@@ -1,4 +1,6 @@
 // Translated from @heroui/styles components/popover.css
+// State/side variants use `[&:where([data-…])]:` (zero added specificity): HeroUI keeps these animations in
+// @layer components, so user utilities such as `data-[state=open]:zoom-in-95` must win over the theme.
 export default {
   slots: {
     base: [
@@ -17,9 +19,9 @@ export default {
       // `duration-150`/`duration-100` are avoided too: Tailwind's `duration-*` utility also sets
       // the literal `transition-duration` property as a side effect, causing the same persistent
       // leak; `[--tw-animation-duration:_]` feeds only the `animate-in`/`animate-out` keyframes.
-      'data-[state=open]:animate-in data-[state=open]:[--tw-animation-duration:150ms] data-[state=open]:ease-smooth data-[state=open]:fade-in-0 data-[state=open]:zoom-in-90',
-      'data-[state=open]:data-[side=top]:slide-in-from-bottom-1 data-[state=open]:data-[side=bottom]:slide-in-from-top-1 data-[state=open]:data-[side=left]:slide-in-from-right-1 data-[state=open]:data-[side=right]:slide-in-from-left-1',
-      'data-[state=closed]:animate-out data-[state=closed]:[--tw-animation-duration:100ms] data-[state=closed]:ease-smooth data-[state=closed]:zoom-out-95 data-[state=closed]:fade-out data-[state=closed]:pointer-events-none',
+      '[&:where([data-state=open])]:animate-in [&:where([data-state=open])]:[--tw-animation-duration:150ms] [&:where([data-state=open])]:ease-smooth [&:where([data-state=open])]:fade-in-0 [&:where([data-state=open])]:zoom-in-90',
+      '[&:where([data-state=open])]:[&:where([data-side=top])]:slide-in-from-bottom-1 [&:where([data-state=open])]:[&:where([data-side=bottom])]:slide-in-from-top-1 [&:where([data-state=open])]:[&:where([data-side=left])]:slide-in-from-right-1 [&:where([data-state=open])]:[&:where([data-side=right])]:slide-in-from-left-1',
+      '[&:where([data-state=closed])]:animate-out [&:where([data-state=closed])]:[--tw-animation-duration:100ms] [&:where([data-state=closed])]:ease-smooth [&:where([data-state=closed])]:zoom-out-95 [&:where([data-state=closed])]:fade-out [&:where([data-state=closed])]:pointer-events-none',
     ],
     dialog: 'p-4 outline-none',
     heading: 'font-medium',
