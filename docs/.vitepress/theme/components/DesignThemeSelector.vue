@@ -89,8 +89,7 @@ function onOptionKeydown(event: KeyboardEvent, index: number) {
   <div aria-hidden="true" class="pointer-events-none fixed size-0 overflow-hidden opacity-0">
     <img v-for="t in THEMES" :key="t.id" alt="" height="36" width="36" :src="t.image" />
   </div>
-  <!-- z-[100000]: react-aria sets this inline on HeroUI's popover; herouse Popover sets no z-index, so the sticky subnav (z-10) covered it. -->
-  <Popover side="bottom" class="z-[100000] w-[248px] rounded-3xl" :ui="{ dialog: 'p-4' }">
+  <Popover side="bottom" class="w-[248px] rounded-3xl" :ui="{ dialog: 'p-4' }">
     <Button
       aria-label="Design theme"
       size="sm"
@@ -108,8 +107,7 @@ function onOptionKeydown(event: KeyboardEvent, index: number) {
         width="20"
         :src="current.image"
       />
-      <!-- `!`: herouse Button's `[&_svg]:size-4` outranks a plain `size-3.5`; HeroUI's BEM `.button svg` rule does not. -->
-      <Icon v-else icon="gravity-ui:bucket-paint" class="size-3.5! text-foreground" />
+      <Icon v-else icon="gravity-ui:bucket-paint" class="size-3.5 text-foreground" />
       <span class="hidden sm:inline">{{ showAvatar && current ? current.label : 'Theme' }}</span>
     </Button>
     <template #content>
@@ -148,8 +146,7 @@ function onOptionKeydown(event: KeyboardEvent, index: number) {
         <div class="flex items-center justify-between">
           <div class="flex flex-col gap-0.5">
             <Label class="text-xs">Vibrant palette</Label>
-            <!-- leading: HeroUI's BEM `.description` keeps text-xs's line-height; tailwind-merge in herouse drops `text-xs` once `text-[10px]` is passed. -->
-            <Description class="text-[10px] leading-(--text-xs--line-height)">More saturated, less contrast</Description>
+            <Description class="text-[10px]">More saturated, less contrast</Description>
           </div>
           <Switch aria-label="Vibrant palette" :model-value="vibrant" @update:model-value="setStoredVibrantPalette(!!$event)" />
         </div>

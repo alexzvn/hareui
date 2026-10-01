@@ -13,7 +13,9 @@ export default {
       'active:will-change-transform active:bg-(--button-bg-pressed) active:[transform:scale(0.97)]',
       // HeroUI declares :hover after :active, so hover background wins while pressing on hover-capable devices
       'hover:bg-(--button-bg-hover) hover:active:bg-(--button-bg-hover)',
-      '[&_svg:not([data-slot=spinner]_svg,[data-slot=link-icon]_svg)]:pointer-events-none [&_svg:not([data-slot=spinner]_svg,[data-slot=link-icon]_svg)]:-mx-0.5 [&_svg:not([data-slot=spinner]_svg,[data-slot=link-icon]_svg)]:my-0.5 [&_svg:not([data-slot=spinner]_svg,[data-slot=link-icon]_svg)]:size-5 [&_svg:not([data-slot=spinner]_svg,[data-slot=link-icon]_svg)]:shrink-0 [&_svg:not([data-slot=spinner]_svg,[data-slot=link-icon]_svg)]:self-center sm:[&_svg:not([data-slot=spinner]_svg,[data-slot=link-icon]_svg)]:my-1 sm:[&_svg:not([data-slot=spinner]_svg,[data-slot=link-icon]_svg)]:size-4',
+      // :where() keeps these at zero specificity: HeroUI's `.button svg:not(…)` sits in @layer components,
+      // so any utility on the icon itself (e.g. `size-3.5`) wins over the button's default icon size.
+      '[:where(&_svg:not([data-slot=spinner]_svg,[data-slot=link-icon]_svg))]:pointer-events-none [:where(&_svg:not([data-slot=spinner]_svg,[data-slot=link-icon]_svg))]:-mx-0.5 [:where(&_svg:not([data-slot=spinner]_svg,[data-slot=link-icon]_svg))]:my-0.5 [:where(&_svg:not([data-slot=spinner]_svg,[data-slot=link-icon]_svg))]:size-5 [:where(&_svg:not([data-slot=spinner]_svg,[data-slot=link-icon]_svg))]:shrink-0 [:where(&_svg:not([data-slot=spinner]_svg,[data-slot=link-icon]_svg))]:self-center sm:[:where(&_svg:not([data-slot=spinner]_svg,[data-slot=link-icon]_svg))]:my-1 sm:[:where(&_svg:not([data-slot=spinner]_svg,[data-slot=link-icon]_svg))]:size-4',
     ],
     spinner: '',
   },
@@ -28,7 +30,7 @@ export default {
       'danger-soft': { base: '[--button-bg:var(--danger-soft)] [--button-bg-hover:var(--danger-soft-hover)] [--button-bg-pressed:var(--danger-soft-hover)] [--button-fg:var(--danger-soft-foreground)]' },
     },
     size: {
-      sm: { base: 'h-9 px-3 md:h-8 [&_svg:not([data-slot=spinner]_svg,[data-slot=link-icon]_svg)]:size-4 sm:[&_svg:not([data-slot=spinner]_svg,[data-slot=link-icon]_svg)]:size-4 active:[transform:scale(0.98)]' },
+      sm: { base: 'h-9 px-3 md:h-8 [:where(&_svg:not([data-slot=spinner]_svg,[data-slot=link-icon]_svg))]:size-4 sm:[:where(&_svg:not([data-slot=spinner]_svg,[data-slot=link-icon]_svg))]:size-4 active:[transform:scale(0.98)]' },
       md: { base: '' },
       lg: { base: 'h-11 text-base md:h-10 active:[transform:scale(0.96)]' },
     },

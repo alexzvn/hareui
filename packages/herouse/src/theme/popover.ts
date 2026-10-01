@@ -3,6 +3,9 @@ export default {
   slots: {
     base: [
       'origin-(--reka-popover-content-transform-origin) bg-overlay p-0 text-sm',
+      // React Aria sets `z-index: 100000` inline on popovers; HeroUI's base.css exposes that level as
+      // `--z-index-overlay`. Reka copies the content's z-index onto its fixed positioning wrapper.
+      'z-(--z-index-overlay)',
       '[border-radius:min(32px,var(--radius-3xl))] [box-shadow:var(--overlay-shadow)]',
       // Entering animation (React Aria `[data-entering=true]` -> Reka's open state).
       // `transition-[opacity,transform]` is intentionally NOT ported: HeroUI only keeps it
