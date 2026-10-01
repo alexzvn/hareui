@@ -1,13 +1,17 @@
 // Translated from @heroui/styles components/modal.css + modal.styles.ts
+// State/side variants use `[&:where([data-…])]:` (zero added specificity): HeroUI keeps these animations in
+// @layer components, so user utilities such as `data-[state=open]:zoom-in-95` must win over the theme.
 export default {
   slots: {
     backdrop: [
       'fixed inset-0 z-(--z-index-overlay) flex flex-row items-center justify-center',
       'h-(--visual-viewport-height) w-full',
-      'data-[state=open]:animate-in data-[state=open]:[--tw-duration:150ms] data-[state=open]:ease-out data-[state=open]:fade-in-0',
-      'data-[state=closed]:animate-out data-[state=closed]:[--tw-duration:100ms] data-[state=closed]:ease-out data-[state=closed]:fade-out-0',
-      'data-[state=open]:will-change-[opacity] data-[state=closed]:will-change-[opacity]',
-      'motion-reduce:data-[state=open]:animate-none motion-reduce:data-[state=closed]:animate-none',
+      '[&:where([data-state=open])]:animate-in [&:where([data-state=open])]:[--tw-duration:150ms] [&:where([data-state=open])]:ease-out [&:where([data-state=open])]:fade-in-0',
+      '[&:where([data-state=closed])]:animate-out [&:where([data-state=closed])]:[--tw-duration:100ms] [&:where([data-state=closed])]:ease-out [&:where([data-state=closed])]:fade-out-0',
+      // HeroUI sets will-change only while entering/exiting; Reka has no entering state, so only exiting gets it
+      // (a permanent will-change puts the open dialog on its own layer and changes text rasterization).
+      '[&:where([data-state=closed])]:will-change-[opacity]',
+      'motion-reduce:[&:where([data-state=open])]:animate-none motion-reduce:[&:where([data-state=closed])]:animate-none',
     ],
     container: [
       'flex flex-col items-center',
@@ -15,10 +19,10 @@ export default {
       'w-(--modal-container-width) [--modal-container-width:100%] sm:[--modal-container-width:fit-content]',
       'p-(--modal-container-padding) [--modal-container-padding:--spacing(4)] sm:[--modal-container-padding:--spacing(10)]',
       'pointer-events-none',
-      'data-[state=open]:animate-in data-[state=open]:[--tw-duration:250ms] data-[state=open]:ease-out-quad data-[state=open]:fade-in-0 data-[state=open]:zoom-in-105',
-      'data-[state=closed]:animate-out data-[state=closed]:[--tw-duration:100ms] data-[state=closed]:ease-out-quad data-[state=closed]:fade-out-0 data-[state=closed]:zoom-out-95',
-      'data-[state=open]:will-change-[opacity,transform] data-[state=closed]:will-change-[opacity,transform]',
-      'motion-reduce:data-[state=open]:animate-none motion-reduce:data-[state=closed]:animate-none',
+      '[&:where([data-state=open])]:animate-in [&:where([data-state=open])]:[--tw-duration:250ms] [&:where([data-state=open])]:ease-out-quad [&:where([data-state=open])]:fade-in-0 [&:where([data-state=open])]:zoom-in-105',
+      '[&:where([data-state=closed])]:animate-out [&:where([data-state=closed])]:[--tw-duration:100ms] [&:where([data-state=closed])]:ease-out-quad [&:where([data-state=closed])]:fade-out-0 [&:where([data-state=closed])]:zoom-out-95',
+      '[&:where([data-state=closed])]:will-change-[opacity,transform]',
+      'motion-reduce:[&:where([data-state=open])]:animate-none motion-reduce:[&:where([data-state=closed])]:animate-none',
     ],
     dialog: [
       'relative',
@@ -64,19 +68,19 @@ export default {
     },
     placement: {
       auto: {
-        container: 'data-[state=open]:slide-in-from-bottom-1 sm:data-[state=open]:slide-in-from-bottom-0',
+        container: '[&:where([data-state=open])]:slide-in-from-bottom-1 sm:[&:where([data-state=open])]:slide-in-from-bottom-0',
         dialog: 'mt-auto mb-(--modal-dialog-margin-bottom) [--modal-dialog-margin-bottom:0px] sm:[--modal-dialog-margin-bottom:auto]',
       },
       top: {
-        container: 'data-[state=open]:slide-in-from-top-1',
+        container: '[&:where([data-state=open])]:slide-in-from-top-1',
         dialog: 'mt-0',
       },
       center: {
-        container: 'data-[state=open]:slide-in-from-top-0',
+        container: '[&:where([data-state=open])]:slide-in-from-top-0',
         dialog: 'my-auto',
       },
       bottom: {
-        container: 'data-[state=open]:slide-in-from-bottom-1',
+        container: '[&:where([data-state=open])]:slide-in-from-bottom-1',
         dialog: 'mt-auto',
       },
     },
@@ -89,8 +93,8 @@ export default {
       full: {
         container: [
           'p-0',
-          'data-[state=open]:slide-in-from-bottom-0 data-[state=open]:zoom-in-100 sm:data-[state=open]:slide-in-from-bottom-0',
-          'data-[state=closed]:zoom-out-100',
+          '[&:where([data-state=open])]:slide-in-from-bottom-0 [&:where([data-state=open])]:zoom-in-100 sm:[&:where([data-state=open])]:slide-in-from-bottom-0',
+          '[&:where([data-state=closed])]:zoom-out-100',
         ],
         dialog: 'h-full min-h-full w-full rounded-none shadow-none',
       },

@@ -166,7 +166,8 @@ onBeforeUnmount(() => {
         :style="{ '--visual-viewport-height': visualViewportHeight }"
         :class="ui.backdrop({ class: props.ui?.backdrop })"
       >
-        <div data-slot="modal-container" :data-placement="placement" :class="ui.container({ class: props.ui?.container })">
+        <!-- data-state mirrors Reka's overlay/content so container enter/exit animations (theme and user `data-[state=…]:` classes) run -->
+        <div data-slot="modal-container" :data-state="isOpen ? 'open' : 'closed'" :data-placement="placement" :class="ui.container({ class: props.ui?.container })">
           <DialogContent
             data-slot="modal-dialog"
             :data-placement="placement"
