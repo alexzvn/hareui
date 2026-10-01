@@ -1,0 +1,160 @@
+import { readFile, writeFile } from 'node:fs/promises'
+import { join, resolve } from 'node:path'
+import { isGroup, isSeparator, normalizePath, sidebar, type SidebarLink } from '../.vitepress/sidebar'
+import type { ComponentApi } from './api-types'
+
+const SITE_URL = 'https://herouse.dev'
+
+const docsRoot = resolve(import.meta.dir, '..')
+const distDir = join(docsRoot, '.vitepress/dist')
+
+interface Page {
+  section: string
+  link: SidebarLink
+  url: string
+  title: string
+  description: string
+  body: string
+}
+
+function sourceFile(link: string): string {
+  const path = normalizePath(link)
+  return link.endsWith('/') ? join(docsRoot, path, 'index.md') : join(docsRoot, `${path}.md`)
+}
+
+function parseFrontmatter(raw: string): { data: Record<string, string>; body: string } {
+  const match = raw.match(/^---\n([\s\S]*?)\n---\n?/)
+  if (!match) return { data: {}, body: raw }
+  const data: Record<string, string> = {}
+  for (const line of match[1].split('\n')) {
+    const kv = line.match(/^(\w+):\s*(.*)$/)
+    if (kv && kv[2]) data[kv[1]] = kv[2].replace(/^(['"])(.*)\1$/, '$2')
+  }
+  return { data, body: raw.slice(match[0].length) }
+}
+
+function attr(tag: string, name: string): string | undefined {
+  return tag.match(new RegExp(`\\b${name}="([^"]*)"`))?.[1]
+}
+
+function escapeCell(value: string): string {
+  return value.replace(/\|/g, '\\|').replace(/\n/g, ' ')
+}
+
+function code(value: string | undefined): string {
+  return value ? `\`${escapeCell(value)}\`` : '-'
+}
+
+async function apiTable(component: string, kind: string): Promise<string> {
+  const api: ComponentApi = JSON.parse(await readFile(join(docsRoot, '.vitepress/api', `${component}.json`), 'utf8'))
+  if (kind === 'props') {
+    return [
+      '| Prop | Type | Default | Description |',
+      '| --- | --- | --- | --- |',
+      ...api.props.map((p) => `| ${code(p.name)} | ${code(p.type)} | ${code(p.default)} | ${escapeCell(p.description) || '-'} |`),
+    ].join('\n')
+  }
+  if (kind === 'slots') {
+    return [
+      '| Slot | Props | Description |',
+      '| --- | --- | --- |',
+      ...api.slots.map((s) => `| ${code(s.name)} | ${code(s.type)} | ${escapeCell(s.description) || '-'} |`),
+    ].join('\n')
+  }
+  return [
+    '| Event | Payload | Description |',
+    '| --- | --- | --- |',
+    ...api.events.map((e) => `| ${code(e.name)} | ${code(e.type)} | ${escapeCell(e.description) || '-'} |`),
+  ].join('\n')
+}
+
+async function replaceAsync(input: string, re: RegExp, fn: (match: string) => Promise<string>): Promise<string> {
+  const parts: (string | Promise<string>)[] = []
+  let last = 0
+  for (const m of input.matchAll(re)) {
+    parts.push(input.slice(last, m.index), fn(m[0]))
+    last = m.index + m[0].length
+  }
+  parts.push(input.slice(last))
+  return (await Promise.all(parts)).join('')
+}
+
+async function toMarkdown(body: string): Promise<string> {
+  let out = body.replace(/<script\b[\s\S]*?<\/script>\n?/g, '').replace(/<style\b[\s\S]*?<\/style>\n?/g, '')
+  out = await replaceAsync(out, /<ComponentPreview\b[^>]*\/>/g, async (tag) => {
+    const name = attr(tag, 'name')
+    if (!name) throw new Error(`ComponentPreview without name: ${tag}`)
+    const src = await readFile(join(docsRoot, 'demos', `${name}.vue`), 'utf8')
+    return `\`\`\`vue\n${src.trimEnd()}\n\`\`\``
+  })
+  out = await replaceAsync(out, /<ApiTable\b[^>]*\/>/g, async (tag) => {
+    const component = attr(tag, 'component')
+    const kind = attr(tag, 'kind')
+    if (!component || !kind) throw new Error(`ApiTable missing attributes: ${tag}`)
+    return apiTable(component, kind)
+  })
+  const fences: string[] = []
+  out = out.replace(/^(```|~~~)[\s\S]*?^\1\s*$/gm, (fence) => `\u0000${fences.push(fence) - 1}\u0000`)
+  out = out.replace(/<\/?[A-Z][\w.]*\b[^>]*>/g, '')
+  out = out.replace(/\u0000(\d+)\u0000/g, (_, i) => fences[Number(i)])
+  return out.replace(/\n{3,}/g, '\n\n').trim()
+}
+
+const pages: Page[] = []
+for (const section of sidebar) {
+  const links = section.items.flatMap((entry) => (isSeparator(entry) ? [] : isGroup(entry) ? entry.items : [entry]))
+  for (const link of links) {
+    const raw = await readFile(sourceFile(link.link), 'utf8').catch((error: NodeJS.ErrnoException) => {
+      if (error.code === 'ENOENT') return undefined
+      throw error
+    })
+    if (raw === undefined) {
+      console.warn(`llms: skipping ${link.link} (no source page yet)`)
+      continue
+    }
+    const { data, body } = parseFrontmatter(raw)
+    pages.push({
+      section: section.text,
+      link,
+      url: `${SITE_URL}${link.link}`,
+      title: data.title ?? link.text,
+      description: data.description ?? '',
+      body: await toMarkdown(body),
+    })
+  }
+}
+
+const description =
+  'HeroUse is a Vue 3 port of HeroUI v3: beautiful, fast and modern UI components built on Reka UI, Tailwind CSS v4 and tailwind-variants, with Nuxt UI-style slots, a `ui` prop for per-element classes and app-level theme overrides.'
+
+const index = [
+  '# HeroUse',
+  '',
+  `> ${description}`,
+  '',
+  ...sidebar.flatMap((section) => {
+    const items = pages.filter((p) => p.section === section.text)
+    return items.length ? [`## ${section.text}`, '', ...items.map((p) => `- [${p.title}](${p.url}): ${p.description}`), ''] : []
+  }),
+].join('\n')
+
+const full = pages
+  .map((p) =>
+    [
+      `<page url="${p.url}">`,
+      `# ${p.title}`,
+      '',
+      '**Category**: vue',
+      `**URL**: ${p.url}`,
+      '',
+      `> ${p.description}`,
+      '',
+      p.body,
+      '</page>',
+    ].join('\n'),
+  )
+  .join('\n\n')
+
+await writeFile(join(distDir, 'llms.txt'), `${index.trimEnd()}\n`)
+await writeFile(join(distDir, 'llms-full.txt'), `${full}\n`)
+console.log(`llms: ${pages.length} pages → llms.txt, llms-full.txt`)

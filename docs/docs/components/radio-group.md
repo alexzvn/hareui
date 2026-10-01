@@ -1,0 +1,160 @@
+---
+title: RadioGroup
+description: Radio group for selecting a single option from a list
+links:
+  reka: radio-group
+  source: RadioGroup.vue
+  styles: radioGroup.ts
+  heroui: radio-group
+---
+
+## Usage
+
+```vue
+<script setup lang="ts">
+import { RadioGroup } from 'herouse'
+</script>
+```
+
+<ComponentPreview name="radio-group/basic" />
+
+## Anatomy
+
+RadioGroup renders a [Label](/docs/components/label) and a [Description](/docs/components/description) from props, then one row per `items` entry — each with its own content button, control, indicator, and optional [Description](/docs/components/description) — followed by a [FieldError](/docs/components/field-error) when `invalid` is true.
+
+```vue
+<template>
+  <RadioGroup :items="items" label="…" description="…" error-message="…" :invalid="…">
+    <template #label />                             <!-- Label content -->
+    <template #description />                        <!-- Description content -->
+    <template #item-label="{ item, index }" />        <!-- replaces item.label -->
+    <template #item-description="{ item, index }" />  <!-- replaces item.description -->
+    <template #indicator="{ item, checked }" />       <!-- custom content inside each control -->
+    <template #error />                               <!-- FieldError content, rendered when invalid -->
+  </RadioGroup>
+</template>
+```
+
+| `ui` key | `data-slot` | Element |
+|---|---|---|
+| `base` | `radio-group` | root element |
+| `item` | `radio` | per-item row (`<div>`) |
+| `content` | `radio-content` | the clickable control + label button |
+| `control` | `radio-control` | circular control |
+| `indicator` | `radio-indicator` | inner dot / `#indicator` content |
+| — | — | [Label](/docs/components/label) (iff `label` / `#label`) |
+| — | — | [Description](/docs/components/description) (group, iff `description` / `#description`) |
+| — | — | [Description](/docs/components/description) (per-item, iff `item.description` / `#item-description`) |
+| — | — | [FieldError](/docs/components/field-error) (iff `invalid` and `error-message` / `#error`) |
+
+## Examples
+
+### Horizontal Orientation
+
+<ComponentPreview name="radio-group/horizontal" />
+
+### Variants
+
+The RadioGroup component supports two visual variants:
+
+- **`primary`** (default) - Standard styling with default background, suitable for most use cases
+- **`secondary`** - Lower emphasis variant, suitable for use alongside surface-style backgrounds
+
+<ComponentPreview name="radio-group/variants" />
+
+### Disabled
+
+<ComponentPreview name="radio-group/disabled" />
+
+### Controlled
+
+Bind the selected value with `v-model`.
+
+<ComponentPreview name="radio-group/controlled" />
+
+### Uncontrolled
+
+Combine `default-value` with `@update:model-value` when you only need to react to updates.
+
+<ComponentPreview name="radio-group/uncontrolled" />
+
+### Validation
+
+Drive `invalid` and `error-message` from local state; there is no built-in form library.
+
+<ComponentPreview name="radio-group/validation" />
+
+### Delivery & Payment
+
+<ComponentPreview name="radio-group/delivery-and-payment" />
+
+### Custom Indicator
+
+<ComponentPreview name="radio-group/custom-indicator" />
+
+## Customization
+
+### Tailwind CSS
+
+Use the `#item-label` slot and `:ui` overrides to restyle each row. HeroUI's render-state attributes `data-[hovered|pressed|focus-visible=true]` map to `hover:` / `active:` / `focus-visible:`.
+
+<ComponentPreview name="radio-group/custom-styles" />
+
+### Global Configuration
+
+```ts
+app.use(createHeroUse({
+  ui: { radioGroup: { slots: { control: 'size-5' } } },
+}))
+```
+
+## Styling Reference
+
+### Slots
+
+- `base` → `[data-slot="radio-group"]` – root container (`flex flex-col`)
+- `item` → `[data-slot="radio"]` – one row per item (`flex flex-col items-start gap-1`)
+- `content` → `[data-slot="radio-content"]` – the clickable button wrapping control + label
+- `control` → `[data-slot="radio-control"]` – circular control
+- `indicator` → `[data-slot="radio-indicator"]` – inner dot, empty by default; fill with `#indicator` for custom content
+
+> **Note:** The child components ([Label](/docs/components/label), [Description](/docs/components/description), [FieldError](/docs/components/field-error)) have their own themes. See their respective pages for customization options.
+
+### Interactive States
+
+RadioGroup sets these data attributes:
+
+- **Selected** (per item): `[data-selected="true"]` on `[data-slot="radio"]` and on its `[data-slot="radio-content"]`
+- **Disabled**: `[data-disabled="true"]` on `[data-slot="radio"]` (group `disabled` or `item.disabled`)
+- **Invalid**: `[data-invalid="true"]` on `[data-slot="radio"]` when the group `invalid` is true
+- **Read only**: `[data-readonly="true"]` and `aria-readonly="true"` on the root
+- **Required**: `[data-required="true"]` on the root
+
+## API Reference
+
+### Props
+
+<ApiTable component="RadioGroup" kind="props" />
+
+### Slots
+
+<ApiTable component="RadioGroup" kind="slots" />
+
+### Emits
+
+<ApiTable component="RadioGroup" kind="emits" />
+
+## Accessibility
+
+- The group label is associated via `aria-labelledby`; each item's clickable button has `aria-describedby` listing its own description and the group's description/error ids
+- `invalid` sets `aria-invalid="true"` and `data-invalid="true"` on the root; the error is rendered via [FieldError](/docs/components/field-error) (`role="alert"`)
+- `required` sets `data-required="true"` on the root
+- Keyboard: arrow keys move selection between items, following `orientation`; <kbd>Tab</kbd> moves focus into and out of the group as a single stop
+
+## Related Components
+
+- [Label](/docs/components/label)
+- [Description](/docs/components/description)
+- [FieldError](/docs/components/field-error)
+- [Checkbox](/docs/components/checkbox)
+- [Switch](/docs/components/switch)

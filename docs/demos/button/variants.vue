@@ -1,0 +1,15 @@
+<script setup lang="ts">
+import { Button } from 'herouse'
+</script>
+
+<template>
+  <div class="flex flex-wrap gap-3">
+    <Button>Primary</Button>
+    <Button variant="secondary">Secondary</Button>
+    <Button variant="tertiary">Tertiary</Button>
+    <Button variant="outline">Outline</Button>
+    <Button variant="ghost">Ghost</Button>
+    <Button variant="danger">Danger</Button>
+    <Button variant="danger-soft">Danger Soft</Button>
+  </div>
+</template>
