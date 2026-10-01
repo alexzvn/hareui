@@ -14,5 +14,6 @@ export { default as checkbox } from './checkbox'
 export { default as modal } from './modal'
 export { default as switch } from './switch'
 export { default as radioGroup } from './radioGroup'
+export { default as popover } from './popover'
 
 export type Themes = typeof import('./index')
