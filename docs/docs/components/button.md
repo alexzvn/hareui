@@ -79,6 +79,12 @@ the same pattern used internally by every component theme.
 
 <ComponentPreview name="button/custom-variants" />
 
+### Adding Ripple Effect
+
+The Button component supports ripple effects through composition, allowing you to nest ripple components as children. This example uses a Vue port of [m3-ripple](https://github.com/saltyaom/m3-ripple).
+
+<ComponentPreview name="button/ripple-effect" />
+
 ## Customization
 
 ### Tailwind CSS
