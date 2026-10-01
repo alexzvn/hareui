@@ -1,5 +1,7 @@
 <script lang="ts">
+import type { ValidateFn, ValidationResult } from '../composables/useFieldValidation'
 import type { ComponentSlots, ComponentVariants } from '../types/tv'
+import type { ValidationBehavior } from './formContext'
 import theme from '../theme/checkbox'
 
 type Checkbox = typeof theme
@@ -18,7 +20,7 @@ export interface CheckboxProps {
   label?: string
   /** Help text rendered below the label. */
   description?: string
-  /** Error message rendered below the label when `invalid` is true. */
+  /** Error message rendered below the label while invalid. Defaults to the validation errors. */
   errorMessage?: string
   /**
    * Visual style of the checkbox.
@@ -31,8 +33,8 @@ export interface CheckboxProps {
    */
   disabled?: boolean
   /**
-   * Whether the checkbox is invalid.
-   * @defaultValue false
+   * Whether the checkbox is invalid. Overrides validation when set.
+   * @defaultValue undefined
    */
   invalid?: boolean
   /**
@@ -45,6 +47,14 @@ export interface CheckboxProps {
    * @defaultValue false
    */
   required?: boolean
+  /** Validates the selection (`true` when checked). Return an error message (or several) when invalid. */
+  validate?: ValidateFn<boolean>
+  /**
+   * `native` blocks form submission and shows errors on change or submit; `aria` shows errors in realtime.
+   * Defaults to the surrounding `Form`.
+   * @defaultValue 'native'
+   */
+  validationBehavior?: ValidationBehavior
   /** The name of the checkbox, used when submitting an HTML form. */
   name?: string
   /**
@@ -65,8 +75,8 @@ export interface CheckboxSlots {
   label?: (props: { state: CheckboxState }) => any
   /** The description content. Replaces the `description` prop. */
   description?: (props: { state: CheckboxState }) => any
-  /** The error content, rendered when `invalid` is true. Replaces the `errorMessage` prop. */
-  error?: () => any
+  /** The error content, rendered while invalid. Replaces the `errorMessage` prop. */
+  error?: (props: ValidationResult) => any
   /** Custom indicator inside the control. Replaces the default checkmark / dash icons. */
   indicator?: (props: { state: CheckboxState }) => any
 }
@@ -74,15 +84,17 @@ export interface CheckboxSlots {
 
 <script setup lang="ts">
 import { CheckboxRoot } from 'reka-ui'
-import { computed, ref, useId, useSlots } from 'vue'
+import { computed, ref, useId, useSlots, useTemplateRef } from 'vue'
 import { useComponentUI } from '../composables/useComponentUI'
+import { useFieldValidation } from '../composables/useFieldValidation'
 import Description from './Description.vue'
 import FieldError from './FieldError.vue'
 
 defineOptions({ inheritAttrs: false })
 
-// `modelValue: undefined` stops Vue casting an absent boolean prop to `false`, so uncontrolled mode and `defaultValue` apply
-const props = withDefaults(defineProps<CheckboxProps>(), { modelValue: undefined })
+// `undefined` defaults stop Vue casting absent boolean props to `false`: uncontrolled mode and `defaultValue` apply,
+// and an unset `invalid` leaves validation in charge
+const props = withDefaults(defineProps<CheckboxProps>(), { modelValue: undefined, invalid: undefined })
 const emit = defineEmits<{
   /** Emitted when the checked state changes. */
   'update:modelValue': [value: boolean | 'indeterminate']
@@ -103,8 +115,23 @@ const local = ref(props.defaultValue ?? false)
 const checked = computed(() => props.modelValue ?? local.value)
 const state = computed<CheckboxState>(() => checked.value === 'indeterminate' ? 'indeterminate' : checked.value ? 'checked' : 'unchecked')
 
+const root = useTemplateRef<HTMLElement>('root')
+const { validation, commitValidation } = useFieldValidation({
+  value: () => checked.value === true,
+  validate: () => props.validate,
+  invalid: () => props.invalid,
+  validationBehavior: () => props.validationBehavior,
+  name: () => props.name,
+  root: () => root.value,
+  onReset: () => {
+    local.value = props.defaultValue ?? false
+    emit('update:modelValue', local.value)
+  },
+})
+const invalid = computed(() => validation.value.isInvalid)
+
 const hasDescription = computed(() => !!(props.description || slots.description))
-const hasError = computed(() => props.invalid && !!(props.errorMessage || slots.error))
+const hasError = computed(() => invalid.value && !!(props.errorMessage || slots.error || validation.value.validationErrors.length))
 const describedBy = computed(() => [hasDescription.value && descriptionId.value, hasError.value && errorId.value].filter(Boolean).join(' ') || undefined)
 
 function onUpdate(value: boolean | 'indeterminate') {
@@ -113,11 +140,13 @@ function onUpdate(value: boolean | 'indeterminate') {
     return
   local.value = value
   emit('update:modelValue', value)
+  commitValidation()
 }
 </script>
 
 <template>
   <div
+    ref="root"
     data-slot="checkbox"
     :data-state="state"
     :data-selected="state === 'checked' ? 'true' : undefined"
@@ -184,7 +213,7 @@ function onUpdate(value: boolean | 'indeterminate') {
       <slot name="description" :state="state">{{ description }}</slot>
     </Description>
     <FieldError v-if="hasError" :id="errorId">
-      <slot name="error">{{ errorMessage }}</slot>
+      <slot name="error" v-bind="validation">{{ errorMessage ?? validation.validationErrors.join(' ') }}</slot>
     </FieldError>
   </div>
 </template>

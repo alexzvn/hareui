@@ -45,7 +45,7 @@ RadioGroup renders a [Label](/docs/components/label) and a [Description](/docs/c
 | — | — | [Label](/docs/components/label) (iff `label` / `#label`) |
 | — | — | [Description](/docs/components/description) (group, iff `description` / `#description`) |
 | — | — | [Description](/docs/components/description) (per-item, iff `item.description` / `#item-description`) |
-| — | — | [FieldError](/docs/components/field-error) (iff `invalid` and `error-message` / `#error`) |
+| — | — | [FieldError](/docs/components/field-error) (while invalid, iff `error-message` / `#error` / validation errors) |
 
 ## Examples
 
@@ -80,7 +80,7 @@ Combine `default-value` with `@update:model-value` when you only need to react t
 
 ### Validation
 
-Drive `invalid` and `error-message` from local state; there is no built-in form library.
+Mark the group `required` inside a [Form](/docs/components/form): submitting without a selection is blocked and shows the error. A `validate` function receives the selected value, and `invalid` overrides both.
 
 <ComponentPreview name="radio-group/validation" />
 

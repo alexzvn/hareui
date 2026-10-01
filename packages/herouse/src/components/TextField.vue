@@ -1,5 +1,7 @@
 <script lang="ts">
+import type { ValidateFn, ValidationResult } from '../composables/useFieldValidation'
 import type { ComponentSlots } from '../types/tv'
+import type { ValidationBehavior } from './formContext'
 import type { InputProps } from './Input.vue'
 import theme from '../theme/textField'
 
@@ -10,7 +12,7 @@ export interface TextFieldProps {
   label?: string
   /** Helper text rendered below the input. Hidden while the field is invalid. */
   description?: string
-  /** Error message rendered below the input when `invalid` is true. */
+  /** Error message rendered below the input while invalid. Defaults to the validation errors. */
   errorMessage?: string
   /**
    * The id of the input; label, description and error ids derive from it.
@@ -44,8 +46,8 @@ export interface TextFieldProps {
    */
   disabled?: boolean
   /**
-   * Whether the field is invalid.
-   * @defaultValue false
+   * Whether the field is invalid. Overrides validation when set.
+   * @defaultValue undefined
    */
   invalid?: boolean
   /**
@@ -58,6 +60,14 @@ export interface TextFieldProps {
    * @defaultValue false
    */
   readonly?: boolean
+  /** Validates the value. Return an error message (or several) when invalid, `true`/`null`/`undefined` when valid. */
+  validate?: ValidateFn<string | number>
+  /**
+   * `native` blocks form submission and shows errors on change or submit; `aria` shows errors in realtime.
+   * Defaults to the surrounding `Form`.
+   * @defaultValue 'native'
+   */
+  validationBehavior?: ValidationBehavior
   /** Additional classes merged into the root element. */
   class?: any
   /** Per-slot class overrides. */
@@ -84,14 +94,15 @@ export interface TextFieldSlots {
   default?: (props: TextFieldSlotProps) => any
   /** Description content. Replaces the `description` prop. */
   description?: () => any
-  /** Error content, rendered when `invalid`. Replaces the `errorMessage` prop. */
-  error?: () => any
+  /** Error content, rendered while invalid. Replaces the `errorMessage` prop. */
+  error?: (props: ValidationResult) => any
 }
 </script>
 
 <script setup lang="ts">
-import { computed, provide, ref, toRef, useAttrs, useId } from 'vue'
+import { computed, provide, ref, toRef, useAttrs, useId, useTemplateRef } from 'vue'
 import { useComponentUI } from '../composables/useComponentUI'
+import { useFieldValidation } from '../composables/useFieldValidation'
 import Description from './Description.vue'
 import FieldError from './FieldError.vue'
 import Input from './Input.vue'
@@ -100,21 +111,39 @@ import { textFieldContextKey } from './textFieldContext'
 
 defineOptions({ inheritAttrs: false })
 
-const props = withDefaults(defineProps<TextFieldProps>(), { type: 'text' })
+// `invalid: undefined`: an absent boolean would cast to `false`, which counts as controlled-valid and hides validation errors
+const props = withDefaults(defineProps<TextFieldProps>(), { type: 'text', invalid: undefined })
 const slots = defineSlots<TextFieldSlots>()
 /** The input value. */
 const modelValue = defineModel<string | number>()
 if (modelValue.value === undefined && props.defaultValue !== undefined)
   modelValue.value = props.defaultValue
 
-// `aria-label` / `aria-labelledby` name the input (as in HeroUI), not the wrapper div
+// Attributes that belong to the input (as in HeroUI, where TextField passes them to its Input), matched case-insensitively
+// so `maxlength` and `maxLength` both work. Everything else stays on the wrapper div.
+const INPUT_ATTRS = new Set([
+  'autofocus', 'autocomplete', 'autocapitalize', 'autocorrect', 'spellcheck', 'inputmode', 'enterkeyhint',
+  'maxlength', 'minlength', 'pattern', 'min', 'max', 'step', 'size', 'list', 'form', 'dirname',
+  'aria-label', 'aria-labelledby', 'aria-details', 'aria-errormessage', 'aria-controls', 'aria-activedescendant', 'aria-autocomplete', 'aria-haspopup',
+  'onfocus', 'onblur',
+])
 const attrs = useAttrs()
-const ariaLabel = computed(() => attrs['aria-label'] as string | undefined)
-const ariaLabelledby = computed(() => attrs['aria-labelledby'] as string | undefined)
-const rootAttrs = computed(() => {
-  const { 'aria-label': _label, 'aria-labelledby': _labelledby, ...rest } = attrs
-  return rest
+const inputAttrs = computed(() => Object.fromEntries(Object.entries(attrs).filter(([key]) => INPUT_ATTRS.has(key.toLowerCase()))))
+const rootAttrs = computed(() => Object.fromEntries(Object.entries(attrs).filter(([key]) => !INPUT_ATTRS.has(key.toLowerCase()) && key !== 'aria-describedby')))
+
+const root = useTemplateRef<HTMLElement>('root')
+const { validation } = useFieldValidation({
+  value: () => modelValue.value ?? '',
+  validate: () => props.validate,
+  invalid: () => props.invalid,
+  validationBehavior: () => props.validationBehavior,
+  name: () => props.name,
+  root: () => root.value,
+  onReset: () => {
+    modelValue.value = props.defaultValue ?? ''
+  },
 })
+const invalid = computed(() => validation.value.isInvalid)
 
 const focusWithin = ref(false)
 const focusVisible = ref(false)
@@ -133,10 +162,11 @@ const autoId = useId()
 const id = computed(() => props.id ?? autoId)
 const hasLabel = computed(() => !!(props.label || slots.label))
 const hasDescription = computed(() => !!(props.description || slots.description))
-const hasError = computed(() => props.invalid && !!(props.errorMessage || slots.error))
+const hasError = computed(() => invalid.value && !!(props.errorMessage || slots.error || validation.value.validationErrors.length))
 const descriptionId = computed(() => `${id.value}-description`)
 const errorId = computed(() => `${id.value}-error`)
 const describedBy = computed(() => [
+  attrs['aria-describedby'] as string | undefined,
   hasDescription.value ? descriptionId.value : undefined,
   hasError.value ? errorId.value : undefined,
 ].filter(Boolean).join(' ') || undefined)
@@ -144,14 +174,16 @@ const describedBy = computed(() => [
 provide(textFieldContextKey, {
   id,
   describedBy,
-  invalid: toRef(() => props.invalid),
+  invalid,
   disabled: toRef(() => props.disabled),
   required: toRef(() => props.required),
   readonly: toRef(() => props.readonly),
   variant: toRef(() => props.variant),
   fullWidth: toRef(() => props.fullWidth),
-  ariaLabel,
-  ariaLabelledby,
+  inputAttrs,
+  model: modelValue,
+  name: toRef(() => props.name),
+  type: toRef(() => props.type),
 })
 
 const ui = useComponentUI('textField', theme, () => ({ fullWidth: props.fullWidth }))
@@ -159,6 +191,7 @@ const ui = useComponentUI('textField', theme, () => ({ fullWidth: props.fullWidt
 
 <template>
   <div
+    ref="root"
     v-bind="rootAttrs"
     data-slot="textfield"
     :data-disabled="disabled ? 'true' : undefined"
@@ -177,7 +210,7 @@ const ui = useComponentUI('textField', theme, () => ({ fullWidth: props.fullWidt
       </slot>
     </Label>
     <slot v-bind="{ id, describedBy, invalid, disabled, required, readonly, focusWithin, focusVisible }">
-      <Input v-model="modelValue" :type="type" :name="name" :placeholder="placeholder" />
+      <Input :placeholder="placeholder" />
     </slot>
     <Description v-if="hasDescription" :id="descriptionId">
       <slot name="description">
@@ -185,8 +218,8 @@ const ui = useComponentUI('textField', theme, () => ({ fullWidth: props.fullWidt
       </slot>
     </Description>
     <FieldError v-if="hasError" :id="errorId">
-      <slot name="error">
-        {{ errorMessage }}
+      <slot name="error" v-bind="validation">
+        {{ errorMessage ?? validation.validationErrors.join(' ') }}
       </slot>
     </FieldError>
   </div>

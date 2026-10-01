@@ -1,5 +1,7 @@
 <script lang="ts">
+import type { ValidateFn } from '../composables/useFieldValidation'
 import type { ComponentSlots, ComponentVariants } from '../types/tv'
+import type { ValidationBehavior } from './formContext'
 import theme from '../theme/input'
 
 type Input = typeof theme
@@ -48,6 +50,13 @@ export interface InputProps {
    * @defaultValue false
    */
   readonly?: boolean
+  /** Validates the value when used without a `TextField` (inside one, set `validate` on the TextField). */
+  validate?: ValidateFn<string | number>
+  /**
+   * Validation behavior when used without a `TextField`. Defaults to the surrounding `Form`.
+   * @defaultValue 'native'
+   */
+  validationBehavior?: ValidationBehavior
   /** Additional classes merged into the root element. */
   class?: any
   /** Per-slot class overrides. */
@@ -56,12 +65,13 @@ export interface InputProps {
 </script>
 
 <script setup lang="ts">
-import { computed, inject } from 'vue'
+import { computed, getCurrentInstance, inject, useTemplateRef, watch } from 'vue'
 import { useComponentUI } from '../composables/useComponentUI'
+import { useFieldValidation } from '../composables/useFieldValidation'
 import { textFieldContextKey } from './textFieldContext'
 
 const props = withDefaults(defineProps<InputProps>(), {
-  type: 'text',
+  type: undefined,
   fullWidth: undefined,
   disabled: undefined,
   invalid: undefined,
@@ -70,26 +80,66 @@ const props = withDefaults(defineProps<InputProps>(), {
 })
 /** The input value. */
 const modelValue = defineModel<string | number>()
-if (modelValue.value === undefined && props.defaultValue !== undefined)
-  modelValue.value = props.defaultValue
 
 const field = inject(textFieldContextKey, null)
+
+// Inside a TextField, an Input without its own v-model uses the field's value; with one, it mirrors into the field
+// so the field's `validate` and form reset see what the user typed
+const vnodeProps = getCurrentInstance()?.vnode.props ?? {}
+const ownModel = !field || ['modelValue', 'model-value', 'onUpdate:modelValue'].some(key => key in vnodeProps)
+const value = computed({
+  get: () => ownModel ? modelValue.value : field!.model.value,
+  set: (v) => {
+    if (ownModel)
+      modelValue.value = v
+    if (field)
+      field.model.value = v
+  },
+})
+if (value.value === undefined && props.defaultValue !== undefined)
+  value.value = props.defaultValue
+if (field && ownModel) {
+  watch(modelValue, (v) => {
+    field.model.value = v
+  }, { immediate: true })
+}
+
+const type = computed(() => props.type ?? field?.type.value ?? 'text')
+const name = computed(() => props.name ?? field?.name.value)
 
 const id = computed(() => props.id ?? field?.id.value)
 const variant = computed(() => props.variant ?? field?.variant.value)
 const fullWidth = computed(() => props.fullWidth ?? field?.fullWidth.value ?? false)
 const disabled = computed(() => props.disabled ?? field?.disabled.value ?? false)
-const invalid = computed(() => props.invalid ?? field?.invalid.value ?? false)
 const required = computed(() => props.required ?? field?.required.value ?? false)
 const readonly = computed(() => props.readonly ?? field?.readonly.value ?? false)
+
+// Inside a TextField the field owns validation; a bare Input validates itself
+const input = useTemplateRef<HTMLInputElement>('input')
+const own = field
+  ? null
+  : useFieldValidation({
+      value: () => value.value ?? '',
+      validate: () => props.validate,
+      invalid: () => props.invalid,
+      validationBehavior: () => props.validationBehavior,
+      name: () => props.name,
+      root: () => input.value,
+      onReset: () => {
+        value.value = props.defaultValue ?? ''
+      },
+    })
+const invalid = computed(() => own ? own.validation.value.isInvalid : props.invalid ?? field?.invalid.value ?? false)
 
 const ui = useComponentUI('input', theme, () => ({ variant: variant.value, fullWidth: fullWidth.value }))
 </script>
 
 <template>
   <input
+    v-bind="field?.inputAttrs.value"
     :id="id"
-    v-model="modelValue"
+    ref="input"
+    v-model="value"
     :type="type"
     :name="name"
     :placeholder="placeholder"
@@ -98,8 +148,6 @@ const ui = useComponentUI('input', theme, () => ({ variant: variant.value, fullW
     :readonly="readonly || undefined"
     :aria-invalid="invalid ? 'true' : undefined"
     :aria-describedby="field?.describedBy.value"
-    :aria-label="field?.ariaLabel.value"
-    :aria-labelledby="field?.ariaLabelledby.value"
     data-slot="input"
     :data-invalid="invalid ? 'true' : undefined"
     :data-disabled="disabled ? 'true' : undefined"

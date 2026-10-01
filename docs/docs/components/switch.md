@@ -24,10 +24,11 @@ Switch is a single component — no compound parts. Label, description, and the 
 composed through props or named slots.
 
 ```vue
-<Switch label="…" description="…">
+<Switch label="…" description="…" error-message="…">
   <template #label="{ checked }" />       <!-- Label content -->
   <template #description />               <!-- Description content -->
   <template #icon="{ checked }" />        <!-- Icon rendered inside the thumb -->
+  <template #error="{ validationErrors }" /> <!-- FieldError content, rendered while invalid -->
 </Switch>
 ```
 
@@ -39,6 +40,7 @@ composed through props or named slots.
 | `thumb` | `switch-thumb` | The moving thumb |
 | `icon` | `switch-icon` | Icon container inside the thumb (iff `#icon`) |
 | — | `description` | [Description](/docs/components/description) (iff `description` / `#description`) |
+| — | `field-error` | [FieldError](/docs/components/field-error) (while invalid, iff `error-message` / `#error` / validation errors) |
 
 ## Examples
 

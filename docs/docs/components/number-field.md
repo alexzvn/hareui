@@ -43,7 +43,7 @@ NumberField renders a [Label](/docs/components/label), a group holding the decre
 | `input` | `number-field-input` | `<input role="spinbutton">` |
 | `incrementButton` | `number-field-increment-button` | `<button>` (iff `increment`) |
 | — | `description` | [Description](/docs/components/description) (iff `description` / `#description`) |
-| — | `field-error` | [FieldError](/docs/components/field-error) (iff `invalid` and `error-message` / `#error`) |
+| — | `field-error` | [FieldError](/docs/components/field-error) (while invalid, iff `error-message` / `#error` / validation errors) |
 
 > **NumberField** allows users to enter numeric values with optional increment/decrement buttons. It supports internationalized formatting, validation, and keyboard navigation.
 
@@ -82,7 +82,7 @@ When used inside a surface (HeroUI's [Surface](https://heroui.com/en/docs/react/
 
 ### Validation
 
-Use `invalid` together with `error-message` to surface validation messages.
+Set `invalid` with `error-message` to control the state yourself, or validate with `required`, a `validate` function, or a surrounding [Form](/docs/components/form). `validate` receives the committed number (`NaN` while empty). `min` / `max` clamp the value rather than reporting an error.
 
 <ComponentPreview name="number-field/validation" />
 

@@ -1,5 +1,7 @@
 <script lang="ts">
+import type { ValidateFn, ValidationResult } from '../composables/useFieldValidation'
 import type { ComponentSlots, ComponentVariants } from '../types/tv'
+import type { ValidationBehavior } from './formContext'
 import theme from '../theme/radioGroup'
 
 type RadioGroup = typeof theme
@@ -24,11 +26,11 @@ export interface RadioGroupProps {
   label?: string
   /** Help text rendered below the group label. */
   description?: string
-  /** Error message rendered below the items when `invalid` is true. */
+  /** Error message rendered below the items while invalid. Defaults to the validation errors. */
   errorMessage?: string
   /**
-   * Whether the group is invalid.
-   * @defaultValue false
+   * Whether the group is invalid. Overrides validation when set.
+   * @defaultValue undefined
    */
   invalid?: boolean
   /**
@@ -46,6 +48,14 @@ export interface RadioGroupProps {
    * @defaultValue false
    */
   required?: boolean
+  /** Validates the selected value (not called while nothing is selected). Return an error message (or several) when invalid. */
+  validate?: ValidateFn<string>
+  /**
+   * `native` blocks form submission and shows errors on change or submit; `aria` shows errors in realtime.
+   * Defaults to the surrounding `Form`.
+   * @defaultValue 'native'
+   */
+  validationBehavior?: ValidationBehavior
   /** The name of the group, used when submitting an HTML form. */
   name?: string
   /**
@@ -71,8 +81,8 @@ export interface RadioGroupSlots {
   'label'?: () => any
   /** The group description content. Replaces the `description` prop. */
   'description'?: () => any
-  /** The error content, rendered when `invalid` is true. Replaces the `errorMessage` prop. */
-  'error'?: () => any
+  /** The error content, rendered while invalid. Replaces the `errorMessage` prop. */
+  'error'?: (props: ValidationResult) => any
   /** The label of each item. Replaces `item.label`. */
   'item-label'?: (props: { item: RadioGroupItem, index: number }) => any
   /** The description of each item. Replaces `item.description`. */
@@ -84,13 +94,15 @@ export interface RadioGroupSlots {
 
 <script setup lang="ts">
 import { RadioGroupItem as RekaRadioGroupItem, RadioGroupRoot } from 'reka-ui'
-import { computed, useId, useSlots } from 'vue'
+import { computed, useId, useSlots, useTemplateRef } from 'vue'
 import { useComponentUI } from '../composables/useComponentUI'
+import { useFieldValidation } from '../composables/useFieldValidation'
 import Description from './Description.vue'
 import FieldError from './FieldError.vue'
 import Label from './Label.vue'
 
-const props = withDefaults(defineProps<RadioGroupProps>(), { items: () => [], orientation: 'vertical' })
+// `invalid: undefined`: an absent boolean would cast to `false`, which counts as controlled-valid and hides validation errors
+const props = withDefaults(defineProps<RadioGroupProps>(), { items: () => [], orientation: 'vertical', invalid: undefined })
 defineSlots<RadioGroupSlots>()
 /** The value of the selected item. Bind with `v-model`. */
 const modelValue = defineModel<string>()
@@ -111,9 +123,23 @@ const errorId = computed(() => `${id.value}-error`)
 // which would let `readonly` items change selection behind our back.
 const selected = computed(() => modelValue.value ?? props.defaultValue ?? null)
 
+const root = useTemplateRef<InstanceType<typeof RadioGroupRoot>>('root')
+const { validation, commitValidation } = useFieldValidation({
+  value: () => selected.value,
+  validate: () => props.validate,
+  invalid: () => props.invalid,
+  validationBehavior: () => props.validationBehavior,
+  name: () => props.name,
+  root: () => root.value?.$el as Element | undefined,
+  onReset: () => {
+    modelValue.value = props.defaultValue
+  },
+})
+const invalid = computed(() => validation.value.isInvalid)
+
 const hasLabel = computed(() => !!(props.label || slots.label))
 const hasDescription = computed(() => !!(props.description || slots.description))
-const hasError = computed(() => props.invalid && !!(props.errorMessage || slots.error))
+const hasError = computed(() => invalid.value && !!(props.errorMessage || slots.error || validation.value.validationErrors.length))
 const describedBy = computed(() => [hasDescription.value && descriptionId.value, hasError.value && errorId.value].filter(Boolean).join(' ') || undefined)
 
 function hasItemDescription(item: RadioGroupItem) {
@@ -125,11 +151,13 @@ function onUpdate(value: unknown) {
   if (props.readonly)
     return
   modelValue.value = value as string
+  commitValidation()
 }
 </script>
 
 <template>
   <RadioGroupRoot
+    ref="root"
     :model-value="selected"
     :name="name"
     :disabled="disabled"
@@ -183,7 +211,7 @@ function onUpdate(value: unknown) {
       </Description>
     </div>
     <FieldError v-if="hasError" :id="errorId">
-      <slot name="error">{{ errorMessage }}</slot>
+      <slot name="error" v-bind="validation">{{ errorMessage ?? validation.validationErrors.join(' ') }}</slot>
     </FieldError>
   </RadioGroupRoot>
 </template>

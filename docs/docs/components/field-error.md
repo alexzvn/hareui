@@ -17,7 +17,7 @@ import { FieldError } from 'herouse'
 
 <ComponentPreview name="field-error/basic" />
 
-The FieldError component displays validation error messages for form fields. It automatically appears when the parent field is marked as invalid: [TextField](/docs/components/text-field) renders it from the `error-message` prop (or `#error` slot) whenever the field is `invalid`.
+The FieldError component displays validation error messages for form fields. Fields render it automatically while they are invalid: from the `error-message` prop or `#error` slot, or else from their validation errors (native constraints, `validate`, or a [Form](/docs/components/form)'s `validation-errors`).
 
 ## Anatomy
 
@@ -133,7 +133,7 @@ The FieldError component ensures accessibility by:
 - Using `role="alert"` so the message is announced when it appears
 - Being referenced from the input's `aria-describedby` inside TextField
 - Providing visual and programmatic error indication (`aria-invalid` on the input)
-- Automatically managing visibility based on validation state (rendered only while the field is `invalid`)
+- Automatically managing visibility based on validation state (rendered only while the field is invalid)
 
 ## Related Components
 

@@ -27,7 +27,7 @@ TextField renders a [Label](/docs/components/label), an [Input](/docs/components
     <template #label />        <!-- Label content -->
     <template #default="{ id, describedBy, invalid, disabled, required, readonly, focusWithin, focusVisible }" /> <!-- replaces the Input -->
     <template #description />  <!-- Description content -->
-    <template #error />        <!-- FieldError content, rendered when invalid -->
+    <template #error="{ isInvalid, validationErrors, validationDetails }" /> <!-- FieldError content, rendered while invalid -->
   </TextField>
 </template>
 ```
@@ -38,7 +38,7 @@ TextField renders a [Label](/docs/components/label), an [Input](/docs/components
 | — | `label` | [Label](/docs/components/label) (iff `label` / `#label`) |
 | — | `input` | [Input](/docs/components/input) (default slot) |
 | — | `description` | [Description](/docs/components/description) (iff `description` / `#description`) |
-| — | `field-error` | [FieldError](/docs/components/field-error) (iff `invalid` and `error-message` / `#error`) |
+| — | `field-error` | [FieldError](/docs/components/field-error) (while invalid, iff `error-message` / `#error` / validation errors) |
 
 > **TextField** combines label, input, description, and error into a single accessible component.
 For standalone inputs, use **[Input](/docs/components/input)**.
@@ -69,7 +69,7 @@ When used inside a surface (HeroUI's [Surface](https://heroui.com/en/docs/react/
 
 ### Validation
 
-Use `invalid` together with `error-message` to surface validation messages.
+Use `invalid` together with `error-message` to control the state yourself, or let the field validate: native attributes (`required`, `minlength`, `pattern`, …) and a `validate` function, inside a [Form](/docs/components/form) or on their own. Without `error-message`, the field shows the validation errors.
 
 <ComponentPreview name="textfield/validation" />
 

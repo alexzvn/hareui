@@ -39,7 +39,7 @@ Checkbox renders a Reka UI [`CheckboxRoot`](https://reka-ui.com/docs/components/
 | `control` | `checkbox-control` | Control box |
 | `indicator` | `checkbox-indicator` | Checkmark / dash indicator |
 | — | `description` | [Description](/docs/components/description) (iff `description` / `#description`) |
-| — | `field-error` | [FieldError](/docs/components/field-error) (iff `invalid` and `error-message` / `#error`) |
+| — | `field-error` | [FieldError](/docs/components/field-error) (while invalid, iff `error-message` / `#error` / validation errors) |
 
 ## Examples
 

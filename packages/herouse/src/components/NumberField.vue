@@ -1,5 +1,7 @@
 <script lang="ts">
+import type { ValidateFn, ValidationResult } from '../composables/useFieldValidation'
 import type { ComponentSlots } from '../types/tv'
+import type { ValidationBehavior } from './formContext'
 import theme from '../theme/numberField'
 
 type NumberField = typeof theme
@@ -33,7 +35,7 @@ export interface NumberFieldProps {
   label?: string
   /** Helper text rendered below the group. Hidden while the field is invalid. */
   description?: string
-  /** Error message rendered below the group when `invalid` is true. */
+  /** Error message rendered below the group while invalid. Defaults to the validation errors. */
   errorMessage?: string
   /**
    * The id of the input; label, description and error ids derive from it.
@@ -86,8 +88,8 @@ export interface NumberFieldProps {
    */
   disabled?: boolean
   /**
-   * Whether the field is invalid.
-   * @defaultValue false
+   * Whether the field is invalid. Overrides validation when set.
+   * @defaultValue undefined
    */
   invalid?: boolean
   /**
@@ -100,6 +102,14 @@ export interface NumberFieldProps {
    * @defaultValue false
    */
   readonly?: boolean
+  /** Validates the committed value (`NaN` while empty). Return an error message (or several) when invalid. */
+  validate?: ValidateFn<number>
+  /**
+   * `native` blocks form submission and shows errors on commit or submit; `aria` shows errors in realtime.
+   * Defaults to the surrounding `Form`.
+   * @defaultValue 'native'
+   */
+  validationBehavior?: ValidationBehavior
   /** Additional classes merged into the root element. */
   class?: any
   /** Per-slot class overrides. */
@@ -115,22 +125,24 @@ export interface NumberFieldSlots {
   decrement?: () => any
   /** Description content. Replaces the `description` prop. */
   description?: () => any
-  /** Error content, rendered when `invalid`. Replaces the `errorMessage` prop. */
-  error?: () => any
+  /** Error content, rendered while invalid. Replaces the `errorMessage` prop. */
+  error?: (props: ValidationResult) => any
 }
 </script>
 
 <script setup lang="ts">
 import { NumberFieldDecrement, NumberFieldIncrement, NumberFieldInput, NumberFieldRoot } from 'reka-ui'
-import { computed, ref, useAttrs, useId, watch } from 'vue'
+import { computed, ref, useAttrs, useId, useTemplateRef, watch } from 'vue'
 import { useComponentUI } from '../composables/useComponentUI'
+import { useFieldValidation } from '../composables/useFieldValidation'
 import Description from './Description.vue'
 import FieldError from './FieldError.vue'
 import Label from './Label.vue'
 
 defineOptions({ inheritAttrs: false })
 
-const props = withDefaults(defineProps<NumberFieldProps>(), { increment: true, decrement: true })
+// `invalid: undefined`: an absent boolean would cast to `false`, which counts as controlled-valid and hides validation errors
+const props = withDefaults(defineProps<NumberFieldProps>(), { increment: true, decrement: true, invalid: undefined })
 const slots = defineSlots<NumberFieldSlots>()
 /** The numeric value; `undefined` while the input is empty. */
 const modelValue = defineModel<number | null>()
@@ -155,9 +167,28 @@ const formValue = ref<number | null | undefined>(displayValue.value ?? snap(prop
 watch(displayValue, (value) => {
   formValue.value = value
 })
+
+const root = useTemplateRef<HTMLElement>('root')
+const { validation, commitValidation } = useFieldValidation({
+  // As in RAC: the committed number, `NaN` while empty
+  value: () => formValue.value ?? Number.NaN,
+  validate: () => props.validate,
+  invalid: () => props.invalid,
+  validationBehavior: () => props.validationBehavior,
+  name: () => props.name,
+  root: () => root.value,
+  onReset: () => {
+    formValue.value = snap(props.defaultValue)
+    modelValue.value = formValue.value
+  },
+})
+const invalid = computed(() => validation.value.isInvalid)
+
 function onUpdate(value: number | undefined) {
   formValue.value = value
   modelValue.value = value
+  // RAC commits validation on blur / Enter and on every stepper press
+  commitValidation()
 }
 
 // `aria-label` / `aria-labelledby` name the input (as in HeroUI), not the wrapper div
@@ -171,7 +202,7 @@ const autoId = useId()
 const id = computed(() => props.id ?? autoId)
 const hasLabel = computed(() => !!(props.label || slots.label))
 const hasDescription = computed(() => !!(props.description || slots.description))
-const hasError = computed(() => props.invalid && !!(props.errorMessage || slots.error))
+const hasError = computed(() => invalid.value && !!(props.errorMessage || slots.error || validation.value.validationErrors.length))
 const descriptionId = computed(() => `${id.value}-description`)
 const errorId = computed(() => `${id.value}-error`)
 const describedBy = computed(() => [
@@ -198,6 +229,7 @@ function onFocusOut(event: FocusEvent) {
 
 <template>
   <div
+    ref="root"
     v-bind="rootAttrs"
     data-slot="number-field"
     :data-disabled="disabled ? 'true' : undefined"
@@ -292,8 +324,8 @@ function onFocusOut(event: FocusEvent) {
       </slot>
     </Description>
     <FieldError v-if="hasError" :id="errorId">
-      <slot name="error">
-        {{ errorMessage }}
+      <slot name="error" v-bind="validation">
+        {{ errorMessage ?? validation.validationErrors.join(' ') }}
       </slot>
     </FieldError>
   </div>
