@@ -52,6 +52,13 @@ Collected from `reviews/*.md` (each has a "Decisions needed" section with option
 5. **Render Function / Render Props / ripple-effect demos.** The plan drops them, but they are on heroui.com. Port via `as`/`as-child`, or add API (`reviews/button.md` #4-5, checkbox/switch). Checkbox and Switch render-props demos were already ported. The Avatar `custom-image-component` demo was ported via the new `#image` slot.
 6. **Switch label-position** is a pixel-identical CSS workaround (DOM order differs from HeroUI).
 7. **Related Showcases** widget on heroui.com component pages: not ported.
+8. **API additions made during review that need your sign-off.** All are additive and option A is kept:
+   - `readonly` on Checkbox, Switch and RadioGroup
+   - `invalid` on Switch
+   - slot props on `#description`
+   - `data-selected` on radio-content
+   - Card `#leading`, Avatar `#image` + img attrs + `loadingStatusChange`
+   - Input/TextField `defaultValue` + `readonly`
 
 ## Next steps
 
