@@ -3,9 +3,9 @@
 ## Status
 
 **Match: ~99.7%** (estimate). Static preview cards (what heroui.com shows without interaction): all
-5 ported demos **0 px** diff, light and dark. Hovered demos (tooltip open), **light**: all
-triggers of all demos captured, 0.13–0.29 %. **Dark hover: UNVERIFIED (see Addendum)**. The light diffs come from
-Reka rounding the floating position to whole pixels (≤ 0.42 px shift → anti-aliasing
+5 ported demos **0 px** diff, light and dark. Hovered demos (tooltip open, every trigger, card
+snapped to a whole pixel): **light 0.00–0.28 %, dark 0.00–0.35 %** (verified, see Addendum). The
+remaining diffs come from Reka rounding the floating position to whole pixels (≤ 0.42 px shift → anti-aliasing
 on text/border). Remaining gaps are behavioural props HeroUI has and Reka can't express directly
 (close delay, focus-only trigger, cross-tooltip warm-up) and are listed below.
 
@@ -69,7 +69,10 @@ on text/border). Remaining gaps are behavioural props HeroUI has and Reka can't 
    HeroUI demo needs it.
 5. **reka-limitation — sub-pixel floating position.** Reka's floating-ui `transform` rounds to device
    pixels (`translate(539px, 381px)`); RAC positions with fractional `left/top`
-   (e.g. x 183.69 vs our 184). This causes the remaining 0.06–0.33 % hover diffs. Options: (a) accept;
+   (e.g. x 183.69 vs our 184). This causes the remaining ≤ 0.35 % hover diffs (light and dark). Measured
+   dark offsets (tooltip relative to trigger): custom-trigger ours −63.13/−35.13/−95.13 vs HeroUI
+   −62.77/−34.77/−94.77 (y); with-arrow #2 −19.23/−44.13 vs −19.25/−43.95. Computed tooltip colours
+   are identical (bg sRGB 24,24,27 on both; same inset 0.3 white shadow and radius). **Parked for the user**: (a) accept;
    (b) fork `PopperContent` to use non-rounded `left/top` (not worth it).
 6. **other — the parity harness doesn't check overlay geometry.** `tooltip-top/bottom` passed
    with the tooltip 12 px off. Suggest the integrator adds the `getBoundingClientRect` of each
@@ -97,21 +100,17 @@ mode to a detached-node error. They were captured on the rerun.
 custom-styles 0.16 %. In the earlier full run, placement and basic were also ≤ 0.3 %, and the
 bottom arrow was visually correct.
 
-**Dark, UNVERIFIED:** custom-trigger 0.98–1.09 %, with-arrow 1.06–1.14 %, custom-styles 0.20 %.
-The diff pixels are on the triggers and card edges; the tooltip bodies match. What I measured
-(`.probe-hover-dark-tt.ts`, dark):
-- Each trigger's position relative to the card is identical on both sites (e.g. Chip 372.92, 161.5).
-- Tooltip position relative to its trigger for custom-trigger 0/1/2: ours −47.92/−63.13,
-  −45.92/−35.13, −144.08/−95.13 vs HeroUI −47.5/−62.77, −45.92/−34.77, −144/−94.77, so ≤ 0.42 px.
-- The card's own sub-pixel y differs: ours 274.63 vs HeroUI 275.27. That puts the whole card on
-  a different raster phase, which fits a 1-row shift of the trigger edges.
-Not proven: I couldn't rule out the peer edits made during the run (`theme/button.ts`
-and `utils/tv.ts` restarts at 1:18–1:21). with-arrow, custom-styles and placement geometry on
-our side is unmeasured, because the docs app went blank (ToastProvider.vue compile error from
-a peer). HeroUI reference values (dark, tooltip rect relative to trigger) for when it's back:
-with-arrow −31.5/−38.95 and −19.25/−43.95; custom-styles −17.6/−28.38; placement
-−3.3/−38.14 (top), −107.34/2 (left), 100.3/2 (right), −12.8/42.86 (bottom).
-
+**Dark: verified after correction.** The first dark runs showed 0.98–1.14 % on the default-theme demos,
+consistently. Two hypotheses were checked:
+- Tooltip theme tokens: **ruled out**. The computed dark `background-color`, `box-shadow`,
+  border colour and radius of the open tooltip rasterize to the same sRGB on both sites
+  (`lab(8.34 …)` and `oklch(0.2103 …)` both → 24,24,27; border 40,40,44; card border 33,33,36).
+- Card sub-pixel phase: **confirmed**. The preview card sits at y 275.27 on heroui.com and 274.63 on
+  ours, so every edge rasterizes 0.36 px apart, and light-on-dark edges show it more. With the
+  card nudged so its top lands on a whole pixel before each shot, dark drops to the light-mode
+  level: basic 0.005 / 0.052 %, placement 0 / 0.072 / 0 / 0.121 %, with-arrow 0.306 / 0.347 %,
+  custom-trigger 0.249 / 0.142 / 0.199 %, custom-styles 0.063 % (light: same order, ≤ 0.282 %).
+So the ~1 % was a capture artifact. The residue is the Reka integer-pixel limitation (#5 above).
 Probe note: RAC tooltips only open on a synthetic hover after an earlier pointer move
 (`mouse.move(0,0)` first). Without it heroui.com shows no tooltip, and that's why my first probe
 returned `tip: null` there.
