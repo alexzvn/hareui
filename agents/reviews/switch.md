@@ -13,6 +13,11 @@
 
 Parity: `bun parity/compare.ts --component switch --concurrency 2` → **16/16 cases passed** (new: `switch-control-bg-override`, `switch-invalid`, `switch-readonly`).
 
+## API changes made (additive, need integrator sign-off per brief line 30)
+- New props `invalid`, `readonly`.
+- `#description` slot now receives `{ checked }`.
+Nothing renamed or removed; option A (props + named slots) kept.
+
 ## Remaining gaps → decisions needed
 ### SwitchGroup (missing-component): Group, Group Horizontal, Form Integration demos
 - HeroUI: `packages/react/src/components/switch-group/switch-group.tsx:15-29` (`SwitchGroup` with `orientation`, `switch-group.css`), used by demos `group.tsx`, `group-horizontal.tsx`, `form.tsx`, and documented under API Reference "SwitchGroup".

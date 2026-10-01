@@ -15,6 +15,11 @@
 
 Parity: `bun parity/compare.ts --component radio-group --concurrency 2` → **16/16 cases passed** (new: `radio-group-readonly`, `radio-group-user-overrides`).
 
+## API changes made (additive, need integrator sign-off per brief line 30)
+- New prop `readonly`.
+- New attribute `data-selected` on `[data-slot=radio-content]` (styling hook).
+Nothing renamed or removed; option A (props + named slots) kept.
+
 ## Remaining gaps → decisions needed
 ### In Surface demo (missing-component)
 - HeroUI `apps/docs/src/demos/en/radio-group/on-surface.tsx:1-5` wraps the group in `<Surface className="w-full rounded-3xl p-6">`.

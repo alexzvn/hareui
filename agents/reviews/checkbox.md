@@ -13,6 +13,11 @@
 
 Parity: `bun parity/compare.ts --component checkbox --concurrency 2` → **16/16 cases passed** (new: `checkbox-readonly`, `checkbox-readonly-unchecked`).
 
+## API changes made (additive, need integrator sign-off per brief line 30)
+- New prop `readonly` (RAC `isReadOnly`).
+- `#description` slot now receives `{ state }` (previously no props).
+Nothing renamed or removed; option A (props + named slots) kept.
+
 ## Remaining gaps → decisions needed
 ### Render Function demo (other: plan drop)
 - HeroUI `checkbox.mdx` "Render Function" (`render-function.tsx`) uses RAC's `render` prop to swap the DOM element.
