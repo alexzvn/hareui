@@ -67,9 +67,8 @@ function copy(event: MouseEvent) {
     <div
       :data-name="dataName"
       :class="['preview not-prose relative min-h-[350px] w-full overflow-hidden rounded-t-xl border-s border-e border-t border-separator p-4 sm:p-10 flex', alignClass]"
-      :style="minHeight ? { minHeight } : undefined"
     >
-      <div :class="['flex w-full', alignClass]">
+      <div :class="['flex w-full', alignClass]" :style="minHeight ? { minHeight } : undefined">
         <component :is="demo" />
       </div>
     </div>
