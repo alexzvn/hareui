@@ -1,5 +1,6 @@
 <script setup lang="ts">
 import { computed, defineAsyncComponent, onBeforeUnmount, onMounted, ref, watch } from 'vue'
+import { ToastProvider } from 'herouse'
 import { useData, useRoute } from 'vitepress'
 import { normalizePath, type ThemeConfig } from '../sidebar'
 import DocsHeader from './components/DocsHeader.vue'
@@ -139,5 +140,10 @@ const links = computed(() => frontmatter.value.links as PageLinks | undefined)
     </template>
 
     <VPLocalSearchBox v-if="searchOpen" @close="searchOpen = false" />
+
+    <!-- Shared default-queue provider: several toast/* demos call the global `toast()`
+         function directly (matching HeroUI's own docs, which mount one Toast.Provider
+         at the app shell) rather than creating their own queue + provider per demo. -->
+    <ToastProvider />
   </div>
 </template>

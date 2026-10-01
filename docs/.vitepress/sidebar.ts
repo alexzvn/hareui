@@ -73,6 +73,7 @@ export const sidebar: SidebarSection[] = [
       { text: 'Switch', link: c('switch') },
       { text: 'Tabs', link: c('tabs') },
       { text: 'TextField', link: c('text-field') },
+      { text: 'Toast', link: c('toast') },
       { text: 'Tooltip', link: c('tooltip') },
       { text: 'Typography', link: c('typography') },
     ],

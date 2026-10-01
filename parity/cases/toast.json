@@ -1,0 +1,17 @@
+[
+  { "id": "toast-default", "component": "toast", "actions": [], "overlay": true },
+  { "id": "toast-accent", "component": "toast", "actions": [], "overlay": true },
+  { "id": "toast-success", "component": "toast", "actions": [], "overlay": true },
+  { "id": "toast-warning", "component": "toast", "actions": [], "overlay": true },
+  { "id": "toast-danger", "component": "toast", "actions": [], "overlay": true },
+  { "id": "toast-with-action", "component": "toast", "actions": [], "overlay": true },
+  { "id": "toast-custom-indicator", "component": "toast", "actions": [], "overlay": true },
+  { "id": "toast-loading", "component": "toast", "actions": [], "overlay": true },
+  { "id": "toast-placement-top", "component": "toast", "actions": [], "overlay": true },
+  { "id": "toast-placement-top-start", "component": "toast", "actions": [], "overlay": true },
+  { "id": "toast-placement-top-end", "component": "toast", "actions": [], "overlay": true },
+  { "id": "toast-placement-bottom-start", "component": "toast", "actions": [], "overlay": true },
+  { "id": "toast-placement-bottom-end", "component": "toast", "actions": [], "overlay": true },
+  { "id": "toast-stacked", "component": "toast", "actions": [], "overlay": true },
+  { "id": "toast-expanded", "component": "toast", "actions": [], "overlay": true }
+]
