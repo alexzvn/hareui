@@ -22,6 +22,9 @@ The user did **not** pick Link, Separator, TextArea, Surface, SwitchGroup or But
 5. **Button ripple-effect demo.** Port HeroUI's demo, adding a small ripple helper or composable if needed.
 6. **Signed off:** all review API additions (see `status.md` item 8). They're now official API.
 
+### Landing page (added by the user during the run)
+Replace the redirect in `docs/index.md` with a port of heroui.com's home page (`/tmp/heroui/apps/docs/src/app/[lang]/(home)/`: `page.tsx`, `home-content.tsx`, `home-layout-links.tsx`, `layout.tsx`, `components/{demo-showcase,release-badges,trust-page}.tsx`, `src/components/footer`). Same layout, typography, spacing and light/dark look, with the live demos built from herouse components. Rebrand to HeroUse. Drop HeroUI-only commercial parts (Pro banner/badge/title, GitHub star count without a repo URL, the sponsor/trust logos) and park them as a user decision. Compare against https://heroui.com in light and dark at 1440 and 390 px.
+
 ## Assignments
 
 | Peer | Work |
@@ -33,6 +36,7 @@ The user did **not** pick Link, Separator, TextArea, Surface, SwitchGroup or But
 | DTT1wRo | finish Tabs indicator + Modal/Popover review, then Toast |
 | _uhc9dP | finish Tabs/Tooltip review |
 | hKWRyJv | finish the docs-site review; add sidebar entries for new components when asked; fix the herouse gaps from the Theme selector: Popover z-index, Button `[&_svg]:size-4` outranking child icon sizes, Description `text-xs` line-height lost on merge |
+| vTSDGtr | landing page (added mid-run) |
 
 ## Integrator (gnUc_P1)
 - Commit each reported unit with explicit pathspecs. Run typecheck, the relevant specs and component parity before each commit.
