@@ -3,8 +3,9 @@
 ## Status
 
 **Match: ~99.7%** (estimate). Static preview cards (what heroui.com shows without interaction): all
-5 ported demos **0 px** diff, light and dark. Hovered demos (tooltip open): 0.06–0.33 %, all from
-Reka rounding the floating position to whole pixels (≤ 0.31 px horizontal shift → anti-aliasing
+5 ported demos **0 px** diff, light and dark. Hovered demos (tooltip open), **light**: all
+triggers of all demos captured, 0.13–0.29 %. **Dark hover: UNVERIFIED (see Addendum)**. The light diffs come from
+Reka rounding the floating position to whole pixels (≤ 0.42 px shift → anti-aliasing
 on text/border). Remaining gaps are behavioural props HeroUI has and Reka can't express directly
 (close delay, focus-only trigger, cross-tooltip warm-up) and are listed below.
 
@@ -83,3 +84,34 @@ on text/border). Remaining gaps are behavioural props HeroUI has and Reka can't 
 `/tmp/herouse-review/tooltip/`: `{basic,placement,with-arrow,custom-trigger,custom-styles}-{heroui,ours}-{light,dark}.png`
 (static) and `*-hover-{heroui,ours}-{light,dark}.png` (first trigger hovered), with `*-diff-*.png`.
 `render-function-*-heroui-*` exist only on heroui (dropped demo).
+
+## Addendum: hovering every trigger (correction)
+
+The hover capture now hovers every trigger in each preview, one at a time with the mouse moved
+away in between, re-queries handles per shot and reloads+retries on HMR detach. Shots are clipped
+to the union of preview and tooltip, so `placement` checks all 4 sides and `with-arrow` checks
+the `offset={12}` button. My first per-trigger run lost `custom-trigger` triggers 2 and 3 in light
+mode to a detached-node error. They were captured on the rerun.
+
+**Light, verified:** with-arrow 0.28 / 0.20 %, custom-trigger 0.23 / 0.13 / 0.20 %,
+custom-styles 0.16 %. In the earlier full run, placement and basic were also ≤ 0.3 %, and the
+bottom arrow was visually correct.
+
+**Dark, UNVERIFIED:** custom-trigger 0.98–1.09 %, with-arrow 1.06–1.14 %, custom-styles 0.20 %.
+The diff pixels are on the triggers and card edges; the tooltip bodies match. What I measured
+(`.probe-hover-dark-tt.ts`, dark):
+- Each trigger's position relative to the card is identical on both sites (e.g. Chip 372.92, 161.5).
+- Tooltip position relative to its trigger for custom-trigger 0/1/2: ours −47.92/−63.13,
+  −45.92/−35.13, −144.08/−95.13 vs HeroUI −47.5/−62.77, −45.92/−34.77, −144/−94.77, so ≤ 0.42 px.
+- The card's own sub-pixel y differs: ours 274.63 vs HeroUI 275.27. That puts the whole card on
+  a different raster phase, which fits a 1-row shift of the trigger edges.
+Not proven: I couldn't rule out the peer edits made during the run (`theme/button.ts`
+and `utils/tv.ts` restarts at 1:18–1:21). with-arrow, custom-styles and placement geometry on
+our side is unmeasured, because the docs app went blank (ToastProvider.vue compile error from
+a peer). HeroUI reference values (dark, tooltip rect relative to trigger) for when it's back:
+with-arrow −31.5/−38.95 and −19.25/−43.95; custom-styles −17.6/−28.38; placement
+−3.3/−38.14 (top), −107.34/2 (left), 100.3/2 (right), −12.8/42.86 (bottom).
+
+Probe note: RAC tooltips only open on a synthetic hover after an earlier pointer move
+(`mouse.move(0,0)` first). Without it heroui.com shows no tooltip, and that's why my first probe
+returned `tip: null` there.
