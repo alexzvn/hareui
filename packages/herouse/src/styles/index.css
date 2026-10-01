@@ -3,6 +3,7 @@
 
 /* Tokens (HeroUI v3 shared theme + default variables) */
 @import "./theme.css";
+@import "./keyframes.css";
 @import "./variables.css" layer(theme);
 
 /* Base */

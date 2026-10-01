@@ -20,3 +20,4 @@ export { default as skeleton } from './skeleton'
 
 export type Themes = typeof import('./index')
 export { default as numberField } from './numberField'
+export { default as progressBar } from './progressBar'

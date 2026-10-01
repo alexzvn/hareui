@@ -1,0 +1,92 @@
+[
+  {
+    "id": "progress-bar-basic",
+    "component": "progress-bar",
+    "actions": [],
+    "ignoreSlots": []
+  },
+  {
+    "id": "progress-bar-color-default",
+    "component": "progress-bar",
+    "actions": [],
+    "ignoreSlots": []
+  },
+  {
+    "id": "progress-bar-color-accent",
+    "component": "progress-bar",
+    "actions": [],
+    "ignoreSlots": []
+  },
+  {
+    "id": "progress-bar-color-success",
+    "component": "progress-bar",
+    "actions": [],
+    "ignoreSlots": []
+  },
+  {
+    "id": "progress-bar-color-warning",
+    "component": "progress-bar",
+    "actions": [],
+    "ignoreSlots": []
+  },
+  {
+    "id": "progress-bar-color-danger",
+    "component": "progress-bar",
+    "actions": [],
+    "ignoreSlots": []
+  },
+  {
+    "id": "progress-bar-size-sm",
+    "component": "progress-bar",
+    "actions": [],
+    "ignoreSlots": []
+  },
+  {
+    "id": "progress-bar-size-md",
+    "component": "progress-bar",
+    "actions": [],
+    "ignoreSlots": []
+  },
+  {
+    "id": "progress-bar-size-lg",
+    "component": "progress-bar",
+    "actions": [],
+    "ignoreSlots": []
+  },
+  {
+    "id": "progress-bar-without-label",
+    "component": "progress-bar",
+    "actions": [],
+    "ignoreSlots": []
+  },
+  {
+    "id": "progress-bar-indeterminate",
+    "component": "progress-bar",
+    "actions": [],
+    "ignoreSlots": []
+  },
+  {
+    "id": "progress-bar-custom-value",
+    "component": "progress-bar",
+    "actions": [],
+    "ignoreSlots": []
+  },
+  {
+    "id": "progress-bar-clamped",
+    "component": "progress-bar",
+    "actions": [],
+    "ignoreSlots": []
+  },
+  {
+    "id": "progress-bar-value-label",
+    "component": "progress-bar",
+    "actions": [],
+    "ignoreSlots": []
+  },
+  {
+    "id": "progress-bar-custom-styles",
+    "component": "progress-bar",
+    "actions": [],
+    "ignoreSlots": []
+  }
+]

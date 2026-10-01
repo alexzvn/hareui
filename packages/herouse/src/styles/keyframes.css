@@ -1,0 +1,17 @@
+/*
+ * Keyframes declared inside @heroui/styles component CSS (not its shared theme), exposed as
+ * `animate-*` theme values so the translated tv themes can use them as utilities.
+ */
+@theme {
+  /* components/progress-bar.css */
+  --animate-progress-bar-indeterminate: progress-bar-indeterminate 1.5s cubic-bezier(0.65, 0, 0.35, 1) infinite;
+
+  @keyframes progress-bar-indeterminate {
+    0% {
+      transform: translateX(-100%);
+    }
+    100% {
+      transform: translateX(350%);
+    }
+  }
+}
