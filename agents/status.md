@@ -31,7 +31,7 @@
   - Commit each as its own unit once its owner reports.
 - **Not yet run:**
   - a full `bun run parity` (all components) after the reviews
-  - `bun run docs:build` + the llms.txt checks
+  - `docs:build` itself **passes** (29 pages, llms generated, `aeb7241`). Still pending: the llms-full.txt colour-data fix (hKWRyJv) and the final full run.
   - the visual playground pass (plan Verification 7)
 
 ## Resolved on 2026-10-02 (see `decisions.md`; don't ask again)
