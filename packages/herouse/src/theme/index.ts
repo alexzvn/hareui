@@ -9,5 +9,6 @@ export { default as textField } from './textField'
 export { default as card } from './card'
 export { default as chip } from './chip'
 export { default as avatar } from './avatar'
+export { default as tabs } from './tabs'
 
 export type Themes = typeof import('./index')
