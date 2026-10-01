@@ -12,7 +12,7 @@ Each one is built per `plan.md` Step 5 conventions plus `decisions.md` (option A
 - Unit specs for consumer-visible behaviour, a playground page, and parity cases in all 3 files (`parity/cases/<c>.json`, `playground/src/parity/cases/<c>.ts`, `reference/src/cases/<c>.tsx`) at the default threshold.
 - Docs: `docs/docs/components/<kebab>.md` with every HeroUI demo ported to `docs/demos/<kebab>/`, a sidebar entry in HeroUI's category, and 0 px vs heroui.com in light and dark (review-brief method).
 
-The user did **not** pick Link, Separator, TextArea, Surface, SwitchGroup or ButtonGroup. The demos that need them stay hand-ported or missing.
+The user did **not** pick Link, Separator, TextArea, Surface, SwitchGroup or ButtonGroup in the first list. Wave 2 below supersedes that: every remaining HeroUI component is now in scope.
 
 ### API work
 1. **CSS-variable responsive sizes.** Theme sizes become `[--<c>-height:…] md:[--<c>-height:…] h-(--<c>-height)` (same for padding etc. where HeroUI uses breakpoints). A user's plain `h-11` then wins at every breakpoint, as with HeroUI's `@layer components`. Themes with `md:` today: button (7), avatar, chip, modal, spinner, switch. Re-run parity for each touched component.
@@ -24,6 +24,25 @@ The user did **not** pick Link, Separator, TextArea, Surface, SwitchGroup or But
 
 ### Landing page (added by the user during the run)
 Replace the redirect in `docs/index.md` with a port of heroui.com's home page (`/tmp/heroui/apps/docs/src/app/[lang]/(home)/`: `page.tsx`, `home-content.tsx`, `home-layout-links.tsx`, `layout.tsx`, `components/{demo-showcase,release-badges,trust-page}.tsx`, `src/components/footer`). Same layout, typography, spacing and light/dark look, with the live demos built from herouse components. Rebrand to HeroUse. Drop HeroUI-only commercial parts (Pro banner/badge/title, GitHub star count without a repo URL, the sponsor/trust logos) and park them as a user decision. Compare against https://heroui.com in light and dark at 1440 and 390 px.
+
+### Wave 2: every remaining HeroUI component (added by the user during the run)
+Port all of `/tmp/heroui/packages/react/src/components/*` that herouse doesn't have yet, with the same per-component deliverables as above (component, theme, exports, specs, playground page, parity cases, docs page with every HeroUI demo, sidebar line, 0 px against heroui.com in light and dark).
+- **API:** option A still holds: props + named slots, no compound parts. Collections (ListBox, Select, ComboBox, Autocomplete, Dropdown/Menu, Table, TagGroup, Accordion, Breadcrumbs, ToggleButtonGroup, CheckboxGroup) take an `items` array with per-item slots, like Tabs/RadioGroup and Nuxt UI. Nested data (sections, sub-menus, table rows/columns) goes through the items shape (e.g. `{ type: 'section', label, items }`, `columns` + `rows`). If a HeroUI demo can't be expressed, park it in `status.md` with options. Don't invent compound parts.
+- **Reka first:** Accordion, AlertDialog, Autocomplete, Calendar, ColorArea/Field/Picker/Slider/Swatch/SwatchPicker, Combobox, DateField, DatePicker, DateRangePicker, Drawer, DropdownMenu/Menu, Listbox, Pagination, PinInput (InputOTP), RangeCalendar, Select, Separator, Slider, TagGroup, TimeField, Toggle, ToggleGroup, Toolbar. Where Reka's behaviour can't match RAC, record it as a reka-limitation with numbers.
+- **Internal parts** (`header`, `empty-state`, `list-box-item/section`, `menu-item/section`, `radio`, `calendar-year-picker`, `color-input-group`, `date-input-group`, `rac`, `icons.tsx`) are built where their parent needs them. They're exported only if HeroUI's docs show them standalone.
+- **Dependency order:** Separator, Kbd, Surface, Link and ListBox come first, because later demos use them. If a dependency isn't committed yet, message its owner directly and build something else meanwhile.
+- **Existing hand-ported markup:** once Separator, Link, Surface, ButtonGroup, SwitchGroup and TextArea land, their owners replace the hand-styled stand-ins in earlier demos (card links, `<hr>` separators in chip/avatar, inlined Surface, the dropped `on-surface`, `release-outline-variant`, switch group and textarea demos) and close those `status.md` items.
+- **Subagents** are allowed. The peer stays responsible for the unit list, built from `git status` (including new helpers and CSS keyframes in `styles/theme.css`).
+
+| Wave 2 owner | Components (in order) |
+|---|---|
+| -8sP15N | Separator, Kbd, Link, Surface, Badge, TextArea, ErrorMessage, Fieldset, ButtonGroup, ToggleButton, ToggleButtonGroup, Toolbar, then the stand-in replacements |
+| kBg55Bg | ListBox (incl. item/section/header/empty-state), Select, ComboBox, Autocomplete |
+| abE2Br_ | CheckboxGroup, SwitchGroup, InputGroup, SearchField, InputOTP, TagGroup, Slider |
+| _uhc9dP | Accordion, DisclosureGroup, AlertDialog, Drawer, Dropdown (Menu), ScrollShadow (incl. Tabs overflow arrows if still hand-built), Breadcrumbs, Pagination |
+| DTT1wRo | after the Toast fidelity unit: Calendar, RangeCalendar, DateField, TimeField, DatePicker, DateRangePicker |
+| hKWRyJv | ColorSwatch, ColorSwatchPicker, ColorSlider, ColorArea, ColorField, ColorPicker; still owns the docs chrome and sidebar ordering |
+| vTSDGtr | after the landing page: Meter, ProgressCircle, AvatarGroup, Table; then restore the landing-page cells that were left out once their components exist |
 
 ## Assignments
 
