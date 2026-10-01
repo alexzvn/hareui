@@ -1,0 +1,62 @@
+[
+  {
+    "id": "alert-default",
+    "component": "alert",
+    "actions": [],
+    "ignoreSlots": []
+  },
+  {
+    "id": "alert-accent",
+    "component": "alert",
+    "actions": [],
+    "ignoreSlots": []
+  },
+  {
+    "id": "alert-success",
+    "component": "alert",
+    "actions": [],
+    "ignoreSlots": []
+  },
+  {
+    "id": "alert-warning",
+    "component": "alert",
+    "actions": [],
+    "ignoreSlots": []
+  },
+  {
+    "id": "alert-danger",
+    "component": "alert",
+    "actions": [],
+    "ignoreSlots": []
+  },
+  {
+    "id": "alert-title-only",
+    "component": "alert",
+    "actions": [],
+    "ignoreSlots": []
+  },
+  {
+    "id": "alert-custom-indicator",
+    "component": "alert",
+    "actions": [],
+    "ignoreSlots": []
+  },
+  {
+    "id": "alert-actions",
+    "component": "alert",
+    "actions": [],
+    "ignoreSlots": []
+  },
+  {
+    "id": "alert-no-indicator",
+    "component": "alert",
+    "actions": [],
+    "ignoreSlots": []
+  },
+  {
+    "id": "alert-ui-override",
+    "component": "alert",
+    "actions": [],
+    "ignoreSlots": []
+  }
+]

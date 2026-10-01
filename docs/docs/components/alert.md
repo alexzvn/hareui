@@ -1,0 +1,96 @@
+---
+title: Alert
+description: Display important messages and notifications to users with status indicators
+links:
+  source: Alert.vue
+  styles: alert.ts
+  heroui: alert
+---
+
+## Usage
+
+```ts
+import { Alert } from 'herouse'
+```
+
+<ComponentPreview name="alert/basic" />
+
+## Anatomy
+
+HeroUI's compound parts (`Alert.Indicator`, `Alert.Content`, `Alert.Title`, `Alert.Description`)
+become props and named slots, rendered in a fixed order: `#leading`, indicator, content, then `#trailing`.
+
+```vue
+<Alert status="…" title="…" description="…">
+  <template #leading /> <!-- unwrapped children before the indicator (e.g. a background) -->
+  <template #indicator /> <!-- replaces the status icon -->
+  <template #title /> <!-- or: replaces the title text -->
+  <template #description /> <!-- or: replaces the description text -->
+  <!-- default slot = extra children of Alert.Content, after the description -->
+  <template #trailing /> <!-- children after Alert.Content (actions, CloseButton) -->
+</Alert>
+```
+
+- The indicator renders by default with the status icon; set `:indicator="false"` to omit it.
+- The title and description render only when their prop or slot is provided.
+
+`ui` keys: `base`, `indicator`, `content`, `title`, `description`.
+
+## Customization
+
+### Tailwind CSS
+
+<ComponentPreview name="alert/custom-styles" />
+
+### Global theme override
+
+Override the `alert` theme app-wide with `createHeroUse`:
+
+```ts
+app.use(createHeroUse({
+  ui: {
+    alert: {
+      slots: { base: 'rounded-2xl shadow-lg', title: 'font-bold text-lg' },
+      variants: {
+        status: { danger: { base: 'border-l-4 border-red-600' } },
+      },
+    },
+  },
+}))
+```
+
+## Styling Reference
+
+Each rendered element carries the same `data-slot` string as HeroUI, so selectors translate 1:1.
+
+| `ui` key | `data-slot` | Description |
+|---|---|---|
+| `base` | `alert-root` | Base alert container |
+| `indicator` | `alert-indicator` | Icon/indicator container |
+| `content` | `alert-content` | Content wrapper for title and description |
+| `title` | `alert-title` | Alert title text (renders as `p`) |
+| `description` | `alert-description` | Alert description text (renders as `span`) |
+
+HeroUI's status modifier classes correspond to the `status` prop (herouse renders utilities, not BEM
+classes, so style through `class`, `ui` or `createHeroUse`): `.alert--default`, `.alert--accent`,
+`.alert--success`, `.alert--warning`, `.alert--danger`.
+
+### Interactive States
+
+The Alert component is primarily informational and doesn't have interactive states on the base component. However, it can contain interactive elements like buttons or close buttons.
+
+## API Reference
+
+### Props
+
+<ApiTable component="Alert" kind="props" />
+
+### Slots
+
+<ApiTable component="Alert" kind="slots" />
+
+## Related Components
+
+- [Button](/docs/components/button)
+- [CloseButton](/docs/components/close-button)
+- [Spinner](/docs/components/spinner)
