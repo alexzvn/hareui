@@ -7,5 +7,6 @@ export { default as fieldError } from './fieldError'
 export { default as input } from './input'
 export { default as textField } from './textField'
 export { default as card } from './card'
+export { default as chip } from './chip'
 
 export type Themes = typeof import('./index')
