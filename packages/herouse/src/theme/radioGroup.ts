@@ -20,7 +20,8 @@ export default {
       '[transition:background-color_200ms_var(--ease-out),border-color_200ms_var(--ease-out),transform_100ms_var(--ease-out)] motion-reduce:transition-none',
       'cursor-(--cursor-interactive)',
       'group-focus-visible/radio-content:status-focused',
-      '[[data-slot=radio-content]:hover_&]:border-field-border-hover',
+      // HeroUI keys radio hover on RAC's `data-hovered` only, which a read-only group never sets
+      '[[data-slot=radio-group]:not([data-readonly=true])_[data-slot=radio-content]:hover_&]:border-field-border-hover',
       '[[data-slot=radio-content]:active_&]:scale-95',
       'group-data-[selected=true]/radio:border-transparent group-data-[selected=true]/radio:bg-accent',
       '[[data-slot=radio][data-selected=true]_[data-slot=radio-content]:active_&]:bg-accent-hover',
@@ -30,7 +31,7 @@ export default {
       'pointer-events-none absolute inset-0 flex items-center justify-center',
       'empty:before:h-full empty:before:w-full empty:before:rounded-lg empty:before:bg-field empty:before:[scale:1] empty:before:content-[\'\']',
       'empty:before:[transition:scale_200ms_var(--ease-out),background-color_200ms_var(--ease-out)] motion-reduce:empty:before:transition-none',
-      '[[data-slot=radio]:not([data-selected=true])_[data-slot=radio-content]:hover_&]:empty:before:bg-field-hover',
+      '[[data-slot=radio-group]:not([data-readonly=true])_[data-slot=radio]:not([data-selected=true])_[data-slot=radio-content]:hover_&]:empty:before:bg-field-hover',
       'group-data-[selected=true]/radio:empty:before:bg-accent-foreground group-data-[selected=true]/radio:empty:before:[scale:0.4286]',
       '[[data-slot=radio][data-selected=true]_[data-slot=radio-content]:active_&]:empty:before:[scale:0.5714]',
     ],
@@ -44,12 +45,13 @@ export default {
         ],
         indicator: [
           '[[data-slot=radio]:not([data-selected=true])_&]:empty:before:bg-(--radio-control-bg)',
-          '[[data-slot=radio]:not([data-selected=true])_[data-slot=radio-content]:hover_&]:empty:before:bg-(--radio-control-bg-hover)',
+          '[[data-slot=radio-group]:not([data-readonly=true])_[data-slot=radio]:not([data-selected=true])_[data-slot=radio-content]:hover_&]:empty:before:bg-(--radio-control-bg-hover)',
         ],
       },
     },
     orientation: {
-      vertical: { base: '[&_[data-slot=radio]]:mt-4' },
+      // `:where()` mirrors HeroUI's `@layer components` rule: any user utility (e.g. `**:data-[slot=radio]:mt-0`) wins
+      vertical: { base: '[:where(&)_[data-slot=radio]]:mt-4' },
       horizontal: { base: 'flex-row flex-wrap gap-4' },
     },
   },

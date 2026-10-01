@@ -53,6 +53,20 @@ export const cases: Record<string, () => ReactElement> = {
   'radio-group-invalid': () => group({ isInvalid: true }, plans, { label: 'Plan selection' }, 'Please select a plan'),
   'radio-group-invalid-selected': () => group({ isInvalid: true, defaultValue: 'premium' }, plans, { label: 'Plan selection' }, 'Please select a plan'),
   'radio-group-readonly': () => group({ 'defaultValue': 'premium', 'isReadOnly': true, 'aria-label': 'Plan' }),
+  'radio-group-user-overrides': () => (
+    <RadioGroup aria-label="Plan" className="**:data-[slot=radio]:mt-0" defaultValue="premium" name="plan">
+      {plans.map(item => (
+        <Radio key={item.value} value={item.value}>
+          <Radio.Content className="rounded-xl data-[selected=true]:bg-accent/10">
+            <Radio.Control>
+              <Radio.Indicator />
+            </Radio.Control>
+            {item.label}
+          </Radio.Content>
+        </Radio>
+      ))}
+    </RadioGroup>
+  ),
 }
 
 // Same renders, different interaction targets (see parity/cases/radio-group.json)

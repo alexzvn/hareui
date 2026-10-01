@@ -39,6 +39,8 @@ export const cases: Record<string, () => VNode> = {
   'radio-group-invalid': () => group({ invalid: true, label: 'Plan selection', errorMessage: 'Please select a plan' }),
   'radio-group-invalid-selected': () => group({ invalid: true, defaultValue: 'premium', label: 'Plan selection', errorMessage: 'Please select a plan' }),
   'radio-group-readonly': () => group({ 'defaultValue': 'premium', 'readonly': true, 'aria-label': 'Plan' }),
+  // user utilities beat the vertical item margin; content classes can key on data-selected
+  'radio-group-user-overrides': () => group({ 'defaultValue': 'premium', 'aria-label': 'Plan', 'class': '**:data-[slot=radio]:mt-0', 'ui': { content: 'rounded-xl data-[selected=true]:bg-accent/10' } }),
 }
 
 // Same renders, different interaction targets (see parity/cases/radio-group.json)

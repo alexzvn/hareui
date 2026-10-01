@@ -111,5 +111,13 @@
       "press"
     ],
     "ignoreSlots": []
+  },
+  {
+    "id": "radio-group-user-overrides",
+    "component": "radio-group",
+    "actions": [
+      "hover"
+    ],
+    "ignoreSlots": []
   }
 ]
