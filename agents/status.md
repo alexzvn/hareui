@@ -54,16 +54,25 @@ Collected from `reviews/*.md` (each has a "Decisions needed" section with option
    - Still missing: Button **ripple-effect**, which needs a ripple primitive or new Button API (`reviews/button.md` #4).
 6. **Switch label-position** is a pixel-identical CSS workaround (DOM order differs from HeroUI).
 7. **Related Showcases** widget on heroui.com component pages: not ported.
-8. **API additions made during review that need your sign-off.** All are additive and option A is kept:
+8. ~~API additions made during review~~: **signed off 2026-10-02** (now official API):
    - `readonly` on Checkbox, Switch and RadioGroup
    - `invalid` on Switch
    - slot props on `#description`
    - `data-selected` on radio-content
    - Card `#leading`, Avatar `#image` + img attrs + `loadingStatusChange`
    - Input/TextField `defaultValue` + `readonly`
+9. **Docs-site items** (`reviews/docs-site.md`). The sidebar is now flat and alphabetical, like heroui.com, not collapsible groups. Still open:
+   - an "All Components" overview page
+   - sidebar New/Updated badges
+   - Getting Started entries with no herouse counterpart (CLI, Figma, MCP)
+   - header GitHub link (needs a repo URL), Ask AI, and the language picker
+   - Get Involved / Contributing sections
+   - the React-only sections that were dropped
+
+Items 2, 3, 4 and Button ripple were decided on 2026-10-02 (see `decisions.md`, `next.md`).
 
 ## Next steps
 
 1. Commit the in-flight units as each peer reports, then delete the leftover scratch files (`.review-shot-tt.ts`, `verify_tooltip_tmp.mjs`, `.probe-tt.ts`).
 2. Merge all reports into one decision report for the user (the list above), and get decisions.
-3. Run the remaining plan Verification items (full parity light+dark, docs:build + llms, consumer smoke, playground visual pass).
+3. Run the remaining plan Verification items (full parity light+dark, docs:build + llms, playground visual pass). Consumer smoke **passed** on 2026-10-02 with a real `bun pm pack` tarball. Overnight work is in `next.md`.

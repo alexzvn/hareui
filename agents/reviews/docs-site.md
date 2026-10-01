@@ -17,7 +17,12 @@ Measurement noise to ignore: heroui.com has a 32px banner above the header, so e
   - header `sm:hidden` with a separator `<hr>`
   - masked viewport, and a framework-tabs footer
   - the extra "Getting Started / Components" links block is removed, because HeroUI switches sections from the header tabs
-
+- ColorSection port: Vue versions of HeroUI's `ColorSectionSideBySide`, `ColorSectionStacked`, `ColorSectionPrimitive` and `ColorSectionFormField`, plus `CollapsibleCode` (culori ^4.0.2, the version HeroUI uses).
+  - colors.md: all colour tables replaced by these components.
+  - colors.md "Default Theme" and theming.md "Variables Reference": now collapsed code blocks containing the full variables.css and theme.css.
+  - Accent section pixelmatch vs heroui.com: about 1% diff (font anti-aliasing).
+  - Build passes.
+- Theme selector (user request): see the separate mailbox message.
   Rects now match: aside 332×900, header 67px, hr at y=66, separator 23px.
 - Content (subagents GsContentA/B, checked against `packages/herouse/src`):
   - index: "garden" sentence; "Is it production-ready?" FAQ
@@ -42,6 +47,12 @@ Measurement noise to ignore: heroui.com has a 32px banner above the header, so e
    - A: leave them out (current).
    - B: link out to HeroUI's Figma file, since the tokens are the same.
 4. **Header items not ported** (other): HeroUI logo (brand), Ask AI, language picker, GitHub link (there is no `git remote`), version selector. Add the GitHub link once the repo URL exists.
+8. **Copy feedback on colour swatches** (missing-component). HeroUI shows `toast.success`, but herouse has no Toast, so we flash an outline pulse on the swatch instead.
+   - A: add a herouse Toast and switch to it.
+   - B: keep the pulse.
+9. **llms.txt has lost the colour data** (regression, needs a decision). `docs/scripts/gen-llms.ts` strips Vue tags, so the colour variable names and values and the full variables.css/theme.css dumps are missing from llms-full.txt. Only the prose survives.
+   - A (recommended): teach gen-llms to render `ColorSection*` `:colors` and `CollapsibleCode` `:code` as a markdown table or fence.
+   - B: accept prose-only llms output.
 5. **Community sections**: "Get Involved" (index.mdx) and "Contributing" (llms-txt.mdx). There is no public repo, Discord or CONTRIBUTING file.
    - A: leave out until a repo exists (current).
    - B: add Issues-only sections once the URL is known.
