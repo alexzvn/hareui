@@ -1,0 +1,37 @@
+@import "tailwindcss";
+@import "./fumadocs/black.css";
+@import "./fumadocs/preset.css";
+@import "../../../packages/herouse/src/styles/index.css";
+@import "./global.css";
+@import "@fontsource-variable/inter";
+@import "vitepress/dist/client/theme-default/styles/icons.css";
+
+@source "../..";
+@source "../markdown.ts";
+@source "./**/*.vue";
+@source "../../../packages/herouse/src/theme";
+
+:root {
+  --font-inter: "Inter Variable";
+}
+
+#nd-page .prose > div > :first-child {
+  margin-top: 0;
+}
+
+#nd-page .prose > div > :last-child {
+  margin-bottom: 0;
+}
+
+:root {
+  --vp-backdrop-bg-color: rgb(0 0 0 / 0.4);
+  --vp-c-brand-1: var(--color-fd-primary);
+  --vp-c-divider: var(--color-fd-border);
+  --vp-local-search-bg: var(--color-fd-background);
+  --vp-local-search-highlight-bg: var(--color-fd-primary);
+  --vp-local-search-highlight-text: var(--color-fd-primary-foreground);
+  --vp-local-search-result-bg: var(--color-fd-card);
+  --vp-local-search-result-border: var(--color-fd-border);
+  --vp-local-search-result-selected-bg: var(--color-fd-accent);
+  --vp-local-search-result-selected-border: var(--color-fd-primary);
+}
