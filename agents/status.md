@@ -32,44 +32,30 @@
 - **Not yet run:**
   - a full `bun run parity` (all components) after the reviews
   - `bun run docs:build` + the llms.txt checks
-  - the consumer smoke test (plan Verification 5)
   - the visual playground pass (plan Verification 7)
+
+## Resolved on 2026-10-02 (see `decisions.md`; don't ask again)
+
+- **Missing components:** the user picked Skeleton, ProgressBar, NumberField, Alert, Disclosure, Toast and Typography instead. Link, Separator, TextArea, Surface, SwitchGroup and ButtonGroup were not chosen, so the demos that need them stay hand-ported (card Link markup, `<hr>` separators, inlined Surface) or missing (TextArea, SwitchGroup and ButtonGroup demos).
+- **Responsive size override:** CSS-variable sizes, in progress (`next.md` API 1).
+- **Card title/description in a custom wrapper:** document `tv(themes.card)` (API 4).
+- **TextField input attrs and the validation layer:** both approved (API 2 and 3).
+- **Render Function / Render Props / ripple:** Render Function and Render Props are ported, and the ripple demo is approved (API 5).
+- **Review API additions:** signed off as official API. They are `readonly` on Checkbox/Switch/RadioGroup, `invalid` on Switch, `#description` slot props, `data-selected` on radio-content, Card `#leading`, Avatar `#image` + img attrs + `loadingStatusChange`, and Input/TextField `defaultValue` + `readonly`.
 
 ## Open decisions for the user
 
 Collected from `reviews/*.md` (each has a "Decisions needed" section with options):
 
-1. **Missing components that HeroUI demos use:**
-   - Link: 3 card demos use hand-ported markup.
-   - Separator: chip/avatar demos use `<hr>`.
-   - TextArea: textfield validation/controlled/on-surface and textarea demos are missing.
-   - Surface: inlined for now; radio/input "In Surface".
-   - SwitchGroup: switch Group / Group Horizontal / Form demos.
-   - ButtonGroup: `release-outline-variant`, which appears only in release notes.
-2. **Responsive size override:** a plain `h-11` doesn't beat the theme's `md:h-9`. In HeroUI the theme sits in `@layer components`, so a plain utility wins. Options: document it, use CSS-variable heights, or add a `responsive` variant. (`reviews/button.md`.) Related: the checkbox/switch/radio peer already moved some rules to `:where()` / var-driven utilities so user utilities win.
-3. **Card title/description inside a custom wrapper become plain markup.** Recommended: document `tv(themes.card)` (`reviews/card.md` §2).
-4. **TextField:** input-level attrs (`autofocus`, `maxlength`, `pattern`) land on the root div. No validation layer (`validate`, `validationBehavior`, `validationErrors`) across form components.
-5. **Render Function / Render Props / ripple-effect demos.** The plan dropped all three, but they're on heroui.com.
-   - Already ported: Button Render Function (`as` prop, `074a98c`), Checkbox and Switch render-props, and Avatar `custom-image-component` (new `#image` slot).
-   - Still missing: Button **ripple-effect**, which needs a ripple primitive or new Button API (`reviews/button.md` #4).
-6. **Switch label-position** is a pixel-identical CSS workaround (DOM order differs from HeroUI).
-7. **Related Showcases** widget on heroui.com component pages: not ported.
-8. ~~API additions made during review~~: **signed off 2026-10-02** (now official API):
-   - `readonly` on Checkbox, Switch and RadioGroup
-   - `invalid` on Switch
-   - slot props on `#description`
-   - `data-selected` on radio-content
-   - Card `#leading`, Avatar `#image` + img attrs + `loadingStatusChange`
-   - Input/TextField `defaultValue` + `readonly`
-9. **Docs-site items** (`reviews/docs-site.md`). The sidebar is now flat and alphabetical, like heroui.com, not collapsible groups. Still open:
+1. **Switch label-position** is a pixel-identical CSS workaround (DOM order differs from HeroUI).
+2. **Related Showcases** widget on heroui.com component pages: not ported.
+3. **Docs-site items** (`reviews/docs-site.md`). The sidebar is now flat and alphabetical, like heroui.com, not collapsible groups. Still open:
    - an "All Components" overview page
    - sidebar New/Updated badges
    - Getting Started entries with no herouse counterpart (CLI, Figma, MCP)
    - header GitHub link (needs a repo URL), Ask AI, and the language picker
    - Get Involved / Contributing sections
    - the React-only sections that were dropped
-
-Items 2, 3, 4 and Button ripple were decided on 2026-10-02 (see `decisions.md`, `next.md`).
 
 ## Next steps
 
