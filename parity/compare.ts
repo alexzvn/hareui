@@ -212,8 +212,11 @@ async function capture(page: Page, base: string, c: Case, state: State, theme: T
   await load(page, base, c, theme)
   await act(page, c, state)
   // Infinite animations (spinners) are pinned to t=0; finite ones (enter transitions) are finished.
+  // Scroll/view-timeline animations (e.g. HeroUI ScrollShadow fades) reflect real scroll state: leave them alone.
   await page.evaluate(() => {
     for (const a of document.getAnimations()) {
+      if (!(a.timeline instanceof DocumentTimeline))
+        continue
       if (a.effect?.getComputedTiming().iterations === Infinity) {
         a.pause()
         a.currentTime = 0
