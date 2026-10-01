@@ -49,7 +49,9 @@ Collected from `reviews/*.md` (each has a "Decisions needed" section with option
 2. **Responsive size override:** a plain `h-11` doesn't beat the theme's `md:h-9`. In HeroUI the theme sits in `@layer components`, so a plain utility wins. Options: document it, use CSS-variable heights, or add a `responsive` variant. (`reviews/button.md`.) Related: the checkbox/switch/radio peer already moved some rules to `:where()` / var-driven utilities so user utilities win.
 3. **Card title/description inside a custom wrapper become plain markup.** Recommended: document `tv(themes.card)` (`reviews/card.md` §2).
 4. **TextField:** input-level attrs (`autofocus`, `maxlength`, `pattern`) land on the root div. No validation layer (`validate`, `validationBehavior`, `validationErrors`) across form components.
-5. **Render Function / Render Props / ripple-effect demos.** The plan drops them, but they are on heroui.com. Port via `as`/`as-child`, or add API (`reviews/button.md` #4-5, checkbox/switch). Checkbox and Switch render-props demos were already ported. The Avatar `custom-image-component` demo was ported via the new `#image` slot.
+5. **Render Function / Render Props / ripple-effect demos.** The plan dropped all three, but they're on heroui.com.
+   - Already ported: Button Render Function (`as` prop, `074a98c`), Checkbox and Switch render-props, and Avatar `custom-image-component` (new `#image` slot).
+   - Still missing: Button **ripple-effect**, which needs a ripple primitive or new Button API (`reviews/button.md` #4).
 6. **Switch label-position** is a pixel-identical CSS workaround (DOM order differs from HeroUI).
 7. **Related Showcases** widget on heroui.com component pages: not ported.
 8. **API additions made during review that need your sign-off.** All are additive and option A is kept:

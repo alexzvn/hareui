@@ -5,7 +5,8 @@
 **Match: ~99.99%.** Every demo that belongs on heroui.com's Button page is on ours, in the same order. Final capture (chat widget hidden, animations frozen, 1440×900):
 - light/dark `basic, variants, sizes, with-icons, icon-only, loading, loading-state, full-width, disabled, custom-variants, custom-styles`: **0 px diff (0.000%)** each
 - light/dark `social`: **2 px (0.001%)**: anti-aliasing on the inlined brand SVGs
-- `render-function`, `ripple-effect`: MISSING on ours. The plan has no rule that drops them, so they are open decisions (#4, #5 below).
+- light/dark `render-function`: **0 px (0.000%)**. Ported with `:as="CustomButton"`, which needed no API change: `Button.vue:13` already declares `as`. While the button is pressed it has `data-custom="pressed"`; otherwise `"bar"`.
+- `ripple-effect`: MISSING on ours. The plan has no rule that drops it, so it is open decision #4 below.
 
 ## Fixed
 
@@ -47,7 +48,7 @@
         neutralizes the inherited breakpoint downscale, exactly mirroring what `theme/button.ts`
         itself does for `sm`/`lg`.
    Added to `button.md` as "Adding custom variants", positioned exactly where HeroUI has it
-   (after Social Buttons; Render Function is not ported yet, see decision #4).
+   (after Social Buttons and Render Function).
    Evidence: before fix 3812px/1.335% (light) / 7466px/2.614% (dark) with a visible outline/text
    offset; after fix 0 px (0.000%) light and dark, confirmed by computed-style comparison (`getBoundingClientRect`,
    `font-size`, `padding`, `box-shadow`, `text-shadow` all byte-identical between heroui.com and
@@ -85,14 +86,11 @@
    (b) Move the responsive heights into a CSS variable, e.g. `h-(--button-h)` with `--button-h` set per size plus an `md:` value, so a plain `h-11` override wins. Small theme change; parity must still match the computed height.
    (c) Ship the responsive downscale as a named variant (`responsive: true` by default) that users can turn off. Adds a public variant, so it's a public API change.
 
-4. **demo-port — `render-function` is missing.** heroui.com's Button page shows it; our page does not. HeroUI uses a `render` prop to swap the rendered element. Vue equivalent within option A: Reka's `as`/`asChild` on Button (if `Button.vue` forwards it) or a scoped default slot. Options: (a) port it as an `as`/`as-child` demo, if Button already forwards those props; (b) add an `as` prop to Button (new prop, needs a parity case); (c) leave it out and add a note on the page.
-
-5. **missing-component/API — `ripple-effect` is missing.** It needs a ripple primitive that herouse doesn't have. Options: (a) add a small `useRipple` composable plus a `#ripple` slot or `ripple` prop on Button (new API, needs a parity case); (b) port the demo with inline markup in the demo file only; (c) leave it out and add a note on the page.
+4. **missing-component/API: `ripple-effect` is missing.** It needs a ripple primitive that herouse doesn't have. Options: (a) add a small `useRipple` composable plus a `#ripple` slot or `ripple` prop on Button (new API, needs a parity case); (b) port the demo with inline markup in the demo file only; (c) leave it out and add a note on the page.
 
 ## Screenshots
 
-All in `/tmp/herouse-review/button/`: `{demo}-{heroui,ours}-{light,dark}.png` and
-`{demo}-diff-{light,dark}.png` for `basic, variants, sizes, with-icons, icon-only, loading,
-loading-state, full-width, disabled, social, custom-variants, custom-styles` (12 demos ×
-2 themes). Diff PNGs exist only for non-zero results: currently `social-diff-{light,dark}.png`.
-`render-function`/`ripple-effect` have no capture on our side (see #4, #5).
+All in `/tmp/herouse-review/button/`: `{demo}-{heroui,ours}-{light,dark}.png` for `basic, variants, sizes, with-icons, icon-only, loading,
+loading-state, full-width, disabled, social, render-function, custom-variants, custom-styles`
+(13 demos × 2 themes). Diff PNGs exist only for non-zero results: currently
+`social-diff-{light,dark}.png`. `ripple-effect` has no capture on our side (see #4).
