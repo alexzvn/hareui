@@ -3,6 +3,8 @@ export default {
   slots: {
     base: [
       'max-w-xs origin-(--trigger-anchor-point) bg-overlay p-2 text-xs break-all',
+      // React Aria sets `z-index: 100000` inline on tooltips (HeroUI base.css `--z-index-overlay`); Reka copies it to the wrapper.
+      'z-(--z-index-overlay)',
       '[border-radius:min(32px,var(--radius-xl))] shadow-overlay',
       // Entering animations (React Aria `[data-entering=true]` -> Reka's non-closed states)
       'data-[state=delayed-open]:animate-in data-[state=delayed-open]:duration-150 data-[state=delayed-open]:ease-smooth data-[state=delayed-open]:fade-in-0 data-[state=delayed-open]:zoom-in-90',

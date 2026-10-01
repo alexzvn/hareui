@@ -39,7 +39,8 @@ export default {
       '[[data-slot=checkbox][data-invalid=true][data-indeterminate=true]_&]:bg-danger [[data-slot=checkbox][data-invalid=true][data-indeterminate=true]_&]:text-danger-foreground',
     ],
     indicator: [
-      'relative z-10 flex size-3 items-center justify-center [&_svg]:size-full [&_svg]:transform-gpu',
+      // :where(): HeroUI's `.checkbox__indicator svg` sits in @layer components, so an icon's own utilities win.
+      'relative z-10 flex size-3 items-center justify-center [:where(&_svg)]:size-full [:where(&_svg)]:transform-gpu',
       'group-data-[selected=true]/checkbox:border-accent-foreground group-data-[indeterminate=true]/checkbox:border-accent-foreground',
     ],
   },

@@ -8,7 +8,8 @@ export default {
       'focus-visible:status-focused',
       'disabled:status-disabled aria-disabled:status-disabled',
       'data-[pending=true]:status-pending',
-      '[&_svg]:pointer-events-none [&_svg]:size-4 [&_svg]:shrink-0 [&_svg]:self-center [&_svg]:-mx-0.5 [&_svg]:my-0.5',
+      // :where(): HeroUI's `.close-button svg` sits in @layer components, so an icon's own utilities win.
+      '[:where(&_svg)]:pointer-events-none [:where(&_svg)]:size-4 [:where(&_svg)]:shrink-0 [:where(&_svg)]:self-center [:where(&_svg)]:-mx-0.5 [:where(&_svg)]:my-0.5',
     ],
     icon: '',
   },
