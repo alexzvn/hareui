@@ -62,6 +62,8 @@ Collected from `reviews/*.md` (each has a "Decisions needed" section with option
    - no `closeDelay` and no focus-only trigger
    - providers are per-instance, so there's no cross-tooltip warm-up
    - positions are integer pixels, up to 0.42 px off RAC; worst hover diff is 0.35 %
+7. **Toast custom content** uses one `#toast` slot (`{ content, close }`) in place of HeroUI's ToastContent/Indicator/Title/Description/CloseButton parts (option A, props + slots). Reka Toast primitives aren't used: flat announce queue, no collapsed/expanded stack geometry.
+8. **Landing page gaps** (vTSDGtr, in progress): left out because herouse lacks the components: showcase bar (ColorSwatchPicker, theme builder, Pro iframes), Select, Slider, ListBox+Kbd, InputOTP, AvatarGroup demos, Separator lines in the login card. Also dropped: GitHub stars/link, Ask AI, language toggle, Themes/React Native/Blog/Roadmap links, Pro banner, footer About/Contact/Privacy/social links. Footer copyright reads "© <year> HeroUse." pending a LICENSE/copyright holder.
 
 ## Next steps
 
