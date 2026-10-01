@@ -51,6 +51,7 @@ export const sidebar: SidebarSection[] = [
     // HeroUI's components meta.json lists pages alphabetically under one "Components" separator.
     items: [
       { separator: 'Components' },
+      { text: 'Alert', link: c('alert') },
       { text: 'Avatar', link: c('avatar') },
       { text: 'Button', link: c('button') },
       { text: 'Card', link: c('card') },
@@ -58,17 +59,20 @@ export const sidebar: SidebarSection[] = [
       { text: 'Chip', link: c('chip') },
       { text: 'CloseButton', link: c('close-button') },
       { text: 'Description', link: c('description') },
+      { text: 'Disclosure', link: c('disclosure') },
       { text: 'FieldError', link: c('field-error') },
       { text: 'Input', link: c('input') },
       { text: 'Label', link: c('label') },
       { text: 'Modal', link: c('modal') },
       { text: 'Popover', link: c('popover') },
       { text: 'RadioGroup', link: c('radio-group') },
+      { text: 'Skeleton', link: c('skeleton') },
       { text: 'Spinner', link: c('spinner') },
       { text: 'Switch', link: c('switch') },
       { text: 'Tabs', link: c('tabs') },
       { text: 'TextField', link: c('text-field') },
       { text: 'Tooltip', link: c('tooltip') },
+      { text: 'Typography', link: c('typography') },
     ],
   },
 ]
