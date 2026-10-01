@@ -145,6 +145,19 @@
   --animate-spin-fast: spin 0.75s linear infinite;
   --animate-skeleton: skeleton 2s linear infinite;
   --animate-caret-blink: caret-blink 1.2s ease-out infinite;
+  --animate-toast-indicator-swap: toast-indicator-fade 150ms var(--toast-ease), toast-indicator-scale 200ms var(--toast-ease);
+
+  @keyframes toast-indicator-fade {
+    from {
+      opacity: 0;
+    }
+  }
+
+  @keyframes toast-indicator-scale {
+    from {
+      scale: 0.92;
+    }
+  }
 
   @keyframes skeleton {
     100% {
