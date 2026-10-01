@@ -68,6 +68,10 @@ slots instead of HeroUI's render-prop children.
 
 <ComponentPreview name="button/social" />
 
+### Render Function
+
+<ComponentPreview name="button/render-function" />
+
 ### Adding custom variants
 
 You can extend herouse's `button` theme by wrapping it with the `tv` extension mechanism,
