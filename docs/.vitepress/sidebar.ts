@@ -64,6 +64,7 @@ export const sidebar: SidebarSection[] = [
       { text: 'Input', link: c('input') },
       { text: 'Label', link: c('label') },
       { text: 'Modal', link: c('modal') },
+      { text: 'NumberField', link: c('number-field') },
       { text: 'Popover', link: c('popover') },
       { text: 'ProgressBar', link: c('progress-bar') },
       { text: 'RadioGroup', link: c('radio-group') },
