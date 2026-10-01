@@ -10,3 +10,4 @@ parity/out
 .*.ts
 pp.ts
 *_tmp.*
+*.timestamp-*.mjs
