@@ -4,6 +4,30 @@ import theme from '../theme/numberField'
 
 type NumberField = typeof theme
 
+function roundToStepPrecision(value: number, step: number) {
+  const pointIndex = step.toString().indexOf('.')
+  const precision = pointIndex >= 0 ? step.toString().length - pointIndex : 0
+  return precision > 0 ? Math.round(value * 10 ** precision) / 10 ** precision : value
+}
+
+// react-stately's (and Reka's internal) snapValueToStep; reka-ui doesn't export it
+function snapValueToStep(value: number, min: number | undefined, max: number | undefined, step: number) {
+  const lo = Number(min)
+  const hi = Number(max)
+  const remainder = (value - (Number.isNaN(lo) ? 0 : lo)) % step
+  let snapped = roundToStepPrecision(Math.abs(remainder) * 2 >= step ? value + Math.sign(remainder) * (step - Math.abs(remainder)) : value - remainder, step)
+  if (!Number.isNaN(lo)) {
+    if (snapped < lo)
+      snapped = lo
+    else if (!Number.isNaN(hi) && snapped > hi)
+      snapped = lo + Math.floor(roundToStepPrecision((hi - lo) / step, step)) * step
+  }
+  else if (!Number.isNaN(hi) && snapped > hi) {
+    snapped = Math.floor(roundToStepPrecision(hi / step, step)) * step
+  }
+  return roundToStepPrecision(snapped, step)
+}
+
 export interface NumberFieldProps {
   /** Label text rendered above the group. */
   label?: string
@@ -27,8 +51,9 @@ export interface NumberFieldProps {
   /** The largest allowed value. */
   max?: number
   /**
-   * The amount the value changes per increment/decrement.
-   * @defaultValue 1
+   * The amount the value changes per increment/decrement. When set, values are also snapped to it
+   * (relative to `min`); when unset, they're only clamped to `min`/`max`.
+   * @defaultValue 1 (0.01 with `formatOptions.style: 'percent'`)
    */
   step?: number
   /** Formatting options for the displayed value (`Intl.NumberFormat`). */
@@ -97,7 +122,7 @@ export interface NumberFieldSlots {
 
 <script setup lang="ts">
 import { NumberFieldDecrement, NumberFieldIncrement, NumberFieldInput, NumberFieldRoot } from 'reka-ui'
-import { computed, useAttrs, useId } from 'vue'
+import { computed, ref, useAttrs, useId, watch } from 'vue'
 import { useComponentUI } from '../composables/useComponentUI'
 import Description from './Description.vue'
 import FieldError from './FieldError.vue'
@@ -105,10 +130,35 @@ import Label from './Label.vue'
 
 defineOptions({ inheritAttrs: false })
 
-const props = withDefaults(defineProps<NumberFieldProps>(), { step: 1, increment: true, decrement: true })
+const props = withDefaults(defineProps<NumberFieldProps>(), { increment: true, decrement: true })
 const slots = defineSlots<NumberFieldSlots>()
 /** The numeric value; `undefined` while the input is empty. */
 const modelValue = defineModel<number | null>()
+
+// As in react-stately's useNumberFieldState: the incoming value and default are clamped into range
+// (and snapped to `step` when one is given) before display; the step falls back to 0.01 for percents.
+const effectiveStep = computed(() => props.step ?? (props.formatOptions?.style === 'percent' ? 0.01 : undefined))
+function snap<T extends number | null | undefined>(value: T): T {
+  if (value == null || Number.isNaN(value))
+    return value
+  const { min, max, step } = props
+  if (step === undefined)
+    return Math.min(max ?? Infinity, Math.max(min ?? -Infinity, value)) as T
+  return snapValueToStep(value, min, max, step) as T
+}
+const displayValue = computed(() => snap(modelValue.value))
+
+// The form value is a sibling `<input type="hidden">` after the root, as in RAC (not Reka's in-root input):
+// form data carries the raw number, and layouts like `space-y-*` treat the field exactly as HeroUI's.
+// Tracked locally so uncontrolled fields submit `defaultValue` without emitting an update on mount.
+const formValue = ref<number | null | undefined>(displayValue.value ?? snap(props.defaultValue))
+watch(displayValue, (value) => {
+  formValue.value = value
+})
+function onUpdate(value: number | undefined) {
+  formValue.value = value
+  modelValue.value = value
+}
 
 // `aria-label` / `aria-labelledby` name the input (as in HeroUI), not the wrapper div
 const attrs = useAttrs()
@@ -130,6 +180,20 @@ const describedBy = computed(() => [
 ].filter(Boolean).join(' ') || undefined)
 
 const ui = useComponentUI('numberField', theme, () => ({ variant: props.variant, fullWidth: props.fullWidth }))
+
+// RAC Group's `data-focus-within` / `data-focus-visible`
+const focusWithin = ref(false)
+const focusVisible = ref(false)
+function onFocusIn(event: FocusEvent) {
+  focusWithin.value = true
+  focusVisible.value = event.target instanceof Element && event.target.matches(':focus-visible')
+}
+function onFocusOut(event: FocusEvent) {
+  if (event.currentTarget instanceof Element && event.relatedTarget instanceof Node && event.currentTarget.contains(event.relatedTarget))
+    return
+  focusWithin.value = false
+  focusVisible.value = false
+}
 </script>
 
 <template>
@@ -149,20 +213,25 @@ const ui = useComponentUI('numberField', theme, () => ({ variant: props.variant,
     </Label>
     <NumberFieldRoot
       :id="id"
-      v-model="modelValue"
-      :default-value="defaultValue"
+      :model-value="displayValue"
+      :default-value="snap(defaultValue)"
       :min="min"
       :max="max"
-      :step="step"
+      :step="effectiveStep"
+      :step-snapping="step !== undefined"
       :format-options="formatOptions"
       :locale="locale"
-      :name="name"
       :disabled="disabled"
       :readonly="readonly"
       :required="required"
       data-slot="number-field-group"
       :data-invalid="invalid ? 'true' : undefined"
+      :data-focus-within="focusWithin ? 'true' : undefined"
+      :data-focus-visible="focusVisible ? 'true' : undefined"
       :class="ui.group({ class: props.ui?.group })"
+      @focusin="onFocusIn"
+      @focusout="onFocusOut"
+      @update:model-value="onUpdate"
     >
       <NumberFieldDecrement
         v-if="decrement"
@@ -228,4 +297,5 @@ const ui = useComponentUI('numberField', theme, () => ({ variant: props.variant,
       </slot>
     </FieldError>
   </div>
+  <input v-if="name" type="hidden" :name="name" :value="formValue ?? ''" :disabled="disabled || undefined">
 </template>
