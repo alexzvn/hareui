@@ -47,15 +47,25 @@ import { Chip } from 'herouse'
 
 ### Tailwind CSS
 
+Use the `class` prop for the root and `:ui="{ label: '…' }"` for the label (tailwind-merge resolves conflicts):
+
 <ComponentPreview name="chip/custom-styles" />
 
 ### Global theme override
+
+Override the `chip` theme app-wide with `createHeroUse`:
 
 ```ts
 app.use(createHeroUse({
   ui: {
     chip: {
-      slots: { base: 'rounded-full' },
+      slots: {
+        base: 'rounded-full text-xs',
+        label: 'font-medium',
+      },
+      compoundVariants: [
+        { color: 'accent', class: { base: 'border-accent/20 text-accent' } },
+      ],
     },
   },
 }))
@@ -63,14 +73,25 @@ app.use(createHeroUse({
 
 ## Styling Reference
 
+Each rendered element carries the same `data-slot` string as HeroUI, so selectors translate 1:1.
+
 | `ui` key | `data-slot` | Description |
 |---|---|---|
-| `base` | `chip` | The root element (`as`, default `span`) |
-| `label` | `chip-label` | The label wrapper, rendered when `label`/default slot is present |
+| `base` | `chip` | Base chip container styles (`as`, default `span`) |
+| `label` | `chip-label` | Label text slot styles, rendered when `label`/default slot is present |
 
-Chips support combining `variant` and `color` via compound variants (e.g. `variant="primary"
-color="accent"` gets a filled accent background; `variant="soft" color="success"` gets a
-lighter success background).
+The variant props map to HeroUI's modifier classes:
+
+- `color`: `accent`, `danger`, `default`, `success`, `warning` (`.chip--{color}`)
+- `variant`: `primary` (filled background), `secondary` (default), `tertiary` (transparent background), `soft` (lighter background)
+- `size`: `sm`, `md` (default), `lg`
+
+Compound variants combine `variant` and `color`:
+
+- **Primary**: `accent`, `success`, `warning` and `danger` get a filled background.
+- **Soft**: `accent`, `success`, `warning`, `danger` and `default` get a lighter background.
+
+Other combinations (e.g. `variant="secondary" color="accent"`) can be styled with a `compoundVariants` entry in the global theme override.
 
 ## API Reference
 
