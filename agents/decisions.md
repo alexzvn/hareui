@@ -1,6 +1,13 @@
 # Decisions (user-confirmed)
 
 Newest first. These override `plan.md` where they conflict.
+## 2026-10-02 (before overnight run)
+
+- **New components:** Skeleton, ProgressBar, NumberField, Alert, Disclosure, Toast, Typography. Link, Separator, TextArea, Surface, SwitchGroup and ButtonGroup were not chosen.
+- **Responsive sizes via CSS variables**, so a plain user utility beats the theme at every breakpoint (HeroUI `@layer components` behaviour).
+- **Approved:** the review API additions, forwarding TextField input attrs to `<input>`, documenting `tv(themes.card)`, a RAC-equivalent validation layer, and the Button ripple-effect demo.
+- **Overnight autonomy is full:** build, verify, commit. New decisions get parked in `status.md`.
+
 
 ## Process
 
