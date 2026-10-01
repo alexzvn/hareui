@@ -22,4 +22,5 @@ export type Themes = typeof import('./index')
 export { default as numberField } from './numberField'
 export { default as progressBar } from './progressBar'
 export { default as typography } from './typography'
+export { default as disclosure } from './disclosure'
 export { default as alert } from './alert'

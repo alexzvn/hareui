@@ -1,0 +1,7 @@
+[
+  { "id": "disclosure-collapsed", "component": "disclosure", "actions": [], "ignoreSlots": [] },
+  { "id": "disclosure-expanded", "component": "disclosure", "actions": [], "ignoreSlots": [] },
+  { "id": "disclosure-disabled", "component": "disclosure", "actions": [], "ignoreSlots": [] },
+  { "id": "disclosure-basic", "component": "disclosure", "actions": [], "ignoreSlots": [] },
+  { "id": "disclosure-custom-trigger", "component": "disclosure", "actions": [], "ignoreSlots": [] }
+]
