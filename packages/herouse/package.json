@@ -39,14 +39,15 @@
     "vue": "^3.5.0"
   },
   "devDependencies": {
-    "vue": "^3.5.43",
-    "tailwindcss": "^4.3.3",
-    "vite": "^8.3.2",
+    "@internationalized/date": "^3.12.4",
     "@vitejs/plugin-vue": "^6.0.9",
-    "vue-tsc": "^3.3.11",
-    "typescript": "~6.0.3",
-    "vitest": "^5.0.3",
     "@vue/test-utils": "^2.5.1",
-    "happy-dom": "^20.14.5"
+    "happy-dom": "^20.14.5",
+    "tailwindcss": "^4.3.3",
+    "typescript": "~6.0.3",
+    "vite": "^8.3.2",
+    "vitest": "^5.0.3",
+    "vue": "^3.5.43",
+    "vue-tsc": "^3.3.11"
   }
 }
