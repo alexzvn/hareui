@@ -4,6 +4,7 @@ import { ToastProvider } from 'herouse'
 import { useData, useRoute } from 'vitepress'
 import { normalizePath, type ThemeConfig } from '../sidebar'
 import DocsHeader from './components/DocsHeader.vue'
+import Home from './Home.vue'
 import SidebarItems from './components/SidebarItems.vue'
 import TocItems from './components/TocItems.vue'
 import TocPopover from './components/TocPopover.vue'
@@ -53,7 +54,9 @@ const links = computed(() => frontmatter.value.links as PageLinks | undefined)
 
 <template>
   <div class="flex min-h-screen flex-col font-sans">
+    <Home v-if="frontmatter.layout === 'home'" :sections="sections" @search="searchOpen = true" />
     <div
+      v-else
       id="nd-notebook-layout"
       class="grid min-h-(--fd-docs-height) auto-cols-auto auto-rows-auto overflow-x-clip transition-[grid-template-columns] [--fd-docs-height:100dvh] [--fd-header-height:0px] [--fd-sidebar-width:0px] [--fd-toc-popover-height:0px] [--fd-toc-width:0px]"
       :style="GRID_STYLE"

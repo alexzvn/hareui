@@ -1,14 +1,6 @@
 ---
-title: HeroUse
-description: Redirecting to the HeroUse documentation.
+layout: home
+title: HeroUse - Beautiful by default, customizable by design.
+titleTemplate: false
+description: Beautiful, accessible Vue UI components built on Reka UI and Tailwind CSS v4 — a Vue port of HeroUI v3.
 ---
-
-<script setup lang="ts">
-import { onMounted } from 'vue'
-import { useRouter } from 'vitepress'
-
-const router = useRouter()
-onMounted(() => router.go('/docs/getting-started/'))
-</script>
-
-Redirecting to [the documentation](/docs/getting-started/)…
