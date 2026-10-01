@@ -11,5 +11,6 @@ export { default as chip } from './chip'
 export { default as avatar } from './avatar'
 export { default as tabs } from './tabs'
 export { default as checkbox } from './checkbox'
+export { default as switch } from './switch'
 
 export type Themes = typeof import('./index')
