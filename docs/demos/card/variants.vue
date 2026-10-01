@@ -4,35 +4,19 @@ import { Card } from 'herouse'
 
 <template>
   <div class="flex flex-col gap-4">
-    <Card class="w-[320px]" variant="transparent">
-      <template #header>
-        <h3 class="text-sm leading-6 font-medium text-foreground">Transparent</h3>
-        <p class="text-sm leading-5 text-muted">Minimal prominence with transparent background</p>
-      </template>
+    <Card class="w-[320px]" description="Minimal prominence with transparent background" title="Transparent" variant="transparent">
       <p>Use for less important content or nested cards</p>
     </Card>
 
-    <Card class="w-[320px]" variant="default">
-      <template #header>
-        <h3 class="text-sm leading-6 font-medium text-foreground">Default</h3>
-        <p class="text-sm leading-5 text-muted">Standard card appearance (bg-surface)</p>
-      </template>
+    <Card class="w-[320px]" description="Standard card appearance (bg-surface)" title="Default" variant="default">
       <p>The default card variant for most use cases</p>
     </Card>
 
-    <Card class="w-[320px]" variant="secondary">
-      <template #header>
-        <h3 class="text-sm leading-6 font-medium text-foreground">Secondary</h3>
-        <p class="text-sm leading-5 text-muted">Medium prominence (bg-surface-secondary)</p>
-      </template>
+    <Card class="w-[320px]" description="Medium prominence (bg-surface-secondary)" title="Secondary" variant="secondary">
       <p>Use to draw moderate attention</p>
     </Card>
 
-    <Card class="w-[320px]" variant="tertiary">
-      <template #header>
-        <h3 class="text-sm leading-6 font-medium text-foreground">Tertiary</h3>
-        <p class="text-sm leading-5 text-muted">Higher prominence (bg-surface-tertiary)</p>
-      </template>
+    <Card class="w-[320px]" description="Higher prominence (bg-surface-tertiary)" title="Tertiary" variant="tertiary">
       <p>Use for primary or featured content</p>
     </Card>
   </div>

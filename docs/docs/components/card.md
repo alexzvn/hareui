@@ -18,21 +18,23 @@ import { Card } from 'herouse'
 ## Anatomy
 
 HeroUI's compound parts (`Card.Header`, `Card.Title`, `Card.Description`, `Card.Content`,
-`Card.Footer`) become named template slots in a fixed render order: `header`, content
-(default slot), then `footer`.
+`Card.Footer`) become props and named slots, rendered in a fixed order: `#leading`, header,
+content (default slot), then `#footer`.
 
 ```vue
 <Card title="…" description="…">
-  <!-- or: -->
-  <template #header>…</template>
-  <!-- default slot = content -->
-  <template #footer>…</template>
+  <template #leading /> <!-- unwrapped children before the header (icon, image, background) -->
+  <template #header /> <!-- or: replaces title + description -->
+  <template #title /> <!-- or: replaces the title text -->
+  <template #description /> <!-- or: replaces the description text -->
+  <!-- default slot = Card.Content -->
+  <template #footer />
 </Card>
 ```
 
-The header renders only when `title`/`description` props or the `#header`/`#title`/`#description`
-slots are provided. The content wrapper renders only when the default slot is used. The
-footer renders only when `#footer` is used.
+- The header renders only when the `title`/`description` props or the `#header`/`#title`/`#description` slots are provided.
+- The content wrapper renders only when the default slot is used; the footer only when `#footer` is used.
+- `#leading` renders its children directly inside the root, without a wrapper, so they become flex items of the card (like the plain children HeroUI places before `Card.Header`).
 
 `ui` keys: `base`, `header`, `title`, `description`, `content`, `footer`.
 
@@ -40,17 +42,20 @@ footer renders only when `#footer` is used.
 
 ### Variants
 
-Cards come in semantic variants that describe their prominence level rather than
-specific visual styles:
+Cards come in semantic variants that describe their prominence level rather than specific visual styles. This allows themes to interpret them differently:
 
 <ComponentPreview name="card/variants" />
 
-- **`transparent`** — minimal prominence, transparent background (great for nested cards)
-- **`default`** — standard card for most use cases (`bg-surface`)
-- **`secondary`** — medium prominence (`bg-surface-secondary`)
-- **`tertiary`** — higher prominence (`bg-surface-tertiary`)
+- **`transparent`** - Minimal prominence, transparent background (great for nested cards)
+- **`default`** - Standard card for most use cases (`bg-surface`)
+- **`secondary`** - Medium prominence to draw moderate attention (`bg-surface-secondary`)
+- **`tertiary`** - Higher prominence for important content (`bg-surface-tertiary`)
 
 ### Horizontal Layout
+
+Put the media in `#leading` and the rest in the default slot: the root gets two flex items, so
+`md:flex-row` lays them out side by side. `:ui="{ content: 'gap-3' }"` turns the content wrapper
+into the right-hand column.
 
 <ComponentPreview name="card/horizontal" />
 
@@ -70,15 +75,22 @@ specific visual styles:
 
 ### Tailwind CSS
 
+Use the `class` prop for the root and the `ui` prop for the inner elements (tailwind-merge resolves conflicts):
+
 <ComponentPreview name="card/custom-styles" />
 
 ### Global theme override
+
+Override the `card` theme app-wide with `createHeroUse`:
 
 ```ts
 app.use(createHeroUse({
   ui: {
     card: {
-      slots: { title: 'text-base font-semibold' },
+      variants: {
+        variant: { secondary: { base: 'bg-linear-to-br from-blue-50 to-purple-50' } },
+      },
+      slots: { title: 'text-xl font-bold' },
     },
   },
 }))
@@ -86,19 +98,52 @@ app.use(createHeroUse({
 
 ## Styling Reference
 
+Each rendered element carries the same `data-slot` string as HeroUI, so selectors translate 1:1.
+
 | `ui` key | `data-slot` | Description |
 |---|---|---|
-| `base` | `card` | The root container |
-| `header` | `card-header` | Header wrapper (title + description) |
-| `title` | `card-title` | The `<h3>` title |
-| `description` | `card-description` | The `<p>` description |
-| `content` | `card-content` | The content wrapper for the default slot |
-| `footer` | `card-footer` | Footer wrapper |
+| `base` | `card` | Base container with padding and border radius |
+| `header` | `card-header` | Header section container |
+| `title` | `card-title` | Title with base font size and weight (renders as `h3`) |
+| `description` | `card-description` | Muted description text (renders as `p`) |
+| `content` | `card-content` | Flexible content container (default slot) |
+| `footer` | `card-footer` | Footer with row layout |
+
+The `variant` prop maps to HeroUI's modifier classes: `transparent` (`.card--transparent`),
+`default` (`.card--default`), `secondary` (`.card--secondary`), `tertiary` (`.card--tertiary`).
+
+## API Reference
+
+### Props
+
+<ApiTable component="Card" kind="props" />
+
+### Slots
+
+<ApiTable component="Card" kind="slots" />
 
 ## Accessibility
 
 ```vue
-<Card as="article" aria-labelledby="card-title" title="Article Title" />
+<script setup lang="ts">
+import { Card, themes, tv } from 'herouse'
+
+const card = tv(themes.card)()
+</script>
+
+<template>
+  <!-- Semantic markup -->
+  <Card as="article" aria-labelledby="card-title">
+    <template #title>
+      <span id="card-title">Article Title</span>
+    </template>
+  </Card>
+
+  <!-- Interactive cards -->
+  <a :class="card.base()" href="/details" aria-label="View product details">
+    <h3 :class="card.title()">Product Name</h3>
+  </a>
+</template>
 ```
 
 ## Related Components

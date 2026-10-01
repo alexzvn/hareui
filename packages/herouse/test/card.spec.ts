@@ -26,4 +26,13 @@ describe('Card', () => {
     const wrapper = mount(Card, { slots: { footer: 'F' } })
     expect(wrapper.find('[data-slot=card-footer]').text()).toBe('F')
   })
+
+  it('#leading renders unwrapped root children before the header', () => {
+    const wrapper = mount(Card, {
+      props: { title: 'T' },
+      slots: { leading: '<img alt="a"><i>b</i>', default: 'Body' },
+    })
+    const children = [...wrapper.element.children].map(el => el.getAttribute('data-slot') ?? el.tagName.toLowerCase())
+    expect(children).toEqual(['img', 'i', 'card-header', 'card-content'])
+  })
 })

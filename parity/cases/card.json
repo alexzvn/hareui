@@ -28,5 +28,17 @@
     "component": "card",
     "actions": [],
     "ignoreSlots": []
+  },
+  {
+    "id": "card-leading",
+    "component": "card",
+    "actions": [],
+    "ignoreSlots": []
+  },
+  {
+    "id": "card-horizontal",
+    "component": "card",
+    "actions": [],
+    "ignoreSlots": []
   }
 ]
