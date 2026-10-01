@@ -86,7 +86,11 @@ defineSlots<TooltipSlots>()
 
 const ui = useComponentUI('tooltip', theme, () => ({}))
 
-const sideOffset = computed(() => props.sideOffset ?? (props.arrow ? 7 : 3))
+// The arrow SVG is 12px tall. Reka's PopperContent adds the arrow's height to `sideOffset`, but
+// React Aria measures `offset` from the trigger to the tooltip body (the arrow overlaps the gap),
+// so subtract it to keep the HeroUI distance.
+const ARROW_HEIGHT = 12
+const sideOffset = computed(() => (props.sideOffset ?? (props.arrow ? 7 : 3)) - (props.arrow ? ARROW_HEIGHT : 0))
 </script>
 
 <template>

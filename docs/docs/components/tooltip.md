@@ -39,18 +39,19 @@ floating content.
 
 ## Examples
 
-### With Arrow
-
-<ComponentPreview name="tooltip/with-arrow" />
-
 ### Placement
 
 <ComponentPreview name="tooltip/placement" />
 
+### With Arrow
+
+<ComponentPreview name="tooltip/with-arrow" />
+
 ### Custom Triggers
 
-Non-focusable elements (an `Avatar`, a `Chip`, a plain `div`) can be used as the trigger;
-add `tabindex="0"` so the tooltip remains reachable from the keyboard.
+The default slot's root element becomes the trigger. To use non-focusable content (an `Avatar`,
+a `Chip`, an icon), wrap it in an `inline-block` element with `role="button"` and `tabindex="0"`
+(the equivalent of HeroUI's `Tooltip.Trigger`) so the tooltip stays reachable from the keyboard.
 
 <ComponentPreview name="tooltip/custom-trigger" />
 
@@ -60,13 +61,15 @@ add `tabindex="0"` so the tooltip remains reachable from the keyboard.
 
 <ComponentPreview name="tooltip/custom-styles" />
 
-### Global theme override
+### Global Configuration
+
+To customize the Tooltip classes for the whole app, extend the `tooltip` theme in `createHeroUse`:
 
 ```ts
 app.use(createHeroUse({
   ui: {
     tooltip: {
-      slots: { base: 'rounded-lg' },
+      slots: { base: 'rounded-xl shadow-lg' },
     },
   },
 }))
@@ -98,7 +101,11 @@ app.use(createHeroUse({
 
 <ApiTable component="Tooltip" kind="slots" />
 
+### Emits
+
+<ApiTable component="Tooltip" kind="emits" />
+
 ## Related Components
 
-- [Popover](/docs/components/popover)
 - [Button](/docs/components/button)
+- [Popover](/docs/components/popover)
