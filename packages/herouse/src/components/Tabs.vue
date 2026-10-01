@@ -47,6 +47,12 @@ export interface TabsProps {
    * @defaultValue true
    */
   content?: boolean
+  /**
+   * Whether to render a separator between tabs. HeroUI separators are opt-in
+   * via `<Tabs.Separator/>`.
+   * @defaultValue false
+   */
+  separator?: boolean
   /** Additional classes merged into the root element. */
   class?: any
   /** Per-slot class overrides. */
@@ -62,13 +68,14 @@ export interface TabsSlots {
 </script>
 
 <script setup lang="ts">
-import { TabsContent, TabsIndicator, TabsList, TabsRoot, TabsTrigger } from 'reka-ui'
-import { computed } from 'vue'
+import { TabsContent, TabsList, TabsRoot, TabsTrigger } from 'reka-ui'
+import { computed, nextTick, onBeforeUnmount, onMounted, ref, watch } from 'vue'
 import { useComponentUI } from '../composables/useComponentUI'
 
 const props = withDefaults(defineProps<TabsProps>(), {
   orientation: 'horizontal',
   content: true,
+  separator: false,
 })
 const modelValue = defineModel<string | number>()
 defineSlots<TabsSlots>()
@@ -109,7 +116,7 @@ function isSeparatorHidden(index: number): boolean {
 
 // Flattens tabs + a single interleaved indicator entry, positioned right after the
 // selected tab so the document order matches HeroUI's per-tab SelectionIndicator while
-// keeping one persistent Reka TabsIndicator instance (stable `key`) so it slides between
+// keeping one persistent indicator instance (stable `key`) so it slides between
 // positions instead of being destroyed/recreated.
 type TabsEntry = { type: 'tab', key: string | number, item: TabsItem, index: number } | { type: 'indicator', key: 'indicator' }
 
@@ -123,6 +130,70 @@ const flatEntries = computed<TabsEntry[]>(() => {
   })
   return entries
 })
+
+// Reka's own TabsIndicator measures the active tab via integer offsetWidth/offsetLeft,
+// which doesn't line up pixel-for-pixel with HeroUI's indicator (React Aria's
+// SelectionIndicator, which uses getBoundingClientRect). We track geometry ourselves —
+// from the active trigger's bounding box relative to the list — so the indicator fills
+// the exact same box React renders (HeroUI's indicator is `size-full` of its own tab).
+const listRef = ref<{ $el: HTMLElement } | null>(null)
+const indicatorGeometry = ref<Record<string, string>>({})
+// React Aria's SelectionIndicator only transitions when a *previous* instance existed to
+// FLIP from; a brand-new indicator (first mount, no prior snapshot) just appears at its
+// final geometry. Our indicator starts with no geometry vars (collapsed to 0×0 at the
+// list's origin) until the first measurement, so without this guard it would visibly
+// animate from that collapsed state into place on mount. Suppress the transition until
+// the first real measurement has painted, then let it animate normally on later changes.
+const indicatorReady = ref(false)
+const indicatorStyle = computed(() => indicatorReady.value ? indicatorGeometry.value : { ...indicatorGeometry.value, transition: 'none' })
+let resizeObserver: ResizeObserver | null = null
+
+function measureIndicator() {
+  const listEl = listRef.value?.$el
+  if (!listEl)
+    return
+  const activeTab = listEl.querySelector<HTMLElement>('[data-slot="tabs-tab"][data-state="active"]')
+  if (!activeTab) {
+    indicatorGeometry.value = {}
+    return
+  }
+  const listRect = listEl.getBoundingClientRect()
+  const tabRect = activeTab.getBoundingClientRect()
+  indicatorGeometry.value = {
+    '--tabs-indicator-x': `${tabRect.left - listRect.left}px`,
+    '--tabs-indicator-y': `${tabRect.top - listRect.top}px`,
+    '--tabs-indicator-width': `${tabRect.width}px`,
+    '--tabs-indicator-height': `${tabRect.height}px`,
+  }
+}
+
+function observeGeometry() {
+  const listEl = listRef.value?.$el
+  resizeObserver?.disconnect()
+  if (!listEl)
+    return
+  resizeObserver = new ResizeObserver(() => measureIndicator())
+  resizeObserver.observe(listEl)
+  listEl.querySelectorAll('[data-slot="tabs-tab"]').forEach(el => resizeObserver!.observe(el))
+}
+
+onMounted(() => {
+  observeGeometry()
+  measureIndicator()
+  requestAnimationFrame(() => { indicatorReady.value = true })
+  window.addEventListener('resize', measureIndicator)
+})
+
+onBeforeUnmount(() => {
+  resizeObserver?.disconnect()
+  window.removeEventListener('resize', measureIndicator)
+})
+
+watch([selectedValue, () => props.items, () => props.orientation], async () => {
+  await nextTick()
+  observeGeometry()
+  measureIndicator()
+}, { deep: true })
 </script>
 
 <template>
@@ -135,11 +206,13 @@ const flatEntries = computed<TabsEntry[]>(() => {
     :class="ui.base({ class: [props.ui?.base, props.class] })"
   >
     <div :class="ui.tabListContainer({ class: props.ui?.tabListContainer })" data-slot="tabs-list-container">
-      <TabsList :class="ui.tabList({ class: props.ui?.tabList })" data-slot="tabs-list">
+      <div :class="ui.scroller({ class: props.ui?.scroller })" data-slot="scroll-shadow">
+        <TabsList ref="listRef" :class="ui.tabList({ class: props.ui?.tabList })" data-slot="tabs-list">
         <template v-for="entry in flatEntries" :key="entry.key">
-          <TabsIndicator
+          <div
             v-if="entry.type === 'indicator'"
-            :data-orientation="orientation"
+            aria-hidden="true"
+            :style="indicatorStyle"
             :class="ui.tabIndicator({ class: props.ui?.tabIndicator })"
             data-slot="tabs-indicator"
           />
@@ -151,6 +224,7 @@ const flatEntries = computed<TabsEntry[]>(() => {
             data-slot="tabs-tab"
           >
             <span
+              v-if="separator"
               aria-hidden="true"
               :data-orientation="orientation"
               :class="ui.separator({ class: [props.ui?.separator, isSeparatorHidden(entry.index) ? 'opacity-0' : undefined] })"
@@ -161,7 +235,8 @@ const flatEntries = computed<TabsEntry[]>(() => {
             </slot>
           </TabsTrigger>
         </template>
-      </TabsList>
+        </TabsList>
+      </div>
     </div>
     <TabsContent
       v-if="visiblePanel"

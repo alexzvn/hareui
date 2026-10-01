@@ -3,21 +3,21 @@ import { Tabs } from '@heroui/react'
 
 export const cases: Record<string, () => ReactElement> = {}
 
-function TabItems({ disabledSecond }: { disabledSecond?: boolean } = {}) {
+function TabItems({ disabledSecond, withSeparator = true }: { disabledSecond?: boolean, withSeparator?: boolean } = {}) {
   return (
     <>
       <Tabs.Tab id="overview">
-        <Tabs.Separator />
+        {withSeparator && <Tabs.Separator />}
         Overview
         <Tabs.Indicator />
       </Tabs.Tab>
       <Tabs.Tab isDisabled={disabledSecond} id="analytics">
-        <Tabs.Separator />
+        {withSeparator && <Tabs.Separator />}
         Analytics
         <Tabs.Indicator />
       </Tabs.Tab>
       <Tabs.Tab id="reports">
-        <Tabs.Separator />
+        {withSeparator && <Tabs.Separator />}
         Reports
         <Tabs.Indicator />
       </Tabs.Tab>
@@ -108,6 +108,15 @@ cases['tabs-selected-second'] = () => (
   <Tabs className="w-96" defaultSelectedKey="analytics">
     <Tabs.ListContainer>
       <Tabs.List aria-label="Options"><TabItems /></Tabs.List>
+    </Tabs.ListContainer>
+    <Panels />
+  </Tabs>
+)
+
+cases['tabs-no-separator'] = () => (
+  <Tabs className="w-96" defaultSelectedKey="overview">
+    <Tabs.ListContainer>
+      <Tabs.List aria-label="Options"><TabItems withSeparator={false} /></Tabs.List>
     </Tabs.ListContainer>
     <Panels />
   </Tabs>

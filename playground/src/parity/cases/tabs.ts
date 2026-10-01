@@ -10,11 +10,12 @@ const items = [
   { label: 'Reports', value: 'reports', content: 'Generate and download detailed reports.' },
 ]
 
-cases['tabs-primary'] = () => h('div', { class: 'w-96' }, [h(Tabs, { items, defaultValue: 'overview' })])
-cases['tabs-secondary'] = () => h('div', { class: 'w-96' }, [h(Tabs, { items, variant: 'secondary', defaultValue: 'overview' })])
-cases['tabs-align-start'] = () => h('div', { class: 'w-96' }, [h(Tabs, { items, align: 'start', defaultValue: 'overview' })])
-cases['tabs-align-end'] = () => h('div', { class: 'w-96' }, [h(Tabs, { items, align: 'end', defaultValue: 'overview' })])
-cases['tabs-vertical'] = () => h('div', { class: 'w-96' }, [h(Tabs, { items, orientation: 'vertical', defaultValue: 'overview' })])
-cases['tabs-vertical-secondary'] = () => h('div', { class: 'w-96' }, [h(Tabs, { items, orientation: 'vertical', variant: 'secondary', defaultValue: 'overview' })])
-cases['tabs-disabled-tab'] = () => h('div', { class: 'w-96' }, [h(Tabs, { items: items.map((item, i) => i === 1 ? { ...item, disabled: true } : item), defaultValue: 'overview' })])
-cases['tabs-selected-second'] = () => h('div', { class: 'w-96' }, [h(Tabs, { items, defaultValue: 'analytics' })])
+cases['tabs-primary'] = () => h('div', { class: 'w-96' }, [h(Tabs, { items, defaultValue: 'overview', separator: true })])
+cases['tabs-secondary'] = () => h('div', { class: 'w-96' }, [h(Tabs, { items, variant: 'secondary', defaultValue: 'overview', separator: true })])
+cases['tabs-align-start'] = () => h('div', { class: 'w-96' }, [h(Tabs, { items, align: 'start', defaultValue: 'overview', separator: true })])
+cases['tabs-align-end'] = () => h('div', { class: 'w-96' }, [h(Tabs, { items, align: 'end', defaultValue: 'overview', separator: true })])
+cases['tabs-vertical'] = () => h('div', { class: 'w-96' }, [h(Tabs, { items, orientation: 'vertical', defaultValue: 'overview', separator: true })])
+cases['tabs-vertical-secondary'] = () => h('div', { class: 'w-96' }, [h(Tabs, { items, orientation: 'vertical', variant: 'secondary', defaultValue: 'overview', separator: true })])
+cases['tabs-disabled-tab'] = () => h('div', { class: 'w-96' }, [h(Tabs, { items: items.map((item, i) => i === 1 ? { ...item, disabled: true } : item), defaultValue: 'overview', separator: true })])
+cases['tabs-selected-second'] = () => h('div', { class: 'w-96' }, [h(Tabs, { items, defaultValue: 'analytics', separator: true })])
+cases['tabs-no-separator'] = () => h('div', { class: 'w-96' }, [h(Tabs, { items, defaultValue: 'overview' })])

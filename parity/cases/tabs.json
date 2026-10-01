@@ -2,123 +2,48 @@
   {
     "id": "tabs-primary",
     "component": "tabs",
-    "actions": [
-      "hover",
-      "focus",
-      "press"
-    ],
-    "target": "[data-slot=tabs-tab]",
-    "ignoreSlots": [
-      "scroll-shadow"
-    ],
-    "ignoreProps": [
-      "width",
-      "height"
-    ],
-    "reason": "Reka's TabsIndicator measures the active tab via integer offsetWidth/offsetHeight while React Aria's SelectionIndicator uses getBoundingClientRect, producing a sub-pixel rounding difference (e.g. 125.344px vs 125px) that cannot be matched. This also shifts the rendered indicator pill by a few pixels, pushing the screenshot pixel-diff ratio above the default 0.1% threshold.",
-    "maxDiffRatio": 0.06
+    "actions": ["hover", "focus", "press"],
+    "target": "[data-slot=tabs-tab]"
   },
   {
     "id": "tabs-secondary",
     "component": "tabs",
-    "actions": [
-      "hover",
-      "focus",
-      "press"
-    ],
-    "target": "[data-slot=tabs-tab]",
-    "ignoreSlots": [
-      "scroll-shadow"
-    ],
-    "ignoreProps": [
-      "width",
-      "height"
-    ],
-    "reason": "Reka's TabsIndicator measures the active tab via integer offsetWidth/offsetHeight while React Aria's SelectionIndicator uses getBoundingClientRect, producing a sub-pixel rounding difference (e.g. 125.344px vs 125px) that cannot be matched. This also shifts the rendered indicator pill by a few pixels, pushing the screenshot pixel-diff ratio above the default 0.1% threshold.",
-    "maxDiffRatio": 0.06
+    "actions": ["hover", "focus", "press"],
+    "target": "[data-slot=tabs-tab]"
   },
   {
     "id": "tabs-align-start",
     "component": "tabs",
-    "actions": [],
-    "ignoreSlots": [
-      "scroll-shadow"
-    ],
-    "ignoreProps": [
-      "width",
-      "height"
-    ],
-    "reason": "Reka's TabsIndicator measures the active tab via integer offsetWidth/offsetHeight while React Aria's SelectionIndicator uses getBoundingClientRect, producing a sub-pixel rounding difference (e.g. 125.344px vs 125px) that cannot be matched. This also shifts the rendered indicator pill by a few pixels, pushing the screenshot pixel-diff ratio above the default 0.1% threshold.",
-    "maxDiffRatio": 0.06
+    "actions": []
   },
   {
     "id": "tabs-align-end",
     "component": "tabs",
-    "actions": [],
-    "ignoreSlots": [
-      "scroll-shadow"
-    ],
-    "ignoreProps": [
-      "width",
-      "height"
-    ],
-    "reason": "Reka's TabsIndicator measures the active tab via integer offsetWidth/offsetHeight while React Aria's SelectionIndicator uses getBoundingClientRect, producing a sub-pixel rounding difference (e.g. 125.344px vs 125px) that cannot be matched. This also shifts the rendered indicator pill by a few pixels, pushing the screenshot pixel-diff ratio above the default 0.1% threshold.",
-    "maxDiffRatio": 0.06
+    "actions": []
   },
   {
     "id": "tabs-vertical",
     "component": "tabs",
-    "actions": [],
-    "ignoreSlots": [
-      "scroll-shadow"
-    ],
-    "ignoreProps": [
-      "width",
-      "height"
-    ],
-    "reason": "Reka's TabsIndicator measures the active tab via integer offsetWidth/offsetHeight while React Aria's SelectionIndicator uses getBoundingClientRect, producing a sub-pixel rounding difference (e.g. 93.67px vs 94px) that cannot be matched. This also shifts the rendered indicator pill by a few pixels, pushing the screenshot pixel-diff ratio above the default 0.1% threshold.",
-    "maxDiffRatio": 0.06
+    "actions": []
   },
   {
     "id": "tabs-vertical-secondary",
     "component": "tabs",
-    "actions": [],
-    "ignoreSlots": [
-      "scroll-shadow"
-    ],
-    "ignoreProps": [
-      "width",
-      "height"
-    ],
-    "reason": "Reka's TabsIndicator measures the active tab via integer offsetWidth/offsetHeight while React Aria's SelectionIndicator uses getBoundingClientRect, producing a sub-pixel rounding difference that cannot be matched. This also shifts the rendered indicator pill by a few pixels, pushing the screenshot pixel-diff ratio above the default 0.1% threshold.",
-    "maxDiffRatio": 0.06
+    "actions": []
   },
   {
     "id": "tabs-disabled-tab",
     "component": "tabs",
-    "actions": [],
-    "ignoreSlots": [
-      "scroll-shadow"
-    ],
-    "ignoreProps": [
-      "width",
-      "height"
-    ],
-    "reason": "Reka's TabsIndicator measures the active tab via integer offsetWidth/offsetHeight while React Aria's SelectionIndicator uses getBoundingClientRect, producing a sub-pixel rounding difference (e.g. 125.344px vs 125px) that cannot be matched. This also shifts the rendered indicator pill by a few pixels, pushing the screenshot pixel-diff ratio above the default 0.1% threshold.",
-    "maxDiffRatio": 0.06
+    "actions": []
   },
   {
     "id": "tabs-selected-second",
     "component": "tabs",
-    "actions": [],
-    "ignoreSlots": [
-      "scroll-shadow"
-    ],
-    "ignoreProps": [
-      "width",
-      "height"
-    ],
-    "reason": "Reka's TabsIndicator measures the active tab via integer offsetWidth/offsetHeight while React Aria's SelectionIndicator uses getBoundingClientRect, producing a sub-pixel rounding difference that cannot be matched. This also shifts the rendered indicator pill by a few pixels, pushing the screenshot pixel-diff ratio above the default 0.1% threshold.",
-    "maxDiffRatio": 0.06
+    "actions": []
+  },
+  {
+    "id": "tabs-no-separator",
+    "component": "tabs",
+    "actions": []
   }
 ]

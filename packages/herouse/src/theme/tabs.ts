@@ -4,7 +4,8 @@ export default {
   slots: {
     base: 'flex gap-2 data-[orientation=horizontal]:flex-col data-[orientation=vertical]:flex-row',
     tabListContainer: 'relative bg-default [border-radius:calc(var(--radius)*2.5)]',
-    tabList: 'inline-flex p-1 data-[orientation=horizontal]:w-max data-[orientation=horizontal]:min-w-full data-[orientation=horizontal]:flex-row data-[orientation=vertical]:flex-col data-[orientation=vertical]:gap-1',
+    scroller: 'relative',
+    tabList: 'isolate inline-flex p-1 data-[orientation=horizontal]:w-max data-[orientation=horizontal]:min-w-full data-[orientation=horizontal]:flex-row data-[orientation=vertical]:flex-col data-[orientation=vertical]:gap-1',
     tab: [
       'relative flex h-8 w-full items-center justify-center rounded-3xl px-4 text-center text-sm font-medium text-muted outline-none no-highlight',
       'z-[1] cursor-(--cursor-interactive)',
@@ -19,8 +20,7 @@ export default {
       'absolute start-0 top-0 rounded-3xl bg-segment shadow-surface -z-1',
       'text-center text-sm leading-5 font-medium text-segment-foreground cursor-(--cursor-interactive)',
       '[transition-duration:250ms] [transition-property:translate,width,height] [transition-timing-function:var(--ease-out-fluid)] motion-reduce:transition-none',
-      'data-[orientation=horizontal]:w-(--reka-tabs-indicator-size) data-[orientation=horizontal]:h-(--reka-tabs-indicator-thickness) data-[orientation=horizontal]:translate-x-(--reka-tabs-indicator-position)',
-      'data-[orientation=vertical]:h-(--reka-tabs-indicator-size) data-[orientation=vertical]:w-(--reka-tabs-indicator-thickness) data-[orientation=vertical]:translate-y-(--reka-tabs-indicator-position)',
+      'w-(--tabs-indicator-width) h-(--tabs-indicator-height) translate-x-(--tabs-indicator-x) translate-y-(--tabs-indicator-y)',
     ],
     tabPanel: 'w-full p-2 outline-none',
     separator: [
@@ -47,20 +47,20 @@ export default {
       },
     },
     orientation: {
-      horizontal: {},
-      vertical: {},
+      horizontal: { scroller: 'overflow-x-auto scrollbar-none' },
+      vertical: { scroller: 'overflow-y-auto scrollbar-none h-full' },
     },
   },
   compoundVariants: [
     {
       variant: 'secondary',
       orientation: 'horizontal',
-      class: { tabListContainer: 'border-b border-border', tabIndicator: 'data-[orientation=horizontal]:top-auto data-[orientation=horizontal]:bottom-0 data-[orientation=horizontal]:h-0.5' },
+      class: { tabListContainer: 'border-b border-border', tabIndicator: 'top-auto bottom-0 h-0.5 translate-y-0' },
     },
     {
       variant: 'secondary',
       orientation: 'vertical',
-      class: { tabListContainer: 'border-s border-border', tabIndicator: 'data-[orientation=vertical]:top-0 data-[orientation=vertical]:start-0 data-[orientation=vertical]:h-full data-[orientation=vertical]:w-0.5' },
+      class: { tabListContainer: 'border-s border-border', tabIndicator: 'start-0 w-0.5 translate-x-0' },
     },
   ],
   defaultVariants: {
