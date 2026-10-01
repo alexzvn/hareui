@@ -1,6 +1,7 @@
 import { mount } from '@vue/test-utils'
 import { describe, expect, it } from 'vitest'
 import Button from '../src/components/Button.vue'
+import Input from '../src/components/Input.vue'
 import Description from '../src/components/Description.vue'
 import { createHeroUse } from '../src/config'
 
@@ -56,5 +57,26 @@ describe('font-size merging', () => {
     const classes = mount(Description, { props: { class: 'text-[#fff]' } }).classes()
     expect(classes).toEqual(expect.arrayContaining(['text-xs', 'text-[#fff]']))
     expect(classes).not.toContain('text-muted')
+  })
+})
+
+describe('responsive sizes', () => {
+  // Breakpoint values only set CSS variables; a single unprefixed class consumes them, so one user
+  // class evicts it and wins at every breakpoint.
+  it('lets a plain height class replace the responsive button height', () => {
+    const classes = mount(Button, { props: { class: 'h-11' } }).classes()
+    expect(classes.filter(c => /(^|:)h-/.test(c))).toEqual(['h-11'])
+  })
+
+  it('lets a named text size replace the responsive input font size and line-height', () => {
+    const classes = mount(Input, { attrs: { class: 'text-lg' } }).classes()
+    expect(classes.filter(c => /(^|:)text-(xs|sm|base|lg|xl|\(length)/.test(c))).toEqual(['text-lg'])
+  })
+
+  it('keeps the responsive line-height under an arbitrary length size, like HeroUI', () => {
+    // HeroUI's `.input` sizes sit in a lower layer, so `text-[18px]` only replaces the font-size.
+    // Tailwind sorts `text-[18px]` after the variable class, so its font-size wins.
+    const classes = mount(Input, { attrs: { class: 'text-[18px]' } }).classes()
+    expect(classes).toEqual(expect.arrayContaining(['text-[18px]', 'text-(length:--input-font-size)/(--input-line-height)']))
   })
 })
