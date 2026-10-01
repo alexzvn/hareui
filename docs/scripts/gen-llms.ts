@@ -79,6 +79,45 @@ async function replaceAsync(input: string, re: RegExp, fn: (match: string) => Pr
   return (await Promise.all(parts)).join('')
 }
 
+/** Static attrs as strings; `:bound` attrs evaluated as JS literals (trusted repo markdown, no interpolation). */
+function tagProps(tag: string): Record<string, unknown> {
+  const props: Record<string, unknown> = {}
+  for (const [, name, value] of tag.matchAll(/\s(:?[\w-]+)="([^"]*)"/g)) {
+    if (name!.startsWith(':')) props[name!.slice(1)] = new Function(`return (${value})`)()
+    else props[name!] = value
+  }
+  return props
+}
+
+/** Every `--token: value` tooltip string nested in `value`, in declaration order. */
+function tokenRows(value: unknown): [string, string][] {
+  if (typeof value === 'string') {
+    const m = /^(--[\w-]+):\s*([\s\S]+)$/.exec(value)
+    return m ? [[m[1]!, m[2]!]] : []
+  }
+  if (Array.isArray(value)) return value.flatMap(tokenRows)
+  if (value && typeof value === 'object') return Object.values(value).flatMap(tokenRows)
+  return []
+}
+
+function colorSectionTable(tag: string): string {
+  const props = tagProps(tag)
+  if ('lightColors' in props || 'darkColors' in props) {
+    const dark = new Map(tokenRows(props.darkColors))
+    const light = tokenRows(props.lightColors)
+    const rows = [...light.map(([v]) => v), ...[...dark.keys()].filter((v) => !light.some(([l]) => l === v))]
+    const lightMap = new Map(light)
+    return [
+      '| Variable | Light | Dark |',
+      '| --- | --- | --- |',
+      ...rows.map((v) => `| ${code(v)} | ${code(lightMap.get(v)) || '-'} | ${code(dark.get(v)) || '-'} |`),
+    ].join('\n')
+  }
+  const rows = tokenRows(props)
+  if (!rows.length) throw new Error(`Color section without tooltips: ${tag.slice(0, 80)}`)
+  return ['| Variable | Value |', '| --- | --- |', ...rows.map(([v, value]) => `| ${code(v)} | ${code(value)} |`)].join('\n')
+}
+
 async function toMarkdown(body: string): Promise<string> {
   let out = body.replace(/<script\b[\s\S]*?<\/script>\n?/g, '').replace(/<style\b[\s\S]*?<\/style>\n?/g, '')
   out = await replaceAsync(out, /<ComponentPreview\b[^>]*\/>/g, async (tag) => {
@@ -92,6 +131,12 @@ async function toMarkdown(body: string): Promise<string> {
     const kind = attr(tag, 'kind')
     if (!component || !kind) throw new Error(`ApiTable missing attributes: ${tag}`)
     return apiTable(component, kind)
+  })
+  out = out.replace(/<ColorSection\w+\b[\s\S]*?\/>/g, colorSectionTable)
+  out = out.replace(/<CollapsibleCode\b[\s\S]*?\/>/g, (tag) => {
+    const { lang = '', code: src } = tagProps(tag) as { lang?: string; code?: string }
+    if (typeof src !== 'string') throw new Error(`CollapsibleCode without :code: ${tag.slice(0, 80)}`)
+    return `\`\`\`${lang}\n${src.trimEnd()}\n\`\`\``
   })
   const fences: string[] = []
   out = out.replace(/^(```|~~~)[\s\S]*?^\1\s*$/gm, (fence) => `\u0000${fences.push(fence) - 1}\u0000`)
