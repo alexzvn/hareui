@@ -19,3 +19,8 @@ cases['tabs-vertical-secondary'] = () => h('div', { class: 'w-96' }, [h(Tabs, { 
 cases['tabs-disabled-tab'] = () => h('div', { class: 'w-96' }, [h(Tabs, { items: items.map((item, i) => i === 1 ? { ...item, disabled: true } : item), defaultValue: 'overview', separator: true })])
 cases['tabs-selected-second'] = () => h('div', { class: 'w-96' }, [h(Tabs, { items, defaultValue: 'analytics', separator: true })])
 cases['tabs-no-separator'] = () => h('div', { class: 'w-96' }, [h(Tabs, { items, defaultValue: 'overview' })])
+
+const overflowItems = ['Overview', 'Analytics', 'Reports', 'Performance', 'Engagement', 'Audience', 'Acquisition', 'Retention', 'Settings']
+  .map(label => ({ label, value: label.toLowerCase(), content: `${label} panel content.` }))
+cases['tabs-overflow'] = () => h('div', { class: 'w-[400px]' }, [h(Tabs, { items: overflowItems })])
+cases['tabs-overflow-vertical'] = () => h('div', { class: 'h-[160px]' }, [h(Tabs, { items: overflowItems, orientation: 'vertical', class: 'h-full' })])

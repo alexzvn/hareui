@@ -1,0 +1,144 @@
+/*
+ * Translated from @heroui/styles components/scroll-shadow.css (fade variant).
+ * Keyed on data attributes instead of BEM classes so any element can opt in:
+ *   data-slot="scroll-shadow" data-orientation="horizontal|vertical" data-scroll-shadow-mode="auto"
+ * plus the JS-driven `data-{left,right,left-right,top,bottom,top-bottom}-scroll` flags as the
+ * fallback for engines without scroll timelines. Sizes come from `--scroll-shadow-size`,
+ * `--scroll-shadow-offset` and `--scroll-shadow-scrollbar-size` (set inline by the component).
+ */
+
+@property --scroll-shadow-start-fade {
+  syntax: "<length>";
+  inherits: false;
+  initial-value: 0px;
+}
+
+@property --scroll-shadow-end-fade {
+  syntax: "<length>";
+  inherits: false;
+  initial-value: 0px;
+}
+
+@keyframes scroll-shadow-start-fade {
+  from {
+    --scroll-shadow-start-fade: 0px;
+  }
+  to {
+    --scroll-shadow-start-fade: var(--scroll-shadow-size);
+  }
+}
+
+@keyframes scroll-shadow-end-fade {
+  from {
+    --scroll-shadow-end-fade: var(--scroll-shadow-size);
+  }
+  to {
+    --scroll-shadow-end-fade: 0px;
+  }
+}
+
+@layer components {
+  [data-slot="scroll-shadow"][data-scroll-shadow-mode] {
+    --scroll-shadow-size: 40px;
+    --scroll-shadow-scrollbar-size: 10px;
+    --scroll-shadow-offset: 0px;
+  }
+
+  /* Vertical */
+  [data-slot="scroll-shadow"][data-orientation="vertical"]:where(
+    [data-top-scroll="true"],
+    [data-bottom-scroll="true"],
+    [data-top-bottom-scroll="true"],
+    [data-scroll-shadow-mode="auto"]
+  ) {
+    mask-image: linear-gradient(var(--scroll-linear-gradient)), linear-gradient(#000, #000);
+    mask-position: left top, right top;
+    mask-repeat: no-repeat;
+    mask-size: calc(100% - var(--scroll-shadow-scrollbar-size)) 100%, var(--scroll-shadow-scrollbar-size) 100%;
+  }
+
+  [data-slot="scroll-shadow"][data-orientation="vertical"][data-top-scroll="true"] {
+    --scroll-linear-gradient: 0deg, #000 calc(100% - var(--scroll-shadow-size)), transparent;
+  }
+
+  [data-slot="scroll-shadow"][data-orientation="vertical"][data-bottom-scroll="true"] {
+    --scroll-linear-gradient: 180deg, #000 calc(100% - var(--scroll-shadow-size)), transparent;
+  }
+
+  [data-slot="scroll-shadow"][data-orientation="vertical"][data-top-bottom-scroll="true"] {
+    --scroll-linear-gradient:
+      #000, #000, transparent 0, #000 var(--scroll-shadow-size),
+      #000 calc(100% - var(--scroll-shadow-size)), transparent;
+  }
+
+  /* Horizontal */
+  [data-slot="scroll-shadow"][data-orientation="horizontal"]:where(
+    [data-left-scroll="true"],
+    [data-right-scroll="true"],
+    [data-left-right-scroll="true"],
+    [data-scroll-shadow-mode="auto"]
+  ) {
+    mask-image: linear-gradient(var(--scroll-linear-gradient)), linear-gradient(#000, #000);
+    mask-position: left top, left bottom;
+    mask-repeat: no-repeat;
+    mask-size: 100% calc(100% - var(--scroll-shadow-scrollbar-size)), 100% var(--scroll-shadow-scrollbar-size);
+  }
+
+  /* `left`/`right` are logical (before/after the scroll position); swap physically in RTL. */
+  [data-slot="scroll-shadow"][data-orientation="horizontal"][data-left-scroll="true"] {
+    --scroll-linear-gradient: 270deg, #000 calc(100% - var(--scroll-shadow-size)), transparent;
+
+    &:dir(rtl) {
+      --scroll-linear-gradient: 90deg, #000 calc(100% - var(--scroll-shadow-size)), transparent;
+    }
+  }
+
+  [data-slot="scroll-shadow"][data-orientation="horizontal"][data-right-scroll="true"] {
+    --scroll-linear-gradient: 90deg, #000 calc(100% - var(--scroll-shadow-size)), transparent;
+
+    &:dir(rtl) {
+      --scroll-linear-gradient: 270deg, #000 calc(100% - var(--scroll-shadow-size)), transparent;
+    }
+  }
+
+  [data-slot="scroll-shadow"][data-orientation="horizontal"][data-left-right-scroll="true"] {
+    --scroll-linear-gradient:
+      to right, #000, #000, transparent 0, #000 var(--scroll-shadow-size),
+      #000 calc(100% - var(--scroll-shadow-size)), transparent;
+  }
+
+  /* Scroll-driven fade: correct from the first paint, no measurement needed. A container
+     without overflow has an inactive timeline, leaving both fades at 0px (mask is a no-op).
+     The selector repeats the attribute so it outranks the attribute-driven gradients above. */
+  @supports (animation-timeline: scroll(self)) {
+    [data-slot="scroll-shadow"][data-slot="scroll-shadow"][data-scroll-shadow-mode="auto"] {
+      animation:
+        scroll-shadow-start-fade linear both,
+        scroll-shadow-end-fade linear both;
+      animation-range:
+        var(--scroll-shadow-offset) calc(var(--scroll-shadow-offset) + var(--scroll-shadow-size)),
+        calc(100% - var(--scroll-shadow-size) - var(--scroll-shadow-offset))
+          calc(100% - var(--scroll-shadow-offset));
+    }
+
+    [data-slot="scroll-shadow"][data-slot="scroll-shadow"][data-orientation="vertical"][data-scroll-shadow-mode="auto"] {
+      animation-timeline: scroll(self block), scroll(self block);
+      --scroll-linear-gradient:
+        180deg, transparent 0, #000 var(--scroll-shadow-start-fade),
+        #000 calc(100% - var(--scroll-shadow-end-fade)), transparent 100%;
+    }
+
+    [data-slot="scroll-shadow"][data-slot="scroll-shadow"][data-orientation="horizontal"][data-scroll-shadow-mode="auto"] {
+      animation-timeline: scroll(self inline), scroll(self inline);
+      --scroll-linear-gradient:
+        90deg, transparent 0, #000 var(--scroll-shadow-start-fade),
+        #000 calc(100% - var(--scroll-shadow-end-fade)), transparent 100%;
+
+      &:dir(rtl) {
+        --scroll-linear-gradient:
+          270deg, transparent 0, #000 var(--scroll-shadow-start-fade),
+          #000 calc(100% - var(--scroll-shadow-end-fade)), transparent 100%;
+      }
+    }
+  }
+}

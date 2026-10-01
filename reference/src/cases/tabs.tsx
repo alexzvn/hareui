@@ -121,3 +121,28 @@ cases['tabs-no-separator'] = () => (
     <Panels />
   </Tabs>
 )
+
+const overflowItems = ['Overview', 'Analytics', 'Reports', 'Performance', 'Engagement', 'Audience', 'Acquisition', 'Retention', 'Settings']
+
+function OverflowTabs({ orientation }: { orientation?: 'vertical' }) {
+  return (
+    <Tabs className={orientation ? 'h-full' : undefined} orientation={orientation}>
+      <Tabs.ListContainer>
+        <Tabs.List aria-label="Overflow options">
+          {overflowItems.map(label => (
+            <Tabs.Tab key={label} id={label.toLowerCase()}>
+              {label}
+              <Tabs.Indicator />
+            </Tabs.Tab>
+          ))}
+        </Tabs.List>
+      </Tabs.ListContainer>
+      {overflowItems.map(label => (
+        <Tabs.Panel key={label} id={label.toLowerCase()}>{`${label} panel content.`}</Tabs.Panel>
+      ))}
+    </Tabs>
+  )
+}
+
+cases['tabs-overflow'] = () => <div className="w-[400px]"><OverflowTabs /></div>
+cases['tabs-overflow-vertical'] = () => <div className="h-[160px]"><OverflowTabs orientation="vertical" /></div>

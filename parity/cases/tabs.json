@@ -45,5 +45,15 @@
     "id": "tabs-no-separator",
     "component": "tabs",
     "actions": []
+  },
+  {
+    "id": "tabs-overflow",
+    "component": "tabs",
+    "actions": []
+  },
+  {
+    "id": "tabs-overflow-vertical",
+    "component": "tabs",
+    "actions": []
   }
 ]

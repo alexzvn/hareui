@@ -1,6 +1,6 @@
 ---
 title: Tabs
-description: Tabbed navigation with a sliding selection indicator
+description: Tabs organize content into multiple sections and allow users to navigate between them.
 links:
   reka: tabs
   source: Tabs.vue
@@ -20,13 +20,13 @@ import { Tabs } from 'herouse'
 
 ## Anatomy
 
-Tabs renders a list container wrapping the tab list, one trigger per `items` entry (each
-with a separator and the shared sliding indicator), followed by a panel for the selected
+Tabs renders a list container wrapping the tab list, one trigger per `items` entry (plus an
+optional separator, and the shared sliding indicator), followed by a panel for the selected
 item.
 
 ```vue
 <template>
-  <Tabs :items="items" default-value="…">
+  <Tabs :items="items" default-value="…" separator> <!-- separator: optional -->
     <template #tab="{ item, index, selected }" /> <!-- replaces item.label -->
     <template #content="{ item, index }" />       <!-- fallback panel content -->
     <template #[item.slot]="{ item, index }" />   <!-- per-item panel content -->
@@ -34,34 +34,58 @@ item.
 </template>
 ```
 
-HeroUI's overflow scroll buttons (`Tabs.ListContainer`'s `ScrollShadow` wrapper and the
-previous/next scroll arrows) are not ported — the tab list simply wraps.
+The tab list sits in a `scroller` (`[data-slot="scroll-shadow"]`). When the tabs overflow it, the
+edges fade and previous/next chevrons (`scrollPrev` / `scrollNext`) appear.
 
 | `ui` key | `data-slot` | Element |
 |---|---|---|
 | `base` | `tabs` | root element |
 | `tabListContainer` | `tabs-list-container` | wrapper around the tab list |
+| `scroller` | `scroll-shadow` | scroll container around the tab list, fades overflowing edges |
+| `scrollPrev` | – | chevron that scrolls to previous tabs (shown only when there are any) |
+| `scrollNext` | – | chevron that scrolls to next tabs (shown only when there are any) |
 | `tabList` | `tabs-list` | the `TabsList` |
 | `tab` | `tabs-tab` | per-item `TabsTrigger` |
-| `tabIndicator` | `tabs-indicator` | sliding selection pill |
-| `separator` | `tabs-separator` | divider rendered inside each tab |
+| `tabIndicator` | `tabs-indicator` | sliding selection indicator, positioned via `--tabs-indicator-{x,y,width,height}` |
+| `separator` | `tabs-separator` | divider inside every tab (iff `separator`); hidden on the selected tab and the one after it |
 | `tabPanel` | `tabs-panel` | the selected item's `TabsContent` |
 
 ## Examples
 
-### Secondary Variant
+### Vertical
 
-<ComponentPreview name="tabs/secondary" />
+<ComponentPreview name="tabs/vertical" />
+
+### Overflow
+
+When the tab list exceeds the available space, the edges fade and scroll chevrons appear so users
+can navigate the hidden tabs. This works the same way for both horizontal and vertical orientations.
+
+<ComponentPreview name="tabs/overflow" />
 
 ### Disabled Tab
 
 <ComponentPreview name="tabs/disabled" />
 
-### Vertical Orientation
+### With Separator
 
-<ComponentPreview name="tabs/vertical" />
+Set `separator` to display separator lines between tabs.
 
-### Vertical Alignment
+<ComponentPreview name="tabs/with-separator" />
+
+### Secondary Variant
+
+<ComponentPreview name="tabs/secondary" />
+
+### Secondary Variant Vertical
+
+<ComponentPreview name="tabs/secondary-vertical" />
+
+### Alignment
+
+Tab content is centered by default. Use `align` to align it to the `start` or `end` instead, which is
+especially useful for vertical, sidebar-style navigation. The tabs can still be overridden with
+`:ui="{ tab: '…' }"`.
 
 <ComponentPreview name="tabs/vertical-alignment" />
 
@@ -69,15 +93,31 @@ previous/next scroll arrows) are not ported — the tab list simply wraps.
 
 ### Tailwind CSS
 
-Use `:ui` overrides to restyle the list, tabs, and indicator.
-
 <ComponentPreview name="tabs/custom-styles" />
 
 ### Global Configuration
 
+To customize the Tabs classes for the whole app, extend the `tabs` theme in `createHeroUse`:
+
 ```ts
 app.use(createHeroUse({
-  ui: { tabs: { slots: { tab: 'rounded-lg' } } },
+  ui: {
+    tabs: {
+      slots: {
+        tabList: 'rounded-xl border border-border bg-surface p-1',
+        tab: 'rounded-lg font-medium',
+        tabIndicator: 'rounded-lg bg-foreground shadow-sm',
+      },
+      variants: {
+        variant: {
+          secondary: {
+            tabList: 'border-b border-border bg-transparent p-0',
+            tabIndicator: 'rounded-none bg-accent',
+          },
+        },
+      },
+    },
+  },
 }))
 ```
 
@@ -87,21 +127,40 @@ app.use(createHeroUse({
 
 - `base` → `[data-slot="tabs"]` – root container (`flex`, column in horizontal orientation)
 - `tabListContainer` → `[data-slot="tabs-list-container"]` – rounded background behind the list
+- `scroller` → `[data-slot="scroll-shadow"]` – scroll area around the list (scrollbar hidden); fades
+  overflowing edges and sets `data-left-scroll` / `data-right-scroll` (`data-top-scroll` /
+  `data-bottom-scroll` when vertical, `data-left-right-scroll` / `data-top-bottom-scroll` when both)
+- `scrollPrev` / `scrollNext` – chevron buttons, shown only while there's hidden content on that side
 - `tabList` → `[data-slot="tabs-list"]` – the row/column of triggers
 - `tab` → `[data-slot="tabs-tab"]` – one trigger per item
-- `tabIndicator` → `[data-slot="tabs-indicator"]` – sliding pill positioned via Reka's
-  `--reka-tabs-indicator-*` CSS variables
-- `separator` → `[data-slot="tabs-separator"]` – divider inside each tab, hidden on the
-  selected tab and the one following it
+- `separator` → `[data-slot="tabs-separator"]` – divider rendered in every tab when `separator` is
+  set; hidden (`opacity-0`) on the selected tab and the one following it
 - `tabPanel` → `[data-slot="tabs-panel"]` – only the selected item's panel is mounted
+- `tabIndicator` → `[data-slot="tabs-indicator"]` – sliding selection indicator; its box comes from the
+  selected tab's `getBoundingClientRect()` via `--tabs-indicator-x/-y/-width/-height`
+
+#### Orientation Attributes
+
+- `[data-orientation="horizontal"]` – horizontal tab layout (default)
+- `[data-orientation="vertical"]` – vertical tab layout
+
+#### Variants
+
+- `variant="secondary"` – underline indicator instead of the filled pill
+
+#### Alignment
+
+- `align="start"` – aligns tab content to the start
+- `align="end"` – aligns tab content to the end
 
 ### Interactive States
 
 Tabs sets these data attributes (from Reka UI):
 
 - **Selected**: `[data-state="active"]` on `[data-slot="tabs-tab"]`
+- **Hover**: `:hover`
+- **Focus**: `:focus-visible`
 - **Disabled**: `[data-disabled]` on `[data-slot="tabs-tab"]` (from `item.disabled`)
-- **Orientation**: `[data-orientation="horizontal"|"vertical"]` on the root, list, and tabs
 
 ## API Reference
 
@@ -113,11 +172,6 @@ Tabs sets these data attributes (from Reka UI):
 
 <ApiTable component="Tabs" kind="slots" />
 
-## Accessibility
+### Emits
 
-- Built on Reka UI's [Tabs](https://reka-ui.com/docs/components/tabs) primitive, which
-  implements the [WAI-ARIA Tabs pattern](https://www.w3.org/WAI/ARIA/apg/patterns/tabs/)
-- Keyboard: arrow keys move selection between tabs, following `orientation`;
-  <kbd>Home</kbd>/<kbd>End</kbd> jump to the first/last tab; <kbd>Tab</kbd> moves focus
-  into and out of the tab list as a single stop
-- Disabled tabs (`item.disabled`) are skipped by keyboard navigation
+<ApiTable component="Tabs" kind="emits" />

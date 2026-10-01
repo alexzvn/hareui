@@ -167,32 +167,83 @@ function measureIndicator() {
   }
 }
 
+// HeroUI's Tabs.ListContainer wraps the list in a ScrollShadow (size 64) and shows prev/next
+// chevrons while there's hidden content on that side. The fade itself is CSS (scroll-driven,
+// see styles/scroll-shadow.css); these flags drive the chevrons and the no-timeline fallback.
+const SCROLL_SHADOW_SIZE = 64
+const scrollerRef = ref<HTMLElement | null>(null)
+const scrollState = ref({ before: false, after: false })
+
+function measureScroll() {
+  const el = scrollerRef.value
+  if (!el)
+    return
+  const vertical = props.orientation === 'vertical'
+  const start = vertical ? el.scrollTop : Math.abs(el.scrollLeft)
+  const size = vertical ? el.scrollHeight : el.scrollWidth
+  const client = vertical ? el.clientHeight : el.clientWidth
+  const before = start > 0
+  const after = start + client < size - 1
+  if (before !== scrollState.value.before || after !== scrollState.value.after)
+    scrollState.value = { before, after }
+}
+
+const scrollAttrs = computed(() => {
+  const { before, after } = scrollState.value
+  const [start, end] = props.orientation === 'vertical' ? ['top', 'bottom'] : ['left', 'right']
+  return before && after
+    ? { [`data-${start}-${end}-scroll`]: 'true' }
+    : { [`data-${start}-scroll`]: String(before), [`data-${end}-scroll`]: String(after) }
+})
+
+// Scrolls 80% of the visible size towards `direction`, clamped to the scroll range (RTL-aware).
+function scrollByPage(direction: 1 | -1) {
+  const el = scrollerRef.value
+  if (!el)
+    return
+  const vertical = props.orientation === 'vertical'
+  const size = vertical ? el.clientHeight : el.clientWidth
+  const maxScroll = Math.max(0, (vertical ? el.scrollHeight : el.scrollWidth) - size)
+  const rtl = !vertical && getComputedStyle(el).direction === 'rtl'
+  const current = vertical ? el.scrollTop : el.scrollLeft
+  const next = Math.min(rtl ? 0 : maxScroll, Math.max(rtl ? -maxScroll : 0, current + direction * size * 0.8 * (rtl ? -1 : 1)))
+  if (next !== current)
+    el.scrollTo({ behavior: 'smooth', [vertical ? 'top' : 'left']: next })
+}
+
+function measureAll() {
+  measureIndicator()
+  measureScroll()
+}
+
 function observeGeometry() {
   const listEl = listRef.value?.$el
   resizeObserver?.disconnect()
   if (!listEl)
     return
-  resizeObserver = new ResizeObserver(() => measureIndicator())
+  resizeObserver = new ResizeObserver(() => measureAll())
   resizeObserver.observe(listEl)
+  if (scrollerRef.value)
+    resizeObserver.observe(scrollerRef.value)
   listEl.querySelectorAll('[data-slot="tabs-tab"]').forEach(el => resizeObserver!.observe(el))
 }
 
 onMounted(() => {
   observeGeometry()
-  measureIndicator()
+  measureAll()
   requestAnimationFrame(() => { indicatorReady.value = true })
-  window.addEventListener('resize', measureIndicator)
+  window.addEventListener('resize', measureAll)
 })
 
 onBeforeUnmount(() => {
   resizeObserver?.disconnect()
-  window.removeEventListener('resize', measureIndicator)
+  window.removeEventListener('resize', measureAll)
 })
 
 watch([selectedValue, () => props.items, () => props.orientation], async () => {
   await nextTick()
   observeGeometry()
-  measureIndicator()
+  measureAll()
 }, { deep: true })
 </script>
 
@@ -206,7 +257,17 @@ watch([selectedValue, () => props.items, () => props.orientation], async () => {
     :class="ui.base({ class: [props.ui?.base, props.class] })"
   >
     <div :class="ui.tabListContainer({ class: props.ui?.tabListContainer })" data-slot="tabs-list-container">
-      <div :class="ui.scroller({ class: props.ui?.scroller })" data-slot="scroll-shadow">
+      <div
+        ref="scrollerRef"
+        :class="ui.scroller({ class: props.ui?.scroller })"
+        :data-orientation="orientation"
+        data-scroll-shadow-mode="auto"
+        :data-scroll-shadow-size="SCROLL_SHADOW_SIZE"
+        data-slot="scroll-shadow"
+        :style="{ '--scroll-shadow-size': `${SCROLL_SHADOW_SIZE}px`, '--scroll-shadow-offset': '0px', '--scroll-shadow-scrollbar-size': '0px' }"
+        v-bind="scrollAttrs"
+        @scroll.passive="measureScroll"
+      >
         <TabsList ref="listRef" :class="ui.tabList({ class: props.ui?.tabList })" data-slot="tabs-list">
         <template v-for="entry in flatEntries" :key="entry.key">
           <div
@@ -237,6 +298,30 @@ watch([selectedValue, () => props.items, () => props.orientation], async () => {
         </template>
         </TabsList>
       </div>
+      <button
+        :aria-label="orientation === 'vertical' ? 'Scroll tabs up' : 'Scroll tabs left'"
+        :class="ui.scrollPrev({ class: [props.ui?.scrollPrev, scrollState.before ? 'inline-flex' : undefined] })"
+        tabindex="-1"
+        type="button"
+        @click="scrollByPage(-1)"
+      >
+        <svg aria-hidden="true" fill="none" height="16" role="presentation" viewBox="0 0 16 16" width="16" xmlns="http://www.w3.org/2000/svg">
+          <path v-if="orientation === 'vertical'" clip-rule="evenodd" d="M13.03 10.53a.75.75 0 0 1-1.06 0L8 6.56l-3.97 3.97a.75.75 0 0 1-1.06-1.06l4.5-4.5a.75.75 0 0 1 1.06 0l4.5 4.5a.75.75 0 0 1 0 1.06" fill="currentColor" fill-rule="evenodd" />
+          <path v-else clip-rule="evenodd" d="M10.53 2.97a.75.75 0 0 1 0 1.06L6.56 8l3.97 3.97a.75.75 0 1 1-1.06 1.06l-4.5-4.5a.75.75 0 0 1 0-1.06l4.5-4.5a.75.75 0 0 1 1.06 0" fill="currentColor" fill-rule="evenodd" />
+        </svg>
+      </button>
+      <button
+        :aria-label="orientation === 'vertical' ? 'Scroll tabs down' : 'Scroll tabs right'"
+        :class="ui.scrollNext({ class: [props.ui?.scrollNext, scrollState.after ? 'inline-flex' : undefined] })"
+        tabindex="-1"
+        type="button"
+        @click="scrollByPage(1)"
+      >
+        <svg aria-hidden="true" fill="none" height="16" role="presentation" viewBox="0 0 16 16" width="16" xmlns="http://www.w3.org/2000/svg">
+          <path v-if="orientation === 'vertical'" clip-rule="evenodd" d="M2.97 5.47a.75.75 0 0 1 1.06 0L8 9.44l3.97-3.97a.75.75 0 1 1 1.06 1.06l-4.5 4.5a.75.75 0 0 1-1.06 0l-4.5-4.5a.75.75 0 0 1 0-1.06" fill="currentColor" fill-rule="evenodd" />
+          <path v-else clip-rule="evenodd" d="M5.47 2.97a.75.75 0 0 1 1.06 0l4.5 4.5a.75.75 0 0 1 0 1.06l-4.5 4.5a.75.75 0 1 1-1.06-1.06L9.44 8 5.47 4.03a.75.75 0 0 1 0-1.06Z" fill="currentColor" fill-rule="evenodd" />
+        </svg>
+      </button>
     </div>
     <TabsContent
       v-if="visiblePanel"

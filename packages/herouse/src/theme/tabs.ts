@@ -1,10 +1,21 @@
 // Translated from @heroui/styles components/tabs.css
-// Tabs.ListContainer scroll buttons (ScrollShadow-based overflow arrows) are not ported.
+// Scroll fade: styles/scroll-shadow.css (keyed on the scroller's data-slot="scroll-shadow").
 export default {
   slots: {
     base: 'flex gap-2 data-[orientation=horizontal]:flex-col data-[orientation=vertical]:flex-row',
     tabListContainer: 'relative bg-default [border-radius:calc(var(--radius)*2.5)]',
     scroller: 'relative',
+    // Overflow chevrons; Tabs.vue adds `inline-flex` while there's hidden content on that side.
+    scrollPrev: [
+      'absolute z-2 hidden size-4 cursor-(--cursor-interactive) items-center justify-center rounded-full border-0 bg-transparent p-0 text-foreground outline-none',
+      '[transition:opacity_150ms_var(--ease-smooth)] motion-reduce:transition-none',
+      '[@media(hover:hover)]:hover:opacity-70 focus-visible:status-focused',
+    ],
+    scrollNext: [
+      'absolute z-2 hidden size-4 cursor-(--cursor-interactive) items-center justify-center rounded-full border-0 bg-transparent p-0 text-foreground outline-none',
+      '[transition:opacity_150ms_var(--ease-smooth)] motion-reduce:transition-none',
+      '[@media(hover:hover)]:hover:opacity-70 focus-visible:status-focused',
+    ],
     tabList: 'isolate inline-flex p-1 data-[orientation=horizontal]:w-max data-[orientation=horizontal]:min-w-full data-[orientation=horizontal]:flex-row data-[orientation=vertical]:flex-col data-[orientation=vertical]:gap-1',
     tab: [
       'relative flex h-8 w-full items-center justify-center rounded-3xl px-4 text-center text-sm font-medium text-muted outline-none no-highlight',
@@ -47,8 +58,16 @@ export default {
       },
     },
     orientation: {
-      horizontal: { scroller: 'overflow-x-auto scrollbar-none' },
-      vertical: { scroller: 'overflow-y-auto scrollbar-none h-full' },
+      horizontal: {
+        scroller: 'overflow-x-auto scrollbar-none',
+        scrollPrev: 'start-1 top-1/2 -translate-y-1/2 rtl:rotate-180',
+        scrollNext: 'end-1 top-1/2 -translate-y-1/2 rtl:rotate-180',
+      },
+      vertical: {
+        scroller: 'overflow-y-auto scrollbar-none h-full',
+        scrollPrev: 'top-1 left-1/2 -translate-x-1/2',
+        scrollNext: 'bottom-1 left-1/2 -translate-x-1/2',
+      },
     },
   },
   compoundVariants: [
