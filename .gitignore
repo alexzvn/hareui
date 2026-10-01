@@ -1,0 +1,10 @@
+node_modules
+dist
+*.tsbuildinfo
+docs/.vitepress/cache
+docs/.vitepress/dist
+docs/.vitepress/api
+parity/out
+.DS_Store
+# scratch scripts
+.*.ts

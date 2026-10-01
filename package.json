@@ -1,0 +1,28 @@
+{
+  "private": true,
+  "name": "herouse-monorepo",
+  "type": "module",
+  "workspaces": [
+    "packages/*",
+    "playground",
+    "reference",
+    "docs"
+  ],
+  "scripts": {
+    "dev": "bun run --cwd playground dev",
+    "build": "bun run --cwd packages/herouse build",
+    "test": "bun run --cwd packages/herouse test",
+    "typecheck": "bun run --cwd packages/herouse typecheck",
+    "reference": "bun run --cwd reference dev",
+    "parity": "bun parity/compare.ts",
+    "docs:dev": "bun run --cwd docs dev",
+    "docs:build": "bun run --cwd docs build"
+  },
+  "devDependencies": {
+    "puppeteer": "^25.12.0",
+    "pixelmatch": "^7.2.0",
+    "pngjs": "^7.0.0",
+    "@types/pngjs": "^6.0.5",
+    "@types/bun": "latest"
+  }
+}
