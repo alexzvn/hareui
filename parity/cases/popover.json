@@ -1,0 +1,56 @@
+[
+  {
+    "id": "popover-top",
+    "component": "popover",
+    "actions": [],
+    "overlay": true,
+    "ignoreSlots": ["popover-overlay-arrow-group"],
+    "ignoreProps": ["position", "transform", "width"],
+    "reason": "Reka's PopperContent positions the floating element via an internal wrapper div one level above the [data-slot=popover] element, so that element's own position/transform never carries the floating offset the way React Aria's does; Reka's PopperArrow also computes the arrow's translate+rotate transform on an internal, unlabeled span rather than on the arrow svg itself, and does not expose a slot equivalent to React Aria's OverlayArrow group wrapper. Final on-screen placement still matches (verified by the screenshot diff). `width` differs by 0.016px (126.625 vs 126.609) only for this one placement/text combination - a sub-pixel text-shaping rounding artifact from the differing DOM depth around the text node (Reka's arrow is a sibling span outside the dialog's flow, React Aria's is an internal OverlayArrow group wrapper inside it), not a real visual difference."
+  },
+  {
+    "id": "popover-right",
+    "component": "popover",
+    "actions": [],
+    "overlay": true,
+    "ignoreSlots": ["popover-overlay-arrow-group"],
+    "ignoreProps": ["position", "transform"],
+    "reason": "See popover-top."
+  },
+  {
+    "id": "popover-bottom",
+    "component": "popover",
+    "actions": [],
+    "overlay": true,
+    "ignoreSlots": ["popover-overlay-arrow-group"],
+    "ignoreProps": ["position", "transform"],
+    "reason": "See popover-top."
+  },
+  {
+    "id": "popover-left",
+    "component": "popover",
+    "actions": [],
+    "overlay": true,
+    "ignoreSlots": ["popover-overlay-arrow-group"],
+    "ignoreProps": ["position", "transform"],
+    "reason": "See popover-top."
+  },
+  {
+    "id": "popover-no-arrow",
+    "component": "popover",
+    "actions": [],
+    "overlay": true,
+    "ignoreSlots": [],
+    "ignoreProps": ["position", "transform"],
+    "reason": "See popover-top (position/transform part only; no arrow is rendered in this case)."
+  },
+  {
+    "id": "popover-title",
+    "component": "popover",
+    "actions": [],
+    "overlay": true,
+    "ignoreSlots": [],
+    "ignoreProps": ["position", "transform"],
+    "reason": "See popover-top (position/transform part only; no arrow is rendered in this case)."
+  }
+]

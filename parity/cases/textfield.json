@@ -1,0 +1,56 @@
+[
+  {
+    "id": "textfield-default",
+    "component": "textfield",
+    "actions": [
+      "hover",
+      "focus"
+    ],
+    "ignoreSlots": [],
+    "target": "[data-slot=input]"
+  },
+  {
+    "id": "textfield-secondary",
+    "component": "textfield",
+    "actions": [
+      "focus"
+    ],
+    "ignoreSlots": [],
+    "target": "[data-slot=input]"
+  },
+  {
+    "id": "textfield-required",
+    "component": "textfield",
+    "actions": [],
+    "ignoreSlots": []
+  },
+  {
+    "id": "textfield-disabled",
+    "component": "textfield",
+    "actions": [],
+    "ignoreSlots": []
+  },
+  {
+    "id": "textfield-invalid",
+    "component": "textfield",
+    "actions": [
+      "focus"
+    ],
+    "ignoreSlots": [],
+    "target": "[data-slot=input]"
+  },
+  {
+    "id": "textfield-full-width",
+    "component": "textfield",
+    "actions": [],
+    "ignoreSlots": []
+  },
+  {
+    "id": "textfield-readonly",
+    "component": "textfield",
+    "actions": [
+      "focus"
+    ],
+    "ignoreSlots": []
+  }
+]

@@ -1,0 +1,18 @@
+[
+  {
+    "id": "close-button-default",
+    "component": "close-button",
+    "actions": [
+      "hover",
+      "focus",
+      "press"
+    ],
+    "ignoreSlots": []
+  },
+  {
+    "id": "close-button-disabled",
+    "component": "close-button",
+    "actions": [],
+    "ignoreSlots": []
+  }
+]

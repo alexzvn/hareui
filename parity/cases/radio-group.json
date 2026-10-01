@@ -1,0 +1,115 @@
+[
+  {
+    "id": "radio-group-primary",
+    "component": "radio-group",
+    "actions": [
+      "focus"
+    ],
+    "ignoreSlots": []
+  },
+  {
+    "id": "radio-group-primary-item",
+    "component": "radio-group",
+    "actions": [
+      "hover",
+      "press"
+    ],
+    "ignoreSlots": [],
+    "target": "#case [data-slot=radio-content]"
+  },
+  {
+    "id": "radio-group-primary-selected-item",
+    "component": "radio-group",
+    "actions": [
+      "hover",
+      "press"
+    ],
+    "ignoreSlots": [],
+    "target": "#case [data-slot=radio]:nth-child(2) [data-slot=radio-content]"
+  },
+  {
+    "id": "radio-group-secondary",
+    "component": "radio-group",
+    "actions": [
+      "focus"
+    ],
+    "ignoreSlots": []
+  },
+  {
+    "id": "radio-group-secondary-item",
+    "component": "radio-group",
+    "actions": [
+      "hover",
+      "press"
+    ],
+    "ignoreSlots": [],
+    "target": "#case [data-slot=radio-content]"
+  },
+  {
+    "id": "radio-group-secondary-selected-item",
+    "component": "radio-group",
+    "actions": [
+      "hover",
+      "press"
+    ],
+    "ignoreSlots": [],
+    "target": "#case [data-slot=radio]:nth-child(2) [data-slot=radio-content]"
+  },
+  {
+    "id": "radio-group-horizontal",
+    "component": "radio-group",
+    "actions": [],
+    "ignoreSlots": []
+  },
+  {
+    "id": "radio-group-with-label",
+    "component": "radio-group",
+    "actions": [],
+    "ignoreSlots": []
+  },
+  {
+    "id": "radio-group-required",
+    "component": "radio-group",
+    "actions": [],
+    "ignoreSlots": []
+  },
+  {
+    "id": "radio-group-disabled",
+    "component": "radio-group",
+    "actions": [],
+    "ignoreSlots": []
+  },
+  {
+    "id": "radio-group-item-disabled",
+    "component": "radio-group",
+    "actions": [],
+    "ignoreSlots": []
+  },
+  {
+    "id": "radio-group-invalid",
+    "component": "radio-group",
+    "actions": [],
+    "ignoreSlots": []
+  },
+  {
+    "id": "radio-group-invalid-selected",
+    "component": "radio-group",
+    "actions": [],
+    "ignoreSlots": []
+  },
+  {
+    "id": "radio-group-disabled-with-label",
+    "component": "radio-group",
+    "actions": [],
+    "ignoreSlots": []
+  },
+  {
+    "id": "radio-group-readonly",
+    "component": "radio-group",
+    "actions": [
+      "hover",
+      "press"
+    ],
+    "ignoreSlots": []
+  }
+]

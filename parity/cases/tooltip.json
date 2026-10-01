@@ -1,0 +1,44 @@
+[
+  {
+    "id": "tooltip-top",
+    "component": "tooltip",
+    "actions": [],
+    "overlay": true,
+    "ignoreSlots": ["tooltip-arrow"]
+  },
+  {
+    "id": "tooltip-right",
+    "component": "tooltip",
+    "actions": [],
+    "overlay": true,
+    "ignoreSlots": ["tooltip-arrow"]
+  },
+  {
+    "id": "tooltip-bottom",
+    "component": "tooltip",
+    "actions": [],
+    "overlay": true,
+    "ignoreSlots": ["tooltip-arrow"]
+  },
+  {
+    "id": "tooltip-left",
+    "component": "tooltip",
+    "actions": [],
+    "overlay": true,
+    "ignoreSlots": ["tooltip-arrow"]
+  },
+  {
+    "id": "tooltip-no-arrow",
+    "component": "tooltip",
+    "actions": [],
+    "overlay": true,
+    "ignoreSlots": []
+  },
+  {
+    "id": "tooltip-text",
+    "component": "tooltip",
+    "actions": [],
+    "overlay": true,
+    "ignoreSlots": []
+  }
+]

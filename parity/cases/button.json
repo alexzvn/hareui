@@ -1,0 +1,130 @@
+[
+  {
+    "id": "button-primary",
+    "component": "button",
+    "actions": [
+      "hover",
+      "focus",
+      "press"
+    ],
+    "ignoreSlots": []
+  },
+  {
+    "id": "button-secondary",
+    "component": "button",
+    "actions": [
+      "hover",
+      "focus",
+      "press"
+    ],
+    "ignoreSlots": []
+  },
+  {
+    "id": "button-tertiary",
+    "component": "button",
+    "actions": [
+      "hover",
+      "focus",
+      "press"
+    ],
+    "ignoreSlots": []
+  },
+  {
+    "id": "button-ghost",
+    "component": "button",
+    "actions": [
+      "hover",
+      "focus",
+      "press"
+    ],
+    "ignoreSlots": []
+  },
+  {
+    "id": "button-outline",
+    "component": "button",
+    "actions": [
+      "hover",
+      "focus",
+      "press"
+    ],
+    "ignoreSlots": []
+  },
+  {
+    "id": "button-danger",
+    "component": "button",
+    "actions": [
+      "hover",
+      "focus",
+      "press"
+    ],
+    "ignoreSlots": []
+  },
+  {
+    "id": "button-danger-soft",
+    "component": "button",
+    "actions": [
+      "hover",
+      "focus",
+      "press"
+    ],
+    "ignoreSlots": []
+  },
+  {
+    "id": "button-size-sm",
+    "component": "button",
+    "actions": [
+      "press"
+    ],
+    "ignoreSlots": []
+  },
+  {
+    "id": "button-size-lg",
+    "component": "button",
+    "actions": [
+      "press"
+    ],
+    "ignoreSlots": []
+  },
+  {
+    "id": "button-full-width",
+    "component": "button",
+    "actions": [],
+    "ignoreSlots": []
+  },
+  {
+    "id": "button-icon-only-sm",
+    "component": "button",
+    "actions": [],
+    "ignoreSlots": []
+  },
+  {
+    "id": "button-icon-only-md",
+    "component": "button",
+    "actions": [],
+    "ignoreSlots": []
+  },
+  {
+    "id": "button-icon-only-lg",
+    "component": "button",
+    "actions": [],
+    "ignoreSlots": []
+  },
+  {
+    "id": "button-with-icon",
+    "component": "button",
+    "actions": [],
+    "ignoreSlots": []
+  },
+  {
+    "id": "button-disabled",
+    "component": "button",
+    "actions": [],
+    "ignoreSlots": []
+  },
+  {
+    "id": "button-pending",
+    "component": "button",
+    "actions": [],
+    "ignoreSlots": []
+  }
+]

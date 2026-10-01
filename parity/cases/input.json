@@ -1,0 +1,66 @@
+[
+  {
+    "id": "input-primary",
+    "component": "input",
+    "actions": [
+      "hover",
+      "focus",
+      "press"
+    ],
+    "ignoreSlots": []
+  },
+  {
+    "id": "input-secondary",
+    "component": "input",
+    "actions": [
+      "hover",
+      "focus",
+      "press"
+    ],
+    "ignoreSlots": []
+  },
+  {
+    "id": "input-full-width",
+    "component": "input",
+    "actions": [],
+    "ignoreSlots": []
+  },
+  {
+    "id": "input-disabled",
+    "component": "input",
+    "actions": [
+      "hover"
+    ],
+    "ignoreSlots": []
+  },
+  {
+    "id": "input-invalid",
+    "component": "input",
+    "actions": [
+      "focus"
+    ],
+    "ignoreSlots": []
+  },
+  {
+    "id": "input-secondary-invalid",
+    "component": "input",
+    "actions": [
+      "focus"
+    ],
+    "ignoreSlots": []
+  },
+  {
+    "id": "input-value",
+    "component": "input",
+    "actions": [],
+    "ignoreSlots": []
+  },
+  {
+    "id": "input-readonly-default-value",
+    "component": "input",
+    "actions": [
+      "focus"
+    ],
+    "ignoreSlots": []
+  }
+]

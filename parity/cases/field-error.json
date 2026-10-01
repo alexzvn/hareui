@@ -1,0 +1,8 @@
+[
+  {
+    "id": "field-error-default",
+    "component": "field-error",
+    "actions": [],
+    "ignoreSlots": []
+  }
+]

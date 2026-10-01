@@ -1,0 +1,80 @@
+[
+  {
+    "id": "avatar-accent",
+    "component": "avatar",
+    "actions": [],
+    "ignoreSlots": []
+  },
+  {
+    "id": "avatar-danger",
+    "component": "avatar",
+    "actions": [],
+    "ignoreSlots": []
+  },
+  {
+    "id": "avatar-default",
+    "component": "avatar",
+    "actions": [],
+    "ignoreSlots": []
+  },
+  {
+    "id": "avatar-success",
+    "component": "avatar",
+    "actions": [],
+    "ignoreSlots": []
+  },
+  {
+    "id": "avatar-warning",
+    "component": "avatar",
+    "actions": [],
+    "ignoreSlots": []
+  },
+  {
+    "id": "avatar-soft-accent",
+    "component": "avatar",
+    "actions": [],
+    "ignoreSlots": []
+  },
+  {
+    "id": "avatar-soft-danger",
+    "component": "avatar",
+    "actions": [],
+    "ignoreSlots": []
+  },
+  {
+    "id": "avatar-soft-default",
+    "component": "avatar",
+    "actions": [],
+    "ignoreSlots": []
+  },
+  {
+    "id": "avatar-soft-success",
+    "component": "avatar",
+    "actions": [],
+    "ignoreSlots": []
+  },
+  {
+    "id": "avatar-soft-warning",
+    "component": "avatar",
+    "actions": [],
+    "ignoreSlots": []
+  },
+  {
+    "id": "avatar-size-sm",
+    "component": "avatar",
+    "actions": [],
+    "ignoreSlots": []
+  },
+  {
+    "id": "avatar-size-lg",
+    "component": "avatar",
+    "actions": [],
+    "ignoreSlots": []
+  },
+  {
+    "id": "avatar-image",
+    "component": "avatar",
+    "actions": [],
+    "ignoreSlots": []
+  }
+]

@@ -1,0 +1,18 @@
+[
+  { "id": "modal-size-xs", "component": "modal", "actions": [], "overlay": true, "ignoreSlots": [] },
+  { "id": "modal-size-sm", "component": "modal", "actions": [], "overlay": true, "ignoreSlots": [] },
+  { "id": "modal-size-md", "component": "modal", "actions": [], "overlay": true, "ignoreSlots": [] },
+  { "id": "modal-size-lg", "component": "modal", "actions": [], "overlay": true, "ignoreSlots": [] },
+  { "id": "modal-size-cover", "component": "modal", "actions": [], "overlay": true, "ignoreSlots": [] },
+  { "id": "modal-size-full", "component": "modal", "actions": [], "overlay": true, "ignoreSlots": [] },
+  { "id": "modal-variant-opaque", "component": "modal", "actions": [], "overlay": true, "ignoreSlots": [] },
+  { "id": "modal-variant-blur", "component": "modal", "actions": [], "overlay": true, "ignoreSlots": [] },
+  { "id": "modal-variant-transparent", "component": "modal", "actions": [], "overlay": true, "ignoreSlots": [] },
+  { "id": "modal-placement-auto", "component": "modal", "actions": [], "overlay": true, "ignoreSlots": [] },
+  { "id": "modal-placement-top", "component": "modal", "actions": [], "overlay": true, "ignoreSlots": [] },
+  { "id": "modal-placement-center", "component": "modal", "actions": [], "overlay": true, "ignoreSlots": [] },
+  { "id": "modal-placement-bottom", "component": "modal", "actions": [], "overlay": true, "ignoreSlots": [] },
+  { "id": "modal-scroll-inside", "component": "modal", "actions": [], "overlay": true, "ignoreSlots": [] },
+  { "id": "modal-scroll-outside", "component": "modal", "actions": [], "overlay": true, "ignoreSlots": [] },
+  { "id": "modal-full", "component": "modal", "actions": [], "overlay": true, "ignoreSlots": [] }
+]

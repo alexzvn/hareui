@@ -1,0 +1,126 @@
+[
+  {
+    "id": "checkbox-primary",
+    "component": "checkbox",
+    "actions": [
+      "hover",
+      "focus",
+      "press"
+    ],
+    "ignoreSlots": []
+  },
+  {
+    "id": "checkbox-secondary",
+    "component": "checkbox",
+    "actions": [
+      "hover",
+      "focus",
+      "press"
+    ],
+    "ignoreSlots": []
+  },
+  {
+    "id": "checkbox-checked",
+    "component": "checkbox",
+    "actions": [
+      "hover",
+      "press"
+    ],
+    "ignoreSlots": []
+  },
+  {
+    "id": "checkbox-secondary-checked",
+    "component": "checkbox",
+    "actions": [
+      "hover"
+    ],
+    "ignoreSlots": []
+  },
+  {
+    "id": "checkbox-indeterminate",
+    "component": "checkbox",
+    "actions": [
+      "press"
+    ],
+    "ignoreSlots": []
+  },
+  {
+    "id": "checkbox-secondary-indeterminate",
+    "component": "checkbox",
+    "actions": [
+      "press"
+    ],
+    "ignoreSlots": []
+  },
+  {
+    "id": "checkbox-disabled",
+    "component": "checkbox",
+    "actions": [],
+    "ignoreSlots": []
+  },
+  {
+    "id": "checkbox-disabled-checked",
+    "component": "checkbox",
+    "actions": [],
+    "ignoreSlots": []
+  },
+  {
+    "id": "checkbox-required",
+    "component": "checkbox",
+    "actions": [],
+    "ignoreSlots": []
+  },
+  {
+    "id": "checkbox-invalid",
+    "component": "checkbox",
+    "actions": [
+      "hover"
+    ],
+    "ignoreSlots": []
+  },
+  {
+    "id": "checkbox-invalid-checked",
+    "component": "checkbox",
+    "actions": [],
+    "ignoreSlots": []
+  },
+  {
+    "id": "checkbox-invalid-indeterminate",
+    "component": "checkbox",
+    "actions": [],
+    "ignoreSlots": []
+  },
+  {
+    "id": "checkbox-with-description",
+    "component": "checkbox",
+    "actions": [
+      "hover"
+    ],
+    "ignoreSlots": []
+  },
+  {
+    "id": "checkbox-no-label",
+    "component": "checkbox",
+    "actions": [
+      "focus"
+    ],
+    "ignoreSlots": []
+  },
+  {
+    "id": "checkbox-readonly",
+    "component": "checkbox",
+    "actions": [
+      "hover",
+      "press"
+    ],
+    "ignoreSlots": []
+  },
+  {
+    "id": "checkbox-readonly-unchecked",
+    "component": "checkbox",
+    "actions": [
+      "hover"
+    ],
+    "ignoreSlots": []
+  }
+]

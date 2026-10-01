@@ -1,0 +1,121 @@
+[
+  {
+    "id": "switch-default",
+    "component": "switch",
+    "actions": [
+      "hover",
+      "focus",
+      "press"
+    ],
+    "ignoreSlots": []
+  },
+  {
+    "id": "switch-size-sm",
+    "component": "switch",
+    "actions": [
+      "press"
+    ],
+    "ignoreSlots": []
+  },
+  {
+    "id": "switch-size-lg",
+    "component": "switch",
+    "actions": [
+      "press"
+    ],
+    "ignoreSlots": []
+  },
+  {
+    "id": "switch-checked",
+    "component": "switch",
+    "actions": [
+      "hover",
+      "focus",
+      "press"
+    ],
+    "ignoreSlots": []
+  },
+  {
+    "id": "switch-checked-sm",
+    "component": "switch",
+    "actions": [],
+    "ignoreSlots": []
+  },
+  {
+    "id": "switch-checked-lg",
+    "component": "switch",
+    "actions": [],
+    "ignoreSlots": []
+  },
+  {
+    "id": "switch-disabled",
+    "component": "switch",
+    "actions": [],
+    "ignoreSlots": []
+  },
+  {
+    "id": "switch-disabled-checked",
+    "component": "switch",
+    "actions": [],
+    "ignoreSlots": []
+  },
+  {
+    "id": "switch-with-description",
+    "component": "switch",
+    "actions": [
+      "hover"
+    ],
+    "ignoreSlots": []
+  },
+  {
+    "id": "switch-with-description-sm",
+    "component": "switch",
+    "actions": [],
+    "ignoreSlots": []
+  },
+  {
+    "id": "switch-with-description-lg",
+    "component": "switch",
+    "actions": [],
+    "ignoreSlots": []
+  },
+  {
+    "id": "switch-no-label",
+    "component": "switch",
+    "actions": [
+      "focus"
+    ],
+    "ignoreSlots": []
+  },
+  {
+    "id": "switch-with-icon",
+    "component": "switch",
+    "actions": [
+      "hover"
+    ],
+    "ignoreSlots": []
+  },
+  {
+    "id": "switch-control-bg-override",
+    "component": "switch",
+    "actions": [
+      "hover",
+      "press"
+    ],
+    "ignoreSlots": []
+  },
+  {
+    "id": "switch-invalid",
+    "component": "switch",
+    "actions": [],
+    "ignoreSlots": []
+  },
+  {
+    "id": "switch-readonly",
+    "component": "switch",
+    "actions": [
+      "press"
+    ],
+    "ignoreSlots": []
+  }
+]

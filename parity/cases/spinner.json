@@ -1,0 +1,50 @@
+[
+  {
+    "id": "spinner-accent",
+    "component": "spinner",
+    "actions": [],
+    "ignoreSlots": []
+  },
+  {
+    "id": "spinner-current",
+    "component": "spinner",
+    "actions": [],
+    "ignoreSlots": []
+  },
+  {
+    "id": "spinner-danger",
+    "component": "spinner",
+    "actions": [],
+    "ignoreSlots": []
+  },
+  {
+    "id": "spinner-success",
+    "component": "spinner",
+    "actions": [],
+    "ignoreSlots": []
+  },
+  {
+    "id": "spinner-warning",
+    "component": "spinner",
+    "actions": [],
+    "ignoreSlots": []
+  },
+  {
+    "id": "spinner-size-sm",
+    "component": "spinner",
+    "actions": [],
+    "ignoreSlots": []
+  },
+  {
+    "id": "spinner-size-lg",
+    "component": "spinner",
+    "actions": [],
+    "ignoreSlots": []
+  },
+  {
+    "id": "spinner-size-xl",
+    "component": "spinner",
+    "actions": [],
+    "ignoreSlots": []
+  }
+]

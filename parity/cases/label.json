@@ -1,0 +1,26 @@
+[
+  {
+    "id": "label-default",
+    "component": "label",
+    "actions": [],
+    "ignoreSlots": []
+  },
+  {
+    "id": "label-disabled",
+    "component": "label",
+    "actions": [],
+    "ignoreSlots": []
+  },
+  {
+    "id": "label-invalid",
+    "component": "label",
+    "actions": [],
+    "ignoreSlots": []
+  },
+  {
+    "id": "label-required",
+    "component": "label",
+    "actions": [],
+    "ignoreSlots": []
+  }
+]

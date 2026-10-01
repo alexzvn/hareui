@@ -1,0 +1,140 @@
+[
+  {
+    "id": "chip-primary-accent",
+    "component": "chip",
+    "actions": [],
+    "ignoreSlots": []
+  },
+  {
+    "id": "chip-primary-danger",
+    "component": "chip",
+    "actions": [],
+    "ignoreSlots": []
+  },
+  {
+    "id": "chip-primary-default",
+    "component": "chip",
+    "actions": [],
+    "ignoreSlots": []
+  },
+  {
+    "id": "chip-primary-success",
+    "component": "chip",
+    "actions": [],
+    "ignoreSlots": []
+  },
+  {
+    "id": "chip-primary-warning",
+    "component": "chip",
+    "actions": [],
+    "ignoreSlots": []
+  },
+  {
+    "id": "chip-secondary-accent",
+    "component": "chip",
+    "actions": [],
+    "ignoreSlots": []
+  },
+  {
+    "id": "chip-secondary-danger",
+    "component": "chip",
+    "actions": [],
+    "ignoreSlots": []
+  },
+  {
+    "id": "chip-secondary-default",
+    "component": "chip",
+    "actions": [],
+    "ignoreSlots": []
+  },
+  {
+    "id": "chip-secondary-success",
+    "component": "chip",
+    "actions": [],
+    "ignoreSlots": []
+  },
+  {
+    "id": "chip-secondary-warning",
+    "component": "chip",
+    "actions": [],
+    "ignoreSlots": []
+  },
+  {
+    "id": "chip-soft-accent",
+    "component": "chip",
+    "actions": [],
+    "ignoreSlots": []
+  },
+  {
+    "id": "chip-soft-danger",
+    "component": "chip",
+    "actions": [],
+    "ignoreSlots": []
+  },
+  {
+    "id": "chip-soft-default",
+    "component": "chip",
+    "actions": [],
+    "ignoreSlots": []
+  },
+  {
+    "id": "chip-soft-success",
+    "component": "chip",
+    "actions": [],
+    "ignoreSlots": []
+  },
+  {
+    "id": "chip-soft-warning",
+    "component": "chip",
+    "actions": [],
+    "ignoreSlots": []
+  },
+  {
+    "id": "chip-tertiary-accent",
+    "component": "chip",
+    "actions": [],
+    "ignoreSlots": []
+  },
+  {
+    "id": "chip-tertiary-danger",
+    "component": "chip",
+    "actions": [],
+    "ignoreSlots": []
+  },
+  {
+    "id": "chip-tertiary-default",
+    "component": "chip",
+    "actions": [],
+    "ignoreSlots": []
+  },
+  {
+    "id": "chip-tertiary-success",
+    "component": "chip",
+    "actions": [],
+    "ignoreSlots": []
+  },
+  {
+    "id": "chip-tertiary-warning",
+    "component": "chip",
+    "actions": [],
+    "ignoreSlots": []
+  },
+  {
+    "id": "chip-size-sm",
+    "component": "chip",
+    "actions": [],
+    "ignoreSlots": []
+  },
+  {
+    "id": "chip-size-lg",
+    "component": "chip",
+    "actions": [],
+    "ignoreSlots": []
+  },
+  {
+    "id": "chip-with-icon",
+    "component": "chip",
+    "actions": [],
+    "ignoreSlots": []
+  }
+]

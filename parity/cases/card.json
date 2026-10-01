@@ -1,0 +1,32 @@
+[
+  {
+    "id": "card-default",
+    "component": "card",
+    "actions": [],
+    "ignoreSlots": []
+  },
+  {
+    "id": "card-secondary",
+    "component": "card",
+    "actions": [],
+    "ignoreSlots": []
+  },
+  {
+    "id": "card-tertiary",
+    "component": "card",
+    "actions": [],
+    "ignoreSlots": []
+  },
+  {
+    "id": "card-transparent",
+    "component": "card",
+    "actions": [],
+    "ignoreSlots": []
+  },
+  {
+    "id": "card-content-only",
+    "component": "card",
+    "actions": [],
+    "ignoreSlots": []
+  }
+]
