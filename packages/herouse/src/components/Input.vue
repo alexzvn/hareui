@@ -102,6 +102,11 @@ if (field && ownModel) {
   watch(modelValue, (v) => {
     field.model.value = v
   }, { immediate: true })
+  // The field writes its model on form reset; pass that back to the parent's v-model
+  watch(field.model, (v) => {
+    if (v !== modelValue.value)
+      modelValue.value = v
+  })
 }
 
 const type = computed(() => props.type ?? field?.type.value ?? 'text')

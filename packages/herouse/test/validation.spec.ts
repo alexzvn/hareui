@@ -245,6 +245,17 @@ describe('TextField with a slotted Input', () => {
     expect(value.value).toBe('z')
     expect(error()).toBe('Too short')
   })
+
+  it('form reset writes the TextField defaultValue back to a slotted Input\'s own v-model', async () => {
+    const value = ref('typed')
+    const w = mountInForm(() => h(TextField, { label: 'N', name: 'n', defaultValue: 'seed' }, {
+      default: () => h(Input, { 'modelValue': value.value, 'onUpdate:modelValue': (v: string | number | undefined) => (value.value = String(v)) }),
+    }))
+    w.get('form').element.reset()
+    await flushPromises()
+    expect(value.value).toBe('seed')
+    expect((w.get('input').element as HTMLInputElement).value).toBe('seed')
+  })
 })
 
 describe('NumberField reset', () => {
