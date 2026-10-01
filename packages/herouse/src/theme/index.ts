@@ -16,5 +16,6 @@ export { default as switch } from './switch'
 export { default as radioGroup } from './radioGroup'
 export { default as popover } from './popover'
 export { default as tooltip } from './tooltip'
+export { default as skeleton } from './skeleton'
 
 export type Themes = typeof import('./index')

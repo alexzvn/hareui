@@ -1,0 +1,38 @@
+[
+  {
+    "id": "skeleton-shimmer",
+    "component": "skeleton",
+    "actions": [],
+    "ignoreSlots": []
+  },
+  {
+    "id": "skeleton-pulse",
+    "component": "skeleton",
+    "actions": [],
+    "ignoreSlots": []
+  },
+  {
+    "id": "skeleton-none",
+    "component": "skeleton",
+    "actions": [],
+    "ignoreSlots": []
+  },
+  {
+    "id": "skeleton-default",
+    "component": "skeleton",
+    "actions": [],
+    "ignoreSlots": []
+  },
+  {
+    "id": "skeleton-custom",
+    "component": "skeleton",
+    "actions": [],
+    "ignoreSlots": []
+  },
+  {
+    "id": "skeleton-children",
+    "component": "skeleton",
+    "actions": [],
+    "ignoreSlots": []
+  }
+]
