@@ -18,6 +18,22 @@ async function waitUnmount() {
 }
 
 describe('modal', () => {
+  // Container enter/exit animations (theme and user `data-[state=…]:` classes) depend on this attribute.
+  it('container mirrors the open state for animations', async () => {
+    const open = ref(true)
+    const wrapper = mount({ render: () => h(Modal, { 'open': open.value, 'onUpdate:open': (v: boolean) => (open.value = v) }, { body: () => 'Content' }) })
+    await nextTick()
+    const container = () => document.querySelector<HTMLElement>('[data-slot=modal-container]')
+    expect(container()?.dataset.state).toBe('open')
+
+    open.value = false
+    await nextTick()
+    // Presence keeps it mounted until the exit animation check; it must already be marked closed.
+    expect(container()?.dataset.state).toBe('closed')
+
+    wrapper.unmount()
+  })
+
   it('trigger opens the dialog', async () => {
     const wrapper = mount(Modal, {
       slots: { default: () => h('button', 'Open'), body: () => 'Content' },
