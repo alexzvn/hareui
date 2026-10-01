@@ -8,3 +8,5 @@ parity/out
 .DS_Store
 # scratch scripts
 .*.ts
+pp.ts
+*_tmp.*
