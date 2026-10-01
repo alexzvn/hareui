@@ -18,12 +18,14 @@ import { Avatar } from 'herouse'
 
 ## Anatomy
 
-Built on Reka UI's `AvatarRoot` / `AvatarImage` / `AvatarFallback`. The fallback shows
-until the image loads, or if it fails.
+HeroUI's `Avatar.Image` and `Avatar.Fallback` parts become props and slots on a single
+component, built on Reka UI's `AvatarRoot` / `AvatarImage` / `AvatarFallback`. The fallback
+shows until the image loads, or if it fails.
 
 ```vue
 <Avatar src="…" alt="…" fallback="JD">
-  <template #fallback>JD</template>
+  <template #image /> <!-- optional: custom image component (Avatar.Image asChild) -->
+  <template #fallback /> <!-- optional: replaces the fallback text (Avatar.Fallback children) -->
 </Avatar>
 ```
 
@@ -49,17 +51,33 @@ until the image loads, or if it fails.
 
 ## Customization
 
+### Custom Image Component
+
+Use the `#image` slot to compose with a custom image component, such as Nuxt's `<NuxtImg>`
+(the equivalent of `asChild` on `Avatar.Image`). Pass `src` on `Avatar` so it can track the
+loading state and show the fallback until the image is ready; the slotted element receives
+`src`, the `image` classes and the loading-state visibility.
+
+<ComponentPreview name="avatar/custom-image-component" />
+
 ### Tailwind CSS
+
+Use the `class` prop for the root and `:ui="{ fallback: '…' }"` for the fallback:
 
 <ComponentPreview name="avatar/custom-styles" />
 
 ### Global theme override
 
+Override the `avatar` theme app-wide with `createHeroUse`:
+
 ```ts
 app.use(createHeroUse({
   ui: {
     avatar: {
-      slots: { base: 'size-16' },
+      slots: {
+        base: 'size-16 border-2 border-accent',
+        fallback: 'bg-linear-to-br from-purple-500 to-pink-500',
+      },
     },
   },
 }))
@@ -69,11 +87,13 @@ app.use(createHeroUse({
 
 | `ui` key | `data-slot` | Description |
 |---|---|---|
-| `base` | — | The root container (Reka `AvatarRoot`) |
-| `image` | — | The `<img>` element, rendered when `src` is set |
-| `fallback` | `avatar-fallback` | The fallback container (text or `#fallback` slot) |
+| `base` | — | Base container with default size (`size-10`), Reka `AvatarRoot` |
+| `image` | — | Image element with aspect-square sizing, rendered when `src` is set |
+| `fallback` | `avatar-fallback` | Fallback container with centered content (text or `#fallback` slot) |
 
-`color` only affects the `fallback` slot (it has no effect once an image has loaded).
+The variant props map to HeroUI's modifier classes: `size` → `.avatar--sm` / `--md` / `--lg`,
+`variant="soft"` → `.avatar--soft`, and `color` → `.avatar__fallback--{color}`. `color` only
+affects the fallback (it has no effect once an image has loaded).
 
 ## API Reference
 
@@ -84,6 +104,10 @@ app.use(createHeroUse({
 ### Slots
 
 <ApiTable component="Avatar" kind="slots" />
+
+### Emits
+
+<ApiTable component="Avatar" kind="emits" />
 
 ## Related Components
 

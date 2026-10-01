@@ -11,3 +11,9 @@ for (const color of ['accent', 'danger', 'default', 'success', 'warning'] as con
 for (const size of ['sm', 'lg'] as const)
   cases[`avatar-size-${size}`] = () => <Avatar size={size}><Avatar.Fallback>JD</Avatar.Fallback></Avatar>
 cases['avatar-image'] = () => <Avatar><Avatar.Image alt="Blue" src={avatarSrc} /><Avatar.Fallback>B</Avatar.Fallback></Avatar>
+cases['avatar-custom-image'] = () => (
+  <Avatar>
+    <Avatar.Image asChild height={40} src={avatarSrc} width={40}><img alt="John Doe" src={avatarSrc} /></Avatar.Image>
+    <Avatar.Fallback>JD</Avatar.Fallback>
+  </Avatar>
+)

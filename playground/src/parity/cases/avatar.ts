@@ -12,3 +12,6 @@ for (const color of ['accent', 'danger', 'default', 'success', 'warning'] as con
 for (const size of ['sm', 'lg'] as const)
   cases[`avatar-size-${size}`] = () => h(Avatar, { size, fallback: 'JD' })
 cases['avatar-image'] = () => h(Avatar, { src: avatarSrc, alt: 'Blue', fallback: 'B' })
+cases['avatar-custom-image'] = () => h(Avatar, { src: avatarSrc, fallback: 'JD' }, {
+  image: () => h('img', { alt: 'John Doe', src: avatarSrc, width: 40, height: 40 }),
+})

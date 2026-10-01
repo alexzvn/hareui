@@ -76,5 +76,11 @@
     "component": "avatar",
     "actions": [],
     "ignoreSlots": []
+  },
+  {
+    "id": "avatar-custom-image",
+    "component": "avatar",
+    "actions": [],
+    "ignoreSlots": []
   }
 ]

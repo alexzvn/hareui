@@ -10,7 +10,7 @@ import { Icon } from '@iconify/vue'
 
     <!-- Icon fallback -->
     <Avatar>
-      <template #fallback><Icon icon="gravity-ui:person" /></template>
+      <template #fallback><Icon height="16" icon="gravity-ui:person" width="16" /></template>
     </Avatar>
 
     <!-- Fallback with delay -->

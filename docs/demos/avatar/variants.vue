@@ -35,7 +35,7 @@ const images = [
       <div v-for="color in colors" :key="color" class="flex w-20 shrink-0 items-center justify-center">
         <Avatar :color="color" :variant="row.variant">
           <template #fallback>
-            <Icon v-if="row.icon" icon="gravity-ui:person" />
+            <Icon v-if="row.icon" height="16" icon="gravity-ui:person" width="16" />
             <template v-else>{{ row.content }}</template>
           </template>
         </Avatar>
