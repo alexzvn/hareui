@@ -1,0 +1,23 @@
+[
+  { "id": "typography-h1", "component": "typography", "actions": [], "ignoreSlots": [] },
+  { "id": "typography-h2", "component": "typography", "actions": [], "ignoreSlots": [] },
+  { "id": "typography-h3", "component": "typography", "actions": [], "ignoreSlots": [] },
+  { "id": "typography-h4", "component": "typography", "actions": [], "ignoreSlots": [] },
+  { "id": "typography-h5", "component": "typography", "actions": [], "ignoreSlots": [] },
+  { "id": "typography-h6", "component": "typography", "actions": [], "ignoreSlots": [] },
+  { "id": "typography-body", "component": "typography", "actions": [], "ignoreSlots": [] },
+  { "id": "typography-body-sm", "component": "typography", "actions": [], "ignoreSlots": [] },
+  { "id": "typography-body-xs", "component": "typography", "actions": [], "ignoreSlots": [] },
+  { "id": "typography-code", "component": "typography", "actions": [], "ignoreSlots": [] },
+  { "id": "typography-align-center", "component": "typography", "actions": [], "ignoreSlots": [] },
+  { "id": "typography-align-end", "component": "typography", "actions": [], "ignoreSlots": [] },
+  { "id": "typography-align-justify", "component": "typography", "actions": [], "ignoreSlots": [] },
+  { "id": "typography-color-muted", "component": "typography", "actions": [], "ignoreSlots": [] },
+  { "id": "typography-weight-normal", "component": "typography", "actions": [], "ignoreSlots": [] },
+  { "id": "typography-weight-medium", "component": "typography", "actions": [], "ignoreSlots": [] },
+  { "id": "typography-weight-semibold", "component": "typography", "actions": [], "ignoreSlots": [] },
+  { "id": "typography-weight-bold", "component": "typography", "actions": [], "ignoreSlots": [] },
+  { "id": "typography-truncate", "component": "typography", "actions": [], "ignoreSlots": [] },
+  { "id": "typography-as-override", "component": "typography", "actions": [], "ignoreSlots": [] },
+  { "id": "typography-prose", "component": "typography", "actions": [], "ignoreSlots": [] }
+]

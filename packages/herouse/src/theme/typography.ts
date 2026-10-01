@@ -1,0 +1,65 @@
+// Translated from @heroui/styles components/typography.css
+export default {
+  slots: {
+    base: 'text-foreground',
+    prose: [
+      'text-foreground',
+      '[&_h1]:text-4xl [&_h1]:font-semibold [&_h1]:tracking-tight',
+      '[&_h2]:text-3xl [&_h2]:font-semibold [&_h2]:tracking-tight',
+      '[&_h3]:text-2xl [&_h3]:font-semibold [&_h3]:tracking-tight',
+      '[&_h4]:text-xl [&_h4]:font-semibold [&_h4]:tracking-tight',
+      '[&_h5]:text-lg [&_h5]:font-semibold [&_h5]:tracking-tight',
+      '[&_h6]:text-base [&_h6]:font-semibold [&_h6]:tracking-tight',
+      '[&_p]:text-base [&_p]:leading-7',
+      '[&_code]:rounded-md [&_code]:bg-default [&_code]:px-1.5 [&_code]:py-0.5 [&_code]:font-mono [&_code]:text-sm [&_code]:text-foreground',
+      '[&_a]:font-medium [&_a]:text-link [&_a]:underline [&_a]:underline-offset-4',
+      '[&_blockquote]:mt-4 [&_blockquote]:border-s-4 [&_blockquote]:border-border [&_blockquote]:ps-4 [&_blockquote]:text-muted [&_blockquote]:italic',
+      '[&_ul]:my-4 [&_ul]:list-disc [&_ul]:space-y-2 [&_ul]:ps-6',
+      '[&_ol]:my-4 [&_ol]:list-decimal [&_ol]:space-y-2 [&_ol]:ps-6',
+      '[&_li]:text-base [&_li]:leading-7',
+      '[&_hr]:my-8 [&_hr]:border-separator',
+      '[&_pre]:my-4 [&_pre]:overflow-x-auto [&_pre]:rounded-xl [&_pre]:bg-default [&_pre]:p-4 [&_pre]:font-mono [&_pre]:text-sm [&_pre]:leading-relaxed',
+      '[&_strong]:font-semibold [&_strong]:text-foreground',
+      '[&_em]:italic',
+      '[&_img]:my-4 [&_img]:rounded-xl',
+    ],
+  },
+  variants: {
+    type: {
+      h1: { base: 'text-4xl font-semibold tracking-tight' },
+      h2: { base: 'text-3xl font-semibold tracking-tight' },
+      h3: { base: 'text-2xl font-semibold tracking-tight' },
+      h4: { base: 'text-xl font-semibold tracking-tight' },
+      h5: { base: 'text-lg font-semibold tracking-tight' },
+      h6: { base: 'text-base font-semibold tracking-tight' },
+      body: { base: 'text-base leading-7' },
+      'body-sm': { base: 'text-sm leading-6' },
+      'body-xs': { base: 'text-xs leading-5' },
+      code: { base: 'rounded-md bg-default px-1.5 py-0.5 font-mono text-sm text-foreground' },
+    },
+    align: {
+      start: { base: 'text-start' },
+      center: { base: 'text-center' },
+      end: { base: 'text-end' },
+      justify: { base: 'text-justify' },
+    },
+    color: {
+      default: { base: 'text-foreground' },
+      muted: { base: 'text-muted' },
+    },
+    weight: {
+      normal: { base: 'font-normal' },
+      medium: { base: 'font-medium' },
+      semibold: { base: 'font-semibold' },
+      bold: { base: 'font-bold' },
+    },
+    truncate: {
+      true: { base: 'block truncate' },
+    },
+  },
+  defaultVariants: {
+    type: 'body',
+    align: 'start',
+    color: 'default',
+  },
+}
