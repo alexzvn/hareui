@@ -2,7 +2,10 @@
 export default {
   slots: {
     base: [
-      'relative isolate inline-flex h-10 w-fit origin-center items-center justify-center gap-2 rounded-3xl px-4 text-sm font-medium whitespace-nowrap outline-none select-none no-highlight md:h-9',
+      'relative isolate inline-flex w-fit origin-center items-center justify-center gap-2 rounded-3xl px-4 text-sm font-medium whitespace-nowrap outline-none select-none no-highlight',
+      // Responsive height lives in a variable so a plain `h-*` from the user wins at every breakpoint
+      // (HeroUI's `md:h-9` sits in @layer components, below utilities).
+      'h-(--button-height) [--button-height:--spacing(10)] md:[--button-height:--spacing(9)]',
       '[transition:transform_250ms_var(--ease-smooth),background-color_100ms_var(--ease-out),box-shadow_100ms_var(--ease-out)] transform-gpu motion-reduce:transition-none',
       'cursor-(--cursor-interactive)',
       '[--button-bg:transparent] [--button-bg-hover:var(--button-bg)] [--button-bg-pressed:var(--button-bg-hover)] [--button-fg:currentColor]',
@@ -30,22 +33,19 @@ export default {
       'danger-soft': { base: '[--button-bg:var(--danger-soft)] [--button-bg-hover:var(--danger-soft-hover)] [--button-bg-pressed:var(--danger-soft-hover)] [--button-fg:var(--danger-soft-foreground)]' },
     },
     size: {
-      sm: { base: 'h-9 px-3 md:h-8 [:where(&_svg:not([data-slot=spinner]_svg,[data-slot=link-icon]_svg))]:size-4 sm:[:where(&_svg:not([data-slot=spinner]_svg,[data-slot=link-icon]_svg))]:size-4 active:[transform:scale(0.98)]' },
+      sm: { base: '[--button-height:--spacing(9)] px-3 md:[--button-height:--spacing(8)] [:where(&_svg:not([data-slot=spinner]_svg,[data-slot=link-icon]_svg))]:size-4 sm:[:where(&_svg:not([data-slot=spinner]_svg,[data-slot=link-icon]_svg))]:size-4 active:[transform:scale(0.98)]' },
       md: { base: '' },
-      lg: { base: 'h-11 text-base md:h-10 active:[transform:scale(0.96)]' },
+      lg: { base: '[--button-height:--spacing(11)] text-base md:[--button-height:--spacing(10)] active:[transform:scale(0.96)]' },
     },
     fullWidth: {
       true: { base: 'w-full' },
       false: { base: '' },
     },
     iconOnly: {
-      true: { base: 'w-10 p-0 md:w-9' },
+      // Icon-only buttons are square: HeroUI's per-size `w-10 md:w-9` etc. equal the size's height.
+      true: { base: 'w-(--button-height) p-0' },
     },
   },
-  compoundVariants: [
-    { iconOnly: true, size: 'sm', class: { base: 'w-9 md:w-8' } },
-    { iconOnly: true, size: 'lg', class: { base: 'w-11 md:w-10' } },
-  ],
   defaultVariants: {
     variant: 'primary',
     size: 'md',

@@ -11,9 +11,9 @@ export default {
     ],
     container: [
       'flex flex-col items-center',
-      'h-(--visual-viewport-height) w-full min-w-0 flex-1',
-      'p-4',
-      'sm:w-fit sm:p-10',
+      'h-(--visual-viewport-height) min-w-0 flex-1',
+      'w-(--modal-container-width) [--modal-container-width:100%] sm:[--modal-container-width:fit-content]',
+      'p-(--modal-container-padding) [--modal-container-padding:--spacing(4)] sm:[--modal-container-padding:--spacing(10)]',
       'pointer-events-none',
       'data-[state=open]:animate-in data-[state=open]:[--tw-duration:250ms] data-[state=open]:ease-out-quad data-[state=open]:fade-in-0 data-[state=open]:zoom-in-105',
       'data-[state=closed]:animate-out data-[state=closed]:[--tw-duration:100ms] data-[state=closed]:ease-out-quad data-[state=closed]:fade-out-0 data-[state=closed]:zoom-out-95',
@@ -65,7 +65,7 @@ export default {
     placement: {
       auto: {
         container: 'data-[state=open]:slide-in-from-bottom-1 sm:data-[state=open]:slide-in-from-bottom-0',
-        dialog: 'mt-auto sm:my-auto',
+        dialog: 'mt-auto mb-(--modal-dialog-margin-bottom) [--modal-dialog-margin-bottom:0px] sm:[--modal-dialog-margin-bottom:auto]',
       },
       top: {
         container: 'data-[state=open]:slide-in-from-top-1',
@@ -88,7 +88,7 @@ export default {
       cover: { dialog: 'h-full min-h-full w-full' },
       full: {
         container: [
-          'p-0 sm:p-0',
+          'p-0',
           'data-[state=open]:slide-in-from-bottom-0 data-[state=open]:zoom-in-100 sm:data-[state=open]:slide-in-from-bottom-0',
           'data-[state=closed]:zoom-out-100',
         ],

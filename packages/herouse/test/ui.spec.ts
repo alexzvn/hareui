@@ -29,7 +29,7 @@ describe('class precedence', () => {
     const wrapper = mount(Button, {
       global: { plugins: [createHeroUse({ ui: { button: { defaultVariants: { size: 'lg' } } } })] },
     })
-    expect(wrapper.classes()).toContain('h-11')
+    expect(wrapper.classes()).toContain('[--button-height:--spacing(11)]')
   })
 
   it('uses the default theme without the plugin', () => {

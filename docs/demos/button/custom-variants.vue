@@ -14,10 +14,10 @@ const myButtonVariants = tv({
       sm: { base: 'rounded-sm' },
     },
     size: {
-      sm: { base: 'h-10 px-4 md:h-10' },
-      md: { base: 'h-11 px-6 md:h-11' },
-      lg: { base: 'h-12 px-8 md:h-12' },
-      xl: { base: 'h-13 px-10 md:h-13' },
+      sm: { base: 'h-10 px-4' },
+      md: { base: 'h-11 px-6' },
+      lg: { base: 'h-12 px-8' },
+      xl: { base: 'h-13 px-10' },
     },
     variant: {
       primary: { base: 'text-white dark:bg-white/10 dark:text-white dark:hover:bg-white/15' },
