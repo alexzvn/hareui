@@ -25,7 +25,7 @@ export default {
       'relative inline-flex size-4 shrink-0 items-center justify-center overflow-hidden rounded-md border [border-width:var(--border-width-field)] border-field-border bg-field shadow-field outline-none no-highlight',
       '[transition:background-color_200ms_var(--ease-out),border-color_200ms_var(--ease-out),transform_100ms_var(--ease-out)] motion-reduce:transition-none',
       'cursor-(--cursor-interactive)',
-      'before:pointer-events-none before:absolute before:inset-0 before:z-0 before:origin-center before:scale-70 before:rounded-md before:bg-accent before:opacity-0 before:content-[\'\']',
+      "before:pointer-events-none before:absolute before:inset-0 before:z-0 before:origin-center before:scale-70 before:rounded-md before:bg-accent before:opacity-0 before:content-['']",
       'before:[transition:scale_100ms_var(--ease-linear),opacity_200ms_var(--ease-linear),background-color_200ms_var(--ease-out)] motion-reduce:before:transition-none',
       'group-has-focus-visible/checkbox:status-focused',
       // HeroUI's hover selector list includes `:has(… [data-hovered])`, so it out-ranks the selected rules. RAC never sets

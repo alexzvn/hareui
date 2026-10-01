@@ -29,7 +29,7 @@ export default {
     ],
     indicator: [
       'pointer-events-none absolute inset-0 flex items-center justify-center',
-      'empty:before:h-full empty:before:w-full empty:before:rounded-lg empty:before:bg-field empty:before:[scale:1] empty:before:content-[\'\']',
+      "empty:before:h-full empty:before:w-full empty:before:rounded-lg empty:before:bg-field empty:before:[scale:1] empty:before:content-['']",
       'empty:before:[transition:scale_200ms_var(--ease-out),background-color_200ms_var(--ease-out)] motion-reduce:empty:before:transition-none',
       '[[data-slot=radio-group]:not([data-readonly=true])_[data-slot=radio]:not([data-selected=true])_[data-slot=radio-content]:hover_&]:empty:before:bg-field-hover',
       'group-data-[selected=true]/radio:empty:before:bg-accent-foreground group-data-[selected=true]/radio:empty:before:[scale:0.4286]',
