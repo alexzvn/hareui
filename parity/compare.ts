@@ -123,6 +123,9 @@ async function snapshot(page: Page, c: Case): Promise<SlotSnapshot[]> {
       canvas.fillStyle = value
       return canvas.fillStyle === '#010203' && value !== 'rgb(1, 2, 3)' ? value : String(canvas.fillStyle)
     }
+    // Overlay cases: position of every slot relative to the trigger area (#case), so offset bugs
+    // (e.g. arrow height added to sideOffset) fail even when styles match.
+    const origin = overlay ? document.querySelector('#case')!.getBoundingClientRect() : null
     return [...root.querySelectorAll('[data-slot]')].map((el) => {
       const cs = getComputedStyle(el)
       const styles: Record<string, string> = {}
@@ -132,6 +135,13 @@ async function snapshot(page: Page, c: Case): Promise<SlotSnapshot[]> {
         const ps = getComputedStyle(el, pseudo)
         for (const p of pseudoProps)
           styles[`${pseudo}${p}`] = norm(p, ps.getPropertyValue(p))
+      }
+      if (origin) {
+        const r = el.getBoundingClientRect()
+        styles['@rect.x'] = String(r.left - origin.left)
+        styles['@rect.y'] = String(r.top - origin.top)
+        styles['@rect.width'] = String(r.width)
+        styles['@rect.height'] = String(r.height)
       }
       return { slot: el.getAttribute('data-slot')!, tag: el.tagName.toLowerCase(), styles }
     })
@@ -163,7 +173,10 @@ function diffSnapshots(c: Case, react: SlotSnapshot[], vue: SlotSnapshot[]): str
     for (const prop of Object.keys(rEl.styles)) {
       if (ignoreProps.has(prop))
         continue
-      if (rEl.styles[prop] !== vEl.styles[prop])
+      // Rects: Reka positions on integer pixels while RAC uses fractional ones; allow 1px.
+      if (prop.startsWith('@rect.')
+        ? Math.abs(Number(rEl.styles[prop]) - Number(vEl.styles[prop])) > 1
+        : rEl.styles[prop] !== vEl.styles[prop])
         errors.push(`${rEl.slot}[${idx}].${prop}: react=${rEl.styles[prop]} vue=${vEl.styles[prop]}`)
     }
   })
