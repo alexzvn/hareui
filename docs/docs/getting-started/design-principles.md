@@ -9,7 +9,7 @@ HeroUse follows the same design principles as HeroUI v3, adapted to Vue's compon
 
 ### 1. Semantic Intent Over Visual Style
 
-Use semantic naming (primary, secondary, tertiary) instead of visual descriptions (solid, flat, bordered). Variant names and values are kept identical to HeroUI, so the hierarchy is unchanged:
+Use semantic naming (primary, secondary, tertiary) instead of visual descriptions (solid, flat, bordered). Inspired by [Uber's Base design system](https://base.uber.com/6d2425e9f/p/756216-button), HeroUse keeps the same variant names and values as HeroUI, so the hierarchy is unchanged:
 
 ```vue
 <!-- ✅ Semantic variants communicate hierarchy -->

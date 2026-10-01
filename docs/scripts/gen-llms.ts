@@ -1,6 +1,6 @@
 import { readFile, writeFile } from 'node:fs/promises'
 import { join, resolve } from 'node:path'
-import { isGroup, isSeparator, normalizePath, sidebar, type SidebarLink } from '../.vitepress/sidebar'
+import { normalizePath, sectionLinks, sidebar, type SidebarLink } from '../.vitepress/sidebar'
 import type { ComponentApi } from './api-types'
 
 const SITE_URL = 'https://herouse.dev'
@@ -102,7 +102,7 @@ async function toMarkdown(body: string): Promise<string> {
 
 const pages: Page[] = []
 for (const section of sidebar) {
-  const links = section.items.flatMap((entry) => (isSeparator(entry) ? [] : isGroup(entry) ? entry.items : [entry]))
+  const links = sectionLinks(section)
   for (const link of links) {
     const raw = await readFile(sourceFile(link.link), 'utf8').catch((error: NodeJS.ErrnoException) => {
       if (error.code === 'ENOENT') return undefined

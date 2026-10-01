@@ -137,7 +137,9 @@ The plugin step is optional, same as in Vite. Skip it unless you need `createHer
 
 Unlike HeroUI, which ships a framework-agnostic `@heroui/styles` package usable from Vue, Svelte, Angular, or plain HTML, HeroUse components are Vue single-file components with [Reka UI](https://reka-ui.com) as a hard dependency. There is no standalone BEM-class stylesheet to drop into a non-Vue project — HeroUse requires Vue 3.5+.
 
-## What's Next?
+## Next Steps
 
-- [Quick Start](/docs/getting-started/quick-start) - Install HeroUse step by step
-- [Design Principles](/docs/getting-started/design-principles) - HeroUse's API conventions
+- [Quick Start](/docs/getting-started/quick-start) - The fastest setup path
+- [Theming](/docs/getting-started/theming) - Customize colors and tokens
+- [Composition](/docs/getting-started/composition) - Slots, scoped slot props, and the `as` prop
+- [Components](/docs/components/button) - Explore all available components

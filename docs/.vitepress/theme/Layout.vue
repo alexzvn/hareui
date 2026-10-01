@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import { computed, defineAsyncComponent, onBeforeUnmount, onMounted, ref, watch } from 'vue'
 import { useData, useRoute } from 'vitepress'
-import { normalizePath, sectionLinks, type ThemeConfig } from '../sidebar'
+import { normalizePath, type ThemeConfig } from '../sidebar'
 import DocsHeader from './components/DocsHeader.vue'
 import SidebarItems from './components/SidebarItems.vue'
 import TocItems from './components/TocItems.vue'
@@ -9,6 +9,7 @@ import TocPopover from './components/TocPopover.vue'
 import PageHeader, { type PageLinks } from './components/PageHeader.vue'
 import PageFooter from './components/PageFooter.vue'
 import ThemeToggle from './components/ThemeToggle.vue'
+import FrameworkTabs from './components/FrameworkTabs.vue'
 import { useToc } from './composables/useToc'
 import { useDocInteractions } from './composables/useDocInteractions'
 
@@ -115,29 +116,27 @@ const links = computed(() => frontmatter.value.links as PageLinks | undefined)
       </div>
     </div>
 
-    <div v-if="mobileSidebarOpen" class="fixed inset-0 z-40 md:hidden">
-      <div class="absolute inset-0 bg-black/30 backdrop-blur-xs" @click="mobileSidebarOpen = false" />
-      <aside id="nd-sidebar-mobile" class="absolute inset-y-0 end-0 flex w-[85%] max-w-[380px] flex-col border-s bg-fd-background text-sm shadow-lg">
-        <div class="flex flex-col items-start justify-center gap-4 px-4 pt-4">
+    <template v-if="mobileSidebarOpen">
+      <div data-state="open" class="data-[state=open]:animate-fd-fade-in data-[state=closed]:animate-fd-fade-out fixed inset-0 z-40 backdrop-blur-xs" @click="mobileSidebarOpen = false" />
+      <aside id="nd-sidebar-mobile" data-state="open" class="bg-fd-background data-[state=open]:animate-fd-sidebar-in data-[state=closed]:animate-fd-sidebar-out fixed inset-y-0 end-0 z-40 flex w-[85%] max-w-[380px] flex-col text-[0.9375rem] shadow-lg">
+        <div class="flex flex-col items-start justify-center gap-4 px-4 pt-4 sm:hidden">
           <div class="flex w-full items-center justify-between gap-4 ps-1">
             <span class="font-semibold text-lg">HeroUse</span>
             <ThemeToggle />
           </div>
+          <!-- HeroUI <Separator />: herouse has no Separator component; classes from styles/components/separator.css -->
+          <hr data-orientation="horizontal" data-slot="separator" role="separator" class="h-px w-full shrink-0 rounded-sm border-t-0 border-b-0 bg-separator" />
         </div>
-        <div data-docs-sidebar-viewport="" class="min-h-0 flex-1 overflow-y-auto overscroll-contain p-4">
-          <div class="mb-4 flex flex-col gap-0.5">
-            <a
-              v-for="section in sections"
-              :key="section.base"
-              :data-active="section === activeSection"
-              class="text-fd-muted-foreground flex items-center gap-2 rounded-lg p-2 data-[active=true]:bg-fd-primary/10 data-[active=true]:text-fd-primary"
-              :href="sectionLinks(section)[0]?.link ?? section.base"
-            >{{ section.text }}</a>
-          </div>
+        <div data-docs-sidebar-viewport="" class="min-h-0 flex-1 overflow-y-auto overscroll-contain p-4 mask-[linear-gradient(to_bottom,transparent,white_12px,white_calc(100%-12px),transparent)]">
           <SidebarItems v-if="activeSection" :items="activeSection.items" :active-path="path" />
         </div>
+        <div class="px-4 pb-4 sm:hidden">
+          <div class="ms-auto pb-1.5">
+            <FrameworkTabs />
+          </div>
+        </div>
       </aside>
-    </div>
+    </template>
 
     <VPLocalSearchBox v-if="searchOpen" @close="searchOpen = false" />
   </div>

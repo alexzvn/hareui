@@ -31,6 +31,27 @@ Because HeroUse uses tailwind-merge, `bg-purple-500` replaces the theme's `bg-(-
 </template>
 ```
 
+## Scrollbars
+
+HeroUse's scroll slots (e.g. `Modal`'s body) apply the `scrollbar` utility, which reads the theme's `--scrollbar-*` variables. Use the same utilities from `herouse` on your own overflow containers:
+
+```vue
+<template>
+  <div class="scrollbar h-64 overflow-y-auto">
+    <!-- long content -->
+  </div>
+</template>
+```
+
+| Utility | Effect |
+|---------|--------|
+| `scrollbar` | HeroUse thumb (reads theme `--scrollbar-*` variables) |
+| `scrollbar-thin` | HeroUse themed thin scrollbar |
+| `scrollbar-default` | OS / browser scrollbars |
+| `scrollbar-none` | Hidden scrollbar |
+
+Global and per-subtree control uses `data-scrollbar` on an ancestor. See [Theming](/docs/getting-started/theming#scrollbars) for tokens and modes.
+
 ## Tailwind-Merge Conflict Resolution
 
 Classes are combined in this order — later layers win when they target the same CSS property: theme file → `createHeroUse({ ui })` → variant props → `:ui` → `class` (root only). See [Theming](/docs/getting-started/theming#precedence) for the full precedence table.
@@ -88,6 +109,48 @@ HeroUse components are plain DOM elements, so native pseudo-classes work directl
 [data-slot="button"]:focus-visible {
   outline: 2px solid var(--focus);
 }
+```
+
+## Extending Component Themes
+
+Every component's theme config is exported from `herouse`'s `themes` namespace (`themes.button`, `themes.card`, …) in the same shape `tv()` expects. Extend one to add a variant that doesn't exist in the original component, resolve it with `tv()`, and apply the resolved class through the `class` prop:
+
+<ComponentPreview name="button/custom-variants" />
+
+Because `tv({ extend })` merges with tailwind-merge, the new variant's classes win over the base theme's conflicting utilities without touching the original `button` theme file.
+
+## Responsive Design
+
+`class` and `:ui` accept any Tailwind utility, including responsive variants:
+
+```vue
+<template>
+  <Button class="text-sm md:text-base lg:text-lg px-3 md:px-4 lg:px-6">
+    Responsive Button
+  </Button>
+</template>
+```
+
+## CSS Modules
+
+Vue's `<style module>` works the same way as any other `class` value — bind the generated identifier instead of a literal string:
+
+```vue
+<!-- GradientButton.vue -->
+<script setup lang="ts">
+import { Button } from 'herouse'
+</script>
+
+<template>
+  <Button :class="$style.button">Scoped Button</Button>
+</template>
+
+<style module>
+.button {
+  background: linear-gradient(135deg, #667eea, #764ba2);
+  color: white;
+}
+</style>
 ```
 
 ## Next Steps

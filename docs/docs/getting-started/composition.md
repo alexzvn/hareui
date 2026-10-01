@@ -103,6 +103,43 @@ All three compose together — swap the element, override one slot's classes, an
 </template>
 ```
 
+## Custom Components
+
+Compose HeroUse primitives into your own components the same way you'd compose any Vue component — no variant-function glue required:
+
+```vue
+<!-- components/IconButton.vue -->
+<script setup lang="ts">
+import { Button, Tooltip } from 'herouse'
+
+defineProps<{ label: string }>()
+</script>
+
+<template>
+  <Tooltip :text="label">
+    <Button :aria-label="label" icon-only variant="ghost">
+      <slot />
+    </Button>
+  </Tooltip>
+</template>
+```
+
+```vue
+<template>
+  <IconButton label="Settings">
+    <Icon icon="gravity-ui:gear" />
+  </IconButton>
+</template>
+```
+
+## Custom Variants
+
+Extend a component's exported theme config with `tv()` to add variants the original doesn't have, instead of forking the component:
+
+<ComponentPreview name="button/custom-variants" />
+
+See [Styling → Extending Component Themes](/docs/getting-started/styling#extending-component-themes) for how the resolved class merges with the `class` prop.
+
 ## Next Steps
 
 - Learn about [Styling](/docs/getting-started/styling) with `class` and `:ui`

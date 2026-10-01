@@ -136,6 +136,14 @@ export function markdownConfig(md: MarkdownRenderer): void {
     }
     md.renderer.rules[`container_${name}_close`] = () => `</div></div></div>\n`
   }
+
+  // fumadocs `Table` mdx component (dist/mdx.js): heroui global.css styles `.prose-no-margin table`.
+  const tableOpen = md.renderer.rules.table_open ?? ((t, i, o, _e, s) => s.renderToken(t, i, o))
+  const tableClose = md.renderer.rules.table_close ?? ((t, i, o, _e, s) => s.renderToken(t, i, o))
+  md.renderer.rules.table_open = (tokens, idx, options, env, self) =>
+    `<div class="relative overflow-auto prose-no-margin my-6">` + tableOpen(tokens, idx, options, env, self)
+  md.renderer.rules.table_close = (tokens, idx, options, env, self) =>
+    tableClose(tokens, idx, options, env, self) + `</div>`
 }
 
 export function headingPermalink(slug: string, _opts: unknown, state: AnchorState, idx: number): void {

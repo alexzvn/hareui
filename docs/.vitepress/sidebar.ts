@@ -10,13 +10,7 @@ export interface SidebarSeparator {
   separator: string
 }
 
-export interface SidebarGroup {
-  text: string
-  items: SidebarLink[]
-  collapsed?: boolean
-}
-
-export type SidebarEntry = SidebarLink | SidebarSeparator | SidebarGroup
+export type SidebarEntry = SidebarLink | SidebarSeparator
 
 export interface SidebarSection {
   text: string
@@ -54,40 +48,27 @@ export const sidebar: SidebarSection[] = [
     text: 'Components',
     icon: 'circles-4-diamond',
     base: '/docs/components',
+    // HeroUI's components meta.json lists pages alphabetically under one "Components" separator.
     items: [
-      { text: 'Navigation', items: [{ text: 'Tabs', link: c('tabs') }] },
-      { text: 'Feedback', items: [{ text: 'Spinner', link: c('spinner') }] },
-      {
-        text: 'Buttons',
-        items: [
-          { text: 'Button', link: c('button') },
-          { text: 'CloseButton', link: c('close-button') },
-        ],
-      },
-      { text: 'Layout', items: [{ text: 'Card', link: c('card') }] },
-      {
-        text: 'Forms',
-        items: [
-          { text: 'TextField', link: c('text-field') },
-          { text: 'Input', link: c('input') },
-          { text: 'Label', link: c('label') },
-          { text: 'RadioGroup', link: c('radio-group') },
-          { text: 'Checkbox', link: c('checkbox') },
-          { text: 'Description', link: c('description') },
-          { text: 'FieldError', link: c('field-error') },
-        ],
-      },
-      { text: 'Media', items: [{ text: 'Avatar', link: c('avatar') }] },
-      { text: 'Data Display', items: [{ text: 'Chip', link: c('chip') }] },
-      {
-        text: 'Overlays',
-        items: [
-          { text: 'Modal', link: c('modal') },
-          { text: 'Popover', link: c('popover') },
-          { text: 'Tooltip', link: c('tooltip') },
-        ],
-      },
-      { text: 'Controls', items: [{ text: 'Switch', link: c('switch') }] },
+      { separator: 'Components' },
+      { text: 'Avatar', link: c('avatar') },
+      { text: 'Button', link: c('button') },
+      { text: 'Card', link: c('card') },
+      { text: 'Checkbox', link: c('checkbox') },
+      { text: 'Chip', link: c('chip') },
+      { text: 'CloseButton', link: c('close-button') },
+      { text: 'Description', link: c('description') },
+      { text: 'FieldError', link: c('field-error') },
+      { text: 'Input', link: c('input') },
+      { text: 'Label', link: c('label') },
+      { text: 'Modal', link: c('modal') },
+      { text: 'Popover', link: c('popover') },
+      { text: 'RadioGroup', link: c('radio-group') },
+      { text: 'Spinner', link: c('spinner') },
+      { text: 'Switch', link: c('switch') },
+      { text: 'Tabs', link: c('tabs') },
+      { text: 'TextField', link: c('text-field') },
+      { text: 'Tooltip', link: c('tooltip') },
     ],
   },
 ]
@@ -96,13 +77,8 @@ export function isSeparator(entry: SidebarEntry): entry is SidebarSeparator {
   return 'separator' in entry
 }
 
-export function isGroup(entry: SidebarEntry): entry is SidebarGroup {
-  return 'items' in entry
-}
 export function sectionLinks(section: SidebarSection): SidebarLink[] {
-  return section.items.flatMap((entry) =>
-    isSeparator(entry) ? [] : isGroup(entry) ? entry.items : [entry],
-  )
+  return section.items.filter((entry): entry is SidebarLink => !isSeparator(entry))
 }
 export function normalizePath(path: string): string {
   const p = path.replace(/[?#].*$/, '').replace(/\.html$/, '').replace(/\/index$/, '')
