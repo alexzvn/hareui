@@ -19,3 +19,4 @@ export { default as tooltip } from './tooltip'
 export { default as skeleton } from './skeleton'
 
 export type Themes = typeof import('./index')
+export { default as numberField } from './numberField'

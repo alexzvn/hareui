@@ -1,0 +1,112 @@
+[
+  {
+    "id": "number-field-default",
+    "component": "number-field",
+    "actions": [
+      "hover"
+    ],
+    "ignoreSlots": [],
+    "target": "[data-slot=number-field-group]"
+  },
+  {
+    "id": "number-field-focus",
+    "component": "number-field",
+    "actions": [
+      "focus"
+    ],
+    "ignoreSlots": [],
+    "target": "[data-slot=number-field-input]"
+  },
+  {
+    "id": "number-field-increment",
+    "component": "number-field",
+    "actions": [
+      "hover",
+      "press"
+    ],
+    "ignoreSlots": [],
+    "target": "[data-slot=number-field-increment-button]"
+  },
+  {
+    "id": "number-field-at-min",
+    "component": "number-field",
+    "actions": [],
+    "ignoreSlots": [],
+    "target": "[data-slot=number-field-decrement-button]"
+  },
+  {
+    "id": "number-field-secondary",
+    "component": "number-field",
+    "actions": [
+      "hover"
+    ],
+    "ignoreSlots": [],
+    "target": "[data-slot=number-field-group]"
+  },
+  {
+    "id": "number-field-secondary-focus",
+    "component": "number-field",
+    "actions": [
+      "focus"
+    ],
+    "ignoreSlots": [],
+    "target": "[data-slot=number-field-input]"
+  },
+  {
+    "id": "number-field-required",
+    "component": "number-field",
+    "actions": [],
+    "ignoreSlots": []
+  },
+  {
+    "id": "number-field-disabled",
+    "component": "number-field",
+    "actions": [],
+    "ignoreSlots": [],
+    "target": "[data-slot=number-field-group]"
+  },
+  {
+    "id": "number-field-invalid",
+    "component": "number-field",
+    "actions": [],
+    "ignoreSlots": [],
+    "target": "[data-slot=number-field-group]"
+  },
+  {
+    "id": "number-field-full-width",
+    "component": "number-field",
+    "actions": [],
+    "ignoreSlots": [],
+    "target": "[data-slot=number-field-group]"
+  },
+  {
+    "id": "number-field-readonly",
+    "component": "number-field",
+    "actions": [],
+    "ignoreSlots": [],
+    "target": "[data-slot=number-field-group]"
+  },
+  {
+    "id": "number-field-percent",
+    "component": "number-field",
+    "actions": [],
+    "ignoreSlots": [],
+    "target": "[data-slot=number-field-input]"
+  },
+  {
+    "id": "number-field-no-buttons",
+    "component": "number-field",
+    "actions": [],
+    "ignoreSlots": [],
+    "target": "[data-slot=number-field-group]"
+  },
+  {
+    "id": "number-field-user-overrides",
+    "component": "number-field",
+    "actions": [
+      "hover"
+    ],
+    "ignoreSlots": [],
+    "target": "[data-slot=number-field-group]"
+  }
+]
