@@ -4,41 +4,43 @@
     "component": "tooltip",
     "actions": [],
     "overlay": true,
-    "ignoreSlots": ["tooltip-arrow"]
+    "ignoreSlots": ["tooltip-arrow"],
+    "reason": "React Aria's OverlayArrow renders an extra wrapper div (data-slot=tooltip-arrow) positioned via a computed center-point + CSS translate(-50%). Reka's PopperArrow positions the arrow via floating-ui's top-left-corner math on an internal non-slot-exposed span, so there is no equivalent wrapper element to attach the data-slot to; only the inner svg (overlay-arrow) is emitted. Verified against the real open DOM on both sides; visual position matches via screenshot diff."
   },
   {
     "id": "tooltip-right",
     "component": "tooltip",
     "actions": [],
     "overlay": true,
-    "ignoreSlots": ["tooltip-arrow"]
+    "ignoreSlots": ["tooltip-arrow"],
+    "reason": "Same as tooltip-top."
   },
   {
     "id": "tooltip-bottom",
     "component": "tooltip",
     "actions": [],
     "overlay": true,
-    "ignoreSlots": ["tooltip-arrow"]
+    "ignoreSlots": ["tooltip-arrow"],
+    "reason": "Same as tooltip-top."
   },
   {
     "id": "tooltip-left",
     "component": "tooltip",
     "actions": [],
     "overlay": true,
-    "ignoreSlots": ["tooltip-arrow"]
+    "ignoreSlots": ["tooltip-arrow"],
+    "reason": "Same as tooltip-top."
   },
   {
     "id": "tooltip-no-arrow",
     "component": "tooltip",
     "actions": [],
-    "overlay": true,
-    "ignoreSlots": []
+    "overlay": true
   },
   {
     "id": "tooltip-text",
     "component": "tooltip",
     "actions": [],
-    "overlay": true,
-    "ignoreSlots": []
+    "overlay": true
   }
 ]
