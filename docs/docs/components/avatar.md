@@ -91,8 +91,9 @@ app.use(createHeroUse({
 | `image` | — | Image element with aspect-square sizing, rendered when `src` is set |
 | `fallback` | `avatar-fallback` | Fallback container with centered content (text or `#fallback` slot) |
 
-The variant props map to HeroUI's modifier classes: `size` → `.avatar--sm` / `--md` / `--lg`,
-`variant="soft"` → `.avatar--soft`, and `color` → `.avatar__fallback--{color}`. `color` only
+HeroUI's modifier classes correspond to props (herouse renders utilities, not BEM classes, so
+style through `class`, `ui` or `createHeroUse`): `.avatar--sm` / `--md` / `--lg` → `size`,
+`.avatar--soft` → `variant="soft"`, `.avatar__fallback--{color}` → `color`. `color` only
 affects the fallback (it has no effect once an image has loaded).
 
 ## API Reference

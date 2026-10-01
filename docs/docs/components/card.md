@@ -96,6 +96,35 @@ app.use(createHeroUse({
 }))
 ```
 
+### Title and description in custom wrappers
+
+When a layout puts the title or description inside your own markup (like the horizontal layout
+above), resolve the Card theme with `tv` to reuse its slot classes, the equivalent of HeroUI's
+`cardVariants()`:
+
+```vue
+<script setup lang="ts">
+import { Card, themes, tv } from 'herouse'
+
+const card = tv(themes.card)()
+</script>
+
+<template>
+  <Card class="md:flex-row" :ui="{ content: 'gap-3' }">
+    <template #leading>
+      <img class="size-[120px] rounded-2xl object-cover" src="…" alt="…" />
+    </template>
+    <div class="flex flex-col gap-1">
+      <h3 data-slot="card-title" :class="card.title({ class: 'pe-8' })">Become an ACME Creator!</h3>
+      <p data-slot="card-description" :class="card.description()">Lorem ipsum dolor sit amet.</p>
+    </div>
+  </Card>
+</template>
+```
+
+`tv(themes.card)` uses the default theme; app-wide `createHeroUse({ ui: { card } })` overrides
+don't apply to these classes.
+
 ## Styling Reference
 
 Each rendered element carries the same `data-slot` string as HeroUI, so selectors translate 1:1.
@@ -109,8 +138,9 @@ Each rendered element carries the same `data-slot` string as HeroUI, so selector
 | `content` | `card-content` | Flexible content container (default slot) |
 | `footer` | `card-footer` | Footer with row layout |
 
-The `variant` prop maps to HeroUI's modifier classes: `transparent` (`.card--transparent`),
-`default` (`.card--default`), `secondary` (`.card--secondary`), `tertiary` (`.card--tertiary`).
+HeroUI's modifier classes correspond to the `variant` prop (herouse renders utilities, not BEM
+classes, so style through `class`, `ui` or `createHeroUse`): `.card--transparent`,
+`.card--default`, `.card--secondary`, `.card--tertiary`.
 
 ## API Reference
 

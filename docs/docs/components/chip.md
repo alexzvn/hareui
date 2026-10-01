@@ -80,9 +80,10 @@ Each rendered element carries the same `data-slot` string as HeroUI, so selector
 | `base` | `chip` | Base chip container styles (`as`, default `span`) |
 | `label` | `chip-label` | Label text slot styles, rendered when `label`/default slot is present |
 
-The variant props map to HeroUI's modifier classes:
+HeroUI's `.chip--*` modifier classes correspond to these props (herouse renders utilities, not BEM
+classes, so style through `class`, `ui` or `createHeroUse`):
 
-- `color`: `accent`, `danger`, `default`, `success`, `warning` (`.chip--{color}`)
+- `color`: `accent`, `danger`, `default`, `success`, `warning`
 - `variant`: `primary` (filled background), `secondary` (default), `tertiary` (transparent background), `soft` (lighter background)
 - `size`: `sm`, `md` (default), `lg`
 
