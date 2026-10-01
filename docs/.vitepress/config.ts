@@ -3,6 +3,7 @@ import tailwindcss from '@tailwindcss/vite'
 import { defineConfigWithTheme } from 'vitepress'
 import { headingPermalink, markdownConfig, searchRender } from './markdown'
 import { sectionLinks, sidebar, type ThemeConfig } from './sidebar'
+import { DESIGN_THEME_IDS } from './theme/design-theme'
 
 const componentSlugs = sidebar
   .flatMap(sectionLinks)
@@ -16,7 +17,15 @@ export default defineConfigWithTheme<ThemeConfig>({
   appearance: true,
   ignoreDeadLinks: [new RegExp(`^/docs/components/(${componentSlugs.join('|')})$`)],
   srcExclude: ['THIRD_PARTY_LICENSES.md', 'demos/**'],
-  head: [['link', { rel: 'icon', href: 'data:,' }]],
+  head: [
+    ['link', { rel: 'icon', href: 'data:,' }],
+    // Restore the docs design-theme preset and vibrant palette before first paint (keys/attributes from HeroUI's utils/design-theme.ts).
+    [
+      'script',
+      {},
+      `try{var r=document.documentElement,t=localStorage.getItem('heroui-docs-design-theme');if(t&&t!=='default'&&${JSON.stringify(DESIGN_THEME_IDS)}.indexOf(t)>-1)r.setAttribute('data-design-theme',t);if(localStorage.getItem('heroui-docs-vibrant-palette')==='true')r.setAttribute('data-vibrant-palette','true')}catch(e){}`,
+    ],
+  ],
   markdown: {
     theme: { light: 'github-light', dark: 'github-dark' },
     anchor: { permalink: headingPermalink },

@@ -6,6 +6,7 @@ import buttonTheme from '../../../../packages/herouse/src/theme/button'
 import { sectionLinks, type SidebarSection } from '../../sidebar'
 import FrameworkTabs from './FrameworkTabs.vue'
 import ThemeToggle from './ThemeToggle.vue'
+import DesignThemeSelector from './DesignThemeSelector.vue'
 
 defineProps<{ sections: SidebarSection[]; activeSection?: SidebarSection }>()
 const emit = defineEmits<{ search: []; openSidebar: [] }>()
@@ -55,6 +56,9 @@ const TAB = 'hover:text-fd-accent-foreground inline-flex items-center gap-2 bord
       </button>
       <div class="flex flex-1 items-center justify-end md:gap-2">
         <div class="flex items-center gap-6 empty:hidden max-lg:hidden" />
+        <div class="me-2 flex items-center gap-3 md:me-0" id="nd-nav-actions">
+          <DesignThemeSelector />
+        </div>
         <div class="flex items-center md:hidden">
           <button data-slot="button" data-search="" type="button" aria-label="Open Search" :class="searchIconButton" @click="emit('search')">
             <svg fill="none" height="24" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" viewBox="0 0 24 24" width="24" xmlns="http://www.w3.org/2000/svg" class="size-4"><circle cx="11" cy="11" r="8" /><path d="m21 21-4.3-4.3" /></svg>

@@ -3,6 +3,7 @@
 @import "./fumadocs/preset.css";
 @import "../../../packages/herouse/src/styles/index.css";
 @import "./global.css";
+@import "./theme-presets.css";
 @import "@fontsource-variable/inter";
 @import "vitepress/dist/client/theme-default/styles/icons.css";
 
