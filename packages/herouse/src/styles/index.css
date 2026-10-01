@@ -1,0 +1,17 @@
+/* herouse styles — import after `@import "tailwindcss";` */
+@import "tw-animate-css";
+
+/* Tokens (HeroUI v3 shared theme + default variables) */
+@import "./theme.css";
+@import "./variables.css" layer(theme);
+
+/* Base */
+@import "./base.css" layer(base);
+@import "./scrollbar.css" layer(base);
+
+/* Utilities and variants */
+@import "./utilities.css";
+@import "./variants.css";
+
+/* Scan component sources/build output for classes */
+@source "../";
