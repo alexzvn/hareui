@@ -1,0 +1,11 @@
+<script setup lang="ts">
+import { Switch, SwitchGroup } from 'herouse'
+</script>
+
+<template>
+  <SwitchGroup class="overflow-x-auto" orientation="horizontal">
+    <Switch name="notifications" label="Notifications" />
+    <Switch name="marketing" label="Marketing" />
+    <Switch name="social" label="Social" />
+  </SwitchGroup>
+</template>

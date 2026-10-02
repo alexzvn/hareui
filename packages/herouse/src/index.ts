@@ -67,6 +67,8 @@ export type { ValidationBehavior, ValidationError, ValidationErrors } from './co
 export type { ValidateFn, ValidationDetails, ValidationResult } from './composables/useFieldValidation'
 export { default as Meter } from './components/Meter.vue'
 export type { MeterProps, MeterSlotProps, MeterSlots } from './components/Meter.vue'
+export { default as SwitchGroup } from './components/SwitchGroup.vue'
+export type { SwitchGroupProps, SwitchGroupSlots } from './components/SwitchGroup.vue'
 export { default as ListBox } from './components/ListBox.vue'
 export type { ListBoxEmits, ListBoxEntry, ListBoxItem, ListBoxItemSlotProps, ListBoxProps, ListBoxSection, ListBoxSeparator, ListBoxSlots, ListBoxValue } from './components/ListBox.vue'
 export { default as Select } from './components/Select.vue'

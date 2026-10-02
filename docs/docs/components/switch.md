@@ -12,7 +12,7 @@ links:
 
 ```vue
 <script setup lang="ts">
-import { Switch } from 'herouse'
+import { Switch, SwitchGroup } from 'herouse'
 </script>
 ```
 
@@ -41,6 +41,20 @@ composed through props or named slots.
 | `icon` | `switch-icon` | Icon container inside the thumb (iff `#icon`) |
 | — | `description` | [Description](/docs/components/description) (iff `description` / `#description`) |
 | — | `field-error` | [FieldError](/docs/components/field-error) (while invalid, iff `error-message` / `#error` / validation errors) |
+
+Group multiple switches with [SwitchGroup](#switchgroup), a layout-only wrapper (`orientation: 'vertical' | 'horizontal'`, default `vertical`):
+
+```vue
+<SwitchGroup>
+  <Switch name="a" label="Option 1" />
+  <Switch name="b" label="Option 2" />
+</SwitchGroup>
+```
+
+| `ui` key | `data-slot` | Element |
+|---|---|---|
+| `base` | `switch-group` | `<div>` root |
+| `items` | `switch-group-items` | Container for the switch items |
 
 ## Examples
 
@@ -77,6 +91,18 @@ composed through props or named slots.
 herouse has no dedicated `label-position` prop; reverse the order with a `content` class override:
 
 <ComponentPreview name="switch/label-position" />
+
+### Group
+
+<ComponentPreview name="switch/group" />
+
+### Group Horizontal
+
+<ComponentPreview name="switch/group-horizontal" />
+
+### Form Integration
+
+<ComponentPreview name="switch/form" />
 
 ### Render Props
 
@@ -134,6 +160,20 @@ app.use(createHeroUse({
 ### Emits
 
 <ApiTable component="Switch" kind="emits" />
+
+## SwitchGroup
+
+`SwitchGroup` is a layout-only wrapper: it renders no state of its own and shares no context with its
+`Switch` children — each switch keeps its own `name`/`value`/`v-model`. Use it purely to apply the grouped
+spacing/orientation styling HeroUI ships for stacks of switches.
+
+### Props
+
+<ApiTable component="SwitchGroup" kind="props" />
+
+### Slots
+
+<ApiTable component="SwitchGroup" kind="slots" />
 
 ## Accessibility
 

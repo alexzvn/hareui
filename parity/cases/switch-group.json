@@ -1,0 +1,14 @@
+[
+  {
+    "id": "switch-group-vertical",
+    "component": "switch-group",
+    "actions": [],
+    "ignoreSlots": []
+  },
+  {
+    "id": "switch-group-horizontal",
+    "component": "switch-group",
+    "actions": [],
+    "ignoreSlots": []
+  }
+]
