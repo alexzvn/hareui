@@ -93,22 +93,53 @@ onBeforeUnmount(() => {
  * -------------------------------------------------------------------------------------------- */
 const rootEl = ref<HTMLElement | null>(null)
 const toastHeight = ref<number | undefined>()
+// Same as HeroUI's useMeasuredHeight: `scrollHeight` at `height: auto` (padding box, no border),
+// re-measured on DOM mutations and on inline-size changes only, not on the animated block size.
+let mutationObserver: MutationObserver | null = null
 let resizeObserver: ResizeObserver | null = null
-onMounted(() => {
-  if (!rootEl.value || typeof ResizeObserver === 'undefined')
+let measureFrame = 0
+function measure() {
+  const el = rootEl.value
+  if (!el)
     return
-  resizeObserver = new ResizeObserver(([entry]) => {
-    // Use the border-box height (includes padding/border), not `entry.contentRect`
-    // (content-box only): the CSS `height` property below sets the border-box size
-    // under `box-sizing: border-box`, so measuring content-box would double-subtract
-    // padding and shrink the toast on every subsequent observation.
-    if (entry)
-      toastHeight.value = entry.borderBoxSize?.[0]?.blockSize ?? rootEl.value?.getBoundingClientRect().height
+  const previous = el.style.height
+  el.style.height = 'auto'
+  const measured = el.scrollHeight
+  el.style.height = previous
+  if (toastHeight.value !== measured)
+    toastHeight.value = measured
+}
+function scheduleMeasure() {
+  if (measureFrame)
+    return
+  measureFrame = requestAnimationFrame(() => {
+    measureFrame = 0
+    measure()
   })
-  resizeObserver.observe(rootEl.value, { box: 'border-box' })
+}
+onMounted(() => {
+  const el = rootEl.value
+  if (!el)
+    return
+  measure()
+  mutationObserver = new MutationObserver(scheduleMeasure)
+  mutationObserver.observe(el, { attributeFilter: ['class'], attributes: true, characterData: true, childList: true, subtree: true })
+  if (typeof ResizeObserver === 'undefined')
+    return
+  let lastWidth = el.getBoundingClientRect().width
+  resizeObserver = new ResizeObserver(([entry]) => {
+    const width = entry?.contentRect.width
+    if (width === undefined || Math.abs(width - lastWidth) < 0.5)
+      return
+    lastWidth = width
+    scheduleMeasure()
+  })
+  resizeObserver.observe(el)
 })
 onBeforeUnmount(() => {
+  mutationObserver?.disconnect()
   resizeObserver?.disconnect()
+  cancelAnimationFrame(measureFrame)
   emit('height-remove', props.toast.key)
 })
 watch(toastHeight, (height) => {

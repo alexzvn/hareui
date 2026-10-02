@@ -11,9 +11,9 @@ function show() {
 
 <template>
   <div class="flex h-full max-w-xl flex-col items-center justify-center">
-    <ToastProvider placement="bottom" :queue="customQueue">
+    <ToastProvider placement="bottom" :queue="customQueue" :ui="{ toast: 'rounded-xl border border-border' }">
       <template #toast="{ content, close }">
-        <div class="relative flex items-center gap-2 rounded-xl border border-border bg-surface px-4 py-3 shadow-overlay">
+        <div class="flex items-center gap-2">
           <svg aria-hidden="true" class="size-4 shrink-0 text-accent-soft-foreground" fill="none" viewBox="0 0 16 16">
             <path clip-rule="evenodd" d="M8 13.5a5.5 5.5 0 1 0 0-11a5.5 5.5 0 0 0 0 11M8 15A7 7 0 1 0 8 1a7 7 0 0 0 0 14m1-9.5a1 1 0 1 1-2 0a1 1 0 0 1 2 0m-.25 3a.75.75 0 0 0-1.5 0V11a.75.75 0 0 0 1.5 0z" fill="currentColor" fill-rule="evenodd" />
           </svg>
@@ -25,8 +25,8 @@ function show() {
               {{ (content as ToastContentValue).description }}
             </p>
           </div>
-          <CloseButton class="absolute end-2 top-1/2 -translate-y-1/2 border-none bg-transparent opacity-100 [&>svg]:size-4" @click="close" />
         </div>
+        <CloseButton class="absolute end-2 top-1/2 -translate-y-1/2 border-none bg-transparent opacity-100 [&>svg]:size-4" @click="close" />
       </template>
     </ToastProvider>
     <Button size="sm" variant="secondary" @click="show">
