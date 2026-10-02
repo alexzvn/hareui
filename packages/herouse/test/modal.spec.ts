@@ -102,4 +102,20 @@ describe('modal', () => {
 
     wrapper.unmount()
   })
+
+  // The theme spaces sections with `header + body` / `body + footer` sibling selectors; the
+  // visually hidden title rendered for a custom #header must not sit between them.
+  it('keeps header, body and footer adjacent when the #header slot replaces the title', async () => {
+    const wrapper = mount(Modal, {
+      props: { defaultOpen: true },
+      slots: { header: () => h('h2', 'Contact Us'), body: () => 'Content', footer: () => 'Actions' },
+    })
+    await nextTick()
+    const body = document.querySelector('[data-slot=modal-body]')!
+    expect(body.previousElementSibling?.getAttribute('data-slot')).toBe('modal-header')
+    expect(body.nextElementSibling?.getAttribute('data-slot')).toBe('modal-footer')
+    expect(document.querySelector('[role=dialog]')?.getAttribute('aria-labelledby')).toBeTruthy()
+
+    wrapper.unmount()
+  })
 })

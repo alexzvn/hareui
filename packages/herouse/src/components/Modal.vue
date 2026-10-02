@@ -191,15 +191,16 @@ onBeforeUnmount(() => {
                   </DialogTitle>
                 </slot>
               </div>
-              <VisuallyHidden v-if="!showHeaderTitle" as-child>
-                <DialogTitle />
-              </VisuallyHidden>
               <div v-if="!!slots.body" data-slot="modal-body" :class="ui.body({ class: props.ui?.body })">
                 <slot name="body" :close="close" />
               </div>
               <div v-if="!!slots.footer" data-slot="modal-footer" :class="ui.footer({ class: props.ui?.footer })">
                 <slot name="footer" :close="close" />
               </div>
+              <!-- after header/body/footer so the theme's `header + body` / `body + footer` sibling margins still apply -->
+              <VisuallyHidden v-if="!showHeaderTitle" as-child>
+                <DialogTitle />
+              </VisuallyHidden>
               <DialogClose v-if="closeButton" as-child>
                 <slot name="close" :close="close">
                   <CloseButton data-slot="modal-close-trigger" :class="ui.closeTrigger({ class: props.ui?.closeTrigger })" />
