@@ -113,6 +113,19 @@ describe('Table', () => {
       delete (HTMLElement.prototype as any).clientWidth
     }
   })
+
+  it('announces the resize limits it enforces, defaulting the minimum to 75px', async () => {
+    vi.stubGlobal('ResizeObserver', class { observe() {} disconnect() {} })
+    const wrapper = mount(Table, { props: { rows, columns: [
+      { key: 'name', label: 'Name', resizable: true },
+      { key: 'role', label: 'Role', resizable: true, minWidth: 120, maxWidth: 300 },
+    ] } })
+    const [byDefault, limited] = wrapper.findAll('[data-slot="table-column-resizer"]')
+    expect(byDefault.attributes('aria-valuemin')).toBe('75')
+    expect(byDefault.attributes()).not.toHaveProperty('aria-valuemax')
+    expect(limited.attributes('aria-valuemin')).toBe('120')
+    expect(limited.attributes('aria-valuemax')).toBe('300')
+  })
 })
 
 afterEach(() => vi.unstubAllGlobals())

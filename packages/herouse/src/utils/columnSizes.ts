@@ -4,6 +4,9 @@
 /** A column width: pixels, a percentage of the table (`'25%'`) or a fraction of the free space (`'2fr'`). */
 export type ColumnWidth = number | `${number}%` | `${number}fr`
 
+/** React Aria's default column min width in pixels. */
+export const DEFAULT_MIN_COLUMN_WIDTH = 75
+
 export interface ColumnSizeInput {
   width?: ColumnWidth
   minWidth?: ColumnWidth
@@ -41,7 +44,7 @@ function cascadeRounding(sizes: number[]): number[] {
  * Resolves each column's pixel width for a table `availableWidth` wide. Widths default to
  * `'1fr'`, min widths to `defaultMinWidth`.
  */
-export function calculateColumnSizes(availableWidth: number, columns: ColumnSizeInput[], defaultMinWidth = 75): number[] {
+export function calculateColumnSizes(availableWidth: number, columns: ColumnSizeInput[], defaultMinWidth = DEFAULT_MIN_COLUMN_WIDTH): number[] {
   const flooredWidth = Math.floor(availableWidth)
   const fraction = availableWidth - flooredWidth
   availableWidth = flooredWidth

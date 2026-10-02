@@ -142,7 +142,7 @@ export interface TableSlots {
 <script setup lang="ts">
 import { computed, nextTick, onBeforeUnmount, ref, useSlots, watch } from 'vue'
 import { useComponentUI } from '../composables/useComponentUI'
-import { calculateColumnSizes } from '../utils/columnSizes'
+import { calculateColumnSizes, DEFAULT_MIN_COLUMN_WIDTH } from '../utils/columnSizes'
 import Checkbox from './Checkbox.vue'
 import Spinner from './Spinner.vue'
 
@@ -302,8 +302,12 @@ function widthStyle(column: TableColumn) {
   return typeof w === 'number' ? { width: `${w}px`, minWidth: `${w}px`, maxWidth: `${w}px` } : undefined
 }
 
+function minWidthOf(column: TableColumn): number {
+  return column.minWidth ?? DEFAULT_MIN_COLUMN_WIDTH
+}
+
 function resizeColumn(column: TableColumn, width: number) {
-  width = Math.max(column.minWidth ?? 75, Math.min(column.maxWidth ?? Number.MAX_SAFE_INTEGER, Math.floor(width)))
+  width = Math.max(minWidthOf(column), Math.min(column.maxWidth ?? Number.MAX_SAFE_INTEGER, Math.floor(width)))
   const index = props.columns.indexOf(column)
   resizedWidths.value = Object.fromEntries(props.columns.map((c, i) => [
     c.key,
@@ -527,7 +531,7 @@ function alignClass(column: TableColumn) {
                 role="separator"
                 aria-orientation="vertical"
                 :aria-valuenow="columnWidths[column.key]"
-                :aria-valuemin="column.minWidth ?? 75"
+                :aria-valuemin="minWidthOf(column)"
                 :aria-valuemax="column.maxWidth"
                 tabindex="0"
                 :data-resizing="resizingKey === column.key ? 'true' : undefined"
