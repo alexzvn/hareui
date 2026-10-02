@@ -20,6 +20,7 @@ export { default as skeleton } from './skeleton'
 export { default as toast } from './toast'
 
 export type Themes = typeof import('./index')
+export { default as meter } from './meter'
 export { default as separator } from './separator'
 export { default as surface } from './surface'
 export { default as textArea } from './textArea'

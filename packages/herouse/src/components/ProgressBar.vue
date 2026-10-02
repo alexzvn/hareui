@@ -72,9 +72,10 @@ export interface ProgressBarSlots {
 </script>
 
 <script setup lang="ts">
-import { ProgressIndicator, ProgressRoot, useId, useLocale } from 'reka-ui'
+import { ProgressIndicator, ProgressRoot, useId } from 'reka-ui'
 import { computed } from 'vue'
 import { useComponentUI } from '../composables/useComponentUI'
+import { useRangeValue } from '../composables/useRangeValue'
 import labelTheme from '../theme/label'
 
 const props = withDefaults(defineProps<ProgressBarProps>(), {
@@ -93,23 +94,13 @@ const ui = useComponentUI('progressBar', theme, () => ({
 }))
 const labelUi = useComponentUI('label', labelTheme, () => ({}))
 
-const locale = useLocale()
 const labelId = useId(undefined, 'herouse-progress-bar-label')
 
-// Same math as React Aria's useProgressBar.
-const clamped = computed(() => Math.min(Math.max(props.value, props.minValue), props.maxValue))
-const fraction = computed(() => {
-  const range = props.maxValue - props.minValue
-  return range === 0 ? 0 : (clamped.value - props.minValue) / range
-})
-const state = computed<ProgressBarSlotProps>(() => {
-  if (props.indeterminate)
-    return { percentage: undefined, valueText: undefined, indeterminate: true }
-  const formatOptions = props.formatOptions ?? { style: 'percent' }
-  const valueText = props.valueLabel
-    ?? new Intl.NumberFormat(locale.value, formatOptions).format(formatOptions.style === 'percent' ? fraction.value : clamped.value)
-  return { percentage: fraction.value * 100, valueText, indeterminate: false }
-})
+const range = useRangeValue(() => props)
+const clamped = computed(() => range.value.clamped)
+const state = computed<ProgressBarSlotProps>(() => props.indeterminate
+  ? { percentage: undefined, valueText: undefined, indeterminate: true }
+  : { percentage: range.value.percentage, valueText: range.value.valueText, indeterminate: false })
 
 const hasLabel = computed(() => !!props.label || !!slots.label)
 const hasOutput = computed(() => props.showOutput ?? ((hasLabel.value || !!slots.output) && !props.indeterminate))

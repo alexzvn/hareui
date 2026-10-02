@@ -1,0 +1,86 @@
+[
+  {
+    "id": "meter-basic",
+    "component": "meter",
+    "actions": [],
+    "ignoreSlots": []
+  },
+  {
+    "id": "meter-color-default",
+    "component": "meter",
+    "actions": [],
+    "ignoreSlots": []
+  },
+  {
+    "id": "meter-color-accent",
+    "component": "meter",
+    "actions": [],
+    "ignoreSlots": []
+  },
+  {
+    "id": "meter-color-success",
+    "component": "meter",
+    "actions": [],
+    "ignoreSlots": []
+  },
+  {
+    "id": "meter-color-warning",
+    "component": "meter",
+    "actions": [],
+    "ignoreSlots": []
+  },
+  {
+    "id": "meter-color-danger",
+    "component": "meter",
+    "actions": [],
+    "ignoreSlots": []
+  },
+  {
+    "id": "meter-size-sm",
+    "component": "meter",
+    "actions": [],
+    "ignoreSlots": []
+  },
+  {
+    "id": "meter-size-md",
+    "component": "meter",
+    "actions": [],
+    "ignoreSlots": []
+  },
+  {
+    "id": "meter-size-lg",
+    "component": "meter",
+    "actions": [],
+    "ignoreSlots": []
+  },
+  {
+    "id": "meter-without-label",
+    "component": "meter",
+    "actions": [],
+    "ignoreSlots": []
+  },
+  {
+    "id": "meter-custom-value",
+    "component": "meter",
+    "actions": [],
+    "ignoreSlots": []
+  },
+  {
+    "id": "meter-clamped",
+    "component": "meter",
+    "actions": [],
+    "ignoreSlots": []
+  },
+  {
+    "id": "meter-value-label",
+    "component": "meter",
+    "actions": [],
+    "ignoreSlots": []
+  },
+  {
+    "id": "meter-custom-styles",
+    "component": "meter",
+    "actions": [],
+    "ignoreSlots": []
+  }
+]
