@@ -1,0 +1,20 @@
+[
+  {
+    "id": "empty-state-default",
+    "component": "empty-state",
+    "actions": [],
+    "ignoreSlots": []
+  },
+  {
+    "id": "empty-state-custom",
+    "component": "empty-state",
+    "actions": [],
+    "ignoreSlots": []
+  },
+  {
+    "id": "empty-state-tag-group",
+    "component": "empty-state",
+    "actions": [],
+    "ignoreSlots": []
+  }
+]

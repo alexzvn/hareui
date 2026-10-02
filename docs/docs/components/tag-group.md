@@ -28,7 +28,7 @@ TagGroup renders an optional [Label](/docs/components/label), a grid of tags, an
     <template #description />                                       <!-- Description content -->
     <template #errorMessage />                                      <!-- Error message content -->
     <template #item="{ item, index, selected, disabled }" />        <!-- Content of each tag (default: item.label) -->
-    <template #empty />                                              <!-- Shown instead of the list when `items` is empty -->
+    <template #empty />                                              <!-- Rendered inside the list when `items` is empty (usually <EmptyState>) -->
   </TagGroup>
 </template>
 ```
@@ -80,11 +80,39 @@ Set `removable` to show a remove button on every (non-disabled) tag. It emits `r
 
 <ComponentPreview name="tag-group/with-error-message" />
 
+### With List Data
+
+Keep the items in a `ref`, remove them on `@remove`, and render an `EmptyState` in the `#empty` slot once the list is empty.
+
+<ComponentPreview name="tag-group/with-list-data" />
+
 ### Render Function
 
 Attributes on `TagGroup` (other than `aria-label`) fall through to the root element.
 
 <ComponentPreview name="tag-group/render-function" />
+
+## EmptyState
+
+`EmptyState` is the small muted placeholder HeroUI renders inside empty collections (TagGroup, ListBox, Table). It renders "No results found" by default; pass your own text in the default slot. Use it in TagGroup's `#empty` slot.
+
+```vue
+<script setup lang="ts">
+import { EmptyState } from 'herouse'
+</script>
+
+<template>
+  <EmptyState class="p-1">
+    No team members
+  </EmptyState>
+</template>
+```
+
+| `ui` key | `data-slot` | Element |
+|---|---|---|
+| `base` | `empty-state` | `<div>` root |
+
+<ApiTable component="EmptyState" kind="props" />
 
 ## Customization
 
