@@ -67,7 +67,7 @@ Collected from `reviews/*.md` (each has a "Decisions needed" section with option
 9. **Wave 2 API stand-ins for HeroUI parts** (option A): ToggleButtonGroup and ButtonGroup separators are a `separator` prop on the group, not a `<ToggleButtonGroup.Separator/>` placed in each button. ListBox and Select take `items` (with `{ type: 'section' }` / `{ type: 'separator' }` entries) plus per-item slots. The ListBox Render Function demo has no `render` prop; attributes fall through.
 10. **Select multiple-value text** renders as one string where React renders several text nodes: 1-16 px anti-aliasing diff on the disabled and controlled-multiple demos.
 11. **Calendar/RangeCalendar week view and day view** (DTT1wRo): Reka always builds full month grids. Options: leave these demos out and document it, or build a custom grid outside Reka for those views.
-12. **RangeCalendar anchor-dependent unavailable dates:** Reka's `isDateUnavailable` gets no anchor date, so HeroUI's "unavailable relative to the first picked date" demo can't be matched without forking Reka. Documented as a reka-limitation for now.
+12. **RangeCalendar anchor-dependent unavailable dates:** Reka's `isDateUnavailable` gets no anchor date. Not parked yet: DTT1wRo is trying a wrapper workaround (track Reka's `update:startValue` and pass an `isDateUnavailable` closure that reads it). It stays open only if that fails.
 
 ## Next steps
 
