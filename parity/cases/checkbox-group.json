@@ -1,0 +1,96 @@
+[
+  {
+    "id": "checkbox-group-primary",
+    "component": "checkbox-group",
+    "actions": ["focus"],
+    "ignoreSlots": []
+  },
+  {
+    "id": "checkbox-group-primary-item",
+    "component": "checkbox-group",
+    "actions": ["hover", "press"],
+    "ignoreSlots": [],
+    "target": "#case [data-slot=checkbox-content]"
+  },
+  {
+    "id": "checkbox-group-primary-selected-item",
+    "component": "checkbox-group",
+    "actions": ["hover", "press"],
+    "ignoreSlots": [],
+    "target": "#case [data-slot=checkbox]:nth-child(2) [data-slot=checkbox-content]"
+  },
+  {
+    "id": "checkbox-group-secondary",
+    "component": "checkbox-group",
+    "actions": ["focus"],
+    "ignoreSlots": []
+  },
+  {
+    "id": "checkbox-group-secondary-item",
+    "component": "checkbox-group",
+    "actions": ["hover", "press"],
+    "ignoreSlots": [],
+    "target": "#case [data-slot=checkbox-content]"
+  },
+  {
+    "id": "checkbox-group-secondary-selected-item",
+    "component": "checkbox-group",
+    "actions": ["hover", "press"],
+    "ignoreSlots": [],
+    "target": "#case [data-slot=checkbox]:nth-child(2) [data-slot=checkbox-content]"
+  },
+  {
+    "id": "checkbox-group-with-label",
+    "component": "checkbox-group",
+    "actions": [],
+    "ignoreSlots": []
+  },
+  {
+    "id": "checkbox-group-required",
+    "component": "checkbox-group",
+    "actions": [],
+    "ignoreSlots": []
+  },
+  {
+    "id": "checkbox-group-disabled",
+    "component": "checkbox-group",
+    "actions": [],
+    "ignoreSlots": []
+  },
+  {
+    "id": "checkbox-group-item-disabled",
+    "component": "checkbox-group",
+    "actions": [],
+    "ignoreSlots": []
+  },
+  {
+    "id": "checkbox-group-invalid",
+    "component": "checkbox-group",
+    "actions": [],
+    "ignoreSlots": []
+  },
+  {
+    "id": "checkbox-group-invalid-selected",
+    "component": "checkbox-group",
+    "actions": [],
+    "ignoreSlots": []
+  },
+  {
+    "id": "checkbox-group-disabled-with-label",
+    "component": "checkbox-group",
+    "actions": [],
+    "ignoreSlots": []
+  },
+  {
+    "id": "checkbox-group-readonly",
+    "component": "checkbox-group",
+    "actions": ["hover", "press"],
+    "ignoreSlots": []
+  },
+  {
+    "id": "checkbox-group-user-overrides",
+    "component": "checkbox-group",
+    "actions": ["hover"],
+    "ignoreSlots": []
+  }
+]
