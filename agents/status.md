@@ -12,27 +12,21 @@
   - Checkbox, Switch, RadioGroup
 - Last verified: typecheck clean; avatar parity 14/14, card 7/7; checkbox, switch and radio-group 16/16 each (reported by the peer); input 8/8, textfield 7/7.
 
-## In flight when this was written
+## In flight at wind-down (2026-10-02 ~15:20; HEAD `a8fbbd9`/`ed43c6a`)
 
-- **Modal, Popover:** review by peer DTT1wRo. Draft reports are in `reviews/modal.md` and `reviews/popover.md`.
-- **Tabs, Tooltip:** review by peer _uhc9dP, covering the user's findings:
-  - tab separators
-  - vertical orientation, fully supported and demoed
-  - the custom-styles demo looks off
-  - Tabs parity must pass at the default 0.001 threshold. The earlier `maxDiffRatio: 0.06` and the ignored indicator width/height were rejected. Root cause: Reka `TabsIndicator` measures integer `offsetWidth`. Planned fix: an own indicator positioned from `getBoundingClientRect` (ResizeObserver + watch on the value), setting the same CSS vars.
-- **Docs-site chrome review (peer hKWRyJv):**
-  - pages: header, sidebar, TOC, typography, code blocks, preview cards, mobile drawer; light/dark, desktop and 390 px
-  - content check of the 11 Getting Started/Handbook pages
-  - plus the **Theme selector** (see `decisions.md`)
-- **Uncommitted working-tree changes from those peers:**
-  - docs sidebar/layout/markdown
-  - Getting Started pages
-  - tabs/tooltip components, themes, demos and cases
-  - Commit each as its own unit once its owner reports.
-- **Not yet run:**
-  - a full `bun run parity` (all components) after the reviews
-  - `docs:build` itself **passes** (29 pages, llms generated, `aeb7241`). Still pending: the llms-full.txt colour-data fix (hKWRyJv) and the final full run.
-  - the visual playground pass (plan Verification 7)
+Everything below is uncommitted in the working tree. Commit each as its own unit with an isolated-index check (copy containing only the unit's files: library + playground typecheck, unit tests, docs build exit 0 with a clean log). Stage `src/index.ts`, `theme/index.ts` and `docs/.vitepress/sidebar.ts` per line, never whole-file.
+
+- **Date components (DTT1wRo):** Calendar, RangeCalendar, DateField, TimeField, DatePicker. Still fixing parity; their sidebar lines are already in `sidebar.ts`. Status items 11-12.
+- **Toast height fix (DTT1wRo):** verified (toast parity 15/15, five demos 0 px vs heroui.com light+dark); unit not yet sent.
+- **ComboBox, Autocomplete (wave 2, kBg55Bg):** not started. kBg55Bg has no uncommitted files.
+- **Colour components** (hKWRyJv): all six committed (`468b999`..`651604a`); nothing outstanding.
+- **_uhc9dP wave 2** (Accordion, DisclosureGroup, ScrollShadow, Breadcrumbs, Pagination, AlertDialog, Drawer, Dropdown + compare.ts box-shadow normaliser): committed (`5d36ce7`..`62af4ff`). Residues: scroll-shadow custom-styles (~1.1k px text raster) and visibility-change (200 px).
+- **ButtonGroup basic/custom-styles demos** (-8sP15N): not done; they were waiting on Dropdown, which is now committed, so they can be written.
+- **`<RelatedComponents>` in `docs/docs/components/modal.md`** (uncommitted): presumed abE2Br_'s Related-cards work; goes with that unit.
+- **All Components page (abE2Br_):** `docs/docs/components/index.md` started; ComponentsCategory/ComponentItem Vue port, self-generated thumbnails in `docs/public/related-components/` (no HeroUI CDN images), then Related Components cards on every component page. Its two sidebar lines ("Overview" separator + "All Components (Vue)", by hKWRyJv) go in with this unit only.
+- **Theme builder page (vTSDGtr):** utils committed (`ed43c6a`). `docs/.vitepress/theme/themes/ThemesPage.vue` and `docs/themes.md` (layout: themes) in progress; the two `Layout.vue` lines (import + `v-else-if` branch) are removed until the page builds. Acceptance: pixel match vs heroui.com/en/themes at 1440/390 light+dark incl. after changing accent/radius/font; generated CSS byte-identical.
+- **Not yet run:** a full `bun run parity` (all components, light+dark) and the visual playground pass (plan Verification 7).
+- **Parity lock:** `/tmp/herouse-parity.lock` has been left stale twice; if a run finds it held with no compare/popdiff process alive, remove it.
 
 ## Resolved on 2026-10-02 (see `decisions.md`; don't ask again)
 
