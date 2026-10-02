@@ -157,9 +157,9 @@ function onUpdate(value: boolean | 'indeterminate') {
     :data-required="required ? 'true' : undefined"
     :class="ui.base({ class: [props.ui?.base, props.class] })"
   >
+    <!-- The id goes on our own element (as-child) instead of Reka's `id` prop: with `id` set, Reka queries `document.querySelector('[for=id]').innerText` after mount and re-renders, which dominated mount time. Same DOM, and a native label[for] still names the control. -->
     <CheckboxRoot
       v-bind="$attrs"
-      :id="id"
       :model-value="checked"
       :name="name"
       :value="value"
@@ -171,43 +171,46 @@ function onUpdate(value: boolean | 'indeterminate') {
       data-slot="checkbox-content"
       :class="ui.content({ class: props.ui?.content })"
       @update:model-value="onUpdate"
+      as-child
     >
-      <span data-slot="checkbox-control" :class="ui.control({ class: props.ui?.control })">
-        <span aria-hidden="true" data-slot="checkbox-indicator" :class="ui.indicator({ class: props.ui?.indicator })">
-          <slot name="indicator" :state="state">
-            <svg
-              v-if="state === 'indeterminate'"
-              aria-hidden="true"
-              data-slot="checkbox-default-indicator--indeterminate"
-              fill="none"
-              role="presentation"
-              stroke="currentColor"
-              stroke-linecap="round"
-              stroke-width="3"
-              viewBox="0 0 24 24"
-            >
-              <line x1="21" x2="3" y1="12" y2="12" />
-            </svg>
-            <svg
-              v-else
-              aria-hidden="true"
-              data-slot="checkbox-default-indicator--checkmark"
-              fill="none"
-              role="presentation"
-              stroke="currentColor"
-              stroke-dasharray="22"
-              :stroke-dashoffset="state === 'checked' ? 44 : 66"
-              stroke-linecap="round"
-              stroke-linejoin="round"
-              stroke-width="2"
-              viewBox="0 0 17 18"
-            >
-              <polyline points="1 9 7 14 15 4" />
-            </svg>
-          </slot>
+      <button :id="id">
+        <span data-slot="checkbox-control" :class="ui.control({ class: props.ui?.control })">
+          <span aria-hidden="true" data-slot="checkbox-indicator" :class="ui.indicator({ class: props.ui?.indicator })">
+            <slot name="indicator" :state="state">
+              <svg
+                v-if="state === 'indeterminate'"
+                aria-hidden="true"
+                data-slot="checkbox-default-indicator--indeterminate"
+                fill="none"
+                role="presentation"
+                stroke="currentColor"
+                stroke-linecap="round"
+                stroke-width="3"
+                viewBox="0 0 24 24"
+              >
+                <line x1="21" x2="3" y1="12" y2="12" />
+              </svg>
+              <svg
+                v-else
+                aria-hidden="true"
+                data-slot="checkbox-default-indicator--checkmark"
+                fill="none"
+                role="presentation"
+                stroke="currentColor"
+                stroke-dasharray="22"
+                :stroke-dashoffset="state === 'checked' ? 44 : 66"
+                stroke-linecap="round"
+                stroke-linejoin="round"
+                stroke-width="2"
+                viewBox="0 0 17 18"
+              >
+                <polyline points="1 9 7 14 15 4" />
+              </svg>
+            </slot>
+          </span>
         </span>
-      </span>
-      <slot name="label" :state="state">{{ label }}</slot>
+        <slot name="label" :state="state">{{ label }}</slot>
+      </button>
     </CheckboxRoot>
     <Description v-if="hasDescription" :id="descriptionId">
       <slot name="description" :state="state">{{ description }}</slot>

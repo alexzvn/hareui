@@ -192,19 +192,22 @@ function onUpdate(value: unknown) {
       :data-invalid="invalid ? 'true' : undefined"
       :class="ui.item({ class: props.ui?.item })"
     >
+      <!-- The id goes on our own element (as-child) instead of Reka's `id` prop: with `id` set, Reka queries `document.querySelector('[for=id]').innerText` after mount and re-renders, which dominated mount time. Same DOM, and a native label[for] still names the control. -->
       <RekaRadioGroupItem
-        :id="`${id}-${index}`"
         :value="item.value"
         :disabled="item.disabled"
         :aria-describedby="[hasItemDescription(item) && `${id}-${index}-description`, describedBy].filter(Boolean).join(' ') || undefined"
         data-slot="radio-content"
         :data-selected="selected === item.value ? 'true' : undefined"
         :class="ui.content({ class: props.ui?.content })"
+        as-child
       >
-        <span data-slot="radio-control" :class="ui.control({ class: props.ui?.control })">
-          <span aria-hidden="true" data-slot="radio-indicator" :class="ui.indicator({ class: props.ui?.indicator })"><slot v-if="slots.indicator" name="indicator" :item="item" :checked="selected === item.value" /></span>
-        </span>
-        <slot name="item-label" :item="item" :index="index">{{ item.label }}</slot>
+        <button :id="`${id}-${index}`">
+          <span data-slot="radio-control" :class="ui.control({ class: props.ui?.control })">
+            <span aria-hidden="true" data-slot="radio-indicator" :class="ui.indicator({ class: props.ui?.indicator })"><slot v-if="slots.indicator" name="indicator" :item="item" :checked="selected === item.value" /></span>
+          </span>
+          <slot name="item-label" :item="item" :index="index">{{ item.label }}</slot>
+        </button>
       </RekaRadioGroupItem>
       <Description v-if="hasItemDescription(item)" :id="`${id}-${index}-description`">
         <slot name="item-description" :item="item" :index="index">{{ item.description }}</slot>

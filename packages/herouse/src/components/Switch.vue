@@ -153,9 +153,9 @@ function onUpdate(value: boolean) {
     :data-required="required ? 'true' : undefined"
     :class="ui.base({ class: [props.ui?.base, props.class] })"
   >
+    <!-- The id goes on our own element (as-child) instead of Reka's `id` prop: with `id` set, Reka queries `document.querySelector('[for=id]').innerText` after mount and re-renders, which dominated mount time. Same DOM, and a native label[for] still names the control. -->
     <SwitchRoot
       v-bind="$attrs"
-      :id="id"
       :model-value="checked"
       :name="name"
       :value="value"
@@ -167,15 +167,18 @@ function onUpdate(value: boolean) {
       data-slot="switch-content"
       :class="ui.content({ class: props.ui?.content })"
       @update:model-value="onUpdate"
+      as-child
     >
-      <span data-slot="switch-control" :class="ui.control({ class: props.ui?.control })">
-        <span data-slot="switch-thumb" :class="ui.thumb({ class: props.ui?.thumb })">
-          <span v-if="slots.icon" data-slot="switch-icon" :class="ui.icon({ class: props.ui?.icon })">
-            <slot name="icon" :checked="checked" />
+      <button :id="id">
+        <span data-slot="switch-control" :class="ui.control({ class: props.ui?.control })">
+          <span data-slot="switch-thumb" :class="ui.thumb({ class: props.ui?.thumb })">
+            <span v-if="slots.icon" data-slot="switch-icon" :class="ui.icon({ class: props.ui?.icon })">
+              <slot name="icon" :checked="checked" />
+            </span>
           </span>
         </span>
-      </span>
-      <slot name="label" :checked="checked">{{ label }}</slot>
+        <slot name="label" :checked="checked">{{ label }}</slot>
+      </button>
     </SwitchRoot>
     <Description v-if="hasDescription" :id="descriptionId">
       <slot name="description" :checked="checked">{{ description }}</slot>

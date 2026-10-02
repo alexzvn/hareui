@@ -197,8 +197,8 @@ function onUpdate(value: string[]) {
       :data-readonly="readonly ? 'true' : undefined"
       :class="itemUi.base({ class: props.ui?.item })"
     >
+      <!-- The id goes on our own element (as-child) instead of Reka's `id` prop: with `id` set, Reka queries `document.querySelector('[for=id]').innerText` after mount and re-renders, which dominated mount time. Same DOM, and a native label[for] still names the control. -->
       <RekaCheckboxRoot
-        :id="`${id}-${index}`"
         :value="item.value"
         :disabled="item.disabled"
         :aria-invalid="invalid ? 'true' : undefined"
@@ -206,29 +206,32 @@ function onUpdate(value: string[]) {
         data-slot="checkbox-content"
         :data-selected="selected.includes(item.value) ? 'true' : undefined"
         :class="itemUi.content({ class: props.ui?.content })"
+        as-child
       >
-        <span data-slot="checkbox-control" :class="itemUi.control({ class: props.ui?.control })">
-          <span aria-hidden="true" data-slot="checkbox-indicator" :class="itemUi.indicator({ class: props.ui?.indicator })">
-            <slot name="indicator" :item="item" :checked="selected.includes(item.value)">
-              <svg
-                aria-hidden="true"
-                data-slot="checkbox-default-indicator--checkmark"
-                fill="none"
-                role="presentation"
-                stroke="currentColor"
-                stroke-dasharray="22"
-                :stroke-dashoffset="selected.includes(item.value) ? 44 : 66"
-                stroke-linecap="round"
-                stroke-linejoin="round"
-                stroke-width="2"
-                viewBox="0 0 17 18"
-              >
-                <polyline points="1 9 7 14 15 4" />
-              </svg>
-            </slot>
+        <button :id="`${id}-${index}`">
+          <span data-slot="checkbox-control" :class="itemUi.control({ class: props.ui?.control })">
+            <span aria-hidden="true" data-slot="checkbox-indicator" :class="itemUi.indicator({ class: props.ui?.indicator })">
+              <slot name="indicator" :item="item" :checked="selected.includes(item.value)">
+                <svg
+                  aria-hidden="true"
+                  data-slot="checkbox-default-indicator--checkmark"
+                  fill="none"
+                  role="presentation"
+                  stroke="currentColor"
+                  stroke-dasharray="22"
+                  :stroke-dashoffset="selected.includes(item.value) ? 44 : 66"
+                  stroke-linecap="round"
+                  stroke-linejoin="round"
+                  stroke-width="2"
+                  viewBox="0 0 17 18"
+                >
+                  <polyline points="1 9 7 14 15 4" />
+                </svg>
+              </slot>
+            </span>
           </span>
-        </span>
-        <slot name="item-label" :item="item" :index="index">{{ item.label }}</slot>
+          <slot name="item-label" :item="item" :index="index">{{ item.label }}</slot>
+        </button>
       </RekaCheckboxRoot>
       <Description v-if="hasItemDescription(item)" :id="`${id}-${index}-description`">
         <slot name="item-description" :item="item" :index="index">{{ item.description }}</slot>
