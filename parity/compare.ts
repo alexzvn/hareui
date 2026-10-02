@@ -117,6 +117,10 @@ async function snapshot(page: Page, c: Case): Promise<SlotSnapshot[]> {
     const root: ParentNode = overlay ? document : document.querySelector('#case')!
     const canvas = document.createElement('canvas').getContext('2d')!
     const norm = (prop: string, value: string) => {
+      // Tailwind shadow utilities compose ring/inset layers that stay transparent and zero-sized; they
+      // paint nothing, so drop them to compare `shadow-*` against HeroUI's plain `box-shadow` values.
+      if (prop === 'box-shadow')
+        return value.replace(/rgba\(0, 0, 0, 0\) 0px 0px 0px 0px( inset)?(, |$)/g, '').replace(/, $/, '') || 'none'
       if (!prop.includes('color'))
         return value
       canvas.fillStyle = '#010203'

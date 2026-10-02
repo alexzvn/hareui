@@ -13,9 +13,11 @@ export default {
       'focus-visible:status-focused',
       'disabled:status-disabled aria-disabled:status-disabled',
       'data-[pending=true]:status-pending',
+      // HeroUI styles `:active` and `[data-pressed=true]` alike; RAC sets the latter on a menu trigger while its menu is open
       'active:will-change-transform active:bg-(--button-bg-pressed) active:[transform:scale(0.97)]',
+      'data-[pressed=true]:will-change-transform data-[pressed=true]:bg-(--button-bg-pressed) data-[pressed=true]:[transform:scale(0.97)]',
       // HeroUI declares :hover after :active, so hover background wins while pressing on hover-capable devices
-      'hover:bg-(--button-bg-hover) hover:active:bg-(--button-bg-hover)',
+      'hover:bg-(--button-bg-hover) hover:active:bg-(--button-bg-hover) hover:data-[pressed=true]:bg-(--button-bg-hover)',
       // :where() keeps these at zero specificity: HeroUI's `.button svg:not(…)` sits in @layer components,
       // so any utility on the icon itself (e.g. `size-3.5`) wins over the button's default icon size.
       '[:where(&_svg:not([data-slot=spinner]_svg,[data-slot=link-icon]_svg))]:pointer-events-none [:where(&_svg:not([data-slot=spinner]_svg,[data-slot=link-icon]_svg))]:-mx-0.5 [:where(&_svg:not([data-slot=spinner]_svg,[data-slot=link-icon]_svg))]:my-0.5 [:where(&_svg:not([data-slot=spinner]_svg,[data-slot=link-icon]_svg))]:size-5 [:where(&_svg:not([data-slot=spinner]_svg,[data-slot=link-icon]_svg))]:shrink-0 [:where(&_svg:not([data-slot=spinner]_svg,[data-slot=link-icon]_svg))]:self-center sm:[:where(&_svg:not([data-slot=spinner]_svg,[data-slot=link-icon]_svg))]:my-1 sm:[:where(&_svg:not([data-slot=spinner]_svg,[data-slot=link-icon]_svg))]:size-4',
@@ -33,9 +35,9 @@ export default {
       'danger-soft': { base: '[--button-bg:var(--danger-soft)] [--button-bg-hover:var(--danger-soft-hover)] [--button-bg-pressed:var(--danger-soft-hover)] [--button-fg:var(--danger-soft-foreground)]' },
     },
     size: {
-      sm: { base: '[--button-height:--spacing(9)] px-3 md:[--button-height:--spacing(8)] [:where(&_svg:not([data-slot=spinner]_svg,[data-slot=link-icon]_svg))]:size-4 sm:[:where(&_svg:not([data-slot=spinner]_svg,[data-slot=link-icon]_svg))]:size-4 active:[transform:scale(0.98)]' },
+      sm: { base: '[--button-height:--spacing(9)] px-3 md:[--button-height:--spacing(8)] [:where(&_svg:not([data-slot=spinner]_svg,[data-slot=link-icon]_svg))]:size-4 sm:[:where(&_svg:not([data-slot=spinner]_svg,[data-slot=link-icon]_svg))]:size-4 active:[transform:scale(0.98)] data-[pressed=true]:[transform:scale(0.98)]' },
       md: { base: '' },
-      lg: { base: '[--button-height:--spacing(11)] text-base md:[--button-height:--spacing(10)] active:[transform:scale(0.96)]' },
+      lg: { base: '[--button-height:--spacing(11)] text-base md:[--button-height:--spacing(10)] active:[transform:scale(0.96)] data-[pressed=true]:[transform:scale(0.96)]' },
     },
     iconOnly: {
       // Before fullWidth: HeroUI's `.button--full-width` comes later, so `w-full` beats the square width.
