@@ -1,0 +1,54 @@
+[
+  {
+    "id": "color-area-default",
+    "component": "color-area",
+    "actions": [
+      "focus",
+      "press"
+    ],
+    "ignoreSlots": [],
+    "target": "[data-slot=color-area-thumb]"
+  },
+  {
+    "id": "color-area-with-dots",
+    "component": "color-area",
+    "actions": [],
+    "ignoreSlots": [],
+    "target": "[data-slot=color-area]"
+  },
+  {
+    "id": "color-area-disabled",
+    "component": "color-area",
+    "actions": [],
+    "ignoreSlots": [],
+    "target": "[data-slot=color-area]"
+  },
+  {
+    "id": "color-area-rgb-channels",
+    "component": "color-area",
+    "actions": [],
+    "ignoreSlots": [],
+    "target": "[data-slot=color-area]"
+  },
+  {
+    "id": "color-area-hsl-channels",
+    "component": "color-area",
+    "actions": [],
+    "ignoreSlots": [],
+    "target": "[data-slot=color-area]"
+  },
+  {
+    "id": "color-area-hsb-channels",
+    "component": "color-area",
+    "actions": [],
+    "ignoreSlots": [],
+    "target": "[data-slot=color-area]"
+  },
+  {
+    "id": "color-area-user-overrides",
+    "component": "color-area",
+    "actions": [],
+    "ignoreSlots": [],
+    "target": "[data-slot=color-area]"
+  }
+]
