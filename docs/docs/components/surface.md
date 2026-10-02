@@ -1,0 +1,102 @@
+---
+title: Surface
+description: Container component that provides surface-level styling and context for child components
+links:
+  source: Surface.vue
+  styles: surface.ts
+  heroui: surface
+---
+
+## Usage
+
+```ts
+import { Surface } from 'herouse'
+```
+
+<ComponentPreview name="surface/basic" />
+
+## Examples
+
+### Variants
+
+Surface comes in semantic variants that describe their prominence level:
+
+- **`default`** - Standard surface appearance (bg-surface)
+- **`secondary`** - Medium prominence (bg-surface-secondary)
+- **`tertiary`** - Higher prominence (bg-surface-tertiary)
+
+<ComponentPreview name="surface/variants" />
+
+### With Form Components
+
+When using form components inside a Surface, use the `variant="secondary"` prop on them to apply
+the lower-emphasis variant suitable for surface backgrounds.
+
+> This demo pairs `Surface` with HeroUI's `TextArea`, which herouse doesn't have yet (Wave 2 scope,
+> not yet built). It's parked rather than ported with a substitute component; once `TextArea` lands,
+> its owner should add `docs/demos/surface/with-form-components.vue` here with `Input` + `TextArea`
+> (matching HeroUI's demo) and this note can be removed.
+
+## Customization
+
+### Tailwind CSS
+
+<ComponentPreview name="surface/custom-styles" />
+
+### Global theme override
+
+Override the `surface` theme app-wide with `createHeroUse`:
+
+```ts
+app.use(createHeroUse({
+  ui: {
+    surface: {
+      slots: { base: 'rounded-2xl border border-border' },
+      variants: {
+        variant: { secondary: { base: 'bg-gradient-to-br from-blue-50 to-purple-50' } },
+      },
+    },
+  },
+}))
+```
+
+## Styling Reference
+
+Each rendered element carries the same `data-slot` string as HeroUI, so selectors translate 1:1.
+
+| `ui` key | `data-slot` | Description |
+|---|---|---|
+| `base` | `surface` | Base surface container |
+
+HeroUI's `.surface--*` modifier classes correspond to the `variant` prop (herouse renders utilities,
+not BEM classes, so style through `class`, `ui` or `createHeroUse`): `transparent`, `default`,
+`secondary`, `tertiary`.
+
+## API Reference
+
+### Props
+
+<ApiTable component="Surface" kind="props" />
+
+### Slots
+
+<ApiTable component="Surface" kind="slots" />
+
+## Context API
+
+### surfaceContextKey
+
+Child components can inject the Surface context to read the current variant:
+
+```ts
+import { inject } from 'vue'
+import { surfaceContextKey } from 'herouse'
+
+const ctx = inject(surfaceContextKey)
+// ctx?.variant.value is a Ref<'transparent' | 'default' | 'secondary' | 'tertiary'>
+```
+
+## Related Components
+
+- [Separator](/docs/components/separator)
+- [Card](/docs/components/card)

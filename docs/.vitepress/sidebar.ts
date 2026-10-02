@@ -72,6 +72,7 @@ export const sidebar: SidebarSection[] = [
       { text: 'Separator', link: c('separator') },
       { text: 'Skeleton', link: c('skeleton') },
       { text: 'Spinner', link: c('spinner') },
+      { text: 'Surface', link: c('surface') },
       { text: 'Switch', link: c('switch') },
       { text: 'Tabs', link: c('tabs') },
       { text: 'TextField', link: c('text-field') },

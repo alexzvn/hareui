@@ -1,0 +1,26 @@
+[
+  {
+    "id": "surface-transparent",
+    "component": "surface",
+    "actions": [],
+    "ignoreSlots": []
+  },
+  {
+    "id": "surface-default",
+    "component": "surface",
+    "actions": [],
+    "ignoreSlots": []
+  },
+  {
+    "id": "surface-secondary",
+    "component": "surface",
+    "actions": [],
+    "ignoreSlots": []
+  },
+  {
+    "id": "surface-tertiary",
+    "component": "surface",
+    "actions": [],
+    "ignoreSlots": []
+  }
+]

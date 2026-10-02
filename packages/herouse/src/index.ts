@@ -67,3 +67,7 @@ export type { ValidationBehavior, ValidationError, ValidationErrors } from './co
 export type { ValidateFn, ValidationDetails, ValidationResult } from './composables/useFieldValidation'
 export { default as Separator } from './components/Separator.vue'
 export type { SeparatorProps, SeparatorSlots } from './components/Separator.vue'
+export { default as Surface } from './components/Surface.vue'
+export type { SurfaceProps, SurfaceSlots } from './components/Surface.vue'
+export { surfaceContextKey } from './components/surfaceContext'
+export type { SurfaceContext } from './components/surfaceContext'
