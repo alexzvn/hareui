@@ -110,6 +110,8 @@ export type { DisclosureGroupEmits, DisclosureGroupProps, DisclosureGroupSlots }
 export { useDisclosureGroupNavigation } from './composables/useDisclosureGroupNavigation'
 export type { UseDisclosureGroupNavigationOptions } from './composables/useDisclosureGroupNavigation'
 export type { ExpandedValue } from './composables/useExpandedValues'
+export { default as ScrollShadow } from './components/ScrollShadow.vue'
+export type { ScrollShadowEmits, ScrollShadowProps, ScrollShadowSlots, ScrollShadowVisibility } from './components/ScrollShadow.vue'
 export { default as Kbd } from './components/Kbd.vue'
 export type { KbdProps, KbdSlots } from './components/Kbd.vue'
 export { kbdKeysLabelMap, kbdKeysMap } from './components/kbdKeys'

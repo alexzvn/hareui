@@ -1,10 +1,10 @@
 // Translated from @heroui/styles components/tabs.css
-// Scroll fade: styles/scroll-shadow.css (keyed on the scroller's data-slot="scroll-shadow").
+// The list scroller is a ScrollShadow (overflow, hidden scrollbar and fade come from it).
 export default {
   slots: {
     base: 'flex gap-2 data-[orientation=horizontal]:flex-col data-[orientation=vertical]:flex-row',
     tabListContainer: 'relative bg-default [border-radius:calc(var(--radius)*2.5)]',
-    scroller: 'relative',
+    scroller: '',
     // Overflow chevrons; Tabs.vue adds `inline-flex` while there's hidden content on that side.
     scrollPrev: [
       'absolute z-2 hidden size-4 cursor-(--cursor-interactive) items-center justify-center rounded-full border-0 bg-transparent p-0 text-foreground outline-none',
@@ -59,12 +59,11 @@ export default {
     },
     orientation: {
       horizontal: {
-        scroller: 'overflow-x-auto scrollbar-none',
         scrollPrev: 'start-1 top-1/2 -translate-y-1/2 rtl:rotate-180',
         scrollNext: 'end-1 top-1/2 -translate-y-1/2 rtl:rotate-180',
       },
       vertical: {
-        scroller: 'overflow-y-auto scrollbar-none h-full',
+        scroller: 'h-full',
         scrollPrev: 'top-1 left-1/2 -translate-x-1/2',
         scrollNext: 'bottom-1 left-1/2 -translate-x-1/2',
       },

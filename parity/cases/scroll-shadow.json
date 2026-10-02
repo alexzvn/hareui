@@ -1,0 +1,8 @@
+[
+  { "id": "scroll-shadow-vertical", "component": "scroll-shadow", "actions": [], "ignoreSlots": [] },
+  { "id": "scroll-shadow-horizontal", "component": "scroll-shadow", "actions": [], "ignoreSlots": [] },
+  { "id": "scroll-shadow-size", "component": "scroll-shadow", "actions": [], "ignoreSlots": [] },
+  { "id": "scroll-shadow-hide-scrollbar", "component": "scroll-shadow", "actions": [], "ignoreSlots": [] },
+  { "id": "scroll-shadow-visibility-both", "component": "scroll-shadow", "actions": [], "ignoreSlots": [] },
+  { "id": "scroll-shadow-visibility-none", "component": "scroll-shadow", "actions": [], "ignoreSlots": [] }
+]

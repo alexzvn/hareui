@@ -71,6 +71,8 @@ export interface TabsSlots {
 import { TabsContent, TabsList, TabsRoot, TabsTrigger } from 'reka-ui'
 import { computed, nextTick, onBeforeUnmount, onMounted, ref, watch } from 'vue'
 import { useComponentUI } from '../composables/useComponentUI'
+import ScrollShadow from './ScrollShadow.vue'
+import type { ScrollShadowVisibility } from './ScrollShadow.vue'
 
 const props = withDefaults(defineProps<TabsProps>(), {
   orientation: 'horizontal',
@@ -167,38 +169,21 @@ function measureIndicator() {
   }
 }
 
-// HeroUI's Tabs.ListContainer wraps the list in a ScrollShadow (size 64) and shows prev/next
-// chevrons while there's hidden content on that side. The fade itself is CSS (scroll-driven,
-// see styles/scroll-shadow.css); these flags drive the chevrons and the no-timeline fallback.
-const SCROLL_SHADOW_SIZE = 64
-const scrollerRef = ref<HTMLElement | null>(null)
+// HeroUI's Tabs.ListContainer wraps the list in a ScrollShadow (size 64, scrollbar hidden) and
+// shows prev/next chevrons while there's hidden content on that side.
+const scrollerRef = ref<InstanceType<typeof ScrollShadow> | null>(null)
 const scrollState = ref({ before: false, after: false })
 
-function measureScroll() {
-  const el = scrollerRef.value
-  if (!el)
-    return
-  const vertical = props.orientation === 'vertical'
-  const start = vertical ? el.scrollTop : Math.abs(el.scrollLeft)
-  const size = vertical ? el.scrollHeight : el.scrollWidth
-  const client = vertical ? el.clientHeight : el.clientWidth
-  const before = start > 0
-  const after = start + client < size - 1
-  if (before !== scrollState.value.before || after !== scrollState.value.after)
-    scrollState.value = { before, after }
+function onScrollVisibility(visibility: ScrollShadowVisibility) {
+  scrollState.value = {
+    before: visibility === 'both' || visibility === 'left' || visibility === 'top',
+    after: visibility === 'both' || visibility === 'right' || visibility === 'bottom',
+  }
 }
-
-const scrollAttrs = computed(() => {
-  const { before, after } = scrollState.value
-  const [start, end] = props.orientation === 'vertical' ? ['top', 'bottom'] : ['left', 'right']
-  return before && after
-    ? { [`data-${start}-${end}-scroll`]: 'true' }
-    : { [`data-${start}-scroll`]: String(before), [`data-${end}-scroll`]: String(after) }
-})
 
 // Scrolls 80% of the visible size towards `direction`, clamped to the scroll range (RTL-aware).
 function scrollByPage(direction: 1 | -1) {
-  const el = scrollerRef.value
+  const el = scrollerRef.value?.el
   if (!el)
     return
   const vertical = props.orientation === 'vertical'
@@ -211,39 +196,32 @@ function scrollByPage(direction: 1 | -1) {
     el.scrollTo({ behavior: 'smooth', [vertical ? 'top' : 'left']: next })
 }
 
-function measureAll() {
-  measureIndicator()
-  measureScroll()
-}
-
 function observeGeometry() {
   const listEl = listRef.value?.$el
   resizeObserver?.disconnect()
   if (!listEl)
     return
-  resizeObserver = new ResizeObserver(() => measureAll())
+  resizeObserver = new ResizeObserver(() => measureIndicator())
   resizeObserver.observe(listEl)
-  if (scrollerRef.value)
-    resizeObserver.observe(scrollerRef.value)
   listEl.querySelectorAll('[data-slot="tabs-tab"]').forEach(el => resizeObserver!.observe(el))
 }
 
 onMounted(() => {
   observeGeometry()
-  measureAll()
+  measureIndicator()
   requestAnimationFrame(() => { indicatorReady.value = true })
-  window.addEventListener('resize', measureAll)
+  window.addEventListener('resize', measureIndicator)
 })
 
 onBeforeUnmount(() => {
   resizeObserver?.disconnect()
-  window.removeEventListener('resize', measureAll)
+  window.removeEventListener('resize', measureIndicator)
 })
 
 watch([selectedValue, () => props.items, () => props.orientation], async () => {
   await nextTick()
   observeGeometry()
-  measureAll()
+  measureIndicator()
 }, { deep: true })
 </script>
 
@@ -257,16 +235,13 @@ watch([selectedValue, () => props.items, () => props.orientation], async () => {
     :class="ui.base({ class: [props.ui?.base, props.class] })"
   >
     <div :class="ui.tabListContainer({ class: props.ui?.tabListContainer })" data-slot="tabs-list-container">
-      <div
+      <ScrollShadow
         ref="scrollerRef"
+        hide-scroll-bar
         :class="ui.scroller({ class: props.ui?.scroller })"
-        :data-orientation="orientation"
-        data-scroll-shadow-mode="auto"
-        :data-scroll-shadow-size="SCROLL_SHADOW_SIZE"
-        data-slot="scroll-shadow"
-        :style="{ '--scroll-shadow-size': `${SCROLL_SHADOW_SIZE}px`, '--scroll-shadow-offset': '0px', '--scroll-shadow-scrollbar-size': '0px' }"
-        v-bind="scrollAttrs"
-        @scroll.passive="measureScroll"
+        :orientation="orientation"
+        :size="64"
+        @visibility-change="onScrollVisibility"
       >
         <TabsList ref="listRef" :class="ui.tabList({ class: props.ui?.tabList })" data-slot="tabs-list">
         <template v-for="entry in flatEntries" :key="entry.key">
@@ -297,7 +272,7 @@ watch([selectedValue, () => props.items, () => props.orientation], async () => {
           </TabsTrigger>
         </template>
         </TabsList>
-      </div>
+      </ScrollShadow>
       <button
         :aria-label="orientation === 'vertical' ? 'Scroll tabs up' : 'Scroll tabs left'"
         :class="ui.scrollPrev({ class: [props.ui?.scrollPrev, scrollState.before ? 'inline-flex' : undefined] })"
