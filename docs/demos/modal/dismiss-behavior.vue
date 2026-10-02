@@ -14,17 +14,17 @@ import { Icon } from '@iconify/vue'
         Escape. Defaults to <code>true</code>. Set to <code>false</code> to require an
         explicit close action.
       </p>
-      <Modal :dismissible="false" class="sm:max-w-[360px]">
+      <Modal :dismissible="false" class="sm:max-w-[360px]" :ui="{ icon: 'bg-default text-foreground' }">
         <Button variant="secondary">
           Open Modal
         </Button>
-        <template #header>
-          <div data-slot="modal-icon" class="flex size-10 shrink-0 items-center justify-center rounded-3xl bg-default text-foreground select-none">
-            <Icon class="size-5" icon="gravity-ui:circle-info" />
-          </div>
-          <h2 data-slot="modal-heading" class="align-middle text-base font-medium text-foreground">
-            dismissible = false
-          </h2>
+        <template #icon>
+          <Icon class="size-5" icon="gravity-ui:circle-info" />
+        </template>
+        <template #title>
+          dismissible = false
+        </template>
+        <template #description>
           <p class="text-sm leading-5 text-muted">
             Clicking the backdrop or pressing Escape won't close this modal
           </p>

@@ -118,4 +118,31 @@ describe('modal', () => {
 
     wrapper.unmount()
   })
+
+  it('names the dialog from `title` when #header replaces the visible heading', async () => {
+    const wrapper = mount(Modal, {
+      props: { defaultOpen: true, title: 'Contact Us' },
+      slots: { header: () => h('div', 'Custom'), body: () => 'Content' },
+    })
+    await nextTick()
+    const dialog = document.querySelector('[role=dialog]')!
+    expect(document.getElementById(dialog.getAttribute('aria-labelledby')!)?.textContent).toBe('Contact Us')
+
+    wrapper.unmount()
+  })
+
+  it('#description renders after the title and describes the dialog', async () => {
+    const wrapper = mount(Modal, {
+      props: { defaultOpen: true, title: 'Contact Us' },
+      slots: { description: () => h('p', { class: 'text-muted' }, 'Fill out the form'), body: () => 'Content' },
+    })
+    await nextTick()
+    const dialog = document.querySelector('[role=dialog]')!
+    const description = document.getElementById(dialog.getAttribute('aria-describedby')!)!
+    expect(description.tagName).toBe('P')
+    expect(description.textContent).toBe('Fill out the form')
+    expect(description.previousElementSibling?.getAttribute('data-slot')).toBe('modal-heading')
+
+    wrapper.unmount()
+  })
 })

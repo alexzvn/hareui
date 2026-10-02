@@ -183,7 +183,7 @@ const controlledOpen = ref(false)
           </template>
         </Modal>
 
-        <Modal>
+        <Modal title="Fully custom header">
           <Button variant="secondary">
             Custom #header
           </Button>

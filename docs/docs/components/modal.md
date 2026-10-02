@@ -27,6 +27,7 @@ through named slots.
   <Button>Open Modal</Button>
   <template #icon><!-- optional icon --></template>
   <template #title>Heading</template>
+  <template #description><p>Optional supporting text</p></template>
   <template #body>Body content</template>
   <template #footer="{ close }">
     <Button @click="close">Continue</Button>
@@ -112,7 +113,7 @@ app.use(createHeroUse({
 | `backdrop` | `modal-backdrop` | The full-screen overlay behind the dialog (Reka `DialogOverlay`) |
 | `container` | `modal-container` | Positioning wrapper with placement support |
 | `dialog` | `modal-dialog` | The dialog surface (Reka `DialogContent`); `class` merges here |
-| `header` | `modal-header` | Header section for the icon and title, rendered when `#header`, `#icon`, or a title is present |
+| `header` | `modal-header` | Header section for the icon, title and description, rendered when `#header`, `#icon`, `#description`, or a title is present |
 | `icon` | `modal-icon` | Icon wrapper rendered before the title, rendered when `#icon` is present |
 | `heading` | `modal-heading` | The title (Reka `DialogTitle`) |
 | `body` | `modal-body` | The scrollable content area, rendered when `#body` is present |

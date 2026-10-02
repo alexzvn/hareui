@@ -63,6 +63,8 @@ export interface ModalSlots {
   icon?: () => any
   /** Replaces the title text. */
   title?: () => any
+  /** Supporting text after the title, linked to the dialog as its description. Pass one element (e.g. a `<p>`). */
+  description?: () => any
   /** The dialog body. */
   body?: (props: { close: () => void }) => any
   /** The dialog footer (actions). */
@@ -83,6 +85,7 @@ export interface ModalEmits {
 import {
   DialogClose,
   DialogContent,
+  DialogDescription,
   DialogOverlay,
   DialogPortal,
   DialogRoot,
@@ -115,7 +118,7 @@ const ui = useComponentUI('modal', theme, () => ({
 
 const hasTitle = computed(() => !!(props.title || slots.title))
 const showHeaderTitle = computed(() => !slots.header && hasTitle.value)
-const hasHeader = computed(() => !!(slots.header || slots.icon || hasTitle.value))
+const hasHeader = computed(() => !!(slots.header || slots.icon || slots.description || hasTitle.value))
 
 function onEscapeKeyDown(event: KeyboardEvent) {
   if (!props.dismissible)
@@ -171,7 +174,7 @@ onBeforeUnmount(() => {
           <DialogContent
             data-slot="modal-dialog"
             :data-placement="placement"
-            :aria-describedby="undefined"
+            v-bind="slots.description ? {} : { 'aria-describedby': undefined }"
             :class="ui.dialog({ class: [props.ui?.dialog, props.class] })"
             @escape-key-down="onEscapeKeyDown"
             @pointer-down-outside="onPointerDownOutside"
@@ -189,6 +192,9 @@ onBeforeUnmount(() => {
                       {{ title }}
                     </slot>
                   </DialogTitle>
+                  <DialogDescription v-if="!!slots.description" as-child>
+                    <slot name="description" />
+                  </DialogDescription>
                 </slot>
               </div>
               <div v-if="!!slots.body" data-slot="modal-body" :class="ui.body({ class: props.ui?.body })">
@@ -199,7 +205,7 @@ onBeforeUnmount(() => {
               </div>
               <!-- after header/body/footer so the theme's `header + body` / `body + footer` sibling margins still apply -->
               <VisuallyHidden v-if="!showHeaderTitle" as-child>
-                <DialogTitle />
+                <DialogTitle>{{ title }}</DialogTitle>
               </VisuallyHidden>
               <DialogClose v-if="closeButton" as-child>
                 <slot name="close" :close="close">
