@@ -234,6 +234,20 @@ function onCalendarUpdate(value: DateValue | DateValue[] | undefined) {
     onCalendarSelect(value)
 }
 
+// React Aria's calendar takes focus on open (its focused date: the value, else the placeholder, else today, else
+// the first available day). Reka's PopoverContent would focus the first tabbable (the year-picker trigger) instead.
+function onOpenAutoFocus(event: Event) {
+  const content = event.target as HTMLElement | null
+  const focusDate = (modelValue.value === undefined ? props.defaultValue : modelValue.value) ?? props.placeholder ?? props.defaultPlaceholder
+  const cell = (focusDate ? content?.querySelector<HTMLElement>(`[data-value="${focusDate.toString().slice(0, 10)}"]:not([data-outside-view])`) : null)
+    ?? content?.querySelector<HTMLElement>('[data-today]:not([data-outside-view])')
+    ?? content?.querySelector<HTMLElement>('[data-value]:not([data-outside-view]):not([data-disabled]):not([data-unavailable])')
+  if (cell) {
+    event.preventDefault()
+    cell.focus()
+  }
+}
+
 const autoId = useId()
 const id = computed(() => props.id ?? autoId)
 const hasLabel = computed(() => !!(props.label || slots.label))
@@ -338,20 +352,24 @@ const groupUiProps = computed<DateInputGroupProps['ui']>(() => ({
       <PopoverContent
         data-slot="date-picker-popover"
         side="bottom"
-        align="start"
+        align="center"
         :side-offset="8"
         :avoid-collisions="true"
         :collision-padding="8"
         :class="ui.popover({ class: props.ui?.popover })"
+        @open-auto-focus="onOpenAutoFocus"
       >
         <slot name="calendar" :value="modelValue" :on-select="onCalendarSelect">
+          <!--
+            No `min-value`/`max-value`: HeroUI's composed `Calendar` passes its own 1900/2099 defaults explicitly, which
+            override the picker's bounds from React Aria's context, so the popover never greys out-of-range days (the
+            field still validates them). `is-date-unavailable` does reach it.
+          -->
           <Calendar
             :model-value="modelValue"
             :default-value="defaultValue"
             :placeholder="placeholder"
             :default-placeholder="defaultPlaceholder"
-            :min-value="minValue"
-            :max-value="maxValue"
             :is-date-unavailable="isDateUnavailable"
             :locale="locale"
             :disabled="disabled"

@@ -262,6 +262,53 @@ const effectiveMaxValue = computed(() => {
 })
 // React Aria highlights `anchor..focused`, so a freshly anchored day is both the selection start and end (a full
 // cap); Reka only marks it as the start.
+// React Aria anchors a range on mouse press start (`useCalendarCell`'s `onPressStart` -> `selectDate`), so the
+// pressed day shows as the anchor while the button is still down; Reka only commits on `click`. Run Reka's own click
+// handler on `pointerdown` (keeping its state machine consistent) and swallow the native click that follows the
+// release. Only the first press of a selection is moved; the closing press still commits on click, as React Aria
+// commits it on press-up.
+let swallowClickOn: HTMLElement | null = null
+function onCellPointerDown(event: PointerEvent) {
+  if (event.button !== 0)
+    return
+  const el = event.currentTarget as HTMLElement
+  if (el.hasAttribute('data-disabled') || el.hasAttribute('data-unavailable') || el.hasAttribute('data-outside-view'))
+    return
+  // RAC's `usePress` focuses the pressed cell from script and flags pointer focus with `data-focused` (no
+  // `data-focus-visible`), which keeps HeroUI's focus ring off. Reka's `data-focused` means "focused date" instead,
+  // so pointer focus is flagged with `data-pointer-focus` until blur.
+  event.preventDefault()
+  el.setAttribute('data-pointer-focus', '')
+  el.addEventListener('blur', () => el.removeAttribute('data-pointer-focus'), { once: true })
+  el.focus()
+  // Chrome drops `:active` once Reka re-renders the pressed cell, so mirror RAC's `data-pressed` (which HeroUI's
+  // CSS styles alongside `:active`) until the press ends.
+  el.setAttribute('data-pressed', 'true')
+  const release = () => el.removeAttribute('data-pressed')
+  window.addEventListener('pointerup', release, { once: true })
+  window.addEventListener('pointercancel', release, { once: true })
+  if (event.pointerType === 'touch' || props.disabled || props.readonly || anchorValue.value)
+    return
+  // Deferred: a synchronous `click()` inside `pointerdown` would run before the press styles apply
+  setTimeout(() => el.click())
+  swallowClickOn = el
+  let synthetic = true
+  const onClick = (click: Event) => {
+    if (synthetic) {
+      synthetic = false
+      return
+    }
+    if (swallowClickOn === el)
+      click.stopImmediatePropagation()
+    swallowClickOn = null
+    el.removeEventListener('click', onClick, true)
+  }
+  el.addEventListener('click', onClick, true)
+  window.addEventListener('pointerup', () => setTimeout(() => {
+    swallowClickOn = null
+  }), { once: true })
+}
+
 function isLoneAnchor(date: DateValue) {
   return !!anchorValue.value && date.compare(anchorValue.value) === 0
 }
@@ -400,6 +447,7 @@ function onModelValueUpdate(value: DateRange | undefined) {
               :day="weekDate"
               :month="grid[0]?.value ?? weekDate"
               v-bind="isLoneAnchor(weekDate) ? { 'data-selection-end': true } : {}"
+              @pointerdown="onCellPointerDown"
               data-slot="range-calendar-cell"
               :class="ui.cell({ class: props.ui?.cell })"
               v-slot="{ dayValue, today, selected, disabled: cellDisabled, unavailable, outsideView, selectionStart, selectionEnd }"
@@ -471,6 +519,7 @@ function onModelValueUpdate(value: DateRange | undefined) {
                     :day="weekDate"
                     :month="month.value"
                     v-bind="isLoneAnchor(weekDate) ? { 'data-selection-end': true } : {}"
+              @pointerdown="onCellPointerDown"
                     data-slot="range-calendar-cell"
                     :class="ui.cell({ class: props.ui?.cell })"
                     v-slot="{ dayValue, today, selected, disabled: cellDisabled, unavailable, outsideView, selectionStart, selectionEnd }"

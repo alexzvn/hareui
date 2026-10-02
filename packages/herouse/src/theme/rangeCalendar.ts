@@ -13,6 +13,8 @@
 // adjacent-month day shown to fill the grid).
 // State variants use `[&:where([data-…])]:` (zero added specificity) so a consumer's plain
 // `data-[selected]:…` override always wins over the theme regardless of class order.
+// Hover rules sit in `@media (hover: hover)` as in HeroUI (Tailwind v4's `hover:` adds it on its own; the arbitrary
+// `[&:where(:hover…)]:` selectors need the explicit `[@media(hover:hover)]:` wrapper).
 export default {
   slots: {
     // `calendar-year-picker.css`: the year grid is absolutely positioned over the day grid
@@ -53,15 +55,14 @@ export default {
       'cursor-(--cursor-interactive)',
       'transform-gpu motion-reduce:transition-none [transition:box-shadow_100ms_var(--ease-out),border-color_100ms_var(--ease-out)]',
       // Focus
-      // HeroUI's `:focus-visible:not([data-focused])` excludes RAC's own `data-focused` (paired there with
-      // `data-focus-visible`); Reka sets `data-focused` on the focused date with no visibility flag, so the
-      // browser's `:focus-visible` alone carries it.
-      '[&:where(:focus-visible)]:z-2 [&:where([data-focus-visible=true])]:z-2',
-      '[&:where(:focus-visible)]:[&_[data-slot=range-calendar-cell-button]]:status-focused',
+      // HeroUI's `:focus-visible:not([data-focused])`: RAC's `data-focused` flags pointer focus. Reka's `data-focused`
+      // marks the focused date instead, so RangeCalendar flags pointer focus with `data-pointer-focus`.
+      '[&:where(:focus-visible:not([data-pointer-focus]))]:z-2 [&:where([data-focus-visible=true])]:z-2',
+      '[&:where(:focus-visible:not([data-pointer-focus]))]:[&_[data-slot=range-calendar-cell-button]]:status-focused',
       '[&:where([data-focus-visible=true])]:[&_[data-slot=range-calendar-cell-button]]:status-focused',
       // Today
       '[&:where([data-today]:not([data-selected]),[data-today]:is([data-disabled],:disabled))]:[&_[data-slot=range-calendar-cell-button]]:bg-accent-soft [&:where([data-today]:not([data-selected]),[data-today]:is([data-disabled],:disabled))]:[&_[data-slot=range-calendar-cell-button]]:text-accent-soft-foreground',
-      '[&:where([data-today]:hover:not([data-selected]))]:[&_[data-slot=range-calendar-cell-button]]:bg-accent-soft-hover',
+      '[@media(hover:hover)]:[&:where([data-today]:hover:not([data-selected]))]:[&_[data-slot=range-calendar-cell-button]]:bg-accent-soft-hover',
       // Range track (middle segment) background; corner radii below are mutually exclusive
       // per side (selection cap > row boundary > plain track) so cascade order never matters.
       '[&:where([data-selected]:not([data-outside-view]):not(:is([data-disabled],:disabled)))]:bg-accent-soft',
@@ -78,10 +79,12 @@ export default {
       '[&:where([data-selection-start]:not([data-outside-view]):not(:is([data-disabled],:disabled)))]:[&_[data-slot=range-calendar-cell-button]]:bg-accent [&:where([data-selection-start]:not([data-outside-view]):not(:is([data-disabled],:disabled)))]:[&_[data-slot=range-calendar-cell-button]]:text-accent-foreground',
       '[&:where([data-selection-end]:not([data-outside-view]):not(:is([data-disabled],:disabled)))]:[&_[data-slot=range-calendar-cell-button]]:bg-accent [&:where([data-selection-end]:not([data-outside-view]):not(:is([data-disabled],:disabled)))]:[&_[data-slot=range-calendar-cell-button]]:text-accent-foreground',
       // Pressed
-      'active:[&_[data-slot=range-calendar-cell-button]]:[scale:0.9]',
-      '[&:where(:active[data-selection-start])]:[&_[data-slot=range-calendar-cell-button]]:bg-accent-hover [&:where(:active[data-selection-end])]:[&_[data-slot=range-calendar-cell-button]]:bg-accent-hover',
+      'active:[&_[data-slot=range-calendar-cell-button]]:[scale:0.9] [&:where([data-pressed=true])]:[&_[data-slot=range-calendar-cell-button]]:[scale:0.9]',
+      // HeroUI declares the pressed cap after the cap colour; Tailwind sorts the two identical-specificity rules the other
+      // way, so the pressed selector carries one attribute's worth of specificity (outside `:where`) to win.
+      '[&:is(:active,[data-pressed=true]):where([data-selection-start])]:[&_[data-slot=range-calendar-cell-button]]:bg-accent-hover [&:is(:active,[data-pressed=true]):where([data-selection-end])]:[&_[data-slot=range-calendar-cell-button]]:bg-accent-hover',
       // Hover (non-selected only)
-      '[&:where(:hover:not([data-selected]))]:[&_[data-slot=range-calendar-cell-button]]:bg-default',
+      '[@media(hover:hover)]:[&:where(:hover:not([data-selected]))]:[&_[data-slot=range-calendar-cell-button]]:bg-default',
       // Outside current month
       '[&:where([data-outside-view])]:text-muted [&:where([data-outside-view])]:opacity-50',
       '[&:where([data-selected][data-outside-view]:not([data-selection-start]):not([data-selection-end]))]:bg-default/20',
@@ -120,8 +123,8 @@ export default {
       'origin-center transform-gpu motion-reduce:transition-none',
       '[transition:color_100ms_var(--ease-smooth),scale_100ms_var(--ease-smooth),opacity_100ms_var(--ease-smooth),background-color_100ms_var(--ease-smooth),box-shadow_100ms_var(--ease-out)]',
       'cursor-(--cursor-interactive)',
-      '[&:where(:hover:not([data-selected]))]:bg-default [&:where(:hover:not([data-selected]))]:text-default-foreground',
-      '[&:where([data-selected])]:bg-accent [&:where([data-selected])]:text-accent-foreground [&:where([data-selected]:hover)]:bg-accent-hover',
+      '[@media(hover:hover)_and_(pointer:fine)]:[&:where(:hover:not([data-selected]))]:bg-default [@media(hover:hover)_and_(pointer:fine)]:[&:where(:hover:not([data-selected]))]:text-default-foreground',
+      '[&:where([data-selected])]:bg-accent [&:where([data-selected])]:text-accent-foreground [@media(hover:hover)_and_(pointer:fine)]:[&:where([data-selected]:hover)]:bg-accent-hover',
       'focus-visible:status-focused',
     ],
   },

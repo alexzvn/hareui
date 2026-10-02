@@ -23,7 +23,7 @@ export default {
     popover: [
       'w-fit origin-(--reka-popover-content-transform-origin) scrollbar-none overflow-y-auto overscroll-contain bg-overlay p-3',
       'motion-reduce:transition-none',
-      'z-(--z-index-overlay) [border-radius:min(32px,var(--radius-3xl))] [box-shadow:var(--overlay-shadow)]',
+      'z-(--z-index-overlay) [border-radius:min(32px,calc(var(--radius)*2.5))] [box-shadow:var(--overlay-shadow)]',
       '[&_[data-slot=calendar-nav-button-icon]]:rotate-0',
       '[&:where(:focus-visible):not([data-focused])]:outline-none [&:where([data-focus-visible=true])]:outline-none',
       '[&:where([data-state=open])]:animate-in [&:where([data-state=open])]:[--tw-animation-duration:150ms] [&:where([data-state=open])]:ease-smooth [&:where([data-state=open])]:fade-in-0 [&:where([data-state=open])]:zoom-in-95',

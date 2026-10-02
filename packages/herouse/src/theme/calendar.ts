@@ -4,6 +4,8 @@
 // semantic: a day belonging to an adjacent month shown to fill the grid).
 // State variants use `[&:where([data-…])]:` (zero added specificity) so a consumer's plain
 // `data-[selected]:…` override always wins over the theme regardless of class order.
+// Hover rules sit in `@media (hover: hover)` as in HeroUI (Tailwind v4's `hover:` adds it on its own; the arbitrary
+// `[&:where(:hover…)]:` selectors need the explicit `[@media(hover:hover)]:` wrapper).
 export default {
   slots: {
     // `calendar-year-picker.css`: the year grid is absolutely positioned over the day grid
@@ -43,12 +45,14 @@ export default {
       'relative flex aspect-square size-full items-center justify-center rounded-3xl text-center text-sm font-medium outline-none no-highlight',
       'transform-gpu motion-reduce:transition-none [transition:transform_250ms_var(--ease-out),box-shadow_100ms_var(--ease-out)]',
       'cursor-(--cursor-interactive)',
-      '[&:where(:focus-visible:not([data-selected]))]:status-focused',
+      // HeroUI: `:focus-visible:not([data-focused])` (RAC's own flag) or `[data-focus-visible]`. Reka sets `data-focused`
+      // on the focused date with no visibility flag, so the browser's `:focus-visible` alone carries it (selected or not).
+      '[&:where(:focus-visible)]:status-focused',
       '[&:where([data-today]:not([data-selected]),[data-today]:is([data-disabled],:disabled))]:bg-accent-soft [&:where([data-today]:not([data-selected]),[data-today]:is([data-disabled],:disabled))]:text-accent-soft-foreground',
-      '[&:where([data-today]:hover:not([data-selected]))]:bg-accent-soft-hover',
+      '[@media(hover:hover)]:[&:where([data-today]:hover:not([data-selected]))]:bg-accent-soft-hover',
       '[&:where([data-selected]:not(:is([data-disabled],:disabled)))]:bg-accent [&:where([data-selected]:not(:is([data-disabled],:disabled)))]:text-accent-foreground',
       'active:bg-default active:[transform:scale(0.95)] [&:where([data-selected]:active)]:bg-accent-hover',
-      '[&:where(:hover:not([data-selected]))]:bg-default',
+      '[@media(hover:hover)]:[&:where(:hover:not([data-selected]))]:bg-default',
       '[&:where([data-outside-view])]:text-muted [&:where([data-outside-view])]:opacity-50',
       '[&:where([data-selected][data-outside-view])]:bg-default',
       '[&:where([data-unavailable])]:status-disabled',
@@ -84,8 +88,8 @@ export default {
       'origin-center transform-gpu motion-reduce:transition-none',
       '[transition:color_100ms_var(--ease-smooth),scale_100ms_var(--ease-smooth),opacity_100ms_var(--ease-smooth),background-color_100ms_var(--ease-smooth),box-shadow_100ms_var(--ease-out)]',
       'cursor-(--cursor-interactive)',
-      '[&:where(:hover:not([data-selected]))]:bg-default [&:where(:hover:not([data-selected]))]:text-default-foreground',
-      '[&:where([data-selected])]:bg-accent [&:where([data-selected])]:text-accent-foreground [&:where([data-selected]:hover)]:bg-accent-hover',
+      '[@media(hover:hover)_and_(pointer:fine)]:[&:where(:hover:not([data-selected]))]:bg-default [@media(hover:hover)_and_(pointer:fine)]:[&:where(:hover:not([data-selected]))]:text-default-foreground',
+      '[&:where([data-selected])]:bg-accent [&:where([data-selected])]:text-accent-foreground [@media(hover:hover)_and_(pointer:fine)]:[&:where([data-selected]:hover)]:bg-accent-hover',
       'focus-visible:status-focused',
     ],
   },
