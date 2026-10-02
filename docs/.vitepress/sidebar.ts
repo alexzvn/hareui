@@ -71,6 +71,7 @@ export const sidebar: SidebarSection[] = [
       { text: 'Popover', link: c('popover') },
       { text: 'ProgressBar', link: c('progress-bar') },
       { text: 'RadioGroup', link: c('radio-group') },
+      { text: 'Select', link: c('select') },
       { text: 'Separator', link: c('separator') },
       { text: 'Skeleton', link: c('skeleton') },
       { text: 'Spinner', link: c('spinner') },

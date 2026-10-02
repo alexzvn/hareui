@@ -201,10 +201,18 @@ function optionProps(row: Row) {
     ui: props.ui,
   }
 }
+
+// Reka highlights the first option on focus entry; RAC focuses the first selected key instead (Select opens this way)
+const listboxRoot = useTemplateRef<{ highlightSelected: () => Promise<void> }>('listboxRoot')
+defineExpose({
+  /** Highlight and focus the first selected option, or the first option when nothing is selected. */
+  highlightSelected: () => listboxRoot.value?.highlightSelected(),
+})
 </script>
 
 <template>
   <ListboxRoot
+    ref="listboxRoot"
     v-model="selection"
     as-child
     :multiple="multiple"

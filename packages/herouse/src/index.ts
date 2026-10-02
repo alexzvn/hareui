@@ -67,6 +67,8 @@ export type { ValidationBehavior, ValidationError, ValidationErrors } from './co
 export type { ValidateFn, ValidationDetails, ValidationResult } from './composables/useFieldValidation'
 export { default as ListBox } from './components/ListBox.vue'
 export type { ListBoxEmits, ListBoxEntry, ListBoxItem, ListBoxItemSlotProps, ListBoxProps, ListBoxSection, ListBoxSeparator, ListBoxSlots, ListBoxValue } from './components/ListBox.vue'
+export { default as Select } from './components/Select.vue'
+export type { SelectEmits, SelectProps, SelectSlots, SelectValue, SelectValueSlotProps } from './components/Select.vue'
 export { default as Separator } from './components/Separator.vue'
 export type { SeparatorProps, SeparatorSlots } from './components/Separator.vue'
 export { default as Surface } from './components/Surface.vue'

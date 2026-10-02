@@ -1,0 +1,103 @@
+[
+  {
+    "id": "select-default",
+    "component": "select",
+    "actions": [
+      "hover",
+      "focus"
+    ],
+    "ignoreSlots": [],
+    "target": "[data-slot=select-trigger]"
+  },
+  {
+    "id": "select-selected",
+    "component": "select",
+    "actions": [],
+    "ignoreSlots": []
+  },
+  {
+    "id": "select-secondary",
+    "component": "select",
+    "actions": [
+      "hover"
+    ],
+    "ignoreSlots": [],
+    "target": "[data-slot=select-trigger]"
+  },
+  {
+    "id": "select-disabled",
+    "component": "select",
+    "actions": [],
+    "ignoreSlots": []
+  },
+  {
+    "id": "select-invalid",
+    "component": "select",
+    "actions": [],
+    "ignoreSlots": []
+  },
+  {
+    "id": "select-description",
+    "component": "select",
+    "actions": [],
+    "ignoreSlots": []
+  },
+  {
+    "id": "select-required",
+    "component": "select",
+    "actions": [],
+    "ignoreSlots": []
+  },
+  {
+    "id": "select-full-width",
+    "component": "select",
+    "actions": [],
+    "ignoreSlots": []
+  },
+  {
+    "id": "select-clear-button",
+    "component": "select",
+    "actions": [
+      "hover"
+    ],
+    "ignoreSlots": [],
+    "target": "[data-slot=select-trigger]"
+  },
+  {
+    "id": "select-multiple",
+    "component": "select",
+    "actions": [],
+    "ignoreSlots": []
+  },
+  {
+    "id": "select-open",
+    "component": "select",
+    "actions": [],
+    "ignoreSlots": [],
+    "overlay": true,
+    "ignoreProps": [
+      "position",
+      "transform"
+    ]
+  },
+  {
+    "id": "select-open-multiple",
+    "component": "select",
+    "actions": [],
+    "ignoreSlots": [],
+    "overlay": true,
+    "ignoreProps": [
+      "position",
+      "transform"
+    ]
+  },
+  {
+    "id": "select-user-overrides",
+    "component": "select",
+    "actions": [
+      "hover"
+    ],
+    "ignoreSlots": [],
+    "target": "[data-slot=select-trigger]"
+  }
+]
