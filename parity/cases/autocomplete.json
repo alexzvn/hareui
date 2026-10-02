@@ -1,0 +1,124 @@
+[
+  {
+    "id": "autocomplete-default",
+    "component": "autocomplete",
+    "actions": [
+      "hover",
+      "focus"
+    ],
+    "ignoreSlots": [],
+    "target": "[data-slot=autocomplete-trigger]"
+  },
+  {
+    "id": "autocomplete-selected",
+    "component": "autocomplete",
+    "actions": [],
+    "ignoreSlots": []
+  },
+  {
+    "id": "autocomplete-secondary",
+    "component": "autocomplete",
+    "actions": [
+      "hover",
+      "focus"
+    ],
+    "ignoreSlots": [],
+    "target": "[data-slot=autocomplete-trigger]"
+  },
+  {
+    "id": "autocomplete-disabled",
+    "component": "autocomplete",
+    "actions": [],
+    "ignoreSlots": []
+  },
+  {
+    "id": "autocomplete-invalid",
+    "component": "autocomplete",
+    "actions": [],
+    "ignoreSlots": []
+  },
+  {
+    "id": "autocomplete-description",
+    "component": "autocomplete",
+    "actions": [],
+    "ignoreSlots": []
+  },
+  {
+    "id": "autocomplete-required",
+    "component": "autocomplete",
+    "actions": [],
+    "ignoreSlots": []
+  },
+  {
+    "id": "autocomplete-full-width",
+    "component": "autocomplete",
+    "actions": [],
+    "ignoreSlots": []
+  },
+  {
+    "id": "autocomplete-custom-indicator",
+    "component": "autocomplete",
+    "actions": [],
+    "ignoreSlots": []
+  },
+  {
+    "id": "autocomplete-multiple",
+    "component": "autocomplete",
+    "actions": [],
+    "ignoreSlots": []
+  },
+  {
+    "id": "autocomplete-open",
+    "component": "autocomplete",
+    "actions": [],
+    "ignoreSlots": [],
+    "overlay": true,
+    "ignoreProps": [
+      "position"
+    ],
+    "reason": "Reka positions a fixed wrapper (data-reka-popper-content-wrapper) around a static popover; RAC positions the popover itself absolutely. Placement is still checked via @rect.* and the screenshot."
+  },
+  {
+    "id": "autocomplete-open-no-search",
+    "component": "autocomplete",
+    "actions": [],
+    "ignoreSlots": [],
+    "overlay": true,
+    "ignoreProps": [
+      "position"
+    ],
+    "reason": "Reka positions a fixed wrapper (data-reka-popper-content-wrapper) around a static popover; RAC positions the popover itself absolutely. Placement is still checked via @rect.* and the screenshot."
+  },
+  {
+    "id": "autocomplete-open-sections",
+    "component": "autocomplete",
+    "actions": [],
+    "ignoreSlots": [],
+    "overlay": true,
+    "ignoreProps": [
+      "position"
+    ],
+    "reason": "Reka positions a fixed wrapper (data-reka-popper-content-wrapper) around a static popover; RAC positions the popover itself absolutely. Placement is still checked via @rect.* and the screenshot."
+  },
+  {
+    "id": "autocomplete-open-empty",
+    "component": "autocomplete",
+    "actions": [],
+    "ignoreSlots": [],
+    "overlay": true,
+    "ignoreProps": [
+      "position"
+    ],
+    "reason": "Reka positions a fixed wrapper (data-reka-popper-content-wrapper) around a static popover; RAC positions the popover itself absolutely. Placement is still checked via @rect.* and the screenshot."
+  },
+  {
+    "id": "autocomplete-user-overrides",
+    "component": "autocomplete",
+    "actions": [
+      "hover",
+      "focus"
+    ],
+    "ignoreSlots": [],
+    "target": "[data-slot=autocomplete-trigger]"
+  }
+]
