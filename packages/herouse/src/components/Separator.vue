@@ -12,7 +12,7 @@ export interface SeparatorProps {
    */
   as?: PrimitiveProps['as']
   /**
-   * The orientation of the separator.
+   * The orientation of the separator. Inside a Toolbar it defaults to the one perpendicular to the toolbar.
    * @defaultValue 'horizontal'
    */
   orientation?: ComponentVariants<Separator>['orientation']
@@ -35,18 +35,28 @@ export interface SeparatorSlots {
 
 <script setup lang="ts">
 import { Separator as SeparatorPrimitive } from 'reka-ui'
-import { computed } from 'vue'
+import { computed, inject } from 'vue'
 import { useComponentUI } from '../composables/useComponentUI'
+import { toolbarContextKey } from './toolbarContext'
 
-const props = withDefaults(defineProps<SeparatorProps>(), { orientation: 'horizontal' })
+const props = defineProps<SeparatorProps>()
 defineSlots<SeparatorSlots>()
 
+const toolbar = inject(toolbarContextKey, null)
+const resolvedOrientation = computed(() => props.orientation
+  ?? (toolbar ? (toolbar.orientation.value === 'horizontal' ? 'vertical' : 'horizontal') : 'horizontal'))
+
 const ui = useComponentUI('separator', theme, () => ({
-  orientation: props.orientation,
+  orientation: resolvedOrientation.value,
   variant: props.variant,
 }))
 
-const resolvedOrientation = computed(() => props.orientation ?? 'horizontal')
+const toolbarClass = computed(() => {
+  if (!toolbar)
+    return undefined
+  const slot = resolvedOrientation.value === 'vertical' ? 'separatorVertical' : 'separatorHorizontal'
+  return toolbar.ui.value[slot]({ class: toolbar.uiOverrides.value?.[slot] })
+})
 </script>
 
 <template>
@@ -54,7 +64,7 @@ const resolvedOrientation = computed(() => props.orientation ?? 'horizontal')
     :as="as"
     :orientation="resolvedOrientation"
     data-slot="separator"
-    :class="ui.base({ class: [props.ui?.base, props.class] })"
+    :class="ui.base({ class: [toolbarClass, props.ui?.base, props.class] })"
   >
     <slot />
   </SeparatorPrimitive>

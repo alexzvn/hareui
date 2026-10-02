@@ -87,6 +87,7 @@ export const sidebar: SidebarSection[] = [
       { text: 'Toast', link: c('toast') },
       { text: 'ToggleButton', link: c('toggle-button') },
       { text: 'ToggleButtonGroup', link: c('toggle-button-group') },
+      { text: 'Toolbar', link: c('toolbar') },
       { text: 'Tooltip', link: c('tooltip') },
       { text: 'Typography', link: c('typography') },
     ],

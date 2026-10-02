@@ -105,7 +105,7 @@ const roleAttrs = computed(() => group?.selectionMode.value === 'single'
 </script>
 
 <template>
-  <RovingFocusItem v-if="group" as-child :focusable="!isDisabled" :active="selected">
+  <RovingFocusItem v-if="group?.roving" as-child :focusable="!isDisabled" :active="selected">
     <Toggle
       :as="as"
       :model-value="selected"
@@ -130,11 +130,18 @@ const roleAttrs = computed(() => group?.selectionMode.value === 'single'
     :as="as"
     :model-value="selected"
     :disabled="isDisabled"
+    v-bind="roleAttrs"
     data-slot="toggle-button"
     :data-selected="selected ? 'true' : undefined"
-    :class="ui.base({ class: [props.ui?.base, props.class] })"
+    :class="ui.base({ class: [groupClass, props.ui?.base, props.class] })"
     @update:model-value="onUpdate"
   >
+    <span
+      v-if="group?.separator.value"
+      aria-hidden="true"
+      data-slot="toggle-button-group-separator"
+      :class="group?.ui.value.separator({ class: group.uiOverrides.value?.separator })"
+    />
     <slot :selected="selected" :disabled="isDisabled" />
   </Toggle>
 </template>

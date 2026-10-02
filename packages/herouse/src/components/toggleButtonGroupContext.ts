@@ -11,6 +11,8 @@ export interface ToggleButtonGroupContext {
   toggle: (value: string) => void
   size: Readonly<Ref<ToggleButtonProps['size']>>
   separator: Readonly<Ref<boolean>>
+  /** False inside a Toolbar: the toolbar owns arrow-key focus, so the buttons are plain tab stops (React Aria). */
+  roving: boolean
   ui: ComputedRef<ComponentUI<typeof toggleButtonGroupTheme>>
   uiOverrides: Readonly<Ref<ComponentSlots<typeof toggleButtonGroupTheme> | undefined>>
 }

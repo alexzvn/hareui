@@ -30,7 +30,7 @@ export interface ToggleButtonGroupProps {
    */
   disallowEmptySelection?: boolean
   /**
-   * Layout direction, also the arrow keys that move focus.
+   * Layout direction, also the arrow keys that move focus. Inside a Toolbar it defaults to the toolbar's orientation.
    * @defaultValue 'horizontal'
    */
   orientation?: ComponentVariants<ToggleButtonGroup>['orientation']
@@ -70,17 +70,22 @@ export interface ToggleButtonGroupSlots {
 </script>
 
 <script setup lang="ts">
-import { RovingFocusGroup } from 'reka-ui'
-import { computed, provide, ref, toRef, watch } from 'vue'
+import { Primitive, RovingFocusGroup } from 'reka-ui'
+import { computed, inject, provide, ref, toRef, watch } from 'vue'
 import { useComponentUI } from '../composables/useComponentUI'
 import { useFieldsetDisabled } from './fieldsetContext'
 import { toggleButtonGroupContextKey } from './toggleButtonGroupContext'
+import { toolbarContextKey } from './toolbarContext'
 
-const props = withDefaults(defineProps<ToggleButtonGroupProps>(), { as: 'div', selectionMode: 'single', orientation: 'horizontal' })
+const props = withDefaults(defineProps<ToggleButtonGroupProps>(), { as: 'div', selectionMode: 'single' })
 const emit = defineEmits<{
   'update:modelValue': [value: string[]]
 }>()
 defineSlots<ToggleButtonGroupSlots>()
+
+// Inside a Toolbar the group takes the toolbar's orientation and leaves arrow keys to it.
+const toolbar = inject(toolbarContextKey, null)
+const orientation = computed(() => props.orientation ?? toolbar?.orientation.value ?? 'horizontal')
 
 const local = ref(props.defaultValue ?? [])
 watch(() => props.defaultValue, value => (local.value = value ?? []))
@@ -100,7 +105,7 @@ function toggle(value: string) {
 }
 
 const ui = useComponentUI('toggleButtonGroup', theme, () => ({
-  orientation: props.orientation,
+  orientation: orientation.value,
   fullWidth: props.fullWidth,
   detached: props.detached,
 }))
@@ -112,17 +117,18 @@ provide(toggleButtonGroupContextKey, {
   toggle,
   size: toRef(() => props.size),
   separator: toRef(() => props.separator),
+  roving: !toolbar,
   ui,
   uiOverrides: toRef(() => props.ui),
 })
 </script>
 
 <template>
-  <RovingFocusGroup
+  <component
+    :is="toolbar ? Primitive : RovingFocusGroup"
     :as="as"
-    :orientation="orientation"
-    :loop="false"
-    :role="selectionMode === 'single' ? 'radiogroup' : 'toolbar'"
+    v-bind="toolbar ? {} : { orientation, loop: false }"
+    :role="selectionMode === 'single' ? 'radiogroup' : toolbar ? 'group' : 'toolbar'"
     :aria-orientation="orientation"
     :aria-disabled="isDisabled || undefined"
     data-slot="toggle-button-group"
@@ -131,5 +137,5 @@ provide(toggleButtonGroupContextKey, {
     :class="ui.base({ class: [props.ui?.base, props.class] })"
   >
     <slot :selected="selected" />
-  </RovingFocusGroup>
+  </component>
 </template>

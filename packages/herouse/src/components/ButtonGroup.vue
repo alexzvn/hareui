@@ -13,7 +13,7 @@ export interface ButtonGroupProps {
    */
   as?: PrimitiveProps['as']
   /**
-   * Layout direction of the buttons.
+   * Layout direction of the buttons. Inside a Toolbar it defaults to the toolbar's orientation.
    * @defaultValue 'horizontal'
    */
   orientation?: ComponentVariants<ButtonGroup>['orientation']
@@ -50,14 +50,21 @@ export interface ButtonGroupSlots {
 
 <script setup lang="ts">
 import { Primitive } from 'reka-ui'
-import { provide, toRef } from 'vue'
+import { computed, inject, provide, toRef } from 'vue'
 import { useComponentUI } from '../composables/useComponentUI'
 import { buttonGroupContextKey } from './buttonGroupContext'
+import { toolbarContextKey } from './toolbarContext'
 
 const props = withDefaults(defineProps<ButtonGroupProps>(), { as: 'div', disabled: undefined, fullWidth: undefined })
 defineSlots<ButtonGroupSlots>()
 
-const ui = useComponentUI('buttonGroup', theme, () => ({ orientation: props.orientation, fullWidth: props.fullWidth }))
+
+// Inside a Toolbar the group takes the toolbar's orientation (HeroUI reads React Aria's ToggleButtonGroupContext).
+const toolbar = inject(toolbarContextKey, null)
+const orientation = computed(() => props.orientation ?? toolbar?.orientation.value ?? 'horizontal')
+
+const ui = useComponentUI('buttonGroup', theme, () => ({ orientation: orientation.value, fullWidth: props.fullWidth }))
+const toolbarClass = computed(() => toolbar?.ui.value.buttonGroup({ class: toolbar.uiOverrides.value?.buttonGroup }))
 
 provide(buttonGroupContextKey, {
   variant: toRef(() => props.variant),
@@ -77,7 +84,7 @@ provide(buttonGroupContextKey, {
     data-slot="button-group"
     :aria-disabled="disabled ? 'true' : undefined"
     :data-disabled="disabled ? 'true' : undefined"
-    :class="ui.base({ class: [props.ui?.base, props.class] })"
+    :class="ui.base({ class: [toolbarClass, props.ui?.base, props.class] })"
   >
     <slot />
   </Primitive>

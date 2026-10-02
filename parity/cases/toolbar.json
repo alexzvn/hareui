@@ -1,0 +1,38 @@
+[
+  {
+    "id": "toolbar-basic",
+    "component": "toolbar",
+    "actions": [],
+    "ignoreSlots": []
+  },
+  {
+    "id": "toolbar-vertical",
+    "component": "toolbar",
+    "actions": [],
+    "ignoreSlots": []
+  },
+  {
+    "id": "toolbar-attached",
+    "component": "toolbar",
+    "actions": [],
+    "ignoreSlots": []
+  },
+  {
+    "id": "toolbar-attached-vertical",
+    "component": "toolbar",
+    "actions": [],
+    "ignoreSlots": []
+  },
+  {
+    "id": "toolbar-with-button-group",
+    "component": "toolbar",
+    "actions": [],
+    "ignoreSlots": []
+  },
+  {
+    "id": "toolbar-custom",
+    "component": "toolbar",
+    "actions": [],
+    "ignoreSlots": []
+  }
+]
