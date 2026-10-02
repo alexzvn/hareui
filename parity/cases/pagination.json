@@ -1,0 +1,8 @@
+[
+  { "id": "pagination-default", "component": "pagination", "actions": [], "ignoreSlots": [] },
+  { "id": "pagination-sm", "component": "pagination", "actions": [], "ignoreSlots": [] },
+  { "id": "pagination-lg", "component": "pagination", "actions": [], "ignoreSlots": [] },
+  { "id": "pagination-ellipsis", "component": "pagination", "actions": [], "ignoreSlots": [] },
+  { "id": "pagination-summary", "component": "pagination", "actions": [], "ignoreSlots": [] },
+  { "id": "pagination-icon-only", "component": "pagination", "actions": [], "ignoreSlots": [] }
+]

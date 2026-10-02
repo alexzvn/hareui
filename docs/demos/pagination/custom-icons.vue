@@ -1,0 +1,15 @@
+<script setup lang="ts">
+import { Icon } from '@iconify/vue'
+import { Pagination } from 'herouse'
+</script>
+
+<template>
+  <Pagination class="justify-center" next-label="Forward" prev-label="Back" :total="3">
+    <template #prevIcon>
+      <Icon icon="gravity-ui:arrow-left" />
+    </template>
+    <template #nextIcon>
+      <Icon icon="gravity-ui:arrow-right" />
+    </template>
+  </Pagination>
+</template>

@@ -86,6 +86,7 @@ export const sidebar: SidebarSection[] = [
       { text: 'Meter', link: c('meter') },
       { text: 'Modal', link: c('modal') },
       { text: 'NumberField', link: c('number-field') },
+      { text: 'Pagination', link: c('pagination') },
       { text: 'Popover', link: c('popover') },
       { text: 'ProgressBar', link: c('progress-bar') },
       { text: 'ProgressCircle', link: c('progress-circle') },
