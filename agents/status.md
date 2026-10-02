@@ -1,4 +1,15 @@
-# Status (as of 2026-10-02)
+# Status (as of 2026-10-03)
+
+## Component set complete (branch `feat/complete-components`, 2026-10-03)
+
+Every HeroUI v3 component now has a herouse counterpart. Since `main` (`7db2f11`):
+
+- **New:** ComboBox, Autocomplete (Select + filter field, virtualized long lists), DateRangePicker, EmptyState (exported; documented on the TagGroup page, as heroui.com has no standalone page).
+- **Decisions applied:** #6 Tooltip `closeDelay` + `trigger="focus"`; #11 Calendar/RangeCalendar week and day views (`visibleDuration`, custom grid outside Reka); #12 RangeCalendar anchor-dependent unavailable dates (wrapper works, no deviation); #14 EmptyState + TagGroup with-list-data demo; #16 ColorField empty input (option A; form value stays `#000000`).
+- **Fixes:** ButtonGroup/ToggleButtonGroup separators only where HeroUI renders them; disabled ToggleButtonGroup wins over a button's `disabled=false` (React Aria); DatePicker popover radius/alignment/open focus; calendar hover gated on `(hover: hover)`; RangeCalendar press behaviour.
+- **Demos:** ButtonGroup basic/custom-styles use Dropdown; surface with-form-components and search-field with-keyboard-shortcut ported. No hand-ported stand-ins remain.
+- **Known deviations (documented on their pages):** DateRangePicker has no `shouldForceLeadingZeros`; ComboBox render-function demo uses attribute fallthrough; Autocomplete custom-styles demo places Label/Description outside the component (alternative: a `descriptionPosition` prop).
+- **Pending:** pixel comparison of the new docs pages against heroui.com (was not reachable from the cloud session); the landing-page loose ends and the HareUI rename (`pharse-2-plan.md`).
 
 ## Done
 
