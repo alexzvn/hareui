@@ -1,0 +1,6 @@
+[
+  { "id": "breadcrumbs-default", "component": "breadcrumbs", "actions": [], "ignoreSlots": [] },
+  { "id": "breadcrumbs-two-levels", "component": "breadcrumbs", "actions": [], "ignoreSlots": [] },
+  { "id": "breadcrumbs-disabled", "component": "breadcrumbs", "actions": [], "ignoreSlots": [] },
+  { "id": "breadcrumbs-custom-separator", "component": "breadcrumbs", "actions": [], "ignoreSlots": [] }
+]

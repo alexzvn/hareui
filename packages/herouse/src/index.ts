@@ -112,6 +112,8 @@ export type { UseDisclosureGroupNavigationOptions } from './composables/useDiscl
 export type { ExpandedValue } from './composables/useExpandedValues'
 export { default as ScrollShadow } from './components/ScrollShadow.vue'
 export type { ScrollShadowEmits, ScrollShadowProps, ScrollShadowSlots, ScrollShadowVisibility } from './components/ScrollShadow.vue'
+export { default as Breadcrumbs } from './components/Breadcrumbs.vue'
+export type { BreadcrumbsItem, BreadcrumbsProps, BreadcrumbsSlots } from './components/Breadcrumbs.vue'
 export { default as Kbd } from './components/Kbd.vue'
 export type { KbdProps, KbdSlots } from './components/Kbd.vue'
 export { kbdKeysLabelMap, kbdKeysMap } from './components/kbdKeys'
