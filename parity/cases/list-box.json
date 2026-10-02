@@ -1,0 +1,63 @@
+[
+  {
+    "id": "list-box-default",
+    "component": "list-box",
+    "actions": [
+      "hover",
+      "press"
+    ],
+    "ignoreSlots": [],
+    "target": "[data-slot=list-box-item]"
+  },
+  {
+    "id": "list-box-focus",
+    "component": "list-box",
+    "actions": [
+      "focus"
+    ],
+    "ignoreSlots": [],
+    "target": "[data-slot=list-box]"
+  },
+  {
+    "id": "list-box-selected",
+    "component": "list-box",
+    "actions": [],
+    "ignoreSlots": []
+  },
+  {
+    "id": "list-box-multiple",
+    "component": "list-box",
+    "actions": [],
+    "ignoreSlots": []
+  },
+  {
+    "id": "list-box-sections",
+    "component": "list-box",
+    "actions": [],
+    "ignoreSlots": []
+  },
+  {
+    "id": "list-box-disabled-item",
+    "component": "list-box",
+    "actions": [
+      "hover"
+    ],
+    "ignoreSlots": [],
+    "target": "[data-slot=list-box-item]:last-child"
+  },
+  {
+    "id": "list-box-action",
+    "component": "list-box",
+    "actions": [],
+    "ignoreSlots": []
+  },
+  {
+    "id": "list-box-user-overrides",
+    "component": "list-box",
+    "actions": [
+      "hover"
+    ],
+    "ignoreSlots": [],
+    "target": "[data-slot=list-box-item]"
+  }
+]
