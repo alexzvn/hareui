@@ -1,0 +1,11 @@
+[
+  { "id": "drawer-placement-bottom", "component": "drawer", "actions": [], "overlay": true, "ignoreSlots": [] },
+  { "id": "drawer-placement-top", "component": "drawer", "actions": [], "overlay": true, "ignoreSlots": [] },
+  { "id": "drawer-placement-left", "component": "drawer", "actions": [], "overlay": true, "ignoreSlots": [] },
+  { "id": "drawer-placement-right", "component": "drawer", "actions": [], "overlay": true, "ignoreSlots": [] },
+  { "id": "drawer-variant-opaque", "component": "drawer", "actions": [], "overlay": true, "ignoreSlots": [] },
+  { "id": "drawer-variant-blur", "component": "drawer", "actions": [], "overlay": true, "ignoreSlots": [] },
+  { "id": "drawer-variant-transparent", "component": "drawer", "actions": [], "overlay": true, "ignoreSlots": [] },
+  { "id": "drawer-no-close", "component": "drawer", "actions": [], "overlay": true, "ignoreSlots": [] },
+  { "id": "drawer-scrollable", "component": "drawer", "actions": [], "overlay": true, "ignoreSlots": [] }
+]
