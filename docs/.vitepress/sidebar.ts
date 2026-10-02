@@ -75,6 +75,7 @@ export const sidebar: SidebarSection[] = [
       { text: 'NumberField', link: c('number-field') },
       { text: 'Popover', link: c('popover') },
       { text: 'ProgressBar', link: c('progress-bar') },
+      { text: 'ProgressCircle', link: c('progress-circle') },
       { text: 'RadioGroup', link: c('radio-group') },
       { text: 'Select', link: c('select') },
       { text: 'Separator', link: c('separator') },

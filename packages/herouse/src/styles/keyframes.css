@@ -14,4 +14,16 @@
       transform: translateX(350%);
     }
   }
+
+  /* components/progress-circle.css */
+  --animate-progress-circle-spin: progress-circle-spin 1s linear infinite;
+
+  @keyframes progress-circle-spin {
+    from {
+      transform: rotate(0deg);
+    }
+    to {
+      transform: rotate(360deg);
+    }
+  }
 }

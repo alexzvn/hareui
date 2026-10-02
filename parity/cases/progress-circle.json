@@ -1,0 +1,98 @@
+[
+  {
+    "id": "progress-circle-basic",
+    "component": "progress-circle",
+    "actions": [],
+    "ignoreSlots": []
+  },
+  {
+    "id": "progress-circle-color-default",
+    "component": "progress-circle",
+    "actions": [],
+    "ignoreSlots": []
+  },
+  {
+    "id": "progress-circle-color-accent",
+    "component": "progress-circle",
+    "actions": [],
+    "ignoreSlots": []
+  },
+  {
+    "id": "progress-circle-color-success",
+    "component": "progress-circle",
+    "actions": [],
+    "ignoreSlots": []
+  },
+  {
+    "id": "progress-circle-color-warning",
+    "component": "progress-circle",
+    "actions": [],
+    "ignoreSlots": []
+  },
+  {
+    "id": "progress-circle-color-danger",
+    "component": "progress-circle",
+    "actions": [],
+    "ignoreSlots": []
+  },
+  {
+    "id": "progress-circle-size-sm",
+    "component": "progress-circle",
+    "actions": [],
+    "ignoreSlots": []
+  },
+  {
+    "id": "progress-circle-size-md",
+    "component": "progress-circle",
+    "actions": [],
+    "ignoreSlots": []
+  },
+  {
+    "id": "progress-circle-size-lg",
+    "component": "progress-circle",
+    "actions": [],
+    "ignoreSlots": []
+  },
+  {
+    "id": "progress-circle-indeterminate",
+    "component": "progress-circle",
+    "actions": [],
+    "ignoreSlots": []
+  },
+  {
+    "id": "progress-circle-zero",
+    "component": "progress-circle",
+    "actions": [],
+    "ignoreSlots": []
+  },
+  {
+    "id": "progress-circle-full",
+    "component": "progress-circle",
+    "actions": [],
+    "ignoreSlots": []
+  },
+  {
+    "id": "progress-circle-custom-range",
+    "component": "progress-circle",
+    "actions": [],
+    "ignoreSlots": []
+  },
+  {
+    "id": "progress-circle-thin",
+    "component": "progress-circle",
+    "actions": [],
+    "ignoreSlots": []
+  },
+  {
+    "id": "progress-circle-thick",
+    "component": "progress-circle",
+    "actions": [],
+    "ignoreSlots": []
+  },
+  {
+    "id": "progress-circle-custom-styles",
+    "component": "progress-circle",
+    "actions": [],
+    "ignoreSlots": []
+  }
+]
