@@ -15,7 +15,7 @@ import FrameworkTabs from './components/FrameworkTabs.vue'
 import { useToc } from './composables/useToc'
 import { useDocInteractions } from './composables/useDocInteractions'
 
-const VPLocalSearchBox = defineAsyncComponent(() => import('vitepress/dist/client/theme-default/components/VPLocalSearchBox.vue'))
+const SearchDialog = defineAsyncComponent(() => import('./components/SearchDialog.vue'))
 
 const { page, frontmatter, theme } = useData<ThemeConfig>()
 const route = useRoute()
@@ -28,6 +28,9 @@ const { items: tocItems, active: tocActive } = useToc()
 useDocInteractions()
 
 const searchOpen = ref(false)
+// SearchDialog (and its minisearch chunk) loads on first open, then stays mounted so it can animate out.
+const searchEverOpened = ref(false)
+watch(searchOpen, isOpen => isOpen && (searchEverOpened.value = true))
 const mobileSidebarOpen = ref(false)
 watch(path, () => (mobileSidebarOpen.value = false))
 
@@ -142,7 +145,7 @@ const links = computed(() => frontmatter.value.links as PageLinks | undefined)
       </aside>
     </template>
 
-    <VPLocalSearchBox v-if="searchOpen" @close="searchOpen = false" />
+    <SearchDialog v-if="searchEverOpened" v-model:open="searchOpen" />
 
     <!-- Shared default-queue provider: several toast/* demos call the global `toast()`
          function directly (matching HeroUI's own docs, which mount one Toast.Provider

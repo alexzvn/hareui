@@ -19,6 +19,7 @@
     "@iconify-json/gravity-ui": "^1.2.14",
     "@iconify/vue": "^5.0.3",
     "@tailwindcss/vite": "^4.3.3",
+    "minisearch": "^7.2.0",
     "shiki": "^4.5.0",
     "tailwindcss": "^4.3.3",
     "typescript": "~6.0.3",

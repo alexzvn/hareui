@@ -33,7 +33,11 @@ export default defineConfigWithTheme<ThemeConfig>({
   },
   themeConfig: {
     sidebar,
-    search: { provider: 'local', options: { _render: searchRender } },
+    search: {
+      provider: 'local',
+      // SearchDialog renders matched paragraphs from the stored section text.
+      options: { _render: searchRender, miniSearch: { options: { storeFields: ['title', 'titles', 'text'] } } },
+    },
   },
   vite: {
     plugins: [tailwindcss()],

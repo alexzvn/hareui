@@ -158,15 +158,29 @@ export function headingPermalink(slug: string, _opts: unknown, state: AnchorStat
   inline.children?.push(after)
 }
 
+// Search text is prose only, like fumadocs' structured data: code blocks are dropped, soft line
+// breaks inside a paragraph / list item / cell are joined (one result row per block), and inline
+// `<code>` / `<strong>` become markdown so they survive VitePress's tag stripping into the stored
+// section text; SearchDialog renders them like fumadocs does.
+function inlineMarkdown(html: string): string {
+  return html
+    .replace(/<pre[\s\S]*?<\/pre>|<code[^>]*>([\s\S]*?)<\/code>|<strong>([\s\S]*?)<\/strong>/g, (match, code, strong) => {
+      if (code !== undefined) return `\`${code}\``
+      if (strong !== undefined) return `**${strong}**`
+      return ''
+    })
+    .replace(/<(p|li|td|th)\b[^>]*>[\s\S]*?<\/\1>/g, block => block.replace(/\s*\n\s*/g, ' '))
+}
+
 export function searchRender(src: string, env: MarkdownEnv, md: MarkdownRenderer): string {
   const html = md.render(src, env)
   if (env.frontmatter?.search === false) return ''
   const title = env.frontmatter?.title ? `<h1>${md.utils.escapeHtml(String(env.frontmatter.title))}<a href="#"></a></h1>` : ''
   return (
     title +
-    html.replace(
+    inlineMarkdown(html.replace(
       /<a data-card="" href="#([^"]*)">([\s\S]*?)<\/a><button aria-label="Copy Anchor Link"[\s\S]*?<\/button>/g,
       '$2<a href="#$1"></a>',
-    )
+    ))
   )
 }
