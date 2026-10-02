@@ -14,6 +14,11 @@ export interface DisclosureProps {
   as?: PrimitiveProps['as']
   /** Text rendered by the default trigger. Ignored when `#trigger` is used. */
   title?: string
+  /**
+   * Identifies this disclosure inside a `DisclosureGroup` (HeroUI's `id`): the group's
+   * `v-model` holds these values. Defaults to a generated id.
+   */
+  value?: string | number
   /** The controlled expanded state of the disclosure. Use with `v-model:open`. */
   open?: boolean
   /**
@@ -58,8 +63,10 @@ export interface DisclosureEmits {
 
 <script setup lang="ts">
 import { Primitive } from 'reka-ui'
-import { computed, defineComponent, h, onBeforeUnmount, onMounted, ref, useId, useSlots, watch } from 'vue'
+import { computed, defineComponent, h, inject, onBeforeUnmount, onMounted, ref, useId, useSlots, watch } from 'vue'
 import { useComponentUI } from '../composables/useComponentUI'
+import { animatePanel, onPanelReveal, setPanelStatic } from '../utils/disclosurePanel'
+import { disclosureGroupContextKey } from './disclosureGroupContext'
 
 // `open: undefined` stops Vue casting an absent boolean prop to `false`, so uncontrolled mode and `defaultOpen` apply
 const props = withDefaults(defineProps<DisclosureProps>(), { as: 'div', open: undefined })
@@ -69,14 +76,21 @@ defineSlots<DisclosureSlots>()
 
 const ui = useComponentUI('disclosure', theme, () => ({}))
 
+// Inside a DisclosureGroup the group owns the expanded state (HeroUI's DisclosureGroup `expandedKeys`).
+const group = inject(disclosureGroupContextKey, null)
+const fallbackValue = useId()
+const value = computed(() => props.value ?? fallbackValue)
+const isDisabled = computed(() => props.disabled || !!group?.disabled.value)
+
 const uncontrolled = ref(props.defaultOpen)
-const isOpen = computed(() => props.open ?? uncontrolled.value)
-function setOpen(value: boolean) {
-  uncontrolled.value = value
-  emit('update:open', value)
+const isOpen = computed(() => group ? group.isExpanded(value.value) : props.open ?? uncontrolled.value)
+function setOpen(open: boolean) {
+  if (group) group.setExpanded(value.value, open)
+  else uncontrolled.value = open
+  emit('update:open', open)
 }
 function toggle() {
-  if (!props.disabled) setOpen(!isOpen.value)
+  if (!isDisabled.value) setOpen(!isOpen.value)
 }
 
 // The chevron, also handed to `#trigger` so custom triggers can render the themed indicator
@@ -117,54 +131,20 @@ const triggerAttrs = computed(() => ({
   'type': 'button',
   'aria-expanded': isOpen.value ? 'true' : 'false',
   'aria-controls': panelId,
-  ...(props.disabled ? { disabled: true } : {}),
+  ...(isDisabled.value ? { disabled: true } : {}),
   ...(slots.trigger ? {} : { 'data-slot': 'disclosure-trigger', 'class': ui.value.trigger({ class: props.ui?.trigger }) }),
 }))
 
-// Panel size animation, ported from react-aria's `useDisclosure` so the `--disclosure-panel-height`
-// variable HeroUI's CSS transitions follows the same auto -> px -> 0px sequence.
 const panel = ref<HTMLElement>()
-function setSize(el: HTMLElement, size: 'auto' | '0px' | 'measure') {
-  el.style.setProperty('--disclosure-panel-width', size === 'measure' ? `${el.scrollWidth}px` : size)
-  el.style.setProperty('--disclosure-panel-height', size === 'measure' ? `${el.scrollHeight}px` : size)
-}
-const afterAnimations = (el: HTMLElement) => Promise.all(el.getAnimations().map(a => a.finished))
-
-function setStatic(el: HTMLElement, open: boolean) {
-  if (open) el.removeAttribute('hidden')
-  else el.setAttribute('hidden', 'until-found')
-  setSize(el, open ? 'auto' : '0px')
-}
-
-function onBeforeMatch() {
-  // Find-in-page revealed the collapsed panel: restore `hidden` and let the state change open it.
-  requestAnimationFrame(() => panel.value?.setAttribute('hidden', 'until-found'))
-  setOpen(!isOpen.value)
-}
-
+let stopReveal: (() => void) | undefined
 onMounted(() => {
-  setStatic(panel.value!, isOpen.value)
-  panel.value!.addEventListener('beforematch', onBeforeMatch)
+  setPanelStatic(panel.value!, isOpen.value)
+  stopReveal = onPanelReveal(panel.value!, () => setOpen(!isOpen.value))
 })
-onBeforeUnmount(() => panel.value?.removeEventListener('beforematch', onBeforeMatch))
+onBeforeUnmount(() => stopReveal?.())
 
 watch(isOpen, (open) => {
-  const el = panel.value
-  if (!el) return
-  if (typeof el.getAnimations !== 'function') return setStatic(el, open)
-  if (open) {
-    el.removeAttribute('hidden')
-    // Pixel size so it can animate; back to auto afterwards so the content can resize.
-    setSize(el, 'measure')
-    afterAnimations(el).then(() => setSize(el, 'auto')).catch(() => {})
-  }
-  else {
-    setSize(el, 'measure')
-    // Force style recalculation so the change to 0px animates.
-    void getComputedStyle(el).height
-    setSize(el, '0px')
-    afterAnimations(el).then(() => el.setAttribute('hidden', 'until-found')).catch(() => {})
-  }
+  if (panel.value) animatePanel(panel.value, open)
 }, { flush: 'post' })
 </script>
 
@@ -173,7 +153,7 @@ watch(isOpen, (open) => {
     :as="as"
     data-slot="disclosure"
     :data-expanded="isOpen ? 'true' : undefined"
-    :data-disabled="disabled ? 'true' : undefined"
+    :data-disabled="isDisabled ? 'true' : undefined"
     :class="ui.base({ class: [props.ui?.base, props.class] })"
   >
     <h3 data-slot="disclosure-heading" :class="ui.heading({ class: props.ui?.heading }) || undefined">

@@ -1,0 +1,10 @@
+[
+  { "id": "accordion-default", "component": "accordion", "actions": [], "ignoreSlots": [] },
+  { "id": "accordion-expanded", "component": "accordion", "actions": [], "ignoreSlots": [] },
+  { "id": "accordion-surface", "component": "accordion", "actions": [], "ignoreSlots": [] },
+  { "id": "accordion-surface-last-expanded", "component": "accordion", "actions": [], "ignoreSlots": [] },
+  { "id": "accordion-hide-separator", "component": "accordion", "actions": [], "ignoreSlots": [] },
+  { "id": "accordion-disabled", "component": "accordion", "actions": [], "ignoreSlots": [] },
+  { "id": "accordion-multiple", "component": "accordion", "actions": [], "ignoreSlots": [] },
+  { "id": "accordion-custom-indicator", "component": "accordion", "actions": [], "ignoreSlots": [] }
+]

@@ -1,0 +1,6 @@
+[
+  { "id": "disclosure-group-basic", "component": "disclosure-group", "actions": [], "ignoreSlots": [] },
+  { "id": "disclosure-group-multiple", "component": "disclosure-group", "actions": [], "ignoreSlots": [] },
+  { "id": "disclosure-group-disabled", "component": "disclosure-group", "actions": [], "ignoreSlots": [] },
+  { "id": "disclosure-group-separator", "component": "disclosure-group", "actions": [], "ignoreSlots": [] }
+]

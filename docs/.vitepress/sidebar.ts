@@ -51,6 +51,7 @@ export const sidebar: SidebarSection[] = [
     // HeroUI's components meta.json lists pages alphabetically under one "Components" separator.
     items: [
       { separator: 'Components' },
+      { text: 'Accordion', link: c('accordion') },
       { text: 'Alert', link: c('alert') },
       { text: 'Avatar', link: c('avatar') },
       { text: 'AvatarGroup', link: c('avatar-group') },
@@ -70,6 +71,7 @@ export const sidebar: SidebarSection[] = [
       { text: 'ColorSwatchPicker', link: c('color-swatch-picker') },
       { text: 'Description', link: c('description') },
       { text: 'Disclosure', link: c('disclosure') },
+      { text: 'DisclosureGroup', link: c('disclosure-group') },
       { text: 'FieldError', link: c('field-error') },
       { text: 'Fieldset', link: c('fieldset') },
       { text: 'Form', link: c('form') },
