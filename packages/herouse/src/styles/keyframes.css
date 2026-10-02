@@ -26,4 +26,18 @@
       transform: rotate(360deg);
     }
   }
+
+  /* components/input-otp.css */
+  --animate-slot-value-in: slot-value-in 250ms var(--ease-smooth) both;
+
+  @keyframes slot-value-in {
+    0% {
+      opacity: 0;
+      transform: translateY(8px) scale(0.8);
+    }
+    100% {
+      opacity: 1;
+      transform: translateY(0) scale(1);
+    }
+  }
 }
