@@ -113,4 +113,57 @@ describe('colorField', () => {
     await el.trigger('blur')
     expect(received).toMatchObject({ r: 0, g: 255, b: 0 })
   })
+
+  describe('empty value (React Aria null)', () => {
+    it('shows an empty input without value/defaultValue while the form value stays #000000', () => {
+      const wrapper = mount({ render: () => h('form', [h(ColorField, { name: 'color', placeholder: '#000000' })]) }, { attachTo: document.body })
+      const node = wrapper.get(input).element as HTMLInputElement
+      expect(node.value).toBe('')
+      expect(node.placeholder).toBe('#000000')
+      expect(new FormData(wrapper.get('form').element).get('color')).toBe('#000000')
+      wrapper.unmount()
+    })
+
+    it('shows an empty input for a null modelValue and fills it when the model is set', async () => {
+      const wrapper = mount(ColorField, { props: { modelValue: null } })
+      const node = wrapper.get(input).element as HTMLInputElement
+      expect(node.value).toBe('')
+      await wrapper.setProps({ modelValue: parseColor('#EF4444') })
+      expect(node.value).toBe('#EF4444')
+      await wrapper.setProps({ modelValue: null })
+      expect(node.value).toBe('')
+    })
+
+    it('emits null when a filled field is cleared and committed', async () => {
+      const wrapper = mount(ColorField, { props: { defaultValue: '#0485F7' } })
+      const el = wrapper.get(input)
+      ;(el.element as HTMLInputElement).value = ''
+      await el.trigger('input')
+      await el.trigger('blur')
+      expect(wrapper.emitted('update:modelValue')!.at(-1)).toEqual([null])
+      expect((el.element as HTMLInputElement).value).toBe('')
+    })
+
+    it('commits a typed colour into an empty field, including #000000', async () => {
+      const wrapper = mount(ColorField)
+      const el = wrapper.get(input)
+      const node = el.element as HTMLInputElement
+      node.value = '#000000'
+      await el.trigger('input')
+      await el.trigger('blur')
+      expect(wrapper.emitted('update:modelValue')!.at(-1)![0]).toMatchObject({ r: 0, g: 0, b: 0 })
+      expect(node.value).toBe('#000000')
+    })
+
+    it('stays empty after committing text that is not a colour', async () => {
+      const wrapper = mount(ColorField)
+      const el = wrapper.get(input)
+      const node = el.element as HTMLInputElement
+      node.value = 'zzz'
+      await el.trigger('input')
+      await el.trigger('blur')
+      expect(node.value).toBe('')
+      expect(wrapper.emitted('update:modelValue')).toBeUndefined()
+    })
+  })
 })

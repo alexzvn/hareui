@@ -24,13 +24,13 @@ export interface ColorFieldProps {
   /** Temporary text shown when the input is empty. */
   placeholder?: string
   /**
-   * The committed color (controlled). A hex string or a Reka `Color` object. Falls back to the
-   * enclosing `ColorPicker`'s color when neither this nor `v-model` is set.
+   * The committed color (controlled). A hex string or a Reka `Color` object; `null` shows an empty
+   * input. Falls back to the enclosing `ColorPicker`'s color when neither this nor `v-model` is set.
    */
-  modelValue?: string | Color
+  modelValue?: string | Color | null
   /**
-   * The initial value when uncontrolled (no `v-model`) and outside a `ColorPicker`.
-   * @defaultValue '#000000'
+   * The initial value when uncontrolled (no `v-model`) and outside a `ColorPicker`. When omitted the
+   * input starts empty (the submitted form value is still `#000000`).
    */
   defaultValue?: string | Color
   /** The color space to operate in when `channel` is set. */
@@ -104,14 +104,17 @@ export interface ColorFieldSlots {
 }
 
 export interface ColorFieldEmits {
-  /** Emitted when the committed color changes (on blur, Enter, stepper or wheel). */
-  'update:modelValue': [value: string | Color]
+  /**
+   * Emitted when the committed color changes (on blur, Enter, stepper or wheel). `null` when the
+   * input is cleared.
+   */
+  'update:modelValue': [value: string | Color | null]
 }
 </script>
 
 <script setup lang="ts">
 import { ColorFieldInput, ColorFieldRoot, normalizeColor } from 'reka-ui'
-import { computed, ref, useAttrs, useId, useSlots, useTemplateRef, watch } from 'vue'
+import { computed, nextTick, ref, useAttrs, useId, useSlots, useTemplateRef, watch } from 'vue'
 import { useComponentUI } from '../composables/useComponentUI'
 import { useFieldValidation } from '../composables/useFieldValidation'
 import { useColorPickerContext } from './colorPickerContext'
@@ -134,16 +137,33 @@ const pickerCtx = useColorPickerContext()
 const hasOwnModel = computed(() => props.modelValue !== undefined)
 const modelValueForRoot = computed<string | Color | undefined>(() => {
   if (hasOwnModel.value)
-    return props.modelValue
+    return props.modelValue ?? undefined
   return pickerCtx ? pickerCtx.color.value : undefined
+})
+
+// Option A of the empty-value decision: React Aria's ColorField can be empty (`null`), Reka's always holds a colour
+// (`#000000`). While "empty" the input text is blanked (see colorFieldHexCase.ts); Reka and the form keep `#000000`.
+// `filledByCommit` covers the gap between a commit and the parent re-rendering with the new `modelValue`.
+const uncontrolledEmpty = ref(props.defaultValue == null)
+const filledByCommit = ref(false)
+const empty = computed(() => {
+  if (filledByCommit.value)
+    return false
+  if (hasOwnModel.value)
+    return props.modelValue === null
+  return !pickerCtx && uncontrolledEmpty.value
 })
 
 // Reka only updates on commit (blur / Enter / stepper / page jump / wheel), like RAC's ColorField; tracked locally
 // for `validate` and so an uncontrolled field without a `ColorPicker` still has a value to validate against.
-const formColor = ref<Color>(normalizeColor(modelValueForRoot.value ?? props.defaultValue ?? '#000000'))
+const formColor = ref<Color | null>(empty.value ? null : normalizeColor(modelValueForRoot.value ?? props.defaultValue ?? '#000000'))
 watch(modelValueForRoot, (value) => {
   if (value !== undefined)
     formColor.value = normalizeColor(value)
+})
+watch(empty, (isEmpty) => {
+  if (isEmpty)
+    formColor.value = null
 })
 
 const root = useTemplateRef<HTMLElement>('root')
@@ -155,6 +175,12 @@ const { validation, commitValidation } = useFieldValidation({
   name: () => props.name,
   root: () => root.value,
   onReset: () => {
+    if (props.defaultValue == null && !pickerCtx) {
+      uncontrolledEmpty.value = true
+      formColor.value = null
+      emit('update:modelValue', null)
+      return
+    }
     const next = normalizeColor(props.defaultValue ?? '#000000')
     formColor.value = next
     emit('update:modelValue', next)
@@ -165,10 +191,26 @@ const { validation, commitValidation } = useFieldValidation({
 const invalid = computed(() => validation.value.isInvalid)
 
 function onUpdateColor(color: Color) {
+  if (empty.value) {
+    filledByCommit.value = true
+    uncontrolledEmpty.value = false
+    nextTick(() => {
+      filledByCommit.value = false
+    })
+  }
   formColor.value = color
   emit('update:modelValue', color)
   if (pickerCtx && !hasOwnModel.value)
     pickerCtx.setColor(color)
+  commitValidation()
+}
+
+function onClear() {
+  if (pickerCtx && !hasOwnModel.value)
+    return
+  uncontrolledEmpty.value = true
+  formColor.value = null
+  emit('update:modelValue', null)
   commitValidation()
 }
 
@@ -248,7 +290,7 @@ function onFocusOut(event: FocusEvent) {
       @focusout="onFocusOut"
       @update:color="onUpdateColor"
     >
-      <ColorFieldHexCase />
+      <ColorFieldHexCase :is-empty="() => empty" :on-clear="onClear" :on-fill="onUpdateColor" />
       <div v-if="hasPrefix" data-slot="color-input-group-prefix" :class="ui.prefix({ class: props.ui?.prefix })">
         <slot name="prefix" />
       </div>
