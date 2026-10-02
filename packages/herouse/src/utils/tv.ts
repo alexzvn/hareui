@@ -17,6 +17,9 @@ export type { ClassValue } from 'tailwind-variants'
  *   tailwind-merge tries arbitrary-value validators in class-group order, and `text-color` accepts any
  *   arbitrary value, so `text-color` is re-registered after `font-size-arbitrary` (an override keeps a
  *   group's position; extend appends).
+ * - A user `transition-*` must evict a theme's arbitrary `[transition:…]` shorthand. In HeroUI the
+ *   component's `transition` declaration sits in `@layer components`, so any utility wins; here both are
+ *   plain utilities and Tailwind sorts the arbitrary property last.
  */
 export const tv = /* @__PURE__ */ createTV({
   twMergeConfig: {
@@ -46,6 +49,7 @@ export const tv = /* @__PURE__ */ createTV({
         'font-size-arbitrary': [{ text: [validators.isArbitraryLength] }],
         'text-color-ordered': [{ text: [fromTheme('color'), validators.isArbitraryVariable, validators.isArbitraryValue] }],
       },
+      conflictingClassGroups: { transition: ['arbitrary..transition'] },
     },
   },
 })
