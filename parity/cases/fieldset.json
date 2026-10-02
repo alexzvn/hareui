@@ -1,0 +1,26 @@
+[
+  {
+    "id": "fieldset-full",
+    "component": "fieldset",
+    "actions": [],
+    "ignoreSlots": []
+  },
+  {
+    "id": "fieldset-legend-only",
+    "component": "fieldset",
+    "actions": [],
+    "ignoreSlots": []
+  },
+  {
+    "id": "fieldset-disabled",
+    "component": "fieldset",
+    "actions": [],
+    "ignoreSlots": []
+  },
+  {
+    "id": "fieldset-ui-override",
+    "component": "fieldset",
+    "actions": [],
+    "ignoreSlots": []
+  }
+]
