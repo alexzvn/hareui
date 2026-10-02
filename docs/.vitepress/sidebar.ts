@@ -55,6 +55,7 @@ export const sidebar: SidebarSection[] = [
       { text: 'Avatar', link: c('avatar') },
       { text: 'Badge', link: c('badge') },
       { text: 'Button', link: c('button') },
+      { text: 'ButtonGroup', link: c('button-group') },
       { text: 'Card', link: c('card') },
       { text: 'Checkbox', link: c('checkbox') },
       { text: 'Chip', link: c('chip') },

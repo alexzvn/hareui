@@ -37,13 +37,14 @@ export default {
       md: { base: '' },
       lg: { base: '[--button-height:--spacing(11)] text-base md:[--button-height:--spacing(10)] active:[transform:scale(0.96)]' },
     },
+    iconOnly: {
+      // Before fullWidth: HeroUI's `.button--full-width` comes later, so `w-full` beats the square width.
+      // Icon-only buttons are square: HeroUI's per-size `w-10 md:w-9` etc. equal the size's height.
+      true: { base: 'w-(--button-height) p-0' },
+    },
     fullWidth: {
       true: { base: 'w-full' },
       false: { base: '' },
-    },
-    iconOnly: {
-      // Icon-only buttons are square: HeroUI's per-size `w-10 md:w-9` etc. equal the size's height.
-      true: { base: 'w-(--button-height) p-0' },
     },
   },
   defaultVariants: {

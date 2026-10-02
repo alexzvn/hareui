@@ -1,0 +1,66 @@
+[
+  {
+    "id": "button-group-basic",
+    "component": "button-group",
+    "actions": [],
+    "ignoreSlots": []
+  },
+  {
+    "id": "button-group-separator",
+    "component": "button-group",
+    "actions": [
+      "hover",
+      "focus",
+      "press"
+    ],
+    "ignoreSlots": [],
+    "target": "#case [data-slot=button]:nth-child(2)"
+  },
+  {
+    "id": "button-group-outline",
+    "component": "button-group",
+    "actions": [
+      "hover",
+      "focus",
+      "press"
+    ],
+    "ignoreSlots": [],
+    "target": "#case [data-slot=button]:nth-child(2)"
+  },
+  {
+    "id": "button-group-vertical",
+    "component": "button-group",
+    "actions": [],
+    "ignoreSlots": []
+  },
+  {
+    "id": "button-group-single",
+    "component": "button-group",
+    "actions": [],
+    "ignoreSlots": []
+  },
+  {
+    "id": "button-group-sm-secondary",
+    "component": "button-group",
+    "actions": [],
+    "ignoreSlots": []
+  },
+  {
+    "id": "button-group-full-width",
+    "component": "button-group",
+    "actions": [],
+    "ignoreSlots": []
+  },
+  {
+    "id": "button-group-disabled",
+    "component": "button-group",
+    "actions": [],
+    "ignoreSlots": []
+  },
+  {
+    "id": "button-group-rounded-override",
+    "component": "button-group",
+    "actions": [],
+    "ignoreSlots": []
+  }
+]

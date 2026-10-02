@@ -90,6 +90,8 @@ export type { ErrorMessageProps, ErrorMessageSlots } from './components/ErrorMes
 export { default as Fieldset } from './components/Fieldset.vue'
 export type { FieldsetProps, FieldsetSlots } from './components/Fieldset.vue'
 export { useFieldsetDisabled } from './components/fieldsetContext'
+export { default as ButtonGroup } from './components/ButtonGroup.vue'
+export type { ButtonGroupProps, ButtonGroupSlots } from './components/ButtonGroup.vue'
 export { default as ToggleButton } from './components/ToggleButton.vue'
 export type { ToggleButtonProps, ToggleButtonSlotProps, ToggleButtonSlots } from './components/ToggleButton.vue'
 export { default as ToggleButtonGroup } from './components/ToggleButtonGroup.vue'
