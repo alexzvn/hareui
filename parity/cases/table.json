@@ -1,0 +1,32 @@
+[
+  {
+    "id": "table-basic",
+    "component": "table",
+    "actions": [],
+    "ignoreSlots": []
+  },
+  {
+    "id": "table-secondary",
+    "component": "table",
+    "actions": [],
+    "ignoreSlots": []
+  },
+  {
+    "id": "table-sorting",
+    "component": "table",
+    "actions": [],
+    "ignoreSlots": []
+  },
+  {
+    "id": "table-empty",
+    "component": "table",
+    "actions": [],
+    "ignoreSlots": []
+  },
+  {
+    "id": "table-tree",
+    "component": "table",
+    "actions": [],
+    "ignoreSlots": []
+  }
+]
