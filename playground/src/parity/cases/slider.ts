@@ -1,5 +1,6 @@
 import type { VNode } from 'vue'
 import { Slider } from 'herouse'
+import { ConfigProvider } from 'reka-ui'
 import { h } from 'vue'
 
 const slider = (props: Record<string, unknown> = {}) => h(Slider, { class: 'w-80', label: 'Volume', defaultValue: 30, ...props })
@@ -14,4 +15,5 @@ export const cases: Record<string, () => VNode> = {
   'slider-disabled': () => slider({ disabled: true }),
   'slider-vertical': () => h('div', { class: 'flex h-64 items-center justify-center' }, [slider({ class: 'h-full', orientation: 'vertical' })]),
   'slider-no-label': () => slider({ 'label': undefined, 'aria-label': 'Volume' }),
+  'slider-rtl': () => h(ConfigProvider, { dir: 'rtl' }, () => h('div', { dir: 'rtl' }, [slider({ label: 'Range', defaultValue: [20, 60], class: 'w-80 [&_[data-slot=slider-fill]]:opacity-0' })])),
 }

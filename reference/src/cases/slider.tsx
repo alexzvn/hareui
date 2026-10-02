@@ -1,5 +1,6 @@
 import type { ReactElement } from 'react'
 import { Label, Slider } from '@heroui/react'
+import { I18nProvider } from 'react-aria-components'
 
 type Props = Omit<Parameters<typeof Slider>[0], 'children'>
 
@@ -30,4 +31,6 @@ export const cases: Record<string, () => ReactElement> = {
   'slider-disabled': () => slider({ isDisabled: true }),
   'slider-vertical': () => <div className="flex h-64 items-center justify-center">{slider({ className: 'h-full', orientation: 'vertical' })}</div>,
   'slider-no-label': () => slider({ 'aria-label': 'Volume' }, null),
+  // he-IL: right-to-left with Latin digits, so the output text stays comparable
+  'slider-rtl': () => <I18nProvider locale="he-IL"><div dir="rtl">{slider({ defaultValue: [20, 60], className: 'w-80 [&_[data-slot=slider-fill]]:opacity-0' }, 'Range')}</div></I18nProvider>,
 }
