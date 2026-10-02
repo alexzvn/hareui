@@ -1,0 +1,101 @@
+[
+  {
+    "id": "input-group-bare",
+    "component": "input-group",
+    "actions": [
+      "hover",
+      "focus",
+      "press"
+    ],
+    "ignoreSlots": [],
+    "target": "[data-slot=input-group]"
+  },
+  {
+    "id": "input-group-with-prefix",
+    "component": "input-group",
+    "actions": [
+      "hover"
+    ],
+    "ignoreSlots": [],
+    "target": "[data-slot=input-group]"
+  },
+  {
+    "id": "input-group-with-suffix",
+    "component": "input-group",
+    "actions": [
+      "hover"
+    ],
+    "ignoreSlots": [],
+    "target": "[data-slot=input-group]"
+  },
+  {
+    "id": "input-group-with-prefix-and-suffix",
+    "component": "input-group",
+    "actions": [
+      "hover"
+    ],
+    "ignoreSlots": [],
+    "target": "[data-slot=input-group]"
+  },
+  {
+    "id": "input-group-secondary",
+    "component": "input-group",
+    "actions": [
+      "hover",
+      "focus",
+      "press"
+    ],
+    "ignoreSlots": [],
+    "target": "[data-slot=input-group]"
+  },
+  {
+    "id": "input-group-disabled",
+    "component": "input-group",
+    "actions": [],
+    "ignoreSlots": []
+  },
+  {
+    "id": "input-group-invalid",
+    "component": "input-group",
+    "actions": [],
+    "ignoreSlots": []
+  },
+  {
+    "id": "input-group-required",
+    "component": "input-group",
+    "actions": [],
+    "ignoreSlots": []
+  },
+  {
+    "id": "input-group-full-width",
+    "component": "input-group",
+    "actions": [],
+    "ignoreSlots": []
+  },
+  {
+    "id": "input-group-readonly",
+    "component": "input-group",
+    "actions": [],
+    "ignoreSlots": []
+  },
+  {
+    "id": "input-group-button-suffix",
+    "component": "input-group",
+    "actions": [
+      "hover",
+      "press"
+    ],
+    "ignoreSlots": [],
+    "target": "[data-slot=input-group-suffix] button"
+  },
+  {
+    "id": "input-group-textarea",
+    "component": "input-group",
+    "actions": [
+      "hover",
+      "focus"
+    ],
+    "ignoreSlots": [],
+    "target": "[data-slot=input-group]"
+  }
+]
