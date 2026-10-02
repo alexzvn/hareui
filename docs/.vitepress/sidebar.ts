@@ -53,6 +53,7 @@ export const sidebar: SidebarSection[] = [
       { separator: 'Components' },
       { text: 'Alert', link: c('alert') },
       { text: 'Avatar', link: c('avatar') },
+      { text: 'Badge', link: c('badge') },
       { text: 'Button', link: c('button') },
       { text: 'Card', link: c('card') },
       { text: 'Checkbox', link: c('checkbox') },

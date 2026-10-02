@@ -1,0 +1,80 @@
+[
+  {
+    "id": "badge-basic",
+    "component": "badge",
+    "actions": [],
+    "ignoreSlots": []
+  },
+  {
+    "id": "badge-dot",
+    "component": "badge",
+    "actions": [],
+    "ignoreSlots": []
+  },
+  {
+    "id": "badge-sm",
+    "component": "badge",
+    "actions": [],
+    "ignoreSlots": []
+  },
+  {
+    "id": "badge-lg",
+    "component": "badge",
+    "actions": [],
+    "ignoreSlots": []
+  },
+  {
+    "id": "badge-secondary-warning",
+    "component": "badge",
+    "actions": [],
+    "ignoreSlots": []
+  },
+  {
+    "id": "badge-soft-accent",
+    "component": "badge",
+    "actions": [],
+    "ignoreSlots": []
+  },
+  {
+    "id": "badge-primary-success",
+    "component": "badge",
+    "actions": [],
+    "ignoreSlots": []
+  },
+  {
+    "id": "badge-top-left",
+    "component": "badge",
+    "actions": [],
+    "ignoreSlots": []
+  },
+  {
+    "id": "badge-bottom-right",
+    "component": "badge",
+    "actions": [],
+    "ignoreSlots": []
+  },
+  {
+    "id": "badge-bottom-left",
+    "component": "badge",
+    "actions": [],
+    "ignoreSlots": []
+  },
+  {
+    "id": "badge-icon",
+    "component": "badge",
+    "actions": [],
+    "ignoreSlots": []
+  },
+  {
+    "id": "badge-custom",
+    "component": "badge",
+    "actions": [],
+    "ignoreSlots": []
+  },
+  {
+    "id": "badge-standalone",
+    "component": "badge",
+    "actions": [],
+    "ignoreSlots": []
+  }
+]
