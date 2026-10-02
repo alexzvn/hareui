@@ -68,6 +68,7 @@ Collected from `reviews/*.md` (each has a "Decisions needed" section with option
 10. **Select multiple-value text** renders as one string where React renders several text nodes: 1-16 px anti-aliasing diff on the disabled and controlled-multiple demos.
 11. **Calendar/RangeCalendar week view and day view** (DTT1wRo): Reka always builds full month grids. Options: leave these demos out and document it, or build a custom grid outside Reka for those views.
 12. **RangeCalendar anchor-dependent unavailable dates:** Reka's `isDateUnavailable` gets no anchor date. Not parked yet: DTT1wRo is trying a wrapper workaround (track Reka's `update:startValue` and pass an `isDateUnavailable` closure that reads it). It stays open only if that fails.
+13. **AvatarGroup count** (option A): HeroUI's `<AvatarGroup.Count>` is a `#count` slot. The count can't take its own size/color/variant; it uses the group's. Table leaves out pagination (until Pagination lands), virtualization and the tanstack-table demo.
 
 ## Next steps
 
