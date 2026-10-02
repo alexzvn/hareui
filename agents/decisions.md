@@ -4,7 +4,8 @@ Newest first. These override `plan.md` where they conflict.
 ## 2026-10-02 (afternoon)
 
 - **Landing showcase tab bar stays removed.** heroui.com's Dashboard/Mail/Chat/Finances/CRM tabs are iframes of HeroUI Pro (paid, closed source), and heroui.pro refuses framing outside heroui.com (`frame-ancestors 'self' https://heroui.com`, `X-Frame-Options: SAMEORIGIN`). Own templates, recreated Pro screens and a Components-only bar were offered; the user chose to leave it as is.
-- **Theme builder:** port heroui.com/en/themes to the docs at `/themes` (assigned to vTSDGtr); "Edit theme" will point there.
+- **Theme builder** (inferred from a bare link the user sent; not explicitly confirmed): port heroui.com/en/themes to the docs at `/themes` (assigned to vTSDGtr); "Edit theme" will point there.
+- **All Components page:** port https://heroui.com/en/docs/react/components (user request; assigned to abE2Br_), with self-generated thumbnails instead of HeroUI's CDN images.
 
 ## 2026-10-02 (before overnight run)
 
