@@ -79,6 +79,7 @@ export const sidebar: SidebarSection[] = [
       { text: 'ProgressBar', link: c('progress-bar') },
       { text: 'ProgressCircle', link: c('progress-circle') },
       { text: 'RadioGroup', link: c('radio-group') },
+      { text: 'SearchField', link: c('search-field') },
       { text: 'Select', link: c('select') },
       { text: 'Separator', link: c('separator') },
       { text: 'Skeleton', link: c('skeleton') },

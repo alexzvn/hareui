@@ -23,6 +23,7 @@ export type Themes = typeof import('./index')
 export { default as meter } from './meter'
 export { default as separator } from './separator'
 export { default as surface } from './surface'
+export { default as searchField } from './searchField'
 export { default as inputGroup } from './inputGroup'
 export { default as progressCircle } from './progressCircle'
 export { default as textArea } from './textArea'

@@ -1,0 +1,66 @@
+[
+  {
+    "id": "search-field-default",
+    "component": "search-field",
+    "actions": ["hover"],
+    "ignoreSlots": [],
+    "target": "[data-slot=search-field-group]"
+  },
+  {
+    "id": "search-field-focus",
+    "component": "search-field",
+    "actions": ["focus"],
+    "ignoreSlots": [],
+    "target": "[data-slot=search-field-input]"
+  },
+  {
+    "id": "search-field-with-value",
+    "component": "search-field",
+    "actions": [],
+    "ignoreSlots": []
+  },
+  {
+    "id": "search-field-secondary",
+    "component": "search-field",
+    "actions": ["focus"],
+    "ignoreSlots": [],
+    "target": "[data-slot=search-field-input]"
+  },
+  {
+    "id": "search-field-required",
+    "component": "search-field",
+    "actions": [],
+    "ignoreSlots": []
+  },
+  {
+    "id": "search-field-disabled",
+    "component": "search-field",
+    "actions": [],
+    "ignoreSlots": []
+  },
+  {
+    "id": "search-field-invalid",
+    "component": "search-field",
+    "actions": ["focus"],
+    "ignoreSlots": [],
+    "target": "[data-slot=search-field-input]"
+  },
+  {
+    "id": "search-field-full-width",
+    "component": "search-field",
+    "actions": [],
+    "ignoreSlots": []
+  },
+  {
+    "id": "search-field-readonly",
+    "component": "search-field",
+    "actions": [],
+    "ignoreSlots": []
+  },
+  {
+    "id": "search-field-user-overrides",
+    "component": "search-field",
+    "actions": [],
+    "ignoreSlots": []
+  }
+]
