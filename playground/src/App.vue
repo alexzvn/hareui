@@ -8,7 +8,7 @@ const isParity = computed(() => route.path.startsWith('/parity/'))
 const dark = ref(document.documentElement.classList.contains('dark'))
 
 function toggleDark() {
-  dark.value = __omp_shell("dark.value")
+  dark.value = !dark.value
   document.documentElement.classList.toggle('dark', dark.value)
 }
 </script>
