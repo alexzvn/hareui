@@ -32,7 +32,11 @@ function toProp(prop: PropertyMeta): ApiProp {
   }
 }
 
-const files = (await readdir(componentsDir)).filter((f) => f.endsWith('.vue')).sort()
+// Only public components: internal parts (ListBoxOption, ToastItem, …) aren't exported from the package entry.
+const entry = await Bun.file(join(componentsDir, '../index.ts')).text()
+const files = (await readdir(componentsDir))
+  .filter((f) => f.endsWith('.vue') && entry.includes(`./components/${f}'`))
+  .sort()
 
 await rm(outDir, { recursive: true, force: true })
 await mkdir(outDir, { recursive: true })
