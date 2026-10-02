@@ -22,6 +22,7 @@ export { default as toast } from './toast'
 export type Themes = typeof import('./index')
 export { default as meter } from './meter'
 export { default as switchGroup } from './switchGroup'
+export { default as colorSwatch } from './colorSwatch'
 export { default as separator } from './separator'
 export { default as surface } from './surface'
 export { default as searchField } from './searchField'

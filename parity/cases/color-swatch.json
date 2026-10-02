@@ -1,0 +1,7 @@
+[
+  { "id": "color-swatch-basic", "component": "color-swatch", "actions": [], "ignoreSlots": [] },
+  { "id": "color-swatch-sizes", "component": "color-swatch", "actions": [], "ignoreSlots": [] },
+  { "id": "color-swatch-shapes", "component": "color-swatch", "actions": [], "ignoreSlots": [] },
+  { "id": "color-swatch-transparency", "component": "color-swatch", "actions": [], "ignoreSlots": [] },
+  { "id": "color-swatch-accessibility", "component": "color-swatch", "actions": [], "ignoreSlots": [] }
+]
