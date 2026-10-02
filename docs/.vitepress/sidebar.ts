@@ -63,6 +63,7 @@ export const sidebar: SidebarSection[] = [
       { text: 'FieldError', link: c('field-error') },
       { text: 'Form', link: c('form') },
       { text: 'Input', link: c('input') },
+      { text: 'Kbd', link: c('kbd') },
       { text: 'Label', link: c('label') },
       { text: 'Modal', link: c('modal') },
       { text: 'NumberField', link: c('number-field') },

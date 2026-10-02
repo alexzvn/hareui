@@ -1,0 +1,44 @@
+[
+  {
+    "id": "kbd-basic",
+    "component": "kbd",
+    "actions": [],
+    "ignoreSlots": []
+  },
+  {
+    "id": "kbd-light",
+    "component": "kbd",
+    "actions": [],
+    "ignoreSlots": []
+  },
+  {
+    "id": "kbd-multi",
+    "component": "kbd",
+    "actions": [],
+    "ignoreSlots": []
+  },
+  {
+    "id": "kbd-key-only",
+    "component": "kbd",
+    "actions": [],
+    "ignoreSlots": []
+  },
+  {
+    "id": "kbd-content-only",
+    "component": "kbd",
+    "actions": [],
+    "ignoreSlots": []
+  },
+  {
+    "id": "kbd-custom",
+    "component": "kbd",
+    "actions": [],
+    "ignoreSlots": []
+  },
+  {
+    "id": "kbd-inline",
+    "component": "kbd",
+    "actions": [],
+    "ignoreSlots": []
+  }
+]
