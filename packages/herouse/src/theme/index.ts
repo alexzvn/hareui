@@ -22,6 +22,7 @@ export { default as toast } from './toast'
 export type Themes = typeof import('./index')
 export { default as separator } from './separator'
 export { default as surface } from './surface'
+export { default as textArea } from './textArea'
 export { default as kbd } from './kbd'
 export { default as link } from './link'
 export { default as numberField } from './numberField'

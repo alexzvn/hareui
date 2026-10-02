@@ -1,0 +1,70 @@
+[
+  {
+    "id": "textarea-primary",
+    "component": "textarea",
+    "actions": [
+      "hover",
+      "focus",
+      "press"
+    ],
+    "ignoreSlots": []
+  },
+  {
+    "id": "textarea-secondary",
+    "component": "textarea",
+    "actions": [
+      "hover",
+      "focus",
+      "press"
+    ],
+    "ignoreSlots": []
+  },
+  {
+    "id": "textarea-full-width",
+    "component": "textarea",
+    "actions": [],
+    "ignoreSlots": []
+  },
+  {
+    "id": "textarea-disabled",
+    "component": "textarea",
+    "actions": [
+      "hover"
+    ],
+    "ignoreSlots": []
+  },
+  {
+    "id": "textarea-invalid",
+    "component": "textarea",
+    "actions": [
+      "focus"
+    ],
+    "ignoreSlots": []
+  },
+  {
+    "id": "textarea-secondary-invalid",
+    "component": "textarea",
+    "actions": [],
+    "ignoreSlots": []
+  },
+  {
+    "id": "textarea-value",
+    "component": "textarea",
+    "actions": [],
+    "ignoreSlots": []
+  },
+  {
+    "id": "textarea-rows",
+    "component": "textarea",
+    "actions": [],
+    "ignoreSlots": []
+  },
+  {
+    "id": "textarea-in-textfield",
+    "component": "textarea",
+    "actions": [
+      "focus"
+    ],
+    "ignoreSlots": []
+  }
+]
