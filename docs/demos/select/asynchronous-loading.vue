@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import { Select, Spinner } from 'herouse'
-import { ref } from 'vue'
+import { onMounted, ref } from 'vue'
 
 interface Pokemon {
   name: string
@@ -24,7 +24,8 @@ async function loadMore() {
     loading.value = false
   }
 }
-loadMore()
+// Client only: VitePress SSR-renders demos
+onMounted(loadMore)
 </script>
 
 <template>
