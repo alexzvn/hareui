@@ -65,6 +65,7 @@ export const sidebar: SidebarSection[] = [
       { text: 'Input', link: c('input') },
       { text: 'Kbd', link: c('kbd') },
       { text: 'Label', link: c('label') },
+      { text: 'Link', link: c('link') },
       { text: 'ListBox', link: c('list-box') },
       { text: 'Modal', link: c('modal') },
       { text: 'NumberField', link: c('number-field') },

@@ -1,0 +1,52 @@
+[
+  {
+    "id": "link-basic",
+    "component": "link",
+    "actions": [
+      "hover",
+      "focus",
+      "press"
+    ],
+    "ignoreSlots": []
+  },
+  {
+    "id": "link-no-icon",
+    "component": "link",
+    "actions": [
+      "hover"
+    ],
+    "ignoreSlots": []
+  },
+  {
+    "id": "link-icon-start",
+    "component": "link",
+    "actions": [],
+    "ignoreSlots": []
+  },
+  {
+    "id": "link-underline",
+    "component": "link",
+    "actions": [],
+    "ignoreSlots": []
+  },
+  {
+    "id": "link-custom-icon",
+    "component": "link",
+    "actions": [],
+    "ignoreSlots": []
+  },
+  {
+    "id": "link-disabled",
+    "component": "link",
+    "actions": [],
+    "ignoreSlots": []
+  },
+  {
+    "id": "link-custom-styles",
+    "component": "link",
+    "actions": [
+      "hover"
+    ],
+    "ignoreSlots": []
+  }
+]
