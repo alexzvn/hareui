@@ -64,8 +64,9 @@ export interface ButtonSlots {
 
 <script setup lang="ts">
 import { Primitive } from 'reka-ui'
-import { computed, inject, provide } from 'vue'
+import { computed, inject, provide, useTemplateRef } from 'vue'
 import { useComponentUI } from '../composables/useComponentUI'
+import { refElement } from '../composables/useFirstChild'
 import { buttonGroupContextKey } from './buttonGroupContext'
 import Spinner from './Spinner.vue'
 import { useFieldsetDisabled } from './fieldsetContext'
@@ -96,6 +97,10 @@ const groupClass = computed(() => {
   ]
 })
 
+// HeroUI renders `ButtonGroup.Separator` in every grouped Button except the first.
+const self = useTemplateRef<unknown>('self')
+const showSeparator = computed((): boolean => !!group?.separator.value && group.firstChild.value !== refElement(self.value))
+
 const isNativeButton = computed(() => props.as === 'button')
 const isDisabled = useFieldsetDisabled(() => props.disabled ?? group?.disabled.value)
 
@@ -123,6 +128,7 @@ function onClickCapture(event: MouseEvent) {
 
 <template>
   <Primitive
+    ref="self"
     :as="as"
     v-bind="attrs"
     data-slot="button"
@@ -132,10 +138,10 @@ function onClickCapture(event: MouseEvent) {
     @click.capture="onClickCapture"
   >
     <span
-      v-if="group?.separator.value"
+      v-if="showSeparator"
       aria-hidden="true"
       data-slot="button-group-separator"
-      :class="group.ui.value.separator({ class: group.uiOverrides.value?.separator })"
+      :class="group!.ui.value.separator({ class: group!.uiOverrides.value?.separator })"
     />
     <slot name="leading" :pending="pending">
       <Spinner v-if="pending" size="sm" color="current" :class="ui.spinner({ class: props.ui?.spinner })" />

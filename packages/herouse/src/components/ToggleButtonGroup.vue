@@ -71,8 +71,9 @@ export interface ToggleButtonGroupSlots {
 
 <script setup lang="ts">
 import { Primitive, RovingFocusGroup } from 'reka-ui'
-import { computed, inject, provide, ref, toRef, watch } from 'vue'
+import { computed, inject, provide, ref, toRef, useTemplateRef, watch } from 'vue'
 import { useComponentUI } from '../composables/useComponentUI'
+import { useFirstChild } from '../composables/useFirstChild'
 import { useFieldsetDisabled } from './fieldsetContext'
 import { toggleButtonGroupContextKey } from './toggleButtonGroupContext'
 import { toolbarContextKey } from './toolbarContext'
@@ -110,6 +111,8 @@ const ui = useComponentUI('toggleButtonGroup', theme, () => ({
   detached: props.detached,
 }))
 
+const firstChild = useFirstChild(useTemplateRef('root'))
+
 provide(toggleButtonGroupContextKey, {
   selectionMode: toRef(() => props.selectionMode),
   selected,
@@ -117,6 +120,7 @@ provide(toggleButtonGroupContextKey, {
   toggle,
   size: toRef(() => props.size),
   separator: toRef(() => props.separator),
+  firstChild,
   roving: !toolbar,
   ui,
   uiOverrides: toRef(() => props.ui),
@@ -126,6 +130,7 @@ provide(toggleButtonGroupContextKey, {
 <template>
   <component
     :is="toolbar ? Primitive : RovingFocusGroup"
+    ref="root"
     :as="as"
     v-bind="toolbar ? {} : { orientation, loop: false }"
     :role="selectionMode === 'single' ? 'radiogroup' : toolbar ? 'group' : 'toolbar'"

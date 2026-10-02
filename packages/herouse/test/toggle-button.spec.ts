@@ -57,9 +57,11 @@ describe('ToggleButtonGroup', () => {
     expect(items(wrapper).map(b => b.attributes('data-selected'))).toEqual([undefined, undefined, 'true'])
   })
 
-  it('renders separators only with `separator` and passes group size', () => {
+  it('renders separators in every button but the first, only with `separator`, and passes group size', async () => {
     const wrapper = group({ separator: true, size: 'sm' })
-    expect(wrapper.findAll('[data-slot="toggle-button-group-separator"]')).toHaveLength(3)
+    await nextTick()
+    expect(items(wrapper)[0]!.find('[data-slot="toggle-button-group-separator"]').exists()).toBe(false)
+    expect(wrapper.findAll('[data-slot="toggle-button-group-separator"]')).toHaveLength(2)
     expect(items(wrapper)[0]!.classes()).toContain('px-3')
   })
 })
