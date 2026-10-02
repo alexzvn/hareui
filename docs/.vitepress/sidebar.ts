@@ -62,6 +62,7 @@ export const sidebar: SidebarSection[] = [
       { text: 'CheckboxGroup', link: c('checkbox-group') },
       { text: 'Chip', link: c('chip') },
       { text: 'CloseButton', link: c('close-button') },
+      { text: 'ColorField', link: c('color-field') },
       { text: 'ColorSwatch', link: c('color-swatch') },
       { text: 'Description', link: c('description') },
       { text: 'Disclosure', link: c('disclosure') },

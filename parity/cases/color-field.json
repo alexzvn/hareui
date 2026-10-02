@@ -1,0 +1,87 @@
+[
+  {
+    "id": "color-field-default",
+    "component": "color-field",
+    "actions": [
+      "hover"
+    ],
+    "ignoreSlots": [],
+    "target": "[data-slot=color-input-group]"
+  },
+  {
+    "id": "color-field-focus",
+    "component": "color-field",
+    "actions": [
+      "focus"
+    ],
+    "ignoreSlots": [],
+    "target": "[data-slot=color-input-group-input]"
+  },
+  {
+    "id": "color-field-secondary",
+    "component": "color-field",
+    "actions": [
+      "hover"
+    ],
+    "ignoreSlots": [],
+    "target": "[data-slot=color-input-group]"
+  },
+  {
+    "id": "color-field-secondary-focus",
+    "component": "color-field",
+    "actions": [
+      "focus"
+    ],
+    "ignoreSlots": [],
+    "target": "[data-slot=color-input-group-input]"
+  },
+  {
+    "id": "color-field-required",
+    "component": "color-field",
+    "actions": [],
+    "ignoreSlots": []
+  },
+  {
+    "id": "color-field-disabled",
+    "component": "color-field",
+    "actions": [],
+    "ignoreSlots": [],
+    "target": "[data-slot=color-input-group]"
+  },
+  {
+    "id": "color-field-invalid",
+    "component": "color-field",
+    "actions": [],
+    "ignoreSlots": [],
+    "target": "[data-slot=color-input-group]"
+  },
+  {
+    "id": "color-field-full-width",
+    "component": "color-field",
+    "actions": [],
+    "ignoreSlots": [],
+    "target": "[data-slot=color-input-group]"
+  },
+  {
+    "id": "color-field-with-description",
+    "component": "color-field",
+    "actions": [],
+    "ignoreSlots": []
+  },
+  {
+    "id": "color-field-channel-editing",
+    "component": "color-field",
+    "actions": [],
+    "ignoreSlots": [],
+    "target": "[data-slot=color-input-group]"
+  },
+  {
+    "id": "color-field-user-overrides",
+    "component": "color-field",
+    "actions": [
+      "hover"
+    ],
+    "ignoreSlots": [],
+    "target": "[data-slot=color-input-group]"
+  }
+]
