@@ -1,0 +1,56 @@
+[
+  {
+    "id": "avatar-group-basic",
+    "component": "avatar-group",
+    "actions": [],
+    "ignoreSlots": []
+  },
+  {
+    "id": "avatar-group-max",
+    "component": "avatar-group",
+    "actions": [],
+    "ignoreSlots": []
+  },
+  {
+    "id": "avatar-group-count",
+    "component": "avatar-group",
+    "actions": [],
+    "ignoreSlots": []
+  },
+  {
+    "id": "avatar-group-size-sm",
+    "component": "avatar-group",
+    "actions": [],
+    "ignoreSlots": []
+  },
+  {
+    "id": "avatar-group-size-lg",
+    "component": "avatar-group",
+    "actions": [],
+    "ignoreSlots": []
+  },
+  {
+    "id": "avatar-group-grid",
+    "component": "avatar-group",
+    "actions": [],
+    "ignoreSlots": []
+  },
+  {
+    "id": "avatar-group-ring",
+    "component": "avatar-group",
+    "actions": [],
+    "ignoreSlots": []
+  },
+  {
+    "id": "avatar-group-inherit",
+    "component": "avatar-group",
+    "actions": [],
+    "ignoreSlots": []
+  },
+  {
+    "id": "avatar-group-custom",
+    "component": "avatar-group",
+    "actions": [],
+    "ignoreSlots": []
+  }
+]
