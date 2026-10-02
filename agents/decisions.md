@@ -1,6 +1,11 @@
 # Decisions (user-confirmed)
 
 Newest first. These override `plan.md` where they conflict.
+## 2026-10-02 (afternoon)
+
+- **Landing showcase tab bar stays removed.** heroui.com's Dashboard/Mail/Chat/Finances/CRM tabs are iframes of HeroUI Pro (paid, closed source), and heroui.pro refuses framing outside heroui.com (`frame-ancestors 'self' https://heroui.com`, `X-Frame-Options: SAMEORIGIN`). Own templates, recreated Pro screens and a Components-only bar were offered; the user chose to leave it as is.
+- **Theme builder:** port heroui.com/en/themes to the docs at `/themes` (assigned to vTSDGtr); "Edit theme" will point there.
+
 ## 2026-10-02 (before overnight run)
 
 - **New components:** Skeleton, ProgressBar, NumberField, Alert, Disclosure, Toast, Typography. Link, Separator, TextArea, Surface, SwitchGroup and ButtonGroup were not chosen.
