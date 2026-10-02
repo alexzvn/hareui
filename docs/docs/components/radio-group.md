@@ -62,6 +62,12 @@ The RadioGroup component supports two visual variants:
 
 <ComponentPreview name="radio-group/variants" />
 
+### In Surface
+
+When used inside a [Surface](/docs/components/surface) component, use `variant="secondary"` to apply the lower emphasis variant suitable for surface backgrounds.
+
+<ComponentPreview name="radio-group/on-surface" />
+
 ### Disabled
 
 <ComponentPreview name="radio-group/disabled" />

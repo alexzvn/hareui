@@ -55,6 +55,10 @@ through named slots.
 
 <ComponentPreview name="modal/controlled" />
 
+### With Form
+
+<ComponentPreview name="modal/with-form" />
+
 ### Custom Trigger
 
 <ComponentPreview name="modal/custom-trigger" />

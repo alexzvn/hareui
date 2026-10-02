@@ -83,6 +83,12 @@ Bind the value with `v-model` to synchronize counters, previews, or formatting.
 
 <ComponentPreview name="textfield/with-error" />
 
+### TextArea
+
+Use [TextArea](/docs/components/text-area) instead of [Input](/docs/components/input) for multiline content.
+
+<ComponentPreview name="textfield/textarea" />
+
 ### Input Types
 
 <ComponentPreview name="textfield/input-types" />

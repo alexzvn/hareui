@@ -6,20 +6,22 @@ import { Icon } from '@iconify/vue'
 <template>
   <Modal
     variant="blur"
-    :ui="{ backdrop: 'bg-linear-to-t from-black/80 via-black/40 to-transparent dark:from-zinc-800/80 dark:via-zinc-800/40' }"
+    class="sm:max-w-[360px]"
+    :ui="{
+      backdrop: 'bg-linear-to-t from-black/80 via-black/40 to-transparent dark:from-zinc-800/80 dark:via-zinc-800/40',
+      header: 'items-center text-center',
+      icon: 'bg-accent-soft text-accent-soft-foreground',
+      footer: 'flex-col-reverse',
+    }"
   >
     <Button variant="secondary">
       Custom Backdrop
     </Button>
-    <template #header>
-      <div class="flex flex-col items-center gap-3 text-center">
-        <div class="flex size-10 shrink-0 items-center justify-center rounded-3xl bg-accent-soft text-accent-soft-foreground">
-          <Icon icon="gravity-ui:sparkles" />
-        </div>
-        <p class="text-base font-medium text-foreground">
-          Premium Backdrop
-        </p>
-      </div>
+    <template #icon>
+      <Icon class="size-5" icon="gravity-ui:sparkles" />
+    </template>
+    <template #title>
+      Premium Backdrop
     </template>
     <template #body>
       <p>
@@ -30,14 +32,12 @@ import { Icon } from '@iconify/vue'
       </p>
     </template>
     <template #footer="{ close }">
-      <div class="flex w-full flex-col-reverse gap-2">
-        <Button class="w-full" variant="secondary" @click="close">
-          Close
-        </Button>
-        <Button class="w-full" @click="close">
-          Amazing!
-        </Button>
-      </div>
+      <Button class="w-full" @click="close">
+        Amazing!
+      </Button>
+      <Button class="w-full" variant="secondary" @click="close">
+        Close
+      </Button>
     </template>
   </Modal>
 </template>
