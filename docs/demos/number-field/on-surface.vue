@@ -1,10 +1,9 @@
 <script setup lang="ts">
-import { NumberField } from 'herouse'
+import { NumberField, Surface } from 'herouse'
 </script>
 
 <template>
-  <!-- herouse has no Surface component; these are HeroUI's `Surface` (variant "default") classes -->
-  <div data-slot="surface" class="relative flex w-full max-w-[280px] flex-col gap-4 rounded-3xl bg-surface p-6 text-surface-foreground">
+  <Surface class="flex w-full max-w-[280px] flex-col gap-4 rounded-3xl p-6">
     <NumberField
       :default-value="1024"
       :min="0"
@@ -26,5 +25,5 @@ import { NumberField } from 'herouse'
       description="Value must be between 0 and 100"
       :ui="{ input: 'w-full' }"
     />
-  </div>
+  </Surface>
 </template>

@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { Avatar } from 'herouse'
+import { Avatar, Separator } from 'herouse'
 import { Icon } from '@iconify/vue'
 
 const colors = ['accent', 'default', 'success', 'warning', 'danger'] as const
@@ -28,7 +28,7 @@ const images = [
       </div>
     </div>
 
-    <hr class="border-separator" />
+    <Separator />
 
     <div v-for="row in rows" :key="row.label" class="flex items-center gap-3">
       <div class="w-24 shrink-0 text-sm text-muted">{{ row.label }}</div>

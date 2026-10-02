@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { Chip } from 'herouse'
+import { Chip, Separator } from 'herouse'
 
 const variants = ['primary', 'secondary', 'tertiary', 'soft'] as const
 const colors = ['accent', 'default', 'success', 'warning', 'danger'] as const
@@ -12,7 +12,7 @@ const matrices = [
 <template>
   <div class="flex w-full flex-col gap-8 overflow-x-auto">
     <template v-for="(matrix, index) in matrices" :key="matrix.title">
-      <hr v-if="index > 0" class="border-separator" />
+      <Separator v-if="index > 0" />
       <div class="flex flex-col gap-4" :data-vibrant-palette="matrix.isVibrant ? 'true' : undefined">
         <h3 class="text-sm font-semibold text-muted">{{ matrix.title }}</h3>
         <div class="flex items-center gap-3">

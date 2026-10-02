@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { TextField } from 'herouse'
+import { TextArea, TextField } from 'herouse'
 import { ref } from 'vue'
 
 const name = ref('')
@@ -19,8 +19,9 @@ const bio = ref('')
       v-model="bio"
       label="Bio"
       name="bio"
-      placeholder="Tell us about yourself..."
       :description="`Characters: ${bio.length} / 200`"
-    />
+    >
+      <TextArea placeholder="Tell us about yourself..." />
+    </TextField>
   </div>
 </template>

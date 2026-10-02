@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { TextField } from 'herouse'
+import { TextArea, TextField } from 'herouse'
 import { computed, ref } from 'vue'
 
 const username = ref('')
@@ -26,9 +26,10 @@ const bioInvalid = computed(() => bio.value.length > 0 && bio.value.length < 20)
       :invalid="bioInvalid"
       label="Bio"
       name="bio"
-      placeholder="Tell us about yourself..."
       :description="bioInvalid ? undefined : `Minimum 20 characters (${bio.length}/20).`"
       error-message="Bio must contain at least 20 characters."
-    />
+    >
+      <TextArea placeholder="Tell us about yourself..." />
+    </TextField>
   </div>
 </template>

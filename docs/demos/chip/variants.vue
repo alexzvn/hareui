@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { Chip } from 'herouse'
+import { Chip, Separator } from 'herouse'
 import { Icon } from '@iconify/vue'
 
 const sizes = ['lg', 'md', 'sm'] as const
@@ -31,7 +31,7 @@ const colors = ['accent', 'default', 'success', 'warning', 'danger'] as const
           </div>
         </div>
       </div>
-      <hr v-if="index < sizes.length - 1" class="border-separator" />
+      <Separator v-if="index < sizes.length - 1" />
     </template>
   </div>
 </template>

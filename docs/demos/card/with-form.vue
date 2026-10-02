@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { Button, Card, Input, Label, TextField } from 'herouse'
+import { Button, Card, Input, Label, Link, TextField } from 'herouse'
 
 function onSubmit(e: Event) {
   e.preventDefault()
@@ -22,13 +22,9 @@ function onSubmit(e: Event) {
       </div>
       <div class="mt-4 flex flex-col items-center gap-2">
         <Button class="w-full" type="submit">Sign In</Button>
-        <!-- herouse has no Link component yet: this is HeroUI's Link markup -->
-        <a
-          class="relative inline-flex h-fit w-fit items-center rounded-xl text-center text-sm font-medium text-link no-underline decoration-separator-tertiary decoration-[1.5px] underline-offset-4 no-highlight transition-colors duration-100 ease-smooth focus-visible:status-focused motion-reduce:transition-none hover:underline hover:decoration-muted/50 active:underline active:decoration-muted"
-          href="#"
-        >
+        <Link class="text-center text-sm" href="#">
           Forgot password?
-        </a>
+        </Link>
       </div>
     </form>
   </Card>

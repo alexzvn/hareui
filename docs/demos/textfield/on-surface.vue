@@ -1,11 +1,9 @@
 <script setup lang="ts">
-import { Input, TextField } from 'herouse'
+import { Input, Surface, TextArea, TextField } from 'herouse'
 </script>
 
 <template>
-  <!-- herouse has no Surface component; these are HeroUI's `Surface` (variant "default") classes.
-       herouse has no TextArea yet, so the Bio field uses an Input. -->
-  <div data-slot="surface" class="relative flex w-full min-w-[340px] flex-col gap-4 rounded-3xl bg-surface p-6 text-surface-foreground">
+  <Surface class="flex w-full min-w-[340px] flex-col gap-4 rounded-3xl p-6">
     <TextField name="name" variant="secondary" label="Your name" description="We'll never share this with anyone else">
       <Input class="w-full" placeholder="John" />
     </TextField>
@@ -13,7 +11,7 @@ import { Input, TextField } from 'herouse'
       <Input class="w-full" placeholder="john@example.com" />
     </TextField>
     <TextField name="bio" variant="secondary" label="Bio" description="Minimum 4 rows">
-      <Input class="w-full" placeholder="Tell us about yourself..." />
+      <TextArea class="w-full" placeholder="Tell us about yourself..." :rows="4" />
     </TextField>
-  </div>
+  </Surface>
 </template>
