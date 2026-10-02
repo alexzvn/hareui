@@ -1,0 +1,20 @@
+[
+  {
+    "id": "error-message-basic",
+    "component": "error-message",
+    "actions": [],
+    "ignoreSlots": []
+  },
+  {
+    "id": "error-message-custom",
+    "component": "error-message",
+    "actions": [],
+    "ignoreSlots": []
+  },
+  {
+    "id": "error-message-long",
+    "component": "error-message",
+    "actions": [],
+    "ignoreSlots": []
+  }
+]
