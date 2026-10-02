@@ -4,27 +4,21 @@
     "component": "input-otp",
     "actions": ["focus"],
     "ignoreSlots": [],
-    "target": "#case [data-slot=input-otp]",
-    "ignoreProps": ["width"],
-    "reason": "On focus the `input-otp` library widens its <input> by 40px to make room for a password-manager badge (pushPasswordManagerStrategy); herouse has no such heuristic. Box and slots are unaffected (screenshots match)"
+    "target": "#case [data-slot=input-otp]"
   },
   {
     "id": "input-otp-secondary",
     "component": "input-otp",
     "actions": ["focus"],
     "ignoreSlots": [],
-    "target": "#case [data-slot=input-otp]",
-    "ignoreProps": ["width"],
-    "reason": "On focus the `input-otp` library widens its <input> by 40px to make room for a password-manager badge (pushPasswordManagerStrategy); herouse has no such heuristic. Box and slots are unaffected (screenshots match)"
+    "target": "#case [data-slot=input-otp]"
   },
   {
     "id": "input-otp-partial",
     "component": "input-otp",
     "actions": ["focus"],
     "ignoreSlots": [],
-    "target": "#case [data-slot=input-otp]",
-    "ignoreProps": ["width"],
-    "reason": "On focus the `input-otp` library widens its <input> by 40px to make room for a password-manager badge (pushPasswordManagerStrategy); herouse has no such heuristic. Box and slots are unaffected (screenshots match)"
+    "target": "#case [data-slot=input-otp]"
   },
   {
     "id": "input-otp-complete",

@@ -173,6 +173,11 @@ function charAt(index: number) {
 // behavior, not custom per-slot focus management. `selStart`/`selEnd` mirror the input's own selection
 // so each slot can tell whether it's the active one (or part of an active range selection).
 const isFocused = ref(false)
+// The `input-otp` library's password-manager badge push (`pushPasswordManagerStrategy: 'increase-width'`, its
+// default): once focused while the box is at least 40px wide, the invisible input is widened by 40px and clipped
+// back, so a manager's badge sits outside the visible box. It stays on for the component's lifetime, as there.
+const PWM_BADGE_SPACE = 40
+const pushPwmBadge = ref(false)
 const selStart = ref<number | null>(null)
 const selEnd = ref<number | null>(null)
 function syncSelection() {
@@ -203,6 +208,8 @@ function commit(next: string) {
 
 function onFocus() {
   isFocused.value = true
+  if (box.value && box.value.offsetWidth >= PWM_BADGE_SPACE)
+    pushPwmBadge.value = true
   const el = input.value
   if (el) {
     const length = (modelValue.value ?? '').length
@@ -316,6 +323,7 @@ function onPaste(event: ClipboardEvent) {
         :data-disabled="disabled ? 'true' : undefined"
         :data-invalid="invalid ? 'true' : undefined"
         :class="ui.input({ class: props.ui?.input })"
+        :style="pushPwmBadge ? { width: `calc(100% + ${PWM_BADGE_SPACE}px)`, clipPath: `inset(0 ${PWM_BADGE_SPACE}px 0 0)` } : undefined"
         @input="onInput"
         @paste="onPaste"
         @focus="onFocus"
