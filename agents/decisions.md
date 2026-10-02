@@ -49,3 +49,15 @@ Newest first. These override `plan.md` where they conflict.
 - **Web now, Lynx later.** vue-lynx 0.5.1 is pre-alpha with no DOM, so Reka can't run on it. It supports Tailwind v3 only, with no `::before`/`::after` and no oklch. Only the API contract and hex tokens could be shared. The bun workspace `packages/*` leaves room for `packages/lynx`.
 - Plain Vue library only: no Nuxt module, no Vite plugin.
 - Package manager is bun.
+
+## Open-decision batch (user, 2026-10-02 16:30) — status.md items 1-20
+
+Kept as is (document as known deviations): #1 Switch label-position CSS workaround; #2 Related Showcases not ported; #5 ProgressBar uses Reka locale; #7 Toast single `#toast` slot, flat queue; #8 landing loose ends wait for the HareUI rename; #9 `separator` prop + `items` API; #10 Select multi-value single string; #13 AvatarGroup `#count` slot; #15 search dialog without Web/Native tabs and Ask AI; #17 ColorSwatchPicker a-d; #18 ColorArea a-d; #19 ColorSlider a-d; #20 ColorPicker a-e.
+
+Changes to make:
+- **#3 Docs site:** add the header GitHub link (`https://github.com/alexzvn/hareui`). No sidebar New/Updated badges, no Get Involved / Contributing. CLI/Figma/MCP, Ask AI, language picker stay out.
+- **#6 Tooltip:** add the missing options only: a close delay and a focus-only trigger. Cross-tooltip warm-up and sub-pixel position drift are accepted and documented.
+- **#11 Calendar:** build a custom week view and day view grid outside Reka so those demos can be ported.
+- **#12 RangeCalendar:** keep trying the anchor-date wrapper; park and document if it fails.
+- **#14 TagGroup:** add an EmptyState component, then port the with-list-data demo.
+- **#16 ColorField:** option A: show an empty input when there is no value/defaultValue (Reka still holds `#000000`, so the form value is `#000000`); restore the controlled demo's "Clear" button.

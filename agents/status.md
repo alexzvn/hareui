@@ -39,6 +39,8 @@ Everything below is uncommitted in the working tree. Commit each as its own unit
 
 ## Open decisions for the user
 
+**All 20 answered on 2026-10-02 16:30; see the last section of `decisions.md`. Items below are kept for reference only.**
+
 Collected from `reviews/*.md` (each has a "Decisions needed" section with options):
 
 1. **Switch label-position** is a pixel-identical CSS workaround (DOM order differs from HeroUI).
