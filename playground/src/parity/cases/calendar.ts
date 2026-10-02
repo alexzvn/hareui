@@ -21,3 +21,9 @@ cases['calendar-min-max'] = () => h(Calendar, { ...base, minValue: parseDate('20
 // month instead of the picker's value, rendering a 5-week grid instead of 6.
 cases['calendar-six-week-month'] = () => h(Calendar, { ariaLabel: 'Event date', defaultValue: parseDate('2024-03-15') })
 cases['calendar-indicator'] = () => h(Calendar, { ...base, defaultValue: parseDate('2025-01-15'), indicator: (date: DateValue) => [3, 15, 22].includes(date.day) })
+
+// Week view / day view (visibleDuration). Jan 2025 never contains "today".
+cases['calendar-week-view'] = () => h(Calendar, { ...base, visibleDuration: { weeks: 1 }, defaultValue: parseDate('2025-01-15') })
+cases['calendar-week-view-multiple'] = () => h(Calendar, { ...base, visibleDuration: { weeks: 3 } })
+cases['calendar-day-view'] = () => h(Calendar, { ...base, visibleDuration: { days: 5 }, defaultValue: parseDate('2025-01-15') })
+cases['calendar-day-view-long'] = () => h(Calendar, { ...base, visibleDuration: { days: 10 } })

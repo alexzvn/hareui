@@ -6,7 +6,8 @@
 // `data-[selected]:…` override always wins over the theme regardless of class order.
 export default {
   slots: {
-    base: '[container-type:inline-size] w-63 max-w-63',
+    // `calendar-year-picker.css`: the year grid is absolutely positioned over the day grid
+    base: '[container-type:inline-size] w-63 max-w-63 group/calendar has-[>[data-slot=calendar-year-picker-grid]]:relative',
     // Multi-month layout (`numberOfMonths > 1`), translated from the HeroUI docs'
     // multiple-months demo markup (free composition in React, baked in here for Option A).
     panels: 'mx-auto flex w-max gap-8',
@@ -28,7 +29,12 @@ export default {
       'disabled:status-disabled aria-disabled:status-disabled [&:where([data-disabled])]:status-disabled',
     ],
     navButtonIcon: 'size-4 rtl:rotate-180',
-    grid: 'grid w-full grid-cols-7 aria-readonly:[&_[data-slot=calendar-cell]]:pointer-events-none',
+    grid: [
+      'grid w-full grid-cols-7 aria-readonly:[&_[data-slot=calendar-cell]]:pointer-events-none',
+      // `calendar-year-picker.css` crossfade: the day grid fades out (then hides) while the year grid is open
+      'group-has-[>[data-slot=calendar-year-picker-grid]]/calendar:will-change-[opacity] group-has-[>[data-slot=calendar-year-picker-grid]]/calendar:[transition:opacity_150ms_var(--ease-out),visibility_0ms_linear] motion-reduce:transition-none',
+      'group-has-[>[data-slot=calendar-year-picker-grid][data-open=true]]/calendar:pointer-events-none group-has-[>[data-slot=calendar-year-picker-grid][data-open=true]]/calendar:opacity-0 group-has-[>[data-slot=calendar-year-picker-grid][data-open=true]]/calendar:invisible group-has-[>[data-slot=calendar-year-picker-grid][data-open=true]]/calendar:[transition:opacity_150ms_var(--ease-out),visibility_0ms_linear_150ms]',
+    ],
     gridHeader: 'contents [&>tr]:contents',
     gridBody: 'contents [&>tr]:contents [&>tr:first-child>td]:mt-1',
     gridRow: 'contents',
@@ -82,5 +88,25 @@ export default {
       '[&:where([data-selected])]:bg-accent [&:where([data-selected])]:text-accent-foreground [&:where([data-selected]:hover)]:bg-accent-hover',
       'focus-visible:status-focused',
     ],
+  },
+  // `visibleDuration` week/day views (`.calendar--week-view` / `.calendar--day-view`), rendered by the
+  // custom grid in the component (Reka only builds month grids).
+  variants: {
+    view: {
+      month: {},
+      week: {
+        cell: 'aspect-square size-auto w-full place-self-center',
+      },
+      day: {
+        cell: 'aspect-square size-auto w-full place-self-center',
+        // Separate 7-column grids for header and body, so fewer than 7 weekday headers don't share a row with dates
+        grid: 'flex flex-col',
+        gridHeader: 'grid w-full grid-cols-7 [&>tr]:contents',
+        gridBody: 'mt-1 grid w-full grid-cols-7 [&>tr]:contents [&>tr:first-child>td]:mt-0',
+      },
+    },
+  },
+  defaultVariants: {
+    view: 'month',
   },
 }

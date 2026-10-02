@@ -114,6 +114,18 @@ months.
 
 <ComponentPreview name="range-calendar/weeks-in-month" />
 
+### Week View
+
+Set `visible-duration` to `{ weeks: n }` to show one or more weeks at a time. Navigation advances by the visible week range. Use `page-behavior="single"` to move one week at a time when showing multiple weeks.
+
+<ComponentPreview name="range-calendar/week-view" />
+
+### Day View
+
+Set `visible-duration` to `{ days: n }` to show a rolling window of consecutive days. Navigation advances by the visible day range. Use `page-behavior="single"` to move one day at a time when showing multiple days.
+
+<ComponentPreview name="range-calendar/day-view" />
+
 ### Focused Value
 
 Programmatically control which month is displayed using `v-model:placeholder`.
@@ -196,11 +208,8 @@ RangeCalendar sets these data attributes (from Reka UI), on `[data-slot="range-c
 
 ### Reka UI Limitations
 
-- No week/day view: Reka's `CalendarRoot`/`RangeCalendarRoot` grid generator (`createMonths`)
-  always produces full-month grids; there's no equivalent of React Aria's
-  `visibleDuration={{ weeks/days: n }}` for restricting the grid to a single week or day, so
-  HeroUI's "Week View" and "Day View" demos have no port without a custom grid built outside
-  Reka's primitives.
+- Week and day views (`visible-duration`) are rendered by herouse's own grid, since Reka's `CalendarRoot`/`RangeCalendarRoot` always build full month grids. They follow React Aria's `visibleDuration` behaviour (alignment, paging, `page-behavior`, keyboard navigation) and HeroUI's `--week-view`/`--day-view` styles; the year picker, `number-of-months` and `fixed-weeks` only apply to the month view.
+- Anchor-aware `is-date-unavailable`: Reka's matcher takes one argument, so RangeCalendar wraps the two-argument callback in a closure that reads the in-progress anchor (the picked start while `end` is unset, `null` once the range is complete, as in react-stately). It also narrows Reka's `min-value`/`max-value` to the run of available days around the anchor (react-stately's `getAvailableRange`), so paging past it is disabled, and marks the lone anchor cell as both selection start and end, as React Aria does.
 - `fixed-weeks` is boolean only (always 6 weeks). HeroUI's React `weeksInMonth` accepts any count up
   to 6; Reka's `RangeCalendarRoot` only exposes the all-or-nothing `fixedWeeks` flag.
 - `invalid` sets `aria-invalid`/`data-invalid` directly rather than through Reka: Reka's own

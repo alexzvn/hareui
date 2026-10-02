@@ -39,5 +39,9 @@
     "id": "calendar-indicator",
     "component": "calendar",
     "actions": []
-  }
+  },
+  {"id": "calendar-week-view", "component": "calendar", "actions": []},
+  {"id": "calendar-week-view-multiple", "component": "calendar", "actions": []},
+  {"id": "calendar-day-view", "component": "calendar", "actions": []},
+  {"id": "calendar-day-view-long", "component": "calendar", "actions": []}
 ]

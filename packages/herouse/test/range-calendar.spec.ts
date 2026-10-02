@@ -1,5 +1,5 @@
 import type { DateRange } from '../src/components/RangeCalendar.vue'
-import { CalendarDate } from '@internationalized/date'
+import { CalendarDate, parseDate } from '@internationalized/date'
 import { mount } from '@vue/test-utils'
 import { describe, expect, it } from 'vitest'
 import { nextTick } from 'vue'
@@ -148,6 +148,54 @@ describe('rangeCalendar', () => {
     const root = wrapper.find('[data-slot=range-calendar]')
     expect(root.attributes('aria-invalid')).toBe('true')
     expect(root.attributes('data-invalid')).toBe('')
+    wrapper.unmount()
+  })
+})
+
+describe('range calendar week/day view (visibleDuration)', () => {
+  it('two clicks select a range in day view; the anchor is passed to isDateUnavailable', async () => {
+    const anchors: (string | null)[] = []
+    const wrapper = mount(RangeCalendar, {
+      props: {
+        ariaLabel: 'Trip',
+        locale: 'en-US',
+        visibleDuration: { days: 10 },
+        defaultPlaceholder: parseDate('2025-01-15'),
+        isDateUnavailable: (_d: any, anchor: any) => { anchors.push(anchor?.toString() ?? null); return false },
+      },
+    })
+    const cell = (day: string) => wrapper.findAll('[data-slot=range-calendar-cell]').find(c => c.text() === day)!
+    await cell('9').trigger('click')
+    expect(anchors.at(-1)).toBe('2025-01-09')
+    await cell('12').trigger('click')
+    const value = wrapper.emitted('update:modelValue')!.at(-1)![0] as any
+    expect([value.start.toString(), value.end.toString()]).toEqual(['2025-01-09', '2025-01-12'])
+    expect(cell('9').attributes('data-selection-start')).toBe('true')
+    expect(cell('12').attributes('data-selection-end')).toBe('true')
+  })
+})
+
+describe('range calendar anchor-dependent unavailable dates', () => {
+  it('anchoring caps the cell on both sides and limits paging to the available run', async () => {
+    const wrapper = mount(RangeCalendar, {
+      props: {
+        ariaLabel: 'Trip',
+        defaultPlaceholder: parseDate('2025-01-15'),
+        isDateUnavailable: (date: any, anchor: any) => anchor != null && Math.abs(date.compare(anchor)) > 7,
+      },
+      attachTo: document.body,
+    })
+    const day10 = wrapper.get('[data-value="2025-01-10"]')
+    await day10.trigger('mouseenter')
+    await day10.trigger('click')
+    expect(day10.attributes('data-selection-start')).toBe('true')
+    expect(day10.attributes('data-selection-end')).toBe('true')
+    expect(wrapper.get('[data-value="2025-01-18"]').attributes('data-unavailable')).toBe('')
+    const [, next] = wrapper.findAll('[data-slot=range-calendar-nav-button]')
+    expect(next!.attributes('disabled')).toBeDefined()
+    await wrapper.get('[data-value="2025-01-14"]').trigger('mouseenter')
+    await wrapper.get('[data-value="2025-01-14"]').trigger('click')
+    expect(wrapper.get('[data-value="2025-01-18"]').attributes('data-unavailable')).toBeUndefined()
     wrapper.unmount()
   })
 })

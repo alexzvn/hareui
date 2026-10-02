@@ -39,5 +39,9 @@
     "id": "range-calendar-non-contiguous",
     "component": "range-calendar",
     "actions": []
-  }
+  },
+  {"id": "range-calendar-week-view", "component": "range-calendar", "actions": []},
+  {"id": "range-calendar-day-view", "component": "range-calendar", "actions": []},
+  {"id": "range-calendar-day-view-long", "component": "range-calendar", "actions": []},
+  {"id": "range-calendar-anchor-unavailable", "component": "range-calendar", "actions": []}
 ]
