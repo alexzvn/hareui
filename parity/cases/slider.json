@@ -1,0 +1,67 @@
+[
+  {
+    "id": "slider-default",
+    "component": "slider",
+    "actions": [
+      "hover",
+      "focus",
+      "press"
+    ],
+    "ignoreSlots": [],
+    "target": "[data-slot=slider-thumb]"
+  },
+  {
+    "id": "slider-zero",
+    "component": "slider",
+    "actions": [],
+    "ignoreSlots": []
+  },
+  {
+    "id": "slider-full",
+    "component": "slider",
+    "actions": [],
+    "ignoreSlots": []
+  },
+  {
+    "id": "slider-range",
+    "component": "slider",
+    "actions": [
+      "focus"
+    ],
+    "ignoreSlots": [],
+    "target": "[data-slot=slider-thumb]"
+  },
+  {
+    "id": "slider-range-edges",
+    "component": "slider",
+    "actions": [],
+    "ignoreSlots": []
+  },
+  {
+    "id": "slider-currency",
+    "component": "slider",
+    "actions": [],
+    "ignoreSlots": []
+  },
+  {
+    "id": "slider-disabled",
+    "component": "slider",
+    "actions": [],
+    "ignoreSlots": []
+  },
+  {
+    "id": "slider-vertical",
+    "component": "slider",
+    "actions": [
+      "focus"
+    ],
+    "ignoreSlots": [],
+    "target": "[data-slot=slider-thumb]"
+  },
+  {
+    "id": "slider-no-label",
+    "component": "slider",
+    "actions": [],
+    "ignoreSlots": []
+  }
+]
