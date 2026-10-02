@@ -1,0 +1,78 @@
+[
+  {
+    "id": "toggle-button-default",
+    "component": "toggle-button",
+    "actions": [
+      "hover",
+      "focus",
+      "press"
+    ],
+    "ignoreSlots": []
+  },
+  {
+    "id": "toggle-button-ghost",
+    "component": "toggle-button",
+    "actions": [
+      "hover",
+      "focus",
+      "press"
+    ],
+    "ignoreSlots": []
+  },
+  {
+    "id": "toggle-button-selected",
+    "component": "toggle-button",
+    "actions": [
+      "hover",
+      "focus",
+      "press"
+    ],
+    "ignoreSlots": []
+  },
+  {
+    "id": "toggle-button-selected-ghost",
+    "component": "toggle-button",
+    "actions": [
+      "hover",
+      "focus",
+      "press"
+    ],
+    "ignoreSlots": []
+  },
+  {
+    "id": "toggle-button-sm",
+    "component": "toggle-button",
+    "actions": [],
+    "ignoreSlots": []
+  },
+  {
+    "id": "toggle-button-lg",
+    "component": "toggle-button",
+    "actions": [],
+    "ignoreSlots": []
+  },
+  {
+    "id": "toggle-button-icon-only",
+    "component": "toggle-button",
+    "actions": [],
+    "ignoreSlots": []
+  },
+  {
+    "id": "toggle-button-icon-only-sm",
+    "component": "toggle-button",
+    "actions": [],
+    "ignoreSlots": []
+  },
+  {
+    "id": "toggle-button-disabled",
+    "component": "toggle-button",
+    "actions": [],
+    "ignoreSlots": []
+  },
+  {
+    "id": "toggle-button-custom",
+    "component": "toggle-button",
+    "actions": [],
+    "ignoreSlots": []
+  }
+]

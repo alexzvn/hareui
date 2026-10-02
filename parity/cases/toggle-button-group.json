@@ -1,0 +1,64 @@
+[
+  {
+    "id": "toggle-button-group-basic",
+    "component": "toggle-button-group",
+    "actions": [
+      "hover",
+      "focus",
+      "press"
+    ],
+    "ignoreSlots": [],
+    "target": "#case [data-slot=toggle-button]:nth-child(2)"
+  },
+  {
+    "id": "toggle-button-group-selected",
+    "component": "toggle-button-group",
+    "actions": [
+      "hover"
+    ],
+    "ignoreSlots": [],
+    "target": "#case [data-slot=toggle-button]:nth-child(2)"
+  },
+  {
+    "id": "toggle-button-group-no-separator",
+    "component": "toggle-button-group",
+    "actions": [],
+    "ignoreSlots": []
+  },
+  {
+    "id": "toggle-button-group-vertical",
+    "component": "toggle-button-group",
+    "actions": [],
+    "ignoreSlots": []
+  },
+  {
+    "id": "toggle-button-group-detached",
+    "component": "toggle-button-group",
+    "actions": [],
+    "ignoreSlots": []
+  },
+  {
+    "id": "toggle-button-group-full-width",
+    "component": "toggle-button-group",
+    "actions": [],
+    "ignoreSlots": []
+  },
+  {
+    "id": "toggle-button-group-sm",
+    "component": "toggle-button-group",
+    "actions": [],
+    "ignoreSlots": []
+  },
+  {
+    "id": "toggle-button-group-disabled",
+    "component": "toggle-button-group",
+    "actions": [],
+    "ignoreSlots": []
+  },
+  {
+    "id": "toggle-button-group-single-text",
+    "component": "toggle-button-group",
+    "actions": [],
+    "ignoreSlots": []
+  }
+]
