@@ -56,7 +56,7 @@ Collected from `reviews/*.md` (each has a "Decisions needed" section with option
    - header GitHub link (needs a repo URL), Ask AI, and the language picker
    - Get Involved / Contributing sections
    - the React-only sections that were dropped
-4. **More missing components seen in new demos:** Select (ProgressBar custom-value uses a styled native `<select>`) and Separator (hand-styled again). Reported by vTSDGtr with the ProgressBar unit.
+4. **Follow-up, not a decision:** Select (`40c8319`) and Separator (`e9c493a`) are now committed. -8sP15N replaces the styled native `<select>` in the ProgressBar custom-value demo and the hand-styled separators in older demos (wave 2 stand-in replacements).
 5. **ProgressBar value formatting** follows Reka's ConfigProvider locale (default `en`), not the browser locale like RAC.
 6. **Tooltip reka-limitations** (`reviews/tooltip.md`):
    - no `closeDelay` and no focus-only trigger
