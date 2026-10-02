@@ -53,6 +53,7 @@ export const sidebar: SidebarSection[] = [
       { separator: 'Components' },
       { text: 'Accordion', link: c('accordion') },
       { text: 'Alert', link: c('alert') },
+      { text: 'AlertDialog', link: c('alert-dialog') },
       { text: 'Avatar', link: c('avatar') },
       { text: 'AvatarGroup', link: c('avatar-group') },
       { text: 'Badge', link: c('badge') },

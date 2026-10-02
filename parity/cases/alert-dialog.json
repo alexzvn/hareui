@@ -1,0 +1,20 @@
+[
+  { "id": "alert-dialog-status-default", "component": "alert-dialog", "actions": [], "overlay": true, "ignoreSlots": [] },
+  { "id": "alert-dialog-status-accent", "component": "alert-dialog", "actions": [], "overlay": true, "ignoreSlots": [] },
+  { "id": "alert-dialog-status-success", "component": "alert-dialog", "actions": [], "overlay": true, "ignoreSlots": [] },
+  { "id": "alert-dialog-status-warning", "component": "alert-dialog", "actions": [], "overlay": true, "ignoreSlots": [] },
+  { "id": "alert-dialog-status-danger", "component": "alert-dialog", "actions": [], "overlay": true, "ignoreSlots": [] },
+  { "id": "alert-dialog-size-xs", "component": "alert-dialog", "actions": [], "overlay": true, "ignoreSlots": [] },
+  { "id": "alert-dialog-size-sm", "component": "alert-dialog", "actions": [], "overlay": true, "ignoreSlots": [] },
+  { "id": "alert-dialog-size-md", "component": "alert-dialog", "actions": [], "overlay": true, "ignoreSlots": [] },
+  { "id": "alert-dialog-size-lg", "component": "alert-dialog", "actions": [], "overlay": true, "ignoreSlots": [] },
+  { "id": "alert-dialog-size-cover", "component": "alert-dialog", "actions": [], "overlay": true, "ignoreSlots": [] },
+  { "id": "alert-dialog-variant-opaque", "component": "alert-dialog", "actions": [], "overlay": true, "ignoreSlots": [] },
+  { "id": "alert-dialog-variant-blur", "component": "alert-dialog", "actions": [], "overlay": true, "ignoreSlots": [] },
+  { "id": "alert-dialog-variant-transparent", "component": "alert-dialog", "actions": [], "overlay": true, "ignoreSlots": [] },
+  { "id": "alert-dialog-placement-auto", "component": "alert-dialog", "actions": [], "overlay": true, "ignoreSlots": [] },
+  { "id": "alert-dialog-placement-top", "component": "alert-dialog", "actions": [], "overlay": true, "ignoreSlots": [] },
+  { "id": "alert-dialog-placement-center", "component": "alert-dialog", "actions": [], "overlay": true, "ignoreSlots": [] },
+  { "id": "alert-dialog-placement-bottom", "component": "alert-dialog", "actions": [], "overlay": true, "ignoreSlots": [] },
+  { "id": "alert-dialog-no-close", "component": "alert-dialog", "actions": [], "overlay": true, "ignoreSlots": [] }
+]
