@@ -116,5 +116,7 @@ export { default as ToggleButtonGroup } from './components/ToggleButtonGroup.vue
 export type { ToggleButtonGroupProps, ToggleButtonGroupSlots } from './components/ToggleButtonGroup.vue'
 export { default as InputOtp } from './components/InputOtp.vue'
 export type { InputOtpEmits, InputOtpProps, InputOtpSlots } from './components/InputOtp.vue'
+export { default as TagGroup } from './components/TagGroup.vue'
+export type { TagGroupEmits, TagGroupItem, TagGroupProps, TagGroupSlots } from './components/TagGroup.vue'
 export { default as Toolbar } from './components/Toolbar.vue'
 export type { ToolbarProps, ToolbarSlots } from './components/Toolbar.vue'

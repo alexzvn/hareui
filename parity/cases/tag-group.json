@@ -1,0 +1,92 @@
+[
+  {
+    "id": "tag-group-default",
+    "component": "tag-group",
+    "actions": [
+      "hover",
+      "focus",
+      "press"
+    ],
+    "ignoreSlots": [],
+    "target": "#case [data-slot=tag]:nth-child(2)"
+  },
+  {
+    "id": "tag-group-selected",
+    "component": "tag-group",
+    "actions": [
+      "hover"
+    ],
+    "ignoreSlots": [],
+    "target": "#case [data-slot=tag]:nth-child(2)"
+  },
+  {
+    "id": "tag-group-sizes",
+    "component": "tag-group",
+    "actions": [],
+    "ignoreSlots": []
+  },
+  {
+    "id": "tag-group-variants",
+    "component": "tag-group",
+    "actions": [],
+    "ignoreSlots": []
+  },
+  {
+    "id": "tag-group-disabled-own",
+    "component": "tag-group",
+    "actions": [],
+    "ignoreSlots": []
+  },
+  {
+    "id": "tag-group-disabled-keys",
+    "component": "tag-group",
+    "actions": [],
+    "ignoreSlots": []
+  },
+  {
+    "id": "tag-group-selection-modes",
+    "component": "tag-group",
+    "actions": [],
+    "ignoreSlots": []
+  },
+  {
+    "id": "tag-group-controlled",
+    "component": "tag-group",
+    "actions": [],
+    "ignoreSlots": []
+  },
+  {
+    "id": "tag-group-removable",
+    "component": "tag-group",
+    "actions": [
+      "hover",
+      "press"
+    ],
+    "ignoreSlots": [],
+    "target": "#case [data-slot=tag-remove-button]:nth-of-type(1)"
+  },
+  {
+    "id": "tag-group-with-prefix",
+    "component": "tag-group",
+    "actions": [],
+    "ignoreSlots": []
+  },
+  {
+    "id": "tag-group-error-message-invalid",
+    "component": "tag-group",
+    "actions": [],
+    "ignoreSlots": []
+  },
+  {
+    "id": "tag-group-error-message-valid",
+    "component": "tag-group",
+    "actions": [],
+    "ignoreSlots": []
+  },
+  {
+    "id": "tag-group-custom-styles",
+    "component": "tag-group",
+    "actions": [],
+    "ignoreSlots": []
+  }
+]
