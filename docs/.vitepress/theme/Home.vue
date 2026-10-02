@@ -58,11 +58,12 @@ const year = new Date().getFullYear()
           </section>
         </div>
         <!-- DemoShowcase: HeroUI renders DemoComponents twice (mobile panel, desktop tab panel); one instance
-             with responsive classes keeps radio names and ids unique. -->
+             with responsive classes keeps radio names and ids unique. Below lg the wrapper is `contents`, so the
+             grid is a direct flex item as in HeroUI's mobile panel (same sub-pixel centering). -->
         <div class="flex min-h-0 w-full max-w-[1200px] flex-1 flex-col py-6 lg:py-10">
           <div class="flex min-h-[420px] max-w-[1200px] flex-1 flex-col">
             <div class="flex w-full flex-1 justify-center rounded-2xl bg-background py-8 lg:overflow-x-hidden lg:overflow-y-auto lg:border lg:border-border/50">
-              <div class="lg:my-auto">
+              <div class="contents lg:my-auto lg:block">
                 <DemoComponents />
               </div>
             </div>

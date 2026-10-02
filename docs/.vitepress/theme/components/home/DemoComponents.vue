@@ -1,11 +1,15 @@
 <script setup lang="ts">
-// Port of HeroUI docs `components/demo/index.tsx`. Cells whose component herouse lacks are left out:
-// Select, Slider and ListBox (left), AvatarGroup and InputOTP (center).
+// Port of HeroUI docs `components/demo/index.tsx`.
 import AlertDemo from './demo/AlertDemo.vue'
 import AlertDialogDemo from './demo/AlertDialogDemo.vue'
 import AllowNotificationsDemo from './demo/AllowNotificationsDemo.vue'
+import AvatarGroupDemo from './demo/AvatarGroupDemo.vue'
 import ButtonsDemo from './demo/ButtonsDemo.vue'
+import InputOTPDemo from './demo/InputOTPDemo.vue'
+import ListBoxDemo from './demo/ListBoxDemo.vue'
 import LoginDemo from './demo/LoginDemo.vue'
+import SelectDemo from './demo/SelectDemo.vue'
+import SliderDemo from './demo/SliderDemo.vue'
 import SubtleCardsDemo from './demo/SubtleCardsDemo.vue'
 import TabsDemo1 from './demo/TabsDemo1.vue'
 import TabsDemo2 from './demo/TabsDemo2.vue'
@@ -19,12 +23,17 @@ import XProfileDemo from './demo/XProfileDemo.vue'
     <!-- Left -->
     <div class="order-2 flex max-w-[360px] flex-col items-center gap-10 md:order-1">
       <TextfieldDemo />
+      <SelectDemo />
       <UIComponentsDemo />
+      <SliderDemo />
       <TabsDemo1 />
       <TabsDemo2 />
+      <ListBoxDemo />
     </div>
     <!-- Center -->
     <div class="order-1 flex max-w-[360px] flex-col items-center gap-10 md:order-2">
+      <AvatarGroupDemo />
+      <InputOTPDemo />
       <ButtonsDemo />
       <XProfileDemo />
       <AlertDemo />
