@@ -1,0 +1,74 @@
+[
+  {
+    "id": "color-slider-default",
+    "component": "color-slider",
+    "actions": [
+      "hover"
+    ],
+    "ignoreSlots": [],
+    "target": "[data-slot=color-slider-thumb]"
+  },
+  {
+    "id": "color-slider-focus",
+    "component": "color-slider",
+    "actions": [
+      "focus"
+    ],
+    "ignoreSlots": [],
+    "target": "[data-slot=color-slider-thumb]"
+  },
+  {
+    "id": "color-slider-saturation",
+    "component": "color-slider",
+    "actions": [],
+    "ignoreSlots": []
+  },
+  {
+    "id": "color-slider-lightness",
+    "component": "color-slider",
+    "actions": [],
+    "ignoreSlots": []
+  },
+  {
+    "id": "color-slider-alpha",
+    "component": "color-slider",
+    "actions": [],
+    "ignoreSlots": []
+  },
+  {
+    "id": "color-slider-red",
+    "component": "color-slider",
+    "actions": [],
+    "ignoreSlots": []
+  },
+  {
+    "id": "color-slider-brightness",
+    "component": "color-slider",
+    "actions": [],
+    "ignoreSlots": []
+  },
+  {
+    "id": "color-slider-disabled",
+    "component": "color-slider",
+    "actions": [],
+    "ignoreSlots": []
+  },
+  {
+    "id": "color-slider-no-label",
+    "component": "color-slider",
+    "actions": [],
+    "ignoreSlots": []
+  },
+  {
+    "id": "color-slider-vertical",
+    "component": "color-slider",
+    "actions": [],
+    "ignoreSlots": []
+  },
+  {
+    "id": "color-slider-custom-styles",
+    "component": "color-slider",
+    "actions": [],
+    "ignoreSlots": []
+  }
+]
