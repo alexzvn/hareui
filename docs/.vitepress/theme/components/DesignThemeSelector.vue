@@ -56,7 +56,7 @@ onBeforeUnmount(() => window.removeEventListener(DESIGN_THEME_CHANGE_EVENT, sync
 const current = computed(() => THEMES.find((t) => t.id === active.value))
 const showAvatar = computed(() => mounted.value && active.value !== 'default' && !!current.value)
 
-// HeroUI links to its own /themes builder; herouse shares the same tokens, so link there.
+// HeroUI links to its own /themes builder; herouse ports it, so link to ours.
 const themeBuilderHref = computed(() => {
   const values = DESIGN_THEME_VALUES[active.value]
   const params = new URLSearchParams({
@@ -64,7 +64,7 @@ const themeBuilderHref = computed(() => {
     chroma: String(values.chroma),
     hue: String(values.hue),
   })
-  return `https://heroui.com/themes?${params}`
+  return `/themes?${params}`
 })
 
 // HeroUI renders `ListBox` (layout="grid", selectionMode="single"); herouse has no ListBox, so the

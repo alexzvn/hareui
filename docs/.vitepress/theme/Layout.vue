@@ -5,6 +5,7 @@ import { useData, useRoute } from 'vitepress'
 import { normalizePath, type ThemeConfig } from '../sidebar'
 import DocsHeader from './components/DocsHeader.vue'
 import Home from './Home.vue'
+import ThemesPage from './themes/ThemesPage.vue'
 import SidebarItems from './components/SidebarItems.vue'
 import TocItems from './components/TocItems.vue'
 import TocPopover from './components/TocPopover.vue'
@@ -58,6 +59,7 @@ const links = computed(() => frontmatter.value.links as PageLinks | undefined)
 <template>
   <div class="flex min-h-screen flex-col font-sans">
     <Home v-if="frontmatter.layout === 'home'" :sections="sections" @search="searchOpen = true" />
+    <ThemesPage v-else-if="frontmatter.layout === 'themes'" />
     <div
       v-else
       id="nd-notebook-layout"
