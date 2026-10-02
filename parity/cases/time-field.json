@@ -1,0 +1,116 @@
+[
+  {
+    "id": "time-field-default",
+    "component": "time-field",
+    "actions": [
+      "hover"
+    ],
+    "ignoreSlots": [],
+    "target": "[data-slot=date-input-group]"
+  },
+  {
+    "id": "time-field-focus",
+    "component": "time-field",
+    "actions": [
+      "focus"
+    ],
+    "ignoreSlots": [],
+    "target": "[data-slot=date-input-group-segment]"
+  },
+  {
+    "id": "time-field-secondary",
+    "component": "time-field",
+    "actions": [
+      "hover"
+    ],
+    "ignoreSlots": [],
+    "target": "[data-slot=date-input-group]"
+  },
+  {
+    "id": "time-field-secondary-focus",
+    "component": "time-field",
+    "actions": [
+      "focus"
+    ],
+    "ignoreSlots": [],
+    "target": "[data-slot=date-input-group-segment]"
+  },
+  {
+    "id": "time-field-required",
+    "component": "time-field",
+    "actions": [],
+    "ignoreSlots": []
+  },
+  {
+    "id": "time-field-disabled",
+    "component": "time-field",
+    "actions": [],
+    "ignoreSlots": [],
+    "target": "[data-slot=date-input-group]"
+  },
+  {
+    "id": "time-field-readonly",
+    "component": "time-field",
+    "actions": [],
+    "ignoreSlots": [],
+    "target": "[data-slot=date-input-group]"
+  },
+  {
+    "id": "time-field-invalid",
+    "component": "time-field",
+    "actions": [],
+    "ignoreSlots": [],
+    "target": "[data-slot=date-input-group]"
+  },
+  {
+    "id": "time-field-full-width",
+    "component": "time-field",
+    "actions": [],
+    "ignoreSlots": [],
+    "target": "[data-slot=date-input-group]"
+  },
+  {
+    "id": "time-field-granularity-second",
+    "component": "time-field",
+    "actions": [],
+    "ignoreSlots": [],
+    "target": "[data-slot=date-input-group]"
+  },
+  {
+    "id": "time-field-12-hour",
+    "component": "time-field",
+    "actions": [],
+    "ignoreSlots": [],
+    "target": "[data-slot=date-input-group]"
+  },
+  {
+    "id": "time-field-with-prefix-icon",
+    "component": "time-field",
+    "actions": [],
+    "ignoreSlots": [],
+    "target": "[data-slot=date-input-group]"
+  },
+  {
+    "id": "time-field-with-suffix-icon",
+    "component": "time-field",
+    "actions": [],
+    "ignoreSlots": [],
+    "target": "[data-slot=date-input-group]"
+  },
+  {
+    "id": "time-field-with-prefix-and-suffix",
+    "component": "time-field",
+    "actions": [],
+    "ignoreSlots": [],
+    "target": "[data-slot=date-input-group]"
+  },
+  {
+    "id": "time-field-user-overrides",
+    "component": "time-field",
+    "actions": [
+      "hover"
+    ],
+    "ignoreSlots": [],
+    "target": "[data-slot=date-input-group]"
+  }
+]

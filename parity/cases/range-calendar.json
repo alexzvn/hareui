@@ -1,0 +1,43 @@
+[
+  {
+    "id": "range-calendar-basic",
+    "component": "range-calendar",
+    "actions": ["hover", "press"],
+    "target": "[data-slot=range-calendar-cell]:not([data-outside-month]):not([data-outside-view])"
+  },
+  {
+    "id": "range-calendar-selected",
+    "component": "range-calendar",
+    "actions": []
+  },
+  {
+    "id": "range-calendar-disabled",
+    "component": "range-calendar",
+    "actions": []
+  },
+  {
+    "id": "range-calendar-read-only",
+    "component": "range-calendar",
+    "actions": []
+  },
+  {
+    "id": "range-calendar-unavailable",
+    "component": "range-calendar",
+    "actions": []
+  },
+  {
+    "id": "range-calendar-min-max",
+    "component": "range-calendar",
+    "actions": []
+  },
+  {
+    "id": "range-calendar-indicator",
+    "component": "range-calendar",
+    "actions": []
+  },
+  {
+    "id": "range-calendar-non-contiguous",
+    "component": "range-calendar",
+    "actions": []
+  }
+]

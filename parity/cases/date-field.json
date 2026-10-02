@@ -1,0 +1,109 @@
+[
+  {
+    "id": "date-field-default",
+    "component": "date-field",
+    "actions": [
+      "hover"
+    ],
+    "ignoreSlots": [],
+    "target": "[data-slot=date-input-group]"
+  },
+  {
+    "id": "date-field-focus",
+    "component": "date-field",
+    "actions": [
+      "focus"
+    ],
+    "ignoreSlots": [],
+    "target": "[data-slot=date-input-group-segment]"
+  },
+  {
+    "id": "date-field-secondary",
+    "component": "date-field",
+    "actions": [
+      "hover"
+    ],
+    "ignoreSlots": [],
+    "target": "[data-slot=date-input-group]"
+  },
+  {
+    "id": "date-field-secondary-focus",
+    "component": "date-field",
+    "actions": [
+      "focus"
+    ],
+    "ignoreSlots": [],
+    "target": "[data-slot=date-input-group-segment]"
+  },
+  {
+    "id": "date-field-required",
+    "component": "date-field",
+    "actions": [],
+    "ignoreSlots": []
+  },
+  {
+    "id": "date-field-disabled",
+    "component": "date-field",
+    "actions": [],
+    "ignoreSlots": [],
+    "target": "[data-slot=date-input-group]"
+  },
+  {
+    "id": "date-field-readonly",
+    "component": "date-field",
+    "actions": [],
+    "ignoreSlots": [],
+    "target": "[data-slot=date-input-group]"
+  },
+  {
+    "id": "date-field-invalid",
+    "component": "date-field",
+    "actions": [],
+    "ignoreSlots": [],
+    "target": "[data-slot=date-input-group]"
+  },
+  {
+    "id": "date-field-full-width",
+    "component": "date-field",
+    "actions": [],
+    "ignoreSlots": [],
+    "target": "[data-slot=date-input-group]"
+  },
+  {
+    "id": "date-field-granularity-second",
+    "component": "date-field",
+    "actions": [],
+    "ignoreSlots": [],
+    "target": "[data-slot=date-input-group]"
+  },
+  {
+    "id": "date-field-with-prefix-icon",
+    "component": "date-field",
+    "actions": [],
+    "ignoreSlots": [],
+    "target": "[data-slot=date-input-group]"
+  },
+  {
+    "id": "date-field-with-suffix-icon",
+    "component": "date-field",
+    "actions": [],
+    "ignoreSlots": [],
+    "target": "[data-slot=date-input-group]"
+  },
+  {
+    "id": "date-field-with-prefix-and-suffix",
+    "component": "date-field",
+    "actions": [],
+    "ignoreSlots": [],
+    "target": "[data-slot=date-input-group]"
+  },
+  {
+    "id": "date-field-user-overrides",
+    "component": "date-field",
+    "actions": [
+      "hover"
+    ],
+    "ignoreSlots": [],
+    "target": "[data-slot=date-input-group]"
+  }
+]

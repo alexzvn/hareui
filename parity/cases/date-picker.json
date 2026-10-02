@@ -1,0 +1,61 @@
+[
+  {
+    "id": "date-picker-default",
+    "component": "date-picker",
+    "actions": ["hover"],
+    "ignoreSlots": [],
+    "target": "#case [data-slot=date-picker-trigger]"
+  },
+  {
+    "id": "date-picker-focus",
+    "component": "date-picker",
+    "actions": ["focus"],
+    "ignoreSlots": []
+  },
+  {
+    "id": "date-picker-secondary",
+    "component": "date-picker",
+    "actions": [],
+    "ignoreSlots": []
+  },
+  {
+    "id": "date-picker-required",
+    "component": "date-picker",
+    "actions": [],
+    "ignoreSlots": []
+  },
+  {
+    "id": "date-picker-disabled",
+    "component": "date-picker",
+    "actions": [],
+    "ignoreSlots": []
+  },
+  {
+    "id": "date-picker-invalid",
+    "component": "date-picker",
+    "actions": [],
+    "ignoreSlots": []
+  },
+  {
+    "id": "date-picker-full-width",
+    "component": "date-picker",
+    "actions": [],
+    "ignoreSlots": []
+  },
+  {
+    "id": "date-picker-open",
+    "component": "date-picker",
+    "actions": [],
+    "ignoreSlots": [],
+    "overlay": true,
+    "ignoreProps": ["position", "transform"]
+  },
+  {
+    "id": "date-picker-open-unavailable",
+    "component": "date-picker",
+    "actions": [],
+    "ignoreSlots": [],
+    "overlay": true,
+    "ignoreProps": ["position", "transform"]
+  }
+]

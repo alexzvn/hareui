@@ -1,0 +1,89 @@
+<script setup lang="ts">
+import type { DateValue } from '@internationalized/date'
+import { parseDate, parseZonedDateTime, Time } from '@internationalized/date'
+import { Calendar, DatePicker, Label, Select, Switch, TimeField } from 'herouse'
+import { computed, ref } from 'vue'
+
+type Granularity = 'day' | 'hour' | 'minute' | 'second'
+type HourCycle = 12 | 24
+
+const granularityOptions = [
+  { value: 'day', label: 'Day' },
+  { value: 'hour', label: 'Hour' },
+  { value: 'minute', label: 'Minute' },
+  { value: 'second', label: 'Second' },
+]
+const hourCycleOptions = [
+  { value: 12, label: '12-hour' },
+  { value: 24, label: '24-hour' },
+]
+
+const granularity = ref<Granularity>('minute')
+const hourCycle = ref<HourCycle>(12)
+const hideTimeZone = ref(false)
+const timeGranularity = computed(() => (granularity.value === 'day' ? undefined : granularity.value))
+
+function defaultValueFor(g: Granularity): DateValue {
+  return g === 'day' ? parseDate('2026-02-03') : parseZonedDateTime('2026-02-03T08:45:00[America/Los_Angeles]')
+}
+const value = ref<DateValue | null>(defaultValueFor(granularity.value))
+
+function hasTime(v: DateValue | null | undefined): v is DateValue & { hour: number, minute: number, second: number } {
+  return !!v && 'hour' in v
+}
+// Reka's embedded Calendar only edits date fields and the TimeField below only edits time fields;
+// each merges onto the other's current value instead of replacing it outright.
+function mergeDate(picked: DateValue, current: DateValue | null | undefined): DateValue {
+  return hasTime(current) ? (current as any).set({ year: picked.year, month: picked.month, day: picked.day }) : picked
+}
+function mergeTime(time: Time, current: DateValue | null | undefined): DateValue | null {
+  return hasTime(current) ? (current as any).set({ hour: time.hour, minute: time.minute, second: time.second }) : (current ?? null)
+}
+
+function onGranularityChange(next: string | number) {
+  granularity.value = next as Granularity
+  value.value = defaultValueFor(granularity.value)
+}
+</script>
+
+<template>
+  <div class="flex flex-col gap-4">
+    <DatePicker
+      :key="granularity"
+      v-model="value"
+      class="w-fit min-w-72"
+      :granularity="granularity"
+      :hour-cycle="hourCycle"
+      :hide-time-zone="hideTimeZone"
+      name="date"
+      label="Date and time"
+      calendar-label="Event date"
+    >
+      <template v-if="timeGranularity" #calendar="{ value: calendarValue, onSelect }">
+        <div class="flex flex-col gap-3">
+          <Calendar :model-value="calendarValue" year-picker @update:model-value="(picked) => onSelect(mergeDate(picked as DateValue, calendarValue))" />
+          <div class="flex items-center justify-between">
+            <Label>Time</Label>
+            <TimeField
+              :model-value="hasTime(calendarValue) ? new Time(calendarValue.hour, calendarValue.minute, calendarValue.second) : undefined"
+              :granularity="timeGranularity"
+              :hour-cycle="hourCycle"
+              :hide-time-zone="hideTimeZone"
+              aria-label="Time"
+              @update:model-value="(time) => time && onSelect(mergeTime(time, calendarValue) as DateValue)"
+            />
+          </div>
+        </div>
+      </template>
+    </DatePicker>
+
+    <div class="flex flex-wrap gap-4">
+      <Select class="w-[120px]" :model-value="granularity" placeholder="Select granularity" variant="secondary" :items="granularityOptions" @update:model-value="onGranularityChange" />
+      <Select class="w-[120px]" :model-value="hourCycle" placeholder="Select hour cycle" variant="secondary" :items="hourCycleOptions" @update:model-value="(v) => (hourCycle = v as HourCycle)" />
+    </div>
+
+    <div class="flex min-w-80 flex-col gap-2">
+      <Switch v-model="hideTimeZone" label="Hide timezone" />
+    </div>
+  </div>
+</template>

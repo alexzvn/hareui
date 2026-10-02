@@ -1,0 +1,43 @@
+[
+  {
+    "id": "calendar-basic",
+    "component": "calendar",
+    "actions": ["hover", "press"],
+    "target": "[data-slot=calendar-cell]:not([data-outside-month]):not([data-outside-view])"
+  },
+  {
+    "id": "calendar-selected",
+    "component": "calendar",
+    "actions": []
+  },
+  {
+    "id": "calendar-disabled",
+    "component": "calendar",
+    "actions": []
+  },
+  {
+    "id": "calendar-read-only",
+    "component": "calendar",
+    "actions": []
+  },
+  {
+    "id": "calendar-unavailable",
+    "component": "calendar",
+    "actions": []
+  },
+  {
+    "id": "calendar-min-max",
+    "component": "calendar",
+    "actions": []
+  },
+  {
+    "id": "calendar-six-week-month",
+    "component": "calendar",
+    "actions": []
+  },
+  {
+    "id": "calendar-indicator",
+    "component": "calendar",
+    "actions": []
+  }
+]

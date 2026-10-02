@@ -1,0 +1,13 @@
+<script setup lang="ts">
+import { Calendar, Description } from 'herouse'
+import { getLocalTimeZone, today } from '@internationalized/date'
+</script>
+
+<template>
+  <div class="flex flex-col items-center gap-4">
+    <Calendar aria-label="Event date" :default-value="today(getLocalTimeZone())" disabled />
+    <Description class="text-center">
+      Calendar is disabled
+    </Description>
+  </div>
+</template>
