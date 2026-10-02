@@ -159,16 +159,17 @@ function diffSnapshots(c: Case, react: SlotSnapshot[], vue: SlotSnapshot[]): str
   const ignore = new Set(c.ignoreSlots ?? [])
   const ignoreProps = new Set(c.ignoreProps ?? [])
   const r = react.filter(s => !ignore.has(s.slot))
+  const v = vue.filter(s => !ignore.has(s.slot))
   const errors: string[] = []
   const rs = r.map(s => s.slot).join(',')
-  const vs = vue.map(s => s.slot).join(',')
+  const vs = v.map(s => s.slot).join(',')
   if (rs !== vs) {
     errors.push(`slot sequence differs\n    react=[${rs}]\n    vue  =[${vs}]`)
     return errors
   }
   const seen: Record<string, number> = {}
   r.forEach((rEl, i) => {
-    const vEl = vue[i]!
+    const vEl = v[i]!
     const idx = (seen[rEl.slot] = (seen[rEl.slot] ?? -1) + 1)
     for (const prop of Object.keys(rEl.styles)) {
       if (ignoreProps.has(prop))
