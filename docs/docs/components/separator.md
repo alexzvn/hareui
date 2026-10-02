@@ -89,5 +89,4 @@ style through `class`, `ui` or `createHeroUse`):
 
 ## Related Components
 
-- [Surface](/docs/components/surface)
-- [Card](/docs/components/card)
+<RelatedComponents :components="['surface', 'card']" />

@@ -92,6 +92,4 @@ Each rendered element carries the same `data-slot` string as HeroUI, so selector
 
 ## Related Components
 
-- [Form](/docs/components/form)
-- [TextField](/docs/components/text-field)
-- [Surface](/docs/components/surface)
+<RelatedComponents :components="['form', 'text-field', 'surface']" />

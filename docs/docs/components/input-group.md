@@ -252,6 +252,4 @@ app.use(createHeroUse({
 
 ## Related Components
 
-- [TextField](/docs/components/text-field)
-- [Input](/docs/components/input)
-- [SearchField](/docs/components/search-field)
+<RelatedComponents :components="['text-field', 'input', 'search-field']" />

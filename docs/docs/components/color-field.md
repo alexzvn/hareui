@@ -170,8 +170,4 @@ ColorField sets these data attributes:
 
 ## Related Components
 
-- [Label](/docs/components/label)
-- [Description](/docs/components/description)
-- [FieldError](/docs/components/field-error)
-- [ColorSwatch](/docs/components/color-swatch)
-- [ColorPicker](/docs/components/color-picker)
+<RelatedComponents :components="['label', 'description', 'field-error', 'color-swatch', 'color-picker']" />

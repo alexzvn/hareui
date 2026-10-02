@@ -160,5 +160,4 @@ The component supports both CSS pseudo-classes and data attributes for flexibili
 
 ## Related Components
 
-- [Button](/docs/components/button)
-- [Link](/docs/components/link)
+<RelatedComponents :components="['button', 'link']" />

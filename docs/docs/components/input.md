@@ -111,6 +111,4 @@ The input reads the field tokens `--field-border`, `--field-border-hover`, `--fi
 
 ## Related Components
 
-- [TextField](/docs/components/text-field)
-- [Label](/docs/components/label)
-- [Description](/docs/components/description)
+<RelatedComponents :components="['text-field', 'label', 'description']" />

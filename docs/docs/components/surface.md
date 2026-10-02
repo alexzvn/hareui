@@ -98,5 +98,4 @@ const ctx = inject(surfaceContextKey)
 
 ## Related Components
 
-- [Separator](/docs/components/separator)
-- [Card](/docs/components/card)
+<RelatedComponents :components="['separator', 'card']" />

@@ -181,7 +181,4 @@ Select follows the ARIA listbox pattern:
 
 ## Related Components
 
-- [ListBox](/docs/components/list-box)
-- [Label](/docs/components/label)
-- [Description](/docs/components/description)
-- [FieldError](/docs/components/field-error)
+<RelatedComponents :components="['list-box', 'label', 'description', 'field-error']" />

@@ -120,6 +120,4 @@ app.use(createHeroUse({
 
 ## Related Components
 
-- [Checkbox](/docs/components/checkbox)
-- [RadioGroup](/docs/components/radio-group)
-- [Form](/docs/components/form)
+<RelatedComponents :components="['checkbox', 'radio-group', 'form']" />

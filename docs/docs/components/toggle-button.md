@@ -88,5 +88,4 @@ The root carries `data-slot="toggle-button"`, as in HeroUI. `ui` key: `base`.
 
 ## Related Components
 
-- [ToggleButtonGroup](/docs/components/toggle-button-group)
-- [Button](/docs/components/button)
+<RelatedComponents :components="['toggle-button-group', 'button']" />

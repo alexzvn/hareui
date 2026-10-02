@@ -122,5 +122,4 @@ app.use(createHeroUse({
 
 ## Related Components
 
-- ColorSwatch
-- ColorPicker
+<RelatedComponents :components="['color-swatch', 'color-picker']" />

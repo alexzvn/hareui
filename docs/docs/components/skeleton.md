@@ -170,5 +170,4 @@ The pulse animation uses Tailwind's built-in `animate-pulse` utility.
 
 ## Related Components
 
-- [Card](/docs/components/card)
-- [Avatar](/docs/components/avatar)
+<RelatedComponents :components="['card', 'avatar']" />

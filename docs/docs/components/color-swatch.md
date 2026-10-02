@@ -86,4 +86,4 @@ Each rendered element carries the same `data-slot` string as HeroUI, so selector
 
 ## Related Components
 
-- [ColorSwatchPicker](/docs/components/color-swatch-picker)
+<RelatedComponents :components="['color-swatch-picker']" />

@@ -133,7 +133,4 @@ Built on Reka's Listbox, which implements the ARIA listbox pattern:
 
 ## Related Components
 
-- [Label](/docs/components/label)
-- [Description](/docs/components/description)
-- [Surface](/docs/components/surface)
-- [Separator](/docs/components/separator)
+<RelatedComponents :components="['label', 'description', 'surface', 'separator']" />

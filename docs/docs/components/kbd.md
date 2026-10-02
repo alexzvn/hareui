@@ -127,4 +127,4 @@ Available values for `keys`, with the symbol and `title` each renders. `kbdKeysM
 
 ## Related Components
 
-- [Typography](/docs/components/typography)
+<RelatedComponents :components="['typography']" />

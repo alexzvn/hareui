@@ -112,5 +112,4 @@ affects the fallback (it has no effect once an image has loaded).
 
 ## Related Components
 
-- [Card](/docs/components/card)
-- [Chip](/docs/components/chip)
+<RelatedComponents :components="['card', 'chip']" />

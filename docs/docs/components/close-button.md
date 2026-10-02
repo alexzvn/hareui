@@ -81,5 +81,4 @@ app.use(createHeroUse({
 
 ## Related Components
 
-- [Button](/docs/components/button)
-- [Modal](/docs/components/modal) — uses CloseButton for its close trigger
+<RelatedComponents :components="['button', 'modal']" />

@@ -107,8 +107,4 @@ app.use(createHeroUse({
 
 ## Related Components
 
-- ColorArea
-- ColorSlider
-- ColorField
-- ColorSwatch
-- ColorSwatchPicker
+<RelatedComponents :components="['color-area', 'color-slider', 'color-field', 'color-swatch', 'color-swatch-picker']" />

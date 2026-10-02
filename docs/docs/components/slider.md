@@ -133,4 +133,4 @@ app.use(createHeroUse({
 
 ## Related Components
 
-- [NumberField](/docs/components/number-field)
+<RelatedComponents :components="['number-field']" />

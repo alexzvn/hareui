@@ -184,7 +184,4 @@ spacing/orientation styling HeroUI ships for stacks of switches.
 
 ## Related Components
 
-- [Checkbox](/docs/components/checkbox)
-- [RadioGroup](/docs/components/radio-group)
-- [Label](/docs/components/label)
-- [Description](/docs/components/description)
+<RelatedComponents :components="['checkbox', 'radio-group', 'label', 'description']" />

@@ -170,5 +170,4 @@ Returns `currentIndex`, `isPrevDisabled`, `isNextDisabled` (computed refs) and `
 
 ## Related Components
 
-- [DisclosureGroup](/docs/components/disclosure-group)
-- [Disclosure](/docs/components/disclosure)
+<RelatedComponents :components="['disclosure-group', 'disclosure']" />

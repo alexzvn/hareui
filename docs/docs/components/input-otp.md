@@ -160,6 +160,4 @@ app.use(createHeroUse({
 
 ## Related Components
 
-- [SearchField](/docs/components/search-field)
-- [NumberField](/docs/components/number-field)
-- [Form](/docs/components/form)
+<RelatedComponents :components="['search-field', 'number-field', 'form']" />

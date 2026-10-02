@@ -110,6 +110,4 @@ glyphs; ring mode uses a thin box-shadow outline via `--background`.
 
 ## Related Components
 
-- [Avatar](/docs/components/avatar)
-- [Badge](/docs/components/badge)
-- [Chip](/docs/components/chip)
+<RelatedComponents :components="['avatar', 'badge', 'chip']" />

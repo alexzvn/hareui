@@ -183,5 +183,4 @@ via Reka UI's `Dialog` primitive:
 
 ## Related Components
 
-- [Button](/docs/components/button)
-- [CloseButton](/docs/components/close-button)
+<RelatedComponents :components="['button', 'close-button']" />

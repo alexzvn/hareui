@@ -115,6 +115,4 @@ not BEM classes, so style through `class`, `ui` or `createHeroUse`):
 
 ## Related Components
 
-- [Card](/docs/components/card)
-- [Label](/docs/components/label)
-- [Description](/docs/components/description)
+<RelatedComponents :components="['card', 'label', 'description']" />

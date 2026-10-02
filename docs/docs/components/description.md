@@ -98,6 +98,4 @@ The Description component enhances accessibility by:
 
 ## Related Components
 
-- [TextField](/docs/components/text-field)
-- [Label](/docs/components/label)
-- [FieldError](/docs/components/field-error)
+<RelatedComponents :components="['text-field', 'label', 'field-error']" />

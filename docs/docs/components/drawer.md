@@ -165,7 +165,4 @@ via Reka UI's `Dialog` primitive:
 
 ## Related Components
 
-- [Modal](/docs/components/modal)
-- [Button](/docs/components/button)
-- [CloseButton](/docs/components/close-button)
-- [AlertDialog](/docs/components/alert-dialog)
+<RelatedComponents :components="['modal', 'button', 'close-button', 'alert-dialog']" />

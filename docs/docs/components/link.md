@@ -139,5 +139,4 @@ import { RouterLink } from 'vue-router'
 
 ## Related Components
 
-- [Button](/docs/components/button)
-- [Card](/docs/components/card)
+<RelatedComponents :components="['button', 'card']" />

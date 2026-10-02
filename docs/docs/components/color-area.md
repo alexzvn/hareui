@@ -109,5 +109,4 @@ app.use(createHeroUse({
 
 ## Related Components
 
-- [ColorSwatch](/docs/components/color-swatch)
-- [ColorField](/docs/components/color-field)
+<RelatedComponents :components="['color-swatch', 'color-field']" />

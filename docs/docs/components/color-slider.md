@@ -133,6 +133,4 @@ app.use(createHeroUse({
 
 ## Related Components
 
-- [Label](/docs/components/label)
-- [ColorSwatch](/docs/components/color-swatch)
-- ColorPicker
+<RelatedComponents :components="['label', 'color-swatch', 'color-picker']" />

@@ -88,5 +88,4 @@ app.use(createHeroUse({
 
 ## Related Components
 
-- [Button](/docs/components/button)
-- [Modal](/docs/components/modal) — a focus-trapping, modal alternative for blocking content
+<RelatedComponents :components="['button', 'modal']" />

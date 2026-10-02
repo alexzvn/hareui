@@ -108,5 +108,4 @@ app.use(createHeroUse({
 
 ## Related Components
 
-- [Avatar](/docs/components/avatar)
-- [Chip](/docs/components/chip)
+<RelatedComponents :components="['avatar', 'chip']" />

@@ -137,5 +137,4 @@ Each rendered element carries the same `data-slot` string as HeroUI, so selector
 
 ## Related Components
 
-- [Spinner](/docs/components/spinner) — rendered automatically inside a pending Button
-- [CloseButton](/docs/components/close-button)
+<RelatedComponents :components="['spinner', 'close-button']" />

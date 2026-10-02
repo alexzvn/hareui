@@ -128,5 +128,4 @@ Each rendered element carries the same `data-slot` string as HeroUI, so selector
 
 ## Related Components
 
-- [ToggleButton](/docs/components/toggle-button)
-- [ButtonGroup](/docs/components/button-group)
+<RelatedComponents :components="['toggle-button', 'button-group']" />

@@ -137,6 +137,4 @@ The FieldError component ensures accessibility by:
 
 ## Related Components
 
-- [TextField](/docs/components/text-field)
-- [Description](/docs/components/description)
-- [Label](/docs/components/label)
+<RelatedComponents :components="['text-field', 'description', 'label']" />

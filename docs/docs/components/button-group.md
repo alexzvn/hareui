@@ -129,5 +129,4 @@ The edge radii are set through CSS variables, so a `rounded-*` class on a Button
 
 ## Related Components
 
-- [Button](/docs/components/button)
-- [ToggleButtonGroup](/docs/components/toggle-button-group)
+<RelatedComponents :components="['button', 'toggle-button-group']" />

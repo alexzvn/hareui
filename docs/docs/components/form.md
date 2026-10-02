@@ -128,8 +128,4 @@ A `reset` button (or `form.reset()`) restores every field's `defaultValue` and c
 
 ## Related Components
 
-- [TextField](/docs/components/text-field)
-- [Checkbox](/docs/components/checkbox)
-- [RadioGroup](/docs/components/radio-group)
-- [Switch](/docs/components/switch)
-- [Button](/docs/components/button)
+<RelatedComponents :components="['text-field', 'checkbox', 'radio-group', 'switch', 'button']" />

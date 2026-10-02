@@ -91,6 +91,4 @@ The Alert component is primarily informational and doesn't have interactive stat
 
 ## Related Components
 
-- [Button](/docs/components/button)
-- [CloseButton](/docs/components/close-button)
-- [Spinner](/docs/components/spinner)
+<RelatedComponents :components="['button', 'close-button', 'spinner']" />

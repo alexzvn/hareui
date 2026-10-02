@@ -116,6 +116,4 @@ The Label component is built on the native HTML `<label>` element ([MDN Referenc
 
 ## Related Components
 
-- [TextField](/docs/components/text-field)
-- [Input](/docs/components/input)
-- [Description](/docs/components/description)
+<RelatedComponents :components="['text-field', 'input', 'description']" />

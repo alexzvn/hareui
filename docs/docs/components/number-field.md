@@ -199,7 +199,4 @@ NumberField sets these data attributes:
 
 ## Related Components
 
-- [Label](/docs/components/label)
-- [Description](/docs/components/description)
-- [FieldError](/docs/components/field-error)
-- [TextField](/docs/components/text-field)
+<RelatedComponents :components="['label', 'description', 'field-error', 'text-field']" />

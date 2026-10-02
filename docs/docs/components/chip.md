@@ -106,5 +106,4 @@ Other combinations (e.g. `variant="secondary" color="accent"`) can be styled wit
 
 ## Related Components
 
-- [Avatar](/docs/components/avatar)
-- [Card](/docs/components/card)
+<RelatedComponents :components="['avatar', 'card']" />

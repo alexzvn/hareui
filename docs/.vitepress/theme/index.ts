@@ -9,6 +9,8 @@ import ColorSectionSideBySide from './components/ColorSectionSideBySide.vue'
 import ColorSectionStacked from './components/ColorSectionStacked.vue'
 import ColorSectionPrimitive from './components/ColorSectionPrimitive.vue'
 import ColorSectionFormField from './components/ColorSectionFormField.vue'
+import ComponentsCategory from './components/ComponentsCategory.vue'
+import RelatedComponents from './components/RelatedComponents.vue'
 import './style.css'
 
 export default {
@@ -22,6 +24,8 @@ export default {
     app.component('ColorSectionStacked', ColorSectionStacked)
     app.component('ColorSectionPrimitive', ColorSectionPrimitive)
     app.component('ColorSectionFormField', ColorSectionFormField)
+    app.component('ComponentsCategory', ComponentsCategory)
+    app.component('RelatedComponents', RelatedComponents)
     app.component('Icon', Icon)
   },
 } satisfies Theme

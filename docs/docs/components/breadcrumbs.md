@@ -128,6 +128,4 @@ The component supports both CSS pseudo-classes and data attributes for flexibili
 
 ## Related Components
 
-- [Link](/docs/components/link)
-- [Separator](/docs/components/separator)
-- [Tabs](/docs/components/tabs)
+<RelatedComponents :components="['link', 'separator', 'tabs']" />

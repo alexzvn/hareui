@@ -178,7 +178,4 @@ const card = tv(themes.card)()
 
 ## Related Components
 
-- [Avatar](/docs/components/avatar)
-- [Chip](/docs/components/chip)
-- [Button](/docs/components/button)
-- [CloseButton](/docs/components/close-button)
+<RelatedComponents :components="['avatar', 'chip', 'button', 'close-button']" />

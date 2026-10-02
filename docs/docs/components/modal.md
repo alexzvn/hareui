@@ -157,6 +157,4 @@ via Reka UI's `Dialog` primitive:
 
 ## Related Components
 
-- [Popover](/docs/components/popover)
-- [Tooltip](/docs/components/tooltip)
-- [Button](/docs/components/button)
+<RelatedComponents :components="['popover', 'tooltip', 'button']" />

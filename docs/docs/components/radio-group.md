@@ -159,8 +159,4 @@ RadioGroup sets these data attributes:
 
 ## Related Components
 
-- [Label](/docs/components/label)
-- [Description](/docs/components/description)
-- [FieldError](/docs/components/field-error)
-- [Checkbox](/docs/components/checkbox)
-- [Switch](/docs/components/switch)
+<RelatedComponents :components="['label', 'description', 'field-error', 'checkbox', 'switch']" />

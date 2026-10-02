@@ -77,6 +77,4 @@ one, unless they set `orientation` themselves.
 
 ## Related Components
 
-- [ButtonGroup](/docs/components/button-group)
-- [ToggleButtonGroup](/docs/components/toggle-button-group)
-- [Separator](/docs/components/separator)
+<RelatedComponents :components="['button-group', 'toggle-button-group', 'separator']" />

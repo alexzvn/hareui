@@ -141,6 +141,4 @@ app.use(createHeroUse({
 
 ## Related Components
 
-- [CloseButton](/docs/components/close-button)
-- [Label](/docs/components/label)
-- [Description](/docs/components/description)
+<RelatedComponents :components="['close-button', 'label', 'description']" />

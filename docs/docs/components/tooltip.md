@@ -107,5 +107,4 @@ app.use(createHeroUse({
 
 ## Related Components
 
-- [Button](/docs/components/button)
-- [Popover](/docs/components/popover)
+<RelatedComponents :components="['button', 'popover']" />

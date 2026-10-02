@@ -172,7 +172,4 @@ The default slot receives the field state, the Vue equivalent of HeroUI's render
 
 ## Related Components
 
-- [Input](/docs/components/input)
-- [Label](/docs/components/label)
-- [Description](/docs/components/description)
-- [FieldError](/docs/components/field-error)
+<RelatedComponents :components="['input', 'label', 'description', 'field-error']" />

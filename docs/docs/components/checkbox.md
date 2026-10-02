@@ -158,7 +158,4 @@ Checkbox sets these data attributes on its root:
 
 ## Related Components
 
-- [RadioGroup](/docs/components/radio-group)
-- [Switch](/docs/components/switch)
-- [Description](/docs/components/description)
-- [FieldError](/docs/components/field-error)
+<RelatedComponents :components="['radio-group', 'switch', 'description', 'field-error']" />

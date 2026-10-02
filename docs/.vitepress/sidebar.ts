@@ -50,6 +50,8 @@ export const sidebar: SidebarSection[] = [
     base: '/docs/components',
     // HeroUI's components meta.json lists pages alphabetically under one "Components" separator.
     items: [
+      { separator: 'Overview' },
+      { text: 'All Components (Vue)', link: c('') },
       { separator: 'Components' },
       { text: 'Accordion', link: c('accordion') },
       { text: 'Alert', link: c('alert') },

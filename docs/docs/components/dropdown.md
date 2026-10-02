@@ -214,7 +214,4 @@ selects and closes, while `Space` toggles selectable items and keeps the menu op
 
 ## Related Components
 
-- [Button](/docs/components/button)
-- [Popover](/docs/components/popover)
-- [Separator](/docs/components/separator)
-- [ListBox](/docs/components/list-box)
+<RelatedComponents :components="['button', 'popover', 'separator', 'list-box']" />

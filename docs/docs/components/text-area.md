@@ -96,6 +96,4 @@ TextArea accepts all standard HTML `<textarea>` attributes (`rows`, `cols`, `max
 
 ## Related Components
 
-- [TextField](/docs/components/text-field)
-- [Input](/docs/components/input)
-- [Surface](/docs/components/surface)
+<RelatedComponents :components="['text-field', 'input', 'surface']" />

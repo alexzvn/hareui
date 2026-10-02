@@ -164,9 +164,4 @@ SearchField sets these data attributes:
 
 ## Related Components
 
-- [Input](/docs/components/input)
-- [TextField](/docs/components/text-field)
-- [Label](/docs/components/label)
-- [Description](/docs/components/description)
-- [FieldError](/docs/components/field-error)
-- [CloseButton](/docs/components/close-button)
+<RelatedComponents :components="['input', 'text-field', 'label', 'description', 'field-error', 'close-button']" />

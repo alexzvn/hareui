@@ -109,7 +109,4 @@ Returns `currentIndex`, `isPrevDisabled`, `isNextDisabled` (computed refs) and `
 
 ## Related Components
 
-- [Accordion](/docs/components/accordion)
-- [Disclosure](/docs/components/disclosure)
-- [Button](/docs/components/button)
-- [Separator](/docs/components/separator)
+<RelatedComponents :components="['accordion', 'disclosure', 'button', 'separator']" />

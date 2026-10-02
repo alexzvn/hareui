@@ -71,4 +71,4 @@ app.use(createHeroUse({
 
 ## Related Components
 
-- [Button](/docs/components/button) — renders a Spinner internally while `pending`
+<RelatedComponents :components="['button']" />
