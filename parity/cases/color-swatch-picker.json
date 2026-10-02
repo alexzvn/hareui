@@ -1,0 +1,12 @@
+[
+  { "id": "color-swatch-picker-basic", "component": "color-swatch-picker", "actions": [], "ignoreSlots": [] },
+  { "id": "color-swatch-picker-default-value", "component": "color-swatch-picker", "actions": [], "ignoreSlots": [] },
+  { "id": "color-swatch-picker-sizes", "component": "color-swatch-picker", "actions": [], "ignoreSlots": [] },
+  { "id": "color-swatch-picker-variants", "component": "color-swatch-picker", "actions": [], "ignoreSlots": [] },
+  { "id": "color-swatch-picker-square-sizes", "component": "color-swatch-picker", "actions": [], "ignoreSlots": [] },
+  { "id": "color-swatch-picker-disabled", "component": "color-swatch-picker", "actions": [], "ignoreSlots": [] },
+  { "id": "color-swatch-picker-stack", "component": "color-swatch-picker", "actions": [], "ignoreSlots": [] },
+  { "id": "color-swatch-picker-custom-indicator", "component": "color-swatch-picker", "actions": [], "ignoreSlots": [] },
+  { "id": "color-swatch-picker-hover", "component": "color-swatch-picker", "actions": ["hover"], "ignoreSlots": [], "target": "[data-slot=color-swatch-picker-item]:nth-child(2)" },
+  { "id": "color-swatch-picker-focus", "component": "color-swatch-picker", "actions": ["focus"], "ignoreSlots": [], "target": "[data-slot=color-swatch-picker-item]:nth-child(3)" }
+]

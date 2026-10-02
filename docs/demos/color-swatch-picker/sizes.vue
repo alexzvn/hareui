@@ -1,0 +1,15 @@
+<script setup lang="ts">
+import { ColorSwatchPicker } from 'herouse'
+
+const colors = ['#F43F5E', '#D946EF', '#8B5CF6', '#3B82F6', '#06B6D4', '#10B981', '#84CC16']
+const sizes = ['xs', 'sm', 'md', 'lg', 'xl'] as const
+</script>
+
+<template>
+  <div class="flex flex-col gap-6">
+    <div v-for="size in sizes" :key="size" class="flex items-center gap-4">
+      <span class="w-8 text-sm text-muted">{{ size }}</span>
+      <ColorSwatchPicker :items="colors" :size="size" />
+    </div>
+  </div>
+</template>

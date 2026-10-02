@@ -64,6 +64,7 @@ export const sidebar: SidebarSection[] = [
       { text: 'CloseButton', link: c('close-button') },
       { text: 'ColorField', link: c('color-field') },
       { text: 'ColorSwatch', link: c('color-swatch') },
+      { text: 'ColorSwatchPicker', link: c('color-swatch-picker') },
       { text: 'Description', link: c('description') },
       { text: 'Disclosure', link: c('disclosure') },
       { text: 'FieldError', link: c('field-error') },
