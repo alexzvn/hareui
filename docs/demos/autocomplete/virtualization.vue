@@ -24,7 +24,6 @@ const filteredUsers = computed(() => searchQuery.value
 </script>
 
 <template>
-  <!-- Not virtualized: Autocomplete renders every row (see the note above) -->
   <Autocomplete
     v-model="selectedKey"
     v-model:input-value="searchQuery"
@@ -37,6 +36,7 @@ const filteredUsers = computed(() => searchQuery.value
     search-placeholder="Search users..."
     :filter="false"
     :items="filteredUsers"
+    :virtualize="{ estimateSize: 50 }"
     :ui="{ searchField: 'sticky top-0 z-10' }"
   >
     <template #empty>

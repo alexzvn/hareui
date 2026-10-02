@@ -1,7 +1,7 @@
 <script setup lang="ts">
 // Internal: one ListBox item. Not exported.
 import type { Component } from 'vue'
-import type { ListBoxItem, ListBoxItemSlotProps, ListBoxSlots } from './ListBox.vue'
+import type { ListBoxItem, ListBoxItemSlotProps, ListBoxSlots, ListBoxValue } from './ListBox.vue'
 import { injectListboxRootContext, ListboxItem } from 'reka-ui'
 import { computed, ref, useTemplateRef } from 'vue'
 import Description from './Description.vue'
@@ -24,7 +24,7 @@ const props = defineProps<{
    * Virtual focus (ComboBox: DOM focus stays in the input). Focus state follows Reka's highlight; `keyboard` tells
    * whether the last interaction was a keyboard one, so the highlight shows as focus-visible (RAC modality).
    */
-  virtualFocus?: { keyboard: boolean }
+  virtualFocus?: { keyboard: boolean, value?: ListBoxValue | null }
 }>()
 const emit = defineEmits<{ action: [event: Event] }>()
 const slots = defineSlots<Omit<ListBoxSlots, 'section-label' | 'empty'>>()
@@ -43,7 +43,10 @@ function onFocus(event: FocusEvent) {
 // Virtual focus: the highlighted element of the enclosing Reka listbox
 const listbox = props.virtualFocus ? injectListboxRootContext() : null
 const option = useTemplateRef<{ $el: HTMLElement }>('option')
-const highlighted = computed(() => !!listbox && !!option.value && listbox.highlightedElement.value === option.value.$el)
+// With `virtualFocus.value` the owner tracks focus by value (virtualized rows unmount), else by Reka's highlighted element
+const highlighted = computed(() => props.virtualFocus && 'value' in props.virtualFocus
+  ? props.virtualFocus.value === props.item.value
+  : !!listbox && !!option.value && listbox.highlightedElement.value === option.value.$el)
 const isFocused = computed(() => props.virtualFocus ? highlighted.value : focused.value)
 const isFocusVisible = computed(() => props.virtualFocus ? highlighted.value && props.virtualFocus.keyboard : focusVisible.value)
 

@@ -4,7 +4,7 @@
 import type { Component } from 'vue'
 import type { ListBoxItemSlotProps, ListBoxSection, ListBoxValue } from './ListBox.vue'
 import type { CollectionBlock, CollectionRow } from './listBoxCollection'
-import { ListboxGroup, ListboxGroupLabel } from 'reka-ui'
+import { ListboxGroup, ListboxGroupLabel, ListboxVirtualizer } from 'reka-ui'
 import { computed, onBeforeUnmount, ref, useTemplateRef, watch } from 'vue'
 import { countRows } from './listBoxCollection'
 import ListBoxOption from './ListBoxOption.vue'
@@ -24,6 +24,8 @@ const props = defineProps<{
   /** Text of the empty state when there's no `#empty` slot; nothing renders when both are absent. */
   emptyText?: string
   loading?: boolean
+  /** Render only the visible rows (Reka `ListboxVirtualizer`); sections and separators are skipped, as in ListBox. */
+  virtualize?: boolean | { estimateSize?: number, overscan?: number }
 }>()
 const emit = defineEmits<{ loadMore: [] }>()
 const slots = defineSlots<{
@@ -41,6 +43,23 @@ const slots = defineSlots<{
 const itemSlots = ['item', 'item-leading', 'item-label', 'item-description', 'item-trailing', 'indicator'] as const
 const forwarded = computed(() => itemSlots.filter(name => slots[name]))
 const empty = computed(() => countRows(props.blocks) === 0)
+
+// Virtualized: flat option rows, looked up by value
+const flatRows = computed(() => props.blocks.flatMap(b => b.kind === 'item' ? [b] : b.kind === 'section' ? b.rows : []))
+const virtualOptions = computed(() => typeof props.virtualize === 'object' ? props.virtualize : {})
+type Virtualizer = { scrollToIndex: (index: number, options?: { align?: 'start' | 'center' | 'end' | 'auto' }) => void }
+let virtualizer: Virtualizer | undefined
+// The tanstack virtualizer is only reachable through the slot; keep it for `scrollToIndex` (renders nothing)
+function captureVirtualizer(v: Virtualizer) {
+  virtualizer = v
+  return undefined
+}
+defineExpose({
+  /** Virtualized: scroll the row at `index` (of the flat, filtered rows) into view. */
+  scrollToIndex: (index: number, align: 'start' | 'center' | 'end' | 'auto' = 'auto') => virtualizer?.scrollToIndex(index, { align }),
+  /** The flat, filtered option rows. */
+  rows: () => flatRows.value,
+})
 
 function optionProps(row: CollectionRow) {
   return {
@@ -79,7 +98,26 @@ watch([sentinelVisible, () => props.loading, () => countRows(props.blocks)], () 
 </script>
 
 <template>
-  <template v-for="block in blocks" :key="block.kind === 'item' ? `i${block.index}` : `b${block.key}`">
+  <!--
+    RAC Virtualizer: each row sits in an absolutely positioned presentational wrapper. `options` are the row objects,
+    not the values: Reka scrolls the selected option to the top on mount, RAC doesn't (the owner scrolls instead).
+  -->
+  <ListboxVirtualizer
+    v-if="virtualize"
+    v-slot="{ option, virtualizer: v }"
+    :options="flatRows as any[]"
+    :estimate-size="virtualOptions.estimateSize ?? 50"
+    :overscan="virtualOptions.overscan ?? 3"
+  >
+    <div role="presentation" class="w-full" :data-virtualizer="captureVirtualizer(v as any)">
+      <ListBoxOption v-bind="optionProps(option as unknown as CollectionRow) as any">
+        <template v-for="name in forwarded" #[name]="state">
+          <slot :name="name" v-bind="state" />
+        </template>
+      </ListBoxOption>
+    </div>
+  </ListboxVirtualizer>
+  <template v-for="block in (virtualize ? [] : blocks)" :key="block.kind === 'item' ? `i${block.index}` : `b${block.key}`">
     <hr
       v-if="block.kind === 'separator'"
       data-slot="separator"

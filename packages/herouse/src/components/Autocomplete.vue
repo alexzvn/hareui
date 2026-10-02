@@ -3,6 +3,7 @@ import type { ValidateFn, ValidationResult } from '../composables/useFieldValida
 import type { ComponentSlots } from '../types/tv'
 import type { ValidationBehavior } from './formContext'
 import type { ListBoxEntry, ListBoxItem, ListBoxItemSlotProps, ListBoxSection, ListBoxValue } from './ListBox.vue'
+import type { CollectionRow } from './listBoxCollection'
 import { injectListboxRootContext } from 'reka-ui'
 import { defineComponent } from 'vue'
 import theme from '../theme/autocomplete'
@@ -80,6 +81,12 @@ export interface AutocompleteProps {
   clearable?: boolean
   /** Async options: shows the `#loading` slot after the last option and emits `load-more` at the end of the list. */
   loading?: boolean
+  /**
+   * Render only the visible rows (Reka `ListboxVirtualizer`), for long lists. Sections and separators are skipped.
+   * Pass `{ estimateSize, overscan }` to tune; rows are `estimateSize` (default 50) px apart.
+   * @defaultValue false
+   */
+  virtualize?: boolean | { estimateSize?: number, overscan?: number }
   /**
    * Visual variant. Use `secondary` on surfaces.
    * @defaultValue 'primary'
@@ -304,38 +311,89 @@ onBeforeUnmount(() => {
   document.removeEventListener('keydown', onDocKeydown, true)
 })
 
-// ---- List highlight (Reka listbox; virtual while the search field owns focus) -----------------------------------
+// ---- Virtual focus (RAC `focusedKey`): DOM focus stays in the search field or on the popover --------------------
+// Tracked by value, not element: virtualized rows unmount when scrolled out
 const listboxRef = shallowRef<ListboxContext>()
-const highlighted = computed(() => listboxRef.value?.highlightedElement.value ?? null)
 const listEl = useTemplateRef<{ $el: HTMLElement }>('list')
-function enabledOptions(): HTMLElement[] {
-  const el = listEl.value?.$el as HTMLElement | undefined
-  return el ? [...el.querySelectorAll<HTMLElement>('[role=option]:not([data-disabled])')] : []
+const rowsRef = useTemplateRef<InstanceType<typeof ListBoxRows>>('rows')
+const focusedKey = ref<ListBoxValue | null>(null)
+const optionId = (value: ListBoxValue) => `${listboxId.value}-option-${String(value)}`
+const activeDescendant = computed(() => focusedKey.value != null ? optionId(focusedKey.value) : undefined)
+function enabledRows() {
+  return props.disabled ? [] : (rowsRef.value?.rows() ?? []).filter(row => !row.item.disabled)
 }
-function setHighlight(el: HTMLElement | null | undefined) {
-  const listbox = listboxRef.value
-  if (!listbox)
+function setFocusKey(value: ListBoxValue | null, scroll = true) {
+  focusedKey.value = value
+  if (value == null || !scroll)
     return
-  if (el)
-    listbox.changeHighlight(el, true, false)
-  else
-    listbox.highlightedElement.value = null
+  // Virtualized: render the row first, then scroll it into view like any other (RAC `scrollIntoViewport`)
+  const reveal = () => document.getElementById(optionId(value))?.scrollIntoView({ block: 'nearest' })
+  const list = listEl.value?.$el as HTMLElement | undefined
+  if (props.virtualize && list && !document.getElementById(optionId(value))) {
+    const index = (rowsRef.value?.rows() ?? []).findIndex(row => row.item.value === value)
+    if (index === -1)
+      return
+    // tanstack's scrollToIndex aligns to the padded scroll ends; it only serves to mount the row here. Then go back
+    // and scroll it to the nearest edge (the row stays mounted until the next scroll event)
+    const from = list.scrollTop
+    rowsRef.value?.scrollToIndex(index)
+    requestAnimationFrame(() => {
+      list.scrollTop = from
+      reveal()
+    })
+  }
+  else {
+    nextTick(reveal)
+  }
+}
+// RAC `ListKeyboardDelegate.getKeyPageBelow/Above`: a viewport height down / up when the list scrolls, else last / first
+function pageIndex(list: CollectionRow[], current: number, down: boolean): number {
+  const el = listEl.value?.$el as HTMLElement | undefined
+  if (!el || current === -1 || el.scrollHeight <= el.clientHeight)
+    return down ? list.length - 1 : 0
+  const all = rowsRef.value?.rows() ?? []
+  const size = typeof props.virtualize === 'object' ? props.virtualize.estimateSize ?? 50 : 50
+  const listTop = el.getBoundingClientRect().top - el.scrollTop
+  // Row rect in content coordinates: measured when mounted, from the virtualizer's fixed row size otherwise
+  const rect = (row: CollectionRow) => {
+    const node = document.getElementById(optionId(row.item.value))
+    if (node && !props.virtualize) {
+      const r = node.getBoundingClientRect()
+      return { y: r.top - listTop, height: r.height }
+    }
+    return { y: all.indexOf(row) * size, height: size }
+  }
+  const start = rect(list[current]!)
+  let i = current
+  if (down) {
+    const pageY = Math.min(el.scrollHeight, start.y - start.height + el.clientHeight)
+    while (i < list.length - 1 && rect(list[i]!).y < pageY)
+      i++
+  }
+  else {
+    const pageY = Math.max(0, start.y + start.height - el.clientHeight)
+    while (i > 0 && rect(list[i]!).y > pageY)
+      i--
+  }
+  return i
 }
 function navigate(key: string) {
-  const list = enabledOptions()
+  const list = enabledRows()
   if (!list.length)
     return
-  const current = highlighted.value ? list.indexOf(highlighted.value) : -1
-  let next: HTMLElement | undefined
-  if (key === 'Home' || key === 'PageUp')
+  const current = list.findIndex(row => row.item.value === focusedKey.value)
+  let next
+  if (key === 'Home')
     next = list[0]
-  else if (key === 'End' || key === 'PageDown')
+  else if (key === 'End')
     next = list.at(-1)
+  else if (key === 'PageUp' || key === 'PageDown')
+    next = list[pageIndex(list, current, key === 'PageDown')]
   else if (current === -1)
     next = key === 'ArrowDown' ? list[0] : list.at(-1)
   else
     next = list[Math.min(Math.max(current + (key === 'ArrowDown' ? 1 : -1), 0), list.length - 1)]
-  setHighlight(next)
+  setFocusKey(next?.item.value ?? null)
 }
 
 // ---- Popover focus ----------------------------------------------------------------------------------------------
@@ -359,9 +417,9 @@ async function onOpenAutoFocus(event: Event) {
   else
     popoverEl()?.focus()
   // RAC: the first selected option, else the first / last option when opened from the keyboard, else nothing
-  const list = enabledOptions()
-  const selected = list.find(el => el.getAttribute('data-state') === 'checked')
-  setHighlight(selected ?? (openStrategy === 'first' ? list[0] : openStrategy === 'last' ? list.at(-1) : null))
+  const list = enabledRows()
+  const selected = list.find(row => selectedValues.value.includes(row.item.value))
+  setFocusKey((selected ?? (openStrategy === 'first' ? list[0] : openStrategy === 'last' ? list.at(-1) : undefined))?.item.value ?? null)
 }
 function onCloseAutoFocus(event: Event) {
   event.preventDefault()
@@ -396,7 +454,7 @@ function onSearchInput(event: Event) {
 // RAC Autocomplete: typing focuses the first match; an empty search focuses nothing
 async function onSearchTextChange() {
   await nextTick()
-  setHighlight(inputValue.value ? enabledOptions()[0] : null)
+  setFocusKey(inputValue.value ? enabledRows()[0]?.item.value ?? null : null)
 }
 function onSearchClear() {
   searchInput.value?.focus()
@@ -415,8 +473,7 @@ function onPopoverKeydown(event: KeyboardEvent) {
       if (fromSearch)
         break
       event.preventDefault()
-      if (highlighted.value?.isConnected)
-        highlighted.value.click()
+      selectFocused()
       break
     case 'ArrowDown':
     case 'ArrowUp':
@@ -429,8 +486,7 @@ function onPopoverKeydown(event: KeyboardEvent) {
       break
     case 'Enter':
       event.preventDefault()
-      if (highlighted.value?.isConnected)
-        highlighted.value.click()
+      selectFocused()
       break
   }
 }
@@ -438,6 +494,15 @@ const searchFocusVisible = ref(false)
 
 // ---- Selection from the list ------------------------------------------------------------------------------------
 const listValue = computed(() => multiple.value ? selectedValues.value : (selectedValues.value[0] ?? undefined))
+// Keyboard selection of the focused option (it may be scrolled out and unmounted, so not a click)
+function selectFocused() {
+  const value = focusedKey.value
+  if (value == null || !enabledRows().some(row => row.item.value === value))
+    return
+  // Through Reka, so it counts as a user selection (a programmatic model change makes Reka re-highlight and,
+  // when virtualized, scroll to the top)
+  listboxRef.value?.onValueChange(value)
+}
 function onListUpdate(value: unknown) {
   if (multiple.value) {
     selection.value = Array.isArray(value) ? value as ListBoxValue[] : []
@@ -582,17 +647,26 @@ function valueIndicatorClass(item: ListBoxItem) {
 }
 const rowSlots = ['item', 'item-leading', 'item-label', 'item-description', 'item-trailing', 'section-label', 'empty', 'loading'] as const
 const forwarded = computed(() => rowSlots.filter(name => slots[name]))
-const virtualFocus = computed(() => ({ keyboard: keyboardModality.value }))
-function optionAttrs() {
+const virtualFocus = computed(() => ({ keyboard: keyboardModality.value, value: focusedKey.value }))
+function optionAttrs(row: CollectionRow) {
   return {
+    id: optionId(row.item.value),
     // RAC `shouldFocusOnHover`: hover moves focus unless the last interaction was a keyboard one
-    onPointermove: (event: PointerEvent) => {
-      const el = event.currentTarget as HTMLElement
-      if (!keyboardModality.value && highlighted.value !== el && !el.hasAttribute('data-disabled'))
-        setHighlight(el)
+    onPointermove: () => {
+      if (!keyboardModality.value && focusedKey.value !== row.item.value && !row.item.disabled && !props.disabled)
+        setFocusKey(row.item.value, false)
+    },
+    // Pointer selection focuses the picked option (it stays focused in multiple mode)
+    onPointerdown: () => {
+      if (!row.item.disabled && !props.disabled)
+        setFocusKey(row.item.value, false)
     },
   }
 }
+watch(isOpen, (value) => {
+  if (!value)
+    focusedKey.value = null
+})
 
 watch(() => props.disabled, (disabled) => {
   if (disabled)
@@ -651,7 +725,8 @@ watch(() => props.disabled, (disabled) => {
             :class="ui.value({ class: props.ui?.value })"
           >
             <!-- RAC SelectValue re-renders each selected item's children, indicator included; the value class hides it -->
-            <slot name="value" :selected-items="selectedItems" :is-placeholder="isPlaceholder" :text="valueText">{{ valueText }}<span v-for="item in selectedItems" :key="String(item.value)" aria-hidden="true" data-slot="list-box-item-indicator" :class="valueIndicatorClass(item)">
+            <!-- A rich item (with a description) re-renders as RAC does: its label only, in the item's column wrapper -->
+            <slot name="value" :selected-items="selectedItems" :is-placeholder="isPlaceholder" :text="valueText"><div v-if="!multiple && selectedItems[0]?.description" class="flex flex-col"><Label as="span">{{ selectedItems[0].label }}</Label></div><template v-else>{{ valueText }}</template><span v-for="item in selectedItems" :key="String(item.value)" aria-hidden="true" data-slot="list-box-item-indicator" :class="valueIndicatorClass(item)">
                 <svg aria-hidden="true" data-slot="list-box-item-indicator--checkmark" fill="none" role="presentation" stroke="currentColor" stroke-dasharray="22" stroke-dashoffset="66" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" viewBox="0 0 17 18">
                   <polyline points="1 9 7 14 15 4" />
                 </svg>
@@ -776,7 +851,7 @@ watch(() => props.disabled, (disabled) => {
                   aria-autocomplete="list"
                   :aria-label="searchLabel"
                   :aria-controls="listboxId"
-                  :aria-activedescendant="highlighted?.id"
+                  :aria-activedescendant="activeDescendant"
                   :placeholder="searchPlaceholder"
                   :value="inputValue"
                   data-slot="search-field-input"
@@ -809,6 +884,7 @@ watch(() => props.disabled, (disabled) => {
               @mousedown.prevent
             >
               <ListBoxRows
+                ref="rows"
                 :blocks="blocks"
                 :selected-values="selectedValues"
                 :selection-mode="selectionMode"
@@ -817,6 +893,7 @@ watch(() => props.disabled, (disabled) => {
                 :virtual-focus="virtualFocus"
                 :option-attrs="optionAttrs"
                 :loading="loading"
+                :virtualize="virtualize"
                 @load-more="emit('loadMore')"
               >
                 <template v-for="name in forwarded" #[name]="state">

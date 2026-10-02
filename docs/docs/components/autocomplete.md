@@ -136,7 +136,7 @@ When used inside a [Surface](/docs/components/surface) component, use `variant="
 
 ### Virtualization
 
-HeroUI virtualizes this list with React Aria's `Virtualizer`. herouse's Autocomplete doesn't virtualize yet: the example below renders all 1,000 rows. For long lists, filter on your side (`:filter="false"` with `v-model:input-value`) as shown here, or use a virtualized [ListBox](/docs/components/list-box#virtualization).
+Set `virtualize` to render only the rows in view, for efficient rendering of large datasets. Pass `{ estimateSize }` with the row height in pixels (default 50); sections and separators aren't rendered in this mode. Here the 1,000 users are filtered on name or email with `:filter="false"` and `v-model:input-value`.
 
 <ComponentPreview name="autocomplete/virtualization" />
 

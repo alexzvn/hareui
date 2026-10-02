@@ -1,5 +1,5 @@
 import type { ReactElement } from 'react'
-import { Autocomplete, Description, EmptyState, FieldError, Header, Label, ListBox, SearchField, Separator, useFilter } from '@heroui/react'
+import { Autocomplete, Description, EmptyState, FieldError, Header, Label, ListBox, ListLayout, SearchField, Separator, useFilter, Virtualizer } from '@heroui/react'
 import { gear } from '../icons'
 
 const states = ['Florida', 'Delaware', 'California', 'Texas']
@@ -49,6 +49,8 @@ function A({ clear = true, search = true, description, error, indicator, trigger
   )
 }
 
+const users = Array.from({ length: 200 }, (_, i) => ({ id: i + 1, name: `User ${i + 1}`, email: `user${i + 1}@acme.com` }))
+
 export const cases: Record<string, () => ReactElement> = {
   'autocomplete-default': () => <A />,
   'autocomplete-selected': () => <A defaultValue="texas" />,
@@ -81,6 +83,23 @@ export const cases: Record<string, () => ReactElement> = {
   'autocomplete-open-empty': () => (
     <A defaultOpen allowsEmptyCollection>
       <ListBox renderEmptyState={() => <EmptyState>No results found</EmptyState>} />
+    </A>
+  ),
+  'autocomplete-open-virtualized': () => (
+    <A defaultOpen defaultValue={3}>
+      <Virtualizer layout={ListLayout} layoutOptions={{ rowHeight: 50 }}>
+        <ListBox items={users}>
+          {user => (
+            <ListBox.Item id={user.id} textValue={user.name}>
+              <div className="flex flex-col">
+                <Label>{user.name}</Label>
+                <Description>{user.email}</Description>
+              </div>
+              <ListBox.ItemIndicator />
+            </ListBox.Item>
+          )}
+        </ListBox>
+      </Virtualizer>
     </A>
   ),
   'autocomplete-user-overrides': () => <A triggerClass="bg-accent-soft rounded-xl" valueClass="font-semibold" />,

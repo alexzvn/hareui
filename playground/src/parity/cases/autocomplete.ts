@@ -12,6 +12,8 @@ const sections = [
 ]
 const empty = { empty: () => 'No results found' }
 
+const users = Array.from({ length: 200 }, (_, i) => ({ value: i + 1, label: `User ${i + 1}`, description: `user${i + 1}@acme.com` }))
+
 export const cases: Record<string, () => VNode> = {
   'autocomplete-default': () => h(Autocomplete, base, empty),
   'autocomplete-selected': () => h(Autocomplete, { ...base, defaultValue: 'texas' }, empty),
@@ -27,5 +29,6 @@ export const cases: Record<string, () => VNode> = {
   'autocomplete-open-no-search': () => h(Autocomplete, { ...base, defaultOpen: true, search: false, selectionMode: 'multiple', defaultValue: ['florida', 'texas'] }, empty),
   'autocomplete-open-sections': () => h(Autocomplete, { ...base, defaultOpen: true, items: sections }),
   'autocomplete-open-empty': () => h(Autocomplete, { ...base, defaultOpen: true, allowsEmptyCollection: true, items: [] }, empty),
+  'autocomplete-open-virtualized': () => h(Autocomplete, { ...base, defaultOpen: true, defaultValue: 3, items: users, virtualize: { estimateSize: 50 } }),
   'autocomplete-user-overrides': () => h(Autocomplete, { ...base, ui: { trigger: 'bg-accent-soft rounded-xl', value: 'font-semibold' } }, empty),
 }

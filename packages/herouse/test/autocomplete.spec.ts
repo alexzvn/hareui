@@ -149,3 +149,33 @@ describe('Autocomplete', () => {
     wrapper.unmount()
   })
 })
+
+describe('Autocomplete virtualize', () => {
+  const users = Array.from({ length: 300 }, (_, i) => ({ value: i + 1, label: `User ${i + 1}` }))
+
+  it('renders only part of a long list and keeps keyboard focus by value', async () => {
+    const { wrapper } = setup({ items: users, virtualize: { estimateSize: 50 }, defaultOpen: true })
+    await flush()
+    // happy-dom has no layout, so the virtualizer mounts (almost) nothing; never all 300 rows
+    expect(options().length).toBeLessThan(300)
+    expect(document.querySelector('[data-reka-virtualizer]')).not.toBeNull()
+    await key(search()!, 'ArrowDown')
+    expect(search()!.getAttribute('aria-activedescendant')).toMatch(/-option-1$/)
+    await key(search()!, 'End')
+    // The last row may not be mounted, but the active descendant points at it
+    expect(search()!.getAttribute('aria-activedescendant')).toMatch(/-option-300$/)
+    await key(search()!, 'Enter')
+    expect(wrapper.emitted('update:modelValue')?.at(-1)).toEqual([300])
+    wrapper.unmount()
+  })
+
+  it('filters before virtualizing', async () => {
+    const { wrapper } = setup({ items: users, virtualize: true, defaultOpen: true })
+    await flush()
+    await typeSearch('User 29')
+    // Typing focuses the first match, even when its row isn't mounted
+    expect(search()!.getAttribute('aria-activedescendant')).toMatch(/-option-29$/)
+    expect(texts().every(t => t?.startsWith('User 29'))).toBe(true)
+    wrapper.unmount()
+  })
+})
