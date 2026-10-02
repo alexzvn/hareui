@@ -1,8 +1,9 @@
 <script setup lang="ts">
 // Internal: one ListBox item. Not exported.
+import type { Component } from 'vue'
 import type { ListBoxItem, ListBoxItemSlotProps, ListBoxSlots } from './ListBox.vue'
-import { ListboxItem } from 'reka-ui'
-import { computed, ref } from 'vue'
+import { injectListboxRootContext, ListboxItem } from 'reka-ui'
+import { computed, ref, useTemplateRef } from 'vue'
 import Description from './Description.vue'
 import Label from './Label.vue'
 
@@ -17,6 +18,13 @@ const props = defineProps<{
   /** Slot class functions of the parent ListBox; `variant` is applied per item. */
   classes: Record<'item' | 'indicator', (options?: { variant?: string, class?: any }) => string>
   ui?: { item?: any, indicator?: any }
+  /** The Reka item primitive to render (ComboBox passes `ComboboxItem`). */
+  component?: Component
+  /**
+   * Virtual focus (ComboBox: DOM focus stays in the input). Focus state follows Reka's highlight; `keyboard` tells
+   * whether the last interaction was a keyboard one, so the highlight shows as focus-visible (RAC modality).
+   */
+  virtualFocus?: { keyboard: boolean }
 }>()
 const emit = defineEmits<{ action: [event: Event] }>()
 const slots = defineSlots<Omit<ListBoxSlots, 'section-label' | 'empty'>>()
@@ -31,6 +39,13 @@ function onFocus(event: FocusEvent) {
   focused.value = true
   focusVisible.value = event.target instanceof Element && event.target.matches(':focus-visible')
 }
+
+// Virtual focus: the highlighted element of the enclosing Reka listbox
+const listbox = props.virtualFocus ? injectListboxRootContext() : null
+const option = useTemplateRef<{ $el: HTMLElement }>('option')
+const highlighted = computed(() => !!listbox && !!option.value && listbox.highlightedElement.value === option.value.$el)
+const isFocused = computed(() => props.virtualFocus ? highlighted.value : focused.value)
+const isFocusVisible = computed(() => props.virtualFocus ? highlighted.value && props.virtualFocus.keyboard : focusVisible.value)
 
 const state = computed<ListBoxItemSlotProps>(() => ({
   item: props.item,
@@ -48,7 +63,9 @@ function onSelect(event: Event) {
 </script>
 
 <template>
-  <ListboxItem
+  <component
+    :is="component ?? ListboxItem"
+    ref="option"
     :value="item.value"
     :disabled="item.disabled"
     :text-value="item.textValue ?? item.label"
@@ -58,8 +75,8 @@ function onSelect(event: Event) {
     :data-selection-mode="selectable ? selectionMode : undefined"
     :data-hovered="hovered ? 'true' : undefined"
     :data-pressed="pressed ? 'true' : undefined"
-    :data-focused="focused ? 'true' : undefined"
-    :data-focus-visible="focusVisible ? 'true' : undefined"
+    :data-focused="isFocused ? 'true' : undefined"
+    :data-focus-visible="isFocusVisible ? 'true' : undefined"
     :class="classes.item({ variant: item.variant, class: [ui?.item, item.class] })"
     @select="onSelect"
     @pointerenter="hovered = $event.pointerType === 'mouse'"
@@ -115,5 +132,5 @@ function onSelect(event: Event) {
         </slot>
       </span>
     </slot>
-  </ListboxItem>
+  </component>
 </template>

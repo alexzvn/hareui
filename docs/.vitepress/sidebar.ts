@@ -74,6 +74,7 @@ export const sidebar: SidebarSection[] = [
       { text: 'ColorSlider', link: c('color-slider') },
       { text: 'ColorSwatch', link: c('color-swatch') },
       { text: 'ColorSwatchPicker', link: c('color-swatch-picker') },
+      { text: 'ComboBox', link: c('combo-box') },
       { text: 'DateField', link: c('date-field') },
       { text: 'DatePicker', link: c('date-picker') },
       { text: 'Description', link: c('description') },

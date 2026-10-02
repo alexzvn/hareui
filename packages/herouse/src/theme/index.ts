@@ -25,6 +25,7 @@ export { default as disclosure } from './disclosure'
 export { default as numberField } from './numberField'
 export { default as listBox } from './listBox'
 export { default as select } from './select'
+export { default as comboBox } from './comboBox'
 
 export type Themes = typeof import('./index')
 export { default as meter } from './meter'

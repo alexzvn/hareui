@@ -1,0 +1,107 @@
+[
+  {
+    "id": "combo-box-default",
+    "component": "combo-box",
+    "actions": [
+      "hover",
+      "focus"
+    ],
+    "ignoreSlots": [],
+    "target": "[data-slot=input]"
+  },
+  {
+    "id": "combo-box-selected",
+    "component": "combo-box",
+    "actions": [],
+    "ignoreSlots": []
+  },
+  {
+    "id": "combo-box-secondary",
+    "component": "combo-box",
+    "actions": [
+      "hover",
+      "focus"
+    ],
+    "ignoreSlots": [],
+    "target": "[data-slot=input]"
+  },
+  {
+    "id": "combo-box-disabled",
+    "component": "combo-box",
+    "actions": [],
+    "ignoreSlots": []
+  },
+  {
+    "id": "combo-box-invalid",
+    "component": "combo-box",
+    "actions": [],
+    "ignoreSlots": []
+  },
+  {
+    "id": "combo-box-description",
+    "component": "combo-box",
+    "actions": [],
+    "ignoreSlots": []
+  },
+  {
+    "id": "combo-box-required",
+    "component": "combo-box",
+    "actions": [],
+    "ignoreSlots": []
+  },
+  {
+    "id": "combo-box-read-only",
+    "component": "combo-box",
+    "actions": [],
+    "ignoreSlots": []
+  },
+  {
+    "id": "combo-box-full-width",
+    "component": "combo-box",
+    "actions": [],
+    "ignoreSlots": []
+  },
+  {
+    "id": "combo-box-custom-indicator",
+    "component": "combo-box",
+    "actions": [],
+    "ignoreSlots": []
+  },
+  {
+    "id": "combo-box-multiple",
+    "component": "combo-box",
+    "actions": [],
+    "ignoreSlots": []
+  },
+  {
+    "id": "combo-box-open",
+    "component": "combo-box",
+    "actions": [],
+    "ignoreSlots": [],
+    "overlay": true,
+    "ignoreProps": [
+      "position"
+    ],
+    "reason": "Reka positions a fixed wrapper (data-reka-popper-content-wrapper) around a static popover; RAC positions the popover itself absolutely. Placement is still checked via @rect.* and the screenshot."
+  },
+  {
+    "id": "combo-box-open-sections",
+    "component": "combo-box",
+    "actions": [],
+    "ignoreSlots": [],
+    "overlay": true,
+    "ignoreProps": [
+      "position"
+    ],
+    "reason": "Reka positions a fixed wrapper (data-reka-popper-content-wrapper) around a static popover; RAC positions the popover itself absolutely. Placement is still checked via @rect.* and the screenshot."
+  },
+  {
+    "id": "combo-box-user-overrides",
+    "component": "combo-box",
+    "actions": [
+      "hover"
+    ],
+    "ignoreSlots": [],
+    "target": "[data-slot=combo-box-trigger]"
+  }
+]
