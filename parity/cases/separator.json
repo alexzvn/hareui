@@ -1,0 +1,26 @@
+[
+  {
+    "id": "separator-horizontal-default",
+    "component": "separator",
+    "actions": [],
+    "ignoreSlots": []
+  },
+  {
+    "id": "separator-horizontal-secondary",
+    "component": "separator",
+    "actions": [],
+    "ignoreSlots": []
+  },
+  {
+    "id": "separator-horizontal-tertiary",
+    "component": "separator",
+    "actions": [],
+    "ignoreSlots": []
+  },
+  {
+    "id": "separator-vertical-default",
+    "component": "separator",
+    "actions": [],
+    "ignoreSlots": []
+  }
+]

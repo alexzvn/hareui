@@ -20,6 +20,7 @@ export { default as skeleton } from './skeleton'
 export { default as toast } from './toast'
 
 export type Themes = typeof import('./index')
+export { default as separator } from './separator'
 export { default as numberField } from './numberField'
 export { default as progressBar } from './progressBar'
 export { default as typography } from './typography'
