@@ -15,7 +15,7 @@
       "focus"
     ],
     "ignoreSlots": [],
-    "target": "[data-slot=date-input-group-segment]"
+    "target": "[data-slot=date-input-group-segment][tabindex=\"0\"]"
   },
   {
     "id": "time-field-secondary",
@@ -33,7 +33,7 @@
       "focus"
     ],
     "ignoreSlots": [],
-    "target": "[data-slot=date-input-group-segment]"
+    "target": "[data-slot=date-input-group-segment][tabindex=\"0\"]"
   },
   {
     "id": "time-field-required",
