@@ -60,6 +60,17 @@ export interface DateInputGroupProps {
   /** `DateFieldInput` or `TimeFieldInput` from `reka-ui`, matching whichever root this is rendered inside. */
   segmentInput: Component
   /**
+   * Range mode (`DateRangePicker`): the end input's segments. When set, `segments` are the start input's, each
+   * segment gets Reka's `type="start"|"end"`, and the `#separator` slot renders between the two inputs.
+   */
+  endSegments?: DateInputGroupSegment[]
+  /**
+   * Wraps the input(s) in a horizontally scrollable `date-input-group-input-container`
+   * (HeroUI's `DateField.InputContainer`), for long ranges that overflow the group.
+   * @defaultValue false
+   */
+  inputContainer?: boolean
+  /**
    * Visual variant of the group.
    * @defaultValue 'primary'
    */
@@ -84,11 +95,17 @@ export interface DateInputGroupSlots {
   prefix?: () => any
   /** Suffix content, rendered after the segments. */
   suffix?: () => any
+  /** Range mode only: rendered between the start and end inputs. */
+  separator?: () => any
 }
 </script>
 
 <script setup lang="ts">
+import type { FunctionalComponent } from 'vue'
 import { useComponentUI } from '../composables/useComponentUI'
+
+// Renders its children without a wrapper element (used when `inputContainer` is off)
+const Passthrough: FunctionalComponent = (_, { slots }) => slots.default?.()
 
 const props = defineProps<DateInputGroupProps>()
 defineSlots<DateInputGroupSlots>()
@@ -107,18 +124,37 @@ const ui = useComponentUI('dateInputGroup', theme, () => ({ variant: props.varia
     <div v-if="$slots.prefix" data-slot="date-input-group-prefix" :class="ui.prefix({ class: props.ui?.prefix })">
       <slot name="prefix" />
     </div>
-    <div data-slot="date-input-group-input" :class="ui.input({ class: props.ui?.input })">
-      <component
-        :is="segmentInput"
-        v-for="item in segments"
-        :key="item.part"
-        :part="item.part"
-        data-slot="date-input-group-segment"
-        :class="ui.segment({ class: props.ui?.segment })"
-      >
-        {{ item.value }}
-      </component>
-    </div>
+    <component :is="inputContainer ? 'div' : Passthrough" v-bind="inputContainer ? { 'data-slot': 'date-input-group-input-container', 'class': ui.inputContainer({ class: props.ui?.inputContainer }) } : {}">
+      <div data-slot="date-input-group-input" :slot="endSegments ? 'start' : undefined" :class="ui.input({ class: props.ui?.input })">
+        <component
+          :is="segmentInput"
+          v-for="item in segments"
+          :key="item.part"
+          :part="item.part"
+          v-bind="endSegments ? { type: 'start' } : {}"
+          data-slot="date-input-group-segment"
+          :class="ui.segment({ class: props.ui?.segment })"
+        >
+          {{ item.value }}
+        </component>
+      </div>
+      <template v-if="endSegments">
+        <slot name="separator" />
+        <div data-slot="date-input-group-input" slot="end" :class="ui.input({ class: props.ui?.input })">
+          <component
+            :is="segmentInput"
+            v-for="item in endSegments"
+            :key="item.part"
+            :part="item.part"
+            type="end"
+            data-slot="date-input-group-segment"
+            :class="ui.segment({ class: props.ui?.segment })"
+          >
+            {{ item.value }}
+          </component>
+        </div>
+      </template>
+    </component>
     <div v-if="$slots.suffix" data-slot="date-input-group-suffix" :class="ui.suffix({ class: props.ui?.suffix })">
       <slot name="suffix" />
     </div>

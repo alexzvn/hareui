@@ -78,6 +78,7 @@ export const sidebar: SidebarSection[] = [
       { text: 'ComboBox', link: c('combo-box') },
       { text: 'DateField', link: c('date-field') },
       { text: 'DatePicker', link: c('date-picker') },
+      { text: 'DateRangePicker', link: c('date-range-picker') },
       { text: 'Description', link: c('description') },
       { text: 'Disclosure', link: c('disclosure') },
       { text: 'DisclosureGroup', link: c('disclosure-group') },
