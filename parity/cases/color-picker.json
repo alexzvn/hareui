@@ -1,0 +1,12 @@
+[
+  { "id": "color-picker-default", "component": "color-picker", "actions": [], "ignoreSlots": [] },
+  { "id": "color-picker-hover", "component": "color-picker", "actions": ["hover"], "ignoreSlots": [], "target": "#case [data-slot=color-picker-trigger]" },
+  { "id": "color-picker-focus", "component": "color-picker", "actions": ["focus"], "ignoreSlots": [] },
+  { "id": "color-picker-disabled", "component": "color-picker", "actions": [], "ignoreSlots": [] },
+  { "id": "color-picker-open", "component": "color-picker", "actions": [], "ignoreSlots": [], "overlay": true, "ignoreProps": ["position", "transform"] },
+  { "id": "color-picker-open-swatches", "component": "color-picker", "actions": [], "ignoreSlots": [], "overlay": true, "ignoreProps": ["position", "transform"] },
+  { "id": "color-picker-open-fields", "component": "color-picker", "actions": [], "ignoreSlots": [], "overlay": true, "ignoreProps": ["position", "transform"] },
+  { "id": "color-picker-open-sliders", "component": "color-picker", "actions": [], "ignoreSlots": [], "overlay": true, "ignoreProps": ["position", "transform"] },
+  { "id": "color-picker-open-controlled", "component": "color-picker", "actions": [], "ignoreSlots": [], "overlay": true, "ignoreProps": ["position", "transform"] },
+  { "id": "color-picker-open-custom-styles", "component": "color-picker", "actions": [], "ignoreSlots": [], "overlay": true, "ignoreProps": ["position", "transform"] }
+]
