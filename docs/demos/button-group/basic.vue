@@ -1,6 +1,13 @@
 <script setup lang="ts">
 import { Icon } from '@iconify/vue'
-import { Button, ButtonGroup, Chip } from 'herouse'
+import type { DropdownEntry } from 'herouse'
+import { Button, ButtonGroup, Chip, Dropdown } from 'herouse'
+
+const mergeOptions: DropdownEntry[] = [
+  { value: 'merge', label: 'Create a merge commit', description: 'All commits from this branch will be added to the base branch', class: 'flex flex-col items-start gap-1 [&>div]:items-start [&>div]:gap-1' },
+  { value: 'squash-and-merge', label: 'Squash and merge', description: 'The 14 commits from this branch will be combined into one commit in the base branch', class: 'flex flex-col items-start gap-1 [&>div]:items-start [&>div]:gap-1' },
+  { value: 'rebase-and-merge', label: 'Rebase and merge', description: 'The 14 commits from this branch will be rebased and added to the base branch', class: 'flex flex-col items-start gap-1 [&>div]:items-start [&>div]:gap-1' },
+]
 </script>
 
 <template>
@@ -9,10 +16,11 @@ import { Button, ButtonGroup, Chip } from 'herouse'
     <div class="flex flex-col gap-2">
       <ButtonGroup separator>
         <Button>Merge pull request</Button>
-        <!-- stand-in: wrap in Dropdown (merge / squash / rebase items) once Dropdown lands -->
-        <Button icon-only aria-label="More options">
-          <Icon icon="gravity-ui:chevron-down" />
-        </Button>
+        <Dropdown :items="mergeOptions" class="max-w-[290px]" align="end">
+          <Button icon-only aria-label="More options">
+            <Icon icon="gravity-ui:chevron-down" />
+          </Button>
+        </Dropdown>
       </ButtonGroup>
     </div>
 
