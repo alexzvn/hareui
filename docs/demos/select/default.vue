@@ -1,7 +1,8 @@
 <script setup lang="ts">
+import type { ListBoxItem } from '@hareui/vue'
 import { Select } from '@hareui/vue'
 
-const states = [
+const states: ListBoxItem[] = [
   { value: 'florida', label: 'Florida' },
   { value: 'delaware', label: 'Delaware' },
   { value: 'california', label: 'California' },

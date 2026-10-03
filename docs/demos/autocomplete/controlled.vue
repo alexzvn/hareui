@@ -1,8 +1,9 @@
 <script setup lang="ts">
+import type { ListBoxItem } from '@hareui/vue'
 import { Autocomplete } from '@hareui/vue'
 import { computed, ref } from 'vue'
 
-const states = [
+const states: ListBoxItem[] = [
   { value: 'california', label: 'California' },
   { value: 'texas', label: 'Texas' },
   { value: 'florida', label: 'Florida' },

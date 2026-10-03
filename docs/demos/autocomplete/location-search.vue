@@ -1,4 +1,5 @@
 <script setup lang="ts">
+import type { ListBoxItem } from '@hareui/vue'
 import { Autocomplete } from '@hareui/vue'
 import { ref, watch } from 'vue'
 
@@ -14,7 +15,7 @@ const allCities = [
   { country: 'Germany', name: 'Berlin' },
   { country: 'Spain', name: 'Madrid' },
 ]
-const items = allCities.map(city => ({ value: city.name, label: city.name, description: city.country }))
+const items: ListBoxItem[] = allCities.map(city => ({ value: city.name, label: city.name, description: city.country }))
 
 const selectedKey = ref<string | null>(null)
 const searchText = ref('')

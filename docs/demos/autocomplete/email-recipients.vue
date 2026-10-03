@@ -1,8 +1,9 @@
 <script setup lang="ts">
+import type { ListBoxItem } from '@hareui/vue'
 import { Autocomplete, TagGroup } from '@hareui/vue'
 import { ref } from 'vue'
 
-const emails = [
+const emails: ListBoxItem[] = [
   { value: 'alice@example.com', label: 'Alice Johnson', description: 'alice@example.com', textValue: 'alice@example.com' },
   { value: 'bob@example.com', label: 'Bob Smith', description: 'bob@example.com', textValue: 'bob@example.com' },
   { value: 'charlie@example.com', label: 'Charlie Brown', description: 'charlie@example.com', textValue: 'charlie@example.com' },

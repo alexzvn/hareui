@@ -1,9 +1,15 @@
 <script setup lang="ts">
+import type { ListBoxItem } from '@hareui/vue'
 import { Autocomplete } from '@hareui/vue'
 import { useFilter } from 'reka-ui'
 import { computed, ref } from 'vue'
 
-function generateUsers(n: number) {
+interface User extends ListBoxItem {
+  label: string
+  description: string
+}
+
+function generateUsers(n: number): User[] {
   const firstNames = ['Emma', 'Liam', 'Olivia', 'Noah', 'Ava', 'James', 'Sophia', 'Oliver', 'Isabella', 'Lucas', 'Mia', 'Ethan', 'Charlotte', 'Mason', 'Amelia', 'Logan', 'Harper', 'Alexander', 'Ella', 'Benjamin']
   const lastNames = ['Smith', 'Johnson', 'Williams', 'Brown', 'Jones', 'Garcia', 'Miller', 'Davis', 'Rodriguez', 'Martinez', 'Anderson', 'Taylor', 'Thomas', 'Jackson', 'White', 'Harris', 'Clark', 'Lewis', 'Robinson', 'Walker']
   return Array.from({ length: n }, (_, i) => {

@@ -1,7 +1,8 @@
 <script setup lang="ts">
+import type { ListBoxItem } from '@hareui/vue'
 import { Select } from '@hareui/vue'
 
-const animals = [
+const animals: ListBoxItem[] = [
   { value: 'cat', label: 'Cat' },
   { value: 'dog', label: 'Dog' },
   { value: 'bird', label: 'Bird' },

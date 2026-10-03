@@ -1,8 +1,8 @@
 <script setup lang="ts">
-import type { ComboBoxValidationValue } from '@hareui/vue'
+import type { ComboBoxValidationValue, ListBoxItem } from '@hareui/vue'
 import { Button, ComboBox, Form } from '@hareui/vue'
 
-const animals = [
+const animals: ListBoxItem[] = [
   { value: 'aardvark', label: 'Aardvark' },
   { value: 'cat', label: 'Cat' },
   { value: 'dog', label: 'Dog' },
