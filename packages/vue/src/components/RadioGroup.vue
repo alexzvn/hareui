@@ -95,6 +95,7 @@ export interface RadioGroupSlots {
 <script setup lang="ts">
 import { RadioGroupItem as RekaRadioGroupItem, RadioGroupRoot } from 'reka-ui'
 import { computed, useId, useSlots, useTemplateRef } from 'vue'
+import { forwardRootClick } from '../composables/forwardRootClick'
 import { useComponentUI } from '../composables/useComponentUI'
 import { useFieldValidation } from '../composables/useFieldValidation'
 import Description from './Description.vue'
@@ -191,6 +192,7 @@ function onUpdate(value: unknown) {
       :data-disabled="disabled || item.disabled ? 'true' : undefined"
       :data-invalid="invalid ? 'true' : undefined"
       :class="ui.item({ class: props.ui?.item })"
+    @click="forwardRootClick($event, '[data-slot=radio-content]')"
     >
       <RekaRadioGroupItem
         :id="`${id}-${index}`"

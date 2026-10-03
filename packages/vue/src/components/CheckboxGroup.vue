@@ -96,6 +96,7 @@ export interface CheckboxGroupSlots {
 import { CheckboxGroupRoot, CheckboxRoot as RekaCheckboxRoot } from 'reka-ui'
 import type { ComponentPublicInstance } from 'vue'
 import { computed, useId, useSlots, useTemplateRef } from 'vue'
+import { forwardRootClick } from '../composables/forwardRootClick'
 import { useComponentUI } from '../composables/useComponentUI'
 import { useFieldValidation } from '../composables/useFieldValidation'
 import Description from './Description.vue'
@@ -196,6 +197,7 @@ function onUpdate(value: string[]) {
       :data-invalid="invalid ? 'true' : undefined"
       :data-readonly="readonly ? 'true' : undefined"
       :class="itemUi.base({ class: props.ui?.item })"
+    @click="forwardRootClick($event, '[data-slot=checkbox-content]')"
     >
       <RekaCheckboxRoot
         :id="`${id}-${index}`"

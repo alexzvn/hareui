@@ -63,3 +63,12 @@ describe('Switch', () => {
     expect(wrapper.find('[data-slot=switch-content]').attributes('aria-invalid')).toBe('true')
   })
 })
+
+describe('Switch row click', () => {
+  it('clicking the root outside the control toggles it', async () => {
+    const wrapper = mount(Switch, { props: { label: 'Wifi' }, attachTo: document.body })
+    await wrapper.find('[data-slot=switch]').trigger('click')
+    expect(wrapper.emitted('update:modelValue')).toEqual([[true]])
+    wrapper.unmount()
+  })
+})

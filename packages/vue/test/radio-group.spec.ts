@@ -57,3 +57,12 @@ describe('RadioGroup', () => {
     wrapper.unmount()
   })
 })
+
+describe('RadioGroup row click', () => {
+  it('clicking the empty space of an item row selects it', async () => {
+    const wrapper = mount(RadioGroup, { props: { items: [{ value: 'a', label: 'A' }, { value: 'b', label: 'B' }] }, attachTo: document.body })
+    await wrapper.findAll('[data-slot=radio]')[1]!.trigger('click')
+    expect(wrapper.emitted('update:modelValue')).toEqual([['b']])
+    wrapper.unmount()
+  })
+})
