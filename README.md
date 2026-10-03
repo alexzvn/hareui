@@ -1,4 +1,7 @@
 <p align="center">
+  <a href="https://hareui.alexzvn.me">
+    <img src="https://img.shields.io/badge/docs-hareui.alexzvn.me-black?style=flat" alt="Documentation">
+  </a>
   <a href="https://github.com/alexzvn/hareui/blob/main/LICENSE">
     <img src="https://img.shields.io/badge/license-MIT-blue?style=flat" alt="License">
   </a>
@@ -8,6 +11,8 @@
 </p>
 
 # HareUI
+
+**Documentation: [hareui.alexzvn.me](https://hareui.alexzvn.me)**
 
 HareUI is a Vue 3 port of [HeroUI v3](https://heroui.com). It pairs the accessible primitives of [Reka UI](https://reka-ui.com) with the utility-first styling of [Tailwind CSS v4](https://tailwindcss.com), and keeps HeroUI's design, tokens and component API.
 
@@ -46,7 +51,7 @@ import { Button } from '@hareui/vue'
 
 ## Documentation
 
-See the [docs](https://github.com/alexzvn/hareui/tree/main/docs/docs) for theming, dark mode, styling, composition and every component.
+Visit [hareui.alexzvn.me](https://hareui.alexzvn.me) for theming, dark mode, styling, composition and every component. AI tools can read the docs as [llms.txt](https://hareui.alexzvn.me/llms.txt) or [llms-full.txt](https://hareui.alexzvn.me/llms-full.txt).
 
 ## Contributing
 

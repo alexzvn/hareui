@@ -159,10 +159,6 @@
       @apply border-none bg-surface px-1 font-sans text-xs font-medium text-muted;
     }
   }
-
-  [aria-label="GitHub"] {
-    @apply w-0 opacity-0;
-  }
 }
 
 /* Sub Navigation */

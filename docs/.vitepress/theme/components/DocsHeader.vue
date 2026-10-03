@@ -8,6 +8,8 @@ import FrameworkTabs from './FrameworkTabs.vue'
 import ThemeToggle from './ThemeToggle.vue'
 import DesignThemeSelector from './DesignThemeSelector.vue'
 import HareLogo from './HareLogo.vue'
+import BrandIcon from './BrandIcon.vue'
+import { REPO_URL } from '../repo'
 
 defineProps<{ sections: SidebarSection[]; activeSection?: SidebarSection }>()
 const emit = defineEmits<{ search: []; openSidebar: [] }>()
@@ -75,6 +77,9 @@ const TAB = 'hover:text-fd-accent-foreground inline-flex items-center gap-2 bord
           </button>
         </div>
         <div class="flex items-center gap-2 max-md:hidden">
+          <a :href="REPO_URL" aria-label="GitHub" rel="noopener noreferrer" target="_blank" :class="searchIconButton">
+            <BrandIcon name="github" class="size-4" />
+          </a>
           <ThemeToggle />
         </div>
       </div>
