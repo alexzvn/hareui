@@ -196,6 +196,7 @@ import FieldError from '../field-error/FieldError.vue'
 import Label from '../label/Label.vue'
 import { countRows, filterEntries, flattenEntries, itemText } from '../list-box/listBoxCollection'
 import ListBoxRows from '../list-box/ListBoxRows.vue'
+import { usePressRelease } from '../select/pressRelease'
 
 defineOptions({ inheritAttrs: false })
 
@@ -276,7 +277,10 @@ const matches = computed(() => {
     return (_item: ListBoxItem) => true
   return (item: ListBoxItem) => (filter ?? contains)(textOf(item), text)
 })
-const blocks = computed(() => filterEntries(props.items, matches.value))
+const liveBlocks = computed(() => filterEntries(props.items, matches.value))
+// What the popover renders: the live collection while open; RAC keeps the last one while the popover animates out
+// (committing rewrites the text to the selected label, which would collapse the list mid-exit)
+const blocks = shallowRef(liveBlocks.value)
 const visibleCount = computed(() => countRows(blocks.value))
 // What the open checks see: the filtered list of the current text (RAC `filteredCollection`)
 const filteredCount = computed(() => {
@@ -289,6 +293,10 @@ const filteredCount = computed(() => {
 // ---- Open state (the `open` prop wins when bound) ---------------------------------------------------------------
 const uncontrolledOpen = ref(props.defaultOpen ?? false)
 const isOpen = computed(() => (props.open ?? uncontrolledOpen.value) && !props.disabled)
+watch([liveBlocks, isOpen], ([live, open]) => {
+  if (open)
+    blocks.value = live
+})
 function setOpenState(value: boolean) {
   if (value === isOpen.value)
     return
@@ -404,11 +412,14 @@ function setHighlight(el: HTMLElement | null | undefined) {
     listbox.highlightedElement.value = null
 }
 // RAC `useSelectableCollection` autoFocus: the first selected option, else first / last per strategy, else none
+// Reka's own `highlightSelected` (which falls back to the first option) runs a few ticks after a model change
+async function afterRekaHighlight() {
+  await nextTick()
+  await nextTick()
+  await nextTick()
+}
 async function highlightOnOpen(strategy: FocusStrategy) {
-  // After Reka's own `highlightSelected` (which falls back to the first option)
-  await nextTick()
-  await nextTick()
-  await nextTick()
+  await afterRekaHighlight()
   const list = enabledOptions()
   const selected = list.find(el => el.getAttribute('data-state') === 'checked')
   setHighlight(selected ?? (strategy === 'first' ? list[0] : strategy === 'last' ? list.at(-1) : null))
@@ -451,8 +462,14 @@ function onInput(event: Event) {
 function onInputTextChange() {
   setHighlight(null)
   showAll.value = false
-  if (!multiple.value && inputValue.value === '')
+  if (!multiple.value && inputValue.value === '') {
+    const hadSelection = selection.value != null
     selection.value = null
+    // Reka re-highlights its first option when the model changes; RAC keeps no focused option, so Tab / Enter
+    // commit the cleared value
+    if (hadSelection)
+      afterRekaHighlight().then(() => setHighlight(null))
+  }
   if (focused.value && (filteredCount.value > 0 || props.allowsEmptyCollection) && !isOpen.value && props.menuTrigger !== 'manual')
     open(null, 'input')
   else if (isOpen.value && !props.allowsEmptyCollection && filteredCount.value === 0)
@@ -578,13 +595,17 @@ function onTriggerClick(event: MouseEvent) {
 }
 
 // ---- Selection from the list (Reka ComboboxItem / ListboxRoot) --------------------------------------------------
+const pressRelease = usePressRelease()
 const rekaValue = computed(() => multiple.value ? selectedValues.value : (selectedKey.value ?? undefined))
 function onRekaValue(value: unknown) {
   if (multiple.value) {
     selection.value = Array.isArray(value) ? value as ListBoxValue[] : []
-    // RAC resets the text and keeps the popover open (Reka keeps the picked option highlighted)
+    // RAC resets the text and keeps the popover open. Reka keeps the picked option highlighted; RAC drops the
+    // virtual focus after a pointer pick and keeps it after a keyboard one
     inputValue.value = ''
     showAll.value = false
+    if (!keyboardModality.value)
+      afterRekaHighlight().then(() => setHighlight(null))
   }
   else {
     const key = (value as ListBoxValue | undefined) ?? null
@@ -847,6 +868,8 @@ function optionAttrs(row: CollectionRow) {
           :data-empty="visibleCount ? undefined : 'true'"
           :class="listBoxUi.base()"
           @mousedown.prevent
+          @pointerdown="pressRelease.onPointerdown"
+          @pointerup="pressRelease.onPointerup"
         >
           <ListBoxRows
             :blocks="blocks"

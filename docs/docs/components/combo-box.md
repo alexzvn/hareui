@@ -231,7 +231,7 @@ app.use(createHareUI({
 ComboBox follows the ARIA combobox pattern:
 
 - Focus stays in the input; the arrow keys, Home / End and Page Up / Page Down move a virtual focus through the options (`aria-activedescendant`), Enter selects, Escape reverts the text and closes
-- Typing filters the options; on blur, text that matches no option reverts to the selected option (unless `allows-custom-value`)
+- Typing filters the options; on blur, text that matches no option reverts to the selected option (unless `allows-custom-value`). Clearing the text clears the selection
 - The trigger button is not in the tab order and keeps focus in the input
 - The label, description and error are linked to the input with `aria-labelledby` / `aria-describedby`
 - With `name`, the selected value (or text) is submitted with forms; `required` uses native validation
