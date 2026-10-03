@@ -96,7 +96,7 @@ export interface CheckboxGroupSlots<T extends CheckboxGroupItem = CheckboxGroupI
 import { CheckboxGroupRoot, CheckboxRoot as RekaCheckboxRoot } from 'reka-ui'
 import type { ComponentPublicInstance } from 'vue'
 import { computed, useId, useSlots, useTemplateRef } from 'vue'
-import { forwardRootClick, keepFocusWhenReadonly, submitOnEnter, trackRootClick } from '../../composables/forwardRootClick'
+import { forwardRootClick, keepFocusWhenReadonly, submitOnEnter } from '../../composables/forwardRootClick'
 import { useComponentUI } from '../../composables/useComponentUI'
 import { useFieldValidation } from '../../composables/useFieldValidation'
 import Description from '../description/Description.vue'
@@ -198,7 +198,6 @@ function onUpdate(value: string[]) {
       :data-invalid="invalid ? 'true' : undefined"
       :data-readonly="readonly ? 'true' : undefined"
       :class="itemUi.base({ class: props.ui?.item })"
-      @click.capture="trackRootClick($event, '[data-slot=checkbox-content]')"
       @click="forwardRootClick($event, '[data-slot=checkbox-content]')"
       @mousedown="keepFocusWhenReadonly($event, readonly, '[data-slot=checkbox-content]')"
     >

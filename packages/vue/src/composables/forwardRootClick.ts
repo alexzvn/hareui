@@ -1,31 +1,25 @@
 const INTERACTIVE = 'a[href], button, input, select, textarea, label, [role=button], [role=checkbox], [role=radio], [role=switch], [contenteditable=""], [contenteditable=true]'
 
-// Decision per click, taken in the capture phase while the clicked node is still in the document.
-const pending = new WeakMap<Event, boolean>()
+// The click's path, snapshotted in the document's capture phase while the clicked node is still in the document.
+// The control's own click handler can re-render and detach the clicked node (the indeterminate glyph swapped for the
+// checkmark) before the root's bubbling handler runs; `contains(target)` is then false and the click would be
+// forwarded a second time. A native listener rather than a second Vue `@click.capture` on the root: Vue skips any
+// later handler on an event whose timestamp isn't after the handler was attached, so a click in the same millisecond
+// as the mount never reached `forwardRootClick`.
+const paths = new WeakMap<Event, EventTarget[]>()
+if (typeof document !== 'undefined')
+  document.addEventListener('click', event => paths.set(event, event.composedPath()), true)
 
-function shouldForward(root: HTMLElement, target: Element | null, content: HTMLElement): boolean {
-  for (let node = target; node; node = node.parentElement) {
+function shouldForward(root: HTMLElement, path: EventTarget[], content: HTMLElement): boolean {
+  for (const node of path) {
     if (node === content)
       return false
     if (node === root)
       return true
-    if (node.matches(INTERACTIVE))
+    if (node instanceof Element && node.matches(INTERACTIVE))
       return false
   }
   return false
-}
-
-/**
- * Capture-phase half of {@link forwardRootClick}, bound as `@click.capture` on the same root. The control's own
- * click handler can re-render and detach the clicked node (the indeterminate glyph swapped for the checkmark)
- * before the root's bubbling handler runs; by then `contains(target)` is false and the click would be forwarded
- * a second time. So the decision is taken here, before any handler below the root has run.
- */
-export function trackRootClick(event: MouseEvent, contentSelector: string) {
-  const root = event.currentTarget as HTMLElement | null
-  const content = root?.querySelector<HTMLElement>(contentSelector)
-  if (root && content)
-    pending.set(event, shouldForward(root, event.target as Element | null, content))
 }
 
 /**
@@ -33,7 +27,6 @@ export function trackRootClick(event: MouseEvent, contentSelector: string) {
  * (including the empty space beside the label text, and the description) toggles it. HareUI's item
  * root is a `<div>` around the Reka control button, so forward clicks that land outside the button.
  * Clicks on the control itself, or on nested interactive content (a link in a description), are left alone.
- * Pair with {@link trackRootClick} on `@click.capture`.
  */
 export function forwardRootClick(event: MouseEvent, contentSelector: string) {
   const root = event.currentTarget as HTMLElement | null
@@ -42,9 +35,8 @@ export function forwardRootClick(event: MouseEvent, contentSelector: string) {
   const content = root.querySelector<HTMLElement>(contentSelector)
   if (!content)
     return
-  const forward = pending.get(event) ?? shouldForward(root, event.target as Element | null, content)
-  pending.delete(event)
-  if (forward)
+  const path = paths.get(event) ?? event.composedPath()
+  if (shouldForward(root, path, content))
     content.click()
 }
 

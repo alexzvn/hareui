@@ -1,5 +1,5 @@
 import { mount } from '@vue/test-utils'
-import { describe, expect, it } from 'vitest'
+import { describe, expect, it, vi } from 'vitest'
 import { defineComponent, h, ref } from 'vue'
 import Checkbox from '../src/components/checkbox/Checkbox.vue'
 import Label from '../src/components/label/Label.vue'
@@ -139,5 +139,18 @@ describe('Checkbox keyboard and readonly parity', () => {
     expect(editableDown.defaultPrevented).toBe(false)
     wrapper.unmount()
     editable.unmount()
+  })
+})
+
+describe('Checkbox root click timing', () => {
+  // Vue skips a later handler on an event stamped no later than the handler's attach time; a click in the same
+  // millisecond as the mount must still reach the root's forwarding handler.
+  it('toggles on a root click in the same millisecond as the mount', async () => {
+    const now = vi.spyOn(Date, 'now').mockReturnValue(1_000_000)
+    const wrapper = mount(Checkbox, { props: { label: 'Terms' }, attachTo: document.body })
+    await wrapper.find('[data-slot=checkbox]').trigger('click')
+    expect(wrapper.emitted('update:modelValue')).toEqual([[true]])
+    wrapper.unmount()
+    now.mockRestore()
   })
 })

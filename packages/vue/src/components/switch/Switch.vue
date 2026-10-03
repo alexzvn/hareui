@@ -83,7 +83,7 @@ export interface SwitchSlots {
 <script setup lang="ts">
 import { SwitchRoot } from 'reka-ui'
 import { computed, ref, useId, useSlots, useTemplateRef } from 'vue'
-import { forwardRootClick, keepFocusWhenReadonly, submitOnEnter, trackRootClick } from '../../composables/forwardRootClick'
+import { forwardRootClick, keepFocusWhenReadonly, submitOnEnter } from '../../composables/forwardRootClick'
 import { useComponentUI } from '../../composables/useComponentUI'
 import { useFieldValidation } from '../../composables/useFieldValidation'
 import Description from '../description/Description.vue'
@@ -153,7 +153,6 @@ function onUpdate(value: boolean) {
     :data-readonly="readonly ? 'true' : undefined"
     :data-required="required ? 'true' : undefined"
     :class="ui.base({ class: [props.ui?.base, props.class] })"
-    @click.capture="trackRootClick($event, '[data-slot=switch-content]')"
     @click="forwardRootClick($event, '[data-slot=switch-content]')"
     @mousedown="keepFocusWhenReadonly($event, readonly, '[data-slot=switch-content]')"
   >
