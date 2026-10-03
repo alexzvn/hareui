@@ -229,9 +229,33 @@ function onCalendarSelect(value: DateValue) {
   isOpen.value = false
   trigger.value?.focus()
 }
+// Also runs when the already-selected date is picked again (the Calendar re-emits it): React Aria still closes.
 function onCalendarUpdate(value: DateValue | DateValue[] | undefined) {
   if (value && !Array.isArray(value))
     onCalendarSelect(value)
+}
+
+// React Aria's `useDatePickerGroup`: Alt+ArrowDown/ArrowUp on a segment opens the calendar instead of
+// stepping the segment. Captured on the field root so it runs before the segment's own handler.
+function onFieldKeydown(event: KeyboardEvent) {
+  if (!event.altKey || (event.key !== 'ArrowDown' && event.key !== 'ArrowUp') || props.disabled || props.readonly)
+    return
+  event.preventDefault()
+  event.stopPropagation()
+  isOpen.value = true
+}
+
+// React Aria returns focus to the trigger whenever the popover closes, outside clicks included; Reka's
+// non-modal popover skips that after an outside interaction.
+function onCloseAutoFocus(event: Event) {
+  event.preventDefault()
+  trigger.value?.focus()
+}
+// Escape closes the whole popover even while the calendar's year picker is open (the year picker marks the
+// event handled to close itself, which would otherwise stop Reka's dismissal).
+function onEscapeKeyDown(event: KeyboardEvent) {
+  if (event.defaultPrevented)
+    isOpen.value = false
 }
 
 // React Aria's calendar takes focus on open (its focused date: the value, else the placeholder, else today, else
@@ -252,6 +276,7 @@ const autoId = useId()
 const id = computed(() => props.id ?? autoId)
 const hasLabel = computed(() => !!(props.label || slots.label))
 const labelId = computed(() => `${id.value}-label`)
+const triggerId = computed(() => `${id.value}-trigger`)
 const hasError = computed(() => invalid.value && !!(props.errorMessage || slots.error || validation.value.validationErrors.length))
 // Matches DateField/TimeField's own convention: hide the description while invalid
 const hasDescription = computed(() => !!(props.description || slots.description) && !invalid.value)
@@ -302,6 +327,7 @@ const groupUiProps = computed<DateInputGroupProps['ui']>(() => ({
       :class="ui.base({ class: [props.ui?.base, props.class] })"
       @update:model-value="onFieldUpdate"
       @update:placeholder="emit('update:placeholder', $event)"
+      @keydown.capture="onFieldKeydown"
     >
       <template #default="{ segments }">
         <!-- `as` falls through to Reka `Label`: the group label names the input group via aria-labelledby, not a single form control (HeroUI renders a span) -->
@@ -322,8 +348,11 @@ const groupUiProps = computed<DateInputGroupProps['ui']>(() => ({
             <template #suffix>
               <PopoverTrigger as-child>
                 <button
+                  :id="triggerId"
                   ref="trigger"
                   type="button"
+                  aria-label="Calendar"
+                  :aria-labelledby="hasLabel ? `${triggerId} ${labelId}` : undefined"
                   data-slot="date-picker-trigger"
                   :disabled="disabled"
                   :class="ui.trigger({ class: props.ui?.trigger })"
@@ -358,6 +387,8 @@ const groupUiProps = computed<DateInputGroupProps['ui']>(() => ({
         :collision-padding="8"
         :class="ui.popover({ class: props.ui?.popover })"
         @open-auto-focus="onOpenAutoFocus"
+        @close-auto-focus="onCloseAutoFocus"
+        @escape-key-down="onEscapeKeyDown"
       >
         <slot name="calendar" :value="modelValue" :on-select="onCalendarSelect">
           <!--

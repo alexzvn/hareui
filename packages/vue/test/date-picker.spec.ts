@@ -213,4 +213,14 @@ describe('datePicker', () => {
     expect(wrapper.findAll('[role=spinbutton]').map(s => s.attributes('aria-invalid'))).toEqual(['true', 'true', 'true'])
     expect(wrapper.get('[data-slot=date-input-group-input]').attributes('data-invalid')).toBeDefined()
   })
+
+  // behaviour-final-check P6
+  it('names the trigger "Calendar", together with the field label', () => {
+    const wrapper = mount(DatePicker, { props: { label: 'Date' } })
+    const button = wrapper.get(trigger)
+    expect(button.attributes('aria-label')).toBe('Calendar')
+    const [self, label] = button.attributes('aria-labelledby')!.split(' ')
+    expect(self).toBe(button.attributes('id'))
+    expect(wrapper.get(`#${label}`).text()).toBe('Date')
+  })
 })

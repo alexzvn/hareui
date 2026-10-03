@@ -215,17 +215,31 @@ watch(committed, (value) => {
   draft.value = value ?? EMPTY
 })
 
-function commit(value: DateRangeValue | null) {
+function commit(value: DateRangeValue | null, validate = true) {
   draft.value = value ?? EMPTY
   modelValue.value = value
-  commitValidation()
+  if (validate)
+    commitValidation()
 }
+// React Aria commits a segment-edited range's validation when focus leaves the field, not on every keystroke,
+// so e.g. a range that is briefly reversed mid-edit isn't flagged until the user is done.
+let validationPending = false
 function onFieldUpdate(value: DateRange) {
   draft.value = value
   if (isComplete(value))
-    commit(value)
+    commit(value, false)
   else if (!value.start && !value.end && committed.value)
-    commit(null)
+    commit(null, false)
+  else
+    return
+  validationPending = true
+}
+function onFieldFocusOut(event: FocusEvent) {
+  const field = root.value?.$el as HTMLElement | undefined
+  if (!validationPending || (event.relatedTarget instanceof Node && field?.contains(event.relatedTarget)))
+    return
+  validationPending = false
+  commitValidation()
 }
 
 // React Aria's `useDateRangePickerState`: picking dates in the calendar keeps the time of day already in the
@@ -247,6 +261,7 @@ function onCalendarChange(range: DateRangeValue) {
 // Completing a range in the calendar closes the popover and refocuses the trigger (React Aria's
 // `shouldCloseOnSelect` default).
 function onCalendarSelect(range: DateRangeValue) {
+  validationPending = false
   commit(range)
   isOpen.value = false
   trigger.value?.focus()
@@ -301,6 +316,7 @@ const autoId = useId()
 const id = computed(() => props.id ?? autoId)
 const hasLabel = computed(() => !!(props.label || slots.label))
 const labelId = computed(() => `${id.value}-label`)
+const triggerId = computed(() => `${id.value}-trigger`)
 const hasError = computed(() => invalid.value && !!(props.errorMessage || slots.error || validation.value.validationErrors.length))
 const hasDescription = computed(() => !!(props.description || slots.description) && !invalid.value)
 const descriptionId = computed(() => `${id.value}-description`)
@@ -320,11 +336,11 @@ const groupUiProps = computed<DateInputGroupProps['ui']>(() => ({
   suffix: 'pointer-events-auto',
 }))
 
-// React Aria's calendar takes focus on open (its focused date: the range start, else the placeholder, else
+// React Aria's calendar takes focus on open (its focused date: the range end, else the placeholder, else
 // today, else the first available day). Reka's PopoverContent would focus the first tabbable (the year-picker trigger) instead.
 function onOpenAutoFocus(event: Event) {
   const content = event.target as HTMLElement | null
-  const focusDate = committed.value?.start ?? props.placeholder ?? props.defaultPlaceholder
+  const focusDate = committed.value?.end ?? props.placeholder ?? props.defaultPlaceholder
   const cell = (focusDate ? content?.querySelector<HTMLElement>(`[data-value="${focusDate.toString().slice(0, 10)}"]:not([data-outside-view])`) : null)
     ?? content?.querySelector<HTMLElement>('[data-today]:not([data-outside-view])')
     ?? content?.querySelector<HTMLElement>('[data-value]:not([data-outside-view]):not([data-disabled]):not([data-unavailable])')
@@ -332,6 +348,29 @@ function onOpenAutoFocus(event: Event) {
     event.preventDefault()
     cell.focus()
   }
+}
+
+// React Aria's `useDatePickerGroup`: Alt+ArrowDown/ArrowUp on a segment opens the calendar instead of
+// stepping the segment. Captured on the field root so it runs before the segment's own handler.
+function onFieldKeydown(event: KeyboardEvent) {
+  if (!event.altKey || (event.key !== 'ArrowDown' && event.key !== 'ArrowUp') || props.disabled || props.readonly)
+    return
+  event.preventDefault()
+  event.stopPropagation()
+  isOpen.value = true
+}
+
+// React Aria returns focus to the trigger whenever the popover closes, outside clicks included; Reka's
+// non-modal popover skips that after an outside interaction.
+function onCloseAutoFocus(event: Event) {
+  event.preventDefault()
+  trigger.value?.focus()
+}
+// Escape closes the whole popover even while the calendar's year picker is open (the year picker marks the
+// event handled to close itself, which would otherwise stop Reka's dismissal).
+function onEscapeKeyDown(event: KeyboardEvent) {
+  if (event.defaultPrevented)
+    isOpen.value = false
 }
 
 function focusFirstSegment() {
@@ -368,6 +407,8 @@ function focusFirstSegment() {
       :data-required="required ? 'true' : undefined"
       :aria-describedby="describedBy"
       :class="ui.base({ class: [props.ui?.base, props.class] })"
+      @keydown.capture="onFieldKeydown"
+      @focusout="onFieldFocusOut"
     >
       <Label v-if="hasLabel" :id="labelId" as="span" :disabled="disabled" :invalid="invalid" :required="required">
         <slot name="label">{{ label }}</slot>
@@ -393,8 +434,12 @@ function focusFirstSegment() {
           <template #suffix>
             <DateRangePickerTrigger as-child>
               <button
+                :id="triggerId"
                 ref="trigger"
                 type="button"
+                aria-label="Calendar"
+                :aria-labelledby="hasLabel ? `${triggerId} ${labelId}` : undefined"
+                :data-reka-date-field-segment="undefined"
                 data-slot="date-range-picker-trigger"
                 :disabled="disabled"
                 :class="ui.trigger({ class: props.ui?.trigger })"
@@ -442,6 +487,8 @@ function focusFirstSegment() {
         :collision-padding="8"
         :class="ui.popover({ class: props.ui?.popover })"
         @open-auto-focus="onOpenAutoFocus"
+        @close-auto-focus="onCloseAutoFocus"
+        @escape-key-down="onEscapeKeyDown"
       >
         <slot name="calendar" :value="committed" :on-select="onCalendarSelect" :on-change="onCalendarChange">
           <!--
@@ -451,7 +498,7 @@ function focusFirstSegment() {
           -->
           <RangeCalendar
             :model-value="committed ?? EMPTY"
-            :default-placeholder="placeholder ?? defaultPlaceholder"
+            :default-placeholder="committed?.end ?? placeholder ?? defaultPlaceholder"
             :is-date-unavailable="isDateUnavailable"
             :allow-non-contiguous-ranges="allowNonContiguousRanges"
             :locale="locale"

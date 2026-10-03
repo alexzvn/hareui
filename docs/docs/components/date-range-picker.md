@@ -178,8 +178,10 @@ app.use(createHareUI({
 - The label names the input group (`aria-labelledby`); each end is its own segmented spinbutton group
 - The field's `aria-describedby` lists the ids of the rendered description (`<id>-description`) and error (`<id>-error`)
 - `start-name`/`end-name` submit each end through its own hidden input, which also carries native `required`
-- Keyboard: <kbd>←</kbd>/<kbd>→</kbd> move between segments (across the separator), <kbd>↑</kbd>/<kbd>↓</kbd> increment/decrement the focused segment, digits type directly into the focused segment and auto-advance
-- Opening the popover moves focus into the calendar (the range start, else today); <kbd>Esc</kbd> or an outside click closes it, and completing a range closes it and returns focus to the trigger
+- Keyboard: <kbd>←</kbd>/<kbd>→</kbd> move between segments (across the separator), <kbd>↑</kbd>/<kbd>↓</kbd> increment/decrement the focused segment (a 12-hour hour stays within its AM/PM period), <kbd>PgUp</kbd>/<kbd>PgDn</kbd> step it by a larger amount, <kbd>Home</kbd>/<kbd>End</kbd> set it to its minimum/maximum, digits type directly into the focused segment and auto-advance
+- The trigger button is named "Calendar"; <kbd>Alt</kbd>+<kbd>↓</kbd> on a segment also opens the popover
+- Opening the popover moves focus into the calendar (the range end, else today); <kbd>Esc</kbd> (even with the year picker open), an outside click or completing a range closes it and returns focus to the trigger
+- A range edited through the segments is validated when focus leaves the field, so a range that is briefly reversed mid-edit isn't flagged
 
 ## Related Components
 
