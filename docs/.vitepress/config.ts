@@ -41,6 +41,9 @@ export default defineConfigWithTheme<ThemeConfig>({
   },
   vite: {
     plugins: [tailwindcss()],
+    // Tailwind emits `:is()` (never matches) where a variant's nested `&::before` meets a pseudo-element variant
+    // (`motion-reduce:before:*`); esbuild's minifier flags that valid selector as a syntax error, lightningcss doesn't.
+    build: { cssMinify: 'lightningcss' },
     resolve: {
       alias: {
         '@hareui/vue': fileURLToPath(new URL('../../packages/vue/src/index.ts', import.meta.url)),
