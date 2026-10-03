@@ -10,13 +10,7 @@ export function useFirstChild(root: Ref<Element | { $el?: unknown } | null | und
   const firstChild = shallowRef<Element | null>(null)
   let observer: MutationObserver | undefined
 
-  function resolve(): Element | null {
-    const value = root.value
-    if (value instanceof Element)
-      return value
-    const el = (value as { $el?: unknown } | null | undefined)?.$el
-    return el instanceof Element ? el : null
-  }
+  const resolve = () => refElement(root.value)
 
   function attach() {
     observer?.disconnect()
@@ -38,8 +32,10 @@ export function useFirstChild(root: Ref<Element | { $el?: unknown } | null | und
   return firstChild
 }
 
-/** Resolves a component/element template ref to its DOM element. */
+/** Resolves a component/element template ref to its DOM element. `null` during SSR, where `Element` is undefined. */
 export function refElement(value: unknown): Element | null {
+  if (typeof Element === 'undefined')
+    return null
   if (value instanceof Element)
     return value
   const el = (value as { $el?: unknown } | null | undefined)?.$el
