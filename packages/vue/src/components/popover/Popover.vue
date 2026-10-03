@@ -82,7 +82,7 @@ import {
   PopoverRoot,
   PopoverTrigger,
 } from 'reka-ui'
-import { computed, ref, useSlots } from 'vue'
+import { computed, onBeforeUnmount, ref, useId, useSlots, watch } from 'vue'
 import { useComponentUI } from '../../composables/useComponentUI'
 
 // `open: undefined` stops Vue casting an absent boolean prop to `false`, so uncontrolled mode and `defaultOpen` apply
@@ -104,11 +104,63 @@ const ui = useComponentUI('popover', theme, () => ({}))
 
 const dialogRef = ref<HTMLElement>()
 const hasHeading = computed(() => !!(props.title || slots.title))
+// React Aria labels the dialog by its title heading (Reka labels it by the trigger).
+const headingId = useId()
+
+const openState = ref(props.defaultOpen ?? false)
+const isOpen = computed(() => props.open ?? openState.value)
+function setOpen(value: boolean) {
+  openState.value = value
+  emit('update:open', value)
+}
 
 function preventIfNotDismissible(event: Event) {
   if (!props.dismissible)
     event.preventDefault()
 }
+
+// Outside pointerdown already handled by `onDocumentPointerDown`, so Reka must not dismiss a second time.
+let handledOutsideEvent: Event | undefined
+
+// React Aria's useInteractOutside only reacts to the primary button, so a right click outside keeps the popover open.
+function onPointerDownOutside(event: CustomEvent<{ originalEvent: PointerEvent }>) {
+  const original = event.detail.originalEvent
+  if (!props.dismissible || original === handledOutsideEvent || original.button > 0)
+    event.preventDefault()
+}
+
+// Reka's DismissableLayer only starts listening for outside pointerdowns a task after the content mounts,
+// so a press right after opening is lost. React Aria listens as soon as the popover is open: cover that gap
+// for events created after the popover opened (the opening press itself is older and is ignored).
+let openedAt = 0
+function onDocumentPointerDown(event: PointerEvent) {
+  const content = dialogRef.value?.closest<HTMLElement>('[data-dismissable-layer]')
+  const target = event.target
+  if (!content || !isOpen.value || !props.dismissible || event.button > 0 || event.timeStamp < openedAt || !(target instanceof Element))
+    return
+  // Only the topmost layer reacts, and presses inside any dismissable layer are left to Reka (nested overlays).
+  const layers = content.ownerDocument.querySelectorAll('[data-dismissable-layer]')
+  if (layers[layers.length - 1] !== content || target.closest('[data-dismissable-layer]'))
+    return
+  handledOutsideEvent = event
+  setOpen(false)
+}
+
+function stopListening() {
+  document.removeEventListener('pointerdown', onDocumentPointerDown, true)
+}
+watch(dialogRef, (el) => {
+  stopListening()
+  if (el) {
+    // Reka hard-codes `aria-labelledby` to the trigger id below any attrs we pass, so relabel the dialog
+    // here; Vue never re-patches it because Reka's value doesn't change between renders.
+    if (hasHeading.value)
+      el.closest('[role=dialog]')?.setAttribute('aria-labelledby', headingId)
+    openedAt = performance.now()
+    document.addEventListener('pointerdown', onDocumentPointerDown, true)
+  }
+})
+onBeforeUnmount(stopListening)
 
 // React Aria moves focus into the dialog element itself when the popover opens;
 // Reka's PopperContent otherwise focuses its own root, so redirect it here to match.
@@ -125,8 +177,8 @@ const contentOffset = computed(() => props.sideOffset - (props.arrow ? ARROW_HEI
 </script>
 
 <template>
-  <PopoverRoot :open="open" :default-open="defaultOpen" :modal="false" v-slot="{ open: isOpen, close }" @update:open="emit('update:open', $event)">
-    <PopoverTrigger v-if="!!slots.default" as-child>
+  <PopoverRoot :open="isOpen" modal v-slot="{ close }" @update:open="setOpen">
+    <PopoverTrigger v-if="!!slots.default" as-child :data-pressed="isOpen ? 'true' : undefined">
       <slot :open="isOpen" />
     </PopoverTrigger>
     <PopoverPortal :disabled="portal === false" :to="typeof portal === 'boolean' ? 'body' : portal">
@@ -139,14 +191,14 @@ const contentOffset = computed(() => props.sideOffset - (props.arrow ? ARROW_HEI
         :collision-padding="8"
         :class="ui.base({ class: [props.ui?.base, props.class] })"
         @escape-key-down="preventIfNotDismissible"
-        @pointer-down-outside="preventIfNotDismissible"
+        @pointer-down-outside="onPointerDownOutside"
         @interact-outside="preventIfNotDismissible"
         @open-auto-focus="onOpenAutoFocus"
       >
         <div ref="dialogRef" data-slot="popover-dialog" tabindex="-1" :class="ui.dialog({ class: props.ui?.dialog })">
-          <h3 v-if="hasHeading" data-slot="popover-heading" :class="ui.heading({ class: props.ui?.heading })">
+          <h2 v-if="hasHeading" :id="headingId" data-slot="popover-heading" :class="ui.heading({ class: props.ui?.heading })">
             <slot name="title">{{ title }}</slot>
-          </h3>
+          </h2>
           <slot name="content" :close="close" />
         </div>
         <PopoverArrow v-if="arrow" as-child>

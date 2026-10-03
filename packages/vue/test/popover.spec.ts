@@ -92,4 +92,35 @@ describe('popover', () => {
     await settle()
     expect(triggerEl().getAttribute('data-pressed')).toBeNull()
   })
+
+  it('labels the dialog by its h2 title heading', async () => {
+    // behaviour-final-check P4
+    mountPopover({ defaultOpen: true })
+    await settle()
+    const heading = document.querySelector<HTMLElement>('[data-slot=popover-heading]')!
+    expect(heading.tagName).toBe('H2')
+    expect(content()!.getAttribute('role')).toBe('dialog')
+    expect(content()!.getAttribute('aria-labelledby')).toBe(heading.id)
+  })
+
+  it('stays open on a right click outside, like React Aria', async () => {
+    const w = mountPopover({ defaultOpen: true })
+    await settle()
+    outside!.dispatchEvent(new PointerEvent('pointerdown', { bubbles: true, button: 2, pointerType: 'mouse' }))
+    await new Promise(r => setTimeout(r, 0))
+    outside!.dispatchEvent(new PointerEvent('pointerdown', { bubbles: true, button: 2, pointerType: 'mouse' }))
+    await settle()
+    expect(w.emitted('update:open')).toBeUndefined()
+    expect(content()).not.toBeNull()
+  })
+
+  it('stays open on an outside click when not dismissible', async () => {
+    const w = mountPopover({ defaultOpen: true, dismissible: false })
+    await settle()
+    outside!.dispatchEvent(new PointerEvent('pointerdown', { bubbles: true, button: 0, pointerType: 'mouse' }))
+    await new Promise(r => setTimeout(r, 0))
+    outside!.dispatchEvent(new PointerEvent('pointerdown', { bubbles: true, button: 0, pointerType: 'mouse' }))
+    await settle()
+    expect(w.emitted('update:open')).toBeUndefined()
+  })
 })
