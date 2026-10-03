@@ -132,7 +132,7 @@ export interface NumberFieldSlots {
 
 <script setup lang="ts">
 import { NumberFieldDecrement, NumberFieldIncrement, NumberFieldInput, NumberFieldRoot } from 'reka-ui'
-import { computed, ref, useAttrs, useId, useTemplateRef, watch } from 'vue'
+import { computed, getCurrentInstance, ref, useAttrs, useId, useTemplateRef, watch } from 'vue'
 import { useComponentUI } from '../../composables/useComponentUI'
 import { useFieldValidation } from '../../composables/useFieldValidation'
 import Description from '../description/Description.vue'
@@ -146,7 +146,9 @@ const props = withDefaults(defineProps<NumberFieldProps>(), { increment: true, d
 const slots = defineSlots<NumberFieldSlots>()
 /** The numeric value; `undefined` while the input is empty. */
 const modelValue = defineModel<number | null>()
-const emit = defineEmits<{ 'update:modelValue': [value: number | null | undefined] }>()
+// A second `defineEmits` for `update:modelValue` would clash with defineModel's emit type, so the forced emit below
+// goes through the instance.
+const instance = getCurrentInstance()
 
 // As in react-stately's useNumberFieldState: the incoming value and default are clamped into range
 // (and snapped to `step` when one is given) before display; the step falls back to 0.01 for percents.
@@ -200,7 +202,7 @@ function onCommitEmpty(event: Event) {
     return
   formValue.value = undefined
   if (modelValue.value == null)
-    emit('update:modelValue', undefined)
+    instance?.emit('update:modelValue', undefined)
   else
     modelValue.value = undefined
   commitValidation()
