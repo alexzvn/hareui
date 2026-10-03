@@ -251,11 +251,11 @@ grouped inside a labeled landmark region:
 
 - **Landmark region**: toasts render in a labeled landmark reachable with `F6`;
   `Alt` + `T` moves focus straight to it. The hotkey is configurable via the `hotkey`
-  prop and can be disabled by passing an empty array; the region label can be
-  overridden with `ariaLabel`
+  prop and can be disabled by passing an empty array; the region is labeled with the
+  toast count (e.g. "2 notifications.") and the label can be overridden with `ariaLabel`
 - **Keyboard**: `Tab` reaches the controls of visible toasts, `Escape` collapses the
   expanded stack, and dismissing a focused toast moves focus to the nearest remaining
-  toast
+  toast (or back to where focus was before entering the region when none remains)
 - **Screen readers**: each toast uses `role="alertdialog"` with its title and
   description linked; new toasts are announced automatically
 - **Timers**: auto-dismiss pauses while the stack is hovered or focused, and while

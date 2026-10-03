@@ -41,6 +41,8 @@ const props = defineProps<ToastItemProps>()
 const emit = defineEmits<{
   'height-change': [key: string, height: number]
   'height-remove': [key: string]
+  /** The toast held focus and is leaving the stack (exiting or pushed past the visible limit). */
+  'focus-leave': [el: HTMLElement]
 }>()
 
 const content = computed(() => (props.toast.content ?? {}) as ToastContentValue)
@@ -149,13 +151,16 @@ watch(toastHeight, (height) => {
 
 /* ------------------------------------------------------------------------------------------------
  * Focus / a11y: hidden and exiting toasts drop out of the tab order; browsers block
- * aria-hidden around a focused element, so focus moves out first.
+ * aria-hidden around a focused element, so focus moves out first: the provider moves it to a
+ * neighbouring toast (RAC's useToastRegion), and it is blurred if it is still inside.
  * -------------------------------------------------------------------------------------------- */
 watch(() => props.isHidden || props.isExiting, (shouldHide) => {
   const el = rootEl.value
   if (!el)
     return
   if (shouldHide) {
+    if (el.contains(document.activeElement))
+      emit('focus-leave', el)
     if (el.contains(document.activeElement))
       (document.activeElement as HTMLElement | null)?.blur()
     el.setAttribute('aria-hidden', 'true')

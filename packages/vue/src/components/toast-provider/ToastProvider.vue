@@ -46,8 +46,8 @@ export interface ToastProviderProps {
   /** Custom toast queue instance; defaults to the shared default queue used by `toast()`. */
   queue?: ToastQueue<ToastContentValueType>
   /**
-   * Accessible label for the region landmark.
-   * @defaultValue 'Notifications'
+   * Accessible label for the region landmark. Defaults to the toast count, as React Aria does
+   * (e.g. "2 notifications.").
    */
   ariaLabel?: string
   /**
@@ -94,7 +94,6 @@ const props = withDefaults(defineProps<ToastProviderProps>(), {
   hotkey: () => DEFAULT_HOTKEY,
   scaleFactor: DEFAULT_SCALE_FACTOR,
   width: DEFAULT_TOAST_WIDTH,
-  ariaLabel: 'Notifications',
   portal: true,
 })
 const slots = useSlots()
@@ -133,13 +132,20 @@ function onPointerLeave(event: PointerEvent) {
   pointerWithin = false
   collapseIfOutside()
 }
-function onFocusIn() {
+function onFocusIn(event: FocusEvent) {
   isPointerOrFocusWithin.value = true
+  const node = regionEl.value
+  const target = event.target as HTMLElement
+  if (node && target !== node)
+    lastFocusedInRegion = target
+  if (node && event.relatedTarget instanceof HTMLElement && !node.contains(event.relatedTarget))
+    lastFocusedOutside = event.relatedTarget
 }
 function onFocusOut(event: FocusEvent) {
   const node = regionEl.value
   if (node && event.relatedTarget instanceof Node && node.contains(event.relatedTarget))
     return
+  lastFocusedOutside = null
   collapseIfOutside()
 }
 function onGlobalPointerOver(event: PointerEvent) {
@@ -158,7 +164,52 @@ function onRegionKeyDown(event: KeyboardEvent) {
   pointerWithin = false
   isPointerOrFocusWithin.value = false
 }
+/* ------------------------------------------------------------------------------------------------
+ * Focus management (RAC useToastRegion / useLandmark). The region is the page's only landmark, so
+ * F6 / Shift+F6 move focus into it, back to the element last focused there when it still exists.
+ * A focused toast leaving the stack hands focus to a neighbouring toast, preferring the newer one,
+ * or back to where focus came from when none is left or the last interaction was a pointer one.
+ * -------------------------------------------------------------------------------------------- */
+let lastFocusedInRegion: HTMLElement | null = null
+let lastFocusedOutside: HTMLElement | null = null
+let pointerModality = false
+const onModalityPointer = () => { pointerModality = true }
+const onModalityKey = () => { pointerModality = false }
+
+function onLandmarkKeyDown(event: KeyboardEvent) {
+  const node = regionEl.value
+  if (!node || event.key !== 'F6' || event.altKey || node.closest('[aria-hidden=true]'))
+    return
+  event.preventDefault()
+  if (lastFocusedInRegion?.isConnected && node.contains(lastFocusedInRegion))
+    lastFocusedInRegion.focus()
+  else
+    node.focus()
+}
+
+function restoreOutsideFocus() {
+  if (lastFocusedOutside?.isConnected)
+    lastFocusedOutside.focus({ preventScroll: true })
+}
+
+function onFocusLeave(el: HTMLElement) {
+  const node = regionEl.value
+  if (!node)
+    return
+  if (pointerModality && lastFocusedOutside?.isConnected)
+    return restoreOutsideFocus()
+  const toasts = [...node.querySelectorAll<HTMLElement>('[data-slot=toast]')]
+  const index = toasts.indexOf(el)
+  const available = (toast: HTMLElement) => toast !== el && !toast.hasAttribute('data-exiting') && toast.getAttribute('aria-hidden') !== 'true'
+  const next = toasts.slice(0, index).reverse().find(available) ?? toasts.slice(index + 1).find(available)
+  if (next)
+    next.focus({ preventScroll: true })
+  else
+    restoreOutsideFocus()
+}
+
 function onDocumentKeyDown(event: KeyboardEvent) {
+  onLandmarkKeyDown(event)
   const node = regionEl.value
   const hotkey = props.hotkey
   if (!node || hotkey.length === 0)
@@ -174,14 +225,20 @@ function onDocumentKeyDown(event: KeyboardEvent) {
 onMounted(() => {
   document.addEventListener('pointerover', onGlobalPointerOver, true)
   document.addEventListener('keydown', onDocumentKeyDown)
+  document.addEventListener('pointerdown', onModalityPointer, true)
+  document.addEventListener('keydown', onModalityKey, true)
 })
 onBeforeUnmount(() => {
   document.removeEventListener('pointerover', onGlobalPointerOver, true)
   document.removeEventListener('keydown', onDocumentKeyDown)
+  document.removeEventListener('pointerdown', onModalityPointer, true)
+  document.removeEventListener('keydown', onModalityKey, true)
 })
 
 // A single remaining toast never expands; exiting toasts don't count.
 const activeToastCount = computed(() => visibleToasts.value.length - exitingKeys.value.size)
+// RAC's default region label (`toastRegion.notifications` in @react-aria/toast's en-US strings).
+const regionLabel = computed(() => props.ariaLabel ?? `${activeToastCount.value} notification${activeToastCount.value === 1 ? '' : 's'}.`)
 const resolvedIsExpanded = computed(() => (props.isExpanded || isPointerOrFocusWithin.value) && activeToastCount.value > 1)
 
 // Interacting with the stack pauses every timer. A closing toast vanishing under the cursor
@@ -298,7 +355,7 @@ const renderItems = computed<RenderItem[]>(() => {
       v-if="visibleToasts.length > 0"
       ref="regionEl"
       role="region"
-      :aria-label="ariaLabel"
+      :aria-label="regionLabel"
       tabindex="-1"
       data-slot="toast-region"
       :data-expanded="resolvedIsExpanded ? 'true' : undefined"
@@ -332,6 +389,7 @@ const renderItems = computed<RenderItem[]>(() => {
         :toast-slot="slots.toast"
         @height-change="onHeightChange"
         @height-remove="onHeightRemove"
+        @focus-leave="onFocusLeave"
       />
     </div>
   </Teleport>

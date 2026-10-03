@@ -191,5 +191,34 @@ describe('toast', () => {
       expect(closing.getAttribute('data-exiting')).toBe('true')
       expect(remaining.contains(document.activeElement)).toBe(true)
     })
+
+    it('closing the last focused toast returns focus to where it came from', async () => {
+      trigger = document.createElement('button')
+      document.body.appendChild(trigger)
+      mounted = mount(ToastProvider, { props: { portal: false }, attachTo: document.body })
+      toast('Only', { timeout: 0 })
+      await nextTick()
+      trigger.focus()
+      const close = toastEls()[0]!.querySelector<HTMLButtonElement>('[data-slot=toast-close]')!
+      close.focus()
+      close.click()
+      await nextTick()
+      await nextTick()
+      expect(document.activeElement).toBe(trigger)
+    })
+
+    it('labels the region with the toast count, like React Aria', async () => {
+      // behaviour-final-check Q3
+      mounted = mount(ToastProvider, { props: { portal: false }, attachTo: document.body })
+      toast('One', { timeout: 0 })
+      await nextTick()
+      const region = () => document.querySelector<HTMLElement>('[data-slot=toast-region]')!
+      expect(region().getAttribute('aria-label')).toBe('1 notification.')
+      toast('Two', { timeout: 0 })
+      await nextTick()
+      expect(region().getAttribute('aria-label')).toBe('2 notifications.')
+      await mounted.setProps({ ariaLabel: 'Alerts' })
+      expect(region().getAttribute('aria-label')).toBe('Alerts')
+    })
   })
 })
