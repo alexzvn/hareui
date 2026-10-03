@@ -179,10 +179,10 @@ describe('colorField', () => {
       return { wrapper, form, el: wrapper.get(input), node: wrapper.get(input).element as HTMLInputElement }
     }
 
-    it('submits the committed hex in uppercase like React Aria', () => {
-      // behaviour-final-check F2
+    it('submits the committed hex in lowercase (decision: React Aria submits uppercase)', () => {
+      // behaviour-final-check F2: kept lowercase by user decision, see .agents/docs/decisions.md
       const { wrapper, form } = mountField({ name: 'brand', defaultValue: '#0485F7' }, true)
-      expect(new FormData(form).get('brand')).toBe('#0485F7')
+      expect(new FormData(form).get('brand')).toBe('#0485f7')
       wrapper.unmount()
       form.remove()
     })
