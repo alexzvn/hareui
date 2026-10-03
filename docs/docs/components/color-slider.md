@@ -133,7 +133,7 @@ app.use(createHareUI({
 
 - The thumb is a `role="slider"` labelled by the channel name, with a localised `aria-valuetext`
 - Keyboard: arrow keys, <kbd>Home</kbd>, <kbd>End</kbd>, <kbd>PageUp</kbd> and <kbd>PageDown</kbd>
-- `name` submits the colour as hex through a hidden input
+- `name` submits the channel value through a hidden input (e.g. `200` for hue, `0.5` for alpha), as React Aria does; the alpha thumb's `aria-valuenow` uses the same 0–1 scale
 
 ## Related Components
 

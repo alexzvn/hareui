@@ -78,7 +78,7 @@ export interface ColorSliderProps {
    * @defaultValue true when there's a label
    */
   showOutput?: boolean
-  /** The name of the hidden input, used for form submission (the color is always submitted as hex). */
+  /** The name of the hidden input, used for form submission. Submits the channel value (e.g. `200` for hue, `0.5` for alpha), as React Aria does. */
   name?: string
   /** Additional classes merged into the root element. */
   class?: any
@@ -132,7 +132,7 @@ import {
   useId,
   useLocale,
 } from 'reka-ui'
-import { computed, ref } from 'vue'
+import { computed, ref, watch } from 'vue'
 import { useColorPickerContext } from '../color-picker/context'
 import { useComponentUI } from '../../composables/useComponentUI'
 import { captureOnDraggedThumb } from '../../composables/thumbPointerCapture'
@@ -216,6 +216,21 @@ const valueText = computed(() => {
       return new Intl.NumberFormat(locale.value, { maximumFractionDigits: 0 }).format(value)
   }
 })
+
+// React Aria's alpha channel ranges 0..1, while Reka's runs 0..100. The submitted form value and the
+// thumb's `aria-value*` use RAC's scale (the value text stays "50%" either way).
+const formValue = computed(() => String(props.channel === 'alpha' ? channelValue.value / 100 : channelValue.value))
+// reka-limitation: `SliderThumbImpl` binds `aria-valuenow/min/max` after `$attrs`, so they can't be
+// overridden by props; they're rewritten on the thumb element after each render instead.
+const thumbRef = ref<{ $el?: Element } | null>(null)
+watch([channelValue, () => props.channel, thumbRef], () => {
+  const el = thumbRef.value?.$el
+  if (props.channel !== 'alpha' || !(el instanceof Element))
+    return
+  el.setAttribute('aria-valuenow', formValue.value)
+  el.setAttribute('aria-valuemin', '0')
+  el.setAttribute('aria-valuemax', '1')
+}, { flush: 'post', immediate: true })
 
 const slotProps = computed<ColorSliderSlotProps>(() => ({
   channelName: channelName.value,
@@ -305,7 +320,6 @@ function onPointerEnd() {
     thumb-alignment="overflow"
     :disabled="disabled"
     :step="step"
-    :name="name"
     data-slot="color-slider"
     :aria-labelledby="hasLabel ? autoId : undefined"
     :class="ui.base({ class: [props.ui?.base, props.class] })"
@@ -340,6 +354,7 @@ function onPointerEnd() {
       :class="ui.track({ class: props.ui?.track })"
     >
       <ColorSliderThumb
+        ref="thumbRef"
         data-slot="color-slider-thumb"
         :data-dragging="isDragging ? 'true' : undefined"
         :style="thumbStyle"
@@ -348,5 +363,13 @@ function onPointerEnd() {
         <slot name="thumb" v-bind="slotProps" />
       </ColorSliderThumb>
     </SliderTrack>
+    <!-- RAC submits the channel value from its `<input type="range">`; Reka's hidden input would submit the hex. -->
+    <input
+      v-if="name"
+      type="hidden"
+      :name="name"
+      :value="formValue"
+      :disabled="disabled"
+    >
   </ColorSliderRoot>
 </template>
