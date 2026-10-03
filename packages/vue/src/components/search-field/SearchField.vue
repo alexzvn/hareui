@@ -140,14 +140,18 @@ function onFocusOut(event: FocusEvent) {
 }
 
 // Kept for backward compatibility with native form submission, matching RAC's useSearchField: Enter submits via
-// the `submit` event instead of letting the browser submit the surrounding form.
+// the `submit` event instead of letting the browser submit the surrounding form. Disabled or readonly fields
+// still swallow Enter but don't submit.
 function onEnter(event: KeyboardEvent) {
   event.preventDefault()
+  if (props.disabled || props.readonly)
+    return
   emit('submit', modelValue.value ?? '')
 }
-// Matches RAC: Escape clears the field, but does nothing (and doesn't blur) when it's already empty.
+// Matches RAC: Escape clears the field, but does nothing (and doesn't blur) when it's already empty,
+// disabled or readonly.
 function onEscape() {
-  if (!modelValue.value)
+  if (props.disabled || props.readonly || !modelValue.value)
     return
   modelValue.value = ''
   emit('clear')
