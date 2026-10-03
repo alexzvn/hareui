@@ -84,6 +84,7 @@ import { computed, ref } from 'vue'
 import { useComponentUI } from '../../composables/useComponentUI'
 import ColorSwatch from '../color-swatch/ColorSwatch.vue'
 import { useColorPickerContext } from '../color-picker/context'
+import ColorSwatchPickerBridge from './colorSwatchPickerBridge'
 
 const props = defineProps<ColorSwatchPickerProps>()
 const emit = defineEmits<ColorSwatchPickerEmits>()
@@ -159,6 +160,7 @@ const ui = useComponentUI('colorSwatchPicker', theme, () => ({
     :class="ui.base({ class: [props.ui?.base, props.class] })"
     @update:model-value="onUpdate"
   >
+    <ColorSwatchPickerBridge :selected="selected" :stack="layout === 'stack'" />
     <ItemPrimitive
       v-for="item in normalized"
       :key="item.value"
