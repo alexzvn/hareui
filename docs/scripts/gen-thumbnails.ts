@@ -25,11 +25,30 @@ const MAX_SCALE = 2.4
 // demo to shoot instead (its ComponentPreview name, e.g. `button-group/variants`), and `select`
 // keeps only the matching elements inside it (`:scope` is the demo's root element). `width` narrows
 // a full-width demo (in CSS px) so it is shot at a readable zoom.
-const PICKS: Record<string, { demo?: string, select?: string, width?: number }> = {
+// Overlays are shot open, as HeroUI's are: `open` clicks (or, with `hover`, hovers) the demo element it
+// matches, then `overlay` picks what to keep from the whole document (overlays are teleported to <body>).
+// Without `select`, nothing of the demo itself is kept. `viewport` resizes the page for overlays sized by it.
+interface Pick {
+  demo?: string
+  select?: string
+  width?: number
+  open?: string
+  hover?: boolean
+  overlay?: string
+  viewport?: { width: number, height: number }
+}
+const PICKS: Record<string, Pick> = {
+  'alert-dialog': { open: 'button', overlay: '[data-slot="alert-dialog-dialog"]' },
   'accordion': { select: '[data-slot="accordion-item"]:nth-child(-n+3)', width: 320 },
   'alert': { select: ':scope > [data-slot="alert-root"]:nth-of-type(2)', width: 380 },
+  // The bottom drawer, as its height fits its content; the narrow viewport keeps it from spanning 1440px.
+  'drawer': { demo: 'drawer/placements', open: 'button', overlay: '[data-slot="drawer-dialog"]', viewport: { width: 560, height: 900 } },
   'button-group': { demo: 'button-group/variants', select: ':scope > :first-child [data-slot="button-group"]' },
+  'modal': { open: 'button', overlay: '[data-slot="modal-dialog"]' },
+  'popover': { select: 'button', open: 'button', overlay: '[data-slot="popover"]' },
   'tabs': { width: 320 },
+  'toast': { open: 'button', overlay: '[data-slot="toast"]' },
+  'tooltip': { select: ':scope > button:first-child', open: ':scope > button:first-child', hover: true, overlay: '[data-reka-popper-content-wrapper]' },
   'typography': { select: ':scope > :nth-child(-n+3)' },
 }
 
@@ -82,15 +101,17 @@ function centre(src: PNG): PNG {
   return out
 }
 
-async function shoot(page: Page, clip: Box): Promise<PNG> {
-  return PNG.sync.read(Buffer.from(await page.screenshot({ clip, omitBackground: true, captureBeyondViewport: true })))
+// Capturing beyond the viewport enlarges it, which moves anything fixed to it, so open overlays are shot within it.
+async function shoot(page: Page, clip: Box, captureBeyondViewport = true): Promise<PNG> {
+  return PNG.sync.read(Buffer.from(await page.screenshot({ clip, omitBackground: true, captureBeyondViewport })))
 }
 
 async function thumbnail(page: Page, slug: string, theme: 'light' | 'dark'): Promise<PNG> {
-  await page.setViewport({ width: 1440, height: 900, deviceScaleFactor: 1 })
-  await page.goto(`${base}/docs/components/${slug}`, { waitUntil: 'networkidle0', timeout: 120_000 })
   const pick = PICKS[slug] ?? {}
-  const found = await page.evaluate((theme, pick) => {
+  const viewport = pick.viewport ?? { width: 1440, height: 900 }
+  await page.setViewport({ ...viewport, deviceScaleFactor: 1 })
+  await page.goto(`${base}/docs/components/${slug}`, { waitUntil: 'networkidle0', timeout: 120_000 })
+  let found = await page.evaluate((theme, pick) => {
     document.documentElement.classList.toggle('dark', theme === 'dark')
     document.documentElement.style.colorScheme = theme
     const preview = pick.demo ? `.preview[data-name="${pick.demo.replace(/\//g, '-')}"]` : '.preview'
@@ -98,10 +119,23 @@ async function thumbnail(page: Page, slug: string, theme: 'light' | 'dark'): Pro
     const root = demo?.firstElementChild as HTMLElement | null | undefined
     if (root && pick.width)
       root.style.width = root.style.maxWidth = `${pick.width}px`
-    const targets = root && pick.select ? [...root.querySelectorAll(pick.select)] : demo ? [demo] : []
+    // The demo's root can be the trigger itself (a Modal renders its trigger slot as its root).
+    const trigger = pick.open && root && (root.matches(pick.open) ? root : root.querySelector(pick.open))
+    trigger?.setAttribute('data-thumbnail-open', '')
+    const targets = root && pick.select ? [...root.querySelectorAll(pick.select)] : demo && !pick.overlay ? [demo] : []
     targets.forEach(el => el.setAttribute('data-thumbnail', ''))
     return targets.length
   }, theme, pick)
+  if (pick.open) {
+    const trigger = await page.$('[data-thumbnail-open]')
+    if (!trigger)
+      throw new Error(`no ${pick.open} to open in the demo`)
+    await trigger.scrollIntoView()
+    await (pick.hover ? trigger.hover() : trigger.click())
+    // Let the overlay's enter animation finish before the transitions are switched off.
+    await sleep(800)
+    found += await page.$$eval(pick.overlay!, els => els.map(el => el.setAttribute('data-thumbnail', '')).length)
+  }
   if (!found)
     throw new Error(`no demo on the page${pick.demo || pick.select ? ` for ${JSON.stringify(pick)}` : ''}`)
   await page.addStyleTag({ content: ISOLATE })
@@ -117,14 +151,14 @@ async function thumbnail(page: Page, slug: string, theme: 'light' | 'dark'): Pro
     return { x, y, width: right - x, height: bottom - y }
   })
   // Pass 1 at 1x finds the demo's ink; pass 2 shoots just that box at the thumbnail's zoom.
-  const ink = inkBox(await shoot(page, rect))
+  const ink = inkBox(await shoot(page, rect, !pick.open))
   if (!ink)
     throw new Error('demo renders nothing')
   // 2px of padding keeps antialiased edges that only appear at the higher zoom.
   const box = { x: rect.x + ink.x - 2, y: rect.y + ink.y - 2, width: ink.width + 4, height: ink.height + 4 }
   const scale = Math.min(MAX_SCALE, MAX_CONTENT.width / box.width, MAX_CONTENT.height / box.height)
-  await page.setViewport({ width: 1440, height: 900, deviceScaleFactor: scale })
-  return centre(await shoot(page, box))
+  await page.setViewport({ ...viewport, deviceScaleFactor: scale })
+  return centre(await shoot(page, box, !pick.open))
 }
 
 mkdirSync(OUT, { recursive: true })
