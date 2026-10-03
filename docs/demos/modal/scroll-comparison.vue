@@ -1,9 +1,10 @@
 <script setup lang="ts">
+import type { RadioGroupItem } from '@hareui/vue'
 import { Button, Modal, RadioGroup } from '@hareui/vue'
 import { ref } from 'vue'
 
 const scroll = ref<'inside' | 'outside'>('inside')
-const items = [
+const items: RadioGroupItem[] = [
   { value: 'inside', label: 'Inside' },
   { value: 'outside', label: 'Outside' },
 ]

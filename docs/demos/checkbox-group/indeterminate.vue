@@ -1,4 +1,5 @@
 <script setup lang="ts">
+import type { CheckboxGroupItem } from '@hareui/vue'
 import { Checkbox, CheckboxGroup } from '@hareui/vue'
 import { computed, ref } from 'vue'
 
@@ -12,7 +13,7 @@ function onToggleAll(isSelected: boolean | 'indeterminate') {
   selected.value = isSelected === true ? [...allOptions] : []
 }
 
-const items = [
+const items: CheckboxGroupItem[] = [
   { value: 'coding', label: 'Coding' },
   { value: 'design', label: 'Design' },
   { value: 'writing', label: 'Writing' },

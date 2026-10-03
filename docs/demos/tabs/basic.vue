@@ -1,7 +1,8 @@
 <script setup lang="ts">
+import type { TabsItem } from '@hareui/vue'
 import { Tabs } from '@hareui/vue'
 
-const items = [
+const items: TabsItem[] = [
   { label: 'Overview', value: 'overview', content: 'View your project overview and recent activity.' },
   { label: 'Analytics', value: 'analytics', content: 'Track your metrics and analyze performance data.' },
   { label: 'Reports', value: 'reports', content: 'Generate and download detailed reports.' },

@@ -1,9 +1,10 @@
 <script setup lang="ts">
+import type { ColorSwatchPickerItem } from '@hareui/vue'
 import { Button, ColorArea, ColorField, ColorPicker, ColorSlider, ColorSwatch, ColorSwatchPicker, Label, colorToString, parseColor } from '@hareui/vue'
 import { ref } from 'vue'
 
 const color = ref(parseColor('#325578'))
-const presets = ['#ef4444', '#f97316', '#eab308', '#22c55e', '#06b6d4', '#3b82f6', '#8b5cf6', '#ec4899', '#f43f5e']
+const presets: ColorSwatchPickerItem[] = ['#ef4444', '#f97316', '#eab308', '#22c55e', '#06b6d4', '#3b82f6', '#8b5cf6', '#ec4899', '#f43f5e']
 
 function shuffleColor() {
   const h = Math.floor(Math.random() * 360)

@@ -1,7 +1,12 @@
 <script setup lang="ts">
+import type { TabsItem } from '@hareui/vue'
 import { Tabs } from '@hareui/vue'
 
-const items = [
+interface Section extends TabsItem {
+  heading: string
+}
+
+const items: Section[] = [
   { label: 'General', value: 'general', heading: 'General', content: 'Manage your account information and preferences.' },
   { label: 'Subscription & Billing', value: 'billing', heading: 'Subscription & Billing', content: 'View and manage your plan and payment methods.' },
   { label: 'Appearance', value: 'appearance', heading: 'Appearance', content: 'Choose a theme and adjust the interface density.' },

@@ -1,7 +1,12 @@
 <script setup lang="ts">
+import type { TabsItem } from '@hareui/vue'
 import { Tabs } from '@hareui/vue'
 
-const items = [
+interface Section extends TabsItem {
+  heading: string
+}
+
+const items: Section[] = [
   { label: 'Account', value: 'account', heading: 'Account Settings', content: 'Manage your account information and preferences.' },
   { label: 'Security', value: 'security', heading: 'Security Settings', content: 'Configure two-factor authentication and password settings.' },
   { label: 'Notifications', value: 'notifications', heading: 'Notification Preferences', content: 'Choose how and when you want to receive notifications.' },

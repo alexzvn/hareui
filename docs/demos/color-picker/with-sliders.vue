@@ -1,4 +1,5 @@
 <script setup lang="ts">
+import type { ListBoxItem } from '@hareui/vue'
 import type { ColorChannel, ColorSpace } from 'reka-ui'
 import { ColorPicker, ColorSlider, ColorSwatch, Label, Select } from '@hareui/vue'
 import { ref } from 'vue'
@@ -9,7 +10,7 @@ const channels: Record<ColorSpace, ColorChannel[]> = {
   hsl: ['hue', 'saturation', 'lightness', 'alpha'],
   rgb: ['red', 'green', 'blue', 'alpha'],
 }
-const spaces = Object.keys(channels).map(value => ({ value, label: value }))
+const spaces: ListBoxItem[] = Object.keys(channels).map(value => ({ value, label: value }))
 const title = (s: string) => s[0].toUpperCase() + s.slice(1)
 </script>
 

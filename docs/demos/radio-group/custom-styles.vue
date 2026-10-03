@@ -1,7 +1,8 @@
 <script setup lang="ts">
+import type { RadioGroupItem } from '@hareui/vue'
 import { Description, RadioGroup } from '@hareui/vue'
 
-const options = [
+const options: RadioGroupItem[] = [
   { description: '$12 billed every month', label: 'Monthly', value: 'monthly' },
   { description: '$120 billed once a year', label: 'Yearly', value: 'yearly' },
 ]
@@ -28,13 +29,13 @@ const indicatorClass
     :items="options.map(({ label, value }) => ({ label, value }))"
     :ui="{ content: contentClass, control: controlClass, indicator: indicatorClass }"
   >
-    <template #item-label="{ index }">
+    <template #item-label="{ item }">
       <div class="flex flex-col gap-0.5">
         <span class="font-medium text-foreground group-data-[selected=true]:text-success-soft-foreground">
-          {{ options[index]!.label }}
+          {{ item.label }}
         </span>
         <Description class="group-data-[selected=true]:text-success-soft-foreground/80">
-          {{ options[index]!.description }}
+          {{ item.description }}
         </Description>
       </div>
     </template>

@@ -1,10 +1,11 @@
 <script setup lang="ts">
+import type { CheckboxGroupItem } from '@hareui/vue'
 import { CheckboxGroup } from '@hareui/vue'
 import { ref } from 'vue'
 
 const selected = ref<string[]>(['coding', 'design'])
 
-const items = [
+const items: CheckboxGroupItem[] = [
   { value: 'coding', label: 'Coding' },
   { value: 'design', label: 'Design' },
   { value: 'writing', label: 'Writing' },

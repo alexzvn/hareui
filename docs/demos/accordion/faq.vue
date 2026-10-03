@@ -1,8 +1,14 @@
 <script setup lang="ts">
+import type { AccordionItem } from '@hareui/vue'
 import { Icon } from '@iconify/vue'
 import { Accordion } from '@hareui/vue'
 
-const categories = [
+interface FaqCategory {
+  title: string
+  items: AccordionItem[]
+}
+
+const categories: FaqCategory[] = [
   {
     items: [
       {

@@ -1,10 +1,14 @@
 <script setup lang="ts">
-import type { ExpandedValue } from '@hareui/vue'
+import type { AccordionItem, ExpandedValue } from '@hareui/vue'
 import { Icon } from '@iconify/vue'
 import { Accordion, Button, useDisclosureGroupNavigation } from '@hareui/vue'
 import { ref } from 'vue'
 
-const items = [
+interface Section extends AccordionItem {
+  value: string
+}
+
+const items: Section[] = [
   {
     content: 'Learn the basics of HeroUI and how to integrate it into your React project. This section covers installation, setup, and your first component.',
     value: 'getting-started',
