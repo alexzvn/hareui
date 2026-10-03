@@ -53,6 +53,21 @@ Autocomplete is a [Select](/docs/components/select) whose popover starts with a 
 | `searchField`, `searchGroup`, `searchIcon`, `searchInput`, `searchClearButton` | `search-field*` | the search field (with `search`) |
 | `listBox` | `list-box` | the option list |
 
+### Typing items
+
+`items` takes the exported `ListBoxItem` type (`ListBoxEntry` when it mixes in sections and separators). Extra fields are kept: extend the type, and the slots receive your type, so no casts are needed.
+
+```ts
+import type { ListBoxItem } from '@hareui/vue'
+
+interface MyItem extends ListBoxItem {
+  icon: string
+}
+
+const items: MyItem[] = [/* ... */]
+// <template #item-leading="{ item }"> — item.icon is a string
+```
+
 ## Examples
 
 ### Variants

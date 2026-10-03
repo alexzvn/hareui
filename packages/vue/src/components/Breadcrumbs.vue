@@ -16,14 +16,14 @@ export interface BreadcrumbsItem {
   [key: string]: any
 }
 
-export interface BreadcrumbsProps {
+export interface BreadcrumbsProps<T extends BreadcrumbsItem = BreadcrumbsItem> {
   /**
    * The element or component to render the list as.
    * @defaultValue 'ol'
    */
   as?: PrimitiveProps['as']
   /** The breadcrumb items, from the root to the current page. */
-  items: BreadcrumbsItem[]
+  items: T[]
   /**
    * Whether all breadcrumb links are disabled.
    * @defaultValue false
@@ -35,29 +35,29 @@ export interface BreadcrumbsProps {
   ui?: ComponentSlots<Breadcrumbs>
 }
 
-type ItemSlotProps = { item: BreadcrumbsItem, index: number, current: boolean }
+type ItemSlotProps<T extends BreadcrumbsItem = BreadcrumbsItem> = { item: T, index: number, current: boolean }
 
-export interface BreadcrumbsSlots {
+export interface BreadcrumbsSlots<T extends BreadcrumbsItem = BreadcrumbsItem> {
   /** Replaces an item's label. */
-  item?: (props: ItemSlotProps) => any
+  item?: (props: ItemSlotProps<T>) => any
   /**
    * Custom separator between items (HeroUI's `separator` prop). A single root element receives
    * the themed separator classes and `data-slot="breadcrumbs-separator"`.
    */
-  separator?: (props: ItemSlotProps) => any
+  separator?: (props: ItemSlotProps<T>) => any
 }
 </script>
 
-<script setup lang="ts">
+<script setup lang="ts" generic="T extends BreadcrumbsItem = BreadcrumbsItem">
 import type { VNode } from 'vue'
 import { Primitive } from 'reka-ui'
 import { cloneVNode, Comment, h, isVNode, useSlots } from 'vue'
 import { useComponentUI } from '../composables/useComponentUI'
 import Link from './Link.vue'
 
-const props = withDefaults(defineProps<BreadcrumbsProps>(), { as: 'ol' })
+const props = withDefaults(defineProps<BreadcrumbsProps<T>>(), { as: 'ol' })
 const slots = useSlots()
-defineSlots<BreadcrumbsSlots>()
+defineSlots<BreadcrumbsSlots<T>>()
 
 const ui = useComponentUI('breadcrumbs', theme, () => ({}))
 

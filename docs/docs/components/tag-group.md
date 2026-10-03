@@ -40,6 +40,21 @@ TagGroup renders an optional [Label](/docs/components/label), a grid of tags, an
 | `tag` *(`tag` theme)* | `tag` | `<div role="row">`, one per item |
 | `removeButton` *(`tag` theme)* | `tag-remove-button` | [CloseButton](/docs/components/close-button) (iff `removable`) |
 
+### Typing items
+
+`items` takes the exported `TagGroupItem` type. Extra fields are kept: extend the type, and the slots receive your type, so no casts are needed.
+
+```ts
+import type { TagGroupItem } from '@hareui/vue'
+
+interface MyItem extends TagGroupItem {
+  icon: string
+}
+
+const items: MyItem[] = [/* ... */]
+// <template #item="{ item }"> — item.icon is a string
+```
+
 ## Examples
 
 ### Sizes

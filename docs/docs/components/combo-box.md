@@ -50,6 +50,21 @@ ComboBox renders a [Label](/docs/components/label), an input group (an [Input](/
 | `value` | `combo-box-value` | selected values (multiple mode or `#value`) |
 | `popover` | `combo-box-popover` | popover holding the list |
 
+### Typing items
+
+`items` takes the exported `ListBoxItem` type (`ListBoxEntry` when it mixes in sections and separators). Extra fields are kept: extend the type, and the slots receive your type, so no casts are needed.
+
+```ts
+import type { ListBoxItem } from '@hareui/vue'
+
+interface MyItem extends ListBoxItem {
+  icon: string
+}
+
+const items: MyItem[] = [/* ... */]
+// <template #item-leading="{ item }"> — item.icon is a string
+```
+
 ## Examples
 
 ### Full Width

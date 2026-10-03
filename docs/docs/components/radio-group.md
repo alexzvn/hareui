@@ -47,6 +47,21 @@ RadioGroup renders a [Label](/docs/components/label) and a [Description](/docs/c
 | — | — | [Description](/docs/components/description) (per-item, iff `item.description` / `#item-description`) |
 | — | — | [FieldError](/docs/components/field-error) (while invalid, iff `error-message` / `#error` / validation errors) |
 
+### Typing items
+
+`items` takes the exported `RadioGroupItem` type. Extra fields are kept: extend the type, and the slots receive your type, so no casts are needed.
+
+```ts
+import type { RadioGroupItem } from '@hareui/vue'
+
+interface MyItem extends RadioGroupItem {
+  icon: string
+}
+
+const items: MyItem[] = [/* ... */]
+// <template #item-label="{ item }"> — item.icon is a string
+```
+
 ## Examples
 
 ### Horizontal Orientation

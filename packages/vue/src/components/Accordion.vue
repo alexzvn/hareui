@@ -20,9 +20,9 @@ export interface AccordionItem {
   [key: string]: any
 }
 
-export interface AccordionProps {
+export interface AccordionProps<T extends AccordionItem = AccordionItem> {
   /** The items to render. */
-  items: AccordionItem[]
+  items: T[]
   /** The expanded item values. Use `v-model` to control them. */
   modelValue?: ExpandedValue[]
   /** The values expanded on first render (uncontrolled). */
@@ -53,20 +53,22 @@ export interface AccordionProps {
   ui?: ComponentSlots<Accordion>
 }
 
-type ItemSlotProps = { item: AccordionItem, index: number, open: boolean }
+type ItemSlotProps<T extends AccordionItem = AccordionItem> = { item: T, index: number, open: boolean }
 
-export interface AccordionSlots {
+export interface AccordionSlots<T extends AccordionItem = AccordionItem> {
   /** Rendered in the trigger before the label (e.g. an icon). */
-  leading?: (props: ItemSlotProps) => any
+  leading?: (props: ItemSlotProps<T>) => any
   /** Replaces the trigger's label text. */
-  label?: (props: ItemSlotProps) => any
+  label?: (props: ItemSlotProps<T>) => any
   /**
    * Replaces the chevron (HeroUI's `Accordion.Indicator` children). A single root element
    * receives the themed indicator classes and `data-expanded`, so it rotates like the default.
    */
-  indicator?: (props: ItemSlotProps) => any
+  indicator?: (props: ItemSlotProps<T>) => any
   /** Body content for every item, overridden by `[item.slot]`. */
-  content?: (props: ItemSlotProps) => any
+  content?: (props: ItemSlotProps<T>) => any
+  /** Body content of the items whose `slot` names it. */
+  [slot: string]: ((props: ItemSlotProps<T>) => any) | undefined
 }
 
 export interface AccordionEmits {
@@ -75,7 +77,7 @@ export interface AccordionEmits {
 }
 </script>
 
-<script setup lang="ts">
+<script setup lang="ts" generic="T extends AccordionItem = AccordionItem">
 import type { VNode } from 'vue'
 import { cloneVNode, Comment, computed, h, isVNode, onBeforeUnmount, useId, useSlots, watch } from 'vue'
 import { useComponentUI } from '../composables/useComponentUI'
@@ -83,10 +85,10 @@ import { useExpandedValues } from '../composables/useExpandedValues'
 import { animatePanel, onPanelReveal, setPanelStatic } from '../utils/disclosurePanel'
 
 // `modelValue: undefined` keeps the uncontrolled mode when no `v-model` is bound.
-const props = withDefaults(defineProps<AccordionProps>(), { modelValue: undefined })
+const props = withDefaults(defineProps<AccordionProps<T>>(), { modelValue: undefined })
 const emit = defineEmits<AccordionEmits>()
 const slots = useSlots()
-defineSlots<AccordionSlots>()
+defineSlots<AccordionSlots<T>>()
 
 const ui = useComponentUI('accordion', theme, () => ({ variant: props.variant }))
 

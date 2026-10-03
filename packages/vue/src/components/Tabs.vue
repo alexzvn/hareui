@@ -17,9 +17,9 @@ export interface TabsItem {
   content?: string
 }
 
-export interface TabsProps {
+export interface TabsProps<T extends TabsItem = TabsItem> {
   /** The tabs to render. */
-  items: TabsItem[]
+  items: T[]
   /** The selected tab value. Use `v-model` to control it. */
   modelValue?: string | number
   /**
@@ -59,28 +59,30 @@ export interface TabsProps {
   ui?: ComponentSlots<Tabs>
 }
 
-export interface TabsSlots {
+export interface TabsSlots<T extends TabsItem = TabsItem> {
   /** Replaces a tab's label. */
-  tab?: (props: { item: TabsItem, index: number, selected: boolean }) => any
+  tab?: (props: { item: T, index: number, selected: boolean }) => any
   /** Fallback panel content for every item, overridden by `[item.slot]`. */
-  content?: (props: { item: TabsItem, index: number }) => any
+  content?: (props: { item: T, index: number }) => any
+  /** Panel content of the items whose `slot` names it. */
+  [slot: string]: ((props: { item: T, index: number, selected: boolean }) => any) | ((props: { item: T, index: number }) => any) | undefined
 }
 </script>
 
-<script setup lang="ts">
+<script setup lang="ts" generic="T extends TabsItem = TabsItem">
 import { TabsContent, TabsList, TabsRoot, TabsTrigger } from 'reka-ui'
 import { computed, nextTick, onBeforeUnmount, onMounted, ref, watch } from 'vue'
 import { useComponentUI } from '../composables/useComponentUI'
 import ScrollShadow from './ScrollShadow.vue'
 import type { ScrollShadowVisibility } from './ScrollShadow.vue'
 
-const props = withDefaults(defineProps<TabsProps>(), {
+const props = withDefaults(defineProps<TabsProps<T>>(), {
   orientation: 'horizontal',
   content: true,
   separator: false,
 })
 const modelValue = defineModel<string | number>()
-defineSlots<TabsSlots>()
+defineSlots<TabsSlots<T>>()
 
 const ui = useComponentUI('tabs', theme, () => ({
   variant: props.variant,
@@ -120,7 +122,7 @@ function isSeparatorHidden(index: number): boolean {
 // selected tab so the document order matches HeroUI's per-tab SelectionIndicator while
 // keeping one persistent indicator instance (stable `key`) so it slides between
 // positions instead of being destroyed/recreated.
-type TabsEntry = { type: 'tab', key: string | number, item: TabsItem, index: number } | { type: 'indicator', key: 'indicator' }
+type TabsEntry = { type: 'tab', key: string | number, item: T, index: number } | { type: 'indicator', key: 'indicator' }
 
 const flatEntries = computed<TabsEntry[]>(() => {
   const entries: TabsEntry[] = []

@@ -47,6 +47,21 @@ Select renders a [Label](/docs/components/label), a trigger button showing the s
 | `indicator` | `select-indicator` / `select-default-indicator` | chevron |
 | `popover` | `select-popover` | popover holding the ListBox |
 
+### Typing items
+
+`items` takes the exported `ListBoxItem` type (`ListBoxEntry` when it mixes in sections and separators). Extra fields are kept: extend the type, and the slots receive your type, so no casts are needed.
+
+```ts
+import type { ListBoxItem } from '@hareui/vue'
+
+interface MyItem extends ListBoxItem {
+  icon: string
+}
+
+const items: MyItem[] = [/* ... */]
+// <template #item-leading="{ item }"> — item.icon is a string
+```
+
 ## Examples
 
 ### Variants

@@ -47,6 +47,21 @@ ListBox takes an `items` array. Each entry is an item (`{ value, label, descript
 | `separator` | `separator` | `<hr>` |
 | `emptyState` | `empty-state` | `<div>` (iff `items` is empty and `#empty` given) |
 
+### Typing items
+
+`items` takes the exported `ListBoxItem` type (`ListBoxEntry` when it mixes in sections and separators). Extra fields are kept: extend the type, and the slots receive your type, so no casts are needed.
+
+```ts
+import type { ListBoxItem } from '@hareui/vue'
+
+interface MyItem extends ListBoxItem {
+  icon: string
+}
+
+const items: MyItem[] = [/* ... */]
+// <template #item-leading="{ item }"> — item.icon is a string
+```
+
 ## Examples
 
 ### With Disabled Items
