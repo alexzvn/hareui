@@ -96,7 +96,7 @@ export interface CheckboxGroupSlots<T extends CheckboxGroupItem = CheckboxGroupI
 import { CheckboxGroupRoot, CheckboxRoot as RekaCheckboxRoot } from 'reka-ui'
 import type { ComponentPublicInstance } from 'vue'
 import { computed, useId, useSlots, useTemplateRef } from 'vue'
-import { forwardRootClick } from '../../composables/forwardRootClick'
+import { forwardRootClick, keepFocusWhenReadonly, submitOnEnter, trackRootClick } from '../../composables/forwardRootClick'
 import { useComponentUI } from '../../composables/useComponentUI'
 import { useFieldValidation } from '../../composables/useFieldValidation'
 import Description from '../description/Description.vue'
@@ -175,6 +175,7 @@ function onUpdate(value: string[]) {
     :data-required="required ? 'true' : undefined"
     :aria-invalid="invalid ? 'true' : undefined"
     :aria-readonly="readonly ? 'true' : undefined"
+    :aria-disabled="disabled ? 'true' : undefined"
     :aria-labelledby="hasLabel ? labelId : undefined"
     :aria-describedby="describedBy"
     :class="ui.base({ class: [props.ui?.base, props.class] })"
@@ -197,7 +198,9 @@ function onUpdate(value: string[]) {
       :data-invalid="invalid ? 'true' : undefined"
       :data-readonly="readonly ? 'true' : undefined"
       :class="itemUi.base({ class: props.ui?.item })"
-    @click="forwardRootClick($event, '[data-slot=checkbox-content]')"
+      @click.capture="trackRootClick($event, '[data-slot=checkbox-content]')"
+      @click="forwardRootClick($event, '[data-slot=checkbox-content]')"
+      @mousedown="keepFocusWhenReadonly($event, readonly, '[data-slot=checkbox-content]')"
     >
       <RekaCheckboxRoot
         :id="`${id}-${index}`"
@@ -208,6 +211,7 @@ function onUpdate(value: string[]) {
         data-slot="checkbox-content"
         :data-selected="selected.includes(item.value) ? 'true' : undefined"
         :class="itemUi.content({ class: props.ui?.content })"
+        @keydown.capture="submitOnEnter"
       >
         <span data-slot="checkbox-control" :class="itemUi.control({ class: props.ui?.control })">
           <span aria-hidden="true" data-slot="checkbox-indicator" :class="itemUi.indicator({ class: props.ui?.indicator })">

@@ -77,3 +77,12 @@ describe('CheckboxGroup row click', () => {
     wrapper.unmount()
   })
 })
+
+describe('CheckboxGroup state parity', () => {
+  // behaviour-final-check G2
+  it('exposes a disabled group as aria-disabled', () => {
+    const wrapper = mount(CheckboxGroup, { props: { items, disabled: true } })
+    expect(wrapper.get('[data-slot=checkbox-group]').attributes('aria-disabled')).toBe('true')
+    expect(mount(CheckboxGroup, { props: { items } }).get('[data-slot=checkbox-group]').attributes('aria-disabled')).toBeUndefined()
+  })
+})

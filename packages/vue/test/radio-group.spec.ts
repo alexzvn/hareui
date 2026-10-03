@@ -66,3 +66,43 @@ describe('RadioGroup row click', () => {
     wrapper.unmount()
   })
 })
+
+describe('RadioGroup keyboard and state parity', () => {
+  // behaviour-final-check R2: RAC ignores Home / End / PageUp / PageDown in a radio group
+  it('Home / End / PageUp / PageDown neither move focus nor change the selection', async () => {
+    const wrapper = mount(RadioGroup, { props: { items, defaultValue: 'premium' }, attachTo: document.body })
+    const radios = wrapper.findAll('[data-slot=radio-content]')
+    ;(radios[1]!.element as HTMLElement).focus()
+    for (const key of ['Home', 'End', 'PageUp', 'PageDown']) {
+      await radios[1]!.trigger('keydown', { key })
+      await new Promise(resolve => setTimeout(resolve))
+      expect(document.activeElement).toBe(radios[1]!.element)
+    }
+    expect(wrapper.emitted('update:modelValue')).toBeUndefined()
+    wrapper.unmount()
+  })
+
+  // behaviour-final-check R5
+  it('exposes a disabled group as aria-disabled', () => {
+    const wrapper = mount(RadioGroup, { props: { items, disabled: true } })
+    expect(wrapper.get('[data-slot=radio-group]').attributes('aria-disabled')).toBe('true')
+    expect(mount(RadioGroup, { props: { items } }).get('[data-slot=radio-group]').attributes('aria-disabled')).toBeUndefined()
+  })
+
+  // behaviour-final-check R4
+  it('Enter on a radio submits the enclosing form without selecting it', async () => {
+    const form = document.createElement('form')
+    document.body.append(form)
+    let submitted = 0
+    form.addEventListener('submit', (e) => {
+      e.preventDefault()
+      submitted++
+    })
+    const wrapper = mount(RadioGroup, { props: { items }, attachTo: form })
+    await wrapper.findAll('[data-slot=radio-content]')[0]!.trigger('keydown', { key: 'Enter' })
+    expect(submitted).toBe(1)
+    expect(wrapper.emitted('update:modelValue')).toBeUndefined()
+    wrapper.unmount()
+    form.remove()
+  })
+})

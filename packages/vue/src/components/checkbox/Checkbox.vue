@@ -85,7 +85,7 @@ export interface CheckboxSlots {
 <script setup lang="ts">
 import { CheckboxRoot } from 'reka-ui'
 import { computed, ref, useId, useSlots, useTemplateRef } from 'vue'
-import { forwardRootClick } from '../../composables/forwardRootClick'
+import { forwardRootClick, keepFocusWhenReadonly, submitOnEnter, trackRootClick } from '../../composables/forwardRootClick'
 import { useComponentUI } from '../../composables/useComponentUI'
 import { useFieldValidation } from '../../composables/useFieldValidation'
 import Description from '../description/Description.vue'
@@ -157,7 +157,9 @@ function onUpdate(value: boolean | 'indeterminate') {
     :data-readonly="readonly ? 'true' : undefined"
     :data-required="required ? 'true' : undefined"
     :class="ui.base({ class: [props.ui?.base, props.class] })"
+    @click.capture="trackRootClick($event, '[data-slot=checkbox-content]')"
     @click="forwardRootClick($event, '[data-slot=checkbox-content]')"
+    @mousedown="keepFocusWhenReadonly($event, readonly, '[data-slot=checkbox-content]')"
   >
     <CheckboxRoot
       v-bind="$attrs"
@@ -172,6 +174,7 @@ function onUpdate(value: boolean | 'indeterminate') {
       :aria-describedby="describedBy"
       data-slot="checkbox-content"
       :class="ui.content({ class: props.ui?.content })"
+      @keydown.capture="submitOnEnter"
       @update:model-value="onUpdate"
     >
       <span data-slot="checkbox-control" :class="ui.control({ class: props.ui?.control })">

@@ -72,3 +72,42 @@ describe('Switch row click', () => {
     wrapper.unmount()
   })
 })
+
+describe('Switch keyboard parity', () => {
+  // behaviour-final-check S1/S2: HeroUI's switch is a native checkbox: Enter submits the form and never toggles
+  it('Enter does not toggle and submits the enclosing form', async () => {
+    const form = document.createElement('form')
+    document.body.append(form)
+    let submitted = 0
+    form.addEventListener('submit', (e) => {
+      e.preventDefault()
+      submitted++
+    })
+    const wrapper = mount(Switch, { props: { label: 'Wi-Fi' }, attachTo: form })
+    await wrapper.get(control).trigger('keydown', { key: 'Enter' })
+    expect(wrapper.emitted('update:modelValue')).toBeUndefined()
+    expect(wrapper.get(control).attributes('aria-checked')).toBe('false')
+    expect(submitted).toBe(1)
+    wrapper.unmount()
+    form.remove()
+  })
+
+  it('Enter clicks the form\'s default button instead when it has one', async () => {
+    const form = document.createElement('form')
+    const submit = document.createElement('button')
+    submit.type = 'submit'
+    let clicked = 0
+    submit.addEventListener('click', (e) => {
+      e.preventDefault()
+      clicked++
+    })
+    const host = document.createElement('div')
+    form.append(host, submit)
+    document.body.append(form)
+    const wrapper = mount(Switch, { props: { label: 'Wi-Fi' }, attachTo: host })
+    await wrapper.get(control).trigger('keydown', { key: 'Enter' })
+    expect(clicked).toBe(1)
+    wrapper.unmount()
+    form.remove()
+  })
+})

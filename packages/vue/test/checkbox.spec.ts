@@ -108,3 +108,36 @@ describe('Checkbox indeterminate glyph click', () => {
     wrapper.unmount()
   })
 })
+
+describe('Checkbox keyboard and readonly parity', () => {
+  // behaviour-final-check C3: a native checkbox performs the form's implicit submission on Enter
+  it('Enter submits the enclosing form and does not toggle', async () => {
+    const form = document.createElement('form')
+    document.body.append(form)
+    let submitted = 0
+    form.addEventListener('submit', (e) => {
+      e.preventDefault()
+      submitted++
+    })
+    const wrapper = mount(Checkbox, { props: { label: 'Terms' }, attachTo: form })
+    await wrapper.get(control).trigger('keydown', { key: 'Enter' })
+    expect(submitted).toBe(1)
+    expect(wrapper.emitted('update:modelValue')).toBeUndefined()
+    wrapper.unmount()
+    form.remove()
+  })
+
+  // behaviour-final-check C4: RAC ignores presses on a readonly checkbox, so focus stays where it was
+  it('pressing a readonly checkbox does not take focus', async () => {
+    const wrapper = mount(Checkbox, { props: { label: 'Terms', readonly: true }, attachTo: document.body })
+    const down = new MouseEvent('mousedown', { bubbles: true, cancelable: true })
+    wrapper.get(control).element.dispatchEvent(down)
+    expect(down.defaultPrevented).toBe(true)
+    const editable = mount(Checkbox, { props: { label: 'Terms' }, attachTo: document.body })
+    const editableDown = new MouseEvent('mousedown', { bubbles: true, cancelable: true })
+    editable.get(control).element.dispatchEvent(editableDown)
+    expect(editableDown.defaultPrevented).toBe(false)
+    wrapper.unmount()
+    editable.unmount()
+  })
+})

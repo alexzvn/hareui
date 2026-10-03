@@ -95,7 +95,7 @@ export interface RadioGroupSlots<T extends RadioGroupItem = RadioGroupItem> {
 <script setup lang="ts" generic="T extends RadioGroupItem = RadioGroupItem">
 import { RadioGroupItem as RekaRadioGroupItem, RadioGroupRoot } from 'reka-ui'
 import { computed, useId, useSlots, useTemplateRef } from 'vue'
-import { forwardRootClick } from '../../composables/forwardRootClick'
+import { forwardRootClick, submitOnEnter, trackRootClick } from '../../composables/forwardRootClick'
 import { useComponentUI } from '../../composables/useComponentUI'
 import { useFieldValidation } from '../../composables/useFieldValidation'
 import Description from '../description/Description.vue'
@@ -147,6 +147,13 @@ function hasItemDescription(item: RadioGroupItem) {
   return !!(item.description || slots['item-description'])
 }
 
+// Reka's roving focus moves focus (without selecting) on Home / End / PageUp / PageDown; RAC's radio group
+// ignores them, so stop them before they reach the focused radio.
+function onKeydownCapture(event: KeyboardEvent) {
+  if (['Home', 'End', 'PageUp', 'PageDown'].includes(event.key))
+    event.stopPropagation()
+}
+
 function onUpdate(value: unknown) {
   // RAC `isReadOnly`: items stay focusable but the selection never changes
   if (props.readonly)
@@ -170,10 +177,12 @@ function onUpdate(value: unknown) {
     :data-required="required ? 'true' : undefined"
     :aria-invalid="invalid ? 'true' : undefined"
     :aria-readonly="readonly ? 'true' : undefined"
+    :aria-disabled="disabled ? 'true' : undefined"
     :aria-labelledby="hasLabel ? labelId : undefined"
     :aria-describedby="describedBy"
     :class="ui.base({ class: [props.ui?.base, props.class] })"
     @update:model-value="onUpdate"
+    @keydown.capture="onKeydownCapture"
   >
     <!-- `as` falls through to Reka `Label`: a group label names the radiogroup via aria-labelledby, not a form control (HeroUI renders a span).
          `disabled` is passed explicitly because Reka sets the root's `data-disabled` to "". -->
@@ -192,7 +201,8 @@ function onUpdate(value: unknown) {
       :data-disabled="disabled || item.disabled ? 'true' : undefined"
       :data-invalid="invalid ? 'true' : undefined"
       :class="ui.item({ class: props.ui?.item })"
-    @click="forwardRootClick($event, '[data-slot=radio-content]')"
+      @click.capture="trackRootClick($event, '[data-slot=radio-content]')"
+      @click="forwardRootClick($event, '[data-slot=radio-content]')"
     >
       <RekaRadioGroupItem
         :id="`${id}-${index}`"
@@ -202,6 +212,7 @@ function onUpdate(value: unknown) {
         data-slot="radio-content"
         :data-selected="selected === item.value ? 'true' : undefined"
         :class="ui.content({ class: props.ui?.content })"
+        @keydown.capture="submitOnEnter"
       >
         <span data-slot="radio-control" :class="ui.control({ class: props.ui?.control })">
           <span aria-hidden="true" data-slot="radio-indicator" :class="ui.indicator({ class: props.ui?.indicator })"><slot v-if="slots.indicator" name="indicator" :item="item" :checked="selected === item.value" /></span>
