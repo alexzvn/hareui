@@ -24,7 +24,7 @@ export interface TabsProps<T extends TabsItem = TabsItem> {
   modelValue?: string | number
   /**
    * The value of the tab selected by default (uncontrolled).
-   * @defaultValue items[0]?.value ?? '0'
+   * @defaultValue the first enabled item's value
    */
   defaultValue?: string | number
   /**
@@ -90,13 +90,27 @@ const ui = useComponentUI('tabs', theme, () => ({
   orientation: props.orientation,
 }))
 
-const defaultValue = computed(() => props.defaultValue ?? props.items[0]?.value ?? '0')
-
 function itemValue(item: TabsItem, index: number): string | number {
   return item.value ?? String(index)
 }
 
+// RAC's useTabListState falls back to the first enabled tab, so a disabled first tab is never
+// selected (and the roving tab stop never lands on a disabled tab).
+const defaultValue = computed(() => {
+  if (props.defaultValue !== undefined)
+    return props.defaultValue
+  const index = props.items.findIndex(item => !item.disabled)
+  return index === -1 ? (props.items[0]?.value ?? '0') : itemValue(props.items[index]!, index)
+})
+
 const selectedValue = computed(() => modelValue.value ?? defaultValue.value)
+
+// The one tab in the Tab order: the selected tab, or the first enabled one when that is disabled.
+const tabStopValue = computed(() => {
+  const selected = props.items.findIndex((item, index) => itemValue(item, index) === selectedValue.value)
+  const index = selected !== -1 && !props.items[selected]!.disabled ? selected : props.items.findIndex(item => !item.disabled)
+  return index === -1 ? undefined : itemValue(props.items[index]!, index)
+})
 
 // React Aria's TabPanel unmounts every panel except the selected one; Reka's TabsContent
 // always keeps the wrapper element (toggling `hidden` only), so only render the selected
@@ -118,22 +132,24 @@ function isSeparatorHidden(index: number): boolean {
   return previous === selectedValue.value
 }
 
-// Flattens tabs + a single interleaved indicator entry, positioned right after the
-// selected tab so the document order matches HeroUI's per-tab SelectionIndicator while
-// keeping one persistent indicator instance (stable `key`) so it slides between
-// positions instead of being destroyed/recreated.
-type TabsEntry = { type: 'tab', key: string | number, item: T, index: number } | { type: 'indicator', key: 'indicator' }
+// HeroUI renders the SelectionIndicator inside the selected tab, so in document order it sits
+// right after that tab. We keep one persistent indicator (so it slides instead of being
+// recreated) and move *it* next to the selected tab. Letting Vue's keyed diff reorder an
+// interleaved list instead could move the focused tab node, which drops keyboard focus.
+const indicatorRef = ref<HTMLElement | null>(null)
 
-const flatEntries = computed<TabsEntry[]>(() => {
-  const entries: TabsEntry[] = []
-  props.items.forEach((item, index) => {
-    const value = itemValue(item, index)
-    entries.push({ type: 'tab', key: value, item, index })
-    if (value === selectedValue.value)
-      entries.push({ type: 'indicator', key: 'indicator' })
-  })
-  return entries
-})
+// Reka's roving focus maps PageUp/PageDown to the first/last tab; RAC's tab list ignores them.
+function onListKeydown(event: KeyboardEvent) {
+  if (event.key === 'PageUp' || event.key === 'PageDown')
+    event.stopPropagation()
+}
+
+function placeIndicator() {
+  const indicator = indicatorRef.value
+  const activeTab = listRef.value?.$el?.querySelector?.('[data-slot="tabs-tab"][data-state="active"]')
+  if (indicator && activeTab && activeTab.nextElementSibling !== indicator)
+    activeTab.after(indicator)
+}
 
 // Reka's own TabsIndicator measures the active tab via integer offsetWidth/offsetLeft,
 // which doesn't line up pixel-for-pixel with HeroUI's indicator (React Aria's
@@ -209,6 +225,7 @@ function observeGeometry() {
 }
 
 onMounted(() => {
+  placeIndicator()
   observeGeometry()
   measureIndicator()
   requestAnimationFrame(() => { indicatorReady.value = true })
@@ -220,8 +237,42 @@ onBeforeUnmount(() => {
   window.removeEventListener('resize', measureIndicator)
 })
 
+// RAC's useTabPanel makes the panel a tab stop only while it has no tabbable child; Reka's
+// TabsContent hardcodes `tabindex="0"`. Vue never re-patches that static attribute, so it is
+// toggled on the element directly and kept in sync with the panel's content.
+const PANEL_TABBABLE = 'a[href],area[href],button:not([disabled]),input:not([disabled]):not([type=hidden]),select:not([disabled]),textarea:not([disabled]),iframe,[contenteditable]:not([contenteditable=false]),[tabindex]:not([tabindex^="-"])'
+const panelRef = ref<{ $el: HTMLElement } | null>(null)
+let panelObserver: MutationObserver | null = null
+
+function syncPanelTabStop() {
+  const panel = panelRef.value?.$el
+  if (!(panel instanceof HTMLElement))
+    return
+  const tabbable = panel.querySelector(PANEL_TABBABLE) !== null
+  if (tabbable && panel.hasAttribute('tabindex'))
+    panel.removeAttribute('tabindex')
+  else if (!tabbable && panel.getAttribute('tabindex') !== '0')
+    panel.setAttribute('tabindex', '0')
+}
+
+watch(() => panelRef.value?.$el as HTMLElement | undefined, (panel) => {
+  panelObserver?.disconnect()
+  panelObserver = null
+  if (!(panel instanceof HTMLElement))
+    return
+  syncPanelTabStop()
+  if (typeof MutationObserver !== 'undefined') {
+    panelObserver = new MutationObserver(syncPanelTabStop)
+    panelObserver.observe(panel, { subtree: true, childList: true, attributes: true, attributeFilter: ['tabindex', 'disabled', 'href', 'contenteditable'] })
+  }
+}, { flush: 'sync' })
+
+onBeforeUnmount(() => panelObserver?.disconnect())
+
 watch([selectedValue, () => props.items, () => props.orientation], async () => {
   await nextTick()
+  // Move before measuring: the measurement flushes styles, so the indicator transitions from its old geometry.
+  placeIndicator()
   observeGeometry()
   measureIndicator()
 }, { deep: true })
@@ -245,34 +296,46 @@ watch([selectedValue, () => props.items, () => props.orientation], async () => {
         :size="64"
         @visibility-change="onScrollVisibility"
       >
-        <TabsList ref="listRef" :class="ui.tabList({ class: props.ui?.tabList })" data-slot="tabs-list">
-        <template v-for="entry in flatEntries" :key="entry.key">
-          <div
-            v-if="entry.type === 'indicator'"
-            aria-hidden="true"
-            :style="indicatorStyle"
-            :class="ui.tabIndicator({ class: props.ui?.tabIndicator })"
-            data-slot="tabs-indicator"
-          />
-          <TabsTrigger
-            v-else
-            :value="itemValue(entry.item, entry.index)"
-            :disabled="entry.item.disabled"
-            :class="ui.tab({ class: props.ui?.tab })"
-            data-slot="tabs-tab"
-          >
-            <span
-              v-if="separator"
+        <!-- `as-child` on the list and the tabs so our attributes win over Reka's. RAC's tablist is not
+             focusable itself (Reka's roving root has `tabindex="0"`, and clicking a disabled tab would
+             focus it), and RAC keeps the selected tab as the single tab stop, where Reka's roving group
+             leaves every tab at -1 until one has been focused. -->
+        <TabsList ref="listRef" as-child>
+          <div :class="ui.tabList({ class: props.ui?.tabList })" :tabindex="undefined" data-slot="tabs-list" @keydown.capture="onListKeydown">
+            <TabsTrigger
+              v-for="(item, index) in items"
+              :key="itemValue(item, index)"
+              :value="itemValue(item, index)"
+              :disabled="item.disabled"
+              as-child
+            >
+              <button
+                type="button"
+                :tabindex="itemValue(item, index) === tabStopValue ? 0 : -1"
+                :class="ui.tab({ class: props.ui?.tab })"
+                data-slot="tabs-tab"
+              >
+                <span
+                  v-if="separator"
+                  aria-hidden="true"
+                  :data-orientation="orientation"
+                  :class="ui.separator({ class: [props.ui?.separator, isSeparatorHidden(index) ? 'opacity-0' : undefined] })"
+                  data-slot="tabs-separator"
+                />
+                <slot name="tab" :item="item" :index="index" :selected="itemValue(item, index) === selectedValue">
+                  {{ item.label }}
+                </slot>
+              </button>
+            </TabsTrigger>
+            <div
+              v-if="items.some((item, index) => itemValue(item, index) === selectedValue)"
+              ref="indicatorRef"
               aria-hidden="true"
-              :data-orientation="orientation"
-              :class="ui.separator({ class: [props.ui?.separator, isSeparatorHidden(entry.index) ? 'opacity-0' : undefined] })"
-              data-slot="tabs-separator"
+              :style="indicatorStyle"
+              :class="ui.tabIndicator({ class: props.ui?.tabIndicator })"
+              data-slot="tabs-indicator"
             />
-            <slot name="tab" :item="entry.item" :index="entry.index" :selected="itemValue(entry.item, entry.index) === selectedValue">
-              {{ entry.item.label }}
-            </slot>
-          </TabsTrigger>
-        </template>
+          </div>
         </TabsList>
       </ScrollShadow>
       <button
@@ -302,6 +365,7 @@ watch([selectedValue, () => props.items, () => props.orientation], async () => {
     </div>
     <TabsContent
       v-if="visiblePanel"
+      ref="panelRef"
       :key="itemValue(visiblePanel.item, visiblePanel.index)"
       :value="itemValue(visiblePanel.item, visiblePanel.index)"
       :class="ui.tabPanel({ class: props.ui?.tabPanel })"

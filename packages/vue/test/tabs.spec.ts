@@ -130,3 +130,54 @@ describe('Tabs', () => {
     wrapper.unmount()
   })
 })
+
+describe('Tabs keyboard and focus parity', () => {
+  afterEach(() => {
+    document.body.innerHTML = ''
+  })
+
+  // behaviour-final-check T6: RAC's tab list ignores PageUp / PageDown
+  it('PageUp / PageDown neither move focus nor change the selected tab', async () => {
+    const wrapper = mount(Tabs, { props: { items, defaultValue: 'analytics' }, attachTo: document.body })
+    await flushPromises()
+    const tab = wrapper.findAll('[data-slot=tabs-tab]')[1]!
+    ;(tab.element as HTMLElement).focus()
+    for (const key of ['PageUp', 'PageDown']) {
+      tab.element.dispatchEvent(new KeyboardEvent('keydown', { key, bubbles: true, cancelable: true }))
+      await flushPromises()
+      expect(document.activeElement).toBe(tab.element)
+      expect(wrapper.find('[data-slot=tabs-panel]').text()).toBe('Analytics content')
+    }
+    wrapper.unmount()
+  })
+
+  // behaviour-final-check T7: the tablist itself is not focusable (RAC), only the selected tab is a tab stop
+  it('makes the selected tab the only tab stop and keeps the tablist out of focus', async () => {
+    const wrapper = mount(Tabs, { props: { items, defaultValue: 'reports' }, attachTo: document.body })
+    await flushPromises()
+    expect(wrapper.get('[role=tablist]').attributes('tabindex')).toBeUndefined()
+    expect(wrapper.findAll('[data-slot=tabs-tab]').map(t => t.attributes('tabindex'))).toEqual(['-1', '-1', '0'])
+    wrapper.unmount()
+  })
+
+  // HeroUI renders the selection indicator inside the selected tab: in document order it follows that tab
+  it('keeps one indicator, placed right after the selected tab', async () => {
+    const wrapper = mount(Tabs, { props: { items, defaultValue: 'overview' }, attachTo: document.body })
+    await flushPromises()
+    const order = () => [...wrapper.get('[data-slot=tabs-list]').element.children].map(el => el.getAttribute('data-slot') === 'tabs-indicator' ? '|' : el.textContent!.trim()).join(' ')
+    expect(order()).toBe('Overview | Analytics Reports')
+    await wrapper.findAll('[data-slot=tabs-tab]')[1]!.trigger('mousedown')
+    await flushPromises()
+    expect(order()).toBe('Overview Analytics | Reports')
+    expect(wrapper.findAll('[data-slot=tabs-indicator]')).toHaveLength(1)
+    wrapper.unmount()
+  })
+
+  // behaviour-final-check T2: the panel is a tab stop only while it has no tabbable content
+  it('makes a panel without tabbable content a tab stop', async () => {
+    const wrapper = mount(Tabs, { props: { items, defaultValue: 'overview' }, attachTo: document.body })
+    await flushPromises()
+    expect(wrapper.get('[data-slot=tabs-panel]').attributes('tabindex')).toBe('0')
+    wrapper.unmount()
+  })
+})
