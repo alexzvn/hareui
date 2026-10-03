@@ -1,6 +1,6 @@
 <script setup lang="ts">
-import type { ToastQueue } from 'herouse'
-import { Button, toast, ToastProvider, ToastQueue as ToastQueueClass } from 'herouse'
+import type { ToastQueue } from '@hareui/vue'
+import { Button, toast, ToastProvider, ToastQueue as ToastQueueClass } from '@hareui/vue'
 import { h } from 'vue'
 import { Icon } from '../icons'
 

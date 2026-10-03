@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { Autocomplete } from 'herouse'
+import { Autocomplete } from '@hareui/vue'
 
 const items = [
   { value: 'florida', label: 'Florida' },

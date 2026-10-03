@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import { Icon } from '../icons'
-import { Switch } from 'herouse'
+import { Switch } from '@hareui/vue'
 import { ref } from 'vue'
 
 const controlled = ref(false)

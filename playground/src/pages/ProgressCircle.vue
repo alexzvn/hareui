@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { Button, ProgressCircle } from 'herouse'
+import { Button, ProgressCircle } from '@hareui/vue'
 import { ref } from 'vue'
 
 const sizes = ['sm', 'md', 'lg'] as const

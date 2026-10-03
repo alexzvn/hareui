@@ -1,6 +1,6 @@
-import type { ToastContentValue } from 'herouse'
+import type { ToastContentValue } from '@hareui/vue'
 import type { VNode } from 'vue'
-import { ToastProvider, ToastQueue } from 'herouse'
+import { ToastProvider, ToastQueue } from '@hareui/vue'
 import { h } from 'vue'
 
 // Each case gets its own queue (not the shared default) so toasts are enqueued

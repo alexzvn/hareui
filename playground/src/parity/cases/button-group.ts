@@ -1,5 +1,5 @@
 import type { VNode } from 'vue'
-import { Button, ButtonGroup, Dropdown } from 'herouse'
+import { Button, ButtonGroup, Dropdown } from '@hareui/vue'
 import { h } from 'vue'
 
 const three = (props: Record<string, unknown> = {}) => h(ButtonGroup, props, () => [

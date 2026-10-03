@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import { getLocalTimeZone, today } from '@internationalized/date'
-import { DateField } from 'herouse'
+import { DateField } from '@hareui/vue'
 </script>
 
 <template>

@@ -1,5 +1,5 @@
 import type { VNode } from 'vue'
-import { CloseButton } from 'herouse'
+import { CloseButton } from '@hareui/vue'
 import { h } from 'vue'
 
 export const cases: Record<string, () => VNode> = {

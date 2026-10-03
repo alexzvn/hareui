@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { Spinner } from 'herouse'
+import { Spinner } from '@hareui/vue'
 
 const sizes = ['sm', 'md', 'lg', 'xl'] as const
 const colors = ['accent', 'current', 'danger', 'success', 'warning'] as const

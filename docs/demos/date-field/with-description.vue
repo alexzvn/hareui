@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { DateField } from 'herouse'
+import { DateField } from '@hareui/vue'
 </script>
 
 <template>

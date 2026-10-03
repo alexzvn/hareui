@@ -11,7 +11,7 @@ links:
 ## Usage
 
 ```ts
-import { Separator } from 'herouse'
+import { Separator } from '@hareui/vue'
 ```
 
 <ComponentPreview name="separator/basic" />
@@ -48,10 +48,10 @@ The Separator component adapts to different surface backgrounds for better visib
 
 ### Global theme override
 
-Override the `separator` theme app-wide with `createHeroUse`:
+Override the `separator` theme app-wide with `createHareUI`:
 
 ```ts
-app.use(createHeroUse({
+app.use(createHareUI({
   ui: {
     separator: {
       slots: { base: 'bg-accent h-[2px]' },
@@ -71,8 +71,8 @@ Each rendered element carries the same `data-slot` string as HeroUI, so selector
 |---|---|---|
 | `base` | `separator` | The separator element |
 
-HeroUI's modifier classes correspond to these props (herouse renders utilities, not BEM classes, so
-style through `class`, `ui` or `createHeroUse`):
+HeroUI's modifier classes correspond to these props (HareUI renders utilities, not BEM classes, so
+style through `class`, `ui` or `createHareUI`):
 
 - `orientation`: `horizontal` (default, full width / 1px height), `vertical` (full height / 1px width)
 - `variant`: `default` (standard contrast), `secondary` (medium contrast), `tertiary` (subtle contrast)

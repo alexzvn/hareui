@@ -4,7 +4,7 @@ import ComponentItem from './ComponentItem.vue'
 import { componentPages } from './componentPages'
 
 // Port of HeroUI docs' related-components.tsx. HeroUI looks the list up in its registry and keeps
-// the first 3; herouse pages pass their own list (slugs under /docs/components).
+// the first 3; HareUI pages pass their own list (slugs under /docs/components).
 const props = defineProps<{ components: string[] }>()
 
 const items = computed(() => componentPages(props.components))

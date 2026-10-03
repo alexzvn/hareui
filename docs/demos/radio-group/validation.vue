@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { Button, Form, RadioGroup } from 'herouse'
+import { Button, Form, RadioGroup } from '@hareui/vue'
 import { ref } from 'vue'
 
 const message = ref<string | null>(null)

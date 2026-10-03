@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { Alert, Button, CloseButton, Spinner } from 'herouse'
+import { Alert, Button, CloseButton, Spinner } from '@hareui/vue'
 </script>
 
 <template>

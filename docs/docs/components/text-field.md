@@ -11,7 +11,7 @@ links:
 
 ```vue
 <script setup lang="ts">
-import { TextField } from 'herouse'
+import { TextField } from '@hareui/vue'
 </script>
 ```
 
@@ -110,7 +110,7 @@ Use the default slot to render your own `Label` and `Input` with custom classes;
 ### Global Configuration
 
 ```ts
-app.use(createHeroUse({
+app.use(createHareUI({
   ui: { textField: { slots: { base: 'gap-2' } } },
 }))
 ```

@@ -10,7 +10,7 @@ links:
 ## Usage
 
 ```ts
-import { Meter } from 'herouse'
+import { Meter } from '@hareui/vue'
 ```
 
 <ComponentPreview name="meter/basic" />
@@ -65,10 +65,10 @@ Use the `class` prop for the root and the `ui` prop for the label, output, track
 
 ### Global theme override
 
-Override the `meter` theme app-wide with `createHeroUse`:
+Override the `meter` theme app-wide with `createHareUI`:
 
 ```ts
-app.use(createHeroUse({
+app.use(createHareUI({
   ui: {
     meter: {
       slots: {
@@ -93,8 +93,8 @@ Each rendered element carries the same `data-slot` string as HeroUI, so selector
 | `track` | `meter-track` | Track background |
 | `fill` | `meter-fill` | Filled portion of the track |
 
-HeroUI's modifier classes correspond to props (herouse renders utilities, not BEM classes, so
-style through `class`, `ui` or `createHeroUse`):
+HeroUI's modifier classes correspond to props (HareUI renders utilities, not BEM classes, so
+style through `class`, `ui` or `createHareUI`):
 
 - `size`: `sm` (thinner track), `md` (default), `lg` (thicker track) (`.meter--{size}`)
 - `color`: `default`, `accent` (default), `success`, `warning`, `danger` (`.meter--{color}`)

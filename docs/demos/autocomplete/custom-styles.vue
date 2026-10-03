@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { Autocomplete, Description, Label, TagGroup } from 'herouse'
+import { Autocomplete, Description, Label, TagGroup } from '@hareui/vue'
 import { ref } from 'vue'
 
 const TEAMMATES = [

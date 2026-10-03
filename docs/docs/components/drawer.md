@@ -11,7 +11,7 @@ links:
 ## Usage
 
 ```ts
-import { Drawer } from 'herouse'
+import { Drawer } from '@hareui/vue'
 ```
 
 <ComponentPreview name="drawer/basic" />
@@ -81,10 +81,10 @@ excluded from the body area to avoid scroll conflicts.
 
 ### Global Configuration
 
-To customize the Drawer classes for the whole app, extend the `drawer` theme in `createHeroUse`:
+To customize the Drawer classes for the whole app, extend the `drawer` theme in `createHareUI`:
 
 ```ts
-app.use(createHeroUse({
+app.use(createHareUI({
   ui: {
     drawer: {
       slots: {

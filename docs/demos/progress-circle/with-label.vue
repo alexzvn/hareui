@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { Label, ProgressCircle } from 'herouse'
+import { Label, ProgressCircle } from '@hareui/vue'
 </script>
 
 <template>

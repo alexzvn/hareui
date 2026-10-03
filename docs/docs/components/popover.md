@@ -10,7 +10,7 @@ links:
 ## Usage
 
 ```ts
-import { Popover } from 'herouse'
+import { Popover } from '@hareui/vue'
 ```
 
 <ComponentPreview name="popover/basic" />
@@ -53,7 +53,7 @@ The default slot's first child is the trigger (receives the current `open` state
 ### Global theme override
 
 ```ts
-app.use(createHeroUse({
+app.use(createHareUI({
   ui: {
     popover: {
       slots: { base: 'rounded-xl' },

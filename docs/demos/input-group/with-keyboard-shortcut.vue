@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { InputGroup, Kbd, TextField } from 'herouse'
+import { InputGroup, Kbd, TextField } from '@hareui/vue'
 </script>
 
 <template>

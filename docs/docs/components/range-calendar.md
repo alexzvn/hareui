@@ -12,7 +12,7 @@ links:
 
 ```vue
 <script setup lang="ts">
-import { RangeCalendar } from 'herouse'
+import { RangeCalendar } from '@hareui/vue'
 </script>
 ```
 
@@ -175,10 +175,10 @@ example below shows the Indian calendar system.
 ### Global Configuration
 
 To customize the RangeCalendar classes for the whole app, extend the `rangeCalendar` theme in
-`createHeroUse`:
+`createHareUI`:
 
 ```ts
-app.use(createHeroUse({
+app.use(createHareUI({
   ui: {
     rangeCalendar: {
       slots: {
@@ -208,7 +208,7 @@ RangeCalendar sets these data attributes (from Reka UI), on `[data-slot="range-c
 
 ### Reka UI Limitations
 
-- Week and day views (`visible-duration`) are rendered by herouse's own grid, since Reka's `CalendarRoot`/`RangeCalendarRoot` always build full month grids. They follow React Aria's `visibleDuration` behaviour (alignment, paging, `page-behavior`, keyboard navigation) and HeroUI's `--week-view`/`--day-view` styles; the year picker, `number-of-months` and `fixed-weeks` only apply to the month view.
+- Week and day views (`visible-duration`) are rendered by HareUI's own grid, since Reka's `CalendarRoot`/`RangeCalendarRoot` always build full month grids. They follow React Aria's `visibleDuration` behaviour (alignment, paging, `page-behavior`, keyboard navigation) and HeroUI's `--week-view`/`--day-view` styles; the year picker, `number-of-months` and `fixed-weeks` only apply to the month view.
 - Anchor-aware `is-date-unavailable`: Reka's matcher takes one argument, so RangeCalendar wraps the two-argument callback in a closure that reads the in-progress anchor (the picked start while `end` is unset, `null` once the range is complete, as in react-stately). It also narrows Reka's `min-value`/`max-value` to the run of available days around the anchor (react-stately's `getAvailableRange`), so paging past it is disabled, and marks the lone anchor cell as both selection start and end, as React Aria does.
 - `fixed-weeks` is boolean only (always 6 weeks). HeroUI's React `weeksInMonth` accepts any count up
   to 6; Reka's `RangeCalendarRoot` only exposes the all-or-nothing `fixedWeeks` flag.

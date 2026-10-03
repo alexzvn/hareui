@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import { Icon } from '@iconify/vue'
-import { Button, Popover } from 'herouse'
+import { Button, Popover } from '@hareui/vue'
 </script>
 
 <template>

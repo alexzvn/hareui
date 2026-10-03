@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { Button, Card, CloseButton } from 'herouse'
+import { Button, Card, CloseButton } from '@hareui/vue'
 </script>
 
 <template>

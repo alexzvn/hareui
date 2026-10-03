@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { ColorArea, ColorSwatch, colorToString, parseColor } from 'herouse'
+import { ColorArea, ColorSwatch, colorToString, parseColor } from '@hareui/vue'
 import { ref } from 'vue'
 
 const color = ref(parseColor('#9B80FF'))

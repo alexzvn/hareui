@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { Button } from 'herouse'
+import { Button } from '@hareui/vue'
 import { defineComponent, h, ref } from 'vue'
 
 const CustomButton = defineComponent((_, { attrs, slots }) => {

@@ -11,7 +11,7 @@ links:
 
 ```vue
 <script setup lang="ts">
-import { InputGroup } from 'herouse'
+import { InputGroup } from '@hareui/vue'
 </script>
 ```
 
@@ -164,7 +164,7 @@ Set `textarea` (with `rows`) for multiline text input with prefix and suffix ele
 ```vue
 <script setup lang="ts">
 import { Icon } from '@iconify/vue'
-import { InputGroup, TextField } from 'herouse'
+import { InputGroup, TextField } from '@hareui/vue'
 import { ref } from 'vue'
 
 const feedback = ref('')
@@ -209,7 +209,7 @@ const feedback = ref('')
 ### Global Configuration
 
 ```ts
-app.use(createHeroUse({
+app.use(createHareUI({
   ui: { inputGroup: { slots: { prefix: 'px-2', suffix: 'px-2' } } },
 }))
 ```

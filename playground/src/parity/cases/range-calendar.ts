@@ -1,7 +1,7 @@
 import type { DateValue } from '@internationalized/date'
 import type { VNode } from 'vue'
 import { isWeekend, parseDate } from '@internationalized/date'
-import { RangeCalendar } from 'herouse'
+import { RangeCalendar } from '@hareui/vue'
 import { defineComponent, h, nextTick, onMounted, ref } from 'vue'
 
 export const cases: Record<string, () => VNode> = {}

@@ -1,6 +1,6 @@
 import type { VNode } from 'vue'
 import { CalendarDate, CalendarDateTime } from '@internationalized/date'
-import { DateField } from 'herouse'
+import { DateField } from '@hareui/vue'
 import { h } from 'vue'
 
 const base = { label: 'Date', description: 'Enter a date', defaultValue: new CalendarDate(2024, 3, 15) }

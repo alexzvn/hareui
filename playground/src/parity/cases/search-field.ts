@@ -1,5 +1,5 @@
 import type { VNode } from 'vue'
-import { SearchField } from 'herouse'
+import { SearchField } from '@hareui/vue'
 import { h } from 'vue'
 
 const base = { label: 'Search', placeholder: 'Search...' }

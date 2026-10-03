@@ -11,7 +11,7 @@ links:
 
 ```vue
 <script setup lang="ts">
-import { Checkbox } from 'herouse'
+import { Checkbox } from '@hareui/vue'
 </script>
 ```
 
@@ -107,7 +107,7 @@ The `#label`, `#description` and `#indicator` slots receive `{ state }` (`'check
 ### Global Configuration
 
 ```ts
-app.use(createHeroUse({
+app.use(createHareUI({
   ui: { checkbox: { slots: { control: 'rounded-full' } } },
 }))
 ```

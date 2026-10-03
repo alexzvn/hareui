@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { ComboBox, EmptyState, Spinner } from 'herouse'
+import { ComboBox, EmptyState, Spinner } from '@hareui/vue'
 import { onMounted, ref, watch } from 'vue'
 
 interface Character {

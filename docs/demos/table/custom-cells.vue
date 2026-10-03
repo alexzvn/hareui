@@ -1,6 +1,6 @@
 <script setup lang="ts">
-import type { TableSelection, TableSortDescriptor } from 'herouse'
-import { Avatar, Button, Chip, Table } from 'herouse'
+import type { TableSelection, TableSortDescriptor } from '@hareui/vue'
+import { Avatar, Button, Chip, Table } from '@hareui/vue'
 import { Icon } from '@iconify/vue'
 import { computed, ref } from 'vue'
 

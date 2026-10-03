@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import { Icon } from '@iconify/vue'
-import { Select } from 'herouse'
+import { Select } from '@hareui/vue'
 
 const states = [
   { value: 'florida', label: 'Florida' },

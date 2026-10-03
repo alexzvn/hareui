@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { Slider } from 'herouse'
+import { Slider } from '@hareui/vue'
 </script>
 
 <template>

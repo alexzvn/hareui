@@ -10,7 +10,7 @@ links:
 ## Usage
 
 ```ts
-import { Toolbar } from 'herouse'
+import { Toolbar } from '@hareui/vue'
 ```
 
 <ComponentPreview name="toolbar/basic" />
@@ -37,10 +37,10 @@ import { Toolbar } from 'herouse'
 
 ### Global theme override
 
-Override the `toolbar` theme app-wide with `createHeroUse`:
+Override the `toolbar` theme app-wide with `createHareUI`:
 
 ```ts
-app.use(createHeroUse({
+app.use(createHareUI({
   ui: {
     toolbar: {
       slots: { base: 'gap-4 rounded-lg bg-surface p-3' },

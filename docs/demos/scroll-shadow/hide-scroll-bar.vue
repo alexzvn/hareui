@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { ScrollShadow } from 'herouse'
+import { ScrollShadow } from '@hareui/vue'
 </script>
 
 <template>

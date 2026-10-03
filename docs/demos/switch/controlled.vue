@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { Switch } from 'herouse'
+import { Switch } from '@hareui/vue'
 import { ref } from 'vue'
 
 const isSelected = ref(false)

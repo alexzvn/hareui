@@ -11,7 +11,7 @@ links:
 
 ```vue
 <script setup lang="ts">
-import { Pagination } from 'herouse'
+import { Pagination } from '@hareui/vue'
 </script>
 ```
 
@@ -21,7 +21,7 @@ import { Pagination } from 'herouse'
 
 HeroUI composes `Pagination.Summary`, `Pagination.Content`, `Pagination.Item`, `Pagination.Link`,
 `Pagination.Previous` / `Pagination.Next` (with `PreviousIcon` / `NextIcon`) and
-`Pagination.Ellipsis` by hand. herouse renders the same markup from `total` and `v-model:page`:
+`Pagination.Ellipsis` by hand. HareUI renders the same markup from `total` and `v-model:page`:
 
 ```vue
 <template>
@@ -90,10 +90,10 @@ You can replace the default chevron icons with the `#prevIcon` and `#nextIcon` s
 
 ### Global Configuration
 
-To customize the Pagination classes for the whole app, extend the `pagination` theme in `createHeroUse`:
+To customize the Pagination classes for the whole app, extend the `pagination` theme in `createHareUI`:
 
 ```ts
-app.use(createHeroUse({
+app.use(createHareUI({
   ui: {
     pagination: {
       slots: {

@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { Tabs } from 'herouse'
+import { Tabs } from '@hareui/vue'
 
 const items = ['Overview', 'Analytics', 'Reports', 'Performance', 'Engagement', 'Audience', 'Acquisition', 'Retention', 'Settings']
   .map(label => ({ label, value: label.toLowerCase(), content: `${label} panel content.` }))

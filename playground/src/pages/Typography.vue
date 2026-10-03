@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { Typography } from 'herouse'
+import { Typography } from '@hareui/vue'
 
 const types = ['h1', 'h2', 'h3', 'h4', 'h5', 'h6', 'body', 'body-sm', 'body-xs', 'code'] as const
 const aligns = ['start', 'center', 'end', 'justify'] as const
@@ -42,7 +42,7 @@ const weights = ['normal', 'medium', 'semibold', 'bold'] as const
       <h2 class="mb-2 text-sm font-medium text-muted">Weight</h2>
       <div class="flex max-w-xl flex-col gap-2">
         <Typography v-for="weight in weights" :key="weight" :weight="weight">
-          {{ weight }} weight — HeroUse typography.
+          {{ weight }} weight — HareUI typography.
         </Typography>
       </div>
     </section>

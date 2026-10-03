@@ -1,6 +1,6 @@
 <script setup lang="ts">
-import type { ExpandedValue } from 'herouse'
-import { Button, Disclosure, DisclosureGroup, Separator, useDisclosureGroupNavigation } from 'herouse'
+import type { ExpandedValue } from '@hareui/vue'
+import { Button, Disclosure, DisclosureGroup, Separator, useDisclosureGroupNavigation } from '@hareui/vue'
 import { ref } from 'vue'
 
 const expanded = ref<ExpandedValue[]>(['one'])

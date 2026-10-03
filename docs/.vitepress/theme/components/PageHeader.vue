@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import { computed } from 'vue'
-import { tv } from '../../../../packages/herouse/src/utils/tv'
-import buttonTheme from '../../../../packages/herouse/src/theme/button'
+import { tv } from '../../../../packages/vue/src/utils/tv'
+import buttonTheme from '../../../../packages/vue/src/theme/button'
 
 export interface PageLinks {
   reka?: string

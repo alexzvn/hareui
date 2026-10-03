@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { Button, Tooltip } from 'herouse'
+import { Button, Tooltip } from '@hareui/vue'
 import { Icon } from '@iconify/vue'
 </script>
 

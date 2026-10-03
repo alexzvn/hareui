@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import { Icon } from '@iconify/vue'
-import { Button, InputGroup, Kbd, TextField, Tooltip } from 'herouse'
+import { Button, InputGroup, Kbd, TextField, Tooltip } from '@hareui/vue'
 import { ref } from 'vue'
 
 const value = ref('')

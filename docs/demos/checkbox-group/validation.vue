@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { Button, CheckboxGroup, Form } from 'herouse'
+import { Button, CheckboxGroup, Form } from '@hareui/vue'
 import { ref } from 'vue'
 
 const message = ref<string | null>(null)

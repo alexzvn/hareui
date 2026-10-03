@@ -1,6 +1,6 @@
 import type { VNode } from 'vue'
-import type { CheckboxGroupItem, CheckboxGroupProps } from 'herouse'
-import { CheckboxGroup } from 'herouse'
+import type { CheckboxGroupItem, CheckboxGroupProps } from '@hareui/vue'
+import { CheckboxGroup } from '@hareui/vue'
 import { h } from 'vue'
 
 const interests: CheckboxGroupItem[] = [

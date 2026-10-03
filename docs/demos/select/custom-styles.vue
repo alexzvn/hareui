@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { Select } from 'herouse'
+import { Select } from '@hareui/vue'
 
 const itemClass = 'rounded-lg data-[focused=true]:bg-accent/10 data-[selected=true]:text-foreground'
 const plans = [

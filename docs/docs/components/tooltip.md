@@ -11,7 +11,7 @@ links:
 ## Usage
 
 ```ts
-import { Tooltip } from 'herouse'
+import { Tooltip } from '@hareui/vue'
 ```
 
 <ComponentPreview name="tooltip/basic" />
@@ -71,9 +71,9 @@ a `Chip`, an icon), wrap it in an `inline-block` element with `role="button"` an
 
 ### Known differences from HeroUI
 
-- **No cross-tooltip warm-up.** React Aria shares one global timer, so once any tooltip has opened, the next one opens instantly. Each herouse Tooltip has its own Reka provider, so every tooltip waits for its own `delay`.
+- **No cross-tooltip warm-up.** React Aria shares one global timer, so once any tooltip has opened, the next one opens instantly. Each HareUI Tooltip has its own Reka provider, so every tooltip waits for its own `delay`.
 - **Sub-pixel position drift.** Reka positions the content with floating-ui and React Aria uses its own overlay maths. The two can differ by under a pixel.
-- **Delays are props, not CSS variables.** HeroUI reads its defaults from `--tooltip-delay` / `--tooltip-close-delay` at runtime. herouse uses the same values as prop defaults, so changing those variables has no effect.
+- **Delays are props, not CSS variables.** HeroUI reads its defaults from `--tooltip-delay` / `--tooltip-close-delay` at runtime. HareUI uses the same values as prop defaults, so changing those variables has no effect.
 
 ## Customization
 
@@ -83,10 +83,10 @@ a `Chip`, an icon), wrap it in an `inline-block` element with `role="button"` an
 
 ### Global Configuration
 
-To customize the Tooltip classes for the whole app, extend the `tooltip` theme in `createHeroUse`:
+To customize the Tooltip classes for the whole app, extend the `tooltip` theme in `createHareUI`:
 
 ```ts
-app.use(createHeroUse({
+app.use(createHareUI({
   ui: {
     tooltip: {
       slots: { base: 'rounded-xl shadow-lg' },

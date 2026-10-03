@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { CheckboxGroup, Surface } from 'herouse'
+import { CheckboxGroup, Surface } from '@hareui/vue'
 
 const items = [
   { value: 'coding', label: 'Coding', description: 'Love building software' },

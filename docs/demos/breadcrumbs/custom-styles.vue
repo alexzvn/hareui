@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { Breadcrumbs } from 'herouse'
+import { Breadcrumbs } from '@hareui/vue'
 
 const items = [
   { label: 'Home', href: '#', class: 'text-muted hover:text-accent' },

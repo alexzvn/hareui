@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { Button, Checkbox } from 'herouse'
+import { Button, Checkbox } from '@hareui/vue'
 
 function handleSubmit(e: Event) {
   e.preventDefault()

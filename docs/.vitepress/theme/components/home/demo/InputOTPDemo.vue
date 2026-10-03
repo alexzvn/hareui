@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { InputOtp, Label, Link } from 'herouse'
+import { InputOtp, Label, Link } from '@hareui/vue'
 import { ref } from 'vue'
 
 // HERO - 4320 - easter egg

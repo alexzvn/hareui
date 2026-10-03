@@ -1,8 +1,8 @@
 <script setup lang="ts">
 import { onBeforeUnmount, onMounted, ref } from 'vue'
 import { Icon } from '@iconify/vue'
-import { tv } from '../../../../packages/herouse/src/utils/tv'
-import buttonTheme from '../../../../packages/herouse/src/theme/button'
+import { tv } from '../../../../packages/vue/src/utils/tv'
+import buttonTheme from '../../../../packages/vue/src/theme/button'
 import { sectionLinks, type SidebarSection } from '../../sidebar'
 import FrameworkTabs from './FrameworkTabs.vue'
 import ThemeToggle from './ThemeToggle.vue'
@@ -37,7 +37,7 @@ const TAB = 'hover:text-fd-accent-foreground inline-flex items-center gap-2 bord
       <div class="items-center flex flex-1">
         <div class="flex items-center gap-4">
           <a class="inline-flex items-center gap-2.5 font-semibold" href="/docs/getting-started/">
-            <span class="font-semibold text-lg">HeroUse</span>
+            <span class="font-semibold text-lg">HareUI</span>
           </a>
         </div>
       </div>

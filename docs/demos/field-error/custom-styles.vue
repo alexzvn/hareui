@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { FieldError, Input, Label, TextField } from 'herouse'
+import { FieldError, Input, Label, TextField } from '@hareui/vue'
 import { computed, ref } from 'vue'
 
 const value = ref('jr')

@@ -12,7 +12,7 @@ links:
 
 ```vue
 <script setup lang="ts">
-import { ListBox } from 'herouse'
+import { ListBox } from '@hareui/vue'
 </script>
 ```
 
@@ -77,7 +77,7 @@ ListBox takes an `items` array. Each entry is an item (`{ value, label, descript
 
 ### Render Function
 
-HeroUI's `render` prop has no herouse equivalent; attributes such as `data-custom` fall through to the root.
+HeroUI's `render` prop has no HareUI equivalent; attributes such as `data-custom` fall through to the root.
 
 <ComponentPreview name="list-box/render-function" />
 
@@ -94,7 +94,7 @@ HeroUI's `render` prop has no herouse equivalent; attributes such as `data-custo
 ### Global Configuration
 
 ```ts
-app.use(createHeroUse({
+app.use(createHareUI({
   ui: { listBox: { slots: { base: 'rounded-lg border border-border p-2', item: 'rounded px-2 py-1' } } },
 }))
 ```

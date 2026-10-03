@@ -10,7 +10,7 @@ links:
 ## Usage
 
 ```ts
-import { ToggleButton, ToggleButtonGroup } from 'herouse'
+import { ToggleButton, ToggleButtonGroup } from '@hareui/vue'
 ```
 
 <ComponentPreview name="toggle-button-group/basic" />
@@ -81,10 +81,10 @@ Use `selection-mode="single"` for mutually exclusive choices or `selection-mode=
 
 ### Global theme override
 
-Override the `toggleButtonGroup` theme app-wide with `createHeroUse`:
+Override the `toggleButtonGroup` theme app-wide with `createHareUI`:
 
 ```ts
-app.use(createHeroUse({
+app.use(createHareUI({
   ui: {
     toggleButtonGroup: {
       slots: { base: 'rounded-lg', separator: 'opacity-25' },

@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import { Icon } from '@iconify/vue'
-import { DateRangePicker } from 'herouse'
+import { DateRangePicker } from '@hareui/vue'
 </script>
 
 <template>

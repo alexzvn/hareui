@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import { Icon } from '@iconify/vue'
-import { Button, Form, TextField } from 'herouse'
+import { Button, Form, TextField } from '@hareui/vue'
 
 function onSubmit(e: Event) {
   e.preventDefault()

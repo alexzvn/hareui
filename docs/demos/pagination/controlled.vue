@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { Pagination } from 'herouse'
+import { Pagination } from '@hareui/vue'
 import { computed, ref } from 'vue'
 
 const page = ref(1)

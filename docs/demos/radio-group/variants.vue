@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { RadioGroup } from 'herouse'
+import { RadioGroup } from '@hareui/vue'
 
 const primaryItems = [
   { value: 'option1', label: 'Option 1', description: 'Standard styling with default background' },

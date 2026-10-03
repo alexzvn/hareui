@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { Avatar, Chip, Tooltip } from 'herouse'
+import { Avatar, Chip, Tooltip } from '@hareui/vue'
 import { Icon } from '@iconify/vue'
 
 // Equivalent of HeroUI's `Tooltip.Trigger`: a focusable inline-block wrapper around non-button content.

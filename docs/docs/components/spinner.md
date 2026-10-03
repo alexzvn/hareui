@@ -10,7 +10,7 @@ links:
 ## Usage
 
 ```ts
-import { Spinner } from 'herouse'
+import { Spinner } from '@hareui/vue'
 ```
 
 <ComponentPreview name="spinner/basic" />
@@ -48,7 +48,7 @@ prefer reduced motion.
 ### Global theme override
 
 ```ts
-app.use(createHeroUse({
+app.use(createHareUI({
   ui: {
     spinner: {
       defaultVariants: { color: 'current' },

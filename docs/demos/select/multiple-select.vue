@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { Select } from 'herouse'
+import { Select } from '@hareui/vue'
 
 const countries = [
   { value: 'argentina', label: 'Argentina' },

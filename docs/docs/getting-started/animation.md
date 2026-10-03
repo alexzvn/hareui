@@ -1,9 +1,9 @@
 ---
 title: Animation
-description: Add smooth animations and transitions to HeroUse components.
+description: Add smooth animations and transitions to HareUI components.
 ---
 
-HeroUse ships [tw-animate-css](https://github.com/Wombosvideo/tw-animate-css) and exposes component state through `data-state`/`data-slot` attributes, so entrance/exit transitions are plain Tailwind utilities — no JavaScript animation library required.
+HareUI ships [tw-animate-css](https://github.com/Wombosvideo/tw-animate-css) and exposes component state through `data-state`/`data-slot` attributes, so entrance/exit transitions are plain Tailwind utilities — no JavaScript animation library required.
 
 ## Built-in Animations
 
@@ -66,10 +66,10 @@ Overlay components (Modal, Popover, Tooltip) use Reka UI's `data-state` to drive
 
 ## Accessibility: Respecting Motion Preferences
 
-HeroUse's built-in transitions use Tailwind's `motion-reduce:` variant, so they are automatically disabled when a user enables "reduce motion" in their system settings:
+HareUI's built-in transitions use Tailwind's `motion-reduce:` variant, so they are automatically disabled when a user enables "reduce motion" in their system settings:
 
 ```css
-/* HeroUse pattern — uses Tailwind's motion-reduce: */
+/* HareUI pattern — uses Tailwind's motion-reduce: */
 [data-slot="button"] {
   @apply transition-colors motion-reduce:transition-none;
 }
@@ -87,7 +87,7 @@ This expands to support both the native media query and an explicit opt-out:
 
 ```html
 <html data-reduce-motion="true">
-  <!-- All HeroUse animations are disabled -->
+  <!-- All HareUI animations are disabled -->
 </html>
 ```
 

@@ -1,6 +1,6 @@
 <script setup lang="ts">
-import type { ComboBoxValidationValue } from 'herouse'
-import { Button, ComboBox, Form } from 'herouse'
+import type { ComboBoxValidationValue } from '@hareui/vue'
+import { Button, ComboBox, Form } from '@hareui/vue'
 
 const animals = [
   { value: 'aardvark', label: 'Aardvark' },

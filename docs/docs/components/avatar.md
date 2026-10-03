@@ -11,7 +11,7 @@ links:
 ## Usage
 
 ```ts
-import { Avatar } from 'herouse'
+import { Avatar } from '@hareui/vue'
 ```
 
 <ComponentPreview name="avatar/basic" />
@@ -68,10 +68,10 @@ Use the `class` prop for the root and `:ui="{ fallback: '…' }"` for the fallba
 
 ### Global theme override
 
-Override the `avatar` theme app-wide with `createHeroUse`:
+Override the `avatar` theme app-wide with `createHareUI`:
 
 ```ts
-app.use(createHeroUse({
+app.use(createHareUI({
   ui: {
     avatar: {
       slots: {
@@ -91,8 +91,8 @@ app.use(createHeroUse({
 | `image` | — | Image element with aspect-square sizing, rendered when `src` is set |
 | `fallback` | `avatar-fallback` | Fallback container with centered content (text or `#fallback` slot) |
 
-HeroUI's modifier classes correspond to props (herouse renders utilities, not BEM classes, so
-style through `class`, `ui` or `createHeroUse`): `.avatar--sm` / `--md` / `--lg` → `size`,
+HeroUI's modifier classes correspond to props (HareUI renders utilities, not BEM classes, so
+style through `class`, `ui` or `createHareUI`): `.avatar--sm` / `--md` / `--lg` → `size`,
 `.avatar--soft` → `variant="soft"`, `.avatar__fallback--{color}` → `color`. `color` only
 affects the fallback (it has no effect once an image has loaded).
 

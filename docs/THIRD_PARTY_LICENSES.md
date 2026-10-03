@@ -1,6 +1,6 @@
 # Third-Party Licenses
 
-The HeroUse documentation theme includes material copied from the following projects.
+The HareUI documentation theme includes material copied from the following projects.
 
 ## fumadocs-ui 16.9.3
 

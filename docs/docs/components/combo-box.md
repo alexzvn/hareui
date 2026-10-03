@@ -12,7 +12,7 @@ links:
 
 ```vue
 <script setup lang="ts">
-import { ComboBox } from 'herouse'
+import { ComboBox } from '@hareui/vue'
 </script>
 ```
 
@@ -116,7 +116,7 @@ Pass `filter` to replace the default case- and accent-insensitive "contains" mat
 
 ### Render Function
 
-HeroUI's `render` prop has no herouse equivalent; attributes such as `data-custom` fall through to the root.
+HeroUI's `render` prop has no HareUI equivalent; attributes such as `data-custom` fall through to the root.
 
 <ComponentPreview name="combo-box/render-function" />
 
@@ -178,7 +178,7 @@ When used inside a [Surface](/docs/components/surface) component, use `variant="
 ### Global Configuration
 
 ```ts
-app.use(createHeroUse({
+app.use(createHareUI({
   ui: { comboBox: { slots: { inputGroup: 'rounded-lg', trigger: 'text-muted', popover: 'rounded-lg border border-border bg-surface p-2' } } },
 }))
 ```

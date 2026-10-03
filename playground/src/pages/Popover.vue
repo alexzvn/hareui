@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import { ref } from 'vue'
-import { Button, Popover } from 'herouse'
+import { Button, Popover } from '@hareui/vue'
 
 const open = ref(false)
 </script>

@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { Button, ComboBox, Form } from 'herouse'
+import { Button, ComboBox, Form } from '@hareui/vue'
 import { ref } from 'vue'
 
 const animals = [

@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { RadioGroup, Surface } from 'herouse'
+import { RadioGroup, Surface } from '@hareui/vue'
 
 const items = [
   { value: 'basic', label: 'Basic Plan', description: 'Includes 100 messages per month' },

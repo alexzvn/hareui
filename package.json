@@ -1,6 +1,6 @@
 {
   "private": true,
-  "name": "herouse-monorepo",
+  "name": "hareui",
   "type": "module",
   "workspaces": [
     "packages/*",
@@ -10,9 +10,9 @@
   ],
   "scripts": {
     "dev": "bun run --cwd playground dev",
-    "build": "bun run --cwd packages/herouse build",
-    "test": "bun run --cwd packages/herouse test",
-    "typecheck": "bun run --cwd packages/herouse typecheck",
+    "build": "bun run --cwd packages/vue build",
+    "test": "bun run --cwd packages/vue test",
+    "typecheck": "bun run --cwd packages/vue typecheck",
     "reference": "bun run --cwd reference dev",
     "parity": "bun parity/compare.ts",
     "docs:dev": "bun run --cwd docs dev",

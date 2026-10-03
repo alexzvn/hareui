@@ -1,5 +1,5 @@
 import type { VNode } from 'vue'
-import { ListBox } from 'herouse'
+import { ListBox } from '@hareui/vue'
 import { h } from 'vue'
 
 const users = [

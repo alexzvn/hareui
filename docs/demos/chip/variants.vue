@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { Chip, Separator } from 'herouse'
+import { Chip, Separator } from '@hareui/vue'
 import { Icon } from '@iconify/vue'
 
 const sizes = ['lg', 'md', 'sm'] as const

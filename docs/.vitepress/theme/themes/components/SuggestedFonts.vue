@@ -2,7 +2,7 @@
 // Port of HeroUI docs `themes/components/suggested-fonts.tsx`.
 import type { CustomFont } from '../composables/customFonts'
 import { Icon } from '@iconify/vue'
-import { Button, ListBox, ScrollShadow, Tooltip } from 'herouse'
+import { Button, ListBox, ScrollShadow, Tooltip } from '@hareui/vue'
 import { computed, onMounted, watch } from 'vue'
 import { useCustomFonts } from '../composables/customFonts'
 import { useVariableSetter } from '../composables/variables'

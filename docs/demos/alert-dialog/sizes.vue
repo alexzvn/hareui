@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { AlertDialog, Button } from 'herouse'
+import { AlertDialog, Button } from '@hareui/vue'
 import { Icon } from '@iconify/vue'
 
 const sizes = ['xs', 'sm', 'md', 'lg', 'cover'] as const

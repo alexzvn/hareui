@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { TextArea } from 'herouse'
+import { TextArea } from '@hareui/vue'
 </script>
 
 <template>

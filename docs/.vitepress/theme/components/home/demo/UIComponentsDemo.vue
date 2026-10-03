@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { Checkbox, RadioGroup, Spinner, Switch } from 'herouse'
+import { Checkbox, RadioGroup, Spinner, Switch } from '@hareui/vue'
 
 const radios = [{ value: 'option1' }, { value: 'option2' }]
 </script>

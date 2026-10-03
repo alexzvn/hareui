@@ -1,9 +1,9 @@
 ---
 title: Dark Mode
-description: Add light, dark, and system theme switching to HeroUse.
+description: Add light, dark, and system theme switching to HareUI.
 ---
 
-HeroUse dark mode is CSS-driven. Components read theme variables from the root element, so there's no provider component to mount. Add the `dark` class or `data-theme="dark"` to `<html>` and every component picks up the dark theme automatically.
+HareUI dark mode is CSS-driven. Components read theme variables from the root element, so there's no provider component to mount. Add the `dark` class or `data-theme="dark"` to `<html>` and every component picks up the dark theme automatically.
 
 ```html
 <html class="dark" data-theme="dark">
@@ -16,12 +16,12 @@ HeroUse dark mode is CSS-driven. Components read theme variables from the root e
 Keep the `bg-background` and `text-foreground` classes on your app shell so the page canvas changes with the active theme.
 
 ::: info
-HeroUse's built-in light and dark themes respond to both `.light`/`.dark` classes and `data-theme="light"`/`data-theme="dark"` attributes. If you set both manually, keep the values in sync.
+HareUI's built-in light and dark themes respond to both `.light`/`.dark` classes and `data-theme="light"`/`data-theme="dark"` attributes. If you set both manually, keep the values in sync.
 :::
 
 ## A Toggle Composable
 
-Since HeroUse has no theme provider, write a small composable that toggles the `dark` class and persists the choice:
+Since HareUI has no theme provider, write a small composable that toggles the `dark` class and persists the choice:
 
 ```ts [composables/useDark.ts]
 import { ref, watchEffect } from 'vue'
@@ -51,7 +51,7 @@ export function useDark() {
 
 ```vue [components/ThemeSwitcher.vue]
 <script setup lang="ts">
-import { Button } from 'herouse'
+import { Button } from '@hareui/vue'
 import { useDark } from '../composables/useDark'
 
 const { theme, setTheme } = useDark()

@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { Chip, Table } from 'herouse'
+import { Chip, Table } from '@hareui/vue'
 
 const columns = [
   { key: 'name', label: 'Name', isRowHeader: true, minWidth: 160, resizable: true },

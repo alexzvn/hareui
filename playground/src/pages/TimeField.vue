@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import type { TimeValue } from 'reka-ui'
 import { Time } from '@internationalized/date'
-import { TimeField } from 'herouse'
+import { TimeField } from '@hareui/vue'
 import { ref } from 'vue'
 
 const time = ref<TimeValue | null>(new Time(9, 30))

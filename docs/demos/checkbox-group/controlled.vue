@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { CheckboxGroup } from 'herouse'
+import { CheckboxGroup } from '@hareui/vue'
 import { ref } from 'vue'
 
 const selected = ref<string[]>(['coding', 'design'])

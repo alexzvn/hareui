@@ -1,5 +1,5 @@
 import type { VNode } from 'vue'
-import { Select } from 'herouse'
+import { Select } from '@hareui/vue'
 import { h } from 'vue'
 
 const states = ['Florida', 'Delaware', 'California', 'Texas'].map(label => ({ value: label.toLowerCase(), label }))

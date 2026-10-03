@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { Input, Label, TextField } from 'herouse'
+import { Input, Label, TextField } from '@hareui/vue'
 import { computed, ref } from 'vue'
 
 const username = ref('')

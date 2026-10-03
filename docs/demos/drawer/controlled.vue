@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { Button, Drawer } from 'herouse'
+import { Button, Drawer } from '@hareui/vue'
 import { reactive, ref } from 'vue'
 
 const isOpen = ref(false)

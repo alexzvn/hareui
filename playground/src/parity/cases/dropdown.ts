@@ -1,6 +1,6 @@
-import type { DropdownEntry, DropdownValue } from 'herouse'
+import type { DropdownEntry, DropdownValue } from '@hareui/vue'
 import type { VNode } from 'vue'
-import { Button, Dropdown } from 'herouse'
+import { Button, Dropdown } from '@hareui/vue'
 import { h } from 'vue'
 
 export const cases: Record<string, () => VNode> = {}

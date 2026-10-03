@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { Avatar, EmptyState, TagGroup } from 'herouse'
+import { Avatar, EmptyState, TagGroup } from '@hareui/vue'
 import { computed, ref } from 'vue'
 
 interface User {

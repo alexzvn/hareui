@@ -11,7 +11,7 @@ links:
 
 ```vue
 <script setup lang="ts">
-import { CheckboxGroup } from 'herouse'
+import { CheckboxGroup } from '@hareui/vue'
 </script>
 ```
 
@@ -92,7 +92,7 @@ Attributes such as `data-*` fall through to the root element.
 ### Global Configuration
 
 ```ts
-app.use(createHeroUse({
+app.use(createHareUI({
   ui: { checkboxGroup: { slots: { base: 'flex flex-col gap-2' } } },
 }))
 ```

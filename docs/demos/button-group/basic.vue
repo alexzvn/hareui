@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import { Icon } from '@iconify/vue'
-import type { DropdownEntry } from 'herouse'
-import { Button, ButtonGroup, Chip, Dropdown } from 'herouse'
+import type { DropdownEntry } from '@hareui/vue'
+import { Button, ButtonGroup, Chip, Dropdown } from '@hareui/vue'
 
 const mergeOptions: DropdownEntry[] = [
   { value: 'merge', label: 'Create a merge commit', description: 'All commits from this branch will be added to the base branch', class: 'flex flex-col items-start gap-1 [&>div]:items-start [&>div]:gap-1' },

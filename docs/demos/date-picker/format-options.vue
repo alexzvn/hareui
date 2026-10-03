@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import type { DateValue } from '@internationalized/date'
 import { parseDate, parseZonedDateTime, Time } from '@internationalized/date'
-import { Calendar, DatePicker, Label, Select, Switch, TimeField } from 'herouse'
+import { Calendar, DatePicker, Label, Select, Switch, TimeField } from '@hareui/vue'
 import { computed, ref } from 'vue'
 
 type Granularity = 'day' | 'hour' | 'minute' | 'second'

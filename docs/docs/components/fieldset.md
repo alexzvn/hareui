@@ -10,7 +10,7 @@ links:
 ## Usage
 
 ```ts
-import { Fieldset } from 'herouse'
+import { Fieldset } from '@hareui/vue'
 ```
 
 <ComponentPreview name="fieldset/basic" />
@@ -30,7 +30,7 @@ named slots, rendered in a fixed order: legend, description, field group, then a
 ```
 
 - Each part renders only when its prop or slot is provided.
-- `disabled` sets the native `disabled` attribute and `data-disabled="true"`, and disables herouse
+- `disabled` sets the native `disabled` attribute and `data-disabled="true"`, and disables HareUI
   controls inside (such as `Button` and `Link`) the same way HeroUI's fieldset does.
 
 `ui` keys: `base`, `legend`, `description`, `fieldGroup`, `actions`.
@@ -51,10 +51,10 @@ When used inside a [Surface](/docs/components/surface) component, use `variant="
 
 ### Global theme override
 
-Override the `fieldset` theme app-wide with `createHeroUse`:
+Override the `fieldset` theme app-wide with `createHareUI`:
 
 ```ts
-app.use(createHeroUse({
+app.use(createHareUI({
   ui: {
     fieldset: {
       slots: {

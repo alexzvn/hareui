@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { Input } from 'herouse'
+import { Input } from '@hareui/vue'
 import { ref } from 'vue'
 
 const value = ref('heroui.com')

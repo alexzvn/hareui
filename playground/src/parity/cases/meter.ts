@@ -1,5 +1,5 @@
 import type { VNode } from 'vue'
-import { Meter } from 'herouse'
+import { Meter } from '@hareui/vue'
 import { h } from 'vue'
 
 export const cases: Record<string, () => VNode> = {}

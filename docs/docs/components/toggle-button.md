@@ -10,7 +10,7 @@ links:
 ## Usage
 
 ```ts
-import { ToggleButton } from 'herouse'
+import { ToggleButton } from '@hareui/vue'
 ```
 
 <ComponentPreview name="toggle-button/basic" />
@@ -47,10 +47,10 @@ Bind the selected state with `v-model`. The default slot receives `{ selected, d
 
 ### Global theme override
 
-Override the `toggleButton` theme app-wide with `createHeroUse`:
+Override the `toggleButton` theme app-wide with `createHareUI`:
 
 ```ts
-app.use(createHeroUse({
+app.use(createHareUI({
   ui: {
     toggleButton: {
       slots: { base: 'bg-purple-500 text-white' },

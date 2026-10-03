@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import { ref } from 'vue'
-import { CloseButton } from 'herouse'
+import { CloseButton } from '@hareui/vue'
 
 const count = ref(0)
 </script>

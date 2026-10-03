@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { Input } from 'herouse'
+import { Input } from '@hareui/vue'
 </script>
 
 <template>

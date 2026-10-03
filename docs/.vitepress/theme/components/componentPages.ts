@@ -13,7 +13,7 @@ const bySlug = new Map(
     .map(page => [page.url.slice(PREFIX.length), page.title] as const),
 )
 
-/** Component pages for the given slugs, in order, skipping slugs herouse has no page for. */
+/** Component pages for the given slugs, in order, skipping slugs HareUI has no page for. */
 export function componentPages(slugs: readonly string[]): ComponentPage[] {
   return slugs.flatMap((slug) => {
     const title = bySlug.get(slug)

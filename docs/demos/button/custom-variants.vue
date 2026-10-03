@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { Button, themes, tv } from 'herouse'
+import { Button, themes, tv } from '@hareui/vue'
 
 const myButtonVariants = tv({
   extend: themes.button,

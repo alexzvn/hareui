@@ -1,6 +1,6 @@
 <script setup lang="ts">
-import type { DropdownEntry } from 'herouse'
-import { Avatar, Dropdown, Label } from 'herouse'
+import type { DropdownEntry } from '@hareui/vue'
+import { Avatar, Dropdown, Label } from '@hareui/vue'
 import { Icon } from '@iconify/vue'
 
 // Equivalent of HeroUI's `Dropdown.Trigger` (a pressable wrapper styled by `.dropdown__trigger`)

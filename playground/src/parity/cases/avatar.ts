@@ -1,5 +1,5 @@
 import type { VNode } from 'vue'
-import { Avatar } from 'herouse'
+import { Avatar } from '@hareui/vue'
 import { h } from 'vue'
 import { avatarSrc } from '../../../../parity/icons'
 

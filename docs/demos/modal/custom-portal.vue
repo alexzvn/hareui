@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { Button, Modal } from 'herouse'
+import { Button, Modal } from '@hareui/vue'
 import { ref } from 'vue'
 
 const portalRef = ref<HTMLElement>()

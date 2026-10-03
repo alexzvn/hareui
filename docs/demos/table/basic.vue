@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { Table } from 'herouse'
+import { Table } from '@hareui/vue'
 
 const columns = [
   { key: 'name', label: 'Name', isRowHeader: true },

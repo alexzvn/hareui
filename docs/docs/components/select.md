@@ -12,7 +12,7 @@ links:
 
 ```vue
 <script setup lang="ts">
-import { Select } from 'herouse'
+import { Select } from '@hareui/vue'
 </script>
 ```
 
@@ -122,7 +122,7 @@ Because ARIA treats the children of a button as presentational, the clear contro
 
 ### Render Function
 
-HeroUI's `render` prop has no herouse equivalent; attributes such as `data-custom` fall through to the root.
+HeroUI's `render` prop has no HareUI equivalent; attributes such as `data-custom` fall through to the root.
 
 <ComponentPreview name="select/render-function" />
 
@@ -141,7 +141,7 @@ Inside a [Surface](/docs/components/surface), use `variant="secondary"` for the 
 ### Global Configuration
 
 ```ts
-app.use(createHeroUse({
+app.use(createHareUI({
   ui: { select: { slots: { trigger: 'rounded-lg', popover: 'rounded-lg' } } },
 }))
 ```

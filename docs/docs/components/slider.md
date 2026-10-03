@@ -11,7 +11,7 @@ links:
 
 ```vue
 <script setup lang="ts">
-import { Slider } from 'herouse'
+import { Slider } from '@hareui/vue'
 </script>
 ```
 
@@ -86,7 +86,7 @@ Attributes such as `data-*` fall through to the root element.
 ### Global Configuration
 
 ```ts
-app.use(createHeroUse({
+app.use(createHareUI({
   ui: { slider: { slots: { output: 'text-muted', thumb: 'rounded-full' } } },
 }))
 ```

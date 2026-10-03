@@ -1,6 +1,6 @@
 <script setup lang="ts">
 // Port of HeroUI docs `themes/components/switch-mode.tsx`. `next-themes` -> the docs' light/dark handling (see colorMode.ts).
-import { Kbd, Label, Tooltip } from 'herouse'
+import { Kbd, Label, Tooltip } from '@hareui/vue'
 import { useColorMode } from '../composables/colorMode'
 import { useKeyPress } from '../composables/keyPress'
 

@@ -18,7 +18,7 @@ function toggleDark() {
   <div v-else class="flex min-h-screen bg-background text-foreground">
     <aside class="w-52 shrink-0 border-e border-separator p-4">
       <div class="mb-4 flex items-center justify-between">
-        <span class="font-semibold">herouse</span>
+        <span class="font-semibold">HareUI</span>
         <button class="rounded-md px-2 py-1 text-xs hover:bg-default" @click="toggleDark">
           {{ dark ? 'Light' : 'Dark' }}
         </button>

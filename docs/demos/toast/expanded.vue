@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { Button, ToastProvider, ToastQueue } from 'herouse'
+import { Button, ToastProvider, ToastQueue } from '@hareui/vue'
 
 const queue = new ToastQueue()
 

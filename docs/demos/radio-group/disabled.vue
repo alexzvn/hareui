@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { RadioGroup } from 'herouse'
+import { RadioGroup } from '@hareui/vue'
 
 const items = [
   { value: 'starter', label: 'Starter', description: 'For side projects and small teams' },

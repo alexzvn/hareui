@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { Kbd, SearchField } from 'herouse'
+import { Kbd, SearchField } from '@hareui/vue'
 import { onBeforeUnmount, onMounted, ref, useTemplateRef } from 'vue'
 
 const value = ref('')

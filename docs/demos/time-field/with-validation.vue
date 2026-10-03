@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import type { Time } from '@internationalized/date'
 import { parseTime } from '@internationalized/date'
-import { TimeField } from 'herouse'
+import { TimeField } from '@hareui/vue'
 import { computed, ref } from 'vue'
 
 const value = ref<Time | null>(null)

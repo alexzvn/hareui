@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { Button, Disclosure, DisclosureGroup, Separator } from 'herouse'
+import { Button, Disclosure, DisclosureGroup, Separator } from '@hareui/vue'
 </script>
 
 <template>

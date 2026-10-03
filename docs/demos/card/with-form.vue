@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { Button, Card, Input, Label, Link, TextField } from 'herouse'
+import { Button, Card, Input, Label, Link, TextField } from '@hareui/vue'
 
 function onSubmit(e: Event) {
   e.preventDefault()

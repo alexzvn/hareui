@@ -1,6 +1,6 @@
 <script setup lang="ts">
-import type { TableSelection } from 'herouse'
-import { Button, Table } from 'herouse'
+import type { TableSelection } from '@hareui/vue'
+import { Button, Table } from '@hareui/vue'
 import { Icon } from '@iconify/vue'
 import { ref } from 'vue'
 

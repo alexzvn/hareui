@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import { ref } from 'vue'
-import { Avatar, Button, Popover } from 'herouse'
+import { Avatar, Button, Popover } from '@hareui/vue'
 
 const isFollowing = ref(false)
 </script>

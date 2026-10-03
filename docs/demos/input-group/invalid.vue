@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import { Icon } from '@iconify/vue'
-import { InputGroup, TextField } from 'herouse'
+import { InputGroup, TextField } from '@hareui/vue'
 </script>
 
 <template>

@@ -1,6 +1,6 @@
 <script setup lang="ts">
-import type { TableSelection } from 'herouse'
-import { Table } from 'herouse'
+import type { TableSelection } from '@hareui/vue'
+import { Table } from '@hareui/vue'
 import { ref } from 'vue'
 
 const columns = [

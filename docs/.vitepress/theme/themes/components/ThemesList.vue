@@ -1,7 +1,7 @@
 <script setup lang="ts">
 // Port of HeroUI docs `themes/components/themes-list.tsx`.
 import type { ThemeId } from '../constants'
-import { ListBox, ScrollShadow } from 'herouse'
+import { ListBox, ScrollShadow } from '@hareui/vue'
 import { computed } from 'vue'
 import { useVariablesState } from '../composables/variables'
 import { findMatchingTheme, themeValuesById, themes } from '../constants'

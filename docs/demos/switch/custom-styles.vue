@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { Description, Switch } from 'herouse'
+import { Description, Switch } from '@hareui/vue'
 </script>
 
 <template>

@@ -1,6 +1,6 @@
 <script setup lang="ts">
 // Port of HeroUI docs `themes/components/bottom-sheet.tsx` (react-aria Modal + framer-motion drag).
-// react-aria `ModalOverlay`/`Modal`/`Dialog` -> Reka dialog primitives (the same ones herouse's Modal is built on);
+// react-aria `ModalOverlay`/`Modal`/`Dialog` -> Reka dialog primitives (the same ones HareUI's Modal is built on);
 // framer-motion:
 //   enter/exit `duration: 0.5, ease: cubicBezier(0.32, 0.72, 0, 1)` -> CSS keyframe animations (Reka's Presence waits on animations),
 //   `y -> backdrop rgba(0,0,0, 0.4 -> 0)` over [0, 600]               -> `--bottom-sheet-y` drives both the sheet and the backdrop alpha,
@@ -81,7 +81,7 @@ function onPointerEnd(event: PointerEvent) {
   else y.value = SNAP_OFFSET
 }
 
-// React Aria focuses the dialog itself on open (see herouse's Modal).
+// React Aria focuses the dialog itself on open (see HareUI's Modal).
 function onOpenAutoFocus(event: Event) {
   event.preventDefault()
   ;(event.target as HTMLElement | null)?.focus({ preventScroll: true })

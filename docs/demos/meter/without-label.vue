@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { Meter } from 'herouse'
+import { Meter } from '@hareui/vue'
 </script>
 
 <template>

@@ -1,5 +1,5 @@
 import type { VNode } from 'vue'
-import { Button, Fieldset, Input, Link } from 'herouse'
+import { Button, Fieldset, Input, Link } from '@hareui/vue'
 import { h } from 'vue'
 
 const field = () => h(Input, { 'aria-label': 'Name', 'placeholder': 'John Doe' })

@@ -1,5 +1,5 @@
 import type { VNode } from 'vue'
-import { Autocomplete } from 'herouse'
+import { Autocomplete } from '@hareui/vue'
 import { h } from 'vue'
 import { gear } from '../icons'
 

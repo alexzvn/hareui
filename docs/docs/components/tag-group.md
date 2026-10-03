@@ -11,7 +11,7 @@ links:
 
 ```vue
 <script setup lang="ts">
-import { TagGroup } from 'herouse'
+import { TagGroup } from '@hareui/vue'
 </script>
 ```
 
@@ -98,7 +98,7 @@ Attributes on `TagGroup` (other than `aria-label`) fall through to the root elem
 
 ```vue
 <script setup lang="ts">
-import { EmptyState } from 'herouse'
+import { EmptyState } from '@hareui/vue'
 </script>
 
 <template>
@@ -123,7 +123,7 @@ import { EmptyState } from 'herouse'
 ### Global Configuration
 
 ```ts
-app.use(createHeroUse({
+app.use(createHareUI({
   ui: { tagGroup: { slots: { list: 'gap-2' } }, tag: { slots: { base: 'rounded-full' } } },
 }))
 ```

@@ -1,10 +1,10 @@
 import type { VNode } from 'vue'
-import { Popover } from 'herouse'
+import { Popover } from '@hareui/vue'
 import { h } from 'vue'
 
 // Generous margin keeps the floating content away from the viewport edges so
 // collision detection never flips the requested placement in either app. A plain
-// <button> (not herouse's Button) keeps the comparison scoped to the popover itself.
+// <button> (not HareUI's Button) keeps the comparison scoped to the popover itself.
 function wrap(node: VNode) {
   return h('div', { style: { margin: '160px' } }, [node])
 }

@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { ListBox } from 'herouse'
+import { ListBox } from '@hareui/vue'
 import { ref } from 'vue'
 
 const items = [

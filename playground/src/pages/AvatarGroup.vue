@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { Avatar, AvatarGroup } from 'herouse'
+import { Avatar, AvatarGroup } from '@hareui/vue'
 
 const names = ['John Doe', 'Kate Wilson', 'Emily Chen', 'Michael Brown', 'Olivia Davis']
 const initials = (name: string) => name.split(' ').map(n => n[0]).join('')

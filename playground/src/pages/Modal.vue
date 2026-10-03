@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { Button, Modal, Popover } from 'herouse'
+import { Button, Modal, Popover } from '@hareui/vue'
 import { ref } from 'vue'
 import { Icon } from '../icons'
 

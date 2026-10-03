@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { Card, ScrollShadow } from 'herouse'
+import { Card, ScrollShadow } from '@hareui/vue'
 
 const images = [
   'https://heroui-assets.nyc3.cdn.digitaloceanspaces.com/docs/robot1.jpeg',

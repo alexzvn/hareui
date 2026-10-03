@@ -11,7 +11,7 @@ links:
 
 ```vue
 <script setup lang="ts">
-import { Description } from 'herouse'
+import { Description } from '@hareui/vue'
 </script>
 ```
 
@@ -41,7 +41,7 @@ import { Description } from 'herouse'
 
 ```vue
 <script setup lang="ts">
-import { TextField } from 'herouse'
+import { TextField } from '@hareui/vue'
 </script>
 
 <template>
@@ -65,7 +65,7 @@ When using the [TextField](/docs/components/text-field) component, the descripti
 ### Global Configuration
 
 ```ts
-app.use(createHeroUse({
+app.use(createHareUI({
   ui: { description: { slots: { base: 'text-muted' } } },
 }))
 ```

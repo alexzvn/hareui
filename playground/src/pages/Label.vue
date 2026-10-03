@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { Input, Label } from 'herouse'
+import { Input, Label } from '@hareui/vue'
 </script>
 
 <template>

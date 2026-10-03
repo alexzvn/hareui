@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { Button, toast } from 'herouse'
+import { Button, toast } from '@hareui/vue'
 
 function uploadFile(): Promise<{ filename: string, size: number }> {
   const { promise, resolve } = Promise.withResolvers<{ filename: string, size: number }>()

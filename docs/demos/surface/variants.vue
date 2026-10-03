@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { Surface } from 'herouse'
+import { Surface } from '@hareui/vue'
 </script>
 
 <template>

@@ -10,7 +10,7 @@ links:
 ## Usage
 
 ```ts
-import { Skeleton } from 'herouse'
+import { Skeleton } from '@hareui/vue'
 ```
 
 <ComponentPreview name="skeleton/basic" />
@@ -65,10 +65,10 @@ before:bg-[linear-gradient(90deg,transparent_0%,rgba(255,255,255,0.5)_50%,transp
 
 ### Global theme override
 
-Override the `skeleton` theme app-wide with `createHeroUse`:
+Override the `skeleton` theme app-wide with `createHareUI`:
 
 ```ts
-app.use(createHeroUse({
+app.use(createHareUI({
   ui: {
     skeleton: {
       slots: {
@@ -118,8 +118,8 @@ Like HeroUI's, the Skeleton root has no `data-slot`.
 |---|---|
 | `base` | Base skeleton styles with background and rounded corners |
 
-HeroUI's modifier classes correspond to the `animationType` prop (herouse renders utilities, not
-BEM classes, so style through `class`, `ui` or `createHeroUse`):
+HeroUI's modifier classes correspond to the `animationType` prop (HareUI renders utilities, not
+BEM classes, so style through `class`, `ui` or `createHareUI`):
 
 - `.skeleton--shimmer` → `shimmer` (default): shimmer animation with a gradient
 - `.skeleton--pulse` → `pulse`: Tailwind's `animate-pulse`

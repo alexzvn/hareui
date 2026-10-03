@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { ListBox } from 'herouse'
+import { ListBox } from '@hareui/vue'
 const firstNames = ['Emma', 'Liam', 'Olivia', 'Noah', 'Ava', 'James', 'Sophia', 'Oliver', 'Isabella', 'Lucas', 'Mia', 'Ethan', 'Charlotte', 'Mason', 'Amelia', 'Logan', 'Harper', 'Alexander', 'Ella', 'Benjamin']
 const lastNames = ['Smith', 'Johnson', 'Williams', 'Brown', 'Jones', 'Garcia', 'Miller', 'Davis', 'Rodriguez', 'Martinez', 'Anderson', 'Taylor', 'Thomas', 'Jackson', 'White', 'Harris', 'Clark', 'Lewis', 'Robinson', 'Walker']
 const users = Array.from({ length: 1000 }, (_, i) => {

@@ -10,7 +10,7 @@ links:
 ## Usage
 
 ```ts
-import { Chip } from 'herouse'
+import { Chip } from '@hareui/vue'
 ```
 
 <ComponentPreview name="chip/basic" />
@@ -53,10 +53,10 @@ Use the `class` prop for the root and `:ui="{ label: '…' }"` for the label (ta
 
 ### Global theme override
 
-Override the `chip` theme app-wide with `createHeroUse`:
+Override the `chip` theme app-wide with `createHareUI`:
 
 ```ts
-app.use(createHeroUse({
+app.use(createHareUI({
   ui: {
     chip: {
       slots: {
@@ -80,8 +80,8 @@ Each rendered element carries the same `data-slot` string as HeroUI, so selector
 | `base` | `chip` | Base chip container styles (`as`, default `span`) |
 | `label` | `chip-label` | Label text slot styles, rendered when `label`/default slot is present |
 
-HeroUI's `.chip--*` modifier classes correspond to these props (herouse renders utilities, not BEM
-classes, so style through `class`, `ui` or `createHeroUse`):
+HeroUI's `.chip--*` modifier classes correspond to these props (HareUI renders utilities, not BEM
+classes, so style through `class`, `ui` or `createHareUI`):
 
 - `color`: `accent`, `danger`, `default`, `success`, `warning`
 - `variant`: `primary` (filled background), `secondary` (default), `tertiary` (transparent background), `soft` (lighter background)

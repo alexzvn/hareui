@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import type { DateValue } from '@internationalized/date'
 import { getLocalTimeZone, today } from '@internationalized/date'
-import { Button, DateField } from 'herouse'
+import { Button, DateField } from '@hareui/vue'
 import { ref } from 'vue'
 
 const value = ref<DateValue | null>(null)

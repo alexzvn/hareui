@@ -4,7 +4,7 @@ import ComponentItem from './ComponentItem.vue'
 import { componentPages } from './componentPages'
 
 // Port of HeroUI docs' components-category.tsx. Groups and order are HeroUI's; components
-// herouse has no docs page for are skipped, as HeroUI skips paths without a page.
+// HareUI has no docs page for are skipped, as HeroUI skips paths without a page.
 const COMPONENT_GROUPS: Record<string, readonly string[]> = {
   'Buttons': ['button', 'button-group', 'close-button', 'toggle-button', 'toggle-button-group'],
   'Forms': [

@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { Button, Switch, SwitchGroup } from 'herouse'
+import { Button, Switch, SwitchGroup } from '@hareui/vue'
 
 function handleSubmit(e: Event) {
   e.preventDefault()

@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { Chip, Table } from 'herouse'
+import { Chip, Table } from '@hareui/vue'
 import { computed, ref } from 'vue'
 
 const statusColorMap = { 'Active': 'success', 'Inactive': 'danger', 'On Leave': 'warning' } as const

@@ -12,7 +12,7 @@ links:
 
 ```vue
 <script setup lang="ts">
-import { RadioGroup } from 'herouse'
+import { RadioGroup } from '@hareui/vue'
 </script>
 ```
 
@@ -109,7 +109,7 @@ Use the `#item-label` slot and `:ui` overrides to restyle each row. HeroUI's ren
 ### Global Configuration
 
 ```ts
-app.use(createHeroUse({
+app.use(createHareUI({
   ui: { radioGroup: { slots: { control: 'size-5' } } },
 }))
 ```

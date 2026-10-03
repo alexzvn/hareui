@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { Tabs } from 'herouse'
+import { Tabs } from '@hareui/vue'
 
 const items = [
   { label: 'Active', value: 'active', content: 'This tab is active and can be selected.' },

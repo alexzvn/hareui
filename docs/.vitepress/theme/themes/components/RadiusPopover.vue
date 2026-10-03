@@ -2,7 +2,7 @@
 // Port of HeroUI docs `themes/components/radius-popover.tsx`.
 import type { RadiusId, ThemeVariables } from '../constants'
 import { Icon } from '@iconify/vue'
-import { InputGroup, ListBox, Popover } from 'herouse'
+import { InputGroup, ListBox, Popover } from '@hareui/vue'
 import { computed } from 'vue'
 import { useVariableSetter } from '../composables/variables'
 import ControlsPopoverTrigger from './ControlsPopoverTrigger.vue'

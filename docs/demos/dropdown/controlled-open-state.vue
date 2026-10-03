@@ -1,6 +1,6 @@
 <script setup lang="ts">
-import type { DropdownEntry } from 'herouse'
-import { Button, Dropdown } from 'herouse'
+import type { DropdownEntry } from '@hareui/vue'
+import { Button, Dropdown } from '@hareui/vue'
 import { ref } from 'vue'
 
 const open = ref(false)

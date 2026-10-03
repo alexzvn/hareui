@@ -1,5 +1,5 @@
 import type { VNode } from 'vue'
-import { Badge } from 'herouse'
+import { Badge } from '@hareui/vue'
 import { h } from 'vue'
 
 const box = () => h('div', { class: 'size-10 rounded-full bg-default' })

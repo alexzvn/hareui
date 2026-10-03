@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { ColorSwatch } from 'herouse'
+import { ColorSwatch } from '@hareui/vue'
 </script>
 
 <template>

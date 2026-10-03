@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { ColorArea } from 'herouse'
+import { ColorArea } from '@hareui/vue'
 </script>
 
 <template>

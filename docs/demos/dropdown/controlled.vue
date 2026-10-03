@@ -1,6 +1,6 @@
 <script setup lang="ts">
-import type { DropdownEntry, DropdownValue } from 'herouse'
-import { Button, Dropdown } from 'herouse'
+import type { DropdownEntry, DropdownValue } from '@hareui/vue'
+import { Button, Dropdown } from '@hareui/vue'
 import { ref } from 'vue'
 
 const selected = ref<DropdownValue[]>(['bold'])

@@ -1,6 +1,6 @@
 <script setup lang="ts">
-import type { ScrollShadowVisibility } from 'herouse'
-import { ScrollShadow } from 'herouse'
+import type { ScrollShadowVisibility } from '@hareui/vue'
+import { ScrollShadow } from '@hareui/vue'
 import { ref } from 'vue'
 
 const state = ref<ScrollShadowVisibility>('none')

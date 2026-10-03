@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { Button, Form, InputOtp } from 'herouse'
+import { Button, Form, InputOtp } from '@hareui/vue'
 import { ref } from 'vue'
 
 const value = ref('')

@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { Tabs } from 'herouse'
+import { Tabs } from '@hareui/vue'
 
 const items = [
   { label: 'General', value: 'general', heading: 'General', content: 'Manage your account information and preferences.' },

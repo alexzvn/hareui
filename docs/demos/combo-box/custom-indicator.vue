@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import { Icon } from '@iconify/vue'
-import { ComboBox } from 'herouse'
+import { ComboBox } from '@hareui/vue'
 
 const animals = [
   { value: 'aardvark', label: 'Aardvark' },

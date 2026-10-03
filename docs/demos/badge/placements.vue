@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { Avatar, Badge } from 'herouse'
+import { Avatar, Badge } from '@hareui/vue'
 
 const placements = ['top-right', 'top-left', 'bottom-right', 'bottom-left'] as const
 </script>

@@ -5,8 +5,8 @@
       "vite/client"
     ],
     "paths": {
-      "herouse": [
-        "../packages/herouse/src/index.ts"
+      "@hareui/vue": [
+        "../packages/vue/src/index.ts"
       ]
     }
   },

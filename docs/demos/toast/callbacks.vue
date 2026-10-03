@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { Button, toast } from 'herouse'
+import { Button, toast } from '@hareui/vue'
 import { ref } from 'vue'
 
 const closedHistory = ref<Array<{ message: string, time: string }>>([])

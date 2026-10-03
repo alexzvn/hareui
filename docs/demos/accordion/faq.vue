@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import { Icon } from '@iconify/vue'
-import { Accordion } from 'herouse'
+import { Accordion } from '@hareui/vue'
 
 const categories = [
   {

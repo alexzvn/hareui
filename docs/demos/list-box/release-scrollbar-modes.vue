@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { ListBox, Surface } from 'herouse'
+import { ListBox, Surface } from '@hareui/vue'
 const modes = [
   { id: 'heroui', label: 'HeroUI thin', scrollbar: 'thin' },
   { id: 'browser', label: 'Browser default', scrollbar: 'default' },

@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { AlertDialog, Button } from 'herouse'
+import { AlertDialog, Button } from '@hareui/vue'
 
 const variants = ['opaque', 'blur', 'transparent'] as const
 const capitalize = (s: string) => s.charAt(0).toUpperCase() + s.slice(1)

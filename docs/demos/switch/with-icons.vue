@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import { Icon } from '@iconify/vue'
-import { Switch } from 'herouse'
+import { Switch } from '@hareui/vue'
 import { reactive } from 'vue'
 
 const icons = [

@@ -1,5 +1,5 @@
 import type { VNode } from 'vue'
-import { TextField } from 'herouse'
+import { TextField } from '@hareui/vue'
 import { h } from 'vue'
 
 const base = { label: 'Email', placeholder: 'john@example.com', description: 'We\'ll never share your email.' }

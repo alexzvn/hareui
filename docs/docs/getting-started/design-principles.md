@@ -1,15 +1,15 @@
 ---
 title: Design Principles
-description: Core principles that guide HeroUse's design and API.
+description: Core principles that guide HareUI's design and API.
 ---
 
-HeroUse follows the same design principles as HeroUI v3, adapted to Vue's component model and Nuxt UI-style conventions.
+HareUI follows the same design principles as HeroUI v3, adapted to Vue's component model and Nuxt UI-style conventions.
 
 ## Core Principles
 
 ### 1. Semantic Intent Over Visual Style
 
-Use semantic naming (primary, secondary, tertiary) instead of visual descriptions (solid, flat, bordered). Inspired by [Uber's Base design system](https://base.uber.com/6d2425e9f/p/756216-button), HeroUse keeps the same variant names and values as HeroUI, so the hierarchy is unchanged:
+Use semantic naming (primary, secondary, tertiary) instead of visual descriptions (solid, flat, bordered). Inspired by [Uber's Base design system](https://base.uber.com/6d2425e9f/p/756216-button), HareUI keeps the same variant names and values as HeroUI, so the hierarchy is unchanged:
 
 ```vue
 <!-- ✅ Semantic variants communicate hierarchy -->
@@ -27,12 +27,12 @@ Use semantic naming (primary, secondary, tertiary) instead of visual description
 
 ### 2. Accessibility as Foundation — Reka UI
 
-HeroUse is built on [Reka UI](https://reka-ui.com) instead of React Aria Components, so the same WCAG-conscious behavior — focus management, keyboard navigation, screen reader support — comes from Vue-native headless primitives. Components also expose their own state through props and data attributes without any extra wiring:
+HareUI is built on [Reka UI](https://reka-ui.com) instead of React Aria Components, so the same WCAG-conscious behavior — focus management, keyboard navigation, screen reader support — comes from Vue-native headless primitives. Components also expose their own state through props and data attributes without any extra wiring:
 
 ```vue
 <script setup lang="ts">
 import { ref } from 'vue'
-import { Button } from 'herouse'
+import { Button } from '@hareui/vue'
 
 const isSaving = ref(false)
 </script>
@@ -48,7 +48,7 @@ const isSaving = ref(false)
 
 ### 3. Composition Over Configuration — Slots Over Compound Components
 
-HeroUI exposes compound parts like `Card.Header` / `Card.Title`. HeroUse replaces compound components with named template slots on a single component — rearrange, customize, or omit parts with standard Vue syntax:
+HeroUI exposes compound parts like `Card.Header` / `Card.Title`. HareUI replaces compound components with named template slots on a single component — rearrange, customize, or omit parts with standard Vue syntax:
 
 ::: code-group
 
@@ -64,7 +64,7 @@ import { Card } from '@heroui/react';
 </Card>
 ```
 
-```vue [HeroUse (Vue)]
+```vue [HareUI (Vue)]
 <template>
   <Card>
     <template #header>
@@ -114,7 +114,7 @@ Consistent patterns across all components: sizes (`sm`, `md`, `lg`), variants, a
 Full TypeScript support with IntelliSense, auto-completion, and compile-time error detection. Component prop, slot, and `ui`-key types are exported alongside each component:
 
 ```ts
-import type { ButtonProps } from 'herouse'
+import type { ButtonProps } from '@hareui/vue'
 
 // Type-safe props
 const props: ButtonProps = {
@@ -125,7 +125,7 @@ const props: ButtonProps = {
 
 ### 7. Semantic Styling — tv Slots + `:ui`
 
-HeroUI separates logic (`@heroui/react`) from BEM-class styles (`@heroui/styles`). HeroUse keeps the same separation of concerns, but each component's theme is a [tailwind-variants](https://tailwind-variants.org/) slot object instead of BEM classes — overridden per-instance with `:ui`, or globally with `createHeroUse`:
+HeroUI separates logic (`@heroui/react`) from BEM-class styles (`@heroui/styles`). HareUI keeps the same separation of concerns, but each component's theme is a [tailwind-variants](https://tailwind-variants.org/) slot object instead of BEM classes — overridden per-instance with `:ui`, or globally with `createHareUI`:
 
 ```vue
 <!-- Per-instance override -->
@@ -134,7 +134,7 @@ HeroUI separates logic (`@heroui/react`) from BEM-class styles (`@heroui/styles`
 
 ```ts
 // Global override (main.ts)
-createHeroUse({
+createHareUI({
   ui: {
     button: { slots: { base: 'uppercase tracking-wider' } },
   },
@@ -147,7 +147,7 @@ Clear APIs, descriptive prop types, IntelliSense, and `data-slot` attributes tha
 
 ### 9. Complete Customization — HeroUI's Own Tokens
 
-Beautiful defaults out of the box. Transform the entire look with CSS variables, exactly like HeroUI — HeroUse copies HeroUI's token names and values verbatim, so existing HeroUI theme CSS (`--accent`, `--radius`, `--surface`, …) applies unchanged:
+Beautiful defaults out of the box. Transform the entire look with CSS variables, exactly like HeroUI — HareUI copies HeroUI's token names and values verbatim, so existing HeroUI theme CSS (`--accent`, `--radius`, `--surface`, …) applies unchanged:
 
 ```css
 /* Theme-wide changes with variables */
@@ -161,11 +161,11 @@ See [Colors](/docs/getting-started/colors) for the full token reference.
 
 ### 10. Open and Extensible
 
-Override any slot, any variant, at any scope — per instance with `:ui`, or app-wide with `createHeroUse`. Precedence (lowest to highest): theme file → `createHeroUse({ ui })` → variant props → `:ui` → `class` (root only). See [Theming](/docs/getting-started/theming) for the full precedence rules.
+Override any slot, any variant, at any scope — per instance with `:ui`, or app-wide with `createHareUI`. Precedence (lowest to highest): theme file → `createHareUI({ ui })` → variant props → `:ui` → `class` (root only). See [Theming](/docs/getting-started/theming) for the full precedence rules.
 
 ## Differences from HeroUI React
 
-| HeroUI (React) | HeroUse (Vue) |
+| HeroUI (React) | HareUI (Vue) |
 |---|---|
 | Compound parts (`Card.Header`, `Card.Title`) | Named slots (`#header`, `#title`) |
 | `isDisabled`, `isPending`, `isInvalid`, `isIconOnly` | `disabled`, `pending`, `invalid`, `iconOnly` |

@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import { Icon } from '@iconify/vue'
-import { Button, toast } from 'herouse'
+import { Button, toast } from '@hareui/vue'
 import { h } from 'vue'
 
 function show() {

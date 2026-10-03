@@ -12,7 +12,7 @@ links:
 
 ```vue
 <script setup lang="ts">
-import { DateField } from 'herouse'
+import { DateField } from '@hareui/vue'
 </script>
 ```
 
@@ -134,7 +134,7 @@ HeroUI's `render` prop replaces the root element and lets sub-parts render-prop 
 ### Global Configuration
 
 ```ts
-app.use(createHeroUse({
+app.use(createHareUI({
   ui: { dateField: { slots: { group: 'rounded-xl', segment: 'font-mono' } } },
 }))
 ```

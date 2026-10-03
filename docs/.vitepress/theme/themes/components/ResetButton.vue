@@ -1,7 +1,7 @@
 <script setup lang="ts">
 // Port of HeroUI docs `themes/components/reset-button.tsx`.
 import { Icon } from '@iconify/vue'
-import { AlertDialog, Button, Kbd, Tooltip } from 'herouse'
+import { AlertDialog, Button, Kbd, Tooltip } from '@hareui/vue'
 import { computed, ref } from 'vue'
 import { useKeyPress } from '../composables/keyPress'
 import { useResetVariables, useVariablesState } from '../composables/variables'

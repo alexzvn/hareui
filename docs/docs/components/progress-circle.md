@@ -11,7 +11,7 @@ links:
 ## Usage
 
 ```ts
-import { ProgressCircle } from 'herouse'
+import { ProgressCircle } from '@hareui/vue'
 ```
 
 <ComponentPreview name="progress-circle/basic" />
@@ -65,10 +65,10 @@ Use the `class` prop for the root and the `ui` prop for the SVG and its circles:
 
 ### Global theme override
 
-Override the `progressCircle` theme app-wide with `createHeroUse`:
+Override the `progressCircle` theme app-wide with `createHareUI`:
 
 ```ts
-app.use(createHeroUse({
+app.use(createHareUI({
   ui: {
     progressCircle: {
       slots: {
@@ -92,8 +92,8 @@ Each rendered element carries the same `data-slot` string as HeroUI, so selector
 | `trackCircle` | `progress-circle-track-circle` | Background circle |
 | `fillCircle` | `progress-circle-fill-circle` | Progress arc |
 
-HeroUI's modifier classes correspond to props (herouse renders utilities, not BEM classes, so
-style through `class`, `ui` or `createHeroUse`):
+HeroUI's modifier classes correspond to props (HareUI renders utilities, not BEM classes, so
+style through `class`, `ui` or `createHareUI`):
 
 - `size`: `sm`, `md` (default), `lg` (`.progress-circle--{size}`)
 - `color`: `default`, `accent` (default), `success`, `warning`, `danger` (`.progress-circle--{color}`)

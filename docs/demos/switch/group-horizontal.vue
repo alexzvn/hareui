@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { Switch, SwitchGroup } from 'herouse'
+import { Switch, SwitchGroup } from '@hareui/vue'
 </script>
 
 <template>

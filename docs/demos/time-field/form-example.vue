@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import type { Time } from '@internationalized/date'
 import { parseTime } from '@internationalized/date'
-import { Button, Form, TimeField } from 'herouse'
+import { Button, Form, TimeField } from '@hareui/vue'
 import { Icon } from '@iconify/vue'
 import { computed, ref } from 'vue'
 

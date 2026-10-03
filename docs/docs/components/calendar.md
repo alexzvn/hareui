@@ -12,7 +12,7 @@ links:
 
 ```vue
 <script setup lang="ts">
-import { Calendar } from 'herouse'
+import { Calendar } from '@hareui/vue'
 </script>
 ```
 
@@ -162,10 +162,10 @@ page by the full visible width, matching React Aria's default behavior for multi
 
 ### Global Configuration
 
-To customize the Calendar classes for the whole app, extend the `calendar` theme in `createHeroUse`:
+To customize the Calendar classes for the whole app, extend the `calendar` theme in `createHareUI`:
 
 ```ts
-app.use(createHeroUse({
+app.use(createHareUI({
   ui: {
     calendar: {
       slots: {
@@ -194,7 +194,7 @@ Calendar sets these data attributes (from Reka UI):
 
 ### Reka UI Limitations
 
-- Week and day views (`visible-duration`) are rendered by herouse's own grid, since Reka's `CalendarRoot`/`RangeCalendarRoot` always build full month grids. They follow React Aria's `visibleDuration` behaviour (alignment, paging, `page-behavior`, keyboard navigation) and HeroUI's `--week-view`/`--day-view` styles; the year picker, `number-of-months` and `fixed-weeks` only apply to the month view.
+- Week and day views (`visible-duration`) are rendered by HareUI's own grid, since Reka's `CalendarRoot`/`RangeCalendarRoot` always build full month grids. They follow React Aria's `visibleDuration` behaviour (alignment, paging, `page-behavior`, keyboard navigation) and HeroUI's `--week-view`/`--day-view` styles; the year picker, `number-of-months` and `fixed-weeks` only apply to the month view.
 - `fixed-weeks` is boolean only (always 6 weeks). HeroUI's React `weeksInMonth` accepts any count up
   to 6; Reka's `CalendarRoot` only exposes the all-or-nothing `fixedWeeks` flag.
 

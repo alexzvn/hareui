@@ -1,5 +1,5 @@
 import type { VNode } from 'vue'
-import { Switch, SwitchGroup } from 'herouse'
+import { Switch, SwitchGroup } from '@hareui/vue'
 import { h } from 'vue'
 
 function group(props: Record<string, unknown> = {}) {

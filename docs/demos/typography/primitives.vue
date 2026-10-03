@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { Typography } from 'herouse'
+import { Typography } from '@hareui/vue'
 </script>
 
 <template>

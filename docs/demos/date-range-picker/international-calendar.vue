@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import { getLocalTimeZone, today } from '@internationalized/date'
-import { DateRangePicker } from 'herouse'
+import { DateRangePicker } from '@hareui/vue'
 
 const start = today(getLocalTimeZone())
 </script>

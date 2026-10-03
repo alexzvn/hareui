@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { ColorSwatch } from 'herouse'
+import { ColorSwatch } from '@hareui/vue'
 
 const colors = ['#0485F7', '#EF4444', '#F59E0B', '#10B981', '#D946EF']
 </script>

@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { Button, NumberField } from 'herouse'
+import { Button, NumberField } from '@hareui/vue'
 import { computed, ref } from 'vue'
 
 const STOCK_AVAILABLE = 3

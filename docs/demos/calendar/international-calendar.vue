@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import { createCalendar, getLocalTimeZone, today, toCalendar } from '@internationalized/date'
-import { Calendar } from 'herouse'
+import { Calendar } from '@hareui/vue'
 
 const locale = 'hi-IN-u-ca-indian'
 const calendarId = new Intl.DateTimeFormat(locale).resolvedOptions().calendar

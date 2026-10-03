@@ -1,5 +1,5 @@
 import type { VNode } from 'vue'
-import { Button, Card } from 'herouse'
+import { Button, Card } from '@hareui/vue'
 import { h } from 'vue'
 import { gear } from '../icons'
 

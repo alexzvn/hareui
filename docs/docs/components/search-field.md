@@ -11,7 +11,7 @@ links:
 
 ```vue
 <script setup lang="ts">
-import { SearchField } from 'herouse'
+import { SearchField } from '@hareui/vue'
 </script>
 ```
 
@@ -116,7 +116,7 @@ Use the `icon` and `clearIcon` slots to render custom icons, and `:ui` or `class
 ### Global Configuration
 
 ```ts
-app.use(createHeroUse({
+app.use(createHareUI({
   ui: { searchField: { slots: { base: 'gap-2' } } },
 }))
 ```

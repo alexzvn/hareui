@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import { Icon } from '@iconify/vue'
-import { Button, toast } from 'herouse'
+import { Button, toast } from '@hareui/vue'
 import { h } from 'vue'
 
 function showDefault() {
@@ -21,7 +21,7 @@ function showAccent() {
 
 function showSuccess() {
   const id = toast.success('You have upgraded your plan', {
-    description: 'You can continue using HeroUse Chat',
+    description: 'You can continue using HareUI Chat',
     action: { label: 'Billing', class: 'bg-success text-success-foreground', onClick: () => toast.close(id) },
   })
 }

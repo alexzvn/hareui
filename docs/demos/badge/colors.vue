@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { Avatar, Badge } from 'herouse'
+import { Avatar, Badge } from '@hareui/vue'
 
 const colors = ['default', 'accent', 'success', 'warning', 'danger'] as const
 </script>

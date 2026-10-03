@@ -1,7 +1,7 @@
 <script setup lang="ts">
-import type { DateRangeValue } from 'herouse'
+import type { DateRangeValue } from '@hareui/vue'
 import { getLocalTimeZone, today } from '@internationalized/date'
-import { DateRangePicker } from 'herouse'
+import { DateRangePicker } from '@hareui/vue'
 import { computed, shallowRef } from 'vue'
 
 const value = shallowRef<DateRangeValue | null>(null)

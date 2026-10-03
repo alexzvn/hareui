@@ -10,7 +10,7 @@ links:
 ## Usage
 
 ```ts
-import { Surface } from 'herouse'
+import { Surface } from '@hareui/vue'
 ```
 
 <ComponentPreview name="surface/basic" />
@@ -42,10 +42,10 @@ the lower-emphasis variant suitable for surface backgrounds.
 
 ### Global theme override
 
-Override the `surface` theme app-wide with `createHeroUse`:
+Override the `surface` theme app-wide with `createHareUI`:
 
 ```ts
-app.use(createHeroUse({
+app.use(createHareUI({
   ui: {
     surface: {
       slots: { base: 'rounded-2xl border border-border' },
@@ -65,8 +65,8 @@ Each rendered element carries the same `data-slot` string as HeroUI, so selector
 |---|---|---|
 | `base` | `surface` | Base surface container |
 
-HeroUI's `.surface--*` modifier classes correspond to the `variant` prop (herouse renders utilities,
-not BEM classes, so style through `class`, `ui` or `createHeroUse`): `transparent`, `default`,
+HeroUI's `.surface--*` modifier classes correspond to the `variant` prop (HareUI renders utilities,
+not BEM classes, so style through `class`, `ui` or `createHareUI`): `transparent`, `default`,
 `secondary`, `tertiary`.
 
 ## API Reference
@@ -87,7 +87,7 @@ Child components can inject the Surface context to read the current variant:
 
 ```ts
 import { inject } from 'vue'
-import { surfaceContextKey } from 'herouse'
+import { surfaceContextKey } from '@hareui/vue'
 
 const ctx = inject(surfaceContextKey)
 // ctx?.variant.value is a Ref<'transparent' | 'default' | 'secondary' | 'tertiary'>

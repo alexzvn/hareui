@@ -1,10 +1,10 @@
 <script setup lang="ts">
 // Port of the HeroUI docs' own `components/color-picker/color-picker.tsx` (the popover with swatch carousel,
-// color area, hue slider + shuffle, and color field with format select), composed from herouse parts.
+// color area, hue slider + shuffle, and color field with format select), composed from HareUI parts.
 import type { Color } from 'reka-ui'
 import type { ColorFormat } from './accentColorUtils'
 import { Icon } from '@iconify/vue'
-import { Button, ColorArea, InputGroup, Popover, Select, TextField } from 'herouse'
+import { Button, ColorArea, InputGroup, Popover, Select, TextField } from '@hareui/vue'
 import { computed, ref } from 'vue'
 import AccentColorSlider from './AccentColorSlider.vue'
 import AccentColorSwatchesCarousel from './AccentColorSwatchesCarousel.vue'

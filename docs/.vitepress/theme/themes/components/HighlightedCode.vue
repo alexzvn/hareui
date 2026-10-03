@@ -1,7 +1,7 @@
 <script setup lang="ts">
 // Port of HeroUI docs `components/highlighted-code.tsx` (Shiki, github-light / github-dark by color mode).
 // Shiki is loaded on demand; until the first highlight is ready, the loading skeleton of `code-panel.tsx` shows.
-import { Skeleton } from 'herouse'
+import { Skeleton } from '@hareui/vue'
 import { onBeforeUnmount, ref, shallowRef, watch } from 'vue'
 import { useColorMode } from '../composables/colorMode'
 

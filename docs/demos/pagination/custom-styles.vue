@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { Pagination } from 'herouse'
+import { Pagination } from '@hareui/vue'
 
 // HeroUI swaps `linkClass` for `activeClass` on the current page; here both live on the `link`
 // key, with the active styles behind `data-[active=true]:`.

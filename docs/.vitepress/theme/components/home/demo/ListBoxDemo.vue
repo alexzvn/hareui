@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import { Icon } from '@iconify/vue'
-import { Kbd, ListBox, Surface } from 'herouse'
+import { Kbd, ListBox, Surface } from '@hareui/vue'
 
 const items = [
   { type: 'section' as const, label: 'Actions', items: [

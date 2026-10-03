@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { Calendar, Select } from 'herouse'
+import { Calendar, Select } from '@hareui/vue'
 import { ref } from 'vue'
 
 const dayOptions = [

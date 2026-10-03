@@ -10,7 +10,7 @@ links:
 ## Usage
 
 ```ts
-import { Button, ButtonGroup } from 'herouse'
+import { Button, ButtonGroup } from '@hareui/vue'
 ```
 
 <ComponentPreview name="button-group/basic" />
@@ -77,10 +77,10 @@ Simply omit the `separator` prop.
 
 ### Global theme override
 
-Override the `buttonGroup` theme app-wide with `createHeroUse`:
+Override the `buttonGroup` theme app-wide with `createHareUI`:
 
 ```ts
-app.use(createHeroUse({
+app.use(createHareUI({
   ui: {
     buttonGroup: {
       slots: { base: 'gap-2 rounded-lg', separator: 'opacity-25' },

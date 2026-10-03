@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { Autocomplete, Surface } from 'herouse'
+import { Autocomplete, Surface } from '@hareui/vue'
 import { ref } from 'vue'
 
 const items = [

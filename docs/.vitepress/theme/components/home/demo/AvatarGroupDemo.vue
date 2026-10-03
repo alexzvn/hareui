@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { Avatar, AvatarGroup } from 'herouse'
+import { Avatar, AvatarGroup } from '@hareui/vue'
 
 const avatars = [
   { image: 'https://heroui-assets.nyc3.cdn.digitaloceanspaces.com/avatars/blue.jpg', name: 'Blue' },

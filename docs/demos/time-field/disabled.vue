@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import { getLocalTimeZone, now, Time } from '@internationalized/date'
-import { TimeField } from 'herouse'
+import { TimeField } from '@hareui/vue'
 
 const currentTime = now(getLocalTimeZone())
 const timeValue = new Time(currentTime.hour, currentTime.minute, currentTime.second)

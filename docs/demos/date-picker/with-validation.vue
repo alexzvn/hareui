@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import type { DateValue } from '@internationalized/date'
 import { getLocalTimeZone, today } from '@internationalized/date'
-import { DatePicker } from 'herouse'
+import { DatePicker } from '@hareui/vue'
 import { computed, ref } from 'vue'
 
 const value = ref<DateValue | null>(null)

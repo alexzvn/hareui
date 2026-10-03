@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { InputOtp, Link } from 'herouse'
+import { InputOtp, Link } from '@hareui/vue'
 
 const slotClass = 'rounded-lg border-border/80 bg-default data-[active=true]:border-accent/40 data-[active=true]:bg-accent-soft'
 </script>

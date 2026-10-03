@@ -11,7 +11,7 @@ const componentSlugs = sidebar
   .filter(Boolean)
 
 export default defineConfigWithTheme<ThemeConfig>({
-  title: 'HeroUse',
+  title: 'HareUI',
   description: 'Beautiful, fast and modern Vue UI library — a Vue port of HeroUI v3',
   cleanUrls: true,
   appearance: true,
@@ -43,7 +43,7 @@ export default defineConfigWithTheme<ThemeConfig>({
     plugins: [tailwindcss()],
     resolve: {
       alias: {
-        herouse: fileURLToPath(new URL('../../packages/herouse/src/index.ts', import.meta.url)),
+        '@hareui/vue': fileURLToPath(new URL('../../packages/vue/src/index.ts', import.meta.url)),
       },
     },
   },

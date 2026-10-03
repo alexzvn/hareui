@@ -12,7 +12,7 @@ links:
 
 ```vue
 <script setup lang="ts">
-import { Label } from 'herouse'
+import { Label } from '@hareui/vue'
 </script>
 ```
 
@@ -65,12 +65,12 @@ Pass utilities through `class` (root) or `:ui="{ base: '…' }"`; they are merge
 
 ### Global Configuration
 
-Override the theme for every Label with `createHeroUse`:
+Override the theme for every Label with `createHareUI`:
 
 ```ts
-import { createHeroUse } from 'herouse'
+import { createHareUI } from '@hareui/vue'
 
-app.use(createHeroUse({
+app.use(createHareUI({
   ui: {
     label: {
       slots: { base: 'font-semibold text-foreground' },

@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { Button, Drawer } from 'herouse'
+import { Button, Drawer } from '@hareui/vue'
 
 const placements = ['bottom', 'top', 'left', 'right'] as const
 const capitalize = (s: string) => s.charAt(0).toUpperCase() + s.slice(1)

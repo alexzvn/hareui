@@ -1,7 +1,7 @@
 <script setup lang="ts">
 // Port of HeroUI docs `themes/components/custom-fonts.tsx`.
 import { Icon } from '@iconify/vue'
-import { Button, InputGroup, Link, TextField } from 'herouse'
+import { Button, InputGroup, Link, TextField } from '@hareui/vue'
 import { computed, ref } from 'vue'
 import { useCustomFonts } from '../composables/customFonts'
 import { useVariableSetter } from '../composables/variables'

@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import { Icon } from '@iconify/vue'
-import { Link } from 'herouse'
+import { Link } from '@hareui/vue'
 </script>
 
 <template>

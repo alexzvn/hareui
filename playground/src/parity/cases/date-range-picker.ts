@@ -1,6 +1,6 @@
 import type { VNode } from 'vue'
 import { CalendarDate, CalendarDateTime } from '@internationalized/date'
-import { DateRangePicker } from 'herouse'
+import { DateRangePicker } from '@hareui/vue'
 import { h } from 'vue'
 
 const base = { label: 'Trip dates', calendarLabel: 'Trip dates', startName: 'startDate', endName: 'endDate', class: 'w-80' }

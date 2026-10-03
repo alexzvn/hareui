@@ -1,7 +1,7 @@
 @import "tailwindcss";
 @import "./fumadocs/black.css";
 @import "./fumadocs/preset.css";
-@import "../../../packages/herouse/src/styles/index.css";
+@import "../../../packages/vue/src/styles/index.css";
 @import "./global.css";
 @import "./theme-presets.css";
 @import "@fontsource-variable/inter";
@@ -10,7 +10,7 @@
 @source "../..";
 @source "../markdown.ts";
 @source "./**/*.vue";
-@source "../../../packages/herouse/src/theme";
+@source "../../../packages/vue/src/theme";
 
 :root {
   --font-inter: "Inter Variable";

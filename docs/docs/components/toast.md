@@ -11,7 +11,7 @@ links:
 ## Usage
 
 ```ts
-import { ToastProvider, toast } from 'herouse'
+import { ToastProvider, toast } from '@hareui/vue'
 ```
 
 <ComponentPreview name="toast/default" />
@@ -76,7 +76,7 @@ Render the provider once at the root of your app.
 
 ```vue
 <script setup lang="ts">
-import { Button, ToastProvider, toast } from 'herouse'
+import { Button, ToastProvider, toast } from '@hareui/vue'
 </script>
 
 <template>
@@ -96,7 +96,7 @@ import { Button, ToastProvider, toast } from 'herouse'
 ### Global theme override
 
 ```ts
-app.use(createHeroUse({
+app.use(createHareUI({
   ui: {
     toast: {
       slots: { toast: 'rounded-xl shadow-lg', content: 'gap-2' },
@@ -171,7 +171,7 @@ singleton, provided for symmetry with other composables; toast state lives outsi
 any component instance, so `toast` works from anywhere, including outside `<script setup>`.
 
 ```ts
-import { toast } from 'herouse'
+import { toast } from '@hareui/vue'
 
 // Basic toast (auto-dismisses after 4 seconds by default)
 toast('Event has been created')

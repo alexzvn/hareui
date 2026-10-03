@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { Avatar, Card } from 'herouse'
+import { Avatar, Card } from '@hareui/vue'
 import VerifiedBadgeIcon from '../icons/VerifiedBadgeIcon.vue'
 </script>
 
@@ -7,14 +7,14 @@ import VerifiedBadgeIcon from '../icons/VerifiedBadgeIcon.vue'
   <Card class="w-full items-start justify-center xl:w-[400px]" :ui="{ header: 'items-top w-full flex-row justify-between', content: 'flex-row text-start', footer: 'gap-2' }">
     <template #header>
       <div class="flex items-center gap-3">
-        <!-- HeroUI shows its logo here; HeroUse has no logo yet, so the fallback initial stands in. -->
+        <!-- HeroUI shows its logo here; HareUI has no logo yet, so the fallback initial stands in. -->
         <Avatar size="sm" fallback="H" />
         <div class="flex h-full flex-col items-start justify-center">
           <div class="flex items-center gap-0.5">
-            <span class="text-sm leading-4 font-semibold">HeroUse</span>
+            <span class="text-sm leading-4 font-semibold">HareUI</span>
             <VerifiedBadgeIcon height="18" width="18" />
           </div>
-          <span class="text-sm tracking-tight text-muted">@herouse</span>
+          <span class="text-sm tracking-tight text-muted">@HareUI</span>
         </div>
       </div>
     </template>

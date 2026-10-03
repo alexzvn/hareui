@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { Checkbox } from 'herouse'
+import { Checkbox } from '@hareui/vue'
 </script>
 
 <template>

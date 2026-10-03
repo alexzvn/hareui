@@ -1,13 +1,13 @@
 ---
 title: Theming
-description: Customize HeroUse's design system with CSS variables and app-level theme overrides.
+description: Customize HareUI's design system with CSS variables and app-level theme overrides.
 ---
 
-HeroUse uses CSS variables for color/spacing tokens and [tailwind-variants](https://tailwind-variants.org/) slot themes for component styles. Customize everything from colors to individual component slots with standard CSS or an app-level config object — no BEM classes required.
+HareUI uses CSS variables for color/spacing tokens and [tailwind-variants](https://tailwind-variants.org/) slot themes for component styles. Customize everything from colors to individual component slots with standard CSS or an app-level config object — no BEM classes required.
 
 ## How It Works
 
-HeroUse's theming system is built on [Tailwind CSS v4](https://tailwindcss.com/docs/theme). The `herouse` stylesheet declares semantic CSS variables (`--accent`, `--surface`, `--radius`, …) for light and dark themes, maps them to Tailwind's `@theme inline` tokens, and each component's `.vue` file consumes them through a tailwind-variants slot object.
+HareUI's theming system is built on [Tailwind CSS v4](https://tailwindcss.com/docs/theme). The `@hareui/vue` stylesheet declares semantic CSS variables (`--accent`, `--surface`, `--radius`, …) for light and dark themes, maps them to Tailwind's `@theme inline` tokens, and each component's `.vue` file consumes them through a tailwind-variants slot object.
 
 **Naming pattern:**
 - Colors without a suffix are backgrounds (e.g. `--accent`)
@@ -18,18 +18,18 @@ HeroUse's theming system is built on [Tailwind CSS v4](https://tailwindcss.com/d
 | Layer | Scope | Mechanism |
 |---|---|---|
 | CSS variables | Global, affects every component that reads the token | Override in `:root` / `.dark` |
-| `createHeroUse({ ui })` | Global, affects one component's slot classes/variants | App-level Vue plugin config |
+| `createHareUI({ ui })` | Global, affects one component's slot classes/variants | App-level Vue plugin config |
 | `:ui` prop | Single instance | Prop on the component |
 | `class` prop | Single instance, root slot only | Prop on the component |
 
 ## Overriding CSS Variables
 
-Add overrides after the `herouse` import:
+Add overrides after the `@hareui/vue` import:
 
 ```css
 /* src/style.css */
 @import "tailwindcss";
-@import "herouse";
+@import "@hareui/vue";
 
 :root {
   /* Override any color variable */
@@ -44,18 +44,18 @@ Add overrides after the `herouse` import:
 
 See [Colors](/docs/getting-started/colors) for the complete token reference and [Dark Mode](/docs/getting-started/dark-mode) for the `.dark` / `data-theme="dark"` switch.
 
-## Overriding Components with `createHeroUse`
+## Overriding Components with `createHareUI`
 
-Pass a `ui` config to `createHeroUse()` to override a component's slot classes, variant classes, or default variants app-wide. Keys match the component's theme name (`button`, `card`, `checkbox`, …); values follow the same `slots` / `variants` / `defaultVariants` shape as the component's internal theme file.
+Pass a `ui` config to `createHareUI()` to override a component's slot classes, variant classes, or default variants app-wide. Keys match the component's theme name (`button`, `card`, `checkbox`, …); values follow the same `slots` / `variants` / `defaultVariants` shape as the component's internal theme file.
 
 ```ts
 // main.ts
 import { createApp } from 'vue'
-import { createHeroUse } from 'herouse'
+import { createHareUI } from '@hareui/vue'
 import App from './App.vue'
 
 createApp(App)
-  .use(createHeroUse({
+  .use(createHareUI({
     ui: {
       button: {
         // Override the base slot class
@@ -90,10 +90,10 @@ Use the `:ui` prop for per-slot overrides, or `class` for the root slot, on one 
 
 ## Precedence
 
-When the same slot is targeted at multiple layers, HeroUse resolves conflicts with [tailwind-merge](https://github.com/dcastil/tailwind-merge) — the last applied class wins. Layers are applied in this order, lowest to highest priority:
+When the same slot is targeted at multiple layers, HareUI resolves conflicts with [tailwind-merge](https://github.com/dcastil/tailwind-merge) — the last applied class wins. Layers are applied in this order, lowest to highest priority:
 
 1. **Theme file** — the component's built-in default (`src/theme/<name>.ts`)
-2. **`createHeroUse({ ui })`** — app-level config
+2. **`createHareUI({ ui })`** — app-level config
 3. **Variant props** — `variant`, `size`, `color`, …
 4. **`:ui` slot classes** — per-instance, per-slot
 5. **`class` prop** — per-instance, root slot only, highest priority
@@ -144,17 +144,17 @@ Now use it in your components:
 
 ## Variables Reference
 
-HeroUse defines three types of variables in `packages/herouse/src/styles/variables.css`:
+HareUI defines three types of variables in `packages/vue/src/styles/variables.css`:
 
 1. **Base Variables** — Non-changing values like `--white`, `--black`, spacing, and typography
 2. **Theme Variables** — Colors that change between light/dark themes, plus scrollbar tokens (`--scrollbar-thumb`, `--scrollbar-width`, etc.)
 3. **Calculated Variables** — Hover states, soft variants, and border/separator levels (derived with `color-mix()`)
 
-For a complete reference, see [Colors](/docs/getting-started/colors) and `packages/herouse/src/styles/variables.css`.
+For a complete reference, see [Colors](/docs/getting-started/colors) and `packages/vue/src/styles/variables.css`.
 
 **Tailwind theme bridge (`@theme inline`):**
 
-`packages/herouse/src/styles/theme.css` maps semantic variables to Tailwind tokens (`--color-*`, `--radius-*`, `--ease-*`). Calculated colors reference underlying vars (e.g. `--surface-hover`, `--accent-soft`) from `variables.css` — they are not inlined with `color-mix()` in this file:
+`packages/vue/src/styles/theme.css` maps semantic variables to Tailwind tokens (`--color-*`, `--radius-*`, `--ease-*`). Calculated colors reference underlying vars (e.g. `--surface-hover`, `--accent-soft`) from `variables.css` — they are not inlined with `color-mix()` in this file:
 
 <CollapsibleCode lang="css" title="theme.css" :code="`@theme inline {
   --color-background: var(--background);
@@ -288,13 +288,13 @@ Form controls rely on `--field-*` theme variables. Hover, focus, and border vari
 
 ## Scrollbars
 
-HeroUse applies a shared scrollbar style to component scroll areas (currently `Modal`'s body). Scrollbars use standard CSS properties (`scrollbar-width`, `scrollbar-color`, `scrollbar-gutter`) — no `::-webkit-scrollbar` overrides.
+HareUI applies a shared scrollbar style to component scroll areas (currently `Modal`'s body). Scrollbars use standard CSS properties (`scrollbar-width`, `scrollbar-color`, `scrollbar-gutter`) — no `::-webkit-scrollbar` overrides.
 
 **Modes** — set `data-scrollbar` on `<html>`, a component root, or a scroll slot:
 
 | Mode | `data-scrollbar` | Behavior |
 |------|------------------|----------|
-| HeroUse thin | *(unset)* or `thin` | Thin thumb from theme tokens |
+| HareUI thin | *(unset)* or `thin` | Thin thumb from theme tokens |
 | OS / browser | `default` | Native scrollbars (`auto`) |
 | Hidden | `none` | No visible scrollbar (`scrollbar-width: none`) |
 
@@ -340,7 +340,7 @@ HeroUse applies a shared scrollbar style to component scroll areas (currently `M
 
 ## Vibrant Palette
 
-By default, HeroUse uses accessible soft foreground colors that mix the semantic color with the foreground for better contrast. If you prefer more saturated, vibrant soft foreground colors, add the `data-vibrant-palette` attribute to your root element:
+By default, HareUI uses accessible soft foreground colors that mix the semantic color with the foreground for better contrast. If you prefer more saturated, vibrant soft foreground colors, add the `data-vibrant-palette` attribute to your root element:
 
 ```html
 <html data-vibrant-palette="true">

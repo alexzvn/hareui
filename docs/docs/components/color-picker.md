@@ -12,7 +12,7 @@ links:
 
 ```vue
 <script setup lang="ts">
-import { ColorArea, ColorPicker, ColorSlider, ColorSwatch, Label } from 'herouse'
+import { ColorArea, ColorPicker, ColorSlider, ColorSwatch, Label } from '@hareui/vue'
 </script>
 ```
 
@@ -66,7 +66,7 @@ Use several `ColorSlider` components to adjust each channel.
 ### Global CSS
 
 ```ts
-app.use(createHeroUse({
+app.use(createHareUI({
   ui: {
     colorPicker: {
       slots: {

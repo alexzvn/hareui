@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { InputOtp, Link } from 'herouse'
+import { InputOtp, Link } from '@hareui/vue'
 </script>
 
 <template>

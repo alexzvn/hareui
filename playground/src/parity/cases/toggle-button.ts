@@ -1,5 +1,5 @@
 import type { VNode } from 'vue'
-import { ToggleButton } from 'herouse'
+import { ToggleButton } from '@hareui/vue'
 import { h } from 'vue'
 
 const heart = () => h('svg', { 'viewBox': '0 0 16 16', 'width': '1em', 'height': '1em', 'fill': 'currentColor', 'aria-hidden': 'true' }, [h('circle', { cx: 8, cy: 8, r: 6 })])

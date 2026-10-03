@@ -4,10 +4,10 @@ import { createChecker, type PropertyMeta } from 'vue-component-meta'
 import type { ApiProp, ComponentApi } from './api-types'
 
 const root = resolve(import.meta.dir, '../..')
-const componentsDir = join(root, 'packages/herouse/src/components')
+const componentsDir = join(root, 'packages/vue/src/components')
 const outDir = join(root, 'docs/.vitepress/api')
 
-const checker = createChecker(join(root, 'packages/herouse/tsconfig.json'), {
+const checker = createChecker(join(root, 'packages/vue/tsconfig.json'), {
   forceUseTs: true,
   printer: { newLine: 1 },
 })

@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import { Icon } from '@iconify/vue'
-import { ToggleButton } from 'herouse'
+import { ToggleButton } from '@hareui/vue'
 import { ref } from 'vue'
 
 const selected = ref(false)

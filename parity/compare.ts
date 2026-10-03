@@ -1,5 +1,5 @@
 /**
- * Visual parity check: herouse playground (:5173) vs @heroui/react reference (:5174).
+ * Visual parity check: HareUI playground (:5173) vs @heroui/react reference (:5174).
  * Compares computed styles of every [data-slot] element and pixel screenshots.
  *
  * Cases: parity/cases/<component>.json + playground/src/parity/cases/<component>.ts + reference/src/cases/<component>.tsx

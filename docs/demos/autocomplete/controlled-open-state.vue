@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { Autocomplete, Button } from 'herouse'
+import { Autocomplete, Button } from '@hareui/vue'
 import { ref } from 'vue'
 
 const items = [
