@@ -138,7 +138,7 @@ import type { DropdownContext, DropdownSelectionGroup } from './context'
 import { DropdownMenuContent, DropdownMenuPortal, DropdownMenuRoot, DropdownMenuTrigger } from 'reka-ui'
 import { computed, onBeforeUnmount, onMounted, provide, ref } from 'vue'
 import { useComponentUI } from '../../composables/useComponentUI'
-import { dropdownContextKey } from './context'
+import { dropdownContextKey, enabledMenuItems } from './context'
 import DropdownMenuItems from './DropdownMenuItems.vue'
 
 const props = withDefaults(defineProps<DropdownProps>(), {
@@ -225,13 +225,41 @@ const ctx: DropdownContext = {
   lastKey: () => lastKey.value,
   action: item => emit('action', item.value),
   slotProps: (item, group) => ({ item, selected: group.mode !== 'none' && group.isSelected(item.value), disabled: !!item.disabled }),
+  onMenuKeydown,
 }
 provide(dropdownContextKey, ctx)
 
+// RAC's `menuTriggerState.open(focusStrategy)`: ArrowUp opens on the last item, a long press on the first.
+// Reka only knows "first item when opened from the keyboard", so the strategy is applied on open below.
+let focusOnOpen: 'first' | 'last' | null = null
+function openWithFocus(strategy: 'first' | 'last') {
+  focusOnOpen = strategy
+  setOpen(true)
+}
+
 // RAC's `useSelectableCollection` focuses the first selected item whenever the menu opens (pointer or
-// keyboard); Reka focuses the content, or the first item when opened from the keyboard.
+// keyboard), else the item of the focus strategy; Reka focuses the content, or the first item when opened
+// from the keyboard.
 function onOpenAutoFocus(event: Event) {
-  const item = (event.target as HTMLElement).querySelector<HTMLElement>('[data-slot=menu-item][aria-checked=true]:not([data-disabled])')
+  const strategy = focusOnOpen
+  focusOnOpen = null
+  const content = event.target as HTMLElement
+  const items = enabledMenuItems(content)
+  const item = content.querySelector<HTMLElement>('[data-slot=menu-item][aria-checked=true]:not([data-disabled])')
+    ?? (strategy === 'first' ? items[0] : strategy === 'last' ? items.at(-1) : undefined)
+  if (!item)
+    return
+  event.preventDefault()
+  item.focus()
+}
+
+// RAC pages through the menu with PageUp / PageDown; the menu never outgrows one page, so that is the
+// first / last enabled item (as in ComboBox). Reka only handles them while the content itself is focused.
+function onMenuKeydown(event: KeyboardEvent) {
+  if (event.key !== 'PageUp' && event.key !== 'PageDown')
+    return
+  const items = enabledMenuItems(event.currentTarget as HTMLElement)
+  const item = event.key === 'PageUp' ? items[0] : items.at(-1)
   if (!item)
     return
   event.preventDefault()
@@ -255,7 +283,7 @@ function onTriggerPointerdownCapture(event: PointerEvent) {
   if (props.trigger !== 'longPress' || props.disabled || event.button !== 0)
     return
   cancelLongPress()
-  longPressTimer = setTimeout(() => setOpen(true), LONG_PRESS_THRESHOLD)
+  longPressTimer = setTimeout(() => openWithFocus('first'), LONG_PRESS_THRESHOLD)
 }
 
 // The toggle Reka requests while a trigger click dispatches (a short press, or the release after a
@@ -275,13 +303,19 @@ function onRootOpenChange(open: boolean) {
 }
 
 function onTriggerKeydownCapture(event: KeyboardEvent) {
-  if (props.trigger !== 'longPress')
+  if (props.trigger !== 'longPress') {
+    // Reka's trigger ignores ArrowUp; RAC opens the menu on its last item.
+    if (event.key === 'ArrowUp' && !props.disabled && !isOpen.value) {
+      event.preventDefault()
+      openWithFocus('last')
+    }
     return
+  }
   if (event.altKey && (event.key === 'ArrowDown' || event.key === 'ArrowUp')) {
     event.preventDefault()
     event.stopImmediatePropagation()
     if (!props.disabled)
-      setOpen(true)
+      openWithFocus(event.key === 'ArrowDown' ? 'first' : 'last')
   }
   else if (event.key === 'Enter' || event.key === ' ' || event.key === 'ArrowDown') {
     event.stopImmediatePropagation()
@@ -322,7 +356,9 @@ onBeforeUnmount(() => {
     </DropdownMenuTrigger>
     <DropdownMenuPortal>
       <!-- Reka puts `role="menu"` on the content (HeroUI's popover); the inner element carries the menu classes -->
+      <!-- `loop`: React Aria wraps keyboard focus from the last item to the first and back -->
       <DropdownMenuContent
+        loop
         :side="side"
         :align="align"
         :side-offset="sideOffset"
@@ -330,6 +366,7 @@ onBeforeUnmount(() => {
         data-slot="dropdown-popover"
         :class="ui.popover({ class: [props.ui?.popover, props.class] })"
         @open-auto-focus="onOpenAutoFocus"
+        @keydown="onMenuKeydown"
       >
         <slot name="content-top" />
         <div

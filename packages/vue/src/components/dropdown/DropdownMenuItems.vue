@@ -4,7 +4,7 @@
 import type { DropdownEntry, DropdownItem, DropdownSection, DropdownSeparator } from './Dropdown.vue'
 import type { DropdownSelectionGroup } from './context'
 import { DropdownMenuGroup, DropdownMenuLabel, DropdownMenuPortal, DropdownMenuSub, DropdownMenuSubContent, useId } from 'reka-ui'
-import { inject } from 'vue'
+import { inject, ref } from 'vue'
 import { dropdownContextKey } from './context'
 import DropdownMenuOption from './DropdownMenuOption.vue'
 
@@ -22,6 +22,21 @@ const hasSubmenu = (entry: DropdownEntry): entry is DropdownItem & { items: Drop
 
 // Submenus are separate menus without a selection mode (RAC: a nested `Menu` has its own selection).
 const submenuGroup: DropdownSelectionGroup = { mode: 'none', indicator: false, isSelected: () => false, toggle: () => {} }
+
+// The open submenu of this level (one at a time, as in RAC's `SubmenuTriggerState`).
+const openSubmenu = ref<DropdownItem['value'] | null>(null)
+
+// Reka closes the whole menu on Escape inside a submenu; RAC closes only that submenu and refocuses
+// its trigger. Stopping the event here keeps it from Reka's document-level Escape listener.
+function onSubmenuKeydown(event: KeyboardEvent) {
+  if (event.key !== 'Escape')
+    return
+  const content = event.currentTarget as HTMLElement
+  event.preventDefault()
+  event.stopPropagation()
+  openSubmenu.value = null
+  content.ownerDocument.querySelector<HTMLElement>(`[aria-controls="${content.id}"]`)?.focus()
+}
 
 function key(entry: DropdownEntry, index: number) {
   return isSeparator(entry) || isSection(entry) ? `${entry.type}-${index}` : `item-${entry.value}`
@@ -56,15 +71,21 @@ function key(entry: DropdownEntry, index: number) {
       </DropdownMenuLabel>
       <DropdownMenuItems :entries="entry.items" :group="ctx.sectionGroup(entry, group)" />
     </DropdownMenuGroup>
-    <DropdownMenuSub v-else-if="hasSubmenu(entry)">
+    <DropdownMenuSub
+      v-else-if="hasSubmenu(entry)"
+      :open="openSubmenu === entry.value"
+      @update:open="openSubmenu = $event ? entry.value : openSubmenu === entry.value ? null : openSubmenu"
+    >
       <DropdownMenuOption :item="entry" :group="group" submenu />
       <DropdownMenuPortal>
         <!-- RAC submenu popover: placement "end top", offset 8, 12px container padding -->
         <DropdownMenuSubContent
+          loop
           :side-offset="8"
           :collision-padding="12"
           data-slot="dropdown-popover"
           :class="ctx.classes().popover!({ class: ctx.ui()?.popover })"
+          @keydown="ctx.onMenuKeydown($event); onSubmenuKeydown($event)"
         >
           <div data-slot="dropdown-menu" :class="ctx.classes().menu!({ class: ctx.ui()?.menu })">
             <DropdownMenuItems :entries="entry.items" :group="submenuGroup" />

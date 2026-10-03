@@ -20,6 +20,13 @@ export interface DropdownContext {
   lastKey: () => string | null
   action: (item: DropdownItem) => void
   slotProps: (item: DropdownItem, group: DropdownSelectionGroup) => DropdownItemSlotProps
+  /** Keydown on a menu (root or submenu) content: PageUp / PageDown paging. */
+  onMenuKeydown: (event: KeyboardEvent) => void
+}
+
+/** The enabled items of one menu content (submenus are portalled, so they are not included). */
+export function enabledMenuItems(menu: Element): HTMLElement[] {
+  return [...menu.querySelectorAll<HTMLElement>('[data-slot=menu-item]:not([data-disabled])')]
 }
 
 export const dropdownContextKey: InjectionKey<DropdownContext> = Symbol('hareui-dropdown')

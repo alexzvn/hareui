@@ -254,4 +254,30 @@ describe('dropdown keyboard navigation', () => {
     expect(document.body.textContent).not.toContain('Messages')
     expect(document.activeElement).toBe(item('Share'))
   })
+
+  it('Alt+ArrowUp on a long-press trigger opens on the last item', async () => {
+    const w = open({ items: actions, trigger: 'longPress', defaultOpen: false })
+    await settle()
+    const trigger = w.get('[data-testid=trigger]').element as HTMLElement
+    trigger.focus()
+    trigger.dispatchEvent(new KeyboardEvent('keydown', { key: 'ArrowUp', altKey: true, bubbles: true, cancelable: true }))
+    await settle()
+    expect(document.activeElement).toBe(item('Delete file'))
+  })
+
+  it('a long press opens the menu with the first item focused', async () => {
+    // behaviour-final-check D5
+    vi.useFakeTimers({ toFake: ['setTimeout', 'clearTimeout'] })
+    try {
+      const w = open({ items: actions, trigger: 'longPress', defaultOpen: false })
+      const trigger = w.get('[data-testid=trigger]').element as HTMLElement
+      trigger.dispatchEvent(new PointerEvent('pointerdown', { bubbles: true, button: 0, pointerType: 'mouse' }))
+      vi.advanceTimersByTime(500)
+      await settle()
+      expect(document.activeElement).toBe(item('New file'))
+    }
+    finally {
+      vi.useRealTimers()
+    }
+  })
 })
