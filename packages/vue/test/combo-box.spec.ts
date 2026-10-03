@@ -1,6 +1,7 @@
 import { mount } from '@vue/test-utils'
 import { afterEach, describe, expect, it } from 'vitest'
 import { h, nextTick } from 'vue'
+import type { ComboBoxValue } from '../src/components/ComboBox.vue'
 import ComboBox from '../src/components/ComboBox.vue'
 
 const items = [
@@ -75,6 +76,21 @@ describe('ComboBox', () => {
     options()[2]!.click()
     await flush()
     expect(wrapper.emitted('update:modelValue')?.at(-1)).toEqual(['dog'])
+    expect(input.element.value).toBe('Dog')
+    wrapper.unmount()
+  })
+
+  it('with v-model, picking an option fills the input before blur', async () => {
+    const { wrapper, input } = setup({
+      'modelValue': 'cat',
+      'onUpdate:modelValue': (value: ComboBoxValue) => wrapper.setProps({ modelValue: value }),
+    })
+    expect(input.element.value).toBe('Cat')
+    await input.trigger('focus')
+    await flush()
+    options()[2]!.click()
+    await flush()
+    expect(wrapper.props('modelValue')).toBe('dog')
     expect(input.element.value).toBe('Dog')
     wrapper.unmount()
   })

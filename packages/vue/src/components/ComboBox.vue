@@ -244,10 +244,11 @@ const selectedValues = computed<ListBoxValue[]>(() => {
 const selectedKey = computed(() => multiple.value ? null : (selectedValues.value[0] ?? null))
 // Selection order, as RAC (`[...selectedKeys]`)
 const selectedItems = computed(() => selectedValues.value.map(v => itemByValue.value.get(v)).filter((item): item is T => !!item))
-const selectedText = computed(() => {
-  const item = selectedKey.value != null ? itemByValue.value.get(selectedKey.value) : undefined
+function keyText(key: ListBoxValue | null) {
+  const item = key != null ? itemByValue.value.get(key) : undefined
   return item ? textOf(item) : ''
-})
+}
+const selectedText = computed(() => keyText(selectedKey.value))
 
 // ---- Input text (`v-model:input-value` wins when bound) ---------------------------------------------------------
 const uncontrolledInput = ref(props.defaultInputValue ?? selectedText.value)
@@ -258,8 +259,9 @@ const inputValue = computed<string>({
     inputModel.value = value
   },
 })
-function resetInputValue() {
-  inputValue.value = multiple.value ? '' : selectedText.value
+// Takes the key explicitly after a write: a bound `v-model` only reflects it once the parent re-renders
+function resetInputValue(key = selectedKey.value) {
+  inputValue.value = multiple.value ? '' : keyText(key)
 }
 
 // ---- Filtering (RAC `useComboBoxState` + `useFilter({ sensitivity: 'base' })`) ----------------------------------
@@ -585,8 +587,9 @@ function onRekaValue(value: unknown) {
     showAll.value = false
   }
   else {
-    selection.value = (value as ListBoxValue | undefined) ?? null
-    resetInputValue()
+    const key = (value as ListBoxValue | undefined) ?? null
+    selection.value = key
+    resetInputValue(key)
   }
   commitValidation()
 }
@@ -626,8 +629,9 @@ const { validation, commitValidation } = useFieldValidation<ComboBoxValidationVa
   name: () => props.name,
   root: () => rootEl(),
   onReset: () => {
-    selection.value = props.defaultValue ?? empty()
-    inputValue.value = props.defaultInputValue ?? selectedText.value
+    const value = props.defaultValue ?? empty()
+    selection.value = value
+    inputValue.value = props.defaultInputValue ?? (multiple.value ? '' : keyText(value as ListBoxValue | null))
   },
 })
 const invalid = computed(() => validation.value.isInvalid)
