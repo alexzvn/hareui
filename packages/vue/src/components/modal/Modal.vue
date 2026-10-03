@@ -95,6 +95,7 @@ import {
 } from 'reka-ui'
 import { computed, onBeforeUnmount, onMounted, ref, useSlots } from 'vue'
 import { useComponentUI } from '../../composables/useComponentUI'
+import { useTabbableFocusLoop } from '../../composables/useTabbableFocusLoop'
 import CloseButton from '../close-button/CloseButton.vue'
 
 // `open: undefined` stops Vue casting an absent boolean prop to `false`, so uncontrolled mode and `defaultOpen` apply
@@ -132,6 +133,10 @@ function onInteractOutside(event: PointerDownOutsideEvent | FocusOutsideEvent) {
   if (!props.dismissible)
     event.preventDefault()
 }
+
+// Tab skips scrollable containers such as an overflowing body, as React Aria's FocusScope does.
+const dialogContent = ref<{ $el: HTMLElement } | null>(null)
+useTabbableFocusLoop(() => dialogContent.value?.$el)
 
 // React Aria's Dialog focuses the dialog container itself on open, not the first
 // tabbable descendant (Reka's FocusScope default). Match that so e.g. a footer
@@ -175,6 +180,7 @@ onBeforeUnmount(() => {
              undoes `hideOthers` twice (on close and on unmount), leaving `aria-hidden` on the page after a few cycles. -->
         <div data-slot="modal-container" :data-state="isOpen ? 'open' : 'closed'" :data-placement="placement" :class="ui.container({ class: props.ui?.container })">
           <DialogContent
+            ref="dialogContent"
             data-slot="modal-dialog"
             :data-placement="placement"
             v-bind="slots.description ? {} : { 'aria-describedby': undefined }"

@@ -160,7 +160,8 @@ Implements the [WAI-ARIA Dialog pattern](https://www.w3.org/WAI/ARIA/apg/pattern
 via Reka UI's `Dialog` primitive:
 
 - **Focus trap**: focus is locked within the drawer while open
-- **Keyboard**: `Escape` closes it (unless `keyboardDismissible` is `false`), `Tab` cycles elements
+- **Keyboard**: `Escape` closes it (unless `keyboardDismissible` is `false`), `Tab` cycles elements.
+  A scrollable body is not a tab stop of its own (as in HeroUI)
 - **Screen readers**: the dialog always has an accessible name, either the rendered title or a
   visually hidden one
 - **Scroll lock**: body scroll is disabled while open

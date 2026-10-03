@@ -250,4 +250,41 @@ describe('modal', () => {
       }
     })
   })
+
+  it('Tab skips a scrollable body and moves through the tabbable elements in order, like React Aria', async () => {
+    // behaviour-final-check M3: Chrome makes an overflowing `modal-body` keyboard-focusable; RAC's FocusScope skips it
+    const wrapper = mount(Modal, {
+      props: { defaultOpen: true, title: 'Terms' },
+      slots: {
+        body: () => h('div', { 'style': 'overflow:auto;max-height:40px', 'data-testid': 'scroller' }, [h('p', 'Long text')]),
+        footer: () => [h('button', 'Cancel'), h('button', 'Confirm')],
+      },
+      attachTo: document.body,
+    })
+    await nextTick()
+    await nextTick()
+    const tab = (shiftKey = false) => {
+      const target = (document.activeElement ?? document.body) as HTMLElement
+      const event = new KeyboardEvent('keydown', { key: 'Tab', shiftKey, bubbles: true, cancelable: true })
+      target.dispatchEvent(event)
+    }
+    const name = () => {
+      const el = document.activeElement as HTMLElement
+      return el.dataset.slot ?? el.getAttribute('aria-label') ?? el.textContent
+    }
+    expect(name()).toBe('modal-dialog')
+    tab()
+    expect(name()).toBe('Cancel')
+    tab()
+    expect(name()).toBe('Confirm')
+    tab()
+    expect(name()).toBe('modal-close-trigger')
+    tab()
+    expect(name()).toBe('Cancel')
+    tab(true)
+    expect(name()).toBe('modal-close-trigger')
+    tab(true)
+    expect(name()).toBe('Confirm')
+    wrapper.unmount()
+  })
 })

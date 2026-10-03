@@ -102,6 +102,7 @@ import {
 } from 'reka-ui'
 import { computed, onBeforeUnmount, onMounted, ref, useSlots } from 'vue'
 import { useComponentUI } from '../../composables/useComponentUI'
+import { useTabbableFocusLoop } from '../../composables/useTabbableFocusLoop'
 import CloseButton from '../close-button/CloseButton.vue'
 
 // `open: undefined` stops Vue casting an absent boolean prop to `false`, so uncontrolled mode and `defaultOpen` apply
@@ -141,6 +142,10 @@ function onInteractOutside(event: PointerDownOutsideEvent | FocusOutsideEvent) {
     event.preventDefault()
 }
 
+// Tab skips scrollable containers such as an overflowing body, as React Aria's FocusScope does.
+const dialogContent = ref<{ $el: HTMLElement } | null>(null)
+useTabbableFocusLoop(() => dialogContent.value?.$el)
+
 // React Aria's Dialog focuses the dialog container itself on open (see Modal.vue).
 function onOpenAutoFocus(event: Event) {
   event.preventDefault()
@@ -177,6 +182,7 @@ onBeforeUnmount(() => {
         <!-- No force-mount: see Modal.vue - the dialog's `presence-hold` keeps it through the container's exit animation -->
         <div data-slot="alert-dialog-container" :data-state="isOpen ? 'open' : 'closed'" :data-placement="placement" :class="ui.container({ class: props.ui?.container })">
           <DialogContent
+            ref="dialogContent"
             data-slot="alert-dialog-dialog"
             role="alertdialog"
             :data-placement="placement"
