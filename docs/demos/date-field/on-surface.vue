@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { DateField, Surface } from 'herouse'
+import { DateField, Surface } from '@hareui/vue'
 import { Icon } from '@iconify/vue'
 </script>
 

@@ -12,7 +12,7 @@ links:
 
 ```vue
 <script setup lang="ts">
-import { TimeField } from 'herouse'
+import { TimeField } from '@hareui/vue'
 </script>
 ```
 
@@ -119,7 +119,7 @@ HeroUI's `render` prop replaces the root element and lets sub-parts render-prop 
 ### Global Configuration
 
 ```ts
-app.use(createHeroUse({
+app.use(createHareUI({
   ui: { timeField: { slots: { group: 'rounded-xl', segment: 'font-mono' } } },
 }))
 ```

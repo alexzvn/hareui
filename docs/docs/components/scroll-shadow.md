@@ -11,7 +11,7 @@ links:
 
 ```vue
 <script setup lang="ts">
-import { ScrollShadow } from 'herouse'
+import { ScrollShadow } from '@hareui/vue'
 </script>
 ```
 
@@ -47,10 +47,10 @@ import { ScrollShadow } from 'herouse'
 
 ### Global Configuration
 
-To customize the ScrollShadow classes for the whole app, extend the `scrollShadow` theme in `createHeroUse`:
+To customize the ScrollShadow classes for the whole app, extend the `scrollShadow` theme in `createHareUI`:
 
 ```ts
-app.use(createHeroUse({
+app.use(createHareUI({
   ui: {
     scrollShadow: {
       slots: { base: 'rounded-xl border border-default-200' },
@@ -77,7 +77,7 @@ app.use(createHeroUse({
 - `orientation="horizontal"` – horizontal scrolling
 - `hide-scroll-bar` – hides the native scrollbar
 
-The fade masks live in herouse's stylesheet (`styles/scroll-shadow.css`) and key on
+The fade masks live in HareUI's stylesheet (`styles/scroll-shadow.css`) and key on
 `[data-slot="scroll-shadow"]` and `[data-orientation]`, so they apply to any element carrying
 those attributes (Tabs' scrolling list uses the same component).
 

@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { Button, Form, Select, Surface } from 'herouse'
+import { Button, Form, Select, Surface } from '@hareui/vue'
 
 const states = [
   { value: 'florida', label: 'Florida' },

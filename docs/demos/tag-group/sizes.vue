@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { TagGroup } from 'herouse'
+import { TagGroup } from '@hareui/vue'
 
 const items = [
   { id: 'news', label: 'News' },

@@ -3,7 +3,7 @@
 // Left out: the preview tabs (their templates are HeroUI Pro), `HeroUIDocsAgentTrigger` (HeroUI-only AI trigger),
 // the language-aware logo link (the docs have no i18n); the logo is the docs wordmark, as in the landing nav.
 import { Icon } from '@iconify/vue'
-import { Button, Kbd, Separator, Tooltip, toast } from 'herouse'
+import { Button, Kbd, Separator, Tooltip, toast } from '@hareui/vue'
 import { h } from 'vue'
 import { useCodePanel } from '../composables/codePanel'
 import { useKeyPress } from '../composables/keyPress'
@@ -33,7 +33,7 @@ useKeyPress('ArrowRight', () => redo(), { enabled: canRedo })
     <div class="flex h-14 w-full max-w-[1400px] items-center justify-between min-[1200px]:h-14">
       <div class="flex items-center gap-4">
         <a href="/" class="inline-flex items-center gap-2.5 font-semibold">
-          <span class="text-lg font-semibold">HeroUse</span>
+          <span class="text-lg font-semibold">HareUI</span>
         </a>
         <div class="flex items-center gap-3">
           <Tooltip :delay="100" arrow>

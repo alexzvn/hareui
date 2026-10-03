@@ -11,7 +11,7 @@ links:
 
 ```vue
 <script setup lang="ts">
-import { DisclosureGroup } from 'herouse'
+import { DisclosureGroup } from '@hareui/vue'
 </script>
 ```
 
@@ -55,10 +55,10 @@ and the `useDisclosureGroupNavigation` composable.
 
 ### Global Configuration
 
-To customize the DisclosureGroup classes for the whole app, extend the `disclosureGroup` theme in `createHeroUse`:
+To customize the DisclosureGroup classes for the whole app, extend the `disclosureGroup` theme in `createHareUI`:
 
 ```ts
-app.use(createHeroUse({
+app.use(createHareUI({
   ui: {
     disclosureGroup: {
       slots: {

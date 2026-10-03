@@ -1,5 +1,5 @@
 import type { VNode } from 'vue'
-import { NumberField } from 'herouse'
+import { NumberField } from '@hareui/vue'
 import { h } from 'vue'
 
 const base = { label: 'Width', description: 'Enter the width in pixels', defaultValue: 1024, min: 0 }

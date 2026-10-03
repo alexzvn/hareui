@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import type { DateValue } from '@internationalized/date'
 import { getLocalTimeZone, today } from '@internationalized/date'
-import { Button, DateField, Form } from 'herouse'
+import { Button, DateField, Form } from '@hareui/vue'
 import { Icon } from '@iconify/vue'
 import { computed, ref } from 'vue'
 

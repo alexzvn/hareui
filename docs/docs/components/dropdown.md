@@ -11,7 +11,7 @@ links:
 ## Usage
 
 ```ts
-import { Dropdown } from 'herouse'
+import { Dropdown } from '@hareui/vue'
 ```
 
 <ComponentPreview name="dropdown/default" />
@@ -25,8 +25,8 @@ submenus (an item with nested `items`). Named slots customize the parts of each 
 
 ```vue
 <script setup lang="ts">
-import type { DropdownEntry } from 'herouse'
-import { Button, Dropdown } from 'herouse'
+import type { DropdownEntry } from '@hareui/vue'
+import { Button, Dropdown } from '@hareui/vue'
 
 const items: DropdownEntry[] = [
   { type: 'section', label: 'Actions', items: [
@@ -129,10 +129,10 @@ With `trigger="longPress"` the menu opens on a long press, or with `Alt + ArrowD
 
 ### Global Configuration
 
-To customize the Dropdown classes for the whole app, extend the `dropdown` theme in `createHeroUse`:
+To customize the Dropdown classes for the whole app, extend the `dropdown` theme in `createHareUI`:
 
 ```ts
-app.use(createHeroUse({
+app.use(createHareUI({
   ui: {
     dropdown: {
       slots: {

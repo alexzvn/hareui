@@ -61,3 +61,10 @@ Changes to make:
 - **#12 RangeCalendar:** keep trying the anchor-date wrapper; park and document if it fails.
 - **#14 TagGroup:** add an EmptyState component, then port the with-list-data demo.
 - **#16 ColorField:** option A: show an empty input when there is no value/defaultValue (Reka still holds `#000000`, so the form value is `#000000`); restore the controlled demo's "Clear" button.
+
+## HareUI rename (user, 2026-10-03)
+
+- Package `herouse` → **`@hareui/vue`**, folder `packages/herouse` → `packages/vue`, root workspace `hareui`. Brand `HeroUse` → **HareUI**.
+- `createHeroUse` / `HeroUseConfig` / `heroUseConfigKey` → `createHareUI` / `HareUIConfig` / `hareUIConfigKey`, no deprecated aliases (pre-1.0, never published). Internal `Symbol`/`useId` prefixes are now `hareui-`.
+- Docs site URL is `https://hareui.alexzvn.me` (matches `docs/public/CNAME`), not `hareui.dev`.
+- Notes under `agents/` keep the old name as history; only this entry records the change.

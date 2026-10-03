@@ -1,6 +1,6 @@
 import type { VNode } from 'vue'
-import type { SwitchProps } from 'herouse'
-import { Switch } from 'herouse'
+import type { SwitchProps } from '@hareui/vue'
+import { Switch } from '@hareui/vue'
 import { h } from 'vue'
 import { gear } from '../icons'
 

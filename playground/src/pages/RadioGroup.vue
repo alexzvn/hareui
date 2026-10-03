@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { Label, RadioGroup } from 'herouse'
+import { Label, RadioGroup } from '@hareui/vue'
 import { ref } from 'vue'
 
 const variants = ['primary', 'secondary'] as const

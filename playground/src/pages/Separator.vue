@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { Separator, Surface } from 'herouse'
+import { Separator, Surface } from '@hareui/vue'
 </script>
 
 <template>
@@ -10,7 +10,7 @@ import { Separator, Surface } from 'herouse'
       <h2 class="mb-2 text-sm font-medium text-muted">Horizontal</h2>
       <div class="max-w-md">
         <div class="space-y-1">
-          <h4 class="text-medium font-medium">HeroUse Components</h4>
+          <h4 class="text-medium font-medium">HareUI Components</h4>
           <p class="text-small text-default-400">Beautiful, fast and modern Vue UI library.</p>
         </div>
         <Separator class="my-4" />

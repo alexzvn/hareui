@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { CheckboxGroup } from 'herouse'
+import { CheckboxGroup } from '@hareui/vue'
 
 const items = [
   { value: 'notifications', label: 'Email notifications', description: 'Receive updates via email' },

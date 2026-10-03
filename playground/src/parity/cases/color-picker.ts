@@ -1,5 +1,5 @@
 import type { VNode } from 'vue'
-import { Button, ColorArea, ColorField, ColorPicker, ColorSlider, ColorSwatch, ColorSwatchPicker, Label, Select } from 'herouse'
+import { Button, ColorArea, ColorField, ColorPicker, ColorSlider, ColorSwatch, ColorSwatchPicker, Label, Select } from '@hareui/vue'
 import { h } from 'vue'
 import { gear } from '../icons'
 

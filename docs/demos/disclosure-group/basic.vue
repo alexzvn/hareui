@@ -1,7 +1,7 @@
 <script setup lang="ts">
-import type { ExpandedValue } from 'herouse'
+import type { ExpandedValue } from '@hareui/vue'
 import { Icon } from '@iconify/vue'
-import { Button, Disclosure, DisclosureGroup, Separator } from 'herouse'
+import { Button, Disclosure, DisclosureGroup, Separator } from '@hareui/vue'
 import { ref } from 'vue'
 
 const expandedKeys = ref<ExpandedValue[]>(['preview'])

@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { Button, Modal, RadioGroup } from 'herouse'
+import { Button, Modal, RadioGroup } from '@hareui/vue'
 import { ref } from 'vue'
 
 const scroll = ref<'inside' | 'outside'>('inside')

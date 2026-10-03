@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { Chip, Separator } from 'herouse'
+import { Chip, Separator } from '@hareui/vue'
 
 const variants = ['primary', 'secondary', 'tertiary', 'soft'] as const
 const colors = ['accent', 'default', 'success', 'warning', 'danger'] as const

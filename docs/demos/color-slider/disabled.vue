@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { ColorSlider } from 'herouse'
+import { ColorSlider } from '@hareui/vue'
 </script>
 
 <template>

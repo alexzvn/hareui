@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { TagGroup } from 'herouse'
+import { TagGroup } from '@hareui/vue'
 
 const ownDisabled = [
   { id: 'news', label: 'News', disabled: true },

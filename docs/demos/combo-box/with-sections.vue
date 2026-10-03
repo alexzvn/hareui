@@ -1,6 +1,6 @@
 <script setup lang="ts">
-import type { ListBoxEntry } from 'herouse'
-import { ComboBox } from 'herouse'
+import type { ListBoxEntry } from '@hareui/vue'
+import { ComboBox } from '@hareui/vue'
 
 const countries: ListBoxEntry[] = [
   {

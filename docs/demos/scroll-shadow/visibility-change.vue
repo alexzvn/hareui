@@ -1,6 +1,6 @@
 <script setup lang="ts">
-import type { ScrollShadowVisibility } from 'herouse'
-import { Card, ScrollShadow } from 'herouse'
+import type { ScrollShadowVisibility } from '@hareui/vue'
+import { Card, ScrollShadow } from '@hareui/vue'
 import { ref } from 'vue'
 
 const images = [

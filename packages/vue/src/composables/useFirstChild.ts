@@ -1,0 +1,47 @@
+import type { Ref } from 'vue'
+import { onBeforeUnmount, onMounted, shallowRef, watch } from 'vue'
+
+/**
+ * Tracks the first element child of a group root. HeroUI places `ButtonGroup.Separator` /
+ * `ToggleButtonGroup.Separator` in every button except the first, so HareUI's buttons render their
+ * separator element only when they are not this element (keeps the `[data-slot]` sequence identical).
+ */
+export function useFirstChild(root: Ref<Element | { $el?: unknown } | null | undefined>) {
+  const firstChild = shallowRef<Element | null>(null)
+  let observer: MutationObserver | undefined
+
+  function resolve(): Element | null {
+    const value = root.value
+    if (value instanceof Element)
+      return value
+    const el = (value as { $el?: unknown } | null | undefined)?.$el
+    return el instanceof Element ? el : null
+  }
+
+  function attach() {
+    observer?.disconnect()
+    const el = resolve()
+    if (!el)
+      return
+    const update = () => {
+      firstChild.value = el.firstElementChild
+    }
+    update()
+    observer = new MutationObserver(update)
+    observer.observe(el, { childList: true })
+  }
+
+  onMounted(attach)
+  watch(resolve, attach, { flush: 'post' })
+  onBeforeUnmount(() => observer?.disconnect())
+
+  return firstChild
+}
+
+/** Resolves a component/element template ref to its DOM element. */
+export function refElement(value: unknown): Element | null {
+  if (value instanceof Element)
+    return value
+  const el = (value as { $el?: unknown } | null | undefined)?.$el
+  return el instanceof Element ? el : null
+}

@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import { ref } from 'vue'
-import { Button } from 'herouse'
+import { Button } from '@hareui/vue'
 import { Icon } from '../icons'
 
 const variants = ['primary', 'secondary', 'tertiary', 'ghost', 'outline', 'danger', 'danger-soft'] as const

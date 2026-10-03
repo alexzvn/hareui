@@ -4,7 +4,7 @@
 // Left out as HeroUI-only: the Web / Native tag group, the "Ask AI" row and HeroUI Pro results.
 import localSearchIndex from '@localSearchIndex'
 import { Icon } from '@iconify/vue'
-import { Kbd } from 'herouse'
+import { Kbd } from '@hareui/vue'
 import MiniSearch from 'minisearch'
 import { DialogContent, DialogOverlay, DialogPortal, DialogRoot, DialogTitle } from 'reka-ui'
 import { useData, useRouter } from 'vitepress'

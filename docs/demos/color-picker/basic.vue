@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { ColorArea, ColorPicker, ColorSlider, ColorSwatch, Label } from 'herouse'
+import { ColorArea, ColorPicker, ColorSlider, ColorSwatch, Label } from '@hareui/vue'
 </script>
 
 <template>

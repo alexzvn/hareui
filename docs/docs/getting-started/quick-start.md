@@ -1,6 +1,6 @@
 ---
 title: Quick Start
-description: Install HeroUse and render your first Button in minutes.
+description: Install HareUI and render your first Button in minutes.
 ---
 
 ## Requirements
@@ -10,24 +10,24 @@ description: Install HeroUse and render your first Button in minutes.
 
 ## Quick Install
 
-Install HeroUse:
+Install HareUI:
 
 ::: code-group
 
 ```bash [npm]
-npm i herouse
+npm i @hareui/vue
 ```
 
 ```bash [pnpm]
-pnpm add herouse
+pnpm add @hareui/vue
 ```
 
 ```bash [yarn]
-yarn add herouse
+yarn add @hareui/vue
 ```
 
 ```bash [bun]
-bun add herouse
+bun add @hareui/vue
 ```
 
 :::
@@ -38,7 +38,7 @@ Add to your main CSS file:
 
 ```css{2}
 @import "tailwindcss";
-@import "herouse";
+@import "@hareui/vue";
 ```
 
 ::: warning
@@ -47,16 +47,16 @@ Import order matters. Always import `tailwindcss` first.
 
 ## Register Plugin (Optional)
 
-HeroUse components work without any setup. Install the plugin only if you want to override themes globally with `createHeroUse`:
+HareUI components work without any setup. Install the plugin only if you want to override themes globally with `createHareUI`:
 
 ```ts [main.ts]
 import { createApp } from 'vue'
-import { createHeroUse } from 'herouse'
+import { createHareUI } from '@hareui/vue'
 import App from './App.vue'
 import './style.css'
 
 createApp(App)
-  .use(createHeroUse())
+  .use(createHareUI())
   .mount('#app')
 ```
 
@@ -64,7 +64,7 @@ createApp(App)
 
 ```vue
 <script setup lang="ts">
-import { Button } from 'herouse'
+import { Button } from '@hareui/vue'
 </script>
 
 <template>
@@ -74,7 +74,7 @@ import { Button } from 'herouse'
 
 ## What's Next?
 
-- [Design Principles](/docs/getting-started/design-principles) - Understand HeroUse's naming and API conventions
+- [Design Principles](/docs/getting-started/design-principles) - Understand HareUI's naming and API conventions
 - [Browse Components](/docs/components/button) - See available components
 - [Learn Styling](/docs/getting-started/styling) - Customize with Tailwind CSS
 - [Explore Composition](/docs/getting-started/composition) - Master slots and the `as` prop

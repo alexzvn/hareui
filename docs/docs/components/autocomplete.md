@@ -12,7 +12,7 @@ links:
 
 ```vue
 <script setup lang="ts">
-import { Autocomplete } from 'herouse'
+import { Autocomplete } from '@hareui/vue'
 </script>
 ```
 
@@ -173,7 +173,7 @@ Set `:search="false"` to drop the search field; the list then takes focus as in 
 ### Global Configuration
 
 ```ts
-app.use(createHeroUse({
+app.use(createHareUI({
   ui: {
     autocomplete: {
       slots: {

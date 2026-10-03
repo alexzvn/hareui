@@ -12,7 +12,7 @@ links:
 
 ```vue
 <script setup lang="ts">
-import { DateRangePicker } from 'herouse'
+import { DateRangePicker } from '@hareui/vue'
 </script>
 ```
 
@@ -113,7 +113,7 @@ Style the field parts through `:ui`; the `#calendar` slot lets you fully restyle
 ### Global Configuration
 
 ```ts
-app.use(createHeroUse({
+app.use(createHareUI({
   ui: { dateRangePicker: { slots: { triggerIndicator: 'text-muted', rangeSeparator: 'px-2 text-default', popover: 'p-0' } } },
 }))
 ```

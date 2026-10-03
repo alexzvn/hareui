@@ -1,6 +1,6 @@
 import type { VNode } from 'vue'
 import { Time } from '@internationalized/date'
-import { TimeField } from 'herouse'
+import { TimeField } from '@hareui/vue'
 import { h } from 'vue'
 
 const base = { label: 'Time', description: 'Enter a time', defaultValue: new Time(9, 30) }

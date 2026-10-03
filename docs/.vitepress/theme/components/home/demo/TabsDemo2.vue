@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import { Icon } from '@iconify/vue'
-import { Tabs } from 'herouse'
+import { Tabs } from '@hareui/vue'
 
 const items = [
   { label: 'Chats', value: 'chats', icon: 'gravity-ui:comment' },

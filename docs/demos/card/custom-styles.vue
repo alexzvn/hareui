@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { Button, Card } from 'herouse'
+import { Button, Card } from '@hareui/vue'
 import { Icon } from '@iconify/vue'
 
 const PRO_FEATURES = [

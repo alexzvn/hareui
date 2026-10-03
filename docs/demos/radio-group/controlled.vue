@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { RadioGroup } from 'herouse'
+import { RadioGroup } from '@hareui/vue'
 import { ref } from 'vue'
 
 const value = ref('pro')

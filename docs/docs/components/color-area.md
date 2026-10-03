@@ -12,7 +12,7 @@ links:
 
 ```vue
 <script setup lang="ts">
-import { ColorArea } from 'herouse'
+import { ColorArea } from '@hareui/vue'
 </script>
 ```
 
@@ -70,7 +70,7 @@ HeroUI's `render` prop replaces the root element. In Vue, attributes you pass to
 ### Global Configuration
 
 ```ts
-app.use(createHeroUse({
+app.use(createHareUI({
   ui: { colorArea: { slots: { base: 'rounded-3xl', thumb: 'size-5 border-4' } } },
 }))
 ```

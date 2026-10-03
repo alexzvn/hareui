@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { InputOtp } from 'herouse'
+import { InputOtp } from '@hareui/vue'
 import { ref } from 'vue'
 
 const code = ref('')

@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { Autocomplete, Avatar, TagGroup } from 'herouse'
+import { Autocomplete, Avatar, TagGroup } from '@hareui/vue'
 import { ref } from 'vue'
 
 const users = [

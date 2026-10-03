@@ -1,8 +1,8 @@
 <script setup lang="ts">
-// Port of the HeroUI docs' own `components/color-picker/components/color-slider.tsx` (horizontal only): a herouse
+// Port of the HeroUI docs' own `components/color-picker/components/color-slider.tsx` (horizontal only): a HareUI
 // ColorSlider restyled to the docs' pill track (`h-8 rounded-full`, no end caps) and round 16px thumb.
 import type { Color, ColorChannel, ColorSpace } from 'reka-ui'
-import { ColorSlider } from 'herouse'
+import { ColorSlider } from '@hareui/vue'
 import { computed } from 'vue'
 
 const props = defineProps<{
@@ -22,7 +22,7 @@ const ui = computed(() => ({
   base: 'grid-rows-[minmax(0,1fr)]',
   track: [
     'h-full min-h-0 w-full rounded-full before:hidden after:hidden [box-shadow:none]',
-    // `!`: herouse sets the track/thumb colors inline
+    // `!`: HareUI sets the track/thumb colors inline
     props.trackBackground && '[background:var(--accent-slider-track)!]',
   ],
   thumb: [

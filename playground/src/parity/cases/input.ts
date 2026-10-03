@@ -1,5 +1,5 @@
 import type { VNode } from 'vue'
-import { Input } from 'herouse'
+import { Input } from '@hareui/vue'
 import { h } from 'vue'
 
 const placeholder = 'Enter your name'

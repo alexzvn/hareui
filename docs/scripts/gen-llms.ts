@@ -3,7 +3,7 @@ import { join, resolve } from 'node:path'
 import { normalizePath, sectionLinks, sidebar, type SidebarLink } from '../.vitepress/sidebar'
 import type { ComponentApi } from './api-types'
 
-const SITE_URL = 'https://herouse.dev'
+const SITE_URL = 'https://hareui.alexzvn.me'
 
 const docsRoot = resolve(import.meta.dir, '..')
 const distDir = join(docsRoot, '.vitepress/dist')
@@ -170,10 +170,10 @@ for (const section of sidebar) {
 }
 
 const description =
-  'HeroUse is a Vue 3 port of HeroUI v3: beautiful, fast and modern UI components built on Reka UI, Tailwind CSS v4 and tailwind-variants, with Nuxt UI-style slots, a `ui` prop for per-element classes and app-level theme overrides.'
+  'HareUI is a Vue 3 port of HeroUI v3: beautiful, fast and modern UI components built on Reka UI, Tailwind CSS v4 and tailwind-variants, with Nuxt UI-style slots, a `ui` prop for per-element classes and app-level theme overrides.'
 
 const index = [
-  '# HeroUse',
+  '# HareUI',
   '',
   `> ${description}`,
   '',

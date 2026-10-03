@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { EmptyState, TagGroup } from 'herouse'
+import { EmptyState, TagGroup } from '@hareui/vue'
 </script>
 
 <template>

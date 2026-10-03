@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { Description, RadioGroup } from 'herouse'
+import { Description, RadioGroup } from '@hareui/vue'
 
 const options = [
   { description: '$12 billed every month', label: 'Monthly', value: 'monthly' },

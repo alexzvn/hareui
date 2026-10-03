@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { Button, ToastProvider, ToastQueue } from 'herouse'
+import { Button, ToastProvider, ToastQueue } from '@hareui/vue'
 
 const placements = ['top start', 'top', 'top end', 'bottom start', 'bottom', 'bottom end'] as const
 type Placement = typeof placements[number]

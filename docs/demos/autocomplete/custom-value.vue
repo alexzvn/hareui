@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { Autocomplete } from 'herouse'
+import { Autocomplete } from '@hareui/vue'
 
 const currencies = [
   { value: 'usd', code: 'USD', name: 'US Dollar', symbol: '$' },

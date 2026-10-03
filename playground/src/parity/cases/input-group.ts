@@ -1,5 +1,5 @@
 import type { VNode } from 'vue'
-import { Button, InputGroup, TextField } from 'herouse'
+import { Button, InputGroup, TextField } from '@hareui/vue'
 import { h } from 'vue'
 import { gear } from '../icons'
 

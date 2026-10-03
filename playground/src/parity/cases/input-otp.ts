@@ -1,6 +1,6 @@
 import type { VNode } from 'vue'
-import type { InputOtpProps } from 'herouse'
-import { InputOtp } from 'herouse'
+import type { InputOtpProps } from '@hareui/vue'
+import { InputOtp } from '@hareui/vue'
 import { h } from 'vue'
 
 function otp(props: InputOtpProps & Record<string, unknown> = {}) {

@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { Autocomplete } from 'herouse'
+import { Autocomplete } from '@hareui/vue'
 import { ref, watch } from 'vue'
 
 const allCities = [

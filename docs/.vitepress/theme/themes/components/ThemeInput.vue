@@ -1,7 +1,7 @@
 <script setup lang="ts">
 // Port of HeroUI docs `themes/components/theme-input.tsx`.
 import { Icon } from '@iconify/vue'
-import { Avatar, InputGroup } from 'herouse'
+import { Avatar, InputGroup } from '@hareui/vue'
 import { computed } from 'vue'
 import { useVariablesState } from '../composables/variables'
 import { findMatchingTheme, themes } from '../constants'

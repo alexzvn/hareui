@@ -12,7 +12,7 @@ links:
 
 ```vue
 <script setup lang="ts">
-import { Switch, SwitchGroup } from 'herouse'
+import { Switch, SwitchGroup } from '@hareui/vue'
 </script>
 ```
 
@@ -88,7 +88,7 @@ Group multiple switches with [SwitchGroup](#switchgroup), a layout-only wrapper 
 
 ### Label Position
 
-herouse has no dedicated `label-position` prop; reverse the order with a `content` class override:
+HareUI has no dedicated `label-position` prop; reverse the order with a `content` class override:
 
 <ComponentPreview name="switch/label-position" />
 
@@ -121,7 +121,7 @@ Override the control's checked colors with CSS variables through `:ui`, and stac
 ### Global Configuration
 
 ```ts
-app.use(createHeroUse({
+app.use(createHareUI({
   ui: { switch: { slots: { control: 'rounded-md' } } },
 }))
 ```

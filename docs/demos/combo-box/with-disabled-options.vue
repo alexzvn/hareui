@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { ComboBox } from 'herouse'
+import { ComboBox } from '@hareui/vue'
 
 const animals = [
   { value: 'dog', label: 'Dog' },

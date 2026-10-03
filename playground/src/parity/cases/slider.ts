@@ -1,5 +1,5 @@
 import type { VNode } from 'vue'
-import { Slider } from 'herouse'
+import { Slider } from '@hareui/vue'
 import { ConfigProvider } from 'reka-ui'
 import { h } from 'vue'
 

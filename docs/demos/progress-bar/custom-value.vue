@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { Label, NumberField, ProgressBar, Select, Separator } from 'herouse'
+import { Label, NumberField, ProgressBar, Select, Separator } from '@hareui/vue'
 import { ref } from 'vue'
 
 const formatStyleOptions = [

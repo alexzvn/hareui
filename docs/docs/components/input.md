@@ -11,7 +11,7 @@ links:
 
 ```vue
 <script setup lang="ts">
-import { Input } from 'herouse'
+import { Input } from '@hareui/vue'
 </script>
 ```
 
@@ -69,7 +69,7 @@ Bind the value with `v-model`.
 ### Global Configuration
 
 ```ts
-app.use(createHeroUse({
+app.use(createHareUI({
   ui: {
     input: {
       slots: { base: 'rounded-lg px-4' },

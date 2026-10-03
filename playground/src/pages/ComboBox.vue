@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { Button, ComboBox, Form, Surface } from 'herouse'
+import { Button, ComboBox, Form, Surface } from '@hareui/vue'
 import { ref } from 'vue'
 
 const animals = ['Aardvark', 'Cat', 'Dog', 'Kangaroo', 'Panda', 'Snake'].map(label => ({ value: label.toLowerCase(), label }))

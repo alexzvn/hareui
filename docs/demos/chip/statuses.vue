@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { Chip } from 'herouse'
+import { Chip } from '@hareui/vue'
 import { Icon } from '@iconify/vue'
 </script>
 

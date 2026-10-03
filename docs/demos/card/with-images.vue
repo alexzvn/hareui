@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { Avatar, Button, Card, CloseButton, Link } from 'herouse'
+import { Avatar, Button, Card, CloseButton, Link } from '@hareui/vue'
 import { Icon } from '@iconify/vue'
 
 const events = [

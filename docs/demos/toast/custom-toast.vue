@@ -1,6 +1,6 @@
 <script setup lang="ts">
-import type { ToastContentValue } from 'herouse'
-import { Button, CloseButton, ToastProvider, ToastQueue } from 'herouse'
+import type { ToastContentValue } from '@hareui/vue'
+import { Button, CloseButton, ToastProvider, ToastQueue } from '@hareui/vue'
 
 const customQueue = new ToastQueue()
 

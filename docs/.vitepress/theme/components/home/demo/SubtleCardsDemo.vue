@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { Avatar, Card } from 'herouse'
+import { Avatar, Card } from '@hareui/vue'
 
 const ASSETS = 'https://heroui-assets.nyc3.cdn.digitaloceanspaces.com'
 const cards = [

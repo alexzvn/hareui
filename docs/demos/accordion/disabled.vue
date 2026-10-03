@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { Accordion } from 'herouse'
+import { Accordion } from '@hareui/vue'
 
 const disabledItems = [
   { label: 'Disabled Item 1', content: 'This content cannot be accessed when the accordion is disabled.' },

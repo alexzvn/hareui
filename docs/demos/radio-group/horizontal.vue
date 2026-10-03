@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { Label, RadioGroup } from 'herouse'
+import { Label, RadioGroup } from '@hareui/vue'
 
 const items = [
   { value: 'starter', label: 'Starter', description: 'For side projects' },

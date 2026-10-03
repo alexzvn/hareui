@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { SearchField } from 'herouse'
+import { SearchField } from '@hareui/vue'
 </script>
 
 <template>

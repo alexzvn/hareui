@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import type { DateValue } from '@internationalized/date'
-import { Button, Description, RangeCalendar } from 'herouse'
+import { Button, Description, RangeCalendar } from '@hareui/vue'
 import { parseDate } from '@internationalized/date'
 import { ref } from 'vue'
 

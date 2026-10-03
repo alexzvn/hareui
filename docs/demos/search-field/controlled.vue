@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { Button, SearchField } from 'herouse'
+import { Button, SearchField } from '@hareui/vue'
 import { ref } from 'vue'
 
 const value = ref('')

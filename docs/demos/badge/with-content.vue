@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import { Icon } from '@iconify/vue'
-import { Avatar, Badge } from 'herouse'
+import { Avatar, Badge } from '@hareui/vue'
 </script>
 
 <template>

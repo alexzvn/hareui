@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { Button, ComboBox, Form, Surface } from 'herouse'
+import { Button, ComboBox, Form, Surface } from '@hareui/vue'
 
 const animals = [
   { value: 'aardvark', label: 'Aardvark' },

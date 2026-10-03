@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { ColorSlider, ColorSwatch, colorToString, parseColor } from 'herouse'
+import { ColorSlider, ColorSwatch, colorToString, parseColor } from '@hareui/vue'
 import { ref } from 'vue'
 
 const color = ref(parseColor('hsl(0, 100%, 50%)'))

@@ -1,8 +1,8 @@
 <script setup lang="ts">
 import type { DateValue } from '@internationalized/date'
-import type { DateRangeValue } from 'herouse'
+import type { DateRangeValue } from '@hareui/vue'
 import { getLocalTimeZone, parseZonedDateTime, Time } from '@internationalized/date'
-import { DateRangePicker, Label, RangeCalendar, TimeField } from 'herouse'
+import { DateRangePicker, Label, RangeCalendar, TimeField } from '@hareui/vue'
 
 const localTimeZone = getLocalTimeZone()
 const defaultValue: DateRangeValue = {

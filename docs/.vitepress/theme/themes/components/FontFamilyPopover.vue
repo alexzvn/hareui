@@ -1,7 +1,7 @@
 <script setup lang="ts">
 // Port of HeroUI docs `themes/components/font-family-popover.tsx`.
 import { Icon } from '@iconify/vue'
-import { InputGroup, Popover } from 'herouse'
+import { InputGroup, Popover } from '@hareui/vue'
 import { computed, ref } from 'vue'
 import { useCustomFonts } from '../composables/customFonts'
 import { useVariableSetter } from '../composables/variables'

@@ -1,5 +1,5 @@
 // Port of HeroUI docs `utils/design-theme.ts` + theme ids/values from `app/[lang]/themes/{constants,theme-values}.ts`.
-// Storage keys and <html> attributes are kept identical so `theme-presets.css` and herouse's vibrant rules apply.
+// Storage keys and <html> attributes are kept identical so `theme-presets.css` and HareUI's vibrant rules apply.
 
 export const DESIGN_THEME_IDS = [
   'default',

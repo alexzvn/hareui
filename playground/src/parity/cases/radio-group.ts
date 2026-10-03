@@ -1,6 +1,6 @@
 import type { VNode } from 'vue'
-import type { RadioGroupItem, RadioGroupProps } from 'herouse'
-import { RadioGroup } from 'herouse'
+import type { RadioGroupItem, RadioGroupProps } from '@hareui/vue'
+import { RadioGroup } from '@hareui/vue'
 import { h } from 'vue'
 
 const plans: RadioGroupItem[] = [

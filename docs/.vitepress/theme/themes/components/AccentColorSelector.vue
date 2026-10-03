@@ -2,7 +2,7 @@
 // Port of HeroUI docs `themes/components/accent-color-selector.tsx`.
 import type { Color } from 'reka-ui'
 import { formatHsl } from 'culori'
-import { Button } from 'herouse'
+import { Button } from '@hareui/vue'
 import { computed } from 'vue'
 import { useVariablesState } from '../composables/variables'
 import AccentColorPicker from './AccentColorPicker.vue'

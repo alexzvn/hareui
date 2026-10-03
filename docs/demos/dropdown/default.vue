@@ -1,6 +1,6 @@
 <script setup lang="ts">
-import type { DropdownEntry } from 'herouse'
-import { Button, Dropdown } from 'herouse'
+import type { DropdownEntry } from '@hareui/vue'
+import { Button, Dropdown } from '@hareui/vue'
 
 const items: DropdownEntry[] = [
   { value: 'new-file', label: 'New file' },

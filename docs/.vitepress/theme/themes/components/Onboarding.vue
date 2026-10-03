@@ -1,7 +1,7 @@
 <script setup lang="ts">
 // Port of HeroUI docs `themes/components/onboarding.tsx`.
 // framer-motion keyframes (`duration: 4, ease: easeInOut, repeat: Infinity, times: [0, .25, .5, .75, 1]`) -> CSS keyframe animations.
-import { Button, Modal } from 'herouse'
+import { Button, Modal } from '@hareui/vue'
 import { onMounted, ref } from 'vue'
 
 const isOpen = ref(false)

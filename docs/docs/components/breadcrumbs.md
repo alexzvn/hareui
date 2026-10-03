@@ -11,7 +11,7 @@ links:
 
 ```vue
 <script setup lang="ts">
-import { Breadcrumbs } from 'herouse'
+import { Breadcrumbs } from '@hareui/vue'
 </script>
 ```
 
@@ -23,7 +23,7 @@ HeroUI's `Breadcrumbs.Item` children become an `items` array. The last item is t
 
 ```vue
 <script setup lang="ts">
-import { Breadcrumbs } from 'herouse'
+import { Breadcrumbs } from '@hareui/vue'
 
 const items = [
   { label: 'Home', href: '#' },
@@ -73,10 +73,10 @@ A single root element in `#separator` receives the separator classes, like HeroU
 
 ### Global Configuration
 
-To customize the Breadcrumbs classes for the whole app, extend the `breadcrumbs` theme in `createHeroUse`:
+To customize the Breadcrumbs classes for the whole app, extend the `breadcrumbs` theme in `createHareUI`:
 
 ```ts
-app.use(createHeroUse({
+app.use(createHareUI({
   ui: {
     breadcrumbs: {
       slots: {

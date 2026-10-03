@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import type { IconifyIcon } from '@iconify/vue'
 import { Icon } from '@iconify/vue'
-import { Description, RadioGroup } from 'herouse'
+import { Description, RadioGroup } from '@hareui/vue'
 
 const deliveryOptions = [
   { description: '4-10 business days', price: '$5.00', label: 'Standard', value: 'standard' },

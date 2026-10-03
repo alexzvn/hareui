@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { Button } from 'herouse'
+import { Button } from '@hareui/vue'
 
 /**
  * The `gradient-border` class below depends on a global utility.

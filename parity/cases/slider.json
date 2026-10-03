@@ -71,6 +71,6 @@
     "ignoreSlots": ["slider-fill"],
     "ignoreProps": ["transform"],
     "target": "[data-slot=slider-thumb]",
-    "reason": "RTL. Thumbs land on identical pixels, but RAC anchors them by `left` + translate(-50%,-50%) while Reka anchors by `right` + translate(50%,-50%), so computed transforms differ by sign. HeroUI's fill keeps `left: start%` in RTL (not mirrored, so it doesn't span its own thumbs); herouse's fill is mirrored. The fill is hidden on both sides so the screenshot still checks track, thumbs and output"
+    "reason": "RTL. Thumbs land on identical pixels, but RAC anchors them by `left` + translate(-50%,-50%) while Reka anchors by `right` + translate(50%,-50%), so computed transforms differ by sign. HeroUI's fill keeps `left: start%` in RTL (not mirrored, so it doesn't span its own thumbs); HareUI's fill is mirrored. The fill is hidden on both sides so the screenshot still checks track, thumbs and output"
   }
 ]

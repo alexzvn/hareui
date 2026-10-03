@@ -1,6 +1,6 @@
 import type { VNode } from 'vue'
-import type { CheckboxProps } from 'herouse'
-import { Checkbox } from 'herouse'
+import type { CheckboxProps } from '@hareui/vue'
+import { Checkbox } from '@hareui/vue'
 import { h } from 'vue'
 
 const box = (props: CheckboxProps & Record<string, unknown> = {}) => h(Checkbox, { name: 'terms', label: 'Accept terms and conditions', ...props })

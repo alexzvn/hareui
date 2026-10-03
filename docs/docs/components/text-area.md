@@ -10,7 +10,7 @@ links:
 ## Usage
 
 ```ts
-import { TextArea } from 'herouse'
+import { TextArea } from '@hareui/vue'
 ```
 
 <ComponentPreview name="textarea/basic" />
@@ -57,7 +57,7 @@ When used inside a [Surface](/docs/components/surface) component, use `variant="
 ### Global Configuration
 
 ```ts
-app.use(createHeroUse({
+app.use(createHareUI({
   ui: {
     textArea: {
       slots: { base: 'rounded-xl px-4 py-3 leading-6' },

@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { AlertDialog, Button } from 'herouse'
+import { AlertDialog, Button } from '@hareui/vue'
 
 const examples = [
   {

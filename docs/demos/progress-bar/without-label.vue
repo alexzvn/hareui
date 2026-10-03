@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { ProgressBar } from 'herouse'
+import { ProgressBar } from '@hareui/vue'
 </script>
 
 <template>

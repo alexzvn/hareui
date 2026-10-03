@@ -10,7 +10,7 @@ links:
 ## Usage
 
 ```ts
-import { Disclosure } from 'herouse'
+import { Disclosure } from '@hareui/vue'
 ```
 
 <ComponentPreview name="disclosure/basic" minHeight="440px" />
@@ -50,10 +50,10 @@ HeroUI's compound parts (`Disclosure.Heading`, `Disclosure.Trigger`, `Disclosure
 
 ### Global CSS
 
-To customize the Disclosure component classes app-wide, override the `disclosure` theme with `createHeroUse`:
+To customize the Disclosure component classes app-wide, override the `disclosure` theme with `createHareUI`:
 
 ```ts
-app.use(createHeroUse({
+app.use(createHareUI({
   ui: {
     disclosure: {
       slots: {

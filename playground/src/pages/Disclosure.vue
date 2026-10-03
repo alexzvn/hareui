@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { Button, Disclosure } from 'herouse'
+import { Button, Disclosure } from '@hareui/vue'
 import { ref } from 'vue'
 import { Icon } from '../icons'
 

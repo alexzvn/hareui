@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { Checkbox, CheckboxGroup, Label } from 'herouse'
+import { Checkbox, CheckboxGroup, Label } from '@hareui/vue'
 import { computed, ref } from 'vue'
 
 const variants = ['primary', 'secondary'] as const

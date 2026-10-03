@@ -1,6 +1,6 @@
 <script setup lang="ts">
-import type { ListBoxEntry } from 'herouse'
-import { Autocomplete } from 'herouse'
+import type { ListBoxEntry } from '@hareui/vue'
+import { Autocomplete } from '@hareui/vue'
 
 const countries: ListBoxEntry[] = [
   {

@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { ColorField } from 'herouse'
+import { ColorField } from '@hareui/vue'
 </script>
 
 <template>

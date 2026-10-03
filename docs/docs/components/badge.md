@@ -10,7 +10,7 @@ links:
 ## Usage
 
 ```ts
-import { Badge } from 'herouse'
+import { Badge } from '@hareui/vue'
 ```
 
 <ComponentPreview name="badge/basic" />
@@ -71,7 +71,7 @@ Badge supports text, numbers, and icons as content. When no content is provided,
 ### Global theme override
 
 ```ts
-app.use(createHeroUse({
+app.use(createHareUI({
   ui: {
     badge: {
       slots: { base: 'border-2' },

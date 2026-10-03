@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import type { DateValue } from '@internationalized/date'
 import { CalendarDate, getLocalTimeZone, today } from '@internationalized/date'
-import { DatePicker } from 'herouse'
+import { DatePicker } from '@hareui/vue'
 import { ref } from 'vue'
 
 const date = ref<DateValue | null>(new CalendarDate(2024, 3, 15))

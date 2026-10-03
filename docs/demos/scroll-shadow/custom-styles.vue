@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { ScrollShadow } from 'herouse'
+import { ScrollShadow } from '@hareui/vue'
 
 const entries = [
   'Reviewed quarterly goals with the design team.',

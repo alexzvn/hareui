@@ -10,7 +10,7 @@ links:
 ## Usage
 
 ```ts
-import { Avatar, AvatarGroup } from 'herouse'
+import { Avatar, AvatarGroup } from '@hareui/vue'
 ```
 
 <ComponentPreview name="avatar-group/basic" />
@@ -59,10 +59,10 @@ import { Avatar, AvatarGroup } from 'herouse'
 
 ### Global theme override
 
-Override the `avatarGroup` theme app-wide with `createHeroUse`:
+Override the `avatarGroup` theme app-wide with `createHareUI`:
 
 ```ts
-app.use(createHeroUse({
+app.use(createHareUI({
   ui: {
     avatarGroup: {
       slots: {
@@ -81,8 +81,8 @@ app.use(createHeroUse({
 | `base` | `avatar-group` | Base avatar group container |
 | `count` | `avatar-group-count` | Overflow count avatar |
 
-HeroUI's modifier classes correspond to props (herouse renders utilities, not BEM classes, so
-style through `class`, `ui` or `createHeroUse`): `.avatar-group--grid` → `grid`,
+HeroUI's modifier classes correspond to props (HareUI renders utilities, not BEM classes, so
+style through `class`, `ui` or `createHareUI`): `.avatar-group--grid` → `grid`,
 `.avatar-group--clip` / `.avatar-group--ring` → `overlap`.
 
 Stacked layout uses negative margin between siblings (`--avatar-group-overlap`, default `0.5rem`).

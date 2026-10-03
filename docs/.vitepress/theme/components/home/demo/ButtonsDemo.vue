@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { Button } from 'herouse'
+import { Button } from '@hareui/vue'
 
 const variants = ['primary', 'secondary', 'tertiary', 'danger', 'danger-soft', 'ghost'] as const
 </script>

@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { Button, ButtonGroup, Separator, ToggleButton, ToggleButtonGroup, Toolbar } from 'herouse'
+import { Button, ButtonGroup, Separator, ToggleButton, ToggleButtonGroup, Toolbar } from '@hareui/vue'
 </script>
 
 <template>

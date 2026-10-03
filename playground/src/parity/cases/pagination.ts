@@ -1,5 +1,5 @@
 import type { VNode } from 'vue'
-import { Pagination } from 'herouse'
+import { Pagination } from '@hareui/vue'
 import { h } from 'vue'
 
 export const cases: Record<string, () => VNode> = {}

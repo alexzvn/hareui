@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { DateRangePicker } from 'herouse'
+import { DateRangePicker } from '@hareui/vue'
 </script>
 
 <template>

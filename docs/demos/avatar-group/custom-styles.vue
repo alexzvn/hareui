@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { Avatar, AvatarGroup } from 'herouse'
+import { Avatar, AvatarGroup } from '@hareui/vue'
 import { Icon } from '@iconify/vue'
 
 const assignees = [

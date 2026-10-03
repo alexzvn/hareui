@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { Button, Input, Modal, Surface, TextField } from 'herouse'
+import { Button, Input, Modal, Surface, TextField } from '@hareui/vue'
 import { Icon } from '@iconify/vue'
 
 const fields = [

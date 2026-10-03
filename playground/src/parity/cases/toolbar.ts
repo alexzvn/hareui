@@ -1,5 +1,5 @@
 import type { VNode } from 'vue'
-import { Button, ButtonGroup, Separator, ToggleButton, ToggleButtonGroup, Toolbar } from 'herouse'
+import { Button, ButtonGroup, Separator, ToggleButton, ToggleButtonGroup, Toolbar } from '@hareui/vue'
 import { h } from 'vue'
 
 const icon = () => h('svg', { 'viewBox': '0 0 16 16', 'width': '1em', 'height': '1em', 'fill': 'currentColor', 'aria-hidden': 'true' }, [h('rect', { x: 3, y: 3, width: 10, height: 10 })])

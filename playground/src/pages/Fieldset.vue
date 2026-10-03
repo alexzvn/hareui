@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { Button, Fieldset, Input, Link, TextField } from 'herouse'
+import { Button, Fieldset, Input, Link, TextField } from '@hareui/vue'
 import { ref } from 'vue'
 
 const disabled = ref(false)

@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import { computed, defineAsyncComponent, onBeforeUnmount, onMounted, ref, watch } from 'vue'
-import { ToastProvider } from 'herouse'
+import { ToastProvider } from '@hareui/vue'
 import { useData, useRoute } from 'vitepress'
 import { normalizePath, type ThemeConfig } from '../sidebar'
 import DocsHeader from './components/DocsHeader.vue'
@@ -130,10 +130,10 @@ const links = computed(() => frontmatter.value.links as PageLinks | undefined)
       <aside id="nd-sidebar-mobile" data-state="open" class="bg-fd-background data-[state=open]:animate-fd-sidebar-in data-[state=closed]:animate-fd-sidebar-out fixed inset-y-0 end-0 z-40 flex w-[85%] max-w-[380px] flex-col text-[0.9375rem] shadow-lg">
         <div class="flex flex-col items-start justify-center gap-4 px-4 pt-4 sm:hidden">
           <div class="flex w-full items-center justify-between gap-4 ps-1">
-            <span class="font-semibold text-lg">HeroUse</span>
+            <span class="font-semibold text-lg">HareUI</span>
             <ThemeToggle />
           </div>
-          <!-- HeroUI <Separator />: herouse has no Separator component; classes from styles/components/separator.css -->
+          <!-- HeroUI <Separator />: HareUI has no Separator component; classes from styles/components/separator.css -->
           <hr data-orientation="horizontal" data-slot="separator" role="separator" class="h-px w-full shrink-0 rounded-sm border-t-0 border-b-0 bg-separator" />
         </div>
         <div data-docs-sidebar-viewport="" class="min-h-0 flex-1 overflow-y-auto overscroll-contain p-4 mask-[linear-gradient(to_bottom,transparent,white_12px,white_calc(100%-12px),transparent)]">

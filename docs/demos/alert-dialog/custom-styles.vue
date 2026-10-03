@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { AlertDialog, Button } from 'herouse'
+import { AlertDialog, Button } from '@hareui/vue'
 
 // HeroUI draws the top glow and hairline with two absolutely positioned `aria-hidden` divs in the
 // dialog; the props API has no slot before the header, so they are the dialog's ::before/::after.

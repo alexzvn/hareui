@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { Description, RangeCalendar } from 'herouse'
+import { Description, RangeCalendar } from '@hareui/vue'
 import { getLocalTimeZone, today } from '@internationalized/date'
 
 const now = today(getLocalTimeZone())

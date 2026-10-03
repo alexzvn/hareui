@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { RangeCalendar, Select } from 'herouse'
+import { RangeCalendar, Select } from '@hareui/vue'
 import { ref } from 'vue'
 
 const dayOptions = [

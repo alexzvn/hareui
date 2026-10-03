@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { NumberField } from 'herouse'
+import { NumberField } from '@hareui/vue'
 </script>
 
 <template>

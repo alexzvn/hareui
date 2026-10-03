@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import { Icon } from '@iconify/vue'
-import { EmptyState, TagGroup } from 'herouse'
+import { EmptyState, TagGroup } from '@hareui/vue'
 import { ref } from 'vue'
 
 const tags = ref([

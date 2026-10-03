@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { Button, ProgressBar } from 'herouse'
+import { Button, ProgressBar } from '@hareui/vue'
 import { ref } from 'vue'
 
 const sizes = ['sm', 'md', 'lg'] as const

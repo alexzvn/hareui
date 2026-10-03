@@ -10,7 +10,7 @@ links:
 
 ```vue
 <script setup lang="ts">
-import { Form } from 'herouse'
+import { Form } from '@hareui/vue'
 </script>
 ```
 
@@ -20,7 +20,7 @@ import { Form } from 'herouse'
 
 ```vue
 <script setup lang="ts">
-import { Button, Form } from 'herouse'
+import { Button, Form } from '@hareui/vue'
 </script>
 
 <template>

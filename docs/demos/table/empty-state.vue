@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { EmptyState, Table } from 'herouse'
+import { EmptyState, Table } from '@hareui/vue'
 import { Icon } from '@iconify/vue'
 
 const columns = [

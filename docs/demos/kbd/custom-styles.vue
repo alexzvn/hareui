@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { Kbd } from 'herouse'
+import { Kbd } from '@hareui/vue'
 </script>
 
 <template>

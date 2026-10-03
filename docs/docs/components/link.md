@@ -10,7 +10,7 @@ links:
 ## Usage
 
 ```ts
-import { Link } from 'herouse'
+import { Link } from '@hareui/vue'
 ```
 
 <ComponentPreview name="link/basic" />
@@ -84,7 +84,7 @@ For more details, see the Tailwind CSS documentation:
 ### Global theme override
 
 ```ts
-app.use(createHeroUse({
+app.use(createHareUI({
   ui: {
     link: {
       slots: {
@@ -126,7 +126,7 @@ Pass a router link component to `as`; the Link styles and icon stay the same:
 
 ```vue
 <script setup lang="ts">
-import { Link } from 'herouse'
+import { Link } from '@hareui/vue'
 import { RouterLink } from 'vue-router'
 </script>
 

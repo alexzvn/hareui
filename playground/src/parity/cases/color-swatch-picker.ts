@@ -1,5 +1,5 @@
 import type { VNode } from 'vue'
-import { ColorSwatchPicker } from 'herouse'
+import { ColorSwatchPicker } from '@hareui/vue'
 import { h } from 'vue'
 
 export const cases: Record<string, () => VNode> = {}

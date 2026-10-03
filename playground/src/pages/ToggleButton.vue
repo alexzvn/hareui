@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { ToggleButton, ToggleButtonGroup } from 'herouse'
+import { ToggleButton, ToggleButtonGroup } from '@hareui/vue'
 import { ref } from 'vue'
 
 const liked = ref(false)

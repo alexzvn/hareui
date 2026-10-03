@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import type { DateValue } from '@internationalized/date'
 import { CalendarDate, isWeekend, parseDate } from '@internationalized/date'
-import { Calendar } from 'herouse'
+import { Calendar } from '@hareui/vue'
 import { ref } from 'vue'
 
 const focused = parseDate('2025-01-15')

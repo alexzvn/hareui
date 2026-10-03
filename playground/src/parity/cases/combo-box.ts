@@ -1,5 +1,5 @@
 import type { VNode } from 'vue'
-import { ComboBox } from 'herouse'
+import { ComboBox } from '@hareui/vue'
 import { defineComponent, h, onMounted, ref } from 'vue'
 import { gear } from '../icons'
 

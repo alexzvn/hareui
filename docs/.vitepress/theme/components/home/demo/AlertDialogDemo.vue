@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import { Icon } from '@iconify/vue'
-import { Avatar, Button, Card, CloseButton, themes, tv } from 'herouse'
+import { Avatar, Button, Card, CloseButton, themes, tv } from '@hareui/vue'
 
 const card = tv(themes.card)()
 </script>

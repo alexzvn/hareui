@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import type { ColorChannel, ColorSpace } from 'reka-ui'
-import { ColorPicker, ColorSlider, ColorSwatch, Label, Select } from 'herouse'
+import { ColorPicker, ColorSlider, ColorSwatch, Label, Select } from '@hareui/vue'
 import { ref } from 'vue'
 
 const colorSpace = ref<ColorSpace>('hsl')

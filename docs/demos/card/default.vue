@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { Card, Link } from 'herouse'
+import { Card, Link } from '@hareui/vue'
 import { Icon } from '@iconify/vue'
 </script>
 

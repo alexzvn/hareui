@@ -1,6 +1,6 @@
 <script setup lang="ts">
-import type { TableSortDescriptor } from 'herouse'
-import { Table } from 'herouse'
+import type { TableSortDescriptor } from '@hareui/vue'
+import { Table } from '@hareui/vue'
 import { computed, ref } from 'vue'
 
 const columns = [

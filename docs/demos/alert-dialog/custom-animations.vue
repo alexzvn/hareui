@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { AlertDialog, Button } from 'herouse'
+import { AlertDialog, Button } from '@hareui/vue'
 import { Icon } from '@iconify/vue'
 
 // HeroUI's `data-[entering]` / `data-[exiting]` map to Reka's `data-[state=open]` / `data-[state=closed]`.

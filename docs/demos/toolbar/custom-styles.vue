@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import { Icon } from '@iconify/vue'
-import { ToggleButton, ToggleButtonGroup, Toolbar } from 'herouse'
+import { ToggleButton, ToggleButtonGroup, Toolbar } from '@hareui/vue'
 
 const toggleClass = 'rounded-lg data-[selected=true]:bg-accent data-[selected=true]:text-accent-foreground'
 </script>

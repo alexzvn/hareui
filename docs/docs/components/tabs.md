@@ -12,7 +12,7 @@ links:
 
 ```vue
 <script setup lang="ts">
-import { Tabs } from 'herouse'
+import { Tabs } from '@hareui/vue'
 </script>
 ```
 
@@ -97,10 +97,10 @@ especially useful for vertical, sidebar-style navigation. The tabs can still be 
 
 ### Global Configuration
 
-To customize the Tabs classes for the whole app, extend the `tabs` theme in `createHeroUse`:
+To customize the Tabs classes for the whole app, extend the `tabs` theme in `createHareUI`:
 
 ```ts
-app.use(createHeroUse({
+app.use(createHareUI({
   ui: {
     tabs: {
       slots: {

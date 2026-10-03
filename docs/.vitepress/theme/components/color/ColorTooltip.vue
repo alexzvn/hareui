@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { Tooltip } from 'herouse'
+import { Tooltip } from '@hareui/vue'
 
 defineProps<{ content?: string; tooltipClass?: string }>()
 </script>

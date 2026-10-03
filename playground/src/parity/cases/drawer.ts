@@ -1,5 +1,5 @@
 import type { VNode } from 'vue'
-import { Button, Drawer } from 'herouse'
+import { Button, Drawer } from '@hareui/vue'
 import { h } from 'vue'
 
 export const cases: Record<string, () => VNode> = {}

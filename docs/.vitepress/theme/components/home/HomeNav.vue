@@ -4,7 +4,7 @@
 // the language toggle and the GitHub link.
 import { onBeforeUnmount, onMounted, ref } from 'vue'
 import { Icon } from '@iconify/vue'
-import { Button } from 'herouse'
+import { Button } from '@hareui/vue'
 import DesignThemeSelector from '../DesignThemeSelector.vue'
 import ThemeToggle from '../ThemeToggle.vue'
 
@@ -44,7 +44,7 @@ onBeforeUnmount(() => window.removeEventListener('scroll', onScroll))
       <div class="relative">
         <nav class="flex h-14 w-full items-center px-4">
           <a class="inline-flex items-center gap-2.5 font-semibold" href="/">
-            <span class="text-lg font-semibold">HeroUse</span>
+            <span class="text-lg font-semibold">HareUI</span>
           </a>
           <ul class="flex flex-row items-center gap-2 px-6 max-sm:hidden">
             <li v-for="link in links" :key="link.url" class="list-none text-sm">

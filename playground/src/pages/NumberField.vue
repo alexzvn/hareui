@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { NumberField } from 'herouse'
+import { NumberField } from '@hareui/vue'
 import { ref } from 'vue'
 
 const width = ref<number | null>(1024)

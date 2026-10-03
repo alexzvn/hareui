@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { Button, Meter } from 'herouse'
+import { Button, Meter } from '@hareui/vue'
 import { ref } from 'vue'
 
 const sizes = ['sm', 'md', 'lg'] as const

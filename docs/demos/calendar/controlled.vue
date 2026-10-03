@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import type { DateValue } from '@internationalized/date'
-import { Button, ButtonGroup, Calendar, Description } from 'herouse'
+import { Button, ButtonGroup, Calendar, Description } from '@hareui/vue'
 import { getLocalTimeZone, parseDate, startOfMonth, startOfWeek, today } from '@internationalized/date'
 import { ref } from 'vue'
 

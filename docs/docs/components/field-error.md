@@ -11,7 +11,7 @@ links:
 
 ```vue
 <script setup lang="ts">
-import { FieldError } from 'herouse'
+import { FieldError } from '@hareui/vue'
 </script>
 ```
 
@@ -31,7 +31,7 @@ The FieldError component displays validation error messages for form fields. Fie
 
 ```vue
 <script setup lang="ts">
-import { TextField } from 'herouse'
+import { TextField } from '@hareui/vue'
 import { computed, ref } from 'vue'
 
 const value = ref('')
@@ -64,7 +64,7 @@ const invalid = computed(() => value.value.length > 0 && value.value.length < 3)
 
 ```vue
 <script setup lang="ts">
-import { TextField } from 'herouse'
+import { TextField } from '@hareui/vue'
 import { computed, ref } from 'vue'
 
 const email = ref('')
@@ -103,7 +103,7 @@ const invalid = computed(() => email.value.length > 0 && !email.value.includes('
 ### Global Configuration
 
 ```ts
-app.use(createHeroUse({
+app.use(createHareUI({
   ui: { fieldError: { slots: { base: 'font-medium text-danger' } } },
 }))
 ```
@@ -112,7 +112,7 @@ app.use(createHeroUse({
 
 ### Slots
 
-- `base` → `[data-slot="field-error"]` — danger color, collapsed (`h-0 opacity-0`) unless `[data-visible]` is present (always set by herouse)
+- `base` → `[data-slot="field-error"]` — danger color, collapsed (`h-0 opacity-0`) unless `[data-visible]` is present (always set by HareUI)
 
 Inside toggle fields (`[data-slot="checkbox"]`, `[data-slot="switch"]`, `[data-slot="radio"]`) the error is stacked like a description without the collapse transition.
 

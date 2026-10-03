@@ -1,5 +1,5 @@
 import type { VNode } from 'vue'
-import { Button, Tooltip } from 'herouse'
+import { Button, Tooltip } from '@hareui/vue'
 import { h } from 'vue'
 
 // Generous margin keeps the floating content away from the viewport edges so

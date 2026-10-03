@@ -12,7 +12,7 @@ links:
 
 ```vue
 <script setup lang="ts">
-import { ColorSlider } from 'herouse'
+import { ColorSlider } from '@hareui/vue'
 </script>
 ```
 
@@ -89,7 +89,7 @@ HeroUI's `render` prop replaces the root element. In Vue, attributes you pass to
 ### Global Configuration
 
 ```ts
-app.use(createHeroUse({
+app.use(createHareUI({
   ui: { colorSlider: { slots: { output: 'text-muted', thumb: 'size-5' } } },
 }))
 ```

@@ -10,7 +10,7 @@ links:
 ## Usage
 
 ```ts
-import { Alert } from 'herouse'
+import { Alert } from '@hareui/vue'
 ```
 
 <ComponentPreview name="alert/basic" />
@@ -44,10 +44,10 @@ become props and named slots, rendered in a fixed order: `#leading`, indicator, 
 
 ### Global theme override
 
-Override the `alert` theme app-wide with `createHeroUse`:
+Override the `alert` theme app-wide with `createHareUI`:
 
 ```ts
-app.use(createHeroUse({
+app.use(createHareUI({
   ui: {
     alert: {
       slots: { base: 'rounded-2xl shadow-lg', title: 'font-bold text-lg' },
@@ -71,8 +71,8 @@ Each rendered element carries the same `data-slot` string as HeroUI, so selector
 | `title` | `alert-title` | Alert title text (renders as `p`) |
 | `description` | `alert-description` | Alert description text (renders as `span`) |
 
-HeroUI's status modifier classes correspond to the `status` prop (herouse renders utilities, not BEM
-classes, so style through `class`, `ui` or `createHeroUse`): `.alert--default`, `.alert--accent`,
+HeroUI's status modifier classes correspond to the `status` prop (HareUI renders utilities, not BEM
+classes, so style through `class`, `ui` or `createHareUI`): `.alert--default`, `.alert--accent`,
 `.alert--success`, `.alert--warning`, `.alert--danger`.
 
 ### Interactive States

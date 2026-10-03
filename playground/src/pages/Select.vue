@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { Button, Form, Select } from 'herouse'
+import { Button, Form, Select } from '@hareui/vue'
 import { ref } from 'vue'
 
 const states = ['Florida', 'Delaware', 'California', 'Texas', 'New York', 'Washington'].map(label => ({ value: label.toLowerCase().replace(' ', '-'), label }))

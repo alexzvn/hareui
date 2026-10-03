@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { Description, TextArea } from 'herouse'
+import { Description, TextArea } from '@hareui/vue'
 import { ref } from 'vue'
 
 const value = ref('')

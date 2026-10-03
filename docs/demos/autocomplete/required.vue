@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { Autocomplete, Button, Form } from 'herouse'
+import { Autocomplete, Button, Form } from '@hareui/vue'
 
 const states = [
   { value: 'florida', label: 'Florida' },

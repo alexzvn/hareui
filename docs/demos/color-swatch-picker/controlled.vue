@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { ColorSwatchPicker, colorToString, parseColor } from 'herouse'
+import { ColorSwatchPicker, colorToString, parseColor } from '@hareui/vue'
 import { ref } from 'vue'
 
 const colors = ['#F43F5E', '#D946EF', '#8B5CF6', '#3B82F6', '#06B6D4', '#10B981', '#84CC16']

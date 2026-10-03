@@ -1,5 +1,5 @@
 import type { VNode } from 'vue'
-import { Accordion } from 'herouse'
+import { Accordion } from '@hareui/vue'
 import { h } from 'vue'
 import { gear } from '../icons'
 

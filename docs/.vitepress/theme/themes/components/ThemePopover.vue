@@ -2,7 +2,7 @@
 // Port of HeroUI docs `themes/components/theme-popover.tsx`.
 import type { ThemeId } from '../constants'
 import { Icon } from '@iconify/vue'
-import { Description, InputGroup, Kbd, Label, ListBox, Popover, Switch } from 'herouse'
+import { Description, InputGroup, Kbd, Label, ListBox, Popover, Switch } from '@hareui/vue'
 import { computed } from 'vue'
 import { useKeyPress } from '../composables/keyPress'
 import { useVariablesState } from '../composables/variables'

@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import { Icon } from '@iconify/vue'
-import { Avatar, TagGroup } from 'herouse'
+import { Avatar, TagGroup } from '@hareui/vue'
 
 const icons: Record<string, string> = {
   news: 'gravity-ui:square-article',

@@ -10,7 +10,7 @@ links:
 ## Usage
 
 ```ts
-import { Typography } from 'herouse'
+import { Typography } from '@hareui/vue'
 ```
 
 <ComponentPreview name="typography/default" />
@@ -64,10 +64,10 @@ Use the `as` prop when you need to customize the rendered element.
 
 ### Global theme override
 
-Override the `typography` theme app-wide with `createHeroUse`:
+Override the `typography` theme app-wide with `createHareUI`:
 
 ```ts
-app.use(createHeroUse({
+app.use(createHareUI({
   ui: {
     typography: {
       variants: {
@@ -91,8 +91,8 @@ default mode, `prose` for `prose` mode), so selectors translate 1:1.
 | `base` | `typography` | Base typography primitive |
 | `prose` | `prose` | Rich prose container |
 
-HeroUI follows [BEM](https://getbem.com/) for its modifier classes (herouse renders utilities,
-not BEM classes, so style through `class`, `ui` or `createHeroUse`):
+HeroUI follows [BEM](https://getbem.com/) for its modifier classes (HareUI renders utilities,
+not BEM classes, so style through `class`, `ui` or `createHareUI`):
 
 - `.typography--h1` through `.typography--h6`, `.typography--body`, `.typography--body-sm`,
   `.typography--body-xs`, `.typography--code` → the `type` prop

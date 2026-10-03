@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { Spinner } from 'herouse'
+import { Spinner } from '@hareui/vue'
 </script>
 
 <template>

@@ -1,7 +1,7 @@
 <script setup lang="ts">
 // Port of HeroUI docs `themes/components/shuffle-button.tsx`.
 import { Icon } from '@iconify/vue'
-import { AlertDialog, Button, Checkbox, Kbd, Label, Tooltip } from 'herouse'
+import { AlertDialog, Button, Checkbox, Kbd, Label, Tooltip } from '@hareui/vue'
 import { ref, watch } from 'vue'
 import { useKeyPress } from '../composables/keyPress'
 import { useRandomizeVariables, useVariablesState } from '../composables/variables'

@@ -12,7 +12,7 @@ links:
 
 ```vue
 <script setup lang="ts">
-import { NumberField } from 'herouse'
+import { NumberField } from '@hareui/vue'
 </script>
 ```
 
@@ -143,7 +143,7 @@ HeroUI's `render` prop replaces the root element. In Vue, attributes you pass to
 ### Global Configuration
 
 ```ts
-app.use(createHeroUse({
+app.use(createHareUI({
   ui: { numberField: { slots: { group: 'rounded-xl', input: 'text-center' } } },
 }))
 ```

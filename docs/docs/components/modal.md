@@ -11,7 +11,7 @@ links:
 ## Usage
 
 ```ts
-import { Modal } from 'herouse'
+import { Modal } from '@hareui/vue'
 ```
 
 <ComponentPreview name="modal/default" />
@@ -97,7 +97,7 @@ through named slots.
 ### Global theme override
 
 ```ts
-app.use(createHeroUse({
+app.use(createHareUI({
   ui: {
     modal: {
       slots: { dialog: 'rounded-2xl' },

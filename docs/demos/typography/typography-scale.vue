@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { Typography } from 'herouse'
+import { Typography } from '@hareui/vue'
 
 const scale = [
   { label: 'h1', meta: '36px / 600 / 1.11 / tight', sample: 'Build better interfaces', type: 'h1' as const },

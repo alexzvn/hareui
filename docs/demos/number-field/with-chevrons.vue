@@ -1,9 +1,9 @@
 <script setup lang="ts">
-import { NumberField } from 'herouse'
+import { NumberField } from '@hareui/vue'
 </script>
 
 <template>
-  <!-- HeroUI stacks the buttons in a wrapper <div>; herouse renders the group itself, so the grid places them instead -->
+  <!-- HeroUI stacks the buttons in a wrapper <div>; HareUI renders the group itself, so the grid places them instead -->
   <NumberField
     class="w-full max-w-64"
     :default-value="99"

@@ -12,7 +12,7 @@ links:
 
 ```vue
 <script setup lang="ts">
-import { ColorSwatch } from 'herouse'
+import { ColorSwatch } from '@hareui/vue'
 </script>
 ```
 
@@ -52,10 +52,10 @@ Use `colorName` to provide a custom accessible name for the color, and `aria-lab
 
 ### Global CSS
 
-To customize the ColorSwatch component classes app-wide, override the `colorSwatch` theme with `createHeroUse`:
+To customize the ColorSwatch component classes app-wide, override the `colorSwatch` theme with `createHareUI`:
 
 ```ts
-app.use(createHeroUse({
+app.use(createHareUI({
   ui: {
     colorSwatch: {
       slots: {

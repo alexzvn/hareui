@@ -10,7 +10,7 @@ links:
 ## Usage
 
 ```ts
-import { CloseButton } from 'herouse'
+import { CloseButton } from '@hareui/vue'
 ```
 
 <ComponentPreview name="close-button/default" />
@@ -46,7 +46,7 @@ A single `<button>` with a default close icon that the default slot can replace.
 ### Global theme override
 
 ```ts
-app.use(createHeroUse({
+app.use(createHareUI({
   ui: {
     closeButton: {
       slots: { base: 'rounded-full' },

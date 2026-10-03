@@ -3,7 +3,7 @@ title: Composition
 description: Build flexible UI with named slots, scoped slot props, and the as prop.
 ---
 
-HeroUse replaces HeroUI's compound-component pattern (`Card.Header`, `Alert.Icon`, …) with named template slots on a single component, plus a `:ui` prop for per-slot classes and an `as` prop to change the rendered element. This page covers the three composition tools you'll use across every component.
+HareUI replaces HeroUI's compound-component pattern (`Card.Header`, `Alert.Icon`, …) with named template slots on a single component, plus a `:ui` prop for per-slot classes and an `as` prop to change the rendered element. This page covers the three composition tools you'll use across every component.
 
 ## Named Slots
 
@@ -36,7 +36,7 @@ import { Card } from '@heroui/react';
 </Card>
 ```
 
-```vue [HeroUse (Vue)]
+```vue [HareUI (Vue)]
 <template>
   <Card title="Settings">
     Body
@@ -56,7 +56,7 @@ Some slots expose internal state as scoped slot props, so you can render differe
 ```vue
 <script setup lang="ts">
 import { ref } from 'vue'
-import { Button } from 'herouse'
+import { Button } from '@hareui/vue'
 
 const isSaving = ref(false)
 </script>
@@ -105,12 +105,12 @@ All three compose together — swap the element, override one slot's classes, an
 
 ## Custom Components
 
-Compose HeroUse primitives into your own components the same way you'd compose any Vue component — no variant-function glue required:
+Compose HareUI primitives into your own components the same way you'd compose any Vue component — no variant-function glue required:
 
 ```vue
 <!-- components/IconButton.vue -->
 <script setup lang="ts">
-import { Button, Tooltip } from 'herouse'
+import { Button, Tooltip } from '@hareui/vue'
 
 defineProps<{ label: string }>()
 </script>

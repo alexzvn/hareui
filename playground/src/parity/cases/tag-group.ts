@@ -1,6 +1,6 @@
 import type { VNode } from 'vue'
-import type { TagGroupItem } from 'herouse'
-import { TagGroup } from 'herouse'
+import type { TagGroupItem } from '@hareui/vue'
+import { TagGroup } from '@hareui/vue'
 import { h } from 'vue'
 import { gearPath } from '../../../../parity/icons'
 

@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { Button, InputGroup, TextField } from 'herouse'
+import { Button, InputGroup, TextField } from '@hareui/vue'
 import { ref } from 'vue'
 
 const visible = ref(false)

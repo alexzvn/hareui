@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { Select, Spinner } from 'herouse'
+import { Select, Spinner } from '@hareui/vue'
 import { onMounted, ref } from 'vue'
 
 interface Pokemon {

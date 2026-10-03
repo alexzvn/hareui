@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import { Icon } from '@iconify/vue'
-import { Avatar, Button, Card, CloseButton, Separator, themes, tv } from 'herouse'
+import { Avatar, Button, Card, CloseButton, Separator, themes, tv } from '@hareui/vue'
 import AppleIcon from '../icons/AppleIcon.vue'
 import GoogleIcon from '../icons/GoogleIcon.vue'
 

@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { RangeCalendar } from 'herouse'
+import { RangeCalendar } from '@hareui/vue'
 import { parseDate } from '@internationalized/date'
 </script>
 

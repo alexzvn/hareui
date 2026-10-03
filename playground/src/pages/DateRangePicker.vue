@@ -1,7 +1,7 @@
 <script setup lang="ts">
-import type { DateRangeValue } from 'herouse'
+import type { DateRangeValue } from '@hareui/vue'
 import { CalendarDate, CalendarDateTime, getLocalTimeZone, isWeekend, today } from '@internationalized/date'
-import { DateRangePicker } from 'herouse'
+import { DateRangePicker } from '@hareui/vue'
 import { shallowRef } from 'vue'
 
 const value = shallowRef<DateRangeValue | null>({ start: new CalendarDate(2024, 3, 15), end: new CalendarDate(2024, 3, 20) })

@@ -3,8 +3,8 @@
 // Left out as HeroUI-only: the GitHub stars line, the Pro banner, and the demo showcase bar
 // (Pro template tabs, ColorSwatchPicker accent swatches, theme-builder link).
 import { Icon } from '@iconify/vue'
-import { Button } from 'herouse'
-import { version } from '../../../packages/herouse/package.json'
+import { Button } from '@hareui/vue'
+import { version } from '../../../packages/vue/package.json'
 import { sectionLinks, type SidebarSection } from '../sidebar'
 import DemoComponents from './components/home/DemoComponents.vue'
 import HomeNav from './components/home/HomeNav.vue'
@@ -32,27 +32,27 @@ const year = new Date().getFullYear()
             :href="docsHref"
           >
             <Icon icon="gravity-ui:rocket" class="size-3 shrink-0 text-accent-soft-foreground" />
-            <span class="max-w-60 truncate sm:max-w-full">HeroUse v{{ version }} — a Vue port of HeroUI v3</span>
+            <span class="max-w-60 truncate sm:max-w-full">HareUI v{{ version }} — a Vue port of HeroUI v3</span>
           </a>
           <h1 class="mt-2 text-3xl font-bold tracking-tight text-foreground sm:text-4xl lg:mt-4 lg:text-5xl">
             Beautiful by default. <span class="block text-muted/70">Customizable by design.</span>
           </h1>
           <p class="text-balance text-muted md:text-lg">
-            HeroUse is the modern UI library for Vue, built to help you move fast, stay consistent, and deliver delightful user experiences.
+            HareUI is the modern UI library for Vue, built to help you move fast, stay consistent, and deliver delightful user experiences.
           </p>
           <div class="mt-4 flex gap-3">
             <Button as="a" :href="docsHref">Get started</Button>
             <Button as="a" :href="componentsHref" variant="outline">View components</Button>
           </div>
-          <section aria-labelledby="herouse-overview" class="sr-only">
-            <h2 id="herouse-overview">Build accessible products with HeroUse</h2>
+          <section aria-labelledby="hareui-overview" class="sr-only">
+            <h2 id="hareui-overview">Build accessible products with HareUI</h2>
             <p>
-              HeroUse is an open-source Vue port of HeroUI v3. It combines Reka UI primitives with Tailwind CSS v4 to
+              HareUI is an open-source Vue port of HeroUI v3. It combines Reka UI primitives with Tailwind CSS v4 to
               provide accessible behavior, typed APIs, customizable composition, and polished defaults.
             </p>
             <h3>Documentation for developers and coding agents</h3>
             <p>
-              The HeroUse documentation includes installation guides, component APIs, examples and theming references.
+              The HareUI documentation includes installation guides, component APIs, examples and theming references.
               Coding agents can use the generated llms.txt indexes.
             </p>
           </section>
@@ -71,7 +71,7 @@ const year = new Date().getFullYear()
         </div>
       </section>
       <footer class="mt-auto flex w-full flex-row flex-wrap items-center justify-center gap-2 py-3 text-muted">
-        <p class="text-sm">&copy; {{ year }} HeroUse.</p>
+        <p class="text-sm">&copy; {{ year }} HareUI.</p>
       </footer>
     </main>
   </main>

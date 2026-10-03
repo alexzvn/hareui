@@ -12,7 +12,7 @@ links:
 
 ```vue
 <script setup lang="ts">
-import { DatePicker } from 'herouse'
+import { DatePicker } from '@hareui/vue'
 </script>
 ```
 
@@ -110,7 +110,7 @@ The `#calendar` slot lets you fully restyle (or replace) the embedded Calendar; 
 ### Global Configuration
 
 ```ts
-app.use(createHeroUse({
+app.use(createHareUI({
   ui: { datePicker: { slots: { trigger: 'text-muted', popover: 'p-0' } } },
 }))
 ```

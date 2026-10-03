@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { Separator } from 'herouse'
+import { Separator } from '@hareui/vue'
 import { defineComponent, h } from 'vue'
 
 const CustomDiv = defineComponent((_, { attrs, slots }) => () => h('div', { ...attrs, 'data-custom': 'foo' }, slots.default?.()))

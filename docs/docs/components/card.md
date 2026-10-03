@@ -10,7 +10,7 @@ links:
 ## Usage
 
 ```ts
-import { Card } from 'herouse'
+import { Card } from '@hareui/vue'
 ```
 
 <ComponentPreview name="card/default" />
@@ -81,10 +81,10 @@ Use the `class` prop for the root and the `ui` prop for the inner elements (tail
 
 ### Global theme override
 
-Override the `card` theme app-wide with `createHeroUse`:
+Override the `card` theme app-wide with `createHareUI`:
 
 ```ts
-app.use(createHeroUse({
+app.use(createHareUI({
   ui: {
     card: {
       variants: {
@@ -104,7 +104,7 @@ above), resolve the Card theme with `tv` to reuse its slot classes, the equivale
 
 ```vue
 <script setup lang="ts">
-import { Card, themes, tv } from 'herouse'
+import { Card, themes, tv } from '@hareui/vue'
 
 const card = tv(themes.card)()
 </script>
@@ -122,7 +122,7 @@ const card = tv(themes.card)()
 </template>
 ```
 
-`tv(themes.card)` uses the default theme; app-wide `createHeroUse({ ui: { card } })` overrides
+`tv(themes.card)` uses the default theme; app-wide `createHareUI({ ui: { card } })` overrides
 don't apply to these classes.
 
 ## Styling Reference
@@ -138,8 +138,8 @@ Each rendered element carries the same `data-slot` string as HeroUI, so selector
 | `content` | `card-content` | Flexible content container (default slot) |
 | `footer` | `card-footer` | Footer with row layout |
 
-HeroUI's modifier classes correspond to the `variant` prop (herouse renders utilities, not BEM
-classes, so style through `class`, `ui` or `createHeroUse`): `.card--transparent`,
+HeroUI's modifier classes correspond to the `variant` prop (HareUI renders utilities, not BEM
+classes, so style through `class`, `ui` or `createHareUI`): `.card--transparent`,
 `.card--default`, `.card--secondary`, `.card--tertiary`.
 
 ## API Reference
@@ -156,7 +156,7 @@ classes, so style through `class`, `ui` or `createHeroUse`): `.card--transparent
 
 ```vue
 <script setup lang="ts">
-import { Card, themes, tv } from 'herouse'
+import { Card, themes, tv } from '@hareui/vue'
 
 const card = tv(themes.card)()
 </script>

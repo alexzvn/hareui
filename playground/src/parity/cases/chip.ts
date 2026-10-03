@@ -1,5 +1,5 @@
 import type { VNode } from 'vue'
-import { Chip } from 'herouse'
+import { Chip } from '@hareui/vue'
 import { h } from 'vue'
 import { gear } from '../icons'
 

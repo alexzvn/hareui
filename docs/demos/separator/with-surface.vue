@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { Separator, Surface } from 'herouse'
+import { Separator, Surface } from '@hareui/vue'
 </script>
 
 <template>

@@ -1,5 +1,5 @@
 import type { VNode } from 'vue'
-import { Disclosure, DisclosureGroup, Separator } from 'herouse'
+import { Disclosure, DisclosureGroup, Separator } from '@hareui/vue'
 import { h } from 'vue'
 
 export const cases: Record<string, () => VNode> = {}

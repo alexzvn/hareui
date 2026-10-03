@@ -2,7 +2,7 @@
 // Port of HeroUI docs `themes/components/lockable-label.tsx`.
 import type { LockableThemeVariableKey } from '../constants'
 import { Icon } from '@iconify/vue'
-import { Button, Label, Tooltip } from 'herouse'
+import { Button, Label, Tooltip } from '@hareui/vue'
 import { ref } from 'vue'
 import { useToggleLockedVariable } from '../composables/variables'
 

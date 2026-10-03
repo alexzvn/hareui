@@ -10,7 +10,7 @@ links:
 ## Usage
 
 ```ts
-import { Kbd } from 'herouse'
+import { Kbd } from '@hareui/vue'
 ```
 
 <ComponentPreview name="kbd/basic" />
@@ -62,10 +62,10 @@ import { Kbd } from 'herouse'
 
 ### Global theme override
 
-Override the `kbd` theme app-wide with `createHeroUse`:
+Override the `kbd` theme app-wide with `createHareUI`:
 
 ```ts
-app.use(createHeroUse({
+app.use(createHareUI({
   ui: {
     kbd: {
       slots: {
@@ -80,7 +80,7 @@ app.use(createHeroUse({
 
 ## Styling Reference
 
-HeroUI's Kbd renders no `data-slot` attributes; style it through `class`, `ui` or `createHeroUse`.
+HeroUI's Kbd renders no `data-slot` attributes; style it through `class`, `ui` or `createHareUI`.
 
 - `base` – keyboard key styles with background and spacing (`variant="light"` makes the background transparent)
 - `abbr` – abbreviation element for modifier keys

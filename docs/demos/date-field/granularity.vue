@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import type { DateValue } from '@internationalized/date'
 import { parseDate, parseZonedDateTime } from '@internationalized/date'
-import { DateField, Label, Select, Tooltip } from 'herouse'
+import { DateField, Label, Select, Tooltip } from '@hareui/vue'
 import { Icon } from '@iconify/vue'
 import { computed, ref } from 'vue'
 

@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { Skeleton } from 'herouse'
+import { Skeleton } from '@hareui/vue'
 
 const types = [
   { type: 'shimmer', label: 'Shimmer' },

@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { Button, Form, SearchField, Spinner } from 'herouse'
+import { Button, Form, SearchField, Spinner } from '@hareui/vue'
 import { computed, ref } from 'vue'
 
 const value = ref('')

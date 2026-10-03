@@ -1,7 +1,7 @@
 import type { MarkdownEnv, MarkdownRenderer } from 'vitepress'
 import gravity from '@iconify-json/gravity-ui/icons.json' with { type: 'json' }
-import { tv } from '../../packages/herouse/src/utils/tv'
-import buttonTheme from '../../packages/herouse/src/theme/button'
+import { tv } from '../../packages/vue/src/utils/tv'
+import buttonTheme from '../../packages/vue/src/theme/button'
 
 type RenderRule = NonNullable<MarkdownRenderer['renderer']['rules']['fence']>
 type Token = Parameters<RenderRule>[0][number]

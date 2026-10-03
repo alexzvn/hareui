@@ -1,5 +1,5 @@
 import type { VNode } from 'vue'
-import { Link } from 'herouse'
+import { Link } from '@hareui/vue'
 import { h } from 'vue'
 
 const svg = () => h('svg', { viewBox: '0 0 16 16', width: '1em', height: '1em' }, [h('path', { d: 'M2 2h12v12H2z', fill: 'currentColor' })])

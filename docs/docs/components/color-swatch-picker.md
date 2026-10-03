@@ -12,7 +12,7 @@ links:
 
 ```vue
 <script setup lang="ts">
-import { ColorSwatchPicker } from 'herouse'
+import { ColorSwatchPicker } from '@hareui/vue'
 </script>
 ```
 
@@ -78,7 +78,7 @@ Use `as` (or `as-child`) to change the root element.
 ### Global CSS
 
 ```ts
-app.use(createHeroUse({
+app.use(createHareUI({
   ui: {
     colorSwatchPicker: {
       slots: {

@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { Button, NumberField } from 'herouse'
+import { Button, NumberField } from '@hareui/vue'
 import { ref } from 'vue'
 
 const value = ref<number | null>(1024)

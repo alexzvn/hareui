@@ -11,7 +11,7 @@ links:
 
 ```vue
 <script setup lang="ts">
-import { InputOtp } from 'herouse'
+import { InputOtp } from '@hareui/vue'
 </script>
 ```
 
@@ -33,7 +33,7 @@ HeroUI's `InputOTP` is a low-level anatomy component built on the [input-otp](ht
 
 | `ui` key | `data-slot` | Element |
 |---|---|---|
-| `base` | — | root `<div>` (herouse-only), stacks label/box/description/error |
+| `base` | — | root `<div>` (HareUI-only), stacks label/box/description/error |
 | — | `label` | [Label](/docs/components/label) (iff `label` / `#label`) |
 | `root` | — | the box (`<div data-input-otp-container>`), HeroUI's `.input-otp` |
 | `group` | `input-otp-group` | one `<div>` per entry in `groups` |
@@ -111,7 +111,7 @@ Use `invalid` together with `error-message` to surface errors.
 ### Global Configuration
 
 ```ts
-app.use(createHeroUse({
+app.use(createHareUI({
   ui: { inputOtp: { slots: { slot: 'size-12 rounded-xl border-2 font-bold' } } },
 }))
 ```
@@ -120,7 +120,7 @@ app.use(createHeroUse({
 
 ### Slots
 
-- `base` → root `<div>` — herouse-only flex-col wrapper around the label, box, description and error
+- `base` → root `<div>` — HareUI-only flex-col wrapper around the label, box, description and error
 - `root` → `[data-input-otp-container]` — the box; `relative flex w-full items-center gap-2`
 - `group` → `[data-slot="input-otp-group"]` — one per entry in `groups`
 - `slot` → `[data-slot="input-otp-slot"]` — a single character cell

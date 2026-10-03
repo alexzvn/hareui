@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { CheckboxGroup } from 'herouse'
+import { CheckboxGroup } from '@hareui/vue'
 
 const controlClass = 'bg-success-soft before:bg-success'
 const indicatorClass = '**:data-[slot=checkbox-default-indicator--checkmark]:text-success-foreground'

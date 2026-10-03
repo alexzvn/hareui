@@ -11,7 +11,7 @@ links:
 ## Usage
 
 ```ts
-import { AlertDialog } from 'herouse'
+import { AlertDialog } from '@hareui/vue'
 ```
 
 <ComponentPreview name="alert-dialog/default" />
@@ -95,10 +95,10 @@ through props and named slots.
 
 ### Global Configuration
 
-To customize the AlertDialog classes for the whole app, extend the `alertDialog` theme in `createHeroUse`:
+To customize the AlertDialog classes for the whole app, extend the `alertDialog` theme in `createHareUI`:
 
 ```ts
-app.use(createHeroUse({
+app.use(createHareUI({
   ui: {
     alertDialog: {
       slots: {

@@ -10,7 +10,7 @@ function otp(props: Omit<Props, 'children'> = {}, groupSizes: number[] = [3, 3],
 
   return (
     <div className="flex w-[280px] flex-col gap-1">
-      {/* herouse's built-in label mirrors the field state, as HeroUI's disabled demo does with `<Label isDisabled>` */}
+      {/* HareUI's built-in label mirrors the field state, as HeroUI's disabled demo does with `<Label isDisabled>` */}
       {head?.label ? <Label isDisabled={props.isDisabled} isInvalid={props.isInvalid} isRequired={props.isRequired ?? props.required}>{head.label}</Label> : null}
       <InputOTP maxLength={groupSizes.reduce((a, b) => a + b, 0)} {...props}>
         {groups.map((indexes, groupIndex) => (

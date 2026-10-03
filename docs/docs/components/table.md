@@ -10,7 +10,7 @@ links:
 ## Usage
 
 ```ts
-import { Table } from 'herouse'
+import { Table } from '@hareui/vue'
 ```
 
 <ComponentPreview name="table/basic" minHeight="320px" />
@@ -18,7 +18,7 @@ import { Table } from 'herouse'
 ## Anatomy
 
 HeroUI composes `Table.ScrollContainer`, `Table.Content`, `Table.Header`, `Table.Column`, `Table.Body`,
-`Table.Row` and `Table.Cell`. herouse renders the same `<table>` structure from two arrays: `columns`
+`Table.Row` and `Table.Cell`. HareUI renders the same `<table>` structure from two arrays: `columns`
 (one entry per header) and `rows` (one object per row, looked up as `row[column.key]`). Per-column slots
 replace the default header or cell content.
 
@@ -98,10 +98,10 @@ Use the `class` prop for the root, `ui` for every part, and `column.class` for o
 
 ### Global theme override
 
-Override the `table` theme app-wide with `createHeroUse`:
+Override the `table` theme app-wide with `createHareUI`:
 
 ```ts
-app.use(createHeroUse({
+app.use(createHareUI({
   ui: {
     table: {
       slots: {
@@ -137,8 +137,8 @@ Each rendered element carries the same `data-slot` string as HeroUI, so selector
 | `loadMoreContent` | `table-load-more-content` | Content wrapper of the load-more row |
 | `footer` | `table-footer` | Footer below the table |
 
-HeroUI's modifier classes correspond to props (herouse renders utilities, not BEM classes, so
-style through `class`, `ui` or `createHeroUse`):
+HeroUI's modifier classes correspond to props (HareUI renders utilities, not BEM classes, so
+style through `class`, `ui` or `createHareUI`):
 
 - `variant`: `primary` (default, rows on a secondary surface), `secondary` (`.table-root--{variant}`)
 

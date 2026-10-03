@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { Button, Chip, Tooltip } from 'herouse'
+import { Button, Chip, Tooltip } from '@hareui/vue'
 import { Icon } from '../icons'
 
 const sides = ['top', 'right', 'bottom', 'left'] as const

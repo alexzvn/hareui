@@ -11,7 +11,7 @@ links:
 
 ```vue
 <script setup lang="ts">
-import { Accordion } from 'herouse'
+import { Accordion } from '@hareui/vue'
 </script>
 ```
 
@@ -90,10 +90,10 @@ label, indicator) and a collapsible panel holding the body. HeroUI's compound pa
 
 ### Global Configuration
 
-To customize the Accordion classes for the whole app, extend the `accordion` theme in `createHeroUse`:
+To customize the Accordion classes for the whole app, extend the `accordion` theme in `createHareUI`:
 
 ```ts
-app.use(createHeroUse({
+app.use(createHareUI({
   ui: {
     accordion: {
       slots: {

@@ -1,6 +1,6 @@
 <script setup lang="ts">
-import type { Color } from 'herouse'
-import { Button, ColorField, ColorSwatch, colorToString, parseColor } from 'herouse'
+import type { Color } from '@hareui/vue'
+import { Button, ColorField, ColorSwatch, colorToString, parseColor } from '@hareui/vue'
 import { ref } from 'vue'
 
 const value = ref<Color | null>(parseColor('#0485F7'))

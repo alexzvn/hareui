@@ -1,6 +1,6 @@
 import type { VNode } from 'vue'
 import { CalendarDate } from '@internationalized/date'
-import { DatePicker } from 'herouse'
+import { DatePicker } from '@hareui/vue'
 import { h } from 'vue'
 
 const base = { label: 'Date', calendarLabel: 'Event date', name: 'date', class: 'w-72' }

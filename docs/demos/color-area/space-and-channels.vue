@@ -1,6 +1,6 @@
 <script setup lang="ts">
-import type { ColorChannel, ColorSpace } from 'herouse'
-import { ColorArea, colorToString, parseColor, Select } from 'herouse'
+import type { ColorChannel, ColorSpace } from '@hareui/vue'
+import { ColorArea, colorToString, parseColor, Select } from '@hareui/vue'
 import { computed, ref } from 'vue'
 
 const colorSpaces = [

@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { Autocomplete, Spinner } from 'herouse'
+import { Autocomplete, Spinner } from '@hareui/vue'
 import { onMounted, ref, watch } from 'vue'
 
 interface Character {

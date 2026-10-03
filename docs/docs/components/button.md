@@ -10,7 +10,7 @@ links:
 ## Usage
 
 ```ts
-import { Button } from 'herouse'
+import { Button } from '@hareui/vue'
 ```
 
 <ComponentPreview name="button/basic" />
@@ -74,7 +74,7 @@ slots instead of HeroUI's render-prop children.
 
 ### Adding custom variants
 
-You can extend herouse's `button` theme by wrapping it with the `tv` extension mechanism,
+You can extend HareUI's `button` theme by wrapping it with the `tv` extension mechanism,
 the same pattern used internally by every component theme.
 
 <ComponentPreview name="button/custom-variants" />
@@ -95,10 +95,10 @@ Use the `class` prop to merge classes onto the root element (tailwind-merge reso
 
 ### Global theme override
 
-Override the `button` theme app-wide with `createHeroUse`:
+Override the `button` theme app-wide with `createHareUI`:
 
 ```ts
-app.use(createHeroUse({
+app.use(createHareUI({
   ui: {
     button: {
       slots: { base: 'rounded-md' },

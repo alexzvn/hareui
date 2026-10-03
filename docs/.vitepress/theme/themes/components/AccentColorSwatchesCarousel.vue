@@ -2,7 +2,7 @@
 // Port of HeroUI docs `components/color-picker/components/color-swatches-carousel.tsx`.
 import type { Color } from 'reka-ui'
 import { Icon } from '@iconify/vue'
-import { Button, ColorSwatchPicker } from 'herouse'
+import { Button, ColorSwatchPicker } from '@hareui/vue'
 import { computed, ref } from 'vue'
 import { chunkArray, SWATCHES_PER_PAGE } from './accentColorUtils'
 

@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { Autocomplete, Avatar } from 'herouse'
+import { Autocomplete, Avatar } from '@hareui/vue'
 import { ref } from 'vue'
 
 const users = [

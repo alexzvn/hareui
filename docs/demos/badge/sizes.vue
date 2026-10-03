@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { Avatar, Badge } from 'herouse'
+import { Avatar, Badge } from '@hareui/vue'
 
 const sizes = ['sm', 'md', 'lg'] as const
 </script>

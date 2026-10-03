@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { Autocomplete, Button, Form, Spinner, Surface } from 'herouse'
+import { Autocomplete, Button, Form, Spinner, Surface } from '@hareui/vue'
 import { ref } from 'vue'
 
 const states = ['Florida', 'Delaware', 'California', 'Texas', 'New York', 'Washington'].map(label => ({ value: label.toLowerCase().replace(' ', '-'), label }))

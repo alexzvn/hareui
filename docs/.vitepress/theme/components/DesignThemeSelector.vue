@@ -2,7 +2,7 @@
 // Port of HeroUI docs `components/design-theme-selector.tsx`.
 import { computed, onBeforeUnmount, onMounted, ref } from 'vue'
 import { Icon } from '@iconify/vue'
-import { Button, Description, Label, Popover, Switch } from 'herouse'
+import { Button, Description, Label, Popover, Switch } from '@hareui/vue'
 import airbnb from '../assets/themes/airbnb.png'
 import black from '../assets/themes/black.png'
 import coinbase from '../assets/themes/coinbase.png'
@@ -56,7 +56,7 @@ onBeforeUnmount(() => window.removeEventListener(DESIGN_THEME_CHANGE_EVENT, sync
 const current = computed(() => THEMES.find((t) => t.id === active.value))
 const showAvatar = computed(() => mounted.value && active.value !== 'default' && !!current.value)
 
-// HeroUI links to its own /themes builder; herouse ports it, so link to ours.
+// HeroUI links to its own /themes builder; HareUI ports it, so link to ours.
 const themeBuilderHref = computed(() => {
   const values = DESIGN_THEME_VALUES[active.value]
   const params = new URLSearchParams({
@@ -67,7 +67,7 @@ const themeBuilderHref = computed(() => {
   return `/themes?${params}`
 })
 
-// HeroUI renders `ListBox` (layout="grid", selectionMode="single"); herouse has no ListBox, so the
+// HeroUI renders `ListBox` (layout="grid", selectionMode="single"); HareUI has no ListBox, so the
 // option markup carries `.list-box` / `.list-box-item` classes from @heroui/styles plus the selector's overrides.
 const options = ref<HTMLElement[]>([])
 function focusOption(index: number) {

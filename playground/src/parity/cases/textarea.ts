@@ -1,5 +1,5 @@
 import type { VNode } from 'vue'
-import { TextArea, TextField } from 'herouse'
+import { TextArea, TextField } from '@hareui/vue'
 import { h } from 'vue'
 
 const placeholder = 'Share a quick project update...'

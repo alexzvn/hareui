@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import type { DateValue } from '@internationalized/date'
-import { Calendar, Description } from 'herouse'
+import { Calendar, Description } from '@hareui/vue'
 import { ref } from 'vue'
 
 const value = ref<readonly DateValue[]>([])

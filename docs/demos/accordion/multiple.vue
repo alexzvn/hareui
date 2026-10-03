@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { Accordion } from 'herouse'
+import { Accordion } from '@hareui/vue'
 
 const items = [
   {

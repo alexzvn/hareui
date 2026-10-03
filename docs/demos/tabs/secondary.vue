@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { Tabs } from 'herouse'
+import { Tabs } from '@hareui/vue'
 
 const items = [
   { label: 'Overview', value: 'overview', content: 'View your project overview and recent activity.' },

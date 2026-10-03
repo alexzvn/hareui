@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { Chip, InputGroup, TextField } from 'herouse'
+import { Chip, InputGroup, TextField } from '@hareui/vue'
 </script>
 
 <template>

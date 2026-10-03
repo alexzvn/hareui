@@ -1,6 +1,6 @@
 <script setup lang="ts">
 // Port of HeroUI docs `themes/components/mobile-footer.tsx`.
-import { ScrollShadow } from 'herouse'
+import { ScrollShadow } from '@hareui/vue'
 import { ref } from 'vue'
 import { THEME_BUILDER_BOTTOM_SHEET_ID, formRadiusOptions, radiusOptions } from '../constants'
 import AccentColorSelector from './AccentColorSelector.vue'

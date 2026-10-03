@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { Surface, TextArea, TextField } from 'herouse'
+import { Surface, TextArea, TextField } from '@hareui/vue'
 import { ref } from 'vue'
 
 const value = ref('')

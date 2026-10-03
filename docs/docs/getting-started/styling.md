@@ -1,9 +1,9 @@
 ---
 title: Styling
-description: Style HeroUse components with the class prop, the ui prop, and data attribute selectors.
+description: Style HareUI components with the class prop, the ui prop, and data attribute selectors.
 ---
 
-Every HeroUse component accepts a `class` prop for the root element and a `:ui` prop for per-slot overrides. Both merge on top of the component's built-in theme with [tailwind-merge](https://github.com/dcastil/tailwind-merge), so conflicting utilities resolve predictably instead of stacking.
+Every HareUI component accepts a `class` prop for the root element and a `:ui` prop for per-slot overrides. Both merge on top of the component's built-in theme with [tailwind-merge](https://github.com/dcastil/tailwind-merge), so conflicting utilities resolve predictably instead of stacking.
 
 ## The `class` Prop
 
@@ -17,7 +17,7 @@ Every HeroUse component accepts a `class` prop for the root element and a `:ui` 
 </template>
 ```
 
-Because HeroUse uses tailwind-merge, `bg-purple-500` replaces the theme's `bg-(--button-bg)` instead of both classes competing at the same specificity.
+Because HareUI uses tailwind-merge, `bg-purple-500` replaces the theme's `bg-(--button-bg)` instead of both classes competing at the same specificity.
 
 ## The `:ui` Prop
 
@@ -33,7 +33,7 @@ Because HeroUse uses tailwind-merge, `bg-purple-500` replaces the theme's `bg-(-
 
 ## Scrollbars
 
-HeroUse's scroll slots (e.g. `Modal`'s body) apply the `scrollbar` utility, which reads the theme's `--scrollbar-*` variables. Use the same utilities from `herouse` on your own overflow containers:
+HareUI's scroll slots (e.g. `Modal`'s body) apply the `scrollbar` utility, which reads the theme's `--scrollbar-*` variables. Use the same utilities from `@hareui/vue` on your own overflow containers:
 
 ```vue
 <template>
@@ -45,8 +45,8 @@ HeroUse's scroll slots (e.g. `Modal`'s body) apply the `scrollbar` utility, whic
 
 | Utility | Effect |
 |---------|--------|
-| `scrollbar` | HeroUse thumb (reads theme `--scrollbar-*` variables) |
-| `scrollbar-thin` | HeroUse themed thin scrollbar |
+| `scrollbar` | HareUI thumb (reads theme `--scrollbar-*` variables) |
+| `scrollbar-thin` | HareUI themed thin scrollbar |
 | `scrollbar-default` | OS / browser scrollbars |
 | `scrollbar-none` | Hidden scrollbar |
 
@@ -54,7 +54,7 @@ Global and per-subtree control uses `data-scrollbar` on an ancestor. See [Themin
 
 ## Tailwind-Merge Conflict Resolution
 
-Classes are combined in this order — later layers win when they target the same CSS property: theme file → `createHeroUse({ ui })` → variant props → `:ui` → `class` (root only). See [Theming](/docs/getting-started/theming#precedence) for the full precedence table.
+Classes are combined in this order — later layers win when they target the same CSS property: theme file → `createHareUI({ ui })` → variant props → `:ui` → `class` (root only). See [Theming](/docs/getting-started/theming#precedence) for the full precedence table.
 
 ```vue
 <!-- Theme default is rounded-3xl; class overrides it to rounded-none -->
@@ -63,7 +63,7 @@ Classes are combined in this order — later layers win when they target the sam
 
 ## State-Based Styling
 
-HeroUse components expose their state through `data-slot` and state data attributes, mirroring HeroUI's selectors:
+HareUI components expose their state through `data-slot` and state data attributes, mirroring HeroUI's selectors:
 
 ```css
 /* Target component state */
@@ -95,7 +95,7 @@ See [Animation](/docs/getting-started/animation) for the full `data-state` → T
 
 ## Native `:hover`/`:active`/`:focus-visible`
 
-HeroUse components are plain DOM elements, so native pseudo-classes work directly — no `data-hovered`/`data-pressed` attributes to match:
+HareUI components are plain DOM elements, so native pseudo-classes work directly — no `data-hovered`/`data-pressed` attributes to match:
 
 ```css
 [data-slot="button"]:hover {
@@ -113,7 +113,7 @@ HeroUse components are plain DOM elements, so native pseudo-classes work directl
 
 ## Extending Component Themes
 
-Every component's theme config is exported from `herouse`'s `themes` namespace (`themes.button`, `themes.card`, …) in the same shape `tv()` expects. Extend one to add a variant that doesn't exist in the original component, resolve it with `tv()`, and apply the resolved class through the `class` prop:
+Every component's theme config is exported from `@hareui/vue`'s `themes` namespace (`themes.button`, `themes.card`, …) in the same shape `tv()` expects. Extend one to add a variant that doesn't exist in the original component, resolve it with `tv()`, and apply the resolved class through the `class` prop:
 
 <ComponentPreview name="button/custom-variants" />
 
@@ -138,7 +138,7 @@ Vue's `<style module>` works the same way as any other `class` value — bind th
 ```vue
 <!-- GradientButton.vue -->
 <script setup lang="ts">
-import { Button } from 'herouse'
+import { Button } from '@hareui/vue'
 </script>
 
 <template>

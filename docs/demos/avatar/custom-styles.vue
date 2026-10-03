@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { Avatar } from 'herouse'
+import { Avatar } from '@hareui/vue'
 </script>
 
 <template>

@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { ComboBox } from 'herouse'
+import { ComboBox } from '@hareui/vue'
 
 const itemClass = 'rounded-lg data-[focused=true]:bg-muted/70 data-[selected=true]:font-medium data-[selected=true]:text-foreground'
 const frameworks = [

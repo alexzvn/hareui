@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { Button, Modal } from 'herouse'
+import { Button, Modal } from '@hareui/vue'
 import { Icon } from '@iconify/vue'
 </script>
 
@@ -12,7 +12,7 @@ import { Icon } from '@iconify/vue'
       <Icon class="text-foreground" icon="gravity-ui:rocket" />
     </template>
     <template #title>
-      Welcome to HeroUse
+      Welcome to HareUI
     </template>
     <template #body>
       <p>

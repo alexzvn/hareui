@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import type { CalendarDate, DateValue } from '@internationalized/date'
-import { Button, Calendar } from 'herouse'
+import { Button, Calendar } from '@hareui/vue'
 import { getLocalTimeZone, isWeekend, today } from '@internationalized/date'
 import { computed, ref } from 'vue'
 
