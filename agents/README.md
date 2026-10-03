@@ -14,6 +14,7 @@ herouse is a Vue 3 port of HeroUI v3 (`@heroui/react@3.2.6`, the `v3` branch). I
 | [`batch-brief.md`](batch-brief.md) | Brief given to peer agents building components (workflow + rules). |
 | [`review-brief.md`](review-brief.md) | Brief given to peer agents doing the docs-fidelity review against heroui.com. |
 | [`reviews/`](reviews/) | Per-component fidelity reports: findings, fixes, and `Decisions needed` sections. |
+| Logo editor: [`playground/src/pages/Logo.vue`](../playground/src/pages/Logo.vue) | Built with HareUI; run `bun run dev` and open `/Logo`. Defaults are the shipped mark (`LOGO_DEFAULTS` in `playground/src/logo/geometry.ts`); "Copy params" gives the JSON that regenerates it. To change the logo, update `LOGO_DEFAULTS` and copy the path it shows into `docs/public/logo.svg` and `docs/.vitepress/theme/components/HareLogo.vue` (keep `transform="rotate(<tilt> 16 16)"`). |
 
 The briefs refer to `/tmp/herouse-plan.md`, `/tmp/herouse-review/*.md`, etc. Those are the same files as `agents/plan.md` and `agents/reviews/*`.
 
