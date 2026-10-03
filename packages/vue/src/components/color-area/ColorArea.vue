@@ -88,6 +88,9 @@ watch(rootModelValue, (value) => {
 })
 const space = computed<ColorSpace>(() => props.colorSpace ?? currentColor.value.space as ColorSpace)
 const channels = computed(() => CHANNELS[space.value])
+// Reka reads channels off the value as-is (a hex string is treated as HSL for `hsb`), so hand it a colour already in the area's space.
+const rootValue = computed(() => rootModelValue.value === undefined ? undefined : toSpace(normalizeColor(rootModelValue.value), space.value))
+const rootDefault = computed(() => toSpace(normalizeColor(props.defaultValue ?? '#ff0000'), space.value))
 const axes = computed(() => {
   const x = props.xChannel ?? channels.value.find(c => c !== props.yChannel)!
   const y = props.yChannel ?? channels.value.find(c => c !== x)!
@@ -190,8 +193,8 @@ const ui = useComponentUI('colorArea', theme, () => ({
        area's `w-full max-w-56` sizes against the parent, not a shrink-to-fit wrapper that collapses it to 0px. -->
   <ColorAreaRoot
     class="contents"
-    :model-value="rootModelValue"
-    :default-value="defaultValue ?? '#ff0000'"
+    :model-value="rootValue"
+    :default-value="rootDefault"
     :color-space="space"
     :x-channel="axes.x"
     :y-channel="axes.y"
