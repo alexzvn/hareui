@@ -138,6 +138,7 @@ async function toMarkdown(body: string): Promise<string> {
     if (typeof src !== 'string') throw new Error(`CollapsibleCode without :code: ${tag.slice(0, 80)}`)
     return `\`\`\`${lang}\n${src.trimEnd()}\n\`\`\``
   })
+  out = out.replace(/<FaqItem\b[^>]*>/g, (tag) => `**${attr(tag, 'question')}**`)
   const fences: string[] = []
   out = out.replace(/^(```|~~~)[\s\S]*?^\1\s*$/gm, (fence) => `\u0000${fences.push(fence) - 1}\u0000`)
   out = out.replace(/<\/?[A-Z][\w.]*\b[^>]*>/g, '')
