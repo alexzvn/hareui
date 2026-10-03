@@ -142,6 +142,7 @@ export interface TableSlots {
 <script setup lang="ts">
 import { computed, nextTick, onBeforeUnmount, ref, useSlots, watch } from 'vue'
 import { useComponentUI } from '../../composables/useComponentUI'
+import { useSelectionManager } from '../../composables/useSelectionManager'
 import { calculateColumnSizes, DEFAULT_MIN_COLUMN_WIDTH } from './columnSizes'
 import Checkbox from '../checkbox/Checkbox.vue'
 import Spinner from '../spinner/Spinner.vue'
@@ -258,20 +259,17 @@ function toggleSelectAll() {
     setSelected(new Set(selectableKeys.value))
 }
 
-function toggleRowSelection(key: TableSelectionKey, row: TableRow) {
-  if (!isSelectable(key, row))
-    return
-  if (props.selectionMode === 'single') {
-    setSelected(isSelected(key) ? new Set() : new Set([key]))
-    return
-  }
-  const current = selectedKeys.value === 'all' ? new Set(selectableKeys.value) : new Set(selectedKeys.value)
-  if (current.has(key))
-    current.delete(key)
-  else
-    current.add(key)
-  setSelected(current)
-}
+// Anchor + Shift ranges, select-all and Escape (RAC `SelectionManager`, toggle behaviour)
+const manager = useSelectionManager<TableSelectionKey>({
+  mode: () => props.selectionMode,
+  keys: () => flatRows.value.map(r => r.key),
+  isDisabled: (key) => {
+    const flat = flatRows.value.find(r => r.key === key)
+    return !flat || !isSelectable(key, flat.row)
+  },
+  selected: () => selectedKeys.value === 'all' ? selectableKeys.value : [...selectedKeys.value],
+  setSelected: keys => setSelected(new Set(keys)),
+})
 
 /** The scroll (or resizable) container: the column layout's width and the load-more observer root. */
 const scrollRootRef = ref<HTMLElement>()
@@ -391,55 +389,107 @@ watch([() => props.hasMore, () => props.loading, () => props.rows.length, sentin
 onBeforeUnmount(() => observer?.disconnect())
 
 /* ---------------- Row focus / keyboard navigation ----------------
- * Matches HeroUI's default `keyboardNavigationBehavior="tab"`: each row is one tab stop
- * (Up/Down/Home/End move it), interactive cell content (checkboxes, buttons) is reached
- * with Tab. This is a plain `<table>`, not a `role="grid"`, so there is no per-cell arrow-key
- * navigation (React Aria's `keyboardNavigationBehavior="arrow"` mode) — recorded as a gap.
+ * Like React Aria's grid, the table is a single tab stop (roving tabindex): the last focused row or
+ * column header, initially the first row. Up/Down/Home/End move between rows, ArrowUp from the first
+ * row enters the header row, Left/Right move between headers. Checkboxes are out of the tab order;
+ * Space/Enter on a row toggles it, Shift+navigation/click selects a range. Focus lands on rows rather
+ * than cells: this is a plain `<table>`, not a `role="grid"`, so there is no per-cell navigation.
  */
 const tableRef = ref<HTMLElement>()
-const activeRowKey = ref<TableSelectionKey>()
+type FocusTarget = { kind: 'row', key: TableSelectionKey } | { kind: 'header', index: number }
+const focusTarget = ref<FocusTarget>()
+const activeRowKey = computed(() => focusTarget.value?.kind === 'row' ? focusTarget.value.key : undefined)
 watch(flatRows, (rowsNow) => {
-  if (rowsNow.length === 0) {
-    activeRowKey.value = undefined
+  const target = focusTarget.value
+  if (target?.kind === 'header' || (target && rowsNow.some(r => r.key === target.key)))
     return
-  }
-  if (!rowsNow.some(r => r.key === activeRowKey.value))
-    activeRowKey.value = rowsNow[0]!.key
+  focusTarget.value = rowsNow.length ? { kind: 'row', key: rowsNow[0]!.key } : { kind: 'header', index: 0 }
 }, { immediate: true })
 
 function focusRow(key: TableSelectionKey) {
+  focusTarget.value = { kind: 'row', key }
   nextTick(() => {
     tableRef.value?.querySelector<HTMLElement>(`[data-row-key="${CSS.escape(String(key))}"]`)?.focus()
   })
 }
 
+function headerCells(): HTMLElement[] {
+  return Array.from(tableRef.value?.querySelectorAll<HTMLElement>('thead > tr > th') ?? [])
+}
+
+function focusHeader(index: number) {
+  const cells = headerCells()
+  index = Math.max(0, Math.min(cells.length - 1, index))
+  focusTarget.value = { kind: 'header', index }
+  cells[index]?.focus()
+}
+
+function headerTabindex(index: number) {
+  const target = focusTarget.value
+  return target?.kind === 'header' && target.index === index ? 0 : -1
+}
+
+function onHeaderKeydown(event: KeyboardEvent) {
+  const cells = headerCells()
+  const index = cells.indexOf(event.target as HTMLElement)
+  if (index === -1)
+    return
+  if (event.key === 'ArrowRight' || event.key === 'ArrowLeft') {
+    event.preventDefault()
+    focusHeader(index + (event.key === 'ArrowRight' ? 1 : -1))
+  }
+  else if (event.key === 'Home' || event.key === 'End') {
+    event.preventDefault()
+    focusHeader(event.key === 'Home' ? 0 : cells.length - 1)
+  }
+  else if (event.key === 'ArrowDown' && flatRows.value.length) {
+    event.preventDefault()
+    focusRow(flatRows.value[0]!.key)
+  }
+  else if ((event.key === ' ' || event.key === 'Enter') && index === 0 && props.selectionMode !== 'none') {
+    event.preventDefault()
+    if (props.selectionMode === 'multiple')
+      toggleSelectAll()
+  }
+}
+
 function onRowKeydown(flat: FlatRow, event: KeyboardEvent) {
+  // Keys typed into interactive cell content (inputs, buttons) are theirs
+  if (event.target !== event.currentTarget)
+    return
+  // Escape clears the selection, Meta/Ctrl+A selects every row
+  if (props.selectionMode !== 'none' && manager.onKeydown(event))
+    return
   const rowsNow = flatRows.value
   const i = rowsNow.findIndex(r => r.key === flat.key)
-  if (event.key === 'ArrowDown' && i < rowsNow.length - 1) {
+  let next: FlatRow | undefined
+  if (event.key === 'ArrowDown')
+    next = rowsNow[i + 1]
+  else if (event.key === 'ArrowUp' && i === 0 && headerCells().length) {
     event.preventDefault()
-    activeRowKey.value = rowsNow[i + 1]!.key
-    focusRow(rowsNow[i + 1]!.key)
+    focusHeader(0)
+    return
   }
-  else if (event.key === 'ArrowUp' && i > 0) {
+  else if (event.key === 'ArrowUp')
+    next = rowsNow[i - 1]
+  else if (event.key === 'Home')
+    next = rowsNow[0]
+  else if (event.key === 'End')
+    next = rowsNow.at(-1)
+  else if ((event.key === 'Enter' || event.key === ' ') && props.selectionMode !== 'none') {
     event.preventDefault()
-    activeRowKey.value = rowsNow[i - 1]!.key
-    focusRow(rowsNow[i - 1]!.key)
+    if (event.shiftKey)
+      manager.extend(flat.key)
+    else
+      manager.toggle(flat.key)
+    return
   }
-  else if (event.key === 'Home' && rowsNow.length > 0) {
-    event.preventDefault()
-    activeRowKey.value = rowsNow[0]!.key
-    focusRow(rowsNow[0]!.key)
-  }
-  else if (event.key === 'End' && rowsNow.length > 0) {
-    event.preventDefault()
-    activeRowKey.value = rowsNow[rowsNow.length - 1]!.key
-    focusRow(rowsNow[rowsNow.length - 1]!.key)
-  }
-  else if ((event.key === 'Enter' || event.key === ' ') && event.target === event.currentTarget && props.selectionMode !== 'none') {
-    event.preventDefault()
-    toggleRowSelection(flat.key, flat.row)
-  }
+  if (!next)
+    return
+  event.preventDefault()
+  focusRow(next.key)
+  if (event.shiftKey)
+    manager.extend(next.key, flat.key)
 }
 
 function onRowClick(flat: FlatRow, event: MouseEvent) {
@@ -448,7 +498,10 @@ function onRowClick(flat: FlatRow, event: MouseEvent) {
   const target = event.target as HTMLElement
   if (target.closest('button, a, input, [data-slot="table-column-resizer"]'))
     return
-  toggleRowSelection(flat.key, flat.row)
+  if (event.shiftKey)
+    manager.extend(flat.key)
+  else
+    manager.toggle(flat.key)
 }
 
 /* ---------------- Misc helpers ---------------- */
@@ -476,27 +529,30 @@ function alignClass(column: TableColumn) {
     >
       <table :aria-label="ariaLabel" data-slot="table-content" :class="ui.content({ class: props.ui?.content })">
         <thead data-slot="table-header" :class="ui.header({ class: props.ui?.header })">
-          <tr>
+          <tr @keydown="onHeaderKeydown">
             <th
               v-if="selectionMode !== 'none'"
               scope="col"
               data-slot="table-column"
+              :tabindex="headerTabindex(0)"
               :class="ui.column({ class: [props.ui?.column, 'pe-0'] })"
               @click.stop
+              @focus="focusTarget = { kind: 'header', index: 0 }"
             >
-              <Checkbox :model-value="selectAllModel" aria-label="Select all" @update:model-value="toggleSelectAll" />
+              <Checkbox :model-value="selectAllModel" aria-label="Select all" tabindex="-1" @update:model-value="toggleSelectAll" />
             </th>
             <th
-              v-for="column in columns"
+              v-for="(column, columnIndex) in columns"
               :key="column.key"
               scope="col"
               data-slot="table-column"
               :data-allows-sorting="column.sortable ? 'true' : undefined"
               :aria-sort="column.sortable ? (sortDirectionFor(column) ?? 'none') : undefined"
-              :tabindex="column.sortable ? 0 : undefined"
+              :tabindex="headerTabindex(columnIndex + (selectionMode !== 'none' ? 1 : 0))"
               :style="widthStyle(column)"
               :class="ui.column({ class: [props.ui?.column, column.class, alignClass(column)] })"
               @click="toggleSort(column)"
+              @focus="focusTarget = { kind: 'header', index: columnIndex + (selectionMode !== 'none' ? 1 : 0) }"
               @keydown.enter.prevent="toggleSort(column)"
               @keydown.space.prevent="toggleSort(column)"
             >
@@ -563,7 +619,7 @@ function alignClass(column: TableColumn) {
             :style="{ '--table-row-level': flat.depth }"
             :class="ui.row({ class: props.ui?.row })"
             @click="onRowClick(flat, $event)"
-            @focus="activeRowKey = flat.key"
+            @focus="focusTarget = { kind: 'row', key: flat.key }"
             @keydown="onRowKeydown(flat, $event)"
           >
             <td
@@ -577,7 +633,8 @@ function alignClass(column: TableColumn) {
                 :disabled="!isSelectable(flat.key, flat.row)"
                 :aria-label="`Select row ${flat.index + 1}`"
                 variant="secondary"
-                @update:model-value="toggleRowSelection(flat.key, flat.row)"
+                tabindex="-1"
+                @update:model-value="manager.toggle(flat.key)"
               />
             </td>
             <td
