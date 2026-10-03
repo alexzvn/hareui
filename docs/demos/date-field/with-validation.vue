@@ -2,9 +2,9 @@
 import type { DateValue } from '@internationalized/date'
 import { getLocalTimeZone, today } from '@internationalized/date'
 import { DateField } from '@hareui/vue'
-import { computed, ref } from 'vue'
+import { computed, shallowRef } from 'vue'
 
-const value = ref<DateValue | null>(null)
+const value = shallowRef<DateValue | null>(null)
 const todayDate = today(getLocalTimeZone())
 const isInvalid = computed(() => value.value !== null && value.value.compare(todayDate) < 0)
 </script>

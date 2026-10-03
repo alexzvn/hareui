@@ -1,9 +1,10 @@
 <script setup lang="ts">
+import type { CalendarIdentifier } from '@internationalized/date'
 import { createCalendar, getLocalTimeZone, today, toCalendar } from '@internationalized/date'
 import { Calendar } from '@hareui/vue'
 
 const locale = 'hi-IN-u-ca-indian'
-const calendarId = new Intl.DateTimeFormat(locale).resolvedOptions().calendar
+const calendarId = new Intl.DateTimeFormat(locale).resolvedOptions().calendar as CalendarIdentifier
 const defaultValue = toCalendar(today(getLocalTimeZone()), createCalendar(calendarId))
 </script>
 

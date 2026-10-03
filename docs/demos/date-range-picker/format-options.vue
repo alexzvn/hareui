@@ -1,6 +1,7 @@
 <script setup lang="ts">
-import type { DateValue } from '@internationalized/date'
-import type { DateRangeValue } from '@hareui/vue'
+import type { CalendarDateTime, DateValue, ZonedDateTime } from '@internationalized/date'
+import type { DateRangeValue, ListBoxItem } from '@hareui/vue'
+import type { TimeValue } from 'reka-ui'
 import { DateFormatter, getLocalTimeZone, parseDate, parseZonedDateTime, Time } from '@internationalized/date'
 import { DateRangePicker, Label, RangeCalendar, Select, Separator, Switch, TimeField } from '@hareui/vue'
 import { computed, ref, shallowRef } from 'vue'
@@ -8,13 +9,13 @@ import { computed, ref, shallowRef } from 'vue'
 type Granularity = 'day' | 'hour' | 'minute' | 'second'
 type HourCycle = 12 | 24
 
-const granularityOptions = [
+const granularityOptions: ListBoxItem[] = [
   { label: 'Day', value: 'day' },
   { label: 'Hour', value: 'hour' },
   { label: 'Minute', value: 'minute' },
   { label: 'Second', value: 'second' },
 ]
-const hourCycleOptions = [
+const hourCycleOptions: ListBoxItem[] = [
   { label: '12-hour', value: 12 },
   { label: '24-hour', value: 24 },
 ]
@@ -43,7 +44,7 @@ function formatRange(range: DateRangeValue) {
   return dateFormatter.formatRange(range.start.toDate(tz), range.end.toDate(tz))
 }
 
-type WithTime = DateValue & { hour: number, minute: number, second: number }
+type WithTime = CalendarDateTime | ZonedDateTime
 function hasTime(v: DateValue | undefined): v is WithTime {
   return !!v && 'hour' in v
 }
@@ -52,10 +53,10 @@ function timeOf(v: DateValue | undefined) {
 }
 // The calendar only edits the date and the time fields only edit the time; each merges onto the other.
 function withDate(picked: DateValue, current: DateValue | undefined): DateValue {
-  return hasTime(current) ? (current as any).set({ year: picked.year, month: picked.month, day: picked.day }) : picked
+  return hasTime(current) ? current.set({ year: picked.year, month: picked.month, day: picked.day }) : picked
 }
-function withTime(time: Time, current: DateValue): DateValue {
-  return hasTime(current) ? (current as any).set({ hour: time.hour, minute: time.minute, second: time.second }) : current
+function withTime(time: TimeValue, current: DateValue): DateValue {
+  return hasTime(current) ? current.set({ hour: time.hour, minute: time.minute, second: time.second }) : current
 }
 </script>
 
@@ -93,7 +94,7 @@ function withTime(time: Time, current: DateValue): DateValue {
               :hour-cycle="hourCycle"
               :hide-time-zone="hideTimeZone"
               :model-value="timeOf(range.start)"
-              @update:model-value="(t) => t && onChange({ start: withTime(t as Time, range.start), end: range.end })"
+              @update:model-value="(t) => t && onChange({ start: withTime(t, range.start), end: range.end })"
             />
           </div>
           <div class="flex items-center justify-between">
@@ -106,7 +107,7 @@ function withTime(time: Time, current: DateValue): DateValue {
               :hour-cycle="hourCycle"
               :hide-time-zone="hideTimeZone"
               :model-value="timeOf(range.end)"
-              @update:model-value="(t) => t && onChange({ start: range.start, end: withTime(t as Time, range.end) })"
+              @update:model-value="(t) => t && onChange({ start: range.start, end: withTime(t, range.end) })"
             />
           </div>
         </div>

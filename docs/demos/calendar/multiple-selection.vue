@@ -1,9 +1,9 @@
 <script setup lang="ts">
 import type { DateValue } from '@internationalized/date'
 import { Calendar, Description } from '@hareui/vue'
-import { ref } from 'vue'
+import { shallowRef } from 'vue'
 
-const value = ref<readonly DateValue[]>([])
+const value = shallowRef<DateValue[]>([])
 </script>
 
 <template>
@@ -12,7 +12,7 @@ const value = ref<readonly DateValue[]>([])
       aria-label="Event dates"
       selection-mode="multiple"
       :model-value="value"
-      @update:model-value="v => value = v as readonly DateValue[]"
+      @update:model-value="v => value = v as DateValue[]"
     />
     <Description class="text-center">
       {{ value.length ? `${value.length} date(s) selected` : 'Select multiple dates' }}

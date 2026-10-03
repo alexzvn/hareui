@@ -1,11 +1,12 @@
 <script setup lang="ts">
 import type { DateValue } from '@internationalized/date'
+import type { ListBoxItem } from '@hareui/vue'
 import { parseDate, parseZonedDateTime } from '@internationalized/date'
 import { DateField, Label, Select, Tooltip } from '@hareui/vue'
 import { Icon } from '@iconify/vue'
 import { computed, ref } from 'vue'
 
-const granularityOptions = [
+const granularityOptions: ListBoxItem[] = [
   { value: 'day', label: 'Day' },
   { value: 'hour', label: 'Hour' },
   { value: 'minute', label: 'Minute' },

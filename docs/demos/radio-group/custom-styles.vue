@@ -29,13 +29,13 @@ const indicatorClass
     :items="options.map(({ label, value }) => ({ label, value }))"
     :ui="{ content: contentClass, control: controlClass, indicator: indicatorClass }"
   >
-    <template #item-label="{ item }">
+    <template #item-label="{ index }">
       <div class="flex flex-col gap-0.5">
         <span class="font-medium text-foreground group-data-[selected=true]:text-success-soft-foreground">
-          {{ item.label }}
+          {{ options[index]!.label }}
         </span>
         <Description class="group-data-[selected=true]:text-success-soft-foreground/80">
-          {{ item.description }}
+          {{ options[index]!.description }}
         </Description>
       </div>
     </template>

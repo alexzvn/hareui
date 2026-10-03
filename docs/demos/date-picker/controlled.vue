@@ -2,9 +2,9 @@
 import type { DateValue } from '@internationalized/date'
 import { getLocalTimeZone, today } from '@internationalized/date'
 import { Button, DatePicker, Description } from '@hareui/vue'
-import { ref } from 'vue'
+import { shallowRef } from 'vue'
 
-const value = ref<DateValue | null>(today(getLocalTimeZone()))
+const value = shallowRef<DateValue | null>(today(getLocalTimeZone()))
 </script>
 
 <template>

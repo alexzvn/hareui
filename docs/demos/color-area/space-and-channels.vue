@@ -1,9 +1,9 @@
 <script setup lang="ts">
-import type { ColorChannel, ColorSpace } from '@hareui/vue'
+import type { ColorChannel, ColorSpace, ListBoxItem, SelectValue } from '@hareui/vue'
 import { ColorArea, colorToString, parseColor, Select } from '@hareui/vue'
 import { computed, ref } from 'vue'
 
-const colorSpaces = [
+const colorSpaces: ListBoxItem[] = [
   { value: 'rgb', label: 'RGB' },
   { value: 'hsl', label: 'HSL' },
   { value: 'hsb', label: 'HSB' },
@@ -32,8 +32,8 @@ const color = ref(parseColor('hsb(219, 58%, 93%)'))
 const xChannel = ref<ColorChannel>('saturation')
 const yChannel = ref<ColorChannel>('brightness')
 
-function onSpaceChange(space: string | null) {
-  if (!space)
+function onSpaceChange(space: SelectValue | undefined) {
+  if (!space || typeof space !== 'string')
     return
   colorSpace.value = space as ColorSpace
   // Reset the channels to sensible defaults for the new colour space

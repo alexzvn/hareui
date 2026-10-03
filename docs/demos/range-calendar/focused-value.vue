@@ -2,9 +2,9 @@
 import type { DateValue } from '@internationalized/date'
 import { Button, Description, RangeCalendar } from '@hareui/vue'
 import { parseDate } from '@internationalized/date'
-import { ref } from 'vue'
+import { shallowRef } from 'vue'
 
-const focusedDate = ref<DateValue>(parseDate('2025-06-15'))
+const focusedDate = shallowRef<DateValue>(parseDate('2025-06-15'))
 </script>
 
 <template>

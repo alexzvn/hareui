@@ -2,9 +2,9 @@
 import type { CalendarDate, DateValue } from '@internationalized/date'
 import { Button, Calendar } from '@hareui/vue'
 import { getLocalTimeZone, isWeekend, today } from '@internationalized/date'
-import { computed, ref } from 'vue'
+import { computed, shallowRef } from 'vue'
 
-const selectedDate = ref<CalendarDate | null>(null)
+const selectedDate = shallowRef<CalendarDate | null>(null)
 const bookedDates = [5, 6, 12, 13, 14, 20]
 
 function isDateUnavailable(date: DateValue) {

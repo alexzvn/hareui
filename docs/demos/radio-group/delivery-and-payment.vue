@@ -72,12 +72,12 @@ const control = 'absolute end-4 top-3 size-5'
         :items="deliveryOptions.map(({ label, value }) => ({ label, value }))"
         :ui="{ base: deliveryBase, content: deliveryContent, control }"
       >
-        <template #item-label="{ item }">
+        <template #item-label="{ index }">
           <div class="flex flex-col gap-1">
-            <span>{{ item.label }}</span>
-            <Description>{{ item.description }}</Description>
+            <span>{{ deliveryOptions[index]!.label }}</span>
+            <Description>{{ deliveryOptions[index]!.description }}</Description>
           </div>
-          <span class="text-sm font-semibold">{{ item.price }}</span>
+          <span class="text-sm font-semibold">{{ deliveryOptions[index]!.price }}</span>
         </template>
       </RadioGroup>
     </section>
@@ -90,11 +90,11 @@ const control = 'absolute end-4 top-3 size-5'
         :items="paymentOptions.map(({ label, value }) => ({ label, value }))"
         :ui="{ base: paymentBase, content: paymentContent, control }"
       >
-        <template #item-label="{ item }">
-          <Icon class="size-6" :icon="item.icon" />
+        <template #item-label="{ index }">
+          <Icon class="size-6" :icon="paymentOptions[index]!.icon" />
           <div class="flex flex-col gap-1">
-            <span>{{ item.label }}</span>
-            <Description>{{ item.description }}</Description>
+            <span>{{ paymentOptions[index]!.label }}</span>
+            <Description>{{ paymentOptions[index]!.description }}</Description>
           </div>
         </template>
       </RadioGroup>

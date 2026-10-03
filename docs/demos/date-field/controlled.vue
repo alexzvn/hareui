@@ -2,9 +2,9 @@
 import type { DateValue } from '@internationalized/date'
 import { getLocalTimeZone, today } from '@internationalized/date'
 import { Button, DateField } from '@hareui/vue'
-import { ref } from 'vue'
+import { shallowRef } from 'vue'
 
-const value = ref<DateValue | null>(null)
+const value = shallowRef<DateValue | null>(null)
 </script>
 
 <template>

@@ -3,10 +3,10 @@ import type { DateRange } from '@hareui/vue'
 import type { DateValue } from '@internationalized/date'
 import { Button, ButtonGroup, Description, RangeCalendar } from '@hareui/vue'
 import { getLocalTimeZone, parseDate, startOfMonth, startOfWeek, today } from '@internationalized/date'
-import { ref } from 'vue'
+import { shallowRef } from 'vue'
 
-const value = ref<DateRange | undefined>()
-const focusedDate = ref<DateValue>(parseDate('2025-12-25'))
+const value = shallowRef<DateRange | undefined>()
+const focusedDate = shallowRef<DateValue>(parseDate('2025-12-25'))
 </script>
 
 <template>
