@@ -100,7 +100,7 @@ export interface TextFieldSlots {
 </script>
 
 <script setup lang="ts">
-import { computed, provide, ref, toRef, useAttrs, useId, useTemplateRef } from 'vue'
+import { computed, provide, ref, toRef, useAttrs, useId, useTemplateRef, watch } from 'vue'
 import { useComponentUI } from '../../composables/useComponentUI'
 import { useFieldValidation } from '../../composables/useFieldValidation'
 import Description from '../description/Description.vue'
@@ -116,8 +116,23 @@ const props = withDefaults(defineProps<TextFieldProps>(), { type: 'text', invali
 const slots = defineSlots<TextFieldSlots>()
 /** The input value. */
 const modelValue = defineModel<string | number>()
-if (modelValue.value === undefined && props.defaultValue !== undefined)
-  modelValue.value = props.defaultValue
+// `defaultValue` seeds the field without emitting `update:modelValue` on mount (RAC's `onChange` only reports
+// changes). Writes that don't change the value (an inner Input mirroring the same value) don't emit either.
+const uncontrolledValue = ref(props.defaultValue)
+watch(modelValue, (v) => {
+  // A parent clearing its v-model clears the field, not back to an earlier typed value
+  if (v === undefined)
+    uncontrolledValue.value = undefined
+})
+const value = computed<string | number | undefined>({
+  get: () => modelValue.value ?? uncontrolledValue.value,
+  set: (v) => {
+    if (v === value.value)
+      return
+    uncontrolledValue.value = v
+    modelValue.value = v
+  },
+})
 
 // Attributes that belong to the input (as in HeroUI, where TextField passes them to its Input), matched case-insensitively
 // so `maxlength` and `maxLength` both work. Everything else stays on the wrapper div.
@@ -133,14 +148,14 @@ const rootAttrs = computed(() => Object.fromEntries(Object.entries(attrs).filter
 
 const root = useTemplateRef<HTMLElement>('root')
 const { validation } = useFieldValidation({
-  value: () => modelValue.value ?? '',
+  value: () => value.value ?? '',
   validate: () => props.validate,
   invalid: () => props.invalid,
   validationBehavior: () => props.validationBehavior,
   name: () => props.name,
   root: () => root.value,
   onReset: () => {
-    modelValue.value = props.defaultValue ?? ''
+    value.value = props.defaultValue ?? ''
   },
 })
 const invalid = computed(() => validation.value.isInvalid)
@@ -181,7 +196,7 @@ provide(textFieldContextKey, {
   variant: toRef(() => props.variant),
   fullWidth: toRef(() => props.fullWidth),
   inputAttrs,
-  model: modelValue,
+  model: value,
   name: toRef(() => props.name),
   type: toRef(() => props.type),
 })

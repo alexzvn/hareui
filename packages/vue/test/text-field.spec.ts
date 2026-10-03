@@ -91,3 +91,15 @@ describe('TextField', () => {
     expect(slotted.get('input').attributes('aria-labelledby')).toBe('heading')
   })
 })
+
+describe('TextField model parity', () => {
+  // behaviour-final-check: RAC's onChange does not fire for the default value
+  it('does not emit update:modelValue on mount with defaultValue, but still shows and submits it', async () => {
+    const wrapper = mount(TextField, { props: { defaultValue: 'jane', name: 'user' } })
+    expect(wrapper.emitted('update:modelValue')).toBeUndefined()
+    const input = wrapper.get('input')
+    expect((input.element as HTMLInputElement).value).toBe('jane')
+    await input.setValue('janet')
+    expect(wrapper.emitted('update:modelValue')).toEqual([['janet']])
+  })
+})
