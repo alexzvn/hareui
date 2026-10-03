@@ -136,6 +136,7 @@ export const sidebar: SidebarSection[] = [
       { separator: 'Overview' },
       { text: 'All Releases', link: r('') },
       { separator: 'Versions' },
+      { text: 'v0.1.2', link: r('v0-1-2') },
       { text: 'v0.1.1', link: r('v0-1-1') },
       { text: 'v0.1.0', link: r('v0-1-0') },
     ],
