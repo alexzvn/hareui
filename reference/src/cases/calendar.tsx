@@ -47,3 +47,9 @@ cases['calendar-indicator'] = () => <Cal defaultValue={parseDate('2025-01-15')} 
 // March 2024 spans 6 calendar weeks (Fri Mar 1 -> Sun Mar 31).
 cases['calendar-six-week-month'] = () => <Cal defaultFocusedValue={undefined} defaultValue={parseDate('2024-03-15')} />
 cases['calendar-min-max'] = () => <Cal minValue={parseDate('2025-01-10')} maxValue={parseDate('2025-01-20')} />
+
+// Week view / day view (visibleDuration). Jan 2025 never contains "today".
+cases['calendar-week-view'] = () => <Cal visibleDuration={{ weeks: 1 }} defaultValue={parseDate('2025-01-15')} />
+cases['calendar-week-view-multiple'] = () => <Cal visibleDuration={{ weeks: 3 }} />
+cases['calendar-day-view'] = () => <Cal visibleDuration={{ days: 5 }} defaultValue={parseDate('2025-01-15')} />
+cases['calendar-day-view-long'] = () => <Cal visibleDuration={{ days: 10 }} />

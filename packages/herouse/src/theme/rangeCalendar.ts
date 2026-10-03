@@ -13,9 +13,12 @@
 // adjacent-month day shown to fill the grid).
 // State variants use `[&:where([data-…])]:` (zero added specificity) so a consumer's plain
 // `data-[selected]:…` override always wins over the theme regardless of class order.
+// Hover rules sit in `@media (hover: hover)` as in HeroUI (Tailwind v4's `hover:` adds it on its own; the arbitrary
+// `[&:where(:hover…)]:` selectors need the explicit `[@media(hover:hover)]:` wrapper).
 export default {
   slots: {
-    base: '[container-type:inline-size] w-63 max-w-63',
+    // `calendar-year-picker.css`: the year grid is absolutely positioned over the day grid
+    base: '[container-type:inline-size] w-63 max-w-63 group/calendar has-[>[data-slot=calendar-year-picker-grid]]:relative',
     // Multi-month layout (`numberOfMonths > 1`), translated from the HeroUI docs'
     // multiple-months demo markup (free composition in React, baked in here for Option A).
     panels: 'mx-auto flex w-max gap-8',
@@ -37,7 +40,12 @@ export default {
       'disabled:status-disabled aria-disabled:status-disabled [&:where([data-disabled])]:status-disabled',
     ],
     navButtonIcon: 'size-4 rtl:rotate-180',
-    grid: 'grid w-full grid-cols-7 aria-readonly:[&_[data-slot=range-calendar-cell]]:pointer-events-none',
+    grid: [
+      'grid w-full grid-cols-7 aria-readonly:[&_[data-slot=range-calendar-cell]]:pointer-events-none',
+      // `calendar-year-picker.css` crossfade: the day grid fades out (then hides) while the year grid is open
+      'group-has-[>[data-slot=calendar-year-picker-grid]]/calendar:will-change-[opacity] group-has-[>[data-slot=calendar-year-picker-grid]]/calendar:[transition:opacity_150ms_var(--ease-out),visibility_0ms_linear] motion-reduce:transition-none',
+      'group-has-[>[data-slot=calendar-year-picker-grid][data-open=true]]/calendar:pointer-events-none group-has-[>[data-slot=calendar-year-picker-grid][data-open=true]]/calendar:opacity-0 group-has-[>[data-slot=calendar-year-picker-grid][data-open=true]]/calendar:invisible group-has-[>[data-slot=calendar-year-picker-grid][data-open=true]]/calendar:[transition:opacity_150ms_var(--ease-out),visibility_0ms_linear_150ms]',
+    ],
     gridHeader: 'contents [&>tr]:contents',
     gridBody: 'contents [&>tr]:contents [&>tr:first-child>td]:mt-1',
     gridRow: 'contents',
@@ -47,12 +55,14 @@ export default {
       'cursor-(--cursor-interactive)',
       'transform-gpu motion-reduce:transition-none [transition:box-shadow_100ms_var(--ease-out),border-color_100ms_var(--ease-out)]',
       // Focus
-      '[&:where(:focus-visible:not([data-focused]))]:z-2 [&:where([data-focus-visible=true])]:z-2',
-      '[&:where(:focus-visible:not([data-focused]))]:[&_[data-slot=range-calendar-cell-button]]:status-focused',
+      // HeroUI's `:focus-visible:not([data-focused])`: RAC's `data-focused` flags pointer focus. Reka's `data-focused`
+      // marks the focused date instead, so RangeCalendar flags pointer focus with `data-pointer-focus`.
+      '[&:where(:focus-visible:not([data-pointer-focus]))]:z-2 [&:where([data-focus-visible=true])]:z-2',
+      '[&:where(:focus-visible:not([data-pointer-focus]))]:[&_[data-slot=range-calendar-cell-button]]:status-focused',
       '[&:where([data-focus-visible=true])]:[&_[data-slot=range-calendar-cell-button]]:status-focused',
       // Today
       '[&:where([data-today]:not([data-selected]),[data-today]:is([data-disabled],:disabled))]:[&_[data-slot=range-calendar-cell-button]]:bg-accent-soft [&:where([data-today]:not([data-selected]),[data-today]:is([data-disabled],:disabled))]:[&_[data-slot=range-calendar-cell-button]]:text-accent-soft-foreground',
-      '[&:where([data-today]:hover:not([data-selected]))]:[&_[data-slot=range-calendar-cell-button]]:bg-accent-soft-hover',
+      '[@media(hover:hover)]:[&:where([data-today]:hover:not([data-selected]))]:[&_[data-slot=range-calendar-cell-button]]:bg-accent-soft-hover',
       // Range track (middle segment) background; corner radii below are mutually exclusive
       // per side (selection cap > row boundary > plain track) so cascade order never matters.
       '[&:where([data-selected]:not([data-outside-view]):not(:is([data-disabled],:disabled)))]:bg-accent-soft',
@@ -69,10 +79,12 @@ export default {
       '[&:where([data-selection-start]:not([data-outside-view]):not(:is([data-disabled],:disabled)))]:[&_[data-slot=range-calendar-cell-button]]:bg-accent [&:where([data-selection-start]:not([data-outside-view]):not(:is([data-disabled],:disabled)))]:[&_[data-slot=range-calendar-cell-button]]:text-accent-foreground',
       '[&:where([data-selection-end]:not([data-outside-view]):not(:is([data-disabled],:disabled)))]:[&_[data-slot=range-calendar-cell-button]]:bg-accent [&:where([data-selection-end]:not([data-outside-view]):not(:is([data-disabled],:disabled)))]:[&_[data-slot=range-calendar-cell-button]]:text-accent-foreground',
       // Pressed
-      'active:[&_[data-slot=range-calendar-cell-button]]:[scale:0.9]',
-      '[&:where(:active[data-selection-start])]:[&_[data-slot=range-calendar-cell-button]]:bg-accent-hover [&:where(:active[data-selection-end])]:[&_[data-slot=range-calendar-cell-button]]:bg-accent-hover',
+      'active:[&_[data-slot=range-calendar-cell-button]]:[scale:0.9] [&:where([data-pressed=true])]:[&_[data-slot=range-calendar-cell-button]]:[scale:0.9]',
+      // HeroUI declares the pressed cap after the cap colour; Tailwind sorts the two identical-specificity rules the other
+      // way, so the pressed selector carries one attribute's worth of specificity (outside `:where`) to win.
+      '[&:is(:active,[data-pressed=true]):where([data-selection-start])]:[&_[data-slot=range-calendar-cell-button]]:bg-accent-hover [&:is(:active,[data-pressed=true]):where([data-selection-end])]:[&_[data-slot=range-calendar-cell-button]]:bg-accent-hover',
       // Hover (non-selected only)
-      '[&:where(:hover:not([data-selected]))]:[&_[data-slot=range-calendar-cell-button]]:bg-default',
+      '[@media(hover:hover)]:[&:where(:hover:not([data-selected]))]:[&_[data-slot=range-calendar-cell-button]]:bg-default',
       // Outside current month
       '[&:where([data-outside-view])]:text-muted [&:where([data-outside-view])]:opacity-50',
       '[&:where([data-selected][data-outside-view]:not([data-selection-start]):not([data-selection-end]))]:bg-default/20',
@@ -111,9 +123,29 @@ export default {
       'origin-center transform-gpu motion-reduce:transition-none',
       '[transition:color_100ms_var(--ease-smooth),scale_100ms_var(--ease-smooth),opacity_100ms_var(--ease-smooth),background-color_100ms_var(--ease-smooth),box-shadow_100ms_var(--ease-out)]',
       'cursor-(--cursor-interactive)',
-      '[&:where(:hover:not([data-selected]))]:bg-default [&:where(:hover:not([data-selected]))]:text-default-foreground',
-      '[&:where([data-selected])]:bg-accent [&:where([data-selected])]:text-accent-foreground [&:where([data-selected]:hover)]:bg-accent-hover',
+      '[@media(hover:hover)_and_(pointer:fine)]:[&:where(:hover:not([data-selected]))]:bg-default [@media(hover:hover)_and_(pointer:fine)]:[&:where(:hover:not([data-selected]))]:text-default-foreground',
+      '[&:where([data-selected])]:bg-accent [&:where([data-selected])]:text-accent-foreground [@media(hover:hover)_and_(pointer:fine)]:[&:where([data-selected]:hover)]:bg-accent-hover',
       'focus-visible:status-focused',
     ],
+  },
+  // `visibleDuration` week/day views (`.calendar--week-view` / `.calendar--day-view`), rendered by the
+  // custom grid in the component (Reka only builds month grids).
+  variants: {
+    view: {
+      month: {},
+      week: {
+        cell: 'aspect-square size-auto w-full place-self-center',
+      },
+      day: {
+        cell: 'aspect-square size-auto w-full place-self-center',
+        // Separate 7-column grids for header and body, so fewer than 7 weekday headers don't share a row with dates
+        grid: 'flex flex-col',
+        gridHeader: 'grid w-full grid-cols-7 [&>tr]:contents',
+        gridBody: 'mt-1 grid w-full grid-cols-7 [&>tr]:contents [&>tr:first-child>td]:mt-0',
+      },
+    },
+  },
+  defaultVariants: {
+    view: 'month',
   },
 }

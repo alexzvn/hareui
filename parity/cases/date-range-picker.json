@@ -1,0 +1,69 @@
+[
+  {
+    "id": "date-range-picker-default",
+    "component": "date-range-picker",
+    "actions": ["hover"],
+    "ignoreSlots": [],
+    "target": "#case [data-slot=date-range-picker-trigger]"
+  },
+  {
+    "id": "date-range-picker-empty",
+    "component": "date-range-picker",
+    "actions": ["focus"],
+    "ignoreSlots": []
+  },
+  {
+    "id": "date-range-picker-secondary",
+    "component": "date-range-picker",
+    "actions": [],
+    "ignoreSlots": []
+  },
+  {
+    "id": "date-range-picker-required",
+    "component": "date-range-picker",
+    "actions": [],
+    "ignoreSlots": []
+  },
+  {
+    "id": "date-range-picker-disabled",
+    "component": "date-range-picker",
+    "actions": [],
+    "ignoreSlots": []
+  },
+  {
+    "id": "date-range-picker-invalid",
+    "component": "date-range-picker",
+    "actions": [],
+    "ignoreSlots": []
+  },
+  {
+    "id": "date-range-picker-full-width",
+    "component": "date-range-picker",
+    "actions": [],
+    "ignoreSlots": []
+  },
+  {
+    "id": "date-range-picker-input-container",
+    "component": "date-range-picker",
+    "actions": [],
+    "ignoreSlots": []
+  },
+  {
+    "id": "date-range-picker-open",
+    "component": "date-range-picker",
+    "actions": [],
+    "ignoreSlots": [],
+    "overlay": true,
+    "ignoreProps": ["position", "transform"],
+    "reason": "Reka's floating-ui wrapper positions the popover with an integer-pixel transform on a fixed wrapper; RAC uses absolute fractional top/left (same as date-picker-open)"
+  },
+  {
+    "id": "date-range-picker-open-unavailable",
+    "component": "date-range-picker",
+    "actions": [],
+    "ignoreSlots": [],
+    "overlay": true,
+    "ignoreProps": ["position", "transform"],
+    "reason": "Reka's floating-ui wrapper positions the popover with an integer-pixel transform on a fixed wrapper; RAC uses absolute fractional top/left (same as date-picker-open)"
+  }
+]

@@ -24,6 +24,21 @@ const sides = ['top', 'right', 'bottom', 'left'] as const
     </section>
 
     <section>
+      <h2 class="mb-2 text-sm font-medium text-muted">Close delay / focus trigger</h2>
+      <div class="flex flex-wrap items-center gap-6 py-10">
+        <Tooltip :delay="0" :close-delay="1000" text="Stays 1s after leaving">
+          <Button variant="secondary">closeDelay 1000</Button>
+        </Tooltip>
+        <Tooltip :delay="0" :close-delay="0" text="Closes immediately">
+          <Button variant="secondary">closeDelay 0</Button>
+        </Tooltip>
+        <Tooltip :delay="0" trigger="focus" text="Only on focus">
+          <Button id="pg-focus-only" variant="secondary">trigger focus</Button>
+        </Tooltip>
+      </div>
+    </section>
+
+    <section>
       <h2 class="mb-2 text-sm font-medium text-muted">Sides (with arrow)</h2>
       <div class="grid grid-cols-3 gap-6 py-10">
         <div />

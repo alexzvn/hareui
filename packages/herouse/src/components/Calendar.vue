@@ -1,5 +1,6 @@
 <script lang="ts">
 import type { DateValue } from '@internationalized/date'
+import type { PageBehavior, VisibleDuration } from '../composables/useCalendarDurationView'
 import type { ComponentSlots } from '../types/tv'
 import theme from '../theme/calendar'
 
@@ -92,6 +93,19 @@ export interface CalendarProps {
   invalid?: boolean
   /** The reading direction of the calendar. */
   dir?: 'ltr' | 'rtl'
+  /**
+   * The visible time range. `{ weeks: n }` shows a week view and `{ days: n }` a day view (a rolling window of
+   * consecutive days); anything else shows the month view (use `number-of-months` for several months).
+   * Navigation advances by the visible range.
+   * @defaultValue { months: 1 }
+   */
+  visibleDuration?: VisibleDuration
+  /**
+   * In week/day views, whether the prev/next buttons and page keys move by the whole visible range
+   * (`'visible'`) or by one week/day (`'single'`).
+   * @defaultValue 'visible'
+   */
+  pageBehavior?: PageBehavior
   /** Additional classes merged into the root element. */
   class?: any
   /** Per-slot class overrides. */
@@ -134,8 +148,10 @@ import {
   CalendarPrev,
   CalendarRoot,
 } from 'reka-ui'
-import { computed, ref } from 'vue'
+import { computed, ref, shallowRef } from 'vue'
+import { isDurationView } from '../composables/useCalendarDurationView'
 import { useComponentUI } from '../composables/useComponentUI'
+import CalendarDurationView from './CalendarDurationView.vue'
 import { defaultMaxValue, defaultMinValue, weekStartsOnFromFirstDay } from '../composables/useCalendarBounds'
 import { formatPanelHeading } from '../composables/useCalendarPanelHeading'
 import { useCalendarPlaceholder } from '../composables/useCalendarPlaceholder'
@@ -152,12 +168,15 @@ const props = withDefaults(defineProps<CalendarProps>(), {
   pagedNavigation: false,
   numberOfMonths: 1,
   invalid: false,
+  pageBehavior: 'visible',
 })
 const effectivePagedNavigation = computed(() => props.numberOfMonths > 1 ? true : props.pagedNavigation)
 const emit = defineEmits<CalendarEmits>()
 defineSlots<CalendarSlots>()
 
-const ui = useComponentUI('calendar', theme, () => ({}))
+const viewKind = computed(() => props.visibleDuration?.days != null ? 'day' as const : props.visibleDuration?.weeks != null ? 'week' as const : 'month' as const)
+const durationView = computed(() => isDurationView(props.visibleDuration))
+const ui = useComponentUI('calendar', theme, () => ({ view: viewKind.value }))
 
 const rootInstance = ref<{ $el: HTMLElement } | null>(null)
 const rootEl = computed(() => rootInstance.value?.$el)
@@ -177,6 +196,15 @@ const placeholderModel = useCalendarPlaceholder(
   props.defaultPlaceholder ?? (Array.isArray(initial) ? (initial[0] ?? arraySeedFallback) : initial ?? undefined),
   value => emit('update:placeholder', value),
 )
+
+// Week/day views run outside Reka, so they keep the (uncontrolled) selection here
+const focusedAccessor = { get value() { return placeholderModel.value }, set value(v: DateValue) { placeholderModel.value = v } }
+const durationValue = shallowRef<DateValue | DateValue[] | null | undefined>(props.modelValue ?? props.defaultValue)
+const currentValue = computed(() => props.modelValue !== undefined ? props.modelValue : durationValue.value)
+function onDurationSelect(value: DateValue | DateValue[]) {
+  durationValue.value = value
+  emit('update:modelValue', value)
+}
 
 const isYearPickerOpen = ref(false)
 const focusedYear = computed(() => placeholderModel.value.year)
@@ -199,7 +227,39 @@ const { activeYear: yearPickerActiveYear, gridRef: yearPickerGridRef, onKeyDown:
 </script>
 
 <template>
+  <CalendarDurationView
+    v-if="durationView"
+    kind="calendar"
+    :ui="ui as any"
+    :ui-overrides="props.ui"
+    :root-class="props.class"
+    :aria-label="ariaLabel"
+    :duration="visibleDuration!"
+    :page-behavior="pageBehavior"
+    :focused="focusedAccessor"
+    :value="currentValue"
+    :selection-mode="selectionMode"
+    :min-value="minValue"
+    :max-value="maxValue"
+    :is-date-unavailable="isDateUnavailable"
+    :disabled="disabled"
+    :readonly="readonly"
+    :invalid="invalid"
+    :locale="locale"
+    :first-day-of-week="firstDayOfWeek"
+    :indicator="indicator"
+    :dir="dir"
+    @select="onDurationSelect"
+  >
+    <template v-if="$slots.navIcon" #navIcon="slotProps">
+      <slot name="navIcon" v-bind="slotProps" />
+    </template>
+    <template v-if="$slots.cell" #cell="slotProps">
+      <slot name="cell" v-bind="(slotProps as any)" />
+    </template>
+  </CalendarDurationView>
   <CalendarRoot
+    v-else
     ref="rootInstance"
     v-slot="{ weekDays, grid, locale: resolvedLocale }"
     :model-value="modelValue"

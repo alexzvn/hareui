@@ -1,6 +1,6 @@
 import { mount } from '@vue/test-utils'
 import { describe, expect, it } from 'vitest'
-import { h } from 'vue'
+import { h, nextTick } from 'vue'
 import Button from '../src/components/Button.vue'
 import ButtonGroup from '../src/components/ButtonGroup.vue'
 
@@ -29,10 +29,14 @@ describe('ButtonGroup', () => {
     expect(b!.attributes('disabled')).toBeUndefined()
   })
 
-  it('renders a separator in each Button only with `separator`', () => {
-    const slots = { default: () => [h(Button, () => 'A'), h(Button, () => 'B')] }
+  it('renders a separator in each Button but the first, only with `separator` (like HeroUI)', async () => {
+    const slots = { default: () => [h(Button, () => 'A'), h(Button, () => 'B'), h(Button, () => 'C')] }
     expect(mount(ButtonGroup, { slots }).findAll('[data-slot="button-group-separator"]')).toHaveLength(0)
-    const seps = mount(ButtonGroup, { props: { separator: true }, slots }).findAll('[data-slot="button-group-separator"]')
+    const wrapper = mount(ButtonGroup, { props: { separator: true }, slots })
+    await nextTick()
+    const buttons = wrapper.findAll('[data-slot="button"]')
+    expect(buttons[0]!.find('[data-slot="button-group-separator"]').exists()).toBe(false)
+    const seps = wrapper.findAll('[data-slot="button-group-separator"]')
     expect(seps).toHaveLength(2)
     expect(seps[0]!.attributes('aria-hidden')).toBe('true')
   })

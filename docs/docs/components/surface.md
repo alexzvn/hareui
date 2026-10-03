@@ -32,10 +32,7 @@ Surface comes in semantic variants that describe their prominence level:
 When using form components inside a Surface, use the `variant="secondary"` prop on them to apply
 the lower-emphasis variant suitable for surface backgrounds.
 
-> This demo pairs `Surface` with HeroUI's `TextArea`, which herouse doesn't have yet (Wave 2 scope,
-> not yet built). It's parked rather than ported with a substitute component; once `TextArea` lands,
-> its owner should add `docs/demos/surface/with-form-components.vue` here with `Input` + `TextArea`
-> (matching HeroUI's demo) and this note can be removed.
+<ComponentPreview name="surface/with-form-components" />
 
 ## Customization
 

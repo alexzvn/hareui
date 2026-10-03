@@ -1,6 +1,6 @@
 import type { DateValue } from '@internationalized/date'
 import type { ComputedRef, Ref } from 'vue'
-import { computed, nextTick, ref, watch } from 'vue'
+import { computed, nextTick, onMounted, ref, watch } from 'vue'
 
 export interface UseCalendarYearPickerOptions {
   /** Whether the year grid is open. Mutated directly to close on selection/Escape. */
@@ -60,6 +60,8 @@ export function useCalendarYearPicker(options: UseCalendarYearPickerOptions) {
     })
   })
 
+  // HeroUI sizes the (hidden) year grid on mount and whenever the focused date changes
+  onMounted(() => nextTick(syncPosition))
   watch(focusedYear, () => nextTick(syncPosition))
 
   function selectYear(year: number) {

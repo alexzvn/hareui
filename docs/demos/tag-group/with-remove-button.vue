@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import { Icon } from '@iconify/vue'
-import { TagGroup } from 'herouse'
+import { EmptyState, TagGroup } from 'herouse'
 import { ref } from 'vue'
 
 const tags = ref([
@@ -27,12 +27,23 @@ function onRemoveFrameworks(ids: string[]) {
 <template>
   <div class="flex flex-col gap-8">
     <div class="w-sm">
-      <TagGroup selection-mode="single" removable label="Default Remove Button" description="Click the X to remove tags" :items="tags" @remove="onRemoveTags" />
+      <TagGroup selection-mode="single" removable label="Default Remove Button" description="Click the X to remove tags" :items="tags" @remove="onRemoveTags">
+        <template #empty>
+          <EmptyState class="p-1">
+            No categories found
+          </EmptyState>
+        </template>
+      </TagGroup>
     </div>
     <div class="w-md">
       <TagGroup selection-mode="single" removable label="Custom Remove Button" description="Custom remove button with icon" :items="frameworks" @remove="onRemoveFrameworks">
         <template #removeButton>
           <Icon icon="gravity-ui:circle-xmark-fill" />
+        </template>
+        <template #empty>
+          <EmptyState class="p-1">
+            No frameworks found
+          </EmptyState>
         </template>
       </TagGroup>
     </div>

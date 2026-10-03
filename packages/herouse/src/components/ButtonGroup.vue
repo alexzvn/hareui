@@ -50,8 +50,9 @@ export interface ButtonGroupSlots {
 
 <script setup lang="ts">
 import { Primitive } from 'reka-ui'
-import { computed, inject, provide, toRef } from 'vue'
+import { computed, inject, provide, toRef, useTemplateRef } from 'vue'
 import { useComponentUI } from '../composables/useComponentUI'
+import { useFirstChild } from '../composables/useFirstChild'
 import { buttonGroupContextKey } from './buttonGroupContext'
 import { toolbarContextKey } from './toolbarContext'
 
@@ -66,12 +67,15 @@ const orientation = computed(() => props.orientation ?? toolbar?.orientation.val
 const ui = useComponentUI('buttonGroup', theme, () => ({ orientation: orientation.value, fullWidth: props.fullWidth }))
 const toolbarClass = computed(() => toolbar?.ui.value.buttonGroup({ class: toolbar.uiOverrides.value?.buttonGroup }))
 
+const firstChild = useFirstChild(useTemplateRef('root'))
+
 provide(buttonGroupContextKey, {
   variant: toRef(() => props.variant),
   size: toRef(() => props.size),
   disabled: toRef(() => props.disabled),
   fullWidth: toRef(() => props.fullWidth),
   separator: toRef(() => props.separator),
+  firstChild,
   ui,
   uiOverrides: toRef(() => props.ui),
 })
@@ -79,6 +83,7 @@ provide(buttonGroupContextKey, {
 
 <template>
   <Primitive
+    ref="root"
     :as="as"
     role="group"
     data-slot="button-group"

@@ -17,6 +17,19 @@ export interface TooltipProps {
    */
   delay?: number
   /**
+   * Delay in milliseconds before the tooltip closes after the pointer leaves the trigger (and the
+   * tooltip). Blur, press, Escape and opening another tooltip still close it immediately, as in
+   * React Aria.
+   * @defaultValue 500
+   */
+  closeDelay?: number
+  /**
+   * What opens the tooltip. `'hover'` opens it on hover and on focus; `'focus'` opens it only when
+   * the trigger receives focus (hovering neither opens nor closes it).
+   * @defaultValue 'hover'
+   */
+  trigger?: 'hover' | 'focus'
+  /**
    * The preferred side of the trigger to render against.
    * @defaultValue 'top'
    */
@@ -67,7 +80,7 @@ export interface TooltipEmits {
 </script>
 
 <script setup lang="ts">
-import { computed } from 'vue'
+import { computed, onBeforeUnmount, onMounted, ref, watch } from 'vue'
 import { TooltipArrow, TooltipContent, TooltipPortal, TooltipProvider, TooltipRoot, TooltipTrigger } from 'reka-ui'
 import { useComponentUI } from '../composables/useComponentUI'
 
@@ -76,6 +89,8 @@ const props = withDefaults(defineProps<TooltipProps>(), {
   open: undefined,
   defaultOpen: false,
   delay: 1500,
+  closeDelay: 500,
+  trigger: 'hover',
   side: 'top',
   align: 'center',
   arrow: false,
@@ -91,14 +106,91 @@ const ui = useComponentUI('tooltip', theme, () => ({}))
 // so subtract it to keep the HeroUI distance.
 const ARROW_HEIGHT = 12
 const sideOffset = computed(() => (props.sideOffset ?? (props.arrow ? 7 : 3)) - (props.arrow ? ARROW_HEIGHT : 0))
+
+// Reka's TooltipRoot has neither a close delay nor a focus-only mode, so it is driven as a controlled
+// component and its open/close requests are filtered here. A request is "hover-driven" when the
+// pointer last left the trigger/content and nothing else (press, key, blur, another tooltip opening)
+// happened since; capture-phase document listeners run before Reka's own trigger handlers.
+// `tooltip.open` is Reka's TOOLTIP_OPEN event: another tooltip opening closes this one immediately.
+const internalOpen = ref(props.open ?? props.defaultOpen)
+watch(() => props.open, (value) => {
+  if (value !== undefined)
+    internalOpen.value = value
+})
+const isOpen = computed(() => props.open ?? internalOpen.value)
+
+const triggerEl = ref<HTMLElement>()
+const pointerLeft = ref(false)
+let closeTimer: ReturnType<typeof setTimeout> | undefined
+
+function cancelClose() {
+  clearTimeout(closeTimer)
+  closeTimer = undefined
+}
+function commit(value: boolean) {
+  cancelClose()
+  if (value === isOpen.value)
+    return
+  if (props.open === undefined)
+    internalOpen.value = value
+  emit('update:open', value)
+}
+
+function onRootUpdate(value: boolean) {
+  if (value) {
+    // Focus-only: ignore hover-driven opens (Reka opens on pointermove after `delay`).
+    const el = triggerEl.value
+    if (props.trigger === 'focus' && !(el && el.contains(document.activeElement)))
+      return
+    pointerLeft.value = false
+    commit(true)
+    return
+  }
+  if (pointerLeft.value) {
+    // Focus-only: hovering never closes a focus-opened tooltip.
+    if (props.trigger === 'focus')
+      return
+    // A second close request while one is pending comes from something else: close now.
+    if (props.closeDelay > 0 && closeTimer === undefined) {
+      closeTimer = setTimeout(() => commit(false), props.closeDelay)
+      return
+    }
+  }
+  commit(false)
+}
+
+function onPointerLeave(event: PointerEvent) {
+  if (event.pointerType !== 'touch')
+    pointerLeft.value = true
+}
+function onPointerEnter() {
+  // Re-entering the trigger or the still-visible tooltip cancels a pending delayed close (RAC keeps
+  // a tooltip open while it is hovered).
+  pointerLeft.value = false
+  cancelClose()
+}
+function resetPointerLeft() {
+  pointerLeft.value = false
+}
+
+const RESET_EVENTS = ['pointerdown', 'keydown', 'blur', 'focus', 'tooltip.open']
+onMounted(() => {
+  for (const type of RESET_EVENTS)
+    document.addEventListener(type, resetPointerLeft, true)
+})
+onBeforeUnmount(() => {
+  cancelClose()
+  for (const type of RESET_EVENTS)
+    document.removeEventListener(type, resetPointerLeft, true)
+})
 </script>
 
 <template>
   <TooltipProvider>
-    <TooltipRoot :open="open" :default-open="defaultOpen" :delay-duration="delay" :disabled="disabled" @update:open="emit('update:open', $event)">
-      <template #default="{ open: isOpen }">
-        <TooltipTrigger as-child>
-          <slot :open="isOpen" />
+    <TooltipRoot :open="isOpen" :delay-duration="delay" :disabled="disabled" @update:open="onRootUpdate">
+      <template #default="{ open: rootOpen }">
+        <TooltipTrigger :ref="(c: any) => { triggerEl = c?.$el }" as-child @pointerenter="onPointerEnter" @pointerleave="onPointerLeave">
+          <slot :open="rootOpen" />
         </TooltipTrigger>
         <TooltipPortal :disabled="portal === false" :to="typeof portal === 'boolean' ? 'body' : portal">
           <TooltipContent
@@ -106,6 +198,8 @@ const sideOffset = computed(() => (props.sideOffset ?? (props.arrow ? 7 : 3)) - 
             :align="align"
             :side-offset="sideOffset"
             :class="ui.base({ class: [props.ui?.base, props.class] })"
+            @pointerenter="onPointerEnter"
+            @pointerleave="onPointerLeave"
           >
             <slot name="content">
               <span v-if="text">{{ text }}</span>

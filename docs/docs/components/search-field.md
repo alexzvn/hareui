@@ -92,6 +92,12 @@ Bind the value with `v-model` to synchronize counters, previews, or formatting. 
 
 <ComponentPreview name="search-field/variants" />
 
+### With Keyboard Shortcut
+
+Add keyboard shortcuts to quickly focus the search field.
+
+<ComponentPreview name="search-field/with-keyboard-shortcut" />
+
 ### Render Function
 
 HeroUI's `render` prop replaces the root element. In Vue, attributes you pass to `SearchField` (other than `aria-label` / `aria-labelledby`, which go to the input) fall through to the root `div`.

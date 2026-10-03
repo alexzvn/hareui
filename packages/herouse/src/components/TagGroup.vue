@@ -81,7 +81,10 @@ export interface TagGroupSlots {
   'item'?: (props: { item: TagGroupItem, index: number, selected: boolean, disabled: boolean }) => any
   /** Content of each tag's remove button (shown when `removable`). Replaces the default close icon. */
   'removeButton'?: (props: { item: TagGroupItem, index: number }) => any
-  /** Content shown instead of the list when `items` is empty. */
+  /**
+   * Content rendered inside the list when `items` is empty (HeroUI's `renderEmptyState`), usually an
+   * `<EmptyState>`. Nothing is rendered when omitted.
+   */
   'empty'?: () => any
 }
 

@@ -122,7 +122,7 @@ Each rendered element carries the same `data-slot` string as HeroUI, so selector
 
 - ToggleButtonGroup passes `size` to all child ToggleButton components
 - Each ToggleButton needs a unique `value` that corresponds to the values in `v-model` / `default-value`
-- The `disabled` prop disables all child ToggleButtons; individual buttons can override this by setting `:disabled="false"`
+- The `disabled` prop disables all child ToggleButtons. A button can't opt back in with `:disabled="false"`: as in React Aria, the group's `disabled` wins
 - The component automatically handles border radius between buttons
 - Use `disallow-empty-selection` with `selection-mode="single"` to ensure one option is always selected
 

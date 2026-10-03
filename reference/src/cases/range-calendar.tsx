@@ -1,6 +1,7 @@
 import type { DateValue } from '@internationalized/date'
 import type { ReactElement } from 'react'
 import { RangeCalendar } from '@heroui/react'
+import { useEffect, useRef } from 'react'
 import { isWeekend, parseDate } from '@internationalized/date'
 
 export const cases: Record<string, () => ReactElement> = {}
@@ -52,3 +53,23 @@ cases['range-calendar-non-contiguous'] = () => (
     allowsNonContiguousRanges
   />
 )
+
+// Week view / day view (visibleDuration). Jan 2025 never contains "today".
+cases['range-calendar-week-view'] = () => <Cal visibleDuration={{ weeks: 2 }} defaultValue={{ start: parseDate('2025-01-14'), end: parseDate('2025-01-21') }} />
+cases['range-calendar-day-view'] = () => <Cal visibleDuration={{ days: 5 }} defaultValue={{ start: parseDate('2025-01-14'), end: parseDate('2025-01-16') }} />
+cases['range-calendar-day-view-long'] = () => <Cal visibleDuration={{ days: 10 }} defaultValue={{ start: parseDate('2025-01-14'), end: parseDate('2025-01-17') }} />
+
+// Anchor-dependent unavailable dates: click Jan 10 on mount to anchor a range (compare.ts has no click action).
+function AnchorCase() {
+  const ref = useRef<HTMLDivElement>(null)
+  useEffect(() => {
+    const cell = [...(ref.current?.querySelectorAll<HTMLElement>('[data-slot=range-calendar-cell]') ?? [])].find(c => c.getAttribute('aria-label')?.includes('January 10, 2025'))
+    cell?.click()
+  }, [])
+  return (
+    <div ref={ref} className="contents">
+      <Cal minValue={parseDate('2025-01-01')} isDateUnavailable={(date, anchor) => anchor != null && Math.abs(date.compare(anchor)) > 7} />
+    </div>
+  )
+}
+cases['range-calendar-anchor-unavailable'] = () => <AnchorCase />

@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { Table } from 'herouse'
+import { EmptyState, Table } from 'herouse'
 import { Icon } from '@iconify/vue'
 
 const columns = [
@@ -13,10 +13,10 @@ const columns = [
 <template>
   <Table aria-label="Empty table" class="min-h-[200px]" :columns="columns" :rows="[]" :ui="{ content: 'h-full min-w-[600px]' }">
     <template #empty>
-      <div class="flex h-full w-full flex-col items-center justify-center gap-4 text-center">
+      <EmptyState class="flex h-full w-full flex-col items-center justify-center gap-4 text-center">
         <Icon class="size-6 text-muted" icon="gravity-ui:tray" />
         <span class="text-sm text-muted">No results found</span>
-      </div>
+      </EmptyState>
     </template>
   </Table>
 </template>

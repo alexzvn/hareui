@@ -59,8 +59,9 @@ export interface ToggleButtonSlots {
 
 <script setup lang="ts">
 import { RovingFocusItem, Toggle } from 'reka-ui'
-import { computed, inject, ref, watch } from 'vue'
+import { computed, inject, ref, useTemplateRef, watch } from 'vue'
 import { useComponentUI } from '../composables/useComponentUI'
+import { refElement } from '../composables/useFirstChild'
 import { useFieldsetDisabled } from './fieldsetContext'
 import { toggleButtonGroupContextKey } from './toggleButtonGroupContext'
 
@@ -78,7 +79,7 @@ watch(() => props.defaultValue, value => (local.value = value ?? false))
 const selected = computed(() => group
   ? props.value !== undefined && group.selected.value.includes(props.value)
   : props.modelValue ?? local.value)
-const isDisabled = useFieldsetDisabled(() => props.disabled ?? group?.disabled.value)
+const isDisabled = useFieldsetDisabled(() => props.disabled || group?.disabled.value || undefined)
 
 function onUpdate(value: boolean) {
   if (group) {
@@ -96,6 +97,10 @@ const ui = useComponentUI('toggleButton', theme, () => ({
   iconOnly: props.iconOnly,
 }))
 
+// HeroUI renders `ToggleButtonGroup.Separator` in every grouped button except the first.
+const self = useTemplateRef<unknown>('self')
+const showSeparator = computed((): boolean => !!group?.separator.value && group.firstChild.value !== refElement(self.value))
+
 const groupClass = computed(() => group?.ui.value.button({ class: group.uiOverrides.value?.button }))
 
 // Inside a single-selection group the buttons are radios, as in React Aria.
@@ -107,6 +112,7 @@ const roleAttrs = computed(() => group?.selectionMode.value === 'single'
 <template>
   <RovingFocusItem v-if="group?.roving" as-child :focusable="!isDisabled" :active="selected">
     <Toggle
+      ref="self"
       :as="as"
       :model-value="selected"
       :disabled="isDisabled"
@@ -117,16 +123,17 @@ const roleAttrs = computed(() => group?.selectionMode.value === 'single'
       @update:model-value="onUpdate"
     >
       <span
-        v-if="group.separator.value"
+        v-if="showSeparator"
         aria-hidden="true"
         data-slot="toggle-button-group-separator"
-        :class="group.ui.value.separator({ class: group.uiOverrides.value?.separator })"
+        :class="group!.ui.value.separator({ class: group!.uiOverrides.value?.separator })"
       />
       <slot :selected="selected" :disabled="isDisabled" />
     </Toggle>
   </RovingFocusItem>
   <Toggle
     v-else
+    ref="self"
     :as="as"
     :model-value="selected"
     :disabled="isDisabled"
@@ -137,10 +144,10 @@ const roleAttrs = computed(() => group?.selectionMode.value === 'single'
     @update:model-value="onUpdate"
   >
     <span
-      v-if="group?.separator.value"
+      v-if="showSeparator"
       aria-hidden="true"
       data-slot="toggle-button-group-separator"
-      :class="group?.ui.value.separator({ class: group.uiOverrides.value?.separator })"
+      :class="group!.ui.value.separator({ class: group!.uiOverrides.value?.separator })"
     />
     <slot :selected="selected" :disabled="isDisabled" />
   </Toggle>

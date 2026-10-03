@@ -1,4 +1,4 @@
-import { CalendarDate } from '@internationalized/date'
+import { CalendarDate, parseDate } from '@internationalized/date'
 import { mount } from '@vue/test-utils'
 import { describe, expect, it } from 'vitest'
 import { nextTick } from 'vue'
@@ -96,6 +96,46 @@ describe('calendar', () => {
     const root = wrapper.find('[data-slot=calendar]')
     expect(root.attributes('aria-invalid')).toBe('true')
     expect(root.attributes('data-invalid')).toBe('')
+    wrapper.unmount()
+  })
+})
+
+describe('calendar week/day view (visibleDuration)', () => {
+  const cells = (w: { findAll: (s: string) => any[] }) => w.findAll('[data-slot=calendar-cell]')
+
+  it('week view renders one 7-day row with a range heading, and pages by the visible weeks', async () => {
+    const wrapper = mount(Calendar, { props: { ariaLabel: 'Week', locale: 'en-US', visibleDuration: { weeks: 1 }, defaultPlaceholder: parseDate('2025-01-15') } })
+    expect(cells(wrapper).map((c: any) => c.text())).toEqual(['12', '13', '14', '15', '16', '17', '18'])
+    expect(wrapper.get('[data-slot=calendar-heading]').text().replace(/\s/g, ' ')).toBe('January 12 – 18, 2025')
+    await wrapper.findAll('[data-slot=calendar-nav-button]')[1]!.trigger('click')
+    expect(cells(wrapper)[0]!.text()).toBe('19')
+  })
+
+  it('day view (< 7 days) shows only the visible days with matching weekday headers', () => {
+    const wrapper = mount(Calendar, { props: { ariaLabel: 'Days', locale: 'en-US', visibleDuration: { days: 5 }, defaultPlaceholder: parseDate('2025-01-15') } })
+    expect(cells(wrapper).map((c: any) => c.text())).toEqual(['13', '14', '15', '16', '17'])
+    expect(wrapper.findAll('[data-slot=calendar-header-cell]').map(c => c.text())).toEqual(['Mon', 'Tue', 'Wed', 'Thu', 'Fri'])
+  })
+
+  it('day view (>= 7 days) shows week rows with leading days disabled', () => {
+    const wrapper = mount(Calendar, { props: { ariaLabel: 'Days', locale: 'en-US', visibleDuration: { days: 10 }, defaultPlaceholder: parseDate('2025-01-15') } })
+    const all = cells(wrapper)
+    expect(all[0]!.text()).toBe('5')
+    expect(all[0]!.attributes('data-disabled')).toBe('')
+    expect(all[3]!.attributes('data-disabled')).toBeUndefined()
+    expect(all.at(-1)!.text()).toBe('17')
+  })
+
+  it('clicking selects, arrow keys move focus across pages, Enter selects', async () => {
+    const wrapper = mount(Calendar, { props: { ariaLabel: 'Week', locale: 'en-US', visibleDuration: { weeks: 1 }, defaultPlaceholder: parseDate('2025-01-15') }, attachTo: document.body })
+    await cells(wrapper)[1]!.trigger('click')
+    expect((wrapper.emitted('update:modelValue')!.at(-1)![0] as any).toString()).toBe('2025-01-13')
+    const grid = wrapper.get('[data-slot=calendar-grid]')
+    for (let i = 0; i < 6; i++)
+      await grid.trigger('keydown', { key: 'ArrowRight' })
+    expect(cells(wrapper)[0]!.text()).toBe('19')
+    await grid.trigger('keydown', { key: 'Enter' })
+    expect((wrapper.emitted('update:modelValue')!.at(-1)![0] as any).toString()).toBe('2025-01-19')
     wrapper.unmount()
   })
 })

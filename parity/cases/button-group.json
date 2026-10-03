@@ -62,5 +62,18 @@
     "component": "button-group",
     "actions": [],
     "ignoreSlots": []
+  },
+  {
+    "id": "button-group-dropdown",
+    "component": "button-group",
+    "actions": [],
+    "overlay": true,
+    "ignoreSlots": [],
+    "ignoreProps": [
+      "position",
+      "outline-width",
+      "outline-color"
+    ],
+    "reason": "Reka positions DropdownMenuContent inside a fixed popper wrapper (content is static); RAC positions the popover itself absolutely. Without a selection RAC focuses the menu element, Reka focuses the role=\"menu\" content (our popover); the UA focus outline does not paint on either (screenshots match). Same as dropdown-default."
   }
 ]

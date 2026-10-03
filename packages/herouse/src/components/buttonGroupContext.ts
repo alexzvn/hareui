@@ -9,6 +9,8 @@ export interface ButtonGroupContext {
   disabled: Readonly<Ref<boolean | undefined>>
   fullWidth: Readonly<Ref<boolean | undefined>>
   separator: Readonly<Ref<boolean>>
+  /** The group's first element child; its button renders no separator element (HeroUI places none there). */
+  firstChild: Readonly<Ref<Element | null>>
   ui: ComputedRef<ComponentUI<typeof buttonGroupTheme>>
   uiOverrides: Readonly<Ref<ComponentSlots<typeof buttonGroupTheme> | undefined>>
 }

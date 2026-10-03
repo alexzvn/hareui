@@ -15,9 +15,11 @@ interface FieldProps {
   defaultOpen?: boolean
 }
 
-function Field({ variant, isRequired, isDisabled, isInvalid, fullWidth, ...props }: FieldProps) {
+// HeroUI's DatePicker has no `defaultPlaceholder`; React Aria's `placeholderValue` is the equivalent (it also
+// becomes the calendar's `defaultFocusedValue`).
+function Field({ variant, isRequired, isDisabled, isInvalid, fullWidth, defaultPlaceholder, ...props }: FieldProps) {
   return (
-    <DatePicker className={fullWidth ? 'w-full' : 'w-72'} name="date" isRequired={isRequired} isDisabled={isDisabled} isInvalid={isInvalid} {...props}>
+    <DatePicker className={fullWidth ? 'w-full' : 'w-72'} name="date" isRequired={isRequired} isDisabled={isDisabled} isInvalid={isInvalid} placeholderValue={defaultPlaceholder} {...props}>
       <Label>Date</Label>
       <DateField.Group fullWidth={fullWidth} variant={variant}>
         <DateField.Input>{segment => <DateField.Segment segment={segment} />}</DateField.Input>

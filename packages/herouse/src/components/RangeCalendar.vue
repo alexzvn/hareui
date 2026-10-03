@@ -1,5 +1,6 @@
 <script lang="ts">
 import type { DateValue } from '@internationalized/date'
+import type { PageBehavior, VisibleDuration } from '../composables/useCalendarDurationView'
 import type { ComponentSlots } from '../types/tv'
 import theme from '../theme/rangeCalendar'
 
@@ -100,6 +101,19 @@ export interface RangeCalendarProps {
   invalid?: boolean
   /** The reading direction of the calendar. */
   dir?: 'ltr' | 'rtl'
+  /**
+   * The visible time range. `{ weeks: n }` shows a week view and `{ days: n }` a day view (a rolling window of
+   * consecutive days); anything else shows the month view (use `number-of-months` for several months).
+   * Navigation advances by the visible range.
+   * @defaultValue { months: 1 }
+   */
+  visibleDuration?: VisibleDuration
+  /**
+   * In week/day views, whether the prev/next buttons and page keys move by the whole visible range
+   * (`'visible'`) or by one week/day (`'single'`).
+   * @defaultValue 'visible'
+   */
+  pageBehavior?: PageBehavior
   /** Additional classes merged into the root element. */
   class?: any
   /** Per-slot class overrides. */
@@ -145,7 +159,9 @@ import {
   RangeCalendarRoot,
 } from 'reka-ui'
 import { computed, ref, shallowRef } from 'vue'
+import { isDurationView } from '../composables/useCalendarDurationView'
 import { useComponentUI } from '../composables/useComponentUI'
+import CalendarDurationView from './CalendarDurationView.vue'
 import { defaultMaxValue, defaultMinValue, weekStartsOnFromFirstDay } from '../composables/useCalendarBounds'
 import { formatPanelHeading } from '../composables/useCalendarPanelHeading'
 import { useCalendarPlaceholder } from '../composables/useCalendarPlaceholder'
@@ -162,12 +178,15 @@ const props = withDefaults(defineProps<RangeCalendarProps>(), {
   pagedNavigation: false,
   numberOfMonths: 1,
   invalid: false,
+  pageBehavior: 'visible',
 })
 const effectivePagedNavigation = computed(() => props.numberOfMonths > 1 ? true : props.pagedNavigation)
 const emit = defineEmits<RangeCalendarEmits>()
 defineSlots<RangeCalendarSlots>()
 
-const ui = useComponentUI('rangeCalendar', theme, () => ({}))
+const viewKind = computed(() => props.visibleDuration?.days != null ? 'day' as const : props.visibleDuration?.weeks != null ? 'week' as const : 'month' as const)
+const durationView = computed(() => isDurationView(props.visibleDuration))
+const ui = useComponentUI('rangeCalendar', theme, () => ({ view: viewKind.value }))
 
 const rootInstance = ref<{ $el: HTMLElement } | null>(null)
 const rootEl = computed(() => rootInstance.value?.$el)
@@ -217,6 +236,91 @@ const wrappedIsDateUnavailable = computed(() => {
     return undefined
   return (date: DateValue) => props.isDateUnavailable!(date, anchorValue.value ?? null)
 })
+// react-stately's `getAvailableRange`: while a range is anchored (and non-contiguous ranges are off), the selectable
+// window shrinks to the run of available days around the anchor, which also disables paging past it.
+function edgeOfAvailableRun(anchor: DateValue, dir: 1 | -1) {
+  const span = { months: Math.max(1, props.numberOfMonths) }
+  const limit = dir < 0 ? anchor.subtract(span) : anchor.add(span)
+  let next = anchor.add({ days: dir })
+  while ((dir < 0 ? next.compare(limit) >= 0 : next.compare(limit) <= 0) && !wrappedIsDateUnavailable.value!(next))
+    next = next.add({ days: dir })
+  return wrappedIsDateUnavailable.value!(next) ? next.add({ days: -dir }) : undefined
+}
+const availableRun = computed(() => {
+  const anchor = anchorValue.value
+  if (!anchor || !wrappedIsDateUnavailable.value || props.allowNonContiguousRanges)
+    return null
+  return { start: edgeOfAvailableRun(anchor, -1), end: edgeOfAvailableRun(anchor, 1) }
+})
+const effectiveMinValue = computed(() => {
+  const start = availableRun.value?.start
+  return start && start.compare(minValue.value) > 0 ? start : minValue.value
+})
+const effectiveMaxValue = computed(() => {
+  const end = availableRun.value?.end
+  return end && end.compare(maxValue.value) < 0 ? end : maxValue.value
+})
+// React Aria highlights `anchor..focused`, so a freshly anchored day is both the selection start and end (a full
+// cap); Reka only marks it as the start.
+// React Aria anchors a range on mouse press start (`useCalendarCell`'s `onPressStart` -> `selectDate`), so the
+// pressed day shows as the anchor while the button is still down; Reka only commits on `click`. Run Reka's own click
+// handler on `pointerdown` (keeping its state machine consistent) and swallow the native click that follows the
+// release. Only the first press of a selection is moved; the closing press still commits on click, as React Aria
+// commits it on press-up.
+let swallowClickOn: HTMLElement | null = null
+function onCellPointerDown(event: PointerEvent) {
+  if (event.button !== 0)
+    return
+  const el = event.currentTarget as HTMLElement
+  if (el.hasAttribute('data-disabled') || el.hasAttribute('data-unavailable') || el.hasAttribute('data-outside-view'))
+    return
+  // RAC's `usePress` focuses the pressed cell from script and flags pointer focus with `data-focused` (no
+  // `data-focus-visible`), which keeps HeroUI's focus ring off. Reka's `data-focused` means "focused date" instead,
+  // so pointer focus is flagged with `data-pointer-focus` until blur.
+  event.preventDefault()
+  el.setAttribute('data-pointer-focus', '')
+  el.addEventListener('blur', () => el.removeAttribute('data-pointer-focus'), { once: true })
+  el.focus()
+  // Chrome drops `:active` once Reka re-renders the pressed cell, so mirror RAC's `data-pressed` (which HeroUI's
+  // CSS styles alongside `:active`) until the press ends.
+  el.setAttribute('data-pressed', 'true')
+  const release = () => el.removeAttribute('data-pressed')
+  window.addEventListener('pointerup', release, { once: true })
+  window.addEventListener('pointercancel', release, { once: true })
+  if (event.pointerType === 'touch' || props.disabled || props.readonly || anchorValue.value)
+    return
+  // Deferred: a synchronous `click()` inside `pointerdown` would run before the press styles apply
+  setTimeout(() => el.click())
+  swallowClickOn = el
+  let synthetic = true
+  const onClick = (click: Event) => {
+    if (synthetic) {
+      synthetic = false
+      return
+    }
+    if (swallowClickOn === el)
+      click.stopImmediatePropagation()
+    swallowClickOn = null
+    el.removeEventListener('click', onClick, true)
+  }
+  el.addEventListener('click', onClick, true)
+  window.addEventListener('pointerup', () => setTimeout(() => {
+    swallowClickOn = null
+  }), { once: true })
+}
+
+function isLoneAnchor(date: DateValue) {
+  return !!anchorValue.value && date.compare(anchorValue.value) === 0
+}
+
+// Week/day views run outside Reka, so they keep the (uncontrolled) selection here
+const focusedAccessor = { get value() { return placeholderModel.value }, set value(v: DateValue) { placeholderModel.value = v } }
+const durationValue = shallowRef<DateRange | undefined>(props.modelValue ?? props.defaultValue)
+const currentValue = computed(() => props.modelValue !== undefined ? props.modelValue : durationValue.value)
+function onDurationSelect(value: DateRange) {
+  durationValue.value = value
+  emit('update:modelValue', value)
+}
 function onModelValueUpdate(value: DateRange | undefined) {
   emit('update:modelValue', value)
   anchorValue.value = value?.end === undefined ? value?.start : undefined
@@ -224,14 +328,46 @@ function onModelValueUpdate(value: DateRange | undefined) {
 </script>
 
 <template>
+  <CalendarDurationView
+    v-if="durationView"
+    kind="range"
+    :ui="ui as any"
+    :ui-overrides="props.ui"
+    :root-class="props.class"
+    :aria-label="ariaLabel"
+    :duration="visibleDuration!"
+    :page-behavior="pageBehavior"
+    :focused="focusedAccessor"
+    :value="currentValue"
+    :min-value="minValue"
+    :max-value="maxValue"
+    :is-date-unavailable="isDateUnavailable"
+    :allow-non-contiguous-ranges="allowNonContiguousRanges"
+    :disabled="disabled"
+    :readonly="readonly"
+    :invalid="invalid"
+    :locale="locale"
+    :first-day-of-week="firstDayOfWeek"
+    :indicator="indicator"
+    :dir="dir"
+    @select="onDurationSelect"
+  >
+    <template v-if="$slots.navIcon" #navIcon="slotProps">
+      <slot name="navIcon" v-bind="slotProps" />
+    </template>
+    <template v-if="$slots.cell" #cell="slotProps">
+      <slot name="cell" v-bind="(slotProps as any)" />
+    </template>
+  </CalendarDurationView>
   <RangeCalendarRoot
+    v-else
     ref="rootInstance"
     v-slot="{ weekDays, grid, locale: resolvedLocale }"
     :model-value="modelValue"
     :default-value="defaultValue"
     v-model:placeholder="placeholderModel"
-    :min-value="minValue"
-    :max-value="maxValue"
+    :min-value="effectiveMinValue"
+    :max-value="effectiveMaxValue"
     :is-date-unavailable="wrappedIsDateUnavailable"
     :disabled="disabled"
     :readonly="readonly"
@@ -310,6 +446,8 @@ function onModelValueUpdate(value: DateRange | undefined) {
             <RangeCalendarCellTrigger
               :day="weekDate"
               :month="grid[0]?.value ?? weekDate"
+              v-bind="isLoneAnchor(weekDate) ? { 'data-selection-end': true } : {}"
+              @pointerdown="onCellPointerDown"
               data-slot="range-calendar-cell"
               :class="ui.cell({ class: props.ui?.cell })"
               v-slot="{ dayValue, today, selected, disabled: cellDisabled, unavailable, outsideView, selectionStart, selectionEnd }"
@@ -380,6 +518,8 @@ function onModelValueUpdate(value: DateRange | undefined) {
                   <RangeCalendarCellTrigger
                     :day="weekDate"
                     :month="month.value"
+                    v-bind="isLoneAnchor(weekDate) ? { 'data-selection-end': true } : {}"
+              @pointerdown="onCellPointerDown"
                     data-slot="range-calendar-cell"
                     :class="ui.cell({ class: props.ui?.cell })"
                     v-slot="{ dayValue, today, selected, disabled: cellDisabled, unavailable, outsideView, selectionStart, selectionEnd }"

@@ -55,6 +55,26 @@ a `Chip`, an icon), wrap it in an `inline-block` element with `role="button"` an
 
 <ComponentPreview name="tooltip/custom-trigger" />
 
+### Delays and Focus-Only Trigger
+
+`delay` (default `1500`) and `close-delay` (default `500`) match HeroUI's `--tooltip-delay` / `--tooltip-close-delay` defaults. The close delay applies only when the pointer leaves the trigger or tooltip; moving back in cancels it. Blur, press, Escape and another tooltip opening close it immediately. `trigger="focus"` opens the tooltip only when the trigger gets focus, and hovering neither opens nor closes it.
+
+```vue
+<Tooltip :delay="0" :close-delay="1000" text="Stays open for a second">
+  <Button variant="secondary">Close delay</Button>
+</Tooltip>
+
+<Tooltip trigger="focus" text="Shown on focus only">
+  <Button variant="secondary">Focus me</Button>
+</Tooltip>
+```
+
+### Known differences from HeroUI
+
+- **No cross-tooltip warm-up.** React Aria shares one global timer, so once any tooltip has opened, the next one opens instantly. Each herouse Tooltip has its own Reka provider, so every tooltip waits for its own `delay`.
+- **Sub-pixel position drift.** Reka positions the content with floating-ui and React Aria uses its own overlay maths. The two can differ by under a pixel.
+- **Delays are props, not CSS variables.** HeroUI reads its defaults from `--tooltip-delay` / `--tooltip-close-delay` at runtime. herouse uses the same values as prop defaults, so changing those variables has no effect.
+
 ## Customization
 
 ### Tailwind CSS

@@ -11,6 +11,8 @@ export interface ToggleButtonGroupContext {
   toggle: (value: string) => void
   size: Readonly<Ref<ToggleButtonProps['size']>>
   separator: Readonly<Ref<boolean>>
+  /** The group's first element child; its button renders no separator element (HeroUI places none there). */
+  firstChild: Readonly<Ref<Element | null>>
   /** False inside a Toolbar: the toolbar owns arrow-key focus, so the buttons are plain tab stops (React Aria). */
   roving: boolean
   ui: ComputedRef<ComponentUI<typeof toggleButtonGroupTheme>>

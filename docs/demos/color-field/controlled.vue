@@ -1,8 +1,9 @@
 <script setup lang="ts">
+import type { Color } from 'herouse'
 import { Button, ColorField, ColorSwatch, colorToString, parseColor } from 'herouse'
 import { ref } from 'vue'
 
-const value = ref(parseColor('#0485F7'))
+const value = ref<Color | null>(parseColor('#0485F7'))
 </script>
 
 <template>
@@ -12,10 +13,10 @@ const value = ref(parseColor('#0485F7'))
       class="w-[280px]"
       name="color"
       label="Color"
-      :description="`Current value: ${colorToString(value, 'hex')}`"
+      :description="`Current value: ${value ? colorToString(value, 'hex') : '(empty)'}`"
     >
       <template #prefix>
-        <ColorSwatch :color="value" size="xs" />
+        <ColorSwatch :color="value ?? undefined" size="xs" />
       </template>
     </ColorField>
     <div class="flex gap-2">
@@ -24,6 +25,9 @@ const value = ref(parseColor('#0485F7'))
       </Button>
       <Button variant="tertiary" @click="value = parseColor('#10B981')">
         Set Green
+      </Button>
+      <Button variant="tertiary" @click="value = null">
+        Clear
       </Button>
     </div>
   </div>

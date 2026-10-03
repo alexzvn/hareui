@@ -72,6 +72,10 @@ When used inside a [Surface](/docs/components/surface) component, use `variant="
 
 <ComponentPreview name="color-field/required" />
 
+::: warning Empty value and forms
+Without `v-model`/`default-value`, or with a `null` model, the input is empty and shows its `placeholder`, as in HeroUI. Reka's ColorField always holds a colour internally, so an empty field still **submits `#000000`** as its form value, and `required` can't block submitting an empty field. Validate with `validate` or check for a `null` model if you need to tell them apart.
+:::
+
 ### Disabled State
 
 <ComponentPreview name="color-field/disabled" />
@@ -94,7 +98,7 @@ ColorField supports editing individual color channels (hue, saturation, lightnes
 
 ### Controlled
 
-Bind the value with `v-model` to synchronize with other components or state management. The committed value is always a `Color` object; use `colorToString(color, 'hex')` to read it as a string.
+Bind the value with `v-model` to synchronize with other components or state management. The committed value is a `Color` object, or `null` when the input is cleared (set the model to `null` to clear it). Use `colorToString(color, 'hex')` to read it as a string.
 
 <ComponentPreview name="color-field/controlled" />
 
