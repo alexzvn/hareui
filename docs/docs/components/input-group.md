@@ -40,7 +40,7 @@ InputGroup wraps an input with optional prefix and suffix elements in one visual
 | `input` | `input-group-textarea` | `<textarea>` (instead of the input, iff `textarea`) |
 | `suffix` | `input-group-suffix` | `<div>` (iff `suffix` / `#suffix`) |
 
-Inside a TextField, the group takes the field's id, name, type, value, `variant`, `fullWidth` and its disabled, invalid, required and read-only states. Its own props win when set. Clicking anywhere in the group outside the input focuses the input.
+Inside a TextField, the group takes the field's id, name, type, value, `variant`, `fullWidth` and its disabled, invalid, required and read-only states. Its own props win when set. Clicking anywhere in the group outside the input focuses the input, except on interactive content such as a suffix button, which keeps focus.
 
 ## Examples
 

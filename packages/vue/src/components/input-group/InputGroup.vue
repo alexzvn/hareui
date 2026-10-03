@@ -159,11 +159,18 @@ const invalid = computed(() => own ? own.validation.value.isInvalid : props.inva
 const hasPrefix = computed(() => !!(props.prefix || slots.prefix))
 const hasSuffix = computed(() => !!(props.suffix || slots.suffix))
 
-// HeroUI focuses the input when anything else in the group is clicked (prefix/suffix padding, a suffix button, …)
+// HeroUI focuses the input when anything else in the group is clicked (prefix/suffix text and padding). Clicks on
+// interactive content (a suffix button) are left alone: RAC's usePress stops their click from reaching the group,
+// so the button keeps focus, and Enter/Space on it don't land in the input.
+const INTERACTIVE = 'a[href], button, input, select, textarea, label, [role=button], [role=link], [tabindex]:not([tabindex="-1"]), [contenteditable=""], [contenteditable=true]'
 function onClick(event: MouseEvent) {
-  const target = event.target as Node
-  if (input.value && target !== input.value && !input.value.contains(target))
-    input.value.focus()
+  const target = event.target as Element
+  if (!input.value || target === input.value || input.value.contains(target))
+    return
+  const interactive = target.closest?.(INTERACTIVE)
+  if (interactive && interactive !== event.currentTarget && (event.currentTarget as Element).contains(interactive))
+    return
+  input.value.focus()
 }
 
 // Shared by the <input> and the <textarea> branch
