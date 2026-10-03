@@ -237,7 +237,7 @@ app.use(createHareUI({
 
 Autocomplete follows the ARIA select-only pattern with a filter field:
 
-- The trigger button opens the popover with click, Enter, Space or the arrow keys; typing on the closed trigger selects the next matching option
+- The trigger button opens the popover with click, Enter, Space or the arrow keys; a mouse press opens on press start, so you can drag onto an option and release to select it. Typing on the closed trigger selects the next matching option
 - Focus moves into the search field; the arrow keys, Home / End and Page Up / Page Down move a virtual focus through the options (`aria-activedescendant`), Enter selects
 - Escape clears the search text first, then closes the popover and returns focus to the trigger
 - The clear button is excluded from the tab order; with `clearable`, Backspace / Delete on the trigger also clears

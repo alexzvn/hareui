@@ -151,6 +151,20 @@ describe('Autocomplete', () => {
 })
 
 describe('Autocomplete behaviour parity (React Aria)', () => {
+  it('a mouse press opens on pointerdown, and the click that ends it keeps the popover open', async () => {
+    // behaviour-final-check A1 (RAC Select trigger opens on press start)
+    const { wrapper, button } = setup()
+    const el = wrapper.get('[data-slot=autocomplete-trigger]').element
+    el.dispatchEvent(new PointerEvent('pointerdown', { bubbles: true, cancelable: true, button: 0, pointerType: 'mouse' }))
+    await flush()
+    expect(button.attributes('aria-expanded')).toBe('true')
+    expect(document.querySelector('[role=listbox]')).not.toBeNull()
+    el.dispatchEvent(new MouseEvent('click', { bubbles: true, cancelable: true, detail: 1 }))
+    await flush()
+    expect(button.attributes('aria-expanded')).toBe('true')
+    wrapper.unmount()
+  })
+
   it('pressing one option, moving to another and releasing selects the option under the pointer', async () => {
     // behaviour-final-check A1
     const { wrapper } = setup()

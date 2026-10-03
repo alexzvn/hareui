@@ -205,6 +205,7 @@ import FieldError from '../field-error/FieldError.vue'
 import Label from '../label/Label.vue'
 import { countRows, filterEntries, flattenEntries, itemText } from '../list-box/listBoxCollection'
 import ListBoxRows from '../list-box/ListBoxRows.vue'
+import { usePressRelease } from '../select/pressRelease'
 
 defineOptions({ inheritAttrs: false })
 
@@ -525,16 +526,37 @@ function clear() {
 }
 
 // ---- Trigger ----------------------------------------------------------------------------------------------------
+// Interactive content (clear button, tag remove buttons) handles its own presses
+function isOwnPress(event: Event) {
+  const interactive = (event.target as Element | null)?.closest('button, [role=button], a, input')
+  return !interactive || interactive === button.value
+}
+// RAC Select trigger: a mouse press toggles on press start (so press-drag-release can select), and the click that
+// ends it is ignored. Touch, pen and keyboard toggle on click.
+let mousePress = false
+function onTriggerPointerdown(event: PointerEvent) {
+  mousePress = false
+  if (props.disabled || event.pointerType !== 'mouse' || event.button !== 0 || !isOwnPress(event))
+    return
+  mousePress = true
+  button.value?.focus()
+  setOpen(!isOpen.value, null)
+}
+function onTriggerMousedown(event: MouseEvent) {
+  // Focus stays where the press put it (the button, or the search field once open)
+  if (mousePress)
+    event.preventDefault()
+}
 function onTriggerClick(event: MouseEvent) {
-  if (props.disabled)
+  if (props.disabled || !isOwnPress(event))
     return
-  // Interactive content (clear button, tag remove buttons) handles its own clicks
-  const target = event.target as Element | null
-  const interactive = target?.closest('button, [role=button], a, input')
-  if (interactive && interactive !== button.value)
+  if (mousePress && event.detail !== 0) {
+    mousePress = false
     return
+  }
   setOpen(!isOpen.value, event.detail === 0 ? 'first' : null)
 }
+const pressRelease = usePressRelease()
 
 // RAC Select: typing on the closed trigger selects the next option whose text starts with the typed string
 let typeahead = ''
@@ -712,6 +734,8 @@ watch(() => props.disabled, (disabled) => {
           :data-focus-within="focusWithin ? 'true' : undefined"
           :data-focus-visible="focusVisible ? 'true' : undefined"
           :class="ui.trigger({ class: props.ui?.trigger })"
+          @pointerdown="onTriggerPointerdown"
+          @mousedown="onTriggerMousedown"
           @click="onTriggerClick"
           @focusin="onFocusIn"
           @focusout="onFocusOut"
@@ -882,6 +906,8 @@ watch(() => props.disabled, (disabled) => {
               :data-empty="countRows(blocks) ? undefined : 'true'"
               :class="listBoxUi.base({ class: props.ui?.listBox })"
               @mousedown.prevent
+              @pointerdown="pressRelease.onPointerdown"
+              @pointerup="pressRelease.onPointerup"
             >
               <ListBoxRows
                 ref="rows"
