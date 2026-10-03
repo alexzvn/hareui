@@ -186,7 +186,10 @@ const ui = useComponentUI('colorArea', theme, () => ({
 </script>
 
 <template>
+  <!-- Reka's root is a wrapper <div> (RAC's root is the area itself); `contents` keeps it out of layout so the
+       area's `w-full max-w-56` sizes against the parent, not a shrink-to-fit wrapper that collapses it to 0px. -->
   <ColorAreaRoot
+    class="contents"
     :model-value="rootModelValue"
     :default-value="defaultValue ?? '#ff0000'"
     :color-space="space"

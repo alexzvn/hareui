@@ -1,6 +1,6 @@
 /**
  * Component thumbnails for the All Components page and the Related Components cards.
- * Screenshots the first demo of every component page from a running docs server, light and dark,
+ * Screenshots the first demo of every component page (or the one picked in PICKS) from a running docs server, light and dark,
  * into public/related-components/{light,dark}-<slug>.png: 874x594 transparent PNGs with the demo
  * centred, the size and layout of HeroUI's docs thumbnails.
  *
@@ -20,6 +20,18 @@ const HEIGHT = 594
 // of the width and half the height as margin, and show small components at roughly 2.4x.
 const MAX_CONTENT = { width: 620, height: 300 }
 const MAX_SCALE = 2.4
+
+// Components whose first demo is a gallery too dense to read at thumbnail size: `demo` names the
+// demo to shoot instead (its ComponentPreview name, e.g. `button-group/variants`), and `select`
+// keeps only the matching elements inside it (`:scope` is the demo's root element). `width` narrows
+// a full-width demo (in CSS px) so it is shot at a readable zoom.
+const PICKS: Record<string, { demo?: string, select?: string, width?: number }> = {
+  'accordion': { select: '[data-slot="accordion-item"]:nth-child(-n+3)', width: 320 },
+  'alert': { select: ':scope > [data-slot="alert-root"]:nth-of-type(2)', width: 380 },
+  'button-group': { demo: 'button-group/variants', select: ':scope > :first-child [data-slot="button-group"]' },
+  'tabs': { width: 320 },
+  'typography': { select: ':scope > :nth-child(-n+3)' },
+}
 
 const PAGES = fileURLToPath(new URL('../docs/components/', import.meta.url))
 const OUT = fileURLToPath(new URL('../public/related-components/', import.meta.url))
@@ -77,24 +89,32 @@ async function shoot(page: Page, clip: Box): Promise<PNG> {
 async function thumbnail(page: Page, slug: string, theme: 'light' | 'dark'): Promise<PNG> {
   await page.setViewport({ width: 1440, height: 900, deviceScaleFactor: 1 })
   await page.goto(`${base}/docs/components/${slug}`, { waitUntil: 'networkidle0', timeout: 120_000 })
-  const found = await page.evaluate((theme) => {
+  const pick = PICKS[slug] ?? {}
+  const found = await page.evaluate((theme, pick) => {
     document.documentElement.classList.toggle('dark', theme === 'dark')
     document.documentElement.style.colorScheme = theme
-    const demo = document.querySelector('.preview > div')
-    demo?.setAttribute('data-thumbnail', '')
-    return !!demo
-  }, theme)
+    const preview = pick.demo ? `.preview[data-name="${pick.demo.replace(/\//g, '-')}"]` : '.preview'
+    const demo = document.querySelector(`${preview} > div`)
+    const root = demo?.firstElementChild as HTMLElement | null | undefined
+    if (root && pick.width)
+      root.style.width = root.style.maxWidth = `${pick.width}px`
+    const targets = root && pick.select ? [...root.querySelectorAll(pick.select)] : demo ? [demo] : []
+    targets.forEach(el => el.setAttribute('data-thumbnail', ''))
+    return targets.length
+  }, theme, pick)
   if (!found)
-    throw new Error('no demo on the page')
+    throw new Error(`no demo on the page${pick.demo || pick.select ? ` for ${JSON.stringify(pick)}` : ''}`)
   await page.addStyleTag({ content: ISOLATE })
   await page.evaluate(() => document.fonts.ready)
   await sleep(300)
 
-  const rect = await page.$eval('[data-thumbnail]', (el) => {
-    const r = el.getBoundingClientRect()
-    const x = Math.floor(r.x + scrollX)
-    const y = Math.floor(r.y + scrollY)
-    return { x, y, width: Math.ceil(r.right + scrollX) - x, height: Math.ceil(r.bottom + scrollY) - y }
+  const rect = await page.$$eval('[data-thumbnail]', (els) => {
+    const rs = els.map(el => el.getBoundingClientRect())
+    const x = Math.floor(Math.min(...rs.map(r => r.left)) + scrollX)
+    const y = Math.floor(Math.min(...rs.map(r => r.top)) + scrollY)
+    const right = Math.ceil(Math.max(...rs.map(r => r.right)) + scrollX)
+    const bottom = Math.ceil(Math.max(...rs.map(r => r.bottom)) + scrollY)
+    return { x, y, width: right - x, height: bottom - y }
   })
   // Pass 1 at 1x finds the demo's ink; pass 2 shoots just that box at the thumbnail's zoom.
   const ink = inkBox(await shoot(page, rect))
