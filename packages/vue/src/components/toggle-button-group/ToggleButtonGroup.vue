@@ -105,6 +105,13 @@ function toggle(value: string) {
   emit('update:modelValue', next)
 }
 
+// Reka's roving focus jumps to the first / last button on Home / End (and PageUp / PageDown); RAC's toggle button
+// group only moves with the arrow keys. Inside a Toolbar the toolbar's own handler already ignores them.
+function onKeydownCapture(event: KeyboardEvent) {
+  if (!toolbar && ['Home', 'End', 'PageUp', 'PageDown'].includes(event.key))
+    event.stopPropagation()
+}
+
 const ui = useComponentUI('toggleButtonGroup', theme, () => ({
   orientation: orientation.value,
   fullWidth: props.fullWidth,
@@ -140,6 +147,7 @@ provide(toggleButtonGroupContextKey, {
     :data-orientation="orientation"
     :data-disabled="isDisabled ? 'true' : undefined"
     :class="ui.base({ class: [props.ui?.base, props.class] })"
+    @keydown.capture="onKeydownCapture"
   >
     <slot :selected="selected" />
   </component>
