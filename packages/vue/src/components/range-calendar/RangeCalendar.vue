@@ -158,12 +158,14 @@ import {
   RangeCalendarPrev,
   RangeCalendarRoot,
 } from 'reka-ui'
-import { computed, ref, shallowRef } from 'vue'
+import { isSameDay, isSameMonth } from '@internationalized/date'
+import { computed, nextTick, onBeforeUnmount, onMounted, ref, shallowRef, watch } from 'vue'
 import { isDurationView } from '../calendar/useCalendarDurationView'
 import { useComponentUI } from '../../composables/useComponentUI'
 import CalendarDurationView from '../calendar/CalendarDurationView.vue'
 import { defaultMaxValue, defaultMinValue, weekStartsOnFromFirstDay } from '../calendar/useCalendarBounds'
 import { formatPanelHeading } from '../calendar/useCalendarPanelHeading'
+import { calendarCellDate, calendarCellFrom, compareDay, focusCalendarCell, useCalendarMonthKeys } from '../calendar/useCalendarMonthKeys'
 import { useCalendarPlaceholder } from '../calendar/useCalendarPlaceholder'
 import { useCalendarYearPicker } from '../calendar/useCalendarYearPicker'
 
@@ -220,98 +222,303 @@ const yearPickerState = useCalendarYearPicker({
 })
 const { activeYear: yearPickerActiveYear, gridRef: yearPickerGridRef, onKeyDown: onYearPickerKeyDown, selectYear: selectYearPickerYear, years: yearPickerYears } = yearPickerState
 
-// React Aria's `isDateUnavailable(date, anchorDate)` lets the matcher depend on the
-// in-progress range's start date (see HeroUI's anchor-unavailable-dates demo). Reka's
-// `Matcher` type is single-argument only (reka-limitation), so we wrap the consumer's
-// 2-arg callback into the 1-arg shape Reka expects, deriving `anchorValue` the same way
-// react-stately's `useRangeCalendarState` does: the anchor is the in-progress start while
-// `end` is still unset, and resets to `null` the instant both are committed (react-stately
-// calls `setAnchorDate(null)` right after `setValue(range)` completes a selection — see
-// `useRangeCalendarState.mjs`'s `selectDate`). Reka's own `startValue` has no such reset
-// (it doubles as the persisted range start), so we derive the anchor from our own
-// `modelValue` flow instead of Reka's `update:startValue` emit to match React's semantics.
-const anchorValue = shallowRef<DateValue | undefined>(undefined)
+// The month view runs React Aria's range state machine (`useRangeCalendarState` + `useCalendarCell`) here and uses
+// Reka only for the grid, focus movement and paging. Reka's own selection is never fed (its model stays empty) and its
+// cell click/Enter/Space handlers are pre-empted in the capture phase: Reka has no live range preview with the
+// selected styling, no press-drag selection, re-anchors its placeholder on every start change and marks unavailable
+// days inside a non-contiguous range as selected. The cell attributes (`data-selected`/`data-selection-start`/
+// `data-selection-end`) are bound from this state and override Reka's.
+const EMPTY_RANGE: DateRange = { start: undefined, end: undefined }
+const internalValue = shallowRef<DateRange | undefined>(props.defaultValue)
+const committed = computed(() => props.modelValue !== undefined ? props.modelValue : internalValue.value)
+// react-stately's `anchorDate`: the first picked day of an in-progress selection, `null` otherwise
+const anchor = shallowRef<DateValue | null>(null)
+// react-stately's `focusedDate` (keyboard focus, or the hovered day while anchored): the preview's moving end
+const focusedDate = shallowRef<DateValue | null>(null)
+let lastEmitted: DateRange | undefined
+
+// React Aria's `isDateUnavailable(date, anchorDate)` lets the matcher depend on the in-progress range's start date
+// (see HeroUI's anchor-unavailable-dates demo). Reka's `Matcher` type is single-argument only (reka-limitation), so
+// the consumer's 2-arg callback is wrapped into the 1-arg shape Reka expects, reading the anchor at call time.
 const wrappedIsDateUnavailable = computed(() => {
   if (!props.isDateUnavailable)
     return undefined
-  return (date: DateValue) => props.isDateUnavailable!(date, anchorValue.value ?? null)
+  return (date: DateValue) => props.isDateUnavailable!(date, anchor.value)
 })
 // react-stately's `getAvailableRange`: while a range is anchored (and non-contiguous ranges are off), the selectable
 // window shrinks to the run of available days around the anchor, which also disables paging past it.
-function edgeOfAvailableRun(anchor: DateValue, dir: 1 | -1) {
+function edgeOfAvailableRun(from: DateValue, dir: 1 | -1) {
   const span = { months: Math.max(1, props.numberOfMonths) }
-  const limit = dir < 0 ? anchor.subtract(span) : anchor.add(span)
-  let next = anchor.add({ days: dir })
+  const limit = dir < 0 ? from.subtract(span) : from.add(span)
+  let next = from.add({ days: dir })
   while ((dir < 0 ? next.compare(limit) >= 0 : next.compare(limit) <= 0) && !wrappedIsDateUnavailable.value!(next))
     next = next.add({ days: dir })
   return wrappedIsDateUnavailable.value!(next) ? next.add({ days: -dir }) : undefined
 }
 const availableRun = computed(() => {
-  const anchor = anchorValue.value
-  if (!anchor || !wrappedIsDateUnavailable.value || props.allowNonContiguousRanges)
+  const from = anchor.value
+  if (!from || !wrappedIsDateUnavailable.value || props.allowNonContiguousRanges)
     return null
-  return { start: edgeOfAvailableRun(anchor, -1), end: edgeOfAvailableRun(anchor, 1) }
+  return { start: edgeOfAvailableRun(from, -1), end: edgeOfAvailableRun(from, 1) }
 })
 const effectiveMinValue = computed(() => {
   const start = availableRun.value?.start
-  return start && start.compare(minValue.value) > 0 ? start : minValue.value
+  return start && compareDay(start, minValue.value) > 0 ? start : minValue.value
 })
 const effectiveMaxValue = computed(() => {
   const end = availableRun.value?.end
-  return end && end.compare(maxValue.value) < 0 ? end : maxValue.value
+  return end && compareDay(end, maxValue.value) < 0 ? end : maxValue.value
 })
-// React Aria highlights `anchor..focused`, so a freshly anchored day is both the selection start and end (a full
-// cap); Reka only marks it as the start.
-// React Aria anchors a range on mouse press start (`useCalendarCell`'s `onPressStart` -> `selectDate`), so the
-// pressed day shows as the anchor while the button is still down; Reka only commits on `click`. Run Reka's own click
-// handler on `pointerdown` (keeping its state machine consistent) and swallow the native click that follows the
-// release. Only the first press of a selection is moved; the closing press still commits on click, as React Aria
-// commits it on press-up.
-let swallowClickOn: HTMLElement | null = null
-function onCellPointerDown(event: PointerEvent) {
-  if (event.button !== 0)
+// Reka's `maximumDays`: while anchored, days `maximumDays` or more away from the anchor are disabled. Reka only applies
+// it to its own start value, which isn't fed, so it is passed back in as `is-date-disabled`.
+function isDateDisabledByMaximumDays(date: DateValue) {
+  return !!props.maximumDays && !!anchor.value && Math.abs(compareDay(date, anchor.value)) >= props.maximumDays
+}
+function isCellDisabled(date: DateValue) {
+  return compareDay(date, effectiveMinValue.value) < 0 || compareDay(date, effectiveMaxValue.value) > 0 || isDateDisabledByMaximumDays(date)
+}
+
+function makeRange(a: DateValue, b: DateValue): { start: DateValue, end: DateValue } {
+  return compareDay(a, b) <= 0 ? { start: a, end: b } : { start: b, end: a }
+}
+const highlightedRange = computed(() => {
+  if (anchor.value)
+    return makeRange(anchor.value, focusedDate.value ?? anchor.value)
+  const value = committed.value
+  return value?.start && value.end ? makeRange(value.start, value.end) : null
+})
+// react-stately's `isInvalidSelection` (+ the `invalid` prop): a committed range whose ends are unavailable or out of
+// bounds. Its cells are flagged `data-invalid` and stay selected even where unavailable.
+const isValueInvalid = computed(() => {
+  if (props.invalid)
+    return true
+  const value = committed.value
+  if (anchor.value || !value?.start || !value.end)
+    return false
+  const outOfBounds = (date: DateValue) => compareDay(date, minValue.value) < 0 || compareDay(date, maxValue.value) > 0
+  return !!wrappedIsDateUnavailable.value?.(value.start) || !!wrappedIsDateUnavailable.value?.(value.end) || outOfBounds(value.start) || outOfBounds(value.end)
+})
+// `useCalendarCell`: outside-month and disabled days are never selected, unavailable ones only inside an invalid range
+function cellState(date: DateValue, month: DateValue) {
+  const range = highlightedRange.value
+  const inRange = !!range && compareDay(date, range.start) >= 0 && compareDay(date, range.end) <= 0
+  const disabled = !isSameMonth(date, month) || isCellDisabled(date)
+  const invalid = inRange && !disabled && isValueInvalid.value
+  const selected = inRange && !disabled && (invalid || !wrappedIsDateUnavailable.value?.(date))
+  return {
+    selected,
+    selectionStart: !!range && isSameDay(date, range.start),
+    selectionEnd: !!range && isSameDay(date, range.end),
+    invalid,
+  }
+}
+function cellAttrs(date: DateValue, month: DateValue) {
+  const state = cellState(date, month)
+  return {
+    'data-selected': state.selected || undefined,
+    'data-selection-start': state.selectionStart || undefined,
+    'data-selection-end': state.selectionEnd || undefined,
+    'data-invalid': state.invalid ? '' : undefined,
+    'aria-invalid': state.invalid || undefined,
+  }
+}
+
+function emitValue(value: DateRange) {
+  lastEmitted = value
+  emit('update:modelValue', value)
+}
+// react-stately's `selectDate`: the first pick anchors, the second commits the ordered range. The anchor is also
+// emitted as a half-open range (`end: undefined`), as Reka did, so v-model consumers see the selection start.
+function selectDate(date: DateValue) {
+  if (props.readonly || props.disabled)
     return
-  const el = event.currentTarget as HTMLElement
-  if (el.hasAttribute('data-disabled') || el.hasAttribute('data-unavailable') || el.hasAttribute('data-outside-view'))
+  if (!anchor.value) {
+    anchor.value = date
+    focusedDate.value = date
+    emitValue({ start: date, end: undefined })
     return
-  // RAC's `usePress` focuses the pressed cell from script and flags pointer focus with `data-focused` (no
-  // `data-focus-visible`), which keeps HeroUI's focus ring off. Reka's `data-focused` means "focused date" instead,
-  // so pointer focus is flagged with `data-pointer-focus` until blur.
-  event.preventDefault()
+  }
+  const range = makeRange(anchor.value, date)
+  anchor.value = null
+  internalValue.value = range
+  emitValue(range)
+}
+// A cell React Aria would let you press: not outside the month, disabled or unavailable
+function isSelectableCell(el: HTMLElement) {
+  return !el.hasAttribute('data-disabled') && !el.hasAttribute('data-unavailable') && !el.hasAttribute('data-outside-view')
+}
+// `focusNearestAvailableDate`: anchoring with the keyboard advances focus one day (back one at the end of the
+// available run) so the preview shows a range immediately.
+function focusNearestAvailableDate(from: DateValue) {
+  const outside = (date: DateValue) => compareDay(date, effectiveMinValue.value) < 0 || compareDay(date, effectiveMaxValue.value) > 0
+  let next = from.add({ days: 1 })
+  if (outside(next))
+    next = from.subtract({ days: 1 })
+  if (outside(next))
+    return
+  focusedDate.value = next
+  placeholderModel.value = next
+  nextTick(() => focusCalendarCell(rootEl.value, next))
+}
+
+// RAC's `usePress` focuses the pressed cell from script and flags pointer focus with `data-focused` (no
+// `data-focus-visible`), which keeps HeroUI's focus ring off. Reka's `data-focused` means "focused date" instead, so
+// pointer focus is flagged with `data-pointer-focus` until blur.
+function pointerFocus(el: HTMLElement) {
   el.setAttribute('data-pointer-focus', '')
   el.addEventListener('blur', () => el.removeAttribute('data-pointer-focus'), { once: true })
   el.focus()
+}
+// The current mouse press (`useCalendarCell`'s per-cell refs): `anchor` when the press started the selection,
+// `boundary` when it grabbed an end of the committed range. Leaving the pressed cell cancels it, as RAC's
+// `shouldCancelOnPointerExit` does while anchored.
+let press: { el: HTMLElement, anchor: boolean, boundary: boolean } | null = null
+let dragging = false
+// A mouse press is handled on pointerdown/pointerup, so the click that follows it is swallowed
+let swallowClick = false
+
+function onCellPointerDown(event: PointerEvent, date: DateValue) {
+  if (event.button !== 0)
+    return
+  const el = event.currentTarget as HTMLElement
+  if (!isSelectableCell(el))
+    return
+  event.preventDefault()
+  pointerFocus(el)
   // Chrome drops `:active` once Reka re-renders the pressed cell, so mirror RAC's `data-pressed` (which HeroUI's
   // CSS styles alongside `:active`) until the press ends.
   el.setAttribute('data-pressed', 'true')
   const release = () => el.removeAttribute('data-pressed')
   window.addEventListener('pointerup', release, { once: true })
   window.addEventListener('pointercancel', release, { once: true })
-  if (event.pointerType === 'touch' || props.disabled || props.readonly || anchorValue.value)
+  if (event.pointerType === 'touch' || props.disabled || props.readonly)
     return
-  // Deferred: a synchronous `click()` inside `pointerdown` would run before the press styles apply
-  setTimeout(() => el.click())
-  swallowClickOn = el
-  let synthetic = true
-  const onClick = (click: Event) => {
-    if (synthetic) {
-      synthetic = false
-      return
-    }
-    if (swallowClickOn === el)
-      click.stopImmediatePropagation()
-    swallowClickOn = null
-    el.removeEventListener('click', onClick, true)
+  swallowClick = true
+  press = { el, anchor: false, boundary: false }
+  // A second press (anchor already set) commits on release
+  if (anchor.value)
+    return
+  dragging = true
+  // Pressing an end of the committed range re-anchors on the opposite end, so dragging adjusts that end
+  const range = highlightedRange.value
+  if (range && !isValueInvalid.value && (isSameDay(date, range.start) || isSameDay(date, range.end))) {
+    anchor.value = isSameDay(date, range.start) ? range.end : range.start
+    focusedDate.value = date
+    press.boundary = true
+    return
   }
-  el.addEventListener('click', onClick, true)
-  window.addEventListener('pointerup', () => setTimeout(() => {
-    swallowClickOn = null
-  }), { once: true })
+  // React Aria anchors on press start so the user can drag out the range
+  selectDate(date)
+  press.anchor = true
+}
+function onCellPointerUp(event: PointerEvent, date: DateValue) {
+  if (event.button !== 0 || event.pointerType === 'touch')
+    return
+  const el = event.currentTarget as HTMLElement
+  const pressedHere = press?.el === el ? press : null
+  press = null
+  dragging = false
+  if (props.disabled || props.readonly || !isSelectableCell(el))
+    return
+  // Releasing on a grabbed range end without dragging starts a new selection there
+  if (pressedHere?.boundary) {
+    anchor.value = date
+    focusedDate.value = date
+  }
+  // Releasing a drag, or the second press of a selection, commits
+  else if (anchor.value && !pressedHere?.anchor) {
+    selectDate(date)
+  }
+}
+// `useRangeCalendar`'s `endDragging`: releasing a drag outside the cells commits the focused date
+function onWindowPointerUp(event: PointerEvent) {
+  setTimeout(() => {
+    swallowClick = false
+  })
+  const wasDragging = dragging
+  dragging = false
+  press = null
+  const root = rootEl.value
+  if (!wasDragging || !anchor.value || !root?.contains(document.activeElement))
+    return
+  const target = event.target as Element | null
+  if (target && root.contains(target) && target.closest('button, [role="button"]'))
+    return
+  selectDate(focusedDate.value ?? anchor.value)
+}
+onMounted(() => window.addEventListener('pointerup', onWindowPointerUp))
+onBeforeUnmount(() => window.removeEventListener('pointerup', onWindowPointerUp))
+
+// `highlightDate`: while anchored, hovering (or dragging over) a day moves the preview's end there, and keyboard
+// focus follows when the calendar has it
+function onCellMouseEnter(event: MouseEvent, date: DateValue) {
+  const el = event.currentTarget as HTMLElement
+  if (press && press.el !== el)
+    press = null
+  if (!anchor.value || !isSelectableCell(el))
+    return
+  focusedDate.value = date
+  if (rootEl.value?.contains(document.activeElement) && document.activeElement !== el)
+    pointerFocus(el)
+}
+function onRootFocusIn(event: FocusEvent) {
+  const cell = calendarCellFrom(event.target, rootEl.value)
+  if (cell && !cell.hasAttribute('data-disabled') && !cell.hasAttribute('data-outside-view'))
+    focusedDate.value = calendarCellDate(cell, placeholderModel.value)
+}
+// Clicks without a handled mouse press (keyboard-less screen readers, touch taps, scripted clicks) select directly.
+// Outside-month cells are inert, as in React Aria. Runs in the capture phase so Reka's cell handler never sees it.
+function onRootClickCapture(event: MouseEvent) {
+  const cell = calendarCellFrom(event.target, rootEl.value)
+  if (!cell)
+    return
+  event.stopPropagation()
+  if (swallowClick) {
+    swallowClick = false
+    return
+  }
+  if (isSelectableCell(cell))
+    selectDate(calendarCellDate(cell, placeholderModel.value))
+}
+function onRootKeyDownCapture(event: KeyboardEvent) {
+  const cell = calendarCellFrom(event.target, rootEl.value)
+  if (!cell)
+    return
+  // `useCalendarGrid`: Escape cancels an in-progress selection (and keeps propagating, e.g. to close a popover)
+  if (event.key === 'Escape') {
+    anchor.value = null
+    return
+  }
+  if ((event.key !== 'Enter' && event.key !== ' ') || event.altKey || event.ctrlKey || event.metaKey)
+    return
+  event.preventDefault()
+  event.stopPropagation()
+  if (!isSelectableCell(cell))
+    return
+  const date = calendarCellDate(cell, placeholderModel.value)
+  const wasAnchored = !!anchor.value
+  selectDate(date)
+  if (!wasAnchored && anchor.value)
+    focusNearestAvailableDate(date)
 }
 
-function isLoneAnchor(date: DateValue) {
-  return !!anchorValue.value && date.compare(anchorValue.value) === 0
-}
+const { onKeyDown: onMonthKeyDown, onHeaderClickCapture } = useCalendarMonthKeys({
+  placeholder: placeholderModel,
+  minValue: () => effectiveMinValue.value,
+  maxValue: () => effectiveMaxValue.value,
+  rootEl: () => rootEl.value,
+  numberOfMonths: () => props.numberOfMonths,
+})
+const prevButton = ref<HTMLElement | null>(null)
+const nextButton = ref<HTMLElement | null>(null)
+
+// Reka re-centred the view on the range start whenever the value changed; keep that for values set from outside
+// (e.g. typed into a DateRangePicker's fields), but not for this calendar's own picks.
+watch(() => props.modelValue?.start, (start) => {
+  if (!start || (lastEmitted?.start && isSameDay(start, lastEmitted.start)) || isSameDay(start, placeholderModel.value))
+    return
+  placeholderModel.value = start
+})
 
 // Week/day views run outside Reka, so they keep the (uncontrolled) selection here
 const focusedAccessor = { get value() { return placeholderModel.value }, set value(v: DateValue) { placeholderModel.value = v } }
@@ -320,10 +527,6 @@ const currentValue = computed(() => props.modelValue !== undefined ? props.model
 function onDurationSelect(value: DateRange) {
   durationValue.value = value
   emit('update:modelValue', value)
-}
-function onModelValueUpdate(value: DateRange | undefined) {
-  emit('update:modelValue', value)
-  anchorValue.value = value?.end === undefined ? value?.start : undefined
 }
 </script>
 
@@ -363,16 +566,15 @@ function onModelValueUpdate(value: DateRange | undefined) {
     v-else
     ref="rootInstance"
     v-slot="{ weekDays, grid, locale: resolvedLocale }"
-    :model-value="modelValue"
-    :default-value="defaultValue"
+    :model-value="EMPTY_RANGE"
     v-model:placeholder="placeholderModel"
     :min-value="effectiveMinValue"
     :max-value="effectiveMaxValue"
     :is-date-unavailable="wrappedIsDateUnavailable"
+    :is-date-disabled="isDateDisabledByMaximumDays"
     :disabled="disabled"
     :readonly="readonly"
     :allow-non-contiguous-ranges="allowNonContiguousRanges"
-    :maximum-days="maximumDays"
     :fixed-weeks="fixedWeeks"
     :locale="locale"
     :week-starts-on="weekStartsOn"
@@ -385,16 +587,20 @@ function onModelValueUpdate(value: DateRange | undefined) {
     :calendar-label="ariaLabel"
     data-slot="range-calendar"
     :class="ui.base({ class: [props.ui?.base, props.class] })"
-    @update:model-value="onModelValueUpdate"
+    @click.capture="onRootClickCapture"
+    @keydown.capture="onRootKeyDownCapture"
+    @keydown="onMonthKeyDown"
+    @focusin="onRootFocusIn"
   >
     <template v-if="numberOfMonths <= 1">
-    <header data-slot="range-calendar-header" :class="ui.header({ class: props.ui?.header })">
+    <header data-slot="range-calendar-header" :class="ui.header({ class: props.ui?.header })" @click.capture="onHeaderClickCapture($event, prevButton, nextButton)">
       <template v-if="yearPicker">
         <button
           type="button"
           data-slot="calendar-year-picker-trigger"
           :data-open="isYearPickerOpen ? 'true' : undefined"
           :aria-expanded="isYearPickerOpen"
+          :aria-label="`${formatPanelHeading(resolvedLocale, grid[0]?.value ?? placeholderModel)}, year selector`"
           :class="ui.yearPickerTrigger({ class: props.ui?.yearPickerTrigger })"
           @click="isYearPickerOpen = !isYearPickerOpen"
         >
@@ -410,7 +616,7 @@ function onModelValueUpdate(value: DateRange | undefined) {
       </template>
       <RangeCalendarHeading v-else data-slot="range-calendar-heading" :class="ui.heading({ class: props.ui?.heading })">{{ formatPanelHeading(resolvedLocale, grid[0]?.value ?? placeholderModel) }}</RangeCalendarHeading>
       <RangeCalendarPrev data-slot="range-calendar-nav-button" as-child>
-        <button type="button" :class="ui.navButton({ class: props.ui?.navButton })">
+        <button ref="prevButton" type="button" aria-label="Previous" :class="ui.navButton({ class: props.ui?.navButton })">
           <slot name="navIcon" direction="previous">
             <svg data-slot="range-calendar-nav-button-icon" height="16" width="16" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg" :class="ui.navButtonIcon({ class: props.ui?.navButtonIcon })">
               <path fill-rule="evenodd" clip-rule="evenodd" d="M10.53 2.97a.75.75 0 0 1 0 1.06L6.56 8l3.97 3.97a.75.75 0 1 1-1.06 1.06l-4.5-4.5a.75.75 0 0 1 0-1.06l4.5-4.5a.75.75 0 0 1 1.06 0" fill="currentColor" />
@@ -419,7 +625,7 @@ function onModelValueUpdate(value: DateRange | undefined) {
         </button>
       </RangeCalendarPrev>
       <RangeCalendarNext data-slot="range-calendar-nav-button" as-child>
-        <button type="button" :class="ui.navButton({ class: props.ui?.navButton })">
+        <button ref="nextButton" type="button" aria-label="Next" :class="ui.navButton({ class: props.ui?.navButton })">
           <slot name="navIcon" direction="next">
             <svg data-slot="range-calendar-nav-button-icon" height="16" width="16" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg" :class="ui.navButtonIcon({ class: props.ui?.navButtonIcon })">
               <path fill-rule="evenodd" clip-rule="evenodd" d="M5.47 2.97a.75.75 0 0 1 1.06 0l4.5 4.5a.75.75 0 0 1 0 1.06l-4.5 4.5a.75.75 0 1 1-1.06-1.06L9.44 8 5.47 4.03a.75.75 0 0 1 0-1.06Z" fill="currentColor" />
@@ -442,27 +648,30 @@ function onModelValueUpdate(value: DateRange | undefined) {
             v-for="weekDate in weekDates"
             :key="weekDate.toString()"
             :date="weekDate"
+            :aria-selected="cellState(weekDate, grid[0]?.value ?? weekDate).selected || undefined"
           >
             <RangeCalendarCellTrigger
               :day="weekDate"
               :month="grid[0]?.value ?? weekDate"
-              v-bind="isLoneAnchor(weekDate) ? { 'data-selection-end': true } : {}"
-              @pointerdown="onCellPointerDown"
+              v-bind="cellAttrs(weekDate, grid[0]?.value ?? weekDate)"
+              @pointerdown="onCellPointerDown($event, weekDate)"
+              @pointerup="onCellPointerUp($event, weekDate)"
+              @mouseenter="onCellMouseEnter($event, weekDate)"
               data-slot="range-calendar-cell"
               :class="ui.cell({ class: props.ui?.cell })"
-              v-slot="{ dayValue, today, selected, disabled: cellDisabled, unavailable, outsideView, selectionStart, selectionEnd }"
+              v-slot="{ dayValue, today, disabled: cellDisabled, unavailable, outsideView }"
             >
               <span data-slot="range-calendar-cell-button" :class="ui.cellButton({ class: props.ui?.cellButton })">
                 <slot
                   name="cell"
                   :date="weekDate"
                   :today="today"
-                  :selected="selected"
+                  :selected="cellState(weekDate, grid[0]?.value ?? weekDate).selected"
                   :disabled="cellDisabled"
                   :unavailable="unavailable"
                   :outside-view="outsideView"
-                  :selection-start="selectionStart"
-                  :selection-end="selectionEnd"
+                  :selection-start="cellState(weekDate, grid[0]?.value ?? weekDate).selectionStart"
+                  :selection-end="cellState(weekDate, grid[0]?.value ?? weekDate).selectionEnd"
                 >
                   {{ dayValue }}
                 </slot>
@@ -479,7 +688,7 @@ function onModelValueUpdate(value: DateRange | undefined) {
         <div v-for="(month, panelIndex) in grid" :key="panelIndex" data-slot="calendar-panel" :class="ui.panel({ class: props.ui?.panel })">
           <header data-slot="range-calendar-header" :class="ui.header({ class: props.ui?.header })">
             <RangeCalendarPrev v-if="panelIndex === 0" data-slot="range-calendar-nav-button" as-child>
-              <button type="button" :class="ui.navButton({ class: props.ui?.navButton })">
+              <button type="button" aria-label="Previous" :class="ui.navButton({ class: props.ui?.navButton })">
                 <slot name="navIcon" direction="previous">
                   <svg data-slot="range-calendar-nav-button-icon" height="16" width="16" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg" :class="ui.navButtonIcon({ class: props.ui?.navButtonIcon })">
                     <path fill-rule="evenodd" clip-rule="evenodd" d="M10.53 2.97a.75.75 0 0 1 0 1.06L6.56 8l3.97 3.97a.75.75 0 1 1-1.06 1.06l-4.5-4.5a.75.75 0 0 1 0-1.06l4.5-4.5a.75.75 0 0 1 1.06 0" fill="currentColor" />
@@ -490,7 +699,7 @@ function onModelValueUpdate(value: DateRange | undefined) {
             <div v-else aria-hidden="true" class="size-6" />
             <span data-slot="range-calendar-heading" :class="ui.heading({ class: props.ui?.heading })">{{ formatPanelHeading(resolvedLocale, month.value) }}</span>
             <RangeCalendarNext v-if="panelIndex === grid.length - 1" data-slot="range-calendar-nav-button" as-child>
-              <button type="button" :class="ui.navButton({ class: props.ui?.navButton })">
+              <button type="button" aria-label="Next" :class="ui.navButton({ class: props.ui?.navButton })">
                 <slot name="navIcon" direction="next">
                   <svg data-slot="range-calendar-nav-button-icon" height="16" width="16" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg" :class="ui.navButtonIcon({ class: props.ui?.navButtonIcon })">
                     <path fill-rule="evenodd" clip-rule="evenodd" d="M5.47 2.97a.75.75 0 0 1 1.06 0l4.5 4.5a.75.75 0 0 1 0 1.06l-4.5 4.5a.75.75 0 1 1-1.06-1.06L9.44 8 5.47 4.03a.75.75 0 0 1 0-1.06Z" fill="currentColor" />
@@ -514,27 +723,30 @@ function onModelValueUpdate(value: DateRange | undefined) {
                   v-for="weekDate in weekDates"
                   :key="weekDate.toString()"
                   :date="weekDate"
+                  :aria-selected="cellState(weekDate, month.value).selected || undefined"
                 >
                   <RangeCalendarCellTrigger
                     :day="weekDate"
                     :month="month.value"
-                    v-bind="isLoneAnchor(weekDate) ? { 'data-selection-end': true } : {}"
-              @pointerdown="onCellPointerDown"
+                    v-bind="cellAttrs(weekDate, month.value)"
+                    @pointerdown="onCellPointerDown($event, weekDate)"
+                    @pointerup="onCellPointerUp($event, weekDate)"
+                    @mouseenter="onCellMouseEnter($event, weekDate)"
                     data-slot="range-calendar-cell"
                     :class="ui.cell({ class: props.ui?.cell })"
-                    v-slot="{ dayValue, today, selected, disabled: cellDisabled, unavailable, outsideView, selectionStart, selectionEnd }"
+                    v-slot="{ dayValue, today, disabled: cellDisabled, unavailable, outsideView }"
                   >
                     <span data-slot="range-calendar-cell-button" :class="ui.cellButton({ class: props.ui?.cellButton })">
                       <slot
                         name="cell"
                         :date="weekDate"
                         :today="today"
-                        :selected="selected"
+                        :selected="cellState(weekDate, month.value).selected"
                         :disabled="cellDisabled"
                         :unavailable="unavailable"
                         :outside-view="outsideView"
-                        :selection-start="selectionStart"
-                        :selection-end="selectionEnd"
+                        :selection-start="cellState(weekDate, month.value).selectionStart"
+                        :selection-end="cellState(weekDate, month.value).selectionEnd"
                       >
                         {{ dayValue }}
                       </slot>

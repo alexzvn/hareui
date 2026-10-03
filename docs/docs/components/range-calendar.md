@@ -194,12 +194,13 @@ app.use(createHareUI({
 
 ### Interactive States
 
-RangeCalendar sets these data attributes (from Reka UI), on `[data-slot="range-calendar-cell"]`:
+RangeCalendar sets these data attributes on `[data-slot="range-calendar-cell"]`:
 
 - **Selected**: `[data-selected]`
 - **Selection start / end**: `[data-selection-start]` / `[data-selection-end]`
 - **Today**: `[data-today]`
 - **Unavailable**: `[data-unavailable]`
+- **Invalid range** (unavailable or out-of-range end, or `invalid`): `[data-invalid]`
 - **Outside the visible month**: `[data-outside-view]`
 - **Hover**: `:hover`
 - **Press**: `:active`
@@ -209,26 +210,20 @@ RangeCalendar sets these data attributes (from Reka UI), on `[data-slot="range-c
 ### Reka UI Limitations
 
 - Week and day views (`visible-duration`) are rendered by HareUI's own grid, since Reka's `CalendarRoot`/`RangeCalendarRoot` always build full month grids. They follow React Aria's `visibleDuration` behaviour (alignment, paging, `page-behavior`, keyboard navigation) and HeroUI's `--week-view`/`--day-view` styles; the year picker, `number-of-months` and `fixed-weeks` only apply to the month view.
-- Anchor-aware `is-date-unavailable`: Reka's matcher takes one argument, so RangeCalendar wraps the two-argument callback in a closure that reads the in-progress anchor (the picked start while `end` is unset, `null` once the range is complete, as in react-stately). It also narrows Reka's `min-value`/`max-value` to the run of available days around the anchor (react-stately's `getAvailableRange`), so paging past it is disabled, and marks the lone anchor cell as both selection start and end, as React Aria does.
+- Anchor-aware `is-date-unavailable`: Reka's matcher takes one argument, so RangeCalendar wraps the two-argument callback in a closure that reads the in-progress anchor (the picked start while `end` is unset, `null` once the range is complete, as in react-stately). It also narrows Reka's `min-value`/`max-value` to the run of available days around the anchor (react-stately's `getAvailableRange`), so paging past it is disabled, The lone anchor cell is both selection start and end, as in React Aria.
 - `fixed-weeks` is boolean only (always 6 weeks). HeroUI's React `weeksInMonth` accepts any count up
   to 6; Reka's `RangeCalendarRoot` only exposes the all-or-nothing `fixedWeeks` flag.
 - `invalid` sets `aria-invalid`/`data-invalid` directly rather than through Reka: Reka's own
   `isInvalid` is a read-only computed derived from `isDateUnavailable`/`minValue`/`maxValue`, with
   no input prop to override it for arbitrary consumer validation (e.g. "stay too long").
-- No press-and-drag range selection: React Aria begins the live anchor on raw `pointerdown`
-  (`useCalendarState`'s `anchorDate`), letting a single press-move-release gesture preview and
-  commit a range. Reka's `RangeCalendarCellTrigger` commits exclusively through its own `click`
-  handler's `changeDate` state machine (`RangeCalendarCellTrigger.vue:106-171`), which is gated on
-  `startValue`/`lastPressedDateValue` set by that same handler. Writing to Reka's internal
-  `startValue` ref from an external `pointerdown` listener to emulate the anchor (tested against
-  both a two-click gesture and a `pointerdown`+`pointerenter`+`pointerup` drag gesture) breaks the
-  state machine rather than extending it: the click gesture commits nothing at all (`changeDate`
-  takes the line 112-126 "already anchored" branch on the very first real click, since
-  `lastPressedDateValue` doesn't match yet, so it returns without setting `start` or `end`), and the
-  drag gesture commits only `start` (`pointerup` isn't one of Reka's commit triggers). There's no
-  props-level override for the anchor/commit logic, so HeroUI's drag-select input method has no
-  port; the two-click gesture (click a start day, hover to preview, click an end day) is fully
-  supported and is what the demos above use.
+- Range selection runs outside Reka: Reka's `RangeCalendarRoot` has no live preview with the selected
+  styling, no press-and-drag selection and re-centres the view on every start change, so the month
+  view keeps react-stately's anchor/focused-date state itself and uses Reka only for the grid, focus
+  movement and paging. Like React Aria, a mouse press anchors the range (drag and release to commit,
+  or click a second day), pressing an end of the selected range and dragging adjusts that end, the
+  preview follows the hovered or focused day, Enter/Space anchors and moves focus one day ahead,
+  Escape cancels, and outside-month days are inert. Picking the first day still emits a half-open
+  range (`end: undefined`).
 
 ## API Reference
 

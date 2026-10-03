@@ -427,3 +427,40 @@ describe('range calendar non-contiguous ranges', () => {
     wrapper.unmount()
   })
 })
+
+describe('range calendar keyboard commit', () => {
+  const press = async (init: KeyboardEventInit) => {
+    document.activeElement!.dispatchEvent(new KeyboardEvent('keydown', { bubbles: true, cancelable: true, ...init }))
+    await nextTick()
+    await nextTick()
+  }
+
+  // behaviour-final-check R2: React Aria advances focus one day on the anchoring Enter, then commits the focused day
+  it('Enter anchors, arrows extend and Enter commits the focused day', async () => {
+    const wrapper = mount(RangeCalendar, { props: { locale: 'en-US', defaultPlaceholder: parseDate('2025-01-15') }, attachTo: document.body })
+    ;(wrapper.get('[data-value="2025-01-15"]').element as HTMLElement).focus()
+    await press({ key: 'Enter', code: 'Enter' })
+    expect(document.activeElement?.getAttribute('data-value')).toBe('2025-01-16')
+    for (let i = 0; i < 3; i++)
+      await press({ key: 'ArrowRight', code: 'ArrowRight' })
+    await press({ key: 'Enter', code: 'Enter' })
+    const value = wrapper.emitted('update:modelValue')?.at(-1)?.[0] as DateRange
+    expect([value.start?.toString(), value.end?.toString()]).toEqual(['2025-01-15', '2025-01-19'])
+    wrapper.unmount()
+  })
+
+  it('Escape cancels an anchored selection and restores the committed range', async () => {
+    const wrapper = mount(RangeCalendar, {
+      props: { locale: 'en-US', defaultValue: { start: parseDate('2025-01-10'), end: parseDate('2025-01-12') } },
+      attachTo: document.body,
+    })
+    ;(wrapper.get('[data-value="2025-01-20"]').element as HTMLElement).focus()
+    await press({ key: 'Enter', code: 'Enter' })
+    expect(wrapper.get('[data-value="2025-01-20"]').attributes('data-selection-start')).toBe('true')
+    await press({ key: 'Escape', code: 'Escape' })
+    expect(wrapper.get('[data-value="2025-01-10"]').attributes('data-selection-start')).toBe('true')
+    expect(wrapper.get('[data-value="2025-01-12"]').attributes('data-selection-end')).toBe('true')
+    expect(wrapper.get('[data-value="2025-01-20"]').attributes('data-selected')).toBeUndefined()
+    wrapper.unmount()
+  })
+})
