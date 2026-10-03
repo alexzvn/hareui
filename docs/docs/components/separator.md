@@ -3,8 +3,8 @@ title: Separator
 description: Visually divide content sections
 links:
   reka: separator
-  source: Separator.vue
-  styles: separator.ts
+  source: separator/Separator.vue
+  styles: separator/theme.ts
   heroui: separator
 ---
 
@@ -86,6 +86,10 @@ style through `class`, `ui` or `createHareUI`):
 ### Slots
 
 <ApiTable component="Separator" kind="slots" />
+
+### Theme
+
+<ApiTheme component="Separator" />
 
 ## Related Components
 

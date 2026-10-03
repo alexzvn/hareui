@@ -2,8 +2,8 @@
 title: TextArea
 description: Primitive multiline text input component that accepts standard HTML attributes
 links:
-  source: TextArea.vue
-  styles: textArea.ts
+  source: text-area/TextArea.vue
+  styles: text-area/theme.ts
   heroui: text-area
 ---
 
@@ -91,6 +91,10 @@ TextArea accepts all standard HTML `<textarea>` attributes (`rows`, `cols`, `max
 ### Emits
 
 <ApiTable component="TextArea" kind="emits" />
+
+### Theme
+
+<ApiTheme component="TextArea" />
 
 > For validation props like `invalid`, `required`, and error handling, use **[TextField](/docs/components/text-field)** with TextArea in its default slot.
 

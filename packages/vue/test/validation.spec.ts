@@ -1,15 +1,15 @@
 import type { VueWrapper } from '@vue/test-utils'
-import type { ValidationErrors } from '../src/components/formContext'
+import type { ValidationErrors } from '../src/components/form/context'
 import { flushPromises, mount } from '@vue/test-utils'
 import { afterEach, describe, expect, it } from 'vitest'
 import { h, nextTick, ref } from 'vue'
-import Checkbox from '../src/components/Checkbox.vue'
-import Form from '../src/components/Form.vue'
-import Input from '../src/components/Input.vue'
-import NumberField from '../src/components/NumberField.vue'
-import RadioGroup from '../src/components/RadioGroup.vue'
-import Switch from '../src/components/Switch.vue'
-import TextField from '../src/components/TextField.vue'
+import Checkbox from '../src/components/checkbox/Checkbox.vue'
+import Form from '../src/components/form/Form.vue'
+import Input from '../src/components/input/Input.vue'
+import NumberField from '../src/components/number-field/NumberField.vue'
+import RadioGroup from '../src/components/radio-group/RadioGroup.vue'
+import Switch from '../src/components/switch/Switch.vue'
+import TextField from '../src/components/text-field/TextField.vue'
 
 const minLength3 = (v: string | number) => String(v).length < 3 ? 'Too short' : null
 

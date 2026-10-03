@@ -3,8 +3,8 @@ title: NumberField
 description: Number input fields with increment/decrement buttons, validation, and internationalized formatting
 links:
   reka: number-field
-  source: NumberField.vue
-  styles: numberField.ts
+  source: number-field/NumberField.vue
+  styles: number-field/theme.ts
   heroui: number-field
 ---
 
@@ -88,7 +88,7 @@ Set `invalid` with `error-message` to control the state yourself, or validate wi
 
 ### Controlled
 
-Bind the value with `v-model` to synchronize with other components or perform custom formatting. The value is `undefined` while the input is empty.
+Bind the value with `v-model` to synchronize with other components or perform custom formatting. The value is `undefined` while the input is empty: clearing the input and blurring or pressing <kbd>Enter</kbd> commits `undefined` and an empty form value.
 
 <ComponentPreview name="number-field/controlled" />
 
@@ -188,13 +188,17 @@ NumberField sets these data attributes:
 
 <ApiTable component="NumberField" kind="emits" />
 
+### Theme
+
+<ApiTheme component="NumberField" />
+
 ## Accessibility
 
 - The input has `role="spinbutton"` with `aria-valuenow`, `aria-valuemin` and `aria-valuemax`
 - The label's `for` points to the input id (auto-generated with `useId()` unless `id` is set)
 - The input's `aria-describedby` lists the ids of the rendered description (`<id>-description`) and error (`<id>-error`)
 - `invalid` sets `aria-invalid="true"` on the input; the error is announced via `role="alert"`
-- Keyboard: <kbd>↑</kbd>/<kbd>↓</kbd> step by `step`, <kbd>PageUp</kbd>/<kbd>PageDown</kbd> by 10 steps, <kbd>Home</kbd>/<kbd>End</kbd> jump to `min`/`max`, <kbd>Enter</kbd> commits typed text
+- Keyboard: <kbd>↑</kbd>/<kbd>↓</kbd> step by `step`, <kbd>PageUp</kbd>/<kbd>PageDown</kbd> also by one `step` (as in React Aria), <kbd>Home</kbd>/<kbd>End</kbd> jump to `min`/`max`, <kbd>Enter</kbd> commits typed text
 - The buttons are labelled "Increase"/"Decrease", aren't in the tab order, and repeat while held
 
 ## Related Components

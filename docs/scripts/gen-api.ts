@@ -1,5 +1,6 @@
 import { mkdir, readdir, rm, writeFile } from 'node:fs/promises'
-import { basename, join, resolve } from 'node:path'
+import { basename, dirname, join, resolve } from 'node:path'
+import ts from 'typescript'
 import { createChecker, type PropertyMeta } from 'vue-component-meta'
 import type { ApiProp, ComponentApi } from './api-types'
 
@@ -32,14 +33,40 @@ function toProp(prop: PropertyMeta): ApiProp {
   }
 }
 
-// Only public components: internal parts (ListBoxOption, ToastItem, …) aren't exported from the package entry.
+// Only public components: the package entry re-exports each folder's index.ts, which lists that folder's public parts
+// (internal parts like ListBoxOption or ToastItem aren't in it).
 const entry = await Bun.file(join(componentsDir, '../index.ts')).text()
-const files = (await readdir(componentsDir))
-  .filter((f) => f.endsWith('.vue') && entry.includes(`./components/${f}'`))
-  .sort()
+const isPublic = async (file: string) => {
+  const dir = dirname(file)
+  if (!entry.includes(`from './components/${dir}'`)) return false
+  const index = await Bun.file(join(componentsDir, dir, 'index.ts')).text()
+  return index.includes(`from './${basename(file)}'`)
+}
+const files: string[] = []
+for (const f of (await readdir(componentsDir, { recursive: true })).sort()) {
+  if (f.endsWith('.vue') && (await isPublic(f))) files.push(f)
+}
 
 await rm(outDir, { recursive: true, force: true })
-await mkdir(outDir, { recursive: true })
+await mkdir(join(outDir, 'theme'), { recursive: true })
+
+// Blank out comments (keeping newlines), then drop lines that held only a comment.
+function stripComments(source: string): string {
+  const scanner = ts.createScanner(ts.ScriptTarget.Latest, false, ts.LanguageVariant.Standard, source)
+  let text = source
+  for (let kind = scanner.scan(); kind !== ts.SyntaxKind.EndOfFileToken; kind = scanner.scan()) {
+    if (kind !== ts.SyntaxKind.SingleLineCommentTrivia && kind !== ts.SyntaxKind.MultiLineCommentTrivia) continue
+    const start = scanner.getTokenStart()
+    const end = scanner.getTokenEnd()
+    text = text.slice(0, start) + text.slice(start, end).replace(/[^\n]/g, '\0') + text.slice(end)
+  }
+  return `${text
+    .split('\n')
+    .filter((line) => !line.includes('\0') || line.replaceAll('\0', '').trim() !== '')
+    .map((line) => line.replaceAll('\0', '').trimEnd())
+    .join('\n')
+    .trim()}\n`
+}
 
 // Generic components (`generic="T extends ListBoxItem = ListBoxItem"`) print `T` in their types; show the item type instead
 function ungeneric(source: string): (type: string) => string {
@@ -50,14 +77,24 @@ function ungeneric(source: string): (type: string) => string {
 for (const file of files) {
   const name = basename(file, '.vue')
   const path = join(componentsDir, file)
+  const source = await Bun.file(path).text()
   const meta = checker.getComponentMeta(path)
-  const named = ungeneric(await Bun.file(path).text())
+  const named = ungeneric(source)
   const api: ComponentApi = {
     props: meta.props
       .filter((p) => !p.global && !(fromNodeModules(p) && !p.description))
       .map((p) => ({ ...toProp(p), type: named(toProp(p).type) })),
     slots: meta.slots.map((s) => ({ name: s.name, type: named(s.type), description: s.description })),
     events: meta.events.map((e) => ({ name: e.name, type: named(e.type), description: e.description })),
+  }
+  // `ui?: ComponentSlots<typeof theme>` prints the whole theme; show the slot keys and publish the theme source instead.
+  const ui = api.props.find((p) => p.name === 'ui')
+  if (ui && /^import theme from '\.\/theme'$/m.test(source)) {
+    const themePath = join(dirname(path), 'theme.ts')
+    const theme: { slots: Record<string, unknown> } = (await import(themePath)).default
+    ui.type = `{ ${Object.keys(theme.slots).map((k) => `${/^\w+$/.test(k) ? k : `'${k}'`}?: ClassValue`).join('; ')} }`
+    ui.description = `${ui.description} Keys are the theme slots; see Theme below.`
+    await writeFile(join(outDir, 'theme', `${name}.ts`), stripComments(await Bun.file(themePath).text()))
   }
   await writeFile(join(outDir, `${name}.json`), `${JSON.stringify(api, null, 2)}\n`)
   console.log(`api: ${name} (${api.props.length} props, ${api.slots.length} slots, ${api.events.length} events)`)

@@ -1,6 +1,6 @@
 import { mount } from '@vue/test-utils'
 import { describe, expect, it } from 'vitest'
-import Separator from '../src/components/Separator.vue'
+import Separator from '../src/components/separator/Separator.vue'
 
 describe('Separator', () => {
   it('defaults to horizontal orientation with role="separator"', () => {

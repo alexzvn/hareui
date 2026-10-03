@@ -1,7 +1,7 @@
 import { mount } from '@vue/test-utils'
 import { describe, expect, it } from 'vitest'
-import { nextTick } from 'vue'
-import Drawer from '../src/components/Drawer.vue'
+import { h, nextTick } from 'vue'
+import Drawer from '../src/components/drawer/Drawer.vue'
 
 // Reka's Presence needs three ticks before a closed dialog leaves the DOM (see modal.spec.ts).
 async function waitUnmount() {
@@ -83,5 +83,31 @@ describe('drawer', () => {
       Date.now = now
       wrapper.unmount()
     }
+  })
+
+  it('Tab skips a scrollable body, like React Aria', async () => {
+    // behaviour-final-check D2
+    const wrapper = mount(Drawer, {
+      props: { defaultOpen: true, title: 'Settings' },
+      slots: {
+        body: () => h('div', { style: 'overflow:auto;max-height:40px' }, [h('p', 'Long text')]),
+        footer: () => [h('button', 'Cancel'), h('button', 'Done')],
+      },
+      attachTo: document.body,
+    })
+    await nextTick()
+    await nextTick()
+    const tab = () => (document.activeElement as HTMLElement).dispatchEvent(new KeyboardEvent('keydown', { key: 'Tab', bubbles: true, cancelable: true }))
+    const name = () => {
+      const el = document.activeElement as HTMLElement
+      return el.dataset.slot ?? el.textContent
+    }
+    const seen: Array<string | null> = []
+    for (let i = 0; i < 4; i++) {
+      tab()
+      seen.push(name())
+    }
+    expect(seen).toEqual(['drawer-close-trigger', 'Cancel', 'Done', 'drawer-close-trigger'])
+    wrapper.unmount()
   })
 })

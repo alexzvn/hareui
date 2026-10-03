@@ -2,8 +2,8 @@
 title: DisclosureGroup
 description: Container that manages multiple Disclosure items with coordinated expanded states
 links:
-  source: DisclosureGroup.vue
-  styles: disclosureGroup.ts
+  source: disclosure-group/DisclosureGroup.vue
+  styles: disclosure-group/theme.ts
   heroui: disclosure-group
 ---
 
@@ -95,6 +95,10 @@ The component supports both CSS pseudo-classes and data attributes for flexibili
 ### Emits
 
 <ApiTable component="DisclosureGroup" kind="emits" />
+
+### Theme
+
+<ApiTheme component="DisclosureGroup" />
 
 ### useDisclosureGroupNavigation
 

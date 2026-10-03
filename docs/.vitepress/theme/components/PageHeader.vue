@@ -1,14 +1,14 @@
 <script setup lang="ts">
 import { computed } from 'vue'
 import { tv } from '../../../../packages/vue/src/utils/tv'
-import buttonTheme from '../../../../packages/vue/src/theme/button'
+import buttonTheme from '../../../../packages/vue/src/components/button/theme'
 import { repoFileUrl } from '../repo'
 import BrandIcon from './BrandIcon.vue'
 
 export interface PageLinks {
-  /** Component file under `packages/vue/src/components/`. */
+  /** Component file under `packages/vue/src/components/`, e.g. `button/Button.vue`. */
   source?: string
-  /** Theme file under `packages/vue/src/theme/`. */
+  /** Theme file under `packages/vue/src/components/`, e.g. `button/theme.ts`. */
   styles?: string
   reka?: string
   heroui?: string
@@ -36,7 +36,7 @@ const badges = computed(() => {
     links.reka && { label: 'Reka UI', href: `https://reka-ui.com/docs/components/${links.reka}`, icon: 'reka' },
     links.heroui && { label: 'HeroUI', href: `https://heroui.com/docs/react/components/${links.heroui}`, icon: 'heroui' },
     links.source && { label: 'Source', href: repoFileUrl(`packages/vue/src/components/${links.source}`), icon: 'github' },
-    links.styles && { label: 'Styles source', href: repoFileUrl(`packages/vue/src/theme/${links.styles}`), icon: 'github' },
+    links.styles && { label: 'Styles source', href: repoFileUrl(`packages/vue/src/components/${links.styles}`), icon: 'github' },
   ].filter((badge): badge is Badge => !!badge)
 })
 </script>

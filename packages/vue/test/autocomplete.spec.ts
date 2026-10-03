@@ -1,7 +1,7 @@
 import { mount } from '@vue/test-utils'
 import { afterEach, describe, expect, it } from 'vitest'
 import { h, nextTick } from 'vue'
-import Autocomplete from '../src/components/Autocomplete.vue'
+import Autocomplete from '../src/components/autocomplete/Autocomplete.vue'
 
 const items = [
   { value: 'florida', label: 'Florida' },
@@ -146,6 +146,38 @@ describe('Autocomplete', () => {
     expect(texts()).toHaveLength(4)
     await typeSearch('flo')
     expect(wrapper.emitted('update:inputValue')?.at(-1)).toEqual(['flo'])
+    wrapper.unmount()
+  })
+})
+
+describe('Autocomplete behaviour parity (React Aria)', () => {
+  it('a mouse press opens on pointerdown, and the click that ends it keeps the popover open', async () => {
+    // behaviour-final-check A1 (RAC Select trigger opens on press start)
+    const { wrapper, button } = setup()
+    const el = wrapper.get('[data-slot=autocomplete-trigger]').element
+    el.dispatchEvent(new PointerEvent('pointerdown', { bubbles: true, cancelable: true, button: 0, pointerType: 'mouse' }))
+    await flush()
+    expect(button.attributes('aria-expanded')).toBe('true')
+    expect(document.querySelector('[role=listbox]')).not.toBeNull()
+    el.dispatchEvent(new MouseEvent('click', { bubbles: true, cancelable: true, detail: 1 }))
+    await flush()
+    expect(button.attributes('aria-expanded')).toBe('true')
+    wrapper.unmount()
+  })
+
+  it('pressing one option, moving to another and releasing selects the option under the pointer', async () => {
+    // behaviour-final-check A1
+    const { wrapper } = setup()
+    await wrapper.get('[data-slot=autocomplete-trigger]').trigger('click')
+    await flush()
+    const pointer = (el: Element, type: string) =>
+      el.dispatchEvent(new PointerEvent(type, { bubbles: true, cancelable: true, button: 0, pointerType: 'mouse' }))
+    pointer(options()[0]!, 'pointerdown')
+    pointer(options()[3]!, 'pointerup')
+    await flush()
+    expect(wrapper.emitted('update:modelValue')?.at(-1)).toEqual(['texas'])
+    expect(wrapper.get(value).text()).toBe('Texas')
+    expect(document.querySelector('[role=listbox]')).toBeNull()
     wrapper.unmount()
   })
 })

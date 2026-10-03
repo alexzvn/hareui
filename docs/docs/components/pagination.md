@@ -2,8 +2,8 @@
 title: Pagination
 description: Page navigation with composable page links, previous/next buttons, and ellipsis indicators
 links:
-  source: Pagination.vue
-  styles: pagination.ts
+  source: pagination/Pagination.vue
+  styles: pagination/theme.ts
   heroui: pagination
 ---
 
@@ -147,6 +147,10 @@ The component supports both CSS pseudo-classes and data attributes for flexibili
 ### Emits
 
 <ApiTable component="Pagination" kind="emits" />
+
+### Theme
+
+<ApiTheme component="Pagination" />
 
 ## Accessibility
 

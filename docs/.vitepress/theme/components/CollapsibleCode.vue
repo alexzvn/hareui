@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import { onMounted, ref, shallowRef, watch } from 'vue'
 import { tv } from '../../../../packages/vue/src/utils/tv'
-import buttonTheme from '../../../../packages/vue/src/theme/button'
+import buttonTheme from '../../../../packages/vue/src/components/button/theme'
 import gravity from '@iconify-json/gravity-ui/icons.json'
 import { flashCopied } from '../composables/useDocInteractions'
 

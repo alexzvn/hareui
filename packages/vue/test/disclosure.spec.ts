@@ -1,7 +1,7 @@
 import { mount } from '@vue/test-utils'
 import { describe, expect, it } from 'vitest'
 import { h, nextTick, ref } from 'vue'
-import Disclosure from '../src/components/Disclosure.vue'
+import Disclosure from '../src/components/disclosure/Disclosure.vue'
 
 describe('disclosure', () => {
   it('uncontrolled: starts collapsed and toggles on trigger click', async () => {

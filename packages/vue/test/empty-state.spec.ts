@@ -1,7 +1,7 @@
 import { mount } from '@vue/test-utils'
 import { describe, expect, it } from 'vitest'
-import EmptyState from '../src/components/EmptyState.vue'
-import TagGroup from '../src/components/TagGroup.vue'
+import EmptyState from '../src/components/empty-state/EmptyState.vue'
+import TagGroup from '../src/components/tag-group/TagGroup.vue'
 
 describe('EmptyState', () => {
   it('renders "No results found" by default with the empty-state slot', () => {

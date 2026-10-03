@@ -1,6 +1,6 @@
 import { mount } from '@vue/test-utils'
 import { describe, expect, it } from 'vitest'
-import Input from '../src/components/Input.vue'
+import Input from '../src/components/input/Input.vue'
 
 describe('Input', () => {
   it('defaultValue seeds an uncontrolled input, including numbers', async () => {

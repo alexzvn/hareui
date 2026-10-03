@@ -2,10 +2,10 @@ import { mount as rawMount } from '@vue/test-utils'
 import { colorToString, parseColor } from 'reka-ui'
 import { afterEach, describe, expect, it } from 'vitest'
 import { h, nextTick } from 'vue'
-import ColorArea from '../src/components/ColorArea.vue'
-import ColorField from '../src/components/ColorField.vue'
-import ColorPicker from '../src/components/ColorPicker.vue'
-import ColorSwatch from '../src/components/ColorSwatch.vue'
+import ColorArea from '../src/components/color-area/ColorArea.vue'
+import ColorField from '../src/components/color-field/ColorField.vue'
+import ColorPicker from '../src/components/color-picker/ColorPicker.vue'
+import ColorSwatch from '../src/components/color-swatch/ColorSwatch.vue'
 
 const wrappers: { unmount: () => void }[] = []
 const mount = ((...a: any[]) => {
@@ -84,5 +84,27 @@ describe('colorPicker', () => {
     expect(trigger().getAttribute('aria-expanded')).toBe('false')
     mount(ColorPicker, { props: { disabled: true }, slots, attachTo: document.body })
     expect(document.body.querySelectorAll('[data-slot=color-picker-trigger]')[1].hasAttribute('disabled')).toBe(true)
+  })
+
+  it('returns focus to the trigger after an outside click closes the popover', async () => {
+    // behaviour-final-check P1
+    const outside = document.createElement('button')
+    document.body.append(outside)
+    const w = mount(ColorPicker, { props: { defaultValue: '#0485F7' }, slots, attachTo: document.body })
+    trigger().click()
+    await nextTick()
+    await nextTick()
+    expect(popover()).not.toBeNull()
+
+    outside.focus()
+    outside.dispatchEvent(new PointerEvent('pointerdown', { bubbles: true, button: 0, pointerType: 'mouse', ctrlKey: false }))
+    outside.dispatchEvent(new PointerEvent('pointerup', { bubbles: true, button: 0, pointerType: 'mouse' }))
+    outside.click()
+    for (let i = 0; i < 4; i++)
+      await nextTick()
+
+    expect(w.emitted('update:open')?.at(-1)).toEqual([false])
+    expect(document.activeElement).toBe(trigger())
+    outside.remove()
   })
 })

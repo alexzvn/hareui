@@ -3,8 +3,8 @@ title: Switch
 description: A toggle switch component for boolean states
 links:
   reka: switch
-  source: Switch.vue
-  styles: switch.ts
+  source: switch/Switch.vue
+  styles: switch/theme.ts
   heroui: switch
 ---
 
@@ -161,6 +161,10 @@ app.use(createHareUI({
 
 <ApiTable component="Switch" kind="emits" />
 
+### Switch Theme
+
+<ApiTheme component="Switch" />
+
 ## SwitchGroup
 
 `SwitchGroup` is a layout-only wrapper: it renders no state of its own and shares no context with its
@@ -174,6 +178,10 @@ spacing/orientation styling HeroUI ships for stacks of switches.
 ### Slots
 
 <ApiTable component="SwitchGroup" kind="slots" />
+
+### SwitchGroup Theme
+
+<ApiTheme component="SwitchGroup" />
 
 ## Accessibility
 

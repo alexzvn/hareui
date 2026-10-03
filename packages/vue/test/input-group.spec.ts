@@ -1,8 +1,8 @@
 import { mount } from '@vue/test-utils'
 import { describe, expect, it } from 'vitest'
 import { h } from 'vue'
-import InputGroup from '../src/components/InputGroup.vue'
-import TextField from '../src/components/TextField.vue'
+import InputGroup from '../src/components/input-group/InputGroup.vue'
+import TextField from '../src/components/text-field/TextField.vue'
 
 describe('InputGroup', () => {
   it('v-model syncs standalone', async () => {
@@ -91,5 +91,21 @@ describe('InputGroup', () => {
     await area.setValue('line one\nline two')
     expect(area.attributes('aria-invalid')).toBe('true')
     expect(wrapper.get('[data-slot=field-error]').text()).toBe('Too long')
+  })
+
+  it('activating a button in the suffix keeps focus on the button instead of moving it to the input', async () => {
+    // behaviour-final-check H14
+    const wrapper = mount(InputGroup, {
+      props: { defaultValue: '12' },
+      slots: { suffix: () => h('button', { type: 'button', 'data-test': 'copy' }, 'Copy') },
+      attachTo: document.body,
+    })
+    const button = wrapper.get('[data-test=copy]')
+    ;(button.element as HTMLElement).focus()
+    expect(document.activeElement).toBe(button.element)
+    // Enter / Space on a focused button, and a mouse click, all arrive as a click event
+    await button.trigger('click')
+    expect(document.activeElement).toBe(button.element)
+    wrapper.unmount()
   })
 })

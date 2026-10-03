@@ -1,6 +1,6 @@
 import { mount } from '@vue/test-utils'
 import { describe, expect, it } from 'vitest'
-import Alert from '../src/components/Alert.vue'
+import Alert from '../src/components/alert/Alert.vue'
 
 const order = (el: Element) => [...el.children].map(c => c.getAttribute('data-slot') ?? c.tagName.toLowerCase())
 

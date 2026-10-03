@@ -2,8 +2,8 @@
 title: Fieldset
 description: Group related form controls with legends, descriptions, and actions
 links:
-  source: Fieldset.vue
-  styles: fieldset.ts
+  source: fieldset/Fieldset.vue
+  styles: fieldset/theme.ts
   heroui: fieldset
 ---
 
@@ -89,6 +89,10 @@ Each rendered element carries the same `data-slot` string as HeroUI, so selector
 ### Slots
 
 <ApiTable component="Fieldset" kind="slots" />
+
+### Theme
+
+<ApiTheme component="Fieldset" />
 
 ## Related Components
 

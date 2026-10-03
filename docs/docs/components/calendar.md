@@ -3,8 +3,8 @@ title: Calendar
 description: Date picker with month grid, navigation, and year picker support built on Reka UI's Calendar.
 links:
   reka: calendar
-  source: Calendar.vue
-  styles: calendar.ts
+  source: calendar/Calendar.vue
+  styles: calendar/theme.ts
   heroui: calendar
 ---
 
@@ -197,6 +197,10 @@ Calendar sets these data attributes (from Reka UI):
 - Week and day views (`visible-duration`) are rendered by HareUI's own grid, since Reka's `CalendarRoot`/`RangeCalendarRoot` always build full month grids. They follow React Aria's `visibleDuration` behaviour (alignment, paging, `page-behavior`, keyboard navigation) and HeroUI's `--week-view`/`--day-view` styles; the year picker, `number-of-months` and `fixed-weeks` only apply to the month view.
 - `fixed-weeks` is boolean only (always 6 weeks). HeroUI's React `weeksInMonth` accepts any count up
   to 6; Reka's `CalendarRoot` only exposes the all-or-nothing `fixedWeeks` flag.
+- React Aria behaviours Reka lacks are added on top of `CalendarRoot`: Home/End and PageUp/PageDown
+  (Shift: by year) keyboard paging, prev/next buttons that keep the focused day of the month,
+  inert outside-month days, and re-selecting the selected date keeps it selected (single
+  selection) while still emitting `update:modelValue` with it.
 
 ## API Reference
 
@@ -211,3 +215,7 @@ Calendar sets these data attributes (from Reka UI):
 ### Emits
 
 <ApiTable component="Calendar" kind="emits" />
+
+### Theme
+
+<ApiTheme component="Calendar" />

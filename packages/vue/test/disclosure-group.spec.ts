@@ -1,8 +1,8 @@
 import { mount } from '@vue/test-utils'
 import { describe, expect, it } from 'vitest'
 import { h } from 'vue'
-import Disclosure from '../src/components/Disclosure.vue'
-import DisclosureGroup from '../src/components/DisclosureGroup.vue'
+import Disclosure from '../src/components/disclosure/Disclosure.vue'
+import DisclosureGroup from '../src/components/disclosure-group/DisclosureGroup.vue'
 
 const group = (props: Record<string, unknown> = {}) => mount(DisclosureGroup, {
   props,

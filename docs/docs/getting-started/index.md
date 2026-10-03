@@ -45,23 +45,48 @@ See [Design Principles](/docs/getting-started/design-principles) for the full li
 
 ## FAQ
 
-**Is HareUI free?**
+<Faq>
+
+<FaqItem question="Is HareUI free?">
+
 Yes — HareUI is MIT licensed and open source.
 
-**Is it production-ready?**
+</FaqItem>
+
+<FaqItem question="Is it production-ready?">
+
 HareUI is in early development (`0.1.x`). The component API is stable for the components that exist, but coverage of HeroUI's full component set is incomplete and the API may still change before a 1.0 release.
 
-**Does it work with TypeScript?**
+</FaqItem>
+
+<FaqItem question="Does it work with TypeScript?">
+
 Fully typed. Every component exports its props, slots, and `ui` slot-key types.
 
-**Can I customize the components?**
+</FaqItem>
+
+<FaqItem question="Can I customize the components?">
+
 Yes. Use Tailwind utilities through the `class` prop, per-slot classes through `:ui`, CSS variables, or an app-wide `createHareUI({ ui })` config. See [Theming](/docs/getting-started/theming) and [Styling](/docs/getting-started/styling).
 
-**What about accessibility?**
+</FaqItem>
+
+<FaqItem question="What about accessibility?">
+
 Built on [Reka UI](https://reka-ui.com) primitives for keyboard navigation, focus management, and ARIA attributes.
 
-**Can I use HareUI without Vue?**
+</FaqItem>
+
+<FaqItem question="Can I use HareUI without Vue?">
+
 No. Unlike HeroUI, which separates `@heroui/styles` (framework-agnostic BEM classes) from `@heroui/react` (behavior), HareUI's styles live inside each Vue single-file component's tailwind-variants theme and are not published as a standalone CSS package.
 
-**Where do I start?**
+</FaqItem>
+
+<FaqItem question="Where do I start?">
+
 Head to [Quick Start](/docs/getting-started/quick-start) to install HareUI and render your first component.
+
+</FaqItem>
+
+</Faq>

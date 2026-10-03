@@ -2,8 +2,8 @@
 title: SearchField
 description: A text field for search queries, with a search icon and a clear button
 links:
-  source: SearchField.vue
-  styles: searchField.ts
+  source: search-field/SearchField.vue
+  styles: search-field/theme.ts
   heroui: search-field
 ---
 
@@ -159,6 +159,10 @@ SearchField sets these data attributes:
 
 <ApiTable component="SearchField" kind="emits" />
 
+### Theme
+
+<ApiTheme component="SearchField" />
+
 ## Accessibility
 
 - The label's `for` points to the input id (auto-generated with `useId()` unless `id` is set)
@@ -166,7 +170,7 @@ SearchField sets these data attributes:
 - `invalid` sets `aria-invalid="true"` on the input; the error is announced via `role="alert"`
 - `required` and `disabled` set the native attributes on the input
 - The clear button is excluded from the tab order (`tabindex="-1"`) and labeled `"Clear search"`; clicking it refocuses the input instead of moving focus away
-- <kbd>Escape</kbd> clears the field (and does nothing when it's already empty); <kbd>Enter</kbd> emits `submit` with the current value
+- <kbd>Escape</kbd> clears the field (and does nothing when it's already empty); <kbd>Enter</kbd> emits `submit` with the current value. Both are ignored while the field is `disabled` or `readonly`
 
 ## Related Components
 

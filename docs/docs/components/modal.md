@@ -3,8 +3,8 @@ title: Modal
 description: Dialog overlay for focused user interactions and important content
 links:
   reka: dialog
-  source: Modal.vue
-  styles: modal.ts
+  source: modal/Modal.vue
+  styles: modal/theme.ts
   heroui: modal
 ---
 
@@ -142,6 +142,10 @@ app.use(createHareUI({
 
 <ApiTable component="Modal" kind="emits" />
 
+### Theme
+
+<ApiTheme component="Modal" />
+
 ## Accessibility
 
 Implements the [WAI-ARIA Dialog pattern](https://www.w3.org/WAI/ARIA/apg/patterns/dialog-modal/)
@@ -150,7 +154,8 @@ via Reka UI's `Dialog` primitive:
 - **Focus trap**: focus is locked within the dialog while open and restored to the
   trigger on close
 - **Keyboard**: `Escape` closes the dialog (unless `dismissible` is `false`), `Tab`
-  cycles through focusable elements inside it
+  cycles through focusable elements inside it. A scrollable body is not a tab stop of its own
+  (as in HeroUI); give it `tabindex="0"` if you want it to be one
 - **Screen readers**: the dialog always has an accessible name — either the rendered
   title or a visually hidden one
 - **Scroll lock**: body scroll is disabled while the modal is open

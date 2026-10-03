@@ -2,8 +2,8 @@
 title: CheckboxGroup
 description: A checkbox group component for managing multiple checkbox selections
 links:
-  source: CheckboxGroup.vue
-  styles: checkboxGroup.ts
+  source: checkbox-group/CheckboxGroup.vue
+  styles: checkbox-group/theme.ts
   heroui: checkbox-group
 ---
 
@@ -132,6 +132,10 @@ app.use(createHareUI({
 ### Emits
 
 <ApiTable component="CheckboxGroup" kind="emits" />
+
+### Theme
+
+<ApiTheme component="CheckboxGroup" />
 
 ## Related Components
 

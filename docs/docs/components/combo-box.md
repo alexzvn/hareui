@@ -3,8 +3,8 @@ title: ComboBox
 description: A combo box combines a text input with a listbox, allowing users to filter a list of options to items matching a query
 links:
   reka: combobox
-  source: ComboBox.vue
-  styles: comboBox.ts
+  source: combo-box/ComboBox.vue
+  styles: combo-box/theme.ts
   heroui: combo-box
 ---
 
@@ -222,12 +222,16 @@ app.use(createHareUI({
 
 <ApiTable component="ComboBox" kind="emits" />
 
+### Theme
+
+<ApiTheme component="ComboBox" />
+
 ## Accessibility
 
 ComboBox follows the ARIA combobox pattern:
 
 - Focus stays in the input; the arrow keys, Home / End and Page Up / Page Down move a virtual focus through the options (`aria-activedescendant`), Enter selects, Escape reverts the text and closes
-- Typing filters the options; on blur, text that matches no option reverts to the selected option (unless `allows-custom-value`)
+- Typing filters the options; on blur, text that matches no option reverts to the selected option (unless `allows-custom-value`). Clearing the text clears the selection
 - The trigger button is not in the tab order and keeps focus in the input
 - The label, description and error are linked to the input with `aria-labelledby` / `aria-describedby`
 - With `name`, the selected value (or text) is submitted with forms; `required` uses native validation

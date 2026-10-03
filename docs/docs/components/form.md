@@ -2,7 +2,7 @@
 title: Form
 description: Wrapper component for form validation and submission handling
 links:
-  source: Form.vue
+  source: form/Form.vue
   heroui: form
 ---
 

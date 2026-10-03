@@ -1,6 +1,6 @@
 import { mount } from '@vue/test-utils'
 import { describe, expect, it } from 'vitest'
-import Typography from '../src/components/Typography.vue'
+import Typography from '../src/components/typography/Typography.vue'
 
 describe('Typography', () => {
   it('defaults to a <p> body element', () => {

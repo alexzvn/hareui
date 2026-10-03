@@ -1,8 +1,8 @@
 import { mount } from '@vue/test-utils'
-import { describe, expect, it } from 'vitest'
+import { describe, expect, it, vi } from 'vitest'
 import { defineComponent, h, ref } from 'vue'
-import Label from '../src/components/Label.vue'
-import Switch from '../src/components/Switch.vue'
+import Label from '../src/components/label/Label.vue'
+import Switch from '../src/components/switch/Switch.vue'
 
 const control = '[data-slot=switch-content]'
 
@@ -70,5 +70,57 @@ describe('Switch row click', () => {
     await wrapper.find('[data-slot=switch]').trigger('click')
     expect(wrapper.emitted('update:modelValue')).toEqual([[true]])
     wrapper.unmount()
+  })
+})
+
+describe('Switch keyboard parity', () => {
+  // behaviour-final-check S1/S2: HeroUI's switch is a native checkbox: Enter submits the form and never toggles
+  it('Enter does not toggle and submits the enclosing form', async () => {
+    const form = document.createElement('form')
+    document.body.append(form)
+    let submitted = 0
+    form.addEventListener('submit', (e) => {
+      e.preventDefault()
+      submitted++
+    })
+    const wrapper = mount(Switch, { props: { label: 'Wi-Fi' }, attachTo: form })
+    await wrapper.get(control).trigger('keydown', { key: 'Enter' })
+    expect(wrapper.emitted('update:modelValue')).toBeUndefined()
+    expect(wrapper.get(control).attributes('aria-checked')).toBe('false')
+    expect(submitted).toBe(1)
+    wrapper.unmount()
+    form.remove()
+  })
+
+  it('Enter clicks the form\'s default button instead when it has one', async () => {
+    const form = document.createElement('form')
+    const submit = document.createElement('button')
+    submit.type = 'submit'
+    let clicked = 0
+    submit.addEventListener('click', (e) => {
+      e.preventDefault()
+      clicked++
+    })
+    const host = document.createElement('div')
+    form.append(host, submit)
+    document.body.append(form)
+    const wrapper = mount(Switch, { props: { label: 'Wi-Fi' }, attachTo: host })
+    await wrapper.get(control).trigger('keydown', { key: 'Enter' })
+    expect(clicked).toBe(1)
+    wrapper.unmount()
+    form.remove()
+  })
+})
+
+describe('Switch root click timing', () => {
+  // Vue skips a later handler on an event stamped no later than the handler's attach time; a click in the same
+  // millisecond as the mount must still reach the root's forwarding handler.
+  it('toggles on a root click in the same millisecond as the mount', async () => {
+    const now = vi.spyOn(Date, 'now').mockReturnValue(1_000_000)
+    const wrapper = mount(Switch, { props: { label: 'Wifi' }, attachTo: document.body })
+    await wrapper.find('[data-slot=switch]').trigger('click')
+    expect(wrapper.emitted('update:modelValue')).toEqual([[true]])
+    wrapper.unmount()
+    now.mockRestore()
   })
 })

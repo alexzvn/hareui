@@ -1,7 +1,7 @@
 import { mount } from '@vue/test-utils'
 import { describe, expect, it } from 'vitest'
 import { h, ref } from 'vue'
-import InputOtp from '../src/components/InputOtp.vue'
+import InputOtp from '../src/components/input-otp/InputOtp.vue'
 
 function controlled(initial = '', props: Record<string, unknown> = {}) {
   const model = ref(initial)
@@ -12,6 +12,36 @@ function controlled(initial = '', props: Record<string, unknown> = {}) {
   }))
   return { model, wrapper, field: wrapper.findComponent(InputOtp), input: wrapper.get('input') }
 }
+
+// happy-dom has no native text editing, so these replay what the browser does to the invisible <input> for a
+// key press, given the selection the component left on it: replace the selection, honour `maxlength`, leave a
+// collapsed caret after the edit, then fire `input`.
+type Wrapper = ReturnType<typeof controlled>['input']
+async function edit(input: Wrapper, replacement: string, deleting: 'backward' | 'forward' | null = null) {
+  const el = input.element as HTMLInputElement
+  let start = el.selectionStart ?? el.value.length
+  const end = el.selectionEnd ?? start
+  if (start === end && deleting === 'backward')
+    start = Math.max(0, start - 1)
+  const stop = start === end && deleting === 'forward' ? end + 1 : end
+  const next = el.value.slice(0, start) + replacement + el.value.slice(stop)
+  if (next.length > el.maxLength)
+    return
+  el.value = next
+  el.setSelectionRange(start + replacement.length, start + replacement.length)
+  await input.trigger('input')
+  await input.trigger('keyup')
+}
+const type = (input: Wrapper, text: string) => edit(input, text)
+const press = (input: Wrapper, key: 'Delete' | 'Backspace') => edit(input, '', key === 'Delete' ? 'forward' : 'backward')
+// The browser moves the caret natively for navigation keys; `keyup` is where the component can observe it.
+async function moveCaret(input: Wrapper, key: string, position: number) {
+  const el = input.element as HTMLInputElement
+  await input.trigger('keydown', { key })
+  el.setSelectionRange(position, position)
+  await input.trigger('keyup', { key })
+}
+const selection = (input: Wrapper) => [(input.element as HTMLInputElement).selectionStart, (input.element as HTMLInputElement).selectionEnd]
 
 describe('inputOtp', () => {
   it('renders HeroUI data-slots: the box, one group per size and a separator between groups', () => {
@@ -115,5 +145,69 @@ describe('inputOtp', () => {
     expect(wrapper.get('[data-slot=label]').attributes('for')).toBe(id)
     expect(input.attributes('aria-describedby')).toContain(`${id}-description`)
     expect(wrapper.get('[data-slot=description]').text()).toBe('Check your email')
+  })
+
+  it('typing on a full field replaces the last slot', async () => {
+    // behaviour-final-check OTP-1
+    const { model, input } = controlled('', { length: 6 })
+    await input.trigger('focus')
+    for (const ch of '123456')
+      await type(input, ch)
+    expect(model.value).toBe('123456')
+    await type(input, '7')
+    expect(model.value).toBe('123457')
+  })
+
+  it('clicking into a full field selects the last slot so typing replaces it', async () => {
+    // behaviour-final-check OTP-1
+    const { model, input } = controlled('123456', { length: 6 })
+    await input.trigger('focus')
+    ;(input.element as HTMLInputElement).setSelectionRange(6, 6) // the browser's caret placement after the click
+    await input.trigger('click')
+    await type(input, '9')
+    expect(model.value).toBe('123459')
+  })
+
+  it('navigating with the arrow keys selects the active slot, so typing replaces it instead of inserting', async () => {
+    // behaviour-final-check OTP-2
+    const { model, input } = controlled('78', { length: 6 })
+    await input.trigger('focus')
+    await moveCaret(input, 'ArrowLeft', 1)
+    await moveCaret(input, 'ArrowLeft', 0)
+    expect(selection(input)).toEqual([0, 1])
+    await type(input, '5')
+    expect(model.value).toBe('58')
+  })
+
+  it('Home selects the first slot, so typing replaces it', async () => {
+    // behaviour-final-check OTP-2
+    const { model, input } = controlled('1234', { length: 6 })
+    await input.trigger('focus')
+    await moveCaret(input, 'Home', 0)
+    expect(selection(input)).toEqual([0, 1])
+    await type(input, '9')
+    expect(model.value).toBe('9234')
+  })
+
+  it('after typing over a slot the next slot is selected, so Delete removes it', async () => {
+    // behaviour-final-check OTP-2
+    const { model, input } = controlled('78', { length: 6 })
+    await input.trigger('focus')
+    await moveCaret(input, 'ArrowLeft', 1)
+    await moveCaret(input, 'ArrowLeft', 0)
+    await type(input, '5')
+    expect(model.value).toBe('58')
+    await press(input, 'Delete')
+    expect(model.value).toBe('5')
+  })
+
+  it('pasting into a full field replaces from the active slot, keeping the earlier slots', async () => {
+    // behaviour-final-check OTP-3
+    const { model, input } = controlled('123456', { length: 6 })
+    await input.trigger('focus')
+    ;(input.element as HTMLInputElement).setSelectionRange(6, 6)
+    await input.trigger('click')
+    await input.trigger('paste', { clipboardData: { getData: () => '12' } })
+    expect(model.value).toBe('123451')
   })
 })

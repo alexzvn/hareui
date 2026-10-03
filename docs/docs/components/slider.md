@@ -2,8 +2,8 @@
 title: Slider
 description: A slider allows a user to select one or more values within a range
 links:
-  source: Slider.vue
-  styles: slider.ts
+  source: slider/Slider.vue
+  styles: slider/theme.ts
   heroui: slider
 ---
 
@@ -123,11 +123,16 @@ app.use(createHareUI({
 
 <ApiTable component="Slider" kind="emits" />
 
+### Theme
+
+<ApiTheme component="Slider" />
+
 ## Accessibility
 
-- Implements the ARIA slider pattern: each thumb is a `role="slider"` with `aria-valuenow`, `aria-valuemin` and `aria-valuemax`
-- Keyboard: Arrow keys step by `step`; Page Up / Page Down and Shift + Arrow step by 10 × `step`; Home / End jump to `min` / `max`
-- `label` names the slider through `aria-labelledby`; without one, pass `aria-label`
+- Implements the ARIA slider pattern: each thumb is a `role="slider"` with `aria-valuenow`, `aria-valuemin`, `aria-valuemax` and the formatted value as `aria-valuetext`; the root is a `role="group"`
+- Keyboard: Arrow keys step by `step`; Page Up / Page Down and Shift + Arrow step by a tenth of the range (at least one `step`); Home / End jump to `min` / `max`
+- Range thumbs can't cross: a thumb stops at its neighbour's value, and Home / End move the focused thumb to the edge of its own range
+- `label` names the slider and every thumb through `aria-labelledby`; without one, pass `aria-label`
 - With `name`, a hidden input submits the value with a form
 - Right-to-left layouts are supported
 

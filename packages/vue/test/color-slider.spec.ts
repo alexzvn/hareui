@@ -1,9 +1,9 @@
 import { mount } from '@vue/test-utils'
 import { parseColor } from 'reka-ui'
 import { describe, expect, it, vi } from 'vitest'
-import { h } from 'vue'
-import ColorSlider from '../src/components/ColorSlider.vue'
-import { ColorPickerContextKey } from '../src/components/colorPickerContext'
+import { h, nextTick } from 'vue'
+import ColorSlider from '../src/components/color-slider/ColorSlider.vue'
+import { ColorPickerContextKey } from '../src/components/color-picker/context'
 
 const thumb = '[data-slot=color-slider-thumb]'
 const track = '[data-slot=color-slider-track]'
@@ -80,5 +80,22 @@ describe('colorSlider', () => {
     await wrapper.get(thumb).trigger('keydown', { key: 'ArrowRight' })
     expect(received).toMatchObject({ h: 51 })
     wrapper.unmount()
+  })
+
+  it('exposes the alpha channel value on a 0..1 scale like React Aria', async () => {
+    // behaviour-final-check S1
+    const wrapper = mount(ColorSlider, { props: { channel: 'alpha', label: 'Alpha', defaultValue: 'hsla(0, 100%, 50%, 0.5)' } })
+    await nextTick()
+    expect(wrapper.get(thumb).attributes('aria-valuenow')).toBe('0.5')
+  })
+
+  it('submits the channel value under `name` inside a form', () => {
+    // behaviour-final-check S2
+    const form = document.createElement('form')
+    document.body.append(form)
+    const wrapper = mount(ColorSlider, { props: { channel: 'hue', name: 'hue', label: 'Hue', defaultValue: 'hsl(200, 100%, 50%)' }, attachTo: form })
+    expect(new FormData(form).get('hue')).toBe('200')
+    wrapper.unmount()
+    form.remove()
   })
 })

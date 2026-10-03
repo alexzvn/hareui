@@ -1,6 +1,6 @@
 import { mount } from '@vue/test-utils'
 import { describe, expect, it } from 'vitest'
-import ProgressBar from '../src/components/ProgressBar.vue'
+import ProgressBar from '../src/components/progress-bar/ProgressBar.vue'
 
 function slots(wrapper: ReturnType<typeof mount>) {
   return wrapper.findAll('[data-slot]').map(el => el.attributes('data-slot'))

@@ -2,8 +2,8 @@
 title: Surface
 description: Container component that provides surface-level styling and context for child components
 links:
-  source: Surface.vue
-  styles: surface.ts
+  source: surface/Surface.vue
+  styles: surface/theme.ts
   heroui: surface
 ---
 
@@ -78,6 +78,10 @@ not BEM classes, so style through `class`, `ui` or `createHareUI`): `transparent
 ### Slots
 
 <ApiTable component="Surface" kind="slots" />
+
+### Theme
+
+<ApiTheme component="Surface" />
 
 ## Context API
 

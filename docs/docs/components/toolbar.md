@@ -2,8 +2,8 @@
 title: Toolbar
 description: A container for interactive controls with arrow key navigation.
 links:
-  source: Toolbar.vue
-  styles: toolbar.ts
+  source: toolbar/Toolbar.vue
+  styles: toolbar/theme.ts
   heroui: toolbar
 ---
 
@@ -74,6 +74,10 @@ one, unless they set `orientation` themselves.
 ### Slots
 
 <ApiTable component="Toolbar" kind="slots" />
+
+### Theme
+
+<ApiTheme component="Toolbar" />
 
 ## Related Components
 

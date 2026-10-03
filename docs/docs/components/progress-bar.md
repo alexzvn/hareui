@@ -3,8 +3,8 @@ title: ProgressBar
 description: A progress bar shows either determinate or indeterminate progress of an operation over time.
 links:
   reka: progress
-  source: ProgressBar.vue
-  styles: progressBar.ts
+  source: progress-bar/ProgressBar.vue
+  styles: progress-bar/theme.ts
   heroui: progress-bar
 ---
 
@@ -114,6 +114,10 @@ style through `class`, `ui` or `createHareUI`):
 ### Slots
 
 <ApiTable component="ProgressBar" kind="slots" />
+
+### Theme
+
+<ApiTheme component="ProgressBar" />
 
 `#label` and `#output` receive:
 

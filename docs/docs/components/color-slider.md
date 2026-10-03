@@ -3,8 +3,8 @@ title: ColorSlider
 description: A color slider allows users to adjust an individual channel of a color value
 links:
   reka: color-slider
-  source: ColorSlider.vue
-  styles: colorSlider.ts
+  source: color-slider/ColorSlider.vue
+  styles: color-slider/theme.ts
   heroui: color-slider
 ---
 
@@ -125,11 +125,15 @@ app.use(createHareUI({
 
 <ApiTable component="ColorSlider" kind="emits" />
 
+### Theme
+
+<ApiTheme component="ColorSlider" />
+
 ## Accessibility
 
 - The thumb is a `role="slider"` labelled by the channel name, with a localised `aria-valuetext`
 - Keyboard: arrow keys, <kbd>Home</kbd>, <kbd>End</kbd>, <kbd>PageUp</kbd> and <kbd>PageDown</kbd>
-- `name` submits the colour as hex through a hidden input
+- `name` submits the channel value through a hidden input (e.g. `200` for hue, `0.5` for alpha), as React Aria does; the alpha thumb's `aria-valuenow` uses the same 0–1 scale
 
 ## Related Components
 

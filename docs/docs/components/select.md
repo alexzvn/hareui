@@ -3,8 +3,8 @@ title: Select
 description: A select displays a collapsible list of options and allows a user to select one or more of them
 links:
   reka: popover
-  source: Select.vue
-  styles: select.ts
+  source: select/Select.vue
+  styles: select/theme.ts
   heroui: select
 ---
 
@@ -185,12 +185,17 @@ app.use(createHareUI({
 
 <ApiTable component="Select" kind="emits" />
 
+### Theme
+
+<ApiTheme component="Select" />
+
 ## Accessibility
 
 Select follows the ARIA listbox pattern:
 
-- The trigger opens the list with click, Enter, Space or the arrow keys; focus moves into the list
-- Typing on the closed trigger selects the next matching option (typeahead)
+- The trigger opens the list with click, Enter, Space or the arrow keys; focus moves into the list (to the selected option, else the first one, or the last one with ArrowUp). A mouse press opens on press start, so you can drag onto an option and release to select it
+- Typing on the closed trigger selects the first matching option, starting from the selected one (typeahead)
+- Closing returns focus to the trigger, unless an outside press moved it to another element
 - `aria-labelledby` combines the label and the current value; description and error are linked with `aria-describedby`
 - A hidden native `<select>` carries `name`, form data and native `required` validation
 

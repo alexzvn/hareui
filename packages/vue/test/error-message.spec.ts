@@ -1,6 +1,6 @@
 import { mount } from '@vue/test-utils'
 import { describe, expect, it } from 'vitest'
-import ErrorMessage from '../src/components/ErrorMessage.vue'
+import ErrorMessage from '../src/components/error-message/ErrorMessage.vue'
 
 describe('ErrorMessage', () => {
   it('renders the errorMessage slot span with HeroUI data-slot and id', () => {

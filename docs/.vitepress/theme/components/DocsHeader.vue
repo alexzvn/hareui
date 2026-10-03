@@ -2,7 +2,7 @@
 import { onBeforeUnmount, onMounted, ref } from 'vue'
 import { Icon } from '@iconify/vue'
 import { tv } from '../../../../packages/vue/src/utils/tv'
-import buttonTheme from '../../../../packages/vue/src/theme/button'
+import buttonTheme from '../../../../packages/vue/src/components/button/theme'
 import { sectionLinks, type SidebarSection } from '../../sidebar'
 import FrameworkTabs from './FrameworkTabs.vue'
 import ThemeToggle from './ThemeToggle.vue'

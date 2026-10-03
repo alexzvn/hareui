@@ -1,8 +1,8 @@
 import { mount } from '@vue/test-utils'
-import { afterEach, describe, expect, it } from 'vitest'
+import { afterEach, describe, expect, it, vi } from 'vitest'
 import { h, nextTick } from 'vue'
-import type { ComboBoxValue } from '../src/components/ComboBox.vue'
-import ComboBox from '../src/components/ComboBox.vue'
+import type { ComboBoxValue } from '../src/components/combo-box/ComboBox.vue'
+import ComboBox from '../src/components/combo-box/ComboBox.vue'
 
 const items = [
   { value: 'aardvark', label: 'Aardvark' },
@@ -225,5 +225,109 @@ describe('ComboBox', () => {
     await wrapper.setProps({ open: false })
     expect(input.attributes('aria-expanded')).toBe('false')
     wrapper.unmount()
+  })
+
+  describe('behaviour parity (React Aria)', () => {
+    const hidden = (wrapper: ReturnType<typeof setup>['wrapper']) => wrapper.get<HTMLInputElement>('input[type=hidden]').element.value
+    const pointer = (el: Element, type: string, init: PointerEventInit = {}) =>
+      el.dispatchEvent(new PointerEvent(type, { bubbles: true, cancelable: true, button: 0, pointerType: 'mouse', ...init }))
+
+    it('clearing the text of a selected item and tabbing away commits empty, not the first option', async () => {
+      // behaviour-final-check H6 / C1
+      const { wrapper, input } = setup({ name: 'animal', defaultValue: 'cat' })
+      expect(hidden(wrapper)).toBe('cat')
+      await input.trigger('focus')
+      await flush()
+      await type(input, '')
+      await input.trigger('keydown', { key: 'Tab' })
+      await input.trigger('blur')
+      await flush()
+      expect(wrapper.emitted('update:modelValue')?.at(-1)).toEqual([null])
+      expect(hidden(wrapper)).toBe('')
+      expect(input.element.value).toBe('')
+      wrapper.unmount()
+    })
+
+    it('clearing the text of a selected item and pressing Enter commits empty, not the first option', async () => {
+      // behaviour-final-check H6 / C1
+      const { wrapper, input } = setup({ name: 'animal', defaultValue: 'cat' })
+      await input.trigger('focus')
+      await flush()
+      await type(input, '')
+      await input.trigger('keydown', { key: 'Enter' })
+      await flush()
+      expect(wrapper.emitted('update:modelValue')?.at(-1)).toEqual([null])
+      expect(hidden(wrapper)).toBe('')
+      expect(input.element.value).toBe('')
+      wrapper.unmount()
+    })
+
+    it('keeps the filtered options in the popover while it animates out after committing a filtered search', async () => {
+      // behaviour-final-check C2
+      // happy-dom runs no CSS, so report an exit animation on the closed popover to keep it mounted like a browser does
+      const realComputedStyle = window.getComputedStyle.bind(window)
+      const spy = vi.spyOn(window, 'getComputedStyle').mockImplementation((el: Element, pseudo?: string | null) => {
+        if (!el.matches('[data-slot=combo-box-popover]'))
+          return realComputedStyle(el, pseudo)
+        return {
+          display: 'block',
+          get animationName() {
+            return el.getAttribute('data-state') === 'closed' ? 'exit' : 'none'
+          },
+        } as CSSStyleDeclaration
+      })
+      try {
+        const { wrapper, input } = setup()
+        await input.trigger('focus')
+        await type(input, 'a')
+        expect(texts()).toEqual(['Aardvark', 'Cat', 'Kangaroo'])
+        await input.trigger('keydown', { key: 'ArrowDown' })
+        await flush()
+        await input.trigger('keydown', { key: 'Enter' })
+        await flush()
+        expect(input.element.value).toBe('Aardvark')
+        expect(input.attributes('aria-expanded')).toBe('false')
+        expect(document.querySelector('[data-slot=combo-box-popover]')?.getAttribute('data-state')).toBe('closed')
+        expect(texts()).toEqual(['Aardvark', 'Cat', 'Kangaroo'])
+        wrapper.unmount()
+      }
+      finally {
+        spy.mockRestore()
+      }
+    })
+
+    it('pressing one option, moving to another and releasing selects the option under the pointer', async () => {
+      // behaviour-final-check C6
+      const { wrapper, input } = setup()
+      await input.trigger('focus')
+      await flush()
+      pointer(options()[0]!, 'pointerdown')
+      pointer(options()[2]!, 'pointerup')
+      await flush()
+      expect(wrapper.emitted('update:modelValue')?.at(-1)).toEqual(['dog'])
+      expect(input.element.value).toBe('Dog')
+      expect(input.attributes('aria-expanded')).toBe('false')
+      wrapper.unmount()
+    })
+
+    it('drops the virtual focus after a pointer pick in multiple mode, keeps it after a keyboard pick', async () => {
+      // behaviour-final-check C5
+      const { wrapper, input } = setup({ selectionMode: 'multiple' })
+      await input.trigger('focus')
+      await flush()
+      pointer(options()[1]!, 'pointerdown')
+      options()[1]!.click()
+      await flush()
+      expect(wrapper.emitted('update:modelValue')?.at(-1)).toEqual([['cat']])
+      expect(input.attributes('aria-expanded')).toBe('true')
+      expect(input.attributes('aria-activedescendant')).toBeUndefined()
+      await input.trigger('keydown', { key: 'ArrowDown' })
+      await flush()
+      await input.trigger('keydown', { key: 'Enter' })
+      await flush()
+      expect(wrapper.emitted('update:modelValue')?.at(-1)).toEqual([['cat', 'aardvark']])
+      expect(input.attributes('aria-activedescendant')).toBe(options()[0]!.id)
+      wrapper.unmount()
+    })
   })
 })

@@ -1,8 +1,8 @@
 import { mount } from '@vue/test-utils'
 import { describe, expect, it } from 'vitest'
 import { h, nextTick, ref } from 'vue'
-import Accordion from '../src/components/Accordion.vue'
-import { useDisclosureGroupNavigation } from '../src/composables/useDisclosureGroupNavigation'
+import Accordion from '../src/components/accordion/Accordion.vue'
+import { useDisclosureGroupNavigation } from '../src/components/disclosure-group/useDisclosureGroupNavigation'
 
 const items = [
   { value: 'a', label: 'A', content: 'Panel A' },

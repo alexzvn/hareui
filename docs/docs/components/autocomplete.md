@@ -3,8 +3,8 @@ title: Autocomplete
 description: An autocomplete combines a select with filtering, allowing users to search and select from a list of options
 links:
   reka: listbox
-  source: Autocomplete.vue
-  styles: autocomplete.ts
+  source: autocomplete/Autocomplete.vue
+  styles: autocomplete/theme.ts
   heroui: autocomplete
 ---
 
@@ -229,11 +229,15 @@ app.use(createHareUI({
 
 <ApiTable component="Autocomplete" kind="emits" />
 
+### Theme
+
+<ApiTheme component="Autocomplete" />
+
 ## Accessibility
 
 Autocomplete follows the ARIA select-only pattern with a filter field:
 
-- The trigger button opens the popover with click, Enter, Space or the arrow keys; typing on the closed trigger selects the next matching option
+- The trigger button opens the popover with click, Enter, Space or the arrow keys; a mouse press opens on press start, so you can drag onto an option and release to select it. Typing on the closed trigger selects the next matching option
 - Focus moves into the search field; the arrow keys, Home / End and Page Up / Page Down move a virtual focus through the options (`aria-activedescendant`), Enter selects
 - Escape clears the search text first, then closes the popover and returns focus to the trigger
 - The clear button is excluded from the tab order; with `clearable`, Backspace / Delete on the trigger also clears

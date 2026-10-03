@@ -1,7 +1,7 @@
 import { mount } from '@vue/test-utils'
 import { describe, expect, it } from 'vitest'
 import { defineComponent, h } from 'vue'
-import Link from '../src/components/Link.vue'
+import Link from '../src/components/link/Link.vue'
 
 const order = (el: Element) => [...el.children].map(c => c.getAttribute('data-slot') ?? c.tagName.toLowerCase())
 

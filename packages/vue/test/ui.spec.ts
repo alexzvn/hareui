@@ -1,8 +1,8 @@
 import { mount } from '@vue/test-utils'
 import { describe, expect, it } from 'vitest'
-import Button from '../src/components/Button.vue'
-import Input from '../src/components/Input.vue'
-import Description from '../src/components/Description.vue'
+import Button from '../src/components/button/Button.vue'
+import Input from '../src/components/input/Input.vue'
+import Description from '../src/components/description/Description.vue'
 import { createHareUI } from '../src/config'
 
 describe('class precedence', () => {

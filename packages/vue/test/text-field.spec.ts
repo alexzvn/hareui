@@ -1,8 +1,8 @@
 import { mount } from '@vue/test-utils'
 import { describe, expect, it } from 'vitest'
 import { h } from 'vue'
-import Input from '../src/components/Input.vue'
-import TextField from '../src/components/TextField.vue'
+import Input from '../src/components/input/Input.vue'
+import TextField from '../src/components/text-field/TextField.vue'
 
 describe('TextField', () => {
   it('aria-describedby lists only the rendered description and error ids', async () => {
@@ -89,5 +89,17 @@ describe('TextField', () => {
     expect(wrapper.attributes('data-testid')).toBe('field')
     const slotted = mount(TextField, { attrs: { 'aria-labelledby': 'heading' }, slots: { default: () => h(Input) } })
     expect(slotted.get('input').attributes('aria-labelledby')).toBe('heading')
+  })
+})
+
+describe('TextField model parity', () => {
+  // behaviour-final-check: RAC's onChange does not fire for the default value
+  it('does not emit update:modelValue on mount with defaultValue, but still shows and submits it', async () => {
+    const wrapper = mount(TextField, { props: { defaultValue: 'jane', name: 'user' } })
+    expect(wrapper.emitted('update:modelValue')).toBeUndefined()
+    const input = wrapper.get('input')
+    expect((input.element as HTMLInputElement).value).toBe('jane')
+    await input.setValue('janet')
+    expect(wrapper.emitted('update:modelValue')).toEqual([['janet']])
   })
 })

@@ -2,8 +2,8 @@
 title: FieldError
 description: Displays validation error messages for form fields
 links:
-  source: FieldError.vue
-  styles: fieldError.ts
+  source: field-error/FieldError.vue
+  styles: field-error/theme.ts
   heroui: field-error
 ---
 
@@ -125,6 +125,10 @@ Inside toggle fields (`[data-slot="checkbox"]`, `[data-slot="switch"]`, `[data-s
 ### Slots
 
 <ApiTable component="FieldError" kind="slots" />
+
+### Theme
+
+<ApiTheme component="FieldError" />
 
 ## Accessibility
 

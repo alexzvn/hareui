@@ -1,9 +1,9 @@
 import { mount } from '@vue/test-utils'
 import { describe, expect, it } from 'vitest'
 import { h, nextTick } from 'vue'
-import Fieldset from '../src/components/Fieldset.vue'
-import ToggleButton from '../src/components/ToggleButton.vue'
-import ToggleButtonGroup from '../src/components/ToggleButtonGroup.vue'
+import Fieldset from '../src/components/fieldset/Fieldset.vue'
+import ToggleButton from '../src/components/toggle-button/ToggleButton.vue'
+import ToggleButtonGroup from '../src/components/toggle-button-group/ToggleButtonGroup.vue'
 
 describe('ToggleButton', () => {
   it('toggles uncontrolled from defaultValue and emits the new state', async () => {

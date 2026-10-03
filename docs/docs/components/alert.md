@@ -2,8 +2,8 @@
 title: Alert
 description: Display important messages and notifications to users with status indicators
 links:
-  source: Alert.vue
-  styles: alert.ts
+  source: alert/Alert.vue
+  styles: alert/theme.ts
   heroui: alert
 ---
 
@@ -88,6 +88,10 @@ The Alert component is primarily informational and doesn't have interactive stat
 ### Slots
 
 <ApiTable component="Alert" kind="slots" />
+
+### Theme
+
+<ApiTheme component="Alert" />
 
 ## Related Components
 

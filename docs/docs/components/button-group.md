@@ -2,8 +2,8 @@
 title: ButtonGroup
 description: Group related buttons together with consistent styling and spacing
 links:
-  source: ButtonGroup.vue
-  styles: buttonGroup.ts
+  source: button-group/ButtonGroup.vue
+  styles: button-group/theme.ts
   heroui: button-group
 ---
 
@@ -118,6 +118,10 @@ The edge radii are set through CSS variables, so a `rounded-*` class on a Button
 ### Slots
 
 <ApiTable component="ButtonGroup" kind="slots" />
+
+### Theme
+
+<ApiTheme component="ButtonGroup" />
 
 ## Note
 

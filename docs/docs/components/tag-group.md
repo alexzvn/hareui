@@ -2,8 +2,8 @@
 title: Tag Group
 description: A focusable list of tags with support for selection and removal
 links:
-  source: TagGroup.vue
-  styles: tagGroup.ts
+  source: tag-group/TagGroup.vue
+  styles: tag-group/theme.ts
   heroui: tag-group
 ---
 
@@ -129,6 +129,10 @@ import { EmptyState } from '@hareui/vue'
 
 <ApiTable component="EmptyState" kind="props" />
 
+### EmptyState Theme
+
+<ApiTheme component="EmptyState" />
+
 ## Customization
 
 ### Tailwind CSS
@@ -174,13 +178,17 @@ app.use(createHareUI({
 
 <ApiTable component="TagGroup" kind="emits" />
 
+### TagGroup Theme
+
+<ApiTheme component="TagGroup" />
+
 ## Accessibility
 
 - The list has `role="grid"`; each tag has `role="row"` wrapping a `role="gridcell"`, matching React Aria's `TagGroup`
 - `aria-multiselectable` is set on the list when `selection-mode` is `'multiple'`
 - `label` names the list through `aria-labelledby`; without one, pass `aria-label`
 - `description` and `error-message` are both referenced by the list's `aria-describedby`
-- Keyboard: Arrow keys move roving focus between tags, skipping disabled ones; Home / End jump to the first / last enabled tag; Enter / Space toggles selection; Delete / Backspace removes the focused tag (or the whole selection, if it's part of it) when `removable`; Escape clears the selection
+- Keyboard: Arrow keys move roving focus between tags, skipping disabled ones; Home / End jump to the first / last enabled tag; Enter / Space toggles selection; in `multiple` mode Shift+Arrow / Home / End and Shift+click select a range and Meta/Ctrl+A selects every enabled tag; Delete / Backspace removes the focused tag (or the whole selection, if it's part of it) when `removable`, and focus moves to the next tag (else the previous one, else the list); Escape clears the selection
 
 ## Related Components
 

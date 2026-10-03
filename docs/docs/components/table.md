@@ -2,8 +2,8 @@
 title: Table
 description: Tables display structured data in rows and columns with support for sorting, selection, column resizing, and infinite scrolling.
 links:
-  source: Table.vue
-  styles: table.ts
+  source: table/Table.vue
+  styles: table/theme.ts
   heroui: table
 ---
 
@@ -61,6 +61,9 @@ sort the data.
 
 Enable row selection with `selection-mode`. The table adds a checkbox column with a select-all checkbox
 in the header; bind `v-model:selected-keys` to read or control the selection (`'all'` or a `Set` of row ids).
+The table is a single tab stop: Arrow Up/Down, Home and End move between rows (Arrow Up from the first row enters
+the header row), Space or Enter toggles the focused row, Shift+Arrow and Shift+click select a range, Meta/Ctrl+A
+selects every row and Escape clears the selection.
 
 <ComponentPreview name="table/selection" minHeight="380px" />
 
@@ -163,6 +166,10 @@ style through `class`, `ui` or `createHareUI`):
 ### Emits
 
 <ApiTable component="Table" kind="emits" />
+
+### Theme
+
+<ApiTheme component="Table" />
 
 ### TableColumn
 

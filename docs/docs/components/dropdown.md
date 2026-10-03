@@ -3,8 +3,8 @@ title: Dropdown
 description: A dropdown displays a list of actions or options that a user can choose
 links:
   reka: dropdown-menu
-  source: Dropdown.vue
-  styles: dropdown.ts
+  source: dropdown/Dropdown.vue
+  styles: dropdown/theme.ts
   heroui: dropdown
 ---
 
@@ -194,6 +194,10 @@ The component supports both CSS pseudo-classes and data attributes for flexibili
 ### Emits
 
 <ApiTable component="Dropdown" kind="emits" />
+
+### Theme
+
+<ApiTheme component="Dropdown" />
 
 ## Accessibility
 

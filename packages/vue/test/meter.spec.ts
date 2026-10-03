@@ -1,6 +1,6 @@
 import { mount } from '@vue/test-utils'
 import { describe, expect, it } from 'vitest'
-import Meter from '../src/components/Meter.vue'
+import Meter from '../src/components/meter/Meter.vue'
 
 function slots(wrapper: ReturnType<typeof mount>) {
   return wrapper.findAll('[data-slot]').map(el => el.attributes('data-slot'))

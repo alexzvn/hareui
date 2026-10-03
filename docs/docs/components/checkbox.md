@@ -2,8 +2,8 @@
 title: Checkbox
 description: Checkboxes allow users to select multiple items from a list, or mark one individual item as selected.
 links:
-  source: Checkbox.vue
-  styles: checkbox.ts
+  source: checkbox/Checkbox.vue
+  styles: checkbox/theme.ts
   heroui: checkbox
 ---
 
@@ -148,6 +148,10 @@ Checkbox sets these data attributes on its root:
 ### Emits
 
 <ApiTable component="Checkbox" kind="emits" />
+
+### Theme
+
+<ApiTheme component="Checkbox" />
 
 ## Accessibility
 

@@ -3,8 +3,8 @@ title: ColorSwatchPicker
 description: A list of color swatches that allows users to select a color from a predefined palette.
 links:
   reka: color-swatch-picker
-  source: ColorSwatchPicker.vue
-  styles: colorSwatchPicker.ts
+  source: color-swatch-picker/ColorSwatchPicker.vue
+  styles: color-swatch-picker/theme.ts
   heroui: color-swatch-picker
 ---
 
@@ -119,6 +119,10 @@ app.use(createHareUI({
 ### Emits
 
 <ApiTable component="ColorSwatchPicker" kind="emits" />
+
+### Theme
+
+<ApiTheme component="ColorSwatchPicker" />
 
 ## Related Components
 

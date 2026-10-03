@@ -3,8 +3,8 @@ title: ColorSwatch
 description: A visual preview of a color value with accessibility support
 links:
   reka: color-swatch
-  source: ColorSwatch.vue
-  styles: colorSwatch.ts
+  source: color-swatch/ColorSwatch.vue
+  styles: color-swatch/theme.ts
   heroui: color-swatch
 ---
 
@@ -83,6 +83,10 @@ Each rendered element carries the same `data-slot` string as HeroUI, so selector
 ### Slots
 
 <ApiTable component="ColorSwatch" kind="slots" />
+
+### Theme
+
+<ApiTheme component="ColorSwatch" />
 
 ## Related Components
 

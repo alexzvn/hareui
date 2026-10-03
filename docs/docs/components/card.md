@@ -2,8 +2,8 @@
 title: Card
 description: Flexible container component for grouping related content and actions
 links:
-  source: Card.vue
-  styles: card.ts
+  source: card/Card.vue
+  styles: card/theme.ts
   heroui: card
 ---
 
@@ -151,6 +151,10 @@ classes, so style through `class`, `ui` or `createHareUI`): `.card--transparent`
 ### Slots
 
 <ApiTable component="Card" kind="slots" />
+
+### Theme
+
+<ApiTheme component="Card" />
 
 ## Accessibility
 

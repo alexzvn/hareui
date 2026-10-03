@@ -1,7 +1,7 @@
 import { mount } from '@vue/test-utils'
 import { afterEach, describe, expect, it } from 'vitest'
 import { nextTick } from 'vue'
-import Select from '../src/components/Select.vue'
+import Select from '../src/components/select/Select.vue'
 
 const items = [
   { value: 'cat', label: 'Cat' },
@@ -91,6 +91,19 @@ describe('Select', () => {
     wrapper.unmount()
   })
 
+  it('typeahead on the closed trigger searches from the selected option inclusive, so a repeated character stays', async () => {
+    // behaviour-final-check S8 (RAC useTypeSelect + ListKeyboardDelegate.getKeyForSearch)
+    const wrapper = mount(Select, { props: { items: [...items, { value: 'cow', label: 'Cow' }] }, attachTo: document.body })
+    await wrapper.get(trigger).trigger('keydown', { key: 'c' })
+    expect(wrapper.emitted('update:modelValue')?.at(-1)).toEqual(['cat'])
+    await new Promise(r => setTimeout(r, 1100))
+    await wrapper.get(trigger).trigger('keydown', { key: 'c' })
+    expect(wrapper.emitted('update:modelValue')?.at(-1)).toEqual(['cat'])
+    await wrapper.get(trigger).trigger('keydown', { key: 'o' })
+    expect(wrapper.emitted('update:modelValue')?.at(-1)).toEqual(['cow'])
+    wrapper.unmount()
+  })
+
   it('submits the selection through the hidden select and blocks required forms natively', async () => {
     const form = document.createElement('form')
     document.body.append(form)
@@ -125,5 +138,172 @@ describe('Select', () => {
     expect(document.querySelector('[role=listbox]')).toBeNull()
     expect(wrapper.emitted('update:open')).toBeUndefined()
     wrapper.unmount()
+  })
+
+  describe('behaviour parity (React Aria)', () => {
+    const fruits = [
+      { value: 'apple', label: 'Apple' },
+      { value: 'banana', label: 'Banana' },
+      { value: 'cherry', label: 'Cherry' },
+      { value: 'tomato', label: 'Tomato' },
+    ]
+    const optionEls = () => [...document.querySelectorAll<HTMLElement>('[role=option]')]
+    const focusedText = () => document.activeElement?.textContent?.trim()
+    const pointer = (el: Element, type: string, init: PointerEventInit = {}) =>
+      el.dispatchEvent(new PointerEvent(type, { bubbles: true, cancelable: true, button: 0, pointerType: 'mouse', ...init }))
+    async function press(k: string) {
+      document.activeElement!.dispatchEvent(new KeyboardEvent('keydown', { key: k, bubbles: true, cancelable: true }))
+      await flush()
+    }
+    async function openByClick(props: Record<string, unknown>) {
+      const wrapper = mount(Select, { props: { items, ...props }, attachTo: document.body })
+      await wrapper.get(trigger).trigger('click')
+      await flush()
+      await flush()
+      return wrapper
+    }
+
+    it('returns focus to the trigger after an outside pointerdown closes the popover', async () => {
+      // behaviour-final-check S1
+      const wrapper = await openByClick({})
+      expect(document.querySelector('[role=listbox]')).not.toBeNull()
+      pointer(document.body, 'pointerdown')
+      pointer(document.body, 'pointerup')
+      document.body.click()
+      await flush()
+      await flush()
+      expect(document.querySelector('[role=listbox]')).toBeNull()
+      expect(document.activeElement?.getAttribute('data-slot')).toBe('select-trigger')
+      wrapper.unmount()
+    })
+
+    it('leaves focus on a focusable element that an outside press moved it to', async () => {
+      // behaviour-final-check S1 (RAC FocusScope only restores focus that is lost or still inside)
+      const wrapper = await openByClick({})
+      const other = document.createElement('input')
+      document.body.appendChild(other)
+      pointer(other, 'pointerdown')
+      other.focus()
+      await flush()
+      await flush()
+      expect(document.querySelector('[role=listbox]')).toBeNull()
+      expect(document.activeElement).toBe(other)
+      wrapper.unmount()
+    })
+
+    it('ArrowUp opens on the selected option when there is one', async () => {
+      // behaviour-final-check S2
+      const wrapper = mount(Select, { props: { items, defaultValue: 'dog' }, attachTo: document.body })
+      wrapper.get<HTMLElement>(trigger).element.focus()
+      await wrapper.get(trigger).trigger('keydown', { key: 'ArrowUp' })
+      await flush()
+      await flush()
+      expect(focusedText()).toBe('Dog')
+      wrapper.unmount()
+    })
+
+    it('a second mouse press on the trigger closes the popover', async () => {
+      // behaviour-final-check S7
+      const wrapper = mount(Select, { props: { items }, attachTo: document.body })
+      const el = wrapper.get(trigger).element
+      for (let i = 0; i < 2; i++) {
+        pointer(el, 'pointerdown')
+        pointer(el, 'pointerup')
+        el.dispatchEvent(new MouseEvent('click', { bubbles: true, cancelable: true, detail: 1 }))
+        await flush()
+        await flush()
+        expect(wrapper.get(trigger).attributes('aria-expanded')).toBe(i === 0 ? 'true' : 'false')
+      }
+      wrapper.unmount()
+    })
+
+    it('ArrowUp on the closed trigger opens with the last enabled option focused', async () => {
+      // behaviour-final-check S2
+      const wrapper = mount(Select, { props: { items }, attachTo: document.body })
+      wrapper.get<HTMLElement>(trigger).element.focus()
+      await wrapper.get(trigger).trigger('keydown', { key: 'ArrowUp' })
+      await flush()
+      await flush()
+      expect(document.querySelector('[role=listbox]')).not.toBeNull()
+      expect(focusedText()).toBe('Eel')
+      wrapper.unmount()
+    })
+
+    it('hovering an option makes it the keyboard-focused option, so ArrowDown continues from it', async () => {
+      // behaviour-final-check S3
+      const wrapper = await openByClick({ items: fruits })
+      expect(focusedText()).toBe('Apple')
+      pointer(optionEls()[1]!, 'pointermove')
+      await flush()
+      expect(focusedText()).toBe('Banana')
+      await press('ArrowDown')
+      expect(focusedText()).toBe('Cherry')
+      wrapper.unmount()
+    })
+
+    it('PageDown moves to the last option and PageUp back to the first in a short list', async () => {
+      // behaviour-final-check S4
+      const wrapper = await openByClick({ items: fruits })
+      expect(focusedText()).toBe('Apple')
+      await press('PageDown')
+      expect(focusedText()).toBe('Tomato')
+      await press('PageUp')
+      expect(focusedText()).toBe('Apple')
+      wrapper.unmount()
+    })
+
+    it('typeahead works straight after arrow keys and ignores non-printable keys', async () => {
+      // behaviour-final-check S5
+      const wrapper = await openByClick({ items: fruits })
+      await press('ArrowDown')
+      await press('ArrowDown')
+      expect(focusedText()).toBe('Cherry')
+      await press('t')
+      expect(focusedText()).toBe('Tomato')
+      wrapper.unmount()
+    })
+
+    it('Space continues a non-empty typeahead string instead of selecting and closing', async () => {
+      // behaviour-final-check S6
+      const numbered = [
+        { value: 1, label: 'Option 1' },
+        { value: 2, label: 'Option 2' },
+        { value: 3, label: 'Option 3' },
+      ]
+      const wrapper = await openByClick({ items: numbered })
+      for (const k of ['o', 'p', 't', 'i', 'o', 'n', ' ', '2'])
+        await press(k)
+      expect(wrapper.emitted('update:modelValue')).toBeUndefined()
+      expect(document.querySelector('[role=listbox]')).not.toBeNull()
+      expect(focusedText()).toBe('Option 2')
+      wrapper.unmount()
+    })
+
+    it('a mouse pointerdown on the trigger opens the popover before the click', async () => {
+      // behaviour-final-check S7
+      const wrapper = mount(Select, { props: { items }, attachTo: document.body })
+      pointer(wrapper.get(trigger).element, 'pointerdown')
+      await flush()
+      expect(document.querySelector('[role=listbox]')).not.toBeNull()
+      expect(wrapper.get(trigger).attributes('aria-expanded')).toBe('true')
+      wrapper.unmount()
+    })
+
+    it('press on the trigger, drag onto an option and release selects that option', async () => {
+      // behaviour-final-check S7
+      const wrapper = mount(Select, { props: { items }, attachTo: document.body })
+      const el = wrapper.get(trigger).element
+      pointer(el, 'pointerdown')
+      await flush()
+      await flush()
+      expect(optionEls()).toHaveLength(4)
+      const dog = optionEls().find(o => o.textContent?.trim() === 'Dog')
+      expect(dog).toBeDefined()
+      pointer(dog!, 'pointerup')
+      await flush()
+      expect(wrapper.emitted('update:modelValue')?.at(-1)).toEqual(['dog'])
+      expect(document.querySelector('[role=listbox]')).toBeNull()
+      wrapper.unmount()
+    })
   })
 })

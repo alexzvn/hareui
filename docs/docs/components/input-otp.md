@@ -2,8 +2,8 @@
 title: InputOtp
 description: A one-time password input for verification codes and secure authentication
 links:
-  source: InputOtp.vue
-  styles: inputOtp.ts
+  source: input-otp/InputOtp.vue
+  styles: input-otp/theme.ts
   heroui: input-otp
 ---
 
@@ -150,9 +150,13 @@ app.use(createHareUI({
 
 <ApiTable component="InputOtp" kind="emits" />
 
+### Theme
+
+<ApiTheme component="InputOtp" />
+
 ## Accessibility
 
-- A single native `<input>` carries focus, typing, selection and paste, so standard text-editing shortcuts (<kbd>Backspace</kbd>, arrow keys, <kbd>Home</kbd>/<kbd>End</kbd>, select-and-retype) work without extra wiring
+- A single native `<input>` carries focus, typing, selection and paste, so standard text-editing shortcuts (<kbd>Backspace</kbd>, arrow keys, <kbd>Home</kbd>/<kbd>End</kbd>, select-and-retype) work without extra wiring. As in input-otp, moving the caret onto a filled slot selects its character, so typing or pasting replaces it (on a full field, the last slot)
 - `autocomplete="one-time-code"` lets browsers and password managers offer SMS-delivered codes
 - `label` associates with the input through `for`/`id`; `description` and `error-message` are wired via `aria-describedby`
 - With `name`, the input submits its value with a form like any text field

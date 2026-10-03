@@ -1,8 +1,8 @@
 import { mount } from '@vue/test-utils'
 import { describe, expect, it } from 'vitest'
 import { h } from 'vue'
-import ColorSwatch from '../src/components/ColorSwatch.vue'
-import { ColorPickerContextKey } from '../src/components/colorPickerContext'
+import ColorSwatch from '../src/components/color-swatch/ColorSwatch.vue'
+import { ColorPickerContextKey } from '../src/components/color-picker/context'
 import { parseColor } from 'reka-ui'
 
 describe('colorSwatch', () => {

@@ -2,8 +2,8 @@
 title: ToggleButtonGroup
 description: Groups multiple ToggleButtons into a unified control, allowing users to select one or multiple options.
 links:
-  source: ToggleButtonGroup.vue
-  styles: toggleButtonGroup.ts
+  source: toggle-button-group/ToggleButtonGroup.vue
+  styles: toggle-button-group/theme.ts
   heroui: toggle-button-group
 ---
 
@@ -118,6 +118,10 @@ Each rendered element carries the same `data-slot` string as HeroUI, so selector
 
 <ApiTable component="ToggleButtonGroup" kind="emits" />
 
+### Theme
+
+<ApiTheme component="ToggleButtonGroup" />
+
 ## Note
 
 - ToggleButtonGroup passes `size` to all child ToggleButton components
@@ -125,6 +129,7 @@ Each rendered element carries the same `data-slot` string as HeroUI, so selector
 - The `disabled` prop disables all child ToggleButtons. A button can't opt back in with `:disabled="false"`: as in React Aria, the group's `disabled` wins
 - The component automatically handles border radius between buttons
 - Use `disallow-empty-selection` with `selection-mode="single"` to ensure one option is always selected
+- **Difference from HeroUI:** pressing a disabled button moves focus to the group container (Reka's roving-focus root), where HeroUI leaves focus where it was. The next <kbd>Tab</kbd> then starts from the group
 
 ## Related Components
 

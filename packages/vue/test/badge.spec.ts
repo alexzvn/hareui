@@ -1,7 +1,7 @@
 import { mount } from '@vue/test-utils'
 import { describe, expect, it } from 'vitest'
 import { h } from 'vue'
-import Badge from '../src/components/Badge.vue'
+import Badge from '../src/components/badge/Badge.vue'
 
 describe('Badge', () => {
   it('anchors the badge after the default slot and wraps content in a label', () => {

@@ -2,8 +2,8 @@
 title: Meter
 description: A meter represents a quantity within a known range, or a fractional value.
 links:
-  source: Meter.vue
-  styles: meter.ts
+  source: meter/Meter.vue
+  styles: meter/theme.ts
   heroui: meter
 ---
 
@@ -108,6 +108,10 @@ style through `class`, `ui` or `createHareUI`):
 ### Slots
 
 <ApiTable component="Meter" kind="slots" />
+
+### Theme
+
+<ApiTheme component="Meter" />
 
 `#label` and `#output` receive:
 

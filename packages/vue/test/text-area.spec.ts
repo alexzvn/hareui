@@ -1,8 +1,8 @@
 import { mount } from '@vue/test-utils'
 import { describe, expect, it } from 'vitest'
 import { h } from 'vue'
-import TextArea from '../src/components/TextArea.vue'
-import TextField from '../src/components/TextField.vue'
+import TextArea from '../src/components/text-area/TextArea.vue'
+import TextField from '../src/components/text-field/TextField.vue'
 
 describe('TextArea', () => {
   it('renders a textarea with HeroUI data-slot and forwards native attributes', () => {

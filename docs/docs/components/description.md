@@ -2,8 +2,8 @@
 title: Description
 description: Provides supplementary text for form fields and other components
 links:
-  source: Description.vue
-  styles: description.ts
+  source: description/Description.vue
+  styles: description/theme.ts
   heroui: description
 ---
 
@@ -87,6 +87,10 @@ Inside a [TextField](/docs/components/text-field) with `[data-invalid="true"]`, 
 ### Slots
 
 <ApiTable component="Description" kind="slots" />
+
+### Theme
+
+<ApiTheme component="Description" />
 
 ## Accessibility
 

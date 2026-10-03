@@ -1,7 +1,7 @@
 import { mount } from '@vue/test-utils'
 import { describe, expect, it, vi } from 'vitest'
 import { h } from 'vue'
-import Button from '../src/components/Button.vue'
+import Button from '../src/components/button/Button.vue'
 
 describe('Button', () => {
   it('pending shows a spinner, sets aria-busy and swallows clicks while staying focusable', async () => {

@@ -1,8 +1,8 @@
 import { mount } from '@vue/test-utils'
 import { colorToString, parseColor } from 'reka-ui'
 import { describe, expect, it } from 'vitest'
-import ColorArea from '../src/components/ColorArea.vue'
-import { ColorPickerContextKey } from '../src/components/colorPickerContext'
+import ColorArea from '../src/components/color-area/ColorArea.vue'
+import { ColorPickerContextKey } from '../src/components/color-picker/context'
 
 const area = '[data-slot=color-area]'
 const thumb = '[data-slot=color-area-thumb]'
@@ -90,5 +90,25 @@ describe('colorArea', () => {
     await t.trigger('keydown', { key: 'ArrowRight' })
     expect(t.attributes('data-focus-visible')).toBe('true')
     wrapper.unmount()
+  })
+
+  it('reports HSB saturation for a hex model value when colorSpace is hsb', () => {
+    // behaviour-final-check H10 / A1: #F43F5E is hsb(349.7, 74%, 96%) but hsl(349.7, 89%, 60%)
+    const wrapper = mount(ColorArea, {
+      props: { defaultValue: '#F43F5E', colorSpace: 'hsb', xChannel: 'saturation', yChannel: 'brightness' },
+    })
+    const text = wrapper.find(thumb).attributes('aria-valuetext')
+    expect(text).toContain('Saturation 74')
+    expect(text).toContain('Brightness 96')
+  })
+
+  it('keeps the thumb at the HSB saturation when a hex v-model arrives from outside', async () => {
+    // behaviour-final-check H10 / A1
+    const wrapper = mount(ColorArea, {
+      props: { modelValue: '#000000', colorSpace: 'hsb', xChannel: 'saturation', yChannel: 'brightness' },
+    })
+    await wrapper.setProps({ modelValue: '#22C55E' })
+    // #22C55E is hsb(142.1, 83%, 77%) but hsl(142.1, 71%, 45%)
+    expect(wrapper.find(thumb).attributes('aria-valuetext')).toContain('Saturation 83')
   })
 })

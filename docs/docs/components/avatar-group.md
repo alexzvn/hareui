@@ -2,8 +2,8 @@
 title: AvatarGroup
 description: Display a stacked or grid group of avatars with overflow counting
 links:
-  source: AvatarGroup.vue
-  styles: avatarGroup.ts
+  source: avatar-group/AvatarGroup.vue
+  styles: avatar-group/theme.ts
   heroui: avatar-group
 ---
 
@@ -98,6 +98,10 @@ glyphs; ring mode uses a thin box-shadow outline via `--background`.
 ### Slots
 
 <ApiTable component="AvatarGroup" kind="slots" />
+
+### Theme
+
+<ApiTheme component="AvatarGroup" />
 
 ## Note
 

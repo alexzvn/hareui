@@ -1,8 +1,8 @@
 import { mount } from '@vue/test-utils'
 import { defineComponent, inject, h } from 'vue'
 import { describe, expect, it } from 'vitest'
-import Surface from '../src/components/Surface.vue'
-import { surfaceContextKey } from '../src/components/surfaceContext'
+import Surface from '../src/components/surface/Surface.vue'
+import { surfaceContextKey } from '../src/components/surface/context'
 
 const VariantReader = defineComponent({
   setup() {

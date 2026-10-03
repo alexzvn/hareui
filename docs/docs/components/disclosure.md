@@ -2,8 +2,8 @@
 title: Disclosure
 description: A disclosure is a collapsible section with a header containing a heading and a trigger button, and a panel that wraps the content.
 links:
-  source: Disclosure.vue
-  styles: disclosure.ts
+  source: disclosure/Disclosure.vue
+  styles: disclosure/theme.ts
   heroui: disclosure
 ---
 
@@ -101,6 +101,10 @@ The component supports both CSS pseudo-classes and data attributes for flexibili
 ### Emits
 
 <ApiTable component="Disclosure" kind="emits" />
+
+### Theme
+
+<ApiTheme component="Disclosure" />
 
 ## Related Components
 

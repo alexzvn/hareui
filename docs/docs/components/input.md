@@ -2,8 +2,8 @@
 title: Input
 description: Primitive single-line text input component that accepts standard HTML attributes
 links:
-  source: Input.vue
-  styles: input.ts
+  source: input/Input.vue
+  styles: input/theme.ts
   heroui: input
 ---
 
@@ -106,6 +106,10 @@ The input reads the field tokens `--field-border`, `--field-border-hover`, `--fi
 ### Emits
 
 <ApiTable component="Input" kind="emits" />
+
+### Theme
+
+<ApiTheme component="Input" />
 
 > For labels, descriptions and error messages, use **[TextField](/docs/components/text-field)**; an `Input` placed in its default slot inherits the field's id, `aria-describedby`, `invalid`, `disabled`, `required`, `variant` and `fullWidth`.
 

@@ -1,7 +1,7 @@
 import { mount } from '@vue/test-utils'
 import { describe, expect, it } from 'vitest'
 import { h, ref } from 'vue'
-import CheckboxGroup from '../src/components/CheckboxGroup.vue'
+import CheckboxGroup from '../src/components/checkbox-group/CheckboxGroup.vue'
 
 const items = [
   { value: 'coding', label: 'Coding' },
@@ -75,5 +75,14 @@ describe('CheckboxGroup row click', () => {
     await boxes[2]!.trigger('click')
     expect(wrapper.emitted('update:modelValue')).toHaveLength(1)
     wrapper.unmount()
+  })
+})
+
+describe('CheckboxGroup state parity', () => {
+  // behaviour-final-check G2
+  it('exposes a disabled group as aria-disabled', () => {
+    const wrapper = mount(CheckboxGroup, { props: { items, disabled: true } })
+    expect(wrapper.get('[data-slot=checkbox-group]').attributes('aria-disabled')).toBe('true')
+    expect(mount(CheckboxGroup, { props: { items } }).get('[data-slot=checkbox-group]').attributes('aria-disabled')).toBeUndefined()
   })
 })

@@ -3,8 +3,8 @@ title: Tabs
 description: Tabs organize content into multiple sections and allow users to navigate between them.
 links:
   reka: tabs
-  source: Tabs.vue
-  styles: tabs.ts
+  source: tabs/Tabs.vue
+  styles: tabs/theme.ts
   heroui: tabs
 ---
 
@@ -190,3 +190,7 @@ Tabs sets these data attributes (from Reka UI):
 ### Emits
 
 <ApiTable component="Tabs" kind="emits" />
+
+### Theme
+
+<ApiTheme component="Tabs" />

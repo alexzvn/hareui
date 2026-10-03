@@ -1,7 +1,7 @@
 import { CalendarDate } from '@internationalized/date'
 import { mount } from '@vue/test-utils'
 import { describe, expect, it } from 'vitest'
-import DatePicker from '../src/components/DatePicker.vue'
+import DatePicker from '../src/components/date-picker/DatePicker.vue'
 
 // Local stand-in for Promise.withResolvers, so the library's tsconfig `lib` doesn't need ES2024.
 function withResolvers<T>() {
@@ -139,5 +139,88 @@ describe('datePicker', () => {
     await flush()
     expect(document.querySelector('[data-testid=custom-calendar]')).not.toBeNull()
     wrapper.unmount()
+  })
+
+  // behaviour-final-check P1
+  it('Alt+ArrowDown on a segment opens the popover and focuses the selected date, leaving the segment value alone', async () => {
+    const wrapper = mount(DatePicker, { props: { label: 'Date', defaultValue: new CalendarDate(2024, 3, 15) }, attachTo: document.body })
+    const month = wrapper.get('[data-reka-date-field-segment="month"]')
+    ;(month.element as HTMLElement).focus()
+    await month.trigger('keydown', { key: 'ArrowDown', altKey: true })
+    await flush()
+
+    expect(document.querySelector('[data-slot=date-picker-popover]')).not.toBeNull()
+    expect(document.activeElement).toBe(document.querySelector('[data-slot=calendar-cell][data-value="2024-03-15"]'))
+    expect(month.text()).toBe('3')
+    wrapper.unmount()
+  })
+
+  // behaviour-final-check P2
+  it('returns focus to the trigger after an outside click closes the popover', async () => {
+    const outside = document.createElement('button')
+    document.body.appendChild(outside)
+    const wrapper = mount(DatePicker, { props: { label: 'Date', defaultValue: new CalendarDate(2025, 1, 15) }, attachTo: document.body })
+    await wrapper.get(trigger).trigger('click')
+    await flush()
+    expect(document.querySelector('[data-slot=date-picker-popover]')).not.toBeNull()
+
+    outside.focus()
+    outside.dispatchEvent(new PointerEvent('pointerdown', { bubbles: true, button: 0, pointerType: 'mouse', ctrlKey: false }))
+    outside.dispatchEvent(new PointerEvent('pointerup', { bubbles: true, button: 0, pointerType: 'mouse' }))
+    outside.click()
+    await flush()
+
+    expect(document.querySelector('[data-slot=date-picker-popover]')).toBeNull()
+    expect(document.activeElement).toBe(wrapper.get(trigger).element)
+    wrapper.unmount()
+    outside.remove()
+  })
+
+  // behaviour-final-check P3
+  it('clicking the already-selected date closes the popover and returns focus to the trigger', async () => {
+    const wrapper = mount(DatePicker, { props: { label: 'Date', defaultValue: new CalendarDate(2025, 1, 15) }, attachTo: document.body })
+    await wrapper.get(trigger).trigger('click')
+    await flush()
+    document.querySelector<HTMLElement>('[data-slot=calendar-cell][data-value="2025-01-15"]')!.click()
+    await flush()
+
+    expect(document.querySelector('[data-slot=date-picker-popover]')).toBeNull()
+    expect(document.activeElement).toBe(wrapper.get(trigger).element)
+    wrapper.unmount()
+  })
+
+  // behaviour-final-check P4
+  it('Escape while the year picker is open closes the whole popover and focuses the trigger', async () => {
+    const wrapper = mount(DatePicker, { props: { label: 'Date', defaultValue: new CalendarDate(2025, 1, 15) }, attachTo: document.body })
+    await wrapper.get(trigger).trigger('click')
+    await flush()
+    document.querySelector<HTMLElement>('[data-slot=calendar-year-picker-trigger]')!.click()
+    await flush()
+    expect(document.querySelector('[data-slot=calendar-year-picker-grid]')?.getAttribute('data-open')).toBe('true')
+
+    const target = document.activeElement ?? document.body
+    target.dispatchEvent(new KeyboardEvent('keydown', { key: 'Escape', bubbles: true, cancelable: true }))
+    await flush()
+
+    expect(document.querySelector('[data-slot=date-picker-popover]')).toBeNull()
+    expect(document.activeElement).toBe(wrapper.get(trigger).element)
+    wrapper.unmount()
+  })
+
+  // behaviour-final-check F5 (shared DateInputGroup)
+  it('invalid: marks every segment aria-invalid and the input element data-invalid', () => {
+    const wrapper = mount(DatePicker, { props: { invalid: true, defaultValue: new CalendarDate(2024, 3, 15) } })
+    expect(wrapper.findAll('[role=spinbutton]').map(s => s.attributes('aria-invalid'))).toEqual(['true', 'true', 'true'])
+    expect(wrapper.get('[data-slot=date-input-group-input]').attributes('data-invalid')).toBeDefined()
+  })
+
+  // behaviour-final-check P6
+  it('names the trigger "Calendar", together with the field label', () => {
+    const wrapper = mount(DatePicker, { props: { label: 'Date' } })
+    const button = wrapper.get(trigger)
+    expect(button.attributes('aria-label')).toBe('Calendar')
+    const [self, label] = button.attributes('aria-labelledby')!.split(' ')
+    expect(self).toBe(button.attributes('id'))
+    expect(wrapper.get(`#${label}`).text()).toBe('Date')
   })
 })

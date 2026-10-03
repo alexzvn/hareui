@@ -1,8 +1,8 @@
 import { mount } from '@vue/test-utils'
 import { describe, expect, it } from 'vitest'
 import { h, nextTick } from 'vue'
-import Button from '../src/components/Button.vue'
-import ButtonGroup from '../src/components/ButtonGroup.vue'
+import Button from '../src/components/button/Button.vue'
+import ButtonGroup from '../src/components/button-group/ButtonGroup.vue'
 
 const buttons = (wrapper: ReturnType<typeof mount>) => wrapper.findAll('[data-slot="button"]')
 

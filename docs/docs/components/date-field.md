@@ -3,8 +3,8 @@ title: DateField
 description: Date input field with labels, descriptions, and validation
 links:
   reka: date-field
-  source: DateField.vue
-  styles: dateField.ts
+  source: date-field/DateField.vue
+  styles: date-field/theme.ts
   heroui: date-field
 ---
 
@@ -178,12 +178,16 @@ DateField sets these data attributes:
 
 <ApiTable component="DateField" kind="emits" />
 
+### Theme
+
+<ApiTheme component="DateField" />
+
 ## Accessibility
 
 - The label's `for` points to the field's id (auto-generated with `useId()` unless `id` is set)
 - The field's `aria-describedby` lists the ids of the rendered description (`<id>-description`) and error (`<id>-error`)
-- `invalid` sets `aria-invalid="true"` on the field; the error is announced via `role="alert"`
-- Keyboard: <kbd>←</kbd>/<kbd>→</kbd> move between segments, <kbd>↑</kbd>/<kbd>↓</kbd> increment/decrement the focused segment, digits type directly into the focused segment and auto-advance
+- `invalid` sets `aria-invalid="true"` on the field and every segment; the error is announced via `role="alert"`
+- Keyboard: <kbd>←</kbd>/<kbd>→</kbd> move between segments, <kbd>↑</kbd>/<kbd>↓</kbd> increment/decrement the focused segment (a 12-hour hour stays within its AM/PM period), <kbd>PgUp</kbd>/<kbd>PgDn</kbd> step it by a larger amount, <kbd>Home</kbd>/<kbd>End</kbd> set it to its minimum/maximum, digits type directly into the focused segment and auto-advance
 - `min-value`, `max-value` and `is-date-unavailable` mark the field invalid on their own, matching React Aria's `useDateFieldState` — no need to compute `invalid` yourself just for native-range feedback
 
 ## Related Components
