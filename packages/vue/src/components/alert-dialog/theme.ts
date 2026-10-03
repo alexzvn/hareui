@@ -31,6 +31,8 @@ export default {
       'p-6',
       'overflow-clip',
       'pointer-events-auto',
+      // Keeps the dialog mounted through the container's exit (see `presence-hold` in styles/keyframes.css).
+      '[&:where([data-state=closed])]:animate-presence-hold',
     ],
     header: 'flex flex-col gap-3 mb-0',
     heading: 'align-middle text-base font-medium text-foreground',

@@ -174,10 +174,9 @@ onBeforeUnmount(() => {
         :style="{ '--visual-viewport-height': visualViewportHeight }"
         :class="ui.backdrop({ class: props.ui?.backdrop })"
       >
-        <!-- force-mount: see Modal.vue - the overlay's Presence keeps the dialog through the container's exit animation -->
+        <!-- No force-mount: see Modal.vue - the dialog's `presence-hold` keeps it through the container's exit animation -->
         <div data-slot="alert-dialog-container" :data-state="isOpen ? 'open' : 'closed'" :data-placement="placement" :class="ui.container({ class: props.ui?.container })">
           <DialogContent
-            force-mount
             data-slot="alert-dialog-dialog"
             role="alertdialog"
             :data-placement="placement"

@@ -66,3 +66,18 @@
     }
   }
 }
+
+/*
+ * HareUI-only, changes nothing visible. Reka's Presence unmounts a closing node at once unless the node itself runs
+ * an exit animation. Modal/AlertDialog dialogs have none (their container animates), so they run this while closed;
+ * the overlay's Presence then removes them together with the backdrop. Longer than any backdrop exit on purpose.
+ */
+@theme {
+  --animate-presence-hold: presence-hold 1s linear;
+
+  @keyframes presence-hold {
+    to {
+      --presence-hold: 1;
+    }
+  }
+}
