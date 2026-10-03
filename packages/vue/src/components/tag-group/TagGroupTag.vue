@@ -2,7 +2,8 @@
 // Internal: one TagGroup tag. Not exported. Roving tabindex, selection toggling and Enter/Space,
 // Delete/Backspace and arrow-key navigation are all driven by the parent `TagGroup` (it owns the
 // collection and needs to skip disabled tags), so this component only renders and tracks hover-ish
-// visual state; it never attaches its own keydown handler.
+// visual state; it never attaches its own keydown handler. Presses are reported with their event so the
+// parent can tell Shift+press (range) from a toggle.
 import type { ComponentUI } from '../../types/tv'
 import type tagTheme from './tagTheme'
 import type { TagGroupItem, TagGroupSlots } from './TagGroup.vue'
@@ -21,7 +22,7 @@ const props = defineProps<{
   classes: ComponentUI<typeof tagTheme>
   ui?: { tag?: any, removeButton?: any }
 }>()
-const emit = defineEmits<{ toggle: [], remove: [] }>()
+const emit = defineEmits<{ press: [event: MouseEvent | PointerEvent], remove: [] }>()
 defineSlots<{ default?: TagGroupSlots['item'], removeButton?: TagGroupSlots['removeButton'] }>()
 
 // RAC render-prop states the CSS actually styles (`:active`/`data-pressed`, `:focus-visible`/`data-focus-visible`).
@@ -37,23 +38,31 @@ function onFocus(event: FocusEvent) {
 let selectedOnDown = false
 
 function onPointerdown(event: PointerEvent) {
-  pressed.value = true
   selectedOnDown = false
+  if (props.disabled)
+    return
+  pressed.value = true
   const fromRemoveButton = event.target instanceof Element && event.target.closest('[data-slot=tag-remove-button]')
-  if (props.disabled || fromRemoveButton || event.pointerType !== 'mouse' || event.button !== 0)
+  if (fromRemoveButton || event.pointerType !== 'mouse' || event.button !== 0)
     return
   selectedOnDown = true
-  emit('toggle')
+  emit('press', event)
 }
 
-function onClick() {
+// A disabled tag isn't focusable: keep focus where it is instead of letting the press blur it to `body` (RAC)
+function onMousedown(event: MouseEvent) {
+  if (props.disabled)
+    event.preventDefault()
+}
+
+function onClick(event: MouseEvent) {
   if (selectedOnDown) {
     selectedOnDown = false
     return
   }
   if (props.disabled)
     return
-  emit('toggle')
+  emit('press', event)
 }
 
 function onRemoveClick(event: MouseEvent) {
@@ -76,6 +85,7 @@ function onRemoveClick(event: MouseEvent) {
     :class="classes.base({ class: ui?.tag })"
     @click="onClick"
     @pointerdown="onPointerdown"
+    @mousedown="onMousedown"
     @pointerup="pressed = false"
     @pointercancel="pressed = false"
     @focus="onFocus"
