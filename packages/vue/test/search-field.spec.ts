@@ -87,4 +87,21 @@ describe('searchField', () => {
     expect(wrapper.find('[data-test=custom-clear]').exists()).toBe(true)
     expect(wrapper.get('[data-slot=search-field-search-icon]').find('svg').exists()).toBe(false)
   })
+
+  it('readonly: escape does not clear the value or emit clear', async () => {
+    // behaviour-final-check H13
+    const model = ref('cats')
+    const wrapper = mount(() => h(SearchField, { 'modelValue': model.value, 'readonly': true, 'onUpdate:modelValue': (v: unknown) => (model.value = String(v ?? '')) }))
+    await wrapper.get('input').trigger('keydown', { key: 'Escape' })
+    expect(model.value).toBe('cats')
+    expect(wrapper.get('input').element.value).toBe('cats')
+    expect(wrapper.findComponent(SearchField).emitted('clear')).toBeUndefined()
+  })
+
+  it('readonly: enter does not emit submit', async () => {
+    // behaviour-final-check H13
+    const wrapper = mount(SearchField, { props: { modelValue: 'cats', readonly: true } })
+    await wrapper.get('input').trigger('keydown', { key: 'Enter' })
+    expect(wrapper.emitted('submit')).toBeUndefined()
+  })
 })

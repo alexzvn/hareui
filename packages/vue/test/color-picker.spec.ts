@@ -85,4 +85,26 @@ describe('colorPicker', () => {
     mount(ColorPicker, { props: { disabled: true }, slots, attachTo: document.body })
     expect(document.body.querySelectorAll('[data-slot=color-picker-trigger]')[1].hasAttribute('disabled')).toBe(true)
   })
+
+  it('returns focus to the trigger after an outside click closes the popover', async () => {
+    // behaviour-final-check P1
+    const outside = document.createElement('button')
+    document.body.append(outside)
+    const w = mount(ColorPicker, { props: { defaultValue: '#0485F7' }, slots, attachTo: document.body })
+    trigger().click()
+    await nextTick()
+    await nextTick()
+    expect(popover()).not.toBeNull()
+
+    outside.focus()
+    outside.dispatchEvent(new PointerEvent('pointerdown', { bubbles: true, button: 0, pointerType: 'mouse', ctrlKey: false }))
+    outside.dispatchEvent(new PointerEvent('pointerup', { bubbles: true, button: 0, pointerType: 'mouse' }))
+    outside.click()
+    for (let i = 0; i < 4; i++)
+      await nextTick()
+
+    expect(w.emitted('update:open')?.at(-1)).toEqual([false])
+    expect(document.activeElement).toBe(trigger())
+    outside.remove()
+  })
 })

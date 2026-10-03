@@ -111,4 +111,46 @@ describe('timeField', () => {
     const segments = wrapper.findAll('[data-slot="date-input-group-segment"]')
     expect(segments.some(s => s.element.getAttribute('data-reka-time-field-segment') === 'second')).toBe(true)
   })
+
+  // behaviour-final-check F1/T2: React Aria cycles the 12-hour hour segment within the current period
+  it('12-hour: ArrowUp on the hour segment wraps within the period instead of crossing AM/PM', async () => {
+    const wrapper = mount(TimeField, { props: { defaultValue: new Time(10, 30, 15), granularity: 'second', hourCycle: 12 } })
+    const hour = wrapper.find('[data-reka-time-field-segment="hour"]')
+    await hour.trigger('focus')
+    await hour.trigger('keydown', { key: 'ArrowUp' })
+    await hour.trigger('keydown', { key: 'ArrowUp' })
+    const emitted = wrapper.emitted('update:modelValue')!
+    // 10 AM -> 11 AM -> 12 AM (hour 0), not 12 PM (hour 12)
+    expect((emitted[emitted.length - 1][0] as Time).hour).toBe(0)
+  })
+
+  // behaviour-final-check T1
+  it('Home and End set the focused segment to its minimum and maximum', async () => {
+    const wrapper = mount(TimeField, { props: { defaultValue: new Time(9, 30), hourCycle: 24 } })
+    const hour = wrapper.find('[data-reka-time-field-segment="hour"]')
+    await hour.trigger('focus')
+    await hour.trigger('keydown', { key: 'Home' })
+    expect(hour.text()).toBe('00')
+    await hour.trigger('keydown', { key: 'End' })
+    expect(hour.text()).toBe('23')
+  })
+
+  // behaviour-final-check T1
+  it('PageUp and PageDown step the focused segment by its large step', async () => {
+    const wrapper = mount(TimeField, { props: { defaultValue: new Time(9, 30), hourCycle: 24 } })
+    const minute = wrapper.find('[data-reka-time-field-segment="minute"]')
+    await minute.trigger('focus')
+    await minute.trigger('keydown', { key: 'PageUp' })
+    // React Aria PAGE_STEP: minute is 15
+    expect(minute.text()).toBe('45')
+    await minute.trigger('keydown', { key: 'PageDown' })
+    expect(minute.text()).toBe('30')
+  })
+
+  // behaviour-final-check F5 (shared DateInputGroup)
+  it('invalid: marks every segment aria-invalid and the input element data-invalid', () => {
+    const wrapper = mount(TimeField, { props: { invalid: true, defaultValue: new Time(9, 30) } })
+    expect(wrapper.findAll('[role=spinbutton]').map(s => s.attributes('aria-invalid'))).toEqual(['true', 'true', 'true'])
+    expect(wrapper.get('[data-slot="date-input-group-input"]').attributes('data-invalid')).toBeDefined()
+  })
 })

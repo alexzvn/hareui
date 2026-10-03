@@ -83,3 +83,28 @@ describe('Checkbox row click', () => {
     wrapper.unmount()
   })
 })
+
+describe('Checkbox indeterminate glyph click', () => {
+  // behaviour-final-check H4
+  // A script-dispatched click never reaches the microtask checkpoint a user click gets between listeners, so
+  // re-render right after the control's own handler: that detaches the glyph before the root's bubbling handler runs.
+  it('toggles once when the glyph is clicked (uncontrolled)', async () => {
+    const wrapper = mount(Checkbox, { props: { defaultValue: 'indeterminate' }, attachTo: document.body })
+    wrapper.find(control).element.addEventListener('click', () => wrapper.vm.$.update())
+    await wrapper.find('[data-slot=checkbox-default-indicator--indeterminate]').trigger('click')
+    expect(wrapper.emitted('update:modelValue')).toEqual([[true]])
+    expect(wrapper.attributes('data-selected')).toBe('true')
+    wrapper.unmount()
+  })
+
+  it('toggles once when the glyph is clicked (v-model)', async () => {
+    const model = ref<boolean | 'indeterminate'>('indeterminate')
+    const seen: Array<boolean | 'indeterminate'> = []
+    const wrapper = mount(() => h(Checkbox, { 'label': 'All', 'modelValue': model.value, 'onUpdate:modelValue': (v: boolean | 'indeterminate') => { seen.push(v); model.value = v } }), { attachTo: document.body })
+    wrapper.find(control).element.addEventListener('click', () => wrapper.vm.$.update())
+    await wrapper.find('[data-slot=checkbox-default-indicator--indeterminate]').trigger('click')
+    expect(seen).toEqual([true])
+    expect(model.value).toBe(true)
+    wrapper.unmount()
+  })
+})

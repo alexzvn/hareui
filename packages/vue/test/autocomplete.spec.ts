@@ -150,6 +150,24 @@ describe('Autocomplete', () => {
   })
 })
 
+describe('Autocomplete behaviour parity (React Aria)', () => {
+  it('pressing one option, moving to another and releasing selects the option under the pointer', async () => {
+    // behaviour-final-check A1
+    const { wrapper } = setup()
+    await wrapper.get('[data-slot=autocomplete-trigger]').trigger('click')
+    await flush()
+    const pointer = (el: Element, type: string) =>
+      el.dispatchEvent(new PointerEvent(type, { bubbles: true, cancelable: true, button: 0, pointerType: 'mouse' }))
+    pointer(options()[0]!, 'pointerdown')
+    pointer(options()[3]!, 'pointerup')
+    await flush()
+    expect(wrapper.emitted('update:modelValue')?.at(-1)).toEqual(['texas'])
+    expect(wrapper.get(value).text()).toBe('Texas')
+    expect(document.querySelector('[role=listbox]')).toBeNull()
+    wrapper.unmount()
+  })
+})
+
 describe('Autocomplete virtualize', () => {
   const users = Array.from({ length: 300 }, (_, i) => ({ value: i + 1, label: `User ${i + 1}` }))
 

@@ -151,3 +151,107 @@ describe('dropdown', () => {
     }
   })
 })
+
+describe('dropdown keyboard navigation', () => {
+  const actions: DropdownEntry[] = [
+    { value: 'new', label: 'New file' },
+    { value: 'edit', label: 'Edit file' },
+    { value: 'delete', label: 'Delete file' },
+  ]
+
+  function key(el: Element, k: string) {
+    el.dispatchEvent(new KeyboardEvent('keydown', { key: k, bubbles: true, cancelable: true }))
+  }
+
+  const focusAfter = async (from: HTMLElement, k: string) => {
+    from.focus()
+    key(from, k)
+    await settle()
+    return document.activeElement
+  }
+
+  it('ArrowDown on the last item wraps to the first', async () => {
+    // behaviour-final-check D1
+    open({ items: actions })
+    await settle()
+    expect(await focusAfter(item('Edit file'), 'ArrowDown')).toBe(item('Delete file'))
+    expect(await focusAfter(item('Delete file'), 'ArrowDown')).toBe(item('New file'))
+  })
+
+  it('ArrowUp on the first item wraps to the last', async () => {
+    // behaviour-final-check D1
+    open({ items: actions })
+    await settle()
+    expect(await focusAfter(item('Edit file'), 'ArrowUp')).toBe(item('New file'))
+    expect(await focusAfter(item('New file'), 'ArrowUp')).toBe(item('Delete file'))
+  })
+
+  // happy-dom fires Reka's focus-outside bookkeeping a couple of ticks after a keyboard-opened submenu mounts and
+  // that closes it again, so submenu keys are dispatched on the first tick, before it can interfere.
+  async function openSubmenu(parent: string) {
+    item(parent).focus()
+    key(item(parent), 'ArrowRight')
+    await nextTick()
+  }
+
+  const submenuItems: DropdownEntry[] = [
+    { value: 'share', label: 'Share', items: [{ value: 'email', label: 'Email' }, { value: 'sms', label: 'Messages' }] },
+    { value: 'delete', label: 'Delete file' },
+  ]
+
+  it('wraps inside a submenu too', async () => {
+    // behaviour-final-check D1
+    open({ items: submenuItems })
+    await settle()
+    await openSubmenu('Share')
+    expect(document.activeElement).toBe(item('Email'))
+
+    key(item('Email'), 'ArrowDown')
+    expect(document.activeElement).toBe(item('Messages'))
+    key(item('Messages'), 'ArrowDown')
+    expect(document.activeElement).toBe(item('Email'))
+    key(item('Email'), 'ArrowUp')
+    expect(document.activeElement).toBe(item('Messages'))
+  })
+
+  it('ArrowUp on the focused trigger opens the menu with the last item focused', async () => {
+    // behaviour-final-check D2
+    const w = open({ items: actions, defaultOpen: false })
+    await settle()
+    const trigger = w.get('[data-testid=trigger]').element as HTMLElement
+    trigger.focus()
+    key(trigger, 'ArrowUp')
+    await settle()
+    expect(menuOpen()).toBe(true)
+    expect(document.activeElement).toBe(item('Delete file'))
+  })
+
+  it('PageUp focuses the first item', async () => {
+    // behaviour-final-check D3
+    open({ items: actions })
+    await settle()
+    expect(await focusAfter(item('Delete file'), 'PageUp')).toBe(item('New file'))
+  })
+
+  it('PageDown focuses the last item', async () => {
+    // behaviour-final-check D3
+    open({ items: actions })
+    await settle()
+    expect(await focusAfter(item('New file'), 'PageDown')).toBe(item('Delete file'))
+  })
+
+  it('Escape inside a submenu closes only the submenu and refocuses its parent item', async () => {
+    // behaviour-final-check D4
+    open({ items: submenuItems })
+    await settle()
+    await openSubmenu('Share')
+    expect(document.activeElement).toBe(item('Email'))
+
+    key(item('Email'), 'Escape')
+    await settle()
+    expect(menuOpen()).toBe(true)
+    expect(item('Delete file')).toBeDefined()
+    expect(document.body.textContent).not.toContain('Messages')
+    expect(document.activeElement).toBe(item('Share'))
+  })
+})

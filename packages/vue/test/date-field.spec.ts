@@ -1,5 +1,5 @@
 import type { DateValue } from '@internationalized/date'
-import { CalendarDate } from '@internationalized/date'
+import { CalendarDate, CalendarDateTime } from '@internationalized/date'
 import { mount } from '@vue/test-utils'
 import { describe, expect, it } from 'vitest'
 import DateField from '../src/components/date-field/DateField.vue'
@@ -123,5 +123,56 @@ describe('dateField', () => {
     const wrapper = mount(DateField, { props: { fullWidth: true } })
     expect(wrapper.classes()).toContain('w-full')
     expect(wrapper.find('[data-slot="date-input-group"]').classes()).toContain('w-full')
+  })
+
+  // behaviour-final-check F1: React Aria cycles the 12-hour hour segment within the current period
+  it('12-hour: ArrowUp on the hour segment wraps within the period instead of crossing AM/PM', async () => {
+    const wrapper = mount(DateField, {
+      props: { defaultValue: new CalendarDateTime(2024, 3, 15, 10, 30, 15), granularity: 'second', hourCycle: 12 },
+    })
+    const hour = wrapper.find('[data-reka-date-field-segment="hour"]')
+    await hour.trigger('focus')
+    await hour.trigger('keydown', { key: 'ArrowUp' })
+    await hour.trigger('keydown', { key: 'ArrowUp' })
+    const emitted = wrapper.emitted('update:modelValue')!
+    // 10 AM -> 11 AM -> 12 AM (hour 0), not 12 PM (hour 12)
+    expect((emitted[emitted.length - 1][0] as CalendarDateTime).hour).toBe(0)
+  })
+
+  // behaviour-final-check F2
+  it('Home and End set the focused segment to its minimum and maximum', async () => {
+    const wrapper = mount(DateField, { props: { defaultValue: new CalendarDate(2024, 3, 15) } })
+    const month = wrapper.find('[data-reka-date-field-segment="month"]')
+    await month.trigger('focus')
+    await month.trigger('keydown', { key: 'Home' })
+    expect(month.text()).toBe('1')
+    await month.trigger('keydown', { key: 'End' })
+    expect(month.text()).toBe('12')
+  })
+
+  // behaviour-final-check F2
+  it('PageUp and PageDown step the focused segment by its large step', async () => {
+    const wrapper = mount(DateField, { props: { defaultValue: new CalendarDate(2024, 6, 15) } })
+    const day = wrapper.find('[data-reka-date-field-segment="day"]')
+    await day.trigger('focus')
+    await day.trigger('keydown', { key: 'PageUp' })
+    // React Aria PAGE_STEP: day is 7
+    expect(day.text()).toBe('22')
+    await day.trigger('keydown', { key: 'PageDown' })
+    expect(day.text()).toBe('15')
+  })
+
+  // behaviour-final-check F5
+  it('invalid: marks every segment aria-invalid', () => {
+    const wrapper = mount(DateField, { props: { invalid: true, defaultValue: new CalendarDate(2024, 3, 15) } })
+    const segments = wrapper.findAll('[role=spinbutton]')
+    expect(segments.length).toBe(3)
+    expect(segments.map(s => s.attributes('aria-invalid'))).toEqual(['true', 'true', 'true'])
+  })
+
+  // behaviour-final-check F5
+  it('invalid: marks the input element data-invalid', () => {
+    const wrapper = mount(DateField, { props: { invalid: true, defaultValue: new CalendarDate(2024, 3, 15) } })
+    expect(wrapper.get('[data-slot="date-input-group-input"]').attributes('data-invalid')).toBeDefined()
   })
 })

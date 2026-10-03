@@ -6,6 +6,11 @@ import Slider from '../src/components/slider/Slider.vue'
 const thumbs = (w: ReturnType<typeof mount>) => w.findAll('[data-slot=slider-thumb]')
 const output = (w: ReturnType<typeof mount>) => w.get('[data-slot=slider-output]').text()
 const track = (w: ReturnType<typeof mount>) => w.get('[data-slot=slider-track]')
+// accessible name computation: aria-labelledby wins over aria-label
+function accessibleName(el: Element) {
+  const labelledBy = (el.getAttribute('aria-labelledby') ?? '').split(/\s+/).map(id => document.getElementById(id)?.textContent ?? '').join(' ').trim()
+  return labelledBy || el.getAttribute('aria-label') || ''
+}
 
 describe('Slider', () => {
   it('keyboard steps update v-model by `step`, clamped to max, and emit changeEnd', async () => {
@@ -86,5 +91,67 @@ describe('Slider', () => {
     expect(thumb.attributes('data-focus-visible')).toBeUndefined()
     await thumb.trigger('keydown', { key: 'ArrowRight' })
     expect(thumb.attributes('data-focus-visible')).toBe('true')
+  })
+
+  it('names each thumb: a slider role with a non-empty accessible name from the label', () => {
+    // behaviour-final-check Slider-1
+    const w = mount(Slider, { props: { label: 'Volume', id: 's', defaultValue: 30 }, attachTo: document.body })
+    const thumb = thumbs(w)[0]!
+    expect(thumb.attributes('role')).toBe('slider')
+    expect(accessibleName(thumb.element)).toContain('Volume')
+    w.unmount()
+  })
+
+  it('names every thumb of a range slider after the slider label', () => {
+    // behaviour-final-check Slider-1
+    const w = mount(Slider, { props: { label: 'Price', id: 'r', defaultValue: [20, 60] }, attachTo: document.body })
+    expect(thumbs(w).map(t => accessibleName(t.element))).toEqual([expect.stringContaining('Price'), expect.stringContaining('Price')])
+    w.unmount()
+  })
+
+  it('range thumbs cannot cross: the start thumb stops at the end thumb\'s value', async () => {
+    // behaviour-final-check Slider-2
+    const model = ref<number[]>([59, 60])
+    const w = mount(() => h(Slider, { 'modelValue': model.value, 'onUpdate:modelValue': (v: number | number[] | undefined) => (model.value = v as number[]) }), { attachTo: document.body })
+    await nextTick()
+    const start = thumbs(w)[0]!
+    ;(start.element as HTMLElement).focus()
+    await start.trigger('keydown', { key: 'ArrowRight' })
+    await start.trigger('keydown', { key: 'ArrowRight' })
+    expect(model.value).toEqual([60, 60])
+    w.unmount()
+  })
+
+  it('range thumbs cannot cross: the end thumb stops at the start thumb\'s value', async () => {
+    // behaviour-final-check Slider-2
+    const model = ref<number[]>([20, 21])
+    const w = mount(() => h(Slider, { 'modelValue': model.value, 'onUpdate:modelValue': (v: number | number[] | undefined) => (model.value = v as number[]) }), { attachTo: document.body })
+    await nextTick()
+    const end = thumbs(w)[1]!
+    ;(end.element as HTMLElement).focus()
+    await end.trigger('keydown', { key: 'ArrowLeft' })
+    await end.trigger('keydown', { key: 'ArrowLeft' })
+    expect(model.value).toEqual([20, 20])
+    w.unmount()
+  })
+
+  it('PageUp / PageDown move by max(step, range / 10), not 10 × step', async () => {
+    // behaviour-final-check Slider-3
+    const w = mount(Slider, { props: { defaultValue: 60, step: 10 }, attachTo: document.body })
+    const thumb = thumbs(w)[0]!
+    await thumb.trigger('keydown', { key: 'PageUp' })
+    expect(output(w)).toBe('70')
+    await thumb.trigger('keydown', { key: 'PageDown' })
+    await thumb.trigger('keydown', { key: 'PageDown' })
+    expect(output(w)).toBe('50')
+    w.unmount()
+  })
+
+  it('PageUp moves a tenth of a large range when that exceeds one step', async () => {
+    // behaviour-final-check Slider-3
+    const w = mount(Slider, { props: { defaultValue: 500, min: 0, max: 1000, step: 1 }, attachTo: document.body })
+    await thumbs(w)[0]!.trigger('keydown', { key: 'PageUp' })
+    expect(output(w)).toBe('600')
+    w.unmount()
   })
 })

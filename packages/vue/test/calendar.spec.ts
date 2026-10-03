@@ -139,3 +139,102 @@ describe('calendar week/day view (visibleDuration)', () => {
     wrapper.unmount()
   })
 })
+
+describe('calendar keyboard paging and re-selection', () => {
+  const heading = (w: { get: (s: string) => { text: () => string } }) => w.get('[data-slot=calendar-heading]').text()
+  const activeDate = () => document.activeElement?.getAttribute('data-value')
+  async function mountFocused() {
+    const wrapper = mount(Calendar, { props: { locale: 'en-US', defaultValue: parseDate('2025-01-15') }, attachTo: document.body })
+    ;(wrapper.get('[data-value="2025-01-15"]').element as HTMLElement).focus()
+    expect(activeDate()).toBe('2025-01-15')
+    return wrapper
+  }
+  async function press(init: KeyboardEventInit) {
+    document.activeElement!.dispatchEvent(new KeyboardEvent('keydown', { bubbles: true, cancelable: true, ...init }))
+    await nextTick()
+    await nextTick()
+  }
+
+  // behaviour-final-check C1
+  it('Home and End move focus to the first and last day of the month', async () => {
+    const wrapper = await mountFocused()
+    await press({ key: 'Home', code: 'Home' })
+    expect(activeDate()).toBe('2025-01-01')
+    await press({ key: 'End', code: 'End' })
+    expect(activeDate()).toBe('2025-01-31')
+    expect(heading(wrapper)).toBe('January 2025')
+    wrapper.unmount()
+  })
+
+  // behaviour-final-check C1
+  it('PageDown and PageUp move focus by one month, keeping the day of the month', async () => {
+    const wrapper = await mountFocused()
+    await press({ key: 'PageDown', code: 'PageDown' })
+    expect(heading(wrapper)).toBe('February 2025')
+    expect(activeDate()).toBe('2025-02-15')
+    await press({ key: 'PageUp', code: 'PageUp' })
+    await press({ key: 'PageUp', code: 'PageUp' })
+    expect(heading(wrapper)).toBe('December 2024')
+    expect(activeDate()).toBe('2024-12-15')
+    wrapper.unmount()
+  })
+
+  // behaviour-final-check C1
+  it('Shift+PageDown and Shift+PageUp move focus by one year, keeping month and day', async () => {
+    const wrapper = await mountFocused()
+    await press({ key: 'PageDown', code: 'PageDown', shiftKey: true })
+    expect(heading(wrapper)).toBe('January 2026')
+    expect(activeDate()).toBe('2026-01-15')
+    await press({ key: 'PageUp', code: 'PageUp', shiftKey: true })
+    await press({ key: 'PageUp', code: 'PageUp', shiftKey: true })
+    expect(heading(wrapper)).toBe('January 2024')
+    expect(activeDate()).toBe('2024-01-15')
+    wrapper.unmount()
+  })
+
+  // behaviour-final-check C2
+  it('clicking the already-selected date keeps it selected', async () => {
+    const wrapper = mount(Calendar, { props: { locale: 'en-US', defaultValue: parseDate('2025-01-15') } })
+    const cell = wrapper.get('[data-value="2025-01-15"]')
+    expect(cell.attributes('data-selected')).toBe('true')
+    await cell.trigger('click')
+    expect(cell.attributes('data-selected')).toBe('true')
+    wrapper.unmount()
+  })
+
+  // behaviour-final-check C2
+  it('pressing Enter or Space on the already-selected date keeps it selected', async () => {
+    const wrapper = await mountFocused()
+    const cell = wrapper.get('[data-value="2025-01-15"]')
+    await press({ key: 'Enter', code: 'Enter' })
+    expect(cell.attributes('data-selected')).toBe('true')
+    await press({ key: ' ', code: 'Space' })
+    expect(cell.attributes('data-selected')).toBe('true')
+    wrapper.unmount()
+  })
+
+  // behaviour-final-check C3
+  it('clicking a leading outside-month day neither navigates nor selects', async () => {
+    const wrapper = mount(Calendar, { props: { locale: 'en-US', defaultValue: parseDate('2025-01-15') } })
+    const outside = wrapper.get('[data-value="2024-12-30"]')
+    expect(outside.attributes('data-outside-view')).toBeDefined()
+    await outside.trigger('click')
+    await nextTick()
+    expect(heading(wrapper)).toBe('January 2025')
+    expect(wrapper.get('[data-value="2025-01-15"]').attributes('data-selected')).toBe('true')
+    expect(wrapper.emitted('update:modelValue')).toBeUndefined()
+    wrapper.unmount()
+  })
+
+  // behaviour-final-check C3
+  it('clicking a trailing outside-month day neither navigates nor selects', async () => {
+    const wrapper = mount(Calendar, { props: { locale: 'en-US', defaultValue: parseDate('2025-01-15') } })
+    const outside = wrapper.get('[data-value="2025-02-01"]')
+    expect(outside.attributes('data-outside-view')).toBeDefined()
+    await outside.trigger('click')
+    await nextTick()
+    expect(heading(wrapper)).toBe('January 2025')
+    expect(wrapper.emitted('update:modelValue')).toBeUndefined()
+    wrapper.unmount()
+  })
+})

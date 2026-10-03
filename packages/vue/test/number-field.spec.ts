@@ -79,4 +79,50 @@ describe('NumberField', () => {
     wrapper.unmount()
     form.remove()
   })
+
+  // behaviour-final-check H12: RAC commits an emptied input as "no value" (change(NaN), hidden input '')
+  async function clearAndCommit(commit: (el: ReturnType<typeof mount>) => Promise<void>) {
+    const form = document.createElement('form')
+    document.body.append(form)
+    const wrapper = mount(NumberField, { props: { name: 'qty', defaultValue: 5 }, attachTo: form })
+    const el = wrapper.get(input)
+    await el.trigger('focus')
+    ;(el.element as HTMLInputElement).value = ''
+    await el.trigger('input')
+    await commit(wrapper)
+    await nextTick()
+    const result = {
+      emitted: wrapper.emitted('update:modelValue')?.at(-1)?.[0],
+      formValue: new FormData(form).get('qty'),
+      shown: (el.element as HTMLInputElement).value,
+    }
+    wrapper.unmount()
+    form.remove()
+    return result
+  }
+
+  it('commits an emptied input on blur as no value: v-model empties and the named form value is empty', async () => {
+    const result = await clearAndCommit(w => w.get(input).trigger('blur'))
+    expect(result.formValue).toBe('')
+    expect(result.shown).toBe('')
+    expect([null, undefined, Number.NaN]).toContainEqual(result.emitted)
+  })
+
+  it('commits an emptied input on Enter as no value: v-model empties and the named form value is empty', async () => {
+    const result = await clearAndCommit(w => w.get(input).trigger('keydown', { key: 'Enter' }))
+    expect(result.formValue).toBe('')
+    expect(result.shown).toBe('')
+    expect([null, undefined, Number.NaN]).toContainEqual(result.emitted)
+  })
+
+  it('PageUp / PageDown move by one step like RAC, not ten', async () => {
+    // behaviour-final-check NumberField page keys
+    const wrapper = mount(NumberField, { props: { defaultValue: 10, step: 5 }, attachTo: document.body })
+    await wrapper.get(input).trigger('keydown', { key: 'PageUp' })
+    expect(wrapper.emitted('update:modelValue')?.at(-1)).toEqual([15])
+    await wrapper.get(input).trigger('keydown', { key: 'PageDown' })
+    await wrapper.get(input).trigger('keydown', { key: 'PageDown' })
+    expect(wrapper.emitted('update:modelValue')?.at(-1)).toEqual([5])
+    wrapper.unmount()
+  })
 })

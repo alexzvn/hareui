@@ -140,4 +140,56 @@ describe('toast', () => {
 
     wrapper.unmount()
   })
+
+  describe('keyboard focus management', () => {
+    let mounted: ReturnType<typeof mount> | undefined
+    let trigger: HTMLButtonElement | undefined
+    const toastEls = () => [...document.querySelectorAll<HTMLElement>('[data-slot=toast]')]
+
+    afterEach(() => {
+      mounted?.unmount()
+      mounted = undefined
+      trigger?.remove()
+      trigger = undefined
+    })
+
+    it('F6 moves focus into the toast region', async () => {
+      // behaviour-final-check Q1
+      trigger = document.createElement('button')
+      document.body.appendChild(trigger)
+      mounted = mount(ToastProvider, { props: { portal: false }, attachTo: document.body })
+      toast('Persistent', { timeout: 0 })
+      await nextTick()
+      trigger.focus()
+      expect(document.activeElement).toBe(trigger)
+
+      trigger.dispatchEvent(new KeyboardEvent('keydown', { key: 'F6', code: 'F6', bubbles: true, cancelable: true }))
+      await nextTick()
+
+      const region = document.querySelector<HTMLElement>('[data-slot=toast-region]')!
+      expect(region.contains(document.activeElement)).toBe(true)
+    })
+
+    it('dismissing the focused toast with its close button moves focus to the remaining toast', async () => {
+      // behaviour-final-check Q2
+      mounted = mount(ToastProvider, { props: { portal: false }, attachTo: document.body })
+      toast('First', { timeout: 0 })
+      toast('Second', { timeout: 0 })
+      await nextTick()
+      expect(toastEls()).toHaveLength(2)
+
+      const closing = toastEls().find(el => el.textContent?.includes('First'))!
+      const remaining = toastEls().find(el => el.textContent?.includes('Second'))!
+      const close = closing.querySelector<HTMLButtonElement>('[data-slot=toast-close]')!
+      close.focus()
+      expect(document.activeElement).toBe(close)
+      // Enter / Space on a focused button activates it as a click
+      close.click()
+      await nextTick()
+      await nextTick()
+
+      expect(closing.getAttribute('data-exiting')).toBe('true')
+      expect(remaining.contains(document.activeElement)).toBe(true)
+    })
+  })
 })

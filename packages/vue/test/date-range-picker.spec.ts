@@ -131,4 +131,53 @@ describe('dateRangePicker', () => {
     expect(document.querySelector('[data-testid=custom]')).not.toBeNull()
     wrapper.unmount()
   })
+
+  // behaviour-final-check D1
+  it('opening the popover focuses the end date of the selected range, not the placeholder', async () => {
+    const wrapper = mount(DateRangePicker, {
+      props: { label: 'Trip dates', defaultValue: range, defaultPlaceholder: new CalendarDate(2025, 1, 1) },
+      attachTo: document.body,
+    })
+    await wrapper.get(trigger).trigger('click')
+    await flush()
+
+    expect(document.activeElement?.getAttribute('data-value')).toBe('2025-01-15')
+    wrapper.unmount()
+  })
+
+  // behaviour-final-check D5
+  it('typing a full 4-digit year in the end date keeps focus on that segment instead of jumping to the trigger', async () => {
+    const wrapper = mount(DateRangePicker, {
+      props: { label: 'Trip dates', defaultPlaceholder: new CalendarDate(2024, 3, 1) },
+      attachTo: document.body,
+    })
+    const endSegments = wrapper.findAll('[data-slot=date-input-group-input]')[1].findAll('[role=spinbutton]')
+    const endYear = endSegments[endSegments.length - 1]
+    ;(endYear.element as HTMLElement).focus()
+    for (const key of ['2', '0', '2', '4'])
+      await endYear.trigger('keydown', { key })
+
+    expect(document.activeElement).not.toBe(wrapper.get(trigger).element)
+    expect(document.activeElement).toBe(endYear.element)
+    wrapper.unmount()
+  })
+
+  // behaviour-final-check D6
+  it('a reversed range is not marked invalid while the user is still editing a segment', async () => {
+    const wrapper = mount(DateRangePicker, {
+      props: { label: 'Trip dates', defaultValue: { start: new CalendarDate(2024, 3, 15), end: new CalendarDate(2024, 3, 20) } },
+      attachTo: document.body,
+    })
+    const startMonth = wrapper.findAll('[data-slot=date-input-group-input]')[0].find('[role=spinbutton]')
+    ;(startMonth.element as HTMLElement).focus()
+    // March -> April: the start (Apr 15) now falls after the end (Mar 20)
+    await startMonth.trigger('keydown', { key: 'ArrowUp' })
+    await flush()
+
+    expect(wrapper.findAll('[role=spinbutton]').map(s => s.attributes('aria-invalid'))).not.toContain('true')
+    expect(wrapper.get('[data-slot=date-input-group]').attributes('data-invalid')).toBeUndefined()
+    expect(wrapper.find('[data-slot=field-error]').exists()).toBe(false)
+    wrapper.unmount()
+  })
+
 })

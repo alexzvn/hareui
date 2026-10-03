@@ -166,4 +166,94 @@ describe('colorField', () => {
       expect(wrapper.emitted('update:modelValue')).toBeUndefined()
     })
   })
+
+  describe('behaviour parity with React Aria', () => {
+    const type = async (el: ReturnType<typeof mountField>['el'], text: string) => {
+      ;(el.element as HTMLInputElement).value = text
+      await el.trigger('input')
+    }
+    function mountField(props: Record<string, unknown> = {}, inForm = false) {
+      const form = document.createElement('form')
+      document.body.append(form)
+      const wrapper = mount(ColorField, { props, attachTo: inForm ? form : document.body })
+      return { wrapper, form, el: wrapper.get(input), node: wrapper.get(input).element as HTMLInputElement }
+    }
+
+    it('submits the committed hex in uppercase like React Aria', () => {
+      // behaviour-final-check F2
+      const { wrapper, form } = mountField({ name: 'brand', defaultValue: '#0485F7' }, true)
+      expect(new FormData(form).get('brand')).toBe('#0485F7')
+      wrapper.unmount()
+      form.remove()
+    })
+
+    it('lets Enter inside a form trigger implicit submission after committing', async () => {
+      // behaviour-final-check F3: happy-dom has no native implicit submission, so either the keydown must be left
+      // un-prevented (browser submits) or the form must be submitted explicitly.
+      const { wrapper, form, el } = mountField({ name: 'brand', defaultValue: '#0485F7' }, true)
+      let submitted = false
+      form.addEventListener('submit', (e) => {
+        e.preventDefault()
+        submitted = true
+      })
+      await type(el, '#ff0000')
+      const enter = new KeyboardEvent('keydown', { key: 'Enter', bubbles: true, cancelable: true })
+      el.element.dispatchEvent(enter)
+      await el.trigger('keyup', { key: 'Enter' })
+      expect(submitted || !enter.defaultPrevented).toBe(true)
+      wrapper.unmount()
+      form.remove()
+    })
+
+    it('drops the alpha digits of an 8-digit hex on commit like React Aria', async () => {
+      // behaviour-final-check F4
+      const { wrapper, el, node } = mountField({ defaultValue: '#FF0000' })
+      await type(el, '#FF0000AA')
+      await el.trigger('blur')
+      expect(node.value).toBe('#FF0000')
+      wrapper.unmount()
+    })
+
+    it('PageUp in hex mode steps by one like the arrow keys', async () => {
+      // behaviour-final-check F5
+      const { wrapper, el, node } = mountField({ defaultValue: '#0485F7' })
+      await el.trigger('keydown', { key: 'PageUp' })
+      expect(node.value).toBe('#0485F8')
+      await el.trigger('keydown', { key: 'PageDown' })
+      expect(node.value).toBe('#0485F7')
+      wrapper.unmount()
+    })
+
+    it('shows the hue channel with its degree unit', () => {
+      // behaviour-final-check F6
+      const { wrapper, node } = mountField({ channel: 'hue', colorSpace: 'hsl', defaultValue: 'hsl(213, 50%, 50%)' })
+      expect(node.value).toBe('213°')
+      wrapper.unmount()
+    })
+
+    it('End on a hue channel field jumps to 360° instead of wrapping to 0', async () => {
+      // behaviour-final-check F6
+      const { wrapper, el, node } = mountField({ channel: 'hue', colorSpace: 'hsl', defaultValue: 'hsl(213, 50%, 50%)' })
+      await el.trigger('keydown', { key: 'End' })
+      expect(node.value).toBe('360°')
+      wrapper.unmount()
+    })
+
+    it('clamps a typed hue above 360 to 360 on commit', async () => {
+      // behaviour-final-check F6
+      const { wrapper, el, node } = mountField({ channel: 'hue', colorSpace: 'hsl', defaultValue: 'hsl(213, 50%, 50%)' })
+      await type(el, '400')
+      await el.trigger('blur')
+      expect(node.value).toBe('360°')
+      wrapper.unmount()
+    })
+
+    it('PageUp on a hue channel field steps by one', async () => {
+      // behaviour-final-check F6
+      const { wrapper, el, node } = mountField({ channel: 'hue', colorSpace: 'hsl', defaultValue: 'hsl(213, 50%, 50%)' })
+      await el.trigger('keydown', { key: 'PageUp' })
+      expect(node.value).toBe('214°')
+      wrapper.unmount()
+    })
+  })
 })
