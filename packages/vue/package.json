@@ -3,6 +3,17 @@
   "version": "0.1.0",
   "description": "HareUI — Vue 3 port of HeroUI v3",
   "license": "MIT",
+  "keywords": ["vue", "vue3", "heroui", "hareui", "tailwindcss", "components", "ui"],
+  "homepage": "https://hareui.alexzvn.me",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/alexzvn/hareui.git",
+    "directory": "packages/vue"
+  },
+  "bugs": "https://github.com/alexzvn/hareui/issues",
+  "publishConfig": {
+    "access": "public"
+  },
   "type": "module",
   "sideEffects": [
     "**/*.css"
@@ -26,7 +37,8 @@
   "scripts": {
     "build": "vite build && vue-tsc -p tsconfig.build.json && cp -R src/styles dist/styles",
     "test": "vitest run",
-    "typecheck": "vue-tsc --noEmit -p tsconfig.json"
+    "typecheck": "vue-tsc --noEmit -p tsconfig.json",
+    "prepublishOnly": "rm -rf dist && bun run typecheck && bun run test && bun run build"
   },
   "dependencies": {
     "reka-ui": "^2.10.5",
