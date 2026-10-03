@@ -108,13 +108,104 @@ const isRange = computed(() => Array.isArray(modelValue.value ?? props.defaultVa
 // controlled, the same technique Checkbox/RadioGroup use to avoid Reka owning uncontrolled state itself.
 const current = computed<number[]>(() => toArray(modelValue.value ?? props.defaultValue) ?? [props.min])
 
+// RAC keeps every thumb between its neighbours (`getThumbMinValue` / `getThumbMaxValue`). Reka instead sorts the
+// values and hands the move over to the other thumb, so a thumb pushed past its neighbour swaps with it. Reka
+// changes one value per update, so recover that value from the sorted result and clamp it onto the thumb that
+// is actually moving (the focused one, or the one a pointer interaction started on).
+let movingIndex: number | null = null
+const thumbRefs = ref<Array<{ $el: HTMLElement } | null>>([])
+function thumbMin(values: number[], index: number) {
+  return index > 0 ? values[index - 1]! : props.min
+}
+function thumbMax(values: number[], index: number) {
+  return index < values.length - 1 ? values[index + 1]! : props.max
+}
+function changedValue(previous: number[], next: number[]): number | undefined {
+  const rest = [...previous]
+  for (const value of next) {
+    const at = rest.indexOf(value)
+    if (at === -1)
+      return value
+    rest.splice(at, 1)
+  }
+  return undefined
+}
+function constrain(values: number[]): number[] {
+  const previous = current.value
+  movingIndex ??= activeThumbIndex.value
+  const index = movingIndex
+  if (values.length < 2 || values.length !== previous.length || index >= previous.length)
+    return values
+  const value = changedValue(previous, values)
+  if (value === undefined)
+    return previous
+  const next = [...previous]
+  next[index] = clamp(value, thumbMin(previous, index), thumbMax(previous, index))
+  return next
+}
+
 function onUpdate(values: number[] | undefined) {
   if (!values)
     return
-  modelValue.value = isRange.value ? [...values] : values[0]
+  const next = constrain(values)
+  // Reka focuses the thumb it handed the move to; keep focus on the thumb that is moving.
+  if (next.length > 1 && movingIndex !== null && document.activeElement !== thumbRefs.value[movingIndex]?.$el)
+    thumbRefs.value[movingIndex]?.$el?.focus?.()
+  modelValue.value = isRange.value ? [...next] : next[0]
 }
-function onCommit(values: number[]) {
-  emit('changeEnd', isRange.value ? [...values] : values[0])
+function onCommit() {
+  emit('changeEnd', isRange.value ? [...current.value] : current.value[0]!)
+}
+
+// RAC's page size is a tenth of the range (at least one step), used by PageUp / PageDown and Shift + Arrow, and
+// Home / End move the focused thumb to the edge of its own allowed range. Reka pages by 10 × step and always
+// moves the first / last thumb on Home / End.
+const pageSize = computed(() => {
+  const range = props.max - props.min
+  return Math.max(props.step, Math.round(range / 10 / props.step) * props.step || props.step)
+})
+function snapToStep(value: number) {
+  const snapped = Math.round((value - props.min) / props.step) * props.step + props.min
+  return Number(snapped.toFixed(Math.max(0, (String(props.step).split('.')[1] ?? '').length)))
+}
+// +1 / -1 for a key that pages the value, 0 for keys left to Reka (plain arrows, which only step)
+function pageDirection(event: KeyboardEvent): number {
+  if (event.key === 'PageUp')
+    return 1
+  if (event.key === 'PageDown')
+    return -1
+  if (!event.shiftKey || !event.key.startsWith('Arrow'))
+    return 0
+  // Reka reads the direction from the `dir` it renders on the root
+  const rtl = props.orientation === 'horizontal' && (event.currentTarget as Element).closest('[dir]')?.getAttribute('dir') === 'rtl'
+  const decrease = event.key === 'ArrowDown' || event.key === (rtl ? 'ArrowRight' : 'ArrowLeft')
+  return decrease ? -1 : 1
+}
+function onThumbKeydown(event: KeyboardEvent, index: number) {
+  pointerActive = false
+  focusVisibleIndex.value = index
+  movingIndex = index
+  activeThumbIndex.value = index
+  const page = pageDirection(event)
+  if (props.disabled || (page === 0 && event.key !== 'Home' && event.key !== 'End'))
+    return
+  // Handled here instead of by Reka's root keydown handler
+  event.preventDefault()
+  event.stopPropagation()
+  const values = current.value
+  const low = thumbMin(values, index)
+  const high = thumbMax(values, index)
+  const target = event.key === 'Home'
+    ? low
+    : event.key === 'End'
+      ? high
+      : snapToStep(values[index]! + page * pageSize.value)
+  const next = [...values]
+  next[index] = clamp(target, low, high)
+  if (next[index] === values[index])
+    return
+  modelValue.value = isRange.value ? next : next[0]
+  emit('changeEnd', isRange.value ? [...next] : next[0]!)
 }
 
 const formatter = computed(() => new Intl.NumberFormat(props.locale, props.formatOptions))
@@ -154,6 +245,9 @@ let pointerActive = false
 function onPointerDownCapture() {
   pointerActive = true
   focusVisibleIndex.value = -1
+  // Reka focuses the thumb closest to the press (unless it already has focus) before its first update; that
+  // thumb is the one to move, picked up in `onUpdate`
+  movingIndex = null
 }
 function onPointerDown() {
   if (!props.disabled)
@@ -164,12 +258,10 @@ function onPointerEnd() {
   pointerActive = false
 }
 function onThumbFocus(index: number) {
-  activeThumbIndex.value = index
+  // While a thumb is moving, Reka may focus its neighbour (it hands crossing moves over); `onUpdate` moves focus back
+  if (movingIndex === null)
+    activeThumbIndex.value = index
   focusVisibleIndex.value = pointerActive ? -1 : index
-}
-function onThumbKeydown(index: number) {
-  pointerActive = false
-  focusVisibleIndex.value = index
 }
 function onThumbBlur() {
   focusVisibleIndex.value = -1
@@ -193,6 +285,7 @@ function dragging(index: number) {
     :name="name"
     :required="required"
     data-slot="slider"
+    role="group"
     :aria-labelledby="hasLabel ? labelId : undefined"
     :class="ui.base({ class: [props.ui?.base, props.class] })"
     @update:model-value="onUpdate"
@@ -227,10 +320,14 @@ function dragging(index: number) {
         data-slot="slider-thumb"
         :data-dragging="dragging(index)"
         :data-focus-visible="focusVisibleIndex === index ? 'true' : undefined"
+        :ref="(el: any) => { thumbRefs[index] = el }"
+        :aria-labelledby="hasLabel ? labelId : undefined"
+        :aria-label="hasLabel ? undefined : ($attrs['aria-label'] as string | undefined)"
+        :aria-valuetext="formattedValues[index]"
         :class="ui.thumb({ class: props.ui?.thumb })"
         @focus="onThumbFocus(index)"
         @blur="onThumbBlur"
-        @keydown="onThumbKeydown(index)"
+        @keydown="onThumbKeydown($event, index)"
       />
     </SliderTrack>
   </SliderRoot>
