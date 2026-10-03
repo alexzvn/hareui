@@ -536,6 +536,8 @@ watch(() => props.disabled, (disabled) => {
             :model-value="multiple ? selectedValues : (selectedValues[0] ?? null)"
             :items="items"
             :selection-mode="selectionMode"
+            highlight-on-hover
+            escape-key-behavior="none"
             :loading="loading"
             :aria-labelledby="listLabelledBy"
             :aria-label="listLabelledBy ? undefined : (attrs['aria-label'] as string | undefined)"
