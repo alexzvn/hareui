@@ -336,11 +336,11 @@ const groupUiProps = computed<DateInputGroupProps['ui']>(() => ({
   suffix: 'pointer-events-auto',
 }))
 
-// React Aria's calendar takes focus on open (its focused date: the range end, else the placeholder, else
+// React Aria's calendar takes focus on open (its focused date: the range start, else the placeholder, else
 // today, else the first available day). Reka's PopoverContent would focus the first tabbable (the year-picker trigger) instead.
 function onOpenAutoFocus(event: Event) {
   const content = event.target as HTMLElement | null
-  const focusDate = committed.value?.end ?? props.placeholder ?? props.defaultPlaceholder
+  const focusDate = committed.value?.start ?? props.placeholder ?? props.defaultPlaceholder
   const cell = (focusDate ? content?.querySelector<HTMLElement>(`[data-value="${focusDate.toString().slice(0, 10)}"]:not([data-outside-view])`) : null)
     ?? content?.querySelector<HTMLElement>('[data-today]:not([data-outside-view])')
     ?? content?.querySelector<HTMLElement>('[data-value]:not([data-outside-view]):not([data-disabled]):not([data-unavailable])')
@@ -498,7 +498,7 @@ function focusFirstSegment() {
           -->
           <RangeCalendar
             :model-value="committed ?? EMPTY"
-            :default-placeholder="committed?.end ?? placeholder ?? defaultPlaceholder"
+            :default-placeholder="committed?.start ?? placeholder ?? defaultPlaceholder"
             :is-date-unavailable="isDateUnavailable"
             :allow-non-contiguous-ranges="allowNonContiguousRanges"
             :locale="locale"

@@ -133,7 +133,7 @@ describe('dateRangePicker', () => {
   })
 
   // behaviour-final-check D1
-  it('opening the popover focuses the end date of the selected range, not the placeholder', async () => {
+  it('opening the popover focuses the start date of the selected range, not the placeholder', async () => {
     const wrapper = mount(DateRangePicker, {
       props: { label: 'Trip dates', defaultValue: range, defaultPlaceholder: new CalendarDate(2025, 1, 1) },
       attachTo: document.body,
@@ -141,7 +141,7 @@ describe('dateRangePicker', () => {
     await wrapper.get(trigger).trigger('click')
     await flush()
 
-    expect(document.activeElement?.getAttribute('data-value')).toBe('2025-01-15')
+    expect(document.activeElement?.getAttribute('data-value')).toBe('2025-01-10')
     wrapper.unmount()
   })
 
