@@ -169,6 +169,10 @@ app.use(createHareUI({
 
 <ApiTable component="DateRangePicker" kind="emits" />
 
+### Theme
+
+<ApiTheme component="DateRangePicker" />
+
 ## Accessibility
 
 - The label names the input group (`aria-labelledby`); each end is its own segmented spinbutton group

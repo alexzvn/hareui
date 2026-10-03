@@ -79,6 +79,10 @@ app.use(createHareUI({
 
 <ApiTable component="CloseButton" kind="slots" />
 
+### Theme
+
+<ApiTheme component="CloseButton" />
+
 ## Related Components
 
 <RelatedComponents :components="['button', 'modal']" />

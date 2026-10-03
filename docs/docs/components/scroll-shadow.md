@@ -128,3 +128,7 @@ mount. Two things to keep in mind when customizing:
 ### Emits
 
 <ApiTable component="ScrollShadow" kind="emits" />
+
+### Theme
+
+<ApiTheme component="ScrollShadow" />

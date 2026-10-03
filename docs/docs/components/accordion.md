@@ -170,6 +170,10 @@ The component supports both CSS pseudo-classes and data attributes for flexibili
 
 <ApiTable component="Accordion" kind="emits" />
 
+### Theme
+
+<ApiTheme component="Accordion" />
+
 ### useDisclosureGroupNavigation
 
 Previous/next navigation for a controlled Accordion or DisclosureGroup (used by the Controlled example).

@@ -168,6 +168,10 @@ The default status icon inside `icon` carries `data-slot="alert-dialog-default-i
 
 <ApiTable component="AlertDialog" kind="emits" />
 
+### Theme
+
+<ApiTheme component="AlertDialog" />
+
 ## Accessibility
 
 Implements the [WAI-ARIA AlertDialog pattern](https://www.w3.org/WAI/ARIA/apg/patterns/alertdialog/)

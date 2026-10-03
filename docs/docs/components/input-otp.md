@@ -150,6 +150,10 @@ app.use(createHareUI({
 
 <ApiTable component="InputOtp" kind="emits" />
 
+### Theme
+
+<ApiTheme component="InputOtp" />
+
 ## Accessibility
 
 - A single native `<input>` carries focus, typing, selection and paste, so standard text-editing shortcuts (<kbd>Backspace</kbd>, arrow keys, <kbd>Home</kbd>/<kbd>End</kbd>, select-and-retype) work without extra wiring

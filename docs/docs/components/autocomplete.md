@@ -229,6 +229,10 @@ app.use(createHareUI({
 
 <ApiTable component="Autocomplete" kind="emits" />
 
+### Theme
+
+<ApiTheme component="Autocomplete" />
+
 ## Accessibility
 
 Autocomplete follows the ARIA select-only pattern with a filter field:

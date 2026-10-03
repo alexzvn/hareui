@@ -105,6 +105,10 @@ app.use(createHareUI({
 
 <ApiTable component="ColorPicker" kind="emits" />
 
+### Theme
+
+<ApiTheme component="ColorPicker" />
+
 ## Related Components
 
 <RelatedComponents :components="['color-area', 'color-slider', 'color-field', 'color-swatch', 'color-swatch-picker']" />

@@ -109,6 +109,10 @@ style through `class`, `ui` or `createHareUI`):
 
 <ApiTable component="Meter" kind="slots" />
 
+### Theme
+
+<ApiTheme component="Meter" />
+
 `#label` and `#output` receive:
 
 | Prop | Type | Description |

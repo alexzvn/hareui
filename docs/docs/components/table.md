@@ -164,6 +164,10 @@ style through `class`, `ui` or `createHareUI`):
 
 <ApiTable component="Table" kind="emits" />
 
+### Theme
+
+<ApiTheme component="Table" />
+
 ### TableColumn
 
 | Prop | Type | Description |

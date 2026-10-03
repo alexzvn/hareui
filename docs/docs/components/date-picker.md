@@ -161,6 +161,10 @@ DatePicker sets these data attributes:
 
 <ApiTable component="DatePicker" kind="emits" />
 
+### Theme
+
+<ApiTheme component="DatePicker" />
+
 ## Accessibility
 
 - The label's `for` points to the field's id (auto-generated with `useId()` unless `id` is set)

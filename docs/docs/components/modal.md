@@ -142,6 +142,10 @@ app.use(createHareUI({
 
 <ApiTable component="Modal" kind="emits" />
 
+### Theme
+
+<ApiTheme component="Modal" />
+
 ## Accessibility
 
 Implements the [WAI-ARIA Dialog pattern](https://www.w3.org/WAI/ARIA/apg/patterns/dialog-modal/)

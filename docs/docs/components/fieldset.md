@@ -90,6 +90,10 @@ Each rendered element carries the same `data-slot` string as HeroUI, so selector
 
 <ApiTable component="Fieldset" kind="slots" />
 
+### Theme
+
+<ApiTheme component="Fieldset" />
+
 ## Related Components
 
 <RelatedComponents :components="['form', 'text-field', 'surface']" />

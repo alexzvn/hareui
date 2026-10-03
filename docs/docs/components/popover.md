@@ -86,6 +86,10 @@ app.use(createHareUI({
 
 <ApiTable component="Popover" kind="slots" />
 
+### Theme
+
+<ApiTheme component="Popover" />
+
 ## Related Components
 
 <RelatedComponents :components="['button', 'modal']" />

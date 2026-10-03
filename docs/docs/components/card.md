@@ -152,6 +152,10 @@ classes, so style through `class`, `ui` or `createHareUI`): `.card--transparent`
 
 <ApiTable component="Card" kind="slots" />
 
+### Theme
+
+<ApiTheme component="Card" />
+
 ## Accessibility
 
 ```vue

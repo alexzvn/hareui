@@ -125,6 +125,10 @@ app.use(createHareUI({
 
 <ApiTable component="ColorSlider" kind="emits" />
 
+### Theme
+
+<ApiTheme component="ColorSlider" />
+
 ## Accessibility
 
 - The thumb is a `role="slider"` labelled by the channel name, with a localised `aria-valuetext`

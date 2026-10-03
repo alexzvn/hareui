@@ -222,6 +222,10 @@ app.use(createHareUI({
 
 <ApiTable component="ComboBox" kind="emits" />
 
+### Theme
+
+<ApiTheme component="ComboBox" />
+
 ## Accessibility
 
 ComboBox follows the ARIA combobox pattern:

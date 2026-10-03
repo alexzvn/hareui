@@ -92,6 +92,10 @@ TextArea accepts all standard HTML `<textarea>` attributes (`rows`, `cols`, `max
 
 <ApiTable component="TextArea" kind="emits" />
 
+### Theme
+
+<ApiTheme component="TextArea" />
+
 > For validation props like `invalid`, `required`, and error handling, use **[TextField](/docs/components/text-field)** with TextArea in its default slot.
 
 ## Related Components

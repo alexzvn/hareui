@@ -75,6 +75,10 @@ one, unless they set `orientation` themselves.
 
 <ApiTable component="Toolbar" kind="slots" />
 
+### Theme
+
+<ApiTheme component="Toolbar" />
+
 ## Related Components
 
 <RelatedComponents :components="['button-group', 'toggle-button-group', 'separator']" />

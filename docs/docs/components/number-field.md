@@ -188,6 +188,10 @@ NumberField sets these data attributes:
 
 <ApiTable component="NumberField" kind="emits" />
 
+### Theme
+
+<ApiTheme component="NumberField" />
+
 ## Accessibility
 
 - The input has `role="spinbutton"` with `aria-valuenow`, `aria-valuemin` and `aria-valuemax`

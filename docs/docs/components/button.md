@@ -135,6 +135,10 @@ Each rendered element carries the same `data-slot` string as HeroUI, so selector
 
 <ApiTable component="Button" kind="slots" />
 
+### Theme
+
+<ApiTheme component="Button" />
+
 ## Related Components
 
 <RelatedComponents :components="['spinner', 'close-button']" />

@@ -165,6 +165,10 @@ ColorField sets these data attributes:
 
 <ApiTable component="ColorField" kind="emits" />
 
+### Theme
+
+<ApiTheme component="ColorField" />
+
 ## Accessibility
 
 - The label's `for` points to the input id (auto-generated with `useId()` unless `id` is set)

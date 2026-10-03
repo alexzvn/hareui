@@ -96,6 +96,10 @@ The component supports both CSS pseudo-classes and data attributes for flexibili
 
 <ApiTable component="DisclosureGroup" kind="emits" />
 
+### Theme
+
+<ApiTheme component="DisclosureGroup" />
+
 ### useDisclosureGroupNavigation
 
 | Option | Type | Default | Description |

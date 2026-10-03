@@ -126,6 +126,10 @@ Inside toggle fields (`[data-slot="checkbox"]`, `[data-slot="switch"]`, `[data-s
 
 <ApiTable component="FieldError" kind="slots" />
 
+### Theme
+
+<ApiTheme component="FieldError" />
+
 ## Accessibility
 
 The FieldError component ensures accessibility by:

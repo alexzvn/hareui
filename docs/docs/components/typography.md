@@ -113,6 +113,10 @@ not BEM classes, so style through `class`, `ui` or `createHareUI`):
 
 <ApiTable component="Typography" kind="slots" />
 
+### Theme
+
+<ApiTheme component="Typography" />
+
 ## Related Components
 
 <RelatedComponents :components="['card', 'label', 'description']" />

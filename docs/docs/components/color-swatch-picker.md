@@ -120,6 +120,10 @@ app.use(createHareUI({
 
 <ApiTable component="ColorSwatchPicker" kind="emits" />
 
+### Theme
+
+<ApiTheme component="ColorSwatchPicker" />
+
 ## Related Components
 
 <RelatedComponents :components="['color-swatch', 'color-picker']" />

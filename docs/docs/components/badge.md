@@ -106,6 +106,10 @@ app.use(createHareUI({
 
 <ApiTable component="Badge" kind="slots" />
 
+### Theme
+
+<ApiTheme component="Badge" />
+
 ## Related Components
 
 <RelatedComponents :components="['avatar', 'chip']" />

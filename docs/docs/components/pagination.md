@@ -148,6 +148,10 @@ The component supports both CSS pseudo-classes and data attributes for flexibili
 
 <ApiTable component="Pagination" kind="emits" />
 
+### Theme
+
+<ApiTheme component="Pagination" />
+
 ## Accessibility
 
 - Semantic `<nav>` element with `aria-label="pagination"` and `role="navigation"`

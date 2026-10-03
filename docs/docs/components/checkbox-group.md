@@ -133,6 +133,10 @@ app.use(createHareUI({
 
 <ApiTable component="CheckboxGroup" kind="emits" />
 
+### Theme
+
+<ApiTheme component="CheckboxGroup" />
+
 ## Related Components
 
 <RelatedComponents :components="['checkbox', 'radio-group', 'form']" />

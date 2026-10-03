@@ -104,6 +104,10 @@ app.use(createHareUI({
 
 <ApiTable component="Label" kind="slots" />
 
+### Theme
+
+<ApiTheme component="Label" />
+
 ## Accessibility
 
 The Label component is built on the native HTML `<label>` element ([MDN Reference](https://developer.mozilla.org/en-US/docs/Web/HTML/Element/label)) and follows WAI-ARIA best practices:

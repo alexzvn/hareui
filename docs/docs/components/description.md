@@ -88,6 +88,10 @@ Inside a [TextField](/docs/components/text-field) with `[data-invalid="true"]`, 
 
 <ApiTable component="Description" kind="slots" />
 
+### Theme
+
+<ApiTheme component="Description" />
+
 ## Accessibility
 
 The Description component enhances accessibility by:

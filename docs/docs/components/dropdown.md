@@ -195,6 +195,10 @@ The component supports both CSS pseudo-classes and data attributes for flexibili
 
 <ApiTable component="Dropdown" kind="emits" />
 
+### Theme
+
+<ApiTheme component="Dropdown" />
+
 ## Accessibility
 
 Implements the [WAI-ARIA Menu pattern](https://www.w3.org/WAI/ARIA/apg/patterns/menubar/) via Reka

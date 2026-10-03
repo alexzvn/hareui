@@ -110,6 +110,10 @@ affects the fallback (it has no effect once an image has loaded).
 
 <ApiTable component="Avatar" kind="emits" />
 
+### Theme
+
+<ApiTheme component="Avatar" />
+
 ## Related Components
 
 <RelatedComponents :components="['card', 'chip']" />

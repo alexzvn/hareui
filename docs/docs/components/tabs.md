@@ -190,3 +190,7 @@ Tabs sets these data attributes (from Reka UI):
 ### Emits
 
 <ApiTable component="Tabs" kind="emits" />
+
+### Theme
+
+<ApiTheme component="Tabs" />

@@ -123,6 +123,10 @@ app.use(createHareUI({
 
 <ApiTable component="Slider" kind="emits" />
 
+### Theme
+
+<ApiTheme component="Slider" />
+
 ## Accessibility
 
 - Implements the ARIA slider pattern: each thumb is a `role="slider"` with `aria-valuenow`, `aria-valuemin` and `aria-valuemax`

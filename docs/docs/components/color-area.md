@@ -102,6 +102,10 @@ app.use(createHareUI({
 
 <ApiTable component="ColorArea" kind="emits" />
 
+### Theme
+
+<ApiTheme component="ColorArea" />
+
 ## Accessibility
 
 - The area is `role="application"` and the thumb a `role="slider"` with an `aria-valuetext` describing both channels

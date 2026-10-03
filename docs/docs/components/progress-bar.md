@@ -115,6 +115,10 @@ style through `class`, `ui` or `createHareUI`):
 
 <ApiTable component="ProgressBar" kind="slots" />
 
+### Theme
+
+<ApiTheme component="ProgressBar" />
+
 `#label` and `#output` receive:
 
 | Prop | Type | Description |

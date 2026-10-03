@@ -84,6 +84,10 @@ Each rendered element carries the same `data-slot` string as HeroUI, so selector
 
 <ApiTable component="ColorSwatch" kind="slots" />
 
+### Theme
+
+<ApiTheme component="ColorSwatch" />
+
 ## Related Components
 
 <RelatedComponents :components="['color-swatch-picker']" />

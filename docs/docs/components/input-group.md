@@ -250,6 +250,10 @@ app.use(createHareUI({
 
 <ApiTable component="InputGroup" kind="emits" />
 
+### Theme
+
+<ApiTheme component="InputGroup" />
+
 ## Related Components
 
 <RelatedComponents :components="['text-field', 'input', 'search-field']" />

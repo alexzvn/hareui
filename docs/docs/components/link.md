@@ -120,6 +120,10 @@ app.use(createHareUI({
 
 <ApiTable component="Link" kind="slots" />
 
+### Theme
+
+<ApiTheme component="Link" />
+
 ### Using with Routing Libraries
 
 Pass a router link component to `as`; the Link styles and icon stay the same:

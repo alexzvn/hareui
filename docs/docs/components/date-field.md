@@ -178,6 +178,10 @@ DateField sets these data attributes:
 
 <ApiTable component="DateField" kind="emits" />
 
+### Theme
+
+<ApiTheme component="DateField" />
+
 ## Accessibility
 
 - The label's `for` points to the field's id (auto-generated with `useId()` unless `id` is set)

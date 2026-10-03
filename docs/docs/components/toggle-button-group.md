@@ -118,6 +118,10 @@ Each rendered element carries the same `data-slot` string as HeroUI, so selector
 
 <ApiTable component="ToggleButtonGroup" kind="emits" />
 
+### Theme
+
+<ApiTheme component="ToggleButtonGroup" />
+
 ## Note
 
 - ToggleButtonGroup passes `size` to all child ToggleButton components

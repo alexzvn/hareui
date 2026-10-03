@@ -135,6 +135,10 @@ The component supports both CSS pseudo-classes and data attributes for flexibili
 
 <ApiTable component="Breadcrumbs" kind="slots" />
 
+### Theme
+
+<ApiTheme component="Breadcrumbs" />
+
 ## Accessibility
 
 - The root is an `<ol>` labelled "Breadcrumbs"; every item is an `<li>`.

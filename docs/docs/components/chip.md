@@ -104,6 +104,10 @@ Other combinations (e.g. `variant="secondary" color="accent"`) can be styled wit
 
 <ApiTable component="Chip" kind="slots" />
 
+### Theme
+
+<ApiTheme component="Chip" />
+
 ## Related Components
 
 <RelatedComponents :components="['avatar', 'card']" />

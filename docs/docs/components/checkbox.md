@@ -149,6 +149,10 @@ Checkbox sets these data attributes on its root:
 
 <ApiTable component="Checkbox" kind="emits" />
 
+### Theme
+
+<ApiTheme component="Checkbox" />
+
 ## Accessibility
 
 - The clickable label (`[data-slot="checkbox-content"]`) is a native `<button role="checkbox">` rendered by Reka UI, keyboard-operable with <kbd>Space</kbd>

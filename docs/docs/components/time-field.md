@@ -163,6 +163,10 @@ TimeField sets these data attributes:
 
 <ApiTable component="TimeField" kind="emits" />
 
+### Theme
+
+<ApiTheme component="TimeField" />
+
 ## Accessibility
 
 - The label's `for` points to the field's id (auto-generated with `useId()` unless `id` is set)

@@ -89,6 +89,10 @@ The Alert component is primarily informational and doesn't have interactive stat
 
 <ApiTable component="Alert" kind="slots" />
 
+### Theme
+
+<ApiTheme component="Alert" />
+
 ## Related Components
 
 <RelatedComponents :components="['button', 'close-button', 'spinner']" />

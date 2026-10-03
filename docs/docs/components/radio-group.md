@@ -165,6 +165,10 @@ RadioGroup sets these data attributes:
 
 <ApiTable component="RadioGroup" kind="emits" />
 
+### Theme
+
+<ApiTheme component="RadioGroup" />
+
 ## Accessibility
 
 - The group label is associated via `aria-labelledby`; each item's clickable button has `aria-describedby` listing its own description and the group's description/error ids

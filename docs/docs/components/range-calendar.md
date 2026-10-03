@@ -243,3 +243,7 @@ RangeCalendar sets these data attributes (from Reka UI), on `[data-slot="range-c
 ### Emits
 
 <ApiTable component="RangeCalendar" kind="emits" />
+
+### Theme
+
+<ApiTheme component="RangeCalendar" />

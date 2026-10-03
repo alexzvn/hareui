@@ -87,6 +87,10 @@ style through `class`, `ui` or `createHareUI`):
 
 <ApiTable component="Separator" kind="slots" />
 
+### Theme
+
+<ApiTheme component="Separator" />
+
 ## Related Components
 
 <RelatedComponents :components="['surface', 'card']" />

@@ -102,6 +102,10 @@ The component supports both CSS pseudo-classes and data attributes for flexibili
 
 <ApiTable component="Disclosure" kind="emits" />
 
+### Theme
+
+<ApiTheme component="Disclosure" />
+
 ## Related Components
 
 <RelatedComponents :components="['button', 'card']" />

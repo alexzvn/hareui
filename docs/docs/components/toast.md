@@ -138,6 +138,10 @@ app.use(createHareUI({
 
 <ApiTable component="ToastProvider" kind="slots" />
 
+### Theme
+
+<ApiTheme component="ToastProvider" />
+
 ### ToastQueue
 
 Manages toast state outside any component, so toasts can be triggered from anywhere —

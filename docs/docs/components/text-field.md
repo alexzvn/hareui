@@ -148,6 +148,10 @@ TextField sets these data attributes on its root:
 
 <ApiTable component="TextField" kind="emits" />
 
+### Theme
+
+<ApiTheme component="TextField" />
+
 ### Render Props
 
 The default slot receives the field state, the Vue equivalent of HeroUI's render props:

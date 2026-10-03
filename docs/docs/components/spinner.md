@@ -69,6 +69,10 @@ app.use(createHareUI({
 
 <ApiTable component="Spinner" kind="props" />
 
+### Theme
+
+<ApiTheme component="Spinner" />
+
 ## Related Components
 
 <RelatedComponents :components="['button']" />

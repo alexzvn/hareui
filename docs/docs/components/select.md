@@ -185,6 +185,10 @@ app.use(createHareUI({
 
 <ApiTable component="Select" kind="emits" />
 
+### Theme
+
+<ApiTheme component="Select" />
+
 ## Accessibility
 
 Select follows the ARIA listbox pattern:

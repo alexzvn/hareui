@@ -159,6 +159,10 @@ SearchField sets these data attributes:
 
 <ApiTable component="SearchField" kind="emits" />
 
+### Theme
+
+<ApiTheme component="SearchField" />
+
 ## Accessibility
 
 - The label's `for` points to the input id (auto-generated with `useId()` unless `id` is set)

@@ -125,6 +125,10 @@ app.use(createHareUI({
 
 <ApiTable component="Tooltip" kind="emits" />
 
+### Theme
+
+<ApiTheme component="Tooltip" />
+
 ## Related Components
 
 <RelatedComponents :components="['button', 'popover']" />

@@ -138,6 +138,10 @@ app.use(createHareUI({
 
 <ApiTable component="ListBox" kind="emits" />
 
+### Theme
+
+<ApiTheme component="ListBox" />
+
 ## Accessibility
 
 Built on Reka's Listbox, which implements the ARIA listbox pattern:
