@@ -238,3 +238,25 @@ describe('calendar keyboard paging and re-selection', () => {
     wrapper.unmount()
   })
 })
+
+describe('calendar navigation buttons', () => {
+  // behaviour-final-check C4/C6
+  it('prev/next keep the focused day of month and are named Previous/Next', async () => {
+    const wrapper = mount(Calendar, { props: { locale: 'en-US', defaultValue: parseDate('2025-01-15') } })
+    const [prev, next] = wrapper.findAll('[data-slot=calendar-nav-button]')
+    expect([prev!.attributes('aria-label'), next!.attributes('aria-label')]).toEqual(['Previous', 'Next'])
+    await next!.trigger('click')
+    expect(wrapper.get('[data-slot=calendar-heading]').text()).toBe('February 2025')
+    expect(wrapper.get('[data-value="2025-02-15"]').attributes('tabindex')).toBe('0')
+    wrapper.unmount()
+  })
+
+  // behaviour-final-check C2 (DatePicker closes on it)
+  it('re-selecting the selected date emits that date', async () => {
+    const value = parseDate('2025-01-15')
+    const wrapper = mount(Calendar, { props: { locale: 'en-US', modelValue: value } })
+    await wrapper.get('[data-value="2025-01-15"]').trigger('click')
+    expect(String(wrapper.emitted('update:modelValue')?.at(-1)?.[0])).toBe(value.toString())
+    wrapper.unmount()
+  })
+})

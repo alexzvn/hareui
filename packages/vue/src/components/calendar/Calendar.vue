@@ -148,12 +148,14 @@ import {
   CalendarPrev,
   CalendarRoot,
 } from 'reka-ui'
+import { isSameDay } from '@internationalized/date'
 import { computed, ref, shallowRef } from 'vue'
 import { isDurationView } from './useCalendarDurationView'
 import { useComponentUI } from '../../composables/useComponentUI'
 import CalendarDurationView from './CalendarDurationView.vue'
 import { defaultMaxValue, defaultMinValue, weekStartsOnFromFirstDay } from './useCalendarBounds'
 import { formatPanelHeading } from './useCalendarPanelHeading'
+import { calendarCellDate, calendarCellFrom, useCalendarMonthKeys } from './useCalendarMonthKeys'
 import { useCalendarPlaceholder } from './useCalendarPlaceholder'
 import { useCalendarYearPicker } from './useCalendarYearPicker'
 
@@ -224,6 +226,48 @@ const yearPickerState = useCalendarYearPicker({
   onSelect: onSelectYear,
 })
 const { activeYear: yearPickerActiveYear, gridRef: yearPickerGridRef, onKeyDown: onYearPickerKeyDown, selectYear: selectYearPickerYear, years: yearPickerYears } = yearPickerState
+
+const prevButton = ref<HTMLElement | null>(null)
+const nextButton = ref<HTMLElement | null>(null)
+const { onKeyDown: onMonthKeyDown, onHeaderClickCapture } = useCalendarMonthKeys({
+  placeholder: placeholderModel,
+  minValue: () => minValue.value,
+  maxValue: () => maxValue.value,
+  rootEl: () => rootEl.value,
+  numberOfMonths: () => props.numberOfMonths,
+})
+
+// React Aria disables outside-month cells, so pressing one neither selects nor pages; Reka would do both. And
+// re-pressing the selected date keeps it selected (Reka's `prevent-deselect`) but still reports it, as React Aria's
+// `onChange` does, which DatePicker relies on to close its popover. Both run in the capture phase, before the cell's
+// own Reka handler.
+function reselect(event: Event, cell: HTMLElement) {
+  if (props.selectionMode === 'multiple' || props.readonly || props.disabled || !cell.hasAttribute('data-selected') || cell.hasAttribute('data-disabled'))
+    return
+  event.preventDefault()
+  event.stopPropagation()
+  const date = calendarCellDate(cell, placeholderModel.value)
+  const current = props.modelValue
+  emit('update:modelValue', current && !Array.isArray(current) && isSameDay(current, date) ? current : date)
+}
+function onRootClickCapture(event: MouseEvent) {
+  const cell = calendarCellFrom(event.target, rootEl.value)
+  if (!cell)
+    return
+  if (cell.hasAttribute('data-outside-view')) {
+    event.preventDefault()
+    event.stopPropagation()
+    return
+  }
+  reselect(event, cell)
+}
+function onRootKeyDownCapture(event: KeyboardEvent) {
+  if ((event.key !== 'Enter' && event.key !== ' ') || event.altKey || event.ctrlKey || event.metaKey)
+    return
+  const cell = calendarCellFrom(event.target, rootEl.value)
+  if (cell)
+    reselect(event, cell)
+}
 </script>
 
 <template>
@@ -283,16 +327,21 @@ const { activeYear: yearPickerActiveYear, gridRef: yearPickerGridRef, onKeyDown:
     :calendar-label="ariaLabel"
     data-slot="calendar"
     :class="ui.base({ class: [props.ui?.base, props.class] })"
+    :prevent-deselect="selectionMode !== 'multiple'"
     @update:model-value="emit('update:modelValue', $event)"
+    @click.capture="onRootClickCapture"
+    @keydown.capture="onRootKeyDownCapture"
+    @keydown="onMonthKeyDown"
   >
     <template v-if="numberOfMonths <= 1">
-    <header data-slot="calendar-header" :class="ui.header({ class: props.ui?.header })">
+    <header data-slot="calendar-header" :class="ui.header({ class: props.ui?.header })" @click.capture="onHeaderClickCapture($event, prevButton, nextButton)">
       <template v-if="yearPicker">
         <button
           type="button"
           data-slot="calendar-year-picker-trigger"
           :data-open="isYearPickerOpen ? 'true' : undefined"
           :aria-expanded="isYearPickerOpen"
+          :aria-label="`${formatPanelHeading(resolvedLocale, grid[0]?.value ?? placeholderModel)}, year selector`"
           :class="ui.yearPickerTrigger({ class: props.ui?.yearPickerTrigger })"
           @click="isYearPickerOpen = !isYearPickerOpen"
         >
@@ -308,7 +357,7 @@ const { activeYear: yearPickerActiveYear, gridRef: yearPickerGridRef, onKeyDown:
       </template>
       <CalendarHeading v-else data-slot="calendar-heading" :class="ui.heading({ class: props.ui?.heading })">{{ formatPanelHeading(resolvedLocale, grid[0]?.value ?? placeholderModel) }}</CalendarHeading>
       <CalendarPrev data-slot="calendar-nav-button" as-child>
-        <button type="button" :class="ui.navButton({ class: props.ui?.navButton })">
+        <button ref="prevButton" type="button" aria-label="Previous" :class="ui.navButton({ class: props.ui?.navButton })">
           <slot name="navIcon" direction="previous">
             <svg data-slot="calendar-nav-button-icon" height="16" width="16" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg" :class="ui.navButtonIcon({ class: props.ui?.navButtonIcon })">
               <path fill-rule="evenodd" clip-rule="evenodd" d="M10.53 2.97a.75.75 0 0 1 0 1.06L6.56 8l3.97 3.97a.75.75 0 1 1-1.06 1.06l-4.5-4.5a.75.75 0 0 1 0-1.06l4.5-4.5a.75.75 0 0 1 1.06 0" fill="currentColor" />
@@ -317,7 +366,7 @@ const { activeYear: yearPickerActiveYear, gridRef: yearPickerGridRef, onKeyDown:
         </button>
       </CalendarPrev>
       <CalendarNext data-slot="calendar-nav-button" as-child>
-        <button type="button" :class="ui.navButton({ class: props.ui?.navButton })">
+        <button ref="nextButton" type="button" aria-label="Next" :class="ui.navButton({ class: props.ui?.navButton })">
           <slot name="navIcon" direction="next">
             <svg data-slot="calendar-nav-button-icon" height="16" width="16" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg" :class="ui.navButtonIcon({ class: props.ui?.navButtonIcon })">
               <path fill-rule="evenodd" clip-rule="evenodd" d="M5.47 2.97a.75.75 0 0 1 1.06 0l4.5 4.5a.75.75 0 0 1 0 1.06l-4.5 4.5a.75.75 0 1 1-1.06-1.06L9.44 8 5.47 4.03a.75.75 0 0 1 0-1.06Z" fill="currentColor" />
@@ -359,7 +408,7 @@ const { activeYear: yearPickerActiveYear, gridRef: yearPickerGridRef, onKeyDown:
         <div v-for="(month, panelIndex) in grid" :key="panelIndex" data-slot="calendar-panel" :class="ui.panel({ class: props.ui?.panel })">
           <header data-slot="calendar-header" :class="ui.header({ class: props.ui?.header })">
             <CalendarPrev v-if="panelIndex === 0" data-slot="calendar-nav-button" as-child>
-              <button type="button" :class="ui.navButton({ class: props.ui?.navButton })">
+              <button type="button" aria-label="Previous" :class="ui.navButton({ class: props.ui?.navButton })">
                 <slot name="navIcon" direction="previous">
                   <svg data-slot="calendar-nav-button-icon" height="16" width="16" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg" :class="ui.navButtonIcon({ class: props.ui?.navButtonIcon })">
                     <path fill-rule="evenodd" clip-rule="evenodd" d="M10.53 2.97a.75.75 0 0 1 0 1.06L6.56 8l3.97 3.97a.75.75 0 1 1-1.06 1.06l-4.5-4.5a.75.75 0 0 1 0-1.06l4.5-4.5a.75.75 0 0 1 1.06 0" fill="currentColor" />
@@ -370,7 +419,7 @@ const { activeYear: yearPickerActiveYear, gridRef: yearPickerGridRef, onKeyDown:
             <div v-else aria-hidden="true" class="size-6" />
             <span data-slot="calendar-heading" :class="ui.heading({ class: props.ui?.heading })">{{ formatPanelHeading(resolvedLocale, month.value) }}</span>
             <CalendarNext v-if="panelIndex === grid.length - 1" data-slot="calendar-nav-button" as-child>
-              <button type="button" :class="ui.navButton({ class: props.ui?.navButton })">
+              <button type="button" aria-label="Next" :class="ui.navButton({ class: props.ui?.navButton })">
                 <slot name="navIcon" direction="next">
                   <svg data-slot="calendar-nav-button-icon" height="16" width="16" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg" :class="ui.navButtonIcon({ class: props.ui?.navButtonIcon })">
                     <path fill-rule="evenodd" clip-rule="evenodd" d="M5.47 2.97a.75.75 0 0 1 1.06 0l4.5 4.5a.75.75 0 0 1 0 1.06l-4.5 4.5a.75.75 0 1 1-1.06-1.06L9.44 8 5.47 4.03a.75.75 0 0 1 0-1.06Z" fill="currentColor" />
