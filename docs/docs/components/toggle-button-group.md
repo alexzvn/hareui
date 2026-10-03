@@ -129,6 +129,7 @@ Each rendered element carries the same `data-slot` string as HeroUI, so selector
 - The `disabled` prop disables all child ToggleButtons. A button can't opt back in with `:disabled="false"`: as in React Aria, the group's `disabled` wins
 - The component automatically handles border radius between buttons
 - Use `disallow-empty-selection` with `selection-mode="single"` to ensure one option is always selected
+- **Difference from HeroUI:** pressing a disabled button moves focus to the group container (Reka's roving-focus root), where HeroUI leaves focus where it was. The next <kbd>Tab</kbd> then starts from the group
 
 ## Related Components
 

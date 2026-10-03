@@ -3,7 +3,8 @@
 Newest first. These override `plan.md` where they conflict.
 ## 2026-10-03 (behaviour parity fixes)
 
-- **ColorField form value stays lowercase hex** (`#0485f7`), unlike React Aria's uppercase `#0485F7`. The user kept the existing lowercase test over the new uppercase parity spec (`color-field.spec.ts` "submits the committed hex in uppercase like React Aria", which therefore stays red). The displayed text is still uppercase like HeroUI.
+- **RadioGroup / ToggleButtonGroup: pressing a disabled item focuses the group container** (review R5/T3). Kept as is for now and documented on both component pages; fixing it needs the roving root rebuilt with `as-child`.
+- **ColorField form value stays lowercase hex** (`#0485f7`), unlike React Aria's uppercase `#0485F7`. The parity spec was changed to assert lowercase. The displayed text is still uppercase like HeroUI.
 
 ## 2026-10-02 (afternoon)
 

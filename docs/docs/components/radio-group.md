@@ -175,6 +175,7 @@ RadioGroup sets these data attributes:
 - `invalid` sets `aria-invalid="true"` and `data-invalid="true"` on the root; the error is rendered via [FieldError](/docs/components/field-error) (`role="alert"`)
 - `required` sets `data-required="true"` on the root
 - Keyboard: arrow keys move selection between items, following `orientation`; <kbd>Tab</kbd> moves focus into and out of the group as a single stop
+- **Difference from HeroUI:** pressing a disabled radio moves focus to the group container (Reka's roving-focus root), where HeroUI leaves focus where it was. The next <kbd>Tab</kbd> then starts from the group
 
 ## Related Components
 
