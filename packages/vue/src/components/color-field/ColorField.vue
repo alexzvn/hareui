@@ -121,7 +121,7 @@ import { useColorPickerContext } from '../color-picker/context'
 import Description from '../description/Description.vue'
 import FieldError from '../field-error/FieldError.vue'
 import Label from '../label/Label.vue'
-import ColorFieldHexCase from './colorFieldHexCase'
+import ColorFieldBridge from './colorFieldBridge'
 
 defineOptions({ inheritAttrs: false })
 
@@ -142,7 +142,7 @@ const modelValueForRoot = computed<string | Color | undefined>(() => {
 })
 
 // Option A of the empty-value decision: React Aria's ColorField can be empty (`null`), Reka's always holds a colour
-// (`#000000`). While "empty" the input text is blanked (see colorFieldHexCase.ts); Reka and the form keep `#000000`.
+// (`#000000`). While "empty" the input text is blanked (see colorFieldBridge.ts); Reka and the form keep `#000000`.
 // `filledByCommit` covers the gap between a commit and the parent re-rendering with the new `modelValue`.
 const uncontrolledEmpty = ref(props.defaultValue == null)
 const filledByCommit = ref(false)
@@ -214,6 +214,31 @@ function onClear() {
   commitValidation()
 }
 
+// Reka `preventDefault`s Enter after committing, which also cancels the browser's implicit form submission
+// (React Aria leaves it alone). Replayed once the committed value has rendered into the form input.
+function onInputKeydown(event: KeyboardEvent) {
+  if (event.key !== 'Enter' || event.isComposing || !(event.currentTarget instanceof HTMLInputElement))
+    return
+  const form = event.currentTarget.form
+  if (form)
+    nextTick(() => submitImplicitly(form))
+}
+function submitImplicitly(form: HTMLFormElement) {
+  const elements = [...form.elements]
+  const submitter = elements.find((el): el is HTMLButtonElement | HTMLInputElement =>
+    (el instanceof HTMLButtonElement || el instanceof HTMLInputElement) && (el.type === 'submit' || el.type === 'image'))
+  if (submitter) {
+    if (!submitter.disabled)
+      submitter.click()
+    return
+  }
+  // Without a submit button, browsers only submit implicitly when a single field blocks it
+  const blocking = elements.filter(el => el instanceof HTMLInputElement
+    && /^(?:text|search|url|tel|email|password|number|date|month|week|time|datetime-local)$/.test(el.type))
+  if (blocking.length <= 1)
+    form.requestSubmit()
+}
+
 // `aria-label` / `aria-labelledby` name the input (as in HeroUI), not the wrapper div
 const attrs = useAttrs()
 const rootAttrs = computed(() => {
@@ -280,7 +305,6 @@ function onFocusOut(event: FocusEvent) {
       :disabled="disabled"
       :readonly="readonly"
       :required="required"
-      :name="name"
       data-slot="color-input-group"
       :data-invalid="invalid ? 'true' : undefined"
       :data-focus-within="focusWithin ? 'true' : undefined"
@@ -290,7 +314,14 @@ function onFocusOut(event: FocusEvent) {
       @focusout="onFocusOut"
       @update:color="onUpdateColor"
     >
-      <ColorFieldHexCase :is-empty="() => empty" :on-clear="onClear" :on-fill="onUpdateColor" />
+      <ColorFieldBridge
+        :is-empty="() => empty"
+        :on-clear="onClear"
+        :on-fill="onUpdateColor"
+        :name="name"
+        :step="step"
+        :locale="locale"
+      />
       <div v-if="hasPrefix" data-slot="color-input-group-prefix" :class="ui.prefix({ class: props.ui?.prefix })">
         <slot name="prefix" />
       </div>
@@ -302,6 +333,7 @@ function onFocusOut(event: FocusEvent) {
         :aria-label="attrs['aria-label']"
         :aria-labelledby="attrs['aria-labelledby']"
         :class="ui.input({ class: props.ui?.input })"
+        @keydown="onInputKeydown"
       />
       <div v-if="hasSuffix" data-slot="color-input-group-suffix" :class="ui.suffix({ class: props.ui?.suffix })">
         <slot name="suffix" />
