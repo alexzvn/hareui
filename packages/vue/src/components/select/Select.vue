@@ -147,6 +147,7 @@ import Description from '../description/Description.vue'
 import FieldError from '../field-error/FieldError.vue'
 import Label from '../label/Label.vue'
 import ListBox from '../list-box/ListBox.vue'
+import { usePressRelease } from './pressRelease'
 
 defineOptions({ inheritAttrs: false })
 
@@ -248,7 +249,8 @@ function clear() {
   emit('clear')
 }
 
-// RAC Select: typing on the closed trigger selects the next option whose text starts with the typed string
+// RAC Select: typing on the closed trigger selects the first option, from the selected one onwards (inclusive, so a
+// repeated character stays put) and then from the top, whose text starts with the typed string
 let typeahead = ''
 let typeaheadTimer: ReturnType<typeof setTimeout> | undefined
 function onTypeahead(key: string) {
@@ -259,8 +261,9 @@ function onTypeahead(key: string) {
   }, 1000)
   const enabled = options.value.filter(item => !item.disabled)
   const current = enabled.findIndex(item => item.value === selectedValues.value[0])
-  const ordered = [...enabled.slice(current + 1), ...enabled.slice(0, current + 1)]
-  const match = (typeahead.length > 1 ? enabled : ordered).find(item => textOf(item).toLowerCase().startsWith(typeahead))
+  const from = Math.max(current, 0)
+  const ordered = [...enabled.slice(from), ...enabled.slice(0, from)]
+  const match = ordered.find(item => textOf(item).toLowerCase().startsWith(typeahead))
   if (match && !multiple.value) {
     selection.value = match.value
     commitValidation()
@@ -268,10 +271,13 @@ function onTypeahead(key: string) {
 }
 
 function onTriggerKeydown(event: KeyboardEvent) {
+  triggerPress = false
   if (props.disabled)
     return
   if (event.key === 'ArrowDown' || event.key === 'ArrowUp') {
     event.preventDefault()
+    // RAC focus strategy: ArrowUp opens on the last option (unless one is selected)
+    openStrategy = event.key === 'ArrowUp' ? 'last' : 'first'
     setOpen(true)
   }
   else if ((event.key === 'Backspace' || event.key === 'Delete') && props.clearable && !isOpen.value) {
@@ -296,17 +302,57 @@ function onTriggerBlur() {
   focusVisible.value = false
 }
 
-// Focus moves into the list on open, as in RAC: the first selected option, else the first option,
-// else (empty collection) the listbox itself
+// Focus moves into the list on open, as in RAC: the first selected option, else the first option (the last one
+// when opened with ArrowUp), else (empty collection) the listbox itself
 const content = useTemplateRef<{ $el: HTMLElement }>('content')
 const listBox = useTemplateRef<{ highlightSelected: () => Promise<void> | undefined }>('listBox')
+let openStrategy: 'first' | 'last' = 'first'
 async function onOpenAutoFocus(event: Event) {
   event.preventDefault()
+  const strategy = openStrategy
+  openStrategy = 'first'
   await listBox.value?.highlightSelected()
   const list = content.value?.$el.querySelector<HTMLElement>('[data-slot=list-box]')
+  // Reka's End key moves the highlight (and focus) to the last enabled option
+  if (list && strategy === 'last' && isPlaceholder.value)
+    list.dispatchEvent(new KeyboardEvent('keydown', { key: 'End', cancelable: true }))
   if (list && !list.contains(document.activeElement))
     list.focus()
 }
+// Reka's non-modal popover skips the trigger refocus after an outside press; RAC restores focus to the trigger
+// unless the press moved it to another element
+function onCloseAutoFocus(event: Event) {
+  event.preventDefault()
+  const active = document.activeElement
+  if (!active || active === document.body || content.value?.$el.contains(active))
+    triggerEl()?.focus()
+}
+
+// RAC Select opens on mouse press start, and releasing over an option selects it (press-drag-release)
+let triggerPress = false
+function onTriggerPointerdown(event: PointerEvent) {
+  if (event.pointerType !== 'mouse' || event.button !== 0 || props.disabled)
+    return
+  // The click that ends this press must not toggle again
+  triggerPress = true
+  triggerEl()?.focus()
+  setOpen(!isOpen.value)
+  const release = () => setTimeout(() => {
+    triggerPress = false
+  })
+  window.addEventListener('pointerup', release, { once: true, capture: true })
+  window.addEventListener('pointercancel', release, { once: true, capture: true })
+}
+function onTriggerMousedown(event: MouseEvent) {
+  // Focus stays where the press put it (the trigger, or the list once open)
+  if (triggerPress)
+    event.preventDefault()
+}
+function onRootOpenChange(value: boolean) {
+  if (!triggerPress)
+    setOpen(value)
+}
+const pressRelease = usePressRelease()
 
 // The validation composable focuses the first native control of an invalid field; the hidden <select>
 // isn't focusable for users, so hand focus to the trigger (RAC marks it `data-react-aria-prevent-focus`)
@@ -386,7 +432,7 @@ watch(() => props.disabled, (disabled) => {
         {{ label }}
       </slot>
     </Label>
-    <PopoverRoot :open="isOpen" :modal="false" @update:open="setOpen">
+    <PopoverRoot :open="isOpen" :modal="false" @update:open="onRootOpenChange">
       <PopoverTrigger as-child>
         <button
           :id="id"
@@ -409,6 +455,8 @@ watch(() => props.disabled, (disabled) => {
           @keydown="onTriggerKeydown"
           @focus="onTriggerFocus"
           @blur="onTriggerBlur"
+          @pointerdown="onTriggerPointerdown"
+          @mousedown="onTriggerMousedown"
           @pointerenter="hovered = $event.pointerType === 'mouse'"
           @pointerleave="hovered = false"
         >
@@ -479,6 +527,9 @@ watch(() => props.disabled, (disabled) => {
           :collision-padding="12"
           :class="ui.popover({ class: props.ui?.popover })"
           @open-auto-focus="onOpenAutoFocus"
+          @close-auto-focus="onCloseAutoFocus"
+          @pointerdown="pressRelease.onPointerdown"
+          @pointerup="pressRelease.onPointerup"
         >
           <ListBox
             ref="listBox"

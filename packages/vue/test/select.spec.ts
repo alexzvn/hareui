@@ -91,6 +91,19 @@ describe('Select', () => {
     wrapper.unmount()
   })
 
+  it('typeahead on the closed trigger searches from the selected option inclusive, so a repeated character stays', async () => {
+    // behaviour-final-check S8 (RAC useTypeSelect + ListKeyboardDelegate.getKeyForSearch)
+    const wrapper = mount(Select, { props: { items: [...items, { value: 'cow', label: 'Cow' }] }, attachTo: document.body })
+    await wrapper.get(trigger).trigger('keydown', { key: 'c' })
+    expect(wrapper.emitted('update:modelValue')?.at(-1)).toEqual(['cat'])
+    await new Promise(r => setTimeout(r, 1100))
+    await wrapper.get(trigger).trigger('keydown', { key: 'c' })
+    expect(wrapper.emitted('update:modelValue')?.at(-1)).toEqual(['cat'])
+    await wrapper.get(trigger).trigger('keydown', { key: 'o' })
+    expect(wrapper.emitted('update:modelValue')?.at(-1)).toEqual(['cow'])
+    wrapper.unmount()
+  })
+
   it('submits the selection through the hidden select and blocks required forms natively', async () => {
     const form = document.createElement('form')
     document.body.append(form)
@@ -161,6 +174,46 @@ describe('Select', () => {
       await flush()
       expect(document.querySelector('[role=listbox]')).toBeNull()
       expect(document.activeElement?.getAttribute('data-slot')).toBe('select-trigger')
+      wrapper.unmount()
+    })
+
+    it('leaves focus on a focusable element that an outside press moved it to', async () => {
+      // behaviour-final-check S1 (RAC FocusScope only restores focus that is lost or still inside)
+      const wrapper = await openByClick({})
+      const other = document.createElement('input')
+      document.body.appendChild(other)
+      pointer(other, 'pointerdown')
+      other.focus()
+      await flush()
+      await flush()
+      expect(document.querySelector('[role=listbox]')).toBeNull()
+      expect(document.activeElement).toBe(other)
+      wrapper.unmount()
+    })
+
+    it('ArrowUp opens on the selected option when there is one', async () => {
+      // behaviour-final-check S2
+      const wrapper = mount(Select, { props: { items, defaultValue: 'dog' }, attachTo: document.body })
+      wrapper.get<HTMLElement>(trigger).element.focus()
+      await wrapper.get(trigger).trigger('keydown', { key: 'ArrowUp' })
+      await flush()
+      await flush()
+      expect(focusedText()).toBe('Dog')
+      wrapper.unmount()
+    })
+
+    it('a second mouse press on the trigger closes the popover', async () => {
+      // behaviour-final-check S7
+      const wrapper = mount(Select, { props: { items }, attachTo: document.body })
+      const el = wrapper.get(trigger).element
+      for (let i = 0; i < 2; i++) {
+        pointer(el, 'pointerdown')
+        pointer(el, 'pointerup')
+        el.dispatchEvent(new MouseEvent('click', { bubbles: true, cancelable: true, detail: 1 }))
+        await flush()
+        await flush()
+        expect(wrapper.get(trigger).attributes('aria-expanded')).toBe(i === 0 ? 'true' : 'false')
+      }
       wrapper.unmount()
     })
 
