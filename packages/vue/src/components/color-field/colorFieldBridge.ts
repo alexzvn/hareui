@@ -23,8 +23,8 @@ const PERCENT_CHANNELS = new Set<ColorChannel>(['saturation', 'lightness', 'brig
  * `onClear` (React Aria commits `null` there). Committing a colour equal to Reka's hidden one emits no Reka update, so
  * `onFill` is called instead. The form value is still `#000000`.
  *
- * Form value: rendered here instead of Reka's hidden input (lowercase hex, always the hex even in channel mode), with
- * React Aria's value: the uppercase hex, or the channel number (alpha on a 0–1 scale).
+ * Form value: rendered here instead of Reka's hidden input (which always submits the hex, even in channel mode), with
+ * the channel number in channel mode (alpha on a 0–1 scale). The hex stays lowercase (React Aria submits it uppercase).
  */
 export default defineComponent({
   name: 'ColorFieldBridge',
@@ -180,7 +180,7 @@ export default defineComponent({
         return '#000000'
       const channel = ctx.channel.value
       if (!channel)
-        return hex({ ...ctx.color.value, alpha: 1 } as Color).toUpperCase()
+        return hex({ ...ctx.color.value, alpha: 1 } as Color).toLowerCase()
       const value = channelValue()
       return String(channel === 'alpha' ? value / 100 : value)
     }

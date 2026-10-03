@@ -1,6 +1,10 @@
 # Decisions (user-confirmed)
 
 Newest first. These override `plan.md` where they conflict.
+## 2026-10-03 (behaviour parity fixes)
+
+- **ColorField form value stays lowercase hex** (`#0485f7`), unlike React Aria's uppercase `#0485F7`. The user kept the existing lowercase test over the new uppercase parity spec (`color-field.spec.ts` "submits the committed hex in uppercase like React Aria", which therefore stays red). The displayed text is still uppercase like HeroUI.
+
 ## 2026-10-02 (afternoon)
 
 - **Landing showcase tab bar stays removed.** heroui.com's Dashboard/Mail/Chat/Finances/CRM tabs are iframes of HeroUI Pro (paid, closed source), and heroui.pro refuses framing outside heroui.com (`frame-ancestors 'self' https://heroui.com`, `X-Frame-Options: SAMEORIGIN`). Own templates, recreated Pro screens and a Components-only bar were offered; the user chose to leave it as is.

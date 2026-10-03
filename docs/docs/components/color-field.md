@@ -176,7 +176,7 @@ ColorField sets these data attributes:
 - `invalid` sets `aria-invalid="true"` on the input; the error is announced via `role="alert"`
 - Keyboard: <kbd>↑</kbd>/<kbd>↓</kbd> (and <kbd>PageUp</kbd>/<kbd>PageDown</kbd>) step the hex value or the active channel by one step, <kbd>Home</kbd>/<kbd>End</kbd> jump a channel to its minimum/maximum, <kbd>Enter</kbd> commits typed text and then submits an enclosing form, mouse wheel steps the value unless `disableWheelChange` is set
 - Channel values show their unit (`213°`, `50%`) and are clamped to the channel range on commit
-- `name` submits the uppercase hex (`#0485F7`), or the channel value in channel mode (alpha on a 0–1 scale)
+- `name` submits the lowercase hex (`#0485f7`; HeroUI submits it uppercase), or the channel value in channel mode (alpha on a 0–1 scale)
 
 ## Related Components
 
