@@ -1,15 +1,16 @@
 // Translated from @heroui/styles components/drawer.css + drawer.styles.ts
 // HeroUI slides the dialog with a `translate` transition toggled by `[data-entering]`/`[data-exiting]`.
 // Reka's Presence only waits for CSS animations, so the same slide (same distance, durations and
-// easing) is expressed as tw-animate keyframes on `data-state`. State variants use
+// easing) is expressed as keyframes on `data-state`: `animate-drawer-in/out` (styles/keyframes.css), tw-animate's
+// enter/exit without the `filter` channel so they stay on the compositor like HeroUI's transitions. State variants use
 // `[&:where([data-state=…])]:` (zero added specificity) as in theme/modal.ts, so user utilities win.
 export default {
   slots: {
     backdrop: [
       'fixed inset-0 z-(--z-index-overlay)',
       'h-(--visual-viewport-height) w-full',
-      '[&:where([data-state=open])]:animate-in [&:where([data-state=open])]:[--tw-duration:250ms] [&:where([data-state=open])]:ease-[cubic-bezier(0.32,0.72,0,1)] [&:where([data-state=open])]:fade-in-0',
-      '[&:where([data-state=closed])]:animate-out [&:where([data-state=closed])]:[--tw-duration:200ms] [&:where([data-state=closed])]:ease-[cubic-bezier(0.32,0.72,0,1)] [&:where([data-state=closed])]:fade-out-0',
+      '[&:where([data-state=open])]:animate-drawer-in [&:where([data-state=open])]:[--tw-duration:250ms] [&:where([data-state=open])]:ease-[cubic-bezier(0.32,0.72,0,1)] [&:where([data-state=open])]:fade-in-0',
+      '[&:where([data-state=closed])]:animate-drawer-out [&:where([data-state=closed])]:[--tw-duration:200ms] [&:where([data-state=closed])]:ease-[cubic-bezier(0.32,0.72,0,1)] [&:where([data-state=closed])]:fade-out-0',
       '[&:where([data-state=closed])]:will-change-[opacity]',
       // HeroUI's resting transition. Enter/exit run on the keyframes above (animated opacity doesn't transition).
       '[transition:opacity_250ms_cubic-bezier(0.32,0.72,0,1)] motion-reduce:transition-none',
@@ -32,8 +33,8 @@ export default {
       '[&:where([data-state=closed])]:will-change-transform',
       // HeroUI's resting transition (`transform`-based keyframes above don't trigger it); drag snap-back sets its own inline.
       '[transition:translate_250ms_cubic-bezier(0.32,0.72,0,1)] motion-reduce:transition-none',
-      '[&:where([data-state=open])]:animate-in [&:where([data-state=open])]:[--tw-duration:250ms] [&:where([data-state=open])]:ease-[cubic-bezier(0.32,0.72,0,1)]',
-      '[&:where([data-state=closed])]:animate-out [&:where([data-state=closed])]:[--tw-duration:200ms] [&:where([data-state=closed])]:ease-[cubic-bezier(0.32,0.72,0,1)]',
+      '[&:where([data-state=open])]:animate-drawer-in [&:where([data-state=open])]:[--tw-duration:250ms] [&:where([data-state=open])]:ease-[cubic-bezier(0.32,0.72,0,1)]',
+      '[&:where([data-state=closed])]:animate-drawer-out [&:where([data-state=closed])]:[--tw-duration:200ms] [&:where([data-state=closed])]:ease-[cubic-bezier(0.32,0.72,0,1)]',
       'motion-reduce:[&:where([data-state=open])]:animate-none motion-reduce:[&:where([data-state=closed])]:animate-none',
     ],
     header: 'flex flex-col gap-3 mb-0 [[data-slot=drawer-handle]+&]:mt-0',

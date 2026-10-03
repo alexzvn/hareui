@@ -41,3 +41,28 @@
     }
   }
 }
+
+/*
+ * tw-animate's `enter`/`exit` minus `filter: blur()`: Chrome never composites an animated filter, so those
+ * keyframes run on the main thread and stall while a dialog mounts. HeroUI's drawer slides with composited
+ * `translate`/`opacity` transitions; these keep our drawer on the compositor too. Same tw-animate variables;
+ * `inline` (as tw-animate does) so `--tw-duration`/`--tw-ease` resolve on the element, not on :root.
+ */
+@theme inline {
+  --animate-drawer-in: drawer-enter var(--tw-animation-duration, var(--tw-duration, 0.15s)) var(--tw-ease, ease) var(--tw-animation-delay, 0s) var(--tw-animation-iteration-count, 1) var(--tw-animation-direction, normal) var(--tw-animation-fill-mode, none);
+  --animate-drawer-out: drawer-exit var(--tw-animation-duration, var(--tw-duration, 0.15s)) var(--tw-ease, ease) var(--tw-animation-delay, 0s) var(--tw-animation-iteration-count, 1) var(--tw-animation-direction, normal) var(--tw-animation-fill-mode, none);
+
+  @keyframes drawer-enter {
+    from {
+      opacity: var(--tw-enter-opacity, 1);
+      transform: translate3d(var(--tw-enter-translate-x, 0), var(--tw-enter-translate-y, 0), 0);
+    }
+  }
+
+  @keyframes drawer-exit {
+    to {
+      opacity: var(--tw-exit-opacity, 1);
+      transform: translate3d(var(--tw-exit-translate-x, 0), var(--tw-exit-translate-y, 0), 0);
+    }
+  }
+}
