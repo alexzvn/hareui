@@ -87,7 +87,7 @@ export interface InputOtpEmits {
 </script>
 
 <script setup lang="ts">
-import { computed, ref, useId, useSlots, useTemplateRef, watch } from 'vue'
+import { computed, onBeforeUnmount, onMounted, ref, useId, useSlots, useTemplateRef, watch } from 'vue'
 import { useComponentUI } from '../../composables/useComponentUI'
 import { useFieldValidation } from '../../composables/useFieldValidation'
 import Description from '../description/Description.vue'
@@ -180,12 +180,58 @@ const PWM_BADGE_SPACE = 40
 const pushPwmBadge = ref(false)
 const selStart = ref<number | null>(null)
 const selEnd = ref<number | null>(null)
+// The selection last mirrored, as the library's `inputMetadataRef.prev`: tells a backward caret move from a forward one
+let prevSelection: [number | null, number | null] = [null, null]
+// The `input-otp` library's selection model (its `selectionchange` listener): outside insert mode (caret at the
+// end of a partial value) a collapsed caret is widened to select the active slot's character, so typing replaces
+// it and Delete removes it. On a full field that is the last character.
 function syncSelection() {
   const el = input.value
   if (!el)
     return
+  const value = el.value
+  const max = props.length
+  let start = -1
+  let end = -1
+  let direction: 'forward' | 'backward' | undefined
+  const caret = el.selectionStart
+  if (value.length !== 0 && caret !== null && el.selectionEnd !== null && caret === el.selectionEnd) {
+    const insertMode = caret === value.length && value.length < max
+    if (!insertMode) {
+      if (caret === 0) {
+        start = 0
+        end = 1
+        direction = 'forward'
+      }
+      else if (caret === max) {
+        start = caret - 1
+        end = caret
+        direction = 'backward'
+      }
+      else if (max > 1 && value.length > 1) {
+        let offset = 0
+        const [prevStart, prevEnd] = prevSelection
+        if (prevStart !== null && prevEnd !== null) {
+          direction = caret < prevEnd ? 'backward' : 'forward'
+          const wasInserting = prevStart === prevEnd && prevStart < max
+          if (direction === 'backward' && !wasInserting)
+            offset = -1
+        }
+        start = offset + caret
+        end = offset + caret + 1
+      }
+    }
+    if (start !== -1 && end !== -1 && start !== end)
+      el.setSelectionRange(start, end, direction)
+  }
   selStart.value = el.selectionStart
   selEnd.value = el.selectionEnd
+  prevSelection = [selStart.value, selEnd.value]
+}
+// The browser fires `selectionchange` for every caret move (arrow keys, clicks, typing), as the library listens to
+function onSelectionChange() {
+  if (document.activeElement === input.value)
+    syncSelection()
 }
 
 function isActive(index: number) {
@@ -222,7 +268,10 @@ function onBlur() {
   isFocused.value = false
   selStart.value = null
   selEnd.value = null
+  prevSelection = [null, null]
 }
+onMounted(() => document.addEventListener('selectionchange', onSelectionChange))
+onBeforeUnmount(() => document.removeEventListener('selectionchange', onSelectionChange))
 
 function onInput(event: Event) {
   const el = event.target as HTMLInputElement
@@ -233,6 +282,7 @@ function onInput(event: Event) {
     el.value = previous
     const pos = Math.min(previous.length, props.length)
     el.setSelectionRange(pos, pos)
+    syncSelection()
     return
   }
   if (el.value.length > next.length)
