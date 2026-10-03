@@ -135,6 +135,7 @@ import {
 import { computed, ref } from 'vue'
 import { useColorPickerContext } from './colorPickerContext'
 import { useComponentUI } from '../composables/useComponentUI'
+import { captureOnDraggedThumb } from '../composables/thumbPointerCapture'
 import Label from './Label.vue'
 
 const props = withDefaults(defineProps<ColorSliderProps>(), {
@@ -282,6 +283,17 @@ const hasLabel = computed(() => !!(props.label || slots.label))
 const hasOutput = computed(() => props.showOutput ?? hasLabel.value)
 const ui = useComponentUI('colorSlider', theme, () => ({ orientation: props.orientation, hasLabel: hasLabel.value, hasOutput: hasOutput.value }))
 
+// reka-limitation: Reka's thumb exposes no `isDragging` state (RAC's `data-dragging`), so it is tracked
+// here: a press anywhere on the slider starts a drag of its single thumb.
+const isDragging = ref(false)
+function onPointerDown() {
+  if (!props.disabled)
+    isDragging.value = true
+}
+function onPointerEnd() {
+  isDragging.value = false
+}
+
 </script>
 
 <template>
@@ -300,6 +312,10 @@ const ui = useComponentUI('colorSlider', theme, () => ({ orientation: props.orie
     @update:color="handleUpdate"
     @change="(value: string) => emit('change', value)"
     @change-end="(value: string) => emit('changeEnd', value)"
+    @pointerdown="onPointerDown"
+    @pointerup="onPointerEnd"
+    @pointercancel="onPointerEnd"
+    @gotpointercapture="captureOnDraggedThumb"
   >
     <Label
       v-if="hasLabel"
@@ -325,6 +341,7 @@ const ui = useComponentUI('colorSlider', theme, () => ({ orientation: props.orie
     >
       <ColorSliderThumb
         data-slot="color-slider-thumb"
+        :data-dragging="isDragging ? 'true' : undefined"
         :style="thumbStyle"
         :class="ui.thumb({ class: props.ui?.thumb })"
       >

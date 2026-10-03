@@ -16,7 +16,7 @@ export default {
       'border-3 border-white shadow-overlay',
       'z-1',
       '[transition:transform_250ms_var(--ease-out),box-shadow_150ms_var(--ease-out)] motion-reduce:transition-none',
-      'active:cursor-grabbing',
+      'data-[dragging=true]:cursor-grabbing',
       'focus-visible:z-10 focus-visible:status-focused',
       // RAC focuses an inner input, so the thumb never receives the UA `:focus-visible` outline width/colour
       'focus-visible:[outline-width:medium] focus-visible:[outline-color:currentcolor]',

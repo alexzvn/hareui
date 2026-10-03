@@ -73,6 +73,7 @@ export interface SliderSlots {
 import { SliderRange, SliderRoot, SliderThumb, SliderTrack } from 'reka-ui'
 import { computed, ref, useId, useSlots } from 'vue'
 import { useComponentUI } from '../composables/useComponentUI'
+import { captureOnDraggedThumb } from '../composables/thumbPointerCapture'
 import Label from './Label.vue'
 
 const props = withDefaults(defineProps<SliderProps>(), {
@@ -200,6 +201,7 @@ function dragging(index: number) {
     @pointerdown="onPointerDown"
     @pointerup="onPointerEnd"
     @pointercancel="onPointerEnd"
+    @gotpointercapture="captureOnDraggedThumb"
   >
     <Label v-if="hasLabel" :id="labelId" :disabled="disabled" :class="ui.label({ class: props.ui?.label })">
       <slot name="label">{{ label }}</slot>
