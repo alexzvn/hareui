@@ -62,7 +62,7 @@ export interface ColorPickerEmits {
 
 <script setup lang="ts">
 import { normalizeColor, PopoverContent, PopoverPortal, PopoverRoot, PopoverTrigger } from 'reka-ui'
-import { computed, provide, ref } from 'vue'
+import { computed, nextTick, onBeforeUnmount, provide, ref, watch } from 'vue'
 import { useComponentUI } from '../../composables/useComponentUI'
 import { ColorPickerContextKey } from './context'
 
@@ -98,12 +98,62 @@ function focusContent(event: Event) {
   // The event targets Reka's positioning wrapper; the popover is its child. It can't take focus until positioned.
   requestAnimationFrame(() => el?.focus({ preventScroll: true }))
 }
+
+// Reka's non-modal popover leaves focus where an outside interaction put it (the clicked control or `body`). RAC's
+// popover is modal: its underlay swallows the outside click and focus always returns to the trigger. The trigger is
+// refocused after the close, again once a pending outside click has finished moving focus, and on unmount.
+const triggerRef = ref<{ $el?: unknown } | null>(null)
+let closedByOutside = false
+let openNow = props.open ?? props.defaultOpen ?? false
+watch(() => props.open, (value) => {
+  if (value !== undefined)
+    openNow = value
+})
+function focusTrigger() {
+  const el = triggerRef.value?.$el
+  if (el instanceof HTMLElement && !openNow)
+    el.focus({ preventScroll: true })
+}
+function onOutsideClick() {
+  document.removeEventListener('click', onOutsideClick, true)
+  focusTrigger()
+}
+function onInteractOutside(event: CustomEvent<{ originalEvent: Event }>) {
+  const el = triggerRef.value?.$el
+  if (event.defaultPrevented || (el instanceof Node && el.contains(event.target as Node)))
+    return
+  closedByOutside = true
+  // A mouse press closes the popover on pointerdown; the browser then moves focus on mousedown
+  if (event.detail.originalEvent.type === 'pointerdown')
+    document.addEventListener('click', onOutsideClick, true)
+}
+function onUpdateOpen(value: boolean) {
+  openNow = value
+  emit('update:open', value)
+  if (value) {
+    closedByOutside = false
+    document.removeEventListener('click', onOutsideClick, true)
+  }
+  else if (closedByOutside) {
+    nextTick(focusTrigger)
+  }
+}
+function onCloseAutoFocus(event: Event) {
+  document.removeEventListener('click', onOutsideClick, true)
+  closedByOutside = false
+  if (!(triggerRef.value?.$el instanceof HTMLElement))
+    return
+  event.preventDefault()
+  focusTrigger()
+}
+onBeforeUnmount(() => document.removeEventListener('click', onOutsideClick, true))
 </script>
 
 <template>
-  <PopoverRoot :open="open" :default-open="defaultOpen" :modal="false" v-slot="{ open: isOpen, close }" @update:open="emit('update:open', $event)">
+  <PopoverRoot :open="open" :default-open="defaultOpen" :modal="false" v-slot="{ open: isOpen, close }" @update:open="onUpdateOpen">
     <div data-slot="color-picker" :class="ui.base({ class: [props.ui?.base, props.class] })">
       <PopoverTrigger
+        ref="triggerRef"
         data-slot="color-picker-trigger"
         :disabled="disabled"
         :data-disabled="disabled ? 'true' : undefined"
@@ -120,6 +170,8 @@ function focusContent(event: Event) {
         :side-offset="sideOffset"
         :collision-padding="8"
         @open-auto-focus="focusContent"
+        @close-auto-focus="onCloseAutoFocus"
+        @interact-outside="onInteractOutside"
         :class="ui.popover({ class: props.ui?.popover })"
       >
         <slot :color="color" :close="close" />
