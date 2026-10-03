@@ -2,8 +2,8 @@
 title: Link
 description: A styled anchor component for navigation with built-in icon support
 links:
-  source: Link.vue
-  styles: link.ts
+  source: link/Link.vue
+  styles: link/theme.ts
   heroui: link
 ---
 

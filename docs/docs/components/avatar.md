@@ -3,8 +3,8 @@ title: Avatar
 description: Display user profile images with customizable fallback content
 links:
   reka: avatar
-  source: Avatar.vue
-  styles: avatar.ts
+  source: avatar/Avatar.vue
+  styles: avatar/theme.ts
   heroui: avatar
 ---
 

@@ -2,8 +2,8 @@
 title: Spinner
 description: A loading indicator component to show pending states
 links:
-  source: Spinner.vue
-  styles: spinner.ts
+  source: spinner/Spinner.vue
+  styles: spinner/theme.ts
   heroui: spinner
 ---
 

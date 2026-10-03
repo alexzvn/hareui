@@ -1,7 +1,7 @@
 import { mount } from '@vue/test-utils'
 import { describe, expect, it } from 'vitest'
 import { h, ref } from 'vue'
-import InputOtp from '../src/components/InputOtp.vue'
+import InputOtp from '../src/components/input-otp/InputOtp.vue'
 
 function controlled(initial = '', props: Record<string, unknown> = {}) {
   const model = ref(initial)

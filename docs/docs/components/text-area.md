@@ -2,8 +2,8 @@
 title: TextArea
 description: Primitive multiline text input component that accepts standard HTML attributes
 links:
-  source: TextArea.vue
-  styles: textArea.ts
+  source: text-area/TextArea.vue
+  styles: text-area/theme.ts
   heroui: text-area
 ---
 

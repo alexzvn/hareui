@@ -1,8 +1,8 @@
 import { mount } from '@vue/test-utils'
 import { describe, expect, it } from 'vitest'
 import { defineComponent, h, ref } from 'vue'
-import Label from '../src/components/Label.vue'
-import Switch from '../src/components/Switch.vue'
+import Label from '../src/components/label/Label.vue'
+import Switch from '../src/components/switch/Switch.vue'
 
 const control = '[data-slot=switch-content]'
 

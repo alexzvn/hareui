@@ -1,7 +1,7 @@
 import { mount } from '@vue/test-utils'
 import { describe, expect, it } from 'vitest'
 import { h, nextTick } from 'vue'
-import AlertDialog from '../src/components/AlertDialog.vue'
+import AlertDialog from '../src/components/alert-dialog/AlertDialog.vue'
 
 function escapeKeydown() {
   document.dispatchEvent(new KeyboardEvent('keydown', { key: 'Escape', bubbles: true, cancelable: true }))

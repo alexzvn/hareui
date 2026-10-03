@@ -3,8 +3,8 @@ title: ColorSlider
 description: A color slider allows users to adjust an individual channel of a color value
 links:
   reka: color-slider
-  source: ColorSlider.vue
-  styles: colorSlider.ts
+  source: color-slider/ColorSlider.vue
+  styles: color-slider/theme.ts
   heroui: color-slider
 ---
 

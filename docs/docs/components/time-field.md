@@ -3,8 +3,8 @@ title: TimeField
 description: Time input field with labels, descriptions, and validation
 links:
   reka: time-field
-  source: TimeField.vue
-  styles: timeField.ts
+  source: time-field/TimeField.vue
+  styles: time-field/theme.ts
   heroui: time-field
 ---
 

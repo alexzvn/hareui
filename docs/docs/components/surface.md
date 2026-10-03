@@ -2,8 +2,8 @@
 title: Surface
 description: Container component that provides surface-level styling and context for child components
 links:
-  source: Surface.vue
-  styles: surface.ts
+  source: surface/Surface.vue
+  styles: surface/theme.ts
   heroui: surface
 ---
 

@@ -1,7 +1,7 @@
 import { mount } from '@vue/test-utils'
 import { describe, expect, it } from 'vitest'
 import { h, ref } from 'vue'
-import TagGroup from '../src/components/TagGroup.vue'
+import TagGroup from '../src/components/tag-group/TagGroup.vue'
 
 const items = [
   { id: 'news', label: 'News' },

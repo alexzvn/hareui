@@ -3,8 +3,8 @@ title: RadioGroup
 description: Radio group for selecting a single option from a list
 links:
   reka: radio-group
-  source: RadioGroup.vue
-  styles: radioGroup.ts
+  source: radio-group/RadioGroup.vue
+  styles: radio-group/theme.ts
   heroui: radio-group
 ---
 

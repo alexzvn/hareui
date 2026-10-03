@@ -1,5 +1,5 @@
 import type { ComputedRef } from 'vue'
-import type { Themes } from '../theme'
+import type { Themes } from '../components/themes'
 import type { ComponentUI, ThemeShape } from '../types/tv'
 import { computed, inject } from 'vue'
 import { hareUIConfigKey } from '../config'

@@ -3,8 +3,8 @@ title: Drawer
 description: Slide-out panel for supplementary content and actions
 links:
   reka: dialog
-  source: Drawer.vue
-  styles: drawer.ts
+  source: drawer/Drawer.vue
+  styles: drawer/theme.ts
   heroui: drawer
 ---
 

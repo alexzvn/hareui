@@ -1,6 +1,6 @@
 import { mount } from '@vue/test-utils'
 import { describe, expect, it } from 'vitest'
-import Card from '../src/components/Card.vue'
+import Card from '../src/components/card/Card.vue'
 
 describe('Card', () => {
   it('omits the header without title, description or #header', () => {

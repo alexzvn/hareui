@@ -3,8 +3,8 @@ title: Separator
 description: Visually divide content sections
 links:
   reka: separator
-  source: Separator.vue
-  styles: separator.ts
+  source: separator/Separator.vue
+  styles: separator/theme.ts
   heroui: separator
 ---
 

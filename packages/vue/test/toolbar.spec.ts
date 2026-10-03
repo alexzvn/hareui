@@ -1,12 +1,12 @@
 import { mount } from '@vue/test-utils'
 import { afterEach, describe, expect, it } from 'vitest'
 import { h } from 'vue'
-import Button from '../src/components/Button.vue'
-import ButtonGroup from '../src/components/ButtonGroup.vue'
-import Separator from '../src/components/Separator.vue'
-import ToggleButton from '../src/components/ToggleButton.vue'
-import ToggleButtonGroup from '../src/components/ToggleButtonGroup.vue'
-import Toolbar from '../src/components/Toolbar.vue'
+import Button from '../src/components/button/Button.vue'
+import ButtonGroup from '../src/components/button-group/ButtonGroup.vue'
+import Separator from '../src/components/separator/Separator.vue'
+import ToggleButton from '../src/components/toggle-button/ToggleButton.vue'
+import ToggleButtonGroup from '../src/components/toggle-button-group/ToggleButtonGroup.vue'
+import Toolbar from '../src/components/toolbar/Toolbar.vue'
 
 const mounted: { unmount: () => void }[] = []
 afterEach(() => mounted.splice(0).forEach(w => w.unmount()))

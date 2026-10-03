@@ -3,8 +3,8 @@ title: ProgressCircle
 description: A circular progress indicator that shows determinate or indeterminate progress.
 links:
   reka: progress
-  source: ProgressCircle.vue
-  styles: progressCircle.ts
+  source: progress-circle/ProgressCircle.vue
+  styles: progress-circle/theme.ts
   heroui: progress-circle
 ---
 

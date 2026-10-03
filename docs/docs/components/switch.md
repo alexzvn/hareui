@@ -3,8 +3,8 @@ title: Switch
 description: A toggle switch component for boolean states
 links:
   reka: switch
-  source: Switch.vue
-  styles: switch.ts
+  source: switch/Switch.vue
+  styles: switch/theme.ts
   heroui: switch
 ---
 

@@ -1,9 +1,9 @@
-import type { DateRange } from '../src/components/RangeCalendar.vue'
+import type { DateRange } from '../src/components/range-calendar/RangeCalendar.vue'
 import { CalendarDate, parseDate } from '@internationalized/date'
 import { mount } from '@vue/test-utils'
 import { describe, expect, it } from 'vitest'
 import { nextTick } from 'vue'
-import RangeCalendar from '../src/components/RangeCalendar.vue'
+import RangeCalendar from '../src/components/range-calendar/RangeCalendar.vue'
 
 const focused = new CalendarDate(2025, 1, 15)
 

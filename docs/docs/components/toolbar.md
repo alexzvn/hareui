@@ -2,8 +2,8 @@
 title: Toolbar
 description: A container for interactive controls with arrow key navigation.
 links:
-  source: Toolbar.vue
-  styles: toolbar.ts
+  source: toolbar/Toolbar.vue
+  styles: toolbar/theme.ts
   heroui: toolbar
 ---
 

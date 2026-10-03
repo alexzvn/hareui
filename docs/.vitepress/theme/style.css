@@ -10,7 +10,7 @@
 @source "../..";
 @source "../markdown.ts";
 @source "./**/*.vue";
-@source "../../../packages/vue/src/theme";
+@source "../../../packages/vue/src/components";
 
 :root {
   --font-inter: "Inter Variable";

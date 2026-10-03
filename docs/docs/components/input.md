@@ -2,8 +2,8 @@
 title: Input
 description: Primitive single-line text input component that accepts standard HTML attributes
 links:
-  source: Input.vue
-  styles: input.ts
+  source: input/Input.vue
+  styles: input/theme.ts
   heroui: input
 ---
 

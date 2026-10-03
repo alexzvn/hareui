@@ -1,7 +1,7 @@
 import { mount } from '@vue/test-utils'
 import { describe, expect, it } from 'vitest'
 import { h, nextTick, ref } from 'vue'
-import Modal from '../src/components/Modal.vue'
+import Modal from '../src/components/modal/Modal.vue'
 
 function escapeKeydown() {
   document.dispatchEvent(new KeyboardEvent('keydown', { key: 'Escape', bubbles: true, cancelable: true }))

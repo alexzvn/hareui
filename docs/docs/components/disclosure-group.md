@@ -2,8 +2,8 @@
 title: DisclosureGroup
 description: Container that manages multiple Disclosure items with coordinated expanded states
 links:
-  source: DisclosureGroup.vue
-  styles: disclosureGroup.ts
+  source: disclosure-group/DisclosureGroup.vue
+  styles: disclosure-group/theme.ts
   heroui: disclosure-group
 ---
 

@@ -3,8 +3,8 @@ title: ComboBox
 description: A combo box combines a text input with a listbox, allowing users to filter a list of options to items matching a query
 links:
   reka: combobox
-  source: ComboBox.vue
-  styles: comboBox.ts
+  source: combo-box/ComboBox.vue
+  styles: combo-box/theme.ts
   heroui: combo-box
 ---
 

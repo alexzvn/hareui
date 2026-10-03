@@ -2,8 +2,8 @@
 title: Meter
 description: A meter represents a quantity within a known range, or a fractional value.
 links:
-  source: Meter.vue
-  styles: meter.ts
+  source: meter/Meter.vue
+  styles: meter/theme.ts
   heroui: meter
 ---
 

@@ -1,7 +1,7 @@
 import { mount } from '@vue/test-utils'
 import { afterEach, describe, expect, it } from 'vitest'
 import { nextTick } from 'vue'
-import Select from '../src/components/Select.vue'
+import Select from '../src/components/select/Select.vue'
 
 const items = [
   { value: 'cat', label: 'Cat' },

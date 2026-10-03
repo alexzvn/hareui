@@ -2,8 +2,8 @@
 title: InputGroup
 description: Group related input controls with prefix and suffix elements for enhanced form fields
 links:
-  source: InputGroup.vue
-  styles: inputGroup.ts
+  source: input-group/InputGroup.vue
+  styles: input-group/theme.ts
   heroui: input-group
 ---
 

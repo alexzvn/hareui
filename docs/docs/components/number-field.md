@@ -3,8 +3,8 @@ title: NumberField
 description: Number input fields with increment/decrement buttons, validation, and internationalized formatting
 links:
   reka: number-field
-  source: NumberField.vue
-  styles: numberField.ts
+  source: number-field/NumberField.vue
+  styles: number-field/theme.ts
   heroui: number-field
 ---
 

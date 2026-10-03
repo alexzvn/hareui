@@ -1,7 +1,7 @@
 import { mount } from '@vue/test-utils'
 import { describe, expect, it } from 'vitest'
 import { h, ref } from 'vue'
-import SearchField from '../src/components/SearchField.vue'
+import SearchField from '../src/components/search-field/SearchField.vue'
 
 function controlled(initial: string, attachTo?: HTMLElement) {
   const model = ref(initial)

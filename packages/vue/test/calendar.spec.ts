@@ -2,7 +2,7 @@ import { CalendarDate, parseDate } from '@internationalized/date'
 import { mount } from '@vue/test-utils'
 import { describe, expect, it } from 'vitest'
 import { nextTick } from 'vue'
-import Calendar from '../src/components/Calendar.vue'
+import Calendar from '../src/components/calendar/Calendar.vue'
 
 const focused = new CalendarDate(2025, 1, 15)
 

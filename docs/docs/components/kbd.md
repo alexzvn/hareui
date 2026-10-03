@@ -2,8 +2,8 @@
 title: Kbd
 description: Display keyboard shortcuts and key combinations
 links:
-  source: Kbd.vue
-  styles: kbd.ts
+  source: kbd/Kbd.vue
+  styles: kbd/theme.ts
   heroui: kbd
 ---
 

@@ -3,8 +3,8 @@ title: Dropdown
 description: A dropdown displays a list of actions or options that a user can choose
 links:
   reka: dropdown-menu
-  source: Dropdown.vue
-  styles: dropdown.ts
+  source: dropdown/Dropdown.vue
+  styles: dropdown/theme.ts
   heroui: dropdown
 ---
 

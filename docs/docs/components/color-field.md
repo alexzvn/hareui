@@ -3,8 +3,8 @@ title: ColorField
 description: Color input field with labels, descriptions, and validation
 links:
   reka: color-field
-  source: ColorField.vue
-  styles: colorField.ts
+  source: color-field/ColorField.vue
+  styles: color-field/theme.ts
   heroui: color-field
 ---
 

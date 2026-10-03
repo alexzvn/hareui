@@ -1,7 +1,7 @@
 import { mount } from '@vue/test-utils'
 import { describe, expect, it } from 'vitest'
 import { nextTick } from 'vue'
-import Drawer from '../src/components/Drawer.vue'
+import Drawer from '../src/components/drawer/Drawer.vue'
 
 // Reka's Presence needs three ticks before a closed dialog leaves the DOM (see modal.spec.ts).
 async function waitUnmount() {

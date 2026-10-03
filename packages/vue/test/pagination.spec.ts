@@ -1,6 +1,6 @@
 import { mount } from '@vue/test-utils'
 import { describe, expect, it } from 'vitest'
-import Pagination from '../src/components/Pagination.vue'
+import Pagination from '../src/components/pagination/Pagination.vue'
 
 const labels = (wrapper: ReturnType<typeof mount>) =>
   wrapper.findAll('[data-slot=pagination-content] > li').slice(1, -1).map(li => li.text())

@@ -1,7 +1,7 @@
 import { mount } from '@vue/test-utils'
 import { describe, expect, it } from 'vitest'
 import { h } from 'vue'
-import Breadcrumbs from '../src/components/Breadcrumbs.vue'
+import Breadcrumbs from '../src/components/breadcrumbs/Breadcrumbs.vue'
 
 const items = [{ label: 'Home', href: '/home' }, { label: 'Products', href: '/products' }, { label: 'Laptop', href: '/laptop' }]
 

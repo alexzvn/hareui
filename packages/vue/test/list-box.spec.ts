@@ -1,7 +1,7 @@
 import { mount } from '@vue/test-utils'
 import { describe, expect, it } from 'vitest'
 import { h } from 'vue'
-import ListBox from '../src/components/ListBox.vue'
+import ListBox from '../src/components/list-box/ListBox.vue'
 
 const items = [
   { value: 'a', label: 'Alpha', description: 'First' },

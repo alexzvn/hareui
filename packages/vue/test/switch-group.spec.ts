@@ -1,8 +1,8 @@
 import { mount } from '@vue/test-utils'
 import { describe, expect, it } from 'vitest'
 import { h } from 'vue'
-import Switch from '../src/components/Switch.vue'
-import SwitchGroup from '../src/components/SwitchGroup.vue'
+import Switch from '../src/components/switch/Switch.vue'
+import SwitchGroup from '../src/components/switch-group/SwitchGroup.vue'
 
 describe('SwitchGroup', () => {
   it('renders the group wrapper and the items container with default (vertical) orientation', () => {

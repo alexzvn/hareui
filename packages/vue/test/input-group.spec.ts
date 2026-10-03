@@ -1,8 +1,8 @@
 import { mount } from '@vue/test-utils'
 import { describe, expect, it } from 'vitest'
 import { h } from 'vue'
-import InputGroup from '../src/components/InputGroup.vue'
-import TextField from '../src/components/TextField.vue'
+import InputGroup from '../src/components/input-group/InputGroup.vue'
+import TextField from '../src/components/text-field/TextField.vue'
 
 describe('InputGroup', () => {
   it('v-model syncs standalone', async () => {

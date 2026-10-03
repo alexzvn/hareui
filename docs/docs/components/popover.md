@@ -2,8 +2,8 @@
 title: Popover
 description: Displays rich content in a portal, anchored to a trigger element
 links:
-  source: Popover.vue
-  styles: popover.ts
+  source: popover/Popover.vue
+  styles: popover/theme.ts
   heroui: popover
 ---
 

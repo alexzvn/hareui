@@ -3,8 +3,8 @@ title: Autocomplete
 description: An autocomplete combines a select with filtering, allowing users to search and select from a list of options
 links:
   reka: listbox
-  source: Autocomplete.vue
-  styles: autocomplete.ts
+  source: autocomplete/Autocomplete.vue
+  styles: autocomplete/theme.ts
   heroui: autocomplete
 ---
 

@@ -2,8 +2,8 @@
 title: Typography
 description: A semantic typography primitive for headings, body copy, and inline code.
 links:
-  source: Typography.vue
-  styles: typography.ts
+  source: typography/Typography.vue
+  styles: typography/theme.ts
   heroui: typography
 ---
 

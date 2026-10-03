@@ -2,8 +2,8 @@
 title: Badge
 description: Displays a small indicator positioned relative to another element, commonly used for notification counts, status dots, and labels
 links:
-  source: Badge.vue
-  styles: badge.ts
+  source: badge/Badge.vue
+  styles: badge/theme.ts
   heroui: badge
 ---
 

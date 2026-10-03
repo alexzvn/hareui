@@ -1,8 +1,8 @@
 import { mount } from '@vue/test-utils'
 import { afterEach, describe, expect, it, vi } from 'vitest'
 import { nextTick } from 'vue'
-import ToastProvider from '../src/components/ToastProvider.vue'
-import { toast, toastQueue, useToast } from '../src/composables/useToast'
+import ToastProvider from '../src/components/toast-provider/ToastProvider.vue'
+import { toast, toastQueue, useToast } from '../src/components/toast-provider/useToast'
 
 function mountProvider() {
   return mount(ToastProvider, { props: { portal: false } })

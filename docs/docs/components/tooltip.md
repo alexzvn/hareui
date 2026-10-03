@@ -3,8 +3,8 @@ title: Tooltip
 description: Displays informative text when users hover over or focus on an element
 links:
   reka: tooltip
-  source: Tooltip.vue
-  styles: tooltip.ts
+  source: tooltip/Tooltip.vue
+  styles: tooltip/theme.ts
   heroui: tooltip
 ---
 

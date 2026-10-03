@@ -21,7 +21,7 @@ The briefs refer to `/tmp/herouse-plan.md`, `/tmp/herouse-review/*.md`, etc. Tho
 ## Repo layout
 
 ```
-packages/herouse/   the library: src/components/*.vue, src/theme/*.ts (tv themes), src/styles/*.css (HeroUI tokens), test/*.spec.ts
+packages/herouse/   the library: src/components/<kebab>/{index.ts,<Pascal>.vue,theme.ts,context.ts} (+ sub-parts/helpers owned by that component; index.ts lists the folder's public exports and src/index.ts re-exports it with `export *`), src/components/themes.ts (theme barrel), src/composables + src/utils (shared only), src/styles/*.css (HeroUI tokens), test/*.spec.ts
 playground/         Vue dev app (:5173). Also hosts /parity/:id cases.
 reference/          React app with @heroui/react 3.2.6 (:5174), renders the same parity cases
 parity/             compare.ts (computed-style + pixelmatch diff) and cases/<component>.json
@@ -59,7 +59,7 @@ Per component: `/tmp/heroui/packages/react/src/components/<c>/<c>.tsx` (structur
 
 - **Comparing against heroui.com:** use a fresh puppeteer profile and set the same `prefers-color-scheme` on both sites. heroui.com's header has a **Theme** menu with a "Vibrant palette" switch, stored in localStorage `heroui-docs-vibrant-palette` (`data-vibrant-palette` on `<html>`). It makes soft foregrounds lighter. The user once had it on, and it looked like a herouse bug. It wasn't. Compare the resolved computed values of real elements, not CSS variable strings. Hide heroui.com's sticky header and chat widget, and freeze animations before screenshots.
 - **Machine load:** use at most `--concurrency 2` per parity run and one puppeteer browser per agent. Never `pkill` processes you didn't start; an earlier run killed peers' jobs and left ~190 orphaned Chrome processes. `compare.ts` now closes its browsers on SIGINT/SIGTERM.
-- **Git:** make atomic commits, one logical unit each, staged by explicit pathspec (never `git add -A` / `.`). If several agents share the tree, exactly one session commits. The others report a file list and a commit message. If you must commit a partial version of a shared file (`src/index.ts`, `src/theme/index.ts`) while others edit it, stage it with `git update-index --cacheinfo 100644,$(git hash-object -w /tmp/x),<path>` and leave the working file alone.
+- **Git:** make atomic commits, one logical unit each, staged by explicit pathspec (never `git add -A` / `.`). If several agents share the tree, exactly one session commits. The others report a file list and a commit message. If you must commit a partial version of a shared file (`src/index.ts`, `src/components/themes.ts`) while others edit it, stage it with `git update-index --cacheinfo 100644,$(git hash-object -w /tmp/x),<path>` and leave the working file alone.
 - **Scratch scripts:** dot-prefixed (`.probe-x.ts`), `pp.ts`, or `*_tmp.*`. All are gitignored. Better still, keep them in `/tmp`.
 - **Font:** the playground, reference and docs all load `@fontsource-variable/inter`, the same file heroui.com uses, with `antialiased` and `optimizeLegibility`. Don't add letter-spacing or other overrides to the playground: it must render the pure theme.
 - **Multi-agent:** peers are coordinated via mecca (`mecca://guide`, `mecca://sessions`, `mecca://mailbox/<id>`). Replies arrive as notifications, so don't poll or `wait`.

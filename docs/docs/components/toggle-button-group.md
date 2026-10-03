@@ -2,8 +2,8 @@
 title: ToggleButtonGroup
 description: Groups multiple ToggleButtons into a unified control, allowing users to select one or multiple options.
 links:
-  source: ToggleButtonGroup.vue
-  styles: toggleButtonGroup.ts
+  source: toggle-button-group/ToggleButtonGroup.vue
+  styles: toggle-button-group/theme.ts
   heroui: toggle-button-group
 ---
 

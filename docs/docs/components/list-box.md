@@ -3,8 +3,8 @@ title: ListBox
 description: A listbox displays a list of options and allows a user to select one or more of them
 links:
   reka: listbox
-  source: ListBox.vue
-  styles: listBox.ts
+  source: list-box/ListBox.vue
+  styles: list-box/theme.ts
   heroui: list-box
 ---
 

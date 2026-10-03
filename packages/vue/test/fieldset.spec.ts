@@ -1,9 +1,9 @@
 import { mount } from '@vue/test-utils'
 import { describe, expect, it } from 'vitest'
 import { h } from 'vue'
-import Button from '../src/components/Button.vue'
-import Fieldset from '../src/components/Fieldset.vue'
-import Link from '../src/components/Link.vue'
+import Button from '../src/components/button/Button.vue'
+import Fieldset from '../src/components/fieldset/Fieldset.vue'
+import Link from '../src/components/link/Link.vue'
 
 const order = (el: Element) => [...el.children].map(c => c.getAttribute('data-slot'))
 

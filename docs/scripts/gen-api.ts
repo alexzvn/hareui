@@ -1,5 +1,5 @@
 import { mkdir, readdir, rm, writeFile } from 'node:fs/promises'
-import { basename, join, resolve } from 'node:path'
+import { basename, dirname, join, resolve } from 'node:path'
 import { createChecker, type PropertyMeta } from 'vue-component-meta'
 import type { ApiProp, ComponentApi } from './api-types'
 
@@ -32,11 +32,19 @@ function toProp(prop: PropertyMeta): ApiProp {
   }
 }
 
-// Only public components: internal parts (ListBoxOption, ToastItem, …) aren't exported from the package entry.
+// Only public components: the package entry re-exports each folder's index.ts, which lists that folder's public parts
+// (internal parts like ListBoxOption or ToastItem aren't in it).
 const entry = await Bun.file(join(componentsDir, '../index.ts')).text()
-const files = (await readdir(componentsDir))
-  .filter((f) => f.endsWith('.vue') && entry.includes(`./components/${f}'`))
-  .sort()
+const isPublic = async (file: string) => {
+  const dir = dirname(file)
+  if (!entry.includes(`from './components/${dir}'`)) return false
+  const index = await Bun.file(join(componentsDir, dir, 'index.ts')).text()
+  return index.includes(`from './${basename(file)}'`)
+}
+const files: string[] = []
+for (const f of (await readdir(componentsDir, { recursive: true })).sort()) {
+  if (f.endsWith('.vue') && (await isPublic(f))) files.push(f)
+}
 
 await rm(outDir, { recursive: true, force: true })
 await mkdir(outDir, { recursive: true })

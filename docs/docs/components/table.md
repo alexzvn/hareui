@@ -2,8 +2,8 @@
 title: Table
 description: Tables display structured data in rows and columns with support for sorting, selection, column resizing, and infinite scrolling.
 links:
-  source: Table.vue
-  styles: table.ts
+  source: table/Table.vue
+  styles: table/theme.ts
   heroui: table
 ---
 

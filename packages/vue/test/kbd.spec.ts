@@ -1,6 +1,6 @@
 import { mount } from '@vue/test-utils'
 import { describe, expect, it } from 'vitest'
-import Kbd from '../src/components/Kbd.vue'
+import Kbd from '../src/components/kbd/Kbd.vue'
 
 describe('Kbd', () => {
   it('renders each key as an abbr symbol titled with its name, then the content', () => {

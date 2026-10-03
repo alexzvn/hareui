@@ -1,7 +1,7 @@
 import { mount } from '@vue/test-utils'
 import { describe, expect, it } from 'vitest'
 import { h, ref } from 'vue'
-import CheckboxGroup from '../src/components/CheckboxGroup.vue'
+import CheckboxGroup from '../src/components/checkbox-group/CheckboxGroup.vue'
 
 const items = [
   { value: 'coding', label: 'Coding' },

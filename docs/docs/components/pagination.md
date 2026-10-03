@@ -2,8 +2,8 @@
 title: Pagination
 description: Page navigation with composable page links, previous/next buttons, and ellipsis indicators
 links:
-  source: Pagination.vue
-  styles: pagination.ts
+  source: pagination/Pagination.vue
+  styles: pagination/theme.ts
   heroui: pagination
 ---
 

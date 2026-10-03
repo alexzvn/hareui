@@ -3,8 +3,8 @@ title: Modal
 description: Dialog overlay for focused user interactions and important content
 links:
   reka: dialog
-  source: Modal.vue
-  styles: modal.ts
+  source: modal/Modal.vue
+  styles: modal/theme.ts
   heroui: modal
 ---
 

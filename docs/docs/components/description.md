@@ -2,8 +2,8 @@
 title: Description
 description: Provides supplementary text for form fields and other components
 links:
-  source: Description.vue
-  styles: description.ts
+  source: description/Description.vue
+  styles: description/theme.ts
   heroui: description
 ---
 

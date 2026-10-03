@@ -3,8 +3,8 @@ title: Toast
 description: Display temporary notifications and messages to users with automatic dismissal and customizable placement
 links:
   reka: toast
-  source: ToastProvider.vue
-  styles: toast.ts
+  source: toast-provider/ToastProvider.vue
+  styles: toast-provider/theme.ts
   heroui: toast
 ---
 

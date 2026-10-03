@@ -2,8 +2,8 @@ import { mount, type VueWrapper } from '@vue/test-utils'
 import { describe, expect, it } from 'vitest'
 import { h } from 'vue'
 import { colorToString, parseColor } from 'reka-ui'
-import ColorSwatchPicker from '../src/components/ColorSwatchPicker.vue'
-import { ColorPickerContextKey } from '../src/components/colorPickerContext'
+import ColorSwatchPicker from '../src/components/color-swatch-picker/ColorSwatchPicker.vue'
+import { ColorPickerContextKey } from '../src/components/color-picker/context'
 
 const items = ['#F43F5E', '#8B5CF6', { value: '#3B82F6', label: 'Sky' }]
 const opts = (c: VueWrapper) => c.findAll('[data-slot=color-swatch-picker-item]')

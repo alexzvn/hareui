@@ -3,8 +3,8 @@ title: Calendar
 description: Date picker with month grid, navigation, and year picker support built on Reka UI's Calendar.
 links:
   reka: calendar
-  source: Calendar.vue
-  styles: calendar.ts
+  source: calendar/Calendar.vue
+  styles: calendar/theme.ts
   heroui: calendar
 ---
 

@@ -2,8 +2,8 @@
 title: TextField
 description: Composition-friendly text fields with labels, descriptions, and inline validation
 links:
-  source: TextField.vue
-  styles: textField.ts
+  source: text-field/TextField.vue
+  styles: text-field/theme.ts
   heroui: text-field
 ---
 

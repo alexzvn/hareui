@@ -1,8 +1,8 @@
-import type { DropdownEntry } from '../src/components/Dropdown.vue'
+import type { DropdownEntry } from '../src/components/dropdown/Dropdown.vue'
 import { mount } from '@vue/test-utils'
 import { afterEach, describe, expect, it, vi } from 'vitest'
 import { h, nextTick } from 'vue'
-import Dropdown from '../src/components/Dropdown.vue'
+import Dropdown from '../src/components/dropdown/Dropdown.vue'
 
 const fruits: DropdownEntry[] = [
   { value: 'apple', label: 'Apple' },

@@ -2,8 +2,8 @@
 title: ToggleButton
 description: An interactive toggle control for on/off or selected/unselected states
 links:
-  source: ToggleButton.vue
-  styles: toggleButton.ts
+  source: toggle-button/ToggleButton.vue
+  styles: toggle-button/theme.ts
   heroui: toggle-button
 ---
 

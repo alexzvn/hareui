@@ -3,8 +3,8 @@ title: Label
 description: Renders an accessible label associated with form controls
 links:
   reka: label
-  source: Label.vue
-  styles: label.ts
+  source: label/Label.vue
+  styles: label/theme.ts
   heroui: label
 ---
 

@@ -1,6 +1,6 @@
 import { mount } from '@vue/test-utils'
 import { describe, expect, it } from 'vitest'
-import ScrollShadow from '../src/components/ScrollShadow.vue'
+import ScrollShadow from '../src/components/scroll-shadow/ScrollShadow.vue'
 
 describe('scrollShadow', () => {
   it('manual visibility sets the matching data flag and manual mode', async () => {

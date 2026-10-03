@@ -2,7 +2,7 @@ import type { DateValue } from '@internationalized/date'
 import { CalendarDate } from '@internationalized/date'
 import { mount } from '@vue/test-utils'
 import { describe, expect, it } from 'vitest'
-import DateField from '../src/components/DateField.vue'
+import DateField from '../src/components/date-field/DateField.vue'
 
 // Local stand-in for Promise.withResolvers, so the library's tsconfig `lib` doesn't need ES2024.
 function withResolvers<T>() {

@@ -1,7 +1,7 @@
 import { Time } from '@internationalized/date'
 import { mount } from '@vue/test-utils'
 import { describe, expect, it } from 'vitest'
-import TimeField from '../src/components/TimeField.vue'
+import TimeField from '../src/components/time-field/TimeField.vue'
 
 // Local stand-in for Promise.withResolvers, so the library's tsconfig `lib` doesn't need ES2024.
 function withResolvers<T>() {

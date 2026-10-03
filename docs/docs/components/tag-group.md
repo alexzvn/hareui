@@ -2,8 +2,8 @@
 title: Tag Group
 description: A focusable list of tags with support for selection and removal
 links:
-  source: TagGroup.vue
-  styles: tagGroup.ts
+  source: tag-group/TagGroup.vue
+  styles: tag-group/theme.ts
   heroui: tag-group
 ---
 

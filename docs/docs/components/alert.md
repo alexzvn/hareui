@@ -2,8 +2,8 @@
 title: Alert
 description: Display important messages and notifications to users with status indicators
 links:
-  source: Alert.vue
-  styles: alert.ts
+  source: alert/Alert.vue
+  styles: alert/theme.ts
   heroui: alert
 ---
 

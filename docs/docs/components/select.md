@@ -3,8 +3,8 @@ title: Select
 description: A select displays a collapsible list of options and allows a user to select one or more of them
 links:
   reka: popover
-  source: Select.vue
-  styles: select.ts
+  source: select/Select.vue
+  styles: select/theme.ts
   heroui: select
 ---
 

@@ -1,8 +1,8 @@
 import { mount } from '@vue/test-utils'
 import { colorToString, parseColor } from 'reka-ui'
 import { describe, expect, it } from 'vitest'
-import ColorArea from '../src/components/ColorArea.vue'
-import { ColorPickerContextKey } from '../src/components/colorPickerContext'
+import ColorArea from '../src/components/color-area/ColorArea.vue'
+import { ColorPickerContextKey } from '../src/components/color-picker/context'
 
 const area = '[data-slot=color-area]'
 const thumb = '[data-slot=color-area-thumb]'

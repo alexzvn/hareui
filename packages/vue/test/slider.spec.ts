@@ -1,7 +1,7 @@
 import { mount } from '@vue/test-utils'
 import { describe, expect, it } from 'vitest'
 import { h, nextTick, ref } from 'vue'
-import Slider from '../src/components/Slider.vue'
+import Slider from '../src/components/slider/Slider.vue'
 
 const thumbs = (w: ReturnType<typeof mount>) => w.findAll('[data-slot=slider-thumb]')
 const output = (w: ReturnType<typeof mount>) => w.get('[data-slot=slider-output]').text()

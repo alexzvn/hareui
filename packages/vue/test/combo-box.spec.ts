@@ -1,8 +1,8 @@
 import { mount } from '@vue/test-utils'
 import { afterEach, describe, expect, it } from 'vitest'
 import { h, nextTick } from 'vue'
-import type { ComboBoxValue } from '../src/components/ComboBox.vue'
-import ComboBox from '../src/components/ComboBox.vue'
+import type { ComboBoxValue } from '../src/components/combo-box/ComboBox.vue'
+import ComboBox from '../src/components/combo-box/ComboBox.vue'
 
 const items = [
   { value: 'aardvark', label: 'Aardvark' },

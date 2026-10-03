@@ -2,8 +2,8 @@
 title: Skeleton
 description: Skeleton is a placeholder to show a loading state and the expected shape of a component.
 links:
-  source: Skeleton.vue
-  styles: skeleton.ts
+  source: skeleton/Skeleton.vue
+  styles: skeleton/theme.ts
   heroui: skeleton
 ---
 

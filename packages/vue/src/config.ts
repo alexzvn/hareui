@@ -1,5 +1,5 @@
 import type { InjectionKey, Plugin } from 'vue'
-import type { Themes } from './theme'
+import type { Themes } from './components/themes'
 import type { ThemeOverride } from './types/tv'
 import { reactive } from 'vue'
 

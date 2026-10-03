@@ -2,8 +2,8 @@
 title: Fieldset
 description: Group related form controls with legends, descriptions, and actions
 links:
-  source: Fieldset.vue
-  styles: fieldset.ts
+  source: fieldset/Fieldset.vue
+  styles: fieldset/theme.ts
   heroui: fieldset
 ---
 

@@ -3,8 +3,8 @@ title: ColorArea
 description: A 2D color picker that allows users to select colors from a gradient area
 links:
   reka: color-area
-  source: ColorArea.vue
-  styles: colorArea.ts
+  source: color-area/ColorArea.vue
+  styles: color-area/theme.ts
   heroui: color-area
 ---
 

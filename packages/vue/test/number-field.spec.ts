@@ -1,7 +1,7 @@
 import { mount } from '@vue/test-utils'
 import { describe, expect, it } from 'vitest'
 import { nextTick } from 'vue'
-import NumberField from '../src/components/NumberField.vue'
+import NumberField from '../src/components/number-field/NumberField.vue'
 
 const inc = '[data-slot=number-field-increment-button]'
 const dec = '[data-slot=number-field-decrement-button]'

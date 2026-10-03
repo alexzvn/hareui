@@ -2,8 +2,8 @@
 title: Slider
 description: A slider allows a user to select one or more values within a range
 links:
-  source: Slider.vue
-  styles: slider.ts
+  source: slider/Slider.vue
+  styles: slider/theme.ts
   heroui: slider
 ---
 

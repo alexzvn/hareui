@@ -1,7 +1,7 @@
 import { mount } from '@vue/test-utils'
 import { afterEach, describe, expect, it } from 'vitest'
 import { h, nextTick } from 'vue'
-import Autocomplete from '../src/components/Autocomplete.vue'
+import Autocomplete from '../src/components/autocomplete/Autocomplete.vue'
 
 const items = [
   { value: 'florida', label: 'Florida' },

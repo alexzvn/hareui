@@ -2,8 +2,8 @@
 title: CloseButton
 description: Button component for closing dialogs, modals, or dismissing content
 links:
-  source: CloseButton.vue
-  styles: closeButton.ts
+  source: close-button/CloseButton.vue
+  styles: close-button/theme.ts
   heroui: close-button
 ---
 

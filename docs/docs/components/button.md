@@ -2,8 +2,8 @@
 title: Button
 description: A clickable button component with multiple variants and states
 links:
-  source: Button.vue
-  styles: button.ts
+  source: button/Button.vue
+  styles: button/theme.ts
   heroui: button
 ---
 

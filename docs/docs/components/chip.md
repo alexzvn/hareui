@@ -2,8 +2,8 @@
 title: Chip
 description: Small informational badges for displaying labels, statuses, and categories
 links:
-  source: Chip.vue
-  styles: chip.ts
+  source: chip/Chip.vue
+  styles: chip/theme.ts
   heroui: chip
 ---
 

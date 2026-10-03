@@ -3,8 +3,8 @@ title: DatePicker
 description: Combines a DateField and a Calendar in a popover for picking a date
 links:
   reka: date-field
-  source: DatePicker.vue
-  styles: datePicker.ts
+  source: date-picker/DatePicker.vue
+  styles: date-picker/theme.ts
   heroui: date-picker
 ---
 

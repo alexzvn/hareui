@@ -1,0 +1,310 @@
+<script lang="ts">
+import type { ComponentSlots, ComponentVariants } from '../../types/tv'
+import theme from './theme'
+
+type Drawer = typeof theme
+
+export interface DrawerProps {
+  /** The controlled open state of the drawer. Use with `v-model:open`. */
+  open?: boolean
+  /** The open state of the drawer when it is initially rendered. Use when you do not need to control its open state. */
+  defaultOpen?: boolean
+  /** Title rendered in the header. */
+  title?: string
+  /**
+   * Edge of the screen the drawer slides in from.
+   * @defaultValue 'bottom'
+   */
+  placement?: ComponentVariants<Drawer>['placement']
+  /**
+   * Visual style of the backdrop.
+   * @defaultValue 'opaque'
+   */
+  variant?: ComponentVariants<Drawer>['variant']
+  /**
+   * Whether clicking the backdrop or dragging the drawer towards its edge closes it.
+   * @defaultValue true
+   */
+  dismissible?: boolean
+  /**
+   * Whether pressing Escape closes the drawer.
+   * @defaultValue true
+   */
+  keyboardDismissible?: boolean
+  /**
+   * Whether the drag handle bar is rendered (at the top, or at the bottom for `placement="top"`).
+   * @defaultValue false
+   */
+  handle?: boolean
+  /**
+   * Whether the default close button is rendered.
+   * @defaultValue true
+   */
+  closeButton?: boolean
+  /**
+   * Where the drawer is teleported. `true` teleports to `body`, `false` renders in place,
+   * a string or element teleports to that target.
+   * @defaultValue true
+   */
+  portal?: boolean | string | HTMLElement
+  /** Additional classes merged into the dialog (panel) element. */
+  class?: any
+  /** Per-slot class overrides. */
+  ui?: ComponentSlots<Drawer>
+}
+
+export interface DrawerSlots {
+  /** The trigger element. Omit to control the drawer purely via `v-model:open`. */
+  default?: (props: { open: boolean }) => any
+  /** Replaces the whole header (title). */
+  header?: () => any
+  /** Replaces the title text. */
+  title?: () => any
+  /** The drawer body (scrollable; drag-to-dismiss is excluded from it). */
+  body?: (props: { close: () => void }) => any
+  /** The drawer footer (actions). */
+  footer?: (props: { close: () => void }) => any
+  /** Replaces the default close button. */
+  close?: (props: { close: () => void }) => any
+  /** Replaces the entire drawer content (handle, header, body, footer, close trigger). */
+  content?: (props: { close: () => void }) => any
+}
+
+export interface DrawerEmits {
+  /** Emitted when the open state changes. */
+  'update:open': [value: boolean]
+}
+</script>
+
+<script setup lang="ts">
+import type { FocusOutsideEvent, PointerDownOutsideEvent } from 'reka-ui'
+import {
+  DialogClose,
+  DialogContent,
+  DialogOverlay,
+  DialogPortal,
+  DialogRoot,
+  DialogTitle,
+  DialogTrigger,
+  VisuallyHidden,
+} from 'reka-ui'
+import { computed, onBeforeUnmount, onMounted, ref, useSlots } from 'vue'
+import { useComponentUI } from '../../composables/useComponentUI'
+import CloseButton from '../close-button/CloseButton.vue'
+
+// `open: undefined` stops Vue casting an absent boolean prop to `false`, so uncontrolled mode and `defaultOpen` apply
+const props = withDefaults(defineProps<DrawerProps>(), {
+  open: undefined,
+  portal: true,
+  closeButton: true,
+  dismissible: true,
+  keyboardDismissible: true,
+  placement: 'bottom',
+})
+const emit = defineEmits<DrawerEmits>()
+const slots = useSlots()
+defineSlots<DrawerSlots>()
+
+const ui = useComponentUI('drawer', theme, () => ({
+  placement: props.placement,
+  variant: props.variant,
+}))
+
+const hasTitle = computed(() => !!(props.title || slots.title))
+const showHeaderTitle = computed(() => !slots.header && hasTitle.value)
+const hasHeader = computed(() => !!(slots.header || hasTitle.value))
+
+function onEscapeKeyDown(event: KeyboardEvent) {
+  if (!props.keyboardDismissible)
+    event.preventDefault()
+}
+function onPointerDownOutside(event: PointerDownOutsideEvent) {
+  if (!props.dismissible)
+    event.preventDefault()
+}
+function onInteractOutside(event: PointerDownOutsideEvent | FocusOutsideEvent) {
+  if (!props.dismissible)
+    event.preventDefault()
+}
+
+// React Aria's Dialog focuses the dialog container itself on open (see Modal.vue).
+function onOpenAutoFocus(event: Event) {
+  event.preventDefault()
+  ;(event.target as HTMLElement | null)?.focus({ preventScroll: true })
+}
+
+// Drag to dismiss, ported from HeroUI's `useDrawerDrag`: past an 8px threshold the panel follows the
+// pointer towards its edge; releasing beyond 30% of its size, or flicking faster than 0.5px/ms,
+// closes it, otherwise it springs back. Controls and the body are excluded so they keep working.
+const DRAG_THRESHOLD = 8
+const DISMISS_FRACTION = 0.3
+const VELOCITY_THRESHOLD = 0.5
+const isVertical = computed(() => props.placement === 'top' || props.placement === 'bottom')
+let dragging = false
+let active = false
+let startPos = 0
+let offset = 0
+let velocity = 0
+let lastTime = 0
+let lastPos = 0
+
+function pointerPos(event: PointerEvent) {
+  return isVertical.value ? event.clientY : event.clientX
+}
+function clampDelta(delta: number) {
+  switch (props.placement) {
+    case 'top':
+    case 'left':
+      return Math.min(0, delta)
+    default:
+      return Math.max(0, delta)
+  }
+}
+function onDragStart(event: PointerEvent) {
+  if (!props.dismissible || event.button !== 0)
+    return
+  const target = event.target as HTMLElement
+  const dialog = event.currentTarget as HTMLElement
+  if (target.closest('[data-slot="drawer-dialog"]') !== dialog)
+    return
+  if (target.closest('input, textarea, button, [role=\'button\'], select, a, [data-slot=\'drawer-body\']'))
+    return
+  dragging = true
+  active = false
+  startPos = pointerPos(event)
+  lastPos = startPos
+  lastTime = Date.now()
+  offset = 0
+  velocity = 0
+}
+function onDragMove(event: PointerEvent) {
+  if (!dragging)
+    return
+  const el = event.currentTarget as HTMLElement
+  const pos = pointerPos(event)
+  const rawDelta = pos - startPos
+  const delta = clampDelta(rawDelta)
+  if (!active) {
+    if (Math.abs(rawDelta) < DRAG_THRESHOLD)
+      return
+    active = true
+    el.style.transition = 'none'
+    el.setPointerCapture(event.pointerId)
+  }
+  offset = delta
+  const now = Date.now()
+  const dt = now - lastTime
+  if (dt > 0) {
+    velocity = (pos - lastPos) / dt
+    lastTime = now
+    lastPos = pos
+  }
+  el.style.transform = `translate${isVertical.value ? 'Y' : 'X'}(${delta}px)`
+}
+function onDragEnd(event: PointerEvent, close: () => void) {
+  if (!dragging)
+    return
+  dragging = false
+  const el = event.currentTarget as HTMLElement
+  if (!active)
+    return
+  active = false
+  try {
+    el.releasePointerCapture(event.pointerId)
+  }
+  catch {}
+  const size = isVertical.value ? el.offsetHeight : el.offsetWidth
+  if (Math.abs(offset) > size * DISMISS_FRACTION || Math.abs(velocity) > VELOCITY_THRESHOLD) {
+    close()
+  }
+  else {
+    el.style.transition = 'transform 300ms cubic-bezier(0.32, 0.72, 0, 1)'
+    el.style.transform = ''
+    el.addEventListener('transitionend', () => {
+      el.style.transition = ''
+    }, { once: true })
+  }
+  offset = 0
+  velocity = 0
+}
+
+// HeroUI's visual-viewport-aware overlay height (see Modal.vue).
+const visualViewportHeight = ref(typeof window !== 'undefined' ? `${window.innerHeight}px` : '100dvh')
+function updateVisualViewportHeight() {
+  visualViewportHeight.value = `${window.visualViewport?.height ?? window.innerHeight}px`
+}
+onMounted(() => {
+  updateVisualViewportHeight()
+  window.visualViewport?.addEventListener('resize', updateVisualViewportHeight)
+  window.addEventListener('resize', updateVisualViewportHeight)
+})
+onBeforeUnmount(() => {
+  window.visualViewport?.removeEventListener('resize', updateVisualViewportHeight)
+  window.removeEventListener('resize', updateVisualViewportHeight)
+})
+</script>
+
+<template>
+  <DialogRoot :open="open" :default-open="defaultOpen" modal v-slot="{ open: isOpen, close }" @update:open="emit('update:open', $event)">
+    <DialogTrigger v-if="!!slots.default" as-child>
+      <slot :open="isOpen" />
+    </DialogTrigger>
+    <DialogPortal :disabled="portal === false" :to="portal === true ? 'body' : (portal === false ? undefined : portal)">
+      <DialogOverlay
+        data-slot="drawer-backdrop"
+        :style="{ '--visual-viewport-height': visualViewportHeight }"
+        :class="ui.backdrop({ class: props.ui?.backdrop })"
+      >
+        <div data-slot="drawer-content" :data-state="isOpen ? 'open' : 'closed'" :data-placement="placement" :class="ui.content({ class: props.ui?.content })">
+          <DialogContent
+            data-slot="drawer-dialog"
+            :data-placement="placement"
+            :aria-describedby="undefined"
+            :style="dismissible ? { touchAction: 'none' } : undefined"
+            :class="ui.dialog({ class: [props.ui?.dialog, props.class] })"
+            @escape-key-down="onEscapeKeyDown"
+            @pointer-down-outside="onPointerDownOutside"
+            @interact-outside="onInteractOutside"
+            @open-auto-focus="onOpenAutoFocus"
+            @pointerdown="onDragStart"
+            @pointermove="onDragMove"
+            @pointerup="onDragEnd($event, close)"
+          >
+            <slot name="content" :close="close">
+              <DialogClose v-if="closeButton" as-child>
+                <slot name="close" :close="close">
+                  <CloseButton data-slot="drawer-close-trigger" :class="ui.closeTrigger({ class: props.ui?.closeTrigger })" />
+                </slot>
+              </DialogClose>
+              <!-- Before the header so `handle + header` / `header + body` spacing selectors still match -->
+              <VisuallyHidden v-if="!showHeaderTitle" as-child>
+                <DialogTitle />
+              </VisuallyHidden>
+              <div v-if="handle && placement !== 'top'" aria-hidden="true" data-slot="drawer-handle" :class="ui.handle({ class: props.ui?.handle })">
+                <div data-slot="drawer-handle-bar" />
+              </div>
+              <div v-if="hasHeader" data-slot="drawer-header" :class="ui.header({ class: props.ui?.header })">
+                <slot name="header">
+                  <DialogTitle v-if="showHeaderTitle" data-slot="drawer-heading" :class="ui.heading({ class: props.ui?.heading })">
+                    <slot name="title">
+                      {{ title }}
+                    </slot>
+                  </DialogTitle>
+                </slot>
+              </div>
+              <div v-if="!!slots.body" data-slot="drawer-body" :class="ui.body({ class: props.ui?.body })">
+                <slot name="body" :close="close" />
+              </div>
+              <div v-if="!!slots.footer" data-slot="drawer-footer" :class="ui.footer({ class: props.ui?.footer })">
+                <slot name="footer" :close="close" />
+              </div>
+              <div v-if="handle && placement === 'top'" aria-hidden="true" data-slot="drawer-handle" :class="ui.handle({ class: props.ui?.handle })">
+                <div data-slot="drawer-handle-bar" />
+              </div>
+            </slot>
+          </DialogContent>
+        </div>
+      </DialogOverlay>
+    </DialogPortal>
+  </DialogRoot>
+</template>

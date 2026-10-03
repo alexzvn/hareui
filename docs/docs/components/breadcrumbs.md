@@ -2,8 +2,8 @@
 title: Breadcrumbs
 description: Navigation breadcrumbs showing the current page's location within a hierarchy
 links:
-  source: Breadcrumbs.vue
-  styles: breadcrumbs.ts
+  source: breadcrumbs/Breadcrumbs.vue
+  styles: breadcrumbs/theme.ts
   heroui: breadcrumbs
 ---
 

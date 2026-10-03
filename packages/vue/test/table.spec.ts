@@ -1,6 +1,6 @@
 import { flushPromises, mount } from '@vue/test-utils'
 import { afterEach, describe, expect, it, vi } from 'vitest'
-import Table from '../src/components/Table.vue'
+import Table from '../src/components/table/Table.vue'
 
 const columns = [
   { key: 'name', label: 'Name', isRowHeader: true, sortable: true },

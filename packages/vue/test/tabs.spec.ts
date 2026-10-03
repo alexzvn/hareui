@@ -1,6 +1,6 @@
 import { mount } from '@vue/test-utils'
 import { describe, expect, it } from 'vitest'
-import Tabs from '../src/components/Tabs.vue'
+import Tabs from '../src/components/tabs/Tabs.vue'
 
 const items = [
   { label: 'Overview', value: 'overview', content: 'Overview content' },

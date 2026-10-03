@@ -3,8 +3,8 @@ title: AlertDialog
 description: Modal dialog for critical confirmations requiring user attention and explicit action
 links:
   reka: dialog
-  source: AlertDialog.vue
-  styles: alertDialog.ts
+  source: alert-dialog/AlertDialog.vue
+  styles: alert-dialog/theme.ts
   heroui: alert-dialog
 ---
 

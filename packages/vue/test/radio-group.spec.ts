@@ -1,7 +1,7 @@
 import { mount } from '@vue/test-utils'
 import { describe, expect, it } from 'vitest'
 import { h, ref } from 'vue'
-import RadioGroup from '../src/components/RadioGroup.vue'
+import RadioGroup from '../src/components/radio-group/RadioGroup.vue'
 
 const items = [
   { value: 'basic', label: 'Basic' },

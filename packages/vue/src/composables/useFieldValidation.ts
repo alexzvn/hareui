@@ -3,9 +3,9 @@
 // `native`: errors appear once committed (on `change`, on the form's `invalid` event) and block submission via
 // `setCustomValidity`. `aria`: errors appear in realtime and never block submission.
 import type { ComputedRef } from 'vue'
-import type { ValidationBehavior, ValidationError } from '../components/formContext'
+import type { ValidationBehavior, ValidationError } from '../components/form/context'
 import { computed, inject, nextTick, onBeforeUnmount, onMounted, ref, shallowRef, watch } from 'vue'
-import { formContextKey } from '../components/formContext'
+import { formContextKey } from '../components/form/context'
 
 /** Snapshot of the native `ValidityState` flags. */
 export interface ValidationDetails {

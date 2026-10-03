@@ -3,8 +3,8 @@ title: ColorPicker
 description: A composable color picker that synchronizes color value between multiple color components
 links:
   reka: popover
-  source: ColorPicker.vue
-  styles: colorPicker.ts
+  source: color-picker/ColorPicker.vue
+  styles: color-picker/theme.ts
   heroui: color-picker
 ---
 

@@ -2,8 +2,8 @@
 title: ScrollShadow
 description: Apply visual shadows to indicate scrollable content overflow with automatic detection of scroll position.
 links:
-  source: ScrollShadow.vue
-  styles: scrollShadow.ts
+  source: scroll-shadow/ScrollShadow.vue
+  styles: scroll-shadow/theme.ts
   heroui: scroll-shadow
 ---
 

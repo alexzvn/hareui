@@ -1,6 +1,6 @@
 import { mount } from '@vue/test-utils'
 import { describe, expect, it } from 'vitest'
-import ProgressCircle from '../src/components/ProgressCircle.vue'
+import ProgressCircle from '../src/components/progress-circle/ProgressCircle.vue'
 
 const CIRCUMFERENCE = 2 * Math.PI * 16
 

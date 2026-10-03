@@ -1,8 +1,8 @@
 import { mount } from '@vue/test-utils'
 import { describe, expect, it } from 'vitest'
 import { h } from 'vue'
-import Input from '../src/components/Input.vue'
-import TextField from '../src/components/TextField.vue'
+import Input from '../src/components/input/Input.vue'
+import TextField from '../src/components/text-field/TextField.vue'
 
 describe('TextField', () => {
   it('aria-describedby lists only the rendered description and error ids', async () => {

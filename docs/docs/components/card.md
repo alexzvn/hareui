@@ -2,8 +2,8 @@
 title: Card
 description: Flexible container component for grouping related content and actions
 links:
-  source: Card.vue
-  styles: card.ts
+  source: card/Card.vue
+  styles: card/theme.ts
   heroui: card
 ---
 

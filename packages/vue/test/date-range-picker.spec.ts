@@ -1,7 +1,7 @@
 import { CalendarDate } from '@internationalized/date'
 import { mount } from '@vue/test-utils'
 import { describe, expect, it } from 'vitest'
-import DateRangePicker from '../src/components/DateRangePicker.vue'
+import DateRangePicker from '../src/components/date-range-picker/DateRangePicker.vue'
 
 const trigger = '[data-slot=date-range-picker-trigger]'
 const flush = () => new Promise(r => setTimeout(r, 0))

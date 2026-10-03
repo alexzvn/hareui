@@ -3,8 +3,8 @@ title: DateField
 description: Date input field with labels, descriptions, and validation
 links:
   reka: date-field
-  source: DateField.vue
-  styles: dateField.ts
+  source: date-field/DateField.vue
+  styles: date-field/theme.ts
   heroui: date-field
 ---
 

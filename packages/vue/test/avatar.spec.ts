@@ -1,7 +1,7 @@
 import { mount } from '@vue/test-utils'
 import { describe, expect, it } from 'vitest'
 import { nextTick } from 'vue'
-import Avatar from '../src/components/Avatar.vue'
+import Avatar from '../src/components/avatar/Avatar.vue'
 
 describe('Avatar', () => {
   it('forwards image attributes to the <img>, not the root', async () => {

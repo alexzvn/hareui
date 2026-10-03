@@ -1,8 +1,8 @@
 import { mount } from '@vue/test-utils'
 import { describe, expect, it } from 'vitest'
 import { h } from 'vue'
-import Avatar from '../src/components/Avatar.vue'
-import AvatarGroup from '../src/components/AvatarGroup.vue'
+import Avatar from '../src/components/avatar/Avatar.vue'
+import AvatarGroup from '../src/components/avatar-group/AvatarGroup.vue'
 
 const avatars = (n: number) => () => Array.from({ length: n }, (_, i) => h(Avatar, { fallback: `A${i}` }))
 

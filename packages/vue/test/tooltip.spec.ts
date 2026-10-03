@@ -2,7 +2,7 @@ import { enableAutoUnmount, mount } from '@vue/test-utils'
 import { TooltipRoot } from 'reka-ui'
 import { afterEach, describe, expect, it, vi } from 'vitest'
 import { h, nextTick } from 'vue'
-import Tooltip from '../src/components/Tooltip.vue'
+import Tooltip from '../src/components/tooltip/Tooltip.vue'
 
 const sleep = (ms: number) => new Promise(r => setTimeout(r, ms))
 

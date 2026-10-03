@@ -3,8 +3,8 @@ title: DateRangePicker
 description: Combines start and end date fields and a RangeCalendar in a popover for picking a date range
 links:
   reka: date-range-picker
-  source: DateRangePicker.vue
-  styles: dateRangePicker.ts
+  source: date-range-picker/DateRangePicker.vue
+  styles: date-range-picker/theme.ts
   heroui: date-range-picker
 ---
 

@@ -2,8 +2,8 @@
 title: InputOtp
 description: A one-time password input for verification codes and secure authentication
 links:
-  source: InputOtp.vue
-  styles: inputOtp.ts
+  source: input-otp/InputOtp.vue
+  styles: input-otp/theme.ts
   heroui: input-otp
 ---
 

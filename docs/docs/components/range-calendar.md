@@ -3,8 +3,8 @@ title: RangeCalendar
 description: Date range picker with month grid, navigation, and year picker support built on Reka UI's RangeCalendar.
 links:
   reka: range-calendar
-  source: RangeCalendar.vue
-  styles: rangeCalendar.ts
+  source: range-calendar/RangeCalendar.vue
+  styles: range-calendar/theme.ts
   heroui: range-calendar
 ---
 

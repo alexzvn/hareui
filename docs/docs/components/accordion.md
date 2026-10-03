@@ -2,8 +2,8 @@
 title: Accordion
 description: A collapsible content panel for organizing information in a compact space
 links:
-  source: Accordion.vue
-  styles: accordion.ts
+  source: accordion/Accordion.vue
+  styles: accordion/theme.ts
   heroui: accordion
 ---
 

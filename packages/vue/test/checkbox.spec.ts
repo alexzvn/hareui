@@ -1,8 +1,8 @@
 import { mount } from '@vue/test-utils'
 import { describe, expect, it } from 'vitest'
 import { defineComponent, h, ref } from 'vue'
-import Checkbox from '../src/components/Checkbox.vue'
-import Label from '../src/components/Label.vue'
+import Checkbox from '../src/components/checkbox/Checkbox.vue'
+import Label from '../src/components/label/Label.vue'
 
 const control = '[data-slot=checkbox-content]'
 

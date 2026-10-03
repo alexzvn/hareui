@@ -2,8 +2,8 @@
 title: SearchField
 description: A text field for search queries, with a search icon and a clear button
 links:
-  source: SearchField.vue
-  styles: searchField.ts
+  source: search-field/SearchField.vue
+  styles: search-field/theme.ts
   heroui: search-field
 ---
 
