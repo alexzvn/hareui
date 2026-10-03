@@ -153,4 +153,21 @@ describe('timeField', () => {
     expect(wrapper.findAll('[role=spinbutton]').map(s => s.attributes('aria-invalid'))).toEqual(['true', 'true', 'true'])
     expect(wrapper.get('[data-slot="date-input-group-input"]').attributes('data-invalid')).toBeDefined()
   })
+
+  // behaviour-final-check F3/F4: React Aria reports the 12-hour hour and zero-padded minutes
+  it('12-hour: the hour segment reports its 12-hour value and the minute is zero-padded in aria-valuetext', () => {
+    const wrapper = mount(TimeField, { props: { defaultValue: new Time(20, 5), hourCycle: 12 } })
+    const hour = wrapper.get('[data-reka-time-field-segment="hour"]')
+    expect(hour.attributes('aria-valuenow')).toBe('8')
+    expect(hour.attributes('aria-valuetext')).toBe('8 PM')
+    expect(wrapper.get('[data-reka-time-field-segment="minute"]').attributes('aria-valuetext')).toBe('05')
+  })
+
+  it('12-hour: End on the hour segment stays within the current period', async () => {
+    const wrapper = mount(TimeField, { props: { defaultValue: new Time(14, 0), hourCycle: 12 } })
+    const hour = wrapper.find('[data-reka-time-field-segment="hour"]')
+    await hour.trigger('keydown', { key: 'End' })
+    const emitted = wrapper.emitted('update:modelValue')!
+    expect((emitted[emitted.length - 1][0] as Time).hour).toBe(23)
+  })
 })
