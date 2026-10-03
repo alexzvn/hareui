@@ -1,13 +1,15 @@
 <script setup lang="ts">
 // Port of the fumadocs `HomeLayout` navbar as heroui.com renders it (`app/[lang]/(home)/layout.tsx`).
 // HeroUI-only entries are left out: Themes, React Native, Blog, Roadmap, Figma, Releases, Ask AI,
-// the language toggle and the GitHub link.
+// and the language toggle.
 import { onBeforeUnmount, onMounted, ref } from 'vue'
 import { Icon } from '@iconify/vue'
 import { Button } from '@hareui/vue'
 import DesignThemeSelector from '../DesignThemeSelector.vue'
 import ThemeToggle from '../ThemeToggle.vue'
 import HareLogo from '../HareLogo.vue'
+import BrandIcon from '../BrandIcon.vue'
+import { REPO_URL } from '../../repo'
 
 const props = defineProps<{ docsHref: string; componentsHref: string }>()
 const emit = defineEmits<{ search: [] }>()
@@ -58,6 +60,9 @@ onBeforeUnmount(() => window.removeEventListener('scroll', onScroll))
               <Button aria-label="Open Search" data-search="" icon-only size="sm" variant="tertiary" class="size-[34px] border-none" @click="emit('search')">
                 <svg fill="none" height="24" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" viewBox="0 0 24 24" width="24" xmlns="http://www.w3.org/2000/svg"><circle cx="11" cy="11" r="8" /><path d="m21 21-4.3-4.3" /></svg>
               </Button>
+              <Button as="a" :href="REPO_URL" aria-label="GitHub" rel="noopener noreferrer" target="_blank" icon-only size="sm" variant="tertiary" class="size-[34px] border-none">
+                <BrandIcon name="github" class="size-4" />
+              </Button>
               <DesignThemeSelector />
             </div>
             <ThemeToggle />
@@ -66,6 +71,9 @@ onBeforeUnmount(() => window.removeEventListener('scroll', onScroll))
             <div class="flex items-center gap-1.5">
               <Button aria-label="Open Search" data-search="" icon-only size="sm" variant="tertiary" class="size-[34px] border-none" @click="emit('search')">
                 <svg fill="none" height="24" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" viewBox="0 0 24 24" width="24" xmlns="http://www.w3.org/2000/svg"><circle cx="11" cy="11" r="8" /><path d="m21 21-4.3-4.3" /></svg>
+              </Button>
+              <Button as="a" :href="REPO_URL" aria-label="GitHub" rel="noopener noreferrer" target="_blank" icon-only size="sm" variant="tertiary" class="size-[34px] border-none">
+                <BrandIcon name="github" class="size-4" />
               </Button>
               <DesignThemeSelector />
             </div>

@@ -2,10 +2,22 @@
 import { computed } from 'vue'
 import { tv } from '../../../../packages/vue/src/utils/tv'
 import buttonTheme from '../../../../packages/vue/src/theme/button'
+import { repoFileUrl } from '../repo'
+import BrandIcon from './BrandIcon.vue'
 
 export interface PageLinks {
+  /** Component file under `packages/vue/src/components/`. */
+  source?: string
+  /** Theme file under `packages/vue/src/theme/`. */
+  styles?: string
   reka?: string
   heroui?: string
+}
+
+interface Badge {
+  label: string
+  href: string
+  icon: 'github' | 'heroui' | 'reka'
 }
 
 const props = defineProps<{ title: string; description?: string; links?: PageLinks }>()
@@ -21,9 +33,11 @@ const linkClass = docsButton().base()
 const badges = computed(() => {
   const links = props.links ?? {}
   return [
-    links.reka && { label: 'Reka UI', href: `https://reka-ui.com/docs/components/${links.reka}`, icon: 'reka' as const },
-    links.heroui && { label: 'HeroUI', href: `https://heroui.com/docs/react/components/${links.heroui}`, icon: 'heroui' as const },
-  ].filter((badge): badge is { label: string; href: string; icon: 'reka' | 'heroui' } => !!badge)
+    links.reka && { label: 'Reka UI', href: `https://reka-ui.com/docs/components/${links.reka}`, icon: 'reka' },
+    links.heroui && { label: 'HeroUI', href: `https://heroui.com/docs/react/components/${links.heroui}`, icon: 'heroui' },
+    links.source && { label: 'Source', href: repoFileUrl(`packages/vue/src/components/${links.source}`), icon: 'github' },
+    links.styles && { label: 'Styles source', href: repoFileUrl(`packages/vue/src/theme/${links.styles}`), icon: 'github' },
+  ].filter((badge): badge is Badge => !!badge)
 })
 </script>
 
@@ -35,13 +49,7 @@ const badges = computed(() => {
     <p v-if="description" class="text-fd-muted-foreground text-md mt-2 mb-4">{{ description }}</p>
     <div v-if="badges.length" class="mb-4 flex flex-wrap gap-2">
       <a v-for="badge in badges" :key="badge.href" :class="linkClass" :href="badge.href" rel="noopener noreferrer" target="_blank">
-        <svg v-if="badge.icon === 'reka'" class="text-lg" width="1em" height="1em" viewBox="0 0 24 24" aria-hidden="true">
-          <circle cx="12" cy="12" r="9" fill="none" stroke="currentColor" stroke-width="2" />
-          <circle cx="12" cy="12" r="3.5" fill="currentColor" />
-        </svg>
-        <svg v-else class="text-lg" width="1em" height="1em" viewBox="0 0 16 16" aria-hidden="true">
-          <path fill="currentColor" d="M3 2h3v5h4V2h3v12h-3V9H6v5H3z" />
-        </svg>
+        <BrandIcon :name="badge.icon" class="text-lg" />
         {{ badge.label }}
       </a>
     </div>
