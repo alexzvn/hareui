@@ -25,8 +25,10 @@ const props = defineProps<{
    * whether the last interaction was a keyboard one, so the highlight shows as focus-visible (RAC modality).
    */
   virtualFocus?: { keyboard: boolean, value?: ListBoxValue | null }
+  /** Mouse hover focuses the option (RAC `shouldFocusOnHover`). */
+  focusOnHover?: boolean
 }>()
-const emit = defineEmits<{ action: [event: Event] }>()
+const emit = defineEmits<{ action: [event: Event], select: [event: CustomEvent<{ originalEvent?: Event }>] }>()
 const slots = defineSlots<Omit<ListBoxSlots, 'section-label' | 'empty'>>()
 
 // RAC interaction states that Reka doesn't expose
@@ -35,14 +37,30 @@ const pressed = ref(false)
 const focused = ref(false)
 const focusVisible = ref(false)
 
+// The enclosing Reka listbox (its highlight is the keyboard cursor)
+const listbox = injectListboxRootContext(null)
+const option = useTemplateRef<{ $el: HTMLElement }>('option')
+
 function onFocus(event: FocusEvent) {
   focused.value = true
   focusVisible.value = event.target instanceof Element && event.target.matches(':focus-visible')
+  // DOM focus is the keyboard cursor (RAC focusedKey): a mouse press or `focus()` must move Reka's highlight too
+  const el = option.value?.$el
+  if (!props.virtualFocus && listbox && el && listbox.highlightedElement.value !== el)
+    listbox.highlightedElement.value = el
 }
 
-// Virtual focus: the highlighted element of the enclosing Reka listbox
-const listbox = props.virtualFocus ? injectListboxRootContext() : null
-const option = useTemplateRef<{ $el: HTMLElement }>('option')
+function onPointermove(event: PointerEvent) {
+  const el = option.value?.$el
+  if (props.focusOnHover && event.pointerType !== 'touch' && !state.value.disabled && el && document.activeElement !== el)
+    el.focus({ preventScroll: true })
+}
+
+// A disabled option isn't focusable: keep focus on the focused option instead of the list container (RAC)
+function onMousedown(event: MouseEvent) {
+  if (state.value.disabled)
+    event.preventDefault()
+}
 // With `virtualFocus.value` the owner tracks focus by value (virtualized rows unmount), else by Reka's highlighted element
 const highlighted = computed(() => props.virtualFocus && 'value' in props.virtualFocus
   ? props.virtualFocus.value === props.item.value
@@ -57,7 +75,10 @@ const state = computed<ListBoxItemSlotProps>(() => ({
   disabled: !!(props.listDisabled || props.item.disabled),
 }))
 
-function onSelect(event: Event) {
+function onSelect(event: CustomEvent<{ originalEvent?: Event }>) {
+  emit('select', event)
+  if (event.defaultPrevented)
+    return
   if (!props.selectable) {
     event.preventDefault()
     emit('action', event)
@@ -85,6 +106,8 @@ function onSelect(event: Event) {
     @pointerenter="hovered = $event.pointerType === 'mouse'"
     @pointerleave="hovered = false; pressed = false"
     @pointerdown="pressed = true"
+    @pointermove="onPointermove"
+    @mousedown="onMousedown"
     @pointerup="pressed = false"
     @pointercancel="pressed = false"
     @focus="onFocus"

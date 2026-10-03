@@ -146,7 +146,10 @@ app.use(createHareUI({
 
 Built on Reka's Listbox, which implements the ARIA listbox pattern:
 
-- Arrow keys, Home/End and typeahead navigation
+- Arrow keys, Home/End, PageUp/PageDown and typeahead navigation (Space continues a typeahead search)
+- In `multiple` mode, Shift+Arrow/Home/End/Space and Shift+click select a range from the last selected item, and Meta/Ctrl+A selects every enabled item
+- Escape clears the selection; set `escape-key-behavior="none"` to leave Escape to a surrounding popover
+- `highlight-on-hover` makes the hovered option the focused one, as in Select's popover
 - `aria-selected` on selectable options, `aria-multiselectable` in multiple mode
 - Disabled items are skipped by keyboard navigation
 

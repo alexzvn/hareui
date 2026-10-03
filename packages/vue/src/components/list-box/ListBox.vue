@@ -63,6 +63,18 @@ export interface ListBoxProps<T extends ListBoxItem = ListBoxItem> {
    */
   disabled?: boolean
   /**
+   * Whether hovering an option with the mouse focuses it, so the keyboard continues from there (RAC
+   * `shouldFocusOnHover`, as in Select's popover).
+   * @defaultValue false
+   */
+  highlightOnHover?: boolean
+  /**
+   * What Escape does: `'clearSelection'` clears a non-empty selection, `'none'` leaves it (and the key) to the
+   * surrounding component, e.g. a popover that closes on Escape.
+   * @defaultValue 'clearSelection'
+   */
+  escapeKeyBehavior?: 'clearSelection' | 'none'
+  /**
    * Render only the visible rows (Reka `ListboxVirtualizer`). Needs a scrolling root (e.g. `class="h-[400px] overflow-y-auto"`)
    * and flat `items` (sections and separators are skipped). Pass `{ estimateSize, overscan }` to tune.
    * @defaultValue false
@@ -116,13 +128,14 @@ export interface ListBoxEmits {
 </script>
 
 <script setup lang="ts" generic="T extends ListBoxItem = ListBoxItem">
-import { ListboxContent, ListboxGroup, ListboxGroupLabel, ListboxRoot, ListboxVirtualizer } from 'reka-ui'
-import { computed, onBeforeUnmount, ref, useTemplateRef, watch } from 'vue'
+import { injectListboxRootContext, ListboxContent, ListboxGroup, ListboxGroupLabel, ListboxRoot, ListboxVirtualizer } from 'reka-ui'
+import { computed, defineComponent, onBeforeUnmount, ref, useTemplateRef, watch } from 'vue'
 import { useComponentUI } from '../../composables/useComponentUI'
+import { useSelectionManager } from '../../composables/useSelectionManager'
 import ListBoxOption from './ListBoxOption.vue'
 
 // `loading: undefined` keeps an absent boolean prop from becoming `false`, so the sentinel only renders for async lists
-const props = withDefaults(defineProps<ListBoxProps<T>>(), { selectionMode: 'single', indicator: true, defaultValue: undefined, loading: undefined })
+const props = withDefaults(defineProps<ListBoxProps<T>>(), { selectionMode: 'single', indicator: true, defaultValue: undefined, loading: undefined, escapeKeyBehavior: 'clearSelection' })
 const emit = defineEmits<ListBoxEmits>()
 const slots = defineSlots<ListBoxSlots<T>>()
 const modelValue = defineModel<ListBoxValue | ListBoxValue[] | null>()
@@ -200,13 +213,172 @@ function optionProps(row: Row) {
     selectionMode: props.selectionMode,
     indicator: props.indicator,
     listDisabled: props.disabled,
+    focusOnHover: props.highlightOnHover,
     classes: ui.value,
     ui: props.ui,
   }
 }
 
+/* ---------------- Keyboard and selection model (RAC `useSelectableList`) ----------------
+ * Reka's listbox has no anchor / Shift ranges, selects all on Meta/Ctrl+A by highlighting the last item,
+ * ignores Escape, maps PageUp/PageDown inverted, feeds every key (ArrowDown, Shift…) into its typeahead buffer
+ * and selects on Space mid-search. A capture-phase handler on the list takes those keys first; plain
+ * arrows, Home/End, Enter and Space stay with Reka.
+ */
+type RekaListbox = ReturnType<typeof injectListboxRootContext>
+let reka: RekaListbox | undefined
+// Renderless child: the Reka root context is only injectable below ListboxRoot
+const RekaContext = defineComponent({
+  setup() {
+    reka = injectListboxRootContext()
+    return () => null
+  },
+})
+
+const enabledValue = (value: ListBoxValue) => {
+  const item = rowByValue.value.get(value)?.item
+  return !!item && !item.disabled && !props.disabled
+}
+const manager = useSelectionManager<ListBoxValue>({
+  mode: () => props.selectionMode,
+  keys: () => flatRows.value.map(row => row.item.value),
+  isDisabled: value => !enabledValue(value),
+  selected: () => {
+    const current = selection.value
+    return current == null ? [] : Array.isArray(current) ? current : [current]
+  },
+  setSelected: (values) => {
+    markUserAction()
+    selection.value = multiple.value ? values : values[0]
+  },
+  keepOnEscape: () => props.escapeKeyBehavior === 'none',
+})
+
+// Reka re-highlights and focuses the first selected option whenever the model changes outside its own
+// handlers. Its keyboard handler flags a change as user-made for 1 ms; a modifier-only key does nothing else.
+function markUserAction() {
+  reka?.onKeydownTypeAhead(new KeyboardEvent('keydown', { key: 'Alt', altKey: true }))
+}
+
+/** The enabled option elements, in DOM order. */
+function enabledOptions(): HTMLElement[] {
+  return (reka ? listboxItems() : []).filter(el => el.dataset.disabled !== '')
+}
+function listboxItems(): HTMLElement[] {
+  return (listboxRoot.value?.getItems() ?? []).map(item => item.ref)
+}
+const valueOf = (el: HTMLElement) => listboxRoot.value?.getItems().find(item => item.ref === el)?.value as ListBoxValue | undefined
+
+function highlight(el: HTMLElement | undefined) {
+  if (el)
+    reka?.changeHighlight(el)
+}
+
+// RAC `getKeyPageBelow/Above`: a page is the scroll container's height; an unscrollable list pages to its ends
+function scrollParent(el: HTMLElement | null): HTMLElement | undefined {
+  for (; el && el !== document.body; el = el.parentElement) {
+    const overflow = getComputedStyle(el).overflowY
+    if (el.scrollHeight > el.clientHeight && (overflow === 'auto' || overflow === 'scroll'))
+      return el
+  }
+}
+function pageTarget(options: HTMLElement[], from: HTMLElement | undefined, list: HTMLElement, down: boolean) {
+  const scroller = scrollParent(list)
+  if (!scroller || !from)
+    return down ? options.at(-1) : options[0]
+  const page = scroller.clientHeight - from.offsetHeight
+  const top = from.getBoundingClientRect().top
+  const offset = (el: HTMLElement) => el.getBoundingClientRect().top - top
+  return down
+    ? options.filter(el => offset(el) >= 0 && offset(el) <= page).at(-1)
+    : options.find(el => offset(el) <= 0 && -offset(el) <= page)
+}
+
+// RAC `useTypeSelect`: printable characters only, searched from the focused option onwards (inclusive);
+// Space continues a non-empty search instead of selecting
+let search = ''
+let searchTimer: ReturnType<typeof setTimeout> | undefined
+function onTypeahead(event: KeyboardEvent, focused: HTMLElement | undefined): boolean {
+  const key = event.key
+  if ([...key].length !== 1 || event.ctrlKey || event.metaKey || event.altKey || (key === ' ' && !search.trim()))
+    return false
+  event.stopPropagation()
+  if (key === ' ')
+    event.preventDefault()
+  search += key.toLowerCase()
+  clearTimeout(searchTimer)
+  searchTimer = setTimeout(() => {
+    search = ''
+  }, 1000)
+  const options = enabledOptions()
+  const start = Math.max(0, focused ? options.indexOf(focused) : 0)
+  const text = (el: HTMLElement) => {
+    const value = valueOf(el)
+    const item = value === undefined ? undefined : rowByValue.value.get(value)?.item
+    return (item?.textValue ?? item?.label ?? el.textContent ?? '').trim().toLowerCase()
+  }
+  highlight([...options.slice(start), ...options.slice(0, start)].find(el => text(el).startsWith(search)))
+  return true
+}
+
+function onKeydownCapture(event: KeyboardEvent) {
+  if (!reka || props.disabled || event.isComposing)
+    return
+  const list = event.currentTarget as HTMLElement
+  const focused = (event.target as Element).closest?.<HTMLElement>('[role=option]') ?? undefined
+  // The keyboard continues from the focused option, even after Reka dropped its highlight (pointer leave)
+  if (!props.virtualize && focused && list.contains(focused) && reka.highlightedElement.value !== focused)
+    reka.highlightedElement.value = focused
+  // Escape clears the selection, Meta/Ctrl+A selects every enabled option and keeps focus
+  if (selectable.value && manager.onKeydown(event))
+    return
+  // Reka's virtualizer pages and searches over the unrendered rows itself
+  if (props.virtualize)
+    return
+  if (onTypeahead(event, focused))
+    return
+
+  const options = enabledOptions()
+  const index = focused ? options.indexOf(focused) : -1
+  let target: HTMLElement | undefined
+  if (event.key === 'PageDown' || event.key === 'PageUp')
+    target = pageTarget(options, focused, list, event.key === 'PageDown')
+  else if (event.shiftKey && multiple.value && !event.altKey) {
+    if (event.key === 'ArrowDown')
+      target = options[index + 1] ?? focused
+    else if (event.key === 'ArrowUp')
+      target = index === -1 ? options.at(-1) : options[index - 1] ?? focused
+    else if (event.key === 'Home')
+      target = options[0]
+    else if (event.key === 'End')
+      target = options.at(-1)
+  }
+  if (!target)
+    return
+  event.preventDefault()
+  event.stopPropagation()
+  highlight(target)
+  const value = valueOf(target)
+  if (event.shiftKey && multiple.value && value !== undefined)
+    manager.extend(value, focused && valueOf(focused))
+}
+
+// Shift+click / Shift+Space extend the range from the anchor; any other press toggles through Reka
+function onOptionSelect(item: ListBoxItem, event: CustomEvent<{ originalEvent?: Event }>) {
+  if (!selectable.value)
+    return
+  const original = event.detail?.originalEvent as MouseEvent | KeyboardEvent | undefined
+  if (multiple.value && original?.shiftKey) {
+    event.preventDefault()
+    manager.extend(item.value)
+    return
+  }
+  if (!isSelected(item))
+    manager.setAnchor(item.value)
+}
+
 // Reka highlights the first option on focus entry; RAC focuses the first selected key instead (Select opens this way)
-const listboxRoot = useTemplateRef<{ highlightSelected: () => Promise<void> }>('listboxRoot')
+const listboxRoot = useTemplateRef<{ highlightSelected: () => Promise<void>, getItems: () => { ref: HTMLElement, value: unknown }[] }>('listboxRoot')
 defineExpose({
   /** Highlight and focus the first selected option, or the first option when nothing is selected. */
   highlightSelected: () => listboxRoot.value?.highlightSelected(),
@@ -228,7 +400,9 @@ defineExpose({
       :data-empty="blocks.length ? undefined : 'true'"
       :aria-multiselectable="multiple ? 'true' : undefined"
       :class="ui.base({ class: [props.ui?.base, props.class] })"
+      @keydown.capture="onKeydownCapture"
     >
+      <RekaContext />
       <ListboxVirtualizer
         v-if="virtualize"
         v-slot="{ option }"
@@ -241,6 +415,7 @@ defineExpose({
           v-bind="optionProps(rowByValue.get(option as ListBoxValue)!)"
           class="w-full"
           @action="emit('action', option as ListBoxValue)"
+          @select="onOptionSelect(rowByValue.get(option as ListBoxValue)!.item, $event)"
         >
           <template v-for="name in forwarded" #[name]="state">
             <slot :name="name" v-bind="state as ListBoxItemSlotProps<T>" />
@@ -274,6 +449,7 @@ defineExpose({
             :key="`i${row.index}`"
             v-bind="optionProps(row)"
             @action="emit('action', row.item.value)"
+            @select="onOptionSelect(row.item, $event)"
           >
             <template v-for="name in forwarded" #[name]="state">
               <slot :name="name" v-bind="state as ListBoxItemSlotProps<T>" />
@@ -284,6 +460,7 @@ defineExpose({
           v-else
           v-bind="optionProps(block)"
           @action="emit('action', block.item.value)"
+          @select="onOptionSelect(block.item, $event)"
         >
           <template v-for="name in forwarded" #[name]="state">
             <slot :name="name" v-bind="state as ListBoxItemSlotProps<T>" />
