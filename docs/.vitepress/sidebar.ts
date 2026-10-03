@@ -21,6 +21,7 @@ export interface SidebarSection {
 
 const gs = (page: string) => `/docs/getting-started/${page}`
 const c = (page: string) => `/docs/components/${page}`
+const r = (page: string) => `/docs/releases/${page}`
 
 export const sidebar: SidebarSection[] = [
   {
@@ -124,6 +125,19 @@ export const sidebar: SidebarSection[] = [
       { text: 'Toolbar', link: c('toolbar') },
       { text: 'Tooltip', link: c('tooltip') },
       { text: 'Typography', link: c('typography') },
+    ],
+  },
+  {
+    text: 'Releases',
+    icon: 'tag',
+    base: '/docs/releases',
+    // Newest first; add each release page at the top of the "Versions" group.
+    items: [
+      { separator: 'Overview' },
+      { text: 'All Releases', link: r('') },
+      { separator: 'Versions' },
+      { text: 'v0.1.1', link: r('v0-1-1') },
+      { text: 'v0.1.0', link: r('v0-1-0') },
     ],
   },
 ]
