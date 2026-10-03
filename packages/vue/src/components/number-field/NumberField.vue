@@ -146,6 +146,7 @@ const props = withDefaults(defineProps<NumberFieldProps>(), { increment: true, d
 const slots = defineSlots<NumberFieldSlots>()
 /** The numeric value; `undefined` while the input is empty. */
 const modelValue = defineModel<number | null>()
+const emit = defineEmits<{ 'update:modelValue': [value: number | null | undefined] }>()
 
 // As in react-stately's useNumberFieldState: the incoming value and default are clamped into range
 // (and snapped to `step` when one is given) before display; the step falls back to 0.01 for percents.
@@ -189,6 +190,34 @@ function onUpdate(value: number | undefined) {
   modelValue.value = value
   // RAC commits validation on blur / Enter and on every stepper press
   commitValidation()
+}
+
+// RAC commits an emptied input as "no value" (`onChange(NaN)`, an empty form value). Reka's applyInputValue
+// clears its own state but, in uncontrolled mode, never emits `undefined` (its passive v-model only emits values
+// that differ from the absent prop), so commit the empty value here. Runs after Reka's blur / Enter handler.
+function onCommitEmpty(event: Event) {
+  if ((event.target as HTMLInputElement).value !== '' || formValue.value == null)
+    return
+  formValue.value = undefined
+  if (modelValue.value == null)
+    emit('update:modelValue', undefined)
+  else
+    modelValue.value = undefined
+  commitValidation()
+}
+function onKeydown(event: KeyboardEvent) {
+  if (event.key === 'Enter' && !event.isComposing)
+    onCommitEmpty(event)
+}
+
+// RAC's spin button moves PageUp / PageDown by a single step (`onIncrementPage` = `onIncrement`); Reka moves 10 steps.
+// Runs in the capture phase, ahead of Reka's handler on the same input, and hands Reka the matching arrow key.
+function onKeydownCapture(event: KeyboardEvent) {
+  if ((event.key !== 'PageUp' && event.key !== 'PageDown') || event.isComposing)
+    return
+  event.preventDefault()
+  event.stopImmediatePropagation()
+  event.target!.dispatchEvent(new KeyboardEvent('keydown', { key: event.key === 'PageUp' ? 'ArrowUp' : 'ArrowDown', cancelable: true }))
 }
 
 // `aria-label` / `aria-labelledby` name the input (as in HeroUI), not the wrapper div
@@ -295,6 +324,9 @@ function onFocusOut(event: FocusEvent) {
         :aria-label="attrs['aria-label']"
         :aria-labelledby="attrs['aria-labelledby']"
         :class="ui.input({ class: props.ui?.input })"
+        @blur="onCommitEmpty"
+        @keydown="onKeydown"
+        @keydown.capture="onKeydownCapture"
       />
       <NumberFieldIncrement
         v-if="increment"
