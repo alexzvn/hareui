@@ -1,15 +1,15 @@
 <script setup lang="ts">
-import type { TableSelection } from '@hareui/vue'
+import type { TableColumn, TableRow, TableSelection } from '@hareui/vue'
 import { Button, Table } from '@hareui/vue'
 import { Icon } from '@iconify/vue'
 import { ref } from 'vue'
 
-const columns = [
+const columns: TableColumn[] = [
   { key: 'name', label: 'Name', isRowHeader: true },
   { key: 'type', label: 'Type' },
   { key: 'date', label: 'Date Modified' },
 ]
-const rows = [
+const rows: TableRow[] = [
   {
     id: '1',
     name: 'Documents',

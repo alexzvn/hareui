@@ -1,8 +1,9 @@
 <script setup lang="ts">
+import type { TableColumn } from '@hareui/vue'
 import { EmptyState, Table } from '@hareui/vue'
 import { Icon } from '@iconify/vue'
 
-const columns = [
+const columns: TableColumn[] = [
   { key: 'name', label: 'Name', isRowHeader: true },
   { key: 'role', label: 'Role' },
   { key: 'status', label: 'Status' },

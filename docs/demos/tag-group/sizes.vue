@@ -1,7 +1,8 @@
 <script setup lang="ts">
+import type { TagGroupItem } from '@hareui/vue'
 import { TagGroup } from '@hareui/vue'
 
-const items = [
+const items: TagGroupItem[] = [
   { id: 'news', label: 'News' },
   { id: 'travel', label: 'Travel' },
   { id: 'gaming', label: 'Gaming' },

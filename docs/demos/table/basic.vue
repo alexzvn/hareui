@@ -1,13 +1,14 @@
 <script setup lang="ts">
+import type { TableColumn, TableRow } from '@hareui/vue'
 import { Table } from '@hareui/vue'
 
-const columns = [
+const columns: TableColumn[] = [
   { key: 'name', label: 'Name', isRowHeader: true },
   { key: 'role', label: 'Role' },
   { key: 'status', label: 'Status' },
   { key: 'email', label: 'Email' },
 ]
-const rows = [
+const rows: TableRow[] = [
   { id: 1, name: 'Kate Moore', role: 'CEO', status: 'Active', email: 'kate@acme.com' },
   { id: 2, name: 'John Smith', role: 'CTO', status: 'Active', email: 'john@acme.com' },
   { id: 3, name: 'Sara Johnson', role: 'CMO', status: 'On Leave', email: 'sara@acme.com' },
