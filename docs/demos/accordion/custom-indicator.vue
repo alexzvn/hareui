@@ -1,10 +1,14 @@
 <script setup lang="ts">
-import type { ExpandedValue } from '@hareui/vue'
+import type { AccordionItem, ExpandedValue } from '@hareui/vue'
 import { Icon } from '@iconify/vue'
 import { Accordion } from '@hareui/vue'
 import { ref } from 'vue'
 
-const items = [
+interface IndicatorItem extends AccordionItem {
+  icon?: string
+}
+
+const items: IndicatorItem[] = [
   {
     value: '1',
     label: 'Using Plus/Minus Icon',

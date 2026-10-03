@@ -1,8 +1,14 @@
 <script setup lang="ts">
+import type { AccordionItem } from '@hareui/vue'
 import { Icon } from '@iconify/vue'
 import { Accordion } from '@hareui/vue'
 
-const items = [
+interface SetupItem extends AccordionItem {
+  iconUrl: string
+  subtitle: string
+}
+
+const items: SetupItem[] = [
   {
     content: 'Stay informed about your account activity with real-time notifications.',
     iconUrl: 'https://heroui-assets.nyc3.cdn.digitaloceanspaces.com/docs/3dicons/bell-small.png',

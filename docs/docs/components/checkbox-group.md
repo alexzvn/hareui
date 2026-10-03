@@ -43,6 +43,21 @@ CheckboxGroup renders its checkboxes from the `items` array. Label, description,
 | — | `description` | [Description](/docs/components/description) (group and per-item) |
 | — | `field-error` | [FieldError](/docs/components/field-error) (while invalid, iff `error-message` / `#error` / validation errors) |
 
+### Typing items
+
+`items` takes the exported `CheckboxGroupItem` type. Extra fields are kept: extend the type, and the slots receive your type, so no casts are needed.
+
+```ts
+import type { CheckboxGroupItem } from '@hareui/vue'
+
+interface MyItem extends CheckboxGroupItem {
+  icon: string
+}
+
+const items: MyItem[] = [/* ... */]
+// <template #item-label="{ item }"> — item.icon is a string
+```
+
 ## Examples
 
 ### In Surface

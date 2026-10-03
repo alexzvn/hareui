@@ -50,6 +50,21 @@ edges fade and previous/next chevrons (`scrollPrev` / `scrollNext`) appear.
 | `separator` | `tabs-separator` | divider inside every tab (iff `separator`); hidden on the selected tab and the one after it |
 | `tabPanel` | `tabs-panel` | the selected item's `TabsContent` |
 
+### Typing items
+
+`items` takes the exported `TabsItem` type. Extra fields are kept: extend the type, and the slots receive your type, so no casts are needed.
+
+```ts
+import type { TabsItem } from '@hareui/vue'
+
+interface MyItem extends TabsItem {
+  icon: string
+}
+
+const items: MyItem[] = [/* ... */]
+// <template #tab="{ item }"> — item.icon is a string
+```
+
 ## Examples
 
 ### Vertical

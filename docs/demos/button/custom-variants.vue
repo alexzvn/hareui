@@ -2,7 +2,7 @@
 import { Button, themes, tv } from '@hareui/vue'
 
 const myButtonVariants = tv({
-  extend: themes.button,
+  extend: tv(themes.button),
   slots: {
     base: 'font-semibold shadow-md text-shadow-lg data-[pending=true]:opacity-40',
   },

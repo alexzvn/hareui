@@ -1,7 +1,8 @@
 <script setup lang="ts">
+import type { RadioGroupItem } from '@hareui/vue'
 import { Label, RadioGroup } from '@hareui/vue'
 
-const items = [
+const items: RadioGroupItem[] = [
   { value: 'starter', label: 'Starter', description: 'For side projects' },
   { value: 'pro', label: 'Pro', description: 'Advanced reporting' },
   { value: 'teams', label: 'Teams', description: 'Up to 10 teammates' },

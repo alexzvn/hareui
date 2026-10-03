@@ -2,9 +2,9 @@
 import type { TimeValue } from 'reka-ui'
 import { getLocalTimeZone, now, Time } from '@internationalized/date'
 import { Button, TimeField } from '@hareui/vue'
-import { ref } from 'vue'
+import { shallowRef } from 'vue'
 
-const value = ref<TimeValue | null>(null)
+const value = shallowRef<TimeValue | null>(null)
 
 function setNow() {
   const currentTime = now(getLocalTimeZone())

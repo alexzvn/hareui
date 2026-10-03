@@ -1,12 +1,13 @@
 <script setup lang="ts">
+import type { RadioGroupItem } from '@hareui/vue'
 import { RadioGroup } from '@hareui/vue'
 
-const primaryItems = [
+const primaryItems: RadioGroupItem[] = [
   { value: 'option1', label: 'Option 1', description: 'Standard styling with default background' },
   { value: 'option2', label: 'Option 2', description: 'Another option with primary styling' },
 ]
 
-const secondaryItems = [
+const secondaryItems: RadioGroupItem[] = [
   { value: 'option1', label: 'Option 1', description: 'Lower emphasis variant for use in surfaces' },
   { value: 'option2', label: 'Option 2', description: 'Another option with secondary styling' },
 ]

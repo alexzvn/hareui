@@ -1,8 +1,9 @@
 <script setup lang="ts">
+import type { ListBoxItem } from '@hareui/vue'
 import { Label, NumberField, ProgressBar, Select, Separator } from '@hareui/vue'
 import { ref } from 'vue'
 
-const formatStyleOptions = [
+const formatStyleOptions: ListBoxItem[] = [
   { label: 'Currency', value: 'currency' },
   { label: 'Percent', value: 'percent' },
   { label: 'Decimal', value: 'decimal' },
@@ -21,13 +22,13 @@ const minValue = ref(0)
 const maxValue = ref(1000)
 const format = ref('percent')
 
-function setMinValue(v: number | null) {
+function setMinValue(v: number | null | undefined) {
   minValue.value = v ?? 0
   if (value.value < minValue.value)
     value.value = minValue.value
 }
 
-function setMaxValue(v: number | null) {
+function setMaxValue(v: number | null | undefined) {
   maxValue.value = v ?? minValue.value + 1
   if (value.value > maxValue.value)
     value.value = maxValue.value

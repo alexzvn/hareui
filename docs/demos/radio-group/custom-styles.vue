@@ -1,7 +1,8 @@
 <script setup lang="ts">
+import type { RadioGroupItem } from '@hareui/vue'
 import { Description, RadioGroup } from '@hareui/vue'
 
-const options = [
+const options: RadioGroupItem[] = [
   { description: '$12 billed every month', label: 'Monthly', value: 'monthly' },
   { description: '$120 billed once a year', label: 'Yearly', value: 'yearly' },
 ]

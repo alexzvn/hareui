@@ -1,9 +1,10 @@
 <script setup lang="ts">
 import { Icon } from '@iconify/vue'
+import type { ListBoxItem } from '@hareui/vue'
 import { Autocomplete } from '@hareui/vue'
 import { ref } from 'vue'
 
-const items = [
+const items: ListBoxItem[] = [
   { value: 'florida', label: 'Florida' },
   { value: 'delaware', label: 'Delaware' },
   { value: 'california', label: 'California' },

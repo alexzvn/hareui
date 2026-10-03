@@ -1,12 +1,13 @@
 <script setup lang="ts">
+import type { AccordionItem } from '@hareui/vue'
 import { Accordion } from '@hareui/vue'
 
-const disabledItems = [
+const disabledItems: AccordionItem[] = [
   { label: 'Disabled Item 1', content: 'This content cannot be accessed when the accordion is disabled.' },
   { label: 'Disabled Item 2', content: 'This content cannot be accessed when the accordion is disabled.' },
 ]
 
-const items = [
+const items: AccordionItem[] = [
   { label: 'Active Item', content: 'This item is active and can be toggled normally.' },
   { label: 'Disabled Item', content: 'This content cannot be accessed when the item is disabled.', disabled: true },
   { label: 'Another Active Item', content: 'This item is also active and can be toggled.' },

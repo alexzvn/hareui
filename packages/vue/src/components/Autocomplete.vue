@@ -12,9 +12,9 @@ type Autocomplete = typeof theme
 
 export type AutocompleteValue = ListBoxValue | ListBoxValue[] | null
 
-export interface AutocompleteProps {
+export interface AutocompleteProps<T extends ListBoxItem = ListBoxItem> {
   /** Options, sections (`{ type: 'section', label, items }`) and separators (`{ type: 'separator' }`), as in ListBox. */
-  items?: ListBoxEntry[]
+  items?: ListBoxEntry<T>[]
   /**
    * Whether one or several options can be selected. In `'multiple'` mode `v-model` is an array.
    * @defaultValue 'single'
@@ -122,20 +122,20 @@ export interface AutocompleteProps {
   ui?: ComponentSlots<Autocomplete> & { searchClearButton?: any }
 }
 
-export interface AutocompleteValueSlotProps {
+export interface AutocompleteValueSlotProps<T extends ListBoxItem = ListBoxItem> {
   /** The selected options, in selection order. */
-  selectedItems: ListBoxItem[]
+  selectedItems: T[]
   /** Whether nothing is selected. */
   isPlaceholder: boolean
   /** The placeholder, or the selected labels joined as a list. */
   text: string
 }
 
-export interface AutocompleteSlots {
+export interface AutocompleteSlots<T extends ListBoxItem = ListBoxItem> {
   /** Label content. Replaces `label`. */
   'label'?: () => any
   /** Trigger value content. Defaults to the selected label(s) or the placeholder. */
-  'value'?: (props: AutocompleteValueSlotProps) => any
+  'value'?: (props: AutocompleteValueSlotProps<T>) => any
   /** Trigger indicator content. Defaults to a chevron. */
   'indicator'?: (props: { open: boolean }) => any
   /** Clear button content. Defaults to a close icon. */
@@ -147,19 +147,19 @@ export interface AutocompleteSlots {
   /** Content after the search input (e.g. a Spinner while fetching). */
   'search-trailing'?: (props: { inputValue: string }) => any
   /** Whole content of each option (as ListBox `#item`). */
-  'item'?: (props: ListBoxItemSlotProps) => any
+  'item'?: (props: ListBoxItemSlotProps<T>) => any
   /** Content before each option's text (ListBox `#item-leading`). */
-  'item-leading'?: (props: ListBoxItemSlotProps) => any
+  'item-leading'?: (props: ListBoxItemSlotProps<T>) => any
   /** Each option's label (ListBox `#item-label`). */
-  'item-label'?: (props: ListBoxItemSlotProps) => any
+  'item-label'?: (props: ListBoxItemSlotProps<T>) => any
   /** Each option's description (ListBox `#item-description`). */
-  'item-description'?: (props: ListBoxItemSlotProps) => any
+  'item-description'?: (props: ListBoxItemSlotProps<T>) => any
   /** Content after each option's text (ListBox `#item-trailing`). */
-  'item-trailing'?: (props: ListBoxItemSlotProps) => any
+  'item-trailing'?: (props: ListBoxItemSlotProps<T>) => any
   /** Option checkmark content (ListBox `#indicator`). */
-  'item-indicator'?: (props: ListBoxItemSlotProps) => any
+  'item-indicator'?: (props: ListBoxItemSlotProps<T>) => any
   /** Section heading (ListBox `#section-label`). */
-  'section-label'?: (props: { section: ListBoxSection }) => any
+  'section-label'?: (props: { section: ListBoxSection<T> }) => any
   /** Empty-state content, rendered when no option matches (HeroUI `renderEmptyState`). */
   'empty'?: () => any
   /** Shown after the last option while `loading` is true. */
@@ -192,7 +192,7 @@ const ListboxBridge = defineComponent({
 })
 </script>
 
-<script setup lang="ts">
+<script setup lang="ts" generic="T extends ListBoxItem = ListBoxItem">
 import { ListboxContent, ListboxRoot, PopoverAnchor, PopoverContent, PopoverPortal, PopoverRoot, Primitive, useFilter } from 'reka-ui'
 import { computed, getCurrentInstance, nextTick, onBeforeUnmount, onMounted, ref, shallowRef, useAttrs, useId, useTemplateRef, watch } from 'vue'
 import { useComponentUI } from '../composables/useComponentUI'
@@ -209,7 +209,7 @@ import ListBoxRows from './ListBoxRows.vue'
 defineOptions({ inheritAttrs: false })
 
 // Absent booleans stay `undefined`: `open` → uncontrolled, `invalid` → validation decides, `loading` → no sentinel
-const props = withDefaults(defineProps<AutocompleteProps>(), {
+const props = withDefaults(defineProps<AutocompleteProps<T>>(), {
   selectionMode: 'single',
   defaultValue: undefined,
   placeholder: 'Select an item',
@@ -222,7 +222,7 @@ const props = withDefaults(defineProps<AutocompleteProps>(), {
   loading: undefined,
 })
 const emit = defineEmits<AutocompleteEmits>()
-const slots = defineSlots<AutocompleteSlots>()
+const slots = defineSlots<AutocompleteSlots<T>>()
 const modelValue = defineModel<AutocompleteValue>()
 const inputModel = defineModel<string>('inputValue')
 // Whether the parent binds `v-model:input-value` (defineModel keeps a local value when it doesn't)
@@ -251,7 +251,7 @@ const selectedValues = computed<ListBoxValue[]>(() => {
 const options = computed(() => flattenEntries(props.items))
 // Selection order, as RAC (`[...selectedKeys]`)
 const itemByValue = computed(() => new Map(options.value.map(item => [item.value, item])))
-const selectedItems = computed(() => selectedValues.value.map(v => itemByValue.value.get(v)).filter((item): item is ListBoxItem => !!item))
+const selectedItems = computed(() => selectedValues.value.map(v => itemByValue.value.get(v)).filter((item): item is T => !!item))
 const listFormat = computed(() => new Intl.ListFormat(undefined, { type: 'conjunction' }))
 const valueText = computed(() => selectedItems.value.length
   ? (multiple.value ? listFormat.value.format(selectedItems.value.map(itemText)) : itemText(selectedItems.value[0]!))
@@ -900,7 +900,7 @@ watch(() => props.disabled, (disabled) => {
                   <slot :name="name" v-bind="state as any" />
                 </template>
                 <template v-if="slots['item-indicator']" #indicator="state">
-                  <slot name="item-indicator" v-bind="state" />
+                  <slot name="item-indicator" v-bind="state as ListBoxItemSlotProps<T>" />
                 </template>
               </ListBoxRows>
             </ListboxContent>

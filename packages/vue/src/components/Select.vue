@@ -9,9 +9,9 @@ type Select = typeof theme
 
 export type SelectValue = ListBoxValue | ListBoxValue[] | null
 
-export interface SelectProps {
+export interface SelectProps<T extends ListBoxItem = ListBoxItem> {
   /** Options, sections (`{ type: 'section', label, items }`) and separators (`{ type: 'separator' }`), as in ListBox. */
-  items?: ListBoxEntry[]
+  items?: ListBoxEntry<T>[]
   /**
    * Whether one or several options can be selected. In `'multiple'` mode `v-model` is an array.
    * @defaultValue 'single'
@@ -85,20 +85,20 @@ export interface SelectProps {
   ui?: ComponentSlots<Select>
 }
 
-export interface SelectValueSlotProps {
+export interface SelectValueSlotProps<T extends ListBoxItem = ListBoxItem> {
   /** The selected options, in collection order. */
-  selectedItems: ListBoxItem[]
+  selectedItems: T[]
   /** Whether nothing is selected. */
   isPlaceholder: boolean
   /** The placeholder, or the selected labels joined as a list. */
   text: string
 }
 
-export interface SelectSlots {
+export interface SelectSlots<T extends ListBoxItem = ListBoxItem> {
   /** Label content. Replaces `label`. */
   'label'?: () => any
   /** Trigger value content. Defaults to the selected label(s) or the placeholder. */
-  'value'?: (props: SelectValueSlotProps) => any
+  'value'?: (props: SelectValueSlotProps<T>) => any
   /** Trigger indicator content. Defaults to a chevron. */
   'indicator'?: (props: { open: boolean }) => any
   /** Clear button content. Defaults to a close icon. */
@@ -108,19 +108,19 @@ export interface SelectSlots {
   /** Error content, rendered while invalid. */
   'error'?: (props: ValidationResult) => any
   /** Whole content of each option (forwarded to ListBox `#item`). */
-  'item'?: (props: ListBoxItemSlotProps) => any
+  'item'?: (props: ListBoxItemSlotProps<T>) => any
   /** Content before each option's text (ListBox `#item-leading`). */
-  'item-leading'?: (props: ListBoxItemSlotProps) => any
+  'item-leading'?: (props: ListBoxItemSlotProps<T>) => any
   /** Each option's label (ListBox `#item-label`). */
-  'item-label'?: (props: ListBoxItemSlotProps) => any
+  'item-label'?: (props: ListBoxItemSlotProps<T>) => any
   /** Each option's description (ListBox `#item-description`). */
-  'item-description'?: (props: ListBoxItemSlotProps) => any
+  'item-description'?: (props: ListBoxItemSlotProps<T>) => any
   /** Content after each option's text (ListBox `#item-trailing`). */
-  'item-trailing'?: (props: ListBoxItemSlotProps) => any
+  'item-trailing'?: (props: ListBoxItemSlotProps<T>) => any
   /** Option checkmark content (ListBox `#indicator`). */
-  'item-indicator'?: (props: ListBoxItemSlotProps) => any
+  'item-indicator'?: (props: ListBoxItemSlotProps<T>) => any
   /** Section heading (ListBox `#section-label`). */
-  'section-label'?: (props: { section: ListBoxSection }) => any
+  'section-label'?: (props: { section: ListBoxSection<T> }) => any
   /** Rendered in the popover when `items` is empty (ListBox `#empty`). */
   'empty'?: () => any
   /** Shown after the last option while `loading` is true (ListBox `#loading`). */
@@ -137,7 +137,7 @@ export interface SelectEmits {
 }
 </script>
 
-<script setup lang="ts">
+<script setup lang="ts" generic="T extends ListBoxItem = ListBoxItem">
 import { PopoverContent, PopoverPortal, PopoverRoot, PopoverTrigger } from 'reka-ui'
 import { computed, ref, useAttrs, useId, useTemplateRef, watch } from 'vue'
 import { useComponentUI } from '../composables/useComponentUI'
@@ -151,7 +151,7 @@ import ListBox from './ListBox.vue'
 defineOptions({ inheritAttrs: false })
 
 // Absent booleans stay `undefined` (not `false`): `open` → uncontrolled, `invalid` → validation decides, `loading` → no sentinel
-const props = withDefaults(defineProps<SelectProps>(), {
+const props = withDefaults(defineProps<SelectProps<T>>(), {
   selectionMode: 'single',
   defaultValue: undefined,
   placeholder: 'Select an item',
@@ -160,7 +160,7 @@ const props = withDefaults(defineProps<SelectProps>(), {
   loading: undefined,
 })
 const emit = defineEmits<SelectEmits>()
-const slots = defineSlots<SelectSlots>()
+const slots = defineSlots<SelectSlots<T>>()
 const modelValue = defineModel<SelectValue>()
 
 const multiple = computed(() => props.selectionMode === 'multiple')
@@ -205,7 +205,7 @@ const options = computed<ListBoxItem[]>(() => (props.items ?? []).flatMap((entry
   return [entry as ListBoxItem]
 }))
 const textOf = (item: ListBoxItem) => item.textValue ?? item.label ?? String(item.value)
-const selectedItems = computed(() => options.value.filter(item => selectedValues.value.includes(item.value)))
+const selectedItems = computed(() => options.value.filter(item => selectedValues.value.includes(item.value)) as T[])
 const listFormat = computed(() => new Intl.ListFormat(undefined, { type: 'conjunction' }))
 const valueText = computed(() => selectedItems.value.length
   ? (multiple.value ? listFormat.value.format(selectedItems.value.map(textOf)) : textOf(selectedItems.value[0]!))
@@ -299,7 +299,7 @@ function onTriggerBlur() {
 // Focus moves into the list on open, as in RAC: the first selected option, else the first option,
 // else (empty collection) the listbox itself
 const content = useTemplateRef<{ $el: HTMLElement }>('content')
-const listBox = useTemplateRef<InstanceType<typeof ListBox>>('listBox')
+const listBox = useTemplateRef<{ highlightSelected: () => Promise<void> | undefined }>('listBox')
 async function onOpenAutoFocus(event: Event) {
   event.preventDefault()
   await listBox.value?.highlightSelected()
@@ -495,7 +495,7 @@ watch(() => props.disabled, (disabled) => {
               <slot :name="name" v-bind="state as any" />
             </template>
             <template v-if="slots['item-indicator']" #indicator="state">
-              <slot name="item-indicator" v-bind="state" />
+              <slot name="item-indicator" v-bind="state as ListBoxItemSlotProps<T>" />
             </template>
           </ListBox>
         </PopoverContent>

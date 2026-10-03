@@ -1,7 +1,8 @@
 <script setup lang="ts">
+import type { TabsItem } from '@hareui/vue'
 import { Tabs } from '@hareui/vue'
 
-const items = [
+const items: TabsItem[] = [
   { label: 'Monthly', value: 'monthly', content: 'Billed monthly, cancel anytime.' },
   { label: 'Yearly', value: 'yearly', content: 'Save 20% with annual billing.' },
 ]

@@ -13,6 +13,7 @@
     "build": "bun run --cwd packages/vue build",
     "test": "bun run --cwd packages/vue test",
     "typecheck": "bun run --cwd packages/vue typecheck",
+    "typecheck:docs": "bun run --cwd docs typecheck",
     "reference": "bun run --cwd reference dev",
     "parity": "bun parity/compare.ts",
     "docs:dev": "bun run --cwd docs dev",

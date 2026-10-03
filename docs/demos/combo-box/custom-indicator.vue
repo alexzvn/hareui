@@ -1,8 +1,9 @@
 <script setup lang="ts">
 import { Icon } from '@iconify/vue'
+import type { ListBoxItem } from '@hareui/vue'
 import { ComboBox } from '@hareui/vue'
 
-const animals = [
+const animals: ListBoxItem[] = [
   { value: 'aardvark', label: 'Aardvark' },
   { value: 'cat', label: 'Cat' },
   { value: 'dog', label: 'Dog' },

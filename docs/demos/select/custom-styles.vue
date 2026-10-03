@@ -1,8 +1,9 @@
 <script setup lang="ts">
+import type { ListBoxItem } from '@hareui/vue'
 import { Select } from '@hareui/vue'
 
 const itemClass = 'rounded-lg data-[focused=true]:bg-accent/10 data-[selected=true]:text-foreground'
-const plans = [
+const plans: ListBoxItem[] = [
   { value: 'free', label: 'Free', class: itemClass },
   { value: 'pro', label: 'Pro', class: itemClass },
 ]

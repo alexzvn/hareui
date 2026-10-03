@@ -1,12 +1,13 @@
 <script setup lang="ts">
+import type { TagGroupItem } from '@hareui/vue'
 import { TagGroup } from '@hareui/vue'
 
-const ownDisabled = [
+const ownDisabled: TagGroupItem[] = [
   { id: 'news', label: 'News', disabled: true },
   { id: 'travel', label: 'Travel' },
   { id: 'gaming', label: 'Gaming', disabled: true },
 ]
-const keyedItems = [
+const keyedItems: TagGroupItem[] = [
   { id: 'news', label: 'News' },
   { id: 'travel', label: 'Travel' },
   { id: 'gaming', label: 'Gaming' },

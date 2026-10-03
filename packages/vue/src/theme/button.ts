@@ -54,5 +54,5 @@ export default {
     size: 'md',
     fullWidth: false,
     iconOnly: false,
-  },
+  } as const,
 }

@@ -1,15 +1,16 @@
 <script setup lang="ts">
 import { Icon } from '@iconify/vue'
+import type { TagGroupItem } from '@hareui/vue'
 import { EmptyState, TagGroup } from '@hareui/vue'
 import { ref } from 'vue'
 
-const tags = ref([
+const tags = ref<TagGroupItem[]>([
   { id: 'news', label: 'News' },
   { id: 'travel', label: 'Travel' },
   { id: 'gaming', label: 'Gaming' },
   { id: 'shopping', label: 'Shopping' },
 ])
-const frameworks = ref([
+const frameworks = ref<TagGroupItem[]>([
   { id: 'react', label: 'React' },
   { id: 'vue', label: 'Vue' },
   { id: 'angular', label: 'Angular' },

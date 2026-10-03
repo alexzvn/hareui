@@ -1,4 +1,5 @@
 <script setup lang="ts">
+import type { ListBoxItem } from '@hareui/vue'
 import { Autocomplete, Description, Label, TagGroup } from '@hareui/vue'
 import { ref } from 'vue'
 
@@ -10,8 +11,13 @@ const TEAMMATES = [
   { id: 'alex', name: 'Alex Rivera', role: 'Marketing' },
 ] as const
 const itemClass = 'rounded-lg data-[focused=true]:bg-accent/10 data-[selected=true]:bg-accent/5 dark:data-[focused=true]:bg-accent/15 dark:data-[selected=true]:bg-accent/8'
-const items = TEAMMATES.map(t => ({ value: t.id, label: t.name, textValue: `${t.name} ${t.role}`, class: itemClass }))
-const byId = new Map<string, (typeof TEAMMATES)[number]>(TEAMMATES.map(t => [t.id, t]))
+
+interface Teammate extends ListBoxItem {
+  name: string
+  role: string
+}
+
+const items: Teammate[] = TEAMMATES.map(t => ({ value: t.id, label: t.name, textValue: `${t.name} ${t.role}`, class: itemClass, name: t.name, role: t.role }))
 
 const selectedKeys = ref<string[]>([])
 
@@ -64,8 +70,8 @@ function onRemoveTags(ids: string[]) {
         </template>
         <template #item-label="{ item }">
           <div class="flex flex-col gap-0.5">
-            <span class="text-sm font-medium text-foreground">{{ byId.get(String(item.value))?.name }}</span>
-            <span class="text-xs text-muted">{{ byId.get(String(item.value))?.role }}</span>
+            <span class="text-sm font-medium text-foreground">{{ item.name }}</span>
+            <span class="text-xs text-muted">{{ item.role }}</span>
           </div>
         </template>
         <template #empty>

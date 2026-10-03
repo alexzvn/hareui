@@ -1,8 +1,9 @@
 <script setup lang="ts">
+import type { ListBoxItem } from '@hareui/vue'
 import { Autocomplete, TagGroup } from '@hareui/vue'
 import { ref } from 'vue'
 
-const tags = [
+const tags: ListBoxItem[] = [
   { value: 'react', label: 'React' },
   { value: 'typescript', label: 'TypeScript' },
   { value: 'javascript', label: 'JavaScript' },

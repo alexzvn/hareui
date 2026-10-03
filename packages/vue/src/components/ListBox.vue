@@ -26,22 +26,25 @@ export interface ListBoxItem {
   class?: any
 }
 
-export interface ListBoxSection {
+export interface ListBoxSection<T extends ListBoxItem = ListBoxItem> {
   type: 'section'
   /** Section heading, rendered as a `<header>`. */
   label?: string
-  items: ListBoxItem[]
+  items: T[]
 }
 
 export interface ListBoxSeparator {
   type: 'separator'
 }
 
-export type ListBoxEntry = ListBoxItem | ListBoxSection | ListBoxSeparator
+export type ListBoxEntry<T extends ListBoxItem = ListBoxItem> = T | ListBoxSection<T> | ListBoxSeparator
 
-export interface ListBoxProps {
-  /** Items, sections (`{ type: 'section', label, items }`) and separators (`{ type: 'separator' }`). */
-  items?: ListBoxEntry[]
+export interface ListBoxProps<T extends ListBoxItem = ListBoxItem> {
+  /**
+   * Items, sections (`{ type: 'section', label, items }`) and separators (`{ type: 'separator' }`).
+   * Extra fields on the items are kept and typed in the item slots.
+   */
+  items?: ListBoxEntry<T>[]
   /**
    * How many items can be selected. With `'none'` items only emit `action`.
    * @defaultValue 'single'
@@ -76,28 +79,28 @@ export interface ListBoxProps {
   ui?: ComponentSlots<ListBox>
 }
 
-export interface ListBoxItemSlotProps {
-  item: ListBoxItem
+export interface ListBoxItemSlotProps<T extends ListBoxItem = ListBoxItem> {
+  item: T
   index: number
   selected: boolean
   disabled: boolean
 }
 
-export interface ListBoxSlots {
+export interface ListBoxSlots<T extends ListBoxItem = ListBoxItem> {
   /** Whole content of each item. Replaces leading, label, description, trailing and indicator. */
-  'item'?: (props: ListBoxItemSlotProps) => any
+  'item'?: (props: ListBoxItemSlotProps<T>) => any
   /** Content before the item text (avatar, icon). */
-  'item-leading'?: (props: ListBoxItemSlotProps) => any
+  'item-leading'?: (props: ListBoxItemSlotProps<T>) => any
   /** The label of each item. Replaces `item.label`. */
-  'item-label'?: (props: ListBoxItemSlotProps) => any
+  'item-label'?: (props: ListBoxItemSlotProps<T>) => any
   /** The description of each item. Replaces `item.description`. */
-  'item-description'?: (props: ListBoxItemSlotProps) => any
+  'item-description'?: (props: ListBoxItemSlotProps<T>) => any
   /** Content after the item text (shortcut, badge). */
-  'item-trailing'?: (props: ListBoxItemSlotProps) => any
+  'item-trailing'?: (props: ListBoxItemSlotProps<T>) => any
   /** Indicator content. Defaults to an animated checkmark. */
-  'indicator'?: (props: ListBoxItemSlotProps) => any
+  'indicator'?: (props: ListBoxItemSlotProps<T>) => any
   /** Section heading. Replaces `section.label`. */
-  'section-label'?: (props: { section: ListBoxSection }) => any
+  'section-label'?: (props: { section: ListBoxSection<T> }) => any
   /** Rendered when `items` is empty. */
   'empty'?: () => any
   /** Shown after the last item while `loading` is true (e.g. a Spinner). */
@@ -112,16 +115,16 @@ export interface ListBoxEmits {
 }
 </script>
 
-<script setup lang="ts">
+<script setup lang="ts" generic="T extends ListBoxItem = ListBoxItem">
 import { ListboxContent, ListboxGroup, ListboxGroupLabel, ListboxRoot, ListboxVirtualizer } from 'reka-ui'
 import { computed, onBeforeUnmount, ref, useTemplateRef, watch } from 'vue'
 import { useComponentUI } from '../composables/useComponentUI'
 import ListBoxOption from './ListBoxOption.vue'
 
 // `loading: undefined` keeps an absent boolean prop from becoming `false`, so the sentinel only renders for async lists
-const props = withDefaults(defineProps<ListBoxProps>(), { selectionMode: 'single', indicator: true, defaultValue: undefined, loading: undefined })
+const props = withDefaults(defineProps<ListBoxProps<T>>(), { selectionMode: 'single', indicator: true, defaultValue: undefined, loading: undefined })
 const emit = defineEmits<ListBoxEmits>()
-const slots = defineSlots<ListBoxSlots>()
+const slots = defineSlots<ListBoxSlots<T>>()
 const modelValue = defineModel<ListBoxValue | ListBoxValue[] | null>()
 
 const ui = useComponentUI('listBox', theme, () => ({}))
@@ -147,8 +150,8 @@ watch([sentinelVisible, () => props.loading, () => props.items?.length], () => {
 })
 
 // Flat running indices so item slots get a stable `index` across sections
-interface Row { kind: 'item', item: ListBoxItem, index: number }
-type Block = Row | { kind: 'section', section: ListBoxSection, rows: Row[], key: number } | { kind: 'separator', key: number }
+interface Row { kind: 'item', item: T, index: number }
+type Block = Row | { kind: 'section', section: ListBoxSection<T>, rows: Row[], key: number } | { kind: 'separator', key: number }
 const blocks = computed<Block[]>(() => {
   let index = 0
   return (props.items ?? []).map((entry, key): Block => {
@@ -156,7 +159,7 @@ const blocks = computed<Block[]>(() => {
       return { kind: 'section', section: entry, rows: entry.items.map(item => ({ kind: 'item', item, index: index++ })), key }
     if ('type' in entry && entry.type === 'separator')
       return { kind: 'separator', key }
-    return { kind: 'item', item: entry as ListBoxItem, index: index++ }
+    return { kind: 'item', item: entry as T, index: index++ }
   })
 })
 
@@ -240,7 +243,7 @@ defineExpose({
           @action="emit('action', option as ListBoxValue)"
         >
           <template v-for="name in forwarded" #[name]="state">
-            <slot :name="name" v-bind="state" />
+            <slot :name="name" v-bind="state as ListBoxItemSlotProps<T>" />
           </template>
         </ListBoxOption>
       </ListboxVirtualizer>
@@ -273,7 +276,7 @@ defineExpose({
             @action="emit('action', row.item.value)"
           >
             <template v-for="name in forwarded" #[name]="state">
-              <slot :name="name" v-bind="state" />
+              <slot :name="name" v-bind="state as ListBoxItemSlotProps<T>" />
             </template>
           </ListBoxOption>
         </ListboxGroup>
@@ -283,7 +286,7 @@ defineExpose({
           @action="emit('action', block.item.value)"
         >
           <template v-for="name in forwarded" #[name]="state">
-            <slot :name="name" v-bind="state" />
+            <slot :name="name" v-bind="state as ListBoxItemSlotProps<T>" />
           </template>
         </ListBoxOption>
       </template>

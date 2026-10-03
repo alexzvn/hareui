@@ -47,6 +47,21 @@ const items = [
 | `link` | `link` | the item's [Link](/docs/components/link) |
 | `separator` | `breadcrumbs-separator` | separator icon between items |
 
+### Typing items
+
+`items` takes the exported `BreadcrumbsItem` type. Extra fields are kept: extend the type, and the slots receive your type, so no casts are needed.
+
+```ts
+import type { BreadcrumbsItem } from '@hareui/vue'
+
+interface MyItem extends BreadcrumbsItem {
+  icon: string
+}
+
+const items: MyItem[] = [/* ... */]
+// <template #item="{ item }"> — item.icon is a string
+```
+
 ## Examples
 
 ### Navigation Levels

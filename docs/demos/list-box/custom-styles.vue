@@ -1,6 +1,12 @@
 <script setup lang="ts">
+import type { ListBoxItem } from '@hareui/vue'
 import { Avatar, ListBox } from '@hareui/vue'
-const users = [
+
+interface User extends ListBoxItem {
+  avatar: string
+}
+
+const users: User[] = [
   { value: '1', label: 'Bob', description: 'bob@heroui.com', avatar: 'https://heroui-assets.nyc3.cdn.digitaloceanspaces.com/avatars/blue.jpg' },
   { value: '2', label: 'Fred', description: 'fred@heroui.com', avatar: 'https://heroui-assets.nyc3.cdn.digitaloceanspaces.com/avatars/green.jpg' },
 ]
@@ -14,7 +20,7 @@ const users = [
     :ui="{ item: 'rounded-lg data-[focused=true]:bg-accent/10 data-[selected=true]:bg-accent/5' }"
   >
     <template #item-leading="{ item }">
-      <Avatar size="sm" :alt="item.label" :src="(item as any).avatar" :fallback="item.label?.[0]" />
+      <Avatar size="sm" :alt="item.label" :src="item.avatar" :fallback="item.label?.[0]" />
     </template>
   </ListBox>
 </template>

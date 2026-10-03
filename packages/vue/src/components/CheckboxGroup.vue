@@ -19,9 +19,9 @@ export interface CheckboxGroupItem {
   disabled?: boolean
 }
 
-export interface CheckboxGroupProps {
+export interface CheckboxGroupProps<T extends CheckboxGroupItem = CheckboxGroupItem> {
   /** The checkbox items. */
-  items?: CheckboxGroupItem[]
+  items?: T[]
   /**
    * The values selected initially when uncontrolled.
    * @defaultValue []
@@ -76,7 +76,7 @@ export interface CheckboxGroupProps {
   ui?: ComponentSlots<CheckboxGroup> & Pick<ComponentSlots<Checkbox>, 'content' | 'control' | 'indicator'> & { item?: any }
 }
 
-export interface CheckboxGroupSlots {
+export interface CheckboxGroupSlots<T extends CheckboxGroupItem = CheckboxGroupItem> {
   /** The group label content. Replaces the `label` prop. */
   'label'?: () => any
   /** The group description content. Replaces the `description` prop. */
@@ -84,15 +84,15 @@ export interface CheckboxGroupSlots {
   /** The error content, rendered while invalid. Replaces the `errorMessage` prop. */
   'error'?: (props: ValidationResult) => any
   /** The label of each item. Replaces `item.label`. */
-  'item-label'?: (props: { item: CheckboxGroupItem, index: number }) => any
+  'item-label'?: (props: { item: T, index: number }) => any
   /** The description of each item. Replaces `item.description`. */
-  'item-description'?: (props: { item: CheckboxGroupItem, index: number }) => any
+  'item-description'?: (props: { item: T, index: number }) => any
   /** Custom content inside each control. Replaces the default checkmark. */
-  'indicator'?: (props: { item: CheckboxGroupItem, checked: boolean }) => any
+  'indicator'?: (props: { item: T, checked: boolean }) => any
 }
 </script>
 
-<script setup lang="ts">
+<script setup lang="ts" generic="T extends CheckboxGroupItem = CheckboxGroupItem">
 import { CheckboxGroupRoot, CheckboxRoot as RekaCheckboxRoot } from 'reka-ui'
 import type { ComponentPublicInstance } from 'vue'
 import { computed, useId, useSlots, useTemplateRef } from 'vue'
@@ -104,8 +104,8 @@ import FieldError from './FieldError.vue'
 import Label from './Label.vue'
 
 // `invalid: undefined`: an absent boolean would cast to `false`, which counts as controlled-valid and hides validation errors
-const props = withDefaults(defineProps<CheckboxGroupProps>(), { items: () => [], invalid: undefined })
-defineSlots<CheckboxGroupSlots>()
+const props = withDefaults(defineProps<CheckboxGroupProps<T>>(), { items: () => [], invalid: undefined })
+defineSlots<CheckboxGroupSlots<T>>()
 /** The selected values. Bind with `v-model`. */
 const modelValue = defineModel<string[]>()
 const slots = useSlots()

@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import type { TableSelection, TableSortDescriptor } from '@hareui/vue'
+import type { TableColumn, TableSelection, TableSortDescriptor } from '@hareui/vue'
 import { Avatar, Button, Chip, Table } from '@hareui/vue'
 import { Icon } from '@iconify/vue'
 import { computed, ref } from 'vue'
@@ -16,7 +16,7 @@ const users: { id: number, name: string, image_url: string, role: string, status
   { id: 1234567, name: 'Emily Davis', image_url: `${AVATARS}/orange.jpg`, role: 'Product Manager', status: 'Inactive', email: 'emily@acme.com' },
 ]
 
-const columns = [
+const columns: TableColumn[] = [
   { key: 'id', label: 'Worker ID', isRowHeader: true, sortable: true, class: 'after:hidden' },
   { key: 'name', label: 'Member', sortable: true },
   { key: 'role', label: 'Role', sortable: true, class: 'min-w-52' },

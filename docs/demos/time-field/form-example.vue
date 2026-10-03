@@ -3,9 +3,9 @@ import type { Time } from '@internationalized/date'
 import { parseTime } from '@internationalized/date'
 import { Button, Form, TimeField } from '@hareui/vue'
 import { Icon } from '@iconify/vue'
-import { computed, ref } from 'vue'
+import { computed, ref, shallowRef } from 'vue'
 
-const value = ref<Time | null>(null)
+const value = shallowRef<Time | null>(null)
 const isSubmitting = ref(false)
 const minTime = parseTime('09:00')
 const maxTime = parseTime('17:00')

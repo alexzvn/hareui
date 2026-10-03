@@ -1,9 +1,9 @@
 <script setup lang="ts">
+import type { TagGroupItem } from '@hareui/vue'
 import { Avatar, EmptyState, TagGroup } from '@hareui/vue'
 import { computed, ref } from 'vue'
 
-interface User {
-  id: string
+interface User extends TagGroupItem {
   label: string
   avatar: string
   fallback: string

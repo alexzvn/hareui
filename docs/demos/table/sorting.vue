@@ -1,9 +1,9 @@
 <script setup lang="ts">
-import type { TableSortDescriptor } from '@hareui/vue'
+import type { TableColumn, TableSortDescriptor } from '@hareui/vue'
 import { Table } from '@hareui/vue'
 import { computed, ref } from 'vue'
 
-const columns = [
+const columns: TableColumn[] = [
   { key: 'name', label: 'Name', isRowHeader: true, sortable: true },
   { key: 'role', label: 'Role', sortable: true },
   { key: 'status', label: 'Status', sortable: true },

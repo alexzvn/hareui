@@ -15,9 +15,9 @@ export interface TagGroupItem {
   disabled?: boolean
 }
 
-export interface TagGroupProps {
+export interface TagGroupProps<T extends TagGroupItem = TagGroupItem> {
   /** The tags to render. */
-  items?: TagGroupItem[]
+  items?: T[]
   /**
    * The type of selection allowed.
    * @defaultValue 'none'
@@ -70,7 +70,7 @@ export interface TagGroupProps {
   ui?: ComponentSlots<TagGroup> & { tag?: any, removeButton?: any }
 }
 
-export interface TagGroupSlots {
+export interface TagGroupSlots<T extends TagGroupItem = TagGroupItem> {
   /** The group label content. Replaces the `label` prop. */
   'label'?: () => any
   /** The group description content. Replaces the `description` prop. */
@@ -78,9 +78,9 @@ export interface TagGroupSlots {
   /** The error content. Replaces the `errorMessage` prop. Rendered whenever either is given. */
   'errorMessage'?: () => any
   /** Content of each tag. Replaces `item.label`. */
-  'item'?: (props: { item: TagGroupItem, index: number, selected: boolean, disabled: boolean }) => any
+  'item'?: (props: { item: T, index: number, selected: boolean, disabled: boolean }) => any
   /** Content of each tag's remove button (shown when `removable`). Replaces the default close icon. */
-  'removeButton'?: (props: { item: TagGroupItem, index: number }) => any
+  'removeButton'?: (props: { item: T, index: number }) => any
   /**
    * Content rendered inside the list when `items` is empty (HeroUI's `renderEmptyState`), usually an
    * `<EmptyState>`. Nothing is rendered when omitted.
@@ -94,7 +94,7 @@ export interface TagGroupEmits {
 }
 </script>
 
-<script setup lang="ts">
+<script setup lang="ts" generic="T extends TagGroupItem = TagGroupItem">
 import { computed, ref, useId } from 'vue'
 import { useComponentUI } from '../composables/useComponentUI'
 import Description from './Description.vue'
@@ -102,9 +102,9 @@ import ErrorMessage from './ErrorMessage.vue'
 import Label from './Label.vue'
 import TagGroupTag from './TagGroupTag.vue'
 
-const props = withDefaults(defineProps<TagGroupProps>(), { items: () => [], selectionMode: 'none' })
+const props = withDefaults(defineProps<TagGroupProps<T>>(), { items: () => [], selectionMode: 'none' })
 const emit = defineEmits<TagGroupEmits>()
-const slots = defineSlots<TagGroupSlots>()
+const slots = defineSlots<TagGroupSlots<T>>()
 /** The selected tag ids. Bind with `v-model:selected`. */
 const selectedModel = defineModel<string[]>('selected')
 
@@ -257,10 +257,10 @@ const describedBy = computed(() => [hasDescription.value && descriptionId.value,
         @remove="removeOne(item)"
       >
         <template v-if="slots.item" #default="state">
-          <slot name="item" v-bind="state" />
+          <slot name="item" v-bind="state as { item: T, index: number, selected: boolean, disabled: boolean }" />
         </template>
         <template v-if="slots.removeButton" #removeButton="state">
-          <slot name="removeButton" v-bind="state" />
+          <slot name="removeButton" v-bind="state as { item: T, index: number }" />
         </template>
       </TagGroupTag>
       <slot v-if="!items.length" name="empty" />

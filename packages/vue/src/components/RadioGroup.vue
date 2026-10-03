@@ -17,9 +17,9 @@ export interface RadioGroupItem {
   disabled?: boolean
 }
 
-export interface RadioGroupProps {
+export interface RadioGroupProps<T extends RadioGroupItem = RadioGroupItem> {
   /** The radio items. */
-  items?: RadioGroupItem[]
+  items?: T[]
   /** The value selected initially when uncontrolled. */
   defaultValue?: string
   /** The group label. */
@@ -76,7 +76,7 @@ export interface RadioGroupProps {
   ui?: ComponentSlots<RadioGroup>
 }
 
-export interface RadioGroupSlots {
+export interface RadioGroupSlots<T extends RadioGroupItem = RadioGroupItem> {
   /** The group label content. Replaces the `label` prop. */
   'label'?: () => any
   /** The group description content. Replaces the `description` prop. */
@@ -84,15 +84,15 @@ export interface RadioGroupSlots {
   /** The error content, rendered while invalid. Replaces the `errorMessage` prop. */
   'error'?: (props: ValidationResult) => any
   /** The label of each item. Replaces `item.label`. */
-  'item-label'?: (props: { item: RadioGroupItem, index: number }) => any
+  'item-label'?: (props: { item: T, index: number }) => any
   /** The description of each item. Replaces `item.description`. */
-  'item-description'?: (props: { item: RadioGroupItem, index: number }) => any
+  'item-description'?: (props: { item: T, index: number }) => any
   /** Custom content inside each control. Replaces the default dot. */
-  'indicator'?: (props: { item: RadioGroupItem, checked: boolean }) => any
+  'indicator'?: (props: { item: T, checked: boolean }) => any
 }
 </script>
 
-<script setup lang="ts">
+<script setup lang="ts" generic="T extends RadioGroupItem = RadioGroupItem">
 import { RadioGroupItem as RekaRadioGroupItem, RadioGroupRoot } from 'reka-ui'
 import { computed, useId, useSlots, useTemplateRef } from 'vue'
 import { forwardRootClick } from '../composables/forwardRootClick'
@@ -103,8 +103,8 @@ import FieldError from './FieldError.vue'
 import Label from './Label.vue'
 
 // `invalid: undefined`: an absent boolean would cast to `false`, which counts as controlled-valid and hides validation errors
-const props = withDefaults(defineProps<RadioGroupProps>(), { items: () => [], orientation: 'vertical', invalid: undefined })
-defineSlots<RadioGroupSlots>()
+const props = withDefaults(defineProps<RadioGroupProps<T>>(), { items: () => [], orientation: 'vertical', invalid: undefined })
+defineSlots<RadioGroupSlots<T>>()
 /** The value of the selected item. Bind with `v-model`. */
 const modelValue = defineModel<string>()
 const slots = useSlots()

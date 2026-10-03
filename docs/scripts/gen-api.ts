@@ -41,15 +41,23 @@ const files = (await readdir(componentsDir))
 await rm(outDir, { recursive: true, force: true })
 await mkdir(outDir, { recursive: true })
 
+// Generic components (`generic="T extends ListBoxItem = ListBoxItem"`) print `T` in their types; show the item type instead
+function ungeneric(source: string): (type: string) => string {
+  const constraint = source.match(/<script setup[^>]*\sgeneric="T extends (\w+)/)?.[1]
+  return constraint ? (type) => type.replace(/<T>/g, '').replace(/\bT\b/g, constraint) : (type) => type
+}
+
 for (const file of files) {
   const name = basename(file, '.vue')
-  const meta = checker.getComponentMeta(join(componentsDir, file))
+  const path = join(componentsDir, file)
+  const meta = checker.getComponentMeta(path)
+  const named = ungeneric(await Bun.file(path).text())
   const api: ComponentApi = {
     props: meta.props
       .filter((p) => !p.global && !(fromNodeModules(p) && !p.description))
-      .map(toProp),
-    slots: meta.slots.map((s) => ({ name: s.name, type: s.type, description: s.description })),
-    events: meta.events.map((e) => ({ name: e.name, type: e.type, description: e.description })),
+      .map((p) => ({ ...toProp(p), type: named(toProp(p).type) })),
+    slots: meta.slots.map((s) => ({ name: s.name, type: named(s.type), description: s.description })),
+    events: meta.events.map((e) => ({ name: e.name, type: named(e.type), description: e.description })),
   }
   await writeFile(join(outDir, `${name}.json`), `${JSON.stringify(api, null, 2)}\n`)
   console.log(`api: ${name} (${api.props.length} props, ${api.slots.length} slots, ${api.events.length} events)`)

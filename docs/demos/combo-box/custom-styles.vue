@@ -1,8 +1,9 @@
 <script setup lang="ts">
+import type { ListBoxItem } from '@hareui/vue'
 import { ComboBox } from '@hareui/vue'
 
 const itemClass = 'rounded-lg data-[focused=true]:bg-muted/70 data-[selected=true]:font-medium data-[selected=true]:text-foreground'
-const frameworks = [
+const frameworks: ListBoxItem[] = [
   { value: 'react', label: 'React', class: itemClass },
   { value: 'vue', label: 'Vue', class: itemClass },
   { value: 'svelte', label: 'Svelte', class: itemClass },

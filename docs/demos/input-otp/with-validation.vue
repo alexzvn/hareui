@@ -19,8 +19,8 @@ function onSubmit(e: Event) {
   console.log('Code verified successfully!')
 }
 
-function handleChange(val: string) {
-  value.value = val
+function handleChange(val: string | undefined) {
+  value.value = val ?? ''
   isInvalid.value = false
 }
 </script>

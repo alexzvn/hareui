@@ -1,7 +1,8 @@
 <script setup lang="ts">
+import type { AccordionItem } from '@hareui/vue'
 import { Accordion } from '@hareui/vue'
 
-const items = [
+const items: AccordionItem[] = [
   {
     label: 'Getting Started',
     content: 'Learn the basics of HeroUI and how to integrate it into your React project. This section covers installation, setup, and your first component.',

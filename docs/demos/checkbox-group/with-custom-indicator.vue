@@ -1,7 +1,8 @@
 <script setup lang="ts">
+import type { CheckboxGroupItem } from '@hareui/vue'
 import { CheckboxGroup } from '@hareui/vue'
 
-const items = [
+const items: CheckboxGroupItem[] = [
   { value: 'notifications', label: 'Email notifications', description: 'Receive updates via email' },
   { value: 'newsletter', label: 'Newsletter', description: 'Get weekly newsletters' },
 ]

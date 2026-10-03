@@ -1,8 +1,9 @@
 <script setup lang="ts">
+import type { ListBoxItem } from '@hareui/vue'
 import { RangeCalendar, Select } from '@hareui/vue'
 import { ref } from 'vue'
 
-const dayOptions = [
+const dayOptions: ListBoxItem[] = [
   { value: '1', label: '1 day' },
   { value: '5', label: '5 days' },
   { value: '7', label: '7 days' },

@@ -1,8 +1,9 @@
 <script setup lang="ts">
+import type { ListBoxItem } from '@hareui/vue'
 import { ComboBox } from '@hareui/vue'
 import { ref } from 'vue'
 
-const animals = [
+const animals: ListBoxItem[] = [
   { value: 'aardvark', label: 'Aardvark' },
   { value: 'cat', label: 'Cat' },
   { value: 'dog', label: 'Dog' },

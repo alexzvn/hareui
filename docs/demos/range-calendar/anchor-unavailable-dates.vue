@@ -1,11 +1,11 @@
 <script setup lang="ts">
-import type { CalendarDate, DateValue } from '@internationalized/date'
+import type { DateValue } from '@internationalized/date'
 import { Description, RangeCalendar } from '@hareui/vue'
 import { getLocalTimeZone, today } from '@internationalized/date'
 
 const now = today(getLocalTimeZone())
 
-function isDateUnavailable(date: DateValue, anchorDate: CalendarDate | null) {
+function isDateUnavailable(date: DateValue, anchorDate: DateValue | null) {
   return anchorDate != null && Math.abs(date.compare(anchorDate)) > 7
 }
 </script>

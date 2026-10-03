@@ -52,6 +52,21 @@ label, indicator) and a collapsible panel holding the body. HeroUI's compound pa
 | `body` | `accordion-body` | content body container |
 | `bodyInner` | – | padded wrapper inside the body (HeroUI's `Accordion.Body` `className` target) |
 
+### Typing items
+
+`items` takes the exported `AccordionItem` type. Extra fields are kept: extend the type, and the slots receive your type, so no casts are needed.
+
+```ts
+import type { AccordionItem } from '@hareui/vue'
+
+interface MyItem extends AccordionItem {
+  icon: string
+}
+
+const items: MyItem[] = [/* ... */]
+// <template #leading="{ item }"> — item.icon is a string
+```
+
 ## Examples
 
 ### Surface

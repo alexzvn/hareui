@@ -1,8 +1,13 @@
 <script setup lang="ts">
+import type { AccordionItem } from '@hareui/vue'
 import { Icon } from '@iconify/vue'
 import { Accordion } from '@hareui/vue'
 
-const items = [
+interface FaqItem extends AccordionItem {
+  icon: string
+}
+
+const items: FaqItem[] = [
   {
     content: 'Browse our products, add items to your cart, and proceed to checkout. You\'ll need to provide shipping and payment information to complete your purchase.',
     icon: 'gravity-ui:shopping-bag',

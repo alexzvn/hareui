@@ -1,0 +1,12 @@
+{
+  "extends": "../tsconfig.base.json",
+  "compilerOptions": {
+    "lib": ["ES2024", "DOM", "DOM.Iterable"],
+    "types": ["vitepress/client"],
+    "paths": {
+      "@hareui/vue": ["../packages/vue/src/index.ts"]
+    },
+    "noEmit": true
+  },
+  "include": ["demos"]
+}
