@@ -64,3 +64,16 @@ describe('CheckboxGroup', () => {
     expect(wrapper.findAll('[data-slot=checkbox]')[0]!.attributes('data-disabled')).toBe('true')
   })
 })
+
+describe('CheckboxGroup row click', () => {
+  it('clicking the empty space of an item row toggles it', async () => {
+    const wrapper = mount(CheckboxGroup, { props: { items }, attachTo: document.body })
+    const boxes = wrapper.findAll('[data-slot=checkbox]')
+    await boxes[0]!.trigger('click')
+    expect(wrapper.emitted('update:modelValue')!.at(-1)).toEqual([['coding']])
+    // A disabled item ignores row clicks too
+    await boxes[2]!.trigger('click')
+    expect(wrapper.emitted('update:modelValue')).toHaveLength(1)
+    wrapper.unmount()
+  })
+})

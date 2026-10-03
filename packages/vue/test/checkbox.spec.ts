@@ -72,3 +72,14 @@ describe('Checkbox', () => {
     expect(content.attributes('aria-readonly')).toBe('true')
   })
 })
+
+describe('Checkbox row click', () => {
+  it('clicking the root outside the control toggles it, but nested links are left alone', async () => {
+    const wrapper = mount(Checkbox, { props: { label: 'Accept' }, slots: { description: () => h('a', { href: '#x' }, 'terms') }, attachTo: document.body })
+    await wrapper.find('[data-slot=checkbox]').trigger('click')
+    expect(wrapper.emitted('update:modelValue')).toEqual([[true]])
+    await wrapper.find('a').trigger('click')
+    expect(wrapper.emitted('update:modelValue')).toHaveLength(1)
+    wrapper.unmount()
+  })
+})
