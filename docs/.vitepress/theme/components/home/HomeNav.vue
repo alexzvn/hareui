@@ -7,6 +7,7 @@ import { Icon } from '@iconify/vue'
 import { Button } from '@hareui/vue'
 import DesignThemeSelector from '../DesignThemeSelector.vue'
 import ThemeToggle from '../ThemeToggle.vue'
+import HareLogo from '../HareLogo.vue'
 
 const props = defineProps<{ docsHref: string; componentsHref: string }>()
 const emit = defineEmits<{ search: [] }>()
@@ -44,6 +45,7 @@ onBeforeUnmount(() => window.removeEventListener('scroll', onScroll))
       <div class="relative">
         <nav class="flex h-14 w-full items-center px-4">
           <a class="inline-flex items-center gap-2.5 font-semibold" href="/">
+            <HareLogo class="size-6" />
             <span class="text-lg font-semibold">HareUI</span>
           </a>
           <ul class="flex flex-row items-center gap-2 px-6 max-sm:hidden">

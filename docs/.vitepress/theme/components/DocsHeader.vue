@@ -7,6 +7,7 @@ import { sectionLinks, type SidebarSection } from '../../sidebar'
 import FrameworkTabs from './FrameworkTabs.vue'
 import ThemeToggle from './ThemeToggle.vue'
 import DesignThemeSelector from './DesignThemeSelector.vue'
+import HareLogo from './HareLogo.vue'
 
 defineProps<{ sections: SidebarSection[]; activeSection?: SidebarSection }>()
 const emit = defineEmits<{ search: []; openSidebar: [] }>()
@@ -37,6 +38,7 @@ const TAB = 'hover:text-fd-accent-foreground inline-flex items-center gap-2 bord
       <div class="items-center flex flex-1">
         <div class="flex items-center gap-4">
           <a class="inline-flex items-center gap-2.5 font-semibold" href="/docs/getting-started/">
+            <HareLogo class="size-6" />
             <span class="font-semibold text-lg">HareUI</span>
           </a>
         </div>

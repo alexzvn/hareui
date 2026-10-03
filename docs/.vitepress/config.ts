@@ -18,7 +18,7 @@ export default defineConfigWithTheme<ThemeConfig>({
   ignoreDeadLinks: [new RegExp(`^/docs/components/(${componentSlugs.join('|')})$`)],
   srcExclude: ['THIRD_PARTY_LICENSES.md', 'demos/**'],
   head: [
-    ['link', { rel: 'icon', href: 'data:,' }],
+    ['link', { rel: 'icon', type: 'image/svg+xml', href: '/logo.svg' }],
     // Restore the docs design-theme preset and vibrant palette before first paint (keys/attributes from HeroUI's utils/design-theme.ts).
     [
       'script',

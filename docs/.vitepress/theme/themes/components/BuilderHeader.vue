@@ -11,6 +11,7 @@ import { useUndoRedo } from '../composables/undoRedo'
 import ResetButton from './ResetButton.vue'
 import ShuffleButton from './ShuffleButton.vue'
 import SwitchMode from './SwitchMode.vue'
+import HareLogo from '../../components/HareLogo.vue'
 
 const { canRedo, canUndo, redo, undo } = useUndoRedo()
 const { isCodeVisible, toggleCode } = useCodePanel()
@@ -33,6 +34,7 @@ useKeyPress('ArrowRight', () => redo(), { enabled: canRedo })
     <div class="flex h-14 w-full max-w-[1400px] items-center justify-between min-[1200px]:h-14">
       <div class="flex items-center gap-4">
         <a href="/" class="inline-flex items-center gap-2.5 font-semibold">
+          <HareLogo class="size-6" />
           <span class="text-lg font-semibold">HareUI</span>
         </a>
         <div class="flex items-center gap-3">

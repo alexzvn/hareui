@@ -1,5 +1,6 @@
 <script setup lang="ts">
 import { Avatar, Card } from '@hareui/vue'
+import HareLogo from '../../HareLogo.vue'
 import VerifiedBadgeIcon from '../icons/VerifiedBadgeIcon.vue'
 </script>
 
@@ -7,8 +8,11 @@ import VerifiedBadgeIcon from '../icons/VerifiedBadgeIcon.vue'
   <Card class="w-full items-start justify-center xl:w-[400px]" :ui="{ header: 'items-top w-full flex-row justify-between', content: 'flex-row text-start', footer: 'gap-2' }">
     <template #header>
       <div class="flex items-center gap-3">
-        <!-- HeroUI shows its logo here; HareUI has no logo yet, so the fallback initial stands in. -->
-        <Avatar size="sm" fallback="H" />
+        <Avatar size="sm">
+          <template #fallback>
+            <HareLogo class="size-5" />
+          </template>
+        </Avatar>
         <div class="flex h-full flex-col items-start justify-center">
           <div class="flex items-center gap-0.5">
             <span class="text-sm leading-4 font-semibold">HareUI</span>
