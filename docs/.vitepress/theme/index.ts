@@ -12,6 +12,8 @@ import ColorSectionPrimitive from './components/ColorSectionPrimitive.vue'
 import ColorSectionFormField from './components/ColorSectionFormField.vue'
 import ComponentsCategory from './components/ComponentsCategory.vue'
 import RelatedComponents from './components/RelatedComponents.vue'
+import Faq from './components/Faq.vue'
+import FaqItem from './components/FaqItem.vue'
 import './style.css'
 
 export default {
@@ -28,6 +30,8 @@ export default {
     app.component('ColorSectionFormField', ColorSectionFormField)
     app.component('ComponentsCategory', ComponentsCategory)
     app.component('RelatedComponents', RelatedComponents)
+    app.component('Faq', Faq)
+    app.component('FaqItem', FaqItem)
     app.component('Icon', Icon)
   },
 } satisfies Theme
