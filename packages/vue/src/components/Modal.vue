@@ -169,9 +169,12 @@ onBeforeUnmount(() => {
         :style="{ '--visual-viewport-height': visualViewportHeight }"
         :class="ui.backdrop({ class: props.ui?.backdrop })"
       >
-        <!-- data-state mirrors Reka's overlay/content so container enter/exit animations (theme and user `data-[state=…]:` classes) run -->
+        <!-- data-state mirrors Reka's overlay/content so container enter/exit animations (theme and user `data-[state=…]:` classes) run.
+             force-mount: the dialog itself has no exit animation, so its own Presence would unmount it at once and the
+             container would zoom/fade out empty; the overlay's Presence unmounts it with the backdrop instead. -->
         <div data-slot="modal-container" :data-state="isOpen ? 'open' : 'closed'" :data-placement="placement" :class="ui.container({ class: props.ui?.container })">
           <DialogContent
+            force-mount
             data-slot="modal-dialog"
             :data-placement="placement"
             v-bind="slots.description ? {} : { 'aria-describedby': undefined }"
