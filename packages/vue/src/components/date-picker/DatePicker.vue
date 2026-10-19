@@ -1,6 +1,7 @@
 <script lang="ts">
 import type { DateFieldRootProps, DateValue } from 'reka-ui'
 import type { ValidateFn, ValidationResult } from '../../composables/useFieldValidation'
+import type { PortalTarget } from '../../config'
 import type { ComponentSlots } from '../../types/tv'
 import type { DateInputGroupProps } from '../date-input-group/DateInputGroup.vue'
 import type { ValidationBehavior } from '../form/context'
@@ -17,6 +18,11 @@ type DateStep = NonNullable<DateFieldRootProps['step']>
 type DateUnavailableMatcher = NonNullable<DateFieldRootProps['isDateUnavailable']>
 
 export interface DatePickerProps {
+  /**
+   * Renders the calendar popover in a portal. `true` portals to `document.body`, a selector string or element is used as the teleport target, and `false` disables portalling.
+   * Falls back to `createHareUI({ portal })`, then `true`.
+   */
+  portal?: PortalTarget
   /** Label text rendered above the group. */
   label?: string
   /** Accessible label for the calendar inside the popover. HeroUI's demos set this independently of `label`. */
@@ -149,6 +155,7 @@ import type { ComponentPublicInstance } from 'vue'
 import { computed, ref, useAttrs, useId, useSlots, useTemplateRef } from 'vue'
 import { useComponentUI } from '../../composables/useComponentUI'
 import { useFieldValidation } from '../../composables/useFieldValidation'
+import { usePortal } from '../../composables/usePortal'
 import Calendar from '../calendar/Calendar.vue'
 import DateInputGroup, { dropDanglingTimeZoneSeparator, wrapBidiIsolate } from '../date-input-group/DateInputGroup.vue'
 import Description from '../description/Description.vue'
@@ -157,7 +164,8 @@ import Label from '../label/Label.vue'
 
 // `invalid: undefined`/`open: undefined`: an absent boolean would cast to `false`, which would count as
 // controlled-valid/controlled-closed and hide validation errors / force the popover shut
-const props = withDefaults(defineProps<DatePickerProps>(), { invalid: undefined, open: undefined, defaultOpen: false })
+const props = withDefaults(defineProps<DatePickerProps>(), { invalid: undefined, open: undefined, portal: undefined, defaultOpen: false })
+const portalTarget = usePortal(() => props.portal)
 defineOptions({ inheritAttrs: false })
 const emit = defineEmits<DatePickerEmits>()
 const slots = defineSlots<DatePickerSlots>()
@@ -377,7 +385,7 @@ const groupUiProps = computed<DateInputGroupProps['ui']>(() => ({
         </FieldError>
       </template>
     </DateFieldRoot>
-    <PopoverPortal>
+    <PopoverPortal :disabled="portalTarget.disabled" :to="portalTarget.to">
       <PopoverContent
         data-slot="date-picker-popover"
         side="bottom"

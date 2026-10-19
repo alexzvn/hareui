@@ -2,6 +2,7 @@
 import type { DateValue } from '@internationalized/date'
 import type { DateRangePickerRootProps } from 'reka-ui'
 import type { ValidateFn, ValidationResult } from '../../composables/useFieldValidation'
+import type { PortalTarget } from '../../config'
 import type { ComponentSlots } from '../../types/tv'
 import type { DateInputGroupProps } from '../date-input-group/DateInputGroup.vue'
 import type { ValidationBehavior } from '../form/context'
@@ -24,6 +25,11 @@ export interface DateRangeValue {
 }
 
 export interface DateRangePickerProps {
+  /**
+   * Renders the calendar popover in a portal. `true` portals to `document.body`, a selector string or element is used as the teleport target, and `false` disables portalling.
+   * Falls back to `createHareUI({ portal })`, then `true`.
+   */
+  portal?: PortalTarget
   /** Label text rendered above the group. */
   label?: string
   /** Accessible label for the range calendar inside the popover. */
@@ -170,6 +176,7 @@ import type { ComponentPublicInstance } from 'vue'
 import { computed, ref, shallowRef, useAttrs, useId, useTemplateRef, watch } from 'vue'
 import { useComponentUI } from '../../composables/useComponentUI'
 import { useFieldValidation } from '../../composables/useFieldValidation'
+import { usePortal } from '../../composables/usePortal'
 import DateInputGroup, { dropDanglingTimeZoneSeparator, wrapBidiIsolate } from '../date-input-group/DateInputGroup.vue'
 import Description from '../description/Description.vue'
 import FieldError from '../field-error/FieldError.vue'
@@ -178,7 +185,8 @@ import RangeCalendar from '../range-calendar/RangeCalendar.vue'
 
 // `invalid: undefined`/`open: undefined`: an absent boolean would cast to `false`, which would count as
 // controlled-valid/controlled-closed and hide validation errors / force the popover shut
-const props = withDefaults(defineProps<DateRangePickerProps>(), { invalid: undefined, open: undefined, defaultOpen: false, inputContainer: false })
+const props = withDefaults(defineProps<DateRangePickerProps>(), { invalid: undefined, open: undefined, portal: undefined, defaultOpen: false, inputContainer: false })
+const portalTarget = usePortal(() => props.portal)
 defineOptions({ inheritAttrs: false })
 const emit = defineEmits<DateRangePickerEmits>()
 const slots = defineSlots<DateRangePickerSlots>()
@@ -477,7 +485,7 @@ function focusFirstSegment() {
         <slot name="error" v-bind="validation">{{ errorMessage ?? validation.validationErrors.join(' ') }}</slot>
       </FieldError>
     </DateRangePickerField>
-    <PopoverPortal>
+    <PopoverPortal :disabled="portalTarget.disabled" :to="portalTarget.to">
       <PopoverContent
         data-slot="date-range-picker-popover"
         side="bottom"

@@ -1,5 +1,6 @@
 <script lang="ts">
 import type { ToastQueue, ToastContentValue as ToastContentValueType } from './toastQueue'
+import type { PortalTarget } from '../../config'
 import type { ComponentSlots, ComponentVariants } from '../../types/tv'
 import theme from './theme'
 
@@ -51,11 +52,10 @@ export interface ToastProviderProps {
    */
   ariaLabel?: string
   /**
-   * Where the region is teleported. `true` teleports to `body`, `false` renders in place,
-   * a string or element teleports to that target.
-   * @defaultValue true
+   * Renders the toast region in a portal. `true` portals to `document.body`, a selector string or element is used as the teleport target, and `false` disables portalling.
+   * Falls back to `createHareUI({ portal })`, then `true`.
    */
-  portal?: boolean | string | HTMLElement
+  portal?: PortalTarget
   /** Additional classes merged into the region element. */
   class?: any
   /** Per-slot class overrides, shared by every rendered toast. */
@@ -84,6 +84,7 @@ const MODIFIER_PROPS = ['altKey', 'ctrlKey', 'metaKey', 'shiftKey'] as const
 import type { QueuedToast } from './toastQueue'
 import { computed, onBeforeUnmount, onMounted, reactive, ref, useSlots, watch } from 'vue'
 import { useComponentUI } from '../../composables/useComponentUI'
+import { usePortal } from '../../composables/usePortal'
 import { toastQueue as defaultToastQueue } from './useToast'
 import ToastItem from './ToastItem.vue'
 
@@ -94,8 +95,9 @@ const props = withDefaults(defineProps<ToastProviderProps>(), {
   hotkey: () => DEFAULT_HOTKEY,
   scaleFactor: DEFAULT_SCALE_FACTOR,
   width: DEFAULT_TOAST_WIDTH,
-  portal: true,
+  portal: undefined,
 })
+const portalTarget = usePortal(() => props.portal)
 const slots = useSlots()
 defineSlots<ToastProviderSlots>()
 
@@ -150,7 +152,9 @@ function onFocusOut(event: FocusEvent) {
 }
 function onGlobalPointerOver(event: PointerEvent) {
   const node = regionEl.value
-  if (!node || event.pointerType === 'touch' || node.contains(event.target as Node))
+  // The composed path's first node: inside a shadow root `event.target` is the shadow host.
+  const target = event.composedPath()[0]
+  if (!node || event.pointerType === 'touch' || (target instanceof Node && node.contains(target)))
     return
   pointerWithin = false
   collapseIfOutside()
@@ -350,7 +354,7 @@ const renderItems = computed<RenderItem[]>(() => {
 </script>
 
 <template>
-  <Teleport :to="portal === true || portal === false ? 'body' : portal" :disabled="portal === false">
+  <Teleport :disabled="portalTarget.disabled" :to="portalTarget.to">
     <div
       v-if="visibleToasts.length > 0"
       ref="regionEl"

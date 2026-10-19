@@ -1,4 +1,5 @@
 <script lang="ts">
+import type { PortalTarget } from '../../config'
 import type { ComponentSlots } from '../../types/tv'
 import theme from './theme'
 
@@ -55,11 +56,10 @@ export interface TooltipProps {
    */
   disabled?: boolean
   /**
-   * Where the tooltip is teleported. `true` teleports to `body`, `false` renders in place,
-   * a string or element teleports to that target.
-   * @defaultValue true
+   * Renders the tooltip in a portal. `true` portals to `document.body`, a selector string or element is used as the teleport target, and `false` disables portalling.
+   * Falls back to `createHareUI({ portal })`, then `true`.
    */
-  portal?: boolean | string | HTMLElement
+  portal?: PortalTarget
   /** Additional classes merged into the tooltip content element. */
   class?: any
   /** Per-slot class overrides. */
@@ -83,6 +83,7 @@ export interface TooltipEmits {
 import { computed, onBeforeUnmount, onMounted, ref, watch } from 'vue'
 import { TooltipArrow, TooltipContent, TooltipPortal, TooltipProvider, TooltipRoot, TooltipTrigger } from 'reka-ui'
 import { useComponentUI } from '../../composables/useComponentUI'
+import { usePortal } from '../../composables/usePortal'
 
 // `open: undefined` stops Vue casting an absent boolean prop to `false`, so uncontrolled mode and `defaultOpen` apply
 const props = withDefaults(defineProps<TooltipProps>(), {
@@ -94,8 +95,9 @@ const props = withDefaults(defineProps<TooltipProps>(), {
   side: 'top',
   align: 'center',
   arrow: false,
-  portal: true,
+  portal: undefined,
 })
+const portalTarget = usePortal(() => props.portal)
 const emit = defineEmits<TooltipEmits>()
 defineSlots<TooltipSlots>()
 
@@ -192,7 +194,7 @@ onBeforeUnmount(() => {
         <TooltipTrigger :ref="(c: any) => { triggerEl = c?.$el }" as-child @pointerenter="onPointerEnter" @pointerleave="onPointerLeave">
           <slot :open="rootOpen" />
         </TooltipTrigger>
-        <TooltipPortal :disabled="portal === false" :to="typeof portal === 'boolean' ? 'body' : portal">
+        <TooltipPortal :disabled="portalTarget.disabled" :to="portalTarget.to">
           <TooltipContent
             :side="side"
             :align="align"

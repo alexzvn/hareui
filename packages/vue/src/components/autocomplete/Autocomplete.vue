@@ -1,5 +1,6 @@
 <script lang="ts">
 import type { ValidateFn, ValidationResult } from '../../composables/useFieldValidation'
+import type { PortalTarget } from '../../config'
 import type { ComponentSlots } from '../../types/tv'
 import type { ValidationBehavior } from '../form/context'
 import type { ListBoxEntry, ListBoxItem, ListBoxItemSlotProps, ListBoxSection, ListBoxValue } from '../list-box/ListBox.vue'
@@ -13,6 +14,11 @@ type Autocomplete = typeof theme
 export type AutocompleteValue = ListBoxValue | ListBoxValue[] | null
 
 export interface AutocompleteProps<T extends ListBoxItem = ListBoxItem> {
+  /**
+   * Renders the listbox popover in a portal. `true` portals to `document.body`, a selector string or element is used as the teleport target, and `false` disables portalling.
+   * Falls back to `createHareUI({ portal })`, then `true`.
+   */
+  portal?: PortalTarget
   /** Options, sections (`{ type: 'section', label, items }`) and separators (`{ type: 'separator' }`), as in ListBox. */
   items?: ListBoxEntry<T>[]
   /**
@@ -195,8 +201,10 @@ const ListboxBridge = defineComponent({
 <script setup lang="ts" generic="T extends ListBoxItem = ListBoxItem">
 import { ListboxContent, ListboxRoot, PopoverAnchor, PopoverContent, PopoverPortal, PopoverRoot, Primitive, useFilter } from 'reka-ui'
 import { computed, getCurrentInstance, nextTick, onBeforeUnmount, onMounted, ref, shallowRef, useAttrs, useId, useTemplateRef, watch } from 'vue'
+import { outsideEventTarget } from '../../composables/nestedLayer'
 import { useComponentUI } from '../../composables/useComponentUI'
 import { useFieldValidation } from '../../composables/useFieldValidation'
+import { usePortal } from '../../composables/usePortal'
 import listBoxTheme from '../list-box/theme'
 import searchFieldTheme from '../search-field/theme'
 import CloseButton from '../close-button/CloseButton.vue'
@@ -211,6 +219,7 @@ defineOptions({ inheritAttrs: false })
 
 // Absent booleans stay `undefined`: `open` → uncontrolled, `invalid` → validation decides, `loading` → no sentinel
 const props = withDefaults(defineProps<AutocompleteProps<T>>(), {
+  portal: undefined,
   selectionMode: 'single',
   defaultValue: undefined,
   placeholder: 'Select an item',
@@ -222,6 +231,7 @@ const props = withDefaults(defineProps<AutocompleteProps<T>>(), {
   invalid: undefined,
   loading: undefined,
 })
+const portalTarget = usePortal(() => props.portal)
 const emit = defineEmits<AutocompleteEmits>()
 const slots = defineSlots<AutocompleteSlots<T>>()
 const modelValue = defineModel<AutocompleteValue>()
@@ -434,7 +444,7 @@ function onCloseAutoFocus(event: Event) {
 // Presses on the trigger toggle it themselves; don't let them count as outside presses
 const trigger = useTemplateRef<HTMLElement>('trigger')
 function onOutside(event: Event) {
-  const target = (event as CustomEvent<{ originalEvent: Event }>).detail?.originalEvent?.target ?? event.target
+  const target = outsideEventTarget(event as CustomEvent<{ originalEvent: Event }>)
   if (target instanceof Node && trigger.value?.contains(target))
     event.preventDefault()
 }
@@ -820,7 +830,7 @@ watch(() => props.disabled, (disabled) => {
           </button>
         </div>
       </PopoverAnchor>
-      <PopoverPortal>
+      <PopoverPortal :disabled="portalTarget.disabled" :to="portalTarget.to">
         <PopoverContent
           role="dialog"
           tabindex="-1"
