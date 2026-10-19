@@ -62,3 +62,7 @@ description: Explore the full list of components available in the library. More 
 ## Utilities
 
 <ComponentsCategory category="Utilities" />
+
+## Utilities
+
+<ComponentsCategory category="Utilities" />
