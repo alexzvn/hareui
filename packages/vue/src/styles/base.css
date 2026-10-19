@@ -21,8 +21,9 @@
   border-color: var(--border, currentColor);
 }
 
-/* Keeps main page content interactive during view transitions */
-:root {
+/* Keeps main page content interactive during view transitions; `:host` so a shadow root gets the overlay levels too */
+:root,
+:host {
   view-transition-name: none;
 
   /**

@@ -51,7 +51,9 @@
     --tooltip-close-delay: 500ms;
   }
 
+  /* Bare `:host`: an unclassed shadow host gets the light theme, as `:root` does; the dark block below still wins */
   :root,
+  :host,
   .light,
   .default,
   [data-theme="light"],
