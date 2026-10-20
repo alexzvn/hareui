@@ -248,6 +248,29 @@ export const rabbitThemeValues: ThemeValues = {
   },
 } as const
 
+// Cloudflare Kumo (packages/kumo/src/styles/theme-kumo.css): pure neutrals, blue brand.
+export const kumoThemeValues: ThemeValues = {
+  base: BASE_FULL_LEFT,
+  chroma: 0.2324,
+  fontFamily: 'inter',
+  formRadius: 'large',
+  hue: 260,
+  lightness: 0.5772,
+  radius: 'medium',
+  semanticOverrides: {
+    dark: {
+      danger: { color: 'oklch(0.577 0.245 27.325)' },
+      success: { color: 'oklch(0.765 0.177 163.223)' },
+      warning: { color: 'oklch(0.645 0.168 50)' },
+    },
+    light: {
+      danger: { color: 'oklch(0.637 0.237 25.331)' },
+      success: { color: 'oklch(0.596 0.145 163.225)' },
+      warning: { color: 'oklch(0.739 0.177 58.2)' },
+    },
+  },
+} as const
+
 export const themeIds = [
   'default',
   'sky',
@@ -260,6 +283,7 @@ export const themeIds = [
   'airbnb',
   'discord',
   'rabbit',
+  'kumo',
 ] as const
 
 export type ThemeId = (typeof themeIds)[number]
@@ -269,6 +293,7 @@ export const themeValuesById: Record<ThemeId, ThemeValues> = {
   coinbase: coinbaseThemeValues,
   default: defaultThemeValues,
   discord: discordThemeValues,
+  kumo: kumoThemeValues,
   lavender: lavenderThemeValues,
   mint: mintThemeValues,
   netflix: netflixThemeValues,

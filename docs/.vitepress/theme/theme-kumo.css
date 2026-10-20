@@ -1,0 +1,160 @@
+/* ============================================================================
+   Kumo theme: Cloudflare Kumo's color tokens (packages/kumo/src/styles/theme-kumo.css)
+   mapped onto HeroUI variables, plus Kumo's raised button treatment
+   (packages/kumo/src/components/button/button.tsx). Spacing, sizes and radii stay HeroUI's.
+   ============================================================================ */
+@layer base {
+  [data-design-theme="kumo"]:not(.dark):not([data-theme="dark"]) {
+    --background: oklch(98.75% 0 0);
+    --border: oklch(14.5% 0 0 / 0.1);
+    --default: oklch(92.2% 0 0);
+    --default-foreground: oklch(21% 0.006 285.885);
+    --field-background: oklch(100% 0 0);
+    --field-border: oklch(14.5% 0 0 / 0.1);
+    --field-foreground: oklch(21% 0.006 285.885);
+    --field-placeholder: oklch(70.8% 0 0);
+    --foreground: oklch(21% 0.006 285.885);
+    --link: oklch(42.4% 0.199 265.638);
+    --muted: oklch(55.6% 0 0);
+    --overlay: oklch(97.5% 0 0);
+    --overlay-foreground: oklch(21% 0.006 285.885);
+    --scrollbar: oklch(87% 0 0);
+    --segment: oklch(100% 0 0);
+    --segment-foreground: oklch(21% 0.006 285.885);
+    --separator: oklch(93.5% 0 0);
+    --surface: oklch(100% 0 0);
+    --surface-foreground: oklch(21% 0.006 285.885);
+    --surface-secondary: oklch(96% 0 0);
+    --surface-secondary-foreground: oklch(21% 0.006 285.885);
+    --surface-tertiary: oklch(92.2% 0 0);
+    --surface-tertiary-foreground: oklch(21% 0.006 285.885);
+    --accent: oklch(57.72% 0.2324 260);
+    --accent-foreground: oklch(100% 0 0);
+    --focus: oklch(57.72% 0.2324 260);
+    --success: oklch(59.6% 0.145 163.225);
+    --success-foreground: oklch(100% 0 0);
+    --warning: oklch(73.9% 0.177 58.2);
+    --warning-foreground: oklch(21% 0.006 285.885);
+    --danger: oklch(63.7% 0.237 25.331);
+    --danger-foreground: oklch(100% 0 0);
+    --chart-1: oklch(from var(--accent) calc(l - 0.24) c h);
+    --chart-2: oklch(from var(--accent) calc(l - 0.12) c h);
+    --chart-3: var(--accent);
+    --chart-4: oklch(from var(--accent) calc(l + 0.12) c h);
+    --chart-5: oklch(from var(--accent) calc(l + 0.24) c h);
+    /* Kumo `tint` (secondary button hover fill) and `text-kumo-danger` (secondary-destructive label) */
+    --kumo-tint: oklch(97% 0 0);
+    --kumo-danger-text: oklch(50.5% 0.213 27.518);
+  }
+
+  [data-design-theme="kumo"].dark,
+  [data-design-theme="kumo"][data-theme="dark"] {
+    color-scheme: dark;
+    --background: oklch(10% 0 0);
+    --border: oklch(32% 0 0);
+    --default: oklch(26.9% 0 0);
+    --default-foreground: oklch(97% 0 0);
+    --field-background: oklch(21% 0.006 285.885);
+    --field-border: oklch(32% 0 0);
+    --field-foreground: oklch(97% 0 0);
+    --field-placeholder: oklch(55.6% 0 0);
+    --foreground: oklch(97% 0 0);
+    --link: oklch(70.7% 0.165 254.624);
+    --muted: oklch(70.8% 0 0);
+    --overlay: oklch(26.9% 0 0);
+    --overlay-foreground: oklch(97% 0 0);
+    --scrollbar: oklch(37.1% 0 0);
+    --segment: oklch(37.1% 0 0);
+    --segment-foreground: oklch(97% 0 0);
+    --separator: oklch(26.9% 0 0);
+    --surface: oklch(17% 0 0);
+    --surface-foreground: oklch(97% 0 0);
+    --surface-secondary: oklch(21% 0.006 285.885);
+    --surface-secondary-foreground: oklch(97% 0 0);
+    --surface-tertiary: oklch(26.9% 0 0);
+    --surface-tertiary-foreground: oklch(97% 0 0);
+    /* Kumo dark brand: color-mix(in oklch, oklch(0.5772 0.2324 260), black 10%) */
+    --accent: oklch(51.95% 0.2092 260);
+    --accent-foreground: oklch(100% 0 0);
+    --focus: oklch(51.95% 0.2092 260);
+    --success: oklch(76.5% 0.177 163.223);
+    --success-foreground: oklch(21% 0.006 285.885);
+    --warning: oklch(64.5% 0.168 50);
+    --warning-foreground: oklch(21% 0.006 285.885);
+    --danger: oklch(57.7% 0.245 27.325);
+    --danger-foreground: oklch(100% 0 0);
+    --chart-1: oklch(from var(--accent) calc(l - 0.24) c h);
+    --chart-2: oklch(from var(--accent) calc(l - 0.12) c h);
+    --chart-3: var(--accent);
+    --chart-4: oklch(from var(--accent) calc(l + 0.12) c h);
+    --chart-5: oklch(from var(--accent) calc(l + 0.24) c h);
+    --kumo-tint: oklch(26.9% 0 0);
+    --kumo-danger-text: oklch(70.4% 0.191 22.216);
+  }
+}
+
+/*
+ * Kumo buttons. Unlayered so they beat the Button's utilities; variants are matched by the
+ * `--button-bg` declarations in packages/vue/src/components/button/theme.ts.
+ * The Tailwind ring variables stay in every box-shadow so `focus-visible:status-focused` still shows.
+ */
+
+/* primary / danger -> Kumo `primary` / `destructive`: top-lit gradient, darker 1px edge, inner highlight */
+[data-design-theme="kumo"] [data-slot="button"][class*="[--button-bg:var(--accent)]"] {
+  --kumo-emphasis: var(--accent);
+}
+
+[data-design-theme="kumo"] [data-slot="button"][class*="[--button-bg:var(--danger)]"] {
+  --kumo-emphasis: var(--danger);
+}
+
+[data-design-theme="kumo"] [data-slot="button"]:is([class*="[--button-bg:var(--accent)]"], [class*="[--button-bg:var(--danger)]"]) {
+  --kumo-emphasis-bg: color-mix(in oklch, var(--kumo-emphasis), white 30%);
+  --kumo-emphasis-from: color-mix(in oklch, var(--kumo-emphasis), white 15%);
+  background-color: var(--kumo-emphasis-bg);
+  background-image: linear-gradient(to bottom, var(--kumo-emphasis-from), var(--kumo-emphasis));
+  box-shadow:
+    var(--tw-inset-shadow, 0 0 #0000),
+    var(--tw-inset-ring-shadow, 0 0 #0000),
+    inset 0 1px 0 0 var(--kumo-emphasis-bg),
+    var(--tw-ring-offset-shadow, 0 0 #0000),
+    var(--tw-ring-shadow, 0 0 #0000),
+    0 0 0 1px color-mix(in oklch, var(--kumo-emphasis), black 10%),
+    0 1px 2px 0 rgb(0 0 0 / 0.05),
+    var(--tw-shadow, 0 0 #0000);
+}
+
+[data-design-theme="kumo"] [data-slot="button"]:is([class*="[--button-bg:var(--accent)]"], [class*="[--button-bg:var(--danger)]"]):hover {
+  --kumo-emphasis-from: var(--kumo-emphasis-bg);
+}
+
+/* secondary / tertiary / danger-soft -> Kumo `secondary` / `secondary-destructive`: raised base with a hairline edge */
+[data-design-theme="kumo"] [data-slot="button"]:is([class*="[--button-bg:var(--default)]"], [class*="[--button-bg:var(--danger-soft)]"]) {
+  --button-bg: var(--surface);
+  --button-bg-hover: var(--kumo-tint);
+  --button-bg-pressed: var(--kumo-tint);
+  --kumo-edge: var(--border);
+  box-shadow:
+    var(--tw-inset-shadow, 0 0 #0000),
+    var(--tw-inset-ring-shadow, 0 0 #0000),
+    var(--tw-ring-offset-shadow, 0 0 #0000),
+    var(--tw-ring-shadow, 0 0 #0000),
+    0 0 0 1px var(--kumo-edge),
+    0 1px 2px 0 rgb(0 0 0 / 0.05),
+    var(--tw-shadow, 0 0 #0000);
+}
+
+/* Kumo's secondary label is neutral (`text-kumo-default`), not HeroUI's accent-tinted one */
+[data-design-theme="kumo"] [data-slot="button"][class*="[--button-bg:var(--default)]"] {
+  --button-fg: var(--default-foreground);
+}
+
+[data-design-theme="kumo"] [data-slot="button"][class*="[--button-bg:var(--danger-soft)]"] {
+  --button-fg: var(--kumo-danger-text);
+  --button-bg-hover: var(--surface);
+  --button-bg-pressed: var(--surface);
+}
+
+[data-design-theme="kumo"] [data-slot="button"][class*="[--button-bg:var(--danger-soft)]"]:hover {
+  --kumo-edge: color-mix(in oklch, var(--danger) 30%, transparent);
+}
