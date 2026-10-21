@@ -73,3 +73,15 @@ Changes to make:
 - `createHeroUse` / `HeroUseConfig` / `heroUseConfigKey` → `createHareUI` / `HareUIConfig` / `hareUIConfigKey`, no deprecated aliases (pre-1.0, never published). Internal `Symbol`/`useId` prefixes are now `hareui-`.
 - Docs site URL is `https://hareui.alexzvn.me` (matches `docs/public/CNAME`), not `hareui.dev`.
 - Notes under `agents/` keep the old name as history; only this entry records the change.
+
+## Dashboard dock breakpoint (orchestrator for the user, 2026-10-21)
+
+- **DashboardSidebar docks at `md` (768px), not Nuxt UI's `lg`.** This deviates from Nuxt on purpose to match HeroUI Pro's AppLayout, which docks its sidebar at `md` (measured: a 814px preview viewport is docked at 1440, a 694px one isn't at 1280). The whole dock moves together: sidebar `md:flex`, sheet content and overlay `md:hidden`, DashboardSidebarToggle and DashboardNavbar's toggle `md:hidden`, DashboardSidebarCollapse `md:flex`, DashboardResizeHandle `md:block`, and DashboardPanel's side-by-side border and sized width `md:`. DashboardNavbar's centre slot (`lg:flex`) and demo panels hidden `max-lg` are about space, not the dock, and stay at `lg`.
+- Docs previews render 1:1 (no scaling). Desktop is the full preview box width, as on Pro, and the box is at least 768px wide in a 1440 window, so the Desktop preset shows the docked layout there.
+
+## User-facing wording: references, not provenance (user, 2026-10-21)
+
+- **HeroUI Pro is never named in anything user-facing**; Nuxt UI and HeroUI are named only where stating the port relationship (getting-started, releases) or mirroring heroui.com content, and Nuxt UI at most once (`getting-started/index.md`, API conventions). Describe the behaviour itself instead of "like X's Y".
+- User-facing = `docs/docs/**/*.md`, `docs/demos/**` (comments show in code blocks), `packages/vue/README.md`, and **every comment in `packages/vue/src`** (JSDoc renders in `<ApiTable>`; docs pages link `links.styles` straight to `theme.ts` on GitHub; the repo is public).
+- `src` comments state behaviour and measured values only (sizes, paddings, timings, breakpoints), never where they were measured. Provenance (Nuxt UI structure/API, HeroUI Pro visual reference) lives in this file only; see the dock-breakpoint entry above. Third-party notices: `packages/vue/THIRD_PARTY_LICENSES.md` (HeroUI Apache-2.0, Nuxt UI MIT, Gravity UI Icons MIT).
+- Inline icons must come from `@gravity-ui/icons` (MIT); say so in the JSDoc (`DashboardSidebarToggle` → `bars`, `DashboardSidebarCollapse` → `layout-side-content-left/right`).
