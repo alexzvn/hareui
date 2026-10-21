@@ -45,6 +45,7 @@
   --shadow-surface: var(--surface-shadow);
   --shadow-overlay: var(--overlay-shadow);
   --shadow-field: var(--field-shadow);
+  --shadow-sidebar-edge: var(--sidebar-edge-shadow);
 
   /* Form Field Tokens */
   --color-field: var(--field-background, var(--default));

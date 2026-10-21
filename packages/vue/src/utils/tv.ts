@@ -7,8 +7,8 @@ export type { ClassValue } from 'tailwind-variants'
  * tailwind-merge configuration matching HeroUI's Tailwind theme:
  * - `text-*` must not evict an earlier `leading-*` (in Tailwind v4 the font size only sets the
  *   line-height fallback `var(--tw-leading, …)`; HeroUI relies on this, e.g. Chip sizes).
- * - HeroUI's custom theme keys (`shadow-surface`, `rounded-field`, `animate-spin-fast`, …) must
- *   conflict with the built-in ones of the same group (e.g. `shadow-none` overrides `shadow-surface`).
+ * - HeroUI's custom theme keys (`shadow-surface`, `rounded-field`, `animate-spin-fast`, …) and HareUI's own
+ *   (`shadow-sidebar-edge`) must conflict with the built-in ones of the same group (e.g. `shadow-none` overrides `shadow-surface`).
  * - An arbitrary length size (`text-[10px]`) must not evict a named size (`text-xs`) set earlier.
  *   Tailwind emits no line-height for arbitrary sizes, so HeroUI's BEM base (`.description { @apply text-xs }`
  *   in a lower layer) keeps text-xs's line-height under a `text-[10px]` override. Keeping both classes
@@ -32,7 +32,7 @@ export const tv = /* @__PURE__ */ createTV({
     },
     extend: {
       theme: {
-        'shadow': ['surface', 'overlay', 'field'],
+        'shadow': ['surface', 'overlay', 'field', 'sidebar-edge'],
         'radius': ['field'],
         'animate': ['spin-fast', 'skeleton', 'caret-blink'],
         'ease': [
