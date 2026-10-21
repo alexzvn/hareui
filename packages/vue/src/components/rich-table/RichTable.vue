@@ -431,7 +431,9 @@ const tableOptions = computed<TableOptionsWithReactiveData<T>>(() => ({
   initialState: props.initialState,
   mergeOptions: props.mergeOptions,
   renderFallbackValue: props.renderFallbackValue,
-  data: data.value,
+  // Pass the ref, not its value: with a plain array TanStack's non-reactive path wraps the options in another
+  // mergeProxy on every recompute, and lookups through the nesting grow exponentially until the page freezes.
+  data,
   columns: columns.value,
   meta: props.meta ?? {},
   getCoreRowModel: getCoreRowModel(),

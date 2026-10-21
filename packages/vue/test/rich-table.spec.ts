@@ -456,3 +456,17 @@ describe('RichTable', () => {
     })
   })
 })
+
+describe('RichTable option updates', () => {
+  it('stays fast across many data and sorting updates', async () => {
+    const wrapper = mountTable({ props: { data: people, columns, getRowId: (row: Person) => row.id } })
+    const started = performance.now()
+    for (let i = 0; i < 40; i++) {
+      await wrapper.setProps({ data: [...people, { id: `n${i}`, name: `New ${i}`, role: 'Dev', age: i }], getRowId: (row: Person) => row.id })
+      await wrapper.get('[data-testid="sort-name"]').trigger('click')
+    }
+    expect(wrapper.findAll('tbody tr')).toHaveLength(4)
+    expect(wrapper.text()).toContain('New 39')
+    expect(performance.now() - started).toBeLessThan(2000)
+  })
+})
