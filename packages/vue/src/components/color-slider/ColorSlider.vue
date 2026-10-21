@@ -136,6 +136,7 @@ import { computed, ref, watch } from 'vue'
 import { useColorPickerContext } from '../color-picker/context'
 import { useComponentUI } from '../../composables/useComponentUI'
 import { captureOnDraggedThumb } from '../../composables/thumbPointerCapture'
+import { refElement } from '../../composables/useFirstChild'
 import Label from '../label/Label.vue'
 
 const props = withDefaults(defineProps<ColorSliderProps>(), {
@@ -224,8 +225,8 @@ const formValue = computed(() => String(props.channel === 'alpha' ? channelValue
 // overridden by props; they're rewritten on the thumb element after each render instead.
 const thumbRef = ref<{ $el?: Element } | null>(null)
 watch([channelValue, () => props.channel, thumbRef], () => {
-  const el = thumbRef.value?.$el
-  if (props.channel !== 'alpha' || !(el instanceof Element))
+  const el = refElement(thumbRef.value)
+  if (props.channel !== 'alpha' || !el)
     return
   el.setAttribute('aria-valuenow', formValue.value)
   el.setAttribute('aria-valuemin', '0')
