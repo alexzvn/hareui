@@ -1,0 +1,224 @@
+<script setup lang="ts">
+import type { NavigationMenuItem } from './NavigationMenu.vue'
+import type { ResolvedLink } from './LinkResolver'
+import {
+  AccordionItem,
+  AccordionRoot,
+  AccordionTrigger,
+  NavigationMenuContent,
+  NavigationMenuItem as RekaNavigationMenuItem,
+  NavigationMenuLink,
+  NavigationMenuTrigger,
+} from 'reka-ui'
+import type { DropdownEntry, DropdownItem, DropdownValue } from '../dropdown/Dropdown.vue'
+import { computed } from 'vue'
+import Dropdown from '../dropdown/Dropdown.vue'
+import Tooltip from '../tooltip/Tooltip.vue'
+import { SlotOutlet, slotName, useNavigationMenu } from './context'
+import { EllipsisVerticalIcon, NavigationMenuIcon } from './icons'
+import LinkResolver from './LinkResolver'
+import NavigationMenuAccordionContent from './NavigationMenuAccordionContent.vue'
+import NavigationMenuChildLink from './NavigationMenuChildLink.vue'
+import NavigationMenuLinkBody from './NavigationMenuLinkBody.vue'
+import NavigationMenuPopover from './NavigationMenuPopover.vue'
+
+// One item of the menu (recursive for vertical children).
+const props = withDefaults(defineProps<{
+  item: NavigationMenuItem
+  index: number
+  /** Nesting depth; 0 for top-level items. */
+  level?: number
+  /** Index of the list (group) the item belongs to. */
+  listIndex?: number
+}>(), { level: 0, listIndex: 0 })
+
+const ctx = useNavigationMenu()
+const { ui } = ctx
+
+// Renders a slot's children as-is: the "no tooltip / no popover" wrapper.
+const Passthrough = (_: unknown, { slots }: { slots: { default?: () => unknown } }) => slots.default?.()
+
+const vertical = computed(() => ctx.props.orientation === 'vertical')
+const collapsed = computed(() => !!ctx.props.collapsed)
+const accordion = computed(() => vertical.value && !collapsed.value)
+const hasChildren = computed(() => !!props.item.children?.length)
+const hasContentSlot = computed(() => !!ctx.slots[slotName(props.item, 'content')])
+const horizontalContent = computed(() => !vertical.value && (hasChildren.value || hasContentSlot.value))
+const label = computed(() => ctx.getLabel(props.item))
+const value = computed(() => ctx.getItemValue(props.item, props.index, props.level, props.listIndex))
+const isGroupLabel = computed(() => vertical.value && props.item.type === 'label')
+
+const popoverEnabled = computed(() => vertical.value && collapsed.value && hasChildren.value && (!!ctx.props.popover || !!props.item.popover))
+const tooltipEnabled = computed(() => (vertical.value && collapsed.value && (!!ctx.props.tooltip || !!props.item.tooltip)) || (!vertical.value && !!props.item.tooltip))
+const outer = computed(() => popoverEnabled.value ? NavigationMenuPopover : tooltipEnabled.value ? Tooltip : Passthrough)
+const outerProps = computed(() => {
+  if (popoverEnabled.value) {
+    return {
+      ...ctx.popoverProps.value,
+      ...(typeof props.item.popover === 'object' ? props.item.popover : {}),
+      class: ui.value.content({ class: [ctx.props.ui?.content, props.item.ui?.content] }),
+    }
+  }
+  if (tooltipEnabled.value)
+    return { text: label.value, ...ctx.tooltipProps.value, ...(typeof props.item.tooltip === 'object' ? props.item.tooltip : {}) }
+  return {}
+})
+
+// Per-item actions: vertical expanded rows with `actions` or an actions slot.
+const hasActions = computed(() => accordion.value && (!!props.item.actions?.length || !!ctx.slots[slotName(props.item, 'actions')]))
+
+function linkClass(active: boolean) {
+  return ui.value.link({
+    class: [ctx.props.ui?.link, props.item.ui?.link, props.item.class],
+    active: active || !!props.item.active,
+    disabled: !!props.item.disabled,
+    level: !vertical.value || props.level > 0,
+    actions: hasActions.value,
+  })
+}
+
+// A stable function ref: Vue calls it on mount and unmount only.
+let stopObservingActions: (() => void) | undefined
+function setActionsEl(el: unknown) {
+  stopObservingActions?.()
+  stopObservingActions = el instanceof HTMLElement ? ctx.observeActions(el) : undefined
+}
+
+// The entry a Dropdown `action` names: an item, or one inside a section or a submenu.
+function findAction(entries: DropdownEntry[], value: DropdownValue): DropdownItem | undefined {
+  for (const entry of entries) {
+    if ('value' in entry && entry.value === value)
+      return entry
+    const nested = 'items' in entry && entry.items ? findAction(entry.items, value) : undefined
+    if (nested)
+      return nested
+  }
+  return undefined
+}
+
+function onAction(value: DropdownValue) {
+  findAction(props.item.actions ?? [], value)?.onSelect?.()
+}
+
+type Kind = typeof NavigationMenuTrigger | typeof AccordionTrigger | typeof NavigationMenuLink
+function kindOf(link: ResolvedLink): Kind {
+  if (horizontalContent.value)
+    return NavigationMenuTrigger
+  if (accordion.value && hasChildren.value && !link.attrs.href)
+    return AccordionTrigger
+  return NavigationMenuLink
+}
+
+function onSelect(event: Event) {
+  if (!props.item.disabled)
+    props.item.onSelect?.(event)
+}
+
+// Reka's link emits `select`; triggers don't, so their clicks stand in for it.
+function kindProps(kind: Kind, link: ResolvedLink) {
+  if (kind === NavigationMenuLink)
+    return { 'asChild': true, 'active': link.active || !!props.item.active, 'onSelect': onSelect }
+  return { asChild: true, disabled: !!props.item.disabled, onClick: onSelect }
+}
+
+const activeOf = (link: ResolvedLink) => link.active || !!props.item.active
+</script>
+
+<template>
+  <component
+    :is="accordion ? AccordionItem : RekaNavigationMenuItem"
+    as="li"
+    v-bind="accordion ? { disabled: !!item.disabled } : {}"
+    :value="value"
+    :data-slot="level > 0 ? 'childItem' : 'item'"
+    :class="level > 0
+      ? ui.childItem({ class: [ctx.props.ui?.childItem, item.ui?.childItem] })
+      : ui.item({ class: [ctx.props.ui?.item, item.ui?.item] })"
+  >
+    <div v-if="isGroupLabel" data-slot="label" :class="ui.label({ class: [ctx.props.ui?.label, item.ui?.label, item.class] })">
+      <NavigationMenuLinkBody :item="item" :index="index" :active="false" trailing-trigger />
+    </div>
+
+    <LinkResolver v-else-if="item.type !== 'label'" v-slot="link" :item="item" :button="accordion && hasChildren && item.type === 'trigger'">
+      <component :is="hasActions ? 'div' : Passthrough" v-bind="hasActions ? { 'data-slot': 'linkRow', 'data-active': activeOf(link) || undefined, 'class': ui.linkRow({ class: [ctx.props.ui?.linkRow, item.ui?.linkRow] }) } : {}">
+        <component :is="outer" v-bind="outerProps">
+          <component :is="kindOf(link)" v-bind="kindProps(kindOf(link), link)">
+            <component
+              :is="link.as"
+              data-slot="link"
+              :class="linkClass(link.active)"
+              v-bind="link.attrs"
+            >
+              <NavigationMenuLinkBody :item="item" :index="index" :active="activeOf(link)" :trailing-trigger="!!link.attrs.href" />
+            </component>
+          </component>
+
+          <template v-if="popoverEnabled" #content="{ close }">
+            <SlotOutlet :name="slotName(item, 'content')" :slot-props="{ item, active: activeOf(link), index, ui, close }">
+              <ul data-slot="childList" :class="ui.childList({ class: [ctx.props.ui?.childList, item.ui?.childList] })">
+                <li data-slot="childLabel" :class="ui.childLabel({ class: [ctx.props.ui?.childLabel, item.ui?.childLabel] })">
+                  {{ label }}
+                </li>
+                <NavigationMenuChildLink v-for="(child, childIndex) in item.children" :key="childIndex" :child="child" :parent="item" />
+              </ul>
+            </SlotOutlet>
+          </template>
+        </component>
+
+        <!-- A sibling of the link, never inside it: laid over the row's end. -->
+        <div v-if="hasActions" :ref="setActionsEl" data-slot="linkActions" :class="ui.linkActions({ class: [ctx.props.ui?.linkActions, item.ui?.linkActions] })">
+          <SlotOutlet :name="slotName(item, 'actions')" :slot-props="{ item, index, active: activeOf(link), ui }" />
+          <Dropdown
+            v-if="item.actions?.length"
+            :items="item.actions"
+            side="right"
+            align="start"
+            :side-offset="6"
+            :disabled="!!item.disabled"
+            :class="ui.linkActionsMenu({ class: [ctx.props.ui?.linkActionsMenu, item.ui?.linkActionsMenu] })"
+            @action="onAction"
+          >
+            <button type="button" data-slot="linkAction" :aria-label="`More actions for ${label}`" :class="ui.linkAction({ class: [ctx.props.ui?.linkAction, item.ui?.linkAction] })">
+              <EllipsisVerticalIcon />
+            </button>
+            <template #item-leading="{ item: entry }">
+              <NavigationMenuIcon
+                v-if="entry.icon"
+                :icon="entry.icon"
+                data-slot="linkActionsItemIcon"
+                :class="ui.linkActionsItemIcon({ class: [ctx.props.ui?.linkActionsItemIcon, item.ui?.linkActionsItemIcon], danger: entry.variant === 'danger' })"
+              />
+            </template>
+          </Dropdown>
+        </div>
+      </component>
+
+      <NavigationMenuContent v-if="horizontalContent" v-bind="ctx.props.content" data-slot="content" :class="ui.content({ class: [ctx.props.ui?.content, item.ui?.content] })">
+        <SlotOutlet :name="slotName(item, 'content')" :slot-props="{ item, active: activeOf(link), index, ui }">
+          <ul data-slot="childList" :class="ui.childList({ class: [ctx.props.ui?.childList, item.ui?.childList] })">
+            <NavigationMenuChildLink v-for="(child, childIndex) in item.children" :key="childIndex" :child="child" :parent="item" detailed />
+          </ul>
+        </SlotOutlet>
+      </NavigationMenuContent>
+    </LinkResolver>
+
+    <NavigationMenuAccordionContent v-if="accordion && hasChildren" data-slot="content" :class="ui.content({ class: [ctx.props.ui?.content, item.ui?.content] })">
+      <AccordionRoot
+        v-bind="ctx.accordionProps.value"
+        :default-value="ctx.getAccordionDefaultValue(item.children!, level + 1, listIndex)"
+        as="ul"
+        data-slot="childList"
+        :class="ui.childList({ class: [ctx.props.ui?.childList, item.ui?.childList] })"
+      >
+        <NavigationMenuNode
+          v-for="(child, childIndex) in item.children"
+          :key="childIndex"
+          :item="child"
+          :index="childIndex"
+          :level="level + 1"
+          :list-index="listIndex"
+        />
+      </AccordionRoot>
+    </NavigationMenuAccordionContent>
+  </component>
+</template>
