@@ -13,6 +13,10 @@ links:
 import { Table } from '@hareui/vue'
 ```
 
+::: tip
+Table renders the rows you give it. To sort, filter, group, paginate or virtualize data in the browser, use [RichTable](./rich-table).
+:::
+
 <ComponentPreview name="table/basic" minHeight="320px" />
 
 ## Anatomy
