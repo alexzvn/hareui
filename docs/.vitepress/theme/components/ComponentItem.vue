@@ -12,8 +12,9 @@ const props = defineProps<{
   title: string
 }>()
 
-// HeroUI's `link no-underline` classes: `.link` is the Link component's base style.
-const linkClass = `${tv(linkTheme)().base()} no-underline`
+// HeroUI's `link no-underline` classes: `.link` is the Link component's base style. Titles keep the foreground colour
+// as on heroui.com; design themes that colour `--link` (e.g. Kumo) target inline prose links, not this grid.
+const linkClass = tv(linkTheme)().base({ class: 'no-underline text-foreground' })
 
 const href = computed(() => withBase(`/docs/components/${props.slug}`))
 const lightSrc = computed(() => withBase(`/related-components/light-${props.slug}.png`))

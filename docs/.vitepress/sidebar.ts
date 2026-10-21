@@ -1,10 +1,12 @@
 import type { DefaultTheme } from 'vitepress'
-import { COMPONENT_GROUPS } from './componentGroups'
+import { COMPONENT_GROUPS, NEW_COMPONENTS } from './componentGroups'
 
 export interface SidebarLink {
   text: string
   link: string
   icon?: string
+  /** Chip shown after the text, as on heroui.com. */
+  badge?: 'new'
 }
 
 export interface SidebarSeparator {
@@ -63,7 +65,7 @@ export const sidebar: SidebarSection[] = [
       { text: 'All Components (Vue)', link: c('') },
       ...Object.entries(COMPONENT_GROUPS).map(([group, slugs]) => ({
         group,
-        items: slugs.map(slug => ({ text: pascal(slug), link: c(slug) })),
+        items: slugs.map(slug => ({ text: pascal(slug), link: c(slug), badge: NEW_COMPONENTS.has(slug) ? 'new' as const : undefined })),
       })),
     ],
   },

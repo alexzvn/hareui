@@ -221,7 +221,7 @@
   @apply items-start pt-4 pl-3 transition-none;
 
   @media (min-width: 600px) {
-    --fd-sidebar-width: 220px;
+    --fd-sidebar-width: 272px;
   }
 
   & > div {
@@ -335,13 +335,13 @@
   position: relative;
 
   @media (min-width: 48rem) {
-    --fd-sidebar-width: 220px;
+    --fd-sidebar-width: 272px;
   }
 }
 
 #nd-notebook-layout {
   @media (min-width: 48rem) {
-    --fd-sidebar-width: 220px;
+    --fd-sidebar-width: 272px;
   }
   grid-template:
     ". header header header ."

@@ -1,5 +1,6 @@
 <script setup lang="ts">
 import { Icon } from '@iconify/vue'
+import { Chip } from '@hareui/vue'
 import { isGroup, isSeparator, normalizePath, type SidebarEntry } from '../../sidebar'
 
 defineProps<{ items: SidebarEntry[]; activePath: string }>()
@@ -7,6 +8,8 @@ defineProps<{ items: SidebarEntry[]; activePath: string }>()
 const LINK_CLASS =
   'text-fd-muted-foreground relative flex flex-row items-center gap-2 rounded-lg p-2 text-start [&_svg]:size-4 [&_svg]:shrink-0 hover:bg-fd-accent/50 hover:text-fd-accent-foreground/80 data-[active=true]:bg-fd-primary/10 data-[active=true]:text-fd-primary transition-colors hover:transition-none data-[active=true]:hover:transition-colors'
 const INDENT = 'padding-inline-start:calc(2 * var(--spacing))'
+// heroui.pro sidebar chip size (16px tall, 10px text); the label never truncates
+const NEW_BADGE_CLASS = 'h-4 shrink-0 rounded-full bg-pink-400/8 px-1 text-[10px] leading-4 font-semibold text-pink-400/90 order-last'
 const key = (entry: SidebarEntry) => isSeparator(entry) ? `sep-${entry.separator}` : isGroup(entry) ? `group-${entry.group}` : entry.link
 </script>
 
@@ -22,7 +25,7 @@ const key = (entry: SidebarEntry) => isSeparator(entry) ? `sep-${entry.separator
           {{ entry.group }}
           <Icon icon="gravity-ui:chevron-down" class="text-fd-muted-foreground size-4 shrink-0 -rotate-90 transition-transform group-open/sidebar-group:rotate-0" />
         </summary>
-        <div class="border-fd-border ms-3 flex flex-col gap-0.5 border-s ps-2">
+        <div class="flex flex-col gap-0.5">
           <a
             v-for="link in entry.items"
             :key="link.link"
@@ -31,7 +34,11 @@ const key = (entry: SidebarEntry) => isSeparator(entry) ? `sep-${entry.separator
             :style="INDENT"
             :href="link.link"
           >
-            {{ link.text }}
+            <template v-if="link.badge === 'new'">
+              <span class="whitespace-nowrap">{{ link.text }}</span>
+              <Chip :class="NEW_BADGE_CLASS">New</Chip>
+            </template>
+            <template v-else>{{ link.text }}</template>
           </a>
         </div>
       </details>
@@ -43,7 +50,11 @@ const key = (entry: SidebarEntry) => isSeparator(entry) ? `sep-${entry.separator
         :href="entry.link"
       >
         <Icon v-if="entry.icon" :icon="`gravity-ui:${entry.icon}`" />
-        {{ entry.text }}
+        <template v-if="entry.badge === 'new'">
+          <span class="whitespace-nowrap">{{ entry.text }}</span>
+          <Chip :class="NEW_BADGE_CLASS">New</Chip>
+        </template>
+        <template v-else>{{ entry.text }}</template>
       </a>
     </template>
   </div>
