@@ -49,6 +49,32 @@ import { Button } from '@hareui/vue'
 </template>
 ```
 
+### Vite plugin (optional)
+
+`@hareui/vue/vite` auto-imports components in templates (through [unplugin-vue-components](https://github.com/unplugin/unplugin-vue-components)) and applies app-wide theme overrides at build time:
+
+```ts
+// vite.config.ts
+import hareui from '@hareui/vue/vite'
+
+export default defineConfig({
+  plugins: [
+    vue(),
+    tailwindcss(),
+    hareui({
+      prefix: 'H', // <HButton> / <h-button>; default '' keeps <Button>
+      ui: { button: { slots: { base: 'uppercase' }, defaultVariants: { size: 'lg' } } },
+    }),
+  ],
+})
+```
+
+- `prefix`: template prefix for HareUI components. Kebab-case (`'h-'`) is accepted.
+- `ui`: same shape as `createHareUI({ ui })`; must be JSON-serializable. `createHareUI({ ui })`, variant props, `:ui` and `class` still override it.
+- `components`: options forwarded to unplugin-vue-components (`dts`, `dirs`, extra `resolvers`, …), or `false` to turn auto import off.
+
+Already registering unplugin-vue-components yourself? Add `HareUIResolver({ prefix })` from `@hareui/vue/vite` to its `resolvers` instead.
+
 ## Documentation
 
 Visit [hareui.alexzvn.me](https://hareui.alexzvn.me) for theming, dark mode, styling, composition and every component. AI tools can read the docs as [llms.txt](https://hareui.alexzvn.me/llms.txt) or [llms-full.txt](https://hareui.alexzvn.me/llms-full.txt).
