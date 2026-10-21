@@ -6,7 +6,7 @@ export default {
     base: 'flex flex-col gap-1 data-[invalid=true]:[&_[data-slot=description]]:hidden aria-[invalid=true]:[&_[data-slot=description]]:hidden [&_[data-slot=label]]:w-fit',
     trigger: [
       'relative isolate inline-flex min-h-9 items-center rounded-field px-3 py-2 text-sm text-field-foreground shadow-field outline-none select-none no-highlight',
-      'bg-(--select-trigger-bg-current) [--select-trigger-bg-current:var(--select-trigger-bg)] [--select-trigger-bg:var(--color-field)] [--select-trigger-bg-hover:var(--color-field-hover)] [--select-trigger-bg-focus:var(--field-focus)]',
+      'bg-(--select-trigger-bg-current) [--select-trigger-bg-current:var(--select-trigger-bg)] [--select-trigger-bg:var(--field-background,var(--default))] [--select-trigger-bg-hover:var(--field-hover)] [--select-trigger-bg-focus:var(--field-focus)]',
       'border-(length:--border-width-field) border-(--field-border)',
       '[transition:background-color_150ms_var(--ease-smooth),border-color_150ms_var(--ease-smooth),box-shadow_150ms_var(--ease-out)] motion-reduce:transition-none',
       'cursor-(--cursor-interactive)',
@@ -54,7 +54,7 @@ export default {
     variant: {
       primary: {},
       secondary: {
-        trigger: 'shadow-none [--select-trigger-bg:var(--color-default)] [--select-trigger-bg-hover:var(--color-default-hover)] [--select-trigger-bg-focus:var(--color-default)]',
+        trigger: 'shadow-none [--select-trigger-bg:var(--default)] [--select-trigger-bg-hover:var(--default-hover)] [--select-trigger-bg-focus:var(--default)]',
       },
     },
     fullWidth: {
