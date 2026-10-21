@@ -1,12 +1,12 @@
 import type { DefaultTheme } from 'vitepress'
-import { COMPONENT_GROUPS, NEW_COMPONENTS } from './componentGroups'
+import { COMPONENT_GROUPS, NEW_COMPONENTS, UPDATED_COMPONENTS } from './componentGroups'
 
 export interface SidebarLink {
   text: string
   link: string
   icon?: string
   /** Chip shown after the text, as on heroui.com. */
-  badge?: 'new'
+  badge?: 'new' | 'updated'
 }
 
 export interface SidebarSeparator {
@@ -65,7 +65,7 @@ export const sidebar: SidebarSection[] = [
       { text: 'All Components (Vue)', link: c('') },
       ...Object.entries(COMPONENT_GROUPS).map(([group, slugs]) => ({
         group,
-        items: slugs.map(slug => ({ text: pascal(slug), link: c(slug), badge: NEW_COMPONENTS.has(slug) ? 'new' as const : undefined })),
+        items: slugs.map(slug => ({ text: pascal(slug), link: c(slug), badge: NEW_COMPONENTS.has(slug) ? 'new' as const : UPDATED_COMPONENTS.has(slug) ? 'updated' as const : undefined })),
       })),
     ],
   },
@@ -78,7 +78,7 @@ export const sidebar: SidebarSection[] = [
       { separator: 'Overview' },
       { text: 'All Releases', link: r('') },
       { separator: 'Versions' },
-      { text: 'Unreleased', link: r('unreleased') },
+      { text: 'v0.2.0', link: r('v0-2-0') },
       { text: 'v0.1.3', link: r('v0-1-3') },
       { text: 'v0.1.2', link: r('v0-1-2') },
       { text: 'v0.1.1', link: r('v0-1-1') },
