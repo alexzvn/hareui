@@ -2,14 +2,15 @@ import type { InjectionKey, Ref } from 'vue'
 import { computed, inject } from 'vue'
 
 export interface FieldsetContext {
-  /** Whether the surrounding `<Fieldset disabled>` disables its descendants. */
+  /** Whether the surrounding `<Fieldset disabled>` (or a disabled or submitting `Form`) disables its descendants. */
   disabled: Readonly<Ref<boolean>>
 }
 
 export const fieldsetContextKey: InjectionKey<FieldsetContext> = Symbol('hareui-fieldset')
 
 /**
- * A control's effective disabled state: its own `disabled` prop or a disabled ancestor `Fieldset`.
+ * A control's effective disabled state: its own `disabled` prop, a disabled ancestor `Fieldset`, or a disabled or
+ * submitting ancestor `Form`.
  * Native controls are already disabled by the browser; this keeps `data-disabled`, `aria-disabled`
  * and div-based controls in sync, like HeroUI's fieldset context.
  */

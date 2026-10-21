@@ -2,13 +2,14 @@
 import type { ValidateFn, ValidationResult } from '../../composables/useFieldValidation'
 import type { ComponentSlots, ComponentVariants } from '../../types/tv'
 import type { ValidationBehavior } from '../form/context'
+import type { FormFieldProps } from '../form/types'
 import theme from './theme'
 
 type Checkbox = typeof theme
 
 export type CheckboxState = 'checked' | 'unchecked' | 'indeterminate'
 
-export interface CheckboxProps {
+export interface CheckboxProps extends FormFieldProps {
   /** The checked state (`true`, `false` or `'indeterminate'`). Bind with `v-model`. */
   modelValue?: boolean | 'indeterminate'
   /**
@@ -88,6 +89,7 @@ import { computed, ref, useId, useSlots, useTemplateRef } from 'vue'
 import { forwardRootClick, keepFocusWhenReadonly, submitOnEnter } from '../../composables/forwardRootClick'
 import { useComponentUI } from '../../composables/useComponentUI'
 import { useFieldValidation } from '../../composables/useFieldValidation'
+import { useFieldsetDisabled } from '../fieldset/context'
 import Description from '../description/Description.vue'
 import FieldError from '../field-error/FieldError.vue'
 
@@ -117,7 +119,10 @@ const checked = computed(() => props.modelValue ?? local.value)
 const state = computed<CheckboxState>(() => checked.value === 'indeterminate' ? 'indeterminate' : checked.value ? 'checked' : 'unchecked')
 
 const root = useTemplateRef<HTMLElement>('root')
+const isDisabled = useFieldsetDisabled(() => props.disabled)
+
 const { validation, commitValidation } = useFieldValidation({
+  formField: props,
   value: () => checked.value === true,
   validate: () => props.validate,
   invalid: () => props.invalid,
@@ -152,7 +157,7 @@ function onUpdate(value: boolean | 'indeterminate') {
     :data-state="state"
     :data-selected="state === 'checked' ? 'true' : undefined"
     :data-indeterminate="state === 'indeterminate' ? 'true' : undefined"
-    :data-disabled="disabled ? 'true' : undefined"
+    :data-disabled="isDisabled ? 'true' : undefined"
     :data-invalid="invalid ? 'true' : undefined"
     :data-readonly="readonly ? 'true' : undefined"
     :data-required="required ? 'true' : undefined"
@@ -167,7 +172,7 @@ function onUpdate(value: boolean | 'indeterminate') {
       :name="name"
       :value="value"
       :required="required"
-      :disabled="disabled"
+      :disabled="isDisabled"
       :aria-invalid="invalid ? 'true' : undefined"
       :aria-readonly="readonly ? 'true' : undefined"
       :aria-describedby="describedBy"

@@ -135,6 +135,7 @@ import {
 import { computed, ref, watch } from 'vue'
 import { useColorPickerContext } from '../color-picker/context'
 import { useComponentUI } from '../../composables/useComponentUI'
+import { useFieldsetDisabled } from '../fieldset/context'
 import { captureOnDraggedThumb } from '../../composables/thumbPointerCapture'
 import { refElement } from '../../composables/useFirstChild'
 import Label from '../label/Label.vue'
@@ -145,6 +146,7 @@ const props = withDefaults(defineProps<ColorSliderProps>(), {
   defaultValue: '#000000',
   showOutput: undefined,
 })
+const isDisabled = useFieldsetDisabled(() => props.disabled)
 const emit = defineEmits<ColorSliderEmits>()
 const slots = defineSlots<ColorSliderSlots>()
 
@@ -259,7 +261,7 @@ const thumbPercent = computed(() => {
 const thumbStyle = computed(() => ({
   '--reka-slider-thumb-transform': 'translate(-50%, -50%)',
   ...(props.orientation === 'vertical' ? { top: `${100 - thumbPercent.value}%` } : {}),
-  ...(props.disabled ? {} : { backgroundColor: colorToString(displayColor.value, 'rgb') }),
+  ...(isDisabled.value ? {} : { backgroundColor: colorToString(displayColor.value, 'rgb') }),
 }))
 
 /**
@@ -303,7 +305,7 @@ const ui = useComponentUI('colorSlider', theme, () => ({ orientation: props.orie
 // here: a press anywhere on the slider starts a drag of its single thumb.
 const isDragging = ref(false)
 function onPointerDown() {
-  if (!props.disabled)
+  if (!isDisabled.value)
     isDragging.value = true
 }
 function onPointerEnd() {
@@ -319,7 +321,7 @@ function onPointerEnd() {
     :color-space="validColorSpace"
     :orientation="orientation"
     thumb-alignment="overflow"
-    :disabled="disabled"
+    :disabled="isDisabled"
     :step="step"
     data-slot="color-slider"
     :aria-labelledby="hasLabel ? autoId : undefined"
@@ -335,7 +337,7 @@ function onPointerEnd() {
     <Label
       v-if="hasLabel"
       :id="autoId"
-      :disabled="disabled"
+      :disabled="isDisabled"
       :class="ui.label({ class: props.ui?.label })"
     >
       <slot name="label">
@@ -370,7 +372,7 @@ function onPointerEnd() {
       type="hidden"
       :name="name"
       :value="formValue"
-      :disabled="disabled"
+      :disabled="isDisabled"
     >
   </ColorSliderRoot>
 </template>

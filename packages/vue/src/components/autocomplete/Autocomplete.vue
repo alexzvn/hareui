@@ -3,6 +3,7 @@ import type { ValidateFn, ValidationResult } from '../../composables/useFieldVal
 import type { PortalTarget } from '../../config'
 import type { ComponentSlots } from '../../types/tv'
 import type { ValidationBehavior } from '../form/context'
+import type { FormFieldProps } from '../form/types'
 import type { ListBoxEntry, ListBoxItem, ListBoxItemSlotProps, ListBoxSection, ListBoxValue } from '../list-box/ListBox.vue'
 import type { CollectionRow } from '../list-box/listBoxCollection'
 import { injectListboxRootContext } from 'reka-ui'
@@ -13,7 +14,7 @@ type Autocomplete = typeof theme
 
 export type AutocompleteValue = ListBoxValue | ListBoxValue[] | null
 
-export interface AutocompleteProps<T extends ListBoxItem = ListBoxItem> {
+export interface AutocompleteProps<T extends ListBoxItem = ListBoxItem> extends FormFieldProps {
   /**
    * Renders the listbox popover in a portal. `true` portals to `document.body`, a selector string or element is used as the teleport target, and `false` disables portalling.
    * Falls back to `createHareUI({ portal })`, then `true`.
@@ -205,6 +206,7 @@ import { outsideEventTarget } from '../../composables/nestedLayer'
 import { useComponentUI } from '../../composables/useComponentUI'
 import { useFieldValidation } from '../../composables/useFieldValidation'
 import { usePortal } from '../../composables/usePortal'
+import { useFieldsetDisabled } from '../fieldset/context'
 import listBoxTheme from '../list-box/theme'
 import searchFieldTheme from '../search-field/theme'
 import CloseButton from '../close-button/CloseButton.vue'
@@ -232,6 +234,7 @@ const props = withDefaults(defineProps<AutocompleteProps<T>>(), {
   loading: undefined,
 })
 const portalTarget = usePortal(() => props.portal)
+const disabled = useFieldsetDisabled(() => props.disabled)
 const emit = defineEmits<AutocompleteEmits>()
 const slots = defineSlots<AutocompleteSlots<T>>()
 const modelValue = defineModel<AutocompleteValue>()
@@ -287,11 +290,11 @@ const blocks = computed(() => {
 
 // ---- Open state (the `open` prop wins when bound) ---------------------------------------------------------------
 const uncontrolledOpen = ref(props.defaultOpen ?? false)
-const isOpen = computed(() => (props.open ?? uncontrolledOpen.value) && !props.disabled)
+const isOpen = computed(() => (props.open ?? uncontrolledOpen.value) && !disabled.value)
 type FocusStrategy = 'first' | 'last' | null
 let openStrategy: FocusStrategy = null
 function setOpen(value: boolean, strategy: FocusStrategy = null) {
-  if (value && (props.disabled || (!props.allowsEmptyCollection && options.value.length === 0)))
+  if (value && (disabled.value || (!props.allowsEmptyCollection && options.value.length === 0)))
     return
   if (value === isOpen.value)
     return
@@ -331,7 +334,7 @@ const focusedKey = ref<ListBoxValue | null>(null)
 const optionId = (value: ListBoxValue) => `${listboxId.value}-option-${String(value)}`
 const activeDescendant = computed(() => focusedKey.value != null ? optionId(focusedKey.value) : undefined)
 function enabledRows() {
-  return props.disabled ? [] : (rowsRef.value?.rows() ?? []).filter(row => !row.item.disabled)
+  return disabled.value ? [] : (rowsRef.value?.rows() ?? []).filter(row => !row.item.disabled)
 }
 function setFocusKey(value: ListBoxValue | null, scroll = true) {
   focusedKey.value = value
@@ -528,7 +531,7 @@ function onListUpdate(value: unknown) {
 }
 
 function clear() {
-  if (props.disabled || isPlaceholder.value)
+  if (disabled.value || isPlaceholder.value)
     return
   selection.value = empty()
   commitValidation()
@@ -546,7 +549,7 @@ function isOwnPress(event: Event) {
 let mousePress = false
 function onTriggerPointerdown(event: PointerEvent) {
   mousePress = false
-  if (props.disabled || event.pointerType !== 'mouse' || event.button !== 0 || !isOwnPress(event))
+  if (disabled.value || event.pointerType !== 'mouse' || event.button !== 0 || !isOwnPress(event))
     return
   mousePress = true
   button.value?.focus()
@@ -558,7 +561,7 @@ function onTriggerMousedown(event: MouseEvent) {
     event.preventDefault()
 }
 function onTriggerClick(event: MouseEvent) {
-  if (props.disabled || !isOwnPress(event))
+  if (disabled.value || !isOwnPress(event))
     return
   if (mousePress && event.detail !== 0) {
     mousePress = false
@@ -587,7 +590,7 @@ function onTypeahead(key: string) {
   }
 }
 function onButtonKeydown(event: KeyboardEvent) {
-  if (props.disabled)
+  if (disabled.value)
     return
   if (event.key === 'ArrowDown' || event.key === 'ArrowUp') {
     event.preventDefault()
@@ -624,6 +627,7 @@ function onFocusOut(event: FocusEvent) {
 // ---- Validation -------------------------------------------------------------------------------------------------
 const root = useTemplateRef<HTMLElement>('root')
 const { validation, commitValidation } = useFieldValidation<AutocompleteValue>({
+  formField: props,
   value: () => selection.value,
   validate: () => props.validate,
   invalid: () => props.invalid,
@@ -685,12 +689,12 @@ function optionAttrs(row: CollectionRow) {
     id: optionId(row.item.value),
     // RAC `shouldFocusOnHover`: hover moves focus unless the last interaction was a keyboard one
     onPointermove: () => {
-      if (!keyboardModality.value && focusedKey.value !== row.item.value && !row.item.disabled && !props.disabled)
+      if (!keyboardModality.value && focusedKey.value !== row.item.value && !row.item.disabled && !disabled.value)
         setFocusKey(row.item.value, false)
     },
     // Pointer selection focuses the picked option (it stays focused in multiple mode)
     onPointerdown: () => {
-      if (!row.item.disabled && !props.disabled)
+      if (!row.item.disabled && !disabled.value)
         setFocusKey(row.item.value, false)
     },
   }
@@ -700,7 +704,7 @@ watch(isOpen, (value) => {
     focusedKey.value = null
 })
 
-watch(() => props.disabled, (disabled) => {
+watch(disabled, (disabled) => {
   if (disabled)
     setOpen(false)
 })

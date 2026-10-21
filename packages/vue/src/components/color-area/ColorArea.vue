@@ -51,6 +51,7 @@ export interface ColorAreaEmits {
 import { ColorAreaArea, ColorAreaRoot, ColorAreaThumb, colorToString, normalizeColor } from 'reka-ui'
 import { computed, onBeforeUnmount, onMounted, ref, watch } from 'vue'
 import { useComponentUI } from '../../composables/useComponentUI'
+import { useFieldsetDisabled } from '../fieldset/context'
 import { useColorPickerContext } from '../color-picker/context'
 
 const CHANNELS: Record<ColorSpace, ColorChannel[]> = {
@@ -64,6 +65,7 @@ function toSpace(color: Color, to: ColorSpace): Color {
 }
 
 const props = defineProps<ColorAreaProps>()
+const isDisabled = useFieldsetDisabled(() => props.disabled)
 const emit = defineEmits<ColorAreaEmits>()
 const modelValue = defineModel<string | Color | undefined>()
 
@@ -166,7 +168,7 @@ let pointerActive = false
 function onPointerDownCapture() {
   pointerActive = true
   focusVisible.value = false
-  if (!props.disabled)
+  if (!isDisabled.value)
     isDragging.value = true
 }
 function onPointerUp() {
@@ -198,7 +200,7 @@ const ui = useComponentUI('colorArea', theme, () => ({
     :color-space="space"
     :x-channel="axes.x"
     :y-channel="axes.y"
-    :disabled="disabled"
+    :disabled="isDisabled"
     :x-name="xName"
     :y-name="yName"
     @update:color="onUpdateColor"

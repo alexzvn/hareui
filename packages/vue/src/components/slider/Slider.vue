@@ -73,6 +73,7 @@ export interface SliderSlots {
 import { SliderRange, SliderRoot, SliderThumb, SliderTrack } from 'reka-ui'
 import { computed, ref, useId, useSlots } from 'vue'
 import { useComponentUI } from '../../composables/useComponentUI'
+import { useFieldsetDisabled } from '../fieldset/context'
 import { captureOnDraggedThumb } from '../../composables/thumbPointerCapture'
 import Label from '../label/Label.vue'
 
@@ -82,6 +83,7 @@ const props = withDefaults(defineProps<SliderProps>(), {
   step: 1,
   orientation: 'horizontal',
 })
+const isDisabled = useFieldsetDisabled(() => props.disabled)
 const modelValue = defineModel<number | number[]>()
 const emit = defineEmits<{
   /** Emitted with the final value when an interaction (pointer drag or keyboard step) commits a change. */
@@ -187,7 +189,7 @@ function onThumbKeydown(event: KeyboardEvent, index: number) {
   movingIndex = index
   activeThumbIndex.value = index
   const page = pageDirection(event)
-  if (props.disabled || (page === 0 && event.key !== 'Home' && event.key !== 'End'))
+  if (isDisabled.value || (page === 0 && event.key !== 'Home' && event.key !== 'End'))
     return
   // Handled here instead of by Reka's root keydown handler
   event.preventDefault()
@@ -250,7 +252,7 @@ function onPointerDownCapture() {
   movingIndex = null
 }
 function onPointerDown() {
-  if (!props.disabled)
+  if (!isDisabled.value)
     isSliding.value = true
 }
 function onPointerEnd() {
@@ -281,7 +283,7 @@ function dragging(index: number) {
     :max="max"
     :step="step"
     :orientation="orientation"
-    :disabled="disabled"
+    :disabled="isDisabled"
     :name="name"
     :required="required"
     data-slot="slider"
@@ -296,7 +298,7 @@ function dragging(index: number) {
     @pointercancel="onPointerEnd"
     @gotpointercapture="captureOnDraggedThumb"
   >
-    <Label v-if="hasLabel" :id="labelId" :disabled="disabled" :class="ui.label({ class: props.ui?.label })">
+    <Label v-if="hasLabel" :id="labelId" :disabled="isDisabled" :class="ui.label({ class: props.ui?.label })">
       <slot name="label">{{ label }}</slot>
     </Label>
     <output data-slot="slider-output" :data-orientation="orientation" :class="ui.output({ class: props.ui?.output })">

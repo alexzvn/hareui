@@ -2,11 +2,12 @@
 import type { ValidateFn, ValidationResult } from '../../composables/useFieldValidation'
 import type { ComponentSlots, ComponentVariants } from '../../types/tv'
 import type { ValidationBehavior } from '../form/context'
+import type { FormFieldProps } from '../form/types'
 import theme from './theme'
 
 type Switch = typeof theme
 
-export interface SwitchProps {
+export interface SwitchProps extends FormFieldProps {
   /** The checked state. Bind with `v-model`. */
   modelValue?: boolean
   /**
@@ -86,6 +87,7 @@ import { computed, ref, useId, useSlots, useTemplateRef } from 'vue'
 import { forwardRootClick, keepFocusWhenReadonly, submitOnEnter } from '../../composables/forwardRootClick'
 import { useComponentUI } from '../../composables/useComponentUI'
 import { useFieldValidation } from '../../composables/useFieldValidation'
+import { useFieldsetDisabled } from '../fieldset/context'
 import Description from '../description/Description.vue'
 import FieldError from '../field-error/FieldError.vue'
 
@@ -114,7 +116,10 @@ const local = ref(props.defaultValue ?? false)
 const checked = computed(() => props.modelValue ?? local.value)
 
 const root = useTemplateRef<HTMLElement>('root')
+const isDisabled = useFieldsetDisabled(() => props.disabled)
+
 const { validation, commitValidation } = useFieldValidation({
+  formField: props,
   value: () => checked.value,
   validate: () => props.validate,
   invalid: () => props.invalid,
@@ -148,7 +153,7 @@ function onUpdate(value: boolean) {
     data-slot="switch"
     :data-state="checked ? 'checked' : 'unchecked'"
     :data-selected="checked ? 'true' : undefined"
-    :data-disabled="disabled ? 'true' : undefined"
+    :data-disabled="isDisabled ? 'true' : undefined"
     :data-invalid="invalid ? 'true' : undefined"
     :data-readonly="readonly ? 'true' : undefined"
     :data-required="required ? 'true' : undefined"
@@ -163,7 +168,7 @@ function onUpdate(value: boolean) {
       :name="name"
       :value="value"
       :required="required"
-      :disabled="disabled"
+      :disabled="isDisabled"
       :aria-describedby="describedBy"
       :aria-invalid="invalid ? 'true' : undefined"
       :aria-readonly="readonly ? 'true' : undefined"

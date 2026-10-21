@@ -27,6 +27,7 @@
     "tailwindcss": "^4.3.3",
     "typescript": "~6.0.3",
     "vitepress": "1.6.4",
-    "vue-component-meta": "^3.3.11"
+    "vue-component-meta": "^3.3.11",
+    "zod": "^4.6.5"
   }
 }

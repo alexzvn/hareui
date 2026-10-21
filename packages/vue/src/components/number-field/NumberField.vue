@@ -2,6 +2,7 @@
 import type { ValidateFn, ValidationResult } from '../../composables/useFieldValidation'
 import type { ComponentSlots } from '../../types/tv'
 import type { ValidationBehavior } from '../form/context'
+import type { FormFieldProps } from '../form/types'
 import theme from './theme'
 
 type NumberField = typeof theme
@@ -30,7 +31,7 @@ function snapValueToStep(value: number, min: number | undefined, max: number | u
   return roundToStepPrecision(snapped, step)
 }
 
-export interface NumberFieldProps {
+export interface NumberFieldProps extends FormFieldProps {
   /** Label text rendered above the group. */
   label?: string
   /** Helper text rendered below the group. Hidden while the field is invalid. */
@@ -135,6 +136,7 @@ import { NumberFieldDecrement, NumberFieldIncrement, NumberFieldInput, NumberFie
 import { computed, getCurrentInstance, ref, useAttrs, useId, useTemplateRef, watch } from 'vue'
 import { useComponentUI } from '../../composables/useComponentUI'
 import { useFieldValidation } from '../../composables/useFieldValidation'
+import { useFieldsetDisabled } from '../fieldset/context'
 import Description from '../description/Description.vue'
 import FieldError from '../field-error/FieldError.vue'
 import Label from '../label/Label.vue'
@@ -172,7 +174,10 @@ watch(displayValue, (value) => {
 })
 
 const root = useTemplateRef<HTMLElement>('root')
+const isDisabled = useFieldsetDisabled(() => props.disabled)
+
 const { validation, commitValidation } = useFieldValidation({
+  formField: props,
   // As in RAC: the committed number, `NaN` while empty
   value: () => formValue.value ?? Number.NaN,
   validate: () => props.validate,
@@ -263,13 +268,13 @@ function onFocusOut(event: FocusEvent) {
     ref="root"
     v-bind="rootAttrs"
     data-slot="number-field"
-    :data-disabled="disabled ? 'true' : undefined"
+    :data-disabled="isDisabled ? 'true' : undefined"
     :data-invalid="invalid ? 'true' : undefined"
     :data-required="required ? 'true' : undefined"
     :data-readonly="readonly ? 'true' : undefined"
     :class="ui.base({ class: [props.ui?.base, props.class] })"
   >
-    <Label v-if="hasLabel" :for="id" :disabled="disabled" :invalid="invalid" :required="required">
+    <Label v-if="hasLabel" :for="id" :disabled="isDisabled" :invalid="invalid" :required="required">
       <slot name="label">
         {{ label }}
       </slot>
@@ -284,7 +289,7 @@ function onFocusOut(event: FocusEvent) {
       :step-snapping="step !== undefined"
       :format-options="formatOptions"
       :locale="locale"
-      :disabled="disabled"
+      :disabled="isDisabled"
       :readonly="readonly"
       :required="required"
       data-slot="number-field-group"
@@ -363,5 +368,5 @@ function onFocusOut(event: FocusEvent) {
       </slot>
     </FieldError>
   </div>
-  <input v-if="name" type="hidden" :name="name" :value="formValue ?? ''" :disabled="disabled || undefined">
+  <input v-if="name" type="hidden" :name="name" :value="formValue ?? ''" :disabled="isDisabled || undefined">
 </template>

@@ -2,12 +2,13 @@
 import type { ValidateFn, ValidationResult } from '../../composables/useFieldValidation'
 import type { ComponentSlots } from '../../types/tv'
 import type { ValidationBehavior } from '../form/context'
+import type { FormFieldProps } from '../form/types'
 import type { InputProps } from '../input/Input.vue'
 import theme from './theme'
 
 type TextField = typeof theme
 
-export interface TextFieldProps {
+export interface TextFieldProps extends FormFieldProps {
   /** Label text rendered above the input. */
   label?: string
   /** Helper text rendered below the input. Hidden while the field is invalid. */
@@ -105,6 +106,7 @@ import { useComponentUI } from '../../composables/useComponentUI'
 import { useFieldValidation } from '../../composables/useFieldValidation'
 import Description from '../description/Description.vue'
 import FieldError from '../field-error/FieldError.vue'
+import { useFieldsetDisabled } from '../fieldset/context'
 import Input from '../input/Input.vue'
 import Label from '../label/Label.vue'
 import { textFieldContextKey } from './context'
@@ -154,11 +156,13 @@ const { validation } = useFieldValidation({
   validationBehavior: () => props.validationBehavior,
   name: () => props.name,
   root: () => root.value,
+  formField: props,
   onReset: () => {
     value.value = props.defaultValue ?? ''
   },
 })
 const invalid = computed(() => validation.value.isInvalid)
+const disabled = useFieldsetDisabled(() => props.disabled)
 
 const focusWithin = ref(false)
 const focusVisible = ref(false)
@@ -190,7 +194,7 @@ provide(textFieldContextKey, {
   id,
   describedBy,
   invalid,
-  disabled: toRef(() => props.disabled),
+  disabled,
   required: toRef(() => props.required),
   readonly: toRef(() => props.readonly),
   variant: toRef(() => props.variant),
