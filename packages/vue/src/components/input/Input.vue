@@ -2,11 +2,12 @@
 import type { ValidateFn } from '../../composables/useFieldValidation'
 import type { ComponentSlots, ComponentVariants } from '../../types/tv'
 import type { ValidationBehavior } from '../form/context'
+import type { FormFieldProps } from '../form/types'
 import theme from './theme'
 
 type Input = typeof theme
 
-export interface InputProps {
+export interface InputProps extends FormFieldProps {
   /**
    * The native input type.
    * @defaultValue 'text'
@@ -68,6 +69,7 @@ export interface InputProps {
 import { computed, getCurrentInstance, inject, useTemplateRef, watch } from 'vue'
 import { useComponentUI } from '../../composables/useComponentUI'
 import { useFieldValidation } from '../../composables/useFieldValidation'
+import { useFieldsetDisabled } from '../fieldset/context'
 import { textFieldContextKey } from '../text-field/context'
 
 const props = withDefaults(defineProps<InputProps>(), {
@@ -115,7 +117,7 @@ const name = computed(() => props.name ?? field?.name.value)
 const id = computed(() => props.id ?? field?.id.value)
 const variant = computed(() => props.variant ?? field?.variant.value)
 const fullWidth = computed(() => props.fullWidth ?? field?.fullWidth.value ?? false)
-const disabled = computed(() => props.disabled ?? field?.disabled.value ?? false)
+const disabled = useFieldsetDisabled(() => props.disabled ?? field?.disabled.value ?? false)
 const required = computed(() => props.required ?? field?.required.value ?? false)
 const readonly = computed(() => props.readonly ?? field?.readonly.value ?? false)
 
@@ -130,6 +132,7 @@ const own = field
       validationBehavior: () => props.validationBehavior,
       name: () => props.name,
       root: () => input.value,
+      formField: props,
       onReset: () => {
         value.value = props.defaultValue ?? ''
       },

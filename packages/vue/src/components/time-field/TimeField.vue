@@ -5,6 +5,7 @@ import type { ValidateFn, ValidationResult } from '../../composables/useFieldVal
 import type { ComponentSlots } from '../../types/tv'
 import type { DateInputGroupProps } from '../date-input-group/DateInputGroup.vue'
 import type { ValidationBehavior } from '../form/context'
+import type { FormFieldProps } from '../form/types'
 import dateInputGroupTheme from '../date-input-group/theme'
 import theme from './theme'
 
@@ -15,7 +16,7 @@ type DateInputGroup = typeof dateInputGroupTheme
 type HourCycle = NonNullable<TimeFieldRootProps['hourCycle']>
 type TimeStep = NonNullable<TimeFieldRootProps['step']>
 
-export interface TimeFieldProps {
+export interface TimeFieldProps extends FormFieldProps {
   /** Label text rendered above the group. */
   label?: string
   /** Helper text rendered below the group. Hidden while the field is invalid. */
@@ -133,11 +134,13 @@ import DateInputGroup, { dropDanglingTimeZoneSeparator, wrapBidiIsolate } from '
 import Description from '../description/Description.vue'
 import FieldError from '../field-error/FieldError.vue'
 import Label from '../label/Label.vue'
+import { useFieldsetDisabled } from '../fieldset/context'
 
 // `invalid: undefined`: an absent boolean would cast to `false`, which counts as controlled-valid and hides validation errors
 const props = withDefaults(defineProps<TimeFieldProps>(), { invalid: undefined })
 const emit = defineEmits<TimeFieldEmits>()
 const slots = defineSlots<TimeFieldSlots>()
+const disabled = useFieldsetDisabled(() => props.disabled)
 /** The selected time. Bind with `v-model`. */
 const modelValue = defineModel<TimeValue | null>()
 
@@ -180,6 +183,7 @@ const { validation, commitValidation } = useFieldValidation({
   validationBehavior: () => props.validationBehavior,
   name: () => props.name,
   root: () => root.value?.$el as Element | undefined,
+  formField: props,
   onReset: () => {
     modelValue.value = props.defaultValue
   },

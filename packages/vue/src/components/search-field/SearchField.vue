@@ -2,11 +2,12 @@
 import type { ValidateFn, ValidationResult } from '../../composables/useFieldValidation'
 import type { ComponentSlots } from '../../types/tv'
 import type { ValidationBehavior } from '../form/context'
+import type { FormFieldProps } from '../form/types'
 import theme from './theme'
 
 type SearchField = typeof theme
 
-export interface SearchFieldProps {
+export interface SearchFieldProps extends FormFieldProps {
   /** Label text rendered above the field. */
   label?: string
   /** Helper text rendered below the field. Hidden while the field is invalid. */
@@ -98,6 +99,7 @@ import { useFieldValidation } from '../../composables/useFieldValidation'
 import CloseButton from '../close-button/CloseButton.vue'
 import Description from '../description/Description.vue'
 import FieldError from '../field-error/FieldError.vue'
+import { useFieldsetDisabled } from '../fieldset/context'
 import Label from '../label/Label.vue'
 
 const props = withDefaults(defineProps<SearchFieldProps>(), { invalid: undefined })
@@ -119,11 +121,13 @@ const { validation } = useFieldValidation({
   validationBehavior: () => props.validationBehavior,
   name: () => props.name,
   root: () => root.value,
+  formField: props,
   onReset: () => {
     modelValue.value = props.defaultValue ?? ''
   },
 })
 const invalid = computed(() => validation.value.isInvalid)
+const disabled = useFieldsetDisabled(() => props.disabled)
 const isEmpty = computed(() => !modelValue.value)
 
 const focusWithin = ref(false)
@@ -144,14 +148,14 @@ function onFocusOut(event: FocusEvent) {
 // still swallow Enter but don't submit.
 function onEnter(event: KeyboardEvent) {
   event.preventDefault()
-  if (props.disabled || props.readonly)
+  if (disabled.value || props.readonly)
     return
   emit('submit', modelValue.value ?? '')
 }
 // Matches RAC: Escape clears the field, but does nothing (and doesn't blur) when it's already empty,
 // disabled or readonly.
 function onEscape() {
-  if (props.disabled || props.readonly || !modelValue.value)
+  if (disabled.value || props.readonly || !modelValue.value)
     return
   modelValue.value = ''
   emit('clear')

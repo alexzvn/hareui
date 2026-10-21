@@ -2,11 +2,12 @@
 import type { ValidateFn, ValidationResult } from '../../composables/useFieldValidation'
 import type { ComponentSlots, ComponentVariants } from '../../types/tv'
 import type { ValidationBehavior } from '../form/context'
+import type { FormFieldProps } from '../form/types'
 import theme from './theme'
 
 type InputOtp = typeof theme
 
-export interface InputOtpProps {
+export interface InputOtpProps extends FormFieldProps {
   /** The current code. Bind with `v-model`. */
   modelValue?: string
   /** The initial code when uncontrolled (no `v-model`). */
@@ -92,6 +93,7 @@ import { useComponentUI } from '../../composables/useComponentUI'
 import { useFieldValidation } from '../../composables/useFieldValidation'
 import Description from '../description/Description.vue'
 import FieldError from '../field-error/FieldError.vue'
+import { useFieldsetDisabled } from '../fieldset/context'
 import Label from '../label/Label.vue'
 
 const props = withDefaults(defineProps<InputOtpProps>(), { length: 6, invalid: undefined })
@@ -124,10 +126,12 @@ const { validation } = useFieldValidation({
   validationBehavior: () => props.validationBehavior,
   name: () => props.name,
   root: () => root.value,
+  formField: props,
   onReset: () => {
     modelValue.value = props.defaultValue ?? ''
   },
 })
+const disabled = useFieldsetDisabled(() => props.disabled)
 const invalid = computed(() => validation.value.isInvalid)
 
 const ui = useComponentUI('inputOtp', theme, () => ({ variant: props.variant }))
@@ -292,7 +296,7 @@ function onInput(event: Event) {
 }
 
 function onPaste(event: ClipboardEvent) {
-  if (props.disabled)
+  if (disabled.value)
     return
   event.preventDefault()
   const el = input.value

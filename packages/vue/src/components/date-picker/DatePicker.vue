@@ -5,6 +5,7 @@ import type { PortalTarget } from '../../config'
 import type { ComponentSlots } from '../../types/tv'
 import type { DateInputGroupProps } from '../date-input-group/DateInputGroup.vue'
 import type { ValidationBehavior } from '../form/context'
+import type { FormFieldProps } from '../form/types'
 import dateInputGroupTheme from '../date-input-group/theme'
 import theme from './theme'
 
@@ -17,7 +18,7 @@ type HourCycle = NonNullable<DateFieldRootProps['hourCycle']>
 type DateStep = NonNullable<DateFieldRootProps['step']>
 type DateUnavailableMatcher = NonNullable<DateFieldRootProps['isDateUnavailable']>
 
-export interface DatePickerProps {
+export interface DatePickerProps extends FormFieldProps {
   /**
    * Renders the calendar popover in a portal. `true` portals to `document.body`, a selector string or element is used as the teleport target, and `false` disables portalling.
    * Falls back to `createHareUI({ portal })`, then `true`.
@@ -161,10 +162,12 @@ import DateInputGroup, { dropDanglingTimeZoneSeparator, wrapBidiIsolate } from '
 import Description from '../description/Description.vue'
 import FieldError from '../field-error/FieldError.vue'
 import Label from '../label/Label.vue'
+import { useFieldsetDisabled } from '../fieldset/context'
 
 // `invalid: undefined`/`open: undefined`: an absent boolean would cast to `false`, which would count as
 // controlled-valid/controlled-closed and hide validation errors / force the popover shut
 const props = withDefaults(defineProps<DatePickerProps>(), { invalid: undefined, open: undefined, portal: undefined, defaultOpen: false })
+const disabled = useFieldsetDisabled(() => props.disabled)
 const portalTarget = usePortal(() => props.portal)
 defineOptions({ inheritAttrs: false })
 const emit = defineEmits<DatePickerEmits>()
@@ -218,6 +221,7 @@ const { validation, commitValidation } = useFieldValidation({
   validationBehavior: () => props.validationBehavior,
   name: () => props.name,
   root: () => root.value?.$el as Element | undefined,
+  formField: props,
   onReset: () => {
     modelValue.value = props.defaultValue
   },
@@ -246,7 +250,7 @@ function onCalendarUpdate(value: DateValue | DateValue[] | undefined) {
 // React Aria's `useDatePickerGroup`: Alt+ArrowDown/ArrowUp on a segment opens the calendar instead of
 // stepping the segment. Captured on the field root so it runs before the segment's own handler.
 function onFieldKeydown(event: KeyboardEvent) {
-  if (!event.altKey || (event.key !== 'ArrowDown' && event.key !== 'ArrowUp') || props.disabled || props.readonly)
+  if (!event.altKey || (event.key !== 'ArrowDown' && event.key !== 'ArrowUp') || disabled.value || props.readonly)
     return
   event.preventDefault()
   event.stopPropagation()
