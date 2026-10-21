@@ -431,8 +431,9 @@ const tableOptions = computed<TableOptionsWithReactiveData<T>>(() => ({
   initialState: props.initialState,
   mergeOptions: props.mergeOptions,
   renderFallbackValue: props.renderFallbackValue,
-  // Pass the ref, not its value: with a plain array TanStack's non-reactive path wraps the options in another
-  // mergeProxy on every recompute, and lookups through the nesting grow exponentially until the page freezes.
+  // Pass the ref, not its value. With a ref, vue-table's `mergeOptions` spreads each `setOptions` result into a flat
+  // object; with a plain array it returns `mergeProxy(prev, …)`, and every recompute of these options nests another
+  // proxy layer whose lookups walk all the layers below, until the page freezes.
   data,
   columns: columns.value,
   meta: props.meta ?? {},
