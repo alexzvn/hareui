@@ -19,8 +19,8 @@ export default {
       'w-(--modal-container-width) [--modal-container-width:100%] sm:[--modal-container-width:fit-content]',
       'p-(--modal-container-padding) [--modal-container-padding:--spacing(4)] sm:[--modal-container-padding:--spacing(10)]',
       'pointer-events-none',
-      '[&:where([data-state=open])]:animate-in [&:where([data-state=open])]:[--tw-duration:250ms] [&:where([data-state=open])]:ease-out-quad [&:where([data-state=open])]:fade-in-0 [&:where([data-state=open])]:zoom-in-105',
-      '[&:where([data-state=closed])]:animate-out [&:where([data-state=closed])]:[--tw-duration:100ms] [&:where([data-state=closed])]:ease-out-quad [&:where([data-state=closed])]:fade-out-0 [&:where([data-state=closed])]:zoom-out-95',
+      '[&:where([data-state=open])]:animate-in [&:where([data-state=open])]:[--tw-duration:250ms] [&:where([data-state=open])]:ease-out-quad [&:where([data-state=open])]:fade-in-0',
+      '[&:where([data-state=closed])]:animate-out [&:where([data-state=closed])]:[--tw-duration:100ms] [&:where([data-state=closed])]:ease-out-quad [&:where([data-state=closed])]:fade-out-0',
       '[&:where([data-state=closed])]:will-change-[opacity,transform]',
       'motion-reduce:[&:where([data-state=open])]:animate-none motion-reduce:[&:where([data-state=closed])]:animate-none',
     ],
@@ -70,19 +70,15 @@ export default {
     },
     placement: {
       auto: {
-        container: '[&:where([data-state=open])]:slide-in-from-bottom-1 sm:[&:where([data-state=open])]:slide-in-from-bottom-0',
         dialog: 'mt-auto mb-(--modal-dialog-margin-bottom) [--modal-dialog-margin-bottom:0px] sm:[--modal-dialog-margin-bottom:auto]',
       },
       top: {
-        container: '[&:where([data-state=open])]:slide-in-from-top-1',
         dialog: 'mt-0',
       },
       center: {
-        container: '[&:where([data-state=open])]:slide-in-from-top-0',
         dialog: 'my-auto',
       },
       bottom: {
-        container: '[&:where([data-state=open])]:slide-in-from-bottom-1',
         dialog: 'mt-auto',
       },
     },
@@ -93,15 +89,21 @@ export default {
       lg: { dialog: 'max-w-lg' },
       cover: { dialog: 'h-full min-h-full w-full' },
       full: {
-        container: [
-          'p-0',
-          '[&:where([data-state=open])]:slide-in-from-bottom-0 [&:where([data-state=open])]:zoom-in-100 sm:[&:where([data-state=open])]:slide-in-from-bottom-0',
-          '[&:where([data-state=closed])]:zoom-out-100',
-        ],
+        // No zoom or slide: the enter/exit transforms are only added for the other sizes (compoundVariants below).
+        container: 'p-0',
         dialog: 'h-full min-h-full w-full rounded-none shadow-none',
       },
     },
   },
+  // The zoom and placement slide live here, not in the base/placement classes, so `size="full"` gets none:
+  // overriding them with `zoom-in-100` loses in stylesheet order (`zoom-in-105` is emitted later).
+  compoundVariants: [
+    { size: ['xs', 'sm', 'md', 'lg', 'cover'], class: { container: '[&:where([data-state=open])]:zoom-in-105 [&:where([data-state=closed])]:zoom-out-95' } },
+    { size: ['xs', 'sm', 'md', 'lg', 'cover'], placement: 'auto', class: { container: '[&:where([data-state=open])]:slide-in-from-bottom-1 sm:[&:where([data-state=open])]:slide-in-from-bottom-0' } },
+    { size: ['xs', 'sm', 'md', 'lg', 'cover'], placement: 'top', class: { container: '[&:where([data-state=open])]:slide-in-from-top-1' } },
+    { size: ['xs', 'sm', 'md', 'lg', 'cover'], placement: 'center', class: { container: '[&:where([data-state=open])]:slide-in-from-top-0' } },
+    { size: ['xs', 'sm', 'md', 'lg', 'cover'], placement: 'bottom', class: { container: '[&:where([data-state=open])]:slide-in-from-bottom-1' } },
+  ],
   defaultVariants: {
     scroll: 'inside',
     size: 'md',

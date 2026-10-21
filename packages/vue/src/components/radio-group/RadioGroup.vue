@@ -2,6 +2,7 @@
 import type { ValidateFn, ValidationResult } from '../../composables/useFieldValidation'
 import type { ComponentSlots, ComponentVariants } from '../../types/tv'
 import type { ValidationBehavior } from '../form/context'
+import type { FormFieldProps } from '../form/types'
 import theme from './theme'
 
 type RadioGroup = typeof theme
@@ -17,7 +18,7 @@ export interface RadioGroupItem {
   disabled?: boolean
 }
 
-export interface RadioGroupProps<T extends RadioGroupItem = RadioGroupItem> {
+export interface RadioGroupProps<T extends RadioGroupItem = RadioGroupItem> extends FormFieldProps {
   /** The radio items. */
   items?: T[]
   /** The value selected initially when uncontrolled. */
@@ -98,6 +99,7 @@ import { computed, useId, useSlots, useTemplateRef } from 'vue'
 import { forwardRootClick, submitOnEnter } from '../../composables/forwardRootClick'
 import { useComponentUI } from '../../composables/useComponentUI'
 import { useFieldValidation } from '../../composables/useFieldValidation'
+import { useFieldsetDisabled } from '../fieldset/context'
 import Description from '../description/Description.vue'
 import FieldError from '../field-error/FieldError.vue'
 import Label from '../label/Label.vue'
@@ -125,7 +127,10 @@ const errorId = computed(() => `${id.value}-error`)
 const selected = computed(() => modelValue.value ?? props.defaultValue ?? null)
 
 const root = useTemplateRef<InstanceType<typeof RadioGroupRoot>>('root')
+const isDisabled = useFieldsetDisabled(() => props.disabled)
+
 const { validation, commitValidation } = useFieldValidation({
+  formField: props,
   value: () => selected.value,
   validate: () => props.validate,
   invalid: () => props.invalid,
@@ -168,7 +173,7 @@ function onUpdate(value: unknown) {
     ref="root"
     :model-value="selected"
     :name="name"
-    :disabled="disabled"
+    :disabled="isDisabled"
     :required="required"
     :orientation="orientation"
     data-slot="radio-group"
@@ -177,7 +182,7 @@ function onUpdate(value: unknown) {
     :data-required="required ? 'true' : undefined"
     :aria-invalid="invalid ? 'true' : undefined"
     :aria-readonly="readonly ? 'true' : undefined"
-    :aria-disabled="disabled ? 'true' : undefined"
+    :aria-disabled="isDisabled ? 'true' : undefined"
     :aria-labelledby="hasLabel ? labelId : undefined"
     :aria-describedby="describedBy"
     :class="ui.base({ class: [props.ui?.base, props.class] })"
@@ -186,7 +191,7 @@ function onUpdate(value: unknown) {
   >
     <!-- `as` falls through to Reka `Label`: a group label names the radiogroup via aria-labelledby, not a form control (HeroUI renders a span).
          `disabled` is passed explicitly because Reka sets the root's `data-disabled` to "". -->
-    <Label v-if="hasLabel" :id="labelId" as="span" :disabled="disabled">
+    <Label v-if="hasLabel" :id="labelId" as="span" :disabled="isDisabled">
       <slot name="label">{{ label }}</slot>
     </Label>
     <Description v-if="hasDescription" :id="descriptionId">
@@ -198,7 +203,7 @@ function onUpdate(value: unknown) {
       data-slot="radio"
       :data-state="selected === item.value ? 'checked' : 'unchecked'"
       :data-selected="selected === item.value ? 'true' : undefined"
-      :data-disabled="disabled || item.disabled ? 'true' : undefined"
+      :data-disabled="isDisabled || item.disabled ? 'true' : undefined"
       :data-invalid="invalid ? 'true' : undefined"
       :class="ui.item({ class: props.ui?.item })"
       @click="forwardRootClick($event, '[data-slot=radio-content]')"

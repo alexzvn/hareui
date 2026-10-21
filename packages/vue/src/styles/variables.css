@@ -17,6 +17,10 @@
     /* Spacing scale */
     --spacing: 0.25rem;
 
+    /* Page container: shared by Container, Header and Footer so their edges line up (1024px, 24px) */
+    --container-max-width: 64rem;
+    --container-padding: 1.5rem;
+
     /* Border */
     --border-width: 1px;
     --field-border-width: 0px;
@@ -51,7 +55,9 @@
     --tooltip-close-delay: 500ms;
   }
 
+  /* Bare `:host`: an unclassed shadow host gets the light theme, as `:root` does; the dark block below still wins */
   :root,
+  :host,
   .light,
   .default,
   [data-theme="light"],

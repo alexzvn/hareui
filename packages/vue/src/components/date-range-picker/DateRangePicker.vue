@@ -2,9 +2,11 @@
 import type { DateValue } from '@internationalized/date'
 import type { DateRangePickerRootProps } from 'reka-ui'
 import type { ValidateFn, ValidationResult } from '../../composables/useFieldValidation'
+import type { PortalTarget } from '../../config'
 import type { ComponentSlots } from '../../types/tv'
 import type { DateInputGroupProps } from '../date-input-group/DateInputGroup.vue'
 import type { ValidationBehavior } from '../form/context'
+import type { FormFieldProps } from '../form/types'
 import type { DateRange } from '../range-calendar/RangeCalendar.vue'
 import dateInputGroupTheme from '../date-input-group/theme'
 import theme from './theme'
@@ -23,7 +25,12 @@ export interface DateRangeValue {
   end: DateValue
 }
 
-export interface DateRangePickerProps {
+export interface DateRangePickerProps extends FormFieldProps {
+  /**
+   * Renders the calendar popover in a portal. `true` portals to `document.body`, a selector string or element is used as the teleport target, and `false` disables portalling.
+   * Falls back to `createHareUI({ portal })`, then `true`.
+   */
+  portal?: PortalTarget
   /** Label text rendered above the group. */
   label?: string
   /** Accessible label for the range calendar inside the popover. */
@@ -170,15 +177,19 @@ import type { ComponentPublicInstance } from 'vue'
 import { computed, ref, shallowRef, useAttrs, useId, useTemplateRef, watch } from 'vue'
 import { useComponentUI } from '../../composables/useComponentUI'
 import { useFieldValidation } from '../../composables/useFieldValidation'
+import { usePortal } from '../../composables/usePortal'
 import DateInputGroup, { dropDanglingTimeZoneSeparator, wrapBidiIsolate } from '../date-input-group/DateInputGroup.vue'
 import Description from '../description/Description.vue'
 import FieldError from '../field-error/FieldError.vue'
 import Label from '../label/Label.vue'
+import { useFieldsetDisabled } from '../fieldset/context'
 import RangeCalendar from '../range-calendar/RangeCalendar.vue'
 
 // `invalid: undefined`/`open: undefined`: an absent boolean would cast to `false`, which would count as
 // controlled-valid/controlled-closed and hide validation errors / force the popover shut
-const props = withDefaults(defineProps<DateRangePickerProps>(), { invalid: undefined, open: undefined, defaultOpen: false, inputContainer: false })
+const props = withDefaults(defineProps<DateRangePickerProps>(), { invalid: undefined, open: undefined, portal: undefined, defaultOpen: false, inputContainer: false })
+const disabled = useFieldsetDisabled(() => props.disabled)
+const portalTarget = usePortal(() => props.portal)
 defineOptions({ inheritAttrs: false })
 const emit = defineEmits<DateRangePickerEmits>()
 const slots = defineSlots<DateRangePickerSlots>()
@@ -303,6 +314,7 @@ const { validation, commitValidation } = useFieldValidation<DateRangeValue>({
   validationBehavior: () => props.validationBehavior,
   name: () => props.startName,
   root: () => root.value?.$el as Element | undefined,
+  formField: props,
   onReset: () => {
     commit(props.defaultValue ?? null)
   },
@@ -353,7 +365,7 @@ function onOpenAutoFocus(event: Event) {
 // React Aria's `useDatePickerGroup`: Alt+ArrowDown/ArrowUp on a segment opens the calendar instead of
 // stepping the segment. Captured on the field root so it runs before the segment's own handler.
 function onFieldKeydown(event: KeyboardEvent) {
-  if (!event.altKey || (event.key !== 'ArrowDown' && event.key !== 'ArrowUp') || props.disabled || props.readonly)
+  if (!event.altKey || (event.key !== 'ArrowDown' && event.key !== 'ArrowUp') || disabled.value || props.readonly)
     return
   event.preventDefault()
   event.stopPropagation()
@@ -477,7 +489,7 @@ function focusFirstSegment() {
         <slot name="error" v-bind="validation">{{ errorMessage ?? validation.validationErrors.join(' ') }}</slot>
       </FieldError>
     </DateRangePickerField>
-    <PopoverPortal>
+    <PopoverPortal :disabled="portalTarget.disabled" :to="portalTarget.to">
       <PopoverContent
         data-slot="date-range-picker-popover"
         side="bottom"

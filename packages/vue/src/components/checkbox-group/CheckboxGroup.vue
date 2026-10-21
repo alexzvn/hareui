@@ -2,6 +2,7 @@
 import type { ValidateFn, ValidationResult } from '../../composables/useFieldValidation'
 import type { ComponentSlots, ComponentVariants } from '../../types/tv'
 import type { ValidationBehavior } from '../form/context'
+import type { FormFieldProps } from '../form/types'
 import checkboxTheme from '../checkbox/theme'
 import theme from './theme'
 
@@ -19,7 +20,7 @@ export interface CheckboxGroupItem {
   disabled?: boolean
 }
 
-export interface CheckboxGroupProps<T extends CheckboxGroupItem = CheckboxGroupItem> {
+export interface CheckboxGroupProps<T extends CheckboxGroupItem = CheckboxGroupItem> extends FormFieldProps {
   /** The checkbox items. */
   items?: T[]
   /**
@@ -99,6 +100,7 @@ import { computed, useId, useSlots, useTemplateRef } from 'vue'
 import { forwardRootClick, keepFocusWhenReadonly, submitOnEnter } from '../../composables/forwardRootClick'
 import { useComponentUI } from '../../composables/useComponentUI'
 import { useFieldValidation } from '../../composables/useFieldValidation'
+import { useFieldsetDisabled } from '../fieldset/context'
 import Description from '../description/Description.vue'
 import FieldError from '../field-error/FieldError.vue'
 import Label from '../label/Label.vue'
@@ -129,7 +131,10 @@ const errorId = computed(() => `${id.value}-error`)
 const selected = computed(() => modelValue.value ?? props.defaultValue ?? [])
 
 const root = useTemplateRef<ComponentPublicInstance>('root')
+const isDisabled = useFieldsetDisabled(() => props.disabled)
+
 const { validation, commitValidation } = useFieldValidation({
+  formField: props,
   value: () => selected.value,
   validate: () => props.validate,
   invalid: () => props.invalid,
@@ -166,7 +171,7 @@ function onUpdate(value: string[]) {
     role="group"
     :model-value="selected"
     :name="name"
-    :disabled="disabled"
+    :disabled="isDisabled"
     :required="required"
     :roving-focus="false"
     data-slot="checkbox-group"
@@ -175,14 +180,14 @@ function onUpdate(value: string[]) {
     :data-required="required ? 'true' : undefined"
     :aria-invalid="invalid ? 'true' : undefined"
     :aria-readonly="readonly ? 'true' : undefined"
-    :aria-disabled="disabled ? 'true' : undefined"
+    :aria-disabled="isDisabled ? 'true' : undefined"
     :aria-labelledby="hasLabel ? labelId : undefined"
     :aria-describedby="describedBy"
     :class="ui.base({ class: [props.ui?.base, props.class] })"
     @update:model-value="onUpdate"
   >
     <!-- `as` falls through to Reka `Label`: the group label names the group via aria-labelledby, not a form control -->
-    <Label v-if="hasLabel" :id="labelId" as="span" :disabled="disabled">
+    <Label v-if="hasLabel" :id="labelId" as="span" :disabled="isDisabled">
       <slot name="label">{{ label }}</slot>
     </Label>
     <Description v-if="hasDescription" :id="descriptionId">
@@ -194,7 +199,7 @@ function onUpdate(value: string[]) {
       data-slot="checkbox"
       :data-state="selected.includes(item.value) ? 'checked' : 'unchecked'"
       :data-selected="selected.includes(item.value) ? 'true' : undefined"
-      :data-disabled="disabled || item.disabled ? 'true' : undefined"
+      :data-disabled="isDisabled || item.disabled ? 'true' : undefined"
       :data-invalid="invalid ? 'true' : undefined"
       :data-readonly="readonly ? 'true' : undefined"
       :class="itemUi.base({ class: props.ui?.item })"

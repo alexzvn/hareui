@@ -1,5 +1,6 @@
 <script lang="ts">
 import type { Color } from 'reka-ui'
+import type { PortalTarget } from '../../config'
 import type { ComponentSlots } from '../../types/tv'
 import theme from './theme'
 
@@ -30,10 +31,10 @@ export interface ColorPickerProps {
    */
   sideOffset?: number
   /**
-   * Render the popover into `body` (or a given target) instead of in place.
-   * @defaultValue true
+   * Renders the color picker popover in a portal. `true` portals to `document.body`, a selector string or element is used as the teleport target, and `false` disables portalling.
+   * Falls back to `createHareUI({ portal })`, then `true`.
    */
-  portal?: boolean | string | HTMLElement
+  portal?: PortalTarget
   /** Whether the trigger is disabled. */
   disabled?: boolean
   /** Additional classes merged into the root element. */
@@ -63,7 +64,9 @@ export interface ColorPickerEmits {
 <script setup lang="ts">
 import { normalizeColor, PopoverContent, PopoverPortal, PopoverRoot, PopoverTrigger } from 'reka-ui'
 import { computed, nextTick, onBeforeUnmount, provide, ref, watch } from 'vue'
+import { outsideEventTarget, preventNestedLayerDismiss } from '../../composables/nestedLayer'
 import { useComponentUI } from '../../composables/useComponentUI'
+import { usePortal } from '../../composables/usePortal'
 import { ColorPickerContextKey } from './context'
 
 // `open: undefined` stops Vue casting an absent boolean prop to `false`, so uncontrolled mode and `defaultOpen` apply.
@@ -72,8 +75,9 @@ const props = withDefaults(defineProps<ColorPickerProps>(), {
   side: 'bottom',
   align: 'start',
   sideOffset: 8,
-  portal: true,
+  portal: undefined,
 })
+const portalTarget = usePortal(() => props.portal)
 const emit = defineEmits<ColorPickerEmits>()
 defineSlots<ColorPickerSlots>()
 
@@ -118,9 +122,12 @@ function onOutsideClick() {
   document.removeEventListener('click', onOutsideClick, true)
   focusTrigger()
 }
+const contentRef = ref<{ $el: HTMLElement } | null>(null)
 function onInteractOutside(event: CustomEvent<{ originalEvent: Event }>) {
+  preventNestedLayerDismiss(event, contentRef.value?.$el)
   const el = triggerRef.value?.$el
-  if (event.defaultPrevented || (el instanceof Node && el.contains(event.target as Node)))
+  const target = outsideEventTarget(event)
+  if (event.defaultPrevented || (el instanceof Node && target instanceof Node && el.contains(target)))
     return
   closedByOutside = true
   // A mouse press closes the popover on pointerdown; the browser then moves focus on mousedown
@@ -162,8 +169,9 @@ onBeforeUnmount(() => document.removeEventListener('click', onOutsideClick, true
         <slot name="trigger" :color="color" :open="isOpen" />
       </PopoverTrigger>
     </div>
-    <PopoverPortal :disabled="portal === false" :to="typeof portal === 'boolean' ? 'body' : portal">
+    <PopoverPortal :disabled="portalTarget.disabled" :to="portalTarget.to">
       <PopoverContent
+        ref="contentRef"
         data-slot="color-picker-popover"
         :side="side"
         :align="align"

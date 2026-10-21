@@ -153,6 +153,21 @@ describe('modal', () => {
     wrapper.unmount()
   })
 
+  it('names the dialog from `title` when #content replaces the whole content', async () => {
+    const warn = vi.spyOn(console, 'warn').mockImplementation(() => {})
+    const wrapper = mount(Modal, {
+      props: { defaultOpen: true, title: 'Custom content' },
+      slots: { content: ({ close }: { close: () => void }) => h('button', { onClick: close }, 'Done') },
+    })
+    await nextTick()
+    const dialog = document.querySelector('[role=dialog]')!
+    expect(document.getElementById(dialog.getAttribute('aria-labelledby')!)?.textContent).toBe('Custom content')
+    expect(warn).not.toHaveBeenCalledWith(expect.stringContaining('requires a `DialogTitle`'))
+
+    wrapper.unmount()
+    warn.mockRestore()
+  })
+
   it('#description renders after the title and describes the dialog', async () => {
     const wrapper = mount(Modal, {
       props: { defaultOpen: true, title: 'Contact Us' },

@@ -1,0 +1,137 @@
+<script setup lang="ts">
+import type { NavigationMenuItem } from './NavigationMenu.vue'
+import { AccordionTrigger } from 'reka-ui'
+import { computed } from 'vue'
+import Avatar from '../avatar/Avatar.vue'
+import Badge from '../badge/Badge.vue'
+import Chip from '../chip/Chip.vue'
+import Kbd from '../kbd/Kbd.vue'
+import { kbdKeysMap } from '../kbd/kbdKeys'
+import { SlotOutlet, slotName, useNavigationMenu } from './context'
+import { ChevronDownIcon, ChevronRightIcon, ExternalIcon, NavigationMenuIcon } from './icons'
+
+// The contents of an item's link: leading (avatar / icon / chip), label, trailing (badge / kbds / chevron).
+const props = defineProps<{
+  item: NavigationMenuItem
+  index: number
+  active: boolean
+  /** Make the chevron its own accordion trigger (vertical items that are also links). */
+  trailingTrigger?: boolean
+}>()
+
+const ctx = useNavigationMenu()
+const { ui } = ctx
+
+const vertical = computed(() => ctx.props.orientation === 'vertical')
+const hasChildren = computed(() => !!props.item.children?.length)
+const hasContentSlot = computed(() => !!ctx.slots[slotName(props.item, 'content')])
+const hasLabelSlot = computed(() => !!ctx.slots[slotName(props.item, 'label')])
+const hasTrailingSlot = computed(() => !!ctx.slots[slotName(props.item, 'trailing')])
+
+const disabled = computed(() => !!props.item.disabled)
+const label = computed(() => ctx.getLabel(props.item))
+const hasBadge = computed(() => !!props.item.badge || props.item.badge === 0)
+const hasIndicator = computed(() => (!vertical.value && (hasChildren.value || hasContentSlot.value)) || (vertical.value && hasChildren.value))
+const hasTrailing = computed(() => hasBadge.value || !!props.item.kbds?.length || hasIndicator.value || !!props.item.trailingIcon || hasTrailingSlot.value)
+const trailingIsTrigger = computed(() => vertical.value && hasChildren.value && !ctx.props.collapsed && !!props.trailingTrigger)
+
+const badgeProps = computed(() => typeof props.item.badge === 'object' ? props.item.badge : { label: props.item.badge })
+const chipProps = computed(() => typeof props.item.chip === 'object' ? props.item.chip : {})
+const kbd = computed(() => {
+  const keys: (keyof typeof kbdKeysMap)[] = []
+  const text: string[] = []
+  for (const key of props.item.kbds ?? []) {
+    if (key in kbdKeysMap)
+      keys.push(key as keyof typeof kbdKeysMap)
+    else
+      text.push(key)
+  }
+  return { keys, text: text.join('') }
+})
+
+const indicatorIcon = computed(() => props.item.trailingIcon || ctx.props.trailingIcon)
+const externalIcon = computed(() => typeof ctx.props.externalIcon === 'boolean' ? undefined : ctx.props.externalIcon)
+const showExternal = computed(() => props.item.target === '_blank' && ctx.props.externalIcon !== false)
+
+function variantsOf() {
+  return { active: props.active, disabled: disabled.value }
+}
+
+// A click on the chevron of a link that has children toggles it instead of navigating.
+function onTrailingClick(event: Event) {
+  if (trailingIsTrigger.value) {
+    event.preventDefault()
+    event.stopPropagation()
+  }
+}
+</script>
+
+<template>
+  <SlotOutlet :name="slotName(item, '')" :slot-props="{ item, index, active, ui }">
+    <SlotOutlet :name="slotName(item, 'leading')" :slot-props="{ item, active, index, ui }">
+      <Avatar
+        v-if="item.avatar"
+        size="sm"
+        v-bind="item.avatar"
+        data-slot="linkLeadingAvatar"
+        :class="ui.linkLeadingAvatar({ class: [ctx.props.ui?.linkLeadingAvatar, item.ui?.linkLeadingAvatar], ...variantsOf() })"
+      />
+      <Badge
+        v-else-if="item.icon && item.chip"
+        size="sm"
+        v-bind="chipProps"
+        data-slot="linkLeadingChip"
+        :class="ui.linkLeadingChip({ class: [ctx.props.ui?.linkLeadingChip, item.ui?.linkLeadingChip] })"
+      >
+        <NavigationMenuIcon :icon="item.icon" data-slot="linkLeadingIcon" :class="ui.linkLeadingIcon({ class: [ctx.props.ui?.linkLeadingIcon, item.ui?.linkLeadingIcon], ...variantsOf() })" />
+      </Badge>
+      <NavigationMenuIcon v-else-if="item.icon" :icon="item.icon" data-slot="linkLeadingIcon" :class="ui.linkLeadingIcon({ class: [ctx.props.ui?.linkLeadingIcon, item.ui?.linkLeadingIcon], ...variantsOf() })" />
+    </SlotOutlet>
+
+    <span
+      v-if="label || hasLabelSlot"
+      data-slot="linkLabel"
+      :class="ui.linkLabel({ class: [ctx.props.ui?.linkLabel, item.ui?.linkLabel] })"
+    >
+      <SlotOutlet :name="slotName(item, 'label')" :slot-props="{ item, active, index }">
+        {{ label }}
+      </SlotOutlet>
+      <NavigationMenuIcon v-if="showExternal && externalIcon" :icon="externalIcon" data-slot="linkLabelExternalIcon" :class="ui.linkLabelExternalIcon({ class: [ctx.props.ui?.linkLabelExternalIcon, item.ui?.linkLabelExternalIcon], active })" />
+      <ExternalIcon v-else-if="showExternal" data-slot="linkLabelExternalIcon" :class="ui.linkLabelExternalIcon({ class: [ctx.props.ui?.linkLabelExternalIcon, item.ui?.linkLabelExternalIcon], active })" />
+    </span>
+
+    <component
+      :is="trailingIsTrigger ? AccordionTrigger : 'span'"
+      v-if="hasTrailing"
+      :as="trailingIsTrigger ? 'span' : undefined"
+      data-slot="linkTrailing"
+      :class="ui.linkTrailing({ class: [ctx.props.ui?.linkTrailing, item.ui?.linkTrailing] })"
+      @click="onTrailingClick"
+    >
+      <SlotOutlet :name="slotName(item, 'trailing')" :slot-props="{ item, active, index, ui }">
+        <Chip
+          v-if="hasBadge"
+          size="sm"
+          variant="tertiary"
+          v-bind="badgeProps"
+          data-slot="linkTrailingBadge"
+          :class="ui.linkTrailingBadge({ class: [ctx.props.ui?.linkTrailingBadge, item.ui?.linkTrailingBadge] })"
+        />
+        <Kbd
+          v-if="item.kbds?.length"
+          :keys="kbd.keys"
+          data-slot="linkTrailingKbd"
+          :class="ui.linkTrailingKbd({ class: [ctx.props.ui?.linkTrailingKbd, item.ui?.linkTrailingKbd] })"
+        >
+          <template v-if="kbd.text" #default>
+            {{ kbd.text }}
+          </template>
+        </Kbd>
+        <NavigationMenuIcon v-if="hasIndicator && indicatorIcon" :icon="indicatorIcon" data-slot="linkTrailingIcon" :class="ui.linkTrailingIcon({ class: [ctx.props.ui?.linkTrailingIcon, item.ui?.linkTrailingIcon], active })" />
+        <ChevronRightIcon v-else-if="hasIndicator && vertical" data-slot="linkTrailingIcon" :class="ui.linkTrailingIcon({ class: [ctx.props.ui?.linkTrailingIcon, item.ui?.linkTrailingIcon], active })" />
+        <ChevronDownIcon v-else-if="hasIndicator" data-slot="linkTrailingIcon" :class="ui.linkTrailingIcon({ class: [ctx.props.ui?.linkTrailingIcon, item.ui?.linkTrailingIcon], active })" />
+        <NavigationMenuIcon v-else-if="item.trailingIcon" :icon="item.trailingIcon" data-slot="linkTrailingIcon" :class="ui.linkTrailingIcon({ class: [ctx.props.ui?.linkTrailingIcon, item.ui?.linkTrailingIcon], active })" />
+      </SlotOutlet>
+    </component>
+  </SlotOutlet>
+</template>

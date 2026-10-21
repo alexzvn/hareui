@@ -3,7 +3,7 @@ title: Design Principles
 description: Core principles that guide HareUI's design and API.
 ---
 
-HareUI follows the same design principles as HeroUI v3, adapted to Vue's component model and Nuxt UI-style conventions.
+HareUI follows the same design principles as HeroUI v3, adapted to Vue's component model with a slot-based API.
 
 ## Core Principles
 

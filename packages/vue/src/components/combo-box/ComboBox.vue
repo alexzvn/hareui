@@ -1,7 +1,9 @@
 <script lang="ts">
 import type { ValidateFn, ValidationResult } from '../../composables/useFieldValidation'
+import type { PortalTarget } from '../../config'
 import type { ComponentSlots } from '../../types/tv'
 import type { ValidationBehavior } from '../form/context'
+import type { FormFieldProps } from '../form/types'
 import type { ListBoxEntry, ListBoxItem, ListBoxItemSlotProps, ListBoxSection, ListBoxValue } from '../list-box/ListBox.vue'
 import type { CollectionRow } from '../list-box/listBoxCollection'
 import { injectComboboxRootContext, injectListboxRootContext } from 'reka-ui'
@@ -22,7 +24,12 @@ export interface ComboBoxValidationValue {
   selectedKey: ListBoxValue | null
 }
 
-export interface ComboBoxProps<T extends ListBoxItem = ListBoxItem> {
+export interface ComboBoxProps<T extends ListBoxItem = ListBoxItem> extends FormFieldProps {
+  /**
+   * Renders the listbox popover in a portal. `true` portals to `document.body`, a selector string or element is used as the teleport target, and `false` disables portalling.
+   * Falls back to `createHareUI({ portal })`, then `true`.
+   */
+  portal?: PortalTarget
   /** Options, sections (`{ type: 'section', label, items }`) and separators (`{ type: 'separator' }`), as in ListBox. */
   items?: ListBoxEntry<T>[]
   /**
@@ -189,6 +196,8 @@ import { ComboboxAnchor, ComboboxContent, ComboboxItem, ComboboxPortal, Combobox
 import { computed, getCurrentInstance, nextTick, onBeforeUnmount, onMounted, ref, shallowRef, useAttrs, useId, useTemplateRef, watch } from 'vue'
 import { useComponentUI } from '../../composables/useComponentUI'
 import { useFieldValidation } from '../../composables/useFieldValidation'
+import { usePortal } from '../../composables/usePortal'
+import { useFieldsetDisabled } from '../fieldset/context'
 import inputTheme from '../input/theme'
 import listBoxTheme from '../list-box/theme'
 import Description from '../description/Description.vue'
@@ -202,6 +211,7 @@ defineOptions({ inheritAttrs: false })
 
 // Absent booleans stay `undefined`: `open` → uncontrolled, `invalid` → validation decides, `loading` → no sentinel
 const props = withDefaults(defineProps<ComboBoxProps<T>>(), {
+  portal: undefined,
   selectionMode: 'single',
   defaultValue: undefined,
   formValue: 'key',
@@ -211,6 +221,8 @@ const props = withDefaults(defineProps<ComboBoxProps<T>>(), {
   invalid: undefined,
   loading: undefined,
 })
+const portalTarget = usePortal(() => props.portal)
+const disabled = useFieldsetDisabled(() => props.disabled)
 const emit = defineEmits<ComboBoxEmits>()
 const slots = defineSlots<ComboBoxSlots<T>>()
 const modelValue = defineModel<ComboBoxValue>()
@@ -292,7 +304,7 @@ const filteredCount = computed(() => {
 
 // ---- Open state (the `open` prop wins when bound) ---------------------------------------------------------------
 const uncontrolledOpen = ref(props.defaultOpen ?? false)
-const isOpen = computed(() => (props.open ?? uncontrolledOpen.value) && !props.disabled)
+const isOpen = computed(() => (props.open ?? uncontrolledOpen.value) && !disabled.value)
 watch([liveBlocks, isOpen], ([live, open]) => {
   if (open)
     blocks.value = live
@@ -308,7 +320,7 @@ type FocusStrategy = 'first' | 'last' | null
 type OpenTrigger = 'focus' | 'input' | 'manual'
 // RAC `state.open(focusStrategy, trigger)`
 function open(strategy: FocusStrategy, trigger: OpenTrigger) {
-  if (props.disabled || props.readonly)
+  if (disabled.value || props.readonly)
     return
   const displayAll = trigger === 'manual' || (trigger === 'focus' && props.menuTrigger === 'focus')
   if (props.allowsEmptyCollection || filteredCount.value > 0 || (displayAll && options.value.length > 0)) {
@@ -571,7 +583,7 @@ function itemValueOf(el: HTMLElement): ListBoxValue | undefined {
 let suppressFocusOpen = false
 const triggerHovered = ref(false)
 function pressTrigger(strategy: FocusStrategy) {
-  if (props.disabled || props.readonly)
+  if (disabled.value || props.readonly)
     return
   const wasOpen = isOpen.value
   suppressFocusOpen = true
@@ -634,13 +646,14 @@ watch(isOpen, (value) => {
   if (value && !openingFromInput)
     showAll.value = true
 }, { flush: 'sync' })
-watch(() => props.disabled, (disabled) => {
+watch(disabled, (disabled) => {
   if (disabled)
     close()
 })
 
 // ---- Validation ---------------------------------------------------------------------------------------------------
 const { validation, commitValidation } = useFieldValidation<ComboBoxValidationValue>({
+  formField: props,
   value: () => multiple.value && selectedValues.value.length === 0
     ? null
     : { inputValue: inputValue.value, value: selection.value, selectedKey: selectedKey.value },
@@ -840,7 +853,7 @@ function optionAttrs(row: CollectionRow) {
     <template v-if="name && !submitText">
       <input v-for="(value, i) in hiddenValues" :key="i" type="hidden" :name="name" :value="value">
     </template>
-    <ComboboxPortal>
+    <ComboboxPortal :disabled="portalTarget.disabled" :to="portalTarget.to">
       <ComboboxContent
         ref="content"
         position="popper"

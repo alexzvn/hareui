@@ -19,6 +19,10 @@ description: Explore the full list of components available in the library. More 
 
 <ComponentsCategory category="Controls" />
 
+## Dashboard
+
+<ComponentsCategory category="Dashboard" />
+
 ## Data Display
 
 <ComponentsCategory category="Data Display" />

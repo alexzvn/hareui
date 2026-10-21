@@ -9,6 +9,7 @@ import coinbase from '../assets/themes/coinbase.png'
 import defaultImage from '../assets/themes/default.png'
 import discord from '../assets/themes/discord.png'
 import lavender from '../assets/themes/lavender.png'
+import kumo from '../assets/themes/kumo.png'
 import mint from '../assets/themes/mint.png'
 import netflix from '../assets/themes/netflix.png'
 import rabbit from '../assets/themes/rabbit.png'
@@ -36,6 +37,7 @@ const THEMES: { id: DesignThemeId; label: string; image: string }[] = [
   { id: 'airbnb', image: airbnb, label: 'Airbnb' },
   { id: 'discord', image: discord, label: 'Discord' },
   { id: 'rabbit', image: rabbit, label: 'Rabbit' },
+  { id: 'kumo', image: kumo, label: 'Kumo' },
 ]
 
 const active = ref<DesignThemeId>('default')

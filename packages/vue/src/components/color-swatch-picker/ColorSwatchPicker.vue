@@ -82,11 +82,13 @@ export interface ColorSwatchPickerEmits {
 import { ColorSwatchPickerItem as ItemPrimitive, ColorSwatchPickerRoot, colorToString, normalizeColor } from 'reka-ui'
 import { computed, ref } from 'vue'
 import { useComponentUI } from '../../composables/useComponentUI'
+import { useFieldsetDisabled } from '../fieldset/context'
 import ColorSwatch from '../color-swatch/ColorSwatch.vue'
 import { useColorPickerContext } from '../color-picker/context'
 import ColorSwatchPickerBridge from './colorSwatchPickerBridge'
 
 const props = defineProps<ColorSwatchPickerProps>()
+const isDisabled = useFieldsetDisabled(() => props.disabled)
 const emit = defineEmits<ColorSwatchPickerEmits>()
 defineSlots<ColorSwatchPickerSlots>()
 
@@ -151,7 +153,7 @@ const ui = useComponentUI('colorSwatchPicker', theme, () => ({
 <template>
   <ColorSwatchPickerRoot
     :model-value="selected"
-    :disabled="disabled"
+    :disabled="isDisabled"
     :name="name"
     :as="as"
     :as-child="asChild"

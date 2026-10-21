@@ -190,6 +190,7 @@ export const themes: Array<{
   { id: 'airbnb', image: '/themes/airbnb.png', label: 'Airbnb' },
   { id: 'discord', image: '/themes/discord.png', label: 'Discord' },
   { id: 'rabbit', image: '/themes/rabbit.png', label: 'Rabbit' },
+  { id: 'kumo', image: '/themes/kumo.png', label: 'Kumo' },
 ]
 
 export type ThemeVariables = {

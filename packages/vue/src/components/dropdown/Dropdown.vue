@@ -1,4 +1,5 @@
 <script lang="ts">
+import type { PortalTarget } from '../../config'
 import type { ComponentSlots } from '../../types/tv'
 import type { KbdKey } from '../kbd/kbdKeys'
 import theme from './theme'
@@ -51,6 +52,11 @@ export interface DropdownSeparator {
 export type DropdownEntry = DropdownItem | DropdownSection | DropdownSeparator
 
 export interface DropdownProps {
+  /**
+   * Renders the menu in a portal. `true` portals to `document.body`, a selector string or element is used as the teleport target, and `false` disables portalling.
+   * Falls back to `createHareUI({ portal })`, then `true`.
+   */
+  portal?: PortalTarget
   /** The menu entries: items, `{ type: 'section' }` groups and `{ type: 'separator' }` dividers. */
   items?: DropdownEntry[]
   /** The controlled open state of the menu. Use with `v-model:open`. */
@@ -137,11 +143,14 @@ function ensureLongPressDescription() {
 import type { DropdownContext, DropdownSelectionGroup } from './context'
 import { DropdownMenuContent, DropdownMenuPortal, DropdownMenuRoot, DropdownMenuTrigger } from 'reka-ui'
 import { computed, onBeforeUnmount, onMounted, provide, ref } from 'vue'
+import { preventNestedLayerDismiss } from '../../composables/nestedLayer'
 import { useComponentUI } from '../../composables/useComponentUI'
+import { usePortal } from '../../composables/usePortal'
 import { dropdownContextKey, enabledMenuItems } from './context'
 import DropdownMenuItems from './DropdownMenuItems.vue'
 
 const props = withDefaults(defineProps<DropdownProps>(), {
+  portal: undefined,
   open: undefined,
   modelValue: undefined,
   selectionMode: 'none',
@@ -151,10 +160,12 @@ const props = withDefaults(defineProps<DropdownProps>(), {
   align: 'start',
   sideOffset: 8,
 })
+const portalTarget = usePortal(() => props.portal)
 const emit = defineEmits<DropdownEmits>()
 const slots = defineSlots<DropdownSlots>()
 
 const ui = useComponentUI('dropdown', theme, () => ({}))
+const contentRef = ref<{ $el: HTMLElement } | null>(null)
 
 const openState = ref(props.defaultOpen)
 const isOpen = computed(() => props.open ?? openState.value)
@@ -210,6 +221,7 @@ const onPointerdown = () => { lastKey.value = null }
 const ctx: DropdownContext = {
   classes: () => ui.value as any,
   ui: () => props.ui,
+  portal: () => portalTarget.value,
   slots,
   rootGroup: () => rootGroup.value,
   sectionGroup(section, parent) {
@@ -354,10 +366,11 @@ onBeforeUnmount(() => {
     >
       <slot />
     </DropdownMenuTrigger>
-    <DropdownMenuPortal>
+    <DropdownMenuPortal :disabled="portalTarget.disabled" :to="portalTarget.to">
       <!-- Reka puts `role="menu"` on the content (HeroUI's popover); the inner element carries the menu classes -->
       <!-- `loop`: React Aria wraps keyboard focus from the last item to the first and back -->
       <DropdownMenuContent
+        ref="contentRef"
         loop
         :side="side"
         :align="align"
@@ -365,6 +378,7 @@ onBeforeUnmount(() => {
         :collision-padding="12"
         data-slot="dropdown-popover"
         :class="ui.popover({ class: [props.ui?.popover, props.class] })"
+        @interact-outside="preventNestedLayerDismiss($event, contentRef?.$el)"
         @open-auto-focus="onOpenAutoFocus"
         @keydown="onMenuKeydown"
       >

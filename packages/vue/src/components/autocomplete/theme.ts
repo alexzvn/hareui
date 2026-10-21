@@ -8,7 +8,7 @@ export default {
     label: '',
     trigger: [
       'relative isolate inline-flex min-h-9 rounded-field px-3 py-2 text-sm text-field-foreground shadow-field outline-none select-none no-highlight',
-      'bg-(--autocomplete-trigger-bg-current) [--autocomplete-trigger-bg-current:var(--autocomplete-trigger-bg)] [--autocomplete-trigger-bg:var(--color-field)] [--autocomplete-trigger-bg-hover:var(--color-field-hover)] [--autocomplete-trigger-bg-focus:var(--field-focus)]',
+      'bg-(--autocomplete-trigger-bg-current) [--autocomplete-trigger-bg-current:var(--autocomplete-trigger-bg)] [--autocomplete-trigger-bg:var(--field-background,var(--default))] [--autocomplete-trigger-bg-hover:var(--field-hover)] [--autocomplete-trigger-bg-focus:var(--field-focus)]',
       'border-(length:--border-width-field) border-(--field-border)',
       '[transition:background-color_150ms_var(--ease-smooth),border-color_150ms_var(--ease-smooth),box-shadow_150ms_var(--ease-out)] motion-reduce:transition-none',
       'cursor-(--cursor-interactive)',
@@ -65,7 +65,7 @@ export default {
     variant: {
       primary: {},
       secondary: {
-        trigger: 'shadow-none [--autocomplete-trigger-bg:var(--color-default)] [--autocomplete-trigger-bg-hover:var(--color-default-hover)] [--autocomplete-trigger-bg-focus:var(--color-default)]',
+        trigger: 'shadow-none [--autocomplete-trigger-bg:var(--default)] [--autocomplete-trigger-bg-hover:var(--default-hover)] [--autocomplete-trigger-bg-focus:var(--default)]',
       },
     },
     fullWidth: {

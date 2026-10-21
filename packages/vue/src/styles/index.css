@@ -9,6 +9,7 @@
 /* Base */
 @import "./base.css" layer(base);
 @import "./scrollbar.css" layer(base);
+@import "./shadow-root.css" layer(base);
 @import "./scroll-shadow.css";
 
 /* Utilities and variants */

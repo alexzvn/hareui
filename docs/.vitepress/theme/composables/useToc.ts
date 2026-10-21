@@ -15,7 +15,9 @@ export function useToc() {
 
   function collect() {
     observer?.disconnect()
+    // Headings rendered by live demos belong to the demo, not the page outline.
     const headings = Array.from(document.querySelectorAll<HTMLElement>('#nd-page .prose h2[id], #nd-page .prose h3[id]'))
+      .filter((h) => !h.closest('.component-preview-container'))
     items.value = headings.map((h) => ({
       id: h.id,
       text: (h.querySelector('a[data-card]')?.textContent ?? h.textContent ?? '').trim(),

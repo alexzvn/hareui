@@ -4,6 +4,7 @@ import type { ValidateFn, ValidationResult } from '../../composables/useFieldVal
 import type { ComponentSlots } from '../../types/tv'
 import type { DateInputGroupProps } from '../date-input-group/DateInputGroup.vue'
 import type { ValidationBehavior } from '../form/context'
+import type { FormFieldProps } from '../form/types'
 import dateInputGroupTheme from '../date-input-group/theme'
 import theme from './theme'
 
@@ -16,7 +17,7 @@ type HourCycle = NonNullable<DateFieldRootProps['hourCycle']>
 type DateStep = NonNullable<DateFieldRootProps['step']>
 type DateUnavailableMatcher = NonNullable<DateFieldRootProps['isDateUnavailable']>
 
-export interface DateFieldProps {
+export interface DateFieldProps extends FormFieldProps {
   /** Label text rendered above the group. */
   label?: string
   /** Helper text rendered below the group. Hidden while the field is invalid. */
@@ -137,11 +138,13 @@ import DateInputGroup, { dropDanglingTimeZoneSeparator, wrapBidiIsolate } from '
 import Description from '../description/Description.vue'
 import FieldError from '../field-error/FieldError.vue'
 import Label from '../label/Label.vue'
+import { useFieldsetDisabled } from '../fieldset/context'
 
 // `invalid: undefined`: an absent boolean would cast to `false`, which counts as controlled-valid and hides validation errors
 const props = withDefaults(defineProps<DateFieldProps>(), { invalid: undefined })
 const emit = defineEmits<DateFieldEmits>()
 const slots = defineSlots<DateFieldSlots>()
+const disabled = useFieldsetDisabled(() => props.disabled)
 /** The selected date. Bind with `v-model`. */
 const modelValue = defineModel<DateValue | null>()
 
@@ -178,6 +181,7 @@ const { validation, commitValidation } = useFieldValidation({
   validationBehavior: () => props.validationBehavior,
   name: () => props.name,
   root: () => root.value?.$el as Element | undefined,
+  formField: props,
   onReset: () => {
     modelValue.value = props.defaultValue
   },

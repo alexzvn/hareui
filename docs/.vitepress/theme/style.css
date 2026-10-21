@@ -4,6 +4,7 @@
 @import "../../../packages/vue/src/styles/index.css";
 @import "./global.css";
 @import "./theme-presets.css";
+@import "./theme-kumo.css";
 @import "@fontsource-variable/inter";
 @import "vitepress/dist/client/theme-default/styles/icons.css";
 

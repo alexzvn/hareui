@@ -13,6 +13,7 @@ export const DESIGN_THEME_IDS = [
   'airbnb',
   'discord',
   'rabbit',
+  'kumo',
 ] as const
 
 export type DesignThemeId = (typeof DESIGN_THEME_IDS)[number]
@@ -35,6 +36,7 @@ export const DESIGN_THEME_VALUES: Record<DesignThemeId, { lightness: number; chr
   airbnb: { lightness: 0.6579, chroma: 0.2309, hue: 17.07 },
   discord: { lightness: 0.5774, chroma: 0.2091, hue: 273.85 },
   rabbit: { lightness: 0.6678, chroma: 0.2232, hue: 36.66 },
+  kumo: { lightness: 0.5772, chroma: 0.2324, hue: 260 },
 }
 
 export function isDesignThemeId(value: string | null | undefined): value is DesignThemeId {

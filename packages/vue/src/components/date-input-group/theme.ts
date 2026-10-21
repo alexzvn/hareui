@@ -10,9 +10,9 @@ export default {
       'border-(length:--border-width-field) border-(--field-border)',
       // State sets a private var instead of `bg-*`, so a plain user `bg-*` (twMerge drops ours) wins in every state,
       // as with HeroUI's `@layer components` rules
-      'bg-(--date-input-group-bg-current) [--date-input-group-bg-current:var(--color-field)]',
+      'bg-(--date-input-group-bg-current) [--date-input-group-bg-current:var(--field-background,var(--default))]',
       '[transition:background-color_150ms_var(--ease-smooth),border-color_150ms_var(--ease-smooth),box-shadow_150ms_var(--ease-out)] motion-reduce:transition-none',
-      'hover:not-focus-within:[--date-input-group-bg-current:var(--color-field-hover)] hover:not-focus-within:border-(--field-border-hover)',
+      'hover:not-focus-within:[--date-input-group-bg-current:var(--field-hover)] hover:not-focus-within:border-(--field-border-hover)',
       // HeroUI skips the field ring while the (Date|DateRange)Picker trigger button itself holds focus (it draws its own ring); `:where` keeps the specificity of a plain `focus-within:`
       '[&:focus-within:where(:not(:has([data-slot=date-picker-trigger]:focus,[data-slot=date-range-picker-trigger]:focus)))]:status-focused-field focus-within:[--date-input-group-bg-current:var(--field-focus)]',
       '[&:where([data-invalid=true])]:status-invalid-field [&:where([data-invalid=true])]:[--date-input-group-bg-current:var(--field-focus)] [&:where([data-invalid=true])]:border-(--color-field-border-invalid)',
@@ -33,15 +33,15 @@ export default {
       // bare `text-foreground` override share identical (zero-specificity) selectors, so twMerge's eviction
       // is the only reliable way to let a plain user `text-*` (twMerge drops ours) win, as with HeroUI's
       // `@layer components` rules
-      'text-(--date-input-group-segment-color-current) [--date-input-group-segment-color-current:var(--color-field-foreground)]',
+      'text-(--date-input-group-segment-color-current) [--date-input-group-segment-color-current:var(--field-foreground,var(--foreground))]',
       // HeroUI/React Aria's `[data-type="literal"]`; Reka's segment attribute is named `data-segment`
-      '[&:where([data-segment=literal])]:p-0 [&:where([data-segment=literal])]:[--date-input-group-segment-color-current:var(--color-muted)]',
-      '[&:where([data-placeholder])]:[--date-input-group-segment-color-current:var(--color-field-placeholder)]',
+      '[&:where([data-segment=literal])]:p-0 [&:where([data-segment=literal])]:[--date-input-group-segment-color-current:var(--muted)]',
+      '[&:where([data-placeholder])]:[--date-input-group-segment-color-current:var(--field-placeholder,var(--muted))]',
       'focus:bg-accent-soft focus:text-accent-soft-foreground',
       '[&:where([data-disabled])]:opacity-50',
       // Invalid styling reads the group's own `data-invalid` (set from validation), not Reka's per-segment attribute:
       // see reka-limitations in dateField.ts / timeField.ts for why.
-      'group-data-[invalid=true]/date-input-group:[--date-input-group-segment-color-current:var(--color-danger)] group-data-[invalid=true]/date-input-group:focus:bg-danger-soft group-data-[invalid=true]/date-input-group:focus:text-danger-soft-foreground',
+      'group-data-[invalid=true]/date-input-group:[--date-input-group-segment-color-current:var(--danger)] group-data-[invalid=true]/date-input-group:focus:bg-danger-soft group-data-[invalid=true]/date-input-group:focus:text-danger-soft-foreground',
     ],
     prefix: 'pointer-events-none shrink-0 text-field-placeholder ms-3 me-0 flex items-center',
     suffix: 'pointer-events-none shrink-0 text-field-placeholder me-3 flex items-center',

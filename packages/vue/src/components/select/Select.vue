@@ -1,7 +1,9 @@
 <script lang="ts">
 import type { ValidateFn, ValidationResult } from '../../composables/useFieldValidation'
+import type { PortalTarget } from '../../config'
 import type { ComponentSlots } from '../../types/tv'
 import type { ValidationBehavior } from '../form/context'
+import type { FormFieldProps } from '../form/types'
 import type { ListBoxEntry, ListBoxItem, ListBoxItemSlotProps, ListBoxSection, ListBoxValue } from '../list-box/ListBox.vue'
 import theme from './theme'
 
@@ -9,7 +11,12 @@ type Select = typeof theme
 
 export type SelectValue = ListBoxValue | ListBoxValue[] | null
 
-export interface SelectProps<T extends ListBoxItem = ListBoxItem> {
+export interface SelectProps<T extends ListBoxItem = ListBoxItem> extends FormFieldProps {
+  /**
+   * Renders the listbox popover in a portal. `true` portals to `document.body`, a selector string or element is used as the teleport target, and `false` disables portalling.
+   * Falls back to `createHareUI({ portal })`, then `true`.
+   */
+  portal?: PortalTarget
   /** Options, sections (`{ type: 'section', label, items }`) and separators (`{ type: 'separator' }`), as in ListBox. */
   items?: ListBoxEntry<T>[]
   /**
@@ -142,6 +149,8 @@ import { PopoverContent, PopoverPortal, PopoverRoot, PopoverTrigger } from 'reka
 import { computed, ref, useAttrs, useId, useTemplateRef, watch } from 'vue'
 import { useComponentUI } from '../../composables/useComponentUI'
 import { useFieldValidation } from '../../composables/useFieldValidation'
+import { usePortal } from '../../composables/usePortal'
+import { useFieldsetDisabled } from '../fieldset/context'
 import listBoxTheme from '../list-box/theme'
 import Description from '../description/Description.vue'
 import FieldError from '../field-error/FieldError.vue'
@@ -153,6 +162,7 @@ defineOptions({ inheritAttrs: false })
 
 // Absent booleans stay `undefined` (not `false`): `open` → uncontrolled, `invalid` → validation decides, `loading` → no sentinel
 const props = withDefaults(defineProps<SelectProps<T>>(), {
+  portal: undefined,
   selectionMode: 'single',
   defaultValue: undefined,
   placeholder: 'Select an item',
@@ -160,6 +170,8 @@ const props = withDefaults(defineProps<SelectProps<T>>(), {
   invalid: undefined,
   loading: undefined,
 })
+const portalTarget = usePortal(() => props.portal)
+const disabled = useFieldsetDisabled(() => props.disabled)
 const emit = defineEmits<SelectEmits>()
 const slots = defineSlots<SelectSlots<T>>()
 const modelValue = defineModel<SelectValue>()
@@ -192,7 +204,7 @@ const isOpen = computed({
   },
 })
 function setOpen(value: boolean) {
-  if (value && props.disabled)
+  if (value && disabled.value)
     return
   isOpen.value = value
 }
@@ -221,6 +233,7 @@ const triggerEl = () => {
 }
 
 const { validation, commitValidation } = useFieldValidation<SelectValue>({
+  formField: props,
   value: () => selection.value,
   validate: () => props.validate,
   invalid: () => props.invalid,
@@ -242,7 +255,7 @@ function onListUpdate(value: ListBoxValue | ListBoxValue[] | null | undefined) {
 }
 
 function clear() {
-  if (props.disabled || isPlaceholder.value)
+  if (disabled.value || isPlaceholder.value)
     return
   selection.value = multiple.value ? [] : null
   commitValidation()
@@ -272,7 +285,7 @@ function onTypeahead(key: string) {
 
 function onTriggerKeydown(event: KeyboardEvent) {
   triggerPress = false
-  if (props.disabled)
+  if (disabled.value)
     return
   if (event.key === 'ArrowDown' || event.key === 'ArrowUp') {
     event.preventDefault()
@@ -331,7 +344,7 @@ function onCloseAutoFocus(event: Event) {
 // RAC Select opens on mouse press start, and releasing over an option selects it (press-drag-release)
 let triggerPress = false
 function onTriggerPointerdown(event: PointerEvent) {
-  if (event.pointerType !== 'mouse' || event.button !== 0 || props.disabled)
+  if (event.pointerType !== 'mouse' || event.button !== 0 || disabled.value)
     return
   // The click that ends this press must not toggle again
   triggerPress = true
@@ -400,7 +413,7 @@ function valueIndicatorClass(item: ListBoxItem) {
   return (listBoxUi.value.indicator as (options?: { variant?: string }) => string)({ variant: item.variant })
 }
 
-watch(() => props.disabled, (disabled) => {
+watch(disabled, (disabled) => {
   if (disabled)
     setOpen(false)
 })
@@ -517,7 +530,7 @@ watch(() => props.disabled, (disabled) => {
           </svg>
         </button>
       </PopoverTrigger>
-      <PopoverPortal>
+      <PopoverPortal :disabled="portalTarget.disabled" :to="portalTarget.to">
         <PopoverContent
           ref="content"
           data-slot="select-popover"

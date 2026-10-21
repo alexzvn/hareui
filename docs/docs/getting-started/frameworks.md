@@ -73,6 +73,51 @@ import { Button } from '@hareui/vue'
 </template>
 ```
 
+### Vite plugin (optional)
+
+`@hareui/vue/vite` auto-imports HareUI components in templates through [unplugin-vue-components](https://github.com/unplugin/unplugin-vue-components) and applies app-wide theme overrides at build time. With it, you can drop the `import { Button } from '@hareui/vue'` lines.
+
+```ts [vite.config.ts]
+import { defineConfig } from 'vite'
+import vue from '@vitejs/plugin-vue'
+import tailwindcss from '@tailwindcss/vite'
+import hareui from '@hareui/vue/vite'
+
+export default defineConfig({
+  plugins: [
+    vue(),
+    tailwindcss(),
+    hareui({
+      prefix: 'H', // <HButton> / <h-button>; default '' keeps <Button>
+      ui: { button: { slots: { base: 'uppercase' }, defaultVariants: { size: 'lg' } } },
+    }),
+  ],
+})
+```
+
+`hareui` is both the default and a named export.
+
+| Option | Type | Default | Description |
+| --- | --- | --- | --- |
+| `prefix` | `string` | `''` | Template prefix for HareUI components. `'H'` resolves `<HButton>` and `<h-button>` to `Button`. Kebab-case (`'h-'`) is accepted. |
+| `ui` | same as `createHareUI({ ui })` | — | App-wide theme overrides, inlined at build time, so values must be JSON-serializable. Applied above the theme files and below `createHareUI({ ui })`. See [Precedence](/docs/getting-started/theming#precedence). |
+| `components` | unplugin-vue-components options \| `false` | `{}` | Forwarded to unplugin-vue-components (`dts`, `dirs`, extra `resolvers`, …); the HareUI resolver is appended to `resolvers`. `false` turns auto import off. |
+
+Already registering unplugin-vue-components yourself? Add `HareUIResolver` to its `resolvers` instead:
+
+```ts [vite.config.ts]
+import Components from 'unplugin-vue-components/vite'
+import { HareUIResolver } from '@hareui/vue/vite'
+
+export default defineConfig({
+  plugins: [
+    vue(),
+    tailwindcss(),
+    Components({ resolvers: [HareUIResolver({ prefix: 'H' })] }),
+  ],
+})
+```
+
 ## Nuxt
 
 HareUI has no Nuxt module. Register it as a plain Vue plugin and load the CSS through Nuxt's config.

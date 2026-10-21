@@ -40,15 +40,16 @@ export interface FieldsetSlots {
 
 <script setup lang="ts">
 import { Primitive } from 'reka-ui'
-import { provide, toRef } from 'vue'
+import { provide } from 'vue'
 import { useComponentUI } from '../../composables/useComponentUI'
 import Description from '../description/Description.vue'
-import { fieldsetContextKey } from './context'
+import { fieldsetContextKey, useFieldsetDisabled } from './context'
 
 const props = withDefaults(defineProps<FieldsetProps>(), { as: 'fieldset' })
 const slots = defineSlots<FieldsetSlots>()
 
-provide(fieldsetContextKey, { disabled: toRef(() => props.disabled) })
+// A disabled ancestor (Fieldset or Form) disables this one's descendants too
+provide(fieldsetContextKey, { disabled: useFieldsetDisabled(() => props.disabled) })
 
 const ui = useComponentUI('fieldset', theme, () => ({}))
 </script>

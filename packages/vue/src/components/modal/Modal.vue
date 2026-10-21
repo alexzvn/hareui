@@ -1,5 +1,6 @@
 <script lang="ts">
 import type { FocusOutsideEvent, PointerDownOutsideEvent } from 'reka-ui'
+import type { PortalTarget } from '../../config'
 import type { ComponentSlots, ComponentVariants } from '../../types/tv'
 import theme from './theme'
 
@@ -43,11 +44,10 @@ export interface ModalProps {
    */
   closeButton?: boolean
   /**
-   * Where the modal is teleported. `true` teleports to `body`, `false` renders in place,
-   * a string or element teleports to that target.
-   * @defaultValue true
+   * Renders the modal in a portal. `true` portals to `document.body`, a selector string or element is used as the teleport target, and `false` disables portalling.
+   * Falls back to `createHareUI({ portal })`, then `true`.
    */
-  portal?: boolean | string | HTMLElement
+  portal?: PortalTarget
   /** Additional classes merged into the dialog element. */
   class?: any
   /** Per-slot class overrides. */
@@ -94,18 +94,21 @@ import {
   VisuallyHidden,
 } from 'reka-ui'
 import { computed, onBeforeUnmount, onMounted, ref, useSlots } from 'vue'
+import { preventNestedLayerDismiss } from '../../composables/nestedLayer'
 import { useComponentUI } from '../../composables/useComponentUI'
+import { usePortal } from '../../composables/usePortal'
 import { useTabbableFocusLoop } from '../../composables/useTabbableFocusLoop'
 import CloseButton from '../close-button/CloseButton.vue'
 
 // `open: undefined` stops Vue casting an absent boolean prop to `false`, so uncontrolled mode and `defaultOpen` apply
 const props = withDefaults(defineProps<ModalProps>(), {
   open: undefined,
-  portal: true,
+  portal: undefined,
   closeButton: true,
   dismissible: true,
   placement: 'auto',
 })
+const portalTarget = usePortal(() => props.portal)
 const emit = defineEmits<ModalEmits>()
 const slots = useSlots()
 defineSlots<ModalSlots>()
@@ -130,6 +133,7 @@ function onPointerDownOutside(event: PointerDownOutsideEvent) {
     event.preventDefault()
 }
 function onInteractOutside(event: PointerDownOutsideEvent | FocusOutsideEvent) {
+  preventNestedLayerDismiss(event, dialogContent.value?.$el)
   if (!props.dismissible)
     event.preventDefault()
 }
@@ -168,7 +172,7 @@ onBeforeUnmount(() => {
     <DialogTrigger v-if="!!slots.default" as-child>
       <slot :open="isOpen" />
     </DialogTrigger>
-    <DialogPortal :disabled="portal === false" :to="portal === true ? 'body' : (portal === false ? undefined : portal)">
+    <DialogPortal :disabled="portalTarget.disabled" :to="portalTarget.to">
       <DialogOverlay
         data-slot="modal-backdrop"
         :style="{ '--visual-viewport-height': visualViewportHeight }"
@@ -190,6 +194,9 @@ onBeforeUnmount(() => {
             @interact-outside="onInteractOutside"
             @open-auto-focus="onOpenAutoFocus"
           >
+            <VisuallyHidden v-if="slots.content && title" as-child>
+              <DialogTitle>{{ title }}</DialogTitle>
+            </VisuallyHidden>
             <slot name="content" :close="close">
               <div v-if="hasHeader" data-slot="modal-header" :class="ui.header({ class: props.ui?.header })">
                 <slot name="header">

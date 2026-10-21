@@ -1,4 +1,5 @@
 import type { InjectionKey } from 'vue'
+import type { ResolvedPortal } from '../../composables/usePortal'
 import type { DropdownItem, DropdownItemSlotProps, DropdownSection, DropdownSlots, DropdownValue } from './Dropdown.vue'
 
 /** One selection scope: the menu itself, or a section with its own `selectionMode` (RAC's `GroupSelectionManager`). */
@@ -13,6 +14,8 @@ export interface DropdownContext {
   /** Slot class functions of the Dropdown theme; `variant` is applied per item. */
   classes: () => Record<string, (options?: { variant?: string, class?: any }) => string>
   ui: () => Record<string, any> | undefined
+  /** Resolved portal of the root menu; submenus portal to the same target. */
+  portal: () => ResolvedPortal
   slots: DropdownSlots
   rootGroup: () => DropdownSelectionGroup
   sectionGroup: (section: DropdownSection, parent: DropdownSelectionGroup) => DropdownSelectionGroup

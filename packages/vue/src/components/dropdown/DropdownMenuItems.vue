@@ -1,10 +1,12 @@
 <script setup lang="ts">
 // Internal: renders a list of Dropdown entries (items, sections, separators, submenus). Recursive
 // for submenus. Not exported.
+import type { ComponentPublicInstance } from 'vue'
 import type { DropdownEntry, DropdownItem, DropdownSection, DropdownSeparator } from './Dropdown.vue'
 import type { DropdownSelectionGroup } from './context'
 import { DropdownMenuGroup, DropdownMenuLabel, DropdownMenuPortal, DropdownMenuSub, DropdownMenuSubContent, useId } from 'reka-ui'
 import { inject, ref } from 'vue'
+import { preventNestedLayerDismiss } from '../../composables/nestedLayer'
 import { dropdownContextKey } from './context'
 import DropdownMenuOption from './DropdownMenuOption.vue'
 
@@ -26,6 +28,15 @@ const submenuGroup: DropdownSelectionGroup = { mode: 'none', indicator: false, i
 // The open submenu of this level (one at a time, as in RAC's `SubmenuTriggerState`).
 const openSubmenu = ref<DropdownItem['value'] | null>(null)
 
+// Mounted submenu contents by item value, for the nested-layer guard.
+const submenuContents = new Map<DropdownItem['value'], Element>()
+function setSubmenuContent(value: DropdownItem['value'], instance: Element | ComponentPublicInstance | null) {
+  if (instance && '$el' in instance)
+    submenuContents.set(value, instance.$el)
+  else
+    submenuContents.delete(value)
+}
+
 // Reka closes the whole menu on Escape inside a submenu; RAC closes only that submenu and refocuses
 // its trigger. Stopping the event here keeps it from Reka's document-level Escape listener.
 function onSubmenuKeydown(event: KeyboardEvent) {
@@ -35,7 +46,8 @@ function onSubmenuKeydown(event: KeyboardEvent) {
   event.preventDefault()
   event.stopPropagation()
   openSubmenu.value = null
-  content.ownerDocument.querySelector<HTMLElement>(`[aria-controls="${content.id}"]`)?.focus()
+  const root = content.getRootNode() as Document | ShadowRoot
+  root.querySelector<HTMLElement>(`[aria-controls="${content.id}"]`)?.focus()
 }
 
 function key(entry: DropdownEntry, index: number) {
@@ -77,14 +89,16 @@ function key(entry: DropdownEntry, index: number) {
       @update:open="openSubmenu = $event ? entry.value : openSubmenu === entry.value ? null : openSubmenu"
     >
       <DropdownMenuOption :item="entry" :group="group" submenu />
-      <DropdownMenuPortal>
+      <DropdownMenuPortal :disabled="ctx.portal().disabled" :to="ctx.portal().to">
         <!-- RAC submenu popover: placement "end top", offset 8, 12px container padding -->
         <DropdownMenuSubContent
+          :ref="instance => setSubmenuContent(entry.value, instance as ComponentPublicInstance | null)"
           loop
           :side-offset="8"
           :collision-padding="12"
           data-slot="dropdown-popover"
           :class="ctx.classes().popover!({ class: ctx.ui()?.popover })"
+          @interact-outside="preventNestedLayerDismiss($event, submenuContents.get(entry.value))"
           @keydown="ctx.onMenuKeydown($event); onSubmenuKeydown($event)"
         >
           <div data-slot="dropdown-menu" :class="ctx.classes().menu!({ class: ctx.ui()?.menu })">

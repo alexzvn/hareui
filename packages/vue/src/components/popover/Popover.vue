@@ -1,4 +1,5 @@
 <script lang="ts">
+import type { PortalTarget } from '../../config'
 import type { ComponentSlots } from '../../types/tv'
 import theme from './theme'
 
@@ -49,10 +50,10 @@ export interface PopoverProps {
    */
   dismissible?: boolean
   /**
-   * Renders the popover content in a portal. `true` portals to `document.body`, a string is used as the teleport target, and `false` disables portalling.
-   * @defaultValue true
+   * Renders the popover content in a portal. `true` portals to `document.body`, a selector string or element is used as the teleport target, and `false` disables portalling.
+   * Falls back to `createHareUI({ portal })`, then `true`.
    */
-  portal?: boolean | string | HTMLElement
+  portal?: PortalTarget
   /** Additional classes merged into the popover surface. */
   class?: any
   /** Per-slot class overrides. */
@@ -83,7 +84,9 @@ import {
   PopoverTrigger,
 } from 'reka-ui'
 import { computed, onBeforeUnmount, ref, useId, useSlots, watch } from 'vue'
+import { preventNestedLayerDismiss } from '../../composables/nestedLayer'
 import { useComponentUI } from '../../composables/useComponentUI'
+import { usePortal } from '../../composables/usePortal'
 
 // `open: undefined` stops Vue casting an absent boolean prop to `false`, so uncontrolled mode and `defaultOpen` apply
 const props = withDefaults(defineProps<PopoverProps>(), {
@@ -94,8 +97,9 @@ const props = withDefaults(defineProps<PopoverProps>(), {
   flip: true,
   arrow: false,
   dismissible: true,
-  portal: true,
+  portal: undefined,
 })
+const portalTarget = usePortal(() => props.portal)
 const emit = defineEmits<PopoverEmits>()
 const slots = useSlots()
 defineSlots<PopoverSlots>()
@@ -119,6 +123,11 @@ function preventIfNotDismissible(event: Event) {
     event.preventDefault()
 }
 
+function onInteractOutside(event: CustomEvent<{ originalEvent: Event }>) {
+  preventNestedLayerDismiss(event, dialogRef.value?.closest('[data-dismissable-layer]'))
+  preventIfNotDismissible(event)
+}
+
 // Outside pointerdown already handled by `onDocumentPointerDown`, so Reka must not dismiss a second time.
 let handledOutsideEvent: Event | undefined
 
@@ -135,11 +144,12 @@ function onPointerDownOutside(event: CustomEvent<{ originalEvent: PointerEvent }
 let openedAt = 0
 function onDocumentPointerDown(event: PointerEvent) {
   const content = dialogRef.value?.closest<HTMLElement>('[data-dismissable-layer]')
-  const target = event.target
+  // The composed path's first node: inside a shadow root `event.target` is the shadow host.
+  const target = event.composedPath()[0]
   if (!content || !isOpen.value || !props.dismissible || event.button > 0 || event.timeStamp < openedAt || !(target instanceof Element))
     return
   // Only the topmost layer reacts, and presses inside any dismissable layer are left to Reka (nested overlays).
-  const layers = content.ownerDocument.querySelectorAll('[data-dismissable-layer]')
+  const layers = (content.getRootNode() as Document | ShadowRoot).querySelectorAll('[data-dismissable-layer]')
   if (layers[layers.length - 1] !== content || target.closest('[data-dismissable-layer]'))
     return
   handledOutsideEvent = event
@@ -181,7 +191,7 @@ const contentOffset = computed(() => props.sideOffset - (props.arrow ? ARROW_HEI
     <PopoverTrigger v-if="!!slots.default" as-child :data-pressed="isOpen ? 'true' : undefined">
       <slot :open="isOpen" />
     </PopoverTrigger>
-    <PopoverPortal :disabled="portal === false" :to="typeof portal === 'boolean' ? 'body' : portal">
+    <PopoverPortal :disabled="portalTarget.disabled" :to="portalTarget.to">
       <PopoverContent
         data-slot="popover"
         :side="side"
@@ -192,7 +202,7 @@ const contentOffset = computed(() => props.sideOffset - (props.arrow ? ARROW_HEI
         :class="ui.base({ class: [props.ui?.base, props.class] })"
         @escape-key-down="preventIfNotDismissible"
         @pointer-down-outside="onPointerDownOutside"
-        @interact-outside="preventIfNotDismissible"
+        @interact-outside="onInteractOutside"
         @open-auto-focus="onOpenAutoFocus"
       >
         <div ref="dialogRef" data-slot="popover-dialog" tabindex="-1" :class="ui.dialog({ class: props.ui?.dialog })">

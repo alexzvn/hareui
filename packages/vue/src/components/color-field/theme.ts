@@ -6,10 +6,10 @@ export default {
       'group inline-flex h-9 items-center overflow-hidden rounded-field border text-sm text-field-foreground shadow-field outline-none',
       // States set a private var instead of `bg-*`, so a plain user `bg-*` (twMerge drops ours) wins in every state,
       // as with HeroUI's `@layer components` rules (same pattern as theme/numberField.ts)
-      'bg-(--color-input-group-bg-current) [--color-input-group-bg-current:var(--color-field)]',
+      'bg-(--color-input-group-bg-current) [--color-input-group-bg-current:var(--field-background,var(--default))]',
       'border-(length:--border-width-field) border-(--field-border)',
       '[transition:background-color_150ms_var(--ease-smooth),border-color_150ms_var(--ease-smooth),box-shadow_150ms_var(--ease-out)] motion-reduce:transition-none',
-      'hover:not-focus-within:[--color-input-group-bg-current:var(--color-field-hover)] hover:not-focus-within:border-(--field-border-hover)',
+      'hover:not-focus-within:[--color-input-group-bg-current:var(--field-hover)] hover:not-focus-within:border-(--field-border-hover)',
       'focus-within:status-focused-field',
       'data-[invalid=true]:status-invalid-field data-[invalid=true]:[--color-input-group-bg-current:var(--field-focus)] data-[invalid=true]:border-(--color-field-border-invalid)',
       'data-disabled:status-disabled aria-disabled:status-disabled',

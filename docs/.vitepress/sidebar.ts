@@ -1,16 +1,25 @@
 import type { DefaultTheme } from 'vitepress'
+import { COMPONENT_GROUPS, NEW_COMPONENTS, UPDATED_COMPONENTS } from './componentGroups'
 
 export interface SidebarLink {
   text: string
   link: string
   icon?: string
+  /** Chip shown after the text, as on heroui.com. */
+  badge?: 'new' | 'updated'
 }
 
 export interface SidebarSeparator {
   separator: string
 }
 
-export type SidebarEntry = SidebarLink | SidebarSeparator
+/** Collapsible group of links; open by default. */
+export interface SidebarGroup {
+  group: string
+  items: SidebarLink[]
+}
+
+export type SidebarEntry = SidebarLink | SidebarSeparator | SidebarGroup
 
 export interface SidebarSection {
   text: string
@@ -22,6 +31,8 @@ export interface SidebarSection {
 const gs = (page: string) => `/docs/getting-started/${page}`
 const c = (page: string) => `/docs/components/${page}`
 const r = (page: string) => `/docs/releases/${page}`
+// `color-swatch-picker` → `ColorSwatchPicker`, the component name
+const pascal = (slug: string) => slug.replace(/(^|-)(\w)/g, (_, __, ch: string) => ch.toUpperCase())
 
 export const sidebar: SidebarSection[] = [
   {
@@ -49,82 +60,13 @@ export const sidebar: SidebarSection[] = [
     text: 'Components',
     icon: 'circles-4-diamond',
     base: '/docs/components',
-    // HeroUI's components meta.json lists pages alphabetically under one "Components" separator.
     items: [
       { separator: 'Overview' },
       { text: 'All Components (Vue)', link: c('') },
-      { separator: 'Components' },
-      { text: 'Accordion', link: c('accordion') },
-      { text: 'Alert', link: c('alert') },
-      { text: 'AlertDialog', link: c('alert-dialog') },
-      { text: 'Autocomplete', link: c('autocomplete') },
-      { text: 'Avatar', link: c('avatar') },
-      { text: 'AvatarGroup', link: c('avatar-group') },
-      { text: 'Badge', link: c('badge') },
-      { text: 'Breadcrumbs', link: c('breadcrumbs') },
-      { text: 'Button', link: c('button') },
-      { text: 'ButtonGroup', link: c('button-group') },
-      { text: 'Calendar', link: c('calendar') },
-      { text: 'Card', link: c('card') },
-      { text: 'Checkbox', link: c('checkbox') },
-      { text: 'CheckboxGroup', link: c('checkbox-group') },
-      { text: 'Chip', link: c('chip') },
-      { text: 'CloseButton', link: c('close-button') },
-      { text: 'ColorArea', link: c('color-area') },
-      { text: 'ColorField', link: c('color-field') },
-      { text: 'ColorPicker', link: c('color-picker') },
-      { text: 'ColorSlider', link: c('color-slider') },
-      { text: 'ColorSwatch', link: c('color-swatch') },
-      { text: 'ColorSwatchPicker', link: c('color-swatch-picker') },
-      { text: 'ComboBox', link: c('combo-box') },
-      { text: 'DateField', link: c('date-field') },
-      { text: 'DatePicker', link: c('date-picker') },
-      { text: 'DateRangePicker', link: c('date-range-picker') },
-      { text: 'Description', link: c('description') },
-      { text: 'Disclosure', link: c('disclosure') },
-      { text: 'DisclosureGroup', link: c('disclosure-group') },
-      { text: 'Drawer', link: c('drawer') },
-      { text: 'Dropdown', link: c('dropdown') },
-      { text: 'FieldError', link: c('field-error') },
-      { text: 'Fieldset', link: c('fieldset') },
-      { text: 'Form', link: c('form') },
-      { text: 'Input', link: c('input') },
-      { text: 'InputGroup', link: c('input-group') },
-      { text: 'InputOtp', link: c('input-otp') },
-      { text: 'Kbd', link: c('kbd') },
-      { text: 'Label', link: c('label') },
-      { text: 'Link', link: c('link') },
-      { text: 'ListBox', link: c('list-box') },
-      { text: 'Meter', link: c('meter') },
-      { text: 'Modal', link: c('modal') },
-      { text: 'NumberField', link: c('number-field') },
-      { text: 'Pagination', link: c('pagination') },
-      { text: 'Popover', link: c('popover') },
-      { text: 'ProgressBar', link: c('progress-bar') },
-      { text: 'ProgressCircle', link: c('progress-circle') },
-      { text: 'RadioGroup', link: c('radio-group') },
-      { text: 'RangeCalendar', link: c('range-calendar') },
-      { text: 'ScrollShadow', link: c('scroll-shadow') },
-      { text: 'SearchField', link: c('search-field') },
-      { text: 'Select', link: c('select') },
-      { text: 'Separator', link: c('separator') },
-      { text: 'Skeleton', link: c('skeleton') },
-      { text: 'Slider', link: c('slider') },
-      { text: 'Spinner', link: c('spinner') },
-      { text: 'Surface', link: c('surface') },
-      { text: 'Switch', link: c('switch') },
-      { text: 'Table', link: c('table') },
-      { text: 'Tabs', link: c('tabs') },
-      { text: 'TagGroup', link: c('tag-group') },
-      { text: 'TextArea', link: c('text-area') },
-      { text: 'TextField', link: c('text-field') },
-      { text: 'TimeField', link: c('time-field') },
-      { text: 'Toast', link: c('toast') },
-      { text: 'ToggleButton', link: c('toggle-button') },
-      { text: 'ToggleButtonGroup', link: c('toggle-button-group') },
-      { text: 'Toolbar', link: c('toolbar') },
-      { text: 'Tooltip', link: c('tooltip') },
-      { text: 'Typography', link: c('typography') },
+      ...Object.entries(COMPONENT_GROUPS).map(([group, slugs]) => ({
+        group,
+        items: slugs.map(slug => ({ text: pascal(slug), link: c(slug), badge: NEW_COMPONENTS.has(slug) ? 'new' as const : UPDATED_COMPONENTS.has(slug) ? 'updated' as const : undefined })),
+      })),
     ],
   },
   {
@@ -136,6 +78,7 @@ export const sidebar: SidebarSection[] = [
       { separator: 'Overview' },
       { text: 'All Releases', link: r('') },
       { separator: 'Versions' },
+      { text: 'v0.2.0', link: r('v0-2-0') },
       { text: 'v0.1.3', link: r('v0-1-3') },
       { text: 'v0.1.2', link: r('v0-1-2') },
       { text: 'v0.1.1', link: r('v0-1-1') },
@@ -148,8 +91,12 @@ export function isSeparator(entry: SidebarEntry): entry is SidebarSeparator {
   return 'separator' in entry
 }
 
+export function isGroup(entry: SidebarEntry): entry is SidebarGroup {
+  return 'group' in entry
+}
+
 export function sectionLinks(section: SidebarSection): SidebarLink[] {
-  return section.items.filter((entry): entry is SidebarLink => !isSeparator(entry))
+  return section.items.flatMap(entry => isSeparator(entry) ? [] : isGroup(entry) ? entry.items : [entry])
 }
 export function normalizePath(path: string): string {
   const p = path.replace(/[?#].*$/, '').replace(/\.html$/, '').replace(/\/index$/, '')

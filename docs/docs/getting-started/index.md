@@ -1,6 +1,6 @@
 ---
 title: Introduction
-description: A Vue 3 port of HeroUI v3, built on Reka UI and Tailwind CSS v4 with a Nuxt UI-style component API.
+description: A Vue 3 port of HeroUI v3, built on Reka UI and Tailwind CSS v4 with a slot-based component API.
 ---
 
 HareUI is a Vue 3 component library that ports [HeroUI v3](https://heroui.com) (React, Tailwind CSS v4, React Aria Components) to Vue. Instead of wrapping React Aria, HareUI is rebuilt on [Reka UI](https://reka-ui.com) for headless behavior, with the exact same visual design as HeroUI — verified with an automated computed-style and screenshot diff against `@heroui/react`.
@@ -37,7 +37,7 @@ HareUI is not a snapshot of HeroUI v3 — it tracks the source library as it evo
 HareUI is a hand-translated port, not a wrapper around `@heroui/react`. Each component is rebuilt from scratch in Vue:
 
 - **Headless foundation**: [Reka UI](https://reka-ui.com) instead of React Aria Components.
-- **API shape**: Nuxt UI-style slots and `:ui` overrides instead of HeroUI's `Card.Header`-style compound components.
+- **API shape**: named slots and `:ui` overrides instead of HeroUI's `Card.Header`-style compound components.
 - **Styling**: component themes are [tailwind-variants](https://tailwind-variants.org/) objects translated by hand from HeroUI's CSS, not an import of `@heroui/styles`.
 - **Tokens**: CSS variables (`--accent`, `--surface`, `--radius`, …) are copied verbatim from HeroUI, so existing HeroUI theme overrides apply unchanged.
 

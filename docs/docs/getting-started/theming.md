@@ -93,10 +93,11 @@ Use the `:ui` prop for per-slot overrides, or `class` for the root slot, on one 
 When the same slot is targeted at multiple layers, HareUI resolves conflicts with [tailwind-merge](https://github.com/dcastil/tailwind-merge) — the last applied class wins. Layers are applied in this order, lowest to highest priority:
 
 1. **Theme file** — the component's built-in default (`src/components/<name>/theme.ts`)
-2. **`createHareUI({ ui })`** — app-level config
-3. **Variant props** — `variant`, `size`, `color`, …
-4. **`:ui` slot classes** — per-instance, per-slot
-5. **`class` prop** — per-instance, root slot only, highest priority
+2. **`hareui({ ui })`** — build-time config from the [Vite plugin](/docs/getting-started/frameworks#vite-plugin-optional)
+3. **`createHareUI({ ui })`** — app-level config
+4. **Variant props** — `variant`, `size`, `color`, …
+5. **`:ui` slot classes** — per-instance, per-slot
+6. **`class` prop** — per-instance, root slot only, highest priority
 
 ```vue
 <script setup lang="ts">

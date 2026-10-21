@@ -78,6 +78,19 @@ describe('alertDialog', () => {
     wrapper.unmount()
   })
 
+  it('names the dialog from `title` when #content replaces the whole content', async () => {
+    const warn = vi.spyOn(console, 'warn').mockImplementation(() => {})
+    const wrapper = mount(AlertDialog, {
+      props: { defaultOpen: true, title: 'Custom content' },
+      slots: { content: ({ close }: { close: () => void }) => h('button', { onClick: close }, 'Done') },
+    })
+    await nextTick()
+    expect(document.getElementById(dialog()!.getAttribute('aria-labelledby')!)?.textContent).toBe('Custom content')
+    expect(warn).not.toHaveBeenCalledWith(expect.stringContaining('requires a `DialogTitle`'))
+    wrapper.unmount()
+    warn.mockRestore()
+  })
+
   describe('page content behind the dialog (aria-hidden)', () => {
     beforeEach(() => stubExitAnimations())
     const mounted: Array<{ unmount: () => void }> = []

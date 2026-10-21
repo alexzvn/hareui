@@ -9,9 +9,10 @@
     "typecheck": "../packages/vue/node_modules/.bin/vue-tsc -p tsconfig.json"
   },
   "dependencies": {
-    "@internationalized/date": "^3.12.4",
-    "culori": "^4.0.2",
     "@hareui/vue": "workspace:*",
+    "@internationalized/date": "^3.12.4",
+    "@tanstack/vue-table": "^8.21.3",
+    "culori": "^4.0.2",
     "reka-ui": "^2.10.5",
     "vue": "^3.5.43"
   },
@@ -26,6 +27,7 @@
     "tailwindcss": "^4.3.3",
     "typescript": "~6.0.3",
     "vitepress": "1.6.4",
-    "vue-component-meta": "^3.3.11"
+    "vue-component-meta": "^3.3.11",
+    "zod": "^4.6.5"
   }
 }

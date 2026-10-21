@@ -3,11 +3,12 @@ import type { Color, ColorChannel, ColorSpace } from 'reka-ui'
 import type { ValidateFn, ValidationResult } from '../../composables/useFieldValidation'
 import type { ComponentSlots } from '../../types/tv'
 import type { ValidationBehavior } from '../form/context'
+import type { FormFieldProps } from '../form/types'
 import theme from './theme'
 
 type ColorField = typeof theme
 
-export interface ColorFieldProps {
+export interface ColorFieldProps extends FormFieldProps {
   /** Label text rendered above the field. */
   label?: string
   /** Helper text rendered below the field. Hidden while the field is invalid. */
@@ -117,6 +118,7 @@ import { ColorFieldInput, ColorFieldRoot, normalizeColor } from 'reka-ui'
 import { computed, nextTick, ref, useAttrs, useId, useSlots, useTemplateRef, watch } from 'vue'
 import { useComponentUI } from '../../composables/useComponentUI'
 import { useFieldValidation } from '../../composables/useFieldValidation'
+import { useFieldsetDisabled } from '../fieldset/context'
 import { useColorPickerContext } from '../color-picker/context'
 import Description from '../description/Description.vue'
 import FieldError from '../field-error/FieldError.vue'
@@ -127,6 +129,7 @@ defineOptions({ inheritAttrs: false })
 
 // `invalid: undefined`: an absent boolean would cast to `false`, which counts as controlled-valid and hides validation errors
 const props = withDefaults(defineProps<ColorFieldProps>(), { invalid: undefined })
+const disabled = useFieldsetDisabled(() => props.disabled)
 const emit = defineEmits<ColorFieldEmits>()
 const slots = useSlots()
 defineSlots<ColorFieldSlots>()
@@ -168,6 +171,7 @@ watch(empty, (isEmpty) => {
 
 const root = useTemplateRef<HTMLElement>('root')
 const { validation, commitValidation } = useFieldValidation({
+  formField: props,
   value: () => formColor.value,
   validate: () => props.validate,
   invalid: () => props.invalid,

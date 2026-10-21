@@ -44,7 +44,7 @@ import { Icon } from '@iconify/vue'
         replaces the entire dialog content. This gives you full control over when and how to
         close the dialog, allowing you to add custom logic before closing.
       </p>
-      <AlertDialog class="sm:max-w-[400px]">
+      <AlertDialog class="sm:max-w-[400px]" title="Using #content slot's close()">
         <Button variant="secondary">
           Open Dialog
         </Button>
