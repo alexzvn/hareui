@@ -66,14 +66,18 @@
   },
   "devDependencies": {
     "@internationalized/date": "^3.12.4",
+    "@sinclair/typebox": "^0.34",
+    "@sinclair/typemap": "^0.10.1",
     "@vitejs/plugin-vue": "^6.0.9",
     "@vue/test-utils": "^2.5.1",
     "happy-dom": "^20.14.5",
     "tailwindcss": "^4.3.3",
     "typescript": "~6.0.3",
+    "valibot": "^1.5.0",
     "vite": "^8.3.2",
     "vitest": "^5.0.3",
     "vue": "^3.5.43",
-    "vue-tsc": "^3.3.11"
+    "vue-tsc": "^3.3.11",
+    "zod": "^4.6.5"
   }
 }
