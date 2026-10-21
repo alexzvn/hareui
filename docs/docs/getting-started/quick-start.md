@@ -80,6 +80,20 @@ createApp(App)
 
 For a shadow root, inject the compiled stylesheet into it (e.g. `import css from './main.css?inline'` into a `<style>` appended to `shadow`). The theme tokens default to the light theme on `:host` (add `dark` to the host for the dark theme), and the Tailwind custom properties that a shadow root can't register with `@property` get their initial values there too.
 
+## Vite Plugin (Optional)
+
+On Vite, `@hareui/vue/vite` auto-imports components in templates and can set app-wide theme overrides at build time:
+
+```ts [vite.config.ts]
+import hareui from '@hareui/vue/vite'
+
+export default defineConfig({
+  plugins: [vue(), tailwindcss(), hareui()],
+})
+```
+
+See [Frameworks](/docs/getting-started/frameworks#vite-plugin-optional) for the `prefix`, `ui` and `components` options.
+
 ## Use Components
 
 ```vue
