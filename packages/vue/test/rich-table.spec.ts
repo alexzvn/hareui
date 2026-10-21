@@ -1,0 +1,458 @@
+import type { VueWrapper } from '@vue/test-utils'
+import type { RichTableApi, RichTableColumn, RichTableData, RichTableProps } from '../src/components/rich-table'
+import { getGroupedRowModel, getPaginationRowModel } from '@tanstack/vue-table'
+import { flushPromises, mount } from '@vue/test-utils'
+import { describe, expect, it, vi } from 'vitest'
+import { h, nextTick, reactive } from 'vue'
+import RichTable from '../src/components/rich-table/RichTable.vue'
+
+// `mount` cannot infer a generic SFC's type parameter (it resolves `T` to `unknown`): this checks the props against
+// `RichTableProps<T>` with `T` inferred from `data`; the `v-model` props (`sorting`, `rowSelection`...) go through the index signature.
+function mountTable<T extends RichTableData>(options: { props: RichTableProps<T> & Record<string, unknown>, slots?: Record<string, string> }): VueWrapper {
+  return mount(RichTable as unknown as Parameters<typeof mount>[0], options) as VueWrapper
+}
+
+interface Person {
+  id: string
+  name: string
+  role: string
+  age: number
+}
+
+const people: Person[] = [
+  { id: 'a', name: 'Kate', role: 'CEO', age: 41 },
+  { id: 'b', name: 'John', role: 'CTO', age: 35 },
+  { id: 'c', name: 'Sara', role: 'CEO', age: 29 },
+]
+
+const columns: RichTableColumn<Person>[] = [
+  {
+    accessorKey: 'name',
+    header: ({ column }) => h('button', { 'data-testid': 'sort-name', 'onClick': column.getToggleSortingHandler() }, 'Name'),
+    enableSorting: true,
+  },
+  { accessorKey: 'role', header: 'Role' },
+]
+
+function tableApiOf(wrapper: VueWrapper) {
+  return (wrapper.vm as unknown as { tableApi: RichTableApi<Person> }).tableApi
+}
+
+function bodyRows(wrapper: VueWrapper) {
+  return wrapper.findAll('[data-slot="rich-table-row"]')
+}
+
+function names(wrapper: VueWrapper) {
+  return bodyRows(wrapper).map(row => row.findAll('td')[0]!.text())
+}
+
+describe('RichTable', () => {
+  it('creates one titled column per key of the first row when columns are omitted', () => {
+    const wrapper = mountTable({ props: { data: people } })
+    expect(wrapper.findAll('th').map(th => th.text())).toEqual(['Id', 'Name', 'Role', 'Age'])
+    expect(bodyRows(wrapper)).toHaveLength(3)
+    expect(bodyRows(wrapper)[0]!.findAll('td').map(td => td.text())).toEqual(['a', 'Kate', 'CEO', '41'])
+  })
+
+  it('renders column-id cell, header and footer slots in place of the definition', () => {
+    const wrapper = mountTable({
+      props: { data: people, columns: [{ accessorKey: 'name', header: 'Name', footer: 'End' }, { accessorKey: 'role', header: 'Role' }] },
+      slots: {
+        'name-cell': '<template #name-cell="{ row }"><b>{{ row.original.name }}!</b></template>',
+        'name-header': '<template #name-header="{ column }"><i>{{ column.id }}</i></template>',
+        'name-footer': '<template #name-footer><u>total</u></template>',
+      },
+    })
+    expect(bodyRows(wrapper)[0]!.findAll('td')[0]!.html()).toContain('<b>Kate!</b>')
+    expect(wrapper.find('thead th').html()).toContain('<i>name</i>')
+    expect(wrapper.find('tfoot th').html()).toContain('<u>total</u>')
+  })
+
+  it('only renders a footer when a column defines one', () => {
+    expect(mountTable({ props: { data: people, columns } }).find('tfoot').exists()).toBe(false)
+    const withFooter = mountTable({ props: { data: people, columns: [{ accessorKey: 'name', footer: 'x' }] } })
+    expect(withFooter.find('tfoot').exists()).toBe(true)
+  })
+
+  it('replaces rows when data changes and picks up in-place mutations', async () => {
+    const data = [...people]
+    const wrapper = mountTable({ props: { data, columns } })
+    await wrapper.setProps({ data: people.slice(0, 1) })
+    expect(names(wrapper)).toEqual(['Kate'])
+    const next = reactive([{ ...people[1]! }])
+    await wrapper.setProps({ data: next })
+    next[0]!.name = 'Johnny'
+    await flushPromises()
+    expect(names(wrapper)).toEqual(['Johnny'])
+  })
+
+  describe('sorting', () => {
+    it('sorts through header handlers and emits update:sorting', async () => {
+      const wrapper = mountTable({ props: { data: people, columns } })
+      expect(wrapper.find('th').attributes('aria-sort')).toBe('none')
+      await wrapper.get('[data-testid="sort-name"]').trigger('click')
+      expect(names(wrapper)).toEqual(['John', 'Kate', 'Sara'])
+      expect(wrapper.emitted('update:sorting')?.at(-1)).toEqual([[{ id: 'name', desc: false }]])
+      expect(wrapper.find('th').attributes('aria-sort')).toBe('ascending')
+      await wrapper.get('[data-testid="sort-name"]').trigger('click')
+      expect(names(wrapper)).toEqual(['Sara', 'Kate', 'John'])
+      expect(wrapper.find('th').attributes('aria-sort')).toBe('descending')
+    })
+
+    it('follows a controlled sorting v-model', async () => {
+      const wrapper = mountTable({ props: { data: people, columns, sorting: [{ id: 'name', desc: true }] } })
+      expect(names(wrapper)).toEqual(['Sara', 'Kate', 'John'])
+      await wrapper.setProps({ sorting: [{ id: 'name', desc: false }] })
+      expect(names(wrapper)).toEqual(['John', 'Kate', 'Sara'])
+    })
+
+    it('does not mark columns without enableSorting as sortable', () => {
+      const wrapper = mountTable({ props: { data: people, columns } })
+      expect(wrapper.findAll('th')[1]!.attributes('aria-sort')).toBeUndefined()
+    })
+  })
+
+  describe('filtering', () => {
+    it('filters rows with the global filter model', async () => {
+      const wrapper = mountTable({ props: { data: people, columns, globalFilter: '' } })
+      expect(bodyRows(wrapper)).toHaveLength(3)
+      await wrapper.setProps({ globalFilter: 'ceo' })
+      expect(names(wrapper)).toEqual(['Kate', 'Sara'])
+      await wrapper.setProps({ globalFilter: 'zzz' })
+      expect(wrapper.find('[data-slot="rich-table-empty"]').text()).toBe('No data')
+    })
+
+    it('filters a column through the exposed table API', async () => {
+      const wrapper = mountTable({ props: { data: people, columns } })
+      tableApiOf(wrapper).getColumn('role')!.setFilterValue('CTO')
+      await nextTick()
+      expect(names(wrapper)).toEqual(['John'])
+      expect(wrapper.emitted('update:columnFilters')?.at(-1)).toEqual([[{ id: 'role', value: 'CTO' }]])
+    })
+  })
+
+  describe('row selection', () => {
+    const selectColumns: RichTableColumn<Person>[] = [
+      { id: 'select', cell: ({ row }) => h('input', { 'type': 'checkbox', 'data-testid': 'pick', 'checked': row.getIsSelected(), 'onChange': row.getToggleSelectedHandler() }) },
+      ...columns,
+    ]
+
+    it('writes the selection to v-model:row-selection keyed by row id', async () => {
+      const wrapper = mountTable({ props: { data: people, columns: selectColumns, getRowId: row => row.id } })
+      // `getToggleSelectedHandler` reads the checkbox's `checked`: check it, then dispatch `change`
+      await wrapper.findAll('[data-testid="pick"]')[1]!.setValue(true)
+      expect(wrapper.emitted('update:rowSelection')?.at(-1)).toEqual([{ b: true }])
+      expect(bodyRows(wrapper).map(row => row.attributes('data-selected'))).toEqual(['false', 'true', 'false'])
+    })
+
+    it('reflects a controlled selection', async () => {
+      const wrapper = mountTable({ props: { data: people, columns: selectColumns, rowSelection: { 0: true, 2: true } } })
+      expect(bodyRows(wrapper).map(row => row.attributes('data-selected'))).toEqual(['true', 'false', 'true'])
+      await wrapper.setProps({ rowSelection: {} })
+      expect(bodyRows(wrapper).every(row => row.attributes('data-selected') === 'false')).toBe(true)
+    })
+  })
+
+  describe('row events', () => {
+    it('calls onSelect on click and Enter/Space, but not for clicks on interactive elements', async () => {
+      const onSelect = vi.fn()
+      const wrapper = mountTable({
+        props: {
+          data: people,
+          columns: [...columns, { id: 'action', cell: () => h('button', { 'data-testid': 'inner' }, 'x') }],
+          onSelect,
+        },
+      })
+      const row = bodyRows(wrapper)[1]!
+      expect(row.attributes('tabindex')).toBe('0')
+      expect(row.attributes('data-selectable')).toBe('true')
+      await row.trigger('click')
+      expect(onSelect).toHaveBeenCalledTimes(1)
+      expect(onSelect.mock.calls[0]![1].original.name).toBe('John')
+      await row.trigger('keydown', { key: 'Enter' })
+      expect(onSelect).toHaveBeenCalledTimes(2)
+      await row.get('[data-testid="inner"]').trigger('click')
+      expect(onSelect).toHaveBeenCalledTimes(2)
+    })
+
+    it('reports hover enter and leave, and context menu requests', async () => {
+      const onHover = vi.fn()
+      const onContextmenu = vi.fn()
+      const second = vi.fn()
+      const wrapper = mountTable({ props: { data: people, columns, onHover, onContextmenu: [onContextmenu, second] } })
+      const row = bodyRows(wrapper)[0]!
+      await row.trigger('pointerenter')
+      expect(onHover.mock.calls[0]![1].original.name).toBe('Kate')
+      await row.trigger('pointerleave')
+      expect(onHover.mock.calls[1]![1]).toBeNull()
+      await row.trigger('contextmenu')
+      expect(onContextmenu).toHaveBeenCalledTimes(1)
+      expect(second).toHaveBeenCalledTimes(1)
+    })
+
+    it('is neither focusable nor selectable without handlers', () => {
+      const row = bodyRows(mountTable({ props: { data: people, columns } }))[0]!
+      expect(row.attributes('tabindex')).toBeUndefined()
+      expect(row.attributes('data-selectable')).toBe('false')
+    })
+  })
+
+  describe('expanded rows', () => {
+    it('renders the expanded slot below rows set in v-model:expanded', async () => {
+      const wrapper = mountTable({
+        props: { data: people, columns, expanded: { 1: true }, expandedOptions: { getRowCanExpand: () => true } },
+        slots: { expanded: '<template #expanded="{ row }"><p data-testid="detail">{{ row.original.role }}</p></template>' },
+      })
+      const rows = wrapper.findAll('tbody tr')
+      expect(rows).toHaveLength(4)
+      expect(rows[1]!.attributes('data-expanded')).toBe('true')
+      expect(rows[2]!.attributes('data-slot')).toBe('rich-table-expanded-row')
+      expect(rows[2]!.get('[data-testid="detail"]').text()).toBe('CTO')
+      expect(rows[2]!.get('td').attributes('colspan')).toBe('2')
+      await wrapper.setProps({ expanded: {} })
+      expect(wrapper.find('[data-testid="detail"]').exists()).toBe(false)
+    })
+
+    it('toggles through the row API and emits update:expanded', async () => {
+      const wrapper = mountTable({
+        props: {
+          data: people,
+          columns: [{ id: 'toggle', cell: ({ row }) => h('button', { 'data-testid': 'toggle', 'onClick': () => row.toggleExpanded() }) }, ...columns],
+          expandedOptions: { getRowCanExpand: () => true },
+        },
+        slots: { expanded: '<template #expanded>more</template>' },
+      })
+      await wrapper.findAll('[data-testid="toggle"]')[0]!.trigger('click')
+      expect(wrapper.emitted('update:expanded')?.at(-1)).toEqual([{ 0: true }])
+      expect(wrapper.findAll('[data-slot="rich-table-expanded-row"]')).toHaveLength(1)
+    })
+
+    it('renders sub rows from get-sub-rows', async () => {
+      interface TreeNode { name: string, children?: TreeNode[] }
+      const tree: TreeNode[] = [{ name: 'Root', children: [{ name: 'Leaf' }] }]
+      const wrapper = mountTable({
+        props: {
+          data: tree,
+          columns: [{ accessorKey: 'name', header: 'Name', cell: ({ row, getValue }) => `${row.depth}:${getValue<string>()}` }],
+          getSubRows: row => row.children,
+          expanded: true,
+        },
+      })
+      // Rows with sub rows still render the column's `cell`, not TanStack's default `aggregatedCell`
+      expect(wrapper.findAll('[data-slot="rich-table-row"]').map(row => row.text())).toEqual(['0:Root', '1:Leaf'])
+      // Without an `#expanded` slot, expanding only reveals sub rows
+      expect(wrapper.findAll('tbody tr')).toHaveLength(2)
+    })
+  })
+
+  describe('grouping', () => {
+    it('renders a group row per distinct value that expands to its rows', async () => {
+      const wrapper = mountTable({ props: { data: people, columns, grouping: ['role'], groupingOptions: { getGroupedRowModel: getGroupedRowModel() } } })
+      expect(bodyRows(wrapper)).toHaveLength(2)
+      await wrapper.setProps({ expanded: true })
+      expect(bodyRows(wrapper)).toHaveLength(5)
+    })
+
+    it('renders aggregated cells on group rows and leaves grouped-by cells of their rows empty', async () => {
+      const aggregated: RichTableColumn<Person>[] = [
+        { accessorKey: 'role', header: 'Role' },
+        { accessorKey: 'age', header: 'Age', aggregationFn: 'sum', aggregatedCell: ({ getValue }) => `Total ${getValue<number>()}` },
+      ]
+      const wrapper = mountTable({ props: { data: people, columns: aggregated, grouping: ['role'], expanded: true, groupingOptions: { getGroupedRowModel: getGroupedRowModel() } } })
+      const cells = bodyRows(wrapper).map(row => row.findAll('td').map(td => td.text()))
+      expect(cells).toEqual([['CEO', 'Total 70'], ['', '41'], ['', '29'], ['CTO', 'Total 35'], ['', '35']])
+    })
+  })
+
+  describe('pinning', () => {
+    const wide: RichTableColumn<Person>[] = [
+      { accessorKey: 'name', header: 'Name', size: 100 },
+      { accessorKey: 'role', header: 'Role', size: 80 },
+      { accessorKey: 'age', header: 'Age', size: 60 },
+      { accessorKey: 'id', header: 'Id', size: 40 },
+    ]
+
+    it('marks pinned columns by side and offsets them by the sizes pinned before them', () => {
+      const wrapper = mountTable({ props: { data: people, columns: wide, columnPinning: { left: ['name', 'role'], right: ['id', 'age'] } } })
+      const cells = bodyRows(wrapper)[0]!.findAll('td')
+      // Visual order: pinned left, center, pinned right
+      expect(cells.map(td => td.attributes('data-pinned'))).toEqual(['left', 'left', 'right', 'right'])
+      expect(cells[0]!.attributes('style')).toContain('--rich-table-pin: 0px')
+      expect(cells[1]!.attributes('style')).toContain('--rich-table-pin: 100px')
+      // `right` offsets count the sizes of the pinned columns after, in the right group
+      expect(cells[3]!.attributes('style')).toContain('--rich-table-pin: 0px')
+      expect(cells[2]!.attributes('style')).toContain('--rich-table-pin: 60px')
+      expect(wrapper.findAll('th').map(th => th.attributes('data-pinned'))).toEqual(['left', 'left', 'right', 'right'])
+    })
+
+    it('leaves unpinned columns plain and moves a column when the pinning model changes', async () => {
+      const wrapper = mountTable({ props: { data: people, columns: wide, columnPinning: { left: [], right: [] } } })
+      expect(wrapper.findAll('th').every(th => th.attributes('data-pinned') === undefined)).toBe(true)
+      await wrapper.setProps({ columnPinning: { left: ['age'], right: [] } })
+      expect(wrapper.findAll('th').map(th => th.text())).toEqual(['Age', 'Name', 'Role', 'Id'])
+      expect(wrapper.findAll('th')[0]!.attributes('data-pinned')).toBe('left')
+    })
+
+    it('pins rows to the top and bottom', async () => {
+      const wrapper = mountTable({ props: { data: people, columns, rowPinning: { top: ['b'], bottom: ['a'] }, getRowId: (row: Person) => row.id } })
+      expect(names(wrapper)).toEqual(['John', 'Sara', 'Kate'])
+      expect(bodyRows(wrapper).map(row => row.attributes('data-pinned'))).toEqual(['top', undefined, 'bottom'])
+    })
+  })
+
+  describe('column visibility, order and sizing', () => {
+    it('hides columns from the visibility model', async () => {
+      const wrapper = mountTable({ props: { data: people, columns, columnVisibility: { role: false } } })
+      expect(wrapper.findAll('th').map(th => th.text())).toEqual(['Name'])
+      await wrapper.setProps({ columnVisibility: {} })
+      expect(wrapper.findAll('th')).toHaveLength(2)
+    })
+
+    it('applies column order', () => {
+      const wrapper = mountTable({ props: { data: people, columns, columnOrder: ['role', 'name'] } })
+      expect(wrapper.findAll('th').map(th => th.text())).toEqual(['Role', 'Name'])
+    })
+
+    it('only sets widths once sizing is enabled', () => {
+      const plain = mountTable({ props: { data: people, columns: [{ accessorKey: 'name', size: 120 }] } })
+      expect(plain.find('th').attributes('style') ?? '').not.toContain('width')
+      const sized = mountTable({
+        props: { data: people, columns: [{ accessorKey: 'name', size: 120 }], columnSizingOptions: { enableColumnResizing: true } },
+      })
+      expect(sized.find('th').attributes('style')).toContain('width: 120px')
+      expect(sized.find('td').attributes('style')).toContain('width: 120px')
+    })
+  })
+
+  describe('pagination', () => {
+    it('paginates client-side only with a pagination row model', async () => {
+      const many = Array.from({ length: 5 }, (_, i) => ({ id: String(i), name: `P${i}`, role: 'x', age: i }))
+      expect(bodyRows(mountTable({ props: { data: many, columns } }))).toHaveLength(5)
+
+      const wrapper = mountTable({ props: { data: many, columns, paginationOptions: { getPaginationRowModel: getPaginationRowModel() }, pagination: { pageIndex: 0, pageSize: 2 } } })
+      expect(names(wrapper)).toEqual(['P0', 'P1'])
+      await wrapper.setProps({ pagination: { pageIndex: 2, pageSize: 2 } })
+      expect(names(wrapper)).toEqual(['P4'])
+    })
+
+    it('emits update:pagination from the table API', async () => {
+      const many = Array.from({ length: 5 }, (_, i) => ({ id: String(i), name: `P${i}`, role: 'x', age: i }))
+      const wrapper = mountTable({ props: { data: many, columns, paginationOptions: { getPaginationRowModel: getPaginationRowModel() }, initialState: { pagination: { pageIndex: 0, pageSize: 2 } } } })
+      tableApiOf(wrapper).nextPage()
+      await nextTick()
+      expect(wrapper.emitted('update:pagination')?.at(-1)).toEqual([{ pageIndex: 1, pageSize: 2 }])
+      expect(names(wrapper)).toEqual(['P2', 'P3'])
+    })
+  })
+
+  describe('empty and loading states', () => {
+    it('shows the empty text, prop and slot, spanning every visible column', () => {
+      const wrapper = mountTable({ props: { data: [], columns } })
+      const cell = wrapper.get('[data-slot="rich-table-empty"]')
+      expect(cell.text()).toBe('No data')
+      expect(cell.attributes('colspan')).toBe('2')
+
+      expect(mountTable({ props: { data: [], columns, empty: 'Nothing here' } }).get('[data-slot="rich-table-empty"]').text()).toBe('Nothing here')
+      const slotted = mountTable({ props: { data: [], columns }, slots: { empty: '<template #empty><em>Custom</em></template>' } })
+      expect(slotted.get('[data-slot="rich-table-empty"]').html()).toContain('<em>Custom</em>')
+    })
+
+    it('shows the loading slot instead of the empty state while loading with no rows', async () => {
+      const wrapper = mountTable({
+        props: { data: [], columns, loading: true },
+        slots: { loading: '<template #loading>Loading…</template>' },
+      })
+      expect(wrapper.find('[data-slot="rich-table-empty"]').exists()).toBe(false)
+      expect(wrapper.get('[data-slot="rich-table-loading"]').text()).toBe('Loading…')
+      await wrapper.setProps({ loading: false })
+      expect(wrapper.find('[data-slot="rich-table-loading"]').exists()).toBe(false)
+      expect(wrapper.find('[data-slot="rich-table-empty"]').exists()).toBe(true)
+    })
+
+    it('keeps rows and animates the header bar while loading', async () => {
+      const wrapper = mountTable({ props: { data: people, columns, loading: true, loadingColor: 'danger', loadingAnimation: 'swing' } })
+      expect(bodyRows(wrapper)).toHaveLength(3)
+      const thead = wrapper.get('thead').classes().join(' ')
+      expect(thead).toContain('after:bg-danger')
+      expect(thead).toContain('motion-safe:after:animate-rich-table-swing')
+      await wrapper.setProps({ loading: false })
+      expect(wrapper.get('thead').classes().join(' ')).not.toContain('after:bg-danger')
+    })
+  })
+
+  describe('sticky', () => {
+    it.each([
+      [true, true, true],
+      ['header', true, false],
+      ['footer', false, true],
+    ] as const)('sticky=%s', (sticky, header, footer) => {
+      const wrapper = mountTable({ props: { data: people, columns: [{ accessorKey: 'name', footer: 'x' }], sticky } })
+      expect(wrapper.get('thead').classes().includes('sticky')).toBe(header)
+      expect(wrapper.get('tfoot').classes().includes('sticky')).toBe(footer)
+    })
+  })
+
+  describe('meta', () => {
+    it('merges column and table meta classes and styles into cells and rows', () => {
+      const wrapper = mountTable({
+        props: {
+          data: people,
+          columns: [
+            {
+              accessorKey: 'name',
+              header: 'Name',
+              meta: {
+                class: { th: 'th-meta', td: cell => (cell.getValue() === 'John' ? 'td-john' : 'td-meta') },
+                style: { td: { color: 'red' } },
+                colspan: { td: cell => (cell.getValue() === 'Sara' ? '2' : '1') },
+              },
+            },
+            { accessorKey: 'role', header: 'Role' },
+          ],
+          meta: { class: { tr: row => `row-${row.original.id}` }, style: { tr: { opacity: '0.5' } } },
+        },
+      })
+      expect(wrapper.find('th').classes()).toContain('th-meta')
+      const rows = bodyRows(wrapper)
+      expect(rows.map(row => row.classes().find(c => c.startsWith('row-')))).toEqual(['row-a', 'row-b', 'row-c'])
+      expect(rows[0]!.attributes('style')).toContain('opacity: 0.5')
+      const cells = rows.map(row => row.find('td'))
+      expect(cells[0]!.classes()).toContain('td-meta')
+      expect(cells[1]!.classes()).toContain('td-john')
+      expect(cells[0]!.attributes('style')).toContain('color: red')
+      expect(cells[2]!.attributes('colspan')).toBe('2')
+    })
+  })
+
+  describe('virtualize', () => {
+    it('renders a window of rows between spacers instead of every row', async () => {
+      // happy-dom has no layout: the virtualizer measures its scroll element's client box, so give it one
+      const height = vi.spyOn(HTMLElement.prototype, 'clientHeight', 'get').mockReturnValue(200)
+      const width = vi.spyOn(HTMLElement.prototype, 'clientWidth', 'get').mockReturnValue(400)
+      const many = Array.from({ length: 1000 }, (_, i) => ({ id: String(i), name: `P${i}`, role: 'x', age: i }))
+      const wrapper = mountTable({
+        props: {
+          data: many,
+          columns,
+          virtualize: { estimateSize: 40, overscan: 2 },
+        },
+      })
+      await flushPromises()
+      height.mockRestore()
+      width.mockRestore()
+      const rendered = bodyRows(wrapper)
+      expect(rendered.length).toBeGreaterThan(0)
+      expect(rendered.length).toBeLessThan(50)
+      expect(rendered[0]!.attributes('data-index')).toBe('0')
+      // The rows below the window are stood in for by a spacer of their estimated height
+      const spacer = wrapper.get('tbody tr[aria-hidden="true"]')
+      const spacerHeight = Number.parseInt(spacer.attributes('style')!.match(/height:\s*(\d+)/)![1]!)
+      expect(spacerHeight).toBeGreaterThan(30_000)
+    })
+
+    it('renders every row without virtualize', () => {
+      const many = Array.from({ length: 200 }, (_, i) => ({ id: String(i), name: `P${i}`, role: 'x', age: i }))
+      expect(bodyRows(mountTable({ props: { data: many, columns } }))).toHaveLength(200)
+    })
+  })
+})

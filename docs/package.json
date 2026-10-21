@@ -9,9 +9,10 @@
     "typecheck": "../packages/vue/node_modules/.bin/vue-tsc -p tsconfig.json"
   },
   "dependencies": {
-    "@internationalized/date": "^3.12.4",
-    "culori": "^4.0.2",
     "@hareui/vue": "workspace:*",
+    "@internationalized/date": "^3.12.4",
+    "@tanstack/vue-table": "^8.21.3",
+    "culori": "^4.0.2",
     "reka-ui": "^2.10.5",
     "vue": "^3.5.43"
   },

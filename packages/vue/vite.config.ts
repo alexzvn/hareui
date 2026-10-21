@@ -9,7 +9,7 @@ export default defineConfig({
     emptyOutDir: true,
     cssCodeSplit: false,
     rolldownOptions: {
-      external: /^(vue|reka-ui|tailwind-variants|tailwind-merge|unplugin-vue-components)(\/|$)/,
+      external: /^(vue|reka-ui|tailwind-variants|tailwind-merge|unplugin-vue-components|@tanstack\/vue-table|@tanstack\/vue-virtual|@internationalized\/date)(\/|$)/,
       output: { preserveModules: true, preserveModulesRoot: 'src', entryFileNames: '[name].js' },
     },
   },

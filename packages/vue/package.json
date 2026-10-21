@@ -45,6 +45,8 @@
     "prepublishOnly": "rm -rf dist && bun run typecheck && bun run test && bun run build"
   },
   "dependencies": {
+    "@tanstack/vue-table": "^8.21.3",
+    "@tanstack/vue-virtual": "^3.13.47",
     "reka-ui": "^2.10.5",
     "tailwind-merge": "^3.7.0",
     "tailwind-variants": "^3.3.1",

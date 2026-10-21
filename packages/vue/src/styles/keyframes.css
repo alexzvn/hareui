@@ -81,3 +81,88 @@
     }
   }
 }
+
+/* RichTable loading bar (`loadingAnimation`) */
+@theme {
+  --animate-rich-table-carousel: rich-table-carousel 2s linear infinite;
+  --animate-rich-table-carousel-rtl: rich-table-carousel-rtl 2s linear infinite;
+  --animate-rich-table-carousel-inverse: rich-table-carousel-inverse 2s linear infinite;
+  --animate-rich-table-carousel-inverse-rtl: rich-table-carousel-inverse-rtl 2s linear infinite;
+  --animate-rich-table-swing: rich-table-swing 2s var(--ease-in-out) infinite;
+  --animate-rich-table-elastic: rich-table-elastic 2s var(--ease-in-out) infinite;
+
+  @keyframes rich-table-carousel {
+    0%,
+    100% {
+      width: 50%;
+    }
+    0% {
+      transform: translateX(-100%);
+    }
+    100% {
+      transform: translateX(200%);
+    }
+  }
+
+  @keyframes rich-table-carousel-rtl {
+    0%,
+    100% {
+      width: 50%;
+    }
+    0% {
+      transform: translateX(100%);
+    }
+    100% {
+      transform: translateX(-200%);
+    }
+  }
+
+  @keyframes rich-table-carousel-inverse {
+    0%,
+    100% {
+      width: 50%;
+    }
+    0% {
+      transform: translateX(200%);
+    }
+    100% {
+      transform: translateX(-100%);
+    }
+  }
+
+  @keyframes rich-table-carousel-inverse-rtl {
+    0%,
+    100% {
+      width: 50%;
+    }
+    0% {
+      transform: translateX(-200%);
+    }
+    100% {
+      transform: translateX(100%);
+    }
+  }
+
+  @keyframes rich-table-swing {
+    0%,
+    100% {
+      width: 50%;
+      transform: translateX(-25%);
+    }
+    50% {
+      transform: translateX(125%);
+    }
+  }
+
+  @keyframes rich-table-elastic {
+    0%,
+    100% {
+      width: 50%;
+      inset-inline-start: 25%;
+    }
+    50% {
+      width: 100%;
+      inset-inline-start: 0;
+    }
+  }
+}
