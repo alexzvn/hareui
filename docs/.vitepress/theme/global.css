@@ -353,8 +353,10 @@
     var(--fd-toc-width) minmax(min-content, 1fr) !important;
 }
 
+/* `xl:px-10` (Pro: 48px): with the 272px docs sidebar it keeps the content column at 780px in a 1440 window, so a
+ * Desktop preview's 1:1 viewport (778px) clears the `md` breakpoint where DashboardSidebar docks. */
 #nd-page {
-  @apply mt-4 gap-4 p-4 px-6 sm:px-4 md:px-6 md:pt-0 xl:px-12 xl:pt-8;
+  @apply mt-4 gap-4 p-4 px-6 sm:px-4 md:px-6 md:pt-0 xl:px-10 xl:pt-8;
 
   > article {
     @apply p-8;

@@ -6,6 +6,8 @@ import { normalizePath, type ThemeConfig } from '../sidebar'
 import DocsHeader from './components/DocsHeader.vue'
 import Home from './Home.vue'
 import ThemesPage from './themes/ThemesPage.vue'
+import PreviewPage from './components/PreviewPage.vue'
+import { previewOverlayTheme } from './demos'
 import SidebarItems from './components/SidebarItems.vue'
 import TocItems from './components/TocItems.vue'
 import TocPopover from './components/TocPopover.vue'
@@ -15,6 +17,7 @@ import ThemeToggle from './components/ThemeToggle.vue'
 import FrameworkTabs from './components/FrameworkTabs.vue'
 import { useToc } from './composables/useToc'
 import { useDocInteractions } from './composables/useDocInteractions'
+import { useDocTheme } from './composables/useDocTheme'
 
 const SearchDialog = defineAsyncComponent(() => import('./components/SearchDialog.vue'))
 
@@ -27,6 +30,11 @@ const activeSection = computed(() => sections.value.find((section) => path.value
 
 const { items: tocItems, active: tocActive } = useToc()
 useDocInteractions()
+
+// Toasts fired from a preview pinned to the other theme take that preview's scope (ComponentPreview); a docs theme
+// change unpins every preview, so the scope only applies while it differs from the docs theme.
+const { dark: docDark, design } = useDocTheme()
+const toastTheme = computed(() => (previewOverlayTheme.value && previewOverlayTheme.value !== (docDark.value ? 'dark' : 'light') ? previewOverlayTheme.value : undefined))
 
 const searchOpen = ref(false)
 // SearchDialog (and its minisearch chunk) loads on first open, then stays mounted so it can animate out.
@@ -57,7 +65,8 @@ const links = computed(() => frontmatter.value.links as PageLinks | undefined)
 </script>
 
 <template>
-  <div class="flex min-h-screen flex-col font-sans">
+  <PreviewPage v-if="frontmatter.layout === 'preview'" />
+  <div v-else class="flex min-h-screen flex-col font-sans">
     <Home v-if="frontmatter.layout === 'home'" :sections="sections" @search="searchOpen = true" />
     <ThemesPage v-else-if="frontmatter.layout === 'themes'" />
     <div
@@ -151,7 +160,8 @@ const links = computed(() => frontmatter.value.links as PageLinks | undefined)
 
     <!-- Shared default-queue provider: several toast/* demos call the global `toast()`
          function directly (matching HeroUI's own docs, which mount one Toast.Provider
-         at the app shell) rather than creating their own queue + provider per demo. -->
-    <ToastProvider />
+         at the app shell) rather than creating their own queue + provider per demo.
+         It takes the theme of a preview pinned to the other theme (ComponentPreview). -->
+    <ToastProvider :class="toastTheme && [toastTheme, 'text-foreground']" v-bind="toastTheme ? design : {}" />
   </div>
 </template>
