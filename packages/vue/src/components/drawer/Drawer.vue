@@ -280,6 +280,9 @@ onBeforeUnmount(() => {
             @pointermove="onDragMove"
             @pointerup="onDragEnd($event, close)"
           >
+            <VisuallyHidden v-if="slots.content && title" as-child>
+              <DialogTitle>{{ title }}</DialogTitle>
+            </VisuallyHidden>
             <slot name="content" :close="close">
               <DialogClose v-if="closeButton" as-child>
                 <slot name="close" :close="close">

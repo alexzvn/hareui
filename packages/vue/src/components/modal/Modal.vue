@@ -194,6 +194,9 @@ onBeforeUnmount(() => {
             @interact-outside="onInteractOutside"
             @open-auto-focus="onOpenAutoFocus"
           >
+            <VisuallyHidden v-if="slots.content && title" as-child>
+              <DialogTitle>{{ title }}</DialogTitle>
+            </VisuallyHidden>
             <slot name="content" :close="close">
               <div v-if="hasHeader" data-slot="modal-header" :class="ui.header({ class: props.ui?.header })">
                 <slot name="header">

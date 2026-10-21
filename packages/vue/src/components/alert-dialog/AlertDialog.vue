@@ -197,6 +197,9 @@ onBeforeUnmount(() => {
             @interact-outside="onInteractOutside"
             @open-auto-focus="onOpenAutoFocus"
           >
+            <VisuallyHidden v-if="slots.content && title" as-child>
+              <DialogTitle>{{ title }}</DialogTitle>
+            </VisuallyHidden>
             <slot name="content" :close="close">
               <DialogClose v-if="closeButton" as-child>
                 <slot name="close" :close="close">

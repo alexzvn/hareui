@@ -49,7 +49,7 @@ import { Icon } from '@iconify/vue'
         replaces the entire dialog body. This gives you full control over when and how to
         close the modal, allowing you to add custom logic before closing.
       </p>
-      <Modal>
+      <Modal title="Using #content slot's close()">
         <Button variant="secondary">
           Open Modal
         </Button>

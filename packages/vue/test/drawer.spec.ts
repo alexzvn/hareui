@@ -1,5 +1,5 @@
 import { mount } from '@vue/test-utils'
-import { describe, expect, it } from 'vitest'
+import { describe, expect, it, vi } from 'vitest'
 import { h, nextTick } from 'vue'
 import Drawer from '../src/components/drawer/Drawer.vue'
 
@@ -41,6 +41,19 @@ describe('drawer', () => {
     order = [...dialog()!.children].map(c => c.getAttribute('data-slot'))
     expect(order.at(-1)).toBe('drawer-handle')
     top.unmount()
+  })
+
+  it('names the dialog from `title` when #content replaces the whole content', async () => {
+    const warn = vi.spyOn(console, 'warn').mockImplementation(() => {})
+    const wrapper = mount(Drawer, {
+      props: { defaultOpen: true, title: 'Custom content' },
+      slots: { content: ({ close }: { close: () => void }) => h('button', { onClick: close }, 'Done') },
+    })
+    await nextTick()
+    expect(document.getElementById(dialog()!.getAttribute('aria-labelledby')!)?.textContent).toBe('Custom content')
+    expect(warn).not.toHaveBeenCalledWith(expect.stringContaining('requires a `DialogTitle`'))
+    wrapper.unmount()
+    warn.mockRestore()
   })
 
   it('a short drag springs back, a long drag towards the edge closes', async () => {

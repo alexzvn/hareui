@@ -78,6 +78,8 @@ through named slots.
 
 ### Close Methods
 
+The `#footer`, `#body` and `#content` slots receive a `close` function. `#content` replaces the whole dialog, so set `title` too: it stays as the dialog's accessible name, visually hidden.
+
 <ComponentPreview name="modal/close-methods" />
 
 ### Custom Animations
