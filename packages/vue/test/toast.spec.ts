@@ -46,6 +46,22 @@ describe('toast', () => {
     expect(useToast()).toBe(toast)
   })
 
+  it('forwards non-prop attributes to the region without an extraneous-attrs warning', async () => {
+    const warn = vi.spyOn(console, 'warn').mockImplementation(() => {})
+    const wrapper = mount(ToastProvider, { props: { portal: false }, attrs: { 'data-design-theme': 'kumo', 'id': 'toasts' } })
+    toast('Scoped', { timeout: 0 })
+    await nextTick()
+
+    const region = wrapper.find('[data-slot=toast-region]')
+    expect(region.attributes('data-design-theme')).toBe('kumo')
+    expect(region.attributes('id')).toBe('toasts')
+    expect(region.attributes('role')).toBe('region')
+    expect(warn).not.toHaveBeenCalled()
+
+    wrapper.unmount()
+    warn.mockRestore()
+  })
+
   it('close removes the toast after its exit animation', async () => {
     toastQueue.destroy()
     const wrapper = mountProvider()

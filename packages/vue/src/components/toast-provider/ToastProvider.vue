@@ -88,6 +88,8 @@ import { usePortal } from '../../composables/usePortal'
 import { toastQueue as defaultToastQueue } from './useToast'
 import ToastItem from './ToastItem.vue'
 
+defineOptions({ inheritAttrs: false })
+
 const props = withDefaults(defineProps<ToastProviderProps>(), {
   placement: 'bottom',
   gap: DEFAULT_GAP,
@@ -357,6 +359,7 @@ const renderItems = computed<RenderItem[]>(() => {
   <Teleport :disabled="portalTarget.disabled" :to="portalTarget.to">
     <div
       v-if="visibleToasts.length > 0"
+      v-bind="$attrs"
       ref="regionEl"
       role="region"
       :aria-label="regionLabel"
