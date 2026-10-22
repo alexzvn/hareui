@@ -1,6 +1,7 @@
 import type { HareUIConfig } from '../src/config'
 import { mount } from '@vue/test-utils'
 import { afterEach, describe, expect, it } from 'vitest'
+import * as charts from '../src/charts'
 import Button from '../src/components/button/Button.vue'
 import { createHareUI } from '../src/config'
 import * as lib from '../src/index'
@@ -21,6 +22,17 @@ describe('HareUIResolver', () => {
     expect(exported.length).toBeGreaterThan(80)
     for (const name of exported)
       expect(resolve(name), name).toEqual({ name, from: '@hareui/vue' })
+  })
+
+  it('resolves chart components to the charts subpath', () => {
+    const exported = Object.entries(charts)
+      .filter(([, value]) => typeof value === 'object' && value !== null && ('setup' in value || 'render' in value))
+      .map(([name]) => name)
+    expect(exported).toContain('AreaChart')
+    expect(exported).toContain('ChartTooltipContent')
+    for (const name of exported)
+      expect(resolve(name), name).toEqual({ name, from: '@hareui/vue/charts' })
+    expect(resolve('HChartArea', 'H')).toEqual({ name: 'ChartArea', from: '@hareui/vue/charts' })
   })
 
   it('resolves only names carrying the prefix, accepting a kebab-case prefix', () => {

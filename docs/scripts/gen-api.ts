@@ -33,9 +33,9 @@ function toProp(prop: PropertyMeta): ApiProp {
   }
 }
 
-// Only public components: the package entry re-exports each folder's index.ts, which lists that folder's public parts
-// (internal parts like ListBoxOption or ToastItem aren't in it).
-const entry = await Bun.file(join(componentsDir, '../index.ts')).text()
+// Only public components: the package entries (`index.ts`, and `charts.ts` for the `@hareui/vue/charts` subpath) re-export
+// each folder's index.ts, which lists that folder's public parts (internal parts like ListBoxOption or ToastItem aren't in it).
+const entry = (await Promise.all(['index.ts', 'charts.ts'].map((file) => Bun.file(join(componentsDir, '..', file)).text()))).join('\n')
 const isPublic = async (file: string) => {
   const dir = dirname(file)
   if (!entry.includes(`from './components/${dir}'`)) return false
@@ -94,7 +94,12 @@ for (const file of files) {
     const theme: { slots: Record<string, unknown> } = (await import(themePath)).default
     ui.type = `{ ${Object.keys(theme.slots).map((k) => `${/^\w+$/.test(k) ? k : `'${k}'`}?: ClassValue`).join('; ')} }`
     ui.description = `${ui.description} Keys are the theme slots; see Theme below.`
-    await writeFile(join(outDir, 'theme', `${name}.ts`), stripComments(await Bun.file(themePath).text()))
+    // Chart roots spread the shared `chartSlots`; publish the resolved slots so the page shows every class.
+    const themeSource = await Bun.file(themePath).text()
+    const published = /^\s*\.\.\.\w+,?$/m.test(themeSource)
+      ? `export default ${JSON.stringify(theme, null, 2).replace(/"(\w+)":/g, '$1:').replace(/"/g, '\'')}\n`
+      : stripComments(themeSource)
+    await writeFile(join(outDir, 'theme', `${name}.ts`), published)
   }
   await writeFile(join(outDir, `${name}.json`), `${JSON.stringify(api, null, 2)}\n`)
   console.log(`api: ${name} (${api.props.length} props, ${api.slots.length} slots, ${api.events.length} events)`)

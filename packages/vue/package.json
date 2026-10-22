@@ -33,6 +33,10 @@
       "import": "./dist/index.js"
     },
     "./style.css": "./dist/styles/index.css",
+    "./charts": {
+      "types": "./dist/charts.d.ts",
+      "import": "./dist/charts.js"
+    },
     "./vite": {
       "types": "./dist/vite.d.ts",
       "import": "./dist/vite.js"
