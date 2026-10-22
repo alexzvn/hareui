@@ -108,7 +108,9 @@ function toArray(value: number | number[] | undefined): number[] | undefined {
 const isRange = computed(() => Array.isArray(modelValue.value ?? props.defaultValue))
 // Always pass an explicit `model-value` to Reka (never `undefined`) so it treats the slider as fully
 // controlled, the same technique Checkbox/RadioGroup use to avoid Reka owning uncontrolled state itself.
-const current = computed<number[]>(() => toArray(modelValue.value ?? props.defaultValue) ?? [props.min])
+// Values outside `[min, max]` are clamped, as RAC does.
+const current = computed<number[]>(() =>
+  (toArray(modelValue.value ?? props.defaultValue) ?? [props.min]).map(v => clamp(v, props.min, props.max)))
 
 // RAC keeps every thumb between its neighbours (`getThumbMinValue` / `getThumbMaxValue`). Reka instead sorts the
 // values and hands the move over to the other thumb, so a thumb pushed past its neighbour swaps with it. Reka
@@ -155,8 +157,10 @@ function onUpdate(values: number[] | undefined) {
     thumbRefs.value[movingIndex]?.$el?.focus?.()
   modelValue.value = isRange.value ? [...next] : next[0]
 }
-function onCommit() {
-  emit('changeEnd', isRange.value ? [...current.value] : current.value[0]!)
+// Reka emits `valueCommit` before `update:modelValue`, so report the committed values rather than `current`
+function onCommit(values: number[]) {
+  const next = constrain(values)
+  emit('changeEnd', isRange.value ? [...next] : next[0]!)
 }
 
 // RAC's page size is a tenth of the range (at least one step), used by PageUp / PageDown and Shift + Arrow, and
@@ -284,7 +288,6 @@ function dragging(index: number) {
     :step="step"
     :orientation="orientation"
     :disabled="isDisabled"
-    :name="name"
     :required="required"
     data-slot="slider"
     role="group"
@@ -301,7 +304,7 @@ function dragging(index: number) {
     <Label v-if="hasLabel" :id="labelId" :disabled="isDisabled" :class="ui.label({ class: props.ui?.label })">
       <slot name="label">{{ label }}</slot>
     </Label>
-    <output data-slot="slider-output" :data-orientation="orientation" :class="ui.output({ class: props.ui?.output })">
+    <output data-slot="slider-output" aria-live="off" :data-orientation="orientation" :class="ui.output({ class: props.ui?.output })">
       <slot name="output" :values="current" :formatted="formattedValues">{{ outputText }}</slot>
     </output>
     <SliderTrack
@@ -326,11 +329,16 @@ function dragging(index: number) {
         :aria-labelledby="hasLabel ? labelId : undefined"
         :aria-label="hasLabel ? undefined : ($attrs['aria-label'] as string | undefined)"
         :aria-valuetext="formattedValues[index]"
+        :aria-disabled="isDisabled ? 'true' : undefined"
         :class="ui.thumb({ class: props.ui?.thumb })"
         @focus="onThumbFocus(index)"
         @blur="onThumbBlur"
         @keydown="onThumbKeydown($event, index)"
       />
     </SliderTrack>
+    <!-- RAC submits one entry per thumb under the plain `name` (Reka would post `name[0]`, `name[1]`) -->
+    <template v-if="name">
+      <input v-for="(value, index) in current" :key="index" type="hidden" :name="name" :value="value" :disabled="isDisabled">
+    </template>
   </SliderRoot>
 </template>

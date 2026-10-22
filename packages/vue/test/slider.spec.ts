@@ -73,6 +73,12 @@ describe('Slider', () => {
     expect(w.get('[data-slot=slider]').attributes('data-disabled')).toBeDefined()
   })
 
+  it('a disabled slider reports aria-disabled on every thumb', () => {
+    const w = mount(Slider, { props: { defaultValue: [20, 60], disabled: true } })
+    expect(thumbs(w).map(t => t.attributes('aria-disabled'))).toEqual(['true', 'true'])
+    expect(mount(Slider, { props: { defaultValue: 30 } }).get('[data-slot=slider-thumb]').attributes('aria-disabled')).toBeUndefined()
+  })
+
   it('the label names the slider', () => {
     const w = mount(Slider, { props: { label: 'Volume', id: 's' } })
     expect(w.get('[data-slot=slider]').attributes('aria-labelledby')).toBe('s-label')
@@ -153,5 +159,40 @@ describe('Slider', () => {
     await thumbs(w)[0]!.trigger('keydown', { key: 'PageUp' })
     expect(output(w)).toBe('600')
     w.unmount()
+  })
+
+  it('changeEnd reports the value just committed, not the previous one', async () => {
+    const w = mount(Slider, { props: { defaultValue: 50 }, attachTo: document.body })
+    await nextTick()
+    for (const key of ['ArrowRight', 'ArrowRight', 'ArrowLeft'])
+      await thumbs(w)[0]!.trigger('keydown', { key })
+    expect(w.emitted('changeEnd')).toEqual([[51], [52], [51]])
+    w.unmount()
+  })
+
+  it('clamps a value outside [min, max] to the range', async () => {
+    const w = mount(Slider, { props: { modelValue: 150, min: 0, max: 100 } })
+    const low = mount(Slider, { props: { defaultValue: [-20, 50] } })
+    // Reka fills in the thumb ARIA values on the tick after mount
+    await nextTick()
+    expect(output(w)).toBe('100')
+    expect(thumbs(w)[0]!.attributes('aria-valuenow')).toBe('100')
+    expect(thumbs(low)[0]!.attributes('aria-valuenow')).toBe('0')
+  })
+
+  it('submits one form entry per thumb under the plain `name`', () => {
+    const entries = (props: Record<string, unknown>) => {
+      const w = mount(() => h('form', [h(Slider, props)]))
+      return [...new FormData(w.get('form').element as HTMLFormElement).entries()]
+    }
+    expect(entries({ name: 'volume', defaultValue: 65 })).toEqual([['volume', '65']])
+    expect(entries({ name: 'price', defaultValue: [20, 60] })).toEqual([['price', '20'], ['price', '60']])
+    // A disabled slider leaves its value out of the form, like a disabled input
+    expect(entries({ name: 'volume', defaultValue: 65, disabled: true })).toEqual([])
+    expect(entries({ defaultValue: 65 })).toEqual([])
+  })
+
+  it('the output does not announce every value change', () => {
+    expect(mount(Slider).get('[data-slot=slider-output]').attributes('aria-live')).toBe('off')
   })
 })
