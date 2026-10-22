@@ -129,8 +129,9 @@ export interface ListBoxEmits {
 
 <script setup lang="ts" generic="T extends ListBoxItem = ListBoxItem">
 import { injectListboxRootContext, ListboxContent, ListboxGroup, ListboxGroupLabel, ListboxRoot, ListboxVirtualizer } from 'reka-ui'
-import { computed, defineComponent, onBeforeUnmount, ref, useTemplateRef, watch } from 'vue'
+import { computed, defineComponent, inject, onBeforeUnmount, provide, ref, useTemplateRef, watch } from 'vue'
 import { useComponentUI } from '../../composables/useComponentUI'
+import { keyboardModalityKey, useKeyboardModality } from '../../composables/useKeyboardModality'
 import { useSelectionManager } from '../../composables/useSelectionManager'
 import ListBoxOption from './ListBoxOption.vue'
 
@@ -141,6 +142,10 @@ const slots = defineSlots<ListBoxSlots<T>>()
 const modelValue = defineModel<ListBoxValue | ListBoxValue[] | null>()
 
 const ui = useComponentUI('listBox', theme, () => ({}))
+
+// Options read the interaction modality; a standalone ListBox tracks its own (Select provides one from before the open)
+if (!inject(keyboardModalityKey, null))
+  provide(keyboardModalityKey, useKeyboardModality())
 
 // Load-more sentinel: observed against the nearest scroll container (IntersectionObserver clips by ancestors)
 const sentinel = useTemplateRef<HTMLElement>('sentinel')

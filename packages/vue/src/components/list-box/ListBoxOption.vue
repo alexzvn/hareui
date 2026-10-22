@@ -3,7 +3,8 @@
 import type { Component } from 'vue'
 import type { ListBoxItem, ListBoxItemSlotProps, ListBoxSlots, ListBoxValue } from './ListBox.vue'
 import { injectListboxRootContext, ListboxItem } from 'reka-ui'
-import { computed, ref, useTemplateRef } from 'vue'
+import { computed, inject, ref, useTemplateRef } from 'vue'
+import { keyboardModalityKey } from '../../composables/useKeyboardModality'
 import Description from '../description/Description.vue'
 import Label from '../label/Label.vue'
 
@@ -35,15 +36,15 @@ const slots = defineSlots<Omit<ListBoxSlots, 'section-label' | 'empty'>>()
 const hovered = ref(false)
 const pressed = ref(false)
 const focused = ref(false)
-const focusVisible = ref(false)
+// RAC interaction modality: DOM focus is focus-visible only after keyboard use (Reka focuses options on open and hover)
+const keyboardModality = inject(keyboardModalityKey, null)
 
 // The enclosing Reka listbox (its highlight is the keyboard cursor)
 const listbox = injectListboxRootContext(null)
 const option = useTemplateRef<{ $el: HTMLElement }>('option')
 
-function onFocus(event: FocusEvent) {
+function onFocus() {
   focused.value = true
-  focusVisible.value = event.target instanceof Element && event.target.matches(':focus-visible')
   // DOM focus is the keyboard cursor (RAC focusedKey): a mouse press or `focus()` must move Reka's highlight too
   const el = option.value?.$el
   if (!props.virtualFocus && listbox && el && listbox.highlightedElement.value !== el)
@@ -66,7 +67,7 @@ const highlighted = computed(() => props.virtualFocus && 'value' in props.virtua
   ? props.virtualFocus.value === props.item.value
   : !!listbox && !!option.value && listbox.highlightedElement.value === option.value.$el)
 const isFocused = computed(() => props.virtualFocus ? highlighted.value : focused.value)
-const isFocusVisible = computed(() => props.virtualFocus ? highlighted.value && props.virtualFocus.keyboard : focusVisible.value)
+const isFocusVisible = computed(() => props.virtualFocus ? highlighted.value && props.virtualFocus.keyboard : focused.value && !!keyboardModality?.value)
 
 const state = computed<ListBoxItemSlotProps>(() => ({
   item: props.item,
@@ -111,7 +112,7 @@ function onSelect(event: CustomEvent<{ originalEvent?: Event }>) {
     @pointerup="pressed = false"
     @pointercancel="pressed = false"
     @focus="onFocus"
-    @blur="focused = false; focusVisible = false"
+    @blur="focused = false"
   >
     <slot name="item" v-bind="state">
       <slot name="item-leading" v-bind="state" />
