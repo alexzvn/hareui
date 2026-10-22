@@ -91,6 +91,8 @@ import { useFieldsetDisabled } from '../fieldset/context'
 import Description from '../description/Description.vue'
 import FieldError from '../field-error/FieldError.vue'
 
+// Attributes go to the switch button; a `data-slot` attribute also renames the root, so a wrapper (CellSwitch) can
+// claim it while the button keeps `switch-content`
 defineOptions({ inheritAttrs: false })
 
 // `undefined` defaults stop Vue casting absent boolean props to `false`: uncontrolled mode and `defaultValue` apply,
@@ -150,7 +152,7 @@ function onUpdate(value: boolean) {
 <template>
   <div
     ref="root"
-    data-slot="switch"
+    :data-slot="($attrs['data-slot'] as string | undefined) ?? 'switch'"
     :data-state="checked ? 'checked' : 'unchecked'"
     :data-selected="checked ? 'true' : undefined"
     :data-disabled="isDisabled ? 'true' : undefined"
