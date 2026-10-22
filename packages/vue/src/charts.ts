@@ -3,4 +3,5 @@
 export * from './components/area-chart'
 export * from './components/chart'
 export * from './components/chart-tooltip'
+export * from './components/line-chart'
 export * from './components/chart-legend'

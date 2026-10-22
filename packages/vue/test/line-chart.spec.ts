@@ -1,0 +1,137 @@
+import { flushPromises, mount } from '@vue/test-utils'
+import { describe, expect, it } from 'vitest'
+import { h, nextTick } from 'vue'
+import ChartLine from '../src/components/chart/ChartLine.vue'
+import ChartTooltip from '../src/components/chart/ChartTooltip.vue'
+import ChartXAxis from '../src/components/chart/ChartXAxis.vue'
+import LineChart from '../src/components/line-chart/LineChart.vue'
+
+const WIDTH = 400
+const HEIGHT = 200
+const margin = { top: 0, right: 0, bottom: 0, left: 0 }
+
+async function settle() {
+  await flushPromises()
+  await nextTick()
+}
+
+async function hover(wrapper: { find: (s: string) => { element: Element } }, clientX: number, clientY: number) {
+  wrapper.find('[data-slot=chart-surface]').element.dispatchEvent(new PointerEvent('pointermove', { clientX, clientY, bubbles: true }))
+  await settle()
+}
+
+const data = [
+  { month: 'Jan', organic: 0, paid: 10 },
+  { month: 'Feb', organic: 10, paid: 5 },
+  { month: 'Mar', organic: 20, paid: 0 },
+]
+
+function mountChart(children: () => any[], props: Record<string, unknown> = {}) {
+  return mount(LineChart, {
+    props: { data, width: WIDTH, height: HEIGHT, margin, ...props },
+    slots: { default: children },
+    attachTo: document.body,
+  })
+}
+
+describe('LineChart', () => {
+  it('draws one path per series across the plot area', async () => {
+    const wrapper = mountChart(() => [
+      h(ChartLine, { dataKey: 'organic', type: 'linear', dot: false, isAnimationActive: false }),
+      h(ChartLine, { dataKey: 'paid', type: 'linear', dot: false, isAnimationActive: false }),
+    ])
+    await settle()
+    const paths = wrapper.findAll('[data-slot=chart-line-curve]')
+    expect(paths).toHaveLength(2)
+    // Point scale over [0, 400]; implicit y domain [0, 20] over [200, 0].
+    expect(paths[0].attributes('d')).toBe('M0,200L200,100L400,0')
+    expect(paths[1].attributes('d')).toBe('M0,100L200,150L400,200')
+    wrapper.unmount()
+  })
+
+  it('applies stroke, width and dash props to the path', async () => {
+    const wrapper = mountChart(() => [
+      h(ChartLine, { dataKey: 'organic', stroke: 'var(--chart-2)', strokeWidth: 2, strokeDasharray: '5 5', dot: false, isAnimationActive: false }),
+    ])
+    await settle()
+    const path = wrapper.find('[data-slot=chart-line-curve]')
+    expect(path.attributes('stroke')).toBe('var(--chart-2)')
+    expect(path.attributes('stroke-width')).toBe('2')
+    expect(path.attributes('stroke-dasharray')).toBe('5 5')
+    wrapper.unmount()
+  })
+
+  it('renders a dot per datum when dot is set', async () => {
+    const wrapper = mountChart(() => [
+      h(ChartLine, { dataKey: 'organic', dot: { r: 3, fill: 'red', strokeWidth: 0 }, isAnimationActive: false }),
+    ])
+    await settle()
+    const dots = wrapper.findAll('[data-slot=chart-dot]')
+    expect(dots).toHaveLength(3)
+    expect(dots[0].attributes('r')).toBe('3')
+    expect(dots[0].attributes('fill')).toBe('red')
+    wrapper.unmount()
+  })
+
+  it('hovering shows a tooltip with the payload of the nearest point', async () => {
+    const wrapper = mountChart(() => [
+      h(ChartXAxis, { dataKey: 'month', hide: true }),
+      h(ChartLine, { dataKey: 'organic', name: 'Organic', dot: false, isAnimationActive: false }),
+      h(ChartLine, { dataKey: 'paid', name: 'Paid', dot: false, isAnimationActive: false }),
+      h(ChartTooltip, { isAnimationActive: false }),
+    ])
+    await settle()
+    // Between Feb (x=200) and Mar (x=400), nearer Feb.
+    await hover(wrapper, 290, 50)
+    const panel = wrapper.find('[data-slot=chart-tooltip]')
+    expect(panel.find('[data-slot=chart-tooltip-header]').text()).toBe('Feb')
+    expect(panel.findAll('[data-slot=chart-tooltip-label]').map(label => label.text())).toEqual(['Organic', 'Paid'])
+    expect(panel.findAll('[data-slot=chart-tooltip-value]').map(value => value.text())).toEqual(['10', '5'])
+    wrapper.unmount()
+  })
+
+  it('passes label and payload to the #content slot of ChartTooltip', async () => {
+    const seen: Array<{ label: unknown, payload: Array<{ dataKey: string, value: unknown, color: string }> }> = []
+    const wrapper = mountChart(() => [
+      h(ChartXAxis, { dataKey: 'month', hide: true }),
+      h(ChartLine, { dataKey: 'organic', stroke: 'var(--chart-3)', dot: false, isAnimationActive: false }),
+      h(ChartTooltip, { isAnimationActive: false }, {
+        content: (props: any) => {
+          if (props.active)
+            seen.push({ label: props.label, payload: props.payload })
+          return h('div', { class: 'custom' }, String(props.label))
+        },
+      }),
+    ])
+    await settle()
+    await hover(wrapper, 395, 10)
+    const last = seen.at(-1)!
+    expect(last.label).toBe('Mar')
+    expect(last.payload[0]).toMatchObject({ dataKey: 'organic', value: 20, color: 'var(--chart-3)' })
+    wrapper.unmount()
+  })
+
+  it('arrow keys move the active point when the chart has a tooltip', async () => {
+    const wrapper = mountChart(() => [
+      h(ChartXAxis, { dataKey: 'month', hide: true }),
+      h(ChartLine, { dataKey: 'organic', name: 'Organic', dot: false, isAnimationActive: false }),
+      h(ChartTooltip, { isAnimationActive: false }),
+    ])
+    await settle()
+    const surface = wrapper.find('[data-slot=chart-surface]')
+    // Keyboard focus activates the first point; arrows move from there.
+    ;(surface.element as SVGElement).focus()
+    await settle()
+    expect(wrapper.find('[data-slot=chart-tooltip]').text()).toContain('Jan')
+    await surface.trigger('keydown', { key: 'ArrowRight' })
+    await settle()
+    expect(wrapper.find('[data-slot=chart-tooltip]').text()).toContain('Feb')
+    await surface.trigger('keydown', { key: 'End' })
+    await settle()
+    expect(wrapper.find('[data-slot=chart-tooltip]').text()).toContain('Mar')
+    await surface.trigger('keydown', { key: 'Escape' })
+    await settle()
+    expect(wrapper.find('[data-slot=chart-tooltip-wrapper]').attributes('data-state')).toBe('closed')
+    wrapper.unmount()
+  })
+})
