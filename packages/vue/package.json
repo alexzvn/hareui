@@ -45,6 +45,7 @@
     "prepublishOnly": "rm -rf dist && bun run typecheck && bun run test && bun run build"
   },
   "dependencies": {
+    "@number-flow/vue": "^0.5.2",
     "@tanstack/vue-table": "^8.21.3",
     "@tanstack/vue-virtual": "^3.13.47",
     "reka-ui": "^2.10.5",
@@ -55,11 +56,19 @@
   },
   "peerDependencies": {
     "@internationalized/date": "^3.12.4",
+    "d3-scale": "^4.0.0",
+    "d3-shape": "^3.0.0",
     "tailwindcss": "^4.3.0",
     "vite": ">=6.0.0",
     "vue": "^3.5.0"
   },
   "peerDependenciesMeta": {
+    "d3-scale": {
+      "optional": true
+    },
+    "d3-shape": {
+      "optional": true
+    },
     "vite": {
       "optional": true
     }
@@ -68,8 +77,12 @@
     "@internationalized/date": "^3.12.4",
     "@sinclair/typebox": "^0.34",
     "@sinclair/typemap": "^0.10.1",
+    "@types/d3-scale": "^4.0.9",
+    "@types/d3-shape": "^3.2.0",
     "@vitejs/plugin-vue": "^6.0.9",
     "@vue/test-utils": "^2.5.1",
+    "d3-scale": "^4.0.2",
+    "d3-shape": "^3.2.0",
     "happy-dom": "^20.14.5",
     "tailwindcss": "^4.3.3",
     "typescript": "~6.0.3",
