@@ -1,0 +1,153 @@
+import NumberFlow from '@number-flow/vue'
+import type { VueWrapper } from '@vue/test-utils'
+import { flushPromises, mount } from '@vue/test-utils'
+import { describe, expect, it, vi } from 'vitest'
+import { h, nextTick, reactive } from 'vue'
+import * as z from 'zod'
+import Form from '../src/components/form/Form.vue'
+import NumberStepper from '../src/components/number-stepper/NumberStepper.vue'
+
+const inc = '[data-slot=number-stepper-increment-button]'
+const dec = '[data-slot=number-stepper-decrement-button]'
+const value = '[data-slot=number-stepper-value]'
+const input = '[data-slot=number-stepper-input]'
+
+async function press(target: { element: Element }) {
+  // Reka's press-and-hold binds its pointerdown listener in a post-flush watcher, after mount
+  await flushPromises()
+  target.element.dispatchEvent(new PointerEvent('pointerdown', { bubbles: true, cancelable: true, button: 0, pointerType: 'mouse' }))
+  target.element.dispatchEvent(new PointerEvent('pointerup', { bubbles: true, button: 0, pointerType: 'mouse' }))
+  await nextTick()
+}
+
+// The value renders through number-flow; assert what it's given, not its (animated) DOM
+function shown(wrapper: VueWrapper) {
+  return wrapper.findComponent(NumberFlow).props('value')
+}
+
+describe('NumberStepper', () => {
+  it('steps with the buttons and emits update:modelValue', async () => {
+    const wrapper = mount(NumberStepper, { props: { defaultValue: 1 }, attachTo: document.body })
+    expect(shown(wrapper)).toBe(1)
+    await press(wrapper.get(inc))
+    expect(wrapper.emitted('update:modelValue')?.at(-1)).toEqual([2])
+    await nextTick()
+    expect(shown(wrapper)).toBe(2)
+    await press(wrapper.get(dec))
+    expect(wrapper.emitted('update:modelValue')?.at(-1)).toEqual([1])
+    wrapper.unmount()
+  })
+
+  it('steps with the arrow keys and clamps to min / max', async () => {
+    const wrapper = mount(NumberStepper, { props: { defaultValue: 4, min: 0, max: 5 }, attachTo: document.body })
+    await wrapper.get(input).trigger('keydown', { key: 'ArrowUp' })
+    expect(wrapper.emitted('update:modelValue')?.at(-1)).toEqual([5])
+    await nextTick()
+    expect(wrapper.get(inc).attributes('disabled')).toBeDefined()
+    await wrapper.get(input).trigger('keydown', { key: 'ArrowUp' })
+    expect(wrapper.emitted('update:modelValue')?.at(-1)).toEqual([5])
+    await wrapper.get(input).trigger('keydown', { key: 'Home' })
+    expect(wrapper.emitted('update:modelValue')?.at(-1)).toEqual([0])
+    await nextTick()
+    expect(wrapper.get(dec).attributes('disabled')).toBeDefined()
+    wrapper.unmount()
+  })
+
+  it('steps by `step` and clamps an out-of-range v-model for display', async () => {
+    const wrapper = mount(NumberStepper, { props: { modelValue: 0, min: 0, step: 5 }, attachTo: document.body })
+    await wrapper.get(input).trigger('keydown', { key: 'ArrowUp' })
+    expect(wrapper.emitted('update:modelValue')?.at(-1)).toEqual([5])
+    await wrapper.setProps({ modelValue: -20 })
+    expect(shown(wrapper)).toBe(0)
+    wrapper.unmount()
+  })
+
+  it('follows external v-model changes', async () => {
+    const wrapper = mount(NumberStepper, { props: { modelValue: 5 } })
+    await wrapper.setProps({ modelValue: 8 })
+    expect(shown(wrapper)).toBe(8)
+    expect(wrapper.get(input).attributes('aria-valuenow')).toBe('8')
+  })
+
+  it('formats the value with formatOptions and submits the raw number', () => {
+    const form = document.createElement('form')
+    document.body.append(form)
+    const wrapper = mount(NumberStepper, {
+      props: { name: 'price', defaultValue: 10, locale: 'en-US', formatOptions: { style: 'currency', currency: 'USD' } },
+      attachTo: form,
+    })
+    const flow = wrapper.findComponent(NumberFlow)
+    expect(flow.props('value')).toBe(10)
+    expect(flow.props('format')).toEqual({ style: 'currency', currency: 'USD' })
+    expect(flow.props('locales')).toBe('en-US')
+    expect((wrapper.get(input).element as HTMLInputElement).value).toBe('$10.00')
+    expect(new FormData(form).get('price')).toBe('10')
+    wrapper.unmount()
+    form.remove()
+  })
+
+  it('exposes the value and formatted value to the value slot', () => {
+    const wrapper = mount(NumberStepper, {
+      props: { defaultValue: 3 },
+      slots: { value: ({ value: v, formattedValue }: { value: number | undefined, formattedValue: string }) => `${formattedValue} items (${v})` },
+    })
+    expect(wrapper.get(value).text()).toBe('3 items (3)')
+  })
+
+  it('disables both buttons and the input when disabled', async () => {
+    const wrapper = mount(NumberStepper, { props: { defaultValue: 3, disabled: true }, attachTo: document.body })
+    expect(wrapper.get('[data-slot=number-stepper]').attributes('data-disabled')).toBe('true')
+    expect(wrapper.get(inc).attributes('disabled')).toBeDefined()
+    expect(wrapper.get(dec).attributes('disabled')).toBeDefined()
+    expect(wrapper.get(input).attributes('disabled')).toBeDefined()
+    await wrapper.get(input).trigger('keydown', { key: 'ArrowUp' })
+    expect(wrapper.emitted('update:modelValue')).toBeUndefined()
+    wrapper.unmount()
+  })
+
+  it('names the buttons after the field and links label and description to the input', () => {
+    const wrapper = mount(NumberStepper, { props: { id: 'g', label: 'Guests', description: 'Up to 10' } })
+    expect(wrapper.get('label').attributes('for')).toBe('g')
+    expect(wrapper.get(input).attributes('id')).toBe('g')
+    expect(wrapper.get(input).attributes('aria-describedby')).toBe('g-description')
+    expect(wrapper.get(inc).attributes('aria-label')).toBe('Increase Guests')
+    expect(wrapper.get(dec).attributes('aria-label')).toBe('Decrease Guests')
+  })
+
+  it('renders a Button when increment / decrement receive Button props', async () => {
+    const wrapper = mount(NumberStepper, { props: { defaultValue: 1, increment: { variant: 'primary', size: 'sm' }, decrement: false }, attachTo: document.body })
+    expect(wrapper.find(dec).exists()).toBe(false)
+    const button = wrapper.get(inc)
+    expect(button.attributes('data-slot')).toBe('number-stepper-increment-button')
+    expect(button.attributes('aria-label')).toBe('Increase')
+    await press(button)
+    expect(wrapper.emitted('update:modelValue')?.at(-1)).toEqual([2])
+    wrapper.unmount()
+  })
+
+  it('joins a Form: schema errors block submit and route to the field by name', async () => {
+    const state = reactive({ guests: 1 })
+    const onSubmit = vi.fn()
+    const schema = z.object({ guests: z.number().min(2, 'At least 2 guests') })
+    const wrapper = mount(() => h(Form, { schema, state, onSubmit }, () => h(NumberStepper, {
+      'label': 'Guests',
+      'name': 'guests',
+      'modelValue': state.guests,
+      'onUpdate:modelValue': (v: number | null | undefined) => { state.guests = v ?? Number.NaN },
+    })), { attachTo: document.body })
+    const submit = () => {
+      wrapper.get('form').element.dispatchEvent(new Event('submit', { cancelable: true }))
+      return flushPromises()
+    }
+    await submit()
+    expect(wrapper.get('[data-slot=field-error]').text()).toBe('At least 2 guests')
+    expect(wrapper.get(input).attributes('aria-invalid')).toBe('true')
+    expect(onSubmit).not.toHaveBeenCalled()
+
+    await wrapper.get(input).trigger('keydown', { key: 'ArrowUp' })
+    await submit()
+    expect(wrapper.find('[data-slot=field-error]').exists()).toBe(false)
+    expect(onSubmit.mock.calls[0]![0].data).toEqual({ guests: 2 })
+    wrapper.unmount()
+  })
+})

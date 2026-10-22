@@ -1,0 +1,352 @@
+<script lang="ts">
+import type { ValidateFn, ValidationResult } from '../../composables/useFieldValidation'
+import type { ComponentSlots } from '../../types/tv'
+import type { ButtonProps } from '../button/Button.vue'
+import type { ValidationBehavior } from '../form/context'
+import type { FormFieldProps } from '../form/types'
+import theme from './theme'
+
+type NumberStepper = typeof theme
+
+export interface NumberStepperProps extends FormFieldProps {
+  /** Label text rendered above the stepper. */
+  label?: string
+  /** Helper text rendered below the stepper. Hidden while the field is invalid. */
+  description?: string
+  /** Error message rendered below the stepper while invalid. Defaults to the validation errors. */
+  errorMessage?: string
+  /**
+   * The id of the input; label, description and error ids derive from it.
+   * @defaultValue useId()
+   */
+  id?: string
+  /** The name of the value, used when submitting a form. */
+  name?: string
+  /** The initial value when uncontrolled (no `v-model`). */
+  defaultValue?: number
+  /** The smallest allowed value. The decrement button is disabled at this value. */
+  min?: number
+  /** The largest allowed value. The increment button is disabled at this value. */
+  max?: number
+  /**
+   * The amount the value changes per press. When set, values are also snapped to it (relative to `min`).
+   * @defaultValue 1 (0.01 with `formatOptions.style: 'percent'`)
+   */
+  step?: number
+  /** Formatting options for the displayed value (`Intl.NumberFormat`). */
+  formatOptions?: Intl.NumberFormatOptions
+  /** Locale used to format the value. Defaults to the `ConfigProvider` locale. */
+  locale?: string
+  /**
+   * Size of the buttons and the value.
+   * @defaultValue 'md'
+   */
+  size?: 'sm' | 'md' | 'lg'
+  /**
+   * Places the increment button first and the decrement button last.
+   * @defaultValue false
+   */
+  reversed?: boolean
+  /**
+   * Renders the increment button. Pass `Button` props (`variant`, `size`, …) to render a `Button` instead of the built-in one.
+   * @defaultValue true
+   */
+  increment?: boolean | Omit<ButtonProps, 'as' | 'type' | 'disabled' | 'pending'>
+  /**
+   * Renders the decrement button. Pass `Button` props (`variant`, `size`, …) to render a `Button` instead of the built-in one.
+   * @defaultValue true
+   */
+  decrement?: boolean | Omit<ButtonProps, 'as' | 'type' | 'disabled' | 'pending'>
+  /**
+   * Whether the stepper is disabled.
+   * @defaultValue false
+   */
+  disabled?: boolean
+  /**
+   * Whether the stepper is invalid. Overrides validation when set.
+   * @defaultValue undefined
+   */
+  invalid?: boolean
+  /**
+   * Whether a value is required.
+   * @defaultValue false
+   */
+  required?: boolean
+  /**
+   * Whether the value can be read but not changed.
+   * @defaultValue false
+   */
+  readonly?: boolean
+  /** Validates the committed value (`NaN` while empty). Return an error message (or several) when invalid. */
+  validate?: ValidateFn<number>
+  /**
+   * `native` blocks form submission and shows errors on commit or submit; `aria` shows errors in realtime.
+   * Defaults to the surrounding `Form`.
+   * @defaultValue 'native'
+   */
+  validationBehavior?: ValidationBehavior
+  /** Additional classes merged into the root element. */
+  class?: any
+  /** Per-slot class overrides. */
+  ui?: ComponentSlots<NumberStepper>
+}
+
+export interface NumberStepperSlots {
+  /** Label content. Replaces the `label` prop. */
+  label?: () => any
+  /** Decrement button content. Defaults to a minus icon. */
+  decrement?: () => any
+  /** Value content. Defaults to the formatted value. */
+  value?: (props: { value: number | undefined, formattedValue: string }) => any
+  /** Increment button content. Defaults to a plus icon. */
+  increment?: () => any
+  /** Description content. Replaces the `description` prop. */
+  description?: () => any
+  /** Error content, rendered while invalid. Replaces the `errorMessage` prop. */
+  error?: (props: ValidationResult) => any
+}
+</script>
+
+<script setup lang="ts">
+import type { Format } from '@number-flow/vue'
+import NumberFlow from '@number-flow/vue'
+import { NumberFieldDecrement, NumberFieldIncrement, NumberFieldInput, NumberFieldRoot, useLocale } from 'reka-ui'
+import { computed, getCurrentInstance, ref, toRef, useAttrs, useId, useTemplateRef, watch } from 'vue'
+import { useComponentUI } from '../../composables/useComponentUI'
+import { useFieldValidation } from '../../composables/useFieldValidation'
+import { snapNumber } from '../../utils/number'
+import Button from '../button/Button.vue'
+import Description from '../description/Description.vue'
+import FieldError from '../field-error/FieldError.vue'
+import { useFieldsetDisabled } from '../fieldset/context'
+import Label from '../label/Label.vue'
+
+defineOptions({ inheritAttrs: false })
+
+// `invalid: undefined`: an absent boolean would cast to `false`, which counts as controlled-valid and hides validation errors
+const props = withDefaults(defineProps<NumberStepperProps>(), { increment: true, decrement: true, invalid: undefined })
+const slots = defineSlots<NumberStepperSlots>()
+/** The numeric value; `undefined` while empty. */
+const modelValue = defineModel<number | null>()
+const instance = getCurrentInstance()
+
+// Same value handling as NumberField: the incoming value and default are clamped (and snapped to `step` when set)
+const effectiveStep = computed(() => props.step ?? (props.formatOptions?.style === 'percent' ? 0.01 : undefined))
+function snap<T extends number | null | undefined>(value: T): T {
+  return snapNumber(value, props.min, props.max, props.step)
+}
+const displayValue = computed(() => snap(modelValue.value))
+
+// Submitted through a sibling `<input type="hidden">`, as NumberField does, so form data carries the raw number
+const formValue = ref<number | null | undefined>(displayValue.value ?? snap(props.defaultValue))
+watch(displayValue, (value) => {
+  formValue.value = value
+})
+
+const root = useTemplateRef<HTMLElement>('root')
+const isDisabled = useFieldsetDisabled(() => props.disabled)
+
+const { validation, commitValidation } = useFieldValidation({
+  formField: props,
+  value: () => formValue.value ?? Number.NaN,
+  validate: () => props.validate,
+  invalid: () => props.invalid,
+  validationBehavior: () => props.validationBehavior,
+  name: () => props.name,
+  root: () => root.value,
+  onReset: () => {
+    formValue.value = snap(props.defaultValue)
+    modelValue.value = formValue.value
+  },
+})
+const invalid = computed(() => validation.value.isInvalid)
+
+// The value rolls digit by digit (number-flow, as in HeroUI Pro), with the same locale and format as the spin button.
+// number-flow skips the motion under `prefers-reduced-motion`.
+const locale = useLocale(toRef(() => props.locale))
+const flowFormat = computed<Format | undefined>(() => {
+  if (!props.formatOptions)
+    return undefined
+  // number-flow supports only standard and compact notation
+  const { notation, ...rest } = props.formatOptions
+  return notation === 'standard' || notation === 'compact' ? { ...rest, notation } : rest
+})
+
+function onUpdate(value: number | undefined) {
+  formValue.value = value
+  modelValue.value = value
+  commitValidation()
+}
+
+// An emptied input commits "no value" (see NumberField): Reka doesn't emit `undefined` when uncontrolled
+function onCommitEmpty(event: Event) {
+  if ((event.target as HTMLInputElement).value !== '' || formValue.value == null)
+    return
+  formValue.value = undefined
+  if (modelValue.value == null)
+    instance?.emit('update:modelValue', undefined)
+  else
+    modelValue.value = undefined
+  commitValidation()
+}
+function onKeydown(event: KeyboardEvent) {
+  if (event.key === 'Enter' && !event.isComposing)
+    onCommitEmpty(event)
+}
+// PageUp / PageDown move by a single step, as in NumberField (Reka moves 10)
+function onKeydownCapture(event: KeyboardEvent) {
+  if ((event.key !== 'PageUp' && event.key !== 'PageDown') || event.isComposing)
+    return
+  event.preventDefault()
+  event.stopImmediatePropagation()
+  event.target!.dispatchEvent(new KeyboardEvent('keydown', { key: event.key === 'PageUp' ? 'ArrowUp' : 'ArrowDown', cancelable: true }))
+}
+
+// `aria-label` / `aria-labelledby` name the input, not the wrapper div
+const attrs = useAttrs()
+const rootAttrs = computed(() => {
+  const { 'aria-label': _label, 'aria-labelledby': _labelledby, ...rest } = attrs
+  return rest
+})
+
+const autoId = useId()
+const id = computed(() => props.id ?? autoId)
+const hasLabel = computed(() => !!(props.label || slots.label))
+const hasDescription = computed(() => !!(props.description || slots.description))
+const hasError = computed(() => invalid.value && !!(props.errorMessage || slots.error || validation.value.validationErrors.length))
+const descriptionId = computed(() => `${id.value}-description`)
+const errorId = computed(() => `${id.value}-error`)
+const describedBy = computed(() => [
+  hasDescription.value ? descriptionId.value : undefined,
+  hasError.value ? errorId.value : undefined,
+].filter(Boolean).join(' ') || undefined)
+
+// The buttons are named after the field: "Increase Quantity"
+const fieldName = computed(() => (attrs['aria-label'] as string | undefined) ?? props.label)
+const incrementLabel = computed(() => fieldName.value ? `Increase ${fieldName.value}` : 'Increase')
+const decrementLabel = computed(() => fieldName.value ? `Decrease ${fieldName.value}` : 'Decrease')
+const incrementButton = computed(() => typeof props.increment === 'object' ? props.increment : undefined)
+const decrementButton = computed(() => typeof props.decrement === 'object' ? props.decrement : undefined)
+
+const ui = useComponentUI('numberStepper', theme, () => ({ size: props.size, reversed: props.reversed }))
+</script>
+
+<template>
+  <div
+    ref="root"
+    v-bind="rootAttrs"
+    data-slot="number-stepper"
+    :data-disabled="isDisabled ? 'true' : undefined"
+    :data-invalid="invalid ? 'true' : undefined"
+    :data-required="required ? 'true' : undefined"
+    :data-readonly="readonly ? 'true' : undefined"
+    :class="ui.base({ class: [props.ui?.base, props.class] })"
+  >
+    <Label v-if="hasLabel" :for="id" :disabled="isDisabled" :invalid="invalid" :required="required">
+      <slot name="label">
+        {{ label }}
+      </slot>
+    </Label>
+    <NumberFieldRoot
+      v-slot="{ modelValue: current, textValue }"
+      :id="id"
+      :model-value="displayValue"
+      :default-value="snap(defaultValue)"
+      :min="min"
+      :max="max"
+      :step="effectiveStep"
+      :step-snapping="step !== undefined"
+      :format-options="formatOptions"
+      :locale="locale"
+      :disabled="isDisabled"
+      :readonly="readonly"
+      :required="required"
+      data-slot="number-stepper-group"
+      :data-disabled="isDisabled ? 'true' : undefined"
+      :aria-disabled="isDisabled ? 'true' : undefined"
+      :data-invalid="invalid ? 'true' : undefined"
+      :class="ui.group({ class: props.ui?.group })"
+      @update:model-value="onUpdate"
+    >
+      <template v-if="decrement">
+        <NumberFieldDecrement v-if="decrementButton" as-child :aria-label="decrementLabel" :aria-controls="id">
+          <Button v-bind="decrementButton" icon-only data-slot="number-stepper-decrement-button" :class="props.ui?.decrementButton">
+            <slot name="decrement">
+              <svg aria-hidden="true" fill="none" height="16" viewBox="0 0 16 16" width="16" xmlns="http://www.w3.org/2000/svg">
+                <path clip-rule="evenodd" d="M1.75 8a.75.75 0 0 1 .75-.75h11a.75.75 0 0 1 0 1.5h-11A.75.75 0 0 1 1.75 8" fill="currentColor" fill-rule="evenodd" />
+              </svg>
+            </slot>
+          </Button>
+        </NumberFieldDecrement>
+        <NumberFieldDecrement
+          v-else
+          data-slot="number-stepper-decrement-button"
+          :aria-label="decrementLabel"
+          :aria-controls="id"
+          :class="ui.decrementButton({ class: props.ui?.decrementButton })"
+        >
+          <slot name="decrement">
+            <svg aria-hidden="true" fill="none" height="16" viewBox="0 0 16 16" width="16" xmlns="http://www.w3.org/2000/svg">
+              <path clip-rule="evenodd" d="M1.75 8a.75.75 0 0 1 .75-.75h11a.75.75 0 0 1 0 1.5h-11A.75.75 0 0 1 1.75 8" fill="currentColor" fill-rule="evenodd" />
+            </svg>
+          </slot>
+        </NumberFieldDecrement>
+      </template>
+      <span data-slot="number-stepper-value" aria-hidden="true" :class="ui.value({ class: props.ui?.value })">
+        <slot name="value" :value="current ?? undefined" :formatted-value="textValue">
+          <NumberFlow v-if="current != null" :value="current" :format="flowFormat" :locales="locale" />
+          <template v-else>
+            {{ textValue }}
+          </template>
+        </slot>
+      </span>
+      <template v-if="increment">
+        <NumberFieldIncrement v-if="incrementButton" as-child :aria-label="incrementLabel" :aria-controls="id">
+          <Button v-bind="incrementButton" icon-only data-slot="number-stepper-increment-button" :class="props.ui?.incrementButton">
+            <slot name="increment">
+              <svg aria-hidden="true" fill="none" height="16" viewBox="0 0 16 16" width="16" xmlns="http://www.w3.org/2000/svg">
+                <path clip-rule="evenodd" d="M8 1.75a.75.75 0 0 1 .75.75v4.75h4.75a.75.75 0 0 1 0 1.5H8.75v4.75a.75.75 0 0 1-1.5 0V8.75H2.5a.75.75 0 0 1 0-1.5h4.75V2.5A.75.75 0 0 1 8 1.75" fill="currentColor" fill-rule="evenodd" />
+              </svg>
+            </slot>
+          </Button>
+        </NumberFieldIncrement>
+        <NumberFieldIncrement
+          v-else
+          data-slot="number-stepper-increment-button"
+          :aria-label="incrementLabel"
+          :aria-controls="id"
+          :class="ui.incrementButton({ class: props.ui?.incrementButton })"
+        >
+          <slot name="increment">
+            <svg aria-hidden="true" fill="none" height="16" viewBox="0 0 16 16" width="16" xmlns="http://www.w3.org/2000/svg">
+              <path clip-rule="evenodd" d="M8 1.75a.75.75 0 0 1 .75.75v4.75h4.75a.75.75 0 0 1 0 1.5H8.75v4.75a.75.75 0 0 1-1.5 0V8.75H2.5a.75.75 0 0 1 0-1.5h4.75V2.5A.75.75 0 0 1 8 1.75" fill="currentColor" fill-rule="evenodd" />
+            </svg>
+          </slot>
+        </NumberFieldIncrement>
+      </template>
+      <NumberFieldInput
+        data-slot="number-stepper-input"
+        :required="required || undefined"
+        :aria-invalid="invalid ? 'true' : undefined"
+        :aria-describedby="describedBy"
+        :aria-label="attrs['aria-label']"
+        :aria-labelledby="attrs['aria-labelledby']"
+        :class="ui.input({ class: props.ui?.input })"
+        @blur="onCommitEmpty"
+        @keydown="onKeydown"
+        @keydown.capture="onKeydownCapture"
+      />
+    </NumberFieldRoot>
+    <Description v-if="hasDescription" :id="descriptionId">
+      <slot name="description">
+        {{ description }}
+      </slot>
+    </Description>
+    <FieldError v-if="hasError" :id="errorId">
+      <slot name="error" v-bind="validation">
+        {{ errorMessage ?? validation.validationErrors.join(' ') }}
+      </slot>
+    </FieldError>
+  </div>
+  <input v-if="name" type="hidden" :name="name" :value="formValue ?? ''" :disabled="isDisabled || undefined">
+</template>
