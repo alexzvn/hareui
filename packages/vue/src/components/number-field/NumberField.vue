@@ -7,30 +7,6 @@ import theme from './theme'
 
 type NumberField = typeof theme
 
-function roundToStepPrecision(value: number, step: number) {
-  const pointIndex = step.toString().indexOf('.')
-  const precision = pointIndex >= 0 ? step.toString().length - pointIndex : 0
-  return precision > 0 ? Math.round(value * 10 ** precision) / 10 ** precision : value
-}
-
-// react-stately's (and Reka's internal) snapValueToStep; reka-ui doesn't export it
-function snapValueToStep(value: number, min: number | undefined, max: number | undefined, step: number) {
-  const lo = Number(min)
-  const hi = Number(max)
-  const remainder = (value - (Number.isNaN(lo) ? 0 : lo)) % step
-  let snapped = roundToStepPrecision(Math.abs(remainder) * 2 >= step ? value + Math.sign(remainder) * (step - Math.abs(remainder)) : value - remainder, step)
-  if (!Number.isNaN(lo)) {
-    if (snapped < lo)
-      snapped = lo
-    else if (!Number.isNaN(hi) && snapped > hi)
-      snapped = lo + Math.floor(roundToStepPrecision((hi - lo) / step, step)) * step
-  }
-  else if (!Number.isNaN(hi) && snapped > hi) {
-    snapped = Math.floor(roundToStepPrecision(hi / step, step)) * step
-  }
-  return roundToStepPrecision(snapped, step)
-}
-
 export interface NumberFieldProps extends FormFieldProps {
   /** Label text rendered above the group. */
   label?: string
@@ -136,6 +112,7 @@ import { NumberFieldDecrement, NumberFieldIncrement, NumberFieldInput, NumberFie
 import { computed, getCurrentInstance, ref, useAttrs, useId, useTemplateRef, watch } from 'vue'
 import { useComponentUI } from '../../composables/useComponentUI'
 import { useFieldValidation } from '../../composables/useFieldValidation'
+import { snapNumber } from '../../utils/number'
 import { useFieldsetDisabled } from '../fieldset/context'
 import Description from '../description/Description.vue'
 import FieldError from '../field-error/FieldError.vue'
@@ -156,12 +133,7 @@ const instance = getCurrentInstance()
 // (and snapped to `step` when one is given) before display; the step falls back to 0.01 for percents.
 const effectiveStep = computed(() => props.step ?? (props.formatOptions?.style === 'percent' ? 0.01 : undefined))
 function snap<T extends number | null | undefined>(value: T): T {
-  if (value == null || Number.isNaN(value))
-    return value
-  const { min, max, step } = props
-  if (step === undefined)
-    return Math.min(max ?? Infinity, Math.max(min ?? -Infinity, value)) as T
-  return snapValueToStep(value, min, max, step) as T
+  return snapNumber(value, props.min, props.max, props.step)
 }
 const displayValue = computed(() => snap(modelValue.value))
 
