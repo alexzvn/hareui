@@ -104,3 +104,4 @@ export type { DashboardContext, DashboardSidebarSide, DashboardSidebarState, Das
 export * from './components/navigation-menu'
 export * from './components/rich-table'
 export * from './components/native-select'
+export * from './components/checkbox-button-group'
