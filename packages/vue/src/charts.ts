@@ -1,0 +1,5 @@
+// `@hareui/vue/charts`: chart components. Separate from the main entry so apps without charts don't need
+// the `d3-scale` and `d3-shape` peer dependencies.
+export * from './components/chart'
+export * from './components/chart-tooltip'
+export * from './components/chart-legend'
