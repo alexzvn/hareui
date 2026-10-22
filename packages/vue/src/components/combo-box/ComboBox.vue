@@ -193,9 +193,10 @@ const RekaBridge = defineComponent({
 
 <script setup lang="ts" generic="T extends ListBoxItem = ListBoxItem">
 import { ComboboxAnchor, ComboboxContent, ComboboxItem, ComboboxPortal, ComboboxRoot, useFilter } from 'reka-ui'
-import { computed, getCurrentInstance, nextTick, onBeforeUnmount, onMounted, ref, shallowRef, useAttrs, useId, useTemplateRef, watch } from 'vue'
+import { computed, getCurrentInstance, nextTick, onMounted, ref, shallowRef, useAttrs, useId, useTemplateRef, watch } from 'vue'
 import { useComponentUI } from '../../composables/useComponentUI'
 import { useFieldValidation } from '../../composables/useFieldValidation'
+import { useKeyboardModality } from '../../composables/useKeyboardModality'
 import { usePortal } from '../../composables/usePortal'
 import { useFieldsetDisabled } from '../fieldset/context'
 import inputTheme from '../input/theme'
@@ -389,24 +390,12 @@ function onReady(listboxContext: ListboxContext, comboboxContext: ComboboxContex
 }
 const highlighted = computed(() => listboxRef.value?.highlightedElement.value ?? null)
 // RAC interaction modality: the highlight is focus-visible after keyboard interaction
-const keyboardModality = ref(true)
-const onDocPointerdown = () => {
-  keyboardModality.value = false
-}
-const onDocKeydown = () => {
-  keyboardModality.value = true
-}
+const keyboardModality = useKeyboardModality()
 onMounted(() => {
   if (input.value)
     combobox?.onInputElementChange(input.value)
   if (isOpen.value)
     highlightOnOpen(null)
-  document.addEventListener('pointerdown', onDocPointerdown, true)
-  document.addEventListener('keydown', onDocKeydown, true)
-})
-onBeforeUnmount(() => {
-  document.removeEventListener('pointerdown', onDocPointerdown, true)
-  document.removeEventListener('keydown', onDocKeydown, true)
 })
 
 const content = useTemplateRef<{ $el: HTMLElement }>('content')

@@ -201,10 +201,11 @@ const ListboxBridge = defineComponent({
 
 <script setup lang="ts" generic="T extends ListBoxItem = ListBoxItem">
 import { ListboxContent, ListboxRoot, PopoverAnchor, PopoverContent, PopoverPortal, PopoverRoot, Primitive, useFilter } from 'reka-ui'
-import { computed, getCurrentInstance, nextTick, onBeforeUnmount, onMounted, ref, shallowRef, useAttrs, useId, useTemplateRef, watch } from 'vue'
+import { computed, getCurrentInstance, nextTick, ref, shallowRef, useAttrs, useId, useTemplateRef, watch } from 'vue'
 import { outsideEventTarget } from '../../composables/nestedLayer'
 import { useComponentUI } from '../../composables/useComponentUI'
 import { useFieldValidation } from '../../composables/useFieldValidation'
+import { useKeyboardModality } from '../../composables/useKeyboardModality'
 import { usePortal } from '../../composables/usePortal'
 import { useFieldsetDisabled } from '../fieldset/context'
 import listBoxTheme from '../list-box/theme'
@@ -309,21 +310,7 @@ watch(isOpen, (value) => {
 })
 
 // ---- Interaction modality (RAC): keyboard focus is focus-visible, hover moves focus only after pointer use ----
-const keyboardModality = ref(true)
-const onDocPointerdown = () => {
-  keyboardModality.value = false
-}
-const onDocKeydown = () => {
-  keyboardModality.value = true
-}
-onMounted(() => {
-  document.addEventListener('pointerdown', onDocPointerdown, true)
-  document.addEventListener('keydown', onDocKeydown, true)
-})
-onBeforeUnmount(() => {
-  document.removeEventListener('pointerdown', onDocPointerdown, true)
-  document.removeEventListener('keydown', onDocKeydown, true)
-})
+const keyboardModality = useKeyboardModality()
 
 // ---- Virtual focus (RAC `focusedKey`): DOM focus stays in the search field or on the popover --------------------
 // Tracked by value, not element: virtualized rows unmount when scrolled out
