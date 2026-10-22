@@ -72,8 +72,9 @@ const DEFAULT: ValidationResult = { isInvalid: false, validationErrors: [], vali
 
 type Control = HTMLInputElement | HTMLSelectElement | HTMLTextAreaElement
 const CONTROLS = 'input:not([type="hidden"]), select, textarea'
-// Where focus goes when the field is the form's first invalid one: the visible control, or Reka's checkbox / switch / radio button
-const FOCUSABLE = 'input:not([type="hidden"]):not([aria-hidden="true"]), select, textarea, [role="checkbox"], [role="switch"], [role="radio"][tabindex="0"]'
+// Where focus goes when the field is the form's first invalid one: the visible control, or Reka's checkbox / switch / radio
+// button (the first enabled radio, so a mouse-submitted form still shows the focus ring on a card or radio)
+const FOCUSABLE = 'input:not([type="hidden"]):not([aria-hidden="true"]), select, textarea, [role="checkbox"], [role="switch"], [role="radio"]:not([data-disabled])'
 
 function asArray(v: ValidationError | null | undefined): string[] {
   if (!v)
