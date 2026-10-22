@@ -66,6 +66,16 @@ export interface SelectProps<T extends ListBoxItem = ListBoxItem> extends FormFi
    */
   fullWidth?: boolean
   /**
+   * Side of the trigger the popover opens on.
+   * @defaultValue 'bottom'
+   */
+  side?: 'top' | 'right' | 'bottom' | 'left'
+  /**
+   * Alignment of the popover against the trigger.
+   * @defaultValue 'center'
+   */
+  align?: 'start' | 'center' | 'end'
+  /**
    * Whether the select is disabled.
    * @defaultValue false
    */
@@ -104,6 +114,8 @@ export interface SelectValueSlotProps<T extends ListBoxItem = ListBoxItem> {
 export interface SelectSlots<T extends ListBoxItem = ListBoxItem> {
   /** Label content. Replaces `label`. */
   'label'?: () => any
+  /** Content inside the trigger before the value. */
+  'leading'?: () => any
   /** Trigger value content. Defaults to the selected label(s) or the placeholder. */
   'value'?: (props: SelectValueSlotProps<T>) => any
   /** Trigger indicator content. Defaults to a chevron. */
@@ -146,9 +158,10 @@ export interface SelectEmits {
 
 <script setup lang="ts" generic="T extends ListBoxItem = ListBoxItem">
 import { PopoverContent, PopoverPortal, PopoverRoot, PopoverTrigger } from 'reka-ui'
-import { computed, ref, useAttrs, useId, useTemplateRef, watch } from 'vue'
+import { computed, provide, ref, useAttrs, useId, useTemplateRef, watch } from 'vue'
 import { useComponentUI } from '../../composables/useComponentUI'
 import { useFieldValidation } from '../../composables/useFieldValidation'
+import { keyboardModalityKey, useKeyboardModality } from '../../composables/useKeyboardModality'
 import { usePortal } from '../../composables/usePortal'
 import { useFieldsetDisabled } from '../fieldset/context'
 import listBoxTheme from '../list-box/theme'
@@ -160,12 +173,17 @@ import { usePressRelease } from './pressRelease'
 
 defineOptions({ inheritAttrs: false })
 
+// The popover's options mount after the press that opens it, so the modality is tracked from here
+provide(keyboardModalityKey, useKeyboardModality())
+
 // Absent booleans stay `undefined` (not `false`): `open` → uncontrolled, `invalid` → validation decides, `loading` → no sentinel
 const props = withDefaults(defineProps<SelectProps<T>>(), {
   portal: undefined,
   selectionMode: 'single',
   defaultValue: undefined,
   placeholder: 'Select an item',
+  side: 'bottom',
+  align: 'center',
   open: undefined,
   invalid: undefined,
   loading: undefined,
@@ -390,12 +408,15 @@ const describedBy = computed(() => [
   hasDescription.value ? descriptionId.value : undefined,
   hasError.value ? errorId.value : undefined,
 ].filter(Boolean).join(' ') || undefined)
+// `aria-labelledby` overrides `aria-label`, so an `aria-label`-only trigger references itself to keep that name (as RAC does)
 const triggerLabelledBy = computed(() => [
   attrs['aria-labelledby'] as string | undefined,
   hasLabel.value ? labelId.value : undefined,
+  attrs['aria-label'] && !attrs['aria-labelledby'] && !hasLabel.value ? id.value : undefined,
   valueId.value,
 ].filter(Boolean).join(' '))
 const listLabelledBy = computed(() => (attrs['aria-labelledby'] as string | undefined) ?? (hasLabel.value ? labelId.value : undefined))
+// Bound after the root's `data-slot`, so a wrapping component (CellSelect, InlineSelect) can rename the root
 const rootAttrs = computed(() => {
   const { 'aria-label': _label, 'aria-labelledby': _labelledby, ...rest } = attrs
   return rest
@@ -422,8 +443,8 @@ watch(disabled, (disabled) => {
 <template>
   <div
     ref="root"
-    v-bind="rootAttrs"
     data-slot="select"
+    v-bind="rootAttrs"
     :data-focused="focused || isOpen ? 'true' : undefined"
     :data-focus-visible="focusVisible ? 'true' : undefined"
     :data-open="isOpen ? 'true' : undefined"
@@ -473,6 +494,7 @@ watch(disabled, (disabled) => {
           @pointerenter="hovered = $event.pointerType === 'mouse'"
           @pointerleave="hovered = false"
         >
+          <slot name="leading" />
           <span
             :id="valueId"
             data-slot="select-value"
@@ -534,8 +556,8 @@ watch(disabled, (disabled) => {
         <PopoverContent
           ref="content"
           data-slot="select-popover"
-          side="bottom"
-          align="center"
+          :side="side"
+          :align="align"
           :side-offset="8"
           :collision-padding="12"
           :class="ui.popover({ class: props.ui?.popover })"

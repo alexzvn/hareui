@@ -1,6 +1,6 @@
 import { mount } from '@vue/test-utils'
 import { afterEach, describe, expect, it } from 'vitest'
-import { nextTick } from 'vue'
+import { h, nextTick } from 'vue'
 import Select from '../src/components/select/Select.vue'
 
 const items = [
@@ -127,6 +127,27 @@ describe('Select', () => {
     expect(btn.attributes('aria-invalid')).toBe('true')
     expect(wrapper.attributes('data-invalid')).toBe('true')
     expect(wrapper.get('[data-slot=field-error]').text()).toBe('Bad')
+    wrapper.unmount()
+  })
+
+  it('keeps an aria-label in the trigger name by referencing the trigger itself', () => {
+    const wrapper = mount(Select, { props: { items, id: 's' }, attrs: { 'aria-label': 'Pet' } })
+    expect(wrapper.get(trigger).attributes('aria-labelledby')).toBe('s s-value')
+  })
+
+  it('renders the leading slot before the value and places the popover with side / align', async () => {
+    const wrapper = mount(Select, {
+      props: { items, defaultOpen: true, side: 'top', align: 'end' },
+      slots: { leading: () => h('i', { class: 'lead' }) },
+      attachTo: document.body,
+    })
+    await flush()
+    const children = [...wrapper.get(trigger).element.children]
+    expect(children[0]!.classList.contains('lead')).toBe(true)
+    expect(children[1]!.getAttribute('data-slot')).toBe('select-value')
+    const popover = document.querySelector('[data-slot=select-popover]')!
+    expect(popover.getAttribute('data-side')).toBe('top')
+    expect(popover.getAttribute('data-align')).toBe('end')
     wrapper.unmount()
   })
 
