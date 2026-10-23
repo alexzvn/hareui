@@ -146,6 +146,8 @@ import { computed, onBeforeUnmount, onMounted, provide, ref } from 'vue'
 import { preventNestedLayerDismiss } from '../../composables/nestedLayer'
 import { useComponentUI } from '../../composables/useComponentUI'
 import { usePortal } from '../../composables/usePortal'
+import descriptionTheme from '../description/theme'
+import labelTheme from '../label/theme'
 import { dropdownContextKey, enabledMenuItems } from './context'
 import DropdownMenuItems from './DropdownMenuItems.vue'
 
@@ -165,6 +167,10 @@ const emit = defineEmits<DropdownEmits>()
 const slots = defineSlots<DropdownSlots>()
 
 const ui = useComponentUI('dropdown', theme, () => ({}))
+// Same classes the Label / Description components would build, resolved once for every item.
+const labelUI = useComponentUI('label', labelTheme, () => ({}))
+const disabledLabelUI = useComponentUI('label', labelTheme, () => ({ disabled: true }))
+const descriptionUI = useComponentUI('description', descriptionTheme, () => ({}))
 const contentRef = ref<{ $el: HTMLElement } | null>(null)
 
 const openState = ref(props.defaultOpen)
@@ -221,6 +227,8 @@ const onPointerdown = () => { lastKey.value = null }
 const ctx: DropdownContext = {
   classes: () => ui.value as any,
   ui: () => props.ui,
+  labelClass: disabled => (disabled ? disabledLabelUI : labelUI).value.base(),
+  descriptionClass: () => descriptionUI.value.base(),
   portal: () => portalTarget.value,
   slots,
   rootGroup: () => rootGroup.value,

@@ -14,6 +14,9 @@ export interface DropdownContext {
   /** Slot class functions of the Dropdown theme; `variant` is applied per item. */
   classes: () => Record<string, (options?: { variant?: string, class?: any }) => string>
   ui: () => Record<string, any> | undefined
+  /** Item label / description classes, resolved once per menu instead of mounting Label / Description per item. */
+  labelClass: (disabled?: boolean) => string
+  descriptionClass: () => string
   /** Resolved portal of the root menu; submenus portal to the same target. */
   portal: () => ResolvedPortal
   slots: DropdownSlots
