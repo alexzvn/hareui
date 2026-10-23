@@ -54,3 +54,19 @@ The `@hareui/vue/vite` plugin and `HareUIResolver` import chart components from 
 - `Slider` can be dragged on touch screens without scrolling the page.
 - When a form submit fails, a `RadioGroup` now moves focus to its first enabled option instead of the group.
 - `@hareui/vue` now depends on `@number-flow/vue`, which NumberStepper uses to animate its value.
+
+## Performance
+
+Faster rendering across the library, with no change to markup, props or events:
+
+- Components share one compiled theme per app instead of building one per instance, which makes mounting and variant changes cheaper everywhere.
+- Fields no longer re-render their label, description and error when an unrelated prop changes.
+- `ListBox`, `Select`, `ComboBox` and `Autocomplete` re-render only the options that change, so arrow keys, toggling an option and typing in a `ComboBox` stay fast with long lists. Typeahead in a long `ListBox` no longer slows down with the square of the item count.
+- Removing a tag from a `TagGroup` no longer re-renders the tags before it.
+- `Dropdown` items render their label and description as plain elements, so large menus open faster.
+- A closed `Modal`, `Drawer` or `AlertDialog` no longer measures the viewport when it mounts, and all of them share one pair of resize listeners.
+- `Tooltip` listens on the document only while it waits to close, instead of keeping five listeners per tooltip.
+- Resizing a `DashboardSidebar` or `DashboardPanel` no longer restyles everything inside it on each frame, and neither does scrolling near the edge of a `ScrollShadow`. Pushing a toast onto a long stack restyles less of it.
+- `Calendar` and `RangeCalendar` render the year picker only after it first opens. Hovering a range re-renders only the days whose state changes.
+- `RichTable` resolves column pinning once per render instead of once per cell, and skips measuring rows that didn't change.
+- Charts measure line length once per draw animation instead of on every frame, cache axis label widths, and stop re-measuring the tooltip on every pointer move.
