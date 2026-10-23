@@ -54,7 +54,10 @@ const path = computed(() => {
 // Mount animation: solid lines draw along their length; dashed lines are revealed with a clip.
 const pathElement = shallowRef<SVGPathElement | null>(null)
 const length = shallowRef(0)
-watch([pathElement, () => series.reveal.value < 1], () => {
+const revealing = computed(() => series.reveal.value < 1)
+// Measure only when the path mounts, the reveal starts/ends, or the geometry changes mid-reveal (e.g. a resize);
+// `getTotalLength` forces layout, so it must not run every animation frame.
+watch([pathElement, revealing, () => (revealing.value ? path.value : null)], () => {
   const element = pathElement.value
   length.value = element && typeof element.getTotalLength === 'function' ? element.getTotalLength() : 0
 }, { flush: 'post' })

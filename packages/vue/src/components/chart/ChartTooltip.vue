@@ -152,10 +152,16 @@ watch([active, label, payload, () => chart.active.coordinate], () => {
 // Panel position: beside the anchor, flipped to stay inside the plot area.
 const panelElement = shallowRef<HTMLElement | null>(null)
 const size = shallowRef({ width: 0, height: 0 })
-watch([panelElement, shown], () => {
+// Measured only when the content can change (not on every pointer move), and assigned only when it differs so
+// moving the pointer does not trigger a second render.
+watch([panelElement, active, label, payload], () => {
   const element = panelElement.value
-  if (element)
-    size.value = { width: element.offsetWidth, height: element.offsetHeight }
+  if (!element)
+    return
+  const width = element.offsetWidth
+  const height = element.offsetHeight
+  if (width !== size.value.width || height !== size.value.height)
+    size.value = { width, height }
 }, { flush: 'post' })
 
 const bounds = computed(() => {

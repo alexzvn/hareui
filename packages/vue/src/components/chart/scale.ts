@@ -222,6 +222,9 @@ export function thinTicks(
     const count = interval === 'preserveStartEnd' ? last : last + 1
     for (let index = 0; index < count; index++) {
       const tick = result[index]!
+      // A tick before the remaining start can never show, whatever its width: skip measuring it.
+      if (index !== 0 && sign * (tick.coordinate - start) < 0)
+        continue
       const extent = size(tick)
       if (index === 0) {
         const gap = sign * (tick.coordinate - (sign * extent) / 2 - start)
@@ -238,6 +241,9 @@ export function thinTicks(
   // preserveEnd
   for (let index = last; index >= 0; index--) {
     const tick = result[index]!
+    // A tick past the remaining end can never show, whatever its width: skip measuring it.
+    if (index !== last && sign * (tick.coordinate - end) > 0)
+      continue
     const extent = size(tick)
     if (index === last) {
       const gap = sign * (tick.coordinate + (sign * extent) / 2 - end)
@@ -253,24 +259,43 @@ export function thinTicks(
 
 let measureContext: CanvasRenderingContext2D | null | undefined
 let measureFamily = 'sans-serif'
+let measureFont = ''
+// Widths keyed by `${font}|${text}`; cleared when full and when web fonts finish loading (widths change).
+// The cap must exceed one chart's distinct labels: each axis pass re-measures every label, so a smaller cap thrashes.
+const widthCache = new Map<string, number>()
+const WIDTH_CACHE_LIMIT = 20_000
 
 /** Width of a label in px at the given font size; falls back to an estimate where canvas is unavailable (SSR, tests). */
 export function measureText(text: string, fontSize: number): number {
   if (measureContext === undefined) {
     try {
       measureContext = typeof document === 'undefined' ? null : document.createElement('canvas').getContext('2d')
-      if (measureContext)
+      if (measureContext) {
         measureFamily = getComputedStyle(document.body).fontFamily || measureFamily
+        document.fonts?.addEventListener?.('loadingdone', () => widthCache.clear())
+      }
     }
     catch {
       measureContext = null
     }
   }
   if (measureContext) {
-    measureContext.font = `${fontSize}px ${measureFamily}`
+    const font = `${fontSize}px ${measureFamily}`
+    const key = `${font}|${text}`
+    const cached = widthCache.get(key)
+    if (cached !== undefined)
+      return cached
+    if (font !== measureFont) {
+      measureContext.font = font
+      measureFont = font
+    }
     const width = measureContext.measureText(text).width
-    if (width > 0)
+    if (width > 0) {
+      if (widthCache.size >= WIDTH_CACHE_LIMIT)
+        widthCache.clear()
+      widthCache.set(key, width)
       return width
+    }
   }
   return text.length * fontSize * 0.6
 }

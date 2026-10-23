@@ -59,9 +59,18 @@ export const easings: Record<ChartEasing, (t: number) => number> = Object.fromEn
   Object.entries(bezierPoints).map(([name, points]) => [name, cubicBezier(points)]),
 ) as Record<ChartEasing, (t: number) => number>
 
+// Called on every pointer move; cached per `matchMedia` function so a replaced (e.g. stubbed) one is respected.
+let reducedMotionSource: typeof window.matchMedia | undefined
+let reducedMotionQuery: MediaQueryList | undefined
+
 export function prefersReducedMotion(): boolean {
-  return typeof window !== 'undefined' && typeof window.matchMedia === 'function'
-    && window.matchMedia('(prefers-reduced-motion: reduce)').matches
+  if (typeof window === 'undefined' || typeof window.matchMedia !== 'function')
+    return false
+  if (reducedMotionSource !== window.matchMedia || !reducedMotionQuery) {
+    reducedMotionSource = window.matchMedia
+    reducedMotionQuery = window.matchMedia('(prefers-reduced-motion: reduce)')
+  }
+  return !!reducedMotionQuery?.matches
 }
 
 export interface ChartTween<T> {

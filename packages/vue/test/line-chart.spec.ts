@@ -1,5 +1,5 @@
 import { flushPromises, mount } from '@vue/test-utils'
-import { describe, expect, it } from 'vitest'
+import { afterEach, describe, expect, it, vi } from 'vitest'
 import { h, nextTick } from 'vue'
 import ChartLine from '../src/components/chart/ChartLine.vue'
 import ChartTooltip from '../src/components/chart/ChartTooltip.vue'
@@ -133,5 +133,48 @@ describe('LineChart', () => {
     await settle()
     expect(wrapper.find('[data-slot=chart-tooltip-wrapper]').attributes('data-state')).toBe('closed')
     wrapper.unmount()
+  })
+
+  describe('mount animation', () => {
+    // The prototype jsdom actually gives `<path>` (SVGPathElement when present, else SVGElement).
+    const proto = Object.getPrototypeOf(document.createElementNS('http://www.w3.org/2000/svg', 'path')) as { getTotalLength?: () => number }
+    const hadLength = Object.prototype.hasOwnProperty.call(proto, 'getTotalLength')
+
+    afterEach(() => {
+      vi.unstubAllGlobals()
+      vi.restoreAllMocks()
+      if (!hadLength)
+        delete proto.getTotalLength
+    })
+
+    it('measures the path length once per series, not every frame of the reveal', async () => {
+      if (!hadLength)
+        proto.getTotalLength = () => 0
+      const getTotalLength = vi.spyOn(proto as Required<typeof proto>, 'getTotalLength').mockReturnValue(500)
+      let queue: FrameRequestCallback[] = []
+      vi.spyOn(performance, 'now').mockReturnValue(0)
+      vi.stubGlobal('requestAnimationFrame', (callback: FrameRequestCallback) => queue.push(callback))
+      vi.stubGlobal('cancelAnimationFrame', () => { queue = [] })
+      const frame = (time: number) => {
+        const run = queue
+        queue = []
+        run.forEach(callback => callback(time))
+      }
+      const wrapper = mountChart(() => [
+        h(ChartLine, { dataKey: 'organic', dot: false, animationDuration: 1000, animationEasing: 'linear' }),
+        h(ChartLine, { dataKey: 'paid', dot: false, animationDuration: 1000, animationEasing: 'linear' }),
+      ])
+      await settle()
+      for (const time of [100, 200, 300, 400, 500, 600]) {
+        frame(time)
+        await settle()
+      }
+      // Still drawing on: the dash grows with the reveal.
+      const [dash, gap] = wrapper.find('[data-slot=chart-line-curve]').attributes('stroke-dasharray')!.split(' ')
+      expect(Number.parseFloat(dash!)).toBeCloseTo(300, 3)
+      expect(gap).toBe('500px')
+      expect(getTotalLength.mock.calls.length).toBeLessThanOrEqual(2)
+      wrapper.unmount()
+    })
   })
 })
