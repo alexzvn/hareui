@@ -12,6 +12,7 @@
 @import "./shadow-root.css" layer(base);
 @import "./scroll-shadow.css";
 @import "./toast.css";
+@import "./dashboard.css";
 
 /* Utilities and variants */
 @import "./utilities.css";

@@ -1,0 +1,8 @@
+@layer components {
+  /* DashboardPanel/DashboardSidebar set an inline `--width` that only the element itself reads.
+     Stop it inheriting so a resize frame restyles the container, not its whole subtree.
+     A nested panel's own inline `--width` still wins. */
+  :is([data-slot="dashboard-sidebar"], [data-slot="dashboard-panel"]) > * {
+    --width: initial;
+  }
+}
