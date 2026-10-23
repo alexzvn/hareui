@@ -1,9 +1,11 @@
+import type { HareUIConfig } from '../src/config'
 import { mount } from '@vue/test-utils'
 import { describe, expect, it } from 'vitest'
+import { defineComponent, nextTick, reactive, ref } from 'vue'
 import Button from '../src/components/button/Button.vue'
 import Input from '../src/components/input/Input.vue'
 import Description from '../src/components/description/Description.vue'
-import { createHareUI } from '../src/config'
+import { createHareUI, hareUIConfigKey } from '../src/config'
 
 describe('class precedence', () => {
   it('class prop beats :ui, which beats app config, which beats the theme', () => {
@@ -78,5 +80,36 @@ describe('responsive sizes', () => {
     // Tailwind sorts `text-[18px]` after the variable class, so its font-size wins.
     const classes = mount(Input, { attrs: { class: 'text-[18px]' } }).classes()
     expect(classes).toEqual(expect.arrayContaining(['text-[18px]', 'text-(length:--input-font-size)/(--input-line-height)']))
+  })
+})
+
+describe('shared theme components', () => {
+  it('restyles a mounted instance when the app config `ui` changes', async () => {
+    const config: HareUIConfig = reactive({})
+    const wrapper = mount(Button, { global: { provide: { [hareUIConfigKey as symbol]: config } } })
+    expect(wrapper.classes()).toContain('px-4')
+    config.ui = { button: { slots: { base: 'px-1' } } }
+    await nextTick()
+    expect(wrapper.classes()).toContain('px-1')
+    expect(wrapper.classes()).not.toContain('px-4')
+  })
+
+  it('resolves variants per instance', async () => {
+    const wrapper = mount(defineComponent({
+      components: { Button },
+      setup: () => ({ size: ref<'sm' | 'lg'>('sm') }),
+      template: '<div><Button id="a" :size="size" /><Button id="b" size="lg" /></div>',
+    }), { global: { plugins: [createHareUI()] } })
+    const lg = '[--button-height:--spacing(11)]'
+    expect(wrapper.find('#a').classes()).not.toContain(lg)
+    expect(wrapper.find('#b').classes()).toContain(lg)
+    ;(wrapper.vm as unknown as { size: 'sm' | 'lg' }).size = 'lg'
+    await nextTick()
+    expect(wrapper.find('#a').classes()).toContain(lg)
+    expect(wrapper.find('#b').classes()).toContain(lg)
+    ;(wrapper.vm as unknown as { size: 'sm' | 'lg' }).size = 'sm'
+    await nextTick()
+    expect(wrapper.find('#a').classes()).not.toContain(lg)
+    expect(wrapper.find('#b').classes()).toContain(lg)
   })
 })
