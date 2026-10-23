@@ -291,6 +291,7 @@ describe('RichTable', () => {
       await wrapper.setProps({ columnPinning: { left: ['age'], right: [] } })
       expect(wrapper.findAll('th').map(th => th.text())).toEqual(['Age', 'Name', 'Role', 'Id'])
       expect(wrapper.findAll('th')[0]!.attributes('data-pinned')).toBe('left')
+      expect(bodyRows(wrapper)[0]!.findAll('td')[0]!.attributes('data-pinned')).toBe('left')
     })
 
     it('pins rows to the top and bottom', async () => {
@@ -313,7 +314,7 @@ describe('RichTable', () => {
       expect(wrapper.findAll('th').map(th => th.text())).toEqual(['Role', 'Name'])
     })
 
-    it('only sets widths once sizing is enabled', () => {
+    it('only sets widths once sizing is enabled, and body cells follow sizing changes', async () => {
       const plain = mountTable({ props: { data: people, columns: [{ accessorKey: 'name', size: 120 }] } })
       expect(plain.find('th').attributes('style') ?? '').not.toContain('width')
       const sized = mountTable({
@@ -321,6 +322,8 @@ describe('RichTable', () => {
       })
       expect(sized.find('th').attributes('style')).toContain('width: 120px')
       expect(sized.find('td').attributes('style')).toContain('width: 120px')
+      await sized.setProps({ columnSizing: { name: 200 } })
+      expect(sized.find('td').attributes('style')).toContain('width: 200px')
     })
   })
 

@@ -338,6 +338,16 @@ const columns = computed<RichTableColumn<T>[]>(() => processColumns(props.column
   ...(props.defaultColumn?.header === undefined && { header: accessorKey.charAt(0).toUpperCase() + accessorKey.slice(1) }),
 }))))
 
+// the injected default cell renders plain text, so the template prints it inline instead of mounting a
+// FlexRender component plus a functional component per cell.
+function defaultCell({ getValue }: CellContext<T, unknown>) {
+  const value = getValue()
+  if (value === '' || value === null || value === undefined) {
+    return '\u00A0'
+  }
+  return String(value)
+}
+
 function processColumns(columns: RichTableColumn<T>[]): RichTableColumn<T>[] {
   return columns.map((column) => {
     const col = { ...column }
@@ -347,13 +357,7 @@ function processColumns(columns: RichTableColumn<T>[]): RichTableColumn<T>[] {
     }
 
     if (!col.cell && !props.defaultColumn?.cell) {
-      col.cell = ({ getValue }) => {
-        const value = getValue()
-        if (value === '' || value === null || value === undefined) {
-          return '\u00A0'
-        }
-        return String(value)
-      }
+      col.cell = defaultCell
     }
 
     return col
@@ -544,9 +548,19 @@ const virtualPaddingBottom = computed(() => {
 const virtualizerInstance = virtualizer ? virtualizer.value : undefined
 
 // Register each rendered row with the virtualizer so its actual height is measured (and re-measured on resize).
+// Vue calls a function ref on every patch, and `measureElement` reads `offsetHeight`, forcing a layout
+// between row patches. An element already registered under the same item key is observed by the virtualizer's
+// ResizeObserver, so it is skipped.
+const registeredRows = new WeakMap<Element, unknown>()
 function measureRow(el: Element | ComponentPublicInstance | null) {
-  if (el instanceof Element) {
-    virtualizerInstance?.measureElement(el)
+  if (el instanceof Element && virtualizerInstance) {
+    const index = virtualizerInstance.indexFromElement(el)
+    const key = virtualizerInstance.options.getItemKey(index)
+    if (registeredRows.get(el) === key && virtualizerInstance.elementsCache.get(key) === el) {
+      return
+    }
+    registeredRows.set(el, key)
+    virtualizerInstance.measureElement(el)
   }
 }
 
@@ -705,6 +719,16 @@ function getColumnStyles(column: Column<T, unknown>, size = column.getSize()): R
 function columnMeta(column: Column<T, unknown>): RichTableColumnMeta<T> | undefined {
   return (column.columnDef as RichTableColumn<T>).meta
 }
+
+// a cell's pinning, edge and width depend only on its column, so they are resolved once per column
+// per change instead of three TanStack proxy walks per cell.
+const columnLayouts = computed(() => {
+  const layouts = new Map<string, { pinned: 'left' | 'right' | undefined, edge: 'left' | 'right' | undefined, styles: Record<string, string> }>()
+  for (const column of tableApi.getAllLeafColumns()) {
+    layouts.set(column.id, { pinned: column.getIsPinned() || undefined, edge: getColumnEdge(column), styles: getColumnStyles(column) })
+  }
+  return layouts
+})
 
 // Group rows render a column's `aggregatedCell` (falling back to `cell`) and leave the cells of grouped-by columns in their rows empty.
 // TanStack v8 also reports cells of rows with sub rows as aggregated and gives every column a default `aggregatedCell`, so only group rows use it.
@@ -879,8 +903,8 @@ defineExpose({
                 <td
                   v-for="cell in entry.row.getVisibleCells()"
                   :key="cell.id"
-                  :data-pinned="cell.column.getIsPinned() || undefined"
-                  :data-edge="getColumnEdge(cell.column)"
+                  :data-pinned="columnLayouts.get(cell.column.id)?.pinned"
+                  :data-edge="columnLayouts.get(cell.column.id)?.edge"
                   :colspan="resolveValue(columnMeta(cell.column)?.colspan?.td, cell)"
                   :rowspan="resolveValue(columnMeta(cell.column)?.rowspan?.td, cell)"
                   data-slot="rich-table-cell"
@@ -891,12 +915,15 @@ defineExpose({
                     ],
                   })"
                   :style="[
-                    getColumnStyles(cell.column),
+                    columnLayouts.get(cell.column.id)?.styles,
                     resolveStyle(columnMeta(cell.column)?.style?.td, cell),
                   ]"
                 >
                   <slot :name="`${cell.column.id}-cell`" v-bind="cell.getContext()">
-                    <FlexRender v-if="!cell.getIsPlaceholder()" :render="cellRenderer(cell)" :props="cell.getContext()" />
+                    <template v-if="!cell.getIsPlaceholder()">
+                      <template v-if="cellRenderer(cell) === defaultCell">{{ defaultCell(cell.getContext()) }}</template>
+                      <FlexRender v-else :render="cellRenderer(cell)" :props="cell.getContext()" />
+                    </template>
                   </slot>
                 </td>
               </tr>
