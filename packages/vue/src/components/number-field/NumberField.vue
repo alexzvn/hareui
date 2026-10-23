@@ -109,7 +109,7 @@ export interface NumberFieldSlots {
 
 <script setup lang="ts">
 import { NumberFieldDecrement, NumberFieldIncrement, NumberFieldInput, NumberFieldRoot } from 'reka-ui'
-import { computed, getCurrentInstance, ref, useAttrs, useId, useTemplateRef, watch } from 'vue'
+import { computed, getCurrentInstance, onBeforeUnmount, onMounted, ref, useAttrs, useId, useTemplateRef, watch } from 'vue'
 import { useComponentUI } from '../../composables/useComponentUI'
 import { useFieldValidation } from '../../composables/useFieldValidation'
 import { useSlotOutlet } from '../../composables/useSlotOutlet'
@@ -193,14 +193,19 @@ function onKeydown(event: KeyboardEvent) {
 }
 
 // RAC's spin button moves PageUp / PageDown by a single step (`onIncrementPage` = `onIncrement`); Reka moves 10 steps.
-// Runs in the capture phase, ahead of Reka's handler on the same input, and hands Reka the matching arrow key.
+// A capture listener on the root runs ahead of Reka's handler on the input and hands Reka the matching arrow key.
+// It is attached natively: a Vue `@keydown.capture` invoker would timestamp the re-dispatched event, and Vue's
+// invoker on the input then drops it as "dispatched before attach" when the key lands right after mount.
 function onKeydownCapture(event: KeyboardEvent) {
-  if ((event.key !== 'PageUp' && event.key !== 'PageDown') || event.isComposing)
+  const target = event.target as HTMLElement
+  if ((event.key !== 'PageUp' && event.key !== 'PageDown') || event.isComposing || target.dataset.slot !== 'number-field-input')
     return
   event.preventDefault()
   event.stopImmediatePropagation()
-  event.target!.dispatchEvent(new KeyboardEvent('keydown', { key: event.key === 'PageUp' ? 'ArrowUp' : 'ArrowDown', cancelable: true }))
+  target.dispatchEvent(new KeyboardEvent('keydown', { key: event.key === 'PageUp' ? 'ArrowUp' : 'ArrowDown', cancelable: true }))
 }
+onMounted(() => root.value?.addEventListener('keydown', onKeydownCapture, true))
+onBeforeUnmount(() => root.value?.removeEventListener('keydown', onKeydownCapture, true))
 
 // `aria-label` / `aria-labelledby` name the input (as in HeroUI), not the wrapper div
 const attrs = useAttrs()
@@ -312,7 +317,6 @@ function onFocusOut(event: FocusEvent) {
         :class="ui.input({ class: props.ui?.input })"
         @blur="onCommitEmpty"
         @keydown="onKeydown"
-        @keydown.capture="onKeydownCapture"
       />
       <NumberFieldIncrement
         v-if="increment"

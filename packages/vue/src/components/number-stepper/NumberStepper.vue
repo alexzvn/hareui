@@ -111,7 +111,7 @@ export interface NumberStepperSlots {
 import type { Format } from '@number-flow/vue'
 import NumberFlow from '@number-flow/vue'
 import { NumberFieldDecrement, NumberFieldIncrement, NumberFieldInput, NumberFieldRoot, useLocale } from 'reka-ui'
-import { computed, getCurrentInstance, ref, toRef, useAttrs, useId, useTemplateRef, watch } from 'vue'
+import { computed, getCurrentInstance, onBeforeUnmount, onMounted, ref, toRef, useAttrs, useId, useTemplateRef, watch } from 'vue'
 import { useComponentUI } from '../../composables/useComponentUI'
 import { useFieldValidation } from '../../composables/useFieldValidation'
 import { useSlotOutlet } from '../../composables/useSlotOutlet'
@@ -197,14 +197,18 @@ function onKeydown(event: KeyboardEvent) {
   if (event.key === 'Enter' && !event.isComposing)
     onCommitEmpty(event)
 }
-// PageUp / PageDown move by a single step, as in NumberField (Reka moves 10)
+// PageUp / PageDown move by a single step, as in NumberField (Reka moves 10). Attached natively on the root for the
+// same reason as NumberField: a Vue capture invoker would make Vue drop the re-dispatched key right after mount.
 function onKeydownCapture(event: KeyboardEvent) {
-  if ((event.key !== 'PageUp' && event.key !== 'PageDown') || event.isComposing)
+  const target = event.target as HTMLElement
+  if ((event.key !== 'PageUp' && event.key !== 'PageDown') || event.isComposing || target.dataset.slot !== 'number-stepper-input')
     return
   event.preventDefault()
   event.stopImmediatePropagation()
-  event.target!.dispatchEvent(new KeyboardEvent('keydown', { key: event.key === 'PageUp' ? 'ArrowUp' : 'ArrowDown', cancelable: true }))
+  target.dispatchEvent(new KeyboardEvent('keydown', { key: event.key === 'PageUp' ? 'ArrowUp' : 'ArrowDown', cancelable: true }))
 }
+onMounted(() => root.value?.addEventListener('keydown', onKeydownCapture, true))
+onBeforeUnmount(() => root.value?.removeEventListener('keydown', onKeydownCapture, true))
 
 // `aria-label` / `aria-labelledby` name the input, not the wrapper div
 const attrs = useAttrs()
@@ -343,7 +347,6 @@ const ui = useComponentUI('numberStepper', theme, () => ({ size: props.size, rev
         :class="ui.input({ class: props.ui?.input })"
         @blur="onCommitEmpty"
         @keydown="onKeydown"
-        @keydown.capture="onKeydownCapture"
       />
     </NumberFieldRoot>
     <Description v-if="hasDescription && $slots.description" :id="descriptionId">

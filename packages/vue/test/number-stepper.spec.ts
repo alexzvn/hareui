@@ -54,6 +54,16 @@ describe('NumberStepper', () => {
     wrapper.unmount()
   })
 
+  it('PageUp / PageDown move by one step, not ten', async () => {
+    const wrapper = mount(NumberStepper, { props: { defaultValue: 10, step: 5 }, attachTo: document.body })
+    await wrapper.get(input).trigger('keydown', { key: 'PageUp' })
+    expect(wrapper.emitted('update:modelValue')?.at(-1)).toEqual([15])
+    await wrapper.get(input).trigger('keydown', { key: 'PageDown' })
+    await wrapper.get(input).trigger('keydown', { key: 'PageDown' })
+    expect(wrapper.emitted('update:modelValue')?.at(-1)).toEqual([5])
+    wrapper.unmount()
+  })
+
   it('steps by `step` and clamps an out-of-range v-model for display', async () => {
     const wrapper = mount(NumberStepper, { props: { modelValue: 0, min: 0, step: 5 }, attachTo: document.body })
     await wrapper.get(input).trigger('keydown', { key: 'ArrowUp' })
