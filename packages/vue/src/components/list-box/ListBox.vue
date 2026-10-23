@@ -198,14 +198,17 @@ const selection = computed<Selection>({
     modelValue.value = value ?? null
   },
 })
+// O(1) membership per option render (a multiple selection can be large)
+const selectedSet = computed(() => Array.isArray(selection.value) ? new Set(selection.value) : undefined)
 function isSelected(item: ListBoxItem) {
   const current = selection.value
   if (!selectable.value || current == null)
     return false
-  return Array.isArray(current) ? current.includes(item.value) : current === item.value
+  return selectedSet.value ? selectedSet.value.has(item.value) : current === item.value
 }
 
-// Item-level slots are forwarded to ListBoxOption
+// Item-level slots are forwarded to ListBoxOption. Forwarding makes every option re-render with the list,
+// so options render slot-less when there is nothing to forward.
 const itemSlots = ['item', 'item-leading', 'item-label', 'item-description', 'item-trailing', 'indicator'] as const
 const forwarded = computed(() => itemSlots.filter(name => slots[name]))
 
@@ -265,12 +268,10 @@ function markUserAction() {
   reka?.onKeydownTypeAhead(new KeyboardEvent('keydown', { key: 'Alt', altKey: true }))
 }
 
+type RekaItem = { ref: HTMLElement, value: unknown }
 /** The enabled option elements, in DOM order. */
-function enabledOptions(): HTMLElement[] {
-  return (reka ? listboxItems() : []).filter(el => el.dataset.disabled !== '')
-}
-function listboxItems(): HTMLElement[] {
-  return (listboxRoot.value?.getItems() ?? []).map(item => item.ref)
+function enabledOptions(items: RekaItem[] = listboxRoot.value?.getItems() ?? []): HTMLElement[] {
+  return (reka ? items.map(item => item.ref) : []).filter(el => el.dataset.disabled !== '')
 }
 const valueOf = (el: HTMLElement) => listboxRoot.value?.getItems().find(item => item.ref === el)?.value as ListBoxValue | undefined
 
@@ -315,10 +316,13 @@ function onTypeahead(event: KeyboardEvent, focused: HTMLElement | undefined): bo
   searchTimer = setTimeout(() => {
     search = ''
   }, 1000)
-  const options = enabledOptions()
+  // One (DOM-querying) `getItems()` per key, not one per option checked
+  const items = listboxRoot.value?.getItems() ?? []
+  const valueByEl = new Map(items.map(item => [item.ref, item.value as ListBoxValue]))
+  const options = enabledOptions(items)
   const start = Math.max(0, focused ? options.indexOf(focused) : 0)
   const text = (el: HTMLElement) => {
-    const value = valueOf(el)
+    const value = valueByEl.get(el)
     const item = value === undefined ? undefined : rowByValue.value.get(value)?.item
     return (item?.textValue ?? item?.label ?? el.textContent ?? '').trim().toLowerCase()
   }
@@ -383,7 +387,7 @@ function onOptionSelect(item: ListBoxItem, event: CustomEvent<{ originalEvent?: 
 }
 
 // Reka highlights the first option on focus entry; RAC focuses the first selected key instead (Select opens this way)
-const listboxRoot = useTemplateRef<{ highlightSelected: () => Promise<void>, getItems: () => { ref: HTMLElement, value: unknown }[] }>('listboxRoot')
+const listboxRoot = useTemplateRef<{ highlightSelected: () => Promise<void>, getItems: () => RekaItem[] }>('listboxRoot')
 defineExpose({
   /** Highlight and focus the first selected option, or the first option when nothing is selected. */
   highlightSelected: () => listboxRoot.value?.highlightSelected(),
@@ -417,6 +421,14 @@ defineExpose({
         :text-content="(value: ListBoxValue) => { const item = rowByValue.get(value)?.item; return (item?.textValue ?? item?.label ?? String(value)).toLowerCase() }"
       >
         <ListBoxOption
+          v-if="!forwarded.length"
+          v-bind="optionProps(rowByValue.get(option as ListBoxValue)!)"
+          class="w-full"
+          @action="emit('action', option as ListBoxValue)"
+          @select="onOptionSelect(rowByValue.get(option as ListBoxValue)!.item, $event)"
+        />
+        <ListBoxOption
+          v-else
           v-bind="optionProps(rowByValue.get(option as ListBoxValue)!)"
           class="w-full"
           @action="emit('action', option as ListBoxValue)"
@@ -449,18 +461,35 @@ defineExpose({
               {{ block.section.label }}
             </slot>
           </ListboxGroupLabel>
-          <ListBoxOption
-            v-for="row in block.rows"
-            :key="`i${row.index}`"
-            v-bind="optionProps(row)"
-            @action="emit('action', row.item.value)"
-            @select="onOptionSelect(row.item, $event)"
-          >
-            <template v-for="name in forwarded" #[name]="state">
-              <slot :name="name" v-bind="state as ListBoxItemSlotProps<T>" />
-            </template>
-          </ListBoxOption>
+          <template v-if="!forwarded.length">
+            <ListBoxOption
+              v-for="row in block.rows"
+              :key="`i${row.index}`"
+              v-bind="optionProps(row)"
+              @action="emit('action', row.item.value)"
+              @select="onOptionSelect(row.item, $event)"
+            />
+          </template>
+          <template v-else>
+            <ListBoxOption
+              v-for="row in block.rows"
+              :key="`i${row.index}`"
+              v-bind="optionProps(row)"
+              @action="emit('action', row.item.value)"
+              @select="onOptionSelect(row.item, $event)"
+            >
+              <template v-for="name in forwarded" #[name]="state">
+                <slot :name="name" v-bind="state as ListBoxItemSlotProps<T>" />
+              </template>
+            </ListBoxOption>
+          </template>
         </ListboxGroup>
+        <ListBoxOption
+          v-else-if="!forwarded.length"
+          v-bind="optionProps(block)"
+          @action="emit('action', block.item.value)"
+          @select="onOptionSelect(block.item, $event)"
+        />
         <ListBoxOption
           v-else
           v-bind="optionProps(block)"

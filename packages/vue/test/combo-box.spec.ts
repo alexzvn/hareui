@@ -1,3 +1,4 @@
+import type { ComponentOptions } from 'vue'
 import { mount } from '@vue/test-utils'
 import { afterEach, describe, expect, it, vi } from 'vitest'
 import { h, nextTick } from 'vue'
@@ -329,5 +330,25 @@ describe('ComboBox', () => {
       expect(input.attributes('aria-activedescendant')).toBe(options()[0]!.id)
       wrapper.unmount()
     })
+  })
+
+  it('typing a second filter character does not re-render options whose props did not change', async () => {
+    const updated: string[] = []
+    const countOptionUpdates: ComponentOptions = {
+      updated() {
+        if (this.$el instanceof Element && this.$el.matches('[role=option]'))
+          updated.push(this.$el.textContent!.trim())
+      },
+    }
+    const wrapper = mount(ComboBox, { props: { items, label: 'Animal' }, attachTo: document.body, global: { mixins: [countOptionUpdates] } })
+    const input = wrapper.get<HTMLInputElement>('input[role=combobox]')
+    await input.trigger('focus')
+    await type(input, 'a')
+    updated.length = 0
+    // Aardvark stays the first row; Kangaroo moves up a row (new props)
+    await type(input, 'ar')
+    expect(texts()).toEqual(['Aardvark', 'Kangaroo'])
+    expect(updated).not.toContain('Aardvark')
+    wrapper.unmount()
   })
 })

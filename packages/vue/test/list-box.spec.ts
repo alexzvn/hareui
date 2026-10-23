@@ -1,5 +1,6 @@
+import type { ComponentOptions } from 'vue'
 import { mount } from '@vue/test-utils'
-import { afterEach, describe, expect, it } from 'vitest'
+import { afterEach, describe, expect, it, vi } from 'vitest'
 import { h } from 'vue'
 import ListBox from '../src/components/list-box/ListBox.vue'
 
@@ -229,6 +230,73 @@ describe('ListBox', () => {
       press(document.activeElement!, 'e')
       expect(document.activeElement).toBe(opts[4])
       expect(wrapper.emitted('update:modelValue')).toBeUndefined()
+      wrapper.unmount()
+    })
+  })
+
+  describe('render scope', () => {
+    const many = Array.from({ length: 50 }, (_, i) => ({ value: `v${i}`, label: `Item ${i}` }))
+    // Option elements whose ListBoxOption re-rendered (Reka's own primitives under it are out of scope)
+    const updatedOptions = new Set<Element>()
+    const trackOptionUpdates: ComponentOptions = {
+      updated() {
+        if (this.$options.__name === 'ListBoxOption' && this.$el instanceof Element && this.$el.matches(option))
+          updatedOptions.add(this.$el)
+      },
+    }
+    const press = (el: Element, key: string) =>
+      el.dispatchEvent(new KeyboardEvent('keydown', { key, bubbles: true, cancelable: true }))
+
+    afterEach(() => {
+      document.body.innerHTML = ''
+    })
+
+    it('ArrowDown re-renders only the previously and newly focused options', async () => {
+      const wrapper = mount(ListBox, { props: { items: many }, attachTo: document.body, global: { mixins: [trackOptionUpdates] } })
+      await wrapper.vm.$nextTick()
+      const opts = wrapper.findAll(option).map(o => o.element as HTMLElement)
+      opts[0]!.focus()
+      press(opts[0]!, 'ArrowDown')
+      await wrapper.vm.$nextTick()
+      updatedOptions.clear()
+      press(document.activeElement!, 'ArrowDown')
+      await wrapper.vm.$nextTick()
+      expect(document.activeElement).toBe(opts[2])
+      expect(opts[2]!.dataset.focused).toBe('true')
+      expect(updatedOptions.has(opts[2]!)).toBe(true)
+      expect([...updatedOptions].filter(el => el !== opts[1] && el !== opts[2]).length).toBe(0)
+      wrapper.unmount()
+    })
+
+    it('selecting re-renders only the options whose selected state changes', async () => {
+      const wrapper = mount(ListBox, { props: { items: [{ type: 'section', label: 'S', items: many.slice(0, 25) }, ...many.slice(25)] }, attachTo: document.body, global: { mixins: [trackOptionUpdates] } })
+      await wrapper.vm.$nextTick()
+      const opts = wrapper.findAll(option).map(o => o.element as HTMLElement)
+      opts[3]!.click()
+      await wrapper.vm.$nextTick()
+      updatedOptions.clear()
+      opts[30]!.click()
+      await wrapper.vm.$nextTick()
+      expect(wrapper.emitted('update:modelValue')?.at(-1)).toEqual(['v30'])
+      expect(opts[30]!.dataset.selected).toBe('true')
+      expect(opts[3]!.dataset.selected).toBeUndefined()
+      expect(updatedOptions.has(opts[30]!)).toBe(true)
+      expect([...updatedOptions].filter(el => el !== opts[3] && el !== opts[30]).length).toBe(0)
+      wrapper.unmount()
+    })
+
+    it('typeahead queries the option collection once per key, whatever the list length', async () => {
+      const wrapper = mount(ListBox, { props: { items: many }, attachTo: document.body })
+      await wrapper.vm.$nextTick()
+      const opts = wrapper.findAll(option).map(o => o.element as HTMLElement)
+      opts[0]!.focus()
+      const query = vi.spyOn(Element.prototype, 'querySelectorAll')
+      // No match: every option is checked
+      press(opts[0]!, 'z')
+      const collectionQueries = query.mock.calls.filter(([selector]) => selector.includes('data-reka-collection-item')).length
+      query.mockRestore()
+      expect(document.activeElement).toBe(opts[0])
+      expect(collectionQueries).toBe(1)
       wrapper.unmount()
     })
   })

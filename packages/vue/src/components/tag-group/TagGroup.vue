@@ -282,8 +282,12 @@ const describedBy = computed(() => [hasDescription.value && descriptionId.value,
     data-slot="tag-group"
     :class="ui.base({ class: [props.ui?.base, props.class] })"
   >
-    <Label v-if="hasLabel" :id="labelId" as="span" :disabled="disabled">
+    <!-- Each slot site is split so the no-slot branch isn't compiled as a forwarded slot, which would force-update the child on every render -->
+    <Label v-if="hasLabel && $slots.label" :id="labelId" as="span" :disabled="disabled">
       <slot name="label">{{ label }}</slot>
+    </Label>
+    <Label v-else-if="hasLabel" :id="labelId" as="span" :disabled="disabled">
+      {{ label }}
     </Label>
     <div
       ref="list"
@@ -299,35 +303,61 @@ const describedBy = computed(() => [hasDescription.value && descriptionId.value,
       @keydown="onListKeydown"
       @focusin="onListFocusIn"
     >
-      <TagGroupTag
-        v-for="(item, index) in items"
-        :key="item.id"
-        :item="item"
-        :index="index"
-        :selected="isSelected(item.id)"
-        :disabled="isItemDisabled(item)"
-        :tabindex="tabindexFor(item)"
-        :selection-mode="selectionMode"
-        :removable="removable"
-        :classes="tagUi"
-        :ui="props.ui"
-        @press="onPress(item, $event)"
-        @remove="removeOne(item)"
-      >
-        <template v-if="slots.item" #default="state">
-          <slot name="item" v-bind="state as { item: T, index: number, selected: boolean, disabled: boolean }" />
-        </template>
-        <template v-if="slots.removeButton" #removeButton="state">
-          <slot name="removeButton" v-bind="state as { item: T, index: number }" />
-        </template>
-      </TagGroupTag>
+      <!-- Slot-less branch: conditional slot templates make the tags' slots dynamic, re-rendering every tag on each group render -->
+      <template v-if="slots.item || slots.removeButton">
+        <TagGroupTag
+          v-for="(item, index) in items"
+          :key="item.id"
+          :item="item"
+          :index="index"
+          :selected="isSelected(item.id)"
+          :disabled="isItemDisabled(item)"
+          :tabindex="tabindexFor(item)"
+          :selection-mode="selectionMode"
+          :removable="removable"
+          :classes="tagUi"
+          :ui="props.ui"
+          @press="onPress(item, $event)"
+          @remove="removeOne(item)"
+        >
+          <template v-if="slots.item" #default="state">
+            <slot name="item" v-bind="state as { item: T, index: number, selected: boolean, disabled: boolean }" />
+          </template>
+          <template v-if="slots.removeButton" #removeButton="state">
+            <slot name="removeButton" v-bind="state as { item: T, index: number }" />
+          </template>
+        </TagGroupTag>
+      </template>
+      <template v-else>
+        <TagGroupTag
+          v-for="(item, index) in items"
+          :key="item.id"
+          :item="item"
+          :index="index"
+          :selected="isSelected(item.id)"
+          :disabled="isItemDisabled(item)"
+          :tabindex="tabindexFor(item)"
+          :selection-mode="selectionMode"
+          :removable="removable"
+          :classes="tagUi"
+          :ui="props.ui"
+          @press="onPress(item, $event)"
+          @remove="removeOne(item)"
+        />
+      </template>
       <slot v-if="!items.length" name="empty" />
     </div>
-    <Description v-if="hasDescription" :id="descriptionId">
+    <Description v-if="hasDescription && $slots.description" :id="descriptionId">
       <slot name="description">{{ description }}</slot>
     </Description>
-    <ErrorMessage v-if="hasError" :id="errorId">
+    <Description v-else-if="hasDescription" :id="descriptionId">
+      {{ description }}
+    </Description>
+    <ErrorMessage v-if="hasError && $slots.errorMessage" :id="errorId">
       <slot name="errorMessage">{{ errorMessage }}</slot>
+    </ErrorMessage>
+    <ErrorMessage v-else-if="hasError" :id="errorId">
+      {{ errorMessage }}
     </ErrorMessage>
   </div>
 </template>

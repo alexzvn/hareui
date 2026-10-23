@@ -1,3 +1,4 @@
+import type { ComponentOptions } from 'vue'
 import { mount } from '@vue/test-utils'
 import { afterEach, describe, expect, it } from 'vitest'
 import { h, nextTick } from 'vue'
@@ -146,6 +147,25 @@ describe('Autocomplete', () => {
     expect(texts()).toHaveLength(4)
     await typeSearch('flo')
     expect(wrapper.emitted('update:inputValue')?.at(-1)).toEqual(['flo'])
+    wrapper.unmount()
+  })
+
+  it('ArrowDown re-renders only the previously and newly focused options', async () => {
+    const updated = new Set<string>()
+    const countOptionUpdates: ComponentOptions = {
+      updated() {
+        if (this.$el instanceof Element && this.$el.matches('[role=option]'))
+          updated.add(this.$el.textContent!.trim())
+      },
+    }
+    const wrapper = mount(Autocomplete, { props: { items, label: 'State' }, attachTo: document.body, global: { mixins: [countOptionUpdates] } })
+    await wrapper.get('[data-slot=autocomplete-trigger]').trigger('click')
+    await flush()
+    await key(search()!, 'ArrowDown')
+    updated.clear()
+    await key(search()!, 'ArrowDown')
+    expect(options()[3]!.getAttribute('data-focused')).toBe('true')
+    expect([...updated].sort()).toEqual(['Delaware', 'Texas'])
     wrapper.unmount()
   })
 })

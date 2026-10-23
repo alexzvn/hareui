@@ -61,11 +61,12 @@ defineExpose({
   rows: () => flatRows.value,
 })
 
+const selectedSet = computed(() => new Set(props.selectedValues))
 function optionProps(row: CollectionRow) {
   return {
     item: row.item,
     index: row.index,
-    selected: props.selectedValues.includes(row.item.value),
+    selected: selectedSet.value.has(row.item.value),
     selectable: true,
     selectionMode: props.selectionMode,
     indicator: true,
@@ -110,11 +111,13 @@ watch([sentinelVisible, () => props.loading, () => countRows(props.blocks)], () 
     :overscan="virtualOptions.overscan ?? 3"
   >
     <div role="presentation" class="w-full" :data-virtualizer="captureVirtualizer(v as any)">
-      <ListBoxOption v-bind="optionProps(option as unknown as CollectionRow) as any">
+      <!-- Slot-less branch: forwarded (dynamic) slots force-update every option on each render -->
+      <ListBoxOption v-if="forwarded.length" v-bind="optionProps(option as unknown as CollectionRow) as any">
         <template v-for="name in forwarded" #[name]="state">
           <slot :name="name" v-bind="state" />
         </template>
       </ListBoxOption>
+      <ListBoxOption v-else v-bind="optionProps(option as unknown as CollectionRow) as any" />
     </div>
   </ListboxVirtualizer>
   <template v-for="block in (virtualize ? [] : blocks)" :key="block.kind === 'item' ? `i${block.index}` : `b${block.key}`">
@@ -135,17 +138,23 @@ watch([sentinelVisible, () => props.loading, () => countRows(props.blocks)], () 
           {{ block.section.label }}
         </slot>
       </ListboxGroupLabel>
-      <ListBoxOption v-for="row in block.rows" :key="`i${row.index}`" v-bind="optionProps(row) as any">
-        <template v-for="name in forwarded" #[name]="state">
-          <slot :name="name" v-bind="state" />
-        </template>
-      </ListBoxOption>
+      <template v-if="forwarded.length">
+        <ListBoxOption v-for="row in block.rows" :key="`i${row.index}`" v-bind="optionProps(row) as any">
+          <template v-for="name in forwarded" #[name]="state">
+            <slot :name="name" v-bind="state" />
+          </template>
+        </ListBoxOption>
+      </template>
+      <template v-else>
+        <ListBoxOption v-for="row in block.rows" :key="`i${row.index}`" v-bind="optionProps(row) as any" />
+      </template>
     </ListboxGroup>
-    <ListBoxOption v-else v-bind="optionProps(block) as any">
+    <ListBoxOption v-else-if="forwarded.length" v-bind="optionProps(block) as any">
       <template v-for="name in forwarded" #[name]="state">
         <slot :name="name" v-bind="state" />
       </template>
     </ListBoxOption>
+    <ListBoxOption v-else v-bind="optionProps(block) as any" />
   </template>
   <!-- RAC renders the empty state inside a presentational row -->
   <div v-if="empty && (slots.empty || emptyText)" role="presentation" style="display: contents;">

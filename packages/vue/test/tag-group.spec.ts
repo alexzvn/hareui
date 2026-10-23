@@ -1,5 +1,6 @@
 import { mount } from '@vue/test-utils'
 import { afterEach, describe, expect, it } from 'vitest'
+import type { ComponentOptions } from 'vue'
 import { h, ref } from 'vue'
 import TagGroup from '../src/components/tag-group/TagGroup.vue'
 
@@ -273,5 +274,25 @@ describe('TagGroup', () => {
       expect([...(last() ?? [])].sort()).toEqual(['news', 'shopping', 'travel'])
       w.unmount()
     })
+  })
+
+  it('removing one tag does not re-render the tags before it', async () => {
+    const updatedTags: string[] = []
+    const countTagUpdates: ComponentOptions = {
+      updated() {
+        if (this.$el instanceof Element && this.$el.matches('[data-slot=tag]'))
+          updatedTags.push(this.$el.textContent!.trim())
+      },
+    }
+    const list = ref(Array.from({ length: 20 }, (_, i) => ({ id: `t${i}`, label: `T${i}` })))
+    const onRemove = (ids: string[]) => (list.value = list.value.filter(it => !ids.includes(it.id)))
+    const w = mount(() => h(TagGroup, { items: list.value, removable: true, onRemove }), { global: { mixins: [countTagUpdates] } })
+    const removeTag = (label: string) => w.findAll('[data-slot=tag]').find(t => t.text() === label)!.get('[data-slot=tag-remove-button]').trigger('click')
+    await removeTag('T19')
+    updatedTags.length = 0
+    await removeTag('T10')
+    expect(w.findAll('[data-slot=tag]')).toHaveLength(18)
+    expect(updatedTags.filter(t => Number(t.slice(1)) < 10)).toEqual([])
+    w.unmount()
   })
 })

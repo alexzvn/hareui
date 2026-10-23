@@ -193,7 +193,7 @@ const RekaBridge = defineComponent({
 
 <script setup lang="ts" generic="T extends ListBoxItem = ListBoxItem">
 import { ComboboxAnchor, ComboboxContent, ComboboxItem, ComboboxPortal, ComboboxRoot, useFilter } from 'reka-ui'
-import { computed, getCurrentInstance, nextTick, onMounted, ref, shallowRef, useAttrs, useId, useTemplateRef, watch } from 'vue'
+import { computed, getCurrentInstance, nextTick, onMounted, reactive, ref, shallowRef, useAttrs, useId, useTemplateRef, watch } from 'vue'
 import { useComponentUI } from '../../composables/useComponentUI'
 import { useFieldValidation } from '../../composables/useFieldValidation'
 import { useKeyboardModality } from '../../composables/useKeyboardModality'
@@ -697,17 +697,17 @@ const inputUi = useComponentUI('input', inputTheme, () => ({ variant: props.vari
 const listBoxUi = useComponentUI('listBox', listBoxTheme, () => ({}))
 const rowSlots = ['item', 'item-leading', 'item-label', 'item-description', 'item-trailing', 'section-label', 'empty', 'loading'] as const
 const forwarded = computed(() => rowSlots.filter(name => slots[name]))
-const virtualFocus = computed(() => ({ keyboard: keyboardModality.value }))
+// One stable object (reactive unwraps the ref): a fresh object per change would re-render every option
+const virtualFocus = reactive({ keyboard: keyboardModality })
+// RAC `shouldFocusOnHover`: hover moves the virtual focus unless the last interaction was a keyboard one
+function onOptionPointermove(event: PointerEvent) {
+  const el = event.currentTarget as HTMLElement
+  if (!keyboardModality.value && highlighted.value !== el && !el.hasAttribute('data-disabled'))
+    setHighlight(el)
+}
+// No closures per row: options re-render only when their own props change
 function optionAttrs(row: CollectionRow) {
-  return {
-    [valueAttr]: String(row.item.value),
-    // RAC `shouldFocusOnHover`: hover moves the virtual focus unless the last interaction was a keyboard one
-    'onPointermove': (event: PointerEvent) => {
-      const el = event.currentTarget as HTMLElement
-      if (!keyboardModality.value && highlighted.value !== el && !el.hasAttribute('data-disabled'))
-        setHighlight(el)
-    },
-  }
+  return { [valueAttr]: String(row.item.value), onPointermove: onOptionPointermove }
 }
 </script>
 
@@ -735,8 +735,9 @@ function optionAttrs(row: CollectionRow) {
     @update:open="onRekaOpen"
   >
     <RekaBridge @ready="onReady" />
+    <!-- Each slot site is split so the no-slot branch isn't compiled as a forwarded slot, which would force-update the child on every render -->
     <Label
-      v-if="hasLabel"
+      v-if="hasLabel && $slots.label"
       :id="labelId"
       :for="id"
       :disabled="disabled"
@@ -747,6 +748,17 @@ function optionAttrs(row: CollectionRow) {
       <slot name="label">
         {{ label }}
       </slot>
+    </Label>
+    <Label
+      v-else-if="hasLabel"
+      :id="labelId"
+      :for="id"
+      :disabled="disabled"
+      :invalid="invalid"
+      :required="required"
+      :class="ui.label({ class: props.ui?.label })"
+    >
+      {{ label }}
     </Label>
     <ComboboxAnchor
       as="div"
@@ -829,15 +841,21 @@ function optionAttrs(row: CollectionRow) {
     >
       <slot name="value" :selected-items="selectedItems" :is-placeholder="!selectedItems.length" :text="valueText">{{ valueText }}</slot>
     </div>
-    <Description v-if="hasDescription" :id="descriptionId">
+    <Description v-if="hasDescription && $slots.description" :id="descriptionId">
       <slot name="description">
         {{ description }}
       </slot>
     </Description>
-    <FieldError v-if="hasError" :id="errorId">
+    <Description v-else-if="hasDescription" :id="descriptionId">
+      {{ description }}
+    </Description>
+    <FieldError v-if="hasError && $slots.error" :id="errorId">
       <slot name="error" v-bind="validation">
         {{ errorMessage ?? validation.validationErrors.join(' ') }}
       </slot>
+    </FieldError>
+    <FieldError v-else-if="hasError" :id="errorId">
+      {{ errorMessage ?? validation.validationErrors.join(' ') }}
     </FieldError>
     <template v-if="name && !submitText">
       <input v-for="(value, i) in hiddenValues" :key="i" type="hidden" :name="name" :value="value">
@@ -874,6 +892,7 @@ function optionAttrs(row: CollectionRow) {
           @pointerup="pressRelease.onPointerup"
         >
           <ListBoxRows
+            v-if="forwarded.length || slots['item-indicator']"
             :blocks="blocks"
             :selected-values="selectedValues"
             :selection-mode="selectionMode"
@@ -892,6 +911,20 @@ function optionAttrs(row: CollectionRow) {
               <slot name="item-indicator" v-bind="state as ListBoxItemSlotProps<T>" />
             </template>
           </ListBoxRows>
+          <!-- Slot-less branch: forwarded (dynamic) slots would force-update the rows on every render -->
+          <ListBoxRows
+            v-else
+            :blocks="blocks"
+            :selected-values="selectedValues"
+            :selection-mode="selectionMode"
+            :disabled="disabled"
+            :classes="listBoxUi as any"
+            :component="ComboboxItem"
+            :virtual-focus="virtualFocus"
+            :option-attrs="optionAttrs"
+            :loading="loading"
+            @load-more="emit('loadMore')"
+          />
         </div>
       </ComboboxContent>
     </ComboboxPortal>

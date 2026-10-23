@@ -237,6 +237,7 @@ const options = computed<ListBoxItem[]>(() => (props.items ?? []).flatMap((entry
 }))
 const textOf = (item: ListBoxItem) => item.textValue ?? item.label ?? String(item.value)
 const selectedItems = computed(() => options.value.filter(item => selectedValues.value.includes(item.value)) as T[])
+const selectedSet = computed(() => new Set(selectedValues.value))
 const listFormat = computed(() => new Intl.ListFormat(undefined, { type: 'conjunction' }))
 const valueText = computed(() => selectedItems.value.length
   ? (multiple.value ? listFormat.value.format(selectedItems.value.map(textOf)) : textOf(selectedItems.value[0]!))
@@ -453,8 +454,9 @@ watch(disabled, (disabled) => {
     :data-required="required ? 'true' : undefined"
     :class="ui.base({ class: [props.ui?.base, props.class] })"
   >
+    <!-- Each slot site is split so the no-slot branch isn't compiled as a forwarded slot, which would force-update the child on every render -->
     <Label
-      v-if="hasLabel"
+      v-if="hasLabel && $slots.label"
       :id="labelId"
       as="span"
       :disabled="disabled"
@@ -465,6 +467,17 @@ watch(disabled, (disabled) => {
       <slot name="label">
         {{ label }}
       </slot>
+    </Label>
+    <Label
+      v-else-if="hasLabel"
+      :id="labelId"
+      as="span"
+      :disabled="disabled"
+      :invalid="invalid"
+      :required="required"
+      @click="triggerEl()?.focus()"
+    >
+      {{ label }}
     </Label>
     <PopoverRoot :open="isOpen" :modal="false" @update:open="onRootOpenChange">
       <PopoverTrigger as-child>
@@ -589,15 +602,21 @@ watch(disabled, (disabled) => {
         </PopoverContent>
       </PopoverPortal>
     </PopoverRoot>
-    <Description v-if="hasDescription" :id="descriptionId">
+    <Description v-if="hasDescription && $slots.description" :id="descriptionId">
       <slot name="description">
         {{ description }}
       </slot>
     </Description>
-    <FieldError v-if="hasError" :id="errorId">
+    <Description v-else-if="hasDescription" :id="descriptionId">
+      {{ description }}
+    </Description>
+    <FieldError v-if="hasError && $slots.error" :id="errorId">
       <slot name="error" v-bind="validation">
         {{ errorMessage ?? validation.validationErrors.join(' ') }}
       </slot>
+    </FieldError>
+    <FieldError v-else-if="hasError" :id="errorId">
+      {{ errorMessage ?? validation.validationErrors.join(' ') }}
     </FieldError>
     <!-- RAC HiddenSelect: carries form data and native `required` validity -->
     <div aria-hidden="true" data-a11y-ignore="aria-hidden-focus" style="border: 0; clip-path: inset(50%); height: 1px; margin: -1px; overflow: hidden; padding: 0; position: absolute; white-space: nowrap; width: 1px;">
@@ -611,7 +630,7 @@ watch(disabled, (disabled) => {
         @invalid="onHiddenInvalid"
       >
         <option value="" />
-        <option v-for="item in options" :key="item.value" :value="item.value" :selected="selectedValues.includes(item.value)">
+        <option v-for="item in options" :key="item.value" :value="item.value" :selected="selectedSet.has(item.value)">
           {{ textOf(item) }}
         </option>
       </select>
