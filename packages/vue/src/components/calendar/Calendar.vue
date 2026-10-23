@@ -387,6 +387,7 @@ function onRootKeyDownCapture(event: KeyboardEvent) {
         <CalendarGridRow v-for="(weekDates, index) in grid[0]?.rows ?? []" :key="`week-${index}`" :class="ui.gridRow({ class: props.ui?.gridRow })">
           <CalendarCell v-for="weekDate in weekDates" :key="weekDate.toString()" :date="weekDate">
             <CalendarCellTrigger
+              v-if="$slots.cell || indicator"
               :day="weekDate"
               :month="grid[0]?.value ?? weekDate"
               data-slot="calendar-cell"
@@ -398,6 +399,14 @@ function onRootKeyDownCapture(event: KeyboardEvent) {
               </slot>
               <span v-if="indicator?.(weekDate)" data-slot="calendar-cell-indicator" aria-hidden="true" :class="ui.cellIndicator({ class: props.ui?.cellIndicator })" />
             </CalendarCellTrigger>
+            <!-- no slot content -> no v-for scope ref, so moving focus doesn't force-update every trigger -->
+            <CalendarCellTrigger
+              v-else
+              :day="weekDate"
+              :month="grid[0]?.value ?? weekDate"
+              data-slot="calendar-cell"
+              :class="ui.cell({ class: props.ui?.cell })"
+            />
           </CalendarCell>
         </CalendarGridRow>
       </CalendarGridBody>
@@ -441,6 +450,7 @@ function onRootKeyDownCapture(event: KeyboardEvent) {
               <CalendarGridRow v-for="(weekDates, index) in month.rows" :key="`week-${index}`" :class="ui.gridRow({ class: props.ui?.gridRow })">
                 <CalendarCell v-for="weekDate in weekDates" :key="weekDate.toString()" :date="weekDate">
                   <CalendarCellTrigger
+                    v-if="$slots.cell || indicator"
                     :day="weekDate"
                     :month="month.value"
                     data-slot="calendar-cell"
@@ -452,6 +462,14 @@ function onRootKeyDownCapture(event: KeyboardEvent) {
                     </slot>
                     <span v-if="indicator?.(weekDate)" data-slot="calendar-cell-indicator" aria-hidden="true" :class="ui.cellIndicator({ class: props.ui?.cellIndicator })" />
                   </CalendarCellTrigger>
+                  <!-- no slot content -> no v-for scope ref, so moving focus doesn't force-update every trigger -->
+                  <CalendarCellTrigger
+                    v-else
+                    :day="weekDate"
+                    :month="month.value"
+                    data-slot="calendar-cell"
+                    :class="ui.cell({ class: props.ui?.cell })"
+                  />
                 </CalendarCell>
               </CalendarGridRow>
             </CalendarGridBody>

@@ -25,8 +25,17 @@ export function useCalendarYearPicker(options: UseCalendarYearPickerOptions) {
   const { focusedYear, gridSlot, maxValue, minValue, onSelect, open, rootEl } = options
   const gridRef = ref<HTMLElement>()
   const activeYear = ref(focusedYear.value)
+  // The 200 year cells are only rendered once the picker has been opened; sync so `years` is
+  // populated before the focus-on-open watcher below reads it
+  const everOpened = ref(open.value)
+  watch(open, (isOpen) => {
+    if (isOpen)
+      everOpened.value = true
+  }, { flush: 'sync' })
 
   const years = computed(() => {
+    if (!everOpened.value)
+      return []
     const start = minValue.value.year
     const end = maxValue.value.year
     const list: number[] = []
