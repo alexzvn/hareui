@@ -1,6 +1,6 @@
 import { mount } from '@vue/test-utils'
 import { describe, expect, it } from 'vitest'
-import { defineComponent, h } from 'vue'
+import { defineComponent, h, markRaw } from 'vue'
 import Link from '../src/components/link/Link.vue'
 
 const order = (el: Element) => [...el.children].map(c => c.getAttribute('data-slot') ?? c.tagName.toLowerCase())
@@ -40,7 +40,7 @@ describe('Link', () => {
   })
 
   it('renders through a custom component via as, forwarding attributes', () => {
-    const Custom = defineComponent((_, { attrs, slots }) => () => h('span', { ...attrs, 'data-custom': 'foo' }, slots.default?.()))
+    const Custom = markRaw(defineComponent((_, { attrs, slots }) => () => h('span', { ...attrs, 'data-custom': 'foo' }, slots.default?.())))
     const wrapper = mount(Link, { props: { as: Custom, href: '#' }, slots: { default: () => 'Go' } })
     expect(wrapper.element.tagName).toBe('SPAN')
     expect(wrapper.attributes('data-custom')).toBe('foo')
