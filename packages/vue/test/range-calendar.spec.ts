@@ -2,7 +2,7 @@ import type { DateRange } from '../src/components/range-calendar/RangeCalendar.v
 import { CalendarDate, parseDate } from '@internationalized/date'
 import { mount } from '@vue/test-utils'
 import { describe, expect, it } from 'vitest'
-import { nextTick } from 'vue'
+import { defineComponent, nextTick, ref } from 'vue'
 import RangeCalendar from '../src/components/range-calendar/RangeCalendar.vue'
 
 const focused = new CalendarDate(2025, 1, 15)
@@ -148,6 +148,50 @@ describe('rangeCalendar', () => {
     const root = wrapper.find('[data-slot=range-calendar]')
     expect(root.attributes('aria-invalid')).toBe('true')
     expect(root.attributes('data-invalid')).toBe('')
+    wrapper.unmount()
+  })
+
+  it('#cell follows parent state and switches back to the day number when the slot is removed', async () => {
+    const tag = ref('a')
+    const show = ref(true)
+    const App = defineComponent({
+      components: { RangeCalendar },
+      setup: () => ({ tag, show, focused }),
+      template: `<RangeCalendar :default-placeholder="focused"><template v-if="show" #cell="{ date }">{{ tag }}{{ date.day }}</template></RangeCalendar>`,
+    })
+    const wrapper = mount(App)
+    const day15 = () => wrapper.findAll('[data-slot=range-calendar-cell]').find(cell => cell.text().endsWith('15'))!
+    expect(day15().text()).toBe('a15')
+    tag.value = 'b'
+    await nextTick()
+    expect(day15().text()).toBe('b15')
+    show.value = false
+    await nextTick()
+    expect(day15().text()).toBe('15')
+    show.value = true
+    await nextTick()
+    expect(day15().text()).toBe('b15')
+    wrapper.unmount()
+  })
+
+  it('hovering while selecting re-renders only the days entering or leaving the preview', async () => {
+    let dayUpdates = 0
+    const countDayUpdates = {
+      updated(this: { $el: unknown }) {
+        if (this.$el instanceof Element && this.$el.matches('[role=gridcell]'))
+          dayUpdates++
+      },
+    }
+    const wrapper = mount(RangeCalendar, { props: { defaultPlaceholder: focused }, global: { mixins: [countDayUpdates] } })
+    const day = (n: number) => wrapper.findAll('[data-slot=range-calendar-cell]').find(cell => cell.text() === String(n))!
+    await day(10).trigger('mouseenter')
+    await day(10).trigger('click')
+    await day(12).trigger('mouseenter')
+    dayUpdates = 0
+    await day(13).trigger('mouseenter')
+    // Only day 13 joins the preview; the cell (and its own wrappers) update, the other ~34 days don't.
+    expect(dayUpdates).toBeGreaterThan(0)
+    expect(dayUpdates).toBeLessThanOrEqual(4)
     wrapper.unmount()
   })
 })
