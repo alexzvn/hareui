@@ -100,11 +100,12 @@ import {
   DialogTrigger,
   VisuallyHidden,
 } from 'reka-ui'
-import { computed, onBeforeUnmount, onMounted, ref, useSlots } from 'vue'
+import { computed, ref, useSlots } from 'vue'
 import { preventNestedLayerDismiss } from '../../composables/nestedLayer'
 import { useComponentUI } from '../../composables/useComponentUI'
 import { usePortal } from '../../composables/usePortal'
 import { useTabbableFocusLoop } from '../../composables/useTabbableFocusLoop'
+import { useVisualViewportHeight } from '../../composables/useVisualViewportHeight'
 import CloseButton from '../close-button/CloseButton.vue'
 
 // `open: undefined` stops Vue casting an absent boolean prop to `false`, so uncontrolled mode and `defaultOpen` apply
@@ -156,20 +157,7 @@ function onOpenAutoFocus(event: Event) {
   ;(event.target as HTMLElement | null)?.focus({ preventScroll: true })
 }
 
-// HeroUI's visual-viewport-aware overlay height (see Modal.vue).
-const visualViewportHeight = ref(typeof window !== 'undefined' ? `${window.innerHeight}px` : '100dvh')
-function updateVisualViewportHeight() {
-  visualViewportHeight.value = `${window.visualViewport?.height ?? window.innerHeight}px`
-}
-onMounted(() => {
-  updateVisualViewportHeight()
-  window.visualViewport?.addEventListener('resize', updateVisualViewportHeight)
-  window.addEventListener('resize', updateVisualViewportHeight)
-})
-onBeforeUnmount(() => {
-  window.visualViewport?.removeEventListener('resize', updateVisualViewportHeight)
-  window.removeEventListener('resize', updateVisualViewportHeight)
-})
+const visualViewportHeight = useVisualViewportHeight()
 </script>
 
 <template>
