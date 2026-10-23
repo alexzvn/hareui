@@ -1,6 +1,6 @@
 import { mount } from '@vue/test-utils'
 import { describe, expect, it } from 'vitest'
-import { nextTick } from 'vue'
+import { h, nextTick } from 'vue'
 import Avatar from '../src/components/avatar/Avatar.vue'
 
 describe('Avatar', () => {
@@ -17,7 +17,7 @@ describe('Avatar', () => {
   it('#image replaces the <img> with the slotted element, keeping src and image classes', async () => {
     const wrapper = mount(Avatar, {
       props: { src: '/a.jpg', fallback: 'JD' },
-      slots: { image: '<picture-img alt="custom" />' },
+      slots: { image: () => h('picture-img', { alt: 'custom' }) },
     })
     await nextTick()
     const custom = wrapper.find('picture-img')
