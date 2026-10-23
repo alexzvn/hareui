@@ -191,12 +191,15 @@ function onUpdate(value: unknown) {
   >
     <!-- `as` falls through to Reka `Label`: a group label names the radiogroup via aria-labelledby, not a form control (HeroUI renders a span).
          `disabled` is passed explicitly because Reka sets the root's `data-disabled` to "". -->
-    <Label v-if="hasLabel" :id="labelId" as="span" :disabled="isDisabled">
+    <!-- Split so the no-slot branch has no forwarded `<slot>` and doesn't force-update the child on every render -->
+    <Label v-if="hasLabel && $slots.label" :id="labelId" as="span" :disabled="isDisabled">
       <slot name="label">{{ label }}</slot>
     </Label>
-    <Description v-if="hasDescription" :id="descriptionId">
+    <Label v-else-if="hasLabel" :id="labelId" as="span" :disabled="isDisabled">{{ label }}</Label>
+    <Description v-if="hasDescription && $slots.description" :id="descriptionId">
       <slot name="description">{{ description }}</slot>
     </Description>
+    <Description v-else-if="hasDescription" :id="descriptionId">{{ description }}</Description>
     <div
       v-for="(item, index) in items"
       :key="item.value"
@@ -223,12 +226,14 @@ function onUpdate(value: unknown) {
         </span>
         <slot name="item-label" :item="item" :index="index">{{ item.label }}</slot>
       </RekaRadioGroupItem>
-      <Description v-if="hasItemDescription(item)" :id="`${id}-${index}-description`">
+      <Description v-if="hasItemDescription(item) && $slots['item-description']" :id="`${id}-${index}-description`">
         <slot name="item-description" :item="item" :index="index">{{ item.description }}</slot>
       </Description>
+      <Description v-else-if="hasItemDescription(item)" :id="`${id}-${index}-description`">{{ item.description }}</Description>
     </div>
-    <FieldError v-if="hasError" :id="errorId">
+    <FieldError v-if="hasError && $slots.error" :id="errorId">
       <slot name="error" v-bind="validation">{{ errorMessage ?? validation.validationErrors.join(' ') }}</slot>
     </FieldError>
+    <FieldError v-else-if="hasError" :id="errorId">{{ errorMessage ?? validation.validationErrors.join(' ') }}</FieldError>
   </RadioGroupRoot>
 </template>

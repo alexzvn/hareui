@@ -112,6 +112,7 @@ import { NumberFieldDecrement, NumberFieldIncrement, NumberFieldInput, NumberFie
 import { computed, getCurrentInstance, ref, useAttrs, useId, useTemplateRef, watch } from 'vue'
 import { useComponentUI } from '../../composables/useComponentUI'
 import { useFieldValidation } from '../../composables/useFieldValidation'
+import { useSlotOutlet } from '../../composables/useSlotOutlet'
 import { snapNumber } from '../../utils/number'
 import { useFieldsetDisabled } from '../fieldset/context'
 import Description from '../description/Description.vue'
@@ -123,6 +124,8 @@ defineOptions({ inheritAttrs: false })
 // `invalid: undefined`: an absent boolean would cast to `false`, which counts as controlled-valid and hides validation errors
 const props = withDefaults(defineProps<NumberFieldProps>(), { increment: true, decrement: true, invalid: undefined })
 const slots = defineSlots<NumberFieldSlots>()
+const DecrementOutlet = useSlotOutlet(slots, 'decrement')
+const IncrementOutlet = useSlotOutlet(slots, 'increment')
 /** The numeric value; `undefined` while the input is empty. */
 const modelValue = defineModel<number | null>()
 // A second `defineEmits` for `update:modelValue` would clash with defineModel's emit type, so the forced emit below
@@ -246,10 +249,14 @@ function onFocusOut(event: FocusEvent) {
     :data-readonly="readonly ? 'true' : undefined"
     :class="ui.base({ class: [props.ui?.base, props.class] })"
   >
-    <Label v-if="hasLabel" :for="id" :disabled="isDisabled" :invalid="invalid" :required="required">
+    <!-- Each part renders the `<slot>` outlet only when that slot is passed: a forwarded slot would otherwise make Vue force-update the child on every render -->
+    <Label v-if="hasLabel && $slots.label" :for="id" :disabled="isDisabled" :invalid="invalid" :required="required">
       <slot name="label">
         {{ label }}
       </slot>
+    </Label>
+    <Label v-else-if="hasLabel" :for="id" :disabled="isDisabled" :invalid="invalid" :required="required">
+      {{ label }}
     </Label>
     <NumberFieldRoot
       :id="id"
@@ -279,7 +286,7 @@ function onFocusOut(event: FocusEvent) {
         data-slot="number-field-decrement-button"
         :class="ui.decrementButton({ class: props.ui?.decrementButton })"
       >
-        <slot name="decrement">
+        <DecrementOutlet>
           <svg
             aria-hidden="true"
             data-slot="number-field-decrement-button-icon"
@@ -292,7 +299,7 @@ function onFocusOut(event: FocusEvent) {
           >
             <path clip-rule="evenodd" d="M1.75 8a.75.75 0 0 1 .75-.75h11a.75.75 0 0 1 0 1.5h-11A.75.75 0 0 1 1.75 8" fill="currentColor" fill-rule="evenodd" />
           </svg>
-        </slot>
+        </DecrementOutlet>
       </NumberFieldDecrement>
       <NumberFieldInput
         data-slot="number-field-input"
@@ -313,7 +320,7 @@ function onFocusOut(event: FocusEvent) {
         data-slot="number-field-increment-button"
         :class="ui.incrementButton({ class: props.ui?.incrementButton })"
       >
-        <slot name="increment">
+        <IncrementOutlet>
           <svg
             aria-hidden="true"
             data-slot="number-field-increment-button-icon"
@@ -326,18 +333,24 @@ function onFocusOut(event: FocusEvent) {
           >
             <path clip-rule="evenodd" d="M8 1.75a.75.75 0 0 1 .75.75v4.75h4.75a.75.75 0 0 1 0 1.5H8.75v4.75a.75.75 0 0 1-1.5 0V8.75H2.5a.75.75 0 0 1 0-1.5h4.75V2.5A.75.75 0 0 1 8 1.75" fill="currentColor" fill-rule="evenodd" />
           </svg>
-        </slot>
+        </IncrementOutlet>
       </NumberFieldIncrement>
     </NumberFieldRoot>
-    <Description v-if="hasDescription" :id="descriptionId">
+    <Description v-if="hasDescription && $slots.description" :id="descriptionId">
       <slot name="description">
         {{ description }}
       </slot>
     </Description>
-    <FieldError v-if="hasError" :id="errorId">
+    <Description v-else-if="hasDescription" :id="descriptionId">
+      {{ description }}
+    </Description>
+    <FieldError v-if="hasError && $slots.error" :id="errorId">
       <slot name="error" v-bind="validation">
         {{ errorMessage ?? validation.validationErrors.join(' ') }}
       </slot>
+    </FieldError>
+    <FieldError v-else-if="hasError" :id="errorId">
+      {{ errorMessage ?? validation.validationErrors.join(' ') }}
     </FieldError>
   </div>
   <input v-if="name" type="hidden" :name="name" :value="formValue ?? ''" :disabled="isDisabled || undefined">

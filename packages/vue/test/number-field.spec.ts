@@ -1,6 +1,7 @@
+import type { ComponentOptions } from 'vue'
 import { mount } from '@vue/test-utils'
 import { describe, expect, it } from 'vitest'
-import { nextTick } from 'vue'
+import { defineComponent, nextTick, ref } from 'vue'
 import NumberField from '../src/components/number-field/NumberField.vue'
 
 const inc = '[data-slot=number-field-increment-button]'
@@ -124,5 +125,58 @@ describe('NumberField', () => {
     await wrapper.get(input).trigger('keydown', { key: 'PageDown' })
     expect(wrapper.emitted('update:modelValue')?.at(-1)).toEqual([5])
     wrapper.unmount()
+  })
+})
+
+describe('NumberField stepper button slots', () => {
+  it('#decrement / #increment render inside the buttons; a parent v-if switches back to the default icons', async () => {
+    const show = ref(true)
+    const wrapper = mount(defineComponent({
+      components: { NumberField },
+      setup: () => ({ show }),
+      template: `<NumberField :default-value="1">
+        <template v-if="show" #decrement><i data-test="minus" /></template>
+        <template v-if="show" #increment><i data-test="plus" /></template>
+      </NumberField>`,
+    }))
+    const decIcon = () => wrapper.get(dec).find('[data-slot=number-field-decrement-button-icon]')
+    const incIcon = () => wrapper.get(inc).find('[data-slot=number-field-increment-button-icon]')
+    expect(wrapper.get(dec).find('[data-test=minus]').exists()).toBe(true)
+    expect(wrapper.get(inc).find('[data-test=plus]').exists()).toBe(true)
+    expect(decIcon().exists()).toBe(false)
+    expect(incIcon().exists()).toBe(false)
+
+    show.value = false
+    await nextTick()
+    expect(wrapper.find('[data-test=minus]').exists()).toBe(false)
+    expect(wrapper.find('[data-test=plus]').exists()).toBe(false)
+    expect(decIcon().element.tagName.toLowerCase()).toBe('svg')
+    expect(incIcon().element.tagName.toLowerCase()).toBe('svg')
+
+    show.value = true
+    await nextTick()
+    expect(wrapper.get(dec).find('[data-test=minus]').exists()).toBe(true)
+    expect(wrapper.get(inc).find('[data-test=plus]').exists()).toBe(true)
+    expect(decIcon().exists()).toBe(false)
+    expect(incIcon().exists()).toBe(false)
+  })
+
+  it('changing only `description` does not re-render the stepper buttons', async () => {
+    let buttonUpdates = 0
+    const countButtonUpdates: ComponentOptions = {
+      updated() {
+        if (this.$el instanceof Element && this.$el.matches(`${inc}, ${dec}`))
+          buttonUpdates++
+      },
+    }
+    const wrapper = mount(NumberField, { props: { label: 'Width', description: 'A', defaultValue: 1 }, global: { mixins: [countButtonUpdates] } })
+    // reka's form-control check is computed before the input mounts and catches up on the first update of any kind
+    await wrapper.setProps({ description: 'B' })
+    buttonUpdates = 0
+    await wrapper.setProps({ description: 'C' })
+    expect(wrapper.get('[data-slot=description]').text()).toBe('C')
+    expect(wrapper.find(inc).exists()).toBe(true)
+    expect(wrapper.find(dec).exists()).toBe(true)
+    expect(buttonUpdates).toBe(0)
   })
 })

@@ -323,9 +323,11 @@ function onPaste(event: ClipboardEvent) {
     :class="ui.base({ class: [props.ui?.base, props.class] })"
   >
     <!-- `base` is HareUI's own wrapper (HeroUI composes Label/InputOTP/Description itself), so it carries no data-slot -->
-    <Label v-if="hasLabel" :for="id" :disabled="disabled" :invalid="invalid" :required="required">
+    <!-- Each part renders the `<slot>` outlet only when that slot is passed: a forwarded slot would otherwise make Vue force-update the child on every render -->
+    <Label v-if="hasLabel && $slots.label" :for="id" :disabled="disabled" :invalid="invalid" :required="required">
       <slot name="label">{{ label }}</slot>
     </Label>
+    <Label v-else-if="hasLabel" :for="id" :disabled="disabled" :invalid="invalid" :required="required">{{ label }}</Label>
     <!-- Like the `input-otp` library's container: HeroUI's `data-slot="input-otp"` and state attributes land on the <input> -->
     <div
       ref="box"
@@ -387,11 +389,13 @@ function onPaste(event: ClipboardEvent) {
         @select="syncSelection"
       >
     </div>
-    <Description v-if="hasDescription" :id="descriptionId">
+    <Description v-if="hasDescription && $slots.description" :id="descriptionId">
       <slot name="description">{{ description }}</slot>
     </Description>
-    <FieldError v-if="hasError" :id="errorId">
+    <Description v-else-if="hasDescription" :id="descriptionId">{{ description }}</Description>
+    <FieldError v-if="hasError && $slots.error" :id="errorId">
       <slot name="error" v-bind="validation">{{ errorMessage ?? validation.validationErrors.join(' ') }}</slot>
     </FieldError>
+    <FieldError v-else-if="hasError" :id="errorId">{{ errorMessage ?? validation.validationErrors.join(' ') }}</FieldError>
   </div>
 </template>

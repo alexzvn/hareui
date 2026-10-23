@@ -400,9 +400,11 @@ defineExpose({
       @cancel="syncInput"
       @focus="onInputFocus"
     >
-    <FieldError v-if="hasError" :id="errorId">
+    <!-- Split so FieldError's slot is only forwarded (and force-updated) when an `error` slot is passed. -->
+    <FieldError v-if="hasError && slots.error" :id="errorId">
       <slot name="error" v-bind="validation">{{ errorMessage ?? validation.validationErrors.join(' ') }}</slot>
     </FieldError>
+    <FieldError v-else-if="hasError" :id="errorId">{{ errorMessage ?? validation.validationErrors.join(' ') }}</FieldError>
     <slot v-if="slots.files" name="files" :files="files" :remove-file="removeFile" />
     <DropZoneFileList v-else>
       <DropZoneFileItem v-for="file in files" :key="fileKey(file)" :file="file" @remove="removeFile(file)" />

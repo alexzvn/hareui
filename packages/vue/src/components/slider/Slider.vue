@@ -301,12 +301,15 @@ function dragging(index: number) {
     @pointercancel="onPointerEnd"
     @gotpointercapture="captureOnDraggedThumb"
   >
-    <Label v-if="hasLabel" :id="labelId" :disabled="isDisabled" :class="ui.label({ class: props.ui?.label })">
+    <!-- Split so slot content is only forwarded (and force-updated) when the slot is actually passed. -->
+    <Label v-if="hasLabel && $slots.label" :id="labelId" :disabled="isDisabled" :class="ui.label({ class: props.ui?.label })">
       <slot name="label">{{ label }}</slot>
     </Label>
-    <output data-slot="slider-output" aria-live="off" :data-orientation="orientation" :class="ui.output({ class: props.ui?.output })">
+    <Label v-else-if="hasLabel" :id="labelId" :disabled="isDisabled" :class="ui.label({ class: props.ui?.label })">{{ label }}</Label>
+    <output v-if="$slots.output" data-slot="slider-output" aria-live="off" :data-orientation="orientation" :class="ui.output({ class: props.ui?.output })">
       <slot name="output" :values="current" :formatted="formattedValues">{{ outputText }}</slot>
     </output>
+    <output v-else data-slot="slider-output" aria-live="off" :data-orientation="orientation" :class="ui.output({ class: props.ui?.output })">{{ outputText }}</output>
     <SliderTrack
       data-slot="slider-track"
       :data-fill-start="fillStart ? 'true' : undefined"

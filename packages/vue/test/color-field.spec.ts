@@ -1,7 +1,8 @@
 import { mount } from '@vue/test-utils'
 import { parseColor } from 'reka-ui'
 import { describe, expect, it } from 'vitest'
-import { h } from 'vue'
+import type { ComponentOptions } from 'vue'
+import { defineComponent, h, nextTick, ref } from 'vue'
 import ColorField from '../src/components/color-field/ColorField.vue'
 import { ColorPickerContextKey } from '../src/components/color-picker/context'
 
@@ -255,5 +256,51 @@ describe('colorField', () => {
       expect(node.value).toBe('214°')
       wrapper.unmount()
     })
+  })
+})
+
+describe('colorField slot outlets', () => {
+  it('#prefix / #suffix toggled by a parent v-if switch between custom content and no wrapper', async () => {
+    const show = ref(true)
+    const wrapper = mount(defineComponent({
+      components: { ColorField },
+      setup: () => ({ show }),
+      template: `<ColorField default-value="#000000">
+        <template v-if="show" #prefix><i data-test="pre" /></template>
+        <template v-if="show" #suffix><i data-test="suf" /></template>
+      </ColorField>`,
+    }))
+    const parts = () => ['[data-test=pre]', '[data-test=suf]', '[data-slot=color-input-group-prefix]', '[data-slot=color-input-group-suffix]'].map(s => wrapper.find(s).exists())
+    expect(parts()).toEqual([true, true, true, true])
+    show.value = false
+    await nextTick()
+    expect(parts()).toEqual([false, false, false, false])
+    show.value = true
+    await nextTick()
+    expect(parts()).toEqual([true, true, true, true])
+    wrapper.unmount()
+  })
+
+  it('changing only `description` does not re-render the group root', async () => {
+    let groupUpdates = 0
+    const countGroupUpdates: ComponentOptions = {
+      updated() {
+        if (this.$el instanceof Element && this.$el.matches(group))
+          groupUpdates++
+      },
+    }
+    const wrapper = mount(ColorField, {
+      props: { label: 'Color', description: 'A', defaultValue: '#000000' },
+      slots: { prefix: () => h('i', { 'data-test': 'pre' }), suffix: () => h('i', { 'data-test': 'suf' }) },
+      global: { mixins: [countGroupUpdates] },
+    })
+    // warm-up: anything settling on the first update of any kind
+    await wrapper.setProps({ description: 'B' })
+    groupUpdates = 0
+    await wrapper.setProps({ description: 'C' })
+    expect(wrapper.get('[data-slot=description]').text()).toBe('C')
+    expect(wrapper.find('[data-test=pre]').exists()).toBe(true)
+    expect(groupUpdates).toBe(0)
+    wrapper.unmount()
   })
 })

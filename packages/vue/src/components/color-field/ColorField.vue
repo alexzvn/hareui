@@ -115,9 +115,10 @@ export interface ColorFieldEmits {
 
 <script setup lang="ts">
 import { ColorFieldInput, ColorFieldRoot, normalizeColor } from 'reka-ui'
-import { computed, nextTick, ref, useAttrs, useId, useSlots, useTemplateRef, watch } from 'vue'
+import { computed, nextTick, onBeforeUpdate, ref, shallowRef, useAttrs, useId, useSlots, useTemplateRef, watch } from 'vue'
 import { useComponentUI } from '../../composables/useComponentUI'
 import { useFieldValidation } from '../../composables/useFieldValidation'
+import { useSlotOutlet } from '../../composables/useSlotOutlet'
 import { useFieldsetDisabled } from '../fieldset/context'
 import { useColorPickerContext } from '../color-picker/context'
 import Description from '../description/Description.vue'
@@ -132,6 +133,8 @@ const props = withDefaults(defineProps<ColorFieldProps>(), { invalid: undefined 
 const disabled = useFieldsetDisabled(() => props.disabled)
 const emit = defineEmits<ColorFieldEmits>()
 const slots = useSlots()
+const PrefixOutlet = useSlotOutlet(slots, 'prefix')
+const SuffixOutlet = useSlotOutlet(slots, 'suffix')
 defineSlots<ColorFieldSlots>()
 
 const pickerCtx = useColorPickerContext()
@@ -253,8 +256,13 @@ const rootAttrs = computed(() => {
 const autoId = useId()
 const id = computed(() => props.id ?? autoId)
 const hasLabel = computed(() => !!(props.label || slots.label))
-const hasPrefix = computed(() => !!slots.prefix)
-const hasSuffix = computed(() => !!slots.suffix)
+// `slots` isn't reactive and the root no longer re-renders with this component, so mirror slot swaps into refs
+const hasPrefix = shallowRef(!!slots.prefix)
+const hasSuffix = shallowRef(!!slots.suffix)
+onBeforeUpdate(() => {
+  hasPrefix.value = !!slots.prefix
+  hasSuffix.value = !!slots.suffix
+})
 const hasDescription = computed(() => !!(props.description || slots.description))
 const hasError = computed(() => invalid.value && !!(props.errorMessage || slots.error || validation.value.validationErrors.length))
 const descriptionId = computed(() => `${id.value}-description`)
@@ -292,10 +300,14 @@ function onFocusOut(event: FocusEvent) {
     :data-readonly="readonly ? 'true' : undefined"
     :class="ui.base({ class: [props.ui?.base, props.class] })"
   >
-    <Label v-if="hasLabel" :for="id" :disabled="disabled" :invalid="invalid" :required="required">
+    <!-- Label/Description/FieldError render their `<slot>` outlet only when that slot is passed: a forwarded slot would otherwise make Vue force-update the child on every render -->
+    <Label v-if="hasLabel && $slots.label" :for="id" :disabled="disabled" :invalid="invalid" :required="required">
       <slot name="label">
         {{ label }}
       </slot>
+    </Label>
+    <Label v-else-if="hasLabel" :for="id" :disabled="disabled" :invalid="invalid" :required="required">
+      {{ label }}
     </Label>
     <ColorFieldRoot
       :model-value="modelValueForRoot"
@@ -326,8 +338,9 @@ function onFocusOut(event: FocusEvent) {
         :step="step"
         :locale="locale"
       />
+      <!-- Prefix/suffix go through `useSlotOutlet` components: a `<slot>` outlet here would make Vue flag the root's slots as forwarded and re-render the root on every render -->
       <div v-if="hasPrefix" data-slot="color-input-group-prefix" :class="ui.prefix({ class: props.ui?.prefix })">
-        <slot name="prefix" />
+        <PrefixOutlet />
       </div>
       <ColorFieldInput
         :id="id"
@@ -340,18 +353,24 @@ function onFocusOut(event: FocusEvent) {
         @keydown="onInputKeydown"
       />
       <div v-if="hasSuffix" data-slot="color-input-group-suffix" :class="ui.suffix({ class: props.ui?.suffix })">
-        <slot name="suffix" />
+        <SuffixOutlet />
       </div>
     </ColorFieldRoot>
-    <Description v-if="hasDescription" :id="descriptionId">
+    <Description v-if="hasDescription && $slots.description" :id="descriptionId">
       <slot name="description">
         {{ description }}
       </slot>
     </Description>
-    <FieldError v-if="hasError" :id="errorId">
+    <Description v-else-if="hasDescription" :id="descriptionId">
+      {{ description }}
+    </Description>
+    <FieldError v-if="hasError && $slots.error" :id="errorId">
       <slot name="error" v-bind="validation">
         {{ errorMessage ?? validation.validationErrors.join(' ') }}
       </slot>
+    </FieldError>
+    <FieldError v-else-if="hasError" :id="errorId">
+      {{ errorMessage ?? validation.validationErrors.join(' ') }}
     </FieldError>
   </div>
 </template>

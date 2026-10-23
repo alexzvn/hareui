@@ -183,15 +183,19 @@ function onUpdate(value: string[]) {
     @update:model-value="onUpdate"
   >
     <!-- `as` falls through to Reka `Label`: the group label names the group via aria-labelledby, not a form control -->
-    <Label v-if="hasLabel" :id="labelId" as="span" :disabled="isDisabled">
+    <!-- Split so the no-slot branch has no forwarded `<slot>` and doesn't force-update the child on every render -->
+    <Label v-if="hasLabel && $slots.label" :id="labelId" as="span" :disabled="isDisabled">
       <slot name="label">{{ label }}</slot>
     </Label>
-    <Description v-if="hasDescription" :id="descriptionId">
+    <Label v-else-if="hasLabel" :id="labelId" as="span" :disabled="isDisabled">{{ label }}</Label>
+    <Description v-if="hasDescription && $slots.description" :id="descriptionId">
       <slot name="description">{{ description }}</slot>
     </Description>
+    <Description v-else-if="hasDescription" :id="descriptionId">{{ description }}</Description>
     <slot />
-    <FieldError v-if="hasError" :id="errorId">
+    <FieldError v-if="hasError && $slots.error" :id="errorId">
       <slot name="error" v-bind="validation">{{ errorMessage ?? validation.validationErrors.join(' ') }}</slot>
     </FieldError>
+    <FieldError v-else-if="hasError" :id="errorId">{{ errorMessage ?? validation.validationErrors.join(' ') }}</FieldError>
   </CheckboxGroupRoot>
 </template>

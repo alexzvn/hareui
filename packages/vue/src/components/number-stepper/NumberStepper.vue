@@ -114,6 +114,7 @@ import { NumberFieldDecrement, NumberFieldIncrement, NumberFieldInput, NumberFie
 import { computed, getCurrentInstance, ref, toRef, useAttrs, useId, useTemplateRef, watch } from 'vue'
 import { useComponentUI } from '../../composables/useComponentUI'
 import { useFieldValidation } from '../../composables/useFieldValidation'
+import { useSlotOutlet } from '../../composables/useSlotOutlet'
 import { snapNumber } from '../../utils/number'
 import Button from '../button/Button.vue'
 import Description from '../description/Description.vue'
@@ -126,6 +127,9 @@ defineOptions({ inheritAttrs: false })
 // `invalid: undefined`: an absent boolean would cast to `false`, which counts as controlled-valid and hides validation errors
 const props = withDefaults(defineProps<NumberStepperProps>(), { increment: true, decrement: true, invalid: undefined })
 const slots = defineSlots<NumberStepperSlots>()
+const DecrementOutlet = useSlotOutlet(slots, 'decrement')
+const IncrementOutlet = useSlotOutlet(slots, 'increment')
+const ValueOutlet = useSlotOutlet(slots, 'value')
 /** The numeric value; `undefined` while empty. */
 const modelValue = defineModel<number | null>()
 const instance = getCurrentInstance()
@@ -242,10 +246,14 @@ const ui = useComponentUI('numberStepper', theme, () => ({ size: props.size, rev
     :data-readonly="readonly ? 'true' : undefined"
     :class="ui.base({ class: [props.ui?.base, props.class] })"
   >
-    <Label v-if="hasLabel" :for="id" :disabled="isDisabled" :invalid="invalid" :required="required">
+    <!-- Label/Description/FieldError render their `<slot>` outlet only when that slot is passed: a forwarded slot would otherwise make Vue force-update the child on every render -->
+    <Label v-if="hasLabel && $slots.label" :for="id" :disabled="isDisabled" :invalid="invalid" :required="required">
       <slot name="label">
         {{ label }}
       </slot>
+    </Label>
+    <Label v-else-if="hasLabel" :for="id" :disabled="isDisabled" :invalid="invalid" :required="required">
+      {{ label }}
     </Label>
     <NumberFieldRoot
       v-slot="{ modelValue: current, textValue }"
@@ -268,14 +276,15 @@ const ui = useComponentUI('numberStepper', theme, () => ({ size: props.size, rev
       :class="ui.group({ class: props.ui?.group })"
       @update:model-value="onUpdate"
     >
+      <!-- Slots inside the root's content go through `useSlotOutlet` components: a `<slot>` outlet here would make Vue flag the root's slots as forwarded and re-render the root and its buttons on every render -->
       <template v-if="decrement">
         <NumberFieldDecrement v-if="decrementButton" as-child :aria-label="decrementLabel" :aria-controls="id">
           <Button v-bind="decrementButton" icon-only data-slot="number-stepper-decrement-button" :class="props.ui?.decrementButton">
-            <slot name="decrement">
+            <DecrementOutlet>
               <svg aria-hidden="true" fill="none" height="16" viewBox="0 0 16 16" width="16" xmlns="http://www.w3.org/2000/svg">
                 <path clip-rule="evenodd" d="M1.75 8a.75.75 0 0 1 .75-.75h11a.75.75 0 0 1 0 1.5h-11A.75.75 0 0 1 1.75 8" fill="currentColor" fill-rule="evenodd" />
               </svg>
-            </slot>
+            </DecrementOutlet>
           </Button>
         </NumberFieldDecrement>
         <NumberFieldDecrement
@@ -285,29 +294,29 @@ const ui = useComponentUI('numberStepper', theme, () => ({ size: props.size, rev
           :aria-controls="id"
           :class="ui.decrementButton({ class: props.ui?.decrementButton })"
         >
-          <slot name="decrement">
+          <DecrementOutlet>
             <svg aria-hidden="true" fill="none" height="16" viewBox="0 0 16 16" width="16" xmlns="http://www.w3.org/2000/svg">
               <path clip-rule="evenodd" d="M1.75 8a.75.75 0 0 1 .75-.75h11a.75.75 0 0 1 0 1.5h-11A.75.75 0 0 1 1.75 8" fill="currentColor" fill-rule="evenodd" />
             </svg>
-          </slot>
+          </DecrementOutlet>
         </NumberFieldDecrement>
       </template>
       <span data-slot="number-stepper-value" aria-hidden="true" :class="ui.value({ class: props.ui?.value })">
-        <slot name="value" :value="current ?? undefined" :formatted-value="textValue">
+        <ValueOutlet v-bind="{ value: current ?? undefined, formattedValue: textValue }">
           <NumberFlow v-if="current != null" :value="current" :format="flowFormat" :locales="locale" />
           <template v-else>
             {{ textValue }}
           </template>
-        </slot>
+        </ValueOutlet>
       </span>
       <template v-if="increment">
         <NumberFieldIncrement v-if="incrementButton" as-child :aria-label="incrementLabel" :aria-controls="id">
           <Button v-bind="incrementButton" icon-only data-slot="number-stepper-increment-button" :class="props.ui?.incrementButton">
-            <slot name="increment">
+            <IncrementOutlet>
               <svg aria-hidden="true" fill="none" height="16" viewBox="0 0 16 16" width="16" xmlns="http://www.w3.org/2000/svg">
                 <path clip-rule="evenodd" d="M8 1.75a.75.75 0 0 1 .75.75v4.75h4.75a.75.75 0 0 1 0 1.5H8.75v4.75a.75.75 0 0 1-1.5 0V8.75H2.5a.75.75 0 0 1 0-1.5h4.75V2.5A.75.75 0 0 1 8 1.75" fill="currentColor" fill-rule="evenodd" />
               </svg>
-            </slot>
+            </IncrementOutlet>
           </Button>
         </NumberFieldIncrement>
         <NumberFieldIncrement
@@ -317,11 +326,11 @@ const ui = useComponentUI('numberStepper', theme, () => ({ size: props.size, rev
           :aria-controls="id"
           :class="ui.incrementButton({ class: props.ui?.incrementButton })"
         >
-          <slot name="increment">
+          <IncrementOutlet>
             <svg aria-hidden="true" fill="none" height="16" viewBox="0 0 16 16" width="16" xmlns="http://www.w3.org/2000/svg">
               <path clip-rule="evenodd" d="M8 1.75a.75.75 0 0 1 .75.75v4.75h4.75a.75.75 0 0 1 0 1.5H8.75v4.75a.75.75 0 0 1-1.5 0V8.75H2.5a.75.75 0 0 1 0-1.5h4.75V2.5A.75.75 0 0 1 8 1.75" fill="currentColor" fill-rule="evenodd" />
             </svg>
-          </slot>
+          </IncrementOutlet>
         </NumberFieldIncrement>
       </template>
       <NumberFieldInput
@@ -337,15 +346,21 @@ const ui = useComponentUI('numberStepper', theme, () => ({ size: props.size, rev
         @keydown.capture="onKeydownCapture"
       />
     </NumberFieldRoot>
-    <Description v-if="hasDescription" :id="descriptionId">
+    <Description v-if="hasDescription && $slots.description" :id="descriptionId">
       <slot name="description">
         {{ description }}
       </slot>
     </Description>
-    <FieldError v-if="hasError" :id="errorId">
+    <Description v-else-if="hasDescription" :id="descriptionId">
+      {{ description }}
+    </Description>
+    <FieldError v-if="hasError && $slots.error" :id="errorId">
       <slot name="error" v-bind="validation">
         {{ errorMessage ?? validation.validationErrors.join(' ') }}
       </slot>
+    </FieldError>
+    <FieldError v-else-if="hasError" :id="errorId">
+      {{ errorMessage ?? validation.validationErrors.join(' ') }}
     </FieldError>
   </div>
   <input v-if="name" type="hidden" :name="name" :value="formValue ?? ''" :disabled="isDisabled || undefined">

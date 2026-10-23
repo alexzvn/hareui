@@ -246,8 +246,12 @@ const groupUiProps = computed<DateInputGroupProps['ui']>(() => ({
   >
     <template #default="{ segments }">
       <!-- `as` falls through to Reka `Label`: the group label names the input group via aria-labelledby, not a single form control (HeroUI renders a span) -->
-      <Label v-if="hasLabel" :id="labelId" as="span" :disabled="disabled" :invalid="invalid" :required="required">
+      <!-- Each slot site is split so the no-slot branch isn't compiled as a forwarded slot, which would force-update the child on every render -->
+      <Label v-if="hasLabel && $slots.label" :id="labelId" as="span" :disabled="disabled" :invalid="invalid" :required="required">
         <slot name="label">{{ label }}</slot>
+      </Label>
+      <Label v-else-if="hasLabel" :id="labelId" as="span" :disabled="disabled" :invalid="invalid" :required="required">
+        {{ label }}
       </Label>
       <DateInputGroup
         :segments="wrapBidiIsolate(dropDanglingTimeZoneSeparator(segments))"
@@ -266,11 +270,17 @@ const groupUiProps = computed<DateInputGroupProps['ui']>(() => ({
           <slot name="suffix" />
         </template>
       </DateInputGroup>
-      <Description v-if="hasDescription" :id="descriptionId">
+      <Description v-if="hasDescription && $slots.description" :id="descriptionId">
         <slot name="description">{{ description }}</slot>
       </Description>
-      <FieldError v-if="hasError" :id="errorId">
+      <Description v-else-if="hasDescription" :id="descriptionId">
+        {{ description }}
+      </Description>
+      <FieldError v-if="hasError && $slots.error" :id="errorId">
         <slot name="error" v-bind="validation">{{ errorMessage ?? validation.validationErrors.join(' ') }}</slot>
+      </FieldError>
+      <FieldError v-else-if="hasError" :id="errorId">
+        {{ errorMessage ?? validation.validationErrors.join(' ') }}
       </FieldError>
     </template>
   </DateFieldRoot>

@@ -422,8 +422,12 @@ function focusFirstSegment() {
       @keydown.capture="onFieldKeydown"
       @focusout="onFieldFocusOut"
     >
-      <Label v-if="hasLabel" :id="labelId" as="span" :disabled="disabled" :invalid="invalid" :required="required">
+      <!-- Each slot site is split so the no-slot branch isn't compiled as a forwarded slot, which would force-update the child on every render -->
+      <Label v-if="hasLabel && $slots.label" :id="labelId" as="span" :disabled="disabled" :invalid="invalid" :required="required">
         <slot name="label">{{ label }}</slot>
+      </Label>
+      <Label v-else-if="hasLabel" :id="labelId" as="span" :disabled="disabled" :invalid="invalid" :required="required">
+        {{ label }}
       </Label>
       <DateRangePickerAnchor as-child>
         <DateInputGroup
@@ -482,11 +486,17 @@ function focusFirstSegment() {
         :disabled="disabled"
         @focus="focusFirstSegment"
       />
-      <Description v-if="hasDescription" :id="descriptionId">
+      <Description v-if="hasDescription && $slots.description" :id="descriptionId">
         <slot name="description">{{ description }}</slot>
       </Description>
-      <FieldError v-if="hasError" :id="errorId">
+      <Description v-else-if="hasDescription" :id="descriptionId">
+        {{ description }}
+      </Description>
+      <FieldError v-if="hasError && $slots.error" :id="errorId">
         <slot name="error" v-bind="validation">{{ errorMessage ?? validation.validationErrors.join(' ') }}</slot>
+      </FieldError>
+      <FieldError v-else-if="hasError" :id="errorId">
+        {{ errorMessage ?? validation.validationErrors.join(' ') }}
       </FieldError>
     </DateRangePickerField>
     <PopoverPortal :disabled="portalTarget.disabled" :to="portalTarget.to">

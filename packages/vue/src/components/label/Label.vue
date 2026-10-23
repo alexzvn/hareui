@@ -35,7 +35,6 @@ export interface LabelSlots {
 </script>
 
 <script setup lang="ts">
-import { Label } from 'reka-ui'
 import { useComponentUI } from '../../composables/useComponentUI'
 
 const props = defineProps<LabelProps>()
@@ -46,10 +45,17 @@ const ui = useComponentUI('label', theme, () => ({
   invalid: props.invalid,
   required: props.required,
 }))
+
+// Same as reka's `Label`: block text selection on double-click. A native element keeps `<Label>` from
+// mounting a reka `Label` + `Primitive` pair per field. A user `@mousedown` falls through and runs after this.
+function onMousedown(event: MouseEvent) {
+  if (!event.defaultPrevented && event.detail > 1)
+    event.preventDefault()
+}
 </script>
 
 <template>
-  <Label :for="props.for" data-slot="label" :class="ui.base({ class: [props.ui?.base, props.class] })">
+  <label :for="props.for" data-slot="label" :class="ui.base({ class: [props.ui?.base, props.class] })" @mousedown="onMousedown">
     <slot />
-  </Label>
+  </label>
 </template>

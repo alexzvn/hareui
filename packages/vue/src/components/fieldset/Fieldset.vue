@@ -67,10 +67,14 @@ const ui = useComponentUI('fieldset', theme, () => ({}))
         {{ legend }}
       </slot>
     </legend>
-    <Description v-if="description || slots.description" :class="ui.description({ class: props.ui?.description })">
+    <!-- Split so Description's slot is only forwarded (and force-updated) when a `description` slot is passed. -->
+    <Description v-if="slots.description" :class="ui.description({ class: props.ui?.description })">
       <slot name="description">
         {{ description }}
       </slot>
+    </Description>
+    <Description v-else-if="description" :class="ui.description({ class: props.ui?.description })">
+      {{ description }}
     </Description>
     <div v-if="slots.default" data-slot="fieldset-field-group" :class="ui.fieldGroup({ class: props.ui?.fieldGroup })">
       <slot />

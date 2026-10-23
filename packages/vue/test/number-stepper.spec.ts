@@ -2,7 +2,8 @@ import NumberFlow from '@number-flow/vue'
 import type { VueWrapper } from '@vue/test-utils'
 import { flushPromises, mount } from '@vue/test-utils'
 import { describe, expect, it, vi } from 'vitest'
-import { h, nextTick, reactive } from 'vue'
+import type { ComponentOptions } from 'vue'
+import { defineComponent, h, nextTick, reactive, ref } from 'vue'
 import * as z from 'zod'
 import Form from '../src/components/form/Form.vue'
 import NumberStepper from '../src/components/number-stepper/NumberStepper.vue'
@@ -148,6 +149,58 @@ describe('NumberStepper', () => {
     await submit()
     expect(wrapper.find('[data-slot=field-error]').exists()).toBe(false)
     expect(onSubmit.mock.calls[0]![0].data).toEqual({ guests: 2 })
+    wrapper.unmount()
+  })
+})
+
+describe('NumberStepper slot outlets', () => {
+  it('#decrement / #increment / #value toggled by a parent v-if switch between custom content and the fallback', async () => {
+    const show = ref(true)
+    const wrapper = mount(defineComponent({
+      components: { NumberStepper },
+      setup: () => ({ show }),
+      template: `<NumberStepper :default-value="1">
+        <template v-if="show" #decrement><i data-test="minus" /></template>
+        <template v-if="show" #increment><i data-test="plus" /></template>
+        <template v-if="show" #value="{ value, formattedValue }"><b data-test="value">{{ value }}|{{ formattedValue }}</b></template>
+      </NumberStepper>`,
+    }))
+    const custom = () => ['minus', 'plus', 'value'].map(t => wrapper.find(`[data-test=${t}]`).exists())
+    expect(custom()).toEqual([true, true, true])
+    expect(wrapper.get('[data-test=value]').text()).toBe('1|1')
+    expect(wrapper.get(dec).find('svg').exists()).toBe(false)
+
+    show.value = false
+    await nextTick()
+    expect(custom()).toEqual([false, false, false])
+    expect(wrapper.get(dec).find('svg').exists()).toBe(true)
+    expect(wrapper.get(inc).find('svg').exists()).toBe(true)
+    expect(wrapper.findComponent(NumberFlow).exists()).toBe(true)
+
+    show.value = true
+    await nextTick()
+    expect(custom()).toEqual([true, true, true])
+    expect(wrapper.get(inc).find('svg').exists()).toBe(false)
+    wrapper.unmount()
+  })
+
+  it('changing only `description` does not re-render the stepper buttons', async () => {
+    let buttonUpdates = 0
+    const countButtonUpdates: ComponentOptions = {
+      updated() {
+        if (this.$el instanceof Element && this.$el.matches(`${inc}, ${dec}`))
+          buttonUpdates++
+      },
+    }
+    const wrapper = mount(NumberStepper, { props: { label: 'Guests', description: 'A', defaultValue: 1 }, global: { mixins: [countButtonUpdates] } })
+    // reka's form-control check is computed before the input mounts and catches up on the first update of any kind
+    await wrapper.setProps({ description: 'B' })
+    buttonUpdates = 0
+    await wrapper.setProps({ description: 'C' })
+    expect(wrapper.get('[data-slot=description]').text()).toBe('C')
+    expect(wrapper.find(inc).exists()).toBe(true)
+    expect(wrapper.find(dec).exists()).toBe(true)
+    expect(buttonUpdates).toBe(0)
     wrapper.unmount()
   })
 })

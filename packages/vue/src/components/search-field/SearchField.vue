@@ -193,10 +193,14 @@ const ui = useComponentUI('searchField', theme, () => ({ variant: props.variant,
     :data-empty="isEmpty ? 'true' : undefined"
     :class="ui.base({ class: [props.ui?.base, props.class] })"
   >
-    <Label v-if="hasLabel" :for="id" :disabled="disabled" :invalid="invalid" :required="required">
+    <!-- Each part renders the `<slot>` outlet only when that slot is passed: a forwarded slot would otherwise make Vue force-update the child on every render -->
+    <Label v-if="hasLabel && $slots.label" :for="id" :disabled="disabled" :invalid="invalid" :required="required">
       <slot name="label">
         {{ label }}
       </slot>
+    </Label>
+    <Label v-else-if="hasLabel" :for="id" :disabled="disabled" :invalid="invalid" :required="required">
+      {{ label }}
     </Label>
     <div
       data-slot="search-field-group"
@@ -234,6 +238,7 @@ const ui = useComponentUI('searchField', theme, () => ({ variant: props.variant,
         @keydown.esc="onEscape"
       >
       <CloseButton
+        v-if="slots.clearIcon"
         data-slot="search-field-clear-button"
         aria-label="Clear search"
         tabindex="-1"
@@ -242,20 +247,34 @@ const ui = useComponentUI('searchField', theme, () => ({ variant: props.variant,
         @mousedown.prevent
         @click="onClear"
       >
-        <template v-if="slots.clearIcon" #default>
-          <slot name="clearIcon" />
-        </template>
+        <slot name="clearIcon" />
       </CloseButton>
+      <CloseButton
+        v-else
+        data-slot="search-field-clear-button"
+        aria-label="Clear search"
+        tabindex="-1"
+        :disabled="disabled || readonly || undefined"
+        :class="ui.clearButton({ class: props.ui?.clearButton })"
+        @mousedown.prevent
+        @click="onClear"
+      />
     </div>
-    <Description v-if="hasDescription" :id="descriptionId">
+    <Description v-if="hasDescription && $slots.description" :id="descriptionId">
       <slot name="description">
         {{ description }}
       </slot>
     </Description>
-    <FieldError v-if="hasError" :id="errorId">
+    <Description v-else-if="hasDescription" :id="descriptionId">
+      {{ description }}
+    </Description>
+    <FieldError v-if="hasError && $slots.error" :id="errorId">
       <slot name="error" v-bind="validation">
         {{ errorMessage ?? validation.validationErrors.join(' ') }}
       </slot>
+    </FieldError>
+    <FieldError v-else-if="hasError" :id="errorId">
+      {{ errorMessage ?? validation.validationErrors.join(' ') }}
     </FieldError>
   </div>
 </template>
