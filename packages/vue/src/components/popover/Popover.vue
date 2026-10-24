@@ -83,11 +83,11 @@ import {
   PopoverRoot,
   PopoverTrigger,
 } from 'reka-ui'
-import { computed, onBeforeUnmount, ref, useId, useSlots, watch } from 'vue'
-import { preventNestedLayerDismiss } from '../../composables/nestedLayer'
+import { computed, ref, useId, useSlots, watch } from 'vue'
 import { useComponentUI } from '../../composables/useComponentUI'
 import { useInertOutside } from '../../composables/useInertOutside'
 import { usePortal } from '../../composables/usePortal'
+import { useLayerDismiss } from '@/composables/useLayerDismiss'
 
 // `open: undefined` stops Vue casting an absent boolean prop to `false`, so uncontrolled mode and `defaultOpen` apply
 const props = withDefaults(defineProps<PopoverProps>(), {
@@ -123,59 +123,20 @@ function setOpen(value: boolean) {
 // content instance stays mounted while closed and its `$el` isn't reactive, so re-read it on every open.
 useInertOutside(() => isOpen.value ? contentRef.value?.$el : null, isOpen)
 
-function preventIfNotDismissible(event: Event) {
-  if (!props.dismissible)
-    event.preventDefault()
-}
-
-function onInteractOutside(event: CustomEvent<{ originalEvent: Event }>) {
-  preventNestedLayerDismiss(event, dialogRef.value?.closest('[data-dismissable-layer]'))
-  preventIfNotDismissible(event)
-}
-
-// Outside pointerdown already handled by `onDocumentPointerDown`, so Reka must not dismiss a second time.
-let handledOutsideEvent: Event | undefined
-
 // React Aria's useInteractOutside only reacts to the primary button, so a right click outside keeps the popover open.
-function onPointerDownOutside(event: CustomEvent<{ originalEvent: PointerEvent }>) {
-  const original = event.detail.originalEvent
-  if (!props.dismissible || original === handledOutsideEvent || original.button > 0)
-    event.preventDefault()
-}
-
-// Reka's DismissableLayer only starts listening for outside pointerdowns a task after the content mounts,
-// so a press right after opening is lost. React Aria listens as soon as the popover is open: cover that gap
-// for events created after the popover opened (the opening press itself is older and is ignored).
-let openedAt = 0
-function onDocumentPointerDown(event: PointerEvent) {
-  const content = dialogRef.value?.closest<HTMLElement>('[data-dismissable-layer]')
-  // The composed path's first node: inside a shadow root `event.target` is the shadow host.
-  const target = event.composedPath()[0]
-  if (!content || !isOpen.value || !props.dismissible || event.button > 0 || event.timeStamp < openedAt || !(target instanceof Element))
-    return
-  // Only the topmost layer reacts, and presses inside any dismissable layer are left to Reka (nested overlays).
-  const layers = (content.getRootNode() as Document | ShadowRoot).querySelectorAll('[data-dismissable-layer]')
-  if (layers[layers.length - 1] !== content || target.closest('[data-dismissable-layer]'))
-    return
-  handledOutsideEvent = event
-  setOpen(false)
-}
-
-function stopListening() {
-  document.removeEventListener('pointerdown', onDocumentPointerDown, true)
-}
-watch(dialogRef, (el) => {
-  stopListening()
-  if (el) {
-    // Reka hard-codes `aria-labelledby` to the trigger id below any attrs we pass, so relabel the dialog
-    // here; Vue never re-patches it because Reka's value doesn't change between renders.
-    if (hasHeading.value)
-      el.closest('[role=dialog]')?.setAttribute('aria-labelledby', headingId)
-    openedAt = performance.now()
-    document.addEventListener('pointerdown', onDocumentPointerDown, true)
-  }
+const { onEscapeKeyDown, onInteractOutside } = useLayerDismiss({
+  content: () => contentRef.value?.$el,
+  isDismissible: () => props.dismissible,
+  shouldIgnoreSecondaryButton: true,
+  earlyPress: { isOpen, onDismiss: () => setOpen(false) },
 })
-onBeforeUnmount(stopListening)
+
+// Reka hard-codes `aria-labelledby` to the trigger id below any attrs we pass, so relabel the dialog
+// here; Vue never re-patches it because Reka's value doesn't change between renders.
+watch(dialogRef, (el) => {
+  if (el && hasHeading.value)
+    el.closest('[role=dialog]')?.setAttribute('aria-labelledby', headingId)
+})
 
 // React Aria moves focus into the dialog element itself when the popover opens;
 // Reka's PopperContent otherwise focuses its own root, so redirect it here to match.
@@ -206,8 +167,7 @@ const contentOffset = computed(() => props.sideOffset - (props.arrow ? ARROW_HEI
         :avoid-collisions="flip"
         :collision-padding="8"
         :class="ui.base({ class: [props.ui?.base, props.class] })"
-        @escape-key-down="preventIfNotDismissible"
-        @pointer-down-outside="onPointerDownOutside"
+        @escape-key-down="onEscapeKeyDown"
         @interact-outside="onInteractOutside"
         @open-auto-focus="onOpenAutoFocus"
       >

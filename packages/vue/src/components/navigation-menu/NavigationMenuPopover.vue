@@ -4,6 +4,7 @@ import { HoverCardContent, HoverCardPortal, HoverCardRoot, HoverCardTrigger } fr
 import { nextTick, onBeforeUnmount, onMounted, ref, useId, watch } from 'vue'
 import { useComponentUI } from '../../composables/useComponentUI'
 import { usePortal } from '../../composables/usePortal'
+import { TOOLTIP_OPEN_EVENT } from '@/composables/nestedLayer'
 import Popover from '../popover/Popover.vue'
 import popoverTheme from '../popover/theme'
 
@@ -33,21 +34,20 @@ const open = ref(false)
 // Reka's `tooltip.open` event closes every other tooltip at once. Opening a hover popover sends it too,
 // and listens for it, so moving down a collapsed rail swaps tooltips and popovers instantly instead of
 // the previous one lingering for its close delay next to the new one.
-const TOOLTIP_OPEN = 'tooltip.open'
 let announcing = false
 watch(open, (value) => {
   if (!value)
     return
   announcing = true
-  document.dispatchEvent(new CustomEvent(TOOLTIP_OPEN))
+  document.dispatchEvent(new CustomEvent(TOOLTIP_OPEN_EVENT))
   announcing = false
 })
 function onOtherOpen() {
   if (!announcing)
     open.value = false
 }
-onMounted(() => document.addEventListener(TOOLTIP_OPEN, onOtherOpen))
-onBeforeUnmount(() => document.removeEventListener(TOOLTIP_OPEN, onOtherOpen))
+onMounted(() => document.addEventListener(TOOLTIP_OPEN_EVENT, onOtherOpen))
+onBeforeUnmount(() => document.removeEventListener(TOOLTIP_OPEN_EVENT, onOtherOpen))
 
 // Keyboard access to the hover card, which Reka leaves to the pointer: the side's arrow key (and Enter / Space
 // on a button trigger) opens it and moves focus to its first link; it stays open while focus is inside, Escape

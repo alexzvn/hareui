@@ -146,10 +146,10 @@ function ensureLongPressDescription() {
 import type { DropdownContext, DropdownSelectionGroup } from './context'
 import { DropdownMenuContent, DropdownMenuPortal, DropdownMenuRoot, DropdownMenuTrigger } from 'reka-ui'
 import { computed, onBeforeUnmount, onMounted, provide, ref } from 'vue'
-import { preventNestedLayerDismiss } from '../../composables/nestedLayer'
 import { useComponentUI } from '../../composables/useComponentUI'
 import { useInertOutside } from '../../composables/useInertOutside'
 import { usePortal } from '../../composables/usePortal'
+import { useLayerDismiss } from '@/composables/useLayerDismiss'
 import descriptionTheme from '../description/theme'
 import labelTheme from '../label/theme'
 import { dropdownContextKey, enabledMenuItems } from './context'
@@ -187,6 +187,8 @@ function setOpen(value: boolean) {
 // interactive). `isOpen` turns false synchronously in `setOpen` and with the `open` prop. The content
 // instance stays mounted while closed and its `$el` isn't reactive, so re-read it on every open.
 useInertOutside(() => isOpen.value ? contentRef.value?.$el : null, isOpen)
+// Reka's menu dismisses on any button outside (unlike Popover) and on every Escape; only the Layer stack is checked here.
+const { onInteractOutside } = useLayerDismiss({ content: () => contentRef.value?.$el })
 
 const selectedState = ref<DropdownValue[]>(props.defaultValue ?? [])
 const selected = computed(() => props.modelValue ?? selectedState.value)
@@ -394,7 +396,7 @@ onBeforeUnmount(() => {
         :collision-padding="12"
         data-slot="dropdown-popover"
         :class="ui.popover({ class: [props.ui?.popover, props.class] })"
-        @interact-outside="preventNestedLayerDismiss($event, contentRef?.$el)"
+        @interact-outside="onInteractOutside"
         @open-auto-focus="onOpenAutoFocus"
         @keydown="onMenuKeydown"
       >

@@ -99,7 +99,7 @@ import {
   DialogTrigger,
   VisuallyHidden,
 } from 'reka-ui'
-import { useSlots } from 'vue'
+import { useSlots, useTemplateRef } from 'vue'
 import { useComponentUI } from '../../composables/useComponentUI'
 import { useDialogShell } from '../../composables/useDialogShell'
 import CloseButton from '../close-button/CloseButton.vue'
@@ -123,21 +123,21 @@ const ui = useComponentUI('alertDialog', theme, () => ({
   placement: props.placement,
 }))
 
+const dialogContent = useTemplateRef<{ $el: HTMLElement }>('dialogContent')
 const {
-  dialogContent,
   portalTarget,
   visualViewportHeight,
   showHeaderTitle,
   hasHeader,
   onOpenChange,
   onEscapeKeyDown,
-  onPointerDownOutside,
   onInteractOutside,
   onOpenAutoFocus,
 } = useDialogShell({
   props,
   slots,
   emit,
+  dialogContent,
   // HeroUI's AlertDialog.Backdrop: `isDismissable = false`, `isKeyboardDismissDisabled = true`.
   keyboardDismissible: () => props.keyboardDismissible,
   headerExtras: () => props.icon,
@@ -165,7 +165,6 @@ const {
             :aria-describedby="undefined"
             :class="ui.dialog({ class: [props.ui?.dialog, props.class] })"
             @escape-key-down="onEscapeKeyDown"
-            @pointer-down-outside="onPointerDownOutside"
             @interact-outside="onInteractOutside"
             @open-auto-focus="onOpenAutoFocus"
           >

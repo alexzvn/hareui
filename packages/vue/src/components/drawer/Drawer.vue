@@ -87,7 +87,7 @@ import {
   DialogTrigger,
   VisuallyHidden,
 } from 'reka-ui'
-import { computed, useSlots } from 'vue'
+import { computed, useSlots, useTemplateRef } from 'vue'
 import { useComponentUI } from '../../composables/useComponentUI'
 import { useDialogShell } from '../../composables/useDialogShell'
 import CloseButton from '../close-button/CloseButton.vue'
@@ -110,21 +110,21 @@ const ui = useComponentUI('drawer', theme, () => ({
   variant: props.variant,
 }))
 
+const dialogContent = useTemplateRef<{ $el: HTMLElement }>('dialogContent')
 const {
-  dialogContent,
   portalTarget,
   visualViewportHeight,
   showHeaderTitle,
   hasHeader,
   onOpenChange,
   onEscapeKeyDown,
-  onPointerDownOutside,
   onInteractOutside,
   onOpenAutoFocus,
 } = useDialogShell({
   props,
   slots,
   emit,
+  dialogContent,
   keyboardDismissible: () => props.keyboardDismissible,
 })
 
@@ -244,7 +244,6 @@ function onDragEnd(event: PointerEvent, close: () => void) {
             :style="dismissible ? { touchAction: 'none' } : undefined"
             :class="ui.dialog({ class: [props.ui?.dialog, props.class] })"
             @escape-key-down="onEscapeKeyDown"
-            @pointer-down-outside="onPointerDownOutside"
             @interact-outside="onInteractOutside"
             @open-auto-focus="onOpenAutoFocus"
             @pointerdown="onDragStart"

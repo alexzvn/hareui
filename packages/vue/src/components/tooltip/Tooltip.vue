@@ -84,6 +84,7 @@ import { computed, onBeforeUnmount, ref, watch } from 'vue'
 import { TooltipArrow, TooltipContent, TooltipPortal, TooltipProvider, TooltipRoot, TooltipTrigger } from 'reka-ui'
 import { useComponentUI } from '../../composables/useComponentUI'
 import { usePortal } from '../../composables/usePortal'
+import { TOOLTIP_OPEN_EVENT } from '@/composables/nestedLayer'
 
 // `open: undefined` stops Vue casting an absent boolean prop to `false`, so uncontrolled mode and `defaultOpen` apply
 const props = withDefaults(defineProps<TooltipProps>(), {
@@ -176,7 +177,7 @@ function resetPointerLeft() {
 }
 
 // Only needed while a delayed close is possible: any other interaction clears `pointerLeft`.
-const RESET_EVENTS = ['pointerdown', 'keydown', 'blur', 'focus', 'tooltip.open']
+const RESET_EVENTS = ['pointerdown', 'keydown', 'blur', 'focus', TOOLTIP_OPEN_EVENT]
 function toggleResetListeners(on: boolean) {
   for (const type of RESET_EVENTS) {
     if (on)
