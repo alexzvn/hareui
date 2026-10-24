@@ -1,17 +1,16 @@
 import type { ComputedRef, Ref } from 'vue'
 import type { ChartLegendProps } from '../chart-legend'
-import type { ChartTooltipContentEntry } from '../chart-tooltip'
 import type { ChartGridProps } from './ChartGrid.vue'
-import type { ChartTooltipProps, ChartTooltipSlotProps } from './ChartTooltip.vue'
+import type { ChartTooltipProps } from './ChartTooltip.vue'
 import type { ChartXAxisProps } from './ChartXAxis.vue'
 import type { ChartYAxisProps } from './ChartYAxis.vue'
 import type { ChartAxisTickSlotProps } from './axis'
 import type { ChartContext } from './context'
+import type { ChartFrameConfig, ChartFrameSlots } from './frame'
 import type {
   ChartAreaSeries,
   ChartBarSeries,
   ChartIndexKey,
-  ChartLegendItem,
   ChartLegendPosition,
   ChartLineSeries,
   ChartSeriesBase,
@@ -19,12 +18,12 @@ import type {
 } from './series-config'
 import type { ChartLayout, ChartMargin } from './types'
 import { computed } from 'vue'
+import { resolveFrameLegend } from './frame'
 import {
   barEndRadius,
   chartDefaults,
   isChartGenerated,
   normalizeSeriesInput,
-  resolveChartLegend,
   resolveChartPart,
   resolveSeries,
   seriesLegendItems,
@@ -110,17 +109,9 @@ export interface CartesianRootProps<T extends object, S extends ChartSeriesBase>
 }
 
 /** Slots shared by the cartesian roots. */
-export interface CartesianRootSlots {
+export interface CartesianRootSlots extends ChartFrameSlots {
   /** Chart parts (`ChartGrid`, `ChartXAxis`, series, `ChartTooltip`, …) and raw SVG such as `<defs>`. */
   'default'?: () => any
-  /** Replaces the tooltip panel of a chart drawn from props. */
-  'tooltip'?: (props: ChartTooltipSlotProps) => any
-  /** Content under the tooltip rows, e.g. a total. */
-  'tooltip-footer'?: (props: { label?: number | string, payload: ChartTooltipContentEntry[] }) => any
-  /** Replaces the legend. `toggle(key)` hides or shows a series. */
-  'legend'?: (props: { items: ChartLegendItem[], toggle: (key: string) => void }) => any
-  /** Replaces each legend item. */
-  'legend-item'?: (props: { item: ChartLegendItem, index: number, toggle: () => void }) => any
   /** Replaces each x axis tick label. Render SVG (`<text>`). */
   'x-tick'?: (props: ChartAxisTickSlotProps) => any
   /** Replaces each y axis tick label. Render SVG (`<text>`). */
@@ -158,8 +149,8 @@ export interface CartesianAutoSeries {
   props: Record<string, unknown>
 }
 
-/** What a cartesian root draws from its props (rendered by `ChartCartesianAuto`). */
-export interface CartesianAutoConfig {
+/** What a cartesian root draws from its props (rendered by `ChartCartesianFrame`). */
+export interface CartesianAutoConfig extends ChartFrameConfig {
   generated: boolean
   layout: Extract<ChartLayout, 'horizontal' | 'vertical'>
   series: CartesianAutoSeries[]
@@ -167,9 +158,6 @@ export interface CartesianAutoConfig {
   xAxis: Partial<ChartXAxisProps> | null
   yAxis: Partial<ChartYAxisProps> | null
   yAxisRight: Partial<ChartYAxisProps> | null
-  tooltip: Partial<ChartTooltipProps> | null
-  legend: { position: ChartLegendPosition, props: Partial<ChartLegendProps<any>> } | null
-  legendItems: ChartLegendItem[]
 }
 
 type AnySeries = ChartAreaSeries & ChartBarSeries & ChartLineSeries & { type?: CartesianSeriesKind }
@@ -308,12 +296,14 @@ export function useCartesianRoot<T extends object, S extends ChartSeriesBase>(op
       xAxis,
       yAxis,
       yAxisRight,
-      tooltip: resolveChartPart<Partial<ChartTooltipProps>>(props.tooltip, definedProps({
-        valueFormatter: seriesValueFormatter(all, props.valueFormatter) as ChartTooltipProps['valueFormatter'],
-        labelFormatter: props.indexFormatter,
-      }), enabled),
-      legend: resolveChartLegend<Partial<ChartLegendProps<any>>>(props.legend as never)
-        ?? (options.hasLegendSlot() ? { position: 'bottom', props: {} } : null),
+      // Composition mode draws only the slot, so a `ChartTooltip` child stays the single tooltip.
+      tooltip: generated.value
+        ? resolveChartPart<Partial<ChartTooltipProps>>(props.tooltip, definedProps({
+            valueFormatter: seriesValueFormatter(all, props.valueFormatter) as ChartTooltipProps['valueFormatter'],
+            labelFormatter: props.indexFormatter,
+          }), enabled)
+        : null,
+      legend: resolveFrameLegend(props.legend, options.hasLegendSlot()),
       legendItems: seriesLegendItems(all),
     }
   })

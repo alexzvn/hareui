@@ -144,17 +144,16 @@ export interface RadialChartSlots {
 <script setup lang="ts" generic="T extends object">
 import { computed } from 'vue'
 import { useComponentUI } from '../../composables/useComponentUI'
-import ChartLegend from '../chart-legend/ChartLegend.vue'
 import ChartCell from '../chart/ChartCell.vue'
+import ChartFrame from '../chart/ChartFrame.vue'
 import ChartPolarAngleAxis from '../chart/ChartPolarAngleAxis.vue'
 import ChartPolarCenter from '../chart/ChartPolarCenter.vue'
 import ChartRadialBar from '../chart/ChartRadialBar.vue'
-import ChartSurface from '../chart/ChartSurface.vue'
-import ChartTooltip from '../chart/ChartTooltip.vue'
 import { useChartRoot } from '../chart/context'
-import { provideChartLabelViewBox } from '../chart/label'
+import { frameSlotNames } from '../chart/frame'
 import { usePolarChart } from '../chart/polar'
-import { chartDefaults, inferValueKeys, isChartGenerated, resolveChartLegend, resolveChartPart, resolveSlices, toggleHiddenKey } from '../chart/series-config'
+import { providePolarCenterLabel, useSliceRoot } from '../chart/polar-root'
+import { chartDefaults } from '../chart/series-config'
 
 const props = withDefaults(defineProps<RadialChartProps<T>>(), {
   height: 300,
@@ -175,33 +174,12 @@ const props = withDefaults(defineProps<RadialChartProps<T>>(), {
 const slots = defineSlots<RadialChartSlots>()
 const hidden = defineModel<string[]>('hidden', { default: () => [] })
 
-const generated = computed(() => isChartGenerated(props))
-const valueKey = computed(() => props.valueKey ?? (props.index === undefined ? undefined : inferValueKeys(props.data, props.index)[0]))
-const slices = computed(() => (generated.value && props.index !== undefined
-  ? resolveSlices({ data: props.data, index: props.index, valueKey: valueKey.value, colors: props.colors, hidden: hidden.value })
-  : undefined))
-const visibleSlices = computed(() => slices.value?.filter(slice => !slice.hidden) ?? [])
+const { valueKey, slices, visibleSlices, config } = useSliceRoot({ props, hidden, hasLegendSlot: () => !!slots.legend })
 // Full bar: `max`, or the largest value of every ring (hidden ones too, so toggling a ring keeps the scale).
 const domainMax = computed(() => props.max ?? Math.max(0, ...(slices.value ?? []).map(slice => slice.value)))
 
 const startAngle = computed(() => props.startAngle ?? (props.gauge ? chartDefaults.gauge.startAngle : 90))
 const endAngle = computed(() => props.endAngle ?? (props.gauge ? chartDefaults.gauge.endAngle : -270))
-
-// Composition mode renders only the slot, so a `ChartTooltip` child stays the single tooltip.
-const tooltip = computed(() => (generated.value
-  ? resolveChartPart<Partial<ChartTooltipProps>>(props.tooltip, {
-      valueFormatter: props.valueFormatter
-        ? (value: number | string, entry: ChartTooltipContentEntry) => (typeof value === 'number' ? props.valueFormatter!(value, entry.name ?? '') : String(value))
-        : undefined,
-    })
-  : null))
-
-const legend = computed(() => (generated.value ? resolveChartLegend<ChartLegendProps<T>>(props.legend) : null))
-const legendPosition = computed(() => legend.value?.position ?? (generated.value && slots.legend ? 'bottom' : null))
-const legendItems = computed<ChartLegendItem[]>(() => (slices.value ?? []).map(({ key, name, color, hidden, value, percent }) => ({ key, name, color, hidden, value, percent })))
-function toggle(key: string) {
-  hidden.value = toggleHiddenKey(hidden.value, key)
-}
 
 const ui = useComponentUI('radialChart', theme, () => ({}))
 const chart = useChartRoot({
@@ -226,44 +204,23 @@ const polar = usePolarChart(chart, {
   maxBarSize: () => props.maxBarSize,
   slices: () => slices.value,
 })
-
-const centerViewBox = computed(() => ({
-  cx: polar.cx.value,
-  cy: polar.cy.value,
-  innerRadius: 0,
-  outerRadius: polar.innerRadius.value,
-  startAngle: 0,
-  endAngle: 360,
-}))
-provideChartLabelViewBox(() => (chart.width.value > 0 ? centerViewBox.value : null), 'center')
+// The hole inside the innermost ring.
+providePolarCenterLabel(chart, polar, () => polar.innerRadius.value)
 </script>
 
 <template>
-  <ChartSurface
+  <ChartFrame
+    v-model:hidden="hidden"
     data-slot="radial-chart"
     :width="width"
     :height="height"
-    :legend="legendPosition"
+    :config="config"
     :class="ui.base({ class: [props.ui?.base, props.class] })"
   >
-    <template v-if="legendPosition" #legend>
-      <slot name="legend" :items="legendItems" :toggle="toggle">
-        <ChartLegend
-          v-model:hidden="hidden"
-          :items="legendItems"
-          toggleable
-          :orientation="legendPosition === 'left' || legendPosition === 'right' ? 'vertical' : 'horizontal'"
-          :value-formatter="props.valueFormatter"
-          v-bind="legend?.props"
-          :class="[(legendPosition === 'top' || legendPosition === 'bottom') && 'justify-center', chart.classes('legend')]"
-        >
-          <template v-if="slots['legend-item']" #item="item">
-            <slot name="legend-item" v-bind="item" />
-          </template>
-        </ChartLegend>
-      </slot>
+    <template v-for="name in frameSlotNames(slots)" #[name]="scope">
+      <slot :name="name" v-bind="scope as any" />
     </template>
-    <template v-if="slices && valueKey">
+    <template v-if="slices && valueKey" #parts>
       <ChartPolarAngleAxis type="number" :domain="[0, domainMax]" :tick="false" :axis-line="false" />
       <ChartRadialBar
         :data-key="valueKey"
@@ -274,17 +231,11 @@ provideChartLabelViewBox(() => (chart.width.value > 0 ? centerViewBox.value : nu
         <ChartCell v-for="slice in visibleSlices" :key="slice.key" :fill="slice.color" />
       </ChartRadialBar>
     </template>
-    <ChartTooltip v-if="tooltip" v-bind="tooltip">
-      <template v-if="slots.tooltip" #content="content">
-        <slot name="tooltip" v-bind="content" />
-      </template>
-      <template v-if="slots['tooltip-footer']" #footer="footer">
-        <slot name="tooltip-footer" v-bind="footer" />
-      </template>
-    </ChartTooltip>
-    <slot />
-    <ChartPolarCenter v-if="slots.center">
-      <slot name="center" v-bind="polar.center.value" />
-    </ChartPolarCenter>
-  </ChartSurface>
+    <template #default>
+      <slot />
+      <ChartPolarCenter v-if="slots.center">
+        <slot name="center" v-bind="polar.center.value" />
+      </ChartPolarCenter>
+    </template>
+  </ChartFrame>
 </template>

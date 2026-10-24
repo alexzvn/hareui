@@ -93,16 +93,15 @@ export interface PieChartSlots {
 <script setup lang="ts" generic="T extends object">
 import { computed } from 'vue'
 import { useComponentUI } from '../../composables/useComponentUI'
-import ChartLegend from '../chart-legend/ChartLegend.vue'
 import ChartCell from '../chart/ChartCell.vue'
+import ChartFrame from '../chart/ChartFrame.vue'
 import ChartPie from '../chart/ChartPie.vue'
 import ChartPolarCenter from '../chart/ChartPolarCenter.vue'
-import ChartSurface from '../chart/ChartSurface.vue'
-import ChartTooltip from '../chart/ChartTooltip.vue'
 import { useChartRoot } from '../chart/context'
-import { provideChartLabelViewBox } from '../chart/label'
+import { frameSlotNames } from '../chart/frame'
 import { usePolarChart } from '../chart/polar'
-import { chartDefaults, inferValueKeys, isChartGenerated, resolveChartLegend, resolveChartPart, resolveSlices, toggleHiddenKey } from '../chart/series-config'
+import { providePolarCenterLabel, useSliceRoot } from '../chart/polar-root'
+import { chartDefaults } from '../chart/series-config'
 
 const props = withDefaults(defineProps<PieChartProps<T>>(), {
   height: 300,
@@ -115,12 +114,7 @@ const props = withDefaults(defineProps<PieChartProps<T>>(), {
 const slots = defineSlots<PieChartSlots>()
 const hidden = defineModel<string[]>('hidden', { default: () => [] })
 
-const generated = computed(() => isChartGenerated(props))
-const valueKey = computed(() => props.valueKey ?? (props.index === undefined ? undefined : inferValueKeys(props.data ?? [], props.index)[0]))
-const slices = computed(() => (generated.value && props.index !== undefined
-  ? resolveSlices({ data: props.data ?? [], index: props.index, valueKey: valueKey.value, colors: props.colors, hidden: hidden.value })
-  : undefined))
-const visibleSlices = computed(() => slices.value?.filter(slice => !slice.hidden) ?? [])
+const { valueKey, slices, visibleSlices, config } = useSliceRoot({ props, hidden, hasLegendSlot: () => !!slots.legend })
 
 const pie = computed(() => {
   const own = {
@@ -135,22 +129,6 @@ const pie = computed(() => {
   return { ...(props.donut ? chartDefaults.donut : {}), ...defined }
 })
 
-// Composition mode renders only the slot, so a `ChartTooltip` child stays the single tooltip.
-const tooltip = computed(() => (generated.value
-  ? resolveChartPart<Partial<ChartTooltipProps>>(props.tooltip, {
-      valueFormatter: props.valueFormatter
-        ? (value: number | string, entry: ChartTooltipContentEntry) => (typeof value === 'number' ? props.valueFormatter!(value, entry.name ?? '') : String(value))
-        : undefined,
-    })
-  : null))
-
-const legend = computed(() => (generated.value ? resolveChartLegend<ChartLegendProps<T>>(props.legend) : null))
-const legendPosition = computed(() => legend.value?.position ?? (generated.value && slots.legend ? 'bottom' : null))
-const legendItems = computed<ChartLegendItem[]>(() => (slices.value ?? []).map(({ key, name, color, hidden, value, percent }) => ({ key, name, color, hidden, value, percent })))
-function toggle(key: string) {
-  hidden.value = toggleHiddenKey(hidden.value, key)
-}
-
 const ui = useComponentUI('pieChart', theme, () => ({}))
 const chart = useChartRoot({
   // Generated mode: only the visible slices reach the pie, so the active index points into them.
@@ -160,63 +138,38 @@ const chart = useChartRoot({
   ui,
   uiProps: () => props.ui,
 })
+// The center follows the first pie drawn (see `usePolarChart`), so the root passes no geometry of its own.
 const polar = usePolarChart(chart, { kind: 'pie', slices: () => slices.value })
-
-const centerViewBox = computed(() => ({
-  cx: polar.cx.value,
-  cy: polar.cy.value,
-  innerRadius: 0,
-  outerRadius: polar.outerRadius.value,
-  startAngle: 0,
-  endAngle: 360,
-}))
-provideChartLabelViewBox(() => (chart.width.value > 0 ? centerViewBox.value : null), 'center')
+providePolarCenterLabel(chart, polar, () => polar.outerRadius.value)
 </script>
 
 <template>
-  <ChartSurface
+  <ChartFrame
+    v-model:hidden="hidden"
     data-slot="pie-chart"
     :width="width"
     :height="height"
-    :legend="legendPosition"
+    :config="config"
     :class="ui.base({ class: [props.ui?.base, props.class] })"
   >
-    <template v-if="legendPosition" #legend>
-      <slot name="legend" :items="legendItems" :toggle="toggle">
-        <ChartLegend
-          v-model:hidden="hidden"
-          :items="legendItems"
-          toggleable
-          :orientation="legendPosition === 'left' || legendPosition === 'right' ? 'vertical' : 'horizontal'"
-          :value-formatter="props.valueFormatter"
-          v-bind="legend?.props"
-          :class="[(legendPosition === 'top' || legendPosition === 'bottom') && 'justify-center', chart.classes('legend')]"
-        >
-          <template v-if="slots['legend-item']" #item="item">
-            <slot name="legend-item" v-bind="item" />
-          </template>
-        </ChartLegend>
-      </slot>
+    <template v-for="name in frameSlotNames(slots)" #[name]="scope">
+      <slot :name="name" v-bind="scope as any" />
     </template>
-    <ChartPie
-      v-if="slices && valueKey"
-      :data-key="valueKey"
-      :name-key="props.index"
-      v-bind="pie"
-    >
-      <ChartCell v-for="slice in visibleSlices" :key="slice.key" :fill="slice.color" />
-    </ChartPie>
-    <ChartTooltip v-if="tooltip" v-bind="tooltip">
-      <template v-if="slots.tooltip" #content="content">
-        <slot name="tooltip" v-bind="content" />
-      </template>
-      <template v-if="slots['tooltip-footer']" #footer="footer">
-        <slot name="tooltip-footer" v-bind="footer" />
-      </template>
-    </ChartTooltip>
-    <slot />
-    <ChartPolarCenter v-if="slots.center">
-      <slot name="center" v-bind="polar.center.value" />
-    </ChartPolarCenter>
-  </ChartSurface>
+    <template #parts>
+      <ChartPie
+        v-if="slices && valueKey"
+        :data-key="valueKey"
+        :name-key="props.index"
+        v-bind="pie"
+      >
+        <ChartCell v-for="slice in visibleSlices" :key="slice.key" :fill="slice.color" />
+      </ChartPie>
+    </template>
+    <template #default>
+      <slot />
+      <ChartPolarCenter v-if="slots.center">
+        <slot name="center" v-bind="polar.center.value" />
+      </ChartPolarCenter>
+    </template>
+  </ChartFrame>
 </template>

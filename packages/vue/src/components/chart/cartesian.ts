@@ -6,6 +6,7 @@ import { scaleBand, scaleLinear, scalePoint } from 'd3-scale'
 import { stack as d3Stack, stackOffsetNone, stackOrderNone } from 'd3-shape'
 import { computed, inject, onScopeDispose, provide, shallowReactive, watchEffect } from 'vue'
 import { provideChartLabelViewBox } from './label'
+import { percentValue } from './percent'
 import { measureText, resolveNumberDomain, thinTicks } from './scale'
 
 export type ChartAxisId = string | number
@@ -96,17 +97,8 @@ export const cartesianContextKey: InjectionKey<CartesianContext> = Symbol('hareu
 
 const sameId = (a: ChartAxisId | undefined, b: ChartAxisId | undefined) => String(a ?? 0) === String(b ?? 0)
 
-function percentValue(value: number | string | undefined, total: number, fallback: number): number {
-  if (value === undefined || value === '')
-    return fallback
-  if (typeof value === 'number')
-    return value
-  const trimmed = value.trim()
-  if (trimmed.endsWith('%'))
-    return (total * Number.parseFloat(trimmed)) / 100
-  const parsed = Number.parseFloat(trimmed)
-  return Number.isFinite(parsed) ? parsed : fallback
-}
+// Bar sizes and gaps pass non-finite values (`Infinity`, `'abc%'`) through instead of falling back, unlike polar layout.
+const BAR_LENGTH = { keepNonFinite: true }
 
 function toNumber(value: unknown): number | null {
   if (value === null || value === undefined || value === '')
@@ -443,7 +435,7 @@ export function useCartesianChart(chart: ChartContext, options: CartesianChartOp
     for (const series of visibleSeries.value) {
       if (series.kind !== 'bar')
         continue
-      const size = series.barSize === undefined ? undefined : percentValue(series.barSize, bandSize, 0)
+      const size = series.barSize === undefined ? undefined : percentValue(series.barSize, bandSize, 0, BAR_LENGTH)
       if (series.stackId !== undefined) {
         const key = String(series.stackId)
         const slot = stackSlots.get(key)
@@ -462,10 +454,10 @@ export function useCartesianChart(chart: ChartContext, options: CartesianChartOp
     }
     if (!slots.length)
       return result
-    const rootSize = options.barSize?.() === undefined ? undefined : percentValue(options.barSize!(), bandSize, 0)
+    const rootSize = options.barSize?.() === undefined ? undefined : percentValue(options.barSize!(), bandSize, 0, BAR_LENGTH)
     for (const slot of slots)
       slot.size ??= rootSize
-    let gap = percentValue(options.barGap?.() ?? 4, bandSize, 0)
+    let gap = percentValue(options.barGap?.() ?? 4, bandSize, 0, BAR_LENGTH)
     const count = slots.length
     const maxBarSize = options.maxBarSize?.()
 
@@ -492,7 +484,7 @@ export function useCartesianChart(chart: ChartContext, options: CartesianChartOp
       return result
     }
 
-    const categoryGap = percentValue(options.barCategoryGap?.() ?? '10%', bandSize, 0)
+    const categoryGap = percentValue(options.barCategoryGap?.() ?? '10%', bandSize, 0, BAR_LENGTH)
     if (bandSize - 2 * categoryGap - (count - 1) * gap <= 0)
       gap = 0
     // A category gap over half the band leaves no room: bars collapse to 0 instead of drawing inverted.

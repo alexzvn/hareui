@@ -97,7 +97,7 @@ import { provideChartCells } from './cells'
 import ChartLayer from './ChartLayer.vue'
 import { useChartContext } from './context'
 import { provideChartLabels } from './label'
-import { computePieSectors, percentValue, sectorPath, usePolarContext } from './polar'
+import { computePieSectors, sectorPath, usePolarContext } from './polar'
 import { DEFAULT_SERIES_COLOR } from './series'
 
 const props = withDefaults(defineProps<ChartPieProps>(), {
@@ -137,16 +137,15 @@ function sliceName(index: number): string {
   return value !== undefined && value !== '' ? String(value) : props.name ?? String(index)
 }
 
+// The polar context resolves the geometry, and a pie chart's center (`#center`, centered `ChartLabel`) reads it back
+// from `registerItems`, so the two always agree.
+const geometry = computed(() => polar.resolveGeometry({ cx: props.cx, cy: props.cy, innerRadius: props.innerRadius, outerRadius: props.outerRadius }))
+
 const target = computed<PieSector[]>(() => {
   if (props.hide)
     return []
-  const box = polar.box.value
-  const maxRadius = polar.maxRadius.value
   return computePieSectors(data.value.map(datum => Number(datum[props.dataKey])), {
-    cx: box.left + percentValue(props.cx, box.width, box.width / 2),
-    cy: box.top + percentValue(props.cy, box.height, box.height / 2),
-    innerRadius: percentValue(props.innerRadius, maxRadius, 0),
-    outerRadius: percentValue(props.outerRadius, maxRadius, maxRadius * 0.8),
+    ...geometry.value,
     startAngle: props.startAngle,
     endAngle: props.endAngle,
     paddingAngle: props.paddingAngle,
@@ -202,7 +201,7 @@ chart.registerSeries((): ChartSeries => ({
   tooltip: props.tooltipType !== 'none',
   entries,
 }))
-polar.registerItems(id, () => ({ sectors: target.value, startAngle: props.startAngle, endAngle: props.endAngle }))
+polar.registerItems(id, () => ({ sectors: target.value, startAngle: props.startAngle, endAngle: props.endAngle, geometry: geometry.value }))
 
 // Labels read the tweened angles so they move with their slices.
 provideChartLabels(() => tween.value.value.map((sector): ChartLabelItem => ({

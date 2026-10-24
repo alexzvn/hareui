@@ -6,6 +6,7 @@ import type { ChartAxisDomain, ChartDatum, ChartPoint } from './types'
 import { arc } from 'd3-shape'
 import { computed, inject, onScopeDispose, provide, shallowReactive, watchEffect } from 'vue'
 import { polarToCartesian } from './label'
+import { percentValue } from './percent'
 import { resolveNumberDomain } from './scale'
 
 // Polar angles are in degrees, 0° at 3 o'clock, positive counter-clockwise.
@@ -22,17 +23,42 @@ export function cartesianToPolar(cx: number, cy: number, x: number, y: number): 
   return { radius: Math.sqrt(dx * dx + dy * dy), angle: Math.atan2(-dy, dx) / RADIAN || 0 }
 }
 
-/** A number, or a percentage string of `total` (`'80%'`). */
-export function percentValue(value: number | string | undefined | null, total: number, fallback = 0): number {
-  if (value === undefined || value === null || value === '')
-    return fallback
-  if (typeof value === 'number')
-    return Number.isFinite(value) ? value : fallback
-  const text = value.trim()
-  const number = Number.parseFloat(text)
-  if (!Number.isFinite(number))
-    return fallback
-  return text.endsWith('%') ? (number / 100) * total : number
+/** Plot area of a polar chart: the chart minus its margins. */
+export interface PolarBox {
+  left: number
+  top: number
+  width: number
+  height: number
+}
+
+/** Center and radii as given on a root or a `ChartPie`: px, or percentage strings. */
+export interface PolarGeometryInput {
+  cx?: number | string
+  cy?: number | string
+  innerRadius?: number | string
+  outerRadius?: number | string
+}
+
+/** Center and radii in px. */
+export interface PolarGeometry {
+  cx: number
+  cy: number
+  innerRadius: number
+  outerRadius: number
+}
+
+/**
+ * Center and radii of a polar chart or a pie inside `box`. `cx`/`cy` are relative to the box width/height (default:
+ * its middle); radii to half its shorter side (default: 0 and 80%).
+ */
+export function resolvePolarGeometry(box: PolarBox, input: PolarGeometryInput): PolarGeometry {
+  const maxRadius = Math.min(box.width, box.height) / 2
+  return {
+    cx: box.left + percentValue(input.cx ?? '50%', box.width, box.width / 2),
+    cy: box.top + percentValue(input.cy ?? '50%', box.height, box.height / 2),
+    innerRadius: percentValue(input.innerRadius ?? 0, maxRadius, 0),
+    outerRadius: percentValue(input.outerRadius ?? '80%', maxRadius, maxRadius * 0.8),
+  }
 }
 
 /** Signed sweep from `startAngle` to `endAngle`, at most one turn. */
@@ -131,6 +157,8 @@ export interface PieItemGroup {
   sectors: PieSector[]
   startAngle: number
   endAngle: number
+  /** Center and radii the pie is drawn with (also when it has no sectors). */
+  geometry: PolarGeometry
 }
 
 /** Sector angles of a pie, including padding and minimum angles. */
@@ -307,10 +335,12 @@ export interface ChartPolarCenterSlotProps {
 
 export interface PolarContext {
   kind: PolarChartKind
-  /** Plot area inside the margins. */
-  box: ComputedRef<{ left: number, top: number, width: number, height: number }>
-  /** Half the shorter side of the plot area; percentage radii are relative to it. */
-  maxRadius: ComputedRef<number>
+  /**
+   * Center and radii of `input` in this chart's plot area. The one formula behind every polar part, so a `ChartPie`
+   * and the root's center agree.
+   */
+  resolveGeometry: (input: PolarGeometryInput) => PolarGeometry
+  /** The root's center and radii; in a pie chart, those of the first registered pie (see `usePolarChart`). */
   cx: ComputedRef<number>
   cy: ComputedRef<number>
   innerRadius: ComputedRef<number>
@@ -323,7 +353,10 @@ export interface PolarContext {
   registerRadiusAxis: (get: () => PolarRadiusAxisConfig) => () => void
   /** Radial bar charts: offset and thickness of a series' bars inside each ring band. */
   radialBarPosition: (seriesId: string) => { offset: number, size: number }
-  /** Item-triggered series (pie): the slices and the sweep of each pie, for hover and keyboard navigation. */
+  /**
+   * Item-triggered series (pie): the slices, the sweep and the geometry of each pie, for hover, keyboard navigation and
+   * the center.
+   */
   registerItems: (seriesId: string, get: () => PieItemGroup) => () => void
   /** Total and hovered slice for the `#center` slot. */
   center: ComputedRef<ChartPolarCenterSlotProps>
@@ -409,7 +442,7 @@ export function usePolarChart(chart: ChartContext, options: PolarChartOptions): 
     return unregister
   }
 
-  const box = computed(() => {
+  const box = computed<PolarBox>(() => {
     const margin = chart.margin.value
     return {
       left: margin.left,
@@ -418,11 +451,21 @@ export function usePolarChart(chart: ChartContext, options: PolarChartOptions): 
       height: Math.max(0, chart.height.value - margin.top - margin.bottom),
     }
   })
-  const maxRadius = computed(() => Math.min(box.value.width, box.value.height) / 2)
-  const cx = computed(() => box.value.left + percentValue(options.cx?.() ?? '50%', box.value.width, box.value.width / 2))
-  const cy = computed(() => box.value.top + percentValue(options.cy?.() ?? '50%', box.value.height, box.value.height / 2))
-  const innerRadius = computed(() => percentValue(options.innerRadius?.() ?? 0, maxRadius.value, 0))
-  const outerRadius = computed(() => percentValue(options.outerRadius?.() ?? '80%', maxRadius.value, maxRadius.value * 0.8))
+  const resolveGeometry = (input: PolarGeometryInput) => resolvePolarGeometry(box.value, input)
+  const rootGeometry = computed(() => resolveGeometry({
+    cx: options.cx?.(),
+    cy: options.cy?.(),
+    innerRadius: options.innerRadius?.(),
+    outerRadius: options.outerRadius?.(),
+  }))
+  // A pie chart's root has no center of its own: it follows the pie actually drawn, so the `#center` slot and a
+  // centered `ChartLabel` sit on it wherever its `cx`/`cy` put it. With several pies the first registered (first in
+  // the template) wins; before any pie mounts, the defaults apply.
+  const geometry = computed(() => (kind === 'pie' ? [...items.values()][0]?.().geometry : undefined) ?? rootGeometry.value)
+  const cx = computed(() => geometry.value.cx)
+  const cy = computed(() => geometry.value.cy)
+  const innerRadius = computed(() => geometry.value.innerRadius)
+  const outerRadius = computed(() => geometry.value.outerRadius)
   const startAngle = computed(() => options.startAngle?.() ?? DEFAULTS[kind].startAngle)
   const endAngle = computed(() => options.endAngle?.() ?? DEFAULTS[kind].endAngle)
 
@@ -493,8 +536,7 @@ export function usePolarChart(chart: ChartContext, options: PolarChartOptions): 
 
   const context: PolarContext = {
     kind,
-    box,
-    maxRadius,
+    resolveGeometry,
     cx,
     cy,
     innerRadius,

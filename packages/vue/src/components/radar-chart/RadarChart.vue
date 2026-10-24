@@ -140,17 +140,17 @@ export interface RadarChartSlots {
 <script setup lang="ts" generic="T extends object">
 import { computed } from 'vue'
 import { useComponentUI } from '../../composables/useComponentUI'
-import ChartLegend from '../chart-legend/ChartLegend.vue'
+import ChartFrame from '../chart/ChartFrame.vue'
 import ChartPolarAngleAxis from '../chart/ChartPolarAngleAxis.vue'
 import ChartPolarGrid from '../chart/ChartPolarGrid.vue'
 import ChartPolarRadiusAxis from '../chart/ChartPolarRadiusAxis.vue'
 import ChartRadar from '../chart/ChartRadar.vue'
-import ChartSurface from '../chart/ChartSurface.vue'
-import ChartTooltip from '../chart/ChartTooltip.vue'
 import { definedProps } from '../chart/cartesian-root'
 import { useChartRoot } from '../chart/context'
+import { frameSlotNames } from '../chart/frame'
 import { usePolarChart } from '../chart/polar'
-import { chartDefaults, isChartGenerated, resolveChartLegend, resolveChartPart, resolveSeries, seriesLegendItems, seriesValueFormatter, toggleHiddenKey } from '../chart/series-config'
+import { usePolarRoot } from '../chart/polar-root'
+import { chartDefaults, isChartGenerated, resolveChartPart, resolveSeries, seriesLegendItems, seriesValueFormatter } from '../chart/series-config'
 
 const props = withDefaults(defineProps<RadarChartProps<T>>(), {
   height: 300,
@@ -193,20 +193,17 @@ const angleAxis = computed(() => (generated.value
   ? resolveChartPart<Partial<ChartPolarAngleAxisProps>>(props.angleAxis, definedProps({ dataKey: props.index as string | undefined, tickFormatter: props.indexFormatter }))
   : null))
 const radiusAxis = computed(() => (generated.value ? resolveChartPart<Partial<ChartPolarRadiusAxisProps>>(props.radiusAxis, {}, false) : null))
-// Composition mode renders only the slot, so a `ChartTooltip` child stays the single tooltip.
-const tooltip = computed(() => (generated.value
-  ? resolveChartPart<Partial<ChartTooltipProps>>(props.tooltip, definedProps({
-      valueFormatter: seriesValueFormatter(resolved.value, props.valueFormatter),
-      labelFormatter: props.indexFormatter,
-    }))
-  : null))
 
-const legend = computed(() => (generated.value ? resolveChartLegend<ChartLegendProps<T>>(props.legend) : null))
-const legendPosition = computed(() => legend.value?.position ?? (generated.value && slots.legend ? 'bottom' : null))
-const legendItems = computed(() => seriesLegendItems(resolved.value))
-function toggle(key: string) {
-  hidden.value = toggleHiddenKey(hidden.value, key)
-}
+const config = usePolarRoot({
+  props,
+  generated: () => generated.value,
+  legendItems: () => seriesLegendItems(resolved.value),
+  tooltip: () => definedProps({
+    valueFormatter: seriesValueFormatter(resolved.value, props.valueFormatter),
+    labelFormatter: props.indexFormatter,
+  }),
+  hasLegendSlot: () => !!slots.legend,
+})
 
 const ui = useComponentUI('radarChart', theme, () => ({}))
 const chart = useChartRoot({
@@ -228,60 +225,44 @@ usePolarChart(chart, {
 </script>
 
 <template>
-  <ChartSurface
+  <ChartFrame
+    v-model:hidden="hidden"
     data-slot="radar-chart"
     :width="width"
     :height="height"
-    :legend="legendPosition"
+    :config="config"
     :class="ui.base({ class: [props.ui?.base, props.class] })"
   >
-    <template v-if="legendPosition" #legend>
-      <slot name="legend" :items="legendItems" :toggle="toggle">
-        <ChartLegend
-          v-model:hidden="hidden"
-          :items="legendItems"
-          toggleable
-          :orientation="legendPosition === 'left' || legendPosition === 'right' ? 'vertical' : 'horizontal'"
-          v-bind="legend?.props"
-          :class="[(legendPosition === 'top' || legendPosition === 'bottom') && 'justify-center', chart.classes('legend')]"
-        >
-          <template v-if="slots['legend-item']" #item="item">
-            <slot name="legend-item" v-bind="item" />
-          </template>
-        </ChartLegend>
-      </slot>
+    <template v-for="name in frameSlotNames(slots)" #[name]="scope">
+      <slot :name="name" v-bind="scope as any" />
     </template>
-    <ChartPolarGrid v-if="grid" v-bind="grid" />
-    <ChartPolarAngleAxis v-if="angleAxis" v-bind="angleAxis">
-      <template v-if="slots['angle-tick']" #tick="tick">
-        <slot name="angle-tick" v-bind="tick" />
-      </template>
-    </ChartPolarAngleAxis>
-    <ChartPolarRadiusAxis v-if="radiusAxis" v-bind="radiusAxis" />
-    <!-- Hidden radars stay mounted with `hide`, so colors are stable and toggling animates. -->
-    <ChartRadar
-      v-for="series in resolved"
-      :key="series.key"
-      :data-key="series.key"
-      :name="series.name"
-      :stroke="series.color"
-      :fill="series.color"
-      :fill-opacity="series.fillOpacity"
-      :stroke-width="series.strokeWidth"
-      :stroke-dasharray="series.strokeDasharray"
-      :dot="series.dot"
-      :active-dot="series.activeDot"
-      :hide="series.hidden"
-      :tooltip-type="series.tooltip === false ? 'none' : undefined"
-    />
-    <ChartTooltip v-if="tooltip" v-bind="tooltip">
-      <template v-if="slots.tooltip" #content="content">
-        <slot name="tooltip" v-bind="content" />
-      </template>
-      <template v-if="slots['tooltip-footer']" #footer="footer">
-        <slot name="tooltip-footer" v-bind="footer" />
-      </template>
-    </ChartTooltip>
-    <slot />
-  </ChartSurface>
+    <template #parts>
+      <ChartPolarGrid v-if="grid" v-bind="grid" />
+      <ChartPolarAngleAxis v-if="angleAxis" v-bind="angleAxis">
+        <template v-if="slots['angle-tick']" #tick="tick">
+          <slot name="angle-tick" v-bind="tick" />
+        </template>
+      </ChartPolarAngleAxis>
+      <ChartPolarRadiusAxis v-if="radiusAxis" v-bind="radiusAxis" />
+      <!-- Hidden radars stay mounted with `hide`, so colors are stable and toggling animates. -->
+      <ChartRadar
+        v-for="series in resolved"
+        :key="series.key"
+        :data-key="series.key"
+        :name="series.name"
+        :stroke="series.color"
+        :fill="series.color"
+        :fill-opacity="series.fillOpacity"
+        :stroke-width="series.strokeWidth"
+        :stroke-dasharray="series.strokeDasharray"
+        :dot="series.dot"
+        :active-dot="series.activeDot"
+        :hide="series.hidden"
+        :tooltip-type="series.tooltip === false ? 'none' : undefined"
+      />
+    </template>
+    <template #default>
+      <slot />
+    </template>
+  </ChartFrame>
 </template>
