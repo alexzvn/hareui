@@ -109,11 +109,11 @@ export interface NumberFieldSlots {
 
 <script setup lang="ts">
 import { NumberFieldDecrement, NumberFieldIncrement, NumberFieldInput, NumberFieldRoot } from 'reka-ui'
-import { computed, getCurrentInstance, onBeforeUnmount, onMounted, ref, useAttrs, useId, useTemplateRef, watch } from 'vue'
+import { computed, onBeforeUnmount, onMounted, ref, useAttrs, useId, useTemplateRef } from 'vue'
 import { useComponentUI } from '../../composables/useComponentUI'
 import { useFieldValidation } from '../../composables/useFieldValidation'
+import { useNumberValue } from '../../composables/useNumberValue'
 import { useSlotOutlet } from '../../composables/useSlotOutlet'
-import { snapNumber } from '../../utils/number'
 import { useFieldsetDisabled } from '../fieldset/context'
 import Description from '../description/Description.vue'
 import FieldError from '../field-error/FieldError.vue'
@@ -128,24 +128,15 @@ const DecrementOutlet = useSlotOutlet(slots, 'decrement')
 const IncrementOutlet = useSlotOutlet(slots, 'increment')
 /** The numeric value; `undefined` while the input is empty. */
 const modelValue = defineModel<number | null>()
-// A second `defineEmits` for `update:modelValue` would clash with defineModel's emit type, so the forced emit below
-// goes through the instance.
-const instance = getCurrentInstance()
 
-// As in react-stately's useNumberFieldState: the incoming value and default are clamped into range
-// (and snapped to `step` when one is given) before display; the step falls back to 0.01 for percents.
-const effectiveStep = computed(() => props.step ?? (props.formatOptions?.style === 'percent' ? 0.01 : undefined))
-function snap<T extends number | null | undefined>(value: T): T {
-  return snapNumber(value, props.min, props.max, props.step)
-}
-const displayValue = computed(() => snap(modelValue.value))
-
-// The form value is a sibling `<input type="hidden">` after the root, as in RAC (not Reka's in-root input):
-// form data carries the raw number, and layouts like `space-y-*` treat the field exactly as HeroUI's.
-// Tracked locally so uncontrolled fields submit `defaultValue` without emitting an update on mount.
-const formValue = ref<number | null | undefined>(displayValue.value ?? snap(props.defaultValue))
-watch(displayValue, (value) => {
-  formValue.value = value
+const { effectiveStep, displayValue, defaultDisplayValue, formValue, commit, commitEmpty, reset } = useNumberValue({
+  model: modelValue,
+  defaultValue: () => props.defaultValue,
+  min: () => props.min,
+  max: () => props.max,
+  step: () => props.step,
+  formatOptions: () => props.formatOptions,
+  onCommit: () => commitValidation(),
 })
 
 const root = useTemplateRef<HTMLElement>('root')
@@ -160,32 +151,14 @@ const { validation, commitValidation } = useFieldValidation({
   validationBehavior: () => props.validationBehavior,
   name: () => props.name,
   root: () => root.value,
-  onReset: () => {
-    formValue.value = snap(props.defaultValue)
-    modelValue.value = formValue.value
-  },
+  onReset: reset,
 })
 const invalid = computed(() => validation.value.isInvalid)
 
-function onUpdate(value: number | undefined) {
-  formValue.value = value
-  modelValue.value = value
-  // RAC commits validation on blur / Enter and on every stepper press
-  commitValidation()
-}
-
-// RAC commits an emptied input as "no value" (`onChange(NaN)`, an empty form value). Reka's applyInputValue
-// clears its own state but, in uncontrolled mode, never emits `undefined` (its passive v-model only emits values
-// that differ from the absent prop), so commit the empty value here. Runs after Reka's blur / Enter handler.
+// Runs after Reka's blur / Enter handler, which has already applied a non-empty input
 function onCommitEmpty(event: Event) {
-  if ((event.target as HTMLInputElement).value !== '' || formValue.value == null)
-    return
-  formValue.value = undefined
-  if (modelValue.value == null)
-    instance?.emit('update:modelValue', undefined)
-  else
-    modelValue.value = undefined
-  commitValidation()
+  if ((event.target as HTMLInputElement).value === '')
+    commitEmpty()
 }
 function onKeydown(event: KeyboardEvent) {
   if (event.key === 'Enter' && !event.isComposing)
@@ -271,7 +244,7 @@ function onFocusOut(event: FocusEvent) {
     <NumberFieldRoot
       :id="id"
       :model-value="displayValue"
-      :default-value="snap(defaultValue)"
+      :default-value="defaultDisplayValue"
       :min="min"
       :max="max"
       :step="effectiveStep"
@@ -288,7 +261,7 @@ function onFocusOut(event: FocusEvent) {
       :class="ui.group({ class: props.ui?.group })"
       @focusin="onFocusIn"
       @focusout="onFocusOut"
-      @update:model-value="onUpdate"
+      @update:model-value="commit"
     >
       <NumberFieldDecrement
         v-if="decrement"

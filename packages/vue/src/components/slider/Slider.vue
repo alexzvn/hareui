@@ -75,6 +75,7 @@ import { computed, ref, useId, useSlots } from 'vue'
 import { useComponentUI } from '../../composables/useComponentUI'
 import { useFieldsetDisabled } from '../fieldset/context'
 import { captureOnDraggedThumb } from '../../composables/thumbPointerCapture'
+import { clamp, snapValueToStep } from '../../utils/number'
 import Label from '../label/Label.vue'
 
 const props = withDefaults(defineProps<SliderProps>(), {
@@ -170,10 +171,6 @@ const pageSize = computed(() => {
   const range = props.max - props.min
   return Math.max(props.step, Math.round(range / 10 / props.step) * props.step || props.step)
 })
-function snapToStep(value: number) {
-  const snapped = Math.round((value - props.min) / props.step) * props.step + props.min
-  return Number(snapped.toFixed(Math.max(0, (String(props.step).split('.')[1] ?? '').length)))
-}
 // +1 / -1 for a key that pages the value, 0 for keys left to Reka (plain arrows, which only step)
 function pageDirection(event: KeyboardEvent): number {
   if (event.key === 'PageUp')
@@ -201,11 +198,13 @@ function onThumbKeydown(event: KeyboardEvent, index: number) {
   const values = current.value
   const low = thumbMin(values, index)
   const high = thumbMax(values, index)
+  // The page snaps relative to `min` but not limited by `max`: the clamp below limits it to the thumb's own range,
+  // so a `max` off the step grid stays reachable
   const target = event.key === 'Home'
     ? low
     : event.key === 'End'
       ? high
-      : snapToStep(values[index]! + page * pageSize.value)
+      : snapValueToStep(values[index]! + page * pageSize.value, props.min, undefined, props.step)
   const next = [...values]
   next[index] = clamp(target, low, high)
   if (next[index] === values[index])
@@ -220,9 +219,6 @@ const outputText = computed(() => formattedValues.value.join(' – '))
 
 // `data-fill-start` / `data-fill-end` on the track replicate `@heroui/react`'s `SliderTrack` exactly
 // (a single thumb fills from its edge toward the value; a range fills between its two thumbs).
-function clamp(value: number, min: number, max: number) {
-  return Math.min(Math.max(value, min), max)
-}
 function fraction(value: number) {
   const range = props.max - props.min
   return range <= 0 ? 0 : clamp((value - props.min) / range, 0, 1)

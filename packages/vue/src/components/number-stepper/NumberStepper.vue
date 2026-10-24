@@ -111,11 +111,11 @@ export interface NumberStepperSlots {
 import type { Format } from '@number-flow/vue'
 import NumberFlow from '@number-flow/vue'
 import { NumberFieldDecrement, NumberFieldIncrement, NumberFieldInput, NumberFieldRoot, useLocale } from 'reka-ui'
-import { computed, getCurrentInstance, onBeforeUnmount, onMounted, ref, toRef, useAttrs, useId, useTemplateRef, watch } from 'vue'
+import { computed, onBeforeUnmount, onMounted, toRef, useAttrs, useId, useTemplateRef } from 'vue'
 import { useComponentUI } from '../../composables/useComponentUI'
 import { useFieldValidation } from '../../composables/useFieldValidation'
+import { useNumberValue } from '../../composables/useNumberValue'
 import { useSlotOutlet } from '../../composables/useSlotOutlet'
-import { snapNumber } from '../../utils/number'
 import Button from '../button/Button.vue'
 import Description from '../description/Description.vue'
 import FieldError from '../field-error/FieldError.vue'
@@ -132,19 +132,16 @@ const IncrementOutlet = useSlotOutlet(slots, 'increment')
 const ValueOutlet = useSlotOutlet(slots, 'value')
 /** The numeric value; `undefined` while empty. */
 const modelValue = defineModel<number | null>()
-const instance = getCurrentInstance()
 
-// Same value handling as NumberField: the incoming value and default are clamped (and snapped to `step` when set)
-const effectiveStep = computed(() => props.step ?? (props.formatOptions?.style === 'percent' ? 0.01 : undefined))
-function snap<T extends number | null | undefined>(value: T): T {
-  return snapNumber(value, props.min, props.max, props.step)
-}
-const displayValue = computed(() => snap(modelValue.value))
-
-// Submitted through a sibling `<input type="hidden">`, as NumberField does, so form data carries the raw number
-const formValue = ref<number | null | undefined>(displayValue.value ?? snap(props.defaultValue))
-watch(displayValue, (value) => {
-  formValue.value = value
+// Same value pipeline as NumberField, submitted through the same sibling `<input type="hidden">`
+const { effectiveStep, displayValue, defaultDisplayValue, formValue, commit, commitEmpty, reset } = useNumberValue({
+  model: modelValue,
+  defaultValue: () => props.defaultValue,
+  min: () => props.min,
+  max: () => props.max,
+  step: () => props.step,
+  formatOptions: () => props.formatOptions,
+  onCommit: () => commitValidation(),
 })
 
 const root = useTemplateRef<HTMLElement>('root')
@@ -158,10 +155,7 @@ const { validation, commitValidation } = useFieldValidation({
   validationBehavior: () => props.validationBehavior,
   name: () => props.name,
   root: () => root.value,
-  onReset: () => {
-    formValue.value = snap(props.defaultValue)
-    modelValue.value = formValue.value
-  },
+  onReset: reset,
 })
 const invalid = computed(() => validation.value.isInvalid)
 
@@ -176,22 +170,10 @@ const flowFormat = computed<Format | undefined>(() => {
   return notation === 'standard' || notation === 'compact' ? { ...rest, notation } : rest
 })
 
-function onUpdate(value: number | undefined) {
-  formValue.value = value
-  modelValue.value = value
-  commitValidation()
-}
-
-// An emptied input commits "no value" (see NumberField): Reka doesn't emit `undefined` when uncontrolled
+// An emptied input commits "no value" (see NumberField)
 function onCommitEmpty(event: Event) {
-  if ((event.target as HTMLInputElement).value !== '' || formValue.value == null)
-    return
-  formValue.value = undefined
-  if (modelValue.value == null)
-    instance?.emit('update:modelValue', undefined)
-  else
-    modelValue.value = undefined
-  commitValidation()
+  if ((event.target as HTMLInputElement).value === '')
+    commitEmpty()
 }
 function onKeydown(event: KeyboardEvent) {
   if (event.key === 'Enter' && !event.isComposing)
@@ -263,7 +245,7 @@ const ui = useComponentUI('numberStepper', theme, () => ({ size: props.size, rev
       v-slot="{ modelValue: current, textValue }"
       :id="id"
       :model-value="displayValue"
-      :default-value="snap(defaultValue)"
+      :default-value="defaultDisplayValue"
       :min="min"
       :max="max"
       :step="effectiveStep"
@@ -278,7 +260,7 @@ const ui = useComponentUI('numberStepper', theme, () => ({ size: props.size, rev
       :aria-disabled="isDisabled ? 'true' : undefined"
       :data-invalid="invalid ? 'true' : undefined"
       :class="ui.group({ class: props.ui?.group })"
-      @update:model-value="onUpdate"
+      @update:model-value="commit"
     >
       <!-- Slots inside the root's content go through `useSlotOutlet` components: a `<slot>` outlet here would make Vue flag the root's slots as forwarded and re-render the root and its buttons on every render -->
       <template v-if="decrement">
