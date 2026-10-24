@@ -1,8 +1,10 @@
 import { mount } from '@vue/test-utils'
 import { describe, expect, it, vi } from 'vitest'
-import { defineComponent, h, ref } from 'vue'
+import { defineComponent, h, nextTick, ref } from 'vue'
 import Label from '../src/components/label/Label.vue'
+import type { SwitchProps } from '../src/components/switch/Switch.vue'
 import Switch from '../src/components/switch/Switch.vue'
+import { expectAccessible } from './a11y'
 
 const control = '[data-slot=switch-content]'
 
@@ -122,5 +124,122 @@ describe('Switch root click timing', () => {
     expect(wrapper.emitted('update:modelValue')).toEqual([[true]])
     wrapper.unmount()
     now.mockRestore()
+  })
+})
+
+// A native button toggles on Space unless a handler cancelled the key; happy-dom has no activation behaviour, so
+// the press helper performs it when the keys get through.
+async function pressSpace(el: Element) {
+  const down = new KeyboardEvent('keydown', { key: ' ', code: 'Space', bubbles: true, cancelable: true })
+  const up = new KeyboardEvent('keyup', { key: ' ', code: 'Space', bubbles: true, cancelable: true })
+  el.dispatchEvent(down)
+  el.dispatchEvent(up)
+  if (el instanceof HTMLButtonElement && !el.disabled && !down.defaultPrevented && !up.defaultPrevented)
+    el.click()
+  await nextTick()
+}
+
+describe('Switch accessibility', () => {
+  it.each<[string, SwitchProps]>([
+    ['off', {}],
+    ['on', { defaultValue: true }],
+    ['disabled', { disabled: true }],
+    ['read-only', { readonly: true, defaultValue: true }],
+    ['required', { required: true }],
+    ['small', { size: 'sm' }],
+    ['described', { description: 'Connect automatically' }],
+    ['invalid with an error message', { description: 'Connect automatically', invalid: true, errorMessage: 'Turn Wi-Fi on' }],
+  ])('has no axe violations when %s', async (_, props) => {
+    const wrapper = mount(Switch, { props: { label: 'Wi-Fi', ...props }, attachTo: document.body })
+    await expectAccessible(wrapper)
+    wrapper.unmount()
+  })
+
+  it('has no axe violations with a thumb icon', async () => {
+    const wrapper = mount(Switch, { props: { label: 'Dark mode' }, slots: { icon: () => h('svg', { 'aria-hidden': 'true', 'viewBox': '0 0 24 24' }) }, attachTo: document.body })
+    await expectAccessible(wrapper)
+    wrapper.unmount()
+  })
+
+  it('has no axe violations inside a form, with its hidden input', async () => {
+    const wrapper = mount(() => h('form', null, h(Switch, { label: 'Wi-Fi', name: 'wifi', required: true })), { attachTo: document.body })
+    await nextTick()
+    await expectAccessible(wrapper)
+    wrapper.unmount()
+  })
+
+  it('is named by an external Label pointing at its id', async () => {
+    const wrapper = mount(defineComponent(() => () => h('div', [
+      h(Switch, { id: 'airplane' }),
+      h(Label, { for: 'airplane' }, () => 'Airplane mode'),
+    ])), { attachTo: document.body })
+    await nextTick()
+    await expectAccessible(wrapper)
+    wrapper.unmount()
+  })
+
+  it('is named by aria-label when it has no visible label', async () => {
+    const wrapper = mount(Switch, { attrs: { 'aria-label': 'Dark mode' }, attachTo: document.body })
+    expect(wrapper.get(control).attributes('aria-label')).toBe('Dark mode')
+    await expectAccessible(wrapper)
+    wrapper.unmount()
+  })
+
+  it('is a switch named by its label whose aria-checked tracks the state', async () => {
+    const wrapper = mount(Switch, { props: { label: 'Wi-Fi', required: true } })
+    const content = wrapper.get(control)
+    expect(content.attributes('role')).toBe('switch')
+    expect(content.text()).toBe('Wi-Fi')
+    expect(content.attributes('aria-required')).toBe('true')
+    expect(content.attributes('aria-checked')).toBe('false')
+    await content.trigger('click')
+    expect(content.attributes('aria-checked')).toBe('true')
+    await wrapper.setProps({ modelValue: false })
+    expect(content.attributes('aria-checked')).toBe('false')
+  })
+
+  it('aria-describedby points at the rendered description and error text', () => {
+    const wrapper = mount(Switch, { props: { label: 'Wi-Fi', description: 'Connect automatically', errorMessage: 'Turn Wi-Fi on', invalid: true }, attachTo: document.body })
+    const ids = wrapper.get(control).attributes('aria-describedby')!.split(' ')
+    expect(ids.map(id => document.getElementById(id)?.textContent?.trim())).toEqual(['Connect automatically', 'Turn Wi-Fi on'])
+    wrapper.unmount()
+  })
+
+  it('is a tab stop that Space toggles', async () => {
+    const wrapper = mount(Switch, { props: { label: 'Wi-Fi' }, attachTo: document.body })
+    const content = wrapper.get(control).element as HTMLButtonElement
+    expect(content.tagName).toBe('BUTTON')
+    expect(content.tabIndex).toBe(0)
+    content.focus()
+    await pressSpace(content)
+    expect(wrapper.emitted('update:modelValue')).toEqual([[true]])
+    expect(content.getAttribute('aria-checked')).toBe('true')
+    await pressSpace(content)
+    expect(wrapper.emitted('update:modelValue')).toEqual([[true], [false]])
+    expect(document.activeElement).toBe(content)
+    wrapper.unmount()
+  })
+
+  it('a read-only switch stays focusable, keeps focus off on press, and Space does not change it', async () => {
+    const wrapper = mount(Switch, { props: { label: 'Wi-Fi', readonly: true }, attachTo: document.body })
+    const content = wrapper.get(control).element as HTMLButtonElement
+    const down = new MouseEvent('mousedown', { bubbles: true, cancelable: true })
+    content.dispatchEvent(down)
+    expect(down.defaultPrevented).toBe(true)
+    content.focus()
+    expect(document.activeElement).toBe(content)
+    await pressSpace(content)
+    expect(wrapper.emitted('update:modelValue')).toBeUndefined()
+    expect(content.getAttribute('aria-checked')).toBe('false')
+    wrapper.unmount()
+  })
+
+  it('a disabled switch is removed from the tab order', () => {
+    const wrapper = mount(Switch, { props: { label: 'Wi-Fi', disabled: true }, attachTo: document.body })
+    const content = wrapper.get(control).element as HTMLButtonElement
+    expect(content.disabled).toBe(true)
+    content.focus()
+    expect(document.activeElement).not.toBe(content)
+    wrapper.unmount()
   })
 })

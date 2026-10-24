@@ -6,6 +6,7 @@ import CheckboxButtonGroup from '../src/components/checkbox-button-group/Checkbo
 import CheckboxButtonGroupItem from '../src/components/checkbox-button-group/CheckboxButtonGroupItem.vue'
 import Form from '../src/components/form/Form.vue'
 import Fieldset from '../src/components/fieldset/Fieldset.vue'
+import { expectAccessible } from './a11y'
 
 const features = [
   { value: 'security', label: 'Security', description: 'Threat detection' },
@@ -232,5 +233,96 @@ describe('CheckboxButtonGroup form integration', () => {
     await items()[1]!.trigger('click')
     await nextTick()
     expect(error()).toBe('Pick one at most')
+  })
+})
+
+// A native button toggles on Space unless a handler cancelled the key; happy-dom has no activation behaviour, so
+// the press helper performs it when the keys get through.
+async function pressSpace(el: Element) {
+  const down = new KeyboardEvent('keydown', { key: ' ', code: 'Space', bubbles: true, cancelable: true })
+  const up = new KeyboardEvent('keyup', { key: ' ', code: 'Space', bubbles: true, cancelable: true })
+  el.dispatchEvent(down)
+  el.dispatchEvent(up)
+  if (el instanceof HTMLButtonElement && !el.disabled && !down.defaultPrevented && !up.defaultPrevented)
+    el.click()
+  await nextTick()
+}
+
+describe('CheckboxButtonGroup accessibility', () => {
+  it.each([
+    ['idle', {}],
+    ['with a selection', { defaultValue: ['security'] }],
+    ['described', { description: 'Add-ons for your plan' }],
+    ['disabled', { disabled: true, defaultValue: ['storage'] }],
+    ['read-only', { readonly: true, defaultValue: ['security'] }],
+    ['required', { required: true }],
+    ['invalid with an error message', { invalid: true, errorMessage: 'Pick at least one' }],
+  ])('has no axe violations when %s', async (_, props) => {
+    mountGroup({ label: 'Features', ...props })
+    await expectAccessible(wrapper)
+  })
+
+  it('has no axe violations with icons, extra content and custom indicators', async () => {
+    mountGroup({ label: 'Features', defaultValue: ['security'] }, {
+      icon: () => h('svg', { viewBox: '0 0 24 24' }),
+      indicator: ({ selected }: { selected: boolean }) => h('svg', { 'data-on': selected }),
+      default: () => h('span', '2 GB included'),
+    })
+    await expectAccessible(wrapper)
+  })
+
+  it('has no axe violations inside a form, with its hidden inputs', async () => {
+    wrapper = mount(() => h('form', null, h(CheckboxButtonGroup, { label: 'Features', name: 'features', defaultValue: ['security'] }, () =>
+      features.map(f => h(CheckboxButtonGroupItem, { key: f.value, ...f })))), { attachTo: document.body })
+    await flushPromises()
+    await expectAccessible(wrapper)
+  })
+
+  it('the group is named by its label and every card hears the group description and error', () => {
+    mountGroup({ id: 'features', label: 'Features', description: 'Add-ons for your plan', invalid: true, errorMessage: 'Pick at least one' })
+    const group = wrapper!.get('[role=group]')
+    expect(document.getElementById(group.attributes('aria-labelledby')!)?.textContent).toBe('Features')
+    const card = items()[0]!
+    const text = card.attributes('aria-describedby')!.split(' ').map(id => document.getElementById(id)?.textContent?.trim())
+    expect(text).toEqual(['Threat detection', 'Add-ons for your plan', 'Pick at least one'])
+    expect(items().every(c => c.attributes('role') === 'checkbox' && c.attributes('aria-invalid') === 'true')).toBe(true)
+  })
+
+  it('aria-checked reflects the selection; the indicator and icon are hidden from assistive tech', async () => {
+    mountGroup({ defaultValue: ['storage'] }, { icon: () => h('svg') })
+    expect(items().map(c => c.attributes('aria-checked'))).toEqual(['false', 'true', 'false'])
+    expect(items()[0]!.get('[data-slot=checkbox-button-group-indicator]').attributes('aria-hidden')).toBe('true')
+    expect(items()[0]!.get('[data-slot=checkbox-button-group-item-icon]').attributes('aria-hidden')).toBe('true')
+  })
+
+  it('Space toggles the focused card and keeps focus on it', async () => {
+    const model = ref<string[]>([])
+    mountGroup(() => ({ 'modelValue': model.value, 'onUpdate:modelValue': (v: string[]) => (model.value = v) }))
+    const card = items()[1]!.element as HTMLButtonElement
+    card.focus()
+    await pressSpace(card)
+    expect(model.value).toEqual(['storage'])
+    expect(card.getAttribute('aria-checked')).toBe('true')
+    await pressSpace(card)
+    expect(model.value).toEqual([])
+    expect(document.activeElement).toBe(card)
+  })
+
+  it('a read-only card stays focusable but Space does not change it', async () => {
+    mountGroup({ 'readonly': true, 'onUpdate:modelValue': () => { throw new Error('unexpected update') } })
+    const card = items()[0]!.element as HTMLButtonElement
+    card.focus()
+    expect(document.activeElement).toBe(card)
+    await pressSpace(card)
+    expect(card.getAttribute('aria-checked')).toBe('false')
+  })
+
+  it('arrow keys do not move focus between cards (no roving focus)', async () => {
+    mountGroup()
+    const card = items()[0]!
+    ;(card.element as HTMLElement).focus()
+    await card.trigger('keydown', { key: 'ArrowRight' })
+    await flushPromises()
+    expect(document.activeElement).toBe(card.element)
   })
 })

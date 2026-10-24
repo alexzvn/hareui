@@ -112,9 +112,12 @@ const attrs = computed(() => {
       'aria-disabled': props.pending ? 'true' : undefined,
     }
   }
+  // React Aria `useButton`: non-button elements get `role="button"` and join the tab order. Disabled ones leave it
+  // (-1 rather than omitted, so a disabled `<a href>` stays out too).
   return {
+    'role': 'button',
     'aria-disabled': isDisabled.value || props.pending ? 'true' : undefined,
-    'tabindex': isDisabled.value ? -1 : undefined,
+    'tabindex': isDisabled.value ? -1 : 0,
   }
 })
 
@@ -122,6 +125,33 @@ function onClickCapture(event: MouseEvent) {
   if (props.pending || (isDisabled.value && !isNativeButton.value)) {
     event.preventDefault()
     event.stopImmediatePropagation()
+  }
+}
+
+// usePress keyboard activation for non-button elements: Enter clicks on keydown, Space on keyup; both prevent page scroll.
+// Anchors with an href already activate natively on Enter.
+function isKeyboardTarget(event: KeyboardEvent) {
+  return !isNativeButton.value && !isDisabled.value && event.target === event.currentTarget
+}
+
+function onKeydown(event: KeyboardEvent) {
+  if (!isKeyboardTarget(event))
+    return
+  const el = event.currentTarget as HTMLElement
+  if (event.key === ' ') {
+    event.preventDefault()
+  }
+  else if (event.key === 'Enter' && !(el instanceof HTMLAnchorElement && el.hasAttribute('href'))) {
+    event.preventDefault()
+    if (!event.repeat)
+      el.click()
+  }
+}
+
+function onKeyup(event: KeyboardEvent) {
+  if (isKeyboardTarget(event) && event.key === ' ') {
+    event.preventDefault()
+    ;(event.currentTarget as HTMLElement).click()
   }
 }
 </script>
@@ -136,6 +166,8 @@ function onClickCapture(event: MouseEvent) {
     :aria-busy="pending ? 'true' : undefined"
     :class="ui.base({ class: [groupClass, props.ui?.base, props.class] })"
     @click.capture="onClickCapture"
+    @keydown="onKeydown"
+    @keyup="onKeyup"
   >
     <span
       v-if="showSeparator"

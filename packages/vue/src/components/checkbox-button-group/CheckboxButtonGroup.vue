@@ -175,7 +175,6 @@ function onUpdate(value: string[]) {
     :data-required="required ? 'true' : undefined"
     :data-disabled="isDisabled ? 'true' : undefined"
     :aria-invalid="invalid ? 'true' : undefined"
-    :aria-readonly="readonly ? 'true' : undefined"
     :aria-disabled="isDisabled ? 'true' : undefined"
     :aria-labelledby="hasLabel ? labelId : undefined"
     :aria-describedby="describedBy"

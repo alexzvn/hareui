@@ -44,6 +44,7 @@ const props = withDefaults(defineProps<ToolbarProps>(), { as: 'div', orientation
 defineSlots<ToolbarSlots>()
 
 // A toolbar inside another toolbar is a plain group; the outer one owns arrow-key navigation (React Aria `useToolbar`).
+// Unlike React Aria it drops `aria-orientation` there: `role="group"` doesn't support it (axe `aria-allowed-attr`).
 const isNested = !!inject(toolbarContextKey, null)
 
 const ui = useComponentUI('toolbar', theme, () => ({ orientation: props.orientation, attached: props.attached }))
@@ -141,7 +142,7 @@ function onFocusin(event: FocusEvent) {
     ref="root"
     :as="as"
     :role="isNested ? 'group' : 'toolbar'"
-    :aria-orientation="orientation"
+    :aria-orientation="isNested ? undefined : orientation"
     data-slot="toolbar"
     :data-orientation="orientation"
     :class="ui.base({ class: [props.ui?.base, props.class] })"

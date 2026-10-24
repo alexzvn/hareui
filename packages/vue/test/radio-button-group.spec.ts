@@ -6,6 +6,7 @@ import Fieldset from '../src/components/fieldset/Fieldset.vue'
 import Form from '../src/components/form/Form.vue'
 import RadioButtonGroup from '../src/components/radio-button-group/RadioButtonGroup.vue'
 import RadioButtonGroupItem from '../src/components/radio-button-group/RadioButtonGroupItem.vue'
+import { expectAccessible } from './a11y'
 
 const plans = [
   { value: 'starter', label: 'Starter', description: 'For individuals' },
@@ -207,6 +208,122 @@ describe('RadioButtonGroup form', () => {
     w.get('form').element.checkValidity()
     await flushPromises()
     expect(document.activeElement).toBe(cards(w)[1]!.element)
+    w.unmount()
+  })
+})
+
+// A native button activates on Space unless a handler cancelled the key; happy-dom has no activation behaviour, so
+// the press helper performs it when the keys get through.
+async function pressSpace(el: Element) {
+  const down = new KeyboardEvent('keydown', { key: ' ', code: 'Space', bubbles: true, cancelable: true })
+  const up = new KeyboardEvent('keyup', { key: ' ', code: 'Space', bubbles: true, cancelable: true })
+  el.dispatchEvent(down)
+  el.dispatchEvent(up)
+  if (el instanceof HTMLButtonElement && !el.disabled && !down.defaultPrevented && !up.defaultPrevented)
+    el.click()
+  await flushPromises()
+}
+
+// See the arrow-key test above for the timing Reka needs.
+async function pressArrow(key: string) {
+  const card = document.activeElement as HTMLElement
+  card.dispatchEvent(new KeyboardEvent('keydown', { key, bubbles: true, cancelable: true }))
+  await flushPromises()
+  await new Promise(resolve => setTimeout(resolve))
+  await flushPromises()
+  card.dispatchEvent(new KeyboardEvent('keyup', { key, bubbles: true }))
+  await flushPromises()
+}
+
+describe('RadioButtonGroup accessibility', () => {
+  it.each([
+    ['idle', {}],
+    ['with a selection', { defaultValue: 'pro' }],
+    ['described', { description: 'Billed monthly' }],
+    ['disabled', { disabled: true, defaultValue: 'starter' }],
+    ['read-only', { readonly: true, defaultValue: 'starter' }],
+    ['required', { required: true }],
+    ['invalid with an error message', { invalid: true, errorMessage: 'Pick a plan' }],
+  ])('has no axe violations when %s', async (_, props) => {
+    const w = group(props)
+    await expectAccessible(w)
+    w.unmount()
+  })
+
+  it('has no axe violations with icons, extra content and custom indicators', async () => {
+    const w = group({ defaultValue: 'pro' }, {
+      icon: () => h('svg', { viewBox: '0 0 24 24' }),
+      indicator: () => h('svg', { viewBox: '0 0 24 24' }),
+      default: () => h('span', '€12 / month'),
+    })
+    await expectAccessible(w)
+    w.unmount()
+  })
+
+  it('has no axe violations inside a form, with its hidden input', async () => {
+    const w = mount(() => h('form', null, h(RadioButtonGroup, { label: 'Plan', name: 'plan', required: true, defaultValue: 'starter' }, () =>
+      plans.map(plan => h(RadioButtonGroupItem, { key: plan.value, ...plan })))), { attachTo: document.body })
+    await flushPromises()
+    await expectAccessible(w)
+    w.unmount()
+  })
+
+  it('every card hears the group description and error after its own description', () => {
+    const w = group({ description: 'Billed monthly', invalid: true, errorMessage: 'Pick a plan' })
+    const radiogroup = w.get('[role=radiogroup]')
+    expect(radiogroup.attributes('aria-invalid')).toBe('true')
+    const text = cards(w)[1]!.attributes('aria-describedby')!.split(' ').map(id => document.getElementById(id)?.textContent?.trim())
+    expect(text).toEqual(['For teams', 'Billed monthly', 'Pick a plan'])
+    w.unmount()
+  })
+
+  it('aria-checked and disabled reflect each card; the indicator and icon are hidden from assistive tech', () => {
+    const w = group({ defaultValue: 'pro' }, { icon: () => h('svg') })
+    expect(cards(w).map(c => c.attributes('aria-checked'))).toEqual(['false', 'true', 'false'])
+    expect(cards(w).map(c => (c.element as HTMLButtonElement).disabled)).toEqual([false, false, true])
+    expect(cards(w)[0]!.get('[data-slot=radio-button-group-indicator]').attributes('aria-hidden')).toBe('true')
+    expect(cards(w)[0]!.get('[data-slot=radio-button-group-item-icon]').attributes('aria-hidden')).toBe('true')
+    w.unmount()
+  })
+
+  it('exposes required and read-only on the radiogroup', () => {
+    const w = group({ required: true, readonly: true })
+    const radiogroup = w.get('[role=radiogroup]')
+    expect(radiogroup.attributes('aria-required')).toBe('true')
+    expect(radiogroup.attributes('aria-readonly')).toBe('true')
+    w.unmount()
+  })
+
+  it('focus entering a group without a selection lands on the first card, and Space selects it', async () => {
+    const w = group()
+    await flushPromises()
+    ;(w.get('[role=radiogroup]').element as HTMLElement).focus()
+    await flushPromises()
+    const first = cards(w)[0]!.element
+    expect(document.activeElement).toBe(first)
+    await pressSpace(first)
+    expect(first.getAttribute('aria-checked')).toBe('true')
+    expect(document.activeElement).toBe(first)
+    w.unmount()
+  })
+
+  it('in a read-only group arrow keys move focus without changing the selection', async () => {
+    const onUpdate = (v: string) => { throw new Error(`unexpected ${v}`) }
+    const w = group({ 'readonly': true, 'defaultValue': 'starter', 'onUpdate:modelValue': onUpdate })
+    await flushPromises()
+    ;(cards(w)[0]!.element as HTMLElement).focus()
+    await pressArrow('ArrowDown')
+    expect(document.activeElement).toBe(cards(w)[1]!.element)
+    await pressSpace(cards(w)[1]!.element)
+    expect(cards(w).map(c => c.attributes('aria-checked'))).toEqual(['true', 'false', 'false'])
+    w.unmount()
+  })
+
+  it('a disabled group takes no focus', () => {
+    const w = group({ disabled: true })
+    const first = cards(w)[0]!.element as HTMLButtonElement
+    first.focus()
+    expect(document.activeElement).not.toBe(first)
     w.unmount()
   })
 })

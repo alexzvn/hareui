@@ -1,7 +1,8 @@
 import { mount } from '@vue/test-utils'
-import { describe, expect, it } from 'vitest'
+import { describe, expect, it, vi } from 'vitest'
 import { defineComponent, h, markRaw } from 'vue'
 import Link from '../src/components/link/Link.vue'
+import { expectAccessible } from './a11y'
 
 const order = (el: Element) => [...el.children].map(c => c.getAttribute('data-slot') ?? c.tagName.toLowerCase())
 
@@ -45,5 +46,60 @@ describe('Link', () => {
     expect(wrapper.element.tagName).toBe('SPAN')
     expect(wrapper.attributes('data-custom')).toBe('foo')
     expect(wrapper.attributes('data-slot')).toBe('link')
+  })
+
+  it.each([
+    ['with an href', { href: '/docs' }],
+    ['with the external icon', { href: 'https://heroui.com', icon: true }],
+    ['with the icon first', { href: '/docs', icon: true, iconPlacement: 'start' }],
+    ['without an href', {}],
+    ['disabled', { href: '/docs', disabled: true }],
+  ])('is accessible %s', async (_, props) => {
+    const wrapper = mount(Link, { props, attachTo: document.body, slots: { default: () => 'Docs' } })
+    await expectAccessible(wrapper)
+    wrapper.unmount()
+  })
+
+  it('a link with an href is a native, focusable link that needs no extra role', () => {
+    const wrapper = mount(Link, { props: { href: '/docs' }, attachTo: document.body, slots: { default: () => 'Docs' } })
+    expect(wrapper.attributes('role')).toBeUndefined()
+    expect(wrapper.attributes('tabindex')).toBeUndefined()
+    ;(wrapper.element as HTMLElement).focus()
+    expect(document.activeElement).toBe(wrapper.element)
+    wrapper.unmount()
+  })
+
+  it('without an href it is still a focusable link that Enter activates (React Aria)', async () => {
+    const onClick = vi.fn()
+    const wrapper = mount(Link, { attrs: { onClick }, attachTo: document.body, slots: { default: () => 'Open' } })
+    expect(wrapper.attributes()).toMatchObject({ role: 'link', tabindex: '0' })
+    const link = wrapper.element as HTMLElement
+    link.focus()
+    expect(document.activeElement).toBe(link)
+    await wrapper.trigger('keydown', { key: 'Enter' })
+    expect(onClick).toHaveBeenCalledOnce()
+    await wrapper.trigger('keydown', { key: ' ' })
+    expect(onClick).toHaveBeenCalledOnce()
+    wrapper.unmount()
+  })
+
+  it('disabled is exposed as a disabled link outside the tab order and does not fire click handlers', async () => {
+    const onClick = vi.fn()
+    const wrapper = mount(Link, { props: { href: '/x', disabled: true }, attrs: { onClick }, attachTo: document.body, slots: { default: () => 'Docs' } })
+    expect(wrapper.attributes()).toMatchObject({ 'role': 'link', 'aria-disabled': 'true' })
+    // No href and no tabindex: a native anchor is then out of the tab order (happy-dom still focuses it).
+    expect(wrapper.attributes('href')).toBeUndefined()
+    expect(wrapper.attributes('tabindex')).toBeUndefined()
+    await wrapper.trigger('click')
+    await wrapper.trigger('keydown', { key: 'Enter' })
+    expect(onClick).not.toHaveBeenCalled()
+    wrapper.unmount()
+  })
+
+  it('the default icon is hidden from assistive technology so the name is the link text', () => {
+    const wrapper = mount(Link, { props: { href: '/x', icon: true }, slots: { default: () => 'Docs' } })
+    expect(wrapper.get('[data-slot="link-default-icon"]').attributes('aria-hidden')).toBe('true')
+    expect(wrapper.text()).toBe('Docs')
+    wrapper.unmount()
   })
 })
