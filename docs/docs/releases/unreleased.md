@@ -55,6 +55,32 @@ The `@hareui/vue/vite` plugin and `HareUIResolver` import chart components from 
 - When a form submit fails, a `RadioGroup` now moves focus to its first enabled option instead of the group.
 - `@hareui/vue` now depends on `@number-flow/vue`, which NumberStepper uses to animate its value.
 
+## Accessibility
+
+Every component is now audited with axe in its idle, open, selected, disabled and invalid states, and every docs demo is audited in a browser. Keyboard and focus behaviour follow React Aria. Visual output is unchanged except where noted.
+
+Behaviour you may notice:
+
+- While a `Modal`, `Drawer`, `AlertDialog`, `Popover` or `Dropdown` is open, the rest of the page is `inert` as well as hidden from screen readers, so nothing behind it can be focused or clicked. Toasts stay reachable.
+- The `DatePicker` and `DateRangePicker` popovers are modal: focus stays inside while open, and a read-only picker no longer opens.
+- In single-selection mode, the select-all checkbox of a `Table` is disabled and named "Select", as in HeroUI. Previously clicking it selected every row.
+- A `Button` rendered as a non-button element (`as="div"`) gets `role="button"`, joins the tab order and responds to Enter and Space. A `Link` without `href` is focusable and activates on Enter.
+- `SearchField`, `InputGroup` and `InputOtp` pass input attributes such as `aria-label`, `autocomplete` and `maxlength` to the input instead of the wrapper. Escape that clears a `SearchField` no longer also closes the dialog around it.
+- `Label` has an `as` prop; date and time fields use it to render a `span` group label.
+- The `#toast` slot of `ToastProvider` receives `titleId` and `descriptionId`; put them on your title and description so the toast is named.
+
+Names, roles and keyboard support:
+
+- `NumberField` stepper buttons are named after the field ("Increase Width") and point at the input with `aria-controls`.
+- `TagGroup` remove buttons are named after their tag ("Remove tag News").
+- `Tabs` with a vertical list also move with Left and Right arrows.
+- `NavigationMenu`: hover cards open with the arrow key or Enter and close with Escape, vertical items with children expand and collapse with arrows, and collapsed icon-only links are named.
+- `Calendar` and `RangeCalendar` grids are named after the visible month, and the year picker is a listbox.
+- `ColorSlider` and `ColorArea` thumbs are named after the field label, and `ColorSlider` announces the formatted value ("120°").
+- `DashboardSidebarToggle` and `DashboardSidebarCollapse` point at the sidebar with `aria-controls`.
+- Removing a file in `DropZone` moves focus to the next file instead of losing it.
+- `Select` and `Autocomplete` popovers are named after the field, and section headers in `ListBox` and `Dropdown` no longer register as page landmarks.
+
 ## Performance
 
 Faster rendering across the library, with no change to markup, props or events:
@@ -67,6 +93,6 @@ Faster rendering across the library, with no change to markup, props or events:
 - A closed `Modal`, `Drawer` or `AlertDialog` no longer measures the viewport when it mounts, and all of them share one pair of resize listeners.
 - `Tooltip` listens on the document only while it waits to close, instead of keeping five listeners per tooltip.
 - Resizing a `DashboardSidebar` or `DashboardPanel` no longer restyles everything inside it on each frame, and neither does scrolling near the edge of a `ScrollShadow`. Pushing a toast onto a long stack restyles less of it.
-- `Calendar` and `RangeCalendar` render the year picker only after it first opens. Hovering a range re-renders only the days whose state changes.
+- `Calendar` and `RangeCalendar` render the year picker's cells in idle time after mounting instead of during it, so a `DatePicker` opens faster and the year picker's first fade-in is not delayed. Hovering a range re-renders only the days whose state changes.
 - `RichTable` resolves column pinning once per render instead of once per cell, and skips measuring rows that didn't change.
 - Charts measure line length once per draw animation instead of on every frame, cache axis label widths, and stop re-measuring the tooltip on every pointer move.
