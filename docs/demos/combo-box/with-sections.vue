@@ -1,3 +1,12 @@
+<template>
+  <ComboBox
+    class="w-[256px]"
+    label="Country"
+    placeholder="Search countries..."
+    :items="countries"
+  />
+</template>
+
 <script setup lang="ts">
 import type { ListBoxEntry } from '@hareui/vue'
 import { ComboBox } from '@hareui/vue'
@@ -37,12 +46,3 @@ const countries: ListBoxEntry[] = [
   },
 ]
 </script>
-
-<template>
-  <ComboBox
-    class="w-[256px]"
-    label="Country"
-    placeholder="Search countries..."
-    :items="countries"
-  />
-</template>

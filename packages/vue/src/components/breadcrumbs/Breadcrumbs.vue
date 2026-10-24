@@ -1,3 +1,38 @@
+<template>
+  <Primitive
+    :as="as"
+    aria-label="Breadcrumbs"
+    data-slot="breadcrumbs"
+    :class="ui.base({ class: [props.ui?.base, props.class] })"
+  >
+    <li
+      v-for="(item, index) in items"
+      :key="index"
+      data-slot="breadcrumbs-item"
+      :data-current="index === items.length - 1 ? 'true' : undefined"
+      :data-disabled="disabled || index === items.length - 1 ? 'true' : undefined"
+      :class="ui.item({ class: [props.ui?.item, item.class] })"
+    >
+      <!-- The current page is a non-interactive span, like React Aria's current Breadcrumb. -->
+      <Link
+        :as="index === items.length - 1 || disabled || !item.href ? 'span' : 'a'"
+        :href="index === items.length - 1 ? undefined : item.href"
+        :disabled="disabled || index === items.length - 1"
+        :role="index === items.length - 1 || disabled || !item.href ? 'link' : undefined"
+        :aria-current="index === items.length - 1 ? 'page' : undefined"
+        :data-current="index === items.length - 1 ? 'true' : undefined"
+        :tabindex="index === items.length - 1 || disabled ? undefined : 0"
+        :class="ui.link({ class: props.ui?.link })"
+      >
+        <slot name="item" :item="item" :index="index" :current="index === items.length - 1">
+          {{ item.label }}
+        </slot>
+      </Link>
+      <Separator v-if="index < items.length - 1" :item="item" :index="index" :current="false" />
+    </li>
+  </Primitive>
+</template>
+
 <script lang="ts">
 import type { PrimitiveProps } from 'reka-ui'
 
@@ -106,38 +141,3 @@ function Separator(p: ItemSlotProps) {
   )
 }
 </script>
-
-<template>
-  <Primitive
-    :as="as"
-    aria-label="Breadcrumbs"
-    data-slot="breadcrumbs"
-    :class="ui.base({ class: [props.ui?.base, props.class] })"
-  >
-    <li
-      v-for="(item, index) in items"
-      :key="index"
-      data-slot="breadcrumbs-item"
-      :data-current="index === items.length - 1 ? 'true' : undefined"
-      :data-disabled="disabled || index === items.length - 1 ? 'true' : undefined"
-      :class="ui.item({ class: [props.ui?.item, item.class] })"
-    >
-      <!-- The current page is a non-interactive span, like React Aria's current Breadcrumb. -->
-      <Link
-        :as="index === items.length - 1 || disabled || !item.href ? 'span' : 'a'"
-        :href="index === items.length - 1 ? undefined : item.href"
-        :disabled="disabled || index === items.length - 1"
-        :role="index === items.length - 1 || disabled || !item.href ? 'link' : undefined"
-        :aria-current="index === items.length - 1 ? 'page' : undefined"
-        :data-current="index === items.length - 1 ? 'true' : undefined"
-        :tabindex="index === items.length - 1 || disabled ? undefined : 0"
-        :class="ui.link({ class: props.ui?.link })"
-      >
-        <slot name="item" :item="item" :index="index" :current="index === items.length - 1">
-          {{ item.label }}
-        </slot>
-      </Link>
-      <Separator v-if="index < items.length - 1" :item="item" :index="index" :current="false" />
-    </li>
-  </Primitive>
-</template>

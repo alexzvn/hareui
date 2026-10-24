@@ -1,3 +1,34 @@
+<template>
+  <div class="w-full max-w-md">
+    <div class="mb-4 flex items-center justify-between">
+      <p class="text-sm text-muted">
+        Expanded: <strong>{{ expandedKeys.join(', ') || 'none' }}</strong>
+      </p>
+      <div class="flex gap-2">
+        <Button
+          aria-label="Previous item"
+          :disabled="isPrevDisabled"
+          size="sm"
+          variant="secondary"
+          @click="onPrevious"
+        >
+          <Icon class="size-4" icon="gravity-ui:chevron-up" />
+        </Button>
+        <Button
+          aria-label="Next item"
+          :disabled="isNextDisabled"
+          size="sm"
+          variant="secondary"
+          @click="onNext"
+        >
+          <Icon class="size-4" icon="gravity-ui:chevron-down" />
+        </Button>
+      </div>
+    </div>
+    <Accordion v-model="expandedKeys" :items="items" />
+  </div>
+</template>
+
 <script setup lang="ts">
 import type { AccordionItem, ExpandedValue } from '@hareui/vue'
 import { Accordion, Button, useDisclosureGroupNavigation } from '@hareui/vue'
@@ -39,34 +70,3 @@ const { isNextDisabled, isPrevDisabled, onNext, onPrevious } = useDisclosureGrou
   },
 })
 </script>
-
-<template>
-  <div class="w-full max-w-md">
-    <div class="mb-4 flex items-center justify-between">
-      <p class="text-sm text-muted">
-        Expanded: <strong>{{ expandedKeys.join(', ') || 'none' }}</strong>
-      </p>
-      <div class="flex gap-2">
-        <Button
-          aria-label="Previous item"
-          :disabled="isPrevDisabled"
-          size="sm"
-          variant="secondary"
-          @click="onPrevious"
-        >
-          <Icon class="size-4" icon="gravity-ui:chevron-up" />
-        </Button>
-        <Button
-          aria-label="Next item"
-          :disabled="isNextDisabled"
-          size="sm"
-          variant="secondary"
-          @click="onNext"
-        >
-          <Icon class="size-4" icon="gravity-ui:chevron-down" />
-        </Button>
-      </div>
-    </div>
-    <Accordion v-model="expandedKeys" :items="items" />
-  </div>
-</template>

@@ -22,6 +22,15 @@ import { Breadcrumbs } from '@hareui/vue'
 HeroUI's `Breadcrumbs.Item` children become an `items` array. The last item is the current page.
 
 ```vue
+<template>
+  <Breadcrumbs :items="items">
+    <template #item="{ item, index, current }" />
+    <!-- replaces an item's label -->
+    <template #separator="{ item, index }" />
+    <!-- replaces the chevron -->
+  </Breadcrumbs>
+</template>
+
 <script setup lang="ts">
 import { Breadcrumbs } from '@hareui/vue'
 
@@ -31,15 +40,6 @@ const items = [
   { label: 'Current Page' },
 ]
 </script>
-
-<template>
-  <Breadcrumbs :items="items">
-    <template #item="{ item, index, current }" />
-    <!-- replaces an item's label -->
-    <template #separator="{ item, index }" />
-    <!-- replaces the chevron -->
-  </Breadcrumbs>
-</template>
 ```
 
 | `ui` key    | `data-slot`             | Element                                            |

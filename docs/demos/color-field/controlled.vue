@@ -1,11 +1,3 @@
-<script setup lang="ts">
-import type { Color } from '@hareui/vue'
-import { Button, ColorField, ColorSwatch, colorToString, parseColor } from '@hareui/vue'
-import { ref } from 'vue'
-
-const value = ref<Color | null>(parseColor('#0485F7'))
-</script>
-
 <template>
   <div class="flex flex-col gap-4">
     <ColorField
@@ -26,3 +18,11 @@ const value = ref<Color | null>(parseColor('#0485F7'))
     </div>
   </div>
 </template>
+
+<script setup lang="ts">
+import type { Color } from '@hareui/vue'
+import { Button, ColorField, ColorSwatch, colorToString, parseColor } from '@hareui/vue'
+import { ref } from 'vue'
+
+const value = ref<Color | null>(parseColor('#0485F7'))
+</script>

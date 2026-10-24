@@ -1,3 +1,22 @@
+<template>
+  <Form class="flex w-72 flex-col gap-3" @submit="handleSubmit">
+    <DatePicker
+      v-model="value"
+      required
+      :invalid="isInvalid"
+      :min-value="todayDate"
+      name="appointmentDate"
+      label="Appointment date"
+      calendar-label="Event date"
+      error-message="Date must be today or in the future."
+      description="Choose a valid appointment date."
+    />
+    <Button class="w-full" :disabled="!value || isInvalid" :pending="isSubmitting" type="submit">
+      {{ isSubmitting ? 'Submitting...' : 'Submit' }}
+    </Button>
+  </Form>
+</template>
+
 <script setup lang="ts">
 import { Button, DatePicker, Form } from '@hareui/vue'
 import type { DateValue } from '@internationalized/date'
@@ -22,22 +41,3 @@ function handleSubmit(e: Event) {
   }, 1200)
 }
 </script>
-
-<template>
-  <Form class="flex w-72 flex-col gap-3" @submit="handleSubmit">
-    <DatePicker
-      v-model="value"
-      required
-      :invalid="isInvalid"
-      :min-value="todayDate"
-      name="appointmentDate"
-      label="Appointment date"
-      calendar-label="Event date"
-      error-message="Date must be today or in the future."
-      description="Choose a valid appointment date."
-    />
-    <Button class="w-full" :disabled="!value || isInvalid" :pending="isSubmitting" type="submit">
-      {{ isSubmitting ? 'Submitting...' : 'Submit' }}
-    </Button>
-  </Form>
-</template>

@@ -1,14 +1,3 @@
-<script setup lang="ts">
-import type { ToastContentValue } from '@hareui/vue'
-import { Button, ToastProvider, ToastQueue } from '@hareui/vue'
-
-const queue = new ToastQueue()
-
-function show() {
-  queue.add({ title: 'Saved', description: 'Draft synced', variant: 'default' })
-}
-</script>
-
 <template>
   <div class="flex flex-col items-center gap-4">
     <ToastProvider
@@ -54,3 +43,14 @@ function show() {
     <Button size="sm" variant="secondary" @click="show"> Show toast </Button>
   </div>
 </template>
+
+<script setup lang="ts">
+import type { ToastContentValue } from '@hareui/vue'
+import { Button, ToastProvider, ToastQueue } from '@hareui/vue'
+
+const queue = new ToastQueue()
+
+function show() {
+  queue.add({ title: 'Saved', description: 'Draft synced', variant: 'default' })
+}
+</script>

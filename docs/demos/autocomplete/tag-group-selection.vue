@@ -1,26 +1,3 @@
-<script setup lang="ts">
-import type { ListBoxItem } from '@hareui/vue'
-import { Autocomplete, TagGroup } from '@hareui/vue'
-import { ref } from 'vue'
-
-const tags: ListBoxItem[] = [
-  { value: 'react', label: 'React' },
-  { value: 'typescript', label: 'TypeScript' },
-  { value: 'javascript', label: 'JavaScript' },
-  { value: 'nodejs', label: 'Node.js' },
-  { value: 'python', label: 'Python' },
-  { value: 'vue', label: 'Vue' },
-  { value: 'angular', label: 'Angular' },
-  { value: 'nextjs', label: 'Next.js' },
-]
-
-const selectedKeys = ref<string[]>([])
-
-function onRemoveTags(ids: string[]) {
-  selectedKeys.value = selectedKeys.value.filter((key) => !ids.includes(key))
-}
-</script>
-
 <template>
   <Autocomplete
     v-model="selectedKeys"
@@ -48,3 +25,26 @@ function onRemoveTags(ids: string[]) {
     <template #empty> No tags found </template>
   </Autocomplete>
 </template>
+
+<script setup lang="ts">
+import type { ListBoxItem } from '@hareui/vue'
+import { Autocomplete, TagGroup } from '@hareui/vue'
+import { ref } from 'vue'
+
+const tags: ListBoxItem[] = [
+  { value: 'react', label: 'React' },
+  { value: 'typescript', label: 'TypeScript' },
+  { value: 'javascript', label: 'JavaScript' },
+  { value: 'nodejs', label: 'Node.js' },
+  { value: 'python', label: 'Python' },
+  { value: 'vue', label: 'Vue' },
+  { value: 'angular', label: 'Angular' },
+  { value: 'nextjs', label: 'Next.js' },
+]
+
+const selectedKeys = ref<string[]>([])
+
+function onRemoveTags(ids: string[]) {
+  selectedKeys.value = selectedKeys.value.filter((key) => !ids.includes(key))
+}
+</script>

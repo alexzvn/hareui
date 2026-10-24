@@ -1,8 +1,3 @@
-<script setup lang="ts">
-import { AlertDialog, Button } from '@hareui/vue'
-import { Icon } from '@iconify/vue'
-</script>
-
 <template>
   <AlertDialog
     class="sm:max-w-[420px]"
@@ -33,3 +28,8 @@ import { Icon } from '@iconify/vue'
     </template>
   </AlertDialog>
 </template>
+
+<script setup lang="ts">
+import { AlertDialog, Button } from '@hareui/vue'
+import { Icon } from '@iconify/vue'
+</script>

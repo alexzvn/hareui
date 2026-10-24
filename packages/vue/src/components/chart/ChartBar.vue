@@ -1,3 +1,23 @@
+<template>
+  <ChartLayer v-if="!hidden" name="bar">
+    <g data-slot="chart-bar" :data-key="dataKey" :class="chart.classes('series', props.class)">
+      <path
+        v-for="bar in bars"
+        :key="bar.rect.index"
+        data-slot="chart-bar-rectangle"
+        :data-index="bar.rect.index"
+        :d="bar.d"
+        :fill="bar.fill"
+        :fill-opacity="bar.fillOpacity"
+        :stroke="bar.stroke"
+        :stroke-width="bar.strokeWidth"
+        :class="bar.class"
+      />
+    </g>
+  </ChartLayer>
+  <slot />
+</template>
+
 <script lang="ts">
 import type { ChartSeriesProps } from './series'
 import type { ChartRadius } from './shapes'
@@ -209,23 +229,3 @@ provideChartLabels(
   'center',
 )
 </script>
-
-<template>
-  <ChartLayer v-if="!hidden" name="bar">
-    <g data-slot="chart-bar" :data-key="dataKey" :class="chart.classes('series', props.class)">
-      <path
-        v-for="bar in bars"
-        :key="bar.rect.index"
-        data-slot="chart-bar-rectangle"
-        :data-index="bar.rect.index"
-        :d="bar.d"
-        :fill="bar.fill"
-        :fill-opacity="bar.fillOpacity"
-        :stroke="bar.stroke"
-        :stroke-width="bar.strokeWidth"
-        :class="bar.class"
-      />
-    </g>
-  </ChartLayer>
-  <slot />
-</template>

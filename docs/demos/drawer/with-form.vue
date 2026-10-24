@@ -1,7 +1,3 @@
-<script setup lang="ts">
-import { Button, Drawer, TextField } from '@hareui/vue'
-</script>
-
 <template>
   <Drawer placement="right" title="Edit Profile">
     <Button variant="secondary"> Edit Profile </Button>
@@ -38,3 +34,7 @@ import { Button, Drawer, TextField } from '@hareui/vue'
     </template>
   </Drawer>
 </template>
+
+<script setup lang="ts">
+import { Button, Drawer, TextField } from '@hareui/vue'
+</script>

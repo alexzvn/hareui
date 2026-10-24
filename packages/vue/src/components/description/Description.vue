@@ -1,3 +1,9 @@
+<template>
+  <span :id="id" data-slot="description" :class="ui.base({ class: [props.ui?.base, props.class] })">
+    <slot />
+  </span>
+</template>
+
 <script lang="ts">
 import type { ComponentSlots } from '../../types/tv'
 import theme from './theme'
@@ -27,9 +33,3 @@ defineSlots<DescriptionSlots>()
 
 const ui = useComponentUI('description', theme, () => ({}))
 </script>
-
-<template>
-  <span :id="id" data-slot="description" :class="ui.base({ class: [props.ui?.base, props.class] })">
-    <slot />
-  </span>
-</template>

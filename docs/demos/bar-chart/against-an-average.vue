@@ -1,23 +1,3 @@
-<script setup lang="ts">
-import { Card } from '@hareui/vue'
-import { BarChart, ChartLegend } from '@hareui/vue/charts'
-
-const data = [
-  { month: 'Mar', thisYear: 62, average: 78 },
-  { month: 'Apr', thisYear: 91, average: 64 },
-  { month: 'May', thisYear: 47, average: 55 },
-  { month: 'Jun', thisYear: 18, average: 31 },
-  { month: 'Jul', thisYear: 9, average: 12 },
-  { month: 'Aug', thisYear: 24, average: 15 },
-]
-
-const series = { thisYear: { name: '2026' }, average: { name: '10-year avg.' } }
-
-function formatRain(value: number) {
-  return `${value} mm`
-}
-</script>
-
 <template>
   <Card
     class="w-full max-w-[480px] rounded-2xl"
@@ -41,3 +21,23 @@ function formatRain(value: number) {
     />
   </Card>
 </template>
+
+<script setup lang="ts">
+import { Card } from '@hareui/vue'
+import { BarChart, ChartLegend } from '@hareui/vue/charts'
+
+const data = [
+  { month: 'Mar', thisYear: 62, average: 78 },
+  { month: 'Apr', thisYear: 91, average: 64 },
+  { month: 'May', thisYear: 47, average: 55 },
+  { month: 'Jun', thisYear: 18, average: 31 },
+  { month: 'Jul', thisYear: 9, average: 12 },
+  { month: 'Aug', thisYear: 24, average: 15 },
+]
+
+const series = { thisYear: { name: '2026' }, average: { name: '10-year avg.' } }
+
+function formatRain(value: number) {
+  return `${value} mm`
+}
+</script>

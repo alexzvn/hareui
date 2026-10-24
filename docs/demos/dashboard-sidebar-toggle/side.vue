@@ -1,19 +1,3 @@
-<script setup lang="ts">
-import {
-  DashboardGroup,
-  DashboardPanel,
-  DashboardSidebar,
-  DashboardSidebarToggle,
-} from '@hareui/vue'
-
-const details = [
-  { label: 'Status', value: 'Open' },
-  { label: 'Assignee', value: 'Emma Wilson' },
-  { label: 'Priority', value: 'High' },
-  { label: 'Created', value: 'Oct 12, 2026' },
-]
-</script>
-
 <template>
   <DashboardGroup unit="rem" :persistent="false">
     <DashboardPanel>
@@ -50,3 +34,19 @@ const details = [
     </DashboardSidebar>
   </DashboardGroup>
 </template>
+
+<script setup lang="ts">
+import {
+  DashboardGroup,
+  DashboardPanel,
+  DashboardSidebar,
+  DashboardSidebarToggle,
+} from '@hareui/vue'
+
+const details = [
+  { label: 'Status', value: 'Open' },
+  { label: 'Assignee', value: 'Emma Wilson' },
+  { label: 'Priority', value: 'High' },
+  { label: 'Created', value: 'Oct 12, 2026' },
+]
+</script>

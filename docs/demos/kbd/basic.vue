@@ -1,7 +1,3 @@
-<script setup lang="ts">
-import { Kbd } from '@hareui/vue'
-</script>
-
 <template>
   <div class="flex items-center gap-4">
     <Kbd keys="command"> K </Kbd>
@@ -10,3 +6,7 @@ import { Kbd } from '@hareui/vue'
     <Kbd keys="option"> D </Kbd>
   </div>
 </template>
+
+<script setup lang="ts">
+import { Kbd } from '@hareui/vue'
+</script>

@@ -1,10 +1,3 @@
-<script setup lang="ts">
-import { ColorArea, ColorSwatch, colorToString, parseColor } from '@hareui/vue'
-import { ref } from 'vue'
-
-const color = ref(parseColor('#9B80FF'))
-</script>
-
 <template>
   <div class="flex flex-col gap-4">
     <ColorArea v-model="color" color-space="rgb" x-channel="red" y-channel="green" />
@@ -17,3 +10,10 @@ const color = ref(parseColor('#9B80FF'))
     </div>
   </div>
 </template>
+
+<script setup lang="ts">
+import { ColorArea, ColorSwatch, colorToString, parseColor } from '@hareui/vue'
+import { ref } from 'vue'
+
+const color = ref(parseColor('#9B80FF'))
+</script>

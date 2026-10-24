@@ -1,3 +1,81 @@
+<template>
+  <RadioGroupRoot
+    ref="root"
+    :model-value="selected"
+    :name="name"
+    :disabled="isDisabled"
+    :required="required"
+    :orientation="orientation"
+    data-slot="radio-group"
+    :data-invalid="invalid ? 'true' : undefined"
+    :data-readonly="readonly ? 'true' : undefined"
+    :data-required="required ? 'true' : undefined"
+    :aria-invalid="invalid ? 'true' : undefined"
+    :aria-readonly="readonly ? 'true' : undefined"
+    :aria-disabled="isDisabled ? 'true' : undefined"
+    :aria-labelledby="hasLabel ? labelId : undefined"
+    :aria-describedby="describedBy"
+    :class="ui.base({ class: [props.ui?.base, props.class] })"
+    @update:model-value="onUpdate"
+    @keydown.capture="onKeydownCapture"
+  >
+    <!-- `as` falls through to Reka `Label`: a group label names the radiogroup via aria-labelledby, not a form control (HeroUI renders a span).
+         `disabled` is passed explicitly because Reka sets the root's `data-disabled` to "". -->
+    <FieldLabel :id="labelId" as="span" :invalid="false" />
+    <FieldDescription />
+    <div
+      v-for="(item, index) in items"
+      :key="item.value"
+      data-slot="radio"
+      :data-state="selected === item.value ? 'checked' : 'unchecked'"
+      :data-selected="selected === item.value ? 'true' : undefined"
+      :data-disabled="isDisabled || item.disabled ? 'true' : undefined"
+      :data-invalid="invalid ? 'true' : undefined"
+      :class="ui.item({ class: props.ui?.item })"
+      @click="forwardRootClick($event, '[data-slot=radio-content]')"
+    >
+      <RekaRadioGroupItem
+        :id="`${id}-${index}`"
+        :value="item.value"
+        :disabled="item.disabled"
+        :aria-describedby="
+          [hasItemDescription(item) && `${id}-${index}-description`, describedBy]
+            .filter(Boolean)
+            .join(' ') || undefined
+        "
+        data-slot="radio-content"
+        :data-selected="selected === item.value ? 'true' : undefined"
+        :class="ui.content({ class: props.ui?.content })"
+        @keydown.capture="submitOnEnter"
+      >
+        <span data-slot="radio-control" :class="ui.control({ class: props.ui?.control })">
+          <span
+            aria-hidden="true"
+            data-slot="radio-indicator"
+            :class="ui.indicator({ class: props.ui?.indicator })"
+            ><slot
+              v-if="slots.indicator"
+              name="indicator"
+              :item="item"
+              :checked="selected === item.value"
+          /></span>
+        </span>
+        <slot name="item-label" :item="item" :index="index">{{ item.label }}</slot>
+      </RekaRadioGroupItem>
+      <Description
+        v-if="hasItemDescription(item) && $slots['item-description']"
+        :id="`${id}-${index}-description`"
+      >
+        <slot name="item-description" :item="item" :index="index">{{ item.description }}</slot>
+      </Description>
+      <Description v-else-if="hasItemDescription(item)" :id="`${id}-${index}-description`">{{
+        item.description
+      }}</Description>
+    </div>
+    <FieldError />
+  </RadioGroupRoot>
+</template>
+
 <script lang="ts">
 import type { ValidateFn, ValidationResult } from '../../composables/useFieldValidation'
 import type { ComponentSlots, ComponentVariants } from '../../types/tv'
@@ -167,81 +245,3 @@ function onUpdate(value: unknown) {
   commitValidation()
 }
 </script>
-
-<template>
-  <RadioGroupRoot
-    ref="root"
-    :model-value="selected"
-    :name="name"
-    :disabled="isDisabled"
-    :required="required"
-    :orientation="orientation"
-    data-slot="radio-group"
-    :data-invalid="invalid ? 'true' : undefined"
-    :data-readonly="readonly ? 'true' : undefined"
-    :data-required="required ? 'true' : undefined"
-    :aria-invalid="invalid ? 'true' : undefined"
-    :aria-readonly="readonly ? 'true' : undefined"
-    :aria-disabled="isDisabled ? 'true' : undefined"
-    :aria-labelledby="hasLabel ? labelId : undefined"
-    :aria-describedby="describedBy"
-    :class="ui.base({ class: [props.ui?.base, props.class] })"
-    @update:model-value="onUpdate"
-    @keydown.capture="onKeydownCapture"
-  >
-    <!-- `as` falls through to Reka `Label`: a group label names the radiogroup via aria-labelledby, not a form control (HeroUI renders a span).
-         `disabled` is passed explicitly because Reka sets the root's `data-disabled` to "". -->
-    <FieldLabel :id="labelId" as="span" :invalid="false" />
-    <FieldDescription />
-    <div
-      v-for="(item, index) in items"
-      :key="item.value"
-      data-slot="radio"
-      :data-state="selected === item.value ? 'checked' : 'unchecked'"
-      :data-selected="selected === item.value ? 'true' : undefined"
-      :data-disabled="isDisabled || item.disabled ? 'true' : undefined"
-      :data-invalid="invalid ? 'true' : undefined"
-      :class="ui.item({ class: props.ui?.item })"
-      @click="forwardRootClick($event, '[data-slot=radio-content]')"
-    >
-      <RekaRadioGroupItem
-        :id="`${id}-${index}`"
-        :value="item.value"
-        :disabled="item.disabled"
-        :aria-describedby="
-          [hasItemDescription(item) && `${id}-${index}-description`, describedBy]
-            .filter(Boolean)
-            .join(' ') || undefined
-        "
-        data-slot="radio-content"
-        :data-selected="selected === item.value ? 'true' : undefined"
-        :class="ui.content({ class: props.ui?.content })"
-        @keydown.capture="submitOnEnter"
-      >
-        <span data-slot="radio-control" :class="ui.control({ class: props.ui?.control })">
-          <span
-            aria-hidden="true"
-            data-slot="radio-indicator"
-            :class="ui.indicator({ class: props.ui?.indicator })"
-            ><slot
-              v-if="slots.indicator"
-              name="indicator"
-              :item="item"
-              :checked="selected === item.value"
-          /></span>
-        </span>
-        <slot name="item-label" :item="item" :index="index">{{ item.label }}</slot>
-      </RekaRadioGroupItem>
-      <Description
-        v-if="hasItemDescription(item) && $slots['item-description']"
-        :id="`${id}-${index}-description`"
-      >
-        <slot name="item-description" :item="item" :index="index">{{ item.description }}</slot>
-      </Description>
-      <Description v-else-if="hasItemDescription(item)" :id="`${id}-${index}-description`">{{
-        item.description
-      }}</Description>
-    </div>
-    <FieldError />
-  </RadioGroupRoot>
-</template>

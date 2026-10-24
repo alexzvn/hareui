@@ -1,3 +1,13 @@
+<template>
+  <Primitive
+    :as="as"
+    data-slot="dashboard-group"
+    :class="ui.base({ class: [props.ui?.base, props.class] })"
+  >
+    <slot />
+  </Primitive>
+</template>
+
 <script lang="ts">
 import type { PrimitiveProps } from 'reka-ui'
 
@@ -88,13 +98,3 @@ provideDashboardContext({
   sidebars: { left, right },
 })
 </script>
-
-<template>
-  <Primitive
-    :as="as"
-    data-slot="dashboard-group"
-    :class="ui.base({ class: [props.ui?.base, props.class] })"
-  >
-    <slot />
-  </Primitive>
-</template>

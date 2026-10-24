@@ -1,7 +1,3 @@
-<script setup lang="ts">
-import { Kbd } from '@hareui/vue'
-</script>
-
 <template>
   <div class="space-y-3">
     <div class="rounded-lg bg-surface p-4">
@@ -15,3 +11,7 @@ import { Kbd } from '@hareui/vue'
     </div>
   </div>
 </template>
+
+<script setup lang="ts">
+import { Kbd } from '@hareui/vue'
+</script>

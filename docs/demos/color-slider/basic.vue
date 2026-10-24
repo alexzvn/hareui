@@ -1,7 +1,3 @@
-<script setup lang="ts">
-import { ColorSlider } from '@hareui/vue'
-</script>
-
 <template>
   <ColorSlider
     channel="hue"
@@ -10,3 +6,7 @@ import { ColorSlider } from '@hareui/vue'
     label="Hue"
   />
 </template>
+
+<script setup lang="ts">
+import { ColorSlider } from '@hareui/vue'
+</script>

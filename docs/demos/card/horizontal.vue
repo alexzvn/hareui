@@ -1,7 +1,3 @@
-<script setup lang="ts">
-import { Button, Card, CloseButton } from '@hareui/vue'
-</script>
-
 <template>
   <!-- #leading and the content wrapper become the two columns of the md:flex-row root -->
   <Card class="w-full items-stretch md:flex-row" :ui="{ content: 'gap-3' }">
@@ -36,3 +32,7 @@ import { Button, Card, CloseButton } from '@hareui/vue'
     </div>
   </Card>
 </template>
+
+<script setup lang="ts">
+import { Button, Card, CloseButton } from '@hareui/vue'
+</script>

@@ -1,3 +1,34 @@
+<template>
+  <Autocomplete
+    v-model="selectedKeys"
+    clearable
+    class="w-[256px]"
+    label="To"
+    placeholder="Add recipients"
+    selection-mode="multiple"
+    search-label="Search emails"
+    search-placeholder="Search emails..."
+    :items="emails"
+  >
+    <template #value="{ selectedItems, isPlaceholder, text }">
+      <template v-if="isPlaceholder">
+        {{ text }}
+      </template>
+      <TagGroup
+        v-else
+        size="sm"
+        removable
+        aria-label="Selected"
+        :items="
+          selectedItems.map((item) => ({ id: String(item.value), label: String(item.value) }))
+        "
+        @remove="onRemoveTags"
+      />
+    </template>
+    <template #empty> No recipients found </template>
+  </Autocomplete>
+</template>
+
 <script setup lang="ts">
 import type { ListBoxItem } from '@hareui/vue'
 import { Autocomplete, TagGroup } from '@hareui/vue'
@@ -42,34 +73,3 @@ function onRemoveTags(ids: string[]) {
   selectedKeys.value = selectedKeys.value.filter((key) => !ids.includes(key))
 }
 </script>
-
-<template>
-  <Autocomplete
-    v-model="selectedKeys"
-    clearable
-    class="w-[256px]"
-    label="To"
-    placeholder="Add recipients"
-    selection-mode="multiple"
-    search-label="Search emails"
-    search-placeholder="Search emails..."
-    :items="emails"
-  >
-    <template #value="{ selectedItems, isPlaceholder, text }">
-      <template v-if="isPlaceholder">
-        {{ text }}
-      </template>
-      <TagGroup
-        v-else
-        size="sm"
-        removable
-        aria-label="Selected"
-        :items="
-          selectedItems.map((item) => ({ id: String(item.value), label: String(item.value) }))
-        "
-        @remove="onRemoveTags"
-      />
-    </template>
-    <template #empty> No recipients found </template>
-  </Autocomplete>
-</template>

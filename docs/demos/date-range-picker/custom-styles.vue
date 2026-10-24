@@ -1,7 +1,3 @@
-<script setup lang="ts">
-import { DateRangePicker, RangeCalendar } from '@hareui/vue'
-</script>
-
 <template>
   <!--
     HeroUI restyles the composed RangeCalendar's parts directly. Option A reaches the field parts through
@@ -39,3 +35,7 @@ import { DateRangePicker, RangeCalendar } from '@hareui/vue'
     </template>
   </DateRangePicker>
 </template>
+
+<script setup lang="ts">
+import { DateRangePicker, RangeCalendar } from '@hareui/vue'
+</script>

@@ -1,15 +1,3 @@
-<script setup lang="ts">
-import {
-  Button,
-  ButtonGroup,
-  Separator,
-  ToggleButton,
-  ToggleButtonGroup,
-  Toolbar,
-} from '@hareui/vue'
-import { Icon } from '@iconify/vue'
-</script>
-
 <template>
   <Toolbar attached aria-label="Text formatting">
     <ToggleButtonGroup aria-label="Text style" selection-mode="multiple" separator>
@@ -34,3 +22,15 @@ import { Icon } from '@iconify/vue'
     </ButtonGroup>
   </Toolbar>
 </template>
+
+<script setup lang="ts">
+import {
+  Button,
+  ButtonGroup,
+  Separator,
+  ToggleButton,
+  ToggleButtonGroup,
+  Toolbar,
+} from '@hareui/vue'
+import { Icon } from '@iconify/vue'
+</script>

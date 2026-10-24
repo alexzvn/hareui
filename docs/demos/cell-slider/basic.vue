@@ -1,7 +1,3 @@
-<script setup lang="ts">
-import { CellSlider } from '@hareui/vue'
-</script>
-
 <template>
   <div class="w-[252px]">
     <CellSlider
@@ -11,3 +7,7 @@ import { CellSlider } from '@hareui/vue'
     />
   </div>
 </template>
+
+<script setup lang="ts">
+import { CellSlider } from '@hareui/vue'
+</script>

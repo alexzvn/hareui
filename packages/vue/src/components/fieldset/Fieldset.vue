@@ -1,3 +1,59 @@
+<template>
+  <Primitive
+    :as="as"
+    data-slot="fieldset"
+    :role="native ? undefined : 'group'"
+    :aria-labelledby="!native && (legend || slots.legend) ? legendId : undefined"
+    :aria-describedby="description || slots.description ? descriptionId : undefined"
+    :aria-disabled="!native && disabled ? 'true' : undefined"
+    :disabled="disabled || undefined"
+    :data-disabled="disabled ? 'true' : undefined"
+    :class="ui.base({ class: [props.ui?.base, props.class] })"
+  >
+    <legend
+      v-if="legend || slots.legend"
+      :id="legendId"
+      data-slot="fieldset-legend"
+      :class="ui.legend({ class: props.ui?.legend })"
+    >
+      <slot name="legend">
+        {{ legend }}
+      </slot>
+    </legend>
+    <!-- Split so Description's slot is only forwarded (and force-updated) when a `description` slot is passed. -->
+    <Description
+      v-if="slots.description"
+      :id="descriptionId"
+      :class="ui.description({ class: props.ui?.description })"
+    >
+      <slot name="description">
+        {{ description }}
+      </slot>
+    </Description>
+    <Description
+      v-else-if="description"
+      :id="descriptionId"
+      :class="ui.description({ class: props.ui?.description })"
+    >
+      {{ description }}
+    </Description>
+    <div
+      v-if="slots.default"
+      data-slot="fieldset-field-group"
+      :class="ui.fieldGroup({ class: props.ui?.fieldGroup })"
+    >
+      <slot />
+    </div>
+    <div
+      v-if="slots.actions"
+      data-slot="fieldset-actions"
+      :class="ui.actions({ class: props.ui?.actions })"
+    >
+      <slot name="actions" />
+    </div>
+  </Primitive>
+</template>
+
 <script lang="ts">
 import type { PrimitiveProps } from 'reka-ui'
 
@@ -62,59 +118,3 @@ const descriptionId = `${baseId}-description`
 
 const ui = useComponentUI('fieldset', theme, () => ({}))
 </script>
-
-<template>
-  <Primitive
-    :as="as"
-    data-slot="fieldset"
-    :role="native ? undefined : 'group'"
-    :aria-labelledby="!native && (legend || slots.legend) ? legendId : undefined"
-    :aria-describedby="description || slots.description ? descriptionId : undefined"
-    :aria-disabled="!native && disabled ? 'true' : undefined"
-    :disabled="disabled || undefined"
-    :data-disabled="disabled ? 'true' : undefined"
-    :class="ui.base({ class: [props.ui?.base, props.class] })"
-  >
-    <legend
-      v-if="legend || slots.legend"
-      :id="legendId"
-      data-slot="fieldset-legend"
-      :class="ui.legend({ class: props.ui?.legend })"
-    >
-      <slot name="legend">
-        {{ legend }}
-      </slot>
-    </legend>
-    <!-- Split so Description's slot is only forwarded (and force-updated) when a `description` slot is passed. -->
-    <Description
-      v-if="slots.description"
-      :id="descriptionId"
-      :class="ui.description({ class: props.ui?.description })"
-    >
-      <slot name="description">
-        {{ description }}
-      </slot>
-    </Description>
-    <Description
-      v-else-if="description"
-      :id="descriptionId"
-      :class="ui.description({ class: props.ui?.description })"
-    >
-      {{ description }}
-    </Description>
-    <div
-      v-if="slots.default"
-      data-slot="fieldset-field-group"
-      :class="ui.fieldGroup({ class: props.ui?.fieldGroup })"
-    >
-      <slot />
-    </div>
-    <div
-      v-if="slots.actions"
-      data-slot="fieldset-actions"
-      :class="ui.actions({ class: props.ui?.actions })"
-    >
-      <slot name="actions" />
-    </div>
-  </Primitive>
-</template>

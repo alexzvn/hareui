@@ -1,3 +1,26 @@
+<template>
+  <Card
+    class="w-full max-w-[700px] rounded-2xl"
+    :ui="{ header: 'flex-row flex-wrap items-center justify-between gap-2' }"
+  >
+    <template #header>
+      <h3 class="text-base font-medium text-foreground">Support Tickets</h3>
+      <ChartLegend :series="series" :colors="colors" />
+    </template>
+    <ComposedChart
+      :data="data"
+      index="date"
+      :series="series"
+      :colors="colors"
+      stacked
+      :y-axis-right="{ domain: [0, 100], tickFormatter: formatPercent }"
+      :tooltip="{ indicator: 'line' }"
+      aria-label="Support tickets by channel and same-day solve rate"
+      :height="300"
+    />
+  </Card>
+</template>
+
 <script setup lang="ts">
 import { Card } from '@hareui/vue'
 import type { ChartComposedSeries } from '@hareui/vue/charts'
@@ -41,26 +64,3 @@ const colors = [
   'var(--muted)',
 ]
 </script>
-
-<template>
-  <Card
-    class="w-full max-w-[700px] rounded-2xl"
-    :ui="{ header: 'flex-row flex-wrap items-center justify-between gap-2' }"
-  >
-    <template #header>
-      <h3 class="text-base font-medium text-foreground">Support Tickets</h3>
-      <ChartLegend :series="series" :colors="colors" />
-    </template>
-    <ComposedChart
-      :data="data"
-      index="date"
-      :series="series"
-      :colors="colors"
-      stacked
-      :y-axis-right="{ domain: [0, 100], tickFormatter: formatPercent }"
-      :tooltip="{ indicator: 'line' }"
-      aria-label="Support tickets by channel and same-day solve rate"
-      :height="300"
-    />
-  </Card>
-</template>

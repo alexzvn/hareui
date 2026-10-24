@@ -1,3 +1,14 @@
+<template>
+  <form class="flex flex-col gap-4" @submit="handleSubmit">
+    <SwitchGroup>
+      <Switch name="notifications" value="on" label="Enable notifications" />
+      <Switch default-value name="newsletter" value="on" label="Subscribe to newsletter" />
+      <Switch name="marketing" value="on" label="Receive marketing updates" />
+    </SwitchGroup>
+    <Button class="mt-4" size="sm" type="submit" variant="primary"> Submit </Button>
+  </form>
+</template>
+
 <script setup lang="ts">
 import { Button, Switch, SwitchGroup } from '@hareui/vue'
 
@@ -11,14 +22,3 @@ function handleSubmit(e: Event) {
   )
 }
 </script>
-
-<template>
-  <form class="flex flex-col gap-4" @submit="handleSubmit">
-    <SwitchGroup>
-      <Switch name="notifications" value="on" label="Enable notifications" />
-      <Switch default-value name="newsletter" value="on" label="Subscribe to newsletter" />
-      <Switch name="marketing" value="on" label="Receive marketing updates" />
-    </SwitchGroup>
-    <Button class="mt-4" size="sm" type="submit" variant="primary"> Submit </Button>
-  </form>
-</template>

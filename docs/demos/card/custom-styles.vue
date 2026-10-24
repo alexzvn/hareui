@@ -1,14 +1,3 @@
-<script setup lang="ts">
-import { Button, Card } from '@hareui/vue'
-import { Icon } from '@iconify/vue'
-
-const PRO_FEATURES = [
-  'Unlimited projects and collaborators',
-  'Priority support with 24h response',
-  'Advanced analytics and exports',
-]
-</script>
-
 <template>
   <Card
     class="relative w-full max-w-md overflow-hidden border border-accent/20 bg-linear-to-br from-accent/12 via-surface to-surface-secondary shadow-lg shadow-accent/10 dark:border-accent/30 dark:from-accent/20 dark:via-surface dark:to-accent/8 dark:shadow-accent/5"
@@ -67,3 +56,14 @@ const PRO_FEATURES = [
     </template>
   </Card>
 </template>
+
+<script setup lang="ts">
+import { Button, Card } from '@hareui/vue'
+import { Icon } from '@iconify/vue'
+
+const PRO_FEATURES = [
+  'Unlimited projects and collaborators',
+  'Priority support with 24h response',
+  'Advanced analytics and exports',
+]
+</script>

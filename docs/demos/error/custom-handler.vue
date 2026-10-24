@@ -1,12 +1,3 @@
-<script setup lang="ts">
-import { Error, toast } from '@hareui/vue'
-
-// With an empty `redirect` the clear button is a plain `<button>`: handle the click yourself (e.g. `router.push('/')`).
-function onClear() {
-  toast('Error cleared')
-}
-</script>
-
 <template>
   <Error
     class="min-h-96"
@@ -19,3 +10,12 @@ function onClear() {
     @clear="onClear"
   />
 </template>
+
+<script setup lang="ts">
+import { Error, toast } from '@hareui/vue'
+
+// With an empty `redirect` the clear button is a plain `<button>`: handle the click yourself (e.g. `router.push('/')`).
+function onClear() {
+  toast('Error cleared')
+}
+</script>

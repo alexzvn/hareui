@@ -1,7 +1,3 @@
-<script setup lang="ts">
-import { NativeSelect } from '@hareui/vue'
-</script>
-
 <template>
   <div class="w-[220px]">
     <NativeSelect full-width label="Pickup time" name="pickup">
@@ -14,3 +10,7 @@ import { NativeSelect } from '@hareui/vue'
     </NativeSelect>
   </div>
 </template>
+
+<script setup lang="ts">
+import { NativeSelect } from '@hareui/vue'
+</script>

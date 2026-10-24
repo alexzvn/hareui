@@ -1,3 +1,17 @@
+<template>
+  <TransitionGroup
+    tag="div"
+    data-slot="drop-zone-file-list"
+    move-class="transition-transform! duration-250! ease-out! motion-reduce:transition-none!"
+    :css="false"
+    :class="ui.fileList({ class: [context?.ui.value?.fileList, props.ui?.fileList, props.class] })"
+    @enter="onEnter"
+    @leave="onLeave"
+  >
+    <slot />
+  </TransitionGroup>
+</template>
+
 <script lang="ts">
 import type { ComponentSlots } from '../../types/tv'
 import theme from './theme'
@@ -70,17 +84,3 @@ function onLeave(el: Element, done: () => void) {
   animate(item, [{ opacity: 1 }, { opacity: 0 }], { duration: 200, easing: 'ease-out' }, done)
 }
 </script>
-
-<template>
-  <TransitionGroup
-    tag="div"
-    data-slot="drop-zone-file-list"
-    move-class="transition-transform! duration-250! ease-out! motion-reduce:transition-none!"
-    :css="false"
-    :class="ui.fileList({ class: [context?.ui.value?.fileList, props.ui?.fileList, props.class] })"
-    @enter="onEnter"
-    @leave="onLeave"
-  >
-    <slot />
-  </TransitionGroup>
-</template>

@@ -1,3 +1,18 @@
+<template>
+  <Form class="flex w-96 flex-col gap-4" :schema="schema" :state="state" @submit="onSubmit">
+    <TextField
+      v-model="state.email"
+      name="email"
+      type="email"
+      label="Email"
+      placeholder="john@example.com"
+    />
+    <TextField v-model="state.password" name="password" type="password" label="Password" />
+    <NumberField v-model="state.seats" name="seats" label="Seats" />
+    <Button type="submit" class="self-start"> Submit </Button>
+  </Form>
+</template>
+
 <script setup lang="ts">
 import type { FormSubmitEvent } from '@hareui/vue'
 import { Button, Form, NumberField, TextField } from '@hareui/vue'
@@ -26,18 +41,3 @@ function onSubmit(event: FormSubmitEvent<Schema>) {
   alert(`Valid: ${JSON.stringify(event.data, null, 2)}`)
 }
 </script>
-
-<template>
-  <Form class="flex w-96 flex-col gap-4" :schema="schema" :state="state" @submit="onSubmit">
-    <TextField
-      v-model="state.email"
-      name="email"
-      type="email"
-      label="Email"
-      placeholder="john@example.com"
-    />
-    <TextField v-model="state.password" name="password" type="password" label="Password" />
-    <NumberField v-model="state.seats" name="seats" label="Seats" />
-    <Button type="submit" class="self-start"> Submit </Button>
-  </Form>
-</template>

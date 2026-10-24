@@ -1,7 +1,3 @@
-<script setup lang="ts">
-import { Button, Popover } from '@hareui/vue'
-</script>
-
 <template>
   <Popover
     :ui="{
@@ -34,3 +30,7 @@ import { Button, Popover } from '@hareui/vue'
     </template>
   </Popover>
 </template>
+
+<script setup lang="ts">
+import { Button, Popover } from '@hareui/vue'
+</script>

@@ -1,7 +1,3 @@
-<script setup lang="ts">
-import { Calendar } from '@hareui/vue'
-</script>
-
 <template>
   <Calendar
     aria-label="Trip dates"
@@ -9,3 +5,7 @@ import { Calendar } from '@hareui/vue'
     :number-of-months="2"
   />
 </template>
+
+<script setup lang="ts">
+import { Calendar } from '@hareui/vue'
+</script>

@@ -1,10 +1,3 @@
-<script setup lang="ts">
-import { Avatar, Button, Popover } from '@hareui/vue'
-import { ref } from 'vue'
-
-const isFollowing = ref(false)
-</script>
-
 <template>
   <div class="flex items-center gap-6">
     <Popover class="w-[320px]">
@@ -64,3 +57,10 @@ const isFollowing = ref(false)
     </Popover>
   </div>
 </template>
+
+<script setup lang="ts">
+import { Avatar, Button, Popover } from '@hareui/vue'
+import { ref } from 'vue'
+
+const isFollowing = ref(false)
+</script>

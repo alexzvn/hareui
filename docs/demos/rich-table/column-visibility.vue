@@ -1,3 +1,17 @@
+<template>
+  <div class="flex w-full flex-col gap-3">
+    <div class="flex justify-end">
+      <Dropdown v-model="visible" :items="items" selection-mode="multiple" align="end">
+        <Button variant="secondary" size="sm">
+          <Icon icon="gravity-ui:layout-columns-3" />
+          Columns
+        </Button>
+      </Dropdown>
+    </div>
+    <RichTable v-model:column-visibility="columnVisibility" :data="data" :columns="columns" />
+  </div>
+</template>
+
 <script setup lang="ts">
 import type { DropdownEntry, RichTableColumn } from '@hareui/vue'
 import { Button, Dropdown, RichTable } from '@hareui/vue'
@@ -49,17 +63,3 @@ const visible = computed({
   },
 })
 </script>
-
-<template>
-  <div class="flex w-full flex-col gap-3">
-    <div class="flex justify-end">
-      <Dropdown v-model="visible" :items="items" selection-mode="multiple" align="end">
-        <Button variant="secondary" size="sm">
-          <Icon icon="gravity-ui:layout-columns-3" />
-          Columns
-        </Button>
-      </Dropdown>
-    </div>
-    <RichTable v-model:column-visibility="columnVisibility" :data="data" :columns="columns" />
-  </div>
-</template>

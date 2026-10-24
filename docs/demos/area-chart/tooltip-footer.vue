@@ -1,3 +1,32 @@
+<template>
+  <Card
+    class="w-full max-w-[520px] rounded-2xl"
+    :ui="{ header: 'flex-row items-center justify-between' }"
+  >
+    <template #header>
+      <h3 class="text-base font-medium text-foreground">App Installs</h3>
+      <ChartLegend :series="series" />
+    </template>
+    <AreaChart
+      :data="data"
+      index="week"
+      :series="series"
+      aria-label="Weekly app installs by store"
+      :height="200"
+      :value-formatter="formatCount"
+      :y-axis="{ tickFormatter: formatTick }"
+      :tooltip="tooltip"
+    >
+      <template #tooltip-footer="{ payload }">
+        <div class="mt-1 flex items-center justify-between gap-4 border-t border-separator pt-1.5">
+          <span class="text-xs font-medium text-muted">Both stores</span>
+          <span class="text-xs font-semibold text-foreground">{{ total(payload) }}</span>
+        </div>
+      </template>
+    </AreaChart>
+  </Card>
+</template>
+
 <script setup lang="ts">
 import { Card } from '@hareui/vue'
 import type { ChartTooltipContentEntry } from '@hareui/vue/charts'
@@ -33,32 +62,3 @@ function total(payload: ChartTooltipContentEntry[]) {
   return formatCount(payload.reduce((sum, entry) => sum + Number(entry.value), 0))
 }
 </script>
-
-<template>
-  <Card
-    class="w-full max-w-[520px] rounded-2xl"
-    :ui="{ header: 'flex-row items-center justify-between' }"
-  >
-    <template #header>
-      <h3 class="text-base font-medium text-foreground">App Installs</h3>
-      <ChartLegend :series="series" />
-    </template>
-    <AreaChart
-      :data="data"
-      index="week"
-      :series="series"
-      aria-label="Weekly app installs by store"
-      :height="200"
-      :value-formatter="formatCount"
-      :y-axis="{ tickFormatter: formatTick }"
-      :tooltip="tooltip"
-    >
-      <template #tooltip-footer="{ payload }">
-        <div class="mt-1 flex items-center justify-between gap-4 border-t border-separator pt-1.5">
-          <span class="text-xs font-medium text-muted">Both stores</span>
-          <span class="text-xs font-semibold text-foreground">{{ total(payload) }}</span>
-        </div>
-      </template>
-    </AreaChart>
-  </Card>
-</template>

@@ -1,3 +1,13 @@
+<template>
+  <Table
+    v-model:sort-descriptor="sortDescriptor"
+    aria-label="Table with sorting"
+    :columns="columns"
+    :rows="rows"
+    :ui="{ content: 'min-w-[600px]' }"
+  />
+</template>
+
 <script setup lang="ts">
 import type { TableColumn, TableSortDescriptor } from '@hareui/vue'
 import { Table } from '@hareui/vue'
@@ -32,13 +42,3 @@ const rows = computed(() => {
   return direction === 'descending' ? sorted.reverse() : sorted
 })
 </script>
-
-<template>
-  <Table
-    v-model:sort-descriptor="sortDescriptor"
-    aria-label="Table with sorting"
-    :columns="columns"
-    :rows="rows"
-    :ui="{ content: 'min-w-[600px]' }"
-  />
-</template>

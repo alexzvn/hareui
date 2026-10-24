@@ -1,8 +1,3 @@
-<script setup lang="ts">
-import { DatePicker } from '@hareui/vue'
-import { Icon } from '@iconify/vue'
-</script>
-
 <template>
   <DatePicker
     class="w-72"
@@ -16,3 +11,8 @@ import { Icon } from '@iconify/vue'
     </template>
   </DatePicker>
 </template>
+
+<script setup lang="ts">
+import { DatePicker } from '@hareui/vue'
+import { Icon } from '@iconify/vue'
+</script>

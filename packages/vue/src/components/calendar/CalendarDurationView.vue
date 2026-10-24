@@ -1,3 +1,185 @@
+<template>
+  <div
+    :data-slot="p"
+    role="application"
+    :aria-label="label"
+    :dir="direction"
+    :aria-invalid="invalid || undefined"
+    :data-invalid="invalid ? '' : undefined"
+    :data-disabled="disabled ? '' : undefined"
+    :data-readonly="readonly ? '' : undefined"
+    :class="ui.base({ class: [uiOverrides?.base, rootClass] })"
+  >
+    <header :data-slot="`${p}-header`" role="presentation" :class="cls('header')">
+      <div :data-slot="`${p}-heading`" aria-hidden="true" :class="cls('heading')">
+        {{ view.heading.value }}
+      </div>
+      <button
+        type="button"
+        :data-slot="`${p}-nav-button`"
+        aria-label="Previous"
+        :disabled="view.isPrevDisabled.value || undefined"
+        :data-disabled="view.isPrevDisabled.value ? '' : undefined"
+        :class="cls('navButton')"
+        @click="view.prevPage()"
+      >
+        <slot name="navIcon" direction="previous">
+          <svg
+            :data-slot="`${p}-nav-button-icon`"
+            height="16"
+            width="16"
+            viewBox="0 0 16 16"
+            fill="none"
+            xmlns="http://www.w3.org/2000/svg"
+            :class="cls('navButtonIcon')"
+          >
+            <path
+              fill-rule="evenodd"
+              clip-rule="evenodd"
+              d="M10.53 2.97a.75.75 0 0 1 0 1.06L6.56 8l3.97 3.97a.75.75 0 1 1-1.06 1.06l-4.5-4.5a.75.75 0 0 1 0-1.06l4.5-4.5a.75.75 0 0 1 1.06 0"
+              fill="currentColor"
+            />
+          </svg>
+        </slot>
+      </button>
+      <button
+        type="button"
+        :data-slot="`${p}-nav-button`"
+        aria-label="Next"
+        :disabled="view.isNextDisabled.value || undefined"
+        :data-disabled="view.isNextDisabled.value ? '' : undefined"
+        :class="cls('navButton')"
+        @click="view.nextPage()"
+      >
+        <slot name="navIcon" direction="next">
+          <svg
+            :data-slot="`${p}-nav-button-icon`"
+            height="16"
+            width="16"
+            viewBox="0 0 16 16"
+            fill="none"
+            xmlns="http://www.w3.org/2000/svg"
+            :class="cls('navButtonIcon')"
+          >
+            <path
+              fill-rule="evenodd"
+              clip-rule="evenodd"
+              d="M5.47 2.97a.75.75 0 0 1 1.06 0l4.5 4.5a.75.75 0 0 1 0 1.06l-4.5 4.5a.75.75 0 1 1-1.06-1.06L9.44 8 5.47 4.03a.75.75 0 0 1 0-1.06Z"
+              fill="currentColor"
+            />
+          </svg>
+        </slot>
+      </button>
+    </header>
+    <table
+      :ref="
+        (el) => {
+          view.gridRef.value = el as HTMLElement
+        }
+      "
+      :data-slot="`${p}-grid`"
+      role="grid"
+      :aria-label="label"
+      :aria-readonly="readonly || undefined"
+      :aria-disabled="disabled || undefined"
+      :aria-multiselectable="kind === 'range' || selectionMode === 'multiple' || undefined"
+      :class="cls('grid')"
+      @keydown="onKeyDown"
+    >
+      <thead :data-slot="`${p}-grid-header`" aria-hidden="true" :class="cls('gridHeader')">
+        <tr :class="cls('gridRow')">
+          <th
+            v-for="(day, i) in view.weekDays.value"
+            :key="i"
+            :data-slot="`${p}-header-cell`"
+            :class="cls('headerCell')"
+          >
+            {{ day }}
+          </th>
+        </tr>
+      </thead>
+      <tbody :data-slot="`${p}-grid-body`" :class="cls('gridBody')">
+        <tr v-for="(row, r) in view.rows.value" :key="r" :class="cls('gridRow')">
+          <template v-for="(date, c) in row" :key="c">
+            <td v-if="!date" />
+            <td
+              v-else
+              role="gridcell"
+              :aria-disabled="!cellState(date).selectable || undefined"
+              :aria-selected="cellState(date).selected || undefined"
+            >
+              <div
+                :data-slot="`${p}-cell`"
+                role="button"
+                :data-value="date.toString()"
+                :tabindex="cellState(date).disabled ? undefined : cellState(date).focused ? 0 : -1"
+                :aria-disabled="!cellState(date).selectable || undefined"
+                :aria-label="view.cellLabel(date)"
+                :data-today="cellState(date).today ? '' : undefined"
+                :data-selected="cellState(date).selected ? true : undefined"
+                :data-selection-start="cellState(date).selectionStart ? true : undefined"
+                :data-selection-end="cellState(date).selectionEnd ? true : undefined"
+                :data-disabled="cellState(date).disabled ? '' : undefined"
+                :data-unavailable="cellState(date).unavailable ? '' : undefined"
+                :data-focused="cellState(date).focused ? '' : undefined"
+                :class="cls('cell')"
+                @click="select(date)"
+                @focus="view.focusedDate.value = date"
+                @pointerenter="onPointerEnter(date)"
+              >
+                <span
+                  v-if="kind === 'range'"
+                  data-slot="range-calendar-cell-button"
+                  :class="cls('cellButton')"
+                >
+                  <slot
+                    name="cell"
+                    :date="date"
+                    :today="cellState(date).today"
+                    :selected="cellState(date).selected"
+                    :disabled="cellState(date).disabled"
+                    :unavailable="cellState(date).unavailable"
+                    :outside-view="false"
+                    :selection-start="cellState(date).selectionStart"
+                    :selection-end="cellState(date).selectionEnd"
+                  >
+                    {{ view.formatDay(date) }}
+                  </slot>
+                  <span
+                    v-if="indicator?.(date)"
+                    data-slot="range-calendar-cell-indicator"
+                    aria-hidden="true"
+                    :class="cls('cellIndicator')"
+                  />
+                </span>
+                <template v-else>
+                  <slot
+                    name="cell"
+                    :date="date"
+                    :today="cellState(date).today"
+                    :selected="cellState(date).selected"
+                    :disabled="cellState(date).disabled"
+                    :unavailable="cellState(date).unavailable"
+                    :outside-view="false"
+                  >
+                    {{ view.formatDay(date) }}
+                  </slot>
+                  <span
+                    v-if="indicator?.(date)"
+                    data-slot="calendar-cell-indicator"
+                    aria-hidden="true"
+                    :class="cls('cellIndicator')"
+                  />
+                </template>
+              </div>
+            </td>
+          </template>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+</template>
+
 <script lang="ts">
 import type { CalendarDate, DateValue } from '@internationalized/date'
 
@@ -193,185 +375,3 @@ function cellState(date: CalendarDate) {
 }
 const label = computed(() => [props.ariaLabel, view.rangeLabel.value].filter(Boolean).join(', '))
 </script>
-
-<template>
-  <div
-    :data-slot="p"
-    role="application"
-    :aria-label="label"
-    :dir="direction"
-    :aria-invalid="invalid || undefined"
-    :data-invalid="invalid ? '' : undefined"
-    :data-disabled="disabled ? '' : undefined"
-    :data-readonly="readonly ? '' : undefined"
-    :class="ui.base({ class: [uiOverrides?.base, rootClass] })"
-  >
-    <header :data-slot="`${p}-header`" role="presentation" :class="cls('header')">
-      <div :data-slot="`${p}-heading`" aria-hidden="true" :class="cls('heading')">
-        {{ view.heading.value }}
-      </div>
-      <button
-        type="button"
-        :data-slot="`${p}-nav-button`"
-        aria-label="Previous"
-        :disabled="view.isPrevDisabled.value || undefined"
-        :data-disabled="view.isPrevDisabled.value ? '' : undefined"
-        :class="cls('navButton')"
-        @click="view.prevPage()"
-      >
-        <slot name="navIcon" direction="previous">
-          <svg
-            :data-slot="`${p}-nav-button-icon`"
-            height="16"
-            width="16"
-            viewBox="0 0 16 16"
-            fill="none"
-            xmlns="http://www.w3.org/2000/svg"
-            :class="cls('navButtonIcon')"
-          >
-            <path
-              fill-rule="evenodd"
-              clip-rule="evenodd"
-              d="M10.53 2.97a.75.75 0 0 1 0 1.06L6.56 8l3.97 3.97a.75.75 0 1 1-1.06 1.06l-4.5-4.5a.75.75 0 0 1 0-1.06l4.5-4.5a.75.75 0 0 1 1.06 0"
-              fill="currentColor"
-            />
-          </svg>
-        </slot>
-      </button>
-      <button
-        type="button"
-        :data-slot="`${p}-nav-button`"
-        aria-label="Next"
-        :disabled="view.isNextDisabled.value || undefined"
-        :data-disabled="view.isNextDisabled.value ? '' : undefined"
-        :class="cls('navButton')"
-        @click="view.nextPage()"
-      >
-        <slot name="navIcon" direction="next">
-          <svg
-            :data-slot="`${p}-nav-button-icon`"
-            height="16"
-            width="16"
-            viewBox="0 0 16 16"
-            fill="none"
-            xmlns="http://www.w3.org/2000/svg"
-            :class="cls('navButtonIcon')"
-          >
-            <path
-              fill-rule="evenodd"
-              clip-rule="evenodd"
-              d="M5.47 2.97a.75.75 0 0 1 1.06 0l4.5 4.5a.75.75 0 0 1 0 1.06l-4.5 4.5a.75.75 0 1 1-1.06-1.06L9.44 8 5.47 4.03a.75.75 0 0 1 0-1.06Z"
-              fill="currentColor"
-            />
-          </svg>
-        </slot>
-      </button>
-    </header>
-    <table
-      :ref="
-        (el) => {
-          view.gridRef.value = el as HTMLElement
-        }
-      "
-      :data-slot="`${p}-grid`"
-      role="grid"
-      :aria-label="label"
-      :aria-readonly="readonly || undefined"
-      :aria-disabled="disabled || undefined"
-      :aria-multiselectable="kind === 'range' || selectionMode === 'multiple' || undefined"
-      :class="cls('grid')"
-      @keydown="onKeyDown"
-    >
-      <thead :data-slot="`${p}-grid-header`" aria-hidden="true" :class="cls('gridHeader')">
-        <tr :class="cls('gridRow')">
-          <th
-            v-for="(day, i) in view.weekDays.value"
-            :key="i"
-            :data-slot="`${p}-header-cell`"
-            :class="cls('headerCell')"
-          >
-            {{ day }}
-          </th>
-        </tr>
-      </thead>
-      <tbody :data-slot="`${p}-grid-body`" :class="cls('gridBody')">
-        <tr v-for="(row, r) in view.rows.value" :key="r" :class="cls('gridRow')">
-          <template v-for="(date, c) in row" :key="c">
-            <td v-if="!date" />
-            <td
-              v-else
-              role="gridcell"
-              :aria-disabled="!cellState(date).selectable || undefined"
-              :aria-selected="cellState(date).selected || undefined"
-            >
-              <div
-                :data-slot="`${p}-cell`"
-                role="button"
-                :data-value="date.toString()"
-                :tabindex="cellState(date).disabled ? undefined : cellState(date).focused ? 0 : -1"
-                :aria-disabled="!cellState(date).selectable || undefined"
-                :aria-label="view.cellLabel(date)"
-                :data-today="cellState(date).today ? '' : undefined"
-                :data-selected="cellState(date).selected ? true : undefined"
-                :data-selection-start="cellState(date).selectionStart ? true : undefined"
-                :data-selection-end="cellState(date).selectionEnd ? true : undefined"
-                :data-disabled="cellState(date).disabled ? '' : undefined"
-                :data-unavailable="cellState(date).unavailable ? '' : undefined"
-                :data-focused="cellState(date).focused ? '' : undefined"
-                :class="cls('cell')"
-                @click="select(date)"
-                @focus="view.focusedDate.value = date"
-                @pointerenter="onPointerEnter(date)"
-              >
-                <span
-                  v-if="kind === 'range'"
-                  data-slot="range-calendar-cell-button"
-                  :class="cls('cellButton')"
-                >
-                  <slot
-                    name="cell"
-                    :date="date"
-                    :today="cellState(date).today"
-                    :selected="cellState(date).selected"
-                    :disabled="cellState(date).disabled"
-                    :unavailable="cellState(date).unavailable"
-                    :outside-view="false"
-                    :selection-start="cellState(date).selectionStart"
-                    :selection-end="cellState(date).selectionEnd"
-                  >
-                    {{ view.formatDay(date) }}
-                  </slot>
-                  <span
-                    v-if="indicator?.(date)"
-                    data-slot="range-calendar-cell-indicator"
-                    aria-hidden="true"
-                    :class="cls('cellIndicator')"
-                  />
-                </span>
-                <template v-else>
-                  <slot
-                    name="cell"
-                    :date="date"
-                    :today="cellState(date).today"
-                    :selected="cellState(date).selected"
-                    :disabled="cellState(date).disabled"
-                    :unavailable="cellState(date).unavailable"
-                    :outside-view="false"
-                  >
-                    {{ view.formatDay(date) }}
-                  </slot>
-                  <span
-                    v-if="indicator?.(date)"
-                    data-slot="calendar-cell-indicator"
-                    aria-hidden="true"
-                    :class="cls('cellIndicator')"
-                  />
-                </template>
-              </div>
-            </td>
-          </template>
-        </tr>
-      </tbody>
-    </table>
-  </div>
-</template>

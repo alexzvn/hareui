@@ -1,3 +1,51 @@
+<template>
+  <div
+    ref="root"
+    :data-slot="($attrs['data-slot'] as string | undefined) ?? 'switch'"
+    :data-state="checked ? 'checked' : 'unchecked'"
+    :data-selected="checked ? 'true' : undefined"
+    :data-disabled="isDisabled ? 'true' : undefined"
+    :data-invalid="invalid ? 'true' : undefined"
+    :data-readonly="readonly ? 'true' : undefined"
+    :data-required="required ? 'true' : undefined"
+    :class="ui.base({ class: [props.ui?.base, props.class] })"
+    @click="forwardRootClick($event, '[data-slot=switch-content]')"
+    @mousedown="keepFocusWhenReadonly($event, readonly, '[data-slot=switch-content]')"
+  >
+    <SwitchRoot
+      v-bind="$attrs"
+      :id="id"
+      :model-value="checked"
+      :name="name"
+      :value="value"
+      :required="required"
+      :disabled="isDisabled"
+      :aria-describedby="describedBy"
+      :aria-invalid="invalid ? 'true' : undefined"
+      :aria-readonly="readonly ? 'true' : undefined"
+      data-slot="switch-content"
+      :class="ui.content({ class: props.ui?.content })"
+      @keydown.capture="submitOnEnter"
+      @update:model-value="onUpdate"
+    >
+      <span data-slot="switch-control" :class="ui.control({ class: props.ui?.control })">
+        <span data-slot="switch-thumb" :class="ui.thumb({ class: props.ui?.thumb })">
+          <span
+            v-if="slots.icon"
+            data-slot="switch-icon"
+            :class="ui.icon({ class: props.ui?.icon })"
+          >
+            <slot name="icon" :checked="checked" />
+          </span>
+        </span>
+      </span>
+      <slot name="label" :checked="checked">{{ label }}</slot>
+    </SwitchRoot>
+    <FieldDescription />
+    <FieldError />
+  </div>
+</template>
+
 <script lang="ts">
 import type { ValidateFn, ValidationResult } from '../../composables/useFieldValidation'
 import type { ComponentSlots, ComponentVariants } from '../../types/tv'
@@ -154,51 +202,3 @@ function onUpdate(value: boolean) {
   commitValidation()
 }
 </script>
-
-<template>
-  <div
-    ref="root"
-    :data-slot="($attrs['data-slot'] as string | undefined) ?? 'switch'"
-    :data-state="checked ? 'checked' : 'unchecked'"
-    :data-selected="checked ? 'true' : undefined"
-    :data-disabled="isDisabled ? 'true' : undefined"
-    :data-invalid="invalid ? 'true' : undefined"
-    :data-readonly="readonly ? 'true' : undefined"
-    :data-required="required ? 'true' : undefined"
-    :class="ui.base({ class: [props.ui?.base, props.class] })"
-    @click="forwardRootClick($event, '[data-slot=switch-content]')"
-    @mousedown="keepFocusWhenReadonly($event, readonly, '[data-slot=switch-content]')"
-  >
-    <SwitchRoot
-      v-bind="$attrs"
-      :id="id"
-      :model-value="checked"
-      :name="name"
-      :value="value"
-      :required="required"
-      :disabled="isDisabled"
-      :aria-describedby="describedBy"
-      :aria-invalid="invalid ? 'true' : undefined"
-      :aria-readonly="readonly ? 'true' : undefined"
-      data-slot="switch-content"
-      :class="ui.content({ class: props.ui?.content })"
-      @keydown.capture="submitOnEnter"
-      @update:model-value="onUpdate"
-    >
-      <span data-slot="switch-control" :class="ui.control({ class: props.ui?.control })">
-        <span data-slot="switch-thumb" :class="ui.thumb({ class: props.ui?.thumb })">
-          <span
-            v-if="slots.icon"
-            data-slot="switch-icon"
-            :class="ui.icon({ class: props.ui?.icon })"
-          >
-            <slot name="icon" :checked="checked" />
-          </span>
-        </span>
-      </span>
-      <slot name="label" :checked="checked">{{ label }}</slot>
-    </SwitchRoot>
-    <FieldDescription />
-    <FieldError />
-  </div>
-</template>

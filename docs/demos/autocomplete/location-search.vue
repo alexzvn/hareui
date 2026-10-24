@@ -1,3 +1,21 @@
+<template>
+  <Autocomplete
+    v-model="selectedKey"
+    v-model:input-value="searchText"
+    clearable
+    class="w-[256px]"
+    label="City"
+    placeholder="Search for a city"
+    search-label="Search cities"
+    search-placeholder="Search cities..."
+    :items="items"
+  >
+    <template #empty>
+      {{ isLoading ? 'Searching...' : 'No cities found' }}
+    </template>
+  </Autocomplete>
+</template>
+
 <script setup lang="ts">
 import type { ListBoxItem } from '@hareui/vue'
 import { Autocomplete } from '@hareui/vue'
@@ -35,21 +53,3 @@ watch(searchText, (text) => {
   }, 300)
 })
 </script>
-
-<template>
-  <Autocomplete
-    v-model="selectedKey"
-    v-model:input-value="searchText"
-    clearable
-    class="w-[256px]"
-    label="City"
-    placeholder="Search for a city"
-    search-label="Search cities"
-    search-placeholder="Search cities..."
-    :items="items"
-  >
-    <template #empty>
-      {{ isLoading ? 'Searching...' : 'No cities found' }}
-    </template>
-  </Autocomplete>
-</template>

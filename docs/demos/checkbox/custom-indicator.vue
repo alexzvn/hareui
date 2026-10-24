@@ -1,7 +1,3 @@
-<script setup lang="ts">
-import { Checkbox } from '@hareui/vue'
-</script>
-
 <template>
   <div class="flex gap-4">
     <Checkbox default-value name="heart" label="Heart">
@@ -48,3 +44,7 @@ import { Checkbox } from '@hareui/vue'
     </Checkbox>
   </div>
 </template>
+
+<script setup lang="ts">
+import { Checkbox } from '@hareui/vue'
+</script>

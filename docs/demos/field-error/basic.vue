@@ -1,11 +1,3 @@
-<script setup lang="ts">
-import { TextField } from '@hareui/vue'
-import { computed, ref } from 'vue'
-
-const value = ref('jr')
-const invalid = computed(() => value.value.length > 0 && value.value.length < 3)
-</script>
-
 <template>
   <TextField
     id="username"
@@ -17,3 +9,11 @@ const invalid = computed(() => value.value.length > 0 && value.value.length < 3)
     error-message="Username must be at least 3 characters"
   />
 </template>
+
+<script setup lang="ts">
+import { TextField } from '@hareui/vue'
+import { computed, ref } from 'vue'
+
+const value = ref('jr')
+const invalid = computed(() => value.value.length > 0 && value.value.length < 3)
+</script>

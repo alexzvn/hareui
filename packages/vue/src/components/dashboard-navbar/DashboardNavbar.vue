@@ -1,3 +1,63 @@
+<template>
+  <Primitive
+    :as="as.root"
+    data-slot="dashboard-navbar"
+    v-bind="$attrs"
+    :class="ui.root({ class: [props.ui?.root, props.class] })"
+  >
+    <div data-slot="dashboard-navbar-left" :class="ui.left({ class: props.ui?.left })">
+      <slot v-if="toggleSide === 'left'" name="toggle" v-bind="{ ...context, ui }">
+        <DashboardSidebarToggle
+          v-if="toggle"
+          :side="toggleSide"
+          v-bind="toggleProps"
+          data-slot="dashboard-navbar-toggle"
+          :class="toggleClass"
+        />
+      </slot>
+
+      <slot name="left" v-bind="context">
+        <slot name="leading" v-bind="{ ...context, ui }" />
+
+        <Primitive
+          v-if="title || slots.title"
+          :as="as.title"
+          data-slot="dashboard-navbar-title"
+          :class="ui.title({ class: props.ui?.title })"
+        >
+          <slot name="title">
+            <span class="truncate">{{ title }}</span>
+          </slot>
+        </Primitive>
+
+        <slot name="trailing" v-bind="{ ...context, ui }" />
+      </slot>
+    </div>
+
+    <div
+      v-if="slots.default"
+      data-slot="dashboard-navbar-center"
+      :class="ui.center({ class: props.ui?.center })"
+    >
+      <slot v-bind="context" />
+    </div>
+
+    <div data-slot="dashboard-navbar-right" :class="ui.right({ class: props.ui?.right })">
+      <slot name="right" v-bind="context" />
+
+      <slot v-if="toggleSide === 'right'" name="toggle" v-bind="{ ...context, ui }">
+        <DashboardSidebarToggle
+          v-if="toggle"
+          :side="toggleSide"
+          v-bind="toggleProps"
+          data-slot="dashboard-navbar-toggle"
+          :class="toggleClass"
+        />
+      </slot>
+    </div>
+  </Primitive>
+</template>
+
 <script lang="ts">
 import type { PrimitiveProps } from 'reka-ui'
 
@@ -110,63 +170,3 @@ const toggleClass = computed(() =>
   }),
 )
 </script>
-
-<template>
-  <Primitive
-    :as="as.root"
-    data-slot="dashboard-navbar"
-    v-bind="$attrs"
-    :class="ui.root({ class: [props.ui?.root, props.class] })"
-  >
-    <div data-slot="dashboard-navbar-left" :class="ui.left({ class: props.ui?.left })">
-      <slot v-if="toggleSide === 'left'" name="toggle" v-bind="{ ...context, ui }">
-        <DashboardSidebarToggle
-          v-if="toggle"
-          :side="toggleSide"
-          v-bind="toggleProps"
-          data-slot="dashboard-navbar-toggle"
-          :class="toggleClass"
-        />
-      </slot>
-
-      <slot name="left" v-bind="context">
-        <slot name="leading" v-bind="{ ...context, ui }" />
-
-        <Primitive
-          v-if="title || slots.title"
-          :as="as.title"
-          data-slot="dashboard-navbar-title"
-          :class="ui.title({ class: props.ui?.title })"
-        >
-          <slot name="title">
-            <span class="truncate">{{ title }}</span>
-          </slot>
-        </Primitive>
-
-        <slot name="trailing" v-bind="{ ...context, ui }" />
-      </slot>
-    </div>
-
-    <div
-      v-if="slots.default"
-      data-slot="dashboard-navbar-center"
-      :class="ui.center({ class: props.ui?.center })"
-    >
-      <slot v-bind="context" />
-    </div>
-
-    <div data-slot="dashboard-navbar-right" :class="ui.right({ class: props.ui?.right })">
-      <slot name="right" v-bind="context" />
-
-      <slot v-if="toggleSide === 'right'" name="toggle" v-bind="{ ...context, ui }">
-        <DashboardSidebarToggle
-          v-if="toggle"
-          :side="toggleSide"
-          v-bind="toggleProps"
-          data-slot="dashboard-navbar-toggle"
-          :class="toggleClass"
-        />
-      </slot>
-    </div>
-  </Primitive>
-</template>

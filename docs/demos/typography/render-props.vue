@@ -1,7 +1,3 @@
-<script setup lang="ts">
-import { Typography } from '@hareui/vue'
-</script>
-
 <template>
   <div class="flex max-w-xl flex-col gap-4">
     <Typography as="h2" type="h1"> H1 visual style, h2 semantic element </Typography>
@@ -10,3 +6,7 @@ import { Typography } from '@hareui/vue'
     </Typography>
   </div>
 </template>
+
+<script setup lang="ts">
+import { Typography } from '@hareui/vue'
+</script>

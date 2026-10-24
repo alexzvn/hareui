@@ -1,3 +1,17 @@
+<template>
+  <Form
+    class="flex w-96 flex-col gap-4"
+    :schema="schema"
+    :state="state"
+    @submit="onSubmit"
+    @error="onError"
+  >
+    <TextField v-model="state.name" name="name" label="Name" />
+    <TextField v-model="state.email" name="email" type="email" label="Email" />
+    <Button type="submit" class="self-start"> Submit </Button>
+  </Form>
+</template>
+
 <script setup lang="ts">
 import type { FormErrorEvent, FormSubmitEvent } from '@hareui/vue'
 import { Button, Form, TextField } from '@hareui/vue'
@@ -30,17 +44,3 @@ function onError(event: FormErrorEvent) {
   }
 }
 </script>
-
-<template>
-  <Form
-    class="flex w-96 flex-col gap-4"
-    :schema="schema"
-    :state="state"
-    @submit="onSubmit"
-    @error="onError"
-  >
-    <TextField v-model="state.name" name="name" label="Name" />
-    <TextField v-model="state.email" name="email" type="email" label="Email" />
-    <Button type="submit" class="self-start"> Submit </Button>
-  </Form>
-</template>

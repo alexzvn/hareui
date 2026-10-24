@@ -1,21 +1,3 @@
-<script setup lang="ts">
-import { Card } from '@hareui/vue'
-import { PieChart } from '@hareui/vue/charts'
-
-const data = [
-  { size: 'Small', orders: 180, fill: 'var(--chart-4)' },
-  { size: 'Medium', orders: 410, fill: 'var(--chart-3)' },
-  { size: 'Large', orders: 230, fill: 'var(--chart-2)' },
-]
-
-const legend = {
-  position: 'right' as const,
-  showValue: true,
-  showPercent: true,
-  percentFormatter: (percent: number) => `(${percent.toFixed(1)}%)`,
-}
-</script>
-
 <template>
   <Card
     class="w-full max-w-[460px] rounded-2xl"
@@ -38,3 +20,21 @@ const legend = {
     </PieChart>
   </Card>
 </template>
+
+<script setup lang="ts">
+import { Card } from '@hareui/vue'
+import { PieChart } from '@hareui/vue/charts'
+
+const data = [
+  { size: 'Small', orders: 180, fill: 'var(--chart-4)' },
+  { size: 'Medium', orders: 410, fill: 'var(--chart-3)' },
+  { size: 'Large', orders: 230, fill: 'var(--chart-2)' },
+]
+
+const legend = {
+  position: 'right' as const,
+  showValue: true,
+  showPercent: true,
+  percentFormatter: (percent: number) => `(${percent.toFixed(1)}%)`,
+}
+</script>

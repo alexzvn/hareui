@@ -1,17 +1,3 @@
-<script setup lang="ts">
-import { Button, TimeField } from '@hareui/vue'
-import { getLocalTimeZone, now, Time } from '@internationalized/date'
-import type { TimeValue } from 'reka-ui'
-import { shallowRef } from 'vue'
-
-const value = shallowRef<TimeValue | null>(null)
-
-function setNow() {
-  const currentTime = now(getLocalTimeZone())
-  value.value = new Time(currentTime.hour, currentTime.minute, currentTime.second)
-}
-</script>
-
 <template>
   <div class="flex flex-col gap-4">
     <TimeField
@@ -27,3 +13,17 @@ function setNow() {
     </div>
   </div>
 </template>
+
+<script setup lang="ts">
+import { Button, TimeField } from '@hareui/vue'
+import { getLocalTimeZone, now, Time } from '@internationalized/date'
+import type { TimeValue } from 'reka-ui'
+import { shallowRef } from 'vue'
+
+const value = shallowRef<TimeValue | null>(null)
+
+function setNow() {
+  const currentTime = now(getLocalTimeZone())
+  value.value = new Time(currentTime.hour, currentTime.minute, currentTime.second)
+}
+</script>

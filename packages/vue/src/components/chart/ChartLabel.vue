@@ -1,3 +1,24 @@
+<template>
+  <ChartLayer v-if="labels.length" name="label">
+    <g data-slot="chart-labels">
+      <template v-for="label in labels" :key="label.index">
+        <slot v-bind="label">
+          <text
+            data-slot="chart-label"
+            :x="label.x"
+            :y="label.y"
+            :text-anchor="label.textAnchor"
+            :dominant-baseline="label.dominantBaseline"
+            :style="fill ? { fill } : undefined"
+            :class="chart.classes('label', props.class)"
+            >{{ label.text }}</text
+          >
+        </slot>
+      </template>
+    </g>
+  </ChartLayer>
+</template>
+
 <script lang="ts">
 import type { ClassValue } from 'tailwind-variants'
 
@@ -93,24 +114,3 @@ const labels = computed<ChartLabelSlotProps[]>(() => {
   ]
 })
 </script>
-
-<template>
-  <ChartLayer v-if="labels.length" name="label">
-    <g data-slot="chart-labels">
-      <template v-for="label in labels" :key="label.index">
-        <slot v-bind="label">
-          <text
-            data-slot="chart-label"
-            :x="label.x"
-            :y="label.y"
-            :text-anchor="label.textAnchor"
-            :dominant-baseline="label.dominantBaseline"
-            :style="fill ? { fill } : undefined"
-            :class="chart.classes('label', props.class)"
-            >{{ label.text }}</text
-          >
-        </slot>
-      </template>
-    </g>
-  </ChartLayer>
-</template>

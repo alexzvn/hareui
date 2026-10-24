@@ -1,7 +1,3 @@
-<script setup lang="ts">
-import { Button, Card, ScrollShadow } from '@hareui/vue'
-</script>
-
 <template>
   <Card
     class="max-w-[400px]"
@@ -24,3 +20,7 @@ import { Button, Card, ScrollShadow } from '@hareui/vue'
     </template>
   </Card>
 </template>
+
+<script setup lang="ts">
+import { Button, Card, ScrollShadow } from '@hareui/vue'
+</script>

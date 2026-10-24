@@ -1,31 +1,3 @@
-<script setup lang="ts">
-import type { DateRangeValue } from '@hareui/vue'
-import { DateRangePicker, Label, RangeCalendar, TimeField } from '@hareui/vue'
-import type { DateValue } from '@internationalized/date'
-import { getLocalTimeZone, parseZonedDateTime, Time } from '@internationalized/date'
-
-const localTimeZone = getLocalTimeZone()
-const defaultValue: DateRangeValue = {
-  start: parseZonedDateTime(`2026-02-03T08:45:00[${localTimeZone}]`),
-  end: parseZonedDateTime(`2026-02-10T18:45:00[${localTimeZone}]`),
-}
-
-type WithTime = DateValue & {
-  hour: number
-  minute: number
-  second: number
-  set: (fields: object) => DateValue
-}
-const timeOf = (v: DateValue) =>
-  new Time((v as WithTime).hour, (v as WithTime).minute, (v as WithTime).second)
-const withDate = (picked: DateValue, current: DateValue | undefined) =>
-  current
-    ? (current as WithTime).set({ year: picked.year, month: picked.month, day: picked.day })
-    : picked
-const withTime = (time: Time, current: DateValue) =>
-  (current as WithTime).set({ hour: time.hour, minute: time.minute, second: time.second })
-</script>
-
 <template>
   <DateRangePicker
     class="w-full max-w-2xs min-w-80"
@@ -79,3 +51,31 @@ const withTime = (time: Time, current: DateValue) =>
     </template>
   </DateRangePicker>
 </template>
+
+<script setup lang="ts">
+import type { DateRangeValue } from '@hareui/vue'
+import { DateRangePicker, Label, RangeCalendar, TimeField } from '@hareui/vue'
+import type { DateValue } from '@internationalized/date'
+import { getLocalTimeZone, parseZonedDateTime, Time } from '@internationalized/date'
+
+const localTimeZone = getLocalTimeZone()
+const defaultValue: DateRangeValue = {
+  start: parseZonedDateTime(`2026-02-03T08:45:00[${localTimeZone}]`),
+  end: parseZonedDateTime(`2026-02-10T18:45:00[${localTimeZone}]`),
+}
+
+type WithTime = DateValue & {
+  hour: number
+  minute: number
+  second: number
+  set: (fields: object) => DateValue
+}
+const timeOf = (v: DateValue) =>
+  new Time((v as WithTime).hour, (v as WithTime).minute, (v as WithTime).second)
+const withDate = (picked: DateValue, current: DateValue | undefined) =>
+  current
+    ? (current as WithTime).set({ year: picked.year, month: picked.month, day: picked.day })
+    : picked
+const withTime = (time: Time, current: DateValue) =>
+  (current as WithTime).set({ hour: time.hour, minute: time.minute, second: time.second })
+</script>

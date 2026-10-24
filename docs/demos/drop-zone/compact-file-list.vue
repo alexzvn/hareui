@@ -1,3 +1,43 @@
+<template>
+  <div class="w-full max-w-[460px] rounded-2xl border border-separator px-3 py-2">
+    <p
+      class="m-0 flex items-center gap-2 border-b border-separator px-1 pb-2 text-xs font-medium text-muted"
+    >
+      <Icon icon="gravity-ui:arrows-rotate-right" class="size-3.5" /> Synced from your watch
+    </p>
+    <DropZoneFileList class="gap-0 divide-y divide-separator">
+      <DropZoneFileItem
+        v-for="file in workoutFiles"
+        :key="file.key"
+        :name="file.name"
+        :size="file.bytes"
+        :status="statusOf(file)"
+        class="rounded-none border-0 px-1 py-3"
+        @remove="removeFile(file.key)"
+      >
+        <template #meta="{ size, status }">
+          <span>{{ size }}</span>
+          <span aria-hidden="true">·</span>
+          <span v-if="status === 'uploading'" class="tabular-nums"
+            >Syncing {{ Math.floor((file.sent / file.bytes) * 100) }}%</span
+          >
+          <span v-else-if="status === 'complete'" class="text-success">Synced</span>
+          <span v-else class="text-danger">Your phone went offline during the sync.</span>
+        </template>
+        <Button
+          v-if="file.offline"
+          class="mt-1.5 w-fit"
+          size="sm"
+          variant="outline"
+          @click="syncAgain(file)"
+        >
+          <Icon icon="gravity-ui:arrows-rotate-left" /> Sync again
+        </Button>
+      </DropZoneFileItem>
+    </DropZoneFileList>
+  </div>
+</template>
+
 <script setup lang="ts">
 import type { DropZoneFileStatus } from '@hareui/vue'
 import { Button, DropZoneFileItem, DropZoneFileList } from '@hareui/vue'
@@ -83,43 +123,3 @@ onBeforeUnmount(() => {
   clearTimeout(refill)
 })
 </script>
-
-<template>
-  <div class="w-full max-w-[460px] rounded-2xl border border-separator px-3 py-2">
-    <p
-      class="m-0 flex items-center gap-2 border-b border-separator px-1 pb-2 text-xs font-medium text-muted"
-    >
-      <Icon icon="gravity-ui:arrows-rotate-right" class="size-3.5" /> Synced from your watch
-    </p>
-    <DropZoneFileList class="gap-0 divide-y divide-separator">
-      <DropZoneFileItem
-        v-for="file in workoutFiles"
-        :key="file.key"
-        :name="file.name"
-        :size="file.bytes"
-        :status="statusOf(file)"
-        class="rounded-none border-0 px-1 py-3"
-        @remove="removeFile(file.key)"
-      >
-        <template #meta="{ size, status }">
-          <span>{{ size }}</span>
-          <span aria-hidden="true">·</span>
-          <span v-if="status === 'uploading'" class="tabular-nums"
-            >Syncing {{ Math.floor((file.sent / file.bytes) * 100) }}%</span
-          >
-          <span v-else-if="status === 'complete'" class="text-success">Synced</span>
-          <span v-else class="text-danger">Your phone went offline during the sync.</span>
-        </template>
-        <Button
-          v-if="file.offline"
-          class="mt-1.5 w-fit"
-          size="sm"
-          variant="outline"
-          @click="syncAgain(file)"
-        >
-          <Icon icon="gravity-ui:arrows-rotate-left" /> Sync again
-        </Button>
-      </DropZoneFileItem>
-    </DropZoneFileList>
-  </div>
-</template>

@@ -1,3 +1,56 @@
+<template>
+  <div class="mb-2 flex items-center justify-between">
+    <p class="text-sm font-medium capitalize">
+      {{ customFonts.length > 0 ? 'All Fonts' : 'Suggested' }}
+    </p>
+    <Button size="sm" variant="ghost" @click="emit('goToCustom')">
+      Add from CDN
+      <Icon icon="gravity-ui:plus" class="size-4" />
+    </Button>
+  </div>
+  <ScrollShadow hide-scroll-bar class="max-h-56 pb-3" :size="15">
+    <ListBox
+      aria-label="Font Family"
+      class="grid grid-cols-3 gap-2 p-0"
+      :items="items"
+      :model-value="selectedKey"
+      selection-mode="single"
+      @update:model-value="onSelectionChange"
+    >
+      <template #item="{ item }">
+        <!-- HeroUI sets `fontFamily` on the item itself; the children are its only text, so they carry it here -->
+        <span class="text-xl font-medium" :style="fontStyle(item.label)">Ag</span>
+        <p
+          class="max-w-[80px] truncate text-[10px] text-muted group-data-[selected=true]:text-foreground"
+          :style="fontStyle(item.label)"
+        >
+          {{ item.label }}
+        </p>
+        <Tooltip v-if="fontById.get(item.value as string)?.isCustom" :delay="100" arrow>
+          <div
+            data-slot="tooltip-trigger"
+            class="absolute end-1 top-1 inline-block [transition:color_150ms_var(--ease-smooth),background-color_150ms_var(--ease-smooth),box-shadow_150ms_var(--ease-out)] motion-reduce:transition-none focus-visible:status-focused"
+          >
+            <Button
+              icon-only
+              class="size-5 min-h-0 min-w-0 p-0 opacity-0 group-data-[hovered=true]:opacity-100"
+              size="sm"
+              variant="ghost"
+              @click.stop="handleDeleteCustomFont(fontById.get(item.value as string)!.url)"
+              @keydown.stop
+            >
+              <Icon icon="gravity-ui:trash-bin" class="size-3 text-danger" />
+            </Button>
+          </div>
+          <template #content>
+            <p>Remove font</p>
+          </template>
+        </Tooltip>
+      </template>
+    </ListBox>
+  </ScrollShadow>
+</template>
+
 <script setup lang="ts">
 import { Button, ListBox, ScrollShadow, Tooltip } from '@hareui/vue'
 import { Icon } from '@iconify/vue'
@@ -99,56 +152,3 @@ function onSelectionChange(selected: unknown) {
   }
 }
 </script>
-
-<template>
-  <div class="mb-2 flex items-center justify-between">
-    <p class="text-sm font-medium capitalize">
-      {{ customFonts.length > 0 ? 'All Fonts' : 'Suggested' }}
-    </p>
-    <Button size="sm" variant="ghost" @click="emit('goToCustom')">
-      Add from CDN
-      <Icon icon="gravity-ui:plus" class="size-4" />
-    </Button>
-  </div>
-  <ScrollShadow hide-scroll-bar class="max-h-56 pb-3" :size="15">
-    <ListBox
-      aria-label="Font Family"
-      class="grid grid-cols-3 gap-2 p-0"
-      :items="items"
-      :model-value="selectedKey"
-      selection-mode="single"
-      @update:model-value="onSelectionChange"
-    >
-      <template #item="{ item }">
-        <!-- HeroUI sets `fontFamily` on the item itself; the children are its only text, so they carry it here -->
-        <span class="text-xl font-medium" :style="fontStyle(item.label)">Ag</span>
-        <p
-          class="max-w-[80px] truncate text-[10px] text-muted group-data-[selected=true]:text-foreground"
-          :style="fontStyle(item.label)"
-        >
-          {{ item.label }}
-        </p>
-        <Tooltip v-if="fontById.get(item.value as string)?.isCustom" :delay="100" arrow>
-          <div
-            data-slot="tooltip-trigger"
-            class="absolute end-1 top-1 inline-block [transition:color_150ms_var(--ease-smooth),background-color_150ms_var(--ease-smooth),box-shadow_150ms_var(--ease-out)] motion-reduce:transition-none focus-visible:status-focused"
-          >
-            <Button
-              icon-only
-              class="size-5 min-h-0 min-w-0 p-0 opacity-0 group-data-[hovered=true]:opacity-100"
-              size="sm"
-              variant="ghost"
-              @click.stop="handleDeleteCustomFont(fontById.get(item.value as string)!.url)"
-              @keydown.stop
-            >
-              <Icon icon="gravity-ui:trash-bin" class="size-3 text-danger" />
-            </Button>
-          </div>
-          <template #content>
-            <p>Remove font</p>
-          </template>
-        </Tooltip>
-      </template>
-    </ListBox>
-  </ScrollShadow>
-</template>

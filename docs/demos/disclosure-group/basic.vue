@@ -1,12 +1,3 @@
-<script setup lang="ts">
-import type { ExpandedValue } from '@hareui/vue'
-import { Button, Disclosure, DisclosureGroup, Separator } from '@hareui/vue'
-import { Icon } from '@iconify/vue'
-import { ref } from 'vue'
-
-const expandedKeys = ref<ExpandedValue[]>(['preview'])
-</script>
-
 <template>
   <div class="w-full max-w-md">
     <div class="flex flex-col gap-4 bg-transparent p-4">
@@ -83,3 +74,12 @@ const expandedKeys = ref<ExpandedValue[]>(['preview'])
     </div>
   </div>
 </template>
+
+<script setup lang="ts">
+import type { ExpandedValue } from '@hareui/vue'
+import { Button, Disclosure, DisclosureGroup, Separator } from '@hareui/vue'
+import { Icon } from '@iconify/vue'
+import { ref } from 'vue'
+
+const expandedKeys = ref<ExpandedValue[]>(['preview'])
+</script>

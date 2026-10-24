@@ -1,19 +1,3 @@
-<script setup lang="ts">
-import type { ListBoxItem } from '@hareui/vue'
-import { CellSelect } from '@hareui/vue'
-import { Icon } from '@iconify/vue'
-
-interface ShippingMethod extends ListBoxItem {
-  icon: string
-}
-
-const methods: ShippingMethod[] = [
-  { value: 'courier', label: 'Courier', icon: 'gravity-ui:car' },
-  { value: 'locker', label: 'Parcel locker', icon: 'gravity-ui:box' },
-  { value: 'store', label: 'Store pickup', icon: 'gravity-ui:house' },
-]
-</script>
-
 <template>
   <div class="w-72">
     <CellSelect
@@ -35,3 +19,19 @@ const methods: ShippingMethod[] = [
     </CellSelect>
   </div>
 </template>
+
+<script setup lang="ts">
+import type { ListBoxItem } from '@hareui/vue'
+import { CellSelect } from '@hareui/vue'
+import { Icon } from '@iconify/vue'
+
+interface ShippingMethod extends ListBoxItem {
+  icon: string
+}
+
+const methods: ShippingMethod[] = [
+  { value: 'courier', label: 'Courier', icon: 'gravity-ui:car' },
+  { value: 'locker', label: 'Parcel locker', icon: 'gravity-ui:box' },
+  { value: 'store', label: 'Store pickup', icon: 'gravity-ui:house' },
+]
+</script>

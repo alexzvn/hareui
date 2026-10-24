@@ -1,19 +1,3 @@
-<script setup lang="ts">
-import { Card } from '@hareui/vue'
-import { RadarChart } from '@hareui/vue/charts'
-
-const data = [
-  { category: 'Range', score: 81 },
-  { category: 'Comfort', score: 68 },
-  { category: 'Safety', score: 90 },
-  { category: 'Portability', score: 57 },
-  { category: 'Build', score: 84 },
-  { category: 'Value', score: 73 },
-]
-
-const series = { score: { name: 'Score' } }
-</script>
-
 <template>
   <Card
     class="w-full max-w-[420px] rounded-2xl"
@@ -30,3 +14,19 @@ const series = { score: { name: 'Score' } }
     />
   </Card>
 </template>
+
+<script setup lang="ts">
+import { Card } from '@hareui/vue'
+import { RadarChart } from '@hareui/vue/charts'
+
+const data = [
+  { category: 'Range', score: 81 },
+  { category: 'Comfort', score: 68 },
+  { category: 'Safety', score: 90 },
+  { category: 'Portability', score: 57 },
+  { category: 'Build', score: 84 },
+  { category: 'Value', score: 73 },
+]
+
+const series = { score: { name: 'Score' } }
+</script>

@@ -1,11 +1,3 @@
-<script setup lang="ts">
-import { InputOtp, Label, Link } from '@hareui/vue'
-import { ref } from 'vue'
-
-// HERO - 4320 - easter egg
-const value = ref('4320')
-</script>
-
 <template>
   <div class="flex w-full justify-center">
     <div class="flex w-[280px] flex-col items-start justify-center gap-2">
@@ -22,3 +14,11 @@ const value = ref('4320')
     </div>
   </div>
 </template>
+
+<script setup lang="ts">
+import { InputOtp, Label, Link } from '@hareui/vue'
+import { ref } from 'vue'
+
+// HERO - 4320 - easter egg
+const value = ref('4320')
+</script>

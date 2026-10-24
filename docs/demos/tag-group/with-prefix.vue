@@ -1,3 +1,30 @@
+<template>
+  <div class="flex flex-col gap-8">
+    <TagGroup
+      selection-mode="single"
+      label="With Icons"
+      description="Tags with icons"
+      :items="iconItems"
+    >
+      <template #item="{ item }">
+        <Icon :icon="icons[item.id]!" />
+        {{ item.label }}
+      </template>
+    </TagGroup>
+    <TagGroup
+      selection-mode="single"
+      label="With Avatars"
+      description="Tags with avatars"
+      :items="people"
+    >
+      <template #item="{ item }">
+        <Avatar class="size-4" alt="" :src="item.avatar" :fallback="item.fallback" />
+        {{ item.label }}
+      </template>
+    </TagGroup>
+  </div>
+</template>
+
 <script setup lang="ts">
 import type { TagGroupItem } from '@hareui/vue'
 import { Avatar, TagGroup } from '@hareui/vue'
@@ -41,30 +68,3 @@ const people: Person[] = [
   },
 ]
 </script>
-
-<template>
-  <div class="flex flex-col gap-8">
-    <TagGroup
-      selection-mode="single"
-      label="With Icons"
-      description="Tags with icons"
-      :items="iconItems"
-    >
-      <template #item="{ item }">
-        <Icon :icon="icons[item.id]!" />
-        {{ item.label }}
-      </template>
-    </TagGroup>
-    <TagGroup
-      selection-mode="single"
-      label="With Avatars"
-      description="Tags with avatars"
-      :items="people"
-    >
-      <template #item="{ item }">
-        <Avatar class="size-4" alt="" :src="item.avatar" :fallback="item.fallback" />
-        {{ item.label }}
-      </template>
-    </TagGroup>
-  </div>
-</template>

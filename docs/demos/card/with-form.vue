@@ -1,12 +1,3 @@
-<script setup lang="ts">
-import { Button, Card, Input, Label, Link, TextField } from '@hareui/vue'
-
-function onSubmit(e: Event) {
-  e.preventDefault()
-  alert('Form submitted successfully!')
-}
-</script>
-
 <template>
   <Card
     class="w-full max-w-md"
@@ -31,3 +22,12 @@ function onSubmit(e: Event) {
     </form>
   </Card>
 </template>
+
+<script setup lang="ts">
+import { Button, Card, Input, Label, Link, TextField } from '@hareui/vue'
+
+function onSubmit(e: Event) {
+  e.preventDefault()
+  alert('Form submitted successfully!')
+}
+</script>

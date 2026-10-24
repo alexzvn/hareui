@@ -1,3 +1,7 @@
+<template>
+  <Select class="w-[256px]" label="Country" placeholder="Select a country" :items="countries" />
+</template>
+
 <script setup lang="ts">
 import type { ListBoxEntry } from '@hareui/vue'
 import { Select } from '@hareui/vue'
@@ -37,7 +41,3 @@ const countries: ListBoxEntry[] = [
   },
 ]
 </script>
-
-<template>
-  <Select class="w-[256px]" label="Country" placeholder="Select a country" :items="countries" />
-</template>

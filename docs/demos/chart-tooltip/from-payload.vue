@@ -1,3 +1,10 @@
+<template>
+  <div class="grid items-start gap-4 sm:grid-cols-2">
+    <ChartTooltipContent label="Week 14" :payload="workouts" />
+    <ChartTooltipContent indicator="line" label="Summer 2025" :payload="bookings" />
+  </div>
+</template>
+
 <script setup lang="ts">
 import { ChartTooltipContent } from '@hareui/vue/charts'
 
@@ -13,10 +20,3 @@ const bookings = [
   { dataKey: 'cars', name: 'Car rentals', fill: 'var(--chart-5)', value: 640 },
 ]
 </script>
-
-<template>
-  <div class="grid items-start gap-4 sm:grid-cols-2">
-    <ChartTooltipContent label="Week 14" :payload="workouts" />
-    <ChartTooltipContent indicator="line" label="Summer 2025" :payload="bookings" />
-  </div>
-</template>

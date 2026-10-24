@@ -1,3 +1,23 @@
+<template>
+  <Autocomplete
+    v-model="selectedKey"
+    v-model:input-value="searchQuery"
+    allows-empty-collection
+    clearable
+    class="w-[300px]"
+    label="User"
+    placeholder="Select a user"
+    search-label="Search users"
+    search-placeholder="Search users..."
+    :filter="false"
+    :items="filteredUsers"
+    :virtualize="{ estimateSize: 50 }"
+    :ui="{ searchField: 'sticky top-0 z-10' }"
+  >
+    <template #empty> No results found </template>
+  </Autocomplete>
+</template>
+
 <script setup lang="ts">
 import type { ListBoxItem } from '@hareui/vue'
 import { Autocomplete } from '@hareui/vue'
@@ -79,23 +99,3 @@ const filteredUsers = computed(() =>
     : allUsers,
 )
 </script>
-
-<template>
-  <Autocomplete
-    v-model="selectedKey"
-    v-model:input-value="searchQuery"
-    allows-empty-collection
-    clearable
-    class="w-[300px]"
-    label="User"
-    placeholder="Select a user"
-    search-label="Search users"
-    search-placeholder="Search users..."
-    :filter="false"
-    :items="filteredUsers"
-    :virtualize="{ estimateSize: 50 }"
-    :ui="{ searchField: 'sticky top-0 z-10' }"
-  >
-    <template #empty> No results found </template>
-  </Autocomplete>
-</template>

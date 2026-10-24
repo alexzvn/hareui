@@ -1,3 +1,7 @@
+<template>
+  <!-- Renders nothing: the series draws the shape. -->
+</template>
+
 <script lang="ts">
 import type { ClassValue } from 'tailwind-variants'
 
@@ -31,7 +35,3 @@ registry.register(() => ({
   class: props.class,
 }))
 </script>
-
-<template>
-  <!-- Renders nothing: the series draws the shape. -->
-</template>

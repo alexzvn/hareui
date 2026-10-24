@@ -1,7 +1,3 @@
-<script setup lang="ts">
-import { TimeField } from '@hareui/vue'
-</script>
-
 <template>
   <!--
     HeroUI's custom-styles demo places `<Description>` above `<TimeField.Group>` via its compound
@@ -23,3 +19,7 @@ import { TimeField } from '@hareui/vue'
     </template>
   </TimeField>
 </template>
+
+<script setup lang="ts">
+import { TimeField } from '@hareui/vue'
+</script>

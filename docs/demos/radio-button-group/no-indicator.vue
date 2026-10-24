@@ -1,15 +1,3 @@
-<script setup lang="ts">
-import { RadioButtonGroup, RadioButtonGroupItem } from '@hareui/vue'
-
-const sizes = [
-  { value: 'small', title: 'Small', description: '25 cm, 6 slices', price: 9.5 },
-  { value: 'medium', title: 'Medium', description: '30 cm, 8 slices', price: 12 },
-  { value: 'large', title: 'Large', description: '35 cm, 10 slices', price: 14.5 },
-]
-
-const eur = new Intl.NumberFormat('en-IE', { style: 'currency', currency: 'EUR' })
-</script>
-
 <template>
   <RadioButtonGroup
     class="w-[min(360px,calc(100vw-2rem))]"
@@ -29,3 +17,15 @@ const eur = new Intl.NumberFormat('en-IE', { style: 'currency', currency: 'EUR' 
     </RadioButtonGroupItem>
   </RadioButtonGroup>
 </template>
+
+<script setup lang="ts">
+import { RadioButtonGroup, RadioButtonGroupItem } from '@hareui/vue'
+
+const sizes = [
+  { value: 'small', title: 'Small', description: '25 cm, 6 slices', price: 9.5 },
+  { value: 'medium', title: 'Medium', description: '30 cm, 8 slices', price: 12 },
+  { value: 'large', title: 'Large', description: '35 cm, 10 slices', price: 14.5 },
+]
+
+const eur = new Intl.NumberFormat('en-IE', { style: 'currency', currency: 'EUR' })
+</script>

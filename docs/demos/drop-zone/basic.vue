@@ -1,3 +1,50 @@
+<template>
+  <div class="grid w-full max-w-[760px] items-start gap-5 sm:grid-cols-2">
+    <DropZone
+      label="Drop your boarding passes and hotel bookings"
+      description="PDF, PNG or JPG, up to 20 MB each."
+      trigger-label="Browse files"
+      accept=".pdf,.png,.jpg,.jpeg"
+      :max-size="20 * 1024 * 1024"
+      multiple
+      @add="addDocuments"
+    >
+      <template #files />
+    </DropZone>
+
+    <section class="flex flex-col gap-3">
+      <h3 class="m-0 text-sm font-semibold text-foreground">
+        Trip documents <span class="font-normal text-muted">({{ documents.length }})</span>
+      </h3>
+      <p
+        v-if="!documents.length"
+        class="m-0 rounded-xl bg-default px-4 py-6 text-center text-xs text-muted"
+      >
+        Nothing here yet. Files you add show up in this list.
+      </p>
+      <DropZoneFileList>
+        <DropZoneFileItem
+          v-for="doc in documents"
+          :key="doc.key"
+          :name="doc.name"
+          :size="doc.bytes"
+          :status="isSent(doc) ? 'complete' : 'uploading'"
+          :progress="isSent(doc) ? undefined : percent(doc)"
+          @remove="removeDocument(doc.key)"
+        >
+          <template #meta="{ size }">
+            <span>{{ size }}</span>
+            <span aria-hidden="true">·</span>
+            <span :class="isSent(doc) && 'text-success'">{{
+              isSent(doc) ? 'Saved to your trip' : `${percent(doc)}% uploaded`
+            }}</span>
+          </template>
+        </DropZoneFileItem>
+      </DropZoneFileList>
+    </section>
+  </div>
+</template>
+
 <script setup lang="ts">
 import { DropZone, DropZoneFileItem, DropZoneFileList } from '@hareui/vue'
 import { onBeforeUnmount, ref } from 'vue'
@@ -55,50 +102,3 @@ function resume() {
 
 onBeforeUnmount(() => cancelAnimationFrame(frame))
 </script>
-
-<template>
-  <div class="grid w-full max-w-[760px] items-start gap-5 sm:grid-cols-2">
-    <DropZone
-      label="Drop your boarding passes and hotel bookings"
-      description="PDF, PNG or JPG, up to 20 MB each."
-      trigger-label="Browse files"
-      accept=".pdf,.png,.jpg,.jpeg"
-      :max-size="20 * 1024 * 1024"
-      multiple
-      @add="addDocuments"
-    >
-      <template #files />
-    </DropZone>
-
-    <section class="flex flex-col gap-3">
-      <h3 class="m-0 text-sm font-semibold text-foreground">
-        Trip documents <span class="font-normal text-muted">({{ documents.length }})</span>
-      </h3>
-      <p
-        v-if="!documents.length"
-        class="m-0 rounded-xl bg-default px-4 py-6 text-center text-xs text-muted"
-      >
-        Nothing here yet. Files you add show up in this list.
-      </p>
-      <DropZoneFileList>
-        <DropZoneFileItem
-          v-for="doc in documents"
-          :key="doc.key"
-          :name="doc.name"
-          :size="doc.bytes"
-          :status="isSent(doc) ? 'complete' : 'uploading'"
-          :progress="isSent(doc) ? undefined : percent(doc)"
-          @remove="removeDocument(doc.key)"
-        >
-          <template #meta="{ size }">
-            <span>{{ size }}</span>
-            <span aria-hidden="true">·</span>
-            <span :class="isSent(doc) && 'text-success'">{{
-              isSent(doc) ? 'Saved to your trip' : `${percent(doc)}% uploaded`
-            }}</span>
-          </template>
-        </DropZoneFileItem>
-      </DropZoneFileList>
-    </section>
-  </div>
-</template>

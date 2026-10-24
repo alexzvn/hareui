@@ -1,54 +1,3 @@
-<script setup lang="ts">
-import { Button } from '@hareui/vue'
-import { formatHsl } from 'culori'
-// Port of HeroUI docs `themes/components/accent-color-selector.tsx`.
-import type { Color } from 'reka-ui'
-import { computed } from 'vue'
-
-import { useVariablesState } from '../composables/variables'
-import AccentColorPicker from './AccentColorPicker.vue'
-import AccentColorSlider from './AccentColorSlider.vue'
-import { formatColor, getHueFromColor, getValuesFromOklch } from './accentColorUtils'
-import LockableLabel from './LockableLabel.vue'
-
-const [variables, setVariables] = useVariablesState()
-const oklchColor = computed(
-  () => `oklch(${variables.value.lightness} ${variables.value.chroma} ${variables.value.hue})`,
-)
-
-const trackBackground = computed(() => {
-  const { chroma, lightness } = variables.value
-
-  // Build gradient with the current chroma level for accurate representation
-  const gradientStops = [24, 48, 72, 96, 120, 144, 168, 192, 216, 240, 264, 288, 312, 336, 360, 24]
-    .map((h) => `oklch(${lightness} ${chroma} ${h})`)
-    .join(', ')
-
-  return `linear-gradient(to right, ${gradientStops})`
-})
-
-const value = computed(() => formatHsl(oklchColor.value) ?? 'hsl(253.67, 100%, 61.99%)')
-
-function handleHueSliderChange(color: Color) {
-  setVariables({
-    ...variables.value,
-    hue: getHueFromColor(color),
-  })
-}
-
-function handleColorChange(color: Color) {
-  const hsl = formatColor(color, 'hsl')
-  const { chroma, hue, lightness } = getValuesFromOklch(hsl)
-
-  setVariables({
-    ...variables.value,
-    chroma,
-    hue,
-    lightness,
-  })
-}
-</script>
-
 <template>
   <div class="flex flex-col gap-1">
     <LockableLabel
@@ -105,3 +54,54 @@ function handleColorChange(color: Color) {
     </div>
   </div>
 </template>
+
+<script setup lang="ts">
+import { Button } from '@hareui/vue'
+import { formatHsl } from 'culori'
+// Port of HeroUI docs `themes/components/accent-color-selector.tsx`.
+import type { Color } from 'reka-ui'
+import { computed } from 'vue'
+
+import { useVariablesState } from '../composables/variables'
+import AccentColorPicker from './AccentColorPicker.vue'
+import AccentColorSlider from './AccentColorSlider.vue'
+import { formatColor, getHueFromColor, getValuesFromOklch } from './accentColorUtils'
+import LockableLabel from './LockableLabel.vue'
+
+const [variables, setVariables] = useVariablesState()
+const oklchColor = computed(
+  () => `oklch(${variables.value.lightness} ${variables.value.chroma} ${variables.value.hue})`,
+)
+
+const trackBackground = computed(() => {
+  const { chroma, lightness } = variables.value
+
+  // Build gradient with the current chroma level for accurate representation
+  const gradientStops = [24, 48, 72, 96, 120, 144, 168, 192, 216, 240, 264, 288, 312, 336, 360, 24]
+    .map((h) => `oklch(${lightness} ${chroma} ${h})`)
+    .join(', ')
+
+  return `linear-gradient(to right, ${gradientStops})`
+})
+
+const value = computed(() => formatHsl(oklchColor.value) ?? 'hsl(253.67, 100%, 61.99%)')
+
+function handleHueSliderChange(color: Color) {
+  setVariables({
+    ...variables.value,
+    hue: getHueFromColor(color),
+  })
+}
+
+function handleColorChange(color: Color) {
+  const hsl = formatColor(color, 'hsl')
+  const { chroma, hue, lightness } = getValuesFromOklch(hsl)
+
+  setVariables({
+    ...variables.value,
+    chroma,
+    hue,
+    lightness,
+  })
+}
+</script>

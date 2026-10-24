@@ -75,14 +75,14 @@ toast('Event created')
 Render the provider once at the root of your app.
 
 ```vue
-<script setup lang="ts">
-import { Button, ToastProvider, toast } from '@hareui/vue'
-</script>
-
 <template>
   <ToastProvider />
   <Button @click="toast('Simple message')"> Show toast </Button>
 </template>
+
+<script setup lang="ts">
+import { Button, ToastProvider, toast } from '@hareui/vue'
+</script>
 ```
 
 ## Customization

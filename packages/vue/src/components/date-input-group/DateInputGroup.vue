@@ -1,3 +1,90 @@
+<template>
+  <div
+    role="group"
+    data-slot="date-input-group"
+    :aria-labelledby="labelledby"
+    :aria-label="ariaLabel"
+    :aria-describedby="describedby"
+    :data-disabled="disabled ? '' : undefined"
+    :data-invalid="invalid ? 'true' : undefined"
+    :class="ui.base({ class: [props.ui?.base, props.class] })"
+  >
+    <div
+      v-if="$slots.prefix"
+      data-slot="date-input-group-prefix"
+      :class="ui.prefix({ class: props.ui?.prefix })"
+    >
+      <slot name="prefix" />
+    </div>
+    <component
+      :is="inputContainer ? 'div' : Passthrough"
+      v-bind="
+        inputContainer
+          ? {
+              'data-slot': 'date-input-group-input-container',
+              class: ui.inputContainer({ class: props.ui?.inputContainer }),
+            }
+          : {}
+      "
+    >
+      <div
+        data-slot="date-input-group-input"
+        :slot="endSegments ? 'start' : undefined"
+        :data-invalid="invalid ? 'true' : undefined"
+        :class="ui.input({ class: props.ui?.input })"
+        @keydown.capture="onSegmentKeydown"
+      >
+        <component
+          :is="segmentInput"
+          v-for="item in segments"
+          :key="item.part"
+          :part="item.part"
+          v-bind="
+            item.part === 'literal'
+              ? endSegments
+                ? { type: 'start' }
+                : {}
+              : segmentAttrs(item.part, endSegments ? 'start' : undefined)
+          "
+          data-slot="date-input-group-segment"
+          :class="ui.segment({ class: props.ui?.segment })"
+        >
+          {{ item.value }}
+        </component>
+      </div>
+      <template v-if="endSegments">
+        <slot name="separator" />
+        <div
+          data-slot="date-input-group-input"
+          slot="end"
+          :data-invalid="invalid ? 'true' : undefined"
+          :class="ui.input({ class: props.ui?.input })"
+          @keydown.capture="onSegmentKeydown"
+        >
+          <component
+            :is="segmentInput"
+            v-for="item in endSegments"
+            :key="item.part"
+            :part="item.part"
+            v-bind="item.part === 'literal' ? { type: 'end' } : segmentAttrs(item.part, 'end')"
+            data-slot="date-input-group-segment"
+            :class="ui.segment({ class: props.ui?.segment })"
+          >
+            {{ item.value }}
+          </component>
+        </div>
+      </template>
+    </component>
+    <div
+      v-if="$slots.suffix"
+      data-slot="date-input-group-suffix"
+      :class="ui.suffix({ class: props.ui?.suffix })"
+    >
+      <slot name="suffix" />
+    </div>
+  </div>
+</template>
+
 <script lang="ts">
 import type { Component } from 'vue'
 
@@ -332,90 +419,3 @@ function segmentAttrs(part: string, type?: 'start' | 'end') {
   return attrs
 }
 </script>
-
-<template>
-  <div
-    role="group"
-    data-slot="date-input-group"
-    :aria-labelledby="labelledby"
-    :aria-label="ariaLabel"
-    :aria-describedby="describedby"
-    :data-disabled="disabled ? '' : undefined"
-    :data-invalid="invalid ? 'true' : undefined"
-    :class="ui.base({ class: [props.ui?.base, props.class] })"
-  >
-    <div
-      v-if="$slots.prefix"
-      data-slot="date-input-group-prefix"
-      :class="ui.prefix({ class: props.ui?.prefix })"
-    >
-      <slot name="prefix" />
-    </div>
-    <component
-      :is="inputContainer ? 'div' : Passthrough"
-      v-bind="
-        inputContainer
-          ? {
-              'data-slot': 'date-input-group-input-container',
-              class: ui.inputContainer({ class: props.ui?.inputContainer }),
-            }
-          : {}
-      "
-    >
-      <div
-        data-slot="date-input-group-input"
-        :slot="endSegments ? 'start' : undefined"
-        :data-invalid="invalid ? 'true' : undefined"
-        :class="ui.input({ class: props.ui?.input })"
-        @keydown.capture="onSegmentKeydown"
-      >
-        <component
-          :is="segmentInput"
-          v-for="item in segments"
-          :key="item.part"
-          :part="item.part"
-          v-bind="
-            item.part === 'literal'
-              ? endSegments
-                ? { type: 'start' }
-                : {}
-              : segmentAttrs(item.part, endSegments ? 'start' : undefined)
-          "
-          data-slot="date-input-group-segment"
-          :class="ui.segment({ class: props.ui?.segment })"
-        >
-          {{ item.value }}
-        </component>
-      </div>
-      <template v-if="endSegments">
-        <slot name="separator" />
-        <div
-          data-slot="date-input-group-input"
-          slot="end"
-          :data-invalid="invalid ? 'true' : undefined"
-          :class="ui.input({ class: props.ui?.input })"
-          @keydown.capture="onSegmentKeydown"
-        >
-          <component
-            :is="segmentInput"
-            v-for="item in endSegments"
-            :key="item.part"
-            :part="item.part"
-            v-bind="item.part === 'literal' ? { type: 'end' } : segmentAttrs(item.part, 'end')"
-            data-slot="date-input-group-segment"
-            :class="ui.segment({ class: props.ui?.segment })"
-          >
-            {{ item.value }}
-          </component>
-        </div>
-      </template>
-    </component>
-    <div
-      v-if="$slots.suffix"
-      data-slot="date-input-group-suffix"
-      :class="ui.suffix({ class: props.ui?.suffix })"
-    >
-      <slot name="suffix" />
-    </div>
-  </div>
-</template>

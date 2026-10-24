@@ -1,38 +1,3 @@
-<script lang="ts">
-import type { ComponentSlots, ComponentVariants } from '../../types/tv'
-import theme from './theme'
-
-type Spinner = typeof theme
-
-export interface SpinnerProps {
-  /**
-   * Size of the spinner.
-   * @defaultValue 'md'
-   */
-  size?: ComponentVariants<Spinner>['size']
-  /**
-   * Color of the spinner.
-   * @defaultValue 'accent'
-   */
-  color?: ComponentVariants<Spinner>['color']
-  /** Additional classes merged into the root element. */
-  class?: any
-  /** Per-slot class overrides. */
-  ui?: ComponentSlots<Spinner>
-}
-</script>
-
-<script setup lang="ts">
-import { useId } from 'vue'
-
-import { useComponentUI } from '../../composables/useComponentUI'
-
-const props = defineProps<SpinnerProps>()
-
-const ui = useComponentUI('spinner', theme, () => ({ size: props.size, color: props.color }))
-const id = useId()
-</script>
-
 <template>
   <span
     aria-label="Loading"
@@ -81,3 +46,38 @@ const id = useId()
     </svg>
   </span>
 </template>
+
+<script lang="ts">
+import type { ComponentSlots, ComponentVariants } from '../../types/tv'
+import theme from './theme'
+
+type Spinner = typeof theme
+
+export interface SpinnerProps {
+  /**
+   * Size of the spinner.
+   * @defaultValue 'md'
+   */
+  size?: ComponentVariants<Spinner>['size']
+  /**
+   * Color of the spinner.
+   * @defaultValue 'accent'
+   */
+  color?: ComponentVariants<Spinner>['color']
+  /** Additional classes merged into the root element. */
+  class?: any
+  /** Per-slot class overrides. */
+  ui?: ComponentSlots<Spinner>
+}
+</script>
+
+<script setup lang="ts">
+import { useId } from 'vue'
+
+import { useComponentUI } from '../../composables/useComponentUI'
+
+const props = defineProps<SpinnerProps>()
+
+const ui = useComponentUI('spinner', theme, () => ({ size: props.size, color: props.color }))
+const id = useId()
+</script>

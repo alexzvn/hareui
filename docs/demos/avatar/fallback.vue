@@ -1,8 +1,3 @@
-<script setup lang="ts">
-import { Avatar } from '@hareui/vue'
-import { Icon } from '@iconify/vue'
-</script>
-
 <template>
   <div class="flex items-center gap-4">
     <!-- Text fallback -->
@@ -27,3 +22,8 @@ import { Icon } from '@iconify/vue'
     />
   </div>
 </template>
+
+<script setup lang="ts">
+import { Avatar } from '@hareui/vue'
+import { Icon } from '@iconify/vue'
+</script>

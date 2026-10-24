@@ -1,12 +1,3 @@
-<script setup lang="ts">
-import { Button, DateField } from '@hareui/vue'
-import type { DateValue } from '@internationalized/date'
-import { getLocalTimeZone, today } from '@internationalized/date'
-import { shallowRef } from 'vue'
-
-const value = shallowRef<DateValue | null>(null)
-</script>
-
 <template>
   <div class="flex flex-col gap-4">
     <DateField
@@ -22,3 +13,12 @@ const value = shallowRef<DateValue | null>(null)
     </div>
   </div>
 </template>
+
+<script setup lang="ts">
+import { Button, DateField } from '@hareui/vue'
+import type { DateValue } from '@internationalized/date'
+import { getLocalTimeZone, today } from '@internationalized/date'
+import { shallowRef } from 'vue'
+
+const value = shallowRef<DateValue | null>(null)
+</script>

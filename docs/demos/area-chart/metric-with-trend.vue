@@ -1,3 +1,50 @@
+<template>
+  <div class="@container w-full max-w-[900px]">
+    <div class="grid grid-cols-1 gap-3 @md:grid-cols-2 @2xl:grid-cols-3">
+      <Card
+        v-for="kpi in kpis"
+        :key="kpi.id"
+        class="rounded-2xl"
+        :title="kpi.title"
+        :ui="{ title: 'text-muted' }"
+      >
+        <div class="grid grid-cols-2 items-end gap-x-2">
+          <div class="flex flex-col gap-1">
+            <span class="text-3xl font-semibold text-foreground tabular-nums">{{ kpi.value }}</span>
+            <Chip
+              :color="kpi.color === 'var(--danger)' ? 'danger' : 'success'"
+              size="sm"
+              variant="tertiary"
+              class="self-start whitespace-nowrap"
+            >
+              <template #leading>
+                <Icon
+                  class="size-3"
+                  :icon="kpi.trend === 'up' ? 'gravity-ui:arrow-up' : 'gravity-ui:arrow-down'"
+                />
+              </template>
+              {{ kpi.change }} <span class="text-muted">{{ kpi.period }}</span>
+            </Chip>
+          </div>
+          <div class="min-w-0">
+            <AreaChart
+              :data="kpi.data"
+              index="week"
+              :series="{ value: { name: kpi.title, color: kpi.color } }"
+              sparkline
+              :value-formatter="kpi.format"
+              :tooltip="{ cursor: false, panel: false }"
+              :aria-label="`${kpi.title} trend`"
+              :height="70"
+              :margin="margin"
+            />
+          </div>
+        </div>
+      </Card>
+    </div>
+  </div>
+</template>
+
 <script setup lang="ts">
 import { Card, Chip } from '@hareui/vue'
 import { AreaChart } from '@hareui/vue/charts'
@@ -45,50 +92,3 @@ const kpis = [
 
 const margin = { top: 4, right: 0, bottom: 0, left: 0 }
 </script>
-
-<template>
-  <div class="@container w-full max-w-[900px]">
-    <div class="grid grid-cols-1 gap-3 @md:grid-cols-2 @2xl:grid-cols-3">
-      <Card
-        v-for="kpi in kpis"
-        :key="kpi.id"
-        class="rounded-2xl"
-        :title="kpi.title"
-        :ui="{ title: 'text-muted' }"
-      >
-        <div class="grid grid-cols-2 items-end gap-x-2">
-          <div class="flex flex-col gap-1">
-            <span class="text-3xl font-semibold text-foreground tabular-nums">{{ kpi.value }}</span>
-            <Chip
-              :color="kpi.color === 'var(--danger)' ? 'danger' : 'success'"
-              size="sm"
-              variant="tertiary"
-              class="self-start whitespace-nowrap"
-            >
-              <template #leading>
-                <Icon
-                  class="size-3"
-                  :icon="kpi.trend === 'up' ? 'gravity-ui:arrow-up' : 'gravity-ui:arrow-down'"
-                />
-              </template>
-              {{ kpi.change }} <span class="text-muted">{{ kpi.period }}</span>
-            </Chip>
-          </div>
-          <div class="min-w-0">
-            <AreaChart
-              :data="kpi.data"
-              index="week"
-              :series="{ value: { name: kpi.title, color: kpi.color } }"
-              sparkline
-              :value-formatter="kpi.format"
-              :tooltip="{ cursor: false, panel: false }"
-              :aria-label="`${kpi.title} trend`"
-              :height="70"
-              :margin="margin"
-            />
-          </div>
-        </div>
-      </Card>
-    </div>
-  </div>
-</template>

@@ -54,13 +54,6 @@ export function useDark() {
 ```
 
 ```vue [components/ThemeSwitcher.vue]
-<script setup lang="ts">
-import { Button } from '@hareui/vue'
-import { useDark } from '../composables/useDark'
-
-const { theme, setTheme } = useDark()
-</script>
-
 <template>
   <div class="flex items-center gap-2">
     <Button :variant="theme === 'light' ? 'primary' : 'secondary'" @click="setTheme('light')">
@@ -74,6 +67,13 @@ const { theme, setTheme } = useDark()
     </Button>
   </div>
 </template>
+
+<script setup lang="ts">
+import { Button } from '@hareui/vue'
+import { useDark } from '../composables/useDark'
+
+const { theme, setTheme } = useDark()
+</script>
 ```
 
 ::: tip

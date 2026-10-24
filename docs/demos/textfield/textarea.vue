@@ -1,7 +1,3 @@
-<script setup lang="ts">
-import { TextArea, TextField } from '@hareui/vue'
-</script>
-
 <template>
   <TextField
     class="w-full max-w-64"
@@ -12,3 +8,7 @@ import { TextArea, TextField } from '@hareui/vue'
     <TextArea placeholder="Write your message here..." :rows="4" />
   </TextField>
 </template>
+
+<script setup lang="ts">
+import { TextArea, TextField } from '@hareui/vue'
+</script>

@@ -1,25 +1,3 @@
-<script setup lang="ts">
-import type { HeaderMode } from '@hareui/vue'
-import { Button, Header, NavigationMenu } from '@hareui/vue'
-import { ref } from 'vue'
-
-const navItems = [
-  { label: 'Docs', href: '#docs', active: true },
-  { label: 'Components', href: '#components' },
-  { label: 'Figma', href: '#figma' },
-  { label: 'Releases', href: '#releases' },
-]
-
-// Touch-sized rows for the mobile menu.
-const menuUi = {
-  list: 'gap-1',
-  link: 'min-h-11 gap-3 rounded-lg px-3 py-2.5 text-base font-medium text-foreground',
-}
-
-const modes: HeaderMode[] = ['modal', 'slideover', 'drawer']
-const mode = ref<HeaderMode>('slideover')
-</script>
-
 <template>
   <!-- `breakpoint="none"` keeps the collapsed layout so the menu is reachable at any width. -->
   <Header breakpoint="none" :mode="mode" title="HareUI" to="#">
@@ -56,3 +34,25 @@ const mode = ref<HeaderMode>('slideover')
     </div>
   </main>
 </template>
+
+<script setup lang="ts">
+import type { HeaderMode } from '@hareui/vue'
+import { Button, Header, NavigationMenu } from '@hareui/vue'
+import { ref } from 'vue'
+
+const navItems = [
+  { label: 'Docs', href: '#docs', active: true },
+  { label: 'Components', href: '#components' },
+  { label: 'Figma', href: '#figma' },
+  { label: 'Releases', href: '#releases' },
+]
+
+// Touch-sized rows for the mobile menu.
+const menuUi = {
+  list: 'gap-1',
+  link: 'min-h-11 gap-3 rounded-lg px-3 py-2.5 text-base font-medium text-foreground',
+}
+
+const modes: HeaderMode[] = ['modal', 'slideover', 'drawer']
+const mode = ref<HeaderMode>('slideover')
+</script>

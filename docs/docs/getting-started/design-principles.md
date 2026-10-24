@@ -30,18 +30,18 @@ Use semantic naming (primary, secondary, tertiary) instead of visual description
 HareUI is built on [Reka UI](https://reka-ui.com) instead of React Aria Components, so the same WCAG-conscious behavior — focus management, keyboard navigation, screen reader support — comes from Vue-native headless primitives. Components also expose their own state through props and data attributes without any extra wiring:
 
 ```vue
+<template>
+  <!-- pending renders a Spinner, sets aria-busy/data-pending, and
+       suppresses the click handler while true -->
+  <Button variant="primary" :pending="isSaving" @click="isSaving = true"> Save </Button>
+</template>
+
 <script setup lang="ts">
 import { ref } from 'vue'
 import { Button } from '@hareui/vue'
 
 const isSaving = ref(false)
 </script>
-
-<template>
-  <!-- pending renders a Spinner, sets aria-busy/data-pending, and
-       suppresses the click handler while true -->
-  <Button variant="primary" :pending="isSaving" @click="isSaving = true"> Save </Button>
-</template>
 ```
 
 ### 3. Composition Over Configuration — Slots Over Compound Components

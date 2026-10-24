@@ -1,3 +1,9 @@
+<template>
+  <div data-slot="empty-state" :class="ui.base({ class: [props.ui?.base, props.class] })">
+    <slot>No results found</slot>
+  </div>
+</template>
+
 <script lang="ts">
 import type { ComponentSlots } from '../../types/tv'
 import theme from './theme'
@@ -25,9 +31,3 @@ defineSlots<EmptyStateSlots>()
 
 const ui = useComponentUI('emptyState', theme, () => ({}))
 </script>
-
-<template>
-  <div data-slot="empty-state" :class="ui.base({ class: [props.ui?.base, props.class] })">
-    <slot>No results found</slot>
-  </div>
-</template>

@@ -1,3 +1,34 @@
+<template>
+  <div v-if="dragging" aria-hidden="true" class="absolute inset-0 z-2 cursor-ew-resize" />
+  <div
+    role="separator"
+    aria-orientation="vertical"
+    aria-label="Resize preview"
+    :aria-valuenow="width"
+    :aria-valuemin="min"
+    :aria-valuemax="max"
+    tabindex="0"
+    class="group/handle absolute inset-y-0 z-3 hidden w-6 cursor-ew-resize touch-none items-center justify-center outline-none select-none md:flex"
+    :style="edge === undefined ? { right: '0px' } : { left: `${edge - 24}px` }"
+    @pointerdown="onPointerDown"
+    @pointermove="onPointerMove"
+    @pointerup="onPointerEnd"
+    @pointercancel="onPointerEnd"
+    @lostpointercapture="onPointerEnd"
+    @pointerenter="emit('preload')"
+    @focus="emit('preload')"
+    @keydown="onKeydown"
+  >
+    <span
+      aria-hidden="true"
+      :class="[
+        'h-10 w-1.5 rounded-full transition-colors group-focus-visible/handle:status-focused motion-reduce:transition-none',
+        dragging ? 'bg-muted/30' : 'bg-muted/20 hover:bg-muted/30',
+      ]"
+    />
+  </div>
+</template>
+
 <script setup lang="ts">
 /**
  * heroui.pro's preview resize handle: a 24px-wide strip just inside the frame's right edge with a 6×40 grey pill.
@@ -46,34 +77,3 @@ function onKeydown(event: KeyboardEvent) {
   emit('resize', clamp(next))
 }
 </script>
-
-<template>
-  <div v-if="dragging" aria-hidden="true" class="absolute inset-0 z-2 cursor-ew-resize" />
-  <div
-    role="separator"
-    aria-orientation="vertical"
-    aria-label="Resize preview"
-    :aria-valuenow="width"
-    :aria-valuemin="min"
-    :aria-valuemax="max"
-    tabindex="0"
-    class="group/handle absolute inset-y-0 z-3 hidden w-6 cursor-ew-resize touch-none items-center justify-center outline-none select-none md:flex"
-    :style="edge === undefined ? { right: '0px' } : { left: `${edge - 24}px` }"
-    @pointerdown="onPointerDown"
-    @pointermove="onPointerMove"
-    @pointerup="onPointerEnd"
-    @pointercancel="onPointerEnd"
-    @lostpointercapture="onPointerEnd"
-    @pointerenter="emit('preload')"
-    @focus="emit('preload')"
-    @keydown="onKeydown"
-  >
-    <span
-      aria-hidden="true"
-      :class="[
-        'h-10 w-1.5 rounded-full transition-colors group-focus-visible/handle:status-focused motion-reduce:transition-none',
-        dragging ? 'bg-muted/30' : 'bg-muted/20 hover:bg-muted/30',
-      ]"
-    />
-  </div>
-</template>

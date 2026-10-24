@@ -1,17 +1,3 @@
-<script setup lang="ts">
-import type { CheckboxGroupItem } from '@hareui/vue'
-import { CheckboxGroup } from '@hareui/vue'
-
-const items: CheckboxGroupItem[] = [
-  {
-    value: 'notifications',
-    label: 'Email notifications',
-    description: 'Receive updates via email',
-  },
-  { value: 'newsletter', label: 'Newsletter', description: 'Get weekly newsletters' },
-]
-</script>
-
 <template>
   <CheckboxGroup
     name="features"
@@ -34,3 +20,17 @@ const items: CheckboxGroupItem[] = [
     </template>
   </CheckboxGroup>
 </template>
+
+<script setup lang="ts">
+import type { CheckboxGroupItem } from '@hareui/vue'
+import { CheckboxGroup } from '@hareui/vue'
+
+const items: CheckboxGroupItem[] = [
+  {
+    value: 'notifications',
+    label: 'Email notifications',
+    description: 'Receive updates via email',
+  },
+  { value: 'newsletter', label: 'Newsletter', description: 'Get weekly newsletters' },
+]
+</script>

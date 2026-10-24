@@ -1,3 +1,36 @@
+<template>
+  <DialogRoot :open="isOpen" modal @update:open="emit('update:isOpen', $event)">
+    <DialogPortal>
+      <DialogOverlay
+        class="bottom-sheet-overlay fixed inset-0 z-100"
+        :class="{ 'is-dragging': isDragging }"
+        :style="{ '--bottom-sheet-y': y }"
+      >
+        <DialogContent
+          :aria-describedby="undefined"
+          class="bottom-sheet absolute bottom-0 w-full rounded-t-3xl bg-background shadow-lg outline-hidden will-change-transform"
+          :class="{ 'is-dragging': isDragging }"
+          :style="{ height: `${SHEET_HEIGHT}px` }"
+          @open-auto-focus="onOpenAutoFocus"
+          @pointerdown="onPointerDown"
+          @pointermove="onPointerMove"
+          @pointerup="onPointerEnd"
+          @pointercancel="onPointerEnd"
+        >
+          <VisuallyHidden as-child>
+            <DialogTitle>Theme settings</DialogTitle>
+          </VisuallyHidden>
+          <!-- Drag affordance -->
+          <div class="bg-default-400 mx-auto mt-2 h-1.5 w-12 rounded-full" />
+          <div :id="id" class="pb-5 outline-hidden">
+            <slot />
+          </div>
+        </DialogContent>
+      </DialogOverlay>
+    </DialogPortal>
+  </DialogRoot>
+</template>
+
 <script setup lang="ts">
 // Port of HeroUI docs `themes/components/bottom-sheet.tsx` (react-aria Modal + framer-motion drag).
 // react-aria `ModalOverlay`/`Modal`/`Dialog` -> Reka dialog primitives (the same ones HareUI's Modal is built on);
@@ -96,39 +129,6 @@ function onOpenAutoFocus(event: Event) {
   ;(event.target as HTMLElement | null)?.focus({ preventScroll: true })
 }
 </script>
-
-<template>
-  <DialogRoot :open="isOpen" modal @update:open="emit('update:isOpen', $event)">
-    <DialogPortal>
-      <DialogOverlay
-        class="bottom-sheet-overlay fixed inset-0 z-100"
-        :class="{ 'is-dragging': isDragging }"
-        :style="{ '--bottom-sheet-y': y }"
-      >
-        <DialogContent
-          :aria-describedby="undefined"
-          class="bottom-sheet absolute bottom-0 w-full rounded-t-3xl bg-background shadow-lg outline-hidden will-change-transform"
-          :class="{ 'is-dragging': isDragging }"
-          :style="{ height: `${SHEET_HEIGHT}px` }"
-          @open-auto-focus="onOpenAutoFocus"
-          @pointerdown="onPointerDown"
-          @pointermove="onPointerMove"
-          @pointerup="onPointerEnd"
-          @pointercancel="onPointerEnd"
-        >
-          <VisuallyHidden as-child>
-            <DialogTitle>Theme settings</DialogTitle>
-          </VisuallyHidden>
-          <!-- Drag affordance -->
-          <div class="bg-default-400 mx-auto mt-2 h-1.5 w-12 rounded-full" />
-          <div :id="id" class="pb-5 outline-hidden">
-            <slot />
-          </div>
-        </DialogContent>
-      </DialogOverlay>
-    </DialogPortal>
-  </DialogRoot>
-</template>
 
 <style scoped>
 .bottom-sheet-overlay {

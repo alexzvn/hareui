@@ -1,3 +1,16 @@
+<template>
+  <Table
+    aria-label="Table with resizable columns"
+    :columns="columns"
+    :rows="rows"
+    :ui="{ content: 'min-w-[700px]' }"
+  >
+    <template #status-cell="{ row }">
+      <Chip :color="row.color" size="sm" variant="soft">{{ row.status }}</Chip>
+    </template>
+  </Table>
+</template>
+
 <script setup lang="ts">
 import type { TableColumn, TableRow } from '@hareui/vue'
 import { Chip, Table } from '@hareui/vue'
@@ -51,16 +64,3 @@ const rows: TableRow[] = [
   },
 ]
 </script>
-
-<template>
-  <Table
-    aria-label="Table with resizable columns"
-    :columns="columns"
-    :rows="rows"
-    :ui="{ content: 'min-w-[700px]' }"
-  >
-    <template #status-cell="{ row }">
-      <Chip :color="row.color" size="sm" variant="soft">{{ row.status }}</Chip>
-    </template>
-  </Table>
-</template>

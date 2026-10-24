@@ -1,9 +1,3 @@
-<script setup lang="ts">
-import { Avatar, AvatarGroup } from '@hareui/vue'
-
-const overlaps = ['clip', 'ring'] as const
-</script>
-
 <template>
   <div class="flex flex-col items-start gap-6">
     <div v-for="overlap in overlaps" :key="overlap" class="flex flex-col gap-2">
@@ -34,6 +28,12 @@ const overlaps = ['clip', 'ring'] as const
     </div>
   </div>
 </template>
+
+<script setup lang="ts">
+import { Avatar, AvatarGroup } from '@hareui/vue'
+
+const overlaps = ['clip', 'ring'] as const
+</script>
 
 <style>
 @keyframes ag-stripes {

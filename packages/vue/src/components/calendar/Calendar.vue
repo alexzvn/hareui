@@ -1,3 +1,80 @@
+<template>
+  <CalendarMonthShell
+    ref="shell"
+    kind="calendar"
+    :ui="ui"
+    :ui-overrides="props.ui"
+    :root-class="props.class"
+    :aria-label="ariaLabel"
+    :placeholder="placeholder"
+    :default-placeholder="placeholderSeed"
+    :min-value="minValue"
+    :max-value="maxValue"
+    :selection="selection"
+    :root-bindings="rootBindings"
+    :disabled="disabled"
+    :readonly="readonly"
+    :invalid="invalid"
+    :locale="locale"
+    :first-day-of-week="firstDayOfWeek"
+    :fixed-weeks="fixedWeeks"
+    :year-picker="yearPicker"
+    :paged-navigation="pagedNavigation"
+    :number-of-months="numberOfMonths"
+    :dir="dir"
+    :visible-duration="visibleDuration"
+    :page-behavior="pageBehavior"
+    :indicator="indicator"
+    @update:placeholder="emit('update:placeholder', $event)"
+    @select="emit('update:modelValue', $event)"
+  >
+    <template v-if="$slots.navIcon" #navIcon="slotProps">
+      <slot name="navIcon" v-bind="slotProps" />
+    </template>
+    <template v-if="$slots.cell" #cell="slotProps">
+      <slot name="cell" v-bind="slotProps as CalendarCellSlotProps" />
+    </template>
+    <template #monthCell="{ date, month }">
+      <CalendarCell :date="date">
+        <CalendarCellTrigger
+          v-if="$slots.cell || indicator"
+          v-slot="{ dayValue, today, selected, disabled: cellDisabled, unavailable, outsideView }"
+          :day="date"
+          :month="month"
+          data-slot="calendar-cell"
+          :class="ui.cell({ class: props.ui?.cell })"
+        >
+          <slot
+            name="cell"
+            :date="date"
+            :today="today"
+            :selected="selected"
+            :disabled="cellDisabled"
+            :unavailable="unavailable"
+            :outside-view="outsideView"
+          >
+            {{ dayValue }}
+          </slot>
+          <span
+            v-if="indicator?.(date)"
+            data-slot="calendar-cell-indicator"
+            aria-hidden="true"
+            :class="ui.cellIndicator({ class: props.ui?.cellIndicator })"
+          />
+        </CalendarCellTrigger>
+        <!-- no slot content -> no slot-scope ref, so moving focus doesn't force-update every trigger -->
+        <CalendarCellTrigger
+          v-else
+          :day="date"
+          :month="month"
+          data-slot="calendar-cell"
+          :class="ui.cell({ class: props.ui?.cell })"
+        />
+      </CalendarCell>
+    </template>
+  </CalendarMonthShell>
+</template>
+
 <script lang="ts">
 import type { DateValue } from '@internationalized/date'
 
@@ -246,80 +323,3 @@ const selection = computed(() => ({
   isDateUnavailable: props.isDateUnavailable,
 }))
 </script>
-
-<template>
-  <CalendarMonthShell
-    ref="shell"
-    kind="calendar"
-    :ui="ui"
-    :ui-overrides="props.ui"
-    :root-class="props.class"
-    :aria-label="ariaLabel"
-    :placeholder="placeholder"
-    :default-placeholder="placeholderSeed"
-    :min-value="minValue"
-    :max-value="maxValue"
-    :selection="selection"
-    :root-bindings="rootBindings"
-    :disabled="disabled"
-    :readonly="readonly"
-    :invalid="invalid"
-    :locale="locale"
-    :first-day-of-week="firstDayOfWeek"
-    :fixed-weeks="fixedWeeks"
-    :year-picker="yearPicker"
-    :paged-navigation="pagedNavigation"
-    :number-of-months="numberOfMonths"
-    :dir="dir"
-    :visible-duration="visibleDuration"
-    :page-behavior="pageBehavior"
-    :indicator="indicator"
-    @update:placeholder="emit('update:placeholder', $event)"
-    @select="emit('update:modelValue', $event)"
-  >
-    <template v-if="$slots.navIcon" #navIcon="slotProps">
-      <slot name="navIcon" v-bind="slotProps" />
-    </template>
-    <template v-if="$slots.cell" #cell="slotProps">
-      <slot name="cell" v-bind="slotProps as CalendarCellSlotProps" />
-    </template>
-    <template #monthCell="{ date, month }">
-      <CalendarCell :date="date">
-        <CalendarCellTrigger
-          v-if="$slots.cell || indicator"
-          v-slot="{ dayValue, today, selected, disabled: cellDisabled, unavailable, outsideView }"
-          :day="date"
-          :month="month"
-          data-slot="calendar-cell"
-          :class="ui.cell({ class: props.ui?.cell })"
-        >
-          <slot
-            name="cell"
-            :date="date"
-            :today="today"
-            :selected="selected"
-            :disabled="cellDisabled"
-            :unavailable="unavailable"
-            :outside-view="outsideView"
-          >
-            {{ dayValue }}
-          </slot>
-          <span
-            v-if="indicator?.(date)"
-            data-slot="calendar-cell-indicator"
-            aria-hidden="true"
-            :class="ui.cellIndicator({ class: props.ui?.cellIndicator })"
-          />
-        </CalendarCellTrigger>
-        <!-- no slot content -> no slot-scope ref, so moving focus doesn't force-update every trigger -->
-        <CalendarCellTrigger
-          v-else
-          :day="date"
-          :month="month"
-          data-slot="calendar-cell"
-          :class="ui.cell({ class: props.ui?.cell })"
-        />
-      </CalendarCell>
-    </template>
-  </CalendarMonthShell>
-</template>

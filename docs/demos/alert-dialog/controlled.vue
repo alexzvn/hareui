@@ -1,32 +1,3 @@
-<script setup lang="ts">
-import { AlertDialog, Button } from '@hareui/vue'
-import { reactive, ref } from 'vue'
-
-const isOpen = ref(false)
-
-// Vue counterpart of HeroUI's `useOverlayState` hook: a ref plus named open/close/toggle helpers.
-function useOverlayState(defaultOpen = false) {
-  const isOpen = ref(defaultOpen)
-  return reactive({
-    isOpen,
-    open: () => {
-      isOpen.value = true
-    },
-    close: () => {
-      isOpen.value = false
-    },
-    toggle: () => {
-      isOpen.value = !isOpen.value
-    },
-    setOpen: (value: boolean) => {
-      isOpen.value = value
-    },
-  })
-}
-
-const state = useOverlayState()
-</script>
-
 <template>
   <div class="flex max-w-md flex-col gap-8">
     <div class="flex flex-col gap-3">
@@ -111,3 +82,32 @@ const state = useOverlayState()
     </div>
   </div>
 </template>
+
+<script setup lang="ts">
+import { AlertDialog, Button } from '@hareui/vue'
+import { reactive, ref } from 'vue'
+
+const isOpen = ref(false)
+
+// Vue counterpart of HeroUI's `useOverlayState` hook: a ref plus named open/close/toggle helpers.
+function useOverlayState(defaultOpen = false) {
+  const isOpen = ref(defaultOpen)
+  return reactive({
+    isOpen,
+    open: () => {
+      isOpen.value = true
+    },
+    close: () => {
+      isOpen.value = false
+    },
+    toggle: () => {
+      isOpen.value = !isOpen.value
+    },
+    setOpen: (value: boolean) => {
+      isOpen.value = value
+    },
+  })
+}
+
+const state = useOverlayState()
+</script>

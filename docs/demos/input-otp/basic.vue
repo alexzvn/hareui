@@ -1,7 +1,3 @@
-<script setup lang="ts">
-import { InputOtp, Link } from '@hareui/vue'
-</script>
-
 <template>
   <div class="flex w-[280px] flex-col gap-2">
     <div class="flex flex-col gap-1">
@@ -14,3 +10,7 @@ import { InputOtp, Link } from '@hareui/vue'
     </div>
   </div>
 </template>
+
+<script setup lang="ts">
+import { InputOtp, Link } from '@hareui/vue'
+</script>

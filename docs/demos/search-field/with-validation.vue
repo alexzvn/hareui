@@ -1,11 +1,3 @@
-<script setup lang="ts">
-import { SearchField } from '@hareui/vue'
-import { computed, ref } from 'vue'
-
-const value = ref('')
-const isInvalid = computed(() => value.value.length > 0 && value.value.length < 3)
-</script>
-
 <template>
   <div class="flex flex-col gap-4">
     <SearchField
@@ -21,3 +13,11 @@ const isInvalid = computed(() => value.value.length > 0 && value.value.length < 
     />
   </div>
 </template>
+
+<script setup lang="ts">
+import { SearchField } from '@hareui/vue'
+import { computed, ref } from 'vue'
+
+const value = ref('')
+const isInvalid = computed(() => value.value.length > 0 && value.value.length < 3)
+</script>

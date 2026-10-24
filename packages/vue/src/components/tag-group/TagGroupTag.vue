@@ -1,3 +1,47 @@
+<template>
+  <div
+    :id="rowId"
+    data-slot="tag"
+    role="row"
+    :aria-label="item.label"
+    :tabindex="disabled ? undefined : tabindex"
+    :aria-selected="selectionMode !== 'none' ? (selected ? 'true' : 'false') : undefined"
+    :aria-disabled="disabled ? 'true' : undefined"
+    :data-selected="selected ? 'true' : undefined"
+    :data-disabled="disabled ? 'true' : undefined"
+    :data-pressed="pressed ? 'true' : undefined"
+    :data-focus-visible="focusVisible ? 'true' : undefined"
+    :class="classes.base({ class: ui?.tag })"
+    @click="onClick"
+    @pointerdown="onPointerdown"
+    @mousedown="onMousedown"
+    @pointerup="pressed = false"
+    @pointercancel="pressed = false"
+    @focus="onFocus"
+    @blur="focusVisible = false"
+  >
+    <div role="gridcell" style="display: contents">
+      <slot :item="item" :index="index" :selected="selected" :disabled="disabled">
+        {{ item.label }}
+      </slot>
+      <CloseButton
+        v-if="removable"
+        :id="removeButtonId"
+        data-slot="tag-remove-button"
+        aria-label="Remove tag"
+        :aria-labelledby="`${removeButtonId} ${rowId}`"
+        :disabled="disabled"
+        :class="classes.removeButton({ class: ui?.removeButton })"
+        @click="onRemoveClick"
+      >
+        <template v-if="$slots.removeButton" #default>
+          <slot name="removeButton" :item="item" :index="index" />
+        </template>
+      </CloseButton>
+    </div>
+  </div>
+</template>
+
 <script setup lang="ts">
 import { ref, useId } from 'vue'
 
@@ -73,47 +117,3 @@ function onRemoveClick(event: MouseEvent) {
   emit('remove')
 }
 </script>
-
-<template>
-  <div
-    :id="rowId"
-    data-slot="tag"
-    role="row"
-    :aria-label="item.label"
-    :tabindex="disabled ? undefined : tabindex"
-    :aria-selected="selectionMode !== 'none' ? (selected ? 'true' : 'false') : undefined"
-    :aria-disabled="disabled ? 'true' : undefined"
-    :data-selected="selected ? 'true' : undefined"
-    :data-disabled="disabled ? 'true' : undefined"
-    :data-pressed="pressed ? 'true' : undefined"
-    :data-focus-visible="focusVisible ? 'true' : undefined"
-    :class="classes.base({ class: ui?.tag })"
-    @click="onClick"
-    @pointerdown="onPointerdown"
-    @mousedown="onMousedown"
-    @pointerup="pressed = false"
-    @pointercancel="pressed = false"
-    @focus="onFocus"
-    @blur="focusVisible = false"
-  >
-    <div role="gridcell" style="display: contents">
-      <slot :item="item" :index="index" :selected="selected" :disabled="disabled">
-        {{ item.label }}
-      </slot>
-      <CloseButton
-        v-if="removable"
-        :id="removeButtonId"
-        data-slot="tag-remove-button"
-        aria-label="Remove tag"
-        :aria-labelledby="`${removeButtonId} ${rowId}`"
-        :disabled="disabled"
-        :class="classes.removeButton({ class: ui?.removeButton })"
-        @click="onRemoveClick"
-      >
-        <template v-if="$slots.removeButton" #default>
-          <slot name="removeButton" :item="item" :index="index" />
-        </template>
-      </CloseButton>
-    </div>
-  </div>
-</template>

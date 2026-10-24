@@ -1,3 +1,36 @@
+<template>
+  <DashboardGroup unit="rem" :persistent="false">
+    <DashboardSidebar id="control-open" v-model:open="open">
+      <template #header>
+        <div class="flex min-w-0 items-center gap-3 px-1 py-2">
+          <span
+            class="flex size-6 shrink-0 items-center justify-center rounded-md bg-accent text-sm font-bold text-accent-foreground"
+            >A</span
+          >
+          <span class="truncate text-sm font-semibold text-foreground">Acme</span>
+        </div>
+      </template>
+      <NavigationMenu :items="items" orientation="vertical" />
+    </DashboardSidebar>
+
+    <DashboardPanel>
+      <template #header>
+        <div class="flex h-16 shrink-0 items-center gap-3 px-4">
+          <DashboardSidebarToggle />
+          <p class="min-w-0 truncate text-sm font-semibold text-foreground">Dashboard</p>
+          <Button size="sm" variant="secondary" class="ms-auto" @click="open = !open">
+            {{ open ? 'Close' : 'Open' }} menu
+            <Kbd>O</Kbd>
+          </Button>
+        </div>
+      </template>
+      <template #body>
+        <div class="h-full rounded-xl border border-dashed border-separator bg-surface/50" />
+      </template>
+    </DashboardPanel>
+  </DashboardGroup>
+</template>
+
 <script setup lang="ts">
 import type { NavigationMenuItem } from '@hareui/vue'
 import {
@@ -38,36 +71,3 @@ function onKeydown(event: KeyboardEvent) {
 onMounted(() => window.addEventListener('keydown', onKeydown))
 onBeforeUnmount(() => window.removeEventListener('keydown', onKeydown))
 </script>
-
-<template>
-  <DashboardGroup unit="rem" :persistent="false">
-    <DashboardSidebar id="control-open" v-model:open="open">
-      <template #header>
-        <div class="flex min-w-0 items-center gap-3 px-1 py-2">
-          <span
-            class="flex size-6 shrink-0 items-center justify-center rounded-md bg-accent text-sm font-bold text-accent-foreground"
-            >A</span
-          >
-          <span class="truncate text-sm font-semibold text-foreground">Acme</span>
-        </div>
-      </template>
-      <NavigationMenu :items="items" orientation="vertical" />
-    </DashboardSidebar>
-
-    <DashboardPanel>
-      <template #header>
-        <div class="flex h-16 shrink-0 items-center gap-3 px-4">
-          <DashboardSidebarToggle />
-          <p class="min-w-0 truncate text-sm font-semibold text-foreground">Dashboard</p>
-          <Button size="sm" variant="secondary" class="ms-auto" @click="open = !open">
-            {{ open ? 'Close' : 'Open' }} menu
-            <Kbd>O</Kbd>
-          </Button>
-        </div>
-      </template>
-      <template #body>
-        <div class="h-full rounded-xl border border-dashed border-separator bg-surface/50" />
-      </template>
-    </DashboardPanel>
-  </DashboardGroup>
-</template>

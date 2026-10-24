@@ -1,3 +1,56 @@
+<template>
+  <TooltipProvider>
+    <TooltipRoot
+      :open="isOpen"
+      :delay-duration="delay"
+      :disabled="disabled"
+      @update:open="onRootUpdate"
+    >
+      <template #default="{ open: rootOpen }">
+        <TooltipTrigger
+          :ref="
+            (c: any) => {
+              triggerEl = c?.$el
+            }
+          "
+          as-child
+          @pointerenter="onPointerEnter"
+          @pointerleave="onPointerLeave"
+        >
+          <slot :open="rootOpen" />
+        </TooltipTrigger>
+        <TooltipPortal :disabled="portalTarget.disabled" :to="portalTarget.to">
+          <TooltipContent
+            :side="side"
+            :align="align"
+            :side-offset="sideOffset"
+            :class="ui.base({ class: [props.ui?.base, props.class] })"
+            @pointerenter="onPointerEnter"
+            @pointerleave="onPointerLeave"
+          >
+            <slot name="content">
+              <span v-if="text">{{ text }}</span>
+            </slot>
+            <TooltipArrow v-if="arrow" as-child>
+              <svg
+                data-slot="overlay-arrow"
+                width="12"
+                height="12"
+                viewBox="0 0 12 12"
+                fill="none"
+                xmlns="http://www.w3.org/2000/svg"
+                :class="ui.arrow({ class: props.ui?.arrow })"
+              >
+                <path d="M0 0C5.48483 8 6.5 8 12 0Z" />
+              </svg>
+            </TooltipArrow>
+          </TooltipContent>
+        </TooltipPortal>
+      </template>
+    </TooltipRoot>
+  </TooltipProvider>
+</template>
+
 <script lang="ts">
 import type { PortalTarget } from '../../config'
 import type { ComponentSlots } from '../../types/tv'
@@ -198,56 +251,3 @@ onBeforeUnmount(() => {
   toggleResetListeners(false)
 })
 </script>
-
-<template>
-  <TooltipProvider>
-    <TooltipRoot
-      :open="isOpen"
-      :delay-duration="delay"
-      :disabled="disabled"
-      @update:open="onRootUpdate"
-    >
-      <template #default="{ open: rootOpen }">
-        <TooltipTrigger
-          :ref="
-            (c: any) => {
-              triggerEl = c?.$el
-            }
-          "
-          as-child
-          @pointerenter="onPointerEnter"
-          @pointerleave="onPointerLeave"
-        >
-          <slot :open="rootOpen" />
-        </TooltipTrigger>
-        <TooltipPortal :disabled="portalTarget.disabled" :to="portalTarget.to">
-          <TooltipContent
-            :side="side"
-            :align="align"
-            :side-offset="sideOffset"
-            :class="ui.base({ class: [props.ui?.base, props.class] })"
-            @pointerenter="onPointerEnter"
-            @pointerleave="onPointerLeave"
-          >
-            <slot name="content">
-              <span v-if="text">{{ text }}</span>
-            </slot>
-            <TooltipArrow v-if="arrow" as-child>
-              <svg
-                data-slot="overlay-arrow"
-                width="12"
-                height="12"
-                viewBox="0 0 12 12"
-                fill="none"
-                xmlns="http://www.w3.org/2000/svg"
-                :class="ui.arrow({ class: props.ui?.arrow })"
-              >
-                <path d="M0 0C5.48483 8 6.5 8 12 0Z" />
-              </svg>
-            </TooltipArrow>
-          </TooltipContent>
-        </TooltipPortal>
-      </template>
-    </TooltipRoot>
-  </TooltipProvider>
-</template>

@@ -1,3 +1,31 @@
+<template>
+  <ChartLayer name="grid">
+    <g
+      data-slot="chart-polar-grid"
+      :class="chart.classes('polarGrid', props.class)"
+      :style="stroke ? { stroke } : undefined"
+      :stroke-dasharray="strokeDasharray"
+    >
+      <template v-for="ring in rings" :key="ring.radius">
+        <circle
+          v-if="gridType === 'circle'"
+          data-slot="chart-polar-grid-ring"
+          :cx="polar.cx.value"
+          :cy="polar.cy.value"
+          :r="ring.radius"
+        />
+        <path v-else data-slot="chart-polar-grid-ring" :d="ring.d" />
+      </template>
+      <line
+        v-for="(spoke, index) in spokes"
+        :key="index"
+        data-slot="chart-polar-grid-spoke"
+        v-bind="spoke"
+      />
+    </g>
+  </ChartLayer>
+</template>
+
 <script lang="ts">
 import type { ClassValue } from 'tailwind-variants'
 
@@ -71,31 +99,3 @@ const rings = computed(() => {
   )
 })
 </script>
-
-<template>
-  <ChartLayer name="grid">
-    <g
-      data-slot="chart-polar-grid"
-      :class="chart.classes('polarGrid', props.class)"
-      :style="stroke ? { stroke } : undefined"
-      :stroke-dasharray="strokeDasharray"
-    >
-      <template v-for="ring in rings" :key="ring.radius">
-        <circle
-          v-if="gridType === 'circle'"
-          data-slot="chart-polar-grid-ring"
-          :cx="polar.cx.value"
-          :cy="polar.cy.value"
-          :r="ring.radius"
-        />
-        <path v-else data-slot="chart-polar-grid-ring" :d="ring.d" />
-      </template>
-      <line
-        v-for="(spoke, index) in spokes"
-        :key="index"
-        data-slot="chart-polar-grid-spoke"
-        v-bind="spoke"
-      />
-    </g>
-  </ChartLayer>
-</template>

@@ -1,3 +1,23 @@
+<template>
+  <Tabs
+    class="w-full max-w-lg"
+    :items="items"
+    default-value="account"
+    orientation="vertical"
+    variant="secondary"
+    :ui="{ tabPanel: 'px-4' }"
+  >
+    <template #content="{ item }">
+      <h3 class="mb-2 font-semibold">
+        {{ item.heading }}
+      </h3>
+      <p class="text-sm text-muted">
+        {{ item.content }}
+      </p>
+    </template>
+  </Tabs>
+</template>
+
 <script setup lang="ts">
 import type { TabsItem } from '@hareui/vue'
 import { Tabs } from '@hareui/vue'
@@ -33,23 +53,3 @@ const items: Section[] = [
   },
 ]
 </script>
-
-<template>
-  <Tabs
-    class="w-full max-w-lg"
-    :items="items"
-    default-value="account"
-    orientation="vertical"
-    variant="secondary"
-    :ui="{ tabPanel: 'px-4' }"
-  >
-    <template #content="{ item }">
-      <h3 class="mb-2 font-semibold">
-        {{ item.heading }}
-      </h3>
-      <p class="text-sm text-muted">
-        {{ item.content }}
-      </p>
-    </template>
-  </Tabs>
-</template>

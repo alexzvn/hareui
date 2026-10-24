@@ -1,7 +1,3 @@
-<script setup lang="ts">
-import { DateRangePicker } from '@hareui/vue'
-</script>
-
 <template>
   <!--
     HeroUI's render-function demo swaps the root element through a `render` prop. Option A has no
@@ -17,3 +13,7 @@ import { DateRangePicker } from '@hareui/vue'
     calendar-label="Trip dates"
   />
 </template>
+
+<script setup lang="ts">
+import { DateRangePicker } from '@hareui/vue'
+</script>

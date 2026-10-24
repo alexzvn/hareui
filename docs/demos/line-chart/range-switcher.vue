@@ -1,3 +1,40 @@
+<template>
+  <Card
+    class="w-full max-w-[520px] rounded-2xl"
+    :ui="{ header: 'flex-row items-start justify-between' }"
+  >
+    <template #header>
+      <div class="flex flex-col gap-3">
+        <h3 class="text-base font-medium text-foreground">Podcast Subscribers</h3>
+        <div class="flex flex-col gap-0.5">
+          <span class="text-xs text-muted">Current total</span>
+          <span class="text-2xl font-semibold text-foreground">{{ current.total }}</span>
+          <span class="text-xs font-medium text-success">{{ current.change }}</span>
+        </div>
+      </div>
+      <Tabs
+        v-model="range"
+        :items="items"
+        :content="false"
+        :ui="{ base: 'w-auto', tab: 'h-7 px-2.5 text-xs' }"
+      />
+    </template>
+    <LineChart
+      :data="current.data"
+      index="when"
+      :series="{ value: { name: 'Subscribers' } }"
+      sparkline
+      :stroke-width="2"
+      :y-axis="{ hide: true, domain: ['dataMin - 100', 'dataMax + 100'] }"
+      :value-formatter="formatSubscribers"
+      :tooltip="{ cursor: false, panel: false }"
+      aria-label="Podcast subscribers over the selected range"
+      :height="182"
+      :margin="margin"
+    />
+  </Card>
+</template>
+
 <script setup lang="ts">
 import type { TabsItem } from '@hareui/vue'
 import { Card, Tabs } from '@hareui/vue'
@@ -87,40 +124,3 @@ function formatSubscribers(value: number) {
   return `${value.toLocaleString('en-US')} subscribers`
 }
 </script>
-
-<template>
-  <Card
-    class="w-full max-w-[520px] rounded-2xl"
-    :ui="{ header: 'flex-row items-start justify-between' }"
-  >
-    <template #header>
-      <div class="flex flex-col gap-3">
-        <h3 class="text-base font-medium text-foreground">Podcast Subscribers</h3>
-        <div class="flex flex-col gap-0.5">
-          <span class="text-xs text-muted">Current total</span>
-          <span class="text-2xl font-semibold text-foreground">{{ current.total }}</span>
-          <span class="text-xs font-medium text-success">{{ current.change }}</span>
-        </div>
-      </div>
-      <Tabs
-        v-model="range"
-        :items="items"
-        :content="false"
-        :ui="{ base: 'w-auto', tab: 'h-7 px-2.5 text-xs' }"
-      />
-    </template>
-    <LineChart
-      :data="current.data"
-      index="when"
-      :series="{ value: { name: 'Subscribers' } }"
-      sparkline
-      :stroke-width="2"
-      :y-axis="{ hide: true, domain: ['dataMin - 100', 'dataMax + 100'] }"
-      :value-formatter="formatSubscribers"
-      :tooltip="{ cursor: false, panel: false }"
-      aria-label="Podcast subscribers over the selected range"
-      :height="182"
-      :margin="margin"
-    />
-  </Card>
-</template>

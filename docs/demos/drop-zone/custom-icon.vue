@@ -1,11 +1,3 @@
-<script setup lang="ts">
-import { DropZone } from '@hareui/vue'
-import { Icon } from '@iconify/vue'
-import { ref } from 'vue'
-
-const cover = ref<File[]>([])
-</script>
-
 <template>
   <DropZone
     v-model="cover"
@@ -20,3 +12,11 @@ const cover = ref<File[]>([])
     </template>
   </DropZone>
 </template>
+
+<script setup lang="ts">
+import { DropZone } from '@hareui/vue'
+import { Icon } from '@iconify/vue'
+import { ref } from 'vue'
+
+const cover = ref<File[]>([])
+</script>

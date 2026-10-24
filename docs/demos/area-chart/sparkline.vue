@@ -1,3 +1,23 @@
+<template>
+  <div class="flex w-full items-center gap-6">
+    <div v-for="item in sparklines" :key="item.id" class="flex min-w-0 flex-1 flex-col gap-1">
+      <span class="text-xs text-muted"
+        >{{ item.label }} · <span class="font-medium text-foreground">{{ item.value }}</span></span
+      >
+      <AreaChart
+        :data="item.data"
+        index="day"
+        :series="{ value: { name: item.label, color: item.color } }"
+        sparkline
+        :value-formatter="item.format"
+        :tooltip="{ cursor: false, panel: false }"
+        :aria-label="`${item.label} trend`"
+        :height="48"
+      />
+    </div>
+  </div>
+</template>
+
 <script setup lang="ts">
 import { AreaChart } from '@hareui/vue/charts'
 
@@ -32,23 +52,3 @@ const sparklines = [
   },
 ]
 </script>
-
-<template>
-  <div class="flex w-full items-center gap-6">
-    <div v-for="item in sparklines" :key="item.id" class="flex min-w-0 flex-1 flex-col gap-1">
-      <span class="text-xs text-muted"
-        >{{ item.label }} · <span class="font-medium text-foreground">{{ item.value }}</span></span
-      >
-      <AreaChart
-        :data="item.data"
-        index="day"
-        :series="{ value: { name: item.label, color: item.color } }"
-        sparkline
-        :value-formatter="item.format"
-        :tooltip="{ cursor: false, panel: false }"
-        :aria-label="`${item.label} trend`"
-        :height="48"
-      />
-    </div>
-  </div>
-</template>

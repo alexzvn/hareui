@@ -1,8 +1,3 @@
-<script setup lang="ts">
-import { Button, Tooltip } from '@hareui/vue'
-import { Icon } from '@iconify/vue'
-</script>
-
 <template>
   <div class="flex items-center gap-4">
     <Tooltip :delay="0" text="This is a tooltip">
@@ -16,3 +11,8 @@ import { Icon } from '@iconify/vue'
     </Tooltip>
   </div>
 </template>
+
+<script setup lang="ts">
+import { Button, Tooltip } from '@hareui/vue'
+import { Icon } from '@iconify/vue'
+</script>

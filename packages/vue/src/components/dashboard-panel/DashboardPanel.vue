@@ -1,3 +1,36 @@
+<template>
+  <div
+    :id="id"
+    ref="el"
+    data-slot="dashboard-panel"
+    v-bind="$attrs"
+    :data-dragging="isDragging"
+    :class="ui.root({ class: [props.ui?.root, props.class] })"
+    :style="size ? { '--width': `${size}${unit}` } : undefined"
+  >
+    <slot>
+      <slot name="header" />
+
+      <div data-slot="dashboard-panel-body" :class="ui.body({ class: props.ui?.body })">
+        <slot name="body" />
+      </div>
+
+      <slot name="footer" />
+    </slot>
+  </div>
+
+  <slot v-if="resizable" name="resize-handle" v-bind="handleSlotProps">
+    <DashboardResizeHandle
+      v-bind="handleSlotProps.attrs"
+      :data-dragging="isDragging"
+      :class="ui.handle({ class: props.ui?.handle })"
+      @pointerdown="onPointerDown"
+      @dblclick="onDoubleClick"
+      @keydown="onKeyDown"
+    />
+  </slot>
+</template>
+
 <script lang="ts">
 import type { ComponentSlots } from '../../types/tv'
 import theme from './theme'
@@ -122,36 +155,3 @@ const handleSlotProps = computed<DashboardPanelResizeHandleSlotProps>(() => ({
   dragging: isDragging.value,
 }))
 </script>
-
-<template>
-  <div
-    :id="id"
-    ref="el"
-    data-slot="dashboard-panel"
-    v-bind="$attrs"
-    :data-dragging="isDragging"
-    :class="ui.root({ class: [props.ui?.root, props.class] })"
-    :style="size ? { '--width': `${size}${unit}` } : undefined"
-  >
-    <slot>
-      <slot name="header" />
-
-      <div data-slot="dashboard-panel-body" :class="ui.body({ class: props.ui?.body })">
-        <slot name="body" />
-      </div>
-
-      <slot name="footer" />
-    </slot>
-  </div>
-
-  <slot v-if="resizable" name="resize-handle" v-bind="handleSlotProps">
-    <DashboardResizeHandle
-      v-bind="handleSlotProps.attrs"
-      :data-dragging="isDragging"
-      :class="ui.handle({ class: props.ui?.handle })"
-      @pointerdown="onPointerDown"
-      @dblclick="onDoubleClick"
-      @keydown="onKeyDown"
-    />
-  </slot>
-</template>

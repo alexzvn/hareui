@@ -1,15 +1,3 @@
-<script setup lang="ts">
-import { useId } from 'vue'
-
-// Brand marks drawn inline: GitHub from Simple Icons (CC0), HeroUI from heroui.com's heroui-plain-logo,
-// Reka UI from unovue/reka-ui docs/content/public/logo.svg, Vue from its official logo.
-defineProps<{ name: 'github' | 'heroui' | 'reka' | 'vue' }>()
-
-// The Reka mark paints with gradients, so its <defs> ids must be unique per instance: a repeated id
-// resolves to the first match in the document, which paints blank when that copy sits in a hidden subtree.
-const uid = useId()
-</script>
-
 <template>
   <svg v-if="name === 'github'" width="1em" height="1em" viewBox="0 0 24 24" aria-hidden="true">
     <path
@@ -130,3 +118,15 @@ const uid = useId()
     </defs>
   </svg>
 </template>
+
+<script setup lang="ts">
+import { useId } from 'vue'
+
+// Brand marks drawn inline: GitHub from Simple Icons (CC0), HeroUI from heroui.com's heroui-plain-logo,
+// Reka UI from unovue/reka-ui docs/content/public/logo.svg, Vue from its official logo.
+defineProps<{ name: 'github' | 'heroui' | 'reka' | 'vue' }>()
+
+// The Reka mark paints with gradients, so its <defs> ids must be unique per instance: a repeated id
+// resolves to the first match in the document, which paints blank when that copy sits in a hidden subtree.
+const uid = useId()
+</script>

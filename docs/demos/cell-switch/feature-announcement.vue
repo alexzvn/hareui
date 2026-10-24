@@ -1,8 +1,3 @@
-<script setup lang="ts">
-import { CellSwitch } from '@hareui/vue'
-import { Icon } from '@iconify/vue'
-</script>
-
 <template>
   <div class="w-[360px]">
     <CellSwitch
@@ -36,3 +31,8 @@ import { Icon } from '@iconify/vue'
     </CellSwitch>
   </div>
 </template>
+
+<script setup lang="ts">
+import { CellSwitch } from '@hareui/vue'
+import { Icon } from '@iconify/vue'
+</script>

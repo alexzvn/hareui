@@ -1,88 +1,3 @@
-<script setup lang="ts">
-import type { BreadcrumbsItem, DropdownEntry, NavigationMenuItem } from '@hareui/vue'
-import {
-  Avatar,
-  Breadcrumbs,
-  Button,
-  DashboardGroup,
-  DashboardNavbar,
-  DashboardPanel,
-  DashboardSidebar,
-  DashboardSidebarCollapse,
-  Dropdown,
-  Kbd,
-  NavigationMenu,
-  Separator,
-} from '@hareui/vue'
-import { Icon } from '@iconify/vue'
-import { h } from 'vue'
-
-// NavigationMenu takes icon components: an Iconify Gravity UI icon that forwards the menu's icon classes.
-const gravityIcon = (name: string) => (attrs: Record<string, unknown>) =>
-  h(Icon, { ...attrs, icon: `gravity-ui:${name}` })
-
-const chat = gravityIcon('sparkles')
-
-const items: NavigationMenuItem[][] = [
-  [
-    { label: 'New Agent', icon: gravityIcon('magic-wand'), href: '#' },
-    { label: 'Search', icon: gravityIcon('magnifier'), href: '#', kbds: ['command', 'K'] },
-    { label: 'Home', icon: gravityIcon('house'), href: '#' },
-    {
-      label: 'Inbox',
-      icon: gravityIcon('envelope'),
-      href: '#',
-      badge: { label: '3', color: 'accent', variant: 'soft' },
-    },
-    { label: 'Meetings', icon: gravityIcon('calendar'), href: '#' },
-    { type: 'label', label: 'Recent chats' },
-    { label: 'Refactor auth module', icon: chat, href: '#' },
-    { label: 'Debug payment flow', icon: chat, href: '#' },
-    { label: 'Write API docs', icon: chat, href: '#' },
-    { label: 'Review PR #482', icon: chat, href: '#' },
-    { type: 'label', label: 'Agents', badge: { label: 'Beta', variant: 'soft' } },
-    { label: 'Coder', icon: gravityIcon('code'), href: '#' },
-    { label: 'Reviewer', icon: gravityIcon('book-open'), href: '#' },
-    { label: 'Writer', icon: gravityIcon('file-text'), href: '#' },
-    { label: 'Add agent', icon: gravityIcon('plus'), href: '#' },
-    { type: 'label', label: 'Teamspaces' },
-    {
-      label: 'Acme HQ',
-      icon: gravityIcon('house'),
-      defaultOpen: true,
-      children: [
-        { label: 'Home', icon: gravityIcon('house'), href: '#' },
-        { label: 'My Tasks', icon: gravityIcon('square-check'), href: '#' },
-        { label: 'Projects', icon: gravityIcon('target'), href: '#' },
-        { label: 'Epics', icon: gravityIcon('rocket'), href: '#' },
-        { label: 'Roadmap', icon: gravityIcon('chart-column'), href: '#', active: true },
-        { label: 'Eng Board', icon: gravityIcon('code'), href: '#' },
-      ],
-    },
-  ],
-  [
-    { type: 'label', label: 'Apps' },
-    { label: 'Docs', icon: gravityIcon('book'), href: '#' },
-    { label: 'Calendar', icon: gravityIcon('calendar'), href: '#' },
-  ],
-]
-
-const breadcrumbs: BreadcrumbsItem[] = [{ label: 'Roadmap', icon: 'gravity-ui:chart-column' }]
-
-const accountItems: DropdownEntry[] = [
-  { value: 'profile', label: 'Profile', icon: 'gravity-ui:person' },
-  { value: 'settings', label: 'Settings', icon: 'gravity-ui:gear' },
-  {
-    value: 'logout',
-    label: 'Log Out',
-    icon: 'gravity-ui:arrow-right-from-square',
-    variant: 'danger',
-  },
-]
-
-const avatar = 'https://heroui-assets.nyc3.cdn.digitaloceanspaces.com/avatars/green.jpg'
-</script>
-
 <template>
   <DashboardGroup unit="rem" :persistent="false">
     <!-- Compact: a smaller `--spacing` on the sidebar tightens every spacing utility inside it. The 3rem rail keeps
@@ -220,3 +135,88 @@ const avatar = 'https://heroui-assets.nyc3.cdn.digitaloceanspaces.com/avatars/gr
     </DashboardPanel>
   </DashboardGroup>
 </template>
+
+<script setup lang="ts">
+import type { BreadcrumbsItem, DropdownEntry, NavigationMenuItem } from '@hareui/vue'
+import {
+  Avatar,
+  Breadcrumbs,
+  Button,
+  DashboardGroup,
+  DashboardNavbar,
+  DashboardPanel,
+  DashboardSidebar,
+  DashboardSidebarCollapse,
+  Dropdown,
+  Kbd,
+  NavigationMenu,
+  Separator,
+} from '@hareui/vue'
+import { Icon } from '@iconify/vue'
+import { h } from 'vue'
+
+// NavigationMenu takes icon components: an Iconify Gravity UI icon that forwards the menu's icon classes.
+const gravityIcon = (name: string) => (attrs: Record<string, unknown>) =>
+  h(Icon, { ...attrs, icon: `gravity-ui:${name}` })
+
+const chat = gravityIcon('sparkles')
+
+const items: NavigationMenuItem[][] = [
+  [
+    { label: 'New Agent', icon: gravityIcon('magic-wand'), href: '#' },
+    { label: 'Search', icon: gravityIcon('magnifier'), href: '#', kbds: ['command', 'K'] },
+    { label: 'Home', icon: gravityIcon('house'), href: '#' },
+    {
+      label: 'Inbox',
+      icon: gravityIcon('envelope'),
+      href: '#',
+      badge: { label: '3', color: 'accent', variant: 'soft' },
+    },
+    { label: 'Meetings', icon: gravityIcon('calendar'), href: '#' },
+    { type: 'label', label: 'Recent chats' },
+    { label: 'Refactor auth module', icon: chat, href: '#' },
+    { label: 'Debug payment flow', icon: chat, href: '#' },
+    { label: 'Write API docs', icon: chat, href: '#' },
+    { label: 'Review PR #482', icon: chat, href: '#' },
+    { type: 'label', label: 'Agents', badge: { label: 'Beta', variant: 'soft' } },
+    { label: 'Coder', icon: gravityIcon('code'), href: '#' },
+    { label: 'Reviewer', icon: gravityIcon('book-open'), href: '#' },
+    { label: 'Writer', icon: gravityIcon('file-text'), href: '#' },
+    { label: 'Add agent', icon: gravityIcon('plus'), href: '#' },
+    { type: 'label', label: 'Teamspaces' },
+    {
+      label: 'Acme HQ',
+      icon: gravityIcon('house'),
+      defaultOpen: true,
+      children: [
+        { label: 'Home', icon: gravityIcon('house'), href: '#' },
+        { label: 'My Tasks', icon: gravityIcon('square-check'), href: '#' },
+        { label: 'Projects', icon: gravityIcon('target'), href: '#' },
+        { label: 'Epics', icon: gravityIcon('rocket'), href: '#' },
+        { label: 'Roadmap', icon: gravityIcon('chart-column'), href: '#', active: true },
+        { label: 'Eng Board', icon: gravityIcon('code'), href: '#' },
+      ],
+    },
+  ],
+  [
+    { type: 'label', label: 'Apps' },
+    { label: 'Docs', icon: gravityIcon('book'), href: '#' },
+    { label: 'Calendar', icon: gravityIcon('calendar'), href: '#' },
+  ],
+]
+
+const breadcrumbs: BreadcrumbsItem[] = [{ label: 'Roadmap', icon: 'gravity-ui:chart-column' }]
+
+const accountItems: DropdownEntry[] = [
+  { value: 'profile', label: 'Profile', icon: 'gravity-ui:person' },
+  { value: 'settings', label: 'Settings', icon: 'gravity-ui:gear' },
+  {
+    value: 'logout',
+    label: 'Log Out',
+    icon: 'gravity-ui:arrow-right-from-square',
+    variant: 'danger',
+  },
+]
+
+const avatar = 'https://heroui-assets.nyc3.cdn.digitaloceanspaces.com/avatars/green.jpg'
+</script>

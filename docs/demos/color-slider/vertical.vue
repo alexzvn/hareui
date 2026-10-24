@@ -1,7 +1,3 @@
-<script setup lang="ts">
-import { ColorSlider } from '@hareui/vue'
-</script>
-
 <template>
   <div class="flex h-48 gap-4">
     <ColorSlider
@@ -24,3 +20,7 @@ import { ColorSlider } from '@hareui/vue'
     />
   </div>
 </template>
+
+<script setup lang="ts">
+import { ColorSlider } from '@hareui/vue'
+</script>

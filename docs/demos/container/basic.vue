@@ -1,7 +1,3 @@
-<script setup lang="ts">
-import { Container } from '@hareui/vue'
-</script>
-
 <template>
   <Container class="w-full">
     <div
@@ -11,3 +7,7 @@ import { Container } from '@hareui/vue'
     </div>
   </Container>
 </template>
+
+<script setup lang="ts">
+import { Container } from '@hareui/vue'
+</script>

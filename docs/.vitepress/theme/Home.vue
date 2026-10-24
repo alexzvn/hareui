@@ -1,27 +1,3 @@
-<script setup lang="ts">
-import { Button } from '@hareui/vue'
-// Landing page (`layout: home`): port of heroui.com's home (`app/[lang]/(home)/page.tsx` + `layout.tsx`).
-// Left out as HeroUI-only: the GitHub stars line, the Pro banner, and the demo showcase bar
-// (Pro template tabs, ColorSwatchPicker accent swatches, theme-builder link).
-import { Icon } from '@iconify/vue'
-
-import { version } from '../../../packages/vue/package.json'
-import { sectionLinks, type SidebarSection } from '../sidebar'
-import DemoComponents from './components/home/DemoComponents.vue'
-import HomeNav from './components/home/HomeNav.vue'
-
-const props = defineProps<{ sections: SidebarSection[] }>()
-const emit = defineEmits<{ search: [] }>()
-
-function firstLink(base: string) {
-  const section = props.sections.find((s) => s.base === base)
-  return (section && sectionLinks(section)[0]?.link) ?? base
-}
-const docsHref = firstLink('/docs/getting-started')
-const componentsHref = firstLink('/docs/components')
-const year = new Date().getFullYear()
-</script>
-
 <template>
   <main id="nd-home-layout" class="flex flex-1 flex-col [--fd-layout-width:1400px]">
     <HomeNav :docs-href="docsHref" :components-href="componentsHref" @search="emit('search')" />
@@ -87,3 +63,27 @@ const year = new Date().getFullYear()
     </main>
   </main>
 </template>
+
+<script setup lang="ts">
+import { Button } from '@hareui/vue'
+// Landing page (`layout: home`): port of heroui.com's home (`app/[lang]/(home)/page.tsx` + `layout.tsx`).
+// Left out as HeroUI-only: the GitHub stars line, the Pro banner, and the demo showcase bar
+// (Pro template tabs, ColorSwatchPicker accent swatches, theme-builder link).
+import { Icon } from '@iconify/vue'
+
+import { version } from '../../../packages/vue/package.json'
+import { sectionLinks, type SidebarSection } from '../sidebar'
+import DemoComponents from './components/home/DemoComponents.vue'
+import HomeNav from './components/home/HomeNav.vue'
+
+const props = defineProps<{ sections: SidebarSection[] }>()
+const emit = defineEmits<{ search: [] }>()
+
+function firstLink(base: string) {
+  const section = props.sections.find((s) => s.base === base)
+  return (section && sectionLinks(section)[0]?.link) ?? base
+}
+const docsHref = firstLink('/docs/getting-started')
+const componentsHref = firstLink('/docs/components')
+const year = new Date().getFullYear()
+</script>

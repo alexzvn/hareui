@@ -1,3 +1,25 @@
+<template>
+  <Card
+    class="w-full max-w-[480px] rounded-2xl"
+    :ui="{ header: 'flex-row flex-wrap items-center justify-between gap-2' }"
+  >
+    <template #header>
+      <h3 class="text-base font-medium text-foreground">Pottery Classes</h3>
+      <ChartLegend :series="series" :colors="colors" />
+    </template>
+    <BarChart
+      :data="data"
+      index="term"
+      :series="series"
+      :colors="colors"
+      :bar-size="12"
+      aria-label="Pottery class enrollments by level and term"
+      :height="220"
+      :tooltip="{ valueFormatter: formatValue }"
+    />
+  </Card>
+</template>
+
 <script setup lang="ts">
 import { Card } from '@hareui/vue'
 import { BarChart, ChartLegend } from '@hareui/vue/charts'
@@ -20,25 +42,3 @@ function formatValue(value: number | string) {
   return `${value} students`
 }
 </script>
-
-<template>
-  <Card
-    class="w-full max-w-[480px] rounded-2xl"
-    :ui="{ header: 'flex-row flex-wrap items-center justify-between gap-2' }"
-  >
-    <template #header>
-      <h3 class="text-base font-medium text-foreground">Pottery Classes</h3>
-      <ChartLegend :series="series" :colors="colors" />
-    </template>
-    <BarChart
-      :data="data"
-      index="term"
-      :series="series"
-      :colors="colors"
-      :bar-size="12"
-      aria-label="Pottery class enrollments by level and term"
-      :height="220"
-      :tooltip="{ valueFormatter: formatValue }"
-    />
-  </Card>
-</template>

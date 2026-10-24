@@ -1,28 +1,3 @@
-<script setup lang="ts">
-import type { ListBoxItem } from '@hareui/vue'
-import { Autocomplete, TagGroup } from '@hareui/vue'
-import { ref } from 'vue'
-
-const items: ListBoxItem[] = [
-  { value: 'option1', label: 'Option 1' },
-  { value: 'option2', label: 'Option 2' },
-  { value: 'option3', label: 'Option 3' },
-  { value: 'option4', label: 'Option 4' },
-]
-
-const selectedKey1 = ref<string | null>(null)
-const selectedKey2 = ref<string | null>(null)
-const selectedKeys1 = ref<string[]>([])
-const selectedKeys2 = ref<string[]>([])
-
-function onRemoveTags1(ids: string[]) {
-  selectedKeys1.value = selectedKeys1.value.filter((key) => !ids.includes(key))
-}
-function onRemoveTags2(ids: string[]) {
-  selectedKeys2.value = selectedKeys2.value.filter((key) => !ids.includes(key))
-}
-</script>
-
 <template>
   <div class="flex flex-col gap-8">
     <div class="flex flex-col gap-4">
@@ -114,3 +89,28 @@ function onRemoveTags2(ids: string[]) {
     </div>
   </div>
 </template>
+
+<script setup lang="ts">
+import type { ListBoxItem } from '@hareui/vue'
+import { Autocomplete, TagGroup } from '@hareui/vue'
+import { ref } from 'vue'
+
+const items: ListBoxItem[] = [
+  { value: 'option1', label: 'Option 1' },
+  { value: 'option2', label: 'Option 2' },
+  { value: 'option3', label: 'Option 3' },
+  { value: 'option4', label: 'Option 4' },
+]
+
+const selectedKey1 = ref<string | null>(null)
+const selectedKey2 = ref<string | null>(null)
+const selectedKeys1 = ref<string[]>([])
+const selectedKeys2 = ref<string[]>([])
+
+function onRemoveTags1(ids: string[]) {
+  selectedKeys1.value = selectedKeys1.value.filter((key) => !ids.includes(key))
+}
+function onRemoveTags2(ids: string[]) {
+  selectedKeys2.value = selectedKeys2.value.filter((key) => !ids.includes(key))
+}
+</script>

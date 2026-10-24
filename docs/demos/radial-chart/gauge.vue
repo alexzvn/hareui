@@ -1,14 +1,3 @@
-<script setup lang="ts">
-import { Card } from '@hareui/vue'
-import { RadialChart } from '@hareui/vue/charts'
-
-const data = [{ metric: 'CPU load', percent: 62, fill: 'var(--chart-3)' }]
-
-function formatPercent(value: number) {
-  return `${value}%`
-}
-</script>
-
 <template>
   <Card
     class="w-full max-w-[280px] rounded-2xl"
@@ -34,3 +23,14 @@ function formatPercent(value: number) {
     </RadialChart>
   </Card>
 </template>
+
+<script setup lang="ts">
+import { Card } from '@hareui/vue'
+import { RadialChart } from '@hareui/vue/charts'
+
+const data = [{ metric: 'CPU load', percent: 62, fill: 'var(--chart-3)' }]
+
+function formatPercent(value: number) {
+  return `${value}%`
+}
+</script>

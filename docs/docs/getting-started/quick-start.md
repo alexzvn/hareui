@@ -96,13 +96,13 @@ See [Frameworks](/docs/getting-started/frameworks#vite-plugin-optional) for the 
 ## Use Components
 
 ```vue
-<script setup lang="ts">
-import { Button } from '@hareui/vue'
-</script>
-
 <template>
   <Button>My Button</Button>
 </template>
+
+<script setup lang="ts">
+import { Button } from '@hareui/vue'
+</script>
 ```
 
 ## What's Next?

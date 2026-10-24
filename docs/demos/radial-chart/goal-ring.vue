@@ -1,15 +1,3 @@
-<script setup lang="ts">
-import { Card } from '@hareui/vue'
-import { RadialChart } from '@hareui/vue/charts'
-
-const goal = 2500
-const data = [{ drink: 'Water', ml: 1600, fill: 'var(--chart-3)' }]
-
-function formatValue(value: number) {
-  return `${value.toLocaleString()} ml`
-}
-</script>
-
 <template>
   <Card
     class="w-full max-w-[300px] rounded-2xl"
@@ -37,3 +25,15 @@ function formatValue(value: number) {
     </RadialChart>
   </Card>
 </template>
+
+<script setup lang="ts">
+import { Card } from '@hareui/vue'
+import { RadialChart } from '@hareui/vue/charts'
+
+const goal = 2500
+const data = [{ drink: 'Water', ml: 1600, fill: 'var(--chart-3)' }]
+
+function formatValue(value: number) {
+  return `${value.toLocaleString()} ml`
+}
+</script>

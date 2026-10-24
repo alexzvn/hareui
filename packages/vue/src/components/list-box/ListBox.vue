@@ -1,3 +1,143 @@
+<template>
+  <ListboxRoot
+    ref="listboxRoot"
+    v-model="selection"
+    as-child
+    :multiple="multiple"
+    :disabled="disabled"
+  >
+    <ListboxContent
+      data-slot="list-box"
+      data-layout="stack"
+      data-orientation="vertical"
+      :data-empty="blocks.length ? undefined : 'true'"
+      :aria-multiselectable="multiple ? 'true' : undefined"
+      :class="ui.base({ class: [props.ui?.base, props.class] })"
+      @keydown.capture="onKeydownCapture"
+    >
+      <RekaContext />
+      <ListboxVirtualizer
+        v-if="virtualize"
+        v-slot="{ option }"
+        :options="flatRows.map((row) => row.item.value)"
+        :estimate-size="virtualOptions.estimateSize"
+        :overscan="virtualOptions.overscan"
+        :text-content="
+          (value: ListBoxValue) => {
+            const item = rowByValue.get(value)?.item
+            return (item?.textValue ?? item?.label ?? String(value)).toLowerCase()
+          }
+        "
+      >
+        <ListBoxOption
+          v-if="!forwarded.length"
+          v-bind="optionProps(rowByValue.get(option as ListBoxValue)!)"
+          class="w-full"
+          @action="emit('action', option as ListBoxValue)"
+          @select="onOptionSelect(rowByValue.get(option as ListBoxValue)!.item, $event)"
+        />
+        <ListBoxOption
+          v-else
+          v-bind="optionProps(rowByValue.get(option as ListBoxValue)!)"
+          class="w-full"
+          @action="emit('action', option as ListBoxValue)"
+          @select="onOptionSelect(rowByValue.get(option as ListBoxValue)!.item, $event)"
+        >
+          <template v-for="name in forwarded" #[name]="state">
+            <slot :name="name" v-bind="state as ListBoxItemSlotProps<T>" />
+          </template>
+        </ListBoxOption>
+      </ListboxVirtualizer>
+      <template
+        v-for="block in virtualize ? [] : blocks"
+        :key="block.kind === 'item' ? `i${block.index}` : `b${block.key}`"
+      >
+        <hr
+          v-if="block.kind === 'separator'"
+          role="presentation"
+          data-slot="separator"
+          data-orientation="horizontal"
+          :class="ui.separator({ class: props.ui?.separator })"
+        />
+        <!-- Reka's group always references its label's id; an unlabelled section stays an unnamed group, as in RAC -->
+        <component
+          :is="sectionLabelled(block.section) ? ListboxGroup : 'section'"
+          v-else-if="block.kind === 'section'"
+          v-bind="sectionLabelled(block.section) ? { as: 'section' } : { role: 'group' }"
+          :class="ui.section({ class: props.ui?.section })"
+        >
+          <ListboxGroupLabel
+            v-if="sectionLabelled(block.section)"
+            as="header"
+            role="presentation"
+            data-slot="header"
+            :class="ui.header({ class: props.ui?.header })"
+          >
+            <slot name="section-label" :section="block.section">
+              {{ block.section.label }}
+            </slot>
+          </ListboxGroupLabel>
+          <template v-if="!forwarded.length">
+            <ListBoxOption
+              v-for="row in block.rows"
+              :key="`i${row.index}`"
+              v-bind="optionProps(row)"
+              @action="emit('action', row.item.value)"
+              @select="onOptionSelect(row.item, $event)"
+            />
+          </template>
+          <template v-else>
+            <ListBoxOption
+              v-for="row in block.rows"
+              :key="`i${row.index}`"
+              v-bind="optionProps(row)"
+              @action="emit('action', row.item.value)"
+              @select="onOptionSelect(row.item, $event)"
+            >
+              <template v-for="name in forwarded" #[name]="state">
+                <slot :name="name" v-bind="state as ListBoxItemSlotProps<T>" />
+              </template>
+            </ListBoxOption>
+          </template>
+        </component>
+        <ListBoxOption
+          v-else-if="!forwarded.length"
+          v-bind="optionProps(block)"
+          @action="emit('action', block.item.value)"
+          @select="onOptionSelect(block.item, $event)"
+        />
+        <ListBoxOption
+          v-else
+          v-bind="optionProps(block)"
+          @action="emit('action', block.item.value)"
+          @select="onOptionSelect(block.item, $event)"
+        >
+          <template v-for="name in forwarded" #[name]="state">
+            <slot :name="name" v-bind="state as ListBoxItemSlotProps<T>" />
+          </template>
+        </ListBoxOption>
+      </template>
+      <!-- RAC wraps the empty state in an option (a listbox owns only options and groups) -->
+      <div v-if="!blocks.length && slots.empty" role="option" style="display: contents">
+        <div data-slot="empty-state" :class="ui.emptyState({ class: props.ui?.emptyState })">
+          <slot name="empty" />
+        </div>
+      </div>
+      <!-- RAC ListBoxLoadMoreItem: loading row (an unselectable option) + 1px sentinel -->
+      <div v-if="loading && slots.loading" role="option" data-slot="list-box-loading">
+        <slot name="loading" />
+      </div>
+      <div
+        v-if="loading !== undefined"
+        ref="sentinel"
+        aria-hidden="true"
+        data-slot="list-box-load-more"
+        style="position: relative; height: 1px; width: 1px"
+      />
+    </ListboxContent>
+  </ListboxRoot>
+</template>
+
 <script lang="ts">
 import type { ComponentSlots } from '../../types/tv'
 import theme from './theme'
@@ -440,143 +580,3 @@ defineExpose({
   highlightSelected: () => listboxRoot.value?.highlightSelected(),
 })
 </script>
-
-<template>
-  <ListboxRoot
-    ref="listboxRoot"
-    v-model="selection"
-    as-child
-    :multiple="multiple"
-    :disabled="disabled"
-  >
-    <ListboxContent
-      data-slot="list-box"
-      data-layout="stack"
-      data-orientation="vertical"
-      :data-empty="blocks.length ? undefined : 'true'"
-      :aria-multiselectable="multiple ? 'true' : undefined"
-      :class="ui.base({ class: [props.ui?.base, props.class] })"
-      @keydown.capture="onKeydownCapture"
-    >
-      <RekaContext />
-      <ListboxVirtualizer
-        v-if="virtualize"
-        v-slot="{ option }"
-        :options="flatRows.map((row) => row.item.value)"
-        :estimate-size="virtualOptions.estimateSize"
-        :overscan="virtualOptions.overscan"
-        :text-content="
-          (value: ListBoxValue) => {
-            const item = rowByValue.get(value)?.item
-            return (item?.textValue ?? item?.label ?? String(value)).toLowerCase()
-          }
-        "
-      >
-        <ListBoxOption
-          v-if="!forwarded.length"
-          v-bind="optionProps(rowByValue.get(option as ListBoxValue)!)"
-          class="w-full"
-          @action="emit('action', option as ListBoxValue)"
-          @select="onOptionSelect(rowByValue.get(option as ListBoxValue)!.item, $event)"
-        />
-        <ListBoxOption
-          v-else
-          v-bind="optionProps(rowByValue.get(option as ListBoxValue)!)"
-          class="w-full"
-          @action="emit('action', option as ListBoxValue)"
-          @select="onOptionSelect(rowByValue.get(option as ListBoxValue)!.item, $event)"
-        >
-          <template v-for="name in forwarded" #[name]="state">
-            <slot :name="name" v-bind="state as ListBoxItemSlotProps<T>" />
-          </template>
-        </ListBoxOption>
-      </ListboxVirtualizer>
-      <template
-        v-for="block in virtualize ? [] : blocks"
-        :key="block.kind === 'item' ? `i${block.index}` : `b${block.key}`"
-      >
-        <hr
-          v-if="block.kind === 'separator'"
-          role="presentation"
-          data-slot="separator"
-          data-orientation="horizontal"
-          :class="ui.separator({ class: props.ui?.separator })"
-        />
-        <!-- Reka's group always references its label's id; an unlabelled section stays an unnamed group, as in RAC -->
-        <component
-          :is="sectionLabelled(block.section) ? ListboxGroup : 'section'"
-          v-else-if="block.kind === 'section'"
-          v-bind="sectionLabelled(block.section) ? { as: 'section' } : { role: 'group' }"
-          :class="ui.section({ class: props.ui?.section })"
-        >
-          <ListboxGroupLabel
-            v-if="sectionLabelled(block.section)"
-            as="header"
-            role="presentation"
-            data-slot="header"
-            :class="ui.header({ class: props.ui?.header })"
-          >
-            <slot name="section-label" :section="block.section">
-              {{ block.section.label }}
-            </slot>
-          </ListboxGroupLabel>
-          <template v-if="!forwarded.length">
-            <ListBoxOption
-              v-for="row in block.rows"
-              :key="`i${row.index}`"
-              v-bind="optionProps(row)"
-              @action="emit('action', row.item.value)"
-              @select="onOptionSelect(row.item, $event)"
-            />
-          </template>
-          <template v-else>
-            <ListBoxOption
-              v-for="row in block.rows"
-              :key="`i${row.index}`"
-              v-bind="optionProps(row)"
-              @action="emit('action', row.item.value)"
-              @select="onOptionSelect(row.item, $event)"
-            >
-              <template v-for="name in forwarded" #[name]="state">
-                <slot :name="name" v-bind="state as ListBoxItemSlotProps<T>" />
-              </template>
-            </ListBoxOption>
-          </template>
-        </component>
-        <ListBoxOption
-          v-else-if="!forwarded.length"
-          v-bind="optionProps(block)"
-          @action="emit('action', block.item.value)"
-          @select="onOptionSelect(block.item, $event)"
-        />
-        <ListBoxOption
-          v-else
-          v-bind="optionProps(block)"
-          @action="emit('action', block.item.value)"
-          @select="onOptionSelect(block.item, $event)"
-        >
-          <template v-for="name in forwarded" #[name]="state">
-            <slot :name="name" v-bind="state as ListBoxItemSlotProps<T>" />
-          </template>
-        </ListBoxOption>
-      </template>
-      <!-- RAC wraps the empty state in an option (a listbox owns only options and groups) -->
-      <div v-if="!blocks.length && slots.empty" role="option" style="display: contents">
-        <div data-slot="empty-state" :class="ui.emptyState({ class: props.ui?.emptyState })">
-          <slot name="empty" />
-        </div>
-      </div>
-      <!-- RAC ListBoxLoadMoreItem: loading row (an unselectable option) + 1px sentinel -->
-      <div v-if="loading && slots.loading" role="option" data-slot="list-box-loading">
-        <slot name="loading" />
-      </div>
-      <div
-        v-if="loading !== undefined"
-        ref="sentinel"
-        aria-hidden="true"
-        data-slot="list-box-load-more"
-        style="position: relative; height: 1px; width: 1px"
-      />
-    </ListboxContent>
-  </ListboxRoot>
-</template>

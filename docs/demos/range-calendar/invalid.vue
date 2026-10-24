@@ -1,16 +1,3 @@
-<script setup lang="ts">
-import type { DateRange } from '@hareui/vue'
-import { Description, RangeCalendar } from '@hareui/vue'
-import { getLocalTimeZone, today } from '@internationalized/date'
-import { computed, shallowRef } from 'vue'
-
-const now = today(getLocalTimeZone())
-const value = shallowRef<DateRange>({ start: now.add({ days: 6 }), end: now.add({ days: 14 }) })
-const isInvalid = computed(
-  () => !!value.value.end && !!value.value.start && value.value.end.compare(value.value.start) > 7,
-)
-</script>
-
 <template>
   <div class="flex flex-col items-center gap-4">
     <RangeCalendar
@@ -23,3 +10,16 @@ const isInvalid = computed(
     <Description v-else class="text-center"> Select a stay of up to 7 days </Description>
   </div>
 </template>
+
+<script setup lang="ts">
+import type { DateRange } from '@hareui/vue'
+import { Description, RangeCalendar } from '@hareui/vue'
+import { getLocalTimeZone, today } from '@internationalized/date'
+import { computed, shallowRef } from 'vue'
+
+const now = today(getLocalTimeZone())
+const value = shallowRef<DateRange>({ start: now.add({ days: 6 }), end: now.add({ days: 14 }) })
+const isInvalid = computed(
+  () => !!value.value.end && !!value.value.start && value.value.end.compare(value.value.start) > 7,
+)
+</script>

@@ -1,19 +1,3 @@
-<script setup lang="ts">
-// Port of HeroUI docs `themes/components/base-color-slider.tsx`.
-import { useVariablesState } from '../composables/variables'
-import ChromaSlider from './ChromaSlider.vue'
-import LockableLabel from './LockableLabel.vue'
-
-const [variables, setVariables] = useVariablesState()
-
-function handleBaseSliderChange(value: number) {
-  setVariables({
-    ...variables.value,
-    base: value,
-  })
-}
-</script>
-
 <template>
   <div class="flex flex-col gap-1">
     <LockableLabel
@@ -29,3 +13,19 @@ function handleBaseSliderChange(value: number) {
     />
   </div>
 </template>
+
+<script setup lang="ts">
+// Port of HeroUI docs `themes/components/base-color-slider.tsx`.
+import { useVariablesState } from '../composables/variables'
+import ChromaSlider from './ChromaSlider.vue'
+import LockableLabel from './LockableLabel.vue'
+
+const [variables, setVariables] = useVariablesState()
+
+function handleBaseSliderChange(value: number) {
+  setVariables({
+    ...variables.value,
+    base: value,
+  })
+}
+</script>

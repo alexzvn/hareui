@@ -1,23 +1,3 @@
-<script setup lang="ts">
-// Port of HeroUI docs `components/demo/index.tsx`.
-import AlertDemo from './demo/AlertDemo.vue'
-import AlertDialogDemo from './demo/AlertDialogDemo.vue'
-import AllowNotificationsDemo from './demo/AllowNotificationsDemo.vue'
-import AvatarGroupDemo from './demo/AvatarGroupDemo.vue'
-import ButtonsDemo from './demo/ButtonsDemo.vue'
-import InputOTPDemo from './demo/InputOTPDemo.vue'
-import ListBoxDemo from './demo/ListBoxDemo.vue'
-import LoginDemo from './demo/LoginDemo.vue'
-import SelectDemo from './demo/SelectDemo.vue'
-import SliderDemo from './demo/SliderDemo.vue'
-import SubtleCardsDemo from './demo/SubtleCardsDemo.vue'
-import TabsDemo1 from './demo/TabsDemo1.vue'
-import TabsDemo2 from './demo/TabsDemo2.vue'
-import TextfieldDemo from './demo/TextfieldDemo.vue'
-import UIComponentsDemo from './demo/UIComponentsDemo.vue'
-import XProfileDemo from './demo/XProfileDemo.vue'
-</script>
-
 <template>
   <div class="mx-auto grid w-fit grid-cols-1 gap-8 md:grid-cols-2 lg:grid-cols-[auto_auto_auto]">
     <!-- Left -->
@@ -53,3 +33,23 @@ import XProfileDemo from './demo/XProfileDemo.vue'
     </div>
   </div>
 </template>
+
+<script setup lang="ts">
+// Port of HeroUI docs `components/demo/index.tsx`.
+import AlertDemo from './demo/AlertDemo.vue'
+import AlertDialogDemo from './demo/AlertDialogDemo.vue'
+import AllowNotificationsDemo from './demo/AllowNotificationsDemo.vue'
+import AvatarGroupDemo from './demo/AvatarGroupDemo.vue'
+import ButtonsDemo from './demo/ButtonsDemo.vue'
+import InputOTPDemo from './demo/InputOTPDemo.vue'
+import ListBoxDemo from './demo/ListBoxDemo.vue'
+import LoginDemo from './demo/LoginDemo.vue'
+import SelectDemo from './demo/SelectDemo.vue'
+import SliderDemo from './demo/SliderDemo.vue'
+import SubtleCardsDemo from './demo/SubtleCardsDemo.vue'
+import TabsDemo1 from './demo/TabsDemo1.vue'
+import TabsDemo2 from './demo/TabsDemo2.vue'
+import TextfieldDemo from './demo/TextfieldDemo.vue'
+import UIComponentsDemo from './demo/UIComponentsDemo.vue'
+import XProfileDemo from './demo/XProfileDemo.vue'
+</script>

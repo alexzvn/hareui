@@ -1,7 +1,3 @@
-<script setup lang="ts">
-import { Button, ButtonGroup } from '@hareui/vue'
-</script>
-
 <template>
   <div class="flex flex-col gap-4">
     <div class="flex flex-col items-start gap-2">
@@ -30,3 +26,7 @@ import { Button, ButtonGroup } from '@hareui/vue'
     </div>
   </div>
 </template>
+
+<script setup lang="ts">
+import { Button, ButtonGroup } from '@hareui/vue'
+</script>

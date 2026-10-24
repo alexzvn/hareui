@@ -1,9 +1,3 @@
-<script setup lang="ts">
-import { NumberStepper } from '@hareui/vue'
-
-const sizes = ['sm', 'md', 'lg'] as const
-</script>
-
 <template>
   <div class="flex flex-wrap items-end gap-6">
     <NumberStepper
@@ -17,3 +11,9 @@ const sizes = ['sm', 'md', 'lg'] as const
     />
   </div>
 </template>
+
+<script setup lang="ts">
+import { NumberStepper } from '@hareui/vue'
+
+const sizes = ['sm', 'md', 'lg'] as const
+</script>

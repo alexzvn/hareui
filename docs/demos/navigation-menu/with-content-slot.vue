@@ -1,43 +1,3 @@
-<script setup lang="ts">
-import type { NavigationMenuItem } from '@hareui/vue'
-import { NavigationMenu } from '@hareui/vue'
-import { Icon } from '@iconify/vue'
-import { h } from 'vue'
-
-const icon = (name: string) => (attrs: Record<string, unknown>) =>
-  h(Icon, { ...attrs, icon: `gravity-ui:${name}` })
-
-const items: NavigationMenuItem[] = [
-  {
-    label: 'Docs',
-    icon: icon('book-open'),
-    slot: 'docs',
-    children: [
-      { label: 'Icons', description: 'Use any icon set with HareUI components.' },
-      { label: 'Colors', description: 'Choose a primary and neutral color for your app.' },
-      { label: 'Theme', description: 'Customize the look of every component from one config.' },
-    ],
-  },
-  {
-    label: 'Components',
-    icon: icon('box'),
-    slot: 'components',
-    children: [
-      { label: 'Link', description: 'Style any element as a link.' },
-      { label: 'Modal', description: 'Display a modal within your application.' },
-      { label: 'NavigationMenu', description: 'Display a list of links.' },
-      { label: 'Pagination', description: 'Display a list of pages.' },
-      {
-        label: 'Popover',
-        description: 'Display a non-modal dialog that floats around a trigger element.',
-      },
-      { label: 'Progress', description: 'Show a horizontal bar to indicate task progression.' },
-    ],
-  },
-  { label: 'GitHub', icon: icon('logo-github') },
-]
-</script>
-
 <template>
   <NavigationMenu
     :items="items"
@@ -79,3 +39,43 @@ const items: NavigationMenuItem[] = [
     </template>
   </NavigationMenu>
 </template>
+
+<script setup lang="ts">
+import type { NavigationMenuItem } from '@hareui/vue'
+import { NavigationMenu } from '@hareui/vue'
+import { Icon } from '@iconify/vue'
+import { h } from 'vue'
+
+const icon = (name: string) => (attrs: Record<string, unknown>) =>
+  h(Icon, { ...attrs, icon: `gravity-ui:${name}` })
+
+const items: NavigationMenuItem[] = [
+  {
+    label: 'Docs',
+    icon: icon('book-open'),
+    slot: 'docs',
+    children: [
+      { label: 'Icons', description: 'Use any icon set with HareUI components.' },
+      { label: 'Colors', description: 'Choose a primary and neutral color for your app.' },
+      { label: 'Theme', description: 'Customize the look of every component from one config.' },
+    ],
+  },
+  {
+    label: 'Components',
+    icon: icon('box'),
+    slot: 'components',
+    children: [
+      { label: 'Link', description: 'Style any element as a link.' },
+      { label: 'Modal', description: 'Display a modal within your application.' },
+      { label: 'NavigationMenu', description: 'Display a list of links.' },
+      { label: 'Pagination', description: 'Display a list of pages.' },
+      {
+        label: 'Popover',
+        description: 'Display a non-modal dialog that floats around a trigger element.',
+      },
+      { label: 'Progress', description: 'Show a horizontal bar to indicate task progression.' },
+    ],
+  },
+  { label: 'GitHub', icon: icon('logo-github') },
+]
+</script>

@@ -1,27 +1,3 @@
-<script setup lang="ts">
-import type { NavigationMenuItem } from '@hareui/vue'
-import {
-  DashboardGroup,
-  DashboardPanel,
-  DashboardSidebar,
-  DashboardSidebarToggle,
-  NavigationMenu,
-} from '@hareui/vue'
-import { Icon } from '@iconify/vue'
-import { h } from 'vue'
-
-// NavigationMenu takes icon components: an Iconify Gravity UI icon that forwards the menu's icon classes.
-const gravityIcon = (name: string) => (attrs: Record<string, unknown>) =>
-  h(Icon, { ...attrs, icon: `gravity-ui:${name}` })
-
-const items: NavigationMenuItem[] = [
-  { label: 'Home', icon: gravityIcon('house'), href: '#', active: true },
-  { label: 'Inbox', icon: gravityIcon('envelope'), href: '#' },
-  { label: 'Contacts', icon: gravityIcon('persons'), href: '#' },
-  { label: 'Settings', icon: gravityIcon('gear'), href: '#' },
-]
-</script>
-
 <template>
   <!-- Sizes are percentages of the group by default; `unit="rem"` or `unit="px"` on the group changes that. -->
   <DashboardGroup :persistent="false">
@@ -52,3 +28,27 @@ const items: NavigationMenuItem[] = [
     </DashboardPanel>
   </DashboardGroup>
 </template>
+
+<script setup lang="ts">
+import type { NavigationMenuItem } from '@hareui/vue'
+import {
+  DashboardGroup,
+  DashboardPanel,
+  DashboardSidebar,
+  DashboardSidebarToggle,
+  NavigationMenu,
+} from '@hareui/vue'
+import { Icon } from '@iconify/vue'
+import { h } from 'vue'
+
+// NavigationMenu takes icon components: an Iconify Gravity UI icon that forwards the menu's icon classes.
+const gravityIcon = (name: string) => (attrs: Record<string, unknown>) =>
+  h(Icon, { ...attrs, icon: `gravity-ui:${name}` })
+
+const items: NavigationMenuItem[] = [
+  { label: 'Home', icon: gravityIcon('house'), href: '#', active: true },
+  { label: 'Inbox', icon: gravityIcon('envelope'), href: '#' },
+  { label: 'Contacts', icon: gravityIcon('persons'), href: '#' },
+  { label: 'Settings', icon: gravityIcon('gear'), href: '#' },
+]
+</script>

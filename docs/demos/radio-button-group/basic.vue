@@ -1,3 +1,26 @@
+<template>
+  <RadioButtonGroup
+    class="w-[min(360px,calc(100vw-2rem))]"
+    default-value="medium"
+    name="roast"
+    variant="secondary"
+    label="Roast"
+    description="Freshly roasted every Monday."
+  >
+    <RadioButtonGroupItem
+      v-for="roast in roasts"
+      :key="roast.value"
+      :value="roast.value"
+      :label="roast.title"
+      :description="roast.description"
+    >
+      <span class="mt-2 text-sm font-semibold">
+        {{ eur.format(roast.price) }}<span class="text-xs font-normal text-muted"> / 250 g</span>
+      </span>
+    </RadioButtonGroupItem>
+  </RadioButtonGroup>
+</template>
+
 <script setup lang="ts">
 import { RadioButtonGroup, RadioButtonGroupItem } from '@hareui/vue'
 
@@ -23,26 +46,3 @@ const eur = new Intl.NumberFormat('en-IE', {
   maximumFractionDigits: 0,
 })
 </script>
-
-<template>
-  <RadioButtonGroup
-    class="w-[min(360px,calc(100vw-2rem))]"
-    default-value="medium"
-    name="roast"
-    variant="secondary"
-    label="Roast"
-    description="Freshly roasted every Monday."
-  >
-    <RadioButtonGroupItem
-      v-for="roast in roasts"
-      :key="roast.value"
-      :value="roast.value"
-      :label="roast.title"
-      :description="roast.description"
-    >
-      <span class="mt-2 text-sm font-semibold">
-        {{ eur.format(roast.price) }}<span class="text-xs font-normal text-muted"> / 250 g</span>
-      </span>
-    </RadioButtonGroupItem>
-  </RadioButtonGroup>
-</template>

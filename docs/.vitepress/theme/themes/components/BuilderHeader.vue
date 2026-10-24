@@ -1,35 +1,3 @@
-<script setup lang="ts">
-import { Button, Kbd, Separator, Tooltip, toast } from '@hareui/vue'
-// Port of HeroUI docs `themes/components/builder-header.tsx`.
-// Left out: the preview tabs (their templates are HeroUI Pro), `HeroUIDocsAgentTrigger` (HeroUI-only AI trigger),
-// the language-aware logo link (the docs have no i18n); the logo is the docs wordmark, as in the landing nav.
-import { Icon } from '@iconify/vue'
-import { h } from 'vue'
-
-import HareLogo from '../../components/HareLogo.vue'
-import { useCodePanel } from '../composables/codePanel'
-import { useKeyPress } from '../composables/keyPress'
-import { useUndoRedo } from '../composables/undoRedo'
-import ResetButton from './ResetButton.vue'
-import ShuffleButton from './ShuffleButton.vue'
-import SwitchMode from './SwitchMode.vue'
-
-const { canRedo, canUndo, redo, undo } = useUndoRedo()
-const { isCodeVisible, toggleCode } = useCodePanel()
-
-function handleShare() {
-  navigator.clipboard.writeText(window.location.href)
-  toast('Link copied', {
-    description: 'Your theme link is copied to the clipboard.',
-    indicator: h(Icon, { icon: 'gravity-ui:link' }),
-    variant: 'success',
-  })
-}
-
-useKeyPress('ArrowLeft', () => undo(), { enabled: canUndo })
-useKeyPress('ArrowRight', () => redo(), { enabled: canRedo })
-</script>
-
 <template>
   <div
     class="sticky top-0 z-50 mb-3 flex h-14 w-full items-center justify-center bg-background px-2 min-[1200px]:mb-4 min-[1200px]:px-0"
@@ -116,3 +84,35 @@ useKeyPress('ArrowRight', () => redo(), { enabled: canRedo })
     </div>
   </div>
 </template>
+
+<script setup lang="ts">
+import { Button, Kbd, Separator, Tooltip, toast } from '@hareui/vue'
+// Port of HeroUI docs `themes/components/builder-header.tsx`.
+// Left out: the preview tabs (their templates are HeroUI Pro), `HeroUIDocsAgentTrigger` (HeroUI-only AI trigger),
+// the language-aware logo link (the docs have no i18n); the logo is the docs wordmark, as in the landing nav.
+import { Icon } from '@iconify/vue'
+import { h } from 'vue'
+
+import HareLogo from '../../components/HareLogo.vue'
+import { useCodePanel } from '../composables/codePanel'
+import { useKeyPress } from '../composables/keyPress'
+import { useUndoRedo } from '../composables/undoRedo'
+import ResetButton from './ResetButton.vue'
+import ShuffleButton from './ShuffleButton.vue'
+import SwitchMode from './SwitchMode.vue'
+
+const { canRedo, canUndo, redo, undo } = useUndoRedo()
+const { isCodeVisible, toggleCode } = useCodePanel()
+
+function handleShare() {
+  navigator.clipboard.writeText(window.location.href)
+  toast('Link copied', {
+    description: 'Your theme link is copied to the clipboard.',
+    indicator: h(Icon, { icon: 'gravity-ui:link' }),
+    variant: 'success',
+  })
+}
+
+useKeyPress('ArrowLeft', () => undo(), { enabled: canUndo })
+useKeyPress('ArrowRight', () => redo(), { enabled: canRedo })
+</script>

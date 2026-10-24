@@ -1,3 +1,17 @@
+<template>
+  <div>
+    <Checkbox
+      name="select-all"
+      label="Select all"
+      :model-value="indeterminate ? 'indeterminate' : allSelected"
+      @update:model-value="onToggleAll"
+    />
+    <div class="ms-6 flex flex-col gap-2">
+      <CheckboxGroup v-model="selected" :items="items" />
+    </div>
+  </div>
+</template>
+
 <script setup lang="ts">
 import type { CheckboxGroupItem } from '@hareui/vue'
 import { Checkbox, CheckboxGroup } from '@hareui/vue'
@@ -21,17 +35,3 @@ const items: CheckboxGroupItem[] = [
   { value: 'writing', label: 'Writing' },
 ]
 </script>
-
-<template>
-  <div>
-    <Checkbox
-      name="select-all"
-      label="Select all"
-      :model-value="indeterminate ? 'indeterminate' : allSelected"
-      @update:model-value="onToggleAll"
-    />
-    <div class="ms-6 flex flex-col gap-2">
-      <CheckboxGroup v-model="selected" :items="items" />
-    </div>
-  </div>
-</template>

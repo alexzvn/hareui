@@ -1,3 +1,73 @@
+<template>
+  <ColorSliderRoot
+    :model-value="boundValue"
+    :channel="channel"
+    :color-space="validColorSpace"
+    :orientation="orientation"
+    thumb-alignment="overflow"
+    :disabled="isDisabled"
+    :step="step"
+    data-slot="color-slider"
+    role="group"
+    :aria-labelledby="hasLabel ? autoId : undefined"
+    :class="ui.base({ class: [props.ui?.base, props.class] })"
+    @update:color="handleUpdate"
+    @change="(value: string) => emit('change', value)"
+    @change-end="(value: string) => emit('changeEnd', value)"
+    @pointerdown="onPointerDown"
+    @pointerup="onPointerEnd"
+    @pointercancel="onPointerEnd"
+    @gotpointercapture="captureOnDraggedThumb"
+  >
+    <!-- Split so Label's slot is only forwarded (and force-updated) when a `label` slot is passed. -->
+    <Label
+      v-if="hasLabel && $slots.label"
+      :id="autoId"
+      :disabled="isDisabled"
+      :class="ui.label({ class: props.ui?.label })"
+    >
+      <slot name="label">
+        {{ label }}
+      </slot>
+    </Label>
+    <Label
+      v-else-if="hasLabel"
+      :id="autoId"
+      :disabled="isDisabled"
+      :class="ui.label({ class: props.ui?.label })"
+    >
+      {{ label }}
+    </Label>
+    <span
+      v-if="hasOutput"
+      data-slot="color-slider-output"
+      :class="ui.output({ class: props.ui?.output })"
+    >
+      <slot name="output" v-bind="slotProps">{{ slotProps.valueText }}</slot>
+    </span>
+    <SliderTrack
+      data-slot="color-slider-track"
+      :style="trackStyle"
+      :class="ui.track({ class: props.ui?.track })"
+    >
+      <ColorSliderThumb
+        ref="thumbRef"
+        data-slot="color-slider-thumb"
+        :aria-label="thumbLabel"
+        :aria-labelledby="thumbLabelledBy"
+        :aria-valuetext="valueText"
+        :data-dragging="isDragging ? 'true' : undefined"
+        :style="thumbStyle"
+        :class="ui.thumb({ class: props.ui?.thumb })"
+      >
+        <slot name="thumb" v-bind="slotProps" />
+      </ColorSliderThumb>
+    </SliderTrack>
+    <!-- RAC submits the channel value from its `<input type="range">`; Reka's hidden input would submit the hex. -->
+    <input v-if="name" type="hidden" :name="name" :value="formValue" :disabled="isDisabled" />
+  </ColorSliderRoot>
+</template>
+
 <script lang="ts">
 import type { Color, ColorChannel, ColorSpace } from 'reka-ui'
 
@@ -354,73 +424,3 @@ function onPointerEnd() {
   isDragging.value = false
 }
 </script>
-
-<template>
-  <ColorSliderRoot
-    :model-value="boundValue"
-    :channel="channel"
-    :color-space="validColorSpace"
-    :orientation="orientation"
-    thumb-alignment="overflow"
-    :disabled="isDisabled"
-    :step="step"
-    data-slot="color-slider"
-    role="group"
-    :aria-labelledby="hasLabel ? autoId : undefined"
-    :class="ui.base({ class: [props.ui?.base, props.class] })"
-    @update:color="handleUpdate"
-    @change="(value: string) => emit('change', value)"
-    @change-end="(value: string) => emit('changeEnd', value)"
-    @pointerdown="onPointerDown"
-    @pointerup="onPointerEnd"
-    @pointercancel="onPointerEnd"
-    @gotpointercapture="captureOnDraggedThumb"
-  >
-    <!-- Split so Label's slot is only forwarded (and force-updated) when a `label` slot is passed. -->
-    <Label
-      v-if="hasLabel && $slots.label"
-      :id="autoId"
-      :disabled="isDisabled"
-      :class="ui.label({ class: props.ui?.label })"
-    >
-      <slot name="label">
-        {{ label }}
-      </slot>
-    </Label>
-    <Label
-      v-else-if="hasLabel"
-      :id="autoId"
-      :disabled="isDisabled"
-      :class="ui.label({ class: props.ui?.label })"
-    >
-      {{ label }}
-    </Label>
-    <span
-      v-if="hasOutput"
-      data-slot="color-slider-output"
-      :class="ui.output({ class: props.ui?.output })"
-    >
-      <slot name="output" v-bind="slotProps">{{ slotProps.valueText }}</slot>
-    </span>
-    <SliderTrack
-      data-slot="color-slider-track"
-      :style="trackStyle"
-      :class="ui.track({ class: props.ui?.track })"
-    >
-      <ColorSliderThumb
-        ref="thumbRef"
-        data-slot="color-slider-thumb"
-        :aria-label="thumbLabel"
-        :aria-labelledby="thumbLabelledBy"
-        :aria-valuetext="valueText"
-        :data-dragging="isDragging ? 'true' : undefined"
-        :style="thumbStyle"
-        :class="ui.thumb({ class: props.ui?.thumb })"
-      >
-        <slot name="thumb" v-bind="slotProps" />
-      </ColorSliderThumb>
-    </SliderTrack>
-    <!-- RAC submits the channel value from its `<input type="range">`; Reka's hidden input would submit the hex. -->
-    <input v-if="name" type="hidden" :name="name" :value="formValue" :disabled="isDisabled" />
-  </ColorSliderRoot>
-</template>

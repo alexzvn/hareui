@@ -1,3 +1,19 @@
+<template>
+  <Primitive
+    ref="root"
+    :as="as"
+    :class="ui.base({ class: [props.ui?.base, props.class] })"
+    :data-orientation="orientation"
+    :data-scroll-shadow-mode="auto ? 'auto' : 'manual'"
+    :data-scroll-shadow-size="size"
+    data-slot="scroll-shadow"
+    :style="{ '--scroll-shadow-size': `${size}px`, '--scroll-shadow-offset': `${offset}px` }"
+    v-bind="scrollAttrs"
+  >
+    <slot />
+  </Primitive>
+</template>
+
 <script lang="ts">
 import type { PrimitiveProps } from 'reka-ui'
 
@@ -178,19 +194,3 @@ defineExpose({
   },
 })
 </script>
-
-<template>
-  <Primitive
-    ref="root"
-    :as="as"
-    :class="ui.base({ class: [props.ui?.base, props.class] })"
-    :data-orientation="orientation"
-    :data-scroll-shadow-mode="auto ? 'auto' : 'manual'"
-    :data-scroll-shadow-size="size"
-    data-slot="scroll-shadow"
-    :style="{ '--scroll-shadow-size': `${size}px`, '--scroll-shadow-offset': `${offset}px` }"
-    v-bind="scrollAttrs"
-  >
-    <slot />
-  </Primitive>
-</template>

@@ -1,8 +1,3 @@
-<script setup lang="ts">
-import { Chip } from '@hareui/vue'
-import { Icon } from '@iconify/vue'
-</script>
-
 <template>
   <div class="flex flex-col gap-4">
     <div class="flex flex-wrap items-center gap-3">
@@ -38,3 +33,8 @@ import { Icon } from '@iconify/vue'
     </div>
   </div>
 </template>
+
+<script setup lang="ts">
+import { Chip } from '@hareui/vue'
+import { Icon } from '@iconify/vue'
+</script>

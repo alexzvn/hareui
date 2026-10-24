@@ -1,7 +1,3 @@
-<script setup lang="ts">
-import { DateField } from '@hareui/vue'
-</script>
-
 <template>
   <div class="flex flex-col gap-4">
     <DateField
@@ -21,3 +17,7 @@ import { DateField } from '@hareui/vue'
     />
   </div>
 </template>
+
+<script setup lang="ts">
+import { DateField } from '@hareui/vue'
+</script>

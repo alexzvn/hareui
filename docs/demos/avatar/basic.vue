@@ -1,7 +1,3 @@
-<script setup lang="ts">
-import { Avatar } from '@hareui/vue'
-</script>
-
 <template>
   <div class="flex items-center gap-4">
     <Avatar
@@ -17,3 +13,7 @@ import { Avatar } from '@hareui/vue'
     <Avatar fallback="JR" />
   </div>
 </template>
+
+<script setup lang="ts">
+import { Avatar } from '@hareui/vue'
+</script>

@@ -1,3 +1,39 @@
+<template>
+  <Slider
+    :id="id"
+    data-slot="cell-slider"
+    :model-value="current"
+    :default-value="defaultValue"
+    :min="min"
+    :max="max"
+    :step="step"
+    :format-options="formatOptions"
+    :locale="locale"
+    :label="label"
+    :disabled="disabled"
+    :name="name"
+    :required="required"
+    orientation="horizontal"
+    :ui="{
+      base: ui.base({ class: [props.ui?.base, props.class] }),
+      track: ui.track({ class: props.ui?.track }),
+      fill: ui.fill({ class: props.ui?.fill }),
+      thumb: ui.thumb({ class: props.ui?.thumb }),
+      label: ui.label({ class: props.ui?.label }),
+      output: ui.output({ class: props.ui?.output }),
+    }"
+    @update:model-value="onUpdate"
+    @change-end="emit('changeEnd', $event as number)"
+  >
+    <template v-if="slots.label" #label>
+      <slot name="label" />
+    </template>
+    <template v-if="slots.output" #output="{ values, formatted }">
+      <slot name="output" :value="values[0]!" :formatted="formatted[0]!" />
+    </template>
+  </Slider>
+</template>
+
 <script lang="ts">
 import type { ComponentSlots, ComponentVariants } from '../../types/tv'
 import theme from './theme'
@@ -102,39 +138,3 @@ function onUpdate(value: number | number[] | undefined) {
   emit('update:modelValue', value as number)
 }
 </script>
-
-<template>
-  <Slider
-    :id="id"
-    data-slot="cell-slider"
-    :model-value="current"
-    :default-value="defaultValue"
-    :min="min"
-    :max="max"
-    :step="step"
-    :format-options="formatOptions"
-    :locale="locale"
-    :label="label"
-    :disabled="disabled"
-    :name="name"
-    :required="required"
-    orientation="horizontal"
-    :ui="{
-      base: ui.base({ class: [props.ui?.base, props.class] }),
-      track: ui.track({ class: props.ui?.track }),
-      fill: ui.fill({ class: props.ui?.fill }),
-      thumb: ui.thumb({ class: props.ui?.thumb }),
-      label: ui.label({ class: props.ui?.label }),
-      output: ui.output({ class: props.ui?.output }),
-    }"
-    @update:model-value="onUpdate"
-    @change-end="emit('changeEnd', $event as number)"
-  >
-    <template v-if="slots.label" #label>
-      <slot name="label" />
-    </template>
-    <template v-if="slots.output" #output="{ values, formatted }">
-      <slot name="output" :value="values[0]!" :formatted="formatted[0]!" />
-    </template>
-  </Slider>
-</template>

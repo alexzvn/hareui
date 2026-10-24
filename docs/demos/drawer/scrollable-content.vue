@@ -1,7 +1,3 @@
-<script setup lang="ts">
-import { Button, Drawer } from '@hareui/vue'
-</script>
-
 <template>
   <Drawer handle title="Terms & Conditions">
     <Button variant="secondary"> Terms & Conditions </Button>
@@ -18,3 +14,7 @@ import { Button, Drawer } from '@hareui/vue'
     </template>
   </Drawer>
 </template>
+
+<script setup lang="ts">
+import { Button, Drawer } from '@hareui/vue'
+</script>

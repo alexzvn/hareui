@@ -1,3 +1,15 @@
+<template>
+  <CheckboxGroup
+    name="notification-channels"
+    label="Notification channels"
+    description="Choose how we should reach you for account updates."
+    class="gap-3 **:data-[slot=checkbox]:mt-0"
+    :default-value="['email']"
+    :items="channels"
+    :ui="{ control: controlClass, indicator: indicatorClass }"
+  />
+</template>
+
 <script setup lang="ts">
 import type { CheckboxGroupItem } from '@hareui/vue'
 import { CheckboxGroup } from '@hareui/vue'
@@ -12,15 +24,3 @@ const channels: CheckboxGroupItem[] = [
   { label: 'Push', value: 'push' },
 ]
 </script>
-
-<template>
-  <CheckboxGroup
-    name="notification-channels"
-    label="Notification channels"
-    description="Choose how we should reach you for account updates."
-    class="gap-3 **:data-[slot=checkbox]:mt-0"
-    :default-value="['email']"
-    :items="channels"
-    :ui="{ control: controlClass, indicator: indicatorClass }"
-  />
-</template>

@@ -1,7 +1,3 @@
-<script setup lang="ts">
-import { Input, TextField } from '@hareui/vue'
-</script>
-
 <template>
   <div class="flex w-full max-w-64 flex-col gap-4">
     <TextField label="Password" name="password" placeholder="••••••••" type="password" />
@@ -13,3 +9,7 @@ import { Input, TextField } from '@hareui/vue'
     <TextField label="Phone" name="phone" placeholder="+1 (555) 000-0000" type="tel" />
   </div>
 </template>
+
+<script setup lang="ts">
+import { Input, TextField } from '@hareui/vue'
+</script>

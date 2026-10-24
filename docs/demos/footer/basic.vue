@@ -1,14 +1,3 @@
-<script setup lang="ts">
-import { Footer, NavigationMenu } from '@hareui/vue'
-import { Icon } from '@iconify/vue'
-
-const items = [
-  { label: 'Figma Kit', href: '#figma' },
-  { label: 'Playground', href: '#playground' },
-  { label: 'Releases', href: '#releases' },
-]
-</script>
-
 <template>
   <div class="w-full overflow-hidden rounded-xl border border-separator">
     <Footer class="border-t-0">
@@ -42,3 +31,14 @@ const items = [
     </Footer>
   </div>
 </template>
+
+<script setup lang="ts">
+import { Footer, NavigationMenu } from '@hareui/vue'
+import { Icon } from '@iconify/vue'
+
+const items = [
+  { label: 'Figma Kit', href: '#figma' },
+  { label: 'Playground', href: '#playground' },
+  { label: 'Releases', href: '#releases' },
+]
+</script>

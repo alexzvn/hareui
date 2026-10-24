@@ -1,59 +1,3 @@
-<script setup lang="ts">
-import { Description, InputGroup, Kbd, Label, ListBox, Popover, Switch } from '@hareui/vue'
-import { Icon } from '@iconify/vue'
-import { computed } from 'vue'
-
-import { useKeyPress } from '../composables/keyPress'
-import { useVariablesState } from '../composables/variables'
-// Port of HeroUI docs `themes/components/theme-popover.tsx`.
-import type { ThemeId } from '../constants'
-import { findMatchingTheme, themeValuesById, themes } from '../constants'
-import ControlsPopoverTrigger from './ControlsPopoverTrigger.vue'
-
-const [variables, setVariables] = useVariablesState()
-const currentThemeId = computed(() => findMatchingTheme(variables.value))
-const currentTheme = computed(() =>
-  currentThemeId.value ? themes.find((t) => t.id === currentThemeId.value) : undefined,
-)
-
-const items = themes.map((theme) => ({
-  value: theme.id,
-  label: theme.label,
-  textValue: theme.id,
-  class:
-    'group relative flex w-10 flex-col items-center justify-center gap-1.5 p-0 hover:bg-transparent data-[hovered=true]:bg-transparent',
-}))
-const images = Object.fromEntries(themes.map((theme) => [theme.id, theme.image]))
-
-function applyTheme(themeId: ThemeId) {
-  const themeValues = themeValuesById[themeId]
-
-  setVariables({
-    base: themeValues.base,
-    chroma: themeValues.chroma,
-    fontFamily: themeValues.fontFamily,
-    formRadius: themeValues.formRadius,
-    hue: themeValues.hue,
-    lightness: themeValues.lightness,
-    radius: themeValues.radius,
-  })
-}
-
-function randomizeTheme() {
-  const randomTheme = themes[Math.floor(Math.random() * themes.length)]
-
-  if (randomTheme) {
-    applyTheme(randomTheme.id)
-  }
-}
-
-useKeyPress('t', randomizeTheme)
-
-function onSelectionChange(selected: unknown) {
-  if (typeof selected === 'string') applyTheme(selected as ThemeId)
-}
-</script>
-
 <template>
   <div class="flex flex-col gap-1">
     <Label>Theme</Label>
@@ -120,3 +64,59 @@ function onSelectionChange(selected: unknown) {
     </Popover>
   </div>
 </template>
+
+<script setup lang="ts">
+import { Description, InputGroup, Kbd, Label, ListBox, Popover, Switch } from '@hareui/vue'
+import { Icon } from '@iconify/vue'
+import { computed } from 'vue'
+
+import { useKeyPress } from '../composables/keyPress'
+import { useVariablesState } from '../composables/variables'
+// Port of HeroUI docs `themes/components/theme-popover.tsx`.
+import type { ThemeId } from '../constants'
+import { findMatchingTheme, themeValuesById, themes } from '../constants'
+import ControlsPopoverTrigger from './ControlsPopoverTrigger.vue'
+
+const [variables, setVariables] = useVariablesState()
+const currentThemeId = computed(() => findMatchingTheme(variables.value))
+const currentTheme = computed(() =>
+  currentThemeId.value ? themes.find((t) => t.id === currentThemeId.value) : undefined,
+)
+
+const items = themes.map((theme) => ({
+  value: theme.id,
+  label: theme.label,
+  textValue: theme.id,
+  class:
+    'group relative flex w-10 flex-col items-center justify-center gap-1.5 p-0 hover:bg-transparent data-[hovered=true]:bg-transparent',
+}))
+const images = Object.fromEntries(themes.map((theme) => [theme.id, theme.image]))
+
+function applyTheme(themeId: ThemeId) {
+  const themeValues = themeValuesById[themeId]
+
+  setVariables({
+    base: themeValues.base,
+    chroma: themeValues.chroma,
+    fontFamily: themeValues.fontFamily,
+    formRadius: themeValues.formRadius,
+    hue: themeValues.hue,
+    lightness: themeValues.lightness,
+    radius: themeValues.radius,
+  })
+}
+
+function randomizeTheme() {
+  const randomTheme = themes[Math.floor(Math.random() * themes.length)]
+
+  if (randomTheme) {
+    applyTheme(randomTheme.id)
+  }
+}
+
+useKeyPress('t', randomizeTheme)
+
+function onSelectionChange(selected: unknown) {
+  if (typeof selected === 'string') applyTheme(selected as ThemeId)
+}
+</script>

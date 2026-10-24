@@ -1,3 +1,22 @@
+<template>
+  <Primitive
+    ref="root"
+    :as="as"
+    :role="isNested ? 'group' : 'toolbar'"
+    :aria-orientation="isNested ? undefined : orientation"
+    data-slot="toolbar"
+    :data-orientation="orientation"
+    :class="ui.base({ class: [props.ui?.base, props.class] })"
+    v-on="
+      isNested
+        ? {}
+        : { keydownCapture: onKeydown, focusinCapture: onFocusin, focusoutCapture: onFocusout }
+    "
+  >
+    <slot :orientation="orientation" />
+  </Primitive>
+</template>
+
 <script lang="ts">
 import type { PrimitiveProps } from 'reka-ui'
 
@@ -142,22 +161,3 @@ function onFocusin(event: FocusEvent) {
   }
 }
 </script>
-
-<template>
-  <Primitive
-    ref="root"
-    :as="as"
-    :role="isNested ? 'group' : 'toolbar'"
-    :aria-orientation="isNested ? undefined : orientation"
-    data-slot="toolbar"
-    :data-orientation="orientation"
-    :class="ui.base({ class: [props.ui?.base, props.class] })"
-    v-on="
-      isNested
-        ? {}
-        : { keydownCapture: onKeydown, focusinCapture: onFocusin, focusoutCapture: onFocusout }
-    "
-  >
-    <slot :orientation="orientation" />
-  </Primitive>
-</template>

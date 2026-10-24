@@ -1,3 +1,41 @@
+<template>
+  <PopoverRoot
+    :open="open"
+    :default-open="defaultOpen"
+    :modal="false"
+    v-slot="{ open: isOpen, close }"
+    @update:open="onUpdateOpen"
+  >
+    <div data-slot="color-picker" :class="ui.base({ class: [props.ui?.base, props.class] })">
+      <PopoverTrigger
+        ref="triggerRef"
+        data-slot="color-picker-trigger"
+        :disabled="disabled"
+        :data-disabled="disabled ? 'true' : undefined"
+        :class="ui.trigger({ class: props.ui?.trigger })"
+      >
+        <slot name="trigger" :color="color" :open="isOpen" />
+      </PopoverTrigger>
+    </div>
+    <PopoverPortal :disabled="portalTarget.disabled" :to="portalTarget.to">
+      <PopoverContent
+        ref="contentRef"
+        data-slot="color-picker-popover"
+        :side="side"
+        :align="align"
+        :side-offset="sideOffset"
+        :collision-padding="8"
+        @open-auto-focus="focusContent"
+        @close-auto-focus="onCloseAutoFocus"
+        @interact-outside="onInteractOutside"
+        :class="ui.popover({ class: props.ui?.popover })"
+      >
+        <slot :color="color" :close="close" />
+      </PopoverContent>
+    </PopoverPortal>
+  </PopoverRoot>
+</template>
+
 <script lang="ts">
 import type { Color } from 'reka-ui'
 
@@ -163,41 +201,3 @@ function onCloseAutoFocus(event: Event) {
 }
 onBeforeUnmount(() => document.removeEventListener('click', onOutsideClick, true))
 </script>
-
-<template>
-  <PopoverRoot
-    :open="open"
-    :default-open="defaultOpen"
-    :modal="false"
-    v-slot="{ open: isOpen, close }"
-    @update:open="onUpdateOpen"
-  >
-    <div data-slot="color-picker" :class="ui.base({ class: [props.ui?.base, props.class] })">
-      <PopoverTrigger
-        ref="triggerRef"
-        data-slot="color-picker-trigger"
-        :disabled="disabled"
-        :data-disabled="disabled ? 'true' : undefined"
-        :class="ui.trigger({ class: props.ui?.trigger })"
-      >
-        <slot name="trigger" :color="color" :open="isOpen" />
-      </PopoverTrigger>
-    </div>
-    <PopoverPortal :disabled="portalTarget.disabled" :to="portalTarget.to">
-      <PopoverContent
-        ref="contentRef"
-        data-slot="color-picker-popover"
-        :side="side"
-        :align="align"
-        :side-offset="sideOffset"
-        :collision-padding="8"
-        @open-auto-focus="focusContent"
-        @close-auto-focus="onCloseAutoFocus"
-        @interact-outside="onInteractOutside"
-        :class="ui.popover({ class: props.ui?.popover })"
-      >
-        <slot :color="color" :close="close" />
-      </PopoverContent>
-    </PopoverPortal>
-  </PopoverRoot>
-</template>

@@ -1,15 +1,3 @@
-<script setup lang="ts">
-import { Button, toast } from '@hareui/vue'
-import { ref } from 'vue'
-
-const closedHistory = ref<Array<{ message: string; time: string }>>([])
-
-function addToHistory(message: string) {
-  const time = new Date().toLocaleTimeString()
-  closedHistory.value = [{ message, time }, ...closedHistory.value].slice(0, 5)
-}
-</script>
-
 <template>
   <div class="flex h-full max-w-2xl flex-col items-center justify-center gap-6">
     <div class="flex w-full flex-wrap items-center justify-center gap-4">
@@ -108,3 +96,15 @@ function addToHistory(message: string) {
     </div>
   </div>
 </template>
+
+<script setup lang="ts">
+import { Button, toast } from '@hareui/vue'
+import { ref } from 'vue'
+
+const closedHistory = ref<Array<{ message: string; time: string }>>([])
+
+function addToHistory(message: string) {
+  const time = new Date().toLocaleTimeString()
+  closedHistory.value = [{ message, time }, ...closedHistory.value].slice(0, 5)
+}
+</script>

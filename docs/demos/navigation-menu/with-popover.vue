@@ -1,3 +1,9 @@
+<template>
+  <div class="flex min-h-72 items-start">
+    <NavigationMenu popover collapsed orientation="vertical" :items="items" />
+  </div>
+</template>
+
 <script setup lang="ts">
 import type { NavigationMenuItem } from '@hareui/vue'
 import { NavigationMenu } from '@hareui/vue'
@@ -117,9 +123,3 @@ const items: NavigationMenuItem[][] = [
   ],
 ]
 </script>
-
-<template>
-  <div class="flex min-h-72 items-start">
-    <NavigationMenu popover collapsed orientation="vertical" :items="items" />
-  </div>
-</template>

@@ -1,3 +1,13 @@
+<template>
+  <ComboBox
+    class="w-[256px]"
+    label="Animal (custom filter)"
+    placeholder="Search animals..."
+    :filter="filter"
+    :items="animals"
+  />
+</template>
+
 <script setup lang="ts">
 import type { ListBoxItem } from '@hareui/vue'
 import { ComboBox } from '@hareui/vue'
@@ -16,13 +26,3 @@ function filter(text: string, inputValue: string) {
   return text.toLowerCase().includes(inputValue.toLowerCase())
 }
 </script>
-
-<template>
-  <ComboBox
-    class="w-[256px]"
-    label="Animal (custom filter)"
-    placeholder="Search animals..."
-    :filter="filter"
-    :items="animals"
-  />
-</template>

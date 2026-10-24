@@ -1,7 +1,3 @@
-<script setup lang="ts">
-import { Button, Tooltip } from '@hareui/vue'
-</script>
-
 <template>
   <Tooltip
     :delay="0"
@@ -13,3 +9,7 @@ import { Button, Tooltip } from '@hareui/vue'
     <Button variant="secondary">Share link</Button>
   </Tooltip>
 </template>
+
+<script setup lang="ts">
+import { Button, Tooltip } from '@hareui/vue'
+</script>

@@ -1,3 +1,14 @@
+<template>
+  <TagGroup
+    v-model:selected="selected"
+    selection-mode="multiple"
+    label="Amenities"
+    :description="description"
+    :error-message="errorMessage"
+    :items="items"
+  />
+</template>
+
 <script setup lang="ts">
 import type { TagGroupItem } from '@hareui/vue'
 import { TagGroup } from '@hareui/vue'
@@ -17,14 +28,3 @@ const description = computed(() =>
 )
 const errorMessage = computed(() => (isInvalid.value ? 'Please select at least one category' : ''))
 </script>
-
-<template>
-  <TagGroup
-    v-model:selected="selected"
-    selection-mode="multiple"
-    label="Amenities"
-    :description="description"
-    :error-message="errorMessage"
-    :items="items"
-  />
-</template>

@@ -1,3 +1,25 @@
+<template>
+  <Table
+    aria-label="Async loading table"
+    :columns="columns"
+    :has-more="hasMore"
+    :loading="loading"
+    :rows="items"
+    :ui="{
+      scrollContainer: 'h-[280px] overflow-y-auto',
+      content: 'min-w-[600px]',
+      header: 'sticky top-0 z-10 bg-surface-secondary',
+    }"
+    @load-more="loadMore"
+  >
+    <template #status-cell="{ row }">
+      <Chip :color="statusColorMap[row.status as Status]" size="sm" variant="soft">{{
+        row.status
+      }}</Chip>
+    </template>
+  </Table>
+</template>
+
 <script setup lang="ts">
 import type { TableColumn } from '@hareui/vue'
 import { Chip, Table } from '@hareui/vue'
@@ -114,25 +136,3 @@ function loadMore() {
   }, 1500)
 }
 </script>
-
-<template>
-  <Table
-    aria-label="Async loading table"
-    :columns="columns"
-    :has-more="hasMore"
-    :loading="loading"
-    :rows="items"
-    :ui="{
-      scrollContainer: 'h-[280px] overflow-y-auto',
-      content: 'min-w-[600px]',
-      header: 'sticky top-0 z-10 bg-surface-secondary',
-    }"
-    @load-more="loadMore"
-  >
-    <template #status-cell="{ row }">
-      <Chip :color="statusColorMap[row.status as Status]" size="sm" variant="soft">{{
-        row.status
-      }}</Chip>
-    </template>
-  </Table>
-</template>

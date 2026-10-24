@@ -1,8 +1,3 @@
-<script setup lang="ts">
-import { Button, ButtonGroup } from '@hareui/vue'
-import { Icon } from '@iconify/vue'
-</script>
-
 <template>
   <div class="w-[400px] space-y-3">
     <ButtonGroup full-width separator>
@@ -23,3 +18,8 @@ import { Icon } from '@iconify/vue'
     </ButtonGroup>
   </div>
 </template>
+
+<script setup lang="ts">
+import { Button, ButtonGroup } from '@hareui/vue'
+import { Icon } from '@iconify/vue'
+</script>

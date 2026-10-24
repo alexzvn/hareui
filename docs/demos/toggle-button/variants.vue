@@ -1,8 +1,3 @@
-<script setup lang="ts">
-import { ToggleButton } from '@hareui/vue'
-import { Icon } from '@iconify/vue'
-</script>
-
 <template>
   <div class="flex items-center gap-3">
     <ToggleButton>
@@ -15,3 +10,8 @@ import { Icon } from '@iconify/vue'
     </ToggleButton>
   </div>
 </template>
+
+<script setup lang="ts">
+import { ToggleButton } from '@hareui/vue'
+import { Icon } from '@iconify/vue'
+</script>

@@ -1,7 +1,3 @@
-<script setup lang="ts">
-import { Description, Label, Switch } from '@hareui/vue'
-</script>
-
 <template>
   <div class="flex w-full justify-center">
     <!--
@@ -21,3 +17,7 @@ import { Description, Label, Switch } from '@hareui/vue'
     </Switch>
   </div>
 </template>
+
+<script setup lang="ts">
+import { Description, Label, Switch } from '@hareui/vue'
+</script>

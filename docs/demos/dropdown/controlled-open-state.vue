@@ -1,3 +1,14 @@
+<template>
+  <div class="flex min-w-sm flex-col items-center justify-center gap-4">
+    <p class="text-sm text-muted">
+      Dropdown is: <strong>{{ open ? 'open' : 'closed' }}</strong>
+    </p>
+    <Dropdown v-model:open="open" :items="items">
+      <Button variant="secondary"> Actions </Button>
+    </Dropdown>
+  </div>
+</template>
+
 <script setup lang="ts">
 import type { DropdownEntry } from '@hareui/vue'
 import { Button, Dropdown } from '@hareui/vue'
@@ -12,14 +23,3 @@ const items: DropdownEntry[] = [
   { value: 'delete-file', label: 'Delete file', variant: 'danger' },
 ]
 </script>
-
-<template>
-  <div class="flex min-w-sm flex-col items-center justify-center gap-4">
-    <p class="text-sm text-muted">
-      Dropdown is: <strong>{{ open ? 'open' : 'closed' }}</strong>
-    </p>
-    <Dropdown v-model:open="open" :items="items">
-      <Button variant="secondary"> Actions </Button>
-    </Dropdown>
-  </div>
-</template>

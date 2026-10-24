@@ -1,3 +1,12 @@
+<template>
+  <RichTable
+    v-model:column-pinning="columnPinning"
+    :data="data"
+    :columns="columns"
+    class="w-full"
+  />
+</template>
+
 <script setup lang="ts">
 import type { RichTableColumn } from '@hareui/vue'
 import { RichTable } from '@hareui/vue'
@@ -100,12 +109,3 @@ const columns: RichTableColumn<Payment>[] = [
   },
 ]
 </script>
-
-<template>
-  <RichTable
-    v-model:column-pinning="columnPinning"
-    :data="data"
-    :columns="columns"
-    class="w-full"
-  />
-</template>

@@ -1,19 +1,3 @@
-<script setup lang="ts">
-import ThemeColumn, { type SoftProps } from './color/ThemeColumn.vue'
-
-defineProps<{
-  name: string
-  baseVariable: string
-  baseTooltip?: string
-  hoverVariable: string
-  hoverCssValue?: string
-  hoverTooltip?: string
-  foregroundVariable: string
-  foregroundTooltip?: string
-  soft?: SoftProps
-}>()
-</script>
-
 <template>
   <div class="not-prose flex flex-col gap-4 sm:flex-row">
     <ThemeColumn
@@ -42,3 +26,19 @@ defineProps<{
     />
   </div>
 </template>
+
+<script setup lang="ts">
+import ThemeColumn, { type SoftProps } from './color/ThemeColumn.vue'
+
+defineProps<{
+  name: string
+  baseVariable: string
+  baseTooltip?: string
+  hoverVariable: string
+  hoverCssValue?: string
+  hoverTooltip?: string
+  foregroundVariable: string
+  foregroundTooltip?: string
+  soft?: SoftProps
+}>()
+</script>

@@ -1,3 +1,15 @@
+<template>
+  <component
+    :is="as"
+    :for="as === 'label' ? props.for : undefined"
+    data-slot="label"
+    :class="ui.base({ class: [props.ui?.base, props.class] })"
+    @mousedown="onMousedown"
+  >
+    <slot />
+  </component>
+</template>
+
 <script lang="ts">
 import type { PrimitiveProps } from 'reka-ui'
 
@@ -59,15 +71,3 @@ function onMousedown(event: MouseEvent) {
   if (!event.defaultPrevented && event.detail > 1) event.preventDefault()
 }
 </script>
-
-<template>
-  <component
-    :is="as"
-    :for="as === 'label' ? props.for : undefined"
-    data-slot="label"
-    :class="ui.base({ class: [props.ui?.base, props.class] })"
-    @mousedown="onMousedown"
-  >
-    <slot />
-  </component>
-</template>

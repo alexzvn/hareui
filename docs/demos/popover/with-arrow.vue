@@ -1,8 +1,3 @@
-<script setup lang="ts">
-import { Button, Popover } from '@hareui/vue'
-import { Icon } from '@iconify/vue'
-</script>
-
 <template>
   <div class="flex items-center gap-4">
     <Popover title="Popover with Arrow" arrow class="max-w-64">
@@ -22,3 +17,8 @@ import { Icon } from '@iconify/vue'
     </Popover>
   </div>
 </template>
+
+<script setup lang="ts">
+import { Button, Popover } from '@hareui/vue'
+import { Icon } from '@iconify/vue'
+</script>

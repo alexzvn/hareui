@@ -1,3 +1,9 @@
+<template>
+  <Dropdown class="rounded-xl border border-border/80 bg-surface p-1 shadow-sm" :items="items">
+    <Button variant="secondary"> Actions </Button>
+  </Dropdown>
+</template>
+
 <script setup lang="ts">
 import type { DropdownEntry } from '@hareui/vue'
 import { Button, Dropdown } from '@hareui/vue'
@@ -13,9 +19,3 @@ const items: DropdownEntry[] = [
   },
 ]
 </script>
-
-<template>
-  <Dropdown class="rounded-xl border border-border/80 bg-surface p-1 shadow-sm" :items="items">
-    <Button variant="secondary"> Actions </Button>
-  </Dropdown>
-</template>

@@ -1,3 +1,42 @@
+<template>
+  <ChartLayer v-if="!hide" name="axis">
+    <g data-slot="chart-polar-radius-axis" :class="chart.classes('axis', props.class)">
+      <line
+        v-if="axisLine"
+        data-slot="chart-polar-radius-axis-line"
+        v-bind="line"
+        :class="chart.classes('radiusAxisLine')"
+      />
+      <template v-if="tick">
+        <g
+          v-for="item in ticks"
+          :key="item.key"
+          data-slot="chart-polar-radius-axis-tick"
+          :transform="item.transform"
+        >
+          <slot
+            name="tick"
+            :x="item.x"
+            :y="item.y"
+            :value="item.value"
+            :index="item.index"
+            :text="item.text"
+            :text-anchor="textAnchor"
+          >
+            <text
+              :x="item.x"
+              :y="item.y"
+              :text-anchor="textAnchor"
+              :class="chart.classes('radiusTick')"
+              >{{ item.text }}</text
+            >
+          </slot>
+        </g>
+      </template>
+    </g>
+  </ChartLayer>
+</template>
+
 <script lang="ts">
 import type { ClassValue } from 'tailwind-variants'
 
@@ -139,42 +178,3 @@ const ticks = computed(() =>
   }),
 )
 </script>
-
-<template>
-  <ChartLayer v-if="!hide" name="axis">
-    <g data-slot="chart-polar-radius-axis" :class="chart.classes('axis', props.class)">
-      <line
-        v-if="axisLine"
-        data-slot="chart-polar-radius-axis-line"
-        v-bind="line"
-        :class="chart.classes('radiusAxisLine')"
-      />
-      <template v-if="tick">
-        <g
-          v-for="item in ticks"
-          :key="item.key"
-          data-slot="chart-polar-radius-axis-tick"
-          :transform="item.transform"
-        >
-          <slot
-            name="tick"
-            :x="item.x"
-            :y="item.y"
-            :value="item.value"
-            :index="item.index"
-            :text="item.text"
-            :text-anchor="textAnchor"
-          >
-            <text
-              :x="item.x"
-              :y="item.y"
-              :text-anchor="textAnchor"
-              :class="chart.classes('radiusTick')"
-              >{{ item.text }}</text
-            >
-          </slot>
-        </g>
-      </template>
-    </g>
-  </ChartLayer>
-</template>

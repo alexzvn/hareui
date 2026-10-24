@@ -1,3 +1,137 @@
+<template>
+  <!-- Modal like HeroUI's (React Aria) popover dialog: focus stays inside, the page behind is hidden from assistive tech -->
+  <PopoverRoot v-model:open="isOpen" modal>
+    <PopoverLabelledBy :labelledby="hasLabel ? `${triggerId} ${labelId}` : triggerId" />
+    <DateFieldRoot
+      :id="id"
+      ref="root"
+      v-bind="attrs"
+      :model-value="modelValue"
+      :default-value="defaultValue"
+      :placeholder="placeholder"
+      :default-placeholder="defaultPlaceholder"
+      :granularity="granularity"
+      :hour-cycle="hourCycle"
+      :step="step"
+      :step-snapping="stepSnapping"
+      :hide-time-zone="hideTimeZone"
+      :min-value="minValue"
+      :max-value="maxValue"
+      :locale="locale"
+      :is-date-unavailable="isDateUnavailable"
+      :disabled="disabled"
+      :readonly="readonly"
+      :required="required"
+      :name="name"
+      data-slot="date-picker"
+      :data-required="required ? 'true' : undefined"
+      :aria-describedby="describedBy"
+      :class="ui.base({ class: [props.ui?.base, props.class] })"
+      @update:model-value="onFieldUpdate"
+      @update:placeholder="emit('update:placeholder', $event)"
+      @keydown.capture="onFieldKeydown"
+    >
+      <template #default="{ segments }">
+        <!-- `as` falls through to Reka `Label`: the group label names the input group via aria-labelledby, not a single form control (HeroUI renders a span) -->
+        <FieldLabel :id="labelId" as="span" />
+        <PopoverAnchor as-child>
+          <DateInputGroup
+            :segments="wrapBidiIsolate(dropDanglingTimeZoneSeparator(segments))"
+            :segment-input="DateFieldInput"
+            :variant="variant"
+            :full-width="fullWidth"
+            :disabled="disabled"
+            :invalid="invalid"
+            :aria-label="attrs['aria-label'] as string | undefined"
+            :labelledby="hasLabel ? labelId : undefined"
+            :describedby="describedBy"
+            :ui="{ base: props.ui?.group, ...groupUiProps }"
+          >
+            <template #suffix>
+              <PopoverTrigger as-child>
+                <button
+                  :id="triggerId"
+                  ref="trigger"
+                  type="button"
+                  aria-label="Calendar"
+                  :aria-labelledby="hasLabel ? `${triggerId} ${labelId}` : undefined"
+                  :aria-describedby="describedBy"
+                  data-slot="date-picker-trigger"
+                  :disabled="disabled || readonly"
+                  :class="ui.trigger({ class: props.ui?.trigger })"
+                >
+                  <span
+                    aria-hidden="true"
+                    data-slot="date-picker-trigger-indicator"
+                    :class="ui.triggerIndicator({ class: props.ui?.triggerIndicator })"
+                  >
+                    <slot name="indicator">
+                      <svg
+                        aria-hidden="true"
+                        fill="none"
+                        height="1em"
+                        role="presentation"
+                        viewBox="0 0 13 14"
+                        width="1em"
+                        xmlns="http://www.w3.org/2000/svg"
+                      >
+                        <path
+                          clip-rule="evenodd"
+                          d="M3.75 4.5A.75.75 0 0 1 3 3.75v-.748a1.5 1.5 0 0 0-1.5 1.5v1h10v-1a1.5 1.5 0 0 0-1.5-1.5v.75a.75.75 0 1 1-1.5 0v-.75h-4v.747a.75.75 0 0 1-.75.75ZM8.5 1.501h-4V.75a.75.75 0 0 0-1.5 0v.752a3 3 0 0 0-3 3v6a3 3 0 0 0 3 3h7a3 3 0 0 0 3-3v-6a3 3 0 0 0-3-3v-.75a.75.75 0 0 0-1.5 0v.75Zm-7 5.5v3.5a1.5 1.5 0 0 0 1.5 1.5h7a1.5 1.5 0 0 0 1.5-1.5v-3.5h-10Z"
+                          fill="currentColor"
+                          fill-rule="evenodd"
+                        />
+                      </svg>
+                    </slot>
+                  </span>
+                </button>
+              </PopoverTrigger>
+            </template>
+          </DateInputGroup>
+        </PopoverAnchor>
+        <FieldDescription />
+        <FieldError />
+      </template>
+    </DateFieldRoot>
+    <PopoverPortal :disabled="portalTarget.disabled" :to="portalTarget.to">
+      <PopoverContent
+        ref="popoverContent"
+        data-slot="date-picker-popover"
+        side="bottom"
+        align="center"
+        :side-offset="8"
+        :avoid-collisions="true"
+        :collision-padding="8"
+        :class="ui.popover({ class: props.ui?.popover })"
+        @open-auto-focus="onOpenAutoFocus"
+        @close-auto-focus="onCloseAutoFocus"
+        @escape-key-down="onEscapeKeyDown"
+      >
+        <slot name="calendar" :value="modelValue" :on-select="onCalendarSelect">
+          <!--
+            No `min-value`/`max-value`: HeroUI's composed `Calendar` passes its own 1900/2099 defaults explicitly, which
+            override the picker's bounds from React Aria's context, so the popover never greys out-of-range days (the
+            field still validates them). `is-date-unavailable` does reach it.
+          -->
+          <Calendar
+            :model-value="modelValue"
+            :default-value="defaultValue"
+            :placeholder="placeholder"
+            :default-placeholder="defaultPlaceholder"
+            :is-date-unavailable="isDateUnavailable"
+            :locale="locale"
+            :disabled="disabled"
+            :invalid="invalid"
+            :aria-label="calendarLabel"
+            year-picker
+            @update:model-value="onCalendarUpdate"
+          />
+        </slot>
+      </PopoverContent>
+    </PopoverPortal>
+  </PopoverRoot>
+</template>
+
 <script lang="ts">
 import type { DateFieldRootProps, DateValue } from 'reka-ui'
 
@@ -355,137 +489,3 @@ const groupUiProps = computed<DateInputGroupProps['ui']>(() => ({
   suffix: 'pointer-events-auto',
 }))
 </script>
-
-<template>
-  <!-- Modal like HeroUI's (React Aria) popover dialog: focus stays inside, the page behind is hidden from assistive tech -->
-  <PopoverRoot v-model:open="isOpen" modal>
-    <PopoverLabelledBy :labelledby="hasLabel ? `${triggerId} ${labelId}` : triggerId" />
-    <DateFieldRoot
-      :id="id"
-      ref="root"
-      v-bind="attrs"
-      :model-value="modelValue"
-      :default-value="defaultValue"
-      :placeholder="placeholder"
-      :default-placeholder="defaultPlaceholder"
-      :granularity="granularity"
-      :hour-cycle="hourCycle"
-      :step="step"
-      :step-snapping="stepSnapping"
-      :hide-time-zone="hideTimeZone"
-      :min-value="minValue"
-      :max-value="maxValue"
-      :locale="locale"
-      :is-date-unavailable="isDateUnavailable"
-      :disabled="disabled"
-      :readonly="readonly"
-      :required="required"
-      :name="name"
-      data-slot="date-picker"
-      :data-required="required ? 'true' : undefined"
-      :aria-describedby="describedBy"
-      :class="ui.base({ class: [props.ui?.base, props.class] })"
-      @update:model-value="onFieldUpdate"
-      @update:placeholder="emit('update:placeholder', $event)"
-      @keydown.capture="onFieldKeydown"
-    >
-      <template #default="{ segments }">
-        <!-- `as` falls through to Reka `Label`: the group label names the input group via aria-labelledby, not a single form control (HeroUI renders a span) -->
-        <FieldLabel :id="labelId" as="span" />
-        <PopoverAnchor as-child>
-          <DateInputGroup
-            :segments="wrapBidiIsolate(dropDanglingTimeZoneSeparator(segments))"
-            :segment-input="DateFieldInput"
-            :variant="variant"
-            :full-width="fullWidth"
-            :disabled="disabled"
-            :invalid="invalid"
-            :aria-label="attrs['aria-label'] as string | undefined"
-            :labelledby="hasLabel ? labelId : undefined"
-            :describedby="describedBy"
-            :ui="{ base: props.ui?.group, ...groupUiProps }"
-          >
-            <template #suffix>
-              <PopoverTrigger as-child>
-                <button
-                  :id="triggerId"
-                  ref="trigger"
-                  type="button"
-                  aria-label="Calendar"
-                  :aria-labelledby="hasLabel ? `${triggerId} ${labelId}` : undefined"
-                  :aria-describedby="describedBy"
-                  data-slot="date-picker-trigger"
-                  :disabled="disabled || readonly"
-                  :class="ui.trigger({ class: props.ui?.trigger })"
-                >
-                  <span
-                    aria-hidden="true"
-                    data-slot="date-picker-trigger-indicator"
-                    :class="ui.triggerIndicator({ class: props.ui?.triggerIndicator })"
-                  >
-                    <slot name="indicator">
-                      <svg
-                        aria-hidden="true"
-                        fill="none"
-                        height="1em"
-                        role="presentation"
-                        viewBox="0 0 13 14"
-                        width="1em"
-                        xmlns="http://www.w3.org/2000/svg"
-                      >
-                        <path
-                          clip-rule="evenodd"
-                          d="M3.75 4.5A.75.75 0 0 1 3 3.75v-.748a1.5 1.5 0 0 0-1.5 1.5v1h10v-1a1.5 1.5 0 0 0-1.5-1.5v.75a.75.75 0 1 1-1.5 0v-.75h-4v.747a.75.75 0 0 1-.75.75ZM8.5 1.501h-4V.75a.75.75 0 0 0-1.5 0v.752a3 3 0 0 0-3 3v6a3 3 0 0 0 3 3h7a3 3 0 0 0 3-3v-6a3 3 0 0 0-3-3v-.75a.75.75 0 0 0-1.5 0v.75Zm-7 5.5v3.5a1.5 1.5 0 0 0 1.5 1.5h7a1.5 1.5 0 0 0 1.5-1.5v-3.5h-10Z"
-                          fill="currentColor"
-                          fill-rule="evenodd"
-                        />
-                      </svg>
-                    </slot>
-                  </span>
-                </button>
-              </PopoverTrigger>
-            </template>
-          </DateInputGroup>
-        </PopoverAnchor>
-        <FieldDescription />
-        <FieldError />
-      </template>
-    </DateFieldRoot>
-    <PopoverPortal :disabled="portalTarget.disabled" :to="portalTarget.to">
-      <PopoverContent
-        ref="popoverContent"
-        data-slot="date-picker-popover"
-        side="bottom"
-        align="center"
-        :side-offset="8"
-        :avoid-collisions="true"
-        :collision-padding="8"
-        :class="ui.popover({ class: props.ui?.popover })"
-        @open-auto-focus="onOpenAutoFocus"
-        @close-auto-focus="onCloseAutoFocus"
-        @escape-key-down="onEscapeKeyDown"
-      >
-        <slot name="calendar" :value="modelValue" :on-select="onCalendarSelect">
-          <!--
-            No `min-value`/`max-value`: HeroUI's composed `Calendar` passes its own 1900/2099 defaults explicitly, which
-            override the picker's bounds from React Aria's context, so the popover never greys out-of-range days (the
-            field still validates them). `is-date-unavailable` does reach it.
-          -->
-          <Calendar
-            :model-value="modelValue"
-            :default-value="defaultValue"
-            :placeholder="placeholder"
-            :default-placeholder="defaultPlaceholder"
-            :is-date-unavailable="isDateUnavailable"
-            :locale="locale"
-            :disabled="disabled"
-            :invalid="invalid"
-            :aria-label="calendarLabel"
-            year-picker
-            @update:model-value="onCalendarUpdate"
-          />
-        </slot>
-      </PopoverContent>
-    </PopoverPortal>
-  </PopoverRoot>
-</template>

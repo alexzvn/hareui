@@ -1,3 +1,15 @@
+<template>
+  <Primitive :as="as" :class="ui.base({ class: [props.ui?.base, props.class] })">
+    <abbr
+      v-for="(key, index) in keyList"
+      :key="index"
+      :class="ui.abbr({ class: props.ui?.abbr })"
+      :title="kbdKeysLabelMap[key]"
+      >{{ kbdKeysMap[key] }}</abbr
+    ><span v-if="slots.default" :class="ui.content({ class: props.ui?.content })"><slot /></span>
+  </Primitive>
+</template>
+
 <script lang="ts">
 import type { PrimitiveProps } from 'reka-ui'
 
@@ -44,15 +56,3 @@ const keyList = computed(() =>
   props.keys === undefined ? [] : Array.isArray(props.keys) ? props.keys : [props.keys],
 )
 </script>
-
-<template>
-  <Primitive :as="as" :class="ui.base({ class: [props.ui?.base, props.class] })">
-    <abbr
-      v-for="(key, index) in keyList"
-      :key="index"
-      :class="ui.abbr({ class: props.ui?.abbr })"
-      :title="kbdKeysLabelMap[key]"
-      >{{ kbdKeysMap[key] }}</abbr
-    ><span v-if="slots.default" :class="ui.content({ class: props.ui?.content })"><slot /></span>
-  </Primitive>
-</template>

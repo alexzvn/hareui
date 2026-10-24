@@ -1,3 +1,22 @@
+<template>
+  <div
+    :class="[
+      'flex min-h-dvh bg-background font-sans text-foreground',
+      centered ? ['p-4 sm:p-10', alignClass] : 'flex-col',
+    ]"
+  >
+    <Suspense v-if="demo" @resolve="announceReady">
+      <div v-if="centered" :class="['flex w-full', alignClass]" :style="minHeight">
+        <component :is="demo" />
+      </div>
+      <component :is="demo" v-else />
+    </Suspense>
+    <p v-else class="p-4 text-danger">Demo not found: {{ name }}</p>
+    <!-- The docs shell's shared queue provider (Layout.vue): demos calling the global `toast()` need one here too. -->
+    <ToastProvider />
+  </div>
+</template>
+
 <script setup lang="ts">
 import { ToastProvider } from '@hareui/vue'
 import { useData } from 'vitepress'
@@ -82,22 +101,3 @@ onMounted(() => {
 })
 onBeforeUnmount(() => observer?.disconnect())
 </script>
-
-<template>
-  <div
-    :class="[
-      'flex min-h-dvh bg-background font-sans text-foreground',
-      centered ? ['p-4 sm:p-10', alignClass] : 'flex-col',
-    ]"
-  >
-    <Suspense v-if="demo" @resolve="announceReady">
-      <div v-if="centered" :class="['flex w-full', alignClass]" :style="minHeight">
-        <component :is="demo" />
-      </div>
-      <component :is="demo" v-else />
-    </Suspense>
-    <p v-else class="p-4 text-danger">Demo not found: {{ name }}</p>
-    <!-- The docs shell's shared queue provider (Layout.vue): demos calling the global `toast()` need one here too. -->
-    <ToastProvider />
-  </div>
-</template>

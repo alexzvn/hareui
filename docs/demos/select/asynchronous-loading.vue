@@ -1,3 +1,21 @@
+<template>
+  <Select
+    class="w-[256px]"
+    label="Pick a Pokemon"
+    placeholder="Select a Pokemon"
+    :items="pokemon.map((p) => ({ value: p.name, label: p.name }))"
+    :loading="loading"
+    @load-more="loadMore"
+  >
+    <template #loading>
+      <div class="flex items-center justify-center gap-2 py-2">
+        <Spinner size="sm" />
+        <span class="text-sm text-muted">Loading more...</span>
+      </div>
+    </template>
+  </Select>
+</template>
+
 <script setup lang="ts">
 import { Select, Spinner } from '@hareui/vue'
 import { onMounted, ref } from 'vue'
@@ -25,21 +43,3 @@ async function loadMore() {
 // Client only: VitePress SSR-renders demos
 onMounted(loadMore)
 </script>
-
-<template>
-  <Select
-    class="w-[256px]"
-    label="Pick a Pokemon"
-    placeholder="Select a Pokemon"
-    :items="pokemon.map((p) => ({ value: p.name, label: p.name }))"
-    :loading="loading"
-    @load-more="loadMore"
-  >
-    <template #loading>
-      <div class="flex items-center justify-center gap-2 py-2">
-        <Spinner size="sm" />
-        <span class="text-sm text-muted">Loading more...</span>
-      </div>
-    </template>
-  </Select>
-</template>

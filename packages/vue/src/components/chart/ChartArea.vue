@@ -1,3 +1,81 @@
+<template>
+  <ChartLayer v-if="!series.hidden.value" name="area">
+    <g
+      data-slot="chart-area"
+      :data-key="dataKey"
+      :class="chart.classes('series', props.class)"
+      :clip-path="series.reveal.value < 1 ? `url(#${clipId})` : undefined"
+    >
+      <defs v-if="series.reveal.value < 1 || areaFill.gradient">
+        <clipPath v-if="series.reveal.value < 1" :id="clipId">
+          <rect v-bind="clip" />
+        </clipPath>
+        <linearGradient
+          v-if="areaFill.gradient"
+          :id="areaFill.gradient.id"
+          x1="0"
+          y1="0"
+          x2="0"
+          y2="1"
+        >
+          <stop
+            offset="0%"
+            :stop-color="areaFill.gradient.color"
+            :stop-opacity="areaFill.gradient.from"
+          />
+          <stop
+            offset="100%"
+            :stop-color="areaFill.gradient.color"
+            :stop-opacity="areaFill.gradient.to"
+          />
+        </linearGradient>
+      </defs>
+      <path
+        data-slot="chart-area-fill"
+        :d="areaPath"
+        :fill="areaFill.fill"
+        :fill-opacity="areaFill.fillOpacity"
+        stroke="none"
+      />
+      <path
+        v-if="stroke !== 'none'"
+        data-slot="chart-area-curve"
+        :d="curvePath"
+        fill="none"
+        :stroke="stroke"
+        :stroke-width="strokeWidth"
+        :stroke-dasharray="strokeDasharray"
+      />
+      <g v-if="dots.length" data-slot="chart-dots">
+        <circle
+          v-for="{ point, attrs } in dots"
+          :key="point.index"
+          data-slot="chart-dot"
+          :cx="point.x"
+          :cy="point.y"
+          :r="attrs.r"
+          :fill="attrs.fill"
+          :stroke="attrs.stroke"
+          :stroke-width="attrs.strokeWidth"
+          :class="chart.classes('dot', attrs.class)"
+        />
+      </g>
+    </g>
+  </ChartLayer>
+  <ChartLayer v-if="activeDot" name="active-dot">
+    <circle
+      data-slot="chart-active-dot"
+      :cx="activeDot.point.x"
+      :cy="activeDot.point.y"
+      :r="activeDot.r"
+      :fill="activeDot.fill"
+      :style="activeDot.style"
+      :class="chart.classes('activeDot', activeDot.class)"
+    />
+  </ChartLayer>
+  <slot />
+</template>
+
 <script lang="ts">
 import type { ChartCurveSeriesProps } from './series'
 
@@ -144,81 +222,3 @@ const activeDot = computed(() => {
   }
 })
 </script>
-
-<template>
-  <ChartLayer v-if="!series.hidden.value" name="area">
-    <g
-      data-slot="chart-area"
-      :data-key="dataKey"
-      :class="chart.classes('series', props.class)"
-      :clip-path="series.reveal.value < 1 ? `url(#${clipId})` : undefined"
-    >
-      <defs v-if="series.reveal.value < 1 || areaFill.gradient">
-        <clipPath v-if="series.reveal.value < 1" :id="clipId">
-          <rect v-bind="clip" />
-        </clipPath>
-        <linearGradient
-          v-if="areaFill.gradient"
-          :id="areaFill.gradient.id"
-          x1="0"
-          y1="0"
-          x2="0"
-          y2="1"
-        >
-          <stop
-            offset="0%"
-            :stop-color="areaFill.gradient.color"
-            :stop-opacity="areaFill.gradient.from"
-          />
-          <stop
-            offset="100%"
-            :stop-color="areaFill.gradient.color"
-            :stop-opacity="areaFill.gradient.to"
-          />
-        </linearGradient>
-      </defs>
-      <path
-        data-slot="chart-area-fill"
-        :d="areaPath"
-        :fill="areaFill.fill"
-        :fill-opacity="areaFill.fillOpacity"
-        stroke="none"
-      />
-      <path
-        v-if="stroke !== 'none'"
-        data-slot="chart-area-curve"
-        :d="curvePath"
-        fill="none"
-        :stroke="stroke"
-        :stroke-width="strokeWidth"
-        :stroke-dasharray="strokeDasharray"
-      />
-      <g v-if="dots.length" data-slot="chart-dots">
-        <circle
-          v-for="{ point, attrs } in dots"
-          :key="point.index"
-          data-slot="chart-dot"
-          :cx="point.x"
-          :cy="point.y"
-          :r="attrs.r"
-          :fill="attrs.fill"
-          :stroke="attrs.stroke"
-          :stroke-width="attrs.strokeWidth"
-          :class="chart.classes('dot', attrs.class)"
-        />
-      </g>
-    </g>
-  </ChartLayer>
-  <ChartLayer v-if="activeDot" name="active-dot">
-    <circle
-      data-slot="chart-active-dot"
-      :cx="activeDot.point.x"
-      :cy="activeDot.point.y"
-      :r="activeDot.r"
-      :fill="activeDot.fill"
-      :style="activeDot.style"
-      :class="chart.classes('activeDot', activeDot.class)"
-    />
-  </ChartLayer>
-  <slot />
-</template>

@@ -1,3 +1,9 @@
+<template>
+  <Primitive :as="as" :class="ui.base({ class: [props.ui?.base, props.class] })">
+    <slot />
+  </Primitive>
+</template>
+
 <script lang="ts">
 import type { PrimitiveProps } from 'reka-ui'
 
@@ -60,9 +66,3 @@ const ui = useComponentUI('skeleton', theme, () => ({
   animationType: props.animationType ?? cssAnimation.value,
 }))
 </script>
-
-<template>
-  <Primitive :as="as" :class="ui.base({ class: [props.ui?.base, props.class] })">
-    <slot />
-  </Primitive>
-</template>

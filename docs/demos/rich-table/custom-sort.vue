@@ -1,3 +1,12 @@
+<template>
+  <RichTable
+    :data="data"
+    :columns="columns"
+    :initial-state="{ sorting: [{ id: 'status', desc: false }] }"
+    class="w-full"
+  />
+</template>
+
 <script setup lang="ts">
 import type { RichTableColumn } from '@hareui/vue'
 import { RichTable } from '@hareui/vue'
@@ -67,12 +76,3 @@ const columns: RichTableColumn<Payment>[] = [
   },
 ]
 </script>
-
-<template>
-  <RichTable
-    :data="data"
-    :columns="columns"
-    :initial-state="{ sorting: [{ id: 'status', desc: false }] }"
-    class="w-full"
-  />
-</template>

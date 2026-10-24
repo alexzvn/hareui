@@ -1,18 +1,3 @@
-<script setup lang="ts">
-import type { ToastContentValue } from '@hareui/vue'
-import { Button, CloseButton, ToastProvider, ToastQueue } from '@hareui/vue'
-
-const customQueue = new ToastQueue()
-
-function show() {
-  customQueue.add({
-    title: 'Custom layout toast',
-    description: 'This uses a custom render function',
-    variant: 'default',
-  })
-}
-</script>
-
 <template>
   <div class="flex h-full max-w-xl flex-col items-center justify-center">
     <ToastProvider
@@ -56,3 +41,18 @@ function show() {
     <Button size="sm" variant="secondary" @click="show"> Custom toast </Button>
   </div>
 </template>
+
+<script setup lang="ts">
+import type { ToastContentValue } from '@hareui/vue'
+import { Button, CloseButton, ToastProvider, ToastQueue } from '@hareui/vue'
+
+const customQueue = new ToastQueue()
+
+function show() {
+  customQueue.add({
+    title: 'Custom layout toast',
+    description: 'This uses a custom render function',
+    variant: 'default',
+  })
+}
+</script>

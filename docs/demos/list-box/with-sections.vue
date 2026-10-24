@@ -1,3 +1,26 @@
+<template>
+  <Surface class="w-[256px] rounded-3xl shadow-surface">
+    <ListBox
+      aria-label="File actions"
+      class="w-full p-2"
+      selection-mode="none"
+      :items="sections(false)"
+      @action="(value) => alert(`Selected item: ${value}`)"
+    >
+      <template #item-leading="{ item }">
+        <div class="flex h-8 items-start justify-center pt-px">
+          <Icon :class="['size-4 shrink-0', item.icon.cls]" :icon="item.icon.name" />
+        </div>
+      </template>
+      <template #item-trailing="{ item }">
+        <Kbd class="ms-auto" variant="light" :keys="item.keys">
+          {{ item.key }}
+        </Kbd>
+      </template>
+    </ListBox>
+  </Surface>
+</template>
+
 <script setup lang="ts">
 import type { KbdKey, ListBoxEntry, ListBoxItem } from '@hareui/vue'
 import { Kbd, ListBox, Surface } from '@hareui/vue'
@@ -53,26 +76,3 @@ const sections = (dangerDisabled: boolean): ListBoxEntry<FileAction>[] => [
 ]
 const alert = (message: string) => window.alert(message)
 </script>
-
-<template>
-  <Surface class="w-[256px] rounded-3xl shadow-surface">
-    <ListBox
-      aria-label="File actions"
-      class="w-full p-2"
-      selection-mode="none"
-      :items="sections(false)"
-      @action="(value) => alert(`Selected item: ${value}`)"
-    >
-      <template #item-leading="{ item }">
-        <div class="flex h-8 items-start justify-center pt-px">
-          <Icon :class="['size-4 shrink-0', item.icon.cls]" :icon="item.icon.name" />
-        </div>
-      </template>
-      <template #item-trailing="{ item }">
-        <Kbd class="ms-auto" variant="light" :keys="item.keys">
-          {{ item.key }}
-        </Kbd>
-      </template>
-    </ListBox>
-  </Surface>
-</template>

@@ -102,14 +102,14 @@ When the same slot is targeted at multiple layers, HareUI resolves conflicts wit
 6. **`class` prop** — per-instance, root slot only, highest priority
 
 ```vue
+<template>
+  <Button :ui="{ base: 'px-2' }" class="px-3">Click me</Button>
+</template>
+
 <script setup lang="ts">
 // Theme default: 'px-4'. App config sets 'px-1'. :ui sets 'px-2'. class sets 'px-3'.
 // Final root class: 'px-3' — class wins over everything else via tailwind-merge.
 </script>
-
-<template>
-  <Button :ui="{ base: 'px-2' }" class="px-3">Click me</Button>
-</template>
 ```
 
 ## Adding Custom Colors

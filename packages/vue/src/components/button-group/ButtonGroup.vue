@@ -1,3 +1,17 @@
+<template>
+  <Primitive
+    ref="root"
+    :as="as"
+    role="group"
+    data-slot="button-group"
+    :aria-disabled="disabled ? 'true' : undefined"
+    :data-disabled="disabled ? 'true' : undefined"
+    :class="ui.base({ class: [toolbarClass, props.ui?.base, props.class] })"
+  >
+    <slot />
+  </Primitive>
+</template>
+
 <script lang="ts">
 import type { PrimitiveProps } from 'reka-ui'
 
@@ -90,17 +104,3 @@ provide(buttonGroupContextKey, {
   uiOverrides: toRef(() => props.ui),
 })
 </script>
-
-<template>
-  <Primitive
-    ref="root"
-    :as="as"
-    role="group"
-    data-slot="button-group"
-    :aria-disabled="disabled ? 'true' : undefined"
-    :data-disabled="disabled ? 'true' : undefined"
-    :class="ui.base({ class: [toolbarClass, props.ui?.base, props.class] })"
-  >
-    <slot />
-  </Primitive>
-</template>

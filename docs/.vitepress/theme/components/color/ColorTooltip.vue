@@ -1,9 +1,3 @@
-<script setup lang="ts">
-import { Tooltip } from '@hareui/vue'
-
-defineProps<{ content?: string; tooltipClass?: string }>()
-</script>
-
 <template>
   <div v-if="!content" :class="tooltipClass">
     <slot />
@@ -17,3 +11,9 @@ defineProps<{ content?: string; tooltipClass?: string }>()
     </template>
   </Tooltip>
 </template>
+
+<script setup lang="ts">
+import { Tooltip } from '@hareui/vue'
+
+defineProps<{ content?: string; tooltipClass?: string }>()
+</script>

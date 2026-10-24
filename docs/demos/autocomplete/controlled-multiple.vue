@@ -1,20 +1,3 @@
-<script setup lang="ts">
-import type { ListBoxItem } from '@hareui/vue'
-import { Autocomplete } from '@hareui/vue'
-import { ref } from 'vue'
-
-const items: ListBoxItem[] = [
-  { value: 'california', label: 'California' },
-  { value: 'texas', label: 'Texas' },
-  { value: 'florida', label: 'Florida' },
-  { value: 'new-york', label: 'New York' },
-  { value: 'illinois', label: 'Illinois' },
-  { value: 'pennsylvania', label: 'Pennsylvania' },
-]
-
-const selected = ref<string[]>(['california', 'texas'])
-</script>
-
 <template>
   <div class="space-y-2">
     <Autocomplete
@@ -35,3 +18,20 @@ const selected = ref<string[]>(['california', 'texas'])
     </p>
   </div>
 </template>
+
+<script setup lang="ts">
+import type { ListBoxItem } from '@hareui/vue'
+import { Autocomplete } from '@hareui/vue'
+import { ref } from 'vue'
+
+const items: ListBoxItem[] = [
+  { value: 'california', label: 'California' },
+  { value: 'texas', label: 'Texas' },
+  { value: 'florida', label: 'Florida' },
+  { value: 'new-york', label: 'New York' },
+  { value: 'illinois', label: 'Illinois' },
+  { value: 'pennsylvania', label: 'Pennsylvania' },
+]
+
+const selected = ref<string[]>(['california', 'texas'])
+</script>

@@ -1,7 +1,3 @@
-<script setup lang="ts">
-import { Button } from '@hareui/vue'
-</script>
-
 <template>
   <div class="flex w-full max-w-xs flex-col gap-3">
     <Button class="w-full" variant="tertiary">
@@ -43,3 +39,7 @@ import { Button } from '@hareui/vue'
     </Button>
   </div>
 </template>
+
+<script setup lang="ts">
+import { Button } from '@hareui/vue'
+</script>

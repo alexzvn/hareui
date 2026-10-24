@@ -1,3 +1,24 @@
+<template>
+  <CheckboxGroup
+    name="addons"
+    label="Notification add-ons"
+    class="w-full max-w-sm gap-2 **:data-[slot=checkbox]:mt-0"
+    :default-value="['email-alerts']"
+    :items="addOns"
+    :ui="{ content: contentClass, control: controlClass }"
+  >
+    <template #item-label="{ item }">
+      <div class="flex flex-1 items-start gap-3">
+        <Icon :icon="item.icon" class="mt-0.5 size-5 shrink-0 text-muted" />
+        <div class="flex flex-col gap-0.5">
+          <span class="font-medium text-foreground">{{ item.label }}</span>
+          <span class="text-sm text-muted">{{ item.desc }}</span>
+        </div>
+      </div>
+    </template>
+  </CheckboxGroup>
+</template>
+
 <script setup lang="ts">
 import type { CheckboxGroupItem } from '@hareui/vue'
 import { CheckboxGroup } from '@hareui/vue'
@@ -33,24 +54,3 @@ const addOns: AddOn[] = [
   },
 ]
 </script>
-
-<template>
-  <CheckboxGroup
-    name="addons"
-    label="Notification add-ons"
-    class="w-full max-w-sm gap-2 **:data-[slot=checkbox]:mt-0"
-    :default-value="['email-alerts']"
-    :items="addOns"
-    :ui="{ content: contentClass, control: controlClass }"
-  >
-    <template #item-label="{ item }">
-      <div class="flex flex-1 items-start gap-3">
-        <Icon :icon="item.icon" class="mt-0.5 size-5 shrink-0 text-muted" />
-        <div class="flex flex-col gap-0.5">
-          <span class="font-medium text-foreground">{{ item.label }}</span>
-          <span class="text-sm text-muted">{{ item.desc }}</span>
-        </div>
-      </div>
-    </template>
-  </CheckboxGroup>
-</template>

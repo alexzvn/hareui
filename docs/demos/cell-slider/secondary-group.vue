@@ -1,7 +1,3 @@
-<script setup lang="ts">
-import { CellSlider } from '@hareui/vue'
-</script>
-
 <template>
   <section class="grid w-[300px] gap-1.5 rounded-3xl bg-surface-secondary p-4">
     <header class="mb-1.5">
@@ -27,3 +23,7 @@ import { CellSlider } from '@hareui/vue'
     />
   </section>
 </template>
+
+<script setup lang="ts">
+import { CellSlider } from '@hareui/vue'
+</script>

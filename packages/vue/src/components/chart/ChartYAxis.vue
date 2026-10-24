@@ -1,3 +1,19 @@
+<template>
+  <ChartCartesianAxis
+    :axis="axis"
+    :tick-size="tickSize"
+    :tick-margin="tickMargin"
+    :tick="tick"
+    :tick-line="tickLine"
+    :axis-line="axisLine"
+    :class="props.class"
+  >
+    <template v-if="$slots.tick" #tick="slotProps">
+      <slot name="tick" v-bind="slotProps" />
+    </template>
+  </ChartCartesianAxis>
+</template>
+
 <script lang="ts">
 import type { ChartAxisProps, ChartAxisSlots } from './axis'
 
@@ -78,19 +94,3 @@ cartesian.registerAxis(() => ({
 
 const axis = computed(() => cartesian.yAxis(props.yAxisId))
 </script>
-
-<template>
-  <ChartCartesianAxis
-    :axis="axis"
-    :tick-size="tickSize"
-    :tick-margin="tickMargin"
-    :tick="tick"
-    :tick-line="tickLine"
-    :axis-line="axisLine"
-    :class="props.class"
-  >
-    <template v-if="$slots.tick" #tick="slotProps">
-      <slot name="tick" v-bind="slotProps" />
-    </template>
-  </ChartCartesianAxis>
-</template>

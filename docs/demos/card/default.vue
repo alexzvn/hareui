@@ -1,8 +1,3 @@
-<script setup lang="ts">
-import { Card, Link } from '@hareui/vue'
-import { Icon } from '@iconify/vue'
-</script>
-
 <template>
   <Card
     class="w-[400px]"
@@ -30,3 +25,8 @@ import { Icon } from '@iconify/vue'
     </template>
   </Card>
 </template>
+
+<script setup lang="ts">
+import { Card, Link } from '@hareui/vue'
+import { Icon } from '@iconify/vue'
+</script>

@@ -1,20 +1,3 @@
-<script setup lang="ts">
-import type { ScrollShadowVisibility } from '@hareui/vue'
-import { Card, ScrollShadow } from '@hareui/vue'
-import { ref } from 'vue'
-
-const images = [
-  'https://heroui-assets.nyc3.cdn.digitaloceanspaces.com/docs/robot1.jpeg',
-  'https://heroui-assets.nyc3.cdn.digitaloceanspaces.com/docs/avocado.jpeg',
-  'https://heroui-assets.nyc3.cdn.digitaloceanspaces.com/docs/oranges.jpeg',
-]
-
-const getRandomImage = (idx: number) => images[idx % images.length]
-
-const verticalState = ref<ScrollShadowVisibility>('none')
-const horizontalState = ref<ScrollShadowVisibility>('none')
-</script>
-
 <template>
   <div class="w-full sm:max-w-sm">
     <div class="mb-8 flex flex-col gap-2">
@@ -73,3 +56,20 @@ const horizontalState = ref<ScrollShadowVisibility>('none')
     </div>
   </div>
 </template>
+
+<script setup lang="ts">
+import type { ScrollShadowVisibility } from '@hareui/vue'
+import { Card, ScrollShadow } from '@hareui/vue'
+import { ref } from 'vue'
+
+const images = [
+  'https://heroui-assets.nyc3.cdn.digitaloceanspaces.com/docs/robot1.jpeg',
+  'https://heroui-assets.nyc3.cdn.digitaloceanspaces.com/docs/avocado.jpeg',
+  'https://heroui-assets.nyc3.cdn.digitaloceanspaces.com/docs/oranges.jpeg',
+]
+
+const getRandomImage = (idx: number) => images[idx % images.length]
+
+const verticalState = ref<ScrollShadowVisibility>('none')
+const horizontalState = ref<ScrollShadowVisibility>('none')
+</script>

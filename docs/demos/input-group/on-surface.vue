@@ -1,8 +1,3 @@
-<script setup lang="ts">
-import { InputGroup, Surface, TextField } from '@hareui/vue'
-import { Icon } from '@iconify/vue'
-</script>
-
 <template>
   <Surface class="rounded-2xl p-6">
     <TextField
@@ -23,3 +18,8 @@ import { Icon } from '@iconify/vue'
     </TextField>
   </Surface>
 </template>
+
+<script setup lang="ts">
+import { InputGroup, Surface, TextField } from '@hareui/vue'
+import { Icon } from '@iconify/vue'
+</script>

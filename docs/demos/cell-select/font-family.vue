@@ -1,18 +1,3 @@
-<script setup lang="ts">
-import type { SelectValue } from '@hareui/vue'
-import { CellSelect } from '@hareui/vue'
-import { ref } from 'vue'
-
-const fonts = [
-  { value: 'ui-monospace, monospace', label: 'System mono' },
-  { value: 'Menlo, monospace', label: 'Menlo' },
-  { value: '"Courier New", monospace', label: 'Courier New' },
-  { value: 'Georgia, serif', label: 'Georgia' },
-]
-
-const font = ref<SelectValue>('Menlo, monospace')
-</script>
-
 <template>
   <div class="grid w-80 gap-3">
     <CellSelect v-model="font" :items="fonts" label="Editor font" :ui="{ indicator: 'hidden' }">
@@ -32,3 +17,18 @@ const greet = (name) =&gt; {
 }</pre>
   </div>
 </template>
+
+<script setup lang="ts">
+import type { SelectValue } from '@hareui/vue'
+import { CellSelect } from '@hareui/vue'
+import { ref } from 'vue'
+
+const fonts = [
+  { value: 'ui-monospace, monospace', label: 'System mono' },
+  { value: 'Menlo, monospace', label: 'Menlo' },
+  { value: '"Courier New", monospace', label: 'Courier New' },
+  { value: 'Georgia, serif', label: 'Georgia' },
+]
+
+const font = ref<SelectValue>('Menlo, monospace')
+</script>

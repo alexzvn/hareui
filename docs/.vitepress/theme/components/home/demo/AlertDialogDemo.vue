@@ -1,10 +1,3 @@
-<script setup lang="ts">
-import { Avatar, Button, Card, CloseButton, themes, tv } from '@hareui/vue'
-import { Icon } from '@iconify/vue'
-
-const card = tv(themes.card)()
-</script>
-
 <template>
   <Card
     class="h-[208px] w-full items-start justify-center p-5 min-[1200px]:w-[340px]"
@@ -29,3 +22,10 @@ const card = tv(themes.card)()
     </template>
   </Card>
 </template>
+
+<script setup lang="ts">
+import { Avatar, Button, Card, CloseButton, themes, tv } from '@hareui/vue'
+import { Icon } from '@iconify/vue'
+
+const card = tv(themes.card)()
+</script>

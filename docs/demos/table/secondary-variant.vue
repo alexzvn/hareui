@@ -1,3 +1,13 @@
+<template>
+  <Table
+    aria-label="Team members"
+    variant="secondary"
+    :columns="columns"
+    :rows="rows"
+    :ui="{ content: 'min-w-[600px]' }"
+  />
+</template>
+
 <script setup lang="ts">
 import type { TableColumn, TableRow } from '@hareui/vue'
 import { Table } from '@hareui/vue'
@@ -15,13 +25,3 @@ const rows: TableRow[] = [
   { id: 4, name: 'Michael Brown', role: 'CFO', status: 'Active', email: 'michael@acme.com' },
 ]
 </script>
-
-<template>
-  <Table
-    aria-label="Team members"
-    variant="secondary"
-    :columns="columns"
-    :rows="rows"
-    :ui="{ content: 'min-w-[600px]' }"
-  />
-</template>

@@ -1,3 +1,14 @@
+<template>
+  <SeparatorPrimitive
+    :as="as"
+    :orientation="resolvedOrientation"
+    data-slot="separator"
+    :class="ui.base({ class: [toolbarClass, props.ui?.base, props.class] })"
+  >
+    <slot />
+  </SeparatorPrimitive>
+</template>
+
 <script lang="ts">
 import type { PrimitiveProps } from 'reka-ui'
 
@@ -67,14 +78,3 @@ const toolbarClass = computed(() => {
   return toolbar.ui.value[slot]({ class: toolbar.uiOverrides.value?.[slot] })
 })
 </script>
-
-<template>
-  <SeparatorPrimitive
-    :as="as"
-    :orientation="resolvedOrientation"
-    data-slot="separator"
-    :class="ui.base({ class: [toolbarClass, props.ui?.base, props.class] })"
-  >
-    <slot />
-  </SeparatorPrimitive>
-</template>

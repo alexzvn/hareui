@@ -1,3 +1,35 @@
+<template>
+  <Primitive
+    ref="self"
+    :as="as"
+    v-bind="attrs"
+    data-slot="button"
+    :data-pending="pending ? 'true' : undefined"
+    :aria-busy="pending ? 'true' : undefined"
+    :class="ui.base({ class: [groupClass, props.ui?.base, props.class] })"
+    @click.capture="onClickCapture"
+    @keydown="onKeydown"
+    @keyup="onKeyup"
+  >
+    <span
+      v-if="showSeparator"
+      aria-hidden="true"
+      data-slot="button-group-separator"
+      :class="group!.ui.value.separator({ class: group!.uiOverrides.value?.separator })"
+    />
+    <slot name="leading" :pending="pending">
+      <Spinner
+        v-if="pending"
+        size="sm"
+        color="current"
+        :class="ui.spinner({ class: props.ui?.spinner })"
+      />
+    </slot>
+    <slot :pending="pending" />
+    <slot name="trailing" :pending="pending" />
+  </Primitive>
+</template>
+
 <script lang="ts">
 import type { PrimitiveProps } from 'reka-ui'
 
@@ -163,35 +195,3 @@ function onKeyup(event: KeyboardEvent) {
   }
 }
 </script>
-
-<template>
-  <Primitive
-    ref="self"
-    :as="as"
-    v-bind="attrs"
-    data-slot="button"
-    :data-pending="pending ? 'true' : undefined"
-    :aria-busy="pending ? 'true' : undefined"
-    :class="ui.base({ class: [groupClass, props.ui?.base, props.class] })"
-    @click.capture="onClickCapture"
-    @keydown="onKeydown"
-    @keyup="onKeyup"
-  >
-    <span
-      v-if="showSeparator"
-      aria-hidden="true"
-      data-slot="button-group-separator"
-      :class="group!.ui.value.separator({ class: group!.uiOverrides.value?.separator })"
-    />
-    <slot name="leading" :pending="pending">
-      <Spinner
-        v-if="pending"
-        size="sm"
-        color="current"
-        :class="ui.spinner({ class: props.ui?.spinner })"
-      />
-    </slot>
-    <slot :pending="pending" />
-    <slot name="trailing" :pending="pending" />
-  </Primitive>
-</template>

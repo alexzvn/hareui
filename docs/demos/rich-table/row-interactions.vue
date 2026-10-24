@@ -1,3 +1,27 @@
+<template>
+  <div ref="root" class="relative flex w-full flex-col gap-3">
+    <RichTable
+      :data="data"
+      :columns="columns"
+      :on-select="onSelect"
+      :on-hover="onHover"
+      :on-contextmenu="onContextmenu"
+    />
+    <p class="text-sm text-muted">
+      {{ log }}
+    </p>
+    <Dropdown
+      v-model:open="menuOpen"
+      :items="items"
+      align="start"
+      :side-offset="2"
+      @action="onAction"
+    >
+      <span aria-hidden="true" class="pointer-events-none absolute size-px" :style="anchor" />
+    </Dropdown>
+  </div>
+</template>
+
 <script setup lang="ts">
 import type { DropdownValue, RichTableColumn, RichTableRow } from '@hareui/vue'
 import { Dropdown, RichTable } from '@hareui/vue'
@@ -60,27 +84,3 @@ function onAction(value: DropdownValue) {
   log.value = `${items.find((item) => item.value === value)?.label}: ${menuRow.value?.name}`
 }
 </script>
-
-<template>
-  <div ref="root" class="relative flex w-full flex-col gap-3">
-    <RichTable
-      :data="data"
-      :columns="columns"
-      :on-select="onSelect"
-      :on-hover="onHover"
-      :on-contextmenu="onContextmenu"
-    />
-    <p class="text-sm text-muted">
-      {{ log }}
-    </p>
-    <Dropdown
-      v-model:open="menuOpen"
-      :items="items"
-      align="start"
-      :side-offset="2"
-      @action="onAction"
-    >
-      <span aria-hidden="true" class="pointer-events-none absolute size-px" :style="anchor" />
-    </Dropdown>
-  </div>
-</template>

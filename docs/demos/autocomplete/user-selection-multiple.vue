@@ -1,3 +1,46 @@
+<template>
+  <Autocomplete
+    v-model="selectedKeys"
+    clearable
+    class="w-[256px]"
+    label="Users"
+    placeholder="Select your teammates"
+    selection-mode="multiple"
+    :search="false"
+    :items="users"
+  >
+    <template #value="{ selectedItems, isPlaceholder, text }">
+      <template v-if="isPlaceholder">
+        {{ text }}
+      </template>
+      <TagGroup
+        v-else
+        size="sm"
+        removable
+        aria-label="Selected users"
+        :items="
+          selectedItems.map((item) => ({
+            id: String(item.value),
+            label: item.label,
+            avatarUrl: item.avatarUrl,
+            fallback: item.fallback,
+          }))
+        "
+        @remove="onRemoveTags"
+      >
+        <template #item="{ item }">
+          <Avatar class="size-4" size="sm" alt="" :src="item.avatarUrl" :fallback="item.fallback" />
+          <span>{{ item.label }}</span>
+        </template>
+      </TagGroup>
+    </template>
+    <template #item-leading="{ item }">
+      <Avatar size="sm" alt="" :src="item.avatarUrl" :fallback="item.fallback" />
+    </template>
+    <template #empty> No results found </template>
+  </Autocomplete>
+</template>
+
 <script setup lang="ts">
 import type { ListBoxItem } from '@hareui/vue'
 import { Autocomplete, Avatar, TagGroup } from '@hareui/vue'
@@ -52,46 +95,3 @@ function onRemoveTags(ids: string[]) {
   selectedKeys.value = selectedKeys.value.filter((key) => !ids.includes(key))
 }
 </script>
-
-<template>
-  <Autocomplete
-    v-model="selectedKeys"
-    clearable
-    class="w-[256px]"
-    label="Users"
-    placeholder="Select your teammates"
-    selection-mode="multiple"
-    :search="false"
-    :items="users"
-  >
-    <template #value="{ selectedItems, isPlaceholder, text }">
-      <template v-if="isPlaceholder">
-        {{ text }}
-      </template>
-      <TagGroup
-        v-else
-        size="sm"
-        removable
-        aria-label="Selected users"
-        :items="
-          selectedItems.map((item) => ({
-            id: String(item.value),
-            label: item.label,
-            avatarUrl: item.avatarUrl,
-            fallback: item.fallback,
-          }))
-        "
-        @remove="onRemoveTags"
-      >
-        <template #item="{ item }">
-          <Avatar class="size-4" size="sm" alt="" :src="item.avatarUrl" :fallback="item.fallback" />
-          <span>{{ item.label }}</span>
-        </template>
-      </TagGroup>
-    </template>
-    <template #item-leading="{ item }">
-      <Avatar size="sm" alt="" :src="item.avatarUrl" :fallback="item.fallback" />
-    </template>
-    <template #empty> No results found </template>
-  </Autocomplete>
-</template>

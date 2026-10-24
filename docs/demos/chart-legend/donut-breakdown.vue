@@ -1,21 +1,3 @@
-<script setup lang="ts">
-import { Card } from '@hareui/vue'
-import { ChartLegend, PieChart } from '@hareui/vue/charts'
-
-const data = [
-  { type: 'Photos', size: 84 },
-  { type: 'Videos', size: 61 },
-  { type: 'Documents', size: 23 },
-  { type: 'Apps', size: 12 },
-]
-
-const used = data.reduce((sum, item) => sum + item.size, 0)
-
-function formatSize(value: number) {
-  return `${value} GB`
-}
-</script>
-
 <template>
   <Card
     class="w-full max-w-[460px] rounded-2xl"
@@ -47,3 +29,21 @@ function formatSize(value: number) {
     />
   </Card>
 </template>
+
+<script setup lang="ts">
+import { Card } from '@hareui/vue'
+import { ChartLegend, PieChart } from '@hareui/vue/charts'
+
+const data = [
+  { type: 'Photos', size: 84 },
+  { type: 'Videos', size: 61 },
+  { type: 'Documents', size: 23 },
+  { type: 'Apps', size: 12 },
+]
+
+const used = data.reduce((sum, item) => sum + item.size, 0)
+
+function formatSize(value: number) {
+  return `${value} GB`
+}
+</script>

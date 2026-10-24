@@ -1,3 +1,7 @@
+<template>
+  <Select class="w-[256px]" label="Animal" placeholder="Select an animal" :items="animals" />
+</template>
+
 <script setup lang="ts">
 import type { ListBoxItem } from '@hareui/vue'
 import { Select } from '@hareui/vue'
@@ -11,7 +15,3 @@ const animals: ListBoxItem[] = [
   { value: 'tiger', label: 'Tiger' },
 ]
 </script>
-
-<template>
-  <Select class="w-[256px]" label="Animal" placeholder="Select an animal" :items="animals" />
-</template>

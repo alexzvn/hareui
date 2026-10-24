@@ -1,3 +1,19 @@
+<template>
+  <div v-if="!loaded" class="space-y-2.5 py-4">
+    <Skeleton v-for="(width, i) in SKELETON_WIDTHS" :key="i" :class="['h-4 rounded-md', width]" />
+  </div>
+  <div
+    v-else-if="html"
+    :class="[
+      'docs-code-block overflow-auto text-sm [&_.shiki]:bg-transparent! [&_pre]:bg-transparent!',
+      showLineNumbers && 'docs-code-block-line-numbers',
+      '[&>pre]:m-0 [&>pre]:p-4',
+      '[&>pre>code]:block [&>pre>code]:font-mono [&>pre>code]:leading-relaxed',
+    ]"
+    v-html="html"
+  />
+</template>
+
 <script setup lang="ts">
 // Port of HeroUI docs `components/highlighted-code.tsx` (Shiki, github-light / github-dark by color mode).
 // Shiki is loaded on demand; until the first highlight is ready, the loading skeleton of `code-panel.tsx` shows.
@@ -75,19 +91,3 @@ const SKELETON_WIDTHS = [
   'w-3/5',
 ]
 </script>
-
-<template>
-  <div v-if="!loaded" class="space-y-2.5 py-4">
-    <Skeleton v-for="(width, i) in SKELETON_WIDTHS" :key="i" :class="['h-4 rounded-md', width]" />
-  </div>
-  <div
-    v-else-if="html"
-    :class="[
-      'docs-code-block overflow-auto text-sm [&_.shiki]:bg-transparent! [&_pre]:bg-transparent!',
-      showLineNumbers && 'docs-code-block-line-numbers',
-      '[&>pre]:m-0 [&>pre]:p-4',
-      '[&>pre>code]:block [&>pre>code]:font-mono [&>pre>code]:leading-relaxed',
-    ]"
-    v-html="html"
-  />
-</template>

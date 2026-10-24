@@ -1,3 +1,75 @@
+<template>
+  <RadioGroupItem
+    :id="id"
+    :value="value"
+    :disabled="isDisabled"
+    :aria-labelledby="hasLabel ? labelId : undefined"
+    :aria-describedby="describedBy"
+    data-slot="radio-button-group-item"
+    :data-selected="selected ? 'true' : undefined"
+    :data-invalid="group.invalid.value ? 'true' : undefined"
+    :data-readonly="group.readonly.value ? 'true' : undefined"
+    :class="cls('item', props.class)"
+    @keydown.capture="submitOnEnter"
+  >
+    <span
+      v-if="indicator"
+      aria-hidden="true"
+      data-slot="radio-button-group-indicator"
+      :data-custom="customIndicator ? 'true' : undefined"
+      :class="cls('indicator')"
+    >
+      <slot v-if="customIndicator" name="indicator" v-bind="slotProps" />
+      <span v-else data-slot="radio-control" :class="radioUI.control({ class: cls('control') })">
+        <span
+          data-slot="radio-indicator"
+          :class="radioUI.indicator({ class: cls('controlIndicator') })"
+        />
+      </span>
+    </span>
+    <span data-slot="radio-button-group-item-content" :class="cls('content')">
+      <span
+        v-if="hasIcon"
+        aria-hidden="true"
+        data-slot="radio-button-group-item-icon"
+        :class="cls('icon')"
+      >
+        <slot name="icon" v-bind="slotProps">
+          <span v-if="typeof icon === 'string'" :class="icon" />
+          <component :is="icon" v-else />
+        </slot>
+      </span>
+      <span data-slot="radio-button-group-item-text" :class="cls('itemText')">
+        <span
+          v-if="hasLabel"
+          :id="labelId"
+          data-slot="radio-button-group-item-label"
+          :class="cls('itemLabel')"
+        >
+          <slot name="label" v-bind="slotProps">{{ label }}</slot>
+        </span>
+        <span
+          v-if="hasDescription"
+          :id="descriptionId"
+          data-slot="radio-button-group-item-description"
+          :class="cls('itemDescription')"
+        >
+          <slot name="description" v-bind="slotProps">{{ description }}</slot>
+        </span>
+        <!-- `contents`: the slot children stay flex items of the text column -->
+        <span
+          v-if="slots.default"
+          :id="extraId"
+          data-slot="radio-button-group-item-extra"
+          class="contents"
+        >
+          <slot v-bind="slotProps" />
+        </span>
+      </span>
+    </span>
+  </RadioGroupItem>
+</template>
+
 <script lang="ts">
 import type { Component } from 'vue'
 
@@ -102,75 +174,3 @@ const { id, labelId, descriptionId, hasLabel, hasDescription, describedBy } = us
 })
 const extraId = computed(() => `${id.value}-extra`)
 </script>
-
-<template>
-  <RadioGroupItem
-    :id="id"
-    :value="value"
-    :disabled="isDisabled"
-    :aria-labelledby="hasLabel ? labelId : undefined"
-    :aria-describedby="describedBy"
-    data-slot="radio-button-group-item"
-    :data-selected="selected ? 'true' : undefined"
-    :data-invalid="group.invalid.value ? 'true' : undefined"
-    :data-readonly="group.readonly.value ? 'true' : undefined"
-    :class="cls('item', props.class)"
-    @keydown.capture="submitOnEnter"
-  >
-    <span
-      v-if="indicator"
-      aria-hidden="true"
-      data-slot="radio-button-group-indicator"
-      :data-custom="customIndicator ? 'true' : undefined"
-      :class="cls('indicator')"
-    >
-      <slot v-if="customIndicator" name="indicator" v-bind="slotProps" />
-      <span v-else data-slot="radio-control" :class="radioUI.control({ class: cls('control') })">
-        <span
-          data-slot="radio-indicator"
-          :class="radioUI.indicator({ class: cls('controlIndicator') })"
-        />
-      </span>
-    </span>
-    <span data-slot="radio-button-group-item-content" :class="cls('content')">
-      <span
-        v-if="hasIcon"
-        aria-hidden="true"
-        data-slot="radio-button-group-item-icon"
-        :class="cls('icon')"
-      >
-        <slot name="icon" v-bind="slotProps">
-          <span v-if="typeof icon === 'string'" :class="icon" />
-          <component :is="icon" v-else />
-        </slot>
-      </span>
-      <span data-slot="radio-button-group-item-text" :class="cls('itemText')">
-        <span
-          v-if="hasLabel"
-          :id="labelId"
-          data-slot="radio-button-group-item-label"
-          :class="cls('itemLabel')"
-        >
-          <slot name="label" v-bind="slotProps">{{ label }}</slot>
-        </span>
-        <span
-          v-if="hasDescription"
-          :id="descriptionId"
-          data-slot="radio-button-group-item-description"
-          :class="cls('itemDescription')"
-        >
-          <slot name="description" v-bind="slotProps">{{ description }}</slot>
-        </span>
-        <!-- `contents`: the slot children stay flex items of the text column -->
-        <span
-          v-if="slots.default"
-          :id="extraId"
-          data-slot="radio-button-group-item-extra"
-          class="contents"
-        >
-          <slot v-bind="slotProps" />
-        </span>
-      </span>
-    </span>
-  </RadioGroupItem>
-</template>

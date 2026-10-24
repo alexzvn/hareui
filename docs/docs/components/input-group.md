@@ -166,14 +166,6 @@ Set `textarea` (with `rows`) for multiline text input with prefix and suffix ele
 ### TextArea Usage Example
 
 ```vue
-<script setup lang="ts">
-import { Icon } from '@iconify/vue'
-import { InputGroup, TextField } from '@hareui/vue'
-import { ref } from 'vue'
-
-const feedback = ref('')
-</script>
-
 <template>
   <TextField
     v-model="feedback"
@@ -202,6 +194,14 @@ const feedback = ref('')
     </template>
   </TextField>
 </template>
+
+<script setup lang="ts">
+import { Icon } from '@iconify/vue'
+import { InputGroup, TextField } from '@hareui/vue'
+import { ref } from 'vue'
+
+const feedback = ref('')
+</script>
 ```
 
 ## Customization

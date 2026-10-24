@@ -1,3 +1,24 @@
+<template>
+  <Card
+    class="w-full max-w-[520px] rounded-2xl"
+    :ui="{ header: 'flex-row flex-wrap items-center justify-between gap-2' }"
+  >
+    <template #header>
+      <h3 class="text-base font-medium text-foreground">Station Temperatures</h3>
+      <ChartLegend v-model:hidden="hidden" :series="series" toggleable />
+    </template>
+    <LineChart
+      v-model:hidden="hidden"
+      :data="data"
+      index="hour"
+      :series="series"
+      aria-label="Temperature by weather station"
+      :height="220"
+      :value-formatter="formatTemperature"
+    />
+  </Card>
+</template>
+
 <script setup lang="ts">
 import { Card } from '@hareui/vue'
 import { ChartLegend, LineChart } from '@hareui/vue/charts'
@@ -23,24 +44,3 @@ function formatTemperature(value: number) {
   return `${value}°C`
 }
 </script>
-
-<template>
-  <Card
-    class="w-full max-w-[520px] rounded-2xl"
-    :ui="{ header: 'flex-row flex-wrap items-center justify-between gap-2' }"
-  >
-    <template #header>
-      <h3 class="text-base font-medium text-foreground">Station Temperatures</h3>
-      <ChartLegend v-model:hidden="hidden" :series="series" toggleable />
-    </template>
-    <LineChart
-      v-model:hidden="hidden"
-      :data="data"
-      index="hour"
-      :series="series"
-      aria-label="Temperature by weather station"
-      :height="220"
-      :value-formatter="formatTemperature"
-    />
-  </Card>
-</template>

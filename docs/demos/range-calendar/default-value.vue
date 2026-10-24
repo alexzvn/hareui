@@ -1,8 +1,3 @@
-<script setup lang="ts">
-import { RangeCalendar } from '@hareui/vue'
-import { parseDate } from '@internationalized/date'
-</script>
-
 <template>
   <RangeCalendar
     aria-label="Trip dates"
@@ -10,3 +5,8 @@ import { parseDate } from '@internationalized/date'
     first-day-of-week="mon"
   />
 </template>
+
+<script setup lang="ts">
+import { RangeCalendar } from '@hareui/vue'
+import { parseDate } from '@internationalized/date'
+</script>

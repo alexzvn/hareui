@@ -1,7 +1,3 @@
-<script setup lang="ts">
-import { Checkbox } from '@hareui/vue'
-</script>
-
 <template>
   <Checkbox
     disabled
@@ -10,3 +6,7 @@ import { Checkbox } from '@hareui/vue'
     description="This feature is coming soon"
   />
 </template>
+
+<script setup lang="ts">
+import { Checkbox } from '@hareui/vue'
+</script>

@@ -1,7 +1,3 @@
-<script setup lang="ts">
-import { NumberField } from '@hareui/vue'
-</script>
-
 <template>
   <div class="flex w-full max-w-64 flex-col gap-4">
     <NumberField
@@ -35,3 +31,7 @@ import { NumberField } from '@hareui/vue'
     </NumberField>
   </div>
 </template>
+
+<script setup lang="ts">
+import { NumberField } from '@hareui/vue'
+</script>

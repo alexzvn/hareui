@@ -1,7 +1,3 @@
-<script setup lang="ts">
-import { Description, RangeCalendar } from '@hareui/vue'
-</script>
-
 <template>
   <div class="flex flex-col items-center gap-4">
     <RangeCalendar aria-label="Trip dates" fixed-weeks />
@@ -10,3 +6,7 @@ import { Description, RangeCalendar } from '@hareui/vue'
     </Description>
   </div>
 </template>
+
+<script setup lang="ts">
+import { Description, RangeCalendar } from '@hareui/vue'
+</script>

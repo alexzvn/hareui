@@ -1,8 +1,3 @@
-<script setup lang="ts">
-import { NumberStepper } from '@hareui/vue'
-import { Icon } from '@iconify/vue'
-</script>
-
 <template>
   <NumberStepper aria-label="Editor font size" :default-value="14" :min="10" :max="24">
     <template #decrement>
@@ -13,3 +8,8 @@ import { Icon } from '@iconify/vue'
     </template>
   </NumberStepper>
 </template>
+
+<script setup lang="ts">
+import { NumberStepper } from '@hareui/vue'
+import { Icon } from '@iconify/vue'
+</script>

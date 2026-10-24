@@ -1,3 +1,49 @@
+<template>
+  <Primitive :as="as" data-slot="card" :class="ui.base({ class: [props.ui?.base, props.class] })">
+    <slot name="leading" />
+    <div
+      v-if="!!slots.header || title || !!slots.title || description || !!slots.description"
+      data-slot="card-header"
+      :class="ui.header({ class: props.ui?.header })"
+    >
+      <slot name="header">
+        <h3
+          v-if="title || !!slots.title"
+          data-slot="card-title"
+          :class="ui.title({ class: props.ui?.title })"
+        >
+          <slot name="title">
+            {{ title }}
+          </slot>
+        </h3>
+        <p
+          v-if="description || !!slots.description"
+          data-slot="card-description"
+          :class="ui.description({ class: props.ui?.description })"
+        >
+          <slot name="description">
+            {{ description }}
+          </slot>
+        </p>
+      </slot>
+    </div>
+    <div
+      v-if="!!slots.default"
+      data-slot="card-content"
+      :class="ui.content({ class: props.ui?.content })"
+    >
+      <slot />
+    </div>
+    <div
+      v-if="!!slots.footer"
+      data-slot="card-footer"
+      :class="ui.footer({ class: props.ui?.footer })"
+    >
+      <slot name="footer" />
+    </div>
+  </Primitive>
+</template>
+
 <script lang="ts">
 import type { PrimitiveProps } from 'reka-ui'
 
@@ -56,49 +102,3 @@ const slots = defineSlots<CardSlots>()
 
 const ui = useComponentUI('card', theme, () => ({ variant: props.variant }))
 </script>
-
-<template>
-  <Primitive :as="as" data-slot="card" :class="ui.base({ class: [props.ui?.base, props.class] })">
-    <slot name="leading" />
-    <div
-      v-if="!!slots.header || title || !!slots.title || description || !!slots.description"
-      data-slot="card-header"
-      :class="ui.header({ class: props.ui?.header })"
-    >
-      <slot name="header">
-        <h3
-          v-if="title || !!slots.title"
-          data-slot="card-title"
-          :class="ui.title({ class: props.ui?.title })"
-        >
-          <slot name="title">
-            {{ title }}
-          </slot>
-        </h3>
-        <p
-          v-if="description || !!slots.description"
-          data-slot="card-description"
-          :class="ui.description({ class: props.ui?.description })"
-        >
-          <slot name="description">
-            {{ description }}
-          </slot>
-        </p>
-      </slot>
-    </div>
-    <div
-      v-if="!!slots.default"
-      data-slot="card-content"
-      :class="ui.content({ class: props.ui?.content })"
-    >
-      <slot />
-    </div>
-    <div
-      v-if="!!slots.footer"
-      data-slot="card-footer"
-      :class="ui.footer({ class: props.ui?.footer })"
-    >
-      <slot name="footer" />
-    </div>
-  </Primitive>
-</template>

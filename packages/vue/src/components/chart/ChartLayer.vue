@@ -1,3 +1,9 @@
+<template>
+  <Teleport v-if="target" :to="target">
+    <slot />
+  </Teleport>
+</template>
+
 <script setup lang="ts">
 import { computed } from 'vue'
 
@@ -12,9 +18,3 @@ const props = defineProps<{ name: ChartLayerName }>()
 const chart = useChartContext('ChartLayer')
 const target = computed(() => chart.layers[props.name])
 </script>
-
-<template>
-  <Teleport v-if="target" :to="target">
-    <slot />
-  </Teleport>
-</template>

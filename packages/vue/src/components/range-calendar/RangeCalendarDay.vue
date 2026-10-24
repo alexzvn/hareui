@@ -1,3 +1,43 @@
+<template>
+  <RangeCalendarCell :date="date" :aria-selected="selected || undefined">
+    <RangeCalendarCellTrigger
+      :day="date"
+      :month="month"
+      :data-selected="selected || undefined"
+      :data-selection-start="selectionStart || undefined"
+      :data-selection-end="selectionEnd || undefined"
+      :data-invalid="invalid ? '' : undefined"
+      :aria-invalid="invalid || undefined"
+      data-slot="range-calendar-cell"
+      :class="ctx.cellClass.value"
+      v-slot="{ dayValue, today, disabled, unavailable, outsideView }"
+      @pointerdown="onPointerDown"
+      @pointerup="onPointerUp"
+      @mouseenter="onMouseEnter"
+    >
+      <span data-slot="range-calendar-cell-button" :class="ctx.cellButtonClass.value">
+        <CellOutlet
+          :date="date"
+          :today="today"
+          :selected="selected"
+          :disabled="disabled"
+          :unavailable="unavailable"
+          :outsideView="outsideView"
+          :selectionStart="selectionStart"
+          :selectionEnd="selectionEnd"
+          >{{ dayValue }}</CellOutlet
+        >
+        <span
+          v-if="ctx.indicator()?.(date)"
+          data-slot="range-calendar-cell-indicator"
+          aria-hidden="true"
+          :class="ctx.indicatorClass.value"
+        />
+      </span>
+    </RangeCalendarCellTrigger>
+  </RangeCalendarCell>
+</template>
+
 <script lang="ts">
 import type { DateValue } from '@internationalized/date'
 import type { Component, ComputedRef, InjectionKey } from 'vue'
@@ -47,43 +87,3 @@ const onMouseEnter = (event: MouseEvent) => ctx.onMouseEnter(event, props.date)
 // every day. Outlet attrs become the slot props, so the template passes camelCase keys.
 const CellOutlet = ctx.CellOutlet
 </script>
-
-<template>
-  <RangeCalendarCell :date="date" :aria-selected="selected || undefined">
-    <RangeCalendarCellTrigger
-      :day="date"
-      :month="month"
-      :data-selected="selected || undefined"
-      :data-selection-start="selectionStart || undefined"
-      :data-selection-end="selectionEnd || undefined"
-      :data-invalid="invalid ? '' : undefined"
-      :aria-invalid="invalid || undefined"
-      data-slot="range-calendar-cell"
-      :class="ctx.cellClass.value"
-      v-slot="{ dayValue, today, disabled, unavailable, outsideView }"
-      @pointerdown="onPointerDown"
-      @pointerup="onPointerUp"
-      @mouseenter="onMouseEnter"
-    >
-      <span data-slot="range-calendar-cell-button" :class="ctx.cellButtonClass.value">
-        <CellOutlet
-          :date="date"
-          :today="today"
-          :selected="selected"
-          :disabled="disabled"
-          :unavailable="unavailable"
-          :outsideView="outsideView"
-          :selectionStart="selectionStart"
-          :selectionEnd="selectionEnd"
-          >{{ dayValue }}</CellOutlet
-        >
-        <span
-          v-if="ctx.indicator()?.(date)"
-          data-slot="range-calendar-cell-indicator"
-          aria-hidden="true"
-          :class="ctx.indicatorClass.value"
-        />
-      </span>
-    </RangeCalendarCellTrigger>
-  </RangeCalendarCell>
-</template>

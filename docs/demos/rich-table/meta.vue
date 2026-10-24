@@ -1,3 +1,12 @@
+<template>
+  <RichTable
+    :data="data"
+    :columns="columns"
+    :meta="{ class: { tr: (row) => (row.original.status === 'failed' ? '*:bg-danger/5' : '') } }"
+    class="w-full"
+  />
+</template>
+
 <script setup lang="ts">
 import type { RichTableColumn } from '@hareui/vue'
 import { RichTable } from '@hareui/vue'
@@ -45,12 +54,3 @@ const columns: RichTableColumn<Payment>[] = [
   },
 ]
 </script>
-
-<template>
-  <RichTable
-    :data="data"
-    :columns="columns"
-    :meta="{ class: { tr: (row) => (row.original.status === 'failed' ? '*:bg-danger/5' : '') } }"
-    class="w-full"
-  />
-</template>

@@ -1,3 +1,36 @@
+<template>
+  <ScrollShadow
+    hide-scroll-bar
+    class="w-full px-4 md:w-auto"
+    orientation="horizontal"
+    visibility="none"
+  >
+    <ListBox
+      aria-label="Theme"
+      class="flex w-max flex-row flex-nowrap gap-5"
+      :items="items"
+      :model-value="currentThemeId ?? null"
+      selection-mode="single"
+      @update:model-value="onSelectionChange"
+    >
+      <template #item="{ item }">
+        <img
+          :alt="item.label"
+          height="48"
+          width="48"
+          :src="images[item.value]"
+          class="size-12 rounded-full bg-surface group-data-[selected=true]:ring-2 group-data-[selected=true]:ring-accent group-data-[selected=true]:ring-offset-2 group-data-[selected=true]:ring-offset-surface"
+        />
+        <span
+          class="text-[10px] font-medium text-muted capitalize group-data-[selected=true]:text-foreground"
+        >
+          {{ item.label }}
+        </span>
+      </template>
+    </ListBox>
+  </ScrollShadow>
+</template>
+
 <script setup lang="ts">
 import { ListBox, ScrollShadow } from '@hareui/vue'
 import { computed } from 'vue'
@@ -37,36 +70,3 @@ function onSelectionChange(selected: unknown) {
   if (typeof selected === 'string') applyTheme(selected as ThemeId)
 }
 </script>
-
-<template>
-  <ScrollShadow
-    hide-scroll-bar
-    class="w-full px-4 md:w-auto"
-    orientation="horizontal"
-    visibility="none"
-  >
-    <ListBox
-      aria-label="Theme"
-      class="flex w-max flex-row flex-nowrap gap-5"
-      :items="items"
-      :model-value="currentThemeId ?? null"
-      selection-mode="single"
-      @update:model-value="onSelectionChange"
-    >
-      <template #item="{ item }">
-        <img
-          :alt="item.label"
-          height="48"
-          width="48"
-          :src="images[item.value]"
-          class="size-12 rounded-full bg-surface group-data-[selected=true]:ring-2 group-data-[selected=true]:ring-accent group-data-[selected=true]:ring-offset-2 group-data-[selected=true]:ring-offset-surface"
-        />
-        <span
-          class="text-[10px] font-medium text-muted capitalize group-data-[selected=true]:text-foreground"
-        >
-          {{ item.label }}
-        </span>
-      </template>
-    </ListBox>
-  </ScrollShadow>
-</template>

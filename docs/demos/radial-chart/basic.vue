@@ -1,18 +1,3 @@
-<script setup lang="ts">
-import { Card } from '@hareui/vue'
-import { RadialChart } from '@hareui/vue/charts'
-
-const data = [
-  { subject: 'Math', minutes: 360, fill: 'var(--chart-4)', detail: '6 of 8 hours' },
-  { subject: 'Languages', minutes: 240, fill: 'var(--chart-3)', detail: '4 of 5 hours' },
-  { subject: 'Science', minutes: 180, fill: 'var(--chart-2)', detail: '3 of 6 hours' },
-]
-
-function formatMinutes(value: number) {
-  return `${value} min`
-}
-</script>
-
 <template>
   <Card
     class="w-full max-w-[380px] rounded-2xl"
@@ -43,3 +28,18 @@ function formatMinutes(value: number) {
     </RadialChart>
   </Card>
 </template>
+
+<script setup lang="ts">
+import { Card } from '@hareui/vue'
+import { RadialChart } from '@hareui/vue/charts'
+
+const data = [
+  { subject: 'Math', minutes: 360, fill: 'var(--chart-4)', detail: '6 of 8 hours' },
+  { subject: 'Languages', minutes: 240, fill: 'var(--chart-3)', detail: '4 of 5 hours' },
+  { subject: 'Science', minutes: 180, fill: 'var(--chart-2)', detail: '3 of 6 hours' },
+]
+
+function formatMinutes(value: number) {
+  return `${value} min`
+}
+</script>

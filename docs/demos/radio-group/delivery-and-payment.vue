@@ -1,3 +1,54 @@
+<template>
+  <div
+    class="flex w-full flex-col items-center gap-10"
+    style="
+      --accent: #006fee;
+      --accent-foreground: #fff;
+      --accent-hover: #006fee;
+      --border-width: 2px;
+      --border-width-field: 2px;
+      --focus: #006fee;
+    "
+  >
+    <section class="flex w-full max-w-lg flex-col gap-4">
+      <RadioGroup
+        default-value="express"
+        name="delivery"
+        variant="secondary"
+        label="Delivery method"
+        :items="deliveryOptions.map(({ label, value }) => ({ label, value }))"
+        :ui="{ base: deliveryBase, content: deliveryContent, control }"
+      >
+        <template #item-label="{ index }">
+          <div class="flex flex-col gap-1">
+            <span>{{ deliveryOptions[index]!.label }}</span>
+            <Description>{{ deliveryOptions[index]!.description }}</Description>
+          </div>
+          <span class="text-sm font-semibold">{{ deliveryOptions[index]!.price }}</span>
+        </template>
+      </RadioGroup>
+    </section>
+    <section class="flex w-full max-w-lg flex-col gap-4">
+      <RadioGroup
+        default-value="visa"
+        name="payment"
+        variant="secondary"
+        label="Payment method"
+        :items="paymentOptions.map(({ label, value }) => ({ label, value }))"
+        :ui="{ base: paymentBase, content: paymentContent, control }"
+      >
+        <template #item-label="{ index }">
+          <Icon class="size-6" :icon="paymentOptions[index]!.icon" />
+          <div class="flex flex-col gap-1">
+            <span>{{ paymentOptions[index]!.label }}</span>
+            <Description>{{ paymentOptions[index]!.description }}</Description>
+          </div>
+        </template>
+      </RadioGroup>
+    </section>
+  </div>
+</template>
+
 <script setup lang="ts">
 import type { RadioGroupItem } from '@hareui/vue'
 import { Description, RadioGroup } from '@hareui/vue'
@@ -57,54 +108,3 @@ const paymentContent = [
 ]
 const control = 'absolute end-4 top-3 size-5'
 </script>
-
-<template>
-  <div
-    class="flex w-full flex-col items-center gap-10"
-    style="
-      --accent: #006fee;
-      --accent-foreground: #fff;
-      --accent-hover: #006fee;
-      --border-width: 2px;
-      --border-width-field: 2px;
-      --focus: #006fee;
-    "
-  >
-    <section class="flex w-full max-w-lg flex-col gap-4">
-      <RadioGroup
-        default-value="express"
-        name="delivery"
-        variant="secondary"
-        label="Delivery method"
-        :items="deliveryOptions.map(({ label, value }) => ({ label, value }))"
-        :ui="{ base: deliveryBase, content: deliveryContent, control }"
-      >
-        <template #item-label="{ index }">
-          <div class="flex flex-col gap-1">
-            <span>{{ deliveryOptions[index]!.label }}</span>
-            <Description>{{ deliveryOptions[index]!.description }}</Description>
-          </div>
-          <span class="text-sm font-semibold">{{ deliveryOptions[index]!.price }}</span>
-        </template>
-      </RadioGroup>
-    </section>
-    <section class="flex w-full max-w-lg flex-col gap-4">
-      <RadioGroup
-        default-value="visa"
-        name="payment"
-        variant="secondary"
-        label="Payment method"
-        :items="paymentOptions.map(({ label, value }) => ({ label, value }))"
-        :ui="{ base: paymentBase, content: paymentContent, control }"
-      >
-        <template #item-label="{ index }">
-          <Icon class="size-6" :icon="paymentOptions[index]!.icon" />
-          <div class="flex flex-col gap-1">
-            <span>{{ paymentOptions[index]!.label }}</span>
-            <Description>{{ paymentOptions[index]!.description }}</Description>
-          </div>
-        </template>
-      </RadioGroup>
-    </section>
-  </div>
-</template>

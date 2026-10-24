@@ -1,7 +1,3 @@
-<script setup lang="ts">
-import { Separator } from '@hareui/vue'
-</script>
-
 <template>
   <div class="flex max-w-md flex-col items-center gap-3">
     <div>Default Variant</div>
@@ -12,3 +8,7 @@ import { Separator } from '@hareui/vue'
     <Separator variant="tertiary" />
   </div>
 </template>
+
+<script setup lang="ts">
+import { Separator } from '@hareui/vue'
+</script>

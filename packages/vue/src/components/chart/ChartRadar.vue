@@ -1,3 +1,48 @@
+<template>
+  <ChartLayer name="series">
+    <g v-if="!hide" data-slot="chart-radar" :class="chart.classes('series', props.class)">
+      <path
+        data-slot="chart-radar-polygon"
+        :d="path"
+        :fill="fillColor"
+        :fill-opacity="fillOpacity"
+        :stroke="strokeColor"
+        :stroke-width="strokeWidth"
+        :stroke-dasharray="strokeDasharray"
+        :class="chart.classes('radar')"
+      />
+      <g v-if="dotStyle" data-slot="chart-radar-dots">
+        <circle
+          v-for="point in tween.value.value"
+          :key="point.index"
+          data-slot="chart-dot"
+          :cx="point.x"
+          :cy="point.y"
+          :r="dotStyle.r"
+          :fill="dotStyle.fill"
+          :fill-opacity="fillOpacity"
+          :stroke="dotStyle.stroke"
+          :stroke-width="dotStyle.strokeWidth"
+          :class="chart.classes('dot', dotStyle.class)"
+        />
+      </g>
+    </g>
+  </ChartLayer>
+  <ChartLayer v-if="activePoint && activeDotStyle" name="active-dot">
+    <circle
+      data-slot="chart-active-dot"
+      :cx="activePoint.x"
+      :cy="activePoint.y"
+      :r="activeDotStyle.r"
+      :fill="activeDotStyle.fill"
+      :stroke="activeDotStyle.stroke"
+      :stroke-width="activeDotStyle.strokeWidth"
+      :class="chart.classes('activeDot', activeDotStyle.class)"
+    />
+  </ChartLayer>
+  <slot />
+</template>
+
 <script lang="ts">
 import type { ClassValue } from 'tailwind-variants'
 
@@ -187,48 +232,3 @@ provideChartLabels(
   'outside',
 )
 </script>
-
-<template>
-  <ChartLayer name="series">
-    <g v-if="!hide" data-slot="chart-radar" :class="chart.classes('series', props.class)">
-      <path
-        data-slot="chart-radar-polygon"
-        :d="path"
-        :fill="fillColor"
-        :fill-opacity="fillOpacity"
-        :stroke="strokeColor"
-        :stroke-width="strokeWidth"
-        :stroke-dasharray="strokeDasharray"
-        :class="chart.classes('radar')"
-      />
-      <g v-if="dotStyle" data-slot="chart-radar-dots">
-        <circle
-          v-for="point in tween.value.value"
-          :key="point.index"
-          data-slot="chart-dot"
-          :cx="point.x"
-          :cy="point.y"
-          :r="dotStyle.r"
-          :fill="dotStyle.fill"
-          :fill-opacity="fillOpacity"
-          :stroke="dotStyle.stroke"
-          :stroke-width="dotStyle.strokeWidth"
-          :class="chart.classes('dot', dotStyle.class)"
-        />
-      </g>
-    </g>
-  </ChartLayer>
-  <ChartLayer v-if="activePoint && activeDotStyle" name="active-dot">
-    <circle
-      data-slot="chart-active-dot"
-      :cx="activePoint.x"
-      :cy="activePoint.y"
-      :r="activeDotStyle.r"
-      :fill="activeDotStyle.fill"
-      :stroke="activeDotStyle.stroke"
-      :stroke-width="activeDotStyle.strokeWidth"
-      :class="chart.classes('activeDot', activeDotStyle.class)"
-    />
-  </ChartLayer>
-  <slot />
-</template>

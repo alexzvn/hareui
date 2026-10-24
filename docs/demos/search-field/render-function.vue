@@ -1,7 +1,3 @@
-<script setup lang="ts">
-import { SearchField } from '@hareui/vue'
-</script>
-
 <template>
   <!-- Attributes other than aria-label/aria-labelledby fall through to the root element (HeroUI's `render` prop) -->
   <SearchField
@@ -12,3 +8,7 @@ import { SearchField } from '@hareui/vue'
     placeholder="Search..."
   />
 </template>
+
+<script setup lang="ts">
+import { SearchField } from '@hareui/vue'
+</script>

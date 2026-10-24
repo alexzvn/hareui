@@ -1,17 +1,3 @@
-<script setup lang="ts">
-import { Button, Disclosure } from '@hareui/vue'
-import { Icon } from '@iconify/vue'
-import { defineComponent, h, ref } from 'vue'
-
-const isExpanded = ref(true)
-
-const CustomRoot = defineComponent(
-  (_, { attrs, slots }) =>
-    () =>
-      h('div', { ...attrs, 'data-custom': 'foo' }, slots.default?.()),
-)
-</script>
-
 <template>
   <div class="w-full max-w-md text-center">
     <Disclosure
@@ -44,3 +30,17 @@ const CustomRoot = defineComponent(
     </Disclosure>
   </div>
 </template>
+
+<script setup lang="ts">
+import { Button, Disclosure } from '@hareui/vue'
+import { Icon } from '@iconify/vue'
+import { defineComponent, h, ref } from 'vue'
+
+const isExpanded = ref(true)
+
+const CustomRoot = defineComponent(
+  (_, { attrs, slots }) =>
+    () =>
+      h('div', { ...attrs, 'data-custom': 'foo' }, slots.default?.()),
+)
+</script>

@@ -1,3 +1,7 @@
+<template>
+  <RichTable sticky :data="data" :columns="columns" class="h-[420px] w-full" />
+</template>
+
 <script setup lang="ts">
 import type { RichTableColumn } from '@hareui/vue'
 import { RichTable } from '@hareui/vue'
@@ -42,7 +46,3 @@ const columns: RichTableColumn<Payment>[] = [
   },
 ]
 </script>
-
-<template>
-  <RichTable sticky :data="data" :columns="columns" class="h-[420px] w-full" />
-</template>

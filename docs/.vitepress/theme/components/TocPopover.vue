@@ -1,27 +1,3 @@
-<script setup lang="ts">
-import { useRoute } from 'vitepress'
-import { computed, ref, watch } from 'vue'
-
-import type { TocItem } from '../composables/useToc'
-import TocItems from './TocItems.vue'
-
-const props = defineProps<{ title: string; items: TocItem[]; active: string[] }>()
-
-const open = ref(false)
-const route = useRoute()
-watch(
-  () => route.path,
-  () => (open.value = false),
-)
-
-const CIRCUMFERENCE = 2 * Math.PI * 11
-const currentIndex = computed(() => props.items.findIndex((item) => item.id === props.active[0]))
-const progress = computed(() =>
-  props.items.length ? (currentIndex.value + 1) / props.items.length : 0,
-)
-const currentText = computed(() => props.items[currentIndex.value]?.text)
-</script>
-
 <template>
   <div
     :data-state="open ? 'open' : 'closed'"
@@ -110,3 +86,27 @@ const currentText = computed(() => props.items[currentIndex.value]?.text)
     </header>
   </div>
 </template>
+
+<script setup lang="ts">
+import { useRoute } from 'vitepress'
+import { computed, ref, watch } from 'vue'
+
+import type { TocItem } from '../composables/useToc'
+import TocItems from './TocItems.vue'
+
+const props = defineProps<{ title: string; items: TocItem[]; active: string[] }>()
+
+const open = ref(false)
+const route = useRoute()
+watch(
+  () => route.path,
+  () => (open.value = false),
+)
+
+const CIRCUMFERENCE = 2 * Math.PI * 11
+const currentIndex = computed(() => props.items.findIndex((item) => item.id === props.active[0]))
+const progress = computed(() =>
+  props.items.length ? (currentIndex.value + 1) / props.items.length : 0,
+)
+const currentText = computed(() => props.items[currentIndex.value]?.text)
+</script>

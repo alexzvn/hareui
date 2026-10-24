@@ -1,3 +1,24 @@
+<template>
+  <div class="flex flex-col gap-4">
+    <div>
+      <SearchField
+        ref="field"
+        v-model="value"
+        name="search"
+        label="Search"
+        placeholder="Search..."
+        description="Use keyboard shortcut to quickly focus this field"
+        :ui="{ input: 'w-[280px]' }"
+      />
+    </div>
+    <div class="text-default-500 flex items-center gap-2 text-sm">
+      <span>Press</span>
+      <Kbd keys="shift"> S </Kbd>
+      <span>to focus the search field</span>
+    </div>
+  </div>
+</template>
+
 <script setup lang="ts">
 import { Kbd, SearchField } from '@hareui/vue'
 import { onBeforeUnmount, onMounted, ref, useTemplateRef } from 'vue'
@@ -19,24 +40,3 @@ function handleKeyDown(e: KeyboardEvent) {
 onMounted(() => window.addEventListener('keydown', handleKeyDown))
 onBeforeUnmount(() => window.removeEventListener('keydown', handleKeyDown))
 </script>
-
-<template>
-  <div class="flex flex-col gap-4">
-    <div>
-      <SearchField
-        ref="field"
-        v-model="value"
-        name="search"
-        label="Search"
-        placeholder="Search..."
-        description="Use keyboard shortcut to quickly focus this field"
-        :ui="{ input: 'w-[280px]' }"
-      />
-    </div>
-    <div class="text-default-500 flex items-center gap-2 text-sm">
-      <span>Press</span>
-      <Kbd keys="shift"> S </Kbd>
-      <span>to focus the search field</span>
-    </div>
-  </div>
-</template>

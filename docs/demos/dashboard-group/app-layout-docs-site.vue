@@ -1,81 +1,3 @@
-<script setup lang="ts">
-import type { NavigationMenuItem } from '@hareui/vue'
-import {
-  Button,
-  DashboardGroup,
-  DashboardNavbar,
-  DashboardPanel,
-  DashboardSidebar,
-  DashboardSidebarCollapse,
-  Kbd,
-  NavigationMenu,
-  SearchField,
-  ToggleButton,
-  ToggleButtonGroup,
-} from '@hareui/vue'
-import { Icon } from '@iconify/vue'
-import { h, ref } from 'vue'
-
-// NavigationMenu takes icon components: an Iconify Gravity UI icon that forwards the menu's icon classes.
-const gravityIcon = (name: string) => (attrs: Record<string, unknown>) =>
-  h(Icon, { ...attrs, icon: `gravity-ui:${name}` })
-
-const pages = (...labels: string[]): NavigationMenuItem[] =>
-  labels.map((label) => ({ label, href: '#' }))
-
-// One flat list: each section is a label (with an icon) followed by text-only pages.
-const items: NavigationMenuItem[] = [
-  { type: 'label', label: 'Getting Started', icon: gravityIcon('rocket') },
-  { label: 'Introduction', href: '#', active: true },
-  ...pages('Installation', 'Project Structure', 'Editor Setup', 'Quick Start'),
-  { type: 'label', label: 'Foundations', icon: gravityIcon('palette') },
-  ...pages('Design Tokens', 'Colors', 'Typography', 'Spacing', 'Dark Mode', 'Accessibility'),
-  { type: 'label', label: 'Components', icon: gravityIcon('cube') },
-  { label: 'Actions', children: pages('Button', 'Button Group', 'Close Button') },
-  {
-    label: 'Inputs',
-    defaultOpen: true,
-    children: [
-      ...pages('TextField', 'Select'),
-      { label: 'Combobox', href: '#', badge: { label: 'Beta', color: 'accent', variant: 'soft' } },
-      ...pages('Checkbox', 'Radio Group', 'Switch', 'Slider'),
-    ],
-  },
-  { label: 'Data Display', children: pages('Avatar', 'Chip', 'Table') },
-  { label: 'Feedback', children: pages('Alert', 'Spinner', 'Toast') },
-  { label: 'Navigation', children: pages('Breadcrumbs', 'Link', 'Tabs') },
-  { label: 'Overlays', children: pages('Modal', 'Popover', 'Tooltip') },
-  { type: 'label', label: 'Hooks', icon: gravityIcon('code') },
-  ...pages('useTheme', 'useDisclosure', 'useMediaQuery', 'useControlledState', 'useInterval'),
-  { type: 'label', label: 'Guides', icon: gravityIcon('book') },
-  ...pages(
-    'Theming',
-    'Customizing Components',
-    'Server Components',
-    'Migrating from v2',
-    'Testing',
-  ),
-]
-
-const footerItems: NavigationMenuItem[] = [
-  {
-    label: 'Changelog',
-    icon: gravityIcon('square-article'),
-    href: '#',
-    badge: { label: 'New', color: 'success', variant: 'soft' },
-  },
-  { label: 'GitHub', icon: gravityIcon('logo-github'), href: '#' },
-  { label: 'Help & Support', icon: gravityIcon('life-ring'), href: '#' },
-]
-
-const themes = [
-  { value: 'light', label: 'Light', icon: 'gravity-ui:sun' },
-  { value: 'dark', label: 'Dark', icon: 'gravity-ui:moon' },
-  { value: 'system', label: 'System', icon: 'gravity-ui:display' },
-]
-const theme = ref(['system'])
-</script>
-
 <template>
   <DashboardGroup unit="rem" :persistent="false">
     <!-- Offcanvas: the long docs tree slides fully away, the article takes the whole width. -->
@@ -197,3 +119,81 @@ const theme = ref(['system'])
     </DashboardPanel>
   </DashboardGroup>
 </template>
+
+<script setup lang="ts">
+import type { NavigationMenuItem } from '@hareui/vue'
+import {
+  Button,
+  DashboardGroup,
+  DashboardNavbar,
+  DashboardPanel,
+  DashboardSidebar,
+  DashboardSidebarCollapse,
+  Kbd,
+  NavigationMenu,
+  SearchField,
+  ToggleButton,
+  ToggleButtonGroup,
+} from '@hareui/vue'
+import { Icon } from '@iconify/vue'
+import { h, ref } from 'vue'
+
+// NavigationMenu takes icon components: an Iconify Gravity UI icon that forwards the menu's icon classes.
+const gravityIcon = (name: string) => (attrs: Record<string, unknown>) =>
+  h(Icon, { ...attrs, icon: `gravity-ui:${name}` })
+
+const pages = (...labels: string[]): NavigationMenuItem[] =>
+  labels.map((label) => ({ label, href: '#' }))
+
+// One flat list: each section is a label (with an icon) followed by text-only pages.
+const items: NavigationMenuItem[] = [
+  { type: 'label', label: 'Getting Started', icon: gravityIcon('rocket') },
+  { label: 'Introduction', href: '#', active: true },
+  ...pages('Installation', 'Project Structure', 'Editor Setup', 'Quick Start'),
+  { type: 'label', label: 'Foundations', icon: gravityIcon('palette') },
+  ...pages('Design Tokens', 'Colors', 'Typography', 'Spacing', 'Dark Mode', 'Accessibility'),
+  { type: 'label', label: 'Components', icon: gravityIcon('cube') },
+  { label: 'Actions', children: pages('Button', 'Button Group', 'Close Button') },
+  {
+    label: 'Inputs',
+    defaultOpen: true,
+    children: [
+      ...pages('TextField', 'Select'),
+      { label: 'Combobox', href: '#', badge: { label: 'Beta', color: 'accent', variant: 'soft' } },
+      ...pages('Checkbox', 'Radio Group', 'Switch', 'Slider'),
+    ],
+  },
+  { label: 'Data Display', children: pages('Avatar', 'Chip', 'Table') },
+  { label: 'Feedback', children: pages('Alert', 'Spinner', 'Toast') },
+  { label: 'Navigation', children: pages('Breadcrumbs', 'Link', 'Tabs') },
+  { label: 'Overlays', children: pages('Modal', 'Popover', 'Tooltip') },
+  { type: 'label', label: 'Hooks', icon: gravityIcon('code') },
+  ...pages('useTheme', 'useDisclosure', 'useMediaQuery', 'useControlledState', 'useInterval'),
+  { type: 'label', label: 'Guides', icon: gravityIcon('book') },
+  ...pages(
+    'Theming',
+    'Customizing Components',
+    'Server Components',
+    'Migrating from v2',
+    'Testing',
+  ),
+]
+
+const footerItems: NavigationMenuItem[] = [
+  {
+    label: 'Changelog',
+    icon: gravityIcon('square-article'),
+    href: '#',
+    badge: { label: 'New', color: 'success', variant: 'soft' },
+  },
+  { label: 'GitHub', icon: gravityIcon('logo-github'), href: '#' },
+  { label: 'Help & Support', icon: gravityIcon('life-ring'), href: '#' },
+]
+
+const themes = [
+  { value: 'light', label: 'Light', icon: 'gravity-ui:sun' },
+  { value: 'dark', label: 'Dark', icon: 'gravity-ui:moon' },
+  { value: 'system', label: 'System', icon: 'gravity-ui:display' },
+]
+const theme = ref(['system'])
+</script>

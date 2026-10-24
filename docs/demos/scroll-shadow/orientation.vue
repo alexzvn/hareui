@@ -1,15 +1,3 @@
-<script setup lang="ts">
-import { Card, ScrollShadow } from '@hareui/vue'
-
-const images = [
-  'https://heroui-assets.nyc3.cdn.digitaloceanspaces.com/docs/robot1.jpeg',
-  'https://heroui-assets.nyc3.cdn.digitaloceanspaces.com/docs/avocado.jpeg',
-  'https://heroui-assets.nyc3.cdn.digitaloceanspaces.com/docs/oranges.jpeg',
-]
-
-const getRandomImage = (idx: number) => images[idx % images.length]
-</script>
-
 <template>
   <div class="w-full sm:max-w-sm">
     <div class="mb-8 w-full">
@@ -56,3 +44,15 @@ const getRandomImage = (idx: number) => images[idx % images.length]
     </div>
   </div>
 </template>
+
+<script setup lang="ts">
+import { Card, ScrollShadow } from '@hareui/vue'
+
+const images = [
+  'https://heroui-assets.nyc3.cdn.digitaloceanspaces.com/docs/robot1.jpeg',
+  'https://heroui-assets.nyc3.cdn.digitaloceanspaces.com/docs/avocado.jpeg',
+  'https://heroui-assets.nyc3.cdn.digitaloceanspaces.com/docs/oranges.jpeg',
+]
+
+const getRandomImage = (idx: number) => images[idx % images.length]
+</script>

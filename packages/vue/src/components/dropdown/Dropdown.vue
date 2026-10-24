@@ -1,3 +1,48 @@
+<template>
+  <DropdownMenuRoot :open="isOpen" @update:open="onRootOpenChange">
+    <DropdownMenuTrigger
+      as-child
+      :disabled="disabled"
+      :data-pressed="isOpen ? 'true' : undefined"
+      :aria-describedby="trigger === 'longPress' ? describedBy : undefined"
+      @pointerdown.capture="onTriggerPointerdownCapture"
+      @click.capture="onTriggerClickCapture"
+      @keydown.capture="onTriggerKeydownCapture"
+      @pointerup="cancelLongPress"
+      @pointerleave="cancelLongPress"
+      @pointercancel="cancelLongPress"
+    >
+      <slot />
+    </DropdownMenuTrigger>
+    <DropdownMenuPortal :disabled="portalTarget.disabled" :to="portalTarget.to">
+      <!-- Reka puts `role="menu"` on the content (HeroUI's popover); the inner element carries the menu classes -->
+      <!-- `loop`: React Aria wraps keyboard focus from the last item to the first and back -->
+      <DropdownMenuContent
+        ref="contentRef"
+        loop
+        :side="side"
+        :align="align"
+        :side-offset="sideOffset"
+        :collision-padding="12"
+        data-slot="dropdown-popover"
+        :class="ui.popover({ class: [props.ui?.popover, props.class] })"
+        @interact-outside="onInteractOutside"
+        @open-auto-focus="onOpenAutoFocus"
+        @keydown="onMenuKeydown"
+      >
+        <slot name="content-top" />
+        <div
+          data-slot="dropdown-menu"
+          :data-selection-mode="selectionMode !== 'none' ? selectionMode : undefined"
+          :class="ui.menu({ class: props.ui?.menu })"
+        >
+          <DropdownMenuItems :entries="items ?? []" :group="rootGroup" />
+        </div>
+      </DropdownMenuContent>
+    </DropdownMenuPortal>
+  </DropdownMenuRoot>
+</template>
+
 <script lang="ts">
 import type { PortalTarget } from '../../config'
 import type { ComponentSlots } from '../../types/tv'
@@ -386,48 +431,3 @@ onBeforeUnmount(() => {
   cancelLongPress()
 })
 </script>
-
-<template>
-  <DropdownMenuRoot :open="isOpen" @update:open="onRootOpenChange">
-    <DropdownMenuTrigger
-      as-child
-      :disabled="disabled"
-      :data-pressed="isOpen ? 'true' : undefined"
-      :aria-describedby="trigger === 'longPress' ? describedBy : undefined"
-      @pointerdown.capture="onTriggerPointerdownCapture"
-      @click.capture="onTriggerClickCapture"
-      @keydown.capture="onTriggerKeydownCapture"
-      @pointerup="cancelLongPress"
-      @pointerleave="cancelLongPress"
-      @pointercancel="cancelLongPress"
-    >
-      <slot />
-    </DropdownMenuTrigger>
-    <DropdownMenuPortal :disabled="portalTarget.disabled" :to="portalTarget.to">
-      <!-- Reka puts `role="menu"` on the content (HeroUI's popover); the inner element carries the menu classes -->
-      <!-- `loop`: React Aria wraps keyboard focus from the last item to the first and back -->
-      <DropdownMenuContent
-        ref="contentRef"
-        loop
-        :side="side"
-        :align="align"
-        :side-offset="sideOffset"
-        :collision-padding="12"
-        data-slot="dropdown-popover"
-        :class="ui.popover({ class: [props.ui?.popover, props.class] })"
-        @interact-outside="onInteractOutside"
-        @open-auto-focus="onOpenAutoFocus"
-        @keydown="onMenuKeydown"
-      >
-        <slot name="content-top" />
-        <div
-          data-slot="dropdown-menu"
-          :data-selection-mode="selectionMode !== 'none' ? selectionMode : undefined"
-          :class="ui.menu({ class: props.ui?.menu })"
-        >
-          <DropdownMenuItems :entries="items ?? []" :group="rootGroup" />
-        </div>
-      </DropdownMenuContent>
-    </DropdownMenuPortal>
-  </DropdownMenuRoot>
-</template>

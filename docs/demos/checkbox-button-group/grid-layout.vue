@@ -1,16 +1,3 @@
-<script setup lang="ts">
-import { CheckboxButtonGroup, CheckboxButtonGroupItem } from '@hareui/vue'
-
-const extras = [
-  { value: 'candles', label: 'Candles', description: 'A set of 12, mixed colors', price: 3.5 },
-  { value: 'topper', label: 'Cake topper', description: 'Hand-lettered name or message', price: 6 },
-  { value: 'box', label: 'Gift box', description: 'Ribboned box with a card', price: 4.25 },
-  { value: 'sparkler', label: 'Sparklers', description: 'Four indoor-safe sparklers', price: 2.75 },
-]
-
-const eur = new Intl.NumberFormat('en-IE', { style: 'currency', currency: 'EUR' })
-</script>
-
 <template>
   <CheckboxButtonGroup
     class="w-[480px] grid-cols-2"
@@ -32,3 +19,16 @@ const eur = new Intl.NumberFormat('en-IE', { style: 'currency', currency: 'EUR' 
     </CheckboxButtonGroupItem>
   </CheckboxButtonGroup>
 </template>
+
+<script setup lang="ts">
+import { CheckboxButtonGroup, CheckboxButtonGroupItem } from '@hareui/vue'
+
+const extras = [
+  { value: 'candles', label: 'Candles', description: 'A set of 12, mixed colors', price: 3.5 },
+  { value: 'topper', label: 'Cake topper', description: 'Hand-lettered name or message', price: 6 },
+  { value: 'box', label: 'Gift box', description: 'Ribboned box with a card', price: 4.25 },
+  { value: 'sparkler', label: 'Sparklers', description: 'Four indoor-safe sparklers', price: 2.75 },
+]
+
+const eur = new Intl.NumberFormat('en-IE', { style: 'currency', currency: 'EUR' })
+</script>

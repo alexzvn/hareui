@@ -1,7 +1,3 @@
-<script setup lang="ts">
-import { Description, Input, Label } from '@hareui/vue'
-</script>
-
 <template>
   <div class="flex w-64 flex-col gap-1">
     <Label for="workspace-slug">Workspace URL</Label>
@@ -11,3 +7,7 @@ import { Description, Input, Label } from '@hareui/vue'
     </Description>
   </div>
 </template>
+
+<script setup lang="ts">
+import { Description, Input, Label } from '@hareui/vue'
+</script>

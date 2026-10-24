@@ -1,3 +1,78 @@
+<template>
+  <div
+    ref="root"
+    v-bind="rootAttrs"
+    data-slot="native-select"
+    :data-disabled="isDisabled ? 'true' : undefined"
+    :data-invalid="invalid ? 'true' : undefined"
+    :aria-invalid="invalid ? 'true' : undefined"
+    :data-required="required ? 'true' : undefined"
+    :class="ui.base({ class: [props.ui?.base, props.class] })"
+  >
+    <FieldLabel :for="id" />
+    <div data-slot="native-select-trigger" :class="ui.trigger({ class: props.ui?.trigger })">
+      <select
+        v-bind="selectAttrs"
+        :id="id"
+        ref="select"
+        data-slot="native-select-select"
+        :value="current"
+        :name="name"
+        :autocomplete="autocomplete"
+        :required="required && (validationBehavior ?? 'native') === 'native'"
+        :aria-required="required ? 'true' : undefined"
+        :disabled="isDisabled"
+        :aria-invalid="invalid ? 'true' : undefined"
+        :aria-describedby="describedBy"
+        :data-placeholder="current === '' ? 'true' : undefined"
+        :class="ui.select({ class: props.ui?.select })"
+        @change="onChange"
+      >
+        <option v-if="placeholder !== undefined" value="">
+          {{ placeholder }}
+        </option>
+        <template v-for="(item, index) in items" :key="index">
+          <optgroup v-if="isGroup(item)" :label="item.label" :disabled="item.disabled">
+            <option
+              v-for="option in item.items.map(optionOf)"
+              :key="option.value"
+              :value="option.value"
+              :disabled="option.disabled"
+            >
+              {{ option.label }}
+            </option>
+          </optgroup>
+          <option v-else :value="optionOf(item).value" :disabled="optionOf(item).disabled">
+            {{ optionOf(item).label }}
+          </option>
+        </template>
+        <slot />
+      </select>
+      <span
+        aria-hidden="true"
+        data-slot="native-select-indicator"
+        :class="ui.indicator({ class: props.ui?.indicator })"
+      >
+        <slot name="indicator">
+          <svg
+            fill="none"
+            stroke="currentColor"
+            stroke-linecap="round"
+            stroke-linejoin="round"
+            stroke-width="2"
+            viewBox="0 0 24 24"
+            xmlns="http://www.w3.org/2000/svg"
+          >
+            <path d="m6 9 6 6 6-6" />
+          </svg>
+        </slot>
+      </span>
+    </div>
+    <FieldDescription />
+    <FieldError />
+  </div>
+</template>
+
 <script lang="ts">
 import type { ValidateFn, ValidationResult } from '../../composables/useFieldValidation'
 import type { ComponentSlots, ComponentVariants } from '../../types/tv'
@@ -205,78 +280,3 @@ function onChange(event: Event) {
   commitValidation()
 }
 </script>
-
-<template>
-  <div
-    ref="root"
-    v-bind="rootAttrs"
-    data-slot="native-select"
-    :data-disabled="isDisabled ? 'true' : undefined"
-    :data-invalid="invalid ? 'true' : undefined"
-    :aria-invalid="invalid ? 'true' : undefined"
-    :data-required="required ? 'true' : undefined"
-    :class="ui.base({ class: [props.ui?.base, props.class] })"
-  >
-    <FieldLabel :for="id" />
-    <div data-slot="native-select-trigger" :class="ui.trigger({ class: props.ui?.trigger })">
-      <select
-        v-bind="selectAttrs"
-        :id="id"
-        ref="select"
-        data-slot="native-select-select"
-        :value="current"
-        :name="name"
-        :autocomplete="autocomplete"
-        :required="required && (validationBehavior ?? 'native') === 'native'"
-        :aria-required="required ? 'true' : undefined"
-        :disabled="isDisabled"
-        :aria-invalid="invalid ? 'true' : undefined"
-        :aria-describedby="describedBy"
-        :data-placeholder="current === '' ? 'true' : undefined"
-        :class="ui.select({ class: props.ui?.select })"
-        @change="onChange"
-      >
-        <option v-if="placeholder !== undefined" value="">
-          {{ placeholder }}
-        </option>
-        <template v-for="(item, index) in items" :key="index">
-          <optgroup v-if="isGroup(item)" :label="item.label" :disabled="item.disabled">
-            <option
-              v-for="option in item.items.map(optionOf)"
-              :key="option.value"
-              :value="option.value"
-              :disabled="option.disabled"
-            >
-              {{ option.label }}
-            </option>
-          </optgroup>
-          <option v-else :value="optionOf(item).value" :disabled="optionOf(item).disabled">
-            {{ optionOf(item).label }}
-          </option>
-        </template>
-        <slot />
-      </select>
-      <span
-        aria-hidden="true"
-        data-slot="native-select-indicator"
-        :class="ui.indicator({ class: props.ui?.indicator })"
-      >
-        <slot name="indicator">
-          <svg
-            fill="none"
-            stroke="currentColor"
-            stroke-linecap="round"
-            stroke-linejoin="round"
-            stroke-width="2"
-            viewBox="0 0 24 24"
-            xmlns="http://www.w3.org/2000/svg"
-          >
-            <path d="m6 9 6 6 6-6" />
-          </svg>
-        </slot>
-      </span>
-    </div>
-    <FieldDescription />
-    <FieldError />
-  </div>
-</template>

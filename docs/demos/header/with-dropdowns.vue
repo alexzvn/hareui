@@ -1,43 +1,3 @@
-<script setup lang="ts">
-import type { DropdownEntry } from '@hareui/vue'
-import { Avatar, Button, Dropdown, Header, NavigationMenu } from '@hareui/vue'
-import { Icon } from '@iconify/vue'
-import { ref } from 'vue'
-
-// Touch-sized rows for the mobile menu.
-const menuUi = {
-  list: 'gap-1',
-  link: 'min-h-11 gap-3 rounded-lg px-3 py-2.5 text-base font-medium text-foreground',
-}
-
-const items = [
-  { label: 'Dashboard', href: '#dashboard', active: true },
-  { label: 'Projects', href: '#projects' },
-  { label: 'Team', href: '#team' },
-  { label: 'Billing', href: '#billing' },
-]
-
-const teams: DropdownEntry[] = [
-  { value: 'acme', label: 'Acme Inc.' },
-  { value: 'globex', label: 'Globex' },
-  { type: 'separator' },
-  { value: 'new-team', label: 'Create team' },
-]
-const userMenu: DropdownEntry[] = [
-  { value: 'profile', label: 'Profile' },
-  { value: 'settings', label: 'Settings' },
-  { type: 'separator' },
-  { value: 'logout', label: 'Log out', variant: 'danger' },
-]
-
-const teamNames: Record<string, string> = { acme: 'Acme Inc.', globex: 'Globex' }
-const team = ref(teamNames.acme)
-
-function selectTeam(value: string | number) {
-  team.value = teamNames[value] ?? team.value
-}
-</script>
-
 <template>
   <!-- A team switcher, nav and a user menu. -->
   <Header breakpoint="md" title="HareUI" to="#">
@@ -101,3 +61,43 @@ function selectTeam(value: string | number) {
     </p>
   </main>
 </template>
+
+<script setup lang="ts">
+import type { DropdownEntry } from '@hareui/vue'
+import { Avatar, Button, Dropdown, Header, NavigationMenu } from '@hareui/vue'
+import { Icon } from '@iconify/vue'
+import { ref } from 'vue'
+
+// Touch-sized rows for the mobile menu.
+const menuUi = {
+  list: 'gap-1',
+  link: 'min-h-11 gap-3 rounded-lg px-3 py-2.5 text-base font-medium text-foreground',
+}
+
+const items = [
+  { label: 'Dashboard', href: '#dashboard', active: true },
+  { label: 'Projects', href: '#projects' },
+  { label: 'Team', href: '#team' },
+  { label: 'Billing', href: '#billing' },
+]
+
+const teams: DropdownEntry[] = [
+  { value: 'acme', label: 'Acme Inc.' },
+  { value: 'globex', label: 'Globex' },
+  { type: 'separator' },
+  { value: 'new-team', label: 'Create team' },
+]
+const userMenu: DropdownEntry[] = [
+  { value: 'profile', label: 'Profile' },
+  { value: 'settings', label: 'Settings' },
+  { type: 'separator' },
+  { value: 'logout', label: 'Log out', variant: 'danger' },
+]
+
+const teamNames: Record<string, string> = { acme: 'Acme Inc.', globex: 'Globex' }
+const team = ref(teamNames.acme)
+
+function selectTeam(value: string | number) {
+  team.value = teamNames[value] ?? team.value
+}
+</script>

@@ -1,20 +1,3 @@
-<script setup lang="ts">
-import type { DropZoneRejection } from '@hareui/vue'
-import { DropZone, DropZoneFileItem, DropZoneFileList } from '@hareui/vue'
-import { ref } from 'vue'
-
-const attachments = ref<File[]>([])
-const error = ref('')
-
-function onReject(rejections: DropZoneRejection[]) {
-  const names = rejections.map(({ file }) => file.name).join(', ')
-  error.value =
-    rejections.length === 1
-      ? `${names} is larger than 3 MB and wasn't attached.`
-      : `${names} are larger than 3 MB and weren't attached.`
-}
-</script>
-
 <template>
   <DropZone
     v-model="attachments"
@@ -43,3 +26,20 @@ function onReject(rejections: DropZoneRejection[]) {
     </template>
   </DropZone>
 </template>
+
+<script setup lang="ts">
+import type { DropZoneRejection } from '@hareui/vue'
+import { DropZone, DropZoneFileItem, DropZoneFileList } from '@hareui/vue'
+import { ref } from 'vue'
+
+const attachments = ref<File[]>([])
+const error = ref('')
+
+function onReject(rejections: DropZoneRejection[]) {
+  const names = rejections.map(({ file }) => file.name).join(', ')
+  error.value =
+    rejections.length === 1
+      ? `${names} is larger than 3 MB and wasn't attached.`
+      : `${names} are larger than 3 MB and weren't attached.`
+}
+</script>

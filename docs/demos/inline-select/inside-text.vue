@@ -1,3 +1,16 @@
+<template>
+  <div class="text-sm text-foreground">
+    Showing revenue for the
+    <InlineSelect
+      v-model="range"
+      aria-label="Date range"
+      :items="ranges"
+      :ui="{ trigger: '-my-0.5', popover: 'w-44' }"
+    />
+    across all workspaces.
+  </div>
+</template>
+
 <script setup lang="ts">
 import type { ListBoxItem, SelectValue } from '@hareui/vue'
 import { InlineSelect } from '@hareui/vue'
@@ -12,16 +25,3 @@ const ranges: ListBoxItem[] = [
 
 const range = ref<SelectValue>('30d')
 </script>
-
-<template>
-  <div class="text-sm text-foreground">
-    Showing revenue for the
-    <InlineSelect
-      v-model="range"
-      aria-label="Date range"
-      :items="ranges"
-      :ui="{ trigger: '-my-0.5', popover: 'w-44' }"
-    />
-    across all workspaces.
-  </div>
-</template>

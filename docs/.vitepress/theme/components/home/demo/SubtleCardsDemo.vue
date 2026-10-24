@@ -1,31 +1,3 @@
-<script setup lang="ts">
-import { Avatar, Card } from '@hareui/vue'
-
-const ASSETS = 'https://heroui-assets.nyc3.cdn.digitaloceanspaces.com'
-const cards = [
-  {
-    title: 'Indie Hackers',
-    members: '148 members',
-    image: `${ASSETS}/docs/demo1.jpg`,
-    fallback: 'JK',
-    by: 'By John',
-    author: 'John',
-    authorImage: `${ASSETS}/avatars/red.jpg`,
-    authorFallback: 'JK',
-  },
-  {
-    title: 'AI Builders',
-    members: '362 members',
-    image: `${ASSETS}/docs/demo2.jpg`,
-    fallback: 'J',
-    by: 'By Martha',
-    author: 'Martha',
-    authorImage: `${ASSETS}/avatars/blue.jpg`,
-    authorFallback: 'M',
-  },
-]
-</script>
-
 <template>
   <div class="flex w-full flex-row flex-wrap justify-between gap-4">
     <Card
@@ -56,3 +28,31 @@ const cards = [
     </Card>
   </div>
 </template>
+
+<script setup lang="ts">
+import { Avatar, Card } from '@hareui/vue'
+
+const ASSETS = 'https://heroui-assets.nyc3.cdn.digitaloceanspaces.com'
+const cards = [
+  {
+    title: 'Indie Hackers',
+    members: '148 members',
+    image: `${ASSETS}/docs/demo1.jpg`,
+    fallback: 'JK',
+    by: 'By John',
+    author: 'John',
+    authorImage: `${ASSETS}/avatars/red.jpg`,
+    authorFallback: 'JK',
+  },
+  {
+    title: 'AI Builders',
+    members: '362 members',
+    image: `${ASSETS}/docs/demo2.jpg`,
+    fallback: 'J',
+    by: 'By Martha',
+    author: 'Martha',
+    authorImage: `${ASSETS}/avatars/blue.jpg`,
+    authorFallback: 'M',
+  },
+]
+</script>

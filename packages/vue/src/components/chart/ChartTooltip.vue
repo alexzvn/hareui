@@ -1,3 +1,50 @@
+<template>
+  <ChartLayer v-if="cursor" :name="cursor.kind === 'band' ? 'cursor-band' : 'cursor-line'">
+    <path
+      data-slot="chart-cursor"
+      :data-kind="cursor.kind"
+      :d="cursor.d"
+      :class="chart.classes('cursor')"
+    />
+  </ChartLayer>
+  <!-- Chart parts mount inside the <svg>: the empty foreignObject puts the teleported panel back in the HTML
+    namespace (otherwise Vue creates an SVG `div` that never renders). -->
+  <foreignObject v-if="chart.overlay.value" width="0" height="0">
+    <Teleport :to="chart.overlay.value">
+      <!-- Without a panel the same live region stays, visually hidden, so screen readers still hear the values. -->
+      <div
+        v-if="shown && (translate || !panel)"
+        ref="panelElement"
+        data-slot="chart-tooltip-wrapper"
+        :data-state="active ? 'open' : 'closed'"
+        :data-panel="panel ? undefined : 'false'"
+        role="status"
+        aria-live="polite"
+        :class="panel ? chart.classes('tooltip') : 'sr-only'"
+        :style="wrapperStyle"
+      >
+        <template v-if="panel || active">
+          <slot name="content" v-bind="shown">
+            <ChartTooltipContent
+              :label="shown.label"
+              :payload="shown.payload"
+              :indicator="indicator"
+              :hide-header="hideHeader"
+              :label-formatter="labelFormatter"
+              :value-formatter="valueFormatter"
+              :class="props.class"
+            >
+              <template v-if="slots.footer" #footer="footer">
+                <slot name="footer" v-bind="footer" />
+              </template>
+            </ChartTooltipContent>
+          </slot>
+        </template>
+      </div>
+    </Teleport>
+  </foreignObject>
+</template>
+
 <script lang="ts">
 import type { ClassValue } from 'tailwind-variants'
 
@@ -224,50 +271,3 @@ const wrapperStyle = computed(() => {
   }
 })
 </script>
-
-<template>
-  <ChartLayer v-if="cursor" :name="cursor.kind === 'band' ? 'cursor-band' : 'cursor-line'">
-    <path
-      data-slot="chart-cursor"
-      :data-kind="cursor.kind"
-      :d="cursor.d"
-      :class="chart.classes('cursor')"
-    />
-  </ChartLayer>
-  <!-- Chart parts mount inside the <svg>: the empty foreignObject puts the teleported panel back in the HTML
-    namespace (otherwise Vue creates an SVG `div` that never renders). -->
-  <foreignObject v-if="chart.overlay.value" width="0" height="0">
-    <Teleport :to="chart.overlay.value">
-      <!-- Without a panel the same live region stays, visually hidden, so screen readers still hear the values. -->
-      <div
-        v-if="shown && (translate || !panel)"
-        ref="panelElement"
-        data-slot="chart-tooltip-wrapper"
-        :data-state="active ? 'open' : 'closed'"
-        :data-panel="panel ? undefined : 'false'"
-        role="status"
-        aria-live="polite"
-        :class="panel ? chart.classes('tooltip') : 'sr-only'"
-        :style="wrapperStyle"
-      >
-        <template v-if="panel || active">
-          <slot name="content" v-bind="shown">
-            <ChartTooltipContent
-              :label="shown.label"
-              :payload="shown.payload"
-              :indicator="indicator"
-              :hide-header="hideHeader"
-              :label-formatter="labelFormatter"
-              :value-formatter="valueFormatter"
-              :class="props.class"
-            >
-              <template v-if="slots.footer" #footer="footer">
-                <slot name="footer" v-bind="footer" />
-              </template>
-            </ChartTooltipContent>
-          </slot>
-        </template>
-      </div>
-    </Teleport>
-  </foreignObject>
-</template>

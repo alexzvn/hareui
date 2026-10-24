@@ -1,33 +1,3 @@
-<script setup lang="ts">
-import { NavigationMenuLink } from 'reka-ui'
-
-import { get, useNavigationMenu } from './context'
-import { ExternalIcon, NavigationMenuIcon } from './icons'
-import LinkResolver from './LinkResolver'
-import type { NavigationMenuChildItem, NavigationMenuItem } from './NavigationMenu.vue'
-
-// One link of an item's child list, in a dropdown content (`detailed`: label + description) or in
-// the collapsed-rail popover (compact).
-const props = defineProps<{
-  child: NavigationMenuChildItem
-  /** The item whose `children` this belongs to; its `ui` overrides apply. */
-  parent: NavigationMenuItem
-  detailed?: boolean
-}>()
-
-const ctx = useNavigationMenu()
-const { ui } = ctx
-
-function onSelect(event: Event) {
-  if (!props.child.disabled) props.child.onSelect?.(event)
-}
-
-const label = () => get(props.child, ctx.props.labelKey as string) as string | undefined
-const showExternal = () => props.child.target === '_blank' && ctx.props.externalIcon !== false
-const customExternal = () =>
-  typeof ctx.props.externalIcon === 'boolean' ? undefined : ctx.props.externalIcon
-</script>
-
 <template>
   <li
     data-slot="childItem"
@@ -163,3 +133,33 @@ const customExternal = () =>
     </LinkResolver>
   </li>
 </template>
+
+<script setup lang="ts">
+import { NavigationMenuLink } from 'reka-ui'
+
+import { get, useNavigationMenu } from './context'
+import { ExternalIcon, NavigationMenuIcon } from './icons'
+import LinkResolver from './LinkResolver'
+import type { NavigationMenuChildItem, NavigationMenuItem } from './NavigationMenu.vue'
+
+// One link of an item's child list, in a dropdown content (`detailed`: label + description) or in
+// the collapsed-rail popover (compact).
+const props = defineProps<{
+  child: NavigationMenuChildItem
+  /** The item whose `children` this belongs to; its `ui` overrides apply. */
+  parent: NavigationMenuItem
+  detailed?: boolean
+}>()
+
+const ctx = useNavigationMenu()
+const { ui } = ctx
+
+function onSelect(event: Event) {
+  if (!props.child.disabled) props.child.onSelect?.(event)
+}
+
+const label = () => get(props.child, ctx.props.labelKey as string) as string | undefined
+const showExternal = () => props.child.target === '_blank' && ctx.props.externalIcon !== false
+const customExternal = () =>
+  typeof ctx.props.externalIcon === 'boolean' ? undefined : ctx.props.externalIcon
+</script>

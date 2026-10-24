@@ -1,21 +1,3 @@
-<script setup lang="ts">
-import { Card } from '@hareui/vue'
-import { ChartLegend, LineChart } from '@hareui/vue/charts'
-
-const data = [
-  { time: '06:00', northPier: 120, oldTown: 60 },
-  { time: '08:00', northPier: 410, oldTown: 220 },
-  { time: '10:00', northPier: 260, oldTown: 310 },
-  { time: '12:00', northPier: 230, oldTown: 380 },
-  { time: '14:00', northPier: 280, oldTown: 360 },
-  { time: '16:00', northPier: 350, oldTown: 290 },
-  { time: '18:00', northPier: 470, oldTown: 240 },
-  { time: '20:00', northPier: 190, oldTown: 150 },
-]
-
-const series = { northPier: { name: 'North Pier' }, oldTown: { name: 'Old Town' } }
-</script>
-
 <template>
   <Card
     class="w-full max-w-[520px] rounded-2xl"
@@ -42,3 +24,21 @@ const series = { northPier: { name: 'North Pier' }, oldTown: { name: 'Old Town' 
     </div>
   </Card>
 </template>
+
+<script setup lang="ts">
+import { Card } from '@hareui/vue'
+import { ChartLegend, LineChart } from '@hareui/vue/charts'
+
+const data = [
+  { time: '06:00', northPier: 120, oldTown: 60 },
+  { time: '08:00', northPier: 410, oldTown: 220 },
+  { time: '10:00', northPier: 260, oldTown: 310 },
+  { time: '12:00', northPier: 230, oldTown: 380 },
+  { time: '14:00', northPier: 280, oldTown: 360 },
+  { time: '16:00', northPier: 350, oldTown: 290 },
+  { time: '18:00', northPier: 470, oldTown: 240 },
+  { time: '20:00', northPier: 190, oldTown: 150 },
+]
+
+const series = { northPier: { name: 'North Pier' }, oldTown: { name: 'Old Town' } }
+</script>

@@ -1,8 +1,3 @@
-<script setup lang="ts">
-import { Avatar, Badge } from '@hareui/vue'
-import { Icon } from '@iconify/vue'
-</script>
-
 <template>
   <div class="flex items-center gap-6">
     <Badge color="danger" content="5" size="sm">
@@ -41,3 +36,8 @@ import { Icon } from '@iconify/vue'
     </Badge>
   </div>
 </template>
+
+<script setup lang="ts">
+import { Avatar, Badge } from '@hareui/vue'
+import { Icon } from '@iconify/vue'
+</script>

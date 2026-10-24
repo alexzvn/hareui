@@ -1,3 +1,47 @@
+<template>
+  <RovingFocusItem v-if="group?.roving" as-child :focusable="!isDisabled" :active="selected">
+    <Toggle
+      ref="self"
+      :as="as"
+      :model-value="selected"
+      :disabled="isDisabled"
+      v-bind="roleAttrs"
+      data-slot="toggle-button"
+      :data-selected="selected ? 'true' : undefined"
+      :class="ui.base({ class: [groupClass, props.ui?.base, props.class] })"
+      @update:model-value="onUpdate"
+    >
+      <span
+        v-if="showSeparator"
+        aria-hidden="true"
+        data-slot="toggle-button-group-separator"
+        :class="group!.ui.value.separator({ class: group!.uiOverrides.value?.separator })"
+      />
+      <slot :selected="selected" :disabled="isDisabled" />
+    </Toggle>
+  </RovingFocusItem>
+  <Toggle
+    v-else
+    ref="self"
+    :as="as"
+    :model-value="selected"
+    :disabled="isDisabled"
+    v-bind="roleAttrs"
+    data-slot="toggle-button"
+    :data-selected="selected ? 'true' : undefined"
+    :class="ui.base({ class: [groupClass, props.ui?.base, props.class] })"
+    @update:model-value="onUpdate"
+  >
+    <span
+      v-if="showSeparator"
+      aria-hidden="true"
+      data-slot="toggle-button-group-separator"
+      :class="group!.ui.value.separator({ class: group!.uiOverrides.value?.separator })"
+    />
+    <slot :selected="selected" :disabled="isDisabled" />
+  </Toggle>
+</template>
+
 <script lang="ts">
 import type { PrimitiveProps } from 'reka-ui'
 
@@ -124,47 +168,3 @@ const roleAttrs = computed(() =>
     : {},
 )
 </script>
-
-<template>
-  <RovingFocusItem v-if="group?.roving" as-child :focusable="!isDisabled" :active="selected">
-    <Toggle
-      ref="self"
-      :as="as"
-      :model-value="selected"
-      :disabled="isDisabled"
-      v-bind="roleAttrs"
-      data-slot="toggle-button"
-      :data-selected="selected ? 'true' : undefined"
-      :class="ui.base({ class: [groupClass, props.ui?.base, props.class] })"
-      @update:model-value="onUpdate"
-    >
-      <span
-        v-if="showSeparator"
-        aria-hidden="true"
-        data-slot="toggle-button-group-separator"
-        :class="group!.ui.value.separator({ class: group!.uiOverrides.value?.separator })"
-      />
-      <slot :selected="selected" :disabled="isDisabled" />
-    </Toggle>
-  </RovingFocusItem>
-  <Toggle
-    v-else
-    ref="self"
-    :as="as"
-    :model-value="selected"
-    :disabled="isDisabled"
-    v-bind="roleAttrs"
-    data-slot="toggle-button"
-    :data-selected="selected ? 'true' : undefined"
-    :class="ui.base({ class: [groupClass, props.ui?.base, props.class] })"
-    @update:model-value="onUpdate"
-  >
-    <span
-      v-if="showSeparator"
-      aria-hidden="true"
-      data-slot="toggle-button-group-separator"
-      :class="group!.ui.value.separator({ class: group!.uiOverrides.value?.separator })"
-    />
-    <slot :selected="selected" :disabled="isDisabled" />
-  </Toggle>
-</template>

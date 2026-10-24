@@ -1,3 +1,15 @@
+<template>
+  <Accordion
+    :items="entries()"
+    variant="surface"
+    :ui="{ heading: 'not-prose', bodyInner: '[&>:first-child]:mt-0 [&>:last-child]:mb-0' }"
+  >
+    <template v-for="entry in entries()" :key="entry.slot" #[entry.slot]>
+      <component :is="entry.node" />
+    </template>
+  </Accordion>
+</template>
+
 <script setup lang="ts">
 import { Accordion } from '@hareui/vue'
 import type { VNode } from 'vue'
@@ -26,15 +38,3 @@ function entries() {
   }))
 }
 </script>
-
-<template>
-  <Accordion
-    :items="entries()"
-    variant="surface"
-    :ui="{ heading: 'not-prose', bodyInner: '[&>:first-child]:mt-0 [&>:last-child]:mb-0' }"
-  >
-    <template v-for="entry in entries()" :key="entry.slot" #[entry.slot]>
-      <component :is="entry.node" />
-    </template>
-  </Accordion>
-</template>

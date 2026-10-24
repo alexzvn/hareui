@@ -1,3 +1,9 @@
+<template>
+  <div data-slot="chart-tooltip-item" :class="classes.item({ class: [ui()?.item, props.class] })">
+    <slot />
+  </div>
+</template>
+
 <script lang="ts">
 export interface ChartTooltipItemProps {
   /** Additional classes merged into the element. */
@@ -18,9 +24,3 @@ defineSlots<ChartTooltipItemSlots>()
 
 const { classes, ui } = useChartTooltipContext('Item')
 </script>
-
-<template>
-  <div data-slot="chart-tooltip-item" :class="classes.item({ class: [ui()?.item, props.class] })">
-    <slot />
-  </div>
-</template>

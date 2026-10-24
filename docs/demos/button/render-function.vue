@@ -1,3 +1,7 @@
+<template>
+  <Button :as="CustomButton"> Press me </Button>
+</template>
+
 <script setup lang="ts">
 import { Button } from '@hareui/vue'
 import { defineComponent, h, ref } from 'vue'
@@ -20,7 +24,3 @@ const CustomButton = defineComponent((_, { attrs, slots }) => {
     )
 })
 </script>
-
-<template>
-  <Button :as="CustomButton"> Press me </Button>
-</template>

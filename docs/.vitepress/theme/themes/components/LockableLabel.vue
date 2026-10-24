@@ -1,26 +1,3 @@
-<script setup lang="ts">
-import { Button, Label, Tooltip } from '@hareui/vue'
-import { Icon } from '@iconify/vue'
-import { ref } from 'vue'
-
-import { useToggleLockedVariable } from '../composables/variables'
-// Port of HeroUI docs `themes/components/lockable-label.tsx`.
-import type { LockableThemeVariableKey } from '../constants'
-
-const props = defineProps<{
-  label: string
-  variable: LockableThemeVariableKey
-  tooltip?: string
-}>()
-
-const isLabelHovered = ref(false)
-const { isLocked, toggleLockedVariable } = useToggleLockedVariable(props.variable)
-
-// HeroUI's `Tooltip.Trigger` renders this wrapper div (`.tooltip__trigger`)
-const TRIGGER =
-  'inline-block [transition:color_150ms_var(--ease-smooth),background-color_150ms_var(--ease-smooth),box-shadow_150ms_var(--ease-out)] motion-reduce:transition-none focus-visible:status-focused'
-</script>
-
 <template>
   <div
     class="flex h-6 items-center gap-1"
@@ -56,3 +33,26 @@ const TRIGGER =
     </Tooltip>
   </div>
 </template>
+
+<script setup lang="ts">
+import { Button, Label, Tooltip } from '@hareui/vue'
+import { Icon } from '@iconify/vue'
+import { ref } from 'vue'
+
+import { useToggleLockedVariable } from '../composables/variables'
+// Port of HeroUI docs `themes/components/lockable-label.tsx`.
+import type { LockableThemeVariableKey } from '../constants'
+
+const props = defineProps<{
+  label: string
+  variable: LockableThemeVariableKey
+  tooltip?: string
+}>()
+
+const isLabelHovered = ref(false)
+const { isLocked, toggleLockedVariable } = useToggleLockedVariable(props.variable)
+
+// HeroUI's `Tooltip.Trigger` renders this wrapper div (`.tooltip__trigger`)
+const TRIGGER =
+  'inline-block [transition:color_150ms_var(--ease-smooth),background-color_150ms_var(--ease-smooth),box-shadow_150ms_var(--ease-out)] motion-reduce:transition-none focus-visible:status-focused'
+</script>

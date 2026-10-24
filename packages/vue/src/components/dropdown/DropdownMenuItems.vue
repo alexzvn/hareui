@@ -1,3 +1,71 @@
+<template>
+  <template v-for="(entry, index) in entries" :key="key(entry, index)">
+    <hr
+      v-if="isSeparator(entry)"
+      data-slot="separator"
+      data-orientation="horizontal"
+      :class="ctx.classes().separator!({ class: ctx.ui()?.separator })"
+    />
+    <DropdownMenuGroup
+      v-else-if="isSection(entry)"
+      as="section"
+      :aria-labelledby="
+        entry.label || ctx.slots['section-label'] ? `${baseId}-${index}` : undefined
+      "
+      :class="ctx.classes().section!({ class: [ctx.ui()?.section, entry.class] })"
+    >
+      <!-- RAC `useMenuSection`: menus can't own headings, so the header is presentational and only labels the group -->
+      <DropdownMenuLabel
+        v-if="entry.label || ctx.slots['section-label']"
+        :id="`${baseId}-${index}`"
+        as="header"
+        role="presentation"
+        data-slot="header"
+        :class="ctx.classes().header!({ class: ctx.ui()?.header })"
+      >
+        <component
+          :is="ctx.slots['section-label']"
+          v-if="ctx.slots['section-label']"
+          :section="entry"
+        />
+        <template v-else>
+          {{ entry.label }}
+        </template>
+      </DropdownMenuLabel>
+      <DropdownMenuItems :entries="entry.items" :group="ctx.sectionGroup(entry, group)" />
+    </DropdownMenuGroup>
+    <DropdownMenuSub
+      v-else-if="hasSubmenu(entry)"
+      :open="openSubmenu === entry.value"
+      @update:open="
+        openSubmenu = $event ? entry.value : openSubmenu === entry.value ? null : openSubmenu
+      "
+    >
+      <DropdownMenuOption :item="entry" :group="group" submenu />
+      <DropdownMenuPortal :disabled="ctx.portal().disabled" :to="ctx.portal().to">
+        <!-- RAC submenu popover: placement "end top", offset 8, 12px container padding -->
+        <DropdownMenuSubContent
+          :ref="
+            (instance) => setSubmenuContent(entry.value, instance as ComponentPublicInstance | null)
+          "
+          loop
+          :side-offset="8"
+          :collision-padding="12"
+          data-slot="dropdown-popover"
+          :class="ctx.classes().popover!({ class: ctx.ui()?.popover })"
+          @interact-outside="preventNestedLayerDismiss($event, submenuContents.get(entry.value))"
+          @keydown="onSubmenuContentKeydown"
+        >
+          <div data-slot="dropdown-menu" :class="ctx.classes().menu!({ class: ctx.ui()?.menu })">
+            <DropdownMenuItems :entries="entry.items" :group="submenuGroup" />
+          </div>
+        </DropdownMenuSubContent>
+      </DropdownMenuPortal>
+    </DropdownMenuSub>
+    <DropdownMenuOption v-else :item="entry" :group="group" />
+  </template>
+</template>
+
 <script setup lang="ts">
 import {
   DropdownMenuGroup,
@@ -80,71 +148,3 @@ function key(entry: DropdownEntry, index: number) {
   return isSeparator(entry) || isSection(entry) ? `${entry.type}-${index}` : `item-${entry.value}`
 }
 </script>
-
-<template>
-  <template v-for="(entry, index) in entries" :key="key(entry, index)">
-    <hr
-      v-if="isSeparator(entry)"
-      data-slot="separator"
-      data-orientation="horizontal"
-      :class="ctx.classes().separator!({ class: ctx.ui()?.separator })"
-    />
-    <DropdownMenuGroup
-      v-else-if="isSection(entry)"
-      as="section"
-      :aria-labelledby="
-        entry.label || ctx.slots['section-label'] ? `${baseId}-${index}` : undefined
-      "
-      :class="ctx.classes().section!({ class: [ctx.ui()?.section, entry.class] })"
-    >
-      <!-- RAC `useMenuSection`: menus can't own headings, so the header is presentational and only labels the group -->
-      <DropdownMenuLabel
-        v-if="entry.label || ctx.slots['section-label']"
-        :id="`${baseId}-${index}`"
-        as="header"
-        role="presentation"
-        data-slot="header"
-        :class="ctx.classes().header!({ class: ctx.ui()?.header })"
-      >
-        <component
-          :is="ctx.slots['section-label']"
-          v-if="ctx.slots['section-label']"
-          :section="entry"
-        />
-        <template v-else>
-          {{ entry.label }}
-        </template>
-      </DropdownMenuLabel>
-      <DropdownMenuItems :entries="entry.items" :group="ctx.sectionGroup(entry, group)" />
-    </DropdownMenuGroup>
-    <DropdownMenuSub
-      v-else-if="hasSubmenu(entry)"
-      :open="openSubmenu === entry.value"
-      @update:open="
-        openSubmenu = $event ? entry.value : openSubmenu === entry.value ? null : openSubmenu
-      "
-    >
-      <DropdownMenuOption :item="entry" :group="group" submenu />
-      <DropdownMenuPortal :disabled="ctx.portal().disabled" :to="ctx.portal().to">
-        <!-- RAC submenu popover: placement "end top", offset 8, 12px container padding -->
-        <DropdownMenuSubContent
-          :ref="
-            (instance) => setSubmenuContent(entry.value, instance as ComponentPublicInstance | null)
-          "
-          loop
-          :side-offset="8"
-          :collision-padding="12"
-          data-slot="dropdown-popover"
-          :class="ctx.classes().popover!({ class: ctx.ui()?.popover })"
-          @interact-outside="preventNestedLayerDismiss($event, submenuContents.get(entry.value))"
-          @keydown="onSubmenuContentKeydown"
-        >
-          <div data-slot="dropdown-menu" :class="ctx.classes().menu!({ class: ctx.ui()?.menu })">
-            <DropdownMenuItems :entries="entry.items" :group="submenuGroup" />
-          </div>
-        </DropdownMenuSubContent>
-      </DropdownMenuPortal>
-    </DropdownMenuSub>
-    <DropdownMenuOption v-else :item="entry" :group="group" />
-  </template>
-</template>

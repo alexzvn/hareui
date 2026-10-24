@@ -1,70 +1,3 @@
-<script setup lang="ts">
-import type { BreadcrumbsItem, NavigationMenuItem } from '@hareui/vue'
-import {
-  Avatar,
-  Breadcrumbs,
-  Button,
-  DashboardGroup,
-  DashboardNavbar,
-  DashboardPanel,
-  DashboardSidebar,
-  DashboardSidebarCollapse,
-  NavigationMenu,
-  Separator,
-  Tooltip,
-} from '@hareui/vue'
-import { Icon } from '@iconify/vue'
-import { h } from 'vue'
-
-// NavigationMenu takes icon components: an Iconify Gravity UI icon that forwards the menu's icon classes.
-const gravityIcon = (name: string) => (attrs: Record<string, unknown>) =>
-  h(Icon, { ...attrs, icon: `gravity-ui:${name}` })
-
-// An array of arrays renders groups separated by a divider.
-const items: NavigationMenuItem[][] = [
-  [
-    { label: 'Overview', icon: gravityIcon('house'), href: '#' },
-    { label: 'Components', icon: gravityIcon('layout-columns'), href: '#', active: true },
-    { label: 'Tokens', icon: gravityIcon('palette'), href: '#' },
-    { label: 'Typography', icon: gravityIcon('text-align-left'), href: '#' },
-    { label: 'Changelog', icon: gravityIcon('square-article'), href: '#' },
-    { label: 'Settings', icon: gravityIcon('gear'), href: '#' },
-  ],
-  [
-    { type: 'label', label: 'Workspaces' },
-    { label: 'Frontend', icon: gravityIcon('folder'), href: '#' },
-    { label: 'Backend', icon: gravityIcon('folder'), href: '#' },
-  ],
-]
-
-const footerItems: NavigationMenuItem[] = [
-  { label: 'Help', icon: gravityIcon('circle-question'), href: '#' },
-]
-
-// Every crumb keeps its natural width. The navbar is a size container (sized by its content box): under 36rem
-// (`@max-xl`) the middle ancestors fold into a "…" crumb that links to the nearest one and names the hidden path
-// in a tooltip, under 24rem (`@max-sm`, a phone) Home folds into it too, and under 20rem (`@max-xs`) only the
-// current page is left.
-const breadcrumbs: BreadcrumbsItem[] = [
-  { label: 'Home', href: '#', class: '@max-sm:hidden' },
-  {
-    label: 'Design System',
-    href: '#',
-    collapsed: 'Projects › Design System',
-    class: 'hidden @max-xl:flex @max-sm:hidden',
-  },
-  {
-    label: 'Design System',
-    href: '#',
-    collapsed: 'Home › Projects › Design System',
-    class: 'hidden @max-sm:flex @max-xs:hidden',
-  },
-  { label: 'Projects', href: '#', class: '@max-xl:hidden' },
-  { label: 'Design System', href: '#', class: '@max-xl:hidden' },
-  { label: 'Components', icon: 'gravity-ui:layout-columns' },
-]
-</script>
-
 <template>
   <DashboardGroup unit="rem" :persistent="false">
     <DashboardSidebar
@@ -167,3 +100,70 @@ const breadcrumbs: BreadcrumbsItem[] = [
     </DashboardPanel>
   </DashboardGroup>
 </template>
+
+<script setup lang="ts">
+import type { BreadcrumbsItem, NavigationMenuItem } from '@hareui/vue'
+import {
+  Avatar,
+  Breadcrumbs,
+  Button,
+  DashboardGroup,
+  DashboardNavbar,
+  DashboardPanel,
+  DashboardSidebar,
+  DashboardSidebarCollapse,
+  NavigationMenu,
+  Separator,
+  Tooltip,
+} from '@hareui/vue'
+import { Icon } from '@iconify/vue'
+import { h } from 'vue'
+
+// NavigationMenu takes icon components: an Iconify Gravity UI icon that forwards the menu's icon classes.
+const gravityIcon = (name: string) => (attrs: Record<string, unknown>) =>
+  h(Icon, { ...attrs, icon: `gravity-ui:${name}` })
+
+// An array of arrays renders groups separated by a divider.
+const items: NavigationMenuItem[][] = [
+  [
+    { label: 'Overview', icon: gravityIcon('house'), href: '#' },
+    { label: 'Components', icon: gravityIcon('layout-columns'), href: '#', active: true },
+    { label: 'Tokens', icon: gravityIcon('palette'), href: '#' },
+    { label: 'Typography', icon: gravityIcon('text-align-left'), href: '#' },
+    { label: 'Changelog', icon: gravityIcon('square-article'), href: '#' },
+    { label: 'Settings', icon: gravityIcon('gear'), href: '#' },
+  ],
+  [
+    { type: 'label', label: 'Workspaces' },
+    { label: 'Frontend', icon: gravityIcon('folder'), href: '#' },
+    { label: 'Backend', icon: gravityIcon('folder'), href: '#' },
+  ],
+]
+
+const footerItems: NavigationMenuItem[] = [
+  { label: 'Help', icon: gravityIcon('circle-question'), href: '#' },
+]
+
+// Every crumb keeps its natural width. The navbar is a size container (sized by its content box): under 36rem
+// (`@max-xl`) the middle ancestors fold into a "…" crumb that links to the nearest one and names the hidden path
+// in a tooltip, under 24rem (`@max-sm`, a phone) Home folds into it too, and under 20rem (`@max-xs`) only the
+// current page is left.
+const breadcrumbs: BreadcrumbsItem[] = [
+  { label: 'Home', href: '#', class: '@max-sm:hidden' },
+  {
+    label: 'Design System',
+    href: '#',
+    collapsed: 'Projects › Design System',
+    class: 'hidden @max-xl:flex @max-sm:hidden',
+  },
+  {
+    label: 'Design System',
+    href: '#',
+    collapsed: 'Home › Projects › Design System',
+    class: 'hidden @max-sm:flex @max-xs:hidden',
+  },
+  { label: 'Projects', href: '#', class: '@max-xl:hidden' },
+  { label: 'Design System', href: '#', class: '@max-xl:hidden' },
+  { label: 'Components', icon: 'gravity-ui:layout-columns' },
+]
+</script>

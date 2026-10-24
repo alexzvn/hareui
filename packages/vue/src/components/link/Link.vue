@@ -1,3 +1,22 @@
+<template>
+  <Primitive
+    :as="as"
+    :href="isDisabled ? undefined : href"
+    :role="hrefless ? 'link' : undefined"
+    :tabindex="hrefless && !isDisabled ? 0 : undefined"
+    :aria-disabled="isDisabled ? 'true' : undefined"
+    :data-disabled="isDisabled ? 'true' : undefined"
+    data-slot="link"
+    :class="ui.base({ class: [props.ui?.base, props.class] })"
+    @click="onClick"
+    @keydown="onKeydown"
+  >
+    <Icon v-if="showIcon && iconPlacement === 'start'" />
+    <slot />
+    <Icon v-if="showIcon && iconPlacement === 'end'" />
+  </Primitive>
+</template>
+
 <script lang="ts">
 import type { PrimitiveProps } from 'reka-ui'
 
@@ -104,22 +123,3 @@ function onKeydown(event: KeyboardEvent) {
   }
 }
 </script>
-
-<template>
-  <Primitive
-    :as="as"
-    :href="isDisabled ? undefined : href"
-    :role="hrefless ? 'link' : undefined"
-    :tabindex="hrefless && !isDisabled ? 0 : undefined"
-    :aria-disabled="isDisabled ? 'true' : undefined"
-    :data-disabled="isDisabled ? 'true' : undefined"
-    data-slot="link"
-    :class="ui.base({ class: [props.ui?.base, props.class] })"
-    @click="onClick"
-    @keydown="onKeydown"
-  >
-    <Icon v-if="showIcon && iconPlacement === 'start'" />
-    <slot />
-    <Icon v-if="showIcon && iconPlacement === 'end'" />
-  </Primitive>
-</template>

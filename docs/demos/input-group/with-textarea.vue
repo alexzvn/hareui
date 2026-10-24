@@ -1,21 +1,3 @@
-<script setup lang="ts">
-import { Button, InputGroup, Kbd, TextField, Tooltip } from '@hareui/vue'
-import { Icon } from '@iconify/vue'
-import { ref } from 'vue'
-
-const value = ref('')
-const isSubmitting = ref(false)
-
-function handleSubmit() {
-  if (!value.value.trim()) return
-  isSubmitting.value = true
-  setTimeout(() => {
-    isSubmitting.value = false
-    value.value = ''
-  }, 1000)
-}
-</script>
-
 <template>
   <TextField
     v-model="value"
@@ -90,3 +72,21 @@ function handleSubmit() {
     </InputGroup>
   </TextField>
 </template>
+
+<script setup lang="ts">
+import { Button, InputGroup, Kbd, TextField, Tooltip } from '@hareui/vue'
+import { Icon } from '@iconify/vue'
+import { ref } from 'vue'
+
+const value = ref('')
+const isSubmitting = ref(false)
+
+function handleSubmit() {
+  if (!value.value.trim()) return
+  isSubmitting.value = true
+  setTimeout(() => {
+    isSubmitting.value = false
+    value.value = ''
+  }, 1000)
+}
+</script>

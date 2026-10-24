@@ -1,31 +1,3 @@
-<script setup lang="ts">
-import { CheckboxButtonGroup, CheckboxButtonGroupItem } from '@hareui/vue'
-import { ref } from 'vue'
-
-const features = [
-  {
-    value: 'format-on-save',
-    label: 'Format on save',
-    description: 'Run the formatter whenever a file is saved',
-    shortcut: 'Alt+Shift+F',
-  },
-  {
-    value: 'inlay-hints',
-    label: 'Inlay hints',
-    description: 'Show parameter names and inferred types inline',
-    shortcut: 'Ctrl+Alt+H',
-  },
-  {
-    value: 'minimap',
-    label: 'Minimap',
-    description: 'Display a code overview next to the scrollbar',
-    shortcut: 'Ctrl+M',
-  },
-]
-
-const enabled = ref(['format-on-save'])
-</script>
-
 <template>
   <div class="flex w-[360px] flex-col gap-4">
     <CheckboxButtonGroup
@@ -53,3 +25,31 @@ const enabled = ref(['format-on-save'])
     </p>
   </div>
 </template>
+
+<script setup lang="ts">
+import { CheckboxButtonGroup, CheckboxButtonGroupItem } from '@hareui/vue'
+import { ref } from 'vue'
+
+const features = [
+  {
+    value: 'format-on-save',
+    label: 'Format on save',
+    description: 'Run the formatter whenever a file is saved',
+    shortcut: 'Alt+Shift+F',
+  },
+  {
+    value: 'inlay-hints',
+    label: 'Inlay hints',
+    description: 'Show parameter names and inferred types inline',
+    shortcut: 'Ctrl+Alt+H',
+  },
+  {
+    value: 'minimap',
+    label: 'Minimap',
+    description: 'Display a code overview next to the scrollbar',
+    shortcut: 'Ctrl+M',
+  },
+]
+
+const enabled = ref(['format-on-save'])
+</script>

@@ -1,3 +1,86 @@
+<template>
+  <div ref="root" v-bind="rootAttrs" :class="ui.base({ class: [props.ui?.base, props.class] })">
+    <!-- `base` is HareUI's own wrapper (HeroUI composes Label/InputOTP/Description itself), so it carries no data-slot -->
+    <FieldLabel :for="id" />
+    <!-- Like the `input-otp` library's container: HeroUI's `data-slot="input-otp"` and state attributes land on the <input> -->
+    <div ref="box" data-input-otp-container="true" :class="ui.root({ class: props.ui?.root })">
+      <template v-for="(indexes, groupIndex) in groupSlots" :key="groupIndex">
+        <div data-slot="input-otp-group" :class="ui.group({ class: props.ui?.group })">
+          <div
+            v-for="index in indexes"
+            :key="index"
+            data-slot="input-otp-slot"
+            :data-active="isActive(index) ? 'true' : undefined"
+            :data-filled="charAt(index) ? 'true' : undefined"
+            :data-disabled="disabled ? 'true' : undefined"
+            :data-invalid="invalid ? 'true' : undefined"
+            :class="ui.slot({ class: props.ui?.slot })"
+          >
+            <div
+              v-if="charAt(index)"
+              data-slot="input-otp-slot-value"
+              :class="ui.slotValue({ class: props.ui?.slotValue })"
+            >
+              {{ charAt(index) }}
+            </div>
+            <div
+              v-if="hasFakeCaret(index)"
+              data-slot="input-otp-caret"
+              :class="ui.caret({ class: props.ui?.caret })"
+            />
+          </div>
+        </div>
+        <div
+          v-if="groupIndex < groupSlots.length - 1"
+          data-slot="input-otp-separator"
+          :class="ui.separator({ class: props.ui?.separator })"
+        />
+      </template>
+      <input
+        :id="id"
+        ref="input"
+        type="text"
+        :value="modelValue ?? ''"
+        :maxlength="length"
+        :name="name"
+        :disabled="disabled || undefined"
+        :required="required || undefined"
+        :pattern="patternRegex?.source"
+        :inputmode="inputMode"
+        autocomplete="one-time-code"
+        autocapitalize="off"
+        autocorrect="off"
+        spellcheck="false"
+        :aria-label="attrs['aria-label'] as string | undefined"
+        :aria-labelledby="attrs['aria-labelledby'] as string | undefined"
+        :aria-invalid="invalid ? 'true' : undefined"
+        :aria-describedby="describedBy"
+        data-slot="input-otp"
+        :data-disabled="disabled ? 'true' : undefined"
+        :data-invalid="invalid ? 'true' : undefined"
+        :class="ui.input({ class: props.ui?.input })"
+        :style="
+          pushPwmBadge
+            ? {
+                width: `calc(100% + ${PWM_BADGE_SPACE}px)`,
+                clipPath: `inset(0 ${PWM_BADGE_SPACE}px 0 0)`,
+              }
+            : undefined
+        "
+        @input="onInput"
+        @paste="onPaste"
+        @focus="onFocus"
+        @blur="onBlur"
+        @click="syncSelection"
+        @keyup="syncSelection"
+        @select="syncSelection"
+      />
+    </div>
+    <FieldDescription />
+    <FieldError />
+  </div>
+</template>
+
 <script lang="ts">
 import type { ValidateFn, ValidationResult } from '../../composables/useFieldValidation'
 import type { ComponentSlots, ComponentVariants } from '../../types/tv'
@@ -323,86 +406,3 @@ function onPaste(event: ClipboardEvent) {
   syncSelection()
 }
 </script>
-
-<template>
-  <div ref="root" v-bind="rootAttrs" :class="ui.base({ class: [props.ui?.base, props.class] })">
-    <!-- `base` is HareUI's own wrapper (HeroUI composes Label/InputOTP/Description itself), so it carries no data-slot -->
-    <FieldLabel :for="id" />
-    <!-- Like the `input-otp` library's container: HeroUI's `data-slot="input-otp"` and state attributes land on the <input> -->
-    <div ref="box" data-input-otp-container="true" :class="ui.root({ class: props.ui?.root })">
-      <template v-for="(indexes, groupIndex) in groupSlots" :key="groupIndex">
-        <div data-slot="input-otp-group" :class="ui.group({ class: props.ui?.group })">
-          <div
-            v-for="index in indexes"
-            :key="index"
-            data-slot="input-otp-slot"
-            :data-active="isActive(index) ? 'true' : undefined"
-            :data-filled="charAt(index) ? 'true' : undefined"
-            :data-disabled="disabled ? 'true' : undefined"
-            :data-invalid="invalid ? 'true' : undefined"
-            :class="ui.slot({ class: props.ui?.slot })"
-          >
-            <div
-              v-if="charAt(index)"
-              data-slot="input-otp-slot-value"
-              :class="ui.slotValue({ class: props.ui?.slotValue })"
-            >
-              {{ charAt(index) }}
-            </div>
-            <div
-              v-if="hasFakeCaret(index)"
-              data-slot="input-otp-caret"
-              :class="ui.caret({ class: props.ui?.caret })"
-            />
-          </div>
-        </div>
-        <div
-          v-if="groupIndex < groupSlots.length - 1"
-          data-slot="input-otp-separator"
-          :class="ui.separator({ class: props.ui?.separator })"
-        />
-      </template>
-      <input
-        :id="id"
-        ref="input"
-        type="text"
-        :value="modelValue ?? ''"
-        :maxlength="length"
-        :name="name"
-        :disabled="disabled || undefined"
-        :required="required || undefined"
-        :pattern="patternRegex?.source"
-        :inputmode="inputMode"
-        autocomplete="one-time-code"
-        autocapitalize="off"
-        autocorrect="off"
-        spellcheck="false"
-        :aria-label="attrs['aria-label'] as string | undefined"
-        :aria-labelledby="attrs['aria-labelledby'] as string | undefined"
-        :aria-invalid="invalid ? 'true' : undefined"
-        :aria-describedby="describedBy"
-        data-slot="input-otp"
-        :data-disabled="disabled ? 'true' : undefined"
-        :data-invalid="invalid ? 'true' : undefined"
-        :class="ui.input({ class: props.ui?.input })"
-        :style="
-          pushPwmBadge
-            ? {
-                width: `calc(100% + ${PWM_BADGE_SPACE}px)`,
-                clipPath: `inset(0 ${PWM_BADGE_SPACE}px 0 0)`,
-              }
-            : undefined
-        "
-        @input="onInput"
-        @paste="onPaste"
-        @focus="onFocus"
-        @blur="onBlur"
-        @click="syncSelection"
-        @keyup="syncSelection"
-        @select="syncSelection"
-      />
-    </div>
-    <FieldDescription />
-    <FieldError />
-  </div>
-</template>

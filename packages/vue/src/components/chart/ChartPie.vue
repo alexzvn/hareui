@@ -1,3 +1,27 @@
+<template>
+  <ChartLayer name="series">
+    <g v-if="!hide" data-slot="chart-pie" :class="chart.classes('series', props.class)">
+      <path
+        v-for="sector in sectors"
+        :key="sector.index"
+        data-slot="chart-pie-sector"
+        :data-index="sector.index"
+        :data-active="
+          chart.active.seriesId === id && chart.active.index === sector.index ? 'true' : undefined
+        "
+        :d="sector.d"
+        :transform="`translate(${sector.cx}, ${sector.cy})`"
+        :fill="sector.fill"
+        :fill-opacity="sector.cell?.fillOpacity"
+        :stroke="sector.cell?.stroke ?? stroke"
+        :stroke-width="sector.cell?.strokeWidth ?? strokeWidth"
+        :class="chart.classes('sector', sector.cell?.class)"
+      />
+    </g>
+  </ChartLayer>
+  <slot />
+</template>
+
 <script lang="ts">
 import type { ClassValue } from 'tailwind-variants'
 
@@ -259,27 +283,3 @@ watchEffect(() => {
     chart.setActive(null)
 })
 </script>
-
-<template>
-  <ChartLayer name="series">
-    <g v-if="!hide" data-slot="chart-pie" :class="chart.classes('series', props.class)">
-      <path
-        v-for="sector in sectors"
-        :key="sector.index"
-        data-slot="chart-pie-sector"
-        :data-index="sector.index"
-        :data-active="
-          chart.active.seriesId === id && chart.active.index === sector.index ? 'true' : undefined
-        "
-        :d="sector.d"
-        :transform="`translate(${sector.cx}, ${sector.cy})`"
-        :fill="sector.fill"
-        :fill-opacity="sector.cell?.fillOpacity"
-        :stroke="sector.cell?.stroke ?? stroke"
-        :stroke-width="sector.cell?.strokeWidth ?? strokeWidth"
-        :class="chart.classes('sector', sector.cell?.class)"
-      />
-    </g>
-  </ChartLayer>
-  <slot />
-</template>

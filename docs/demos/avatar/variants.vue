@@ -1,24 +1,3 @@
-<script setup lang="ts">
-import { Avatar, Separator } from '@hareui/vue'
-import { Icon } from '@iconify/vue'
-
-const colors = ['accent', 'default', 'success', 'warning', 'danger'] as const
-const rows = [
-  { label: 'letter', content: 'AG', icon: false, variant: 'default' as const },
-  { label: 'letter soft', content: 'AG', icon: false, variant: 'soft' as const },
-  { label: 'icon', content: '', icon: true, variant: 'default' as const },
-  { label: 'icon soft', content: '', icon: true, variant: 'soft' as const },
-]
-
-const images = [
-  'https://img.heroui.chat/image/avatar?w=400&h=400&u=3',
-  'https://img.heroui.chat/image/avatar?w=400&h=400&u=4',
-  'https://img.heroui.chat/image/avatar?w=400&h=400&u=5',
-  'https://img.heroui.chat/image/avatar?w=400&h=400&u=8',
-  'https://img.heroui.chat/image/avatar?w=400&h=400&u=16',
-]
-</script>
-
 <template>
   <div class="flex flex-col gap-4">
     <div class="flex items-center gap-3">
@@ -67,3 +46,24 @@ const images = [
     </div>
   </div>
 </template>
+
+<script setup lang="ts">
+import { Avatar, Separator } from '@hareui/vue'
+import { Icon } from '@iconify/vue'
+
+const colors = ['accent', 'default', 'success', 'warning', 'danger'] as const
+const rows = [
+  { label: 'letter', content: 'AG', icon: false, variant: 'default' as const },
+  { label: 'letter soft', content: 'AG', icon: false, variant: 'soft' as const },
+  { label: 'icon', content: '', icon: true, variant: 'default' as const },
+  { label: 'icon soft', content: '', icon: true, variant: 'soft' as const },
+]
+
+const images = [
+  'https://img.heroui.chat/image/avatar?w=400&h=400&u=3',
+  'https://img.heroui.chat/image/avatar?w=400&h=400&u=4',
+  'https://img.heroui.chat/image/avatar?w=400&h=400&u=5',
+  'https://img.heroui.chat/image/avatar?w=400&h=400&u=8',
+  'https://img.heroui.chat/image/avatar?w=400&h=400&u=16',
+]
+</script>

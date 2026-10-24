@@ -1,3 +1,7 @@
+<template>
+  <Accordion class="w-full max-w-md" :items="items" multiple />
+</template>
+
 <script setup lang="ts">
 import type { AccordionItem } from '@hareui/vue'
 import { Accordion } from '@hareui/vue'
@@ -25,7 +29,3 @@ const items: AccordionItem[] = [
   },
 ]
 </script>
-
-<template>
-  <Accordion class="w-full max-w-md" :items="items" multiple />
-</template>

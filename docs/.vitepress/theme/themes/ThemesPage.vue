@@ -1,27 +1,3 @@
-<script setup lang="ts">
-// Theme builder (`layout: themes`): port of HeroUI docs `app/[lang]/themes/page.tsx`.
-// Left out: metadata (frontmatter in docs/themes.md), `ProBanner`, `DictionaryProvider` (strings are inlined).
-// The builder state lives in the URL query, which only exists on the client, so the page body renders after mount
-// (the server markup is the empty page shell) instead of hydrating against defaults.
-import { onMounted, ref } from 'vue'
-
-import AccentColorSelector from './components/AccentColorSelector.vue'
-import BaseColorSlider from './components/BaseColorSlider.vue'
-import BuilderHeader from './components/BuilderHeader.vue'
-import FontFamilyPopover from './components/FontFamilyPopover.vue'
-import MobileFooter from './components/MobileFooter.vue'
-import Onboarding from './components/Onboarding.vue'
-import RadiusPopover from './components/RadiusPopover.vue'
-import ThemeBuilderContent from './components/ThemeBuilderContent.vue'
-import ThemePopover from './components/ThemePopover.vue'
-import { THEME_BUILDER_PAGE_ID, formRadiusOptions, radiusOptions } from './constants'
-
-const isMounted = ref(false)
-onMounted(() => {
-  isMounted.value = true
-})
-</script>
-
 <template>
   <div
     :id="THEME_BUILDER_PAGE_ID"
@@ -61,3 +37,27 @@ onMounted(() => {
   </div>
   <Onboarding v-if="isMounted" />
 </template>
+
+<script setup lang="ts">
+// Theme builder (`layout: themes`): port of HeroUI docs `app/[lang]/themes/page.tsx`.
+// Left out: metadata (frontmatter in docs/themes.md), `ProBanner`, `DictionaryProvider` (strings are inlined).
+// The builder state lives in the URL query, which only exists on the client, so the page body renders after mount
+// (the server markup is the empty page shell) instead of hydrating against defaults.
+import { onMounted, ref } from 'vue'
+
+import AccentColorSelector from './components/AccentColorSelector.vue'
+import BaseColorSlider from './components/BaseColorSlider.vue'
+import BuilderHeader from './components/BuilderHeader.vue'
+import FontFamilyPopover from './components/FontFamilyPopover.vue'
+import MobileFooter from './components/MobileFooter.vue'
+import Onboarding from './components/Onboarding.vue'
+import RadiusPopover from './components/RadiusPopover.vue'
+import ThemeBuilderContent from './components/ThemeBuilderContent.vue'
+import ThemePopover from './components/ThemePopover.vue'
+import { THEME_BUILDER_PAGE_ID, formRadiusOptions, radiusOptions } from './constants'
+
+const isMounted = ref(false)
+onMounted(() => {
+  isMounted.value = true
+})
+</script>

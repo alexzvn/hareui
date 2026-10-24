@@ -1,3 +1,97 @@
+<template>
+  <div
+    ref="root"
+    v-bind="rootAttrs"
+    data-slot="search-field"
+    :data-disabled="disabled ? 'true' : undefined"
+    :data-invalid="invalid ? 'true' : undefined"
+    :data-required="required ? 'true' : undefined"
+    :data-readonly="readonly ? 'true' : undefined"
+    :data-empty="isEmpty ? 'true' : undefined"
+    :class="ui.base({ class: [props.ui?.base, props.class] })"
+  >
+    <FieldLabel :for="id" />
+    <div
+      data-slot="search-field-group"
+      role="group"
+      :data-invalid="invalid ? 'true' : undefined"
+      :data-disabled="disabled ? 'true' : undefined"
+      :data-focus-within="focusWithin ? 'true' : undefined"
+      :data-focus-visible="focusVisible ? 'true' : undefined"
+      :class="ui.group({ class: props.ui?.group })"
+      @focusin="onFocusIn"
+      @focusout="onFocusOut"
+    >
+      <span
+        data-slot="search-field-search-icon"
+        :class="ui.searchIcon({ class: props.ui?.searchIcon })"
+      >
+        <slot name="icon">
+          <svg
+            aria-hidden="true"
+            fill="none"
+            height="16"
+            role="presentation"
+            viewBox="0 0 16 16"
+            width="16"
+            xmlns="http://www.w3.org/2000/svg"
+          >
+            <path
+              clip-rule="evenodd"
+              d="M11.5 7a4.5 4.5 0 1 1-9 0a4.5 4.5 0 0 1 9 0m-.82 4.74a6 6 0 1 1 1.06-1.06l2.79 2.79a.75.75 0 1 1-1.06 1.06z"
+              fill="currentColor"
+              fill-rule="evenodd"
+            />
+          </svg>
+        </slot>
+      </span>
+      <input
+        v-bind="inputAttrs"
+        :id="id"
+        ref="input"
+        v-model="modelValue"
+        type="search"
+        :name="name"
+        :placeholder="placeholder"
+        :disabled="disabled || undefined"
+        :required="required || undefined"
+        :readonly="readonly || undefined"
+        :aria-invalid="invalid ? 'true' : undefined"
+        :aria-describedby="describedBy"
+        data-slot="search-field-input"
+        :data-invalid="invalid ? 'true' : undefined"
+        :class="ui.input({ class: props.ui?.input })"
+        @keydown.enter="onEnter"
+        @keydown.esc="onEscape"
+      />
+      <CloseButton
+        v-if="slots.clearIcon"
+        data-slot="search-field-clear-button"
+        aria-label="Clear search"
+        tabindex="-1"
+        :disabled="disabled || readonly || undefined"
+        :class="ui.clearButton({ class: props.ui?.clearButton })"
+        @mousedown.prevent
+        @click="onClear"
+      >
+        <slot name="clearIcon" />
+      </CloseButton>
+      <CloseButton
+        v-else
+        data-slot="search-field-clear-button"
+        aria-label="Clear search"
+        tabindex="-1"
+        :disabled="disabled || readonly || undefined"
+        :class="ui.clearButton({ class: props.ui?.clearButton })"
+        @mousedown.prevent
+        @click="onClear"
+      />
+    </div>
+    <FieldDescription />
+    <FieldError />
+  </div>
+</template>
+
 <script lang="ts">
 import type { ValidateFn, ValidationResult } from '../../composables/useFieldValidation'
 import type { ComponentSlots } from '../../types/tv'
@@ -195,97 +289,3 @@ const ui = useComponentUI('searchField', theme, () => ({
   fullWidth: props.fullWidth,
 }))
 </script>
-
-<template>
-  <div
-    ref="root"
-    v-bind="rootAttrs"
-    data-slot="search-field"
-    :data-disabled="disabled ? 'true' : undefined"
-    :data-invalid="invalid ? 'true' : undefined"
-    :data-required="required ? 'true' : undefined"
-    :data-readonly="readonly ? 'true' : undefined"
-    :data-empty="isEmpty ? 'true' : undefined"
-    :class="ui.base({ class: [props.ui?.base, props.class] })"
-  >
-    <FieldLabel :for="id" />
-    <div
-      data-slot="search-field-group"
-      role="group"
-      :data-invalid="invalid ? 'true' : undefined"
-      :data-disabled="disabled ? 'true' : undefined"
-      :data-focus-within="focusWithin ? 'true' : undefined"
-      :data-focus-visible="focusVisible ? 'true' : undefined"
-      :class="ui.group({ class: props.ui?.group })"
-      @focusin="onFocusIn"
-      @focusout="onFocusOut"
-    >
-      <span
-        data-slot="search-field-search-icon"
-        :class="ui.searchIcon({ class: props.ui?.searchIcon })"
-      >
-        <slot name="icon">
-          <svg
-            aria-hidden="true"
-            fill="none"
-            height="16"
-            role="presentation"
-            viewBox="0 0 16 16"
-            width="16"
-            xmlns="http://www.w3.org/2000/svg"
-          >
-            <path
-              clip-rule="evenodd"
-              d="M11.5 7a4.5 4.5 0 1 1-9 0a4.5 4.5 0 0 1 9 0m-.82 4.74a6 6 0 1 1 1.06-1.06l2.79 2.79a.75.75 0 1 1-1.06 1.06z"
-              fill="currentColor"
-              fill-rule="evenodd"
-            />
-          </svg>
-        </slot>
-      </span>
-      <input
-        v-bind="inputAttrs"
-        :id="id"
-        ref="input"
-        v-model="modelValue"
-        type="search"
-        :name="name"
-        :placeholder="placeholder"
-        :disabled="disabled || undefined"
-        :required="required || undefined"
-        :readonly="readonly || undefined"
-        :aria-invalid="invalid ? 'true' : undefined"
-        :aria-describedby="describedBy"
-        data-slot="search-field-input"
-        :data-invalid="invalid ? 'true' : undefined"
-        :class="ui.input({ class: props.ui?.input })"
-        @keydown.enter="onEnter"
-        @keydown.esc="onEscape"
-      />
-      <CloseButton
-        v-if="slots.clearIcon"
-        data-slot="search-field-clear-button"
-        aria-label="Clear search"
-        tabindex="-1"
-        :disabled="disabled || readonly || undefined"
-        :class="ui.clearButton({ class: props.ui?.clearButton })"
-        @mousedown.prevent
-        @click="onClear"
-      >
-        <slot name="clearIcon" />
-      </CloseButton>
-      <CloseButton
-        v-else
-        data-slot="search-field-clear-button"
-        aria-label="Clear search"
-        tabindex="-1"
-        :disabled="disabled || readonly || undefined"
-        :class="ui.clearButton({ class: props.ui?.clearButton })"
-        @mousedown.prevent
-        @click="onClear"
-      />
-    </div>
-    <FieldDescription />
-    <FieldError />
-  </div>
-</template>

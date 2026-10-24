@@ -1,3 +1,61 @@
+<template>
+  <div class="not-prose flex items-center justify-end px-0.5 pb-3">
+    <div class="flex min-w-0 items-center gap-1">
+      <button
+        type="button"
+        aria-label="Toggle preview theme"
+        :class="iconButtonClass"
+        @click="emit('toggleTheme')"
+      >
+        <span class="flex" v-html="icon(theme === 'dark' ? 'sun' : 'moon')" />
+      </button>
+      <a
+        aria-label="Open in new tab"
+        :class="iconButtonClass"
+        :href="href"
+        target="_blank"
+        rel="noopener noreferrer"
+      >
+        <span class="flex" v-html="icon('arrow-up-right')" />
+      </a>
+      <div aria-hidden="true" class="mx-1 hidden h-5 w-px shrink-0 bg-separator md:block" />
+      <div
+        ref="group"
+        role="radiogroup"
+        aria-label="Preview device"
+        class="relative isolate hidden h-8 shrink-0 items-center rounded-full bg-default p-0.5 md:flex"
+        @keydown="onSegmentKeydown"
+        @pointerenter="emit('preload')"
+        @focusin="emit('preload')"
+      >
+        <span
+          v-if="indicator"
+          aria-hidden="true"
+          :class="[
+            'absolute start-0 top-0.5 -z-1 h-7 rounded-full bg-segment shadow-surface',
+            sliding &&
+              '[transition-duration:250ms] [transition-property:translate,width] [transition-timing-function:var(--ease-out-fluid)] motion-reduce:transition-none',
+          ]"
+          :style="{ width: `${indicator.width}px`, translate: `${indicator.x}px 0` }"
+        />
+        <button
+          v-for="item in DEVICES"
+          ref="items"
+          :key="item.value"
+          type="button"
+          role="radio"
+          :aria-checked="device === item.value"
+          :tabindex="device === item.value ? 0 : -1"
+          class="flex h-7 cursor-(--cursor-interactive) items-center rounded-full px-2.5 text-xs font-medium text-muted outline-none transition-[color,opacity] duration-150 focus-visible:status-focused aria-checked:text-segment-foreground motion-reduce:transition-none [@media(hover:hover)]:[&:not([aria-checked=true]):hover]:opacity-70"
+          @click="select(item.value)"
+        >
+          {{ item.label }}
+        </button>
+      </div>
+    </div>
+  </div>
+</template>
+
 <script lang="ts">
 export type PreviewDevice = 'mobile' | 'tablet' | 'desktop'
 </script>
@@ -76,61 +134,3 @@ const icon = (name: 'moon' | 'sun' | 'arrow-up-right') =>
 const iconButtonClass =
   'flex size-7 cursor-(--cursor-interactive) items-center justify-center rounded-lg text-muted outline-none transition-colors hover:bg-default hover:text-foreground focus-visible:status-focused motion-reduce:transition-none'
 </script>
-
-<template>
-  <div class="not-prose flex items-center justify-end px-0.5 pb-3">
-    <div class="flex min-w-0 items-center gap-1">
-      <button
-        type="button"
-        aria-label="Toggle preview theme"
-        :class="iconButtonClass"
-        @click="emit('toggleTheme')"
-      >
-        <span class="flex" v-html="icon(theme === 'dark' ? 'sun' : 'moon')" />
-      </button>
-      <a
-        aria-label="Open in new tab"
-        :class="iconButtonClass"
-        :href="href"
-        target="_blank"
-        rel="noopener noreferrer"
-      >
-        <span class="flex" v-html="icon('arrow-up-right')" />
-      </a>
-      <div aria-hidden="true" class="mx-1 hidden h-5 w-px shrink-0 bg-separator md:block" />
-      <div
-        ref="group"
-        role="radiogroup"
-        aria-label="Preview device"
-        class="relative isolate hidden h-8 shrink-0 items-center rounded-full bg-default p-0.5 md:flex"
-        @keydown="onSegmentKeydown"
-        @pointerenter="emit('preload')"
-        @focusin="emit('preload')"
-      >
-        <span
-          v-if="indicator"
-          aria-hidden="true"
-          :class="[
-            'absolute start-0 top-0.5 -z-1 h-7 rounded-full bg-segment shadow-surface',
-            sliding &&
-              '[transition-duration:250ms] [transition-property:translate,width] [transition-timing-function:var(--ease-out-fluid)] motion-reduce:transition-none',
-          ]"
-          :style="{ width: `${indicator.width}px`, translate: `${indicator.x}px 0` }"
-        />
-        <button
-          v-for="item in DEVICES"
-          ref="items"
-          :key="item.value"
-          type="button"
-          role="radio"
-          :aria-checked="device === item.value"
-          :tabindex="device === item.value ? 0 : -1"
-          class="flex h-7 cursor-(--cursor-interactive) items-center rounded-full px-2.5 text-xs font-medium text-muted outline-none transition-[color,opacity] duration-150 focus-visible:status-focused aria-checked:text-segment-foreground motion-reduce:transition-none [@media(hover:hover)]:[&:not([aria-checked=true]):hover]:opacity-70"
-          @click="select(item.value)"
-        >
-          {{ item.label }}
-        </button>
-      </div>
-    </div>
-  </div>
-</template>

@@ -1,3 +1,22 @@
+<template>
+  <CheckboxButtonGroup
+    class="w-[320px]"
+    name="backup-folders"
+    label="Back up these folders"
+    variant="secondary"
+    :default-value="['camera']"
+  >
+    <CheckboxButtonGroupItem
+      v-for="folder in folders"
+      :key="folder.value"
+      :value="folder.value"
+      :label="folder.label"
+      :description="folder.description"
+      v-on="ripple"
+    />
+  </CheckboxButtonGroup>
+</template>
+
 <script setup lang="ts">
 import { CheckboxButtonGroup, CheckboxButtonGroupItem } from '@hareui/vue'
 
@@ -116,22 +135,3 @@ const ripple = {
   },
 }
 </script>
-
-<template>
-  <CheckboxButtonGroup
-    class="w-[320px]"
-    name="backup-folders"
-    label="Back up these folders"
-    variant="secondary"
-    :default-value="['camera']"
-  >
-    <CheckboxButtonGroupItem
-      v-for="folder in folders"
-      :key="folder.value"
-      :value="folder.value"
-      :label="folder.label"
-      :description="folder.description"
-      v-on="ripple"
-    />
-  </CheckboxButtonGroup>
-</template>

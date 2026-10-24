@@ -1,3 +1,15 @@
+<template>
+  <div class="flex w-full flex-col gap-3">
+    <Input
+      v-model="email"
+      aria-label="Filter emails"
+      placeholder="Filter emails..."
+      class="max-w-xs"
+    />
+    <RichTable ref="table" :data="data" :columns="columns" />
+  </div>
+</template>
+
 <script setup lang="ts">
 import type { RichTableColumn } from '@hareui/vue'
 import { Input, RichTable } from '@hareui/vue'
@@ -38,15 +50,3 @@ const email = computed({
   set: (value) => table.value?.tableApi?.getColumn('email')?.setFilterValue(value || undefined),
 })
 </script>
-
-<template>
-  <div class="flex w-full flex-col gap-3">
-    <Input
-      v-model="email"
-      aria-label="Filter emails"
-      placeholder="Filter emails..."
-      class="max-w-xs"
-    />
-    <RichTable ref="table" :data="data" :columns="columns" />
-  </div>
-</template>

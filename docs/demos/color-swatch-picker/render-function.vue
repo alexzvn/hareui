@@ -1,3 +1,7 @@
+<template>
+  <ColorSwatchPicker aria-label="Color" :items="colors" as="div" data-custom="foo" />
+</template>
+
 <script setup lang="ts">
 import type { ColorSwatchPickerItem } from '@hareui/vue'
 import { ColorSwatchPicker } from '@hareui/vue'
@@ -12,7 +16,3 @@ const colors: ColorSwatchPickerItem[] = [
   '#84CC16',
 ]
 </script>
-
-<template>
-  <ColorSwatchPicker aria-label="Color" :items="colors" as="div" data-custom="foo" />
-</template>

@@ -1,30 +1,3 @@
-<script setup lang="ts">
-import type { DropdownEntry } from '@hareui/vue'
-import { Avatar, Dropdown, Label } from '@hareui/vue'
-import { Icon } from '@iconify/vue'
-
-// Equivalent of HeroUI's `Dropdown.Trigger` (a pressable wrapper styled by `.dropdown__trigger`)
-// around non-button content.
-const triggerClass = [
-  'inline-block rounded-full outline-none transform-gpu cursor-(--cursor-interactive)',
-  '[transition:transform_250ms_var(--ease-out-quart),background-color_150ms_var(--ease-smooth),box-shadow_150ms_var(--ease-out)] motion-reduce:transition-none',
-  'focus-visible:status-focused active:[transform:scale(0.97)]',
-].join(' ')
-
-const items: DropdownEntry[] = [
-  { value: 'dashboard', label: 'Dashboard' },
-  { value: 'profile', label: 'Profile' },
-  { value: 'settings', label: 'Settings', icon: 'gravity-ui:gear' },
-  { value: 'new-project', label: 'Create Team', icon: 'gravity-ui:persons' },
-  {
-    value: 'logout',
-    label: 'Log Out',
-    icon: 'gravity-ui:arrow-right-from-square',
-    variant: 'danger',
-  },
-]
-</script>
-
 <template>
   <Dropdown :items="items">
     <button data-slot="dropdown-trigger" type="button" :class="triggerClass">
@@ -67,3 +40,30 @@ const items: DropdownEntry[] = [
     </template>
   </Dropdown>
 </template>
+
+<script setup lang="ts">
+import type { DropdownEntry } from '@hareui/vue'
+import { Avatar, Dropdown, Label } from '@hareui/vue'
+import { Icon } from '@iconify/vue'
+
+// Equivalent of HeroUI's `Dropdown.Trigger` (a pressable wrapper styled by `.dropdown__trigger`)
+// around non-button content.
+const triggerClass = [
+  'inline-block rounded-full outline-none transform-gpu cursor-(--cursor-interactive)',
+  '[transition:transform_250ms_var(--ease-out-quart),background-color_150ms_var(--ease-smooth),box-shadow_150ms_var(--ease-out)] motion-reduce:transition-none',
+  'focus-visible:status-focused active:[transform:scale(0.97)]',
+].join(' ')
+
+const items: DropdownEntry[] = [
+  { value: 'dashboard', label: 'Dashboard' },
+  { value: 'profile', label: 'Profile' },
+  { value: 'settings', label: 'Settings', icon: 'gravity-ui:gear' },
+  { value: 'new-project', label: 'Create Team', icon: 'gravity-ui:persons' },
+  {
+    value: 'logout',
+    label: 'Log Out',
+    icon: 'gravity-ui:arrow-right-from-square',
+    variant: 'danger',
+  },
+]
+</script>

@@ -1,15 +1,3 @@
-<script setup lang="ts">
-import type { RadioGroupItem } from '@hareui/vue'
-import { Button, Modal, RadioGroup } from '@hareui/vue'
-import { ref } from 'vue'
-
-const scroll = ref<'inside' | 'outside'>('inside')
-const items: RadioGroupItem[] = [
-  { value: 'inside', label: 'Inside' },
-  { value: 'outside', label: 'Outside' },
-]
-</script>
-
 <template>
   <div class="flex flex-col gap-4">
     <RadioGroup v-model="scroll" orientation="horizontal" name="scroll" :items="items" />
@@ -33,3 +21,15 @@ const items: RadioGroupItem[] = [
     </Modal>
   </div>
 </template>
+
+<script setup lang="ts">
+import type { RadioGroupItem } from '@hareui/vue'
+import { Button, Modal, RadioGroup } from '@hareui/vue'
+import { ref } from 'vue'
+
+const scroll = ref<'inside' | 'outside'>('inside')
+const items: RadioGroupItem[] = [
+  { value: 'inside', label: 'Inside' },
+  { value: 'outside', label: 'Outside' },
+]
+</script>

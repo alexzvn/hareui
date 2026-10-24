@@ -1,3 +1,16 @@
+<template>
+  <div class="flex items-center justify-center px-10">
+    <InlineSelect
+      v-model="placement"
+      aria-label="Popover placement"
+      :items="placements"
+      :side="current.side"
+      :align="current.align"
+      :ui="{ popover: 'w-44' }"
+    />
+  </div>
+</template>
+
 <script setup lang="ts">
 import type { ListBoxItem, SelectValue } from '@hareui/vue'
 import { InlineSelect } from '@hareui/vue'
@@ -29,16 +42,3 @@ const current = computed(
   () => placements.find((p) => p.value === placement.value) ?? placements[2]!,
 )
 </script>
-
-<template>
-  <div class="flex items-center justify-center px-10">
-    <InlineSelect
-      v-model="placement"
-      aria-label="Popover placement"
-      :items="placements"
-      :side="current.side"
-      :align="current.align"
-      :ui="{ popover: 'w-44' }"
-    />
-  </div>
-</template>

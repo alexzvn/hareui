@@ -1,3 +1,25 @@
+<template>
+  <Card
+    class="w-full max-w-[600px] rounded-2xl"
+    :ui="{ header: 'flex-row flex-wrap items-center justify-between gap-2' }"
+  >
+    <template #header>
+      <h3 class="text-base font-medium text-foreground">API Latency by Region</h3>
+      <ChartLegend :series="series" :colors="colors" />
+    </template>
+    <LineChart
+      :data="data"
+      index="hour"
+      :series="series"
+      :colors="colors"
+      aria-label="API latency by region over the day"
+      :height="240"
+      :value-formatter="formatLatency"
+      :tooltip="{ indicator: 'line' }"
+    />
+  </Card>
+</template>
+
 <script setup lang="ts">
 import { Card } from '@hareui/vue'
 import { ChartLegend, LineChart } from '@hareui/vue/charts'
@@ -29,25 +51,3 @@ function formatLatency(value: number) {
   return `${value} ms`
 }
 </script>
-
-<template>
-  <Card
-    class="w-full max-w-[600px] rounded-2xl"
-    :ui="{ header: 'flex-row flex-wrap items-center justify-between gap-2' }"
-  >
-    <template #header>
-      <h3 class="text-base font-medium text-foreground">API Latency by Region</h3>
-      <ChartLegend :series="series" :colors="colors" />
-    </template>
-    <LineChart
-      :data="data"
-      index="hour"
-      :series="series"
-      :colors="colors"
-      aria-label="API latency by region over the day"
-      :height="240"
-      :value-formatter="formatLatency"
-      :tooltip="{ indicator: 'line' }"
-    />
-  </Card>
-</template>

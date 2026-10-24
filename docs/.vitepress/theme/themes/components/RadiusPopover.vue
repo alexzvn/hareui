@@ -1,3 +1,49 @@
+<template>
+  <div class="flex flex-col gap-1">
+    <LockableLabel :label="label" :variable="variableKey" />
+    <Popover side="top" class="w-[304px] rounded-3xl" :ui="{ dialog: 'p-3' }">
+      <ControlsPopoverTrigger>
+        <InputGroup
+          class="w-40 cursor-pointer"
+          :id="variableKey"
+          :name="variableKey"
+          readonly
+          :model-value="currentOption ? RADIUS_OPTION_LABELS[currentOption.id] : ''"
+          :ui="{ prefix: 'w-10', input: 'max-w-20 cursor-pointer capitalize', suffix: 'w-10' }"
+        >
+          <template #prefix>
+            <span class="text-base font-semibold text-muted">{{ currentOption?.label }}</span>
+          </template>
+          <template #suffix>
+            <Icon icon="gravity-ui:chevrons-expand-vertical" class="size-3" />
+          </template>
+        </InputGroup>
+      </ControlsPopoverTrigger>
+      <template #content>
+        <div class="mb-2 flex flex-col gap-0.5 ps-2">
+          <p class="text-xs font-medium capitalize">{{ label }}</p>
+          <p class="text-xs text-muted">{{ description }}</p>
+        </div>
+        <ListBox
+          :aria-label="label"
+          class="grid grid-cols-3 gap-2 px-0"
+          :items="items"
+          :model-value="currentValue"
+          selection-mode="single"
+          @update:model-value="onSelectionChange"
+        >
+          <template #item="{ item }">
+            <span class="text-xl font-semibold">{{ item.label }}</span>
+            <p class="text-xs text-muted capitalize group-data-[selected=true]:text-foreground">
+              {{ RADIUS_OPTION_LABELS[item.value as RadiusId] }}
+            </p>
+          </template>
+        </ListBox>
+      </template>
+    </Popover>
+  </div>
+</template>
+
 <script setup lang="ts">
 import { InputGroup, ListBox, Popover } from '@hareui/vue'
 import { Icon } from '@iconify/vue'
@@ -49,49 +95,3 @@ function onSelectionChange(selected: unknown) {
   if (selected) setVariable(props.variableKey, String(selected) as RadiusId)
 }
 </script>
-
-<template>
-  <div class="flex flex-col gap-1">
-    <LockableLabel :label="label" :variable="variableKey" />
-    <Popover side="top" class="w-[304px] rounded-3xl" :ui="{ dialog: 'p-3' }">
-      <ControlsPopoverTrigger>
-        <InputGroup
-          class="w-40 cursor-pointer"
-          :id="variableKey"
-          :name="variableKey"
-          readonly
-          :model-value="currentOption ? RADIUS_OPTION_LABELS[currentOption.id] : ''"
-          :ui="{ prefix: 'w-10', input: 'max-w-20 cursor-pointer capitalize', suffix: 'w-10' }"
-        >
-          <template #prefix>
-            <span class="text-base font-semibold text-muted">{{ currentOption?.label }}</span>
-          </template>
-          <template #suffix>
-            <Icon icon="gravity-ui:chevrons-expand-vertical" class="size-3" />
-          </template>
-        </InputGroup>
-      </ControlsPopoverTrigger>
-      <template #content>
-        <div class="mb-2 flex flex-col gap-0.5 ps-2">
-          <p class="text-xs font-medium capitalize">{{ label }}</p>
-          <p class="text-xs text-muted">{{ description }}</p>
-        </div>
-        <ListBox
-          :aria-label="label"
-          class="grid grid-cols-3 gap-2 px-0"
-          :items="items"
-          :model-value="currentValue"
-          selection-mode="single"
-          @update:model-value="onSelectionChange"
-        >
-          <template #item="{ item }">
-            <span class="text-xl font-semibold">{{ item.label }}</span>
-            <p class="text-xs text-muted capitalize group-data-[selected=true]:text-foreground">
-              {{ RADIUS_OPTION_LABELS[item.value as RadiusId] }}
-            </p>
-          </template>
-        </ListBox>
-      </template>
-    </Popover>
-  </div>
-</template>

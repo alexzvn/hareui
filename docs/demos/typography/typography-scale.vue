@@ -1,3 +1,19 @@
+<template>
+  <div class="flex w-full flex-col divide-y divide-border">
+    <div
+      v-for="row in scale"
+      :key="row.label"
+      class="grid grid-cols-[160px_1fr] items-center gap-8 py-5"
+    >
+      <div class="flex shrink-0 flex-col gap-0.5">
+        <span class="text-sm font-semibold text-foreground">{{ row.label }}</span>
+        <span class="text-xs whitespace-nowrap text-muted">{{ row.meta }}</span>
+      </div>
+      <Typography :type="row.type">{{ row.sample }}</Typography>
+    </div>
+  </div>
+</template>
+
 <script setup lang="ts">
 import { Typography } from '@hareui/vue'
 
@@ -54,19 +70,3 @@ const scale = [
   { label: 'code', meta: '14px / mono', sample: 'pnpm add @heroui/react', type: 'code' as const },
 ]
 </script>
-
-<template>
-  <div class="flex w-full flex-col divide-y divide-border">
-    <div
-      v-for="row in scale"
-      :key="row.label"
-      class="grid grid-cols-[160px_1fr] items-center gap-8 py-5"
-    >
-      <div class="flex shrink-0 flex-col gap-0.5">
-        <span class="text-sm font-semibold text-foreground">{{ row.label }}</span>
-        <span class="text-xs whitespace-nowrap text-muted">{{ row.meta }}</span>
-      </div>
-      <Typography :type="row.type">{{ row.sample }}</Typography>
-    </div>
-  </div>
-</template>

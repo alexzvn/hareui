@@ -1,3 +1,96 @@
+<template>
+  <CheckboxGroupRoot
+    ref="root"
+    role="group"
+    :model-value="selected"
+    :name="name"
+    :disabled="isDisabled"
+    :required="required"
+    :roving-focus="false"
+    data-slot="checkbox-group"
+    :data-invalid="invalid ? 'true' : undefined"
+    :data-readonly="readonly ? 'true' : undefined"
+    :data-required="required ? 'true' : undefined"
+    :aria-invalid="invalid ? 'true' : undefined"
+    :aria-disabled="isDisabled ? 'true' : undefined"
+    :aria-labelledby="hasLabel ? labelId : undefined"
+    :aria-describedby="describedBy"
+    :class="ui.base({ class: [props.ui?.base, props.class] })"
+    @update:model-value="onUpdate"
+  >
+    <!-- `as` falls through to Reka `Label`: the group label names the group via aria-labelledby, not a form control -->
+    <FieldLabel :id="labelId" as="span" :invalid="false" />
+    <FieldDescription />
+    <div
+      v-for="(item, index) in items"
+      :key="item.value"
+      data-slot="checkbox"
+      :data-state="selected.includes(item.value) ? 'checked' : 'unchecked'"
+      :data-selected="selected.includes(item.value) ? 'true' : undefined"
+      :data-disabled="isDisabled || item.disabled ? 'true' : undefined"
+      :data-invalid="invalid ? 'true' : undefined"
+      :data-readonly="readonly ? 'true' : undefined"
+      :class="itemUi.base({ class: props.ui?.item })"
+      @click="forwardRootClick($event, '[data-slot=checkbox-content]')"
+      @mousedown="keepFocusWhenReadonly($event, readonly, '[data-slot=checkbox-content]')"
+    >
+      <RekaCheckboxRoot
+        :id="`${id}-${index}`"
+        :value="item.value"
+        :disabled="item.disabled"
+        :aria-invalid="invalid ? 'true' : undefined"
+        :aria-readonly="readonly ? 'true' : undefined"
+        :aria-describedby="
+          [hasItemDescription(item) && `${id}-${index}-description`, describedBy]
+            .filter(Boolean)
+            .join(' ') || undefined
+        "
+        data-slot="checkbox-content"
+        :data-selected="selected.includes(item.value) ? 'true' : undefined"
+        :class="itemUi.content({ class: props.ui?.content })"
+        @keydown.capture="submitOnEnter"
+      >
+        <span data-slot="checkbox-control" :class="itemUi.control({ class: props.ui?.control })">
+          <span
+            aria-hidden="true"
+            data-slot="checkbox-indicator"
+            :class="itemUi.indicator({ class: props.ui?.indicator })"
+          >
+            <slot name="indicator" :item="item" :checked="selected.includes(item.value)">
+              <svg
+                aria-hidden="true"
+                data-slot="checkbox-default-indicator--checkmark"
+                fill="none"
+                role="presentation"
+                stroke="currentColor"
+                stroke-dasharray="22"
+                :stroke-dashoffset="selected.includes(item.value) ? 44 : 66"
+                stroke-linecap="round"
+                stroke-linejoin="round"
+                stroke-width="2"
+                viewBox="0 0 17 18"
+              >
+                <polyline points="1 9 7 14 15 4" />
+              </svg>
+            </slot>
+          </span>
+        </span>
+        <slot name="item-label" :item="item" :index="index">{{ item.label }}</slot>
+      </RekaCheckboxRoot>
+      <Description
+        v-if="hasItemDescription(item) && $slots['item-description']"
+        :id="`${id}-${index}-description`"
+      >
+        <slot name="item-description" :item="item" :index="index">{{ item.description }}</slot>
+      </Description>
+      <Description v-else-if="hasItemDescription(item)" :id="`${id}-${index}-description`">{{
+        item.description
+      }}</Description>
+    </div>
+    <FieldError />
+  </CheckboxGroupRoot>
+</template>
+
 <script lang="ts">
 import type { ValidateFn, ValidationResult } from '../../composables/useFieldValidation'
 import type { ComponentSlots, ComponentVariants } from '../../types/tv'
@@ -171,96 +264,3 @@ function onUpdate(value: string[]) {
   commitValidation()
 }
 </script>
-
-<template>
-  <CheckboxGroupRoot
-    ref="root"
-    role="group"
-    :model-value="selected"
-    :name="name"
-    :disabled="isDisabled"
-    :required="required"
-    :roving-focus="false"
-    data-slot="checkbox-group"
-    :data-invalid="invalid ? 'true' : undefined"
-    :data-readonly="readonly ? 'true' : undefined"
-    :data-required="required ? 'true' : undefined"
-    :aria-invalid="invalid ? 'true' : undefined"
-    :aria-disabled="isDisabled ? 'true' : undefined"
-    :aria-labelledby="hasLabel ? labelId : undefined"
-    :aria-describedby="describedBy"
-    :class="ui.base({ class: [props.ui?.base, props.class] })"
-    @update:model-value="onUpdate"
-  >
-    <!-- `as` falls through to Reka `Label`: the group label names the group via aria-labelledby, not a form control -->
-    <FieldLabel :id="labelId" as="span" :invalid="false" />
-    <FieldDescription />
-    <div
-      v-for="(item, index) in items"
-      :key="item.value"
-      data-slot="checkbox"
-      :data-state="selected.includes(item.value) ? 'checked' : 'unchecked'"
-      :data-selected="selected.includes(item.value) ? 'true' : undefined"
-      :data-disabled="isDisabled || item.disabled ? 'true' : undefined"
-      :data-invalid="invalid ? 'true' : undefined"
-      :data-readonly="readonly ? 'true' : undefined"
-      :class="itemUi.base({ class: props.ui?.item })"
-      @click="forwardRootClick($event, '[data-slot=checkbox-content]')"
-      @mousedown="keepFocusWhenReadonly($event, readonly, '[data-slot=checkbox-content]')"
-    >
-      <RekaCheckboxRoot
-        :id="`${id}-${index}`"
-        :value="item.value"
-        :disabled="item.disabled"
-        :aria-invalid="invalid ? 'true' : undefined"
-        :aria-readonly="readonly ? 'true' : undefined"
-        :aria-describedby="
-          [hasItemDescription(item) && `${id}-${index}-description`, describedBy]
-            .filter(Boolean)
-            .join(' ') || undefined
-        "
-        data-slot="checkbox-content"
-        :data-selected="selected.includes(item.value) ? 'true' : undefined"
-        :class="itemUi.content({ class: props.ui?.content })"
-        @keydown.capture="submitOnEnter"
-      >
-        <span data-slot="checkbox-control" :class="itemUi.control({ class: props.ui?.control })">
-          <span
-            aria-hidden="true"
-            data-slot="checkbox-indicator"
-            :class="itemUi.indicator({ class: props.ui?.indicator })"
-          >
-            <slot name="indicator" :item="item" :checked="selected.includes(item.value)">
-              <svg
-                aria-hidden="true"
-                data-slot="checkbox-default-indicator--checkmark"
-                fill="none"
-                role="presentation"
-                stroke="currentColor"
-                stroke-dasharray="22"
-                :stroke-dashoffset="selected.includes(item.value) ? 44 : 66"
-                stroke-linecap="round"
-                stroke-linejoin="round"
-                stroke-width="2"
-                viewBox="0 0 17 18"
-              >
-                <polyline points="1 9 7 14 15 4" />
-              </svg>
-            </slot>
-          </span>
-        </span>
-        <slot name="item-label" :item="item" :index="index">{{ item.label }}</slot>
-      </RekaCheckboxRoot>
-      <Description
-        v-if="hasItemDescription(item) && $slots['item-description']"
-        :id="`${id}-${index}-description`"
-      >
-        <slot name="item-description" :item="item" :index="index">{{ item.description }}</slot>
-      </Description>
-      <Description v-else-if="hasItemDescription(item)" :id="`${id}-${index}-description`">{{
-        item.description
-      }}</Description>
-    </div>
-    <FieldError />
-  </CheckboxGroupRoot>
-</template>

@@ -1,8 +1,3 @@
-<script setup lang="ts">
-import { Surface, TimeField } from '@hareui/vue'
-import { Icon } from '@iconify/vue'
-</script>
-
 <template>
   <Surface class="flex w-full max-w-sm flex-col gap-4 rounded-3xl p-6">
     <TimeField
@@ -25,3 +20,8 @@ import { Icon } from '@iconify/vue'
     </TimeField>
   </Surface>
 </template>
+
+<script setup lang="ts">
+import { Surface, TimeField } from '@hareui/vue'
+import { Icon } from '@iconify/vue'
+</script>

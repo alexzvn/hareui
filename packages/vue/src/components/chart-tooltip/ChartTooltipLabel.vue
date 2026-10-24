@@ -1,3 +1,12 @@
+<template>
+  <span
+    data-slot="chart-tooltip-label"
+    :class="classes.label({ class: [ui()?.label, props.class] })"
+  >
+    <slot />
+  </span>
+</template>
+
 <script lang="ts">
 export interface ChartTooltipLabelProps {
   /** Additional classes merged into the element. */
@@ -18,12 +27,3 @@ defineSlots<ChartTooltipLabelSlots>()
 
 const { classes, ui } = useChartTooltipContext('Label')
 </script>
-
-<template>
-  <span
-    data-slot="chart-tooltip-label"
-    :class="classes.label({ class: [ui()?.label, props.class] })"
-  >
-    <slot />
-  </span>
-</template>

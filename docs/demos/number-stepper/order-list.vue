@@ -1,28 +1,3 @@
-<script setup lang="ts">
-import { NumberStepper } from '@hareui/vue'
-import { computed, reactive } from 'vue'
-
-const items = [
-  { key: 'sourdough', name: 'Sourdough', price: 6.5, max: 3 },
-  { key: 'croissant', name: 'Croissant', price: 2.2, max: 12 },
-  { key: 'baguette', name: 'Baguette', price: 3, max: 6 },
-  { key: 'cinnamon', name: 'Cinnamon roll', price: 3.8, max: 8 },
-] as const
-
-const order = reactive<Record<(typeof items)[number]['key'], number | null>>({
-  sourdough: 1,
-  croissant: 4,
-  baguette: 0,
-  cinnamon: 2,
-})
-
-const euro = new Intl.NumberFormat('en-IE', { style: 'currency', currency: 'EUR' })
-const total = computed(() =>
-  items.reduce((sum, item) => sum + item.price * (order[item.key] ?? 0), 0),
-)
-const count = computed(() => items.reduce((sum, item) => sum + (order[item.key] ?? 0), 0))
-</script>
-
 <template>
   <div class="w-[420px] max-w-full overflow-hidden rounded-2xl border border-border">
     <div class="grid grid-cols-2 gap-px bg-border">
@@ -56,3 +31,28 @@ const count = computed(() => items.reduce((sum, item) => sum + (order[item.key] 
     </div>
   </div>
 </template>
+
+<script setup lang="ts">
+import { NumberStepper } from '@hareui/vue'
+import { computed, reactive } from 'vue'
+
+const items = [
+  { key: 'sourdough', name: 'Sourdough', price: 6.5, max: 3 },
+  { key: 'croissant', name: 'Croissant', price: 2.2, max: 12 },
+  { key: 'baguette', name: 'Baguette', price: 3, max: 6 },
+  { key: 'cinnamon', name: 'Cinnamon roll', price: 3.8, max: 8 },
+] as const
+
+const order = reactive<Record<(typeof items)[number]['key'], number | null>>({
+  sourdough: 1,
+  croissant: 4,
+  baguette: 0,
+  cinnamon: 2,
+})
+
+const euro = new Intl.NumberFormat('en-IE', { style: 'currency', currency: 'EUR' })
+const total = computed(() =>
+  items.reduce((sum, item) => sum + item.price * (order[item.key] ?? 0), 0),
+)
+const count = computed(() => items.reduce((sum, item) => sum + (order[item.key] ?? 0), 0))
+</script>

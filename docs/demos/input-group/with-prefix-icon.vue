@@ -1,8 +1,3 @@
-<script setup lang="ts">
-import { InputGroup, TextField } from '@hareui/vue'
-import { Icon } from '@iconify/vue'
-</script>
-
 <template>
   <TextField
     class="w-full max-w-[280px]"
@@ -17,3 +12,8 @@ import { Icon } from '@iconify/vue'
     </InputGroup>
   </TextField>
 </template>
+
+<script setup lang="ts">
+import { InputGroup, TextField } from '@hareui/vue'
+import { Icon } from '@iconify/vue'
+</script>

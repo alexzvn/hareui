@@ -1,7 +1,3 @@
-<script setup lang="ts">
-import { Description, Switch } from '@hareui/vue'
-</script>
-
 <template>
   <Switch
     id="autosave"
@@ -18,3 +14,7 @@ import { Description, Switch } from '@hareui/vue'
     </template>
   </Switch>
 </template>
+
+<script setup lang="ts">
+import { Description, Switch } from '@hareui/vue'
+</script>

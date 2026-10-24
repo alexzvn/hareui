@@ -1,3 +1,33 @@
+<template>
+  <RadioGroupRoot
+    ref="root"
+    :model-value="selected"
+    :name="name"
+    :disabled="isDisabled"
+    :required="required"
+    :orientation="orientation"
+    data-slot="radio-button-group"
+    :data-layout="layout"
+    :data-invalid="invalid ? 'true' : undefined"
+    :data-readonly="readonly ? 'true' : undefined"
+    :data-required="required ? 'true' : undefined"
+    :aria-invalid="invalid ? 'true' : undefined"
+    :aria-readonly="readonly ? 'true' : undefined"
+    :aria-disabled="isDisabled ? 'true' : undefined"
+    :aria-labelledby="hasLabel ? labelId : undefined"
+    :aria-describedby="describedBy"
+    :class="ui.base({ class: [props.ui?.base, props.class] })"
+    @update:model-value="onUpdate"
+    @keydown.capture="onKeydownCapture"
+  >
+    <!-- A group label names the radiogroup via aria-labelledby, not a form control. -->
+    <FieldLabel :id="labelId" as="span" :invalid="false" />
+    <FieldDescription />
+    <slot />
+    <FieldError />
+  </RadioGroupRoot>
+</template>
+
 <script lang="ts">
 import type { ValidateFn, ValidationResult } from '../../composables/useFieldValidation'
 import type { ComponentSlots, ComponentVariants } from '../../types/tv'
@@ -158,33 +188,3 @@ function onUpdate(value: unknown) {
   commitValidation()
 }
 </script>
-
-<template>
-  <RadioGroupRoot
-    ref="root"
-    :model-value="selected"
-    :name="name"
-    :disabled="isDisabled"
-    :required="required"
-    :orientation="orientation"
-    data-slot="radio-button-group"
-    :data-layout="layout"
-    :data-invalid="invalid ? 'true' : undefined"
-    :data-readonly="readonly ? 'true' : undefined"
-    :data-required="required ? 'true' : undefined"
-    :aria-invalid="invalid ? 'true' : undefined"
-    :aria-readonly="readonly ? 'true' : undefined"
-    :aria-disabled="isDisabled ? 'true' : undefined"
-    :aria-labelledby="hasLabel ? labelId : undefined"
-    :aria-describedby="describedBy"
-    :class="ui.base({ class: [props.ui?.base, props.class] })"
-    @update:model-value="onUpdate"
-    @keydown.capture="onKeydownCapture"
-  >
-    <!-- A group label names the radiogroup via aria-labelledby, not a form control. -->
-    <FieldLabel :id="labelId" as="span" :invalid="false" />
-    <FieldDescription />
-    <slot />
-    <FieldError />
-  </RadioGroupRoot>
-</template>

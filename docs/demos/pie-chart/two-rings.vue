@@ -1,28 +1,3 @@
-<script setup lang="ts">
-import { Card } from '@hareui/vue'
-import { ChartCell, ChartLegend, ChartPie, ChartTooltip, PieChart } from '@hareui/vue/charts'
-
-const colors = ['var(--chart-4)', 'var(--chart-3)', 'var(--chart-2)', 'var(--chart-1)']
-
-const previous = [
-  { season: 'Spring', label: 'Spring 2024', rainfall: 210 },
-  { season: 'Summer', label: 'Summer 2024', rainfall: 140 },
-  { season: 'Autumn', label: 'Autumn 2024', rainfall: 260 },
-  { season: 'Winter', label: 'Winter 2024', rainfall: 190 },
-]
-
-const current = [
-  { season: 'Spring', label: 'Spring 2025', rainfall: 240 },
-  { season: 'Summer', label: 'Summer 2025', rainfall: 110 },
-  { season: 'Autumn', label: 'Autumn 2025', rainfall: 300 },
-  { season: 'Winter', label: 'Winter 2025', rainfall: 220 },
-]
-
-function formatValue(value: number | string) {
-  return `${value} mm`
-}
-</script>
-
 <template>
   <Card
     class="w-full max-w-[400px] rounded-2xl"
@@ -68,3 +43,28 @@ function formatValue(value: number | string) {
     </div>
   </Card>
 </template>
+
+<script setup lang="ts">
+import { Card } from '@hareui/vue'
+import { ChartCell, ChartLegend, ChartPie, ChartTooltip, PieChart } from '@hareui/vue/charts'
+
+const colors = ['var(--chart-4)', 'var(--chart-3)', 'var(--chart-2)', 'var(--chart-1)']
+
+const previous = [
+  { season: 'Spring', label: 'Spring 2024', rainfall: 210 },
+  { season: 'Summer', label: 'Summer 2024', rainfall: 140 },
+  { season: 'Autumn', label: 'Autumn 2024', rainfall: 260 },
+  { season: 'Winter', label: 'Winter 2024', rainfall: 190 },
+]
+
+const current = [
+  { season: 'Spring', label: 'Spring 2025', rainfall: 240 },
+  { season: 'Summer', label: 'Summer 2025', rainfall: 110 },
+  { season: 'Autumn', label: 'Autumn 2025', rainfall: 300 },
+  { season: 'Winter', label: 'Winter 2025', rainfall: 220 },
+]
+
+function formatValue(value: number | string) {
+  return `${value} mm`
+}
+</script>

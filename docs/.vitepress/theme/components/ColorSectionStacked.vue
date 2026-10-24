@@ -1,18 +1,3 @@
-<script setup lang="ts">
-import StackedSwatch from './color/StackedSwatch.vue'
-import ThemeChip from './color/ThemeChip.vue'
-
-interface StackedColor {
-  label: string
-  variable: string
-  cssValue?: string
-  border?: boolean
-  tooltip?: string
-}
-
-defineProps<{ lightColors: StackedColor[]; darkColors: StackedColor[] }>()
-</script>
-
 <template>
   <div class="not-prose flex flex-col gap-2">
     <div data-theme="light">
@@ -41,3 +26,18 @@ defineProps<{ lightColors: StackedColor[]; darkColors: StackedColor[] }>()
     </div>
   </div>
 </template>
+
+<script setup lang="ts">
+import StackedSwatch from './color/StackedSwatch.vue'
+import ThemeChip from './color/ThemeChip.vue'
+
+interface StackedColor {
+  label: string
+  variable: string
+  cssValue?: string
+  border?: boolean
+  tooltip?: string
+}
+
+defineProps<{ lightColors: StackedColor[]; darkColors: StackedColor[] }>()
+</script>

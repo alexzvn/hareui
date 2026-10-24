@@ -1,3 +1,56 @@
+<template>
+  <ChartLayer v-if="!axis.hide" name="axis">
+    <g
+      :data-slot="axis.axis === 'x' ? 'chart-x-axis' : 'chart-y-axis'"
+      :data-orientation="axis.orientation"
+      :class="chart.classes('axis', props.class)"
+    >
+      <line
+        v-if="axisLine"
+        data-slot="chart-axis-line"
+        v-bind="line"
+        fill="none"
+        :class="chart.classes('axisLine')"
+      />
+      <template v-if="tickLine">
+        <line
+          v-for="entry in ticks"
+          :key="`line-${entry.tick.index}`"
+          data-slot="chart-tick-line"
+          v-bind="entry.line"
+          fill="none"
+          :class="chart.classes('tickLine')"
+        />
+      </template>
+      <template v-if="tick">
+        <template v-for="entry in ticks" :key="`tick-${entry.tick.index}`">
+          <slot
+            name="tick"
+            v-bind="{
+              x: entry.x,
+              y: entry.y,
+              value: entry.tick.value,
+              index: entry.tick.index,
+              text: entry.tick.text,
+              textAnchor: anchor.textAnchor,
+            }"
+          >
+            <text
+              data-slot="chart-tick"
+              :x="entry.x"
+              :y="entry.y"
+              :dy="anchor.dy"
+              :text-anchor="anchor.textAnchor"
+              :class="chart.classes('tick')"
+              >{{ entry.tick.text }}</text
+            >
+          </slot>
+        </template>
+      </template>
+    </g>
+  </ChartLayer>
+</template>
+
 <script setup lang="ts">
 import type { ClassValue } from 'tailwind-variants'
 import { computed } from 'vue'
@@ -93,56 +146,3 @@ function tickGeometry(tick: ChartTick) {
 
 const ticks = computed(() => props.axis.ticks.map((tick) => ({ tick, ...tickGeometry(tick) })))
 </script>
-
-<template>
-  <ChartLayer v-if="!axis.hide" name="axis">
-    <g
-      :data-slot="axis.axis === 'x' ? 'chart-x-axis' : 'chart-y-axis'"
-      :data-orientation="axis.orientation"
-      :class="chart.classes('axis', props.class)"
-    >
-      <line
-        v-if="axisLine"
-        data-slot="chart-axis-line"
-        v-bind="line"
-        fill="none"
-        :class="chart.classes('axisLine')"
-      />
-      <template v-if="tickLine">
-        <line
-          v-for="entry in ticks"
-          :key="`line-${entry.tick.index}`"
-          data-slot="chart-tick-line"
-          v-bind="entry.line"
-          fill="none"
-          :class="chart.classes('tickLine')"
-        />
-      </template>
-      <template v-if="tick">
-        <template v-for="entry in ticks" :key="`tick-${entry.tick.index}`">
-          <slot
-            name="tick"
-            v-bind="{
-              x: entry.x,
-              y: entry.y,
-              value: entry.tick.value,
-              index: entry.tick.index,
-              text: entry.tick.text,
-              textAnchor: anchor.textAnchor,
-            }"
-          >
-            <text
-              data-slot="chart-tick"
-              :x="entry.x"
-              :y="entry.y"
-              :dy="anchor.dy"
-              :text-anchor="anchor.textAnchor"
-              :class="chart.classes('tick')"
-              >{{ entry.tick.text }}</text
-            >
-          </slot>
-        </template>
-      </template>
-    </g>
-  </ChartLayer>
-</template>

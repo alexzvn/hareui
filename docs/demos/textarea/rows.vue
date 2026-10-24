@@ -1,7 +1,3 @@
-<script setup lang="ts">
-import { Label, TextArea } from '@hareui/vue'
-</script>
-
 <template>
   <div class="flex w-96 flex-col gap-4">
     <div class="flex flex-col gap-2">
@@ -25,3 +21,7 @@ import { Label, TextArea } from '@hareui/vue'
     </div>
   </div>
 </template>
+
+<script setup lang="ts">
+import { Label, TextArea } from '@hareui/vue'
+</script>

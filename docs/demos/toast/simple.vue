@@ -1,7 +1,3 @@
-<script setup lang="ts">
-import { Button, toast } from '@hareui/vue'
-</script>
-
 <template>
   <div class="flex h-full max-w-xl flex-col items-center justify-center">
     <div class="flex w-full flex-wrap items-center justify-center gap-4">
@@ -21,3 +17,7 @@ import { Button, toast } from '@hareui/vue'
     </div>
   </div>
 </template>
+
+<script setup lang="ts">
+import { Button, toast } from '@hareui/vue'
+</script>

@@ -1,25 +1,3 @@
-<script setup lang="ts">
-import { Card } from '@hareui/vue'
-import { AreaChart, ChartLegend } from '@hareui/vue/charts'
-
-const data = [
-  { hour: '00:00', download: 120, upload: 35 },
-  { hour: '03:00', download: 85, upload: 22 },
-  { hour: '06:00', download: 140, upload: 41 },
-  { hour: '09:00', download: 380, upload: 160 },
-  { hour: '12:00', download: 420, upload: 210 },
-  { hour: '15:00', download: 395, upload: 245 },
-  { hour: '18:00', download: 610, upload: 180 },
-  { hour: '21:00', download: 720, upload: 150 },
-]
-
-const series = { download: { name: 'Download' }, upload: { name: 'Upload' } }
-
-function formatSpeed(value: number | string) {
-  return `${value} Mbps`
-}
-</script>
-
 <template>
   <Card
     class="w-full max-w-[520px] rounded-2xl"
@@ -45,3 +23,25 @@ function formatSpeed(value: number | string) {
     </div>
   </Card>
 </template>
+
+<script setup lang="ts">
+import { Card } from '@hareui/vue'
+import { AreaChart, ChartLegend } from '@hareui/vue/charts'
+
+const data = [
+  { hour: '00:00', download: 120, upload: 35 },
+  { hour: '03:00', download: 85, upload: 22 },
+  { hour: '06:00', download: 140, upload: 41 },
+  { hour: '09:00', download: 380, upload: 160 },
+  { hour: '12:00', download: 420, upload: 210 },
+  { hour: '15:00', download: 395, upload: 245 },
+  { hour: '18:00', download: 610, upload: 180 },
+  { hour: '21:00', download: 720, upload: 150 },
+]
+
+const series = { download: { name: 'Download' }, upload: { name: 'Upload' } }
+
+function formatSpeed(value: number | string) {
+  return `${value} Mbps`
+}
+</script>

@@ -1,3 +1,29 @@
+<template>
+  <div class="flex h-full max-w-xl flex-col items-center justify-center">
+    <div class="flex w-full flex-wrap items-center justify-center gap-4">
+      <Button size="sm" variant="tertiary" @click="showDefault"> Default toast </Button>
+      <Button size="sm" variant="secondary" @click="showAccent"> Accent toast </Button>
+      <Button
+        class="text-success-soft-foreground"
+        size="sm"
+        variant="tertiary"
+        @click="showSuccess"
+      >
+        Success toast
+      </Button>
+      <Button
+        class="text-warning-soft-foreground"
+        size="sm"
+        variant="tertiary"
+        @click="showWarning"
+      >
+        Warning toast
+      </Button>
+      <Button size="sm" variant="danger-soft" @click="showDanger"> Danger toast </Button>
+    </div>
+  </div>
+</template>
+
 <script setup lang="ts">
 import { Button, toast } from '@hareui/vue'
 import { Icon } from '@iconify/vue'
@@ -50,29 +76,3 @@ function showDanger() {
   })
 }
 </script>
-
-<template>
-  <div class="flex h-full max-w-xl flex-col items-center justify-center">
-    <div class="flex w-full flex-wrap items-center justify-center gap-4">
-      <Button size="sm" variant="tertiary" @click="showDefault"> Default toast </Button>
-      <Button size="sm" variant="secondary" @click="showAccent"> Accent toast </Button>
-      <Button
-        class="text-success-soft-foreground"
-        size="sm"
-        variant="tertiary"
-        @click="showSuccess"
-      >
-        Success toast
-      </Button>
-      <Button
-        class="text-warning-soft-foreground"
-        size="sm"
-        variant="tertiary"
-        @click="showWarning"
-      >
-        Warning toast
-      </Button>
-      <Button size="sm" variant="danger-soft" @click="showDanger"> Danger toast </Button>
-    </div>
-  </div>
-</template>

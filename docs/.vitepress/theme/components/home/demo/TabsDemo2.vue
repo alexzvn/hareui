@@ -1,13 +1,3 @@
-<script setup lang="ts">
-import { Tabs } from '@hareui/vue'
-import { Icon } from '@iconify/vue'
-
-const items = [
-  { label: 'Chats', value: 'chats', icon: 'gravity-ui:comment' },
-  { label: 'Emails', value: 'emails', icon: 'gravity-ui:envelope' },
-]
-</script>
-
 <template>
   <Tabs
     class="w-[256px]"
@@ -22,3 +12,13 @@ const items = [
     </template>
   </Tabs>
 </template>
+
+<script setup lang="ts">
+import { Tabs } from '@hareui/vue'
+import { Icon } from '@iconify/vue'
+
+const items = [
+  { label: 'Chats', value: 'chats', icon: 'gravity-ui:comment' },
+  { label: 'Emails', value: 'emails', icon: 'gravity-ui:envelope' },
+]
+</script>

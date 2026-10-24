@@ -1,7 +1,3 @@
-<script setup lang="ts">
-import { Switch } from '@hareui/vue'
-</script>
-
 <template>
   <Switch>
     <template #label="{ checked }">
@@ -9,3 +5,7 @@ import { Switch } from '@hareui/vue'
     </template>
   </Switch>
 </template>
+
+<script setup lang="ts">
+import { Switch } from '@hareui/vue'
+</script>

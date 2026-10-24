@@ -1,3 +1,14 @@
+<template>
+  <ComboBox
+    class="w-[256px]"
+    selection-mode="multiple"
+    label="Favorite Animals"
+    placeholder="Search animals..."
+    value-placeholder="No animals selected"
+    :items="animals"
+  />
+</template>
+
 <script setup lang="ts">
 import type { ListBoxItem } from '@hareui/vue'
 import { ComboBox } from '@hareui/vue'
@@ -11,14 +22,3 @@ const animals: ListBoxItem[] = [
   { value: 'snake', label: 'Snake' },
 ]
 </script>
-
-<template>
-  <ComboBox
-    class="w-[256px]"
-    selection-mode="multiple"
-    label="Favorite Animals"
-    placeholder="Search animals..."
-    value-placeholder="No animals selected"
-    :items="animals"
-  />
-</template>

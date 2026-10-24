@@ -1,3 +1,49 @@
+<template>
+  <div v-if="totalPages !== 0" class="flex items-center gap-2">
+    <Button
+      icon-only
+      class="size-5 min-w-5 shrink-0 rounded-full"
+      :disabled="isFirstPage"
+      size="sm"
+      variant="ghost"
+      @click="navigateSwatches('left')"
+    >
+      <Icon icon="gravity-ui:chevron-left" class="size-4" />
+    </Button>
+    <div class="relative flex-1 overflow-hidden">
+      <div
+        class="flex transition-transform duration-300 ease-out"
+        :style="{
+          transform: `translateX(-${swatchPage * 100}%)`,
+        }"
+      >
+        <div
+          v-for="(pageSwatches, pageIndex) in swatchPages"
+          :key="pageIndex"
+          class="flex h-[22px] w-full shrink-0 justify-center"
+        >
+          <ColorSwatchPicker
+            :items="pageSwatches"
+            :model-value="color"
+            :ui="SWATCH_UI"
+            @update:model-value="emit('select', $event as Color)"
+          />
+        </div>
+      </div>
+    </div>
+    <Button
+      icon-only
+      class="size-5 min-w-5 shrink-0 rounded-full"
+      :disabled="isLastPage"
+      size="sm"
+      variant="ghost"
+      @click="navigateSwatches('right')"
+    >
+      <Icon icon="gravity-ui:chevron-right" class="size-4" />
+    </Button>
+  </div>
+</template>
+
 <script setup lang="ts">
 import { Button, ColorSwatchPicker } from '@hareui/vue'
 import { Icon } from '@iconify/vue'
@@ -57,49 +103,3 @@ const SWATCH_UI = {
   indicator: 'hidden',
 }
 </script>
-
-<template>
-  <div v-if="totalPages !== 0" class="flex items-center gap-2">
-    <Button
-      icon-only
-      class="size-5 min-w-5 shrink-0 rounded-full"
-      :disabled="isFirstPage"
-      size="sm"
-      variant="ghost"
-      @click="navigateSwatches('left')"
-    >
-      <Icon icon="gravity-ui:chevron-left" class="size-4" />
-    </Button>
-    <div class="relative flex-1 overflow-hidden">
-      <div
-        class="flex transition-transform duration-300 ease-out"
-        :style="{
-          transform: `translateX(-${swatchPage * 100}%)`,
-        }"
-      >
-        <div
-          v-for="(pageSwatches, pageIndex) in swatchPages"
-          :key="pageIndex"
-          class="flex h-[22px] w-full shrink-0 justify-center"
-        >
-          <ColorSwatchPicker
-            :items="pageSwatches"
-            :model-value="color"
-            :ui="SWATCH_UI"
-            @update:model-value="emit('select', $event as Color)"
-          />
-        </div>
-      </div>
-    </div>
-    <Button
-      icon-only
-      class="size-5 min-w-5 shrink-0 rounded-full"
-      :disabled="isLastPage"
-      size="sm"
-      variant="ghost"
-      @click="navigateSwatches('right')"
-    >
-      <Icon icon="gravity-ui:chevron-right" class="size-4" />
-    </Button>
-  </div>
-</template>

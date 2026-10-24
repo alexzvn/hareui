@@ -1,3 +1,223 @@
+<template>
+  <div
+    ref="root"
+    data-slot="select"
+    v-bind="rootAttrs"
+    :data-focused="focused || isOpen ? 'true' : undefined"
+    :data-focus-visible="focusVisible ? 'true' : undefined"
+    :data-open="isOpen ? 'true' : undefined"
+    :data-disabled="disabled ? 'true' : undefined"
+    :data-invalid="invalid ? 'true' : undefined"
+    :data-required="required ? 'true' : undefined"
+    :class="ui.base({ class: [props.ui?.base, props.class] })"
+  >
+    <FieldLabel :id="labelId" as="span" @click="triggerEl()?.focus()" />
+    <PopoverRoot :open="isOpen" :modal="false" @update:open="onRootOpenChange">
+      <PopoverLabel />
+      <PopoverTrigger as-child>
+        <button
+          :id="id"
+          ref="trigger"
+          type="button"
+          data-slot="select-trigger"
+          aria-haspopup="listbox"
+          :aria-label="attrs['aria-label'] as string | undefined"
+          :aria-labelledby="triggerLabelledBy"
+          :aria-describedby="describedBy"
+          :aria-invalid="invalid ? 'true' : undefined"
+          :disabled="disabled"
+          :data-disabled="disabled ? 'true' : undefined"
+          :data-pressed="isOpen ? 'true' : undefined"
+          :data-hovered="hovered ? 'true' : undefined"
+          :data-focused="focused ? 'true' : undefined"
+          :data-focus-visible="focusVisible ? 'true' : undefined"
+          :class="ui.trigger({ class: props.ui?.trigger })"
+          @keydown="onTriggerKeydown"
+          @focus="onTriggerFocus"
+          @blur="onTriggerBlur"
+          @pointerdown="onTriggerPointerdown"
+          @mousedown="onTriggerMousedown"
+          @pointerenter="hovered = $event.pointerType === 'mouse'"
+          @pointerleave="hovered = false"
+        >
+          <slot name="leading" />
+          <span
+            :id="valueId"
+            data-slot="select-value"
+            :data-placeholder="isPlaceholder ? 'true' : undefined"
+            :class="ui.value({ class: props.ui?.value })"
+          >
+            <slot
+              name="value"
+              :selected-items="selectedItems"
+              :is-placeholder="isPlaceholder"
+              :text="valueText"
+            >
+              {{ valueText }}
+              <!-- RAC SelectValue re-renders each selected item's children, indicator included; the value class hides it -->
+              <span
+                v-for="item in selectedItems"
+                :key="String(item.value)"
+                aria-hidden="true"
+                data-slot="list-box-item-indicator"
+                :class="valueIndicatorClass(item)"
+              >
+                <svg
+                  aria-hidden="true"
+                  data-slot="list-box-item-indicator--checkmark"
+                  fill="none"
+                  role="presentation"
+                  stroke="currentColor"
+                  stroke-dasharray="22"
+                  stroke-dashoffset="66"
+                  stroke-linecap="round"
+                  stroke-linejoin="round"
+                  stroke-width="2"
+                  viewBox="0 0 17 18"
+                >
+                  <polyline points="1 9 7 14 15 4" />
+                </svg>
+              </span>
+            </slot>
+          </span>
+          <span
+            v-if="clearable"
+            aria-hidden="true"
+            data-slot="select-clear-button"
+            :data-empty="isPlaceholder ? 'true' : undefined"
+            :class="ui.clearButton({ class: props.ui?.clearButton })"
+            @pointerdown.stop
+            @click.stop.prevent="clear"
+          >
+            <slot name="clear">
+              <svg
+                aria-hidden="true"
+                data-slot="select-clear-button-icon"
+                fill="none"
+                height="16"
+                role="presentation"
+                viewBox="0 0 16 16"
+                width="16"
+                xmlns="http://www.w3.org/2000/svg"
+              >
+                <path
+                  clip-rule="evenodd"
+                  d="M3.47 3.47a.75.75 0 0 1 1.06 0L8 6.94l3.47-3.47a.75.75 0 1 1 1.06 1.06L9.06 8l3.47 3.47a.75.75 0 1 1-1.06 1.06L8 9.06l-3.47 3.47a.75.75 0 0 1-1.06-1.06L6.94 8 3.47 4.53a.75.75 0 0 1 0-1.06Z"
+                  fill="currentColor"
+                  fill-rule="evenodd"
+                />
+              </svg>
+            </slot>
+          </span>
+          <span
+            v-if="slots.indicator"
+            aria-hidden="true"
+            data-slot="select-indicator"
+            :data-open="isOpen ? 'true' : undefined"
+            :class="ui.indicator({ class: props.ui?.indicator })"
+          >
+            <slot name="indicator" :open="isOpen" />
+          </span>
+          <svg
+            v-else
+            aria-hidden="true"
+            data-slot="select-default-indicator"
+            :data-open="isOpen ? 'true' : undefined"
+            fill="none"
+            height="16"
+            role="presentation"
+            viewBox="0 0 16 16"
+            width="16"
+            xmlns="http://www.w3.org/2000/svg"
+            :class="ui.indicator({ class: props.ui?.indicator })"
+          >
+            <path
+              clip-rule="evenodd"
+              d="M2.97 5.47a.75.75 0 0 1 1.06 0L8 9.44l3.97-3.97a.75.75 0 1 1 1.06 1.06l-4.5 4.5a.75.75 0 0 1-1.06 0l-4.5-4.5a.75.75 0 0 1 0-1.06"
+              fill="currentColor"
+              fill-rule="evenodd"
+            />
+          </svg>
+        </button>
+      </PopoverTrigger>
+      <PopoverPortal :disabled="portalTarget.disabled" :to="portalTarget.to">
+        <PopoverContent
+          ref="content"
+          data-slot="select-popover"
+          :side="side"
+          :align="align"
+          :side-offset="8"
+          :collision-padding="12"
+          :class="ui.popover({ class: props.ui?.popover })"
+          @open-auto-focus="onOpenAutoFocus"
+          @close-auto-focus="onCloseAutoFocus"
+          @pointerdown="pressRelease.onPointerdown"
+          @pointerup="pressRelease.onPointerup"
+        >
+          <ListBox
+            ref="listBox"
+            :model-value="multiple ? selectedValues : selectedKey"
+            :items="items"
+            :selection-mode="selectionMode"
+            highlight-on-hover
+            escape-key-behavior="none"
+            :loading="loading"
+            :aria-labelledby="listLabelledBy"
+            :aria-label="listLabelledBy ? undefined : (attrs['aria-label'] as string | undefined)"
+            @update:model-value="onListUpdate"
+            @load-more="emit('loadMore')"
+          >
+            <template v-for="name in forwarded" #[name]="state">
+              <slot :name="name" v-bind="state as any" />
+            </template>
+            <template v-if="slots['item-indicator']" #indicator="state">
+              <slot name="item-indicator" v-bind="state as ListBoxItemSlotProps<T>" />
+            </template>
+          </ListBox>
+        </PopoverContent>
+      </PopoverPortal>
+    </PopoverRoot>
+    <FieldDescription />
+    <FieldError />
+    <!-- RAC HiddenSelect: carries form data and native `required` validity -->
+    <div
+      aria-hidden="true"
+      data-a11y-ignore="aria-hidden-focus"
+      style="
+        border: 0;
+        clip-path: inset(50%);
+        height: 1px;
+        margin: -1px;
+        overflow: hidden;
+        padding: 0;
+        position: absolute;
+        white-space: nowrap;
+        width: 1px;
+      "
+    >
+      <select
+        tabindex="-1"
+        :name="name"
+        :multiple="multiple"
+        :required="required && (validationBehavior ?? 'native') === 'native'"
+        :disabled="disabled"
+        :autocomplete="autocomplete"
+        @invalid="onHiddenInvalid"
+      >
+        <option value="" />
+        <option
+          v-for="item in options"
+          :key="item.value"
+          :value="item.value"
+          :selected="isSelected(item.value)"
+        >
+          {{ itemText(item) }}
+        </option>
+      </select>
+    </div>
+  </div>
+</template>
+
 <script lang="ts">
 import type { ValidateFn, ValidationResult } from '../../composables/useFieldValidation'
 import type { PortalTarget } from '../../config'
@@ -477,223 +697,3 @@ watch(disabled, (disabled) => {
   if (disabled) setOpen(false)
 })
 </script>
-
-<template>
-  <div
-    ref="root"
-    data-slot="select"
-    v-bind="rootAttrs"
-    :data-focused="focused || isOpen ? 'true' : undefined"
-    :data-focus-visible="focusVisible ? 'true' : undefined"
-    :data-open="isOpen ? 'true' : undefined"
-    :data-disabled="disabled ? 'true' : undefined"
-    :data-invalid="invalid ? 'true' : undefined"
-    :data-required="required ? 'true' : undefined"
-    :class="ui.base({ class: [props.ui?.base, props.class] })"
-  >
-    <FieldLabel :id="labelId" as="span" @click="triggerEl()?.focus()" />
-    <PopoverRoot :open="isOpen" :modal="false" @update:open="onRootOpenChange">
-      <PopoverLabel />
-      <PopoverTrigger as-child>
-        <button
-          :id="id"
-          ref="trigger"
-          type="button"
-          data-slot="select-trigger"
-          aria-haspopup="listbox"
-          :aria-label="attrs['aria-label'] as string | undefined"
-          :aria-labelledby="triggerLabelledBy"
-          :aria-describedby="describedBy"
-          :aria-invalid="invalid ? 'true' : undefined"
-          :disabled="disabled"
-          :data-disabled="disabled ? 'true' : undefined"
-          :data-pressed="isOpen ? 'true' : undefined"
-          :data-hovered="hovered ? 'true' : undefined"
-          :data-focused="focused ? 'true' : undefined"
-          :data-focus-visible="focusVisible ? 'true' : undefined"
-          :class="ui.trigger({ class: props.ui?.trigger })"
-          @keydown="onTriggerKeydown"
-          @focus="onTriggerFocus"
-          @blur="onTriggerBlur"
-          @pointerdown="onTriggerPointerdown"
-          @mousedown="onTriggerMousedown"
-          @pointerenter="hovered = $event.pointerType === 'mouse'"
-          @pointerleave="hovered = false"
-        >
-          <slot name="leading" />
-          <span
-            :id="valueId"
-            data-slot="select-value"
-            :data-placeholder="isPlaceholder ? 'true' : undefined"
-            :class="ui.value({ class: props.ui?.value })"
-          >
-            <slot
-              name="value"
-              :selected-items="selectedItems"
-              :is-placeholder="isPlaceholder"
-              :text="valueText"
-            >
-              {{ valueText }}
-              <!-- RAC SelectValue re-renders each selected item's children, indicator included; the value class hides it -->
-              <span
-                v-for="item in selectedItems"
-                :key="String(item.value)"
-                aria-hidden="true"
-                data-slot="list-box-item-indicator"
-                :class="valueIndicatorClass(item)"
-              >
-                <svg
-                  aria-hidden="true"
-                  data-slot="list-box-item-indicator--checkmark"
-                  fill="none"
-                  role="presentation"
-                  stroke="currentColor"
-                  stroke-dasharray="22"
-                  stroke-dashoffset="66"
-                  stroke-linecap="round"
-                  stroke-linejoin="round"
-                  stroke-width="2"
-                  viewBox="0 0 17 18"
-                >
-                  <polyline points="1 9 7 14 15 4" />
-                </svg>
-              </span>
-            </slot>
-          </span>
-          <span
-            v-if="clearable"
-            aria-hidden="true"
-            data-slot="select-clear-button"
-            :data-empty="isPlaceholder ? 'true' : undefined"
-            :class="ui.clearButton({ class: props.ui?.clearButton })"
-            @pointerdown.stop
-            @click.stop.prevent="clear"
-          >
-            <slot name="clear">
-              <svg
-                aria-hidden="true"
-                data-slot="select-clear-button-icon"
-                fill="none"
-                height="16"
-                role="presentation"
-                viewBox="0 0 16 16"
-                width="16"
-                xmlns="http://www.w3.org/2000/svg"
-              >
-                <path
-                  clip-rule="evenodd"
-                  d="M3.47 3.47a.75.75 0 0 1 1.06 0L8 6.94l3.47-3.47a.75.75 0 1 1 1.06 1.06L9.06 8l3.47 3.47a.75.75 0 1 1-1.06 1.06L8 9.06l-3.47 3.47a.75.75 0 0 1-1.06-1.06L6.94 8 3.47 4.53a.75.75 0 0 1 0-1.06Z"
-                  fill="currentColor"
-                  fill-rule="evenodd"
-                />
-              </svg>
-            </slot>
-          </span>
-          <span
-            v-if="slots.indicator"
-            aria-hidden="true"
-            data-slot="select-indicator"
-            :data-open="isOpen ? 'true' : undefined"
-            :class="ui.indicator({ class: props.ui?.indicator })"
-          >
-            <slot name="indicator" :open="isOpen" />
-          </span>
-          <svg
-            v-else
-            aria-hidden="true"
-            data-slot="select-default-indicator"
-            :data-open="isOpen ? 'true' : undefined"
-            fill="none"
-            height="16"
-            role="presentation"
-            viewBox="0 0 16 16"
-            width="16"
-            xmlns="http://www.w3.org/2000/svg"
-            :class="ui.indicator({ class: props.ui?.indicator })"
-          >
-            <path
-              clip-rule="evenodd"
-              d="M2.97 5.47a.75.75 0 0 1 1.06 0L8 9.44l3.97-3.97a.75.75 0 1 1 1.06 1.06l-4.5 4.5a.75.75 0 0 1-1.06 0l-4.5-4.5a.75.75 0 0 1 0-1.06"
-              fill="currentColor"
-              fill-rule="evenodd"
-            />
-          </svg>
-        </button>
-      </PopoverTrigger>
-      <PopoverPortal :disabled="portalTarget.disabled" :to="portalTarget.to">
-        <PopoverContent
-          ref="content"
-          data-slot="select-popover"
-          :side="side"
-          :align="align"
-          :side-offset="8"
-          :collision-padding="12"
-          :class="ui.popover({ class: props.ui?.popover })"
-          @open-auto-focus="onOpenAutoFocus"
-          @close-auto-focus="onCloseAutoFocus"
-          @pointerdown="pressRelease.onPointerdown"
-          @pointerup="pressRelease.onPointerup"
-        >
-          <ListBox
-            ref="listBox"
-            :model-value="multiple ? selectedValues : selectedKey"
-            :items="items"
-            :selection-mode="selectionMode"
-            highlight-on-hover
-            escape-key-behavior="none"
-            :loading="loading"
-            :aria-labelledby="listLabelledBy"
-            :aria-label="listLabelledBy ? undefined : (attrs['aria-label'] as string | undefined)"
-            @update:model-value="onListUpdate"
-            @load-more="emit('loadMore')"
-          >
-            <template v-for="name in forwarded" #[name]="state">
-              <slot :name="name" v-bind="state as any" />
-            </template>
-            <template v-if="slots['item-indicator']" #indicator="state">
-              <slot name="item-indicator" v-bind="state as ListBoxItemSlotProps<T>" />
-            </template>
-          </ListBox>
-        </PopoverContent>
-      </PopoverPortal>
-    </PopoverRoot>
-    <FieldDescription />
-    <FieldError />
-    <!-- RAC HiddenSelect: carries form data and native `required` validity -->
-    <div
-      aria-hidden="true"
-      data-a11y-ignore="aria-hidden-focus"
-      style="
-        border: 0;
-        clip-path: inset(50%);
-        height: 1px;
-        margin: -1px;
-        overflow: hidden;
-        padding: 0;
-        position: absolute;
-        white-space: nowrap;
-        width: 1px;
-      "
-    >
-      <select
-        tabindex="-1"
-        :name="name"
-        :multiple="multiple"
-        :required="required && (validationBehavior ?? 'native') === 'native'"
-        :disabled="disabled"
-        :autocomplete="autocomplete"
-        @invalid="onHiddenInvalid"
-      >
-        <option value="" />
-        <option
-          v-for="item in options"
-          :key="item.value"
-          :value="item.value"
-          :selected="isSelected(item.value)"
-        >
-          {{ itemText(item) }}
-        </option>
-      </select>
-    </div>
-  </div>
-</template>

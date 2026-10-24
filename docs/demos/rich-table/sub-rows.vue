@@ -1,3 +1,13 @@
+<template>
+  <RichTable
+    :data="data"
+    :columns="columns"
+    :get-sub-rows="(row) => row.children"
+    :initial-state="{ expanded: { 0: true } }"
+    class="w-full"
+  />
+</template>
+
 <script setup lang="ts">
 import type { RichTableColumn, RichTableRow } from '@hareui/vue'
 import { Button, Chip, RichTable } from '@hareui/vue'
@@ -119,13 +129,3 @@ const columns: RichTableColumn<Node>[] = [
   { accessorKey: 'modified', header: 'Date Modified', meta: { class: { td: 'text-muted' } } },
 ]
 </script>
-
-<template>
-  <RichTable
-    :data="data"
-    :columns="columns"
-    :get-sub-rows="(row) => row.children"
-    :initial-state="{ expanded: { 0: true } }"
-    class="w-full"
-  />
-</template>

@@ -1,7 +1,3 @@
-<script setup lang="ts">
-// HareUI mark: squares #2 and #3 of a padded 2x2 grid, blended where their corners meet, with squircle (continuous-curvature) corners. Mirrored in docs/public/logo.svg (favicon).
-</script>
-
 <template>
   <svg
     aria-hidden="true"
@@ -18,3 +14,7 @@
     />
   </svg>
 </template>
+
+<script setup lang="ts">
+// HareUI mark: squares #2 and #3 of a padded 2x2 grid, blended where their corners meet, with squircle (continuous-curvature) corners. Mirrored in docs/public/logo.svg (favicon).
+</script>

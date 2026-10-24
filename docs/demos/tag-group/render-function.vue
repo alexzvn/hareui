@@ -1,3 +1,13 @@
+<template>
+  <!-- Attributes fall through to the root element (HeroUI's `render` prop) -->
+  <TagGroup aria-label="Tags" data-custom="foo" selection-mode="single" :items="items">
+    <template #item="{ item }">
+      <Icon :icon="icons[item.id]!" />
+      {{ item.label }}
+    </template>
+  </TagGroup>
+</template>
+
 <script setup lang="ts">
 import type { TagGroupItem } from '@hareui/vue'
 import { TagGroup } from '@hareui/vue'
@@ -16,13 +26,3 @@ const items: TagGroupItem[] = [
   { id: 'default-shopping', label: 'Shopping' },
 ]
 </script>
-
-<template>
-  <!-- Attributes fall through to the root element (HeroUI's `render` prop) -->
-  <TagGroup aria-label="Tags" data-custom="foo" selection-mode="single" :items="items">
-    <template #item="{ item }">
-      <Icon :icon="icons[item.id]!" />
-      {{ item.label }}
-    </template>
-  </TagGroup>
-</template>

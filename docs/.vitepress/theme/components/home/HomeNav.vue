@@ -1,48 +1,3 @@
-<script setup lang="ts">
-import { Button } from '@hareui/vue'
-import { Icon } from '@iconify/vue'
-// Port of the fumadocs `HomeLayout` navbar as heroui.com renders it (`app/[lang]/(home)/layout.tsx`).
-// HeroUI-only entries are left out: Themes, React Native, Blog, Roadmap, Figma, Releases, Ask AI,
-// and the language toggle.
-import { onBeforeUnmount, onMounted, ref } from 'vue'
-
-import { REPO_URL } from '../../repo'
-import BrandIcon from '../BrandIcon.vue'
-import DesignThemeSelector from '../DesignThemeSelector.vue'
-import HareLogo from '../HareLogo.vue'
-import ThemeToggle from '../ThemeToggle.vue'
-
-const props = defineProps<{ docsHref: string; componentsHref: string }>()
-const emit = defineEmits<{ search: [] }>()
-
-// `text` is the navbar label, `menuText` the mobile menu label (as in HeroUI's dictionary).
-const links = [
-  { text: 'Docs', menuText: 'Getting Started', icon: 'book', url: props.docsHref },
-  {
-    text: 'Components',
-    menuText: 'Components',
-    icon: 'circles-4-diamond',
-    url: props.componentsHref,
-  },
-]
-
-const NAV_LINK =
-  '[&_svg]:size-4 inline-flex items-center gap-1 p-2 text-fd-muted-foreground transition-colors hover:text-fd-accent-foreground data-[active=true]:text-fd-primary'
-const MENU_LINK =
-  'inline-flex items-center gap-2 py-1.5 transition-colors hover:text-fd-popover-foreground/50 data-[active=true]:font-medium data-[active=true]:text-fd-primary [&_svg]:size-4'
-
-const menuOpen = ref(false)
-const transparent = ref(true)
-function onScroll() {
-  transparent.value = window.scrollY < 10
-}
-onMounted(() => {
-  onScroll()
-  window.addEventListener('scroll', onScroll, { passive: true })
-})
-onBeforeUnmount(() => window.removeEventListener('scroll', onScroll))
-</script>
-
 <template>
   <header id="nd-nav" class="sticky top-0 z-40 h-14" aria-label="Main">
     <div
@@ -201,3 +156,48 @@ onBeforeUnmount(() => window.removeEventListener('scroll', onScroll))
     </div>
   </header>
 </template>
+
+<script setup lang="ts">
+import { Button } from '@hareui/vue'
+import { Icon } from '@iconify/vue'
+// Port of the fumadocs `HomeLayout` navbar as heroui.com renders it (`app/[lang]/(home)/layout.tsx`).
+// HeroUI-only entries are left out: Themes, React Native, Blog, Roadmap, Figma, Releases, Ask AI,
+// and the language toggle.
+import { onBeforeUnmount, onMounted, ref } from 'vue'
+
+import { REPO_URL } from '../../repo'
+import BrandIcon from '../BrandIcon.vue'
+import DesignThemeSelector from '../DesignThemeSelector.vue'
+import HareLogo from '../HareLogo.vue'
+import ThemeToggle from '../ThemeToggle.vue'
+
+const props = defineProps<{ docsHref: string; componentsHref: string }>()
+const emit = defineEmits<{ search: [] }>()
+
+// `text` is the navbar label, `menuText` the mobile menu label (as in HeroUI's dictionary).
+const links = [
+  { text: 'Docs', menuText: 'Getting Started', icon: 'book', url: props.docsHref },
+  {
+    text: 'Components',
+    menuText: 'Components',
+    icon: 'circles-4-diamond',
+    url: props.componentsHref,
+  },
+]
+
+const NAV_LINK =
+  '[&_svg]:size-4 inline-flex items-center gap-1 p-2 text-fd-muted-foreground transition-colors hover:text-fd-accent-foreground data-[active=true]:text-fd-primary'
+const MENU_LINK =
+  'inline-flex items-center gap-2 py-1.5 transition-colors hover:text-fd-popover-foreground/50 data-[active=true]:font-medium data-[active=true]:text-fd-primary [&_svg]:size-4'
+
+const menuOpen = ref(false)
+const transparent = ref(true)
+function onScroll() {
+  transparent.value = window.scrollY < 10
+}
+onMounted(() => {
+  onScroll()
+  window.addEventListener('scroll', onScroll, { passive: true })
+})
+onBeforeUnmount(() => window.removeEventListener('scroll', onScroll))
+</script>

@@ -1,3 +1,55 @@
+<template>
+  <ChartLayer v-if="!series.hidden.value" name="line">
+    <g
+      data-slot="chart-line"
+      :data-key="dataKey"
+      :class="chart.classes('series', props.class)"
+      :clip-path="clipping ? `url(#${clipId})` : undefined"
+    >
+      <defs v-if="clipping">
+        <clipPath :id="clipId">
+          <rect v-bind="clip" />
+        </clipPath>
+      </defs>
+      <path
+        ref="pathElement"
+        data-slot="chart-line-curve"
+        :d="path"
+        fill="none"
+        :stroke="stroke"
+        :stroke-width="strokeWidth"
+        :stroke-dasharray="dasharray"
+      />
+      <g v-if="dots.length" data-slot="chart-dots">
+        <circle
+          v-for="{ point, attrs } in dots"
+          :key="point.index"
+          data-slot="chart-dot"
+          :cx="point.x"
+          :cy="point.y"
+          :r="attrs.r"
+          :fill="attrs.fill"
+          :stroke="attrs.stroke"
+          :stroke-width="attrs.strokeWidth"
+          :class="chart.classes('dot', attrs.class)"
+        />
+      </g>
+    </g>
+  </ChartLayer>
+  <ChartLayer v-if="activeDot" name="active-dot">
+    <circle
+      data-slot="chart-active-dot"
+      :cx="activeDot.point.x"
+      :cy="activeDot.point.y"
+      :r="activeDot.r"
+      :fill="activeDot.fill"
+      :style="activeDot.style"
+      :class="chart.classes('activeDot', activeDot.class)"
+    />
+  </ChartLayer>
+  <slot />
+</template>
+
 <script lang="ts">
 import type { ChartCurveSeriesProps } from './series'
 
@@ -115,55 +167,3 @@ const activeDot = computed(() => {
   }
 })
 </script>
-
-<template>
-  <ChartLayer v-if="!series.hidden.value" name="line">
-    <g
-      data-slot="chart-line"
-      :data-key="dataKey"
-      :class="chart.classes('series', props.class)"
-      :clip-path="clipping ? `url(#${clipId})` : undefined"
-    >
-      <defs v-if="clipping">
-        <clipPath :id="clipId">
-          <rect v-bind="clip" />
-        </clipPath>
-      </defs>
-      <path
-        ref="pathElement"
-        data-slot="chart-line-curve"
-        :d="path"
-        fill="none"
-        :stroke="stroke"
-        :stroke-width="strokeWidth"
-        :stroke-dasharray="dasharray"
-      />
-      <g v-if="dots.length" data-slot="chart-dots">
-        <circle
-          v-for="{ point, attrs } in dots"
-          :key="point.index"
-          data-slot="chart-dot"
-          :cx="point.x"
-          :cy="point.y"
-          :r="attrs.r"
-          :fill="attrs.fill"
-          :stroke="attrs.stroke"
-          :stroke-width="attrs.strokeWidth"
-          :class="chart.classes('dot', attrs.class)"
-        />
-      </g>
-    </g>
-  </ChartLayer>
-  <ChartLayer v-if="activeDot" name="active-dot">
-    <circle
-      data-slot="chart-active-dot"
-      :cx="activeDot.point.x"
-      :cy="activeDot.point.y"
-      :r="activeDot.r"
-      :fill="activeDot.fill"
-      :style="activeDot.style"
-      :class="chart.classes('activeDot', activeDot.class)"
-    />
-  </ChartLayer>
-  <slot />
-</template>

@@ -1,24 +1,3 @@
-<script setup lang="ts">
-import type { ListBoxItem } from '@hareui/vue'
-import { Autocomplete, TagGroup } from '@hareui/vue'
-import { ref } from 'vue'
-
-const items: ListBoxItem[] = [
-  { value: 'florida', label: 'Florida' },
-  { value: 'delaware', label: 'Delaware' },
-  { value: 'california', label: 'California' },
-  { value: 'texas', label: 'Texas' },
-  { value: 'new-york', label: 'New York' },
-  { value: 'washington', label: 'Washington' },
-]
-
-const selectedKeys = ref<string[]>([])
-
-function onRemoveTags(ids: string[]) {
-  selectedKeys.value = selectedKeys.value.filter((key) => !ids.includes(key))
-}
-</script>
-
 <template>
   <Autocomplete
     v-model="selectedKeys"
@@ -45,3 +24,24 @@ function onRemoveTags(ids: string[]) {
     <template #empty> No results found </template>
   </Autocomplete>
 </template>
+
+<script setup lang="ts">
+import type { ListBoxItem } from '@hareui/vue'
+import { Autocomplete, TagGroup } from '@hareui/vue'
+import { ref } from 'vue'
+
+const items: ListBoxItem[] = [
+  { value: 'florida', label: 'Florida' },
+  { value: 'delaware', label: 'Delaware' },
+  { value: 'california', label: 'California' },
+  { value: 'texas', label: 'Texas' },
+  { value: 'new-york', label: 'New York' },
+  { value: 'washington', label: 'Washington' },
+]
+
+const selectedKeys = ref<string[]>([])
+
+function onRemoveTags(ids: string[]) {
+  selectedKeys.value = selectedKeys.value.filter((key) => !ids.includes(key))
+}
+</script>

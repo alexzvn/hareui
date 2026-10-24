@@ -1,10 +1,3 @@
-<script setup lang="ts">
-import { Button, SearchField } from '@hareui/vue'
-import { ref } from 'vue'
-
-const value = ref('')
-</script>
-
 <template>
   <div class="flex flex-col gap-4">
     <SearchField v-model="value" class="w-[280px]" name="search" label="Search">
@@ -16,3 +9,10 @@ const value = ref('')
     </div>
   </div>
 </template>
+
+<script setup lang="ts">
+import { Button, SearchField } from '@hareui/vue'
+import { ref } from 'vue'
+
+const value = ref('')
+</script>

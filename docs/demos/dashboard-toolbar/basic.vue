@@ -1,20 +1,3 @@
-<script setup lang="ts">
-import {
-  DashboardGroup,
-  DashboardNavbar,
-  DashboardPanel,
-  DashboardToolbar,
-  Link,
-  Tabs,
-} from '@hareui/vue'
-
-const tabs = [
-  { label: 'General', value: 'general' },
-  { label: 'Members', value: 'members' },
-  { label: 'Billing', value: 'billing' },
-]
-</script>
-
 <template>
   <DashboardGroup unit="rem" :persistent="false">
     <DashboardPanel>
@@ -42,3 +25,20 @@ const tabs = [
     </DashboardPanel>
   </DashboardGroup>
 </template>
+
+<script setup lang="ts">
+import {
+  DashboardGroup,
+  DashboardNavbar,
+  DashboardPanel,
+  DashboardToolbar,
+  Link,
+  Tabs,
+} from '@hareui/vue'
+
+const tabs = [
+  { label: 'General', value: 'general' },
+  { label: 'Members', value: 'members' },
+  { label: 'Billing', value: 'billing' },
+]
+</script>

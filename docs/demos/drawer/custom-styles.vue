@@ -1,7 +1,3 @@
-<script setup lang="ts">
-import { Button, Drawer } from '@hareui/vue'
-</script>
-
 <template>
   <Drawer
     class="border-l border-border/80 bg-surface"
@@ -21,3 +17,7 @@ import { Button, Drawer } from '@hareui/vue'
     </template>
   </Drawer>
 </template>
+
+<script setup lang="ts">
+import { Button, Drawer } from '@hareui/vue'
+</script>

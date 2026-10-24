@@ -1,38 +1,3 @@
-<script setup lang="ts">
-import type { ListBoxItem } from '@hareui/vue'
-import { Label, NumberField, ProgressBar, Select, Separator } from '@hareui/vue'
-import { ref } from 'vue'
-
-const formatStyleOptions: ListBoxItem[] = [
-  { label: 'Currency', value: 'currency' },
-  { label: 'Percent', value: 'percent' },
-  { label: 'Decimal', value: 'decimal' },
-  { label: 'Unit', value: 'unit' },
-]
-
-const formatOptionsMap: Record<string, Intl.NumberFormatOptions> = {
-  currency: { currency: 'USD', style: 'currency' },
-  decimal: { style: 'decimal' },
-  percent: { style: 'percent' },
-  unit: { style: 'unit', unit: 'mile' },
-}
-
-const value = ref(750)
-const minValue = ref(0)
-const maxValue = ref(1000)
-const format = ref('percent')
-
-function setMinValue(v: number | null | undefined) {
-  minValue.value = v ?? 0
-  if (value.value < minValue.value) value.value = minValue.value
-}
-
-function setMaxValue(v: number | null | undefined) {
-  maxValue.value = v ?? minValue.value + 1
-  if (value.value > maxValue.value) value.value = maxValue.value
-}
-</script>
-
 <template>
   <div class="flex w-full flex-col gap-6 md:flex-row md:items-center md:gap-10">
     <div class="flex w-full max-w-md flex-1 justify-center">
@@ -81,3 +46,38 @@ function setMaxValue(v: number | null | undefined) {
     </div>
   </div>
 </template>
+
+<script setup lang="ts">
+import type { ListBoxItem } from '@hareui/vue'
+import { Label, NumberField, ProgressBar, Select, Separator } from '@hareui/vue'
+import { ref } from 'vue'
+
+const formatStyleOptions: ListBoxItem[] = [
+  { label: 'Currency', value: 'currency' },
+  { label: 'Percent', value: 'percent' },
+  { label: 'Decimal', value: 'decimal' },
+  { label: 'Unit', value: 'unit' },
+]
+
+const formatOptionsMap: Record<string, Intl.NumberFormatOptions> = {
+  currency: { currency: 'USD', style: 'currency' },
+  decimal: { style: 'decimal' },
+  percent: { style: 'percent' },
+  unit: { style: 'unit', unit: 'mile' },
+}
+
+const value = ref(750)
+const minValue = ref(0)
+const maxValue = ref(1000)
+const format = ref('percent')
+
+function setMinValue(v: number | null | undefined) {
+  minValue.value = v ?? 0
+  if (value.value < minValue.value) value.value = minValue.value
+}
+
+function setMaxValue(v: number | null | undefined) {
+  maxValue.value = v ?? minValue.value + 1
+  if (value.value > maxValue.value) value.value = maxValue.value
+}
+</script>

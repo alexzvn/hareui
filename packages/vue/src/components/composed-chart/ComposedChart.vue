@@ -1,3 +1,18 @@
+<template>
+  <ChartCartesianFrame
+    v-model:hidden="hidden"
+    data-slot="composed-chart"
+    :width="width"
+    :height="height"
+    :config="root.config.value"
+    :class="ui.base({ class: [props.ui?.base, props.class] })"
+  >
+    <template v-for="name in slotNames()" #[name]="scope">
+      <slot :name="name" v-bind="scope as any" />
+    </template>
+  </ChartCartesianFrame>
+</template>
+
 <script lang="ts">
 import type { ComponentSlots } from '../../types/tv'
 import type { CartesianRootProps, CartesianRootSlots } from '../chart/cartesian-root'
@@ -88,18 +103,3 @@ const root = useCartesianRoot<T, ChartComposedSeries>({
   hasLegendSlot: () => !!slots.legend,
 })
 </script>
-
-<template>
-  <ChartCartesianFrame
-    v-model:hidden="hidden"
-    data-slot="composed-chart"
-    :width="width"
-    :height="height"
-    :config="root.config.value"
-    :class="ui.base({ class: [props.ui?.base, props.class] })"
-  >
-    <template v-for="name in slotNames()" #[name]="scope">
-      <slot :name="name" v-bind="scope as any" />
-    </template>
-  </ChartCartesianFrame>
-</template>

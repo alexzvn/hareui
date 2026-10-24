@@ -1,3 +1,9 @@
+<template>
+  <Dropdown v-model="selected" class="min-w-[256px]" :items="items">
+    <Button variant="secondary"> Styles </Button>
+  </Dropdown>
+</template>
+
 <script setup lang="ts">
 import type { DropdownEntry, DropdownValue } from '@hareui/vue'
 import { Button, Dropdown } from '@hareui/vue'
@@ -41,9 +47,3 @@ const items: DropdownEntry[] = [
   },
 ]
 </script>
-
-<template>
-  <Dropdown v-model="selected" class="min-w-[256px]" :items="items">
-    <Button variant="secondary"> Styles </Button>
-  </Dropdown>
-</template>

@@ -1,3 +1,14 @@
+<template>
+  <RichTable
+    v-model:row-pinning="rowPinning"
+    :data="data"
+    :columns="columns"
+    :get-row-id="(row) => row.id"
+    class="w-full"
+    :meta="{ class: { tr: (row) => (row.getIsPinned() ? 'font-medium' : '') } }"
+  />
+</template>
+
 <script setup lang="ts">
 import type { RichTableColumn } from '@hareui/vue'
 import { Button, RichTable } from '@hareui/vue'
@@ -49,14 +60,3 @@ const columns: RichTableColumn<Payment>[] = [
   },
 ]
 </script>
-
-<template>
-  <RichTable
-    v-model:row-pinning="rowPinning"
-    :data="data"
-    :columns="columns"
-    :get-row-id="(row) => row.id"
-    class="w-full"
-    :meta="{ class: { tr: (row) => (row.getIsPinned() ? 'font-medium' : '') } }"
-  />
-</template>

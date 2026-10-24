@@ -1,7 +1,3 @@
-<script setup lang="ts">
-import { Input, Surface, TextArea, TextField } from '@hareui/vue'
-</script>
-
 <template>
   <Surface class="flex w-full min-w-[340px] flex-col gap-4 rounded-3xl p-6">
     <TextField
@@ -20,3 +16,7 @@ import { Input, Surface, TextArea, TextField } from '@hareui/vue'
     </TextField>
   </Surface>
 </template>
+
+<script setup lang="ts">
+import { Input, Surface, TextArea, TextField } from '@hareui/vue'
+</script>

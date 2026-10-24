@@ -1,3 +1,194 @@
+<template>
+  <div
+    ref="root"
+    v-bind="rootAttrs"
+    data-slot="number-stepper"
+    :data-disabled="isDisabled ? 'true' : undefined"
+    :data-invalid="invalid ? 'true' : undefined"
+    :data-required="required ? 'true' : undefined"
+    :data-readonly="readonly ? 'true' : undefined"
+    :class="ui.base({ class: [props.ui?.base, props.class] })"
+  >
+    <FieldLabel :for="id" />
+    <NumberFieldRoot
+      v-slot="{ modelValue: current, textValue }"
+      :id="id"
+      :model-value="displayValue"
+      :default-value="defaultDisplayValue"
+      :min="min"
+      :max="max"
+      :step="effectiveStep"
+      :step-snapping="step !== undefined"
+      :format-options="formatOptions"
+      :locale="locale"
+      :disabled="isDisabled"
+      :readonly="readonly"
+      :required="required"
+      data-slot="number-stepper-group"
+      :data-disabled="isDisabled ? 'true' : undefined"
+      :aria-disabled="isDisabled ? 'true' : undefined"
+      :data-invalid="invalid ? 'true' : undefined"
+      :class="ui.group({ class: props.ui?.group })"
+      @update:model-value="commit"
+    >
+      <!-- Slots inside the root's content go through `useSlotOutlet` components: a `<slot>` outlet here would make Vue flag the root's slots as forwarded and re-render the root and its buttons on every render -->
+      <template v-if="decrement">
+        <NumberFieldDecrement
+          v-if="decrementButton"
+          as-child
+          :aria-label="decrementLabel"
+          :aria-controls="id"
+        >
+          <Button
+            v-bind="decrementButton"
+            icon-only
+            data-slot="number-stepper-decrement-button"
+            :class="props.ui?.decrementButton"
+          >
+            <DecrementOutlet>
+              <svg
+                aria-hidden="true"
+                fill="none"
+                height="16"
+                viewBox="0 0 16 16"
+                width="16"
+                xmlns="http://www.w3.org/2000/svg"
+              >
+                <path
+                  clip-rule="evenodd"
+                  d="M1.75 8a.75.75 0 0 1 .75-.75h11a.75.75 0 0 1 0 1.5h-11A.75.75 0 0 1 1.75 8"
+                  fill="currentColor"
+                  fill-rule="evenodd"
+                />
+              </svg>
+            </DecrementOutlet>
+          </Button>
+        </NumberFieldDecrement>
+        <NumberFieldDecrement
+          v-else
+          data-slot="number-stepper-decrement-button"
+          :aria-label="decrementLabel"
+          :aria-controls="id"
+          :class="ui.decrementButton({ class: props.ui?.decrementButton })"
+        >
+          <DecrementOutlet>
+            <svg
+              aria-hidden="true"
+              fill="none"
+              height="16"
+              viewBox="0 0 16 16"
+              width="16"
+              xmlns="http://www.w3.org/2000/svg"
+            >
+              <path
+                clip-rule="evenodd"
+                d="M1.75 8a.75.75 0 0 1 .75-.75h11a.75.75 0 0 1 0 1.5h-11A.75.75 0 0 1 1.75 8"
+                fill="currentColor"
+                fill-rule="evenodd"
+              />
+            </svg>
+          </DecrementOutlet>
+        </NumberFieldDecrement>
+      </template>
+      <span
+        data-slot="number-stepper-value"
+        aria-hidden="true"
+        :class="ui.value({ class: props.ui?.value })"
+      >
+        <ValueOutlet v-bind="{ value: current ?? undefined, formattedValue: textValue }">
+          <NumberFlow
+            v-if="current != null"
+            :value="current"
+            :format="flowFormat"
+            :locales="locale"
+          />
+          <template v-else>
+            {{ textValue }}
+          </template>
+        </ValueOutlet>
+      </span>
+      <template v-if="increment">
+        <NumberFieldIncrement
+          v-if="incrementButton"
+          as-child
+          :aria-label="incrementLabel"
+          :aria-controls="id"
+        >
+          <Button
+            v-bind="incrementButton"
+            icon-only
+            data-slot="number-stepper-increment-button"
+            :class="props.ui?.incrementButton"
+          >
+            <IncrementOutlet>
+              <svg
+                aria-hidden="true"
+                fill="none"
+                height="16"
+                viewBox="0 0 16 16"
+                width="16"
+                xmlns="http://www.w3.org/2000/svg"
+              >
+                <path
+                  clip-rule="evenodd"
+                  d="M8 1.75a.75.75 0 0 1 .75.75v4.75h4.75a.75.75 0 0 1 0 1.5H8.75v4.75a.75.75 0 0 1-1.5 0V8.75H2.5a.75.75 0 0 1 0-1.5h4.75V2.5A.75.75 0 0 1 8 1.75"
+                  fill="currentColor"
+                  fill-rule="evenodd"
+                />
+              </svg>
+            </IncrementOutlet>
+          </Button>
+        </NumberFieldIncrement>
+        <NumberFieldIncrement
+          v-else
+          data-slot="number-stepper-increment-button"
+          :aria-label="incrementLabel"
+          :aria-controls="id"
+          :class="ui.incrementButton({ class: props.ui?.incrementButton })"
+        >
+          <IncrementOutlet>
+            <svg
+              aria-hidden="true"
+              fill="none"
+              height="16"
+              viewBox="0 0 16 16"
+              width="16"
+              xmlns="http://www.w3.org/2000/svg"
+            >
+              <path
+                clip-rule="evenodd"
+                d="M8 1.75a.75.75 0 0 1 .75.75v4.75h4.75a.75.75 0 0 1 0 1.5H8.75v4.75a.75.75 0 0 1-1.5 0V8.75H2.5a.75.75 0 0 1 0-1.5h4.75V2.5A.75.75 0 0 1 8 1.75"
+                fill="currentColor"
+                fill-rule="evenodd"
+              />
+            </svg>
+          </IncrementOutlet>
+        </NumberFieldIncrement>
+      </template>
+      <NumberFieldInput
+        data-slot="number-stepper-input"
+        :required="required || undefined"
+        :aria-invalid="invalid ? 'true' : undefined"
+        :aria-describedby="describedBy"
+        :aria-label="attrs['aria-label']"
+        :aria-labelledby="attrs['aria-labelledby']"
+        :class="ui.input({ class: props.ui?.input })"
+        @blur="onCommitEmpty"
+        @keydown="onKeydown"
+      />
+    </NumberFieldRoot>
+    <FieldDescription />
+    <FieldError />
+  </div>
+  <input
+    v-if="name"
+    type="hidden"
+    :name="name"
+    :value="formValue ?? ''"
+    :disabled="isDisabled || undefined"
+  />
+</template>
+
 <script lang="ts">
 import type { ValidateFn, ValidationResult } from '../../composables/useFieldValidation'
 import type { ComponentSlots } from '../../types/tv'
@@ -245,194 +436,3 @@ const ui = useComponentUI('numberStepper', theme, () => ({
   reversed: props.reversed,
 }))
 </script>
-
-<template>
-  <div
-    ref="root"
-    v-bind="rootAttrs"
-    data-slot="number-stepper"
-    :data-disabled="isDisabled ? 'true' : undefined"
-    :data-invalid="invalid ? 'true' : undefined"
-    :data-required="required ? 'true' : undefined"
-    :data-readonly="readonly ? 'true' : undefined"
-    :class="ui.base({ class: [props.ui?.base, props.class] })"
-  >
-    <FieldLabel :for="id" />
-    <NumberFieldRoot
-      v-slot="{ modelValue: current, textValue }"
-      :id="id"
-      :model-value="displayValue"
-      :default-value="defaultDisplayValue"
-      :min="min"
-      :max="max"
-      :step="effectiveStep"
-      :step-snapping="step !== undefined"
-      :format-options="formatOptions"
-      :locale="locale"
-      :disabled="isDisabled"
-      :readonly="readonly"
-      :required="required"
-      data-slot="number-stepper-group"
-      :data-disabled="isDisabled ? 'true' : undefined"
-      :aria-disabled="isDisabled ? 'true' : undefined"
-      :data-invalid="invalid ? 'true' : undefined"
-      :class="ui.group({ class: props.ui?.group })"
-      @update:model-value="commit"
-    >
-      <!-- Slots inside the root's content go through `useSlotOutlet` components: a `<slot>` outlet here would make Vue flag the root's slots as forwarded and re-render the root and its buttons on every render -->
-      <template v-if="decrement">
-        <NumberFieldDecrement
-          v-if="decrementButton"
-          as-child
-          :aria-label="decrementLabel"
-          :aria-controls="id"
-        >
-          <Button
-            v-bind="decrementButton"
-            icon-only
-            data-slot="number-stepper-decrement-button"
-            :class="props.ui?.decrementButton"
-          >
-            <DecrementOutlet>
-              <svg
-                aria-hidden="true"
-                fill="none"
-                height="16"
-                viewBox="0 0 16 16"
-                width="16"
-                xmlns="http://www.w3.org/2000/svg"
-              >
-                <path
-                  clip-rule="evenodd"
-                  d="M1.75 8a.75.75 0 0 1 .75-.75h11a.75.75 0 0 1 0 1.5h-11A.75.75 0 0 1 1.75 8"
-                  fill="currentColor"
-                  fill-rule="evenodd"
-                />
-              </svg>
-            </DecrementOutlet>
-          </Button>
-        </NumberFieldDecrement>
-        <NumberFieldDecrement
-          v-else
-          data-slot="number-stepper-decrement-button"
-          :aria-label="decrementLabel"
-          :aria-controls="id"
-          :class="ui.decrementButton({ class: props.ui?.decrementButton })"
-        >
-          <DecrementOutlet>
-            <svg
-              aria-hidden="true"
-              fill="none"
-              height="16"
-              viewBox="0 0 16 16"
-              width="16"
-              xmlns="http://www.w3.org/2000/svg"
-            >
-              <path
-                clip-rule="evenodd"
-                d="M1.75 8a.75.75 0 0 1 .75-.75h11a.75.75 0 0 1 0 1.5h-11A.75.75 0 0 1 1.75 8"
-                fill="currentColor"
-                fill-rule="evenodd"
-              />
-            </svg>
-          </DecrementOutlet>
-        </NumberFieldDecrement>
-      </template>
-      <span
-        data-slot="number-stepper-value"
-        aria-hidden="true"
-        :class="ui.value({ class: props.ui?.value })"
-      >
-        <ValueOutlet v-bind="{ value: current ?? undefined, formattedValue: textValue }">
-          <NumberFlow
-            v-if="current != null"
-            :value="current"
-            :format="flowFormat"
-            :locales="locale"
-          />
-          <template v-else>
-            {{ textValue }}
-          </template>
-        </ValueOutlet>
-      </span>
-      <template v-if="increment">
-        <NumberFieldIncrement
-          v-if="incrementButton"
-          as-child
-          :aria-label="incrementLabel"
-          :aria-controls="id"
-        >
-          <Button
-            v-bind="incrementButton"
-            icon-only
-            data-slot="number-stepper-increment-button"
-            :class="props.ui?.incrementButton"
-          >
-            <IncrementOutlet>
-              <svg
-                aria-hidden="true"
-                fill="none"
-                height="16"
-                viewBox="0 0 16 16"
-                width="16"
-                xmlns="http://www.w3.org/2000/svg"
-              >
-                <path
-                  clip-rule="evenodd"
-                  d="M8 1.75a.75.75 0 0 1 .75.75v4.75h4.75a.75.75 0 0 1 0 1.5H8.75v4.75a.75.75 0 0 1-1.5 0V8.75H2.5a.75.75 0 0 1 0-1.5h4.75V2.5A.75.75 0 0 1 8 1.75"
-                  fill="currentColor"
-                  fill-rule="evenodd"
-                />
-              </svg>
-            </IncrementOutlet>
-          </Button>
-        </NumberFieldIncrement>
-        <NumberFieldIncrement
-          v-else
-          data-slot="number-stepper-increment-button"
-          :aria-label="incrementLabel"
-          :aria-controls="id"
-          :class="ui.incrementButton({ class: props.ui?.incrementButton })"
-        >
-          <IncrementOutlet>
-            <svg
-              aria-hidden="true"
-              fill="none"
-              height="16"
-              viewBox="0 0 16 16"
-              width="16"
-              xmlns="http://www.w3.org/2000/svg"
-            >
-              <path
-                clip-rule="evenodd"
-                d="M8 1.75a.75.75 0 0 1 .75.75v4.75h4.75a.75.75 0 0 1 0 1.5H8.75v4.75a.75.75 0 0 1-1.5 0V8.75H2.5a.75.75 0 0 1 0-1.5h4.75V2.5A.75.75 0 0 1 8 1.75"
-                fill="currentColor"
-                fill-rule="evenodd"
-              />
-            </svg>
-          </IncrementOutlet>
-        </NumberFieldIncrement>
-      </template>
-      <NumberFieldInput
-        data-slot="number-stepper-input"
-        :required="required || undefined"
-        :aria-invalid="invalid ? 'true' : undefined"
-        :aria-describedby="describedBy"
-        :aria-label="attrs['aria-label']"
-        :aria-labelledby="attrs['aria-labelledby']"
-        :class="ui.input({ class: props.ui?.input })"
-        @blur="onCommitEmpty"
-        @keydown="onKeydown"
-      />
-    </NumberFieldRoot>
-    <FieldDescription />
-    <FieldError />
-  </div>
-  <input
-    v-if="name"
-    type="hidden"
-    :name="name"
-    :value="formValue ?? ''"
-    :disabled="isDisabled || undefined"
-  />
-</template>

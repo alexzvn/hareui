@@ -1,7 +1,3 @@
-<script setup lang="ts">
-import { Chip, InputGroup, TextField } from '@hareui/vue'
-</script>
-
 <template>
   <TextField aria-label="Email address" class="w-full max-w-[280px]" name="email">
     <InputGroup :ui="{ input: 'w-full max-w-[280px]', suffix: 'pe-2' }" placeholder="Email address">
@@ -11,3 +7,7 @@ import { Chip, InputGroup, TextField } from '@hareui/vue'
     </InputGroup>
   </TextField>
 </template>
+
+<script setup lang="ts">
+import { Chip, InputGroup, TextField } from '@hareui/vue'
+</script>

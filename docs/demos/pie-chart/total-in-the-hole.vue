@@ -1,3 +1,26 @@
+<template>
+  <Card
+    class="w-full max-w-[360px] rounded-2xl"
+    title="Library Loans"
+    :ui="{ title: 'text-base', content: 'items-center' }"
+  >
+    <PieChart
+      :data="data"
+      index="format"
+      donut
+      :width="240"
+      :height="240"
+      :legend="legend"
+      aria-label="Library loans by format"
+    >
+      <template #center="{ total }">
+        <span class="text-3xl font-bold text-foreground">{{ compact(total) }}</span>
+        <span class="text-sm text-muted">Loans this month</span>
+      </template>
+    </PieChart>
+  </Card>
+</template>
+
 <script setup lang="ts">
 import { Card } from '@hareui/vue'
 import { PieChart } from '@hareui/vue/charts'
@@ -21,26 +44,3 @@ function compact(value: number) {
   return compactFormat.format(value)
 }
 </script>
-
-<template>
-  <Card
-    class="w-full max-w-[360px] rounded-2xl"
-    title="Library Loans"
-    :ui="{ title: 'text-base', content: 'items-center' }"
-  >
-    <PieChart
-      :data="data"
-      index="format"
-      donut
-      :width="240"
-      :height="240"
-      :legend="legend"
-      aria-label="Library loans by format"
-    >
-      <template #center="{ total }">
-        <span class="text-3xl font-bold text-foreground">{{ compact(total) }}</span>
-        <span class="text-sm text-muted">Loans this month</span>
-      </template>
-    </PieChart>
-  </Card>
-</template>

@@ -1,10 +1,3 @@
-<script setup lang="ts">
-import { Description, TextArea } from '@hareui/vue'
-import { ref } from 'vue'
-
-const value = ref('')
-</script>
-
 <template>
   <div class="flex w-96 flex-col gap-2">
     <TextArea
@@ -18,3 +11,10 @@ const value = ref('')
     </Description>
   </div>
 </template>
+
+<script setup lang="ts">
+import { Description, TextArea } from '@hareui/vue'
+import { ref } from 'vue'
+
+const value = ref('')
+</script>

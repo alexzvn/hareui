@@ -1,11 +1,3 @@
-<script setup lang="ts">
-import { Avatar, Badge, Separator } from '@hareui/vue'
-
-const variants = ['primary', 'secondary', 'soft'] as const
-const colors = ['accent', 'default', 'success', 'warning', 'danger'] as const
-const avatarSrc = 'https://heroui-assets.nyc3.cdn.digitaloceanspaces.com/avatars/green.jpg'
-</script>
-
 <template>
   <div class="flex flex-col gap-8">
     <template v-for="(variant, index) in variants" :key="variant">
@@ -30,3 +22,11 @@ const avatarSrc = 'https://heroui-assets.nyc3.cdn.digitaloceanspaces.com/avatars
     </template>
   </div>
 </template>
+
+<script setup lang="ts">
+import { Avatar, Badge, Separator } from '@hareui/vue'
+
+const variants = ['primary', 'secondary', 'soft'] as const
+const colors = ['accent', 'default', 'success', 'warning', 'danger'] as const
+const avatarSrc = 'https://heroui-assets.nyc3.cdn.digitaloceanspaces.com/avatars/green.jpg'
+</script>

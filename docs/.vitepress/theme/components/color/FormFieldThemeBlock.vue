@@ -1,37 +1,3 @@
-<script setup lang="ts">
-import { computed } from 'vue'
-
-import { contrastStyle, copyColorValue } from '../../composables/useColorCopy'
-import ColorBlock from './ColorBlock.vue'
-import ColorTooltip from './ColorTooltip.vue'
-import ThemeChip from './ThemeChip.vue'
-
-export interface FormFieldColors {
-  bg: string
-  bgTooltip?: string
-  bgHover: string
-  bgHoverTooltip?: string
-  bgFocusTooltip?: string
-  placeholder: string
-  placeholderTooltip?: string
-  foreground: string
-  foregroundTooltip?: string
-}
-
-const props = defineProps<{ colors: FormFieldColors; theme: 'light' | 'dark' }>()
-
-const bgStyle = computed(() => contrastStyle(props.colors.bg))
-const placeholderStyle = computed(() => contrastStyle(props.colors.placeholder))
-const foregroundStyle = computed(() => contrastStyle(props.colors.foreground))
-
-function onPlaceholderClick(event: MouseEvent) {
-  void copyColorValue(event, props.colors.placeholder)
-}
-function onForegroundClick(event: MouseEvent) {
-  void copyColorValue(event, props.colors.foreground)
-}
-</script>
-
 <template>
   <div :data-theme="theme">
     <div class="flex flex-col gap-2">
@@ -88,3 +54,37 @@ function onForegroundClick(event: MouseEvent) {
     </div>
   </div>
 </template>
+
+<script setup lang="ts">
+import { computed } from 'vue'
+
+import { contrastStyle, copyColorValue } from '../../composables/useColorCopy'
+import ColorBlock from './ColorBlock.vue'
+import ColorTooltip from './ColorTooltip.vue'
+import ThemeChip from './ThemeChip.vue'
+
+export interface FormFieldColors {
+  bg: string
+  bgTooltip?: string
+  bgHover: string
+  bgHoverTooltip?: string
+  bgFocusTooltip?: string
+  placeholder: string
+  placeholderTooltip?: string
+  foreground: string
+  foregroundTooltip?: string
+}
+
+const props = defineProps<{ colors: FormFieldColors; theme: 'light' | 'dark' }>()
+
+const bgStyle = computed(() => contrastStyle(props.colors.bg))
+const placeholderStyle = computed(() => contrastStyle(props.colors.placeholder))
+const foregroundStyle = computed(() => contrastStyle(props.colors.foreground))
+
+function onPlaceholderClick(event: MouseEvent) {
+  void copyColorValue(event, props.colors.placeholder)
+}
+function onForegroundClick(event: MouseEvent) {
+  void copyColorValue(event, props.colors.foreground)
+}
+</script>

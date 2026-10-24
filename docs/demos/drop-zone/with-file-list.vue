@@ -1,3 +1,54 @@
+<template>
+  <div class="w-full max-w-[520px] rounded-3xl bg-default p-4">
+    <header class="mb-3 flex items-baseline justify-between px-1">
+      <h3 class="m-0 text-sm font-semibold text-foreground">Shop assets</h3>
+      <span class="text-xs text-muted">{{ live }} of {{ assets.length }} on the menu</span>
+    </header>
+    <DropZone
+      label="Add menu photos and price sheets"
+      description="Images, PDFs and spreadsheets, up to 15 MB each."
+      trigger-label="Upload"
+      multiple
+      :ui="{ area: 'bg-surface', fileItem: 'bg-surface' }"
+      @add="addAssets"
+    >
+      <template #icon>
+        <Icon icon="gravity-ui:folder-open" />
+      </template>
+      <template #files>
+        <DropZoneFileList>
+          <DropZoneFileItem
+            v-for="asset in assets"
+            :key="asset.key"
+            :name="asset.name"
+            :size="asset.bytes"
+            :status="statusOf(asset)"
+            :progress="
+              asset.lostConnection ? undefined : Math.floor((asset.sent / asset.bytes) * 100)
+            "
+            retryable
+            @remove="removeAsset(asset.key)"
+            @retry="resend(asset)"
+          >
+            <template #meta="{ size, status }">
+              <span>{{ size }}</span>
+              <span aria-hidden="true">·</span>
+              <span v-if="status === 'uploading'">Sending to the shop…</span>
+              <span v-else-if="status === 'complete'" class="flex items-center gap-1">
+                <Icon icon="gravity-ui:circle-check-fill" class="size-3 text-success" /> On the menu
+              </span>
+              <span v-else class="flex items-center gap-1 text-danger">
+                <Icon icon="gravity-ui:circle-xmark-fill" class="size-3" /> Connection lost
+              </span>
+            </template>
+            <template #retry> Upload again </template>
+          </DropZoneFileItem>
+        </DropZoneFileList>
+      </template>
+    </DropZone>
+  </div>
+</template>
+
 <script setup lang="ts">
 import type { DropZoneFileStatus } from '@hareui/vue'
 import { DropZone, DropZoneFileItem, DropZoneFileList } from '@hareui/vue'
@@ -86,54 +137,3 @@ function resume() {
 onMounted(resume)
 onBeforeUnmount(() => cancelAnimationFrame(frame))
 </script>
-
-<template>
-  <div class="w-full max-w-[520px] rounded-3xl bg-default p-4">
-    <header class="mb-3 flex items-baseline justify-between px-1">
-      <h3 class="m-0 text-sm font-semibold text-foreground">Shop assets</h3>
-      <span class="text-xs text-muted">{{ live }} of {{ assets.length }} on the menu</span>
-    </header>
-    <DropZone
-      label="Add menu photos and price sheets"
-      description="Images, PDFs and spreadsheets, up to 15 MB each."
-      trigger-label="Upload"
-      multiple
-      :ui="{ area: 'bg-surface', fileItem: 'bg-surface' }"
-      @add="addAssets"
-    >
-      <template #icon>
-        <Icon icon="gravity-ui:folder-open" />
-      </template>
-      <template #files>
-        <DropZoneFileList>
-          <DropZoneFileItem
-            v-for="asset in assets"
-            :key="asset.key"
-            :name="asset.name"
-            :size="asset.bytes"
-            :status="statusOf(asset)"
-            :progress="
-              asset.lostConnection ? undefined : Math.floor((asset.sent / asset.bytes) * 100)
-            "
-            retryable
-            @remove="removeAsset(asset.key)"
-            @retry="resend(asset)"
-          >
-            <template #meta="{ size, status }">
-              <span>{{ size }}</span>
-              <span aria-hidden="true">·</span>
-              <span v-if="status === 'uploading'">Sending to the shop…</span>
-              <span v-else-if="status === 'complete'" class="flex items-center gap-1">
-                <Icon icon="gravity-ui:circle-check-fill" class="size-3 text-success" /> On the menu
-              </span>
-              <span v-else class="flex items-center gap-1 text-danger">
-                <Icon icon="gravity-ui:circle-xmark-fill" class="size-3" /> Connection lost
-              </span>
-            </template>
-            <template #retry> Upload again </template>
-          </DropZoneFileItem>
-        </DropZoneFileList>
-      </template>
-    </DropZone>
-  </div>
-</template>

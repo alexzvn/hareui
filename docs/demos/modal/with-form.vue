@@ -1,16 +1,3 @@
-<script setup lang="ts">
-import { Button, Input, Modal, Surface, TextField } from '@hareui/vue'
-import { Icon } from '@iconify/vue'
-
-const fields = [
-  { name: 'name', type: 'text', label: 'Name', placeholder: 'Enter your name' },
-  { name: 'email', type: 'email', label: 'Email', placeholder: 'Enter your email' },
-  { name: 'phone', type: 'tel', label: 'Phone', placeholder: 'Enter your phone number' },
-  { name: 'company', type: undefined, label: 'Company', placeholder: 'Enter your company name' },
-  { name: 'message', type: undefined, label: 'Message', placeholder: 'Enter your message' },
-]
-</script>
-
 <template>
   <Modal
     placement="auto"
@@ -51,3 +38,16 @@ const fields = [
     </template>
   </Modal>
 </template>
+
+<script setup lang="ts">
+import { Button, Input, Modal, Surface, TextField } from '@hareui/vue'
+import { Icon } from '@iconify/vue'
+
+const fields = [
+  { name: 'name', type: 'text', label: 'Name', placeholder: 'Enter your name' },
+  { name: 'email', type: 'email', label: 'Email', placeholder: 'Enter your email' },
+  { name: 'phone', type: 'tel', label: 'Phone', placeholder: 'Enter your phone number' },
+  { name: 'company', type: undefined, label: 'Company', placeholder: 'Enter your company name' },
+  { name: 'message', type: undefined, label: 'Message', placeholder: 'Enter your message' },
+]
+</script>

@@ -1,36 +1,3 @@
-<script setup lang="ts">
-import { CheckboxButtonGroup, CheckboxButtonGroupItem } from '@hareui/vue'
-import { Icon } from '@iconify/vue'
-
-const routines = [
-  {
-    value: 'morning',
-    label: 'Good morning',
-    description: 'Blinds up and coffee on at 7:00.',
-    icon: 'gravity-ui:sun',
-  },
-  {
-    value: 'away',
-    label: 'Away mode',
-    description: 'Lock up and switch off lights.',
-    icon: 'gravity-ui:lock',
-  },
-  {
-    value: 'night',
-    label: 'Night',
-    description: 'Dim the hallway after 23:00.',
-    icon: 'gravity-ui:moon',
-    isNew: true,
-  },
-  {
-    value: 'power',
-    label: 'Power saver',
-    description: 'Cut idle plugs at peak hours.',
-    icon: 'gravity-ui:power',
-  },
-]
-</script>
-
 <template>
   <CheckboxButtonGroup
     class="w-[440px] grid-cols-2"
@@ -64,3 +31,36 @@ const routines = [
     </CheckboxButtonGroupItem>
   </CheckboxButtonGroup>
 </template>
+
+<script setup lang="ts">
+import { CheckboxButtonGroup, CheckboxButtonGroupItem } from '@hareui/vue'
+import { Icon } from '@iconify/vue'
+
+const routines = [
+  {
+    value: 'morning',
+    label: 'Good morning',
+    description: 'Blinds up and coffee on at 7:00.',
+    icon: 'gravity-ui:sun',
+  },
+  {
+    value: 'away',
+    label: 'Away mode',
+    description: 'Lock up and switch off lights.',
+    icon: 'gravity-ui:lock',
+  },
+  {
+    value: 'night',
+    label: 'Night',
+    description: 'Dim the hallway after 23:00.',
+    icon: 'gravity-ui:moon',
+    isNew: true,
+  },
+  {
+    value: 'power',
+    label: 'Power saver',
+    description: 'Cut idle plugs at peak hours.',
+    icon: 'gravity-ui:power',
+  },
+]
+</script>

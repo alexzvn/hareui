@@ -1,3 +1,111 @@
+<template>
+  <DialogRoot
+    :open="open"
+    :default-open="defaultOpen"
+    modal
+    v-slot="{ open: isOpen, close }"
+    @update:open="onOpenChange"
+  >
+    <DialogTrigger v-if="!!slots.default" as-child>
+      <slot :open="isOpen" />
+    </DialogTrigger>
+    <DialogPortal :disabled="portalTarget.disabled" :to="portalTarget.to">
+      <DialogOverlay
+        data-slot="drawer-backdrop"
+        :style="{ '--visual-viewport-height': visualViewportHeight }"
+        :class="ui.backdrop({ class: props.ui?.backdrop })"
+      >
+        <div
+          data-slot="drawer-content"
+          :data-state="isOpen ? 'open' : 'closed'"
+          :data-placement="placement"
+          :class="ui.content({ class: props.ui?.content })"
+        >
+          <DialogContent
+            ref="dialogContent"
+            data-slot="drawer-dialog"
+            :data-placement="placement"
+            :aria-describedby="undefined"
+            :style="dismissible ? { touchAction: 'none' } : undefined"
+            :class="ui.dialog({ class: [props.ui?.dialog, props.class] })"
+            @escape-key-down="onEscapeKeyDown"
+            @interact-outside="onInteractOutside"
+            @open-auto-focus="onOpenAutoFocus"
+            @pointerdown="onDragStart"
+            @pointermove="onDragMove"
+            @pointerup="onDragEnd($event, close)"
+          >
+            <VisuallyHidden v-if="slots.content && title" as-child>
+              <DialogTitle>{{ title }}</DialogTitle>
+            </VisuallyHidden>
+            <slot name="content" :close="close">
+              <DialogClose v-if="closeButton" as-child>
+                <slot name="close" :close="close">
+                  <CloseButton
+                    data-slot="drawer-close-trigger"
+                    :class="ui.closeTrigger({ class: props.ui?.closeTrigger })"
+                  />
+                </slot>
+              </DialogClose>
+              <!-- Before the header so `handle + header` / `header + body` spacing selectors still match -->
+              <VisuallyHidden v-if="!showHeaderTitle" as-child>
+                <DialogTitle>{{ title }}</DialogTitle>
+              </VisuallyHidden>
+              <div
+                v-if="handle && placement !== 'top'"
+                aria-hidden="true"
+                data-slot="drawer-handle"
+                :class="ui.handle({ class: props.ui?.handle })"
+              >
+                <div data-slot="drawer-handle-bar" />
+              </div>
+              <div
+                v-if="hasHeader"
+                data-slot="drawer-header"
+                :class="ui.header({ class: props.ui?.header })"
+              >
+                <slot name="header">
+                  <DialogTitle
+                    v-if="showHeaderTitle"
+                    data-slot="drawer-heading"
+                    :class="ui.heading({ class: props.ui?.heading })"
+                  >
+                    <slot name="title">
+                      {{ title }}
+                    </slot>
+                  </DialogTitle>
+                </slot>
+              </div>
+              <div
+                v-if="!!slots.body"
+                data-slot="drawer-body"
+                :class="ui.body({ class: props.ui?.body })"
+              >
+                <slot name="body" :close="close" />
+              </div>
+              <div
+                v-if="!!slots.footer"
+                data-slot="drawer-footer"
+                :class="ui.footer({ class: props.ui?.footer })"
+              >
+                <slot name="footer" :close="close" />
+              </div>
+              <div
+                v-if="handle && placement === 'top'"
+                aria-hidden="true"
+                data-slot="drawer-handle"
+                :class="ui.handle({ class: props.ui?.handle })"
+              >
+                <div data-slot="drawer-handle-bar" />
+              </div>
+            </slot>
+          </DialogContent>
+        </div>
+      </DialogOverlay>
+    </DialogPortal>
+  </DialogRoot>
+</template>
+
 <script lang="ts">
 import type { PortalTarget } from '../../config'
 import type { ComponentSlots, ComponentVariants } from '../../types/tv'
@@ -222,111 +330,3 @@ function onDragEnd(event: PointerEvent, close: () => void) {
   velocity = 0
 }
 </script>
-
-<template>
-  <DialogRoot
-    :open="open"
-    :default-open="defaultOpen"
-    modal
-    v-slot="{ open: isOpen, close }"
-    @update:open="onOpenChange"
-  >
-    <DialogTrigger v-if="!!slots.default" as-child>
-      <slot :open="isOpen" />
-    </DialogTrigger>
-    <DialogPortal :disabled="portalTarget.disabled" :to="portalTarget.to">
-      <DialogOverlay
-        data-slot="drawer-backdrop"
-        :style="{ '--visual-viewport-height': visualViewportHeight }"
-        :class="ui.backdrop({ class: props.ui?.backdrop })"
-      >
-        <div
-          data-slot="drawer-content"
-          :data-state="isOpen ? 'open' : 'closed'"
-          :data-placement="placement"
-          :class="ui.content({ class: props.ui?.content })"
-        >
-          <DialogContent
-            ref="dialogContent"
-            data-slot="drawer-dialog"
-            :data-placement="placement"
-            :aria-describedby="undefined"
-            :style="dismissible ? { touchAction: 'none' } : undefined"
-            :class="ui.dialog({ class: [props.ui?.dialog, props.class] })"
-            @escape-key-down="onEscapeKeyDown"
-            @interact-outside="onInteractOutside"
-            @open-auto-focus="onOpenAutoFocus"
-            @pointerdown="onDragStart"
-            @pointermove="onDragMove"
-            @pointerup="onDragEnd($event, close)"
-          >
-            <VisuallyHidden v-if="slots.content && title" as-child>
-              <DialogTitle>{{ title }}</DialogTitle>
-            </VisuallyHidden>
-            <slot name="content" :close="close">
-              <DialogClose v-if="closeButton" as-child>
-                <slot name="close" :close="close">
-                  <CloseButton
-                    data-slot="drawer-close-trigger"
-                    :class="ui.closeTrigger({ class: props.ui?.closeTrigger })"
-                  />
-                </slot>
-              </DialogClose>
-              <!-- Before the header so `handle + header` / `header + body` spacing selectors still match -->
-              <VisuallyHidden v-if="!showHeaderTitle" as-child>
-                <DialogTitle>{{ title }}</DialogTitle>
-              </VisuallyHidden>
-              <div
-                v-if="handle && placement !== 'top'"
-                aria-hidden="true"
-                data-slot="drawer-handle"
-                :class="ui.handle({ class: props.ui?.handle })"
-              >
-                <div data-slot="drawer-handle-bar" />
-              </div>
-              <div
-                v-if="hasHeader"
-                data-slot="drawer-header"
-                :class="ui.header({ class: props.ui?.header })"
-              >
-                <slot name="header">
-                  <DialogTitle
-                    v-if="showHeaderTitle"
-                    data-slot="drawer-heading"
-                    :class="ui.heading({ class: props.ui?.heading })"
-                  >
-                    <slot name="title">
-                      {{ title }}
-                    </slot>
-                  </DialogTitle>
-                </slot>
-              </div>
-              <div
-                v-if="!!slots.body"
-                data-slot="drawer-body"
-                :class="ui.body({ class: props.ui?.body })"
-              >
-                <slot name="body" :close="close" />
-              </div>
-              <div
-                v-if="!!slots.footer"
-                data-slot="drawer-footer"
-                :class="ui.footer({ class: props.ui?.footer })"
-              >
-                <slot name="footer" :close="close" />
-              </div>
-              <div
-                v-if="handle && placement === 'top'"
-                aria-hidden="true"
-                data-slot="drawer-handle"
-                :class="ui.handle({ class: props.ui?.handle })"
-              >
-                <div data-slot="drawer-handle-bar" />
-              </div>
-            </slot>
-          </DialogContent>
-        </div>
-      </DialogOverlay>
-    </DialogPortal>
-  </DialogRoot>
-</template>

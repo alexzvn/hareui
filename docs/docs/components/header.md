@@ -103,15 +103,6 @@ Use the `height` prop to change the height of the header. Defaults to `4rem`.
 ### Within an app layout
 
 ```vue
-<script setup lang="ts">
-import { Button, Footer, Header, NavigationMenu } from '@hareui/vue'
-
-const items = [
-  { label: 'Docs', href: '/docs', active: true },
-  { label: 'Components', href: '/components' },
-]
-</script>
-
 <template>
   <Header hide-on-scroll>
     <template #title><Logo class="h-6 w-auto" /></template>
@@ -131,6 +122,15 @@ const items = [
 
   <Footer>…</Footer>
 </template>
+
+<script setup lang="ts">
+import { Button, Footer, Header, NavigationMenu } from '@hareui/vue'
+
+const items = [
+  { label: 'Docs', href: '/docs', active: true },
+  { label: 'Components', href: '/components' },
+]
+</script>
 ```
 
 ## Customization

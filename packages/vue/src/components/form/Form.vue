@@ -1,3 +1,16 @@
+<template>
+  <component
+    :is="parent ? 'div' : 'form'"
+    ref="form"
+    :name="parent ? undefined : name"
+    :novalidate="(!parent && validationBehavior !== 'native') || undefined"
+    @submit="onSubmit"
+    @reset="clear()"
+  >
+    <slot :errors="errors" :loading="loading" />
+  </component>
+</template>
+
 <script lang="ts">
 import type { ValidationBehavior, ValidationErrors } from './context'
 import type {
@@ -491,16 +504,3 @@ defineExpose({
   blurredFields,
 })
 </script>
-
-<template>
-  <component
-    :is="parent ? 'div' : 'form'"
-    ref="form"
-    :name="parent ? undefined : name"
-    :novalidate="(!parent && validationBehavior !== 'native') || undefined"
-    @submit="onSubmit"
-    @reset="clear()"
-  >
-    <slot :errors="errors" :loading="loading" />
-  </component>
-</template>

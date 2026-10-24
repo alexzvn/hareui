@@ -1,39 +1,3 @@
-<script setup lang="ts">
-import type { ListBoxItem } from '@hareui/vue'
-import { Autocomplete, Description, Label, TagGroup } from '@hareui/vue'
-import { ref } from 'vue'
-
-const TEAMMATES = [
-  { id: 'sarah', name: 'Sarah Chen', role: 'Product Design' },
-  { id: 'marcus', name: 'Marcus Lee', role: 'Engineering' },
-  { id: 'priya', name: 'Priya Patel', role: 'Data Science' },
-  { id: 'jordan', name: 'Jordan Kim', role: 'Customer Success' },
-  { id: 'alex', name: 'Alex Rivera', role: 'Marketing' },
-] as const
-const itemClass =
-  'rounded-lg data-[focused=true]:bg-accent/10 data-[selected=true]:bg-accent/5 dark:data-[focused=true]:bg-accent/15 dark:data-[selected=true]:bg-accent/8'
-
-interface Teammate extends ListBoxItem {
-  name: string
-  role: string
-}
-
-const items: Teammate[] = TEAMMATES.map((t) => ({
-  value: t.id,
-  label: t.name,
-  textValue: `${t.name} ${t.role}`,
-  class: itemClass,
-  name: t.name,
-  role: t.role,
-}))
-
-const selectedKeys = ref<string[]>([])
-
-function onRemoveTags(ids: string[]) {
-  selectedKeys.value = selectedKeys.value.filter((key) => !ids.includes(key))
-}
-</script>
-
 <template>
   <div class="w-full max-w-sm pt-6">
     <!-- HeroUI places the Description between the Label and the trigger; here both sit above the component -->
@@ -89,3 +53,39 @@ function onRemoveTags(ids: string[]) {
     </div>
   </div>
 </template>
+
+<script setup lang="ts">
+import type { ListBoxItem } from '@hareui/vue'
+import { Autocomplete, Description, Label, TagGroup } from '@hareui/vue'
+import { ref } from 'vue'
+
+const TEAMMATES = [
+  { id: 'sarah', name: 'Sarah Chen', role: 'Product Design' },
+  { id: 'marcus', name: 'Marcus Lee', role: 'Engineering' },
+  { id: 'priya', name: 'Priya Patel', role: 'Data Science' },
+  { id: 'jordan', name: 'Jordan Kim', role: 'Customer Success' },
+  { id: 'alex', name: 'Alex Rivera', role: 'Marketing' },
+] as const
+const itemClass =
+  'rounded-lg data-[focused=true]:bg-accent/10 data-[selected=true]:bg-accent/5 dark:data-[focused=true]:bg-accent/15 dark:data-[selected=true]:bg-accent/8'
+
+interface Teammate extends ListBoxItem {
+  name: string
+  role: string
+}
+
+const items: Teammate[] = TEAMMATES.map((t) => ({
+  value: t.id,
+  label: t.name,
+  textValue: `${t.name} ${t.role}`,
+  class: itemClass,
+  name: t.name,
+  role: t.role,
+}))
+
+const selectedKeys = ref<string[]>([])
+
+function onRemoveTags(ids: string[]) {
+  selectedKeys.value = selectedKeys.value.filter((key) => !ids.includes(key))
+}
+</script>

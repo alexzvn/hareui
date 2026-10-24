@@ -1,30 +1,3 @@
-<script setup lang="ts">
-import type { TagGroupItem } from '@hareui/vue'
-import { EmptyState, TagGroup } from '@hareui/vue'
-import { Icon } from '@iconify/vue'
-import { ref } from 'vue'
-
-const tags = ref<TagGroupItem[]>([
-  { id: 'news', label: 'News' },
-  { id: 'travel', label: 'Travel' },
-  { id: 'gaming', label: 'Gaming' },
-  { id: 'shopping', label: 'Shopping' },
-])
-const frameworks = ref<TagGroupItem[]>([
-  { id: 'react', label: 'React' },
-  { id: 'vue', label: 'Vue' },
-  { id: 'angular', label: 'Angular' },
-  { id: 'svelte', label: 'Svelte' },
-])
-
-function onRemoveTags(ids: string[]) {
-  tags.value = tags.value.filter((tag) => !ids.includes(tag.id))
-}
-function onRemoveFrameworks(ids: string[]) {
-  frameworks.value = frameworks.value.filter((framework) => !ids.includes(framework.id))
-}
-</script>
-
 <template>
   <div class="flex flex-col gap-8">
     <div class="w-sm">
@@ -60,3 +33,30 @@ function onRemoveFrameworks(ids: string[]) {
     </div>
   </div>
 </template>
+
+<script setup lang="ts">
+import type { TagGroupItem } from '@hareui/vue'
+import { EmptyState, TagGroup } from '@hareui/vue'
+import { Icon } from '@iconify/vue'
+import { ref } from 'vue'
+
+const tags = ref<TagGroupItem[]>([
+  { id: 'news', label: 'News' },
+  { id: 'travel', label: 'Travel' },
+  { id: 'gaming', label: 'Gaming' },
+  { id: 'shopping', label: 'Shopping' },
+])
+const frameworks = ref<TagGroupItem[]>([
+  { id: 'react', label: 'React' },
+  { id: 'vue', label: 'Vue' },
+  { id: 'angular', label: 'Angular' },
+  { id: 'svelte', label: 'Svelte' },
+])
+
+function onRemoveTags(ids: string[]) {
+  tags.value = tags.value.filter((tag) => !ids.includes(tag.id))
+}
+function onRemoveFrameworks(ids: string[]) {
+  frameworks.value = frameworks.value.filter((framework) => !ids.includes(framework.id))
+}
+</script>

@@ -1,14 +1,3 @@
-<script setup lang="ts">
-import { Chip, Separator } from '@hareui/vue'
-
-const variants = ['primary', 'secondary', 'tertiary', 'soft'] as const
-const colors = ['accent', 'default', 'success', 'warning', 'danger'] as const
-const matrices = [
-  { title: 'Default palette', isVibrant: false },
-  { title: 'Vibrant palette', isVibrant: true },
-]
-</script>
-
 <template>
   <div class="flex w-full flex-col gap-8 overflow-x-auto">
     <template v-for="(matrix, index) in matrices" :key="matrix.title">
@@ -52,3 +41,14 @@ const matrices = [
     </template>
   </div>
 </template>
+
+<script setup lang="ts">
+import { Chip, Separator } from '@hareui/vue'
+
+const variants = ['primary', 'secondary', 'tertiary', 'soft'] as const
+const colors = ['accent', 'default', 'success', 'warning', 'danger'] as const
+const matrices = [
+  { title: 'Default palette', isVibrant: false },
+  { title: 'Vibrant palette', isVibrant: true },
+]
+</script>

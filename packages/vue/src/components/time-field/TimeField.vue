@@ -1,3 +1,58 @@
+<template>
+  <TimeFieldRoot
+    :id="id"
+    ref="root"
+    :model-value="modelValue"
+    :default-value="defaultValue"
+    :placeholder="placeholder"
+    :default-placeholder="defaultPlaceholder"
+    :granularity="granularity"
+    :hour-cycle="hourCycle"
+    :step="step"
+    :step-snapping="stepSnapping"
+    :hide-time-zone="hideTimeZone"
+    :min-value="minValue"
+    :max-value="maxValue"
+    :locale="locale"
+    :disabled="disabled"
+    :readonly="readonly"
+    :required="required"
+    :name="name"
+    data-slot="time-field"
+    :data-required="required ? 'true' : undefined"
+    :aria-describedby="describedBy"
+    :class="ui.base({ class: [props.ui?.base, props.class] })"
+    @update:model-value="onUpdate"
+    @update:placeholder="emit('update:placeholder', $event)"
+  >
+    <template #default="{ segments }">
+      <!-- `as` falls through to Reka `Label`: the group label names the input group via aria-labelledby, not a single form control (HeroUI renders a span) -->
+      <FieldLabel :id="labelId" as="span" />
+      <DateInputGroup
+        :segments="wrapBidiIsolate(dropDanglingTimeZoneSeparator(segments))"
+        :segment-input="TimeFieldInput"
+        :variant="variant"
+        :full-width="fullWidth"
+        :disabled="disabled"
+        :invalid="invalid"
+        :aria-label="$attrs['aria-label'] as string | undefined"
+        :labelledby="hasLabel ? labelId : undefined"
+        :describedby="describedBy"
+        :ui="{ base: props.ui?.group, ...groupUiProps }"
+      >
+        <template v-if="slots.prefix" #prefix>
+          <slot name="prefix" />
+        </template>
+        <template v-if="slots.suffix" #suffix>
+          <slot name="suffix" />
+        </template>
+      </DateInputGroup>
+      <FieldDescription />
+      <FieldError />
+    </template>
+  </TimeFieldRoot>
+</template>
+
 <script lang="ts">
 import type { AnyTime } from '@internationalized/date'
 import type { TimeFieldRootProps, TimeValue } from 'reka-ui'
@@ -228,58 +283,3 @@ const groupUiProps = computed<DateInputGroupProps['ui']>(() => ({
   suffix: props.ui?.suffix,
 }))
 </script>
-
-<template>
-  <TimeFieldRoot
-    :id="id"
-    ref="root"
-    :model-value="modelValue"
-    :default-value="defaultValue"
-    :placeholder="placeholder"
-    :default-placeholder="defaultPlaceholder"
-    :granularity="granularity"
-    :hour-cycle="hourCycle"
-    :step="step"
-    :step-snapping="stepSnapping"
-    :hide-time-zone="hideTimeZone"
-    :min-value="minValue"
-    :max-value="maxValue"
-    :locale="locale"
-    :disabled="disabled"
-    :readonly="readonly"
-    :required="required"
-    :name="name"
-    data-slot="time-field"
-    :data-required="required ? 'true' : undefined"
-    :aria-describedby="describedBy"
-    :class="ui.base({ class: [props.ui?.base, props.class] })"
-    @update:model-value="onUpdate"
-    @update:placeholder="emit('update:placeholder', $event)"
-  >
-    <template #default="{ segments }">
-      <!-- `as` falls through to Reka `Label`: the group label names the input group via aria-labelledby, not a single form control (HeroUI renders a span) -->
-      <FieldLabel :id="labelId" as="span" />
-      <DateInputGroup
-        :segments="wrapBidiIsolate(dropDanglingTimeZoneSeparator(segments))"
-        :segment-input="TimeFieldInput"
-        :variant="variant"
-        :full-width="fullWidth"
-        :disabled="disabled"
-        :invalid="invalid"
-        :aria-label="$attrs['aria-label'] as string | undefined"
-        :labelledby="hasLabel ? labelId : undefined"
-        :describedby="describedBy"
-        :ui="{ base: props.ui?.group, ...groupUiProps }"
-      >
-        <template v-if="slots.prefix" #prefix>
-          <slot name="prefix" />
-        </template>
-        <template v-if="slots.suffix" #suffix>
-          <slot name="suffix" />
-        </template>
-      </DateInputGroup>
-      <FieldDescription />
-      <FieldError />
-    </template>
-  </TimeFieldRoot>
-</template>

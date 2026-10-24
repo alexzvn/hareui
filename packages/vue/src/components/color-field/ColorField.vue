@@ -1,3 +1,76 @@
+<template>
+  <div
+    ref="root"
+    v-bind="rootAttrs"
+    data-slot="color-field"
+    :data-disabled="disabled ? 'true' : undefined"
+    :data-invalid="invalid ? 'true' : undefined"
+    :data-required="required ? 'true' : undefined"
+    :data-readonly="readonly ? 'true' : undefined"
+    :class="ui.base({ class: [props.ui?.base, props.class] })"
+  >
+    <FieldLabel :for="id" />
+    <ColorFieldRoot
+      :model-value="modelValueForRoot"
+      :default-value="defaultValue"
+      :color-space="colorSpace"
+      :channel="channel"
+      :placeholder="placeholder"
+      :locale="locale"
+      :step="step"
+      :disable-wheel-change="disableWheelChange"
+      :disabled="disabled"
+      :readonly="readonly"
+      :required="required"
+      data-slot="color-input-group"
+      :data-invalid="invalid ? 'true' : undefined"
+      :data-focus-within="focusWithin ? 'true' : undefined"
+      :data-focus-visible="focusVisible ? 'true' : undefined"
+      :class="ui.group({ class: props.ui?.group })"
+      @focusin="onFocusIn"
+      @focusout="onFocusOut"
+      @update:color="onUpdateColor"
+    >
+      <ColorFieldBridge
+        :is-empty="() => empty"
+        :on-clear="onClear"
+        :on-fill="onUpdateColor"
+        :name="name"
+        :step="step"
+        :locale="locale"
+      />
+      <!-- Prefix/suffix go through `useSlotOutlet` components: a `<slot>` outlet here would make Vue flag the root's slots as forwarded and re-render the root on every render -->
+      <div
+        v-if="hasPrefix"
+        data-slot="color-input-group-prefix"
+        :class="ui.prefix({ class: props.ui?.prefix })"
+      >
+        <PrefixOutlet />
+      </div>
+      <ColorFieldInput
+        :id="id"
+        data-slot="color-input-group-input"
+        :aria-invalid="invalid ? 'true' : undefined"
+        :aria-required="required ? 'true' : undefined"
+        :aria-describedby="describedBy"
+        :aria-label="attrs['aria-label']"
+        :aria-labelledby="attrs['aria-labelledby']"
+        :class="ui.input({ class: props.ui?.input })"
+        @keydown="onInputKeydown"
+      />
+      <div
+        v-if="hasSuffix"
+        data-slot="color-input-group-suffix"
+        :class="ui.suffix({ class: props.ui?.suffix })"
+      >
+        <SuffixOutlet />
+      </div>
+    </ColorFieldRoot>
+    <FieldDescription />
+    <FieldError />
+  </div>
+</template>
+
 <script lang="ts">
 import type { Color, ColorChannel, ColorSpace } from 'reka-ui'
 
@@ -306,76 +379,3 @@ function onFocusOut(event: FocusEvent) {
   focusVisible.value = false
 }
 </script>
-
-<template>
-  <div
-    ref="root"
-    v-bind="rootAttrs"
-    data-slot="color-field"
-    :data-disabled="disabled ? 'true' : undefined"
-    :data-invalid="invalid ? 'true' : undefined"
-    :data-required="required ? 'true' : undefined"
-    :data-readonly="readonly ? 'true' : undefined"
-    :class="ui.base({ class: [props.ui?.base, props.class] })"
-  >
-    <FieldLabel :for="id" />
-    <ColorFieldRoot
-      :model-value="modelValueForRoot"
-      :default-value="defaultValue"
-      :color-space="colorSpace"
-      :channel="channel"
-      :placeholder="placeholder"
-      :locale="locale"
-      :step="step"
-      :disable-wheel-change="disableWheelChange"
-      :disabled="disabled"
-      :readonly="readonly"
-      :required="required"
-      data-slot="color-input-group"
-      :data-invalid="invalid ? 'true' : undefined"
-      :data-focus-within="focusWithin ? 'true' : undefined"
-      :data-focus-visible="focusVisible ? 'true' : undefined"
-      :class="ui.group({ class: props.ui?.group })"
-      @focusin="onFocusIn"
-      @focusout="onFocusOut"
-      @update:color="onUpdateColor"
-    >
-      <ColorFieldBridge
-        :is-empty="() => empty"
-        :on-clear="onClear"
-        :on-fill="onUpdateColor"
-        :name="name"
-        :step="step"
-        :locale="locale"
-      />
-      <!-- Prefix/suffix go through `useSlotOutlet` components: a `<slot>` outlet here would make Vue flag the root's slots as forwarded and re-render the root on every render -->
-      <div
-        v-if="hasPrefix"
-        data-slot="color-input-group-prefix"
-        :class="ui.prefix({ class: props.ui?.prefix })"
-      >
-        <PrefixOutlet />
-      </div>
-      <ColorFieldInput
-        :id="id"
-        data-slot="color-input-group-input"
-        :aria-invalid="invalid ? 'true' : undefined"
-        :aria-required="required ? 'true' : undefined"
-        :aria-describedby="describedBy"
-        :aria-label="attrs['aria-label']"
-        :aria-labelledby="attrs['aria-labelledby']"
-        :class="ui.input({ class: props.ui?.input })"
-        @keydown="onInputKeydown"
-      />
-      <div
-        v-if="hasSuffix"
-        data-slot="color-input-group-suffix"
-        :class="ui.suffix({ class: props.ui?.suffix })"
-      >
-        <SuffixOutlet />
-      </div>
-    </ColorFieldRoot>
-    <FieldDescription />
-    <FieldError />
-  </div>
-</template>

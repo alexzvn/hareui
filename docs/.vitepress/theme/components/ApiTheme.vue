@@ -1,3 +1,7 @@
+<template>
+  <CollapsibleCode :code="code" lang="ts" />
+</template>
+
 <script setup lang="ts">
 import { computed } from 'vue'
 
@@ -20,7 +24,3 @@ const code = computed(() => {
   return source
 })
 </script>
-
-<template>
-  <CollapsibleCode :code="code" lang="ts" />
-</template>

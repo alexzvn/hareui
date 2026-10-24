@@ -1,7 +1,3 @@
-<script setup lang="ts">
-import { CellSlider } from '@hareui/vue'
-</script>
-
 <template>
   <dl class="grid w-[340px] grid-cols-[auto_1fr] items-center gap-x-3 gap-y-2">
     <template v-for="variant in ['default', 'secondary'] as const" :key="variant">
@@ -19,3 +15,7 @@ import { CellSlider } from '@hareui/vue'
     </template>
   </dl>
 </template>
+
+<script setup lang="ts">
+import { CellSlider } from '@hareui/vue'
+</script>

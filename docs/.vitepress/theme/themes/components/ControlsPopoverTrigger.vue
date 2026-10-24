@@ -1,3 +1,15 @@
+<template>
+  <div
+    data-slot="popover-trigger"
+    role="button"
+    tabindex="0"
+    class="inline-block [transition:color_150ms_var(--ease-smooth),background-color_150ms_var(--ease-smooth),box-shadow_150ms_var(--ease-out)] motion-reduce:transition-none focus-visible:status-focused"
+    @keydown="onKeydown"
+  >
+    <slot />
+  </div>
+</template>
+
 <script setup lang="ts">
 // Private: HeroUI's `Popover.Trigger` is a `div[role=button]` (`.popover__trigger`) wrapping the trigger content.
 // HareUI's Popover turns its default slot's root element into the trigger, so this wrapper is that root.
@@ -10,15 +22,3 @@ function onKeydown(event: KeyboardEvent) {
   }
 }
 </script>
-
-<template>
-  <div
-    data-slot="popover-trigger"
-    role="button"
-    tabindex="0"
-    class="inline-block [transition:color_150ms_var(--ease-smooth),background-color_150ms_var(--ease-smooth),box-shadow_150ms_var(--ease-out)] motion-reduce:transition-none focus-visible:status-focused"
-    @keydown="onKeydown"
-  >
-    <slot />
-  </div>
-</template>

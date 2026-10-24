@@ -1,11 +1,3 @@
-<script setup lang="ts">
-import { TimeField } from '@hareui/vue'
-import { getLocalTimeZone, now, Time } from '@internationalized/date'
-
-const currentTime = now(getLocalTimeZone())
-const timeValue = new Time(currentTime.hour, currentTime.minute, currentTime.second)
-</script>
-
 <template>
   <div class="flex flex-col gap-4">
     <TimeField
@@ -25,3 +17,11 @@ const timeValue = new Time(currentTime.hour, currentTime.minute, currentTime.sec
     />
   </div>
 </template>
+
+<script setup lang="ts">
+import { TimeField } from '@hareui/vue'
+import { getLocalTimeZone, now, Time } from '@internationalized/date'
+
+const currentTime = now(getLocalTimeZone())
+const timeValue = new Time(currentTime.hour, currentTime.minute, currentTime.second)
+</script>

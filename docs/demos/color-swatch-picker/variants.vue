@@ -1,3 +1,16 @@
+<template>
+  <div class="flex flex-col gap-6">
+    <div class="flex flex-col gap-2">
+      <span class="text-sm text-muted">Circle (default)</span>
+      <ColorSwatchPicker aria-label="Color, circle" :items="colors" variant="circle" />
+    </div>
+    <div class="flex flex-col gap-2">
+      <span class="text-sm text-muted">Square</span>
+      <ColorSwatchPicker aria-label="Color, square" :items="colors" variant="square" />
+    </div>
+  </div>
+</template>
+
 <script setup lang="ts">
 import type { ColorSwatchPickerItem } from '@hareui/vue'
 import { ColorSwatchPicker } from '@hareui/vue'
@@ -12,16 +25,3 @@ const colors: ColorSwatchPickerItem[] = [
   '#84CC16',
 ]
 </script>
-
-<template>
-  <div class="flex flex-col gap-6">
-    <div class="flex flex-col gap-2">
-      <span class="text-sm text-muted">Circle (default)</span>
-      <ColorSwatchPicker aria-label="Color, circle" :items="colors" variant="circle" />
-    </div>
-    <div class="flex flex-col gap-2">
-      <span class="text-sm text-muted">Square</span>
-      <ColorSwatchPicker aria-label="Color, square" :items="colors" variant="square" />
-    </div>
-  </div>
-</template>

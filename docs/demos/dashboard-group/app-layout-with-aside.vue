@@ -1,119 +1,3 @@
-<script setup lang="ts">
-import type { BreadcrumbsItem, NavigationMenuItem } from '@hareui/vue'
-import {
-  Avatar,
-  Breadcrumbs,
-  Button,
-  Chip,
-  DashboardGroup,
-  DashboardNavbar,
-  DashboardPanel,
-  DashboardSidebar,
-  DashboardSidebarCollapse,
-  DashboardSidebarToggle,
-  Disclosure,
-  DisclosureGroup,
-  NavigationMenu,
-} from '@hareui/vue'
-import { Icon } from '@iconify/vue'
-import { h, ref } from 'vue'
-
-// NavigationMenu takes icon components: an Iconify Gravity UI icon that forwards the menu's icon classes.
-const gravityIcon = (name: string) => (attrs: Record<string, unknown>) =>
-  h(Icon, { ...attrs, icon: `gravity-ui:${name}` })
-
-const count = (label: string) => ({
-  label,
-  variant: 'tertiary' as const,
-  class: 'text-xs text-muted',
-})
-// A colored dot centred in the icon box (`attrs` carries the menu's icon size classes).
-const dot = (color: string) => (attrs: Record<string, unknown>) =>
-  h('span', { ...attrs, class: [attrs.class, 'flex items-center justify-center'] }, [
-    h('span', {
-      class: 'size-2 rounded-full',
-      style: { backgroundColor: `var(--color-${color})` },
-    }),
-  ])
-
-const items: NavigationMenuItem[] = [
-  { label: 'My inbox', icon: gravityIcon('envelope'), href: '#', badge: count('3') },
-  {
-    label: 'All messages',
-    icon: gravityIcon('envelope'),
-    href: '#',
-    active: true,
-    badge: count('13'),
-  },
-  { label: 'Created by me', icon: gravityIcon('pencil'), href: '#' },
-  { label: 'Unassigned', icon: gravityIcon('circle-question'), href: '#', badge: count('10') },
-  { type: 'label', label: 'Team inboxes' },
-  { label: 'Customer success', icon: dot('success'), href: '#' },
-  { label: 'Sales', icon: dot('danger'), href: '#' },
-  { label: 'Developers', icon: dot('accent'), href: '#' },
-]
-
-const footerItems: NavigationMenuItem[] = [
-  { label: 'Analytics', icon: gravityIcon('chart-column'), href: '#' },
-  { label: 'Help Center', icon: gravityIcon('circle-question'), href: '#' },
-]
-
-const breadcrumbs: BreadcrumbsItem[] = [{ label: 'Inbox', icon: 'gravity-ui:envelope' }]
-
-const avatars = {
-  blue: 'https://heroui-assets.nyc3.cdn.digitaloceanspaces.com/avatars/blue.jpg',
-  green: 'https://heroui-assets.nyc3.cdn.digitaloceanspaces.com/avatars/green.jpg',
-  purple: 'https://heroui-assets.nyc3.cdn.digitaloceanspaces.com/avatars/purple.jpg',
-}
-
-const messages = [
-  {
-    from: 'customer',
-    text: "My direct deposit didn't show up today. It's usually here by now. Can you check what happened?",
-  },
-  {
-    from: 'agent',
-    text: "Thanks for reaching out, Dan. I'm looking into this now and will get back to you shortly.",
-  },
-  { from: 'customer', text: 'Thanks, I appreciate it!' },
-  {
-    from: 'agent',
-    text: "Good news — the deposit has been released and should land in your account within the next hour. Let me know if you don't see it.",
-  },
-]
-
-const sections = [
-  {
-    value: 'user',
-    title: 'User details',
-    rows: [
-      ['Name', 'Dan Fox'],
-      ['Company', 'Ashby'],
-      ['Type', 'Customer'],
-      ['Email', 'dan@ashby.com'],
-    ],
-  },
-  {
-    value: 'recent',
-    title: 'Recent conversations',
-    list: ['Payment failed on autopay', 'How do I export invoices?', 'Upgrade plan inquiry'],
-  },
-  {
-    value: 'company',
-    title: 'Company information',
-    rows: [
-      ['Name', 'Ashby'],
-      ['Plan', 'Enterprise'],
-      ['Size', '201 – 500'],
-    ],
-  },
-]
-const expanded = ref<(string | number)[]>(['user'])
-
-// Starts on the icon rail so the conversation keeps room next to the aside.
-const navCollapsed = ref(true)
-</script>
-
 <template>
   <DashboardGroup unit="rem" :persistent="false">
     <DashboardSidebar
@@ -342,3 +226,119 @@ const navCollapsed = ref(true)
     </DashboardSidebar>
   </DashboardGroup>
 </template>
+
+<script setup lang="ts">
+import type { BreadcrumbsItem, NavigationMenuItem } from '@hareui/vue'
+import {
+  Avatar,
+  Breadcrumbs,
+  Button,
+  Chip,
+  DashboardGroup,
+  DashboardNavbar,
+  DashboardPanel,
+  DashboardSidebar,
+  DashboardSidebarCollapse,
+  DashboardSidebarToggle,
+  Disclosure,
+  DisclosureGroup,
+  NavigationMenu,
+} from '@hareui/vue'
+import { Icon } from '@iconify/vue'
+import { h, ref } from 'vue'
+
+// NavigationMenu takes icon components: an Iconify Gravity UI icon that forwards the menu's icon classes.
+const gravityIcon = (name: string) => (attrs: Record<string, unknown>) =>
+  h(Icon, { ...attrs, icon: `gravity-ui:${name}` })
+
+const count = (label: string) => ({
+  label,
+  variant: 'tertiary' as const,
+  class: 'text-xs text-muted',
+})
+// A colored dot centred in the icon box (`attrs` carries the menu's icon size classes).
+const dot = (color: string) => (attrs: Record<string, unknown>) =>
+  h('span', { ...attrs, class: [attrs.class, 'flex items-center justify-center'] }, [
+    h('span', {
+      class: 'size-2 rounded-full',
+      style: { backgroundColor: `var(--color-${color})` },
+    }),
+  ])
+
+const items: NavigationMenuItem[] = [
+  { label: 'My inbox', icon: gravityIcon('envelope'), href: '#', badge: count('3') },
+  {
+    label: 'All messages',
+    icon: gravityIcon('envelope'),
+    href: '#',
+    active: true,
+    badge: count('13'),
+  },
+  { label: 'Created by me', icon: gravityIcon('pencil'), href: '#' },
+  { label: 'Unassigned', icon: gravityIcon('circle-question'), href: '#', badge: count('10') },
+  { type: 'label', label: 'Team inboxes' },
+  { label: 'Customer success', icon: dot('success'), href: '#' },
+  { label: 'Sales', icon: dot('danger'), href: '#' },
+  { label: 'Developers', icon: dot('accent'), href: '#' },
+]
+
+const footerItems: NavigationMenuItem[] = [
+  { label: 'Analytics', icon: gravityIcon('chart-column'), href: '#' },
+  { label: 'Help Center', icon: gravityIcon('circle-question'), href: '#' },
+]
+
+const breadcrumbs: BreadcrumbsItem[] = [{ label: 'Inbox', icon: 'gravity-ui:envelope' }]
+
+const avatars = {
+  blue: 'https://heroui-assets.nyc3.cdn.digitaloceanspaces.com/avatars/blue.jpg',
+  green: 'https://heroui-assets.nyc3.cdn.digitaloceanspaces.com/avatars/green.jpg',
+  purple: 'https://heroui-assets.nyc3.cdn.digitaloceanspaces.com/avatars/purple.jpg',
+}
+
+const messages = [
+  {
+    from: 'customer',
+    text: "My direct deposit didn't show up today. It's usually here by now. Can you check what happened?",
+  },
+  {
+    from: 'agent',
+    text: "Thanks for reaching out, Dan. I'm looking into this now and will get back to you shortly.",
+  },
+  { from: 'customer', text: 'Thanks, I appreciate it!' },
+  {
+    from: 'agent',
+    text: "Good news — the deposit has been released and should land in your account within the next hour. Let me know if you don't see it.",
+  },
+]
+
+const sections = [
+  {
+    value: 'user',
+    title: 'User details',
+    rows: [
+      ['Name', 'Dan Fox'],
+      ['Company', 'Ashby'],
+      ['Type', 'Customer'],
+      ['Email', 'dan@ashby.com'],
+    ],
+  },
+  {
+    value: 'recent',
+    title: 'Recent conversations',
+    list: ['Payment failed on autopay', 'How do I export invoices?', 'Upgrade plan inquiry'],
+  },
+  {
+    value: 'company',
+    title: 'Company information',
+    rows: [
+      ['Name', 'Ashby'],
+      ['Plan', 'Enterprise'],
+      ['Size', '201 – 500'],
+    ],
+  },
+]
+const expanded = ref<(string | number)[]>(['user'])
+
+// Starts on the icon rail so the conversation keeps room next to the aside.
+const navCollapsed = ref(true)
+</script>

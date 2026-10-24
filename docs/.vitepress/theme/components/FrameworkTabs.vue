@@ -1,7 +1,3 @@
-<script setup lang="ts">
-import BrandIcon from './BrandIcon.vue'
-</script>
-
 <template>
   <div data-slot="tabs" class="flex flex-col gap-2" data-orientation="horizontal">
     <div
@@ -35,3 +31,7 @@ import BrandIcon from './BrandIcon.vue'
     </div>
   </div>
 </template>
+
+<script setup lang="ts">
+import BrandIcon from './BrandIcon.vue'
+</script>

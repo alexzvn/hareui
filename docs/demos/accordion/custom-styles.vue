@@ -1,3 +1,29 @@
+<template>
+  <Accordion
+    class="bg-surface-1/10 w-full max-w-md rounded-2xl"
+    :items="items"
+    :ui="ui"
+    variant="surface"
+  >
+    <template #leading="{ item }">
+      <img
+        :alt="item.label"
+        class="h-11 w-11 transition-[scale,rotate] duration-300 ease-out group-hover/item:scale-120 group-hover/item:-rotate-10 group-hover/item:drop-shadow-lg"
+        :src="item.iconUrl"
+      />
+    </template>
+    <template #label="{ item }">
+      <div class="flex flex-col gap-0">
+        <span class="leading-5 font-medium">{{ item.label }}</span>
+        <span class="leading-6 font-normal text-muted/80">{{ item.subtitle }}</span>
+      </div>
+    </template>
+    <template #indicator>
+      <Icon height="16" icon="gravity-ui:chevron-down" width="16" />
+    </template>
+  </Accordion>
+</template>
+
 <script setup lang="ts">
 import type { AccordionItem } from '@hareui/vue'
 import { Accordion } from '@hareui/vue'
@@ -38,29 +64,3 @@ const ui = {
   bodyInner: 'text-muted/80',
 }
 </script>
-
-<template>
-  <Accordion
-    class="bg-surface-1/10 w-full max-w-md rounded-2xl"
-    :items="items"
-    :ui="ui"
-    variant="surface"
-  >
-    <template #leading="{ item }">
-      <img
-        :alt="item.label"
-        class="h-11 w-11 transition-[scale,rotate] duration-300 ease-out group-hover/item:scale-120 group-hover/item:-rotate-10 group-hover/item:drop-shadow-lg"
-        :src="item.iconUrl"
-      />
-    </template>
-    <template #label="{ item }">
-      <div class="flex flex-col gap-0">
-        <span class="leading-5 font-medium">{{ item.label }}</span>
-        <span class="leading-6 font-normal text-muted/80">{{ item.subtitle }}</span>
-      </div>
-    </template>
-    <template #indicator>
-      <Icon height="16" icon="gravity-ui:chevron-down" width="16" />
-    </template>
-  </Accordion>
-</template>

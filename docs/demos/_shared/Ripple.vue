@@ -1,3 +1,12 @@
+<template>
+  <div ref="root" class="salty-ripple" aria-hidden="true">
+    <div
+      ref="surface"
+      :class="['salty-ripple-surface', { '--hover': hovered, '--press': pressed }]"
+    />
+  </div>
+</template>
+
 <script setup lang="ts">
 /**
  * Vue port of `m3-ripple@1.1.3` (MIT, © 2025 saltyAom), the Material Design 3 ripple
@@ -217,15 +226,6 @@ onBeforeUnmount(() => {
   for (const [type, fn] of Object.entries(listeners)) parent?.removeEventListener(type, fn, true)
 })
 </script>
-
-<template>
-  <div ref="root" class="salty-ripple" aria-hidden="true">
-    <div
-      ref="surface"
-      :class="['salty-ripple-surface', { '--hover': hovered, '--press': pressed }]"
-    />
-  </div>
-</template>
 
 <style>
 /* m3-ripple@1.1.3 ripple.css, verbatim. */

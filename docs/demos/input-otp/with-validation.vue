@@ -1,3 +1,19 @@
+<template>
+  <Form class="flex w-[280px] flex-col gap-2" @submit="onSubmit">
+    <InputOtp
+      :model-value="value"
+      label="Verify account"
+      description="Hint: The code is 123456"
+      name="code"
+      :invalid="isInvalid"
+      error-message="Invalid code. Please try again."
+      :groups="[3, 3]"
+      @update:model-value="handleChange"
+    />
+    <Button :disabled="value.length !== 6" type="submit"> Submit </Button>
+  </Form>
+</template>
+
 <script setup lang="ts">
 import { Button, Form, InputOtp } from '@hareui/vue'
 import { ref } from 'vue'
@@ -24,19 +40,3 @@ function handleChange(val: string | undefined) {
   isInvalid.value = false
 }
 </script>
-
-<template>
-  <Form class="flex w-[280px] flex-col gap-2" @submit="onSubmit">
-    <InputOtp
-      :model-value="value"
-      label="Verify account"
-      description="Hint: The code is 123456"
-      name="code"
-      :invalid="isInvalid"
-      error-message="Invalid code. Please try again."
-      :groups="[3, 3]"
-      @update:model-value="handleChange"
-    />
-    <Button :disabled="value.length !== 6" type="submit"> Submit </Button>
-  </Form>
-</template>

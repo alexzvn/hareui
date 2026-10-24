@@ -1,3 +1,25 @@
+<template>
+  <Card
+    class="w-full max-w-[560px] rounded-2xl"
+    :ui="{ header: 'flex-row flex-wrap items-center justify-between gap-2' }"
+  >
+    <template #header>
+      <h3 class="text-base font-medium text-foreground">Bike Share Rides</h3>
+      <ChartLegend :series="series" :colors="colors" />
+    </template>
+    <ComposedChart
+      :data="data"
+      index="week"
+      :series="series"
+      :colors="colors"
+      :y-axis="{ tickFormatter: formatCount }"
+      :y-axis-right="{ domain: [0, 6], tickFormatter: formatKm }"
+      aria-label="Weekly bike share rides and average distance"
+      :height="260"
+    />
+  </Card>
+</template>
+
 <script setup lang="ts">
 import { Card } from '@hareui/vue'
 import type { ChartComposedSeries } from '@hareui/vue/charts'
@@ -36,25 +58,3 @@ const series = {
 } satisfies Record<string, ChartComposedSeries>
 const colors = ['var(--chart-3)', 'var(--chart-5)']
 </script>
-
-<template>
-  <Card
-    class="w-full max-w-[560px] rounded-2xl"
-    :ui="{ header: 'flex-row flex-wrap items-center justify-between gap-2' }"
-  >
-    <template #header>
-      <h3 class="text-base font-medium text-foreground">Bike Share Rides</h3>
-      <ChartLegend :series="series" :colors="colors" />
-    </template>
-    <ComposedChart
-      :data="data"
-      index="week"
-      :series="series"
-      :colors="colors"
-      :y-axis="{ tickFormatter: formatCount }"
-      :y-axis-right="{ domain: [0, 6], tickFormatter: formatKm }"
-      aria-label="Weekly bike share rides and average distance"
-      :height="260"
-    />
-  </Card>
-</template>

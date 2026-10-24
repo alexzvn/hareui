@@ -1,3 +1,77 @@
+<template>
+  <div data-slot="tag-group" :class="ui.base({ class: [props.ui?.base, props.class] })">
+    <FieldLabel :id="labelId" as="span" />
+    <div
+      ref="list"
+      role="grid"
+      data-slot="tag-group-list"
+      :aria-multiselectable="selectionMode === 'multiple' ? 'true' : undefined"
+      :aria-label="props['aria-label']"
+      :aria-labelledby="hasLabel ? labelId : undefined"
+      :aria-describedby="describedBy"
+      :data-empty="items.length ? undefined : 'true'"
+      :tabindex="items.length ? undefined : 0"
+      :class="ui.list({ class: props.ui?.list })"
+      @keydown="onListKeydown"
+      @focusin="onListFocusIn"
+    >
+      <!-- Slot-less branch: conditional slot templates make the tags' slots dynamic, re-rendering every tag on each group render -->
+      <template v-if="slots.item || slots.removeButton">
+        <TagGroupTag
+          v-for="(item, index) in items"
+          :key="item.id"
+          :item="item"
+          :index="index"
+          :selected="isSelected(item.id)"
+          :disabled="isItemDisabled(item)"
+          :tabindex="tabindexFor(item)"
+          :selection-mode="selectionMode"
+          :removable="removable"
+          :classes="tagUi"
+          :ui="props.ui"
+          @press="onPress(item, $event)"
+          @remove="removeOne(item)"
+        >
+          <template v-if="slots.item" #default="state">
+            <slot
+              name="item"
+              v-bind="state as { item: T; index: number; selected: boolean; disabled: boolean }"
+            />
+          </template>
+          <template v-if="slots.removeButton" #removeButton="state">
+            <slot name="removeButton" v-bind="state as { item: T; index: number }" />
+          </template>
+        </TagGroupTag>
+      </template>
+      <template v-else>
+        <TagGroupTag
+          v-for="(item, index) in items"
+          :key="item.id"
+          :item="item"
+          :index="index"
+          :selected="isSelected(item.id)"
+          :disabled="isItemDisabled(item)"
+          :tabindex="tabindexFor(item)"
+          :selection-mode="selectionMode"
+          :removable="removable"
+          :classes="tagUi"
+          :ui="props.ui"
+          @press="onPress(item, $event)"
+          @remove="removeOne(item)"
+        />
+      </template>
+      <!-- As RAC GridList: the empty state sits in a layout-less row/cell, so the grid keeps its required children -->
+      <div v-if="!items.length && $slots.empty" role="row" style="display: contents">
+        <div role="gridcell" style="display: contents">
+          <slot name="empty" />
+        </div>
+      </div>
+    </div>
+    <FieldDescription />
+    <FieldError />
+  </div>
+</template>
+
 <script lang="ts">
 import type { ComponentSlots, ComponentVariants } from '../../types/tv'
 import tagTheme from './tagTheme'
@@ -272,77 +346,3 @@ const { labelId, hasLabel, describedBy, FieldLabel, FieldDescription, FieldError
   },
 )
 </script>
-
-<template>
-  <div data-slot="tag-group" :class="ui.base({ class: [props.ui?.base, props.class] })">
-    <FieldLabel :id="labelId" as="span" />
-    <div
-      ref="list"
-      role="grid"
-      data-slot="tag-group-list"
-      :aria-multiselectable="selectionMode === 'multiple' ? 'true' : undefined"
-      :aria-label="props['aria-label']"
-      :aria-labelledby="hasLabel ? labelId : undefined"
-      :aria-describedby="describedBy"
-      :data-empty="items.length ? undefined : 'true'"
-      :tabindex="items.length ? undefined : 0"
-      :class="ui.list({ class: props.ui?.list })"
-      @keydown="onListKeydown"
-      @focusin="onListFocusIn"
-    >
-      <!-- Slot-less branch: conditional slot templates make the tags' slots dynamic, re-rendering every tag on each group render -->
-      <template v-if="slots.item || slots.removeButton">
-        <TagGroupTag
-          v-for="(item, index) in items"
-          :key="item.id"
-          :item="item"
-          :index="index"
-          :selected="isSelected(item.id)"
-          :disabled="isItemDisabled(item)"
-          :tabindex="tabindexFor(item)"
-          :selection-mode="selectionMode"
-          :removable="removable"
-          :classes="tagUi"
-          :ui="props.ui"
-          @press="onPress(item, $event)"
-          @remove="removeOne(item)"
-        >
-          <template v-if="slots.item" #default="state">
-            <slot
-              name="item"
-              v-bind="state as { item: T; index: number; selected: boolean; disabled: boolean }"
-            />
-          </template>
-          <template v-if="slots.removeButton" #removeButton="state">
-            <slot name="removeButton" v-bind="state as { item: T; index: number }" />
-          </template>
-        </TagGroupTag>
-      </template>
-      <template v-else>
-        <TagGroupTag
-          v-for="(item, index) in items"
-          :key="item.id"
-          :item="item"
-          :index="index"
-          :selected="isSelected(item.id)"
-          :disabled="isItemDisabled(item)"
-          :tabindex="tabindexFor(item)"
-          :selection-mode="selectionMode"
-          :removable="removable"
-          :classes="tagUi"
-          :ui="props.ui"
-          @press="onPress(item, $event)"
-          @remove="removeOne(item)"
-        />
-      </template>
-      <!-- As RAC GridList: the empty state sits in a layout-less row/cell, so the grid keeps its required children -->
-      <div v-if="!items.length && $slots.empty" role="row" style="display: contents">
-        <div role="gridcell" style="display: contents">
-          <slot name="empty" />
-        </div>
-      </div>
-    </div>
-    <FieldDescription />
-    <FieldError />
-  </div>
-</template>

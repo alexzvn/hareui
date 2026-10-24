@@ -1,3 +1,15 @@
+<template>
+  <CodePanel
+    show-line-numbers
+    file-name="theme.css"
+    :is-visible="isCodeVisible"
+    lang="css"
+    :source-code="cssCode"
+    title="globals.css"
+    @close="toggleCode"
+  />
+</template>
+
 <script setup lang="ts">
 // Port of HeroUI docs `themes/components/theme-code-panel.tsx`.
 // `useDeferredValue` has no Vue counterpart; HighlightedCode highlights asynchronously and coalesces rapid changes,
@@ -22,15 +34,3 @@ const cssCode = computed(() => {
   return generateMinimalCssVariables(variables.value, customFontInfo ?? undefined)
 })
 </script>
-
-<template>
-  <CodePanel
-    show-line-numbers
-    file-name="theme.css"
-    :is-visible="isCodeVisible"
-    lang="css"
-    :source-code="cssCode"
-    title="globals.css"
-    @close="toggleCode"
-  />
-</template>

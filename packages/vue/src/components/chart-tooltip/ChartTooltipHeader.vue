@@ -1,3 +1,12 @@
+<template>
+  <div
+    data-slot="chart-tooltip-header"
+    :class="classes.header({ class: [ui()?.header, props.class] })"
+  >
+    <slot />
+  </div>
+</template>
+
 <script lang="ts">
 export interface ChartTooltipHeaderProps {
   /** Additional classes merged into the element. */
@@ -18,12 +27,3 @@ defineSlots<ChartTooltipHeaderSlots>()
 
 const { classes, ui } = useChartTooltipContext('Header')
 </script>
-
-<template>
-  <div
-    data-slot="chart-tooltip-header"
-    :class="classes.header({ class: [ui()?.header, props.class] })"
-  >
-    <slot />
-  </div>
-</template>

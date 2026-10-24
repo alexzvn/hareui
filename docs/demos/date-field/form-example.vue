@@ -1,29 +1,3 @@
-<script setup lang="ts">
-import { Button, DateField, Form } from '@hareui/vue'
-import { Icon } from '@iconify/vue'
-import type { DateValue } from '@internationalized/date'
-import { getLocalTimeZone, today } from '@internationalized/date'
-import { computed, ref, shallowRef } from 'vue'
-
-const value = shallowRef<DateValue | null>(null)
-const isSubmitting = ref(false)
-const todayDate = today(getLocalTimeZone())
-const isInvalid = computed(() => value.value !== null && value.value.compare(todayDate) < 0)
-
-function handleSubmit(e: Event) {
-  e.preventDefault()
-  if (!value.value || isInvalid.value) return
-
-  isSubmitting.value = true
-  // Simulate API call
-  setTimeout(() => {
-    console.log('Date submitted:', { date: value.value })
-    value.value = null
-    isSubmitting.value = false
-  }, 1500)
-}
-</script>
-
 <template>
   <Form class="flex w-[280px] flex-col gap-4" @submit="handleSubmit">
     <DateField
@@ -52,3 +26,29 @@ function handleSubmit(e: Event) {
     </Button>
   </Form>
 </template>
+
+<script setup lang="ts">
+import { Button, DateField, Form } from '@hareui/vue'
+import { Icon } from '@iconify/vue'
+import type { DateValue } from '@internationalized/date'
+import { getLocalTimeZone, today } from '@internationalized/date'
+import { computed, ref, shallowRef } from 'vue'
+
+const value = shallowRef<DateValue | null>(null)
+const isSubmitting = ref(false)
+const todayDate = today(getLocalTimeZone())
+const isInvalid = computed(() => value.value !== null && value.value.compare(todayDate) < 0)
+
+function handleSubmit(e: Event) {
+  e.preventDefault()
+  if (!value.value || isInvalid.value) return
+
+  isSubmitting.value = true
+  // Simulate API call
+  setTimeout(() => {
+    console.log('Date submitted:', { date: value.value })
+    value.value = null
+    isSubmitting.value = false
+  }, 1500)
+}
+</script>

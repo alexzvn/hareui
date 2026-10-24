@@ -1,7 +1,3 @@
-<script setup lang="ts">
-import { InputGroup, Spinner, TextField } from '@hareui/vue'
-</script>
-
 <template>
   <TextField
     aria-label="Status"
@@ -16,3 +12,7 @@ import { InputGroup, Spinner, TextField } from '@hareui/vue'
     </InputGroup>
   </TextField>
 </template>
+
+<script setup lang="ts">
+import { InputGroup, Spinner, TextField } from '@hareui/vue'
+</script>

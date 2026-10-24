@@ -1,7 +1,3 @@
-<script setup lang="ts">
-import { ColorArea, ColorPicker, ColorSlider, ColorSwatch, Label } from '@hareui/vue'
-</script>
-
 <template>
   <ColorPicker default-value="#0485F7">
     <template #trigger>
@@ -24,3 +20,7 @@ import { ColorArea, ColorPicker, ColorSlider, ColorSwatch, Label } from '@hareui
     />
   </ColorPicker>
 </template>
+
+<script setup lang="ts">
+import { ColorArea, ColorPicker, ColorSlider, ColorSwatch, Label } from '@hareui/vue'
+</script>

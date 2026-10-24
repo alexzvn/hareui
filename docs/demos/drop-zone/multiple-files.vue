@@ -1,14 +1,3 @@
-<script setup lang="ts">
-import { DropZone } from '@hareui/vue'
-import { computed, ref } from 'vue'
-
-const episodeFiles = ref<File[]>([])
-
-const totalMegabytes = computed(() =>
-  (episodeFiles.value.reduce((sum, file) => sum + file.size, 0) / (1024 * 1024)).toFixed(1),
-)
-</script>
-
 <template>
   <div class="flex w-full max-w-[440px] flex-col gap-2">
     <DropZone
@@ -24,3 +13,14 @@ const totalMegabytes = computed(() =>
     </p>
   </div>
 </template>
+
+<script setup lang="ts">
+import { DropZone } from '@hareui/vue'
+import { computed, ref } from 'vue'
+
+const episodeFiles = ref<File[]>([])
+
+const totalMegabytes = computed(() =>
+  (episodeFiles.value.reduce((sum, file) => sum + file.size, 0) / (1024 * 1024)).toFixed(1),
+)
+</script>

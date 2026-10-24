@@ -1,3 +1,25 @@
+<template>
+  <section class="flex flex-col gap-2">
+    <div class="flex flex-wrap items-center justify-between gap-2">
+      <h1 class="text-[1.75em] font-semibold flex items-center gap-2">{{ title }}</h1>
+    </div>
+    <p v-if="description" class="text-fd-muted-foreground text-md mt-2 mb-4">{{ description }}</p>
+    <div v-if="badges.length" class="mb-4 flex flex-wrap gap-2">
+      <a
+        v-for="badge in badges"
+        :key="badge.href"
+        :class="linkClass"
+        :href="badge.href"
+        rel="noopener noreferrer"
+        target="_blank"
+      >
+        <BrandIcon :name="badge.icon" class="text-lg" />
+        {{ badge.label }}
+      </a>
+    </div>
+  </section>
+</template>
+
 <script setup lang="ts">
 import { computed } from 'vue'
 
@@ -57,25 +79,3 @@ const badges = computed(() => {
   ].filter((badge): badge is Badge => !!badge)
 })
 </script>
-
-<template>
-  <section class="flex flex-col gap-2">
-    <div class="flex flex-wrap items-center justify-between gap-2">
-      <h1 class="text-[1.75em] font-semibold flex items-center gap-2">{{ title }}</h1>
-    </div>
-    <p v-if="description" class="text-fd-muted-foreground text-md mt-2 mb-4">{{ description }}</p>
-    <div v-if="badges.length" class="mb-4 flex flex-wrap gap-2">
-      <a
-        v-for="badge in badges"
-        :key="badge.href"
-        :class="linkClass"
-        :href="badge.href"
-        rel="noopener noreferrer"
-        target="_blank"
-      >
-        <BrandIcon :name="badge.icon" class="text-lg" />
-        {{ badge.label }}
-      </a>
-    </div>
-  </section>
-</template>

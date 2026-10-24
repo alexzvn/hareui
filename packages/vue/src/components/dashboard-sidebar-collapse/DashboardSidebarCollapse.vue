@@ -1,3 +1,56 @@
+<template>
+  <Button
+    :as="as"
+    icon-only
+    data-slot="dashboard-sidebar-collapse"
+    :variant="variant"
+    :size="size"
+    :disabled="disabled"
+    :aria-label="collapsed ? 'Expand sidebar' : 'Collapse sidebar'"
+    :aria-expanded="!collapsed"
+    :aria-controls="sidebar?.id.value"
+    :class="ui.base({ class: [props.ui?.base, props.class] })"
+    @click="sidebar?.collapse(!collapsed)"
+  >
+    <slot :collapsed="collapsed">
+      <svg
+        v-if="side === 'left'"
+        aria-hidden="true"
+        fill="none"
+        height="16"
+        role="presentation"
+        viewBox="0 0 16 16"
+        width="16"
+        xmlns="http://www.w3.org/2000/svg"
+      >
+        <path
+          clip-rule="evenodd"
+          d="M6 3.5h6A1.5 1.5 0 0 1 13.5 5v6a1.5 1.5 0 0 1-1.5 1.5H6zm-1.5 0H4A1.5 1.5 0 0 0 2.5 5v6A1.5 1.5 0 0 0 4 12.5h.5zM1 5a3 3 0 0 1 3-3h8a3 3 0 0 1 3 3v6a3 3 0 0 1-3 3H4a3 3 0 0 1-3-3z"
+          fill="currentColor"
+          fill-rule="evenodd"
+        />
+      </svg>
+      <svg
+        v-else
+        aria-hidden="true"
+        fill="none"
+        height="16"
+        role="presentation"
+        viewBox="0 0 16 16"
+        width="16"
+        xmlns="http://www.w3.org/2000/svg"
+      >
+        <path
+          clip-rule="evenodd"
+          d="M10 3.5H4A1.5 1.5 0 0 0 2.5 5v6A1.5 1.5 0 0 0 4 12.5h6zm1.5 0h.5A1.5 1.5 0 0 1 13.5 5v6a1.5 1.5 0 0 1-1.5 1.5h-.5zM15 5a3 3 0 0 0-3-3H4a3 3 0 0 0-3 3v6a3 3 0 0 0 3 3h8a3 3 0 0 0 3-3z"
+          fill="currentColor"
+          fill-rule="evenodd"
+        />
+      </svg>
+    </slot>
+  </Button>
+</template>
+
 <script lang="ts">
 import type { PrimitiveProps } from 'reka-ui'
 
@@ -69,56 +122,3 @@ const dashboard = useDashboard()
 const sidebar = computed(() => dashboard?.sidebars[props.side])
 const collapsed = computed(() => sidebar.value?.collapsed.value ?? false)
 </script>
-
-<template>
-  <Button
-    :as="as"
-    icon-only
-    data-slot="dashboard-sidebar-collapse"
-    :variant="variant"
-    :size="size"
-    :disabled="disabled"
-    :aria-label="collapsed ? 'Expand sidebar' : 'Collapse sidebar'"
-    :aria-expanded="!collapsed"
-    :aria-controls="sidebar?.id.value"
-    :class="ui.base({ class: [props.ui?.base, props.class] })"
-    @click="sidebar?.collapse(!collapsed)"
-  >
-    <slot :collapsed="collapsed">
-      <svg
-        v-if="side === 'left'"
-        aria-hidden="true"
-        fill="none"
-        height="16"
-        role="presentation"
-        viewBox="0 0 16 16"
-        width="16"
-        xmlns="http://www.w3.org/2000/svg"
-      >
-        <path
-          clip-rule="evenodd"
-          d="M6 3.5h6A1.5 1.5 0 0 1 13.5 5v6a1.5 1.5 0 0 1-1.5 1.5H6zm-1.5 0H4A1.5 1.5 0 0 0 2.5 5v6A1.5 1.5 0 0 0 4 12.5h.5zM1 5a3 3 0 0 1 3-3h8a3 3 0 0 1 3 3v6a3 3 0 0 1-3 3H4a3 3 0 0 1-3-3z"
-          fill="currentColor"
-          fill-rule="evenodd"
-        />
-      </svg>
-      <svg
-        v-else
-        aria-hidden="true"
-        fill="none"
-        height="16"
-        role="presentation"
-        viewBox="0 0 16 16"
-        width="16"
-        xmlns="http://www.w3.org/2000/svg"
-      >
-        <path
-          clip-rule="evenodd"
-          d="M10 3.5H4A1.5 1.5 0 0 0 2.5 5v6A1.5 1.5 0 0 0 4 12.5h6zm1.5 0h.5A1.5 1.5 0 0 1 13.5 5v6a1.5 1.5 0 0 1-1.5 1.5h-.5zM15 5a3 3 0 0 0-3-3H4a3 3 0 0 0-3 3v6a3 3 0 0 0 3 3h8a3 3 0 0 0 3-3z"
-          fill="currentColor"
-          fill-rule="evenodd"
-        />
-      </svg>
-    </slot>
-  </Button>
-</template>

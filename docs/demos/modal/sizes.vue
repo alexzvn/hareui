@@ -1,10 +1,3 @@
-<script setup lang="ts">
-import { Button, Modal } from '@hareui/vue'
-import { Icon } from '@iconify/vue'
-
-const sizes = ['xs', 'sm', 'md', 'lg', 'cover', 'full'] as const
-</script>
-
 <template>
   <div class="flex flex-wrap gap-4">
     <Modal v-for="size in sizes" :key="size" :size="size">
@@ -40,3 +33,10 @@ const sizes = ['xs', 'sm', 'md', 'lg', 'cover', 'full'] as const
     </Modal>
   </div>
 </template>
+
+<script setup lang="ts">
+import { Button, Modal } from '@hareui/vue'
+import { Icon } from '@iconify/vue'
+
+const sizes = ['xs', 'sm', 'md', 'lg', 'cover', 'full'] as const
+</script>

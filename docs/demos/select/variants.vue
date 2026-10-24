@@ -1,13 +1,3 @@
-<script setup lang="ts">
-import type { ListBoxItem } from '@hareui/vue'
-import { Select } from '@hareui/vue'
-
-const options: ListBoxItem[] = [
-  { value: 'option1', label: 'Option 1' },
-  { value: 'option2', label: 'Option 2' },
-]
-</script>
-
 <template>
   <div class="flex flex-col gap-4">
     <Select
@@ -26,3 +16,13 @@ const options: ListBoxItem[] = [
     />
   </div>
 </template>
+
+<script setup lang="ts">
+import type { ListBoxItem } from '@hareui/vue'
+import { Select } from '@hareui/vue'
+
+const options: ListBoxItem[] = [
+  { value: 'option1', label: 'Option 1' },
+  { value: 'option2', label: 'Option 2' },
+]
+</script>

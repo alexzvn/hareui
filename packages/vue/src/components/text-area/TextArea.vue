@@ -1,3 +1,23 @@
+<template>
+  <textarea
+    v-bind="field?.inputAttrs.value"
+    :id="id"
+    ref="textarea"
+    v-model="value"
+    :name="name"
+    :placeholder="placeholder"
+    :disabled="disabled || undefined"
+    :required="required || undefined"
+    :readonly="readonly || undefined"
+    :aria-invalid="invalid ? 'true' : undefined"
+    :aria-describedby="field?.describedBy.value"
+    data-slot="textarea"
+    :data-invalid="invalid ? 'true' : undefined"
+    :data-disabled="disabled ? 'true' : undefined"
+    :class="ui.base({ class: [props.ui?.base, props.class] })"
+  />
+</template>
+
 <script lang="ts">
 import type { ValidateFn } from '../../composables/useFieldValidation'
 import type { ComponentSlots, ComponentVariants } from '../../types/tv'
@@ -141,23 +161,3 @@ const ui = useComponentUI('textArea', theme, () => ({
   fullWidth: fullWidth.value,
 }))
 </script>
-
-<template>
-  <textarea
-    v-bind="field?.inputAttrs.value"
-    :id="id"
-    ref="textarea"
-    v-model="value"
-    :name="name"
-    :placeholder="placeholder"
-    :disabled="disabled || undefined"
-    :required="required || undefined"
-    :readonly="readonly || undefined"
-    :aria-invalid="invalid ? 'true' : undefined"
-    :aria-describedby="field?.describedBy.value"
-    data-slot="textarea"
-    :data-invalid="invalid ? 'true' : undefined"
-    :data-disabled="disabled ? 'true' : undefined"
-    :class="ui.base({ class: [props.ui?.base, props.class] })"
-  />
-</template>

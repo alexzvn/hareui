@@ -1,3 +1,26 @@
+<template>
+  <form class="flex w-[300px] flex-col gap-4" @submit="onSubmit">
+    <NativeSelect
+      required
+      full-width
+      label="From"
+      name="origin"
+      placeholder="Departure airport"
+      :items="airports"
+    />
+    <NativeSelect
+      required
+      full-width
+      label="Cabin"
+      name="cabin"
+      placeholder="Choose a cabin"
+      description="Upgrades depend on seat availability"
+      :items="cabins"
+    />
+    <Button size="lg" type="submit"> Search flights </Button>
+  </form>
+</template>
+
 <script setup lang="ts">
 import { Button, NativeSelect } from '@hareui/vue'
 
@@ -39,26 +62,3 @@ function onSubmit(event: Event) {
   alert(`Searching flights: ${JSON.stringify(data)}`)
 }
 </script>
-
-<template>
-  <form class="flex w-[300px] flex-col gap-4" @submit="onSubmit">
-    <NativeSelect
-      required
-      full-width
-      label="From"
-      name="origin"
-      placeholder="Departure airport"
-      :items="airports"
-    />
-    <NativeSelect
-      required
-      full-width
-      label="Cabin"
-      name="cabin"
-      placeholder="Choose a cabin"
-      description="Upgrades depend on seat availability"
-      :items="cabins"
-    />
-    <Button size="lg" type="submit"> Search flights </Button>
-  </form>
-</template>

@@ -1,3 +1,16 @@
+<template>
+  <ConfigProvider
+    :use-id="() => useId()"
+    :dir="dir"
+    :locale="locale"
+    :scroll-body="scrollBody"
+    :nonce="nonce"
+  >
+    <slot />
+    <ToastProvider v-if="toaster !== null" v-bind="toaster" />
+  </ConfigProvider>
+</template>
+
 <script lang="ts">
 import type { ConfigProviderProps } from 'reka-ui'
 
@@ -66,16 +79,3 @@ provide(hareUIConfigKey, {
   },
 })
 </script>
-
-<template>
-  <ConfigProvider
-    :use-id="() => useId()"
-    :dir="dir"
-    :locale="locale"
-    :scroll-body="scrollBody"
-    :nonce="nonce"
-  >
-    <slot />
-    <ToastProvider v-if="toaster !== null" v-bind="toaster" />
-  </ConfigProvider>
-</template>

@@ -1,7 +1,3 @@
-<script setup lang="ts">
-import { InputOtp } from '@hareui/vue'
-</script>
-
 <template>
   <InputOtp
     class="w-[280px]"
@@ -11,3 +7,7 @@ import { InputOtp } from '@hareui/vue'
     :groups="[3, 3]"
   />
 </template>
+
+<script setup lang="ts">
+import { InputOtp } from '@hareui/vue'
+</script>

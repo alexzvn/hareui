@@ -1,3 +1,13 @@
+<template>
+  <RichTable
+    :data="data"
+    :columns="columns"
+    :column-sizing-options="{ enableColumnResizing: true, columnResizeMode: 'onChange' }"
+    :ui="{ base: 'table-fixed' }"
+    class="w-full"
+  />
+</template>
+
 <script setup lang="ts">
 import type { RichTableColumn, RichTableHeader } from '@hareui/vue'
 import { RichTable } from '@hareui/vue'
@@ -87,13 +97,3 @@ const columns: RichTableColumn<Payment>[] = [
   },
 ]
 </script>
-
-<template>
-  <RichTable
-    :data="data"
-    :columns="columns"
-    :column-sizing-options="{ enableColumnResizing: true, columnResizeMode: 'onChange' }"
-    :ui="{ base: 'table-fixed' }"
-    class="w-full"
-  />
-</template>

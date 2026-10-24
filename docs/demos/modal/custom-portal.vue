@@ -1,10 +1,3 @@
-<script setup lang="ts">
-import { Button, Modal } from '@hareui/vue'
-import { ref } from 'vue'
-
-const portalRef = ref<HTMLElement>()
-</script>
-
 <template>
   <div class="flex flex-col gap-4">
     <div>
@@ -48,3 +41,10 @@ const portalRef = ref<HTMLElement>()
     </div>
   </div>
 </template>
+
+<script setup lang="ts">
+import { Button, Modal } from '@hareui/vue'
+import { ref } from 'vue'
+
+const portalRef = ref<HTMLElement>()
+</script>

@@ -1,29 +1,3 @@
-<script setup lang="ts">
-import { Avatar, Button, Card, CloseButton, Link } from '@hareui/vue'
-import { Icon } from '@iconify/vue'
-
-const events = [
-  {
-    alt: 'Futuristic Robot',
-    src: 'https://heroui-assets.nyc3.cdn.digitaloceanspaces.com/docs/robot1.jpeg',
-    title: 'Bridging the Future',
-    description: 'Today, 6:30 PM',
-  },
-  {
-    alt: 'Avocado',
-    src: 'https://heroui-assets.nyc3.cdn.digitaloceanspaces.com/docs/avocado.jpeg',
-    title: 'Avocado Hackathon',
-    description: 'Wed, 4:30 PM',
-  },
-  {
-    alt: 'Sound Electro event',
-    src: 'https://heroui-assets.nyc3.cdn.digitaloceanspaces.com/docs/oranges.jpeg',
-    title: 'Sound Electro | Beyond art',
-    description: 'Fri, 8:00 PM',
-  },
-]
-</script>
-
 <template>
   <div class="flex w-full items-center justify-center">
     <div class="grid w-full max-w-2xl grid-cols-12 gap-4 p-4">
@@ -237,3 +211,29 @@ const events = [
     </div>
   </div>
 </template>
+
+<script setup lang="ts">
+import { Avatar, Button, Card, CloseButton, Link } from '@hareui/vue'
+import { Icon } from '@iconify/vue'
+
+const events = [
+  {
+    alt: 'Futuristic Robot',
+    src: 'https://heroui-assets.nyc3.cdn.digitaloceanspaces.com/docs/robot1.jpeg',
+    title: 'Bridging the Future',
+    description: 'Today, 6:30 PM',
+  },
+  {
+    alt: 'Avocado',
+    src: 'https://heroui-assets.nyc3.cdn.digitaloceanspaces.com/docs/avocado.jpeg',
+    title: 'Avocado Hackathon',
+    description: 'Wed, 4:30 PM',
+  },
+  {
+    alt: 'Sound Electro event',
+    src: 'https://heroui-assets.nyc3.cdn.digitaloceanspaces.com/docs/oranges.jpeg',
+    title: 'Sound Electro | Beyond art',
+    description: 'Fri, 8:00 PM',
+  },
+]
+</script>

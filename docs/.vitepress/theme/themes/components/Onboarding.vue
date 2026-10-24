@@ -1,21 +1,3 @@
-<script setup lang="ts">
-// Port of HeroUI docs `themes/components/onboarding.tsx`.
-// framer-motion keyframes (`duration: 4, ease: easeInOut, repeat: Infinity, times: [0, .25, .5, .75, 1]`) -> CSS keyframe animations.
-import { Button, Modal } from '@hareui/vue'
-import { onMounted, ref } from 'vue'
-
-const isOpen = ref(false)
-
-onMounted(() => {
-  const onboarding = localStorage.getItem('onboarding')
-
-  if (!onboarding) {
-    isOpen.value = true
-    localStorage.setItem('onboarding', 'true')
-  }
-})
-</script>
-
 <template>
   <Modal
     v-model:open="isOpen"
@@ -58,6 +40,24 @@ onMounted(() => {
     </template>
   </Modal>
 </template>
+
+<script setup lang="ts">
+// Port of HeroUI docs `themes/components/onboarding.tsx`.
+// framer-motion keyframes (`duration: 4, ease: easeInOut, repeat: Infinity, times: [0, .25, .5, .75, 1]`) -> CSS keyframe animations.
+import { Button, Modal } from '@hareui/vue'
+import { onMounted, ref } from 'vue'
+
+const isOpen = ref(false)
+
+onMounted(() => {
+  const onboarding = localStorage.getItem('onboarding')
+
+  if (!onboarding) {
+    isOpen.value = true
+    localStorage.setItem('onboarding', 'true')
+  }
+})
+</script>
 
 <style scoped>
 .onboarding-block {

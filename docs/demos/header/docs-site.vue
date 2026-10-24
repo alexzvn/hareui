@@ -1,29 +1,3 @@
-<script setup lang="ts">
-import { Button, Header, Kbd, NavigationMenu, ToggleButton, ToggleButtonGroup } from '@hareui/vue'
-import { Icon } from '@iconify/vue'
-import { ref } from 'vue'
-
-// Touch-sized rows for the mobile menu.
-const menuUi = {
-  list: 'gap-1',
-  link: 'min-h-11 gap-3 rounded-lg px-3 py-2.5 text-base font-medium text-foreground',
-}
-
-const items = [
-  { label: 'Docs', href: '#docs', active: true },
-  { label: 'Components', href: '#components' },
-  { label: 'Blog', href: '#blog' },
-  { label: 'Changelog', href: '#changelog' },
-]
-
-const theme = ref(['system'])
-const itemClass =
-  'inline-flex h-8 items-center rounded-lg px-2 text-sm text-muted no-underline outline-none transition-colors hover:text-foreground focus-visible:status-focused data-[current=true]:text-foreground'
-// Theme switch: ghost icons, muted until hovered or selected, no fill on the selected one.
-const themeButtonClass =
-  'size-7 [--toggle-button-fg:var(--muted)] hover:[--toggle-button-fg:var(--foreground)] [--toggle-button-bg-selected:transparent] [--toggle-button-bg-selected-hover:var(--default)] [--toggle-button-fg-selected:var(--foreground)]'
-</script>
-
 <template>
   <!-- A docs-site navbar: nav next to the brand, search and a theme segment on the right. -->
   <!-- Unlike the default equal side columns, the nav keeps its width and the right side takes what is left. -->
@@ -128,3 +102,29 @@ const themeButtonClass =
     </p>
   </main>
 </template>
+
+<script setup lang="ts">
+import { Button, Header, Kbd, NavigationMenu, ToggleButton, ToggleButtonGroup } from '@hareui/vue'
+import { Icon } from '@iconify/vue'
+import { ref } from 'vue'
+
+// Touch-sized rows for the mobile menu.
+const menuUi = {
+  list: 'gap-1',
+  link: 'min-h-11 gap-3 rounded-lg px-3 py-2.5 text-base font-medium text-foreground',
+}
+
+const items = [
+  { label: 'Docs', href: '#docs', active: true },
+  { label: 'Components', href: '#components' },
+  { label: 'Blog', href: '#blog' },
+  { label: 'Changelog', href: '#changelog' },
+]
+
+const theme = ref(['system'])
+const itemClass =
+  'inline-flex h-8 items-center rounded-lg px-2 text-sm text-muted no-underline outline-none transition-colors hover:text-foreground focus-visible:status-focused data-[current=true]:text-foreground'
+// Theme switch: ghost icons, muted until hovered or selected, no fill on the selected one.
+const themeButtonClass =
+  'size-7 [--toggle-button-fg:var(--muted)] hover:[--toggle-button-fg:var(--foreground)] [--toggle-button-bg-selected:transparent] [--toggle-button-bg-selected-hover:var(--default)] [--toggle-button-fg-selected:var(--foreground)]'
+</script>

@@ -1,3 +1,12 @@
+<template>
+  <TagGroup aria-label="Tags" selection-mode="single" :items="items">
+    <template #item="{ item }">
+      <Icon :icon="icons[item.id]!" />
+      {{ item.label }}
+    </template>
+  </TagGroup>
+</template>
+
 <script setup lang="ts">
 import type { TagGroupItem } from '@hareui/vue'
 import { TagGroup } from '@hareui/vue'
@@ -16,12 +25,3 @@ const icons: Record<string, string> = {
   'default-shopping': 'gravity-ui:shopping-bag',
 }
 </script>
-
-<template>
-  <TagGroup aria-label="Tags" selection-mode="single" :items="items">
-    <template #item="{ item }">
-      <Icon :icon="icons[item.id]!" />
-      {{ item.label }}
-    </template>
-  </TagGroup>
-</template>

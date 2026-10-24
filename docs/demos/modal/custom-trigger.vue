@@ -1,8 +1,3 @@
-<script setup lang="ts">
-import { Button, Modal } from '@hareui/vue'
-import { Icon } from '@iconify/vue'
-</script>
-
 <template>
   <Modal class="sm:max-w-[360px]" :ui="{ icon: 'bg-accent-soft text-accent-soft-foreground' }">
     <button
@@ -35,3 +30,8 @@ import { Icon } from '@iconify/vue'
     </template>
   </Modal>
 </template>
+
+<script setup lang="ts">
+import { Button, Modal } from '@hareui/vue'
+import { Icon } from '@iconify/vue'
+</script>

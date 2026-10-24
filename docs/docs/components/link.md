@@ -135,14 +135,14 @@ app.use(
 Pass a router link component to `as`; the Link styles and icon stay the same:
 
 ```vue
+<template>
+  <Link :as="RouterLink" to="/about"> About Page </Link>
+</template>
+
 <script setup lang="ts">
 import { Link } from '@hareui/vue'
 import { RouterLink } from 'vue-router'
 </script>
-
-<template>
-  <Link :as="RouterLink" to="/about"> About Page </Link>
-</template>
 ```
 
 ## Related Components

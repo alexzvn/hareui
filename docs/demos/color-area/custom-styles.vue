@@ -1,7 +1,3 @@
-<script setup lang="ts">
-import { ColorArea } from '@hareui/vue'
-</script>
-
 <template>
   <ColorArea
     class="size-44 rounded-3xl"
@@ -9,3 +5,7 @@ import { ColorArea } from '@hareui/vue'
     default-value="rgb(116, 52, 255)"
   />
 </template>
+
+<script setup lang="ts">
+import { ColorArea } from '@hareui/vue'
+</script>

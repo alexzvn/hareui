@@ -1,3 +1,211 @@
+<template>
+  <ComboboxRoot
+    v-bind="rootAttrs"
+    as="div"
+    data-slot="combo-box"
+    :model-value="rekaValue as any"
+    :multiple="multiple"
+    :disabled="disabled"
+    :open="isOpen"
+    ignore-filter
+    :highlight-on-hover="false"
+    :reset-search-term-on-blur="false"
+    :reset-search-term-on-select="false"
+    :data-focused="focused ? 'true' : undefined"
+    :data-open="isOpen ? 'true' : undefined"
+    :data-disabled="disabled ? 'true' : undefined"
+    :data-readonly="readonly ? 'true' : undefined"
+    :data-invalid="invalid ? 'true' : undefined"
+    :data-required="required ? 'true' : undefined"
+    :class="ui.base({ class: [props.ui?.base, props.class] })"
+    @update:model-value="onRekaValue"
+    @update:open="onRekaOpen"
+  >
+    <RekaBridge @ready="onReady" />
+    <FieldLabel :id="labelId" :for="id" :class="ui.label({ class: props.ui?.label })" />
+    <ComboboxAnchor
+      as="div"
+      role="group"
+      data-slot="combo-box-input-group"
+      :data-disabled="disabled ? 'true' : undefined"
+      :data-invalid="invalid ? 'true' : undefined"
+      :data-focus-within="focused ? 'true' : undefined"
+      :data-focus-visible="focusVisible ? 'true' : undefined"
+      :class="ui.inputGroup({ class: props.ui?.inputGroup })"
+    >
+      <input
+        :id="id"
+        ref="input"
+        type="text"
+        role="combobox"
+        autocomplete="off"
+        autocorrect="off"
+        spellcheck="false"
+        aria-autocomplete="list"
+        :aria-expanded="isOpen ? 'true' : 'false'"
+        :aria-controls="isOpen ? listboxId : undefined"
+        :aria-activedescendant="isOpen && highlighted ? highlighted.id : undefined"
+        :aria-label="attrs['aria-label'] as string | undefined"
+        :aria-labelledby="inputLabelledBy"
+        :aria-describedby="describedBy"
+        :aria-invalid="invalid ? 'true' : undefined"
+        :aria-required="required && !nativeRequired ? 'true' : undefined"
+        :value="inputValue"
+        :placeholder="placeholder"
+        :name="submitText ? name : undefined"
+        :disabled="disabled || undefined"
+        :readonly="readonly || undefined"
+        :required="nativeRequired || undefined"
+        data-slot="input"
+        :data-invalid="invalid ? 'true' : undefined"
+        :data-disabled="disabled ? 'true' : undefined"
+        :data-focused="focused ? 'true' : undefined"
+        :data-focus-visible="focusVisible ? 'true' : undefined"
+        :class="inputUi.base({ class: props.ui?.input })"
+        @input="onInput"
+        @keydown="onKeydown"
+        @focus="onFocus"
+        @blur="onBlur"
+      />
+      <button
+        :id="triggerId"
+        type="button"
+        tabindex="-1"
+        data-slot="combo-box-trigger"
+        aria-label="Show suggestions"
+        :aria-labelledby="hasLabel ? `${triggerId} ${labelId}` : undefined"
+        aria-haspopup="listbox"
+        :aria-expanded="isOpen ? 'true' : 'false'"
+        :aria-controls="isOpen ? listboxId : undefined"
+        :disabled="disabled || readonly || undefined"
+        :data-disabled="disabled || readonly ? 'true' : undefined"
+        :data-open="isOpen ? 'true' : undefined"
+        :data-pressed="isOpen ? 'true' : undefined"
+        :data-hovered="triggerHovered ? 'true' : undefined"
+        :class="ui.trigger({ class: props.ui?.trigger })"
+        @pointerdown="onTriggerPointerdown"
+        @click="onTriggerClick"
+        @pointerenter="triggerHovered = $event.pointerType === 'mouse'"
+        @pointerleave="triggerHovered = false"
+      >
+        <slot name="indicator" :open="isOpen">
+          <svg
+            aria-hidden="true"
+            data-slot="combo-box-trigger-default-icon"
+            fill="none"
+            height="16"
+            role="presentation"
+            viewBox="0 0 16 16"
+            width="16"
+            xmlns="http://www.w3.org/2000/svg"
+          >
+            <path
+              clip-rule="evenodd"
+              d="M2.97 5.47a.75.75 0 0 1 1.06 0L8 9.44l3.97-3.97a.75.75 0 1 1 1.06 1.06l-4.5 4.5a.75.75 0 0 1-1.06 0l-4.5-4.5a.75.75 0 0 1 0-1.06"
+              fill="currentColor"
+              fill-rule="evenodd"
+            />
+          </svg>
+        </slot>
+      </button>
+    </ComboboxAnchor>
+    <div
+      v-if="showValue"
+      :id="valueId"
+      data-slot="combo-box-value"
+      :data-placeholder="isPlaceholder ? 'true' : undefined"
+      :class="ui.value({ class: props.ui?.value })"
+    >
+      <slot
+        name="value"
+        :selected-items="selectedItems"
+        :is-placeholder="isPlaceholder"
+        :text="valueText"
+        >{{ valueText }}</slot
+      >
+    </div>
+    <FieldDescription />
+    <FieldError />
+    <template v-if="name && !submitText">
+      <input
+        v-for="(value, i) in hiddenValues"
+        :key="i"
+        type="hidden"
+        :name="name"
+        :value="value"
+      />
+    </template>
+    <ComboboxPortal :disabled="portalTarget.disabled" :to="portalTarget.to">
+      <ComboboxContent
+        ref="content"
+        position="popper"
+        :role="undefined"
+        :aria-orientation="undefined"
+        :aria-multiselectable="undefined"
+        :data-orientation="undefined"
+        data-slot="combo-box-popover"
+        side="bottom"
+        align="center"
+        :side-offset="8"
+        :collision-padding="12"
+        :class="ui.popover({ class: props.ui?.popover })"
+      >
+        <div
+          :id="listboxId"
+          role="listbox"
+          aria-orientation="vertical"
+          data-slot="list-box"
+          data-layout="stack"
+          data-orientation="vertical"
+          aria-label="Suggestions"
+          :aria-labelledby="hasLabel ? `${listboxId} ${labelId}` : undefined"
+          :aria-multiselectable="multiple ? 'true' : undefined"
+          :data-empty="visibleCount ? undefined : 'true'"
+          :class="listBoxUi.base()"
+          @mousedown.prevent
+          @pointerdown="pressRelease.onPointerdown"
+          @pointerup="pressRelease.onPointerup"
+        >
+          <ListBoxRows
+            v-if="forwarded.length || slots['item-indicator']"
+            :blocks="blocks"
+            :selected-values="selectedValues"
+            :selection-mode="selectionMode"
+            :disabled="disabled"
+            :classes="listBoxUi as any"
+            :component="ComboboxItem"
+            :virtual-focus="virtualFocus"
+            :option-attrs="optionAttrs"
+            :loading="loading"
+            @load-more="emit('loadMore')"
+          >
+            <template v-for="name in forwarded" #[name]="state">
+              <slot :name="name" v-bind="state as any" />
+            </template>
+            <template v-if="slots['item-indicator']" #indicator="state">
+              <slot name="item-indicator" v-bind="state as ListBoxItemSlotProps<T>" />
+            </template>
+          </ListBoxRows>
+          <!-- Slot-less branch: forwarded (dynamic) slots would force-update the rows on every render -->
+          <ListBoxRows
+            v-else
+            :blocks="blocks"
+            :selected-values="selectedValues"
+            :selection-mode="selectionMode"
+            :disabled="disabled"
+            :classes="listBoxUi as any"
+            :component="ComboboxItem"
+            :virtual-focus="virtualFocus"
+            :option-attrs="optionAttrs"
+            :loading="loading"
+            @load-more="emit('loadMore')"
+          />
+        </div>
+      </ComboboxContent>
+    </ComboboxPortal>
+  </ComboboxRoot>
+</template>
+
 <script lang="ts">
 import { injectComboboxRootContext, injectListboxRootContext } from 'reka-ui'
 import { defineComponent } from 'vue'
@@ -716,211 +924,3 @@ function optionAttrs(row: CollectionRow) {
   return { [valueAttr]: String(row.item.value), onPointermove: onOptionPointermove }
 }
 </script>
-
-<template>
-  <ComboboxRoot
-    v-bind="rootAttrs"
-    as="div"
-    data-slot="combo-box"
-    :model-value="rekaValue as any"
-    :multiple="multiple"
-    :disabled="disabled"
-    :open="isOpen"
-    ignore-filter
-    :highlight-on-hover="false"
-    :reset-search-term-on-blur="false"
-    :reset-search-term-on-select="false"
-    :data-focused="focused ? 'true' : undefined"
-    :data-open="isOpen ? 'true' : undefined"
-    :data-disabled="disabled ? 'true' : undefined"
-    :data-readonly="readonly ? 'true' : undefined"
-    :data-invalid="invalid ? 'true' : undefined"
-    :data-required="required ? 'true' : undefined"
-    :class="ui.base({ class: [props.ui?.base, props.class] })"
-    @update:model-value="onRekaValue"
-    @update:open="onRekaOpen"
-  >
-    <RekaBridge @ready="onReady" />
-    <FieldLabel :id="labelId" :for="id" :class="ui.label({ class: props.ui?.label })" />
-    <ComboboxAnchor
-      as="div"
-      role="group"
-      data-slot="combo-box-input-group"
-      :data-disabled="disabled ? 'true' : undefined"
-      :data-invalid="invalid ? 'true' : undefined"
-      :data-focus-within="focused ? 'true' : undefined"
-      :data-focus-visible="focusVisible ? 'true' : undefined"
-      :class="ui.inputGroup({ class: props.ui?.inputGroup })"
-    >
-      <input
-        :id="id"
-        ref="input"
-        type="text"
-        role="combobox"
-        autocomplete="off"
-        autocorrect="off"
-        spellcheck="false"
-        aria-autocomplete="list"
-        :aria-expanded="isOpen ? 'true' : 'false'"
-        :aria-controls="isOpen ? listboxId : undefined"
-        :aria-activedescendant="isOpen && highlighted ? highlighted.id : undefined"
-        :aria-label="attrs['aria-label'] as string | undefined"
-        :aria-labelledby="inputLabelledBy"
-        :aria-describedby="describedBy"
-        :aria-invalid="invalid ? 'true' : undefined"
-        :aria-required="required && !nativeRequired ? 'true' : undefined"
-        :value="inputValue"
-        :placeholder="placeholder"
-        :name="submitText ? name : undefined"
-        :disabled="disabled || undefined"
-        :readonly="readonly || undefined"
-        :required="nativeRequired || undefined"
-        data-slot="input"
-        :data-invalid="invalid ? 'true' : undefined"
-        :data-disabled="disabled ? 'true' : undefined"
-        :data-focused="focused ? 'true' : undefined"
-        :data-focus-visible="focusVisible ? 'true' : undefined"
-        :class="inputUi.base({ class: props.ui?.input })"
-        @input="onInput"
-        @keydown="onKeydown"
-        @focus="onFocus"
-        @blur="onBlur"
-      />
-      <button
-        :id="triggerId"
-        type="button"
-        tabindex="-1"
-        data-slot="combo-box-trigger"
-        aria-label="Show suggestions"
-        :aria-labelledby="hasLabel ? `${triggerId} ${labelId}` : undefined"
-        aria-haspopup="listbox"
-        :aria-expanded="isOpen ? 'true' : 'false'"
-        :aria-controls="isOpen ? listboxId : undefined"
-        :disabled="disabled || readonly || undefined"
-        :data-disabled="disabled || readonly ? 'true' : undefined"
-        :data-open="isOpen ? 'true' : undefined"
-        :data-pressed="isOpen ? 'true' : undefined"
-        :data-hovered="triggerHovered ? 'true' : undefined"
-        :class="ui.trigger({ class: props.ui?.trigger })"
-        @pointerdown="onTriggerPointerdown"
-        @click="onTriggerClick"
-        @pointerenter="triggerHovered = $event.pointerType === 'mouse'"
-        @pointerleave="triggerHovered = false"
-      >
-        <slot name="indicator" :open="isOpen">
-          <svg
-            aria-hidden="true"
-            data-slot="combo-box-trigger-default-icon"
-            fill="none"
-            height="16"
-            role="presentation"
-            viewBox="0 0 16 16"
-            width="16"
-            xmlns="http://www.w3.org/2000/svg"
-          >
-            <path
-              clip-rule="evenodd"
-              d="M2.97 5.47a.75.75 0 0 1 1.06 0L8 9.44l3.97-3.97a.75.75 0 1 1 1.06 1.06l-4.5 4.5a.75.75 0 0 1-1.06 0l-4.5-4.5a.75.75 0 0 1 0-1.06"
-              fill="currentColor"
-              fill-rule="evenodd"
-            />
-          </svg>
-        </slot>
-      </button>
-    </ComboboxAnchor>
-    <div
-      v-if="showValue"
-      :id="valueId"
-      data-slot="combo-box-value"
-      :data-placeholder="isPlaceholder ? 'true' : undefined"
-      :class="ui.value({ class: props.ui?.value })"
-    >
-      <slot
-        name="value"
-        :selected-items="selectedItems"
-        :is-placeholder="isPlaceholder"
-        :text="valueText"
-        >{{ valueText }}</slot
-      >
-    </div>
-    <FieldDescription />
-    <FieldError />
-    <template v-if="name && !submitText">
-      <input
-        v-for="(value, i) in hiddenValues"
-        :key="i"
-        type="hidden"
-        :name="name"
-        :value="value"
-      />
-    </template>
-    <ComboboxPortal :disabled="portalTarget.disabled" :to="portalTarget.to">
-      <ComboboxContent
-        ref="content"
-        position="popper"
-        :role="undefined"
-        :aria-orientation="undefined"
-        :aria-multiselectable="undefined"
-        :data-orientation="undefined"
-        data-slot="combo-box-popover"
-        side="bottom"
-        align="center"
-        :side-offset="8"
-        :collision-padding="12"
-        :class="ui.popover({ class: props.ui?.popover })"
-      >
-        <div
-          :id="listboxId"
-          role="listbox"
-          aria-orientation="vertical"
-          data-slot="list-box"
-          data-layout="stack"
-          data-orientation="vertical"
-          aria-label="Suggestions"
-          :aria-labelledby="hasLabel ? `${listboxId} ${labelId}` : undefined"
-          :aria-multiselectable="multiple ? 'true' : undefined"
-          :data-empty="visibleCount ? undefined : 'true'"
-          :class="listBoxUi.base()"
-          @mousedown.prevent
-          @pointerdown="pressRelease.onPointerdown"
-          @pointerup="pressRelease.onPointerup"
-        >
-          <ListBoxRows
-            v-if="forwarded.length || slots['item-indicator']"
-            :blocks="blocks"
-            :selected-values="selectedValues"
-            :selection-mode="selectionMode"
-            :disabled="disabled"
-            :classes="listBoxUi as any"
-            :component="ComboboxItem"
-            :virtual-focus="virtualFocus"
-            :option-attrs="optionAttrs"
-            :loading="loading"
-            @load-more="emit('loadMore')"
-          >
-            <template v-for="name in forwarded" #[name]="state">
-              <slot :name="name" v-bind="state as any" />
-            </template>
-            <template v-if="slots['item-indicator']" #indicator="state">
-              <slot name="item-indicator" v-bind="state as ListBoxItemSlotProps<T>" />
-            </template>
-          </ListBoxRows>
-          <!-- Slot-less branch: forwarded (dynamic) slots would force-update the rows on every render -->
-          <ListBoxRows
-            v-else
-            :blocks="blocks"
-            :selected-values="selectedValues"
-            :selection-mode="selectionMode"
-            :disabled="disabled"
-            :classes="listBoxUi as any"
-            :component="ComboboxItem"
-            :virtual-focus="virtualFocus"
-            :option-attrs="optionAttrs"
-            :loading="loading"
-            @load-more="emit('loadMore')"
-          />
-        </div>
-      </ComboboxContent>
-    </ComboboxPortal>
-  </ComboboxRoot>
-</template>

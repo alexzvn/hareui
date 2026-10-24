@@ -1,25 +1,3 @@
-<script setup lang="ts">
-import { Card, Chip } from '@hareui/vue'
-import { BarChart } from '@hareui/vue/charts'
-import { Icon } from '@iconify/vue'
-
-const data = [
-  { day: 'Mon', loaves: 64 },
-  { day: 'Tue', loaves: 58 },
-  { day: 'Wed', loaves: 71 },
-  { day: 'Thu', loaves: 69 },
-  { day: 'Fri', loaves: 92 },
-  { day: 'Sat', loaves: 118 },
-  { day: 'Sun', loaves: 103 },
-]
-
-const series = { loaves: { name: 'Loaves', color: 'var(--accent)' } }
-
-function formatValue(value: number | string) {
-  return `${value} loaves`
-}
-</script>
-
 <template>
   <Card
     class="w-full max-w-[480px] rounded-2xl"
@@ -49,3 +27,25 @@ function formatValue(value: number | string) {
     />
   </Card>
 </template>
+
+<script setup lang="ts">
+import { Card, Chip } from '@hareui/vue'
+import { BarChart } from '@hareui/vue/charts'
+import { Icon } from '@iconify/vue'
+
+const data = [
+  { day: 'Mon', loaves: 64 },
+  { day: 'Tue', loaves: 58 },
+  { day: 'Wed', loaves: 71 },
+  { day: 'Thu', loaves: 69 },
+  { day: 'Fri', loaves: 92 },
+  { day: 'Sat', loaves: 118 },
+  { day: 'Sun', loaves: 103 },
+]
+
+const series = { loaves: { name: 'Loaves', color: 'var(--accent)' } }
+
+function formatValue(value: number | string) {
+  return `${value} loaves`
+}
+</script>

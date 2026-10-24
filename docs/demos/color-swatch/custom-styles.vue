@@ -1,9 +1,3 @@
-<script setup lang="ts">
-import { ColorSwatch } from '@hareui/vue'
-
-const colors = ['#0485F7', '#EF4444', '#F59E0B', '#10B981', '#D946EF']
-</script>
-
 <template>
   <div class="flex flex-col gap-8">
     <div class="flex flex-col gap-2">
@@ -34,3 +28,9 @@ const colors = ['#0485F7', '#EF4444', '#F59E0B', '#10B981', '#D946EF']
     </div>
   </div>
 </template>
+
+<script setup lang="ts">
+import { ColorSwatch } from '@hareui/vue'
+
+const colors = ['#0485F7', '#EF4444', '#F59E0B', '#10B981', '#D946EF']
+</script>

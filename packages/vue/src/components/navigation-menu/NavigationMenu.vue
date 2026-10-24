@@ -1,3 +1,71 @@
+<template>
+  <NavigationMenuRoot
+    data-slot="root"
+    v-bind="{
+      ...rootProps,
+      ...(vertical
+        ? {}
+        : {
+            modelValue: props.modelValue as string | undefined,
+            defaultValue: props.defaultValue as string | undefined,
+            'onUpdate:modelValue': (value: string) => emit('update:modelValue', value),
+          }),
+      ...$attrs,
+    }"
+    :data-collapsed="props.collapsed"
+    :class="ui.root({ class: [props.ui?.root, props.class] })"
+  >
+    <slot name="list-leading" />
+
+    <template v-for="(list, listIndex) in lists" :key="`list-${listIndex}`">
+      <component
+        :is="vertical && !collapsed ? AccordionRoot : NavigationMenuList"
+        v-bind="listProps(list, listIndex)"
+        as="ul"
+        data-slot="list"
+        :class="ui.list({ class: props.ui?.list })"
+      >
+        <NavigationMenuNode
+          v-for="(item, index) in list"
+          :key="`list-${listIndex}-${index}`"
+          :item="item"
+          :index="index"
+          :list-index="listIndex"
+        />
+      </component>
+
+      <div
+        v-if="vertical && listIndex < lists.length - 1"
+        role="separator"
+        data-slot="separator"
+        :class="ui.separator({ class: props.ui?.separator })"
+      />
+    </template>
+
+    <slot name="list-trailing" />
+
+    <div
+      v-if="!vertical"
+      data-slot="viewportWrapper"
+      :class="ui.viewportWrapper({ class: props.ui?.viewportWrapper })"
+    >
+      <NavigationMenuIndicator
+        v-if="props.arrow"
+        data-slot="indicator"
+        :class="ui.indicator({ class: props.ui?.indicator })"
+      >
+        <div data-slot="arrow" :class="ui.arrow({ class: props.ui?.arrow })" />
+      </NavigationMenuIndicator>
+
+      <NavigationMenuViewport
+        v-bind="props.viewport"
+        data-slot="viewport"
+        :class="ui.viewport({ class: props.ui?.viewport })"
+      />
+    </div>
+  </NavigationMenuRoot>
+</template>
+
 <script lang="ts">
 import type { AccordionRootProps, NavigationMenuContentProps } from 'reka-ui'
 import type { Component } from 'vue'
@@ -472,71 +540,3 @@ provide(navigationMenuKey, {
   observeActions,
 })
 </script>
-
-<template>
-  <NavigationMenuRoot
-    data-slot="root"
-    v-bind="{
-      ...rootProps,
-      ...(vertical
-        ? {}
-        : {
-            modelValue: props.modelValue as string | undefined,
-            defaultValue: props.defaultValue as string | undefined,
-            'onUpdate:modelValue': (value: string) => emit('update:modelValue', value),
-          }),
-      ...$attrs,
-    }"
-    :data-collapsed="props.collapsed"
-    :class="ui.root({ class: [props.ui?.root, props.class] })"
-  >
-    <slot name="list-leading" />
-
-    <template v-for="(list, listIndex) in lists" :key="`list-${listIndex}`">
-      <component
-        :is="vertical && !collapsed ? AccordionRoot : NavigationMenuList"
-        v-bind="listProps(list, listIndex)"
-        as="ul"
-        data-slot="list"
-        :class="ui.list({ class: props.ui?.list })"
-      >
-        <NavigationMenuNode
-          v-for="(item, index) in list"
-          :key="`list-${listIndex}-${index}`"
-          :item="item"
-          :index="index"
-          :list-index="listIndex"
-        />
-      </component>
-
-      <div
-        v-if="vertical && listIndex < lists.length - 1"
-        role="separator"
-        data-slot="separator"
-        :class="ui.separator({ class: props.ui?.separator })"
-      />
-    </template>
-
-    <slot name="list-trailing" />
-
-    <div
-      v-if="!vertical"
-      data-slot="viewportWrapper"
-      :class="ui.viewportWrapper({ class: props.ui?.viewportWrapper })"
-    >
-      <NavigationMenuIndicator
-        v-if="props.arrow"
-        data-slot="indicator"
-        :class="ui.indicator({ class: props.ui?.indicator })"
-      >
-        <div data-slot="arrow" :class="ui.arrow({ class: props.ui?.arrow })" />
-      </NavigationMenuIndicator>
-
-      <NavigationMenuViewport
-        v-bind="props.viewport"
-        data-slot="viewport"
-        :class="ui.viewport({ class: props.ui?.viewport })"
-      />
-    </div>
-  </NavigationMenuRoot>
-</template>

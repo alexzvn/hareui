@@ -1,7 +1,3 @@
-<script setup lang="ts">
-import { Skeleton } from '@hareui/vue'
-</script>
-
 <template>
   <div class="flex items-center gap-3">
     <Skeleton class="h-10 w-10 shrink-0 rounded-full" />
@@ -11,3 +7,7 @@ import { Skeleton } from '@hareui/vue'
     </div>
   </div>
 </template>
+
+<script setup lang="ts">
+import { Skeleton } from '@hareui/vue'
+</script>

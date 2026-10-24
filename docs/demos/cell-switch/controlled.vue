@@ -1,10 +1,3 @@
-<script setup lang="ts">
-import { CellSwitch } from '@hareui/vue'
-import { ref } from 'vue'
-
-const offlineMaps = ref(false)
-</script>
-
 <template>
   <div class="w-[272px] rounded-2xl border border-separator p-2">
     <CellSwitch v-model="offlineMaps" label="Offline maps" />
@@ -16,3 +9,10 @@ const offlineMaps = ref(false)
     </footer>
   </div>
 </template>
+
+<script setup lang="ts">
+import { CellSwitch } from '@hareui/vue'
+import { ref } from 'vue'
+
+const offlineMaps = ref(false)
+</script>

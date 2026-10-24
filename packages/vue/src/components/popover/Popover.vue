@@ -1,3 +1,56 @@
+<template>
+  <PopoverRoot :open="isOpen" modal v-slot="{ close }" @update:open="setOpen">
+    <PopoverTrigger v-if="!!slots.default" as-child :data-pressed="isOpen ? 'true' : undefined">
+      <slot :open="isOpen" />
+    </PopoverTrigger>
+    <PopoverPortal :disabled="portalTarget.disabled" :to="portalTarget.to">
+      <PopoverContent
+        ref="contentRef"
+        data-slot="popover"
+        :side="side"
+        :align="align"
+        :side-offset="contentOffset"
+        :avoid-collisions="flip"
+        :collision-padding="8"
+        :class="ui.base({ class: [props.ui?.base, props.class] })"
+        @escape-key-down="onEscapeKeyDown"
+        @interact-outside="onInteractOutside"
+        @open-auto-focus="onOpenAutoFocus"
+      >
+        <div
+          ref="dialogRef"
+          data-slot="popover-dialog"
+          tabindex="-1"
+          :class="ui.dialog({ class: props.ui?.dialog })"
+        >
+          <h2
+            v-if="hasHeading"
+            :id="headingId"
+            data-slot="popover-heading"
+            :class="ui.heading({ class: props.ui?.heading })"
+          >
+            <slot name="title">{{ title }}</slot>
+          </h2>
+          <slot name="content" :close="close" />
+        </div>
+        <PopoverArrow v-if="arrow" as-child>
+          <svg
+            data-slot="popover-overlay-arrow"
+            fill="none"
+            height="12"
+            viewBox="0 0 12 12"
+            width="12"
+            xmlns="http://www.w3.org/2000/svg"
+            :class="ui.arrow({ class: props.ui?.arrow })"
+          >
+            <path d="M0 0C5.48483 8 6.5 8 12 0Z" />
+          </svg>
+        </PopoverArrow>
+      </PopoverContent>
+    </PopoverPortal>
+  </PopoverRoot>
+</template>
+
 <script lang="ts">
 import type { PortalTarget } from '../../config'
 import type { ComponentSlots } from '../../types/tv'
@@ -147,56 +200,3 @@ function onOpenAutoFocus(event: Event) {
 const ARROW_HEIGHT = 12
 const contentOffset = computed(() => props.sideOffset - (props.arrow ? ARROW_HEIGHT : 0))
 </script>
-
-<template>
-  <PopoverRoot :open="isOpen" modal v-slot="{ close }" @update:open="setOpen">
-    <PopoverTrigger v-if="!!slots.default" as-child :data-pressed="isOpen ? 'true' : undefined">
-      <slot :open="isOpen" />
-    </PopoverTrigger>
-    <PopoverPortal :disabled="portalTarget.disabled" :to="portalTarget.to">
-      <PopoverContent
-        ref="contentRef"
-        data-slot="popover"
-        :side="side"
-        :align="align"
-        :side-offset="contentOffset"
-        :avoid-collisions="flip"
-        :collision-padding="8"
-        :class="ui.base({ class: [props.ui?.base, props.class] })"
-        @escape-key-down="onEscapeKeyDown"
-        @interact-outside="onInteractOutside"
-        @open-auto-focus="onOpenAutoFocus"
-      >
-        <div
-          ref="dialogRef"
-          data-slot="popover-dialog"
-          tabindex="-1"
-          :class="ui.dialog({ class: props.ui?.dialog })"
-        >
-          <h2
-            v-if="hasHeading"
-            :id="headingId"
-            data-slot="popover-heading"
-            :class="ui.heading({ class: props.ui?.heading })"
-          >
-            <slot name="title">{{ title }}</slot>
-          </h2>
-          <slot name="content" :close="close" />
-        </div>
-        <PopoverArrow v-if="arrow" as-child>
-          <svg
-            data-slot="popover-overlay-arrow"
-            fill="none"
-            height="12"
-            viewBox="0 0 12 12"
-            width="12"
-            xmlns="http://www.w3.org/2000/svg"
-            :class="ui.arrow({ class: props.ui?.arrow })"
-          >
-            <path d="M0 0C5.48483 8 6.5 8 12 0Z" />
-          </svg>
-        </PopoverArrow>
-      </PopoverContent>
-    </PopoverPortal>
-  </PopoverRoot>
-</template>

@@ -1,7 +1,3 @@
-<script setup lang="ts">
-import { Surface } from '@hareui/vue'
-</script>
-
 <template>
   <Surface
     class="w-full max-w-sm rounded-xl border border-accent/15 bg-linear-to-br from-accent/8 via-surface to-surface-secondary p-4"
@@ -11,3 +7,7 @@ import { Surface } from '@hareui/vue'
     <p class="text-sm text-muted">View invoices and payment methods in one place.</p>
   </Surface>
 </template>
+
+<script setup lang="ts">
+import { Surface } from '@hareui/vue'
+</script>

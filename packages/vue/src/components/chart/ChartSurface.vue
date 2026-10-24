@@ -1,3 +1,40 @@
+<template>
+  <div v-bind="rootAttrs" :data-legend="legend ?? undefined" :class="frameClass" :style="rootStyle">
+    <slot v-if="legend && legendFirst" name="legend" />
+    <div ref="root" data-slot="chart-plot" :class="plotClass" :style="plotStyle">
+      <svg
+        v-if="chart.width.value > 0"
+        ref="svg"
+        data-slot="chart-surface"
+        :width="chart.width.value"
+        :height="chart.height.value"
+        :viewBox="`0 0 ${chart.width.value} ${chart.height.value}`"
+        :tabindex="tracking ? 0 : undefined"
+        :role="tracking ? 'application' : undefined"
+        v-bind="svgAttrs"
+        :class="chart.classes('surface')"
+        @pointermove="onPointerMove"
+        @pointerdown="onPointerDown"
+        @pointerleave="onPointerLeave"
+        @keydown="onKeydown"
+        @focus="onFocus"
+        @blur="onBlur"
+      >
+        <slot />
+        <g
+          v-for="name in chartLayerNames"
+          :key="name"
+          :ref="(element) => setLayer(name, element)"
+          :data-layer="name"
+          aria-hidden="true"
+        />
+      </svg>
+      <div :ref="setOverlay" data-slot="chart-overlay" :class="chart.classes('overlay')" />
+    </div>
+    <slot v-if="legend && !legendFirst" name="legend" />
+  </div>
+</template>
+
 <script setup lang="ts">
 import { computed, onBeforeUnmount, onMounted, shallowRef, useAttrs, watch, watchEffect } from 'vue'
 
@@ -199,40 +236,3 @@ function onBlur() {
   if (chart.active.source === 'keyboard') chart.setActive(null)
 }
 </script>
-
-<template>
-  <div v-bind="rootAttrs" :data-legend="legend ?? undefined" :class="frameClass" :style="rootStyle">
-    <slot v-if="legend && legendFirst" name="legend" />
-    <div ref="root" data-slot="chart-plot" :class="plotClass" :style="plotStyle">
-      <svg
-        v-if="chart.width.value > 0"
-        ref="svg"
-        data-slot="chart-surface"
-        :width="chart.width.value"
-        :height="chart.height.value"
-        :viewBox="`0 0 ${chart.width.value} ${chart.height.value}`"
-        :tabindex="tracking ? 0 : undefined"
-        :role="tracking ? 'application' : undefined"
-        v-bind="svgAttrs"
-        :class="chart.classes('surface')"
-        @pointermove="onPointerMove"
-        @pointerdown="onPointerDown"
-        @pointerleave="onPointerLeave"
-        @keydown="onKeydown"
-        @focus="onFocus"
-        @blur="onBlur"
-      >
-        <slot />
-        <g
-          v-for="name in chartLayerNames"
-          :key="name"
-          :ref="(element) => setLayer(name, element)"
-          :data-layer="name"
-          aria-hidden="true"
-        />
-      </svg>
-      <div :ref="setOverlay" data-slot="chart-overlay" :class="chart.classes('overlay')" />
-    </div>
-    <slot v-if="legend && !legendFirst" name="legend" />
-  </div>
-</template>

@@ -61,15 +61,15 @@ createApp(App).use(createHareUI()).mount('#app')
 ### 5. Use your first component
 
 ```vue [src/App.vue]
-<script setup lang="ts">
-import { Button } from '@hareui/vue'
-</script>
-
 <template>
   <main class="flex min-h-screen items-center justify-center">
     <Button variant="tertiary">Hello HareUI</Button>
   </main>
 </template>
+
+<script setup lang="ts">
+import { Button } from '@hareui/vue'
+</script>
 ```
 
 ### Vite plugin (optional)

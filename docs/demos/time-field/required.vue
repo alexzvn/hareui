@@ -1,7 +1,3 @@
-<script setup lang="ts">
-import { TimeField } from '@hareui/vue'
-</script>
-
 <template>
   <div class="flex flex-col gap-4">
     <TimeField required class="w-[256px]" name="time" label="Time" />
@@ -14,3 +10,7 @@ import { TimeField } from '@hareui/vue'
     />
   </div>
 </template>
+
+<script setup lang="ts">
+import { TimeField } from '@hareui/vue'
+</script>

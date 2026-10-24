@@ -1,3 +1,54 @@
+<template>
+  <Table
+    v-model:selected-keys="selectedKeys"
+    v-model:sort-descriptor="sortDescriptor"
+    aria-label="Table with custom cells"
+    :columns="columns"
+    :rows="rows"
+    selection-mode="multiple"
+    :ui="{ content: 'min-w-[800px]' }"
+  >
+    <template #actions-header>
+      <span class="block text-end">Actions</span>
+    </template>
+    <template #id-cell="{ row }">
+      <div class="flex items-center gap-2 font-medium">
+        #{{ row.id }}
+        <Button :aria-label="`Copy ID #${row.id}`" icon-only size="sm" variant="ghost">
+          <Icon class="size-4 text-muted" icon="gravity-ui:copy" />
+        </Button>
+      </div>
+    </template>
+    <template #name-cell="{ row }">
+      <div class="flex items-center gap-3">
+        <Avatar alt="" :fallback="initials(row.name)" size="sm" :src="row.image_url" />
+        <div class="flex flex-col">
+          <span class="text-xs">{{ row.name }}</span>
+          <span class="text-xs text-muted">{{ row.email }}</span>
+        </div>
+      </div>
+    </template>
+    <template #status-cell="{ row }">
+      <Chip :color="statusColorMap[row.status as Status]" size="sm" variant="soft">{{
+        row.status
+      }}</Chip>
+    </template>
+    <template #actions-cell="{ row }">
+      <div class="flex items-center gap-1">
+        <Button :aria-label="`View ${row.name}`" icon-only size="sm" variant="tertiary">
+          <Icon class="size-4" icon="gravity-ui:eye" />
+        </Button>
+        <Button :aria-label="`Edit ${row.name}`" icon-only size="sm" variant="tertiary">
+          <Icon class="size-4" icon="gravity-ui:pencil" />
+        </Button>
+        <Button :aria-label="`Delete ${row.name}`" icon-only size="sm" variant="danger-soft">
+          <Icon class="size-4" icon="gravity-ui:trash-bin" />
+        </Button>
+      </div>
+    </template>
+  </Table>
+</template>
+
 <script setup lang="ts">
 import type { TableColumn, TableSelection, TableSortDescriptor } from '@hareui/vue'
 import { Avatar, Button, Chip, Table } from '@hareui/vue'
@@ -84,54 +135,3 @@ const initials = (name: string) =>
     .map((n) => n[0])
     .join('')
 </script>
-
-<template>
-  <Table
-    v-model:selected-keys="selectedKeys"
-    v-model:sort-descriptor="sortDescriptor"
-    aria-label="Table with custom cells"
-    :columns="columns"
-    :rows="rows"
-    selection-mode="multiple"
-    :ui="{ content: 'min-w-[800px]' }"
-  >
-    <template #actions-header>
-      <span class="block text-end">Actions</span>
-    </template>
-    <template #id-cell="{ row }">
-      <div class="flex items-center gap-2 font-medium">
-        #{{ row.id }}
-        <Button :aria-label="`Copy ID #${row.id}`" icon-only size="sm" variant="ghost">
-          <Icon class="size-4 text-muted" icon="gravity-ui:copy" />
-        </Button>
-      </div>
-    </template>
-    <template #name-cell="{ row }">
-      <div class="flex items-center gap-3">
-        <Avatar alt="" :fallback="initials(row.name)" size="sm" :src="row.image_url" />
-        <div class="flex flex-col">
-          <span class="text-xs">{{ row.name }}</span>
-          <span class="text-xs text-muted">{{ row.email }}</span>
-        </div>
-      </div>
-    </template>
-    <template #status-cell="{ row }">
-      <Chip :color="statusColorMap[row.status as Status]" size="sm" variant="soft">{{
-        row.status
-      }}</Chip>
-    </template>
-    <template #actions-cell="{ row }">
-      <div class="flex items-center gap-1">
-        <Button :aria-label="`View ${row.name}`" icon-only size="sm" variant="tertiary">
-          <Icon class="size-4" icon="gravity-ui:eye" />
-        </Button>
-        <Button :aria-label="`Edit ${row.name}`" icon-only size="sm" variant="tertiary">
-          <Icon class="size-4" icon="gravity-ui:pencil" />
-        </Button>
-        <Button :aria-label="`Delete ${row.name}`" icon-only size="sm" variant="danger-soft">
-          <Icon class="size-4" icon="gravity-ui:trash-bin" />
-        </Button>
-      </div>
-    </template>
-  </Table>
-</template>

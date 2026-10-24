@@ -1,3 +1,33 @@
+<template>
+  <CheckboxGroupRoot
+    ref="root"
+    role="group"
+    :model-value="selected"
+    :name="name"
+    :disabled="isDisabled"
+    :required="required"
+    :roving-focus="false"
+    data-slot="checkbox-button-group"
+    :data-layout="layout ?? 'flex'"
+    :data-invalid="invalid ? 'true' : undefined"
+    :data-readonly="readonly ? 'true' : undefined"
+    :data-required="required ? 'true' : undefined"
+    :data-disabled="isDisabled ? 'true' : undefined"
+    :aria-invalid="invalid ? 'true' : undefined"
+    :aria-disabled="isDisabled ? 'true' : undefined"
+    :aria-labelledby="hasLabel ? labelId : undefined"
+    :aria-describedby="describedBy"
+    :class="ui.base({ class: [props.ui?.base, props.class] })"
+    @update:model-value="onUpdate"
+  >
+    <!-- `as` falls through to Reka `Label`: the group label names the group via aria-labelledby, not a form control -->
+    <FieldLabel :id="labelId" as="span" :invalid="false" />
+    <FieldDescription />
+    <slot />
+    <FieldError />
+  </CheckboxGroupRoot>
+</template>
+
 <script lang="ts">
 import type { ValidateFn, ValidationResult } from '../../composables/useFieldValidation'
 import type { ComponentSlots, ComponentVariants } from '../../types/tv'
@@ -155,33 +185,3 @@ function onUpdate(value: string[]) {
   commitValidation()
 }
 </script>
-
-<template>
-  <CheckboxGroupRoot
-    ref="root"
-    role="group"
-    :model-value="selected"
-    :name="name"
-    :disabled="isDisabled"
-    :required="required"
-    :roving-focus="false"
-    data-slot="checkbox-button-group"
-    :data-layout="layout ?? 'flex'"
-    :data-invalid="invalid ? 'true' : undefined"
-    :data-readonly="readonly ? 'true' : undefined"
-    :data-required="required ? 'true' : undefined"
-    :data-disabled="isDisabled ? 'true' : undefined"
-    :aria-invalid="invalid ? 'true' : undefined"
-    :aria-disabled="isDisabled ? 'true' : undefined"
-    :aria-labelledby="hasLabel ? labelId : undefined"
-    :aria-describedby="describedBy"
-    :class="ui.base({ class: [props.ui?.base, props.class] })"
-    @update:model-value="onUpdate"
-  >
-    <!-- `as` falls through to Reka `Label`: the group label names the group via aria-labelledby, not a form control -->
-    <FieldLabel :id="labelId" as="span" :invalid="false" />
-    <FieldDescription />
-    <slot />
-    <FieldError />
-  </CheckboxGroupRoot>
-</template>

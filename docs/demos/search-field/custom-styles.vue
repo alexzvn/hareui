@@ -1,7 +1,3 @@
-<script setup lang="ts">
-import { SearchField } from '@hareui/vue'
-</script>
-
 <template>
   <SearchField
     class="w-full max-w-64"
@@ -17,3 +13,7 @@ import { SearchField } from '@hareui/vue'
     }"
   />
 </template>
+
+<script setup lang="ts">
+import { SearchField } from '@hareui/vue'
+</script>

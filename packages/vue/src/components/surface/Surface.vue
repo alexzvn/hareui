@@ -1,3 +1,13 @@
+<template>
+  <Primitive
+    :as="as"
+    data-slot="surface"
+    :class="ui.base({ class: [props.ui?.base, props.class] })"
+  >
+    <slot />
+  </Primitive>
+</template>
+
 <script lang="ts">
 import type { PrimitiveProps } from 'reka-ui'
 
@@ -46,13 +56,3 @@ const ui = useComponentUI('surface', theme, () => ({
 const variant = computed(() => props.variant ?? 'default')
 provide(surfaceContextKey, { variant: toRef(variant) })
 </script>
-
-<template>
-  <Primitive
-    :as="as"
-    data-slot="surface"
-    :class="ui.base({ class: [props.ui?.base, props.class] })"
-  >
-    <slot />
-  </Primitive>
-</template>

@@ -1,3 +1,29 @@
+<template>
+  <div
+    ref="track"
+    aria-label="Amount of color in gray"
+    :aria-valuemax="MAX_CHROMA"
+    :aria-valuemin="0"
+    :aria-valuenow="value"
+    :class="cn(SLIDER_TRACK, props.class)"
+    role="slider"
+    tabindex="0"
+    :style="{
+      background: `linear-gradient(to right, oklch(0.7 0 ${hue}), oklch(0.7 ${MAX_CHROMA} ${hue}))`,
+    }"
+    @keydown="handleKeyDown"
+    @pointerdown="handlePointerDown"
+  >
+    <div
+      :class="SLIDER_THUMB"
+      :style="{
+        backgroundColor: currentColor,
+        left: `${thumbPosition}%`,
+      }"
+    />
+  </div>
+</template>
+
 <script setup lang="ts">
 // Port of HeroUI docs `themes/components/chroma-slider.tsx`: a slider for selecting chroma/saturation.
 import { computed, useTemplateRef } from 'vue'
@@ -85,29 +111,3 @@ const thumbPosition = computed(() => (props.value / MAX_CHROMA) * 100)
 // Current color at this chroma level
 const currentColor = computed(() => `oklch(0.7 ${props.value} ${props.hue})`)
 </script>
-
-<template>
-  <div
-    ref="track"
-    aria-label="Amount of color in gray"
-    :aria-valuemax="MAX_CHROMA"
-    :aria-valuemin="0"
-    :aria-valuenow="value"
-    :class="cn(SLIDER_TRACK, props.class)"
-    role="slider"
-    tabindex="0"
-    :style="{
-      background: `linear-gradient(to right, oklch(0.7 0 ${hue}), oklch(0.7 ${MAX_CHROMA} ${hue}))`,
-    }"
-    @keydown="handleKeyDown"
-    @pointerdown="handlePointerDown"
-  >
-    <div
-      :class="SLIDER_THUMB"
-      :style="{
-        backgroundColor: currentColor,
-        left: `${thumbPosition}%`,
-      }"
-    />
-  </div>
-</template>

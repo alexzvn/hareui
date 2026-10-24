@@ -1,8 +1,3 @@
-<script setup lang="ts">
-import { Button, Modal } from '@hareui/vue'
-import { Icon } from '@iconify/vue'
-</script>
-
 <template>
   <Modal>
     <Button variant="secondary"> Open Modal </Button>
@@ -21,3 +16,8 @@ import { Icon } from '@iconify/vue'
     </template>
   </Modal>
 </template>
+
+<script setup lang="ts">
+import { Button, Modal } from '@hareui/vue'
+import { Icon } from '@iconify/vue'
+</script>

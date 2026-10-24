@@ -40,10 +40,6 @@ import { Description } from '@hareui/vue'
 ### Integration with TextField
 
 ```vue
-<script setup lang="ts">
-import { TextField } from '@hareui/vue'
-</script>
-
 <template>
   <TextField
     type="email"
@@ -52,6 +48,10 @@ import { TextField } from '@hareui/vue'
     description="We'll never share your email"
   />
 </template>
+
+<script setup lang="ts">
+import { TextField } from '@hareui/vue'
+</script>
 ```
 
 When using the [TextField](/docs/components/text-field) component, the description id and the input's `aria-describedby` are wired automatically.

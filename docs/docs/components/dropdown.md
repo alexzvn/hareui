@@ -24,6 +24,16 @@ array: items, `{ type: 'section' }` groups with a header, `{ type: 'separator' }
 submenus (an item with nested `items`). Named slots customize the parts of each item.
 
 ```vue
+<template>
+  <Dropdown :items="items" @action="onAction">
+    <Button>Open</Button>
+    <template #content-top>Content above the menu</template>
+    <template #item-leading="{ item }">Icon</template>
+    <template #indicator="{ selected }">Custom indicator</template>
+    <template #submenu-indicator="{ item }">Custom chevron</template>
+  </Dropdown>
+</template>
+
 <script setup lang="ts">
 import type { DropdownEntry } from '@hareui/vue'
 import { Button, Dropdown } from '@hareui/vue'
@@ -46,16 +56,6 @@ const items: DropdownEntry[] = [
   { value: 'delete', label: 'Delete', variant: 'danger' },
 ]
 </script>
-
-<template>
-  <Dropdown :items="items" @action="onAction">
-    <Button>Open</Button>
-    <template #content-top>Content above the menu</template>
-    <template #item-leading="{ item }">Icon</template>
-    <template #indicator="{ selected }">Custom indicator</template>
-    <template #submenu-indicator="{ item }">Custom chevron</template>
-  </Dropdown>
-</template>
 ```
 
 ## Examples

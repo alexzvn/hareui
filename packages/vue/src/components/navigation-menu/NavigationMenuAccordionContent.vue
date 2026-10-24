@@ -1,3 +1,20 @@
+<template>
+  <div
+    v-if="shown || !root.unmountOnHide.value"
+    :id="collapsible.contentId"
+    ref="el"
+    role="region"
+    :aria-labelledby="item.triggerId || labelledby"
+    :data-state="item.dataState.value"
+    :data-disabled="item.dataDisabled.value"
+    :data-orientation="root.orientation"
+    :hidden="shown ? undefined : 'until-found'"
+    @beforematch="root.changeModelValue(item.value.value)"
+  >
+    <slot />
+  </div>
+</template>
+
 <script setup lang="ts">
 import {
   injectAccordionItemContext,
@@ -163,20 +180,3 @@ onBeforeUnmount(() => {
   running = []
 })
 </script>
-
-<template>
-  <div
-    v-if="shown || !root.unmountOnHide.value"
-    :id="collapsible.contentId"
-    ref="el"
-    role="region"
-    :aria-labelledby="item.triggerId || labelledby"
-    :data-state="item.dataState.value"
-    :data-disabled="item.dataDisabled.value"
-    :data-orientation="root.orientation"
-    :hidden="shown ? undefined : 'until-found'"
-    @beforematch="root.changeModelValue(item.value.value)"
-  >
-    <slot />
-  </div>
-</template>

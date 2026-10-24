@@ -1,3 +1,17 @@
+<template>
+  <Primitive :as="as" data-slot="chip" :class="ui.base({ class: [props.ui?.base, props.class] })">
+    <slot name="leading" />
+    <span
+      v-if="label !== undefined || !!slots.default"
+      data-slot="chip-label"
+      :class="ui.label({ class: props.ui?.label })"
+    >
+      <slot>{{ label }}</slot>
+    </span>
+    <slot name="trailing" />
+  </Primitive>
+</template>
+
 <script lang="ts">
 import type { PrimitiveProps } from 'reka-ui'
 
@@ -59,17 +73,3 @@ const ui = useComponentUI('chip', theme, () => ({
   size: props.size,
 }))
 </script>
-
-<template>
-  <Primitive :as="as" data-slot="chip" :class="ui.base({ class: [props.ui?.base, props.class] })">
-    <slot name="leading" />
-    <span
-      v-if="label !== undefined || !!slots.default"
-      data-slot="chip-label"
-      :class="ui.label({ class: props.ui?.label })"
-    >
-      <slot>{{ label }}</slot>
-    </span>
-    <slot name="trailing" />
-  </Primitive>
-</template>

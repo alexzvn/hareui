@@ -1,3 +1,52 @@
+<template>
+  <Primitive
+    :as="as"
+    data-slot="disclosure"
+    :data-expanded="isOpen ? 'true' : undefined"
+    :data-disabled="isDisabled ? 'true' : undefined"
+    :class="ui.base({ class: [props.ui?.base, props.class] })"
+  >
+    <h3
+      data-slot="disclosure-heading"
+      :class="ui.heading({ class: props.ui?.heading }) || undefined"
+    >
+      <Primitive
+        :as="slots.trigger ? undefined : 'button'"
+        :as-child="!!slots.trigger"
+        v-bind="triggerAttrs"
+        @click="toggle"
+      >
+        <slot name="trigger" :open="isOpen" :indicator="Indicator">
+          {{ title }}
+          <slot name="indicator" :open="isOpen">
+            <Indicator />
+          </slot>
+        </slot>
+      </Primitive>
+    </h3>
+    <div
+      :id="panelId"
+      ref="panel"
+      role="group"
+      :aria-labelledby="triggerId"
+      :aria-hidden="isOpen ? 'false' : 'true'"
+      data-slot="disclosure-content"
+      :data-expanded="isOpen ? 'true' : undefined"
+      :class="ui.content({ class: props.ui?.content })"
+    >
+      <div
+        v-if="!!slots.default"
+        data-slot="disclosure-body"
+        :class="ui.body({ class: props.ui?.body })"
+      >
+        <div :class="ui.bodyInner({ class: props.ui?.bodyInner }) || undefined">
+          <slot />
+        </div>
+      </div>
+    </div>
+  </Primitive>
+</template>
+
 <script lang="ts">
 import type { PrimitiveProps } from 'reka-ui'
 import type { Component } from 'vue'
@@ -175,52 +224,3 @@ watch(
   { flush: 'post' },
 )
 </script>
-
-<template>
-  <Primitive
-    :as="as"
-    data-slot="disclosure"
-    :data-expanded="isOpen ? 'true' : undefined"
-    :data-disabled="isDisabled ? 'true' : undefined"
-    :class="ui.base({ class: [props.ui?.base, props.class] })"
-  >
-    <h3
-      data-slot="disclosure-heading"
-      :class="ui.heading({ class: props.ui?.heading }) || undefined"
-    >
-      <Primitive
-        :as="slots.trigger ? undefined : 'button'"
-        :as-child="!!slots.trigger"
-        v-bind="triggerAttrs"
-        @click="toggle"
-      >
-        <slot name="trigger" :open="isOpen" :indicator="Indicator">
-          {{ title }}
-          <slot name="indicator" :open="isOpen">
-            <Indicator />
-          </slot>
-        </slot>
-      </Primitive>
-    </h3>
-    <div
-      :id="panelId"
-      ref="panel"
-      role="group"
-      :aria-labelledby="triggerId"
-      :aria-hidden="isOpen ? 'false' : 'true'"
-      data-slot="disclosure-content"
-      :data-expanded="isOpen ? 'true' : undefined"
-      :class="ui.content({ class: props.ui?.content })"
-    >
-      <div
-        v-if="!!slots.default"
-        data-slot="disclosure-body"
-        :class="ui.body({ class: props.ui?.body })"
-      >
-        <div :class="ui.bodyInner({ class: props.ui?.bodyInner }) || undefined">
-          <slot />
-        </div>
-      </div>
-    </div>
-  </Primitive>
-</template>

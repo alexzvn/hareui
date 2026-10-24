@@ -1,3 +1,64 @@
+<template>
+  <div data-slot="accordion" :class="ui.base({ class: [props.ui?.base, props.class] })">
+    <div
+      v-for="(item, index) in items"
+      :key="valueOf(item, index)"
+      data-slot="accordion-item"
+      :data-expanded="isExpanded(valueOf(item, index)) ? 'true' : undefined"
+      :data-disabled="isItemDisabled(item) ? 'true' : undefined"
+      :data-hide-separator="hideSeparator ? 'true' : undefined"
+      :class="ui.item({ class: props.ui?.item })"
+    >
+      <h3 data-slot="accordion-heading" :class="ui.heading({ class: props.ui?.heading })">
+        <button
+          :id="`${id}-trigger-${index}`"
+          type="button"
+          data-slot="accordion-trigger"
+          :aria-expanded="isExpanded(valueOf(item, index)) ? 'true' : 'false'"
+          :aria-controls="`${id}-panel-${index}`"
+          :disabled="isItemDisabled(item) || undefined"
+          :class="ui.trigger({ class: props.ui?.trigger })"
+          @click="toggle(item, index)"
+        >
+          <slot
+            name="leading"
+            :item="item"
+            :index="index"
+            :open="isExpanded(valueOf(item, index))"
+          />
+          <slot name="label" :item="item" :index="index" :open="isExpanded(valueOf(item, index))">
+            {{ item.label }}
+          </slot>
+          <Indicator :item="item" :index="index" :open="isExpanded(valueOf(item, index))" />
+        </button>
+      </h3>
+      <div
+        :id="`${id}-panel-${index}`"
+        :ref="(el) => registerPanel(valueOf(item, index), el)"
+        role="group"
+        :aria-labelledby="`${id}-trigger-${index}`"
+        :aria-hidden="isExpanded(valueOf(item, index)) ? 'false' : 'true'"
+        data-slot="accordion-panel"
+        :data-expanded="isExpanded(valueOf(item, index)) ? 'true' : undefined"
+        :class="ui.panel({ class: props.ui?.panel })"
+      >
+        <div data-slot="accordion-body" :class="ui.body({ class: props.ui?.body })">
+          <div :class="ui.bodyInner({ class: props.ui?.bodyInner })">
+            <slot
+              :name="(item.slot || 'content') as 'content'"
+              :item="item"
+              :index="index"
+              :open="isExpanded(valueOf(item, index))"
+            >
+              {{ item.content }}
+            </slot>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</template>
+
 <script lang="ts">
 import type { ExpandedValue } from '../../composables/useExpandedValues'
 import type { ComponentSlots, ComponentVariants } from '../../types/tv'
@@ -190,64 +251,3 @@ watch(
   { flush: 'post' },
 )
 </script>
-
-<template>
-  <div data-slot="accordion" :class="ui.base({ class: [props.ui?.base, props.class] })">
-    <div
-      v-for="(item, index) in items"
-      :key="valueOf(item, index)"
-      data-slot="accordion-item"
-      :data-expanded="isExpanded(valueOf(item, index)) ? 'true' : undefined"
-      :data-disabled="isItemDisabled(item) ? 'true' : undefined"
-      :data-hide-separator="hideSeparator ? 'true' : undefined"
-      :class="ui.item({ class: props.ui?.item })"
-    >
-      <h3 data-slot="accordion-heading" :class="ui.heading({ class: props.ui?.heading })">
-        <button
-          :id="`${id}-trigger-${index}`"
-          type="button"
-          data-slot="accordion-trigger"
-          :aria-expanded="isExpanded(valueOf(item, index)) ? 'true' : 'false'"
-          :aria-controls="`${id}-panel-${index}`"
-          :disabled="isItemDisabled(item) || undefined"
-          :class="ui.trigger({ class: props.ui?.trigger })"
-          @click="toggle(item, index)"
-        >
-          <slot
-            name="leading"
-            :item="item"
-            :index="index"
-            :open="isExpanded(valueOf(item, index))"
-          />
-          <slot name="label" :item="item" :index="index" :open="isExpanded(valueOf(item, index))">
-            {{ item.label }}
-          </slot>
-          <Indicator :item="item" :index="index" :open="isExpanded(valueOf(item, index))" />
-        </button>
-      </h3>
-      <div
-        :id="`${id}-panel-${index}`"
-        :ref="(el) => registerPanel(valueOf(item, index), el)"
-        role="group"
-        :aria-labelledby="`${id}-trigger-${index}`"
-        :aria-hidden="isExpanded(valueOf(item, index)) ? 'false' : 'true'"
-        data-slot="accordion-panel"
-        :data-expanded="isExpanded(valueOf(item, index)) ? 'true' : undefined"
-        :class="ui.panel({ class: props.ui?.panel })"
-      >
-        <div data-slot="accordion-body" :class="ui.body({ class: props.ui?.body })">
-          <div :class="ui.bodyInner({ class: props.ui?.bodyInner })">
-            <slot
-              :name="(item.slot || 'content') as 'content'"
-              :item="item"
-              :index="index"
-              :open="isExpanded(valueOf(item, index))"
-            >
-              {{ item.content }}
-            </slot>
-          </div>
-        </div>
-      </div>
-    </div>
-  </div>
-</template>

@@ -1,3 +1,29 @@
+<template>
+  <div
+    v-if="items.length === 0"
+    class="rounded-lg border bg-fd-card p-3 text-xs text-fd-muted-foreground"
+  >
+    No Headings
+  </div>
+  <div v-else ref="container" class="relative">
+    <div
+      class="bg-fd-primary absolute inset-s-0 top-(--fd-top) h-(--fd-height) w-px transition-[top,height] ease-linear data-[hidden=true]:opacity-0"
+      :data-hidden="active.length === 0"
+      :style="{ '--fd-top': `${rail.top}px`, '--fd-height': `${rail.height}px` }"
+    />
+    <div class="border-fd-foreground/10 flex flex-col border-s">
+      <a
+        v-for="item in items"
+        :key="item.id"
+        :data-active="activeSet.has(item.id)"
+        :href="`#${item.id}`"
+        :class="[ITEM_CLASS, indent(item.depth)]"
+        >{{ item.text }}</a
+      >
+    </div>
+  </div>
+</template>
+
 <script setup lang="ts">
 import { computed, nextTick, ref, watch } from 'vue'
 
@@ -38,29 +64,3 @@ watch(
   { deep: true },
 )
 </script>
-
-<template>
-  <div
-    v-if="items.length === 0"
-    class="rounded-lg border bg-fd-card p-3 text-xs text-fd-muted-foreground"
-  >
-    No Headings
-  </div>
-  <div v-else ref="container" class="relative">
-    <div
-      class="bg-fd-primary absolute inset-s-0 top-(--fd-top) h-(--fd-height) w-px transition-[top,height] ease-linear data-[hidden=true]:opacity-0"
-      :data-hidden="active.length === 0"
-      :style="{ '--fd-top': `${rail.top}px`, '--fd-height': `${rail.height}px` }"
-    />
-    <div class="border-fd-foreground/10 flex flex-col border-s">
-      <a
-        v-for="item in items"
-        :key="item.id"
-        :data-active="activeSet.has(item.id)"
-        :href="`#${item.id}`"
-        :class="[ITEM_CLASS, indent(item.depth)]"
-        >{{ item.text }}</a
-      >
-    </div>
-  </div>
-</template>

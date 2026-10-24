@@ -1,7 +1,3 @@
-<script setup lang="ts">
-import { Pagination } from '@hareui/vue'
-</script>
-
 <template>
   <div class="flex flex-col gap-6">
     <div v-for="size in ['sm', 'md', 'lg'] as const" :key="size" class="flex flex-col gap-2">
@@ -15,3 +11,7 @@ import { Pagination } from '@hareui/vue'
     </div>
   </div>
 </template>
+
+<script setup lang="ts">
+import { Pagination } from '@hareui/vue'
+</script>

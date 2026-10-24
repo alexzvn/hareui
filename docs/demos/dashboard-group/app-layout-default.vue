@@ -1,78 +1,3 @@
-<script setup lang="ts">
-import type { BreadcrumbsItem, DropdownEntry, NavigationMenuItem } from '@hareui/vue'
-import {
-  Avatar,
-  Breadcrumbs,
-  Button,
-  DashboardGroup,
-  DashboardNavbar,
-  DashboardPanel,
-  DashboardSidebar,
-  DashboardSidebarCollapse,
-  NavigationMenu,
-  Separator,
-} from '@hareui/vue'
-import { Icon } from '@iconify/vue'
-import { h, ref } from 'vue'
-
-// NavigationMenu takes icon components: an Iconify Gravity UI icon that forwards the menu's icon classes.
-const gravityIcon = (name: string) => (attrs: Record<string, unknown>) =>
-  h(Icon, { ...attrs, icon: `gravity-ui:${name}` })
-
-const notify = ref(true)
-
-// The ⋮ menu at the end of a row: shown on hover and keyboard focus, always in the mobile sheet.
-const pageActions: DropdownEntry[] = [
-  { value: 'open', label: 'Open', icon: gravityIcon('folder-open') },
-  { value: 'duplicate', label: 'Duplicate', icon: gravityIcon('copy') },
-  { value: 'delete', label: 'Delete', icon: gravityIcon('trash-bin'), variant: 'danger' },
-]
-
-const items: NavigationMenuItem[] = [
-  // The current row always shows its actions; Dashboard's only show in the mobile sheet.
-  {
-    label: 'Dashboard',
-    icon: gravityIcon('house'),
-    href: '#',
-    active: true,
-    slot: 'dashboard',
-    actions: pageActions,
-    ui: { linkActions: 'hidden in-[[role=dialog]]:flex' },
-  },
-  {
-    label: 'Analytics',
-    icon: gravityIcon('chart-column'),
-    defaultOpen: true,
-    children: [
-      { label: 'Overview', href: '#', actions: pageActions },
-      { label: 'Reports', href: '#', actions: pageActions },
-      { label: 'Conversions', href: '#', actions: pageActions },
-    ],
-  },
-  {
-    label: 'Tracker',
-    icon: gravityIcon('list-check'),
-    href: '#',
-    badge: { label: 'New', color: 'success', variant: 'soft' },
-  },
-  {
-    label: 'Settings',
-    icon: gravityIcon('gear'),
-    children: [
-      { label: 'General', href: '#' },
-      { label: 'Billing', href: '#' },
-    ],
-  },
-]
-
-const footerItems: NavigationMenuItem[] = [
-  { label: 'Help & Information', icon: gravityIcon('circle-question'), href: '#' },
-  { label: 'Log out', icon: gravityIcon('arrow-right-from-square'), href: '#' },
-]
-
-const breadcrumbs: BreadcrumbsItem[] = [{ label: 'Dashboard', icon: 'gravity-ui:house' }]
-</script>
-
 <template>
   <DashboardGroup unit="rem" :persistent="false">
     <!-- Collapsible to an icon rail: the trigger in the navbar toggles it. -->
@@ -192,3 +117,78 @@ const breadcrumbs: BreadcrumbsItem[] = [{ label: 'Dashboard', icon: 'gravity-ui:
     </DashboardPanel>
   </DashboardGroup>
 </template>
+
+<script setup lang="ts">
+import type { BreadcrumbsItem, DropdownEntry, NavigationMenuItem } from '@hareui/vue'
+import {
+  Avatar,
+  Breadcrumbs,
+  Button,
+  DashboardGroup,
+  DashboardNavbar,
+  DashboardPanel,
+  DashboardSidebar,
+  DashboardSidebarCollapse,
+  NavigationMenu,
+  Separator,
+} from '@hareui/vue'
+import { Icon } from '@iconify/vue'
+import { h, ref } from 'vue'
+
+// NavigationMenu takes icon components: an Iconify Gravity UI icon that forwards the menu's icon classes.
+const gravityIcon = (name: string) => (attrs: Record<string, unknown>) =>
+  h(Icon, { ...attrs, icon: `gravity-ui:${name}` })
+
+const notify = ref(true)
+
+// The ⋮ menu at the end of a row: shown on hover and keyboard focus, always in the mobile sheet.
+const pageActions: DropdownEntry[] = [
+  { value: 'open', label: 'Open', icon: gravityIcon('folder-open') },
+  { value: 'duplicate', label: 'Duplicate', icon: gravityIcon('copy') },
+  { value: 'delete', label: 'Delete', icon: gravityIcon('trash-bin'), variant: 'danger' },
+]
+
+const items: NavigationMenuItem[] = [
+  // The current row always shows its actions; Dashboard's only show in the mobile sheet.
+  {
+    label: 'Dashboard',
+    icon: gravityIcon('house'),
+    href: '#',
+    active: true,
+    slot: 'dashboard',
+    actions: pageActions,
+    ui: { linkActions: 'hidden in-[[role=dialog]]:flex' },
+  },
+  {
+    label: 'Analytics',
+    icon: gravityIcon('chart-column'),
+    defaultOpen: true,
+    children: [
+      { label: 'Overview', href: '#', actions: pageActions },
+      { label: 'Reports', href: '#', actions: pageActions },
+      { label: 'Conversions', href: '#', actions: pageActions },
+    ],
+  },
+  {
+    label: 'Tracker',
+    icon: gravityIcon('list-check'),
+    href: '#',
+    badge: { label: 'New', color: 'success', variant: 'soft' },
+  },
+  {
+    label: 'Settings',
+    icon: gravityIcon('gear'),
+    children: [
+      { label: 'General', href: '#' },
+      { label: 'Billing', href: '#' },
+    ],
+  },
+]
+
+const footerItems: NavigationMenuItem[] = [
+  { label: 'Help & Information', icon: gravityIcon('circle-question'), href: '#' },
+  { label: 'Log out', icon: gravityIcon('arrow-right-from-square'), href: '#' },
+]
+
+const breadcrumbs: BreadcrumbsItem[] = [{ label: 'Dashboard', icon: 'gravity-ui:house' }]
+</script>

@@ -1,3 +1,11 @@
+<template>
+  <ListBox aria-label="Users" class="w-[220px]" :items="users">
+    <template #item-leading="{ item }">
+      <Avatar size="sm" :alt="item.label" :src="item.avatar" :fallback="item.label?.[0]" />
+    </template>
+  </ListBox>
+</template>
+
 <script setup lang="ts">
 import type { ListBoxItem } from '@hareui/vue'
 import { Avatar, ListBox } from '@hareui/vue'
@@ -27,11 +35,3 @@ const users: User[] = [
   },
 ]
 </script>
-
-<template>
-  <ListBox aria-label="Users" class="w-[220px]" :items="users">
-    <template #item-leading="{ item }">
-      <Avatar size="sm" :alt="item.label" :src="item.avatar" :fallback="item.label?.[0]" />
-    </template>
-  </ListBox>
-</template>

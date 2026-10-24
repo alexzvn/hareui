@@ -1,33 +1,3 @@
-<script setup lang="ts">
-import { InputGroup, Popover } from '@hareui/vue'
-// Port of HeroUI docs `themes/components/font-family-popover.tsx`.
-import { Icon } from '@iconify/vue'
-import { computed, ref } from 'vue'
-
-import { useCustomFonts } from '../composables/customFonts'
-import { useVariableSetter } from '../composables/variables'
-import { fonts } from '../constants'
-import { extractFontFamilyFromUrl, isCustomFontUrl } from '../utils/font-utils'
-import ControlsPopoverTrigger from './ControlsPopoverTrigger.vue'
-import CustomFonts from './CustomFonts.vue'
-import LockableLabel from './LockableLabel.vue'
-import SuggestedFonts from './SuggestedFonts.vue'
-
-const { variables } = useVariableSetter()
-const { customFonts } = useCustomFonts()
-const mode = ref<'suggested' | 'custom'>('suggested')
-
-// Find current font label - check predefined fonts first, then URL-based custom fonts
-const currentFontLabel = computed(() => {
-  const fontFamily = variables.value.fontFamily
-  const currentSuggestedFont = fonts.find((f) => f.id === fontFamily)
-  const currentUrlFontLabel = isCustomFontUrl(fontFamily)
-    ? extractFontFamilyFromUrl(fontFamily)
-    : null
-  return currentSuggestedFont?.label ?? currentUrlFontLabel ?? 'Inter'
-})
-</script>
-
 <template>
   <div class="flex flex-col gap-1">
     <LockableLabel label="Font Family" variable="fontFamily" />
@@ -60,3 +30,33 @@ const currentFontLabel = computed(() => {
     </Popover>
   </div>
 </template>
+
+<script setup lang="ts">
+import { InputGroup, Popover } from '@hareui/vue'
+// Port of HeroUI docs `themes/components/font-family-popover.tsx`.
+import { Icon } from '@iconify/vue'
+import { computed, ref } from 'vue'
+
+import { useCustomFonts } from '../composables/customFonts'
+import { useVariableSetter } from '../composables/variables'
+import { fonts } from '../constants'
+import { extractFontFamilyFromUrl, isCustomFontUrl } from '../utils/font-utils'
+import ControlsPopoverTrigger from './ControlsPopoverTrigger.vue'
+import CustomFonts from './CustomFonts.vue'
+import LockableLabel from './LockableLabel.vue'
+import SuggestedFonts from './SuggestedFonts.vue'
+
+const { variables } = useVariableSetter()
+const { customFonts } = useCustomFonts()
+const mode = ref<'suggested' | 'custom'>('suggested')
+
+// Find current font label - check predefined fonts first, then URL-based custom fonts
+const currentFontLabel = computed(() => {
+  const fontFamily = variables.value.fontFamily
+  const currentSuggestedFont = fonts.find((f) => f.id === fontFamily)
+  const currentUrlFontLabel = isCustomFontUrl(fontFamily)
+    ? extractFontFamilyFromUrl(fontFamily)
+    : null
+  return currentSuggestedFont?.label ?? currentUrlFontLabel ?? 'Inter'
+})
+</script>

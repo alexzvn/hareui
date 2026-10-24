@@ -1,7 +1,3 @@
-<script setup lang="ts">
-import { Main } from '@hareui/vue'
-</script>
-
 <template>
   <div
     class="w-full overflow-hidden rounded-2xl border border-border bg-surface [--header-height:3.5rem]"
@@ -24,3 +20,7 @@ import { Main } from '@hareui/vue'
     </Main>
   </div>
 </template>
+
+<script setup lang="ts">
+import { Main } from '@hareui/vue'
+</script>

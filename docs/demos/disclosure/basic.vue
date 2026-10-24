@@ -1,11 +1,3 @@
-<script setup lang="ts">
-import { Button, Disclosure } from '@hareui/vue'
-import { Icon } from '@iconify/vue'
-import { ref } from 'vue'
-
-const isExpanded = ref(true)
-</script>
-
 <template>
   <div class="w-full max-w-md text-center">
     <Disclosure
@@ -37,3 +29,11 @@ const isExpanded = ref(true)
     </Disclosure>
   </div>
 </template>
+
+<script setup lang="ts">
+import { Button, Disclosure } from '@hareui/vue'
+import { Icon } from '@iconify/vue'
+import { ref } from 'vue'
+
+const isExpanded = ref(true)
+</script>

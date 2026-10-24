@@ -1,3 +1,13 @@
+<template>
+  <Tabs
+    class="w-full max-w-md"
+    :items="items"
+    default-value="overview"
+    separator
+    :ui="{ tabPanel: 'pt-4' }"
+  />
+</template>
+
 <script setup lang="ts">
 import type { TabsItem } from '@hareui/vue'
 import { Tabs } from '@hareui/vue'
@@ -16,13 +26,3 @@ const items: TabsItem[] = [
   { label: 'Reports', value: 'reports', content: 'Generate and download detailed reports.' },
 ]
 </script>
-
-<template>
-  <Tabs
-    class="w-full max-w-md"
-    :items="items"
-    default-value="overview"
-    separator
-    :ui="{ tabPanel: 'pt-4' }"
-  />
-</template>

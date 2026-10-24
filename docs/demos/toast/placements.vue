@@ -1,3 +1,14 @@
+<template>
+  <div class="flex h-full flex-col items-center justify-center gap-6">
+    <ToastProvider v-for="p in placements" :key="p" :placement="p" :queue="placementQueues[p]" />
+    <div class="flex max-w-xs flex-wrap justify-center gap-2">
+      <Button v-for="p in placements" :key="p" size="sm" variant="secondary" @click="showToast(p)">
+        {{ p }}
+      </Button>
+    </div>
+  </div>
+</template>
+
 <script setup lang="ts">
 import { Button, ToastProvider, ToastQueue } from '@hareui/vue'
 
@@ -17,14 +28,3 @@ function showToast(placement: Placement) {
   })
 }
 </script>
-
-<template>
-  <div class="flex h-full flex-col items-center justify-center gap-6">
-    <ToastProvider v-for="p in placements" :key="p" :placement="p" :queue="placementQueues[p]" />
-    <div class="flex max-w-xs flex-wrap justify-center gap-2">
-      <Button v-for="p in placements" :key="p" size="sm" variant="secondary" @click="showToast(p)">
-        {{ p }}
-      </Button>
-    </div>
-  </div>
-</template>

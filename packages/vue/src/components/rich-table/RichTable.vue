@@ -1,3 +1,217 @@
+<template>
+  <Primitive
+    ref="rootRef"
+    :as="props.as"
+    data-slot="rich-table"
+    v-bind="$attrs"
+    :class="ui.root({ class: [props.ui?.root, props.class] })"
+  >
+    <table
+      ref="tableRef"
+      data-slot="rich-table-content"
+      :class="ui.base({ class: [props.ui?.base] })"
+    >
+      <caption
+        v-if="props.caption || !!slots.caption"
+        data-slot="rich-table-caption"
+        :class="ui.caption({ class: [props.ui?.caption] })"
+      >
+        <slot name="caption">
+          {{ props.caption }}
+        </slot>
+      </caption>
+
+      <thead data-slot="rich-table-header" :class="ui.thead({ class: [props.ui?.thead] })">
+        <tr
+          v-for="headerGroup in tableApi.getHeaderGroups()"
+          :key="headerGroup.id"
+          data-slot="rich-table-header-row"
+          :class="ui.tr({ class: [props.ui?.tr] })"
+        >
+          <th
+            v-for="header in headerGroup.headers"
+            :key="header.id"
+            :data-pinned="header.column.getIsPinned() || undefined"
+            :data-edge="getColumnEdge(header.column)"
+            :role="isEmptyHeader(header) ? 'cell' : undefined"
+            :scope="isEmptyHeader(header) ? undefined : header.colSpan > 1 ? 'colgroup' : 'col'"
+            :colspan="header.colSpan > 1 ? header.colSpan : undefined"
+            :rowspan="header.rowSpan > 1 ? header.rowSpan : undefined"
+            :aria-sort="getAriaSort(header)"
+            data-slot="rich-table-column"
+            :class="
+              ui.th({
+                class: [props.ui?.th, resolveValue(columnMeta(header.column)?.class?.th, header)],
+              })
+            "
+            :style="[
+              getColumnStyles(header.column, header.getSize()),
+              resolveStyle(columnMeta(header.column)?.style?.th, header),
+            ]"
+          >
+            <slot :name="`${header.id}-header`" v-bind="header.getContext()">
+              <FlexRender
+                v-if="!header.isPlaceholder"
+                :render="header.column.columnDef.header"
+                :props="header.getContext()"
+              />
+            </slot>
+          </th>
+        </tr>
+      </thead>
+
+      <tbody data-slot="rich-table-body" :class="ui.tbody({ class: [props.ui?.tbody] })">
+        <slot name="body-top" />
+
+        <template v-if="rows.length">
+          <template v-for="entry in bodyEntries" :key="entry.key">
+            <tr
+              v-if="entry.kind === 'spacer'"
+              :style="{ height: `${entry.height}px` }"
+              aria-hidden="true"
+            >
+              <td :colspan="columnCount" class="p-0" />
+            </tr>
+
+            <template v-else>
+              <tr
+                :ref="measureRowRef"
+                :[indexAttribute]="entry.index"
+                :data-selected="entry.row.getIsSelected()"
+                :data-selectable="!!props.onSelect || !!props.onHover || !!props.onContextmenu"
+                :data-expanded="entry.row.getIsExpanded()"
+                :data-pinned="entry.row.getIsPinned() || undefined"
+                :tabindex="props.onSelect ? 0 : undefined"
+                data-slot="rich-table-row"
+                :class="
+                  ui.tr({
+                    class: [props.ui?.tr, resolveValue(props.meta?.class?.tr, entry.row)],
+                  })
+                "
+                :style="resolveStyle(props.meta?.style?.tr, entry.row)"
+                @click="onRowSelect($event, entry.row)"
+                @keydown.self.exact.enter.space="onRowSelect($event, entry.row)"
+                @pointerenter="onRowHover($event, entry.row)"
+                @pointerleave="onRowHover($event, null)"
+                @contextmenu="onRowContextmenu($event, entry.row)"
+              >
+                <td
+                  v-for="cell in entry.row.getVisibleCells()"
+                  :key="cell.id"
+                  :data-pinned="columnLayouts.get(cell.column.id)?.pinned"
+                  :data-edge="columnLayouts.get(cell.column.id)?.edge"
+                  :colspan="resolveValue(columnMeta(cell.column)?.colspan?.td, cell)"
+                  :rowspan="resolveValue(columnMeta(cell.column)?.rowspan?.td, cell)"
+                  data-slot="rich-table-cell"
+                  :class="
+                    ui.td({
+                      class: [props.ui?.td, resolveValue(columnMeta(cell.column)?.class?.td, cell)],
+                    })
+                  "
+                  :style="[
+                    columnLayouts.get(cell.column.id)?.styles,
+                    resolveStyle(columnMeta(cell.column)?.style?.td, cell),
+                  ]"
+                >
+                  <slot :name="`${cell.column.id}-cell`" v-bind="cell.getContext()">
+                    <template v-if="!cell.getIsPlaceholder()">
+                      <template v-if="cellRenderer(cell) === defaultCell">{{
+                        defaultCell(cell.getContext())
+                      }}</template>
+                      <FlexRender v-else :render="cellRenderer(cell)" :props="cell.getContext()" />
+                    </template>
+                  </slot>
+                </td>
+              </tr>
+
+              <tr
+                v-if="entry.row.getIsExpanded() && !!slots.expanded"
+                data-slot="rich-table-expanded-row"
+                :class="ui.tr({ class: [props.ui?.tr] })"
+                @vue:mounted="onExpandedRowMounted"
+                @vue:unmounted="onExpandedRowUnmounted"
+              >
+                <td
+                  :colspan="entry.row.getVisibleCells().length"
+                  data-slot="rich-table-cell"
+                  :class="ui.td({ class: [props.ui?.td] })"
+                >
+                  <slot name="expanded" :row="entry.row" />
+                </td>
+              </tr>
+            </template>
+          </template>
+        </template>
+
+        <tr v-else-if="props.loading && !!slots['loading']">
+          <td
+            :colspan="columnCount"
+            data-slot="rich-table-loading"
+            :class="ui.loading({ class: props.ui?.loading })"
+          >
+            <slot name="loading" />
+          </td>
+        </tr>
+
+        <tr v-else>
+          <td
+            :colspan="columnCount"
+            data-slot="rich-table-empty"
+            :class="ui.empty({ class: props.ui?.empty })"
+          >
+            <slot name="empty">
+              {{ props.empty || 'No data' }}
+            </slot>
+          </td>
+        </tr>
+
+        <slot name="body-bottom" />
+      </tbody>
+
+      <tfoot
+        v-if="hasFooter"
+        data-slot="rich-table-footer"
+        :class="ui.tfoot({ class: [props.ui?.tfoot] })"
+      >
+        <tr
+          v-for="footerGroup in tableApi.getFooterGroups()"
+          :key="footerGroup.id"
+          data-slot="rich-table-footer-row"
+          :class="ui.tr({ class: [props.ui?.tr] })"
+        >
+          <th
+            v-for="header in footerGroup.headers"
+            :key="header.id"
+            :data-pinned="header.column.getIsPinned() || undefined"
+            :data-edge="getColumnEdge(header.column)"
+            :colspan="header.colSpan > 1 ? header.colSpan : undefined"
+            :rowspan="header.rowSpan > 1 ? header.rowSpan : undefined"
+            :role="isEmptyFooter(header) ? 'cell' : undefined"
+            data-slot="rich-table-column"
+            :class="
+              ui.th({
+                class: [props.ui?.th, resolveValue(columnMeta(header.column)?.class?.th, header)],
+              })
+            "
+            :style="[
+              getColumnStyles(header.column, header.getSize()),
+              resolveStyle(columnMeta(header.column)?.style?.th, header),
+            ]"
+          >
+            <slot :name="`${header.id}-footer`" v-bind="header.getContext()">
+              <FlexRender
+                v-if="!header.isPlaceholder"
+                :render="header.column.columnDef.footer"
+                :props="header.getContext()"
+              />
+            </slot>
+          </th>
+        </tr>
+      </tfoot>
+    </table>
+  </Primitive>
+</template>
+
 <script lang="ts">
 import type {
   Cell,
@@ -965,217 +1179,3 @@ defineExpose({
   tableApi,
 })
 </script>
-
-<template>
-  <Primitive
-    ref="rootRef"
-    :as="props.as"
-    data-slot="rich-table"
-    v-bind="$attrs"
-    :class="ui.root({ class: [props.ui?.root, props.class] })"
-  >
-    <table
-      ref="tableRef"
-      data-slot="rich-table-content"
-      :class="ui.base({ class: [props.ui?.base] })"
-    >
-      <caption
-        v-if="props.caption || !!slots.caption"
-        data-slot="rich-table-caption"
-        :class="ui.caption({ class: [props.ui?.caption] })"
-      >
-        <slot name="caption">
-          {{ props.caption }}
-        </slot>
-      </caption>
-
-      <thead data-slot="rich-table-header" :class="ui.thead({ class: [props.ui?.thead] })">
-        <tr
-          v-for="headerGroup in tableApi.getHeaderGroups()"
-          :key="headerGroup.id"
-          data-slot="rich-table-header-row"
-          :class="ui.tr({ class: [props.ui?.tr] })"
-        >
-          <th
-            v-for="header in headerGroup.headers"
-            :key="header.id"
-            :data-pinned="header.column.getIsPinned() || undefined"
-            :data-edge="getColumnEdge(header.column)"
-            :role="isEmptyHeader(header) ? 'cell' : undefined"
-            :scope="isEmptyHeader(header) ? undefined : header.colSpan > 1 ? 'colgroup' : 'col'"
-            :colspan="header.colSpan > 1 ? header.colSpan : undefined"
-            :rowspan="header.rowSpan > 1 ? header.rowSpan : undefined"
-            :aria-sort="getAriaSort(header)"
-            data-slot="rich-table-column"
-            :class="
-              ui.th({
-                class: [props.ui?.th, resolveValue(columnMeta(header.column)?.class?.th, header)],
-              })
-            "
-            :style="[
-              getColumnStyles(header.column, header.getSize()),
-              resolveStyle(columnMeta(header.column)?.style?.th, header),
-            ]"
-          >
-            <slot :name="`${header.id}-header`" v-bind="header.getContext()">
-              <FlexRender
-                v-if="!header.isPlaceholder"
-                :render="header.column.columnDef.header"
-                :props="header.getContext()"
-              />
-            </slot>
-          </th>
-        </tr>
-      </thead>
-
-      <tbody data-slot="rich-table-body" :class="ui.tbody({ class: [props.ui?.tbody] })">
-        <slot name="body-top" />
-
-        <template v-if="rows.length">
-          <template v-for="entry in bodyEntries" :key="entry.key">
-            <tr
-              v-if="entry.kind === 'spacer'"
-              :style="{ height: `${entry.height}px` }"
-              aria-hidden="true"
-            >
-              <td :colspan="columnCount" class="p-0" />
-            </tr>
-
-            <template v-else>
-              <tr
-                :ref="measureRowRef"
-                :[indexAttribute]="entry.index"
-                :data-selected="entry.row.getIsSelected()"
-                :data-selectable="!!props.onSelect || !!props.onHover || !!props.onContextmenu"
-                :data-expanded="entry.row.getIsExpanded()"
-                :data-pinned="entry.row.getIsPinned() || undefined"
-                :tabindex="props.onSelect ? 0 : undefined"
-                data-slot="rich-table-row"
-                :class="
-                  ui.tr({
-                    class: [props.ui?.tr, resolveValue(props.meta?.class?.tr, entry.row)],
-                  })
-                "
-                :style="resolveStyle(props.meta?.style?.tr, entry.row)"
-                @click="onRowSelect($event, entry.row)"
-                @keydown.self.exact.enter.space="onRowSelect($event, entry.row)"
-                @pointerenter="onRowHover($event, entry.row)"
-                @pointerleave="onRowHover($event, null)"
-                @contextmenu="onRowContextmenu($event, entry.row)"
-              >
-                <td
-                  v-for="cell in entry.row.getVisibleCells()"
-                  :key="cell.id"
-                  :data-pinned="columnLayouts.get(cell.column.id)?.pinned"
-                  :data-edge="columnLayouts.get(cell.column.id)?.edge"
-                  :colspan="resolveValue(columnMeta(cell.column)?.colspan?.td, cell)"
-                  :rowspan="resolveValue(columnMeta(cell.column)?.rowspan?.td, cell)"
-                  data-slot="rich-table-cell"
-                  :class="
-                    ui.td({
-                      class: [props.ui?.td, resolveValue(columnMeta(cell.column)?.class?.td, cell)],
-                    })
-                  "
-                  :style="[
-                    columnLayouts.get(cell.column.id)?.styles,
-                    resolveStyle(columnMeta(cell.column)?.style?.td, cell),
-                  ]"
-                >
-                  <slot :name="`${cell.column.id}-cell`" v-bind="cell.getContext()">
-                    <template v-if="!cell.getIsPlaceholder()">
-                      <template v-if="cellRenderer(cell) === defaultCell">{{
-                        defaultCell(cell.getContext())
-                      }}</template>
-                      <FlexRender v-else :render="cellRenderer(cell)" :props="cell.getContext()" />
-                    </template>
-                  </slot>
-                </td>
-              </tr>
-
-              <tr
-                v-if="entry.row.getIsExpanded() && !!slots.expanded"
-                data-slot="rich-table-expanded-row"
-                :class="ui.tr({ class: [props.ui?.tr] })"
-                @vue:mounted="onExpandedRowMounted"
-                @vue:unmounted="onExpandedRowUnmounted"
-              >
-                <td
-                  :colspan="entry.row.getVisibleCells().length"
-                  data-slot="rich-table-cell"
-                  :class="ui.td({ class: [props.ui?.td] })"
-                >
-                  <slot name="expanded" :row="entry.row" />
-                </td>
-              </tr>
-            </template>
-          </template>
-        </template>
-
-        <tr v-else-if="props.loading && !!slots['loading']">
-          <td
-            :colspan="columnCount"
-            data-slot="rich-table-loading"
-            :class="ui.loading({ class: props.ui?.loading })"
-          >
-            <slot name="loading" />
-          </td>
-        </tr>
-
-        <tr v-else>
-          <td
-            :colspan="columnCount"
-            data-slot="rich-table-empty"
-            :class="ui.empty({ class: props.ui?.empty })"
-          >
-            <slot name="empty">
-              {{ props.empty || 'No data' }}
-            </slot>
-          </td>
-        </tr>
-
-        <slot name="body-bottom" />
-      </tbody>
-
-      <tfoot
-        v-if="hasFooter"
-        data-slot="rich-table-footer"
-        :class="ui.tfoot({ class: [props.ui?.tfoot] })"
-      >
-        <tr
-          v-for="footerGroup in tableApi.getFooterGroups()"
-          :key="footerGroup.id"
-          data-slot="rich-table-footer-row"
-          :class="ui.tr({ class: [props.ui?.tr] })"
-        >
-          <th
-            v-for="header in footerGroup.headers"
-            :key="header.id"
-            :data-pinned="header.column.getIsPinned() || undefined"
-            :data-edge="getColumnEdge(header.column)"
-            :colspan="header.colSpan > 1 ? header.colSpan : undefined"
-            :rowspan="header.rowSpan > 1 ? header.rowSpan : undefined"
-            :role="isEmptyFooter(header) ? 'cell' : undefined"
-            data-slot="rich-table-column"
-            :class="
-              ui.th({
-                class: [props.ui?.th, resolveValue(columnMeta(header.column)?.class?.th, header)],
-              })
-            "
-            :style="[
-              getColumnStyles(header.column, header.getSize()),
-              resolveStyle(columnMeta(header.column)?.style?.th, header),
-            ]"
-          >
-            <slot :name="`${header.id}-footer`" v-bind="header.getContext()">
-              <FlexRender
-                v-if="!header.isPlaceholder"
-                :render="header.column.columnDef.footer"
-                :props="header.getContext()"
-              />
-            </slot>
-          </th>
-        </tr>
-      </tfoot>
-    </table>
-  </Primitive>
-</template>

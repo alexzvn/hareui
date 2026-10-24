@@ -1,7 +1,3 @@
-<script setup lang="ts">
-import { Button, Drawer } from '@hareui/vue'
-</script>
-
 <template>
   <Drawer :close-button="false" :dismissible="false" title="Confirm Action">
     <Button variant="secondary"> Important Action </Button>
@@ -17,3 +13,7 @@ import { Button, Drawer } from '@hareui/vue'
     </template>
   </Drawer>
 </template>
+
+<script setup lang="ts">
+import { Button, Drawer } from '@hareui/vue'
+</script>

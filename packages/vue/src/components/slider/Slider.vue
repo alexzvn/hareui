@@ -1,3 +1,107 @@
+<template>
+  <SliderRoot
+    :id="id"
+    as="div"
+    thumb-alignment="overflow"
+    :model-value="current"
+    :min="min"
+    :max="max"
+    :step="step"
+    :orientation="orientation"
+    :disabled="isDisabled"
+    :required="required"
+    data-slot="slider"
+    role="group"
+    :aria-labelledby="hasLabel ? labelId : undefined"
+    :class="ui.base({ class: [props.ui?.base, props.class] })"
+    @update:model-value="onUpdate"
+    @value-commit="onCommit"
+    @pointerdown.capture="onPointerDownCapture"
+    @pointerdown="onPointerDown"
+    @pointerup="onPointerEnd"
+    @pointercancel="onPointerEnd"
+    @gotpointercapture="captureOnDraggedThumb"
+  >
+    <!-- Split so slot content is only forwarded (and force-updated) when the slot is actually passed. -->
+    <Label
+      v-if="hasLabel && $slots.label"
+      :id="labelId"
+      :disabled="isDisabled"
+      :class="ui.label({ class: props.ui?.label })"
+    >
+      <slot name="label">{{ label }}</slot>
+    </Label>
+    <Label
+      v-else-if="hasLabel"
+      :id="labelId"
+      :disabled="isDisabled"
+      :class="ui.label({ class: props.ui?.label })"
+      >{{ label }}</Label
+    >
+    <output
+      v-if="$slots.output"
+      data-slot="slider-output"
+      aria-live="off"
+      :data-orientation="orientation"
+      :class="ui.output({ class: props.ui?.output })"
+    >
+      <slot name="output" :values="current" :formatted="formattedValues">{{ outputText }}</slot>
+    </output>
+    <output
+      v-else
+      data-slot="slider-output"
+      aria-live="off"
+      :data-orientation="orientation"
+      :class="ui.output({ class: props.ui?.output })"
+      >{{ outputText }}</output
+    >
+    <SliderTrack
+      data-slot="slider-track"
+      :data-fill-start="fillStart ? 'true' : undefined"
+      :data-fill-end="fillEnd ? 'true' : undefined"
+      :class="ui.track({ class: props.ui?.track })"
+    >
+      <!-- RAC sizes the fill with an explicit width/height (Reka only sets both edges, which rounds differently) -->
+      <SliderRange
+        data-slot="slider-fill"
+        :style="{ [orientation === 'vertical' ? 'height' : 'width']: `${fillFraction * 100}%` }"
+        :class="ui.fill({ class: props.ui?.fill })"
+      />
+      <SliderThumb
+        v-for="index in current.keys()"
+        :key="index"
+        data-slot="slider-thumb"
+        :data-dragging="dragging(index)"
+        :data-focus-visible="focusVisibleIndex === index ? 'true' : undefined"
+        :ref="
+          (el: any) => {
+            thumbRefs[index] = el
+          }
+        "
+        :aria-labelledby="hasLabel ? labelId : undefined"
+        :aria-label="hasLabel ? undefined : ($attrs['aria-label'] as string | undefined)"
+        :aria-valuetext="formattedValues[index]"
+        :aria-disabled="isDisabled ? 'true' : undefined"
+        :class="ui.thumb({ class: props.ui?.thumb })"
+        @focus="onThumbFocus(index)"
+        @blur="onThumbBlur"
+        @keydown="onThumbKeydown($event, index)"
+      />
+    </SliderTrack>
+    <!-- RAC submits one entry per thumb under the plain `name` (Reka would post `name[0]`, `name[1]`) -->
+    <template v-if="name">
+      <input
+        v-for="(value, index) in current"
+        :key="index"
+        type="hidden"
+        :name="name"
+        :value="value"
+        :disabled="isDisabled"
+      />
+    </template>
+  </SliderRoot>
+</template>
+
 <script lang="ts">
 import type { ComponentSlots } from '../../types/tv'
 import theme from './theme'
@@ -276,107 +380,3 @@ function dragging(index: number) {
   return isSliding.value && activeThumbIndex.value === index ? 'true' : undefined
 }
 </script>
-
-<template>
-  <SliderRoot
-    :id="id"
-    as="div"
-    thumb-alignment="overflow"
-    :model-value="current"
-    :min="min"
-    :max="max"
-    :step="step"
-    :orientation="orientation"
-    :disabled="isDisabled"
-    :required="required"
-    data-slot="slider"
-    role="group"
-    :aria-labelledby="hasLabel ? labelId : undefined"
-    :class="ui.base({ class: [props.ui?.base, props.class] })"
-    @update:model-value="onUpdate"
-    @value-commit="onCommit"
-    @pointerdown.capture="onPointerDownCapture"
-    @pointerdown="onPointerDown"
-    @pointerup="onPointerEnd"
-    @pointercancel="onPointerEnd"
-    @gotpointercapture="captureOnDraggedThumb"
-  >
-    <!-- Split so slot content is only forwarded (and force-updated) when the slot is actually passed. -->
-    <Label
-      v-if="hasLabel && $slots.label"
-      :id="labelId"
-      :disabled="isDisabled"
-      :class="ui.label({ class: props.ui?.label })"
-    >
-      <slot name="label">{{ label }}</slot>
-    </Label>
-    <Label
-      v-else-if="hasLabel"
-      :id="labelId"
-      :disabled="isDisabled"
-      :class="ui.label({ class: props.ui?.label })"
-      >{{ label }}</Label
-    >
-    <output
-      v-if="$slots.output"
-      data-slot="slider-output"
-      aria-live="off"
-      :data-orientation="orientation"
-      :class="ui.output({ class: props.ui?.output })"
-    >
-      <slot name="output" :values="current" :formatted="formattedValues">{{ outputText }}</slot>
-    </output>
-    <output
-      v-else
-      data-slot="slider-output"
-      aria-live="off"
-      :data-orientation="orientation"
-      :class="ui.output({ class: props.ui?.output })"
-      >{{ outputText }}</output
-    >
-    <SliderTrack
-      data-slot="slider-track"
-      :data-fill-start="fillStart ? 'true' : undefined"
-      :data-fill-end="fillEnd ? 'true' : undefined"
-      :class="ui.track({ class: props.ui?.track })"
-    >
-      <!-- RAC sizes the fill with an explicit width/height (Reka only sets both edges, which rounds differently) -->
-      <SliderRange
-        data-slot="slider-fill"
-        :style="{ [orientation === 'vertical' ? 'height' : 'width']: `${fillFraction * 100}%` }"
-        :class="ui.fill({ class: props.ui?.fill })"
-      />
-      <SliderThumb
-        v-for="index in current.keys()"
-        :key="index"
-        data-slot="slider-thumb"
-        :data-dragging="dragging(index)"
-        :data-focus-visible="focusVisibleIndex === index ? 'true' : undefined"
-        :ref="
-          (el: any) => {
-            thumbRefs[index] = el
-          }
-        "
-        :aria-labelledby="hasLabel ? labelId : undefined"
-        :aria-label="hasLabel ? undefined : ($attrs['aria-label'] as string | undefined)"
-        :aria-valuetext="formattedValues[index]"
-        :aria-disabled="isDisabled ? 'true' : undefined"
-        :class="ui.thumb({ class: props.ui?.thumb })"
-        @focus="onThumbFocus(index)"
-        @blur="onThumbBlur"
-        @keydown="onThumbKeydown($event, index)"
-      />
-    </SliderTrack>
-    <!-- RAC submits one entry per thumb under the plain `name` (Reka would post `name[0]`, `name[1]`) -->
-    <template v-if="name">
-      <input
-        v-for="(value, index) in current"
-        :key="index"
-        type="hidden"
-        :name="name"
-        :value="value"
-        :disabled="isDisabled"
-      />
-    </template>
-  </SliderRoot>
-</template>

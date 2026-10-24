@@ -1,10 +1,3 @@
-<script setup lang="ts">
-import { Button, Modal } from '@hareui/vue'
-import { Icon } from '@iconify/vue'
-
-const variants = ['opaque', 'blur', 'transparent'] as const
-</script>
-
 <template>
   <div class="flex flex-wrap gap-4">
     <Modal v-for="variant in variants" :key="variant" :variant="variant">
@@ -30,3 +23,10 @@ const variants = ['opaque', 'blur', 'transparent'] as const
     </Modal>
   </div>
 </template>
+
+<script setup lang="ts">
+import { Button, Modal } from '@hareui/vue'
+import { Icon } from '@iconify/vue'
+
+const variants = ['opaque', 'blur', 'transparent'] as const
+</script>

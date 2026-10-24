@@ -1,3 +1,55 @@
+<template>
+  <Teleport :disabled="portalTarget.disabled" :to="portalTarget.to">
+    <div
+      v-if="visibleToasts.length > 0"
+      v-bind="$attrs"
+      ref="regionEl"
+      role="region"
+      :aria-label="regionLabel"
+      tabindex="-1"
+      data-slot="toast-region"
+      :data-expanded="resolvedIsExpanded ? 'true' : undefined"
+      :style="{
+        '--gap': `${gap}px`,
+        '--placement': placement,
+        '--scale-factor': scaleFactor,
+        '--toast-width': typeof width === 'number' ? `${width}px` : width,
+      }"
+      :class="ui.region({ class: [props.ui?.region, props.class] })"
+      @pointerenter="onPointerEnterOrMove"
+      @pointermove="onPointerEnterOrMove"
+      @pointerleave="onPointerLeave"
+      @focusin="onFocusIn"
+      @focusout="onFocusOut"
+      @keydown="onRegionKeyDown"
+    >
+      <ToastItem
+        v-for="item in renderItems"
+        :key="item.toast.key"
+        :toast="item.toast"
+        :index="item.index"
+        :is-frontmost="item.isFrontmost"
+        :is-exiting="item.isExiting"
+        :is-hidden="item.isHidden"
+        :is-expanded="resolvedIsExpanded"
+        :is-mobile="isMobile"
+        :placement="placement!"
+        :z-index="item.zIndex"
+        :offset-collapsed="item.offsetCollapsed"
+        :offset-expanded="item.offsetExpanded"
+        :scale-collapsed="item.scaleCollapsed"
+        :front-height="item.frontHeight"
+        :close="() => activeQueue.close(item.toast.key)"
+        :provider-ui="props.ui"
+        :toast-slot="slots.toast"
+        @height-change="onHeightChange"
+        @height-remove="onHeightRemove"
+        @focus-leave="onFocusLeave"
+      />
+    </div>
+  </Teleport>
+</template>
+
 <script lang="ts">
 import type { PortalTarget } from '../../config'
 import type { ComponentSlots, ComponentVariants } from '../../types/tv'
@@ -364,55 +416,3 @@ const renderItems = computed<RenderItem[]>(() => {
   return items
 })
 </script>
-
-<template>
-  <Teleport :disabled="portalTarget.disabled" :to="portalTarget.to">
-    <div
-      v-if="visibleToasts.length > 0"
-      v-bind="$attrs"
-      ref="regionEl"
-      role="region"
-      :aria-label="regionLabel"
-      tabindex="-1"
-      data-slot="toast-region"
-      :data-expanded="resolvedIsExpanded ? 'true' : undefined"
-      :style="{
-        '--gap': `${gap}px`,
-        '--placement': placement,
-        '--scale-factor': scaleFactor,
-        '--toast-width': typeof width === 'number' ? `${width}px` : width,
-      }"
-      :class="ui.region({ class: [props.ui?.region, props.class] })"
-      @pointerenter="onPointerEnterOrMove"
-      @pointermove="onPointerEnterOrMove"
-      @pointerleave="onPointerLeave"
-      @focusin="onFocusIn"
-      @focusout="onFocusOut"
-      @keydown="onRegionKeyDown"
-    >
-      <ToastItem
-        v-for="item in renderItems"
-        :key="item.toast.key"
-        :toast="item.toast"
-        :index="item.index"
-        :is-frontmost="item.isFrontmost"
-        :is-exiting="item.isExiting"
-        :is-hidden="item.isHidden"
-        :is-expanded="resolvedIsExpanded"
-        :is-mobile="isMobile"
-        :placement="placement!"
-        :z-index="item.zIndex"
-        :offset-collapsed="item.offsetCollapsed"
-        :offset-expanded="item.offsetExpanded"
-        :scale-collapsed="item.scaleCollapsed"
-        :front-height="item.frontHeight"
-        :close="() => activeQueue.close(item.toast.key)"
-        :provider-ui="props.ui"
-        :toast-slot="slots.toast"
-        @height-change="onHeightChange"
-        @height-remove="onHeightRemove"
-        @focus-leave="onFocusLeave"
-      />
-    </div>
-  </Teleport>
-</template>

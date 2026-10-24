@@ -1,7 +1,3 @@
-<script setup lang="ts">
-import { Button, ButtonGroup } from '@hareui/vue'
-</script>
-
 <template>
   <ButtonGroup>
     <Button>First</Button>
@@ -9,3 +5,7 @@ import { Button, ButtonGroup } from '@hareui/vue'
     <Button>Third</Button>
   </ButtonGroup>
 </template>
+
+<script setup lang="ts">
+import { Button, ButtonGroup } from '@hareui/vue'
+</script>

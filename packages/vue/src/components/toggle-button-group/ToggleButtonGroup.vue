@@ -1,3 +1,22 @@
+<template>
+  <component
+    :is="toolbar ? Primitive : RovingFocusGroup"
+    ref="root"
+    :as="as"
+    v-bind="toolbar ? {} : { orientation, loop: false }"
+    :role="selectionMode === 'single' ? 'radiogroup' : toolbar ? 'group' : 'toolbar'"
+    :aria-orientation="toolbar && selectionMode !== 'single' ? undefined : orientation"
+    :aria-disabled="isDisabled || undefined"
+    data-slot="toggle-button-group"
+    :data-orientation="orientation"
+    :data-disabled="isDisabled ? 'true' : undefined"
+    :class="ui.base({ class: [props.ui?.base, props.class] })"
+    @keydown.capture="onKeydownCapture"
+  >
+    <slot :selected="selected" />
+  </component>
+</template>
+
 <script lang="ts">
 import type { PrimitiveProps } from 'reka-ui'
 
@@ -145,22 +164,3 @@ provide(toggleButtonGroupContextKey, {
   uiOverrides: toRef(() => props.ui),
 })
 </script>
-
-<template>
-  <component
-    :is="toolbar ? Primitive : RovingFocusGroup"
-    ref="root"
-    :as="as"
-    v-bind="toolbar ? {} : { orientation, loop: false }"
-    :role="selectionMode === 'single' ? 'radiogroup' : toolbar ? 'group' : 'toolbar'"
-    :aria-orientation="toolbar && selectionMode !== 'single' ? undefined : orientation"
-    :aria-disabled="isDisabled || undefined"
-    data-slot="toggle-button-group"
-    :data-orientation="orientation"
-    :data-disabled="isDisabled ? 'true' : undefined"
-    :class="ui.base({ class: [props.ui?.base, props.class] })"
-    @keydown.capture="onKeydownCapture"
-  >
-    <slot :selected="selected" />
-  </component>
-</template>

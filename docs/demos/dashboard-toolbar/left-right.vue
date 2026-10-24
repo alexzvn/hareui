@@ -1,14 +1,3 @@
-<script setup lang="ts">
-import {
-  Button,
-  DashboardGroup,
-  DashboardNavbar,
-  DashboardPanel,
-  DashboardToolbar,
-} from '@hareui/vue'
-import { Icon } from '@iconify/vue'
-</script>
-
 <template>
   <DashboardGroup unit="rem" :persistent="false">
     <DashboardPanel>
@@ -41,3 +30,14 @@ import { Icon } from '@iconify/vue'
     </DashboardPanel>
   </DashboardGroup>
 </template>
+
+<script setup lang="ts">
+import {
+  Button,
+  DashboardGroup,
+  DashboardNavbar,
+  DashboardPanel,
+  DashboardToolbar,
+} from '@hareui/vue'
+import { Icon } from '@iconify/vue'
+</script>

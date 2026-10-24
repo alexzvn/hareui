@@ -1,7 +1,3 @@
-<script setup lang="ts">
-import { TextField } from '@hareui/vue'
-</script>
-
 <template>
   <TextField
     disabled
@@ -13,3 +9,7 @@ import { TextField } from '@hareui/vue'
     description="This field cannot be edited"
   />
 </template>
+
+<script setup lang="ts">
+import { TextField } from '@hareui/vue'
+</script>

@@ -1,3 +1,38 @@
+<template>
+  <ChartLayer v-if="tracks.length" name="bar-background">
+    <g data-slot="chart-radial-bar-background">
+      <path
+        v-for="track in tracks"
+        :key="track.index"
+        data-slot="chart-radial-bar-track"
+        :d="track.d"
+        :transform="`translate(${polar.cx.value}, ${polar.cy.value})`"
+        :style="backgroundStyle.fill ? { fill: backgroundStyle.fill } : undefined"
+        :class="chart.classes('radialBarBackground', backgroundStyle.class)"
+      />
+    </g>
+  </ChartLayer>
+  <ChartLayer name="series">
+    <g v-if="!hide" data-slot="chart-radial-bar" :class="chart.classes('series', props.class)">
+      <path
+        v-for="sector in sectors"
+        :key="sector.index"
+        data-slot="chart-radial-bar-sector"
+        :data-index="sector.index"
+        :data-active="chart.active.index === sector.index ? 'true' : undefined"
+        :d="sector.d"
+        :transform="`translate(${sector.cx}, ${sector.cy})`"
+        :fill="sector.fill"
+        :fill-opacity="sector.cell?.fillOpacity ?? fillOpacity"
+        :stroke="sector.cell?.stroke ?? stroke"
+        :stroke-width="sector.cell?.strokeWidth ?? strokeWidth"
+        :class="chart.classes('sector', sector.cell?.class)"
+      />
+    </g>
+  </ChartLayer>
+  <slot />
+</template>
+
 <script lang="ts">
 import type { ClassValue } from 'tailwind-variants'
 
@@ -235,38 +270,3 @@ provideChartLabels(
   'insideStart',
 )
 </script>
-
-<template>
-  <ChartLayer v-if="tracks.length" name="bar-background">
-    <g data-slot="chart-radial-bar-background">
-      <path
-        v-for="track in tracks"
-        :key="track.index"
-        data-slot="chart-radial-bar-track"
-        :d="track.d"
-        :transform="`translate(${polar.cx.value}, ${polar.cy.value})`"
-        :style="backgroundStyle.fill ? { fill: backgroundStyle.fill } : undefined"
-        :class="chart.classes('radialBarBackground', backgroundStyle.class)"
-      />
-    </g>
-  </ChartLayer>
-  <ChartLayer name="series">
-    <g v-if="!hide" data-slot="chart-radial-bar" :class="chart.classes('series', props.class)">
-      <path
-        v-for="sector in sectors"
-        :key="sector.index"
-        data-slot="chart-radial-bar-sector"
-        :data-index="sector.index"
-        :data-active="chart.active.index === sector.index ? 'true' : undefined"
-        :d="sector.d"
-        :transform="`translate(${sector.cx}, ${sector.cy})`"
-        :fill="sector.fill"
-        :fill-opacity="sector.cell?.fillOpacity ?? fillOpacity"
-        :stroke="sector.cell?.stroke ?? stroke"
-        :stroke-width="sector.cell?.strokeWidth ?? strokeWidth"
-        :class="chart.classes('sector', sector.cell?.class)"
-      />
-    </g>
-  </ChartLayer>
-  <slot />
-</template>

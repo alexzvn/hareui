@@ -1,34 +1,3 @@
-<script setup lang="ts">
-import type { ListBoxItem } from '@hareui/vue'
-import { DateField, Label, Select, Tooltip } from '@hareui/vue'
-import { Icon } from '@iconify/vue'
-import type { DateValue } from '@internationalized/date'
-import { parseDate, parseZonedDateTime } from '@internationalized/date'
-import { computed, ref } from 'vue'
-
-const granularityOptions: ListBoxItem[] = [
-  { value: 'day', label: 'Day' },
-  { value: 'hour', label: 'Hour' },
-  { value: 'minute', label: 'Minute' },
-  { value: 'second', label: 'Second' },
-]
-
-const granularity = ref<'day' | 'hour' | 'minute' | 'second'>('day')
-const selectValue = computed({
-  get: () => granularity.value,
-  set: (value) => {
-    granularity.value = value as typeof granularity.value
-  },
-})
-
-// Determine appropriate default value based on granularity
-const defaultValue = computed<DateValue>(() =>
-  granularity.value === 'day'
-    ? parseDate('2025-02-03')
-    : parseZonedDateTime('2025-02-03T08:45:00[America/Los_Angeles]'),
-)
-</script>
-
 <template>
   <div class="flex gap-4">
     <DateField
@@ -68,3 +37,34 @@ const defaultValue = computed<DateValue>(() =>
     </div>
   </div>
 </template>
+
+<script setup lang="ts">
+import type { ListBoxItem } from '@hareui/vue'
+import { DateField, Label, Select, Tooltip } from '@hareui/vue'
+import { Icon } from '@iconify/vue'
+import type { DateValue } from '@internationalized/date'
+import { parseDate, parseZonedDateTime } from '@internationalized/date'
+import { computed, ref } from 'vue'
+
+const granularityOptions: ListBoxItem[] = [
+  { value: 'day', label: 'Day' },
+  { value: 'hour', label: 'Hour' },
+  { value: 'minute', label: 'Minute' },
+  { value: 'second', label: 'Second' },
+]
+
+const granularity = ref<'day' | 'hour' | 'minute' | 'second'>('day')
+const selectValue = computed({
+  get: () => granularity.value,
+  set: (value) => {
+    granularity.value = value as typeof granularity.value
+  },
+})
+
+// Determine appropriate default value based on granularity
+const defaultValue = computed<DateValue>(() =>
+  granularity.value === 'day'
+    ? parseDate('2025-02-03')
+    : parseZonedDateTime('2025-02-03T08:45:00[America/Los_Angeles]'),
+)
+</script>

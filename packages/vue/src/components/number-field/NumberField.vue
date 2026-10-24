@@ -1,3 +1,118 @@
+<template>
+  <div
+    ref="root"
+    v-bind="rootAttrs"
+    data-slot="number-field"
+    :data-disabled="isDisabled ? 'true' : undefined"
+    :data-invalid="invalid ? 'true' : undefined"
+    :data-required="required ? 'true' : undefined"
+    :data-readonly="readonly ? 'true' : undefined"
+    :class="ui.base({ class: [props.ui?.base, props.class] })"
+  >
+    <FieldLabel :for="id" />
+    <NumberFieldRoot
+      :id="id"
+      :model-value="displayValue"
+      :default-value="defaultDisplayValue"
+      :min="min"
+      :max="max"
+      :step="effectiveStep"
+      :step-snapping="step !== undefined"
+      :format-options="formatOptions"
+      :locale="locale"
+      :disabled="isDisabled"
+      :readonly="readonly"
+      :required="required"
+      data-slot="number-field-group"
+      :data-invalid="invalid ? 'true' : undefined"
+      :data-focus-within="focusWithin ? 'true' : undefined"
+      :data-focus-visible="focusVisible ? 'true' : undefined"
+      :class="ui.group({ class: props.ui?.group })"
+      @focusin="onFocusIn"
+      @focusout="onFocusOut"
+      @update:model-value="commit"
+    >
+      <NumberFieldDecrement
+        v-if="decrement"
+        slot="decrement"
+        data-slot="number-field-decrement-button"
+        :aria-label="decrementLabel"
+        :aria-controls="id"
+        :class="ui.decrementButton({ class: props.ui?.decrementButton })"
+      >
+        <DecrementOutlet>
+          <svg
+            aria-hidden="true"
+            data-slot="number-field-decrement-button-icon"
+            fill="none"
+            height="16"
+            role="presentation"
+            viewBox="0 0 16 16"
+            width="16"
+            xmlns="http://www.w3.org/2000/svg"
+          >
+            <path
+              clip-rule="evenodd"
+              d="M1.75 8a.75.75 0 0 1 .75-.75h11a.75.75 0 0 1 0 1.5h-11A.75.75 0 0 1 1.75 8"
+              fill="currentColor"
+              fill-rule="evenodd"
+            />
+          </svg>
+        </DecrementOutlet>
+      </NumberFieldDecrement>
+      <NumberFieldInput
+        data-slot="number-field-input"
+        :placeholder="placeholder"
+        :required="required || undefined"
+        :aria-invalid="invalid ? 'true' : undefined"
+        :aria-describedby="describedBy"
+        :aria-label="attrs['aria-label']"
+        :aria-labelledby="attrs['aria-labelledby']"
+        :class="ui.input({ class: props.ui?.input })"
+        @blur="onCommitEmpty"
+        @keydown="onKeydown"
+      />
+      <NumberFieldIncrement
+        v-if="increment"
+        slot="increment"
+        data-slot="number-field-increment-button"
+        :aria-label="incrementLabel"
+        :aria-controls="id"
+        :class="ui.incrementButton({ class: props.ui?.incrementButton })"
+      >
+        <IncrementOutlet>
+          <svg
+            aria-hidden="true"
+            data-slot="number-field-increment-button-icon"
+            fill="none"
+            height="16"
+            role="presentation"
+            viewBox="0 0 16 16"
+            width="16"
+            xmlns="http://www.w3.org/2000/svg"
+          >
+            <path
+              clip-rule="evenodd"
+              d="M8 1.75a.75.75 0 0 1 .75.75v4.75h4.75a.75.75 0 0 1 0 1.5H8.75v4.75a.75.75 0 0 1-1.5 0V8.75H2.5a.75.75 0 0 1 0-1.5h4.75V2.5A.75.75 0 0 1 8 1.75"
+              fill="currentColor"
+              fill-rule="evenodd"
+            />
+          </svg>
+        </IncrementOutlet>
+      </NumberFieldIncrement>
+    </NumberFieldRoot>
+    <FieldDescription />
+    <FieldError />
+  </div>
+  <input
+    v-if="name"
+    type="hidden"
+    :name="name"
+    :value="formValue ?? ''"
+    :disabled="isDisabled || undefined"
+  />
+</template>
+
 <script lang="ts">
 import type { ValidateFn, ValidationResult } from '../../composables/useFieldValidation'
 import type { ComponentSlots } from '../../types/tv'
@@ -245,118 +360,3 @@ function onFocusOut(event: FocusEvent) {
   focusVisible.value = false
 }
 </script>
-
-<template>
-  <div
-    ref="root"
-    v-bind="rootAttrs"
-    data-slot="number-field"
-    :data-disabled="isDisabled ? 'true' : undefined"
-    :data-invalid="invalid ? 'true' : undefined"
-    :data-required="required ? 'true' : undefined"
-    :data-readonly="readonly ? 'true' : undefined"
-    :class="ui.base({ class: [props.ui?.base, props.class] })"
-  >
-    <FieldLabel :for="id" />
-    <NumberFieldRoot
-      :id="id"
-      :model-value="displayValue"
-      :default-value="defaultDisplayValue"
-      :min="min"
-      :max="max"
-      :step="effectiveStep"
-      :step-snapping="step !== undefined"
-      :format-options="formatOptions"
-      :locale="locale"
-      :disabled="isDisabled"
-      :readonly="readonly"
-      :required="required"
-      data-slot="number-field-group"
-      :data-invalid="invalid ? 'true' : undefined"
-      :data-focus-within="focusWithin ? 'true' : undefined"
-      :data-focus-visible="focusVisible ? 'true' : undefined"
-      :class="ui.group({ class: props.ui?.group })"
-      @focusin="onFocusIn"
-      @focusout="onFocusOut"
-      @update:model-value="commit"
-    >
-      <NumberFieldDecrement
-        v-if="decrement"
-        slot="decrement"
-        data-slot="number-field-decrement-button"
-        :aria-label="decrementLabel"
-        :aria-controls="id"
-        :class="ui.decrementButton({ class: props.ui?.decrementButton })"
-      >
-        <DecrementOutlet>
-          <svg
-            aria-hidden="true"
-            data-slot="number-field-decrement-button-icon"
-            fill="none"
-            height="16"
-            role="presentation"
-            viewBox="0 0 16 16"
-            width="16"
-            xmlns="http://www.w3.org/2000/svg"
-          >
-            <path
-              clip-rule="evenodd"
-              d="M1.75 8a.75.75 0 0 1 .75-.75h11a.75.75 0 0 1 0 1.5h-11A.75.75 0 0 1 1.75 8"
-              fill="currentColor"
-              fill-rule="evenodd"
-            />
-          </svg>
-        </DecrementOutlet>
-      </NumberFieldDecrement>
-      <NumberFieldInput
-        data-slot="number-field-input"
-        :placeholder="placeholder"
-        :required="required || undefined"
-        :aria-invalid="invalid ? 'true' : undefined"
-        :aria-describedby="describedBy"
-        :aria-label="attrs['aria-label']"
-        :aria-labelledby="attrs['aria-labelledby']"
-        :class="ui.input({ class: props.ui?.input })"
-        @blur="onCommitEmpty"
-        @keydown="onKeydown"
-      />
-      <NumberFieldIncrement
-        v-if="increment"
-        slot="increment"
-        data-slot="number-field-increment-button"
-        :aria-label="incrementLabel"
-        :aria-controls="id"
-        :class="ui.incrementButton({ class: props.ui?.incrementButton })"
-      >
-        <IncrementOutlet>
-          <svg
-            aria-hidden="true"
-            data-slot="number-field-increment-button-icon"
-            fill="none"
-            height="16"
-            role="presentation"
-            viewBox="0 0 16 16"
-            width="16"
-            xmlns="http://www.w3.org/2000/svg"
-          >
-            <path
-              clip-rule="evenodd"
-              d="M8 1.75a.75.75 0 0 1 .75.75v4.75h4.75a.75.75 0 0 1 0 1.5H8.75v4.75a.75.75 0 0 1-1.5 0V8.75H2.5a.75.75 0 0 1 0-1.5h4.75V2.5A.75.75 0 0 1 8 1.75"
-              fill="currentColor"
-              fill-rule="evenodd"
-            />
-          </svg>
-        </IncrementOutlet>
-      </NumberFieldIncrement>
-    </NumberFieldRoot>
-    <FieldDescription />
-    <FieldError />
-  </div>
-  <input
-    v-if="name"
-    type="hidden"
-    :name="name"
-    :value="formValue ?? ''"
-    :disabled="isDisabled || undefined"
-  />
-</template>

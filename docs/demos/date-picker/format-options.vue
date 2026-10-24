@@ -1,62 +1,3 @@
-<script setup lang="ts">
-import type { ListBoxItem, SelectValue } from '@hareui/vue'
-import { Calendar, DatePicker, Label, Select, Switch, TimeField } from '@hareui/vue'
-import type { CalendarDateTime, DateValue, ZonedDateTime } from '@internationalized/date'
-import { parseDate, parseZonedDateTime, Time } from '@internationalized/date'
-import type { TimeValue } from 'reka-ui'
-import { computed, ref, shallowRef } from 'vue'
-
-type Granularity = 'day' | 'hour' | 'minute' | 'second'
-type HourCycle = 12 | 24
-
-const granularityOptions: ListBoxItem[] = [
-  { value: 'day', label: 'Day' },
-  { value: 'hour', label: 'Hour' },
-  { value: 'minute', label: 'Minute' },
-  { value: 'second', label: 'Second' },
-]
-const hourCycleOptions: ListBoxItem[] = [
-  { value: 12, label: '12-hour' },
-  { value: 24, label: '24-hour' },
-]
-
-const granularity = ref<Granularity>('minute')
-const hourCycle = ref<HourCycle>(12)
-const hideTimeZone = ref(false)
-const timeGranularity = computed(() =>
-  granularity.value === 'day' ? undefined : granularity.value,
-)
-
-function defaultValueFor(g: Granularity): DateValue {
-  return g === 'day'
-    ? parseDate('2026-02-03')
-    : parseZonedDateTime('2026-02-03T08:45:00[America/Los_Angeles]')
-}
-const value = shallowRef<DateValue | null>(defaultValueFor(granularity.value))
-
-function hasTime(v: DateValue | null | undefined): v is CalendarDateTime | ZonedDateTime {
-  return !!v && 'hour' in v
-}
-// Reka's embedded Calendar only edits date fields and the TimeField below only edits time fields;
-// each merges onto the other's current value instead of replacing it outright.
-function mergeDate(picked: DateValue, current: DateValue | null | undefined): DateValue {
-  return hasTime(current)
-    ? current.set({ year: picked.year, month: picked.month, day: picked.day })
-    : picked
-}
-function mergeTime(time: TimeValue, current: DateValue | null | undefined): DateValue | null {
-  return hasTime(current)
-    ? current.set({ hour: time.hour, minute: time.minute, second: time.second })
-    : (current ?? null)
-}
-
-function onGranularityChange(next: SelectValue | undefined) {
-  if (typeof next !== 'string') return
-  granularity.value = next as Granularity
-  value.value = defaultValueFor(granularity.value)
-}
-</script>
-
 <template>
   <div class="flex flex-col gap-4">
     <DatePicker
@@ -124,3 +65,62 @@ function onGranularityChange(next: SelectValue | undefined) {
     </div>
   </div>
 </template>
+
+<script setup lang="ts">
+import type { ListBoxItem, SelectValue } from '@hareui/vue'
+import { Calendar, DatePicker, Label, Select, Switch, TimeField } from '@hareui/vue'
+import type { CalendarDateTime, DateValue, ZonedDateTime } from '@internationalized/date'
+import { parseDate, parseZonedDateTime, Time } from '@internationalized/date'
+import type { TimeValue } from 'reka-ui'
+import { computed, ref, shallowRef } from 'vue'
+
+type Granularity = 'day' | 'hour' | 'minute' | 'second'
+type HourCycle = 12 | 24
+
+const granularityOptions: ListBoxItem[] = [
+  { value: 'day', label: 'Day' },
+  { value: 'hour', label: 'Hour' },
+  { value: 'minute', label: 'Minute' },
+  { value: 'second', label: 'Second' },
+]
+const hourCycleOptions: ListBoxItem[] = [
+  { value: 12, label: '12-hour' },
+  { value: 24, label: '24-hour' },
+]
+
+const granularity = ref<Granularity>('minute')
+const hourCycle = ref<HourCycle>(12)
+const hideTimeZone = ref(false)
+const timeGranularity = computed(() =>
+  granularity.value === 'day' ? undefined : granularity.value,
+)
+
+function defaultValueFor(g: Granularity): DateValue {
+  return g === 'day'
+    ? parseDate('2026-02-03')
+    : parseZonedDateTime('2026-02-03T08:45:00[America/Los_Angeles]')
+}
+const value = shallowRef<DateValue | null>(defaultValueFor(granularity.value))
+
+function hasTime(v: DateValue | null | undefined): v is CalendarDateTime | ZonedDateTime {
+  return !!v && 'hour' in v
+}
+// Reka's embedded Calendar only edits date fields and the TimeField below only edits time fields;
+// each merges onto the other's current value instead of replacing it outright.
+function mergeDate(picked: DateValue, current: DateValue | null | undefined): DateValue {
+  return hasTime(current)
+    ? current.set({ year: picked.year, month: picked.month, day: picked.day })
+    : picked
+}
+function mergeTime(time: TimeValue, current: DateValue | null | undefined): DateValue | null {
+  return hasTime(current)
+    ? current.set({ hour: time.hour, minute: time.minute, second: time.second })
+    : (current ?? null)
+}
+
+function onGranularityChange(next: SelectValue | undefined) {
+  if (typeof next !== 'string') return
+  granularity.value = next as Granularity
+  value.value = defaultValueFor(granularity.value)
+}
+</script>

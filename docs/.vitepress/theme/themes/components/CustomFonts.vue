@@ -1,3 +1,44 @@
+<template>
+  <div class="flex flex-col gap-2">
+    <div class="flex items-center justify-between">
+      <Link
+        as="span"
+        role="link"
+        tabindex="0"
+        class="flex items-center gap-1 no-underline"
+        @click="emit('goToSuggested')"
+        @keydown.enter="emit('goToSuggested')"
+      >
+        <Icon icon="gravity-ui:arrow-left" class="size-4" />
+        Back
+      </Link>
+    </div>
+    <TextField
+      label="Font URL"
+      description="Supports G Fonts, Fontsource and Fontshare"
+      :invalid="showError"
+      :error-message="errorMessage ?? undefined"
+      :model-value="cdnUrl"
+      @update:model-value="onCdnUrlChange"
+    >
+      <InputGroup variant="secondary" placeholder="Paste font URL..." @focusout="hasBlurred = true">
+        <template #prefix>
+          <Icon icon="gravity-ui:globe" class="size-4 text-muted" />
+        </template>
+      </InputGroup>
+    </TextField>
+    <Button
+      class="w-full"
+      :disabled="!cdnUrl.trim() || validationError !== null || isImporting"
+      size="sm"
+      variant="secondary"
+      @click="handleImport"
+    >
+      {{ isImporting ? 'Importing...' : 'Import font' }}
+    </Button>
+  </div>
+</template>
+
 <script setup lang="ts">
 import { Button, InputGroup, Link, TextField } from '@hareui/vue'
 // Port of HeroUI docs `themes/components/custom-fonts.tsx`.
@@ -78,44 +119,3 @@ function handleImport() {
   }
 }
 </script>
-
-<template>
-  <div class="flex flex-col gap-2">
-    <div class="flex items-center justify-between">
-      <Link
-        as="span"
-        role="link"
-        tabindex="0"
-        class="flex items-center gap-1 no-underline"
-        @click="emit('goToSuggested')"
-        @keydown.enter="emit('goToSuggested')"
-      >
-        <Icon icon="gravity-ui:arrow-left" class="size-4" />
-        Back
-      </Link>
-    </div>
-    <TextField
-      label="Font URL"
-      description="Supports G Fonts, Fontsource and Fontshare"
-      :invalid="showError"
-      :error-message="errorMessage ?? undefined"
-      :model-value="cdnUrl"
-      @update:model-value="onCdnUrlChange"
-    >
-      <InputGroup variant="secondary" placeholder="Paste font URL..." @focusout="hasBlurred = true">
-        <template #prefix>
-          <Icon icon="gravity-ui:globe" class="size-4 text-muted" />
-        </template>
-      </InputGroup>
-    </TextField>
-    <Button
-      class="w-full"
-      :disabled="!cdnUrl.trim() || validationError !== null || isImporting"
-      size="sm"
-      variant="secondary"
-      @click="handleImport"
-    >
-      {{ isImporting ? 'Importing...' : 'Import font' }}
-    </Button>
-  </div>
-</template>

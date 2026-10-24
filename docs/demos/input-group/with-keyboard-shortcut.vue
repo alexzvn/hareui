@@ -1,7 +1,3 @@
-<script setup lang="ts">
-import { InputGroup, Kbd, TextField } from '@hareui/vue'
-</script>
-
 <template>
   <TextField aria-label="Command" class="w-full max-w-[280px]" name="command">
     <InputGroup :ui="{ input: 'w-full max-w-[280px]', suffix: 'pe-2' }" placeholder="Command">
@@ -11,3 +7,7 @@ import { InputGroup, Kbd, TextField } from '@hareui/vue'
     </InputGroup>
   </TextField>
 </template>
+
+<script setup lang="ts">
+import { InputGroup, Kbd, TextField } from '@hareui/vue'
+</script>

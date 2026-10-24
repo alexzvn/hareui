@@ -1,3 +1,26 @@
+<template>
+  <NavigationMenu
+    :items="items"
+    :ui="{ linkLabel: 'max-sm:sr-only' }"
+    class="w-full justify-center"
+  >
+    <template #more>
+      <Dropdown :items="moreItems" align="start">
+        <Button variant="ghost" size="sm" aria-label="More">
+          More
+          <Icon icon="gravity-ui:chevron-down" />
+        </Button>
+        <template #item-leading="{ item }">
+          <Icon class="size-4 shrink-0 text-muted" :icon="item.icon" />
+        </template>
+      </Dropdown>
+    </template>
+    <template #github-trailing>
+      <Chip label="6k+" size="sm" />
+    </template>
+  </NavigationMenu>
+</template>
+
 <script setup lang="ts">
 import type { DropdownEntry, NavigationMenuItem } from '@hareui/vue'
 import { Button, Chip, Dropdown, NavigationMenu } from '@hareui/vue'
@@ -26,26 +49,3 @@ const items: NavigationMenuItem[] = [
   },
 ]
 </script>
-
-<template>
-  <NavigationMenu
-    :items="items"
-    :ui="{ linkLabel: 'max-sm:sr-only' }"
-    class="w-full justify-center"
-  >
-    <template #more>
-      <Dropdown :items="moreItems" align="start">
-        <Button variant="ghost" size="sm" aria-label="More">
-          More
-          <Icon icon="gravity-ui:chevron-down" />
-        </Button>
-        <template #item-leading="{ item }">
-          <Icon class="size-4 shrink-0 text-muted" :icon="item.icon" />
-        </template>
-      </Dropdown>
-    </template>
-    <template #github-trailing>
-      <Chip label="6k+" size="sm" />
-    </template>
-  </NavigationMenu>
-</template>

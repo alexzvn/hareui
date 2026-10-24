@@ -1,3 +1,46 @@
+<template>
+  <ChartFrame
+    v-model:hidden="hidden"
+    data-slot="radar-chart"
+    :width="width"
+    :height="height"
+    :config="config"
+    :class="ui.base({ class: [props.ui?.base, props.class] })"
+  >
+    <template v-for="name in frameSlotNames(slots)" #[name]="scope">
+      <slot :name="name" v-bind="scope as any" />
+    </template>
+    <template #parts>
+      <ChartPolarGrid v-if="grid" v-bind="grid" />
+      <ChartPolarAngleAxis v-if="angleAxis" v-bind="angleAxis">
+        <template v-if="slots['angle-tick']" #tick="tick">
+          <slot name="angle-tick" v-bind="tick" />
+        </template>
+      </ChartPolarAngleAxis>
+      <ChartPolarRadiusAxis v-if="radiusAxis" v-bind="radiusAxis" />
+      <!-- Hidden radars stay mounted with `hide`, so colors are stable and toggling animates. -->
+      <ChartRadar
+        v-for="series in resolved"
+        :key="series.key"
+        :data-key="series.key"
+        :name="series.name"
+        :stroke="series.color"
+        :fill="series.color"
+        :fill-opacity="series.fillOpacity"
+        :stroke-width="series.strokeWidth"
+        :stroke-dasharray="series.strokeDasharray"
+        :dot="series.dot"
+        :active-dot="series.activeDot"
+        :hide="series.hidden"
+        :tooltip-type="series.tooltip === false ? 'none' : undefined"
+      />
+    </template>
+    <template #default>
+      <slot />
+    </template>
+  </ChartFrame>
+</template>
+
 <script lang="ts">
 import type { ComponentSlots } from '../../types/tv'
 import type { ChartLegendProps } from '../chart-legend/ChartLegend.vue'
@@ -260,46 +303,3 @@ usePolarChart(chart, {
   endAngle: () => props.endAngle,
 })
 </script>
-
-<template>
-  <ChartFrame
-    v-model:hidden="hidden"
-    data-slot="radar-chart"
-    :width="width"
-    :height="height"
-    :config="config"
-    :class="ui.base({ class: [props.ui?.base, props.class] })"
-  >
-    <template v-for="name in frameSlotNames(slots)" #[name]="scope">
-      <slot :name="name" v-bind="scope as any" />
-    </template>
-    <template #parts>
-      <ChartPolarGrid v-if="grid" v-bind="grid" />
-      <ChartPolarAngleAxis v-if="angleAxis" v-bind="angleAxis">
-        <template v-if="slots['angle-tick']" #tick="tick">
-          <slot name="angle-tick" v-bind="tick" />
-        </template>
-      </ChartPolarAngleAxis>
-      <ChartPolarRadiusAxis v-if="radiusAxis" v-bind="radiusAxis" />
-      <!-- Hidden radars stay mounted with `hide`, so colors are stable and toggling animates. -->
-      <ChartRadar
-        v-for="series in resolved"
-        :key="series.key"
-        :data-key="series.key"
-        :name="series.name"
-        :stroke="series.color"
-        :fill="series.color"
-        :fill-opacity="series.fillOpacity"
-        :stroke-width="series.strokeWidth"
-        :stroke-dasharray="series.strokeDasharray"
-        :dot="series.dot"
-        :active-dot="series.activeDot"
-        :hide="series.hidden"
-        :tooltip-type="series.tooltip === false ? 'none' : undefined"
-      />
-    </template>
-    <template #default>
-      <slot />
-    </template>
-  </ChartFrame>
-</template>

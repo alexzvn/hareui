@@ -117,13 +117,13 @@ Attributes on `TagGroup` (other than `aria-label`) fall through to the root elem
 `EmptyState` is the small muted placeholder HeroUI renders inside empty collections (TagGroup, ListBox, Table). It renders "No results found" by default; pass your own text in the default slot. Use it in TagGroup's `#empty` slot.
 
 ```vue
-<script setup lang="ts">
-import { EmptyState } from '@hareui/vue'
-</script>
-
 <template>
   <EmptyState class="p-1"> No team members </EmptyState>
 </template>
+
+<script setup lang="ts">
+import { EmptyState } from '@hareui/vue'
+</script>
 ```
 
 | `ui` key | `data-slot`   | Element      |

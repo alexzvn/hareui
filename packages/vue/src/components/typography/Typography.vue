@@ -1,3 +1,23 @@
+<template>
+  <Primitive
+    v-if="prose"
+    :as="as ?? 'div'"
+    data-slot="prose"
+    :class="ui.prose({ class: [props.ui?.prose, props.class] })"
+  >
+    <slot />
+  </Primitive>
+  <Primitive
+    v-else
+    :as="element"
+    data-slot="typography"
+    :data-type="type"
+    :class="ui.base({ class: [props.ui?.base, props.class] })"
+  >
+    <slot />
+  </Primitive>
+</template>
+
 <script lang="ts">
 import type { PrimitiveProps } from 'reka-ui'
 
@@ -92,23 +112,3 @@ const ui = useComponentUI('typography', theme, () => ({
 
 const element = computed(() => props.as ?? defaultElementByType[props.type ?? 'body'])
 </script>
-
-<template>
-  <Primitive
-    v-if="prose"
-    :as="as ?? 'div'"
-    data-slot="prose"
-    :class="ui.prose({ class: [props.ui?.prose, props.class] })"
-  >
-    <slot />
-  </Primitive>
-  <Primitive
-    v-else
-    :as="element"
-    data-slot="typography"
-    :data-type="type"
-    :class="ui.base({ class: [props.ui?.base, props.class] })"
-  >
-    <slot />
-  </Primitive>
-</template>

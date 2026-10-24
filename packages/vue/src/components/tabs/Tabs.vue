@@ -1,3 +1,175 @@
+<template>
+  <TabsRoot
+    v-model="modelValue"
+    :default-value="defaultValue"
+    :orientation="orientation"
+    activation-mode="automatic"
+    data-slot="tabs"
+    :class="ui.base({ class: [props.ui?.base, props.class] })"
+  >
+    <div
+      :class="ui.tabListContainer({ class: props.ui?.tabListContainer })"
+      data-slot="tabs-list-container"
+    >
+      <ScrollShadow
+        ref="scrollerRef"
+        hide-scroll-bar
+        :class="ui.scroller({ class: props.ui?.scroller })"
+        :orientation="orientation"
+        :size="64"
+        @visibility-change="onScrollVisibility"
+      >
+        <!-- `as-child` on the list and the tabs so our attributes win over Reka's. RAC's tablist is not
+             focusable itself (Reka's roving root has `tabindex="0"`, and clicking a disabled tab would
+             focus it), and RAC keeps the selected tab as the single tab stop, where Reka's roving group
+             leaves every tab at -1 until one has been focused. -->
+        <TabsList ref="listRef" as-child>
+          <div
+            :class="ui.tabList({ class: props.ui?.tabList })"
+            :tabindex="undefined"
+            data-slot="tabs-list"
+            @keydown.capture="onListKeydown"
+          >
+            <TabsTrigger
+              v-for="(item, index) in items"
+              :key="itemValue(item, index)"
+              :value="itemValue(item, index)"
+              :disabled="item.disabled"
+              as-child
+            >
+              <button
+                type="button"
+                :tabindex="itemValue(item, index) === tabStopValue ? 0 : -1"
+                :class="ui.tab({ class: props.ui?.tab })"
+                data-slot="tabs-tab"
+              >
+                <span
+                  v-if="separator"
+                  aria-hidden="true"
+                  :data-orientation="orientation"
+                  :class="
+                    ui.separator({
+                      class: [
+                        props.ui?.separator,
+                        isSeparatorHidden(index) ? 'opacity-0' : undefined,
+                      ],
+                    })
+                  "
+                  data-slot="tabs-separator"
+                />
+                <slot
+                  name="tab"
+                  :item="item"
+                  :index="index"
+                  :selected="itemValue(item, index) === selectedValue"
+                >
+                  {{ item.label }}
+                </slot>
+              </button>
+            </TabsTrigger>
+            <div
+              v-if="items.some((item, index) => itemValue(item, index) === selectedValue)"
+              ref="indicatorRef"
+              aria-hidden="true"
+              :style="indicatorStyle"
+              :class="ui.tabIndicator({ class: props.ui?.tabIndicator })"
+              data-slot="tabs-indicator"
+            />
+          </div>
+        </TabsList>
+      </ScrollShadow>
+      <button
+        :aria-label="orientation === 'vertical' ? 'Scroll tabs up' : 'Scroll tabs left'"
+        :class="
+          ui.scrollPrev({
+            class: [props.ui?.scrollPrev, scrollState.before ? 'inline-flex' : undefined],
+          })
+        "
+        tabindex="-1"
+        type="button"
+        @click="scrollByPage(-1)"
+      >
+        <svg
+          aria-hidden="true"
+          fill="none"
+          height="16"
+          role="presentation"
+          viewBox="0 0 16 16"
+          width="16"
+          xmlns="http://www.w3.org/2000/svg"
+        >
+          <path
+            v-if="orientation === 'vertical'"
+            clip-rule="evenodd"
+            d="M13.03 10.53a.75.75 0 0 1-1.06 0L8 6.56l-3.97 3.97a.75.75 0 0 1-1.06-1.06l4.5-4.5a.75.75 0 0 1 1.06 0l4.5 4.5a.75.75 0 0 1 0 1.06"
+            fill="currentColor"
+            fill-rule="evenodd"
+          />
+          <path
+            v-else
+            clip-rule="evenodd"
+            d="M10.53 2.97a.75.75 0 0 1 0 1.06L6.56 8l3.97 3.97a.75.75 0 1 1-1.06 1.06l-4.5-4.5a.75.75 0 0 1 0-1.06l4.5-4.5a.75.75 0 0 1 1.06 0"
+            fill="currentColor"
+            fill-rule="evenodd"
+          />
+        </svg>
+      </button>
+      <button
+        :aria-label="orientation === 'vertical' ? 'Scroll tabs down' : 'Scroll tabs right'"
+        :class="
+          ui.scrollNext({
+            class: [props.ui?.scrollNext, scrollState.after ? 'inline-flex' : undefined],
+          })
+        "
+        tabindex="-1"
+        type="button"
+        @click="scrollByPage(1)"
+      >
+        <svg
+          aria-hidden="true"
+          fill="none"
+          height="16"
+          role="presentation"
+          viewBox="0 0 16 16"
+          width="16"
+          xmlns="http://www.w3.org/2000/svg"
+        >
+          <path
+            v-if="orientation === 'vertical'"
+            clip-rule="evenodd"
+            d="M2.97 5.47a.75.75 0 0 1 1.06 0L8 9.44l3.97-3.97a.75.75 0 1 1 1.06 1.06l-4.5 4.5a.75.75 0 0 1-1.06 0l-4.5-4.5a.75.75 0 0 1 0-1.06"
+            fill="currentColor"
+            fill-rule="evenodd"
+          />
+          <path
+            v-else
+            clip-rule="evenodd"
+            d="M5.47 2.97a.75.75 0 0 1 1.06 0l4.5 4.5a.75.75 0 0 1 0 1.06l-4.5 4.5a.75.75 0 1 1-1.06-1.06L9.44 8 5.47 4.03a.75.75 0 0 1 0-1.06Z"
+            fill="currentColor"
+            fill-rule="evenodd"
+          />
+        </svg>
+      </button>
+    </div>
+    <TabsContent
+      v-if="visiblePanel"
+      ref="panelRef"
+      :key="itemValue(visiblePanel.item, visiblePanel.index)"
+      :value="itemValue(visiblePanel.item, visiblePanel.index)"
+      :class="ui.tabPanel({ class: props.ui?.tabPanel })"
+      data-slot="tabs-panel"
+    >
+      <slot
+        :name="(visiblePanel.item.slot || 'content') as 'content'"
+        :item="visiblePanel.item"
+        :index="visiblePanel.index"
+      >
+        {{ visiblePanel.item.content }}
+      </slot>
+    </TabsContent>
+  </TabsRoot>
+</template>
+
 <script lang="ts">
 import type { ComponentSlots, ComponentVariants } from '../../types/tv'
 import theme from './theme'
@@ -314,175 +486,3 @@ watch(
   { deep: true },
 )
 </script>
-
-<template>
-  <TabsRoot
-    v-model="modelValue"
-    :default-value="defaultValue"
-    :orientation="orientation"
-    activation-mode="automatic"
-    data-slot="tabs"
-    :class="ui.base({ class: [props.ui?.base, props.class] })"
-  >
-    <div
-      :class="ui.tabListContainer({ class: props.ui?.tabListContainer })"
-      data-slot="tabs-list-container"
-    >
-      <ScrollShadow
-        ref="scrollerRef"
-        hide-scroll-bar
-        :class="ui.scroller({ class: props.ui?.scroller })"
-        :orientation="orientation"
-        :size="64"
-        @visibility-change="onScrollVisibility"
-      >
-        <!-- `as-child` on the list and the tabs so our attributes win over Reka's. RAC's tablist is not
-             focusable itself (Reka's roving root has `tabindex="0"`, and clicking a disabled tab would
-             focus it), and RAC keeps the selected tab as the single tab stop, where Reka's roving group
-             leaves every tab at -1 until one has been focused. -->
-        <TabsList ref="listRef" as-child>
-          <div
-            :class="ui.tabList({ class: props.ui?.tabList })"
-            :tabindex="undefined"
-            data-slot="tabs-list"
-            @keydown.capture="onListKeydown"
-          >
-            <TabsTrigger
-              v-for="(item, index) in items"
-              :key="itemValue(item, index)"
-              :value="itemValue(item, index)"
-              :disabled="item.disabled"
-              as-child
-            >
-              <button
-                type="button"
-                :tabindex="itemValue(item, index) === tabStopValue ? 0 : -1"
-                :class="ui.tab({ class: props.ui?.tab })"
-                data-slot="tabs-tab"
-              >
-                <span
-                  v-if="separator"
-                  aria-hidden="true"
-                  :data-orientation="orientation"
-                  :class="
-                    ui.separator({
-                      class: [
-                        props.ui?.separator,
-                        isSeparatorHidden(index) ? 'opacity-0' : undefined,
-                      ],
-                    })
-                  "
-                  data-slot="tabs-separator"
-                />
-                <slot
-                  name="tab"
-                  :item="item"
-                  :index="index"
-                  :selected="itemValue(item, index) === selectedValue"
-                >
-                  {{ item.label }}
-                </slot>
-              </button>
-            </TabsTrigger>
-            <div
-              v-if="items.some((item, index) => itemValue(item, index) === selectedValue)"
-              ref="indicatorRef"
-              aria-hidden="true"
-              :style="indicatorStyle"
-              :class="ui.tabIndicator({ class: props.ui?.tabIndicator })"
-              data-slot="tabs-indicator"
-            />
-          </div>
-        </TabsList>
-      </ScrollShadow>
-      <button
-        :aria-label="orientation === 'vertical' ? 'Scroll tabs up' : 'Scroll tabs left'"
-        :class="
-          ui.scrollPrev({
-            class: [props.ui?.scrollPrev, scrollState.before ? 'inline-flex' : undefined],
-          })
-        "
-        tabindex="-1"
-        type="button"
-        @click="scrollByPage(-1)"
-      >
-        <svg
-          aria-hidden="true"
-          fill="none"
-          height="16"
-          role="presentation"
-          viewBox="0 0 16 16"
-          width="16"
-          xmlns="http://www.w3.org/2000/svg"
-        >
-          <path
-            v-if="orientation === 'vertical'"
-            clip-rule="evenodd"
-            d="M13.03 10.53a.75.75 0 0 1-1.06 0L8 6.56l-3.97 3.97a.75.75 0 0 1-1.06-1.06l4.5-4.5a.75.75 0 0 1 1.06 0l4.5 4.5a.75.75 0 0 1 0 1.06"
-            fill="currentColor"
-            fill-rule="evenodd"
-          />
-          <path
-            v-else
-            clip-rule="evenodd"
-            d="M10.53 2.97a.75.75 0 0 1 0 1.06L6.56 8l3.97 3.97a.75.75 0 1 1-1.06 1.06l-4.5-4.5a.75.75 0 0 1 0-1.06l4.5-4.5a.75.75 0 0 1 1.06 0"
-            fill="currentColor"
-            fill-rule="evenodd"
-          />
-        </svg>
-      </button>
-      <button
-        :aria-label="orientation === 'vertical' ? 'Scroll tabs down' : 'Scroll tabs right'"
-        :class="
-          ui.scrollNext({
-            class: [props.ui?.scrollNext, scrollState.after ? 'inline-flex' : undefined],
-          })
-        "
-        tabindex="-1"
-        type="button"
-        @click="scrollByPage(1)"
-      >
-        <svg
-          aria-hidden="true"
-          fill="none"
-          height="16"
-          role="presentation"
-          viewBox="0 0 16 16"
-          width="16"
-          xmlns="http://www.w3.org/2000/svg"
-        >
-          <path
-            v-if="orientation === 'vertical'"
-            clip-rule="evenodd"
-            d="M2.97 5.47a.75.75 0 0 1 1.06 0L8 9.44l3.97-3.97a.75.75 0 1 1 1.06 1.06l-4.5 4.5a.75.75 0 0 1-1.06 0l-4.5-4.5a.75.75 0 0 1 0-1.06"
-            fill="currentColor"
-            fill-rule="evenodd"
-          />
-          <path
-            v-else
-            clip-rule="evenodd"
-            d="M5.47 2.97a.75.75 0 0 1 1.06 0l4.5 4.5a.75.75 0 0 1 0 1.06l-4.5 4.5a.75.75 0 1 1-1.06-1.06L9.44 8 5.47 4.03a.75.75 0 0 1 0-1.06Z"
-            fill="currentColor"
-            fill-rule="evenodd"
-          />
-        </svg>
-      </button>
-    </div>
-    <TabsContent
-      v-if="visiblePanel"
-      ref="panelRef"
-      :key="itemValue(visiblePanel.item, visiblePanel.index)"
-      :value="itemValue(visiblePanel.item, visiblePanel.index)"
-      :class="ui.tabPanel({ class: props.ui?.tabPanel })"
-      data-slot="tabs-panel"
-    >
-      <slot
-        :name="(visiblePanel.item.slot || 'content') as 'content'"
-        :item="visiblePanel.item"
-        :index="visiblePanel.index"
-      >
-        {{ visiblePanel.item.content }}
-      </slot>
-    </TabsContent>
-  </TabsRoot>
-</template>

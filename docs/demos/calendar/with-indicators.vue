@@ -1,3 +1,7 @@
+<template>
+  <Calendar aria-label="Event date" :indicator="indicator" />
+</template>
+
 <script setup lang="ts">
 import { Calendar } from '@hareui/vue'
 import type { DateValue } from '@internationalized/date'
@@ -9,7 +13,3 @@ function indicator(date: DateValue) {
   return isToday(date, getLocalTimeZone()) || datesWithEvents.includes(date.day)
 }
 </script>
-
-<template>
-  <Calendar aria-label="Event date" :indicator="indicator" />
-</template>

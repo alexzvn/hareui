@@ -1,13 +1,3 @@
-<script setup lang="ts">
-import { CheckboxButtonGroup, CheckboxButtonGroupItem } from '@hareui/vue'
-
-const coverage = [
-  { value: 'baggage', label: 'Lost baggage', description: 'Up to $1,000 per checked bag' },
-  { value: 'delay', label: 'Flight delay', description: 'Meals and hotel after a 6-hour delay' },
-  { value: 'medical', label: 'Medical care', description: 'Emergency treatment abroad' },
-]
-</script>
-
 <template>
   <CheckboxButtonGroup
     disabled
@@ -27,3 +17,13 @@ const coverage = [
     />
   </CheckboxButtonGroup>
 </template>
+
+<script setup lang="ts">
+import { CheckboxButtonGroup, CheckboxButtonGroupItem } from '@hareui/vue'
+
+const coverage = [
+  { value: 'baggage', label: 'Lost baggage', description: 'Up to $1,000 per checked bag' },
+  { value: 'delay', label: 'Flight delay', description: 'Meals and hotel after a 6-hour delay' },
+  { value: 'medical', label: 'Medical care', description: 'Emergency treatment abroad' },
+]
+</script>

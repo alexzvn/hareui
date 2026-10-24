@@ -1,51 +1,3 @@
-<script setup lang="ts">
-import type { BreadcrumbsItem, NavigationMenuItem } from '@hareui/vue'
-import {
-  Avatar,
-  Breadcrumbs,
-  Button,
-  DashboardGroup,
-  DashboardNavbar,
-  DashboardPanel,
-  DashboardSidebar,
-  DashboardSidebarCollapse,
-  NavigationMenu,
-  Separator,
-} from '@hareui/vue'
-import { Icon } from '@iconify/vue'
-import { h } from 'vue'
-
-// NavigationMenu takes icon components: an Iconify Gravity UI icon that forwards the menu's icon classes.
-const gravityIcon = (name: string) => (attrs: Record<string, unknown>) =>
-  h(Icon, { ...attrs, icon: `gravity-ui:${name}` })
-
-const items: NavigationMenuItem[] = [
-  { label: 'Dashboard', icon: gravityIcon('house'), href: '#', active: true },
-  {
-    label: 'Analytics',
-    icon: gravityIcon('chart-column'),
-    defaultOpen: true,
-    children: [
-      { label: 'Overview', href: '#' },
-      { label: 'Reports', href: '#' },
-    ],
-  },
-  {
-    label: 'Tracker',
-    icon: gravityIcon('list-check'),
-    href: '#',
-    badge: { label: 'New', color: 'success', variant: 'soft' },
-  },
-  { label: 'Settings', icon: gravityIcon('gear'), href: '#' },
-]
-
-const footerItems: NavigationMenuItem[] = [
-  { label: 'Help', icon: gravityIcon('circle-question'), href: '#' },
-]
-
-const breadcrumbs: BreadcrumbsItem[] = [{ label: 'Dashboard', icon: 'gravity-ui:house' }]
-</script>
-
 <template>
   <DashboardGroup unit="rem" :persistent="false">
     <!-- Floating: a rounded, elevated sidebar detached from the edges. -->
@@ -151,3 +103,51 @@ const breadcrumbs: BreadcrumbsItem[] = [{ label: 'Dashboard', icon: 'gravity-ui:
     </DashboardPanel>
   </DashboardGroup>
 </template>
+
+<script setup lang="ts">
+import type { BreadcrumbsItem, NavigationMenuItem } from '@hareui/vue'
+import {
+  Avatar,
+  Breadcrumbs,
+  Button,
+  DashboardGroup,
+  DashboardNavbar,
+  DashboardPanel,
+  DashboardSidebar,
+  DashboardSidebarCollapse,
+  NavigationMenu,
+  Separator,
+} from '@hareui/vue'
+import { Icon } from '@iconify/vue'
+import { h } from 'vue'
+
+// NavigationMenu takes icon components: an Iconify Gravity UI icon that forwards the menu's icon classes.
+const gravityIcon = (name: string) => (attrs: Record<string, unknown>) =>
+  h(Icon, { ...attrs, icon: `gravity-ui:${name}` })
+
+const items: NavigationMenuItem[] = [
+  { label: 'Dashboard', icon: gravityIcon('house'), href: '#', active: true },
+  {
+    label: 'Analytics',
+    icon: gravityIcon('chart-column'),
+    defaultOpen: true,
+    children: [
+      { label: 'Overview', href: '#' },
+      { label: 'Reports', href: '#' },
+    ],
+  },
+  {
+    label: 'Tracker',
+    icon: gravityIcon('list-check'),
+    href: '#',
+    badge: { label: 'New', color: 'success', variant: 'soft' },
+  },
+  { label: 'Settings', icon: gravityIcon('gear'), href: '#' },
+]
+
+const footerItems: NavigationMenuItem[] = [
+  { label: 'Help', icon: gravityIcon('circle-question'), href: '#' },
+]
+
+const breadcrumbs: BreadcrumbsItem[] = [{ label: 'Dashboard', icon: 'gravity-ui:house' }]
+</script>

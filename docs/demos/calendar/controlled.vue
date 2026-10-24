@@ -1,19 +1,3 @@
-<script setup lang="ts">
-import { Button, ButtonGroup, Calendar, Description } from '@hareui/vue'
-import type { DateValue } from '@internationalized/date'
-import {
-  getLocalTimeZone,
-  parseDate,
-  startOfMonth,
-  startOfWeek,
-  today,
-} from '@internationalized/date'
-import { shallowRef } from 'vue'
-
-const value = shallowRef<DateValue | null>(null)
-const focusedDate = shallowRef<DateValue>(parseDate('2025-12-25'))
-</script>
-
 <template>
   <div class="flex flex-col items-center gap-4">
     <ButtonGroup full-width size="sm" variant="tertiary">
@@ -89,3 +73,19 @@ const focusedDate = shallowRef<DateValue>(parseDate('2025-12-25'))
     </div>
   </div>
 </template>
+
+<script setup lang="ts">
+import { Button, ButtonGroup, Calendar, Description } from '@hareui/vue'
+import type { DateValue } from '@internationalized/date'
+import {
+  getLocalTimeZone,
+  parseDate,
+  startOfMonth,
+  startOfWeek,
+  today,
+} from '@internationalized/date'
+import { shallowRef } from 'vue'
+
+const value = shallowRef<DateValue | null>(null)
+const focusedDate = shallowRef<DateValue>(parseDate('2025-12-25'))
+</script>

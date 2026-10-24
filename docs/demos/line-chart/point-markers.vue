@@ -1,3 +1,22 @@
+<template>
+  <Card
+    class="w-full max-w-[520px] rounded-2xl"
+    title="Sleep This Week"
+    description="Average 7.2 h per night"
+    :ui="{ title: 'text-base', description: 'text-xs' }"
+  >
+    <LineChart
+      :data="data"
+      index="day"
+      :series="series"
+      aria-label="Hours of sleep per night this week"
+      :height="200"
+      :value-formatter="formatHours"
+      :y-axis="{ domain: [5, 9] }"
+    />
+  </Card>
+</template>
+
 <script setup lang="ts">
 import { Card } from '@hareui/vue'
 import { LineChart } from '@hareui/vue/charts'
@@ -24,22 +43,3 @@ function formatHours(value: number) {
   return `${value} h`
 }
 </script>
-
-<template>
-  <Card
-    class="w-full max-w-[520px] rounded-2xl"
-    title="Sleep This Week"
-    description="Average 7.2 h per night"
-    :ui="{ title: 'text-base', description: 'text-xs' }"
-  >
-    <LineChart
-      :data="data"
-      index="day"
-      :series="series"
-      aria-label="Hours of sleep per night this week"
-      :height="200"
-      :value-formatter="formatHours"
-      :y-axis="{ domain: [5, 9] }"
-    />
-  </Card>
-</template>

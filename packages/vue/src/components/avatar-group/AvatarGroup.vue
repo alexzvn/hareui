@@ -1,3 +1,9 @@
+<template>
+  <div data-slot="avatar-group" :class="ui.base({ class: [props.ui?.base, props.class] })">
+    <Items />
+  </div>
+</template>
+
 <script lang="ts">
 import type { VNode } from 'vue'
 
@@ -111,9 +117,3 @@ function Items() {
   return nodes
 }
 </script>
-
-<template>
-  <div data-slot="avatar-group" :class="ui.base({ class: [props.ui?.base, props.class] })">
-    <Items />
-  </div>
-</template>

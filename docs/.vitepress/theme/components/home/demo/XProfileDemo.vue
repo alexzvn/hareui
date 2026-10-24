@@ -1,10 +1,3 @@
-<script setup lang="ts">
-import { Avatar, Card } from '@hareui/vue'
-
-import HareLogo from '../../HareLogo.vue'
-import VerifiedBadgeIcon from '../icons/VerifiedBadgeIcon.vue'
-</script>
-
 <template>
   <Card
     class="w-full items-start justify-center xl:w-[400px]"
@@ -48,3 +41,10 @@ import VerifiedBadgeIcon from '../icons/VerifiedBadgeIcon.vue'
     </template>
   </Card>
 </template>
+
+<script setup lang="ts">
+import { Avatar, Card } from '@hareui/vue'
+
+import HareLogo from '../../HareLogo.vue'
+import VerifiedBadgeIcon from '../icons/VerifiedBadgeIcon.vue'
+</script>

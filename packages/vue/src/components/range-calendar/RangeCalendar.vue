@@ -1,3 +1,46 @@
+<template>
+  <CalendarMonthShell
+    ref="shell"
+    kind="range"
+    :ui="ui"
+    :ui-overrides="props.ui"
+    :root-class="props.class"
+    :aria-label="ariaLabel"
+    :placeholder="placeholder"
+    :default-placeholder="placeholderSeed"
+    :min-value="minValue"
+    :max-value="maxValue"
+    :month-bounds="monthBounds"
+    :selection="shellSelection"
+    :root-bindings="rootBindings"
+    :disabled="disabled"
+    :readonly="readonly"
+    :invalid="invalid"
+    :locale="locale"
+    :first-day-of-week="firstDayOfWeek"
+    :fixed-weeks="fixedWeeks"
+    :year-picker="yearPicker"
+    :paged-navigation="pagedNavigation"
+    :number-of-months="numberOfMonths"
+    :dir="dir"
+    :visible-duration="visibleDuration"
+    :page-behavior="pageBehavior"
+    :indicator="indicator"
+    @update:placeholder="emit('update:placeholder', $event)"
+    @select="emit('update:modelValue', $event)"
+  >
+    <template v-if="$slots.navIcon" #navIcon="slotProps">
+      <slot name="navIcon" v-bind="slotProps" />
+    </template>
+    <template v-if="$slots.cell" #cell="slotProps">
+      <slot name="cell" v-bind="slotProps as RangeCalendarCellSlotProps" />
+    </template>
+    <template #monthCell="{ date, month }">
+      <RangeCalendarDay :date="date" :month="month" />
+    </template>
+  </CalendarMonthShell>
+</template>
+
 <script lang="ts">
 import type { DateValue } from '@internationalized/date'
 
@@ -510,46 +553,3 @@ const shellSelection = computed(() => ({
   allowNonContiguousRanges: props.allowNonContiguousRanges,
 }))
 </script>
-
-<template>
-  <CalendarMonthShell
-    ref="shell"
-    kind="range"
-    :ui="ui"
-    :ui-overrides="props.ui"
-    :root-class="props.class"
-    :aria-label="ariaLabel"
-    :placeholder="placeholder"
-    :default-placeholder="placeholderSeed"
-    :min-value="minValue"
-    :max-value="maxValue"
-    :month-bounds="monthBounds"
-    :selection="shellSelection"
-    :root-bindings="rootBindings"
-    :disabled="disabled"
-    :readonly="readonly"
-    :invalid="invalid"
-    :locale="locale"
-    :first-day-of-week="firstDayOfWeek"
-    :fixed-weeks="fixedWeeks"
-    :year-picker="yearPicker"
-    :paged-navigation="pagedNavigation"
-    :number-of-months="numberOfMonths"
-    :dir="dir"
-    :visible-duration="visibleDuration"
-    :page-behavior="pageBehavior"
-    :indicator="indicator"
-    @update:placeholder="emit('update:placeholder', $event)"
-    @select="emit('update:modelValue', $event)"
-  >
-    <template v-if="$slots.navIcon" #navIcon="slotProps">
-      <slot name="navIcon" v-bind="slotProps" />
-    </template>
-    <template v-if="$slots.cell" #cell="slotProps">
-      <slot name="cell" v-bind="slotProps as RangeCalendarCellSlotProps" />
-    </template>
-    <template #monthCell="{ date, month }">
-      <RangeCalendarDay :date="date" :month="month" />
-    </template>
-  </CalendarMonthShell>
-</template>

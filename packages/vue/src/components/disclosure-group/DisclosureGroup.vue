@@ -1,3 +1,14 @@
+<template>
+  <Primitive
+    :as="as"
+    data-slot="disclosure-group"
+    :data-disabled="disabled ? 'true' : undefined"
+    :class="ui.base({ class: [props.ui?.base, props.class] })"
+  >
+    <slot :expanded="expanded" :disabled="!!disabled" />
+  </Primitive>
+</template>
+
 <script lang="ts">
 import type { PrimitiveProps } from 'reka-ui'
 
@@ -71,14 +82,3 @@ provide(disclosureGroupContextKey, {
   disabled: computed(() => !!props.disabled),
 })
 </script>
-
-<template>
-  <Primitive
-    :as="as"
-    data-slot="disclosure-group"
-    :data-disabled="disabled ? 'true' : undefined"
-    :class="ui.base({ class: [props.ui?.base, props.class] })"
-  >
-    <slot :expanded="expanded" :disabled="!!disabled" />
-  </Primitive>
-</template>

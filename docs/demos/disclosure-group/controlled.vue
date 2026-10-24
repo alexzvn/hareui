@@ -1,27 +1,3 @@
-<script setup lang="ts">
-import type { ExpandedValue } from '@hareui/vue'
-import {
-  Button,
-  Disclosure,
-  DisclosureGroup,
-  Separator,
-  useDisclosureGroupNavigation,
-} from '@hareui/vue'
-import { Icon } from '@iconify/vue'
-import { ref } from 'vue'
-
-const expandedKeys = ref<ExpandedValue[]>(['preview'])
-const itemIds = ['preview', 'download'] // Track our disclosure items
-
-const { isNextDisabled, isPrevDisabled, onNext, onPrevious } = useDisclosureGroupNavigation({
-  expandedKeys,
-  itemIds,
-  onExpandedChange: (keys) => {
-    expandedKeys.value = keys
-  },
-})
-</script>
-
 <template>
   <div class="w-full max-w-md">
     <div class="flex flex-col gap-4 rounded-3xl p-4">
@@ -121,3 +97,27 @@ const { isNextDisabled, isPrevDisabled, onNext, onPrevious } = useDisclosureGrou
     </div>
   </div>
 </template>
+
+<script setup lang="ts">
+import type { ExpandedValue } from '@hareui/vue'
+import {
+  Button,
+  Disclosure,
+  DisclosureGroup,
+  Separator,
+  useDisclosureGroupNavigation,
+} from '@hareui/vue'
+import { Icon } from '@iconify/vue'
+import { ref } from 'vue'
+
+const expandedKeys = ref<ExpandedValue[]>(['preview'])
+const itemIds = ['preview', 'download'] // Track our disclosure items
+
+const { isNextDisabled, isPrevDisabled, onNext, onPrevious } = useDisclosureGroupNavigation({
+  expandedKeys,
+  itemIds,
+  onExpandedChange: (keys) => {
+    expandedKeys.value = keys
+  },
+})
+</script>

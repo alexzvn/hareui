@@ -1,3 +1,19 @@
+<template>
+  <section class="w-80 rounded-3xl bg-surface p-2 shadow-surface">
+    <h3 class="px-3 pt-2 pb-3 text-sm font-semibold">Calendar</h3>
+    <div class="grid gap-1.5">
+      <CellSelect
+        v-for="setting in settings"
+        :key="setting.key"
+        v-model="setting.value"
+        :items="setting.options"
+        :label="setting.label"
+        variant="secondary"
+      />
+    </div>
+  </section>
+</template>
+
 <script setup lang="ts">
 import { CellSelect } from '@hareui/vue'
 import { reactive } from 'vue'
@@ -34,19 +50,3 @@ const settings = reactive([
   },
 ])
 </script>
-
-<template>
-  <section class="w-80 rounded-3xl bg-surface p-2 shadow-surface">
-    <h3 class="px-3 pt-2 pb-3 text-sm font-semibold">Calendar</h3>
-    <div class="grid gap-1.5">
-      <CellSelect
-        v-for="setting in settings"
-        :key="setting.key"
-        v-model="setting.value"
-        :items="setting.options"
-        :label="setting.label"
-        variant="secondary"
-      />
-    </div>
-  </section>
-</template>

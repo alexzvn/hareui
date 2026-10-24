@@ -1,3 +1,19 @@
+<template>
+  <div class="flex w-full flex-col gap-3">
+    <RichTable
+      ref="table"
+      v-model:row-selection="rowSelection"
+      :data="data"
+      :columns="columns"
+      :on-select="onSelect"
+    />
+    <p class="text-sm text-muted">
+      {{ table?.tableApi?.getFilteredSelectedRowModel().rows.length || 0 }} of
+      {{ table?.tableApi?.getFilteredRowModel().rows.length || 0 }} row(s) selected.
+    </p>
+  </div>
+</template>
+
 <script setup lang="ts">
 import type { RichTableColumn, RichTableRow } from '@hareui/vue'
 import { Avatar, Checkbox, Chip, RichTable } from '@hareui/vue'
@@ -125,19 +141,3 @@ function onSelect(_: Event, row: RichTableRow<Employee>) {
   row.toggleSelected(!row.getIsSelected())
 }
 </script>
-
-<template>
-  <div class="flex w-full flex-col gap-3">
-    <RichTable
-      ref="table"
-      v-model:row-selection="rowSelection"
-      :data="data"
-      :columns="columns"
-      :on-select="onSelect"
-    />
-    <p class="text-sm text-muted">
-      {{ table?.tableApi?.getFilteredSelectedRowModel().rows.length || 0 }} of
-      {{ table?.tableApi?.getFilteredRowModel().rows.length || 0 }} row(s) selected.
-    </p>
-  </div>
-</template>

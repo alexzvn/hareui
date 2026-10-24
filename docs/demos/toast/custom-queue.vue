@@ -1,11 +1,3 @@
-<script setup lang="ts">
-import { Button, ToastProvider, ToastQueue } from '@hareui/vue'
-
-const notificationQueue = new ToastQueue({ maxVisibleToasts: 2 })
-const errorQueue = new ToastQueue({ maxVisibleToasts: 3 })
-const successQueue = new ToastQueue({ maxVisibleToasts: 1 })
-</script>
-
 <template>
   <div class="flex h-full max-w-4xl items-center justify-center gap-4">
     <ToastProvider placement="bottom" :queue="notificationQueue" />
@@ -61,3 +53,11 @@ const successQueue = new ToastQueue({ maxVisibleToasts: 1 })
     </div>
   </div>
 </template>
+
+<script setup lang="ts">
+import { Button, ToastProvider, ToastQueue } from '@hareui/vue'
+
+const notificationQueue = new ToastQueue({ maxVisibleToasts: 2 })
+const errorQueue = new ToastQueue({ maxVisibleToasts: 3 })
+const successQueue = new ToastQueue({ maxVisibleToasts: 1 })
+</script>

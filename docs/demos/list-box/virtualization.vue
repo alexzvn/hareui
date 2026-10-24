@@ -1,3 +1,12 @@
+<template>
+  <ListBox
+    aria-label="Virtualized list with 1000 items"
+    class="h-[400px] w-[300px] overflow-y-auto"
+    :items="users"
+    :virtualize="{ estimateSize: 50 }"
+  />
+</template>
+
 <script setup lang="ts">
 import type { ListBoxItem } from '@hareui/vue'
 import { ListBox } from '@hareui/vue'
@@ -55,12 +64,3 @@ const users: ListBoxItem[] = Array.from({ length: 1000 }, (_, i) => {
   }
 })
 </script>
-
-<template>
-  <ListBox
-    aria-label="Virtualized list with 1000 items"
-    class="h-[400px] w-[300px] overflow-y-auto"
-    :items="users"
-    :virtualize="{ estimateSize: 50 }"
-  />
-</template>

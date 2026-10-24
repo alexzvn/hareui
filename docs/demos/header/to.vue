@@ -1,7 +1,3 @@
-<script setup lang="ts">
-import { Header } from '@hareui/vue'
-</script>
-
 <template>
   <div class="flex w-full flex-col gap-4">
     <div class="overflow-hidden rounded-xl border border-separator">
@@ -38,3 +34,7 @@ import { Header } from '@hareui/vue'
     </div>
   </div>
 </template>
+
+<script setup lang="ts">
+import { Header } from '@hareui/vue'
+</script>

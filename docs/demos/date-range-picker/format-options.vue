@@ -1,91 +1,3 @@
-<script setup lang="ts">
-import type { DateRangeValue, ListBoxItem } from '@hareui/vue'
-import {
-  DateRangePicker,
-  Label,
-  RangeCalendar,
-  Select,
-  Separator,
-  Switch,
-  TimeField,
-} from '@hareui/vue'
-import type { CalendarDateTime, DateValue, ZonedDateTime } from '@internationalized/date'
-import {
-  DateFormatter,
-  getLocalTimeZone,
-  parseDate,
-  parseZonedDateTime,
-  Time,
-} from '@internationalized/date'
-import type { TimeValue } from 'reka-ui'
-import { computed, ref, shallowRef } from 'vue'
-
-type Granularity = 'day' | 'hour' | 'minute' | 'second'
-type HourCycle = 12 | 24
-
-const granularityOptions: ListBoxItem[] = [
-  { label: 'Day', value: 'day' },
-  { label: 'Hour', value: 'hour' },
-  { label: 'Minute', value: 'minute' },
-  { label: 'Second', value: 'second' },
-]
-const hourCycleOptions: ListBoxItem[] = [
-  { label: '12-hour', value: 12 },
-  { label: '24-hour', value: 24 },
-]
-
-const granularity = ref<Granularity>('minute')
-const hourCycle = ref<HourCycle>(12)
-const hideTimeZone = ref(false)
-const timeGranularity = computed(() =>
-  granularity.value === 'day' ? undefined : granularity.value,
-)
-
-function defaultValueFor(g: Granularity): DateRangeValue {
-  const tz = getLocalTimeZone()
-  if (g === 'day') return { start: parseDate('2025-02-03'), end: parseDate('2025-02-10') }
-  return {
-    start: parseZonedDateTime(`2026-02-03T08:45:00[${tz}]`),
-    end: parseZonedDateTime(`2026-02-10T18:45:00[${tz}]`),
-  }
-}
-const value = shallowRef<DateRangeValue | null>(defaultValueFor(granularity.value))
-
-function onGranularityChange(next: string | number) {
-  granularity.value = next as Granularity
-  value.value = defaultValueFor(granularity.value)
-}
-
-const dateFormatter = new DateFormatter('en-US', {
-  day: 'numeric',
-  month: 'short',
-  year: 'numeric',
-})
-function formatRange(range: DateRangeValue) {
-  const tz = getLocalTimeZone()
-  return dateFormatter.formatRange(range.start.toDate(tz), range.end.toDate(tz))
-}
-
-type WithTime = CalendarDateTime | ZonedDateTime
-function hasTime(v: DateValue | undefined): v is WithTime {
-  return !!v && 'hour' in v
-}
-function timeOf(v: DateValue | undefined) {
-  return hasTime(v) ? new Time(v.hour, v.minute, v.second) : undefined
-}
-// The calendar only edits the date and the time fields only edit the time; each merges onto the other.
-function withDate(picked: DateValue, current: DateValue | undefined): DateValue {
-  return hasTime(current)
-    ? current.set({ year: picked.year, month: picked.month, day: picked.day })
-    : picked
-}
-function withTime(time: TimeValue, current: DateValue): DateValue {
-  return hasTime(current)
-    ? current.set({ hour: time.hour, minute: time.minute, second: time.second })
-    : current
-}
-</script>
-
 <template>
   <div class="flex w-full flex-col gap-4">
     <DateRangePicker
@@ -181,3 +93,91 @@ function withTime(time: TimeValue, current: DateValue): DateValue {
     </div>
   </div>
 </template>
+
+<script setup lang="ts">
+import type { DateRangeValue, ListBoxItem } from '@hareui/vue'
+import {
+  DateRangePicker,
+  Label,
+  RangeCalendar,
+  Select,
+  Separator,
+  Switch,
+  TimeField,
+} from '@hareui/vue'
+import type { CalendarDateTime, DateValue, ZonedDateTime } from '@internationalized/date'
+import {
+  DateFormatter,
+  getLocalTimeZone,
+  parseDate,
+  parseZonedDateTime,
+  Time,
+} from '@internationalized/date'
+import type { TimeValue } from 'reka-ui'
+import { computed, ref, shallowRef } from 'vue'
+
+type Granularity = 'day' | 'hour' | 'minute' | 'second'
+type HourCycle = 12 | 24
+
+const granularityOptions: ListBoxItem[] = [
+  { label: 'Day', value: 'day' },
+  { label: 'Hour', value: 'hour' },
+  { label: 'Minute', value: 'minute' },
+  { label: 'Second', value: 'second' },
+]
+const hourCycleOptions: ListBoxItem[] = [
+  { label: '12-hour', value: 12 },
+  { label: '24-hour', value: 24 },
+]
+
+const granularity = ref<Granularity>('minute')
+const hourCycle = ref<HourCycle>(12)
+const hideTimeZone = ref(false)
+const timeGranularity = computed(() =>
+  granularity.value === 'day' ? undefined : granularity.value,
+)
+
+function defaultValueFor(g: Granularity): DateRangeValue {
+  const tz = getLocalTimeZone()
+  if (g === 'day') return { start: parseDate('2025-02-03'), end: parseDate('2025-02-10') }
+  return {
+    start: parseZonedDateTime(`2026-02-03T08:45:00[${tz}]`),
+    end: parseZonedDateTime(`2026-02-10T18:45:00[${tz}]`),
+  }
+}
+const value = shallowRef<DateRangeValue | null>(defaultValueFor(granularity.value))
+
+function onGranularityChange(next: string | number) {
+  granularity.value = next as Granularity
+  value.value = defaultValueFor(granularity.value)
+}
+
+const dateFormatter = new DateFormatter('en-US', {
+  day: 'numeric',
+  month: 'short',
+  year: 'numeric',
+})
+function formatRange(range: DateRangeValue) {
+  const tz = getLocalTimeZone()
+  return dateFormatter.formatRange(range.start.toDate(tz), range.end.toDate(tz))
+}
+
+type WithTime = CalendarDateTime | ZonedDateTime
+function hasTime(v: DateValue | undefined): v is WithTime {
+  return !!v && 'hour' in v
+}
+function timeOf(v: DateValue | undefined) {
+  return hasTime(v) ? new Time(v.hour, v.minute, v.second) : undefined
+}
+// The calendar only edits the date and the time fields only edit the time; each merges onto the other.
+function withDate(picked: DateValue, current: DateValue | undefined): DateValue {
+  return hasTime(current)
+    ? current.set({ year: picked.year, month: picked.month, day: picked.day })
+    : picked
+}
+function withTime(time: TimeValue, current: DateValue): DateValue {
+  return hasTime(current)
+    ? current.set({ hour: time.hour, minute: time.minute, second: time.second })
+    : current
+}
+</script>

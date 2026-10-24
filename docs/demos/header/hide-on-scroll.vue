@@ -1,19 +1,3 @@
-<script setup lang="ts">
-import { Button, Header, NavigationMenu } from '@hareui/vue'
-
-const items = [
-  { label: 'Features', href: '#features', active: true },
-  { label: 'Pricing', href: '#pricing' },
-  { label: 'About', href: '#about' },
-]
-
-// Touch-sized rows for the mobile menu.
-const menuUi = {
-  list: 'gap-1',
-  link: 'min-h-11 gap-3 rounded-lg px-3 py-2.5 text-base font-medium text-foreground',
-}
-</script>
-
 <template>
   <!-- The divider is an inset shadow: a border would shrink the 64px row to 63px and put the toggle on a half pixel.
        The menu's header row gets it too, so the toggle sits on exactly the same pixel when the menu opens. -->
@@ -61,3 +45,19 @@ const menuUi = {
     </p>
   </div>
 </template>
+
+<script setup lang="ts">
+import { Button, Header, NavigationMenu } from '@hareui/vue'
+
+const items = [
+  { label: 'Features', href: '#features', active: true },
+  { label: 'Pricing', href: '#pricing' },
+  { label: 'About', href: '#about' },
+]
+
+// Touch-sized rows for the mobile menu.
+const menuUi = {
+  list: 'gap-1',
+  link: 'min-h-11 gap-3 rounded-lg px-3 py-2.5 text-base font-medium text-foreground',
+}
+</script>

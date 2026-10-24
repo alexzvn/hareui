@@ -1,3 +1,12 @@
+<template>
+  <Accordion v-model="expandedKeys" class="w-full max-w-md" :items="items" variant="surface">
+    <template #indicator="{ item, open }">
+      <Icon v-if="item.icon" height="16" :icon="item.icon" width="16" />
+      <Icon v-else height="16" :icon="open ? 'gravity-ui:minus' : 'gravity-ui:plus'" width="16" />
+    </template>
+  </Accordion>
+</template>
+
 <script setup lang="ts">
 import type { AccordionItem, ExpandedValue } from '@hareui/vue'
 import { Accordion } from '@hareui/vue'
@@ -33,12 +42,3 @@ const items: IndicatorItem[] = [
 
 const expandedKeys = ref<ExpandedValue[]>([''])
 </script>
-
-<template>
-  <Accordion v-model="expandedKeys" class="w-full max-w-md" :items="items" variant="surface">
-    <template #indicator="{ item, open }">
-      <Icon v-if="item.icon" height="16" :icon="item.icon" width="16" />
-      <Icon v-else height="16" :icon="open ? 'gravity-ui:minus' : 'gravity-ui:plus'" width="16" />
-    </template>
-  </Accordion>
-</template>

@@ -1,3 +1,36 @@
+<template>
+  <div class="flex flex-col items-center gap-6">
+    <div class="flex gap-4">
+      <Select
+        class="w-32"
+        label="Color Space"
+        :model-value="colorSpace"
+        :items="colorSpaces"
+        @update:model-value="onSpaceChange"
+      />
+      <Select v-model="xChannel" class="w-36" label="X Axis" :items="xChannelOptions" />
+      <Select v-model="yChannel" class="w-36" label="Y Axis" :items="yChannelOptions" />
+    </div>
+
+    <ColorArea
+      v-model="color"
+      :color-space="colorSpace"
+      :x-channel="xChannel"
+      :y-channel="yChannel"
+    />
+
+    <div class="flex items-center gap-3">
+      <div
+        class="size-8 rounded-md border border-default"
+        :style="{ backgroundColor: colorToString(color, 'rgb') }"
+      />
+      <code class="rounded bg-default/50 px-2 py-1 text-sm">
+        {{ colorToString(color, colorSpace) }}
+      </code>
+    </div>
+  </div>
+</template>
+
 <script setup lang="ts">
 import type { ColorChannel, ColorSpace, ListBoxItem, SelectValue } from '@hareui/vue'
 import { ColorArea, colorToString, parseColor, Select } from '@hareui/vue'
@@ -56,36 +89,3 @@ const yChannelOptions = computed(() =>
   channelsBySpace[colorSpace.value].filter((c) => c.value !== xChannel.value),
 )
 </script>
-
-<template>
-  <div class="flex flex-col items-center gap-6">
-    <div class="flex gap-4">
-      <Select
-        class="w-32"
-        label="Color Space"
-        :model-value="colorSpace"
-        :items="colorSpaces"
-        @update:model-value="onSpaceChange"
-      />
-      <Select v-model="xChannel" class="w-36" label="X Axis" :items="xChannelOptions" />
-      <Select v-model="yChannel" class="w-36" label="Y Axis" :items="yChannelOptions" />
-    </div>
-
-    <ColorArea
-      v-model="color"
-      :color-space="colorSpace"
-      :x-channel="xChannel"
-      :y-channel="yChannel"
-    />
-
-    <div class="flex items-center gap-3">
-      <div
-        class="size-8 rounded-md border border-default"
-        :style="{ backgroundColor: colorToString(color, 'rgb') }"
-      />
-      <code class="rounded bg-default/50 px-2 py-1 text-sm">
-        {{ colorToString(color, colorSpace) }}
-      </code>
-    </div>
-  </div>
-</template>

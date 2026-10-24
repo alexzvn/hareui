@@ -1,10 +1,3 @@
-<script setup lang="ts">
-import { Button, Modal } from '@hareui/vue'
-import { Icon } from '@iconify/vue'
-
-const placements = ['auto', 'top', 'center', 'bottom'] as const
-</script>
-
 <template>
   <div class="flex flex-wrap gap-4">
     <Modal v-for="placement in placements" :key="placement" :placement="placement">
@@ -29,3 +22,10 @@ const placements = ['auto', 'top', 'center', 'bottom'] as const
     </Modal>
   </div>
 </template>
+
+<script setup lang="ts">
+import { Button, Modal } from '@hareui/vue'
+import { Icon } from '@iconify/vue'
+
+const placements = ['auto', 'top', 'center', 'bottom'] as const
+</script>

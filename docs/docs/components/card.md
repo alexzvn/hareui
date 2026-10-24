@@ -105,12 +105,6 @@ above), resolve the Card theme with `tv` to reuse its slot classes, the equivale
 `cardVariants()`:
 
 ```vue
-<script setup lang="ts">
-import { Card, themes, tv } from '@hareui/vue'
-
-const card = tv(themes.card)()
-</script>
-
 <template>
   <Card class="md:flex-row" :ui="{ content: 'gap-3' }">
     <template #leading>
@@ -122,6 +116,12 @@ const card = tv(themes.card)()
     </div>
   </Card>
 </template>
+
+<script setup lang="ts">
+import { Card, themes, tv } from '@hareui/vue'
+
+const card = tv(themes.card)()
+</script>
 ```
 
 `tv(themes.card)` uses the default theme; app-wide `createHareUI({ ui: { card } })` overrides
@@ -161,12 +161,6 @@ classes, so style through `class`, `ui` or `createHareUI`): `.card--transparent`
 ## Accessibility
 
 ```vue
-<script setup lang="ts">
-import { Card, themes, tv } from '@hareui/vue'
-
-const card = tv(themes.card)()
-</script>
-
 <template>
   <!-- Semantic markup -->
   <Card as="article" aria-labelledby="card-title">
@@ -180,6 +174,12 @@ const card = tv(themes.card)()
     <h3 :class="card.title()">Product Name</h3>
   </a>
 </template>
+
+<script setup lang="ts">
+import { Card, themes, tv } from '@hareui/vue'
+
+const card = tv(themes.card)()
+</script>
 ```
 
 ## Related Components

@@ -1,10 +1,3 @@
-<script setup lang="ts">
-import { DateRangePicker } from '@hareui/vue'
-import { getLocalTimeZone, today } from '@internationalized/date'
-
-const start = today(getLocalTimeZone())
-</script>
-
 <template>
   <DateRangePicker
     disabled
@@ -18,3 +11,10 @@ const start = today(getLocalTimeZone())
     description="This date range picker is disabled."
   />
 </template>
+
+<script setup lang="ts">
+import { DateRangePicker } from '@hareui/vue'
+import { getLocalTimeZone, today } from '@internationalized/date'
+
+const start = today(getLocalTimeZone())
+</script>

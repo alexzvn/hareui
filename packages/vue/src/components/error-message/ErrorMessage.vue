@@ -1,3 +1,14 @@
+<template>
+  <span
+    :id="id"
+    slot="errorMessage"
+    data-slot="error-message"
+    :class="ui.base({ class: [props.ui?.base, props.class] })"
+  >
+    <slot />
+  </span>
+</template>
+
 <script lang="ts">
 import type { ComponentSlots } from '../../types/tv'
 import theme from './theme'
@@ -27,14 +38,3 @@ defineSlots<ErrorMessageSlots>()
 
 const ui = useComponentUI('errorMessage', theme, () => ({}))
 </script>
-
-<template>
-  <span
-    :id="id"
-    slot="errorMessage"
-    data-slot="error-message"
-    :class="ui.base({ class: [props.ui?.base, props.class] })"
-  >
-    <slot />
-  </span>
-</template>

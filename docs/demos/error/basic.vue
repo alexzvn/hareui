@@ -1,7 +1,3 @@
-<script setup lang="ts">
-import { Error } from '@hareui/vue'
-</script>
-
 <template>
   <Error
     class="min-h-96"
@@ -12,3 +8,7 @@ import { Error } from '@hareui/vue'
     }"
   />
 </template>
+
+<script setup lang="ts">
+import { Error } from '@hareui/vue'
+</script>

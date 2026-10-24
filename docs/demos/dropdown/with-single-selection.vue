@@ -1,3 +1,9 @@
+<template>
+  <Dropdown v-model="selected" class="min-w-[256px]" :items="items" selection-mode="single">
+    <Button variant="secondary"> Fruit </Button>
+  </Dropdown>
+</template>
+
 <script setup lang="ts">
 import type { DropdownEntry, DropdownValue } from '@hareui/vue'
 import { Button, Dropdown } from '@hareui/vue'
@@ -19,9 +25,3 @@ const items: DropdownEntry[] = [
   { value: 'pear', label: 'Pear' },
 ]
 </script>
-
-<template>
-  <Dropdown v-model="selected" class="min-w-[256px]" :items="items" selection-mode="single">
-    <Button variant="secondary"> Fruit </Button>
-  </Dropdown>
-</template>

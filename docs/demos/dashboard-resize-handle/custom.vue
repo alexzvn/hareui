@@ -1,7 +1,3 @@
-<script setup lang="ts">
-import { DashboardGroup, DashboardNavbar, DashboardPanel, DashboardResizeHandle } from '@hareui/vue'
-</script>
-
 <template>
   <DashboardGroup :persistent="false">
     <DashboardPanel id="custom-left" resizable :default-size="40" :max-size="70" :min-size="20">
@@ -46,3 +42,7 @@ import { DashboardGroup, DashboardNavbar, DashboardPanel, DashboardResizeHandle 
     </DashboardPanel>
   </DashboardGroup>
 </template>
+
+<script setup lang="ts">
+import { DashboardGroup, DashboardNavbar, DashboardPanel, DashboardResizeHandle } from '@hareui/vue'
+</script>

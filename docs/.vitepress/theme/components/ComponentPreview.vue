@@ -1,3 +1,146 @@
+<template>
+  <p v-if="!demo" class="text-danger">Demo not found: {{ name }}</p>
+  <div
+    v-else
+    class="component-preview-container group relative my-4 w-full"
+    :data-name="dataName"
+    style="contain: content"
+  >
+    <PreviewToolbar
+      v-model:device="device"
+      :href="href"
+      :theme="theme"
+      @toggle-theme="toggleTheme"
+      @preset="customWidth = undefined"
+      @preload="preload"
+    />
+    <div v-if="paged" ref="stage" class="relative">
+      <DevicePreview
+        mode="page"
+        :name="name"
+        :height="frameHeight"
+        :width="viewport"
+        :theme="theme"
+      />
+      <PreviewResizeHandle
+        v-model:dragging="dragging"
+        :width="viewport ?? fullWidth"
+        :min="minWidth"
+        :max="fullWidth"
+        :edge="pageEdge"
+        @resize="customWidth = $event"
+      />
+    </div>
+    <div
+      v-else
+      ref="stage"
+      :data-name="dataName"
+      v-bind="scopeAttributes"
+      :class="[
+        'preview not-prose relative min-h-[350px] w-full overflow-hidden rounded-t-xl border-s border-e border-t border-separator bg-background p-4 text-foreground sm:p-10 flex',
+        alignClass,
+        pinnedTheme,
+      ]"
+      @pointerdown.capture="claimOverlays"
+      @keydown.capture="claimOverlays"
+    >
+      <div
+        :class="['isolate flex w-full', alignClass, frameShown && 'invisible']"
+        :style="minHeight ? { minHeight } : undefined"
+      >
+        <component :is="demo" />
+      </div>
+      <DevicePreview
+        v-if="frameMounted"
+        mode="inline"
+        :name="name"
+        :width="viewport"
+        :theme="theme"
+        :visible="frameVisible"
+        @ready="frameReady = true"
+      />
+      <div
+        v-if="displayWidth !== undefined && displayWidth < fullWidth"
+        aria-hidden="true"
+        class="absolute inset-y-0 end-0 z-1 border-s border-separator bg-background"
+        :style="{ left: `${displayWidth}px` }"
+      />
+      <PreviewResizeHandle
+        v-model:dragging="dragging"
+        :width="viewport ?? fullWidth"
+        :min="minWidth"
+        :max="fullWidth"
+        :edge="displayWidth"
+        @resize="customWidth = $event"
+        @preload="preload"
+      />
+    </div>
+    <div
+      :class="[
+        'code-section relative border border-separator bg-transparent',
+        paged ? 'mt-4 rounded-xl' : 'rounded-b-xl',
+      ]"
+    >
+      <div class="code-block-wrapper">
+        <div class="relative">
+          <div class="relative">
+            <div
+              :class="[
+                'code-block-wrapper relative',
+                !expanded && 'mask-to-bottom max-h-[150px] overflow-hidden',
+              ]"
+            >
+              <figure
+                dir="ltr"
+                class="my-4 bg-fd-card rounded-xl shiki relative border not-prose overflow-hidden text-sm docs-code-block shadow-none docs-code-block-line-numbers"
+                lang="vue"
+                tabindex="-1"
+              >
+                <div
+                  class="z-1! empty:hidden absolute top-3 right-2 z-2 backdrop-blur-lg rounded-lg text-fd-muted-foreground"
+                >
+                  <button
+                    aria-label="Copy Text"
+                    type="button"
+                    :class="copyClass"
+                    @click="copy"
+                    v-html="copyIcon"
+                  />
+                </div>
+                <div
+                  role="region"
+                  tabindex="0"
+                  class="text-[0.8125rem] py-3.5 overflow-auto max-h-[600px] fd-scroll-container focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-inset focus-visible:ring-fd-ring"
+                  style="--padding-right: calc(var(--spacing) * 8)"
+                >
+                  <pre
+                    class="min-w-full w-max *:flex *:flex-col shiki shiki-themes github-light github-dark"
+                    style="
+                      --shiki-light: #24292e;
+                      --shiki-dark: #e1e4e8;
+                      --shiki-light-bg: #fff;
+                      --shiki-dark-bg: #24292e;
+                    "
+                    tabindex="0"
+                  ><code v-if="codeHtml" v-html="codeHtml" /><code v-else><span v-for="(line, i) in source?.split('\n')" :key="i" class="line">{{ line }}</span></code></pre>
+                </div>
+              </figure>
+            </div>
+            <button
+              type="button"
+              data-slot="button"
+              :class="expandClass"
+              @click="expanded = !expanded"
+            >
+              {{ expanded ? 'Collapse code' : 'Expand code' }}
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</template>
+
 <script setup lang="ts">
 import { hareUIConfigKey, type HareUIConfig } from '@hareui/vue'
 import gravity from '@iconify-json/gravity-ui/icons.json'
@@ -232,146 +375,3 @@ function copy(event: MouseEvent) {
   if (source.value) void navigator.clipboard.writeText(source.value).then(() => flashCopied(target))
 }
 </script>
-
-<template>
-  <p v-if="!demo" class="text-danger">Demo not found: {{ name }}</p>
-  <div
-    v-else
-    class="component-preview-container group relative my-4 w-full"
-    :data-name="dataName"
-    style="contain: content"
-  >
-    <PreviewToolbar
-      v-model:device="device"
-      :href="href"
-      :theme="theme"
-      @toggle-theme="toggleTheme"
-      @preset="customWidth = undefined"
-      @preload="preload"
-    />
-    <div v-if="paged" ref="stage" class="relative">
-      <DevicePreview
-        mode="page"
-        :name="name"
-        :height="frameHeight"
-        :width="viewport"
-        :theme="theme"
-      />
-      <PreviewResizeHandle
-        v-model:dragging="dragging"
-        :width="viewport ?? fullWidth"
-        :min="minWidth"
-        :max="fullWidth"
-        :edge="pageEdge"
-        @resize="customWidth = $event"
-      />
-    </div>
-    <div
-      v-else
-      ref="stage"
-      :data-name="dataName"
-      v-bind="scopeAttributes"
-      :class="[
-        'preview not-prose relative min-h-[350px] w-full overflow-hidden rounded-t-xl border-s border-e border-t border-separator bg-background p-4 text-foreground sm:p-10 flex',
-        alignClass,
-        pinnedTheme,
-      ]"
-      @pointerdown.capture="claimOverlays"
-      @keydown.capture="claimOverlays"
-    >
-      <div
-        :class="['isolate flex w-full', alignClass, frameShown && 'invisible']"
-        :style="minHeight ? { minHeight } : undefined"
-      >
-        <component :is="demo" />
-      </div>
-      <DevicePreview
-        v-if="frameMounted"
-        mode="inline"
-        :name="name"
-        :width="viewport"
-        :theme="theme"
-        :visible="frameVisible"
-        @ready="frameReady = true"
-      />
-      <div
-        v-if="displayWidth !== undefined && displayWidth < fullWidth"
-        aria-hidden="true"
-        class="absolute inset-y-0 end-0 z-1 border-s border-separator bg-background"
-        :style="{ left: `${displayWidth}px` }"
-      />
-      <PreviewResizeHandle
-        v-model:dragging="dragging"
-        :width="viewport ?? fullWidth"
-        :min="minWidth"
-        :max="fullWidth"
-        :edge="displayWidth"
-        @resize="customWidth = $event"
-        @preload="preload"
-      />
-    </div>
-    <div
-      :class="[
-        'code-section relative border border-separator bg-transparent',
-        paged ? 'mt-4 rounded-xl' : 'rounded-b-xl',
-      ]"
-    >
-      <div class="code-block-wrapper">
-        <div class="relative">
-          <div class="relative">
-            <div
-              :class="[
-                'code-block-wrapper relative',
-                !expanded && 'mask-to-bottom max-h-[150px] overflow-hidden',
-              ]"
-            >
-              <figure
-                dir="ltr"
-                class="my-4 bg-fd-card rounded-xl shiki relative border not-prose overflow-hidden text-sm docs-code-block shadow-none docs-code-block-line-numbers"
-                lang="vue"
-                tabindex="-1"
-              >
-                <div
-                  class="z-1! empty:hidden absolute top-3 right-2 z-2 backdrop-blur-lg rounded-lg text-fd-muted-foreground"
-                >
-                  <button
-                    aria-label="Copy Text"
-                    type="button"
-                    :class="copyClass"
-                    @click="copy"
-                    v-html="copyIcon"
-                  />
-                </div>
-                <div
-                  role="region"
-                  tabindex="0"
-                  class="text-[0.8125rem] py-3.5 overflow-auto max-h-[600px] fd-scroll-container focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-inset focus-visible:ring-fd-ring"
-                  style="--padding-right: calc(var(--spacing) * 8)"
-                >
-                  <pre
-                    class="min-w-full w-max *:flex *:flex-col shiki shiki-themes github-light github-dark"
-                    style="
-                      --shiki-light: #24292e;
-                      --shiki-dark: #e1e4e8;
-                      --shiki-light-bg: #fff;
-                      --shiki-dark-bg: #24292e;
-                    "
-                    tabindex="0"
-                  ><code v-if="codeHtml" v-html="codeHtml" /><code v-else><span v-for="(line, i) in source?.split('\n')" :key="i" class="line">{{ line }}</span></code></pre>
-                </div>
-              </figure>
-            </div>
-            <button
-              type="button"
-              data-slot="button"
-              :class="expandClass"
-              @click="expanded = !expanded"
-            >
-              {{ expanded ? 'Collapse code' : 'Expand code' }}
-            </button>
-          </div>
-        </div>
-      </div>
-    </div>
-  </div>
-</template>

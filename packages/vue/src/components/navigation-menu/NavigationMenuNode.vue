@@ -1,3 +1,195 @@
+<template>
+  <component
+    :is="accordion ? AccordionItem : RekaNavigationMenuItem"
+    as="li"
+    v-bind="accordion ? { disabled: !!item.disabled } : {}"
+    :value="value"
+    :data-slot="level > 0 ? 'childItem' : 'item'"
+    :class="
+      level > 0
+        ? ui.childItem({ class: [ctx.props.ui?.childItem, item.ui?.childItem] })
+        : ui.item({ class: [ctx.props.ui?.item, item.ui?.item] })
+    "
+  >
+    <div
+      v-if="isGroupLabel"
+      :id="disclosure ? disclosureIds.link : undefined"
+      data-slot="label"
+      :class="ui.label({ class: [ctx.props.ui?.label, item.ui?.label, item.class] })"
+    >
+      <NavigationMenuLinkBody
+        :item="item"
+        :index="index"
+        :active="false"
+        :disclosure="disclosure"
+      />
+    </div>
+
+    <LinkResolver
+      v-else-if="item.type !== 'label'"
+      v-slot="link"
+      :item="item"
+      :button="accordion && hasChildren && item.type === 'trigger'"
+    >
+      <component
+        :is="hasActions ? 'div' : Passthrough"
+        v-bind="
+          hasActions
+            ? {
+                'data-slot': 'linkRow',
+                'data-active': activeOf(link) || undefined,
+                class: ui.linkRow({ class: [ctx.props.ui?.linkRow, item.ui?.linkRow] }),
+              }
+            : {}
+        "
+      >
+        <component :is="outer" v-bind="outerProps">
+          <component :is="kindOf(link)" v-bind="kindProps(kindOf(link), link)">
+            <component
+              :is="link.as"
+              data-slot="link"
+              :class="linkClass(link.active)"
+              v-bind="linkAttrs(link)"
+            >
+              <NavigationMenuLinkBody
+                :item="item"
+                :index="index"
+                :active="activeOf(link)"
+                :disclosure="link.attrs.href ? disclosure : undefined"
+              />
+            </component>
+          </component>
+
+          <template v-if="popoverEnabled" #content="{ close }">
+            <SlotOutlet
+              :name="slotName(item, 'content')"
+              :slot-props="{ item, active: activeOf(link), index, ui, close }"
+            >
+              <ul
+                data-slot="childList"
+                :class="ui.childList({ class: [ctx.props.ui?.childList, item.ui?.childList] })"
+              >
+                <li
+                  data-slot="childLabel"
+                  :class="ui.childLabel({ class: [ctx.props.ui?.childLabel, item.ui?.childLabel] })"
+                >
+                  {{ label }}
+                </li>
+                <NavigationMenuChildLink
+                  v-for="(child, childIndex) in item.children"
+                  :key="childIndex"
+                  :child="child"
+                  :parent="item"
+                />
+              </ul>
+            </SlotOutlet>
+          </template>
+        </component>
+
+        <!-- A sibling of the link, never inside it: laid over the row's end. -->
+        <div
+          v-if="hasActions"
+          :ref="setActionsEl"
+          data-slot="linkActions"
+          :class="ui.linkActions({ class: [ctx.props.ui?.linkActions, item.ui?.linkActions] })"
+        >
+          <SlotOutlet
+            :name="slotName(item, 'actions')"
+            :slot-props="{ item, index, active: activeOf(link), ui }"
+          />
+          <Dropdown
+            v-if="item.actions?.length"
+            :items="item.actions"
+            side="right"
+            align="start"
+            :side-offset="6"
+            :disabled="!!item.disabled"
+            :class="
+              ui.linkActionsMenu({
+                class: [ctx.props.ui?.linkActionsMenu, item.ui?.linkActionsMenu],
+              })
+            "
+            @action="onAction"
+          >
+            <button
+              type="button"
+              data-slot="linkAction"
+              :aria-label="`More actions for ${label}`"
+              :class="ui.linkAction({ class: [ctx.props.ui?.linkAction, item.ui?.linkAction] })"
+            >
+              <EllipsisVerticalIcon />
+            </button>
+            <template #item-leading="{ item: entry }">
+              <NavigationMenuIcon
+                v-if="entry.icon"
+                :icon="entry.icon"
+                data-slot="linkActionsItemIcon"
+                :class="
+                  ui.linkActionsItemIcon({
+                    class: [ctx.props.ui?.linkActionsItemIcon, item.ui?.linkActionsItemIcon],
+                    danger: entry.variant === 'danger',
+                  })
+                "
+              />
+            </template>
+          </Dropdown>
+        </div>
+      </component>
+
+      <NavigationMenuTabBridge v-if="horizontalContent" />
+      <NavigationMenuContent
+        v-if="horizontalContent"
+        v-bind="ctx.props.content"
+        data-slot="content"
+        :class="ui.content({ class: [ctx.props.ui?.content, item.ui?.content] })"
+      >
+        <SlotOutlet
+          :name="slotName(item, 'content')"
+          :slot-props="{ item, active: activeOf(link), index, ui }"
+        >
+          <ul
+            data-slot="childList"
+            :class="ui.childList({ class: [ctx.props.ui?.childList, item.ui?.childList] })"
+          >
+            <NavigationMenuChildLink
+              v-for="(child, childIndex) in item.children"
+              :key="childIndex"
+              :child="child"
+              :parent="item"
+              detailed
+            />
+          </ul>
+        </SlotOutlet>
+      </NavigationMenuContent>
+    </LinkResolver>
+
+    <NavigationMenuAccordionContent
+      v-if="accordion && hasChildren"
+      :id="disclosureIds.region"
+      :labelledby="disclosureIds.link"
+      data-slot="content"
+      :class="ui.content({ class: [ctx.props.ui?.content, item.ui?.content] })"
+    >
+      <AccordionRoot
+        v-bind="ctx.accordionProps.value"
+        :default-value="ctx.getAccordionDefaultValue(item.children!, level + 1, listIndex)"
+        as="ul"
+        data-slot="childList"
+        :class="ui.childList({ class: [ctx.props.ui?.childList, item.ui?.childList] })"
+      >
+        <NavigationMenuNode
+          v-for="(child, childIndex) in item.children"
+          :key="childIndex"
+          :item="child"
+          :index="childIndex"
+          :level="level + 1"
+          :list-index="listIndex"
+        />
+      </AccordionRoot>
+    </NavigationMenuAccordionContent>
+  </component>
+</template>
+
 <script setup lang="ts">
 import {
   AccordionItem,
@@ -201,195 +393,3 @@ function linkAttrs(link: ResolvedLink) {
   return attrs
 }
 </script>
-
-<template>
-  <component
-    :is="accordion ? AccordionItem : RekaNavigationMenuItem"
-    as="li"
-    v-bind="accordion ? { disabled: !!item.disabled } : {}"
-    :value="value"
-    :data-slot="level > 0 ? 'childItem' : 'item'"
-    :class="
-      level > 0
-        ? ui.childItem({ class: [ctx.props.ui?.childItem, item.ui?.childItem] })
-        : ui.item({ class: [ctx.props.ui?.item, item.ui?.item] })
-    "
-  >
-    <div
-      v-if="isGroupLabel"
-      :id="disclosure ? disclosureIds.link : undefined"
-      data-slot="label"
-      :class="ui.label({ class: [ctx.props.ui?.label, item.ui?.label, item.class] })"
-    >
-      <NavigationMenuLinkBody
-        :item="item"
-        :index="index"
-        :active="false"
-        :disclosure="disclosure"
-      />
-    </div>
-
-    <LinkResolver
-      v-else-if="item.type !== 'label'"
-      v-slot="link"
-      :item="item"
-      :button="accordion && hasChildren && item.type === 'trigger'"
-    >
-      <component
-        :is="hasActions ? 'div' : Passthrough"
-        v-bind="
-          hasActions
-            ? {
-                'data-slot': 'linkRow',
-                'data-active': activeOf(link) || undefined,
-                class: ui.linkRow({ class: [ctx.props.ui?.linkRow, item.ui?.linkRow] }),
-              }
-            : {}
-        "
-      >
-        <component :is="outer" v-bind="outerProps">
-          <component :is="kindOf(link)" v-bind="kindProps(kindOf(link), link)">
-            <component
-              :is="link.as"
-              data-slot="link"
-              :class="linkClass(link.active)"
-              v-bind="linkAttrs(link)"
-            >
-              <NavigationMenuLinkBody
-                :item="item"
-                :index="index"
-                :active="activeOf(link)"
-                :disclosure="link.attrs.href ? disclosure : undefined"
-              />
-            </component>
-          </component>
-
-          <template v-if="popoverEnabled" #content="{ close }">
-            <SlotOutlet
-              :name="slotName(item, 'content')"
-              :slot-props="{ item, active: activeOf(link), index, ui, close }"
-            >
-              <ul
-                data-slot="childList"
-                :class="ui.childList({ class: [ctx.props.ui?.childList, item.ui?.childList] })"
-              >
-                <li
-                  data-slot="childLabel"
-                  :class="ui.childLabel({ class: [ctx.props.ui?.childLabel, item.ui?.childLabel] })"
-                >
-                  {{ label }}
-                </li>
-                <NavigationMenuChildLink
-                  v-for="(child, childIndex) in item.children"
-                  :key="childIndex"
-                  :child="child"
-                  :parent="item"
-                />
-              </ul>
-            </SlotOutlet>
-          </template>
-        </component>
-
-        <!-- A sibling of the link, never inside it: laid over the row's end. -->
-        <div
-          v-if="hasActions"
-          :ref="setActionsEl"
-          data-slot="linkActions"
-          :class="ui.linkActions({ class: [ctx.props.ui?.linkActions, item.ui?.linkActions] })"
-        >
-          <SlotOutlet
-            :name="slotName(item, 'actions')"
-            :slot-props="{ item, index, active: activeOf(link), ui }"
-          />
-          <Dropdown
-            v-if="item.actions?.length"
-            :items="item.actions"
-            side="right"
-            align="start"
-            :side-offset="6"
-            :disabled="!!item.disabled"
-            :class="
-              ui.linkActionsMenu({
-                class: [ctx.props.ui?.linkActionsMenu, item.ui?.linkActionsMenu],
-              })
-            "
-            @action="onAction"
-          >
-            <button
-              type="button"
-              data-slot="linkAction"
-              :aria-label="`More actions for ${label}`"
-              :class="ui.linkAction({ class: [ctx.props.ui?.linkAction, item.ui?.linkAction] })"
-            >
-              <EllipsisVerticalIcon />
-            </button>
-            <template #item-leading="{ item: entry }">
-              <NavigationMenuIcon
-                v-if="entry.icon"
-                :icon="entry.icon"
-                data-slot="linkActionsItemIcon"
-                :class="
-                  ui.linkActionsItemIcon({
-                    class: [ctx.props.ui?.linkActionsItemIcon, item.ui?.linkActionsItemIcon],
-                    danger: entry.variant === 'danger',
-                  })
-                "
-              />
-            </template>
-          </Dropdown>
-        </div>
-      </component>
-
-      <NavigationMenuTabBridge v-if="horizontalContent" />
-      <NavigationMenuContent
-        v-if="horizontalContent"
-        v-bind="ctx.props.content"
-        data-slot="content"
-        :class="ui.content({ class: [ctx.props.ui?.content, item.ui?.content] })"
-      >
-        <SlotOutlet
-          :name="slotName(item, 'content')"
-          :slot-props="{ item, active: activeOf(link), index, ui }"
-        >
-          <ul
-            data-slot="childList"
-            :class="ui.childList({ class: [ctx.props.ui?.childList, item.ui?.childList] })"
-          >
-            <NavigationMenuChildLink
-              v-for="(child, childIndex) in item.children"
-              :key="childIndex"
-              :child="child"
-              :parent="item"
-              detailed
-            />
-          </ul>
-        </SlotOutlet>
-      </NavigationMenuContent>
-    </LinkResolver>
-
-    <NavigationMenuAccordionContent
-      v-if="accordion && hasChildren"
-      :id="disclosureIds.region"
-      :labelledby="disclosureIds.link"
-      data-slot="content"
-      :class="ui.content({ class: [ctx.props.ui?.content, item.ui?.content] })"
-    >
-      <AccordionRoot
-        v-bind="ctx.accordionProps.value"
-        :default-value="ctx.getAccordionDefaultValue(item.children!, level + 1, listIndex)"
-        as="ul"
-        data-slot="childList"
-        :class="ui.childList({ class: [ctx.props.ui?.childList, item.ui?.childList] })"
-      >
-        <NavigationMenuNode
-          v-for="(child, childIndex) in item.children"
-          :key="childIndex"
-          :item="child"
-          :index="childIndex"
-          :level="level + 1"
-          :list-index="listIndex"
-        />
-      </AccordionRoot>
-    </NavigationMenuAccordionContent>
-  </component>
-</template>

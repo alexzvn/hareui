@@ -1,3 +1,20 @@
+<template>
+  <Dropdown class="min-w-[220px]" :items="items" @action="(key) => console.log(`Selected: ${key}`)">
+    <Button aria-label="Menu" icon-only variant="secondary">
+      <Icon class="outline-none" height="16" icon="gravity-ui:bars" width="16" />
+    </Button>
+    <template #item-leading="{ item }">
+      <div class="flex h-8 items-start justify-center pt-px">
+        <Icon
+          class="size-4 shrink-0"
+          :class="item.variant === 'danger' ? 'text-danger' : 'text-muted'"
+          :icon="item.icon"
+        />
+      </div>
+    </template>
+  </Dropdown>
+</template>
+
 <script setup lang="ts">
 import type { DropdownEntry } from '@hareui/vue'
 import { Button, Dropdown } from '@hareui/vue'
@@ -42,20 +59,3 @@ const items: DropdownEntry[] = [
   },
 ]
 </script>
-
-<template>
-  <Dropdown class="min-w-[220px]" :items="items" @action="(key) => console.log(`Selected: ${key}`)">
-    <Button aria-label="Menu" icon-only variant="secondary">
-      <Icon class="outline-none" height="16" icon="gravity-ui:bars" width="16" />
-    </Button>
-    <template #item-leading="{ item }">
-      <div class="flex h-8 items-start justify-center pt-px">
-        <Icon
-          class="size-4 shrink-0"
-          :class="item.variant === 'danger' ? 'text-danger' : 'text-muted'"
-          :icon="item.icon"
-        />
-      </div>
-    </template>
-  </Dropdown>
-</template>

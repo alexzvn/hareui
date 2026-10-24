@@ -1,20 +1,3 @@
-<script setup lang="ts">
-import type { ListBoxItem } from '@hareui/vue'
-import { Autocomplete, Button } from '@hareui/vue'
-import { ref } from 'vue'
-
-const items: ListBoxItem[] = [
-  { value: 'florida', label: 'Florida' },
-  { value: 'delaware', label: 'Delaware' },
-  { value: 'california', label: 'California' },
-  { value: 'texas', label: 'Texas' },
-  { value: 'new-york', label: 'New York' },
-  { value: 'washington', label: 'Washington' },
-]
-
-const isOpen = ref(false)
-</script>
-
 <template>
   <div class="space-y-4">
     <Autocomplete
@@ -33,3 +16,20 @@ const isOpen = ref(false)
     <p class="text-sm text-muted">Autocomplete is {{ isOpen ? 'open' : 'closed' }}</p>
   </div>
 </template>
+
+<script setup lang="ts">
+import type { ListBoxItem } from '@hareui/vue'
+import { Autocomplete, Button } from '@hareui/vue'
+import { ref } from 'vue'
+
+const items: ListBoxItem[] = [
+  { value: 'florida', label: 'Florida' },
+  { value: 'delaware', label: 'Delaware' },
+  { value: 'california', label: 'California' },
+  { value: 'texas', label: 'Texas' },
+  { value: 'new-york', label: 'New York' },
+  { value: 'washington', label: 'Washington' },
+]
+
+const isOpen = ref(false)
+</script>

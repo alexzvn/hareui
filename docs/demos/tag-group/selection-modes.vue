@@ -1,18 +1,3 @@
-<script setup lang="ts">
-import type { TagGroupItem } from '@hareui/vue'
-import { TagGroup } from '@hareui/vue'
-import { ref } from 'vue'
-
-const items: TagGroupItem[] = [
-  { id: 'news', label: 'News' },
-  { id: 'travel', label: 'Travel' },
-  { id: 'gaming', label: 'Gaming' },
-  { id: 'shopping', label: 'Shopping' },
-]
-const single = ref<string[]>(['news'])
-const multiple = ref<string[]>(['news', 'travel'])
-</script>
-
 <template>
   <div class="flex flex-col gap-8">
     <TagGroup
@@ -31,3 +16,18 @@ const multiple = ref<string[]>(['news', 'travel'])
     />
   </div>
 </template>
+
+<script setup lang="ts">
+import type { TagGroupItem } from '@hareui/vue'
+import { TagGroup } from '@hareui/vue'
+import { ref } from 'vue'
+
+const items: TagGroupItem[] = [
+  { id: 'news', label: 'News' },
+  { id: 'travel', label: 'Travel' },
+  { id: 'gaming', label: 'Gaming' },
+  { id: 'shopping', label: 'Shopping' },
+]
+const single = ref<string[]>(['news'])
+const multiple = ref<string[]>(['news', 'travel'])
+</script>

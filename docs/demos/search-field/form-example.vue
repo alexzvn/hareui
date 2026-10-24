@@ -1,25 +1,3 @@
-<script setup lang="ts">
-import { Button, Form, SearchField, Spinner } from '@hareui/vue'
-import { computed, ref } from 'vue'
-
-const value = ref('')
-const isSubmitting = ref(false)
-const MIN_LENGTH = 3
-const isInvalid = computed(() => value.value.length > 0 && value.value.length < MIN_LENGTH)
-
-function handleSubmit(e: Event) {
-  e.preventDefault()
-  if (value.value.length < MIN_LENGTH) return
-  isSubmitting.value = true
-  // Simulate API call
-  setTimeout(() => {
-    console.log('Search submitted:', { query: value.value })
-    value.value = ''
-    isSubmitting.value = false
-  }, 1500)
-}
-</script>
-
 <template>
   <Form class="flex w-[280px] flex-col gap-4" @submit="handleSubmit">
     <SearchField
@@ -48,3 +26,25 @@ function handleSubmit(e: Event) {
     </Button>
   </Form>
 </template>
+
+<script setup lang="ts">
+import { Button, Form, SearchField, Spinner } from '@hareui/vue'
+import { computed, ref } from 'vue'
+
+const value = ref('')
+const isSubmitting = ref(false)
+const MIN_LENGTH = 3
+const isInvalid = computed(() => value.value.length > 0 && value.value.length < MIN_LENGTH)
+
+function handleSubmit(e: Event) {
+  e.preventDefault()
+  if (value.value.length < MIN_LENGTH) return
+  isSubmitting.value = true
+  // Simulate API call
+  setTimeout(() => {
+    console.log('Search submitted:', { query: value.value })
+    value.value = ''
+    isSubmitting.value = false
+  }, 1500)
+}
+</script>

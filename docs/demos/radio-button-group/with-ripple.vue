@@ -1,3 +1,27 @@
+<template>
+  <RadioButtonGroup
+    class="w-full max-w-2xl grid-cols-1 sm:grid-cols-3"
+    default-value="1080p"
+    layout="grid"
+    name="video-quality"
+    variant="secondary"
+    label="Streaming quality"
+  >
+    <RadioButtonGroupItem
+      v-for="quality in qualities"
+      :key="quality.value"
+      :value="quality.value"
+      :label="quality.title"
+      :description="quality.description"
+      v-on="ripple"
+    >
+      <span class="mt-2 font-mono text-xs text-muted"
+        >{{ quality.value }} · {{ quality.usage }}</span
+      >
+    </RadioButtonGroupItem>
+  </RadioButtonGroup>
+</template>
+
 <script setup lang="ts">
 import { RadioButtonGroup, RadioButtonGroupItem } from '@hareui/vue'
 
@@ -122,27 +146,3 @@ const ripple = {
   },
 }
 </script>
-
-<template>
-  <RadioButtonGroup
-    class="w-full max-w-2xl grid-cols-1 sm:grid-cols-3"
-    default-value="1080p"
-    layout="grid"
-    name="video-quality"
-    variant="secondary"
-    label="Streaming quality"
-  >
-    <RadioButtonGroupItem
-      v-for="quality in qualities"
-      :key="quality.value"
-      :value="quality.value"
-      :label="quality.title"
-      :description="quality.description"
-      v-on="ripple"
-    >
-      <span class="mt-2 font-mono text-xs text-muted"
-        >{{ quality.value }} · {{ quality.usage }}</span
-      >
-    </RadioButtonGroupItem>
-  </RadioButtonGroup>
-</template>

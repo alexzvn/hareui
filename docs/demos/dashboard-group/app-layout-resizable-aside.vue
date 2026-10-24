@@ -1,33 +1,3 @@
-<script setup lang="ts">
-import type { BreadcrumbsItem, NavigationMenuItem } from '@hareui/vue'
-import {
-  Avatar,
-  Breadcrumbs,
-  Button,
-  Chip,
-  DashboardGroup,
-  DashboardNavbar,
-  DashboardPanel,
-  DashboardSidebar,
-  DashboardSidebarCollapse,
-  DashboardSidebarToggle,
-  NavigationMenu,
-} from '@hareui/vue'
-import { Icon } from '@iconify/vue'
-import { h } from 'vue'
-
-// NavigationMenu takes icon components: an Iconify Gravity UI icon that forwards the menu's icon classes.
-const gravityIcon = (name: string) => (attrs: Record<string, unknown>) =>
-  h(Icon, { ...attrs, icon: `gravity-ui:${name}` })
-
-const items: NavigationMenuItem[] = [
-  { label: 'Inbox', icon: gravityIcon('envelope'), href: '#', active: true },
-  { label: 'Home', icon: gravityIcon('house'), href: '#' },
-]
-
-const breadcrumbs: BreadcrumbsItem[] = [{ label: 'Inbox', icon: 'gravity-ui:envelope' }]
-</script>
-
 <template>
   <DashboardGroup unit="rem" :persistent="false">
     <DashboardSidebar
@@ -153,3 +123,33 @@ const breadcrumbs: BreadcrumbsItem[] = [{ label: 'Inbox', icon: 'gravity-ui:enve
     </DashboardSidebar>
   </DashboardGroup>
 </template>
+
+<script setup lang="ts">
+import type { BreadcrumbsItem, NavigationMenuItem } from '@hareui/vue'
+import {
+  Avatar,
+  Breadcrumbs,
+  Button,
+  Chip,
+  DashboardGroup,
+  DashboardNavbar,
+  DashboardPanel,
+  DashboardSidebar,
+  DashboardSidebarCollapse,
+  DashboardSidebarToggle,
+  NavigationMenu,
+} from '@hareui/vue'
+import { Icon } from '@iconify/vue'
+import { h } from 'vue'
+
+// NavigationMenu takes icon components: an Iconify Gravity UI icon that forwards the menu's icon classes.
+const gravityIcon = (name: string) => (attrs: Record<string, unknown>) =>
+  h(Icon, { ...attrs, icon: `gravity-ui:${name}` })
+
+const items: NavigationMenuItem[] = [
+  { label: 'Inbox', icon: gravityIcon('envelope'), href: '#', active: true },
+  { label: 'Home', icon: gravityIcon('house'), href: '#' },
+]
+
+const breadcrumbs: BreadcrumbsItem[] = [{ label: 'Inbox', icon: 'gravity-ui:envelope' }]
+</script>

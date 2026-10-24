@@ -1,3 +1,26 @@
+<template>
+  <div class="flex w-full flex-col items-center gap-4">
+    <NavigationMenu
+      v-model="active"
+      :items="items"
+      :ui="{ linkLabel: 'max-sm:sr-only' }"
+      class="w-full justify-center"
+    />
+    <div class="flex flex-wrap justify-center gap-2">
+      <Button
+        v-for="(item, index) in items"
+        :key="index"
+        size="sm"
+        variant="secondary"
+        @click="active = `item-${index}`"
+      >
+        Open {{ item.label }}
+      </Button>
+      <Button size="sm" variant="ghost" @click="active = undefined"> Close </Button>
+    </div>
+  </div>
+</template>
+
 <script setup lang="ts">
 import type { NavigationMenuItem } from '@hareui/vue'
 import { Button, NavigationMenu } from '@hareui/vue'
@@ -104,26 +127,3 @@ const items: NavigationMenuItem[] = [
 
 const active = ref<string>()
 </script>
-
-<template>
-  <div class="flex w-full flex-col items-center gap-4">
-    <NavigationMenu
-      v-model="active"
-      :items="items"
-      :ui="{ linkLabel: 'max-sm:sr-only' }"
-      class="w-full justify-center"
-    />
-    <div class="flex flex-wrap justify-center gap-2">
-      <Button
-        v-for="(item, index) in items"
-        :key="index"
-        size="sm"
-        variant="secondary"
-        @click="active = `item-${index}`"
-      >
-        Open {{ item.label }}
-      </Button>
-      <Button size="sm" variant="ghost" @click="active = undefined"> Close </Button>
-    </div>
-  </div>
-</template>

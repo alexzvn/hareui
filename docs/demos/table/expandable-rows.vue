@@ -1,3 +1,37 @@
+<template>
+  <Table
+    v-model:expanded-keys="expandedKeys"
+    aria-label="Files"
+    :columns="columns"
+    :rows="rows"
+    tree-column="name"
+    :ui="{ content: 'min-w-[520px]' }"
+  >
+    <template #name-cell="{ row, hasChildItems, isExpanded, toggle }">
+      <span class="flex items-center gap-1">
+        <Button
+          v-if="hasChildItems"
+          aria-label="Toggle row"
+          icon-only
+          size="sm"
+          variant="ghost"
+          @click="toggle"
+        >
+          <Icon
+            aria-hidden="true"
+            :class="[
+              'size-4 text-muted transition-transform duration-150',
+              isExpanded ? 'rotate-90' : 'rtl:rotate-180',
+            ]"
+            icon="gravity-ui:chevron-right"
+          />
+        </Button>
+        <span>{{ row.name }}</span>
+      </span>
+    </template>
+  </Table>
+</template>
+
 <script setup lang="ts">
 import type { TableColumn, TableRow, TableSelection } from '@hareui/vue'
 import { Button, Table } from '@hareui/vue'
@@ -41,37 +75,3 @@ const rows: TableRow[] = [
 ]
 const expandedKeys = ref<TableSelection>(new Set(['1']))
 </script>
-
-<template>
-  <Table
-    v-model:expanded-keys="expandedKeys"
-    aria-label="Files"
-    :columns="columns"
-    :rows="rows"
-    tree-column="name"
-    :ui="{ content: 'min-w-[520px]' }"
-  >
-    <template #name-cell="{ row, hasChildItems, isExpanded, toggle }">
-      <span class="flex items-center gap-1">
-        <Button
-          v-if="hasChildItems"
-          aria-label="Toggle row"
-          icon-only
-          size="sm"
-          variant="ghost"
-          @click="toggle"
-        >
-          <Icon
-            aria-hidden="true"
-            :class="[
-              'size-4 text-muted transition-transform duration-150',
-              isExpanded ? 'rotate-90' : 'rtl:rotate-180',
-            ]"
-            icon="gravity-ui:chevron-right"
-          />
-        </Button>
-        <span>{{ row.name }}</span>
-      </span>
-    </template>
-  </Table>
-</template>

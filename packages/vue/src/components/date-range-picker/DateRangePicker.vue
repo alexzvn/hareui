@@ -1,3 +1,166 @@
+<template>
+  <!-- Modal like HeroUI's (React Aria) popover dialog: focus stays inside, the page behind is hidden from assistive tech -->
+  <DateRangePickerRoot
+    :id="id"
+    v-model:open="isOpen"
+    :model-value="draft"
+    :placeholder="placeholder"
+    :default-placeholder="defaultPlaceholder"
+    :granularity="granularity"
+    :hour-cycle="hourCycle"
+    :step="step"
+    :hide-time-zone="hideTimeZone"
+    :min-value="minValue"
+    :max-value="maxValue"
+    :locale="locale"
+    :is-date-unavailable="isDateUnavailable ? fieldIsDateUnavailable : undefined"
+    :disabled="disabled"
+    :readonly="readonly"
+    modal
+    @update:model-value="onFieldUpdate"
+    @update:placeholder="emit('update:placeholder', $event)"
+  >
+    <PopoverLabelledBy :labelledby="hasLabel ? `${triggerId} ${labelId}` : triggerId" />
+    <DateRangePickerField
+      ref="root"
+      v-slot="{ segments }"
+      v-bind="attrs"
+      data-slot="date-range-picker"
+      :data-required="required ? 'true' : undefined"
+      :aria-describedby="describedBy"
+      :class="ui.base({ class: [props.ui?.base, props.class] })"
+      @keydown.capture="onFieldKeydown"
+      @focusout="onFieldFocusOut"
+    >
+      <FieldLabel :id="labelId" as="span" />
+      <DateRangePickerAnchor as-child>
+        <DateInputGroup
+          :segments="wrapBidiIsolate(dropDanglingTimeZoneSeparator(segments.start))"
+          :end-segments="wrapBidiIsolate(dropDanglingTimeZoneSeparator(segments.end))"
+          :segment-input="DateRangePickerInput"
+          :input-container="inputContainer"
+          :variant="variant"
+          :full-width="fullWidth"
+          :disabled="disabled"
+          :invalid="invalid"
+          :aria-label="attrs['aria-label'] as string | undefined"
+          :labelledby="hasLabel ? labelId : undefined"
+          :describedby="describedBy"
+          :ui="groupUiProps"
+        >
+          <template #separator>
+            <span
+              aria-hidden="true"
+              data-slot="date-range-picker-range-separator"
+              :class="ui.rangeSeparator({ class: props.ui?.rangeSeparator })"
+            >
+              <slot name="separator">{{ ' - ' }}</slot>
+            </span>
+          </template>
+          <template #suffix>
+            <DateRangePickerTrigger as-child>
+              <button
+                :id="triggerId"
+                ref="trigger"
+                type="button"
+                aria-label="Calendar"
+                :aria-labelledby="hasLabel ? `${triggerId} ${labelId}` : undefined"
+                :aria-describedby="describedBy"
+                :data-reka-date-field-segment="undefined"
+                data-slot="date-range-picker-trigger"
+                :disabled="disabled || readonly"
+                :class="ui.trigger({ class: props.ui?.trigger })"
+              >
+                <span
+                  aria-hidden="true"
+                  data-slot="date-range-picker-trigger-indicator"
+                  :class="ui.triggerIndicator({ class: props.ui?.triggerIndicator })"
+                >
+                  <slot name="indicator">
+                    <svg
+                      aria-hidden="true"
+                      fill="none"
+                      height="1em"
+                      role="presentation"
+                      viewBox="0 0 13 14"
+                      width="1em"
+                      xmlns="http://www.w3.org/2000/svg"
+                    >
+                      <path
+                        clip-rule="evenodd"
+                        d="M3.75 4.5A.75.75 0 0 1 3 3.75v-.748a1.5 1.5 0 0 0-1.5 1.5v1h10v-1a1.5 1.5 0 0 0-1.5-1.5v.75a.75.75 0 1 1-1.5 0v-.75h-4v.747a.75.75 0 0 1-.75.75ZM8.5 1.501h-4V.75a.75.75 0 0 0-1.5 0v.752a3 3 0 0 0-3 3v6a3 3 0 0 0 3 3h7a3 3 0 0 0 3-3v-6a3 3 0 0 0-3-3v-.75a.75.75 0 0 0-1.5 0v.75Zm-7 5.5v3.5a1.5 1.5 0 0 0 1.5 1.5h7a1.5 1.5 0 0 0 1.5-1.5v-3.5h-10Z"
+                        fill="currentColor"
+                        fill-rule="evenodd"
+                      />
+                    </svg>
+                  </slot>
+                </span>
+              </button>
+            </DateRangePickerTrigger>
+          </template>
+        </DateInputGroup>
+      </DateRangePickerAnchor>
+      <!-- React Aria's HiddenDateInput pair: carries `startName`/`endName` and native `required` (Reka's own mirror input holds one combined string) -->
+      <VisuallyHidden
+        v-for="part in ['start', 'end'] as const"
+        :key="part"
+        as="input"
+        feature="focusable"
+        aria-hidden="true"
+        tabindex="-1"
+        :name="part === 'start' ? startName : endName"
+        :value="committed?.[part]?.toString() ?? ''"
+        :required="required"
+        :disabled="disabled"
+        @focus="focusFirstSegment"
+      />
+      <FieldDescription />
+      <FieldError />
+    </DateRangePickerField>
+    <PopoverPortal :disabled="portalTarget.disabled" :to="portalTarget.to">
+      <PopoverContent
+        ref="popoverContent"
+        data-slot="date-range-picker-popover"
+        side="bottom"
+        align="center"
+        :side-offset="8"
+        :avoid-collisions="true"
+        :collision-padding="8"
+        :class="ui.popover({ class: props.ui?.popover })"
+        @open-auto-focus="onOpenAutoFocus"
+        @close-auto-focus="onCloseAutoFocus"
+        @escape-key-down="onEscapeKeyDown"
+      >
+        <slot
+          name="calendar"
+          :value="committed"
+          :on-select="onCalendarSelect"
+          :on-change="onCalendarChange"
+        >
+          <!--
+            No `min-value`/`max-value`: HeroUI's composed `RangeCalendar` passes its own 1900/2099 defaults explicitly,
+            which override the picker's bounds from React Aria's context, so the popover never greys out-of-range days
+            (the field still validates them). `is-date-unavailable` does reach it.
+          -->
+          <RangeCalendar
+            :model-value="committed ?? EMPTY"
+            :default-placeholder="committed?.start ?? placeholder ?? defaultPlaceholder"
+            :is-date-unavailable="isDateUnavailable"
+            :allow-non-contiguous-ranges="allowNonContiguousRanges"
+            :locale="locale"
+            :disabled="disabled"
+            :readonly="readonly"
+            :invalid="invalid"
+            :aria-label="calendarLabel"
+            year-picker
+            @update:model-value="onCalendarUpdate"
+          />
+        </slot>
+      </PopoverContent>
+    </PopoverPortal>
+  </DateRangePickerRoot>
+</template>
+
 <script lang="ts">
 import type { DateValue } from '@internationalized/date'
 import type { DateRangePickerRootProps } from 'reka-ui'
@@ -443,166 +606,3 @@ function focusFirstSegment() {
     ?.focus()
 }
 </script>
-
-<template>
-  <!-- Modal like HeroUI's (React Aria) popover dialog: focus stays inside, the page behind is hidden from assistive tech -->
-  <DateRangePickerRoot
-    :id="id"
-    v-model:open="isOpen"
-    :model-value="draft"
-    :placeholder="placeholder"
-    :default-placeholder="defaultPlaceholder"
-    :granularity="granularity"
-    :hour-cycle="hourCycle"
-    :step="step"
-    :hide-time-zone="hideTimeZone"
-    :min-value="minValue"
-    :max-value="maxValue"
-    :locale="locale"
-    :is-date-unavailable="isDateUnavailable ? fieldIsDateUnavailable : undefined"
-    :disabled="disabled"
-    :readonly="readonly"
-    modal
-    @update:model-value="onFieldUpdate"
-    @update:placeholder="emit('update:placeholder', $event)"
-  >
-    <PopoverLabelledBy :labelledby="hasLabel ? `${triggerId} ${labelId}` : triggerId" />
-    <DateRangePickerField
-      ref="root"
-      v-slot="{ segments }"
-      v-bind="attrs"
-      data-slot="date-range-picker"
-      :data-required="required ? 'true' : undefined"
-      :aria-describedby="describedBy"
-      :class="ui.base({ class: [props.ui?.base, props.class] })"
-      @keydown.capture="onFieldKeydown"
-      @focusout="onFieldFocusOut"
-    >
-      <FieldLabel :id="labelId" as="span" />
-      <DateRangePickerAnchor as-child>
-        <DateInputGroup
-          :segments="wrapBidiIsolate(dropDanglingTimeZoneSeparator(segments.start))"
-          :end-segments="wrapBidiIsolate(dropDanglingTimeZoneSeparator(segments.end))"
-          :segment-input="DateRangePickerInput"
-          :input-container="inputContainer"
-          :variant="variant"
-          :full-width="fullWidth"
-          :disabled="disabled"
-          :invalid="invalid"
-          :aria-label="attrs['aria-label'] as string | undefined"
-          :labelledby="hasLabel ? labelId : undefined"
-          :describedby="describedBy"
-          :ui="groupUiProps"
-        >
-          <template #separator>
-            <span
-              aria-hidden="true"
-              data-slot="date-range-picker-range-separator"
-              :class="ui.rangeSeparator({ class: props.ui?.rangeSeparator })"
-            >
-              <slot name="separator">{{ ' - ' }}</slot>
-            </span>
-          </template>
-          <template #suffix>
-            <DateRangePickerTrigger as-child>
-              <button
-                :id="triggerId"
-                ref="trigger"
-                type="button"
-                aria-label="Calendar"
-                :aria-labelledby="hasLabel ? `${triggerId} ${labelId}` : undefined"
-                :aria-describedby="describedBy"
-                :data-reka-date-field-segment="undefined"
-                data-slot="date-range-picker-trigger"
-                :disabled="disabled || readonly"
-                :class="ui.trigger({ class: props.ui?.trigger })"
-              >
-                <span
-                  aria-hidden="true"
-                  data-slot="date-range-picker-trigger-indicator"
-                  :class="ui.triggerIndicator({ class: props.ui?.triggerIndicator })"
-                >
-                  <slot name="indicator">
-                    <svg
-                      aria-hidden="true"
-                      fill="none"
-                      height="1em"
-                      role="presentation"
-                      viewBox="0 0 13 14"
-                      width="1em"
-                      xmlns="http://www.w3.org/2000/svg"
-                    >
-                      <path
-                        clip-rule="evenodd"
-                        d="M3.75 4.5A.75.75 0 0 1 3 3.75v-.748a1.5 1.5 0 0 0-1.5 1.5v1h10v-1a1.5 1.5 0 0 0-1.5-1.5v.75a.75.75 0 1 1-1.5 0v-.75h-4v.747a.75.75 0 0 1-.75.75ZM8.5 1.501h-4V.75a.75.75 0 0 0-1.5 0v.752a3 3 0 0 0-3 3v6a3 3 0 0 0 3 3h7a3 3 0 0 0 3-3v-6a3 3 0 0 0-3-3v-.75a.75.75 0 0 0-1.5 0v.75Zm-7 5.5v3.5a1.5 1.5 0 0 0 1.5 1.5h7a1.5 1.5 0 0 0 1.5-1.5v-3.5h-10Z"
-                        fill="currentColor"
-                        fill-rule="evenodd"
-                      />
-                    </svg>
-                  </slot>
-                </span>
-              </button>
-            </DateRangePickerTrigger>
-          </template>
-        </DateInputGroup>
-      </DateRangePickerAnchor>
-      <!-- React Aria's HiddenDateInput pair: carries `startName`/`endName` and native `required` (Reka's own mirror input holds one combined string) -->
-      <VisuallyHidden
-        v-for="part in ['start', 'end'] as const"
-        :key="part"
-        as="input"
-        feature="focusable"
-        aria-hidden="true"
-        tabindex="-1"
-        :name="part === 'start' ? startName : endName"
-        :value="committed?.[part]?.toString() ?? ''"
-        :required="required"
-        :disabled="disabled"
-        @focus="focusFirstSegment"
-      />
-      <FieldDescription />
-      <FieldError />
-    </DateRangePickerField>
-    <PopoverPortal :disabled="portalTarget.disabled" :to="portalTarget.to">
-      <PopoverContent
-        ref="popoverContent"
-        data-slot="date-range-picker-popover"
-        side="bottom"
-        align="center"
-        :side-offset="8"
-        :avoid-collisions="true"
-        :collision-padding="8"
-        :class="ui.popover({ class: props.ui?.popover })"
-        @open-auto-focus="onOpenAutoFocus"
-        @close-auto-focus="onCloseAutoFocus"
-        @escape-key-down="onEscapeKeyDown"
-      >
-        <slot
-          name="calendar"
-          :value="committed"
-          :on-select="onCalendarSelect"
-          :on-change="onCalendarChange"
-        >
-          <!--
-            No `min-value`/`max-value`: HeroUI's composed `RangeCalendar` passes its own 1900/2099 defaults explicitly,
-            which override the picker's bounds from React Aria's context, so the popover never greys out-of-range days
-            (the field still validates them). `is-date-unavailable` does reach it.
-          -->
-          <RangeCalendar
-            :model-value="committed ?? EMPTY"
-            :default-placeholder="committed?.start ?? placeholder ?? defaultPlaceholder"
-            :is-date-unavailable="isDateUnavailable"
-            :allow-non-contiguous-ranges="allowNonContiguousRanges"
-            :locale="locale"
-            :disabled="disabled"
-            :readonly="readonly"
-            :invalid="invalid"
-            :aria-label="calendarLabel"
-            year-picker
-            @update:model-value="onCalendarUpdate"
-          />
-        </slot>
-      </PopoverContent>
-    </PopoverPortal>
-  </DateRangePickerRoot>
-</template>

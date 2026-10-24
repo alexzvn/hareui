@@ -1,3 +1,106 @@
+<template>
+  <div
+    ref="rootEl"
+    role="alertdialog"
+    aria-modal="false"
+    data-slot="toast"
+    :aria-labelledby="labelledBy"
+    :aria-describedby="describedBy"
+    :tabindex="tabIndex"
+    :data-entering="isEntering ? 'true' : undefined"
+    :data-exiting="isExiting ? 'true' : undefined"
+    :data-expanded="isExpanded ? 'true' : undefined"
+    :data-frontmost="isFrontmost ? 'true' : undefined"
+    :data-hidden="isHidden ? 'true' : undefined"
+    :data-index="index"
+    :data-placement="placement"
+    :style="styleVars"
+    :class="ui.toast({ class: providerUi?.toast })"
+  >
+    <template v-if="toastSlot">
+      <component
+        :is="renderValue"
+        :value="toastSlot({ content, close: props.close, titleId, descriptionId: descId })"
+      />
+    </template>
+    <template v-else>
+      <div
+        v-if="hasIndicator"
+        data-slot="toast-indicator"
+        :data-swapped="hasSwapped ? 'true' : undefined"
+        :class="ui.indicator({ class: providerUi?.indicator })"
+      >
+        <Spinner v-if="content.isLoading" color="current" size="sm" />
+        <component
+          :is="renderValue"
+          v-else-if="content.indicator !== undefined"
+          :value="content.indicator"
+        />
+        <svg
+          v-else
+          aria-hidden="true"
+          data-slot="toast-default-icon"
+          fill="none"
+          height="16"
+          role="presentation"
+          viewBox="0 0 16 16"
+          width="16"
+          xmlns="http://www.w3.org/2000/svg"
+        >
+          <path clip-rule="evenodd" :d="defaultIconPath" fill="currentColor" fill-rule="evenodd" />
+        </svg>
+      </div>
+      <div
+        data-slot="toast-content"
+        role="alert"
+        aria-atomic="true"
+        :aria-hidden="isContentVisible ? undefined : 'true'"
+        :class="ui.content({ class: providerUi?.content })"
+      >
+        <p
+          v-if="hasTitle"
+          :id="titleId"
+          data-slot="toast-title"
+          :class="ui.title({ class: providerUi?.title })"
+        >
+          <component :is="renderValue" :value="content.title" />
+        </p>
+        <p
+          v-if="hasDescription"
+          :id="descId"
+          data-slot="toast-description"
+          :class="ui.description({ class: providerUi?.description })"
+        >
+          <component :is="renderValue" :value="content.description" />
+        </p>
+        <Button
+          v-if="isMobile && content.action"
+          data-slot="toast-action-button"
+          :variant="content.action.variant ?? 'secondary'"
+          :class="[ui.action({ class: providerUi?.action }), content.action.class]"
+          @click="onActionClick"
+        >
+          <component :is="renderValue" :value="content.action.label" />
+        </Button>
+      </div>
+      <Button
+        v-if="!isMobile && content.action"
+        data-slot="toast-action-button"
+        :variant="content.action.variant ?? 'secondary'"
+        :class="[ui.action({ class: providerUi?.action }), content.action.class]"
+        @click="onActionClick"
+      >
+        <component :is="renderValue" :value="content.action.label" />
+      </Button>
+      <CloseButton
+        data-slot="toast-close"
+        :class="ui.close({ class: providerUi?.close })"
+        @click="props.close"
+      />
+    </template>
+  </div>
+</template>
+
 <script lang="ts">
 import type { ComponentSlots } from '../../types/tv'
 import theme from './theme'
@@ -260,106 +363,3 @@ function onActionClick(event: MouseEvent) {
   content.value.action?.onClick?.(event)
 }
 </script>
-
-<template>
-  <div
-    ref="rootEl"
-    role="alertdialog"
-    aria-modal="false"
-    data-slot="toast"
-    :aria-labelledby="labelledBy"
-    :aria-describedby="describedBy"
-    :tabindex="tabIndex"
-    :data-entering="isEntering ? 'true' : undefined"
-    :data-exiting="isExiting ? 'true' : undefined"
-    :data-expanded="isExpanded ? 'true' : undefined"
-    :data-frontmost="isFrontmost ? 'true' : undefined"
-    :data-hidden="isHidden ? 'true' : undefined"
-    :data-index="index"
-    :data-placement="placement"
-    :style="styleVars"
-    :class="ui.toast({ class: providerUi?.toast })"
-  >
-    <template v-if="toastSlot">
-      <component
-        :is="renderValue"
-        :value="toastSlot({ content, close: props.close, titleId, descriptionId: descId })"
-      />
-    </template>
-    <template v-else>
-      <div
-        v-if="hasIndicator"
-        data-slot="toast-indicator"
-        :data-swapped="hasSwapped ? 'true' : undefined"
-        :class="ui.indicator({ class: providerUi?.indicator })"
-      >
-        <Spinner v-if="content.isLoading" color="current" size="sm" />
-        <component
-          :is="renderValue"
-          v-else-if="content.indicator !== undefined"
-          :value="content.indicator"
-        />
-        <svg
-          v-else
-          aria-hidden="true"
-          data-slot="toast-default-icon"
-          fill="none"
-          height="16"
-          role="presentation"
-          viewBox="0 0 16 16"
-          width="16"
-          xmlns="http://www.w3.org/2000/svg"
-        >
-          <path clip-rule="evenodd" :d="defaultIconPath" fill="currentColor" fill-rule="evenodd" />
-        </svg>
-      </div>
-      <div
-        data-slot="toast-content"
-        role="alert"
-        aria-atomic="true"
-        :aria-hidden="isContentVisible ? undefined : 'true'"
-        :class="ui.content({ class: providerUi?.content })"
-      >
-        <p
-          v-if="hasTitle"
-          :id="titleId"
-          data-slot="toast-title"
-          :class="ui.title({ class: providerUi?.title })"
-        >
-          <component :is="renderValue" :value="content.title" />
-        </p>
-        <p
-          v-if="hasDescription"
-          :id="descId"
-          data-slot="toast-description"
-          :class="ui.description({ class: providerUi?.description })"
-        >
-          <component :is="renderValue" :value="content.description" />
-        </p>
-        <Button
-          v-if="isMobile && content.action"
-          data-slot="toast-action-button"
-          :variant="content.action.variant ?? 'secondary'"
-          :class="[ui.action({ class: providerUi?.action }), content.action.class]"
-          @click="onActionClick"
-        >
-          <component :is="renderValue" :value="content.action.label" />
-        </Button>
-      </div>
-      <Button
-        v-if="!isMobile && content.action"
-        data-slot="toast-action-button"
-        :variant="content.action.variant ?? 'secondary'"
-        :class="[ui.action({ class: providerUi?.action }), content.action.class]"
-        @click="onActionClick"
-      >
-        <component :is="renderValue" :value="content.action.label" />
-      </Button>
-      <CloseButton
-        data-slot="toast-close"
-        :class="ui.close({ class: providerUi?.close })"
-        @click="props.close"
-      />
-    </template>
-  </div>
-</template>

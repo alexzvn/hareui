@@ -1,3 +1,24 @@
+<template>
+  <Form class="flex w-80 flex-col gap-3" @submit="handleSubmit">
+    <DateRangePicker
+      v-model="value"
+      required
+      full-width
+      :invalid="isInvalid"
+      :min-value="currentDate"
+      start-name="tripStartDate"
+      end-name="tripEndDate"
+      label="Trip dates"
+      calendar-label="Trip dates"
+      description="Select your check-in and check-out dates."
+      error-message="Please choose a valid range in the future."
+    />
+    <Button class="w-full" :disabled="!value || isInvalid" :pending="isSubmitting" type="submit">
+      {{ isSubmitting ? 'Submitting...' : 'Submit' }}
+    </Button>
+  </Form>
+</template>
+
 <script setup lang="ts">
 import type { DateRangeValue } from '@hareui/vue'
 import { Button, DateRangePicker, Form } from '@hareui/vue'
@@ -24,24 +45,3 @@ function handleSubmit(event: Event) {
   }, 1200)
 }
 </script>
-
-<template>
-  <Form class="flex w-80 flex-col gap-3" @submit="handleSubmit">
-    <DateRangePicker
-      v-model="value"
-      required
-      full-width
-      :invalid="isInvalid"
-      :min-value="currentDate"
-      start-name="tripStartDate"
-      end-name="tripEndDate"
-      label="Trip dates"
-      calendar-label="Trip dates"
-      description="Select your check-in and check-out dates."
-      error-message="Please choose a valid range in the future."
-    />
-    <Button class="w-full" :disabled="!value || isInvalid" :pending="isSubmitting" type="submit">
-      {{ isSubmitting ? 'Submitting...' : 'Submit' }}
-    </Button>
-  </Form>
-</template>

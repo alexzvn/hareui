@@ -1,3 +1,14 @@
+<template>
+  <!-- Same foreignObject + Teleport hop as ChartTooltip: parts mount inside the <svg>. -->
+  <foreignObject v-if="chart.overlay.value" width="0" height="0">
+    <Teleport :to="chart.overlay.value">
+      <div data-slot="chart-center" :class="chart.classes('center')" :style="style">
+        <slot />
+      </div>
+    </Teleport>
+  </foreignObject>
+</template>
+
 <script setup lang="ts">
 import { computed } from 'vue'
 
@@ -12,14 +23,3 @@ const polar = usePolarContext('ChartPolarCenter')
 
 const style = computed(() => ({ left: `${polar.cx.value}px`, top: `${polar.cy.value}px` }))
 </script>
-
-<template>
-  <!-- Same foreignObject + Teleport hop as ChartTooltip: parts mount inside the <svg>. -->
-  <foreignObject v-if="chart.overlay.value" width="0" height="0">
-    <Teleport :to="chart.overlay.value">
-      <div data-slot="chart-center" :class="chart.classes('center')" :style="style">
-        <slot />
-      </div>
-    </Teleport>
-  </foreignObject>
-</template>

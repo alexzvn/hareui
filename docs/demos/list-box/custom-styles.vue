@@ -1,3 +1,16 @@
+<template>
+  <ListBox
+    aria-label="Assignee"
+    class="w-56 rounded-xl border border-border/80 bg-surface p-1 shadow-sm"
+    :items="users.slice(0, 2)"
+    :ui="{ item: 'rounded-lg data-[focused=true]:bg-accent/10 data-[selected=true]:bg-accent/5' }"
+  >
+    <template #item-leading="{ item }">
+      <Avatar size="sm" :alt="item.label" :src="item.avatar" :fallback="item.label?.[0]" />
+    </template>
+  </ListBox>
+</template>
+
 <script setup lang="ts">
 import type { ListBoxItem } from '@hareui/vue'
 import { Avatar, ListBox } from '@hareui/vue'
@@ -21,16 +34,3 @@ const users: User[] = [
   },
 ]
 </script>
-
-<template>
-  <ListBox
-    aria-label="Assignee"
-    class="w-56 rounded-xl border border-border/80 bg-surface p-1 shadow-sm"
-    :items="users.slice(0, 2)"
-    :ui="{ item: 'rounded-lg data-[focused=true]:bg-accent/10 data-[selected=true]:bg-accent/5' }"
-  >
-    <template #item-leading="{ item }">
-      <Avatar size="sm" :alt="item.label" :src="item.avatar" :fallback="item.label?.[0]" />
-    </template>
-  </ListBox>
-</template>

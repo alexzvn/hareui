@@ -1,7 +1,3 @@
-<script setup lang="ts">
-import { Alert, Button, CloseButton } from '@hareui/vue'
-</script>
-
 <template>
   <div class="w-full max-w-xl">
     <Alert
@@ -27,3 +23,7 @@ import { Alert, Button, CloseButton } from '@hareui/vue'
     </Alert>
   </div>
 </template>
+
+<script setup lang="ts">
+import { Alert, Button, CloseButton } from '@hareui/vue'
+</script>

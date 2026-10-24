@@ -1,3 +1,13 @@
+<template>
+  <Primitive
+    :as="as"
+    data-slot="container"
+    :class="ui.base({ class: [props.ui?.base, props.class] })"
+  >
+    <slot />
+  </Primitive>
+</template>
+
 <script lang="ts">
 import type { PrimitiveProps } from 'reka-ui'
 
@@ -35,13 +45,3 @@ defineSlots<ContainerSlots>()
 
 const ui = useComponentUI('container', theme, () => ({}))
 </script>
-
-<template>
-  <Primitive
-    :as="as"
-    data-slot="container"
-    :class="ui.base({ class: [props.ui?.base, props.class] })"
-  >
-    <slot />
-  </Primitive>
-</template>

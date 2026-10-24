@@ -1,20 +1,3 @@
-<script setup lang="ts">
-import { Button, Header, NavigationMenu } from '@hareui/vue'
-
-const navItems = [
-  { label: 'Docs', href: '#docs', active: true },
-  { label: 'Components', href: '#components' },
-  { label: 'Figma', href: '#figma' },
-  { label: 'Releases', href: '#releases' },
-]
-
-// Touch-sized rows for the mobile menu.
-const menuUi = {
-  list: 'gap-1',
-  link: 'min-h-11 gap-3 rounded-lg px-3 py-2.5 text-base font-medium text-foreground',
-}
-</script>
-
 <template>
   <Header breakpoint="none" title="HareUI" to="#">
     <template #title>
@@ -93,3 +76,20 @@ const menuUi = {
     </p>
   </main>
 </template>
+
+<script setup lang="ts">
+import { Button, Header, NavigationMenu } from '@hareui/vue'
+
+const navItems = [
+  { label: 'Docs', href: '#docs', active: true },
+  { label: 'Components', href: '#components' },
+  { label: 'Figma', href: '#figma' },
+  { label: 'Releases', href: '#releases' },
+]
+
+// Touch-sized rows for the mobile menu.
+const menuUi = {
+  list: 'gap-1',
+  link: 'min-h-11 gap-3 rounded-lg px-3 py-2.5 text-base font-medium text-foreground',
+}
+</script>

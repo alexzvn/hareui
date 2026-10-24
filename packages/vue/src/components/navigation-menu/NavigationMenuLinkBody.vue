@@ -1,92 +1,3 @@
-<script setup lang="ts">
-import { computed } from 'vue'
-
-import Avatar from '../avatar/Avatar.vue'
-import Badge from '../badge/Badge.vue'
-import Chip from '../chip/Chip.vue'
-import Kbd from '../kbd/Kbd.vue'
-import { kbdKeysMap } from '../kbd/kbdKeys'
-import { SlotOutlet, slotName, useNavigationMenu } from './context'
-import { ChevronDownIcon, ChevronRightIcon, ExternalIcon, NavigationMenuIcon } from './icons'
-import type { NavigationMenuItem } from './NavigationMenu.vue'
-
-// The contents of an item's link: leading (avatar / icon / chip), label, trailing (badge / kbds / chevron).
-const props = defineProps<{
-  item: NavigationMenuItem
-  index: number
-  active: boolean
-  /**
-   * The item's nested-list state (vertical items that are also links or group labels): the chevron then
-   * toggles it on click. Pointer-only: the link carries the keyboard and ARIA side.
-   */
-  disclosure?: { open: boolean; toggle: () => void }
-}>()
-
-const ctx = useNavigationMenu()
-const { ui } = ctx
-
-const vertical = computed(() => ctx.props.orientation === 'vertical')
-const hasChildren = computed(() => !!props.item.children?.length)
-const hasContentSlot = computed(() => !!ctx.slots[slotName(props.item, 'content')])
-const hasLabelSlot = computed(() => !!ctx.slots[slotName(props.item, 'label')])
-const hasTrailingSlot = computed(() => !!ctx.slots[slotName(props.item, 'trailing')])
-
-const disabled = computed(() => !!props.item.disabled)
-const label = computed(() => ctx.getLabel(props.item))
-const hasBadge = computed(() => !!props.item.badge || props.item.badge === 0)
-const hasIndicator = computed(
-  () =>
-    (!vertical.value && (hasChildren.value || hasContentSlot.value)) ||
-    (vertical.value && hasChildren.value),
-)
-const hasTrailing = computed(
-  () =>
-    hasBadge.value ||
-    !!props.item.kbds?.length ||
-    hasIndicator.value ||
-    !!props.item.trailingIcon ||
-    hasTrailingSlot.value,
-)
-const trailingIsTrigger = computed(
-  () => vertical.value && hasChildren.value && !ctx.props.collapsed && !!props.disclosure,
-)
-
-const badgeProps = computed(() =>
-  typeof props.item.badge === 'object' ? props.item.badge : { label: props.item.badge },
-)
-const chipProps = computed(() => (typeof props.item.chip === 'object' ? props.item.chip : {}))
-const kbd = computed(() => {
-  const keys: (keyof typeof kbdKeysMap)[] = []
-  const text: string[] = []
-  for (const key of props.item.kbds ?? []) {
-    if (key in kbdKeysMap) keys.push(key as keyof typeof kbdKeysMap)
-    else text.push(key)
-  }
-  return { keys, text: text.join('') }
-})
-
-const indicatorIcon = computed(() => props.item.trailingIcon || ctx.props.trailingIcon)
-const externalIcon = computed(() =>
-  typeof ctx.props.externalIcon === 'boolean' ? undefined : ctx.props.externalIcon,
-)
-const showExternal = computed(
-  () => props.item.target === '_blank' && ctx.props.externalIcon !== false,
-)
-
-function variantsOf() {
-  return { active: props.active, disabled: disabled.value }
-}
-
-// A click on the chevron of a link that has children toggles it instead of navigating.
-function onTrailingClick(event: Event) {
-  if (trailingIsTrigger.value) {
-    event.preventDefault()
-    event.stopPropagation()
-    props.disclosure!.toggle()
-  }
-}
-</script>
-
 <template>
   <SlotOutlet :name="slotName(item, '')" :slot-props="{ item, index, active, ui }">
     <SlotOutlet :name="slotName(item, 'leading')" :slot-props="{ item, active, index, ui }">
@@ -244,3 +155,92 @@ function onTrailingClick(event: Event) {
     </span>
   </SlotOutlet>
 </template>
+
+<script setup lang="ts">
+import { computed } from 'vue'
+
+import Avatar from '../avatar/Avatar.vue'
+import Badge from '../badge/Badge.vue'
+import Chip from '../chip/Chip.vue'
+import Kbd from '../kbd/Kbd.vue'
+import { kbdKeysMap } from '../kbd/kbdKeys'
+import { SlotOutlet, slotName, useNavigationMenu } from './context'
+import { ChevronDownIcon, ChevronRightIcon, ExternalIcon, NavigationMenuIcon } from './icons'
+import type { NavigationMenuItem } from './NavigationMenu.vue'
+
+// The contents of an item's link: leading (avatar / icon / chip), label, trailing (badge / kbds / chevron).
+const props = defineProps<{
+  item: NavigationMenuItem
+  index: number
+  active: boolean
+  /**
+   * The item's nested-list state (vertical items that are also links or group labels): the chevron then
+   * toggles it on click. Pointer-only: the link carries the keyboard and ARIA side.
+   */
+  disclosure?: { open: boolean; toggle: () => void }
+}>()
+
+const ctx = useNavigationMenu()
+const { ui } = ctx
+
+const vertical = computed(() => ctx.props.orientation === 'vertical')
+const hasChildren = computed(() => !!props.item.children?.length)
+const hasContentSlot = computed(() => !!ctx.slots[slotName(props.item, 'content')])
+const hasLabelSlot = computed(() => !!ctx.slots[slotName(props.item, 'label')])
+const hasTrailingSlot = computed(() => !!ctx.slots[slotName(props.item, 'trailing')])
+
+const disabled = computed(() => !!props.item.disabled)
+const label = computed(() => ctx.getLabel(props.item))
+const hasBadge = computed(() => !!props.item.badge || props.item.badge === 0)
+const hasIndicator = computed(
+  () =>
+    (!vertical.value && (hasChildren.value || hasContentSlot.value)) ||
+    (vertical.value && hasChildren.value),
+)
+const hasTrailing = computed(
+  () =>
+    hasBadge.value ||
+    !!props.item.kbds?.length ||
+    hasIndicator.value ||
+    !!props.item.trailingIcon ||
+    hasTrailingSlot.value,
+)
+const trailingIsTrigger = computed(
+  () => vertical.value && hasChildren.value && !ctx.props.collapsed && !!props.disclosure,
+)
+
+const badgeProps = computed(() =>
+  typeof props.item.badge === 'object' ? props.item.badge : { label: props.item.badge },
+)
+const chipProps = computed(() => (typeof props.item.chip === 'object' ? props.item.chip : {}))
+const kbd = computed(() => {
+  const keys: (keyof typeof kbdKeysMap)[] = []
+  const text: string[] = []
+  for (const key of props.item.kbds ?? []) {
+    if (key in kbdKeysMap) keys.push(key as keyof typeof kbdKeysMap)
+    else text.push(key)
+  }
+  return { keys, text: text.join('') }
+})
+
+const indicatorIcon = computed(() => props.item.trailingIcon || ctx.props.trailingIcon)
+const externalIcon = computed(() =>
+  typeof ctx.props.externalIcon === 'boolean' ? undefined : ctx.props.externalIcon,
+)
+const showExternal = computed(
+  () => props.item.target === '_blank' && ctx.props.externalIcon !== false,
+)
+
+function variantsOf() {
+  return { active: props.active, disabled: disabled.value }
+}
+
+// A click on the chevron of a link that has children toggles it instead of navigating.
+function onTrailingClick(event: Event) {
+  if (trailingIsTrigger.value) {
+    event.preventDefault()
+    event.stopPropagation()
+    props.disclosure!.toggle()
+  }
+}
+</script>

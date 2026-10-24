@@ -1,11 +1,3 @@
-<script setup lang="ts">
-import { Button, Modal } from '@hareui/vue'
-import { Icon } from '@iconify/vue'
-import { ref } from 'vue'
-
-const isOpen = ref(false)
-</script>
-
 <template>
   <div class="flex max-w-md flex-col gap-3">
     <h3 class="text-lg font-semibold text-foreground">Controlled with v-model:open</h3>
@@ -46,3 +38,11 @@ const isOpen = ref(false)
     </Modal>
   </div>
 </template>
+
+<script setup lang="ts">
+import { Button, Modal } from '@hareui/vue'
+import { Icon } from '@iconify/vue'
+import { ref } from 'vue'
+
+const isOpen = ref(false)
+</script>

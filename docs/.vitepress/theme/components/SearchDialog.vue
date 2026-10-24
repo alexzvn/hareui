@@ -1,3 +1,146 @@
+<template>
+  <DialogRoot v-model:open="open">
+    <DialogPortal>
+      <DialogOverlay
+        class="fixed inset-0 z-50 backdrop-blur-xs bg-fd-overlay data-[state=open]:animate-fd-fade-in data-[state=closed]:animate-fd-fade-out"
+      />
+      <DialogContent
+        :aria-describedby="undefined"
+        class="fixed left-1/2 top-4 md:top-[calc(50%-250px)] z-50 w-[calc(100%-1rem)] max-w-screen-sm -translate-x-1/2 rounded-xl text-fd-popover-foreground shadow-2xl shadow-black/50 overflow-hidden data-[state=closed]:animate-fd-dialog-out data-[state=open]:animate-fd-dialog-in *:border-b *:has-[+:last-child[data-empty=true]]:border-b-0 *:data-[empty=true]:border-b-0 *:last:border-b-0 border-none bg-surface"
+      >
+        <DialogTitle class="hidden">Search</DialogTitle>
+        <div class="flex flex-row items-center gap-2 p-3 border-b border-separator">
+          <svg
+            aria-hidden="true"
+            :class="[
+              'lucide lucide-search size-5 text-fd-muted-foreground',
+              loading && 'animate-pulse duration-400',
+            ]"
+            fill="none"
+            height="24"
+            stroke="currentColor"
+            stroke-linecap="round"
+            stroke-linejoin="round"
+            stroke-width="2"
+            viewBox="0 0 24 24"
+            width="24"
+            xmlns="http://www.w3.org/2000/svg"
+          >
+            <path d="m21 21-4.34-4.34" />
+            <circle cx="11" cy="11" r="8" />
+          </svg>
+          <input
+            v-model="search"
+            autofocus
+            class="placeholder:text-fd-muted-foreground w-0 flex-1 bg-transparent text-lg focus-visible:outline-none"
+            placeholder="What are you searching for?"
+          />
+          <Kbd @click="open = false">ESC</Kbd>
+        </div>
+        <div
+          ref="listRef"
+          class="overflow-hidden h-(--fd-animated-height) transition-[height] **:aria-selected:bg-default **:aria-selected:text-foreground"
+          :data-empty="items === null"
+          :style="
+            animatedHeight === undefined
+              ? undefined
+              : { '--fd-animated-height': `${animatedHeight}px` }
+          "
+        >
+          <div
+            :class="['w-full flex flex-col overflow-y-auto max-h-[460px] p-1', !items && 'hidden']"
+          >
+            <div
+              v-if="items?.length === 0"
+              class="py-12 text-center text-sm text-fd-muted-foreground"
+            >
+              No results found
+            </div>
+            <button
+              v-for="item in items ?? []"
+              :key="item.id"
+              type="button"
+              :aria-selected="item.id === active"
+              :class="[ITEM_CLASS, item.id === active && 'bg-fd-accent text-fd-accent-foreground']"
+              @click="select(item)"
+              @pointermove="active = item.id"
+            >
+              <div v-if="item.type === 'suggestion'" class="inline-flex items-center gap-2">
+                <Icon v-if="item.icon" :icon="`gravity-ui:${item.icon}`" />
+                <span>{{ item.name }}</span>
+              </div>
+              <div
+                v-else-if="item.type === 'jump'"
+                class="text-fd-muted-foreground inline-flex items-center gap-2"
+              >
+                <svg
+                  aria-hidden="true"
+                  class="lucide lucide-arrow-right size-4"
+                  fill="none"
+                  height="24"
+                  stroke="currentColor"
+                  stroke-linecap="round"
+                  stroke-linejoin="round"
+                  stroke-width="2"
+                  viewBox="0 0 24 24"
+                  width="24"
+                  xmlns="http://www.w3.org/2000/svg"
+                >
+                  <path d="M5 12h14" />
+                  <path d="m12 5 7 7-7 7" />
+                </svg>
+                <p>
+                  Jump to <span class="text-fd-foreground font-medium">{{ item.name }}</span>
+                </p>
+              </div>
+              <template v-else>
+                <div
+                  class="inline-flex items-center text-fd-muted-foreground text-xs empty:hidden"
+                />
+                <div
+                  v-if="item.type !== 'page'"
+                  role="none"
+                  class="absolute inset-s-3 inset-y-0 w-px bg-fd-border"
+                />
+                <svg
+                  v-if="item.type === 'heading'"
+                  aria-hidden="true"
+                  class="lucide lucide-hash absolute inset-s-6 top-2.5 size-4 text-fd-muted-foreground"
+                  fill="none"
+                  height="24"
+                  stroke="currentColor"
+                  stroke-linecap="round"
+                  stroke-linejoin="round"
+                  stroke-width="2"
+                  viewBox="0 0 24 24"
+                  width="24"
+                  xmlns="http://www.w3.org/2000/svg"
+                >
+                  <line x1="4" x2="20" y1="9" y2="9" />
+                  <line x1="4" x2="20" y1="15" y2="15" />
+                  <line x1="10" x2="8" y1="3" y2="21" />
+                  <line x1="16" x2="14" y1="3" y2="21" />
+                </svg>
+                <div
+                  :class="[
+                    'min-w-0',
+                    item.type === 'text' && 'ps-4',
+                    item.type === 'heading' && 'ps-8',
+                    item.type === 'text' ? 'text-fd-popover-foreground/80' : 'font-medium',
+                  ]"
+                >
+                  <!-- eslint-disable-next-line vue/no-v-html -- built by renderInline from escaped index text -->
+                  <p class="min-w-0" v-html="item.html" />
+                </div>
+              </template>
+            </button>
+          </div>
+        </div>
+      </DialogContent>
+    </DialogPortal>
+  </DialogRoot>
+</template>
+
 <script setup lang="ts">
 import { Kbd } from '@hareui/vue'
 import { Icon } from '@iconify/vue'
@@ -255,146 +398,3 @@ onBeforeUnmount(() => {
 const ITEM_CLASS =
   'relative select-none shrink-0 px-2.5 py-2 text-start text-sm overflow-hidden rounded-lg'
 </script>
-
-<template>
-  <DialogRoot v-model:open="open">
-    <DialogPortal>
-      <DialogOverlay
-        class="fixed inset-0 z-50 backdrop-blur-xs bg-fd-overlay data-[state=open]:animate-fd-fade-in data-[state=closed]:animate-fd-fade-out"
-      />
-      <DialogContent
-        :aria-describedby="undefined"
-        class="fixed left-1/2 top-4 md:top-[calc(50%-250px)] z-50 w-[calc(100%-1rem)] max-w-screen-sm -translate-x-1/2 rounded-xl text-fd-popover-foreground shadow-2xl shadow-black/50 overflow-hidden data-[state=closed]:animate-fd-dialog-out data-[state=open]:animate-fd-dialog-in *:border-b *:has-[+:last-child[data-empty=true]]:border-b-0 *:data-[empty=true]:border-b-0 *:last:border-b-0 border-none bg-surface"
-      >
-        <DialogTitle class="hidden">Search</DialogTitle>
-        <div class="flex flex-row items-center gap-2 p-3 border-b border-separator">
-          <svg
-            aria-hidden="true"
-            :class="[
-              'lucide lucide-search size-5 text-fd-muted-foreground',
-              loading && 'animate-pulse duration-400',
-            ]"
-            fill="none"
-            height="24"
-            stroke="currentColor"
-            stroke-linecap="round"
-            stroke-linejoin="round"
-            stroke-width="2"
-            viewBox="0 0 24 24"
-            width="24"
-            xmlns="http://www.w3.org/2000/svg"
-          >
-            <path d="m21 21-4.34-4.34" />
-            <circle cx="11" cy="11" r="8" />
-          </svg>
-          <input
-            v-model="search"
-            autofocus
-            class="placeholder:text-fd-muted-foreground w-0 flex-1 bg-transparent text-lg focus-visible:outline-none"
-            placeholder="What are you searching for?"
-          />
-          <Kbd @click="open = false">ESC</Kbd>
-        </div>
-        <div
-          ref="listRef"
-          class="overflow-hidden h-(--fd-animated-height) transition-[height] **:aria-selected:bg-default **:aria-selected:text-foreground"
-          :data-empty="items === null"
-          :style="
-            animatedHeight === undefined
-              ? undefined
-              : { '--fd-animated-height': `${animatedHeight}px` }
-          "
-        >
-          <div
-            :class="['w-full flex flex-col overflow-y-auto max-h-[460px] p-1', !items && 'hidden']"
-          >
-            <div
-              v-if="items?.length === 0"
-              class="py-12 text-center text-sm text-fd-muted-foreground"
-            >
-              No results found
-            </div>
-            <button
-              v-for="item in items ?? []"
-              :key="item.id"
-              type="button"
-              :aria-selected="item.id === active"
-              :class="[ITEM_CLASS, item.id === active && 'bg-fd-accent text-fd-accent-foreground']"
-              @click="select(item)"
-              @pointermove="active = item.id"
-            >
-              <div v-if="item.type === 'suggestion'" class="inline-flex items-center gap-2">
-                <Icon v-if="item.icon" :icon="`gravity-ui:${item.icon}`" />
-                <span>{{ item.name }}</span>
-              </div>
-              <div
-                v-else-if="item.type === 'jump'"
-                class="text-fd-muted-foreground inline-flex items-center gap-2"
-              >
-                <svg
-                  aria-hidden="true"
-                  class="lucide lucide-arrow-right size-4"
-                  fill="none"
-                  height="24"
-                  stroke="currentColor"
-                  stroke-linecap="round"
-                  stroke-linejoin="round"
-                  stroke-width="2"
-                  viewBox="0 0 24 24"
-                  width="24"
-                  xmlns="http://www.w3.org/2000/svg"
-                >
-                  <path d="M5 12h14" />
-                  <path d="m12 5 7 7-7 7" />
-                </svg>
-                <p>
-                  Jump to <span class="text-fd-foreground font-medium">{{ item.name }}</span>
-                </p>
-              </div>
-              <template v-else>
-                <div
-                  class="inline-flex items-center text-fd-muted-foreground text-xs empty:hidden"
-                />
-                <div
-                  v-if="item.type !== 'page'"
-                  role="none"
-                  class="absolute inset-s-3 inset-y-0 w-px bg-fd-border"
-                />
-                <svg
-                  v-if="item.type === 'heading'"
-                  aria-hidden="true"
-                  class="lucide lucide-hash absolute inset-s-6 top-2.5 size-4 text-fd-muted-foreground"
-                  fill="none"
-                  height="24"
-                  stroke="currentColor"
-                  stroke-linecap="round"
-                  stroke-linejoin="round"
-                  stroke-width="2"
-                  viewBox="0 0 24 24"
-                  width="24"
-                  xmlns="http://www.w3.org/2000/svg"
-                >
-                  <line x1="4" x2="20" y1="9" y2="9" />
-                  <line x1="4" x2="20" y1="15" y2="15" />
-                  <line x1="10" x2="8" y1="3" y2="21" />
-                  <line x1="16" x2="14" y1="3" y2="21" />
-                </svg>
-                <div
-                  :class="[
-                    'min-w-0',
-                    item.type === 'text' && 'ps-4',
-                    item.type === 'heading' && 'ps-8',
-                    item.type === 'text' ? 'text-fd-popover-foreground/80' : 'font-medium',
-                  ]"
-                >
-                  <!-- eslint-disable-next-line vue/no-v-html -- built by renderInline from escaped index text -->
-                  <p class="min-w-0" v-html="item.html" />
-                </div>
-              </template>
-            </button>
-          </div>
-        </div>
-      </DialogContent>
-    </DialogPortal>
-  </DialogRoot>
-</template>

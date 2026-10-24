@@ -1,3 +1,35 @@
+<template>
+  <ChartSurface :width="width" :height="height" :legend="config.legend?.position">
+    <template v-if="config.legend" #legend>
+      <slot name="legend" :items="config.legendItems" :toggle="toggle">
+        <!-- Centering goes before the root's `ui.legend` classes, so an override wins. -->
+        <ChartLegend
+          v-model:hidden="hidden"
+          :items="config.legendItems"
+          toggleable
+          :orientation="stackedLegend ? 'horizontal' : 'vertical'"
+          v-bind="config.legend.props"
+          :class="[stackedLegend && 'justify-center', chart.classes('legend')]"
+        >
+          <template v-if="$slots['legend-item']" #item="item">
+            <slot name="legend-item" v-bind="item" />
+          </template>
+        </ChartLegend>
+      </slot>
+    </template>
+    <slot name="parts" />
+    <ChartTooltip v-if="config.tooltip" v-bind="config.tooltip">
+      <template v-if="$slots.tooltip" #content="content">
+        <slot name="tooltip" v-bind="content" />
+      </template>
+      <template v-if="$slots['tooltip-footer']" #footer="footer">
+        <slot name="tooltip-footer" v-bind="footer" />
+      </template>
+    </ChartTooltip>
+    <slot />
+  </ChartSurface>
+</template>
+
 <script setup lang="ts">
 import { computed } from 'vue'
 
@@ -39,35 +71,3 @@ const stackedLegend = computed(
   () => props.config.legend?.position === 'top' || props.config.legend?.position === 'bottom',
 )
 </script>
-
-<template>
-  <ChartSurface :width="width" :height="height" :legend="config.legend?.position">
-    <template v-if="config.legend" #legend>
-      <slot name="legend" :items="config.legendItems" :toggle="toggle">
-        <!-- Centering goes before the root's `ui.legend` classes, so an override wins. -->
-        <ChartLegend
-          v-model:hidden="hidden"
-          :items="config.legendItems"
-          toggleable
-          :orientation="stackedLegend ? 'horizontal' : 'vertical'"
-          v-bind="config.legend.props"
-          :class="[stackedLegend && 'justify-center', chart.classes('legend')]"
-        >
-          <template v-if="$slots['legend-item']" #item="item">
-            <slot name="legend-item" v-bind="item" />
-          </template>
-        </ChartLegend>
-      </slot>
-    </template>
-    <slot name="parts" />
-    <ChartTooltip v-if="config.tooltip" v-bind="config.tooltip">
-      <template v-if="$slots.tooltip" #content="content">
-        <slot name="tooltip" v-bind="content" />
-      </template>
-      <template v-if="$slots['tooltip-footer']" #footer="footer">
-        <slot name="tooltip-footer" v-bind="footer" />
-      </template>
-    </ChartTooltip>
-    <slot />
-  </ChartSurface>
-</template>

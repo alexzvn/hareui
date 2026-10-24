@@ -1,28 +1,3 @@
-<script setup lang="ts">
-import { Icon } from '@iconify/vue'
-import { computed } from 'vue'
-
-import { normalizePath, sectionLinks, type SidebarSection } from '../../sidebar'
-import { data as pages } from '../pages.data'
-
-const props = defineProps<{ section?: SidebarSection; path: string }>()
-
-const descriptions = new Map(pages.map((page) => [page.url, page.description]))
-
-const neighbours = computed(() => {
-  if (!props.section) return []
-  const links = sectionLinks(props.section).filter((link) =>
-    descriptions.has(normalizePath(link.link)),
-  )
-  const index = links.findIndex((link) => normalizePath(link.link) === props.path)
-  if (index === -1) return []
-  return [
-    { link: links[index - 1], next: false },
-    { link: links[index + 1], next: true },
-  ].filter((item) => item.link)
-})
-</script>
-
 <template>
   <div v-if="neighbours.length" class="@container my-8 grid gap-4 grid-cols-2">
     <a
@@ -50,3 +25,28 @@ const neighbours = computed(() => {
     </a>
   </div>
 </template>
+
+<script setup lang="ts">
+import { Icon } from '@iconify/vue'
+import { computed } from 'vue'
+
+import { normalizePath, sectionLinks, type SidebarSection } from '../../sidebar'
+import { data as pages } from '../pages.data'
+
+const props = defineProps<{ section?: SidebarSection; path: string }>()
+
+const descriptions = new Map(pages.map((page) => [page.url, page.description]))
+
+const neighbours = computed(() => {
+  if (!props.section) return []
+  const links = sectionLinks(props.section).filter((link) =>
+    descriptions.has(normalizePath(link.link)),
+  )
+  const index = links.findIndex((link) => normalizePath(link.link) === props.path)
+  if (index === -1) return []
+  return [
+    { link: links[index - 1], next: false },
+    { link: links[index + 1], next: true },
+  ].filter((item) => item.link)
+})
+</script>

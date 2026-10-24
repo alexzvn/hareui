@@ -1,21 +1,3 @@
-<script setup lang="ts">
-import type { ListBoxItem } from '@hareui/vue'
-import { Autocomplete } from '@hareui/vue'
-import { Icon } from '@iconify/vue'
-import { ref } from 'vue'
-
-const items: ListBoxItem[] = [
-  { value: 'florida', label: 'Florida' },
-  { value: 'delaware', label: 'Delaware' },
-  { value: 'california', label: 'California' },
-  { value: 'texas', label: 'Texas' },
-  { value: 'new-york', label: 'New York' },
-  { value: 'washington', label: 'Washington' },
-]
-
-const selectedKey = ref<string | null>(null)
-</script>
-
 <template>
   <Autocomplete
     v-model="selectedKey"
@@ -33,3 +15,21 @@ const selectedKey = ref<string | null>(null)
     <template #empty> No results found </template>
   </Autocomplete>
 </template>
+
+<script setup lang="ts">
+import type { ListBoxItem } from '@hareui/vue'
+import { Autocomplete } from '@hareui/vue'
+import { Icon } from '@iconify/vue'
+import { ref } from 'vue'
+
+const items: ListBoxItem[] = [
+  { value: 'florida', label: 'Florida' },
+  { value: 'delaware', label: 'Delaware' },
+  { value: 'california', label: 'California' },
+  { value: 'texas', label: 'Texas' },
+  { value: 'new-york', label: 'New York' },
+  { value: 'washington', label: 'Washington' },
+]
+
+const selectedKey = ref<string | null>(null)
+</script>

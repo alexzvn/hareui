@@ -1,10 +1,3 @@
-<script setup lang="ts">
-import { CellSlider } from '@hareui/vue'
-import { ref } from 'vue'
-
-const speed = ref(1.25)
-</script>
-
 <template>
   <div class="flex w-[252px] flex-col gap-2">
     <CellSlider
@@ -20,3 +13,10 @@ const speed = ref(1.25)
     </p>
   </div>
 </template>
+
+<script setup lang="ts">
+import { CellSlider } from '@hareui/vue'
+import { ref } from 'vue'
+
+const speed = ref(1.25)
+</script>

@@ -1,13 +1,3 @@
-<script setup lang="ts">
-import { Container, Footer } from '@hareui/vue'
-
-const columns = [
-  { label: 'Product', links: ['Components', 'Themes', 'Releases'] },
-  { label: 'Resources', links: ['Docs', 'Figma Kit', 'Playground'] },
-  { label: 'Community', links: ['GitHub', 'Discussions', 'Contributing'] },
-]
-</script>
-
 <template>
   <div class="w-full overflow-hidden rounded-xl border border-separator">
     <Footer class="border-t-0">
@@ -69,3 +59,13 @@ const columns = [
     </Footer>
   </div>
 </template>
+
+<script setup lang="ts">
+import { Container, Footer } from '@hareui/vue'
+
+const columns = [
+  { label: 'Product', links: ['Components', 'Themes', 'Releases'] },
+  { label: 'Resources', links: ['Docs', 'Figma Kit', 'Playground'] },
+  { label: 'Community', links: ['GitHub', 'Discussions', 'Contributing'] },
+]
+</script>

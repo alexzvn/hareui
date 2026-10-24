@@ -1,7 +1,3 @@
-<script setup lang="ts">
-import { Alert, Button, CloseButton, Spinner } from '@hareui/vue'
-</script>
-
 <template>
   <div class="grid w-full max-w-xl gap-4">
     <!-- Default - General information -->
@@ -64,3 +60,7 @@ import { Alert, Button, CloseButton, Spinner } from '@hareui/vue'
     />
   </div>
 </template>
+
+<script setup lang="ts">
+import { Alert, Button, CloseButton, Spinner } from '@hareui/vue'
+</script>

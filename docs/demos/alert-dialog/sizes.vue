@@ -1,11 +1,3 @@
-<script setup lang="ts">
-import { AlertDialog, Button } from '@hareui/vue'
-import { Icon } from '@iconify/vue'
-
-const sizes = ['xs', 'sm', 'md', 'lg', 'cover'] as const
-const capitalize = (s: string) => s.charAt(0).toUpperCase() + s.slice(1)
-</script>
-
 <template>
   <div class="flex flex-wrap gap-4">
     <AlertDialog
@@ -41,3 +33,11 @@ const capitalize = (s: string) => s.charAt(0).toUpperCase() + s.slice(1)
     </AlertDialog>
   </div>
 </template>
+
+<script setup lang="ts">
+import { AlertDialog, Button } from '@hareui/vue'
+import { Icon } from '@iconify/vue'
+
+const sizes = ['xs', 'sm', 'md', 'lg', 'cover'] as const
+const capitalize = (s: string) => s.charAt(0).toUpperCase() + s.slice(1)
+</script>

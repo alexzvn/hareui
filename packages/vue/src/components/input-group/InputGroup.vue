@@ -1,3 +1,53 @@
+<template>
+  <div
+    v-bind="rootAttrs"
+    data-slot="input-group"
+    role="group"
+    :aria-disabled="disabled ? 'true' : undefined"
+    :data-invalid="invalid ? 'true' : undefined"
+    :data-disabled="disabled ? 'true' : undefined"
+    :class="ui.base({ class: [props.ui?.base, props.class] })"
+    @click="onClick"
+  >
+    <div
+      v-if="hasPrefix"
+      data-slot="input-group-prefix"
+      :class="ui.prefix({ class: props.ui?.prefix })"
+    >
+      <slot name="prefix">
+        {{ prefix }}
+      </slot>
+    </div>
+    <textarea
+      v-if="textarea"
+      v-bind="controlAttrs"
+      ref="input"
+      v-model="value"
+      :rows="rows"
+      data-slot="input-group-textarea"
+      :class="ui.input({ class: props.ui?.input })"
+    />
+    <input
+      v-else
+      v-bind="controlAttrs"
+      ref="input"
+      v-model="value"
+      :type="type"
+      data-slot="input-group-input"
+      :class="ui.input({ class: props.ui?.input })"
+    />
+    <div
+      v-if="hasSuffix"
+      data-slot="input-group-suffix"
+      :class="ui.suffix({ class: props.ui?.suffix })"
+    >
+      <slot name="suffix">
+        {{ suffix }}
+      </slot>
+    </div>
+  </div>
+</template>
+
 <script lang="ts">
 import type { ValidateFn } from '../../composables/useFieldValidation'
 import type { ComponentSlots, ComponentVariants } from '../../types/tv'
@@ -216,53 +266,3 @@ const ui = useComponentUI('inputGroup', theme, () => ({
   fullWidth: fullWidth.value,
 }))
 </script>
-
-<template>
-  <div
-    v-bind="rootAttrs"
-    data-slot="input-group"
-    role="group"
-    :aria-disabled="disabled ? 'true' : undefined"
-    :data-invalid="invalid ? 'true' : undefined"
-    :data-disabled="disabled ? 'true' : undefined"
-    :class="ui.base({ class: [props.ui?.base, props.class] })"
-    @click="onClick"
-  >
-    <div
-      v-if="hasPrefix"
-      data-slot="input-group-prefix"
-      :class="ui.prefix({ class: props.ui?.prefix })"
-    >
-      <slot name="prefix">
-        {{ prefix }}
-      </slot>
-    </div>
-    <textarea
-      v-if="textarea"
-      v-bind="controlAttrs"
-      ref="input"
-      v-model="value"
-      :rows="rows"
-      data-slot="input-group-textarea"
-      :class="ui.input({ class: props.ui?.input })"
-    />
-    <input
-      v-else
-      v-bind="controlAttrs"
-      ref="input"
-      v-model="value"
-      :type="type"
-      data-slot="input-group-input"
-      :class="ui.input({ class: props.ui?.input })"
-    />
-    <div
-      v-if="hasSuffix"
-      data-slot="input-group-suffix"
-      :class="ui.suffix({ class: props.ui?.suffix })"
-    >
-      <slot name="suffix">
-        {{ suffix }}
-      </slot>
-    </div>
-  </div>
-</template>

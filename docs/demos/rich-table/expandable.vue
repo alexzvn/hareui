@@ -1,3 +1,29 @@
+<template>
+  <RichTable
+    v-model:expanded="expanded"
+    :data="data"
+    :columns="columns"
+    :expanded-options="{ getRowCanExpand: () => true }"
+    class="w-full"
+  >
+    <template #expanded="{ row }">
+      <!-- `ps-11` lines the details up with the Customer column -->
+      <dl class="grid grid-cols-[auto_1fr] gap-x-6 gap-y-1 ps-11 text-sm">
+        <dt class="text-muted">Transaction</dt>
+        <dd class="font-mono">
+          {{ row.original.id }}
+        </dd>
+        <dt class="text-muted">Email</dt>
+        <dd>{{ row.original.email }}</dd>
+        <dt class="text-muted">Date</dt>
+        <dd>{{ dateTime.format(new Date(row.original.date)) }}</dd>
+        <dt class="text-muted">Fee</dt>
+        <dd>{{ currency.format(row.original.fee) }}</dd>
+      </dl>
+    </template>
+  </RichTable>
+</template>
+
 <script setup lang="ts">
 import type { RichTableColumn, RichTableRow } from '@hareui/vue'
 import { Button, RichTable } from '@hareui/vue'
@@ -105,29 +131,3 @@ const columns: RichTableColumn<Payment>[] = [
   },
 ]
 </script>
-
-<template>
-  <RichTable
-    v-model:expanded="expanded"
-    :data="data"
-    :columns="columns"
-    :expanded-options="{ getRowCanExpand: () => true }"
-    class="w-full"
-  >
-    <template #expanded="{ row }">
-      <!-- `ps-11` lines the details up with the Customer column -->
-      <dl class="grid grid-cols-[auto_1fr] gap-x-6 gap-y-1 ps-11 text-sm">
-        <dt class="text-muted">Transaction</dt>
-        <dd class="font-mono">
-          {{ row.original.id }}
-        </dd>
-        <dt class="text-muted">Email</dt>
-        <dd>{{ row.original.email }}</dd>
-        <dt class="text-muted">Date</dt>
-        <dd>{{ dateTime.format(new Date(row.original.date)) }}</dd>
-        <dt class="text-muted">Fee</dt>
-        <dd>{{ currency.format(row.original.fee) }}</dd>
-      </dl>
-    </template>
-  </RichTable>
-</template>

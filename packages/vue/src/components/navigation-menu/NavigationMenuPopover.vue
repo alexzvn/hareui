@@ -1,3 +1,65 @@
+<template>
+  <Popover
+    v-if="mode === 'click'"
+    :side="side"
+    :align="align"
+    :side-offset="sideOffset"
+    :portal="portal"
+    :class="props.class"
+    :ui="{ dialog: 'p-0' }"
+  >
+    <slot />
+    <template #content="{ close }">
+      <slot name="content" :close="close" />
+    </template>
+  </Popover>
+  <HoverCardRoot
+    v-else
+    :open="open"
+    :open-delay="openDelay"
+    :close-delay="closeDelay"
+    @update:open="onOpenChange"
+  >
+    <HoverCardTrigger
+      :ref="setTrigger"
+      as-child
+      :aria-expanded="open"
+      :aria-controls="open ? contentId : undefined"
+      @keydown="onTriggerKeydown"
+      @blur="suppressOpen = false"
+      @pointerleave="suppressOpen = false"
+    >
+      <slot />
+    </HoverCardTrigger>
+    <HoverCardPortal :disabled="portalTarget.disabled" :to="portalTarget.to">
+      <HoverCardContent
+        :id="contentId"
+        :ref="setContent"
+        data-slot="popover"
+        :side="side"
+        :align="align"
+        :side-offset="sideOffset"
+        :align-offset="alignOffset"
+        :collision-padding="8"
+        :class="
+          ui.base({ class: ['origin-(--reka-hover-card-content-transform-origin)', props.class] })
+        "
+        @keydown="onContentKeydown"
+        @focusout="onContentFocusout"
+      >
+        <slot
+          name="content"
+          :close="
+            () => {
+              open = false
+            }
+          "
+        />
+      </HoverCardContent>
+    </HoverCardPortal>
+  </HoverCardRoot>
+</template>
+
 <script setup lang="ts">
 import { HoverCardContent, HoverCardPortal, HoverCardRoot, HoverCardTrigger } from 'reka-ui'
 import { nextTick, onBeforeUnmount, onMounted, ref, useId, watch } from 'vue'
@@ -129,65 +191,3 @@ function setContent(el: unknown) {
   if (contentEl.value && focusOnMount) nextTick(focusFirst)
 }
 </script>
-
-<template>
-  <Popover
-    v-if="mode === 'click'"
-    :side="side"
-    :align="align"
-    :side-offset="sideOffset"
-    :portal="portal"
-    :class="props.class"
-    :ui="{ dialog: 'p-0' }"
-  >
-    <slot />
-    <template #content="{ close }">
-      <slot name="content" :close="close" />
-    </template>
-  </Popover>
-  <HoverCardRoot
-    v-else
-    :open="open"
-    :open-delay="openDelay"
-    :close-delay="closeDelay"
-    @update:open="onOpenChange"
-  >
-    <HoverCardTrigger
-      :ref="setTrigger"
-      as-child
-      :aria-expanded="open"
-      :aria-controls="open ? contentId : undefined"
-      @keydown="onTriggerKeydown"
-      @blur="suppressOpen = false"
-      @pointerleave="suppressOpen = false"
-    >
-      <slot />
-    </HoverCardTrigger>
-    <HoverCardPortal :disabled="portalTarget.disabled" :to="portalTarget.to">
-      <HoverCardContent
-        :id="contentId"
-        :ref="setContent"
-        data-slot="popover"
-        :side="side"
-        :align="align"
-        :side-offset="sideOffset"
-        :align-offset="alignOffset"
-        :collision-padding="8"
-        :class="
-          ui.base({ class: ['origin-(--reka-hover-card-content-transform-origin)', props.class] })
-        "
-        @keydown="onContentKeydown"
-        @focusout="onContentFocusout"
-      >
-        <slot
-          name="content"
-          :close="
-            () => {
-              open = false
-            }
-          "
-        />
-      </HoverCardContent>
-    </HoverCardPortal>
-  </HoverCardRoot>
-</template>

@@ -1,7 +1,3 @@
-<script setup lang="ts">
-import { Separator } from '@hareui/vue'
-</script>
-
 <template>
   <div class="max-w-md">
     <div class="space-y-1">
@@ -18,3 +14,7 @@ import { Separator } from '@hareui/vue'
     </div>
   </div>
 </template>
+
+<script setup lang="ts">
+import { Separator } from '@hareui/vue'
+</script>

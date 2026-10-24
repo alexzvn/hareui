@@ -1,3 +1,44 @@
+<template>
+  <div class="w-sm">
+    <TagGroup
+      v-model:selected="selected"
+      selection-mode="multiple"
+      removable
+      label="Team Members"
+      description="Select team members for your project"
+      :items="users"
+      @remove="onRemove"
+    >
+      <template #item="{ item }">
+        <Avatar
+          class="size-4"
+          size="sm"
+          alt=""
+          :src="(item as User).avatar"
+          :fallback="(item as User).fallback"
+        />
+        {{ item.label }}
+      </template>
+      <template #empty>
+        <EmptyState class="p-1"> No team members </EmptyState>
+      </template>
+    </TagGroup>
+    <div v-if="selectedUsers.length > 0" class="mt-4 flex flex-col gap-2">
+      <p class="text-sm font-medium text-muted">Selected:</p>
+      <div class="flex flex-wrap gap-2">
+        <div
+          v-for="user in selectedUsers"
+          :key="`${user.id}-selected`"
+          class="flex items-center gap-2 rounded-lg bg-surface-tertiary px-2 py-1"
+        >
+          <Avatar class="size-4" size="sm" alt="" :src="user.avatar" :fallback="user.fallback" />
+          <span class="text-sm">{{ user.label }}</span>
+        </div>
+      </div>
+    </div>
+  </div>
+</template>
+
 <script setup lang="ts">
 import type { TagGroupItem } from '@hareui/vue'
 import { Avatar, EmptyState, TagGroup } from '@hareui/vue'
@@ -60,44 +101,3 @@ function onRemove(ids: string[]) {
   selected.value = selected.value.filter((id) => !ids.includes(id))
 }
 </script>
-
-<template>
-  <div class="w-sm">
-    <TagGroup
-      v-model:selected="selected"
-      selection-mode="multiple"
-      removable
-      label="Team Members"
-      description="Select team members for your project"
-      :items="users"
-      @remove="onRemove"
-    >
-      <template #item="{ item }">
-        <Avatar
-          class="size-4"
-          size="sm"
-          alt=""
-          :src="(item as User).avatar"
-          :fallback="(item as User).fallback"
-        />
-        {{ item.label }}
-      </template>
-      <template #empty>
-        <EmptyState class="p-1"> No team members </EmptyState>
-      </template>
-    </TagGroup>
-    <div v-if="selectedUsers.length > 0" class="mt-4 flex flex-col gap-2">
-      <p class="text-sm font-medium text-muted">Selected:</p>
-      <div class="flex flex-wrap gap-2">
-        <div
-          v-for="user in selectedUsers"
-          :key="`${user.id}-selected`"
-          class="flex items-center gap-2 rounded-lg bg-surface-tertiary px-2 py-1"
-        >
-          <Avatar class="size-4" size="sm" alt="" :src="user.avatar" :fallback="user.fallback" />
-          <span class="text-sm">{{ user.label }}</span>
-        </div>
-      </div>
-    </div>
-  </div>
-</template>

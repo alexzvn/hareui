@@ -1,3 +1,26 @@
+<template>
+  <Card
+    class="w-full max-w-[620px] rounded-2xl"
+    :ui="{ header: 'flex-row flex-wrap items-center justify-between gap-2' }"
+  >
+    <template #header>
+      <h3 class="text-base font-medium text-foreground">Cinema Attendance</h3>
+      <ChartLegend :series="series" :colors="colors" />
+    </template>
+    <ComposedChart
+      :data="data"
+      index="month"
+      :series="series"
+      :colors="colors"
+      :y-axis="{ tickFormatter: formatCount }"
+      :y-axis-right="{ domain: [0, 100], tickFormatter: formatPercent }"
+      :tooltip="{ indicator: 'line' }"
+      aria-label="Cinema tickets, screenings and occupancy by month"
+      :height="280"
+    />
+  </Card>
+</template>
+
 <script setup lang="ts">
 import { Card } from '@hareui/vue'
 import type { ChartComposedSeries } from '@hareui/vue/charts'
@@ -50,26 +73,3 @@ const series = {
 } satisfies Record<string, ChartComposedSeries>
 const colors = ['var(--chart-3)', 'var(--chart-5)', 'var(--chart-1)']
 </script>
-
-<template>
-  <Card
-    class="w-full max-w-[620px] rounded-2xl"
-    :ui="{ header: 'flex-row flex-wrap items-center justify-between gap-2' }"
-  >
-    <template #header>
-      <h3 class="text-base font-medium text-foreground">Cinema Attendance</h3>
-      <ChartLegend :series="series" :colors="colors" />
-    </template>
-    <ComposedChart
-      :data="data"
-      index="month"
-      :series="series"
-      :colors="colors"
-      :y-axis="{ tickFormatter: formatCount }"
-      :y-axis-right="{ domain: [0, 100], tickFormatter: formatPercent }"
-      :tooltip="{ indicator: 'line' }"
-      aria-label="Cinema tickets, screenings and occupancy by month"
-      :height="280"
-    />
-  </Card>
-</template>

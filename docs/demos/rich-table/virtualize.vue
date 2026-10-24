@@ -1,3 +1,13 @@
+<template>
+  <RichTable
+    sticky
+    :data="data"
+    :columns="columns"
+    :virtualize="{ estimateSize: 45, overscan: 8 }"
+    class="h-[420px] w-full"
+  />
+</template>
+
 <script setup lang="ts">
 import type { RichTableColumn } from '@hareui/vue'
 import { RichTable } from '@hareui/vue'
@@ -20,13 +30,3 @@ const columns: RichTableColumn<Row>[] = [
   { accessorKey: 'email', header: 'Email' },
 ]
 </script>
-
-<template>
-  <RichTable
-    sticky
-    :data="data"
-    :columns="columns"
-    :virtualize="{ estimateSize: 45, overscan: 8 }"
-    class="h-[420px] w-full"
-  />
-</template>

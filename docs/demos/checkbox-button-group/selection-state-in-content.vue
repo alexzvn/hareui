@@ -1,20 +1,3 @@
-<script setup lang="ts">
-import { CheckboxButtonGroup, CheckboxButtonGroupItem } from '@hareui/vue'
-
-const extras = [
-  { value: 'oat-milk', label: 'Oat milk', description: 'Swap dairy in every drink', price: 0.6 },
-  { value: 'extra-shot', label: 'Extra shot', description: 'A second espresso shot', price: 0.9 },
-  {
-    value: 'vanilla',
-    label: 'Vanilla syrup',
-    description: 'House-made, lightly sweet',
-    price: 0.5,
-  },
-]
-
-const gbp = new Intl.NumberFormat('en-GB', { style: 'currency', currency: 'GBP' })
-</script>
-
 <template>
   <CheckboxButtonGroup
     class="w-[360px]"
@@ -38,3 +21,20 @@ const gbp = new Intl.NumberFormat('en-GB', { style: 'currency', currency: 'GBP' 
     </CheckboxButtonGroupItem>
   </CheckboxButtonGroup>
 </template>
+
+<script setup lang="ts">
+import { CheckboxButtonGroup, CheckboxButtonGroupItem } from '@hareui/vue'
+
+const extras = [
+  { value: 'oat-milk', label: 'Oat milk', description: 'Swap dairy in every drink', price: 0.6 },
+  { value: 'extra-shot', label: 'Extra shot', description: 'A second espresso shot', price: 0.9 },
+  {
+    value: 'vanilla',
+    label: 'Vanilla syrup',
+    description: 'House-made, lightly sweet',
+    price: 0.5,
+  },
+]
+
+const gbp = new Intl.NumberFormat('en-GB', { style: 'currency', currency: 'GBP' })
+</script>

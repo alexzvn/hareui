@@ -1,7 +1,3 @@
-<script setup lang="ts">
-import { DateField } from '@hareui/vue'
-</script>
-
 <template>
   <DateField
     class="w-64"
@@ -11,3 +7,7 @@ import { DateField } from '@hareui/vue'
     :ui="{ group: 'rounded-xl border border-border/80 bg-default shadow-sm' }"
   />
 </template>
+
+<script setup lang="ts">
+import { DateField } from '@hareui/vue'
+</script>

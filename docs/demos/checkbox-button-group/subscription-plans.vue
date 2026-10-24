@@ -1,3 +1,25 @@
+<template>
+  <CheckboxButtonGroup
+    class="w-[360px]"
+    name="courses"
+    label="Courses"
+    description="Pick the tracks to include."
+    :default-value="['vocabulary', 'speaking']"
+  >
+    <CheckboxButtonGroupItem
+      v-for="course in courses"
+      :key="course.value"
+      :value="course.value"
+      :label="course.label"
+      :description="course.description"
+    >
+      <span class="mt-2 text-xs font-medium text-accent">
+        {{ course.lessons }} {{ course.lessons === 1 ? 'lesson' : 'lessons' }} per week
+      </span>
+    </CheckboxButtonGroupItem>
+  </CheckboxButtonGroup>
+</template>
+
 <script setup lang="ts">
 import { CheckboxButtonGroup, CheckboxButtonGroupItem } from '@hareui/vue'
 
@@ -22,25 +44,3 @@ const courses = [
   },
 ]
 </script>
-
-<template>
-  <CheckboxButtonGroup
-    class="w-[360px]"
-    name="courses"
-    label="Courses"
-    description="Pick the tracks to include."
-    :default-value="['vocabulary', 'speaking']"
-  >
-    <CheckboxButtonGroupItem
-      v-for="course in courses"
-      :key="course.value"
-      :value="course.value"
-      :label="course.label"
-      :description="course.description"
-    >
-      <span class="mt-2 text-xs font-medium text-accent">
-        {{ course.lessons }} {{ course.lessons === 1 ? 'lesson' : 'lessons' }} per week
-      </span>
-    </CheckboxButtonGroupItem>
-  </CheckboxButtonGroup>
-</template>

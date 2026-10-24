@@ -1,3 +1,16 @@
+<template>
+  <Accordion class="w-full max-w-md" :items="items" variant="surface">
+    <template #leading="{ item }">
+      <span class="me-3 size-4 shrink-0 text-muted"
+        ><Icon :icon="item.icon" height="16" width="16"
+      /></span>
+    </template>
+    <template #indicator>
+      <Icon height="16" icon="gravity-ui:chevron-down" width="16" />
+    </template>
+  </Accordion>
+</template>
+
 <script setup lang="ts">
 import type { AccordionItem } from '@hareui/vue'
 import { Accordion } from '@hareui/vue'
@@ -45,16 +58,3 @@ const items: FaqItem[] = [
   },
 ]
 </script>
-
-<template>
-  <Accordion class="w-full max-w-md" :items="items" variant="surface">
-    <template #leading="{ item }">
-      <span class="me-3 size-4 shrink-0 text-muted"
-        ><Icon :icon="item.icon" height="16" width="16"
-      /></span>
-    </template>
-    <template #indicator>
-      <Icon height="16" icon="gravity-ui:chevron-down" width="16" />
-    </template>
-  </Accordion>
-</template>

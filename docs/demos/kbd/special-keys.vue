@@ -1,7 +1,3 @@
-<script setup lang="ts">
-import { Kbd } from '@hareui/vue'
-</script>
-
 <template>
   <div class="space-y-3">
     <p class="text-sm">Press <Kbd keys="enter" /> to confirm or <Kbd keys="escape" /> to cancel.</p>
@@ -12,3 +8,7 @@ import { Kbd } from '@hareui/vue'
     <p class="text-sm">Hold <Kbd keys="space" /> to temporarily enable panning mode.</p>
   </div>
 </template>
+
+<script setup lang="ts">
+import { Kbd } from '@hareui/vue'
+</script>

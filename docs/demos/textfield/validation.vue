@@ -1,13 +1,3 @@
-<script setup lang="ts">
-import { TextArea, TextField } from '@hareui/vue'
-import { computed, ref } from 'vue'
-
-const username = ref('')
-const bio = ref('')
-const usernameInvalid = computed(() => username.value.length > 0 && username.value.length < 3)
-const bioInvalid = computed(() => bio.value.length > 0 && bio.value.length < 20)
-</script>
-
 <template>
   <div class="flex w-full max-w-64 flex-col gap-4">
     <TextField
@@ -33,3 +23,13 @@ const bioInvalid = computed(() => bio.value.length > 0 && bio.value.length < 20)
     </TextField>
   </div>
 </template>
+
+<script setup lang="ts">
+import { TextArea, TextField } from '@hareui/vue'
+import { computed, ref } from 'vue'
+
+const username = ref('')
+const bio = ref('')
+const usernameInvalid = computed(() => username.value.length > 0 && username.value.length < 3)
+const bioInvalid = computed(() => bio.value.length > 0 && bio.value.length < 20)
+</script>

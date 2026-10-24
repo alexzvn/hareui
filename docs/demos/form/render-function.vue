@@ -1,33 +1,3 @@
-<script setup lang="ts">
-import { Button, Form, TextField } from '@hareui/vue'
-import { Icon } from '@iconify/vue'
-
-function onSubmit(e: Event) {
-  e.preventDefault()
-  const formData = new FormData(e.currentTarget as HTMLFormElement)
-  const data: Record<string, string> = {}
-  // Convert FormData to plain object
-  formData.forEach((value, key) => {
-    data[key] = value.toString()
-  })
-  alert(`Form submitted with: ${JSON.stringify(data, null, 2)}`)
-}
-
-function validateEmail(value: string | number) {
-  if (!/^[\w.%+-]+@[A-Z0-9.-]+\.[A-Z]{2,}$/i.test(String(value)))
-    return 'Please enter a valid email address'
-  return null
-}
-
-function validatePassword(value: string | number) {
-  const password = String(value)
-  if (password.length < 8) return 'Password must be at least 8 characters'
-  if (!/[A-Z]/.test(password)) return 'Password must contain at least one uppercase letter'
-  if (!/\d/.test(password)) return 'Password must contain at least one number'
-  return null
-}
-</script>
-
 <template>
   <!-- Attributes fall through to the native <form> element (HeroUI's `render` prop) -->
   <Form class="flex w-96 flex-col gap-4" data-custom="foo" @submit="onSubmit">
@@ -58,3 +28,33 @@ function validatePassword(value: string | number) {
     </div>
   </Form>
 </template>
+
+<script setup lang="ts">
+import { Button, Form, TextField } from '@hareui/vue'
+import { Icon } from '@iconify/vue'
+
+function onSubmit(e: Event) {
+  e.preventDefault()
+  const formData = new FormData(e.currentTarget as HTMLFormElement)
+  const data: Record<string, string> = {}
+  // Convert FormData to plain object
+  formData.forEach((value, key) => {
+    data[key] = value.toString()
+  })
+  alert(`Form submitted with: ${JSON.stringify(data, null, 2)}`)
+}
+
+function validateEmail(value: string | number) {
+  if (!/^[\w.%+-]+@[A-Z0-9.-]+\.[A-Z]{2,}$/i.test(String(value)))
+    return 'Please enter a valid email address'
+  return null
+}
+
+function validatePassword(value: string | number) {
+  const password = String(value)
+  if (password.length < 8) return 'Password must be at least 8 characters'
+  if (!/[A-Z]/.test(password)) return 'Password must contain at least one uppercase letter'
+  if (!/\d/.test(password)) return 'Password must contain at least one number'
+  return null
+}
+</script>

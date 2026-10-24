@@ -1,3 +1,127 @@
+<template>
+  <nav
+    aria-label="pagination"
+    data-slot="pagination"
+    role="navigation"
+    :class="ui.base({ class: [props.ui?.base, props.class] })"
+  >
+    <div
+      v-if="$slots.summary"
+      data-slot="pagination-summary"
+      dir="auto"
+      :class="ui.summary({ class: props.ui?.summary })"
+    >
+      <slot name="summary" :page="current" :total="total" />
+    </div>
+    <ul data-slot="pagination-content" :class="ui.content({ class: props.ui?.content })">
+      <li data-slot="pagination-item" :class="ui.item({ class: props.ui?.item })">
+        <button
+          type="button"
+          data-slot="pagination-previous"
+          :aria-label="prevLabel ? undefined : 'Previous page'"
+          :disabled="isPrevDisabled || undefined"
+          :data-disabled="isPrevDisabled ? 'true' : undefined"
+          :class="navClass"
+          @click="go(current - 1)"
+        >
+          <span
+            aria-hidden="true"
+            data-slot="pagination-previous-icon"
+            :class="ui.icon({ class: props.ui?.icon })"
+          >
+            <slot name="prevIcon">
+              <svg
+                aria-hidden="true"
+                fill="none"
+                height="16"
+                role="presentation"
+                viewBox="0 0 16 16"
+                width="16"
+                xmlns="http://www.w3.org/2000/svg"
+              >
+                <path
+                  clip-rule="evenodd"
+                  d="M10.53 2.97a.75.75 0 0 1 0 1.06L6.56 8l3.97 3.97a.75.75 0 1 1-1.06 1.06l-4.5-4.5a.75.75 0 0 1 0-1.06l4.5-4.5a.75.75 0 0 1 1.06 0"
+                  fill="currentColor"
+                  fill-rule="evenodd"
+                />
+              </svg>
+            </slot>
+          </span>
+          <span v-if="prevLabel">{{ prevLabel }}</span>
+        </button>
+      </li>
+      <template v-if="!hidePages">
+        <li
+          v-for="(entry, index) in entries"
+          :key="entry === 'ellipsis' ? `ellipsis-${index}` : entry"
+          data-slot="pagination-item"
+          :class="ui.item({ class: props.ui?.item })"
+        >
+          <span
+            v-if="entry === 'ellipsis'"
+            aria-hidden="true"
+            data-slot="pagination-ellipsis"
+            :class="ui.ellipsis({ class: props.ui?.ellipsis })"
+            >&hellip;</span
+          >
+          <button
+            v-else
+            type="button"
+            data-slot="pagination-link"
+            :aria-current="entry === current ? 'page' : undefined"
+            :data-active="entry === current ? 'true' : undefined"
+            :disabled="disabled || undefined"
+            :class="linkClass"
+            @click="go(entry)"
+          >
+            <slot name="link" :page="entry" :active="entry === current">
+              {{ entry }}
+            </slot>
+          </button>
+        </li>
+      </template>
+      <li data-slot="pagination-item" :class="ui.item({ class: props.ui?.item })">
+        <button
+          type="button"
+          data-slot="pagination-next"
+          :aria-label="nextLabel ? undefined : 'Next page'"
+          :disabled="isNextDisabled || undefined"
+          :data-disabled="isNextDisabled ? 'true' : undefined"
+          :class="navClass"
+          @click="go(current + 1)"
+        >
+          <span v-if="nextLabel">{{ nextLabel }}</span>
+          <span
+            aria-hidden="true"
+            data-slot="pagination-next-icon"
+            :class="ui.icon({ class: props.ui?.icon })"
+          >
+            <slot name="nextIcon">
+              <svg
+                aria-hidden="true"
+                fill="none"
+                height="16"
+                role="presentation"
+                viewBox="0 0 16 16"
+                width="16"
+                xmlns="http://www.w3.org/2000/svg"
+              >
+                <path
+                  clip-rule="evenodd"
+                  d="M5.47 2.97a.75.75 0 0 1 1.06 0l4.5 4.5a.75.75 0 0 1 0 1.06l-4.5 4.5a.75.75 0 1 1-1.06-1.06L9.44 8 5.47 4.03a.75.75 0 0 1 0-1.06Z"
+                  fill="currentColor"
+                  fill-rule="evenodd"
+                />
+              </svg>
+            </slot>
+          </span>
+        </button>
+      </li>
+    </ul>
+  </nav>
+</template>
+
 <script lang="ts">
 import type { ComponentSlots, ComponentVariants } from '../../types/tv'
 import theme from './theme'
@@ -126,127 +250,3 @@ const navClass = computed(() =>
   ui.value.link({ class: [ui.value.nav(), props.ui?.link, props.ui?.nav] }),
 )
 </script>
-
-<template>
-  <nav
-    aria-label="pagination"
-    data-slot="pagination"
-    role="navigation"
-    :class="ui.base({ class: [props.ui?.base, props.class] })"
-  >
-    <div
-      v-if="$slots.summary"
-      data-slot="pagination-summary"
-      dir="auto"
-      :class="ui.summary({ class: props.ui?.summary })"
-    >
-      <slot name="summary" :page="current" :total="total" />
-    </div>
-    <ul data-slot="pagination-content" :class="ui.content({ class: props.ui?.content })">
-      <li data-slot="pagination-item" :class="ui.item({ class: props.ui?.item })">
-        <button
-          type="button"
-          data-slot="pagination-previous"
-          :aria-label="prevLabel ? undefined : 'Previous page'"
-          :disabled="isPrevDisabled || undefined"
-          :data-disabled="isPrevDisabled ? 'true' : undefined"
-          :class="navClass"
-          @click="go(current - 1)"
-        >
-          <span
-            aria-hidden="true"
-            data-slot="pagination-previous-icon"
-            :class="ui.icon({ class: props.ui?.icon })"
-          >
-            <slot name="prevIcon">
-              <svg
-                aria-hidden="true"
-                fill="none"
-                height="16"
-                role="presentation"
-                viewBox="0 0 16 16"
-                width="16"
-                xmlns="http://www.w3.org/2000/svg"
-              >
-                <path
-                  clip-rule="evenodd"
-                  d="M10.53 2.97a.75.75 0 0 1 0 1.06L6.56 8l3.97 3.97a.75.75 0 1 1-1.06 1.06l-4.5-4.5a.75.75 0 0 1 0-1.06l4.5-4.5a.75.75 0 0 1 1.06 0"
-                  fill="currentColor"
-                  fill-rule="evenodd"
-                />
-              </svg>
-            </slot>
-          </span>
-          <span v-if="prevLabel">{{ prevLabel }}</span>
-        </button>
-      </li>
-      <template v-if="!hidePages">
-        <li
-          v-for="(entry, index) in entries"
-          :key="entry === 'ellipsis' ? `ellipsis-${index}` : entry"
-          data-slot="pagination-item"
-          :class="ui.item({ class: props.ui?.item })"
-        >
-          <span
-            v-if="entry === 'ellipsis'"
-            aria-hidden="true"
-            data-slot="pagination-ellipsis"
-            :class="ui.ellipsis({ class: props.ui?.ellipsis })"
-            >&hellip;</span
-          >
-          <button
-            v-else
-            type="button"
-            data-slot="pagination-link"
-            :aria-current="entry === current ? 'page' : undefined"
-            :data-active="entry === current ? 'true' : undefined"
-            :disabled="disabled || undefined"
-            :class="linkClass"
-            @click="go(entry)"
-          >
-            <slot name="link" :page="entry" :active="entry === current">
-              {{ entry }}
-            </slot>
-          </button>
-        </li>
-      </template>
-      <li data-slot="pagination-item" :class="ui.item({ class: props.ui?.item })">
-        <button
-          type="button"
-          data-slot="pagination-next"
-          :aria-label="nextLabel ? undefined : 'Next page'"
-          :disabled="isNextDisabled || undefined"
-          :data-disabled="isNextDisabled ? 'true' : undefined"
-          :class="navClass"
-          @click="go(current + 1)"
-        >
-          <span v-if="nextLabel">{{ nextLabel }}</span>
-          <span
-            aria-hidden="true"
-            data-slot="pagination-next-icon"
-            :class="ui.icon({ class: props.ui?.icon })"
-          >
-            <slot name="nextIcon">
-              <svg
-                aria-hidden="true"
-                fill="none"
-                height="16"
-                role="presentation"
-                viewBox="0 0 16 16"
-                width="16"
-                xmlns="http://www.w3.org/2000/svg"
-              >
-                <path
-                  clip-rule="evenodd"
-                  d="M5.47 2.97a.75.75 0 0 1 1.06 0l4.5 4.5a.75.75 0 0 1 0 1.06l-4.5 4.5a.75.75 0 1 1-1.06-1.06L9.44 8 5.47 4.03a.75.75 0 0 1 0-1.06Z"
-                  fill="currentColor"
-                  fill-rule="evenodd"
-                />
-              </svg>
-            </slot>
-          </span>
-        </button>
-      </li>
-    </ul>
-  </nav>
-</template>

@@ -1,7 +1,3 @@
-<script setup lang="ts">
-import { Card } from '@hareui/vue'
-</script>
-
 <template>
   <div class="flex flex-col gap-4">
     <Card
@@ -41,3 +37,7 @@ import { Card } from '@hareui/vue'
     </Card>
   </div>
 </template>
+
+<script setup lang="ts">
+import { Card } from '@hareui/vue'
+</script>

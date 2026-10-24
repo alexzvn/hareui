@@ -1,3 +1,11 @@
+<template>
+  <NavigationMenu
+    :items="items"
+    :ui="{ linkLabel: 'max-sm:sr-only' }"
+    class="w-full justify-center"
+  />
+</template>
+
 <script setup lang="ts">
 import type { NavigationMenuItem } from '@hareui/vue'
 import { NavigationMenu } from '@hareui/vue'
@@ -114,11 +122,3 @@ const items: NavigationMenuItem[] = [
   { label: 'Help', icon: icon('circle-question'), disabled: true },
 ]
 </script>
-
-<template>
-  <NavigationMenu
-    :items="items"
-    :ui="{ linkLabel: 'max-sm:sr-only' }"
-    class="w-full justify-center"
-  />
-</template>

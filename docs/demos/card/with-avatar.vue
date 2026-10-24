@@ -1,7 +1,3 @@
-<script setup lang="ts">
-import { Avatar, Card } from '@hareui/vue'
-</script>
-
 <template>
   <div class="flex flex-wrap gap-4">
     <Card
@@ -59,3 +55,7 @@ import { Avatar, Card } from '@hareui/vue'
     </Card>
   </div>
 </template>
+
+<script setup lang="ts">
+import { Avatar, Card } from '@hareui/vue'
+</script>

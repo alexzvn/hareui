@@ -1,8 +1,3 @@
-<script setup lang="ts">
-import { DateField } from '@hareui/vue'
-import { Icon } from '@iconify/vue'
-</script>
-
 <template>
   <DateField class="w-[256px]" name="date" label="Date" description="Enter a date">
     <template #prefix>
@@ -13,3 +8,8 @@ import { Icon } from '@iconify/vue'
     </template>
   </DateField>
 </template>
+
+<script setup lang="ts">
+import { DateField } from '@hareui/vue'
+import { Icon } from '@iconify/vue'
+</script>

@@ -1,7 +1,3 @@
-<script setup lang="ts">
-import { SearchField } from '@hareui/vue'
-</script>
-
 <template>
   <div class="flex flex-col gap-4">
     <SearchField
@@ -32,3 +28,7 @@ import { SearchField } from '@hareui/vue'
     </SearchField>
   </div>
 </template>
+
+<script setup lang="ts">
+import { SearchField } from '@hareui/vue'
+</script>

@@ -1,3 +1,29 @@
+<template>
+  <Select class="w-[256px]" label="User" placeholder="Select a user" :items="users">
+    <template #value="{ selectedItems, isPlaceholder, text }">
+      <template v-if="isPlaceholder">
+        {{ text }}
+      </template>
+      <template v-else-if="selectedItems.length > 1">
+        {{ selectedItems.length }} users selected
+      </template>
+      <div v-else class="flex items-center gap-2">
+        <Avatar
+          class="size-4"
+          size="sm"
+          alt=""
+          :src="selectedItems[0]!.avatarUrl"
+          :fallback="selectedItems[0]!.fallback"
+        />
+        <span>{{ selectedItems[0]!.label }}</span>
+      </div>
+    </template>
+    <template #item-leading="{ item }">
+      <Avatar size="sm" alt="" :src="item.avatarUrl" :fallback="item.fallback" />
+    </template>
+  </Select>
+</template>
+
 <script setup lang="ts">
 import type { ListBoxItem } from '@hareui/vue'
 import { Avatar, Select } from '@hareui/vue'
@@ -45,29 +71,3 @@ const users: User[] = [
   },
 ]
 </script>
-
-<template>
-  <Select class="w-[256px]" label="User" placeholder="Select a user" :items="users">
-    <template #value="{ selectedItems, isPlaceholder, text }">
-      <template v-if="isPlaceholder">
-        {{ text }}
-      </template>
-      <template v-else-if="selectedItems.length > 1">
-        {{ selectedItems.length }} users selected
-      </template>
-      <div v-else class="flex items-center gap-2">
-        <Avatar
-          class="size-4"
-          size="sm"
-          alt=""
-          :src="selectedItems[0]!.avatarUrl"
-          :fallback="selectedItems[0]!.fallback"
-        />
-        <span>{{ selectedItems[0]!.label }}</span>
-      </div>
-    </template>
-    <template #item-leading="{ item }">
-      <Avatar size="sm" alt="" :src="item.avatarUrl" :fallback="item.fallback" />
-    </template>
-  </Select>
-</template>

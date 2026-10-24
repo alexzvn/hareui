@@ -1,7 +1,3 @@
-<script setup lang="ts">
-import { InputOtp, Link, Surface } from '@hareui/vue'
-</script>
-
 <template>
   <Surface class="flex w-full flex-col gap-2 rounded-3xl p-6">
     <p class="text-sm text-muted">We've sent a code to a****@gmail.com</p>
@@ -12,3 +8,7 @@ import { InputOtp, Link, Surface } from '@hareui/vue'
     </div>
   </Surface>
 </template>
+
+<script setup lang="ts">
+import { InputOtp, Link, Surface } from '@hareui/vue'
+</script>

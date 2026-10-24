@@ -1,3 +1,88 @@
+<template>
+  <Handle v-if="side === 'right'" />
+
+  <aside
+    :id="id"
+    ref="el"
+    data-slot="dashboard-sidebar"
+    v-bind="$attrs"
+    :data-side="side"
+    :data-collapsed="isCollapsed"
+    :data-dragging="isDragging"
+    :class="ui.root({ class: [props.ui?.root, props.class] })"
+    :style="{ '--width': `${size || 0}${unit}` }"
+  >
+    <div
+      v-if="!!slots.header"
+      data-slot="dashboard-sidebar-header"
+      :class="ui.header({ class: props.ui?.header })"
+    >
+      <slot name="header" :collapsed="isCollapsed" :collapse="collapse" />
+    </div>
+
+    <div data-slot="dashboard-sidebar-body" :class="ui.body({ class: props.ui?.body })">
+      <slot :collapsed="isCollapsed" :collapse="collapse" />
+    </div>
+
+    <div
+      v-if="!!slots.footer"
+      data-slot="dashboard-sidebar-footer"
+      :class="ui.footer({ class: props.ui?.footer })"
+    >
+      <slot name="footer" :collapsed="isCollapsed" :collapse="collapse" />
+    </div>
+  </aside>
+
+  <Handle v-if="side === 'left'" />
+
+  <component :is="Menu" v-model:open="open" v-bind="menuProps" :ui="menuClasses">
+    <template #content="{ close }">
+      <div :id="menuId" data-slot="dashboard-sidebar-menu" class="contents">
+        <slot name="content" :close="close">
+          <VisuallyHidden as-child>
+            <DialogTitle>{{ menuTitle }}</DialogTitle>
+          </VisuallyHidden>
+
+          <div
+            v-if="mode === 'drawer'"
+            aria-hidden="true"
+            data-slot="drawer-handle"
+            class="flex items-center justify-center pt-2 pb-1"
+          >
+            <div class="h-1 w-9 rounded-xs bg-separator" />
+          </div>
+
+          <div class="contents" @click="onMenuClick">
+            <div
+              v-if="!!slots.header || mode !== 'drawer'"
+              data-slot="dashboard-sidebar-header"
+              :class="ui.header({ class: props.ui?.header })"
+            >
+              <Toggle v-if="mode !== 'drawer' && toggleSide === 'left'" />
+
+              <slot name="header" :collapsed="false" :collapse="() => {}" />
+
+              <Toggle v-if="mode !== 'drawer' && toggleSide === 'right'" />
+            </div>
+
+            <div data-slot="dashboard-sidebar-body" :class="ui.body({ class: props.ui?.body })">
+              <slot :collapsed="false" :collapse="() => {}" />
+            </div>
+
+            <div
+              v-if="!!slots.footer"
+              data-slot="dashboard-sidebar-footer"
+              :class="ui.footer({ class: props.ui?.footer })"
+            >
+              <slot name="footer" :collapsed="false" :collapse="() => {}" />
+            </div>
+          </div>
+        </slot>
+      </div>
+    </template>
+  </component>
+</template>
+
 <script lang="ts">
 import type { ComponentSlots, ComponentUI } from '../../types/tv'
 import type { ButtonProps } from '../button/Button.vue'
@@ -354,88 +439,3 @@ const Toggle: FunctionalComponent = () => {
   )
 }
 </script>
-
-<template>
-  <Handle v-if="side === 'right'" />
-
-  <aside
-    :id="id"
-    ref="el"
-    data-slot="dashboard-sidebar"
-    v-bind="$attrs"
-    :data-side="side"
-    :data-collapsed="isCollapsed"
-    :data-dragging="isDragging"
-    :class="ui.root({ class: [props.ui?.root, props.class] })"
-    :style="{ '--width': `${size || 0}${unit}` }"
-  >
-    <div
-      v-if="!!slots.header"
-      data-slot="dashboard-sidebar-header"
-      :class="ui.header({ class: props.ui?.header })"
-    >
-      <slot name="header" :collapsed="isCollapsed" :collapse="collapse" />
-    </div>
-
-    <div data-slot="dashboard-sidebar-body" :class="ui.body({ class: props.ui?.body })">
-      <slot :collapsed="isCollapsed" :collapse="collapse" />
-    </div>
-
-    <div
-      v-if="!!slots.footer"
-      data-slot="dashboard-sidebar-footer"
-      :class="ui.footer({ class: props.ui?.footer })"
-    >
-      <slot name="footer" :collapsed="isCollapsed" :collapse="collapse" />
-    </div>
-  </aside>
-
-  <Handle v-if="side === 'left'" />
-
-  <component :is="Menu" v-model:open="open" v-bind="menuProps" :ui="menuClasses">
-    <template #content="{ close }">
-      <div :id="menuId" data-slot="dashboard-sidebar-menu" class="contents">
-        <slot name="content" :close="close">
-          <VisuallyHidden as-child>
-            <DialogTitle>{{ menuTitle }}</DialogTitle>
-          </VisuallyHidden>
-
-          <div
-            v-if="mode === 'drawer'"
-            aria-hidden="true"
-            data-slot="drawer-handle"
-            class="flex items-center justify-center pt-2 pb-1"
-          >
-            <div class="h-1 w-9 rounded-xs bg-separator" />
-          </div>
-
-          <div class="contents" @click="onMenuClick">
-            <div
-              v-if="!!slots.header || mode !== 'drawer'"
-              data-slot="dashboard-sidebar-header"
-              :class="ui.header({ class: props.ui?.header })"
-            >
-              <Toggle v-if="mode !== 'drawer' && toggleSide === 'left'" />
-
-              <slot name="header" :collapsed="false" :collapse="() => {}" />
-
-              <Toggle v-if="mode !== 'drawer' && toggleSide === 'right'" />
-            </div>
-
-            <div data-slot="dashboard-sidebar-body" :class="ui.body({ class: props.ui?.body })">
-              <slot :collapsed="false" :collapse="() => {}" />
-            </div>
-
-            <div
-              v-if="!!slots.footer"
-              data-slot="dashboard-sidebar-footer"
-              :class="ui.footer({ class: props.ui?.footer })"
-            >
-              <slot name="footer" :collapsed="false" :collapse="() => {}" />
-            </div>
-          </div>
-        </slot>
-      </div>
-    </template>
-  </component>
-</template>

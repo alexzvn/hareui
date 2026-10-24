@@ -1,3 +1,22 @@
+<template>
+  <div class="flex w-full justify-center">
+    <AvatarGroup :max="5">
+      <Avatar
+        v-for="(item, index) in avatars"
+        :key="`${item.name}-${index}`"
+        :alt="item.name"
+        :fallback="
+          item.name
+            .split(' ')
+            .map((n) => n[0])
+            .join('')
+        "
+        :src="item.image"
+      />
+    </AvatarGroup>
+  </div>
+</template>
+
 <script setup lang="ts">
 import { Avatar, AvatarGroup } from '@hareui/vue'
 
@@ -23,22 +42,3 @@ const avatars = [
   },
 ]
 </script>
-
-<template>
-  <div class="flex w-full justify-center">
-    <AvatarGroup :max="5">
-      <Avatar
-        v-for="(item, index) in avatars"
-        :key="`${item.name}-${index}`"
-        :alt="item.name"
-        :fallback="
-          item.name
-            .split(' ')
-            .map((n) => n[0])
-            .join('')
-        "
-        :src="item.image"
-      />
-    </AvatarGroup>
-  </div>
-</template>

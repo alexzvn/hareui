@@ -1,7 +1,3 @@
-<script setup lang="ts">
-import { Button, DashboardGroup, DashboardNavbar, DashboardPanel } from '@hareui/vue'
-</script>
-
 <template>
   <DashboardGroup :persistent="false">
     <DashboardPanel id="basic">
@@ -30,3 +26,7 @@ import { Button, DashboardGroup, DashboardNavbar, DashboardPanel } from '@hareui
     </DashboardPanel>
   </DashboardGroup>
 </template>
+
+<script setup lang="ts">
+import { Button, DashboardGroup, DashboardNavbar, DashboardPanel } from '@hareui/vue'
+</script>

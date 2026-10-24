@@ -1,13 +1,3 @@
-<script setup lang="ts">
-import { CellColorPicker } from '@hareui/vue'
-
-const activities = [
-  { name: 'Running', color: '#F97316' },
-  { name: 'Cycling', color: '#0EA5E9' },
-  { name: 'Swimming', color: '#14B8A6' },
-]
-</script>
-
 <template>
   <fieldset class="w-80 rounded-3xl border border-separator p-2">
     <legend class="px-2 text-xs font-medium text-muted">Chart colors</legend>
@@ -21,3 +11,13 @@ const activities = [
     </div>
   </fieldset>
 </template>
+
+<script setup lang="ts">
+import { CellColorPicker } from '@hareui/vue'
+
+const activities = [
+  { name: 'Running', color: '#F97316' },
+  { name: 'Cycling', color: '#0EA5E9' },
+  { name: 'Swimming', color: '#14B8A6' },
+]
+</script>

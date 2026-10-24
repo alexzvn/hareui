@@ -1,3 +1,18 @@
+<template>
+  <ColorSlider
+    :channel="channel"
+    :color-space="colorSpace"
+    :model-value="modelValue"
+    :class="props.class"
+    :ui="ui"
+    :style="{
+      '--accent-slider-track': trackBackground,
+      '--accent-slider-thumb': thumbBackground,
+    }"
+    @update:model-value="emit('update:modelValue', $event)"
+  />
+</template>
+
 <script setup lang="ts">
 import { ColorSlider } from '@hareui/vue'
 // Port of the HeroUI docs' own `components/color-picker/components/color-slider.tsx` (horizontal only): a HareUI
@@ -31,18 +46,3 @@ const ui = computed(() => ({
   ],
 }))
 </script>
-
-<template>
-  <ColorSlider
-    :channel="channel"
-    :color-space="colorSpace"
-    :model-value="modelValue"
-    :class="props.class"
-    :ui="ui"
-    :style="{
-      '--accent-slider-track': trackBackground,
-      '--accent-slider-thumb': thumbBackground,
-    }"
-    @update:model-value="emit('update:modelValue', $event)"
-  />
-</template>

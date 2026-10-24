@@ -1,7 +1,3 @@
-<script setup lang="ts">
-import { Calendar, DatePicker } from '@hareui/vue'
-</script>
-
 <template>
   <!--
     HeroUI's custom-styles demo restyles the embedded Calendar's own sub-parts directly. Option A's
@@ -28,3 +24,7 @@ import { Calendar, DatePicker } from '@hareui/vue'
     </template>
   </DatePicker>
 </template>
+
+<script setup lang="ts">
+import { Calendar, DatePicker } from '@hareui/vue'
+</script>

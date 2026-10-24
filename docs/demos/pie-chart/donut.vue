@@ -1,19 +1,3 @@
-<script setup lang="ts">
-import { Card } from '@hareui/vue'
-import { PieChart } from '@hareui/vue/charts'
-
-const data = [
-  { channel: 'Email', tickets: 3840, fill: 'var(--chart-4)' },
-  { channel: 'Chat', tickets: 2610, fill: 'var(--chart-3)' },
-  { channel: 'Phone', tickets: 1250, fill: 'var(--chart-2)' },
-  { channel: 'Forum', tickets: 960, fill: 'var(--chart-1)' },
-]
-
-function formatValue(value: number) {
-  return value.toLocaleString()
-}
-</script>
-
 <template>
   <Card
     class="w-full max-w-[360px] rounded-2xl"
@@ -31,3 +15,19 @@ function formatValue(value: number) {
     />
   </Card>
 </template>
+
+<script setup lang="ts">
+import { Card } from '@hareui/vue'
+import { PieChart } from '@hareui/vue/charts'
+
+const data = [
+  { channel: 'Email', tickets: 3840, fill: 'var(--chart-4)' },
+  { channel: 'Chat', tickets: 2610, fill: 'var(--chart-3)' },
+  { channel: 'Phone', tickets: 1250, fill: 'var(--chart-2)' },
+  { channel: 'Forum', tickets: 960, fill: 'var(--chart-1)' },
+]
+
+function formatValue(value: number) {
+  return value.toLocaleString()
+}
+</script>

@@ -1,8 +1,3 @@
-<script setup lang="ts">
-import { DatePicker } from '@hareui/vue'
-import { getLocalTimeZone, today } from '@internationalized/date'
-</script>
-
 <template>
   <DatePicker
     class="w-72"
@@ -13,3 +8,8 @@ import { getLocalTimeZone, today } from '@internationalized/date'
     :default-value="today(getLocalTimeZone())"
   />
 </template>
+
+<script setup lang="ts">
+import { DatePicker } from '@hareui/vue'
+import { getLocalTimeZone, today } from '@internationalized/date'
+</script>

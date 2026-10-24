@@ -1,7 +1,3 @@
-<script setup lang="ts">
-import { App, Button, Modal } from '@hareui/vue'
-</script>
-
 <template>
   <App portal="#app-portal-target" :toaster="null">
     <!-- The portal target: overlays of this subtree teleport here instead of `document.body`. -->
@@ -30,3 +26,7 @@ import { App, Button, Modal } from '@hareui/vue'
     </div>
   </App>
 </template>
+
+<script setup lang="ts">
+import { App, Button, Modal } from '@hareui/vue'
+</script>

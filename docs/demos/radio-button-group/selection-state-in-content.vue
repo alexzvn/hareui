@@ -1,23 +1,3 @@
-<script setup lang="ts">
-import { RadioButtonGroup, RadioButtonGroupItem } from '@hareui/vue'
-
-const intensities = [
-  { value: 'easy', title: 'Easy', description: 'Walks and light stretching', minutes: 20 },
-  {
-    value: 'moderate',
-    title: 'Moderate',
-    description: 'Jogging, cycling, yoga flows',
-    minutes: 35,
-  },
-  {
-    value: 'intense',
-    title: 'Intense',
-    description: 'Intervals and strength circuits',
-    minutes: 45,
-  },
-]
-</script>
-
 <template>
   <RadioButtonGroup
     class="w-[min(360px,calc(100vw-2rem))]"
@@ -40,3 +20,23 @@ const intensities = [
     </RadioButtonGroupItem>
   </RadioButtonGroup>
 </template>
+
+<script setup lang="ts">
+import { RadioButtonGroup, RadioButtonGroupItem } from '@hareui/vue'
+
+const intensities = [
+  { value: 'easy', title: 'Easy', description: 'Walks and light stretching', minutes: 20 },
+  {
+    value: 'moderate',
+    title: 'Moderate',
+    description: 'Jogging, cycling, yoga flows',
+    minutes: 35,
+  },
+  {
+    value: 'intense',
+    title: 'Intense',
+    description: 'Intervals and strength circuits',
+    minutes: 45,
+  },
+]
+</script>

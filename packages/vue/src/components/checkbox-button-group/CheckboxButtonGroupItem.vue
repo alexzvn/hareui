@@ -1,105 +1,3 @@
-<script lang="ts">
-import type { Component } from 'vue'
-
-import type { ComponentSlots } from '../../types/tv'
-import theme from './theme'
-
-export interface CheckboxButtonGroupItemProps {
-  /** The value added to / removed from the group's `v-model` when the item is toggled. */
-  value: string
-  /** The item title. */
-  label?: string
-  /** Help text rendered below the title. */
-  description?: string
-  /** Leading icon: an icon class (`i-lucide-cloud`) or a component. */
-  icon?: string | Component
-  /**
-   * Whether the item is disabled.
-   * @defaultValue false
-   */
-  disabled?: boolean
-  /**
-   * Whether to render the selection indicator in the top-right corner. Set `false` to rely on the selected ring alone.
-   * @defaultValue true
-   */
-  indicator?: boolean
-  /** The id of the item's checkbox. Generated when omitted. */
-  id?: string
-  /** Additional classes merged into the card. */
-  class?: any
-  /** Per-slot class overrides for this item. Merged after the group's `ui`. */
-  ui?: Omit<ComponentSlots<typeof theme>, 'base'>
-}
-
-export interface CheckboxButtonGroupItemSlotProps {
-  /** Whether the item is selected. */
-  selected: boolean
-  /** Whether the item is disabled, directly or through the group. */
-  disabled: boolean
-}
-
-export interface CheckboxButtonGroupItemSlots {
-  /** Extra content rendered after the title and description. */
-  default?: (props: CheckboxButtonGroupItemSlotProps) => any
-  /** The title content. Replaces the `label` prop. */
-  label?: (props: CheckboxButtonGroupItemSlotProps) => any
-  /** The description content. Replaces the `description` prop. */
-  description?: (props: CheckboxButtonGroupItemSlotProps) => any
-  /** The leading icon. Replaces the `icon` prop. */
-  icon?: (props: CheckboxButtonGroupItemSlotProps) => any
-  /** A custom indicator icon, shown in accent color while the item is selected. Replaces the default checkbox. */
-  indicator?: (props: CheckboxButtonGroupItemSlotProps) => any
-}
-</script>
-
-<script setup lang="ts">
-import { CheckboxRoot } from 'reka-ui'
-import { computed, inject, useSlots } from 'vue'
-
-import { submitOnEnter } from '../../composables/forwardRootClick'
-import { useComponentUI } from '../../composables/useComponentUI'
-import { useFieldChrome } from '../../composables/useFieldChrome'
-import { checkboxButtonGroupContextKey } from './context'
-
-defineOptions({ inheritAttrs: false })
-
-const props = withDefaults(defineProps<CheckboxButtonGroupItemProps>(), { indicator: true })
-defineSlots<CheckboxButtonGroupItemSlots>()
-const slots = useSlots()
-
-const injected = inject(checkboxButtonGroupContextKey, null)
-if (!injected) throw new Error('CheckboxButtonGroupItem must be used inside a CheckboxButtonGroup.')
-const group = injected
-
-const selected = computed(() => group.selected.value.includes(props.value))
-// Reka merges the group's disabled state into the control; mirror it on the card for styling.
-const isDisabled = computed(() => group.disabled.value || props.disabled)
-const slotProps = computed(() => ({ selected: selected.value, disabled: isDisabled.value }))
-
-const hasCustomIndicator = computed(() => !!slots.indicator)
-const hasIcon = computed(() => !!(props.icon || slots.icon))
-
-// Resolved per item: the indicator and icon variants depend on this item's slots / props.
-const itemUi = useComponentUI('checkboxButtonGroup', theme, () => ({
-  layout: group.layout.value,
-  variant: group.variant.value,
-  customIndicator: hasCustomIndicator.value,
-  withIcon: hasIcon.value,
-}))
-// Named by the title alone; the description and the default slot content are announced through aria-describedby.
-const { id, labelId, descriptionId, hasLabel, hasDescription, describedBy } = useFieldChrome({
-  props,
-  slots,
-  describedByIds: () => [slots.default && extraId.value, group.describedBy.value],
-  describedByIdsPosition: 'afterDescription',
-})
-const extraId = computed(() => `${id.value}-extra`)
-
-function cls(slot: keyof NonNullable<CheckboxButtonGroupItemProps['ui']>, extra?: any) {
-  return [group.uiOverrides.value?.[slot], props.ui?.[slot], extra]
-}
-</script>
-
 <template>
   <CheckboxRoot
     v-bind="$attrs"
@@ -203,3 +101,105 @@ function cls(slot: keyof NonNullable<CheckboxButtonGroupItemProps['ui']>, extra?
     </span>
   </CheckboxRoot>
 </template>
+
+<script lang="ts">
+import type { Component } from 'vue'
+
+import type { ComponentSlots } from '../../types/tv'
+import theme from './theme'
+
+export interface CheckboxButtonGroupItemProps {
+  /** The value added to / removed from the group's `v-model` when the item is toggled. */
+  value: string
+  /** The item title. */
+  label?: string
+  /** Help text rendered below the title. */
+  description?: string
+  /** Leading icon: an icon class (`i-lucide-cloud`) or a component. */
+  icon?: string | Component
+  /**
+   * Whether the item is disabled.
+   * @defaultValue false
+   */
+  disabled?: boolean
+  /**
+   * Whether to render the selection indicator in the top-right corner. Set `false` to rely on the selected ring alone.
+   * @defaultValue true
+   */
+  indicator?: boolean
+  /** The id of the item's checkbox. Generated when omitted. */
+  id?: string
+  /** Additional classes merged into the card. */
+  class?: any
+  /** Per-slot class overrides for this item. Merged after the group's `ui`. */
+  ui?: Omit<ComponentSlots<typeof theme>, 'base'>
+}
+
+export interface CheckboxButtonGroupItemSlotProps {
+  /** Whether the item is selected. */
+  selected: boolean
+  /** Whether the item is disabled, directly or through the group. */
+  disabled: boolean
+}
+
+export interface CheckboxButtonGroupItemSlots {
+  /** Extra content rendered after the title and description. */
+  default?: (props: CheckboxButtonGroupItemSlotProps) => any
+  /** The title content. Replaces the `label` prop. */
+  label?: (props: CheckboxButtonGroupItemSlotProps) => any
+  /** The description content. Replaces the `description` prop. */
+  description?: (props: CheckboxButtonGroupItemSlotProps) => any
+  /** The leading icon. Replaces the `icon` prop. */
+  icon?: (props: CheckboxButtonGroupItemSlotProps) => any
+  /** A custom indicator icon, shown in accent color while the item is selected. Replaces the default checkbox. */
+  indicator?: (props: CheckboxButtonGroupItemSlotProps) => any
+}
+</script>
+
+<script setup lang="ts">
+import { CheckboxRoot } from 'reka-ui'
+import { computed, inject, useSlots } from 'vue'
+
+import { submitOnEnter } from '../../composables/forwardRootClick'
+import { useComponentUI } from '../../composables/useComponentUI'
+import { useFieldChrome } from '../../composables/useFieldChrome'
+import { checkboxButtonGroupContextKey } from './context'
+
+defineOptions({ inheritAttrs: false })
+
+const props = withDefaults(defineProps<CheckboxButtonGroupItemProps>(), { indicator: true })
+defineSlots<CheckboxButtonGroupItemSlots>()
+const slots = useSlots()
+
+const injected = inject(checkboxButtonGroupContextKey, null)
+if (!injected) throw new Error('CheckboxButtonGroupItem must be used inside a CheckboxButtonGroup.')
+const group = injected
+
+const selected = computed(() => group.selected.value.includes(props.value))
+// Reka merges the group's disabled state into the control; mirror it on the card for styling.
+const isDisabled = computed(() => group.disabled.value || props.disabled)
+const slotProps = computed(() => ({ selected: selected.value, disabled: isDisabled.value }))
+
+const hasCustomIndicator = computed(() => !!slots.indicator)
+const hasIcon = computed(() => !!(props.icon || slots.icon))
+
+// Resolved per item: the indicator and icon variants depend on this item's slots / props.
+const itemUi = useComponentUI('checkboxButtonGroup', theme, () => ({
+  layout: group.layout.value,
+  variant: group.variant.value,
+  customIndicator: hasCustomIndicator.value,
+  withIcon: hasIcon.value,
+}))
+// Named by the title alone; the description and the default slot content are announced through aria-describedby.
+const { id, labelId, descriptionId, hasLabel, hasDescription, describedBy } = useFieldChrome({
+  props,
+  slots,
+  describedByIds: () => [slots.default && extraId.value, group.describedBy.value],
+  describedByIdsPosition: 'afterDescription',
+})
+const extraId = computed(() => `${id.value}-extra`)
+
+function cls(slot: keyof NonNullable<CheckboxButtonGroupItemProps['ui']>, extra?: any) {
+  return [group.uiOverrides.value?.[slot], props.ui?.[slot], extra]
+}
+</script>

@@ -1,21 +1,3 @@
-<script setup lang="ts">
-import { Button, Header, NavigationMenu } from '@hareui/vue'
-import { Icon } from '@iconify/vue'
-
-const navItems = [
-  { label: 'Docs', href: '#docs', active: true },
-  { label: 'Components', href: '#components' },
-  { label: 'Figma', href: '#figma' },
-  { label: 'Releases', href: '#releases' },
-]
-
-// Touch-sized rows for the mobile menu.
-const menuUi = {
-  list: 'gap-1',
-  link: 'min-h-11 gap-3 rounded-lg px-3 py-2.5 text-base font-medium text-foreground',
-}
-</script>
-
 <template>
   <!-- A compact bar: `height` sets the bar height, `ui.container` / `ui.body` tighten the padding. -->
   <Header height="3rem" title="HareUI" to="#" :ui="{ container: 'gap-3 px-4', body: 'px-4' }">
@@ -64,3 +46,21 @@ const menuUi = {
     </p>
   </main>
 </template>
+
+<script setup lang="ts">
+import { Button, Header, NavigationMenu } from '@hareui/vue'
+import { Icon } from '@iconify/vue'
+
+const navItems = [
+  { label: 'Docs', href: '#docs', active: true },
+  { label: 'Components', href: '#components' },
+  { label: 'Figma', href: '#figma' },
+  { label: 'Releases', href: '#releases' },
+]
+
+// Touch-sized rows for the mobile menu.
+const menuUi = {
+  list: 'gap-1',
+  link: 'min-h-11 gap-3 rounded-lg px-3 py-2.5 text-base font-medium text-foreground',
+}
+</script>

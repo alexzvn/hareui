@@ -1,3 +1,11 @@
+<template>
+  <div data-slot="switch-group" :class="ui.base({ class: [props.ui?.base, props.class] })">
+    <div data-slot="switch-group-items" :class="ui.items({ class: props.ui?.items })">
+      <slot />
+    </div>
+  </div>
+</template>
+
 <script lang="ts">
 import type { ComponentSlots, ComponentVariants } from '../../types/tv'
 import theme from './theme'
@@ -32,11 +40,3 @@ const ui = useComponentUI('switchGroup', theme, () => ({
   orientation: props.orientation,
 }))
 </script>
-
-<template>
-  <div data-slot="switch-group" :class="ui.base({ class: [props.ui?.base, props.class] })">
-    <div data-slot="switch-group-items" :class="ui.items({ class: props.ui?.items })">
-      <slot />
-    </div>
-  </div>
-</template>

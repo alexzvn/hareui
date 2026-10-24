@@ -1,15 +1,3 @@
-<script setup lang="ts">
-import { Card } from '@hareui/vue'
-import { RadialChart } from '@hareui/vue/charts'
-
-const metrics = [
-  { name: 'Memory', used: 12, max: 16, unit: 'GB', fill: 'var(--chart-4)' },
-  { name: 'Disk', used: 410, max: 512, unit: 'GB', fill: 'var(--chart-3)' },
-  { name: 'Network', used: 220, max: 1000, unit: 'Mbps', fill: 'var(--chart-2)' },
-  { name: 'Temperature', used: 88, max: 100, unit: '°C', fill: 'var(--danger)' },
-]
-</script>
-
 <template>
   <div class="grid w-full max-w-[640px] grid-cols-2 gap-3 lg:grid-cols-4">
     <Card
@@ -42,3 +30,15 @@ const metrics = [
     </Card>
   </div>
 </template>
+
+<script setup lang="ts">
+import { Card } from '@hareui/vue'
+import { RadialChart } from '@hareui/vue/charts'
+
+const metrics = [
+  { name: 'Memory', used: 12, max: 16, unit: 'GB', fill: 'var(--chart-4)' },
+  { name: 'Disk', used: 410, max: 512, unit: 'GB', fill: 'var(--chart-3)' },
+  { name: 'Network', used: 220, max: 1000, unit: 'Mbps', fill: 'var(--chart-2)' },
+  { name: 'Temperature', used: 88, max: 100, unit: '°C', fill: 'var(--danger)' },
+]
+</script>

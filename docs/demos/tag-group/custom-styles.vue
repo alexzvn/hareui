@@ -1,3 +1,12 @@
+<template>
+  <TagGroup
+    aria-label="Topics"
+    selection-mode="single"
+    :items="items"
+    :ui="{ list: 'gap-2', tag: tagClass }"
+  />
+</template>
+
 <script setup lang="ts">
 import type { TagGroupItem } from '@hareui/vue'
 import { TagGroup } from '@hareui/vue'
@@ -12,12 +21,3 @@ const items: TagGroupItem[] = [
   { id: 'shopping', label: 'Shopping' },
 ]
 </script>
-
-<template>
-  <TagGroup
-    aria-label="Topics"
-    selection-mode="single"
-    :items="items"
-    :ui="{ list: 'gap-2', tag: tagClass }"
-  />
-</template>

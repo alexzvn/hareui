@@ -1,17 +1,3 @@
-<script setup lang="ts">
-import { NativeSelect } from '@hareui/vue'
-import { ref } from 'vue'
-
-const timezone = ref('cet')
-const items = [
-  { value: 'utc', label: 'UTC' },
-  { value: 'cet', label: 'Central European' },
-  { value: 'est', label: 'US Eastern' },
-  { value: 'pst', label: 'US Pacific' },
-  { value: 'jst', label: 'Japan' },
-]
-</script>
-
 <template>
   <div class="w-[220px] space-y-2">
     <NativeSelect
@@ -27,3 +13,17 @@ const items = [
     </p>
   </div>
 </template>
+
+<script setup lang="ts">
+import { NativeSelect } from '@hareui/vue'
+import { ref } from 'vue'
+
+const timezone = ref('cet')
+const items = [
+  { value: 'utc', label: 'UTC' },
+  { value: 'cet', label: 'Central European' },
+  { value: 'est', label: 'US Eastern' },
+  { value: 'pst', label: 'US Pacific' },
+  { value: 'jst', label: 'Japan' },
+]
+</script>

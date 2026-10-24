@@ -1,3 +1,15 @@
+<template>
+  <div class="flex w-full flex-col gap-3">
+    <Input
+      v-model="globalFilter"
+      aria-label="Filter rows"
+      placeholder="Filter..."
+      class="max-w-xs"
+    />
+    <RichTable v-model:global-filter="globalFilter" :data="data" :columns="columns" />
+  </div>
+</template>
+
 <script setup lang="ts">
 import type { RichTableColumn } from '@hareui/vue'
 import { Input, RichTable } from '@hareui/vue'
@@ -32,15 +44,3 @@ const columns: RichTableColumn<Payment>[] = [
   },
 ]
 </script>
-
-<template>
-  <div class="flex w-full flex-col gap-3">
-    <Input
-      v-model="globalFilter"
-      aria-label="Filter rows"
-      placeholder="Filter..."
-      class="max-w-xs"
-    />
-    <RichTable v-model:global-filter="globalFilter" :data="data" :columns="columns" />
-  </div>
-</template>

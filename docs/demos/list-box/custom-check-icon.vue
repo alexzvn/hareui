@@ -1,3 +1,16 @@
+<template>
+  <Surface class="w-[256px] rounded-3xl shadow-surface">
+    <ListBox aria-label="Users" selection-mode="multiple" :items="users">
+      <template #item-leading="{ item }">
+        <Avatar size="sm" :alt="item.label" :src="item.avatar" :fallback="item.label?.[0]" />
+      </template>
+      <template #indicator="{ selected }">
+        <Icon v-if="selected" class="size-4 text-accent-soft-foreground" icon="gravity-ui:check" />
+      </template>
+    </ListBox>
+  </Surface>
+</template>
+
 <script setup lang="ts">
 import type { ListBoxItem } from '@hareui/vue'
 import { Avatar, ListBox, Surface } from '@hareui/vue'
@@ -28,16 +41,3 @@ const users: User[] = [
   },
 ]
 </script>
-
-<template>
-  <Surface class="w-[256px] rounded-3xl shadow-surface">
-    <ListBox aria-label="Users" selection-mode="multiple" :items="users">
-      <template #item-leading="{ item }">
-        <Avatar size="sm" :alt="item.label" :src="item.avatar" :fallback="item.label?.[0]" />
-      </template>
-      <template #indicator="{ selected }">
-        <Icon v-if="selected" class="size-4 text-accent-soft-foreground" icon="gravity-ui:check" />
-      </template>
-    </ListBox>
-  </Surface>
-</template>

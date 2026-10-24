@@ -1,7 +1,3 @@
-<script setup lang="ts">
-import { ColorSlider } from '@hareui/vue'
-</script>
-
 <template>
   <!-- Attributes fall through to the root element (HeroUI's `render` prop) -->
   <ColorSlider
@@ -12,3 +8,7 @@ import { ColorSlider } from '@hareui/vue'
     label="Hue"
   />
 </template>
+
+<script setup lang="ts">
+import { ColorSlider } from '@hareui/vue'
+</script>

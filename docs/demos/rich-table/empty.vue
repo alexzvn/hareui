@@ -1,21 +1,3 @@
-<script setup lang="ts">
-import type { RichTableColumn } from '@hareui/vue'
-import { Button, RichTable } from '@hareui/vue'
-import { Icon } from '@iconify/vue'
-
-interface Payment {
-  name: string
-  status: string
-  amount: number
-}
-
-const columns: RichTableColumn<Payment>[] = [
-  { accessorKey: 'name', header: 'Customer' },
-  { accessorKey: 'status', header: 'Status' },
-  { accessorKey: 'amount', header: 'Amount' },
-]
-</script>
-
 <template>
   <div class="flex w-full flex-col gap-6">
     <RichTable :data="[]" :columns="columns" empty="No payments found." />
@@ -43,3 +25,21 @@ const columns: RichTableColumn<Payment>[] = [
     </RichTable>
   </div>
 </template>
+
+<script setup lang="ts">
+import type { RichTableColumn } from '@hareui/vue'
+import { Button, RichTable } from '@hareui/vue'
+import { Icon } from '@iconify/vue'
+
+interface Payment {
+  name: string
+  status: string
+  amount: number
+}
+
+const columns: RichTableColumn<Payment>[] = [
+  { accessorKey: 'name', header: 'Customer' },
+  { accessorKey: 'status', header: 'Status' },
+  { accessorKey: 'amount', header: 'Amount' },
+]
+</script>

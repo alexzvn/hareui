@@ -1,3 +1,29 @@
+<template>
+  <Surface class="w-[320px] rounded-3xl p-6">
+    <Form class="flex w-full flex-col gap-4" @submit.prevent="onSubmit">
+      <Select
+        required
+        class="w-full"
+        label="State"
+        name="state"
+        placeholder="Select one"
+        variant="secondary"
+        :items="states"
+      />
+      <Select
+        required
+        class="w-full"
+        label="Country"
+        name="country"
+        placeholder="Select a country"
+        variant="secondary"
+        :items="countries"
+      />
+      <Button type="submit"> Submit </Button>
+    </Form>
+  </Surface>
+</template>
+
 <script setup lang="ts">
 import type { ListBoxItem } from '@hareui/vue'
 import { Button, Form, Select, Surface } from '@hareui/vue'
@@ -25,29 +51,3 @@ function onSubmit(event: SubmitEvent) {
   alert('Form submitted successfully!')
 }
 </script>
-
-<template>
-  <Surface class="w-[320px] rounded-3xl p-6">
-    <Form class="flex w-full flex-col gap-4" @submit.prevent="onSubmit">
-      <Select
-        required
-        class="w-full"
-        label="State"
-        name="state"
-        placeholder="Select one"
-        variant="secondary"
-        :items="states"
-      />
-      <Select
-        required
-        class="w-full"
-        label="Country"
-        name="country"
-        placeholder="Select a country"
-        variant="secondary"
-        :items="countries"
-      />
-      <Button type="submit"> Submit </Button>
-    </Form>
-  </Surface>
-</template>

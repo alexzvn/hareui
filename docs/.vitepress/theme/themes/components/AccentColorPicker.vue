@@ -1,3 +1,95 @@
+<template>
+  <Popover
+    side="top"
+    :class="cn('w-[248px] rounded-[20px]', popoverClassName)"
+    :ui="{ dialog: 'flex flex-col gap-2 px-2 pt-4 pb-2' }"
+  >
+    <ControlsPopoverTrigger>
+      <slot name="trigger" />
+    </ControlsPopoverTrigger>
+    <template #content>
+      <slot :color="colorValue">
+        <!-- Color Swatches Carousel -->
+        <AccentColorSwatchesCarousel
+          v-if="showSwatches"
+          :color="colorValue"
+          :initial-color-hex="initialColorHex"
+          :swatches="swatches"
+          @select="handleColorChange"
+        />
+
+        <!-- Color Area -->
+        <ColorArea
+          class="aspect-auto size-[232px] max-w-none border border-border shadow-none"
+          color-space="hsl"
+          :model-value="colorValue"
+          :ui="{
+            thumb:
+              'size-6 rounded-full border-2 border-white [box-shadow:0_10px_15px_-3px_rgb(0_0_0/0.1),0_4px_6px_-4px_rgb(0_0_0/0.1)] [transition:none] data-[dragging=true]:size-6',
+          }"
+          x-channel="saturation"
+          y-channel="lightness"
+          @change="handleColorChange"
+        />
+
+        <!-- Hue Slider with Shuffle -->
+        <div class="flex w-full items-center justify-between gap-2">
+          <AccentColorSlider
+            channel="hue"
+            class="h-5 max-w-[184px] flex-1"
+            color-space="hsl"
+            :model-value="colorValue"
+            @update:model-value="handleColorChange"
+          />
+          <Button
+            v-if="showShuffle"
+            icon-only
+            class="size-8 min-w-8 shrink-0 rounded-full"
+            size="sm"
+            variant="tertiary"
+            @click="handleShuffle"
+          >
+            <Icon icon="gravity-ui:shuffle" class="size-4" />
+          </Button>
+        </div>
+
+        <!-- Alpha Slider -->
+        <AccentColorSlider
+          v-if="showAlpha"
+          channel="alpha"
+          :model-value="colorValue"
+          @update:model-value="handleColorChange"
+        />
+
+        <!-- Color Field with Color Space Selector -->
+        <TextField v-if="showColorField" aria-labelledby="Accent color" :invalid="inputError">
+          <InputGroup
+            full-width
+            class="rounded-xl"
+            variant="secondary"
+            :model-value="displayedInputValue"
+            :ui="{ input: 'w-full flex-1 px-4 text-sm', suffix: 'border-s border-separator px-0' }"
+            @update:model-value="handleInputChange"
+            @focusin="handleInputFocus"
+            @focusout="handleInputBlur"
+            @keydown="handleInputKeyDown"
+          >
+            <template #suffix>
+              <Select
+                aria-label="Color format"
+                :items="FORMAT_ITEMS"
+                :model-value="currentColorFormat"
+                :ui="{ trigger: 'h-full min-w-22 rounded-none border-none bg-transparent px-3' }"
+                @update:model-value="onFormatChange"
+              />
+            </template>
+          </InputGroup>
+        </TextField>
+      </slot>
+    </template>
+  </Popover>
+</template>
+
 <script setup lang="ts">
 import { Button, ColorArea, InputGroup, Popover, Select, TextField } from '@hareui/vue'
 import { Icon } from '@iconify/vue'
@@ -131,95 +223,3 @@ function onFormatChange(key: unknown) {
   }
 }
 </script>
-
-<template>
-  <Popover
-    side="top"
-    :class="cn('w-[248px] rounded-[20px]', popoverClassName)"
-    :ui="{ dialog: 'flex flex-col gap-2 px-2 pt-4 pb-2' }"
-  >
-    <ControlsPopoverTrigger>
-      <slot name="trigger" />
-    </ControlsPopoverTrigger>
-    <template #content>
-      <slot :color="colorValue">
-        <!-- Color Swatches Carousel -->
-        <AccentColorSwatchesCarousel
-          v-if="showSwatches"
-          :color="colorValue"
-          :initial-color-hex="initialColorHex"
-          :swatches="swatches"
-          @select="handleColorChange"
-        />
-
-        <!-- Color Area -->
-        <ColorArea
-          class="aspect-auto size-[232px] max-w-none border border-border shadow-none"
-          color-space="hsl"
-          :model-value="colorValue"
-          :ui="{
-            thumb:
-              'size-6 rounded-full border-2 border-white [box-shadow:0_10px_15px_-3px_rgb(0_0_0/0.1),0_4px_6px_-4px_rgb(0_0_0/0.1)] [transition:none] data-[dragging=true]:size-6',
-          }"
-          x-channel="saturation"
-          y-channel="lightness"
-          @change="handleColorChange"
-        />
-
-        <!-- Hue Slider with Shuffle -->
-        <div class="flex w-full items-center justify-between gap-2">
-          <AccentColorSlider
-            channel="hue"
-            class="h-5 max-w-[184px] flex-1"
-            color-space="hsl"
-            :model-value="colorValue"
-            @update:model-value="handleColorChange"
-          />
-          <Button
-            v-if="showShuffle"
-            icon-only
-            class="size-8 min-w-8 shrink-0 rounded-full"
-            size="sm"
-            variant="tertiary"
-            @click="handleShuffle"
-          >
-            <Icon icon="gravity-ui:shuffle" class="size-4" />
-          </Button>
-        </div>
-
-        <!-- Alpha Slider -->
-        <AccentColorSlider
-          v-if="showAlpha"
-          channel="alpha"
-          :model-value="colorValue"
-          @update:model-value="handleColorChange"
-        />
-
-        <!-- Color Field with Color Space Selector -->
-        <TextField v-if="showColorField" aria-labelledby="Accent color" :invalid="inputError">
-          <InputGroup
-            full-width
-            class="rounded-xl"
-            variant="secondary"
-            :model-value="displayedInputValue"
-            :ui="{ input: 'w-full flex-1 px-4 text-sm', suffix: 'border-s border-separator px-0' }"
-            @update:model-value="handleInputChange"
-            @focusin="handleInputFocus"
-            @focusout="handleInputBlur"
-            @keydown="handleInputKeyDown"
-          >
-            <template #suffix>
-              <Select
-                aria-label="Color format"
-                :items="FORMAT_ITEMS"
-                :model-value="currentColorFormat"
-                :ui="{ trigger: 'h-full min-w-22 rounded-none border-none bg-transparent px-3' }"
-                @update:model-value="onFormatChange"
-              />
-            </template>
-          </InputGroup>
-        </TextField>
-      </slot>
-    </template>
-  </Popover>
-</template>

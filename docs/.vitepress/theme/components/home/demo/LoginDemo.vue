@@ -1,13 +1,3 @@
-<script setup lang="ts">
-import { Avatar, Button, Card, CloseButton, Separator, themes, tv } from '@hareui/vue'
-import { Icon } from '@iconify/vue'
-
-import AppleIcon from '../icons/AppleIcon.vue'
-import GoogleIcon from '../icons/GoogleIcon.vue'
-
-const card = tv(themes.card)()
-</script>
-
 <template>
   <Card
     class="w-[320px] max-w-full items-start justify-center p-5"
@@ -39,3 +29,13 @@ const card = tv(themes.card)()
     </Button>
   </Card>
 </template>
+
+<script setup lang="ts">
+import { Avatar, Button, Card, CloseButton, Separator, themes, tv } from '@hareui/vue'
+import { Icon } from '@iconify/vue'
+
+import AppleIcon from '../icons/AppleIcon.vue'
+import GoogleIcon from '../icons/GoogleIcon.vue'
+
+const card = tv(themes.card)()
+</script>

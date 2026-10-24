@@ -1,19 +1,3 @@
-<script setup lang="ts">
-import type { ListBoxItem } from '@hareui/vue'
-import { ColorPicker, ColorSlider, ColorSwatch, Label, Select } from '@hareui/vue'
-import type { ColorChannel, ColorSpace } from 'reka-ui'
-import { ref } from 'vue'
-
-const colorSpace = ref<ColorSpace>('hsl')
-const channels: Record<ColorSpace, ColorChannel[]> = {
-  hsb: ['hue', 'saturation', 'brightness', 'alpha'],
-  hsl: ['hue', 'saturation', 'lightness', 'alpha'],
-  rgb: ['red', 'green', 'blue', 'alpha'],
-}
-const spaces: ListBoxItem[] = Object.keys(channels).map((value) => ({ value, label: value }))
-const title = (s: string) => s[0].toUpperCase() + s.slice(1)
-</script>
-
 <template>
   <ColorPicker default-value="hsl(219, 58%, 93%)" :ui="{ popover: 'max-w-62 gap-2 px-2 py-3' }">
     <template #trigger>
@@ -41,3 +25,19 @@ const title = (s: string) => s[0].toUpperCase() + s.slice(1)
     </div>
   </ColorPicker>
 </template>
+
+<script setup lang="ts">
+import type { ListBoxItem } from '@hareui/vue'
+import { ColorPicker, ColorSlider, ColorSwatch, Label, Select } from '@hareui/vue'
+import type { ColorChannel, ColorSpace } from 'reka-ui'
+import { ref } from 'vue'
+
+const colorSpace = ref<ColorSpace>('hsl')
+const channels: Record<ColorSpace, ColorChannel[]> = {
+  hsb: ['hue', 'saturation', 'brightness', 'alpha'],
+  hsl: ['hue', 'saturation', 'lightness', 'alpha'],
+  rgb: ['red', 'green', 'blue', 'alpha'],
+}
+const spaces: ListBoxItem[] = Object.keys(channels).map((value) => ({ value, label: value }))
+const title = (s: string) => s[0].toUpperCase() + s.slice(1)
+</script>

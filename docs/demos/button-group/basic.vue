@@ -1,31 +1,3 @@
-<script setup lang="ts">
-import type { DropdownEntry } from '@hareui/vue'
-import { Button, ButtonGroup, Chip, Dropdown } from '@hareui/vue'
-import { Icon } from '@iconify/vue'
-
-const mergeOptions: DropdownEntry[] = [
-  {
-    value: 'merge',
-    label: 'Create a merge commit',
-    description: 'All commits from this branch will be added to the base branch',
-    class: 'flex flex-col items-start gap-1 [&>div]:items-start [&>div]:gap-1',
-  },
-  {
-    value: 'squash-and-merge',
-    label: 'Squash and merge',
-    description:
-      'The 14 commits from this branch will be combined into one commit in the base branch',
-    class: 'flex flex-col items-start gap-1 [&>div]:items-start [&>div]:gap-1',
-  },
-  {
-    value: 'rebase-and-merge',
-    label: 'Rebase and merge',
-    description: 'The 14 commits from this branch will be rebased and added to the base branch',
-    class: 'flex flex-col items-start gap-1 [&>div]:items-start [&>div]:gap-1',
-  },
-]
-</script>
-
 <template>
   <div class="flex flex-col items-start gap-6">
     <!-- Single button with dropdown -->
@@ -148,3 +120,31 @@ const mergeOptions: DropdownEntry[] = [
     </div>
   </div>
 </template>
+
+<script setup lang="ts">
+import type { DropdownEntry } from '@hareui/vue'
+import { Button, ButtonGroup, Chip, Dropdown } from '@hareui/vue'
+import { Icon } from '@iconify/vue'
+
+const mergeOptions: DropdownEntry[] = [
+  {
+    value: 'merge',
+    label: 'Create a merge commit',
+    description: 'All commits from this branch will be added to the base branch',
+    class: 'flex flex-col items-start gap-1 [&>div]:items-start [&>div]:gap-1',
+  },
+  {
+    value: 'squash-and-merge',
+    label: 'Squash and merge',
+    description:
+      'The 14 commits from this branch will be combined into one commit in the base branch',
+    class: 'flex flex-col items-start gap-1 [&>div]:items-start [&>div]:gap-1',
+  },
+  {
+    value: 'rebase-and-merge',
+    label: 'Rebase and merge',
+    description: 'The 14 commits from this branch will be rebased and added to the base branch',
+    class: 'flex flex-col items-start gap-1 [&>div]:items-start [&>div]:gap-1',
+  },
+]
+</script>

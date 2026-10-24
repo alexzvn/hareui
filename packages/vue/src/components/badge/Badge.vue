@@ -1,3 +1,33 @@
+<template>
+  <span
+    v-if="slots.default"
+    data-slot="badge-anchor"
+    :class="ui.anchor({ class: props.ui?.anchor })"
+  >
+    <slot />
+    <span data-slot="badge" :class="ui.base({ class: [props.ui?.base, props.class] })">
+      <slot name="content">
+        <span
+          v-if="content !== undefined && content !== ''"
+          data-slot="badge-label"
+          :class="ui.label({ class: props.ui?.label })"
+          >{{ content }}</span
+        >
+      </slot>
+    </span>
+  </span>
+  <span v-else data-slot="badge" :class="ui.base({ class: [props.ui?.base, props.class] })">
+    <slot name="content">
+      <span
+        v-if="content !== undefined && content !== ''"
+        data-slot="badge-label"
+        :class="ui.label({ class: props.ui?.label })"
+        >{{ content }}</span
+      >
+    </slot>
+  </span>
+</template>
+
 <script lang="ts">
 import type { ComponentSlots, ComponentVariants } from '../../types/tv'
 import theme from './theme'
@@ -42,33 +72,3 @@ const ui = useComponentUI('badge', theme, () => ({
   variant: props.variant,
 }))
 </script>
-
-<template>
-  <span
-    v-if="slots.default"
-    data-slot="badge-anchor"
-    :class="ui.anchor({ class: props.ui?.anchor })"
-  >
-    <slot />
-    <span data-slot="badge" :class="ui.base({ class: [props.ui?.base, props.class] })">
-      <slot name="content">
-        <span
-          v-if="content !== undefined && content !== ''"
-          data-slot="badge-label"
-          :class="ui.label({ class: props.ui?.label })"
-          >{{ content }}</span
-        >
-      </slot>
-    </span>
-  </span>
-  <span v-else data-slot="badge" :class="ui.base({ class: [props.ui?.base, props.class] })">
-    <slot name="content">
-      <span
-        v-if="content !== undefined && content !== ''"
-        data-slot="badge-label"
-        :class="ui.label({ class: props.ui?.label })"
-        >{{ content }}</span
-      >
-    </slot>
-  </span>
-</template>

@@ -1,3 +1,15 @@
+<template>
+  <AvatarGroup>
+    <Avatar
+      v-for="user in users.slice(0, 4)"
+      :key="user.id"
+      :alt="user.name"
+      :fallback="initials(user.name)"
+      :src="user.image"
+    />
+  </AvatarGroup>
+</template>
+
 <script setup lang="ts">
 import { Avatar, AvatarGroup } from '@hareui/vue'
 
@@ -35,15 +47,3 @@ const initials = (name: string) =>
     .map((n) => n[0])
     .join('')
 </script>
-
-<template>
-  <AvatarGroup>
-    <Avatar
-      v-for="user in users.slice(0, 4)"
-      :key="user.id"
-      :alt="user.name"
-      :fallback="initials(user.name)"
-      :src="user.image"
-    />
-  </AvatarGroup>
-</template>

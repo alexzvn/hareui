@@ -1,3 +1,66 @@
+<template>
+  <Primitive
+    :as="as.root"
+    data-slot="error"
+    :class="ui.root({ class: [props.ui?.root, props.class] })"
+  >
+    <div
+      v-if="slots.leading"
+      data-slot="error-leading"
+      :class="ui.leading({ class: props.ui?.leading })"
+    >
+      <slot name="leading" :ui="ui" />
+    </div>
+    <p
+      v-if="statusCode || slots.statusCode"
+      data-slot="error-status-code"
+      :class="ui.statusCode({ class: props.ui?.statusCode })"
+    >
+      <slot name="statusCode">
+        {{ statusCode }}
+      </slot>
+    </p>
+    <Primitive
+      v-if="statusMessage || slots.statusMessage"
+      :as="as.statusMessage"
+      data-slot="error-status-message"
+      :class="ui.statusMessage({ class: props.ui?.statusMessage })"
+    >
+      <slot name="statusMessage">
+        {{ statusMessage }}
+      </slot>
+    </Primitive>
+    <p
+      v-if="(error?.message && error.message !== statusMessage) || slots.message"
+      data-slot="error-message"
+      :class="ui.message({ class: props.ui?.message })"
+    >
+      <slot name="message">
+        {{ error?.message }}
+      </slot>
+    </p>
+    <div
+      v-if="clear || slots.links"
+      data-slot="error-links"
+      :class="ui.links({ class: props.ui?.links })"
+    >
+      <slot name="links">
+        <Button
+          v-if="clear"
+          :as="redirect ? 'a' : 'button'"
+          size="lg"
+          v-bind="clearButtonProps"
+          :href="redirect || undefined"
+          @click="emit('clear', $event)"
+        >
+          {{ clearLabel }}
+        </Button>
+      </slot>
+    </div>
+    <slot />
+  </Primitive>
+</template>
+
 <script lang="ts">
 import type { PrimitiveProps } from 'reka-ui'
 
@@ -96,66 +159,3 @@ const clearButtonProps = computed(() => {
   return button
 })
 </script>
-
-<template>
-  <Primitive
-    :as="as.root"
-    data-slot="error"
-    :class="ui.root({ class: [props.ui?.root, props.class] })"
-  >
-    <div
-      v-if="slots.leading"
-      data-slot="error-leading"
-      :class="ui.leading({ class: props.ui?.leading })"
-    >
-      <slot name="leading" :ui="ui" />
-    </div>
-    <p
-      v-if="statusCode || slots.statusCode"
-      data-slot="error-status-code"
-      :class="ui.statusCode({ class: props.ui?.statusCode })"
-    >
-      <slot name="statusCode">
-        {{ statusCode }}
-      </slot>
-    </p>
-    <Primitive
-      v-if="statusMessage || slots.statusMessage"
-      :as="as.statusMessage"
-      data-slot="error-status-message"
-      :class="ui.statusMessage({ class: props.ui?.statusMessage })"
-    >
-      <slot name="statusMessage">
-        {{ statusMessage }}
-      </slot>
-    </Primitive>
-    <p
-      v-if="(error?.message && error.message !== statusMessage) || slots.message"
-      data-slot="error-message"
-      :class="ui.message({ class: props.ui?.message })"
-    >
-      <slot name="message">
-        {{ error?.message }}
-      </slot>
-    </p>
-    <div
-      v-if="clear || slots.links"
-      data-slot="error-links"
-      :class="ui.links({ class: props.ui?.links })"
-    >
-      <slot name="links">
-        <Button
-          v-if="clear"
-          :as="redirect ? 'a' : 'button'"
-          size="lg"
-          v-bind="clearButtonProps"
-          :href="redirect || undefined"
-          @click="emit('clear', $event)"
-        >
-          {{ clearLabel }}
-        </Button>
-      </slot>
-    </div>
-    <slot />
-  </Primitive>
-</template>

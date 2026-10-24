@@ -1,3 +1,15 @@
+<template>
+  <span
+    :id="id"
+    data-slot="field-error"
+    data-visible="true"
+    role="alert"
+    :class="ui.base({ class: [props.ui?.base, props.class] })"
+  >
+    <slot />
+  </span>
+</template>
+
 <script lang="ts">
 import type { ComponentSlots } from '../../types/tv'
 import theme from './theme'
@@ -27,15 +39,3 @@ defineSlots<FieldErrorSlots>()
 
 const ui = useComponentUI('fieldError', theme, () => ({}))
 </script>
-
-<template>
-  <span
-    :id="id"
-    data-slot="field-error"
-    data-visible="true"
-    role="alert"
-    :class="ui.base({ class: [props.ui?.base, props.class] })"
-  >
-    <slot />
-  </span>
-</template>

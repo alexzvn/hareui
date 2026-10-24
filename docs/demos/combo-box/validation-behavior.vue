@@ -1,21 +1,3 @@
-<script setup lang="ts">
-import type { ListBoxItem } from '@hareui/vue'
-import { Button, ComboBox, Form } from '@hareui/vue'
-import { ref } from 'vue'
-
-const animals: ListBoxItem[] = [
-  { value: 'aardvark', label: 'Aardvark' },
-  { value: 'cat', label: 'Cat' },
-  { value: 'dog', label: 'Dog' },
-  { value: 'kangaroo', label: 'Kangaroo' },
-  { value: 'panda', label: 'Panda' },
-  { value: 'snake', label: 'Snake' },
-]
-
-const nativeMessage = ref<string | null>(null)
-const ariaMessage = ref<string | null>(null)
-</script>
-
 <template>
   <div class="flex flex-col gap-8">
     <Form
@@ -58,3 +40,21 @@ const ariaMessage = ref<string | null>(null)
     </Form>
   </div>
 </template>
+
+<script setup lang="ts">
+import type { ListBoxItem } from '@hareui/vue'
+import { Button, ComboBox, Form } from '@hareui/vue'
+import { ref } from 'vue'
+
+const animals: ListBoxItem[] = [
+  { value: 'aardvark', label: 'Aardvark' },
+  { value: 'cat', label: 'Cat' },
+  { value: 'dog', label: 'Dog' },
+  { value: 'kangaroo', label: 'Kangaroo' },
+  { value: 'panda', label: 'Panda' },
+  { value: 'snake', label: 'Snake' },
+]
+
+const nativeMessage = ref<string | null>(null)
+const ariaMessage = ref<string | null>(null)
+</script>

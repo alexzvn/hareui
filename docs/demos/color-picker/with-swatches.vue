@@ -1,27 +1,3 @@
-<script setup lang="ts">
-import type { ColorSwatchPickerItem } from '@hareui/vue'
-import {
-  ColorArea,
-  ColorPicker,
-  ColorSlider,
-  ColorSwatch,
-  ColorSwatchPicker,
-  Label,
-} from '@hareui/vue'
-
-const presets: ColorSwatchPickerItem[] = [
-  '#ef4444',
-  '#f97316',
-  '#eab308',
-  '#22c55e',
-  '#06b6d4',
-  '#3b82f6',
-  '#8b5cf6',
-  '#ec4899',
-  '#f43f5e',
-]
-</script>
-
 <template>
   <ColorPicker default-value="#F43F5E">
     <template #trigger>
@@ -51,3 +27,27 @@ const presets: ColorSwatchPickerItem[] = [
     />
   </ColorPicker>
 </template>
+
+<script setup lang="ts">
+import type { ColorSwatchPickerItem } from '@hareui/vue'
+import {
+  ColorArea,
+  ColorPicker,
+  ColorSlider,
+  ColorSwatch,
+  ColorSwatchPicker,
+  Label,
+} from '@hareui/vue'
+
+const presets: ColorSwatchPickerItem[] = [
+  '#ef4444',
+  '#f97316',
+  '#eab308',
+  '#22c55e',
+  '#06b6d4',
+  '#3b82f6',
+  '#8b5cf6',
+  '#ec4899',
+  '#f43f5e',
+]
+</script>

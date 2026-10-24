@@ -1,8 +1,3 @@
-<script setup lang="ts">
-import { AlertDialog, Button } from '@hareui/vue'
-import { Icon } from '@iconify/vue'
-</script>
-
 <template>
   <div class="flex max-w-2xl flex-col gap-8">
     <div class="flex flex-col gap-2">
@@ -68,3 +63,8 @@ import { Icon } from '@iconify/vue'
     </div>
   </div>
 </template>
+
+<script setup lang="ts">
+import { AlertDialog, Button } from '@hareui/vue'
+import { Icon } from '@iconify/vue'
+</script>

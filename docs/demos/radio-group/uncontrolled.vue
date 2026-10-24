@@ -1,17 +1,3 @@
-<script setup lang="ts">
-import type { RadioGroupItem } from '@hareui/vue'
-import { RadioGroup } from '@hareui/vue'
-import { ref } from 'vue'
-
-const selection = ref('pro')
-
-const items: RadioGroupItem[] = [
-  { value: 'starter', label: 'Starter', description: 'For side projects and small teams' },
-  { value: 'pro', label: 'Pro', description: 'Advanced reporting and analytics' },
-  { value: 'teams', label: 'Teams', description: 'Share access with up to 10 teammates' },
-]
-</script>
-
 <template>
   <div class="flex flex-col gap-4">
     <RadioGroup
@@ -26,3 +12,17 @@ const items: RadioGroupItem[] = [
     </p>
   </div>
 </template>
+
+<script setup lang="ts">
+import type { RadioGroupItem } from '@hareui/vue'
+import { RadioGroup } from '@hareui/vue'
+import { ref } from 'vue'
+
+const selection = ref('pro')
+
+const items: RadioGroupItem[] = [
+  { value: 'starter', label: 'Starter', description: 'For side projects and small teams' },
+  { value: 'pro', label: 'Pro', description: 'Advanced reporting and analytics' },
+  { value: 'teams', label: 'Teams', description: 'Share access with up to 10 teammates' },
+]
+</script>

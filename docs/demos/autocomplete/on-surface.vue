@@ -1,20 +1,3 @@
-<script setup lang="ts">
-import type { ListBoxItem } from '@hareui/vue'
-import { Autocomplete, Surface } from '@hareui/vue'
-import { ref } from 'vue'
-
-const items: ListBoxItem[] = [
-  { value: 'florida', label: 'Florida' },
-  { value: 'delaware', label: 'Delaware' },
-  { value: 'california', label: 'California' },
-  { value: 'texas', label: 'Texas' },
-  { value: 'new-york', label: 'New York' },
-  { value: 'washington', label: 'Washington' },
-]
-
-const selectedKey = ref<string | null>(null)
-</script>
-
 <template>
   <Surface class="w-[320px] rounded-3xl p-6">
     <Autocomplete
@@ -32,3 +15,20 @@ const selectedKey = ref<string | null>(null)
     </Autocomplete>
   </Surface>
 </template>
+
+<script setup lang="ts">
+import type { ListBoxItem } from '@hareui/vue'
+import { Autocomplete, Surface } from '@hareui/vue'
+import { ref } from 'vue'
+
+const items: ListBoxItem[] = [
+  { value: 'florida', label: 'Florida' },
+  { value: 'delaware', label: 'Delaware' },
+  { value: 'california', label: 'California' },
+  { value: 'texas', label: 'Texas' },
+  { value: 'new-york', label: 'New York' },
+  { value: 'washington', label: 'Washington' },
+]
+
+const selectedKey = ref<string | null>(null)
+</script>

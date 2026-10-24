@@ -1,3 +1,34 @@
+<template>
+  <Autocomplete
+    v-model="selectedKey"
+    clearable
+    class="w-[256px]"
+    label="User"
+    placeholder="Select a user"
+    :search="false"
+    :items="users"
+  >
+    <template #value="{ selectedItems, isPlaceholder, text }">
+      <template v-if="isPlaceholder || !selectedItems[0]">
+        {{ text }}
+      </template>
+      <div v-else class="flex items-center gap-2">
+        <Avatar
+          class="size-4"
+          size="sm"
+          :src="selectedItems[0]!.avatarUrl"
+          :fallback="selectedItems[0]!.fallback"
+        />
+        <span>{{ selectedItems[0]!.label }}</span>
+      </div>
+    </template>
+    <template #item-leading="{ item }">
+      <Avatar size="sm" :src="item.avatarUrl" :fallback="item.fallback" />
+    </template>
+    <template #empty> No results found </template>
+  </Autocomplete>
+</template>
+
 <script setup lang="ts">
 import type { ListBoxItem } from '@hareui/vue'
 import { Autocomplete, Avatar } from '@hareui/vue'
@@ -48,34 +79,3 @@ const users: User[] = [
 
 const selectedKey = ref<string | null>(null)
 </script>
-
-<template>
-  <Autocomplete
-    v-model="selectedKey"
-    clearable
-    class="w-[256px]"
-    label="User"
-    placeholder="Select a user"
-    :search="false"
-    :items="users"
-  >
-    <template #value="{ selectedItems, isPlaceholder, text }">
-      <template v-if="isPlaceholder || !selectedItems[0]">
-        {{ text }}
-      </template>
-      <div v-else class="flex items-center gap-2">
-        <Avatar
-          class="size-4"
-          size="sm"
-          :src="selectedItems[0]!.avatarUrl"
-          :fallback="selectedItems[0]!.fallback"
-        />
-        <span>{{ selectedItems[0]!.label }}</span>
-      </div>
-    </template>
-    <template #item-leading="{ item }">
-      <Avatar size="sm" :src="item.avatarUrl" :fallback="item.fallback" />
-    </template>
-    <template #empty> No results found </template>
-  </Autocomplete>
-</template>

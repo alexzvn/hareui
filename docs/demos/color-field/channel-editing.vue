@@ -1,10 +1,3 @@
-<script setup lang="ts">
-import { ColorField, ColorSwatch, colorToString, parseColor } from '@hareui/vue'
-import { ref } from 'vue'
-
-const color = ref(parseColor('#7F007F'))
-</script>
-
 <template>
   <div class="flex flex-col gap-4">
     <p class="text-sm text-muted">Edit individual HSL channels:</p>
@@ -48,3 +41,10 @@ const color = ref(parseColor('#7F007F'))
     </div>
   </div>
 </template>
+
+<script setup lang="ts">
+import { ColorField, ColorSwatch, colorToString, parseColor } from '@hareui/vue'
+import { ref } from 'vue'
+
+const color = ref(parseColor('#7F007F'))
+</script>

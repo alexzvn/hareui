@@ -1,7 +1,3 @@
-<script setup lang="ts">
-import { DashboardSidebarCollapse } from '@hareui/vue'
-</script>
-
 <template>
   <!-- The button hides itself below `lg`, where the sidebar is a sheet: `flex` keeps these on screen. -->
   <div class="flex flex-wrap items-center justify-center gap-2">
@@ -11,3 +7,7 @@ import { DashboardSidebarCollapse } from '@hareui/vue'
     <DashboardSidebarCollapse variant="outline" class="flex" />
   </div>
 </template>
+
+<script setup lang="ts">
+import { DashboardSidebarCollapse } from '@hareui/vue'
+</script>

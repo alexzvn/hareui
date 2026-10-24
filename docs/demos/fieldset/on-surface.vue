@@ -1,18 +1,3 @@
-<script setup lang="ts">
-import { Button, Fieldset, Form, Input, Surface, TextArea, TextField } from '@hareui/vue'
-import { Icon } from '@iconify/vue'
-
-function onSubmit(e: Event) {
-  e.preventDefault()
-  alert('Form submitted successfully!')
-}
-
-const validateName = (value: string | number) =>
-  String(value).length < 3 ? 'Name must be at least 3 characters' : null
-const validateBio = (value: string | number) =>
-  String(value).length < 10 ? 'Bio must be at least 10 characters' : null
-</script>
-
 <template>
   <div class="flex items-center justify-center rounded-3xl bg-surface p-6">
     <Surface class="w-full min-w-[380px]">
@@ -49,3 +34,18 @@ const validateBio = (value: string | number) =>
     </Surface>
   </div>
 </template>
+
+<script setup lang="ts">
+import { Button, Fieldset, Form, Input, Surface, TextArea, TextField } from '@hareui/vue'
+import { Icon } from '@iconify/vue'
+
+function onSubmit(e: Event) {
+  e.preventDefault()
+  alert('Form submitted successfully!')
+}
+
+const validateName = (value: string | number) =>
+  String(value).length < 3 ? 'Name must be at least 3 characters' : null
+const validateBio = (value: string | number) =>
+  String(value).length < 10 ? 'Bio must be at least 10 characters' : null
+</script>

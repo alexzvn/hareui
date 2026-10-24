@@ -1,3 +1,103 @@
+<template>
+  <!--
+    RAC Virtualizer: each row sits in an absolutely positioned presentational wrapper. `options` are the row objects,
+    not the values: Reka scrolls the selected option to the top on mount, RAC doesn't (the owner scrolls instead).
+  -->
+  <ListboxVirtualizer
+    v-if="virtualize"
+    v-slot="{ option, virtualizer: v }"
+    :options="flatRows as any[]"
+    :estimate-size="virtualOptions.estimateSize ?? 50"
+    :overscan="virtualOptions.overscan ?? 3"
+  >
+    <div role="presentation" class="w-full" :data-virtualizer="captureVirtualizer(v as any)">
+      <!-- Slot-less branch: forwarded (dynamic) slots force-update every option on each render -->
+      <ListBoxOption
+        v-if="forwarded.length"
+        v-bind="optionProps(option as unknown as CollectionRow) as any"
+      >
+        <template v-for="name in forwarded" #[name]="state">
+          <slot :name="name" v-bind="state" />
+        </template>
+      </ListBoxOption>
+      <ListBoxOption v-else v-bind="optionProps(option as unknown as CollectionRow) as any" />
+    </div>
+  </ListboxVirtualizer>
+  <template
+    v-for="block in virtualize ? [] : blocks"
+    :key="block.kind === 'item' ? `i${block.index}` : `b${block.key}`"
+  >
+    <hr
+      v-if="block.kind === 'separator'"
+      role="presentation"
+      data-slot="separator"
+      data-orientation="horizontal"
+      :class="classes.separator()"
+    />
+    <!-- Reka's group always references its label's id; an unlabelled section stays an unnamed group, as in RAC -->
+    <component
+      :is="sectionLabelled(block.section) ? ListboxGroup : 'section'"
+      v-else-if="block.kind === 'section'"
+      v-bind="sectionLabelled(block.section) ? { as: 'section' } : { role: 'group' }"
+      :class="classes.section()"
+    >
+      <ListboxGroupLabel
+        v-if="sectionLabelled(block.section)"
+        as="header"
+        role="presentation"
+        data-slot="header"
+        :class="classes.header()"
+      >
+        <slot name="section-label" :section="block.section">
+          {{ block.section.label }}
+        </slot>
+      </ListboxGroupLabel>
+      <template v-if="forwarded.length">
+        <ListBoxOption
+          v-for="row in block.rows"
+          :key="`i${row.index}`"
+          v-bind="optionProps(row) as any"
+        >
+          <template v-for="name in forwarded" #[name]="state">
+            <slot :name="name" v-bind="state" />
+          </template>
+        </ListBoxOption>
+      </template>
+      <template v-else>
+        <ListBoxOption
+          v-for="row in block.rows"
+          :key="`i${row.index}`"
+          v-bind="optionProps(row) as any"
+        />
+      </template>
+    </component>
+    <ListBoxOption v-else-if="forwarded.length" v-bind="optionProps(block) as any">
+      <template v-for="name in forwarded" #[name]="state">
+        <slot :name="name" v-bind="state" />
+      </template>
+    </ListBoxOption>
+    <ListBoxOption v-else v-bind="optionProps(block) as any" />
+  </template>
+  <!-- RAC renders the empty state inside an option row (a listbox owns only options and groups) -->
+  <div v-if="empty && (slots.empty || emptyText)" role="option" style="display: contents">
+    <div data-slot="empty-state" :class="classes.emptyState()">
+      <slot name="empty">
+        {{ emptyText }}
+      </slot>
+    </div>
+  </div>
+  <div v-if="loading && slots.loading" role="option" data-slot="list-box-loading">
+    <slot name="loading" />
+  </div>
+  <div
+    v-if="loading !== undefined"
+    ref="sentinel"
+    aria-hidden="true"
+    data-slot="list-box-load-more"
+    style="position: relative; height: 1px; width: 1px"
+  />
+</template>
+
 <script setup lang="ts">
 import { ListboxGroup, ListboxGroupLabel, ListboxVirtualizer } from 'reka-ui'
 // Internal: the rows of a filtered ListBox (options, sections, separators, empty state, load-more sentinel), rendered
@@ -114,103 +214,3 @@ watch([sentinelVisible, () => props.loading, () => countRows(props.blocks)], () 
   if (sentinelVisible.value && props.loading === false) emit('loadMore')
 })
 </script>
-
-<template>
-  <!--
-    RAC Virtualizer: each row sits in an absolutely positioned presentational wrapper. `options` are the row objects,
-    not the values: Reka scrolls the selected option to the top on mount, RAC doesn't (the owner scrolls instead).
-  -->
-  <ListboxVirtualizer
-    v-if="virtualize"
-    v-slot="{ option, virtualizer: v }"
-    :options="flatRows as any[]"
-    :estimate-size="virtualOptions.estimateSize ?? 50"
-    :overscan="virtualOptions.overscan ?? 3"
-  >
-    <div role="presentation" class="w-full" :data-virtualizer="captureVirtualizer(v as any)">
-      <!-- Slot-less branch: forwarded (dynamic) slots force-update every option on each render -->
-      <ListBoxOption
-        v-if="forwarded.length"
-        v-bind="optionProps(option as unknown as CollectionRow) as any"
-      >
-        <template v-for="name in forwarded" #[name]="state">
-          <slot :name="name" v-bind="state" />
-        </template>
-      </ListBoxOption>
-      <ListBoxOption v-else v-bind="optionProps(option as unknown as CollectionRow) as any" />
-    </div>
-  </ListboxVirtualizer>
-  <template
-    v-for="block in virtualize ? [] : blocks"
-    :key="block.kind === 'item' ? `i${block.index}` : `b${block.key}`"
-  >
-    <hr
-      v-if="block.kind === 'separator'"
-      role="presentation"
-      data-slot="separator"
-      data-orientation="horizontal"
-      :class="classes.separator()"
-    />
-    <!-- Reka's group always references its label's id; an unlabelled section stays an unnamed group, as in RAC -->
-    <component
-      :is="sectionLabelled(block.section) ? ListboxGroup : 'section'"
-      v-else-if="block.kind === 'section'"
-      v-bind="sectionLabelled(block.section) ? { as: 'section' } : { role: 'group' }"
-      :class="classes.section()"
-    >
-      <ListboxGroupLabel
-        v-if="sectionLabelled(block.section)"
-        as="header"
-        role="presentation"
-        data-slot="header"
-        :class="classes.header()"
-      >
-        <slot name="section-label" :section="block.section">
-          {{ block.section.label }}
-        </slot>
-      </ListboxGroupLabel>
-      <template v-if="forwarded.length">
-        <ListBoxOption
-          v-for="row in block.rows"
-          :key="`i${row.index}`"
-          v-bind="optionProps(row) as any"
-        >
-          <template v-for="name in forwarded" #[name]="state">
-            <slot :name="name" v-bind="state" />
-          </template>
-        </ListBoxOption>
-      </template>
-      <template v-else>
-        <ListBoxOption
-          v-for="row in block.rows"
-          :key="`i${row.index}`"
-          v-bind="optionProps(row) as any"
-        />
-      </template>
-    </component>
-    <ListBoxOption v-else-if="forwarded.length" v-bind="optionProps(block) as any">
-      <template v-for="name in forwarded" #[name]="state">
-        <slot :name="name" v-bind="state" />
-      </template>
-    </ListBoxOption>
-    <ListBoxOption v-else v-bind="optionProps(block) as any" />
-  </template>
-  <!-- RAC renders the empty state inside an option row (a listbox owns only options and groups) -->
-  <div v-if="empty && (slots.empty || emptyText)" role="option" style="display: contents">
-    <div data-slot="empty-state" :class="classes.emptyState()">
-      <slot name="empty">
-        {{ emptyText }}
-      </slot>
-    </div>
-  </div>
-  <div v-if="loading && slots.loading" role="option" data-slot="list-box-loading">
-    <slot name="loading" />
-  </div>
-  <div
-    v-if="loading !== undefined"
-    ref="sentinel"
-    aria-hidden="true"
-    data-slot="list-box-load-more"
-    style="position: relative; height: 1px; width: 1px"
-  />
-</template>

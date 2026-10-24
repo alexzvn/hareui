@@ -1,39 +1,3 @@
-<script setup lang="ts">
-import { Icon } from '@iconify/vue'
-import { onBeforeUnmount, onMounted, ref } from 'vue'
-
-import buttonTheme from '../../../../packages/vue/src/components/button/theme'
-import { tv } from '../../../../packages/vue/src/utils/tv'
-import { sectionLinks, type SidebarSection } from '../../sidebar'
-import { REPO_URL } from '../repo'
-import BrandIcon from './BrandIcon.vue'
-import DesignThemeSelector from './DesignThemeSelector.vue'
-import FrameworkTabs from './FrameworkTabs.vue'
-import HareLogo from './HareLogo.vue'
-import ThemeToggle from './ThemeToggle.vue'
-
-defineProps<{ sections: SidebarSection[]; activeSection?: SidebarSection }>()
-const emit = defineEmits<{ search: []; openSidebar: [] }>()
-
-const button = tv(buttonTheme)
-const searchIconButton = button({ iconOnly: true, size: 'sm', variant: 'tertiary' }).base({
-  class: 'size-[34px] border-none p-2',
-})
-
-const transparent = ref(true)
-function onScroll() {
-  transparent.value = window.scrollY < 10
-}
-onMounted(() => {
-  onScroll()
-  window.addEventListener('scroll', onScroll, { passive: true })
-})
-onBeforeUnmount(() => window.removeEventListener('scroll', onScroll))
-
-const TAB =
-  'hover:text-fd-accent-foreground inline-flex items-center gap-2 border-b-2 pb-1.5 text-sm font-medium text-nowrap transition-colors'
-</script>
-
 <template>
   <header
     :data-transparent="transparent"
@@ -168,3 +132,39 @@ const TAB =
     </div>
   </header>
 </template>
+
+<script setup lang="ts">
+import { Icon } from '@iconify/vue'
+import { onBeforeUnmount, onMounted, ref } from 'vue'
+
+import buttonTheme from '../../../../packages/vue/src/components/button/theme'
+import { tv } from '../../../../packages/vue/src/utils/tv'
+import { sectionLinks, type SidebarSection } from '../../sidebar'
+import { REPO_URL } from '../repo'
+import BrandIcon from './BrandIcon.vue'
+import DesignThemeSelector from './DesignThemeSelector.vue'
+import FrameworkTabs from './FrameworkTabs.vue'
+import HareLogo from './HareLogo.vue'
+import ThemeToggle from './ThemeToggle.vue'
+
+defineProps<{ sections: SidebarSection[]; activeSection?: SidebarSection }>()
+const emit = defineEmits<{ search: []; openSidebar: [] }>()
+
+const button = tv(buttonTheme)
+const searchIconButton = button({ iconOnly: true, size: 'sm', variant: 'tertiary' }).base({
+  class: 'size-[34px] border-none p-2',
+})
+
+const transparent = ref(true)
+function onScroll() {
+  transparent.value = window.scrollY < 10
+}
+onMounted(() => {
+  onScroll()
+  window.addEventListener('scroll', onScroll, { passive: true })
+})
+onBeforeUnmount(() => window.removeEventListener('scroll', onScroll))
+
+const TAB =
+  'hover:text-fd-accent-foreground inline-flex items-center gap-2 border-b-2 pb-1.5 text-sm font-medium text-nowrap transition-colors'
+</script>

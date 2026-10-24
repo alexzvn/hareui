@@ -1,18 +1,3 @@
-<script setup lang="ts">
-import { Button, Fieldset, Form, Input, TextArea, TextField } from '@hareui/vue'
-import { Icon } from '@iconify/vue'
-
-function onSubmit(e: Event) {
-  e.preventDefault()
-  alert('Form submitted successfully!')
-}
-
-const validateName = (value: string | number) =>
-  String(value).length < 3 ? 'Name must be at least 3 characters' : null
-const validateBio = (value: string | number) =>
-  String(value).length < 10 ? 'Bio must be at least 10 characters' : null
-</script>
-
 <template>
   <Form class="w-full max-w-96" @submit="onSubmit">
     <Fieldset legend="Profile Settings" description="Update your profile information.">
@@ -41,3 +26,18 @@ const validateBio = (value: string | number) =>
     </Fieldset>
   </Form>
 </template>
+
+<script setup lang="ts">
+import { Button, Fieldset, Form, Input, TextArea, TextField } from '@hareui/vue'
+import { Icon } from '@iconify/vue'
+
+function onSubmit(e: Event) {
+  e.preventDefault()
+  alert('Form submitted successfully!')
+}
+
+const validateName = (value: string | number) =>
+  String(value).length < 3 ? 'Name must be at least 3 characters' : null
+const validateBio = (value: string | number) =>
+  String(value).length < 10 ? 'Bio must be at least 10 characters' : null
+</script>

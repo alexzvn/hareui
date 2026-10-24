@@ -1,3 +1,51 @@
+<template>
+  <Primitive
+    ref="root"
+    v-bind="$attrs"
+    :as="as"
+    data-slot="header"
+    :data-hidden="hidden ? 'true' : undefined"
+    :data-menu-open="open ? 'true' : undefined"
+    :style="heightStyle"
+    :class="ui.root({ class: [props.ui?.root, props.class] })"
+    @focusin="onFocusIn"
+  >
+    <slot name="top" />
+
+    <div
+      ref="bar"
+      data-slot="header-container"
+      :class="ui.container({ class: props.ui?.container })"
+    >
+      <Left />
+
+      <div data-slot="header-center" :class="ui.center({ class: props.ui?.center })">
+        <slot />
+      </div>
+
+      <Right />
+    </div>
+
+    <slot name="bottom" />
+  </Primitive>
+
+  <Teleport v-if="hasMenu" :to="portal.to" :disabled="portal.disabled">
+    <div ref="anchor" data-slot="header-menu-anchor" class="contents" :style="anchorStyle">
+      <Modal v-if="mode === 'modal'" v-model:open="open" v-bind="modalProps">
+        <template #content="{ close }">
+          <MenuContent :close="close" />
+        </template>
+      </Modal>
+
+      <Drawer v-else v-model:open="open" v-bind="drawerProps">
+        <template #content="{ close }">
+          <MenuContent :close="close" />
+        </template>
+      </Drawer>
+    </div>
+  </Teleport>
+</template>
+
 <script lang="ts">
 import type { PrimitiveProps } from 'reka-ui'
 
@@ -601,51 +649,3 @@ function onFocusIn() {
   if (hidden.value) hidden.value = false
 }
 </script>
-
-<template>
-  <Primitive
-    ref="root"
-    v-bind="$attrs"
-    :as="as"
-    data-slot="header"
-    :data-hidden="hidden ? 'true' : undefined"
-    :data-menu-open="open ? 'true' : undefined"
-    :style="heightStyle"
-    :class="ui.root({ class: [props.ui?.root, props.class] })"
-    @focusin="onFocusIn"
-  >
-    <slot name="top" />
-
-    <div
-      ref="bar"
-      data-slot="header-container"
-      :class="ui.container({ class: props.ui?.container })"
-    >
-      <Left />
-
-      <div data-slot="header-center" :class="ui.center({ class: props.ui?.center })">
-        <slot />
-      </div>
-
-      <Right />
-    </div>
-
-    <slot name="bottom" />
-  </Primitive>
-
-  <Teleport v-if="hasMenu" :to="portal.to" :disabled="portal.disabled">
-    <div ref="anchor" data-slot="header-menu-anchor" class="contents" :style="anchorStyle">
-      <Modal v-if="mode === 'modal'" v-model:open="open" v-bind="modalProps">
-        <template #content="{ close }">
-          <MenuContent :close="close" />
-        </template>
-      </Modal>
-
-      <Drawer v-else v-model:open="open" v-bind="drawerProps">
-        <template #content="{ close }">
-          <MenuContent :close="close" />
-        </template>
-      </Drawer>
-    </div>
-  </Teleport>
-</template>

@@ -1,3 +1,22 @@
+<template>
+  <div class="flex w-full flex-col gap-3">
+    <p class="text-sm text-muted">{{ items.length }} / {{ all.length }} payments</p>
+    <RichTable ref="table" class="max-h-100" sticky :data="items" :columns="columns">
+      <template v-if="items.length < all.length" #body-bottom>
+        <!-- Load-more row: a centered Spinner while the next page loads. -->
+        <tr ref="sentinel">
+          <td :colspan="columns.length" class="py-3">
+            <div class="flex items-center justify-center py-2">
+              <Spinner v-if="loading" aria-label="Loading more payments" />
+              <span v-else class="size-6" />
+            </div>
+          </td>
+        </tr>
+      </template>
+    </RichTable>
+  </div>
+</template>
+
 <script setup lang="ts">
 import type { RichTableColumn } from '@hareui/vue'
 import { RichTable, Spinner } from '@hareui/vue'
@@ -64,22 +83,3 @@ watch(sentinel, (el) => {
 })
 onBeforeUnmount(() => observer?.disconnect())
 </script>
-
-<template>
-  <div class="flex w-full flex-col gap-3">
-    <p class="text-sm text-muted">{{ items.length }} / {{ all.length }} payments</p>
-    <RichTable ref="table" class="max-h-100" sticky :data="items" :columns="columns">
-      <template v-if="items.length < all.length" #body-bottom>
-        <!-- Load-more row: a centered Spinner while the next page loads. -->
-        <tr ref="sentinel">
-          <td :colspan="columns.length" class="py-3">
-            <div class="flex items-center justify-center py-2">
-              <Spinner v-if="loading" aria-label="Loading more payments" />
-              <span v-else class="size-6" />
-            </div>
-          </td>
-        </tr>
-      </template>
-    </RichTable>
-  </div>
-</template>

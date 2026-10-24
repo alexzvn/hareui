@@ -1,3 +1,128 @@
+<template>
+  <component
+    :is="component"
+    v-bind="extraAttrs"
+    :disabled="item.disabled"
+    :text-value="item.textValue ?? item.label"
+    data-slot="menu-item"
+    :data-selected="state.selected ? 'true' : undefined"
+    :data-has-submenu="submenu ? 'true' : undefined"
+    :data-hovered="hovered ? 'true' : undefined"
+    :data-pressed="pressed ? 'true' : undefined"
+    :data-focused="focused ? 'true' : undefined"
+    :data-focus-visible="focusVisible ? 'true' : undefined"
+    :class="classes.item!({ variant: item.variant, class: [ctx.ui()?.item, item.class] })"
+    @select="onSelect"
+    @pointerenter="hovered = $event.pointerType === 'mouse'"
+    @pointerleave="onPointerleave"
+    @pointerdown="pressed = true"
+    @pointerup="pressed = false"
+    @pointercancel="pressed = false"
+    @focus="onFocus"
+    @blur="onBlur"
+  >
+    <component :is="slots.item" v-if="slots.item" v-bind="state" />
+    <template v-else>
+      <span
+        v-if="selectable && group.indicator"
+        aria-hidden="true"
+        data-slot="menu-item-indicator"
+        :data-type="group.indicator"
+        :data-visible="state.selected || undefined"
+        :class="classes.indicator!({ variant: item.variant, class: ctx.ui()?.indicator })"
+      >
+        <component :is="slots.indicator" v-if="slots.indicator" v-bind="state" />
+        <svg
+          v-else-if="group.indicator === 'dot'"
+          aria-hidden="true"
+          data-slot="menu-item-indicator--dot"
+          fill="currentColor"
+          fill-rule="evenodd"
+          role="presentation"
+          viewBox="0 0 16 16"
+          xmlns="http://www.w3.org/2000/svg"
+        >
+          <path clip-rule="evenodd" d="M8 15A7 7 0 1 0 8 1a7 7 0 0 0 0 14" fill-rule="evenodd" />
+        </svg>
+        <svg
+          v-else
+          aria-hidden="true"
+          data-slot="menu-item-indicator--checkmark"
+          fill="none"
+          role="presentation"
+          stroke="currentColor"
+          stroke-dasharray="22"
+          :stroke-dashoffset="state.selected ? 44 : 66"
+          stroke-linecap="round"
+          stroke-linejoin="round"
+          stroke-width="2"
+          viewBox="0 0 17 18"
+        >
+          <polyline points="1 9 7 14 15 4" />
+        </svg>
+      </span>
+      <component :is="slots['item-leading']" v-if="slots['item-leading']" v-bind="state" />
+      <div v-if="item.description || slots['item-description']" class="flex flex-col">
+        <label
+          data-slot="label"
+          :class="ctx.labelClass(item.disabled)"
+          :id="`${id}-label`"
+          @mousedown="onLabelMousedown"
+        >
+          <component :is="slots['item-label']" v-if="slots['item-label']" v-bind="state" />
+          <template v-else>
+            {{ item.label }}
+          </template>
+        </label>
+        <span :id="`${id}-description`" data-slot="description" :class="ctx.descriptionClass()">
+          <component
+            :is="slots['item-description']"
+            v-if="slots['item-description']"
+            v-bind="state"
+          />
+          <template v-else>
+            {{ item.description }}
+          </template>
+        </span>
+      </div>
+      <label
+        v-else
+        data-slot="label"
+        :class="ctx.labelClass(item.disabled)"
+        :id="`${id}-label`"
+        @mousedown="onLabelMousedown"
+      >
+        <component :is="slots['item-label']" v-if="slots['item-label']" v-bind="state" />
+        <template v-else>
+          {{ item.label }}
+        </template>
+      </label>
+      <component :is="slots['item-trailing']" v-if="slots['item-trailing']" v-bind="state" />
+      <Kbd
+        v-else-if="item.kbd"
+        :id="`${id}-kbd`"
+        class="ms-auto"
+        variant="light"
+        :keys="item.kbd.keys"
+      >
+        <template v-if="item.kbd.content">
+          {{ item.kbd.content }}
+        </template>
+      </Kbd>
+      <span
+        v-if="submenu"
+        aria-hidden="true"
+        data-slot="submenu-indicator"
+        :class="
+          classes.submenuIndicator!({ variant: item.variant, class: ctx.ui()?.submenuIndicator })
+        "
+      >
+        <SubmenuIndicatorContent />
+      </span>
+    </template>
+  </component>
+</template>
+
 <script setup lang="ts">
 import { DropdownMenuCheckboxItem, DropdownMenuItem, DropdownMenuSubTrigger, useId } from 'reka-ui'
 import { computed, h, inject, ref, renderSlot } from 'vue'
@@ -125,128 +250,3 @@ const SubmenuIndicatorContent = () =>
     chevron(),
   ])
 </script>
-
-<template>
-  <component
-    :is="component"
-    v-bind="extraAttrs"
-    :disabled="item.disabled"
-    :text-value="item.textValue ?? item.label"
-    data-slot="menu-item"
-    :data-selected="state.selected ? 'true' : undefined"
-    :data-has-submenu="submenu ? 'true' : undefined"
-    :data-hovered="hovered ? 'true' : undefined"
-    :data-pressed="pressed ? 'true' : undefined"
-    :data-focused="focused ? 'true' : undefined"
-    :data-focus-visible="focusVisible ? 'true' : undefined"
-    :class="classes.item!({ variant: item.variant, class: [ctx.ui()?.item, item.class] })"
-    @select="onSelect"
-    @pointerenter="hovered = $event.pointerType === 'mouse'"
-    @pointerleave="onPointerleave"
-    @pointerdown="pressed = true"
-    @pointerup="pressed = false"
-    @pointercancel="pressed = false"
-    @focus="onFocus"
-    @blur="onBlur"
-  >
-    <component :is="slots.item" v-if="slots.item" v-bind="state" />
-    <template v-else>
-      <span
-        v-if="selectable && group.indicator"
-        aria-hidden="true"
-        data-slot="menu-item-indicator"
-        :data-type="group.indicator"
-        :data-visible="state.selected || undefined"
-        :class="classes.indicator!({ variant: item.variant, class: ctx.ui()?.indicator })"
-      >
-        <component :is="slots.indicator" v-if="slots.indicator" v-bind="state" />
-        <svg
-          v-else-if="group.indicator === 'dot'"
-          aria-hidden="true"
-          data-slot="menu-item-indicator--dot"
-          fill="currentColor"
-          fill-rule="evenodd"
-          role="presentation"
-          viewBox="0 0 16 16"
-          xmlns="http://www.w3.org/2000/svg"
-        >
-          <path clip-rule="evenodd" d="M8 15A7 7 0 1 0 8 1a7 7 0 0 0 0 14" fill-rule="evenodd" />
-        </svg>
-        <svg
-          v-else
-          aria-hidden="true"
-          data-slot="menu-item-indicator--checkmark"
-          fill="none"
-          role="presentation"
-          stroke="currentColor"
-          stroke-dasharray="22"
-          :stroke-dashoffset="state.selected ? 44 : 66"
-          stroke-linecap="round"
-          stroke-linejoin="round"
-          stroke-width="2"
-          viewBox="0 0 17 18"
-        >
-          <polyline points="1 9 7 14 15 4" />
-        </svg>
-      </span>
-      <component :is="slots['item-leading']" v-if="slots['item-leading']" v-bind="state" />
-      <div v-if="item.description || slots['item-description']" class="flex flex-col">
-        <label
-          data-slot="label"
-          :class="ctx.labelClass(item.disabled)"
-          :id="`${id}-label`"
-          @mousedown="onLabelMousedown"
-        >
-          <component :is="slots['item-label']" v-if="slots['item-label']" v-bind="state" />
-          <template v-else>
-            {{ item.label }}
-          </template>
-        </label>
-        <span :id="`${id}-description`" data-slot="description" :class="ctx.descriptionClass()">
-          <component
-            :is="slots['item-description']"
-            v-if="slots['item-description']"
-            v-bind="state"
-          />
-          <template v-else>
-            {{ item.description }}
-          </template>
-        </span>
-      </div>
-      <label
-        v-else
-        data-slot="label"
-        :class="ctx.labelClass(item.disabled)"
-        :id="`${id}-label`"
-        @mousedown="onLabelMousedown"
-      >
-        <component :is="slots['item-label']" v-if="slots['item-label']" v-bind="state" />
-        <template v-else>
-          {{ item.label }}
-        </template>
-      </label>
-      <component :is="slots['item-trailing']" v-if="slots['item-trailing']" v-bind="state" />
-      <Kbd
-        v-else-if="item.kbd"
-        :id="`${id}-kbd`"
-        class="ms-auto"
-        variant="light"
-        :keys="item.kbd.keys"
-      >
-        <template v-if="item.kbd.content">
-          {{ item.kbd.content }}
-        </template>
-      </Kbd>
-      <span
-        v-if="submenu"
-        aria-hidden="true"
-        data-slot="submenu-indicator"
-        :class="
-          classes.submenuIndicator!({ variant: item.variant, class: ctx.ui()?.submenuIndicator })
-        "
-      >
-        <SubmenuIndicatorContent />
-      </span>
-    </template>
-  </component>
-</template>

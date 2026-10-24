@@ -1,3 +1,24 @@
+<template>
+  <div class="flex gap-3">
+    <Switch
+      v-for="icon in icons"
+      :key="icon.key"
+      v-model="selected[icon.key]"
+      :aria-label="icon.key"
+      size="lg"
+      :ui="{ control: selected[icon.key] ? icon.selectedControlClass : '' }"
+    >
+      <template #icon="{ checked }">
+        <Icon
+          :icon="checked ? icon.on : icon.off"
+          class="size-3 text-inherit"
+          :class="checked ? 'opacity-100' : 'opacity-70'"
+        />
+      </template>
+    </Switch>
+  </div>
+</template>
+
 <script setup lang="ts">
 import { Switch } from '@hareui/vue'
 import { Icon } from '@iconify/vue'
@@ -35,24 +56,3 @@ const selected = reactive<Record<string, boolean>>(
   Object.fromEntries(icons.map((icon) => [icon.key, true])),
 )
 </script>
-
-<template>
-  <div class="flex gap-3">
-    <Switch
-      v-for="icon in icons"
-      :key="icon.key"
-      v-model="selected[icon.key]"
-      :aria-label="icon.key"
-      size="lg"
-      :ui="{ control: selected[icon.key] ? icon.selectedControlClass : '' }"
-    >
-      <template #icon="{ checked }">
-        <Icon
-          :icon="checked ? icon.on : icon.off"
-          class="size-3 text-inherit"
-          :class="checked ? 'opacity-100' : 'opacity-70'"
-        />
-      </template>
-    </Switch>
-  </div>
-</template>

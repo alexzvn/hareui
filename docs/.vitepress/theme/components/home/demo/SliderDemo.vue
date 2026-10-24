@@ -1,7 +1,3 @@
-<script setup lang="ts">
-import { Slider } from '@hareui/vue'
-</script>
-
 <template>
   <div class="w-[256px] px-1">
     <Slider
@@ -15,3 +11,7 @@ import { Slider } from '@hareui/vue'
     />
   </div>
 </template>
+
+<script setup lang="ts">
+import { Slider } from '@hareui/vue'
+</script>

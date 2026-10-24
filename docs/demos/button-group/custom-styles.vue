@@ -1,3 +1,18 @@
+<template>
+  <ButtonGroup separator>
+    <Button class="rounded-none bg-[#08872B] hover:bg-[#0FBF3E]"> Merge pull request </Button>
+    <Dropdown :items="mergeOptions" class="max-w-[290px] rounded-none" align="end">
+      <Button
+        icon-only
+        aria-label="Merge options"
+        class="rounded-none bg-[#08872B] hover:bg-[#0FBF3E]"
+      >
+        <Icon class="size-4" icon="gravity-ui:chevron-down" />
+      </Button>
+    </Dropdown>
+  </ButtonGroup>
+</template>
+
 <script setup lang="ts">
 import type { DropdownEntry } from '@hareui/vue'
 import { Button, ButtonGroup, Dropdown } from '@hareui/vue'
@@ -25,18 +40,3 @@ const mergeOptions: DropdownEntry[] = [
   },
 ]
 </script>
-
-<template>
-  <ButtonGroup separator>
-    <Button class="rounded-none bg-[#08872B] hover:bg-[#0FBF3E]"> Merge pull request </Button>
-    <Dropdown :items="mergeOptions" class="max-w-[290px] rounded-none" align="end">
-      <Button
-        icon-only
-        aria-label="Merge options"
-        class="rounded-none bg-[#08872B] hover:bg-[#0FBF3E]"
-      >
-        <Icon class="size-4" icon="gravity-ui:chevron-down" />
-      </Button>
-    </Dropdown>
-  </ButtonGroup>
-</template>

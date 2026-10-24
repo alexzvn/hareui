@@ -1,3 +1,32 @@
+<template>
+  <Card
+    class="w-full max-w-[520px] rounded-2xl"
+    :ui="{ header: 'flex-row items-center justify-between' }"
+  >
+    <template #header>
+      <h3 class="text-base font-medium text-foreground">Power Use vs Budget</h3>
+      <div class="flex items-center gap-3">
+        <div class="flex items-center gap-1.5">
+          <span class="size-3 rounded-full" style="background-color: var(--chart-3)" />
+          <span class="text-xs text-muted">Used</span>
+        </div>
+        <div class="flex items-center gap-1.5">
+          <span class="h-0 w-3 border-t-2 border-dashed" style="border-color: var(--chart-1)" />
+          <span class="text-xs text-muted">Budget</span>
+        </div>
+      </div>
+    </template>
+    <LineChart
+      :data="data"
+      index="week"
+      :series="series"
+      aria-label="Weekly power use against budget"
+      :height="200"
+      :value-formatter="formatUsage"
+    />
+  </Card>
+</template>
+
 <script setup lang="ts">
 import { Card } from '@hareui/vue'
 import { LineChart } from '@hareui/vue/charts'
@@ -30,32 +59,3 @@ function formatUsage(value: number) {
   return `${value} kWh`
 }
 </script>
-
-<template>
-  <Card
-    class="w-full max-w-[520px] rounded-2xl"
-    :ui="{ header: 'flex-row items-center justify-between' }"
-  >
-    <template #header>
-      <h3 class="text-base font-medium text-foreground">Power Use vs Budget</h3>
-      <div class="flex items-center gap-3">
-        <div class="flex items-center gap-1.5">
-          <span class="size-3 rounded-full" style="background-color: var(--chart-3)" />
-          <span class="text-xs text-muted">Used</span>
-        </div>
-        <div class="flex items-center gap-1.5">
-          <span class="h-0 w-3 border-t-2 border-dashed" style="border-color: var(--chart-1)" />
-          <span class="text-xs text-muted">Budget</span>
-        </div>
-      </div>
-    </template>
-    <LineChart
-      :data="data"
-      index="week"
-      :series="series"
-      aria-label="Weekly power use against budget"
-      :height="200"
-      :value-formatter="formatUsage"
-    />
-  </Card>
-</template>

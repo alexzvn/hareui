@@ -1,47 +1,3 @@
-<script setup lang="ts">
-import type { NavigationMenuItem } from '@hareui/vue'
-import {
-  Avatar,
-  Button,
-  DashboardGroup,
-  DashboardNavbar,
-  DashboardPanel,
-  DashboardSidebar,
-  DashboardSidebarCollapse,
-  NavigationMenu,
-  Separator,
-} from '@hareui/vue'
-import { Icon } from '@iconify/vue'
-import { h } from 'vue'
-
-// NavigationMenu takes icon components: an Iconify Gravity UI icon that forwards the menu's icon classes.
-const gravityIcon = (name: string) => (attrs: Record<string, unknown>) =>
-  h(Icon, { ...attrs, icon: `gravity-ui:${name}` })
-
-const items: NavigationMenuItem[] = [
-  { label: 'Home', icon: gravityIcon('house'), href: '#' },
-  { label: 'Analytics', icon: gravityIcon('chart-column'), href: '#' },
-  { label: 'Alerts', icon: gravityIcon('bell'), href: '#' },
-]
-
-const sections = ['Overview', 'Activity', 'Timeline', 'Metrics', 'Notes']
-const sectionId = (section: string) => `content-scroll-${section.toLowerCase()}`
-
-// Scrolls the panel body (the scroll container), never the page around it, and keeps the section clear of the
-// sticky "Jump to" bar.
-function jumpTo(section: string) {
-  const target = document.getElementById(sectionId(section))
-  const body = target?.closest<HTMLElement>('[data-slot="dashboard-panel-body"]')
-  if (!target || !body) return
-  const bar = body.querySelector<HTMLElement>('nav[aria-label="Jump to"]')
-  const offset = target.getBoundingClientRect().top - body.getBoundingClientRect().top
-  body.scrollTo({
-    top: body.scrollTop + offset - (bar?.offsetHeight ?? 0) - 24,
-    behavior: 'smooth',
-  })
-}
-</script>
-
 <template>
   <DashboardGroup unit="rem" :persistent="false">
     <DashboardSidebar
@@ -151,3 +107,47 @@ function jumpTo(section: string) {
     </DashboardPanel>
   </DashboardGroup>
 </template>
+
+<script setup lang="ts">
+import type { NavigationMenuItem } from '@hareui/vue'
+import {
+  Avatar,
+  Button,
+  DashboardGroup,
+  DashboardNavbar,
+  DashboardPanel,
+  DashboardSidebar,
+  DashboardSidebarCollapse,
+  NavigationMenu,
+  Separator,
+} from '@hareui/vue'
+import { Icon } from '@iconify/vue'
+import { h } from 'vue'
+
+// NavigationMenu takes icon components: an Iconify Gravity UI icon that forwards the menu's icon classes.
+const gravityIcon = (name: string) => (attrs: Record<string, unknown>) =>
+  h(Icon, { ...attrs, icon: `gravity-ui:${name}` })
+
+const items: NavigationMenuItem[] = [
+  { label: 'Home', icon: gravityIcon('house'), href: '#' },
+  { label: 'Analytics', icon: gravityIcon('chart-column'), href: '#' },
+  { label: 'Alerts', icon: gravityIcon('bell'), href: '#' },
+]
+
+const sections = ['Overview', 'Activity', 'Timeline', 'Metrics', 'Notes']
+const sectionId = (section: string) => `content-scroll-${section.toLowerCase()}`
+
+// Scrolls the panel body (the scroll container), never the page around it, and keeps the section clear of the
+// sticky "Jump to" bar.
+function jumpTo(section: string) {
+  const target = document.getElementById(sectionId(section))
+  const body = target?.closest<HTMLElement>('[data-slot="dashboard-panel-body"]')
+  if (!target || !body) return
+  const bar = body.querySelector<HTMLElement>('nav[aria-label="Jump to"]')
+  const offset = target.getBoundingClientRect().top - body.getBoundingClientRect().top
+  body.scrollTo({
+    top: body.scrollTop + offset - (bar?.offsetHeight ?? 0) - 24,
+    behavior: 'smooth',
+  })
+}
+</script>

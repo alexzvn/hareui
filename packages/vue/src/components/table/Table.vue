@@ -1,3 +1,226 @@
+<template>
+  <div ref="tableRef" data-slot="table" :class="ui.base({ class: [props.ui?.base, props.class] })">
+    <div
+      ref="scrollRootRef"
+      :data-slot="hasResizableColumns ? 'table-resizable-container' : 'table-scroll-container'"
+      :class="
+        hasResizableColumns
+          ? ui.resizableContainer({ class: props.ui?.resizableContainer })
+          : ui.scrollContainer({ class: props.ui?.scrollContainer })
+      "
+    >
+      <table
+        :aria-label="ariaLabel"
+        data-slot="table-content"
+        :class="ui.content({ class: props.ui?.content })"
+      >
+        <thead data-slot="table-header" :class="ui.header({ class: props.ui?.header })">
+          <tr @keydown="onHeaderKeydown">
+            <th
+              v-if="selectionMode !== 'none'"
+              scope="col"
+              data-slot="table-column"
+              :tabindex="headerTabindex(0)"
+              :class="ui.column({ class: [props.ui?.column, 'pe-0'] })"
+              @click.stop
+              @focus="focusTarget = { kind: 'header', index: 0 }"
+            >
+              <!-- Like React Aria's select-all checkbox: only multiple selection can select every row, so single selection disables it and names it "Select". -->
+              <Checkbox
+                :model-value="selectAllModel"
+                :aria-label="selectionMode === 'multiple' ? 'Select all' : 'Select'"
+                :disabled="selectionMode !== 'multiple' || selectableKeys.length === 0"
+                tabindex="-1"
+                @update:model-value="toggleSelectAll"
+              />
+            </th>
+            <th
+              v-for="(column, columnIndex) in columns"
+              :id="column.resizable ? columnHeaderId(column) : undefined"
+              :key="column.key"
+              scope="col"
+              data-slot="table-column"
+              :data-allows-sorting="column.sortable ? 'true' : undefined"
+              :aria-sort="column.sortable ? (sortDirectionFor(column) ?? 'none') : undefined"
+              :tabindex="headerTabindex(columnIndex + (selectionMode !== 'none' ? 1 : 0))"
+              :style="widthStyle(column)"
+              :class="ui.column({ class: [props.ui?.column, column.class, alignClass(column)] })"
+              @click="toggleSort(column)"
+              @focus="
+                focusTarget = {
+                  kind: 'header',
+                  index: columnIndex + (selectionMode !== 'none' ? 1 : 0),
+                }
+              "
+              @keydown.enter.prevent="toggleSort(column)"
+              @keydown.space.prevent="toggleSort(column)"
+            >
+              <span
+                v-if="column.sortable"
+                data-slot="table-sortable-column-header"
+                :data-direction="sortDirectionFor(column)"
+                :class="ui.sortableColumnHeader({ class: props.ui?.sortableColumnHeader })"
+              >
+                <slot
+                  :name="`${column.key}-header`"
+                  :column="column"
+                  :sort-direction="sortDirectionFor(column)"
+                  >{{ column.label }}</slot
+                >
+                <!-- Like HeroUI's SortableColumnHeader: the indicator only shows on the sorted column. -->
+                <svg
+                  v-if="sortDirectionFor(column)"
+                  aria-hidden="true"
+                  data-slot="table-sortable-column-indicator"
+                  :data-direction="sortDirectionFor(column)"
+                  :class="ui.sortableColumnIndicator({ class: props.ui?.sortableColumnIndicator })"
+                  fill="none"
+                  height="16"
+                  role="presentation"
+                  viewBox="0 0 16 16"
+                  width="16"
+                  xmlns="http://www.w3.org/2000/svg"
+                >
+                  <path
+                    clip-rule="evenodd"
+                    d="M13.03 10.53a.75.75 0 0 1-1.06 0L8 6.56l-3.97 3.97a.75.75 0 0 1-1.06-1.06l4.5-4.5a.75.75 0 0 1 1.06 0l4.5 4.5a.75.75 0 0 1 0 1.06"
+                    fill="currentColor"
+                    fill-rule="evenodd"
+                  />
+                </svg>
+              </span>
+              <slot
+                v-else
+                :name="`${column.key}-header`"
+                :column="column"
+                :sort-direction="undefined"
+                >{{ column.label }}</slot
+              >
+              <!-- Named and valued like React Aria's ColumnResizer input: "Resizer <column>", its width in pixels. -->
+              <div
+                v-if="column.resizable"
+                :id="`${columnHeaderId(column)}-resizer`"
+                data-slot="table-column-resizer"
+                role="separator"
+                aria-orientation="vertical"
+                aria-label="Resizer"
+                :aria-labelledby="`${columnHeaderId(column)}-resizer ${columnHeaderId(column)}`"
+                :aria-valuenow="columnWidthOf(column)"
+                :aria-valuetext="`${columnWidthOf(column)} pixels`"
+                :aria-valuemin="minWidthOf(column)"
+                :aria-valuemax="column.maxWidth"
+                tabindex="0"
+                :data-resizing="resizingKey === column.key ? 'true' : undefined"
+                :class="ui.columnResizer({ class: props.ui?.columnResizer })"
+                @click.stop
+                @pointerdown.stop="onResizerPointerDown(column, $event)"
+                @keydown="onResizerKeydown(column, $event)"
+              />
+            </th>
+          </tr>
+        </thead>
+        <tbody
+          data-slot="table-body"
+          :data-empty="flatRows.length === 0 || undefined"
+          :class="ui.body({ class: props.ui?.body })"
+        >
+          <!-- Like React Aria's `renderEmptyState`: no row at all unless the slot is provided. -->
+          <tr v-if="flatRows.length === 0 && !!slots.empty" role="row">
+            <td role="rowheader" :colspan="colSpan">
+              <slot name="empty" />
+            </td>
+          </tr>
+          <tr
+            v-for="flat in flatRows"
+            :key="flat.key"
+            class="group"
+            data-slot="table-row"
+            :data-row-key="flat.key"
+            :data-selected="isSelected(flat.key) ? 'true' : undefined"
+            :aria-selected="selectionMode !== 'none' ? isSelected(flat.key) : undefined"
+            :aria-disabled="flat.row.disabled ? 'true' : undefined"
+            :tabindex="flat.key === activeRowKey ? 0 : -1"
+            :style="{ '--table-row-level': flat.depth }"
+            :class="ui.row({ class: props.ui?.row })"
+            @click="onRowClick(flat, $event)"
+            @focus="focusTarget = { kind: 'row', key: flat.key }"
+            @keydown="onRowKeydown(flat, $event)"
+          >
+            <td
+              v-if="selectionMode !== 'none'"
+              data-slot="table-cell"
+              :class="ui.cell({ class: [props.ui?.cell, 'pe-0'] })"
+              @click.stop
+            >
+              <Checkbox
+                :model-value="isSelected(flat.key)"
+                :disabled="!isSelectable(flat.key, flat.row)"
+                :aria-label="`Select row ${flat.index + 1}`"
+                variant="secondary"
+                tabindex="-1"
+                @update:model-value="manager.toggle(flat.key)"
+              />
+            </td>
+            <td
+              v-for="column in columns"
+              :key="column.key"
+              :role="column.isRowHeader ? 'rowheader' : undefined"
+              data-slot="table-cell"
+              :data-tree-column="treeColumn === column.key ? 'true' : undefined"
+              :style="widthStyle(column)"
+              :class="ui.cell({ class: [props.ui?.cell, column.class, alignClass(column)] })"
+            >
+              <slot
+                :name="`${column.key}-cell`"
+                :row="flat.row"
+                :column="column"
+                :value="cellValue(flat.row, column)"
+                :index="flat.index"
+                :depth="flat.depth"
+                :is-expanded="isRowExpanded(flat.key)"
+                :has-child-items="flat.hasChildItems"
+                :toggle="() => toggleExpanded(flat.key)"
+              >
+                {{ cellValue(flat.row, column) }}
+              </slot>
+            </td>
+          </tr>
+          <!-- React Aria's LoadMoreItem: an inert zero-height sentinel row, plus the content row only while loading. -->
+          <tr v-if="hasMore" ref="sentinelRef" inert style="height: 0">
+            <td style="padding: 0; border: 0">
+              <div style="position: relative; height: 1px; width: 1px" />
+            </td>
+          </tr>
+          <tr
+            v-if="hasMore && loading"
+            role="row"
+            data-slot="table-load-more"
+            :class="ui.loadMore({ class: props.ui?.loadMore })"
+          >
+            <td role="rowheader" :colspan="colSpan">
+              <div
+                data-slot="table-load-more-content"
+                :class="ui.loadMoreContent({ class: props.ui?.loadMoreContent })"
+              >
+                <slot name="load-more">
+                  <Spinner size="md" />
+                </slot>
+              </div>
+            </td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+    <div
+      v-if="!!slots.footer"
+      data-slot="table-footer"
+      :class="ui.footer({ class: props.ui?.footer })"
+    >
+      <slot name="footer" />
+    </div>
+  </div>
+</template>
+
 <script lang="ts">
 import type { ComponentSlots, ComponentVariants } from '../../types/tv'
 import type { ColumnWidth } from './columnSizes'
@@ -546,226 +769,3 @@ function alignClass(column: TableColumn) {
   return undefined
 }
 </script>
-
-<template>
-  <div ref="tableRef" data-slot="table" :class="ui.base({ class: [props.ui?.base, props.class] })">
-    <div
-      ref="scrollRootRef"
-      :data-slot="hasResizableColumns ? 'table-resizable-container' : 'table-scroll-container'"
-      :class="
-        hasResizableColumns
-          ? ui.resizableContainer({ class: props.ui?.resizableContainer })
-          : ui.scrollContainer({ class: props.ui?.scrollContainer })
-      "
-    >
-      <table
-        :aria-label="ariaLabel"
-        data-slot="table-content"
-        :class="ui.content({ class: props.ui?.content })"
-      >
-        <thead data-slot="table-header" :class="ui.header({ class: props.ui?.header })">
-          <tr @keydown="onHeaderKeydown">
-            <th
-              v-if="selectionMode !== 'none'"
-              scope="col"
-              data-slot="table-column"
-              :tabindex="headerTabindex(0)"
-              :class="ui.column({ class: [props.ui?.column, 'pe-0'] })"
-              @click.stop
-              @focus="focusTarget = { kind: 'header', index: 0 }"
-            >
-              <!-- Like React Aria's select-all checkbox: only multiple selection can select every row, so single selection disables it and names it "Select". -->
-              <Checkbox
-                :model-value="selectAllModel"
-                :aria-label="selectionMode === 'multiple' ? 'Select all' : 'Select'"
-                :disabled="selectionMode !== 'multiple' || selectableKeys.length === 0"
-                tabindex="-1"
-                @update:model-value="toggleSelectAll"
-              />
-            </th>
-            <th
-              v-for="(column, columnIndex) in columns"
-              :id="column.resizable ? columnHeaderId(column) : undefined"
-              :key="column.key"
-              scope="col"
-              data-slot="table-column"
-              :data-allows-sorting="column.sortable ? 'true' : undefined"
-              :aria-sort="column.sortable ? (sortDirectionFor(column) ?? 'none') : undefined"
-              :tabindex="headerTabindex(columnIndex + (selectionMode !== 'none' ? 1 : 0))"
-              :style="widthStyle(column)"
-              :class="ui.column({ class: [props.ui?.column, column.class, alignClass(column)] })"
-              @click="toggleSort(column)"
-              @focus="
-                focusTarget = {
-                  kind: 'header',
-                  index: columnIndex + (selectionMode !== 'none' ? 1 : 0),
-                }
-              "
-              @keydown.enter.prevent="toggleSort(column)"
-              @keydown.space.prevent="toggleSort(column)"
-            >
-              <span
-                v-if="column.sortable"
-                data-slot="table-sortable-column-header"
-                :data-direction="sortDirectionFor(column)"
-                :class="ui.sortableColumnHeader({ class: props.ui?.sortableColumnHeader })"
-              >
-                <slot
-                  :name="`${column.key}-header`"
-                  :column="column"
-                  :sort-direction="sortDirectionFor(column)"
-                  >{{ column.label }}</slot
-                >
-                <!-- Like HeroUI's SortableColumnHeader: the indicator only shows on the sorted column. -->
-                <svg
-                  v-if="sortDirectionFor(column)"
-                  aria-hidden="true"
-                  data-slot="table-sortable-column-indicator"
-                  :data-direction="sortDirectionFor(column)"
-                  :class="ui.sortableColumnIndicator({ class: props.ui?.sortableColumnIndicator })"
-                  fill="none"
-                  height="16"
-                  role="presentation"
-                  viewBox="0 0 16 16"
-                  width="16"
-                  xmlns="http://www.w3.org/2000/svg"
-                >
-                  <path
-                    clip-rule="evenodd"
-                    d="M13.03 10.53a.75.75 0 0 1-1.06 0L8 6.56l-3.97 3.97a.75.75 0 0 1-1.06-1.06l4.5-4.5a.75.75 0 0 1 1.06 0l4.5 4.5a.75.75 0 0 1 0 1.06"
-                    fill="currentColor"
-                    fill-rule="evenodd"
-                  />
-                </svg>
-              </span>
-              <slot
-                v-else
-                :name="`${column.key}-header`"
-                :column="column"
-                :sort-direction="undefined"
-                >{{ column.label }}</slot
-              >
-              <!-- Named and valued like React Aria's ColumnResizer input: "Resizer <column>", its width in pixels. -->
-              <div
-                v-if="column.resizable"
-                :id="`${columnHeaderId(column)}-resizer`"
-                data-slot="table-column-resizer"
-                role="separator"
-                aria-orientation="vertical"
-                aria-label="Resizer"
-                :aria-labelledby="`${columnHeaderId(column)}-resizer ${columnHeaderId(column)}`"
-                :aria-valuenow="columnWidthOf(column)"
-                :aria-valuetext="`${columnWidthOf(column)} pixels`"
-                :aria-valuemin="minWidthOf(column)"
-                :aria-valuemax="column.maxWidth"
-                tabindex="0"
-                :data-resizing="resizingKey === column.key ? 'true' : undefined"
-                :class="ui.columnResizer({ class: props.ui?.columnResizer })"
-                @click.stop
-                @pointerdown.stop="onResizerPointerDown(column, $event)"
-                @keydown="onResizerKeydown(column, $event)"
-              />
-            </th>
-          </tr>
-        </thead>
-        <tbody
-          data-slot="table-body"
-          :data-empty="flatRows.length === 0 || undefined"
-          :class="ui.body({ class: props.ui?.body })"
-        >
-          <!-- Like React Aria's `renderEmptyState`: no row at all unless the slot is provided. -->
-          <tr v-if="flatRows.length === 0 && !!slots.empty" role="row">
-            <td role="rowheader" :colspan="colSpan">
-              <slot name="empty" />
-            </td>
-          </tr>
-          <tr
-            v-for="flat in flatRows"
-            :key="flat.key"
-            class="group"
-            data-slot="table-row"
-            :data-row-key="flat.key"
-            :data-selected="isSelected(flat.key) ? 'true' : undefined"
-            :aria-selected="selectionMode !== 'none' ? isSelected(flat.key) : undefined"
-            :aria-disabled="flat.row.disabled ? 'true' : undefined"
-            :tabindex="flat.key === activeRowKey ? 0 : -1"
-            :style="{ '--table-row-level': flat.depth }"
-            :class="ui.row({ class: props.ui?.row })"
-            @click="onRowClick(flat, $event)"
-            @focus="focusTarget = { kind: 'row', key: flat.key }"
-            @keydown="onRowKeydown(flat, $event)"
-          >
-            <td
-              v-if="selectionMode !== 'none'"
-              data-slot="table-cell"
-              :class="ui.cell({ class: [props.ui?.cell, 'pe-0'] })"
-              @click.stop
-            >
-              <Checkbox
-                :model-value="isSelected(flat.key)"
-                :disabled="!isSelectable(flat.key, flat.row)"
-                :aria-label="`Select row ${flat.index + 1}`"
-                variant="secondary"
-                tabindex="-1"
-                @update:model-value="manager.toggle(flat.key)"
-              />
-            </td>
-            <td
-              v-for="column in columns"
-              :key="column.key"
-              :role="column.isRowHeader ? 'rowheader' : undefined"
-              data-slot="table-cell"
-              :data-tree-column="treeColumn === column.key ? 'true' : undefined"
-              :style="widthStyle(column)"
-              :class="ui.cell({ class: [props.ui?.cell, column.class, alignClass(column)] })"
-            >
-              <slot
-                :name="`${column.key}-cell`"
-                :row="flat.row"
-                :column="column"
-                :value="cellValue(flat.row, column)"
-                :index="flat.index"
-                :depth="flat.depth"
-                :is-expanded="isRowExpanded(flat.key)"
-                :has-child-items="flat.hasChildItems"
-                :toggle="() => toggleExpanded(flat.key)"
-              >
-                {{ cellValue(flat.row, column) }}
-              </slot>
-            </td>
-          </tr>
-          <!-- React Aria's LoadMoreItem: an inert zero-height sentinel row, plus the content row only while loading. -->
-          <tr v-if="hasMore" ref="sentinelRef" inert style="height: 0">
-            <td style="padding: 0; border: 0">
-              <div style="position: relative; height: 1px; width: 1px" />
-            </td>
-          </tr>
-          <tr
-            v-if="hasMore && loading"
-            role="row"
-            data-slot="table-load-more"
-            :class="ui.loadMore({ class: props.ui?.loadMore })"
-          >
-            <td role="rowheader" :colspan="colSpan">
-              <div
-                data-slot="table-load-more-content"
-                :class="ui.loadMoreContent({ class: props.ui?.loadMoreContent })"
-              >
-                <slot name="load-more">
-                  <Spinner size="md" />
-                </slot>
-              </div>
-            </td>
-          </tr>
-        </tbody>
-      </table>
-    </div>
-    <div
-      v-if="!!slots.footer"
-      data-slot="table-footer"
-      :class="ui.footer({ class: props.ui?.footer })"
-    >
-      <slot name="footer" />
-    </div>
-  </div>
-</template>

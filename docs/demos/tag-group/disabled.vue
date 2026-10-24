@@ -1,19 +1,3 @@
-<script setup lang="ts">
-import type { TagGroupItem } from '@hareui/vue'
-import { TagGroup } from '@hareui/vue'
-
-const ownDisabled: TagGroupItem[] = [
-  { id: 'news', label: 'News', disabled: true },
-  { id: 'travel', label: 'Travel' },
-  { id: 'gaming', label: 'Gaming', disabled: true },
-]
-const keyedItems: TagGroupItem[] = [
-  { id: 'news', label: 'News' },
-  { id: 'travel', label: 'Travel' },
-  { id: 'gaming', label: 'Gaming' },
-]
-</script>
-
 <template>
   <div class="flex flex-col gap-4">
     <TagGroup
@@ -31,3 +15,19 @@ const keyedItems: TagGroupItem[] = [
     />
   </div>
 </template>
+
+<script setup lang="ts">
+import type { TagGroupItem } from '@hareui/vue'
+import { TagGroup } from '@hareui/vue'
+
+const ownDisabled: TagGroupItem[] = [
+  { id: 'news', label: 'News', disabled: true },
+  { id: 'travel', label: 'Travel' },
+  { id: 'gaming', label: 'Gaming', disabled: true },
+]
+const keyedItems: TagGroupItem[] = [
+  { id: 'news', label: 'News' },
+  { id: 'travel', label: 'Travel' },
+  { id: 'gaming', label: 'Gaming' },
+]
+</script>

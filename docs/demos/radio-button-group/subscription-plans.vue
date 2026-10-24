@@ -1,39 +1,3 @@
-<script setup lang="ts">
-import { Chip, RadioButtonGroup, RadioButtonGroupItem } from '@hareui/vue'
-import { Icon } from '@iconify/vue'
-import { h } from 'vue'
-
-const memberships = [
-  {
-    value: 'monthly',
-    title: 'Monthly',
-    icon: 'gravity-ui:calendar',
-    price: '€11.99',
-    period: 'every month',
-    billing: 'Cancel anytime',
-    features: ['All courses', 'Speaking drills', 'Progress stats'],
-  },
-  {
-    value: 'yearly',
-    title: 'Yearly',
-    icon: 'gravity-ui:graduation-cap',
-    price: '€84',
-    period: 'per year',
-    billing: '€84 per year · €7 per month',
-    features: ['Everything in Monthly', 'Offline lessons', 'Priority support'],
-  },
-  {
-    value: 'family',
-    title: 'Family',
-    icon: 'gravity-ui:persons',
-    price: '€149',
-    period: 'per year',
-    billing: 'Up to 4 learners',
-    features: ['Everything in Yearly', 'Separate profiles', 'Shared streaks'],
-  },
-]
-</script>
-
 <template>
   <RadioButtonGroup
     class="w-full max-w-3xl grid-cols-1 sm:grid-cols-3"
@@ -84,3 +48,39 @@ const memberships = [
     </RadioButtonGroupItem>
   </RadioButtonGroup>
 </template>
+
+<script setup lang="ts">
+import { Chip, RadioButtonGroup, RadioButtonGroupItem } from '@hareui/vue'
+import { Icon } from '@iconify/vue'
+import { h } from 'vue'
+
+const memberships = [
+  {
+    value: 'monthly',
+    title: 'Monthly',
+    icon: 'gravity-ui:calendar',
+    price: '€11.99',
+    period: 'every month',
+    billing: 'Cancel anytime',
+    features: ['All courses', 'Speaking drills', 'Progress stats'],
+  },
+  {
+    value: 'yearly',
+    title: 'Yearly',
+    icon: 'gravity-ui:graduation-cap',
+    price: '€84',
+    period: 'per year',
+    billing: '€84 per year · €7 per month',
+    features: ['Everything in Monthly', 'Offline lessons', 'Priority support'],
+  },
+  {
+    value: 'family',
+    title: 'Family',
+    icon: 'gravity-ui:persons',
+    price: '€149',
+    period: 'per year',
+    billing: 'Up to 4 learners',
+    features: ['Everything in Yearly', 'Separate profiles', 'Shared streaks'],
+  },
+]
+</script>

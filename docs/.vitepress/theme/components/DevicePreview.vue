@@ -1,3 +1,39 @@
+<template>
+  <div v-if="mode === 'page'" ref="root" class="w-full">
+    <div
+      class="max-w-full overflow-hidden rounded-xl border border-separator"
+      :style="{ height, width: width === undefined ? '100%' : `${width + 2}px` }"
+    >
+      <iframe
+        v-if="src"
+        ref="iframe"
+        :data-preview-theme="theme"
+        :src="src"
+        :title="`${name} preview`"
+        :class="[
+          'block size-full border-0 bg-transparent transition-opacity duration-150 ease-out motion-reduce:transition-none',
+          !ready && 'opacity-0',
+        ]"
+      />
+    </div>
+  </div>
+  <div
+    v-else
+    class="absolute inset-y-0 start-0"
+    :style="{ width: width === undefined ? '100%' : `${width}px` }"
+  >
+    <iframe
+      v-if="src"
+      ref="iframe"
+      :data-preview-theme="theme"
+      :src="src"
+      :title="`${name} preview`"
+      :class="['block size-full border-0 bg-transparent', !(ready && visible) && 'opacity-0']"
+      :inert="!(ready && visible)"
+    />
+  </div>
+</template>
+
 <script setup lang="ts">
 import { withBase } from 'vitepress'
 import { onBeforeUnmount, onMounted, ref, shallowRef, useTemplateRef } from 'vue'
@@ -70,39 +106,3 @@ onBeforeUnmount(() => {
   visibilityObserver?.disconnect()
 })
 </script>
-
-<template>
-  <div v-if="mode === 'page'" ref="root" class="w-full">
-    <div
-      class="max-w-full overflow-hidden rounded-xl border border-separator"
-      :style="{ height, width: width === undefined ? '100%' : `${width + 2}px` }"
-    >
-      <iframe
-        v-if="src"
-        ref="iframe"
-        :data-preview-theme="theme"
-        :src="src"
-        :title="`${name} preview`"
-        :class="[
-          'block size-full border-0 bg-transparent transition-opacity duration-150 ease-out motion-reduce:transition-none',
-          !ready && 'opacity-0',
-        ]"
-      />
-    </div>
-  </div>
-  <div
-    v-else
-    class="absolute inset-y-0 start-0"
-    :style="{ width: width === undefined ? '100%' : `${width}px` }"
-  >
-    <iframe
-      v-if="src"
-      ref="iframe"
-      :data-preview-theme="theme"
-      :src="src"
-      :title="`${name} preview`"
-      :class="['block size-full border-0 bg-transparent', !(ready && visible) && 'opacity-0']"
-      :inert="!(ready && visible)"
-    />
-  </div>
-</template>

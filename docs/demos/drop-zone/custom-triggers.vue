@@ -1,13 +1,3 @@
-<script setup lang="ts">
-import { Button, DropZone, Link } from '@hareui/vue'
-import { Icon } from '@iconify/vue'
-import { ref } from 'vue'
-
-const invoices = ref<File[]>([])
-const receipt = ref<File[]>([])
-const playlist = ref<File[]>([])
-</script>
-
 <template>
   <div class="grid w-full max-w-[720px] gap-4 sm:grid-cols-2">
     <DropZone
@@ -60,3 +50,13 @@ const playlist = ref<File[]>([])
     </DropZone>
   </div>
 </template>
+
+<script setup lang="ts">
+import { Button, DropZone, Link } from '@hareui/vue'
+import { Icon } from '@iconify/vue'
+import { ref } from 'vue'
+
+const invoices = ref<File[]>([])
+const receipt = ref<File[]>([])
+const playlist = ref<File[]>([])
+</script>

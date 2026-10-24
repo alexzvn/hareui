@@ -19,16 +19,16 @@ import { DropZone, DropZoneFileItem, DropZoneFileList } from '@hareui/vue'
 Bind `v-model` to get the selected files as a `File[]`. DropZone lists them below the area, each with a remove button.
 
 ```vue
+<template>
+  <DropZone v-model="files" label="Drop your receipts here" multiple />
+</template>
+
 <script setup lang="ts">
 import { DropZone } from '@hareui/vue'
 import { ref } from 'vue'
 
 const files = ref<File[]>([])
 </script>
-
-<template>
-  <DropZone v-model="files" label="Drop your receipts here" multiple />
-</template>
 ```
 
 To show upload progress, listen to `@add` and render your own list in the `#files` slot with `DropZoneFileList` and `DropZoneFileItem`. With `multiple`, DropZone still keeps every added file in its selection: call the slot's `removeFile` when you remove one from your list (or use `v-model`), so removed files aren't submitted with the form.

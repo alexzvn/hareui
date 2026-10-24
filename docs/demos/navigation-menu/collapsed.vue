@@ -1,3 +1,18 @@
+<template>
+  <div class="flex flex-col items-start gap-4">
+    <Button size="sm" variant="secondary" @click="collapsed = !collapsed">
+      {{ collapsed ? 'Expand' : 'Collapse' }}
+    </Button>
+    <!-- Give the menu a width; collapsed, it shrinks to a single icon column. -->
+    <NavigationMenu
+      :collapsed="collapsed"
+      :items="items"
+      orientation="vertical"
+      :class="collapsed ? 'w-9' : 'w-54'"
+    />
+  </div>
+</template>
+
 <script setup lang="ts">
 import type { NavigationMenuItem } from '@hareui/vue'
 import { Button, NavigationMenu } from '@hareui/vue'
@@ -118,18 +133,3 @@ const items: NavigationMenuItem[][] = [
 
 const collapsed = ref(true)
 </script>
-
-<template>
-  <div class="flex flex-col items-start gap-4">
-    <Button size="sm" variant="secondary" @click="collapsed = !collapsed">
-      {{ collapsed ? 'Expand' : 'Collapse' }}
-    </Button>
-    <!-- Give the menu a width; collapsed, it shrinks to a single icon column. -->
-    <NavigationMenu
-      :collapsed="collapsed"
-      :items="items"
-      orientation="vertical"
-      :class="collapsed ? 'w-9' : 'w-54'"
-    />
-  </div>
-</template>

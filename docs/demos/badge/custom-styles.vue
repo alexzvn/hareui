@@ -1,7 +1,3 @@
-<script setup lang="ts">
-import { Avatar, Badge } from '@hareui/vue'
-</script>
-
 <template>
   <Badge
     class="min-w-5 font-semibold tabular-nums"
@@ -17,3 +13,7 @@ import { Avatar, Badge } from '@hareui/vue'
     />
   </Badge>
 </template>
+
+<script setup lang="ts">
+import { Avatar, Badge } from '@hareui/vue'
+</script>

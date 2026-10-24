@@ -1,65 +1,3 @@
-<script setup lang="ts">
-// Port of HeroUI docs `components/code-panel.tsx`.
-// framer-motion -> CSS transitions: backdrop `duration: 0.3, ease: easeOut`; panel `spring { bounce: 0, duration: 0.4 }`
-// (a critically damped spring settling at 0.4s, sampled into `linear()`). HeroUI returns `null` as soon as `isVisible`
-// is false, so there is no exit animation; neither here.
-import { Icon } from '@iconify/vue'
-import { onBeforeUnmount, ref } from 'vue'
-
-import HighlightedCode from './HighlightedCode.vue'
-
-const props = withDefaults(
-  defineProps<{
-    /** Raw source code to highlight (used with `lang`) */
-    sourceCode?: string
-    /** File name for download */
-    fileName?: string
-    /** Language for syntax highlighting */
-    lang?: string
-    /** Panel title */
-    title?: string
-    /** Whether to show line numbers */
-    showLineNumbers?: boolean
-    isVisible: boolean
-    class?: any
-  }>(),
-  { lang: 'tsx', showLineNumbers: true, title: 'Source code' },
-)
-const emit = defineEmits<{ close: [] }>()
-defineSlots<{
-  /** Pre-rendered content (takes precedence over `sourceCode`) */
-  default?: () => any
-}>()
-
-// Same behavior as fumadocs' `useCopyButton`: `copied` for 1.5s
-const copied = ref(false)
-let copiedTimer: ReturnType<typeof setTimeout> | undefined
-function onCopy() {
-  if (props.sourceCode) void navigator.clipboard.writeText(props.sourceCode)
-  clearTimeout(copiedTimer)
-  copied.value = true
-  copiedTimer = setTimeout(() => (copied.value = false), 1500)
-}
-onBeforeUnmount(() => clearTimeout(copiedTimer))
-
-function handleDownload() {
-  if (!props.sourceCode || !props.fileName) return
-
-  const blob = new Blob([props.sourceCode], { type: 'text/plain' })
-  const url = URL.createObjectURL(blob)
-  const link = document.createElement('a')
-
-  link.href = url
-  link.download = props.fileName
-  link.click()
-
-  URL.revokeObjectURL(url)
-}
-
-const ACTION =
-  'flex h-8 w-8 cursor-pointer items-center justify-center rounded-md text-foreground/40 transition-colors hover:bg-foreground/5 hover:text-foreground/60'
-</script>
-
 <template>
   <template v-if="isVisible">
     <Transition name="code-panel-backdrop" appear>
@@ -130,6 +68,68 @@ const ACTION =
     </Transition>
   </template>
 </template>
+
+<script setup lang="ts">
+// Port of HeroUI docs `components/code-panel.tsx`.
+// framer-motion -> CSS transitions: backdrop `duration: 0.3, ease: easeOut`; panel `spring { bounce: 0, duration: 0.4 }`
+// (a critically damped spring settling at 0.4s, sampled into `linear()`). HeroUI returns `null` as soon as `isVisible`
+// is false, so there is no exit animation; neither here.
+import { Icon } from '@iconify/vue'
+import { onBeforeUnmount, ref } from 'vue'
+
+import HighlightedCode from './HighlightedCode.vue'
+
+const props = withDefaults(
+  defineProps<{
+    /** Raw source code to highlight (used with `lang`) */
+    sourceCode?: string
+    /** File name for download */
+    fileName?: string
+    /** Language for syntax highlighting */
+    lang?: string
+    /** Panel title */
+    title?: string
+    /** Whether to show line numbers */
+    showLineNumbers?: boolean
+    isVisible: boolean
+    class?: any
+  }>(),
+  { lang: 'tsx', showLineNumbers: true, title: 'Source code' },
+)
+const emit = defineEmits<{ close: [] }>()
+defineSlots<{
+  /** Pre-rendered content (takes precedence over `sourceCode`) */
+  default?: () => any
+}>()
+
+// Same behavior as fumadocs' `useCopyButton`: `copied` for 1.5s
+const copied = ref(false)
+let copiedTimer: ReturnType<typeof setTimeout> | undefined
+function onCopy() {
+  if (props.sourceCode) void navigator.clipboard.writeText(props.sourceCode)
+  clearTimeout(copiedTimer)
+  copied.value = true
+  copiedTimer = setTimeout(() => (copied.value = false), 1500)
+}
+onBeforeUnmount(() => clearTimeout(copiedTimer))
+
+function handleDownload() {
+  if (!props.sourceCode || !props.fileName) return
+
+  const blob = new Blob([props.sourceCode], { type: 'text/plain' })
+  const url = URL.createObjectURL(blob)
+  const link = document.createElement('a')
+
+  link.href = url
+  link.download = props.fileName
+  link.click()
+
+  URL.revokeObjectURL(url)
+}
+
+const ACTION =
+  'flex h-8 w-8 cursor-pointer items-center justify-center rounded-md text-foreground/40 transition-colors hover:bg-foreground/5 hover:text-foreground/60'
+</script>
 
 <style scoped>
 .code-panel-backdrop-enter-active {

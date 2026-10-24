@@ -1,3 +1,29 @@
+<template>
+  <ChartFrame
+    v-model:hidden="hidden"
+    data-slot="pie-chart"
+    :width="width"
+    :height="height"
+    :config="config"
+    :class="ui.base({ class: [props.ui?.base, props.class] })"
+  >
+    <template v-for="name in frameSlotNames(slots)" #[name]="scope">
+      <slot :name="name" v-bind="scope as any" />
+    </template>
+    <template #parts>
+      <ChartPie v-if="slices && valueKey" :data-key="valueKey" :name-key="props.index" v-bind="pie">
+        <ChartCell v-for="slice in visibleSlices" :key="slice.key" :fill="slice.color" />
+      </ChartPie>
+    </template>
+    <template #default>
+      <slot />
+      <ChartPolarCenter v-if="slots.center">
+        <slot name="center" v-bind="polar.center.value" />
+      </ChartPolarCenter>
+    </template>
+  </ChartFrame>
+</template>
+
 <script lang="ts">
 import type { ComponentSlots } from '../../types/tv'
 import type { ChartLegendProps } from '../chart-legend/ChartLegend.vue'
@@ -161,29 +187,3 @@ const chart = useChartRoot({
 const polar = usePolarChart(chart, { kind: 'pie', slices: () => slices.value })
 providePolarCenterLabel(chart, polar, () => polar.outerRadius.value)
 </script>
-
-<template>
-  <ChartFrame
-    v-model:hidden="hidden"
-    data-slot="pie-chart"
-    :width="width"
-    :height="height"
-    :config="config"
-    :class="ui.base({ class: [props.ui?.base, props.class] })"
-  >
-    <template v-for="name in frameSlotNames(slots)" #[name]="scope">
-      <slot :name="name" v-bind="scope as any" />
-    </template>
-    <template #parts>
-      <ChartPie v-if="slices && valueKey" :data-key="valueKey" :name-key="props.index" v-bind="pie">
-        <ChartCell v-for="slice in visibleSlices" :key="slice.key" :fill="slice.color" />
-      </ChartPie>
-    </template>
-    <template #default>
-      <slot />
-      <ChartPolarCenter v-if="slots.center">
-        <slot name="center" v-bind="polar.center.value" />
-      </ChartPolarCenter>
-    </template>
-  </ChartFrame>
-</template>

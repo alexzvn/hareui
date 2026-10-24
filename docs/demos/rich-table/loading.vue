@@ -1,3 +1,28 @@
+<template>
+  <div class="flex w-full flex-col gap-3">
+    <div class="flex flex-wrap items-center gap-2">
+      <Button size="sm" variant="secondary" @click="loading = !loading">
+        {{ loading ? 'Stop loading' : 'Start loading' }}
+      </Button>
+      <Button
+        v-for="animation in ['carousel', 'carousel-inverse', 'swing', 'elastic'] as const"
+        :key="animation"
+        size="sm"
+        :variant="loadingAnimation === animation ? 'primary' : 'tertiary'"
+        @click="loadingAnimation = animation"
+      >
+        {{ animation }}
+      </Button>
+    </div>
+    <RichTable
+      :loading="loading"
+      :loading-animation="loadingAnimation"
+      :data="data"
+      :columns="columns"
+    />
+  </div>
+</template>
+
 <script setup lang="ts">
 import type { RichTableColumn } from '@hareui/vue'
 import { Button, RichTable } from '@hareui/vue'
@@ -31,28 +56,3 @@ const columns: RichTableColumn<Payment>[] = [
   },
 ]
 </script>
-
-<template>
-  <div class="flex w-full flex-col gap-3">
-    <div class="flex flex-wrap items-center gap-2">
-      <Button size="sm" variant="secondary" @click="loading = !loading">
-        {{ loading ? 'Stop loading' : 'Start loading' }}
-      </Button>
-      <Button
-        v-for="animation in ['carousel', 'carousel-inverse', 'swing', 'elastic'] as const"
-        :key="animation"
-        size="sm"
-        :variant="loadingAnimation === animation ? 'primary' : 'tertiary'"
-        @click="loadingAnimation = animation"
-      >
-        {{ animation }}
-      </Button>
-    </div>
-    <RichTable
-      :loading="loading"
-      :loading-animation="loadingAnimation"
-      :data="data"
-      :columns="columns"
-    />
-  </div>
-</template>

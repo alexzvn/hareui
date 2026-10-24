@@ -1,7 +1,3 @@
-<script setup lang="ts">
-import { Checkbox } from '@hareui/vue'
-</script>
-
 <template>
   <Checkbox
     invalid
@@ -11,3 +7,7 @@ import { Checkbox } from '@hareui/vue'
     error-message="You must accept the terms to continue"
   />
 </template>
+
+<script setup lang="ts">
+import { Checkbox } from '@hareui/vue'
+</script>

@@ -1,33 +1,3 @@
-<script setup lang="ts">
-import { AlertDialog, Button, Kbd, Tooltip } from '@hareui/vue'
-// Port of HeroUI docs `themes/components/reset-button.tsx`.
-import { Icon } from '@iconify/vue'
-import { computed, ref } from 'vue'
-
-import { useKeyPress } from '../composables/keyPress'
-import { useResetVariables, useVariablesState } from '../composables/variables'
-import { defaultThemeVariables } from '../constants'
-
-const reset = useResetVariables()
-const [variables] = useVariablesState()
-const isOpen = ref(false)
-
-const isDisabled = computed(() => {
-  const v = variables.value
-  return (
-    v.chroma === defaultThemeVariables.chroma &&
-    v.hue === defaultThemeVariables.hue &&
-    v.lightness === defaultThemeVariables.lightness &&
-    v.fontFamily === defaultThemeVariables.fontFamily &&
-    v.formRadius === defaultThemeVariables.formRadius &&
-    v.radius === defaultThemeVariables.radius &&
-    v.base === defaultThemeVariables.base
-  )
-})
-
-useKeyPress('d', () => (isOpen.value = true), { enabled: () => !isDisabled.value })
-</script>
-
 <template>
   <Tooltip :delay="100" arrow>
     <!-- HeroUI `Tooltip.Trigger` renders this focusable wrapper -->
@@ -74,3 +44,33 @@ useKeyPress('d', () => (isOpen.value = true), { enabled: () => !isDisabled.value
     </template>
   </Tooltip>
 </template>
+
+<script setup lang="ts">
+import { AlertDialog, Button, Kbd, Tooltip } from '@hareui/vue'
+// Port of HeroUI docs `themes/components/reset-button.tsx`.
+import { Icon } from '@iconify/vue'
+import { computed, ref } from 'vue'
+
+import { useKeyPress } from '../composables/keyPress'
+import { useResetVariables, useVariablesState } from '../composables/variables'
+import { defaultThemeVariables } from '../constants'
+
+const reset = useResetVariables()
+const [variables] = useVariablesState()
+const isOpen = ref(false)
+
+const isDisabled = computed(() => {
+  const v = variables.value
+  return (
+    v.chroma === defaultThemeVariables.chroma &&
+    v.hue === defaultThemeVariables.hue &&
+    v.lightness === defaultThemeVariables.lightness &&
+    v.fontFamily === defaultThemeVariables.fontFamily &&
+    v.formRadius === defaultThemeVariables.formRadius &&
+    v.radius === defaultThemeVariables.radius &&
+    v.base === defaultThemeVariables.base
+  )
+})
+
+useKeyPress('d', () => (isOpen.value = true), { enabled: () => !isDisabled.value })
+</script>

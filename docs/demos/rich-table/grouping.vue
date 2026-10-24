@@ -1,3 +1,14 @@
+<template>
+  <RichTable
+    v-model:grouping="grouping"
+    :grouping-options="groupingOptions"
+    :data="data"
+    :columns="columns"
+    :initial-state="{ expanded: true }"
+    class="w-full"
+  />
+</template>
+
 <script setup lang="ts">
 import type { RichTableColumn, RichTableRow } from '@hareui/vue'
 import { Button, RichTable } from '@hareui/vue'
@@ -73,14 +84,3 @@ const columns: RichTableColumn<Payment>[] = [
   },
 ]
 </script>
-
-<template>
-  <RichTable
-    v-model:grouping="grouping"
-    :grouping-options="groupingOptions"
-    :data="data"
-    :columns="columns"
-    :initial-state="{ expanded: true }"
-    class="w-full"
-  />
-</template>

@@ -1,16 +1,3 @@
-<script setup lang="ts">
-import type { TableColumn } from '@hareui/vue'
-import { EmptyState, Table } from '@hareui/vue'
-import { Icon } from '@iconify/vue'
-
-const columns: TableColumn[] = [
-  { key: 'name', label: 'Name', isRowHeader: true },
-  { key: 'role', label: 'Role' },
-  { key: 'status', label: 'Status' },
-  { key: 'email', label: 'Email' },
-]
-</script>
-
 <template>
   <Table
     aria-label="Empty table"
@@ -27,3 +14,16 @@ const columns: TableColumn[] = [
     </template>
   </Table>
 </template>
+
+<script setup lang="ts">
+import type { TableColumn } from '@hareui/vue'
+import { EmptyState, Table } from '@hareui/vue'
+import { Icon } from '@iconify/vue'
+
+const columns: TableColumn[] = [
+  { key: 'name', label: 'Name', isRowHeader: true },
+  { key: 'role', label: 'Role' },
+  { key: 'status', label: 'Status' },
+  { key: 'email', label: 'Email' },
+]
+</script>

@@ -1,7 +1,3 @@
-<script setup lang="ts">
-import { Alert, Button } from '@hareui/vue'
-</script>
-
 <template>
   <Alert
     class="w-full items-center xl:w-[400px]"
@@ -14,3 +10,7 @@ import { Alert, Button } from '@hareui/vue'
     </template>
   </Alert>
 </template>
+
+<script setup lang="ts">
+import { Alert, Button } from '@hareui/vue'
+</script>

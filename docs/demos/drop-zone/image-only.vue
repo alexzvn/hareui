@@ -1,11 +1,3 @@
-<script setup lang="ts">
-import { DropZone } from '@hareui/vue'
-import { Icon } from '@iconify/vue'
-import { ref } from 'vue'
-
-const dishPhoto = ref<File[]>([])
-</script>
-
 <template>
   <DropZone
     v-model="dishPhoto"
@@ -20,3 +12,11 @@ const dishPhoto = ref<File[]>([])
     </template>
   </DropZone>
 </template>
+
+<script setup lang="ts">
+import { DropZone } from '@hareui/vue'
+import { Icon } from '@iconify/vue'
+import { ref } from 'vue'
+
+const dishPhoto = ref<File[]>([])
+</script>

@@ -1,3 +1,18 @@
+<!-- React Aria's useColorSwatch sets an inline `background-color` of the colour; mirror it so the computed style matches. -->
+<template>
+  <ColorSwatchPrimitive
+    :color="resolvedColor"
+    :label="colorName"
+    data-slot="color-swatch"
+    :style="{ backgroundColor: 'var(--reka-color-swatch-color)' }"
+    :class="ui.base({ class: [props.ui?.base, props.class] })"
+  >
+    <template #default="slotProps">
+      <slot v-bind="slotProps" />
+    </template>
+  </ColorSwatchPrimitive>
+</template>
+
 <script lang="ts">
 import type { Color } from 'reka-ui'
 
@@ -55,18 +70,3 @@ const ui = useComponentUI('colorSwatch', theme, () => ({
   size: props.size,
 }))
 </script>
-
-<!-- React Aria's useColorSwatch sets an inline `background-color` of the colour; mirror it so the computed style matches. -->
-<template>
-  <ColorSwatchPrimitive
-    :color="resolvedColor"
-    :label="colorName"
-    data-slot="color-swatch"
-    :style="{ backgroundColor: 'var(--reka-color-swatch-color)' }"
-    :class="ui.base({ class: [props.ui?.base, props.class] })"
-  >
-    <template #default="slotProps">
-      <slot v-bind="slotProps" />
-    </template>
-  </ColorSwatchPrimitive>
-</template>

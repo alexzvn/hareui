@@ -1,7 +1,3 @@
-<script setup lang="ts">
-import { Slider } from '@hareui/vue'
-</script>
-
 <template>
   <Slider class="w-full max-w-xs" label="Range" :default-value="[25, 75]">
     <template #output="{ formatted }">
@@ -9,3 +5,7 @@ import { Slider } from '@hareui/vue'
     </template>
   </Slider>
 </template>
+
+<script setup lang="ts">
+import { Slider } from '@hareui/vue'
+</script>

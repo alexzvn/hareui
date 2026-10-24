@@ -1,7 +1,3 @@
-<script setup lang="ts">
-import { Button, Popover } from '@hareui/vue'
-</script>
-
 <template>
   <div class="flex items-center gap-4">
     <Popover title="Popover Title" class="max-w-64">
@@ -14,3 +10,7 @@ import { Button, Popover } from '@hareui/vue'
     </Popover>
   </div>
 </template>
+
+<script setup lang="ts">
+import { Button, Popover } from '@hareui/vue'
+</script>

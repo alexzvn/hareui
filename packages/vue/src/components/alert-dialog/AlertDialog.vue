@@ -1,150 +1,3 @@
-<script lang="ts">
-import type { PortalTarget } from '../../config'
-import type { ComponentSlots, ComponentVariants } from '../../types/tv'
-import theme from './theme'
-
-type AlertDialog = typeof theme
-
-export interface AlertDialogProps {
-  /** The controlled open state of the alert dialog. Use with `v-model:open`. */
-  open?: boolean
-  /** The open state of the alert dialog when it is initially rendered. Use when you do not need to control its open state. */
-  defaultOpen?: boolean
-  /** Title rendered in the header. */
-  title?: string
-  /**
-   * Status color of the header icon. Also picks the default icon.
-   * @defaultValue 'danger'
-   */
-  status?: ComponentVariants<AlertDialog>['status']
-  /**
-   * Whether the status icon is rendered in the header. The `#icon` slot replaces its content.
-   * @defaultValue true
-   */
-  icon?: boolean
-  /**
-   * Size of the dialog.
-   * @defaultValue 'md'
-   */
-  size?: ComponentVariants<AlertDialog>['size']
-  /**
-   * Visual style of the backdrop.
-   * @defaultValue 'opaque'
-   */
-  variant?: ComponentVariants<AlertDialog>['variant']
-  /**
-   * Vertical position of the dialog within the viewport.
-   * @defaultValue 'auto'
-   */
-  placement?: ComponentVariants<AlertDialog>['placement']
-  /**
-   * Whether clicking the backdrop closes the alert dialog. Alert dialogs require an explicit action by default.
-   * @defaultValue false
-   */
-  dismissible?: boolean
-  /**
-   * Whether pressing Escape closes the alert dialog.
-   * @defaultValue false
-   */
-  keyboardDismissible?: boolean
-  /**
-   * Whether the default close button is rendered.
-   * @defaultValue true
-   */
-  closeButton?: boolean
-  /**
-   * Renders the alert dialog in a portal. `true` portals to `document.body`, a selector string or element is used as the teleport target, and `false` disables portalling.
-   * Falls back to `createHareUI({ portal })`, then `true`.
-   */
-  portal?: PortalTarget
-  /** Additional classes merged into the dialog element. */
-  class?: any
-  /** Per-slot class overrides. */
-  ui?: ComponentSlots<AlertDialog>
-}
-
-export interface AlertDialogSlots {
-  /** The trigger element. Omit to control the alert dialog purely via `v-model:open`. */
-  default?: (props: { open: boolean }) => any
-  /** Replaces the whole header (icon and title). */
-  header?: () => any
-  /** Replaces the default status icon inside the icon wrapper. */
-  icon?: () => any
-  /** Replaces the title text. */
-  title?: () => any
-  /** The dialog body. */
-  body?: (props: { close: () => void }) => any
-  /** The dialog footer (actions). */
-  footer?: (props: { close: () => void }) => any
-  /** Replaces the default close button. */
-  close?: (props: { close: () => void }) => any
-  /** Replaces the entire dialog content (header, body, footer, close trigger). */
-  content?: (props: { close: () => void }) => any
-}
-
-export interface AlertDialogEmits {
-  /** Emitted when the open state changes. */
-  'update:open': [value: boolean]
-}
-</script>
-
-<script setup lang="ts">
-import {
-  DialogClose,
-  DialogContent,
-  DialogOverlay,
-  DialogPortal,
-  DialogRoot,
-  DialogTitle,
-  DialogTrigger,
-  VisuallyHidden,
-} from 'reka-ui'
-import { useSlots, useTemplateRef } from 'vue'
-
-import { useComponentUI } from '../../composables/useComponentUI'
-import { useDialogShell } from '../../composables/useDialogShell'
-import CloseButton from '../close-button/CloseButton.vue'
-
-// `open: undefined` stops Vue casting an absent boolean prop to `false`, so uncontrolled mode and `defaultOpen` apply
-const props = withDefaults(defineProps<AlertDialogProps>(), {
-  open: undefined,
-  portal: undefined,
-  icon: true,
-  closeButton: true,
-  placement: 'auto',
-})
-const emit = defineEmits<AlertDialogEmits>()
-const slots = useSlots()
-defineSlots<AlertDialogSlots>()
-
-const ui = useComponentUI('alertDialog', theme, () => ({
-  status: props.status,
-  size: props.size,
-  variant: props.variant,
-  placement: props.placement,
-}))
-
-const dialogContent = useTemplateRef<{ $el: HTMLElement }>('dialogContent')
-const {
-  portalTarget,
-  visualViewportHeight,
-  showHeaderTitle,
-  hasHeader,
-  onOpenChange,
-  onEscapeKeyDown,
-  onInteractOutside,
-  onOpenAutoFocus,
-} = useDialogShell({
-  props,
-  slots,
-  emit,
-  dialogContent,
-  // HeroUI's AlertDialog.Backdrop: `isDismissable = false`, `isKeyboardDismissDisabled = true`.
-  keyboardDismissible: () => props.keyboardDismissible,
-  headerExtras: () => props.icon,
-})
-</script>
-
 <template>
   <DialogRoot
     :open="open"
@@ -314,3 +167,150 @@ const {
     </DialogPortal>
   </DialogRoot>
 </template>
+
+<script lang="ts">
+import type { PortalTarget } from '../../config'
+import type { ComponentSlots, ComponentVariants } from '../../types/tv'
+import theme from './theme'
+
+type AlertDialog = typeof theme
+
+export interface AlertDialogProps {
+  /** The controlled open state of the alert dialog. Use with `v-model:open`. */
+  open?: boolean
+  /** The open state of the alert dialog when it is initially rendered. Use when you do not need to control its open state. */
+  defaultOpen?: boolean
+  /** Title rendered in the header. */
+  title?: string
+  /**
+   * Status color of the header icon. Also picks the default icon.
+   * @defaultValue 'danger'
+   */
+  status?: ComponentVariants<AlertDialog>['status']
+  /**
+   * Whether the status icon is rendered in the header. The `#icon` slot replaces its content.
+   * @defaultValue true
+   */
+  icon?: boolean
+  /**
+   * Size of the dialog.
+   * @defaultValue 'md'
+   */
+  size?: ComponentVariants<AlertDialog>['size']
+  /**
+   * Visual style of the backdrop.
+   * @defaultValue 'opaque'
+   */
+  variant?: ComponentVariants<AlertDialog>['variant']
+  /**
+   * Vertical position of the dialog within the viewport.
+   * @defaultValue 'auto'
+   */
+  placement?: ComponentVariants<AlertDialog>['placement']
+  /**
+   * Whether clicking the backdrop closes the alert dialog. Alert dialogs require an explicit action by default.
+   * @defaultValue false
+   */
+  dismissible?: boolean
+  /**
+   * Whether pressing Escape closes the alert dialog.
+   * @defaultValue false
+   */
+  keyboardDismissible?: boolean
+  /**
+   * Whether the default close button is rendered.
+   * @defaultValue true
+   */
+  closeButton?: boolean
+  /**
+   * Renders the alert dialog in a portal. `true` portals to `document.body`, a selector string or element is used as the teleport target, and `false` disables portalling.
+   * Falls back to `createHareUI({ portal })`, then `true`.
+   */
+  portal?: PortalTarget
+  /** Additional classes merged into the dialog element. */
+  class?: any
+  /** Per-slot class overrides. */
+  ui?: ComponentSlots<AlertDialog>
+}
+
+export interface AlertDialogSlots {
+  /** The trigger element. Omit to control the alert dialog purely via `v-model:open`. */
+  default?: (props: { open: boolean }) => any
+  /** Replaces the whole header (icon and title). */
+  header?: () => any
+  /** Replaces the default status icon inside the icon wrapper. */
+  icon?: () => any
+  /** Replaces the title text. */
+  title?: () => any
+  /** The dialog body. */
+  body?: (props: { close: () => void }) => any
+  /** The dialog footer (actions). */
+  footer?: (props: { close: () => void }) => any
+  /** Replaces the default close button. */
+  close?: (props: { close: () => void }) => any
+  /** Replaces the entire dialog content (header, body, footer, close trigger). */
+  content?: (props: { close: () => void }) => any
+}
+
+export interface AlertDialogEmits {
+  /** Emitted when the open state changes. */
+  'update:open': [value: boolean]
+}
+</script>
+
+<script setup lang="ts">
+import {
+  DialogClose,
+  DialogContent,
+  DialogOverlay,
+  DialogPortal,
+  DialogRoot,
+  DialogTitle,
+  DialogTrigger,
+  VisuallyHidden,
+} from 'reka-ui'
+import { useSlots, useTemplateRef } from 'vue'
+
+import { useComponentUI } from '../../composables/useComponentUI'
+import { useDialogShell } from '../../composables/useDialogShell'
+import CloseButton from '../close-button/CloseButton.vue'
+
+// `open: undefined` stops Vue casting an absent boolean prop to `false`, so uncontrolled mode and `defaultOpen` apply
+const props = withDefaults(defineProps<AlertDialogProps>(), {
+  open: undefined,
+  portal: undefined,
+  icon: true,
+  closeButton: true,
+  placement: 'auto',
+})
+const emit = defineEmits<AlertDialogEmits>()
+const slots = useSlots()
+defineSlots<AlertDialogSlots>()
+
+const ui = useComponentUI('alertDialog', theme, () => ({
+  status: props.status,
+  size: props.size,
+  variant: props.variant,
+  placement: props.placement,
+}))
+
+const dialogContent = useTemplateRef<{ $el: HTMLElement }>('dialogContent')
+const {
+  portalTarget,
+  visualViewportHeight,
+  showHeaderTitle,
+  hasHeader,
+  onOpenChange,
+  onEscapeKeyDown,
+  onInteractOutside,
+  onOpenAutoFocus,
+} = useDialogShell({
+  props,
+  slots,
+  emit,
+  dialogContent,
+  // HeroUI's AlertDialog.Backdrop: `isDismissable = false`, `isKeyboardDismissDisabled = true`.
+  keyboardDismissible: () => props.keyboardDismissible,
+  headerExtras: () => props.icon,
+})
+</script>

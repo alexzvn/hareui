@@ -1,19 +1,3 @@
-<script setup lang="ts">
-// Port of HeroUI docs `themes/components/switch-mode.tsx`. `next-themes` -> the docs' light/dark handling (see colorMode.ts).
-import { Kbd, Label, Tooltip } from '@hareui/vue'
-
-import { useColorMode } from '../composables/colorMode'
-import { useKeyPress } from '../composables/keyPress'
-
-defineProps<{ label?: string }>()
-
-const { isDark, toggle: handleModeSwitch } = useColorMode()
-
-useKeyPress('s', handleModeSwitch)
-
-const ITEM = 'size-6.5 rounded-full p-1.5'
-</script>
-
 <template>
   <div :class="['flex flex-col gap-1', !label && 'h-9']">
     <Label v-if="label">{{ label }}</Label>
@@ -77,3 +61,19 @@ const ITEM = 'size-6.5 rounded-full p-1.5'
     </Tooltip>
   </div>
 </template>
+
+<script setup lang="ts">
+// Port of HeroUI docs `themes/components/switch-mode.tsx`. `next-themes` -> the docs' light/dark handling (see colorMode.ts).
+import { Kbd, Label, Tooltip } from '@hareui/vue'
+
+import { useColorMode } from '../composables/colorMode'
+import { useKeyPress } from '../composables/keyPress'
+
+defineProps<{ label?: string }>()
+
+const { isDark, toggle: handleModeSwitch } = useColorMode()
+
+useKeyPress('s', handleModeSwitch)
+
+const ITEM = 'size-6.5 rounded-full p-1.5'
+</script>

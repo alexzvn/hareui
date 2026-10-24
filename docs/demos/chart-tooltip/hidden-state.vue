@@ -1,13 +1,3 @@
-<script setup lang="ts">
-import { Switch } from '@hareui/vue'
-import { ChartTooltipContent } from '@hareui/vue/charts'
-import { ref } from 'vue'
-
-const active = ref(true)
-
-const rides = [{ name: 'Distance', color: 'var(--chart-2)', value: '14.2 km' }]
-</script>
-
 <template>
   <div class="flex w-64 flex-col gap-3">
     <Switch v-model="active" label="Point hovered" />
@@ -18,3 +8,13 @@ const rides = [{ name: 'Distance', color: 'var(--chart-2)', value: '14.2 km' }]
     </div>
   </div>
 </template>
+
+<script setup lang="ts">
+import { Switch } from '@hareui/vue'
+import { ChartTooltipContent } from '@hareui/vue/charts'
+import { ref } from 'vue'
+
+const active = ref(true)
+
+const rides = [{ name: 'Distance', color: 'var(--chart-2)', value: '14.2 km' }]
+</script>

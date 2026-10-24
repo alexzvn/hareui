@@ -1,3 +1,16 @@
+<template>
+  <NavigationMenu
+    collapsed
+    orientation="vertical"
+    :items="items"
+    :ui="{
+      link: 'h-auto flex-col gap-1 py-2',
+      linkLabel: 'block text-[10px]/3 text-center',
+    }"
+    class="w-16"
+  />
+</template>
+
 <script setup lang="ts">
 import type { NavigationMenuItem } from '@hareui/vue'
 import { NavigationMenu } from '@hareui/vue'
@@ -14,16 +27,3 @@ const items: NavigationMenuItem[] = [
   { label: 'Settings', icon: icon('gear') },
 ]
 </script>
-
-<template>
-  <NavigationMenu
-    collapsed
-    orientation="vertical"
-    :items="items"
-    :ui="{
-      link: 'h-auto flex-col gap-1 py-2',
-      linkLabel: 'block text-[10px]/3 text-center',
-    }"
-    class="w-16"
-  />
-</template>

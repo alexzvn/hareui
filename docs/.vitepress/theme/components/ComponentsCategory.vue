@@ -1,15 +1,3 @@
-<script setup lang="ts">
-import { computed } from 'vue'
-
-import { COMPONENT_GROUPS } from '../../componentGroups'
-import ComponentItem from './ComponentItem.vue'
-import { componentPages } from './componentPages'
-
-const props = defineProps<{ category: string }>()
-
-const components = computed(() => componentPages(COMPONENT_GROUPS[props.category] ?? []))
-</script>
-
 <template>
   <div v-if="components.length" class="not-prose flex flex-col gap-12">
     <div class="flex flex-col gap-6">
@@ -24,3 +12,15 @@ const components = computed(() => componentPages(COMPONENT_GROUPS[props.category
     </div>
   </div>
 </template>
+
+<script setup lang="ts">
+import { computed } from 'vue'
+
+import { COMPONENT_GROUPS } from '../../componentGroups'
+import ComponentItem from './ComponentItem.vue'
+import { componentPages } from './componentPages'
+
+const props = defineProps<{ category: string }>()
+
+const components = computed(() => componentPages(COMPONENT_GROUPS[props.category] ?? []))
+</script>

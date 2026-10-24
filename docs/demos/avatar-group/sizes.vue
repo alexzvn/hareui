@@ -1,3 +1,20 @@
+<template>
+  <div class="flex flex-col items-center gap-6">
+    <div v-for="s in sizes" :key="s.size" class="flex flex-col items-center gap-2">
+      <p class="text-sm text-muted">{{ s.label }}</p>
+      <AvatarGroup :size="s.size">
+        <Avatar
+          v-for="user in users.slice(0, 4)"
+          :key="user.id"
+          :alt="user.name"
+          :fallback="initials(user.name)"
+          :src="user.image"
+        />
+      </AvatarGroup>
+    </div>
+  </div>
+</template>
+
 <script setup lang="ts">
 import { Avatar, AvatarGroup } from '@hareui/vue'
 
@@ -41,20 +58,3 @@ const sizes = [
   { size: 'lg', label: 'Large' },
 ] as const
 </script>
-
-<template>
-  <div class="flex flex-col items-center gap-6">
-    <div v-for="s in sizes" :key="s.size" class="flex flex-col items-center gap-2">
-      <p class="text-sm text-muted">{{ s.label }}</p>
-      <AvatarGroup :size="s.size">
-        <Avatar
-          v-for="user in users.slice(0, 4)"
-          :key="user.id"
-          :alt="user.name"
-          :fallback="initials(user.name)"
-          :src="user.image"
-        />
-      </AvatarGroup>
-    </div>
-  </div>
-</template>

@@ -1,7 +1,3 @@
-<script setup lang="ts">
-import { DatePicker } from '@hareui/vue'
-</script>
-
 <template>
   <!--
     HeroUI's render-function demo shows a render prop customizing each sub-part; Option A has no
@@ -16,3 +12,7 @@ import { DatePicker } from '@hareui/vue'
     calendar-label="Event date"
   />
 </template>
+
+<script setup lang="ts">
+import { DatePicker } from '@hareui/vue'
+</script>

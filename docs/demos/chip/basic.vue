@@ -1,7 +1,3 @@
-<script setup lang="ts">
-import { Chip } from '@hareui/vue'
-</script>
-
 <template>
   <div class="flex flex-wrap items-center gap-3">
     <Chip>Default</Chip>
@@ -11,3 +7,7 @@ import { Chip } from '@hareui/vue'
     <Chip color="danger">Danger</Chip>
   </div>
 </template>
+
+<script setup lang="ts">
+import { Chip } from '@hareui/vue'
+</script>

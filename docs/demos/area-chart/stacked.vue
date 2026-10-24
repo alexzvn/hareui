@@ -1,3 +1,27 @@
+<template>
+  <Card
+    class="w-full max-w-[600px] rounded-2xl"
+    :ui="{ header: 'flex-row flex-wrap items-center justify-between gap-2' }"
+  >
+    <template #header>
+      <h3 class="text-base font-medium text-foreground">Recycling Collected</h3>
+      <ChartLegend :series="series" :colors="colors" />
+    </template>
+    <AreaChart
+      :data="data"
+      index="month"
+      :series="series"
+      :colors="colors"
+      stacked
+      :fill-opacity="[0.4, 0.1]"
+      aria-label="Recycling collected by material"
+      :height="240"
+      :value-formatter="formatTonnes"
+      :tooltip="{ indicator: 'line' }"
+    />
+  </Card>
+</template>
+
 <script setup lang="ts">
 import { Card } from '@hareui/vue'
 import { AreaChart, ChartLegend } from '@hareui/vue/charts'
@@ -29,27 +53,3 @@ function formatTonnes(value: number) {
   return `${value} t`
 }
 </script>
-
-<template>
-  <Card
-    class="w-full max-w-[600px] rounded-2xl"
-    :ui="{ header: 'flex-row flex-wrap items-center justify-between gap-2' }"
-  >
-    <template #header>
-      <h3 class="text-base font-medium text-foreground">Recycling Collected</h3>
-      <ChartLegend :series="series" :colors="colors" />
-    </template>
-    <AreaChart
-      :data="data"
-      index="month"
-      :series="series"
-      :colors="colors"
-      stacked
-      :fill-opacity="[0.4, 0.1]"
-      aria-label="Recycling collected by material"
-      :height="240"
-      :value-formatter="formatTonnes"
-      :tooltip="{ indicator: 'line' }"
-    />
-  </Card>
-</template>

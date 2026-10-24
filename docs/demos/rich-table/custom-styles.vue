@@ -1,3 +1,17 @@
+<template>
+  <RichTable
+    :data="data"
+    :columns="columns"
+    class="w-full rounded-xl border border-separator"
+    :ui="{
+      th: 'bg-accent/10 text-accent uppercase tracking-wide',
+      td: 'text-muted',
+      tbody: '[&>[data-slot=rich-table-row]]:hover:*:bg-accent/5',
+    }"
+    variant="secondary"
+  />
+</template>
+
 <script setup lang="ts">
 import type { RichTableColumn } from '@hareui/vue'
 import { RichTable } from '@hareui/vue'
@@ -28,17 +42,3 @@ const columns: RichTableColumn<Payment>[] = [
   },
 ]
 </script>
-
-<template>
-  <RichTable
-    :data="data"
-    :columns="columns"
-    class="w-full rounded-xl border border-separator"
-    :ui="{
-      th: 'bg-accent/10 text-accent uppercase tracking-wide',
-      td: 'text-muted',
-      tbody: '[&>[data-slot=rich-table-row]]:hover:*:bg-accent/5',
-    }"
-    variant="secondary"
-  />
-</template>

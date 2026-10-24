@@ -1,7 +1,3 @@
-<script setup lang="ts">
-import { NumberField } from '@hareui/vue'
-</script>
-
 <template>
   <!-- HeroUI stacks the buttons in a wrapper <div>; HareUI renders the group itself, so the grid places them instead -->
   <NumberField
@@ -54,3 +50,7 @@ import { NumberField } from '@hareui/vue'
     </template>
   </NumberField>
 </template>
+
+<script setup lang="ts">
+import { NumberField } from '@hareui/vue'
+</script>

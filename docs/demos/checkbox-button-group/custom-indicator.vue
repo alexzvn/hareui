@@ -1,3 +1,28 @@
+<template>
+  <CheckboxButtonGroup
+    class="w-[380px]"
+    name="goals"
+    label="Weekly goals"
+    variant="secondary"
+    :default-value="['steps', 'sleep']"
+  >
+    <CheckboxButtonGroupItem
+      v-for="goal in goals"
+      :key="goal.value"
+      :value="goal.value"
+      :label="goal.label"
+      :description="goal.description"
+    >
+      <template #indicator>
+        <Icon icon="gravity-ui:flame" />
+      </template>
+      <span class="mt-2 text-xs text-muted">
+        Target: <span class="font-semibold text-foreground">{{ goal.target }} {{ goal.unit }}</span>
+      </span>
+    </CheckboxButtonGroupItem>
+  </CheckboxButtonGroup>
+</template>
+
 <script setup lang="ts">
 import { CheckboxButtonGroup, CheckboxButtonGroupItem } from '@hareui/vue'
 import { Icon } from '@iconify/vue'
@@ -26,28 +51,3 @@ const goals = [
   },
 ]
 </script>
-
-<template>
-  <CheckboxButtonGroup
-    class="w-[380px]"
-    name="goals"
-    label="Weekly goals"
-    variant="secondary"
-    :default-value="['steps', 'sleep']"
-  >
-    <CheckboxButtonGroupItem
-      v-for="goal in goals"
-      :key="goal.value"
-      :value="goal.value"
-      :label="goal.label"
-      :description="goal.description"
-    >
-      <template #indicator>
-        <Icon icon="gravity-ui:flame" />
-      </template>
-      <span class="mt-2 text-xs text-muted">
-        Target: <span class="font-semibold text-foreground">{{ goal.target }} {{ goal.unit }}</span>
-      </span>
-    </CheckboxButtonGroupItem>
-  </CheckboxButtonGroup>
-</template>

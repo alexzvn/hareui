@@ -1,3 +1,25 @@
+<template>
+  <div class="flex w-full flex-col gap-4">
+    <NavigationMenu orientation="vertical" :items="items" class="w-60">
+      <!-- Buttons before the ⋮ menu: style them with `ui.linkAction()`. -->
+      <template #dashboard-actions="{ ui }">
+        <button
+          type="button"
+          aria-label="Notify Dashboard"
+          :aria-pressed="notify"
+          :class="ui.linkAction()"
+          @click="notify = !notify"
+        >
+          <Icon :icon="notify ? 'gravity-ui:bell' : 'gravity-ui:bell-slash'" />
+        </button>
+      </template>
+    </NavigationMenu>
+    <p class="text-sm text-muted">
+      {{ status }}
+    </p>
+  </div>
+</template>
+
 <script setup lang="ts">
 import type { DropdownEntry, NavigationMenuItem } from '@hareui/vue'
 import { NavigationMenu } from '@hareui/vue'
@@ -57,25 +79,3 @@ const items: NavigationMenuItem[] = [
   },
 ]
 </script>
-
-<template>
-  <div class="flex w-full flex-col gap-4">
-    <NavigationMenu orientation="vertical" :items="items" class="w-60">
-      <!-- Buttons before the ⋮ menu: style them with `ui.linkAction()`. -->
-      <template #dashboard-actions="{ ui }">
-        <button
-          type="button"
-          aria-label="Notify Dashboard"
-          :aria-pressed="notify"
-          :class="ui.linkAction()"
-          @click="notify = !notify"
-        >
-          <Icon :icon="notify ? 'gravity-ui:bell' : 'gravity-ui:bell-slash'" />
-        </button>
-      </template>
-    </NavigationMenu>
-    <p class="text-sm text-muted">
-      {{ status }}
-    </p>
-  </div>
-</template>

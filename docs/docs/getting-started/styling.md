@@ -132,14 +132,14 @@ Because `tv({ extend })` merges with tailwind-merge, the new variant's classes w
 Vue's `<style module>` works the same way as any other `class` value — bind the generated identifier instead of a literal string:
 
 ```vue
+<template>
+  <Button :class="$style.button">Scoped Button</Button>
+</template>
+
 <!-- GradientButton.vue -->
 <script setup lang="ts">
 import { Button } from '@hareui/vue'
 </script>
-
-<template>
-  <Button :class="$style.button">Scoped Button</Button>
-</template>
 
 <style module>
 .button {

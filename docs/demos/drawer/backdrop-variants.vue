@@ -1,10 +1,3 @@
-<script setup lang="ts">
-import { Button, Drawer } from '@hareui/vue'
-
-const variants = ['opaque', 'blur', 'transparent'] as const
-const capitalize = (s: string) => s.charAt(0).toUpperCase() + s.slice(1)
-</script>
-
 <template>
   <div class="flex flex-wrap gap-4">
     <Drawer
@@ -28,3 +21,10 @@ const capitalize = (s: string) => s.charAt(0).toUpperCase() + s.slice(1)
     </Drawer>
   </div>
 </template>
+
+<script setup lang="ts">
+import { Button, Drawer } from '@hareui/vue'
+
+const variants = ['opaque', 'blur', 'transparent'] as const
+const capitalize = (s: string) => s.charAt(0).toUpperCase() + s.slice(1)
+</script>

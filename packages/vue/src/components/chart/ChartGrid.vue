@@ -1,3 +1,28 @@
+<template>
+  <ChartLayer name="grid">
+    <g data-slot="chart-grid" :class="chart.classes('grid', props.class)">
+      <line
+        v-for="(line, index) in horizontalLines"
+        :key="`h-${index}`"
+        data-slot="chart-grid-line"
+        data-direction="horizontal"
+        v-bind="line"
+        fill="none"
+        :stroke-dasharray="strokeDasharray"
+      />
+      <line
+        v-for="(line, index) in verticalLines"
+        :key="`v-${index}`"
+        data-slot="chart-grid-line"
+        data-direction="vertical"
+        v-bind="line"
+        fill="none"
+        :stroke-dasharray="strokeDasharray"
+      />
+    </g>
+  </ChartLayer>
+</template>
+
 <script lang="ts">
 import type { ClassValue } from 'tailwind-variants'
 
@@ -86,28 +111,3 @@ const verticalLines = computed(() => {
   return points.map((x) => ({ x1: x, x2: x, y1: plot.top, y2: plot.top + plot.height }))
 })
 </script>
-
-<template>
-  <ChartLayer name="grid">
-    <g data-slot="chart-grid" :class="chart.classes('grid', props.class)">
-      <line
-        v-for="(line, index) in horizontalLines"
-        :key="`h-${index}`"
-        data-slot="chart-grid-line"
-        data-direction="horizontal"
-        v-bind="line"
-        fill="none"
-        :stroke-dasharray="strokeDasharray"
-      />
-      <line
-        v-for="(line, index) in verticalLines"
-        :key="`v-${index}`"
-        data-slot="chart-grid-line"
-        data-direction="vertical"
-        v-bind="line"
-        fill="none"
-        :stroke-dasharray="strokeDasharray"
-      />
-    </g>
-  </ChartLayer>
-</template>

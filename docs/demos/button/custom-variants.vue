@@ -1,3 +1,9 @@
+<template>
+  <Button :class="myButtonVariants({ radius: 'full', variant: 'primary' }).base()">
+    Custom Button
+  </Button>
+</template>
+
 <script setup lang="ts">
 import { Button, themes, tv } from '@hareui/vue'
 
@@ -29,9 +35,3 @@ const myButtonVariants = tv({
   },
 })
 </script>
-
-<template>
-  <Button :class="myButtonVariants({ radius: 'full', variant: 'primary' }).base()">
-    Custom Button
-  </Button>
-</template>

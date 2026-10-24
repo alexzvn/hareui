@@ -1,3 +1,45 @@
+<template>
+  <!-- Reka's root is a wrapper <div> (RAC's root is the area itself); `contents` keeps it out of layout so the
+       area's `w-full max-w-56` sizes against the parent, not a shrink-to-fit wrapper that collapses it to 0px. -->
+  <ColorAreaRoot
+    class="contents"
+    :model-value="rootValue"
+    :default-value="rootDefault"
+    :color-space="space"
+    :x-channel="axes.x"
+    :y-channel="axes.y"
+    :disabled="isDisabled"
+    :x-name="xName"
+    :y-name="yName"
+    @update:color="onUpdateColor"
+    @change-end="onChangeEnd"
+  >
+    <template #default>
+      <ColorAreaArea
+        data-slot="color-area"
+        :style="areaStyle"
+        :class="ui.base({ class: [props.ui?.base, props.class] })"
+        @pointerdown.capture="onPointerDownCapture"
+        @keyup="onKeyup"
+      >
+        <ColorAreaThumb
+          :id="thumbId"
+          data-slot="color-area-thumb"
+          :aria-label="thumbLabel"
+          :aria-labelledby="thumbLabelledBy"
+          :style="{ '--color-area-thumb-color': thumbColor, backgroundColor: thumbColor }"
+          :data-dragging="isDragging ? 'true' : undefined"
+          :data-focus-visible="focusVisible ? 'true' : undefined"
+          @focus="onThumbFocus"
+          @keydown="onThumbKeydown"
+          @blur="focusVisible = false"
+          :class="ui.thumb({ class: props.ui?.thumb })"
+        />
+      </ColorAreaArea>
+    </template>
+  </ColorAreaRoot>
+</template>
+
 <script lang="ts">
 import type { Color, ColorChannel, ColorSpace } from 'reka-ui'
 
@@ -233,45 +275,3 @@ const thumbLabelledBy = computed(() => {
   return typeof ids === 'string' && ids ? `${ids} ${thumbId}` : undefined
 })
 </script>
-
-<template>
-  <!-- Reka's root is a wrapper <div> (RAC's root is the area itself); `contents` keeps it out of layout so the
-       area's `w-full max-w-56` sizes against the parent, not a shrink-to-fit wrapper that collapses it to 0px. -->
-  <ColorAreaRoot
-    class="contents"
-    :model-value="rootValue"
-    :default-value="rootDefault"
-    :color-space="space"
-    :x-channel="axes.x"
-    :y-channel="axes.y"
-    :disabled="isDisabled"
-    :x-name="xName"
-    :y-name="yName"
-    @update:color="onUpdateColor"
-    @change-end="onChangeEnd"
-  >
-    <template #default>
-      <ColorAreaArea
-        data-slot="color-area"
-        :style="areaStyle"
-        :class="ui.base({ class: [props.ui?.base, props.class] })"
-        @pointerdown.capture="onPointerDownCapture"
-        @keyup="onKeyup"
-      >
-        <ColorAreaThumb
-          :id="thumbId"
-          data-slot="color-area-thumb"
-          :aria-label="thumbLabel"
-          :aria-labelledby="thumbLabelledBy"
-          :style="{ '--color-area-thumb-color': thumbColor, backgroundColor: thumbColor }"
-          :data-dragging="isDragging ? 'true' : undefined"
-          :data-focus-visible="focusVisible ? 'true' : undefined"
-          @focus="onThumbFocus"
-          @keydown="onThumbKeydown"
-          @blur="focusVisible = false"
-          :class="ui.thumb({ class: props.ui?.thumb })"
-        />
-      </ColorAreaArea>
-    </template>
-  </ColorAreaRoot>
-</template>

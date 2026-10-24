@@ -1,8 +1,3 @@
-<script setup lang="ts">
-import { DateRangePicker } from '@hareui/vue'
-import { Icon } from '@iconify/vue'
-</script>
-
 <template>
   <DateRangePicker
     class="w-80"
@@ -18,3 +13,8 @@ import { Icon } from '@iconify/vue'
     </template>
   </DateRangePicker>
 </template>
+
+<script setup lang="ts">
+import { DateRangePicker } from '@hareui/vue'
+import { Icon } from '@iconify/vue'
+</script>

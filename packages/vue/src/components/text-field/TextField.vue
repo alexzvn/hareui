@@ -1,3 +1,29 @@
+<template>
+  <div
+    ref="root"
+    v-bind="rootAttrs"
+    data-slot="textfield"
+    :data-disabled="disabled ? 'true' : undefined"
+    :data-invalid="invalid ? 'true' : undefined"
+    :data-required="required ? 'true' : undefined"
+    :data-readonly="readonly ? 'true' : undefined"
+    :data-focus-within="focusWithin ? 'true' : undefined"
+    :data-focus-visible="focusVisible ? 'true' : undefined"
+    :class="ui.base({ class: [props.ui?.base, props.class] })"
+    @focusin="onFocusIn"
+    @focusout="onFocusOut"
+  >
+    <FieldLabel :for="id" />
+    <slot
+      v-bind="{ id, describedBy, invalid, disabled, required, readonly, focusWithin, focusVisible }"
+    >
+      <Input :placeholder="placeholder" />
+    </slot>
+    <FieldDescription />
+    <FieldError />
+  </div>
+</template>
+
 <script lang="ts">
 import type { ValidateFn, ValidationResult } from '../../composables/useFieldValidation'
 import type { ComponentSlots } from '../../types/tv'
@@ -199,29 +225,3 @@ provide(textFieldContextKey, {
 
 const ui = useComponentUI('textField', theme, () => ({ fullWidth: props.fullWidth }))
 </script>
-
-<template>
-  <div
-    ref="root"
-    v-bind="rootAttrs"
-    data-slot="textfield"
-    :data-disabled="disabled ? 'true' : undefined"
-    :data-invalid="invalid ? 'true' : undefined"
-    :data-required="required ? 'true' : undefined"
-    :data-readonly="readonly ? 'true' : undefined"
-    :data-focus-within="focusWithin ? 'true' : undefined"
-    :data-focus-visible="focusVisible ? 'true' : undefined"
-    :class="ui.base({ class: [props.ui?.base, props.class] })"
-    @focusin="onFocusIn"
-    @focusout="onFocusOut"
-  >
-    <FieldLabel :for="id" />
-    <slot
-      v-bind="{ id, describedBy, invalid, disabled, required, readonly, focusWithin, focusVisible }"
-    >
-      <Input :placeholder="placeholder" />
-    </slot>
-    <FieldDescription />
-    <FieldError />
-  </div>
-</template>

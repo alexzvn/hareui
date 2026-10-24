@@ -1,7 +1,3 @@
-<script setup lang="ts">
-import { Surface, TextArea } from '@hareui/vue'
-</script>
-
 <template>
   <Surface class="w-full rounded-3xl p-6">
     <TextArea
@@ -11,3 +7,7 @@ import { Surface, TextArea } from '@hareui/vue'
     />
   </Surface>
 </template>
+
+<script setup lang="ts">
+import { Surface, TextArea } from '@hareui/vue'
+</script>

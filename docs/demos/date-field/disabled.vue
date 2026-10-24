@@ -1,8 +1,3 @@
-<script setup lang="ts">
-import { DateField } from '@hareui/vue'
-import { getLocalTimeZone, today } from '@internationalized/date'
-</script>
-
 <template>
   <div class="flex flex-col gap-4">
     <DateField
@@ -22,3 +17,8 @@ import { getLocalTimeZone, today } from '@internationalized/date'
     />
   </div>
 </template>
+
+<script setup lang="ts">
+import { DateField } from '@hareui/vue'
+import { getLocalTimeZone, today } from '@internationalized/date'
+</script>

@@ -1,11 +1,3 @@
-<script setup lang="ts">
-import { FieldError, Input, Label, TextField } from '@hareui/vue'
-import { computed, ref } from 'vue'
-
-const value = ref('jr')
-const invalid = computed(() => value.value.length > 0 && value.value.length < 3)
-</script>
-
 <template>
   <TextField id="handle" class="w-64" :invalid="invalid">
     <template #default="{ id }">
@@ -17,3 +9,11 @@ const invalid = computed(() => value.value.length > 0 && value.value.length < 3)
     </template>
   </TextField>
 </template>
+
+<script setup lang="ts">
+import { FieldError, Input, Label, TextField } from '@hareui/vue'
+import { computed, ref } from 'vue'
+
+const value = ref('jr')
+const invalid = computed(() => value.value.length > 0 && value.value.length < 3)
+</script>

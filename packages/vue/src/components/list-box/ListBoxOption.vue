@@ -1,3 +1,81 @@
+<template>
+  <component
+    :is="component ?? ListboxItem"
+    ref="option"
+    :value="item.value"
+    :disabled="item.disabled"
+    :text-value="item.textValue ?? item.label"
+    data-slot="list-box-item"
+    :aria-selected="selectable ? selected : undefined"
+    :aria-disabled="state.disabled ? 'true' : undefined"
+    :aria-labelledby="rich && hasLabel ? labelId : undefined"
+    :aria-describedby="rich ? descriptionId : undefined"
+    :data-selected="selected ? 'true' : undefined"
+    :data-selection-mode="selectable ? selectionMode : undefined"
+    :data-hovered="hovered ? 'true' : undefined"
+    :data-pressed="pressed ? 'true' : undefined"
+    :data-focused="isFocused ? 'true' : undefined"
+    :data-focus-visible="isFocusVisible ? 'true' : undefined"
+    :class="classes.item({ variant: item.variant, class: [ui?.item, item.class] })"
+    @select="onSelect"
+    @pointerenter="hovered = $event.pointerType === 'mouse'"
+    @pointerleave="onPointerleave"
+    @pointerdown="pressed = true"
+    @pointermove="onPointermove"
+    @mousedown="onMousedown"
+    @pointerup="pressed = false"
+    @pointercancel="pressed = false"
+    @focus="onFocus"
+    @blur="focused = false"
+  >
+    <slot name="item" v-bind="state">
+      <slot name="item-leading" v-bind="state" />
+      <!-- With a description: Label + Description (HeroUI's rich item). Label only: plain text (HeroUI's `<ListBox.Item>Text</ListBox.Item>`). -->
+      <div v-if="rich" class="flex flex-col">
+        <Label v-if="hasLabel" :id="labelId" :disabled="state.disabled">
+          <slot name="item-label" v-bind="state">
+            {{ item.label }}
+          </slot>
+        </Label>
+        <Description :id="descriptionId">
+          <slot name="item-description" v-bind="state">
+            {{ item.description }}
+          </slot>
+        </Description>
+      </div>
+      <slot v-else name="item-label" v-bind="state">
+        {{ item.label }}
+      </slot>
+      <slot name="item-trailing" v-bind="state" />
+      <span
+        v-if="indicator && selectable"
+        aria-hidden="true"
+        data-slot="list-box-item-indicator"
+        :data-visible="selected || undefined"
+        :class="classes.indicator({ variant: item.variant, class: ui?.indicator })"
+      >
+        <slot name="indicator" v-bind="state">
+          <svg
+            aria-hidden="true"
+            data-slot="list-box-item-indicator--checkmark"
+            fill="none"
+            role="presentation"
+            stroke="currentColor"
+            stroke-dasharray="22"
+            :stroke-dashoffset="selected ? 44 : 66"
+            stroke-linecap="round"
+            stroke-linejoin="round"
+            stroke-width="2"
+            viewBox="0 0 17 18"
+          >
+            <polyline points="1 9 7 14 15 4" />
+          </svg>
+        </slot>
+      </span>
+    </slot>
+  </component>
+</template>
+
 <script setup lang="ts">
 import { injectListboxRootContext, ListboxItem } from 'reka-ui'
 // Internal: one ListBox item. Not exported.
@@ -119,81 +197,3 @@ function onSelect(event: CustomEvent<{ originalEvent?: Event }>) {
   }
 }
 </script>
-
-<template>
-  <component
-    :is="component ?? ListboxItem"
-    ref="option"
-    :value="item.value"
-    :disabled="item.disabled"
-    :text-value="item.textValue ?? item.label"
-    data-slot="list-box-item"
-    :aria-selected="selectable ? selected : undefined"
-    :aria-disabled="state.disabled ? 'true' : undefined"
-    :aria-labelledby="rich && hasLabel ? labelId : undefined"
-    :aria-describedby="rich ? descriptionId : undefined"
-    :data-selected="selected ? 'true' : undefined"
-    :data-selection-mode="selectable ? selectionMode : undefined"
-    :data-hovered="hovered ? 'true' : undefined"
-    :data-pressed="pressed ? 'true' : undefined"
-    :data-focused="isFocused ? 'true' : undefined"
-    :data-focus-visible="isFocusVisible ? 'true' : undefined"
-    :class="classes.item({ variant: item.variant, class: [ui?.item, item.class] })"
-    @select="onSelect"
-    @pointerenter="hovered = $event.pointerType === 'mouse'"
-    @pointerleave="onPointerleave"
-    @pointerdown="pressed = true"
-    @pointermove="onPointermove"
-    @mousedown="onMousedown"
-    @pointerup="pressed = false"
-    @pointercancel="pressed = false"
-    @focus="onFocus"
-    @blur="focused = false"
-  >
-    <slot name="item" v-bind="state">
-      <slot name="item-leading" v-bind="state" />
-      <!-- With a description: Label + Description (HeroUI's rich item). Label only: plain text (HeroUI's `<ListBox.Item>Text</ListBox.Item>`). -->
-      <div v-if="rich" class="flex flex-col">
-        <Label v-if="hasLabel" :id="labelId" :disabled="state.disabled">
-          <slot name="item-label" v-bind="state">
-            {{ item.label }}
-          </slot>
-        </Label>
-        <Description :id="descriptionId">
-          <slot name="item-description" v-bind="state">
-            {{ item.description }}
-          </slot>
-        </Description>
-      </div>
-      <slot v-else name="item-label" v-bind="state">
-        {{ item.label }}
-      </slot>
-      <slot name="item-trailing" v-bind="state" />
-      <span
-        v-if="indicator && selectable"
-        aria-hidden="true"
-        data-slot="list-box-item-indicator"
-        :data-visible="selected || undefined"
-        :class="classes.indicator({ variant: item.variant, class: ui?.indicator })"
-      >
-        <slot name="indicator" v-bind="state">
-          <svg
-            aria-hidden="true"
-            data-slot="list-box-item-indicator--checkmark"
-            fill="none"
-            role="presentation"
-            stroke="currentColor"
-            stroke-dasharray="22"
-            :stroke-dashoffset="selected ? 44 : 66"
-            stroke-linecap="round"
-            stroke-linejoin="round"
-            stroke-width="2"
-            viewBox="0 0 17 18"
-          >
-            <polyline points="1 9 7 14 15 4" />
-          </svg>
-        </slot>
-      </span>
-    </slot>
-  </component>
-</template>

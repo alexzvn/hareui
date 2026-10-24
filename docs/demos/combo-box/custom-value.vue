@@ -1,3 +1,11 @@
+<template>
+  <ComboBox class="w-[256px]" label="User" placeholder="Search users..." :items="users">
+    <template #item-leading="{ item }">
+      <Avatar size="sm" alt="" :src="item.avatarUrl" :fallback="item.fallback" />
+    </template>
+  </ComboBox>
+</template>
+
 <script setup lang="ts">
 import type { ListBoxItem } from '@hareui/vue'
 import { Avatar, ComboBox } from '@hareui/vue'
@@ -45,11 +53,3 @@ const users: User[] = [
   },
 ]
 </script>
-
-<template>
-  <ComboBox class="w-[256px]" label="User" placeholder="Search users..." :items="users">
-    <template #item-leading="{ item }">
-      <Avatar size="sm" alt="" :src="item.avatarUrl" :fallback="item.fallback" />
-    </template>
-  </ComboBox>
-</template>

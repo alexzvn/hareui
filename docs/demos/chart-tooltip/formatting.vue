@@ -1,3 +1,12 @@
+<template>
+  <ChartTooltipContent
+    :label="27"
+    :payload="sleep"
+    :label-formatter="toWeek"
+    :value-formatter="toHours"
+  />
+</template>
+
 <script setup lang="ts">
 import { ChartTooltipContent } from '@hareui/vue/charts'
 
@@ -16,12 +25,3 @@ function toWeek(label: number | string) {
   return `Week ${label}`
 }
 </script>
-
-<template>
-  <ChartTooltipContent
-    :label="27"
-    :payload="sleep"
-    :label-formatter="toWeek"
-    :value-formatter="toHours"
-  />
-</template>

@@ -1,7 +1,3 @@
-<script setup lang="ts">
-import { ColorSwatch } from '@hareui/vue'
-</script>
-
 <template>
   <div class="flex items-center gap-3">
     <ColorSwatch aria-label="100% opacity" color="rgba(4, 133, 247, 1)" />
@@ -11,3 +7,7 @@ import { ColorSwatch } from '@hareui/vue'
     <ColorSwatch aria-label="0% opacity" color="rgba(4, 133, 247, 0)" />
   </div>
 </template>
+
+<script setup lang="ts">
+import { ColorSwatch } from '@hareui/vue'
+</script>

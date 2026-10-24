@@ -1,64 +1,3 @@
-<script lang="ts">
-import type { PrimitiveProps } from 'reka-ui'
-
-import type { ComponentSlots, ComponentVariants } from '../../types/tv'
-import theme from './theme'
-
-type Alert = typeof theme
-
-export interface AlertProps {
-  /**
-   * The element or component to render as.
-   * @defaultValue 'div'
-   */
-  as?: PrimitiveProps['as']
-  /**
-   * The visual status of the alert. Also picks the default indicator icon.
-   * @defaultValue 'default'
-   */
-  status?: ComponentVariants<Alert>['status']
-  /** Title text. */
-  title?: string
-  /** Description text rendered under the title. */
-  description?: string
-  /**
-   * Show the indicator. Set to `false` to render the alert without one.
-   * @defaultValue true
-   */
-  indicator?: boolean
-  /** Additional classes merged into the root element. */
-  class?: any
-  /** Per-slot class overrides. */
-  ui?: ComponentSlots<Alert>
-}
-
-export interface AlertSlots {
-  /** Content rendered inside the root before the indicator, without a wrapper (e.g. a decorative background). */
-  leading?: () => any
-  /** Replaces the status icon inside the indicator. */
-  indicator?: () => any
-  /** Replaces the title text. */
-  title?: () => any
-  /** Replaces the description text. */
-  description?: () => any
-  /** Extra content rendered inside the content wrapper, after the description (e.g. an action button). */
-  default?: () => any
-  /** Content rendered after the content wrapper (e.g. actions or a close button). */
-  trailing?: () => any
-}
-</script>
-
-<script setup lang="ts">
-import { Primitive } from 'reka-ui'
-
-import { useComponentUI } from '../../composables/useComponentUI'
-
-const props = withDefaults(defineProps<AlertProps>(), { as: 'div', indicator: true })
-const slots = defineSlots<AlertSlots>()
-
-const ui = useComponentUI('alert', theme, () => ({ status: props.status }))
-</script>
-
 <template>
   <Primitive
     :as="as"
@@ -170,3 +109,64 @@ const ui = useComponentUI('alert', theme, () => ({ status: props.status }))
     <slot name="trailing" />
   </Primitive>
 </template>
+
+<script lang="ts">
+import type { PrimitiveProps } from 'reka-ui'
+
+import type { ComponentSlots, ComponentVariants } from '../../types/tv'
+import theme from './theme'
+
+type Alert = typeof theme
+
+export interface AlertProps {
+  /**
+   * The element or component to render as.
+   * @defaultValue 'div'
+   */
+  as?: PrimitiveProps['as']
+  /**
+   * The visual status of the alert. Also picks the default indicator icon.
+   * @defaultValue 'default'
+   */
+  status?: ComponentVariants<Alert>['status']
+  /** Title text. */
+  title?: string
+  /** Description text rendered under the title. */
+  description?: string
+  /**
+   * Show the indicator. Set to `false` to render the alert without one.
+   * @defaultValue true
+   */
+  indicator?: boolean
+  /** Additional classes merged into the root element. */
+  class?: any
+  /** Per-slot class overrides. */
+  ui?: ComponentSlots<Alert>
+}
+
+export interface AlertSlots {
+  /** Content rendered inside the root before the indicator, without a wrapper (e.g. a decorative background). */
+  leading?: () => any
+  /** Replaces the status icon inside the indicator. */
+  indicator?: () => any
+  /** Replaces the title text. */
+  title?: () => any
+  /** Replaces the description text. */
+  description?: () => any
+  /** Extra content rendered inside the content wrapper, after the description (e.g. an action button). */
+  default?: () => any
+  /** Content rendered after the content wrapper (e.g. actions or a close button). */
+  trailing?: () => any
+}
+</script>
+
+<script setup lang="ts">
+import { Primitive } from 'reka-ui'
+
+import { useComponentUI } from '../../composables/useComponentUI'
+
+const props = withDefaults(defineProps<AlertProps>(), { as: 'div', indicator: true })
+const slots = defineSlots<AlertSlots>()
+
+const ui = useComponentUI('alert', theme, () => ({ status: props.status }))
+</script>

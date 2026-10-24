@@ -1,7 +1,3 @@
-<script setup lang="ts">
-import { ProgressCircle } from '@hareui/vue'
-</script>
-
 <template>
   <div class="flex items-center gap-6">
     <ProgressCircle aria-label="Loading" size="sm" :value="40" />
@@ -9,3 +5,7 @@ import { ProgressCircle } from '@hareui/vue'
     <ProgressCircle aria-label="Loading" size="lg" :value="80" />
   </div>
 </template>
+
+<script setup lang="ts">
+import { ProgressCircle } from '@hareui/vue'
+</script>

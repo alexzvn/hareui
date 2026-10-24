@@ -1,3 +1,14 @@
+<template>
+  <ChartTooltipContent indicator="line" class="min-w-44">
+    <ChartTooltipHeader>Build #318</ChartTooltipHeader>
+    <ChartTooltipItem v-for="step in steps" :key="step.name">
+      <ChartTooltipIndicator :color="step.color" />
+      <ChartTooltipLabel>{{ step.name }}</ChartTooltipLabel>
+      <ChartTooltipValue>{{ step.time }}</ChartTooltipValue>
+    </ChartTooltipItem>
+  </ChartTooltipContent>
+</template>
+
 <script setup lang="ts">
 import {
   ChartTooltipContent,
@@ -15,14 +26,3 @@ const steps = [
   { name: 'Deploy', color: 'var(--chart-5)', time: '35s' },
 ]
 </script>
-
-<template>
-  <ChartTooltipContent indicator="line" class="min-w-44">
-    <ChartTooltipHeader>Build #318</ChartTooltipHeader>
-    <ChartTooltipItem v-for="step in steps" :key="step.name">
-      <ChartTooltipIndicator :color="step.color" />
-      <ChartTooltipLabel>{{ step.name }}</ChartTooltipLabel>
-      <ChartTooltipValue>{{ step.time }}</ChartTooltipValue>
-    </ChartTooltipItem>
-  </ChartTooltipContent>
-</template>

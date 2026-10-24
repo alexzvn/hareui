@@ -1,3 +1,34 @@
+<template>
+  <Form class="flex w-[280px] flex-col gap-4" @submit="handleSubmit">
+    <InputOtp
+      v-model="value"
+      label="Two-factor authentication"
+      description="Enter the 6-digit code from your authenticator app"
+      :invalid="!!error"
+      :error-message="error"
+      :groups="[3, 3]"
+      @update:model-value="error = ''"
+    />
+    <Button
+      class="w-full"
+      :disabled="value.length !== 6"
+      :pending="isSubmitting"
+      type="submit"
+      variant="primary"
+    >
+      <template v-if="isSubmitting">
+        <Spinner color="current" size="sm" />
+        Verifying...
+      </template>
+      <template v-else> Verify </template>
+    </Button>
+    <div class="flex items-center justify-center gap-1">
+      <p class="text-sm text-muted">Having trouble?</p>
+      <Link class="text-sm text-foreground underline" href="#"> Use backup code </Link>
+    </div>
+  </Form>
+</template>
+
 <script setup lang="ts">
 import { Button, Form, InputOtp, Link, Spinner } from '@hareui/vue'
 import { ref } from 'vue'
@@ -29,34 +60,3 @@ function handleSubmit(e: Event) {
   }, 1500)
 }
 </script>
-
-<template>
-  <Form class="flex w-[280px] flex-col gap-4" @submit="handleSubmit">
-    <InputOtp
-      v-model="value"
-      label="Two-factor authentication"
-      description="Enter the 6-digit code from your authenticator app"
-      :invalid="!!error"
-      :error-message="error"
-      :groups="[3, 3]"
-      @update:model-value="error = ''"
-    />
-    <Button
-      class="w-full"
-      :disabled="value.length !== 6"
-      :pending="isSubmitting"
-      type="submit"
-      variant="primary"
-    >
-      <template v-if="isSubmitting">
-        <Spinner color="current" size="sm" />
-        Verifying...
-      </template>
-      <template v-else> Verify </template>
-    </Button>
-    <div class="flex items-center justify-center gap-1">
-      <p class="text-sm text-muted">Having trouble?</p>
-      <Link class="text-sm text-foreground underline" href="#"> Use backup code </Link>
-    </div>
-  </Form>
-</template>

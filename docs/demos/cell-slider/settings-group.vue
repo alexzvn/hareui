@@ -1,3 +1,23 @@
+<template>
+  <div class="w-[300px] divide-y divide-separator rounded-2xl border border-separator">
+    <section v-for="(rows, title) in filters" :key="title" class="grid gap-1.5 p-3">
+      <h4 class="mb-1 text-[11px] font-semibold tracking-wide text-muted uppercase">
+        {{ title }}
+      </h4>
+      <CellSlider
+        v-for="row in rows"
+        :key="row.label"
+        :label="row.label"
+        :default-value="row.value"
+        :min="row.min"
+        :max="row.max"
+        :step="row.step"
+        :format-options="row.format"
+      />
+    </section>
+  </div>
+</template>
+
 <script setup lang="ts">
 import { CellSlider } from '@hareui/vue'
 
@@ -49,23 +69,3 @@ const filters: Record<string, Filter[]> = {
   ],
 }
 </script>
-
-<template>
-  <div class="w-[300px] divide-y divide-separator rounded-2xl border border-separator">
-    <section v-for="(rows, title) in filters" :key="title" class="grid gap-1.5 p-3">
-      <h4 class="mb-1 text-[11px] font-semibold tracking-wide text-muted uppercase">
-        {{ title }}
-      </h4>
-      <CellSlider
-        v-for="row in rows"
-        :key="row.label"
-        :label="row.label"
-        :default-value="row.value"
-        :min="row.min"
-        :max="row.max"
-        :step="row.step"
-        :format-options="row.format"
-      />
-    </section>
-  </div>
-</template>

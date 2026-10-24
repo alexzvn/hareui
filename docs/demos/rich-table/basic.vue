@@ -1,3 +1,7 @@
+<template>
+  <RichTable :data="data" :columns="columns" class="w-full" />
+</template>
+
 <script setup lang="ts">
 import type { RichTableColumn } from '@hareui/vue'
 import { Chip, RichTable } from '@hareui/vue'
@@ -99,7 +103,3 @@ const columns: RichTableColumn<Payment>[] = [
   },
 ]
 </script>
-
-<template>
-  <RichTable :data="data" :columns="columns" class="w-full" />
-</template>

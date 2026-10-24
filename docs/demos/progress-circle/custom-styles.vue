@@ -1,7 +1,3 @@
-<script setup lang="ts">
-import { ProgressCircle } from '@hareui/vue'
-</script>
-
 <template>
   <ProgressCircle
     aria-label="Sync progress"
@@ -13,3 +9,7 @@ import { ProgressCircle } from '@hareui/vue'
     :value="68"
   />
 </template>
+
+<script setup lang="ts">
+import { ProgressCircle } from '@hareui/vue'
+</script>

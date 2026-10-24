@@ -1,3 +1,30 @@
+<template>
+  <div class="flex flex-wrap gap-4">
+    <AlertDialog
+      v-for="example in examples"
+      :key="example.status"
+      class="sm:max-w-[400px]"
+      :status="example.status"
+      :title="example.header"
+    >
+      <Button :class="example.classNames">
+        {{ example.trigger }}
+      </Button>
+      <template #body>
+        <p>{{ example.body }}</p>
+      </template>
+      <template #footer="{ close }">
+        <Button variant="tertiary" @click="close">
+          {{ example.actions.cancel }}
+        </Button>
+        <Button :variant="example.status === 'danger' ? 'danger' : 'primary'" @click="close">
+          {{ example.actions.confirm }}
+        </Button>
+      </template>
+    </AlertDialog>
+  </div>
+</template>
+
 <script setup lang="ts">
 import { AlertDialog, Button } from '@hareui/vue'
 
@@ -36,30 +63,3 @@ const examples = [
   },
 ] as const
 </script>
-
-<template>
-  <div class="flex flex-wrap gap-4">
-    <AlertDialog
-      v-for="example in examples"
-      :key="example.status"
-      class="sm:max-w-[400px]"
-      :status="example.status"
-      :title="example.header"
-    >
-      <Button :class="example.classNames">
-        {{ example.trigger }}
-      </Button>
-      <template #body>
-        <p>{{ example.body }}</p>
-      </template>
-      <template #footer="{ close }">
-        <Button variant="tertiary" @click="close">
-          {{ example.actions.cancel }}
-        </Button>
-        <Button :variant="example.status === 'danger' ? 'danger' : 'primary'" @click="close">
-          {{ example.actions.confirm }}
-        </Button>
-      </template>
-    </AlertDialog>
-  </div>
-</template>

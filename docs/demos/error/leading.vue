@@ -1,8 +1,3 @@
-<script setup lang="ts">
-import { Error } from '@hareui/vue'
-import { Icon } from '@iconify/vue'
-</script>
-
 <template>
   <Error
     class="min-h-96"
@@ -19,3 +14,8 @@ import { Icon } from '@iconify/vue'
     </template>
   </Error>
 </template>
+
+<script setup lang="ts">
+import { Error } from '@hareui/vue'
+import { Icon } from '@iconify/vue'
+</script>

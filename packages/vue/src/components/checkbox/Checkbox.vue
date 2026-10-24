@@ -1,3 +1,80 @@
+<template>
+  <div
+    ref="root"
+    data-slot="checkbox"
+    :data-state="state"
+    :data-selected="state === 'checked' ? 'true' : undefined"
+    :data-indeterminate="state === 'indeterminate' ? 'true' : undefined"
+    :data-disabled="isDisabled ? 'true' : undefined"
+    :data-invalid="invalid ? 'true' : undefined"
+    :data-readonly="readonly ? 'true' : undefined"
+    :data-required="required ? 'true' : undefined"
+    :class="ui.base({ class: [props.ui?.base, props.class] })"
+    @click="forwardRootClick($event, '[data-slot=checkbox-content]')"
+    @mousedown="keepFocusWhenReadonly($event, readonly, '[data-slot=checkbox-content]')"
+  >
+    <CheckboxRoot
+      v-bind="$attrs"
+      :id="id"
+      :model-value="checked"
+      :name="name"
+      :value="value"
+      :required="required"
+      :disabled="isDisabled"
+      :aria-invalid="invalid ? 'true' : undefined"
+      :aria-readonly="readonly ? 'true' : undefined"
+      :aria-describedby="describedBy"
+      data-slot="checkbox-content"
+      :class="ui.content({ class: props.ui?.content })"
+      @keydown.capture="submitOnEnter"
+      @update:model-value="onUpdate"
+    >
+      <span data-slot="checkbox-control" :class="ui.control({ class: props.ui?.control })">
+        <span
+          aria-hidden="true"
+          data-slot="checkbox-indicator"
+          :class="ui.indicator({ class: props.ui?.indicator })"
+        >
+          <slot name="indicator" :state="state">
+            <svg
+              v-if="state === 'indeterminate'"
+              aria-hidden="true"
+              data-slot="checkbox-default-indicator--indeterminate"
+              fill="none"
+              role="presentation"
+              stroke="currentColor"
+              stroke-linecap="round"
+              stroke-width="3"
+              viewBox="0 0 24 24"
+            >
+              <line x1="21" x2="3" y1="12" y2="12" />
+            </svg>
+            <svg
+              v-else
+              aria-hidden="true"
+              data-slot="checkbox-default-indicator--checkmark"
+              fill="none"
+              role="presentation"
+              stroke="currentColor"
+              stroke-dasharray="22"
+              :stroke-dashoffset="state === 'checked' ? 44 : 66"
+              stroke-linecap="round"
+              stroke-linejoin="round"
+              stroke-width="2"
+              viewBox="0 0 17 18"
+            >
+              <polyline points="1 9 7 14 15 4" />
+            </svg>
+          </slot>
+        </span>
+      </span>
+      <slot name="label" :state="state">{{ label }}</slot>
+    </CheckboxRoot>
+    <FieldDescription />
+    <FieldError />
+  </div>
+</template>
+
 <script lang="ts">
 import type { ValidateFn, ValidationResult } from '../../composables/useFieldValidation'
 import type { ComponentSlots, ComponentVariants } from '../../types/tv'
@@ -156,80 +233,3 @@ function onUpdate(value: boolean | 'indeterminate') {
   commitValidation()
 }
 </script>
-
-<template>
-  <div
-    ref="root"
-    data-slot="checkbox"
-    :data-state="state"
-    :data-selected="state === 'checked' ? 'true' : undefined"
-    :data-indeterminate="state === 'indeterminate' ? 'true' : undefined"
-    :data-disabled="isDisabled ? 'true' : undefined"
-    :data-invalid="invalid ? 'true' : undefined"
-    :data-readonly="readonly ? 'true' : undefined"
-    :data-required="required ? 'true' : undefined"
-    :class="ui.base({ class: [props.ui?.base, props.class] })"
-    @click="forwardRootClick($event, '[data-slot=checkbox-content]')"
-    @mousedown="keepFocusWhenReadonly($event, readonly, '[data-slot=checkbox-content]')"
-  >
-    <CheckboxRoot
-      v-bind="$attrs"
-      :id="id"
-      :model-value="checked"
-      :name="name"
-      :value="value"
-      :required="required"
-      :disabled="isDisabled"
-      :aria-invalid="invalid ? 'true' : undefined"
-      :aria-readonly="readonly ? 'true' : undefined"
-      :aria-describedby="describedBy"
-      data-slot="checkbox-content"
-      :class="ui.content({ class: props.ui?.content })"
-      @keydown.capture="submitOnEnter"
-      @update:model-value="onUpdate"
-    >
-      <span data-slot="checkbox-control" :class="ui.control({ class: props.ui?.control })">
-        <span
-          aria-hidden="true"
-          data-slot="checkbox-indicator"
-          :class="ui.indicator({ class: props.ui?.indicator })"
-        >
-          <slot name="indicator" :state="state">
-            <svg
-              v-if="state === 'indeterminate'"
-              aria-hidden="true"
-              data-slot="checkbox-default-indicator--indeterminate"
-              fill="none"
-              role="presentation"
-              stroke="currentColor"
-              stroke-linecap="round"
-              stroke-width="3"
-              viewBox="0 0 24 24"
-            >
-              <line x1="21" x2="3" y1="12" y2="12" />
-            </svg>
-            <svg
-              v-else
-              aria-hidden="true"
-              data-slot="checkbox-default-indicator--checkmark"
-              fill="none"
-              role="presentation"
-              stroke="currentColor"
-              stroke-dasharray="22"
-              :stroke-dashoffset="state === 'checked' ? 44 : 66"
-              stroke-linecap="round"
-              stroke-linejoin="round"
-              stroke-width="2"
-              viewBox="0 0 17 18"
-            >
-              <polyline points="1 9 7 14 15 4" />
-            </svg>
-          </slot>
-        </span>
-      </span>
-      <slot name="label" :state="state">{{ label }}</slot>
-    </CheckboxRoot>
-    <FieldDescription />
-    <FieldError />
-  </div>
-</template>

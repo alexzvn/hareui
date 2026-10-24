@@ -1,3 +1,7 @@
+<template>
+  <NavigationMenu :items="items" orientation="vertical" class="w-64" />
+</template>
+
 <script setup lang="ts">
 import type { NavigationMenuItem } from '@hareui/vue'
 import { NavigationMenu } from '@hareui/vue'
@@ -114,7 +118,3 @@ const items: NavigationMenuItem[] = [
   { label: 'Help', icon: icon('circle-question'), disabled: true },
 ]
 </script>
-
-<template>
-  <NavigationMenu :items="items" orientation="vertical" class="w-64" />
-</template>

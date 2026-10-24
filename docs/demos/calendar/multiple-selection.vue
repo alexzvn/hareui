@@ -1,11 +1,3 @@
-<script setup lang="ts">
-import { Calendar, Description } from '@hareui/vue'
-import type { DateValue } from '@internationalized/date'
-import { shallowRef } from 'vue'
-
-const value = shallowRef<DateValue[]>([])
-</script>
-
 <template>
   <div class="flex flex-col items-center gap-4">
     <Calendar
@@ -19,3 +11,11 @@ const value = shallowRef<DateValue[]>([])
     </Description>
   </div>
 </template>
+
+<script setup lang="ts">
+import { Calendar, Description } from '@hareui/vue'
+import type { DateValue } from '@internationalized/date'
+import { shallowRef } from 'vue'
+
+const value = shallowRef<DateValue[]>([])
+</script>

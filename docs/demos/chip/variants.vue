@@ -1,12 +1,3 @@
-<script setup lang="ts">
-import { Chip, Separator } from '@hareui/vue'
-import { Icon } from '@iconify/vue'
-
-const sizes = ['lg', 'md', 'sm'] as const
-const variants = ['primary', 'secondary', 'tertiary', 'soft'] as const
-const colors = ['accent', 'default', 'success', 'warning', 'danger'] as const
-</script>
-
 <template>
   <div class="flex flex-col gap-8 overflow-x-auto">
     <template v-for="(size, index) in sizes" :key="size">
@@ -49,3 +40,12 @@ const colors = ['accent', 'default', 'success', 'warning', 'danger'] as const
     </template>
   </div>
 </template>
+
+<script setup lang="ts">
+import { Chip, Separator } from '@hareui/vue'
+import { Icon } from '@iconify/vue'
+
+const sizes = ['lg', 'md', 'sm'] as const
+const variants = ['primary', 'secondary', 'tertiary', 'soft'] as const
+const colors = ['accent', 'default', 'success', 'warning', 'danger'] as const
+</script>

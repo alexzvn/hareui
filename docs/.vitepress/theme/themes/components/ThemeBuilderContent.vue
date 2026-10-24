@@ -1,13 +1,3 @@
-<script setup lang="ts">
-// Port of HeroUI docs `themes/components/theme-builder-content.tsx`.
-// The preview always shows the components tab, so the "Pro template" link (HeroUI Pro) is parked; its row stays
-// (invisible, as on the components tab in HeroUI) to keep the layout identical.
-import { ScrollShadow } from '@hareui/vue'
-
-import PreviewContainer from './PreviewContainer.vue'
-import ThemeCodePanel from './ThemeCodePanel.vue'
-</script>
-
 <template>
   <div class="mx-auto flex h-full min-h-0 w-full max-w-[1400px] flex-col">
     <div
@@ -27,3 +17,13 @@ import ThemeCodePanel from './ThemeCodePanel.vue'
     </ScrollShadow>
   </div>
 </template>
+
+<script setup lang="ts">
+// Port of HeroUI docs `themes/components/theme-builder-content.tsx`.
+// The preview always shows the components tab, so the "Pro template" link (HeroUI Pro) is parked; its row stays
+// (invisible, as on the components tab in HeroUI) to keep the layout identical.
+import { ScrollShadow } from '@hareui/vue'
+
+import PreviewContainer from './PreviewContainer.vue'
+import ThemeCodePanel from './ThemeCodePanel.vue'
+</script>

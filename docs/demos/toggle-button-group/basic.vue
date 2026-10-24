@@ -1,8 +1,3 @@
-<script setup lang="ts">
-import { ToggleButton, ToggleButtonGroup } from '@hareui/vue'
-import { Icon } from '@iconify/vue'
-</script>
-
 <template>
   <ToggleButtonGroup selection-mode="multiple" separator>
     <ToggleButton icon-only aria-label="Bold" value="bold">
@@ -19,3 +14,8 @@ import { Icon } from '@iconify/vue'
     </ToggleButton>
   </ToggleButtonGroup>
 </template>
+
+<script setup lang="ts">
+import { ToggleButton, ToggleButtonGroup } from '@hareui/vue'
+import { Icon } from '@iconify/vue'
+</script>

@@ -1,17 +1,3 @@
-<script setup lang="ts">
-import { Card } from '@hareui/vue'
-import { ChartCell, ChartLegend, ChartPie, ChartTooltip, PieChart } from '@hareui/vue/charts'
-
-const data = [
-  { mode: 'Bike', people: 41 },
-  { mode: 'Train', people: 27 },
-  { mode: 'Bus', people: 18 },
-  { mode: 'Car', people: 14 },
-]
-
-const colors = ['var(--chart-4)', 'var(--chart-3)', 'var(--chart-2)', 'var(--chart-1)']
-</script>
-
 <template>
   <Card
     class="w-full max-w-[360px] rounded-2xl"
@@ -27,3 +13,17 @@ const colors = ['var(--chart-4)', 'var(--chart-3)', 'var(--chart-2)', 'var(--cha
     <ChartLegend :data="data" index="mode" :colors="colors" />
   </Card>
 </template>
+
+<script setup lang="ts">
+import { Card } from '@hareui/vue'
+import { ChartCell, ChartLegend, ChartPie, ChartTooltip, PieChart } from '@hareui/vue/charts'
+
+const data = [
+  { mode: 'Bike', people: 41 },
+  { mode: 'Train', people: 27 },
+  { mode: 'Bus', people: 18 },
+  { mode: 'Car', people: 14 },
+]
+
+const colors = ['var(--chart-4)', 'var(--chart-3)', 'var(--chart-2)', 'var(--chart-1)']
+</script>

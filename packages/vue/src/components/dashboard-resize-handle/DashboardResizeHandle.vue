@@ -1,3 +1,14 @@
+<template>
+  <Primitive
+    :as="as"
+    role="separator"
+    data-slot="dashboard-resize-handle"
+    :class="ui.base({ class: [props.ui?.base, props.class] })"
+  >
+    <slot />
+  </Primitive>
+</template>
+
 <script lang="ts">
 import type { PrimitiveProps } from 'reka-ui'
 
@@ -34,14 +45,3 @@ defineSlots<DashboardResizeHandleSlots>()
 
 const ui = useComponentUI('dashboardResizeHandle', theme, () => ({}))
 </script>
-
-<template>
-  <Primitive
-    :as="as"
-    role="separator"
-    data-slot="dashboard-resize-handle"
-    :class="ui.base({ class: [props.ui?.base, props.class] })"
-  >
-    <slot />
-  </Primitive>
-</template>

@@ -1,47 +1,3 @@
-<script setup lang="ts">
-import { computed } from 'vue'
-
-import { contrastStyle, copyColorValue, getTokenName } from '../../composables/useColorCopy'
-import ColorBlock from './ColorBlock.vue'
-import ColorHeader from './ColorHeader.vue'
-import ColorTooltip from './ColorTooltip.vue'
-
-export interface SoftProps {
-  baseVariable: string
-  baseCssValue?: string
-  baseTooltip?: string
-  hoverVariable: string
-  hoverCssValue?: string
-  hoverTooltip?: string
-  foregroundVariable: string
-  foregroundCssValue?: string
-  foregroundTooltip?: string
-}
-
-const props = defineProps<{
-  theme: 'Light' | 'Dark'
-  name: string
-  baseVariable: string
-  baseTooltip?: string
-  hoverVariable: string
-  hoverCssValue?: string
-  hoverTooltip?: string
-  foregroundVariable: string
-  foregroundTooltip?: string
-  soft?: SoftProps
-}>()
-
-const baseStyle = computed(() => contrastStyle(props.baseVariable))
-const softHoverToken = computed(() =>
-  props.soft ? getTokenName(props.soft.hoverTooltip, props.soft.hoverVariable) : '',
-)
-
-function onSoftHoverClick(event: MouseEvent) {
-  if (!props.soft) return
-  void copyColorValue(event, props.soft.hoverCssValue || props.soft.hoverVariable)
-}
-</script>
-
 <template>
   <div class="flex flex-1 flex-col gap-2" :data-theme="theme.toLowerCase()">
     <ColorHeader :bg-variable="baseVariable" :name="name" :theme="theme" :tooltip="baseTooltip" />
@@ -99,3 +55,47 @@ function onSoftHoverClick(event: MouseEvent) {
     </div>
   </div>
 </template>
+
+<script setup lang="ts">
+import { computed } from 'vue'
+
+import { contrastStyle, copyColorValue, getTokenName } from '../../composables/useColorCopy'
+import ColorBlock from './ColorBlock.vue'
+import ColorHeader from './ColorHeader.vue'
+import ColorTooltip from './ColorTooltip.vue'
+
+export interface SoftProps {
+  baseVariable: string
+  baseCssValue?: string
+  baseTooltip?: string
+  hoverVariable: string
+  hoverCssValue?: string
+  hoverTooltip?: string
+  foregroundVariable: string
+  foregroundCssValue?: string
+  foregroundTooltip?: string
+}
+
+const props = defineProps<{
+  theme: 'Light' | 'Dark'
+  name: string
+  baseVariable: string
+  baseTooltip?: string
+  hoverVariable: string
+  hoverCssValue?: string
+  hoverTooltip?: string
+  foregroundVariable: string
+  foregroundTooltip?: string
+  soft?: SoftProps
+}>()
+
+const baseStyle = computed(() => contrastStyle(props.baseVariable))
+const softHoverToken = computed(() =>
+  props.soft ? getTokenName(props.soft.hoverTooltip, props.soft.hoverVariable) : '',
+)
+
+function onSoftHoverClick(event: MouseEvent) {
+  if (!props.soft) return
+  void copyColorValue(event, props.soft.hoverCssValue || props.soft.hoverVariable)
+}
+</script>

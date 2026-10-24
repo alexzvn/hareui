@@ -1,76 +1,3 @@
-<script setup lang="ts">
-import { ToastProvider } from '@hareui/vue'
-import { useData, useRoute } from 'vitepress'
-import { computed, defineAsyncComponent, onBeforeUnmount, onMounted, ref, watch } from 'vue'
-
-import { normalizePath, type ThemeConfig } from '../sidebar'
-import DocsHeader from './components/DocsHeader.vue'
-import FrameworkTabs from './components/FrameworkTabs.vue'
-import PageFooter from './components/PageFooter.vue'
-import PageHeader, { type PageLinks } from './components/PageHeader.vue'
-import PreviewPage from './components/PreviewPage.vue'
-import SidebarItems from './components/SidebarItems.vue'
-import ThemeToggle from './components/ThemeToggle.vue'
-import TocItems from './components/TocItems.vue'
-import TocPopover from './components/TocPopover.vue'
-import { useDocInteractions } from './composables/useDocInteractions'
-import { useDocTheme } from './composables/useDocTheme'
-import { useToc } from './composables/useToc'
-import { previewOverlayTheme } from './demos'
-import Home from './Home.vue'
-import ThemesPage from './themes/ThemesPage.vue'
-
-const SearchDialog = defineAsyncComponent(() => import('./components/SearchDialog.vue'))
-
-const { page, frontmatter, theme } = useData<ThemeConfig>()
-const route = useRoute()
-
-const path = computed(() => normalizePath(route.path))
-const sections = computed(() => theme.value.sidebar)
-const activeSection = computed(
-  () => sections.value.find((section) => path.value.startsWith(section.base)) ?? sections.value[0],
-)
-
-const { items: tocItems, active: tocActive } = useToc()
-useDocInteractions()
-
-// Toasts fired from a preview pinned to the other theme take that preview's scope (ComponentPreview); a docs theme
-// change unpins every preview, so the scope only applies while it differs from the docs theme.
-const { dark: docDark, design } = useDocTheme()
-const toastTheme = computed(() =>
-  previewOverlayTheme.value && previewOverlayTheme.value !== (docDark.value ? 'dark' : 'light')
-    ? previewOverlayTheme.value
-    : undefined,
-)
-
-const searchOpen = ref(false)
-// SearchDialog (and its minisearch chunk) loads on first open, then stays mounted so it can animate out.
-const searchEverOpened = ref(false)
-watch(searchOpen, (isOpen) => isOpen && (searchEverOpened.value = true))
-const mobileSidebarOpen = ref(false)
-watch(path, () => (mobileSidebarOpen.value = false))
-
-function onKeydown(event: KeyboardEvent) {
-  if (event.key.toLowerCase() === 'k' && (event.metaKey || event.ctrlKey)) {
-    event.preventDefault()
-    searchOpen.value = true
-  }
-}
-onMounted(() => window.addEventListener('keydown', onKeydown))
-onBeforeUnmount(() => window.removeEventListener('keydown', onKeydown))
-
-const GRID_STYLE = [
-  '--fd-docs-row-1:var(--fd-banner-height, 0px)',
-  '--fd-docs-row-2:calc(var(--fd-docs-row-1) + var(--fd-header-height))',
-  '--fd-docs-row-3:calc(var(--fd-docs-row-2) + var(--fd-toc-popover-height))',
-  '--fd-sidebar-col:var(--fd-sidebar-width)',
-  `grid-template:". header header header ." "sidebar sidebar toc-popover toc-popover ." "sidebar sidebar main toc ." 1fr / minmax(min-content, 1fr) var(--fd-sidebar-col) minmax(0, calc(var(--fd-layout-width,97rem) - var(--fd-sidebar-col) - var(--fd-toc-width))) var(--fd-toc-width) minmax(min-content, 1fr)`,
-].join(';')
-
-const title = computed(() => String(frontmatter.value.title ?? page.value.title ?? ''))
-const links = computed(() => frontmatter.value.links as PageLinks | undefined)
-</script>
-
 <template>
   <PreviewPage v-if="frontmatter.layout === 'preview'" />
   <div v-else class="flex min-h-screen flex-col font-sans">
@@ -213,3 +140,76 @@ const links = computed(() => frontmatter.value.links as PageLinks | undefined)
     />
   </div>
 </template>
+
+<script setup lang="ts">
+import { ToastProvider } from '@hareui/vue'
+import { useData, useRoute } from 'vitepress'
+import { computed, defineAsyncComponent, onBeforeUnmount, onMounted, ref, watch } from 'vue'
+
+import { normalizePath, type ThemeConfig } from '../sidebar'
+import DocsHeader from './components/DocsHeader.vue'
+import FrameworkTabs from './components/FrameworkTabs.vue'
+import PageFooter from './components/PageFooter.vue'
+import PageHeader, { type PageLinks } from './components/PageHeader.vue'
+import PreviewPage from './components/PreviewPage.vue'
+import SidebarItems from './components/SidebarItems.vue'
+import ThemeToggle from './components/ThemeToggle.vue'
+import TocItems from './components/TocItems.vue'
+import TocPopover from './components/TocPopover.vue'
+import { useDocInteractions } from './composables/useDocInteractions'
+import { useDocTheme } from './composables/useDocTheme'
+import { useToc } from './composables/useToc'
+import { previewOverlayTheme } from './demos'
+import Home from './Home.vue'
+import ThemesPage from './themes/ThemesPage.vue'
+
+const SearchDialog = defineAsyncComponent(() => import('./components/SearchDialog.vue'))
+
+const { page, frontmatter, theme } = useData<ThemeConfig>()
+const route = useRoute()
+
+const path = computed(() => normalizePath(route.path))
+const sections = computed(() => theme.value.sidebar)
+const activeSection = computed(
+  () => sections.value.find((section) => path.value.startsWith(section.base)) ?? sections.value[0],
+)
+
+const { items: tocItems, active: tocActive } = useToc()
+useDocInteractions()
+
+// Toasts fired from a preview pinned to the other theme take that preview's scope (ComponentPreview); a docs theme
+// change unpins every preview, so the scope only applies while it differs from the docs theme.
+const { dark: docDark, design } = useDocTheme()
+const toastTheme = computed(() =>
+  previewOverlayTheme.value && previewOverlayTheme.value !== (docDark.value ? 'dark' : 'light')
+    ? previewOverlayTheme.value
+    : undefined,
+)
+
+const searchOpen = ref(false)
+// SearchDialog (and its minisearch chunk) loads on first open, then stays mounted so it can animate out.
+const searchEverOpened = ref(false)
+watch(searchOpen, (isOpen) => isOpen && (searchEverOpened.value = true))
+const mobileSidebarOpen = ref(false)
+watch(path, () => (mobileSidebarOpen.value = false))
+
+function onKeydown(event: KeyboardEvent) {
+  if (event.key.toLowerCase() === 'k' && (event.metaKey || event.ctrlKey)) {
+    event.preventDefault()
+    searchOpen.value = true
+  }
+}
+onMounted(() => window.addEventListener('keydown', onKeydown))
+onBeforeUnmount(() => window.removeEventListener('keydown', onKeydown))
+
+const GRID_STYLE = [
+  '--fd-docs-row-1:var(--fd-banner-height, 0px)',
+  '--fd-docs-row-2:calc(var(--fd-docs-row-1) + var(--fd-header-height))',
+  '--fd-docs-row-3:calc(var(--fd-docs-row-2) + var(--fd-toc-popover-height))',
+  '--fd-sidebar-col:var(--fd-sidebar-width)',
+  `grid-template:". header header header ." "sidebar sidebar toc-popover toc-popover ." "sidebar sidebar main toc ." 1fr / minmax(min-content, 1fr) var(--fd-sidebar-col) minmax(0, calc(var(--fd-layout-width,97rem) - var(--fd-sidebar-col) - var(--fd-toc-width))) var(--fd-toc-width) minmax(min-content, 1fr)`,
+].join(';')
+
+const title = computed(() => String(frontmatter.value.title ?? page.value.title ?? ''))
+const links = computed(() => frontmatter.value.links as PageLinks | undefined)
+</script>

@@ -19,10 +19,6 @@ import { Form } from '@hareui/vue'
 ## Anatomy
 
 ```vue
-<script setup lang="ts">
-import { Button, Form } from '@hareui/vue'
-</script>
-
 <template>
   <Form>
     <!-- Form fields go here -->
@@ -30,6 +26,10 @@ import { Button, Form } from '@hareui/vue'
     <Button type="reset" />
   </Form>
 </template>
+
+<script setup lang="ts">
+import { Button, Form } from '@hareui/vue'
+</script>
 ```
 
 ## Examples
@@ -112,19 +112,19 @@ A field is validated when the user interacts with it, on the events listed in `v
 Call `submit()` on the form ref to submit from outside the `<form>`. It runs native constraint validation first, then submits like a submit button.
 
 ```vue
-<script setup lang="ts">
-import type { FormInstance } from '@hareui/vue'
-import { useTemplateRef } from 'vue'
-
-const form = useTemplateRef<FormInstance<typeof schema>>('form')
-</script>
-
 <template>
   <Form ref="form" :schema="schema" :state="state" @submit="onSubmit">
     <!-- fields -->
   </Form>
   <Button @click="form?.submit()"> Save </Button>
 </template>
+
+<script setup lang="ts">
+import type { FormInstance } from '@hareui/vue'
+import { useTemplateRef } from 'vue'
+
+const form = useTemplateRef<FormInstance<typeof schema>>('form')
+</script>
 ```
 
 ### Nesting Forms

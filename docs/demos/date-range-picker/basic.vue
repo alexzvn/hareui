@@ -1,7 +1,3 @@
-<script setup lang="ts">
-import { DateRangePicker } from '@hareui/vue'
-</script>
-
 <template>
   <DateRangePicker
     class="w-80"
@@ -12,3 +8,7 @@ import { DateRangePicker } from '@hareui/vue'
     calendar-label="Trip dates"
   />
 </template>
+
+<script setup lang="ts">
+import { DateRangePicker } from '@hareui/vue'
+</script>

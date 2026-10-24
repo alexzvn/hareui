@@ -1,3 +1,25 @@
+<template>
+  <!-- The footer sits in the table's gray container, under the rows -->
+  <div class="w-full rounded-[min(32px,calc(var(--radius)*2.5))] bg-surface-secondary">
+    <RichTable
+      v-model:pagination="pagination"
+      :data="data"
+      :columns="columns"
+      :pagination-options="paginationOptions"
+    />
+    <Pagination
+      v-model:page="page"
+      :total="pageCount"
+      size="sm"
+      prev-label=""
+      next-label=""
+      class="px-5 pt-1.5 pb-3.5"
+    >
+      <template #summary> {{ first }} to {{ last }} of {{ data.length }} payments </template>
+    </Pagination>
+  </div>
+</template>
+
 <script setup lang="ts">
 import type { RichTableColumn } from '@hareui/vue'
 import { Pagination, RichTable } from '@hareui/vue'
@@ -45,25 +67,3 @@ const page = computed({
 const first = computed(() => pagination.value.pageIndex * pagination.value.pageSize + 1)
 const last = computed(() => Math.min(first.value + pagination.value.pageSize - 1, data.length))
 </script>
-
-<template>
-  <!-- The footer sits in the table's gray container, under the rows -->
-  <div class="w-full rounded-[min(32px,calc(var(--radius)*2.5))] bg-surface-secondary">
-    <RichTable
-      v-model:pagination="pagination"
-      :data="data"
-      :columns="columns"
-      :pagination-options="paginationOptions"
-    />
-    <Pagination
-      v-model:page="page"
-      :total="pageCount"
-      size="sm"
-      prev-label=""
-      next-label=""
-      class="px-5 pt-1.5 pb-3.5"
-    >
-      <template #summary> {{ first }} to {{ last }} of {{ data.length }} payments </template>
-    </Pagination>
-  </div>
-</template>

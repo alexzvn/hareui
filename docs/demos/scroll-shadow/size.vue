@@ -1,7 +1,3 @@
-<script setup lang="ts">
-import { ScrollShadow } from '@hareui/vue'
-</script>
-
 <template>
   <div class="w-full p-0 sm:max-w-sm">
     <ScrollShadow class="max-h-[240px] p-4" :size="80">
@@ -15,3 +11,7 @@ import { ScrollShadow } from '@hareui/vue'
     </ScrollShadow>
   </div>
 </template>
+
+<script setup lang="ts">
+import { ScrollShadow } from '@hareui/vue'
+</script>

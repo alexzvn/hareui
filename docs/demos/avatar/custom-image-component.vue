@@ -1,9 +1,3 @@
-<script setup lang="ts">
-import { Avatar } from '@hareui/vue'
-
-const SRC = 'https://heroui-assets.nyc3.cdn.digitaloceanspaces.com/avatars/blue.jpg'
-</script>
-
 <template>
   <Avatar fallback="JD" :src="SRC">
     <template #image>
@@ -11,3 +5,9 @@ const SRC = 'https://heroui-assets.nyc3.cdn.digitaloceanspaces.com/avatars/blue.
     </template>
   </Avatar>
 </template>
+
+<script setup lang="ts">
+import { Avatar } from '@hareui/vue'
+
+const SRC = 'https://heroui-assets.nyc3.cdn.digitaloceanspaces.com/avatars/blue.jpg'
+</script>

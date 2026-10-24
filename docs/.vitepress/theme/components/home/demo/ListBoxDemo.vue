@@ -1,3 +1,20 @@
+<template>
+  <Surface class="w-[256px] rounded-3xl shadow-surface">
+    <ListBox aria-label="File actions" class="w-full p-2" :items="items" selection-mode="none">
+      <template #item-leading="{ item }">
+        <div class="flex h-8 items-start justify-center pt-px">
+          <Icon :class="['size-4 shrink-0', (item as any).iconClass]" :icon="(item as any).icon" />
+        </div>
+      </template>
+      <template #item-trailing="{ item }">
+        <Kbd class="ms-auto" :keys="(item as any).keys" variant="light">{{
+          (item as any).key
+        }}</Kbd>
+      </template>
+    </ListBox>
+  </Surface>
+</template>
+
 <script setup lang="ts">
 import { Kbd, ListBox, Surface } from '@hareui/vue'
 import { Icon } from '@iconify/vue'
@@ -46,20 +63,3 @@ const items = [
   },
 ]
 </script>
-
-<template>
-  <Surface class="w-[256px] rounded-3xl shadow-surface">
-    <ListBox aria-label="File actions" class="w-full p-2" :items="items" selection-mode="none">
-      <template #item-leading="{ item }">
-        <div class="flex h-8 items-start justify-center pt-px">
-          <Icon :class="['size-4 shrink-0', (item as any).iconClass]" :icon="(item as any).icon" />
-        </div>
-      </template>
-      <template #item-trailing="{ item }">
-        <Kbd class="ms-auto" :keys="(item as any).keys" variant="light">{{
-          (item as any).key
-        }}</Kbd>
-      </template>
-    </ListBox>
-  </Surface>
-</template>

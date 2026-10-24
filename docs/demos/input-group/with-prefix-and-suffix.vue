@@ -1,7 +1,3 @@
-<script setup lang="ts">
-import { InputGroup, TextField } from '@hareui/vue'
-</script>
-
 <template>
   <TextField
     class="w-full max-w-[280px]"
@@ -13,3 +9,7 @@ import { InputGroup, TextField } from '@hareui/vue'
     <InputGroup :ui="{ input: 'w-full max-w-[200px]' }" type="number" prefix="$" suffix="USD" />
   </TextField>
 </template>
+
+<script setup lang="ts">
+import { InputGroup, TextField } from '@hareui/vue'
+</script>
