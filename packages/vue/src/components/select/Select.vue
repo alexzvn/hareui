@@ -169,6 +169,7 @@ import Description from '../description/Description.vue'
 import FieldError from '../field-error/FieldError.vue'
 import Label from '../label/Label.vue'
 import ListBox from '../list-box/ListBox.vue'
+import { useTypeahead } from '../list-box/useTypeahead'
 import { usePressRelease } from './pressRelease'
 
 defineOptions({ inheritAttrs: false })
@@ -282,25 +283,8 @@ function clear() {
 }
 
 // RAC Select: typing on the closed trigger selects the first option, from the selected one onwards (inclusive, so a
-// repeated character stays put) and then from the top, whose text starts with the typed string
-let typeahead = ''
-let typeaheadTimer: ReturnType<typeof setTimeout> | undefined
-function onTypeahead(key: string) {
-  typeahead += key.toLowerCase()
-  clearTimeout(typeaheadTimer)
-  typeaheadTimer = setTimeout(() => {
-    typeahead = ''
-  }, 1000)
-  const enabled = options.value.filter(item => !item.disabled)
-  const current = enabled.findIndex(item => item.value === selectedValues.value[0])
-  const from = Math.max(current, 0)
-  const ordered = [...enabled.slice(from), ...enabled.slice(0, from)]
-  const match = ordered.find(item => textOf(item).toLowerCase().startsWith(typeahead))
-  if (match && !multiple.value) {
-    selection.value = match.value
-    commitValidation()
-  }
-}
+// repeated character stays put) and then from the top, whose text starts with the typed string. Space opens instead.
+const typeahead = useTypeahead({ start: 'current' })
 
 function onTriggerKeydown(event: KeyboardEvent) {
   triggerPress = false
@@ -316,8 +300,18 @@ function onTriggerKeydown(event: KeyboardEvent) {
     event.preventDefault()
     clear()
   }
-  else if (event.key.length === 1 && event.key !== ' ' && !event.ctrlKey && !event.metaKey && !event.altKey) {
-    onTypeahead(event.key)
+  else {
+    typeahead.onKeydown(event, () => ({
+      items: options.value,
+      text: textOf,
+      disabled: item => !!item.disabled,
+      isCurrent: item => item.value === selectedValues.value[0],
+    }), (match) => {
+      if (!multiple.value) {
+        selection.value = match.value
+        commitValidation()
+      }
+    })
   }
 }
 

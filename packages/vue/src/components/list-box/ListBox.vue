@@ -134,6 +134,7 @@ import { useComponentUI } from '../../composables/useComponentUI'
 import { keyboardModalityKey, useKeyboardModality } from '../../composables/useKeyboardModality'
 import { useSelectionManager } from '../../composables/useSelectionManager'
 import ListBoxOption from './ListBoxOption.vue'
+import { useTypeahead } from './useTypeahead'
 
 // `loading: undefined` keeps an absent boolean prop from becoming `false`, so the sentinel only renders for async lists
 const props = withDefaults(defineProps<ListBoxProps<T>>(), { selectionMode: 'single', indicator: true, defaultValue: undefined, loading: undefined, escapeKeyBehavior: 'clearSelection' })
@@ -301,34 +302,30 @@ function pageTarget(options: HTMLElement[], from: HTMLElement | undefined, list:
     : options.find(el => offset(el) <= 0 && -offset(el) <= page)
 }
 
-// RAC `useTypeSelect`: printable characters only, searched from the focused option onwards (inclusive);
-// Space continues a non-empty search instead of selecting
-let search = ''
-let searchTimer: ReturnType<typeof setTimeout> | undefined
+// RAC `useTypeSelect`: searched from the focused option onwards (inclusive); Space continues a non-empty search
+// instead of selecting
+const typeahead = useTypeahead({ start: 'current', space: true })
 function onTypeahead(event: KeyboardEvent, focused: HTMLElement | undefined): boolean {
-  const key = event.key
-  if ([...key].length !== 1 || event.ctrlKey || event.metaKey || event.altKey || (key === ' ' && !search.trim()))
-    return false
-  event.stopPropagation()
-  if (key === ' ')
-    event.preventDefault()
-  search += key.toLowerCase()
-  clearTimeout(searchTimer)
-  searchTimer = setTimeout(() => {
-    search = ''
-  }, 1000)
-  // One (DOM-querying) `getItems()` per key, not one per option checked
-  const items = listboxRoot.value?.getItems() ?? []
-  const valueByEl = new Map(items.map(item => [item.ref, item.value as ListBoxValue]))
-  const options = enabledOptions(items)
-  const start = Math.max(0, focused ? options.indexOf(focused) : 0)
-  const text = (el: HTMLElement) => {
-    const value = valueByEl.get(el)
-    const item = value === undefined ? undefined : rowByValue.value.get(value)?.item
-    return (item?.textValue ?? item?.label ?? el.textContent ?? '').trim().toLowerCase()
+  const handled = typeahead.onKeydown(event, () => {
+    // One (DOM-querying) `getItems()` per key, not one per option checked
+    const items = listboxRoot.value?.getItems() ?? []
+    const valueByEl = new Map(items.map(item => [item.ref, item.value as ListBoxValue]))
+    return {
+      items: enabledOptions(items),
+      text: (el: HTMLElement) => {
+        const value = valueByEl.get(el)
+        const item = value === undefined ? undefined : rowByValue.value.get(value)?.item
+        return (item?.textValue ?? item?.label ?? el.textContent ?? '').trim()
+      },
+      isCurrent: el => el === focused,
+    }
+  }, highlight)
+  if (handled) {
+    event.stopPropagation()
+    if (event.key === ' ')
+      event.preventDefault()
   }
-  highlight([...options.slice(start), ...options.slice(0, start)].find(el => text(el).startsWith(search)))
-  return true
+  return handled
 }
 
 function onKeydownCapture(event: KeyboardEvent) {
