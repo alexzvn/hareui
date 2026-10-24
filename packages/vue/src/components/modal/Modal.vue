@@ -93,9 +93,10 @@ import {
   DialogTrigger,
   VisuallyHidden,
 } from 'reka-ui'
-import { computed, ref, useSlots } from 'vue'
+import { computed, ref, useSlots, watch } from 'vue'
 import { preventNestedLayerDismiss } from '../../composables/nestedLayer'
 import { useComponentUI } from '../../composables/useComponentUI'
+import { useInertOutside } from '../../composables/useInertOutside'
 import { usePortal } from '../../composables/usePortal'
 import { useTabbableFocusLoop } from '../../composables/useTabbableFocusLoop'
 import { useVisualViewportHeight } from '../../composables/useVisualViewportHeight'
@@ -142,6 +143,19 @@ function onInteractOutside(event: PointerDownOutsideEvent | FocusOutsideEvent) {
 // Tab skips scrollable containers such as an overflowing body, as React Aria's FocusScope does.
 const dialogContent = ref<{ $el: HTMLElement } | null>(null)
 useTabbableFocusLoop(() => dialogContent.value?.$el)
+// Mirrors DialogRoot's open state synchronously: set from the `open` prop and from Reka's `update:open`.
+const openState = ref(props.open ?? props.defaultOpen ?? false)
+watch(() => props.open, (open) => {
+  if (open !== undefined)
+    openState.value = open
+}, { flush: 'sync' })
+function onOpenChange(open: boolean) {
+  // Controlled: the `open` watcher follows the parent, which may keep the dialog open.
+  if (props.open === undefined)
+    openState.value = open
+  emit('update:open', open)
+}
+useInertOutside(dialogContent, openState)
 
 // React Aria's Dialog focuses the dialog container itself on open, not the first
 // tabbable descendant (Reka's FocusScope default). Match that so e.g. a footer
@@ -155,7 +169,7 @@ const visualViewportHeight = useVisualViewportHeight()
 </script>
 
 <template>
-  <DialogRoot :open="open" :default-open="defaultOpen" modal v-slot="{ open: isOpen, close }" @update:open="emit('update:open', $event)">
+  <DialogRoot :open="open" :default-open="defaultOpen" modal v-slot="{ open: isOpen, close }" @update:open="onOpenChange">
     <DialogTrigger v-if="!!slots.default" as-child>
       <slot :open="isOpen" />
     </DialogTrigger>

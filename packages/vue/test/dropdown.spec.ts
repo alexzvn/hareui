@@ -3,6 +3,7 @@ import { mount } from '@vue/test-utils'
 import { afterEach, describe, expect, it, vi } from 'vitest'
 import { h, nextTick } from 'vue'
 import Dropdown from '../src/components/dropdown/Dropdown.vue'
+import { expectAccessible } from './a11y'
 
 const fruits: DropdownEntry[] = [
   { value: 'apple', label: 'Apple' },
@@ -279,5 +280,210 @@ describe('dropdown keyboard navigation', () => {
     finally {
       vi.useRealTimers()
     }
+  })
+})
+
+describe('dropdown accessibility', () => {
+  const rich: DropdownEntry[] = [
+    { value: 'new', label: 'New file', description: 'Create a new file', kbd: { keys: 'command', content: 'N' } },
+    { value: 'share', label: 'Share', items: [{ value: 'email', label: 'Email' }, { value: 'sms', label: 'Messages' }] },
+    { type: 'separator' },
+    { type: 'section', label: 'Danger zone', items: [{ value: 'archive', label: 'Archive', disabled: true }, { value: 'delete', label: 'Delete file', variant: 'danger' }] },
+  ]
+
+  const trigger = () => document.querySelector<HTMLElement>('[data-testid=trigger]')!
+  const menu = () => document.querySelector<HTMLElement>('[role=menu]')
+  function key(el: Element, k: string) {
+    el.dispatchEvent(new KeyboardEvent('keydown', { key: k, bubbles: true, cancelable: true }))
+  }
+  // Vue drops an event stamped no later than the millisecond its listener was attached, so a key
+  // dispatched right after mount can miss Reka's trigger listener. Real presses come later.
+  const pastMount = () => new Promise(r => setTimeout(r, 2))
+
+  it('passes axe while closed', async () => {
+    const w = open({ items: fruits, defaultOpen: false })
+    await settle()
+    await expectAccessible(w)
+  })
+
+  it('passes axe while closed with a long-press trigger', async () => {
+    const w = open({ items: fruits, defaultOpen: false, trigger: 'longPress' })
+    await settle()
+    await expectAccessible(w)
+  })
+
+  it('passes axe while open with descriptions, shortcuts, a submenu, a separator, a section and a disabled item', async () => {
+    open({ items: rich })
+    await settle()
+    expect(menu()).not.toBeNull()
+    await expectAccessible()
+  })
+
+  it('passes axe while open with single selection', async () => {
+    open({ items: fruits, selectionMode: 'single', defaultValue: ['apple'] })
+    await settle()
+    await expectAccessible()
+  })
+
+  it('passes axe while open with multiple selection and the dot indicator', async () => {
+    open({ items: fruits, selectionMode: 'multiple', indicator: 'dot', defaultValue: ['apple', 'banana'] })
+    await settle()
+    await expectAccessible()
+  })
+
+  // `#content-top` renders inside reka's role="menu" (HeroUI renders it beside the menu, in the popover). Text passes;
+  // a named <img> fails aria-required-children, so a card next to its own name text uses a decorative image (alt="").
+  it('passes axe with a #content-top user card whose avatar is decorative', async () => {
+    wrapper = mount(Dropdown, {
+      props: { defaultOpen: true, items: fruits },
+      slots: {
+        'default': () => h('button', { 'data-testid': 'trigger' }, 'Open'),
+        'content-top': () => h('div', { class: 'px-3 pt-3 pb-1' }, [
+          h('img', { src: '/jane.jpg', alt: '' }),
+          h('p', 'Jane Doe'),
+          h('p', 'jane@example.com'),
+        ]),
+      },
+      attachTo: document.body,
+    })
+    await settle()
+    expect(menu()!.textContent).toContain('jane@example.com')
+    await expectAccessible()
+  })
+
+  it('passes axe with a submenu open', async () => {
+    open({ items: rich })
+    await settle()
+    item('Share').focus()
+    key(item('Share'), 'ArrowRight')
+    await nextTick()
+    expect(item('Email')).toBeDefined()
+    await expectAccessible()
+  })
+
+  it('wires the trigger to the menu with aria-haspopup, aria-expanded and aria-controls', async () => {
+    const w = open({ items: fruits, defaultOpen: false })
+    await settle()
+    expect(trigger().getAttribute('aria-haspopup')).toBe('menu')
+    expect(trigger().getAttribute('aria-expanded')).toBe('false')
+    await w.setProps({ open: true })
+    await settle()
+    expect(trigger().getAttribute('aria-expanded')).toBe('true')
+    expect(trigger().getAttribute('aria-controls')).toBe(menu()!.id)
+    expect(document.getElementById(menu()!.getAttribute('aria-labelledby')!)).toBe(trigger())
+  })
+
+  it('names items by their label and describes them by description and shortcut', async () => {
+    open({ items: rich })
+    await settle()
+    const newFile = item('New file')
+    expect(newFile.getAttribute('role')).toBe('menuitem')
+    expect(document.getElementById(newFile.getAttribute('aria-labelledby')!)!.textContent?.trim()).toBe('New file')
+    const described = newFile.getAttribute('aria-describedby')!.split(' ').map(id => document.getElementById(id))
+    expect(described.every(Boolean)).toBe(true)
+    expect(described[0]!.textContent?.trim()).toBe('Create a new file')
+    expect(described[1]!.textContent).toContain('N')
+  })
+
+  it('exposes sections as labelled groups, separators, disabled items and submenu triggers', async () => {
+    open({ items: rich })
+    await settle()
+    const group = document.querySelector<HTMLElement>('[role=menu] [role=group]')!
+    expect(document.getElementById(group.getAttribute('aria-labelledby')!)!.textContent?.trim()).toBe('Danger zone')
+    expect(group.contains(item('Delete file'))).toBe(true)
+    expect(document.querySelector('[role=menu] [role=separator], [role=menu] hr')).not.toBeNull()
+    expect(item('Archive').getAttribute('aria-disabled')).toBe('true')
+    expect(item('Share').getAttribute('aria-haspopup')).toBe('menu')
+    expect(item('Share').getAttribute('aria-expanded')).toBe('false')
+  })
+
+  it('reflects multiple selection with aria-checked on menuitemcheckbox', async () => {
+    open({ items: fruits, selectionMode: 'multiple', defaultValue: ['banana'] })
+    await settle()
+    expect(item('Apple').getAttribute('role')).toBe('menuitemcheckbox')
+    expect(item('Apple').getAttribute('aria-checked')).toBe('false')
+    expect(item('Banana').getAttribute('aria-checked')).toBe('true')
+    item('Apple').click()
+    await settle()
+    expect(item('Apple').getAttribute('aria-checked')).toBe('true')
+  })
+
+  it('Enter, Space and ArrowDown on the trigger open the menu with the first item focused', async () => {
+    for (const k of ['Enter', ' ', 'ArrowDown']) {
+      open({ items: fruits, defaultOpen: false })
+      await settle()
+      await pastMount()
+      trigger().focus()
+      key(trigger(), k)
+      await settle()
+      expect(menu()).not.toBeNull()
+      expect(document.activeElement).toBe(item('Apple'))
+      wrapper!.unmount()
+      wrapper = undefined
+    }
+  })
+
+  it('Home and End move to the first and last enabled items, skipping disabled ones', async () => {
+    open({ items: [{ value: 'a', label: 'Alpha' }, { value: 'b', label: 'Beta' }, { value: 'c', label: 'Gamma', disabled: true }] })
+    await settle()
+    item('Alpha').focus()
+    key(item('Alpha'), 'End')
+    await settle()
+    expect(document.activeElement).toBe(item('Beta'))
+    key(item('Beta'), 'Home')
+    await settle()
+    expect(document.activeElement).toBe(item('Alpha'))
+    key(item('Alpha'), 'ArrowDown')
+    key(item('Beta'), 'ArrowDown')
+    await settle()
+    expect(document.activeElement).toBe(item('Alpha'))
+  })
+
+  it('typeahead focuses the next item starting with the typed text', async () => {
+    open({ items: [{ value: 'new', label: 'New file' }, { value: 'edit', label: 'Edit file' }, { value: 'delete', label: 'Delete file' }] })
+    await settle()
+    item('New file').focus()
+    key(item('New file'), 'd')
+    await settle()
+    expect(document.activeElement).toBe(item('Delete file'))
+  })
+
+  it('ArrowLeft in a submenu closes it and refocuses its trigger item', async () => {
+    open({ items: rich })
+    await settle()
+    item('Share').focus()
+    key(item('Share'), 'ArrowRight')
+    await nextTick()
+    expect(item('Share').getAttribute('aria-expanded')).toBe('true')
+    expect(document.activeElement).toBe(item('Email'))
+    key(item('Email'), 'ArrowLeft')
+    await settle()
+    expect(document.body.textContent).not.toContain('Messages')
+    expect(document.activeElement).toBe(item('Share'))
+  })
+
+  it('Escape closes the menu and returns focus to the trigger', async () => {
+    const w = open({ items: fruits, defaultOpen: false })
+    await settle()
+    await pastMount()
+    trigger().focus()
+    key(trigger(), 'Enter')
+    await settle()
+    expect(document.activeElement).toBe(item('Apple'))
+    key(item('Apple'), 'Escape')
+    await settle()
+    expect(menu()).toBeNull()
+    expect(w.emitted('update:open')?.at(-1)).toEqual([false])
+    await vi.waitFor(() => expect(document.activeElement).toBe(trigger()))
+  })
+
+  it('a disabled trigger does not open from the keyboard', async () => {
+    open({ items: fruits, defaultOpen: false, disabled: true })
+    await settle()
+    trigger().focus()
+    key(trigger(), 'Enter')
+    key(trigger(), 'ArrowUp')
+    await settle()
+    expect(menu()).toBeNull()
   })
 })

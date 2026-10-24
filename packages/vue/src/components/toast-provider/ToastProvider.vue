@@ -67,8 +67,10 @@ export interface ToastProviderSlots {
    * Replaces a toast's inner content (indicator, title, description, action,
    * close button). The positioned, animated stack wrapper is still rendered
    * by the provider; style it with the `ui.toast` slot override.
+   * Put `titleId` / `descriptionId` on the elements holding the title and description to name and describe
+   * the toast, and wrap the message in a `role="alert"` element so screen readers announce it.
    */
-  toast?: (props: { content: ToastContentValueType, close: () => void }) => any
+  toast?: (props: { content: ToastContentValueType, close: () => void, titleId: string, descriptionId: string }) => any
 }
 
 // Module scope (not <script setup>): withDefaults() is hoisted out of setup() and can't see setup locals.

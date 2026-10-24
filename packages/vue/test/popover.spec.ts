@@ -2,6 +2,7 @@ import { mount } from '@vue/test-utils'
 import { afterEach, describe, expect, it } from 'vitest'
 import { h, nextTick } from 'vue'
 import Popover from '../src/components/popover/Popover.vue'
+import { expectAccessible } from './a11y'
 
 let wrapper: ReturnType<typeof mount> | undefined
 let outside: HTMLButtonElement | undefined
@@ -122,5 +123,89 @@ describe('popover', () => {
     outside!.dispatchEvent(new PointerEvent('pointerdown', { bubbles: true, button: 0, pointerType: 'mouse' }))
     await settle()
     expect(w.emitted('update:open')).toBeUndefined()
+  })
+
+  it('passes axe while closed', async () => {
+    const w = mountPopover()
+    await settle()
+    await expectAccessible(w)
+  })
+
+  it('passes axe while open with a title', async () => {
+    mountPopover({ defaultOpen: true })
+    await settle()
+    expect(content()).not.toBeNull()
+    await expectAccessible()
+  })
+
+  it('passes axe while open without a title', async () => {
+    mountPopover({ defaultOpen: true, title: undefined })
+    await settle()
+    expect(content()).not.toBeNull()
+    await expectAccessible()
+  })
+
+  it('wires the trigger to the dialog with aria-haspopup, aria-expanded and aria-controls', async () => {
+    const w = mountPopover()
+    await settle()
+    expect(triggerEl().getAttribute('aria-haspopup')).toBe('dialog')
+    expect(triggerEl().getAttribute('aria-expanded')).toBe('false')
+    triggerEl().click()
+    await settle()
+    expect(triggerEl().getAttribute('aria-expanded')).toBe('true')
+    expect(triggerEl().getAttribute('aria-controls')).toBe(content()!.id)
+    await w.setProps({ open: false })
+    await settle()
+    expect(triggerEl().getAttribute('aria-expanded')).toBe('false')
+  })
+
+  it('without a title, names the dialog by its trigger', async () => {
+    mountPopover({ defaultOpen: true, title: undefined })
+    await settle()
+    const labelledBy = content()!.getAttribute('aria-labelledby')!
+    expect(document.getElementById(labelledBy)).toBe(triggerEl())
+  })
+
+  it('moves focus into the dialog on open, traps Tab inside it, and Escape returns focus to the trigger', async () => {
+    wrapper = mount(Popover, {
+      props: { title: 'Title' },
+      slots: {
+        default: () => h('button', { 'data-testid': 'trigger' }, 'Open'),
+        content: () => [h('button', { id: 'first' }, 'First'), h('button', { id: 'last' }, 'Last')],
+      },
+      attachTo: document.body,
+    })
+    triggerEl().focus()
+    triggerEl().click()
+    await settle()
+    const dialog = document.querySelector<HTMLElement>('[data-slot=popover-dialog]')!
+    expect(document.activeElement).toBe(dialog)
+
+    const last = document.getElementById('last')!
+    last.focus()
+    last.dispatchEvent(new KeyboardEvent('keydown', { key: 'Tab', bubbles: true, cancelable: true }))
+    await settle()
+    expect(document.activeElement).toBe(document.getElementById('first'))
+
+    const first = document.getElementById('first')!
+    first.dispatchEvent(new KeyboardEvent('keydown', { key: 'Tab', shiftKey: true, bubbles: true, cancelable: true }))
+    await settle()
+    expect(document.activeElement).toBe(last)
+
+    last.dispatchEvent(new KeyboardEvent('keydown', { key: 'Escape', bubbles: true, cancelable: true }))
+    await settle()
+    expect(content()).toBeNull()
+    expect(wrapper.emitted('update:open')?.at(-1)).toEqual([false])
+    expect(document.activeElement).toBe(triggerEl())
+  })
+
+  it('ignores Escape when not dismissible', async () => {
+    const w = mountPopover({ defaultOpen: true, dismissible: false })
+    await settle()
+    document.querySelector<HTMLElement>('[data-slot=popover-dialog]')!
+      .dispatchEvent(new KeyboardEvent('keydown', { key: 'Escape', bubbles: true, cancelable: true }))
+    await settle()
+    expect(w.emitted('update:open')).toBeUndefined()
+    expect(content()).not.toBeNull()
   })
 })

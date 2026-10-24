@@ -1,7 +1,9 @@
 import { mount } from '@vue/test-utils'
-import { describe, expect, it, vi } from 'vitest'
+import { afterEach, describe, expect, it, vi } from 'vitest'
+import type { VNodeChild } from 'vue'
 import { h, nextTick } from 'vue'
 import Drawer from '../src/components/drawer/Drawer.vue'
+import { expectAccessible } from './a11y'
 
 // Reka's Presence needs three ticks before a closed dialog leaves the DOM (see modal.spec.ts).
 async function waitUnmount() {
@@ -122,5 +124,145 @@ describe('drawer', () => {
     }
     expect(seen).toEqual(['drawer-close-trigger', 'Cancel', 'Done', 'drawer-close-trigger'])
     wrapper.unmount()
+  })
+
+  describe('accessibility', () => {
+    const mounted: Array<{ unmount: () => void }> = []
+    afterEach(() => {
+      mounted.splice(0).forEach(w => w.unmount())
+      document.body.innerHTML = ''
+    })
+
+    const escapeKeydown = () => document.dispatchEvent(new KeyboardEvent('keydown', { key: 'Escape', bubbles: true, cancelable: true }))
+    const closeTrigger = () => document.querySelector<HTMLButtonElement>('[data-slot=drawer-close-trigger]')!
+
+    // `undefined` drops a default slot, so a test can check the drawer without it.
+    type SlotFns = Partial<Record<string, (props: { close: () => void }) => VNodeChild>>
+
+    function mountWithTrigger(props: Record<string, unknown> = {}, slots: SlotFns = {}) {
+      const all: SlotFns = {
+        default: () => h('button', { id: 'trigger' }, 'Open'),
+        body: () => h('label', ['Name', h('input', { type: 'text' })]),
+        footer: () => [h('button', 'Cancel'), h('button', 'Save')],
+        ...slots,
+      }
+      const wrapper = mount(Drawer, {
+        props: { title: 'Settings', handle: true, ...props },
+        slots: Object.fromEntries(Object.entries(all).filter(([, fn]) => fn)),
+        attachTo: document.body,
+      })
+      mounted.push(wrapper)
+      const trigger = document.querySelector<HTMLButtonElement>('#trigger')!
+      return { wrapper, trigger }
+    }
+
+    async function openWith(trigger: HTMLButtonElement) {
+      trigger.focus()
+      trigger.click()
+      await nextTick()
+      await nextTick()
+    }
+
+    it('has no axe violations closed, with the trigger only', async () => {
+      const { wrapper } = mountWithTrigger()
+      await expectAccessible(wrapper)
+    })
+
+    const variants: Array<[string, Record<string, unknown>, SlotFns]> = [
+      ['a title, handle, body and footer', {}, {}],
+      ['a custom #header and a `title`', {}, { header: () => h('h2', 'Settings') }],
+      ['#content replacing the whole content', {}, { content: () => h('button', 'Done') }],
+      ['placement="left" and no close button', { placement: 'left', closeButton: false }, {}],
+      ['placement="top" (handle after the footer)', { placement: 'top' }, {}],
+      ['dismissible=false and keyboardDismissible=false', { dismissible: false, keyboardDismissible: false }, {}],
+    ]
+    it.each(variants)('has no axe violations open with %s', async (_name, props, slots) => {
+      const { trigger } = mountWithTrigger(props, slots)
+      await openWith(trigger)
+      expect(dialog()).not.toBeNull()
+      await expectAccessible()
+    })
+
+    it('renders role="dialog" and the trigger reflects the open state', async () => {
+      const { trigger } = mountWithTrigger()
+      expect(trigger.getAttribute('aria-haspopup')).toBe('dialog')
+      expect(trigger.getAttribute('aria-expanded')).toBe('false')
+      await openWith(trigger)
+      expect(dialog()!.getAttribute('role')).toBe('dialog')
+      expect(trigger.getAttribute('aria-expanded')).toBe('true')
+      expect(trigger.getAttribute('aria-controls')).toBe(dialog()!.id)
+    })
+
+    it('names the dialog from its visible heading, with no dangling aria-describedby', async () => {
+      const { trigger } = mountWithTrigger()
+      await openWith(trigger)
+      const heading = document.getElementById(dialog()!.getAttribute('aria-labelledby')!)!
+      expect(heading.getAttribute('data-slot')).toBe('drawer-heading')
+      expect(heading.textContent?.trim()).toBe('Settings')
+      expect(dialog()!.hasAttribute('aria-describedby')).toBe(false)
+    })
+
+    it('names the dialog from `title` when #header replaces the visible heading', async () => {
+      const { trigger } = mountWithTrigger({}, { header: () => h('div', 'Custom') })
+      await openWith(trigger)
+      expect(document.getElementById(dialog()!.getAttribute('aria-labelledby')!)?.textContent).toBe('Settings')
+    })
+
+    it('hides the decorative handle and names the close button "Close"', async () => {
+      const { trigger } = mountWithTrigger()
+      await openWith(trigger)
+      expect(document.querySelector('[data-slot=drawer-handle]')!.getAttribute('aria-hidden')).toBe('true')
+      expect(closeTrigger().tagName).toBe('BUTTON')
+      expect(closeTrigger().getAttribute('aria-label')).toBe('Close')
+    })
+
+    it('focuses the dialog on open and returns focus to the trigger on Escape', async () => {
+      const { trigger } = mountWithTrigger()
+      await openWith(trigger)
+      expect(document.activeElement).toBe(dialog())
+      expect(dialog()!.tabIndex).toBe(-1)
+
+      escapeKeydown()
+      await waitUnmount()
+      expect(dialog()).toBeNull()
+      expect(document.activeElement).toBe(trigger)
+    })
+
+    it('keyboardDismissible=false keeps the drawer open on Escape', async () => {
+      const { trigger } = mountWithTrigger({ keyboardDismissible: false })
+      await openWith(trigger)
+      escapeKeydown()
+      await waitUnmount()
+      expect(dialog()).not.toBeNull()
+    })
+
+    it('returns focus to the trigger when closed with the close button', async () => {
+      const { trigger } = mountWithTrigger()
+      await openWith(trigger)
+      closeTrigger().focus()
+      closeTrigger().click()
+      await waitUnmount()
+      expect(dialog()).toBeNull()
+      expect(document.activeElement).toBe(trigger)
+    })
+
+    it('Shift+Tab wraps from the first tabbable to the last', async () => {
+      const { trigger } = mountWithTrigger()
+      await openWith(trigger)
+      closeTrigger().focus()
+      closeTrigger().dispatchEvent(new KeyboardEvent('keydown', { key: 'Tab', shiftKey: true, bubbles: true, cancelable: true }))
+      expect(document.activeElement?.textContent).toBe('Save')
+    })
+
+    it('keeps focus inside the drawer when focus moves to the page behind it', async () => {
+      const outside = document.createElement('button')
+      outside.textContent = 'Outside'
+      document.body.prepend(outside)
+      const { trigger } = mountWithTrigger()
+      await openWith(trigger)
+      outside.focus()
+      await nextTick()
+      expect(dialog()!.contains(document.activeElement)).toBe(true)
+    })
   })
 })

@@ -3,6 +3,7 @@ import { TooltipRoot } from 'reka-ui'
 import { afterEach, describe, expect, it, vi } from 'vitest'
 import { h, nextTick } from 'vue'
 import Tooltip from '../src/components/tooltip/Tooltip.vue'
+import { expectAccessible } from './a11y'
 
 const sleep = (ms: number) => new Promise(r => setTimeout(r, ms))
 
@@ -103,5 +104,59 @@ describe('Tooltip', () => {
     await wrapper.setProps({ open: true })
     await sleep(0)
     expect(document.body.textContent).toContain('Tip')
+  })
+
+  it('passes axe while closed and while open', async () => {
+    const closed = mountTooltip()
+    await expectAccessible(closed)
+    closed.unmount()
+
+    mountTooltip({ defaultOpen: true, arrow: true })
+    await sleep(0)
+    expect(document.querySelector('[role=tooltip]')).not.toBeNull()
+    await expectAccessible()
+  })
+
+  it('describes the trigger by the tooltip text only while open', async () => {
+    const wrapper = mountTooltip()
+    const trigger = wrapper.get('#trigger').element as HTMLElement
+    expect(trigger.hasAttribute('aria-describedby')).toBe(false)
+
+    trigger.focus()
+    await sleep(0)
+    const describedBy = trigger.getAttribute('aria-describedby')!
+    const tooltip = document.getElementById(describedBy)!
+    expect(tooltip.getAttribute('role')).toBe('tooltip')
+    expect(tooltip.textContent?.trim()).toBe('Tip')
+
+    trigger.blur()
+    await sleep(0)
+    expect(trigger.hasAttribute('aria-describedby')).toBe(false)
+  })
+
+  it('opens on keyboard focus, and Escape closes it while focus stays on the trigger', async () => {
+    const wrapper = mountTooltip()
+    const trigger = wrapper.get('#trigger').element as HTMLElement
+    trigger.focus()
+    await sleep(0)
+    expect(document.querySelector('[role=tooltip]')).not.toBeNull()
+
+    trigger.dispatchEvent(new KeyboardEvent('keydown', { key: 'Escape', bubbles: true, cancelable: true }))
+    await sleep(0)
+    expect(wrapper.emitted('update:open')?.at(-1)).toEqual([false])
+    expect(document.querySelector('[role=tooltip]')).toBeNull()
+    expect(trigger.hasAttribute('aria-describedby')).toBe(false)
+    expect(document.activeElement).toBe(trigger)
+  })
+
+  it('a disabled tooltip never opens or describes its trigger', async () => {
+    const wrapper = mountTooltip({ disabled: true })
+    const trigger = wrapper.get('#trigger').element as HTMLElement
+    trigger.focus()
+    pointer(trigger, 'pointermove')
+    await sleep(10)
+    expect(wrapper.emitted('update:open')).toBeUndefined()
+    expect(document.querySelector('[role=tooltip]')).toBeNull()
+    expect(trigger.hasAttribute('aria-describedby')).toBe(false)
   })
 })

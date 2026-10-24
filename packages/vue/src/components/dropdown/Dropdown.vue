@@ -103,7 +103,10 @@ export interface DropdownItemSlotProps {
 export interface DropdownSlots {
   /** The trigger. Merged onto its single root element (`as-child`). */
   'default'?: () => any
-  /** Content above the menu, inside the popover (e.g. a user card). */
+  /**
+   * Content above the menu, inside the popover (e.g. a user card). It renders inside the `role="menu"` element, so
+   * keep it to text and decorative images (`alt=""`): a named image there is not an allowed menu child.
+   */
   'content-top'?: () => any
   /** Replaces the whole item content. */
   'item'?: (props: DropdownItemSlotProps) => any
@@ -145,6 +148,7 @@ import { DropdownMenuContent, DropdownMenuPortal, DropdownMenuRoot, DropdownMenu
 import { computed, onBeforeUnmount, onMounted, provide, ref } from 'vue'
 import { preventNestedLayerDismiss } from '../../composables/nestedLayer'
 import { useComponentUI } from '../../composables/useComponentUI'
+import { useInertOutside } from '../../composables/useInertOutside'
 import { usePortal } from '../../composables/usePortal'
 import descriptionTheme from '../description/theme'
 import labelTheme from '../label/theme'
@@ -179,6 +183,10 @@ function setOpen(value: boolean) {
   openState.value = value
   emit('update:open', value)
 }
+// Reka hides the page for the root menu only (submenus portal in later, after this runs, and stay
+// interactive). `isOpen` turns false synchronously in `setOpen` and with the `open` prop. The content
+// instance stays mounted while closed and its `$el` isn't reactive, so re-read it on every open.
+useInertOutside(() => isOpen.value ? contentRef.value?.$el : null, isOpen)
 
 const selectedState = ref<DropdownValue[]>(props.defaultValue ?? [])
 const selected = computed(() => props.modelValue ?? selectedState.value)
