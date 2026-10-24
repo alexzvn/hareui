@@ -192,18 +192,18 @@ const triggerEl = ref<HTMLElement>()
 const pointerLeft = ref(false)
 let closeTimer: ReturnType<typeof setTimeout> | undefined
 
-function cancelClose() {
+const cancelClose = () => {
   clearTimeout(closeTimer)
   closeTimer = undefined
 }
-function commit(value: boolean) {
+const commit = (value: boolean) => {
   cancelClose()
   if (value === isOpen.value) return
   if (props.open === undefined) internalOpen.value = value
   emit('update:open', value)
 }
 
-function onRootUpdate(value: boolean) {
+const onRootUpdate = (value: boolean) => {
   if (value) {
     // Focus-only: ignore hover-driven opens (Reka opens on pointermove after `delay`).
     const el = triggerEl.value
@@ -224,22 +224,22 @@ function onRootUpdate(value: boolean) {
   commit(false)
 }
 
-function onPointerLeave(event: PointerEvent) {
+const onPointerLeave = (event: PointerEvent) => {
   if (event.pointerType !== 'touch') pointerLeft.value = true
 }
-function onPointerEnter() {
+const onPointerEnter = () => {
   // Re-entering the trigger or the still-visible tooltip cancels a pending delayed close (RAC keeps
   // a tooltip open while it is hovered).
   pointerLeft.value = false
   cancelClose()
 }
-function resetPointerLeft() {
+const resetPointerLeft = () => {
   pointerLeft.value = false
 }
 
 // Only needed while a delayed close is possible: any other interaction clears `pointerLeft`.
 const RESET_EVENTS = ['pointerdown', 'keydown', 'blur', 'focus', TOOLTIP_OPEN_EVENT]
-function toggleResetListeners(on: boolean) {
+const toggleResetListeners = (on: boolean) => {
   for (const type of RESET_EVENTS) {
     if (on) document.addEventListener(type, resetPointerLeft, true)
     else document.removeEventListener(type, resetPointerLeft, true)

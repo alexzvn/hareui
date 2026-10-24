@@ -23,10 +23,10 @@ afterEach(() => {
 })
 
 // `props` may be a getter so a controlled `modelValue` is read during render and stays reactive
-function mountGroup(
+const mountGroup = (
   props: Record<string, unknown> | (() => Record<string, unknown>) = {},
   itemSlots: Record<string, any> = {},
-) {
+) => {
   wrapper = mount(
     () =>
       h(CheckboxButtonGroup, typeof props === 'function' ? props() : props, () =>
@@ -358,7 +358,7 @@ describe('CheckboxButtonGroup form integration', () => {
 
 // A native button toggles on Space unless a handler cancelled the key; happy-dom has no activation behaviour, so
 // the press helper performs it when the keys get through.
-async function pressSpace(el: Element) {
+const pressSpace = async (el: Element) => {
   const down = new KeyboardEvent('keydown', {
     key: ' ',
     code: 'Space',

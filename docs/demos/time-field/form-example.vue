@@ -44,7 +44,7 @@ const isInvalid = computed(
     value.value !== null && (value.value.compare(minTime) < 0 || value.value.compare(maxTime) > 0),
 )
 
-function handleSubmit(e: Event) {
+const handleSubmit = (e: Event) => {
   e.preventDefault()
   if (!value.value || isInvalid.value) return
 

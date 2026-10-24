@@ -21,7 +21,7 @@ const Probe = defineComponent({
   },
 })
 
-function probe(props: Record<string, unknown>, parentConfig?: object) {
+const probe = (props: Record<string, unknown>, parentConfig?: object) => {
   const Parent = defineComponent({
     setup() {
       if (parentConfig) provide(hareUIConfigKey, parentConfig)

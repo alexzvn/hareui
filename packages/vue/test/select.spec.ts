@@ -212,16 +212,16 @@ describe('Select', () => {
     const listbox = () => document.querySelector<HTMLElement>('[role=listbox]')
     const optionEls = () => [...document.querySelectorAll<HTMLElement>('[role=option]')]
     const focusedText = () => document.activeElement?.textContent?.trim()
-    async function press(key: string, init: KeyboardEventInit = {}) {
+    const press = async (key: string, init: KeyboardEventInit = {}) => {
       document.activeElement!.dispatchEvent(
         new KeyboardEvent('keydown', { key, bubbles: true, cancelable: true, ...init }),
       )
       await flush()
     }
-    async function openWithKeyboard(
+    const openWithKeyboard = async (
       props: Record<string, unknown>,
       attrs: Record<string, unknown> = {},
-    ) {
+    ) => {
       const wrapper = mount(Select, {
         props: { items, label: 'Pet', ...props },
         attrs,
@@ -454,13 +454,13 @@ describe('Select', () => {
           ...init,
         }),
       )
-    async function press(k: string) {
+    const press = async (k: string) => {
       document.activeElement!.dispatchEvent(
         new KeyboardEvent('keydown', { key: k, bubbles: true, cancelable: true }),
       )
       await flush()
     }
-    async function openByClick(props: Record<string, unknown>) {
+    const openByClick = async (props: Record<string, unknown>) => {
       const wrapper = mount(Select, { props: { items, ...props }, attachTo: document.body })
       await wrapper.get(trigger).trigger('click')
       await flush()

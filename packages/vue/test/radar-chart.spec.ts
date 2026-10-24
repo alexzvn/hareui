@@ -26,12 +26,12 @@ const data = [
   { category: 'W', score: 50, other: 50 },
 ]
 
-async function settle() {
+const settle = async () => {
   await flushPromises()
   await nextTick()
 }
 
-function mountChart(children: () => any[], props: Record<string, unknown> = {}) {
+const mountChart = (children: () => any[], props: Record<string, unknown> = {}) => {
   return mount(RadarChart, {
     props: { data, width: SIZE, height: SIZE, margin, ...props },
     slots: { default: children },
@@ -39,7 +39,7 @@ function mountChart(children: () => any[], props: Record<string, unknown> = {}) 
   })
 }
 
-async function hover(wrapper: ReturnType<typeof mountChart>, clientX: number, clientY: number) {
+const hover = async (wrapper: ReturnType<typeof mountChart>, clientX: number, clientY: number) => {
   wrapper
     .find('[data-slot=chart-surface]')
     .element.dispatchEvent(new PointerEvent('pointermove', { clientX, clientY, bubbles: true }))
@@ -394,7 +394,7 @@ describe('RadarChart generated mode', () => {
   beforeAll(() => vi.stubGlobal('matchMedia', () => ({ matches: true })))
   afterAll(() => vi.unstubAllGlobals())
 
-  function mountGenerated(props: Record<string, unknown> = {}, slots: Record<string, any> = {}) {
+  const mountGenerated = (props: Record<string, unknown> = {}, slots: Record<string, any> = {}) => {
     return mount(RadarChart, {
       props: { data, index: 'category', width: SIZE, height: SIZE, margin, ...props },
       slots,

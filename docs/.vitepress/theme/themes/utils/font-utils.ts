@@ -27,7 +27,7 @@ const JSDELIVR_ALLOWED_PATHS = [
  * Validates if a URL is from an allowed font CDN host and uses HTTPS.
  * This is a security check to prevent loading malicious resources.
  */
-export function isValidFontCdnUrl(url: string): boolean {
+export const isValidFontCdnUrl = (url: string): boolean => {
   try {
     const parsedUrl = new URL(url)
 
@@ -54,7 +54,7 @@ export function isValidFontCdnUrl(url: string): boolean {
  * Checks if a fontFamily value is a valid CDN URL (for custom fonts)
  * Only returns true if it's a valid URL from an allowed CDN host
  */
-export function isCustomFontUrl(fontFamily: string): boolean {
+export const isCustomFontUrl = (fontFamily: string): boolean => {
   if (!fontFamily.startsWith('https://')) {
     return false
   }
@@ -73,7 +73,7 @@ export function isCustomFontUrl(fontFamily: string): boolean {
  * - Fontsource: https://cdn.jsdelivr.net/fontsource/fonts/lato@latest/latin-400-normal.woff2 -> "Lato"
  * - CDNfonts: https://fonts.cdnfonts.com/css/stasiun -> "Stasiun"
  */
-export function extractFontFamilyFromUrl(url: string): string | null {
+export const extractFontFamilyFromUrl = (url: string): string | null => {
   try {
     const parsedUrl = new URL(url)
 
@@ -155,7 +155,7 @@ const FONT_FILE_EXTENSIONS = ['.woff2', '.woff', '.ttf', '.otf', '.eot']
 /**
  * Checks if a URL points to a font file (vs a CSS stylesheet)
  */
-export function isFontFileUrl(url: string): boolean {
+export const isFontFileUrl = (url: string): boolean => {
   try {
     const pathname = new URL(url).pathname.toLowerCase()
 
@@ -169,7 +169,7 @@ export function isFontFileUrl(url: string): boolean {
  * Generates @font-face CSS for a font file URL
  * Supports Fontsource variable fonts and static fonts
  */
-function generateFontFaceCSS(fontFamily: string, url: string): string {
+const generateFontFaceCSS = (fontFamily: string, url: string): string => {
   // Detect variable fonts by URL patterns
   const isVariable = url.includes(':vf@') || url.includes('-wght-') || url.includes('-opsz-')
 
@@ -210,11 +210,11 @@ function generateFontFaceCSS(fontFamily: string, url: string): string {
  * @param fontFamily - Font family name (required for font files)
  * @returns The injected element
  */
-export function injectFontLink(
+export const injectFontLink = (
   id: string,
   url: string,
   fontFamily?: string,
-): HTMLLinkElement | HTMLStyleElement | null {
+): HTMLLinkElement | HTMLStyleElement | null => {
   if (typeof document === 'undefined') return null
 
   const elementId = `font-link-${id}`
@@ -258,7 +258,7 @@ export function injectFontLink(
 /**
  * Removes a font element by ID
  */
-export function removeFontLink(id: string): void {
+export const removeFontLink = (id: string): void => {
   if (typeof document === 'undefined') return
 
   const elementId = `font-link-${id}`
@@ -273,12 +273,14 @@ export function removeFontLink(id: string): void {
  * Gets font info from a URL for CSS generation.
  * Returns null if the URL is invalid or not from a trusted CDN.
  */
-export function getCustomFontInfoFromUrl(url: string): {
+export const getCustomFontInfoFromUrl = (
+  url: string,
+): {
   fontFamily: string
   label: string
   url: string
   variable: string
-} | null {
+} | null => {
   // Security: Validate URL is from a trusted CDN before processing
   if (!isValidFontCdnUrl(url)) {
     return null

@@ -252,11 +252,11 @@ const { id, labelId, hasLabel, describedBy, FieldLabel, FieldDescription, FieldE
     disabled: isDisabled,
   })
 
-function hasItemDescription(item: CheckboxGroupItem) {
+const hasItemDescription = (item: CheckboxGroupItem) => {
   return !!(item.description || slots['item-description'])
 }
 
-function onUpdate(value: string[]) {
+const onUpdate = (value: string[]) => {
   // `isReadOnly`: items stay focusable but the selection never changes
   if (props.readonly) return
   modelValue.value = value

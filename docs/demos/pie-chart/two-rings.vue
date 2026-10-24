@@ -64,7 +64,7 @@ const current = [
   { season: 'Winter', label: 'Winter 2025', rainfall: 220 },
 ]
 
-function formatValue(value: number | string) {
+const formatValue = (value: number | string) => {
   return `${value} mm`
 }
 </script>

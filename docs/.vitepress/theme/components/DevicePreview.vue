@@ -70,7 +70,7 @@ const emit = defineEmits<{ ready: [] }>()
 const iframe = useTemplateRef<HTMLIFrameElement>('iframe')
 const src = shallowRef<string>()
 const ready = ref(false)
-function onMessage(event: MessageEvent) {
+const onMessage = (event: MessageEvent) => {
   if (
     !iframe.value ||
     event.source !== iframe.value.contentWindow ||
@@ -83,7 +83,7 @@ function onMessage(event: MessageEvent) {
 
 const root = useTemplateRef<HTMLElement>('root')
 let visibilityObserver: IntersectionObserver | undefined
-function load() {
+const load = () => {
   src.value = withBase(demoPreviewPath(props.name))
 }
 onMounted(() => {

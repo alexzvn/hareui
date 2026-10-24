@@ -19,7 +19,7 @@ import RadialChart from '@/components/radial-chart/RadialChart.vue'
 const SIZE = 200
 const margin = { top: 0, right: 0, bottom: 0, left: 0 }
 
-async function settle() {
+const settle = async () => {
   await flushPromises()
   await nextTick()
 }
@@ -102,7 +102,7 @@ describe('chart frame', () => {
   afterAll(() => vi.unstubAllGlobals())
 
   describe.each(cases)('$name', ({ component, props, keys, series }) => {
-    function mountChart(extra: Record<string, unknown> = {}, slots: Record<string, any> = {}) {
+    const mountChart = (extra: Record<string, unknown> = {}, slots: Record<string, any> = {}) => {
       return mount(component, {
         props: { width: SIZE, height: SIZE, margin, ...props, ...extra },
         slots,
@@ -192,7 +192,7 @@ describe('chart frame', () => {
     const pie = (props: Record<string, unknown>) =>
       h(ChartPie, { data, dataKey: 'value', isAnimationActive: false, ...props })
 
-    function mountPies(pies: () => any[]) {
+    const mountPies = (pies: () => any[]) => {
       return mount(PieChart, {
         props: { width: SIZE, height: SIZE, margin },
         slots: {

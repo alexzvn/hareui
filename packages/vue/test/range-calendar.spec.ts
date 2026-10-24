@@ -287,7 +287,7 @@ describe('range calendar keyboard paging and outside days', () => {
   const heading = (w: { get: (s: string) => { text: () => string } }) =>
     w.get('[data-slot=range-calendar-heading]').text()
   const activeDate = () => document.activeElement?.getAttribute('data-value')
-  async function mountFocused() {
+  const mountFocused = async () => {
     const wrapper = mount(RangeCalendar, {
       props: {
         locale: 'en-US',
@@ -300,7 +300,7 @@ describe('range calendar keyboard paging and outside days', () => {
     expect(activeDate()).toBe('2025-01-15')
     return wrapper
   }
-  async function press(init: KeyboardEventInit) {
+  const press = async (init: KeyboardEventInit) => {
     document.activeElement!.dispatchEvent(
       new KeyboardEvent('keydown', { bubbles: true, cancelable: true, ...init }),
     )
@@ -462,7 +462,7 @@ describe('range calendar press-drag selection', () => {
     el.dispatchEvent(new PointerEvent(type, { bubbles: true, button: 0, pointerType: 'mouse' }))
   // A real pointer drag ends with pointerup on the release cell and no click on either cell (the click targets the
   // common ancestor of the pressed and released elements).
-  async function dragTo(wrapper: ReturnType<typeof mount>, from: string, ...over: string[]) {
+  const dragTo = async (wrapper: ReturnType<typeof mount>, from: string, ...over: string[]) => {
     const cell = (d: string) => wrapper.get(`[data-value="${d}"]`)
     fire(cell(from).element, 'pointerdown')
     await tick()

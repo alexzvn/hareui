@@ -17,7 +17,7 @@ const dec = '[data-slot=number-stepper-decrement-button]'
 const value = '[data-slot=number-stepper-value]'
 const input = '[data-slot=number-stepper-input]'
 
-async function press(target: { element: Element }) {
+const press = async (target: { element: Element }) => {
   // Reka's press-and-hold binds its pointerdown listener in a post-flush watcher, after mount
   await flushPromises()
   target.element.dispatchEvent(
@@ -35,7 +35,7 @@ async function press(target: { element: Element }) {
 }
 
 // The value renders through number-flow; assert what it's given, not its (animated) DOM
-function shown(wrapper: VueWrapper) {
+const shown = (wrapper: VueWrapper) => {
   return wrapper.findComponent(NumberFlow).props('value')
 }
 

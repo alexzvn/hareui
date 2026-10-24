@@ -14,7 +14,10 @@ type Target = Element | { $el: Element | null } | null | undefined
  * the component's `update:open` handler): Reka returns focus to the trigger in a pre-flush watcher, which an
  * `inert` trigger would ignore.
  */
-export function useInertOutside(target: MaybeRefOrGetter<Target>, open: MaybeRefOrGetter<boolean>) {
+export const useInertOutside = (
+  target: MaybeRefOrGetter<Target>,
+  open: MaybeRefOrGetter<boolean>,
+) => {
   let added: Element[] = []
   const release = () => {
     for (const node of added) node.removeAttribute('inert')

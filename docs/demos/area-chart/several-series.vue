@@ -41,7 +41,7 @@ const data = [
 
 const series = { download: { name: 'Download' }, upload: { name: 'Upload' } }
 
-function formatSpeed(value: number | string) {
+const formatSpeed = (value: number | string) => {
   return `${value} Mbps`
 }
 </script>

@@ -31,13 +31,13 @@ const value = ref('')
 const isComplete = ref(false)
 const isSubmitting = ref(false)
 
-function handleComplete(code: string) {
+const handleComplete = (code: string) => {
   isComplete.value = true
   // eslint-disable-next-line no-console
   console.log('Code complete:', code)
 }
 
-function handleSubmit(e: Event) {
+const handleSubmit = (e: Event) => {
   e.preventDefault()
   isSubmitting.value = true
   // Simulate API call

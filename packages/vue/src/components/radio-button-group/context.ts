@@ -21,7 +21,7 @@ export type RadioButtonGroupContext = {
 
 export const radioButtonGroupKey: InjectionKey<RadioButtonGroupContext> = Symbol('RadioButtonGroup')
 
-export function useRadioButtonGroup() {
+export const useRadioButtonGroup = () => {
   const context = inject(radioButtonGroupKey, null)
   if (!context) throw new Error('RadioButtonGroupItem must be used inside a RadioButtonGroup.')
   return context

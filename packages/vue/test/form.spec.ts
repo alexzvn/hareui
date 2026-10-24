@@ -15,7 +15,7 @@ afterEach(() => {
   wrapper = undefined
 })
 
-function signUp(formProps: Record<string, unknown> = {}) {
+const signUp = (formProps: Record<string, unknown> = {}) => {
   wrapper = mount(
     () =>
       h(Form, { 'aria-label': 'Sign up', ...formProps }, () => [
@@ -35,7 +35,7 @@ function signUp(formProps: Record<string, unknown> = {}) {
 }
 
 /** The text of every element the control's `aria-describedby` points at. */
-function descriptions(el: Element) {
+const descriptions = (el: Element) => {
   return (el.getAttribute('aria-describedby') ?? '')
     .split(' ')
     .filter(Boolean)

@@ -38,7 +38,7 @@ const series = {
 }
 const colors = ['var(--chart-4)', 'var(--chart-3)', 'var(--chart-1)']
 
-function formatValue(value: number | string) {
+const formatValue = (value: number | string) => {
   return `${value} students`
 }
 </script>

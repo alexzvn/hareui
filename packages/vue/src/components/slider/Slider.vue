@@ -207,7 +207,7 @@ const labelId = computed(() => `${id.value}-label`)
 const hasLabel = computed(() => !!(props.label || slots.label))
 
 // Reka's `SliderRoot` always works with `number[]`; a plain number renders a single thumb, an array a range.
-function toArray(value: number | number[] | undefined): number[] | undefined {
+const toArray = (value: number | number[] | undefined): number[] | undefined => {
   if (value === undefined) return undefined
   return Array.isArray(value) ? value : [value]
 }
@@ -227,13 +227,13 @@ const current = computed<number[]>(() =>
 // is actually moving (the focused one, or the one a pointer interaction started on).
 let movingIndex: number | null = null
 const thumbRefs = ref<Array<{ $el: HTMLElement } | null>>([])
-function thumbMin(values: number[], index: number) {
+const thumbMin = (values: number[], index: number) => {
   return index > 0 ? values[index - 1]! : props.min
 }
-function thumbMax(values: number[], index: number) {
+const thumbMax = (values: number[], index: number) => {
   return index < values.length - 1 ? values[index + 1]! : props.max
 }
-function changedValue(previous: number[], next: number[]): number | undefined {
+const changedValue = (previous: number[], next: number[]): number | undefined => {
   const rest = [...previous]
   for (const value of next) {
     const at = rest.indexOf(value)
@@ -242,7 +242,7 @@ function changedValue(previous: number[], next: number[]): number | undefined {
   }
   return undefined
 }
-function constrain(values: number[]): number[] {
+const constrain = (values: number[]): number[] => {
   const previous = current.value
   movingIndex ??= activeThumbIndex.value
   const index = movingIndex
@@ -255,7 +255,7 @@ function constrain(values: number[]): number[] {
   return next
 }
 
-function onUpdate(values: number[] | undefined) {
+const onUpdate = (values: number[] | undefined) => {
   if (!values) return
   const next = constrain(values)
   // Reka focuses the thumb it handed the move to; keep focus on the thumb that is moving.
@@ -268,7 +268,7 @@ function onUpdate(values: number[] | undefined) {
   modelValue.value = isRange.value ? [...next] : next[0]
 }
 // Reka emits `valueCommit` before `update:modelValue`, so report the committed values rather than `current`
-function onCommit(values: number[]) {
+const onCommit = (values: number[]) => {
   const next = constrain(values)
   emit('changeEnd', isRange.value ? [...next] : next[0]!)
 }
@@ -281,7 +281,7 @@ const pageSize = computed(() => {
   return Math.max(props.step, Math.round(range / 10 / props.step) * props.step || props.step)
 })
 // +1 / -1 for a key that pages the value, 0 for keys left to Reka (plain arrows, which only step)
-function pageDirection(event: KeyboardEvent): number {
+const pageDirection = (event: KeyboardEvent): number => {
   if (event.key === 'PageUp') return 1
   if (event.key === 'PageDown') return -1
   if (!event.shiftKey || !event.key.startsWith('Arrow')) return 0
@@ -292,7 +292,7 @@ function pageDirection(event: KeyboardEvent): number {
   const decrease = event.key === 'ArrowDown' || event.key === (rtl ? 'ArrowRight' : 'ArrowLeft')
   return decrease ? -1 : 1
 }
-function onThumbKeydown(event: KeyboardEvent, index: number) {
+const onThumbKeydown = (event: KeyboardEvent, index: number) => {
   pointerActive = false
   focusVisibleIndex.value = index
   movingIndex = index
@@ -326,7 +326,7 @@ const outputText = computed(() => formattedValues.value.join(' – '))
 
 // `data-fill-start` / `data-fill-end` on the track replicate `@heroui/react`'s `SliderTrack` exactly
 // (a single thumb fills from its edge toward the value; a range fills between its two thumbs).
-function fraction(value: number) {
+const fraction = (value: number) => {
   const range = props.max - props.min
   return range <= 0 ? 0 : clamp((value - props.min) / range, 0, 1)
 }
@@ -355,29 +355,29 @@ const isSliding = ref(false)
 const activeThumbIndex = ref(0)
 const focusVisibleIndex = ref(-1)
 let pointerActive = false
-function onPointerDownCapture() {
+const onPointerDownCapture = () => {
   pointerActive = true
   focusVisibleIndex.value = -1
   // Reka focuses the thumb closest to the press (unless it already has focus) before its first update; that
   // thumb is the one to move, picked up in `onUpdate`
   movingIndex = null
 }
-function onPointerDown() {
+const onPointerDown = () => {
   if (!isDisabled.value) isSliding.value = true
 }
-function onPointerEnd() {
+const onPointerEnd = () => {
   isSliding.value = false
   pointerActive = false
 }
-function onThumbFocus(index: number) {
+const onThumbFocus = (index: number) => {
   // While a thumb is moving, Reka may focus its neighbour (it hands crossing moves over); `onUpdate` moves focus back
   if (movingIndex === null) activeThumbIndex.value = index
   focusVisibleIndex.value = pointerActive ? -1 : index
 }
-function onThumbBlur() {
+const onThumbBlur = () => {
   focusVisibleIndex.value = -1
 }
-function dragging(index: number) {
+const dragging = (index: number) => {
   return isSliding.value && activeThumbIndex.value === index ? 'true' : undefined
 }
 </script>

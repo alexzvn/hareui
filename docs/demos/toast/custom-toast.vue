@@ -48,7 +48,7 @@ import { Button, CloseButton, ToastProvider, ToastQueue } from '@hareui/vue'
 
 const customQueue = new ToastQueue()
 
-function show() {
+const show = () => {
   customQueue.add({
     title: 'Custom layout toast',
     description: 'This uses a custom render function',

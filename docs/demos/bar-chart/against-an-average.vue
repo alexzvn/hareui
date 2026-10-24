@@ -37,7 +37,7 @@ const data = [
 
 const series = { thisYear: { name: '2026' }, average: { name: '10-year avg.' } }
 
-function formatRain(value: number) {
+const formatRain = (value: number) => {
   return `${value} mm`
 }
 </script>

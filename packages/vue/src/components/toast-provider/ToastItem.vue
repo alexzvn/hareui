@@ -179,7 +179,7 @@ const hasDescription = computed(
 // them (as RAC's useSlotId does), so the toast never points at a missing element.
 const slotHasTitle = ref(false)
 const slotHasDescription = ref(false)
-function syncSlotIds() {
+const syncSlotIds = () => {
   const el = rootEl.value
   if (!el || !props.toastSlot) return
   slotHasTitle.value = !!el.querySelector(`[id="${titleId}"]`)
@@ -244,7 +244,7 @@ const toastHeight = ref<number | undefined>()
 let mutationObserver: MutationObserver | null = null
 let resizeObserver: ResizeObserver | null = null
 let measureFrame = 0
-function measure() {
+const measure = () => {
   const el = rootEl.value
   if (!el) return
   const previous = el.style.height
@@ -253,7 +253,7 @@ function measure() {
   el.style.height = previous
   if (toastHeight.value !== measured) toastHeight.value = measured
 }
-function scheduleMeasure() {
+const scheduleMeasure = () => {
   if (measureFrame) return
   measureFrame = requestAnimationFrame(() => {
     measureFrame = 0
@@ -301,7 +301,7 @@ watch(
  * aria-hidden around a focused element, so focus moves out first: the provider moves it to a
  * neighbouring toast (RAC's useToastRegion), and it is blurred if it is still inside.
  * -------------------------------------------------------------------------------------------- */
-function syncHidden(shouldHide: boolean) {
+const syncHidden = (shouldHide: boolean) => {
   const el = rootEl.value
   if (!el) return
   if (shouldHide) {
@@ -361,7 +361,7 @@ watch(indicatorKind, (kind) => {
  * Action button: HeroUI swaps its DOM position with a real media query instead of CSS display,
  * so only one instance (inside content on mobile, after content on desktop) is ever mounted.
  * -------------------------------------------------------------------------------------------- */
-function onActionClick(event: MouseEvent) {
+const onActionClick = (event: MouseEvent) => {
   content.value.action?.onClick?.(event)
 }
 </script>

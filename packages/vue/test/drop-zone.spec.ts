@@ -13,12 +13,12 @@ import { expectAccessible } from './a11y'
 const area = '[data-slot=drop-zone-area]'
 const input = '[data-slot=drop-zone-input]'
 
-function file(name: string, type: string, size = 3) {
+const file = (name: string, type: string, size = 3) => {
   return new File(['x'.repeat(size)], name, { type })
 }
 
 // A drag event carrying files, built by hand so it doesn't depend on the DOM's DataTransfer support
-function dragEvent(type: string, files: File[]) {
+const dragEvent = (type: string, files: File[]) => {
   const event = new Event(type, { bubbles: true, cancelable: true })
   Object.defineProperty(event, 'dataTransfer', {
     value: {
@@ -31,18 +31,18 @@ function dragEvent(type: string, files: File[]) {
   return event
 }
 
-async function drop(element: Element, files: File[]) {
+const drop = async (element: Element, files: File[]) => {
   element.dispatchEvent(dragEvent('drop', files))
   await nextTick()
 }
 
-async function select(element: HTMLInputElement, files: File[]) {
+const select = async (element: HTMLInputElement, files: File[]) => {
   Object.defineProperty(element, 'files', { value: files, configurable: true, writable: true })
   element.dispatchEvent(new Event('change', { bubbles: true }))
   await nextTick()
 }
 
-function mountModel(props: Record<string, unknown> = {}) {
+const mountModel = (props: Record<string, unknown> = {}) => {
   const model = ref<File[]>([])
   const onAdd = vi.fn()
   const onReject = vi.fn<(rejections: DropZoneRejection[]) => void>()
@@ -337,7 +337,7 @@ describe('DropZone accessibility', () => {
   const button = '[data-slot=drop-zone-focus-target]'
   const pdf = () => file('a.pdf', 'application/pdf')
 
-  function mountFiles(initial: File[]) {
+  const mountFiles = (initial: File[]) => {
     const model = ref<File[]>(initial)
     const wrapper = mount(
       () =>

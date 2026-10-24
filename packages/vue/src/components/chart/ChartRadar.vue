@@ -169,7 +169,7 @@ const target = computed<RadarPoint[]>(() => {
 })
 
 // Mount: the radar grows out of the center. Data change: every point moves from its previous radius.
-function interpolate(from: RadarPoint[] | null, to: RadarPoint[], t: number): RadarPoint[] {
+const interpolate = (from: RadarPoint[] | null, to: RadarPoint[], t: number): RadarPoint[] => {
   const cx = polar.cx.value
   const cy = polar.cy.value
   return to.map((point) => {

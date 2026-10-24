@@ -17,7 +17,7 @@ const value = '[data-slot=select-value]'
 const flush = flushPromises
 const optionEls = () => [...document.querySelectorAll<HTMLElement>('[role=option]')]
 const focusedText = () => document.activeElement?.textContent?.trim()
-async function press(key: string) {
+const press = async (key: string) => {
   document.activeElement!.dispatchEvent(
     new KeyboardEvent('keydown', { key, bubbles: true, cancelable: true }),
   )
@@ -188,7 +188,7 @@ describe('InlineSelect', () => {
     expect(children[1]!.getAttribute('data-slot')).toBe('select-value')
   })
 
-  async function openWithKeyboard(props: Record<string, unknown> = {}) {
+  const openWithKeyboard = async (props: Record<string, unknown> = {}) => {
     const wrapper = mount(InlineSelect, {
       props: { items, defaultValue: 'en', id: 'lang', ...props },
       attrs: { 'aria-label': 'Language' },

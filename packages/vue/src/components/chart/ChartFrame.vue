@@ -64,7 +64,7 @@ const hidden = defineModel<string[]>('hidden', { required: true })
 
 const chart = useChartContext('ChartFrame')
 
-function toggle(key: string) {
+const toggle = (key: string) => {
   hidden.value = toggleHiddenKey(hidden.value, key)
 }
 

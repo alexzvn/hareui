@@ -146,7 +146,7 @@ const classes = computed(() => ctx.classes())
 const slots = ctx.slots
 
 // Reka's Label guard: a double click on the label must not select its text.
-function onLabelMousedown(event: MouseEvent) {
+const onLabelMousedown = (event: MouseEvent) => {
   if (!event.defaultPrevented && event.detail > 1) event.preventDefault()
 }
 
@@ -194,24 +194,24 @@ const extraAttrs = computed(() => ({
     : {}),
 }))
 
-function onFocus(event: FocusEvent) {
+const onFocus = (event: FocusEvent) => {
   focused.value = true
   focusVisible.value = event.target instanceof Element && event.target.matches(':focus-visible')
 }
 
-function onBlur() {
+const onBlur = () => {
   focused.value = false
   focusVisible.value = false
 }
 
-function onPointerleave() {
+const onPointerleave = () => {
   hovered.value = false
   pressed.value = false
 }
 
 // RAC `useMenuItem`: pointer selection closes unless the selection is multiple; keyboard selection
 // closes only on Enter (Space keeps the menu open to toggle more items) or for plain actions.
-function onSelect(event: Event) {
+const onSelect = (event: Event) => {
   if (!selectable.value) {
     ctx.action(props.item)
     return
@@ -224,7 +224,7 @@ function onSelect(event: Event) {
 
 // HeroUI's IconChevronRight. `renderSlot` falls back to it when `#submenu-indicator` renders nothing
 // (e.g. a `v-if` that doesn't match this item), so a custom indicator can be applied per item.
-function chevron() {
+const chevron = () => {
   return h(
     'svg',
     {

@@ -52,7 +52,7 @@ const items = themes.map((theme) => ({
 }))
 const images = Object.fromEntries(themes.map((theme) => [theme.id, theme.image]))
 
-function applyTheme(themeId: ThemeId) {
+const applyTheme = (themeId: ThemeId) => {
   const themeValues = themeValuesById[themeId]
 
   setVariables({
@@ -66,7 +66,7 @@ function applyTheme(themeId: ThemeId) {
   })
 }
 
-function onSelectionChange(selected: unknown) {
+const onSelectionChange = (selected: unknown) => {
   if (typeof selected === 'string') applyTheme(selected as ThemeId)
 }
 </script>

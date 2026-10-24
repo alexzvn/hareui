@@ -1,7 +1,7 @@
 import { injectNavigationMenuItemContext } from 'reka-ui'
 import { defineComponent, watchPostEffect } from 'vue'
 
-function isTab(event: KeyboardEvent): boolean {
+const isTab = (event: KeyboardEvent): boolean => {
   return (
     event.key === 'Tab' &&
     !event.altKey &&

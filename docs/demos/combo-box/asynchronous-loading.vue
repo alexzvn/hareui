@@ -37,7 +37,7 @@ const loading = ref(false)
 let cursor: string | null = null
 let controller: AbortController | undefined
 
-async function load(url: string, append: boolean) {
+const load = async (url: string, append: boolean) => {
   controller?.abort()
   controller = new AbortController()
   loading.value = true
@@ -52,7 +52,7 @@ async function load(url: string, append: boolean) {
     if ((error as Error).name !== 'AbortError') loading.value = false
   }
 }
-function loadMore() {
+const loadMore = () => {
   if (cursor && !loading.value) load(cursor, true)
 }
 watch(filterText, (text) => load(`https://swapi.py4e.com/api/people/?search=${text}`, false))

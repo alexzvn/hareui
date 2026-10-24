@@ -242,7 +242,7 @@ const bounds = computed(() => {
   return { x: 0, y: 0, width: chart.width.value, height: chart.height.value }
 })
 
-function place(coordinate: number, dimension: number, start: number, extent: number) {
+const place = (coordinate: number, dimension: number, start: number, extent: number) => {
   const after = coordinate + props.offset
   if (after + dimension > start + extent)
     return Math.max(coordinate - dimension - props.offset, start)

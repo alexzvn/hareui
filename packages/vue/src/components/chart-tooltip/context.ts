@@ -14,7 +14,7 @@ export type ChartTooltipContext = {
 
 export const chartTooltipContextKey: InjectionKey<ChartTooltipContext> = Symbol('ChartTooltip')
 
-export function useChartTooltipContext(part: string): ChartTooltipContext {
+export const useChartTooltipContext = (part: string): ChartTooltipContext => {
   const context = inject(chartTooltipContextKey, null)
   if (!context) throw new Error(`ChartTooltip${part} must be used inside ChartTooltipContent`)
   return context

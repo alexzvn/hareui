@@ -381,7 +381,7 @@ const selection = computed<Selection>({
 const selectedSet = computed(() =>
   Array.isArray(selection.value) ? new Set(selection.value) : undefined,
 )
-function isSelected(item: ListBoxItem) {
+const isSelected = (item: ListBoxItem) => {
   const current = selection.value
   if (!selectable.value || current == null) return false
   return selectedSet.value ? selectedSet.value.has(item.value) : current === item.value
@@ -400,7 +400,7 @@ const itemSlots = [
 const forwarded = computed(() => itemSlots.filter((name) => slots[name]))
 const sectionLabelled = (section: ListBoxSection<T>) => !!(section.label || slots['section-label'])
 
-function optionProps(row: Row) {
+const optionProps = (row: Row) => {
   return {
     item: row.item,
     index: row.index,
@@ -452,36 +452,36 @@ const manager = useSelectionManager<ListBoxValue>({
 
 // Reka re-highlights and focuses the first selected option whenever the model changes outside its own
 // handlers. Its keyboard handler flags a change as user-made for 1 ms; a modifier-only key does nothing else.
-function markUserAction() {
+const markUserAction = () => {
   reka?.onKeydownTypeAhead(new KeyboardEvent('keydown', { key: 'Alt', altKey: true }))
 }
 
 type RekaItem = { ref: HTMLElement; value: unknown }
 /** The enabled option elements, in DOM order. */
-function enabledOptions(items: RekaItem[] = listboxRoot.value?.getItems() ?? []): HTMLElement[] {
+const enabledOptions = (items: RekaItem[] = listboxRoot.value?.getItems() ?? []): HTMLElement[] => {
   return (reka ? items.map((item) => item.ref) : []).filter((el) => el.dataset.disabled !== '')
 }
 const valueOf = (el: HTMLElement) =>
   listboxRoot.value?.getItems().find((item) => item.ref === el)?.value as ListBoxValue | undefined
 
-function highlight(el: HTMLElement | undefined) {
+const highlight = (el: HTMLElement | undefined) => {
   if (el) reka?.changeHighlight(el)
 }
 
 // RAC `getKeyPageBelow/Above`: a page is the scroll container's height; an unscrollable list pages to its ends
-function scrollParent(el: HTMLElement | null): HTMLElement | undefined {
+const scrollParent = (el: HTMLElement | null): HTMLElement | undefined => {
   for (; el && el !== document.body; el = el.parentElement) {
     const overflow = getComputedStyle(el).overflowY
     if (el.scrollHeight > el.clientHeight && (overflow === 'auto' || overflow === 'scroll'))
       return el
   }
 }
-function pageTarget(
+const pageTarget = (
   options: HTMLElement[],
   from: HTMLElement | undefined,
   list: HTMLElement,
   down: boolean,
-) {
+) => {
   const scroller = scrollParent(list)
   if (!scroller || !from) return down ? options.at(-1) : options[0]
   const page = scroller.clientHeight - from.offsetHeight
@@ -495,7 +495,7 @@ function pageTarget(
 // RAC `useTypeSelect`: searched from the focused option onwards (inclusive); Space continues a non-empty search
 // instead of selecting
 const typeahead = useTypeahead({ start: 'current', space: true })
-function onTypeahead(event: KeyboardEvent, focused: HTMLElement | undefined): boolean {
+const onTypeahead = (event: KeyboardEvent, focused: HTMLElement | undefined): boolean => {
   const handled = typeahead.onKeydown(
     event,
     () => {
@@ -521,7 +521,7 @@ function onTypeahead(event: KeyboardEvent, focused: HTMLElement | undefined): bo
   return handled
 }
 
-function onKeydownCapture(event: KeyboardEvent) {
+const onKeydownCapture = (event: KeyboardEvent) => {
   if (!reka || props.disabled || event.isComposing) return
   const list = event.currentTarget as HTMLElement
   const focused = (event.target as Element).closest?.<HTMLElement>('[role=option]') ?? undefined
@@ -561,7 +561,7 @@ function onKeydownCapture(event: KeyboardEvent) {
 }
 
 // Shift+click / Shift+Space extend the range from the anchor; any other press toggles through Reka
-function onOptionSelect(item: ListBoxItem, event: CustomEvent<{ originalEvent?: Event }>) {
+const onOptionSelect = (item: ListBoxItem, event: CustomEvent<{ originalEvent?: Event }>) => {
   if (!selectable.value) return
   const original = event.detail?.originalEvent as MouseEvent | KeyboardEvent | undefined
   if (multiple.value && original?.shiftKey) {

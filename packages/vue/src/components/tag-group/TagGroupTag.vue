@@ -80,7 +80,7 @@ const focusVisible = ref(false)
 const rowId = useId()
 const removeButtonId = `${rowId}-remove`
 
-function onFocus(event: FocusEvent) {
+const onFocus = (event: FocusEvent) => {
   focusVisible.value = event.target instanceof Element && event.target.matches(':focus-visible')
 }
 
@@ -88,7 +88,7 @@ function onFocus(event: FocusEvent) {
 // shows the selected state. `selectedOnDown` swallows the click that follows that same press.
 let selectedOnDown = false
 
-function onPointerdown(event: PointerEvent) {
+const onPointerdown = (event: PointerEvent) => {
   selectedOnDown = false
   if (props.disabled) return
   pressed.value = true
@@ -100,11 +100,11 @@ function onPointerdown(event: PointerEvent) {
 }
 
 // A disabled tag isn't focusable: keep focus where it is instead of letting the press blur it to `body` (RAC)
-function onMousedown(event: MouseEvent) {
+const onMousedown = (event: MouseEvent) => {
   if (props.disabled) event.preventDefault()
 }
 
-function onClick(event: MouseEvent) {
+const onClick = (event: MouseEvent) => {
   if (selectedOnDown) {
     selectedOnDown = false
     return
@@ -113,7 +113,7 @@ function onClick(event: MouseEvent) {
   emit('press', event)
 }
 
-function onRemoveClick(event: MouseEvent) {
+const onRemoveClick = (event: MouseEvent) => {
   event.stopPropagation()
   emit('remove')
 }

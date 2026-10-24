@@ -81,7 +81,7 @@ import { reactive, ref } from 'vue'
 const isOpen = ref(false)
 
 // Vue counterpart of HeroUI's `useOverlayState` hook: a ref plus named open/close/toggle helpers.
-function useOverlayState(defaultOpen = false) {
+const useOverlayState = (defaultOpen = false) => {
   const isOpen = ref(defaultOpen)
   return reactive({
     isOpen,

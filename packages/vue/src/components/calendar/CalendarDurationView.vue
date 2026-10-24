@@ -290,7 +290,7 @@ const highlighted = computed(() => {
     : null
 })
 
-function isSelected(date: CalendarDate) {
+const isSelected = (date: CalendarDate) => {
   if (props.kind === 'range')
     return (
       !!highlighted.value &&
@@ -302,11 +302,11 @@ function isSelected(date: CalendarDate) {
 }
 
 // The emitted value keeps the original value's calendar system (Gregorian by default) and time of day
-function convert(date: CalendarDate, old: DateValue | undefined): DateValue {
+const convert = (date: CalendarDate, old: DateValue | undefined): DateValue => {
   const converted = toCalendar(date, old?.calendar ?? new GregorianCalendar())
   return old && 'hour' in old ? (old as any).set(converted) : converted
 }
-function select(date: CalendarDate) {
+const select = (date: CalendarDate) => {
   if (props.disabled || props.readonly || view.isCellDisabled(date) || unavailable(date)) return
   view.focusedDate.value = date
   if (props.kind === 'range') {
@@ -328,12 +328,12 @@ function select(date: CalendarDate) {
   }
   emit('select', convert(date, props.value ?? undefined))
 }
-function onPointerEnter(date: CalendarDate) {
+const onPointerEnter = (date: CalendarDate) => {
   // `highlightDate`: while a range is anchored, hovering moves the focused date (and the preview)
   if (anchor.value && !view.isCellDisabled(date) && !unavailable(date))
     view.focusedDate.value = date
 }
-function onKeyDown(event: KeyboardEvent) {
+const onKeyDown = (event: KeyboardEvent) => {
   view.onKeyDown(
     event,
     {
@@ -348,7 +348,7 @@ function onKeyDown(event: KeyboardEvent) {
   )
 }
 
-function cellState(date: CalendarDate) {
+const cellState = (date: CalendarDate) => {
   const disabled = view.isCellDisabled(date)
   const isUnavailable = unavailable(date)
   const selectable = !disabled && !isUnavailable

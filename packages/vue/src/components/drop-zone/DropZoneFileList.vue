@@ -43,12 +43,12 @@ defineSlots<DropZoneFileListSlots>()
 const context = inject(dropZoneContextKey, null)
 const ui = useComponentUI('dropZone', theme, () => ({}))
 
-function animate(
+const animate = (
   el: Element,
   keyframes: Keyframe[],
   options: KeyframeAnimationOptions,
   done: () => void,
-) {
+) => {
   const reduced =
     typeof window !== 'undefined' && window.matchMedia?.('(prefers-reduced-motion: reduce)').matches
   if (reduced || typeof (el as HTMLElement).animate !== 'function') {
@@ -60,7 +60,7 @@ function animate(
   animation.oncancel = done
 }
 
-function onEnter(el: Element, done: () => void) {
+const onEnter = (el: Element, done: () => void) => {
   animate(
     el,
     [
@@ -73,7 +73,7 @@ function onEnter(el: Element, done: () => void) {
 }
 
 // Leaving items are taken out of the flow at their current spot, so the remaining items slide into place right away
-function onLeave(el: Element, done: () => void) {
+const onLeave = (el: Element, done: () => void) => {
   const item = el as HTMLElement
   const { offsetTop, offsetLeft, offsetWidth } = item
   Object.assign(item.style, {

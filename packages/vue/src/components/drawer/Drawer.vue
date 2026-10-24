@@ -253,10 +253,10 @@ let velocity = 0
 let lastTime = 0
 let lastPos = 0
 
-function pointerPos(event: PointerEvent) {
+const pointerPos = (event: PointerEvent) => {
   return isVertical.value ? event.clientY : event.clientX
 }
-function clampDelta(delta: number) {
+const clampDelta = (delta: number) => {
   switch (props.placement) {
     case 'top':
     case 'left':
@@ -265,7 +265,7 @@ function clampDelta(delta: number) {
       return Math.max(0, delta)
   }
 }
-function onDragStart(event: PointerEvent) {
+const onDragStart = (event: PointerEvent) => {
   if (!props.dismissible || event.button !== 0) return
   const target = event.target as HTMLElement
   const dialog = event.currentTarget as HTMLElement
@@ -282,7 +282,7 @@ function onDragStart(event: PointerEvent) {
   offset = 0
   velocity = 0
 }
-function onDragMove(event: PointerEvent) {
+const onDragMove = (event: PointerEvent) => {
   if (!dragging) return
   const el = event.currentTarget as HTMLElement
   const pos = pointerPos(event)
@@ -304,7 +304,7 @@ function onDragMove(event: PointerEvent) {
   }
   el.style.transform = `translate${isVertical.value ? 'Y' : 'X'}(${delta}px)`
 }
-function onDragEnd(event: PointerEvent, close: () => void) {
+const onDragEnd = (event: PointerEvent, close: () => void) => {
   if (!dragging) return
   dragging = false
   const el = event.currentTarget as HTMLElement

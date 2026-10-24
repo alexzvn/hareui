@@ -291,7 +291,7 @@ const hasActions = computed(
     (!!props.item.actions?.length || !!ctx.slots[slotName(props.item, 'actions')]),
 )
 
-function linkClass(active: boolean) {
+const linkClass = (active: boolean) => {
   return ui.value.link({
     class: [ctx.props.ui?.link, props.item.ui?.link, props.item.class],
     active: active || !!props.item.active,
@@ -303,13 +303,13 @@ function linkClass(active: boolean) {
 
 // A stable function ref: Vue calls it on mount and unmount only.
 let stopObservingActions: (() => void) | undefined
-function setActionsEl(el: unknown) {
+const setActionsEl = (el: unknown) => {
   stopObservingActions?.()
   stopObservingActions = el instanceof HTMLElement ? ctx.observeActions(el) : undefined
 }
 
 // The entry a Dropdown `action` names: an item, or one inside a section or a submenu.
-function findAction(entries: DropdownEntry[], value: DropdownValue): DropdownItem | undefined {
+const findAction = (entries: DropdownEntry[], value: DropdownValue): DropdownItem | undefined => {
   for (const entry of entries) {
     if ('value' in entry && entry.value === value) return entry
     const nested = 'items' in entry && entry.items ? findAction(entry.items, value) : undefined
@@ -318,23 +318,23 @@ function findAction(entries: DropdownEntry[], value: DropdownValue): DropdownIte
   return undefined
 }
 
-function onAction(value: DropdownValue) {
+const onAction = (value: DropdownValue) => {
   findAction(props.item.actions ?? [], value)?.onSelect?.()
 }
 
 type Kind = typeof NavigationMenuTrigger | typeof AccordionTrigger | typeof NavigationMenuLink
-function kindOf(link: ResolvedLink): Kind {
+const kindOf = (link: ResolvedLink): Kind => {
   if (horizontalContent.value) return NavigationMenuTrigger
   if (accordion.value && hasChildren.value && !link.attrs.href) return AccordionTrigger
   return NavigationMenuLink
 }
 
-function onSelect(event: Event) {
+const onSelect = (event: Event) => {
   if (!props.item.disabled) props.item.onSelect?.(event)
 }
 
 // Reka's link emits `select`; triggers don't, so their clicks stand in for it.
-function kindProps(kind: Kind, link: ResolvedLink) {
+const kindProps = (kind: Kind, link: ResolvedLink) => {
   if (kind === NavigationMenuLink)
     return { asChild: true, active: link.active || !!props.item.active, onSelect: onSelect }
   return { asChild: true, disabled: !!props.item.disabled, onClick: onSelect }
@@ -351,7 +351,7 @@ const expanded = computed(() => {
   const open = accordionRoot?.modelValue.value
   return Array.isArray(open) ? open.includes(value.value) : open === value.value
 })
-function toggleExpanded() {
+const toggleExpanded = () => {
   // Same guard as Reka's AccordionTrigger: a single, non-collapsible accordion keeps its open item open.
   if (
     !accordionRoot ||
@@ -367,7 +367,7 @@ const disclosure = computed(() =>
     : undefined,
 )
 
-function onDisclosureKeydown(event: KeyboardEvent) {
+const onDisclosureKeydown = (event: KeyboardEvent) => {
   if (event.altKey || event.ctrlKey || event.metaKey || event.shiftKey) return
   const rtl = accordionRoot?.direction.value === 'rtl'
   if (
@@ -379,7 +379,7 @@ function onDisclosureKeydown(event: KeyboardEvent) {
   }
 }
 
-function linkAttrs(link: ResolvedLink) {
+const linkAttrs = (link: ResolvedLink) => {
   const attrs: Record<string, unknown> = { ...link.attrs }
   // The collapsed rail hides labels: name the icon-only link by its label.
   if (vertical.value && collapsed.value && label.value) attrs['aria-label'] = label.value

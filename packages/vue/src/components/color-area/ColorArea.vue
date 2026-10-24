@@ -120,7 +120,7 @@ const FIELD: Record<string, string> = {
   green: 'g',
   blue: 'b',
 }
-function toSpace(color: Color, to: ColorSpace): Color {
+const toSpace = (color: Color, to: ColorSpace): Color => {
   return color.space === to ? color : normalizeColor(colorToString(color, to))
 }
 
@@ -206,7 +206,7 @@ const areaStyle = computed(() => {
 })
 const thumbColor = computed(() => colorToString(currentColor.value, 'rgb'))
 
-function onUpdateColor(color: Color) {
+const onUpdateColor = (color: Color) => {
   // Inside a ColorPicker the context owns the colour; writing the local model would detach from it.
   currentColor.value = color
   if (usesContext.value) ctx!.setColor(color)
@@ -214,7 +214,7 @@ function onUpdateColor(color: Color) {
   // Reka never fires its own `change`; every committed colour update is a change.
   emit('change', color)
 }
-function onChangeEnd() {
+const onChangeEnd = () => {
   emit('changeEnd', currentColor.value)
 }
 // Reka only commits on pointer-up; React Aria also ends a change when a keyboard step ends.
@@ -228,7 +228,7 @@ const commitKeys = new Set([
   'Home',
   'End',
 ])
-function onKeyup(event: KeyboardEvent) {
+const onKeyup = (event: KeyboardEvent) => {
   if (commitKeys.has(event.key)) onChangeEnd()
 }
 
@@ -239,19 +239,19 @@ const isDragging = ref(false)
 // Keyboard-modality focus ring, as RAC's `useFocusRing`: Reka focuses the thumb on a pointer press as well.
 const focusVisible = ref(false)
 let pointerActive = false
-function onPointerDownCapture() {
+const onPointerDownCapture = () => {
   pointerActive = true
   focusVisible.value = false
   if (!isDisabled.value) isDragging.value = true
 }
-function onPointerUp() {
+const onPointerUp = () => {
   isDragging.value = false
   pointerActive = false
 }
-function onThumbFocus() {
+const onThumbFocus = () => {
   focusVisible.value = !pointerActive
 }
-function onThumbKeydown() {
+const onThumbKeydown = () => {
   pointerActive = false
   focusVisible.value = true
 }

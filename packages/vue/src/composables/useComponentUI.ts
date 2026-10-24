@@ -11,7 +11,7 @@ import { tv } from '@/utils/tv'
 declare const __HAREUI_UI__: HareUIConfig['ui'] | undefined
 
 // A theme (or extended tv component) plus an override is a valid tv config; tv's generics can't infer the spread.
-function extendOptions(extend: unknown, override: object | undefined) {
+const extendOptions = (extend: unknown, override: object | undefined) => {
   return { extend, ...override } as unknown as Parameters<typeof tv>[0]
 }
 
@@ -30,7 +30,7 @@ const bases = new WeakMap<object, Map<string, object>>()
 // one outlives the instance that created it; it is collected with its app config.
 const shared = new WeakMap<object, WeakMap<object, ComputedRef<Shared>>>()
 
-function getBase(name: keyof Themes, theme: object) {
+const getBase = (name: keyof Themes, theme: object) => {
   const buildUI = typeof __HAREUI_UI__ === 'undefined' ? undefined : __HAREUI_UI__?.[name]
   const key = buildUI ? JSON.stringify(buildUI) : ''
   let byOverride = bases.get(theme)
@@ -41,7 +41,7 @@ function getBase(name: keyof Themes, theme: object) {
   return base
 }
 
-function getComponent(config: HareUIConfig, name: keyof Themes, base: object) {
+const getComponent = (config: HareUIConfig, name: keyof Themes, base: object) => {
   let byBase = shared.get(config)
   if (!byBase) shared.set(config, (byBase = new WeakMap()))
   let component = byBase.get(base)
@@ -57,7 +57,7 @@ function getComponent(config: HareUIConfig, name: keyof Themes, base: object) {
 }
 
 // Keyed over every prop (compound variants may reference any of them); undefined if a value is an object.
-function memoKey(props: Record<string, unknown>) {
+const memoKey = (props: Record<string, unknown>) => {
   let key = ''
   for (const name in props) {
     const value = props[name]
@@ -68,7 +68,7 @@ function memoKey(props: Record<string, unknown>) {
 }
 
 // tv's own result cache isn't used: it re-signs every compound variant per call, slower than this for themes with compounds.
-function resolve(component: Shared, props: Record<string, unknown>) {
+const resolve = (component: Shared, props: Record<string, unknown>) => {
   const key = memoKey(props)
   if (key === undefined) return component.tv(props)
   let result = component.results.get(key)
@@ -84,11 +84,11 @@ function resolve(component: Shared, props: Record<string, unknown>) {
  * option, then by the app config (`createHareUI({ ui })`), resolved for the current variant props.
  * The tv component is shared by every instance of the same app config and theme.
  */
-export function useComponentUI<T extends ThemeShape>(
+export const useComponentUI = <T extends ThemeShape>(
   name: keyof Themes,
   theme: T,
   variantProps: () => Record<string, unknown>,
-): ComputedRef<ComponentUI<T>> {
+): ComputedRef<ComponentUI<T>> => {
   const config = inject(hareUIConfigKey, NO_CONFIG)
   const component = getComponent(config, name, getBase(name, theme))
   return computed(() => resolve(component.value, variantProps()) as ComponentUI<T>)

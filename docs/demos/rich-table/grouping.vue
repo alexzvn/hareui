@@ -36,7 +36,7 @@ const grouping = ref(['status'])
 const groupingOptions = { getGroupedRowModel: getGroupedRowModel() }
 
 // A ghost button whose muted chevron turns from right to down.
-function expandToggle(row: RichTableRow<Payment>, label: string) {
+const expandToggle = (row: RichTableRow<Payment>, label: string) => {
   const isExpanded = row.getIsExpanded()
   return h(
     Button,

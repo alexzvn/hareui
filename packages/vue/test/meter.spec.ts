@@ -6,7 +6,7 @@ import Meter from '@/components/meter/Meter.vue'
 
 import { axeViolations } from './a11y'
 
-function slots(wrapper: ReturnType<typeof mount>) {
+const slots = (wrapper: ReturnType<typeof mount>) => {
   return wrapper.findAll('[data-slot]').map((el) => el.attributes('data-slot'))
 }
 

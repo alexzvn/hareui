@@ -37,13 +37,13 @@ const rail = ref({ top: 0, height: 0 })
 const ITEM_CLASS =
   'prose text-fd-muted-foreground hover:text-fd-accent-foreground data-[active=true]:text-fd-primary scroll-m-4 py-1.5 text-sm wrap-anywhere transition-colors first:pt-0 last:pb-0'
 
-function indent(depth: number) {
+const indent = (depth: number) => {
   return depth <= 2 ? 'ps-3' : depth === 3 ? 'ps-6' : 'ps-8'
 }
 
 const activeSet = computed(() => new Set(props.active))
 
-function measure() {
+const measure = () => {
   const el = container.value
   if (!el || props.active.length === 0) return
   const anchors = props.active

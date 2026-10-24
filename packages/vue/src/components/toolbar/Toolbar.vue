@@ -99,13 +99,13 @@ const FOCUSABLE = [
   '[tabindex]',
 ].join(',')
 
-function focusable(el: HTMLElement) {
+const focusable = (el: HTMLElement) => {
   return [...el.querySelectorAll<HTMLElement>(FOCUSABLE)].filter(
     (node) => !node.closest('[inert]') && node.getClientRects().length > 0,
   )
 }
 
-function move(el: HTMLElement, step: 1 | -1, edge?: 'first' | 'last') {
+const move = (el: HTMLElement, step: 1 | -1, edge?: 'first' | 'last') => {
   const nodes = focusable(el)
   if (nodes.length === 0) return
   if (edge) {
@@ -122,7 +122,7 @@ function move(el: HTMLElement, step: 1 | -1, edge?: 'first' | 'last') {
 // Remembers the control focused when Tab left the toolbar, so focus returns there on re-entry.
 let lastFocused: HTMLElement | null = null
 
-function onKeydown(event: KeyboardEvent) {
+const onKeydown = (event: KeyboardEvent) => {
   const el = root.value?.$el
   if (!el || !el.contains(event.target as Node)) return
   const reverse = props.orientation === 'horizontal' && getComputedStyle(el).direction === 'rtl'
@@ -144,13 +144,13 @@ function onKeydown(event: KeyboardEvent) {
   event.preventDefault()
 }
 
-function onFocusout(event: FocusEvent) {
+const onFocusout = (event: FocusEvent) => {
   const el = root.value?.$el
   if (el && !el.contains(event.relatedTarget as Node | null) && !lastFocused)
     lastFocused = event.target as HTMLElement
 }
 
-function onFocusin(event: FocusEvent) {
+const onFocusin = (event: FocusEvent) => {
   const el = root.value?.$el
   if (
     lastFocused &&

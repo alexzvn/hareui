@@ -127,7 +127,7 @@ const items = ref(allUsers.slice(0, ITEMS_PER_PAGE))
 const loading = ref(false)
 const hasMore = computed(() => items.value.length < allUsers.length)
 
-function loadMore() {
+const loadMore = () => {
   if (!hasMore.value || loading.value) return
   loading.value = true
   setTimeout(() => {

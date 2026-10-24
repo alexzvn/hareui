@@ -53,14 +53,14 @@ describe('Tabs', () => {
     expect(wrapper.find('[data-slot=tabs-panel]').text()).toBe('fallback content')
   })
 
-  function activeTabLabel(): string {
+  const activeTabLabel = (): string => {
     const active = document.activeElement
     return active?.matches('[data-slot=tabs-tab]')
       ? active.textContent!.trim()
       : `<${active?.tagName.toLowerCase()}>`
   }
 
-  function pressKey(el: Element, key: string) {
+  const pressKey = (el: Element, key: string) => {
     el.dispatchEvent(new KeyboardEvent('keydown', { key, bubbles: true, cancelable: true }))
   }
 

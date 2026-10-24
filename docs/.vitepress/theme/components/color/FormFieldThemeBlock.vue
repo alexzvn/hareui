@@ -81,10 +81,10 @@ const bgStyle = computed(() => contrastStyle(props.colors.bg))
 const placeholderStyle = computed(() => contrastStyle(props.colors.placeholder))
 const foregroundStyle = computed(() => contrastStyle(props.colors.foreground))
 
-function onPlaceholderClick(event: MouseEvent) {
+const onPlaceholderClick = (event: MouseEvent) => {
   void copyColorValue(event, props.colors.placeholder)
 }
-function onForegroundClick(event: MouseEvent) {
+const onForegroundClick = (event: MouseEvent) => {
   void copyColorValue(event, props.colors.foreground)
 }
 </script>

@@ -49,7 +49,7 @@ const series = {
 }
 const colors = ['var(--chart-5)', 'var(--chart-3)', 'var(--chart-2)', 'var(--chart-1)']
 
-function formatTonnes(value: number) {
+const formatTonnes = (value: number) => {
   return `${value} t`
 }
 </script>

@@ -229,17 +229,17 @@ const { id, labelId, hasLabel, describedBy, FieldLabel, FieldDescription, FieldE
     disabled: isDisabled,
   })
 
-function hasItemDescription(item: RadioGroupItem) {
+const hasItemDescription = (item: RadioGroupItem) => {
   return !!(item.description || slots['item-description'])
 }
 
 // Reka's roving focus moves focus (without selecting) on Home / End / PageUp / PageDown; RAC's radio group
 // ignores them, so stop them before they reach the focused radio.
-function onKeydownCapture(event: KeyboardEvent) {
+const onKeydownCapture = (event: KeyboardEvent) => {
   if (['Home', 'End', 'PageUp', 'PageDown'].includes(event.key)) event.stopPropagation()
 }
 
-function onUpdate(value: unknown) {
+const onUpdate = (value: unknown) => {
   // RAC `isReadOnly`: items stay focusable but the selection never changes
   if (props.readonly) return
   modelValue.value = value as string

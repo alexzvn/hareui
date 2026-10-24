@@ -6,12 +6,12 @@
  * comes back as is (`'abc%'` as `NaN`). Polar layout falls back; cartesian bar layout keeps it (its sizes and gaps
  * have always passed such values through).
  */
-export function percentValue(
+export const percentValue = (
   value: number | string | undefined | null,
   total: number,
   fallback = 0,
   options: { keepNonFinite?: boolean } = {},
-): number {
+): number => {
   if (value === undefined || value === null || value === '') return fallback
   if (typeof value === 'number')
     return Number.isFinite(value) || options.keepNonFinite ? value : fallback

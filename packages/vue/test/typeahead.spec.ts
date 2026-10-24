@@ -11,7 +11,7 @@ type Item = {
 const item = (label: string, disabled?: boolean): Item => ({ label, disabled })
 
 // A list whose current item follows the typeahead, as the Select trigger and ListBox use it
-function setup(options: TypeaheadOptions, items: Item[], initial?: Item) {
+const setup = (options: TypeaheadOptions, items: Item[], initial?: Item) => {
   const scope = effectScope()
   const typeahead = scope.run(() => useTypeahead(options))!
   let current = initial

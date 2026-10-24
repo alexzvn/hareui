@@ -7,15 +7,15 @@ export type ExpandedValue = string | number
  * state): controlled through `modelValue`, uncontrolled from `defaultValue`. Without `multiple`,
  * expanding an item collapses the others.
  */
-export function useExpandedValues(
+export const useExpandedValues = (
   props: { modelValue?: ExpandedValue[]; defaultValue?: ExpandedValue[]; multiple?: boolean },
   emit: (value: ExpandedValue[]) => void,
-) {
+) => {
   const uncontrolled = ref<ExpandedValue[]>([...(props.defaultValue ?? [])])
   const expanded = computed(() => props.modelValue ?? uncontrolled.value)
 
   const isExpanded = (value: ExpandedValue) => expanded.value.includes(value)
-  function setExpanded(value: ExpandedValue, open: boolean) {
+  const setExpanded = (value: ExpandedValue, open: boolean) => {
     if (open === isExpanded(value)) return
     const next = open
       ? props.multiple

@@ -221,7 +221,7 @@ const footerItems: NavigationMenuItem[] = [
 const breadcrumbs: BreadcrumbsItem[] = [{ label: 'Overview', icon: 'gravity-ui:house' }]
 
 // Sparkline: a smooth-enough polyline plus the same line closed to the bottom for the gradient fill.
-function sparkline(values: number[]) {
+const sparkline = (values: number[]) => {
   const max = Math.max(...values)
   const min = Math.min(...values)
   const step = 100 / (values.length - 1)

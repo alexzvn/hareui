@@ -24,12 +24,12 @@ export type RangeValue = {
  * `useProgressBar`: clamp, fraction of the range, and `Intl.NumberFormat` (percent formats the fraction).
  * The locale comes from Reka's `ConfigProvider` (default `'en'`).
  */
-export function useRangeValue(options: () => RangeValueOptions): ComputedRef<RangeValue> {
+export const useRangeValue = (options: () => RangeValueOptions): ComputedRef<RangeValue> => {
   const locale = useLocale()
   // Reused while locale and options are unchanged: a progress/meter value can tick every frame.
   let formatter: Intl.NumberFormat | undefined
   let formatterKey: string | undefined
-  function format(value: number, formatOptions: Intl.NumberFormatOptions): string {
+  const format = (value: number, formatOptions: Intl.NumberFormatOptions): string => {
     const key = `${locale.value}|${JSON.stringify(formatOptions)}`
     if (!formatter || key !== formatterKey) {
       formatter = new Intl.NumberFormat(locale.value, formatOptions)

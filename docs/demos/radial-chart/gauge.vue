@@ -30,7 +30,7 @@ import { RadialChart } from '@hareui/vue/charts'
 
 const data = [{ metric: 'CPU load', percent: 62, fill: 'var(--chart-3)' }]
 
-function formatPercent(value: number) {
+const formatPercent = (value: number) => {
   return `${value}%`
 }
 </script>

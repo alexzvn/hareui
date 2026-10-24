@@ -13,7 +13,7 @@ const now: () => number =
     ? () => performance.now()
     : () => Date.now()
 
-function prefersReducedMotion(): boolean {
+const prefersReducedMotion = (): boolean => {
   return (
     typeof window !== 'undefined' &&
     !!window.matchMedia?.('(prefers-reduced-motion: reduce)')?.matches
@@ -21,7 +21,7 @@ function prefersReducedMotion(): boolean {
 }
 
 let keySeq = 0
-function generateKey(): string {
+const generateKey = (): string => {
   keySeq += 1
   return `toast-${keySeq}-${Math.random().toString(36).slice(2, 8)}`
 }

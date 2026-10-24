@@ -180,11 +180,11 @@ provide(radioButtonGroupKey, {
 
 // Reka's roving focus moves focus (without selecting) on Home / End / PageUp / PageDown; a native radio group
 // ignores them, so stop them before they reach the focused item.
-function onKeydownCapture(event: KeyboardEvent) {
+const onKeydownCapture = (event: KeyboardEvent) => {
   if (['Home', 'End', 'PageUp', 'PageDown'].includes(event.key)) event.stopPropagation()
 }
 
-function onUpdate(value: unknown) {
+const onUpdate = (value: unknown) => {
   if (props.readonly) return
   modelValue.value = value as string
   commitValidation()

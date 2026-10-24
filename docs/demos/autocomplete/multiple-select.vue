@@ -42,7 +42,7 @@ const items: ListBoxItem[] = [
 
 const selectedKeys = ref<string[]>([])
 
-function onRemoveTags(ids: string[]) {
+const onRemoveTags = (ids: string[]) => {
   selectedKeys.value = selectedKeys.value.filter((key) => !ids.includes(key))
 }
 </script>

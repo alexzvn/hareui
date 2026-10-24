@@ -65,7 +65,7 @@ watchEffect(() => {
 
 const isTouch = ({ pointerType }: PointerEvent) => pointerType === 'touch'
 
-function shouldReactToEvent(event: PointerEvent) {
+const shouldReactToEvent = (event: PointerEvent) => {
   const parent = root.value?.parentElement as
     | (HTMLElement & { disabled?: boolean })
     | null
@@ -76,13 +76,13 @@ function shouldReactToEvent(event: PointerEvent) {
   return isTouch(event) || event.buttons === 1
 }
 
-function inBounds({ x, y }: PointerEvent) {
+const inBounds = ({ x, y }: PointerEvent) => {
   const rect = root.value?.getBoundingClientRect()
   if (!rect) return false
   return x >= rect.left && x <= rect.right && y >= rect.top && y <= rect.bottom
 }
 
-function determineRippleSize() {
+const determineRippleSize = () => {
   if (!root.value) return
   const { height, width } = root.value.getBoundingClientRect()
   const maxDim = Math.max(height, width)
@@ -93,7 +93,7 @@ function determineRippleSize() {
   rippleSize = `${initialSize}px`
 }
 
-function getNormalizedPointerEventCoords(event: PointerEvent) {
+const getNormalizedPointerEventCoords = (event: PointerEvent) => {
   const rect = root.value?.getBoundingClientRect()
   if (!rect) return { x: 0, y: 0 }
   return {
@@ -102,7 +102,7 @@ function getNormalizedPointerEventCoords(event: PointerEvent) {
   }
 }
 
-function getTranslationCoordinates(event?: PointerEvent) {
+const getTranslationCoordinates = (event?: PointerEvent) => {
   const parent = root.value?.parentElement
   if (!parent) return { startPoint: { x: 0, y: 0 }, endPoint: { x: 0, y: 0 } }
   const { height, width } = parent.getBoundingClientRect()
@@ -111,7 +111,7 @@ function getTranslationCoordinates(event?: PointerEvent) {
   return { startPoint: event ? getNormalizedPointerEventCoords(event) : endPoint, endPoint }
 }
 
-function startPressAnimation(event?: PointerEvent) {
+const startPressAnimation = (event?: PointerEvent) => {
   if (!surface.value) return
   pressed.value = true
   growAnimation?.cancel()
@@ -130,7 +130,7 @@ function startPressAnimation(event?: PointerEvent) {
   )
 }
 
-function endPressAnimation() {
+const endPressAnimation = () => {
   rippleStartEvent = undefined
   state = State.Inactive
   const animation = growAnimation
@@ -145,17 +145,17 @@ function endPressAnimation() {
   }, props.minimumPressDuration - pressAnimationPlayState)
 }
 
-function onPointerEnter(event: PointerEvent) {
+const onPointerEnter = (event: PointerEvent) => {
   if (shouldReactToEvent(event)) hovered.value = true
 }
 
-function onPointerLeave(event: PointerEvent) {
+const onPointerLeave = (event: PointerEvent) => {
   if (!shouldReactToEvent(event)) return
   hovered.value = false
   if (state !== State.Inactive) endPressAnimation()
 }
 
-function onPointerUp(event: PointerEvent) {
+const onPointerUp = (event: PointerEvent) => {
   if (!shouldReactToEvent(event)) return
   if (state === State.Holding) {
     state = State.WaitingForClick
@@ -167,7 +167,7 @@ function onPointerUp(event: PointerEvent) {
   }
 }
 
-function onPointerDown(event: PointerEvent) {
+const onPointerDown = (event: PointerEvent) => {
   if (!shouldReactToEvent(event)) return
   rippleStartEvent = event
   if (!isTouch(event)) {
@@ -185,7 +185,7 @@ function onPointerDown(event: PointerEvent) {
   }, props.touchDelay)
 }
 
-function onClick() {
+const onClick = () => {
   if (props.disabled) return
   if (state === State.WaitingForClick) {
     endPressAnimation()
@@ -197,11 +197,11 @@ function onClick() {
   }
 }
 
-function onPointerCancel(event: PointerEvent) {
+const onPointerCancel = (event: PointerEvent) => {
   if (shouldReactToEvent(event)) endPressAnimation()
 }
 
-function onContextMenu() {
+const onContextMenu = () => {
   if (props.disabled) return
   checkBoundsAfterContextMenu = true
   endPressAnimation()

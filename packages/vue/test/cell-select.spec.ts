@@ -118,7 +118,7 @@ describe('CellSelect', () => {
     wrapper.unmount()
   })
 
-  async function openWithKeyboard(props: Record<string, unknown> = {}) {
+  const openWithKeyboard = async (props: Record<string, unknown> = {}) => {
     const wrapper = mount(CellSelect, {
       props: { items, label: 'Theme', defaultValue: 'dark', ...props },
       attachTo: document.body,

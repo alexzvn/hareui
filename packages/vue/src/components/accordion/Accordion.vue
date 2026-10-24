@@ -176,7 +176,7 @@ const { isExpanded, setExpanded } = useExpandedValues(props, (value) =>
 const id = useId()
 const valueOf = (item: AccordionItem, index: number) => item.value ?? index
 const isItemDisabled = (item: AccordionItem) => props.disabled || !!item.disabled
-function toggle(item: AccordionItem, index: number) {
+const toggle = (item: AccordionItem, index: number) => {
   if (isItemDisabled(item)) return
   const value = valueOf(item, index)
   setExpanded(value, !isExpanded(value))
@@ -187,7 +187,7 @@ const CHEVRON_DOWN =
 
 // HeroUI's `Accordion.Indicator`: a single child element is cloned with the indicator classes
 // and state (React's `cloneElement`); anything else falls back to the default chevron.
-function renderIndicator(item: AccordionItem, index: number, open: boolean) {
+const renderIndicator = (item: AccordionItem, index: number, open: boolean) => {
   const shared = {
     class: ui.value.indicator({ class: props.ui?.indicator }),
     'data-slot': 'accordion-indicator',
@@ -227,7 +227,7 @@ const Indicator = (p: { item: AccordionItem; index: number; open: boolean }) =>
 // function refs are re-invoked (null, then the element) on every render, so registration is
 // keyed by element identity and cleaned up only when the element changes or on unmount.
 const panels = new Map<ExpandedValue, { el: HTMLElement; stop: () => void }>()
-function registerPanel(value: ExpandedValue, el: unknown) {
+const registerPanel = (value: ExpandedValue, el: unknown) => {
   if (!(el instanceof HTMLElement) || panels.get(value)?.el === el) return
   panels.get(value)?.stop()
   setPanelStatic(el, isExpanded(value))

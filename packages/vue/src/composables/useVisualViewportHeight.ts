@@ -7,11 +7,11 @@ import { onBeforeUnmount, onMounted, ref } from 'vue'
 const height = ref('100dvh')
 let subscribers = 0
 
-function update() {
+const update = () => {
   height.value = `${window.visualViewport?.height ?? window.innerHeight}px`
 }
 
-export function useVisualViewportHeight() {
+export const useVisualViewportHeight = () => {
   onMounted(() => {
     if (subscribers++ === 0) {
       // The viewport may have changed while nothing listened, so re-measure on (re)attach.

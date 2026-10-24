@@ -40,7 +40,7 @@ let running = false
 let dirty = false
 let unmounted = false
 
-async function highlight() {
+const highlight = async () => {
   if (running) {
     dirty = true
     return

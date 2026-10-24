@@ -16,7 +16,7 @@ export type DayRange<T extends DateValue = DateValue> = {
 }
 
 /** Orders two picks into a range, whichever was picked first. */
-export function makeRange<T extends DateValue>(a: T, b: T): DayRange<T> {
+export const makeRange = <T extends DateValue>(a: T, b: T): DayRange<T> => {
   return compareDay(a, b) <= 0 ? { start: a, end: b } : { start: b, end: a }
 }
 
@@ -24,12 +24,12 @@ export function makeRange<T extends DateValue>(a: T, b: T): DayRange<T> {
  * One edge of react-stately's `getAvailableRange`: the last available day before the first unavailable one in
  * direction `dir`, or `undefined` when no unavailable day is found within `span` of `from`.
  */
-export function edgeOfAvailableRun<T extends DateValue>(
+export const edgeOfAvailableRun = <T extends DateValue>(
   from: T,
   dir: 1 | -1,
   isUnavailable: (date: T) => boolean,
   span: DateDuration,
-): T | undefined {
+): T | undefined => {
   const limit = (dir < 0 ? from.subtract(span) : from.add(span)) as T
   let next = from.add({ days: dir }) as T
   while (
@@ -41,11 +41,11 @@ export function edgeOfAvailableRun<T extends DateValue>(
 }
 
 /** The run of available days around `anchor`; either side is `undefined` when unbounded within `span`. */
-export function availableRun<T extends DateValue>(
+export const availableRun = <T extends DateValue>(
   anchor: T,
   isUnavailable: (date: T) => boolean,
   span: DateDuration,
-): { start?: T; end?: T } {
+): { start?: T; end?: T } => {
   return {
     start: edgeOfAvailableRun(anchor, -1, isUnavailable, span),
     end: edgeOfAvailableRun(anchor, 1, isUnavailable, span),
@@ -53,11 +53,11 @@ export function availableRun<T extends DateValue>(
 }
 
 /** Narrows `[min, max]` to the available run (the tighter bound wins on each side). */
-export function boundsWithinRun(
+export const boundsWithinRun = (
   min: DateValue,
   max: DateValue,
   run: { start?: DateValue; end?: DateValue } | null,
-): { min: DateValue; max: DateValue } {
+): { min: DateValue; max: DateValue } => {
   return {
     min: run?.start && compareDay(run.start, min) > 0 ? run.start : min,
     max: run?.end && compareDay(run.end, max) < 0 ? run.end : max,
@@ -68,11 +68,11 @@ export function boundsWithinRun(
  * Reka's `maximumDays`: while anchored, days `maximumDays` or more away from the anchor (either side) are disabled.
  * `0`/`undefined` means no limit.
  */
-export function exceedsMaximumDays(
+export const exceedsMaximumDays = (
   date: DateValue,
   anchor: DateValue | null,
   maximumDays: number | undefined,
-): boolean {
+): boolean => {
   return !!maximumDays && !!anchor && Math.abs(compareDay(date, anchor)) >= maximumDays
 }
 
@@ -80,12 +80,12 @@ export function exceedsMaximumDays(
  * `useCalendarCell`'s selected rule: a day inside the highlighted range is never selected when disabled, and an
  * unavailable day only when the range is invalid (so an invalid committed range stays visibly selected end to end).
  */
-export function isDaySelectedInRange(state: {
+export const isDaySelectedInRange = (state: {
   inRange: boolean
   disabled: boolean
   unavailable: boolean
   invalid: boolean
-}): boolean {
+}): boolean => {
   return state.inRange && !state.disabled && (state.invalid || !state.unavailable)
 }
 
@@ -125,9 +125,9 @@ export type RangeSelection<T extends DateValue = DateValue> = {
   cancel: () => boolean
 }
 
-export function useRangeSelection<T extends DateValue = DateValue>(
+export const useRangeSelection = <T extends DateValue = DateValue>(
   options: UseRangeSelectionOptions<T>,
-): RangeSelection<T> {
+): RangeSelection<T> => {
   // `shallowRef<T | null>` returns a conditional type that stays deferred (and distributes) for a generic `T`, so
   // the ref is typed through its declared shape instead.
   const anchor = shallowRef(null) as ShallowRef<T | null>
@@ -150,14 +150,14 @@ export function useRangeSelection<T extends DateValue = DateValue>(
   const effectiveMin = computed(() => bounds.value.min)
   const effectiveMax = computed(() => bounds.value.max)
 
-  function isOutsideWindow(date: DateValue) {
+  const isOutsideWindow = (date: DateValue) => {
     return (
       compareDay(date, effectiveMin.value) < 0 ||
       compareDay(date, effectiveMax.value) > 0 ||
       exceedsMaximumDays(date, anchor.value, options.maximumDays?.())
     )
   }
-  function select(date: T) {
+  const select = (date: T) => {
     if (!anchor.value) {
       anchor.value = date
       options.onAnchor?.(date)
@@ -167,7 +167,7 @@ export function useRangeSelection<T extends DateValue = DateValue>(
     anchor.value = null
     options.onCommit(range)
   }
-  function cancel() {
+  const cancel = () => {
     if (!anchor.value) return false
     anchor.value = null
     return true

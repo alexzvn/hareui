@@ -96,7 +96,7 @@ const selectedUsers = computed(() =>
     .filter((user): user is User => !!user),
 )
 
-function onRemove(ids: string[]) {
+const onRemove = (ids: string[]) => {
   users.value = users.value.filter((user) => !ids.includes(user.id))
   selected.value = selected.value.filter((id) => !ids.includes(id))
 }

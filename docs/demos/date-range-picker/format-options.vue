@@ -137,7 +137,7 @@ const timeGranularity = computed(() =>
   granularity.value === 'day' ? undefined : granularity.value,
 )
 
-function defaultValueFor(g: Granularity): DateRangeValue {
+const defaultValueFor = (g: Granularity): DateRangeValue => {
   const tz = getLocalTimeZone()
   if (g === 'day') return { start: parseDate('2025-02-03'), end: parseDate('2025-02-10') }
   return {
@@ -147,7 +147,7 @@ function defaultValueFor(g: Granularity): DateRangeValue {
 }
 const value = shallowRef<DateRangeValue | null>(defaultValueFor(granularity.value))
 
-function onGranularityChange(next: string | number) {
+const onGranularityChange = (next: string | number) => {
   granularity.value = next as Granularity
   value.value = defaultValueFor(granularity.value)
 }
@@ -157,25 +157,25 @@ const dateFormatter = new DateFormatter('en-US', {
   month: 'short',
   year: 'numeric',
 })
-function formatRange(range: DateRangeValue) {
+const formatRange = (range: DateRangeValue) => {
   const tz = getLocalTimeZone()
   return dateFormatter.formatRange(range.start.toDate(tz), range.end.toDate(tz))
 }
 
 type WithTime = CalendarDateTime | ZonedDateTime
-function hasTime(v: DateValue | undefined): v is WithTime {
+const hasTime = (v: DateValue | undefined): v is WithTime => {
   return !!v && 'hour' in v
 }
-function timeOf(v: DateValue | undefined) {
+const timeOf = (v: DateValue | undefined) => {
   return hasTime(v) ? new Time(v.hour, v.minute, v.second) : undefined
 }
 // The calendar only edits the date and the time fields only edit the time; each merges onto the other.
-function withDate(picked: DateValue, current: DateValue | undefined): DateValue {
+const withDate = (picked: DateValue, current: DateValue | undefined): DateValue => {
   return hasTime(current)
     ? current.set({ year: picked.year, month: picked.month, day: picked.day })
     : picked
 }
-function withTime(time: TimeValue, current: DateValue): DateValue {
+const withTime = (time: TimeValue, current: DateValue): DateValue => {
   return hasTime(current)
     ? current.set({ hour: time.hour, minute: time.minute, second: time.second })
     : current

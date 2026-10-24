@@ -128,7 +128,7 @@ const fontById = computed(() => new Map(allFonts.value.map((font) => [font.id, f
 // The selected key is the fontFamily value (either a font ID or a CDN URL)
 const selectedKey = computed(() => variables.value.fontFamily)
 
-function handleDeleteCustomFont(fontUrl: string) {
+const handleDeleteCustomFont = (fontUrl: string) => {
   // Find the font by URL and remove it
   const font = props.customFonts.find((f) => f.url === fontUrl)
 
@@ -141,11 +141,11 @@ function handleDeleteCustomFont(fontUrl: string) {
   }
 }
 
-function fontStyle(label?: string) {
+const fontStyle = (label?: string) => {
   return { fontFamily: `"${label}", sans-serif` }
 }
 
-function onSelectionChange(selected: unknown) {
+const onSelectionChange = (selected: unknown) => {
   // `disallowEmptySelection`: clicking the selected item keeps it selected
   if (selected) {
     setVariable('fontFamily', String(selected))

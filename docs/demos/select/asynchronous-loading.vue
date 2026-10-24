@@ -29,7 +29,7 @@ const pokemon = ref<Pokemon[]>([])
 const loading = ref(false)
 let cursor: string | null = 'https://pokeapi.co/api/v2/pokemon'
 
-async function loadMore() {
+const loadMore = async () => {
   if (!cursor || loading.value) return
   loading.value = true
   try {

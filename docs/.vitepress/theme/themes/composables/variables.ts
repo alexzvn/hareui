@@ -82,7 +82,7 @@ export const search = shallowRef(
 if (typeof window !== 'undefined')
   window.addEventListener('popstate', () => (search.value = window.location.search.slice(1)))
 
-function parse(query: string): ThemeBuilderState {
+const parse = (query: string): ThemeBuilderState => {
   const params = new URLSearchParams(query)
   const state = {} as Record<string, unknown>
   for (const key of keys) {
@@ -93,7 +93,7 @@ function parse(query: string): ThemeBuilderState {
 }
 
 // Same minimal encoding as nuqs' `renderQueryString`, so URLs read like heroui.com's (`,` and `:` stay literal).
-function encodeValue(value: string) {
+const encodeValue = (value: string) => {
   return value
     .replace(/%/g, '%25')
     .replace(/\+/g, '%2B')
@@ -107,7 +107,7 @@ function encodeValue(value: string) {
     .replace(/>/g, '%3E')
 }
 
-export function renderQuery(params: URLSearchParams) {
+export const renderQuery = (params: URLSearchParams) => {
   return [...params]
     .map(([key, value]) => `${encodeURIComponent(key)}=${encodeValue(value)}`)
     .join('&')
@@ -116,7 +116,7 @@ export function renderQuery(params: URLSearchParams) {
 const state = computed(() => parse(search.value))
 
 /** Merges `update` into the URL (nuqs `setState` semantics) and pushes a history entry. */
-function setVariables(update: Partial<ThemeBuilderState>) {
+const setVariables = (update: Partial<ThemeBuilderState>) => {
   const params = new URLSearchParams(search.value)
   for (const key of keys) {
     if (!(key in update)) continue
@@ -136,11 +136,11 @@ function setVariables(update: Partial<ThemeBuilderState>) {
   )
 }
 
-export function useVariablesState() {
+export const useVariablesState = () => {
   return [state, setVariables] as const
 }
 
-export function useVariableSetter() {
+export const useVariableSetter = () => {
   const setVariable = <K extends keyof ThemeBuilderState>(
     variable: K,
     value: ThemeBuilderState[K],
@@ -148,7 +148,7 @@ export function useVariableSetter() {
   return { setVariable, variables: state }
 }
 
-export function useToggleLockedVariable(key: LockableThemeVariableKey) {
+export const useToggleLockedVariable = (key: LockableThemeVariableKey) => {
   const isLocked = computed(() => state.value.lockedVariables.includes(key))
   const toggleLockedVariable = () => {
     const { lockedVariables } = state.value
@@ -162,7 +162,7 @@ export function useToggleLockedVariable(key: LockableThemeVariableKey) {
   return { isLocked, toggleLockedVariable }
 }
 
-export function useRandomizeVariables() {
+export const useRandomizeVariables = () => {
   return () => {
     const variables = state.value
     const randomPick = <T>(arr: T[]): T => arr[Math.floor(Math.random() * arr.length)] as T
@@ -182,6 +182,6 @@ export function useRandomizeVariables() {
   }
 }
 
-export function useResetVariables() {
+export const useResetVariables = () => {
   return () => setVariables({ ...defaultThemeVariables, lockedVariables: [] })
 }

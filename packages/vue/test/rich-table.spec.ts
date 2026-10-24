@@ -16,11 +16,11 @@ import { expectAccessible } from './a11y'
 
 // `mount` cannot infer a generic SFC's type parameter (it resolves `T` to `unknown`): this checks the props against
 // `RichTableProps<T>` with `T` inferred from `data`; the `v-model` props (`sorting`, `rowSelection`...) go through the index signature.
-function mountTable<T extends RichTableData>(options: {
+const mountTable = <T extends RichTableData>(options: {
   props: RichTableProps<T> & Record<string, unknown>
   slots?: Record<string, string>
   attachTo?: Element
-}): VueWrapper {
+}): VueWrapper => {
   return mount(RichTable as unknown as Parameters<typeof mount>[0], options) as VueWrapper
 }
 
@@ -51,15 +51,15 @@ const columns: RichTableColumn<Person>[] = [
   { accessorKey: 'role', header: 'Role' },
 ]
 
-function tableApiOf(wrapper: VueWrapper) {
+const tableApiOf = (wrapper: VueWrapper) => {
   return (wrapper.vm as unknown as { tableApi: RichTableApi<Person> }).tableApi
 }
 
-function bodyRows(wrapper: VueWrapper) {
+const bodyRows = (wrapper: VueWrapper) => {
   return wrapper.findAll('[data-slot="rich-table-row"]')
 }
 
-function names(wrapper: VueWrapper) {
+const names = (wrapper: VueWrapper) => {
   return bodyRows(wrapper).map((row) => row.findAll('td')[0]!.text())
 }
 

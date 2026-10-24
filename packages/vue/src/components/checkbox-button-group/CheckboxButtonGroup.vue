@@ -181,7 +181,7 @@ provide(checkboxButtonGroupContextKey, {
   uiOverrides: toRef(() => props.ui),
 })
 
-function onUpdate(value: string[]) {
+const onUpdate = (value: string[]) => {
   if (props.readonly) return
   modelValue.value = value
   commitValidation()

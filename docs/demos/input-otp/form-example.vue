@@ -37,7 +37,7 @@ const value = ref('')
 const error = ref('')
 const isSubmitting = ref(false)
 
-function handleSubmit(e: Event) {
+const handleSubmit = (e: Event) => {
   e.preventDefault()
   error.value = ''
 

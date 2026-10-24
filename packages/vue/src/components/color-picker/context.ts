@@ -16,6 +16,6 @@ export type ColorPickerContext = {
 export const ColorPickerContextKey: InjectionKey<ColorPickerContext> = Symbol('hareui.ColorPicker')
 
 /** The enclosing ColorPicker's colour state, or `undefined` outside a ColorPicker. */
-export function useColorPickerContext(): ColorPickerContext | undefined {
+export const useColorPickerContext = (): ColorPickerContext | undefined => {
   return inject(ColorPickerContextKey, undefined)
 }

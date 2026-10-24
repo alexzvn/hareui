@@ -39,7 +39,7 @@ const data = [
   { date: 'Sep 10', email: 129, chat: 247, phone: 70, social: 29, solved: 83 },
 ]
 
-function formatPercent(value: number | string) {
+const formatPercent = (value: number | string) => {
   return `${value}%`
 }
 

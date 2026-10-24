@@ -103,7 +103,7 @@ import { ref } from 'vue'
 
 const closedHistory = ref<Array<{ message: string; time: string }>>([])
 
-function addToHistory(message: string) {
+const addToHistory = (message: string) => {
   const time = new Date().toLocaleTimeString()
   closedHistory.value = [{ message, time }, ...closedHistory.value].slice(0, 5)
 }

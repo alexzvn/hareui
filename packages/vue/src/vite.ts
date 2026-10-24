@@ -29,7 +29,7 @@ export type HareUIPluginOptions = {
 
 const components = new Map(Object.entries(componentNames))
 
-function pascalCase(value: string): string {
+const pascalCase = (value: string): string => {
   return value
     .split(/[-_]/)
     .map((part) => part.charAt(0).toUpperCase() + part.slice(1))
@@ -40,7 +40,7 @@ function pascalCase(value: string): string {
  * unplugin-vue-components resolver for HareUI components, for setups that register unplugin-vue-components themselves.
  * Chart components resolve to `@hareui/vue/charts`.
  */
-export function HareUIResolver(options: HareUIResolverOptions = {}): ComponentResolver {
+export const HareUIResolver = (options: HareUIResolverOptions = {}): ComponentResolver => {
   const prefix = pascalCase(options.prefix ?? '')
   return {
     type: 'component',
@@ -54,7 +54,7 @@ export function HareUIResolver(options: HareUIResolverOptions = {}): ComponentRe
 }
 
 /** Vite plugin: auto-imports HareUI components (optionally prefixed) and applies app-wide theme overrides. */
-export function hareui(options: HareUIPluginOptions = {}): Plugin[] {
+export const hareui = (options: HareUIPluginOptions = {}): Plugin[] => {
   const plugins: Plugin[] = []
   const { ui } = options
   if (ui) {

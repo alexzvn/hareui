@@ -21,7 +21,7 @@ export type HareUIConfig = {
 export const hareUIConfigKey: InjectionKey<HareUIConfig> = Symbol('hareui-config')
 
 /** Vue plugin providing app-level HareUI configuration. Optional. */
-export function createHareUI(config: HareUIConfig = {}): Plugin {
+export const createHareUI = (config: HareUIConfig = {}): Plugin => {
   return {
     install(app) {
       // A proxied element is not a DOM Node, so Teleport could not insert into it.

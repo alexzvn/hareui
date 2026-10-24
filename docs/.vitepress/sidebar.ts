@@ -98,20 +98,20 @@ export const sidebar: SidebarSection[] = [
   },
 ]
 
-export function isSeparator(entry: SidebarEntry): entry is SidebarSeparator {
+export const isSeparator = (entry: SidebarEntry): entry is SidebarSeparator => {
   return 'separator' in entry
 }
 
-export function isGroup(entry: SidebarEntry): entry is SidebarGroup {
+export const isGroup = (entry: SidebarEntry): entry is SidebarGroup => {
   return 'group' in entry
 }
 
-export function sectionLinks(section: SidebarSection): SidebarLink[] {
+export const sectionLinks = (section: SidebarSection): SidebarLink[] => {
   return section.items.flatMap((entry) =>
     isSeparator(entry) ? [] : isGroup(entry) ? entry.items : [entry],
   )
 }
-export function normalizePath(path: string): string {
+export const normalizePath = (path: string): string => {
   const p = path
     .replace(/[?#].*$/, '')
     .replace(/\.html$/, '')

@@ -35,9 +35,9 @@ const bezierPoints: Record<ChartEasing, [number, number, number, number]> = {
 }
 
 /** CSS `cubic-bezier()` timing function evaluated at `t` (0–1). */
-export function cubicBezier([x1, y1, x2, y2]: [number, number, number, number]): (
+export const cubicBezier = ([x1, y1, x2, y2]: [number, number, number, number]): ((
   t: number,
-) => number {
+) => number) => {
   const curve = (a: number, b: number) => (t: number) =>
     3 * a * (1 - t) ** 2 * t + 3 * b * (1 - t) * t ** 2 + t ** 3
   const x = curve(x1, x2)
@@ -65,7 +65,7 @@ export const easings: Record<ChartEasing, (t: number) => number> = Object.fromEn
 let reducedMotionSource: typeof window.matchMedia | undefined
 let reducedMotionQuery: MediaQueryList | undefined
 
-export function prefersReducedMotion(): boolean {
+export const prefersReducedMotion = (): boolean => {
   if (typeof window === 'undefined' || typeof window.matchMedia !== 'function') return false
   if (reducedMotionSource !== window.matchMedia || !reducedMotionQuery) {
     reducedMotionSource = window.matchMedia
@@ -87,12 +87,12 @@ export type ChartTween<T> = {
  * Tweens a series' geometry: on mount from `null` (the series decides how it enters), and from the
  * currently drawn geometry whenever `key` changes (new data or series props). Size changes alone jump.
  */
-export function useChartTween<T>(
+export const useChartTween = <T>(
   target: () => T,
   interpolate: (from: T | null, to: T, t: number) => T,
   key: WatchSource,
   options: () => ChartAnimationProps,
-): ChartTween<T> {
+): ChartTween<T> => {
   const progress = ref(1)
   const entering = ref(false)
   const from = shallowRef<T | null>(null)
@@ -108,14 +108,14 @@ export function useChartTween<T>(
     return drawn
   })
 
-  function stop() {
+  const stop = () => {
     if (frame) cancelAnimationFrame(frame)
     clearTimeout(timer)
     frame = 0
     timer = undefined
   }
 
-  function start(initial: boolean) {
+  const start = (initial: boolean) => {
     const {
       isAnimationActive = true,
       animationBegin = 0,
@@ -164,6 +164,6 @@ export function useChartTween<T>(
 }
 
 /** Linear interpolation. */
-export function lerp(from: number, to: number, t: number): number {
+export const lerp = (from: number, to: number, t: number): number => {
   return from + (to - from) * t
 }

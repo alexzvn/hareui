@@ -50,7 +50,7 @@ const items = ref(all.slice(0, PAGE))
 const loading = ref(false)
 const hasMore = () => items.value.length < all.length
 
-function loadMore() {
+const loadMore = () => {
   if (loading.value || !hasMore()) return
   loading.value = true
   setTimeout(() => {

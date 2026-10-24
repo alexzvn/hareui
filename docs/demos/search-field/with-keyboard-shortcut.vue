@@ -27,7 +27,7 @@ const value = ref('')
 const field = useTemplateRef<{ $el: HTMLElement }>('field')
 const input = () => field.value?.$el.querySelector('input') ?? null
 
-function handleKeyDown(e: KeyboardEvent) {
+const handleKeyDown = (e: KeyboardEvent) => {
   // Check for Shift+S
   if (e.shiftKey && e.key === 'S' && !e.metaKey && !e.ctrlKey && !e.altKey) {
     e.preventDefault()

@@ -76,14 +76,14 @@ const assets = ref<ShopAsset[]>([
 ])
 let added = 0
 
-function statusOf(asset: ShopAsset): DropZoneFileStatus {
+const statusOf = (asset: ShopAsset): DropZoneFileStatus => {
   if (asset.lostConnection) return 'failed'
   return asset.sent >= asset.bytes ? 'complete' : 'uploading'
 }
 
 const live = computed(() => assets.value.filter((asset) => statusOf(asset) === 'complete').length)
 
-function addAssets(files: File[]) {
+const addAssets = (files: File[]) => {
   assets.value.push(
     ...files.map((file) => ({
       key: `asset-${added++}`,
@@ -96,13 +96,13 @@ function addAssets(files: File[]) {
   resume()
 }
 
-function resend(asset: ShopAsset) {
+const resend = (asset: ShopAsset) => {
   asset.lostConnection = false
   asset.sent = 0
   resume()
 }
 
-function removeAsset(key: string) {
+const removeAsset = (key: string) => {
   assets.value = assets.value.filter((asset) => asset.key !== key)
 }
 
@@ -111,7 +111,7 @@ const BYTES_PER_MS = (1.5 * 1024 * 1024) / 1000
 let frame = 0
 let lastTime = 0
 
-function pump(now: number) {
+const pump = (now: number) => {
   const sending = assets.value.filter((asset) => statusOf(asset) === 'uploading')
   if (!sending.length) {
     frame = 0
@@ -128,7 +128,7 @@ function pump(now: number) {
   frame = requestAnimationFrame(pump)
 }
 
-function resume() {
+const resume = () => {
   if (frame) return
   lastTime = performance.now()
   frame = requestAnimationFrame(pump)

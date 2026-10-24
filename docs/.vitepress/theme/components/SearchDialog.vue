@@ -220,13 +220,13 @@ watch(open, (isOpen) => {
 /* Inline markdown (`code`, **strong**) kept in the index by `searchRender`, rendered like fumadocs. */
 const CODE_CLASS = 'border rounded-md px-px bg-fd-secondary text-fd-secondary-foreground'
 
-function decodeEntities(text: string): string {
+const decodeEntities = (text: string): string => {
   const el = document.createElement('textarea')
   el.innerHTML = text
   return el.value
 }
 
-function escapeHtml(text: string): string {
+const escapeHtml = (text: string): string => {
   return text
     .replace(/&/g, '&amp;')
     .replace(/</g, '&lt;')
@@ -234,7 +234,7 @@ function escapeHtml(text: string): string {
     .replace(/"/g, '&quot;')
 }
 
-function escapeRegExp(text: string): string {
+const escapeRegExp = (text: string): string => {
   return text.replace(/[.*+?^${}()|[\]\\]/g, '\\$&')
 }
 
@@ -245,13 +245,13 @@ const termPattern = computed(() =>
     : undefined,
 )
 
-function highlight(escaped: string): string {
+const highlight = (escaped: string): string => {
   return termPattern.value
     ? escaped.replace(termPattern.value, '<span class="text-fd-primary underline">$1</span>')
     : escaped
 }
 
-function renderInline(markdown: string): string {
+const renderInline = (markdown: string): string => {
   return decodeEntities(markdown)
     .split(/(`[^`]+`)/)
     .map((part) => {
@@ -265,7 +265,7 @@ function renderInline(markdown: string): string {
     .join('')
 }
 
-function matches(text: string): boolean {
+const matches = (text: string): boolean => {
   const lower = decodeEntities(text).toLowerCase()
   return terms.value.some((term) => lower.includes(term))
 }
@@ -345,12 +345,12 @@ watch(
   { immediate: true },
 )
 
-function select(item: Item) {
+const select = (item: Item) => {
   open.value = false
   router.go(item.url)
 }
 
-function onKeydown(e: KeyboardEvent) {
+const onKeydown = (e: KeyboardEvent) => {
   const list = items.value
   if (!open.value || !list || e.isComposing) return
   if (e.key === 'ArrowDown' || e.key === 'ArrowUp') {
@@ -371,7 +371,7 @@ function onKeydown(e: KeyboardEvent) {
 }
 // The window listener is client-only: the watch is not immediate (it would run during SSR),
 // and onMounted covers a dialog that mounts already open.
-function listenKeys(isOpen: boolean) {
+const listenKeys = (isOpen: boolean) => {
   if (isOpen) window.addEventListener('keydown', onKeydown)
   else window.removeEventListener('keydown', onKeydown)
 }

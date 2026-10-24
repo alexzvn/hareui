@@ -33,7 +33,7 @@ const data = [
   { day: 'Sun', covers: 142, avgCheck: 38 },
 ]
 
-function formatCurrency(value: number | string) {
+const formatCurrency = (value: number | string) => {
   return `€${value}`
 }
 

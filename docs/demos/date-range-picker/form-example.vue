@@ -34,7 +34,7 @@ const isInvalid = computed(
     (value.value.start.compare(currentDate) < 0 || value.value.end.compare(value.value.start) < 0),
 )
 
-function handleSubmit(event: Event) {
+const handleSubmit = (event: Event) => {
   event.preventDefault()
   if (!value.value || isInvalid.value) return
 

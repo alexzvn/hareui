@@ -9,7 +9,7 @@ import { getLocalTimeZone, isToday } from '@internationalized/date'
 
 const datesWithEvents = [3, 7, 12, 15, 21, 28]
 
-function indicator(date: DateValue) {
+const indicator = (date: DateValue) => {
   return isToday(date, getLocalTimeZone()) || datesWithEvents.includes(date.day)
 }
 </script>

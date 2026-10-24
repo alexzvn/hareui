@@ -6,7 +6,7 @@ const svg = (name: 'copy' | 'check') =>
 const COPY_ICON = svg('copy')
 const CHECK_ICON = svg('check')
 
-export function flashCopied(button: HTMLElement) {
+export const flashCopied = (button: HTMLElement) => {
   button.setAttribute('aria-label', 'Copied Text')
   button.innerHTML = CHECK_ICON
   window.setTimeout(() => {
@@ -15,13 +15,13 @@ export function flashCopied(button: HTMLElement) {
   }, 1500)
 }
 
-function codeText(figure: Element): string {
+const codeText = (figure: Element): string => {
   const lines = figure.querySelectorAll('pre code > .line')
   if (lines.length === 0) return figure.querySelector('pre')?.textContent ?? ''
   return Array.from(lines, (line) => line.textContent ?? '').join('\n')
 }
 
-function selectTab(trigger: HTMLElement) {
+const selectTab = (trigger: HTMLElement) => {
   const tabs = trigger.closest('[data-fd-tabs]')
   if (!tabs) return
   for (const t of tabs.querySelectorAll<HTMLElement>(':scope > [role=tablist] > [role=tab]')) {
@@ -34,7 +34,7 @@ function selectTab(trigger: HTMLElement) {
   }
 }
 
-function onClick(event: MouseEvent) {
+const onClick = (event: MouseEvent) => {
   const target = event.target as Element | null
   const copy = target?.closest<HTMLElement>('[data-copy-code]')
   if (copy) {
@@ -52,7 +52,7 @@ function onClick(event: MouseEvent) {
   if (tab) selectTab(tab)
 }
 
-export function useDocInteractions() {
+export const useDocInteractions = () => {
   onMounted(() => document.addEventListener('click', onClick))
   onBeforeUnmount(() => document.removeEventListener('click', onClick))
 }

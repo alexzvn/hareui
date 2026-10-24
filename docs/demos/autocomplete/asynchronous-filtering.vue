@@ -41,7 +41,7 @@ const characters = ref<Character[]>([])
 const isLoading = ref(false)
 let controller: AbortController | undefined
 
-async function load(text: string) {
+const load = async (text: string) => {
   controller?.abort()
   controller = new AbortController()
   isLoading.value = true

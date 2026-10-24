@@ -20,7 +20,7 @@ const popover = () => document.body.querySelector('[data-slot=color-picker-popov
 const valueText = () =>
   document.body.querySelector('[data-slot=cell-color-picker-value-display]')!.textContent!.trim()
 const settle = () => new Promise((resolve) => setTimeout(resolve, 30))
-async function open() {
+const open = async () => {
   trigger().click()
   await nextTick()
   await settle()

@@ -90,7 +90,7 @@ const items = computed(() =>
   })),
 )
 
-function onSelectionChange(selected: unknown) {
+const onSelectionChange = (selected: unknown) => {
   // `disallowEmptySelection`: clicking the selected item keeps it selected
   if (selected) setVariable(props.variableKey, String(selected) as RadiusId)
 }

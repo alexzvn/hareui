@@ -8,17 +8,17 @@ import { DateFormatter, getLocalTimeZone } from '@internationalized/date'
  * "<Month> <Year>" label, so this formats it directly from that panel's `Grid.value`, using the
  * resolved `locale` exposed on `CalendarRoot`/`RangeCalendarRoot`'s default slot.
  */
-export function formatPanelHeading(locale: string | undefined, panelValue: DateValue): string {
+export const formatPanelHeading = (locale: string | undefined, panelValue: DateValue): string => {
   return new DateFormatter(locale ?? 'en-US', { month: 'long', year: 'numeric' }).format(
     panelValue.toDate(getLocalTimeZone()),
   )
 }
 
 /** React Aria's `useCalendarGrid` label: the calendar's own `aria-label` followed by the month the grid shows. */
-export function formatGridLabel(
+export const formatGridLabel = (
   ariaLabel: string | undefined,
   locale: string | undefined,
   panelValue: DateValue,
-): string {
+): string => {
   return [ariaLabel, formatPanelHeading(locale, panelValue)].filter(Boolean).join(', ')
 }

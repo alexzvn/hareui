@@ -235,11 +235,11 @@ const isEmpty = computed(() => !modelValue.value)
 
 const focusWithin = ref(false)
 const focusVisible = ref(false)
-function onFocusIn(event: FocusEvent) {
+const onFocusIn = (event: FocusEvent) => {
   focusWithin.value = true
   focusVisible.value = event.target instanceof Element && event.target.matches(':focus-visible')
 }
-function onFocusOut(event: FocusEvent) {
+const onFocusOut = (event: FocusEvent) => {
   if (
     event.currentTarget instanceof Element &&
     event.relatedTarget instanceof Node &&
@@ -253,21 +253,21 @@ function onFocusOut(event: FocusEvent) {
 // Kept for backward compatibility with native form submission, matching RAC's useSearchField: Enter submits via
 // the `submit` event instead of letting the browser submit the surrounding form. Disabled or readonly fields
 // still swallow Enter but don't submit.
-function onEnter(event: KeyboardEvent) {
+const onEnter = (event: KeyboardEvent) => {
   event.preventDefault()
   if (disabled.value || props.readonly) return
   emit('submit', modelValue.value ?? '')
 }
 // Matches RAC: Escape clears the field and stops there (an enclosing dialog stays open), but does nothing and lets
 // the key through when the field is already empty, disabled or readonly.
-function onEscape(event: KeyboardEvent) {
+const onEscape = (event: KeyboardEvent) => {
   if (disabled.value || props.readonly || !modelValue.value) return
   event.preventDefault()
   event.stopPropagation()
   modelValue.value = ''
   emit('clear')
 }
-function onClear() {
+const onClear = () => {
   // RAC focuses the input before the click reaches the button, so it never leaves the input
   input.value?.focus()
   modelValue.value = ''

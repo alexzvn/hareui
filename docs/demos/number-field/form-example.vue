@@ -33,7 +33,7 @@ const value = ref<number | null>()
 const isSubmitting = ref(false)
 const isOutOfStock = computed(() => value.value != null && value.value > STOCK_AVAILABLE)
 
-function handleSubmit(e: Event) {
+const handleSubmit = (e: Event) => {
   e.preventDefault()
   if (value.value == null || value.value < 1 || value.value > STOCK_AVAILABLE) return
   isSubmitting.value = true

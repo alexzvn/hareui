@@ -22,7 +22,7 @@ import { shallowRef } from 'vue'
 
 const value = shallowRef<TimeValue | null>(null)
 
-function setNow() {
+const setNow = () => {
   const currentTime = now(getLocalTimeZone())
   value.value = new Time(currentTime.hour, currentTime.minute, currentTime.second)
 }

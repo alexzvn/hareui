@@ -11,7 +11,7 @@ const thumbs = (w: ReturnType<typeof mount>) => w.findAll('[data-slot=slider-thu
 const output = (w: ReturnType<typeof mount>) => w.get('[data-slot=slider-output]').text()
 const track = (w: ReturnType<typeof mount>) => w.get('[data-slot=slider-track]')
 // accessible name computation: aria-labelledby wins over aria-label
-function accessibleName(el: Element) {
+const accessibleName = (el: Element) => {
   const labelledBy = (el.getAttribute('aria-labelledby') ?? '')
     .split(/\s+/)
     .map((id) => document.getElementById(id)?.textContent ?? '')

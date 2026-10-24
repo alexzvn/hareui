@@ -82,7 +82,7 @@ const presets: ColorSwatchPickerItem[] = [
   '#f43f5e',
 ]
 
-function shuffleColor() {
+const shuffleColor = () => {
   const h = Math.floor(Math.random() * 360)
   const s = 50 + Math.floor(Math.random() * 50)
   const l = 40 + Math.floor(Math.random() * 30)

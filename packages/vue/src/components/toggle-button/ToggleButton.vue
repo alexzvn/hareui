@@ -137,7 +137,7 @@ const selected = computed(() =>
 )
 const isDisabled = useFieldsetDisabled(() => props.disabled || group?.disabled.value || undefined)
 
-function onUpdate(value: boolean) {
+const onUpdate = (value: boolean) => {
   if (group) {
     if (props.value !== undefined) group.toggle(props.value)
     return

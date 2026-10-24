@@ -20,7 +20,7 @@ const placementQueues: Record<Placement, ToastQueue> = Object.fromEntries(
   placements.map((p) => [p, new ToastQueue({ maxVisibleToasts: 3 })]),
 ) as Record<Placement, ToastQueue>
 
-function showToast(placement: Placement) {
+const showToast = (placement: Placement) => {
   placementQueues[placement].add({
     title: 'Event created',
     description: 'Event has been created',

@@ -9,7 +9,7 @@ import DashboardSidebar from '@/components/dashboard-sidebar/DashboardSidebar.vu
 import { expectAccessible } from './a11y'
 
 /** Clicks like a user, past the millisecond Vue attached the listener in (it drops a click fired within it). */
-async function click(el: HTMLElement) {
+const click = async (el: HTMLElement) => {
   const { promise, resolve } = Promise.withResolvers<void>()
   setTimeout(resolve, 2)
   await promise
@@ -20,7 +20,7 @@ async function click(el: HTMLElement) {
 const button = (side: 'left' | 'right' = 'left') =>
   document.querySelector<HTMLButtonElement>(`[data-testid=collapse-${side}]`)!
 
-function mountDashboard(collapseProps: Record<string, unknown> = {}) {
+const mountDashboard = (collapseProps: Record<string, unknown> = {}) => {
   return mount(DashboardGroup, {
     props: { persistent: false },
     slots: {

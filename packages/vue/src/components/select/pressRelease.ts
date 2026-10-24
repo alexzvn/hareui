@@ -7,7 +7,7 @@ const optionAt = (target: EventTarget | null) =>
     ? target.closest<HTMLElement>('[role=option]:not([data-disabled])')
     : null
 
-export function usePressRelease() {
+export const usePressRelease = () => {
   let pressed: HTMLElement | null = null
   return {
     onPointerdown(event: PointerEvent) {

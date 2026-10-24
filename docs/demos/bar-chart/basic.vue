@@ -45,7 +45,7 @@ const data = [
 
 const series = { loaves: { name: 'Loaves', color: 'var(--accent)' } }
 
-function formatValue(value: number | string) {
+const formatValue = (value: number | string) => {
   return `${value} loaves`
 }
 </script>

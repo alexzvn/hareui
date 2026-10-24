@@ -219,12 +219,12 @@ const root = useTemplateRef<ComponentPublicInstance>('root')
 // combined with `validate`'s own errors the same way RAC's `mergeValidation` does (custom error wins when both
 // apply); Reka only tracks this internally per-segment (unreachable from outside), so it's computed here instead
 // and fed into `validate` so it follows `validationBehavior` like any other error.
-function formatDateBoundary(value: DateValue) {
+const formatDateBoundary = (value: DateValue) => {
   return new DateFormatter(props.locale ?? 'en-US', { dateStyle: 'medium' }).format(
     value.toDate(getLocalTimeZone()),
   )
 }
-function builtinValidate(value: DateValue) {
+const builtinValidate = (value: DateValue) => {
   if (props.minValue && value.compare(props.minValue) < 0)
     return `Value must be ${formatDateBoundary(props.minValue)} or later.`
   if (props.maxValue && value.compare(props.maxValue) > 0)
@@ -232,7 +232,7 @@ function builtinValidate(value: DateValue) {
   if (props.isDateUnavailable?.(value)) return 'Selected date unavailable.'
   return undefined
 }
-function validate(value: DateValue) {
+const validate = (value: DateValue) => {
   const custom = props.validate?.(value)
   return custom && custom !== true ? custom : builtinValidate(value)
 }
@@ -253,7 +253,7 @@ const { validation, commitValidation } = useFieldValidation({
 })
 const invalid = computed(() => props.invalid ?? validation.value.isInvalid)
 
-function onUpdate(value: DateValue | undefined) {
+const onUpdate = (value: DateValue | undefined) => {
   modelValue.value = value
   // No real `change` event bubbles from Reka's hidden mirror input while typing segments
   commitValidation()

@@ -3,7 +3,7 @@ import { defineComponent, getCurrentInstance, h } from 'vue'
 
 import type { NavigationMenuChildItem, NavigationMenuItem } from './NavigationMenu.vue'
 
-function defined(attrs: Record<string, unknown>): Record<string, unknown> {
+const defined = (attrs: Record<string, unknown>): Record<string, unknown> => {
   return Object.fromEntries(Object.entries(attrs).filter(([, value]) => value !== undefined))
 }
 

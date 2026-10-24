@@ -63,7 +63,7 @@ export type ToastFunction = {
   getQueue: () => ToastQueue<ToastContentValue>
 }
 
-function createToastFunction(queue: ToastQueue<ToastContentValue>): ToastFunction {
+const createToastFunction = (queue: ToastQueue<ToastContentValue>): ToastFunction => {
   const createContent = (message: VNodeChild, options?: ToastOptions): ToastContentValue => ({
     title: message,
     description: options?.description,
@@ -159,6 +159,6 @@ export const toast: ToastFunction = createToastFunction(toastQueue)
  * other Vue libraries; `toast` itself is also exported directly and is
  * equivalent, since toast state lives outside any component instance.
  */
-export function useToast(): ToastFunction {
+export const useToast = (): ToastFunction => {
   return toast
 }

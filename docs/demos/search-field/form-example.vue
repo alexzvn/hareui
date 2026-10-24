@@ -36,7 +36,7 @@ const isSubmitting = ref(false)
 const MIN_LENGTH = 3
 const isInvalid = computed(() => value.value.length > 0 && value.value.length < MIN_LENGTH)
 
-function handleSubmit(e: Event) {
+const handleSubmit = (e: Event) => {
   e.preventDefault()
   if (value.value.length < MIN_LENGTH) return
   isSubmitting.value = true

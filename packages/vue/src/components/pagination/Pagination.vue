@@ -222,7 +222,7 @@ const ui = useComponentUI('pagination', theme, () => ({ size: props.size }))
 
 const uncontrolled = ref(props.defaultPage)
 const current = computed(() => props.page ?? uncontrolled.value)
-function go(page: number) {
+const go = (page: number) => {
   if (props.disabled || page < 1 || page > props.total || page === current.value) return
   uncontrolled.value = page
   emit('update:page', page)

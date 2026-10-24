@@ -89,7 +89,7 @@ export type ChartSeriesPoint = {
 export const DEFAULT_SERIES_COLOR = 'var(--chart-3)'
 
 /** Indicator color of a series: the stroke unless it is `none`, else the fill. */
-export function seriesColor(stroke: string | undefined, fill: string | undefined): string {
+export const seriesColor = (stroke: string | undefined, fill: string | undefined): string => {
   return stroke && stroke !== 'none' ? stroke : (fill ?? DEFAULT_SERIES_COLOR)
 }
 
@@ -112,16 +112,16 @@ export type PointSeries = {
 }
 
 /** The root's resolved `series` entry for a key, when the root has `index` / `series` props. */
-export function useRootSeries(chart: ChartContext, dataKey: () => string) {
+export const useRootSeries = (chart: ChartContext, dataKey: () => string) => {
   const config = useChartConfig(chart)
   return computed(() => config.series(dataKey()))
 }
 
-function interpolatePoints(
+const interpolatePoints = (
   from: (ChartSeriesPoint | null)[] | null,
   to: (ChartSeriesPoint | null)[],
   t: number,
-) {
+) => {
   if (!from || !from.length) return to
   return to.map((point, index) => {
     if (!point) return null
@@ -139,7 +139,7 @@ function interpolatePoints(
 }
 
 /** Registers an area or line series and computes its animated points. Call in the series' setup. */
-export function usePointSeries(
+export const usePointSeries = (
   kind: 'area' | 'line',
   props: ChartCurveSeriesProps & {
     stackId?: string | number
@@ -147,7 +147,7 @@ export function usePointSeries(
     baseValue?: number | 'dataMin' | 'dataMax'
   },
   colors: () => { stroke?: string; fill?: string },
-): PointSeries {
+): PointSeries => {
   const chart = useChartContext(kind === 'area' ? 'ChartArea' : 'ChartLine')
   const cartesian = useCartesianContext(kind === 'area' ? 'ChartArea' : 'ChartLine')
   const id = useId(undefined, `hareui-chart-${kind}`)
@@ -274,10 +274,10 @@ export function usePointSeries(
 }
 
 /** Normalizes a `dot` / `activeDot` prop into circle attributes, or `null` when disabled. */
-export function dotAttrs(
+export const dotAttrs = (
   option: boolean | ChartDotProps | undefined,
   defaults: Required<Omit<ChartDotProps, 'class'>>,
-): (Required<Omit<ChartDotProps, 'class'>> & { class?: ClassValue }) | null {
+): (Required<Omit<ChartDotProps, 'class'>> & { class?: ClassValue }) | null => {
   if (!option) return null
   return option === true ? defaults : { ...defaults, ...option }
 }

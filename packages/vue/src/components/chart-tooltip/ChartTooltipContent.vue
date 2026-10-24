@@ -101,7 +101,7 @@ const headerText = computed(() => {
   return props.labelFormatter ? props.labelFormatter(props.label) : String(props.label)
 })
 
-function formatValue(entry: ChartTooltipContentEntry) {
+const formatValue = (entry: ChartTooltipContentEntry) => {
   const value = entry.value
   if (value === undefined || value === null) return ''
   if (props.valueFormatter) return props.valueFormatter(value, entry)

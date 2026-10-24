@@ -203,15 +203,15 @@ const rows = computed<ChartLegendItem[]>(() => {
   return []
 })
 
-function formatValue(value: number, key: string) {
+const formatValue = (value: number, key: string) => {
   return props.valueFormatter ? props.valueFormatter(value, key) : value.toLocaleString()
 }
 
-function formatPercent(percent: number) {
+const formatPercent = (percent: number) => {
   return props.percentFormatter ? props.percentFormatter(percent) : `${Math.round(percent)}%`
 }
 
-function toggle(key: string) {
+const toggle = (key: string) => {
   hidden.value = toggleHiddenKey(hidden.value, key)
 }
 </script>

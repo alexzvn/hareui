@@ -39,7 +39,7 @@ const data = [
 
 const series = { lisbon: { name: 'Lisbon' }, oslo: { name: 'Oslo' } }
 
-function formatDegrees(value: number) {
+const formatDegrees = (value: number) => {
   return `${value}°C`
 }
 </script>

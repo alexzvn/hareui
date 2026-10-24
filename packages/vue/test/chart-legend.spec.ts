@@ -12,7 +12,7 @@ const devices = [
   { name: 'Tablet', value: 100 },
 ]
 
-function rows(wrapper: ReturnType<typeof mount>) {
+const rows = (wrapper: ReturnType<typeof mount>) => {
   return wrapper.findAll('[data-slot="chart-legend-item"]').map((row) => ({
     color: (row.get('[data-slot="chart-legend-indicator"]').element as HTMLElement).style
       .backgroundColor,

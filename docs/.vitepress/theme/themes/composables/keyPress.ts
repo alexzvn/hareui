@@ -10,11 +10,11 @@ export type UseKeyPressOptions = {
   enabled?: MaybeRefOrGetter<boolean>
 }
 
-export function useKeyPress(
+export const useKeyPress = (
   key: string,
   callback: (event: KeyboardEvent) => void,
   options: UseKeyPressOptions = {},
-) {
+) => {
   const { alt = false, ctrl = false, enabled = true, shift = false } = options
 
   const onKeyDown = (event: KeyboardEvent) => {

@@ -84,12 +84,12 @@ type Session = {
 }
 let session: Session | null = null
 
-function onPointerDown(event: PointerEvent) {
+const onPointerDown = (event: PointerEvent) => {
   if (event.button !== 0 || (event.target as HTMLElement).closest(OWN_GESTURES)) return
   session = { startY: event.clientY, pointerId: event.pointerId, active: false, samples: [] }
 }
 
-function onPointerMove(event: PointerEvent) {
+const onPointerMove = (event: PointerEvent) => {
   if (!session || event.pointerId !== session.pointerId) return
   const offset = event.clientY - session.startY
   if (!session.active) {
@@ -105,7 +105,7 @@ function onPointerMove(event: PointerEvent) {
   session.samples = session.samples.filter((sample) => now - sample.t <= 100)
 }
 
-function onPointerEnd(event: PointerEvent) {
+const onPointerEnd = (event: PointerEvent) => {
   if (!session || event.pointerId !== session.pointerId) return
   const { active, samples, startY } = session
   session = null
@@ -124,7 +124,7 @@ function onPointerEnd(event: PointerEvent) {
 }
 
 // React Aria focuses the dialog itself on open (see HareUI's Modal).
-function onOpenAutoFocus(event: Event) {
+const onOpenAutoFocus = (event: Event) => {
   event.preventDefault()
   ;(event.target as HTMLElement | null)?.focus({ preventScroll: true })
 }

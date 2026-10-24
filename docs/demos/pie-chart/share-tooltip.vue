@@ -35,7 +35,7 @@ const data = [
 
 const total = data.reduce((sum, item) => sum + item.orders, 0)
 
-function formatShare(value: number) {
+const formatShare = (value: number) => {
   return `${((value / total) * 100).toFixed(1)}%`
 }
 </script>

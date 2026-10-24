@@ -24,7 +24,7 @@ export const isSelectAllKey = (event: KeyboardEvent) =>
  * TagGroup and Table: an anchor for Shift ranges, select-all and clear. Focus movement stays with each
  * component; it calls `extend` with the key focus moved to.
  */
-export function useSelectionManager<K>(options: SelectionManagerOptions<K>) {
+export const useSelectionManager = <K>(options: SelectionManagerOptions<K>) => {
   // RAC keeps the anchor and the range's moving end on the Selection object
   let anchor: K | undefined
   let current: K | undefined
@@ -34,7 +34,7 @@ export function useSelectionManager<K>(options: SelectionManagerOptions<K>) {
   const isSelected = (key: K) => options.selected().includes(key)
 
   /** Selectable keys from `a` to `b` inclusive, in collection order. */
-  function range(a: K, b: K): K[] {
+  const range = (a: K, b: K): K[] => {
     const keys = options.keys()
     let from = keys.indexOf(a)
     let to = keys.indexOf(b)
@@ -43,13 +43,13 @@ export function useSelectionManager<K>(options: SelectionManagerOptions<K>) {
     return keys.slice(from, to + 1).filter((key) => !options.isDisabled(key))
   }
 
-  function write(keys: K[]) {
+  const write = (keys: K[]) => {
     fromAll = false
     options.setSelected(keys)
   }
 
   /** Click / Space / Enter: toggles `key` (single mode replaces). Adding a key makes it the anchor. */
-  function toggle(key: K) {
+  const toggle = (key: K) => {
     const mode = options.mode()
     if (mode === 'none' || options.isDisabled(key)) return
     if (isSelected(key)) {
@@ -64,7 +64,7 @@ export function useSelectionManager<K>(options: SelectionManagerOptions<K>) {
    * Shift+click / Shift+navigation: selects the range from the anchor to `to`, replacing the range the anchor
    * last spanned. Without an anchor the range starts at `from` (the key focus left), else at `to` itself.
    */
-  function extend(to: K, from?: K) {
+  const extend = (to: K, from?: K) => {
     const mode = options.mode()
     if (mode === 'none' || options.isDisabled(to)) return
     if (mode === 'single') {
@@ -86,7 +86,7 @@ export function useSelectionManager<K>(options: SelectionManagerOptions<K>) {
   }
 
   /** Meta/Ctrl+A: every selectable key. Focus stays where it is. */
-  function selectAll() {
+  const selectAll = () => {
     if (options.mode() !== 'multiple') return false
     write(options.keys().filter((key) => !options.isDisabled(key)))
     anchor = current = undefined
@@ -95,7 +95,7 @@ export function useSelectionManager<K>(options: SelectionManagerOptions<K>) {
   }
 
   /** Escape: clears a non-empty selection (RAC `escapeKeyBehavior: 'clearSelection'`). */
-  function clear() {
+  const clear = () => {
     if (options.mode() === 'none' || options.keepOnEscape?.() || options.selected().length === 0)
       return false
     write([])
@@ -107,7 +107,7 @@ export function useSelectionManager<K>(options: SelectionManagerOptions<K>) {
    * Handles the selection shortcuts that don't move focus (Escape, Meta/Ctrl+A). Returns whether the event was
    * consumed; it is then default-prevented and stopped, as RAC does.
    */
-  function onKeydown(event: KeyboardEvent): boolean {
+  const onKeydown = (event: KeyboardEvent): boolean => {
     const handled = event.key === 'Escape' ? clear() : isSelectAllKey(event) ? selectAll() : false
     if (handled) {
       event.preventDefault()
@@ -117,7 +117,7 @@ export function useSelectionManager<K>(options: SelectionManagerOptions<K>) {
   }
 
   /** Records `key` as the anchor without changing the selection (e.g. a toggle made elsewhere). */
-  function setAnchor(key: K | undefined) {
+  const setAnchor = (key: K | undefined) => {
     anchor = current = key
     fromAll = false
   }

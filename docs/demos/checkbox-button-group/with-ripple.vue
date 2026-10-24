@@ -33,7 +33,7 @@ const PRESSED_OPACITY = '0.12'
 const MIN_PRESS_MS = 225
 
 // A clipping layer inside the card, so the card itself keeps `overflow: visible`.
-function layer(card: HTMLElement) {
+const layer = (card: HTMLElement) => {
   let root = card.querySelector<HTMLElement>(':scope > [data-ripple]')
   if (root) return root
   root = document.createElement('span')
@@ -59,11 +59,11 @@ function layer(card: HTMLElement) {
   return root
 }
 
-function setHover(card: HTMLElement, on: boolean) {
+const setHover = (card: HTMLElement, on: boolean) => {
   ;(layer(card).firstElementChild as HTMLElement).style.opacity = on ? HOVER_OPACITY : '0'
 }
 
-function press(card: HTMLElement, x: number, y: number) {
+const press = (card: HTMLElement, x: number, y: number) => {
   const { width, height } = card.getBoundingClientRect()
   const maxDim = Math.max(width, height)
   const size = Math.floor(maxDim * 0.2)
@@ -95,7 +95,7 @@ function press(card: HTMLElement, x: number, y: number) {
   requestAnimationFrame(() => (wave.style.opacity = PRESSED_OPACITY))
 }
 
-function release(card: HTMLElement) {
+const release = (card: HTMLElement) => {
   for (const wave of card.querySelectorAll<HTMLElement>(
     '[data-ripple] > [data-wave]:not([data-released])',
   )) {

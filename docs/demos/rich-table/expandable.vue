@@ -90,7 +90,7 @@ const dateTime = new Intl.DateTimeFormat('en-US', {
 const expanded = ref({ 0: true })
 
 // A ghost button whose muted chevron turns from right to down.
-function expandToggle(row: RichTableRow<Payment>) {
+const expandToggle = (row: RichTableRow<Payment>) => {
   const isExpanded = row.getIsExpanded()
   return h(
     Button,

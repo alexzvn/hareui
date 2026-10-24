@@ -13,22 +13,22 @@ export type ColumnSizeInput = {
   maxWidth?: ColumnWidth
 }
 
-function isStatic(width: ColumnWidth): boolean {
+const isStatic = (width: ColumnWidth): boolean => {
   return typeof width === 'number' || /^\d+(?:\.\d+)?%$/.test(width)
 }
 
-function staticWidth(width: ColumnWidth, tableWidth: number): number {
+const staticWidth = (width: ColumnWidth, tableWidth: number): number => {
   return typeof width === 'number' ? width : tableWidth * (Number.parseFloat(width) / 100)
 }
 
-function flexFactor(width: ColumnWidth): number {
+const flexFactor = (width: ColumnWidth): number => {
   if (typeof width === 'number') return 1
   const match = width.match(/^(.+)(?=fr$)/)
   return match ? Number.parseFloat(match[0]) : 1
 }
 
 /** Rounds floats summing to an integer into integers with the same sum. */
-function cascadeRounding(sizes: number[]): number[] {
+const cascadeRounding = (sizes: number[]): number[] => {
   let fpTotal = 0
   let intTotal = 0
   return sizes.map((size) => {
@@ -43,11 +43,11 @@ function cascadeRounding(sizes: number[]): number[] {
  * Resolves each column's pixel width for a table `availableWidth` wide. Widths default to
  * `'1fr'`, min widths to `defaultMinWidth`.
  */
-export function calculateColumnSizes(
+export const calculateColumnSizes = (
   availableWidth: number,
   columns: ColumnSizeInput[],
   defaultMinWidth = DEFAULT_MIN_COLUMN_WIDTH,
-): number[] {
+): number[] => {
   const flooredWidth = Math.floor(availableWidth)
   const fraction = availableWidth - flooredWidth
   availableWidth = flooredWidth

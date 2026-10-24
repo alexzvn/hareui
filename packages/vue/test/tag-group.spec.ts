@@ -206,7 +206,7 @@ describe('TagGroup', () => {
     })
 
     /** A TagGroup whose consumer removes the tags it is told to remove, as every real usage does. */
-    function mountRemovable(initial: typeof enabled) {
+    const mountRemovable = (initial: typeof enabled) => {
       const list = ref(initial)
       const removed: string[][] = []
       const w = mount(
@@ -271,7 +271,7 @@ describe('TagGroup', () => {
       w.unmount()
     })
 
-    function mountMultiple(defaultSelected: string[] = []) {
+    const mountMultiple = (defaultSelected: string[] = []) => {
       const w = mount(TagGroup, {
         props: { items, selectionMode: 'multiple', defaultSelected },
         attachTo: document.body,

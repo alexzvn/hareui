@@ -6,7 +6,7 @@ import ProgressBar from '@/components/progress-bar/ProgressBar.vue'
 
 import { expectAccessible } from './a11y'
 
-function slots(wrapper: ReturnType<typeof mount>) {
+const slots = (wrapper: ReturnType<typeof mount>) => {
   return wrapper.findAll('[data-slot]').map((el) => el.attributes('data-slot'))
 }
 

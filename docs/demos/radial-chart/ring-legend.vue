@@ -37,7 +37,7 @@ const data = [
 
 const spent = data.reduce((sum, item) => sum + item.spent, 0)
 
-function formatValue(value: number) {
+const formatValue = (value: number) => {
   return `$${value.toLocaleString()}`
 }
 

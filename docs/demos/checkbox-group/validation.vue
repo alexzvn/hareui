@@ -27,7 +27,7 @@ const items: CheckboxGroupItem[] = [
   { value: 'push', label: 'Push notifications' },
 ]
 
-function onSubmit(e: Event) {
+const onSubmit = (e: Event) => {
   e.preventDefault()
   const formData = new FormData(e.currentTarget as HTMLFormElement)
   const values = formData.getAll('preferences')

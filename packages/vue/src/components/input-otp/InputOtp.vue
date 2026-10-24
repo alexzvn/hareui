@@ -268,7 +268,7 @@ const inputMode = computed(() =>
   props.pattern === 'chars' || props.pattern === 'alphanumeric' ? 'text' : 'numeric',
 )
 
-function charAt(index: number) {
+const charAt = (index: number) => {
   return (modelValue.value ?? '')[index]
 }
 
@@ -289,7 +289,7 @@ let prevSelection: [number | null, number | null] = [null, null]
 // The `input-otp` library's selection model (its `selectionchange` listener): outside insert mode (caret at the
 // end of a partial value) a collapsed caret is widened to select the active slot's character, so typing replaces
 // it and Delete removes it. On a full field that is the last character.
-function syncSelection() {
+const syncSelection = () => {
   const el = input.value
   if (!el) return
   const value = el.value
@@ -333,26 +333,26 @@ function syncSelection() {
   prevSelection = [selStart.value, selEnd.value]
 }
 // The browser fires `selectionchange` for every caret move (arrow keys, clicks, typing), as the library listens to
-function onSelectionChange() {
+const onSelectionChange = () => {
   if (document.activeElement === input.value) syncSelection()
 }
 
-function isActive(index: number) {
+const isActive = (index: number) => {
   if (!isFocused.value || selStart.value === null || selEnd.value === null) return false
   if (selStart.value === selEnd.value) return index === Math.min(selStart.value, props.length - 1)
   return index >= selStart.value && index < selEnd.value
 }
-function hasFakeCaret(index: number) {
+const hasFakeCaret = (index: number) => {
   return isActive(index) && !charAt(index)
 }
 
-function commit(next: string) {
+const commit = (next: string) => {
   const previous = modelValue.value ?? ''
   modelValue.value = next
   if (next.length === props.length && previous.length < props.length) emit('complete', next)
 }
 
-function onFocus() {
+const onFocus = () => {
   isFocused.value = true
   if (box.value && box.value.offsetWidth >= PWM_BADGE_SPACE) pushPwmBadge.value = true
   const el = input.value
@@ -363,7 +363,7 @@ function onFocus() {
   }
   syncSelection()
 }
-function onBlur() {
+const onBlur = () => {
   isFocused.value = false
   selStart.value = null
   selEnd.value = null
@@ -372,7 +372,7 @@ function onBlur() {
 onMounted(() => document.addEventListener('selectionchange', onSelectionChange))
 onBeforeUnmount(() => document.removeEventListener('selectionchange', onSelectionChange))
 
-function onInput(event: Event) {
+const onInput = (event: Event) => {
   const el = event.target as HTMLInputElement
   const next = el.value.slice(0, props.length)
   if (next.length > 0 && patternRegex.value && !patternRegex.value.test(next)) {
@@ -389,7 +389,7 @@ function onInput(event: Event) {
   syncSelection()
 }
 
-function onPaste(event: ClipboardEvent) {
+const onPaste = (event: ClipboardEvent) => {
   if (disabled.value) return
   event.preventDefault()
   const el = input.value

@@ -104,7 +104,7 @@ import SwitchMode from './SwitchMode.vue'
 const { canRedo, canUndo, redo, undo } = useUndoRedo()
 const { isCodeVisible, toggleCode } = useCodePanel()
 
-function handleShare() {
+const handleShare = () => {
   navigator.clipboard.writeText(window.location.href)
   toast('Link copied', {
     description: 'Your theme link is copied to the clipboard.',

@@ -79,7 +79,7 @@ type Setup = {
   formatOptions?: Intl.NumberFormatOptions
 }
 
-function setup(initial: Setup = {}) {
+const setup = (initial: Setup = {}) => {
   const props = ref<Setup>({ ...initial })
   const model = ref<number | null | undefined>(initial.modelValue)
   const onCommit = vi.fn()

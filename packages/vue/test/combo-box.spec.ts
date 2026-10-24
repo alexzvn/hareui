@@ -27,7 +27,7 @@ afterEach(() => {
   document.body.innerHTML = ''
 })
 
-function setup(props: Record<string, any> = {}, slots?: Record<string, any>) {
+const setup = (props: Record<string, any> = {}, slots?: Record<string, any>) => {
   const wrapper = mount(ComboBox, {
     props: { items, label: 'Animal', ...props },
     slots,
@@ -37,7 +37,7 @@ function setup(props: Record<string, any> = {}, slots?: Record<string, any>) {
   return { wrapper, input }
 }
 
-async function type(input: ReturnType<typeof setup>['input'], text: string) {
+const type = async (input: ReturnType<typeof setup>['input'], text: string) => {
   input.element.value = text
   await input.trigger('input')
   await flush()

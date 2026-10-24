@@ -7,7 +7,7 @@ import Label from '@/components/label/Label.vue'
 
 import { expectAccessible } from './a11y'
 
-function mousedown(el: Element, detail: number) {
+const mousedown = (el: Element, detail: number) => {
   const event = new MouseEvent('mousedown', { detail, bubbles: true, cancelable: true })
   el.dispatchEvent(event)
   return event

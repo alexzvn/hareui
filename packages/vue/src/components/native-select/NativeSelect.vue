@@ -265,16 +265,16 @@ const selectAttrs = computed(() => {
   return rest
 })
 
-function optionOf(option: NativeSelectOption) {
+const optionOf = (option: NativeSelectOption) => {
   return typeof option === 'string'
     ? { value: option, label: option, disabled: false }
     : { ...option, label: option.label ?? option.value }
 }
-function isGroup(item: NativeSelectItem): item is NativeSelectGroup {
+const isGroup = (item: NativeSelectItem): item is NativeSelectGroup => {
   return typeof item === 'object' && 'items' in item
 }
 
-function onChange(event: Event) {
+const onChange = (event: Event) => {
   const value = (event.target as HTMLSelectElement).value
   local.value = value
   emit('update:modelValue', value)

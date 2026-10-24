@@ -50,7 +50,7 @@ const dragging = defineModel<boolean>('dragging', { default: false })
 const clamp = (value: number) => Math.round(Math.min(props.max, Math.max(props.min, value)))
 
 let start: { x: number; width: number } | undefined
-function onPointerDown(event: PointerEvent) {
+const onPointerDown = (event: PointerEvent) => {
   if (event.button !== 0) return
   // No text selection or focus change: the drag owns the pointer.
   event.preventDefault()
@@ -58,16 +58,16 @@ function onPointerDown(event: PointerEvent) {
   start = { x: event.clientX, width: props.width }
   dragging.value = true
 }
-function onPointerMove(event: PointerEvent) {
+const onPointerMove = (event: PointerEvent) => {
   if (start) emit('resize', clamp(start.width + event.clientX - start.x))
 }
-function onPointerEnd() {
+const onPointerEnd = () => {
   start = undefined
   dragging.value = false
 }
 
 const STEPS: Record<string, number> = { ArrowLeft: -10, ArrowRight: 10 }
-function onKeydown(event: KeyboardEvent) {
+const onKeydown = (event: KeyboardEvent) => {
   let next: number | undefined
   if (event.key in STEPS) next = props.width + STEPS[event.key] * (event.shiftKey ? 5 : 1)
   else if (event.key === 'Home') next = props.min

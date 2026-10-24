@@ -120,17 +120,17 @@ const openSubmenu = ref<DropdownItem['value'] | null>(null)
 
 // Mounted submenu contents by item value, for the nested-layer guard.
 const submenuContents = new Map<DropdownItem['value'], Element>()
-function setSubmenuContent(
+const setSubmenuContent = (
   value: DropdownItem['value'],
   instance: Element | ComponentPublicInstance | null,
-) {
+) => {
   if (instance && '$el' in instance) submenuContents.set(value, instance.$el)
   else submenuContents.delete(value)
 }
 
 // Reka closes the whole menu on Escape inside a submenu; RAC closes only that submenu and refocuses
 // its trigger. Stopping the event here keeps it from Reka's document-level Escape listener.
-function onSubmenuKeydown(event: KeyboardEvent) {
+const onSubmenuKeydown = (event: KeyboardEvent) => {
   if (event.key !== 'Escape') return
   const content = event.currentTarget as HTMLElement
   event.preventDefault()
@@ -140,12 +140,12 @@ function onSubmenuKeydown(event: KeyboardEvent) {
   root.querySelector<HTMLElement>(`[aria-controls="${content.id}"]`)?.focus()
 }
 
-function onSubmenuContentKeydown(event: KeyboardEvent) {
+const onSubmenuContentKeydown = (event: KeyboardEvent) => {
   ctx.onMenuKeydown(event)
   onSubmenuKeydown(event)
 }
 
-function key(entry: DropdownEntry, index: number) {
+const key = (entry: DropdownEntry, index: number) => {
   return isSeparator(entry) || isSection(entry) ? `${entry.type}-${index}` : `item-${entry.value}`
 }
 </script>

@@ -296,7 +296,7 @@ const {
 } = selection
 // Reka only applies `maximumDays` to its own start value, which isn't fed, so it is passed back in as
 // `is-date-disabled`.
-function isDateDisabledByMaximumDays(date: DateValue) {
+const isDateDisabledByMaximumDays = (date: DateValue) => {
   return exceedsMaximumDays(date, anchor.value, props.maximumDays)
 }
 
@@ -321,7 +321,7 @@ const isValueInvalid = computed(() => {
   )
 })
 // `useCalendarCell`: outside-month and disabled days are never selected, unavailable ones only inside an invalid range
-function cellState(date: DateValue, month: DateValue) {
+const cellState = (date: DateValue, month: DateValue) => {
   const range = highlightedRange.value
   const inRange = !!range && compareDay(date, range.start) >= 0 && compareDay(date, range.end) <= 0
   const disabled = !isSameMonth(date, month) || selection.isOutsideWindow(date)
@@ -340,16 +340,16 @@ function cellState(date: DateValue, month: DateValue) {
   }
 }
 
-function emitValue(value: DateRange) {
+const emitValue = (value: DateRange) => {
   lastEmitted = value
   emit('update:modelValue', value)
 }
-function selectDate(date: DateValue) {
+const selectDate = (date: DateValue) => {
   if (props.readonly || props.disabled) return
   selection.select(date)
 }
 // A cell React Aria would let you press: not outside the month, disabled or unavailable
-function isSelectableCell(el: HTMLElement) {
+const isSelectableCell = (el: HTMLElement) => {
   return (
     !el.hasAttribute('data-disabled') &&
     !el.hasAttribute('data-unavailable') &&
@@ -358,7 +358,7 @@ function isSelectableCell(el: HTMLElement) {
 }
 // `focusNearestAvailableDate`: anchoring with the keyboard advances focus one day (back one at the end of the
 // available run) so the preview shows a range immediately.
-function focusNearestAvailableDate(from: DateValue) {
+const focusNearestAvailableDate = (from: DateValue) => {
   const outside = (date: DateValue) =>
     compareDay(date, effectiveMinValue.value) < 0 || compareDay(date, effectiveMaxValue.value) > 0
   let next = from.add({ days: 1 })
@@ -372,7 +372,7 @@ function focusNearestAvailableDate(from: DateValue) {
 // RAC's `usePress` focuses the pressed cell from script and flags pointer focus with `data-focused` (no
 // `data-focus-visible`), which keeps HeroUI's focus ring off. Reka's `data-focused` means "focused date" instead, so
 // pointer focus is flagged with `data-pointer-focus` until blur.
-function pointerFocus(el: HTMLElement) {
+const pointerFocus = (el: HTMLElement) => {
   el.setAttribute('data-pointer-focus', '')
   el.addEventListener('blur', () => el.removeAttribute('data-pointer-focus'), { once: true })
   el.focus()
@@ -385,7 +385,7 @@ let dragging = false
 // A mouse press is handled on pointerdown/pointerup, so the click that follows it is swallowed
 let swallowClick = false
 
-function onCellPointerDown(event: PointerEvent, date: DateValue) {
+const onCellPointerDown = (event: PointerEvent, date: DateValue) => {
   if (event.button !== 0) return
   const el = event.currentTarget as HTMLElement
   if (!isSelectableCell(el)) return
@@ -419,7 +419,7 @@ function onCellPointerDown(event: PointerEvent, date: DateValue) {
   selectDate(date)
   press.anchor = true
 }
-function onCellPointerUp(event: PointerEvent, date: DateValue) {
+const onCellPointerUp = (event: PointerEvent, date: DateValue) => {
   if (event.button !== 0 || event.pointerType === 'touch') return
   const el = event.currentTarget as HTMLElement
   const pressedHere = press?.el === el ? press : null
@@ -437,7 +437,7 @@ function onCellPointerUp(event: PointerEvent, date: DateValue) {
   }
 }
 // `useRangeCalendar`'s `endDragging`: releasing a drag outside the cells commits the focused date
-function onWindowPointerUp(event: PointerEvent) {
+const onWindowPointerUp = (event: PointerEvent) => {
   setTimeout(() => {
     swallowClick = false
   })
@@ -455,7 +455,7 @@ onBeforeUnmount(() => window.removeEventListener('pointerup', onWindowPointerUp)
 
 // `highlightDate`: while anchored, hovering (or dragging over) a day moves the preview's end there, and keyboard
 // focus follows when the calendar has it
-function onCellMouseEnter(event: MouseEvent, date: DateValue) {
+const onCellMouseEnter = (event: MouseEvent, date: DateValue) => {
   const el = event.currentTarget as HTMLElement
   if (press && press.el !== el) press = null
   if (!anchor.value || !isSelectableCell(el)) return
@@ -474,14 +474,14 @@ provide(rangeCalendarDayKey, {
   indicator: () => props.indicator,
   CellOutlet: useSlotOutlet(slots, 'cell'),
 })
-function onRootFocusIn(event: FocusEvent) {
+const onRootFocusIn = (event: FocusEvent) => {
   const cell = calendarCellFrom(event.target, rootEl())
   if (cell && !cell.hasAttribute('data-disabled') && !cell.hasAttribute('data-outside-view'))
     focusedDate.value = calendarCellDate(cell, monthShell.value!.placeholder)
 }
 // Clicks without a handled mouse press (keyboard-less screen readers, touch taps, scripted clicks) select directly.
 // Outside-month cells are inert, as in React Aria. Runs in the capture phase so Reka's cell handler never sees it.
-function onRootClickCapture(event: MouseEvent) {
+const onRootClickCapture = (event: MouseEvent) => {
   const cell = calendarCellFrom(event.target, rootEl())
   if (!cell) return
   event.stopPropagation()
@@ -491,7 +491,7 @@ function onRootClickCapture(event: MouseEvent) {
   }
   if (isSelectableCell(cell)) selectDate(calendarCellDate(cell, monthShell.value!.placeholder))
 }
-function onRootKeyDownCapture(event: KeyboardEvent) {
+const onRootKeyDownCapture = (event: KeyboardEvent) => {
   const cell = calendarCellFrom(event.target, rootEl())
   if (!cell) return
   // `useCalendarGrid`: Escape cancels an in-progress selection (and keeps propagating, e.g. to close a popover)

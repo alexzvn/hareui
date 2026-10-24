@@ -124,7 +124,7 @@ const selected = computed(() => props.modelValue ?? local.value)
 const isDisabled = useFieldsetDisabled(() => props.disabled)
 
 // React Aria semantics: single selection replaces the selection, pressing the selected button clears it.
-function toggle(value: string) {
+const toggle = (value: string) => {
   const isSelected = selected.value.includes(value)
   const next =
     props.selectionMode === 'single'
@@ -141,7 +141,7 @@ function toggle(value: string) {
 
 // Reka's roving focus jumps to the first / last button on Home / End (and PageUp / PageDown); RAC's toggle button
 // group only moves with the arrow keys. Inside a Toolbar the toolbar's own handler already ignores them.
-function onKeydownCapture(event: KeyboardEvent) {
+const onKeydownCapture = (event: KeyboardEvent) => {
   if (!toolbar && ['Home', 'End', 'PageUp', 'PageDown'].includes(event.key)) event.stopPropagation()
 }
 

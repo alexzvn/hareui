@@ -177,7 +177,7 @@ export type DropdownEmits = {
 
 // React Aria's `useLongPress` accessibility description, shared by every long-press trigger.
 const LONG_PRESS_DESCRIPTION_ID = 'hareui-dropdown-long-press-description'
-function ensureLongPressDescription() {
+const ensureLongPressDescription = () => {
   if (document.getElementById(LONG_PRESS_DESCRIPTION_ID)) return
   const el = document.createElement('div')
   el.id = LONG_PRESS_DESCRIPTION_ID
@@ -231,7 +231,7 @@ const contentRef = ref<{ $el: HTMLElement } | null>(null)
 
 const openState = ref(props.defaultOpen)
 const isOpen = computed(() => props.open ?? openState.value)
-function setOpen(value: boolean) {
+const setOpen = (value: boolean) => {
   openState.value = value
   emit('update:open', value)
 }
@@ -244,7 +244,7 @@ const { onInteractOutside } = useLayerDismiss({ content: () => contentRef.value?
 
 const selectedState = ref<DropdownValue[]>(props.defaultValue ?? [])
 const selected = computed(() => props.modelValue ?? selectedState.value)
-function setSelected(value: DropdownValue[]) {
+const setSelected = (value: DropdownValue[]) => {
   selectedState.value = value
   emit('update:modelValue', value)
 }
@@ -256,11 +256,11 @@ const isSection = (entry: DropdownEntry): entry is DropdownSection =>
  * A selection scope (RAC's `SelectionManager` / `GroupSelectionManager`). `single` replaces only
  * this scope's values and deselects on re-select, as React Aria does without `disallowEmptySelection`.
  */
-function makeGroup(
+const makeGroup = (
   mode: DropdownSelectionGroup['mode'],
   indicator: DropdownSelectionGroup['indicator'],
   values: () => DropdownValue[],
-): DropdownSelectionGroup {
+): DropdownSelectionGroup => {
   return {
     mode,
     indicator,
@@ -294,6 +294,17 @@ const onKeydown = (event: KeyboardEvent) => {
 }
 const onPointerdown = () => {
   lastKey.value = null
+}
+
+// RAC pages through the menu with PageUp / PageDown; the menu never outgrows one page, so that is the
+// first / last enabled item (as in ComboBox). Reka only handles them while the content itself is focused.
+const onMenuKeydown = (event: KeyboardEvent) => {
+  if (event.key !== 'PageUp' && event.key !== 'PageDown') return
+  const items = enabledMenuItems(event.currentTarget as HTMLElement)
+  const item = event.key === 'PageUp' ? items[0] : items.at(-1)
+  if (!item) return
+  event.preventDefault()
+  item.focus()
 }
 
 const ctx: DropdownContext = {
@@ -333,7 +344,7 @@ provide(dropdownContextKey, ctx)
 // RAC's `menuTriggerState.open(focusStrategy)`: ArrowUp opens on the last item, a long press on the first.
 // Reka only knows "first item when opened from the keyboard", so the strategy is applied on open below.
 let focusOnOpen: 'first' | 'last' | null = null
-function openWithFocus(strategy: 'first' | 'last') {
+const openWithFocus = (strategy: 'first' | 'last') => {
   focusOnOpen = strategy
   setOpen(true)
 }
@@ -341,7 +352,7 @@ function openWithFocus(strategy: 'first' | 'last') {
 // RAC's `useSelectableCollection` focuses the first selected item whenever the menu opens (pointer or
 // keyboard), else the item of the focus strategy; Reka focuses the content, or the first item when opened
 // from the keyboard.
-function onOpenAutoFocus(event: Event) {
+const onOpenAutoFocus = (event: Event) => {
   const strategy = focusOnOpen
   focusOnOpen = null
   const content = event.target as HTMLElement
@@ -355,17 +366,6 @@ function onOpenAutoFocus(event: Event) {
   item.focus()
 }
 
-// RAC pages through the menu with PageUp / PageDown; the menu never outgrows one page, so that is the
-// first / last enabled item (as in ComboBox). Reka only handles them while the content itself is focused.
-function onMenuKeydown(event: KeyboardEvent) {
-  if (event.key !== 'PageUp' && event.key !== 'PageDown') return
-  const items = enabledMenuItems(event.currentTarget as HTMLElement)
-  const item = event.key === 'PageUp' ? items[0] : items.at(-1)
-  if (!item) return
-  event.preventDefault()
-  item.focus()
-}
-
 // Long press: keep Reka's trigger from toggling on press; open after RAC's 500ms threshold instead.
 // Reka 2.10's trigger toggles on every `click` (it doesn't check `defaultPrevented`) and on
 // Enter / Space / ArrowDown keydown. The trigger's own click and press handlers still run, as RAC's
@@ -374,12 +374,12 @@ const LONG_PRESS_THRESHOLD = 500
 let longPressTimer: ReturnType<typeof setTimeout> | undefined
 const describedBy = ref<string>()
 
-function cancelLongPress() {
+const cancelLongPress = () => {
   clearTimeout(longPressTimer)
   longPressTimer = undefined
 }
 
-function onTriggerPointerdownCapture(event: PointerEvent) {
+const onTriggerPointerdownCapture = (event: PointerEvent) => {
   if (props.trigger !== 'longPress' || props.disabled || event.button !== 0) return
   cancelLongPress()
   longPressTimer = setTimeout(() => openWithFocus('first'), LONG_PRESS_THRESHOLD)
@@ -389,17 +389,17 @@ function onTriggerPointerdownCapture(event: PointerEvent) {
 // long press) is dropped. Cleared on a task, not a microtask: browsers run a microtask checkpoint
 // after each listener, which would clear the flag before Reka's bubble-phase listener runs.
 let suppressTriggerToggle = false
-function onTriggerClickCapture() {
+const onTriggerClickCapture = () => {
   if (props.trigger !== 'longPress') return
   suppressTriggerToggle = true
   setTimeout(() => (suppressTriggerToggle = false))
 }
 
-function onRootOpenChange(open: boolean) {
+const onRootOpenChange = (open: boolean) => {
   if (!suppressTriggerToggle) setOpen(open)
 }
 
-function onTriggerKeydownCapture(event: KeyboardEvent) {
+const onTriggerKeydownCapture = (event: KeyboardEvent) => {
   if (props.trigger !== 'longPress') {
     // Reka's trigger ignores ArrowUp; RAC opens the menu on its last item.
     if (event.key === 'ArrowUp' && !props.disabled && !isOpen.value) {

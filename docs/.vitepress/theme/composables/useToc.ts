@@ -7,13 +7,13 @@ export type TocItem = {
   depth: number
 }
 
-export function useToc() {
+export const useToc = () => {
   const route = useRoute()
   const items = ref<TocItem[]>([])
   const active = ref<string[]>([])
   let observer: IntersectionObserver | undefined
 
-  function collect() {
+  const collect = () => {
     observer?.disconnect()
     // Headings rendered by live demos belong to the demo, not the page outline.
     const headings = Array.from(

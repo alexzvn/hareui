@@ -32,7 +32,7 @@ type Schema = z.output<typeof schema> & Partial<z.output<typeof newsSchema>>
 
 const state = reactive<Partial<Schema>>({ news: false })
 
-function onSubmit(event: FormSubmitEvent<Schema>) {
+const onSubmit = (event: FormSubmitEvent<Schema>) => {
   alert(`Valid: ${JSON.stringify(event.data, null, 2)}`)
 }
 </script>

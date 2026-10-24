@@ -62,20 +62,20 @@ const modes: { mode: Mode; label: string; paths: string[] }[] = [
 const current = ref<Mode>('auto')
 let media: MediaQueryList | undefined
 
-function apply(mode: Mode) {
+const apply = (mode: Mode) => {
   const dark = mode === 'dark' || (mode === 'auto' && !!media?.matches)
   const root = document.documentElement
   root.classList.toggle('dark', dark)
   root.style.colorScheme = dark ? 'dark' : 'light'
 }
 
-function select(mode: Mode) {
+const select = (mode: Mode) => {
   current.value = mode
   localStorage.setItem(STORAGE_KEY, mode)
   apply(mode)
 }
 
-function onSystemChange() {
+const onSystemChange = () => {
   if (current.value === 'auto') apply('auto')
 }
 

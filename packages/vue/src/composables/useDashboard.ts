@@ -44,17 +44,17 @@ export type DashboardContext = {
 
 export const dashboardContextKey: InjectionKey<DashboardContext> = Symbol('hareui-dashboard')
 
-export function provideDashboardContext(context: DashboardContext): void {
+export const provideDashboardContext = (context: DashboardContext): void => {
   provide(dashboardContextKey, context)
 }
 
 /** Context of the closest `DashboardGroup`, or `undefined` outside one. */
-export function useDashboard(): DashboardContext | undefined {
+export const useDashboard = (): DashboardContext | undefined => {
   return inject(dashboardContextKey, undefined)
 }
 
 /** Creates the reactive state of one sidebar slot (used by `DashboardGroup`, and standalone by sidebars outside a group). */
-export function createDashboardSidebarState(): DashboardSidebarState {
+export const createDashboardSidebarState = (): DashboardSidebarState => {
   const open = ref(false)
   const collapsed = ref(false)
   const id = ref<string>()

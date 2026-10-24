@@ -82,7 +82,7 @@ export type ChartContext = {
 }
 
 /** Default `dataKey` of the category axis and per-series defaults of the parts, by `dataKey`. */
-export function useChartConfig(chart: ChartContext) {
+export const useChartConfig = (chart: ChartContext) => {
   return {
     index: () => chart.config.value?.()?.index,
     series: (dataKey: string) =>
@@ -102,7 +102,7 @@ export const chartContextKey: InjectionKey<ChartContext> = Symbol('hareui-chart'
 const DEFAULT_MARGIN: Required<ChartMargin> = { top: 8, right: 8, bottom: 0, left: 0 }
 
 /** Creates the chart context of a root and provides it to its parts. Call in the root's setup. */
-export function useChartRoot(options: ChartRootOptions): ChartContext {
+export const useChartRoot = (options: ChartRootOptions): ChartContext => {
   const id = useId(undefined, 'hareui-chart')
   const width = ref(0)
   const height = ref(0)
@@ -129,14 +129,14 @@ export function useChartRoot(options: ChartRootOptions): ChartContext {
     return [...registry.values()].sort(byTemplateOrder).map((entry) => entry.get())
   })
 
-  function byTemplateOrder(a: { anchor: () => Node | null }, b: { anchor: () => Node | null }) {
+  const byTemplateOrder = (a: { anchor: () => Node | null }, b: { anchor: () => Node | null }) => {
     const first = a.anchor()
     const second = b.anchor()
     if (!first?.isConnected || !second?.isConnected || first === second) return 0
     return first.compareDocumentPosition(second) & Node.DOCUMENT_POSITION_FOLLOWING ? -1 : 1
   }
 
-  function registerSeries(get: () => ChartSeries) {
+  const registerSeries = (get: () => ChartSeries) => {
     const key = nextSeries++
     const instance = getCurrentInstance()
     registry.set(key, {
@@ -149,7 +149,7 @@ export function useChartRoot(options: ChartRootOptions): ChartContext {
     return unregister
   }
 
-  function setActive(state: Partial<ChartActiveState> | null) {
+  const setActive = (state: Partial<ChartActiveState> | null) => {
     if (!state || state.index === null || state.index === undefined) {
       Object.assign(active, { index: null, seriesId: null, coordinate: null, source: null })
       return
@@ -159,7 +159,7 @@ export function useChartRoot(options: ChartRootOptions): ChartContext {
 
   const tooltipLabel = shallowRef<(index: number) => string | number | undefined>(() => undefined)
 
-  function payloadAt(index: number, seriesId?: string | null): ChartTooltipPayloadEntry[] {
+  const payloadAt = (index: number, seriesId?: string | null): ChartTooltipPayloadEntry[] => {
     const datum = data.value[index]
     return series.value
       .filter(
@@ -246,7 +246,7 @@ export function useChartRoot(options: ChartRootOptions): ChartContext {
 }
 
 /** The enclosing chart root's context. Throws outside a chart. */
-export function useChartContext(component = 'Chart part'): ChartContext {
+export const useChartContext = (component = 'Chart part'): ChartContext => {
   const context = inject(chartContextKey, null)
   if (!context)
     throw new Error(`${component} must be used inside a chart (AreaChart, BarChart, LineChart, …).`)

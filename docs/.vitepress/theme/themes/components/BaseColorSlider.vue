@@ -22,7 +22,7 @@ import LockableLabel from './LockableLabel.vue'
 
 const [variables, setVariables] = useVariablesState()
 
-function handleBaseSliderChange(value: number) {
+const handleBaseSliderChange = (value: number) => {
   setVariables({
     ...variables.value,
     base: value,

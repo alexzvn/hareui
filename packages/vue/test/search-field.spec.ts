@@ -6,7 +6,7 @@ import SearchField from '@/components/search-field/SearchField.vue'
 
 import { expectAccessible } from './a11y'
 
-function controlled(initial: string, attachTo?: HTMLElement) {
+const controlled = (initial: string, attachTo?: HTMLElement) => {
   const model = ref(initial)
   const wrapper = mount(
     () =>

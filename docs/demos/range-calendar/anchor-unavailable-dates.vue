@@ -18,7 +18,7 @@ import { getLocalTimeZone, today } from '@internationalized/date'
 
 const now = today(getLocalTimeZone())
 
-function isDateUnavailable(date: DateValue, anchorDate: DateValue | null) {
+const isDateUnavailable = (date: DateValue, anchorDate: DateValue | null) => {
   return anchorDate != null && Math.abs(date.compare(anchorDate)) > 7
 }
 </script>

@@ -184,11 +184,11 @@ const disabled = useFieldsetDisabled(() => props.disabled)
 
 const focusWithin = ref(false)
 const focusVisible = ref(false)
-function onFocusIn(event: FocusEvent) {
+const onFocusIn = (event: FocusEvent) => {
   focusWithin.value = true
   focusVisible.value = event.target instanceof Element && event.target.matches(':focus-visible')
 }
-function onFocusOut(event: FocusEvent) {
+const onFocusOut = (event: FocusEvent) => {
   if (
     event.currentTarget instanceof Element &&
     event.relatedTarget instanceof Node &&

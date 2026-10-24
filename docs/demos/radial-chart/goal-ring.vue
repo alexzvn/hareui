@@ -33,7 +33,7 @@ import { RadialChart } from '@hareui/vue/charts'
 const goal = 2500
 const data = [{ drink: 'Water', ml: 1600, fill: 'var(--chart-3)' }]
 
-function formatValue(value: number) {
+const formatValue = (value: number) => {
   return `${value.toLocaleString()} ml`
 }
 </script>

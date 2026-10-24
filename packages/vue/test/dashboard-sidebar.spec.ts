@@ -11,18 +11,18 @@ import { useDashboard } from '@/composables/useDashboard'
 
 import { expectAccessible } from './a11y'
 
-async function settle() {
+const settle = async () => {
   for (let i = 0; i < 4; i++) await nextTick()
 }
 
-function clearCookies() {
+const clearCookies = () => {
   for (const part of document.cookie.split(';')) {
     const name = part.split('=')[0]?.trim()
     if (name) document.cookie = `${name}=; path=/; max-age=0`
   }
 }
 
-function cookieValue(key: string): unknown {
+const cookieValue = (key: string): unknown => {
   const entry = document.cookie
     .split(';')
     .map((p) => p.trim())
@@ -37,14 +37,14 @@ const handle = (root: ParentNode = document) =>
 const width = (el: HTMLElement) => el.style.getPropertyValue('--width')
 
 /** happy-dom has no layout: give the sidebar and its parent a width for the drag maths (parent 1000px). */
-function layout(el: HTMLElement, elWidth: number, parentWidth = 1000) {
+const layout = (el: HTMLElement, elWidth: number, parentWidth = 1000) => {
   vi.spyOn(el, 'getBoundingClientRect').mockReturnValue({ width: elWidth } as DOMRect)
   vi.spyOn(el.parentElement!, 'getBoundingClientRect').mockReturnValue({
     width: parentWidth,
   } as DOMRect)
 }
 
-function press(target: Element, clientX: number) {
+const press = (target: Element, clientX: number) => {
   target.dispatchEvent(
     new PointerEvent('pointerdown', {
       bubbles: true,
@@ -55,25 +55,25 @@ function press(target: Element, clientX: number) {
     }),
   )
 }
-function move(clientX: number) {
+const move = (clientX: number) => {
   document.dispatchEvent(
     new PointerEvent('pointermove', { bubbles: true, clientX, pointerId: 1, pointerType: 'mouse' }),
   )
 }
-function release() {
+const release = () => {
   document.dispatchEvent(
     new PointerEvent('pointerup', { bubbles: true, pointerId: 1, pointerType: 'mouse' }),
   )
 }
 /** Press the handle at `from`, drag to `to`, release (release flushes the pending animation frame). */
-async function drag(from: number, to: number) {
+const drag = async (from: number, to: number) => {
   press(handle(), from)
   move(to)
   release()
   await nextTick()
 }
 
-async function key(target: Element, k: string, init: KeyboardEventInit = {}) {
+const key = async (target: Element, k: string, init: KeyboardEventInit = {}) => {
   target.dispatchEvent(
     new KeyboardEvent('keydown', { key: k, bubbles: true, cancelable: true, ...init }),
   )
@@ -81,7 +81,7 @@ async function key(target: Element, k: string, init: KeyboardEventInit = {}) {
 }
 
 type Props = Record<string, unknown>
-function mountSidebar(sidebar: Props = {}, group: Props = {}) {
+const mountSidebar = (sidebar: Props = {}, group: Props = {}) => {
   return mount(DashboardGroup, {
     props: { class: 'relative', ...group },
     slots: {
@@ -609,7 +609,7 @@ describe('dashboard sidebar', () => {
   })
 
   describe('group context', () => {
-    function mountWithContext(sidebarProps: Props = {}) {
+    const mountWithContext = (sidebarProps: Props = {}) => {
       let ctx!: DashboardContext
       const Probe = defineComponent({
         setup() {
@@ -992,7 +992,7 @@ describe('dashboard sidebar', () => {
     const toggleButton = () => document.querySelector<HTMLButtonElement>('[data-testid=toggle]')!
 
     /** A sidebar with its navbar toggle, as a dashboard renders it on mobile. */
-    function mountWithToggle(sidebar: Props = {}) {
+    const mountWithToggle = (sidebar: Props = {}) => {
       return mount(DashboardGroup, {
         props: { persistent: false },
         slots: {
@@ -1041,14 +1041,14 @@ describe('dashboard sidebar', () => {
     })
 
     /** Waits past the millisecond a listener was attached: Vue drops a click fired within it. */
-    function pause() {
+    const pause = () => {
       const { promise, resolve } = Promise.withResolvers<void>()
       setTimeout(resolve, 2)
       return promise
     }
 
     /** Focuses and clicks the toggle like a user. */
-    async function openMenu() {
+    const openMenu = async () => {
       await pause()
       toggleButton().focus()
       toggleButton().click()

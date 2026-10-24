@@ -155,10 +155,10 @@ const radioUI = useComponentUI('radioGroup', radioGroupTheme, () => ({
   variant: group.variant.value,
 }))
 
-function cls(
+const cls = (
   slot: keyof NonNullable<RadioButtonGroupItemProps['ui']>,
   extra?: RadioButtonGroupItemProps['class'],
-) {
+) => {
   return ui.value[slot]({ class: [group.ui.value?.[slot], props.ui?.[slot], extra] })
 }
 

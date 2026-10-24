@@ -22,16 +22,16 @@ const data = [
   { month: 'Mar', organic: 20, paid: 0 },
 ]
 
-async function settle() {
+const settle = async () => {
   await flushPromises()
   await nextTick()
 }
 
-function mountRoot(
+const mountRoot = (
   component: any,
   props: Record<string, unknown>,
   slots: Record<string, any> = {},
-) {
+) => {
   return mount(component, {
     props: { data, width: WIDTH, height: HEIGHT, margin, ...props },
     slots,
@@ -39,11 +39,11 @@ function mountRoot(
   })
 }
 
-async function hover(
+const hover = async (
   wrapper: { find: (selector: string) => { element: Element } },
   clientX: number,
   clientY = 100,
-) {
+) => {
   wrapper
     .find('[data-slot=chart-surface]')
     .element.dispatchEvent(new PointerEvent('pointermove', { clientX, clientY, bubbles: true }))

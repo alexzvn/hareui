@@ -49,11 +49,11 @@ const series = {
 
 type Plan = keyof typeof series
 
-function total(key: string) {
+const total = (key: string) => {
   return data.reduce((sum, row) => sum + row[key as Plan], 0)
 }
 
-function change(key: string) {
+const change = (key: string) => {
   const first = data[0]![key as Plan]
   const last = data.at(-1)![key as Plan]
   return Math.round(((last - first) / first) * 100)

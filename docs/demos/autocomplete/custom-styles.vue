@@ -85,7 +85,7 @@ const items: Teammate[] = TEAMMATES.map((t) => ({
 
 const selectedKeys = ref<string[]>([])
 
-function onRemoveTags(ids: string[]) {
+const onRemoveTags = (ids: string[]) => {
   selectedKeys.value = selectedKeys.value.filter((key) => !ids.includes(key))
 }
 </script>

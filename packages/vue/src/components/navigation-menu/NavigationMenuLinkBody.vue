@@ -232,12 +232,12 @@ const showExternal = computed(
   () => props.item.target === '_blank' && ctx.props.externalIcon !== false,
 )
 
-function variantsOf() {
+const variantsOf = () => {
   return { active: props.active, disabled: disabled.value }
 }
 
 // A click on the chevron of a link that has children toggles it instead of navigating.
-function onTrailingClick(event: Event) {
+const onTrailingClick = (event: Event) => {
   if (trailingIsTrigger.value) {
     event.preventDefault()
     event.stopPropagation()

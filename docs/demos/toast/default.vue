@@ -9,7 +9,7 @@ import { Button, toast } from '@hareui/vue'
 import { Icon } from '@iconify/vue'
 import { h } from 'vue'
 
-function show() {
+const show = () => {
   const id = toast('You have been invited to join a team', {
     description: 'Bob sent you an invitation to join HeroUI team',
     indicator: h(Icon, { icon: 'gravity-ui:persons' }),

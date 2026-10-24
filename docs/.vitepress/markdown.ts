@@ -19,7 +19,7 @@ type AnchorState = {
 const gravityIcons: Record<string, { body: string }> = gravity.icons
 const button = tv(buttonTheme)
 
-export function gravityIcon(name: string, attrs = ''): string {
+export const gravityIcon = (name: string, attrs = ''): string => {
   const icon = gravityIcons[name]
   if (!icon) throw new Error(`gravity-ui icon not found: ${name}`)
   return `<svg aria-hidden="true" height="1em" role="img" viewBox="0 0 16 16" width="1em" xmlns="http://www.w3.org/2000/svg"${attrs}>${icon.body}</svg>`
@@ -65,7 +65,7 @@ const FIGURE_STYLE =
   '--shiki-light:#24292e;--shiki-dark:#e1e4e8;--shiki-light-bg:#fff;--shiki-dark-bg:#24292e'
 const MAX_LINES_FOR_LINE_NUMBERS = 20
 
-export function codeFigure(codeInner: string, { vPre = true, extraClass = '' } = {}): string {
+export const codeFigure = (codeInner: string, { vPre = true, extraClass = '' } = {}): string => {
   const lines = (codeInner.match(/<span class="line/g) ?? []).length
   const classes = [
     'my-4 bg-fd-card rounded-xl shiki relative border shadow-sm not-prose overflow-hidden text-sm mdx-code-block',
@@ -85,7 +85,7 @@ export function codeFigure(codeInner: string, { vPre = true, extraClass = '' } =
   )
 }
 
-function renderShikiFence(html: string): string {
+const renderShikiFence = (html: string): string => {
   const m = html.match(/<pre([^>]*)><code[^>]*>([\s\S]*)<\/code>\s*<\/pre>/)
   if (!m) throw new Error(`unexpected fence output: ${html.slice(0, 200)}`)
   return codeFigure(m[2], { vPre: /\sv-pre(=|\s|$)/.test(m[1]) })
@@ -98,7 +98,7 @@ const TAB_PANEL =
 
 let tabsCounter = 0
 
-export function markdownConfig(md: MarkdownRenderer): void {
+export const markdownConfig = (md: MarkdownRenderer): void => {
   const fence = md.renderer.rules.fence!
   const codeInline = md.renderer.rules.code_inline!
 
@@ -166,12 +166,12 @@ export function markdownConfig(md: MarkdownRenderer): void {
     tableClose(tokens, idx, options, env, self) + `</div>`
 }
 
-export function headingPermalink(
+export const headingPermalink = (
   slug: string,
   _opts: unknown,
   state: AnchorState,
   idx: number,
-): void {
+): void => {
   state.tokens[idx].attrJoin('class', 'group/heading flex scroll-m-28 flex-row items-center gap-1')
   const inline = state.tokens[idx + 1]
   const before = new state.Token('html_inline', '', 0)
@@ -186,7 +186,7 @@ export function headingPermalink(
 // breaks inside a paragraph / list item / cell are joined (one result row per block), and inline
 // `<code>` / `<strong>` become markdown so they survive VitePress's tag stripping into the stored
 // section text; SearchDialog renders them like fumadocs does.
-function inlineMarkdown(html: string): string {
+const inlineMarkdown = (html: string): string => {
   return html
     .replace(
       /<pre[\s\S]*?<\/pre>|<code[^>]*>([\s\S]*?)<\/code>|<strong>([\s\S]*?)<\/strong>/g,
@@ -199,7 +199,7 @@ function inlineMarkdown(html: string): string {
     .replace(/<(p|li|td|th)\b[^>]*>[\s\S]*?<\/\1>/g, (block) => block.replace(/\s*\n\s*/g, ' '))
 }
 
-export function searchRender(src: string, env: MarkdownEnv, md: MarkdownRenderer): string {
+export const searchRender = (src: string, env: MarkdownEnv, md: MarkdownRenderer): string => {
   const html = md.render(src, env)
   if (env.frontmatter?.search === false) return ''
   const title = env.frontmatter?.title

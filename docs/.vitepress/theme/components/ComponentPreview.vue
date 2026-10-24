@@ -210,7 +210,7 @@ const pageTheme = computed<PreviewTheme>(() => (docDark.value ? 'dark' : 'light'
 const pinnedTheme = ref<PreviewTheme>()
 const theme = computed(() => pinnedTheme.value ?? pageTheme.value)
 watch(pageTheme, () => (pinnedTheme.value = undefined))
-function toggleTheme() {
+const toggleTheme = () => {
   const next = theme.value === 'dark' ? 'light' : 'dark'
   pinnedTheme.value = next === pageTheme.value ? undefined : next
 }
@@ -265,7 +265,7 @@ const frameVisible = computed(() => narrow.value || dragging.value)
 watchEffect(() => {
   if (!paged && frameVisible.value) frameMounted.value = true
 })
-function preload() {
+const preload = () => {
   if (!paged && !compact.value) frameMounted.value = true
 }
 const frameShown = computed(() => frameReady.value && frameVisible.value)
@@ -305,7 +305,7 @@ provide(hareUIConfigKey, {
     return overlayScoped.value ? portalTarget.value : parentConfig.portal
   },
 } satisfies HareUIConfig)
-function claimOverlays() {
+const claimOverlays = () => {
   previewOverlayTheme.value = overlayScoped.value ? theme.value : undefined
 }
 
@@ -327,7 +327,7 @@ const demo = computed(() => {
 })
 
 const highlighted = new Map<string, Promise<string>>()
-function highlight(name: string, code: string): Promise<string> {
+const highlight = (name: string, code: string): Promise<string> => {
   let cached = highlighted.get(name)
   if (!cached) {
     cached = import('shiki').then(({ codeToHtml }) =>
@@ -370,7 +370,7 @@ const alignClass = computed(
     })[props.align],
 )
 
-function copy(event: MouseEvent) {
+const copy = (event: MouseEvent) => {
   const target = event.currentTarget as HTMLElement
   if (source.value) void navigator.clipboard.writeText(source.value).then(() => flashCopied(target))
 }

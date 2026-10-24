@@ -9,14 +9,14 @@ import Modal from '@/components/modal/Modal.vue'
 
 // The lifecycle `useDialogShell` gives Modal, Drawer and AlertDialog, checked through each of them.
 
-function escapeKeydown() {
+const escapeKeydown = () => {
   document.dispatchEvent(
     new KeyboardEvent('keydown', { key: 'Escape', bubbles: true, cancelable: true }),
   )
 }
 
 // Reka's Presence needs three ticks before a closed dialog leaves the DOM (see modal.spec.ts).
-async function waitUnmount() {
+const waitUnmount = async () => {
   await nextTick()
   await nextTick()
   await nextTick()
@@ -24,7 +24,7 @@ async function waitUnmount() {
 
 // happy-dom has no CSS animations: report a running one for closed elements whose theme declares a closed-state
 // animation, so the dialog stays mounted through its exit until `finishExit` (see modal.spec.ts).
-function stubExitAnimations() {
+const stubExitAnimations = () => {
   const original = window.getComputedStyle.bind(window)
   vi.spyOn(window, 'getComputedStyle').mockImplementation((el: Element, pseudo?: string | null) => {
     const real = original(el, pseudo)
@@ -89,7 +89,7 @@ afterEach(() => {
 describe.each(cases)('dialog shell: $name', ({ component, slot, escapeOn, escapeOff }) => {
   const dialog = () => document.querySelector<HTMLElement>(`[data-slot=${slot}-dialog]`)
 
-  async function finishExit() {
+  const finishExit = async () => {
     await waitUnmount()
     const event = Object.assign(new Event('animationend', { bubbles: true }), {
       animationName: 'exit',
@@ -101,10 +101,10 @@ describe.each(cases)('dialog shell: $name', ({ component, slot, escapeOn, escape
   }
 
   /** Mounts the dialog beside a page, controlled by `open`. `onUpdate` replaces the default `v-model` write-back. */
-  function mountDialog(
+  const mountDialog = (
     props: Record<string, unknown> = {},
     { initial = false, onUpdate }: { initial?: boolean; onUpdate?: (value: boolean) => void } = {},
-  ) {
+  ) => {
     const open = ref(initial)
     const wrapper = mount(
       {

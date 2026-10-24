@@ -34,10 +34,10 @@ const curves: Record<Exclude<ChartCurveType, 'monotone' | 'bump'>, CurveFactory>
 }
 
 /** d3 curve for a curve `type`; `monotone` and `bump` follow the chart layout. */
-export function curveFactory(
+export const curveFactory = (
   type: ChartCurveType | CurveFactory = 'linear',
   layout: ChartLayout = 'horizontal',
-): CurveFactory {
+): CurveFactory => {
   if (typeof type === 'function') return type
   if (type === 'monotone' || type === 'bump') {
     const vertical = layout === 'vertical'

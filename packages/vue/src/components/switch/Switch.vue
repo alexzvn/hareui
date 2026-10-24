@@ -195,7 +195,7 @@ const { id, describedBy, FieldDescription, FieldError } = useFieldChrome({
   slotProps: () => ({ checked: checked.value }),
 })
 
-function onUpdate(value: boolean) {
+const onUpdate = (value: boolean) => {
   // RAC `isReadOnly`: the control stays focusable but never changes state
   if (props.readonly) return
   local.value = value

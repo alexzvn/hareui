@@ -12,6 +12,6 @@ type ClassValue =
 
 const merge = tv({})
 
-export function cn(...inputs: ClassValue[]) {
+export const cn = (...inputs: ClassValue[]) => {
   return merge({ class: inputs })
 }

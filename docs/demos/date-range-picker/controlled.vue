@@ -28,7 +28,7 @@ import { shallowRef } from 'vue'
 const start = today(getLocalTimeZone())
 const value = shallowRef<DateRangeValue | null>({ start, end: start.add({ days: 4 }) })
 
-function setWeek() {
+const setWeek = () => {
   const nextStart = today(getLocalTimeZone())
   value.value = { start: nextStart, end: nextStart.add({ days: 6 }) }
 }

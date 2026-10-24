@@ -10,7 +10,7 @@ const trigger = '[data-slot=date-range-picker-trigger]'
 const flush = () => new Promise((r) => setTimeout(r, 0))
 const range = { start: new CalendarDate(2025, 1, 10), end: new CalendarDate(2025, 1, 15) }
 
-function cell(day: number) {
+const cell = (day: number) => {
   return [
     ...document.querySelectorAll<HTMLElement>(
       '[data-slot=range-calendar-cell]:not([data-outside-view])',
@@ -224,9 +224,9 @@ describe('DateRangePicker accessibility', () => {
       })
       .join(' ')
 
-  async function open(
+  const open = async (
     props: Record<string, unknown> = { label: 'Trip dates', defaultValue: range },
-  ) {
+  ) => {
     const wrapper = mount(DateRangePicker, { props: props as any, attachTo: document.body })
     await wrapper.get(trigger).trigger('click')
     await flush()

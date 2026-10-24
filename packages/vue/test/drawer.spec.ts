@@ -8,7 +8,7 @@ import Drawer from '@/components/drawer/Drawer.vue'
 import { expectAccessible } from './a11y'
 
 // Reka's Presence needs three ticks before a closed dialog leaves the DOM (see modal.spec.ts).
-async function waitUnmount() {
+const waitUnmount = async () => {
   await nextTick()
   await nextTick()
   await nextTick()
@@ -16,11 +16,11 @@ async function waitUnmount() {
 
 const dialog = () => document.querySelector<HTMLElement>('[data-slot=drawer-dialog]')
 
-function pointer(type: string, el: Element, clientY: number) {
+const pointer = (type: string, el: Element, clientY: number) => {
   el.dispatchEvent(new PointerEvent(type, { bubbles: true, button: 0, clientY, pointerId: 1 }))
 }
 
-function drag(el: HTMLElement, distance: number) {
+const drag = (el: HTMLElement, distance: number) => {
   // happy-dom/jsdom lack pointer capture; drag logic only needs it not to throw.
   el.setPointerCapture ??= () => {}
   el.releasePointerCapture ??= () => {}
@@ -159,7 +159,7 @@ describe('drawer', () => {
     // `undefined` drops a default slot, so a test can check the drawer without it.
     type SlotFns = Partial<Record<string, (props: { close: () => void }) => VNodeChild>>
 
-    function mountWithTrigger(props: Record<string, unknown> = {}, slots: SlotFns = {}) {
+    const mountWithTrigger = (props: Record<string, unknown> = {}, slots: SlotFns = {}) => {
       const all: SlotFns = {
         default: () => h('button', { id: 'trigger' }, 'Open'),
         body: () => h('label', ['Name', h('input', { type: 'text' })]),
@@ -176,7 +176,7 @@ describe('drawer', () => {
       return { wrapper, trigger }
     }
 
-    async function openWith(trigger: HTMLButtonElement) {
+    const openWith = async (trigger: HTMLButtonElement) => {
       trigger.focus()
       trigger.click()
       await nextTick()

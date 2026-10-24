@@ -398,16 +398,16 @@ const ui = useComponentUI('table', theme, () => ({ variant: props.variant }))
 const localSelected = ref<TableSelection>(props.defaultSelectedKeys ?? new Set())
 const selectedKeys = computed<TableSelection>(() => selectedKeysModel.value ?? localSelected.value)
 
-function setSelected(next: TableSelection) {
+const setSelected = (next: TableSelection) => {
   localSelected.value = next
   selectedKeysModel.value = next
 }
 
-function isSelected(key: TableSelectionKey): boolean {
+const isSelected = (key: TableSelectionKey): boolean => {
   return selectedKeys.value === 'all' || selectedKeys.value.has(key)
 }
 
-function isSelectable(key: TableSelectionKey, row: TableRow): boolean {
+const isSelectable = (key: TableSelectionKey, row: TableRow): boolean => {
   return !row.disabled && !props.disabledKeys?.includes(key)
 }
 
@@ -415,11 +415,11 @@ function isSelectable(key: TableSelectionKey, row: TableRow): boolean {
 const localExpanded = ref<TableSelection>(props.defaultExpandedKeys ?? new Set())
 const expandedKeys = computed<TableSelection>(() => expandedKeysModel.value ?? localExpanded.value)
 
-function isRowExpanded(key: TableSelectionKey): boolean {
+const isRowExpanded = (key: TableSelectionKey): boolean => {
   return expandedKeys.value === 'all' || expandedKeys.value.has(key)
 }
 
-function toggleExpanded(key: TableSelectionKey) {
+const toggleExpanded = (key: TableSelectionKey) => {
   const current = expandedKeys.value
   const next = new Set(
     current === 'all' ? flatRows.value.filter((r) => r.hasChildItems).map((r) => r.key) : current,
@@ -434,7 +434,7 @@ function toggleExpanded(key: TableSelectionKey) {
 const localSort = ref<TableSortDescriptor | undefined>(props.defaultSortDescriptor)
 const sortDescriptor = computed(() => sortDescriptorModel.value ?? localSort.value)
 
-function toggleSort(column: TableColumn) {
+const toggleSort = (column: TableColumn) => {
   if (!column.sortable) return
   const current = sortDescriptor.value
   const direction: TableSortDirection =
@@ -444,7 +444,7 @@ function toggleSort(column: TableColumn) {
   sortDescriptorModel.value = next
 }
 
-function sortDirectionFor(column: TableColumn): TableSortDirection | undefined {
+const sortDirectionFor = (column: TableColumn): TableSortDirection | undefined => {
   return sortDescriptor.value?.column === column.key ? sortDescriptor.value.direction : undefined
 }
 
@@ -460,7 +460,7 @@ type FlatRow = {
 const flatRows = computed<FlatRow[]>(() => {
   const acc: FlatRow[] = []
   let index = 0
-  function visit(rows: TableRow[], depth: number) {
+  const visit = (rows: TableRow[], depth: number) => {
     rows.forEach((row, i) => {
       const key = row.id ?? i
       const hasChildItems = !!row.children?.length
@@ -485,7 +485,7 @@ const selectAllModel = computed<boolean | 'indeterminate'>(() =>
   allSelected.value ? true : someSelected.value ? 'indeterminate' : false,
 )
 
-function toggleSelectAll() {
+const toggleSelectAll = () => {
   if (allSelected.value) setSelected(new Set())
   else setSelected(new Set(selectableKeys.value))
 }
@@ -528,29 +528,29 @@ const columnWidths = computed<Record<string, number>>(() => {
   return Object.fromEntries(props.columns.map((column, i) => [column.key, sizes[i]]))
 })
 
-function widthStyle(column: TableColumn) {
+const widthStyle = (column: TableColumn) => {
   const w = hasResizableColumns.value ? columnWidths.value[column.key] : column.width
   return typeof w === 'number'
     ? { width: `${w}px`, minWidth: `${w}px`, maxWidth: `${w}px` }
     : undefined
 }
 
-function minWidthOf(column: TableColumn): number {
+const minWidthOf = (column: TableColumn): number => {
   return column.minWidth ?? DEFAULT_MIN_COLUMN_WIDTH
 }
 
 /** A resizable column's laid-out width; its minimum until the container has been measured (the layout clamps a 0px container to the minimums). */
-function columnWidthOf(column: TableColumn): number {
+const columnWidthOf = (column: TableColumn): number => {
   return columnWidths.value[column.key] ?? minWidthOf(column)
 }
 
 const baseId = useId()
 // By position, not key: a key may hold characters (spaces) that would split an `aria-labelledby` id list
-function columnHeaderId(column: TableColumn) {
+const columnHeaderId = (column: TableColumn) => {
   return `${baseId}-column-${props.columns.indexOf(column)}`
 }
 
-function resizeColumn(column: TableColumn, width: number) {
+const resizeColumn = (column: TableColumn, width: number) => {
   width = Math.max(
     minWidthOf(column),
     Math.min(column.maxWidth ?? Number.MAX_SAFE_INTEGER, Math.floor(width)),
@@ -586,25 +586,25 @@ watch(
 
 let resizeStart: { column: TableColumn; startX: number; startWidth: number } | null = null
 
-function onResizerPointerDown(column: TableColumn, event: PointerEvent) {
+const onResizerPointerDown = (column: TableColumn, event: PointerEvent) => {
   resizeStart = { column, startX: event.clientX, startWidth: columnWidths.value[column.key] ?? 0 }
   resizingKey.value = column.key
   window.addEventListener('pointermove', onResizerPointerMove)
   window.addEventListener('pointerup', onResizerPointerUp, { once: true })
 }
 
-function onResizerPointerMove(event: PointerEvent) {
+const onResizerPointerMove = (event: PointerEvent) => {
   if (resizeStart)
     resizeColumn(resizeStart.column, resizeStart.startWidth + event.clientX - resizeStart.startX)
 }
 
-function onResizerPointerUp() {
+const onResizerPointerUp = () => {
   resizeStart = null
   resizingKey.value = undefined
   window.removeEventListener('pointermove', onResizerPointerMove)
 }
 
-function onResizerKeydown(column: TableColumn, event: KeyboardEvent) {
+const onResizerKeydown = (column: TableColumn, event: KeyboardEvent) => {
   if (event.key !== 'ArrowLeft' && event.key !== 'ArrowRight') return
   event.preventDefault()
   const step = event.shiftKey ? 50 : 10
@@ -625,7 +625,7 @@ let observer: IntersectionObserver | undefined
 // watch below can fire several times per tick (e.g. on mount) without asking twice.
 let observedState: unknown[] = []
 
-function observeSentinel() {
+const observeSentinel = () => {
   const state = [props.hasMore, props.loading, props.rows.length, sentinelRef.value]
   if (state.every((value, i) => value === observedState[i])) return
   observedState = state
@@ -674,7 +674,7 @@ watch(
   { immediate: true },
 )
 
-function focusRow(key: TableSelectionKey) {
+const focusRow = (key: TableSelectionKey) => {
   focusTarget.value = { kind: 'row', key }
   nextTick(() => {
     tableRef.value
@@ -683,23 +683,23 @@ function focusRow(key: TableSelectionKey) {
   })
 }
 
-function headerCells(): HTMLElement[] {
+const headerCells = (): HTMLElement[] => {
   return Array.from(tableRef.value?.querySelectorAll<HTMLElement>('thead > tr > th') ?? [])
 }
 
-function focusHeader(index: number) {
+const focusHeader = (index: number) => {
   const cells = headerCells()
   index = Math.max(0, Math.min(cells.length - 1, index))
   focusTarget.value = { kind: 'header', index }
   cells[index]?.focus()
 }
 
-function headerTabindex(index: number) {
+const headerTabindex = (index: number) => {
   const target = focusTarget.value
   return target?.kind === 'header' && target.index === index ? 0 : -1
 }
 
-function onHeaderKeydown(event: KeyboardEvent) {
+const onHeaderKeydown = (event: KeyboardEvent) => {
   const cells = headerCells()
   const index = cells.indexOf(event.target as HTMLElement)
   if (index === -1) return
@@ -722,7 +722,7 @@ function onHeaderKeydown(event: KeyboardEvent) {
   }
 }
 
-function onRowKeydown(flat: FlatRow, event: KeyboardEvent) {
+const onRowKeydown = (flat: FlatRow, event: KeyboardEvent) => {
   // Keys typed into interactive cell content (inputs, buttons) are theirs
   if (event.target !== event.currentTarget) return
   // Escape clears the selection, Meta/Ctrl+A selects every row
@@ -750,7 +750,7 @@ function onRowKeydown(flat: FlatRow, event: KeyboardEvent) {
   if (event.shiftKey) manager.extend(next.key, flat.key)
 }
 
-function onRowClick(flat: FlatRow, event: MouseEvent) {
+const onRowClick = (flat: FlatRow, event: MouseEvent) => {
   if (props.selectionMode === 'none') return
   const target = event.target as HTMLElement
   if (target.closest('button, a, input, [data-slot="table-column-resizer"]')) return
@@ -761,11 +761,11 @@ function onRowClick(flat: FlatRow, event: MouseEvent) {
 /* ---------------- Misc helpers ---------------- */
 const colSpan = computed(() => props.columns.length + (props.selectionMode !== 'none' ? 1 : 0))
 
-function cellValue(row: TableRow, column: TableColumn) {
+const cellValue = (row: TableRow, column: TableColumn) => {
   return row[column.key]
 }
 
-function alignClass(column: TableColumn) {
+const alignClass = (column: TableColumn) => {
   if (column.align === 'center') return 'text-center'
   if (column.align === 'end') return 'text-end'
   return undefined

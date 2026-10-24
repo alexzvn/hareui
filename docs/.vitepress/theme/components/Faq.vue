@@ -21,7 +21,7 @@ import FaqItem from './FaqItem.vue'
 // not-prose so the trigger keeps the component's own type styles; answers keep prose styling.
 const slots = useSlots()
 
-function faqItems(nodes: VNode[]): VNode[] {
+const faqItems = (nodes: VNode[]): VNode[] => {
   return nodes.flatMap((node) => {
     if (node.type === FaqItem) return [node]
     if (node.type === Fragment && Array.isArray(node.children))
@@ -30,7 +30,7 @@ function faqItems(nodes: VNode[]): VNode[] {
   })
 }
 
-function entries() {
+const entries = () => {
   return faqItems(slots.default?.() ?? []).map((node, index) => ({
     label: (node.props as { question: string }).question,
     slot: `faq-${index}`,

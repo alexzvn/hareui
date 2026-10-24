@@ -8,7 +8,7 @@ import { expectAccessible } from './a11y'
 
 const CIRCUMFERENCE = 2 * Math.PI * 16
 
-function fill(wrapper: ReturnType<typeof mount>) {
+const fill = (wrapper: ReturnType<typeof mount>) => {
   return wrapper.get('[data-slot="progress-circle-fill-circle"]')
 }
 

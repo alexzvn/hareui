@@ -21,7 +21,7 @@ import { ref } from 'vue'
 const value = ref('')
 const isInvalid = ref(false)
 
-function onSubmit(e: Event) {
+const onSubmit = (e: Event) => {
   e.preventDefault()
 
   if (value.value !== '123456') {
@@ -35,7 +35,7 @@ function onSubmit(e: Event) {
   console.log('Code verified successfully!')
 }
 
-function handleChange(val: string | undefined) {
+const handleChange = (val: string | undefined) => {
   value.value = val ?? ''
   isInvalid.value = false
 }

@@ -7,7 +7,7 @@ import DatePicker from '@/components/date-picker/DatePicker.vue'
 import { expectAccessible } from './a11y'
 
 // Local stand-in for Promise.withResolvers, so the library's tsconfig `lib` doesn't need ES2024.
-function withResolvers<T>() {
+const withResolvers = <T>() => {
   let resolve!: (value: T) => void
   const promise = new Promise<T>((res) => {
     resolve = res
@@ -300,7 +300,9 @@ describe('DatePicker accessibility', () => {
       })
       .join(' ')
 
-  async function open(props: Record<string, unknown> = { label: 'Due date', defaultValue: date }) {
+  const open = async (
+    props: Record<string, unknown> = { label: 'Due date', defaultValue: date },
+  ) => {
     const wrapper = mount(DatePicker, { props: props as any, attachTo: document.body })
     await wrapper.get(trigger).trigger('click')
     await flush()

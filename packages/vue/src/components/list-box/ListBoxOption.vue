@@ -128,13 +128,13 @@ const option = useTemplateRef<{ $el: HTMLElement }>('option')
 
 // RAC omits `aria-selected` when nothing can be selected; Reka always renders it (as `false`), and never rewrites an
 // unchanged value, so removing it after each render sticks
-function dropSelectedState() {
+const dropSelectedState = () => {
   if (!props.selectable) option.value?.$el.removeAttribute?.('aria-selected')
 }
 onMounted(dropSelectedState)
 onUpdated(dropSelectedState)
 
-function onFocus() {
+const onFocus = () => {
   focused.value = true
   // DOM focus is the keyboard cursor (RAC focusedKey): a mouse press or `focus()` must move Reka's highlight too
   const el = option.value?.$el
@@ -142,12 +142,12 @@ function onFocus() {
     listbox.highlightedElement.value = el
 }
 
-function onPointerleave() {
+const onPointerleave = () => {
   hovered.value = false
   pressed.value = false
 }
 
-function onPointermove(event: PointerEvent) {
+const onPointermove = (event: PointerEvent) => {
   const el = option.value?.$el
   if (
     props.focusOnHover &&
@@ -160,7 +160,7 @@ function onPointermove(event: PointerEvent) {
 }
 
 // A disabled option isn't focusable: keep focus on the focused option instead of the list container (RAC)
-function onMousedown(event: MouseEvent) {
+const onMousedown = (event: MouseEvent) => {
   if (state.value.disabled) event.preventDefault()
 }
 // With `virtualFocus.value` the owner tracks focus by value (virtualized rows unmount), else by Reka's highlighted element
@@ -189,7 +189,7 @@ const state = computed<ListBoxItemSlotProps>(() => ({
   disabled: !!(props.listDisabled || props.item.disabled),
 }))
 
-function onSelect(event: CustomEvent<{ originalEvent?: Event }>) {
+const onSelect = (event: CustomEvent<{ originalEvent?: Event }>) => {
   emit('select', event)
   if (event.defaultPrevented) return
   if (!props.selectable) {

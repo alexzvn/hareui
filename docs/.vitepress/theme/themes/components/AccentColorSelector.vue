@@ -86,14 +86,14 @@ const trackBackground = computed(() => {
 
 const value = computed(() => formatHsl(oklchColor.value) ?? 'hsl(253.67, 100%, 61.99%)')
 
-function handleHueSliderChange(color: Color) {
+const handleHueSliderChange = (color: Color) => {
   setVariables({
     ...variables.value,
     hue: getHueFromColor(color),
   })
 }
 
-function handleColorChange(color: Color) {
+const handleColorChange = (color: Color) => {
   const hsl = formatColor(color, 'hsl')
   const { chroma, hue, lightness } = getValuesFromOklch(hsl)
 

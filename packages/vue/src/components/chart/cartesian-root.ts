@@ -141,9 +141,9 @@ export const cartesianRootDefaults = {
 const DEFAULT_MARGIN: Required<ChartMargin> = { top: 8, right: 8, bottom: 0, left: 0 }
 
 /** A root's margin: its `margin` prop, else the default (a 2px top margin for sparklines). */
-export function rootMargin(
+export const rootMargin = (
   props: Pick<CartesianRootProps<object, ChartSeriesBase>, 'margin' | 'sparkline'>,
-): ChartMargin {
+): ChartMargin => {
   return props.margin ?? (props.sparkline ? chartDefaults.sparkline.margin : DEFAULT_MARGIN)
 }
 
@@ -185,14 +185,14 @@ export type CartesianRootOptions<T extends object, S extends ChartSeriesBase> = 
 }
 
 /** Drops `undefined` values, so they don't override defaults when spread. */
-export function definedProps<P extends object>(values: P): Partial<P> {
+export const definedProps = <P extends object>(values: P): Partial<P> => {
   return Object.fromEntries(
     Object.entries(values).filter(([, value]) => value !== undefined),
   ) as Partial<P>
 }
 
 /** Default config of a series kind, below root props and the series' own config. */
-function kindDefaults(kind: CartesianSeriesKind, sparkline: boolean): Partial<AnySeries> {
+const kindDefaults = (kind: CartesianSeriesKind, sparkline: boolean): Partial<AnySeries> => {
   const thin =
     sparkline && kind !== 'bar' ? { strokeWidth: chartDefaults.sparkline.strokeWidth } : {}
   // Lines never stack, even in a `stacked` chart.
@@ -204,9 +204,9 @@ function kindDefaults(kind: CartesianSeriesKind, sparkline: boolean): Partial<An
  * Turns a cartesian root's props into what it draws: resolved series, part props and legend. Also publishes the index
  * and series to the chart context, so parts placed by hand default from them.
  */
-export function useCartesianRoot<T extends object, S extends ChartSeriesBase>(
+export const useCartesianRoot = <T extends object, S extends ChartSeriesBase>(
   options: CartesianRootOptions<T, S>,
-) {
+) => {
   const { chart, props, hidden } = options
 
   const generated = computed(() => isChartGenerated(props))

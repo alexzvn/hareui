@@ -14,7 +14,7 @@ import { createDashboardSidebarState, provideDashboardContext } from '@/composab
 import { expectAccessible } from './a11y'
 
 // Provides the dashboard context the way DashboardGroup does, without depending on the group.
-function mountInDashboard(render: () => VNode) {
+const mountInDashboard = (render: () => VNode) => {
   const left = createDashboardSidebarState()
   const right = createDashboardSidebarState()
   const Harness = defineComponent({
@@ -302,7 +302,7 @@ describe('dashboardToolbar', () => {
 })
 
 describe('dashboardNavbar accessibility', () => {
-  function mountNavbar(navbar: Record<string, unknown> = {}) {
+  const mountNavbar = (navbar: Record<string, unknown> = {}) => {
     return mount(DashboardGroup, {
       props: { persistent: false },
       slots: {

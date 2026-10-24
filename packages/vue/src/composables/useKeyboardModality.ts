@@ -6,7 +6,7 @@ import { onBeforeUnmount, onMounted, readonly, ref } from 'vue'
  * interaction (and before any), `false` after a pointer press. Focus or a highlight is focus-visible only in
  * keyboard modality, so opening a list with the mouse shows no focus ring on its options.
  */
-export function useKeyboardModality(): Readonly<Ref<boolean>> {
+export const useKeyboardModality = (): Readonly<Ref<boolean>> => {
   const keyboard = ref(true)
   const onPointerdown = () => {
     keyboard.value = false

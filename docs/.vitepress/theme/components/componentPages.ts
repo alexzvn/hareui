@@ -14,7 +14,7 @@ const bySlug = new Map(
 )
 
 /** Component pages for the given slugs, in order, skipping slugs HareUI has no page for. */
-export function componentPages(slugs: readonly string[]): ComponentPage[] {
+export const componentPages = (slugs: readonly string[]): ComponentPage[] => {
   return slugs.flatMap((slug) => {
     const title = bySlug.get(slug)
     return title ? [{ slug, title }] : []

@@ -59,14 +59,14 @@ type TripDocument = {
 const documents = ref<TripDocument[]>([])
 let added = 0
 
-function addDocuments(files: File[]) {
+const addDocuments = (files: File[]) => {
   documents.value.push(
     ...files.map((file) => ({ key: `doc-${added++}`, name: file.name, bytes: file.size, sent: 0 })),
   )
   resume()
 }
 
-function removeDocument(key: string) {
+const removeDocument = (key: string) => {
   documents.value = documents.value.filter((doc) => doc.key !== key)
 }
 
@@ -78,7 +78,7 @@ const BYTES_PER_MS = (1.5 * 1024 * 1024) / 1000
 let frame = 0
 let lastTime = 0
 
-function pump(now: number) {
+const pump = (now: number) => {
   const sending = documents.value.filter((doc) => !isSent(doc))
   if (!sending.length) {
     frame = 0
@@ -94,7 +94,7 @@ function pump(now: number) {
   frame = requestAnimationFrame(pump)
 }
 
-function resume() {
+const resume = () => {
   if (frame) return
   lastTime = performance.now()
   frame = requestAnimationFrame(pump)

@@ -34,11 +34,11 @@ import { computed, shallowRef } from 'vue'
 const selectedRange = shallowRef<DateRange | undefined>()
 const blockedDates = [5, 6, 12, 13, 14, 20]
 
-function isDateUnavailable(date: DateValue) {
+const isDateUnavailable = (date: DateValue) => {
   return isWeekend(date, 'en-US') || blockedDates.includes(date.day)
 }
 
-function indicator(date: DateValue) {
+const indicator = (date: DateValue) => {
   return !isWeekend(date, 'en-US') && blockedDates.includes(date.day)
 }
 

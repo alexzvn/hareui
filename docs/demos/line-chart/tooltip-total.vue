@@ -42,11 +42,11 @@ const data = [
 
 const series = { solar: { name: 'Solar' }, grid: { name: 'Grid' } }
 
-function formatEnergy(value: number | string) {
+const formatEnergy = (value: number | string) => {
   return `${value} kWh`
 }
 
-function total(payload: ChartTooltipContentEntry[]) {
+const total = (payload: ChartTooltipContentEntry[]) => {
   return formatEnergy(payload.reduce((sum, entry) => sum + Number(entry.value), 0).toFixed(1))
 }
 </script>

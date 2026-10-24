@@ -4,7 +4,7 @@ import { onMounted, readonly, ref, shallowRef } from 'vue'
 export const DESIGN_ATTRIBUTES = ['data-design-theme', 'data-vibrant-palette'] as const
 export type DesignAttributes = Partial<Record<(typeof DESIGN_ATTRIBUTES)[number], string>>
 
-export function readDesignAttributes(root: Element): DesignAttributes {
+export const readDesignAttributes = (root: Element): DesignAttributes => {
   const attributes: DesignAttributes = {}
   for (const name of DESIGN_ATTRIBUTES) {
     const value = root.getAttribute(name)
@@ -22,7 +22,7 @@ let observing = false
  * `<html>` directly, bypassing VitePress' `isDark`, so the DOM is the source of truth: one observer, shared by every
  * caller. It starts on mount, so hydration renders the SSR defaults (light, no preset).
  */
-export function useDocTheme() {
+export const useDocTheme = () => {
   onMounted(() => {
     if (observing) return
     observing = true

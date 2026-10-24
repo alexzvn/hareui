@@ -26,10 +26,10 @@ const currency = new Intl.NumberFormat('en-US', { style: 'currency', currency: '
 const sorting = ref([{ id: 'amount', desc: true }])
 
 // The whole header cell toggles the sort; one chevron turns with the direction and stays hidden while unsorted.
-function sortableHeader(
+const sortableHeader = (
   column: { getIsSorted: () => false | 'asc' | 'desc'; toggleSorting: (desc?: boolean) => void },
   label: string,
-) {
+) => {
   const sorted = column.getIsSorted()
   return h(
     'button',

@@ -470,11 +470,16 @@ const lists = computed<NavigationMenuItem[][]>(() => {
     : [items as NavigationMenuItem[]]
 })
 
-function getLabel(item: NavigationMenuItem) {
+const getLabel = (item: NavigationMenuItem) => {
   return get(item, props.labelKey) as string | undefined
 }
 
-function getItemValue(item: NavigationMenuItem, index: number, level: number, listIndex: number) {
+const getItemValue = (
+  item: NavigationMenuItem,
+  index: number,
+  level: number,
+  listIndex: number,
+) => {
   const prefix = lists.value.length > 1 ? `group-${listIndex}-` : ''
   return (
     (get(item, props.valueKey) as string | undefined) ??
@@ -482,7 +487,7 @@ function getItemValue(item: NavigationMenuItem, index: number, level: number, li
   )
 }
 
-function getAccordionDefaultValue(list: NavigationMenuItem[], level = 0, listIndex = 0) {
+const getAccordionDefaultValue = (list: NavigationMenuItem[], level = 0, listIndex = 0) => {
   const open = list.reduce<string[]>((acc, item, index) => {
     if (item.defaultOpen || item.open) acc.push(getItemValue(item, index, level, listIndex))
     return acc
@@ -490,7 +495,7 @@ function getAccordionDefaultValue(list: NavigationMenuItem[], level = 0, listInd
   return props.type === 'single' ? open[0] : open
 }
 
-function listProps(list: NavigationMenuItem[], listIndex: number) {
+const listProps = (list: NavigationMenuItem[], listIndex: number) => {
   if (!vertical.value || collapsed.value) return {}
   return {
     ...accordionProps.value,
@@ -505,7 +510,7 @@ function listProps(list: NavigationMenuItem[], listIndex: number) {
 // width plus their end inset) and a 12px gap before the label. Hidden actions (`display: none`) fall back to
 // the one-button default.
 let actionsObserver: ResizeObserver | undefined
-function observeActions(el: HTMLElement) {
+const observeActions = (el: HTMLElement) => {
   if (typeof ResizeObserver === 'undefined') return () => {}
   actionsObserver ??= new ResizeObserver((entries) => {
     for (const { target } of entries) {

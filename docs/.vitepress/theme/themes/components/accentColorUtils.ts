@@ -43,7 +43,7 @@ const clamp = (value: number, min: number, max: number) => Math.min(Math.max(val
 const wrapHue = (hue: number) => ((hue % 360) + 360) % 360
 
 /** React Aria clamps channels (and keeps two decimals) when it parses a color; Reka's `normalizeColor` does neither. */
-function clampColor(color: Color): Color {
+const clampColor = (color: Color): Color => {
   const alpha = clamp(color.alpha, 0, 1)
   if (color.space === 'rgb')
     return {
@@ -71,12 +71,12 @@ function clampColor(color: Color): Color {
 }
 
 /** `parseColor` of React Aria: throws when the string is not a supported color. */
-function parseColor(value: string): Color {
+const parseColor = (value: string): Color => {
   return clampColor(normalizeColor(value))
 }
 
 /** React Aria's `color.toString('css')`. */
-function toCss(color: Color): string {
+const toCss = (color: Color): string => {
   if (color.space === 'rgb') {
     return `rgb(${Math.round(color.r)}, ${Math.round(color.g)}, ${Math.round(color.b)})`
   }
@@ -84,7 +84,7 @@ function toCss(color: Color): string {
   return `hsl(${toFixed2(hsl.h)}, ${toFixed2(hsl.s)}%, ${toFixed2(hsl.l)}%)`
 }
 
-function toHex(color: Color): string {
+const toHex = (color: Color): string => {
   const rgb = convertToRgb(color)
   const channel = (value: number) => Math.round(value).toString(16).padStart(2, '0')
   return `#${channel(rgb.r)}${channel(rgb.g)}${channel(rgb.b)}`.toUpperCase()
@@ -104,7 +104,7 @@ function toHex(color: Color): string {
  * normalizeColorSyntax("rgb(255 128 0)") // → "rgb(255, 128, 0)"
  * normalizeColorSyntax("rgb(255 128 0 / 0.5)") // → "rgba(255, 128, 0, 0.5)"
  */
-export function normalizeColorSyntax(color: string): string {
+export const normalizeColorSyntax = (color: string): string => {
   const trimmed = color.trim()
 
   // Match hsl/hsla with space-separated values
@@ -163,7 +163,7 @@ export function normalizeColorSyntax(color: string): string {
  * Detects the color format from an input string.
  * Returns null if the format cannot be determined.
  */
-export function detectColorFormat(value: string): ColorFormat | null {
+export const detectColorFormat = (value: string): ColorFormat | null => {
   const trimmed = value.trim().toLowerCase()
 
   if (trimmed.startsWith('oklch(')) return 'oklch'
@@ -184,7 +184,7 @@ export function detectColorFormat(value: string): ColorFormat | null {
  * Formats a Color object to a string in the specified format.
  * Handles OKLCH conversion using culori.
  */
-export function formatColor(color: Color, format: ColorFormat): string {
+export const formatColor = (color: Color, format: ColorFormat): string => {
   switch (format) {
     case 'hex':
       return toHex(color)
@@ -217,7 +217,7 @@ export function formatColor(color: Color, format: ColorFormat): string {
   }
 }
 
-export function getHueFromColor(color: Color): number {
+export const getHueFromColor = (color: Color): number => {
   const oklch = converter('oklch')(formatColor(color, 'hsl'))
 
   if (!oklch || oklch.h === undefined) {
@@ -227,11 +227,13 @@ export function getHueFromColor(color: Color): number {
   return oklch.h
 }
 
-export function getValuesFromOklch(hsl: string): {
+export const getValuesFromOklch = (
+  hsl: string,
+): {
   lightness: number
   chroma: number
   hue: number
-} {
+} => {
   const oklch = converter('oklch')
   const oklchColor = oklch(hsl)
 
@@ -246,7 +248,7 @@ export function getValuesFromOklch(hsl: string): {
  * Validates if a string is a valid color for the given format.
  * Returns the parsed Color if valid, null otherwise.
  */
-export function validateColorInput(input: string, format: ColorFormat): Color | null {
+export const validateColorInput = (input: string, format: ColorFormat): Color | null => {
   const trimmed = input.trim()
 
   if (!trimmed) return null
@@ -329,7 +331,7 @@ export function validateColorInput(input: string, format: ColorFormat): Color | 
  * Handles OKLCH conversion since the color parser doesn't support it natively.
  * Falls back to DEFAULT_COLOR if parsing fails.
  */
-export function safeParseColor(color: string): Color {
+export const safeParseColor = (color: string): Color => {
   try {
     if (color.startsWith('oklch')) {
       const hsl = formatHsl(color)
@@ -348,7 +350,7 @@ export function safeParseColor(color: string): Color {
 }
 
 /** The color as a HSL `Color` from a random hue, saturation and lightness (the picker's shuffle button). */
-export function randomColor(): Color {
+export const randomColor = (): Color => {
   const randomHue = Math.floor(Math.random() * 360)
   const randomSaturation = 50 + Math.floor(Math.random() * 50)
   const randomLightness = 40 + Math.floor(Math.random() * 30)
@@ -360,7 +362,7 @@ export function randomColor(): Color {
  * Chunks an array into smaller arrays of a specified size.
  * Useful for pagination of swatches.
  */
-export function chunkArray<T>(array: T[], chunkSize: number): T[][] {
+export const chunkArray = <T>(array: T[], chunkSize: number): T[][] => {
   const chunks: T[][] = []
 
   for (let i = 0; i < array.length; i += chunkSize) {

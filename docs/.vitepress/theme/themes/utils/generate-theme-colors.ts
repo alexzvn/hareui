@@ -199,28 +199,28 @@ export type ColorGenerationParams = {
 /**
  * Adjust hue of a color object, keeping lightness and chroma
  */
-function adjustHue(color: OklchColor, newHue: number): OklchColor {
+const adjustHue = (color: OklchColor, newHue: number): OklchColor => {
   return { ...color, h: newHue }
 }
 
 /**
  * Adjust chroma of a color object, keeping lightness and hue
  */
-function adjustChroma(color: OklchColor, newChroma: number): OklchColor {
+const adjustChroma = (color: OklchColor, newChroma: number): OklchColor => {
   return { ...color, c: Math.max(0, newChroma) }
 }
 
 /**
  * Format a color object to OKLCH string
  */
-export function formatOklch(color: OklchColor): string {
+export const formatOklch = (color: OklchColor): string => {
   return `oklch(${(color.l * 100).toFixed(2)}% ${color.c.toFixed(4)} ${color.h.toFixed(2)})`
 }
 
 /**
  * Parse an OKLCH string to color object
  */
-export function parseOklch(value: string): OklchColor | null {
+export const parseOklch = (value: string): OklchColor | null => {
   // Handle CSS variable references
   if (value.startsWith('var(')) {
     return null
@@ -247,7 +247,7 @@ export function parseOklch(value: string): OklchColor | null {
  * Calculate a blended hue for semantic colors based on the base hue
  * This creates cohesion while maintaining semantic meaning
  */
-function calculateSemanticHue(semanticDefaultHue: number, baseHue: number): number {
+const calculateSemanticHue = (semanticDefaultHue: number, baseHue: number): number => {
   const hueOffset = (baseHue - DEFAULT_ACCENT.hue) * SEMANTIC_HUE_BLEND_FACTOR
   let newHue = semanticDefaultHue + hueOffset
 
@@ -262,7 +262,7 @@ function calculateSemanticHue(semanticDefaultHue: number, baseHue: number): numb
  * Calculate foreground color based on background lightness
  * Uses OKLCH perceptual uniformity for accurate contrast decisions
  */
-export function calculateForeground(oklchString: string): string {
+export const calculateForeground = (oklchString: string): string => {
   const color = parseOklch(oklchString)
 
   if (!color) return 'oklch(99.11% 0 0)' // fallback to snow
@@ -283,7 +283,11 @@ export function calculateForeground(oklchString: string): string {
  * Calculate accent foreground color for solid accent backgrounds
  * Optimized for button text on accent-colored backgrounds
  */
-export function calculateAccentForeground(lightness: number, chroma: number, hue: number): string {
+export const calculateAccentForeground = (
+  lightness: number,
+  chroma: number,
+  hue: number,
+): string => {
   // For accent colors, we typically want high contrast
   // If accent is light (> 0.65), use dark foreground
   // If accent is dark (< 0.65), use light foreground
@@ -297,12 +301,12 @@ export function calculateAccentForeground(lightness: number, chroma: number, hue
 /**
  * Generate a semantic color with appropriate foreground
  */
-function generateSemanticColor(
+const generateSemanticColor = (
   name: string,
   config: (typeof SEMANTIC_COLORS)['success'],
   baseHue: number,
   grayChroma: number,
-): { color: ThemeColor; foreground: ThemeColor } {
+): { color: ThemeColor; foreground: ThemeColor } => {
   // Calculate blended hue
   const adjustedHue = calculateSemanticHue(config.hue, baseHue)
   const adjustedHueDark = calculateSemanticHue(
@@ -358,7 +362,7 @@ function generateSemanticColor(
  * - Full theme color generation for both light and dark modes
  * - Semantic color overrides for specific themes
  */
-export function generateThemeColors(params: ColorGenerationParams): GeneratedThemeColors {
+export const generateThemeColors = (params: ColorGenerationParams): GeneratedThemeColors => {
   const {
     lightness,
     chroma,
@@ -701,10 +705,10 @@ export function generateThemeColors(params: ColorGenerationParams): GeneratedThe
  *   - Light: accent/warning/success soft 15%/20%, danger 15%/20%
  *   - Dark:  accent/warning/success soft 12%/16%, danger 15%/20%
  */
-export function getDerivedColorFormulas(
+export const getDerivedColorFormulas = (
   theme: 'light' | 'dark',
   options?: { vibrant?: boolean },
-): Record<string, string> {
+): Record<string, string> => {
   const isLight = theme === 'light'
   const vibrant = options?.vibrant ?? false
   const [softPct, softHoverPct] = isLight ? ['15%', '20%'] : ['12%', '16%']
@@ -793,10 +797,10 @@ export const radiusDerivedVariables: Record<string, string> = {
 /**
  * Get all color variables as a flat record for applying to an element
  */
-export function getColorVariablesForElement(
+export const getColorVariablesForElement = (
   colors: GeneratedThemeColors,
   theme: 'light' | 'dark',
-): Record<string, string> {
+): Record<string, string> => {
   const isLight = theme === 'light'
   const getValue = (color: ThemeColor) => (isLight ? color.oklchLight : color.oklchDark)
 

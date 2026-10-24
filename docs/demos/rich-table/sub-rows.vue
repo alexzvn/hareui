@@ -56,7 +56,7 @@ const data: Node[] = [
 ]
 
 // A ghost button whose muted chevron turns from right to down.
-function expandToggle(row: RichTableRow<Node>) {
+const expandToggle = (row: RichTableRow<Node>) => {
   const isExpanded = row.getIsExpanded()
   return h(
     Button,

@@ -11,7 +11,10 @@ import { expectAccessible } from './a11y'
 const date = new CalendarDate(2025, 1, 15)
 
 // DateInputGroup isn't exported: it is only rendered inside a Reka date root, as the fields and pickers do
-function field(groupProps: Record<string, unknown> = {}, rootProps: Record<string, unknown> = {}) {
+const field = (
+  groupProps: Record<string, unknown> = {},
+  rootProps: Record<string, unknown> = {},
+) => {
   return defineComponent(
     () => () =>
       h('div', [
@@ -29,7 +32,7 @@ function field(groupProps: Record<string, unknown> = {}, rootProps: Record<strin
   )
 }
 
-function rangeField(groupProps: Record<string, unknown> = {}) {
+const rangeField = (groupProps: Record<string, unknown> = {}) => {
   return defineComponent(
     () => () =>
       h('div', [
@@ -63,7 +66,7 @@ const spinbuttons = (root: ParentNode) => [
 ]
 
 /** Accessible name per aria-labelledby (an element referencing itself contributes its own aria-label). */
-function accessibleName(el: HTMLElement) {
+const accessibleName = (el: HTMLElement) => {
   const ids = el.getAttribute('aria-labelledby')
   if (!ids) return el.getAttribute('aria-label')
   return ids

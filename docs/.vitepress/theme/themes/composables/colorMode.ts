@@ -5,7 +5,7 @@ import { onBeforeUnmount, onMounted, ref } from 'vue'
 
 const STORAGE_KEY = 'vitepress-theme-appearance'
 
-export function useColorMode() {
+export const useColorMode = () => {
   const isDark = ref(
     typeof document !== 'undefined' && document.documentElement.classList.contains('dark'),
   )
@@ -13,7 +13,7 @@ export function useColorMode() {
 
   const read = () => (isDark.value = document.documentElement.classList.contains('dark'))
 
-  function setDark(dark: boolean) {
+  const setDark = (dark: boolean) => {
     const root = document.documentElement
     localStorage.setItem(STORAGE_KEY, dark ? 'dark' : 'light')
     root.classList.toggle('dark', dark)

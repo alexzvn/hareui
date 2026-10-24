@@ -118,7 +118,7 @@ const auto = computed(() => props.enabled && props.visibility === 'auto')
 const state = ref<{ before: boolean; after: boolean } | null>(null)
 let frame: number | null = null
 
-function measure() {
+const measure = () => {
   const el = root.value?.$el
   if (!el) return
   const vertical = props.orientation === 'vertical'

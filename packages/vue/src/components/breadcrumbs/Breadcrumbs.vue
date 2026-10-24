@@ -108,7 +108,7 @@ const CHEVRON_RIGHT =
 
 // HeroUI clones a custom separator element with the separator classes (React's `cloneElement`);
 // anything else is rendered as-is, and no slot falls back to the chevron.
-function Separator(p: ItemSlotProps) {
+const Separator = (p: ItemSlotProps) => {
   const shared = {
     class: ui.value.separator({ class: props.ui?.separator }),
     'data-slot': 'breadcrumbs-separator',

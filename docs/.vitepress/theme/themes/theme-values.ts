@@ -321,7 +321,7 @@ export const themeComparisonKeys = [
  * Find which predefined theme matches the current variable values.
  * Returns undefined if no theme matches (i.e., it's a custom theme).
  */
-export function findMatchingTheme(currentValues: ThemeValues): ThemeId | undefined {
+export const findMatchingTheme = (currentValues: ThemeValues): ThemeId | undefined => {
   for (const themeId of themeIds) {
     const themeValues = themeValuesById[themeId]
     const matches = themeComparisonKeys.every((key) => {

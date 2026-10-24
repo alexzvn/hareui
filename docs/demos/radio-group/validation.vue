@@ -27,7 +27,7 @@ const items: RadioGroupItem[] = [
   { value: 'teams', label: 'Teams', description: 'Share access with up to 10 teammates' },
 ]
 
-function onSubmit(e: Event) {
+const onSubmit = (e: Event) => {
   e.preventDefault()
   const formData = new FormData(e.currentTarget as HTMLFormElement)
   const value = formData.get('plan-validation')

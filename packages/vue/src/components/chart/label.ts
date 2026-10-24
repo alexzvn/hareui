@@ -62,38 +62,38 @@ export type ChartLabelSource = {
 const chartLabelSourceKey: InjectionKey<ChartLabelSource> = Symbol('hareui-chart-label')
 
 /** Series: feeds `ChartLabel` children one item per datum. */
-export function provideChartLabels(
+export const provideChartLabels = (
   items: () => ChartLabelItem[],
   position?: ChartLabelPosition,
-): void {
+): void => {
   provide(chartLabelSourceKey, { items, position })
 }
 
 /** Roots and series: the box a single `ChartLabel` value is placed in (plot area, pie center, …). */
-export function provideChartLabelViewBox(
+export const provideChartLabelViewBox = (
   viewBox: () => ChartLabelViewBox | null,
   position?: ChartLabelPosition,
-): void {
+): void => {
   provide(chartLabelSourceKey, { viewBox, position })
 }
 
-export function useChartLabelSource(): ChartLabelSource | null {
+export const useChartLabelSource = (): ChartLabelSource | null => {
   return inject(chartLabelSourceKey, null)
 }
 
-export function isPolarViewBox(viewBox: ChartLabelViewBox): viewBox is ChartPolarViewBox {
+export const isPolarViewBox = (viewBox: ChartLabelViewBox): viewBox is ChartPolarViewBox => {
   return 'cx' in viewBox
 }
 
 const RADIAN = Math.PI / 180
 
 /** Point at `radius`/`angle` around a center. */
-export function polarToCartesian(
+export const polarToCartesian = (
   cx: number,
   cy: number,
   radius: number,
   angle: number,
-): { x: number; y: number } {
+): { x: number; y: number } => {
   return { x: cx + Math.cos(-RADIAN * angle) * radius, y: cy + Math.sin(-RADIAN * angle) * radius }
 }
 
@@ -105,11 +105,11 @@ export type ChartLabelAttrs = {
 }
 
 /** Text anchor point of a label at `position` in its view box. */
-export function labelAttrs(
+export const labelAttrs = (
   viewBox: ChartLabelViewBox,
   position: ChartLabelPosition,
   offset: number,
-): ChartLabelAttrs {
+): ChartLabelAttrs => {
   if (isPolarViewBox(viewBox)) {
     const { cx, cy, innerRadius, outerRadius, startAngle, endAngle } = viewBox
     const midAngle = (startAngle + endAngle) / 2

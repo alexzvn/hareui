@@ -15,7 +15,7 @@ const fruits: DropdownEntry[] = [
 
 let wrapper: ReturnType<typeof mount> | undefined
 
-function open(props: Record<string, unknown>) {
+const open = (props: Record<string, unknown>) => {
   wrapper = mount(Dropdown, {
     props: { defaultOpen: true, ...props },
     slots: { default: () => h('button', { 'data-testid': 'trigger' }, 'Open') },
@@ -35,11 +35,11 @@ const item = (label: string) =>
   )!
 const menuOpen = () => document.querySelector('[data-slot=dropdown-popover]') !== null
 
-async function settle() {
+const settle = async () => {
   for (let i = 0; i < 4; i++) await nextTick()
 }
 
-function press(el: HTMLElement, key: 'Enter' | ' ') {
+const press = (el: HTMLElement, key: 'Enter' | ' ') => {
   el.focus()
   el.dispatchEvent(new KeyboardEvent('keydown', { key, bubbles: true, cancelable: true }))
 }
@@ -186,7 +186,7 @@ describe('dropdown keyboard navigation', () => {
     { value: 'delete', label: 'Delete file' },
   ]
 
-  function key(el: Element, k: string) {
+  const key = (el: Element, k: string) => {
     el.dispatchEvent(new KeyboardEvent('keydown', { key: k, bubbles: true, cancelable: true }))
   }
 
@@ -215,7 +215,7 @@ describe('dropdown keyboard navigation', () => {
 
   // happy-dom fires Reka's focus-outside bookkeeping a couple of ticks after a keyboard-opened submenu mounts and
   // that closes it again, so submenu keys are dispatched on the first tick, before it can interfere.
-  async function openSubmenu(parent: string) {
+  const openSubmenu = async (parent: string) => {
     item(parent).focus()
     key(item(parent), 'ArrowRight')
     await nextTick()
@@ -353,7 +353,7 @@ describe('dropdown accessibility', () => {
 
   const trigger = () => document.querySelector<HTMLElement>('[data-testid=trigger]')!
   const menu = () => document.querySelector<HTMLElement>('[role=menu]')
-  function key(el: Element, k: string) {
+  const key = (el: Element, k: string) => {
     el.dispatchEvent(new KeyboardEvent('keydown', { key: k, bubbles: true, cancelable: true }))
   }
   // Vue drops an event stamped no later than the millisecond its listener was attached, so a key

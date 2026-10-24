@@ -111,7 +111,7 @@ describe('NumberField', () => {
   })
 
   // behaviour-final-check H12: RAC commits an emptied input as "no value" (change(NaN), hidden input '')
-  async function clearAndCommit(commit: (el: ReturnType<typeof mount>) => Promise<void>) {
+  const clearAndCommit = async (commit: (el: ReturnType<typeof mount>) => Promise<void>) => {
     const form = document.createElement('form')
     document.body.append(form)
     const wrapper = mount(NumberField, { props: { name: 'qty', defaultValue: 5 }, attachTo: form })

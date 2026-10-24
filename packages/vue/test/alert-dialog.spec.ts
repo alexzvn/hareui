@@ -7,14 +7,14 @@ import AlertDialog from '@/components/alert-dialog/AlertDialog.vue'
 
 import { expectAccessible } from './a11y'
 
-function escapeKeydown() {
+const escapeKeydown = () => {
   document.dispatchEvent(
     new KeyboardEvent('keydown', { key: 'Escape', bubbles: true, cancelable: true }),
   )
 }
 
 // Reka's Presence needs three ticks before a closed dialog leaves the DOM (see modal.spec.ts).
-async function waitUnmount() {
+const waitUnmount = async () => {
   await nextTick()
   await nextTick()
   await nextTick()
@@ -23,7 +23,7 @@ async function waitUnmount() {
 // happy-dom has no CSS animations. Emulate them from the theme: a closed element whose classes declare a closed-state
 // animation (the backdrop's exit, the dialog's `presence-hold`) reports a running one, so reka's Presence keeps it
 // mounted (`unmountSuspended`) until `animationend`. The backdrop's exit is the shortest, so `finishExit` ends only that.
-function stubExitAnimations() {
+const stubExitAnimations = () => {
   const original = window.getComputedStyle.bind(window)
   vi.spyOn(window, 'getComputedStyle').mockImplementation((el: Element, pseudo?: string | null) => {
     const real = original(el, pseudo)
@@ -37,7 +37,7 @@ function stubExitAnimations() {
   })
 }
 
-async function finishExit() {
+const finishExit = async () => {
   await waitUnmount()
   const event = Object.assign(new Event('animationend', { bubbles: true }), {
     animationName: 'exit',
@@ -129,7 +129,7 @@ describe('alertDialog', () => {
       document.body.innerHTML = ''
     })
 
-    function mountControlled() {
+    const mountControlled = () => {
       const open = ref(false)
       const wrapper = mount(
         {
@@ -219,7 +219,7 @@ describe('alertDialog', () => {
     // `undefined` drops a default slot, so a test can check the dialog without it.
     type SlotFns = Partial<Record<string, (props: { close: () => void }) => VNodeChild>>
 
-    function mountWithTrigger(props: Record<string, unknown> = {}, slots: SlotFns = {}) {
+    const mountWithTrigger = (props: Record<string, unknown> = {}, slots: SlotFns = {}) => {
       const all: SlotFns = {
         default: () => h('button', { id: 'trigger' }, 'Delete project'),
         body: () => h('p', 'This permanently deletes the project.'),
@@ -239,7 +239,7 @@ describe('alertDialog', () => {
       return { wrapper, trigger }
     }
 
-    async function openWith(trigger: HTMLButtonElement) {
+    const openWith = async (trigger: HTMLButtonElement) => {
       trigger.focus()
       trigger.click()
       await nextTick()

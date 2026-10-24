@@ -40,7 +40,7 @@ const series = {
 }
 const hidden = ref<string[]>(['airport'])
 
-function formatTemperature(value: number) {
+const formatTemperature = (value: number) => {
   return `${value}°C`
 }
 </script>

@@ -13,7 +13,7 @@ export type CustomFont = {
 
 const STORAGE_KEY = 'theme-builder-custom-fonts'
 
-function read(): CustomFont[] {
+const read = (): CustomFont[] => {
   if (typeof window === 'undefined') return []
   try {
     const stored = localStorage.getItem(STORAGE_KEY)
@@ -27,7 +27,7 @@ function read(): CustomFont[] {
 const customFonts = ref<CustomFont[]>([])
 let loaded = false
 
-function save(fonts: CustomFont[]) {
+const save = (fonts: CustomFont[]) => {
   try {
     localStorage.setItem(STORAGE_KEY, JSON.stringify(fonts))
     customFonts.value = fonts
@@ -36,7 +36,7 @@ function save(fonts: CustomFont[]) {
   }
 }
 
-function generateFontId(fontFamily: string, existing: CustomFont[]) {
+const generateFontId = (fontFamily: string, existing: CustomFont[]) => {
   const baseId = `custom-${fontFamily.toLowerCase().replace(/\s+/g, '-')}`
   const ids = new Set(existing.map((f) => f.id))
   if (!ids.has(baseId)) return baseId
@@ -50,7 +50,7 @@ export type AddCustomFontResult =
   | { error: 'cannot-detect-family' }
   | { error: 'already-imported'; label: string }
 
-export function useCustomFonts() {
+export const useCustomFonts = () => {
   if (!loaded && typeof window !== 'undefined') {
     loaded = true
     customFonts.value = read()

@@ -3,7 +3,7 @@
 // the same auto -> px -> 0px sequence, and collapsed panels stay find-in-page searchable
 // (`hidden="until-found"`).
 
-function setSize(el: HTMLElement, size: 'auto' | '0px' | 'measure') {
+const setSize = (el: HTMLElement, size: 'auto' | '0px' | 'measure') => {
   el.style.setProperty(
     '--disclosure-panel-width',
     size === 'measure' ? `${el.scrollWidth}px` : size,
@@ -17,14 +17,14 @@ function setSize(el: HTMLElement, size: 'auto' | '0px' | 'measure') {
 const afterAnimations = (el: HTMLElement) => Promise.all(el.getAnimations().map((a) => a.finished))
 
 /** Applies the open/closed state without animating (first render, or no Web Animations API). */
-export function setPanelStatic(el: HTMLElement, open: boolean) {
+export const setPanelStatic = (el: HTMLElement, open: boolean) => {
   if (open) el.removeAttribute('hidden')
   else el.setAttribute('hidden', 'until-found')
   setSize(el, open ? 'auto' : '0px')
 }
 
 /** Animates the panel to its new open/closed state. */
-export function animatePanel(el: HTMLElement, open: boolean) {
+export const animatePanel = (el: HTMLElement, open: boolean) => {
   if (typeof el.getAnimations !== 'function') return setPanelStatic(el, open)
   if (open) {
     el.removeAttribute('hidden')
@@ -48,7 +48,7 @@ export function animatePanel(el: HTMLElement, open: boolean) {
  * Opens the panel when find-in-page reveals it while collapsed. Returns the cleanup function.
  * `toggle` must flip the owner's open state.
  */
-export function onPanelReveal(el: HTMLElement, toggle: () => void) {
+export const onPanelReveal = (el: HTMLElement, toggle: () => void) => {
   const handler = () => {
     // Restore `hidden` and let the state change open the panel.
     requestAnimationFrame(() => el.setAttribute('hidden', 'until-found'))

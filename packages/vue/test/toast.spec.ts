@@ -7,12 +7,12 @@ import { toast, toastQueue, useToast } from '@/components/toast-provider/useToas
 
 import { expectAccessible } from './a11y'
 
-function mountProvider() {
+const mountProvider = () => {
   return mount(ToastProvider, { props: { portal: false } })
 }
 
 // Local stand-in for Promise.withResolvers, so the library's tsconfig `lib` doesn't need ES2024.
-function withResolvers<T>() {
+const withResolvers = <T>() => {
   let resolve!: (value: T) => void
   let reject!: (reason?: unknown) => void
   const promise = new Promise<T>((res, rej) => {
@@ -22,7 +22,7 @@ function withResolvers<T>() {
   return { promise, resolve, reject }
 }
 
-function delay(ms: number): Promise<void> {
+const delay = (ms: number): Promise<void> => {
   const { promise, resolve } = withResolvers<void>()
   setTimeout(resolve, ms)
   return promise
@@ -260,10 +260,10 @@ describe('toast', () => {
       titleId: string
       descriptionId: string
     }
-    function mountRegion(
+    const mountRegion = (
       props: Record<string, unknown> = {},
       slots: Record<string, (p: ToastSlotProps) => unknown> = {},
-    ) {
+    ) => {
       mounted = mount(ToastProvider, {
         props: { portal: false, ...props },
         slots,

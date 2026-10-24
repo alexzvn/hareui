@@ -37,14 +37,14 @@ export default defineComponent({
       { immediate: true },
     )
 
-    function onFocusIn(event: FocusEvent) {
+    const onFocusIn = (event: FocusEvent) => {
       const item = event.target instanceof Element ? event.target.closest<HTMLElement>(ITEM) : null
       if (item && listbox.highlightedElement.value !== item)
         listbox.changeHighlight(item, false, false)
     }
 
     // Moves through the rendered items rather than Reka's collection, which only fills in after mount
-    function onKeydown(event: KeyboardEvent) {
+    const onKeydown = (event: KeyboardEvent) => {
       const el = root()
       if (!el || event.altKey || event.ctrlKey || event.metaKey || !listbox.focusable.value) return
       const items = [...el.querySelectorAll<HTMLElement>(ITEM)].filter(

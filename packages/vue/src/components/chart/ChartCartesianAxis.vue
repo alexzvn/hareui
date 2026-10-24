@@ -104,7 +104,7 @@ const anchor = computed(() => {
   }
 })
 
-function tickGeometry(tick: ChartTick) {
+const tickGeometry = (tick: ChartTick) => {
   const { box, orientation } = props.axis
   // The tick size is always reserved, even with tick lines hidden.
   const gap = props.tickSize + props.tickMargin

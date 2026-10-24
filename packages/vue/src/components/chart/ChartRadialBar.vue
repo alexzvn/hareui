@@ -139,7 +139,7 @@ const polar = usePolarContext('ChartRadialBar')
 const id = useId(undefined, 'hareui-chart-radial-bar')
 const cells = provideChartCells()
 
-function ringFill(index: number): string {
+const ringFill = (index: number): string => {
   const own = chart.data.value[index]?.fill
   return (
     cells.value[index]?.fill ??
@@ -149,12 +149,12 @@ function ringFill(index: number): string {
   )
 }
 
-function ringName(index: number): string {
+const ringName = (index: number): string => {
   const value = chart.data.value[index]?.[props.nameKey]
   return value !== undefined && value !== '' ? String(value) : (props.name ?? props.dataKey)
 }
 
-function entries(index: number): ChartTooltipPayloadEntry[] {
+const entries = (index: number): ChartTooltipPayloadEntry[] => {
   const datum = chart.data.value[index]
   const value = datum?.[props.dataKey]
   if (!datum || value === undefined || value === null || value === '') return []
@@ -222,11 +222,11 @@ const backgroundStyle = computed(() =>
 )
 
 // Mount: bars sweep out from the start angle. Data change: each bar moves from its previous end angle.
-function interpolate(
+const interpolate = (
   from: RadialBarSector[] | null,
   to: RadialBarSector[],
   t: number,
-): RadialBarSector[] {
+): RadialBarSector[] => {
   return to.map((sector) => {
     const previous = from?.find((item) => item.index === sector.index)
     return {

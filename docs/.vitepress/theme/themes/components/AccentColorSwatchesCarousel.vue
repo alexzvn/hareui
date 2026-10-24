@@ -79,7 +79,7 @@ const swatchPage = ref(
   })(),
 )
 
-function navigateSwatches(direction: 'left' | 'right') {
+const navigateSwatches = (direction: 'left' | 'right') => {
   if (direction === 'left') {
     swatchPage.value = Math.max(0, swatchPage.value - 1)
   } else {

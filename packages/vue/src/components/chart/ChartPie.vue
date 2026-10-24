@@ -152,13 +152,13 @@ const cells = provideChartCells()
 
 const data = computed(() => (props.data ?? chart.data.value) as ChartDatum[])
 
-function sliceFill(index: number): string {
+const sliceFill = (index: number): string => {
   const datum = data.value[index]
   const own = typeof datum?.fill === 'string' ? datum.fill : undefined
   return cells.value[index]?.fill ?? own ?? props.fill ?? DEFAULT_SERIES_COLOR
 }
 
-function sliceName(index: number): string {
+const sliceName = (index: number): string => {
   const value = data.value[index]?.[props.nameKey]
   return value !== undefined && value !== '' ? String(value) : (props.name ?? String(index))
 }
@@ -190,7 +190,7 @@ const target = computed<PieSector[]>(() => {
 
 // Mount: the slices fan open from `startAngle`. Data change: each slice moves from the slice at the same relative
 // position in the previous drawing, so adding or removing rows doesn't make every slice jump.
-function interpolate(from: PieSector[] | null, to: PieSector[], t: number): PieSector[] {
+const interpolate = (from: PieSector[] | null, to: PieSector[], t: number): PieSector[] => {
   return to.map((sector, index) => {
     const previous = from?.length ? from[Math.floor((index * from.length) / to.length)] : undefined
     return {
@@ -225,7 +225,7 @@ const sectors = computed(() =>
   })),
 )
 
-function entries(index: number): ChartTooltipPayloadEntry[] {
+const entries = (index: number): ChartTooltipPayloadEntry[] => {
   const datum = data.value[index]
   const value = datum?.[props.dataKey]
   if (!datum || value === undefined || value === null) return []

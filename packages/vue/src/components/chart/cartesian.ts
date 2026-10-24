@@ -108,21 +108,21 @@ const sameId = (a: ChartAxisId | undefined, b: ChartAxisId | undefined) =>
 // Bar sizes and gaps pass non-finite values (`Infinity`, `'abc%'`) through instead of falling back, unlike polar layout.
 const BAR_LENGTH = { keepNonFinite: true }
 
-function toNumber(value: unknown): number | null {
+const toNumber = (value: unknown): number | null => {
   if (value === null || value === undefined || value === '') return null
   const number = typeof value === 'number' ? value : Number(value)
   return Number.isFinite(number) ? number : null
 }
 
 /** Adds axes, scales, stacking and bar layout to a chart root (area, bar, line, composed charts). */
-export function useCartesianChart(
+export const useCartesianChart = (
   chart: ChartContext,
   options: CartesianChartOptions = {},
-): CartesianContext {
+): CartesianContext => {
   const registry = shallowReactive(new Map<number, () => ChartAxisConfig>())
   let next = 0
 
-  function registerAxis(get: () => ChartAxisConfig) {
+  const registerAxis = (get: () => ChartAxisConfig) => {
     const key = next++
     registry.set(key, get)
     const unregister = () => registry.delete(key)
@@ -175,7 +175,7 @@ export function useCartesianChart(
   const axisType = (config: ChartAxisConfig) =>
     config.type ?? (config.axis === 'x' ? 'category' : 'number')
   // Tick values and labels of a number axis. They depend on the data, not on the plot box.
-  function numberTicks(config: ChartAxisConfig) {
+  const numberTicks = (config: ChartAxisConfig) => {
     const data = chart.data.value
     const alongData = (config.axis === 'x') === horizontal.value && !!config.dataKey
     const extent: [number, number] = alongData
@@ -198,18 +198,18 @@ export function useCartesianChart(
     }
   }
 
-  function tickText(config: ChartAxisConfig, value: number | string, index: number) {
+  const tickText = (config: ChartAxisConfig, value: number | string, index: number) => {
     const text = config.tickFormatter ? config.tickFormatter(value, index) : String(value)
     return config.unit ? `${text}${config.unit}` : text
   }
 
-  function categoryOf(config: ChartAxisConfig, index: number): number | string {
+  const categoryOf = (config: ChartAxisConfig, index: number): number | string => {
     const value = config.dataKey ? chart.data.value[index]?.[config.dataKey] : index
     return (value ?? index) as number | string
   }
 
   // Widest tick label plus the tick space: the width of an `'auto'` y axis.
-  function autoSize(config: ChartAxisConfig) {
+  const autoSize = (config: ChartAxisConfig) => {
     const texts =
       axisType(config) === 'category'
         ? chart.data.value.map((_, index) => tickText(config, categoryOf(config, index), index))
@@ -283,11 +283,11 @@ export function useCartesianChart(
     return result
   })
 
-  function rawValues(series: ChartSeries): Array<number | null> {
+  const rawValues = (series: ChartSeries): Array<number | null> => {
     return chart.data.value.map((datum) => toNumber(datum[series.dataKey]))
   }
 
-  function valueExtent(axis: 'x' | 'y', id: ChartAxisId): [number, number] {
+  const valueExtent = (axis: 'x' | 'y', id: ChartAxisId): [number, number] => {
     let min = Infinity
     let max = -Infinity
     for (const series of visibleSeries.value) {
@@ -428,7 +428,7 @@ export function useCartesianChart(
     })
   })
 
-  function findAxis(axis: 'x' | 'y', id: ChartAxisId | undefined): ResolvedAxis {
+  const findAxis = (axis: 'x' | 'y', id: ChartAxisId | undefined): ResolvedAxis => {
     const all = axes.value
     return (
       all.find((entry) => entry.axis === axis && sameId(entry.id, id)) ??
@@ -445,12 +445,12 @@ export function useCartesianChart(
     )
   })
 
-  function valueAxisOf(series: ChartSeries): ResolvedAxis {
+  const valueAxisOf = (series: ChartSeries): ResolvedAxis => {
     return horizontal.value ? findAxis('y', series.yAxisId) : findAxis('x', series.xAxisId)
   }
 
   /** Default baseline: 0, clamped into the value axis domain. */
-  function baseValue(axis: ResolvedAxis): number {
+  const baseValue = (axis: ResolvedAxis): number => {
     const [a, b] = axis.domain as [number, number]
     const min = Math.min(a, b)
     const max = Math.max(a, b)
@@ -459,7 +459,7 @@ export function useCartesianChart(
     return 0
   }
 
-  function seriesValues(seriesId: string): Array<[number, number] | null> {
+  const seriesValues = (seriesId: string): Array<[number, number] | null> => {
     const series = chart.series.value.find((entry) => entry.id === seriesId)
     if (!series) return []
     const stacked = stacks.value.get(series.id)
@@ -610,7 +610,7 @@ export function useCartesianChart(
 }
 
 /** The enclosing cartesian chart (AreaChart, BarChart, LineChart, ComposedChart). Throws elsewhere. */
-export function useCartesianContext(component = 'Chart part'): CartesianContext {
+export const useCartesianContext = (component = 'Chart part'): CartesianContext => {
   const context = inject(cartesianContextKey, null)
   if (!context)
     throw new Error(

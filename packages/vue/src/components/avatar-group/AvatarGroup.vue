@@ -71,7 +71,7 @@ const ui = useComponentUI('avatarGroup', theme, () => ({
   overlap: props.overlap,
 }))
 
-function flatten(nodes: VNode[]): VNode[] {
+const flatten = (nodes: VNode[]): VNode[] => {
   return nodes.flatMap((node) => {
     if (node.type === Fragment && Array.isArray(node.children))
       return flatten(node.children as VNode[])
@@ -86,7 +86,7 @@ const groupProps = computed(() => ({
 }))
 
 /** Fills in the group's size/color/variant on direct Avatar children that omit them, like HeroUI's context. */
-function inherit(node: VNode): VNode {
+const inherit = (node: VNode): VNode => {
   if (node.type !== Avatar) return node
   const own = node.props ?? {}
   const extra = Object.fromEntries(
@@ -97,7 +97,7 @@ function inherit(node: VNode): VNode {
   return Object.keys(extra).length ? cloneVNode(node, extra) : node
 }
 
-function Items() {
+const Items = () => {
   const children = flatten(slots.default?.() ?? [])
   const visible = props.max == null ? children : children.slice(0, Math.max(0, props.max))
   const remaining = children.length - visible.length

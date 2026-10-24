@@ -21,7 +21,7 @@ const blockedRanges = [
   [now.add({ days: 12 }), now.add({ days: 13 })],
 ] as const
 
-function isDateUnavailable(date: DateValue) {
+const isDateUnavailable = (date: DateValue) => {
   return blockedRanges.some(([start, end]) => date.compare(start) >= 0 && date.compare(end) <= 0)
 }
 </script>

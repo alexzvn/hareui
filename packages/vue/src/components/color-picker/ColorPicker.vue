@@ -131,7 +131,7 @@ const color = computed<Color>(() =>
   props.modelValue === undefined ? internal.value : normalizeColor(props.modelValue),
 )
 
-function setColor(value: Color | string) {
+const setColor = (value: Color | string) => {
   const next = normalizeColor(value)
   internal.value = next
   emit('update:modelValue', next)
@@ -140,7 +140,7 @@ function setColor(value: Color | string) {
 provide(ColorPickerContextKey, { color, setColor })
 
 // RAC focuses the popover itself on open (not the first tabbable child like Reka), so Tab starts at the first control.
-function focusContent(event: Event) {
+const focusContent = (event: Event) => {
   event.preventDefault()
   const el = (event.target as HTMLElement | null)?.querySelector<HTMLElement>(
     '[data-slot=color-picker-popover]',
@@ -161,16 +161,16 @@ watch(
     if (value !== undefined) openNow = value
   },
 )
-function focusTrigger() {
+const focusTrigger = () => {
   const el = triggerRef.value?.$el
   if (el instanceof HTMLElement && !openNow) el.focus({ preventScroll: true })
 }
-function onOutsideClick() {
+const onOutsideClick = () => {
   document.removeEventListener('click', onOutsideClick, true)
   focusTrigger()
 }
 const contentRef = ref<{ $el: HTMLElement } | null>(null)
-function onInteractOutside(event: CustomEvent<{ originalEvent: Event }>) {
+const onInteractOutside = (event: CustomEvent<{ originalEvent: Event }>) => {
   preventNestedLayerDismiss(event, contentRef.value?.$el)
   const el = triggerRef.value?.$el
   const target = outsideEventTarget(event)
@@ -184,7 +184,7 @@ function onInteractOutside(event: CustomEvent<{ originalEvent: Event }>) {
   if (event.detail.originalEvent.type === 'pointerdown')
     document.addEventListener('click', onOutsideClick, true)
 }
-function onUpdateOpen(value: boolean) {
+const onUpdateOpen = (value: boolean) => {
   openNow = value
   emit('update:open', value)
   if (value) {
@@ -194,7 +194,7 @@ function onUpdateOpen(value: boolean) {
     nextTick(focusTrigger)
   }
 }
-function onCloseAutoFocus(event: Event) {
+const onCloseAutoFocus = (event: Event) => {
   document.removeEventListener('click', onOutsideClick, true)
   closedByOutside = false
   if (!(triggerRef.value?.$el instanceof HTMLElement)) return

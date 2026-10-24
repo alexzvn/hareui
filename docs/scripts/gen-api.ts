@@ -15,20 +15,20 @@ const checker = createChecker(join(root, 'packages/vue/tsconfig.json'), {
   printer: { newLine: 1 },
 })
 
-function defaultValue(prop: PropertyMeta): string | undefined {
+const defaultValue = (prop: PropertyMeta): string | undefined => {
   if (prop.default !== undefined) return prop.default
   const tag = prop.tags.find((t) => t.name === 'defaultValue' || t.name === 'default')
   return tag?.text?.trim() || undefined
 }
 
-function fromNodeModules(prop: PropertyMeta): boolean {
+const fromNodeModules = (prop: PropertyMeta): boolean => {
   return (
     prop.declarations.length > 0 &&
     prop.declarations.every((d) => d.file.includes('/node_modules/'))
   )
 }
 
-function toProp(prop: PropertyMeta): ApiProp {
+const toProp = (prop: PropertyMeta): ApiProp => {
   return {
     name: prop.name,
     type: prop.type.replace(/\s*\|\s*undefined$/, ''),
@@ -60,7 +60,7 @@ await rm(outDir, { recursive: true, force: true })
 await mkdir(join(outDir, 'theme'), { recursive: true })
 
 // Blank out comments (keeping newlines), then drop lines that held only a comment.
-function stripComments(source: string): string {
+const stripComments = (source: string): string => {
   const scanner = ts.createScanner(
     ts.ScriptTarget.Latest,
     false,
@@ -87,7 +87,7 @@ function stripComments(source: string): string {
 }
 
 // Generic components (`generic="T extends ListBoxItem = ListBoxItem"`) print `T` in their types; show the item type instead
-function ungeneric(source: string): (type: string) => string {
+const ungeneric = (source: string): ((type: string) => string) => {
   const constraint = source.match(/<script setup[^>]*\sgeneric="T extends (\w+)/)?.[1]
   return constraint
     ? (type) => type.replace(/<T>/g, '').replace(/\bT\b/g, constraint)

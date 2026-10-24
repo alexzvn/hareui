@@ -18,7 +18,7 @@ const payload = [
   { dataKey: 'referral', fill: 'var(--chart-2)', value: 'n/a' },
 ]
 
-function rows(wrapper: ReturnType<typeof mount>) {
+const rows = (wrapper: ReturnType<typeof mount>) => {
   return wrapper.findAll('[data-slot="chart-tooltip-item"]').map((row) => ({
     color: (row.get('[data-slot="chart-tooltip-indicator"]').element as HTMLElement).style
       .backgroundColor,

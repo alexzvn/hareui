@@ -16,7 +16,7 @@ afterEach(() => {
 
 // Dynamic import is intentional: `--skeleton-animation` is cached at module level (once per
 // page), so each test needs a fresh module instance after `vi.resetModules()`.
-async function mountSkeleton(props: Record<string, unknown> = {}) {
+const mountSkeleton = async (props: Record<string, unknown> = {}) => {
   const { default: Skeleton } = await import('@/components/skeleton/Skeleton.vue')
   const wrapper = mount(Skeleton, { props, attachTo: document.body })
   await nextTick()

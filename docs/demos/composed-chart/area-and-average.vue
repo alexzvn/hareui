@@ -44,7 +44,7 @@ const series = {
   average: { type: 'line', name: '20-year average', strokeDasharray: '6 3' },
 } satisfies Record<string, ChartComposedSeries>
 
-function formatPercent(value: number) {
+const formatPercent = (value: number) => {
   return `${value}%`
 }
 </script>

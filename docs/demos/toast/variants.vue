@@ -29,7 +29,7 @@ import { Button, toast } from '@hareui/vue'
 import { Icon } from '@iconify/vue'
 import { h } from 'vue'
 
-function showDefault() {
+const showDefault = () => {
   const id = toast('You have been invited to join a team', {
     description: 'Bob sent you an invitation to join HeroUI team',
     indicator: h(Icon, { icon: 'gravity-ui:persons' }),
@@ -38,14 +38,14 @@ function showDefault() {
   })
 }
 
-function showAccent() {
+const showAccent = () => {
   const id = toast.info('You have 2 credits left', {
     description: 'Get a paid plan for more credits',
     action: { label: 'Upgrade', onClick: () => toast.close(id) },
   })
 }
 
-function showSuccess() {
+const showSuccess = () => {
   const id = toast.success('You have upgraded your plan', {
     description: 'You can continue using HareUI Chat',
     action: {
@@ -56,7 +56,7 @@ function showSuccess() {
   })
 }
 
-function showWarning() {
+const showWarning = () => {
   const id = toast.warning('You have no credits left', {
     description: 'Upgrade to a paid plan to continue',
     action: {
@@ -67,7 +67,7 @@ function showWarning() {
   })
 }
 
-function showDanger() {
+const showDanger = () => {
   const id = toast.danger('Storage is full', {
     description:
       'Remove files to release space. Adding more text to demonstrate longer content display',

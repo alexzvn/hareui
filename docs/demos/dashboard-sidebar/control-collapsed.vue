@@ -63,7 +63,7 @@ const items: NavigationMenuItem[] = [
 
 const collapsed = ref(false)
 
-function onKeydown(event: KeyboardEvent) {
+const onKeydown = (event: KeyboardEvent) => {
   const target = event.target as HTMLElement
   if (
     event.key.toLowerCase() === 'c' &&

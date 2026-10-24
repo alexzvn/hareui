@@ -54,7 +54,7 @@ const minHeight = computed(() =>
   params.value?.minHeight ? { minHeight: String(params.value.minHeight) } : undefined,
 )
 
-function syncTheme() {
+const syncTheme = () => {
   const root = document.documentElement
   const frame = window.frameElement
   const theme = frame
@@ -73,7 +73,7 @@ function syncTheme() {
 }
 
 /** Tells the embedding page the demo is on screen: the frame painted after this rAF shows it. */
-function announceReady() {
+const announceReady = () => {
   if (window.parent === window) return
   requestAnimationFrame(() => {
     const message: PreviewReadyMessage = { type: 'hareui-preview-ready' }

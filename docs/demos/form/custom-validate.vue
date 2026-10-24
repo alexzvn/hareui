@@ -21,7 +21,7 @@ type State = {
 const state = reactive<State>({})
 
 // Return one error per invalid field, keyed by the field's `name`
-function validate(state: Partial<State>): FormError[] {
+const validate = (state: Partial<State>): FormError[] => {
   const errors: FormError[] = []
   if (!state.email) errors.push({ name: 'email', message: 'Email is required' })
   if (!state.password) errors.push({ name: 'password', message: 'Password is required' })
@@ -30,7 +30,7 @@ function validate(state: Partial<State>): FormError[] {
   return errors
 }
 
-function onSubmit(event: FormSubmitEvent<State>) {
+const onSubmit = (event: FormSubmitEvent<State>) => {
   alert(`Valid: ${JSON.stringify(event.data, null, 2)}`)
 }
 </script>

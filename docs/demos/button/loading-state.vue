@@ -14,7 +14,7 @@ import { ref } from 'vue'
 
 const isPending = ref(false)
 
-function onClick() {
+const onClick = () => {
   isPending.value = true
   setTimeout(() => (isPending.value = false), 2000)
 }

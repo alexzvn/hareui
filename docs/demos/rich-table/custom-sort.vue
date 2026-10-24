@@ -32,10 +32,10 @@ const currency = new Intl.NumberFormat('en-US', { style: 'currency', currency: '
 // Sort statuses by their position in this list instead of alphabetically.
 const order = ['failed', 'processing', 'paid', 'refunded']
 
-function sortableHeader(
+const sortableHeader = (
   column: { getIsSorted: () => false | 'asc' | 'desc'; toggleSorting: (desc?: boolean) => void },
   label: string,
-) {
+) => {
   const sorted = column.getIsSorted()
   return h(
     'button',

@@ -34,7 +34,7 @@ import { ref } from 'vue'
 const value = ref<Color>()
 const isSubmitting = ref(false)
 
-function handleSubmit(e: Event) {
+const handleSubmit = (e: Event) => {
   e.preventDefault()
   if (!value.value) return
 

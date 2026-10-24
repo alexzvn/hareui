@@ -57,7 +57,7 @@ const INPUT_ATTRS = new Set([
  * Splits a field's fallthrough attributes into the input's and the wrapper's. `aria-describedby` goes to neither:
  * the field merges it into the input's own description ids.
  */
-export function splitInputAttrs(attrs: Record<string, unknown>) {
+export const splitInputAttrs = (attrs: Record<string, unknown>) => {
   const input: Record<string, unknown> = {}
   const root: Record<string, unknown> = {}
   for (const [key, value] of Object.entries(attrs)) {

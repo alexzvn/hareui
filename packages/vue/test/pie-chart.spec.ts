@@ -27,12 +27,12 @@ const data = [
   { name: 'Safari', value: 3 },
 ]
 
-async function settle() {
+const settle = async () => {
   await flushPromises()
   await nextTick()
 }
 
-function mountChart(children: () => any[], props: Record<string, unknown> = {}) {
+const mountChart = (children: () => any[], props: Record<string, unknown> = {}) => {
   return mount(PieChart, {
     props: { width: SIZE, height: SIZE, margin, ...props },
     slots: { default: children },
@@ -48,7 +48,7 @@ const pie = (props: Record<string, unknown> = {}, cells?: () => any[]) =>
   )
 
 // Moves the pointer over the chart to a polar position around (100, 100). jsdom boxes sit at 0,0, so client = SVG coordinates.
-async function hoverAt(wrapper: ReturnType<typeof mountChart>, radius: number, angle: number) {
+const hoverAt = async (wrapper: ReturnType<typeof mountChart>, radius: number, angle: number) => {
   const clientX = 100 + radius * Math.cos((angle * Math.PI) / 180)
   const clientY = 100 - radius * Math.sin((angle * Math.PI) / 180)
   wrapper
@@ -534,7 +534,7 @@ describe('PieChart generated mode', () => {
     { name: 'Edge', visits: 4, fill: 'red' },
   ]
 
-  function mountGenerated(props: Record<string, unknown> = {}, slots: Record<string, any> = {}) {
+  const mountGenerated = (props: Record<string, unknown> = {}, slots: Record<string, any> = {}) => {
     return mount(PieChart, {
       props: { data: browsers, index: 'name', width: SIZE, height: SIZE, margin, ...props },
       slots,

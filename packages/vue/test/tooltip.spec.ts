@@ -9,7 +9,7 @@ import { expectAccessible } from './a11y'
 
 const sleep = (ms: number) => new Promise((r) => setTimeout(r, ms))
 
-function mountTooltip(props: Record<string, unknown> = {}) {
+const mountTooltip = (props: Record<string, unknown> = {}) => {
   return mount(Tooltip, {
     props: { text: 'Tip', delay: 0, ...props },
     slots: { default: () => h('button', { id: 'trigger' }, 'Trigger') },
@@ -17,7 +17,7 @@ function mountTooltip(props: Record<string, unknown> = {}) {
   })
 }
 
-function pointer(el: Element, type: string) {
+const pointer = (el: Element, type: string) => {
   el.dispatchEvent(
     new PointerEvent(type, {
       bubbles: type !== 'pointerleave' && type !== 'pointerenter',

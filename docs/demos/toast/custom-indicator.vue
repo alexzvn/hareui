@@ -9,7 +9,7 @@ import { Button, toast } from '@hareui/vue'
 import { Icon } from '@iconify/vue'
 import { h } from 'vue'
 
-function show() {
+const show = () => {
   toast('Custom icon indicator', { indicator: h(Icon, { icon: 'gravity-ui:star' }) })
 }
 </script>

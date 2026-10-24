@@ -91,7 +91,7 @@ const users: User[] = [
 
 const selectedKeys = ref<string[]>(['1', '2'])
 
-function onRemoveTags(ids: string[]) {
+const onRemoveTags = (ids: string[]) => {
   selectedKeys.value = selectedKeys.value.filter((key) => !ids.includes(key))
 }
 </script>

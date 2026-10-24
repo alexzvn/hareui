@@ -217,12 +217,12 @@ const root = useTemplateRef<ComponentPublicInstance>('root')
 // `TimeValue.compare()` has incompatible call signatures across its `Time | CalendarDateTime | ZonedDateTime`
 // members, so bounds are compared by time-of-day fields directly instead (matches HeroUI/React Aria semantics,
 // where `minValue`/`maxValue` constrain the time of day regardless of any date part).
-function compareTimeOfDay(a: AnyTime, b: AnyTime) {
+const compareTimeOfDay = (a: AnyTime, b: AnyTime) => {
   return (
     a.hour - b.hour || a.minute - b.minute || a.second - b.second || a.millisecond - b.millisecond
   )
 }
-function formatTimeBoundary(value: AnyTime) {
+const formatTimeBoundary = (value: AnyTime) => {
   const reference = new Date(2020, 0, 1, value.hour, value.minute, value.second, value.millisecond)
   const hourCycle = props.hourCycle === 12 ? 'h12' : props.hourCycle === 24 ? 'h23' : undefined
   return new Intl.DateTimeFormat(props.locale ?? 'en-US', {
@@ -231,14 +231,14 @@ function formatTimeBoundary(value: AnyTime) {
     hourCycle,
   }).format(reference)
 }
-function builtinValidate(value: TimeValue) {
+const builtinValidate = (value: TimeValue) => {
   if (props.minValue && compareTimeOfDay(value, props.minValue) < 0)
     return `Value must be ${formatTimeBoundary(props.minValue)} or later.`
   if (props.maxValue && compareTimeOfDay(value, props.maxValue) > 0)
     return `Value must be ${formatTimeBoundary(props.maxValue)} or earlier.`
   return undefined
 }
-function validate(value: TimeValue) {
+const validate = (value: TimeValue) => {
   const custom = props.validate?.(value)
   return custom && custom !== true ? custom : builtinValidate(value)
 }
@@ -259,7 +259,7 @@ const { validation, commitValidation } = useFieldValidation({
 })
 const invalid = computed(() => props.invalid ?? validation.value.isInvalid)
 
-function onUpdate(value: TimeValue | undefined) {
+const onUpdate = (value: TimeValue | undefined) => {
   modelValue.value = value
   // No real `change` event bubbles from Reka's hidden mirror input while typing segments
   commitValidation()

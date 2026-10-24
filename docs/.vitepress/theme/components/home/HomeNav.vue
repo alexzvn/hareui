@@ -192,7 +192,7 @@ const MENU_LINK =
 
 const menuOpen = ref(false)
 const transparent = ref(true)
-function onScroll() {
+const onScroll = () => {
   transparent.value = window.scrollY < 10
 }
 onMounted(() => {

@@ -39,7 +39,7 @@ const data = [
   { subject: 'Science', minutes: 180, fill: 'var(--chart-2)', detail: '3 of 6 hours' },
 ]
 
-function formatMinutes(value: number) {
+const formatMinutes = (value: number) => {
   return `${value} min`
 }
 </script>

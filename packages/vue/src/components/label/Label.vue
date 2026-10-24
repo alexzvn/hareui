@@ -68,7 +68,7 @@ const ui = useComponentUI('label', theme, () => ({
 
 // Same as reka's `Label` (for any element it renders): block text selection on double-click. A plain element keeps
 // `<Label>` from mounting a reka `Label` + `Primitive` pair per field. A user `@mousedown` falls through and runs after this.
-function onMousedown(event: MouseEvent) {
+const onMousedown = (event: MouseEvent) => {
   if (!event.defaultPrevented && event.detail > 1) event.preventDefault()
 }
 </script>

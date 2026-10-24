@@ -341,7 +341,7 @@ describe('ListBox', () => {
       document.body.innerHTML = ''
     })
 
-    async function setup(selectionMode: 'none' | 'single' | 'multiple') {
+    const setup = async (selectionMode: 'none' | 'single' | 'multiple') => {
       const wrapper = mount(ListBox, {
         props: { items: fruit, selectionMode },
         attachTo: document.body,

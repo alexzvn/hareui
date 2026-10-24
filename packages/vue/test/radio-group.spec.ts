@@ -141,7 +141,7 @@ describe('RadioGroup keyboard and state parity', () => {
 
 // A native button activates on Space unless a handler cancelled the key; happy-dom has no activation behaviour, so
 // the press helper performs it when the keys get through.
-async function pressSpace(el: Element) {
+const pressSpace = async (el: Element) => {
   const down = new KeyboardEvent('keydown', {
     key: ' ',
     code: 'Space',
@@ -168,7 +168,7 @@ async function pressSpace(el: Element) {
 
 // Real key timing: Reka flags arrow keys on window keydown (cleared on keyup), its roving group moves focus on the
 // next tick, and the newly focused radio clicks itself in a timeout while the flag is still set.
-async function pressArrow(key: string) {
+const pressArrow = async (key: string) => {
   const radio = document.activeElement as HTMLElement
   radio.dispatchEvent(new KeyboardEvent('keydown', { key, bubbles: true, cancelable: true }))
   await flushPromises()

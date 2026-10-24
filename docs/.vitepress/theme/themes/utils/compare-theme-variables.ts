@@ -1,9 +1,9 @@
 import type { ThemeVariables } from '../constants'
 
-export function compareThemeVariables(
+export const compareThemeVariables = (
   variables: ThemeVariables,
   snapshotVariables: ThemeVariables,
-) {
+) => {
   return (
     variables.chroma === snapshotVariables.chroma &&
     variables.hue === snapshotVariables.hue &&

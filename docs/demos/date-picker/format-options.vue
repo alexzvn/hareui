@@ -95,30 +95,30 @@ const timeGranularity = computed(() =>
   granularity.value === 'day' ? undefined : granularity.value,
 )
 
-function defaultValueFor(g: Granularity): DateValue {
+const defaultValueFor = (g: Granularity): DateValue => {
   return g === 'day'
     ? parseDate('2026-02-03')
     : parseZonedDateTime('2026-02-03T08:45:00[America/Los_Angeles]')
 }
 const value = shallowRef<DateValue | null>(defaultValueFor(granularity.value))
 
-function hasTime(v: DateValue | null | undefined): v is CalendarDateTime | ZonedDateTime {
+const hasTime = (v: DateValue | null | undefined): v is CalendarDateTime | ZonedDateTime => {
   return !!v && 'hour' in v
 }
 // Reka's embedded Calendar only edits date fields and the TimeField below only edits time fields;
 // each merges onto the other's current value instead of replacing it outright.
-function mergeDate(picked: DateValue, current: DateValue | null | undefined): DateValue {
+const mergeDate = (picked: DateValue, current: DateValue | null | undefined): DateValue => {
   return hasTime(current)
     ? current.set({ year: picked.year, month: picked.month, day: picked.day })
     : picked
 }
-function mergeTime(time: TimeValue, current: DateValue | null | undefined): DateValue | null {
+const mergeTime = (time: TimeValue, current: DateValue | null | undefined): DateValue | null => {
   return hasTime(current)
     ? current.set({ hour: time.hour, minute: time.minute, second: time.second })
     : (current ?? null)
 }
 
-function onGranularityChange(next: SelectValue | undefined) {
+const onGranularityChange = (next: SelectValue | undefined) => {
   if (typeof next !== 'string') return
   granularity.value = next as Granularity
   value.value = defaultValueFor(granularity.value)

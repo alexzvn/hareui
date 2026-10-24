@@ -13,7 +13,7 @@ export type CollectionBlock =
   | { kind: 'separator'; key: number }
 
 /** Every option of `entries`, sections flattened, in collection order. */
-export function flattenEntries(entries: ListBoxEntry[] | undefined): ListBoxItem[] {
+export const flattenEntries = (entries: ListBoxEntry[] | undefined): ListBoxItem[] => {
   return (entries ?? []).flatMap((entry) => {
     if ('type' in entry && entry.type === 'section') return entry.items
     if ('type' in entry && entry.type === 'separator') return []
@@ -28,10 +28,10 @@ export const itemText = (item: ListBoxItem) => item.textValue ?? item.label ?? S
  * Rows to render for the options matching `match`, with flat running indices. As in RAC, sections without a
  * matching option are dropped and separators are kept.
  */
-export function filterEntries(
+export const filterEntries = (
   entries: ListBoxEntry[] | undefined,
   match: (item: ListBoxItem) => boolean,
-): CollectionBlock[] {
+): CollectionBlock[] => {
   const all = flattenEntries(entries)
   const blocks: CollectionBlock[] = []
   ;(entries ?? []).forEach((entry, key) => {
@@ -54,7 +54,7 @@ export function filterEntries(
 }
 
 /** Number of option rows in `blocks`. */
-export function countRows(blocks: CollectionBlock[]): number {
+export const countRows = (blocks: CollectionBlock[]): number => {
   return blocks.reduce(
     (n, b) => n + (b.kind === 'item' ? 1 : b.kind === 'section' ? b.rows.length : 0),
     0,

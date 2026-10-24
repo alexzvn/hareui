@@ -89,7 +89,7 @@ const CHANNEL_TO_REQUIRED_COLOR_SPACE: Partial<Record<ColorChannel, ColorSpace>>
 /** Channels that only exist in HSL/HSB (not RGB). */
 const HSL_HSB_ONLY_CHANNELS = new Set<ColorChannel>(['hue', 'saturation'])
 
-function warnInDev(message: string) {
+const warnInDev = (message: string) => {
   if (import.meta.env?.DEV) console.warn(message)
 }
 
@@ -98,10 +98,10 @@ function warnInDev(message: string) {
  * React ColorSlider: an incompatible combination (e.g. `channel="red"` with `colorSpace="hsl"`)
  * is auto-corrected with a dev warning instead of producing a broken gradient.
  */
-function getValidColorSpace(
+const getValidColorSpace = (
   channel: ColorChannel,
   colorSpace?: ColorSpace,
-): ColorSpace | undefined {
+): ColorSpace | undefined => {
   const required = CHANNEL_TO_REQUIRED_COLOR_SPACE[channel]
   if (required && colorSpace && colorSpace !== required) {
     warnInDev(
@@ -239,7 +239,7 @@ const boundValue = computed<string | Color>(() => {
   return localValue.value
 })
 
-function handleUpdate(color: Color) {
+const handleUpdate = (color: Color) => {
   if (!isControlled.value) {
     if (pickerCtx) pickerCtx.setColor(color)
     else localValue.value = color
@@ -255,7 +255,7 @@ const effectiveColorSpace = computed(() => validColorSpace.value ?? 'hsl')
  * computed channel value / track gradient / edge colors stay consistent with what the slider
  * itself is dragging (in particular `saturation`, which is ambiguous between HSL and HSB).
  */
-function toNativeSpace(color: Color, channel: ColorChannel, space: ColorSpace): Color {
+const toNativeSpace = (color: Color, channel: ColorChannel, space: ColorSpace): Color => {
   switch (channel) {
     case 'hue':
     case 'lightness':
@@ -418,10 +418,10 @@ const thumbLabelledBy = computed(() =>
 // reka-limitation: Reka's thumb exposes no `isDragging` state (RAC's `data-dragging`), so it is tracked
 // here: a press anywhere on the slider starts a drag of its single thumb.
 const isDragging = ref(false)
-function onPointerDown() {
+const onPointerDown = () => {
   if (!isDisabled.value) isDragging.value = true
 }
-function onPointerEnd() {
+const onPointerEnd = () => {
   isDragging.value = false
 }
 </script>

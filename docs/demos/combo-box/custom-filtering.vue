@@ -21,7 +21,7 @@ const animals: ListBoxItem[] = [
 ]
 
 // Plain case-insensitive substring match (the default also ignores accents)
-function filter(text: string, inputValue: string) {
+const filter = (text: string, inputValue: string) => {
   if (!inputValue) return true
   return text.toLowerCase().includes(inputValue.toLowerCase())
 }

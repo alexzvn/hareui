@@ -29,7 +29,7 @@ type User = {
   description: string
 } & ListBoxItem
 
-function generateUsers(n: number): User[] {
+const generateUsers = (n: number): User[] => {
   const firstNames = [
     'Emma',
     'Liam',

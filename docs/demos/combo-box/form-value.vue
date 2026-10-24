@@ -43,7 +43,7 @@ const animals: ListBoxItem[] = [
 
 const message = ref<string | null>(null)
 
-function onSubmit(event: SubmitEvent) {
+const onSubmit = (event: SubmitEvent) => {
   const formData = new FormData(event.currentTarget as HTMLFormElement)
   message.value = `Key: ${formData.get('animal')}. Text: ${formData.get('animal-text')}.`
 }

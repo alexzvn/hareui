@@ -30,12 +30,12 @@ type Schema = z.output<typeof schema>
 
 const state = reactive<Partial<Schema>>({})
 
-function onSubmit(event: FormSubmitEvent<Schema>) {
+const onSubmit = (event: FormSubmitEvent<Schema>) => {
   alert(`Valid: ${JSON.stringify(event.data, null, 2)}`)
 }
 
 // Move focus to the first invalid field
-function onError(event: FormErrorEvent) {
+const onError = (event: FormErrorEvent) => {
   const id = event.errors[0]?.id
   if (id) {
     const element = document.getElementById(id)

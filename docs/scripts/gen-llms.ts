@@ -18,12 +18,12 @@ type Page = {
   body: string
 }
 
-function sourceFile(link: string): string {
+const sourceFile = (link: string): string => {
   const path = normalizePath(link)
   return link.endsWith('/') ? join(docsRoot, path, 'index.md') : join(docsRoot, `${path}.md`)
 }
 
-function parseFrontmatter(raw: string): { data: Record<string, string>; body: string } {
+const parseFrontmatter = (raw: string): { data: Record<string, string>; body: string } => {
   const match = raw.match(/^---\n([\s\S]*?)\n---\n?/)
   if (!match) return { data: {}, body: raw }
   const data: Record<string, string> = {}
@@ -34,19 +34,19 @@ function parseFrontmatter(raw: string): { data: Record<string, string>; body: st
   return { data, body: raw.slice(match[0].length) }
 }
 
-function attr(tag: string, name: string): string | undefined {
+const attr = (tag: string, name: string): string | undefined => {
   return tag.match(new RegExp(`\\b${name}="([^"]*)"`))?.[1]
 }
 
-function escapeCell(value: string): string {
+const escapeCell = (value: string): string => {
   return value.replace(/\|/g, '\\|').replace(/\n/g, ' ')
 }
 
-function code(value: string | undefined): string {
+const code = (value: string | undefined): string => {
   return value ? `\`${escapeCell(value)}\`` : '-'
 }
 
-async function apiTable(component: string, kind: string): Promise<string> {
+const apiTable = async (component: string, kind: string): Promise<string> => {
   const api: ComponentApi = JSON.parse(
     await readFile(join(docsRoot, '.vitepress/api', `${component}.json`), 'utf8'),
   )
@@ -78,11 +78,11 @@ async function apiTable(component: string, kind: string): Promise<string> {
   ].join('\n')
 }
 
-async function replaceAsync(
+const replaceAsync = async (
   input: string,
   re: RegExp,
   fn: (match: string) => Promise<string>,
-): Promise<string> {
+): Promise<string> => {
   const parts: (string | Promise<string>)[] = []
   let last = 0
   for (const m of input.matchAll(re)) {
@@ -94,7 +94,7 @@ async function replaceAsync(
 }
 
 /** Static attrs as strings; `:bound` attrs evaluated as JS literals (trusted repo markdown, no interpolation). */
-function tagProps(tag: string): Record<string, unknown> {
+const tagProps = (tag: string): Record<string, unknown> => {
   const props: Record<string, unknown> = {}
   for (const [, name, value] of tag.matchAll(/\s(:?[\w-]+)="([^"]*)"/g)) {
     if (name!.startsWith(':')) props[name!.slice(1)] = new Function(`return (${value})`)()
@@ -104,7 +104,7 @@ function tagProps(tag: string): Record<string, unknown> {
 }
 
 /** Every `--token: value` tooltip string nested in `value`, in declaration order. */
-function tokenRows(value: unknown): [string, string][] {
+const tokenRows = (value: unknown): [string, string][] => {
   if (typeof value === 'string') {
     const m = /^(--[\w-]+):\s*([\s\S]+)$/.exec(value)
     return m ? [[m[1]!, m[2]!]] : []
@@ -114,7 +114,7 @@ function tokenRows(value: unknown): [string, string][] {
   return []
 }
 
-function colorSectionTable(tag: string): string {
+const colorSectionTable = (tag: string): string => {
   const props = tagProps(tag)
   if ('lightColors' in props || 'darkColors' in props) {
     const dark = new Map(tokenRows(props.darkColors))
@@ -141,7 +141,7 @@ function colorSectionTable(tag: string): string {
   ].join('\n')
 }
 
-async function toMarkdown(body: string): Promise<string> {
+const toMarkdown = async (body: string): Promise<string> => {
   let out = body
     .replace(/<script\b[\s\S]*?<\/script>\n?/g, '')
     .replace(/<style\b[\s\S]*?<\/style>\n?/g, '')

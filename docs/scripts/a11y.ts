@@ -165,7 +165,7 @@ const AXE_OPTIONS = {
 const TRIGGER = '[aria-haspopup]:not([aria-expanded="true"]), [aria-expanded="false"]'
 
 const args = process.argv.slice(2)
-function flag(name: string): string | undefined {
+const flag = (name: string): string | undefined => {
   const i = args.indexOf(`--${name}`)
   return i >= 0 ? args[i + 1] : undefined
 }
@@ -181,7 +181,7 @@ const nextFrames = (page: Page) =>
       ),
   )
 
-async function audit(page: Page, demo: string): Promise<Audit> {
+const audit = async (page: Page, demo: string): Promise<Audit> => {
   const accepted = ACCEPTED.filter((a) => !a.demos || a.demos.includes(demo))
   return page.evaluate(
     async (options, accepted) => {
@@ -214,7 +214,7 @@ async function audit(page: Page, demo: string): Promise<Audit> {
   )
 }
 
-async function load(page: Page, demo: string) {
+const load = async (page: Page, demo: string) => {
   await page.goto(`${base}/preview/${demo}`, { waitUntil: 'load', timeout: 60000 })
   await page.waitForFunction(
     () => {
@@ -238,7 +238,7 @@ async function load(page: Page, demo: string) {
   if (!(await page.evaluate(() => 'axe' in window))) await page.evaluate(AXE_SOURCE)
 }
 
-async function open(page: Page): Promise<string | undefined> {
+const open = async (page: Page): Promise<string | undefined> => {
   const handle = await page.evaluateHandle((selector) => {
     return (
       [...document.querySelectorAll<HTMLElement>(selector)].find((el) => {
@@ -276,7 +276,7 @@ type Tab = {
 
 let browser: Browser | undefined
 
-async function newTab(): Promise<Tab> {
+const newTab = async (): Promise<Tab> => {
   const page = await browser!.newPage()
   page.setDefaultTimeout(30000)
   await page.setViewport({ width: 1280, height: 800, deviceScaleFactor: 1 })
@@ -286,7 +286,7 @@ async function newTab(): Promise<Tab> {
   return tab
 }
 
-async function auditDemo(tab: Tab, demo: string): Promise<Result[] | undefined> {
+const auditDemo = async (tab: Tab, demo: string): Promise<Result[] | undefined> => {
   const component = demo.split('/')[0]!
   await load(tab.page, demo)
   const loaded = tab.loads
@@ -300,7 +300,7 @@ async function auditDemo(tab: Tab, demo: string): Promise<Result[] | undefined> 
 const DEMO_TIMEOUT = 120_000
 const FAIL_FAST = 6
 
-async function run(tab: Tab, demo: string): Promise<{ tab: Tab; results: Result[] }> {
+const run = async (tab: Tab, demo: string): Promise<{ tab: Tab; results: Result[] }> => {
   const failed = (error: string) => ({
     tab,
     results: [
@@ -350,7 +350,7 @@ for (const signal of ['SIGINT', 'SIGTERM'] as const) {
 
 const short = (html: string) => (html.length > 160 ? `${html.slice(0, 157)}...` : html)
 
-function report(results: Result[]): number {
+const report = (results: Result[]): number => {
   const failing = (r: Result) => r.violations.filter((v) => v.id !== 'color-contrast')
   console.log('\nPer demo:')
   for (const r of results) {
@@ -412,7 +412,7 @@ function report(results: Result[]): number {
   return failed + errors
 }
 
-async function main() {
+const main = async () => {
   try {
     await fetch(base)
   } catch {

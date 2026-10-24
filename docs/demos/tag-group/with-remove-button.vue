@@ -53,10 +53,10 @@ const frameworks = ref<TagGroupItem[]>([
   { id: 'svelte', label: 'Svelte' },
 ])
 
-function onRemoveTags(ids: string[]) {
+const onRemoveTags = (ids: string[]) => {
   tags.value = tags.value.filter((tag) => !ids.includes(tag.id))
 }
-function onRemoveFrameworks(ids: string[]) {
+const onRemoveFrameworks = (ids: string[]) => {
   frameworks.value = frameworks.value.filter((framework) => !ids.includes(framework.id))
 }
 </script>

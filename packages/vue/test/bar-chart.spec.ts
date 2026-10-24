@@ -15,7 +15,7 @@ const HEIGHT = 200
 const margin = { top: 0, right: 0, bottom: 0, left: 0 }
 
 /** Bounding box of an SVG path made of M/L/H/V/A/Z commands (absolute or relative). */
-function bbox(d: string) {
+const bbox = (d: string) => {
   const xs: number[] = []
   const ys: number[] = []
   let x = 0
@@ -63,16 +63,16 @@ function bbox(d: string) {
   }
 }
 
-async function settle() {
+const settle = async () => {
   await flushPromises()
   await nextTick()
 }
 
-async function hover(
+const hover = async (
   wrapper: { find: (s: string) => { element: Element } },
   clientX: number,
   clientY: number,
-) {
+) => {
   wrapper
     .find('[data-slot=chart-surface]')
     .element.dispatchEvent(new PointerEvent('pointermove', { clientX, clientY, bubbles: true }))
@@ -84,7 +84,7 @@ const data = [
   { name: 'B', low: 20, high: 20 },
 ]
 
-function mountChart(children: () => any[], props: Record<string, unknown> = {}) {
+const mountChart = (children: () => any[], props: Record<string, unknown> = {}) => {
   return mount(BarChart, {
     props: { data, width: WIDTH, height: HEIGHT, margin, ...props },
     slots: { default: children },
@@ -92,7 +92,7 @@ function mountChart(children: () => any[], props: Record<string, unknown> = {}) 
   })
 }
 
-function bars(wrapper: ReturnType<typeof mountChart>) {
+const bars = (wrapper: ReturnType<typeof mountChart>) => {
   return wrapper.findAll('[data-slot=chart-bar-rectangle]').map((bar) => bbox(bar.attributes('d')!))
 }
 

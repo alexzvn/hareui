@@ -230,7 +230,7 @@ const hasSuffix = computed(() => !!(props.suffix || slots.suffix))
 // so the button keeps focus, and Enter/Space on it don't land in the input.
 const INTERACTIVE =
   'a[href], button, input, select, textarea, label, [role=button], [role=link], [tabindex]:not([tabindex="-1"]), [contenteditable=""], [contenteditable=true]'
-function onClick(event: MouseEvent) {
+const onClick = (event: MouseEvent) => {
   const target = event.target as Element
   if (!input.value || target === input.value || input.value.contains(target)) return
   const interactive = target.closest?.(INTERACTIVE)

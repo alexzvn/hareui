@@ -25,7 +25,7 @@ const indeterminate = computed(
 )
 const allSelected = computed(() => selected.value.length === allOptions.length)
 
-function onToggleAll(isSelected: boolean | 'indeterminate') {
+const onToggleAll = (isSelected: boolean | 'indeterminate') => {
   selected.value = isSelected === true ? [...allOptions] : []
 }
 

@@ -33,11 +33,11 @@ import { computed, shallowRef } from 'vue'
 const selectedDate = shallowRef<CalendarDate | null>(null)
 const bookedDates = [5, 6, 12, 13, 14, 20]
 
-function isDateUnavailable(date: DateValue) {
+const isDateUnavailable = (date: DateValue) => {
   return isWeekend(date, 'en-US') || bookedDates.includes(date.day)
 }
 
-function indicator(date: DateValue) {
+const indicator = (date: DateValue) => {
   return !isWeekend(date, 'en-US') && bookedDates.includes(date.day)
 }
 

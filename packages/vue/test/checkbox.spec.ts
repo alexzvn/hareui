@@ -205,7 +205,7 @@ describe('Checkbox root click timing', () => {
 
 // A native button toggles on Space unless a handler cancelled the key; happy-dom has no activation behaviour, so
 // the press helper performs it when the keys get through.
-async function pressSpace(el: Element) {
+const pressSpace = async (el: Element) => {
   const down = new KeyboardEvent('keydown', {
     key: ' ',
     code: 'Space',

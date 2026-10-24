@@ -7,7 +7,7 @@ import Modal from '@/components/modal/Modal.vue'
 
 import { expectAccessible } from './a11y'
 
-function escapeKeydown() {
+const escapeKeydown = () => {
   document.dispatchEvent(
     new KeyboardEvent('keydown', { key: 'Escape', bubbles: true, cancelable: true }),
   )
@@ -17,7 +17,7 @@ function escapeKeydown() {
 // `getComputedStyle(...).animationName` on the tick after the `present` prop
 // flips, which itself happens a tick after the watcher's own internal
 // `await nextTick()` - three ticks in total before the dialog leaves the DOM.
-async function waitUnmount() {
+const waitUnmount = async () => {
   await nextTick()
   await nextTick()
   await nextTick()
@@ -26,7 +26,7 @@ async function waitUnmount() {
 // happy-dom has no CSS animations. Emulate them from the theme: a closed element whose classes declare a closed-state
 // animation (the backdrop's exit, the dialog's `presence-hold`) reports a running one, so reka's Presence keeps it
 // mounted (`unmountSuspended`) until `animationend`. The backdrop's exit is the shortest, so `finishExit` ends only that.
-function stubExitAnimations() {
+const stubExitAnimations = () => {
   const original = window.getComputedStyle.bind(window)
   vi.spyOn(window, 'getComputedStyle').mockImplementation((el: Element, pseudo?: string | null) => {
     const real = original(el, pseudo)
@@ -40,7 +40,7 @@ function stubExitAnimations() {
   })
 }
 
-async function finishExit() {
+const finishExit = async () => {
   await waitUnmount()
   const event = Object.assign(new Event('animationend', { bubbles: true }), {
     animationName: 'exit',
@@ -232,7 +232,7 @@ describe('modal', () => {
       document.body.innerHTML = ''
     })
 
-    function mountControlled() {
+    const mountControlled = () => {
       const open = ref(false)
       const wrapper = mount(
         {
@@ -442,7 +442,7 @@ describe('modal', () => {
     // `undefined` drops a default slot, so a test can check the dialog without it.
     type SlotFns = Partial<Record<string, (props: { close: () => void }) => VNodeChild>>
 
-    function mountWithTrigger(props: Record<string, unknown> = {}, slots: SlotFns = {}) {
+    const mountWithTrigger = (props: Record<string, unknown> = {}, slots: SlotFns = {}) => {
       const all: SlotFns = {
         default: () => h('button', { id: 'trigger' }, 'Open'),
         description: () => h('p', 'We reply within a day.'),
@@ -460,7 +460,7 @@ describe('modal', () => {
       return { wrapper, trigger }
     }
 
-    async function openWith(trigger: HTMLButtonElement) {
+    const openWith = async (trigger: HTMLButtonElement) => {
       trigger.focus()
       trigger.click()
       await nextTick()

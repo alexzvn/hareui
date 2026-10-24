@@ -137,7 +137,7 @@ const columns: RichTableColumn<Employee>[] = [
   { accessorKey: 'joined', header: 'Joined', meta: { class: { td: 'text-muted' } } },
 ]
 
-function onSelect(_: Event, row: RichTableRow<Employee>) {
+const onSelect = (_: Event, row: RichTableRow<Employee>) => {
   row.toggleSelected(!row.getIsSelected())
 }
 </script>

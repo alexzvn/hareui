@@ -21,7 +21,7 @@
 <script setup lang="ts">
 import { AreaChart } from '@hareui/vue/charts'
 
-function points(values: number[]) {
+const points = (values: number[]) => {
   return values.map((value, index) => ({ day: `Oct ${index + 1}`, value }))
 }
 

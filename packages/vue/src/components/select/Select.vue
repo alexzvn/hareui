@@ -472,7 +472,7 @@ const isOpen = computed({
     emit('update:open', value)
   },
 })
-function setOpen(value: boolean) {
+const setOpen = (value: boolean) => {
   if (value && disabled.value) return
   isOpen.value = value
 }
@@ -514,7 +514,7 @@ const clear = () => {
 // repeated character stays put) and then from the top, whose text starts with the typed string. Space opens instead.
 const typeahead = useTypeahead({ start: 'current' })
 
-function onTriggerKeydown(event: KeyboardEvent) {
+const onTriggerKeydown = (event: KeyboardEvent) => {
   triggerPress = false
   if (disabled.value) return
   if (event.key === 'ArrowDown' || event.key === 'ArrowUp') {
@@ -552,11 +552,11 @@ function onTriggerKeydown(event: KeyboardEvent) {
 const hovered = ref(false)
 const focused = ref(false)
 const focusVisible = ref(false)
-function onTriggerFocus(event: FocusEvent) {
+const onTriggerFocus = (event: FocusEvent) => {
   focused.value = true
   focusVisible.value = event.target instanceof Element && event.target.matches(':focus-visible')
 }
-function onTriggerBlur() {
+const onTriggerBlur = () => {
   focused.value = false
   focusVisible.value = false
 }
@@ -566,7 +566,7 @@ function onTriggerBlur() {
 const content = useTemplateRef<{ $el: HTMLElement }>('content')
 const listBox = useTemplateRef<{ highlightSelected: () => Promise<void> | undefined }>('listBox')
 let openStrategy: 'first' | 'last' = 'first'
-async function onOpenAutoFocus(event: Event) {
+const onOpenAutoFocus = async (event: Event) => {
   event.preventDefault()
   const strategy = openStrategy
   openStrategy = 'first'
@@ -579,7 +579,7 @@ async function onOpenAutoFocus(event: Event) {
 }
 // Reka's non-modal popover skips the trigger refocus after an outside press; RAC restores focus to the trigger
 // unless the press moved it to another element
-function onCloseAutoFocus(event: Event) {
+const onCloseAutoFocus = (event: Event) => {
   event.preventDefault()
   const active = document.activeElement
   if (!active || active === document.body || content.value?.$el.contains(active))
@@ -588,7 +588,7 @@ function onCloseAutoFocus(event: Event) {
 
 // RAC Select opens on mouse press start, and releasing over an option selects it (press-drag-release)
 let triggerPress = false
-function onTriggerPointerdown(event: PointerEvent) {
+const onTriggerPointerdown = (event: PointerEvent) => {
   if (event.pointerType !== 'mouse' || event.button !== 0 || disabled.value) return
   // The click that ends this press must not toggle again
   triggerPress = true
@@ -601,18 +601,18 @@ function onTriggerPointerdown(event: PointerEvent) {
   window.addEventListener('pointerup', release, { once: true, capture: true })
   window.addEventListener('pointercancel', release, { once: true, capture: true })
 }
-function onTriggerMousedown(event: MouseEvent) {
+const onTriggerMousedown = (event: MouseEvent) => {
   // Focus stays where the press put it (the trigger, or the list once open)
   if (triggerPress) event.preventDefault()
 }
-function onRootOpenChange(value: boolean) {
+const onRootOpenChange = (value: boolean) => {
   if (!triggerPress) setOpen(value)
 }
 const pressRelease = usePressRelease()
 
 // The validation composable focuses the first native control of an invalid field; the hidden <select>
 // isn't focusable for users, so hand focus to the trigger (RAC marks it `data-react-aria-prevent-focus`)
-function onHiddenInvalid() {
+const onHiddenInvalid = () => {
   requestAnimationFrame(() => {
     if (
       document.activeElement instanceof HTMLSelectElement &&
@@ -689,7 +689,7 @@ const ui = useComponentUI('select', theme, () => ({
 // Classes for the hidden indicator copies inside the value (RAC renders the item's own indicator there);
 // per-item variant override, as in ListBoxOption
 const listBoxUi = useComponentUI('listBox', listBoxTheme, () => ({}))
-function valueIndicatorClass(item: ListBoxItem) {
+const valueIndicatorClass = (item: ListBoxItem) => {
   return (listBoxUi.value.indicator as (options?: { variant?: string }) => string)({
     variant: item.variant,
   })

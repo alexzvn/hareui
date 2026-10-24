@@ -82,19 +82,19 @@
 <script setup lang="ts">
 import { Button, toast } from '@hareui/vue'
 
-function uploadFile(): Promise<{ filename: string; size: number }> {
+const uploadFile = (): Promise<{ filename: string; size: number }> => {
   const { promise, resolve } = Promise.withResolvers<{ filename: string; size: number }>()
   setTimeout(() => resolve({ filename: 'document.pdf', size: 1024 }), 2000)
   return promise
 }
 
-function createEvent(): Promise<never> {
+const createEvent = (): Promise<never> => {
   const { promise, reject } = Promise.withResolvers<never>()
   setTimeout(() => reject(new Error('Network error. Please try again.')), 2000)
   return promise
 }
 
-function saveData(): Promise<{ count: number }> {
+const saveData = (): Promise<{ count: number }> => {
   const { promise, resolve, reject } = Promise.withResolvers<{ count: number }>()
   setTimeout(() => {
     if (Math.random() > 0.5) resolve({ count: 42 })
@@ -103,13 +103,13 @@ function saveData(): Promise<{ count: number }> {
   return promise
 }
 
-function fetchUser(): Promise<{ name: string; email: string }> {
+const fetchUser = (): Promise<{ name: string; email: string }> => {
   const { promise, resolve } = Promise.withResolvers<{ name: string; email: string }>()
   setTimeout(() => resolve({ email: 'john@example.com', name: 'John Doe' }), 2000)
   return promise
 }
 
-function uploadWithLoading() {
+const uploadWithLoading = () => {
   const loadingId = toast('Uploading file...', {
     description: 'Please wait while we upload your file',
     isLoading: true,
@@ -123,7 +123,7 @@ function uploadWithLoading() {
   }, 3000)
 }
 
-function paymentProcessing() {
+const paymentProcessing = () => {
   const loadingId = toast('Processing payment...', { isLoading: true, timeout: 0 })
   setTimeout(() => {
     toast.update(loadingId, 'Payment processed', {
@@ -133,7 +133,7 @@ function paymentProcessing() {
   }, 2500)
 }
 
-function loadingToError() {
+const loadingToError = () => {
   const loadingId = toast('Saving changes...', { isLoading: true, timeout: 0 })
   setTimeout(() => {
     toast.update(loadingId, 'Failed to save', {

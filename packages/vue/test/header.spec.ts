@@ -8,7 +8,7 @@ import type { HeaderProps } from '@/components/header/Header.vue'
 import { expectAccessible } from './a11y'
 
 // Reka's Presence needs three ticks before a closed dialog leaves the DOM (see modal.spec.ts).
-async function settle() {
+const settle = async () => {
   for (let i = 0; i < 4; i++) await nextTick()
 }
 
@@ -16,15 +16,15 @@ const toggle = () => document.querySelector<HTMLButtonElement>('[data-slot=heade
 
 // Vue's event invoker ignores events stamped in the millisecond its listener was attached (`_vts <= attached`), so a
 // click fired right after mounting can be dropped. A real click never lands that fast.
-async function click(el: HTMLElement) {
+const click = async (el: HTMLElement) => {
   await new Promise((resolve) => setTimeout(resolve, 2))
   el.click()
 }
 
-function mountHeader(
+const mountHeader = (
   props: Partial<HeaderProps> & Record<string, unknown> = {},
   slots: Record<string, () => any> = { body: () => h('a', { href: '#docs', id: 'link' }, 'Docs') },
-) {
+) => {
   return mount(Header, { props, slots, attachTo: document.body })
 }
 
@@ -223,7 +223,7 @@ describe('header hideOnScroll', () => {
   })
 
   const root = () => document.querySelector<HTMLElement>('[data-slot=header]')!
-  function scrollTo(y: number) {
+  const scrollTo = (y: number) => {
     Object.assign(window, { scrollY: y })
     window.dispatchEvent(new Event('scroll'))
   }

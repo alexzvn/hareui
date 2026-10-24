@@ -82,18 +82,18 @@ const CONTROLS = 'input:not([type="hidden"]), select, textarea'
 const FOCUSABLE =
   'input:not([type="hidden"]):not([aria-hidden="true"]), select, textarea, [role="checkbox"], [role="switch"], [role="radio"]:not([data-disabled])'
 
-function asArray(v: ValidationError | null | undefined): string[] {
+const asArray = (v: ValidationError | null | undefined): string[] => {
   if (!v) return []
   return Array.isArray(v) ? v : [v]
 }
 
-function errorResult(errors: string[]): ValidationResult | null {
+const errorResult = (errors: string[]): ValidationResult | null => {
   return errors.length
     ? { isInvalid: true, validationErrors: errors, validationDetails: CUSTOM }
     : null
 }
 
-function isEqual(a: ValidationResult, b: ValidationResult) {
+const isEqual = (a: ValidationResult, b: ValidationResult) => {
   return (
     a === b ||
     (a.isInvalid === b.isInvalid &&
@@ -105,11 +105,11 @@ function isEqual(a: ValidationResult, b: ValidationResult) {
   )
 }
 
-function controls(root: Element): Control[] {
+const controls = (root: Element): Control[] => {
   return root.matches(CONTROLS) ? [root as Control] : [...root.querySelectorAll<Control>(CONTROLS)]
 }
 
-function nativeValidity(controls: Control[]): ValidationResult {
+const nativeValidity = (controls: Control[]): ValidationResult => {
   const errors = new Set<string>()
   const details = { ...VALID }
   for (const el of controls) {
@@ -122,16 +122,18 @@ function nativeValidity(controls: Control[]): ValidationResult {
   return { isInvalid: !details.valid, validationErrors: [...errors], validationDetails: details }
 }
 
-function firstInvalid(form: HTMLFormElement) {
+const firstInvalid = (form: HTMLFormElement) => {
   return [...form.elements].find((el) => (el as Control).validity?.valid === false)
 }
 
-export function useFieldValidation<T>(options: FieldValidationOptions<T>): {
+export const useFieldValidation = <T>(
+  options: FieldValidationOptions<T>,
+): {
   /** The validation state to display (drives `invalid`, `aria-invalid` and FieldError). */
   validation: ComputedRef<ValidationResult>
   /** Commits the current value's validation (native behavior), e.g. after a stepper press that fires no `change`. */
   commitValidation: () => void
-} {
+} => {
   const form = inject(formContextKey, null)
   const behavior = computed(
     () => options.validationBehavior() ?? form?.validationBehavior.value ?? 'native',
@@ -162,7 +164,7 @@ export function useFieldValidation<T>(options: FieldValidationOptions<T>): {
     )
     return match ? errorResult([match.message]) : null
   })
-  function withFormError(shown: ValidationResult): ValidationResult {
+  const withFormError = (shown: ValidationResult): ValidationResult => {
     const error = formError.value
     if (!error) return shown
     return shown.isInvalid
@@ -205,7 +207,7 @@ export function useFieldValidation<T>(options: FieldValidationOptions<T>): {
       ),
   )
 
-  function sync() {
+  const sync = () => {
     const root = options.root()
     if (!root) return
     const els = controls(root).filter((el) => !el.disabled)
@@ -224,13 +226,13 @@ export function useFieldValidation<T>(options: FieldValidationOptions<T>): {
   watch([realtime, () => options.value(), behavior], sync, { flush: 'post' })
 
   // Reports a field event to the surrounding `Form`, which tracks it and validates the field per its `validateOn`
-  function emitFormEvent(type: FormInputEvents, flags?: Omit<FormInputEvent, 'type' | 'name'>) {
+  const emitFormEvent = (type: FormInputEvents, flags?: Omit<FormInputEvent, 'type' | 'name'>) => {
     const name = options.name()
     if (form && name) form.emit({ type, name, ...flags })
   }
   let inputTimer: ReturnType<typeof setTimeout> | undefined
   // Tracked right away so a submit within the delay isn't followed by a late dirty mark or validation
-  function emitFormInput(eager: boolean) {
+  const emitFormInput = (eager: boolean) => {
     emitFormEvent('input', { validate: false })
     clearTimeout(inputTimer)
     const delay = options.formField?.validateOnInputDelay ?? form?.validateOnInputDelay.value ?? 0
@@ -238,7 +240,7 @@ export function useFieldValidation<T>(options: FieldValidationOptions<T>): {
   }
   onBeforeUnmount(() => clearTimeout(inputTimer))
 
-  function commit() {
+  const commit = () => {
     serverErrorCleared.value = true
     if (behavior.value !== 'native') return
     // After the next render, so the latest value has been validated
@@ -251,19 +253,19 @@ export function useFieldValidation<T>(options: FieldValidationOptions<T>): {
 
   // Called by fields whose user changes fire no native `change` (Reka controls, stepper presses): a committed change
   // that also counts as input, validated right away
-  function commitValidation() {
+  const commitValidation = () => {
     commit()
     emitFormEvent('change')
     emitFormInput(true)
   }
 
-  function resetValidation() {
+  const resetValidation = () => {
     current.value = DEFAULT
     serverErrorCleared.value = true
   }
 
   // Whether focus at `node` is still within the field: inside its root, or in a popup one of its controls owns
-  function isWithin(root: Element, node: EventTarget | null) {
+  const isWithin = (root: Element, node: EventTarget | null) => {
     if (!(node instanceof Node)) return false
     if (root.contains(node)) return true
     return [...root.querySelectorAll('[aria-controls]')].some((el) =>
@@ -294,7 +296,7 @@ export function useFieldValidation<T>(options: FieldValidationOptions<T>): {
   // Attached on mount (template refs are set by then) and re-attached if the root element changes
   let attached: Element | null | undefined
   let detach: (() => void) | undefined
-  function attach() {
+  const attach = () => {
     const root = options.root()
     if (root === attached) return
     detach?.()

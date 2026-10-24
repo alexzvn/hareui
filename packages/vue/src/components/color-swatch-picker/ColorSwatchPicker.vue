@@ -174,7 +174,7 @@ defineSlots<ColorSwatchPickerSlots>()
 
 const pickerCtx = useColorPickerContext()
 
-function keyOf(value: string | Color | undefined): string {
+const keyOf = (value: string | Color | undefined): string => {
   if (value === undefined || value === '') return ''
   try {
     return colorToString(normalizeColor(value), 'hex').toLowerCase()
@@ -209,7 +209,7 @@ const selected = computed(() => {
 
 // Reka's root emits `update:modelValue` twice per selection (its own v-model plus the forwarded listener), so drop the repeat within a tick
 let lastSelected: string | undefined
-function onUpdate(value: unknown) {
+const onUpdate = (value: unknown) => {
   const next = (Array.isArray(value) ? value[0] : value) as string | undefined
   if (!next || next === lastSelected) return
   lastSelected = next

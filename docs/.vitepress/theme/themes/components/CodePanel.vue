@@ -105,7 +105,7 @@ defineSlots<{
 // Same behavior as fumadocs' `useCopyButton`: `copied` for 1.5s
 const copied = ref(false)
 let copiedTimer: ReturnType<typeof setTimeout> | undefined
-function onCopy() {
+const onCopy = () => {
   if (props.sourceCode) void navigator.clipboard.writeText(props.sourceCode)
   clearTimeout(copiedTimer)
   copied.value = true
@@ -113,7 +113,7 @@ function onCopy() {
 }
 onBeforeUnmount(() => clearTimeout(copiedTimer))
 
-function handleDownload() {
+const handleDownload = () => {
   if (!props.sourceCode || !props.fileName) return
 
   const blob = new Blob([props.sourceCode], { type: 'text/plain' })

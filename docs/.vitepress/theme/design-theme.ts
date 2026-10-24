@@ -42,24 +42,24 @@ export const DESIGN_THEME_VALUES: Record<
   kumo: { lightness: 0.5772, chroma: 0.2324, hue: 260 },
 }
 
-export function isDesignThemeId(value: string | null | undefined): value is DesignThemeId {
+export const isDesignThemeId = (value: string | null | undefined): value is DesignThemeId => {
   return (DESIGN_THEME_IDS as readonly string[]).includes(value ?? '')
 }
 
-export function getStoredDesignTheme(): DesignThemeId {
+export const getStoredDesignTheme = (): DesignThemeId => {
   const stored = localStorage.getItem(DESIGN_THEME_STORAGE_KEY)
   return isDesignThemeId(stored) ? stored : DEFAULT_DESIGN_THEME
 }
 
-export function getStoredVibrantPalette(): boolean {
+export const getStoredVibrantPalette = (): boolean => {
   return localStorage.getItem(VIBRANT_STORAGE_KEY) === 'true'
 }
 
-function notifyDesignThemeChange(themeId: DesignThemeId) {
+const notifyDesignThemeChange = (themeId: DesignThemeId) => {
   window.dispatchEvent(new CustomEvent(DESIGN_THEME_CHANGE_EVENT, { detail: { themeId } }))
 }
 
-export function setStoredDesignTheme(themeId: DesignThemeId) {
+export const setStoredDesignTheme = (themeId: DesignThemeId) => {
   const root = document.documentElement
   localStorage.setItem(DESIGN_THEME_STORAGE_KEY, themeId)
   if (themeId === DEFAULT_DESIGN_THEME) root.removeAttribute('data-design-theme')
@@ -67,7 +67,7 @@ export function setStoredDesignTheme(themeId: DesignThemeId) {
   notifyDesignThemeChange(themeId)
 }
 
-export function setStoredVibrantPalette(enabled: boolean) {
+export const setStoredVibrantPalette = (enabled: boolean) => {
   const root = document.documentElement
   localStorage.setItem(VIBRANT_STORAGE_KEY, String(enabled))
   if (enabled) root.setAttribute('data-vibrant-palette', 'true')

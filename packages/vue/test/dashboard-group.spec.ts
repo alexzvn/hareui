@@ -17,7 +17,7 @@ const nav = (label: string) =>
   ])
 
 /** A full dashboard: a labelled resizable/collapsible sidebar, a panel with a navbar and a labelled aside panel. */
-function mountDashboard() {
+const mountDashboard = () => {
   return mount(DashboardGroup, {
     props: { persistent: false },
     slots: {

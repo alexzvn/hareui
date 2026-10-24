@@ -14,9 +14,9 @@ export type ResolvedPortal = {
  * Resolves an overlay's portal target: the component's own `portal` prop, else the app-wide
  * `createHareUI({ portal })`, else `document.body`.
  */
-export function usePortal(
+export const usePortal = (
   portal: MaybeRefOrGetter<PortalTarget | undefined>,
-): ComputedRef<ResolvedPortal> {
+): ComputedRef<ResolvedPortal> => {
   const config = inject(hareUIConfigKey, {})
   return computed(() => {
     const target = toValue(portal) ?? config.portal ?? true

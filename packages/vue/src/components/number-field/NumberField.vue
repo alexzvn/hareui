@@ -281,10 +281,10 @@ const { validation, commitValidation } = useFieldValidation({
 const invalid = computed(() => validation.value.isInvalid)
 
 // Runs after Reka's blur / Enter handler, which has already applied a non-empty input
-function onCommitEmpty(event: Event) {
+const onCommitEmpty = (event: Event) => {
   if ((event.target as HTMLInputElement).value === '') commitEmpty()
 }
-function onKeydown(event: KeyboardEvent) {
+const onKeydown = (event: KeyboardEvent) => {
   if (event.key === 'Enter' && !event.isComposing) onCommitEmpty(event)
 }
 
@@ -292,7 +292,7 @@ function onKeydown(event: KeyboardEvent) {
 // A capture listener on the root runs ahead of Reka's handler on the input and hands Reka the matching arrow key.
 // It is attached natively: a Vue `@keydown.capture` invoker would timestamp the re-dispatched event, and Vue's
 // invoker on the input then drops it as "dispatched before attach" when the key lands right after mount.
-function onKeydownCapture(event: KeyboardEvent) {
+const onKeydownCapture = (event: KeyboardEvent) => {
   const target = event.target as HTMLElement
   if (
     (event.key !== 'PageUp' && event.key !== 'PageDown') ||
@@ -346,11 +346,11 @@ const ui = useComponentUI('numberField', theme, () => ({
 // RAC Group's `data-focus-within` / `data-focus-visible`
 const focusWithin = ref(false)
 const focusVisible = ref(false)
-function onFocusIn(event: FocusEvent) {
+const onFocusIn = (event: FocusEvent) => {
   focusWithin.value = true
   focusVisible.value = event.target instanceof Element && event.target.matches(':focus-visible')
 }
-function onFocusOut(event: FocusEvent) {
+const onFocusOut = (event: FocusEvent) => {
   if (
     event.currentTarget instanceof Element &&
     event.relatedTarget instanceof Node &&

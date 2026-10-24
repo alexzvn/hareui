@@ -92,7 +92,7 @@ const items = themes.map((theme) => ({
 }))
 const images = Object.fromEntries(themes.map((theme) => [theme.id, theme.image]))
 
-function applyTheme(themeId: ThemeId) {
+const applyTheme = (themeId: ThemeId) => {
   const themeValues = themeValuesById[themeId]
 
   setVariables({
@@ -106,7 +106,7 @@ function applyTheme(themeId: ThemeId) {
   })
 }
 
-function randomizeTheme() {
+const randomizeTheme = () => {
   const randomTheme = themes[Math.floor(Math.random() * themes.length)]
 
   if (randomTheme) {
@@ -116,7 +116,7 @@ function randomizeTheme() {
 
 useKeyPress('t', randomizeTheme)
 
-function onSelectionChange(selected: unknown) {
+const onSelectionChange = (selected: unknown) => {
   if (typeof selected === 'string') applyTheme(selected as ThemeId)
 }
 </script>

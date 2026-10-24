@@ -77,12 +77,12 @@ const showValidationError = computed(() => hasBlurred.value && validationError.v
 const showError = computed(() => showValidationError.value || importError.value !== null)
 const errorMessage = computed(() => importError.value ?? validationError.value)
 
-function onCdnUrlChange(value: string | number | undefined) {
+const onCdnUrlChange = (value: string | number | undefined) => {
   cdnUrl.value = String(value ?? '')
   importError.value = null
 }
 
-function handleImport() {
+const handleImport = () => {
   if (validationError.value) return
 
   isImporting.value = true

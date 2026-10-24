@@ -71,7 +71,7 @@ const menuOpen = ref(false)
 const menuRow = ref<Payment>()
 const anchor = ref({ left: '0px', top: '0px' })
 
-function onContextmenu(e: Event, row: RichTableRow<Payment>) {
+const onContextmenu = (e: Event, row: RichTableRow<Payment>) => {
   e.preventDefault()
   const { clientX, clientY } = e as MouseEvent
   const rect = root.value!.getBoundingClientRect()
@@ -80,7 +80,7 @@ function onContextmenu(e: Event, row: RichTableRow<Payment>) {
   menuOpen.value = true
 }
 
-function onAction(value: DropdownValue) {
+const onAction = (value: DropdownValue) => {
   log.value = `${items.find((item) => item.value === value)?.label}: ${menuRow.value?.name}`
 }
 </script>

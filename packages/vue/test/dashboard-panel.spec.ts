@@ -9,10 +9,10 @@ import { expectAccessible } from './a11y'
 
 const handle = () => document.querySelector<HTMLElement>('[data-slot=dashboard-resize-handle]')!
 
-function mountPanel(
+const mountPanel = (
   panel: Record<string, unknown> = {},
   slots: Record<string, (props: never) => unknown> = {},
-) {
+) => {
   return mount(DashboardGroup, {
     props: { persistent: false },
     slots: {
@@ -27,7 +27,7 @@ function mountPanel(
   })
 }
 
-async function key(k: string) {
+const key = async (k: string) => {
   handle().dispatchEvent(new KeyboardEvent('keydown', { key: k, bubbles: true, cancelable: true }))
   await nextTick()
 }

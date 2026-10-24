@@ -38,7 +38,7 @@ export type SkeletonSlots = {
 // `null` = not read yet. Read once per page, like HeroUI's cached `useCSSVariable`.
 let cssAnimationCache: string | undefined | null = null
 
-function readCssAnimation(): string | undefined {
+const readCssAnimation = (): string | undefined => {
   if (cssAnimationCache === null)
     cssAnimationCache =
       getComputedStyle(document.documentElement).getPropertyValue('--skeleton-animation').trim() ||

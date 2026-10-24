@@ -81,14 +81,14 @@ const chart = useChartContext('ChartGrid')
 const cartesian = useCartesianContext('ChartGrid')
 
 // Tick positions of the axis with this exact id; an unknown id gives none, leaving only the edge lines.
-function tickCoordinates(axis: 'x' | 'y', id: string | number) {
+const tickCoordinates = (axis: 'x' | 'y', id: string | number) => {
   const resolved = cartesian.axes.value.find(
     (entry) => entry.axis === axis && String(entry.id ?? 0) === String(id),
   )
   return resolved?.allTicks.map((tick) => tick.coordinate) ?? []
 }
 
-function withEdges(coordinates: number[], start: number, end: number) {
+const withEdges = (coordinates: number[], start: number, end: number) => {
   if (props.syncWithTicks) return coordinates
   return [...coordinates, ...[start, end].filter((edge) => !coordinates.includes(edge))]
 }

@@ -32,7 +32,7 @@ const props = defineProps<{
 const token = computed(() => getTokenName(props.tooltip, props.bgVariable))
 const style = computed(() => contrastStyle(props.bgVariable))
 
-function onClick(event: MouseEvent) {
+const onClick = (event: MouseEvent) => {
   void copyColorValue(event, props.bgVariable)
 }
 </script>

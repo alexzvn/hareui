@@ -23,7 +23,7 @@ describe('useChartTween', () => {
   })
 
   // Manual frames: `frame(ms)` runs the queued callbacks at that time.
-  function fakeFrames() {
+  const fakeFrames = () => {
     let queue: FrameRequestCallback[] = []
     vi.spyOn(performance, 'now').mockReturnValue(0)
     vi.stubGlobal('requestAnimationFrame', (callback: FrameRequestCallback) => queue.push(callback))
@@ -146,12 +146,12 @@ describe('Chart', () => {
     { month: 'Mar', organic: 20, paid: 0 },
   ]
 
-  async function settle() {
+  const settle = async () => {
     await flushPromises()
     await nextTick()
   }
 
-  function mountChart(props: Record<string, unknown> = {}) {
+  const mountChart = (props: Record<string, unknown> = {}) => {
     return mount(LineChart, {
       props: {
         data: data,
@@ -168,7 +168,7 @@ describe('Chart', () => {
   const surface = (wrapper: ReturnType<typeof mountChart>) =>
     wrapper.find('[data-slot=chart-surface]').element as SVGSVGElement
 
-  function keydown(target: Element, key: string) {
+  const keydown = (target: Element, key: string) => {
     const event = new KeyboardEvent('keydown', { key, bubbles: true, cancelable: true })
     target.dispatchEvent(event)
     return event

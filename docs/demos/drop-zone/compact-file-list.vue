@@ -60,18 +60,18 @@ const startingFiles = (): WorkoutFile[] => [
 
 const workoutFiles = ref<WorkoutFile[]>(startingFiles())
 
-function statusOf(file: WorkoutFile): DropZoneFileStatus {
+const statusOf = (file: WorkoutFile): DropZoneFileStatus => {
   if (file.offline) return 'failed'
   return file.sent >= file.bytes ? 'complete' : 'uploading'
 }
 
-function syncAgain(file: WorkoutFile) {
+const syncAgain = (file: WorkoutFile) => {
   file.offline = false
   file.sent = 0
   resume()
 }
 
-function removeFile(key: string) {
+const removeFile = (key: string) => {
   workoutFiles.value = workoutFiles.value.filter((file) => file.key !== key)
 }
 
@@ -80,7 +80,7 @@ const BYTES_PER_MS = (1.5 * 1024 * 1024) / 1000
 let frame = 0
 let lastTime = 0
 
-function pump(now: number) {
+const pump = (now: number) => {
   const syncing = workoutFiles.value.filter((file) => statusOf(file) === 'uploading')
   if (!syncing.length) {
     frame = 0
@@ -97,7 +97,7 @@ function pump(now: number) {
   frame = requestAnimationFrame(pump)
 }
 
-function resume() {
+const resume = () => {
   if (frame) return
   lastTime = performance.now()
   frame = requestAnimationFrame(pump)

@@ -88,7 +88,7 @@ const props = withDefaults(
 )
 
 const highlighted = new Map<string, Promise<string>>()
-function highlight(code: string, lang: string): Promise<string> {
+const highlight = (code: string, lang: string): Promise<string> => {
   const key = `${lang}:${code}`
   let cached = highlighted.get(key)
   if (!cached) {
@@ -105,7 +105,7 @@ function highlight(code: string, lang: string): Promise<string> {
 }
 
 const codeHtml = shallowRef<string>()
-async function render() {
+const render = async () => {
   const trimmed = props.code.trim()
   if (!trimmed) return
   const html = await highlight(trimmed, props.lang)
@@ -125,7 +125,7 @@ const expandClass = button({ variant: 'tertiary', size: 'sm' }).base({
 })
 const copyIcon = `<svg aria-hidden="true" height="1em" role="img" viewBox="0 0 16 16" width="1em" xmlns="http://www.w3.org/2000/svg">${gravity.icons.copy.body}</svg>`
 
-function copy(event: MouseEvent) {
+const copy = (event: MouseEvent) => {
   const target = event.currentTarget as HTMLElement
   void navigator.clipboard.writeText(props.code.trim()).then(() => flashCopied(target))
 }

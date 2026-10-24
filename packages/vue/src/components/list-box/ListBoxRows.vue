@@ -168,7 +168,7 @@ type Virtualizer = {
 }
 let virtualizer: Virtualizer | undefined
 // The tanstack virtualizer is only reachable through the slot; keep it for `scrollToIndex` (renders nothing)
-function captureVirtualizer(v: Virtualizer) {
+const captureVirtualizer = (v: Virtualizer) => {
   virtualizer = v
   return undefined
 }
@@ -181,7 +181,7 @@ defineExpose({
 })
 
 const selectedSet = computed(() => new Set(props.selectedValues))
-function optionProps(row: CollectionRow) {
+const optionProps = (row: CollectionRow) => {
   return {
     item: row.item,
     index: row.index,

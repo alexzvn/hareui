@@ -47,7 +47,7 @@ const SLIDER_THUMB =
 const track = useTemplateRef<HTMLDivElement>('track')
 let isDragging = false
 
-function getValueFromPosition(clientX: number) {
+const getValueFromPosition = (clientX: number) => {
   if (!track.value) return props.value
   const rect = track.value.getBoundingClientRect()
   const percentage = Math.max(0, Math.min(1, (clientX - rect.left) / rect.width))
@@ -56,7 +56,7 @@ function getValueFromPosition(clientX: number) {
   return Math.round(percentage * MAX_CHROMA * 10000) / 10000
 }
 
-function handlePointerDown(e: PointerEvent) {
+const handlePointerDown = (e: PointerEvent) => {
   isDragging = true
   // Capture pointer to receive events even when pointer leaves the element
   ;(e.target as HTMLElement).setPointerCapture(e.pointerId)
@@ -79,7 +79,7 @@ function handlePointerDown(e: PointerEvent) {
   document.addEventListener('pointerup', handlePointerUp)
 }
 
-function handleKeyDown(e: KeyboardEvent) {
+const handleKeyDown = (e: KeyboardEvent) => {
   let newValue = props.value
   const step = e.shiftKey ? 0.002 : 0.0002
 

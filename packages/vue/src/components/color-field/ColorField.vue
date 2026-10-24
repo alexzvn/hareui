@@ -278,7 +278,7 @@ const { validation, commitValidation } = useFieldValidation({
 })
 const invalid = computed(() => validation.value.isInvalid)
 
-function onUpdateColor(color: Color) {
+const onUpdateColor = (color: Color) => {
   if (empty.value) {
     filledByCommit.value = true
     uncontrolledEmpty.value = false
@@ -292,7 +292,7 @@ function onUpdateColor(color: Color) {
   commitValidation()
 }
 
-function onClear() {
+const onClear = () => {
   if (pickerCtx && !hasOwnModel.value) return
   uncontrolledEmpty.value = true
   formColor.value = null
@@ -302,7 +302,7 @@ function onClear() {
 
 // Reka `preventDefault`s Enter after committing, which also cancels the browser's implicit form submission
 // (React Aria leaves it alone). Replayed once the committed value has rendered into the form input.
-function onInputKeydown(event: KeyboardEvent) {
+const onInputKeydown = (event: KeyboardEvent) => {
   if (
     event.key !== 'Enter' ||
     event.isComposing ||
@@ -312,7 +312,7 @@ function onInputKeydown(event: KeyboardEvent) {
   const form = event.currentTarget.form
   if (form) nextTick(() => submitImplicitly(form))
 }
-function submitImplicitly(form: HTMLFormElement) {
+const submitImplicitly = (form: HTMLFormElement) => {
   const elements = [...form.elements]
   const submitter = elements.find(
     (el): el is HTMLButtonElement | HTMLInputElement =>
@@ -366,11 +366,11 @@ const ui = useComponentUI('colorField', theme, () => ({
 // RAC Group's `data-focus-within` / `data-focus-visible`
 const focusWithin = ref(false)
 const focusVisible = ref(false)
-function onFocusIn(event: FocusEvent) {
+const onFocusIn = (event: FocusEvent) => {
   focusWithin.value = true
   focusVisible.value = event.target instanceof Element && event.target.matches(':focus-visible')
 }
-function onFocusOut(event: FocusEvent) {
+const onFocusOut = (event: FocusEvent) => {
   if (
     event.currentTarget instanceof Element &&
     event.relatedTarget instanceof Node &&

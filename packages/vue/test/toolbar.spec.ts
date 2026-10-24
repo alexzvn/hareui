@@ -14,7 +14,7 @@ import { expectAccessible } from './a11y'
 const mounted: { unmount: () => void }[] = []
 afterEach(() => mounted.splice(0).forEach((w) => w.unmount()))
 
-function editor(props: Record<string, unknown> = {}) {
+const editor = (props: Record<string, unknown> = {}) => {
   const wrapper = mount(Toolbar, {
     props: { 'aria-label': 'Text formatting', ...props },
     attachTo: document.body,
@@ -37,7 +37,7 @@ function editor(props: Record<string, unknown> = {}) {
   return { wrapper, button }
 }
 
-async function key(el: Element, k: string, shiftKey = false) {
+const key = async (el: Element, k: string, shiftKey = false) => {
   el.dispatchEvent(
     new KeyboardEvent('keydown', { key: k, shiftKey, bubbles: true, cancelable: true }),
   )

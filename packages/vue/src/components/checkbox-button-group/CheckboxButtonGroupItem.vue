@@ -201,7 +201,7 @@ const { id, labelId, descriptionId, hasLabel, hasDescription, describedBy } = us
 })
 const extraId = computed(() => `${id.value}-extra`)
 
-function cls(slot: keyof NonNullable<CheckboxButtonGroupItemProps['ui']>, extra?: any) {
+const cls = (slot: keyof NonNullable<CheckboxButtonGroupItemProps['ui']>, extra?: any) => {
   return [group.uiOverrides.value?.[slot], props.ui?.[slot], extra]
 }
 </script>

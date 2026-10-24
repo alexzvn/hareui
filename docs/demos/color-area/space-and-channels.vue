@@ -65,7 +65,7 @@ const color = ref(parseColor('hsb(219, 58%, 93%)'))
 const xChannel = ref<ColorChannel>('saturation')
 const yChannel = ref<ColorChannel>('brightness')
 
-function onSpaceChange(space: SelectValue | undefined) {
+const onSpaceChange = (space: SelectValue | undefined) => {
   if (!space || typeof space !== 'string') return
   colorSpace.value = space as ColorSpace
   // Reset the channels to sensible defaults for the new colour space

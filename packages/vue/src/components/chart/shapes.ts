@@ -5,13 +5,13 @@ export type ChartRadius = number | [number, number, number, number]
  * SVG path of a rectangle with rounded corners. Width and height may be negative
  * (bars below the baseline or drawn leftwards); radii are clamped to half the shorter side.
  */
-export function rectanglePath(
+export const rectanglePath = (
   x: number,
   y: number,
   width: number,
   height: number,
   radius: ChartRadius = 0,
-): string {
+): string => {
   const maxRadius = Math.min(Math.abs(width) / 2, Math.abs(height) / 2)
   const ySign = height >= 0 ? 1 : -1
   const xSign = width >= 0 ? 1 : -1

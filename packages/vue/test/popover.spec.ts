@@ -9,7 +9,7 @@ import { expectAccessible } from './a11y'
 let wrapper: ReturnType<typeof mount> | undefined
 let outside: HTMLButtonElement | undefined
 
-function mountPopover(props: Record<string, unknown> = {}) {
+const mountPopover = (props: Record<string, unknown> = {}) => {
   outside = document.createElement('button')
   outside.id = 'outside'
   outside.textContent = 'Outside'
@@ -35,11 +35,11 @@ afterEach(() => {
 const content = () => document.querySelector<HTMLElement>('[data-slot=popover]')
 const triggerEl = () => document.querySelector<HTMLElement>('[data-testid=trigger]')!
 
-async function settle() {
+const settle = async () => {
   for (let i = 0; i < 4; i++) await nextTick()
 }
 
-function hiddenFromAT(el: HTMLElement): boolean {
+const hiddenFromAT = (el: HTMLElement): boolean => {
   for (let node: HTMLElement | null = el; node; node = node.parentElement) {
     if (node.getAttribute('aria-hidden') === 'true' || node.hasAttribute('inert')) return true
   }

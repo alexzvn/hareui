@@ -79,7 +79,7 @@ import HomeNav from './components/home/HomeNav.vue'
 const props = defineProps<{ sections: SidebarSection[] }>()
 const emit = defineEmits<{ search: [] }>()
 
-function firstLink(base: string) {
+const firstLink = (base: string) => {
   const section = props.sections.find((s) => s.base === base)
   return (section && sectionLinks(section)[0]?.link) ?? base
 }

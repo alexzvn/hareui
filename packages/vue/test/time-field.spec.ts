@@ -8,7 +8,7 @@ import TimeField from '@/components/time-field/TimeField.vue'
 import { expectAccessible } from './a11y'
 
 // Local stand-in for Promise.withResolvers, so the library's tsconfig `lib` doesn't need ES2024.
-function withResolvers<T>() {
+const withResolvers = <T>() => {
   let resolve!: (value: T) => void
   const promise = new Promise<T>((res) => {
     resolve = res

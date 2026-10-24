@@ -37,7 +37,7 @@ const state = reactive<Partial<Schema>>({
   seats: 1,
 })
 
-function onSubmit(event: FormSubmitEvent<Schema>) {
+const onSubmit = (event: FormSubmitEvent<Schema>) => {
   alert(`Valid: ${JSON.stringify(event.data, null, 2)}`)
 }
 </script>

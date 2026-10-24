@@ -23,44 +23,46 @@ export type VisibleDuration = {
 export type PageBehavior = 'visible' | 'single'
 
 /** Whether a duration selects the custom week/day grid (anything but a plain month view). */
-export function isDurationView(duration: VisibleDuration | undefined): duration is VisibleDuration {
+export const isDurationView = (
+  duration: VisibleDuration | undefined,
+): duration is VisibleDuration => {
   return !!duration && (duration.weeks != null || duration.days != null)
 }
 
 // ---------------------------------------------------------------------------------------------
 // Ported from react-stately `calendar/utils` (alignStart / alignEnd / alignCenter / constrainStart)
 // ---------------------------------------------------------------------------------------------
-function alignStart(
+const alignStart = (
   date: CalendarDate,
   duration: DateDuration,
   locale: string,
   min?: DateValue,
   max?: DateValue,
-): CalendarDate {
+): CalendarDate => {
   let aligned = date
   if (duration.weeks || (duration.days && duration.days > 7)) aligned = startOfWeek(date, locale)
   return constrainStart(date, aligned, duration, locale, min, max)
 }
-function alignEnd(
+const alignEnd = (
   date: CalendarDate,
   duration: DateDuration,
   locale: string,
   min?: DateValue,
   max?: DateValue,
-): CalendarDate {
+): CalendarDate => {
   const d = { ...duration }
   if (d.days) d.days--
   else if (d.weeks) d.weeks--
   const aligned = alignStart(date, duration, locale).subtract(d)
   return constrainStart(date, aligned, duration, locale, min, max)
 }
-function alignCenter(
+const alignCenter = (
   date: CalendarDate,
   duration: DateDuration,
   locale: string,
   min?: DateValue,
   max?: DateValue,
-): CalendarDate {
+): CalendarDate => {
   const half: DateDuration = {}
   for (const key of Object.keys(duration) as (keyof DateDuration)[]) {
     const value = duration[key] ?? 0
@@ -71,14 +73,14 @@ function alignCenter(
   const aligned = alignStart(date, duration, locale).subtract(half)
   return constrainStart(date, aligned, duration, locale, min, max)
 }
-function constrainStart(
+const constrainStart = (
   date: CalendarDate,
   aligned: CalendarDate,
   duration: DateDuration,
   locale: string,
   min?: DateValue,
   max?: DateValue,
-): CalendarDate {
+): CalendarDate => {
   if (min && date.compare(min) >= 0)
     aligned =
       (maxDate(
@@ -91,17 +93,17 @@ function constrainStart(
       aligned
   return aligned
 }
-function constrainValue(date: CalendarDate, min?: DateValue, max?: DateValue): CalendarDate {
+const constrainValue = (date: CalendarDate, min?: DateValue, max?: DateValue): CalendarDate => {
   if (min) date = (maxDate(date, toCalendarDate(min)) as CalendarDate | null) ?? date
   if (max) date = (minDate(date, toCalendarDate(max)) as CalendarDate | null) ?? date
   return date
 }
-function unitDuration(duration: DateDuration): DateDuration {
+const unitDuration = (duration: DateDuration): DateDuration => {
   const unit: DateDuration = {}
   for (const key of Object.keys(duration) as (keyof DateDuration)[]) unit[key] = 1
   return unit
 }
-function isOutOfRange(date: DateValue, min?: DateValue, max?: DateValue) {
+const isOutOfRange = (date: DateValue, min?: DateValue, max?: DateValue) => {
   return (min != null && date.compare(min) < 0) || (max != null && date.compare(max) > 0)
 }
 
@@ -124,7 +126,7 @@ export type UseCalendarDurationViewOptions = {
  * always build full month grids, so the week and day views compute their own visible range, rows, headings and
  * keyboard navigation here (decision #11), while the month view stays on Reka.
  */
-export function useCalendarDurationView(options: UseCalendarDurationViewOptions) {
+export const useCalendarDurationView = (options: UseCalendarDurationViewOptions) => {
   const timeZone = getLocalTimeZone()
   const displayCalendar = computed(() =>
     createCalendar(new DateFormatter(options.locale()).resolvedOptions().calendar as any),
@@ -145,7 +147,7 @@ export function useCalendarDurationView(options: UseCalendarDurationViewOptions)
     },
   })
 
-  function initialStart() {
+  const initialStart = () => {
     const align = options.alignment() === 'start' ? alignStart : alignCenter
     return align(focusedDate.value, duration.value, options.locale(), min(), max())
   }
@@ -175,7 +177,7 @@ export function useCalendarDurationView(options: UseCalendarDurationViewOptions)
   const pageDuration = computed(() =>
     options.pageBehavior() === 'visible' ? duration.value : unitDuration(duration.value),
   )
-  function nextPage() {
+  const nextPage = () => {
     const start = startDate.value.add(pageDuration.value)
     const focused = focusedDate.value
     startDate.value = alignStart(
@@ -185,7 +187,7 @@ export function useCalendarDurationView(options: UseCalendarDurationViewOptions)
     )
     focusedDate.value = constrainValue(focused.add(pageDuration.value), min(), max())
   }
-  function prevPage() {
+  const prevPage = () => {
     const start = startDate.value.subtract(pageDuration.value)
     const focused = focusedDate.value
     startDate.value = alignStart(
@@ -291,7 +293,7 @@ export function useCalendarDurationView(options: UseCalendarDurationViewOptions)
 
   // Keyboard navigation (`useCalendarGrid` shortcuts). DOM focus follows the focused date while the grid has focus.
   const gridRef = ref<HTMLElement>()
-  function focusCell(date: CalendarDate) {
+  const focusCell = (date: CalendarDate) => {
     focusedDate.value = date
     nextTick(() => {
       if (!gridRef.value?.contains(document.activeElement)) return
@@ -300,11 +302,11 @@ export function useCalendarDurationView(options: UseCalendarDurationViewOptions)
         ?.focus()
     })
   }
-  function onKeyDown(
+  const onKeyDown = (
     event: KeyboardEvent,
     handlers: { select: (date: CalendarDate) => void; escape?: () => void },
     dir: 'ltr' | 'rtl' = 'ltr',
-  ) {
+  ) => {
     const focused = focusedDate.value
     const d = duration.value
     const unit = unitDuration(d)
@@ -351,11 +353,11 @@ export function useCalendarDurationView(options: UseCalendarDurationViewOptions)
     }
     event.preventDefault()
   }
-  function nextPageAndFocus() {
+  const nextPageAndFocus = () => {
     nextPage()
     focusCell(focusedDate.value)
   }
-  function prevPageAndFocus() {
+  const prevPageAndFocus = () => {
     prevPage()
     focusCell(focusedDate.value)
   }

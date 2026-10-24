@@ -58,7 +58,7 @@ const items: NavigationMenuItem[] = [
 
 const open = ref(false)
 
-function onKeydown(event: KeyboardEvent) {
+const onKeydown = (event: KeyboardEvent) => {
   const target = event.target as HTMLElement
   if (
     event.key.toLowerCase() === 'o' &&

@@ -45,7 +45,7 @@ const colors = ['var(--chart-1)', 'var(--chart-3)', 'var(--chart-5)']
 
 const margin = { top: 0, right: 0, bottom: 0, left: 0 }
 
-function formatMinutes(value: number) {
+const formatMinutes = (value: number) => {
   return `${value} min`
 }
 </script>

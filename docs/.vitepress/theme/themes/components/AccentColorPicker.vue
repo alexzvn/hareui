@@ -156,7 +156,7 @@ const inputError = ref(false)
 const colorValue = computed(() => safeParseColor(props.value))
 const initialColorHex = computed(() => props.value.toLowerCase())
 
-function handleColorChange(newColor: Color) {
+const handleColorChange = (newColor: Color) => {
   emit('change', newColor)
 }
 
@@ -166,7 +166,7 @@ const displayedInputValue = computed(
 )
 
 // Handle input change - validate on every change
-function handleInputChange(newValue: string | number | undefined) {
+const handleInputChange = (newValue: string | number | undefined) => {
   const value = String(newValue ?? '')
 
   editingValue.value = value
@@ -189,7 +189,7 @@ function handleInputChange(newValue: string | number | undefined) {
 const isInput = (event: Event) => (event.target as HTMLElement).matches('input')
 
 // On blur, reset to the current valid color if there was an error
-function handleInputBlur(event: FocusEvent) {
+const handleInputBlur = (event: FocusEvent) => {
   if (!isInput(event)) return
   if (inputError.value) {
     editingValue.value = null
@@ -199,7 +199,7 @@ function handleInputBlur(event: FocusEvent) {
   }
 }
 
-function handleInputKeyDown(event: KeyboardEvent) {
+const handleInputKeyDown = (event: KeyboardEvent) => {
   if (!isInput(event)) return
   if (event.key === 'Escape') {
     editingValue.value = null
@@ -208,16 +208,16 @@ function handleInputKeyDown(event: KeyboardEvent) {
   }
 }
 
-function handleInputFocus(event: FocusEvent) {
+const handleInputFocus = (event: FocusEvent) => {
   if (!isInput(event)) return
   editingValue.value = formatColor(colorValue.value, currentColorFormat.value)
 }
 
-function handleShuffle() {
+const handleShuffle = () => {
   handleColorChange(randomColor())
 }
 
-function onFormatChange(key: unknown) {
+const onFormatChange = (key: unknown) => {
   if (key) {
     currentColorFormat.value = key as ColorFormat
   }

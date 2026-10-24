@@ -94,7 +94,7 @@ const softHoverToken = computed(() =>
   props.soft ? getTokenName(props.soft.hoverTooltip, props.soft.hoverVariable) : '',
 )
 
-function onSoftHoverClick(event: MouseEvent) {
+const onSoftHoverClick = (event: MouseEvent) => {
   if (!props.soft) return
   void copyColorValue(event, props.soft.hoverCssValue || props.soft.hoverVariable)
 }

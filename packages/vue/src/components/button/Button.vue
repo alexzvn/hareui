@@ -162,7 +162,7 @@ const attrs = computed(() => {
   }
 })
 
-function onClickCapture(event: MouseEvent) {
+const onClickCapture = (event: MouseEvent) => {
   if (props.pending || (isDisabled.value && !isNativeButton.value)) {
     event.preventDefault()
     event.stopImmediatePropagation()
@@ -171,11 +171,11 @@ function onClickCapture(event: MouseEvent) {
 
 // usePress keyboard activation for non-button elements: Enter clicks on keydown, Space on keyup; both prevent page scroll.
 // Anchors with an href already activate natively on Enter.
-function isKeyboardTarget(event: KeyboardEvent) {
+const isKeyboardTarget = (event: KeyboardEvent) => {
   return !isNativeButton.value && !isDisabled.value && event.target === event.currentTarget
 }
 
-function onKeydown(event: KeyboardEvent) {
+const onKeydown = (event: KeyboardEvent) => {
   if (!isKeyboardTarget(event)) return
   const el = event.currentTarget as HTMLElement
   if (event.key === ' ') {
@@ -189,7 +189,7 @@ function onKeydown(event: KeyboardEvent) {
   }
 }
 
-function onKeyup(event: KeyboardEvent) {
+const onKeyup = (event: KeyboardEvent) => {
   if (isKeyboardTarget(event) && event.key === ' ') {
     event.preventDefault()
     ;(event.currentTarget as HTMLElement).click()

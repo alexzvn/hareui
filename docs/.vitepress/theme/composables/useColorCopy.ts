@@ -2,13 +2,13 @@ import { converter, parse } from 'culori'
 
 const toOklch = converter('oklch')
 
-function formatNumber(value: number | undefined): string {
+const formatNumber = (value: number | undefined): string => {
   if (typeof value !== 'number') return '0'
   return Number(value.toFixed(4)).toString()
 }
 
 /** Converts any CSS color string (resolved rgb/hex/etc.) into an `oklch(...)` string. */
-export function toOklchCss(value: string): string {
+export const toOklchCss = (value: string): string => {
   const parsed = parse(value)
   if (!parsed) return value
 
@@ -23,7 +23,7 @@ export function toOklchCss(value: string): string {
 }
 
 /** Reads the computed background color of the clicked element, converts it to oklch, and copies it. */
-export async function copyColorValue(event: MouseEvent, fallback?: string): Promise<void> {
+export const copyColorValue = async (event: MouseEvent, fallback?: string): Promise<void> => {
   const target = event.currentTarget as HTMLElement
   const computedValue = getComputedStyle(target).backgroundColor || fallback
   const value = computedValue ? toOklchCss(computedValue) : fallback || ''
@@ -35,19 +35,19 @@ export async function copyColorValue(event: MouseEvent, fallback?: string): Prom
 }
 
 /** Briefly pulses the clicked swatch to indicate the value was copied, without disturbing its label. */
-function flashSwatch(target: HTMLElement): void {
+const flashSwatch = (target: HTMLElement): void => {
   target.classList.add('outline', 'outline-2', 'outline-offset-2', 'outline-current')
   window.setTimeout(() => {
     target.classList.remove('outline', 'outline-2', 'outline-offset-2', 'outline-current')
   }, 600)
 }
 
-export function getTokenName(content: string | undefined, fallback: string): string {
+export const getTokenName = (content: string | undefined, fallback: string): string => {
   if (!content) return fallback
   return content.split(':')[0]?.trim() || fallback
 }
 
-export function contrastStyle(bgVar: string): Record<string, string> {
+export const contrastStyle = (bgVar: string): Record<string, string> => {
   return {
     WebkitBackgroundClip: 'text',
     backgroundClip: 'text',

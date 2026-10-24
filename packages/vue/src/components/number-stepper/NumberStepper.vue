@@ -372,15 +372,15 @@ const flowFormat = computed<Format | undefined>(() => {
 })
 
 // An emptied input commits "no value" (see NumberField)
-function onCommitEmpty(event: Event) {
+const onCommitEmpty = (event: Event) => {
   if ((event.target as HTMLInputElement).value === '') commitEmpty()
 }
-function onKeydown(event: KeyboardEvent) {
+const onKeydown = (event: KeyboardEvent) => {
   if (event.key === 'Enter' && !event.isComposing) onCommitEmpty(event)
 }
 // PageUp / PageDown move by a single step, as in NumberField (Reka moves 10). Attached natively on the root for the
 // same reason as NumberField: a Vue capture invoker would make Vue drop the re-dispatched key right after mount.
-function onKeydownCapture(event: KeyboardEvent) {
+const onKeydownCapture = (event: KeyboardEvent) => {
   const target = event.target as HTMLElement
   if (
     (event.key !== 'PageUp' && event.key !== 'PageDown') ||

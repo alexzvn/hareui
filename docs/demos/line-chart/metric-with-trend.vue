@@ -50,7 +50,7 @@ import { Card, Chip } from '@hareui/vue'
 import { LineChart } from '@hareui/vue/charts'
 import { Icon } from '@iconify/vue'
 
-function points(values: number[]) {
+const points = (values: number[]) => {
   return values.map((value, index) => ({ week: `Week ${index + 1}`, value }))
 }
 

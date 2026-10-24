@@ -36,7 +36,7 @@ const CONTENT_SELECTORS = [
 ].join(', ')
 
 /** Parses `oklch(L C H)` into its components. */
-function parseOklch(oklch: string): { lightness: number; chroma: number; hue: number } | null {
+const parseOklch = (oklch: string): { lightness: number; chroma: number; hue: number } | null => {
   const match = oklch.match(/oklch\(\s*([\d.]+)\s+([\d.]+)\s+([\d.]+)\s*\)/)
   if (!match?.[1] || !match[2] || !match[3]) return null
   return {
@@ -46,7 +46,7 @@ function parseOklch(oklch: string): { lightness: number; chroma: number; hue: nu
   }
 }
 
-function buildVarsCSS(vars: Record<string, string>) {
+const buildVarsCSS = (vars: Record<string, string>) => {
   return Object.entries(vars)
     .map(([prop, val]) => `${prop}: ${val};`)
     .join('\n    ')
@@ -56,11 +56,11 @@ function buildVarsCSS(vars: Record<string, string>) {
  * Radius and font apply to both modes. Derived radius values are re-declared on the scoped elements
  * because custom properties resolve `var()` where they are defined.
  */
-function getCommonVariables(
+const getCommonVariables = (
   radius: string,
   fieldRadius: string,
   fontVariable: string,
-): Record<string, string> {
+): Record<string, string> => {
   return {
     '--field-radius': fieldRadius,
     '--font-sans': `var(${fontVariable})`,
@@ -69,11 +69,11 @@ function getCommonVariables(
   }
 }
 
-function scopedCSS(
+const scopedCSS = (
   colorLightVars: Record<string, string>,
   colorDarkVars: Record<string, string>,
   commonVars: Record<string, string>,
-) {
+) => {
   const fullLightVars = { ...commonVars, ...colorLightVars }
   const fullDarkVars = { ...commonVars, ...colorDarkVars }
   return `
@@ -97,7 +97,7 @@ function scopedCSS(
 }
 
 /** Adaptive accents (e.g. black/white) use a different accent value in light and dark mode. */
-function getAdaptiveColorCSS(
+const getAdaptiveColorCSS = (
   accentColor: string,
   chroma: number,
   hue: number,
@@ -105,7 +105,7 @@ function getAdaptiveColorCSS(
   commonVars: Record<string, string>,
   semanticOverrides?: SemanticOverrides,
   vibrant?: boolean,
-): string | null {
+): string | null => {
   const adaptiveConfig = adaptiveColors[accentColor]
   if (!adaptiveConfig) return null
 
@@ -140,7 +140,7 @@ function getAdaptiveColorCSS(
   return scopedCSS(colorLightVars, colorDarkVars, commonVars)
 }
 
-function getThemeColorsCSS(
+const getThemeColorsCSS = (
   chroma: number,
   hue: number,
   lightness: number,
@@ -148,7 +148,7 @@ function getThemeColorsCSS(
   commonVars: Record<string, string>,
   semanticOverrides?: SemanticOverrides,
   vibrant?: boolean,
-) {
+) => {
   const colors = generateThemeColors({ chroma, grayChroma, hue, lightness, semanticOverrides })
   const derivedOpts = { vibrant }
   return scopedCSS(
@@ -164,7 +164,7 @@ function getThemeColorsCSS(
   )
 }
 
-function injectStyleElement(id: string, css: string) {
+const injectStyleElement = (id: string, css: string) => {
   document.getElementById(id)?.remove()
   const style = document.createElement('style')
   style.id = id
@@ -172,15 +172,15 @@ function injectStyleElement(id: string, css: string) {
   document.head.appendChild(style)
 }
 
-function removeInjected() {
+const removeInjected = () => {
   for (const id of [ADAPTIVE_STYLE_ID, THEME_COLORS_STYLE_ID]) document.getElementById(id)?.remove()
 }
 
 /** Syncs the builder variables to injected `<style>` elements. Call once, from the page root (client only). */
-export function useCssSync() {
+export const useCssSync = () => {
   const [variables] = useVariablesState()
 
-  function sync() {
+  const sync = () => {
     const v = variables.value
     const accentColor = `oklch(${v.lightness} ${v.chroma} ${v.hue})`
     const matchingThemeId = findMatchingTheme(v)

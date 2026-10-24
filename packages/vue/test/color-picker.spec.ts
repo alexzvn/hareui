@@ -47,7 +47,7 @@ const fullSlots = {
   ],
 }
 const settle = () => new Promise((resolve) => setTimeout(resolve, 30))
-async function open() {
+const open = async () => {
   trigger().click()
   await nextTick()
   await settle()

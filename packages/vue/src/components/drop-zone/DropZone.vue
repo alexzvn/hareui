@@ -286,7 +286,7 @@ const { id, labelId, descriptionId, hasLabel, hasDescription, describedBy, Field
   })
 
 // Mirrors the selection into the file input, so native form submission and `required` see it
-function syncInput() {
+const syncInput = () => {
   const el = input.value
   if (!el) return
   try {
@@ -301,12 +301,12 @@ function syncInput() {
 watch(files, syncInput, { flush: 'post' })
 onMounted(syncInput)
 
-function setFiles(next: File[]) {
+const setFiles = (next: File[]) => {
   local.value = next
   emit('update:modelValue', next)
 }
 
-function addFiles(incoming: File[]) {
+const addFiles = (incoming: File[]) => {
   const accepted: File[] = []
   const rejected: DropZoneRejection[] = []
   for (const file of incoming) {
@@ -326,7 +326,7 @@ function addFiles(incoming: File[]) {
   syncInput()
 }
 
-function removeFile(file: File | number) {
+const removeFile = (file: File | number) => {
   const index = typeof file === 'number' ? file : files.value.indexOf(file)
   if (index < 0 || index >= files.value.length) return
   setFiles(files.value.filter((_, i) => i !== index))
@@ -335,7 +335,7 @@ function removeFile(file: File | number) {
 
 // The built-in items by file, to move focus off an item that is going away
 const itemElements = new Map<File, Element>()
-function setItemElement(file: File, item: unknown) {
+const setItemElement = (file: File, item: unknown) => {
   const el = item && typeof item === 'object' && '$el' in item ? item.$el : undefined
   if (el instanceof Element) itemElements.set(file, el)
   else itemElements.delete(file)
@@ -343,7 +343,7 @@ function setItemElement(file: File, item: unknown) {
 
 // Removing the item that holds focus would drop focus to the page: it moves to the next file's remove button,
 // else the previous one's, else the area button
-function onItemRemove(file: File, index: number) {
+const onItemRemove = (file: File, index: number) => {
   // Read before removing: a bound `v-model` only updates `files` on the parent's next render
   const neighbour = files.value[index + 1] ?? files.value[index - 1]
   const hadFocus = itemElements.get(file)?.contains(document.activeElement) ?? false
@@ -358,19 +358,19 @@ function onItemRemove(file: File, index: number) {
 }
 
 // Clearing first makes the picker fire `change` even when the same file is picked again; a cancelled picker restores it
-function open() {
+const open = () => {
   if (isDisabled.value || !input.value) return
   input.value.value = ''
   input.value.click()
 }
 
 // The file input is hidden, so focus sent to it (e.g. by a failed form submission) moves to the area's button
-function onInputFocus() {
+const onInputFocus = () => {
   focusTarget.value?.focus({ focusVisible: true } as FocusOptions)
   focusVisible.value = true
 }
 
-function onInputChange(event: Event) {
+const onInputChange = (event: Event) => {
   // Validation is committed by `addFiles`; the form doesn't need the raw picker event
   event.stopPropagation()
   addFiles(Array.from(input.value?.files ?? []))
@@ -379,7 +379,7 @@ function onInputChange(event: Event) {
 // File keys stay stable across selections, so the list animates only the files that come and go
 const keys = new WeakMap<File, number>()
 let nextKey = 0
-function fileKey(file: File) {
+const fileKey = (file: File) => {
   if (!keys.has(file)) keys.set(file, nextKey++)
   return keys.get(file)!
 }
@@ -390,7 +390,7 @@ let dragDepth = 0
 const hasFiles = (event: DragEvent) =>
   !!event.dataTransfer && Array.from(event.dataTransfer.types).includes('Files')
 
-function onDragEnter(event: DragEvent) {
+const onDragEnter = (event: DragEvent) => {
   if (isDisabled.value || !hasFiles(event)) return
   event.preventDefault()
   dragDepth++
@@ -398,7 +398,7 @@ function onDragEnter(event: DragEvent) {
 }
 
 // A disabled area still cancels `dragover`, with no drop effect, so a stray drop doesn't make the browser open the file
-function onDragOver(event: DragEvent) {
+const onDragOver = (event: DragEvent) => {
   if (!hasFiles(event)) return
   event.preventDefault()
   const allowed = !isDisabled.value && dragMatchesAccept(event.dataTransfer?.items, props.accept)
@@ -406,12 +406,12 @@ function onDragOver(event: DragEvent) {
   dropTarget.value = allowed
 }
 
-function onDragLeave() {
+const onDragLeave = () => {
   dragDepth = Math.max(0, dragDepth - 1)
   if (dragDepth === 0) dropTarget.value = false
 }
 
-function onDrop(event: DragEvent) {
+const onDrop = (event: DragEvent) => {
   dragDepth = 0
   dropTarget.value = false
   if (!hasFiles(event)) return
@@ -419,7 +419,7 @@ function onDrop(event: DragEvent) {
   if (!isDisabled.value) addFiles(Array.from(event.dataTransfer?.files ?? []))
 }
 
-function onPaste(event: ClipboardEvent) {
+const onPaste = (event: ClipboardEvent) => {
   const pasted = Array.from(event.clipboardData?.files ?? [])
   if (isDisabled.value || !pasted.length) return
   event.preventDefault()
@@ -428,7 +428,7 @@ function onPaste(event: ClipboardEvent) {
 
 // Mirrors React Aria's `data-focus-visible`: keyboard focus on the area's hidden button rings the whole area
 const focusVisible = ref(false)
-function onFocus(event: FocusEvent) {
+const onFocus = (event: FocusEvent) => {
   try {
     focusVisible.value = (event.target as Element).matches(':focus-visible')
   } catch {

@@ -20,18 +20,18 @@ afterEach(() => {
   wrapper = undefined
 })
 
-function mountInForm(children: () => any, formProps: Record<string, unknown> = {}) {
+const mountInForm = (children: () => any, formProps: Record<string, unknown> = {}) => {
   wrapper = mount(() => h(Form, formProps, children), { attachTo: document.body })
   return wrapper
 }
 
-async function type(input: HTMLInputElement, value: string) {
+const type = async (input: HTMLInputElement, value: string) => {
   input.value = value
   input.dispatchEvent(new Event('input'))
   await nextTick()
 }
 
-async function commit(input: Element) {
+const commit = async (input: Element) => {
   input.dispatchEvent(new Event('change', { bubbles: true }))
   await flushPromises()
 }

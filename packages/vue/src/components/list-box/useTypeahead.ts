@@ -37,12 +37,12 @@ export type TypeaheadSource<T> = {
 /** RAC `TYPEAHEAD_DEBOUNCE_WAIT_MS`: the buffer resets this long after the last typeahead key. */
 const RESET_MS = 1000
 
-export function useTypeahead(options: TypeaheadOptions) {
+export const useTypeahead = (options: TypeaheadOptions) => {
   let search = ''
   let timer: ReturnType<typeof setTimeout> | undefined
   onScopeDispose(() => clearTimeout(timer))
 
-  function accepts(event: KeyboardEvent) {
+  const accepts = (event: KeyboardEvent) => {
     // One printable character (one code point, so astral characters count); named keys are longer
     return (
       [...event.key].length === 1 &&
@@ -53,7 +53,7 @@ export function useTypeahead(options: TypeaheadOptions) {
     )
   }
 
-  function find<T>({ items, text, disabled, isCurrent }: TypeaheadSource<T>): T | undefined {
+  const find = <T>({ items, text, disabled, isCurrent }: TypeaheadSource<T>): T | undefined => {
     const enabled = disabled ? items.filter((item) => !disabled(item)) : items
     const index = isCurrent ? enabled.findIndex(isCurrent) : -1
     const from =
@@ -70,11 +70,11 @@ export function useTypeahead(options: TypeaheadOptions) {
    * `select`; nothing matching leaves the current item alone and keeps the buffer (RAC clears it instead and lets the
    * key propagate).
    */
-  function onKeydown<T>(
+  const onKeydown = <T>(
     event: KeyboardEvent,
     source: () => TypeaheadSource<T>,
     select: (match: T) => void,
-  ): boolean {
+  ): boolean => {
     if (!accepts(event)) return false
     search += event.key.toLowerCase()
     clearTimeout(timer)

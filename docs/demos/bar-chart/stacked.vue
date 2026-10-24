@@ -40,11 +40,11 @@ const series = {
 }
 const colors = ['var(--chart-2)', 'var(--chart-3)', 'var(--chart-5)']
 
-function formatTick(value: number | string) {
+const formatTick = (value: number | string) => {
   return `$${(Number(value) / 1000).toFixed(0)}k`
 }
 
-function formatValue(value: number | string) {
+const formatValue = (value: number | string) => {
   return `$${Number(value).toLocaleString()}`
 }
 </script>

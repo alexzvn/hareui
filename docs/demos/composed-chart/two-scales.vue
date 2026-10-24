@@ -40,15 +40,15 @@ const data = [
 
 const compact = new Intl.NumberFormat('en', { notation: 'compact' })
 
-function formatCount(value: number | string) {
+const formatCount = (value: number | string) => {
   return compact.format(Number(value))
 }
 
-function formatNumber(value: number) {
+const formatNumber = (value: number) => {
   return Number(value).toLocaleString('en-US')
 }
 
-function formatKm(value: number | string) {
+const formatKm = (value: number | string) => {
   return `${value} km`
 }
 

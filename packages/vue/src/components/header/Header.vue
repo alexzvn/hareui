@@ -231,7 +231,7 @@ const showToggle = computed(() => !!slots.toggle || (!!props.toggle && hasMenu.v
 // Applied inline so it also reaches the menu's header, which is teleported out of the root.
 const heightStyle = computed(() => (props.height ? { '--header-height': props.height } : undefined))
 
-function toggleOpen() {
+const toggleOpen = () => {
   open.value = !open.value
 }
 
@@ -335,7 +335,7 @@ const anchor = useTemplateRef<HTMLElement>('anchor')
 const anchorStyle = ref<Record<string, string>>({})
 
 // The bar's hide-on-scroll offset (`translate`), so the region is where the bar rests, not where it is mid-slide.
-function barOffsetY(el: HTMLElement) {
+const barOffsetY = (el: HTMLElement) => {
   const y = getComputedStyle(el).translate.split(' ')[1]
   if (!y) return 0
   const value = Number.parseFloat(y)
@@ -354,7 +354,7 @@ const transformProps = [
   'filter',
   'backdropFilter',
 ] as const
-function fixedContainingBlock(from: Element | null | undefined): HTMLElement | null {
+const fixedContainingBlock = (from: Element | null | undefined): HTMLElement | null => {
   for (let el = from; el && el !== document.documentElement; el = el.parentElement) {
     const style = getComputedStyle(el)
     // Unsupported properties read as empty, so only an explicit non-`none` value counts.
@@ -369,7 +369,7 @@ function fixedContainingBlock(from: Element | null | undefined): HTMLElement | n
   return null
 }
 
-function updateAnchor() {
+const updateAnchor = () => {
   const el = root.value?.$el
   if (!el || !bar.value) return
   const box = el.getBoundingClientRect()
@@ -398,7 +398,7 @@ function updateAnchor() {
 // `requestAnimationFrame` returns cannot leave a stale id behind.
 let anchorFrame = 0
 let anchorScheduled = false
-function scheduleAnchorUpdate() {
+const scheduleAnchorUpdate = () => {
   if (anchorScheduled) return
   anchorScheduled = true
   anchorFrame = requestAnimationFrame(() => {
@@ -407,7 +407,7 @@ function scheduleAnchorUpdate() {
   })
 }
 
-function stopAnchorTracking() {
+const stopAnchorTracking = () => {
   window.removeEventListener('resize', scheduleAnchorUpdate)
   window.removeEventListener('scroll', scheduleAnchorUpdate, true)
   if (anchorScheduled) {
@@ -466,7 +466,7 @@ const drawerProps = computed((): DrawerMenuProps => {
   }
 })
 
-function onMenuClick(event: MouseEvent) {
+const onMenuClick = (event: MouseEvent) => {
   if (props.autoClose && (event.target as HTMLElement).closest('a[href]')) open.value = false
 }
 
@@ -512,7 +512,7 @@ watch(
   () => closeOnNavigation(),
 )
 
-function closeOnNavigation() {
+const closeOnNavigation = () => {
   if (props.autoClose) open.value = false
 }
 
@@ -521,7 +521,7 @@ function closeOnNavigation() {
 let bodyStyles: { overflow: string; paddingRight: string; marginRight: string } | null = null
 let scrollLockObserver: MutationObserver | null = null
 
-function restoreBodyStyles() {
+const restoreBodyStyles = () => {
   if (!bodyStyles) return
   // Only write on a difference: writing an identical value still queues a mutation record, which would loop the observer.
   const { style } = document.body
@@ -530,7 +530,7 @@ function restoreBodyStyles() {
   }
 }
 
-function stopRestoringBodyStyles() {
+const stopRestoringBodyStyles = () => {
   scrollLockObserver?.disconnect()
   scrollLockObserver = null
 }
@@ -561,7 +561,7 @@ let lastY = 0
 let frame = 0
 let frameScheduled = false
 
-function resolveScroller(): HTMLElement | Window {
+const resolveScroller = (): HTMLElement | Window => {
   const target = props.scrollTarget
   if (typeof target === 'string') return document.querySelector<HTMLElement>(target) ?? window
   if (target) return target
@@ -577,11 +577,11 @@ function resolveScroller(): HTMLElement | Window {
   return window
 }
 
-function scrollY() {
+const scrollY = () => {
   return Math.max(0, scroller === window ? window.scrollY : (scroller as HTMLElement).scrollTop)
 }
 
-function update() {
+const update = () => {
   frameScheduled = false
   const y = scrollY()
   const delta = y - lastY
@@ -592,13 +592,13 @@ function update() {
   else if (delta < 0) hidden.value = false
 }
 
-function onScroll() {
+const onScroll = () => {
   if (frameScheduled) return
   frameScheduled = true
   frame = requestAnimationFrame(update)
 }
 
-function stopScrollTracking() {
+const stopScrollTracking = () => {
   scroller?.removeEventListener('scroll', onScroll)
   scroller = null
   if (frameScheduled) {
@@ -607,7 +607,7 @@ function stopScrollTracking() {
   }
 }
 
-function startScrollTracking() {
+const startScrollTracking = () => {
   stopScrollTracking()
   scroller = resolveScroller()
   lastY = scrollY()
@@ -646,7 +646,7 @@ watch(
 )
 
 // A bar that holds the keyboard focus must not slide away.
-function onFocusIn() {
+const onFocusIn = () => {
   if (hidden.value) hidden.value = false
 }
 </script>

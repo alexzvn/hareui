@@ -33,7 +33,7 @@
 import { Button, Form, TextField } from '@hareui/vue'
 import { Icon } from '@iconify/vue'
 
-function onSubmit(e: Event) {
+const onSubmit = (e: Event) => {
   e.preventDefault()
   const formData = new FormData(e.currentTarget as HTMLFormElement)
   const data: Record<string, string> = {}
@@ -44,13 +44,13 @@ function onSubmit(e: Event) {
   alert(`Form submitted with: ${JSON.stringify(data, null, 2)}`)
 }
 
-function validateEmail(value: string | number) {
+const validateEmail = (value: string | number) => {
   if (!/^[\w.%+-]+@[A-Z0-9.-]+\.[A-Z]{2,}$/i.test(String(value)))
     return 'Please enter a valid email address'
   return null
 }
 
-function validatePassword(value: string | number) {
+const validatePassword = (value: string | number) => {
   const password = String(value)
   if (password.length < 8) return 'Password must be at least 8 characters'
   if (!/[A-Z]/.test(password)) return 'Password must contain at least one uppercase letter'

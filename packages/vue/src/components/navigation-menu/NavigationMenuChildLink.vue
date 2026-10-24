@@ -154,7 +154,7 @@ const props = defineProps<{
 const ctx = useNavigationMenu()
 const { ui } = ctx
 
-function onSelect(event: Event) {
+const onSelect = (event: Event) => {
   if (!props.child.disabled) props.child.onSelect?.(event)
 }
 

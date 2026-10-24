@@ -54,7 +54,7 @@ const data = [
   { month: 'Dec', output: 118 },
 ]
 
-function formatValue(value: number | string) {
+const formatValue = (value: number | string) => {
   return `${value} kWh`
 }
 </script>

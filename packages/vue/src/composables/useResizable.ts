@@ -48,7 +48,7 @@ type StoredState = {
 
 const COOKIE_MAX_AGE = 60 * 60 * 24 * 365
 
-function readCookie(key: string): string | undefined {
+const readCookie = (key: string): string | undefined => {
   if (typeof document === 'undefined') return undefined
   const name = `${encodeURIComponent(key)}=`
   for (const part of document.cookie.split(';')) {
@@ -59,10 +59,10 @@ function readCookie(key: string): string | undefined {
 }
 
 /** Reads a persisted `{ size, collapsed }` entry. Missing, unparsable or malformed data yields `undefined` fields (never throws). */
-export function readDashboardStorage(
+export const readDashboardStorage = (
   storage: DashboardStorage,
   key: string,
-): StoredState | undefined {
+): StoredState | undefined => {
   let raw: string | null | undefined
   try {
     if (storage === 'cookie') raw = readCookie(key)
@@ -86,11 +86,11 @@ export function readDashboardStorage(
 }
 
 /** Writes a `{ size, collapsed }` entry. Storage failures (quota, blocked cookies) are swallowed. */
-export function writeDashboardStorage(
+export const writeDashboardStorage = (
   storage: DashboardStorage,
   key: string,
   value: { size: number; collapsed: boolean },
-): void {
+): void => {
   const raw = JSON.stringify(value)
   try {
     if (storage === 'cookie') {
@@ -134,12 +134,12 @@ type UseResizableSetup = {
  * only writes: pointer moves are coalesced into one reactive update per animation frame. While dragging,
  * `body` gets `user-select: none` and a `col-resize` cursor; nothing is persisted until the drag ends.
  */
-export function useResizable({
+export const useResizable = ({
   key,
   options,
   element: el,
   initialCollapsed = false,
-}: UseResizableSetup): UseResizableReturn {
+}: UseResizableSetup): UseResizableReturn => {
   const opts = computed(() => {
     const value = toValue(options)
     return {
@@ -170,7 +170,7 @@ export function useResizable({
   const isDragging = ref(false)
   const currentSize = computed(() => (isCollapsed.value ? opts.value.collapsedSize : size.value))
 
-  function persist() {
+  const persist = () => {
     if (persists())
       writeDashboardStorage(opts.value.storage, key, {
         size: size.value,
@@ -178,17 +178,17 @@ export function useResizable({
       })
   }
 
-  function setCollapsed(value: boolean) {
+  const setCollapsed = (value: boolean) => {
     if (!opts.value.collapsible || value === isCollapsed.value) return
     isCollapsed.value = value
     if (!isDragging.value) persist()
   }
 
-  function collapse(value?: boolean) {
+  const collapse = (value?: boolean) => {
     setCollapsed(value ?? !isCollapsed.value)
   }
 
-  function setSize(value: number) {
+  const setSize = (value: number) => {
     size.value = value
     if (!isDragging.value) persist()
   }
@@ -201,7 +201,7 @@ export function useResizable({
   let pendingX = 0
   let bodyStyle: { userSelect: string; cursor: string } | undefined
 
-  function sizeFromPointer(clientX: number): number {
+  const sizeFromPointer = (clientX: number): number => {
     const s = session!
     const toward = opts.value.side === 'left' ? clientX - s.startX : s.startX - clientX
     const width = s.startWidth + (s.rtl ? -toward : toward)
@@ -210,7 +210,7 @@ export function useResizable({
     return (width / s.parentWidth) * 100
   }
 
-  function applyPointer(clientX: number) {
+  const applyPointer = (clientX: number) => {
     if (!session) return
     const value = sizeFromPointer(clientX)
     if (
@@ -224,7 +224,7 @@ export function useResizable({
     size.value = clamp(value)
   }
 
-  function schedule(clientX: number) {
+  const schedule = (clientX: number) => {
     pendingX = clientX
     if (frame) return
     frame = requestAnimationFrame(() => {
@@ -233,7 +233,7 @@ export function useResizable({
     })
   }
 
-  function finish() {
+  const finish = () => {
     if (!session) return
     if (frame) {
       cancelAnimationFrame(frame)
@@ -252,10 +252,10 @@ export function useResizable({
     persist()
   }
 
-  function start(
+  const start = (
     startX: number,
     attach: (move: (clientX: number) => void, end: () => void) => () => void,
-  ): boolean {
+  ): boolean => {
     const node = el.value
     if (!node || !opts.value.resizable || session) return false
     const startWidth = node.getBoundingClientRect().width
@@ -278,7 +278,7 @@ export function useResizable({
     return true
   }
 
-  function onPointerDown(e: PointerEvent) {
+  const onPointerDown = (e: PointerEvent) => {
     if (!el.value || !opts.value.resizable || (e.pointerType === 'mouse' && e.button !== 0)) return
     e.preventDefault()
     e.stopPropagation()
@@ -310,7 +310,7 @@ export function useResizable({
 
   // The `mousedown`/`touchstart` slot props. Browsers fire these after `pointerdown`, and
   // `pointerdown`'s preventDefault suppresses the compat events, so a handle bound to all three still drags once.
-  function onMouseDown(e: MouseEvent) {
+  const onMouseDown = (e: MouseEvent) => {
     if (!el.value || !opts.value.resizable || e.button !== 0) return
     e.preventDefault()
     e.stopPropagation()
@@ -325,7 +325,7 @@ export function useResizable({
     })
   }
 
-  function onTouchStart(e: TouchEvent) {
+  const onTouchStart = (e: TouchEvent) => {
     const touch = e.touches[0]
     if (!el.value || !opts.value.resizable || !touch) return
     e.preventDefault()
@@ -349,7 +349,7 @@ export function useResizable({
     })
   }
 
-  function onDoubleClick(e: MouseEvent) {
+  const onDoubleClick = (e: MouseEvent) => {
     if (!el.value || !opts.value.resizable) return
     e.preventDefault()
     e.stopPropagation()
@@ -359,7 +359,7 @@ export function useResizable({
 
   // --- keyboard ---------------------------------------------------------------------------------
 
-  function onKeyDown(e: KeyboardEvent) {
+  const onKeyDown = (e: KeyboardEvent) => {
     const node = el.value
     if (!node || !opts.value.resizable) return
     const { unit, minSize, maxSize, collapsible } = opts.value

@@ -7,7 +7,7 @@ import InputOtp from '@/components/input-otp/InputOtp.vue'
 
 import { expectAccessible } from './a11y'
 
-function controlled(initial = '', props: Record<string, unknown> = {}) {
+const controlled = (initial = '', props: Record<string, unknown> = {}) => {
   const model = ref(initial)
   const wrapper = mount(() =>
     h(InputOtp, {
@@ -23,11 +23,11 @@ function controlled(initial = '', props: Record<string, unknown> = {}) {
 // key press, given the selection the component left on it: replace the selection, honour `maxlength`, leave a
 // collapsed caret after the edit, then fire `input`.
 type Wrapper = ReturnType<typeof controlled>['input']
-async function edit(
+const edit = async (
   input: Wrapper,
   replacement: string,
   deleting: 'backward' | 'forward' | null = null,
-) {
+) => {
   const el = input.element as HTMLInputElement
   let start = el.selectionStart ?? el.value.length
   const end = el.selectionEnd ?? start
@@ -44,7 +44,7 @@ const type = (input: Wrapper, text: string) => edit(input, text)
 const press = (input: Wrapper, key: 'Delete' | 'Backspace') =>
   edit(input, '', key === 'Delete' ? 'forward' : 'backward')
 // The browser moves the caret natively for navigation keys; `keyup` is where the component can observe it.
-async function moveCaret(input: Wrapper, key: string, position: number) {
+const moveCaret = async (input: Wrapper, key: string, position: number) => {
   const el = input.element as HTMLInputElement
   await input.trigger('keydown', { key })
   el.setSelectionRange(position, position)

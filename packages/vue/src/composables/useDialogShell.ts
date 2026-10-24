@@ -49,7 +49,7 @@ export type DialogShellOptions = {
  *
  * Must be called in `setup`.
  */
-export function useDialogShell(options: DialogShellOptions) {
+export const useDialogShell = (options: DialogShellOptions) => {
   const { props, slots, emit, dialogContent } = options
   const portalTarget = usePortal(() => props.portal)
 
@@ -64,7 +64,7 @@ export function useDialogShell(options: DialogShellOptions) {
     },
     { flush: 'sync' },
   )
-  function onOpenChange(open: boolean) {
+  const onOpenChange = (open: boolean) => {
     // Controlled: the `open` watcher follows the parent, which may keep the dialog open.
     if (props.open === undefined) openState.value = open
     emit('update:open', open)
@@ -81,7 +81,7 @@ export function useDialogShell(options: DialogShellOptions) {
   // React Aria's Dialog focuses the dialog container itself on open, not the first
   // tabbable descendant (Reka's FocusScope default). Match that so e.g. a footer
   // button doesn't pick up an unwanted focus ring when the dialog opens.
-  function onOpenAutoFocus(event: Event) {
+  const onOpenAutoFocus = (event: Event) => {
     event.preventDefault()
     ;(event.target as HTMLElement | null)?.focus({ preventScroll: true })
   }

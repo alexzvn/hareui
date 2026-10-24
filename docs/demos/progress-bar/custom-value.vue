@@ -71,12 +71,12 @@ const minValue = ref(0)
 const maxValue = ref(1000)
 const format = ref('percent')
 
-function setMinValue(v: number | null | undefined) {
+const setMinValue = (v: number | null | undefined) => {
   minValue.value = v ?? 0
   if (value.value < minValue.value) value.value = minValue.value
 }
 
-function setMaxValue(v: number | null | undefined) {
+const setMaxValue = (v: number | null | undefined) => {
   maxValue.value = v ?? minValue.value + 1
   if (value.value > maxValue.value) value.value = maxValue.value
 }

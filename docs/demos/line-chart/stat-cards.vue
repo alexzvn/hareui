@@ -68,7 +68,7 @@ const data = [
   { month: 'Dec', loans: 3912 },
 ]
 
-function formatTick(value: number) {
+const formatTick = (value: number) => {
   return `${(value / 1000).toFixed(1)}k`
 }
 

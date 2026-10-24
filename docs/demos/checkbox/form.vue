@@ -12,7 +12,7 @@
 <script setup lang="ts">
 import { Button, Checkbox } from '@hareui/vue'
 
-function handleSubmit(e: Event) {
+const handleSubmit = (e: Event) => {
   e.preventDefault()
   const formData = new FormData(e.target as HTMLFormElement)
   alert(

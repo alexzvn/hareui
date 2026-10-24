@@ -39,7 +39,7 @@ const series = {
   },
 }
 
-function formatHours(value: number) {
+const formatHours = (value: number) => {
   return `${value} h`
 }
 </script>

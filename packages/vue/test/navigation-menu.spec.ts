@@ -12,11 +12,11 @@ type Props = Record<string, unknown>
 
 let wrapper: VueWrapper | undefined
 
-function mountMenu(
+const mountMenu = (
   props: Props,
   slots: Record<string, (props: never) => unknown> = {},
   global: Props = {},
-): VueWrapper {
+): VueWrapper => {
   // The generic SFC's prop types can't be inferred from a plain record; cast at the mount boundary only.
   const mounted = mount(NavigationMenu as unknown as Parameters<typeof mount>[0], {
     props,
@@ -35,11 +35,11 @@ afterEach(() => {
 })
 
 // The text of every open tooltip (Reka renders a visually hidden role=tooltip copy of the content).
-function tooltips() {
+const tooltips = () => {
   return [...document.querySelectorAll('[role=tooltip]')].map((el) => el.textContent?.trim())
 }
 
-function press(el: Element, key: string) {
+const press = (el: Element, key: string) => {
   el.dispatchEvent(new KeyboardEvent('keydown', { key, bubbles: true, cancelable: true }))
 }
 
@@ -224,7 +224,7 @@ describe('NavigationMenu slots', () => {
 
 describe('NavigationMenu router links', () => {
   // A minimal vue-router RouterLink: it renders nothing itself and hands the link state to its slot.
-  function routerStub(navigate: (to: unknown) => void) {
+  const routerStub = (navigate: (to: unknown) => void) => {
     return defineComponent({
       props: { to: { type: [String, Object], required: true }, custom: Boolean, replace: Boolean },
       setup(props, { slots }) {
@@ -931,7 +931,7 @@ describe('NavigationMenu accessibility', () => {
     menu.findAll('button').find((b) => b.text().includes(label))!.element as HTMLElement
   const link = (label: string) =>
     [...document.querySelectorAll<HTMLElement>('a')].find((a) => a.textContent?.includes(label))!
-  function wait(ms: number) {
+  const wait = (ms: number) => {
     const { promise, resolve } = Promise.withResolvers<void>()
     setTimeout(resolve, ms)
     return promise

@@ -193,7 +193,7 @@ watch(searchOpen, (isOpen) => isOpen && (searchEverOpened.value = true))
 const mobileSidebarOpen = ref(false)
 watch(path, () => (mobileSidebarOpen.value = false))
 
-function onKeydown(event: KeyboardEvent) {
+const onKeydown = (event: KeyboardEvent) => {
   if (event.key.toLowerCase() === 'k' && (event.metaKey || event.ctrlKey)) {
     event.preventDefault()
     searchOpen.value = true

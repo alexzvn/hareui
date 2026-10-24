@@ -149,12 +149,12 @@ const uncontrolled = ref(props.defaultOpen)
 const isOpen = computed(() =>
   group ? group.isExpanded(value.value) : (props.open ?? uncontrolled.value),
 )
-function setOpen(open: boolean) {
+const setOpen = (open: boolean) => {
   if (group) group.setExpanded(value.value, open)
   else uncontrolled.value = open
   emit('update:open', open)
 }
-function toggle() {
+const toggle = () => {
   if (!isDisabled.value) setOpen(!isOpen.value)
 }
 

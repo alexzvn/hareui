@@ -50,15 +50,15 @@ const tooltip = {
   labelFormatter: (label: number | string) => `Week ${String(label).slice(1)}`,
 }
 
-function formatTick(value: number | string) {
+const formatTick = (value: number | string) => {
   return Number(value) >= 1000 ? `${(Number(value) / 1000).toFixed(0)}k` : `${value}`
 }
 
-function formatCount(value: number) {
+const formatCount = (value: number) => {
   return value.toLocaleString()
 }
 
-function total(payload: ChartTooltipContentEntry[]) {
+const total = (payload: ChartTooltipContentEntry[]) => {
   return formatCount(payload.reduce((sum, entry) => sum + Number(entry.value), 0))
 }
 </script>

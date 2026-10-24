@@ -10,7 +10,7 @@ import { Calendar, Description } from '@hareui/vue'
 import type { DateValue } from '@internationalized/date'
 import { isWeekend } from '@internationalized/date'
 
-function isDateUnavailable(date: DateValue) {
+const isDateUnavailable = (date: DateValue) => {
   return isWeekend(date, 'en-US')
 }
 </script>

@@ -8,12 +8,12 @@ import DashboardSidebar from '@/components/dashboard-sidebar/DashboardSidebar.vu
 
 import { expectAccessible } from './a11y'
 
-async function settle() {
+const settle = async () => {
   for (let i = 0; i < 4; i++) await nextTick()
 }
 
 /** Clicks like a user, past the millisecond Vue attached the listener in (it drops a click fired within it), then settles. */
-async function click(el: HTMLElement) {
+const click = async (el: HTMLElement) => {
   const { promise, resolve } = Promise.withResolvers<void>()
   setTimeout(resolve, 2)
   await promise
@@ -24,7 +24,7 @@ async function click(el: HTMLElement) {
 const toggle = (side: 'left' | 'right' = 'left') =>
   document.querySelector<HTMLButtonElement>(`[data-testid=toggle-${side}]`)!
 
-function mountDashboard(toggleProps: Record<string, unknown> = {}) {
+const mountDashboard = (toggleProps: Record<string, unknown> = {}) => {
   return mount(DashboardGroup, {
     props: { persistent: false },
     slots: {

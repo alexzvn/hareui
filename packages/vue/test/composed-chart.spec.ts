@@ -17,7 +17,7 @@ const HEIGHT = 200
 const margin = { top: 0, right: 0, bottom: 0, left: 0 }
 
 /** Bounding box of an SVG path made of M/L/H/V/A/Z commands (absolute or relative). */
-function bbox(d: string) {
+const bbox = (d: string) => {
   const xs: number[] = []
   const ys: number[] = []
   let x = 0
@@ -65,16 +65,16 @@ function bbox(d: string) {
   }
 }
 
-async function settle() {
+const settle = async () => {
   await flushPromises()
   await nextTick()
 }
 
-async function hover(
+const hover = async (
   wrapper: { find: (s: string) => { element: Element } },
   clientX: number,
   clientY: number,
-) {
+) => {
   wrapper
     .find('[data-slot=chart-surface]')
     .element.dispatchEvent(new PointerEvent('pointermove', { clientX, clientY, bubbles: true }))
@@ -86,7 +86,7 @@ const data = [
   { month: 'Feb', revenue: 200, orders: 2, views: 100 },
 ]
 
-function mountChart(children: () => any[]) {
+const mountChart = (children: () => any[]) => {
   return mount(ComposedChart, {
     props: { data, width: WIDTH, height: HEIGHT, margin },
     slots: { default: children },

@@ -25,7 +25,7 @@ const options: axe.RunOptions = {
 }
 
 /** axe violations under `target` (default `document.body`, which includes portalled overlays) as `rule: html` lines. */
-export async function axeViolations(target?: Element | VueWrapper): Promise<string[]> {
+export const axeViolations = async (target?: Element | VueWrapper): Promise<string[]> => {
   const context = !target
     ? document.body
     : 'element' in target
@@ -39,6 +39,6 @@ export async function axeViolations(target?: Element | VueWrapper): Promise<stri
  * Fails with the violating rules and elements. Pass the mounted wrapper for inline content, or nothing to audit
  * `document.body` once an overlay is open (mount with `attachTo: document.body`).
  */
-export async function expectAccessible(target?: Element | VueWrapper) {
+export const expectAccessible = async (target?: Element | VueWrapper) => {
   expect(await axeViolations(target)).toEqual([])
 }

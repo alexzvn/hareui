@@ -79,7 +79,7 @@ defineProps<{
 }>()
 const emit = defineEmits<{ toggleTheme: []; preset: [device: PreviewDevice]; preload: [] }>()
 const device = defineModel<PreviewDevice>('device', { required: true })
-function select(value: PreviewDevice) {
+const select = (value: PreviewDevice) => {
   device.value = value
   emit('preset', value)
 }
@@ -95,7 +95,7 @@ const items = useTemplateRef<HTMLButtonElement[]>('items')
 const indicator = ref<{ x: number; width: number }>()
 /** The pill slides only when the device changes; layout remeasures (fonts, resize, unhiding) snap it in place. */
 const sliding = ref(false)
-function measureIndicator() {
+const measureIndicator = () => {
   const item = items.value?.[DEVICES.findIndex((d) => d.value === device.value)]
   if (!item?.offsetWidth || !group.value) return
   // Fractional geometry: offsetLeft/offsetWidth round, leaving the pill up to half a pixel off its item.
@@ -117,7 +117,7 @@ watch(device, () => {
   sliding.value = true
   nextTick(measureIndicator)
 })
-function onSegmentKeydown(event: KeyboardEvent) {
+const onSegmentKeydown = (event: KeyboardEvent) => {
   const step = (
     { ArrowRight: 1, ArrowDown: 1, ArrowLeft: -1, ArrowUp: -1 } as Record<string, number>
   )[event.key]

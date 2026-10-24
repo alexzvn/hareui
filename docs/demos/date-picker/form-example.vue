@@ -28,7 +28,7 @@ const isSubmitting = ref(false)
 const todayDate = today(getLocalTimeZone())
 const isInvalid = computed(() => value.value !== null && value.value.compare(todayDate) < 0)
 
-function handleSubmit(e: Event) {
+const handleSubmit = (e: Event) => {
   e.preventDefault()
   if (!value.value || isInvalid.value) return
 

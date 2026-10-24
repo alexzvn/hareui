@@ -39,7 +39,7 @@
 import { Button, Fieldset, Form, Input, TextArea, TextField } from '@hareui/vue'
 import { Icon } from '@iconify/vue'
 
-function onSubmit(e: Event) {
+const onSubmit = (e: Event) => {
   e.preventDefault()
   alert('Form submitted successfully!')
 }

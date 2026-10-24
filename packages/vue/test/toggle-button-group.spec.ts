@@ -9,7 +9,7 @@ import { expectAccessible } from './a11y'
 
 const IDS = ['left', 'center', 'right']
 
-function group(props: Record<string, unknown> = {}, disabled: string[] = []) {
+const group = (props: Record<string, unknown> = {}, disabled: string[] = []) => {
   return mount(ToggleButtonGroup, {
     props,
     attrs: { 'aria-label': 'Text alignment' },
@@ -29,7 +29,7 @@ function group(props: Record<string, unknown> = {}, disabled: string[] = []) {
 
 const el = (id: string) => document.getElementById(id)!
 
-function key(target: Element, k: string) {
+const key = (target: Element, k: string) => {
   target.dispatchEvent(new KeyboardEvent('keydown', { key: k, bubbles: true, cancelable: true }))
 }
 

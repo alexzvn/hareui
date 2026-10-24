@@ -334,7 +334,7 @@ describe('ColorField', () => {
       ;(el.element as HTMLInputElement).value = text
       await el.trigger('input')
     }
-    function mountField(props: Record<string, unknown> = {}, inForm = false) {
+    const mountField = (props: Record<string, unknown> = {}, inForm = false) => {
       const form = document.createElement('form')
       document.body.append(form)
       const wrapper = mount(ColorField, { props, attachTo: inForm ? form : document.body })

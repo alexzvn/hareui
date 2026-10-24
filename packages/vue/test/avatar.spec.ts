@@ -10,8 +10,9 @@ import { expectAccessible } from './a11y'
 // happy-dom never loads images: capture the probe images reka creates and settle them by hand.
 const NativeImage = window.Image
 
-function stubImages() {
+const stubImages = () => {
   const probes: HTMLImageElement[] = []
+  // oxlint-disable-next-line eslint/prefer-arrow-callback -- constructor mock, invoked with `new`
   vi.spyOn(window, 'Image').mockImplementation(function () {
     const img = new NativeImage()
     probes.push(img)

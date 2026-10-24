@@ -139,7 +139,7 @@ const sectionId = (section: string) => `content-scroll-${section.toLowerCase()}`
 
 // Scrolls the panel body (the scroll container), never the page around it, and keeps the section clear of the
 // sticky "Jump to" bar.
-function jumpTo(section: string) {
+const jumpTo = (section: string) => {
   const target = document.getElementById(sectionId(section))
   const body = target?.closest<HTMLElement>('[data-slot="dashboard-panel-body"]')
   if (!target || !body) return

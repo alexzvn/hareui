@@ -57,7 +57,7 @@ let token = 0
 const OMEGA = 9.2335 / 240
 const springProgress = (t: number) => 1 - Math.exp(-OMEGA * t) * (1 + OMEGA * t)
 // motion runs the spring until it is within 0.5px of the target and slower than 2px/s.
-function springDuration(distance: number) {
+const springDuration = (distance: number) => {
   let t = 1
   while (
     t < 1000 &&
@@ -67,7 +67,7 @@ function springDuration(distance: number) {
     t += 1
   return t
 }
-function springEasing(duration: number) {
+const springEasing = (duration: number) => {
   const end = springProgress(duration)
   const points = Array.from(
     { length: 33 },
@@ -78,7 +78,7 @@ function springEasing(duration: number) {
 const supportsLinear =
   typeof CSS !== 'undefined' && CSS.supports('transition-timing-function', 'linear(0, 1)')
 
-function animatable(): HTMLElement | undefined {
+const animatable = (): HTMLElement | undefined => {
   const node = el.value
   if (!node || typeof node.animate !== 'function') return undefined
   const flag = node.closest('[data-reduce-motion]')?.getAttribute('data-reduce-motion')
@@ -88,7 +88,7 @@ function animatable(): HTMLElement | undefined {
   return reduced ? undefined : node
 }
 
-function settle(node: HTMLElement) {
+const settle = (node: HTMLElement) => {
   for (const animation of running) animation.cancel()
   running = []
   node.style.removeProperty('overflow')

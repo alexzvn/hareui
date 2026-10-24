@@ -40,7 +40,7 @@ const legend = {
 
 const compactFormat = new Intl.NumberFormat('en', { notation: 'compact', maximumFractionDigits: 1 })
 
-function compact(value: number) {
+const compact = (value: number) => {
   return compactFormat.format(value)
 }
 </script>

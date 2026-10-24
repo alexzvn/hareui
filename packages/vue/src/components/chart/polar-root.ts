@@ -49,7 +49,7 @@ export type PolarRootOptions = {
  * Turns a polar root's props into its `ChartFrame` config: the legend and the tooltip. Composition mode renders only
  * the slot, so a `ChartTooltip` child stays the single tooltip and there is no legend.
  */
-export function usePolarRoot(options: PolarRootOptions): ComputedRef<ChartFrameConfig> {
+export const usePolarRoot = (options: PolarRootOptions): ComputedRef<ChartFrameConfig> => {
   const { props } = options
   return computed<ChartFrameConfig>(() => {
     if (!options.generated()) return { legend: null, legendItems: [], tooltip: null }
@@ -81,7 +81,7 @@ export type SliceRootOptions<T extends object> = {
  * `usePolarRoot` for `PieChart` and `RadialChart`: their rows as slices (`index` turns it on), with the legend and
  * tooltip formatting slice values by name.
  */
-export function useSliceRoot<T extends object>(options: SliceRootOptions<T>) {
+export const useSliceRoot = <T extends object>(options: SliceRootOptions<T>) => {
   const { props, hidden } = options
 
   const generated = computed(() => isChartGenerated(props))
@@ -134,11 +134,11 @@ export function useSliceRoot<T extends object>(options: SliceRootOptions<T>) {
  * A `ChartLabel` placed directly in a pie or radial root sits on the polar center, inside a disc of `radius` (the pie,
  * or the hole inside the innermost ring).
  */
-export function providePolarCenterLabel(
+export const providePolarCenterLabel = (
   chart: ChartContext,
   polar: PolarContext,
   radius: () => number,
-): void {
+): void => {
   const viewBox = computed(() => ({
     cx: polar.cx.value,
     cy: polar.cy.value,

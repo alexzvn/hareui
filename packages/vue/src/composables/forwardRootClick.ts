@@ -11,7 +11,7 @@ const paths = new WeakMap<Event, EventTarget[]>()
 if (typeof document !== 'undefined')
   document.addEventListener('click', (event) => paths.set(event, event.composedPath()), true)
 
-function shouldForward(root: HTMLElement, path: EventTarget[], content: HTMLElement): boolean {
+const shouldForward = (root: HTMLElement, path: EventTarget[], content: HTMLElement): boolean => {
   for (const node of path) {
     if (node === content) return false
     if (node === root) return true
@@ -26,7 +26,7 @@ function shouldForward(root: HTMLElement, path: EventTarget[], content: HTMLElem
  * root is a `<div>` around the Reka control button, so forward clicks that land outside the button.
  * Clicks on the control itself, or on nested interactive content (a link in a description), are left alone.
  */
-export function forwardRootClick(event: MouseEvent, contentSelector: string) {
+export const forwardRootClick = (event: MouseEvent, contentSelector: string) => {
   const root = event.currentTarget as HTMLElement | null
   if (!root || event.defaultPrevented) return
   const content = root.querySelector<HTMLElement>(contentSelector)
@@ -40,11 +40,11 @@ export function forwardRootClick(event: MouseEvent, contentSelector: string) {
  * click leaves focus where it was. HareUI's control is a native `<button>`, which takes focus on mousedown.
  * Nested interactive content (a link in a description) still takes focus as usual.
  */
-export function keepFocusWhenReadonly(
+export const keepFocusWhenReadonly = (
   event: MouseEvent,
   readonly: boolean,
   contentSelector: string,
-) {
+) => {
   const root = event.currentTarget as HTMLElement | null
   const content = root?.querySelector<HTMLElement>(contentSelector)
   if (!readonly || !root || !content) return
@@ -64,7 +64,7 @@ const BLOCKS_IMPLICIT_SUBMISSION =
  * on it), so this runs ahead of Reka's handler on the same element and submits the way the browser would: through
  * the form's default button, or directly when no other field blocks implicit submission.
  */
-export function submitOnEnter(event: KeyboardEvent) {
+export const submitOnEnter = (event: KeyboardEvent) => {
   if (
     event.key !== 'Enter' ||
     event.isComposing ||

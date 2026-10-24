@@ -39,7 +39,7 @@ import {
 
 const data = [{ metric: 'CPU load', percent: 62, fill: 'var(--chart-3)' }]
 
-function formatPercent(value: number | string) {
+const formatPercent = (value: number | string) => {
   return `${value}%`
 }
 </script>

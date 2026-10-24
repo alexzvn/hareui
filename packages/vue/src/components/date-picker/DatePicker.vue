@@ -365,12 +365,12 @@ const attrs = useAttrs()
 // combined with `validate`'s own errors the same way RAC's `mergeValidation` does (custom error wins when both
 // apply); Reka only tracks this internally per-segment (unreachable from outside), so it's computed here instead
 // and fed into `validate` so it follows `validationBehavior` like any other error.
-function formatDateBoundary(value: DateValue) {
+const formatDateBoundary = (value: DateValue) => {
   return new DateFormatter(props.locale ?? 'en-US', { dateStyle: 'medium' }).format(
     value.toDate(getLocalTimeZone()),
   )
 }
-function builtinValidate(value: DateValue) {
+const builtinValidate = (value: DateValue) => {
   if (props.minValue && value.compare(props.minValue) < 0)
     return `Value must be ${formatDateBoundary(props.minValue)} or later.`
   if (props.maxValue && value.compare(props.maxValue) > 0)
@@ -378,7 +378,7 @@ function builtinValidate(value: DateValue) {
   if (props.isDateUnavailable?.(value)) return 'Selected date unavailable.'
   return undefined
 }
-function validate(value: DateValue) {
+const validate = (value: DateValue) => {
   const custom = props.validate?.(value)
   return custom && custom !== true ? custom : builtinValidate(value)
 }
@@ -399,27 +399,27 @@ const { validation, commitValidation } = useFieldValidation({
 })
 const invalid = computed(() => props.invalid ?? validation.value.isInvalid)
 
-function onFieldUpdate(value: DateValue | undefined) {
+const onFieldUpdate = (value: DateValue | undefined) => {
   modelValue.value = value
   // No real `change` event bubbles from Reka's hidden mirror input while typing segments
   commitValidation()
 }
 // Selecting a date in the calendar closes the popover and restores focus to the trigger,
 // matching HeroUI's own DatePicker behavior.
-function onCalendarSelect(value: DateValue) {
+const onCalendarSelect = (value: DateValue) => {
   modelValue.value = value
   commitValidation()
   isOpen.value = false
   trigger.value?.focus()
 }
 // Also runs when the already-selected date is picked again (the Calendar re-emits it): React Aria still closes.
-function onCalendarUpdate(value: DateValue | DateValue[] | undefined) {
+const onCalendarUpdate = (value: DateValue | DateValue[] | undefined) => {
   if (value && !Array.isArray(value)) onCalendarSelect(value)
 }
 
 // React Aria's `useDatePickerGroup`: Alt+ArrowDown/ArrowUp on a segment opens the calendar instead of
 // stepping the segment. Captured on the field root so it runs before the segment's own handler.
-function onFieldKeydown(event: KeyboardEvent) {
+const onFieldKeydown = (event: KeyboardEvent) => {
   if (
     !event.altKey ||
     (event.key !== 'ArrowDown' && event.key !== 'ArrowUp') ||
@@ -434,19 +434,19 @@ function onFieldKeydown(event: KeyboardEvent) {
 
 // React Aria returns focus to the trigger whenever the popover closes; Reka's modal popover skips that after a
 // right-click outside.
-function onCloseAutoFocus(event: Event) {
+const onCloseAutoFocus = (event: Event) => {
   event.preventDefault()
   trigger.value?.focus()
 }
 // Escape closes the whole popover even while the calendar's year picker is open (the year picker marks the
 // event handled to close itself, which would otherwise stop Reka's dismissal).
-function onEscapeKeyDown(event: KeyboardEvent) {
+const onEscapeKeyDown = (event: KeyboardEvent) => {
   if (event.defaultPrevented) isOpen.value = false
 }
 
 // React Aria's calendar takes focus on open (its focused date: the value, else the placeholder, else today, else
 // the first available day). Reka's PopoverContent would focus the first tabbable (the year-picker trigger) instead.
-function onOpenAutoFocus(event: Event) {
+const onOpenAutoFocus = (event: Event) => {
   const content = event.target as HTMLElement | null
   const focusDate =
     (modelValue.value === undefined ? props.defaultValue : modelValue.value) ??

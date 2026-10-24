@@ -205,7 +205,7 @@ describe('calendar keyboard paging and re-selection', () => {
   const heading = (w: { get: (s: string) => { text: () => string } }) =>
     w.get('[data-slot=calendar-heading]').text()
   const activeDate = () => document.activeElement?.getAttribute('data-value')
-  async function mountFocused() {
+  const mountFocused = async () => {
     const wrapper = mount(Calendar, {
       props: { locale: 'en-US', defaultValue: parseDate('2025-01-15') },
       attachTo: document.body,
@@ -214,7 +214,7 @@ describe('calendar keyboard paging and re-selection', () => {
     expect(activeDate()).toBe('2025-01-15')
     return wrapper
   }
-  async function press(init: KeyboardEventInit) {
+  const press = async (init: KeyboardEventInit) => {
     document.activeElement!.dispatchEvent(
       new KeyboardEvent('keydown', { bubbles: true, cancelable: true, ...init }),
     )

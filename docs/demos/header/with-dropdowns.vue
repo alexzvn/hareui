@@ -97,7 +97,7 @@ const userMenu: DropdownEntry[] = [
 const teamNames: Record<string, string> = { acme: 'Acme Inc.', globex: 'Globex' }
 const team = ref(teamNames.acme)
 
-function selectTeam(value: string | number) {
+const selectTeam = (value: string | number) => {
   team.value = teamNames[value] ?? team.value
 }
 </script>

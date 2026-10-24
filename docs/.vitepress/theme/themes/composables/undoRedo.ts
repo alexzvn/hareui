@@ -4,7 +4,7 @@ import { onBeforeUnmount, onMounted, ref, watch } from 'vue'
 
 import { search } from './variables'
 
-export function useUndoRedo() {
+export const useUndoRedo = () => {
   const canUndo = ref(false)
   const canRedo = ref(false)
   let historyStack: string[] = []

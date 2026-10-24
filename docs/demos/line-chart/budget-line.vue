@@ -55,7 +55,7 @@ const series = [
   { key: 'used', name: 'Used', color: 'var(--chart-3)' },
 ] as const
 
-function formatUsage(value: number) {
+const formatUsage = (value: number) => {
   return `${value} kWh`
 }
 </script>

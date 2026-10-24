@@ -407,7 +407,7 @@ const trigger = useTemplateRef<HTMLButtonElement>('trigger')
 const attrs = useAttrs()
 
 const EMPTY: DateRange = { start: undefined, end: undefined }
-function isComplete(value: DateRange | null | undefined): value is DateRangeValue {
+const isComplete = (value: DateRange | null | undefined): value is DateRangeValue => {
   return !!value?.start && !!value.end
 }
 // The committed value: `v-model` once set, else `defaultValue`.
@@ -423,7 +423,7 @@ watch(committed, (value) => {
   draft.value = value ?? EMPTY
 })
 
-function commit(value: DateRangeValue | null, validate = true) {
+const commit = (value: DateRangeValue | null, validate = true) => {
   draft.value = value ?? EMPTY
   modelValue.value = value
   if (validate) commitValidation()
@@ -431,14 +431,14 @@ function commit(value: DateRangeValue | null, validate = true) {
 // React Aria commits a segment-edited range's validation when focus leaves the field, not on every keystroke,
 // so e.g. a range that is briefly reversed mid-edit isn't flagged until the user is done.
 let validationPending = false
-function onFieldUpdate(value: DateRange) {
+const onFieldUpdate = (value: DateRange) => {
   draft.value = value
   if (isComplete(value)) commit(value, false)
   else if (!value.start && !value.end && committed.value) commit(null, false)
   else return
   validationPending = true
 }
-function onFieldFocusOut(event: FocusEvent) {
+const onFieldFocusOut = (event: FocusEvent) => {
   const field = root.value?.$el as HTMLElement | undefined
   if (
     !validationPending ||
@@ -457,7 +457,7 @@ const hasTimeGranularity = computed(
     props.granularity === 'minute' ||
     props.granularity === 'second',
 )
-function withTime(date: DateValue, current: DateValue | undefined): DateValue {
+const withTime = (date: DateValue, current: DateValue | undefined): DateValue => {
   if (current && 'hour' in current)
     return (current as any).set({
       era: (date as any).era,
@@ -468,35 +468,35 @@ function withTime(date: DateValue, current: DateValue | undefined): DateValue {
   if (hasTimeGranularity.value && !('hour' in date)) return toCalendarDateTime(date)
   return date
 }
-function mergeTime(range: DateRangeValue): DateRangeValue {
+const mergeTime = (range: DateRangeValue): DateRangeValue => {
   return {
     start: withTime(range.start, draft.value.start),
     end: withTime(range.end, draft.value.end),
   }
 }
-function onCalendarChange(range: DateRangeValue) {
+const onCalendarChange = (range: DateRangeValue) => {
   commit(range)
 }
 // Completing a range in the calendar closes the popover and refocuses the trigger (React Aria's
 // `shouldCloseOnSelect` default).
-function onCalendarSelect(range: DateRangeValue) {
+const onCalendarSelect = (range: DateRangeValue) => {
   validationPending = false
   commit(range)
   isOpen.value = false
   trigger.value?.focus()
 }
-function onCalendarUpdate(value: DateRange | undefined) {
+const onCalendarUpdate = (value: DateRange | undefined) => {
   if (isComplete(value)) onCalendarSelect(mergeTime(value))
 }
 
 // React Aria's builtin range validation (`validateDateRange`): each end against min/max/unavailable, plus a
 // reversed range; combined with `validate` the way RAC's `mergeValidation` does (custom error wins).
-function formatDateBoundary(value: DateValue) {
+const formatDateBoundary = (value: DateValue) => {
   return new DateFormatter(props.locale ?? 'en-US', { dateStyle: 'medium' }).format(
     value.toDate(getLocalTimeZone()),
   )
 }
-function validateDate(value: DateValue) {
+const validateDate = (value: DateValue) => {
   const errors: string[] = []
   if (props.minValue && value.compare(props.minValue) < 0)
     errors.push(`Value must be ${formatDateBoundary(props.minValue)} or later.`)
@@ -505,12 +505,12 @@ function validateDate(value: DateValue) {
   if (props.isDateUnavailable?.(value, null)) errors.push('Selected date unavailable.')
   return errors
 }
-function builtinValidate(value: DateRangeValue) {
+const builtinValidate = (value: DateRangeValue) => {
   const errors = [...new Set([...validateDate(value.start), ...validateDate(value.end)])]
   if (value.end.compare(value.start) < 0) errors.push('Start date must be before end date.')
   return errors.length ? errors : undefined
 }
-function validate(value: DateRangeValue) {
+const validate = (value: DateRangeValue) => {
   const custom = props.validate?.(value)
   return custom && custom !== true ? custom : builtinValidate(value)
 }
@@ -555,7 +555,7 @@ const groupUiProps = computed<DateInputGroupProps['ui']>(() => ({
 
 // React Aria's calendar takes focus on open (its focused date: the range start, else the placeholder, else
 // today, else the first available day). Reka's PopoverContent would focus the first tabbable (the year-picker trigger) instead.
-function onOpenAutoFocus(event: Event) {
+const onOpenAutoFocus = (event: Event) => {
   const content = event.target as HTMLElement | null
   const focusDate = committed.value?.start ?? props.placeholder ?? props.defaultPlaceholder
   const cell =
@@ -576,7 +576,7 @@ function onOpenAutoFocus(event: Event) {
 
 // React Aria's `useDatePickerGroup`: Alt+ArrowDown/ArrowUp on a segment opens the calendar instead of
 // stepping the segment. Captured on the field root so it runs before the segment's own handler.
-function onFieldKeydown(event: KeyboardEvent) {
+const onFieldKeydown = (event: KeyboardEvent) => {
   if (
     !event.altKey ||
     (event.key !== 'ArrowDown' && event.key !== 'ArrowUp') ||
@@ -591,17 +591,17 @@ function onFieldKeydown(event: KeyboardEvent) {
 
 // React Aria returns focus to the trigger whenever the popover closes; Reka's modal popover skips that after a
 // right-click outside.
-function onCloseAutoFocus(event: Event) {
+const onCloseAutoFocus = (event: Event) => {
   event.preventDefault()
   trigger.value?.focus()
 }
 // Escape closes the whole popover even while the calendar's year picker is open (the year picker marks the
 // event handled to close itself, which would otherwise stop Reka's dismissal).
-function onEscapeKeyDown(event: KeyboardEvent) {
+const onEscapeKeyDown = (event: KeyboardEvent) => {
   if (event.defaultPrevented) isOpen.value = false
 }
 
-function focusFirstSegment() {
+const focusFirstSegment = () => {
   root.value?.$el
     ?.querySelector?.('[data-slot=date-input-group-segment][contenteditable=true]')
     ?.focus()

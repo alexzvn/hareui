@@ -164,7 +164,7 @@ const headingId = useId()
 
 const openState = ref(props.defaultOpen ?? false)
 const isOpen = computed(() => props.open ?? openState.value)
-function setOpen(value: boolean) {
+const setOpen = (value: boolean) => {
   openState.value = value
   emit('update:open', value)
 }
@@ -189,7 +189,7 @@ watch(dialogRef, (el) => {
 
 // React Aria moves focus into the dialog element itself when the popover opens;
 // Reka's PopperContent otherwise focuses its own root, so redirect it here to match.
-function onOpenAutoFocus(event: Event) {
+const onOpenAutoFocus = (event: Event) => {
   event.preventDefault()
   dialogRef.value?.focus()
 }

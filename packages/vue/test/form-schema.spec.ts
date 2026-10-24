@@ -24,18 +24,18 @@ const sleep = (ms: number) => new Promise((resolve) => setTimeout(resolve, ms))
 const errors = () =>
   [...document.querySelectorAll('[data-slot="field-error"]')].map((e) => e.textContent?.trim())
 
-async function type(input: HTMLInputElement, value: string) {
+const type = async (input: HTMLInputElement, value: string) => {
   input.value = value
   input.dispatchEvent(new Event('input', { bubbles: true }))
   await flushPromises()
 }
 
-async function blur(input: HTMLInputElement) {
+const blur = async (input: HTMLInputElement) => {
   input.dispatchEvent(new FocusEvent('focusout', { bubbles: true }))
   await flushPromises()
 }
 
-async function submit(w: VueWrapper) {
+const submit = async (w: VueWrapper) => {
   const event = new Event('submit', { cancelable: true })
   w.get('form').element.dispatchEvent(event)
   await flushPromises()
@@ -43,7 +43,7 @@ async function submit(w: VueWrapper) {
 }
 
 /** A TextField bound with v-model to `state[name]`. */
-function field(state: Record<string, any>, name: string, props: Record<string, unknown> = {}) {
+const field = (state: Record<string, any>, name: string, props: Record<string, unknown> = {}) => {
   return h(TextField, {
     label: name,
     name,

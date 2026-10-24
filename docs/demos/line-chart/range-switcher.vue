@@ -49,7 +49,7 @@ type Point = {
 }
 
 /** Labels each point by how long ago it was: `span` units before the last point, which is "Now". */
-function points(values: number[], span: number, unit: 'hour' | 'day' | 'week'): Point[] {
+const points = (values: number[], span: number, unit: 'hour' | 'day' | 'week'): Point[] => {
   const last = values.length - 1
   return values.map((value, index) => {
     const ago = Math.round((span * (last - index)) / last)
@@ -120,7 +120,7 @@ const current = computed(() => ranges[range.value])
 
 const margin = { top: 4, right: 0, bottom: 0, left: 0 }
 
-function formatSubscribers(value: number) {
+const formatSubscribers = (value: number) => {
   return `${value.toLocaleString('en-US')} subscribers`
 }
 </script>

@@ -50,7 +50,7 @@ import { Button, ToastProvider, ToastQueue } from '@hareui/vue'
 
 const queue = new ToastQueue()
 
-function show() {
+const show = () => {
   queue.add({ title: 'Saved', description: 'Draft synced', variant: 'default' })
 }
 </script>

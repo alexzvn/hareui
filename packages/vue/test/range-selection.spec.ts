@@ -19,7 +19,7 @@ const unavailableOn =
   (date: DateValue) =>
     date.month === 3 && days.includes(date.day)
 
-function setup(overrides: Partial<UseRangeSelectionOptions> = {}) {
+const setup = (overrides: Partial<UseRangeSelectionOptions> = {}) => {
   const anchored: DateValue[] = []
   const committed: DayRange[] = []
   const selection = useRangeSelection({

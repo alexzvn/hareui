@@ -8,11 +8,11 @@ import { computed, shallowRef } from 'vue'
  * local state so the view (and the year picker) still moves when `v-model:placeholder` isn't used.
  * `seed` is the initial view when no placeholder is given (e.g. the first selected date).
  */
-export function useCalendarPlaceholder(
+export const useCalendarPlaceholder = (
   placeholder: () => DateValue | undefined,
   seed: DateValue | undefined,
   onUpdate: (value: DateValue) => void,
-): WritableComputedRef<DateValue> {
+): WritableComputedRef<DateValue> => {
   const internal = shallowRef<DateValue>(placeholder() ?? seed ?? today(getLocalTimeZone()))
   return computed<DateValue>({
     get: () => placeholder() ?? internal.value,

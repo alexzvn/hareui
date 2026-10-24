@@ -5,11 +5,15 @@ import type { ChartAxisDomain, ChartAxisDomainItem, ChartAxisInterval } from './
 
 const round = (value: number) => Number.parseFloat(value.toPrecision(12))
 
-function digitCount(value: number): number {
+const digitCount = (value: number): number => {
   return value === 0 ? 1 : Math.floor(Math.log10(Math.abs(value))) + 1
 }
 
-function formatStep(roughStep: number, allowDecimals: boolean, correctionFactor: number): number {
+const formatStep = (
+  roughStep: number,
+  allowDecimals: boolean,
+  correctionFactor: number,
+): number => {
   if (roughStep <= 0) return 0
   const digits = digitCount(roughStep)
   const digitValue = 10 ** digits
@@ -22,7 +26,7 @@ function formatStep(roughStep: number, allowDecimals: boolean, correctionFactor:
   return allowDecimals ? step : Math.ceil(step)
 }
 
-function rangeStep(start: number, end: number, step: number): number[] {
+const rangeStep = (start: number, end: number, step: number): number[] => {
   const values: number[] = []
   if (step <= 0) return values
   for (
@@ -34,13 +38,13 @@ function rangeStep(start: number, end: number, step: number): number[] {
   return values
 }
 
-function calculateStep(
+const calculateStep = (
   min: number,
   max: number,
   tickCount: number,
   allowDecimals: boolean,
   correctionFactor = 0,
-): { step: number; tickMin: number; tickMax: number } {
+): { step: number; tickMin: number; tickMax: number } => {
   if (!Number.isFinite((max - min) / (tickCount - 1))) return { step: 0, tickMin: 0, tickMax: 0 }
   const step = formatStep(round((max - min) / (tickCount - 1)), allowDecimals, correctionFactor)
   let middle: number
@@ -66,7 +70,7 @@ function calculateStep(
   }
 }
 
-function ticksOfSingleValue(value: number, tickCount: number, allowDecimals: boolean): number[] {
+const ticksOfSingleValue = (value: number, tickCount: number, allowDecimals: boolean): number[] => {
   let step = 1
   let middle = value
   if (!Number.isInteger(value) && allowDecimals) {
@@ -89,11 +93,11 @@ function ticksOfSingleValue(value: number, tickCount: number, allowDecimals: boo
 }
 
 /** Rounded ticks covering `[min, max]`; the axis domain grows to the first and last tick. */
-export function niceTicks(
+export const niceTicks = (
   [min, max]: [number, number],
   tickCount = 5,
   allowDecimals = true,
-): number[] {
+): number[] => {
   const count = Math.max(tickCount, 2)
   const [low, high] = min > max ? [max, min] : [min, max]
   if (!Number.isFinite(low) || !Number.isFinite(high)) return [min, max]
@@ -104,11 +108,11 @@ export function niceTicks(
 }
 
 /** Evenly stepped ticks inside a fixed domain, always ending on the domain max. */
-export function fixedDomainTicks(
+export const fixedDomainTicks = (
   [min, max]: [number, number],
   tickCount = 5,
   allowDecimals = true,
-): number[] {
+): number[] => {
   const [low, high] = min > max ? [max, min] : [min, max]
   if (!Number.isFinite(low) || !Number.isFinite(high)) return [min, max]
   if (low === high) return [low]
@@ -120,12 +124,12 @@ export function fixedDomainTicks(
 
 const DATA_BOUND = /^data(Min|Max)\s*([-+])\s*([\d.]+)$/
 
-function resolveDomainItem(
+const resolveDomainItem = (
   item: ChartAxisDomainItem,
   bound: number,
   edge: 0 | 1,
   allowDataOverflow: boolean,
-): number {
+): number => {
   if (typeof item === 'number')
     return allowDataOverflow ? item : edge === 0 ? Math.min(item, bound) : Math.max(item, bound)
   if (typeof item === 'function') return item(bound)
@@ -150,10 +154,10 @@ export type NumberDomainOptions = {
 }
 
 /** Resolves a number axis domain from the data extent and the `domain` prop, with its tick values. */
-export function resolveNumberDomain(
+export const resolveNumberDomain = (
   dataExtent: [number, number],
   options: NumberDomainOptions = {},
-): { domain: [number, number]; ticks: number[] } {
+): { domain: [number, number]; ticks: number[] } => {
   const {
     domain: specified = [0, 'auto'],
     tickCount = 5,
@@ -199,13 +203,13 @@ export type ChartTick = {
  * Thins ticks whose labels would overlap. `size` measures a label along the axis;
  * `bounds` is the visible span (the whole SVG), labels may not cross it.
  */
-export function thinTicks(
+export const thinTicks = (
   ticks: Omit<ChartTick, 'labelCoordinate'>[],
   interval: ChartAxisInterval,
   size: (tick: Omit<ChartTick, 'labelCoordinate'>) => number,
   bounds: [number, number],
   minTickGap: number,
-): ChartTick[] {
+): ChartTick[] => {
   const all = ticks.map((tick) => ({ ...tick, labelCoordinate: tick.coordinate }))
   if (!all.length) return all
   if (typeof interval === 'number') return all.filter((_, index) => index % (interval + 1) === 0)
@@ -290,7 +294,7 @@ const widthCache = new Map<string, number>()
 const WIDTH_CACHE_LIMIT = 20_000
 
 /** Width of a label in px at the given font size; falls back to an estimate where canvas is unavailable (SSR, tests). */
-export function measureText(text: string, fontSize: number): number {
+export const measureText = (text: string, fontSize: number): number => {
   if (measureContext === undefined) {
     try {
       measureContext =

@@ -22,7 +22,7 @@ export type UseDisclosureGroupNavigationOptions = {
  * HeroUI's `useDisclosureGroupNavigation`. The current item is the first expanded one (or the
  * first item when none is expanded).
  */
-export function useDisclosureGroupNavigation(options: UseDisclosureGroupNavigationOptions) {
+export const useDisclosureGroupNavigation = (options: UseDisclosureGroupNavigationOptions) => {
   const currentIndex = computed(() => {
     const ids = toValue(options.itemIds)
     const expanded = toValue(options.expandedKeys)
@@ -30,7 +30,7 @@ export function useDisclosureGroupNavigation(options: UseDisclosureGroupNavigati
     return current === undefined ? -1 : ids.indexOf(current)
   })
 
-  function goTo(index: number) {
+  const goTo = (index: number) => {
     const id = toValue(options.itemIds)[index]
     if (id === undefined) return
     const expanded = toValue(options.expandedKeys)

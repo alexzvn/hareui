@@ -157,11 +157,11 @@ export type ChartModeProps = {
 }
 
 /** Generated mode: the root renders its parts from props. Otherwise the root renders only its default slot. */
-export function isChartGenerated(props: ChartModeProps): boolean {
+export const isChartGenerated = (props: ChartModeProps): boolean => {
   return props.index !== undefined || props.series !== undefined || props.sparkline === true
 }
 
-function isFiniteNumber(value: unknown): value is number {
+const isFiniteNumber = (value: unknown): value is number => {
   return typeof value === 'number' && Number.isFinite(value)
 }
 
@@ -169,7 +169,7 @@ function isFiniteNumber(value: unknown): value is number {
  * Numeric keys of the rows, in order of first appearance, without `index`. A key whose non-null values aren't all
  * numbers is skipped, so name, color and date fields never become series.
  */
-export function inferValueKeys(data: readonly object[], index?: string): string[] {
+export const inferValueKeys = (data: readonly object[], index?: string): string[] => {
   const numeric = new Map<string, boolean>()
   for (const row of data) {
     for (const [key, value] of Object.entries(row)) {
@@ -181,9 +181,9 @@ export function inferValueKeys(data: readonly object[], index?: string): string[
 }
 
 /** Map and array forms to `[key, config]` pairs, in series order. */
-export function normalizeSeriesInput<S extends object>(
+export const normalizeSeriesInput = <S extends object>(
   series: ChartSeriesInput<any, S>,
-): Array<[key: string, config: Partial<S>]> {
+): Array<[key: string, config: Partial<S>]> => {
   if (Array.isArray(series)) {
     return series.map((entry: string | (S & { key: string })) => {
       if (typeof entry === 'string') return [entry, {}]
@@ -197,7 +197,10 @@ export function normalizeSeriesInput<S extends object>(
 }
 
 /** The color at a position: `colors` cycles, then the palette. */
-export function chartColorAt(position: number, colors: readonly string[] = CHART_PALETTE): string {
+export const chartColorAt = (
+  position: number,
+  colors: readonly string[] = CHART_PALETTE,
+): string => {
   const palette = colors.length > 0 ? colors : CHART_PALETTE
   return palette[position % palette.length]!
 }
@@ -218,9 +221,9 @@ export type ResolveSeriesOptions<T, S> = {
   stacked?: boolean
 }
 
-export function resolveSeries<T extends object, S extends ChartSeriesBase = ChartSeriesBase>(
+export const resolveSeries = <T extends object, S extends ChartSeriesBase = ChartSeriesBase>(
   options: ResolveSeriesOptions<T, S>,
-): ChartResolvedSeries<S>[] {
+): ChartResolvedSeries<S>[] => {
   const entries: Array<[string, Partial<S>]> =
     options.series === undefined
       ? inferValueKeys(options.data, options.index).map((key) => [key, {}])
@@ -249,7 +252,7 @@ export function resolveSeries<T extends object, S extends ChartSeriesBase = Char
 }
 
 /** Adds or removes a key from a `hidden` list, without mutating it. */
-export function toggleHiddenKey(hidden: readonly string[], key: string): string[] {
+export const toggleHiddenKey = (hidden: readonly string[], key: string): string[] => {
   return hidden.includes(key) ? hidden.filter((item) => item !== key) : [...hidden, key]
 }
 
@@ -257,12 +260,12 @@ export function toggleHiddenKey(hidden: readonly string[], key: string): string[
  * Radius per series: each visible bar's outer end is rounded (top for vertical bars, right for horizontal ones);
  * in a stack only the last visible series is. Numbers expand to `[tl, tr, br, bl]`; arrays pass through.
  */
-export function barEndRadius(
+export const barEndRadius = (
   series: ReadonlyArray<
     Pick<ChartResolvedSeries<ChartBarSeries>, 'key' | 'hidden' | 'stackId' | 'radius'>
   >,
   layout: Extract<ChartLayout, 'horizontal' | 'vertical'> = 'horizontal',
-): Record<string, ChartRadius> {
+): Record<string, ChartRadius> => {
   const lastInStack = new Map<string, string>()
   for (const item of series) {
     if (!item.hidden && item.stackId !== undefined) lastInStack.set(item.stackId, item.key)
@@ -280,7 +283,7 @@ export function barEndRadius(
 }
 
 /** Id of a series' gradient: unique per chart (pass `useId()`), valid inside `url(#…)`. */
-export function chartGradientId(chartId: string, key: string): string {
+export const chartGradientId = (chartId: string, key: string): string => {
   return `${chartId}-fill-${key}`.replace(/[^\w-]/g, '_')
 }
 
@@ -296,10 +299,10 @@ export type ChartAreaFillResult = {
  * Turns an area series' `fill` and `fillOpacity` into `ChartArea` props.
  * Gradient: a number `n` means `[n, 0]`. Solid or custom fill: a tuple uses its top opacity.
  */
-export function resolveAreaFill(
+export const resolveAreaFill = (
   series: Pick<ChartResolvedSeries<ChartAreaSeries>, 'key' | 'color' | 'fill' | 'fillOpacity'>,
   chartId: string,
-): ChartAreaFillResult {
+): ChartAreaFillResult => {
   const fill = series.fill ?? chartDefaults.area.fill
   const opacity = series.fillOpacity ?? chartDefaults.area.fillOpacity
   if (fill === 'none') return { fill: 'none', fillOpacity: 0 }
@@ -318,10 +321,10 @@ export function resolveAreaFill(
  * Tooltip value formatter for a generated chart: the series' own `valueFormatter`, else the root one (which also gets
  * the key). `undefined` when neither exists, so the tooltip keeps its default.
  */
-export function seriesValueFormatter(
+export const seriesValueFormatter = (
   series: ReadonlyArray<Pick<ChartResolvedSeries, 'key' | 'valueFormatter'>>,
   rootFormatter?: (value: number, key: string) => string,
-): ((value: number | string, entry?: { dataKey?: string }) => string) | undefined {
+): ((value: number | string, entry?: { dataKey?: string }) => string) | undefined => {
   if (!rootFormatter && !series.some((item) => item.valueFormatter)) return undefined
   const byKey = new Map(series.map((item) => [item.key, item.valueFormatter]))
   return (value, entry) => {
@@ -337,11 +340,11 @@ export function seriesValueFormatter(
  * A root's `grid` / `xAxis` / `yAxis` / `tooltip` prop to the part's props, or `null` when the part is off.
  * `undefined` follows `enabled` (false in sparklines); `true` means the defaults; an object is merged over them.
  */
-export function resolveChartPart<P extends object>(
+export const resolveChartPart = <P extends object>(
   value: boolean | Partial<P> | undefined,
   defaults: P,
   enabled = true,
-): P | null {
+): P | null => {
   if (value === false || (value === undefined && !enabled)) return null
   if (value === true || value === undefined) return { ...defaults }
   return { ...defaults, ...value }
@@ -350,14 +353,14 @@ export function resolveChartPart<P extends object>(
 export type ChartLegendPosition = 'top' | 'bottom' | 'left' | 'right'
 
 /** A root's `legend` prop to its position and `ChartLegend` props, or `null` when there is no in-chart legend. */
-export function resolveChartLegend<P extends object>(
+export const resolveChartLegend = <P extends object>(
   value:
     | boolean
     | ChartLegendPosition
     | (Partial<P> & { position?: ChartLegendPosition })
     | undefined,
   defaultPosition: ChartLegendPosition = 'bottom',
-): { position: ChartLegendPosition; props: Partial<P> } | null {
+): { position: ChartLegendPosition; props: Partial<P> } | null => {
   if (value === undefined || value === false) return null
   if (value === true) return { position: defaultPosition, props: {} }
   if (typeof value === 'string') return { position: value, props: {} }
@@ -396,7 +399,9 @@ export type ResolveSlicesOptions<T> = {
 }
 
 /** Rows of a pie or radial chart as slices with name, color, value and share. */
-export function resolveSlices<T extends object>(options: ResolveSlicesOptions<T>): ChartSlice<T>[] {
+export const resolveSlices = <T extends object>(
+  options: ResolveSlicesOptions<T>,
+): ChartSlice<T>[] => {
   const valueKey = options.valueKey ?? inferValueKeys(options.data, options.index)[0]
   const hidden = new Set(options.hidden ?? [])
   const colors = options.colors
@@ -427,9 +432,9 @@ export function resolveSlices<T extends object>(options: ResolveSlicesOptions<T>
 }
 
 /** Legend rows of resolved series. */
-export function seriesLegendItems(
+export const seriesLegendItems = (
   series: ReadonlyArray<Pick<ChartResolvedSeries, 'key' | 'name' | 'color' | 'hidden'>>,
-): ChartLegendItem[] {
+): ChartLegendItem[] => {
   return series.map(({ key, name, color, hidden }) => ({ key, name, color, hidden }))
 }
 

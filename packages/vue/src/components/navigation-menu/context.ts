@@ -51,14 +51,14 @@ export type NavigationMenuContext = {
 export const navigationMenuKey: InjectionKey<NavigationMenuContext> =
   Symbol('hareui-navigation-menu')
 
-export function useNavigationMenu(): NavigationMenuContext {
+export const useNavigationMenu = (): NavigationMenuContext => {
   const context = inject(navigationMenuKey)
   if (!context) throw new Error('NavigationMenu parts must be used inside <NavigationMenu>')
   return context
 }
 
 /** Reads a (possibly dotted) path from an item (dotted-path getter). */
-export function get(item: unknown, path: string): unknown {
+export const get = (item: unknown, path: string): unknown => {
   let value: unknown = item
   for (const key of path.split('.')) {
     if (value === null || typeof value !== 'object') return undefined
@@ -68,7 +68,7 @@ export function get(item: unknown, path: string): unknown {
 }
 
 /** Whether rendered slot output has content (Vue's own rule for falling back to slot defaults). */
-export function hasContent(nodes: VNode[] | undefined): boolean {
+export const hasContent = (nodes: VNode[] | undefined): boolean => {
   return !!nodes?.some((node) =>
     node.type === Comment
       ? false
@@ -79,10 +79,10 @@ export function hasContent(nodes: VNode[] | undefined): boolean {
 }
 
 /** Slot names an item resolves to: its own `slot` field, falling back to the generic one. */
-export function slotName(
+export const slotName = (
   item: NavigationMenuItem,
   suffix: '' | 'leading' | 'label' | 'trailing' | 'content' | 'actions',
-): string {
+): string => {
   const base = item.slot || 'item'
   return suffix ? `${base}-${suffix}` : base
 }
@@ -91,10 +91,10 @@ export function slotName(
  * Renders a named slot of the root `NavigationMenu` with this component's default slot as the
  * fallback, so the item templates can live in separate components.
  */
-export function SlotOutlet(
+export const SlotOutlet = (
   props: { name: string; slotProps?: Record<string, unknown> },
   { slots }: { slots: Slots },
-) {
+) => {
   const root = inject(navigationMenuKey)
   const render = root?.slots[props.name]
   if (render) {

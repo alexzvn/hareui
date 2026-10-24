@@ -26,13 +26,13 @@ const animals: ListBoxItem[] = [
   { value: 'snake', label: 'Snake' },
 ]
 
-function validate(value: ComboBoxValidationValue) {
+const validate = (value: ComboBoxValidationValue) => {
   if (value.selectedKey == null) return 'Please select an animal'
   if (value.selectedKey === 'snake') return 'Snakes are not allowed'
   return true
 }
 
-function onSubmit() {
+const onSubmit = () => {
   alert('Form submitted successfully!')
 }
 </script>

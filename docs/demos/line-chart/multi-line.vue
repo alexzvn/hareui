@@ -47,7 +47,7 @@ const series = {
 }
 const colors = ['var(--chart-5)', 'var(--chart-3)', 'var(--chart-2)', 'var(--chart-1)']
 
-function formatLatency(value: number) {
+const formatLatency = (value: number) => {
   return `${value} ms`
 }
 </script>

@@ -28,7 +28,7 @@ afterEach(() => {
   document.body.innerHTML = ''
 })
 
-function setup(props: Record<string, any> = {}, slots?: Record<string, any>) {
+const setup = (props: Record<string, any> = {}, slots?: Record<string, any>) => {
   const wrapper = mount(Autocomplete, {
     props: { items, label: 'State', placeholder: 'Select one', ...props },
     slots,
@@ -36,13 +36,13 @@ function setup(props: Record<string, any> = {}, slots?: Record<string, any>) {
   })
   return { wrapper, button: wrapper.get('button[aria-haspopup=listbox]') }
 }
-async function typeSearch(text: string) {
+const typeSearch = async (text: string) => {
   const input = search()!
   input.value = text
   input.dispatchEvent(new Event('input'))
   await flush()
 }
-async function key(el: Element, k: string) {
+const key = async (el: Element, k: string) => {
   el.dispatchEvent(new KeyboardEvent('keydown', { key: k, bubbles: true, cancelable: true }))
   await flush()
 }
@@ -285,7 +285,7 @@ describe('Autocomplete accessibility', () => {
       .join(' ')
   const listbox = () => document.querySelector<HTMLElement>('[role=listbox]')
   const popover = () => document.querySelector<HTMLElement>('[data-slot=autocomplete-popover]')
-  async function open(wrapper: ReturnType<typeof setup>['wrapper']) {
+  const open = async (wrapper: ReturnType<typeof setup>['wrapper']) => {
     await wrapper.get('[data-slot=autocomplete-trigger]').trigger('click')
     await flush()
   }

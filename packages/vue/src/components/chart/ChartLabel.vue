@@ -81,7 +81,7 @@ defineSlots<ChartLabelSlots>()
 const chart = useChartContext('ChartLabel')
 const source = useChartLabelSource()
 
-function format(value: number | string | undefined, index: number) {
+const format = (value: number | string | undefined, index: number) => {
   if (props.formatter) return props.formatter(value, index)
   return value === undefined || value === null ? '' : String(value)
 }

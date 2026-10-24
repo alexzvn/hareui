@@ -10,7 +10,7 @@ import { HareUIResolver } from '@/vite'
 
 const globals = globalThis as { __HAREUI_UI__?: HareUIConfig['ui'] }
 
-function resolve(name: string, prefix?: string) {
+const resolve = (name: string, prefix?: string) => {
   const resolver = HareUIResolver({ prefix })
   return typeof resolver === 'function' ? resolver(name) : resolver.resolve(name)
 }

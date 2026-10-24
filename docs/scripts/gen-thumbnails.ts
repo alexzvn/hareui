@@ -163,7 +163,7 @@ type Box = {
 }
 
 /** Bounding box of the non-transparent pixels in a PNG, in its own pixels. */
-function inkBox(png: PNG): Box | null {
+const inkBox = (png: PNG): Box | null => {
   let [x0, y0, x1, y1] = [png.width, png.height, -1, -1]
   for (let y = 0; y < png.height; y++) {
     for (let x = 0; x < png.width; x++) {
@@ -179,7 +179,7 @@ function inkBox(png: PNG): Box | null {
 }
 
 /** Centres `src` on a transparent WIDTH x HEIGHT canvas, cropping it if it is larger. */
-function centre(src: PNG): PNG {
+const centre = (src: PNG): PNG => {
   const out = new PNG({ width: WIDTH, height: HEIGHT })
   const dx = Math.round((WIDTH - src.width) / 2)
   const dy = Math.round((HEIGHT - src.height) / 2)
@@ -193,13 +193,13 @@ function centre(src: PNG): PNG {
 }
 
 // Capturing beyond the viewport enlarges it, which moves anything fixed to it, so open overlays are shot within it.
-async function shoot(page: Page, clip: Box, captureBeyondViewport = true): Promise<PNG> {
+const shoot = async (page: Page, clip: Box, captureBeyondViewport = true): Promise<PNG> => {
   return PNG.sync.read(
     Buffer.from(await page.screenshot({ clip, omitBackground: true, captureBeyondViewport })),
   )
 }
 
-async function thumbnail(page: Page, slug: string, theme: 'light' | 'dark'): Promise<PNG> {
+const thumbnail = async (page: Page, slug: string, theme: 'light' | 'dark'): Promise<PNG> => {
   const pick = PICKS[slug] ?? {}
   const viewport = pick.page ?? pick.viewport ?? { width: 1440, height: 900 }
   await page.setViewport({ ...viewport, deviceScaleFactor: 1 })
@@ -309,7 +309,7 @@ async function thumbnail(page: Page, slug: string, theme: 'light' | 'dark'): Pro
 }
 
 /** Rounds the corners of an opaque crop and outlines it, so it reads as a window on any card background. */
-function frame(png: PNG, scale: number): PNG {
+const frame = (png: PNG, scale: number): PNG => {
   const { width: w, height: h } = png
   const r = CROP_RADIUS * scale
   for (let y = 0; y < h; y++) {

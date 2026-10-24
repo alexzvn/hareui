@@ -35,7 +35,7 @@ import { ref } from 'vue'
 const attachments = ref<File[]>([])
 const error = ref('')
 
-function onReject(rejections: DropZoneRejection[]) {
+const onReject = (rejections: DropZoneRejection[]) => {
   const names = rejections.map(({ file }) => file.name).join(', ')
   error.value =
     rejections.length === 1

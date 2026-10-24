@@ -267,7 +267,7 @@ const ui = useComponentUI('tabs', theme, () => ({
   orientation: props.orientation,
 }))
 
-function itemValue(item: TabsItem, index: number): string | number {
+const itemValue = (item: TabsItem, index: number): string | number => {
   return item.value ?? String(index)
 }
 
@@ -302,7 +302,7 @@ const visiblePanel = computed(() => {
   return index === -1 ? null : { item: props.items[index]!, index }
 })
 
-function isSeparatorHidden(index: number): boolean {
+const isSeparatorHidden = (index: number): boolean => {
   const current = itemValue(props.items[index]!, index)
   if (current === selectedValue.value) return true
   if (index === 0) return false
@@ -319,7 +319,7 @@ const indicatorRef = ref<HTMLElement | null>(null)
 // Reka's roving focus maps PageUp/PageDown to the first/last tab; RAC's tab list ignores them.
 // RAC's TabsKeyboardDelegate also moves with ArrowLeft/ArrowRight (flipped in RTL) in a vertical
 // list, where Reka only reacts to ArrowUp/ArrowDown; focusing the tab selects it (automatic activation).
-function onListKeydown(event: KeyboardEvent) {
+const onListKeydown = (event: KeyboardEvent) => {
   if (event.key === 'PageUp' || event.key === 'PageDown') {
     event.stopPropagation()
     return
@@ -337,7 +337,7 @@ function onListKeydown(event: KeyboardEvent) {
   tabs[(index + step + tabs.length) % tabs.length]!.focus()
 }
 
-function placeIndicator() {
+const placeIndicator = () => {
   const indicator = indicatorRef.value
   const activeTab = listRef.value?.$el?.querySelector?.(
     '[data-slot="tabs-tab"][data-state="active"]',
@@ -367,7 +367,7 @@ const indicatorStyle = computed(() =>
 )
 let resizeObserver: ResizeObserver | null = null
 
-function measureIndicator() {
+const measureIndicator = () => {
   const listEl = listRef.value?.$el
   if (!listEl) return
   const activeTab = listEl.querySelector<HTMLElement>('[data-slot="tabs-tab"][data-state="active"]')
@@ -390,7 +390,7 @@ function measureIndicator() {
 const scrollerRef = ref<InstanceType<typeof ScrollShadow> | null>(null)
 const scrollState = ref({ before: false, after: false })
 
-function onScrollVisibility(visibility: ScrollShadowVisibility) {
+const onScrollVisibility = (visibility: ScrollShadowVisibility) => {
   scrollState.value = {
     before: visibility === 'both' || visibility === 'left' || visibility === 'top',
     after: visibility === 'both' || visibility === 'right' || visibility === 'bottom',
@@ -398,7 +398,7 @@ function onScrollVisibility(visibility: ScrollShadowVisibility) {
 }
 
 // Scrolls 80% of the visible size towards `direction`, clamped to the scroll range (RTL-aware).
-function scrollByPage(direction: 1 | -1) {
+const scrollByPage = (direction: 1 | -1) => {
   const el = scrollerRef.value?.el
   if (!el) return
   const vertical = props.orientation === 'vertical'
@@ -413,7 +413,7 @@ function scrollByPage(direction: 1 | -1) {
   if (next !== current) el.scrollTo({ behavior: 'smooth', [vertical ? 'top' : 'left']: next })
 }
 
-function observeGeometry() {
+const observeGeometry = () => {
   const listEl = listRef.value?.$el
   resizeObserver?.disconnect()
   if (!listEl) return
@@ -445,7 +445,7 @@ const PANEL_TABBABLE =
 const panelRef = ref<{ $el: HTMLElement } | null>(null)
 let panelObserver: MutationObserver | null = null
 
-function syncPanelTabStop() {
+const syncPanelTabStop = () => {
   const panel = panelRef.value?.$el
   if (!(panel instanceof HTMLElement)) return
   const tabbable = panel.querySelector(PANEL_TABBABLE) !== null

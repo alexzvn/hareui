@@ -134,7 +134,7 @@ const ui = useComponentUI('cellSlider', theme, () => ({
 // Uncontrolled state lives here; Slider sees a controlled value (`undefined` until there is one, so it falls back to `min`)
 const local = ref(props.defaultValue)
 const current = computed(() => props.modelValue ?? local.value)
-function onUpdate(value: number | number[] | undefined) {
+const onUpdate = (value: number | number[] | undefined) => {
   local.value = value as number
   emit('update:modelValue', value as number)
 }

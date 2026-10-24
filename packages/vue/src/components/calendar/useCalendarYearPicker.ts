@@ -23,7 +23,7 @@ export type UseCalendarYearPickerOptions = {
  * via JS) and supports arrow-key/Home/End navigation across a 3-column grid. Ported behaviourally
  * since Reka has no year-picker primitive (recorded as a reka-limitation).
  */
-export function useCalendarYearPicker(options: UseCalendarYearPickerOptions) {
+export const useCalendarYearPicker = (options: UseCalendarYearPickerOptions) => {
   const { focusedYear, gridRef, gridSlot, maxValue, minValue, onSelect, open, rootEl } = options
   const activeYear = ref(focusedYear.value)
   // The 200 year cells stay out of the mount (so a DatePicker popover opens faster) and are rendered in
@@ -60,7 +60,7 @@ export function useCalendarYearPicker(options: UseCalendarYearPickerOptions) {
     return list
   })
 
-  function syncPosition() {
+  const syncPosition = () => {
     const root = rootEl.value
     const grid = gridRef.value
     if (!root || !grid) return
@@ -70,7 +70,7 @@ export function useCalendarYearPicker(options: UseCalendarYearPickerOptions) {
     grid.style.height = `${dayGrid.offsetHeight}px`
   }
 
-  function focusYear(year: number) {
+  const focusYear = (year: number) => {
     gridRef.value?.querySelector<HTMLElement>(`[data-year="${year}"]`)?.focus()
   }
 
@@ -97,12 +97,12 @@ export function useCalendarYearPicker(options: UseCalendarYearPickerOptions) {
   onMounted(() => nextTick(syncPosition))
   watch(focusedYear, () => nextTick(syncPosition))
 
-  function selectYear(year: number) {
+  const selectYear = (year: number) => {
     activeYear.value = year
     onSelect(year)
   }
 
-  function onKeyDown(event: KeyboardEvent) {
+  const onKeyDown = (event: KeyboardEvent) => {
     if (event.key === 'Escape' && open.value) {
       event.preventDefault()
       open.value = false
@@ -147,6 +147,6 @@ export function useCalendarYearPicker(options: UseCalendarYearPickerOptions) {
 }
 
 /** React Aria's `useCalendarYearPicker` label for the year listbox: the locale's name for the year field. */
-export function yearPickerLabel(locale: string | undefined): string {
+export const yearPickerLabel = (locale: string | undefined): string => {
   return new Intl.DisplayNames(locale ?? 'en-US', { type: 'dateTimeField' }).of('year') ?? 'Year'
 }

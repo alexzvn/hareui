@@ -3,7 +3,7 @@ import { onBeforeUnmount, onMounted } from 'vue'
 const NATIVE_FOCUSABLE =
   'a[href], area[href], button, input, select, textarea, iframe, summary, audio[controls], video[controls], [contenteditable]:not([contenteditable="false"])'
 
-function isVisible(el: HTMLElement, container: HTMLElement) {
+const isVisible = (el: HTMLElement, container: HTMLElement) => {
   for (
     let node: HTMLElement | null = el;
     node && node !== container.parentElement;
@@ -21,7 +21,7 @@ function isVisible(el: HTMLElement, container: HTMLElement) {
  * or an explicit `tabindex >= 0`. Chrome's keyboard-focusable scrollers (an overflowing `modal-body` / `drawer-body`)
  * are left out, as in React Aria's FocusScope tree walker.
  */
-export function getTabbables(container: HTMLElement): HTMLElement[] {
+export const getTabbables = (container: HTMLElement): HTMLElement[] => {
   return [...container.querySelectorAll<HTMLElement>(`${NATIVE_FOCUSABLE}, [tabindex]`)].filter(
     (el) => {
       if (el.tabIndex < 0 || (el as HTMLButtonElement).disabled) return false
@@ -38,8 +38,8 @@ export function getTabbables(container: HTMLElement): HTMLElement[] {
  * those middle Tabs. It listens on the document in the bubble phase, so Reka's edge wrap (and any child that handles
  * Tab itself and prevents the default) runs first and is left alone.
  */
-export function useTabbableFocusLoop(getContainer: () => HTMLElement | null | undefined) {
-  function onKeydown(event: KeyboardEvent) {
+export const useTabbableFocusLoop = (getContainer: () => HTMLElement | null | undefined) => {
+  const onKeydown = (event: KeyboardEvent) => {
     if (
       event.key !== 'Tab' ||
       event.altKey ||

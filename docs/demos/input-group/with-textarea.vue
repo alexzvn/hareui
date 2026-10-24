@@ -81,7 +81,7 @@ import { ref } from 'vue'
 const value = ref('')
 const isSubmitting = ref(false)
 
-function handleSubmit() {
+const handleSubmit = () => {
   if (!value.value.trim()) return
   isSubmitting.value = true
   setTimeout(() => {

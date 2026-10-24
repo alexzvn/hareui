@@ -56,7 +56,7 @@ const cabins = [
   { value: 'business', label: 'Business' },
 ]
 
-function onSubmit(event: Event) {
+const onSubmit = (event: Event) => {
   event.preventDefault()
   const data = Object.fromEntries(new FormData(event.target as HTMLFormElement))
   alert(`Searching flights: ${JSON.stringify(data)}`)

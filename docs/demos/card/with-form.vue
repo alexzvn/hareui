@@ -26,7 +26,7 @@
 <script setup lang="ts">
 import { Button, Card, Input, Label, Link, TextField } from '@hareui/vue'
 
-function onSubmit(e: Event) {
+const onSubmit = (e: Event) => {
   e.preventDefault()
   alert('Form submitted successfully!')
 }

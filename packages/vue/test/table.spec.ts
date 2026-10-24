@@ -14,7 +14,7 @@ const rows = [
   { id: 2, name: 'John', role: 'CTO', disabled: true },
 ]
 
-function bodyRows(wrapper: ReturnType<typeof mount>) {
+const bodyRows = (wrapper: ReturnType<typeof mount>) => {
   return wrapper.findAll('[data-slot="table-row"]')
 }
 
@@ -165,18 +165,18 @@ describe('Table', () => {
 // ---- behaviour-final-check: selection model and single tab stop ----
 const people = [1, 2, 3, 4, 5].map((id) => ({ id, name: `Person ${id}`, role: 'Dev' }))
 
-function selectedIds(wrapper: ReturnType<typeof mount>) {
+const selectedIds = (wrapper: ReturnType<typeof mount>) => {
   return bodyRows(wrapper)
     .filter((r) => r.attributes('data-selected') === 'true')
     .map((r) => r.attributes('data-row-key'))
 }
 
-function row(wrapper: ReturnType<typeof mount>, id: number) {
+const row = (wrapper: ReturnType<typeof mount>, id: number) => {
   return wrapper.get<HTMLTableRowElement>(`[data-row-key="${id}"]`)
 }
 
 /** Dispatches a key on the focused element like the browser does; Space on a button then activates it (native keyup click). */
-async function press(key: string, init: KeyboardEventInit = {}) {
+const press = async (key: string, init: KeyboardEventInit = {}) => {
   const target = document.activeElement ?? document.body
   const event = new KeyboardEvent('keydown', { key, bubbles: true, cancelable: true, ...init })
   target.dispatchEvent(event)
@@ -185,7 +185,7 @@ async function press(key: string, init: KeyboardEventInit = {}) {
 }
 
 /** The elements Tab can reach inside the table, in DOM order. */
-function tabStops(wrapper: ReturnType<typeof mount>) {
+const tabStops = (wrapper: ReturnType<typeof mount>) => {
   const root: Element = wrapper.element
   return Array.from(
     root.querySelectorAll<HTMLElement>('button, a[href], input, select, textarea, [tabindex]'),

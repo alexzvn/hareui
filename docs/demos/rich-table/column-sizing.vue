@@ -32,7 +32,7 @@ const currency = new Intl.NumberFormat('en-US', { style: 'currency', currency: '
 
 // The column resizer is the column separator itself: it grows into a full-height accent line on hover and
 // while dragging. Arrow keys resize by 10px, double click resets.
-function resizer(header: RichTableHeader<Payment>, label: string) {
+const resizer = (header: RichTableHeader<Payment>, label: string) => {
   const { column } = header
   const resizeBy = (delta: number) =>
     header

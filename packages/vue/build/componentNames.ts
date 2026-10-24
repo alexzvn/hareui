@@ -14,7 +14,7 @@ const entries = { 'index.ts': '@hareui/vue', 'charts.ts': '@hareui/vue/charts' }
  * Component name → import path, for the components each entry re-exports
  * (`export * from './components/<dir>'` → `export { default as Name }`).
  */
-export function componentNames(): Record<string, string> {
+export const componentNames = (): Record<string, string> => {
   const names: Record<string, string> = {}
   for (const [file, from] of Object.entries(entries)) {
     const entry = readFileSync(`${srcDir}${file}`, 'utf8')
@@ -27,7 +27,7 @@ export function componentNames(): Record<string, string> {
 }
 
 /** Serves `virtual:hareui-component-names` (the name → import path map) to the Vite plugin entry at build/test time. */
-export function componentNamesPlugin(): Plugin {
+export const componentNamesPlugin = (): Plugin => {
   return {
     name: 'hareui:component-names',
     resolveId: (id) => (id === VIRTUAL_ID ? RESOLVED_ID : undefined),

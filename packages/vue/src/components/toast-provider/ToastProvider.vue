@@ -183,22 +183,22 @@ const regionEl = ref<HTMLElement | null>(null)
 const isPointerOrFocusWithin = ref(false)
 let pointerWithin = false
 
-function collapseIfOutside() {
+const collapseIfOutside = () => {
   const node = regionEl.value
   if (node && !pointerWithin && !node.contains(document.activeElement))
     isPointerOrFocusWithin.value = false
 }
-function onPointerEnterOrMove(event: PointerEvent) {
+const onPointerEnterOrMove = (event: PointerEvent) => {
   if (event.pointerType === 'touch') return
   pointerWithin = true
   isPointerOrFocusWithin.value = true
 }
-function onPointerLeave(event: PointerEvent) {
+const onPointerLeave = (event: PointerEvent) => {
   if (event.pointerType === 'touch') return
   pointerWithin = false
   collapseIfOutside()
 }
-function onFocusIn(event: FocusEvent) {
+const onFocusIn = (event: FocusEvent) => {
   isPointerOrFocusWithin.value = true
   const node = regionEl.value
   const target = event.target as HTMLElement
@@ -206,13 +206,13 @@ function onFocusIn(event: FocusEvent) {
   if (node && event.relatedTarget instanceof HTMLElement && !node.contains(event.relatedTarget))
     lastFocusedOutside = event.relatedTarget
 }
-function onFocusOut(event: FocusEvent) {
+const onFocusOut = (event: FocusEvent) => {
   const node = regionEl.value
   if (node && event.relatedTarget instanceof Node && node.contains(event.relatedTarget)) return
   lastFocusedOutside = null
   collapseIfOutside()
 }
-function onGlobalPointerOver(event: PointerEvent) {
+const onGlobalPointerOver = (event: PointerEvent) => {
   const node = regionEl.value
   // The composed path's first node: inside a shadow root `event.target` is the shadow host.
   const target = event.composedPath()[0]
@@ -221,7 +221,7 @@ function onGlobalPointerOver(event: PointerEvent) {
   pointerWithin = false
   collapseIfOutside()
 }
-function onRegionKeyDown(event: KeyboardEvent) {
+const onRegionKeyDown = (event: KeyboardEvent) => {
   const node = regionEl.value
   if (!node || event.key !== 'Escape') return
   if (node.contains(document.activeElement)) (document.activeElement as HTMLElement | null)?.blur()
@@ -244,7 +244,7 @@ const onModalityKey = () => {
   pointerModality = false
 }
 
-function onLandmarkKeyDown(event: KeyboardEvent) {
+const onLandmarkKeyDown = (event: KeyboardEvent) => {
   const node = regionEl.value
   if (!node || event.key !== 'F6' || event.altKey || node.closest('[aria-hidden=true]')) return
   event.preventDefault()
@@ -253,11 +253,11 @@ function onLandmarkKeyDown(event: KeyboardEvent) {
   else node.focus()
 }
 
-function restoreOutsideFocus() {
+const restoreOutsideFocus = () => {
   if (lastFocusedOutside?.isConnected) lastFocusedOutside.focus({ preventScroll: true })
 }
 
-function onFocusLeave(el: HTMLElement) {
+const onFocusLeave = (el: HTMLElement) => {
   const node = regionEl.value
   if (!node) return
   if (pointerModality && lastFocusedOutside?.isConnected) return restoreOutsideFocus()
@@ -273,7 +273,7 @@ function onFocusLeave(el: HTMLElement) {
   else restoreOutsideFocus()
 }
 
-function onDocumentKeyDown(event: KeyboardEvent) {
+const onDocumentKeyDown = (event: KeyboardEvent) => {
   onLandmarkKeyDown(event)
   const node = regionEl.value
   const hotkey = props.hotkey
@@ -323,7 +323,7 @@ watch(isPointerOrFocusWithin, (within) => {
 })
 
 // Pause timers while the page is hidden so toasts aren't missed in a background tab.
-function onVisibilityChange() {
+const onVisibilityChange = () => {
   if (document.hidden) activeQueue.value.suspendTimers('visibility')
   else activeQueue.value.resumeTimers('visibility')
 }
@@ -341,7 +341,7 @@ const isMobile = ref(
   typeof window !== 'undefined' ? window.matchMedia('(max-width: 768px)').matches : false,
 )
 let mobileQuery: MediaQueryList | null = null
-function onMobileChange(event: MediaQueryListEvent) {
+const onMobileChange = (event: MediaQueryListEvent) => {
   isMobile.value = event.matches
 }
 onMounted(() => {
@@ -358,10 +358,10 @@ onBeforeUnmount(() => {
  * height and the measured heights of every toast ahead of it in the stack.
  * -------------------------------------------------------------------------------------------- */
 const heights = reactive<Record<string, number>>({})
-function onHeightChange(key: string, height: number) {
+const onHeightChange = (key: string, height: number) => {
   heights[key] = height
 }
-function onHeightRemove(key: string) {
+const onHeightRemove = (key: string) => {
   delete heights[key]
 }
 

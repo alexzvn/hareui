@@ -14,11 +14,11 @@ const EXTERNAL =
 const ELLIPSIS_VERTICAL =
   'M8 4.5a1.5 1.5 0 1 0 0-3 1.5 1.5 0 0 0 0 3M9.5 8a1.5 1.5 0 1 1-3 0 1.5 1.5 0 0 1 3 0m0 5a1.5 1.5 0 1 1-3 0 1.5 1.5 0 0 1 3 0'
 
-function svg(
+const svg = (
   viewBox: string,
   d: string,
   evenodd = false,
-): FunctionalComponent<{ class?: IconClass }> {
+): FunctionalComponent<{ class?: IconClass }> => {
   const icon: FunctionalComponent<{ class?: IconClass }> = (props) =>
     h(
       'svg',

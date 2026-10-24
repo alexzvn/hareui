@@ -361,7 +361,7 @@ const menuClasses = computed(() => {
   }
 })
 
-function toggleOpen() {
+const toggleOpen = () => {
   open.value = !open.value
 }
 
@@ -373,7 +373,7 @@ watch(open, (value) => {
   if (value) toggleIdle.value = true
 })
 
-function onMenuClick(event: MouseEvent) {
+const onMenuClick = (event: MouseEvent) => {
   if (props.autoClose && (event.target as Element | null)?.closest?.('a[href]')) open.value = false
 }
 

@@ -22,12 +22,12 @@ const data = [
   { name: 'Steps', value: 100, fill: 'var(--chart-3)' },
 ]
 
-async function settle() {
+const settle = async () => {
   await flushPromises()
   await nextTick()
 }
 
-function mountChart(children: () => any[], props: Record<string, unknown> = {}) {
+const mountChart = (children: () => any[], props: Record<string, unknown> = {}) => {
   return mount(RadialChart, {
     props: { data, width: SIZE, height: SIZE, margin, ...props },
     slots: { default: children },
@@ -35,7 +35,7 @@ function mountChart(children: () => any[], props: Record<string, unknown> = {}) 
   })
 }
 
-async function hover(wrapper: ReturnType<typeof mountChart>, clientX: number, clientY: number) {
+const hover = async (wrapper: ReturnType<typeof mountChart>, clientX: number, clientY: number) => {
   wrapper
     .find('[data-slot=chart-surface]')
     .element.dispatchEvent(new PointerEvent('pointermove', { clientX, clientY, bubbles: true }))
@@ -287,7 +287,7 @@ describe('RadialChart generated mode', () => {
     { name: 'Exercise', progress: 80 },
   ]
 
-  function mountGenerated(props: Record<string, unknown> = {}, slots: Record<string, any> = {}) {
+  const mountGenerated = (props: Record<string, unknown> = {}, slots: Record<string, any> = {}) => {
     return mount(RadialChart, {
       props: { data: goals, index: 'name', width: SIZE, height: SIZE, margin, ...props },
       slots,
@@ -295,7 +295,7 @@ describe('RadialChart generated mode', () => {
     })
   }
 
-  function mountComposed(children: () => any[], props: Record<string, unknown> = {}) {
+  const mountComposed = (children: () => any[], props: Record<string, unknown> = {}) => {
     return mount(RadialChart, {
       props: { data: goals, width: SIZE, height: SIZE, margin, ...props },
       slots: { default: children },

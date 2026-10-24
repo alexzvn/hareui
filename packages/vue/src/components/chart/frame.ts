@@ -45,9 +45,9 @@ const FRAME_SLOTS = [
 ] as const satisfies ReadonlyArray<keyof ChartFrameSlots>
 
 /** The frame slots a root was given, for forwarding them to `ChartFrame` with `v-for` + `#[name]`. */
-export function frameSlotNames(
+export const frameSlotNames = (
   slots: Partial<Record<keyof ChartFrameSlots, unknown>>,
-): Array<keyof ChartFrameSlots> {
+): Array<keyof ChartFrameSlots> => {
   return FRAME_SLOTS.filter((name) => slots[name] !== undefined)
 }
 
@@ -55,7 +55,7 @@ export function frameSlotNames(
  * A root's legend: its `legend` prop, else the bottom when only a `legend` slot is given (the slot is the opt-in).
  * `defaults` go under the `legend` prop's own `ChartLegend` props.
  */
-export function resolveFrameLegend(
+export const resolveFrameLegend = (
   value:
     | boolean
     | ChartLegendPosition
@@ -63,7 +63,7 @@ export function resolveFrameLegend(
     | undefined,
   hasLegendSlot: boolean,
   defaults: Partial<ChartLegendProps<any>> = {},
-): ChartFrameLegend | null {
+): ChartFrameLegend | null => {
   const legend = resolveChartLegend<Partial<ChartLegendProps<any>>>(value)
   if (legend) return { position: legend.position, props: { ...defaults, ...legend.props } }
   return hasLegendSlot ? { position: 'bottom', props: { ...defaults } } : null

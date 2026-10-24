@@ -55,7 +55,7 @@ export default defineComponent({
     let writing = false
     const pinned = shallowRef<{ value: number; hex: string } | null>(null)
 
-    function channelValue(): number {
+    const channelValue = (): number => {
       const channel = ctx.channel.value!
       if (pinned.value && pinned.value.hex === hex(ctx.color.value)) return pinned.value.value
       return getChannelValue(ctx.color.value, channel)
@@ -84,7 +84,7 @@ export default defineComponent({
         divisor: 1,
       }
     })
-    function format(value: number): string {
+    const format = (value: number): string => {
       return channelFormat.value.formatter.format(value / channelFormat.value.divisor)
     }
 
@@ -118,7 +118,7 @@ export default defineComponent({
     const editable = () => !ctx.readonly.value && !ctx.disabled.value
 
     // Sets the channel through Reka's own number commit, then pins the value against the hex it produced.
-    function setChannel(value: number) {
+    const setChannel = (value: number) => {
       const channel = ctx.channel.value!
       const range = getChannelRange(channel)
       const clamped = Math.max(range.min, Math.min(range.max, value))
@@ -194,7 +194,7 @@ export default defineComponent({
       step(event.deltaY > 0 ? -1 : 1)
     }
 
-    function formValue(): string {
+    const formValue = (): string => {
       if (props.isEmpty()) return '#000000'
       const channel = ctx.channel.value
       if (!channel) return hex({ ...ctx.color.value, alpha: 1 } as Color).toLowerCase()

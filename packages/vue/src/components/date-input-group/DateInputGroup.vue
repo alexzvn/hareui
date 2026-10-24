@@ -108,7 +108,7 @@ export type DateInputGroupSegment = {
  * bidi-isolation mark gap above, this one is NOT zero-width (it renders as a real space), so it's
  * stripped here before the segments reach `DateInputGroup`.
  */
-export function dropDanglingTimeZoneSeparator(segments: DateInputGroupSegment[]) {
+export const dropDanglingTimeZoneSeparator = (segments: DateInputGroupSegment[]) => {
   const last = segments.at(-1)
   return last && last.part === 'literal' && last.value.trim() === ''
     ? segments.slice(0, -1)
@@ -121,7 +121,7 @@ export function dropDanglingTimeZoneSeparator(segments: DateInputGroupSegment[])
  * RTL locales. Reka's `shared/date/parser.ts` doesn't add these, so they're inserted here to keep the
  * segment list (and therefore the `gap-px`-driven group width) identical to HeroUI's React output.
  */
-export function wrapBidiIsolate(segments: DateInputGroupSegment[]) {
+export const wrapBidiIsolate = (segments: DateInputGroupSegment[]) => {
   const open = segments.findIndex((s) => s.part === 'hour')
   if (open === -1) return segments
   let close = open
@@ -136,7 +136,7 @@ export function wrapBidiIsolate(segments: DateInputGroupSegment[]) {
   result.splice(open, 0, { part: 'literal', value: '\u2066' })
   return result
 }
-function isTimeUnitPart(part: string) {
+const isTimeUnitPart = (part: string) => {
   return part === 'hour' || part === 'minute' || part === 'second'
 }
 
@@ -243,7 +243,7 @@ type SegmentState = {
 const rangeContext = injectDateRangeFieldRootContext(null as any)
 const timeContext = injectTimeFieldRootContext(null as any)
 const dateContext = injectDateFieldRootContext(null as any)
-function segmentState(type?: string | null): SegmentState | undefined {
+const segmentState = (type?: string | null): SegmentState | undefined => {
   if (props.endSegments) {
     if (!rangeContext) return undefined
     const end = type === 'end'
@@ -269,11 +269,11 @@ const PAGE_STEP: Record<string, number> = {
 // Reka keeps a `dayPeriod` segment value even for 24-hour fields; the rendered segments tell which cycle is shown
 const is12Hour = computed(() => props.segments.some((s) => s.part === 'dayPeriod'))
 
-function segmentBounds(
+const segmentBounds = (
   part: string,
   values: SegmentValues,
   placeholder: DateValue,
-): [number, number] | undefined {
+): [number, number] | undefined => {
   switch (part) {
     case 'year':
       return [1, 9999]
@@ -311,7 +311,7 @@ function segmentBounds(
  * the current period (11 AM -> 12 AM) where Reka crosses into the other one. Runs in the capture phase so the
  * handled keys never reach Reka's own segment handler; every other key is left to Reka.
  */
-function onSegmentKeydown(event: KeyboardEvent) {
+const onSegmentKeydown = (event: KeyboardEvent) => {
   if (event.isComposing || event.altKey || event.ctrlKey || event.metaKey) return
   const el = event.target as HTMLElement
   const part =
@@ -388,7 +388,7 @@ const RANGE_FIELD_NAMES = { start: 'Start Date', end: 'End Date' } as const
  * Also React Aria's segment naming (field name, range end, then the field label via `aria-labelledby`), the field
  * description on the first segment (every segment while invalid) and `aria-readonly`.
  */
-function segmentAttrs(part: string, type?: 'start' | 'end') {
+const segmentAttrs = (part: string, type?: 'start' | 'end') => {
   const state = segmentState(type)
   const id = `${segmentIdBase}-${type ?? 'field'}-${part}`
   const name = [displayNames.value.of(part), type ? RANGE_FIELD_NAMES[type] : undefined]

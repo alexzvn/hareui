@@ -11,7 +11,7 @@ import TextField from '@/components/text-field/TextField.vue'
 import { useFieldChrome } from '@/composables/useFieldChrome'
 import type { ValidationResult } from '@/composables/useFieldValidation'
 
-function result(errors: string[] = []): ValidationResult {
+const result = (errors: string[] = []): ValidationResult => {
   return {
     isInvalid: errors.length > 0,
     validationErrors: errors,

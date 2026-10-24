@@ -65,7 +65,7 @@ const [variables] = useVariablesState()
 let snapshotVariables = variables.value
 let isRandomizing = false
 
-function handleRandomize() {
+const handleRandomize = () => {
   isRandomizing = true
   randomize()
   if (isDontShowAgainChecked.value) {
@@ -74,7 +74,7 @@ function handleRandomize() {
   isOpen.value = false
 }
 
-function handleModalTrigger() {
+const handleModalTrigger = () => {
   const dontShowAgain = localStorage.getItem(LOCAL_STORAGE_KEYS.SHUFFLE_WARNING_SHOWN)
   const isSame = compareThemeVariables(variables.value, snapshotVariables)
 
@@ -88,12 +88,12 @@ function handleModalTrigger() {
 
 useKeyPress('r', handleModalTrigger, { enabled: () => props.enableKeyboardShortcut })
 
-function handleOpenChange(open: boolean) {
+const handleOpenChange = (open: boolean) => {
   isDontShowAgainChecked.value = false
   isOpen.value = open
 }
 
-function handleClose() {
+const handleClose = () => {
   isDontShowAgainChecked.value = false
   isOpen.value = false
 }

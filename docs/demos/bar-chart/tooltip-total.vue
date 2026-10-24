@@ -42,15 +42,15 @@ const data = [
 const series = { app: { name: 'App' }, desk: { name: 'Front desk' }, kiosk: { name: 'Kiosk' } }
 const colors = ['var(--chart-3)', 'var(--chart-2)', 'var(--chart-1)']
 
-function formatTick(value: number | string) {
+const formatTick = (value: number | string) => {
   return `${(Number(value) / 1000).toFixed(0)}k`
 }
 
-function formatCount(value: number | string) {
+const formatCount = (value: number | string) => {
   return Number(value).toLocaleString()
 }
 
-function total(payload: ChartTooltipContentEntry[]) {
+const total = (payload: ChartTooltipContentEntry[]) => {
   return formatCount(payload.reduce((sum, entry) => sum + Number(entry.value), 0))
 }
 </script>

@@ -91,7 +91,7 @@ watchEffect(() => {
 })
 
 let observer: ResizeObserver | undefined
-function measure() {
+const measure = () => {
   if (fixedWidth.value !== null || !root.value) return
   chart.width.value = Math.floor(root.value.getBoundingClientRect().width)
 }
@@ -122,20 +122,20 @@ const plotClass = computed(() => [
 
 const tracking = computed(() => chart.tooltipEnabled.value > 0)
 
-function setLayer(name: ChartLayerName, element: unknown) {
+const setLayer = (name: ChartLayerName, element: unknown) => {
   chart.layers[name] = element instanceof Element ? element : null
 }
 
-function setOverlay(element: unknown) {
+const setOverlay = (element: unknown) => {
   chart.overlay.value = element instanceof HTMLElement ? element : null
 }
 
-function localPoint(event: PointerEvent) {
+const localPoint = (event: PointerEvent) => {
   const rect = svg.value!.getBoundingClientRect()
   return { x: event.clientX - rect.left, y: event.clientY - rect.top }
 }
 
-function onPointerMove(event: PointerEvent) {
+const onPointerMove = (event: PointerEvent) => {
   const interaction = chart.interaction.value
   if (!tracking.value || !interaction?.hitTest) return
   const { x, y } = localPoint(event)
@@ -152,12 +152,12 @@ function onPointerMove(event: PointerEvent) {
   )
 }
 
-function onPointerLeave() {
+const onPointerLeave = () => {
   if (chart.active.source === 'pointer') chart.setActive(null)
 }
 
 // Position after a navigation key in a list of `count` items, `undefined` for other keys.
-function nextPosition(key: string, current: number | null, count: number) {
+const nextPosition = (key: string, current: number | null, count: number) => {
   switch (key) {
     case 'ArrowRight':
     case 'ArrowDown':
@@ -174,7 +174,7 @@ function nextPosition(key: string, current: number | null, count: number) {
   }
 }
 
-function onKeydown(event: KeyboardEvent) {
+const onKeydown = (event: KeyboardEvent) => {
   const interaction = chart.interaction.value
   if (!tracking.value || !interaction) return
   if (event.key === 'Escape') {
@@ -209,12 +209,12 @@ function onKeydown(event: KeyboardEvent) {
 // Pressing the pointer focuses the chart too; only keyboard focus picks a datum.
 let pointerFocus = false
 
-function onPointerDown(event: PointerEvent) {
+const onPointerDown = (event: PointerEvent) => {
   pointerFocus = true
   onPointerMove(event)
 }
 
-function onFocus() {
+const onFocus = () => {
   const interaction = chart.interaction.value
   const fromPointer = pointerFocus
   pointerFocus = false
@@ -231,7 +231,7 @@ function onFocus() {
     chart.setActive({ index: 0, coordinate: interaction.coordinateOf(0), source: 'keyboard' })
 }
 
-function onBlur() {
+const onBlur = () => {
   pointerFocus = false
   if (chart.active.source === 'keyboard') chart.setActive(null)
 }

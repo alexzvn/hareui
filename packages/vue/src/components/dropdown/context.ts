@@ -39,7 +39,7 @@ export type DropdownContext = {
 }
 
 /** The enabled items of one menu content (submenus are portalled, so they are not included). */
-export function enabledMenuItems(menu: Element): HTMLElement[] {
+export const enabledMenuItems = (menu: Element): HTMLElement[] => {
   return [...menu.querySelectorAll<HTMLElement>('[data-slot=menu-item]:not([data-disabled])')]
 }
 

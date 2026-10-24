@@ -599,7 +599,7 @@ const columns = computed<RichTableColumn<T>[]>(() =>
 
 // the injected default cell renders plain text, so the template prints it inline instead of mounting a
 // FlexRender component plus a functional component per cell.
-function defaultCell({ getValue }: CellContext<T, unknown>) {
+const defaultCell = ({ getValue }: CellContext<T, unknown>) => {
   const value = getValue()
   if (value === '' || value === null || value === undefined) {
     return '\u00A0'
@@ -607,7 +607,7 @@ function defaultCell({ getValue }: CellContext<T, unknown>) {
   return String(value)
 }
 
-function processColumns(columns: RichTableColumn<T>[]): RichTableColumn<T>[] {
+const processColumns = (columns: RichTableColumn<T>[]): RichTableColumn<T>[] => {
   return columns.map((column) => {
     const col = { ...column }
 
@@ -638,7 +638,7 @@ const ui = useComponentUI('richTable', theme, () => ({
 }))
 
 const hasFooter = computed(() => {
-  function hasFooterRecursive(columns: RichTableColumn<T>[]): boolean {
+  const hasFooterRecursive = (columns: RichTableColumn<T>[]): boolean => {
     for (const column of columns) {
       if ('footer' in column) {
         return true
@@ -655,10 +655,10 @@ const hasFooter = computed(() => {
 
 // A model is written on every change (bound or not), so each slice is controlled by its model once it has a value;
 // until then TanStack keeps it in its internal state, seeded from `initialState`.
-function valueUpdater<S>(
+const valueUpdater = <S>(
   model: { value: S | undefined },
   key: keyof ReturnType<Table<T>['getState']>,
-) {
+) => {
   return (updaterOrValue: Updater<S>) => {
     const current = (model.value ?? tableApi.getState()[key]) as S
     model.value =
@@ -813,6 +813,22 @@ const getItemKey = computed(() => {
   return getKey ? (index: number) => getKey(index) : (index: number) => rows[index]?.id ?? index
 })
 
+const measureRowElement = (
+  el: Element,
+  entry: ResizeObserverEntry | undefined,
+  instance: Virtualizer<Element, Element>,
+) => {
+  const measure = virtualizerProps.value.measureElement
+  const height = measure
+    ? measure(el, entry, instance)
+    : (entry?.borderBoxSize?.[0]?.blockSize ?? (el as HTMLElement).offsetHeight)
+  const expanded = el.nextElementSibling
+  return Math.round(
+    height +
+      (expanded && expandedRows.get(expanded) === el ? (expanded as HTMLElement).offsetHeight : 0),
+  )
+}
+
 const virtualizer =
   !!props.virtualize &&
   useVirtualizer<Element, Element>({
@@ -858,7 +874,7 @@ const virtualizerInstance = virtualizer ? virtualizer.value : undefined
 // between row patches. An element already registered under the same item key is observed by the virtualizer's
 // ResizeObserver, so it is skipped.
 const registeredRows = new WeakMap<Element, unknown>()
-function measureRow(el: Element | ComponentPublicInstance | null) {
+const measureRow = (el: Element | ComponentPublicInstance | null) => {
   if (el instanceof Element && virtualizerInstance) {
     const index = virtualizerInstance.indexFromElement(el)
     const key = virtualizerInstance.options.getItemKey(index)
@@ -876,23 +892,7 @@ const measureRowRef = virtualizerInstance ? measureRow : undefined
 const expandedRows = new WeakMap<Element, Element>()
 let expandedRowsObserver: ResizeObserver | undefined
 
-function measureRowElement(
-  el: Element,
-  entry: ResizeObserverEntry | undefined,
-  instance: Virtualizer<Element, Element>,
-) {
-  const measure = virtualizerProps.value.measureElement
-  const height = measure
-    ? measure(el, entry, instance)
-    : (entry?.borderBoxSize?.[0]?.blockSize ?? (el as HTMLElement).offsetHeight)
-  const expanded = el.nextElementSibling
-  return Math.round(
-    height +
-      (expanded && expandedRows.get(expanded) === el ? (expanded as HTMLElement).offsetHeight : 0),
-  )
-}
-
-function remeasureRow(el: Element | null | undefined) {
+const remeasureRow = (el: Element | null | undefined) => {
   if (!el?.isConnected || !virtualizer) {
     return
   }
@@ -903,7 +903,7 @@ function remeasureRow(el: Element | null | undefined) {
   )
 }
 
-function onExpandedRowMounted({ el }: { el: unknown }) {
+const onExpandedRowMounted = ({ el }: { el: unknown }) => {
   if (!virtualizer || !(el instanceof Element) || !el.previousElementSibling) {
     return
   }
@@ -919,7 +919,7 @@ function onExpandedRowMounted({ el }: { el: unknown }) {
   expandedRowsObserver.observe(el)
 }
 
-function onExpandedRowUnmounted({ el }: { el: unknown }) {
+const onExpandedRowUnmounted = ({ el }: { el: unknown }) => {
   if (!(el instanceof Element)) {
     return
   }
@@ -973,7 +973,7 @@ const rightDetached = ref(false)
 let scrollElement: HTMLElement | undefined
 let resizeObserver: ResizeObserver | undefined
 
-function updateDetached() {
+const updateDetached = () => {
   if (!scrollElement) {
     return
   }
@@ -1013,7 +1013,7 @@ const pinnedEdgeIds = computed(() => ({
   right: tableApi.getRightVisibleLeafColumns()[0]?.id,
 }))
 
-function getColumnEdge(column: Column<T, unknown>): 'left' | 'right' | undefined {
+const getColumnEdge = (column: Column<T, unknown>): 'left' | 'right' | undefined => {
   const pinned = column.getIsPinned()
   if (!pinned || !(pinned === 'left' ? leftDetached.value : rightDetached.value)) {
     return undefined
@@ -1029,10 +1029,10 @@ const sizingActive = computed(
     Object.keys(tableApi.getState().columnSizing).length > 0,
 )
 
-function getColumnStyles(
+const getColumnStyles = (
   column: Column<T, unknown>,
   size = column.getSize(),
-): Record<string, string> {
+): Record<string, string> => {
   const styles: Record<string, string> = sizingActive.value ? { width: `${size}px` } : {}
   const pinned = column.getIsPinned()
   if (pinned === 'left') {
@@ -1044,7 +1044,7 @@ function getColumnStyles(
 }
 
 // TanStack types a column's `meta` as its (empty) `ColumnMeta`: `RichTableColumn` is what declares it as `RichTableColumnMeta`.
-function columnMeta(column: Column<T, unknown>): RichTableColumnMeta<T> | undefined {
+const columnMeta = (column: Column<T, unknown>): RichTableColumnMeta<T> | undefined => {
   return (column.columnDef as RichTableColumn<T>).meta
 }
 
@@ -1071,13 +1071,13 @@ const columnLayouts = computed(() => {
 
 // Group rows render a column's `aggregatedCell` (falling back to `cell`) and leave the cells of grouped-by columns in their rows empty.
 // TanStack v8 also reports cells of rows with sub rows as aggregated and gives every column a default `aggregatedCell`, so only group rows use it.
-function cellRenderer(cell: Cell<T, unknown>) {
+const cellRenderer = (cell: Cell<T, unknown>) => {
   const { aggregatedCell, cell: render } = cell.column.columnDef
   return cell.row.getIsGrouped() && cell.getIsAggregated() ? (aggregatedCell ?? render) : render
 }
 
 /* ---------------- Rows ---------------- */
-function onRowSelect(e: Event, row: Row<T>) {
+const onRowSelect = (e: Event, row: Row<T>) => {
   if (!props.onSelect) {
     return
   }
@@ -1097,11 +1097,11 @@ function onRowSelect(e: Event, row: Row<T>) {
   props.onSelect(e, row)
 }
 
-function onRowHover(e: Event, row: Row<T> | null) {
+const onRowHover = (e: Event, row: Row<T> | null) => {
   props.onHover?.(e, row)
 }
 
-function onRowContextmenu(e: Event, row: Row<T>) {
+const onRowContextmenu = (e: Event, row: Row<T>) => {
   if (!props.onContextmenu) {
     return
   }
@@ -1113,25 +1113,25 @@ function onRowContextmenu(e: Event, row: Row<T>) {
   }
 }
 
-function resolveValue<V, A>(prop: V | ((arg: A) => V) | undefined, arg: A): V | undefined {
+const resolveValue = <V, A>(prop: V | ((arg: A) => V) | undefined, arg: A): V | undefined => {
   return typeof prop === 'function' ? (prop as (arg: A) => V)(arg) : prop
 }
 
-function resolveStyle<A>(
+const resolveStyle = <A>(
   prop: string | Record<string, string> | ((arg: A) => string | Record<string, string>) | undefined,
   arg: A,
-): StyleValue {
+): StyleValue => {
   return resolveValue(prop, arg)
 }
 
 // `getCanSort()` is true for every accessor column, so it cannot tell a column that offers sort UI
 // from a plain one, and an explicit `enableSorting: true` can still come from `defaultColumn` or be
 // overridden by `sortingOptions`. A header is sortable only when both agree.
-function isSortable(column: Column<T, unknown>) {
+const isSortable = (column: Column<T, unknown>) => {
   return column.columnDef.enableSorting === true && column.getCanSort()
 }
 
-function getAriaSort(header: Header<T, unknown>): AriaAttributes['aria-sort'] {
+const getAriaSort = (header: Header<T, unknown>): AriaAttributes['aria-sort'] => {
   if (header.isPlaceholder || !isSortable(header.column)) {
     return undefined
   }
@@ -1161,11 +1161,11 @@ function getAriaSort(header: Header<T, unknown>): AriaAttributes['aria-sort'] {
 
 // A placeholder header (the slot above a column outside a group) and the footer of a column that defines none are
 // layout fillers, not headers: an empty `th` would be announced as a nameless column header, so they are plain cells.
-function isEmptyHeader(header: Header<T, unknown>) {
+const isEmptyHeader = (header: Header<T, unknown>) => {
   return header.isPlaceholder && !slots[`${header.id}-header`]
 }
 
-function isEmptyFooter(header: Header<T, unknown>) {
+const isEmptyFooter = (header: Header<T, unknown>) => {
   return (
     (header.isPlaceholder || header.column.columnDef.footer === undefined) &&
     !slots[`${header.id}-footer`]

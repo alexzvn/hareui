@@ -136,7 +136,7 @@ const active = ref<DesignThemeId>('default')
 const vibrant = ref(false)
 const mounted = ref(false)
 
-function syncAppearance() {
+const syncAppearance = () => {
   active.value = getStoredDesignTheme()
   vibrant.value = getStoredVibrantPalette()
 }
@@ -164,10 +164,10 @@ const themeBuilderHref = computed(() => {
 // HeroUI renders `ListBox` (layout="grid", selectionMode="single"); HareUI has no ListBox, so the
 // option markup carries `.list-box` / `.list-box-item` classes from @heroui/styles plus the selector's overrides.
 const options = ref<HTMLElement[]>([])
-function focusOption(index: number) {
+const focusOption = (index: number) => {
   options.value[(index + THEMES.length) % THEMES.length]?.focus()
 }
-function onOptionKeydown(event: KeyboardEvent, index: number) {
+const onOptionKeydown = (event: KeyboardEvent, index: number) => {
   const step = { ArrowRight: 1, ArrowLeft: -1, ArrowDown: 4, ArrowUp: -4 }[event.key]
   if (step) {
     event.preventDefault()

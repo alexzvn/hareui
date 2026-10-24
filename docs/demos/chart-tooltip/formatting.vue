@@ -16,12 +16,12 @@ const sleep = [
   { name: 'REM', color: 'var(--chart-4)', value: 2.1 },
 ]
 
-function toHours(value: number | string) {
+const toHours = (value: number | string) => {
   const minutes = Math.round(Number(value) * 60)
   return `${Math.floor(minutes / 60)}h ${String(minutes % 60).padStart(2, '0')}m`
 }
 
-function toWeek(label: number | string) {
+const toWeek = (label: number | string) => {
   return `Week ${label}`
 }
 </script>

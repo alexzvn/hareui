@@ -59,15 +59,15 @@ export type ValidateSchemaResult<T> = {
 }
 
 // `in` throws on primitives, and ArkType schemas are functions
-function hasKeys(value: unknown): value is object {
+const hasKeys = (value: unknown): value is object => {
   return (typeof value === 'object' || typeof value === 'function') && value !== null
 }
 
-export function isStandardSchema(schema: unknown): schema is StandardSchemaV1 {
+export const isStandardSchema = (schema: unknown): schema is StandardSchemaV1 => {
   return hasKeys(schema) && '~standard' in schema
 }
 
-export function isSuperstructSchema(schema: unknown): schema is SuperstructSchema {
+export const isSuperstructSchema = (schema: unknown): schema is SuperstructSchema => {
   return (
     hasKeys(schema) &&
     'schema' in schema &&
@@ -81,14 +81,14 @@ export function isSuperstructSchema(schema: unknown): schema is SuperstructSchem
 }
 
 /** Joins an issue path into the dotted field `name` it belongs to (`address.city`, `items.0.qty`); `''` for form-level issues. */
-function issueName(path: StandardSchemaV1.Issue['path']): string {
+const issueName = (path: StandardSchemaV1.Issue['path']): string => {
   return (path ?? []).map((segment) => String(hasKeys(segment) ? segment.key : segment)).join('.')
 }
 
-async function validateStandardSchema<T>(
+const validateStandardSchema = async <T>(
   state: unknown,
   schema: StandardSchemaV1<unknown, T>,
-): Promise<ValidateSchemaResult<T>> {
+): Promise<ValidateSchemaResult<T>> => {
   const result = await schema['~standard'].validate(state)
   if (result.issues)
     return {
@@ -101,10 +101,10 @@ async function validateStandardSchema<T>(
   return { errors: null, result: result.value }
 }
 
-function validateSuperstructSchema<T>(
+const validateSuperstructSchema = <T>(
   state: unknown,
   schema: SuperstructSchema<T>,
-): ValidateSchemaResult<T> {
+): ValidateSchemaResult<T> => {
   const [error, result] = schema.validate(state)
   if (error)
     return {
@@ -117,10 +117,10 @@ function validateSuperstructSchema<T>(
 }
 
 /** Validates `state` with a Standard Schema or a Superstruct struct; issues become errors named by their dotted path. */
-export async function validateSchema<T>(
+export const validateSchema = async <T>(
   state: unknown,
   schema: StandardSchemaV1<unknown, T> | SuperstructSchema<T>,
-): Promise<ValidateSchemaResult<T>> {
+): Promise<ValidateSchemaResult<T>> => {
   // A schema kept in reactive state arrives as a proxy, and Zod 4 reads its internals through `this` in a getter
   const raw = toRaw(schema)
   if (isStandardSchema(raw))
@@ -134,7 +134,7 @@ export async function validateSchema<T>(
 const UNSAFE_KEYS = new Set(['__proto__', 'constructor', 'prototype'])
 
 /** Reads the value at a dotted path; the object itself for an empty path. */
-export function getAtPath(data: unknown, path?: string): unknown {
+export const getAtPath = (data: unknown, path?: string): unknown => {
   if (!path) return data
   let node = data
   for (const key of path.split('.')) {
@@ -145,7 +145,7 @@ export function getAtPath(data: unknown, path?: string): unknown {
 }
 
 /** Writes `value` at a dotted path, creating objects (or arrays for numeric segments) along the way. An empty path merges into `data`. */
-export function setAtPath<T extends object>(data: T, path: string, value: unknown): T {
+export const setAtPath = <T extends object>(data: T, path: string, value: unknown): T => {
   if (!path) return Object.assign(data, value)
   const keys = path.split('.')
   if (keys.some((key) => UNSAFE_KEYS.has(key))) return data

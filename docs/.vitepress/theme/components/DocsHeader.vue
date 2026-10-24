@@ -156,7 +156,7 @@ const searchIconButton = button({ iconOnly: true, size: 'sm', variant: 'tertiary
 })
 
 const transparent = ref(true)
-function onScroll() {
+const onScroll = () => {
   transparent.value = window.scrollY < 10
 }
 onMounted(() => {

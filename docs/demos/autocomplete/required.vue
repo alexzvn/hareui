@@ -51,7 +51,7 @@ const countries: ListBoxItem[] = [
   { value: 'germany', label: 'Germany' },
 ]
 
-function onSubmit(event: SubmitEvent) {
+const onSubmit = (event: SubmitEvent) => {
   const data = Object.fromEntries(new FormData(event.currentTarget as HTMLFormElement))
   console.log('Form submitted:', data)
   alert('Form submitted successfully!')

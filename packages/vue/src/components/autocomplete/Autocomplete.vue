@@ -681,7 +681,7 @@ const uncontrolledOpen = ref(props.defaultOpen ?? false)
 const isOpen = computed(() => (props.open ?? uncontrolledOpen.value) && !disabled.value)
 type FocusStrategy = 'first' | 'last' | null
 let openStrategy: FocusStrategy = null
-function setOpen(value: boolean, strategy: FocusStrategy = null) {
+const setOpen = (value: boolean, strategy: FocusStrategy = null) => {
   if (value && (disabled.value || (!props.allowsEmptyCollection && options.value.length === 0)))
     return
   if (value === isOpen.value) return
@@ -707,10 +707,10 @@ const optionId = (value: ListBoxValue) => `${listboxId.value}-option-${String(va
 const activeDescendant = computed(() =>
   focusedKey.value != null ? optionId(focusedKey.value) : undefined,
 )
-function enabledRows() {
+const enabledRows = () => {
   return disabled.value ? [] : (rowsRef.value?.rows() ?? []).filter((row) => !row.item.disabled)
 }
-function setFocusKey(value: ListBoxValue | null, scroll = true) {
+const setFocusKey = (value: ListBoxValue | null, scroll = true) => {
   focusedKey.value = value
   if (value == null || !scroll) return
   // Virtualized: render the row first, then scroll it into view like any other (RAC `scrollIntoViewport`)
@@ -733,7 +733,7 @@ function setFocusKey(value: ListBoxValue | null, scroll = true) {
   }
 }
 // RAC `ListKeyboardDelegate.getKeyPageBelow/Above`: a viewport height down / up when the list scrolls, else last / first
-function pageIndex(list: CollectionRow[], current: number, down: boolean): number {
+const pageIndex = (list: CollectionRow[], current: number, down: boolean): number => {
   const el = listEl.value?.$el as HTMLElement | undefined
   if (!el || current === -1 || el.scrollHeight <= el.clientHeight) return down ? list.length - 1 : 0
   const all = rowsRef.value?.rows() ?? []
@@ -759,7 +759,7 @@ function pageIndex(list: CollectionRow[], current: number, down: boolean): numbe
   }
   return i
 }
-function navigate(key: string) {
+const navigate = (key: string) => {
   const list = enabledRows()
   if (!list.length) return
   const current = list.findIndex((row) => row.item.value === focusedKey.value)
@@ -789,7 +789,7 @@ watch(
   },
   { flush: 'sync' },
 )
-async function onOpenAutoFocus(event: Event) {
+const onOpenAutoFocus = async (event: Event) => {
   event.preventDefault()
   // After Reka's own mount highlight (which falls back to the first option)
   await nextTick()
@@ -807,7 +807,7 @@ async function onOpenAutoFocus(event: Event) {
     )?.item.value ?? null,
   )
 }
-function onCloseAutoFocus(event: Event) {
+const onCloseAutoFocus = (event: Event) => {
   event.preventDefault()
   // Only when focus was still inside the popover (or lost), as RAC
   const active = document.activeElement
@@ -821,11 +821,11 @@ function onCloseAutoFocus(event: Event) {
 }
 // Presses on the trigger toggle it themselves; don't let them count as outside presses
 const trigger = useTemplateRef<HTMLElement>('trigger')
-function onOutside(event: Event) {
+const onOutside = (event: Event) => {
   const target = outsideEventTarget(event as CustomEvent<{ originalEvent: Event }>)
   if (target instanceof Node && trigger.value?.contains(target)) event.preventDefault()
 }
-function onEscapeKeyDown(event: KeyboardEvent) {
+const onEscapeKeyDown = (event: KeyboardEvent) => {
   // RAC SearchField: Escape clears the text first; the next one closes
   if (props.search && inputValue.value) {
     event.preventDefault()
@@ -835,22 +835,22 @@ function onEscapeKeyDown(event: KeyboardEvent) {
 }
 
 // ---- Search input -----------------------------------------------------------------------------------------------
-function onSearchInput(event: Event) {
+const onSearchInput = (event: Event) => {
   inputValue.value = (event.target as HTMLInputElement).value
   onSearchTextChange()
 }
 // RAC Autocomplete: typing focuses the first match; an empty search focuses nothing
-async function onSearchTextChange() {
+const onSearchTextChange = async () => {
   await nextTick()
   setFocusKey(inputValue.value ? (enabledRows()[0]?.item.value ?? null) : null)
 }
-function onSearchClear() {
+const onSearchClear = () => {
   searchInput.value?.focus()
   inputValue.value = ''
   onSearchTextChange()
 }
 // Keys from the search field, or from the popover itself when there is none
-function onPopoverKeydown(event: KeyboardEvent) {
+const onPopoverKeydown = (event: KeyboardEvent) => {
   if (event.isComposing) return
   const fromSearch = event.target === searchInput.value
   if (!fromSearch && event.target !== popoverEl()) return
@@ -882,14 +882,14 @@ const listValue = computed(() =>
   multiple.value ? selectedValues.value : (selectedKey.value ?? undefined),
 )
 // Keyboard selection of the focused option (it may be scrolled out and unmounted, so not a click)
-function selectFocused() {
+const selectFocused = () => {
   const value = focusedKey.value
   if (value == null || !enabledRows().some((row) => row.item.value === value)) return
   // Through Reka, so it counts as a user selection (a programmatic model change makes Reka re-highlight and,
   // when virtualized, scroll to the top)
   listboxRef.value?.onValueChange(value)
 }
-function onListUpdate(value: unknown) {
+const onListUpdate = (value: unknown) => {
   if (multiple.value) {
     selection.value = Array.isArray(value) ? (value as ListBoxValue[]) : []
   } else {
@@ -909,14 +909,14 @@ const clear = () => {
 
 // ---- Trigger ----------------------------------------------------------------------------------------------------
 // Interactive content (clear button, tag remove buttons) handles its own presses
-function isOwnPress(event: Event) {
+const isOwnPress = (event: Event) => {
   const interactive = (event.target as Element | null)?.closest('button, [role=button], a, input')
   return !interactive || interactive === button.value
 }
 // RAC Select trigger: a mouse press toggles on press start (so press-drag-release can select), and the click that
 // ends it is ignored. Touch, pen and keyboard toggle on click.
 let mousePress = false
-function onTriggerPointerdown(event: PointerEvent) {
+const onTriggerPointerdown = (event: PointerEvent) => {
   mousePress = false
   if (disabled.value || event.pointerType !== 'mouse' || event.button !== 0 || !isOwnPress(event))
     return
@@ -924,11 +924,11 @@ function onTriggerPointerdown(event: PointerEvent) {
   button.value?.focus()
   setOpen(!isOpen.value, null)
 }
-function onTriggerMousedown(event: MouseEvent) {
+const onTriggerMousedown = (event: MouseEvent) => {
   // Focus stays where the press put it (the button, or the search field once open)
   if (mousePress) event.preventDefault()
 }
-function onTriggerClick(event: MouseEvent) {
+const onTriggerClick = (event: MouseEvent) => {
   if (disabled.value || !isOwnPress(event)) return
   if (mousePress && event.detail !== 0) {
     mousePress = false
@@ -940,7 +940,7 @@ const pressRelease = usePressRelease()
 
 // Typing on the closed trigger selects the next option whose text starts with the typed string (see `TypeaheadStart`)
 const typeahead = useTypeahead({ start: 'next' })
-function onButtonKeydown(event: KeyboardEvent) {
+const onButtonKeydown = (event: KeyboardEvent) => {
   if (disabled.value) return
   if (event.key === 'ArrowDown' || event.key === 'ArrowUp') {
     event.preventDefault()
@@ -978,12 +978,12 @@ function onButtonKeydown(event: KeyboardEvent) {
 const hovered = ref(false)
 const focusWithin = ref(false)
 const focusVisible = ref(false)
-function onFocusIn(event: FocusEvent) {
+const onFocusIn = (event: FocusEvent) => {
   focusWithin.value = true
   focusVisible.value =
     event.target === button.value && button.value?.matches(':focus-visible') === true
 }
-function onFocusOut(event: FocusEvent) {
+const onFocusOut = (event: FocusEvent) => {
   if (event.relatedTarget instanceof Node && trigger.value?.contains(event.relatedTarget)) return
   focusWithin.value = false
   focusVisible.value = false
@@ -1002,7 +1002,7 @@ const { validation, commitValidation } = useFieldValidation<AutocompleteValue>({
   onReset: reset,
 })
 const invalid = computed(() => validation.value.isInvalid)
-function onHiddenInvalid() {
+const onHiddenInvalid = () => {
   requestAnimationFrame(() => {
     if (
       document.activeElement instanceof HTMLSelectElement &&
@@ -1059,7 +1059,7 @@ const searchUi = useComponentUI('searchField', searchFieldTheme, () => ({
   variant: 'secondary',
   fullWidth: false,
 }))
-function valueIndicatorClass(item: ListBoxItem) {
+const valueIndicatorClass = (item: ListBoxItem) => {
   return (listBoxUi.value.indicator as (options?: { variant?: string }) => string)({
     variant: item.variant,
   })
@@ -1079,11 +1079,11 @@ const forwarded = computed(() => rowSlots.filter((name) => slots[name]))
 const virtualFocus = reactive({ keyboard: keyboardModality, value: focusedKey })
 // The option under the pointer, from the `id` its attrs write
 const itemById = computed(() => new Map(options.value.map((item) => [optionId(item.value), item])))
-function eventItem(event: Event) {
+const eventItem = (event: Event) => {
   return itemById.value.get((event.currentTarget as HTMLElement).id)
 }
 // RAC `shouldFocusOnHover`: hover moves focus unless the last interaction was a keyboard one
-function onOptionPointermove(event: PointerEvent) {
+const onOptionPointermove = (event: PointerEvent) => {
   const item = eventItem(event)
   if (
     item &&
@@ -1095,12 +1095,12 @@ function onOptionPointermove(event: PointerEvent) {
     setFocusKey(item.value, false)
 }
 // Pointer selection focuses the picked option (it stays focused in multiple mode)
-function onOptionPointerdown(event: PointerEvent) {
+const onOptionPointerdown = (event: PointerEvent) => {
   const item = eventItem(event)
   if (item && !item.disabled && !disabled.value) setFocusKey(item.value, false)
 }
 // No closures per row: options re-render only when their own props change
-function optionAttrs(row: CollectionRow) {
+const optionAttrs = (row: CollectionRow) => {
   return {
     id: optionId(row.item.value),
     onPointermove: onOptionPointermove,

@@ -17,7 +17,7 @@ import Select from '@/components/select/Select.vue'
 import type { PortalTarget } from '@/config'
 import { createHareUI } from '@/config'
 
-function withResolvers<T>() {
+const withResolvers = <T>() => {
   let resolve!: (value: T) => void
   const promise = new Promise<T>((res) => {
     resolve = res
@@ -53,19 +53,19 @@ afterEach(() => {
   document.body.innerHTML = ''
 })
 
-function target(id: string) {
+const target = (id: string) => {
   const el = document.createElement('div')
   el.id = id
   document.body.append(el)
   return el
 }
 
-async function open(
+const open = async (
   component: Component,
   props: Record<string, unknown>,
   slots: Record<string, () => unknown>,
   portal?: PortalTarget,
-) {
+) => {
   const host = target('host')
   const wrapper = mount(component, {
     props,
@@ -141,11 +141,11 @@ describe('shadow root', () => {
 
 describe('nested dismissable layers in a shadow root', () => {
   // Mounts into a shadow root with overlays portalled next to the app, as in a browser extension panel.
-  async function mountInShadow(
+  const mountInShadow = async (
     component: Component,
     props: Record<string, unknown>,
     slots: Record<string, () => unknown>,
-  ) {
+  ) => {
     const host = target('shadow-host')
     const shadow = host.attachShadow({ mode: 'open' })
     const app = document.createElement('div')
@@ -173,7 +173,7 @@ describe('nested dismissable layers in a shadow root', () => {
   }
 
   // Reka registers its document listeners a task after the content mounts.
-  async function settle() {
+  const settle = async () => {
     for (let i = 0; i < 4; i++) await nextTick()
     const { promise, resolve } = withResolvers<void>()
     setTimeout(resolve, 0)
@@ -182,7 +182,7 @@ describe('nested dismissable layers in a shadow root', () => {
 
   // happy-dom doesn't retarget: dispatch what a browser's document listener sees for a press on `real` inside the
   // shadow root, i.e. `target` is the shadow host and only `composedPath()` reaches the pressed element.
-  async function pressInShadow(host: Element, real: Element) {
+  const pressInShadow = async (host: Element, real: Element) => {
     const event = new PointerEvent('pointerdown', {
       bubbles: true,
       composed: true,
@@ -224,7 +224,7 @@ describe('nested dismissable layers in a shadow root', () => {
     },
   })
 
-  async function openSelectInModal() {
+  const openSelectInModal = async () => {
     const mounted = await mountInShadow(SelectInModal, {}, {})
     await mounted.wrapper.setProps({ selectOpen: true })
     await settle()

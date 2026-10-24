@@ -191,10 +191,10 @@ const ui = useComponentUI('tagGroup', theme, () => ({}))
 const tagUi = useComponentUI('tag', tagTheme, () => ({ size: props.size, variant: props.variant }))
 
 const selected = computed(() => selectedModel.value ?? props.defaultSelected ?? [])
-function isSelected(itemId: string) {
+const isSelected = (itemId: string) => {
   return selected.value.includes(itemId)
 }
-function isItemDisabled(item: TagGroupItem) {
+const isItemDisabled = (item: TagGroupItem) => {
   return !!(props.disabled || item.disabled || props.disabledKeys?.includes(item.id))
 }
 
@@ -213,20 +213,20 @@ const manager = useSelectionManager<string>({
 })
 
 // Shift+press extends the range from the anchor; other presses toggle (RAC `useSelectableItem`)
-function onPress(item: TagGroupItem, event?: MouseEvent | PointerEvent) {
+const onPress = (item: TagGroupItem, event?: MouseEvent | PointerEvent) => {
   if (event?.shiftKey && props.selectionMode === 'multiple') manager.extend(item.id)
   else manager.toggle(item.id)
 }
 
 // Clicking the remove button always removes just that one tag; Delete/Backspace while a tag is
 // focused removes the whole selection when that tag is part of it. Matches RAC's `useTag`.
-function removeOne(item: TagGroupItem) {
+const removeOne = (item: TagGroupItem) => {
   if (isItemDisabled(item)) return
   restoreFocusAfterRemoval(item)
   emit('remove', [item.id])
   dropPendingFocus()
 }
-function removeViaKeyboard(item: TagGroupItem) {
+const removeViaKeyboard = (item: TagGroupItem) => {
   if (isItemDisabled(item)) return
   restoreFocusAfterRemoval(item)
   emit('remove', isSelected(item.id) ? [...selected.value] : [item.id])
@@ -237,7 +237,7 @@ function removeViaKeyboard(item: TagGroupItem) {
 // collection focus repair, move focus to the next remaining enabled tag, else the previous one, else the list.
 const listEl = useTemplateRef<HTMLElement>('list')
 let pendingFocus: { items: T[]; index: number } | undefined
-function restoreFocusAfterRemoval(item: TagGroupItem) {
+const restoreFocusAfterRemoval = (item: TagGroupItem) => {
   if (!listEl.value?.contains(document.activeElement)) return
   const focused = document.activeElement!.closest<HTMLElement>('[data-slot=tag]')
   const index = focused ? tagElements().indexOf(focused) : -1
@@ -248,7 +248,7 @@ function restoreFocusAfterRemoval(item: TagGroupItem) {
 }
 // Called after `emit('remove')`, so this tick runs after the re-render of a consumer that removed the tags;
 // nothing is left to repair when the consumer kept them
-function dropPendingFocus() {
+const dropPendingFocus = () => {
   nextTick(() => {
     pendingFocus = undefined
   })
@@ -279,18 +279,18 @@ watch(
 // skip disabled tags, matching RAC) are implemented directly here instead.
 const focusedId = ref<string>()
 const defaultFocusableId = computed(() => props.items.find((it) => !isItemDisabled(it))?.id)
-function tabindexFor(item: TagGroupItem): 0 | -1 {
+const tabindexFor = (item: TagGroupItem): 0 | -1 => {
   return item.id === (focusedId.value ?? defaultFocusableId.value) ? 0 : -1
 }
-function tagElements() {
+const tagElements = () => {
   return Array.from(listEl.value?.querySelectorAll<HTMLElement>(':scope > [data-slot=tag]') ?? [])
 }
-function onListFocusIn(event: FocusEvent) {
+const onListFocusIn = (event: FocusEvent) => {
   const index = tagElements().indexOf(event.target as HTMLElement)
   if (index !== -1) focusedId.value = props.items[index]?.id
 }
 
-function onListKeydown(event: KeyboardEvent) {
+const onListKeydown = (event: KeyboardEvent) => {
   const tagEls = tagElements()
   const currentIndex = tagEls.indexOf(event.target as HTMLElement)
   const item = props.items[currentIndex]

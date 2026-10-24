@@ -36,7 +36,7 @@ const data = [
 
 const stored = data.reduce((sum, item) => sum + item.size, 0)
 
-function formatValue(value: number) {
+const formatValue = (value: number) => {
   return `${value} GB`
 }
 </script>

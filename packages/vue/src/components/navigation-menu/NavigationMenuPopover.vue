@@ -105,7 +105,7 @@ watch(open, (value) => {
   document.dispatchEvent(new CustomEvent(TOOLTIP_OPEN_EVENT))
   announcing = false
 })
-function onOtherOpen() {
+const onOtherOpen = () => {
   if (!announcing) open.value = false
 }
 onMounted(() => document.addEventListener(TOOLTIP_OPEN_EVENT, onOtherOpen))
@@ -138,13 +138,13 @@ const EXIT_KEYS = {
 const FOCUSABLE =
   'a[href], button:not([disabled]), input:not([disabled]), select:not([disabled]), textarea:not([disabled]), [tabindex]:not([tabindex="-1"])'
 
-function focusFirst() {
+const focusFirst = () => {
   focusOnMount = false
   contentEl.value?.querySelector<HTMLElement>(FOCUSABLE)?.focus()
 }
 
 // Enter / Space keep their default, so a button trigger still clicks (and runs its `onSelect`).
-function onTriggerKeydown(event: KeyboardEvent) {
+const onTriggerKeydown = (event: KeyboardEvent) => {
   const target = event.currentTarget as HTMLElement
   const isEntryKey = event.key === ENTRY_KEYS[props.side]
   if (!isEntryKey && !(target.tagName === 'BUTTON' && (event.key === 'Enter' || event.key === ' ')))
@@ -160,7 +160,7 @@ function onTriggerKeydown(event: KeyboardEvent) {
   open.value = true
 }
 
-function onContentKeydown(event: KeyboardEvent) {
+const onContentKeydown = (event: KeyboardEvent) => {
   if (event.key !== 'Escape' && event.key !== EXIT_KEYS[props.side]) return
   event.preventDefault()
   event.stopPropagation()
@@ -170,23 +170,23 @@ function onContentKeydown(event: KeyboardEvent) {
 }
 
 // Focus moving to another element outside the card and its trigger closes it.
-function onContentFocusout(event: FocusEvent) {
+const onContentFocusout = (event: FocusEvent) => {
   const next = event.relatedTarget as Node | null
   if (next && !contentEl.value?.contains(next) && !triggerEl.value?.contains(next))
     open.value = false
 }
 
-function onOpenChange(value: boolean) {
+const onOpenChange = (value: boolean) => {
   if (value && suppressOpen.value) return
   // Reka closes on the trigger's blur or a pointer leave; focus inside the card keeps it open.
   if (!value && contentEl.value?.contains(document.activeElement)) return
   open.value = value
 }
 
-function setTrigger(el: unknown) {
+const setTrigger = (el: unknown) => {
   triggerEl.value = (el as { $el?: HTMLElement } | null)?.$el
 }
-function setContent(el: unknown) {
+const setContent = (el: unknown) => {
   contentEl.value = (el as { $el?: HTMLElement } | null)?.$el
   if (contentEl.value && focusOnMount) nextTick(focusFirst)
 }

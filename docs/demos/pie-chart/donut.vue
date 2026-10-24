@@ -27,7 +27,7 @@ const data = [
   { channel: 'Forum', tickets: 960, fill: 'var(--chart-1)' },
 ]
 
-function formatValue(value: number) {
+const formatValue = (value: number) => {
   return value.toLocaleString()
 }
 </script>

@@ -17,10 +17,10 @@ const plans = [
 ]
 
 // `props` may be a getter so reactive values (v-model) re-render the group.
-function group(
+const group = (
   props: Record<string, unknown> | (() => Record<string, unknown>) = {},
   itemSlots: Record<string, any> = {},
-) {
+) => {
   const read = typeof props === 'function' ? props : () => props
   return mount(
     () =>
@@ -269,7 +269,7 @@ describe('RadioButtonGroup form', () => {
 
 // A native button activates on Space unless a handler cancelled the key; happy-dom has no activation behaviour, so
 // the press helper performs it when the keys get through.
-async function pressSpace(el: Element) {
+const pressSpace = async (el: Element) => {
   const down = new KeyboardEvent('keydown', {
     key: ' ',
     code: 'Space',
@@ -295,7 +295,7 @@ async function pressSpace(el: Element) {
 }
 
 // See the arrow-key test above for the timing Reka needs.
-async function pressArrow(key: string) {
+const pressArrow = async (key: string) => {
   const card = document.activeElement as HTMLElement
   card.dispatchEvent(new KeyboardEvent('keydown', { key, bubbles: true, cancelable: true }))
   await flushPromises()
