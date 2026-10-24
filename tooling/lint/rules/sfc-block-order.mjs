@@ -13,7 +13,7 @@ export const getTopLevelBlocks = (text) => {
       if (line.startsWith(`</${open}>`)) open = null
       continue
     }
-    const match = /^<(template|script|style)(?=[\s>])/.exec(line)
+    const match = /^<(template|script|style)(?=[\s>]|$)/.exec(line)
     if (!match) continue
     const kind = match[1]
     blocks.push(kind)

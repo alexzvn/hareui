@@ -1,6 +1,6 @@
 /**
  * One-off fixer for rule V1: reorders top-level SFC blocks to template → script(s) → style(s).
- * Usage: bun scripts/fix-sfc-block-order.ts <dir|file>...
+ * Usage: bun tooling/scripts/fix-sfc-block-order.ts <dir|file>...
  * Also rewrites ```vue fences inside .md files.
  */
 import { readdirSync, readFileSync, statSync, writeFileSync } from 'node:fs'
@@ -10,11 +10,16 @@ type Kind = 'template' | 'script' | 'style'
 const RANK: Record<Kind, number> = { template: 0, script: 1, style: 2 }
 const SKIP = new Set(['node_modules', 'dist', '.git'])
 
-/** Splits SFC text into top-level blocks; returns null when there is non-blank text outside blocks. */
+/**
+ * Splits SFC text into top-level blocks; top-level HTML comments travel with the block they precede.
+ * Returns null when there is other non-blank text outside blocks.
+ */
 const splitBlocks = (text: string) => {
   const lines = text.split('\n')
   const blocks: { kind: Kind; text: string }[] = []
   let current: { kind: Kind; lines: string[] } | null = null
+  let leading: string[] = []
+  let isInComment = false
   for (const line of lines) {
     if (current) {
       current.lines.push(line)
@@ -23,19 +28,26 @@ const splitBlocks = (text: string) => {
       current = null
       continue
     }
-    const match = /^<(template|script|style)(?=[\s>])/.exec(line)
+    if (isInComment || line.startsWith('<!--')) {
+      leading.push(line)
+      isInComment = !line.includes('-->')
+      continue
+    }
+    const match = /^<(template|script|style)(?=[\s>]|$)/.exec(line)
     if (!match) {
       if (line.trim() !== '') return null
       continue
     }
     const kind = match[1] as Kind
+    const opening = [...leading, line]
+    leading = []
     if (new RegExp(`</${kind}>\\s*$`).test(line)) {
-      blocks.push({ kind, text: line })
+      blocks.push({ kind, text: opening.join('\n') })
       continue
     }
-    current = { kind, lines: [line] }
+    current = { kind, lines: opening }
   }
-  return current ? null : blocks
+  return current || leading.length > 0 ? null : blocks
 }
 
 const reorder = (text: string) => {
@@ -52,7 +64,7 @@ const reorderMarkdown = (text: string) =>
   text.replace(
     /^(```vue[^\n]*\n)([\s\S]*?\n)(```)$/gm,
     (_, open: string, body: string, close: string) => {
-      const hasBlocks = /^<(template|script)(?=[\s>])/m.test(body)
+      const hasBlocks = /^<(template|script)(?=[\s>]|$)/m.test(body)
       return open + (hasBlocks ? reorder(body) : body) + close
     },
   )
