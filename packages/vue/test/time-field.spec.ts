@@ -1,7 +1,9 @@
 import { Time } from '@internationalized/date'
 import { mount } from '@vue/test-utils'
 import { describe, expect, it } from 'vitest'
+import { nextTick } from 'vue'
 import TimeField from '../src/components/time-field/TimeField.vue'
+import { expectAccessible } from './a11y'
 
 // Local stand-in for Promise.withResolvers, so the library's tsconfig `lib` doesn't need ES2024.
 function withResolvers<T>() {
@@ -169,5 +171,76 @@ describe('timeField', () => {
     await hour.trigger('keydown', { key: 'End' })
     const emitted = wrapper.emitted('update:modelValue')!
     expect((emitted[emitted.length - 1][0] as Time).hour).toBe(23)
+  })
+})
+
+describe('TimeField accessibility', () => {
+  const time = new Time(9, 30)
+  const spinbuttons = (wrapper: { element: Element }) => [...wrapper.element.querySelectorAll<HTMLElement>('[role=spinbutton]')]
+  const textOf = (ids: string | null) => ids?.split(' ').map(id => document.getElementById(id)?.textContent?.trim()).join(' ')
+
+  it('passes axe idle, filled with description, aria-labelled, invalid with error, disabled, read-only, 24-hour and with seconds', async () => {
+    const cases = [
+      { label: 'Start time' },
+      { label: 'Start time', description: 'Office hours only', defaultValue: time },
+      { 'aria-label': 'Start time' },
+      { label: 'Start time', invalid: true, errorMessage: 'Too early', defaultValue: time },
+      { label: 'Start time', disabled: true, defaultValue: time },
+      { label: 'Start time', readonly: true, defaultValue: time },
+      { label: 'Start time', hourCycle: 24 as const, defaultValue: time },
+      { label: 'Start time', granularity: 'second' as const, defaultValue: time },
+    ]
+    for (const props of cases) {
+      const wrapper = mount(TimeField, { props: props as any, attachTo: document.body })
+      await expectAccessible(wrapper)
+      wrapper.unmount()
+    }
+  })
+
+  it('every segment, including AM/PM, is named by its field name and the visible label', () => {
+    const wrapper = mount(TimeField, { props: { label: 'Start time', defaultValue: time }, attachTo: document.body })
+    const segments = spinbuttons(wrapper)
+    expect(segments.map(s => s.getAttribute('aria-label'))).toEqual(['hour, ', 'minute, ', 'AM/PM, '])
+    for (const segment of segments) {
+      const [self, ...label] = segment.getAttribute('aria-labelledby')!.split(' ')
+      expect(self).toBe(segment.id)
+      expect(textOf(label.join(' '))).toBe('Start time')
+    }
+    wrapper.unmount()
+  })
+
+  it('description on the first segment only; while invalid every segment is aria-invalid and described by the error', () => {
+    const valid = mount(TimeField, { props: { label: 'Start time', description: 'Office hours only', defaultValue: time }, attachTo: document.body })
+    expect(spinbuttons(valid).map(s => textOf(s.getAttribute('aria-describedby')))).toEqual(['Office hours only', undefined, undefined])
+    valid.unmount()
+
+    const invalid = mount(TimeField, { props: { label: 'Start time', invalid: true, errorMessage: 'Too early', defaultValue: time }, attachTo: document.body })
+    for (const segment of spinbuttons(invalid)) {
+      expect(segment.getAttribute('aria-invalid')).toBe('true')
+      expect(textOf(segment.getAttribute('aria-describedby'))).toBe('Too early')
+    }
+    invalid.unmount()
+  })
+
+  it('read-only segments keep focus with aria-readonly; disabled ones are aria-disabled and leave the tab order', () => {
+    const readonly = mount(TimeField, { props: { label: 'Start time', readonly: true, defaultValue: time } })
+    expect(spinbuttons(readonly).every(s => s.getAttribute('aria-readonly') === 'true' && s.tabIndex === 0)).toBe(true)
+    readonly.unmount()
+    const disabled = mount(TimeField, { props: { label: 'Start time', disabled: true, defaultValue: time } })
+    expect(spinbuttons(disabled).every(s => s.getAttribute('aria-disabled') === 'true' && !s.hasAttribute('tabindex'))).toBe(true)
+    disabled.unmount()
+  })
+
+  it('keyboard: ArrowLeft moves to the previous segment and ArrowDown decrements the focused one', async () => {
+    const wrapper = mount(TimeField, { props: { label: 'Start time', defaultValue: time }, attachTo: document.body })
+    const [hour, minute] = spinbuttons(wrapper)
+    minute!.focus()
+    await wrapper.get('[data-slot=date-input-group]').trigger('keydown', { key: 'ArrowLeft' })
+    expect(document.activeElement).toBe(hour)
+    hour!.dispatchEvent(new KeyboardEvent('keydown', { key: 'ArrowDown', bubbles: true, cancelable: true }))
+    await nextTick()
+    expect((wrapper.emitted('update:modelValue')!.at(-1)![0] as Time).hour).toBe(8)
+    expect(hour!.getAttribute('aria-valuenow')).toBe('8')
+    wrapper.unmount()
   })
 })

@@ -2,6 +2,7 @@ import { CalendarDate } from '@internationalized/date'
 import { mount } from '@vue/test-utils'
 import { describe, expect, it } from 'vitest'
 import DatePicker from '../src/components/date-picker/DatePicker.vue'
+import { expectAccessible } from './a11y'
 
 // Local stand-in for Promise.withResolvers, so the library's tsconfig `lib` doesn't need ES2024.
 function withResolvers<T>() {
@@ -222,5 +223,133 @@ describe('datePicker', () => {
     const [self, label] = button.attributes('aria-labelledby')!.split(' ')
     expect(self).toBe(button.attributes('id'))
     expect(wrapper.get(`#${label}`).text()).toBe('Date')
+  })
+})
+
+describe('DatePicker accessibility', () => {
+  const date = new CalendarDate(2025, 1, 15)
+  const popover = () => document.querySelector<HTMLElement>('[data-slot=date-picker-popover]')
+  const nameOf = (ids: string) => ids.split(' ').map((id) => {
+    const el = document.getElementById(id)!
+    return el.getAttribute('aria-label') ?? el.textContent!.trim()
+  }).join(' ')
+
+  async function open(props: Record<string, unknown> = { label: 'Due date', defaultValue: date }) {
+    const wrapper = mount(DatePicker, { props: props as any, attachTo: document.body })
+    await wrapper.get(trigger).trigger('click')
+    await flush()
+    return wrapper
+  }
+
+  it('passes axe idle, filled with description, aria-labelled, invalid with error, disabled and read-only', async () => {
+    const cases = [
+      { label: 'Due date' },
+      { label: 'Due date', description: 'Pick a weekday', defaultValue: date },
+      { 'aria-label': 'Due date' },
+      { label: 'Due date', invalid: true, errorMessage: 'Pick a later date', defaultValue: date },
+      { label: 'Due date', disabled: true, defaultValue: date },
+      { label: 'Due date', readonly: true, defaultValue: date },
+    ]
+    for (const props of cases) {
+      const wrapper = mount(DatePicker, { props: props as any, attachTo: document.body })
+      await expectAccessible(wrapper)
+      wrapper.unmount()
+    }
+  })
+
+  it('passes axe with the calendar popover open', async () => {
+    const wrapper = await open()
+    try {
+      await expectAccessible()
+    }
+    finally {
+      wrapper.unmount()
+    }
+  })
+
+  it('passes axe with the popover\'s year picker open', async () => {
+    const wrapper = await open()
+    document.querySelector<HTMLElement>('[data-slot=calendar-year-picker-trigger]')!.click()
+    await flush()
+    try {
+      await expectAccessible()
+    }
+    finally {
+      wrapper.unmount()
+    }
+  })
+
+  it('the trigger announces a dialog popup, the field description and its expanded state, and controls the open dialog', async () => {
+    const wrapper = mount(DatePicker, { props: { label: 'Due date', description: 'Pick a weekday' }, attachTo: document.body })
+    const button = wrapper.get(trigger)
+    expect(button.attributes('aria-haspopup')).toBe('dialog')
+    expect(nameOf(button.attributes('aria-describedby')!)).toBe('Pick a weekday')
+    expect(button.attributes('aria-expanded')).toBe('false')
+    await button.trigger('click')
+    await flush()
+    expect(button.attributes('aria-expanded')).toBe('true')
+    expect(button.attributes('aria-controls')).toBe(popover()!.id)
+    wrapper.unmount()
+  })
+
+  it('the popover is a dialog named by the trigger and the field label', async () => {
+    const wrapper = await open()
+    expect(popover()!.getAttribute('role')).toBe('dialog')
+    expect(nameOf(popover()!.getAttribute('aria-labelledby')!)).toBe('Calendar Due date')
+    wrapper.unmount()
+  })
+
+  it('without a visible label the dialog is still named by the trigger', async () => {
+    const wrapper = await open({ 'aria-label': 'Due date' })
+    expect(nameOf(popover()!.getAttribute('aria-labelledby')!)).toBe('Calendar')
+    wrapper.unmount()
+  })
+
+  it('opening with the trigger moves focus to the selected date', async () => {
+    const wrapper = await open()
+    expect(document.activeElement).toBe(document.querySelector('[data-slot=calendar-cell][data-value="2025-01-15"]'))
+    wrapper.unmount()
+  })
+
+  it('focus is contained in the open dialog', async () => {
+    const outside = document.createElement('button')
+    document.body.appendChild(outside)
+    const wrapper = await open()
+    outside.focus()
+    await flush()
+    expect(popover()!.contains(document.activeElement)).toBe(true)
+    wrapper.unmount()
+    outside.remove()
+  })
+
+  it('Escape on a day closes the dialog, collapses the trigger and returns focus to it', async () => {
+    const wrapper = await open()
+    document.activeElement!.dispatchEvent(new KeyboardEvent('keydown', { key: 'Escape', bubbles: true, cancelable: true }))
+    await flush()
+    expect(popover()).toBeNull()
+    expect(wrapper.get(trigger).attributes('aria-expanded')).toBe('false')
+    expect(document.activeElement).toBe(wrapper.get(trigger).element)
+    wrapper.unmount()
+  })
+
+  it('disabled and read-only pickers cannot open the dialog', async () => {
+    for (const props of [{ disabled: true }, { readonly: true }]) {
+      const wrapper = mount(DatePicker, { props: { label: 'Due date', defaultValue: date, ...props }, attachTo: document.body })
+      expect(wrapper.get(trigger).attributes('disabled')).toBeDefined()
+      await wrapper.get(trigger).trigger('click')
+      const month = wrapper.get('[data-reka-date-field-segment="month"]')
+      await month.trigger('keydown', { key: 'ArrowDown', altKey: true })
+      await flush()
+      expect(popover()).toBeNull()
+      wrapper.unmount()
+    }
+  })
+
+  it('segments are named by their field and the label, and described by the description', () => {
+    const wrapper = mount(DatePicker, { props: { label: 'Due date', description: 'Pick a weekday', defaultValue: date }, attachTo: document.body })
+    const segments = wrapper.findAll('[role=spinbutton]')
+    expect(segments.map(s => nameOf(s.attributes('aria-labelledby')!))).toEqual(['month,  Due date', 'day,  Due date', 'year,  Due date'])
+    expect(nameOf(segments[0]!.attributes('aria-describedby')!)).toBe('Pick a weekday')
+    wrapper.unmount()
   })
 })

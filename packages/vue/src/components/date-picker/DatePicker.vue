@@ -153,9 +153,10 @@ export interface DatePickerEmits {
 import { DateFormatter, getLocalTimeZone } from '@internationalized/date'
 import { DateFieldInput, DateFieldRoot, PopoverAnchor, PopoverContent, PopoverPortal, PopoverRoot, PopoverTrigger } from 'reka-ui'
 import type { ComponentPublicInstance } from 'vue'
-import { computed, ref, useAttrs, useId, useSlots, useTemplateRef } from 'vue'
+import { computed, ref, useAttrs, useId, useSlots, useTemplateRef, watch } from 'vue'
 import { useComponentUI } from '../../composables/useComponentUI'
 import { useFieldValidation } from '../../composables/useFieldValidation'
+import { useInertOutside } from '../../composables/useInertOutside'
 import { usePortal } from '../../composables/usePortal'
 import Calendar from '../calendar/Calendar.vue'
 import DateInputGroup, { dropDanglingTimeZoneSeparator, wrapBidiIsolate } from '../date-input-group/DateInputGroup.vue'
@@ -163,6 +164,7 @@ import Description from '../description/Description.vue'
 import FieldError from '../field-error/FieldError.vue'
 import Label from '../label/Label.vue'
 import { useFieldsetDisabled } from '../fieldset/context'
+import PopoverLabelledBy from './PopoverLabelledBy'
 
 // `invalid: undefined`/`open: undefined`: an absent boolean would cast to `false`, which would count as
 // controlled-valid/controlled-closed and hide validation errors / force the popover shut
@@ -175,7 +177,12 @@ const slots = defineSlots<DatePickerSlots>()
 /** The selected date. Bind with `v-model`. */
 const modelValue = defineModel<DateValue | null>()
 /** The popover's open state. Bind with `v-model:open`. */
-const openLocal = ref(props.defaultOpen ?? false)
+// Also mirrors a controlled `open` synchronously, so `useInertOutside` releases before Reka refocuses the trigger.
+const openLocal = ref(props.open ?? props.defaultOpen ?? false)
+watch(() => props.open, (open) => {
+  if (open !== undefined)
+    openLocal.value = open
+}, { flush: 'sync' })
 const isOpen = computed({
   get: () => props.open ?? openLocal.value,
   set: (value: boolean) => {
@@ -183,6 +190,7 @@ const isOpen = computed({
     emit('update:open', value)
   },
 })
+useInertOutside(useTemplateRef<ComponentPublicInstance>('popoverContent'), openLocal)
 
 const ui = useComponentUI('datePicker', theme, () => ({ fullWidth: props.fullWidth }))
 
@@ -257,8 +265,8 @@ function onFieldKeydown(event: KeyboardEvent) {
   isOpen.value = true
 }
 
-// React Aria returns focus to the trigger whenever the popover closes, outside clicks included; Reka's
-// non-modal popover skips that after an outside interaction.
+// React Aria returns focus to the trigger whenever the popover closes; Reka's modal popover skips that after a
+// right-click outside.
 function onCloseAutoFocus(event: Event) {
   event.preventDefault()
   trigger.value?.focus()
@@ -311,7 +319,9 @@ const groupUiProps = computed<DateInputGroupProps['ui']>(() => ({
 </script>
 
 <template>
-  <PopoverRoot v-model:open="isOpen" :modal="false">
+  <!-- Modal like HeroUI's (React Aria) popover dialog: focus stays inside, the page behind is hidden from assistive tech -->
+  <PopoverRoot v-model:open="isOpen" modal>
+    <PopoverLabelledBy :labelledby="hasLabel ? `${triggerId} ${labelId}` : triggerId" />
     <DateFieldRoot
       :id="id"
       ref="root"
@@ -358,7 +368,9 @@ const groupUiProps = computed<DateInputGroupProps['ui']>(() => ({
             :full-width="fullWidth"
             :disabled="disabled"
             :invalid="invalid"
-            :aria-labelledby="hasLabel ? labelId : undefined"
+            :aria-label="attrs['aria-label'] as string | undefined"
+            :labelledby="hasLabel ? labelId : undefined"
+            :describedby="describedBy"
             :ui="{ base: props.ui?.group, ...groupUiProps }"
           >
             <template #suffix>
@@ -369,8 +381,9 @@ const groupUiProps = computed<DateInputGroupProps['ui']>(() => ({
                   type="button"
                   aria-label="Calendar"
                   :aria-labelledby="hasLabel ? `${triggerId} ${labelId}` : undefined"
+                  :aria-describedby="describedBy"
                   data-slot="date-picker-trigger"
-                  :disabled="disabled"
+                  :disabled="disabled || readonly"
                   :class="ui.trigger({ class: props.ui?.trigger })"
                 >
                   <span aria-hidden="true" data-slot="date-picker-trigger-indicator" :class="ui.triggerIndicator({ class: props.ui?.triggerIndicator })">
@@ -401,6 +414,7 @@ const groupUiProps = computed<DateInputGroupProps['ui']>(() => ({
     </DateFieldRoot>
     <PopoverPortal :disabled="portalTarget.disabled" :to="portalTarget.to">
       <PopoverContent
+        ref="popoverContent"
         data-slot="date-picker-popover"
         side="bottom"
         align="center"

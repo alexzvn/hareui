@@ -154,10 +154,10 @@ import { isDurationView } from './useCalendarDurationView'
 import { useComponentUI } from '../../composables/useComponentUI'
 import CalendarDurationView from './CalendarDurationView.vue'
 import { defaultMaxValue, defaultMinValue, weekStartsOnFromFirstDay } from './useCalendarBounds'
-import { formatPanelHeading } from './useCalendarPanelHeading'
+import { formatGridLabel, formatPanelHeading } from './useCalendarPanelHeading'
 import { calendarCellDate, calendarCellFrom, useCalendarMonthKeys } from './useCalendarMonthKeys'
 import { useCalendarPlaceholder } from './useCalendarPlaceholder'
-import { useCalendarYearPicker } from './useCalendarYearPicker'
+import { useCalendarYearPicker, yearPickerLabel } from './useCalendarYearPicker'
 
 const props = withDefaults(defineProps<CalendarProps>(), {
   modelValue: undefined,
@@ -326,6 +326,7 @@ function onRootKeyDownCapture(event: KeyboardEvent) {
     :dir="dir"
     :calendar-label="ariaLabel"
     data-slot="calendar"
+    role="application"
     :class="ui.base({ class: [props.ui?.base, props.class] })"
     :prevent-deselect="selectionMode !== 'multiple'"
     @update:model-value="emit('update:modelValue', $event)"
@@ -334,7 +335,7 @@ function onRootKeyDownCapture(event: KeyboardEvent) {
     @keydown="onMonthKeyDown"
   >
     <template v-if="numberOfMonths <= 1">
-    <header data-slot="calendar-header" :class="ui.header({ class: props.ui?.header })" @click.capture="onHeaderClickCapture($event, prevButton, nextButton)">
+    <header data-slot="calendar-header" role="presentation" :class="ui.header({ class: props.ui?.header })" @click.capture="onHeaderClickCapture($event, prevButton, nextButton)">
       <template v-if="yearPicker">
         <button
           type="button"
@@ -375,7 +376,7 @@ function onRootKeyDownCapture(event: KeyboardEvent) {
         </button>
       </CalendarNext>
     </header>
-    <CalendarGrid data-slot="calendar-grid" :class="ui.grid({ class: props.ui?.grid })">
+    <CalendarGrid data-slot="calendar-grid" role="grid" :aria-label="formatGridLabel(ariaLabel, resolvedLocale, grid[0]?.value ?? placeholderModel)" :aria-multiselectable="selectionMode === 'multiple' || undefined" :class="ui.grid({ class: props.ui?.grid })">
       <CalendarGridHead data-slot="calendar-grid-header" :class="ui.gridHeader({ class: props.ui?.gridHeader })">
         <CalendarGridRow :class="ui.gridRow({ class: props.ui?.gridRow })">
           <CalendarHeadCell v-for="(day, i) in weekDays" :key="`weekday-${i}`" data-slot="calendar-header-cell" :class="ui.headerCell({ class: props.ui?.headerCell })">
@@ -415,7 +416,7 @@ function onRootKeyDownCapture(event: KeyboardEvent) {
     <template v-else>
       <div data-slot="calendar-panels" :class="ui.panels({ class: props.ui?.panels })">
         <div v-for="(month, panelIndex) in grid" :key="panelIndex" data-slot="calendar-panel" :class="ui.panel({ class: props.ui?.panel })">
-          <header data-slot="calendar-header" :class="ui.header({ class: props.ui?.header })">
+          <header data-slot="calendar-header" role="presentation" :class="ui.header({ class: props.ui?.header })">
             <CalendarPrev v-if="panelIndex === 0" data-slot="calendar-nav-button" as-child>
               <button type="button" aria-label="Previous" :class="ui.navButton({ class: props.ui?.navButton })">
                 <slot name="navIcon" direction="previous">
@@ -438,7 +439,7 @@ function onRootKeyDownCapture(event: KeyboardEvent) {
             </CalendarNext>
             <div v-else aria-hidden="true" class="size-6" />
           </header>
-          <CalendarGrid data-slot="calendar-grid" :class="ui.grid({ class: props.ui?.grid })">
+          <CalendarGrid data-slot="calendar-grid" role="grid" :aria-label="formatGridLabel(ariaLabel, resolvedLocale, month.value)" :aria-multiselectable="selectionMode === 'multiple' || undefined" :class="ui.grid({ class: props.ui?.grid })">
             <CalendarGridHead data-slot="calendar-grid-header" :class="ui.gridHeader({ class: props.ui?.gridHeader })">
               <CalendarGridRow :class="ui.gridRow({ class: props.ui?.gridRow })">
                 <CalendarHeadCell v-for="(day, i) in weekDays" :key="`weekday-${i}`" data-slot="calendar-header-cell" :class="ui.headerCell({ class: props.ui?.headerCell })">
@@ -482,6 +483,7 @@ function onRootKeyDownCapture(event: KeyboardEvent) {
       ref="yearPickerGridRef"
       data-slot="calendar-year-picker-grid"
       role="listbox"
+      :aria-label="yearPickerLabel(resolvedLocale)"
       tabindex="-1"
       :aria-hidden="!isYearPickerOpen"
       :data-open="isYearPickerOpen ? 'true' : undefined"
@@ -492,6 +494,7 @@ function onRootKeyDownCapture(event: KeyboardEvent) {
         v-for="year in yearPickerYears"
         :key="year"
         type="button"
+        role="option"
         data-slot="calendar-year-picker-year-cell"
         :data-year="year"
         :data-selected="year === focusedYear ? true : undefined"

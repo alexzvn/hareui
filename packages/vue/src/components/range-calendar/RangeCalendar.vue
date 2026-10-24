@@ -164,10 +164,10 @@ import { useComponentUI } from '../../composables/useComponentUI'
 import { useSlotOutlet } from '../../composables/useSlotOutlet'
 import CalendarDurationView from '../calendar/CalendarDurationView.vue'
 import { defaultMaxValue, defaultMinValue, weekStartsOnFromFirstDay } from '../calendar/useCalendarBounds'
-import { formatPanelHeading } from '../calendar/useCalendarPanelHeading'
+import { formatGridLabel, formatPanelHeading } from '../calendar/useCalendarPanelHeading'
 import { calendarCellDate, calendarCellFrom, compareDay, focusCalendarCell, useCalendarMonthKeys } from '../calendar/useCalendarMonthKeys'
 import { useCalendarPlaceholder } from '../calendar/useCalendarPlaceholder'
-import { useCalendarYearPicker } from '../calendar/useCalendarYearPicker'
+import { useCalendarYearPicker, yearPickerLabel } from '../calendar/useCalendarYearPicker'
 
 const props = withDefaults(defineProps<RangeCalendarProps>(), {
   modelValue: undefined,
@@ -588,6 +588,7 @@ function onDurationSelect(value: DateRange) {
     :dir="dir"
     :calendar-label="ariaLabel"
     data-slot="range-calendar"
+    role="application"
     :class="ui.base({ class: [props.ui?.base, props.class] })"
     @click.capture="onRootClickCapture"
     @keydown.capture="onRootKeyDownCapture"
@@ -595,7 +596,7 @@ function onDurationSelect(value: DateRange) {
     @focusin="onRootFocusIn"
   >
     <template v-if="numberOfMonths <= 1">
-    <header data-slot="range-calendar-header" :class="ui.header({ class: props.ui?.header })" @click.capture="onHeaderClickCapture($event, prevButton, nextButton)">
+    <header data-slot="range-calendar-header" role="presentation" :class="ui.header({ class: props.ui?.header })" @click.capture="onHeaderClickCapture($event, prevButton, nextButton)">
       <template v-if="yearPicker">
         <button
           type="button"
@@ -636,7 +637,7 @@ function onDurationSelect(value: DateRange) {
         </button>
       </RangeCalendarNext>
     </header>
-    <RangeCalendarGrid data-slot="range-calendar-grid" :class="ui.grid({ class: props.ui?.grid })">
+    <RangeCalendarGrid data-slot="range-calendar-grid" role="grid" :aria-label="formatGridLabel(ariaLabel, resolvedLocale, grid[0]?.value ?? placeholderModel)" aria-multiselectable="true" :class="ui.grid({ class: props.ui?.grid })">
       <RangeCalendarGridHead data-slot="range-calendar-grid-header" :class="ui.gridHeader({ class: props.ui?.gridHeader })">
         <RangeCalendarGridRow :class="ui.gridRow({ class: props.ui?.gridRow })">
           <CalendarHeadCell v-for="(day, i) in weekDays" :key="`weekday-${i}`" data-slot="range-calendar-header-cell" :class="ui.headerCell({ class: props.ui?.headerCell })">
@@ -654,7 +655,7 @@ function onDurationSelect(value: DateRange) {
     <template v-else>
       <div data-slot="calendar-panels" :class="ui.panels({ class: props.ui?.panels })">
         <div v-for="(month, panelIndex) in grid" :key="panelIndex" data-slot="calendar-panel" :class="ui.panel({ class: props.ui?.panel })">
-          <header data-slot="range-calendar-header" :class="ui.header({ class: props.ui?.header })">
+          <header data-slot="range-calendar-header" role="presentation" :class="ui.header({ class: props.ui?.header })">
             <RangeCalendarPrev v-if="panelIndex === 0" data-slot="range-calendar-nav-button" as-child>
               <button type="button" aria-label="Previous" :class="ui.navButton({ class: props.ui?.navButton })">
                 <slot name="navIcon" direction="previous">
@@ -677,7 +678,7 @@ function onDurationSelect(value: DateRange) {
             </RangeCalendarNext>
             <div v-else aria-hidden="true" class="size-6" />
           </header>
-          <RangeCalendarGrid data-slot="range-calendar-grid" :class="ui.grid({ class: props.ui?.grid })">
+          <RangeCalendarGrid data-slot="range-calendar-grid" role="grid" :aria-label="formatGridLabel(ariaLabel, resolvedLocale, month.value)" aria-multiselectable="true" :class="ui.grid({ class: props.ui?.grid })">
             <RangeCalendarGridHead data-slot="range-calendar-grid-header" :class="ui.gridHeader({ class: props.ui?.gridHeader })">
               <RangeCalendarGridRow :class="ui.gridRow({ class: props.ui?.gridRow })">
                 <CalendarHeadCell v-for="(day, i) in weekDays" :key="`weekday-${i}`" data-slot="range-calendar-header-cell" :class="ui.headerCell({ class: props.ui?.headerCell })">
@@ -699,6 +700,7 @@ function onDurationSelect(value: DateRange) {
       ref="yearPickerGridRef"
       data-slot="calendar-year-picker-grid"
       role="listbox"
+      :aria-label="yearPickerLabel(resolvedLocale)"
       tabindex="-1"
       :aria-hidden="!isYearPickerOpen"
       :data-open="isYearPickerOpen ? 'true' : undefined"
@@ -709,6 +711,7 @@ function onDurationSelect(value: DateRange) {
         v-for="year in yearPickerYears"
         :key="year"
         type="button"
+        role="option"
         data-slot="calendar-year-picker-year-cell"
         :data-year="year"
         :data-selected="year === focusedYear ? true : undefined"

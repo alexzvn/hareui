@@ -3,6 +3,7 @@ import { mount } from '@vue/test-utils'
 import { describe, expect, it } from 'vitest'
 import { nextTick } from 'vue'
 import Calendar from '../src/components/calendar/Calendar.vue'
+import { expectAccessible } from './a11y'
 
 const focused = new CalendarDate(2025, 1, 15)
 
@@ -257,6 +258,145 @@ describe('calendar navigation buttons', () => {
     const wrapper = mount(Calendar, { props: { locale: 'en-US', modelValue: value } })
     await wrapper.get('[data-value="2025-01-15"]').trigger('click')
     expect(String(wrapper.emitted('update:modelValue')?.at(-1)?.[0])).toBe(value.toString())
+    wrapper.unmount()
+  })
+})
+
+describe('Calendar accessibility', () => {
+  const flush = () => new Promise(r => setTimeout(r, 0))
+  const press = (key: string) => document.activeElement!.dispatchEvent(new KeyboardEvent('keydown', { key, code: key, bubbles: true, cancelable: true }))
+  const date = new CalendarDate(2025, 1, 15)
+
+  it('passes axe idle, selected, disabled, read-only, invalid, unavailable, multi-select, multi-month and week view', async () => {
+    const cases = [
+      { defaultPlaceholder: date },
+      { defaultValue: date, ariaLabel: 'Event date' },
+      { defaultValue: date, disabled: true },
+      { defaultValue: date, readonly: true },
+      { defaultValue: date, invalid: true },
+      { defaultValue: date, minValue: new CalendarDate(2025, 1, 5), isDateUnavailable: (d: CalendarDate) => d.day === 18 },
+      { defaultValue: [date, date.add({ days: 2 })], selectionMode: 'multiple' as const },
+      { defaultValue: date, numberOfMonths: 2 },
+      { defaultValue: date, visibleDuration: { weeks: 1 } },
+      { defaultValue: date, yearPicker: true },
+    ]
+    for (const props of cases) {
+      const wrapper = mount(Calendar, { props: props as any, attachTo: document.body })
+      await nextTick()
+      await expectAccessible(wrapper)
+      wrapper.unmount()
+    }
+  })
+
+  it('passes axe with the year picker open', async () => {
+    const wrapper = mount(Calendar, { props: { defaultValue: date, yearPicker: true }, attachTo: document.body })
+    await wrapper.get('[data-slot=calendar-year-picker-trigger]').trigger('click')
+    await flush()
+    await expectAccessible(wrapper)
+    wrapper.unmount()
+  })
+
+  it('is an application with a grid per month, each named by the calendar label and its month', () => {
+    const wrapper = mount(Calendar, { props: { defaultValue: date, ariaLabel: 'Event date', numberOfMonths: 2 }, attachTo: document.body })
+    expect(wrapper.attributes('role')).toBe('application')
+    expect(wrapper.attributes('aria-label')).toContain('Event date')
+    const grids = wrapper.findAll('[data-slot=calendar-grid]')
+    expect(grids.map(g => g.attributes('role'))).toEqual(['grid', 'grid'])
+    expect(grids.map(g => g.attributes('aria-label'))).toEqual(['Event date, January 2025', 'Event date, February 2025'])
+    expect(grids[0]!.attributes('aria-multiselectable')).toBeUndefined()
+    wrapper.unmount()
+  })
+
+  it('multiple selection marks the grid multiselectable and every selected cell aria-selected', () => {
+    const wrapper = mount(Calendar, { props: { defaultValue: [date, date.add({ days: 2 })], selectionMode: 'multiple' }, attachTo: document.body })
+    expect(wrapper.get('[data-slot=calendar-grid]').attributes('aria-multiselectable')).toBe('true')
+    const selected = wrapper.findAll('td[aria-selected=true] [data-slot=calendar-cell]').map(c => c.attributes('data-value'))
+    expect(selected).toEqual(['2025-01-15', '2025-01-17'])
+    wrapper.unmount()
+  })
+
+  it('days are named with their full date; the selected day is aria-selected and out-of-range days aria-disabled', () => {
+    const wrapper = mount(Calendar, { props: { defaultValue: date, minValue: new CalendarDate(2025, 1, 5) } })
+    const selected = wrapper.get('[data-value="2025-01-15"]')
+    expect(selected.attributes('role')).toBe('button')
+    expect(selected.attributes('aria-label')).toBe('Wednesday, January 15, 2025')
+    expect(selected.element.closest('td')!.getAttribute('aria-selected')).toBe('true')
+    expect(wrapper.get('[data-value="2025-01-16"]').element.closest('td')!.hasAttribute('aria-selected')).toBe(false)
+    expect(wrapper.get('[data-value="2025-01-04"]').attributes('aria-disabled')).toBe('true')
+    expect(wrapper.get('[data-value="2025-01-04"]').element.closest('td')!.getAttribute('aria-disabled')).toBe('true')
+    wrapper.unmount()
+  })
+
+  it('only the selected day is in the tab order, and the tab stop follows arrow-key focus', async () => {
+    const wrapper = mount(Calendar, { props: { defaultValue: date }, attachTo: document.body })
+    const tabbable = () => wrapper.findAll('[data-slot=calendar-cell][tabindex="0"]').map(c => c.attributes('data-value'))
+    expect(tabbable()).toEqual(['2025-01-15'])
+    ;(wrapper.get('[data-value="2025-01-15"]').element as HTMLElement).focus()
+    press('ArrowDown')
+    await nextTick()
+    expect((document.activeElement as HTMLElement).dataset.value).toBe('2025-01-22')
+    expect(tabbable()).toEqual(['2025-01-22'])
+    wrapper.unmount()
+  })
+
+  it('year picker: the trigger reports expanded, focus lands on the selected year, and arrows/Home/End move it', async () => {
+    const wrapper = mount(Calendar, { props: { defaultValue: date, yearPicker: true }, attachTo: document.body })
+    const trigger = wrapper.get('[data-slot=calendar-year-picker-trigger]')
+    const grid = wrapper.get('[data-slot=calendar-year-picker-grid]')
+    expect(trigger.attributes('aria-expanded')).toBe('false')
+    expect(grid.attributes('aria-hidden')).toBe('true')
+
+    await trigger.trigger('click')
+    await flush()
+    expect(trigger.attributes('aria-expanded')).toBe('true')
+    expect(grid.attributes('aria-hidden')).toBe('false')
+    expect(grid.attributes('role')).toBe('listbox')
+    expect(grid.attributes('aria-label')).toBe('year')
+    const active = () => document.activeElement as HTMLElement
+    expect(active().dataset.year).toBe('2025')
+    expect(active().getAttribute('role')).toBe('option')
+    expect(active().getAttribute('aria-selected')).toBe('true')
+    expect(grid.findAll('[tabindex="0"]').map(c => c.attributes('data-year'))).toEqual(['2025'])
+
+    press('ArrowRight')
+    expect(active().dataset.year).toBe('2026')
+    press('ArrowDown')
+    expect(active().dataset.year).toBe('2029')
+    press('ArrowUp')
+    press('ArrowLeft')
+    expect(active().dataset.year).toBe('2025')
+    press('Home')
+    expect(active()).toBe(grid.find('[data-year]').element)
+    press('End')
+    expect(active()).toBe(grid.findAll('[data-year]').at(-1)!.element)
+    wrapper.unmount()
+  })
+
+  it('year picker: Escape closes it and returns focus to its trigger', async () => {
+    const wrapper = mount(Calendar, { props: { defaultValue: date, yearPicker: true }, attachTo: document.body })
+    const trigger = wrapper.get('[data-slot=calendar-year-picker-trigger]')
+    await trigger.trigger('click')
+    await flush()
+    press('Escape')
+    await flush()
+    expect(trigger.attributes('aria-expanded')).toBe('false')
+    expect(wrapper.get('[data-slot=calendar-year-picker-grid]').attributes('aria-hidden')).toBe('true')
+    expect(document.activeElement).toBe(trigger.element)
+    wrapper.unmount()
+  })
+
+  it('year picker: choosing a year closes it and returns focus to its trigger instead of the hidden year cell', async () => {
+    const wrapper = mount(Calendar, { props: { defaultValue: date, yearPicker: true }, attachTo: document.body })
+    const trigger = wrapper.get('[data-slot=calendar-year-picker-trigger]')
+    await trigger.trigger('click')
+    await flush()
+    const year = wrapper.get('[data-year="2027"]')
+    ;(year.element as HTMLElement).focus()
+    await year.trigger('click')
+    await flush()
+    expect(trigger.attributes('aria-expanded')).toBe('false')
+    expect(document.activeElement).toBe(trigger.element)
+    expect(trigger.attributes('aria-label')).toContain('2027')
     wrapper.unmount()
   })
 })

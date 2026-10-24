@@ -260,7 +260,9 @@ const groupUiProps = computed<DateInputGroupProps['ui']>(() => ({
         :full-width="fullWidth"
         :disabled="disabled"
         :invalid="invalid"
-        :aria-labelledby="hasLabel ? labelId : undefined"
+        :aria-label="$attrs['aria-label'] as string | undefined"
+        :labelledby="hasLabel ? labelId : undefined"
+        :describedby="describedBy"
         :ui="{ base: props.ui?.group, ...groupUiProps }"
       >
         <template v-if="slots.prefix" #prefix>
