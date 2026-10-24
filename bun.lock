@@ -85,7 +85,7 @@
         "vite",
       ],
     },
-    "playground": {
+    "tooling/playground": {
       "name": "playground",
       "dependencies": {
         "@fontsource-variable/inter": "^5.3.0",
@@ -105,7 +105,7 @@
         "vite": "^8.3.2",
       },
     },
-    "reference": {
+    "tooling/reference": {
       "name": "reference",
       "dependencies": {
         "@fontsource-variable/inter": "^5.3.0",
@@ -818,7 +818,7 @@
 
     "pkg-types": ["pkg-types@2.3.3", "", { "dependencies": { "confbox": "^0.3.1", "exsolve": "^1.1.1", "pathe": "^2.0.3" } }, "sha512-j/lCFdcppV0JxWpCEITdbDltBxPP6cHT+yNJ6Go2OgoSA9518X847X9z0p6LtA4Nc16+eQzCZjRrWanTGvHJ5w=="],
 
-    "playground": ["playground@workspace:playground"],
+    "playground": ["playground@workspace:tooling/playground"],
 
     "pngjs": ["pngjs@7.0.0", "", {}, "sha512-LKWqWJRhstyYo9pGvgor/ivk2w94eSjE3RGVuzLGlr3NmD8bf7RcYGze1mNdEHRP6TRP6rMuDHk5t44hnTRyow=="],
 
@@ -854,7 +854,7 @@
 
     "readdirp": ["readdirp@5.1.1", "", {}, "sha512-Kko+Y5XQ6fM+Ce3dq3m9YGxnacYZYl9cA1wZjaF3Vbry2L3i1qVg8+CAgNPsXRArPMUMCaOR7oa9Nqntc43JKA=="],
 
-    "reference": ["reference@workspace:reference"],
+    "reference": ["reference@workspace:tooling/reference"],
 
     "regex": ["regex@6.1.0", "", { "dependencies": { "regex-utilities": "^2.3.0" } }, "sha512-6VwtthbV4o/7+OaAF9I5L5V3llLEsoPyq9P1JVXkedTP33c7MfCG0/5NOPcSJn0TzXcG9YUrR0gQSWioew3LDg=="],
 

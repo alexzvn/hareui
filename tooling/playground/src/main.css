@@ -1,5 +1,5 @@
 @import "tailwindcss";
-@import "../../packages/vue/src/styles/index.css";
+@import "../../../packages/vue/src/styles/index.css";
 
 /* Match heroui.com: Inter (same v4 wght-only variable file as next/font) + docs text rendering */
 @import "@fontsource-variable/inter";
