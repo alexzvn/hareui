@@ -167,6 +167,8 @@ import { usePortal } from '../../composables/usePortal'
 import { useFieldsetDisabled } from '../fieldset/context'
 import listBoxTheme from '../list-box/theme'
 import ListBox from '../list-box/ListBox.vue'
+import { itemText } from '../list-box/listBoxCollection'
+import { useCollectionModel } from '../list-box/useCollectionModel'
 import { useTypeahead } from '../list-box/useTypeahead'
 import { usePressRelease } from './pressRelease'
 
@@ -195,20 +197,26 @@ const modelValue = defineModel<SelectValue>()
 
 const multiple = computed(() => props.selectionMode === 'multiple')
 
-// Selection: `v-model` wins when bound; otherwise local, seeded from `defaultValue`
-const uncontrolled = ref<SelectValue>(props.defaultValue ?? (multiple.value ? [] : null))
-const selection = computed<SelectValue>({
-  get: () => modelValue.value !== undefined ? modelValue.value : uncontrolled.value,
-  set: (value) => {
-    uncontrolled.value = value
-    modelValue.value = value
-  },
-})
-const selectedValues = computed<ListBoxValue[]>(() => {
-  const value = selection.value
-  if (value == null)
-    return []
-  return Array.isArray(value) ? value : [value]
+// Selection: `v-model` wins when bound; otherwise local, seeded from `defaultValue`. Selected items keep collection
+// order (not RAC's selection order)
+const {
+  options,
+  selection,
+  selectedValues,
+  selectedKey,
+  selectedItems,
+  valueText,
+  isPlaceholder,
+  isSelected,
+  clear: clearSelection,
+  reset,
+} = useCollectionModel<T>({
+  items: () => props.items,
+  model: modelValue,
+  defaultValue: () => props.defaultValue,
+  isMultiple: () => multiple.value,
+  placeholder: () => props.placeholder,
+  order: 'collection',
 })
 
 // Open state: the `open` prop wins when bound
@@ -226,23 +234,6 @@ function setOpen(value: boolean) {
   isOpen.value = value
 }
 
-// Flat options in collection order
-const options = computed<ListBoxItem[]>(() => (props.items ?? []).flatMap((entry) => {
-  if ('type' in entry && entry.type === 'section')
-    return entry.items
-  if ('type' in entry && entry.type === 'separator')
-    return []
-  return [entry as ListBoxItem]
-}))
-const textOf = (item: ListBoxItem) => item.textValue ?? item.label ?? String(item.value)
-const selectedItems = computed(() => options.value.filter(item => selectedValues.value.includes(item.value)) as T[])
-const selectedSet = computed(() => new Set(selectedValues.value))
-const listFormat = computed(() => new Intl.ListFormat(undefined, { type: 'conjunction' }))
-const valueText = computed(() => selectedItems.value.length
-  ? (multiple.value ? listFormat.value.format(selectedItems.value.map(textOf)) : textOf(selectedItems.value[0]!))
-  : props.placeholder)
-const isPlaceholder = computed(() => selectedItems.value.length === 0)
-
 const root = useTemplateRef<HTMLElement>('root')
 const trigger = useTemplateRef<{ $el: HTMLElement } | HTMLElement>('trigger')
 const triggerEl = () => {
@@ -258,24 +249,22 @@ const { validation, commitValidation } = useFieldValidation<SelectValue>({
   validationBehavior: () => props.validationBehavior,
   name: () => props.name,
   root: () => root.value,
-  onReset: () => {
-    selection.value = props.defaultValue ?? (multiple.value ? [] : null)
-  },
+  onReset: reset,
 })
 const invalid = computed(() => validation.value.isInvalid)
 
-function onListUpdate(value: ListBoxValue | ListBoxValue[] | null | undefined) {
-  selection.value = value ?? (multiple.value ? [] : null)
+const onListUpdate = (value: ListBoxValue | ListBoxValue[] | null | undefined) => {
+  selection.value = value
   commitValidation()
   // Single selection closes the popover; focus returns to the trigger
   if (!multiple.value)
     setOpen(false)
 }
 
-function clear() {
+const clear = () => {
   if (disabled.value || isPlaceholder.value)
     return
-  selection.value = multiple.value ? [] : null
+  clearSelection()
   commitValidation()
   emit('clear')
 }
@@ -301,7 +290,7 @@ function onTriggerKeydown(event: KeyboardEvent) {
   else {
     typeahead.onKeydown(event, () => ({
       items: options.value,
-      text: textOf,
+      text: itemText,
       disabled: item => !!item.disabled,
       isCurrent: item => item.value === selectedValues.value[0],
     }), (match) => {
@@ -559,7 +548,7 @@ watch(disabled, (disabled) => {
         >
           <ListBox
             ref="listBox"
-            :model-value="multiple ? selectedValues : (selectedValues[0] ?? null)"
+            :model-value="multiple ? selectedValues : selectedKey"
             :items="items"
             :selection-mode="selectionMode"
             highlight-on-hover
@@ -594,8 +583,8 @@ watch(disabled, (disabled) => {
         @invalid="onHiddenInvalid"
       >
         <option value="" />
-        <option v-for="item in options" :key="item.value" :value="item.value" :selected="selectedSet.has(item.value)">
-          {{ textOf(item) }}
+        <option v-for="item in options" :key="item.value" :value="item.value" :selected="isSelected(item.value)">
+          {{ itemText(item) }}
         </option>
       </select>
     </div>

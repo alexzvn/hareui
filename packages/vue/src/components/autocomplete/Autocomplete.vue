@@ -226,8 +226,9 @@ import listBoxTheme from '../list-box/theme'
 import searchFieldTheme from '../search-field/theme'
 import CloseButton from '../close-button/CloseButton.vue'
 import Label from '../label/Label.vue'
-import { countRows, filterEntries, flattenEntries, itemText } from '../list-box/listBoxCollection'
+import { countRows, filterEntries, itemText } from '../list-box/listBoxCollection'
 import ListBoxRows from '../list-box/ListBoxRows.vue'
+import { useCollectionModel } from '../list-box/useCollectionModel'
 import { useTypeahead } from '../list-box/useTypeahead'
 import { usePressRelease } from '../select/pressRelease'
 
@@ -258,33 +259,27 @@ const vnodeProps = getCurrentInstance()?.vnode.props ?? {}
 const inputControlled = () => ['inputValue', 'input-value'].some(key => key in vnodeProps)
 
 const multiple = computed(() => props.selectionMode === 'multiple')
-const empty = (): AutocompleteValue => multiple.value ? [] : null
 
-// ---- Selection (`v-model` wins when bound) ----------------------------------------------------------------------
-const uncontrolled = ref<AutocompleteValue>(props.defaultValue ?? empty())
-const selection = computed<AutocompleteValue>({
-  get: () => modelValue.value !== undefined ? modelValue.value : uncontrolled.value,
-  set: (value) => {
-    uncontrolled.value = value
-    modelValue.value = value
-  },
+// ---- Collection and selection (`v-model` wins when bound) -------------------------------------------------------
+// Selected items keep selection order, as RAC (`[...selectedKeys]`)
+const {
+  options,
+  selection,
+  selectedValues,
+  selectedKey,
+  selectedItems,
+  valueText,
+  isPlaceholder,
+  isSelected,
+  clear: clearSelection,
+  reset,
+} = useCollectionModel<T>({
+  items: () => props.items,
+  model: modelValue,
+  defaultValue: () => props.defaultValue,
+  isMultiple: () => multiple.value,
+  placeholder: () => props.placeholder,
 })
-const selectedValues = computed<ListBoxValue[]>(() => {
-  const value = selection.value
-  if (value == null)
-    return []
-  return Array.isArray(value) ? value : [value]
-})
-
-const options = computed(() => flattenEntries(props.items))
-// Selection order, as RAC (`[...selectedKeys]`)
-const itemByValue = computed(() => new Map(options.value.map(item => [item.value, item])))
-const selectedItems = computed(() => selectedValues.value.map(v => itemByValue.value.get(v)).filter((item): item is T => !!item))
-const listFormat = computed(() => new Intl.ListFormat(undefined, { type: 'conjunction' }))
-const valueText = computed(() => selectedItems.value.length
-  ? (multiple.value ? listFormat.value.format(selectedItems.value.map(itemText)) : itemText(selectedItems.value[0]!))
-  : props.placeholder)
-const isPlaceholder = computed(() => selectedItems.value.length === 0)
 
 // ---- Search text (`v-model:input-value` wins when bound) and filtering ------------------------------------------
 const uncontrolledInput = ref(props.defaultInputValue ?? '')
@@ -432,7 +427,7 @@ async function onOpenAutoFocus(event: Event) {
     popoverEl()?.focus()
   // RAC: the first selected option, else the first / last option when opened from the keyboard, else nothing
   const list = enabledRows()
-  const selected = list.find(row => selectedValues.value.includes(row.item.value))
+  const selected = list.find(row => isSelected(row.item.value))
   setFocusKey((selected ?? (openStrategy === 'first' ? list[0] : openStrategy === 'last' ? list.at(-1) : undefined))?.item.value ?? null)
 }
 function onCloseAutoFocus(event: Event) {
@@ -507,7 +502,7 @@ function onPopoverKeydown(event: KeyboardEvent) {
 const searchFocusVisible = ref(false)
 
 // ---- Selection from the list ------------------------------------------------------------------------------------
-const listValue = computed(() => multiple.value ? selectedValues.value : (selectedValues.value[0] ?? undefined))
+const listValue = computed(() => multiple.value ? selectedValues.value : (selectedKey.value ?? undefined))
 // Keyboard selection of the focused option (it may be scrolled out and unmounted, so not a click)
 function selectFocused() {
   const value = focusedKey.value
@@ -530,10 +525,10 @@ function onListUpdate(value: unknown) {
   commitValidation()
 }
 
-function clear() {
+const clear = () => {
   if (disabled.value || isPlaceholder.value)
     return
-  selection.value = empty()
+  clearSelection()
   commitValidation()
   emit('clear')
 }
@@ -628,9 +623,7 @@ const { validation, commitValidation } = useFieldValidation<AutocompleteValue>({
   validationBehavior: () => props.validationBehavior,
   name: () => props.name,
   root: () => root.value,
-  onReset: () => {
-    selection.value = props.defaultValue ?? empty()
-  },
+  onReset: reset,
 })
 const invalid = computed(() => validation.value.isInvalid)
 function onHiddenInvalid() {
@@ -962,7 +955,7 @@ watch(disabled, (disabled) => {
         @invalid="onHiddenInvalid"
       >
         <option value="" />
-        <option v-for="item in options" :key="item.value" :value="item.value" :selected="selectedValues.includes(item.value)">
+        <option v-for="item in options" :key="item.value" :value="item.value" :selected="isSelected(item.value)">
           {{ itemText(item) }}
         </option>
       </select>

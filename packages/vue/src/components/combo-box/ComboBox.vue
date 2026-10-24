@@ -202,8 +202,9 @@ import { usePortal } from '../../composables/usePortal'
 import { useFieldsetDisabled } from '../fieldset/context'
 import inputTheme from '../input/theme'
 import listBoxTheme from '../list-box/theme'
-import { countRows, filterEntries, flattenEntries, itemText } from '../list-box/listBoxCollection'
+import { countRows, filterEntries, itemText } from '../list-box/listBoxCollection'
 import ListBoxRows from '../list-box/ListBoxRows.vue'
+import { useCollectionModel } from '../list-box/useCollectionModel'
 import { usePressRelease } from '../select/pressRelease'
 
 defineOptions({ inheritAttrs: false })
@@ -231,36 +232,27 @@ const vnodeProps = getCurrentInstance()?.vnode.props ?? {}
 const inputControlled = () => ['inputValue', 'input-value'].some(key => key in vnodeProps)
 
 const multiple = computed(() => props.selectionMode === 'multiple')
-const empty = (): ComboBoxValue => multiple.value ? [] : null
 
-// ---- Collection -------------------------------------------------------------------------------------------------
-const options = computed(() => flattenEntries(props.items))
-const textOf = itemText
-const itemByValue = computed(() => new Map(options.value.map(item => [item.value, item])))
-
-// ---- Selection (`v-model` wins when bound) ----------------------------------------------------------------------
-const uncontrolled = ref<ComboBoxValue>(props.defaultValue ?? empty())
-const selection = computed<ComboBoxValue>({
-  get: () => modelValue.value !== undefined ? modelValue.value : uncontrolled.value,
-  set: (value) => {
-    uncontrolled.value = value
-    modelValue.value = value
-  },
+// ---- Collection and selection (`v-model` wins when bound) -------------------------------------------------------
+// Selected items keep selection order, as RAC (`[...selectedKeys]`)
+const {
+  options,
+  selection,
+  selectedValues,
+  selectedKey,
+  selectedItems,
+  valueText,
+  isPlaceholder,
+  resolveItemText,
+  reset,
+} = useCollectionModel<T>({
+  items: () => props.items,
+  model: modelValue,
+  defaultValue: () => props.defaultValue,
+  isMultiple: () => multiple.value,
+  placeholder: () => props.valuePlaceholder,
 })
-const selectedValues = computed<ListBoxValue[]>(() => {
-  const value = selection.value
-  if (value == null)
-    return []
-  return Array.isArray(value) ? value : [value]
-})
-const selectedKey = computed(() => multiple.value ? null : (selectedValues.value[0] ?? null))
-// Selection order, as RAC (`[...selectedKeys]`)
-const selectedItems = computed(() => selectedValues.value.map(v => itemByValue.value.get(v)).filter((item): item is T => !!item))
-function keyText(key: ListBoxValue | null) {
-  const item = key != null ? itemByValue.value.get(key) : undefined
-  return item ? textOf(item) : ''
-}
-const selectedText = computed(() => keyText(selectedKey.value))
+const selectedText = computed(() => resolveItemText(selectedKey.value))
 
 // ---- Input text (`v-model:input-value` wins when bound) ---------------------------------------------------------
 const uncontrolledInput = ref(props.defaultInputValue ?? selectedText.value)
@@ -272,8 +264,8 @@ const inputValue = computed<string>({
   },
 })
 // Takes the key explicitly after a write: a bound `v-model` only reflects it once the parent re-renders
-function resetInputValue(key = selectedKey.value) {
-  inputValue.value = multiple.value ? '' : keyText(key)
+const resetInputValue = (key = selectedKey.value) => {
+  inputValue.value = multiple.value ? '' : resolveItemText(key)
 }
 
 // ---- Filtering (RAC `useComboBoxState` + `useFilter({ sensitivity: 'base' })`) ----------------------------------
@@ -286,7 +278,7 @@ const matches = computed(() => {
   const filter = props.filter
   if (filter === false || showAll.value)
     return (_item: ListBoxItem) => true
-  return (item: ListBoxItem) => (filter ?? contains)(textOf(item), text)
+  return (item: ListBoxItem) => (filter ?? contains)(itemText(item), text)
 })
 const liveBlocks = computed(() => filterEntries(props.items, matches.value))
 // What the popover renders: the live collection while open; RAC keeps the last one while the popover animates out
@@ -298,7 +290,7 @@ const filteredCount = computed(() => {
   const filter = props.filter
   if (filter === false)
     return options.value.length
-  return options.value.filter(item => (filter ?? contains)(textOf(item), inputValue.value)).length
+  return options.value.filter(item => (filter ?? contains)(itemText(item), inputValue.value)).length
 })
 
 // ---- Open state (the `open` prop wins when bound) ---------------------------------------------------------------
@@ -650,9 +642,8 @@ const { validation, commitValidation } = useFieldValidation<ComboBoxValidationVa
   name: () => props.name,
   root: () => rootEl(),
   onReset: () => {
-    const value = props.defaultValue ?? empty()
-    selection.value = value
-    inputValue.value = props.defaultInputValue ?? (multiple.value ? '' : keyText(value as ListBoxValue | null))
+    const value = reset()
+    inputValue.value = props.defaultInputValue ?? (multiple.value ? '' : resolveItemText(value as ListBoxValue | null))
   },
 })
 const invalid = computed(() => validation.value.isInvalid)
@@ -685,8 +676,6 @@ const rootAttrs = computed(() => {
   const { 'aria-label': _label, 'aria-labelledby': _labelledby, 'aria-describedby': _describedby, ...rest } = attrs
   return rest
 })
-const listFormat = computed(() => new Intl.ListFormat(undefined, { type: 'conjunction' }))
-const valueText = computed(() => listFormat.value.format(selectedItems.value.map(textOf)) || (props.valuePlaceholder ?? ''))
 const submitText = computed(() => props.allowsCustomValue || props.formValue === 'text')
 const hiddenValues = computed(() => selectedValues.value.length ? selectedValues.value : [''])
 
@@ -811,10 +800,10 @@ function optionAttrs(row: CollectionRow) {
       v-if="showValue"
       :id="valueId"
       data-slot="combo-box-value"
-      :data-placeholder="selectedItems.length ? undefined : 'true'"
+      :data-placeholder="isPlaceholder ? 'true' : undefined"
       :class="ui.value({ class: props.ui?.value })"
     >
-      <slot name="value" :selected-items="selectedItems" :is-placeholder="!selectedItems.length" :text="valueText">{{ valueText }}</slot>
+      <slot name="value" :selected-items="selectedItems" :is-placeholder="isPlaceholder" :text="valueText">{{ valueText }}</slot>
     </div>
     <FieldDescription />
     <FieldError />

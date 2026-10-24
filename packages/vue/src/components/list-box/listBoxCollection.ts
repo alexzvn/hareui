@@ -1,4 +1,5 @@
-// Internal: filtered ListBox collections shared by ComboBox and Autocomplete (RAC `filterCollection`).
+// Internal: pure ListBox collection helpers: flattening and option text (behind `useCollectionModel`) and the filtered
+// collections of ComboBox and Autocomplete (RAC `filterCollection`).
 import type { ListBoxEntry, ListBoxItem, ListBoxSection } from './ListBox.vue'
 
 export interface CollectionRow { kind: 'item', item: ListBoxItem, index: number }
