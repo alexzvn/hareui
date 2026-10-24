@@ -74,11 +74,13 @@ const ui = useComponentUI('avatar', theme, () => ({ color: props.color, size: pr
 
 <template>
   <AvatarRoot :class="ui.base({ class: [props.ui?.base, props.class] })">
+    <!-- reka hard-codes role="img"; Radix sets none, and alt="" with a role breaks aria-allowed-role. -->
     <AvatarImage
       v-if="src"
       :as-child="!!slots.image"
       :src="src"
       :alt="alt"
+      :role="undefined"
       :srcset="srcset"
       :sizes="sizes"
       :loading="loading"
