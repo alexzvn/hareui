@@ -1,7 +1,23 @@
 // V3: template element/component refs use Vue 3.5 `useTemplateRef('name')`, not `ref<HTMLElement>()`.
+// Only refs the SFC template binds with a static `ref="name"` are flagged: element refs created in script
+// (portal hosts) or filled by function refs are not template refs.
+import fs from 'node:fs'
+
 const REF_FACTORIES = new Set(['ref', 'shallowRef'])
 const ELEMENT_TYPE = /Element$/
 const COMPONENT_TYPES = new Set(['ComponentPublicInstance', 'InstanceType'])
+const STATIC_REF = /\sref="([\w$]+)"/g
+
+const templateRefNames = new Map()
+
+const getTemplateRefNames = (filename) => {
+  if (!templateRefNames.has(filename)) {
+    const source = fs.readFileSync(filename, 'utf8')
+    templateRefNames.set(filename, new Set([...source.matchAll(STATIC_REF)].map((m) => m[1])))
+  }
+
+  return templateRefNames.get(filename)
+}
 
 const typeName = (name) => (name.type === 'TSQualifiedName' ? name.right.name : name.name)
 
@@ -24,11 +40,22 @@ export default {
     schema: [],
   },
   create(context) {
+    const { filename } = context
+    if (!filename.endsWith('.vue')) return {}
+
     return {
       CallExpression(node) {
         if (node.callee.type !== 'Identifier' || !REF_FACTORIES.has(node.callee.name)) return
         const [type] = (node.typeArguments ?? node.typeParameters)?.params ?? []
         if (!isTemplateRefType(type)) return
+
+        const declarator = node.parent
+        const isBoundInTemplate =
+          declarator.type === 'VariableDeclarator' &&
+          declarator.id.type === 'Identifier' &&
+          getTemplateRefNames(filename).has(declarator.id.name)
+        if (!isBoundInTemplate) return
+
         context.report({ node, messageId: 'useTemplateRef', data: { factory: node.callee.name } })
       },
     }
