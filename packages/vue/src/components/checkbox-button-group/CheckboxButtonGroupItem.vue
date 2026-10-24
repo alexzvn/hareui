@@ -53,9 +53,10 @@ export interface CheckboxButtonGroupItemSlots {
 
 <script setup lang="ts">
 import { CheckboxRoot } from 'reka-ui'
-import { computed, inject, useId, useSlots } from 'vue'
+import { computed, inject, useSlots } from 'vue'
 import { submitOnEnter } from '../../composables/forwardRootClick'
 import { useComponentUI } from '../../composables/useComponentUI'
+import { useFieldChrome } from '../../composables/useFieldChrome'
 import { checkboxButtonGroupContextKey } from './context'
 
 defineOptions({ inheritAttrs: false })
@@ -68,11 +69,6 @@ const injected = inject(checkboxButtonGroupContextKey, null)
 if (!injected)
   throw new Error('CheckboxButtonGroupItem must be used inside a CheckboxButtonGroup.')
 const group = injected
-
-const autoId = useId()
-const id = computed(() => props.id ?? autoId)
-const labelId = computed(() => `${id.value}-label`)
-const descriptionId = computed(() => `${id.value}-description`)
 
 const selected = computed(() => group.selected.value.includes(props.value))
 // Reka merges the group's disabled state into the control; mirror it on the card for styling.
@@ -89,11 +85,14 @@ const itemUi = useComponentUI('checkboxButtonGroup', theme, () => ({
   customIndicator: hasCustomIndicator.value,
   withIcon: hasIcon.value,
 }))
-const hasLabel = computed(() => !!(props.label || slots.label))
-const hasDescription = computed(() => !!(props.description || slots.description))
-const extraId = computed(() => `${id.value}-extra`)
 // Named by the title alone; the description and the default slot content are announced through aria-describedby.
-const describedBy = computed(() => [hasDescription.value && descriptionId.value, slots.default && extraId.value, group.describedBy.value].filter(Boolean).join(' ') || undefined)
+const { id, labelId, descriptionId, hasLabel, hasDescription, describedBy } = useFieldChrome({
+  props,
+  slots,
+  describedByIds: () => [slots.default && extraId.value, group.describedBy.value],
+  describedByIdsPosition: 'afterDescription',
+})
+const extraId = computed(() => `${id.value}-extra`)
 
 function cls(slot: keyof NonNullable<CheckboxButtonGroupItemProps['ui']>, extra?: any) {
   return [group.uiOverrides.value?.[slot], props.ui?.[slot], extra]

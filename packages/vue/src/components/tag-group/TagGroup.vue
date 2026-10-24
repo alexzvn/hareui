@@ -99,7 +99,6 @@ import { computed, nextTick, ref, useTemplateRef, watch } from 'vue'
 import { useComponentUI } from '../../composables/useComponentUI'
 import { useFieldChrome } from '../../composables/useFieldChrome'
 import { useSelectionManager } from '../../composables/useSelectionManager'
-import ErrorMessage from '../error-message/ErrorMessage.vue'
 import TagGroupTag from './TagGroupTag.vue'
 
 const props = withDefaults(defineProps<TagGroupProps<T>>(), { items: () => [], selectionMode: 'none' })
@@ -264,16 +263,13 @@ function onListKeydown(event: KeyboardEvent) {
     manager.extend(next.id, item.id)
 }
 
-// The chrome covers label and description only: TagGroup's error is an always-shown `ErrorMessage` (`errorMessage`
-// prop or slot, no validation), so the chrome gets no `invalid` and the error is composed here.
-const { id, labelId, hasLabel, describedBy: chromeDescribedBy, FieldLabel, FieldDescription } = useFieldChrome({
+// HeroUI's TagGroup has no validation: its error is the always-mounted `ErrorMessage`, so the chrome gets no `invalid`.
+const { labelId, hasLabel, describedBy, FieldLabel, FieldDescription, FieldError } = useFieldChrome({
   props,
   slots,
   disabled: () => props.disabled,
+  errorPart: 'errorMessage',
 })
-const errorId = computed(() => `${id.value}-error`)
-const hasError = computed(() => props.errorMessage !== undefined || !!slots.errorMessage)
-const describedBy = computed(() => [chromeDescribedBy.value, hasError.value && errorId.value].filter(Boolean).join(' ') || undefined)
 </script>
 
 <template>
@@ -346,11 +342,6 @@ const describedBy = computed(() => [chromeDescribedBy.value, hasError.value && e
       </div>
     </div>
     <FieldDescription />
-    <ErrorMessage v-if="hasError && $slots.errorMessage" :id="errorId">
-      <slot name="errorMessage">{{ errorMessage }}</slot>
-    </ErrorMessage>
-    <ErrorMessage v-else-if="hasError" :id="errorId">
-      {{ errorMessage }}
-    </ErrorMessage>
+    <FieldError />
   </div>
 </template>

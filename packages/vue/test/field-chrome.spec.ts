@@ -4,6 +4,9 @@ import { describe, expect, it } from 'vitest'
 import { defineComponent, h, nextTick, ref } from 'vue'
 import Checkbox from '../src/components/checkbox/Checkbox.vue'
 import DateField from '../src/components/date-field/DateField.vue'
+import RadioButtonGroup from '../src/components/radio-button-group/RadioButtonGroup.vue'
+import RadioButtonGroupItem from '../src/components/radio-button-group/RadioButtonGroupItem.vue'
+import TagGroup from '../src/components/tag-group/TagGroup.vue'
 import TextField from '../src/components/text-field/TextField.vue'
 import { useFieldChrome } from '../src/composables/useFieldChrome'
 
@@ -23,6 +26,8 @@ const Harness = defineComponent({
     hide: Boolean,
     extra: { type: Array as () => (string | undefined)[], default: () => [] },
     group: Boolean,
+    position: String as () => 'beforeDescription' | 'afterDescription',
+    errorPart: String as () => 'fieldError' | 'errorMessage',
   },
   setup(props, { slots, attrs }) {
     const chrome = useFieldChrome({
@@ -35,6 +40,8 @@ const Harness = defineComponent({
       hideDescriptionWhenInvalid: props.hide,
       ariaDescribedBy: () => attrs['aria-describedby'] as string | undefined,
       describedByIds: () => props.extra,
+      describedByIdsPosition: props.position,
+      errorPart: props.errorPart,
     })
     const { FieldLabel, FieldDescription, FieldError } = chrome
     return () => h('div', [
@@ -55,6 +62,45 @@ describe('useFieldChrome', () => {
       attrs: { 'aria-describedby': 'outer' },
     })
     expect(describedBy(w)).toBe('outer f-value f-description f-error')
+  })
+
+  it('lists the extra ids after the description with describedByIdsPosition afterDescription', () => {
+    const w = mount(Harness, {
+      props: { id: 'f', description: 'Help', errorMessage: 'Bad', invalid: true, extra: ['f-extra', undefined, 'group-help'], position: 'afterDescription' },
+      attrs: { 'aria-describedby': 'outer' },
+    })
+    expect(describedBy(w)).toBe('outer f-description f-extra group-help f-error')
+
+    const noDescription = mount(Harness, { props: { id: 'g', extra: ['g-extra'], position: 'afterDescription' } })
+    expect(describedBy(noDescription)).toBe('g-extra')
+  })
+
+  it('errorPart errorMessage renders an ErrorMessage whenever errorMessage is given, even empty, regardless of invalid', async () => {
+    const w = mount(Harness, { props: { id: 'f', errorPart: 'errorMessage', errors: ['v1'] } })
+    expect(w.find('#f-error').exists()).toBe(false)
+    expect(describedBy(w)).toBeUndefined()
+
+    await w.setProps({ errorMessage: '' })
+    const error = w.get('#f-error')
+    expect(error.attributes('data-slot')).toBe('error-message')
+    expect(error.attributes('role')).toBeUndefined()
+    expect(error.text()).toBe('')
+    expect(describedBy(w)).toBe('f-error')
+
+    await w.setProps({ errorMessage: 'Required' })
+    expect(w.get('#f-error').text()).toBe('Required')
+  })
+
+  it('errorPart errorMessage renders the errorMessage slot, not the error slot', () => {
+    const w = mount(Harness, {
+      props: { id: 'f', errorPart: 'errorMessage' },
+      slots: { errorMessage: () => 'From slot', error: () => 'Ignored' },
+    })
+    expect(w.get('#f-error').text()).toBe('From slot')
+    expect(describedBy(w)).toBe('f-error')
+
+    const errorSlotOnly = mount(Harness, { props: { id: 'g', errorPart: 'errorMessage' }, slots: { error: () => 'Ignored' } })
+    expect(errorSlotOnly.find('#g-error').exists()).toBe(false)
   })
 
   it('is undefined when nothing describes the field', () => {
@@ -180,5 +226,19 @@ describe('converted fields', () => {
     })
     expect(w.get('#c-description').text()).toBe('state: unchecked')
     expect(w.get('[role=checkbox]').attributes('aria-describedby')).toBe('c-description c-error')
+  })
+
+  it('RadioButtonGroupItem lists its description, then its extra content, then the group ids', () => {
+    const w = mount(() => h(RadioButtonGroup, { id: 'g', label: 'Plan', description: 'Pick one' }, () =>
+      h(RadioButtonGroupItem, { id: 'r', value: 'pro', label: 'Pro', description: 'For teams' }, { default: () => 'Extra' })))
+    const ids = w.get('#r').attributes('aria-describedby')!.split(' ')
+    expect(ids.slice(0, 2)).toEqual(['r-description', 'r-extra'])
+    expect(ids.slice(2).map(id => w.get(`#${id}`).text())).toContain('Pick one')
+  })
+
+  it('TagGroup renders its ErrorMessage for an empty errorMessage and describes the list with it', () => {
+    const w = mount(TagGroup, { props: { id: 't', items: [{ id: 'a', label: 'A' }], description: 'D', errorMessage: '' } })
+    expect(w.get('#t-error').attributes('data-slot')).toBe('error-message')
+    expect(w.get('[role=grid]').attributes('aria-describedby')).toBe('t-description t-error')
   })
 })

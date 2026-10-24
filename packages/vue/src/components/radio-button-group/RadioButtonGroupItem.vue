@@ -53,9 +53,10 @@ export interface RadioButtonGroupItemSlots {
 
 <script setup lang="ts">
 import { RadioGroupItem } from 'reka-ui'
-import { computed, useId, useSlots } from 'vue'
+import { computed, useSlots } from 'vue'
 import { submitOnEnter } from '../../composables/forwardRootClick'
 import { useComponentUI } from '../../composables/useComponentUI'
+import { useFieldChrome } from '../../composables/useFieldChrome'
 import radioGroupTheme from '../radio-group/theme'
 import { useRadioButtonGroup } from './context'
 
@@ -85,15 +86,14 @@ const selected = computed(() => group.selected.value === props.value)
 const isDisabled = computed(() => group.disabled.value || props.disabled)
 const slotProps = computed(() => ({ selected: selected.value, disabled: isDisabled.value }))
 
-const autoId = useId()
-const id = computed(() => props.id ?? autoId)
-const labelId = computed(() => `${id.value}-label`)
-const descriptionId = computed(() => `${id.value}-description`)
-const extraId = computed(() => `${id.value}-extra`)
-const hasLabel = computed(() => !!(props.label || slots.label))
-const hasDescription = computed(() => !!(props.description || slots.description))
 // Named by the title alone; the description and the default slot content are announced through aria-describedby.
-const describedBy = computed(() => [hasDescription.value && descriptionId.value, slots.default && extraId.value, group.describedBy.value].filter(Boolean).join(' ') || undefined)
+const { id, labelId, descriptionId, hasLabel, hasDescription, describedBy } = useFieldChrome({
+  props,
+  slots,
+  describedByIds: () => [slots.default && extraId.value, group.describedBy.value],
+  describedByIdsPosition: 'afterDescription',
+})
+const extraId = computed(() => `${id.value}-extra`)
 </script>
 
 <template>
