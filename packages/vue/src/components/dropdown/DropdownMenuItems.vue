@@ -50,6 +50,11 @@ function onSubmenuKeydown(event: KeyboardEvent) {
   root.querySelector<HTMLElement>(`[aria-controls="${content.id}"]`)?.focus()
 }
 
+function onSubmenuContentKeydown(event: KeyboardEvent) {
+  ctx.onMenuKeydown(event)
+  onSubmenuKeydown(event)
+}
+
 function key(entry: DropdownEntry, index: number) {
   return isSeparator(entry) || isSection(entry) ? `${entry.type}-${index}` : `item-${entry.value}`
 }
@@ -101,7 +106,7 @@ function key(entry: DropdownEntry, index: number) {
           data-slot="dropdown-popover"
           :class="ctx.classes().popover!({ class: ctx.ui()?.popover })"
           @interact-outside="preventNestedLayerDismiss($event, submenuContents.get(entry.value))"
-          @keydown="ctx.onMenuKeydown($event); onSubmenuKeydown($event)"
+          @keydown="onSubmenuContentKeydown"
         >
           <div data-slot="dropdown-menu" :class="ctx.classes().menu!({ class: ctx.ui()?.menu })">
             <DropdownMenuItems :entries="entry.items" :group="submenuGroup" />

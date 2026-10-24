@@ -58,6 +58,16 @@ function onFocus(event: FocusEvent) {
   focusVisible.value = event.target instanceof Element && event.target.matches(':focus-visible')
 }
 
+function onBlur() {
+  focused.value = false
+  focusVisible.value = false
+}
+
+function onPointerleave() {
+  hovered.value = false
+  pressed.value = false
+}
+
 // RAC `useMenuItem`: pointer selection closes unless the selection is multiple; keyboard selection
 // closes only on Enter (Space keeps the menu open to toggle more items) or for plain actions.
 function onSelect(event: Event) {
@@ -98,12 +108,12 @@ const SubmenuIndicatorContent = () => renderSlot(slots as Record<string, any>, '
     :class="classes.item!({ variant: item.variant, class: [ctx.ui()?.item, item.class] })"
     @select="onSelect"
     @pointerenter="hovered = $event.pointerType === 'mouse'"
-    @pointerleave="hovered = false; pressed = false"
+    @pointerleave="onPointerleave"
     @pointerdown="pressed = true"
     @pointerup="pressed = false"
     @pointercancel="pressed = false"
     @focus="onFocus"
-    @blur="focused = false; focusVisible = false"
+    @blur="onBlur"
   >
     <component :is="slots.item" v-if="slots.item" v-bind="state" />
     <template v-else>

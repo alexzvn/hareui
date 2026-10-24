@@ -60,6 +60,11 @@ function onFocus() {
     listbox.highlightedElement.value = el
 }
 
+function onPointerleave() {
+  hovered.value = false
+  pressed.value = false
+}
+
 function onPointermove(event: PointerEvent) {
   const el = option.value?.$el
   if (props.focusOnHover && event.pointerType !== 'touch' && !state.value.disabled && el && document.activeElement !== el)
@@ -123,7 +128,7 @@ function onSelect(event: CustomEvent<{ originalEvent?: Event }>) {
     :class="classes.item({ variant: item.variant, class: [ui?.item, item.class] })"
     @select="onSelect"
     @pointerenter="hovered = $event.pointerType === 'mouse'"
-    @pointerleave="hovered = false; pressed = false"
+    @pointerleave="onPointerleave"
     @pointerdown="pressed = true"
     @pointermove="onPointermove"
     @mousedown="onMousedown"
