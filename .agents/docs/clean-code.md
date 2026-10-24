@@ -49,8 +49,8 @@ Code is read far more than written; give it room to breathe.
 
 | # | Rule | Enforced by |
 |---|------|-------------|
-| R1 | Blank line before and after every multi-line statement (block, multi-line call or literal) unless it is first/last in its block; blank line before a `return` that follows other statements | `hareui/padding-lines` (autofix) |
-| R2 | A comment sits on its own line(s) directly above the code it explains, preceded by a blank line (unless first in its block). No trailing comments after code | `hareui/padding-lines` (autofix), review |
+| R1 | Blank line before and after every multi-line statement (block, multi-line call or literal) unless it is first/last in its block, or the statement before it is a single-line `const`/`let` it uses ("compute, then branch"). Blank line before a `return` that follows other statements, except in a two-statement block | `hareui/padding-lines` (autofix) |
+| R2 | A comment sits on its own line(s) directly above the code it explains, with a blank line above it (unless first in its block). No trailing comments after code | `hareui/padding-lines` (autofix), review |
 | R3 | Max nesting depth 3 blocks, max 3 nested callbacks; deeper → extract a named function | `eslint/max-depth`, `eslint/max-nested-callbacks` |
 | R4 | Name intermediate values instead of chaining them inside conditions (`const rows = list.rows() ?? []` then `rows.findIndex(…)`); one idea per line | review-only |
 | R5 | Hoist inner helper closures to setup/module level when they don't need the enclosing function's locals beyond their parameters | review-only |

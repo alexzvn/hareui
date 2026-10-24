@@ -59,7 +59,16 @@
       {
         "assertFunctionNames": ["expect", "expect*"]
       }
-    ]
+    ],
+    "hareui/padding-lines": "error",
+    "hareui/max-file-lines": [
+      "error",
+      {
+        "max": 600
+      }
+    ],
+    "eslint/max-depth": ["error", 3],
+    "eslint/max-nested-callbacks": ["error", 3]
   },
   "overrides": [
     {
@@ -72,7 +81,14 @@
       "files": ["packages/vue/test/**", "**/*.spec.ts"],
       "rules": {
         "eslint/max-params": "off",
-        "hareui/public-jsdoc": "off"
+        "hareui/public-jsdoc": "off",
+        "eslint/max-nested-callbacks": ["error", 5],
+        "hareui/max-file-lines": [
+          "error",
+          {
+            "max": 1500
+          }
+        ]
       }
     },
     {
