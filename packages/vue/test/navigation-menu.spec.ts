@@ -4,6 +4,7 @@ import { afterEach, describe, expect, it, vi } from 'vitest'
 import { createSSRApp, defineComponent, h, nextTick } from 'vue'
 import { renderToString } from 'vue/server-renderer'
 import NavigationMenu from '../src/components/navigation-menu/NavigationMenu.vue'
+import { expectAccessible } from './a11y'
 
 type Props = Record<string, unknown>
 
@@ -726,5 +727,305 @@ describe('NavigationMenu horizontal', () => {
     // The indicator renders once a trigger is open; the viewport wrapper is always there.
     const withArrow = mountMenu({ items, arrow: true })
     expect(withArrow.find('[data-slot=viewportWrapper]').exists()).toBe(true)
+  })
+})
+
+describe('NavigationMenu accessibility', () => {
+  const horizontal = [
+    { label: 'Guide', children: [{ label: 'Introduction', description: 'Get started', href: '#intro' }, { label: 'Installation', description: 'Set it up', href: '#install' }] },
+    { label: 'GitHub', href: '#gh', target: '_blank' },
+    { label: 'Docs', href: '#docs', active: true },
+    { label: 'Blog', href: '#blog', disabled: true },
+  ]
+  const vertical = [
+    [{ label: 'Workspace', type: 'label' }, { label: 'Inbox', icon: 'i-test-inbox', href: '#inbox', badge: 3, kbds: ['command', 'K'], active: true }],
+    [
+      { label: 'Guide', icon: 'i-test-guide', children: [{ label: 'Introduction', href: '#intro' }, { label: 'Installation', href: '#install' }] },
+      { label: 'Reference', icon: 'i-test-ref', href: '#ref', children: [{ label: 'API', href: '#api' }] },
+      { label: 'Archive', icon: 'i-test-archive', children: [{ label: 'Old', href: '#old' }], disabled: true },
+    ],
+  ]
+  const collapsedItems = [
+    { label: 'Home', icon: 'i-test-home', href: '#home' },
+    { label: 'Guide', icon: 'i-test-guide', children: [{ label: 'Introduction', href: '#intro' }, { label: 'Installation', href: '#install' }] },
+  ]
+
+  const trigger = (menu: VueWrapper, label: string) => menu.findAll('button').find(b => b.text().includes(label))!.element as HTMLElement
+  const link = (label: string) => [...document.querySelectorAll<HTMLElement>('a')].find(a => a.textContent?.includes(label))!
+  function wait(ms: number) {
+    const { promise, resolve } = Promise.withResolvers<void>()
+    setTimeout(resolve, ms)
+    return promise
+  }
+
+  it('passes axe horizontally while idle', async () => {
+    const menu = mountMenu({ items: horizontal, 'aria-label': 'Main' })
+    await flushPromises()
+    await expectAccessible(menu)
+  })
+
+  it('passes axe horizontally with a trigger open', async () => {
+    const menu = mountMenu({ items: horizontal, modelValue: 'item-0', arrow: true, 'aria-label': 'Main' })
+    await flushPromises()
+    expect(menu.text()).toContain('Get started')
+    await expectAccessible(menu)
+  })
+
+  it('passes axe vertically with groups, a label, collapsed and expanded items and a disabled one', async () => {
+    const menu = mountMenu({ orientation: 'vertical', items: vertical, 'aria-label': 'Sidebar' })
+    await flushPromises()
+    await expectAccessible(menu)
+    menu.unmount()
+
+    const open = vertical.map(list => list.map(item => ('children' in item && !('disabled' in item) ? { ...item, defaultOpen: true } : item)))
+    const expanded = mountMenu({ orientation: 'vertical', items: open, 'aria-label': 'Sidebar' })
+    await flushPromises()
+    expect(expanded.text()).toContain('Introduction')
+    await expectAccessible(expanded)
+  })
+
+  it('passes axe with a row actions menu open', async () => {
+    mountMenu({ orientation: 'vertical', 'aria-label': 'Sidebar', items: [{ label: 'Dashboard', href: '#dashboard', actions: [{ value: 'open', label: 'Open' }, { value: 'delete', label: 'Delete', variant: 'danger' }] }] })
+    await flushPromises()
+    const button = document.querySelector<HTMLElement>('[aria-label="More actions for Dashboard"]')!
+    button.focus()
+    press(button, 'Enter')
+    await flushPromises()
+    expect(document.querySelector('[role=menu]')).not.toBeNull()
+    await expectAccessible()
+  })
+
+  it('passes axe collapsed while idle, with a tooltip open, and with a click popover open', async () => {
+    const idle = mountMenu({ orientation: 'vertical', collapsed: true, items: collapsedItems, 'aria-label': 'Sidebar' })
+    await flushPromises()
+    await expectAccessible(idle)
+    idle.unmount()
+
+    mountMenu({ orientation: 'vertical', collapsed: true, tooltip: { defaultOpen: true, delay: 0 }, items: collapsedItems, 'aria-label': 'Sidebar' })
+    await flushPromises()
+    expect(tooltips()).toEqual(['Home', 'Guide'])
+    await expectAccessible()
+    wrapper!.unmount()
+
+    const click = mountMenu({ orientation: 'vertical', collapsed: true, popover: { mode: 'click' }, items: collapsedItems, 'aria-label': 'Sidebar' })
+    await trigger(click, 'Guide').click()
+    await flushPromises()
+    expect(document.querySelector('[data-slot=popover]')).not.toBeNull()
+    await expectAccessible()
+  })
+
+  it('passes axe collapsed with a hover popover open', async () => {
+    const menu = mountMenu({ orientation: 'vertical', collapsed: true, popover: true, items: collapsedItems, 'aria-label': 'Sidebar' })
+    await flushPromises()
+    menu.findAll('[data-slot=link]')[1]!.element.dispatchEvent(new PointerEvent('pointerenter', { pointerType: 'mouse' }))
+    await wait(10)
+    await flushPromises()
+    expect(document.querySelector('[data-slot=popover][data-state=open]')).not.toBeNull()
+    await expectAccessible()
+  })
+
+  it('renders a nav landmark named by aria-label', () => {
+    const menu = mountMenu({ items: horizontal, 'aria-label': 'Main' })
+    expect(menu.element.tagName).toBe('NAV')
+    expect(menu.attributes('aria-label')).toBe('Main')
+  })
+
+  it('names collapsed icon-only items by their label', async () => {
+    const menu = mountMenu({ orientation: 'vertical', collapsed: true, items: collapsedItems })
+    await flushPromises()
+    const [home, guide] = menu.findAll('[data-slot=link]').map(l => l.element as HTMLElement)
+    expect(home!.getAttribute('aria-label')).toBe('Home')
+    expect(guide!.getAttribute('aria-label')).toBe('Guide')
+  })
+
+  it('horizontal disclosure: the trigger controls its content, which is labelled by the trigger', async () => {
+    const menu = mountMenu({ items: horizontal })
+    await flushPromises()
+    const guide = trigger(menu, 'Guide')
+    expect(guide.getAttribute('aria-expanded')).toBe('false')
+    guide.click()
+    await flushPromises()
+    expect(guide.getAttribute('aria-expanded')).toBe('true')
+    const content = document.getElementById(guide.getAttribute('aria-controls')!)!
+    expect(content).not.toBeNull()
+    expect(content.textContent).toContain('Introduction')
+    expect(document.getElementById(content.getAttribute('aria-labelledby')!)).toBe(guide)
+  })
+
+  // Enter on the trigger is the native button click (covered by the click test); Reka handles Space itself.
+  it('horizontal keyboard: Space toggles, ArrowDown enters the content, Escape closes and refocuses the trigger', async () => {
+    const menu = mountMenu({ items: horizontal })
+    await flushPromises()
+    const guide = trigger(menu, 'Guide')
+    const space = () => guide.dispatchEvent(new KeyboardEvent('keydown', { key: ' ', keyCode: 32, bubbles: true, cancelable: true }))
+    guide.focus()
+    space()
+    await flushPromises()
+    expect(guide.getAttribute('aria-expanded')).toBe('true')
+
+    press(guide, 'ArrowDown')
+    await flushPromises()
+    expect(document.activeElement).toBe(link('Introduction'))
+
+    press(link('Introduction'), 'Escape')
+    await flushPromises()
+    expect(guide.getAttribute('aria-expanded')).toBe('false')
+    expect(document.activeElement).toBe(guide)
+
+    space()
+    await flushPromises()
+    expect(guide.getAttribute('aria-expanded')).toBe('true')
+    space()
+    await flushPromises()
+    expect(guide.getAttribute('aria-expanded')).toBe('false')
+  })
+
+  // Reka's focus proxy after the trigger sits inside `aria-hidden`, so it isn't a tab stop; the trigger bridges Tab.
+  it('horizontal keyboard: Tab from the open trigger enters the content and Shift+Tab returns to the trigger', async () => {
+    const menu = mountMenu({ items: horizontal })
+    await flushPromises()
+    const guide = trigger(menu, 'Guide')
+    const tab = (el: Element, shiftKey = false) => {
+      const event = new KeyboardEvent('keydown', { key: 'Tab', shiftKey, bubbles: true, cancelable: true })
+      el.dispatchEvent(event)
+      return event
+    }
+    guide.focus()
+    guide.click()
+    await flushPromises()
+    expect(guide.getAttribute('aria-expanded')).toBe('true')
+    const proxy = guide.nextElementSibling as HTMLElement
+    expect(proxy.getAttribute('aria-hidden')).toBe('true')
+    expect(proxy.tabIndex).toBe(-1)
+
+    expect(tab(guide).defaultPrevented).toBe(true)
+    expect(document.activeElement).toBe(link('Introduction'))
+
+    // Within the content, Reka moves between its links.
+    expect(tab(link('Introduction')).defaultPrevented).toBe(true)
+    expect(document.activeElement).toBe(link('Installation'))
+    tab(link('Installation'), true)
+    expect(document.activeElement).toBe(link('Introduction'))
+
+    expect(tab(link('Introduction'), true).defaultPrevented).toBe(true)
+    expect(document.activeElement).toBe(guide)
+    expect(guide.getAttribute('aria-expanded')).toBe('true')
+
+    // Leaving the content took its links out of the tab order; entering it again restores them.
+    await flushPromises()
+    expect(link('Introduction').tabIndex).toBe(-1)
+    expect(tab(guide).defaultPrevented).toBe(true)
+    expect(document.activeElement).toBe(link('Introduction'))
+
+    // Shift+Tab from the trigger itself goes back through the page as usual.
+    guide.focus()
+    expect(tab(guide, true).defaultPrevented).toBe(false)
+  })
+
+  it('vertical disclosure: each trigger controls its expanded region and arrows move between triggers', async () => {
+    const menu = mountMenu({ orientation: 'vertical', items: [{ label: 'Guide', children }, { label: 'Other', children: [{ label: 'Elsewhere' }] }] })
+    await flushPromises()
+    const guide = trigger(menu, 'Guide')
+    const other = trigger(menu, 'Other')
+    guide.click()
+    await flushPromises()
+    expect(guide.getAttribute('aria-expanded')).toBe('true')
+    const region = document.getElementById(guide.getAttribute('aria-controls')!)!
+    expect(region.textContent).toContain('Introduction')
+    expect(other.getAttribute('aria-expanded')).toBe('false')
+
+    // Arrows follow the visible rows: from an expanded trigger into its children.
+    guide.focus()
+    press(guide, 'ArrowDown')
+    expect(document.activeElement?.textContent).toContain('Introduction')
+    guide.click()
+    await flushPromises()
+    press(guide, 'ArrowDown')
+    expect(document.activeElement).toBe(other)
+    press(other, 'Home')
+    expect(document.activeElement).toBe(guide)
+    press(guide, 'End')
+    expect(document.activeElement).toBe(other)
+  })
+
+  it('a vertical link with children exposes its expanded state and toggles with ArrowRight / ArrowLeft and its chevron', async () => {
+    const menu = mountMenu({ orientation: 'vertical', items: [{ label: 'Reference', href: '#ref', children: [{ label: 'API', href: '#api' }] }] })
+    await flushPromises()
+    const reference = link('Reference')
+    expect(reference.getAttribute('aria-expanded')).toBe('false')
+    const chevron = menu.get('[data-slot=linkTrailing]').element
+    expect(chevron.hasAttribute('aria-expanded')).toBe(false)
+
+    reference.focus()
+    press(reference, 'ArrowRight')
+    await flushPromises()
+    expect(reference.getAttribute('aria-expanded')).toBe('true')
+    const region = document.getElementById(reference.getAttribute('aria-controls')!)!
+    expect(region.textContent).toContain('API')
+    expect(document.getElementById(region.getAttribute('aria-labelledby')!)).toBe(reference)
+
+    press(reference, 'ArrowLeft')
+    await flushPromises()
+    expect(reference.getAttribute('aria-expanded')).toBe('false')
+
+    ;(chevron as HTMLElement).click()
+    await flushPromises()
+    expect(reference.getAttribute('aria-expanded')).toBe('true')
+    expect(menu.emitted('update:modelValue')?.at(-1)).toEqual([['item-0']])
+  })
+
+  it('a disabled vertical trigger is disabled and does not expand', async () => {
+    const menu = mountMenu({ orientation: 'vertical', items: [{ label: 'Archive', children, disabled: true }] })
+    await flushPromises()
+    const archive = trigger(menu, 'Archive')
+    expect(archive.hasAttribute('disabled') || archive.getAttribute('aria-disabled') === 'true').toBe(true)
+    archive.click()
+    await flushPromises()
+    expect(archive.getAttribute('aria-expanded')).toBe('false')
+  })
+
+  it('a collapsed click popover moves focus in and Escape returns it to the item', async () => {
+    const menu = mountMenu({ orientation: 'vertical', collapsed: true, popover: { mode: 'click' }, items: collapsedItems })
+    const guide = trigger(menu, 'Guide')
+    guide.focus()
+    guide.click()
+    await flushPromises()
+    const popover = document.querySelector<HTMLElement>('[data-slot=popover]')!
+    expect(popover.contains(document.activeElement)).toBe(true)
+    press(document.activeElement!, 'Escape')
+    await flushPromises()
+    expect(document.querySelector('[data-slot=popover]')).toBeNull()
+    expect(document.activeElement).toBe(guide)
+  })
+
+  it('a collapsed hover popover opens from the keyboard, takes focus, and Escape returns focus without reopening', async () => {
+    const menu = mountMenu({ orientation: 'vertical', collapsed: true, popover: true, items: collapsedItems })
+    await flushPromises()
+    const guide = trigger(menu, 'Guide')
+    guide.focus()
+    press(guide, 'ArrowRight')
+    await wait(10)
+    await flushPromises()
+    const popover = document.querySelector<HTMLElement>('[data-slot=popover][data-state=open]')!
+    expect(popover).not.toBeNull()
+    expect(guide.getAttribute('aria-expanded')).toBe('true')
+    expect(guide.getAttribute('aria-controls')).toBe(popover.id)
+    expect(document.activeElement).toBe(link('Introduction'))
+
+    // The trigger's blur would close the card after its delay; focus inside keeps it open.
+    await wait(150)
+    expect(document.querySelector('[data-slot=popover][data-state=open]')).not.toBeNull()
+
+    press(document.activeElement!, 'Escape')
+    await wait(10)
+    await flushPromises()
+    expect(document.activeElement).toBe(guide)
+    expect(document.querySelector('[data-slot=popover][data-state=open]')).toBeNull()
+    expect(guide.getAttribute('aria-expanded')).toBe('false')
+
+    press(guide, 'Enter')
+    await wait(10)
+    await flushPromises()
+    expect(document.activeElement).toBe(link('Introduction'))
   })
 })

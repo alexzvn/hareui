@@ -1,6 +1,5 @@
 <script setup lang="ts">
 import type { NavigationMenuItem } from './NavigationMenu.vue'
-import { AccordionTrigger } from 'reka-ui'
 import { computed } from 'vue'
 import Avatar from '../avatar/Avatar.vue'
 import Badge from '../badge/Badge.vue'
@@ -15,8 +14,11 @@ const props = defineProps<{
   item: NavigationMenuItem
   index: number
   active: boolean
-  /** Make the chevron its own accordion trigger (vertical items that are also links). */
-  trailingTrigger?: boolean
+  /**
+   * The item's nested-list state (vertical items that are also links or group labels): the chevron then
+   * toggles it on click. Pointer-only: the link carries the keyboard and ARIA side.
+   */
+  disclosure?: { open: boolean, toggle: () => void }
 }>()
 
 const ctx = useNavigationMenu()
@@ -33,7 +35,7 @@ const label = computed(() => ctx.getLabel(props.item))
 const hasBadge = computed(() => !!props.item.badge || props.item.badge === 0)
 const hasIndicator = computed(() => (!vertical.value && (hasChildren.value || hasContentSlot.value)) || (vertical.value && hasChildren.value))
 const hasTrailing = computed(() => hasBadge.value || !!props.item.kbds?.length || hasIndicator.value || !!props.item.trailingIcon || hasTrailingSlot.value)
-const trailingIsTrigger = computed(() => vertical.value && hasChildren.value && !ctx.props.collapsed && !!props.trailingTrigger)
+const trailingIsTrigger = computed(() => vertical.value && hasChildren.value && !ctx.props.collapsed && !!props.disclosure)
 
 const badgeProps = computed(() => typeof props.item.badge === 'object' ? props.item.badge : { label: props.item.badge })
 const chipProps = computed(() => typeof props.item.chip === 'object' ? props.item.chip : {})
@@ -62,6 +64,7 @@ function onTrailingClick(event: Event) {
   if (trailingIsTrigger.value) {
     event.preventDefault()
     event.stopPropagation()
+    props.disclosure!.toggle()
   }
 }
 </script>
@@ -100,11 +103,10 @@ function onTrailingClick(event: Event) {
       <ExternalIcon v-else-if="showExternal" data-slot="linkLabelExternalIcon" :class="ui.linkLabelExternalIcon({ class: [ctx.props.ui?.linkLabelExternalIcon, item.ui?.linkLabelExternalIcon], active })" />
     </span>
 
-    <component
-      :is="trailingIsTrigger ? AccordionTrigger : 'span'"
+    <span
       v-if="hasTrailing"
-      :as="trailingIsTrigger ? 'span' : undefined"
       data-slot="linkTrailing"
+      :data-state="trailingIsTrigger ? (disclosure!.open ? 'open' : 'closed') : undefined"
       :class="ui.linkTrailing({ class: [ctx.props.ui?.linkTrailing, item.ui?.linkTrailing] })"
       @click="onTrailingClick"
     >
@@ -132,6 +134,6 @@ function onTrailingClick(event: Event) {
         <ChevronDownIcon v-else-if="hasIndicator" data-slot="linkTrailingIcon" :class="ui.linkTrailingIcon({ class: [ctx.props.ui?.linkTrailingIcon, item.ui?.linkTrailingIcon], active })" />
         <NavigationMenuIcon v-else-if="item.trailingIcon" :icon="item.trailingIcon" data-slot="linkTrailingIcon" :class="ui.linkTrailingIcon({ class: [ctx.props.ui?.linkTrailingIcon, item.ui?.linkTrailingIcon], active })" />
       </SlotOutlet>
-    </component>
+    </span>
   </SlotOutlet>
 </template>

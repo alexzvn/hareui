@@ -139,9 +139,25 @@ function isSeparatorHidden(index: number): boolean {
 const indicatorRef = ref<HTMLElement | null>(null)
 
 // Reka's roving focus maps PageUp/PageDown to the first/last tab; RAC's tab list ignores them.
+// RAC's TabsKeyboardDelegate also moves with ArrowLeft/ArrowRight (flipped in RTL) in a vertical
+// list, where Reka only reacts to ArrowUp/ArrowDown; focusing the tab selects it (automatic activation).
 function onListKeydown(event: KeyboardEvent) {
-  if (event.key === 'PageUp' || event.key === 'PageDown')
+  if (event.key === 'PageUp' || event.key === 'PageDown') {
     event.stopPropagation()
+    return
+  }
+  if (props.orientation !== 'vertical' || (event.key !== 'ArrowLeft' && event.key !== 'ArrowRight'))
+    return
+  const list = event.currentTarget as HTMLElement
+  const tabs = [...list.querySelectorAll<HTMLElement>('[data-slot="tabs-tab"]:not([disabled])')]
+  const index = tabs.indexOf(document.activeElement as HTMLElement)
+  if (index === -1)
+    return
+  event.preventDefault()
+  event.stopPropagation()
+  const rtl = list.closest('[dir]')?.getAttribute('dir') === 'rtl'
+  const step = (event.key === 'ArrowRight') !== rtl ? 1 : -1
+  tabs[(index + step + tabs.length) % tabs.length]!.focus()
 }
 
 function placeIndicator() {

@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import { injectAccordionItemContext, injectAccordionRootContext, injectCollapsibleRootContext } from 'reka-ui'
-import { computed, nextTick, onBeforeUnmount, ref, useId, useTemplateRef, watch } from 'vue'
+import { computed, nextTick, onBeforeUnmount, ref, useTemplateRef, watch } from 'vue'
 
 // The nested list of a vertical item, expanding and collapsing with these motion variants:
 //   enter: height 0 -> auto as a `spring({ bounce: 0, duration: 0.24 })`, opacity 0 -> 1 over 220ms
@@ -14,10 +14,17 @@ import { computed, nextTick, onBeforeUnmount, ref, useId, useTemplateRef, watch 
 // It stands in for Reka's `AccordionContent` (same attributes and ids), whose presence mounts the rows a tick after
 // opening and unmounts them at once on close (it only waits for CSS animations).
 
+const props = defineProps<{
+  /** The region id: the item's link or trigger points `aria-controls` at it. */
+  id: string
+  /** Labels the region when the item has no AccordionTrigger (a link or a group label). */
+  labelledby: string
+}>()
+
 const root = injectAccordionRootContext()
 const item = injectAccordionItemContext()
 const collapsible = injectCollapsibleRootContext()
-collapsible.contentId ||= `reka-collapsible-content-${useId()}`
+collapsible.contentId ||= props.id
 
 const el = useTemplateRef<HTMLElement>('el')
 const exiting = ref(false)
@@ -129,7 +136,7 @@ onBeforeUnmount(() => {
     :id="collapsible.contentId"
     ref="el"
     role="region"
-    :aria-labelledby="item.triggerId"
+    :aria-labelledby="item.triggerId || labelledby"
     :data-state="item.dataState.value"
     :data-disabled="item.dataDisabled.value"
     :data-orientation="root.orientation"
