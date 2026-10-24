@@ -211,6 +211,7 @@ function isSelected(item: ListBoxItem) {
 // so options render slot-less when there is nothing to forward.
 const itemSlots = ['item', 'item-leading', 'item-label', 'item-description', 'item-trailing', 'indicator'] as const
 const forwarded = computed(() => itemSlots.filter(name => slots[name]))
+const sectionLabelled = (section: ListBoxSection<T>) => !!(section.label || slots['section-label'])
 
 function optionProps(row: Row) {
   return {
@@ -442,18 +443,22 @@ defineExpose({
       <template v-for="block in (virtualize ? [] : blocks)" :key="block.kind === 'item' ? `i${block.index}` : `b${block.key}`">
         <hr
           v-if="block.kind === 'separator'"
+          role="presentation"
           data-slot="separator"
           data-orientation="horizontal"
           :class="ui.separator({ class: props.ui?.separator })"
         >
-        <ListboxGroup
+        <!-- Reka's group always references its label's id; an unlabelled section stays an unnamed group, as in RAC -->
+        <component
+          :is="sectionLabelled(block.section) ? ListboxGroup : 'section'"
           v-else-if="block.kind === 'section'"
-          as="section"
+          v-bind="sectionLabelled(block.section) ? { as: 'section' } : { role: 'group' }"
           :class="ui.section({ class: props.ui?.section })"
         >
           <ListboxGroupLabel
-            v-if="block.section.label || slots['section-label']"
+            v-if="sectionLabelled(block.section)"
             as="header"
+            role="presentation"
             data-slot="header"
             :class="ui.header({ class: props.ui?.header })"
           >
@@ -483,7 +488,7 @@ defineExpose({
               </template>
             </ListBoxOption>
           </template>
-        </ListboxGroup>
+        </component>
         <ListBoxOption
           v-else-if="!forwarded.length"
           v-bind="optionProps(block)"
@@ -501,11 +506,14 @@ defineExpose({
           </template>
         </ListBoxOption>
       </template>
-      <div v-if="!blocks.length && slots.empty" data-slot="empty-state" :class="ui.emptyState({ class: props.ui?.emptyState })">
-        <slot name="empty" />
+      <!-- RAC wraps the empty state in an option (a listbox owns only options and groups) -->
+      <div v-if="!blocks.length && slots.empty" role="option" style="display: contents;">
+        <div data-slot="empty-state" :class="ui.emptyState({ class: props.ui?.emptyState })">
+          <slot name="empty" />
+        </div>
       </div>
-      <!-- RAC ListBoxLoadMoreItem: loading row (not an option) + 1px sentinel -->
-      <div v-if="loading && slots.loading" role="presentation" data-slot="list-box-loading">
+      <!-- RAC ListBoxLoadMoreItem: loading row (an unselectable option) + 1px sentinel -->
+      <div v-if="loading && slots.loading" role="option" data-slot="list-box-loading">
         <slot name="loading" />
       </div>
       <div v-if="loading !== undefined" ref="sentinel" aria-hidden="true" data-slot="list-box-load-more" style="position: relative; height: 1px; width: 1px;" />

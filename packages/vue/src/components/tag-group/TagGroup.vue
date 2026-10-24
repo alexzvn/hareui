@@ -345,7 +345,12 @@ const describedBy = computed(() => [hasDescription.value && descriptionId.value,
           @remove="removeOne(item)"
         />
       </template>
-      <slot v-if="!items.length" name="empty" />
+      <!-- As RAC GridList: the empty state sits in a layout-less row/cell, so the grid keeps its required children -->
+      <div v-if="!items.length && $slots.empty" role="row" style="display: contents">
+        <div role="gridcell" style="display: contents">
+          <slot name="empty" />
+        </div>
+      </div>
     </div>
     <Description v-if="hasDescription && $slots.description" :id="descriptionId">
       <slot name="description">{{ description }}</slot>

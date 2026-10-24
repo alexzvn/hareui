@@ -2,6 +2,7 @@ import { mount } from '@vue/test-utils'
 import { afterEach, describe, expect, it } from 'vitest'
 import { h, nextTick } from 'vue'
 import Select from '../src/components/select/Select.vue'
+import { axeViolations, expectAccessible } from './a11y'
 
 const items = [
   { value: 'cat', label: 'Cat' },
@@ -159,6 +160,206 @@ describe('Select', () => {
     expect(document.querySelector('[role=listbox]')).toBeNull()
     expect(wrapper.emitted('update:open')).toBeUndefined()
     wrapper.unmount()
+  })
+
+  describe('accessibility', () => {
+    const sectioned = [
+      { type: 'section' as const, label: 'Mammals', items: [{ value: 'cat', label: 'Cat', description: 'Purrs' }, { value: 'dog', label: 'Dog' }] },
+      { type: 'separator' as const },
+      { type: 'section' as const, label: 'Others', items: [{ value: 'emu', label: 'Emu', disabled: true }, { value: 'eel', label: 'Eel' }] },
+    ]
+    const listbox = () => document.querySelector<HTMLElement>('[role=listbox]')
+    const optionEls = () => [...document.querySelectorAll<HTMLElement>('[role=option]')]
+    const focusedText = () => document.activeElement?.textContent?.trim()
+    async function press(key: string, init: KeyboardEventInit = {}) {
+      document.activeElement!.dispatchEvent(new KeyboardEvent('keydown', { key, bubbles: true, cancelable: true, ...init }))
+      await flush()
+    }
+    async function openWithKeyboard(props: Record<string, unknown>, attrs: Record<string, unknown> = {}) {
+      const wrapper = mount(Select, { props: { items, label: 'Pet', ...props }, attrs, attachTo: document.body })
+      wrapper.get<HTMLElement>(trigger).element.focus()
+      await wrapper.get(trigger).trigger('keydown', { key: 'ArrowDown' })
+      await flush()
+      await flush()
+      return wrapper
+    }
+
+    it('has no axe violations idle, with a description, required, invalid with an error message, and disabled', async () => {
+      for (const props of [
+        { label: 'Pet' },
+        { label: 'Pet', description: 'Your favourite', defaultValue: 'dog' },
+        { label: 'Pet', required: true, name: 'pet' },
+        { label: 'Pet', invalid: true, errorMessage: 'Pick a pet', description: 'Your favourite' },
+        { label: 'Pet', disabled: true, defaultValue: 'cat' },
+      ]) {
+        const wrapper = mount(Select, { props: { items, ...props }, attachTo: document.body })
+        await expectAccessible(wrapper)
+        wrapper.unmount()
+      }
+    })
+
+    it('has no axe violations named only by aria-label, and with a clear button', async () => {
+      const wrapper = mount(Select, { props: { items, clearable: true, defaultValue: 'cat' }, attrs: { 'aria-label': 'Pet' }, attachTo: document.body })
+      await expectAccessible(wrapper)
+      wrapper.unmount()
+    })
+
+    it('has no axe violations while open, with a selection, sections, separators and a disabled option', async () => {
+      const single = await openWithKeyboard({ items: sectioned, defaultValue: 'dog', description: 'Your favourite' })
+      expect(listbox()).not.toBeNull()
+      await expectAccessible()
+      single.unmount()
+
+      const multiple = await openWithKeyboard({ items: sectioned, selectionMode: 'multiple', defaultValue: ['cat', 'eel'] })
+      expect(listbox()).not.toBeNull()
+      await expectAccessible()
+      multiple.unmount()
+    })
+
+    it('has no axe violations while open with an empty collection', async () => {
+      const wrapper = await openWithKeyboard({ items: [] }, {})
+      expect(listbox()).not.toBeNull()
+      expect(await axeViolations()).toEqual([])
+      wrapper.unmount()
+    })
+
+    it('exposes the popup type, expanded state and the controlled listbox on the trigger', async () => {
+      const wrapper = mount(Select, { props: { items, label: 'Pet' }, attachTo: document.body })
+      const btn = wrapper.get(trigger)
+      expect(btn.element.tagName).toBe('BUTTON')
+      expect(btn.attributes('aria-haspopup')).toBe('listbox')
+      expect(btn.attributes('aria-expanded')).toBe('false')
+      await btn.trigger('keydown', { key: 'ArrowDown' })
+      await flush()
+      expect(btn.attributes('aria-expanded')).toBe('true')
+      const controls = btn.attributes('aria-controls')
+      expect(controls).toBeTruthy()
+      const controlled = document.getElementById(controls!)
+      expect(controlled).not.toBeNull()
+      expect(controlled!.matches('[role=listbox]') || !!controlled!.querySelector('[role=listbox]')).toBe(true)
+      wrapper.unmount()
+    })
+
+    it('names the listbox after the label and reflects selected and disabled options', async () => {
+      const wrapper = await openWithKeyboard({ id: 's', defaultValue: 'dog' })
+      expect(listbox()!.getAttribute('aria-labelledby')).toBe('s-label')
+      expect(document.getElementById('s-label')!.textContent!.trim()).toBe('Pet')
+      const [cat, dog, emu] = optionEls()
+      expect(dog!.getAttribute('aria-selected')).toBe('true')
+      expect(cat!.getAttribute('aria-selected')).toBe('false')
+      expect(emu!.getAttribute('aria-disabled')).toBe('true')
+      wrapper.unmount()
+    })
+
+    it('names the listbox with the aria-label when there is no visible label', async () => {
+      const wrapper = mount(Select, { props: { items }, attrs: { 'aria-label': 'Pet' }, attachTo: document.body })
+      await wrapper.get(trigger).trigger('keydown', { key: 'ArrowDown' })
+      await flush()
+      expect(listbox()!.getAttribute('aria-label')).toBe('Pet')
+      wrapper.unmount()
+    })
+
+    it('the trigger name includes the label and the current value', () => {
+      const wrapper = mount(Select, { props: { items, id: 's', label: 'Pet', defaultValue: 'dog' } })
+      const ids = wrapper.get(trigger).attributes('aria-labelledby')!.split(' ')
+      expect(ids.map(id => wrapper.find(`[id="${id}"]`).text())).toEqual(['Pet', 'Dog'])
+      wrapper.unmount()
+    })
+
+    it('pressing the label focuses the trigger', async () => {
+      const wrapper = mount(Select, { props: { items, label: 'Pet' }, attachTo: document.body })
+      await wrapper.get('[data-slot=label]').trigger('click')
+      expect(document.activeElement).toBe(wrapper.get(trigger).element)
+      wrapper.unmount()
+    })
+
+    it('Escape closes the list without selecting and returns focus to the trigger', async () => {
+      const wrapper = await openWithKeyboard({})
+      expect(focusedText()).toBe('Cat')
+      await press('Escape')
+      await flush()
+      expect(listbox()).toBeNull()
+      expect(wrapper.get(trigger).attributes('aria-expanded')).toBe('false')
+      expect(document.activeElement).toBe(wrapper.get(trigger).element)
+      expect(wrapper.emitted('update:modelValue')).toBeUndefined()
+      wrapper.unmount()
+    })
+
+    it('arrow keys skip disabled options and Home / End reach the first and last enabled ones', async () => {
+      const wrapper = await openWithKeyboard({ defaultValue: 'dog' })
+      expect(focusedText()).toBe('Dog')
+      await press('ArrowDown')
+      expect(focusedText()).toBe('Eel')
+      await press('ArrowUp')
+      expect(focusedText()).toBe('Dog')
+      await press('End')
+      expect(focusedText()).toBe('Eel')
+      await press('Home')
+      expect(focusedText()).toBe('Cat')
+      wrapper.unmount()
+    })
+
+    it('Space selects the focused option, closes and returns focus to the trigger', async () => {
+      const wrapper = await openWithKeyboard({})
+      await press('ArrowDown')
+      expect(focusedText()).toBe('Dog')
+      await press(' ')
+      await flush()
+      expect(wrapper.emitted('update:modelValue')?.at(-1)).toEqual(['dog'])
+      expect(listbox()).toBeNull()
+      expect(document.activeElement).toBe(wrapper.get(trigger).element)
+      wrapper.unmount()
+    })
+
+    it('multiple: the listbox is multiselectable and Enter toggles options while the list stays open', async () => {
+      const wrapper = await openWithKeyboard({ selectionMode: 'multiple' })
+      expect(listbox()!.getAttribute('aria-multiselectable')).toBe('true')
+      await press('Enter')
+      expect(wrapper.emitted('update:modelValue')?.at(-1)).toEqual([['cat']])
+      expect(optionEls()[0]!.getAttribute('aria-selected')).toBe('true')
+      expect(listbox()).not.toBeNull()
+      expect(focusedText()).toBe('Cat')
+      wrapper.unmount()
+    })
+
+    it('keeps the hidden form select out of the tab order and the accessibility tree', () => {
+      const wrapper = mount(Select, { props: { items, label: 'Pet', name: 'pet' } })
+      const hidden = wrapper.get('select')
+      expect(hidden.attributes('tabindex')).toBe('-1')
+      expect(hidden.element.closest('[aria-hidden=true]')).not.toBeNull()
+      wrapper.unmount()
+    })
+
+    it('the clear button is presentational inside the trigger; Delete clears from the keyboard', async () => {
+      const wrapper = mount(Select, { props: { items, label: 'Pet', clearable: true, defaultValue: 'cat' }, attachTo: document.body })
+      expect(wrapper.get('[data-slot=select-clear-button]').attributes('aria-hidden')).toBe('true')
+      wrapper.get<HTMLElement>(trigger).element.focus()
+      await wrapper.get(trigger).trigger('keydown', { key: 'Delete' })
+      expect(wrapper.emitted('clear')).toHaveLength(1)
+      expect(wrapper.get(value).text()).toBe('Select an item')
+      expect(document.activeElement).toBe(wrapper.get(trigger).element)
+      wrapper.unmount()
+    })
+
+    it('disabled: the trigger is natively disabled, so it is out of the tab order', () => {
+      const wrapper = mount(Select, { props: { items, label: 'Pet', disabled: true } })
+      expect(wrapper.get(trigger).attributes('disabled')).toBeDefined()
+      expect(wrapper.get('select').attributes('disabled')).toBeDefined()
+      wrapper.unmount()
+    })
+
+    it('names the popover dialog after the label, or after an aria-label-only trigger', async () => {
+      const labelled = await openWithKeyboard({ id: 's' })
+      const dialog = () => document.querySelector('[data-slot=select-popover]')!
+      expect(dialog().getAttribute('role')).toBe('dialog')
+      expect(dialog().getAttribute('aria-labelledby')).toBe('s-label')
+      expect(labelled.get(trigger).attributes('id')).toBe('s')
+      labelled.unmount()
+
+      const aria = await openWithKeyboard({ id: 's', label: undefined }, { 'aria-label': 'Pet' })
+      expect(dialog().getAttribute('aria-labelledby')).toBe('s')
+      aria.unmount()
+    })
   })
 
   describe('behaviour parity (React Aria)', () => {

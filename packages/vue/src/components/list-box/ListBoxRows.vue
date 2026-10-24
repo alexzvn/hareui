@@ -42,6 +42,7 @@ const slots = defineSlots<{
 
 const itemSlots = ['item', 'item-leading', 'item-label', 'item-description', 'item-trailing', 'indicator'] as const
 const forwarded = computed(() => itemSlots.filter(name => slots[name]))
+const sectionLabelled = (section: ListBoxSection) => !!(section.label || slots['section-label'])
 const empty = computed(() => countRows(props.blocks) === 0)
 
 // Virtualized: flat option rows, looked up by value
@@ -123,14 +124,22 @@ watch([sentinelVisible, () => props.loading, () => countRows(props.blocks)], () 
   <template v-for="block in (virtualize ? [] : blocks)" :key="block.kind === 'item' ? `i${block.index}` : `b${block.key}`">
     <hr
       v-if="block.kind === 'separator'"
+      role="presentation"
       data-slot="separator"
       data-orientation="horizontal"
       :class="classes.separator()"
     >
-    <ListboxGroup v-else-if="block.kind === 'section'" as="section" :class="classes.section()">
+    <!-- Reka's group always references its label's id; an unlabelled section stays an unnamed group, as in RAC -->
+    <component
+      :is="sectionLabelled(block.section) ? ListboxGroup : 'section'"
+      v-else-if="block.kind === 'section'"
+      v-bind="sectionLabelled(block.section) ? { as: 'section' } : { role: 'group' }"
+      :class="classes.section()"
+    >
       <ListboxGroupLabel
-        v-if="block.section.label || slots['section-label']"
+        v-if="sectionLabelled(block.section)"
         as="header"
+        role="presentation"
         data-slot="header"
         :class="classes.header()"
       >
@@ -148,7 +157,7 @@ watch([sentinelVisible, () => props.loading, () => countRows(props.blocks)], () 
       <template v-else>
         <ListBoxOption v-for="row in block.rows" :key="`i${row.index}`" v-bind="optionProps(row) as any" />
       </template>
-    </ListboxGroup>
+    </component>
     <ListBoxOption v-else-if="forwarded.length" v-bind="optionProps(block) as any">
       <template v-for="name in forwarded" #[name]="state">
         <slot :name="name" v-bind="state" />
@@ -156,15 +165,15 @@ watch([sentinelVisible, () => props.loading, () => countRows(props.blocks)], () 
     </ListBoxOption>
     <ListBoxOption v-else v-bind="optionProps(block) as any" />
   </template>
-  <!-- RAC renders the empty state inside a presentational row -->
-  <div v-if="empty && (slots.empty || emptyText)" role="presentation" style="display: contents;">
+  <!-- RAC renders the empty state inside an option row (a listbox owns only options and groups) -->
+  <div v-if="empty && (slots.empty || emptyText)" role="option" style="display: contents;">
     <div data-slot="empty-state" :class="classes.emptyState()">
       <slot name="empty">
         {{ emptyText }}
       </slot>
     </div>
   </div>
-  <div v-if="loading && slots.loading" role="presentation" data-slot="list-box-loading">
+  <div v-if="loading && slots.loading" role="option" data-slot="list-box-loading">
     <slot name="loading" />
   </div>
   <div v-if="loading !== undefined" ref="sentinel" aria-hidden="true" data-slot="list-box-load-more" style="position: relative; height: 1px; width: 1px;" />

@@ -2,7 +2,9 @@ import { flushPromises, mount } from '@vue/test-utils'
 import { describe, expect, it } from 'vitest'
 import { h, ref } from 'vue'
 import Fieldset from '../src/components/fieldset/Fieldset.vue'
+import type { NativeSelectProps } from '../src/components/native-select/NativeSelect.vue'
 import NativeSelect from '../src/components/native-select/NativeSelect.vue'
+import { expectAccessible } from './a11y'
 
 const select = '[data-slot=native-select-select]'
 const items = ['todo', { value: 'done', label: 'Done' }, { value: 'cancelled', label: 'Cancelled', disabled: true }]
@@ -99,6 +101,66 @@ describe('NativeSelect', () => {
     expect(new FormData(form).get('a')).toBe('done')
     wrapper.unmount()
     form.remove()
+  })
+
+  it('has no axe violations idle, with a placeholder and groups, a description, required, invalid with an error message, and disabled', async () => {
+    const cases: NativeSelectProps[] = [
+      { label: 'Status', items },
+      { label: 'Status', placeholder: 'Select', items: [...items, { label: 'More', items: ['a', 'b'] }] },
+      { label: 'Status', description: 'Where the task stands', items, defaultValue: 'done' },
+      { label: 'Status', required: true, name: 'status', placeholder: 'Select', items },
+      { label: 'Status', invalid: true, errorMessage: 'Pick a status', description: 'Where the task stands', items },
+      { label: 'Status', disabled: true, items },
+    ]
+    for (const props of cases) {
+      const wrapper = mount(NativeSelect, { props, attachTo: document.body })
+      await expectAccessible(wrapper)
+      wrapper.unmount()
+    }
+  })
+
+  it('has no axe violations named only by aria-label', async () => {
+    const wrapper = mount(NativeSelect, { props: { items }, attrs: { 'aria-label': 'Status' }, attachTo: document.body })
+    expect(wrapper.get(select).attributes('aria-label')).toBe('Status')
+    await expectAccessible(wrapper)
+    wrapper.unmount()
+  })
+
+  it('associates the label with the select (native label activation focuses it)', () => {
+    const wrapper = mount(NativeSelect, { props: { label: 'Status', items }, attachTo: document.body })
+    const label = wrapper.get('label')
+    expect(label.attributes('for')).toBe(wrapper.get(select).attributes('id'))
+    expect((wrapper.get(select).element as HTMLSelectElement).labels?.[0]?.textContent?.trim()).toBe('Status')
+    wrapper.unmount()
+  })
+
+  it('describes the select by its description, then its error, keeping a consumer aria-describedby', () => {
+    const wrapper = mount(NativeSelect, {
+      props: { id: 's', label: 'Status', items, description: 'Help', invalid: true, errorMessage: 'Bad' },
+      attrs: { 'aria-describedby': 'extra' },
+    })
+    expect(wrapper.get(select).attributes('aria-describedby')).toBe('extra s-description s-error')
+    expect(wrapper.get('#s-description').text()).toBe('Help')
+    expect(wrapper.get('#s-error').text()).toBe('Bad')
+    wrapper.unmount()
+  })
+
+  it('exposes required, invalid and disabled state on the select', async () => {
+    const wrapper = mount(NativeSelect, { props: { label: 'Status', items, required: true } })
+    const el = wrapper.get(select)
+    expect(el.attributes('required')).toBeDefined()
+    expect(el.attributes('aria-required')).toBe('true')
+    expect(el.attributes('aria-invalid')).toBeUndefined()
+    await wrapper.setProps({ invalid: true, disabled: true })
+    expect(el.attributes('aria-invalid')).toBe('true')
+    expect(el.attributes('disabled')).toBeDefined()
+    wrapper.unmount()
+  })
+
+  it('keeps the decorative chevron out of the accessibility tree', () => {
+    const wrapper = mount(NativeSelect, { props: { label: 'Status', items } })
+    expect(wrapper.get('[data-slot=native-select-indicator]').attributes('aria-hidden')).toBe('true')
+    wrapper.unmount()
   })
 
   it('is disabled by an ancestor Fieldset', () => {

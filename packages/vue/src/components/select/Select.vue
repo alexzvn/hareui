@@ -157,8 +157,8 @@ export interface SelectEmits {
 </script>
 
 <script setup lang="ts" generic="T extends ListBoxItem = ListBoxItem">
-import { PopoverContent, PopoverPortal, PopoverRoot, PopoverTrigger } from 'reka-ui'
-import { computed, provide, ref, useAttrs, useId, useTemplateRef, watch } from 'vue'
+import { injectPopoverRootContext, PopoverContent, PopoverPortal, PopoverRoot, PopoverTrigger } from 'reka-ui'
+import { computed, defineComponent, provide, ref, useAttrs, useId, useTemplateRef, watch, watchEffect } from 'vue'
 import { useComponentUI } from '../../composables/useComponentUI'
 import { useFieldValidation } from '../../composables/useFieldValidation'
 import { keyboardModalityKey, useKeyboardModality } from '../../composables/useKeyboardModality'
@@ -417,6 +417,19 @@ const triggerLabelledBy = computed(() => [
   valueId.value,
 ].filter(Boolean).join(' '))
 const listLabelledBy = computed(() => (attrs['aria-labelledby'] as string | undefined) ?? (hasLabel.value ? labelId.value : undefined))
+// RAC names the popover dialog like the listbox (or after an `aria-label`-only trigger). Reka labels its content with
+// its own trigger id, which the trigger's `id` replaces, so point that id at the label instead (set before the trigger's
+// setup, which only fills it when empty)
+const popoverLabelledBy = computed(() => listLabelledBy.value ?? id.value)
+const PopoverLabel = defineComponent({
+  setup() {
+    const popover = injectPopoverRootContext()
+    watchEffect(() => {
+      popover.triggerId = popoverLabelledBy.value
+    })
+    return () => null
+  },
+})
 // Bound after the root's `data-slot`, so a wrapping component (CellSelect, InlineSelect) can rename the root
 const rootAttrs = computed(() => {
   const { 'aria-label': _label, 'aria-labelledby': _labelledby, ...rest } = attrs
@@ -480,6 +493,7 @@ watch(disabled, (disabled) => {
       {{ label }}
     </Label>
     <PopoverRoot :open="isOpen" :modal="false" @update:open="onRootOpenChange">
+      <PopoverLabel />
       <PopoverTrigger as-child>
         <button
           :id="id"
@@ -491,7 +505,6 @@ watch(disabled, (disabled) => {
           :aria-labelledby="triggerLabelledBy"
           :aria-describedby="describedBy"
           :aria-invalid="invalid ? 'true' : undefined"
-          :aria-required="required ? 'true' : undefined"
           :disabled="disabled"
           :data-disabled="disabled ? 'true' : undefined"
           :data-pressed="isOpen ? 'true' : undefined"

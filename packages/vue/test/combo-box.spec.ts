@@ -4,6 +4,7 @@ import { afterEach, describe, expect, it, vi } from 'vitest'
 import { h, nextTick } from 'vue'
 import type { ComboBoxValue } from '../src/components/combo-box/ComboBox.vue'
 import ComboBox from '../src/components/combo-box/ComboBox.vue'
+import { expectAccessible } from './a11y'
 
 const items = [
   { value: 'aardvark', label: 'Aardvark' },
@@ -350,5 +351,220 @@ describe('ComboBox', () => {
     expect(texts()).toEqual(['Aardvark', 'Kangaroo'])
     expect(updated).not.toContain('Aardvark')
     wrapper.unmount()
+  })
+
+  describe('accessibility', () => {
+    /** The text an `aria-labelledby` / `aria-describedby` list points at; fails on dangling ids. */
+    const refText = (ids: string | null | undefined) => (ids ?? '').split(' ').filter(Boolean).map((id) => {
+      const el = document.getElementById(id)
+      expect(el, `#${id} exists`).not.toBeNull()
+      return el!.getAttribute('aria-label') ?? el!.textContent!.trim()
+    }).join(' ')
+    const listbox = () => document.querySelector<HTMLElement>('[role=listbox]')
+
+    it('has no axe violations closed, with a description, disabled and read-only', async () => {
+      for (const props of [{}, { description: 'Pick one', placeholder: 'Search animals' }, { disabled: true }, { readonly: true, defaultValue: 'cat' }]) {
+        const { wrapper } = setup(props)
+        await flush()
+        await expectAccessible()
+        wrapper.unmount()
+      }
+    })
+
+    it('has no axe violations open, with a highlighted, a selected and a disabled option', async () => {
+      const { wrapper, input } = setup({ defaultValue: 'cat' })
+      await input.trigger('focus')
+      await flush()
+      await input.trigger('keydown', { key: 'ArrowDown' })
+      await flush()
+      expect(input.attributes('aria-activedescendant')).toBeDefined()
+      await expectAccessible()
+      wrapper.unmount()
+    })
+
+    it('has no axe violations open in multiple mode and with the empty state', async () => {
+      const multi = setup({ selectionMode: 'multiple', defaultValue: ['dog'] })
+      await multi.input.trigger('focus')
+      await flush()
+      await expectAccessible()
+      multi.wrapper.unmount()
+
+      const empty = setup({ allowsEmptyCollection: true }, { empty: () => 'No results' })
+      await empty.input.trigger('focus')
+      await type(empty.input, 'xyz')
+      expect(document.querySelector('[data-slot=empty-state]')).not.toBeNull()
+      await expectAccessible()
+      empty.wrapper.unmount()
+    })
+
+    it('has no axe violations open with sections and separators', async () => {
+      const sections = [
+        { type: 'section', label: 'A', items: [{ value: 'a1', label: 'Apple' }] },
+        { type: 'separator' },
+        { type: 'section', label: 'B', items: [{ value: 'b1', label: 'Banana' }] },
+      ]
+      const { wrapper, input } = setup({ items: sections })
+      try {
+        await input.trigger('focus')
+        await flush()
+        // Each section is a group named by its header
+        const groups = [...document.querySelectorAll('[role=listbox] > [role=group]')]
+        expect(groups.map(g => refText(g.getAttribute('aria-labelledby')))).toEqual(['A', 'B'])
+        await expectAccessible()
+      }
+      finally {
+        wrapper.unmount()
+      }
+    })
+
+    it('has no axe violations when invalid with an error message', async () => {
+      const { wrapper, input } = setup({ invalid: true, errorMessage: 'Pick an animal', description: 'Required' })
+      await flush()
+      expect(input.attributes('aria-invalid')).toBe('true')
+      await expectAccessible()
+      wrapper.unmount()
+    })
+
+    it('names the input, the trigger and the listbox from the label', async () => {
+      const { wrapper, input } = setup({ description: 'Pick one' })
+      expect(refText(input.attributes('aria-labelledby'))).toBe('Animal')
+      expect(document.querySelector(`label[for="${input.attributes('id')}"]`)?.textContent?.trim()).toBe('Animal')
+      expect(refText(input.attributes('aria-describedby'))).toBe('Pick one')
+      const trigger = wrapper.get('[data-slot=combo-box-trigger]')
+      expect(refText(trigger.attributes('aria-labelledby'))).toBe('Show suggestions Animal')
+      await input.trigger('focus')
+      await flush()
+      expect(refText(listbox()!.getAttribute('aria-labelledby'))).toBe('Suggestions Animal')
+      wrapper.unmount()
+    })
+
+    it('an aria-label names the input when there is no visible label', async () => {
+      const wrapper = mount(ComboBox, { props: { items }, attrs: { 'aria-label': 'Animal' }, attachTo: document.body })
+      const input = wrapper.get('input[role=combobox]')
+      expect(input.attributes('aria-label')).toBe('Animal')
+      expect(input.attributes('aria-labelledby')).toBeUndefined()
+      await expectAccessible()
+      wrapper.unmount()
+    })
+
+    it('aria-expanded / aria-controls follow the popup on the input and the trigger', async () => {
+      const { wrapper, input } = setup()
+      const trigger = wrapper.get('[data-slot=combo-box-trigger]')
+      expect(input.attributes('aria-expanded')).toBe('false')
+      expect(input.attributes('aria-controls')).toBeUndefined()
+      expect(trigger.attributes('aria-haspopup')).toBe('listbox')
+      await input.trigger('focus')
+      await flush()
+      expect(input.attributes('aria-expanded')).toBe('true')
+      expect(trigger.attributes('aria-expanded')).toBe('true')
+      expect(input.attributes('aria-controls')).toBe(listbox()!.id)
+      expect(trigger.attributes('aria-controls')).toBe(listbox()!.id)
+      wrapper.unmount()
+    })
+
+    it('options expose aria-selected; multiple mode is aria-multiselectable', async () => {
+      const single = setup({ defaultValue: 'cat' })
+      await single.input.trigger('focus')
+      await flush()
+      expect(options().map(o => o.getAttribute('aria-selected'))).toEqual(['false', 'true', 'false', 'false'])
+      expect(listbox()!.hasAttribute('aria-multiselectable')).toBe(false)
+      single.wrapper.unmount()
+
+      const multi = setup({ selectionMode: 'multiple', defaultValue: ['aardvark', 'dog'] })
+      await multi.input.trigger('focus')
+      await flush()
+      expect(listbox()!.getAttribute('aria-multiselectable')).toBe('true')
+      expect(options().map(o => o.getAttribute('aria-selected'))).toEqual(['true', 'false', 'true', 'false'])
+      expect(refText(multi.input.attributes('aria-describedby'))).toBe('Aardvark and Dog')
+      multi.wrapper.unmount()
+    })
+
+    it('a disabled option is exposed with aria-disabled', async () => {
+      const { wrapper, input } = setup()
+      try {
+        await input.trigger('focus')
+        await flush()
+        expect(options()[3]!.getAttribute('aria-disabled')).toBe('true')
+        expect(options().slice(0, 3).map(o => o.getAttribute('aria-disabled'))).toEqual([null, null, null])
+      }
+      finally {
+        wrapper.unmount()
+      }
+    })
+
+    it('ArrowDown on a closed field opens it on the first option, ArrowUp on the last enabled one', async () => {
+      const down = setup({ menuTrigger: 'manual' })
+      await down.input.trigger('focus')
+      await down.input.trigger('keydown', { key: 'ArrowDown' })
+      await flush()
+      expect(down.input.attributes('aria-expanded')).toBe('true')
+      expect(down.input.attributes('aria-activedescendant')).toBe(options()[0]!.id)
+      down.wrapper.unmount()
+
+      const up = setup({ menuTrigger: 'manual' })
+      await up.input.trigger('focus')
+      await up.input.trigger('keydown', { key: 'ArrowUp' })
+      await flush()
+      // Kangaroo (last) is disabled
+      expect(up.input.attributes('aria-activedescendant')).toBe(options()[2]!.id)
+      up.wrapper.unmount()
+    })
+
+    it('Home / End move to the first / last enabled option and the arrows stop at the ends', async () => {
+      const { wrapper, input } = setup()
+      await input.trigger('focus')
+      await flush()
+      const active = () => input.attributes('aria-activedescendant')
+      await input.trigger('keydown', { key: 'End' })
+      await flush()
+      expect(active()).toBe(options()[2]!.id)
+      await input.trigger('keydown', { key: 'ArrowDown' })
+      await flush()
+      expect(active()).toBe(options()[2]!.id)
+      await input.trigger('keydown', { key: 'Home' })
+      await flush()
+      expect(active()).toBe(options()[0]!.id)
+      await input.trigger('keydown', { key: 'ArrowUp' })
+      await flush()
+      expect(active()).toBe(options()[0]!.id)
+      wrapper.unmount()
+    })
+
+    it('Escape closes the listbox and keeps focus in the input', async () => {
+      const { wrapper, input } = setup()
+      input.element.focus()
+      await flush()
+      expect(input.attributes('aria-expanded')).toBe('true')
+      await input.trigger('keydown', { key: 'Escape' })
+      await flush()
+      expect(input.attributes('aria-expanded')).toBe('false')
+      expect(input.attributes('aria-activedescendant')).toBeUndefined()
+      expect(document.activeElement).toBe(input.element)
+      wrapper.unmount()
+    })
+
+    it('focus stays in the input while options are highlighted and after the trigger toggles the popup', async () => {
+      const { wrapper, input } = setup({ menuTrigger: 'manual' })
+      const trigger = wrapper.get<HTMLButtonElement>('[data-slot=combo-box-trigger]')
+      // The trigger is a pointer affordance: Tab goes to the input only
+      expect(trigger.attributes('tabindex')).toBe('-1')
+      trigger.element.dispatchEvent(new MouseEvent('click', { bubbles: true, detail: 0 }))
+      await flush()
+      expect(document.activeElement).toBe(input.element)
+      expect(input.attributes('aria-expanded')).toBe('true')
+      expect(input.attributes('aria-activedescendant')).toBe(options()[0]!.id)
+      await input.trigger('keydown', { key: 'ArrowDown' })
+      await flush()
+      expect(document.activeElement).toBe(input.element)
+      expect(options().some(o => o.contains(document.activeElement))).toBe(false)
+      wrapper.unmount()
+    })
+
+    it('a disabled field is out of the tab order and its trigger is disabled', async () => {
+      const { wrapper, input } = setup({ disabled: true })
+      expect((input.element as HTMLInputElement).disabled).toBe(true)
+      expect(wrapper.get<HTMLButtonElement>('[data-slot=combo-box-trigger]').element.disabled).toBe(true)
+      wrapper.unmount()
+    })
   })
 })

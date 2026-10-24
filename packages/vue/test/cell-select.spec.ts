@@ -1,8 +1,10 @@
 import { mount } from '@vue/test-utils'
 import { afterEach, describe, expect, it } from 'vitest'
 import { h, ref } from 'vue'
+import type { CellSelectProps } from '../src/components/cell-select/CellSelect.vue'
 import CellSelect from '../src/components/cell-select/CellSelect.vue'
 import Fieldset from '../src/components/fieldset/Fieldset.vue'
+import { expectAccessible } from './a11y'
 
 const items = [
   { value: 'default', label: 'Default' },
@@ -91,6 +93,82 @@ describe('CellSelect', () => {
     const focusedOption = document.querySelector('[role=option][data-focused=true]')
     expect(focusedOption).not.toBeNull()
     expect(focusedOption!.getAttribute('data-focus-visible')).toBe('true')
+    wrapper.unmount()
+  })
+
+  async function openWithKeyboard(props: Record<string, unknown> = {}) {
+    const wrapper = mount(CellSelect, { props: { items, label: 'Theme', defaultValue: 'dark', ...props }, attachTo: document.body })
+    wrapper.get<HTMLElement>(trigger).element.focus()
+    await wrapper.get(trigger).trigger('keydown', { key: 'ArrowDown' })
+    await flush()
+    await flush()
+    return wrapper
+  }
+  const focusedText = () => document.activeElement?.textContent?.trim()
+  const press = async (key: string) => {
+    document.activeElement!.dispatchEvent(new KeyboardEvent('keydown', { key, bubbles: true, cancelable: true }))
+    await flush()
+  }
+
+  it('has no axe violations idle, with a description, invalid with an error message, and disabled', async () => {
+    const cases: Pick<CellSelectProps, keyof CellSelectProps>[] = [
+      { items, label: 'Theme' },
+      { items, label: 'Theme', defaultValue: 'dark', description: 'Applies to every window' },
+      { items, label: 'Theme', invalid: true, errorMessage: 'Pick a theme', description: 'Applies to every window' },
+      { items, label: 'Theme', disabled: true, defaultValue: 'system' },
+      { items, label: 'Theme', clearable: true, defaultValue: 'dark' },
+    ]
+    for (const props of cases) {
+      const wrapper = mount(CellSelect, { props, attachTo: document.body })
+      await expectAccessible(wrapper)
+      wrapper.unmount()
+    }
+  })
+
+  it('has no axe violations while open', async () => {
+    const wrapper = await openWithKeyboard()
+    expect(document.querySelector('[role=listbox]')).not.toBeNull()
+    await expectAccessible()
+    wrapper.unmount()
+  })
+
+  it('names the popover dialog after the row label and reflects the expanded state', async () => {
+    const wrapper = await openWithKeyboard()
+    const labelId = wrapper.get('[data-slot=cell-select-label]').attributes('id')
+    expect(wrapper.get(trigger).attributes('aria-expanded')).toBe('true')
+    expect(wrapper.get(trigger).attributes('aria-haspopup')).toBe('listbox')
+    expect(document.querySelector('[data-slot=select-popover]')!.getAttribute('aria-labelledby')).toBe(labelId)
+    expect(document.querySelector('[role=option][aria-selected=true]')?.textContent?.trim()).toBe('Dark')
+    wrapper.unmount()
+  })
+
+  it('describes the trigger by its description and error', () => {
+    const wrapper = mount(CellSelect, { props: { items, label: 'Theme', id: 'c', description: 'Help', invalid: true, errorMessage: 'Bad' } })
+    expect(wrapper.get(trigger).attributes('aria-describedby')).toBe('c-description c-error')
+    expect(wrapper.get('#c-error').text()).toBe('Bad')
+    expect(wrapper.get(trigger).attributes('aria-invalid')).toBe('true')
+    wrapper.unmount()
+  })
+
+  it('keyboard: opens on the selected option, arrows move, Enter selects and returns focus; Escape closes', async () => {
+    const wrapper = await openWithKeyboard()
+    expect(focusedText()).toBe('Dark')
+    await press('ArrowDown')
+    expect(focusedText()).toBe('System')
+    await press('Enter')
+    await flush()
+    expect(wrapper.emitted('update:modelValue')?.at(-1)).toEqual(['system'])
+    expect(document.querySelector('[role=listbox]')).toBeNull()
+    expect(document.activeElement).toBe(wrapper.get(trigger).element)
+
+    await wrapper.get(trigger).trigger('keydown', { key: 'ArrowUp' })
+    await flush()
+    await flush()
+    expect(focusedText()).toBe('System')
+    await press('Escape')
+    await flush()
+    expect(document.querySelector('[role=listbox]')).toBeNull()
+    expect(document.activeElement).toBe(wrapper.get(trigger).element)
     wrapper.unmount()
   })
 

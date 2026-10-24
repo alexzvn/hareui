@@ -6,8 +6,8 @@ import type { ValidationBehavior } from '../form/context'
 import type { FormFieldProps } from '../form/types'
 import type { ListBoxEntry, ListBoxItem, ListBoxItemSlotProps, ListBoxSection, ListBoxValue } from '../list-box/ListBox.vue'
 import type { CollectionRow } from '../list-box/listBoxCollection'
-import { injectListboxRootContext } from 'reka-ui'
-import { defineComponent } from 'vue'
+import { injectListboxRootContext, injectPopoverRootContext } from 'reka-ui'
+import { defineComponent, watchEffect } from 'vue'
 import theme from './theme'
 
 type Autocomplete = typeof theme
@@ -194,6 +194,19 @@ const ListboxBridge = defineComponent({
     // RAC Autocomplete: focus stays in the search field (or on the popover); options get virtual focus
     listbox.focusable.value = false
     emit('ready', listbox)
+    return () => null
+  },
+})
+
+// Internal: Reka names the popover dialog after its PopoverTrigger (`aria-labelledby` = `triggerId`, overriding ours).
+// The trigger here is an anchor, so hand Reka the field's label instead, as RAC Select labels its popover.
+const PopoverLabelBridge = defineComponent({
+  props: { labelledBy: { type: String, default: undefined } },
+  setup(props) {
+    const popover = injectPopoverRootContext()
+    watchEffect(() => {
+      popover.triggerId = props.labelledBy ?? ''
+    })
     return () => null
   },
 })
@@ -650,12 +663,13 @@ const describedBy = computed(() => [
   hasDescription.value ? descriptionId.value : undefined,
   hasError.value ? errorId.value : undefined,
 ].filter(Boolean).join(' ') || undefined)
-const buttonLabelledBy = computed(() => [
-  attrs['aria-labelledby'] as string | undefined,
-  valueId.value,
-  hasLabel.value ? labelId.value : undefined,
-].filter(Boolean).join(' '))
-const listLabelledBy = computed(() => [listboxId.value, (attrs['aria-labelledby'] as string | undefined) ?? (hasLabel.value ? labelId.value : undefined)].filter(Boolean).join(' '))
+// RAC useSelect: the label (then any `aria-labelledby`) names the field; a bare `aria-label` on the trigger is
+// referenced by the trigger's own id, so it still counts next to the value
+const fieldLabelledBy = computed(() => [hasLabel.value ? labelId.value : undefined, attrs['aria-labelledby'] as string | undefined].filter(Boolean).join(' ') || undefined)
+const selfLabelledBy = computed(() => attrs['aria-label'] && !fieldLabelledBy.value ? id.value : undefined)
+const buttonLabelledBy = computed(() => [valueId.value, fieldLabelledBy.value, selfLabelledBy.value].filter(Boolean).join(' '))
+const popupLabelledBy = computed(() => fieldLabelledBy.value ?? selfLabelledBy.value)
+const listLabelledBy = computed(() => [listboxId.value, popupLabelledBy.value].filter(Boolean).join(' '))
 const rootAttrs = computed(() => {
   const { 'aria-label': _label, 'aria-labelledby': _labelledby, ...rest } = attrs
   return rest
@@ -745,6 +759,7 @@ watch(disabled, (disabled) => {
       {{ label }}
     </Label>
     <PopoverRoot :open="isOpen" :modal="false" @update:open="setOpen">
+      <PopoverLabelBridge :labelled-by="popupLabelledBy" />
       <PopoverAnchor as-child>
         <div
           ref="trigger"
@@ -807,7 +822,6 @@ watch(disabled, (disabled) => {
             :aria-labelledby="buttonLabelledBy"
             :aria-describedby="describedBy"
             :aria-invalid="invalid ? 'true' : undefined"
-            :aria-required="required ? 'true' : undefined"
             :disabled="disabled"
             :data-pressed="isOpen ? 'true' : undefined"
             @keydown="onButtonKeydown"
@@ -850,7 +864,6 @@ watch(disabled, (disabled) => {
           align="center"
           :side-offset="8"
           :collision-padding="12"
-          :aria-labelledby="hasLabel ? labelId : undefined"
           :class="ui.popover({ class: props.ui?.popover })"
           @open-auto-focus="onOpenAutoFocus"
           @close-auto-focus="onCloseAutoFocus"

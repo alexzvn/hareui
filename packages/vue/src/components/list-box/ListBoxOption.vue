@@ -3,7 +3,7 @@
 import type { Component } from 'vue'
 import type { ListBoxItem, ListBoxItemSlotProps, ListBoxSlots, ListBoxValue } from './ListBox.vue'
 import { injectListboxRootContext, ListboxItem } from 'reka-ui'
-import { computed, inject, ref, useTemplateRef } from 'vue'
+import { computed, inject, onMounted, onUpdated, ref, useId, useTemplateRef } from 'vue'
 import { keyboardModalityKey } from '../../composables/useKeyboardModality'
 import Description from '../description/Description.vue'
 import Label from '../label/Label.vue'
@@ -43,6 +43,15 @@ const keyboardModality = inject(keyboardModalityKey, null)
 const listbox = injectListboxRootContext(null)
 const option = useTemplateRef<{ $el: HTMLElement }>('option')
 
+// RAC omits `aria-selected` when nothing can be selected; Reka always renders it (as `false`), and never rewrites an
+// unchanged value, so removing it after each render sticks
+function dropSelectedState() {
+  if (!props.selectable)
+    option.value?.$el.removeAttribute?.('aria-selected')
+}
+onMounted(dropSelectedState)
+onUpdated(dropSelectedState)
+
 function onFocus() {
   focused.value = true
   // DOM focus is the keyboard cursor (RAC focusedKey): a mouse press or `focus()` must move Reka's highlight too
@@ -68,6 +77,12 @@ const highlighted = computed(() => props.virtualFocus && 'value' in props.virtua
   : !!listbox && !!option.value && listbox.highlightedElement.value === option.value.$el)
 const isFocused = computed(() => props.virtualFocus ? highlighted.value : focused.value)
 const isFocusVisible = computed(() => props.virtualFocus ? highlighted.value && props.virtualFocus.keyboard : focused.value && !!keyboardModality?.value)
+
+// RAC useOption: a rich item is named by its label and described by its description
+const labelId = useId()
+const descriptionId = useId()
+const rich = computed(() => !slots.item && !!(props.item.description || slots['item-description']))
+const hasLabel = computed(() => !!(props.item.label || slots['item-label']))
 
 const state = computed<ListBoxItemSlotProps>(() => ({
   item: props.item,
@@ -96,6 +111,9 @@ function onSelect(event: CustomEvent<{ originalEvent?: Event }>) {
     :text-value="item.textValue ?? item.label"
     data-slot="list-box-item"
     :aria-selected="selectable ? selected : undefined"
+    :aria-disabled="state.disabled ? 'true' : undefined"
+    :aria-labelledby="rich && hasLabel ? labelId : undefined"
+    :aria-describedby="rich ? descriptionId : undefined"
     :data-selected="selected ? 'true' : undefined"
     :data-selection-mode="selectable ? selectionMode : undefined"
     :data-hovered="hovered ? 'true' : undefined"
@@ -117,13 +135,13 @@ function onSelect(event: CustomEvent<{ originalEvent?: Event }>) {
     <slot name="item" v-bind="state">
       <slot name="item-leading" v-bind="state" />
       <!-- With a description: Label + Description (HeroUI's rich item). Label only: plain text (HeroUI's `<ListBox.Item>Text</ListBox.Item>`). -->
-      <div v-if="item.description || slots['item-description']" class="flex flex-col">
-        <Label v-if="item.label || slots['item-label']" :disabled="state.disabled">
+      <div v-if="rich" class="flex flex-col">
+        <Label v-if="hasLabel" :id="labelId" :disabled="state.disabled">
           <slot name="item-label" v-bind="state">
             {{ item.label }}
           </slot>
         </Label>
-        <Description>
+        <Description :id="descriptionId">
           <slot name="item-description" v-bind="state">
             {{ item.description }}
           </slot>

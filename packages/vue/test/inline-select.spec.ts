@@ -2,6 +2,7 @@ import { flushPromises, mount } from '@vue/test-utils'
 import { afterEach, describe, expect, it } from 'vitest'
 import { defineComponent, h, nextTick, ref } from 'vue'
 import InlineSelect from '../src/components/inline-select/InlineSelect.vue'
+import { expectAccessible } from './a11y'
 
 const items = [
   { value: 'en', label: 'English' },
@@ -151,6 +152,70 @@ describe('InlineSelect', () => {
     const children = [...wrapper.get(trigger).element.children]
     expect(children[0]!.classList.contains('team-icon')).toBe(true)
     expect(children[1]!.getAttribute('data-slot')).toBe('select-value')
+  })
+
+  async function openWithKeyboard(props: Record<string, unknown> = {}) {
+    const wrapper = mount(InlineSelect, { props: { items, defaultValue: 'en', id: 'lang', ...props }, attrs: { 'aria-label': 'Language' }, attachTo: document.body })
+    wrapper.get<HTMLElement>(trigger).element.focus()
+    await wrapper.get(trigger).trigger('keydown', { key: 'ArrowDown' })
+    await flush()
+    await flush()
+    return wrapper
+  }
+
+  it('has no axe violations idle (aria-label or visible label), disabled, and with a custom indicator', async () => {
+    const named = { 'aria-label': 'Language' }
+    for (const create of [
+      () => mount(InlineSelect, { props: { items, defaultValue: 'en' }, attrs: named, attachTo: document.body }),
+      () => mount(InlineSelect, { props: { items, label: 'Language' }, attachTo: document.body }),
+      () => mount(InlineSelect, { props: { items, defaultValue: 'en', disabled: true }, attrs: named, attachTo: document.body }),
+      () => mount(InlineSelect, { props: { items }, attrs: named, slots: { indicator: () => h('svg', { 'aria-hidden': 'true' }) }, attachTo: document.body }),
+    ]) {
+      const wrapper = create()
+      await expectAccessible(wrapper)
+      wrapper.unmount()
+    }
+  })
+
+  it('has no axe violations while open, in single and multiple mode', async () => {
+    const single = await openWithKeyboard()
+    expect(document.querySelector('[role=listbox]')).not.toBeNull()
+    await expectAccessible()
+    single.unmount()
+
+    const multiple = await openWithKeyboard({ selectionMode: 'multiple', defaultValue: ['en', 'fr'] })
+    await expectAccessible()
+    multiple.unmount()
+  })
+
+  it('names the open listbox and its popover after the aria-label-only trigger', async () => {
+    const wrapper = await openWithKeyboard()
+    const t = wrapper.get(trigger)
+    expect(t.attributes('aria-haspopup')).toBe('listbox')
+    expect(t.attributes('aria-expanded')).toBe('true')
+    expect(document.querySelector('[role=listbox]')!.getAttribute('aria-label')).toBe('Language')
+    expect(document.querySelector('[data-slot=select-popover]')!.getAttribute('aria-labelledby')).toBe('lang')
+    expect(optionEls().map(o => o.getAttribute('aria-selected'))).toEqual(['true', 'false', 'false', 'false'])
+    wrapper.unmount()
+  })
+
+  it('Escape returns focus to the trigger and collapses it', async () => {
+    const wrapper = await openWithKeyboard()
+    expect(focusedText()).toBe('English')
+    await press('Escape')
+    await flush()
+    expect(wrapper.get(trigger).attributes('aria-expanded')).toBe('false')
+    expect(document.activeElement).toBe(wrapper.get(trigger).element)
+    wrapper.unmount()
+  })
+
+  it('End / Home move to the last and first options while open', async () => {
+    const wrapper = await openWithKeyboard()
+    await press('End')
+    expect(focusedText()).toBe('Japanese')
+    await press('Home')
+    expect(focusedText()).toBe('English')
+    wrapper.unmount()
   })
 
   it('disabled trigger does not open', async () => {
