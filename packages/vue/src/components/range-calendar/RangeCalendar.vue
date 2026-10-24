@@ -168,6 +168,7 @@ import { formatGridLabel, formatPanelHeading } from '../calendar/useCalendarPane
 import { calendarCellDate, calendarCellFrom, compareDay, focusCalendarCell, useCalendarMonthKeys } from '../calendar/useCalendarMonthKeys'
 import { useCalendarPlaceholder } from '../calendar/useCalendarPlaceholder'
 import { useCalendarYearPicker, yearPickerLabel } from '../calendar/useCalendarYearPicker'
+import { exceedsMaximumDays, isDaySelectedInRange, makeRange, useRangeSelection } from '../calendar/useRangeSelection'
 
 const props = withDefaults(defineProps<RangeCalendarProps>(), {
   modelValue: undefined,
@@ -231,56 +232,38 @@ const { activeYear: yearPickerActiveYear, gridRef: yearPickerGridRef, onKeyDown:
 const EMPTY_RANGE: DateRange = { start: undefined, end: undefined }
 const internalValue = shallowRef<DateRange | undefined>(props.defaultValue)
 const committed = computed(() => props.modelValue !== undefined ? props.modelValue : internalValue.value)
-// react-stately's `anchorDate`: the first picked day of an in-progress selection, `null` otherwise
-const anchor = shallowRef<DateValue | null>(null)
 // react-stately's `focusedDate` (keyboard focus, or the hovered day while anchored): the preview's moving end
 const focusedDate = shallowRef<DateValue | null>(null)
 let lastEmitted: DateRange | undefined
 
 // React Aria's `isDateUnavailable(date, anchorDate)` lets the matcher depend on the in-progress range's start date
 // (see HeroUI's anchor-unavailable-dates demo). Reka's `Matcher` type is single-argument only (reka-limitation), so
-// the consumer's 2-arg callback is wrapped into the 1-arg shape Reka expects, reading the anchor at call time.
-const wrappedIsDateUnavailable = computed(() => {
-  if (!props.isDateUnavailable)
-    return undefined
-  return (date: DateValue) => props.isDateUnavailable!(date, anchor.value)
+// the core's anchor-bound 1-arg matcher is what Reka gets.
+// react-stately's `selectDate`: the first pick anchors, the second commits the ordered range. The anchor is also
+// emitted as a half-open range (`end: undefined`), as Reka did, so v-model consumers see the selection start.
+const selection = useRangeSelection({
+  isDateUnavailable: () => props.isDateUnavailable,
+  allowNonContiguousRanges: () => props.allowNonContiguousRanges,
+  minValue: () => minValue.value,
+  maxValue: () => maxValue.value,
+  span: () => ({ months: Math.max(1, props.numberOfMonths) }),
+  maximumDays: () => props.maximumDays,
+  onAnchor: (date) => {
+    focusedDate.value = date
+    emitValue({ start: date, end: undefined })
+  },
+  onCommit: (range) => {
+    internalValue.value = range
+    emitValue(range)
+  },
 })
-// react-stately's `getAvailableRange`: while a range is anchored (and non-contiguous ranges are off), the selectable
-// window shrinks to the run of available days around the anchor, which also disables paging past it.
-function edgeOfAvailableRun(from: DateValue, dir: 1 | -1) {
-  const span = { months: Math.max(1, props.numberOfMonths) }
-  const limit = dir < 0 ? from.subtract(span) : from.add(span)
-  let next = from.add({ days: dir })
-  while ((dir < 0 ? next.compare(limit) >= 0 : next.compare(limit) <= 0) && !wrappedIsDateUnavailable.value!(next))
-    next = next.add({ days: dir })
-  return wrappedIsDateUnavailable.value!(next) ? next.add({ days: -dir }) : undefined
-}
-const availableRun = computed(() => {
-  const from = anchor.value
-  if (!from || !wrappedIsDateUnavailable.value || props.allowNonContiguousRanges)
-    return null
-  return { start: edgeOfAvailableRun(from, -1), end: edgeOfAvailableRun(from, 1) }
-})
-const effectiveMinValue = computed(() => {
-  const start = availableRun.value?.start
-  return start && compareDay(start, minValue.value) > 0 ? start : minValue.value
-})
-const effectiveMaxValue = computed(() => {
-  const end = availableRun.value?.end
-  return end && compareDay(end, maxValue.value) < 0 ? end : maxValue.value
-})
-// Reka's `maximumDays`: while anchored, days `maximumDays` or more away from the anchor are disabled. Reka only applies
-// it to its own start value, which isn't fed, so it is passed back in as `is-date-disabled`.
+const { anchor, isUnavailable: wrappedIsDateUnavailable, effectiveMin: effectiveMinValue, effectiveMax: effectiveMaxValue } = selection
+// Reka only applies `maximumDays` to its own start value, which isn't fed, so it is passed back in as
+// `is-date-disabled`.
 function isDateDisabledByMaximumDays(date: DateValue) {
-  return !!props.maximumDays && !!anchor.value && Math.abs(compareDay(date, anchor.value)) >= props.maximumDays
-}
-function isCellDisabled(date: DateValue) {
-  return compareDay(date, effectiveMinValue.value) < 0 || compareDay(date, effectiveMaxValue.value) > 0 || isDateDisabledByMaximumDays(date)
+  return exceedsMaximumDays(date, anchor.value, props.maximumDays)
 }
 
-function makeRange(a: DateValue, b: DateValue): { start: DateValue, end: DateValue } {
-  return compareDay(a, b) <= 0 ? { start: a, end: b } : { start: b, end: a }
-}
 const highlightedRange = computed(() => {
   if (anchor.value)
     return makeRange(anchor.value, focusedDate.value ?? anchor.value)
@@ -302,9 +285,9 @@ const isValueInvalid = computed(() => {
 function cellState(date: DateValue, month: DateValue) {
   const range = highlightedRange.value
   const inRange = !!range && compareDay(date, range.start) >= 0 && compareDay(date, range.end) <= 0
-  const disabled = !isSameMonth(date, month) || isCellDisabled(date)
+  const disabled = !isSameMonth(date, month) || selection.isOutsideWindow(date)
   const invalid = inRange && !disabled && isValueInvalid.value
-  const selected = inRange && !disabled && (invalid || !wrappedIsDateUnavailable.value?.(date))
+  const selected = isDaySelectedInRange({ inRange, disabled, unavailable: !!wrappedIsDateUnavailable.value?.(date), invalid })
   return {
     selected,
     selectionStart: !!range && isSameDay(date, range.start),
@@ -317,21 +300,10 @@ function emitValue(value: DateRange) {
   lastEmitted = value
   emit('update:modelValue', value)
 }
-// react-stately's `selectDate`: the first pick anchors, the second commits the ordered range. The anchor is also
-// emitted as a half-open range (`end: undefined`), as Reka did, so v-model consumers see the selection start.
 function selectDate(date: DateValue) {
   if (props.readonly || props.disabled)
     return
-  if (!anchor.value) {
-    anchor.value = date
-    focusedDate.value = date
-    emitValue({ start: date, end: undefined })
-    return
-  }
-  const range = makeRange(anchor.value, date)
-  anchor.value = null
-  internalValue.value = range
-  emitValue(range)
+  selection.select(date)
 }
 // A cell React Aria would let you press: not outside the month, disabled or unavailable
 function isSelectableCell(el: HTMLElement) {
@@ -488,7 +460,7 @@ function onRootKeyDownCapture(event: KeyboardEvent) {
     return
   // `useCalendarGrid`: Escape cancels an in-progress selection (and keeps propagating, e.g. to close a popover)
   if (event.key === 'Escape') {
-    anchor.value = null
+    selection.cancel()
     return
   }
   if ((event.key !== 'Enter' && event.key !== ' ') || event.altKey || event.ctrlKey || event.metaKey)

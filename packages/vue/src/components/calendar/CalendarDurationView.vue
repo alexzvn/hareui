@@ -37,10 +37,11 @@ export interface CalendarDurationViewProps {
 </script>
 
 <script setup lang="ts">
-import { GregorianCalendar, isSameDay, maxDate, minDate, toCalendar, toCalendarDate } from '@internationalized/date'
+import { GregorianCalendar, isSameDay, toCalendar } from '@internationalized/date'
 import { useDirection, useLocale } from 'reka-ui'
-import { computed, shallowRef, toRef } from 'vue'
+import { computed, toRef } from 'vue'
 import { useCalendarDurationView } from './useCalendarDurationView'
+import { makeRange, useRangeSelection } from './useRangeSelection'
 
 const props = defineProps<CalendarDurationViewProps>()
 const emit = defineEmits<{ select: [value: any] }>()
@@ -54,25 +55,21 @@ const direction = useDirection(toRef(() => props.dir))
 const p = computed(() => props.kind === 'range' ? 'range-calendar' : 'calendar')
 const cls = (slot: string) => props.ui[slot]?.({ class: props.uiOverrides?.[slot] })
 
-// ---- Range selection state (react-stately `useRangeCalendarState`) ----
-const anchor = shallowRef<CalendarDate | null>(null)
+// ---- Range selection state (react-stately `useRangeCalendarState`, shared core in `useRangeSelection`) ----
 const range = computed<{ start: DateValue, end: DateValue } | null>(() => props.kind === 'range' && props.value?.start && props.value?.end ? props.value : null)
-const unavailable = (date: DateValue) => props.isDateUnavailable?.(date, anchor.value) ?? false
-function nextUnavailable(from: CalendarDate, dir: 1 | -1): CalendarDate | undefined {
-  const span = view.endDate.value.compare(view.startDate.value) + 1
-  let next = from.add({ days: dir })
-  const limit = dir < 0 ? from.subtract({ days: span }) : from.add({ days: span })
-  while ((dir < 0 ? next.compare(limit) >= 0 : next.compare(limit) <= 0) && !unavailable(next))
-    next = next.add({ days: dir })
-  return unavailable(next) ? next.add({ days: -dir }) : undefined
-}
-const availableRange = computed(() => {
-  if (props.kind !== 'range' || !anchor.value || !props.isDateUnavailable || props.allowNonContiguousRanges)
-    return null
-  return { start: nextUnavailable(anchor.value, -1), end: nextUnavailable(anchor.value, 1) }
+// No `onAnchor`: unlike the month view, the first pick emits nothing until the range commits.
+const selection = useRangeSelection<CalendarDate>({
+  isDateUnavailable: () => props.isDateUnavailable,
+  allowNonContiguousRanges: () => props.allowNonContiguousRanges,
+  minValue: () => props.minValue,
+  maxValue: () => props.maxValue,
+  // The available run is searched one visible duration each way
+  span: () => ({ days: view.endDate.value.compare(view.startDate.value) + 1 }),
+  enabled: () => props.kind === 'range',
+  onCommit: r => emit('select', { start: convert(r.start, range.value?.start), end: convert(r.end, range.value?.end) }),
 })
-const effectiveMin = computed(() => (availableRange.value?.start ? maxDate(props.minValue, availableRange.value.start) : null) ?? props.minValue)
-const effectiveMax = computed(() => (availableRange.value?.end ? minDate(props.maxValue, availableRange.value.end) : null) ?? props.maxValue)
+const anchor = selection.anchor
+const unavailable = (date: DateValue) => selection.isUnavailable.value?.(date) ?? false
 
 // react-stately aligns a range that doesn't fit the centered window to its start
 const alignment = () => {
@@ -85,17 +82,14 @@ const view = useCalendarDurationView({
   duration: () => props.duration,
   locale: () => locale.value,
   firstDayOfWeek: () => props.firstDayOfWeek,
-  minValue: () => effectiveMin.value,
-  maxValue: () => effectiveMax.value,
+  minValue: () => selection.effectiveMin.value,
+  maxValue: () => selection.effectiveMax.value,
   pageBehavior: () => props.pageBehavior,
   disabled: () => props.disabled,
   focused: props.focused,
   alignment,
 })
 
-function makeRange(a: CalendarDate, b: CalendarDate) {
-  return b.compare(a) < 0 ? { start: b, end: a } : { start: a, end: b }
-}
 const highlighted = computed(() => {
   if (props.kind !== 'range')
     return null
@@ -122,13 +116,7 @@ function select(date: CalendarDate) {
     return
   view.focusedDate.value = date
   if (props.kind === 'range') {
-    if (!anchor.value) {
-      anchor.value = date
-      return
-    }
-    const r = makeRange(anchor.value, date)
-    anchor.value = null
-    emit('select', { start: convert(r.start, range.value?.start), end: convert(r.end, range.value?.end) })
+    selection.select(date)
     return
   }
   if (props.selectionMode === 'multiple') {
@@ -147,7 +135,7 @@ function onPointerEnter(date: CalendarDate) {
 function onKeyDown(event: KeyboardEvent) {
   view.onKeyDown(event, {
     select: date => select(date),
-    escape: anchor.value ? () => { anchor.value = null } : undefined,
+    escape: anchor.value ? () => { selection.cancel() } : undefined,
   }, direction.value)
 }
 
