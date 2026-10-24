@@ -185,8 +185,11 @@ const controlAttrs = computed(() => ({
   'data-disabled': disabled.value ? 'true' : undefined,
 }))
 
-const ui = useComponentUI('inputGroup', theme, () => ({
-  variant: variant.value,
-  fullWidth: fullWidth.value,
-}))
+const ui = useComponentUI('inputGroup', {
+  theme,
+  variantProps: () => ({
+    variant: variant.value,
+    fullWidth: fullWidth.value,
+  }),
+})
 </script>

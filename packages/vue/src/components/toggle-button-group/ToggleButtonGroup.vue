@@ -55,17 +55,15 @@ watch(
 const selected = computed(() => props.modelValue ?? local.value)
 const isDisabled = useFieldsetDisabled(() => props.disabled)
 
+const toggledSelection = (value: string, isSelected: boolean): string[] => {
+  if (props.selectionMode === 'single') return isSelected ? [] : [value]
+
+  return isSelected ? selected.value.filter((v) => v !== value) : [...selected.value, value]
+}
+
 // React Aria semantics: single selection replaces the selection, pressing the selected button clears it.
 const toggle = (value: string) => {
-  const isSelected = selected.value.includes(value)
-  const next =
-    props.selectionMode === 'single'
-      ? isSelected
-        ? []
-        : [value]
-      : isSelected
-        ? selected.value.filter((v) => v !== value)
-        : [...selected.value, value]
+  const next = toggledSelection(value, selected.value.includes(value))
 
   if (props.disallowEmptySelection && next.length === 0) return
   local.value = next
@@ -78,11 +76,14 @@ const onKeydownCapture = (event: KeyboardEvent) => {
   if (!toolbar && ['Home', 'End', 'PageUp', 'PageDown'].includes(event.key)) event.stopPropagation()
 }
 
-const ui = useComponentUI('toggleButtonGroup', theme, () => ({
-  orientation: orientation.value,
-  fullWidth: props.fullWidth,
-  detached: props.detached,
-}))
+const ui = useComponentUI('toggleButtonGroup', {
+  theme,
+  variantProps: () => ({
+    orientation: orientation.value,
+    fullWidth: props.fullWidth,
+    detached: props.detached,
+  }),
+})
 
 const firstChild = useFirstChild(useTemplateRef('root'))
 

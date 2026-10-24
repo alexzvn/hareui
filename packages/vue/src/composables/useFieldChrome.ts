@@ -140,21 +140,21 @@ export const useFieldChrome = (options: FieldChromeOptions) => {
       present.value = next
   })
 
-  const invalid = computed(() => !!toValue(options.invalid))
+  const isInvalid = computed(() => !!toValue(options.invalid))
   const validation = computed(() => toValue(options.validation) ?? VALID_RESULT)
   const hasLabel = computed(() => !!(props.label || present.value.label))
 
   const hasDescription = computed(
     () =>
       !!(props.description || present.value.description) &&
-      !(options.hideDescriptionWhenInvalid && invalid.value),
+      !(options.hideDescriptionWhenInvalid && isInvalid.value),
   )
 
   const hasMessageError = computed(() => props.errorMessage !== undefined || present.value.error)
 
   const hasInvalidError = computed(
     () =>
-      invalid.value &&
+      isInvalid.value &&
       !!(props.errorMessage || present.value.error || validation.value.validationErrors.length),
   )
 
@@ -195,7 +195,7 @@ export const useFieldChrome = (options: FieldChromeOptions) => {
               Label,
               {
                 disabled: toValue(options.disabled),
-                invalid: invalid.value,
+                invalid: isInvalid.value,
                 required: toValue(options.required),
                 ...attrs,
                 class: normalizeClass(attrs.class),

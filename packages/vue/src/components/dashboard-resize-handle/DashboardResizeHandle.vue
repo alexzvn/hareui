@@ -23,5 +23,5 @@ import theme from './theme'
 const props = defineProps<DashboardResizeHandleProps>()
 defineSlots<DashboardResizeHandleSlots>()
 
-const ui = useComponentUI('dashboardResizeHandle', theme, () => ({}))
+const ui = useComponentUI('dashboardResizeHandle', { theme: theme, variantProps: () => ({}) })
 </script>

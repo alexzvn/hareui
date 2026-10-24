@@ -1,14 +1,14 @@
 <template>
   <div class="flex flex-col items-start gap-4">
-    <Button size="sm" variant="secondary" @click="collapsed = !collapsed">
-      {{ collapsed ? 'Expand' : 'Collapse' }}
+    <Button size="sm" variant="secondary" @click="isCollapsed = !isCollapsed">
+      {{ isCollapsed ? 'Expand' : 'Collapse' }}
     </Button>
     <!-- Give the menu a width; collapsed, it shrinks to a single icon column. -->
     <NavigationMenu
-      :collapsed="collapsed"
+      :collapsed="isCollapsed"
       :items="items"
       orientation="vertical"
-      :class="collapsed ? 'w-9' : 'w-54'"
+      :class="isCollapsed ? 'w-9' : 'w-54'"
     />
   </div>
 </template>
@@ -132,5 +132,5 @@ const items: NavigationMenuItem[][] = [
   ],
 ]
 
-const collapsed = ref(true)
+const isCollapsed = ref(true)
 </script>

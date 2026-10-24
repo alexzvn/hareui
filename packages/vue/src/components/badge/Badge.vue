@@ -37,10 +37,13 @@ import theme from './theme'
 const props = defineProps<BadgeProps>()
 const slots = defineSlots<BadgeSlots>()
 
-const ui = useComponentUI('badge', theme, () => ({
-  color: props.color,
-  placement: props.placement,
-  size: props.size,
-  variant: props.variant,
-}))
+const ui = useComponentUI('badge', {
+  theme,
+  variantProps: () => ({
+    color: props.color,
+    placement: props.placement,
+    size: props.size,
+    variant: props.variant,
+  }),
+})
 </script>

@@ -30,7 +30,7 @@ import theme from './theme'
 const props = withDefaults(defineProps<LinkProps>(), { as: 'a', iconPlacement: 'end' })
 const slots = defineSlots<LinkSlots>()
 
-const ui = useComponentUI('link', theme, () => ({}))
+const ui = useComponentUI('link', { theme: theme, variantProps: () => ({}) })
 const isDisabled = useFieldsetDisabled(() => props.disabled)
 const showIcon = computed(() => props.icon || !!slots.icon)
 

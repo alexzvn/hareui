@@ -7,7 +7,7 @@
       input-container
       :granularity="granularity"
       :hour-cycle="hourCycle"
-      :hide-time-zone="hideTimeZone"
+      :hide-time-zone="shouldHideTimeZone"
       start-name="startDate"
       end-name="endDate"
       label="Date range"
@@ -35,7 +35,7 @@
               variant="secondary"
               :granularity="timeGranularity"
               :hour-cycle="hourCycle"
-              :hide-time-zone="hideTimeZone"
+              :hide-time-zone="shouldHideTimeZone"
               :model-value="timeOf(range.start)"
               @update:model-value="
                 (t) => t && onChange({ start: withTime(t, range.start), end: range.end })
@@ -50,7 +50,7 @@
               variant="secondary"
               :granularity="timeGranularity"
               :hour-cycle="hourCycle"
-              :hide-time-zone="hideTimeZone"
+              :hide-time-zone="shouldHideTimeZone"
               :model-value="timeOf(range.end)"
               @update:model-value="
                 (t) => t && onChange({ start: range.start, end: withTime(t, range.end) })
@@ -89,7 +89,7 @@
     </div>
 
     <div class="flex min-w-[529px] flex-col gap-2">
-      <Switch v-model="hideTimeZone" label="Hide timezone" />
+      <Switch v-model="shouldHideTimeZone" label="Hide timezone" />
     </div>
   </div>
 </template>
@@ -133,7 +133,7 @@ const hourCycleOptions: ListBoxItem[] = [
 
 const granularity = ref<Granularity>('minute')
 const hourCycle = ref<HourCycle>(12)
-const hideTimeZone = ref(false)
+const shouldHideTimeZone = ref(false)
 
 const timeGranularity = computed(() =>
   granularity.value === 'day' ? undefined : granularity.value,

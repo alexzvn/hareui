@@ -7,6 +7,7 @@ import type theme from './theme'
 
 type ProgressBar = typeof theme
 
+/** Props for `ProgressBar`, which shows the progress of an operation over time. */
 export type ProgressBarProps = {
   /**
    * The current value (clamped to `minValue`–`maxValue`).
@@ -57,6 +58,7 @@ export type ProgressBarProps = {
   ui?: ComponentSlots<ProgressBar>
 }
 
+/** Props passed to the `ProgressBar` slots. */
 export type ProgressBarSlotProps = {
   /** The percentage of the progress (0–100); `undefined` when indeterminate. */
   percentage: number | undefined
@@ -66,6 +68,7 @@ export type ProgressBarSlotProps = {
   indeterminate: boolean
 }
 
+/** Slots for `ProgressBar`. */
 export type ProgressBarSlots = {
   /** Replaces the label text. */
   label?: (props: ProgressBarSlotProps) => VNode[]

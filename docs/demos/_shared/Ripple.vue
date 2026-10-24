@@ -2,7 +2,7 @@
   <div ref="root" class="salty-ripple" aria-hidden="true">
     <div
       ref="surface"
-      :class="['salty-ripple-surface', { '--hover': hovered, '--press': pressed }]"
+      :class="['salty-ripple-surface', { '--hover': isHovered, '--press': isPressed }]"
     />
   </div>
 </template>
@@ -13,7 +13,7 @@
  * used by heroui.com's "Adding Ripple Effect" Button demo. Place it as the first child of
  * a positioned element; it listens to pointer events on its parent.
  */
-import { onBeforeUnmount, onMounted, ref, watchEffect } from 'vue'
+import { onBeforeUnmount, onMounted, ref, useTemplateRef, watchEffect } from 'vue'
 
 const props = withDefaults(
   defineProps<{
@@ -42,10 +42,10 @@ const State = {
 
 type State = (typeof State)[keyof typeof State]
 
-const hovered = ref(false)
-const pressed = ref(false)
-const root = ref<HTMLDivElement>()
-const surface = ref<HTMLDivElement>()
+const isHovered = ref(false)
+const isPressed = ref(false)
+const root = useTemplateRef<HTMLDivElement>('root')
+const surface = useTemplateRef<HTMLDivElement>('surface')
 
 let rippleSize = ''
 let rippleScale = ''
@@ -53,7 +53,7 @@ let initialSize = 0
 let growAnimation: Animation | undefined
 let state: State = State.Inactive
 let rippleStartEvent: PointerEvent | undefined
-let checkBoundsAfterContextMenu = false
+let shouldCheckBoundsAfterContextMenu = false
 
 watchEffect(() => {
   const style = surface.value?.style
@@ -123,7 +123,7 @@ const getTranslationCoordinates = (event?: PointerEvent) => {
 
 const startPressAnimation = (event?: PointerEvent) => {
   if (!surface.value) return
-  pressed.value = true
+  isPressed.value = true
   growAnimation?.cancel()
   determineRippleSize()
   const { startPoint, endPoint } = getTranslationCoordinates(event)
@@ -148,22 +148,22 @@ const endPressAnimation = () => {
     typeof animation?.currentTime === 'number' ? animation.currentTime : Infinity
 
   if (pressAnimationPlayState >= props.minimumPressDuration) {
-    pressed.value = false
+    isPressed.value = false
     return
   }
 
   setTimeout(() => {
-    if (growAnimation === animation) pressed.value = false
+    if (growAnimation === animation) isPressed.value = false
   }, props.minimumPressDuration - pressAnimationPlayState)
 }
 
 const onPointerEnter = (event: PointerEvent) => {
-  if (shouldReactToEvent(event)) hovered.value = true
+  if (shouldReactToEvent(event)) isHovered.value = true
 }
 
 const onPointerLeave = (event: PointerEvent) => {
   if (!shouldReactToEvent(event)) return
-  hovered.value = false
+  isHovered.value = false
   if (state !== State.Inactive) endPressAnimation()
 }
 
@@ -192,8 +192,8 @@ const onPointerDown = (event: PointerEvent) => {
     return
   }
 
-  if (checkBoundsAfterContextMenu && !inBounds(event)) return
-  checkBoundsAfterContextMenu = false
+  if (shouldCheckBoundsAfterContextMenu && !inBounds(event)) return
+  shouldCheckBoundsAfterContextMenu = false
   state = State.TouchDelay
 
   setTimeout(() => {
@@ -223,7 +223,7 @@ const onPointerCancel = (event: PointerEvent) => {
 
 const onContextMenu = () => {
   if (props.disabled) return
-  checkBoundsAfterContextMenu = true
+  shouldCheckBoundsAfterContextMenu = true
   endPressAnimation()
 }
 

@@ -134,12 +134,15 @@ const emit = defineEmits<ModalEmits>()
 const slots = useSlots()
 defineSlots<ModalSlots>()
 
-const ui = useComponentUI('modal', theme, () => ({
-  scroll: props.scroll,
-  size: props.size,
-  variant: props.variant,
-  placement: props.placement,
-}))
+const ui = useComponentUI('modal', {
+  theme,
+  variantProps: () => ({
+    scroll: props.scroll,
+    size: props.size,
+    variant: props.variant,
+    placement: props.placement,
+  }),
+})
 
 const dialogContent = useTemplateRef<{ $el: HTMLElement }>('dialogContent')
 const {

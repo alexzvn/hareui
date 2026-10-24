@@ -44,14 +44,14 @@ export default defineComponent({
 
     return (): VNode[] | undefined => {
       const item = props.item
-      const disabled = !!item.disabled
+      const isDisabled = !!item.disabled
       const explicit = typeof item.active === 'boolean' ? item.active : undefined
 
       const common: Record<string, unknown> = {
         target: item.target,
         rel: item.rel ?? (item.target === '_blank' ? 'noopener noreferrer' : undefined),
         download: item.download,
-        'aria-disabled': disabled ? 'true' : undefined,
+        'aria-disabled': isDisabled ? 'true' : undefined,
       }
 
       // Undefined attributes are dropped: an explicit `undefined` would override the attributes Reka's link sets (`aria-current`, `data-active`) when merged.
@@ -62,7 +62,7 @@ export default defineComponent({
         return render({
           as: 'button',
           active: explicit ?? false,
-          attrs: { type: 'button', disabled: disabled || undefined },
+          attrs: { type: 'button', disabled: isDisabled || undefined },
         })
 
       const to = item.to
@@ -75,7 +75,7 @@ export default defineComponent({
           attrs: {
             ...common,
             ...(to !== undefined ? { to } : {}),
-            href: disabled ? undefined : item.href,
+            href: isDisabled ? undefined : item.href,
           },
         })
       }
@@ -83,7 +83,7 @@ export default defineComponent({
       if (
         to !== undefined &&
         RouterLink &&
-        !disabled &&
+        !isDisabled &&
         !item.external &&
         item.target !== '_blank'
       ) {
@@ -113,8 +113,8 @@ export default defineComponent({
           active: explicit ?? false,
           attrs: {
             ...common,
-            href: disabled ? undefined : href,
-            role: disabled ? 'link' : undefined,
+            href: isDisabled ? undefined : href,
+            role: isDisabled ? 'link' : undefined,
           },
         })
       }
@@ -122,7 +122,7 @@ export default defineComponent({
       return render({
         as: 'button',
         active: explicit ?? false,
-        attrs: { type: 'button', disabled: disabled || undefined },
+        attrs: { type: 'button', disabled: isDisabled || undefined },
       })
     }
   },

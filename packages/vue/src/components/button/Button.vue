@@ -12,7 +12,7 @@
     @keyup="onKeyup"
   >
     <span
-      v-if="showSeparator"
+      v-if="shouldShowSeparator"
       aria-hidden="true"
       data-slot="button-group-separator"
       :class="group!.ui.value.separator({ class: group!.uiOverrides.value?.separator })"
@@ -57,12 +57,15 @@ const group = inject(buttonGroupContextKey, null)
 provide(buttonGroupContextKey, null)
 
 const variant = computed(() => props.variant ?? group?.variant.value)
-const ui = useComponentUI('button', theme, () => ({
-  variant: variant.value,
-  size: props.size ?? group?.size.value,
-  fullWidth: props.fullWidth ?? group?.fullWidth.value,
-  iconOnly: props.iconOnly,
-}))
+const ui = useComponentUI('button', {
+  theme,
+  variantProps: () => ({
+    variant: variant.value,
+    size: props.size ?? group?.size.value,
+    fullWidth: props.fullWidth ?? group?.fullWidth.value,
+    iconOnly: props.iconOnly,
+  }),
+})
 
 const groupClass = computed(() => {
   if (!group) return undefined
@@ -77,7 +80,7 @@ const groupClass = computed(() => {
 
 // HeroUI renders `ButtonGroup.Separator` in every grouped Button except the first.
 const self = useTemplateRef<unknown>('self')
-const showSeparator = computed(
+const shouldShowSeparator = computed(
   (): boolean => !!group?.separator.value && group.firstChild.value !== refElement(self.value),
 )
 
@@ -118,15 +121,17 @@ const isKeyboardTarget = (event: KeyboardEvent) => {
 const onKeydown = (event: KeyboardEvent) => {
   if (!isKeyboardTarget(event)) return
   const el = event.currentTarget as HTMLElement
+
   if (event.key === ' ') {
     event.preventDefault()
-  } else if (
-    event.key === 'Enter' &&
-    !(el instanceof HTMLAnchorElement && el.hasAttribute('href'))
-  ) {
-    event.preventDefault()
-    if (!event.repeat) el.click()
+    return
   }
+
+  const isLink = el instanceof HTMLAnchorElement && el.hasAttribute('href')
+  if (event.key !== 'Enter' || isLink) return
+
+  event.preventDefault()
+  if (!event.repeat) el.click()
 }
 
 const onKeyup = (event: KeyboardEvent) => {

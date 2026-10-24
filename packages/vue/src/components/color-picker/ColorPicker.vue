@@ -62,7 +62,7 @@ const portalTarget = usePortal(() => props.portal)
 const emit = defineEmits<ColorPickerEmits>()
 defineSlots<ColorPickerSlots>()
 
-const ui = useComponentUI('colorPicker', theme, () => ({}))
+const ui = useComponentUI('colorPicker', { theme: theme, variantProps: () => ({}) })
 
 // RAC's ColorPicker defaults to black when neither value nor defaultValue is given.
 const internal = ref<Color>(normalizeColor(props.defaultValue ?? '#000000'))

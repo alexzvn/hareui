@@ -56,7 +56,7 @@
               aria-label="Send prompt"
               :disabled="!value.trim()"
               :pending="isSubmitting"
-              @click="handleSubmit"
+              @click="onSubmit"
             >
               <template #default="{ pending }">
                 <Icon v-if="!pending" icon="gravity-ui:arrow-up" />
@@ -81,7 +81,7 @@ import { ref } from 'vue'
 const value = ref('')
 const isSubmitting = ref(false)
 
-const handleSubmit = () => {
+const onSubmit = () => {
   if (!value.value.trim()) return
   isSubmitting.value = true
 

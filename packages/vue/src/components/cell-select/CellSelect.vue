@@ -75,7 +75,10 @@ const props = withDefaults(defineProps<CellSelectProps<T>>(), {
 const emit = defineEmits<CellSelectEmits>()
 const slots = defineSlots<CellSelectSlots<T>>()
 
-const ui = useComponentUI('cellSelect', theme, () => ({ variant: props.variant }))
+const ui = useComponentUI('cellSelect', {
+  theme,
+  variantProps: () => ({ variant: props.variant }),
+})
 
 const selectProps = computed(() => {
   const {

@@ -5,6 +5,7 @@ import type { ClassValue } from '@/utils/tv'
 
 import type theme from './theme'
 
+/** Props of `RadioButtonGroupItem`: one selectable card of a `RadioButtonGroup`. */
 export type RadioButtonGroupItemProps = {
   /** The value submitted and bound to the group's `v-model` when the item is selected. */
   value: string
@@ -32,6 +33,7 @@ export type RadioButtonGroupItemProps = {
   ui?: Omit<ComponentSlots<typeof theme>, 'base'>
 }
 
+/** Props every `RadioButtonGroupItem` slot receives. */
 export type RadioButtonGroupItemSlotProps = {
   /** Whether the item is selected. */
   selected: boolean
@@ -39,6 +41,7 @@ export type RadioButtonGroupItemSlotProps = {
   disabled: boolean
 }
 
+/** Slots of `RadioButtonGroupItem`. */
 export type RadioButtonGroupItemSlots = {
   /** Extra content rendered after the title and description. */
   default?: (props: RadioButtonGroupItemSlotProps) => VNode[]

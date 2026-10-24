@@ -45,7 +45,10 @@ const getBase = (name: keyof Themes, theme: object) => {
   return base
 }
 
-const getComponent = (config: HareUIConfig, name: keyof Themes, base: object) => {
+const getComponent = (
+  config: HareUIConfig,
+  { name, base }: { name: keyof Themes; base: object },
+) => {
   let byBase = shared.get(config)
   if (!byBase) shared.set(config, (byBase = new WeakMap()))
   let component = byBase.get(base)
@@ -87,6 +90,14 @@ const resolve = (component: Shared, props: Record<string, unknown>) => {
   return result
 }
 
+/** What `useComponentUI` resolves: the component's default theme and a getter for its current variant props. */
+export type UseComponentUIOptions<T extends ThemeShape> = {
+  /** The component's default theme (`./theme.ts`). */
+  theme: T
+  /** Reads the props that select variants; tracked, so the classes update when they change. */
+  variantProps: () => Record<string, unknown>
+}
+
 /**
  * Builds the slot class functions for a component: default theme, extended by the Vite plugin's `ui`
  * option, then by the app config (`createHareUI({ ui })`), resolved for the current variant props.
@@ -94,11 +105,10 @@ const resolve = (component: Shared, props: Record<string, unknown>) => {
  */
 export const useComponentUI = <T extends ThemeShape>(
   name: keyof Themes,
-  theme: T,
-  variantProps: () => Record<string, unknown>,
+  { theme, variantProps }: UseComponentUIOptions<T>,
 ): ComputedRef<ComponentUI<T>> => {
   const config = inject(hareUIConfigKey, NO_CONFIG)
-  const component = getComponent(config, name, getBase(name, theme))
+  const component = getComponent(config, { name, base: getBase(name, theme) })
 
   return computed(() => resolve(component.value, variantProps()) as ComponentUI<T>)
 }

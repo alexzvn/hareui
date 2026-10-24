@@ -6,7 +6,7 @@
     :aria-labelledby="hasLabel ? labelId : undefined"
     :aria-describedby="describedBy"
     data-slot="radio-button-group-item"
-    :data-selected="selected ? 'true' : undefined"
+    :data-selected="isSelected ? 'true' : undefined"
     :data-invalid="group.invalid.value ? 'true' : undefined"
     :data-readonly="group.readonly.value ? 'true' : undefined"
     :class="cls('item', props.class)"
@@ -16,10 +16,10 @@
       v-if="indicator"
       aria-hidden="true"
       data-slot="radio-button-group-indicator"
-      :data-custom="customIndicator ? 'true' : undefined"
+      :data-custom="hasCustomIndicator ? 'true' : undefined"
       :class="cls('indicator')"
     >
-      <slot v-if="customIndicator" name="indicator" v-bind="slotProps" />
+      <slot v-if="hasCustomIndicator" name="indicator" v-bind="slotProps" />
       <span v-else data-slot="radio-control" :class="radioUI.control({ class: cls('control') })">
         <span
           data-slot="radio-indicator"
@@ -92,19 +92,25 @@ const slots = useSlots()
 const group = useRadioButtonGroup()
 
 const hasIcon = computed(() => !!(props.icon || slots.icon))
-const customIndicator = computed(() => !!slots.indicator)
+const hasCustomIndicator = computed(() => !!slots.indicator)
 
-const ui = useComponentUI('radioButtonGroup', theme, () => ({
-  layout: group.layout.value,
-  variant: group.variant.value,
-  withIcon: hasIcon.value,
-  customIndicator: customIndicator.value,
-}))
+const ui = useComponentUI('radioButtonGroup', {
+  theme,
+  variantProps: () => ({
+    layout: group.layout.value,
+    variant: group.variant.value,
+    withIcon: hasIcon.value,
+    customIndicator: hasCustomIndicator.value,
+  }),
+})
 
 // The default indicator is the radio dot of `RadioGroup`, so it follows that theme (and its overrides).
-const radioUI = useComponentUI('radioGroup', radioGroupTheme, () => ({
-  variant: group.variant.value,
-}))
+const radioUI = useComponentUI('radioGroup', {
+  theme: radioGroupTheme,
+  variantProps: () => ({
+    variant: group.variant.value,
+  }),
+})
 
 const cls = (
   slot: keyof NonNullable<RadioButtonGroupItemProps['ui']>,
@@ -113,11 +119,11 @@ const cls = (
   return ui.value[slot]({ class: [group.ui.value?.[slot], props.ui?.[slot], extra] })
 }
 
-const selected = computed(() => group.selected.value === props.value)
+const isSelected = computed(() => group.selected.value === props.value)
 
 // Reka merges the group's disabled state into the radio and sets `data-disabled=""` on it.
 const isDisabled = computed(() => group.disabled.value || props.disabled)
-const slotProps = computed(() => ({ selected: selected.value, disabled: isDisabled.value }))
+const slotProps = computed(() => ({ selected: isSelected.value, disabled: isDisabled.value }))
 
 // Named by the title alone; the description and the default slot content are announced through aria-describedby.
 const { id, labelId, descriptionId, hasLabel, hasDescription, describedBy } = useFieldChrome({

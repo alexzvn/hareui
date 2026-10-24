@@ -47,6 +47,7 @@
 import { useId } from 'reka-ui'
 import { computed } from 'vue'
 
+import type { ChartTweenStep } from './animation'
 import { lerp, useChartTween } from './animation'
 import ChartLayer from './ChartLayer.vue'
 import type { ChartRadarProps, ChartRadarSlots } from './ChartRadar.types'
@@ -101,8 +102,7 @@ chart.registerSeries((): ChartSeries => ({
 
 const target = computed<RadarPoint[]>(() => {
   if (props.hide) return []
-  const cx = polar.cx.value
-  const cy = polar.cy.value
+  const center = { cx: polar.cx.value, cy: polar.cy.value }
   const angleAxis = polar.angleAxis.value
   const radiusAxis = polar.radiusAxis.value
 
@@ -113,29 +113,28 @@ const target = computed<RadarPoint[]>(() => {
     const angle = angleAxis.at(index)
     const radius = radiusAxis.scale(value)
 
-    return [{ index, angle, radius, value: raw, ...polarToCartesian(cx, cy, radius, angle) }]
+    return [{ index, angle, radius, value: raw, ...polarToCartesian(center, { radius, angle }) }]
   })
 })
 
 // Mount: the radar grows out of the center. Data change: every point moves from its previous radius.
-const interpolate = (from: RadarPoint[] | null, to: RadarPoint[], t: number): RadarPoint[] => {
-  const cx = polar.cx.value
-  const cy = polar.cy.value
+const interpolate = ({ from, to, t }: ChartTweenStep<RadarPoint[]>): RadarPoint[] => {
+  const center = { cx: polar.cx.value, cy: polar.cy.value }
 
   return to.map((point) => {
     const previous = from?.find((item) => item.index === point.index)
-    const radius = lerp(previous?.radius ?? 0, point.radius, t)
+    const radius = lerp([previous?.radius ?? 0, point.radius], t)
 
-    return { ...point, radius, ...polarToCartesian(cx, cy, radius, point.angle) }
+    return { ...point, radius, ...polarToCartesian(center, { radius, angle: point.angle }) }
   })
 }
 
-const tween = useChartTween(
-  () => target.value,
+const tween = useChartTween({
+  target: () => target.value,
   interpolate,
-  () => [chart.data.value, props.dataKey, props.hide],
-  () => props,
-)
+  key: () => [chart.data.value, props.dataKey, props.hide],
+  animation: () => props,
+})
 
 const path = computed(() => polygonPath(tween.value.value))
 

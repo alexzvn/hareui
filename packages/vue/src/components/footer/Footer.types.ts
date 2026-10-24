@@ -8,6 +8,7 @@ import type theme from './theme'
 
 type Footer = typeof theme
 
+/** Props of the `Footer` component: the page footer, with start, center and end content areas. */
 export type FooterProps = {
   /**
    * The element or component to render as.
@@ -20,6 +21,7 @@ export type FooterProps = {
   ui?: ComponentSlots<Footer>
 }
 
+/** Slots of the `Footer` component. */
 export type FooterSlots = {
   /** Content aligned to the start on large screens (e.g. copyright). */
   left?: () => VNode[]

@@ -251,22 +251,24 @@ describe('resolveFrameLegend', () => {
   const format = (value: number) => `#${value}`
 
   it('has no legend without the prop or a legend slot', () => {
-    expect(resolveFrameLegend(undefined, false)).toBeNull()
-    expect(resolveFrameLegend(false, false)).toBeNull()
+    expect(resolveFrameLegend(undefined, { hasLegendSlot: false })).toBeNull()
+    expect(resolveFrameLegend(false, { hasLegendSlot: false })).toBeNull()
   })
 
   it('puts a legend slot alone at the bottom', () => {
-    expect(resolveFrameLegend(undefined, true, { valueFormatter: format })).toEqual({
+    expect(
+      resolveFrameLegend(undefined, { hasLegendSlot: true, defaults: { valueFormatter: format } }),
+    ).toEqual({
       position: 'bottom',
       props: { valueFormatter: format },
     })
   })
 
   it('takes the position from the prop, over the slot default', () => {
-    expect(resolveFrameLegend('left', true)?.position).toBe('left')
-    expect(resolveFrameLegend(true, false)?.position).toBe('bottom')
+    expect(resolveFrameLegend('left', { hasLegendSlot: true })?.position).toBe('left')
+    expect(resolveFrameLegend(true, { hasLegendSlot: false })?.position).toBe('bottom')
 
-    expect(resolveFrameLegend({ showValue: true }, false)).toEqual({
+    expect(resolveFrameLegend({ showValue: true }, { hasLegendSlot: false })).toEqual({
       position: 'bottom',
       props: { showValue: true },
     })
@@ -275,10 +277,10 @@ describe('resolveFrameLegend', () => {
   it("lets the prop's own legend props win over the root defaults", () => {
     const own = (value: number) => `${value}!`
     expect(
-      resolveFrameLegend({ position: 'right', valueFormatter: own }, false, {
-        valueFormatter: format,
-        showValue: true,
-      }),
+      resolveFrameLegend(
+        { position: 'right', valueFormatter: own },
+        { hasLegendSlot: false, defaults: { valueFormatter: format, showValue: true } },
+      ),
     ).toEqual({ position: 'right', props: { valueFormatter: own, showValue: true } })
   })
 })
@@ -313,25 +315,25 @@ describe('resolvePolarGeometry', () => {
 
 describe('percentValue', () => {
   it('reads px numbers, numeric strings and percentages of the total', () => {
-    expect(percentValue(12, 80)).toBe(12)
-    expect(percentValue(' 12 ', 80)).toBe(12)
-    expect(percentValue('25%', 80)).toBe(20)
-    expect(percentValue(undefined, 80, 7)).toBe(7)
-    expect(percentValue(null, 80, 7)).toBe(7)
-    expect(percentValue('', 80, 7)).toBe(7)
+    expect(percentValue(12, { total: 80 })).toBe(12)
+    expect(percentValue(' 12 ', { total: 80 })).toBe(12)
+    expect(percentValue('25%', { total: 80 })).toBe(20)
+    expect(percentValue(undefined, { total: 80, fallback: 7 })).toBe(7)
+    expect(percentValue(null, { total: 80, fallback: 7 })).toBe(7)
+    expect(percentValue('', { total: 80, fallback: 7 })).toBe(7)
   })
 
   it('falls back on non-finite input unless keepNonFinite is set (cartesian bar layout)', () => {
-    expect(percentValue(Number.POSITIVE_INFINITY, 80, 7)).toBe(7)
+    expect(percentValue(Number.POSITIVE_INFINITY, { total: 80, fallback: 7 })).toBe(7)
 
-    expect(percentValue(Number.POSITIVE_INFINITY, 80, 7, { keepNonFinite: true })).toBe(
-      Number.POSITIVE_INFINITY,
-    )
+    expect(
+      percentValue(Number.POSITIVE_INFINITY, { total: 80, fallback: 7, keepNonFinite: true }),
+    ).toBe(Number.POSITIVE_INFINITY)
 
-    expect(percentValue('abc%', 80, 7)).toBe(7)
-    expect(percentValue('abc%', 80, 7, { keepNonFinite: true })).toBeNaN()
+    expect(percentValue('abc%', { total: 80, fallback: 7 })).toBe(7)
+    expect(percentValue('abc%', { total: 80, fallback: 7, keepNonFinite: true })).toBeNaN()
 
     // A plain string that isn't a number falls back either way.
-    expect(percentValue('abc', 80, 7, { keepNonFinite: true })).toBe(7)
+    expect(percentValue('abc', { total: 80, fallback: 7, keepNonFinite: true })).toBe(7)
   })
 })

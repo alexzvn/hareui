@@ -8,6 +8,7 @@ import type theme from './theme'
 
 type Alert = typeof theme
 
+/** Props of `Alert`: an inline status message with an indicator icon, a title and a description. */
 export type AlertProps = {
   /**
    * The element or component to render as.
@@ -34,6 +35,7 @@ export type AlertProps = {
   ui?: ComponentSlots<Alert>
 }
 
+/** Slots of `Alert`, for replacing its parts or adding leading, trailing and extra content. */
 export type AlertSlots = {
   /** Content rendered inside the root before the indicator, without a wrapper (e.g. a decorative background). */
   leading?: () => VNode[]

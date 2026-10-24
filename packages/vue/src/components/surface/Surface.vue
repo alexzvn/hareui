@@ -21,9 +21,12 @@ import theme from './theme'
 const props = withDefaults(defineProps<SurfaceProps>(), { as: 'div', variant: 'default' })
 defineSlots<SurfaceSlots>()
 
-const ui = useComponentUI('surface', theme, () => ({
-  variant: props.variant,
-}))
+const ui = useComponentUI('surface', {
+  theme,
+  variantProps: () => ({
+    variant: props.variant,
+  }),
+})
 
 const variant = computed(() => props.variant ?? 'default')
 provide(surfaceContextKey, { variant: toRef(variant) })

@@ -82,15 +82,19 @@ const apiTable = async (component: string, kind: string): Promise<string> => {
   ].join('\n')
 }
 
+type AsyncReplacement = {
+  pattern: RegExp
+  replace: (match: string) => Promise<string>
+}
+
 const replaceAsync = async (
   input: string,
-  re: RegExp,
-  fn: (match: string) => Promise<string>,
+  { pattern, replace }: AsyncReplacement,
 ): Promise<string> => {
   const parts: (string | Promise<string>)[] = []
   let last = 0
-  for (const m of input.matchAll(re)) {
-    parts.push(input.slice(last, m.index), fn(m[0]))
+  for (const m of input.matchAll(pattern)) {
+    parts.push(input.slice(last, m.index), replace(m[0]))
     last = m.index + m[0].length
   }
 
@@ -103,8 +107,12 @@ const replaceAsync = async (
 const tagProps = (tag: string): Record<string, unknown> => {
   const props: Record<string, unknown> = {}
   for (const [, name, value] of tag.matchAll(/\s(:?[\w-]+)="([^"]*)"/g)) {
-    if (name!.startsWith(':')) props[name!.slice(1)] = new Function(`return (${value})`)()
-    else props[name!] = value
+    if (!name!.startsWith(':')) {
+      props[name!] = value
+      continue
+    }
+
+    props[name!.slice(1)] = new Function(`return (${value})`)()
   }
 
   return props
@@ -159,20 +167,26 @@ const toMarkdown = async (body: string): Promise<string> => {
     .replace(/<script\b[\s\S]*?<\/script>\n?/g, '')
     .replace(/<style\b[\s\S]*?<\/style>\n?/g, '')
 
-  out = await replaceAsync(out, /<ComponentPreview\b[^>]*\/>/g, async (tag) => {
-    const name = attr(tag, 'name')
-    if (!name) throw new Error(`ComponentPreview without name: ${tag}`)
-    const src = await readFile(join(docsRoot, 'demos', `${name}.vue`), 'utf8')
+  out = await replaceAsync(out, {
+    pattern: /<ComponentPreview\b[^>]*\/>/g,
+    replace: async (tag) => {
+      const name = attr(tag, 'name')
+      if (!name) throw new Error(`ComponentPreview without name: ${tag}`)
+      const src = await readFile(join(docsRoot, 'demos', `${name}.vue`), 'utf8')
 
-    return `\`\`\`vue\n${src.trimEnd()}\n\`\`\``
+      return `\`\`\`vue\n${src.trimEnd()}\n\`\`\``
+    },
   })
 
-  out = await replaceAsync(out, /<ApiTable\b[^>]*\/>/g, async (tag) => {
-    const component = attr(tag, 'component')
-    const kind = attr(tag, 'kind')
-    if (!component || !kind) throw new Error(`ApiTable missing attributes: ${tag}`)
+  out = await replaceAsync(out, {
+    pattern: /<ApiTable\b[^>]*\/>/g,
+    replace: async (tag) => {
+      const component = attr(tag, 'component')
+      const kind = attr(tag, 'kind')
+      if (!component || !kind) throw new Error(`ApiTable missing attributes: ${tag}`)
 
-    return apiTable(component, kind)
+      return apiTable(component, kind)
+    },
   })
 
   out = out.replace(/<ColorSection\w+\b[\s\S]*?\/>/g, colorSectionTable)
@@ -186,14 +200,17 @@ const toMarkdown = async (body: string): Promise<string> => {
   })
 
   out = out.replace(/<FaqItem\b[^>]*>/g, (tag) => `**${attr(tag, 'question')}**`)
+
+  // Code fences are swapped for numbered placeholders while component tags are stripped, so tags shown in
+  // code samples survive. U+E000 (private use) brackets the index: it never appears in docs markdown.
   const fences: string[] = []
   out = out.replace(
     /^(```|~~~)[\s\S]*?^\1\s*$/gm,
-    (fence) => `\u0000${fences.push(fence) - 1}\u0000`,
+    (fence) => `\uE000${fences.push(fence) - 1}\uE000`,
   )
 
   out = out.replace(/<\/?[A-Z][\w.]*\b[^>]*>/g, '')
-  out = out.replace(/\u0000(\d+)\u0000/g, (_, i) => fences[Number(i)])
+  out = out.replace(/\uE000(\d+)\uE000/g, (_, i) => fences[Number(i)])
 
   return out.replace(/\n{3,}/g, '\n\n').trim()
 }

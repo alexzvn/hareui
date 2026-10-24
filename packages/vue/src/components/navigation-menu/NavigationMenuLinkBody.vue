@@ -55,7 +55,7 @@
         {{ label }}
       </SlotOutlet>
       <NavigationMenuIcon
-        v-if="showExternal && externalIcon"
+        v-if="shouldShowExternal && externalIcon"
         :icon="externalIcon"
         data-slot="linkLabelExternalIcon"
         :class="
@@ -66,7 +66,7 @@
         "
       />
       <ExternalIcon
-        v-else-if="showExternal"
+        v-else-if="shouldShowExternal"
         data-slot="linkLabelExternalIcon"
         :class="
           ui.linkLabelExternalIcon({
@@ -121,7 +121,7 @@
           "
         />
         <ChevronRightIcon
-          v-else-if="hasIndicator && vertical"
+          v-else-if="hasIndicator && isVertical"
           data-slot="linkTrailingIcon"
           :class="
             ui.linkTrailingIcon({
@@ -184,20 +184,20 @@ const props = defineProps<{
 const ctx = useNavigationMenu()
 const { ui } = ctx
 
-const vertical = computed(() => ctx.props.orientation === 'vertical')
+const isVertical = computed(() => ctx.props.orientation === 'vertical')
 const hasChildren = computed(() => !!props.item.children?.length)
 const hasContentSlot = computed(() => !!ctx.slots[slotName(props.item, 'content')])
 const hasLabelSlot = computed(() => !!ctx.slots[slotName(props.item, 'label')])
 const hasTrailingSlot = computed(() => !!ctx.slots[slotName(props.item, 'trailing')])
 
-const disabled = computed(() => !!props.item.disabled)
+const isDisabled = computed(() => !!props.item.disabled)
 const label = computed(() => ctx.getLabel(props.item))
 const hasBadge = computed(() => !!props.item.badge || props.item.badge === 0)
 
 const hasIndicator = computed(
   () =>
-    (!vertical.value && (hasChildren.value || hasContentSlot.value)) ||
-    (vertical.value && hasChildren.value),
+    (!isVertical.value && (hasChildren.value || hasContentSlot.value)) ||
+    (isVertical.value && hasChildren.value),
 )
 
 const hasTrailing = computed(
@@ -210,7 +210,7 @@ const hasTrailing = computed(
 )
 
 const trailingIsTrigger = computed(
-  () => vertical.value && hasChildren.value && !ctx.props.collapsed && !!props.disclosure,
+  () => isVertical.value && hasChildren.value && !ctx.props.collapsed && !!props.disclosure,
 )
 
 const badgeProps = computed(() =>
@@ -219,15 +219,16 @@ const badgeProps = computed(() =>
 
 const chipProps = computed(() => (typeof props.item.chip === 'object' ? props.item.chip : {}))
 
-const kbd = computed(() => {
-  const keys: (keyof typeof kbdKeysMap)[] = []
-  const text: string[] = []
-  for (const key of props.item.kbds ?? []) {
-    if (key in kbdKeysMap) keys.push(key as keyof typeof kbdKeysMap)
-    else text.push(key)
-  }
+const isKbdKey = (key: string): key is keyof typeof kbdKeysMap => key in kbdKeysMap
 
-  return { keys, text: text.join('') }
+// Known keys render as their symbols; anything else is joined into literal text.
+const kbd = computed(() => {
+  const kbds = props.item.kbds ?? []
+
+  return {
+    keys: kbds.filter(isKbdKey),
+    text: kbds.filter((key) => !isKbdKey(key)).join(''),
+  }
 })
 
 const indicatorIcon = computed(() => props.item.trailingIcon || ctx.props.trailingIcon)
@@ -236,12 +237,12 @@ const externalIcon = computed(() =>
   typeof ctx.props.externalIcon === 'boolean' ? undefined : ctx.props.externalIcon,
 )
 
-const showExternal = computed(
+const shouldShowExternal = computed(
   () => props.item.target === '_blank' && ctx.props.externalIcon !== false,
 )
 
 const variantsOf = () => {
-  return { active: props.active, disabled: disabled.value }
+  return { active: props.active, disabled: isDisabled.value }
 }
 
 // A click on the chevron of a link that has children toggles it instead of navigating.

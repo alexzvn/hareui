@@ -5,6 +5,7 @@ import type theme from './theme'
 
 type Spinner = typeof theme
 
+/** Props of `Spinner`, an animated indicator for an operation in progress. */
 export type SpinnerProps = {
   /**
    * Size of the spinner.

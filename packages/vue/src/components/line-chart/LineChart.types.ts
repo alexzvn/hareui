@@ -7,6 +7,7 @@ import type theme from './theme'
 
 type LineChartTheme = typeof theme
 
+/** Props of `LineChart`: a cartesian chart that shows trends as connected lines. */
 export type LineChartProps<T extends object = Record<string, unknown>> = {
   /**
    * Curve of every series.
@@ -32,4 +33,5 @@ export type LineChartProps<T extends object = Record<string, unknown>> = {
   ui?: ComponentSlots<LineChartTheme>
 } & CartesianRootProps<T, ChartLineSeries>
 
+/** Slots of `LineChart`: chart parts, axis tick labels, legend and tooltip content. */
 export type LineChartSlots = {} & CartesianRootSlots

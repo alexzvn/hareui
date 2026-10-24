@@ -9,6 +9,7 @@ import type theme from './theme'
 
 type Kbd = typeof theme
 
+/** Props for `Kbd`, which displays a keyboard key or shortcut, optionally prefixed by modifier symbols. */
 export type KbdProps = {
   /**
    * The element or component to render as.
@@ -25,6 +26,7 @@ export type KbdProps = {
   ui?: ComponentSlots<Kbd>
 }
 
+/** Slots for `Kbd`. */
 export type KbdSlots = {
   /** The key text after the symbols, wrapped in the `content` element (HeroUI's `Kbd.Content`). */
   default?: () => VNode[]

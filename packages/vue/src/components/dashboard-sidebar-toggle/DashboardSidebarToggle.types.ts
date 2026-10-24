@@ -9,6 +9,7 @@ import type theme from './theme'
 
 type DashboardSidebarToggle = typeof theme
 
+/** Props of `DashboardSidebarToggle`, the button that opens and closes a dashboard sidebar's mobile menu. */
 export type DashboardSidebarToggleProps = {
   /**
    * The element or component to render as.
@@ -41,6 +42,7 @@ export type DashboardSidebarToggleProps = {
   ui?: ComponentSlots<DashboardSidebarToggle>
 }
 
+/** Slots of `DashboardSidebarToggle`. */
 export type DashboardSidebarToggleSlots = {
   /** The button content. Defaults to the gravity-ui `bars` icon, and to a close icon while the sidebar is open. */
   default?: (props: { open: boolean }) => unknown

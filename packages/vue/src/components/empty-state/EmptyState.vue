@@ -13,5 +13,5 @@ import theme from './theme'
 const props = defineProps<EmptyStateProps>()
 defineSlots<EmptyStateSlots>()
 
-const ui = useComponentUI('emptyState', theme, () => ({}))
+const ui = useComponentUI('emptyState', { theme: theme, variantProps: () => ({}) })
 </script>

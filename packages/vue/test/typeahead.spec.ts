@@ -21,16 +21,15 @@ const setup = (options: TypeaheadOptions, items: Item[], initial?: Item) => {
   })
 
   const type = (key: string, init: KeyboardEventInit = {}) =>
-    typeahead.onKeydown(
-      new KeyboardEvent('keydown', { key, ...init }),
-      () => ({
+    typeahead.onKeydown(new KeyboardEvent('keydown', { key, ...init }), {
+      source: () => ({
         items,
         text: (i) => i.label,
         disabled: (i) => !!i.disabled,
         isCurrent: (i) => i === current,
       }),
       select,
-    )
+    })
 
   return { type, select, scope, current: () => current }
 }

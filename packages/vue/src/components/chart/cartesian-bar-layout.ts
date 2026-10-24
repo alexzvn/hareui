@@ -8,10 +8,8 @@ type BarSlot = { ids: string[]; size?: number; max?: number }
 type BarEntry = [string, ChartBarPosition]
 
 // Bar sizes and gaps pass non-finite values (`Infinity`, `'abc%'`) through instead of falling back, unlike polar layout.
-const BAR_LENGTH = { keepNonFinite: true }
-
 const toBarLength = (value: number | string, bandSize: number) =>
-  percentValue(value, bandSize, 0, BAR_LENGTH)
+  percentValue(value, { total: bandSize, keepNonFinite: true })
 
 // Unstacked bars get one slot each; a stack shares one slot, sized by the first of its bars that sets a size.
 const collectBarSlots = (series: ChartSeries[], bandSize: number): BarSlot[] => {

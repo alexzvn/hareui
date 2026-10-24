@@ -1,5 +1,6 @@
 import type { ClassValue } from '@/utils/tv'
 
+/** Props of `ChartPolarGrid`: the rings and spokes behind a polar chart. */
 export type ChartPolarGridProps = {
   /**
    * Shape of the rings: polygons through the angle axis ticks, or circles.

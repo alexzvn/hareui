@@ -4,6 +4,7 @@ import type { ClassValue } from '@/utils/tv'
 
 import type { ChartAnimationProps } from './animation'
 
+/** Track drawn behind each radial bar, over the full angle. */
 export type ChartRadialBarBackground = {
   /** Track color. Defaults to the theme's default color. */
   fill?: string
@@ -11,6 +12,7 @@ export type ChartRadialBarBackground = {
   class?: ClassValue
 }
 
+/** Props of `ChartRadialBar`: one ring per row, its arc sized by `dataKey` on the angle axis. */
 export type ChartRadialBarProps = {
   /** Key of the value in each row. */
   dataKey: string
@@ -62,6 +64,7 @@ export type ChartRadialBarProps = {
   class?: ClassValue
 } & ChartAnimationProps
 
+/** Slots of `ChartRadialBar`. */
 export type ChartRadialBarSlots = {
   /** `ChartCell` per ring (in data order) and `ChartLabel`. */
   default?: () => VNode[]

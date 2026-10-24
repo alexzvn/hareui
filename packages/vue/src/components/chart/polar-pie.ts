@@ -93,7 +93,7 @@ export const computePieSectors = (values: number[], options: PieLayoutOptions): 
       endAngle: sectorEnd,
       midAngle,
       middleRadius,
-      tooltipPosition: polarToCartesian(cx, cy, middleRadius, midAngle),
+      tooltipPosition: polarToCartesian({ cx, cy }, { radius: middleRadius, angle: midAngle }),
     })
   })
 

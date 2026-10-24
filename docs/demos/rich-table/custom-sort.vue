@@ -65,8 +65,7 @@ const columns: RichTableColumn<Payment>[] = [
     accessorKey: 'status',
     header: ({ column }) => sortableHeader(column, 'Status'),
     enableSorting: true,
-    sortingFn: (a, b, id) =>
-      order.indexOf(String(a.getValue(id))) - order.indexOf(String(b.getValue(id))),
+    sortingFn: (a, b) => order.indexOf(a.original.status) - order.indexOf(b.original.status),
     meta: { class: { td: 'capitalize' } },
   },
   {

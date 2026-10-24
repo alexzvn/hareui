@@ -17,7 +17,8 @@ import {
   toCalendar,
   toCalendarDate,
 } from '@internationalized/date'
-import { computed, nextTick, ref, shallowRef, watch } from 'vue'
+import { computed, nextTick, shallowRef, watch } from 'vue'
+import type { ShallowRef } from 'vue'
 
 /** React Aria's `visibleDuration`: `{ months }` is the (Reka) month view, `{ weeks }` / `{ days }` the custom views. */
 export type VisibleDuration = {
@@ -38,42 +39,35 @@ export const isDurationView = (
 // ---------------------------------------------------------------------------------------------
 // Ported from react-stately `calendar/utils` (alignStart / alignEnd / alignCenter / constrainStart)
 // ---------------------------------------------------------------------------------------------
-const alignStart = (
-  date: CalendarDate,
-  duration: DateDuration,
-  locale: string,
-  min?: DateValue,
-  max?: DateValue,
-): CalendarDate => {
-  let aligned = date
-  if (duration.weeks || (duration.days && duration.days > 7)) aligned = startOfWeek(date, locale)
+type Bounds = { min?: DateValue; max?: DateValue }
 
-  return constrainStart(date, aligned, duration, locale, min, max)
+type AlignOptions = Bounds & { duration: DateDuration; locale: string }
+
+const alignStart = (date: CalendarDate, options: AlignOptions): CalendarDate => {
+  const { duration, locale } = options
+  const isWeekAligned = !!duration.weeks || (!!duration.days && duration.days > 7)
+  const aligned = isWeekAligned ? startOfWeek(date, locale) : date
+
+  return constrainStart({ date, aligned }, options)
 }
 
-const alignEnd = (
-  date: CalendarDate,
-  duration: DateDuration,
-  locale: string,
-  min?: DateValue,
-  max?: DateValue,
-): CalendarDate => {
-  const d = { ...duration }
-  if (d.days) d.days--
-  else if (d.weeks) d.weeks--
+// The offset from a range's start to its last unit: one day (or week) short of the duration
+const toLastUnitOffset = (duration: DateDuration): DateDuration => {
+  if (duration.days) return { ...duration, days: duration.days - 1 }
+  if (duration.weeks) return { ...duration, weeks: duration.weeks - 1 }
 
-  const aligned = alignStart(date, duration, locale).subtract(d)
-
-  return constrainStart(date, aligned, duration, locale, min, max)
+  return { ...duration }
 }
 
-const alignCenter = (
-  date: CalendarDate,
-  duration: DateDuration,
-  locale: string,
-  min?: DateValue,
-  max?: DateValue,
-): CalendarDate => {
+const alignEnd = (date: CalendarDate, options: AlignOptions): CalendarDate => {
+  const { duration, locale } = options
+  const aligned = alignStart(date, { duration, locale }).subtract(toLastUnitOffset(duration))
+
+  return constrainStart({ date, aligned }, options)
+}
+
+const alignCenter = (date: CalendarDate, options: AlignOptions): CalendarDate => {
+  const { duration, locale } = options
   const half: DateDuration = {}
   for (const key of Object.keys(duration) as (keyof DateDuration)[]) {
     const value = duration[key] ?? 0
@@ -82,39 +76,45 @@ const alignCenter = (
     half[key] = h
   }
 
-  const aligned = alignStart(date, duration, locale).subtract(half)
+  const aligned = alignStart(date, { duration, locale }).subtract(half)
 
-  return constrainStart(date, aligned, duration, locale, min, max)
+  return constrainStart({ date, aligned }, options)
 }
 
 const constrainStart = (
-  date: CalendarDate,
-  aligned: CalendarDate,
-  duration: DateDuration,
-  locale: string,
-  min?: DateValue,
-  max?: DateValue,
+  range: { date: CalendarDate; aligned: CalendarDate },
+  options: AlignOptions,
 ): CalendarDate => {
+  const { date } = range
+  const { duration, locale, min, max } = options
+  let { aligned } = range
   if (min && date.compare(min) >= 0)
     aligned =
       (maxDate(
         aligned,
-        alignStart(toCalendarDate(min), duration, locale),
+        alignStart(toCalendarDate(min), { duration, locale }),
       ) as CalendarDate | null) ?? aligned
 
   if (max && date.compare(max) <= 0)
     aligned =
-      (minDate(aligned, alignEnd(toCalendarDate(max), duration, locale)) as CalendarDate | null) ??
-      aligned
+      (minDate(
+        aligned,
+        alignEnd(toCalendarDate(max), { duration, locale }),
+      ) as CalendarDate | null) ?? aligned
 
   return aligned
 }
 
-const constrainValue = (date: CalendarDate, min?: DateValue, max?: DateValue): CalendarDate => {
-  if (min) date = (maxDate(date, toCalendarDate(min)) as CalendarDate | null) ?? date
-  if (max) date = (minDate(date, toCalendarDate(max)) as CalendarDate | null) ?? date
+const constrainValue = (date: CalendarDate, bounds: Bounds): CalendarDate => {
+  const { min, max } = bounds
+  let constrained = date
+  if (min)
+    constrained = (maxDate(constrained, toCalendarDate(min)) as CalendarDate | null) ?? constrained
 
-  return date
+  if (max)
+    constrained = (minDate(constrained, toCalendarDate(max)) as CalendarDate | null) ?? constrained
+
+  return constrained
 }
 
 const unitDuration = (duration: DateDuration): DateDuration => {
@@ -124,9 +124,21 @@ const unitDuration = (duration: DateDuration): DateDuration => {
   return unit
 }
 
-const isOutOfRange = (date: DateValue, min?: DateValue, max?: DateValue) => {
+const isOutOfRange = (date: DateValue, bounds: Bounds) => {
+  const { min, max } = bounds
+
   return (min != null && date.compare(min) < 0) || (max != null && date.compare(max) > 0)
 }
+
+/** `onKeyDown`'s per-call options: the selection/cancel callbacks and the reading direction. */
+export type DurationKeyDownOptions = {
+  select: (date: CalendarDate) => void
+  /** Escape: cancels an in-progress selection (omitted when there is none to cancel). */
+  escape?: () => void
+  dir?: 'ltr' | 'rtl'
+}
+
+type KeyAction = (event: KeyboardEvent, keyOptions: DurationKeyDownOptions) => void
 
 export type UseCalendarDurationViewOptions = {
   duration: () => VisibleDuration | undefined
@@ -140,6 +152,8 @@ export type UseCalendarDurationViewOptions = {
   focused: { value: DateValue }
   /** react-stately's `selectionAlignment`, evaluated when the visible range is (re)aligned. */
   alignment: () => 'start' | 'center'
+  /** The day grid element (the component's `useTemplateRef`); DOM focus follows the focused date inside it. */
+  gridRef: Readonly<ShallowRef<HTMLElement | null>>
 }
 
 /**
@@ -164,28 +178,32 @@ export const useCalendarDurationView = (options: UseCalendarDurationViewOptions)
   const toDisplay = (value: DateValue) =>
     toCalendar(toCalendarDate(value), displayCalendar.value) as CalendarDate
 
-  const min = () => options.minValue()
-  const max = () => options.maxValue()
+  const bounds = (): Bounds => ({ min: options.minValue(), max: options.maxValue() })
+
+  const alignOptions = (alignDuration: DateDuration = duration.value): AlignOptions => ({
+    duration: alignDuration,
+    locale: options.locale(),
+    ...bounds(),
+  })
 
   const focusedDate = computed<CalendarDate>({
-    get: () => constrainValue(toDisplay(options.focused.value), min(), max()),
+    get: () => constrainValue(toDisplay(options.focused.value), bounds()),
     set: (value) => {
-      options.focused.value = constrainValue(value, min(), max())
+      options.focused.value = constrainValue(value, bounds())
     },
   })
 
   const initialStart = () => {
     const align = options.alignment() === 'start' ? alignStart : alignCenter
-    return align(focusedDate.value, duration.value, options.locale(), min(), max())
+
+    return align(focusedDate.value, alignOptions())
   }
 
   const startDate = shallowRef<CalendarDate>(initialStart())
   const endDate = computed(() => {
-    const d = { ...duration.value }
-    if (d.days) d.days--
-    else d.days = -1
+    const d = duration.value
 
-    return startDate.value.add(d)
+    return startDate.value.add({ ...d, days: d.days ? d.days - 1 : -1 })
   })
 
   // React Aria realigns when the duration or the display calendar changes, and pages the range to keep the
@@ -197,10 +215,12 @@ export const useCalendarDurationView = (options: UseCalendarDurationViewOptions)
   watch(
     focusedDate,
     (focused) => {
-      if (focused.compare(startDate.value) < 0)
-        startDate.value = alignEnd(focused, duration.value, options.locale(), min(), max())
-      else if (focused.compare(endDate.value) > 0)
-        startDate.value = alignStart(focused, duration.value, options.locale(), min(), max())
+      if (focused.compare(startDate.value) < 0) {
+        startDate.value = alignEnd(focused, alignOptions())
+        return
+      }
+
+      if (focused.compare(endDate.value) > 0) startDate.value = alignStart(focused, alignOptions())
     },
     { flush: 'sync' },
   )
@@ -209,31 +229,23 @@ export const useCalendarDurationView = (options: UseCalendarDurationViewOptions)
     options.pageBehavior() === 'visible' ? duration.value : unitDuration(duration.value),
   )
 
-  const nextPage = () => {
-    const start = startDate.value.add(pageDuration.value)
+  // Moves the visible range one page forward/back (realigned within min/max) and the focused date with it
+  const page = (isForward: boolean) => {
+    const step = pageDuration.value
     const focused = focusedDate.value
-    startDate.value = alignStart(
-      constrainStart(focused, start, pageDuration.value, options.locale(), min(), max()),
-      pageDuration.value,
-      options.locale(),
-    )
+    const start = isForward ? startDate.value.add(step) : startDate.value.subtract(step)
+    const constrained = constrainStart({ date: focused, aligned: start }, alignOptions(step))
+    startDate.value = alignStart(constrained, { duration: step, locale: options.locale() })
 
-    focusedDate.value = constrainValue(focused.add(pageDuration.value), min(), max())
+    const nextFocused = isForward ? focused.add(step) : focused.subtract(step)
+    focusedDate.value = constrainValue(nextFocused, bounds())
   }
 
-  const prevPage = () => {
-    const start = startDate.value.subtract(pageDuration.value)
-    const focused = focusedDate.value
-    startDate.value = alignStart(
-      constrainStart(focused, start, pageDuration.value, options.locale(), min(), max()),
-      pageDuration.value,
-      options.locale(),
-    )
+  const nextPage = () => page(true)
 
-    focusedDate.value = constrainValue(focused.subtract(pageDuration.value), min(), max())
-  }
+  const prevPage = () => page(false)
 
-  const isInvalid = (date: DateValue) => isOutOfRange(date, min(), max())
+  const isInvalid = (date: DateValue) => isOutOfRange(date, bounds())
 
   const isOutsideVisibleRange = (date: DateValue) =>
     date.compare(startDate.value) < 0 || date.compare(endDate.value) > 0
@@ -289,12 +301,12 @@ export const useCalendarDurationView = (options: UseCalendarDurationViewOptions)
   const weekDays = computed(() => {
     const formatter = new DateFormatter(options.locale(), { weekday: 'short', timeZone })
     const d = days.value
-    const short = d != null && d < 7
-    const first = short
+    const isShortDayView = d != null && d < 7
+    const first = isShortDayView
       ? startDate.value
       : startOfWeek(startDate.value, options.locale(), options.firstDayOfWeek())
 
-    return Array.from({ length: short ? d! : 7 }, (_, i) =>
+    return Array.from({ length: isShortDayView ? d : 7 }, (_, i) =>
       formatter.format(first.add({ days: i }).toDate(timeZone)),
     )
   })
@@ -340,85 +352,70 @@ export const useCalendarDurationView = (options: UseCalendarDurationViewOptions)
     }).format(date.toDate(timeZone))
 
   // Keyboard navigation (`useCalendarGrid` shortcuts). DOM focus follows the focused date while the grid has focus.
-  const gridRef = ref<HTMLElement>()
   const focusCell = (date: CalendarDate) => {
     focusedDate.value = date
 
     nextTick(() => {
-      if (!gridRef.value?.contains(document.activeElement)) return
+      const grid = options.gridRef.value
+      if (!grid?.contains(document.activeElement)) return
 
-      gridRef.value
-        .querySelector<HTMLElement>(`[data-value="${focusedDate.value.toString()}"]`)
-        ?.focus()
+      grid.querySelector<HTMLElement>(`[data-value="${focusedDate.value.toString()}"]`)?.focus()
     })
   }
 
-  const onKeyDown = (
-    event: KeyboardEvent,
-    handlers: { select: (date: CalendarDate) => void; escape?: () => void },
-    dir: 'ltr' | 'rtl' = 'ltr',
-  ) => {
+  const moveFocus = (amount: DateDuration, isForward: boolean) => {
     const focused = focusedDate.value
-    const d = duration.value
-    const unit = unitDuration(d)
-    const rtl = dir === 'rtl'
-    switch (event.key) {
-      case 'ArrowLeft':
-        focusCell(rtl ? focused.add({ days: 1 }) : focused.subtract({ days: 1 }))
-        break
-      case 'ArrowRight':
-        focusCell(rtl ? focused.subtract({ days: 1 }) : focused.add({ days: 1 }))
-        break
-      case 'ArrowUp':
-        if (d.days) prevPageAndFocus()
-        else focusCell(focused.subtract({ weeks: 1 }))
+    focusCell(isForward ? focused.add(amount) : focused.subtract(amount))
+  }
 
-        break
-      case 'ArrowDown':
-        if (d.days) nextPageAndFocus()
-        else focusCell(focused.add({ weeks: 1 }))
+  const pageAndFocus = (isForward: boolean) => {
+    page(isForward)
+    focusCell(focusedDate.value)
+  }
 
-        break
-      case 'Home':
-        focusCell(d.days ? startDate.value : startOfWeek(focused, options.locale()))
-        break
-      case 'End':
-        focusCell(d.days ? endDate.value : startOfWeek(focused, options.locale()).add({ days: 6 }))
-        break
-      case 'PageUp':
-        if (d.days) prevPageAndFocus()
-        else focusCell(event.shiftKey ? focused.subtract({ months: 1 }) : focused.subtract(unit))
-
-        break
-      case 'PageDown':
-        if (d.days) nextPageAndFocus()
-        else focusCell(event.shiftKey ? focused.add({ months: 1 }) : focused.add(unit))
-
-        break
-      case 'Enter':
-      case ' ':
-        handlers.select(focused)
-        break
-      case 'Escape':
-        if (!handlers.escape) return
-        handlers.escape()
-
-        return
-      default:
-        return
+  // The day view pages on Up/Down/PageUp/PageDown; the week view moves the focused date by `amount`
+  const pageOrMoveFocus = (amount: DateDuration, isForward: boolean) => {
+    if (duration.value.days) {
+      pageAndFocus(isForward)
+      return
     }
 
+    moveFocus(amount, isForward)
+  }
+
+  // Shift+PageUp/PageDown moves a month, PageUp/PageDown alone one unit of the duration
+  const pageAmount = (event: KeyboardEvent): DateDuration =>
+    event.shiftKey ? { months: 1 } : unitDuration(duration.value)
+
+  const weekStart = () => startOfWeek(focusedDate.value, options.locale())
+
+  const selectFocused: KeyAction = (_, keyOptions) => keyOptions.select(focusedDate.value)
+
+  const keyActions: Partial<Record<string, KeyAction>> = {
+    ArrowLeft: (_, keyOptions) => moveFocus({ days: 1 }, keyOptions.dir === 'rtl'),
+    ArrowRight: (_, keyOptions) => moveFocus({ days: 1 }, keyOptions.dir !== 'rtl'),
+    ArrowUp: () => pageOrMoveFocus({ weeks: 1 }, false),
+    ArrowDown: () => pageOrMoveFocus({ weeks: 1 }, true),
+    Home: () => focusCell(duration.value.days ? startDate.value : weekStart()),
+    End: () => focusCell(duration.value.days ? endDate.value : weekStart().add({ days: 6 })),
+    PageUp: (event) => pageOrMoveFocus(pageAmount(event), false),
+    PageDown: (event) => pageOrMoveFocus(pageAmount(event), true),
+    Enter: selectFocused,
+    ' ': selectFocused,
+  }
+
+  const onKeyDown = (event: KeyboardEvent, keyOptions: DurationKeyDownOptions) => {
+    // Escape only cancels an in-progress selection; its default is never prevented
+    if (event.key === 'Escape') {
+      keyOptions.escape?.()
+      return
+    }
+
+    const action = keyActions[event.key]
+    if (!action) return
+
+    action(event, keyOptions)
     event.preventDefault()
-  }
-
-  const nextPageAndFocus = () => {
-    nextPage()
-    focusCell(focusedDate.value)
-  }
-
-  const prevPageAndFocus = () => {
-    prevPage()
-    focusCell(focusedDate.value)
   }
 
   return {
@@ -429,7 +426,6 @@ export const useCalendarDurationView = (options: UseCalendarDurationViewOptions)
     weekDays,
     heading,
     rangeLabel,
-    gridRef,
     nextPage,
     prevPage,
     isPrevDisabled,

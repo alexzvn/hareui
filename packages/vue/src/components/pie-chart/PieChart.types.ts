@@ -21,6 +21,7 @@ import type theme from './theme'
 
 type PieChartTheme = typeof theme
 
+/** Props of `PieChart`: a pie or donut chart, drawn from props (`data` + `index`) or composed from `ChartPie` and other chart parts. */
 export type PieChartProps<T extends object = ChartDatum> = {
   /** Rows of the chart. With `index`, each row is one slice; otherwise they are shared by every `ChartPie` without its own `data`. */
   data?: T[]
@@ -88,6 +89,7 @@ export type PieChartProps<T extends object = ChartDatum> = {
   ui?: ComponentSlots<PieChartTheme>
 }
 
+/** Slots of `PieChart`. */
 export type PieChartSlots = {
   /** Chart parts: `ChartPie`, `ChartTooltip`, a centered `ChartLabel`, and raw SVG such as `<defs>`. With `index`, extra parts drawn over the generated pie. */
   default?: () => VNode[]

@@ -1,5 +1,5 @@
 <template>
-  <form class="flex w-[280px] flex-col gap-4" @submit="handleSubmit">
+  <form class="flex w-[280px] flex-col gap-4" @submit="onSubmit">
     <NumberField
       v-model="value"
       required
@@ -33,7 +33,7 @@ const value = ref<number | null>()
 const isSubmitting = ref(false)
 const isOutOfStock = computed(() => value.value != null && value.value > STOCK_AVAILABLE)
 
-const handleSubmit = (e: Event) => {
+const onSubmit = (e: Event) => {
   e.preventDefault()
   if (value.value == null || value.value < 1 || value.value > STOCK_AVAILABLE) return
   isSubmitting.value = true

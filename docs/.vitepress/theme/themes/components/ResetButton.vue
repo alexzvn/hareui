@@ -72,5 +72,5 @@ const isDisabled = computed(() => {
   )
 })
 
-useKeyPress('d', () => (isOpen.value = true), { enabled: () => !isDisabled.value })
+useKeyPress('d', { onPress: () => (isOpen.value = true), enabled: () => !isDisabled.value })
 </script>

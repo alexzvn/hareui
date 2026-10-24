@@ -1,10 +1,10 @@
 <template>
-  <Form class="flex w-[280px] flex-col gap-2" @submit="handleSubmit">
+  <Form class="flex w-[280px] flex-col gap-2" @submit="onSubmit">
     <InputOtp
       v-model="value"
       label="Verify account"
       :groups="[3, 3]"
-      @complete="handleComplete"
+      @complete="onComplete"
       @update:model-value="isComplete = false"
     />
     <Button
@@ -31,14 +31,14 @@ const value = ref('')
 const isComplete = ref(false)
 const isSubmitting = ref(false)
 
-const handleComplete = (code: string) => {
+const onComplete = (code: string) => {
   isComplete.value = true
 
   // eslint-disable-next-line no-console
   console.log('Code complete:', code)
 }
 
-const handleSubmit = (e: Event) => {
+const onSubmit = (e: Event) => {
   e.preventDefault()
   isSubmitting.value = true
 

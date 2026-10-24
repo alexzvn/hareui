@@ -115,7 +115,10 @@ export const usePolarInteraction = (chart: ChartContext, source: PolarInteractio
     const radius =
       raw === undefined ? polar.outerRadius.value : polar.radiusAxis.value.scale(Number(raw))
 
-    return polarToCartesian(polar.cx.value, polar.cy.value, radius, polar.angleAxis.value.at(index))
+    return polarToCartesian(
+      { cx: polar.cx.value, cy: polar.cy.value },
+      { radius, angle: polar.angleAxis.value.at(index) },
+    )
   }
 
   /** Radial bars: the middle of the ring at the start of the sweep. */
@@ -123,7 +126,10 @@ export const usePolarInteraction = (chart: ChartContext, source: PolarInteractio
     const band = polar.radiusAxis.value
     const radius = band.at(index) + band.bandwidth / 2
 
-    return polarToCartesian(polar.cx.value, polar.cy.value, radius, polar.startAngle.value)
+    return polarToCartesian(
+      { cx: polar.cx.value, cy: polar.cy.value },
+      { radius, angle: polar.startAngle.value },
+    )
   }
 
   const coordinateOf = (index: number): ChartPoint | null => {

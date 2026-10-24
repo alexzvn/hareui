@@ -26,7 +26,7 @@ const props = withDefaults(defineProps<DashboardGroupProps>(), {
 
 defineSlots<DashboardGroupSlots>()
 
-const ui = useComponentUI('dashboardGroup', theme, () => ({}))
+const ui = useComponentUI('dashboardGroup', { theme: theme, variantProps: () => ({}) })
 
 const left = createDashboardSidebarState()
 const right = createDashboardSidebarState()

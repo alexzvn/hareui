@@ -205,7 +205,10 @@ const isOpen = computed({
 
 useInertOutside(useTemplateRef<ComponentPublicInstance>('popoverContent'), openLocal)
 
-const ui = useComponentUI('datePicker', theme, () => ({ fullWidth: props.fullWidth }))
+const ui = useComponentUI('datePicker', {
+  theme,
+  variantProps: () => ({ fullWidth: props.fullWidth }),
+})
 
 const root = useTemplateRef<ComponentPublicInstance>('root')
 const trigger = useTemplateRef<HTMLButtonElement>('trigger')

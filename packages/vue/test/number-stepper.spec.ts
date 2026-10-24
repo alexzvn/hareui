@@ -375,15 +375,15 @@ describe('NumberStepper', () => {
 
 describe('NumberStepper slot outlets', () => {
   it('#decrement / #increment / #value toggled by a parent v-if switch between custom content and the fallback', async () => {
-    const show = ref(true)
+    const isShown = ref(true)
     const wrapper = mount(
       defineComponent({
         components: { NumberStepper },
-        setup: () => ({ show }),
+        setup: () => ({ isShown }),
         template: `<NumberStepper :default-value="1">
-        <template v-if="show" #decrement><i data-test="minus" /></template>
-        <template v-if="show" #increment><i data-test="plus" /></template>
-        <template v-if="show" #value="{ value, formattedValue }"><b data-test="value">{{ value }}|{{ formattedValue }}</b></template>
+        <template v-if="isShown" #decrement><i data-test="minus" /></template>
+        <template v-if="isShown" #increment><i data-test="plus" /></template>
+        <template v-if="isShown" #value="{ value, formattedValue }"><b data-test="value">{{ value }}|{{ formattedValue }}</b></template>
       </NumberStepper>`,
       }),
     )
@@ -395,14 +395,14 @@ describe('NumberStepper slot outlets', () => {
     expect(wrapper.get('[data-test=value]').text()).toBe('1|1')
     expect(wrapper.get(dec).find('svg').exists()).toBe(false)
 
-    show.value = false
+    isShown.value = false
     await nextTick()
     expect(custom()).toEqual([false, false, false])
     expect(wrapper.get(dec).find('svg').exists()).toBe(true)
     expect(wrapper.get(inc).find('svg').exists()).toBe(true)
     expect(wrapper.findComponent(NumberFlow).exists()).toBe(true)
 
-    show.value = true
+    isShown.value = true
     await nextTick()
     expect(custom()).toEqual([true, true, true])
     expect(wrapper.get(inc).find('svg').exists()).toBe(false)

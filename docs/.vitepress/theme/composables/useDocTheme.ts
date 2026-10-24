@@ -14,9 +14,9 @@ export const readDesignAttributes = (root: Element): DesignAttributes => {
   return attributes
 }
 
-const dark = ref(false)
+const isDark = ref(false)
 const design = shallowRef<DesignAttributes>({})
-let observing = false
+let isObserving = false
 
 /**
  * The docs page's live theme: `html.dark` plus the design attributes. The docs ThemeToggle and the theme builder write
@@ -25,11 +25,11 @@ let observing = false
  */
 export const useDocTheme = () => {
   onMounted(() => {
-    if (observing) return
-    observing = true
+    if (isObserving) return
+    isObserving = true
     const root = document.documentElement
     const read = () => {
-      dark.value = root.classList.contains('dark')
+      isDark.value = root.classList.contains('dark')
       const next = readDesignAttributes(root)
       if (DESIGN_ATTRIBUTES.some((name) => next[name] !== design.value[name])) design.value = next
     }
@@ -42,5 +42,5 @@ export const useDocTheme = () => {
     })
   })
 
-  return { dark: readonly(dark), design: readonly(design) }
+  return { dark: readonly(isDark), design: readonly(design) }
 }

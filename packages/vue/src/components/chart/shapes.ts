@@ -1,15 +1,14 @@
 /** Corner radii: one value for all corners, or `[topLeft, topRight, bottomRight, bottomLeft]`. */
 export type ChartRadius = number | [number, number, number, number]
 
+type Rectangle = { x: number; y: number; width: number; height: number }
+
 /**
  * SVG path of a rectangle with rounded corners. Width and height may be negative
  * (bars below the baseline or drawn leftwards); radii are clamped to half the shorter side.
  */
 export const rectanglePath = (
-  x: number,
-  y: number,
-  width: number,
-  height: number,
+  { x, y, width, height }: Rectangle,
   radius: ChartRadius = 0,
 ): string => {
   const maxRadius = Math.min(Math.abs(width) / 2, Math.abs(height) / 2)

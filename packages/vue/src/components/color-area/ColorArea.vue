@@ -29,10 +29,10 @@
           :aria-labelledby="thumbLabelledBy"
           :style="{ '--color-area-thumb-color': thumbColor, backgroundColor: thumbColor }"
           :data-dragging="isDragging ? 'true' : undefined"
-          :data-focus-visible="focusVisible ? 'true' : undefined"
+          :data-focus-visible="isFocusVisible ? 'true' : undefined"
           @focus="onThumbFocus"
           @keydown="onThumbKeydown"
-          @blur="focusVisible = false"
+          @blur="isFocusVisible = false"
           :class="ui.thumb({ class: props.ui?.thumb })"
         />
       </ColorAreaArea>
@@ -85,12 +85,12 @@ const emit = defineEmits<ColorAreaEmits>()
 const modelValue = defineModel<string | Color | undefined>()
 
 const ctx = useColorPickerContext()
-const usesContext = computed(() => modelValue.value === undefined && !!ctx)
+const isContextControlled = computed(() => modelValue.value === undefined && !!ctx)
 
 // Controlled when a `v-model` is given, or implicitly via an enclosing `ColorPicker`.
 const rootModelValue = computed<string | Color | undefined>(() => {
   if (modelValue.value !== undefined) return modelValue.value
-  if (usesContext.value) return ctx!.color.value
+  if (isContextControlled.value) return ctx!.color.value
 
   return undefined
 })
@@ -149,12 +149,12 @@ const areaStyle = computed(() => {
     }
   }
 
-  const hsl = space.value === 'hsl'
-  const base: Record<string, number> = hsl ? { h: 0, s: 100, l: 50 } : { h: 0, s: 100, b: 100 }
+  const isHsl = space.value === 'hsl'
+  const base: Record<string, number> = isHsl ? { h: 0, s: 100, l: 50 } : { h: 0, s: 100, b: 100 }
   base[FIELD[z]] = zValue
 
   const css = (v: Record<string, number>) =>
-    hsl
+    isHsl
       ? `hsl(${v.h}, ${v.s}%, ${v.l}%)`
       : colorToString({ space: 'hsb', h: v.h, s: v.s, b: v.b, alpha: 1 } as Color, 'rgb')
 
@@ -177,12 +177,20 @@ const areaStyle = computed(() => {
 
 const thumbColor = computed(() => colorToString(currentColor.value, 'rgb'))
 
-const onUpdateColor = (color: Color) => {
-  // Inside a ColorPicker the context owns the colour; writing the local model would detach from it.
-  currentColor.value = color
+// Inside a ColorPicker the context owns the colour; writing the local model would detach from it.
+const writeColor = (color: Color) => {
+  if (isContextControlled.value) {
+    ctx!.setColor(color)
 
-  if (usesContext.value) ctx!.setColor(color)
-  else modelValue.value = color
+    return
+  }
+
+  modelValue.value = color
+}
+
+const onUpdateColor = (color: Color) => {
+  currentColor.value = color
+  writeColor(color)
 
   // Reka never fires its own `change`; every committed colour update is a change.
   emit('change', color)
@@ -214,34 +222,37 @@ const onKeyup = (event: KeyboardEvent) => {
 const isDragging = ref(false)
 
 // Keyboard-modality focus ring, as RAC's `useFocusRing`: Reka focuses the thumb on a pointer press as well.
-const focusVisible = ref(false)
-let pointerActive = false
+const isFocusVisible = ref(false)
+let isPointerActive = false
 const onPointerDownCapture = () => {
-  pointerActive = true
-  focusVisible.value = false
+  isPointerActive = true
+  isFocusVisible.value = false
   if (!isDisabled.value) isDragging.value = true
 }
 
 const onPointerUp = () => {
   isDragging.value = false
-  pointerActive = false
+  isPointerActive = false
 }
 
 const onThumbFocus = () => {
-  focusVisible.value = !pointerActive
+  isFocusVisible.value = !isPointerActive
 }
 
 const onThumbKeydown = () => {
-  pointerActive = false
-  focusVisible.value = true
+  isPointerActive = false
+  isFocusVisible.value = true
 }
 
 onMounted(() => window.addEventListener('pointerup', onPointerUp))
 onBeforeUnmount(() => window.removeEventListener('pointerup', onPointerUp))
 
-const ui = useComponentUI('colorArea', theme, () => ({
-  showDots: props.showDots,
-}))
+const ui = useComponentUI('colorArea', {
+  theme,
+  variantProps: () => ({
+    showDots: props.showDots,
+  }),
+})
 
 // The group gets the consumer's `aria-label`/`aria-labelledby` (fallthrough); the focusable thumb carries it too, as
 // React Aria's channel inputs are labelled "<label>, <channel>". Reka's thumb only names the channels.

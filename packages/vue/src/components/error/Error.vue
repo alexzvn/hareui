@@ -81,7 +81,7 @@ const props = withDefaults(defineProps<ErrorProps>(), {
 const emit = defineEmits<ErrorEmits>()
 const slots = defineSlots<ErrorSlots>()
 
-const ui = useComponentUI('error', theme, () => ({}))
+const ui = useComponentUI('error', { theme: theme, variantProps: () => ({}) })
 
 const as = computed(() => resolveAs(props.as, { root: 'main', statusMessage: 'h1' }))
 const statusCode = computed(() => props.error?.statusCode || props.error?.status)

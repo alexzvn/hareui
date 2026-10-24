@@ -673,8 +673,8 @@ describe('dashboard sidebar', () => {
         },
       })
 
-      const open = ref(false)
-      const collapsed = ref(false)
+      const isOpen = ref(false)
+      const isCollapsed = ref(false)
       const wrapper = mount(
         {
           render: () =>
@@ -686,10 +686,10 @@ describe('dashboard sidebar', () => {
                   {
                     id: 'main',
                     collapsible: true,
-                    open: open.value,
-                    'onUpdate:open': (v: boolean) => (open.value = v),
-                    collapsed: collapsed.value,
-                    'onUpdate:collapsed': (v: boolean) => (collapsed.value = v),
+                    open: isOpen.value,
+                    'onUpdate:open': (v: boolean) => (isOpen.value = v),
+                    collapsed: isCollapsed.value,
+                    'onUpdate:collapsed': (v: boolean) => (isCollapsed.value = v),
                     ...sidebarProps,
                   },
                   { default: () => 'Body' },
@@ -700,39 +700,39 @@ describe('dashboard sidebar', () => {
         { attachTo: document.body },
       )
 
-      return { wrapper, ctx: () => ctx, open, collapsed }
+      return { wrapper, ctx: () => ctx, isOpen, isCollapsed }
     }
 
     it('toggleSidebar / collapseSidebar drive v-model:open and v-model:collapsed', async () => {
-      const { wrapper, ctx, open, collapsed } = mountWithContext()
+      const { wrapper, ctx, isOpen, isCollapsed } = mountWithContext()
       expect(ctx().sidebarOpen.value).toBe(false)
 
       ctx().toggleSidebar()
       await nextTick()
-      expect(open.value).toBe(true)
+      expect(isOpen.value).toBe(true)
 
       ctx().toggleSidebar()
       await nextTick()
-      expect(open.value).toBe(false)
+      expect(isOpen.value).toBe(false)
 
       ctx().collapseSidebar(true)
       await nextTick()
-      expect(collapsed.value).toBe(true)
+      expect(isCollapsed.value).toBe(true)
       expect(aside().dataset.collapsed).toBe('true')
       expect(ctx().sidebarCollapsed.value).toBe(true)
       wrapper.unmount()
     })
 
     it('v-model changes are mirrored into the context', async () => {
-      const { wrapper, ctx, open, collapsed } = mountWithContext()
-      open.value = true
-      collapsed.value = true
+      const { wrapper, ctx, isOpen, isCollapsed } = mountWithContext()
+      isOpen.value = true
+      isCollapsed.value = true
       await settle()
       expect(ctx().sidebarOpen.value).toBe(true)
       expect(ctx().sidebarCollapsed.value).toBe(true)
       expect(aside().dataset.collapsed).toBe('true')
 
-      collapsed.value = false
+      isCollapsed.value = false
       await settle()
       expect(aside().dataset.collapsed).toBe('false')
       expect(ctx().sidebarCollapsed.value).toBe(false)
@@ -740,28 +740,28 @@ describe('dashboard sidebar', () => {
     })
 
     it('dragging and keyboard collapse are reported through v-model:collapsed and the context', async () => {
-      const { wrapper, ctx, collapsed } = mountWithContext({ resizable: true })
+      const { wrapper, ctx, isCollapsed } = mountWithContext({ resizable: true })
       layout(aside(), 150)
 
       // within the collapse threshold of collapsedSize (0)
       await drag(150, 10)
       await settle()
-      expect(collapsed.value).toBe(true)
+      expect(isCollapsed.value).toBe(true)
       expect(ctx().sidebarCollapsed.value).toBe(true)
 
       await key(handle(), 'Enter')
       await settle()
-      expect(collapsed.value).toBe(false)
+      expect(isCollapsed.value).toBe(false)
       expect(ctx().sidebarCollapsed.value).toBe(false)
 
       await key(handle(), 'Enter')
       await settle()
-      expect(collapsed.value).toBe(true)
+      expect(isCollapsed.value).toBe(true)
       expect(ctx().sidebarCollapsed.value).toBe(true)
 
       await key(handle(), 'Enter')
       await settle()
-      expect(collapsed.value).toBe(false)
+      expect(isCollapsed.value).toBe(false)
       expect(ctx().sidebars.left.collapsed.value).toBe(false)
       wrapper.unmount()
     })
@@ -819,7 +819,7 @@ describe('dashboard sidebar', () => {
 
   describe('mobile menu', () => {
     it('renders header/body/footer in a drawer and the toggle closes it', async () => {
-      const open = ref(true)
+      const isOpen = ref(true)
       const wrapper = mount(
         {
           render: () =>
@@ -829,8 +829,8 @@ describe('dashboard sidebar', () => {
                   DashboardSidebar,
                   {
                     id: 'main',
-                    open: open.value,
-                    'onUpdate:open': (v: boolean) => (open.value = v),
+                    open: isOpen.value,
+                    'onUpdate:open': (v: boolean) => (isOpen.value = v),
                   },
                   {
                     header: () => 'Header',
@@ -861,13 +861,13 @@ describe('dashboard sidebar', () => {
 
       dialog.querySelector<HTMLElement>('[data-slot=dashboard-sidebar-toggle]')!.click()
       await settle()
-      expect(open.value).toBe(false)
+      expect(isOpen.value).toBe(false)
       expect(document.querySelector('[data-slot=drawer-dialog]')).toBeNull()
       wrapper.unmount()
     })
 
     it("holds the close button's hover fill until the pointer moves over it, on every open", async () => {
-      const open = ref(false)
+      const isOpen = ref(false)
       const wrapper = mount(
         {
           render: () =>
@@ -878,8 +878,8 @@ describe('dashboard sidebar', () => {
                   {
                     id: 'idle',
                     side: 'right',
-                    open: open.value,
-                    'onUpdate:open': (v: boolean) => (open.value = v),
+                    open: isOpen.value,
+                    'onUpdate:open': (v: boolean) => (isOpen.value = v),
                   },
                   {
                     default: () => 'Body',
@@ -895,7 +895,7 @@ describe('dashboard sidebar', () => {
           '[data-slot=drawer-dialog] [data-slot=dashboard-sidebar-toggle]',
         )!
 
-      open.value = true
+      isOpen.value = true
       await settle()
       expect(close().hasAttribute('data-idle')).toBe(true)
       close().dispatchEvent(new PointerEvent('pointermove', { bubbles: true }))
@@ -904,7 +904,7 @@ describe('dashboard sidebar', () => {
 
       close().click()
       await settle()
-      open.value = true
+      isOpen.value = true
       await settle()
       expect(close().hasAttribute('data-idle')).toBe(true)
       wrapper.unmount()
@@ -954,7 +954,7 @@ describe('dashboard sidebar', () => {
     })
 
     it('autoClose closes the menu when a link inside is clicked, unless disabled', async () => {
-      const open = ref(true)
+      const isOpen = ref(true)
 
       // The default slot renders twice (desktop aside + menu): click the copy inside the menu.
       const link = () =>
@@ -971,8 +971,8 @@ describe('dashboard sidebar', () => {
                   DashboardSidebar,
                   {
                     id: 'main',
-                    open: open.value,
-                    'onUpdate:open': (v: boolean) => (open.value = v),
+                    open: isOpen.value,
+                    'onUpdate:open': (v: boolean) => (isOpen.value = v),
                     autoClose: false,
                   },
                   { default: link },
@@ -985,11 +985,11 @@ describe('dashboard sidebar', () => {
       await settle()
       menuLink().click()
       await settle()
-      expect(open.value).toBe(true)
+      expect(isOpen.value).toBe(true)
       wrapper.unmount()
       await settle()
 
-      const open2 = ref(true)
+      const isOpenWithAutoClose = ref(true)
       const wrapper2 = mount(
         {
           render: () =>
@@ -999,8 +999,8 @@ describe('dashboard sidebar', () => {
                   DashboardSidebar,
                   {
                     id: 'main',
-                    open: open2.value,
-                    'onUpdate:open': (v: boolean) => (open2.value = v),
+                    open: isOpenWithAutoClose.value,
+                    'onUpdate:open': (v: boolean) => (isOpenWithAutoClose.value = v),
                   },
                   { default: link },
                 ),
@@ -1012,7 +1012,7 @@ describe('dashboard sidebar', () => {
       await settle()
       menuLink().click()
       await settle()
-      expect(open2.value).toBe(false)
+      expect(isOpenWithAutoClose.value).toBe(false)
       wrapper2.unmount()
     })
   })

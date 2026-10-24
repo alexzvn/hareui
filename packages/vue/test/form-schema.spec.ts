@@ -67,6 +67,13 @@ const schemas: Record<string, StandardSchemaV1<{ name: string }, { name: string 
   typebox: Compile(Type.Object({ name: Type.String({ minLength: 3 }) })),
 }
 
+// The TypeBox schema sets no custom message, so it reports its built-in one
+const tooShortMessages: Record<string, unknown> = {
+  zod: 'Too short',
+  valibot: 'Too short',
+  typebox: expect.any(String),
+}
+
 describe.each(Object.entries(schemas))('schema: %s', (vendor, schema) => {
   it('blocks submit with errors routed to the field by name, then submits the validated state', async () => {
     const state = reactive({ name: 'ab' })
@@ -80,8 +87,7 @@ describe.each(Object.entries(schemas))('schema: %s', (vendor, schema) => {
     const input = wrapper.get('input').element
 
     await submit(wrapper)
-    expect(errors()).toHaveLength(1)
-    if (vendor !== 'typebox') expect(errors()[0]).toBe('Too short')
+    expect(errors()).toEqual([tooShortMessages[vendor]])
     expect(input.getAttribute('aria-invalid')).toBe('true')
     expect(onSubmit).not.toHaveBeenCalled()
     expect(onError).toHaveBeenCalledOnce()
@@ -156,16 +162,18 @@ describe('form validation', () => {
     const schema = z.object({ age: z.coerce.number() })
     const state = reactive({ age: '42' })
     const onSubmit = vi.fn<(event: FormSubmitEvent<unknown>) => void>()
-    const transform = ref(true)
+    const shouldTransform = ref(true)
     wrapper = mount(
       () =>
-        h(Form, { schema, state, transform: transform.value, onSubmit }, () => field(state, 'age')),
+        h(Form, { schema, state, transform: shouldTransform.value, onSubmit }, () =>
+          field(state, 'age'),
+        ),
       { attachTo: document.body },
     )
 
     await submit(wrapper)
     expect(onSubmit.mock.calls[0]![0].data).toEqual({ age: 42 })
-    transform.value = false
+    shouldTransform.value = false
     await nextTick()
     await submit(wrapper)
     expect(onSubmit.mock.calls[1]![0].data).toEqual({ age: '42' })
@@ -464,8 +472,8 @@ describe('form validation', () => {
 
 describe('setAtPath', () => {
   it('creates arrays for numeric segments and ignores prototype keys', () => {
-    expect(setAtPath({}, 'items.0.qty', 2)).toEqual({ items: [{ qty: 2 }] })
-    setAtPath({}, '__proto__.polluted', true)
+    expect(setAtPath({}, { path: 'items.0.qty', value: 2 })).toEqual({ items: [{ qty: 2 }] })
+    setAtPath({}, { path: '__proto__.polluted', value: true })
     expect(({} as Record<string, unknown>).polluted).toBeUndefined()
   })
 })

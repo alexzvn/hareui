@@ -7,8 +7,10 @@ import type theme from './theme'
 
 type Pagination = typeof theme
 
+/** One entry of the pagination list: a page number, or `'ellipsis'` for a gap of skipped pages. */
 export type PaginationEntry = number | 'ellipsis'
 
+/** Props of the `Pagination` component. */
 export type PaginationProps = {
   /** The current page (1-based). Use `v-model:page` to control it. */
   page?: number
@@ -62,6 +64,7 @@ export type PaginationProps = {
   ui?: ComponentSlots<Pagination>
 }
 
+/** Slots of the `Pagination` component. */
 export type PaginationSlots = {
   /** Info shown before the links (HeroUI's `Pagination.Summary`). */
   summary?: (props: { page: number; total: number }) => VNode[]
@@ -73,6 +76,7 @@ export type PaginationSlots = {
   nextIcon?: () => VNode[]
 }
 
+/** Events emitted by the `Pagination` component. */
 export type PaginationEmits = {
   /** Emitted when the page changes. */
   'update:page': [page: number]

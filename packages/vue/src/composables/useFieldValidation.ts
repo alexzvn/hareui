@@ -6,7 +6,17 @@
 // The `Form`'s `schema` / `validate` errors show as soon as the form reports them (per its `validateOn`), and never
 // block native submission: the form validates again on submit.
 import type { ComputedRef } from 'vue'
-import { computed, inject, nextTick, onBeforeUnmount, onMounted, ref, shallowRef, watch } from 'vue'
+import {
+  computed,
+  inject,
+  nextTick,
+  onBeforeUnmount,
+  onMounted,
+  onWatcherCleanup,
+  ref,
+  shallowRef,
+  watch,
+} from 'vue'
 
 import type { FormInputEvent, ValidationBehavior, ValidationError } from '@/components/form/context'
 import { formContextKey } from '@/components/form/context'
@@ -27,6 +37,7 @@ export type ValidationDetails = {
   valid: boolean
 }
 
+/** A field's displayed validation state, as exposed to `#error` slots and the `Form`. */
 export type ValidationResult = {
   /** Whether the field is currently displayed as invalid. */
   isInvalid: boolean
@@ -190,17 +201,17 @@ export const useFieldValidation = <T>(
   }
 
   // Server errors show when the form receives a new `validationErrors` object and clear once the user commits a change
-  const serverErrorCleared = ref(false)
+  const isServerErrorCleared = ref(false)
   watch(
     () => form?.validationErrors.value,
     () => {
-      serverErrorCleared.value = false
+      isServerErrorCleared.value = false
     },
   )
 
   const serverError = computed(() => {
     const name = options.name()
-    return serverErrorCleared.value || !name
+    return isServerErrorCleared.value || !name
       ? null
       : errorResult(asArray(form?.validationErrors.value?.[name]))
   })
@@ -227,9 +238,9 @@ export const useFieldValidation = <T>(
     const root = options.root()
     if (!root) return
     const els = controls(root).filter((el) => !el.disabled)
-    const native = behavior.value === 'native'
+    const isNative = behavior.value === 'native'
     const message =
-      native && realtime.value.isInvalid
+      isNative && realtime.value.isInvalid
         ? realtime.value.validationErrors.join(' ') || 'Invalid value.'
         : ''
 
@@ -237,10 +248,10 @@ export const useFieldValidation = <T>(
       el.setCustomValidity(message)
 
       // Suppress the browser's validation tooltip on hover
-      if (native && !el.hasAttribute('title')) el.title = ''
+      if (isNative && !el.hasAttribute('title')) el.title = ''
     }
 
-    if (native && !realtime.value.isInvalid) nextValidation = nativeValidity(els)
+    if (isNative && !realtime.value.isInvalid) nextValidation = nativeValidity(els)
   }
 
   watch([realtime, () => options.value(), behavior], sync, { flush: 'post' })
@@ -264,7 +275,7 @@ export const useFieldValidation = <T>(
   onBeforeUnmount(() => clearTimeout(inputTimer))
 
   const commit = () => {
-    serverErrorCleared.value = true
+    isServerErrorCleared.value = true
     if (behavior.value !== 'native') return
 
     // After the next render, so the latest value has been validated
@@ -285,7 +296,7 @@ export const useFieldValidation = <T>(
 
   const resetValidation = () => {
     current.value = DEFAULT
-    serverErrorCleared.value = true
+    isServerErrorCleared.value = true
   }
 
   // Whether focus at `node` is still within the field: inside its root, or in a popup one of its controls owns
@@ -303,10 +314,10 @@ export const useFieldValidation = <T>(
 
   watch(
     () => options.name(),
-    (name, _, onCleanup) => {
+    (name) => {
       if (!form || !name) return
 
-      onCleanup(
+      onWatcherCleanup(
         form.registerInput(name, {
           id: () => {
             const root = options.root()

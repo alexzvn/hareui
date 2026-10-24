@@ -1,5 +1,5 @@
 <template>
-  <Form class="flex w-72 flex-col gap-3" @submit="handleSubmit">
+  <Form class="flex w-72 flex-col gap-3" @submit="onSubmit">
     <DatePicker
       v-model="value"
       required
@@ -28,7 +28,7 @@ const isSubmitting = ref(false)
 const todayDate = today(getLocalTimeZone())
 const isInvalid = computed(() => value.value !== null && value.value.compare(todayDate) < 0)
 
-const handleSubmit = (e: Event) => {
+const onSubmit = (e: Event) => {
   e.preventDefault()
   if (!value.value || isInvalid.value) return
 

@@ -51,7 +51,16 @@
 </template>
 
 <script setup lang="ts">
-import { computed, onBeforeUnmount, onMounted, reactive, ref, useSlots, watch } from 'vue'
+import {
+  computed,
+  onBeforeUnmount,
+  onMounted,
+  reactive,
+  ref,
+  useSlots,
+  useTemplateRef,
+  watch,
+} from 'vue'
 
 import { useComponentUI } from '@/composables/useComponentUI'
 import { usePortal } from '@/composables/usePortal'
@@ -86,7 +95,10 @@ const portalTarget = usePortal(() => props.portal)
 const slots = useSlots()
 defineSlots<ToastProviderSlots>()
 
-const ui = useComponentUI('toast', theme, () => ({ placement: props.placement }))
+const ui = useComponentUI('toast', {
+  theme,
+  variantProps: () => ({ placement: props.placement }),
+})
 
 const activeQueue = computed(() => props.queue ?? defaultToastQueue)
 const visibleToasts = computed(() => activeQueue.value.visibleToasts)
@@ -100,7 +112,7 @@ const resolvedMaxVisibleToasts = computed(
  * Expansion: hover, keyboard focus, or the `isExpanded` prop. Native listeners on the region
  * node mirror HeroUI's toast.tsx exactly, since Vue has no built-in region hover/focus-within.
  * -------------------------------------------------------------------------------------------- */
-const regionEl = ref<HTMLElement | null>(null)
+const regionEl = useTemplateRef<HTMLElement>('regionEl')
 const isPointerOrFocusWithin = ref(false)
 let isPointerWithin = false
 

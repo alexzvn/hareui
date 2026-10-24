@@ -59,10 +59,13 @@ export const resolvePolarGeometry = (box: PolarBox, input: PolarGeometryInput): 
   const maxRadius = Math.min(box.width, box.height) / 2
 
   return {
-    cx: box.left + percentValue(input.cx ?? '50%', box.width, box.width / 2),
-    cy: box.top + percentValue(input.cy ?? '50%', box.height, box.height / 2),
-    innerRadius: percentValue(input.innerRadius ?? 0, maxRadius, 0),
-    outerRadius: percentValue(input.outerRadius ?? '80%', maxRadius, maxRadius * 0.8),
+    cx: box.left + percentValue(input.cx ?? '50%', { total: box.width, fallback: box.width / 2 }),
+    cy: box.top + percentValue(input.cy ?? '50%', { total: box.height, fallback: box.height / 2 }),
+    innerRadius: percentValue(input.innerRadius ?? 0, { total: maxRadius }),
+    outerRadius: percentValue(input.outerRadius ?? '80%', {
+      total: maxRadius,
+      fallback: maxRadius * 0.8,
+    }),
   }
 }
 

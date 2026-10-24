@@ -339,8 +339,11 @@ const decrementButton = computed(() =>
   typeof props.decrement === 'object' ? props.decrement : undefined,
 )
 
-const ui = useComponentUI('numberStepper', theme, () => ({
-  size: props.size,
-  reversed: props.reversed,
-}))
+const ui = useComponentUI('numberStepper', {
+  theme,
+  variantProps: () => ({
+    size: props.size,
+    reversed: props.reversed,
+  }),
+})
 </script>

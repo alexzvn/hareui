@@ -103,10 +103,13 @@ defineSlots<RadioGroupSlots<T>>()
 const modelValue = defineModel<string>()
 const slots = useSlots()
 
-const ui = useComponentUI('radioGroup', theme, () => ({
-  variant: props.variant,
-  orientation: props.orientation,
-}))
+const ui = useComponentUI('radioGroup', {
+  theme,
+  variantProps: () => ({
+    variant: props.variant,
+    orientation: props.orientation,
+  }),
+})
 
 // `null` (not `undefined`) when nothing is selected: Reka self-manages its state when `modelValue` is undefined,
 // which would let `readonly` items change selection behind our back.

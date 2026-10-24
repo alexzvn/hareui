@@ -33,11 +33,11 @@
             <button
               type="button"
               aria-label="Notify Dashboard"
-              :aria-pressed="notify"
+              :aria-pressed="isNotifying"
               :class="ui.linkAction()"
-              @click="notify = !notify"
+              @click="isNotifying = !isNotifying"
             >
-              <Icon :icon="notify ? 'gravity-ui:bell' : 'gravity-ui:bell-slash'" />
+              <Icon :icon="isNotifying ? 'gravity-ui:bell' : 'gravity-ui:bell-slash'" />
             </button>
           </template>
         </NavigationMenu>
@@ -139,7 +139,7 @@ import { h, ref } from 'vue'
 const gravityIcon = (name: string) => (attrs: Record<string, unknown>) =>
   h(Icon, { ...attrs, icon: `gravity-ui:${name}` })
 
-const notify = ref(true)
+const isNotifying = ref(true)
 
 // The ⋮ menu at the end of a row: shown on hover and keyboard focus, always in the mobile sheet.
 const pageActions: DropdownEntry[] = [

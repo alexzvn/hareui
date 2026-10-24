@@ -32,7 +32,9 @@
       :data-readonly="readonly ? 'true' : undefined"
       :class="itemUi.base({ class: props.ui?.item })"
       @click="forwardRootClick($event, '[data-slot=checkbox-content]')"
-      @mousedown="keepFocusWhenReadonly($event, readonly, '[data-slot=checkbox-content]')"
+      @mousedown="
+        keepFocusWhenReadonly($event, { readonly, contentSelector: '[data-slot=checkbox-content]' })
+      "
     >
       <RekaCheckboxRoot
         :id="`${id}-${index}`"
@@ -127,14 +129,20 @@ defineSlots<CheckboxGroupSlots<T>>()
 const modelValue = defineModel<string[]>()
 const slots = useSlots()
 
-const ui = useComponentUI('checkboxGroup', theme, () => ({
-  variant: props.variant,
-}))
+const ui = useComponentUI('checkboxGroup', {
+  theme,
+  variantProps: () => ({
+    variant: props.variant,
+  }),
+})
 
 // Items are literally HeroUI's `<Checkbox>` inside `<CheckboxGroup>`: reuse its theme/classes verbatim.
-const itemUi = useComponentUI('checkbox', checkboxTheme, () => ({
-  variant: props.variant,
-}))
+const itemUi = useComponentUI('checkbox', {
+  theme: checkboxTheme,
+  variantProps: () => ({
+    variant: props.variant,
+  }),
+})
 
 // `[]` (not `undefined`): Reka self-manages its state when `modelValue` is undefined, which would let
 // `readonly` items change selection behind our back.

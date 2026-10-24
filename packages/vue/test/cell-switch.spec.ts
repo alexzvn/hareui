@@ -22,23 +22,23 @@ describe('CellSwitch', () => {
   })
 
   it('a click anywhere on the row toggles v-model', async () => {
-    const model = ref(false)
+    const isChecked = ref(false)
     const wrapper = mount(
       () =>
         h(CellSwitch, {
           label: 'Animations',
-          modelValue: model.value,
-          'onUpdate:modelValue': (v: boolean) => (model.value = v),
+          modelValue: isChecked.value,
+          'onUpdate:modelValue': (v: boolean) => (isChecked.value = v),
         }),
       { attachTo: document.body },
     )
 
     await wrapper.get('[data-slot=cell-switch-label]').trigger('click')
-    expect(model.value).toBe(true)
+    expect(isChecked.value).toBe(true)
     expect(wrapper.get('[data-slot=cell-switch]').attributes('data-selected')).toBe('true')
     expect(wrapper.get(row).attributes('aria-checked')).toBe('true')
     await wrapper.get(row).trigger('click')
-    expect(model.value).toBe(false)
+    expect(isChecked.value).toBe(false)
     wrapper.unmount()
   })
 

@@ -145,7 +145,7 @@ describe('alertDialog', () => {
     })
 
     const mountControlled = () => {
-      const open = ref(false)
+      const isOpen = ref(false)
       const wrapper = mount(
         {
           render: () =>
@@ -154,9 +154,9 @@ describe('alertDialog', () => {
               h(
                 AlertDialog,
                 {
-                  open: open.value,
+                  open: isOpen.value,
                   keyboardDismissible: true,
-                  'onUpdate:open': (v: boolean) => (open.value = v),
+                  'onUpdate:open': (v: boolean) => (isOpen.value = v),
                 },
                 {
                   body: () => 'Body',
@@ -174,11 +174,11 @@ describe('alertDialog', () => {
       // The mount container is the sibling of the portalled dialog (the `#app` of a real page).
       const pageRoot = document.querySelector<HTMLElement>('#page')!.parentElement!.parentElement!
 
-      return { open, wrapper, pageRoot }
+      return { isOpen, wrapper, pageRoot }
     }
 
     // Each close path, repeated: the live repro leaves the page hidden from the 3rd cycle on.
-    const closePaths: Array<[string, (open: { value: boolean }) => void]> = [
+    const closePaths: Array<[string, (isOpen: { value: boolean }) => void]> = [
       ['Escape', () => escapeKeydown()],
       [
         'close button',
@@ -190,8 +190,8 @@ describe('alertDialog', () => {
       ['footer close()', () => document.querySelector<HTMLButtonElement>('#confirm')!.click()],
       [
         'controlled open=false',
-        (open) => {
-          open.value = false
+        (isOpen) => {
+          isOpen.value = false
         },
       ],
     ]
@@ -200,18 +200,18 @@ describe('alertDialog', () => {
       'releases aria-hidden on the page after every open/close cycle closed with %s',
       async (_name, close) => {
         // behaviour-final-check H1
-        const { open, pageRoot } = mountControlled()
+        const { isOpen, pageRoot } = mountControlled()
         for (let cycle = 1; cycle <= 4; cycle++) {
-          open.value = true
+          isOpen.value = true
           await nextTick()
           expect(pageRoot.getAttribute('aria-hidden'), `open, cycle ${cycle}`).toBe('true')
-          close(open)
+          close(isOpen)
           await waitUnmount()
 
           // the container's exit animation must not run empty
           expect(dialog(), `mounted while exiting, cycle ${cycle}`).not.toBeNull()
           await finishExit()
-          expect(open.value, `closed, cycle ${cycle}`).toBe(false)
+          expect(isOpen.value, `closed, cycle ${cycle}`).toBe(false)
           expect(dialog(), `unmounted, cycle ${cycle}`).toBeNull()
 
           expect(

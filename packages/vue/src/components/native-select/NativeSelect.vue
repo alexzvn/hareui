@@ -104,10 +104,13 @@ defineSlots<NativeSelectSlots>()
 const slots = useSlots()
 const attrs = useAttrs()
 
-const ui = useComponentUI('nativeSelect', theme, () => ({
-  variant: props.variant,
-  fullWidth: props.fullWidth,
-}))
+const ui = useComponentUI('nativeSelect', {
+  theme,
+  variantProps: () => ({
+    variant: props.variant,
+    fullWidth: props.fullWidth,
+  }),
+})
 
 const root = useTemplateRef<HTMLElement>('root')
 const select = useTemplateRef<HTMLSelectElement>('select')

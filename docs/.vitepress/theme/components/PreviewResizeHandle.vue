@@ -72,12 +72,18 @@ const onPointerEnd = () => {
 }
 
 const STEPS: Record<string, number> = { ArrowLeft: -10, ArrowRight: 10 }
-const onKeydown = (event: KeyboardEvent) => {
-  let next: number | undefined
-  if (event.key in STEPS) next = props.width + STEPS[event.key] * (event.shiftKey ? 5 : 1)
-  else if (event.key === 'Home') next = props.min
-  else if (event.key === 'End') next = props.max
 
+/** The width a key moves the handle to; `undefined` for keys the handle ignores. */
+const getKeyboardWidth = (event: KeyboardEvent) => {
+  if (event.key in STEPS) return props.width + STEPS[event.key] * (event.shiftKey ? 5 : 1)
+  if (event.key === 'Home') return props.min
+  if (event.key === 'End') return props.max
+
+  return undefined
+}
+
+const onKeydown = (event: KeyboardEvent) => {
+  const next = getKeyboardWidth(event)
   if (next === undefined) return
   event.preventDefault()
   emit('resize', clamp(next))

@@ -7,6 +7,7 @@ import type theme from './theme'
 
 type CloseButton = typeof theme
 
+/** Props of `CloseButton`, an icon button that closes or dismisses its surrounding surface. */
 export type CloseButtonProps = {
   /**
    * Visual style of the close button.
@@ -29,6 +30,7 @@ export type CloseButtonProps = {
   ui?: ComponentSlots<CloseButton>
 }
 
+/** Slots of `CloseButton`. */
 export type CloseButtonSlots = {
   /** Replaces the default close icon. */
   default?: () => VNode[]

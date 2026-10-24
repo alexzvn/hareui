@@ -8,6 +8,7 @@ import type theme from './theme'
 
 type Skeleton = typeof theme
 
+/** Props of `Skeleton`, an animated placeholder shown while content loads. */
 export type SkeletonProps = {
   /**
    * The element or component to render as.
@@ -25,6 +26,7 @@ export type SkeletonProps = {
   ui?: ComponentSlots<Skeleton>
 }
 
+/** Slots of `Skeleton`. */
 export type SkeletonSlots = {
   /** Optional content rendered inside the placeholder. */
   default?: () => VNode[]

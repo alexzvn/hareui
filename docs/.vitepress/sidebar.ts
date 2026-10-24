@@ -34,7 +34,14 @@ const c = (page: string) => `/docs/components/${page}`
 const r = (page: string) => `/docs/releases/${page}`
 
 // `color-swatch-picker` → `ColorSwatchPicker`, the component name
-const pascal = (slug: string) => slug.replace(/(^|-)(\w)/g, (_, __, ch: string) => ch.toUpperCase())
+const pascal = (slug: string) => slug.replace(/(?:^|-)(\w)/g, (_, ch: string) => ch.toUpperCase())
+
+const componentBadge = (slug: string) => {
+  if (NEW_COMPONENTS.has(slug)) return 'new' as const
+  if (UPDATED_COMPONENTS.has(slug)) return 'updated' as const
+
+  return undefined
+}
 
 export const sidebar: SidebarSection[] = [
   {
@@ -70,11 +77,7 @@ export const sidebar: SidebarSection[] = [
         items: slugs.map((slug) => ({
           text: pascal(slug),
           link: c(slug),
-          badge: NEW_COMPONENTS.has(slug)
-            ? ('new' as const)
-            : UPDATED_COMPONENTS.has(slug)
-              ? ('updated' as const)
-              : undefined,
+          badge: componentBadge(slug),
         })),
       })),
     ],
@@ -107,10 +110,14 @@ export const isGroup = (entry: SidebarEntry): entry is SidebarGroup => {
   return 'group' in entry
 }
 
+const entryLinks = (entry: SidebarEntry): SidebarLink[] => {
+  if (isSeparator(entry)) return []
+
+  return isGroup(entry) ? entry.items : [entry]
+}
+
 export const sectionLinks = (section: SidebarSection): SidebarLink[] => {
-  return section.items.flatMap((entry) =>
-    isSeparator(entry) ? [] : isGroup(entry) ? entry.items : [entry],
-  )
+  return section.items.flatMap(entryLinks)
 }
 
 export const normalizePath = (path: string): string => {

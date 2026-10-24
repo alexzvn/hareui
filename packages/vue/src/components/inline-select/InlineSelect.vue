@@ -59,7 +59,7 @@ const props = withDefaults(defineProps<InlineSelectProps<T>>(), {
 const emit = defineEmits<InlineSelectEmits>()
 const slots = defineSlots<InlineSelectSlots<T>>()
 
-const ui = useComponentUI('inlineSelect', theme, () => ({}))
+const ui = useComponentUI('inlineSelect', { theme: theme, variantProps: () => ({}) })
 
 const selectProps = computed(() => {
   const { ui: _ui, modelValue: _modelValue, ...rest } = props

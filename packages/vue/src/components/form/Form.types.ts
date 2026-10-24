@@ -13,6 +13,7 @@ import type {
   InferInput,
 } from './types'
 
+/** Props of `Form`: a `<form>` that validates its fields with a schema or a function, and shares validation behavior and server errors with them. */
 export type FormProps<S extends FormSchema, T extends boolean = true, N extends boolean = false> = {
   /**
    * Validation behavior for the fields inside. `native` blocks submission and shows errors on change or submit;
@@ -69,12 +70,13 @@ export type FormProps<S extends FormSchema, T extends boolean = true, N extends 
   onSubmit?: (event: FormSubmitEvent<FormData<S, T>>) => unknown
 }
 
-// `submit` is the `onSubmit` prop, so the form can await it (`loadingAuto`)
+/** Events emitted by `Form`. `submit` is the `onSubmit` prop instead, so the form can await it (`loadingAuto`). */
 export type FormEmits = {
   /** Submission was blocked by validation errors. */
   error: [event: FormErrorEvent]
 }
 
+/** Props passed to the `default` slot. */
 export type FormSlotProps = {
   /** The current `schema` / `validate` errors. */
   errors: FormErrorWithId[]
@@ -82,6 +84,7 @@ export type FormSlotProps = {
   loading: boolean
 }
 
+/** Slots of `Form`. */
 export type FormSlots = {
   /** Fields and buttons. */
   default?: (props: FormSlotProps) => VNode[]

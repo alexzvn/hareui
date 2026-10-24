@@ -7,6 +7,7 @@ import type theme from './theme'
 
 type AreaChartTheme = typeof theme
 
+/** Props for `AreaChart`, which plots series as filled areas over a shared index axis. */
 export type AreaChartProps<T extends object = Record<string, unknown>> = {
   /**
    * Stacks every area on one stack. A series' own `stack` wins.
@@ -48,4 +49,5 @@ export type AreaChartProps<T extends object = Record<string, unknown>> = {
   ui?: ComponentSlots<AreaChartTheme>
 } & CartesianRootProps<T, ChartAreaSeries>
 
-export type AreaChartSlots = {} & CartesianRootSlots
+/** Slots for `AreaChart`: chart parts, tooltip and legend overrides shared by the cartesian charts. */
+export type AreaChartSlots = CartesianRootSlots

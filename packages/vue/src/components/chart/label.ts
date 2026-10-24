@@ -19,8 +19,14 @@ export type ChartPolarViewBox = {
   endAngle: number
 }
 
+/** Shape a label is placed against: a rectangle (bars, points, plot area) or a sector (pie, radial bar). */
 export type ChartLabelViewBox = ChartCartesianViewBox | ChartPolarViewBox
 
+/**
+ * Where a label sits relative to its view box. Rectangles use the sides (`top`, `left`, …), `inside*`
+ * edges and corners, or `center`. Sectors use `outside`, `insideStart`, `insideEnd`, `end`, `center`
+ * (the pie center), and fall back to the middle of the sector.
+ */
 export type ChartLabelPosition =
   | 'top'
   | 'bottom'
@@ -87,12 +93,16 @@ export const isPolarViewBox = (viewBox: ChartLabelViewBox): viewBox is ChartPola
 
 const RADIAN = Math.PI / 180
 
+/** Center of a polar chart, in px. */
+type PolarCenter = { cx: number; cy: number }
+
+/** A point in polar coordinates; the angle in degrees, 0 = 3 o'clock, counter-clockwise. */
+type PolarCoordinate = { radius: number; angle: number }
+
 /** Point at `radius`/`angle` around a center. */
 export const polarToCartesian = (
-  cx: number,
-  cy: number,
-  radius: number,
-  angle: number,
+  { cx, cy }: PolarCenter,
+  { radius, angle }: PolarCoordinate,
 ): { x: number; y: number } => {
   return { x: cx + Math.cos(-RADIAN * angle) * radius, y: cy + Math.sin(-RADIAN * angle) * radius }
 }
@@ -104,144 +114,187 @@ export type ChartLabelAttrs = {
   dominantBaseline: 'auto' | 'central' | 'hanging'
 }
 
-/** Text anchor point of a label at `position` in its view box. */
-export const labelAttrs = (
-  viewBox: ChartLabelViewBox,
-  position: ChartLabelPosition,
-  offset: number,
+type LabelPlacement = { position: ChartLabelPosition; offset: number }
+
+type PolarEdgePosition = 'insideStart' | 'insideEnd' | 'end'
+
+const isPolarEdgePosition = (position: ChartLabelPosition): position is PolarEdgePosition =>
+  position === 'insideStart' || position === 'insideEnd' || position === 'end'
+
+type OutsideDirection = { cos: number; sin: number; isVertical: boolean }
+
+// Straight up or down, the text is centred on the point; otherwise it starts on the side facing away from the center.
+const outsideTextAnchor = ({ cos, isVertical }: OutsideDirection) => {
+  if (isVertical) return 'middle'
+
+  return cos > 0 ? 'start' : 'end'
+}
+
+// Straight up or down, the text sits above / below the point instead of across it.
+const outsideBaseline = ({ sin, isVertical }: OutsideDirection) => {
+  if (!isVertical) return 'central'
+
+  return sin < 0 ? 'auto' : 'hanging'
+}
+
+const polarOutsideLabel = (viewBox: ChartPolarViewBox, offset: number): ChartLabelAttrs => {
+  const { cx, cy, outerRadius, startAngle, endAngle } = viewBox
+  const midAngle = (startAngle + endAngle) / 2
+  const point = polarToCartesian({ cx, cy }, { radius: outerRadius + offset, angle: midAngle })
+  const cos = Math.cos(-RADIAN * midAngle)
+  const direction = { cos, sin: Math.sin(-RADIAN * midAngle), isVertical: Math.abs(cos) < 1e-6 }
+
+  return {
+    ...point,
+    textAnchor: outsideTextAnchor(direction),
+    dominantBaseline: outsideBaseline(direction),
+  }
+}
+
+const polarEdgeAngle = (
+  position: PolarEdgePosition,
+  { startAngle, endAngle, shift }: { startAngle: number; endAngle: number; shift: number },
+): number => {
+  if (position === 'insideStart') return startAngle + shift
+  if (position === 'insideEnd') return endAngle - shift
+
+  return endAngle + shift
+}
+
+const polarLabelAttrs = (
+  viewBox: ChartPolarViewBox,
+  { position, offset }: LabelPlacement,
 ): ChartLabelAttrs => {
-  if (isPolarViewBox(viewBox)) {
-    const { cx, cy, innerRadius, outerRadius, startAngle, endAngle } = viewBox
-    const midAngle = (startAngle + endAngle) / 2
-    const midRadius = (innerRadius + outerRadius) / 2
+  const { cx, cy, innerRadius, outerRadius, startAngle, endAngle } = viewBox
+  const midAngle = (startAngle + endAngle) / 2
+  const midRadius = (innerRadius + outerRadius) / 2
+  if (position === 'outside') return polarOutsideLabel(viewBox, offset)
 
-    if (position === 'outside') {
-      const point = polarToCartesian(cx, cy, outerRadius + offset, midAngle)
-      const cos = Math.cos(-RADIAN * midAngle)
-      const sin = Math.sin(-RADIAN * midAngle)
-      const vertical = Math.abs(cos) < 1e-6
-      const textAnchor = vertical ? 'middle' : cos > 0 ? 'start' : 'end'
-
-      // Straight up or down, the text sits above / below the point instead of across it.
-      const dominantBaseline = !vertical ? 'central' : sin < 0 ? 'auto' : 'hanging'
-
-      return { ...point, textAnchor, dominantBaseline }
-    }
-
-    if (position === 'insideStart' || position === 'insideEnd' || position === 'end') {
-      const sign = endAngle >= startAngle ? 1 : -1
-      const angle =
-        position === 'insideStart'
-          ? startAngle + (sign * (offset / Math.max(midRadius, 1))) / RADIAN
-          : position === 'insideEnd'
-            ? endAngle - (sign * (offset / Math.max(midRadius, 1))) / RADIAN
-            : endAngle + (sign * (offset / Math.max(midRadius, 1))) / RADIAN
-
-      return {
-        ...polarToCartesian(cx, cy, midRadius, angle),
-        textAnchor: 'middle',
-        dominantBaseline: 'central',
-      }
-    }
-
-    if (position === 'center')
-      return { x: cx, y: cy, textAnchor: 'middle', dominantBaseline: 'central' }
+  if (isPolarEdgePosition(position)) {
+    const sign = endAngle >= startAngle ? 1 : -1
+    const shift = (sign * (offset / Math.max(midRadius, 1))) / RADIAN
+    const angle = polarEdgeAngle(position, { startAngle, endAngle, shift })
 
     return {
-      ...polarToCartesian(cx, cy, midRadius, midAngle),
+      ...polarToCartesian({ cx, cy }, { radius: midRadius, angle }),
       textAnchor: 'middle',
       dominantBaseline: 'central',
     }
   }
 
-  const { x, y, width, height } = viewBox
+  if (position === 'center')
+    return { x: cx, y: cy, textAnchor: 'middle', dominantBaseline: 'central' }
 
-  // Negative sizes (bars below the baseline / drawn leftwards) flip the outer side.
-  const vSign = height >= 0 ? 1 : -1
-  const hSign = width >= 0 ? 1 : -1
-  const top = { y: y - vSign * offset, end: vSign > 0 ? 'auto' : 'hanging' } as const
-  const bottom = { y: y + height + vSign * offset, end: vSign > 0 ? 'hanging' : 'auto' } as const
-  switch (position) {
-    case 'top':
-      return { x: x + width / 2, y: top.y, textAnchor: 'middle', dominantBaseline: top.end }
-    case 'bottom':
-      return { x: x + width / 2, y: bottom.y, textAnchor: 'middle', dominantBaseline: bottom.end }
-    case 'left':
-      return {
-        x: x - hSign * offset,
-        y: y + height / 2,
-        textAnchor: hSign > 0 ? 'end' : 'start',
-        dominantBaseline: 'central',
-      }
-    case 'right':
-      return {
-        x: x + width + hSign * offset,
-        y: y + height / 2,
-        textAnchor: hSign > 0 ? 'start' : 'end',
-        dominantBaseline: 'central',
-      }
-    case 'insideLeft':
-      return {
-        x: x + hSign * offset,
-        y: y + height / 2,
-        textAnchor: hSign > 0 ? 'start' : 'end',
-        dominantBaseline: 'central',
-      }
-    case 'insideRight':
-      return {
-        x: x + width - hSign * offset,
-        y: y + height / 2,
-        textAnchor: hSign > 0 ? 'end' : 'start',
-        dominantBaseline: 'central',
-      }
-    case 'insideTop':
-      return {
-        x: x + width / 2,
-        y: y + vSign * offset,
-        textAnchor: 'middle',
-        dominantBaseline: vSign > 0 ? 'hanging' : 'auto',
-      }
-    case 'insideBottom':
-      return {
-        x: x + width / 2,
-        y: y + height - vSign * offset,
-        textAnchor: 'middle',
-        dominantBaseline: vSign > 0 ? 'auto' : 'hanging',
-      }
-    case 'insideTopLeft':
-      return {
-        x: x + hSign * offset,
-        y: y + vSign * offset,
-        textAnchor: 'start',
-        dominantBaseline: 'hanging',
-      }
-    case 'insideTopRight':
-      return {
-        x: x + width - hSign * offset,
-        y: y + vSign * offset,
-        textAnchor: 'end',
-        dominantBaseline: 'hanging',
-      }
-    case 'insideBottomLeft':
-      return {
-        x: x + hSign * offset,
-        y: y + height - vSign * offset,
-        textAnchor: 'start',
-        dominantBaseline: 'auto',
-      }
-    case 'insideBottomRight':
-      return {
-        x: x + width - hSign * offset,
-        y: y + height - vSign * offset,
-        textAnchor: 'end',
-        dominantBaseline: 'auto',
-      }
-    default:
-      return {
-        x: x + width / 2,
-        y: y + height / 2,
-        textAnchor: 'middle',
-        dominantBaseline: 'central',
-      }
+  return {
+    ...polarToCartesian({ cx, cy }, { radius: midRadius, angle: midAngle }),
+    textAnchor: 'middle',
+    dominantBaseline: 'central',
   }
+}
+
+// Negative sizes (bars below the baseline / drawn leftwards) flip the outer side: `hSign`/`vSign` are -1 then.
+type CartesianLabelFrame = ChartCartesianViewBox & { offset: number; hSign: 1 | -1; vSign: 1 | -1 }
+
+const cartesianCenterLabel = ({ x, y, width, height }: CartesianLabelFrame): ChartLabelAttrs => ({
+  x: x + width / 2,
+  y: y + height / 2,
+  textAnchor: 'middle',
+  dominantBaseline: 'central',
+})
+
+// Positions not listed (`center`, `inside` and the polar-only ones) center the label in the box.
+const cartesianLabels: Partial<
+  Record<ChartLabelPosition, (frame: CartesianLabelFrame) => ChartLabelAttrs>
+> = {
+  top: ({ x, y, width, offset, vSign }) => ({
+    x: x + width / 2,
+    y: y - vSign * offset,
+    textAnchor: 'middle',
+    dominantBaseline: vSign > 0 ? 'auto' : 'hanging',
+  }),
+  bottom: ({ x, y, width, height, offset, vSign }) => ({
+    x: x + width / 2,
+    y: y + height + vSign * offset,
+    textAnchor: 'middle',
+    dominantBaseline: vSign > 0 ? 'hanging' : 'auto',
+  }),
+  left: ({ x, y, height, offset, hSign }) => ({
+    x: x - hSign * offset,
+    y: y + height / 2,
+    textAnchor: hSign > 0 ? 'end' : 'start',
+    dominantBaseline: 'central',
+  }),
+  right: ({ x, y, width, height, offset, hSign }) => ({
+    x: x + width + hSign * offset,
+    y: y + height / 2,
+    textAnchor: hSign > 0 ? 'start' : 'end',
+    dominantBaseline: 'central',
+  }),
+  insideLeft: ({ x, y, height, offset, hSign }) => ({
+    x: x + hSign * offset,
+    y: y + height / 2,
+    textAnchor: hSign > 0 ? 'start' : 'end',
+    dominantBaseline: 'central',
+  }),
+  insideRight: ({ x, y, width, height, offset, hSign }) => ({
+    x: x + width - hSign * offset,
+    y: y + height / 2,
+    textAnchor: hSign > 0 ? 'end' : 'start',
+    dominantBaseline: 'central',
+  }),
+  insideTop: ({ x, y, width, offset, vSign }) => ({
+    x: x + width / 2,
+    y: y + vSign * offset,
+    textAnchor: 'middle',
+    dominantBaseline: vSign > 0 ? 'hanging' : 'auto',
+  }),
+  insideBottom: ({ x, y, width, height, offset, vSign }) => ({
+    x: x + width / 2,
+    y: y + height - vSign * offset,
+    textAnchor: 'middle',
+    dominantBaseline: vSign > 0 ? 'auto' : 'hanging',
+  }),
+  insideTopLeft: ({ x, y, offset, hSign, vSign }) => ({
+    x: x + hSign * offset,
+    y: y + vSign * offset,
+    textAnchor: 'start',
+    dominantBaseline: 'hanging',
+  }),
+  insideTopRight: ({ x, y, width, offset, hSign, vSign }) => ({
+    x: x + width - hSign * offset,
+    y: y + vSign * offset,
+    textAnchor: 'end',
+    dominantBaseline: 'hanging',
+  }),
+  insideBottomLeft: ({ x, y, height, offset, hSign, vSign }) => ({
+    x: x + hSign * offset,
+    y: y + height - vSign * offset,
+    textAnchor: 'start',
+    dominantBaseline: 'auto',
+  }),
+  insideBottomRight: ({ x, y, width, height, offset, hSign, vSign }) => ({
+    x: x + width - hSign * offset,
+    y: y + height - vSign * offset,
+    textAnchor: 'end',
+    dominantBaseline: 'auto',
+  }),
+}
+
+/** Text anchor point of a label at `position` in its view box. */
+export const labelAttrs = (
+  viewBox: ChartLabelViewBox,
+  placement: LabelPlacement,
+): ChartLabelAttrs => {
+  if (isPolarViewBox(viewBox)) return polarLabelAttrs(viewBox, placement)
+
+  const frame: CartesianLabelFrame = {
+    ...viewBox,
+    offset: placement.offset,
+    hSign: viewBox.width >= 0 ? 1 : -1,
+    vSign: viewBox.height >= 0 ? 1 : -1,
+  }
+
+  const place = cartesianLabels[placement.position] ?? cartesianCenterLabel
+
+  return place(frame)
 }

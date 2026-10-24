@@ -1,5 +1,8 @@
+/** Inclusive numeric limits; an absent bound doesn't limit. */
+export type NumberBounds = { min?: number | undefined; max?: number | undefined }
+
 /** `value` limited to `[min, max]`; an absent bound doesn't limit. */
-export const clamp = (value: number, min = -Infinity, max = Infinity) => {
+export const clamp = (value: number, { min = -Infinity, max = Infinity }: NumberBounds = {}) => {
   return Math.min(Math.max(value, min), max)
 }
 
@@ -25,6 +28,21 @@ const roundToPrecision = (value: number, precision: number) => {
   return Math.round(value * pow) / pow
 }
 
+type SnapLimits = { lo: number; hi: number; step: number; stepPrecision: number }
+
+// Above `max` the value takes the last step at or below `max`; below `min` it takes `min`.
+const limitSnapped = (snapped: number, { lo, hi, step, stepPrecision }: SnapLimits) => {
+  const isAboveMax = !Number.isNaN(hi) && snapped > hi
+  if (Number.isNaN(lo)) {
+    return isAboveMax ? Math.floor(roundToPrecision(hi / step, stepPrecision)) * step : snapped
+  }
+
+  if (snapped < lo) return lo
+  if (!isAboveMax) return snapped
+
+  return lo + Math.floor(roundToPrecision((hi - lo) / step, stepPrecision)) * step
+}
+
 /**
  * react-stately's (and Reka's internal) `snapValueToStep`; reka-ui doesn't export it. Snaps to the nearest
  * `min + k·step` (halves round away from `min`), then limits to `[min, max]`: above `max` it takes the last step
@@ -33,31 +51,21 @@ const roundToPrecision = (value: number, precision: number) => {
  */
 export const snapValueToStep = (
   value: number,
-  min: number | undefined,
-  max: number | undefined,
-  step: number,
+  { min, max, step }: NumberBounds & { step: number },
 ) => {
   const lo = Number(min)
   const hi = Number(max)
   const stepPrecision = precisionOf(step)
   const precision = Number.isNaN(lo) ? stepPrecision : Math.max(stepPrecision, precisionOf(lo))
   const remainder = (value - (Number.isNaN(lo) ? 0 : lo)) % step
-  let snapped = roundToPrecision(
+  const snapped = roundToPrecision(
     Math.abs(remainder) * 2 >= step
       ? value + Math.sign(remainder) * (step - Math.abs(remainder))
       : value - remainder,
     precision,
   )
 
-  if (!Number.isNaN(lo)) {
-    if (snapped < lo) snapped = lo
-    else if (!Number.isNaN(hi) && snapped > hi)
-      snapped = lo + Math.floor(roundToPrecision((hi - lo) / step, stepPrecision)) * step
-  } else if (!Number.isNaN(hi) && snapped > hi) {
-    snapped = Math.floor(roundToPrecision(hi / step, stepPrecision)) * step
-  }
-
-  return roundToPrecision(snapped, precision)
+  return roundToPrecision(limitSnapped(snapped, { lo, hi, step, stepPrecision }), precision)
 }
 
 /**
@@ -66,12 +74,10 @@ export const snapValueToStep = (
  */
 export const snapNumber = <T extends number | null | undefined>(
   value: T,
-  min: number | undefined,
-  max: number | undefined,
-  step: number | undefined,
+  { min, max, step }: NumberBounds & { step?: number },
 ): T => {
   if (value == null || Number.isNaN(value)) return value
-  if (step === undefined) return clamp(value, min, max) as T
+  if (step === undefined) return clamp(value, { min, max }) as T
 
-  return snapValueToStep(value, min, max, step) as T
+  return snapValueToStep(value, { min, max, step }) as T
 }

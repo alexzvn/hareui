@@ -3,7 +3,7 @@
     aria-label="Async loading table"
     :columns="columns"
     :has-more="hasMore"
-    :loading="loading"
+    :loading="isLoading"
     :rows="items"
     :ui="{
       scrollContainer: 'h-[280px] overflow-y-auto',
@@ -125,16 +125,16 @@ const columns: TableColumn[] = [
 ]
 
 const items = ref(allUsers.slice(0, ITEMS_PER_PAGE))
-const loading = ref(false)
+const isLoading = ref(false)
 const hasMore = computed(() => items.value.length < allUsers.length)
 
 const loadMore = () => {
-  if (!hasMore.value || loading.value) return
-  loading.value = true
+  if (!hasMore.value || isLoading.value) return
+  isLoading.value = true
 
   setTimeout(() => {
     items.value = allUsers.slice(0, items.value.length + ITEMS_PER_PAGE)
-    loading.value = false
+    isLoading.value = false
   }, 1500)
 }
 </script>

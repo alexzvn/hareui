@@ -3,8 +3,8 @@
     <div
       :class="[
         'border-b backdrop-blur-lg transition-colors *:mx-auto *:max-w-(--fd-layout-width)',
-        (menuOpen || !transparent) && 'bg-fd-background/80',
-        menuOpen && 'max-lg:rounded-b-2xl max-lg:shadow-lg',
+        (isMenuOpen || !isTransparent) && 'bg-fd-background/80',
+        isMenuOpen && 'max-lg:rounded-b-2xl max-lg:shadow-lg',
       ]"
     >
       <div class="relative">
@@ -106,10 +106,10 @@
               <button
                 type="button"
                 aria-label="Toggle Menu"
-                :aria-expanded="menuOpen"
-                :data-state="menuOpen ? 'open' : 'closed'"
+                :aria-expanded="isMenuOpen"
+                :data-state="isMenuOpen ? 'open' : 'closed'"
                 class="group inline-flex items-center justify-center rounded-md p-1.5 text-sm font-medium transition-colors duration-100 hover:bg-fd-accent hover:text-fd-accent-foreground focus-visible:ring-2 focus-visible:ring-fd-ring focus-visible:outline-none disabled:pointer-events-none disabled:opacity-50 data-[state=open]:bg-fd-accent/50 [&_svg]:size-5.5"
-                @click="menuOpen = !menuOpen"
+                @click="isMenuOpen = !isMenuOpen"
               >
                 <svg
                   aria-hidden="true"
@@ -131,7 +131,7 @@
           </div>
         </nav>
       </div>
-      <div v-if="menuOpen" class="flex w-full justify-center lg:hidden">
+      <div v-if="isMenuOpen" class="flex w-full justify-center lg:hidden">
         <div
           class="flex max-h-[80svh] w-full flex-col overflow-auto p-4 sm:flex-row sm:items-center sm:justify-end"
         >
@@ -191,10 +191,10 @@ const NAV_LINK =
 const MENU_LINK =
   'inline-flex items-center gap-2 py-1.5 transition-colors hover:text-fd-popover-foreground/50 data-[active=true]:font-medium data-[active=true]:text-fd-primary [&_svg]:size-4'
 
-const menuOpen = ref(false)
-const transparent = ref(true)
+const isMenuOpen = ref(false)
+const isTransparent = ref(true)
 const onScroll = () => {
-  transparent.value = window.scrollY < 10
+  isTransparent.value = window.scrollY < 10
 }
 
 onMounted(() => {

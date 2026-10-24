@@ -41,9 +41,12 @@ const props = defineProps<AvatarProps>()
 const emit = defineEmits<AvatarEmits>()
 const slots = defineSlots<AvatarSlots>()
 
-const ui = useComponentUI('avatar', theme, () => ({
-  color: props.color,
-  size: props.size,
-  variant: props.variant,
-}))
+const ui = useComponentUI('avatar', {
+  theme,
+  variantProps: () => ({
+    color: props.color,
+    size: props.size,
+    variant: props.variant,
+  }),
+})
 </script>

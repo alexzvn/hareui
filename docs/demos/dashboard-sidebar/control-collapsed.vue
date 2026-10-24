@@ -2,7 +2,7 @@
   <DashboardGroup unit="rem" :persistent="false">
     <DashboardSidebar
       id="control-collapsed"
-      v-model:collapsed="collapsed"
+      v-model:collapsed="isCollapsed"
       collapsible
       :default-size="14"
     >
@@ -12,10 +12,12 @@
             class="flex size-6 shrink-0 items-center justify-center rounded-md bg-accent text-sm font-bold text-accent-foreground"
             >A</span
           >
-          <span v-if="!collapsed" class="truncate text-sm font-semibold text-foreground">Acme</span>
+          <span v-if="!isCollapsed" class="truncate text-sm font-semibold text-foreground"
+            >Acme</span
+          >
         </div>
       </template>
-      <NavigationMenu :items="items" orientation="vertical" :collapsed="collapsed" tooltip />
+      <NavigationMenu :items="items" orientation="vertical" :collapsed="isCollapsed" tooltip />
     </DashboardSidebar>
 
     <DashboardPanel>
@@ -23,8 +25,8 @@
         <div class="flex h-16 shrink-0 items-center gap-3 px-4">
           <DashboardSidebarToggle />
           <p class="min-w-0 truncate text-sm font-semibold text-foreground">Dashboard</p>
-          <Button size="sm" variant="secondary" class="ms-auto" @click="collapsed = !collapsed">
-            {{ collapsed ? 'Expand' : 'Collapse' }}
+          <Button size="sm" variant="secondary" class="ms-auto" @click="isCollapsed = !isCollapsed">
+            {{ isCollapsed ? 'Expand' : 'Collapse' }}
             <Kbd>C</Kbd>
           </Button>
         </div>
@@ -61,7 +63,7 @@ const items: NavigationMenuItem[] = [
   { label: 'Settings', icon: gravityIcon('gear'), href: '#' },
 ]
 
-const collapsed = ref(false)
+const isCollapsed = ref(false)
 
 const onKeydown = (event: KeyboardEvent) => {
   const target = event.target as HTMLElement
@@ -71,7 +73,7 @@ const onKeydown = (event: KeyboardEvent) => {
     !event.ctrlKey &&
     !/input|textarea|select/i.test(target.tagName)
   )
-    collapsed.value = !collapsed.value
+    isCollapsed.value = !isCollapsed.value
 }
 
 onMounted(() => window.addEventListener('keydown', onKeydown))

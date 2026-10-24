@@ -8,6 +8,7 @@ import type theme from './theme'
 
 type Disclosure = typeof theme
 
+/** Props of `Disclosure`, a collapsible section with a trigger that shows and hides its panel. */
 export type DisclosureProps = {
   /**
    * The element or component to render the root as.
@@ -40,6 +41,7 @@ export type DisclosureProps = {
   ui?: ComponentSlots<Disclosure>
 }
 
+/** Slots of `Disclosure`. */
 export type DisclosureSlots = {
   /**
    * Replaces the whole trigger content (default: the `title` text followed by `#indicator`).
@@ -57,6 +59,7 @@ export type DisclosureSlots = {
   default?: () => VNode[]
 }
 
+/** Events emitted by `Disclosure`. */
 export type DisclosureEmits = {
   /** Emitted when the expanded state changes. */
   'update:open': [value: boolean]

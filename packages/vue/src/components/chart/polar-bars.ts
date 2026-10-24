@@ -96,20 +96,21 @@ export const bandBarPositions = (
   const { bandSize, bars } = band
   if (!bars.length || bandSize <= 0) return bars.map(() => ({ offset: 0, size: 0 }))
 
-  const gap = percentValue(options.barGap ?? 4, bandSize, 0)
+  const gap = percentValue(options.barGap ?? 4, { total: bandSize })
   const sizes = bars.map((bar) => bar.barSize ?? options.barSize)
   const firstSize = sizes[0]
 
   const isFixed =
-    firstSize !== undefined && Number.isFinite(percentValue(firstSize, bandSize, Number.NaN))
+    firstSize !== undefined &&
+    Number.isFinite(percentValue(firstSize, { total: bandSize, fallback: Number.NaN }))
 
   if (isFixed) {
-    const fixedSizes = sizes.map((size) => percentValue(size, bandSize, 0))
+    const fixedSizes = sizes.map((size) => percentValue(size, { total: bandSize }))
 
     return centerFixedBars({ bandSize, gap }, fixedSizes)
   }
 
-  const categoryGap = percentValue(options.barCategoryGap ?? '10%', bandSize, 0)
+  const categoryGap = percentValue(options.barCategoryGap ?? '10%', { total: bandSize })
   const maxSizes = bars.map((bar) => bar.maxBarSize ?? options.maxBarSize)
 
   return shareBand({ bandSize, gap, categoryGap }, maxSizes)

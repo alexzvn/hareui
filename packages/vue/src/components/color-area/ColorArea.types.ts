@@ -7,6 +7,7 @@ import type theme from './theme'
 
 type ColorArea = typeof theme
 
+/** Props for `ColorArea`, a 2D area for adjusting two channels of a colour, e.g. saturation and lightness. */
 export type ColorAreaProps = {
   /**
    * The colour value (controlled), as a hex/CSS colour string or a `Color` object. Use with `v-model`.
@@ -41,6 +42,7 @@ export type ColorAreaProps = {
   ui?: ComponentSlots<ColorArea>
 }
 
+/** Events emitted by `ColorArea`. */
 export type ColorAreaEmits = {
   /** Emitted on every colour change, mirroring HeroUI's `onChange` (fired while dragging/typing). */
   change: [value: Color]

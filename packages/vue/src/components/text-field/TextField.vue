@@ -7,15 +7,24 @@
     :data-invalid="invalid ? 'true' : undefined"
     :data-required="required ? 'true' : undefined"
     :data-readonly="readonly ? 'true' : undefined"
-    :data-focus-within="focusWithin ? 'true' : undefined"
-    :data-focus-visible="focusVisible ? 'true' : undefined"
+    :data-focus-within="isFocusWithin ? 'true' : undefined"
+    :data-focus-visible="isFocusVisible ? 'true' : undefined"
     :class="ui.base({ class: [props.ui?.base, props.class] })"
     @focusin="onFocusIn"
     @focusout="onFocusOut"
   >
     <FieldLabel :for="id" />
     <slot
-      v-bind="{ id, describedBy, invalid, disabled, required, readonly, focusWithin, focusVisible }"
+      v-bind="{
+        id,
+        describedBy,
+        invalid,
+        disabled,
+        required,
+        readonly,
+        focusWithin: isFocusWithin,
+        focusVisible: isFocusVisible,
+      }"
     >
       <Input :placeholder="placeholder" />
     </slot>
@@ -85,11 +94,11 @@ const { validation } = useFieldValidation({
 const invalid = computed(() => validation.value.isInvalid)
 const disabled = useFieldsetDisabled(() => props.disabled)
 
-const focusWithin = ref(false)
-const focusVisible = ref(false)
+const isFocusWithin = ref(false)
+const isFocusVisible = ref(false)
 const onFocusIn = (event: FocusEvent) => {
-  focusWithin.value = true
-  focusVisible.value = event.target instanceof Element && event.target.matches(':focus-visible')
+  isFocusWithin.value = true
+  isFocusVisible.value = event.target instanceof Element && event.target.matches(':focus-visible')
 }
 
 const onFocusOut = (event: FocusEvent) => {
@@ -100,8 +109,8 @@ const onFocusOut = (event: FocusEvent) => {
   )
     return
 
-  focusWithin.value = false
-  focusVisible.value = false
+  isFocusWithin.value = false
+  isFocusVisible.value = false
 }
 
 const { id, describedBy, FieldLabel, FieldDescription, FieldError } = useFieldChrome({
@@ -130,5 +139,8 @@ provide(textFieldContextKey, {
   type: toRef(() => props.type),
 })
 
-const ui = useComponentUI('textField', theme, () => ({ fullWidth: props.fullWidth }))
+const ui = useComponentUI('textField', {
+  theme,
+  variantProps: () => ({ fullWidth: props.fullWidth }),
+})
 </script>

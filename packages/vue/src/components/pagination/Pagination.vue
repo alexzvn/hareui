@@ -148,7 +148,10 @@ const props = withDefaults(defineProps<PaginationProps>(), {
 const emit = defineEmits<PaginationEmits>()
 defineSlots<PaginationSlots>()
 
-const ui = useComponentUI('pagination', theme, () => ({ size: props.size }))
+const ui = useComponentUI('pagination', {
+  theme,
+  variantProps: () => ({ size: props.size }),
+})
 
 const uncontrolled = ref(props.defaultPage)
 const current = computed(() => props.page ?? uncontrolled.value)

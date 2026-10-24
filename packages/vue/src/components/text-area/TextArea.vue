@@ -105,8 +105,11 @@ const invalid = computed(() =>
   own ? own.validation.value.isInvalid : (props.invalid ?? field?.invalid.value ?? false),
 )
 
-const ui = useComponentUI('textArea', theme, () => ({
-  variant: variant.value,
-  fullWidth: fullWidth.value,
-}))
+const ui = useComponentUI('textArea', {
+  theme,
+  variantProps: () => ({
+    variant: variant.value,
+    fullWidth: fullWidth.value,
+  }),
+})
 </script>

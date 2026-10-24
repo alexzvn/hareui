@@ -8,6 +8,7 @@ import type theme from './theme'
 
 type Surface = typeof theme
 
+/** Props of the `Surface` component: a container that sets the background layer its content sits on. */
 export type SurfaceProps = {
   /**
    * The element or component to render as.
@@ -25,6 +26,7 @@ export type SurfaceProps = {
   ui?: ComponentSlots<Surface>
 }
 
+/** Slots of the `Surface` component. */
 export type SurfaceSlots = {
   /** The surface content. */
   default?: () => VNode[]

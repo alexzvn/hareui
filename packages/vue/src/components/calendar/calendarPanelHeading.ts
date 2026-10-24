@@ -17,8 +17,7 @@ export const formatPanelHeading = (locale: string | undefined, panelValue: DateV
 /** React Aria's `useCalendarGrid` label: the calendar's own `aria-label` followed by the month the grid shows. */
 export const formatGridLabel = (
   ariaLabel: string | undefined,
-  locale: string | undefined,
-  panelValue: DateValue,
+  panel: { locale: string | undefined; month: DateValue },
 ): string => {
-  return [ariaLabel, formatPanelHeading(locale, panelValue)].filter(Boolean).join(', ')
+  return [ariaLabel, formatPanelHeading(panel.locale, panel.month)].filter(Boolean).join(', ')
 }

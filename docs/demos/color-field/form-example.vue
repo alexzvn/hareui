@@ -1,5 +1,5 @@
 <template>
-  <Form class="flex w-[280px] flex-col gap-4" @submit="handleSubmit">
+  <Form class="flex w-[280px] flex-col gap-4" @submit="onSubmit">
     <ColorField
       v-model="value"
       full-width
@@ -34,7 +34,7 @@ import { ref } from 'vue'
 const value = ref<Color>()
 const isSubmitting = ref(false)
 
-const handleSubmit = (e: Event) => {
+const onSubmit = (e: Event) => {
   e.preventDefault()
   if (!value.value) return
 

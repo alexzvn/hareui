@@ -90,12 +90,21 @@ const portalTarget = usePortal(() => props.portal)
 const emit = defineEmits<DropdownEmits>()
 const slots = defineSlots<DropdownSlots<T>>()
 
-const ui = useComponentUI('dropdown', theme, () => ({}))
+const ui = useComponentUI('dropdown', { theme: theme, variantProps: () => ({}) })
 
 // Same classes the Label / Description components would build, resolved once for every item.
-const labelUI = useComponentUI('label', labelTheme, () => ({}))
-const disabledLabelUI = useComponentUI('label', labelTheme, () => ({ disabled: true }))
-const descriptionUI = useComponentUI('description', descriptionTheme, () => ({}))
+const labelUI = useComponentUI('label', { theme: labelTheme, variantProps: () => ({}) })
+
+const disabledLabelUI = useComponentUI('label', {
+  theme: labelTheme,
+  variantProps: () => ({ disabled: true }),
+})
+
+const descriptionUI = useComponentUI('description', {
+  theme: descriptionTheme,
+  variantProps: () => ({}),
+})
+
 const contentRef = ref<{ $el: HTMLElement } | null>(null)
 
 const openState = ref(props.defaultOpen)
@@ -284,15 +293,15 @@ const onTriggerPointerdownCapture = (event: PointerEvent) => {
 // The toggle Reka requests while a trigger click dispatches (a short press, or the release after a
 // long press) is dropped. Cleared on a task, not a microtask: browsers run a microtask checkpoint
 // after each listener, which would clear the flag before Reka's bubble-phase listener runs.
-let suppressTriggerToggle = false
+let shouldSuppressTriggerToggle = false
 const onTriggerClickCapture = () => {
   if (props.trigger !== 'longPress') return
-  suppressTriggerToggle = true
-  setTimeout(() => (suppressTriggerToggle = false))
+  shouldSuppressTriggerToggle = true
+  setTimeout(() => (shouldSuppressTriggerToggle = false))
 }
 
 const onRootOpenChange = (open: boolean) => {
-  if (!suppressTriggerToggle) setOpen(open)
+  if (!shouldSuppressTriggerToggle) setOpen(open)
 }
 
 const onTriggerKeydownCapture = (event: KeyboardEvent) => {

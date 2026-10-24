@@ -38,10 +38,12 @@ export const useInertOutside = (
 
         if (keep.has(child)) {
           walk(child)
-        } else if (!child.hasAttribute('inert')) {
-          child.setAttribute('inert', '')
-          added.push(child)
+          continue
         }
+
+        if (child.hasAttribute('inert')) continue
+        child.setAttribute('inert', '')
+        added.push(child)
       }
     }
 

@@ -51,7 +51,7 @@
 
 <script setup lang="ts">
 import { AlertDialog, Button } from '@hareui/vue'
-import { ref } from 'vue'
+import { useTemplateRef } from 'vue'
 
-const portalRef = ref<HTMLElement>()
+const portalRef = useTemplateRef<HTMLElement>('portalRef')
 </script>

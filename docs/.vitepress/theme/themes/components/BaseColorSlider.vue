@@ -9,7 +9,7 @@
       class="h-6 w-[160px]"
       :hue="variables.hue"
       :value="variables.base"
-      @change="handleBaseSliderChange"
+      @change="onBaseSliderChange"
     />
   </div>
 </template>
@@ -22,7 +22,7 @@ import LockableLabel from './LockableLabel.vue'
 
 const [variables, setVariables] = useVariablesState()
 
-const handleBaseSliderChange = (value: number) => {
+const onBaseSliderChange = (value: number) => {
   setVariables({
     ...variables.value,
     base: value,

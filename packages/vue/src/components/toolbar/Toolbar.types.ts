@@ -8,6 +8,7 @@ import type theme from './theme'
 
 type Toolbar = typeof theme
 
+/** Props of the `Toolbar` component: a container of controls navigated with arrow keys. */
 export type ToolbarProps = {
   /**
    * The element or component to render as.
@@ -31,6 +32,7 @@ export type ToolbarProps = {
   ui?: ComponentSlots<Toolbar>
 }
 
+/** Slots of the `Toolbar` component. */
 export type ToolbarSlots = {
   /** Toolbar controls; receives HeroUI's render props. */
   default?: (props: { orientation: 'horizontal' | 'vertical' }) => VNode[]

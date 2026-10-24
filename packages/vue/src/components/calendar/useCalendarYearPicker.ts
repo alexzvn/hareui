@@ -18,6 +18,29 @@ export type UseCalendarYearPickerOptions = {
   onSelect: (year: number) => void
 }
 
+// Runs `callback` when idle (after 200ms without `requestIdleCallback`); returns its canceller
+const scheduleIdle = (callback: () => void): (() => void) => {
+  if (typeof requestIdleCallback !== 'function') {
+    const id = setTimeout(callback, 200)
+
+    return () => clearTimeout(id)
+  }
+
+  const id = requestIdleCallback(callback, { timeout: 1000 })
+
+  return () => cancelIdleCallback(id)
+}
+
+// The year grid's keyboard moves across its 3 columns: the next index from the current and the last one
+const YEAR_KEY_MOVES: Partial<Record<string, (index: number, last: number) => number>> = {
+  ArrowRight: (index, last) => Math.min(index + 1, last),
+  ArrowLeft: (index) => Math.max(index - 1, 0),
+  ArrowDown: (index, last) => Math.min(index + 3, last),
+  ArrowUp: (index) => Math.max(index - 3, 0),
+  Home: () => 0,
+  End: (_, last) => last,
+}
+
 /**
  * HeroUI's `CalendarYearPickerGrid` is absolutely positioned over the day grid (sized to match it
  * via JS) and supports arrow-key/Home/End navigation across a 3-column grid. Ported behaviourally
@@ -42,14 +65,10 @@ export const useCalendarYearPicker = (options: UseCalendarYearPickerOptions) => 
   let cancelIdle: (() => void) | undefined
   onMounted(() => {
     if (everOpened.value) return
-    const render = () => (everOpened.value = true)
-    if (typeof requestIdleCallback === 'function') {
-      const id = requestIdleCallback(render, { timeout: 1000 })
-      cancelIdle = () => cancelIdleCallback(id)
-    } else {
-      const id = setTimeout(render, 200)
-      cancelIdle = () => clearTimeout(id)
-    }
+
+    cancelIdle = scheduleIdle(() => {
+      everOpened.value = true
+    })
   })
 
   onScopeDispose(() => cancelIdle?.())
@@ -120,37 +139,18 @@ export const useCalendarYearPicker = (options: UseCalendarYearPickerOptions) => 
     if (!open.value || years.value.length === 0) return
     const currentIndex = years.value.indexOf(activeYear.value)
     if (currentIndex === -1) return
-    let nextIndex = currentIndex
-    switch (event.key) {
-      case 'ArrowRight':
-        nextIndex = Math.min(currentIndex + 1, years.value.length - 1)
-        break
-      case 'ArrowLeft':
-        nextIndex = Math.max(currentIndex - 1, 0)
-        break
-      case 'ArrowDown':
-        nextIndex = Math.min(currentIndex + 3, years.value.length - 1)
-        break
-      case 'ArrowUp':
-        nextIndex = Math.max(currentIndex - 3, 0)
-        break
-      case 'Home':
-        nextIndex = 0
-        break
-      case 'End':
-        nextIndex = years.value.length - 1
-        break
-      default:
-        return
-    }
 
-    if (nextIndex !== currentIndex) {
-      event.preventDefault()
-      const nextYear = years.value[nextIndex]
-      if (nextYear == null) return
-      activeYear.value = nextYear
-      focusYear(nextYear)
-    }
+    const move = YEAR_KEY_MOVES[event.key]
+    if (!move) return
+
+    const nextIndex = move(currentIndex, years.value.length - 1)
+    if (nextIndex === currentIndex) return
+
+    event.preventDefault()
+    const nextYear = years.value[nextIndex]
+    if (nextYear == null) return
+    activeYear.value = nextYear
+    focusYear(nextYear)
   }
 
   return { activeYear, onKeyDown, selectYear, years }

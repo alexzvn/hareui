@@ -9,6 +9,7 @@ import type { ToastQueue, ToastContentValue as ToastContentValueType } from './t
 
 type Toast = typeof theme
 
+/** Props for `ToastProvider`, the region that renders and stacks the toasts of a queue. */
 export type ToastProviderProps = {
   /**
    * Placement of the toast region.
@@ -65,6 +66,7 @@ export type ToastProviderProps = {
   ui?: ComponentSlots<Toast>
 }
 
+/** Slots for `ToastProvider`. */
 export type ToastProviderSlots = {
   /**
    * Replaces a toast's inner content (indicator, title, description, action,
@@ -74,9 +76,13 @@ export type ToastProviderSlots = {
    * the toast, and wrap the message in a `role="alert"` element so screen readers announce it.
    */
   toast?: (props: {
+    /** The toast's content as passed to `toast()`. */
     content: ToastContentValueType
+    /** Closes this toast. */
     close: () => void
+    /** Id to put on the element holding the title. */
     titleId: string
+    /** Id to put on the element holding the description. */
     descriptionId: string
   }) => VNode[]
 }

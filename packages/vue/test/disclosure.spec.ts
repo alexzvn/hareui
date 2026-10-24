@@ -40,7 +40,7 @@ describe('disclosure', () => {
   })
 
   it('v-model:open stays in sync with external state in both directions', async () => {
-    const open = ref(false)
+    const isOpen = ref(false)
     const Wrapper = {
       setup() {
         return () =>
@@ -48,9 +48,9 @@ describe('disclosure', () => {
             Disclosure,
             {
               title: 'Toggle',
-              open: open.value,
+              open: isOpen.value,
               'onUpdate:open': (value: boolean) => {
-                open.value = value
+                isOpen.value = value
               },
             },
             { default: () => 'Content' },
@@ -61,12 +61,12 @@ describe('disclosure', () => {
     const wrapper = mount(Wrapper)
     expect(wrapper.find('[data-slot=disclosure-trigger]').attributes('aria-expanded')).toBe('false')
 
-    open.value = true
+    isOpen.value = true
     await nextTick()
     expect(wrapper.find('[data-slot=disclosure-trigger]').attributes('aria-expanded')).toBe('true')
 
     await wrapper.find('[data-slot=disclosure-trigger]').trigger('click')
-    expect(open.value).toBe(false)
+    expect(isOpen.value).toBe(false)
   })
 
   it('disabled blocks toggling', async () => {

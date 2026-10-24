@@ -19,5 +19,5 @@ import theme from './theme'
 const props = defineProps<FieldErrorProps>()
 defineSlots<FieldErrorSlots>()
 
-const ui = useComponentUI('fieldError', theme, () => ({}))
+const ui = useComponentUI('fieldError', { theme: theme, variantProps: () => ({}) })
 </script>

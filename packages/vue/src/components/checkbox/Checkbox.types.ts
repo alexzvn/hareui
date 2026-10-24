@@ -10,8 +10,10 @@ import type theme from './theme'
 
 type Checkbox = typeof theme
 
+/** The visual state of a `Checkbox`, as passed to its slots. */
 export type CheckboxState = 'checked' | 'unchecked' | 'indeterminate'
 
+/** Props of `Checkbox`, a control that toggles between checked and unchecked, with an optional indeterminate state. */
 export type CheckboxProps = {
   /** The checked state (`true`, `false` or `'indeterminate'`). Bind with `v-model`. */
   modelValue?: boolean | 'indeterminate'
@@ -74,6 +76,7 @@ export type CheckboxProps = {
   ui?: ComponentSlots<Checkbox>
 } & FormFieldProps
 
+/** Slots of `Checkbox`. */
 export type CheckboxSlots = {
   /** The label content. Replaces the `label` prop. */
   label?: (props: { state: CheckboxState }) => VNode[]

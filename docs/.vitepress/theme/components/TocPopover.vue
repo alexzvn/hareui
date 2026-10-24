@@ -1,22 +1,22 @@
 <template>
   <div
-    :data-state="open ? 'open' : 'closed'"
+    :data-state="isOpen ? 'open' : 'closed'"
     data-toc-popover=""
     class="max-xl:layout:[--fd-toc-popover-height:--spacing(10)] sticky top-(--fd-docs-row-2) z-10 h-(--fd-toc-popover-height) [grid-area:toc-popover] xl:hidden"
   >
     <header
       :class="[
         'border-b backdrop-blur-sm transition-colors',
-        open && 'bg-fd-background/90 shadow-lg',
+        isOpen && 'bg-fd-background/90 shadow-lg',
       ]"
     >
       <button
         type="button"
-        :aria-expanded="open"
-        :data-state="open ? 'open' : 'closed'"
+        :aria-expanded="isOpen"
+        :data-state="isOpen ? 'open' : 'closed'"
         data-toc-popover-trigger=""
         class="text-fd-muted-foreground flex h-10 w-full items-center gap-2.5 px-4 py-2.5 text-start text-sm focus-visible:outline-none md:px-6 [&_svg]:size-4"
-        @click="open = !open"
+        @click="isOpen = !isOpen"
       >
         <svg
           :aria-valuenow="progress"
@@ -45,14 +45,14 @@
           <span
             :class="[
               'truncate transition-all',
-              !open && currentText && 'pointer-events-none -translate-y-full opacity-0',
+              !isOpen && currentText && 'pointer-events-none -translate-y-full opacity-0',
             ]"
             >{{ title }}</span
           >
           <span
             :class="[
               'truncate transition-all',
-              (open || !currentText) && 'pointer-events-none translate-y-full opacity-0',
+              (isOpen || !currentText) && 'pointer-events-none translate-y-full opacity-0',
             ]"
             >{{ currentText }}</span
           >
@@ -63,7 +63,7 @@
           height="16"
           fill="none"
           viewBox="0 0 16 16"
-          :class="['mx-0.5 shrink-0 transition-transform', open && 'rotate-180']"
+          :class="['mx-0.5 shrink-0 transition-transform', isOpen && 'rotate-180']"
         >
           <path
             fill="currentColor"
@@ -74,8 +74,8 @@
         </svg>
       </button>
       <div
-        v-show="open"
-        :data-state="open ? 'open' : 'closed'"
+        v-show="isOpen"
+        :data-state="isOpen ? 'open' : 'closed'"
         data-toc-popover-content=""
         class="flex max-h-[50vh] flex-col px-4 md:px-6"
       >
@@ -96,11 +96,11 @@ import TocItems from './TocItems.vue'
 
 const props = defineProps<{ title: string; items: TocItem[]; active: string[] }>()
 
-const open = ref(false)
+const isOpen = ref(false)
 const route = useRoute()
 watch(
   () => route.path,
-  () => (open.value = false),
+  () => (isOpen.value = false),
 )
 
 const CIRCUMFERENCE = 2 * Math.PI * 11

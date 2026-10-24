@@ -1,7 +1,7 @@
 <template>
-  <div ref="tableRef" data-slot="table" :class="ui.base({ class: [props.ui?.base, props.class] })">
+  <div ref="table" data-slot="table" :class="ui.base({ class: [props.ui?.base, props.class] })">
     <div
-      ref="scrollRootRef"
+      ref="scrollRoot"
       :data-slot="hasResizableColumns ? 'table-resizable-container' : 'table-scroll-container'"
       :class="
         hasResizableColumns
@@ -181,7 +181,7 @@
             </td>
           </tr>
           <!-- React Aria's LoadMoreItem: an inert zero-height sentinel row, plus the content row only while loading. -->
-          <tr v-if="hasMore" ref="sentinelRef" inert style="height: 0">
+          <tr v-if="hasMore" ref="sentinel" inert style="height: 0">
             <td style="padding: 0; border: 0">
               <div style="position: relative; height: 1px; width: 1px" />
             </td>
@@ -217,7 +217,7 @@
 </template>
 
 <script setup lang="ts" generic="T extends TableRow = TableRow">
-import { computed, ref, useSlots } from 'vue'
+import { computed, useSlots, useTemplateRef } from 'vue'
 
 import Checkbox from '@/components/checkbox/Checkbox.vue'
 import Spinner from '@/components/spinner/Spinner.vue'
@@ -264,14 +264,17 @@ const sortDescriptorModel = defineModel<TableSortDescriptor | undefined>('sortDe
 defineSlots<TableSlots<T>>()
 const slots = useSlots()
 
-const ui = useComponentUI('table', theme, () => ({ variant: props.variant }))
+const ui = useComponentUI('table', {
+  theme,
+  variantProps: () => ({ variant: props.variant }),
+})
 
-const tableRef = ref<HTMLElement>()
+const table = useTemplateRef<HTMLElement>('table')
 
 /** The scroll (or resizable) container: the column layout's width and the load-more observer root. */
-const scrollRootRef = ref<HTMLElement>()
+const scrollRoot = useTemplateRef<HTMLElement>('scrollRoot')
 
-const sentinelRef = ref<HTMLElement>()
+const sentinel = useTemplateRef<HTMLElement>('sentinel')
 
 const { sortDirectionFor, toggleSort } = useTableSort({
   model: sortDescriptorModel,
@@ -309,14 +312,14 @@ const {
   columnHeaderId,
   onResizerPointerDown,
   onResizerKeydown,
-} = useTableColumnResize({ columns: () => props.columns, container: scrollRootRef })
+} = useTableColumnResize({ columns: () => props.columns, container: scrollRoot })
 
 useTableLoadMore({
   hasMore: () => props.hasMore,
   loading: () => props.loading,
   rowCount: () => props.rows.length,
-  sentinel: sentinelRef,
-  root: scrollRootRef,
+  sentinel,
+  root: scrollRoot,
   onLoadMore: () => emit('loadMore'),
 })
 
@@ -329,7 +332,7 @@ const {
   onRowKeydown,
   onRowClick,
 } = useTableNavigation({
-  table: tableRef,
+  table,
   rows: () => flatRows.value,
   selectionMode: () => props.selectionMode,
   manager,

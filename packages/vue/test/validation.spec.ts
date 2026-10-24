@@ -129,12 +129,12 @@ describe('validation: aria', () => {
 
 describe('validation: precedence', () => {
   it('controlled `invalid` overrides validate(), both ways', async () => {
-    const invalid = ref<boolean | undefined>(false)
+    const isInvalid = ref<boolean | undefined>(false)
     wrapper = mount(
       () =>
         h(TextField, {
           label: 'N',
-          invalid: invalid.value,
+          invalid: isInvalid.value,
           validationBehavior: 'aria',
           validate: () => 'Bad',
           errorMessage: 'Custom',
@@ -143,10 +143,10 @@ describe('validation: precedence', () => {
     )
 
     expect(error()).toBeUndefined()
-    invalid.value = true
+    isInvalid.value = true
     await nextTick()
     expect(error()).toBe('Custom')
-    invalid.value = undefined
+    isInvalid.value = undefined
     await nextTick()
     expect(error()).toBe('Custom')
     expect(wrapper.get('input').attributes('aria-invalid')).toBe('true')

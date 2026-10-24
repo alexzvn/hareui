@@ -54,27 +54,25 @@ const radii = computed(
 
 const spokes = computed(() => {
   if (!props.radialLines) return []
-  const cx = polar.cx.value
-  const cy = polar.cy.value
+  const center = { cx: polar.cx.value, cy: polar.cy.value }
 
   return angles.value.map((angle) => {
-    const from = polarToCartesian(cx, cy, polar.innerRadius.value, angle)
-    const to = polarToCartesian(cx, cy, polar.outerRadius.value, angle)
+    const from = polarToCartesian(center, { radius: polar.innerRadius.value, angle })
+    const to = polarToCartesian(center, { radius: polar.outerRadius.value, angle })
 
     return { x1: from.x, y1: from.y, x2: to.x, y2: to.y }
   })
 })
 
 const rings = computed(() => {
-  const cx = polar.cx.value
-  const cy = polar.cy.value
+  const center = { cx: polar.cx.value, cy: polar.cy.value }
 
   return radii.value.map((radius) =>
     props.gridType === 'circle'
       ? { radius, d: '' }
       : {
           radius,
-          d: polygonPath(angles.value.map((angle) => polarToCartesian(cx, cy, radius, angle))),
+          d: polygonPath(angles.value.map((angle) => polarToCartesian(center, { radius, angle }))),
         },
   )
 })

@@ -11,6 +11,7 @@ import type theme from './theme'
 
 type TextField = typeof theme
 
+/** Props of the `TextField` component: a labelled input with description, error message and validation. */
 export type TextFieldProps = {
   /** Label text rendered above the input. */
   label?: string
@@ -78,12 +79,19 @@ export type TextFieldProps = {
   ui?: ComponentSlots<TextField>
 } & FormFieldProps
 
+/** Props passed to the `TextField` default slot, for wiring a custom control to the field. */
 export type TextFieldSlotProps = {
+  /** Id to put on the control so the field's label points at it. */
   id: string
+  /** Space-separated ids of the rendered description and error elements, for the control's `aria-describedby`. */
   describedBy: string | undefined
+  /** Whether the field is invalid (from the `invalid` prop or validation). */
   invalid: boolean
+  /** Whether the field is disabled. */
   disabled: boolean
+  /** Whether the field is required. */
   required: boolean
+  /** Whether the field's value can be selected but not changed. */
   readonly: boolean
   /** Whether any element inside the field has focus. */
   focusWithin: boolean
@@ -91,6 +99,7 @@ export type TextFieldSlotProps = {
   focusVisible: boolean
 }
 
+/** Slots of the `TextField` component. */
 export type TextFieldSlots = {
   /** Label content. Replaces the `label` prop. */
   label?: () => VNode[]

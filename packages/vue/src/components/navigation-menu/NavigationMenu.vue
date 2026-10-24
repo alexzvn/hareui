@@ -3,7 +3,7 @@
     data-slot="root"
     v-bind="{
       ...rootProps,
-      ...(vertical
+      ...(isVertical
         ? {}
         : {
             modelValue: props.modelValue as string | undefined,
@@ -19,7 +19,7 @@
 
     <template v-for="(list, listIndex) in lists" :key="`list-${listIndex}`">
       <component
-        :is="vertical && !collapsed ? AccordionRoot : NavigationMenuList"
+        :is="isVertical && !isCollapsed ? AccordionRoot : NavigationMenuList"
         v-bind="listProps(list, listIndex)"
         as="ul"
         data-slot="list"
@@ -35,7 +35,7 @@
       </component>
 
       <div
-        v-if="vertical && listIndex < lists.length - 1"
+        v-if="isVertical && listIndex < lists.length - 1"
         role="separator"
         data-slot="separator"
         :class="ui.separator({ class: props.ui?.separator })"
@@ -45,7 +45,7 @@
     <slot name="list-trailing" />
 
     <div
-      v-if="!vertical"
+      v-if="!isVertical"
       data-slot="viewportWrapper"
       :class="ui.viewportWrapper({ class: props.ui?.viewportWrapper })"
     >
@@ -80,6 +80,7 @@ import type { TooltipProps } from '@/components/tooltip/Tooltip.types'
 import { useComponentUI } from '@/composables/useComponentUI'
 
 import { get, navigationMenuKey } from './context'
+import type { NavigationMenuItemPosition } from './context'
 import type {
   NavigationMenuItem,
   NavigationMenuProps,
@@ -111,18 +112,21 @@ const emit = defineEmits<NavigationMenuEmits>()
 const slots = useSlots()
 defineSlots<NavigationMenuSlots<T>>()
 
-const vertical = computed(() => props.orientation === 'vertical')
-const collapsed = computed(() => !!props.collapsed)
+const isVertical = computed(() => props.orientation === 'vertical')
+const isCollapsed = computed(() => !!props.collapsed)
 
-const ui = useComponentUI('navigationMenu', theme, () => ({
-  orientation: props.orientation,
-  contentOrientation: vertical.value ? undefined : props.contentOrientation,
-  collapsed: !!props.collapsed,
-  color: props.color,
-  variant: props.variant,
-  highlight: !!props.highlight,
-  highlightColor: props.highlightColor || props.color,
-}))
+const ui = useComponentUI('navigationMenu', {
+  theme,
+  variantProps: () => ({
+    orientation: props.orientation,
+    contentOrientation: isVertical.value ? undefined : props.contentOrientation,
+    collapsed: !!props.collapsed,
+    color: props.color,
+    variant: props.variant,
+    highlight: !!props.highlight,
+    highlightColor: props.highlightColor || props.color,
+  }),
+})
 
 const rootProps = computed(() => ({
   as: props.as,
@@ -143,7 +147,7 @@ const accordionProps = computed(() => ({
 }))
 
 const tooltipProps = computed<TooltipProps>(() => ({
-  ...(vertical.value ? { delay: 0, side: 'right' as const } : {}),
+  ...(isVertical.value ? { delay: 0, side: 'right' as const } : {}),
   ...(typeof props.tooltip === 'object' ? props.tooltip : {}),
 }))
 
@@ -167,35 +171,34 @@ const getLabel = (item: NavigationMenuItem) => {
   return get(item, props.labelKey) as string | undefined
 }
 
-const getItemValue = (
-  item: NavigationMenuItem,
-  index: number,
-  level: number,
-  listIndex: number,
-) => {
+const getItemValue = (item: NavigationMenuItem, position: NavigationMenuItemPosition) => {
+  const { index, level, listIndex } = position
   const prefix = lists.value.length > 1 ? `group-${listIndex}-` : ''
+
   return (
     (get(item, props.valueKey) as string | undefined) ??
     (level > 0 ? `${prefix}item-${level}-${index}` : `${prefix}item-${index}`)
   )
 }
 
-const getAccordionDefaultValue = (list: NavigationMenuItem[], level = 0, listIndex = 0) => {
-  const open = list.reduce<string[]>((acc, item, index) => {
-    if (item.defaultOpen || item.open) acc.push(getItemValue(item, index, level, listIndex))
-    return acc
-  }, [])
+const getAccordionDefaultValue = (
+  list: NavigationMenuItem[],
+  { level, listIndex }: Omit<NavigationMenuItemPosition, 'index'>,
+) => {
+  const openValues = list.flatMap((item, index) =>
+    item.defaultOpen || item.open ? [getItemValue(item, { index, level, listIndex })] : [],
+  )
 
-  return props.type === 'single' ? open[0] : open
+  return props.type === 'single' ? openValues[0] : openValues
 }
 
 const listProps = (list: NavigationMenuItem[], listIndex: number) => {
-  if (!vertical.value || collapsed.value) return {}
+  if (!isVertical.value || isCollapsed.value) return {}
 
   return {
     ...accordionProps.value,
     modelValue: props.modelValue,
-    defaultValue: props.defaultValue ?? getAccordionDefaultValue(list, 0, listIndex),
+    defaultValue: props.defaultValue ?? getAccordionDefaultValue(list, { level: 0, listIndex }),
     'onUpdate:modelValue': (value: string | string[] | undefined) =>
       emit('update:modelValue', value),
   }

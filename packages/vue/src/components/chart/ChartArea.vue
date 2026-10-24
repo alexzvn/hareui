@@ -132,7 +132,12 @@ const areaFill = computed(() => {
 // The tooltip and active dot use the series color, not a gradient url.
 const fill = computed(() => (props.fill === 'gradient' ? color.value : areaFill.value.fill))
 
-const series = usePointSeries('area', props, () => ({ stroke: stroke.value, fill: fill.value }))
+const series = usePointSeries({
+  kind: 'area',
+  props,
+  colors: () => ({ stroke: stroke.value, fill: fill.value }),
+})
+
 const { chart, cartesian, horizontal } = series
 const clipId = `${series.id}-clip`
 
@@ -188,7 +193,7 @@ const dots = computed(() => {
     strokeWidth: 1,
   })
 
-  if (!attrs || series.animating.value) return []
+  if (!attrs || series.isAnimating.value) return []
 
   return series.points.value.flatMap((point) => (point ? [{ point, attrs }] : []))
 })

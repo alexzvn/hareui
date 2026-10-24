@@ -7,6 +7,7 @@ import type theme from './theme'
 
 type DashboardToolbar = typeof theme
 
+/** Props of the `DashboardToolbar` component: a bar of controls (filters, tabs, actions) below the navbar of a dashboard panel. */
 export type DashboardToolbarProps = {
   /**
    * The element or component to render as.
@@ -19,6 +20,7 @@ export type DashboardToolbarProps = {
   ui?: ComponentSlots<DashboardToolbar>
 }
 
+/** Slots of the `DashboardToolbar` component. */
 export type DashboardToolbarSlots = {
   /** Replaces the `left` and `right` groups. */
   default?: () => unknown

@@ -8,6 +8,7 @@ import type theme from './theme'
 
 type TextArea = typeof theme
 
+/** Props of `TextArea`, a multi-line text input usable alone or inside a `TextField`. */
 export type TextAreaProps = {
   /** The id of the textarea. Defaults to the id provided by a surrounding `TextField`. */
   id?: string

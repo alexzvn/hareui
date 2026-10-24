@@ -32,8 +32,13 @@ export type NativeSelectGroup = {
   disabled?: boolean
 }
 
+/** One entry of `NativeSelect`'s `items`: an option, or a group of options rendered as an `<optgroup>`. */
 export type NativeSelectItem = NativeSelectOption | NativeSelectGroup
 
+/**
+ * Props of `NativeSelect`: a styled native `<select>` with a label, description and error message, for when
+ * the platform's own picker is preferred over a custom listbox.
+ */
 export type NativeSelectProps = {
   /** The selected value. Bind with `v-model`. */
   modelValue?: string
@@ -94,6 +99,7 @@ export type NativeSelectProps = {
   ui?: ComponentSlots<NativeSelect>
 } & FormFieldProps
 
+/** Slots of `NativeSelect`. */
 export type NativeSelectSlots = {
   /** `<option>` and `<optgroup>` elements, rendered after `items`. */
   default?: () => VNode[]

@@ -34,6 +34,34 @@ export const getTabbables = (container: HTMLElement): HTMLElement[] => {
   )
 }
 
+type TabMove = { active: HTMLElement; container: HTMLElement; isBackward: boolean }
+
+// Focus is on something that isn't tabbable (e.g. a clicked scroller): continue from its position in the DOM.
+const getTabbableFromPosition = (
+  tabbables: HTMLElement[],
+  { active, isBackward }: Omit<TabMove, 'container'>,
+): HTMLElement | undefined => {
+  const after = tabbables.findIndex(
+    (el) => active.compareDocumentPosition(el) & Node.DOCUMENT_POSITION_FOLLOWING,
+  )
+
+  if (!isBackward) return tabbables[after === -1 ? 0 : after]
+
+  return tabbables[(after === -1 ? tabbables.length : after) - 1] ?? tabbables[tabbables.length - 1]
+}
+
+const getNextTabbable = (
+  tabbables: HTMLElement[],
+  { active, container, isBackward }: TabMove,
+): HTMLElement | undefined => {
+  if (active === container) return isBackward ? tabbables[tabbables.length - 1] : tabbables[0]
+
+  const index = tabbables.indexOf(active)
+  if (index === -1) return getTabbableFromPosition(tabbables, { active, isBackward })
+
+  return tabbables[(index + (isBackward ? -1 : 1) + tabbables.length) % tabbables.length]
+}
+
 /**
  * React Aria's FocusScope moves focus itself on every Tab inside a dialog; Reka's FocusScope only wraps at the first
  * and last tabbable and leaves the other Tabs to the browser, which also stops on scrollable containers. This handles
@@ -56,25 +84,7 @@ export const useTabbableFocusLoop = (getContainer: () => HTMLElement | null | un
     if (!container || !active || !container.contains(active)) return
     const tabbables = getTabbables(container)
     if (!tabbables.length) return
-    let next: HTMLElement | undefined
-    if (active === container) {
-      next = event.shiftKey ? tabbables[tabbables.length - 1] : tabbables[0]
-    } else {
-      const index = tabbables.indexOf(active)
-      if (index === -1) {
-        // Focus is on something that isn't tabbable (e.g. a clicked scroller): continue from its position in the DOM.
-        const after = tabbables.findIndex(
-          (el) => active.compareDocumentPosition(el) & Node.DOCUMENT_POSITION_FOLLOWING,
-        )
-
-        next = event.shiftKey
-          ? (tabbables[(after === -1 ? tabbables.length : after) - 1] ??
-            tabbables[tabbables.length - 1])
-          : tabbables[after === -1 ? 0 : after]
-      } else {
-        next = tabbables[(index + (event.shiftKey ? -1 : 1) + tabbables.length) % tabbables.length]
-      }
-    }
+    const next = getNextTabbable(tabbables, { active, container, isBackward: event.shiftKey })
 
     if (!next || next === active) return
     event.preventDefault()

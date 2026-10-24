@@ -25,8 +25,8 @@
       :required="required"
       data-slot="number-field-group"
       :data-invalid="invalid ? 'true' : undefined"
-      :data-focus-within="focusWithin ? 'true' : undefined"
-      :data-focus-visible="focusVisible ? 'true' : undefined"
+      :data-focus-within="isFocusWithin ? 'true' : undefined"
+      :data-focus-visible="isFocusVisible ? 'true' : undefined"
       :class="ui.group({ class: props.ui?.group })"
       @focusin="onFocusIn"
       @focusout="onFocusOut"
@@ -239,17 +239,20 @@ const decrementLabel = computed(() =>
   fieldName.value ? `Decrease ${fieldName.value}` : 'Decrease',
 )
 
-const ui = useComponentUI('numberField', theme, () => ({
-  variant: props.variant,
-  fullWidth: props.fullWidth,
-}))
+const ui = useComponentUI('numberField', {
+  theme,
+  variantProps: () => ({
+    variant: props.variant,
+    fullWidth: props.fullWidth,
+  }),
+})
 
 // RAC Group's `data-focus-within` / `data-focus-visible`
-const focusWithin = ref(false)
-const focusVisible = ref(false)
+const isFocusWithin = ref(false)
+const isFocusVisible = ref(false)
 const onFocusIn = (event: FocusEvent) => {
-  focusWithin.value = true
-  focusVisible.value = event.target instanceof Element && event.target.matches(':focus-visible')
+  isFocusWithin.value = true
+  isFocusVisible.value = event.target instanceof Element && event.target.matches(':focus-visible')
 }
 
 const onFocusOut = (event: FocusEvent) => {
@@ -260,7 +263,7 @@ const onFocusOut = (event: FocusEvent) => {
   )
     return
 
-  focusWithin.value = false
-  focusVisible.value = false
+  isFocusWithin.value = false
+  isFocusVisible.value = false
 }
 </script>

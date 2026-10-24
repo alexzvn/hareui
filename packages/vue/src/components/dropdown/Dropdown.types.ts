@@ -9,8 +9,10 @@ import type theme from './theme'
 
 type Dropdown = typeof theme
 
+/** The key identifying a `Dropdown` item, emitted by `action` and stored in `v-model`. */
 export type DropdownValue = string | number
 
+/** An actionable or selectable entry of a `Dropdown` menu. */
 export type DropdownItem = {
   /** Unique key of the item across the whole menu. Emitted by `action` and stored in `v-model`. */
   value: DropdownValue
@@ -20,6 +22,7 @@ export type DropdownItem = {
   description?: string
   /** Text used for typeahead. Defaults to `label`. */
   textValue?: string
+  /** Whether the item can't be focused, selected or activated. */
   disabled?: boolean
   /** `danger` colours the label (and indicators) for destructive actions. */
   variant?: 'default' | 'danger'
@@ -33,10 +36,13 @@ export type DropdownItem = {
   [key: string]: unknown
 }
 
+/** A labelled group of `Dropdown` items, rendered as a `role="group"` with its own optional selection. */
 export type DropdownSection<T extends DropdownItem = DropdownItem> = {
+  /** Marks the entry as a section. */
   type: 'section'
   /** Rendered as the section `<header>`, which also labels the group. */
   label?: string
+  /** The items of the section. */
   items: T[]
   /**
    * Section-level selection, independent of the rest of the menu (React Aria's section
@@ -45,18 +51,23 @@ export type DropdownSection<T extends DropdownItem = DropdownItem> = {
   selectionMode?: 'none' | 'single' | 'multiple'
   /** Indicator for this section's selectable items. @defaultValue 'checkmark' */
   indicator?: 'checkmark' | 'dot' | false
+  /** Classes merged onto the section element. */
   class?: ClassValue
 }
 
+/** A visual divider between `Dropdown` entries. */
 export type DropdownSeparator = {
+  /** Marks the entry as a separator. */
   type: 'separator'
 }
 
+/** Any entry of the `Dropdown` `items` list: an item, a section or a separator. */
 export type DropdownEntry<T extends DropdownItem = DropdownItem> =
   | T
   | DropdownSection<T>
   | DropdownSeparator
 
+/** Props of `Dropdown`, a menu of actions or options that opens from a trigger. */
 export type DropdownProps<T extends DropdownItem = DropdownItem> = {
   /**
    * Renders the menu in a portal. `true` portals to `document.body`, a selector string or element is used as the teleport target, and `false` disables portalling.
@@ -97,15 +108,21 @@ export type DropdownProps<T extends DropdownItem = DropdownItem> = {
   sideOffset?: number
   /** Classes merged onto the popover. */
   class?: ClassValue
+  /** Per-slot class overrides. */
   ui?: ComponentSlots<Dropdown>
 }
 
+/** What every per-item slot of `Dropdown` receives. */
 export type DropdownItemSlotProps<T extends DropdownItem = DropdownItem> = {
+  /** The item the slot renders. */
   item: T
+  /** Whether the item is selected (always `false` outside a selectable group). */
   selected: boolean
+  /** Whether the item is disabled. */
   disabled: boolean
 }
 
+/** Slots of `Dropdown`. */
 export type DropdownSlots<T extends DropdownItem = DropdownItem> = {
   /** The trigger. Merged onto its single root element (`as-child`). */
   default?: () => VNode[]
@@ -116,8 +133,11 @@ export type DropdownSlots<T extends DropdownItem = DropdownItem> = {
   'content-top'?: () => VNode[]
   /** Replaces the whole item content. */
   item?: (props: DropdownItemSlotProps<T>) => VNode[]
+  /** Content before the label, such as an icon or avatar. */
   'item-leading'?: (props: DropdownItemSlotProps<T>) => VNode[]
+  /** Replaces the item label text. */
   'item-label'?: (props: DropdownItemSlotProps<T>) => VNode[]
+  /** Replaces the secondary text under the label. Also links it as the item's description. */
   'item-description'?: (props: DropdownItemSlotProps<T>) => VNode[]
   /** Replaces the keyboard shortcut. */
   'item-trailing'?: (props: DropdownItemSlotProps<T>) => VNode[]
@@ -125,11 +145,15 @@ export type DropdownSlots<T extends DropdownItem = DropdownItem> = {
   indicator?: (props: DropdownItemSlotProps<T>) => VNode[]
   /** Custom submenu chevron. */
   'submenu-indicator'?: (props: DropdownItemSlotProps<T>) => VNode[]
+  /** Replaces a section header's text. */
   'section-label'?: (props: { section: DropdownSection<T> }) => VNode[]
 }
 
+/** Events emitted by `Dropdown`. */
 export type DropdownEmits = {
+  /** Emitted when the menu opens or closes (`v-model:open`). */
   'update:open': [value: boolean]
+  /** Emitted when the selected values change (`v-model`). */
   'update:modelValue': [value: DropdownValue[]]
   /** An action item (not a selectable one, not a submenu trigger) was selected. */
   action: [value: DropdownValue]

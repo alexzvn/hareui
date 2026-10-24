@@ -7,24 +7,24 @@
     data-slot="menu-item"
     :data-selected="state.selected ? 'true' : undefined"
     :data-has-submenu="submenu ? 'true' : undefined"
-    :data-hovered="hovered ? 'true' : undefined"
-    :data-pressed="pressed ? 'true' : undefined"
-    :data-focused="focused ? 'true' : undefined"
-    :data-focus-visible="focusVisible ? 'true' : undefined"
+    :data-hovered="isHovered ? 'true' : undefined"
+    :data-pressed="isPressed ? 'true' : undefined"
+    :data-focused="isFocused ? 'true' : undefined"
+    :data-focus-visible="isFocusVisible ? 'true' : undefined"
     :class="classes.item!({ variant: item.variant, class: [ctx.ui()?.item, item.class] })"
     @select="onSelect"
-    @pointerenter="hovered = $event.pointerType === 'mouse'"
+    @pointerenter="isHovered = $event.pointerType === 'mouse'"
     @pointerleave="onPointerleave"
-    @pointerdown="pressed = true"
-    @pointerup="pressed = false"
-    @pointercancel="pressed = false"
+    @pointerdown="isPressed = true"
+    @pointerup="isPressed = false"
+    @pointercancel="isPressed = false"
     @focus="onFocus"
     @blur="onBlur"
   >
     <component :is="slots.item" v-if="slots.item" v-bind="state" />
     <template v-else>
       <span
-        v-if="selectable && group.indicator"
+        v-if="isSelectable && group.indicator"
         aria-hidden="true"
         data-slot="menu-item-indicator"
         :data-type="group.indicator"
@@ -151,10 +151,10 @@ const onLabelMousedown = (event: MouseEvent) => {
 }
 
 // RAC interaction states that Reka doesn't expose
-const hovered = ref(false)
-const pressed = ref(false)
-const focused = ref(false)
-const focusVisible = ref(false)
+const isHovered = ref(false)
+const isPressed = ref(false)
+const isFocused = ref(false)
+const isFocusVisible = ref(false)
 
 // RAC `useMenuItem`: the label names the item; description and keyboard shortcut describe it.
 const id = useId(undefined, 'hareui-dropdown-item')
@@ -173,21 +173,19 @@ const aria = computed(() =>
       },
 )
 
-const selectable = computed(() => !props.submenu && props.group.mode !== 'none')
+const isSelectable = computed(() => !props.submenu && props.group.mode !== 'none')
 const state = computed(() => ctx.slotProps(props.item, props.group))
 
-const component = computed(() =>
-  props.submenu
-    ? DropdownMenuSubTrigger
-    : selectable.value
-      ? DropdownMenuCheckboxItem
-      : DropdownMenuItem,
-)
+const component = computed(() => {
+  if (props.submenu) return DropdownMenuSubTrigger
+
+  return isSelectable.value ? DropdownMenuCheckboxItem : DropdownMenuItem
+})
 
 // Only bound when set: an `undefined` fallthrough attr would erase Reka's own `role="menuitemcheckbox"`
 const extraAttrs = computed(() => ({
   ...aria.value,
-  ...(selectable.value
+  ...(isSelectable.value
     ? {
         modelValue: state.value.selected,
         role: props.group.mode === 'single' ? 'menuitemradio' : 'menuitemcheckbox',
@@ -197,24 +195,24 @@ const extraAttrs = computed(() => ({
 }))
 
 const onFocus = (event: FocusEvent) => {
-  focused.value = true
-  focusVisible.value = event.target instanceof Element && event.target.matches(':focus-visible')
+  isFocused.value = true
+  isFocusVisible.value = event.target instanceof Element && event.target.matches(':focus-visible')
 }
 
 const onBlur = () => {
-  focused.value = false
-  focusVisible.value = false
+  isFocused.value = false
+  isFocusVisible.value = false
 }
 
 const onPointerleave = () => {
-  hovered.value = false
-  pressed.value = false
+  isHovered.value = false
+  isPressed.value = false
 }
 
 // RAC `useMenuItem`: pointer selection closes unless the selection is multiple; keyboard selection
 // closes only on Enter (Space keeps the menu open to toggle more items) or for plain actions.
 const onSelect = (event: Event) => {
-  if (!selectable.value) {
+  if (!isSelectable.value) {
     ctx.action(props.item)
     return
   }

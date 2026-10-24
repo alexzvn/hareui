@@ -123,7 +123,11 @@ export const useListBoxKeyboard = ({
   }
 
   const onTypeahead = (event: KeyboardEvent, focused: HTMLElement | undefined): boolean => {
-    const isHandled = typeahead.onKeydown(event, () => createTypeaheadSource(focused), highlight)
+    const isHandled = typeahead.onKeydown(event, {
+      source: () => createTypeaheadSource(focused),
+      select: highlight,
+    })
+
     if (!isHandled) return false
 
     event.stopPropagation()

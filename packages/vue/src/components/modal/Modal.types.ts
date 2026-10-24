@@ -8,6 +8,7 @@ import type theme from './theme'
 
 type Modal = typeof theme
 
+/** Props of `Modal`, a dialog that overlays the page and keeps focus inside it until closed. */
 export type ModalProps = {
   /** The controlled open state of the modal. Use with `v-model:open`. */
   open?: boolean
@@ -56,6 +57,7 @@ export type ModalProps = {
   ui?: ComponentSlots<Modal>
 }
 
+/** Slots of `Modal`. */
 export type ModalSlots = {
   /** The trigger element. Omit to control the modal purely via `v-model:open`. */
   default?: (props: { open: boolean }) => VNode[]
@@ -77,6 +79,7 @@ export type ModalSlots = {
   content?: (props: { close: () => void }) => VNode[]
 }
 
+/** Events emitted by `Modal`. */
 export type ModalEmits = {
   /** Emitted when the open state changes. */
   'update:open': [value: boolean]

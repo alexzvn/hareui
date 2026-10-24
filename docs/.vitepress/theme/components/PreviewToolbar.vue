@@ -33,7 +33,7 @@
           aria-hidden="true"
           :class="[
             'absolute start-0 top-0.5 -z-1 h-7 rounded-full bg-segment shadow-surface',
-            sliding &&
+            isSliding &&
               '[transition-duration:250ms] [transition-property:translate,width] [transition-timing-function:var(--ease-out-fluid)] motion-reduce:transition-none',
           ]"
           :style="{ width: `${indicator.width}px`, translate: `${indicator.x}px 0` }"
@@ -96,7 +96,7 @@ const items = useTemplateRef<HTMLButtonElement[]>('items')
 const indicator = ref<{ x: number; width: number }>()
 
 /** The pill slides only when the device changes; layout remeasures (fonts, resize, unhiding) snap it in place. */
-const sliding = ref(false)
+const isSliding = ref(false)
 
 const measureIndicator = () => {
   const item = items.value?.[DEVICES.findIndex((d) => d.value === device.value)]
@@ -112,7 +112,7 @@ const group = useTemplateRef<HTMLElement>('group')
 let resizeObserver: ResizeObserver | undefined
 onMounted(() => {
   resizeObserver = new ResizeObserver(() => {
-    sliding.value = false
+    isSliding.value = false
     measureIndicator()
   })
 
@@ -122,7 +122,7 @@ onMounted(() => {
 onBeforeUnmount(() => resizeObserver?.disconnect())
 
 watch(device, () => {
-  sliding.value = true
+  isSliding.value = true
   nextTick(measureIndicator)
 })
 

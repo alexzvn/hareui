@@ -216,7 +216,7 @@ export const useCartesianRoot = <T extends object, S extends ChartSeriesBase>(
   const layout = computed(() => options.layout?.() ?? 'horizontal')
 
   const resolved = computed(() => {
-    const sparkline = !!props.sparkline
+    const isSparkline = !!props.sparkline
     const rootDefaults = options.rootDefaults() as Partial<AnySeries>
 
     // Kind defaults go under root props and series config; a ComposedChart picks them per series `type`.
@@ -225,7 +225,7 @@ export const useCartesianRoot = <T extends object, S extends ChartSeriesBase>(
         ? undefined
         : normalizeSeriesInput<AnySeries>(props.series as ChartSeriesInput<object, AnySeries>).map(
             ([key, entry]) => ({
-              ...kindDefaults(options.kind(entry), sparkline),
+              ...kindDefaults(options.kind(entry), isSparkline),
               ...rootDefaults,
               ...entry,
               key,
@@ -241,7 +241,7 @@ export const useCartesianRoot = <T extends object, S extends ChartSeriesBase>(
       stacked: options.stacked?.(),
       defaults: series
         ? undefined
-        : { ...kindDefaults(options.kind({}), sparkline), ...rootDefaults },
+        : { ...kindDefaults(options.kind({}), isSparkline), ...rootDefaults },
     })
   })
 
@@ -252,8 +252,8 @@ export const useCartesianRoot = <T extends object, S extends ChartSeriesBase>(
       : { index: props.index as string | undefined, series: resolved.value, hidden: hidden.value }
 
   const config = computed<CartesianAutoConfig>(() => {
-    const vertical = layout.value === 'vertical'
-    const enabled = !props.sparkline
+    const isVertical = layout.value === 'vertical'
+    const isEnabled = !props.sparkline
     const all = resolved.value
     const kinds = all.map((entry) => options.kind(entry))
     const radius = barEndRadius(
@@ -269,7 +269,7 @@ export const useCartesianRoot = <T extends object, S extends ChartSeriesBase>(
         name: entry.name,
         hide: entry.hidden,
         tooltipType: entry.tooltip === false ? ('none' as const) : undefined,
-        yAxisId: entry.yAxis === 'right' && !vertical ? 'right' : undefined,
+        yAxisId: entry.yAxis === 'right' && !isVertical ? 'right' : undefined,
         class: entry.class,
       })
 
@@ -307,9 +307,13 @@ export const useCartesianRoot = <T extends object, S extends ChartSeriesBase>(
 
       // `ChartArea` draws the `'gradient'` fill itself. A custom fill (e.g. `url(#id)`) carries its own opacity, so the
       // default `[top, bottom]` pair doesn't dim it; only a number does.
-      const custom = entry.fill !== undefined && !['gradient', 'solid', 'none'].includes(entry.fill)
+      const hasCustomFill =
+        entry.fill !== undefined && !['gradient', 'solid', 'none'].includes(entry.fill)
+
       const fill = entry.fill === 'solid' ? entry.color : entry.fill
-      const fillOpacity = custom && typeof entry.fillOpacity !== 'number' ? 1 : entry.fillOpacity
+
+      const fillOpacity =
+        hasCustomFill && typeof entry.fillOpacity !== 'number' ? 1 : entry.fillOpacity
 
       return {
         key: entry.key,
@@ -328,58 +332,53 @@ export const useCartesianRoot = <T extends object, S extends ChartSeriesBase>(
     })
 
     const valueAxis = definedProps({ tickFormatter: valueTicks })
-    const xAxis = resolveChartPart<Partial<ChartXAxisProps>>(
-      props.xAxis,
-      vertical
+    const xAxis = resolveChartPart<Partial<ChartXAxisProps>>(props.xAxis, {
+      defaults: isVertical
         ? { ...chartDefaults.xAxis, type: 'number', ...valueAxis }
         : { ...chartDefaults.xAxis, ...categoryAxis },
-      enabled,
-    )
+      isEnabled,
+    })
 
-    const yAxis = resolveChartPart<Partial<ChartYAxisProps>>(
-      props.yAxis,
-      vertical
+    const yAxis = resolveChartPart<Partial<ChartYAxisProps>>(props.yAxis, {
+      defaults: isVertical
         ? { ...chartDefaults.yAxis, type: 'category', width: 'auto', ...categoryAxis }
         : { ...chartDefaults.yAxis, width: 'auto', ...valueAxis },
-      enabled,
-    )
+      isEnabled,
+    })
 
     const usesRight = series.some((entry) => entry.props.yAxisId === 'right')
-    const yAxisRight = vertical
+    const yAxisRight = isVertical
       ? null
-      : resolveChartPart<Partial<ChartYAxisProps>>(
-          props.yAxisRight,
-          { width: 'auto', ...valueAxis, yAxisId: 'right', orientation: 'right' },
-          usesRight,
-        )
+      : resolveChartPart<Partial<ChartYAxisProps>>(props.yAxisRight, {
+          defaults: { width: 'auto', ...valueAxis, yAxisId: 'right', orientation: 'right' },
+          isEnabled: usesRight,
+        })
 
     return {
       generated: generated.value,
       layout: layout.value,
       series,
-      grid: resolveChartPart<Partial<ChartGridProps>>(
-        props.grid,
-        vertical ? chartDefaults.gridVertical : chartDefaults.grid,
-        enabled,
-      ),
+      grid: resolveChartPart<Partial<ChartGridProps>>(props.grid, {
+        defaults: isVertical ? chartDefaults.gridVertical : chartDefaults.grid,
+        isEnabled,
+      }),
       xAxis,
       yAxis,
       yAxisRight,
       // Composition mode draws only the slot, so a `ChartTooltip` child stays the single tooltip.
       tooltip: generated.value
-        ? resolveChartPart<Partial<ChartTooltipProps>>(
-            props.tooltip,
-            definedProps({
+        ? resolveChartPart<Partial<ChartTooltipProps>>(props.tooltip, {
+            defaults: definedProps({
               valueFormatter: seriesValueFormatter(
                 all,
                 props.valueFormatter,
               ) as ChartTooltipProps['valueFormatter'],
               labelFormatter: props.indexFormatter,
             }),
-            enabled,
-          )
+            isEnabled,
+          })
         : null,
-      legend: resolveFrameLegend(props.legend, options.hasLegendSlot()),
+      legend: resolveFrameLegend(props.legend, { hasLegendSlot: options.hasLegendSlot() }),
       legendItems: seriesLegendItems(all),
     }
   })

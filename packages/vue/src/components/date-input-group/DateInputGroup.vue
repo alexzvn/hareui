@@ -106,10 +106,13 @@ const Passthrough: FunctionalComponent = (_, { slots }) => slots.default?.()
 const props = defineProps<DateInputGroupProps>()
 defineSlots<DateInputGroupSlots>()
 
-const ui = useComponentUI('dateInputGroup', theme, () => ({
-  variant: props.variant,
-  fullWidth: props.fullWidth,
-}))
+const ui = useComponentUI('dateInputGroup', {
+  theme,
+  variantProps: () => ({
+    variant: props.variant,
+    fullWidth: props.fullWidth,
+  }),
+})
 
 // React Aria's `useDateSegment` PAGE_STEP (PageUp/PageDown); its keys are exactly the numeric segments
 const PAGE_STEP = {

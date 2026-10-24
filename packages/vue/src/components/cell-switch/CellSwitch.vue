@@ -54,9 +54,12 @@ const props = withDefaults(defineProps<CellSwitchProps>(), {
 const emit = defineEmits<CellSwitchEmits>()
 const slots = defineSlots<CellSwitchSlots>()
 
-const ui = useComponentUI('cellSwitch', theme, () => ({
-  variant: props.variant,
-}))
+const ui = useComponentUI('cellSwitch', {
+  theme,
+  variantProps: () => ({
+    variant: props.variant,
+  }),
+})
 // The row is Switch's own button, so a click anywhere on it toggles the switch. The root's `data-slot` replaces
 // Switch's, so the theme repeats the Switch rules that key off `[data-slot=switch]`.
 // No comment above `<Switch>` in the template: in dev it would make the root a fragment and stop attribute fallthrough.

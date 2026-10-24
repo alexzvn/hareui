@@ -33,13 +33,13 @@ const mountHeader = (
 
 describe('header menu', () => {
   it('the toggle opens and closes the menu and reports it through v-model:open', async () => {
-    const open = ref(false)
+    const isOpen = ref(false)
     const wrapper = mount(
       {
         render: () =>
           h(
             Header,
-            { open: open.value, 'onUpdate:open': (v: boolean) => (open.value = v) },
+            { open: isOpen.value, 'onUpdate:open': (v: boolean) => (isOpen.value = v) },
             { body: () => 'Menu body' },
           ),
       },
@@ -52,7 +52,7 @@ describe('header menu', () => {
 
     await click(toggle())
     await settle()
-    expect(open.value).toBe(true)
+    expect(isOpen.value).toBe(true)
     expect(document.querySelector('[data-slot=modal-dialog]')).not.toBeNull()
     expect(document.querySelector('[data-slot=header-menu-body]')?.textContent).toBe('Menu body')
 
@@ -67,7 +67,7 @@ describe('header menu', () => {
 
     await click(document.querySelectorAll<HTMLElement>('[data-slot=header-toggle]')[1]!)
     await settle()
-    expect(open.value).toBe(false)
+    expect(isOpen.value).toBe(false)
     expect(document.querySelector('[data-slot=modal-dialog]')).toBeNull()
 
     wrapper.unmount()
@@ -87,26 +87,25 @@ describe('header menu', () => {
     hidden.unmount()
   })
 
-  it('maps mode to Modal or to a Drawer on the right / at the bottom', async () => {
-    for (const [mode, selector] of [
-      ['modal', '[data-slot=modal-dialog]'],
-      ['slideover', '[data-slot=drawer-dialog][data-placement=right]'],
-      ['drawer', '[data-slot=drawer-dialog][data-placement=bottom]'],
-    ] as const) {
+  it.each([
+    { mode: 'modal', selector: '[data-slot=modal-dialog]' },
+    { mode: 'slideover', selector: '[data-slot=drawer-dialog][data-placement=right]' },
+    { mode: 'drawer', selector: '[data-slot=drawer-dialog][data-placement=bottom]' },
+  ] as const)(
+    'maps mode $mode to Modal or to a Drawer on the right / at the bottom',
+    async ({ mode, selector }) => {
       const wrapper = mountHeader({ mode })
       await click(toggle())
       await settle()
-      expect(document.querySelector(selector), mode).not.toBeNull()
+      expect(document.querySelector(selector)).not.toBeNull()
 
       // Only `drawer` has no menu header.
-      expect(!!document.querySelector('[data-slot=header-menu-header]'), mode).toBe(
-        mode !== 'drawer',
-      )
+      expect(!!document.querySelector('[data-slot=header-menu-header]')).toBe(mode !== 'drawer')
 
       wrapper.unmount()
       await settle()
-    }
-  })
+    },
+  )
 
   it("anchors the menu to the bar: the overlay sits in a region starting at the bar's top edge", async () => {
     const wrapper = mountHeader()
@@ -247,14 +246,14 @@ describe('header hideOnScroll', () => {
   }
 
   it('hides on scroll down, reveals on scroll up, and always shows at the top', async () => {
-    const hidden = ref(false)
+    const isHidden = ref(false)
     const wrapper = mount(
       {
         render: () =>
           h(Header, {
             hideOnScroll: true,
-            hidden: hidden.value,
-            'onUpdate:hidden': (v: boolean) => (hidden.value = v),
+            hidden: isHidden.value,
+            'onUpdate:hidden': (v: boolean) => (isHidden.value = v),
           }),
       },
       { attachTo: document.body },
@@ -265,28 +264,28 @@ describe('header hideOnScroll', () => {
     // still within the bar's own height
     scrollTo(40)
     await nextTick()
-    expect(hidden.value).toBe(false)
+    expect(isHidden.value).toBe(false)
 
     scrollTo(200)
     await nextTick()
-    expect(hidden.value).toBe(true)
+    expect(isHidden.value).toBe(true)
     expect(root().getAttribute('data-hidden')).toBe('true')
 
     scrollTo(300)
     await nextTick()
-    expect(hidden.value).toBe(true)
+    expect(isHidden.value).toBe(true)
 
     scrollTo(290)
     await nextTick()
-    expect(hidden.value).toBe(false)
+    expect(isHidden.value).toBe(false)
     expect(root().getAttribute('data-hidden')).toBeNull()
 
     scrollTo(500)
     await nextTick()
-    expect(hidden.value).toBe(true)
+    expect(isHidden.value).toBe(true)
     scrollTo(10)
     await nextTick()
-    expect(hidden.value).toBe(false)
+    expect(isHidden.value).toBe(false)
 
     wrapper.unmount()
   })

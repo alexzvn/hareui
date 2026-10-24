@@ -180,7 +180,7 @@ const modelValue = defineModel<ListBoxValue | ListBoxValue[] | null>()
 const listboxRoot = useTemplateRef<ListBoxRekaRoot>('listboxRoot')
 const sentinel = useTemplateRef<HTMLElement>('sentinel')
 
-const ui = useComponentUI('listBox', theme, () => ({}))
+const ui = useComponentUI('listBox', { theme: theme, variantProps: () => ({}) })
 
 // Options read the interaction modality; a standalone ListBox tracks its own (Select provides one from before the open)
 if (!inject(keyboardModalityKey, null)) provide(keyboardModalityKey, useKeyboardModality())

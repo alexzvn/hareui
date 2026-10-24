@@ -37,6 +37,7 @@
 import { useId } from 'reka-ui'
 import { computed } from 'vue'
 
+import type { ChartTweenStep } from './animation'
 import { lerp, useChartTween } from './animation'
 import { provideChartCells } from './cells'
 import ChartLayer from './ChartLayer.vue'
@@ -162,26 +163,22 @@ const backgroundStyle = computed(() =>
 )
 
 // Mount: bars sweep out from the start angle. Data change: each bar moves from its previous end angle.
-const interpolate = (
-  from: RadialBarSector[] | null,
-  to: RadialBarSector[],
-  t: number,
-): RadialBarSector[] => {
+const interpolate = ({ from, to, t }: ChartTweenStep<RadialBarSector[]>): RadialBarSector[] => {
   return to.map((sector) => {
     const previous = from?.find((item) => item.index === sector.index)
     return {
       ...sector,
-      endAngle: lerp(previous?.endAngle ?? sector.startAngle, sector.endAngle, t),
+      endAngle: lerp([previous?.endAngle ?? sector.startAngle, sector.endAngle], t),
     }
   })
 }
 
-const tween = useChartTween(
-  () => target.value,
+const tween = useChartTween({
+  target: () => target.value,
   interpolate,
-  () => [chart.data.value, props.dataKey, props.hide],
-  () => props,
-)
+  key: () => [chart.data.value, props.dataKey, props.hide],
+  animation: () => props,
+})
 
 const sectors = computed(() =>
   tween.value.value.map((sector) => ({

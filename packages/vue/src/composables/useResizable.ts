@@ -1,32 +1,90 @@
 import type { MaybeRefOrGetter, Ref, ShallowRef } from 'vue'
-import { computed, getCurrentScope, onScopeDispose, ref, toValue, watch } from 'vue'
+import {
+  computed,
+  getCurrentScope,
+  onScopeDispose,
+  onWatcherCleanup,
+  ref,
+  toValue,
+  watch,
+} from 'vue'
 
 import type { DashboardStorage, DashboardUnit } from './useDashboard'
 
+/** Reactive options of `useResizable`: size bounds, collapse behavior and persistence. */
 export type UseResizableOptions = {
-  /** The side of the panel the resize handle sits on is the opposite one: a `left` panel is resized from its right edge. */
+  /**
+   * The side of the layout the panel sits on. The resize handle sits on the opposite edge: a
+   * `left` panel is resized from its right edge.
+   * @defaultValue 'left'
+   */
   side?: 'left' | 'right'
+  /**
+   * The smallest size, in `unit`, a drag or keyboard resize can reach.
+   * @defaultValue 0
+   */
   minSize?: number
+  /**
+   * The largest size, in `unit`, a drag or keyboard resize can reach.
+   * @defaultValue 100
+   */
   maxSize?: number
+  /**
+   * The initial size in `unit` when nothing is persisted; double-clicking the handle restores it.
+   * @defaultValue 0
+   */
   defaultSize?: number
+  /**
+   * Whether the panel can be resized by dragging or with the keyboard.
+   * @defaultValue true
+   */
   resizable?: boolean
+  /**
+   * Whether the panel collapses to `collapsedSize` when dragged near it or on `Enter`.
+   * @defaultValue false
+   */
   collapsible?: boolean
+  /**
+   * The size in `unit` while collapsed.
+   * @defaultValue 0
+   */
   collapsedSize?: number
+  /**
+   * Where the size and collapsed state are persisted: a cookie, `localStorage`, or a custom adapter.
+   * @defaultValue 'cookie'
+   */
   storage?: DashboardStorage
+  /**
+   * Whether the size and collapsed state are persisted across reloads.
+   * @defaultValue true
+   */
   persistent?: boolean
+  /**
+   * The unit of every size option and of the returned `size`.
+   * @defaultValue '%'
+   */
   unit?: DashboardUnit
 }
 
+/** State and event handlers returned by `useResizable`, to bind on the panel and its resize handle. */
 export type UseResizableReturn = {
   /** The rendered size in `unit`: `collapsedSize` while collapsed. */
   size: Readonly<Ref<number>>
+  /** Whether a pointer, mouse or touch drag is in progress. */
   isDragging: Readonly<Ref<boolean>>
+  /** Whether the panel is collapsed to `collapsedSize`. */
   isCollapsed: Readonly<Ref<boolean>>
+  /** Starts a pointer drag; bind on the resize handle's `pointerdown`. */
   onPointerDown: (e: PointerEvent) => void
+  /** Starts a mouse drag; for handles that only receive `mousedown`. */
   onMouseDown: (e: MouseEvent) => void
+  /** Starts a touch drag; for handles that only receive `touchstart`. */
   onTouchStart: (e: TouchEvent) => void
+  /** Expands the panel and restores `defaultSize`. */
   onDoubleClick: (e: MouseEvent) => void
+  /** Arrow keys resize (Shift for larger steps), `Home`/`End` jump to the bounds, `Enter` toggles collapse. */
   onKeyDown: (e: KeyboardEvent) => void
+  /** Collapses (`true`), expands (`false`) or toggles (no argument) a `collapsible` panel. */
   collapse: (value?: boolean) => void
   /** `aria-value*` + keyboard attributes for a `role="separator"` handle; `hidden` while collapsed to a zero width. */
   handleAttrs: Readonly<
@@ -59,6 +117,13 @@ const readCookie = (key: string): string | undefined => {
   return undefined
 }
 
+const readRawStorage = (storage: DashboardStorage, key: string): string | null | undefined => {
+  if (storage === 'cookie') return readCookie(key)
+  if (storage !== 'local') return storage.getItem(key)
+
+  return typeof localStorage === 'undefined' ? undefined : localStorage.getItem(key)
+}
+
 /** Reads a persisted `{ size, collapsed }` entry. Missing, unparsable or malformed data yields `undefined` fields (never throws). */
 export const readDashboardStorage = (
   storage: DashboardStorage,
@@ -66,10 +131,7 @@ export const readDashboardStorage = (
 ): StoredState | undefined => {
   let raw: string | null | undefined
   try {
-    if (storage === 'cookie') raw = readCookie(key)
-    else if (storage === 'local')
-      raw = typeof localStorage === 'undefined' ? undefined : localStorage.getItem(key)
-    else raw = storage.getItem(key)
+    raw = readRawStorage(storage, key)
   } catch {
     return undefined
   }
@@ -89,23 +151,33 @@ export const readDashboardStorage = (
   }
 }
 
+const writeRawStorage = (storage: DashboardStorage, { key, raw }: { key: string; raw: string }) => {
+  if (storage === 'cookie') {
+    if (typeof document === 'undefined') return
+    document.cookie = `${encodeURIComponent(key)}=${encodeURIComponent(raw)}; path=/; max-age=${COOKIE_MAX_AGE}; samesite=lax`
+
+    return
+  }
+
+  if (storage !== 'local') {
+    storage.setItem(key, raw)
+
+    return
+  }
+
+  if (typeof localStorage !== 'undefined') localStorage.setItem(key, raw)
+}
+
 /** Writes a `{ size, collapsed }` entry. Storage failures (quota, blocked cookies) are swallowed. */
 export const writeDashboardStorage = (
   storage: DashboardStorage,
-  key: string,
-  value: { size: number; collapsed: boolean },
+  { key, value }: { key: string; value: { size: number; collapsed: boolean } },
 ): void => {
-  const raw = JSON.stringify(value)
   try {
-    if (storage === 'cookie') {
-      if (typeof document !== 'undefined')
-        document.cookie = `${encodeURIComponent(key)}=${encodeURIComponent(raw)}; path=/; max-age=${COOKIE_MAX_AGE}; samesite=lax`
-    } else if (storage === 'local') {
-      if (typeof localStorage !== 'undefined') localStorage.setItem(key, raw)
-    } else {
-      storage.setItem(key, raw)
-    }
-  } catch {}
+    writeRawStorage(storage, { key, raw: JSON.stringify(value) })
+  } catch {
+    // Persistence is best-effort: a full quota or blocked cookies must not break resizing.
+  }
 }
 
 /** Dragging closer than this (in `unit`) to the collapsed size collapses a `collapsible` panel. */
@@ -177,11 +249,12 @@ export const useResizable = ({
   const currentSize = computed(() => (isCollapsed.value ? opts.value.collapsedSize : size.value))
 
   const persist = () => {
-    if (persists())
-      writeDashboardStorage(opts.value.storage, key, {
-        size: size.value,
-        collapsed: isCollapsed.value,
-      })
+    if (!persists()) return
+
+    writeDashboardStorage(opts.value.storage, {
+      key,
+      value: { size: size.value, collapsed: isCollapsed.value },
+    })
   }
 
   const setCollapsed = (value: boolean) => {
@@ -303,7 +376,9 @@ export const useResizable = ({
     start(e.clientX, (move, end) => {
       try {
         target?.setPointerCapture?.(id)
-      } catch {}
+      } catch {
+        // Capture is an enhancement: the document listeners below still track the drag without it.
+      }
 
       const onMove = (ev: PointerEvent) => {
         if (ev.pointerId === id) move(ev.clientX)
@@ -324,7 +399,9 @@ export const useResizable = ({
 
         try {
           target?.releasePointerCapture?.(id)
-        } catch {}
+        } catch {
+          // The pointer may already be released (element removed or pointer cancelled).
+        }
       }
     })
   }
@@ -409,46 +486,55 @@ export const useResizable = ({
 
     if (e.key !== 'ArrowLeft' && e.key !== 'ArrowRight') return
     e.preventDefault()
-    const rtl = getComputedStyle(node).direction === 'rtl'
-    const towardsEnd = (e.key === 'ArrowRight') !== rtl
-    const grows = opts.value.side === 'left' ? towardsEnd : !towardsEnd
+    const isRtl = getComputedStyle(node).direction === 'rtl'
+    const isTowardsEnd = (e.key === 'ArrowRight') !== isRtl
+    const grows = opts.value.side === 'left' ? isTowardsEnd : !isTowardsEnd
     const step = KEYBOARD_STEP[unit] * (e.shiftKey ? 5 : 1)
 
     if (grows) {
-      if (isCollapsed.value) setCollapsed(false)
-      else setSize(clamp(size.value + step))
+      if (isCollapsed.value) {
+        setCollapsed(false)
+
+        return
+      }
+
+      setSize(clamp(size.value + step))
 
       return
     }
 
     if (isCollapsed.value) return
     const next = size.value - step
-    if (collapsible && next < minSize) setCollapsed(true)
-    else setSize(clamp(next))
+    if (collapsible && next < minSize) {
+      setCollapsed(true)
+
+      return
+    }
+
+    setSize(clamp(next))
   }
 
   // A drag can't start from a zero-width element (there is nothing to grab or measure), so the
   // handle hides while a collapsed element renders 0px wide (off-canvas); the toggle / collapse button reopens it.
   // The rendered width, not `collapsedSize`, decides: the default rail is 48px (a CSS minimum) at `collapsedSize: 0`.
-  const zeroWidth = ref(false)
-  watch(
-    el,
-    (node, _, onCleanup) => {
-      if (!node || typeof ResizeObserver === 'undefined') return
+  const isZeroWidth = ref(false)
 
-      const observer = new ResizeObserver(() => {
-        zeroWidth.value = node.getBoundingClientRect().width === 0
-      })
+  const observeWidth = (node: HTMLElement | null) => {
+    if (!node || typeof ResizeObserver === 'undefined') return
 
-      observer.observe(node)
-      onCleanup(() => observer.disconnect())
-    },
-    { immediate: true },
-  )
+    const observer = new ResizeObserver(() => {
+      isZeroWidth.value = node.getBoundingClientRect().width === 0
+    })
+
+    observer.observe(node)
+    onWatcherCleanup(() => observer.disconnect())
+  }
+
+  watch(el, observeWidth, { immediate: true })
 
   const handleAttrs = computed(() => ({
     tabindex: 0 as const,
-    hidden: isCollapsed.value && zeroWidth.value,
+    hidden: isCollapsed.value && isZeroWidth.value,
     'aria-orientation': 'vertical' as const,
     'aria-valuenow': Math.round(currentSize.value * 100) / 100,
     'aria-valuemin': opts.value.collapsible ? opts.value.collapsedSize : opts.value.minSize,

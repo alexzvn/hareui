@@ -1,5 +1,5 @@
 <template>
-  <form class="flex flex-col gap-4" @submit="handleSubmit">
+  <form class="flex flex-col gap-4" @submit="onSubmit">
     <div class="flex flex-col gap-3">
       <Checkbox name="notifications" value="on" label="Enable notifications" />
       <Checkbox default-value name="newsletter" value="on" label="Subscribe to newsletter" />
@@ -12,7 +12,7 @@
 <script setup lang="ts">
 import { Button, Checkbox } from '@hareui/vue'
 
-const handleSubmit = (e: Event) => {
+const onSubmit = (e: Event) => {
   e.preventDefault()
   const formData = new FormData(e.target as HTMLFormElement)
   alert(

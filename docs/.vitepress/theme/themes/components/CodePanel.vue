@@ -32,21 +32,21 @@
               aria-label="Download code"
               :class="ACTION"
               type="button"
-              @click="handleDownload"
+              @click="onDownload"
             >
               <Icon height="1em" icon="gravity-ui:arrow-down-to-line" width="16" />
             </button>
             <button
               v-if="!!sourceCode"
-              :aria-label="copied ? 'Copied!' : 'Copy code'"
+              :aria-label="isCopied ? 'Copied!' : 'Copy code'"
               :class="[ACTION, 'data-[copied=true]:text-green-500']"
-              :data-copied="copied || undefined"
+              :data-copied="isCopied || undefined"
               type="button"
               @click="onCopy"
             >
               <Icon
                 height="1em"
-                :icon="copied ? 'gravity-ui:check' : 'gravity-ui:copy'"
+                :icon="isCopied ? 'gravity-ui:check' : 'gravity-ui:copy'"
                 width="16"
               />
             </button>
@@ -105,19 +105,19 @@ defineSlots<{
   default?: () => VNode[]
 }>()
 
-// Same behavior as fumadocs' `useCopyButton`: `copied` for 1.5s
-const copied = ref(false)
+// Same behavior as fumadocs' `useCopyButton`: `isCopied` for 1.5s
+const isCopied = ref(false)
 let copiedTimer: ReturnType<typeof setTimeout> | undefined
 const onCopy = () => {
   if (props.sourceCode) void navigator.clipboard.writeText(props.sourceCode)
   clearTimeout(copiedTimer)
-  copied.value = true
-  copiedTimer = setTimeout(() => (copied.value = false), 1500)
+  isCopied.value = true
+  copiedTimer = setTimeout(() => (isCopied.value = false), 1500)
 }
 
 onBeforeUnmount(() => clearTimeout(copiedTimer))
 
-const handleDownload = () => {
+const onDownload = () => {
   if (!props.sourceCode || !props.fileName) return
 
   const blob = new Blob([props.sourceCode], { type: 'text/plain' })

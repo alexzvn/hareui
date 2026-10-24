@@ -39,5 +39,5 @@ import theme from './theme'
 const props = withDefaults(defineProps<FooterProps>(), { as: 'footer' })
 const slots = defineSlots<FooterSlots>()
 
-const ui = useComponentUI('footer', theme, () => ({}))
+const ui = useComponentUI('footer', { theme: theme, variantProps: () => ({}) })
 </script>

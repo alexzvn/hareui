@@ -19,9 +19,9 @@
     </slot>
   </div>
 
-  <slot v-if="resizable" name="resize-handle" v-bind="handleSlotProps">
+  <slot v-if="resizable" name="resize-handle" v-bind="resizeHandleSlotProps">
     <DashboardResizeHandle
-      v-bind="handleSlotProps.attrs"
+      v-bind="resizeHandleSlotProps.attrs"
       :data-dragging="isDragging"
       :class="ui.handle({ class: props.ui?.handle })"
       @pointerdown="onPointerDown"
@@ -86,11 +86,14 @@ const {
   element: el,
 })
 
-const ui = useComponentUI('dashboardPanel', theme, () => ({ size: !!size.value }))
+const ui = useComponentUI('dashboardPanel', {
+  theme,
+  variantProps: () => ({ size: !!size.value }),
+})
 
 const unit = computed(() => dashboard?.unit ?? '%')
 
-const handleSlotProps = computed<DashboardPanelResizeHandleSlotProps>(() => ({
+const resizeHandleSlotProps = computed<DashboardPanelResizeHandleSlotProps>(() => ({
   onPointerDown,
   onMouseDown,
   onTouchStart,

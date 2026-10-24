@@ -13,6 +13,7 @@ import type theme from './theme'
 
 type CellSelect = typeof theme
 
+/** Props of `CellSelect`, a settings-list row with a label at the start and a `Select` trigger at the end. */
 export type CellSelectProps<T extends ListBoxItem = ListBoxItem> = {
   /** Text shown at the start of the row. Also names the trigger and the listbox. */
   label?: string
@@ -37,11 +38,13 @@ export type CellSelectProps<T extends ListBoxItem = ListBoxItem> = {
   ui?: ComponentSlots<CellSelect>
 } & Omit<SelectProps<T>, 'variant' | 'label' | 'fullWidth' | 'side' | 'align' | 'ui'>
 
+/** Slots of `CellSelect`: every `Select` slot except `leading`, plus a `label` slot for the row label. */
 export type CellSelectSlots<T extends ListBoxItem = ListBoxItem> = {
   /** Row label content. Replaces `label`. */
   label?: () => VNode[]
 } & Omit<SelectSlots<T>, 'label' | 'leading'>
 
+/** Events of `CellSelect`: the `Select` events. */
 export type CellSelectEmits = {
   /** The selection changed (`v-model`). */
   'update:modelValue': [value: SelectValue]

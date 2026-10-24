@@ -16,6 +16,7 @@ export type DashboardSidebarMode = 'slideover' | 'drawer' | 'modal'
 /** Props forwarded to the menu overlay: `Modal` props for `mode="modal"`, `Drawer` props otherwise. */
 export type DashboardSidebarMenuProps = Partial<DrawerProps> | Partial<ModalProps>
 
+/** Props of `DashboardSidebar`: a resizable, collapsible sidebar that becomes an overlay menu below the `md` breakpoint. */
 export type DashboardSidebarProps = {
   /**
    * Identifies the sidebar in the storage (`${storageKey}-sidebar-${id}`) and as its element id.
@@ -86,6 +87,7 @@ export type DashboardSidebarProps = {
   ui?: ComponentSlots<DashboardSidebar>
 }
 
+/** Events emitted by `DashboardSidebar`. */
 export type DashboardSidebarEmits = {
   /** Emitted when the mobile menu opens or closes. */
   'update:open': [value: boolean]
@@ -93,27 +95,39 @@ export type DashboardSidebarEmits = {
   'update:collapsed': [value: boolean]
 }
 
+/** Props passed to the `toggle` slot that replaces the menu header's toggle button. */
 export type DashboardSidebarToggleSlotProps = {
+  /** Whether the mobile menu is open. */
   open: boolean
+  /** Opens the mobile menu when closed, closes it when open. */
   toggle: () => void
+  /** The resolved slot class functions, to style a custom toggle like the default one. */
   ui: DashboardSidebarUI
 }
 
+/** Props passed to the `resize-handle` slot: bind the handlers and `attrs` on a custom handle element. */
 export type DashboardSidebarResizeHandleSlotProps = {
+  /** Starts a pointer drag that resizes the sidebar. */
   onPointerDown: (e: PointerEvent) => void
+  /** Starts a mouse drag; fallback for environments without pointer events. */
   onMouseDown: (e: MouseEvent) => void
+  /** Starts a touch drag; fallback for environments without pointer events. */
   onTouchStart: (e: TouchEvent) => void
+  /** Expands the sidebar and resets it to `defaultSize`. */
   onDoubleClick: (e: MouseEvent) => void
+  /** Keyboard resizing: arrows step the size (Shift for larger steps), Home/End jump to min/max, Enter collapses when `collapsible`. */
   onKeyDown: (e: KeyboardEvent) => void
   /** `aria-valuenow`/`min`/`max` and `tabindex` for a `role="separator"` handle. */
   attrs: Record<string, unknown>
   /** Whether the sidebar is being dragged. */
   dragging: boolean
+  /** The resolved slot class functions, to style a custom handle like the default one. */
   ui: DashboardSidebarUI
 }
 
 type DashboardSidebarUI = ComponentUI<DashboardSidebar>
 
+/** Slots of `DashboardSidebar`: the header, body and footer regions, plus overrides for the menu toggle, menu content and resize handle. */
 export type DashboardSidebarSlots = {
   /** The sidebar header (logo, team switcher...). Hidden when omitted. */
   header?: (props: { collapsed: boolean; collapse: (value: boolean) => void }) => VNode[]

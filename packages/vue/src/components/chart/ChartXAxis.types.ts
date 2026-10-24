@@ -1,5 +1,6 @@
 import type { ChartAxisProps, ChartAxisSlots } from './axis'
 
+/** Props of `ChartXAxis`: the horizontal axis of a cartesian chart, with its line, ticks and labels. */
 export type ChartXAxisProps = {
   /**
    * Id that series reference with `xAxisId` when a chart has several x axes.
@@ -20,4 +21,5 @@ export type ChartXAxisProps = {
   padding?: { left?: number; right?: number }
 } & ChartAxisProps
 
+/** Slots of `ChartXAxis`. */
 export type ChartXAxisSlots = ChartAxisSlots

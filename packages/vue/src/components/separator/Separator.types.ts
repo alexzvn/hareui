@@ -8,6 +8,7 @@ import type theme from './theme'
 
 type Separator = typeof theme
 
+/** Props of `Separator`: a horizontal or vertical divider between content. */
 export type SeparatorProps = {
   /**
    * The element or component to render as.
@@ -30,6 +31,7 @@ export type SeparatorProps = {
   ui?: ComponentSlots<Separator>
 }
 
+/** Slots of `Separator`. */
 export type SeparatorSlots = {
   /** Content rendered inside the separator (uncommon; HeroUI's separator is normally empty). */
   default?: () => VNode[]

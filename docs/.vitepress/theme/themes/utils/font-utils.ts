@@ -166,6 +166,16 @@ export const isFontFileUrl = (url: string): boolean => {
   }
 }
 
+/** The `@font-face` `format()` for a font file, from its extension and variable font status. */
+const getFontFormat = (url: string, isVariable: boolean) => {
+  if (url.endsWith('.woff')) return 'woff'
+  if (url.endsWith('.ttf')) return 'truetype'
+  if (url.endsWith('.otf')) return 'opentype'
+  if (isVariable && url.endsWith('.woff2')) return 'woff2-variations'
+
+  return 'woff2'
+}
+
 /**
  * Generates @font-face CSS for a font file URL
  * Supports Fontsource variable fonts and static fonts
@@ -174,18 +184,7 @@ const generateFontFaceCSS = (fontFamily: string, url: string): string => {
   // Detect variable fonts by URL patterns
   const isVariable = url.includes(':vf@') || url.includes('-wght-') || url.includes('-opsz-')
 
-  // Determine format based on file extension and variable font status
-  let format = 'woff2'
-
-  if (url.endsWith('.woff')) {
-    format = 'woff'
-  } else if (url.endsWith('.ttf')) {
-    format = 'truetype'
-  } else if (url.endsWith('.otf')) {
-    format = 'opentype'
-  } else if (isVariable && url.endsWith('.woff2')) {
-    format = 'woff2-variations'
-  }
+  const format = getFontFormat(url, isVariable)
 
   // Variable fonts support weight range, static fonts use 400
   const fontWeight = isVariable ? '100 900' : '400'
@@ -208,13 +207,11 @@ const generateFontFaceCSS = (fontFamily: string, url: string): string => {
  *
  * @param id - Unique identifier for this font
  * @param url - CDN URL for the font (stylesheet or font file)
- * @param fontFamily - Font family name (required for font files)
- * @returns The injected element
+ * @returns The injected element, or `null` when the family of a font file can't be read from its URL
  */
 export const injectFontLink = (
   id: string,
   url: string,
-  fontFamily?: string,
 ): HTMLLinkElement | HTMLStyleElement | null => {
   if (typeof document === 'undefined') return null
 
@@ -227,14 +224,11 @@ export const injectFontLink = (
 
   // Check if this is a font file URL that needs @font-face generation
   if (isFontFileUrl(url)) {
-    // For font files, we need the font family name to generate @font-face
-    const family = fontFamily || extractFontFamilyFromUrl(url)
+    // For font files, we need the font family name to generate @font-face. Imports are validated
+    // with the same extractor first, so an unreadable family only comes from a hand-edited URL: skip it.
+    const family = extractFontFamilyFromUrl(url)
 
-    if (!family) {
-      console.warn('Could not determine font family for font file:', url)
-
-      return null
-    }
+    if (!family) return null
 
     const styleElement = document.createElement('style')
 

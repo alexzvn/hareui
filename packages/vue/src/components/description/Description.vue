@@ -13,5 +13,5 @@ import theme from './theme'
 const props = defineProps<DescriptionProps>()
 defineSlots<DescriptionSlots>()
 
-const ui = useComponentUI('description', theme, () => ({}))
+const ui = useComponentUI('description', { theme: theme, variantProps: () => ({}) })
 </script>

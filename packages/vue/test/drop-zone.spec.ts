@@ -244,7 +244,9 @@ describe('DropZone', () => {
     Object.defineProperty(el, 'value', {
       configurable: true,
       get: () => 'C:\\fakepath\\a.pdf',
-      set: (v: string) => values.push(v),
+      set: (v: string) => {
+        values.push(v)
+      },
     })
 
     vi.spyOn(el, 'click').mockImplementation(() => {})

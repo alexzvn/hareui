@@ -10,6 +10,7 @@ import type theme from './theme'
 
 type CheckboxButtonGroup = typeof theme
 
+/** Props of `CheckboxButtonGroup`: a multi-select group of card-like checkbox buttons with label, description and validation. Bind the selected values with `v-model`. */
 export type CheckboxButtonGroupProps = {
   /**
    * The values selected initially when uncontrolled.
@@ -70,6 +71,7 @@ export type CheckboxButtonGroupProps = {
   ui?: ComponentSlots<CheckboxButtonGroup>
 } & FormFieldProps
 
+/** Slots of `CheckboxButtonGroup`: the items plus overrides for the label, description and error message. */
 export type CheckboxButtonGroupSlots = {
   /** The `CheckboxButtonGroupItem` components. */
   default?: () => VNode[]

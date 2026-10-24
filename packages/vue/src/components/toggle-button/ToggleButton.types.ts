@@ -8,6 +8,7 @@ import type theme from './theme'
 
 type ToggleButton = typeof theme
 
+/** Props of `ToggleButton`: a button that toggles between selected and unselected, on its own or inside a `ToggleButtonGroup`. */
 export type ToggleButtonProps = {
   /**
    * The element or component to render as.
@@ -49,11 +50,15 @@ export type ToggleButtonProps = {
   ui?: ComponentSlots<ToggleButton>
 }
 
+/** State passed to the `ToggleButton` default slot. */
 export type ToggleButtonSlotProps = {
+  /** Whether the button is selected (pressed). */
   selected: boolean
+  /** Whether the button is disabled, directly, through its `ToggleButtonGroup` or an enclosing disabled fieldset. */
   disabled: boolean
 }
 
+/** Slots of `ToggleButton`. */
 export type ToggleButtonSlots = {
   /** The button content. */
   default?: (props: ToggleButtonSlotProps) => VNode[]

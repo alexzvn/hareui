@@ -10,6 +10,7 @@ import type theme from './theme'
 
 type CellSwitch = typeof theme
 
+/** Props of `CellSwitch`, a settings-list row with a label at the start and a switch at the end. */
 export type CellSwitchProps = {
   /** The checked state. Bind with `v-model`. */
   modelValue?: boolean
@@ -70,11 +71,13 @@ export type CellSwitchProps = {
   ui?: ComponentSlots<CellSwitch>
 } & FormFieldProps
 
+/** Events of `CellSwitch`. */
 export type CellSwitchEmits = {
   /** Emitted when the checked state changes. */
   'update:modelValue': [value: boolean]
 }
 
+/** Slots of `CellSwitch`. */
 export type CellSwitchSlots = {
   /** The content at the start of the row. Replaces the `label` prop. */
   label?: (props: { checked: boolean }) => VNode[]

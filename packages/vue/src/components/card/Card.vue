@@ -55,5 +55,8 @@ import theme from './theme'
 const props = withDefaults(defineProps<CardProps>(), { as: 'div' })
 const slots = defineSlots<CardSlots>()
 
-const ui = useComponentUI('card', theme, () => ({ variant: props.variant }))
+const ui = useComponentUI('card', {
+  theme,
+  variantProps: () => ({ variant: props.variant }),
+})
 </script>

@@ -70,10 +70,9 @@ const BADGES = {
   updated: { label: 'Updated', class: `${BADGE_CLASS} bg-sky-400/8 text-sky-400/90` },
 } as const
 
-const key = (entry: SidebarEntry) =>
-  isSeparator(entry)
-    ? `sep-${entry.separator}`
-    : isGroup(entry)
-      ? `group-${entry.group}`
-      : entry.link
+const key = (entry: SidebarEntry) => {
+  if (isSeparator(entry)) return `sep-${entry.separator}`
+
+  return isGroup(entry) ? `group-${entry.group}` : entry.link
+}
 </script>

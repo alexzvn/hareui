@@ -23,6 +23,7 @@ export type FileItemSlots = Pick<
   | 'fileRemoveTrigger'
 >
 
+/** Props of `DropZoneFileItem`: one file row with a format icon, name, size, optional progress bar and remove/retry buttons. */
 export type DropZoneFileItemProps = {
   /** The file to show. Fills in `name` and `size`. */
   file?: File
@@ -54,6 +55,7 @@ export type DropZoneFileItemProps = {
   ui?: FileItemSlots
 }
 
+/** Props passed to every `DropZoneFileItem` slot. */
 export type DropZoneFileItemSlotProps = {
   /** The file name. */
   name: string
@@ -65,6 +67,7 @@ export type DropZoneFileItemSlotProps = {
   progress: number | undefined
 }
 
+/** Slots of `DropZoneFileItem`. */
 export type DropZoneFileItemSlots = {
   /** Replaces the file format icon. */
   icon?: (props: DropZoneFileItemSlotProps) => VNode[]

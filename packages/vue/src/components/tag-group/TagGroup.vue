@@ -95,8 +95,12 @@ const slots = defineSlots<TagGroupSlots<T>>()
 /** The selected tag ids. Bind with `v-model:selected`. */
 const selectedModel = defineModel<string[]>('selected')
 
-const ui = useComponentUI('tagGroup', theme, () => ({}))
-const tagUi = useComponentUI('tag', tagTheme, () => ({ size: props.size, variant: props.variant }))
+const ui = useComponentUI('tagGroup', { theme: theme, variantProps: () => ({}) })
+
+const tagUi = useComponentUI('tag', {
+  theme: tagTheme,
+  variantProps: () => ({ size: props.size, variant: props.variant }),
+})
 
 const selected = computed(() => selectedModel.value ?? props.defaultSelected ?? [])
 const isSelected = (itemId: string) => {

@@ -12,7 +12,7 @@
       @update:model-value="onUpdate"
     >
       <span
-        v-if="showSeparator"
+        v-if="hasSeparator"
         aria-hidden="true"
         data-slot="toggle-button-group-separator"
         :class="group!.ui.value.separator({ class: group!.uiOverrides.value?.separator })"
@@ -33,7 +33,7 @@
     @update:model-value="onUpdate"
   >
     <span
-      v-if="showSeparator"
+      v-if="hasSeparator"
       aria-hidden="true"
       data-slot="toggle-button-group-separator"
       :class="group!.ui.value.separator({ class: group!.uiOverrides.value?.separator })"
@@ -93,15 +93,18 @@ const onUpdate = (value: boolean) => {
   emit('update:modelValue', value)
 }
 
-const ui = useComponentUI('toggleButton', theme, () => ({
-  variant: props.variant,
-  size: props.size ?? group?.size.value,
-  iconOnly: props.iconOnly,
-}))
+const ui = useComponentUI('toggleButton', {
+  theme,
+  variantProps: () => ({
+    variant: props.variant,
+    size: props.size ?? group?.size.value,
+    iconOnly: props.iconOnly,
+  }),
+})
 
 // HeroUI renders `ToggleButtonGroup.Separator` in every grouped button except the first.
 const self = useTemplateRef<unknown>('self')
-const showSeparator = computed(
+const hasSeparator = computed(
   (): boolean => !!group?.separator.value && group.firstChild.value !== refElement(self.value),
 )
 

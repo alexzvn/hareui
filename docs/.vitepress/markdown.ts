@@ -103,18 +103,28 @@ const TAB_PANEL =
 
 let tabsCounter = 0
 
+// markdown-it's default for a rule left unset
+const renderToken: RenderRule = (...args) => {
+  const [tokens, idx, options, , self] = args
+
+  return self.renderToken(tokens, idx, options)
+}
+
 export const markdownConfig = (md: MarkdownRenderer): void => {
   const fence = md.renderer.rules.fence!
   const codeInline = md.renderer.rules.code_inline!
 
-  md.renderer.rules.code_inline = (tokens, idx, options, env, self) => {
+  md.renderer.rules.code_inline = (...args) => {
+    const [tokens, idx] = args
     tokens[idx].attrSet('v-pre', '')
-    return codeInline(tokens, idx, options, env, self)
+
+    return codeInline(...args)
   }
 
-  md.renderer.rules.fence = (tokens, idx, options, env, self) => {
+  md.renderer.rules.fence = (...args) => {
+    const [tokens, idx] = args
     const inGroup = (tokens[idx].meta as CodeGroupMeta | null)?.codeGroup
-    const figure = renderShikiFence(fence(tokens, idx, options, env, self))
+    const figure = renderShikiFence(fence(...args))
     if (!inGroup) return figure
     const value = `${inGroup.id}-${inGroup.index}`
 
@@ -140,9 +150,9 @@ export const markdownConfig = (md: MarkdownRenderer): void => {
       } satisfies CodeGroupMeta
 
       const value = `${id}-${index}`
-      const active = index === 0
+      const isActive = index === 0
       triggers.push(
-        `<button type="button" role="tab" aria-selected="${active}" aria-controls="${value}-content" data-state="${active ? 'active' : 'inactive'}" id="${value}-trigger" class="${TAB_TRIGGER}" tabindex="${active ? 0 : -1}" data-orientation="horizontal">${md.utils.escapeHtml(title)}</button>`,
+        `<button type="button" role="tab" aria-selected="${isActive}" aria-controls="${value}-content" data-state="${isActive ? 'active' : 'inactive'}" id="${value}-trigger" class="${TAB_TRIGGER}" tabindex="${isActive ? 0 : -1}" data-orientation="horizontal">${md.utils.escapeHtml(title)}</button>`,
       )
     }
 
@@ -155,7 +165,8 @@ export const markdownConfig = (md: MarkdownRenderer): void => {
   md.renderer.rules['container_code-group_close'] = () => `</div>\n`
 
   for (const [name, callout] of Object.entries(CALLOUTS)) {
-    md.renderer.rules[`container_${name}_open`] = (tokens, idx, _options, env) => {
+    md.renderer.rules[`container_${name}_open`] = (...args) => {
+      const [tokens, idx, , env] = args
       const info = tokens[idx].info.trim().slice(name.length).trim()
       const title = info ? `<p class="font-medium my-0!">${md.renderInline(info, env)}</p>` : ''
 
@@ -170,17 +181,16 @@ export const markdownConfig = (md: MarkdownRenderer): void => {
   }
 
   // fumadocs `Table` mdx component (dist/mdx.js): heroui global.css styles `.prose-no-margin table`.
-  const tableOpen = md.renderer.rules.table_open ?? ((t, i, o, _e, s) => s.renderToken(t, i, o))
-  const tableClose = md.renderer.rules.table_close ?? ((t, i, o, _e, s) => s.renderToken(t, i, o))
+  const tableOpen = md.renderer.rules.table_open ?? renderToken
+  const tableClose = md.renderer.rules.table_close ?? renderToken
 
-  md.renderer.rules.table_open = (tokens, idx, options, env, self) =>
-    `<div class="relative overflow-auto prose-no-margin my-6">` +
-    tableOpen(tokens, idx, options, env, self)
+  md.renderer.rules.table_open = (...args) =>
+    `<div class="relative overflow-auto prose-no-margin my-6">` + tableOpen(...args)
 
-  md.renderer.rules.table_close = (tokens, idx, options, env, self) =>
-    tableClose(tokens, idx, options, env, self) + `</div>`
+  md.renderer.rules.table_close = (...args) => tableClose(...args) + `</div>`
 }
 
+// oxlint-disable-next-line max-params -- markdown-it-anchor's `permalink(slug, opts, state, idx)` signature
 export const headingPermalink = (
   slug: string,
   _opts: unknown,
@@ -205,7 +215,8 @@ const inlineMarkdown = (html: string): string => {
   return html
     .replace(
       /<pre[\s\S]*?<\/pre>|<code[^>]*>([\s\S]*?)<\/code>|<strong>([\s\S]*?)<\/strong>/g,
-      (match, code, strong) => {
+      (_match: string, ...groups: (string | undefined)[]) => {
+        const [code, strong] = groups
         if (code !== undefined) return `\`${code}\``
         if (strong !== undefined) return `**${strong}**`
 
@@ -215,6 +226,7 @@ const inlineMarkdown = (html: string): string => {
     .replace(/<(p|li|td|th)\b[^>]*>[\s\S]*?<\/\1>/g, (block) => block.replace(/\s*\n\s*/g, ' '))
 }
 
+// oxlint-disable-next-line max-params -- VitePress's local search `_render(src, env, md)` signature
 export const searchRender = (src: string, env: MarkdownEnv, md: MarkdownRenderer): string => {
   const html = md.render(src, env)
   if (env.frontmatter?.search === false) return ''

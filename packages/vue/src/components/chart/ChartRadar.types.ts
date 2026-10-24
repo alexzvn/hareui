@@ -5,6 +5,7 @@ import type { ClassValue } from '@/utils/tv'
 import type { ChartAnimationProps } from './animation'
 import type { ChartDotProps } from './types'
 
+/** Props of `ChartRadar`: a series drawn as a polygon through one point per category. */
 export type ChartRadarProps = {
   /** Key of the value in each row. */
   dataKey: string
@@ -50,6 +51,7 @@ export type ChartRadarProps = {
   class?: ClassValue
 } & ChartAnimationProps
 
+/** Slots of `ChartRadar`. */
 export type ChartRadarSlots = {
   /** `ChartLabel` for a label at every point. */
   default?: () => VNode[]

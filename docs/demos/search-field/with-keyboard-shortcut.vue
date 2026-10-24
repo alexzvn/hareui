@@ -27,7 +27,7 @@ const value = ref('')
 const field = useTemplateRef<{ $el: HTMLElement }>('field')
 const input = () => field.value?.$el.querySelector('input') ?? null
 
-const handleKeyDown = (e: KeyboardEvent) => {
+const onKeyDown = (e: KeyboardEvent) => {
   // Check for Shift+S
   if (e.shiftKey && e.key === 'S' && !e.metaKey && !e.ctrlKey && !e.altKey) {
     e.preventDefault()
@@ -38,6 +38,6 @@ const handleKeyDown = (e: KeyboardEvent) => {
   if (e.key === 'Escape' && document.activeElement === input()) input()?.blur()
 }
 
-onMounted(() => window.addEventListener('keydown', handleKeyDown))
-onBeforeUnmount(() => window.removeEventListener('keydown', handleKeyDown))
+onMounted(() => window.addEventListener('keydown', onKeyDown))
+onBeforeUnmount(() => window.removeEventListener('keydown', onKeyDown))
 </script>

@@ -44,7 +44,7 @@ const slots = useSlots()
 // Every slot is forwarded to the frame, which places it.
 const slotNames = () => Object.keys(slots) as Array<keyof ComposedChartSlots>
 
-const ui = useComponentUI('composedChart', theme, () => ({}))
+const ui = useComponentUI('composedChart', { theme: theme, variantProps: () => ({}) })
 const chart = useChartRoot({
   data: () => props.data as ChartDatum[],
   margin: () => rootMargin(props),

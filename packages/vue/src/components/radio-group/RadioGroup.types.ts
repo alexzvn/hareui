@@ -10,6 +10,7 @@ import type theme from './theme'
 
 type RadioGroup = typeof theme
 
+/** One option of a `RadioGroup`. */
 export type RadioGroupItem = {
   /** The value submitted and bound to `v-model` when the item is selected. */
   value: string
@@ -21,6 +22,7 @@ export type RadioGroupItem = {
   disabled?: boolean
 }
 
+/** Props of `RadioGroup`: a set of radio buttons where exactly one option can be selected, with label, description and validation. */
 export type RadioGroupProps<T extends RadioGroupItem = RadioGroupItem> = {
   /** The radio items. */
   items?: T[]
@@ -80,6 +82,7 @@ export type RadioGroupProps<T extends RadioGroupItem = RadioGroupItem> = {
   ui?: ComponentSlots<RadioGroup>
 } & FormFieldProps
 
+/** Slots of `RadioGroup`. */
 export type RadioGroupSlots<T extends RadioGroupItem = RadioGroupItem> = {
   /** The group label content. Replaces the `label` prop. */
   label?: () => VNode[]

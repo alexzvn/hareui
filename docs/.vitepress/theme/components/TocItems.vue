@@ -25,20 +25,22 @@
 </template>
 
 <script setup lang="ts">
-import { computed, nextTick, ref, watch } from 'vue'
+import { computed, nextTick, ref, useTemplateRef, watch } from 'vue'
 
 import type { TocItem } from '../composables/useToc'
 
 const props = defineProps<{ items: TocItem[]; active: string[] }>()
 
-const container = ref<HTMLElement>()
+const container = useTemplateRef<HTMLElement>('container')
 const rail = ref({ top: 0, height: 0 })
 
 const ITEM_CLASS =
   'prose text-fd-muted-foreground hover:text-fd-accent-foreground data-[active=true]:text-fd-primary scroll-m-4 py-1.5 text-sm wrap-anywhere transition-colors first:pt-0 last:pb-0'
 
 const indent = (depth: number) => {
-  return depth <= 2 ? 'ps-3' : depth === 3 ? 'ps-6' : 'ps-8'
+  if (depth <= 2) return 'ps-3'
+
+  return depth === 3 ? 'ps-6' : 'ps-8'
 }
 
 const activeSet = computed(() => new Set(props.active))

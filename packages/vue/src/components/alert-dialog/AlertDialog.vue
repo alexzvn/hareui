@@ -201,12 +201,15 @@ const emit = defineEmits<AlertDialogEmits>()
 const slots = useSlots()
 defineSlots<AlertDialogSlots>()
 
-const ui = useComponentUI('alertDialog', theme, () => ({
-  status: props.status,
-  size: props.size,
-  variant: props.variant,
-  placement: props.placement,
-}))
+const ui = useComponentUI('alertDialog', {
+  theme,
+  variantProps: () => ({
+    status: props.status,
+    size: props.size,
+    variant: props.variant,
+    placement: props.placement,
+  }),
+})
 
 const dialogContent = useTemplateRef<{ $el: HTMLElement }>('dialogContent')
 const {

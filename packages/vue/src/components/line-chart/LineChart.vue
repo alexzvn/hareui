@@ -45,7 +45,7 @@ const slots = useSlots()
 // Every slot is forwarded to the frame, which places it.
 const slotNames = () => Object.keys(slots) as Array<keyof LineChartSlots>
 
-const ui = useComponentUI('lineChart', theme, () => ({}))
+const ui = useComponentUI('lineChart', { theme: theme, variantProps: () => ({}) })
 const chart = useChartRoot({
   data: () => props.data as ChartDatum[],
   margin: () => rootMargin(props),

@@ -11,7 +11,7 @@
       {{ log }}
     </p>
     <Dropdown
-      v-model:open="menuOpen"
+      v-model:open="isMenuOpen"
       :items="items"
       align="start"
       :side-offset="2"
@@ -69,7 +69,7 @@ const items = [
 ]
 
 const root = useTemplateRef('root')
-const menuOpen = ref(false)
+const isMenuOpen = ref(false)
 const menuRow = ref<Payment>()
 const anchor = ref({ left: '0px', top: '0px' })
 
@@ -79,7 +79,7 @@ const onContextmenu = (e: Event, row: RichTableRow<Payment>) => {
   const rect = root.value!.getBoundingClientRect()
   anchor.value = { left: `${clientX - rect.left}px`, top: `${clientY - rect.top}px` }
   menuRow.value = row.original
-  menuOpen.value = true
+  isMenuOpen.value = true
 }
 
 const onAction = (value: DropdownValue) => {

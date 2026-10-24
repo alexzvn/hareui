@@ -7,6 +7,7 @@ import type theme from './theme'
 
 type CellSlider = typeof theme
 
+/** Props of the `CellSlider` component: a slider laid out as a settings row, with the label and value inside the track. */
 export type CellSliderProps = {
   /** The current value. Bind with `v-model`. */
   modelValue?: number
@@ -61,6 +62,7 @@ export type CellSliderProps = {
   ui?: ComponentSlots<CellSlider>
 }
 
+/** Events emitted by the `CellSlider` component. */
 export type CellSliderEmits = {
   /** Emitted when the value changes, on every step of a drag. */
   'update:modelValue': [value: number]
@@ -68,6 +70,7 @@ export type CellSliderEmits = {
   changeEnd: [value: number]
 }
 
+/** Slots of the `CellSlider` component. */
 export type CellSliderSlots = {
   /** The label content. Replaces the `label` prop. */
   label?: () => VNode[]

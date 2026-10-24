@@ -16,8 +16,8 @@
       role="group"
       :data-invalid="invalid ? 'true' : undefined"
       :data-disabled="disabled ? 'true' : undefined"
-      :data-focus-within="focusWithin ? 'true' : undefined"
-      :data-focus-visible="focusVisible ? 'true' : undefined"
+      :data-focus-within="isFocusWithin ? 'true' : undefined"
+      :data-focus-visible="isFocusVisible ? 'true' : undefined"
       :class="ui.group({ class: props.ui?.group })"
       @focusin="onFocusIn"
       @focusout="onFocusOut"
@@ -143,11 +143,11 @@ const invalid = computed(() => validation.value.isInvalid)
 const disabled = useFieldsetDisabled(() => props.disabled)
 const isEmpty = computed(() => !modelValue.value)
 
-const focusWithin = ref(false)
-const focusVisible = ref(false)
+const isFocusWithin = ref(false)
+const isFocusVisible = ref(false)
 const onFocusIn = (event: FocusEvent) => {
-  focusWithin.value = true
-  focusVisible.value = event.target instanceof Element && event.target.matches(':focus-visible')
+  isFocusWithin.value = true
+  isFocusVisible.value = event.target instanceof Element && event.target.matches(':focus-visible')
 }
 
 const onFocusOut = (event: FocusEvent) => {
@@ -158,8 +158,8 @@ const onFocusOut = (event: FocusEvent) => {
   )
     return
 
-  focusWithin.value = false
-  focusVisible.value = false
+  isFocusWithin.value = false
+  isFocusVisible.value = false
 }
 
 // Kept for backward compatibility with native form submission, matching RAC's useSearchField: Enter submits via
@@ -199,8 +199,11 @@ const { id, describedBy, FieldLabel, FieldDescription, FieldError } = useFieldCh
   ariaDescribedBy: () => attrs['aria-describedby'] as string | undefined,
 })
 
-const ui = useComponentUI('searchField', theme, () => ({
-  variant: props.variant,
-  fullWidth: props.fullWidth,
-}))
+const ui = useComponentUI('searchField', {
+  theme,
+  variantProps: () => ({
+    variant: props.variant,
+    fullWidth: props.fullWidth,
+  }),
+})
 </script>

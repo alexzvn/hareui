@@ -48,8 +48,8 @@ const collapsible = injectCollapsibleRootContext()
 collapsible.contentId ||= props.id
 
 const el = useTemplateRef<HTMLElement>('el')
-const exiting = ref(false)
-const shown = computed(() => item.open.value || exiting.value)
+const isExiting = ref(false)
+const shown = computed(() => item.open.value || isExiting.value)
 let running: Animation[] = []
 let token = 0
 
@@ -87,11 +87,11 @@ const animatable = (): HTMLElement | undefined => {
   const node = el.value
   if (!node || typeof node.animate !== 'function') return undefined
   const flag = node.closest('[data-reduce-motion]')?.getAttribute('data-reduce-motion')
-  const reduced =
+  const isReduced =
     flag === 'true' ||
     (flag !== 'false' && !!window.matchMedia?.('(prefers-reduced-motion: reduce)').matches)
 
-  return reduced ? undefined : node
+  return isReduced ? undefined : node
 }
 
 const settle = (node: HTMLElement) => {
@@ -101,11 +101,46 @@ const settle = (node: HTMLElement) => {
   node.style.removeProperty('pointer-events')
 }
 
+type PanelKeyframes = { height: Keyframe[]; opacity: Keyframe[] }
+
+const animateEnter = (
+  node: HTMLElement,
+  { height, opacity, distance }: PanelKeyframes & { distance: number },
+): Animation[] => {
+  const duration = springDuration(distance)
+
+  return [
+    node.animate(height, {
+      duration,
+      easing: supportsLinear ? springEasing(duration) : 'cubic-bezier(0.25, 1, 0.5, 1)',
+      fill: 'forwards',
+    }),
+    node.animate(opacity, {
+      duration: 220,
+      easing: 'cubic-bezier(0.16, 1, 0.3, 1)',
+      fill: 'forwards',
+    }),
+  ]
+}
+
+const animateExit = (node: HTMLElement, { height, opacity }: PanelKeyframes): Animation[] => [
+  node.animate(height, {
+    duration: 180,
+    easing: 'cubic-bezier(0.4, 0, 1, 1)',
+    fill: 'forwards',
+  }),
+  node.animate(opacity, {
+    duration: 100,
+    easing: 'cubic-bezier(0.23, 1, 0.32, 1)',
+    fill: 'forwards',
+  }),
+]
+
 // Before the render: a closing panel keeps its rows for the exit.
 watch(
   item.open,
   (open) => {
-    exiting.value = !open && !!animatable()
+    isExiting.value = !open && !!animatable()
   },
   { flush: 'pre' },
 )
@@ -124,16 +159,17 @@ watch(
       return
     }
 
-    const interrupted = running.length > 0
-    const fromHeight = interrupted || !open ? node.getBoundingClientRect().height : 0
-    const fromOpacity = interrupted ? Number(getComputedStyle(node).opacity) : open ? 0 : 1
+    const isInterrupted = running.length > 0
+    const fromHeight = isInterrupted || !open ? node.getBoundingClientRect().height : 0
+    const restingOpacity = open ? 0 : 1
+    const fromOpacity = isInterrupted ? Number(getComputedStyle(node).opacity) : restingOpacity
     settle(node)
     const toHeight = open ? node.getBoundingClientRect().height : 0
 
     // Nothing to travel (no layout, or a hidden ancestor): switch at once.
     if (toHeight === fromHeight) {
       token++
-      exiting.value = false
+      isExiting.value = false
 
       return
     }
@@ -143,34 +179,9 @@ watch(
 
     const height = [{ height: `${fromHeight}px` }, { height: `${toHeight}px` }]
     const opacity = [{ opacity: fromOpacity }, { opacity: open ? 1 : 0 }]
-    if (open) {
-      const duration = springDuration(Math.abs(toHeight - fromHeight))
-      running = [
-        node.animate(height, {
-          duration,
-          easing: supportsLinear ? springEasing(duration) : 'cubic-bezier(0.25, 1, 0.5, 1)',
-          fill: 'forwards',
-        }),
-        node.animate(opacity, {
-          duration: 220,
-          easing: 'cubic-bezier(0.16, 1, 0.3, 1)',
-          fill: 'forwards',
-        }),
-      ]
-    } else {
-      running = [
-        node.animate(height, {
-          duration: 180,
-          easing: 'cubic-bezier(0.4, 0, 1, 1)',
-          fill: 'forwards',
-        }),
-        node.animate(opacity, {
-          duration: 100,
-          easing: 'cubic-bezier(0.23, 1, 0.32, 1)',
-          fill: 'forwards',
-        }),
-      ]
-    }
+    running = open
+      ? animateEnter(node, { height, opacity, distance: Math.abs(toHeight - fromHeight) })
+      : animateExit(node, { height, opacity })
 
     const current = ++token
     Promise.all(running.map((a) => a.finished)).then(
@@ -179,7 +190,7 @@ watch(
         if (open) return settle(node)
 
         // Unmount (or hide) the rows first, then drop the held end state: no frame shows them at full height.
-        exiting.value = false
+        isExiting.value = false
         nextTick(() => current === token && settle(node))
       },
       () => {},

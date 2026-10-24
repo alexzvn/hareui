@@ -9,10 +9,14 @@ const digitCount = (value: number): number => {
   return value === 0 ? 1 : Math.floor(Math.log10(Math.abs(value))) + 1
 }
 
+type StepOptions = {
+  allowDecimals: boolean
+  correctionFactor: number
+}
+
 const formatStep = (
   roughStep: number,
-  allowDecimals: boolean,
-  correctionFactor: number,
+  { allowDecimals, correctionFactor }: StepOptions,
 ): number => {
   if (roughStep <= 0) return 0
   const digits = digitCount(roughStep)
@@ -28,7 +32,7 @@ const formatStep = (
   return allowDecimals ? step : Math.ceil(step)
 }
 
-const rangeStep = (start: number, end: number, step: number): number[] => {
+const rangeStep = ([start, end]: [number, number], step: number): number[] => {
   const values: number[] = []
   if (step <= 0) return values
 
@@ -42,28 +46,32 @@ const rangeStep = (start: number, end: number, step: number): number[] => {
   return values
 }
 
+/** The tick a stepped scale is centred on: zero when the range spans it, else the rounded midpoint. */
+const stepMiddle = ([min, max]: [number, number], step: number): number => {
+  if (min <= 0 && max >= 0) return 0
+  const middle = round((min + max) / 2)
+
+  return round(middle - (middle % step))
+}
+
+type CalculateStepOptions = StepOptions & { tickCount: number }
+
 const calculateStep = (
-  min: number,
-  max: number,
-  tickCount: number,
-  allowDecimals: boolean,
-  correctionFactor = 0,
+  [min, max]: [number, number],
+  { tickCount, allowDecimals, correctionFactor }: CalculateStepOptions,
 ): { step: number; tickMin: number; tickMax: number } => {
   if (!Number.isFinite((max - min) / (tickCount - 1))) return { step: 0, tickMin: 0, tickMax: 0 }
-  const step = formatStep(round((max - min) / (tickCount - 1)), allowDecimals, correctionFactor)
-  let middle: number
-  if (min <= 0 && max >= 0) {
-    middle = 0
-  } else {
-    middle = round((min + max) / 2)
-    middle = round(middle - (middle % step))
-  }
-
+  const step = formatStep(round((max - min) / (tickCount - 1)), { allowDecimals, correctionFactor })
+  const middle = stepMiddle([min, max], step)
   let belowCount = Math.ceil(round((middle - min) / step))
   let upCount = Math.ceil(round((max - middle) / step))
   const scaleCount = belowCount + upCount + 1
   if (scaleCount > tickCount)
-    return calculateStep(min, max, tickCount, allowDecimals, correctionFactor + 1)
+    return calculateStep([min, max], {
+      tickCount,
+      allowDecimals,
+      correctionFactor: correctionFactor + 1,
+    })
 
   if (scaleCount < tickCount) {
     upCount = max > 0 ? upCount + (tickCount - scaleCount) : upCount
@@ -77,26 +85,45 @@ const calculateStep = (
   }
 }
 
-const ticksOfSingleValue = (value: number, tickCount: number, allowDecimals: boolean): number[] => {
-  let step = 1
-  let middle = value
-  if (!Number.isInteger(value) && allowDecimals) {
-    const abs = Math.abs(value)
-    if (abs < 1) {
-      step = 10 ** (digitCount(value) - 1)
-      middle = round(Math.floor(value / step) * step)
-    } else if (abs > 1) {
-      middle = Math.floor(value)
-    }
-  } else if (value === 0) {
-    middle = Math.floor((tickCount - 1) / 2)
-  } else if (!allowDecimals) {
-    middle = Math.floor(value)
+/** Tick count and decimal handling shared by the tick generators. */
+type TickOptions = {
+  /** Number of ticks to aim for. @defaultValue 5 */
+  tickCount?: number
+  /** Whether ticks may fall on fractional values. @defaultValue true */
+  allowDecimals?: boolean
+}
+
+type TickAnchor = { step: number; middle: number }
+
+const fractionalTickAnchor = (value: number): TickAnchor => {
+  const abs = Math.abs(value)
+  if (abs < 1) {
+    const step = 10 ** (digitCount(value) - 1)
+
+    return { step, middle: round(Math.floor(value / step) * step) }
   }
 
-  const middleIndex = Math.floor((tickCount - 1) / 2)
+  if (abs > 1) return { step: 1, middle: Math.floor(value) }
 
-  return Array.from({ length: tickCount }, (_, index) =>
+  return { step: 1, middle: value }
+}
+
+const singleValueTickAnchor = (
+  value: number,
+  { tickCount, allowDecimals }: Required<TickOptions>,
+): TickAnchor => {
+  if (!Number.isInteger(value) && allowDecimals) return fractionalTickAnchor(value)
+  if (value === 0) return { step: 1, middle: Math.floor((tickCount - 1) / 2) }
+  if (!allowDecimals) return { step: 1, middle: Math.floor(value) }
+
+  return { step: 1, middle: value }
+}
+
+const ticksOfSingleValue = (value: number, options: Required<TickOptions>): number[] => {
+  const { step, middle } = singleValueTickAnchor(value, options)
+  const middleIndex = Math.floor((options.tickCount - 1) / 2)
+
+  return Array.from({ length: options.tickCount }, (_, index) =>
     round(middle + (index - middleIndex) * step),
   )
 }
@@ -104,15 +131,20 @@ const ticksOfSingleValue = (value: number, tickCount: number, allowDecimals: boo
 /** Rounded ticks covering `[min, max]`; the axis domain grows to the first and last tick. */
 export const niceTicks = (
   [min, max]: [number, number],
-  tickCount = 5,
-  allowDecimals = true,
+  { tickCount = 5, allowDecimals = true }: TickOptions = {},
 ): number[] => {
   const count = Math.max(tickCount, 2)
   const [low, high] = min > max ? [max, min] : [min, max]
   if (!Number.isFinite(low) || !Number.isFinite(high)) return [min, max]
-  if (low === high) return ticksOfSingleValue(low, count, allowDecimals)
-  const { step, tickMin, tickMax } = calculateStep(low, high, count, allowDecimals)
-  const values = rangeStep(tickMin, round(tickMax + 0.1 * step), step)
+  if (low === high) return ticksOfSingleValue(low, { tickCount: count, allowDecimals })
+
+  const { step, tickMin, tickMax } = calculateStep([low, high], {
+    tickCount: count,
+    allowDecimals,
+    correctionFactor: 0,
+  })
+
+  const values = rangeStep([tickMin, round(tickMax + 0.1 * step)], step)
 
   return min > max ? values.reverse() : values
 }
@@ -120,43 +152,59 @@ export const niceTicks = (
 /** Evenly stepped ticks inside a fixed domain, always ending on the domain max. */
 export const fixedDomainTicks = (
   [min, max]: [number, number],
-  tickCount = 5,
-  allowDecimals = true,
+  { tickCount = 5, allowDecimals = true }: TickOptions = {},
 ): number[] => {
   const [low, high] = min > max ? [max, min] : [min, max]
   if (!Number.isFinite(low) || !Number.isFinite(high)) return [min, max]
   if (low === high) return [low]
   const count = Math.max(tickCount, 2)
-  const step = formatStep(round((high - low) / (count - 1)), allowDecimals, 0)
-  const values = [...rangeStep(low, round(high - 0.99 * step), step), high]
+  const step = formatStep(round((high - low) / (count - 1)), { allowDecimals, correctionFactor: 0 })
+  const values = [...rangeStep([low, round(high - 0.99 * step)], step), high]
 
   return min > max ? values.reverse() : values
 }
 
 const DATA_BOUND = /^data(Min|Max)\s*([-+])\s*([\d.]+)$/
 
-const resolveDomainItem = (
-  item: ChartAxisDomainItem,
-  bound: number,
-  edge: 0 | 1,
-  allowDataOverflow: boolean,
-): number => {
-  if (typeof item === 'number')
-    return allowDataOverflow ? item : edge === 0 ? Math.min(item, bound) : Math.max(item, bound)
+type DomainItemOptions = {
+  /** The data extent value on this edge. */
+  bound: number
+  edge: 0 | 1
+  allowDataOverflow: boolean
+}
+
+const resolveDomainItem = (item: ChartAxisDomainItem, options: DomainItemOptions): number => {
+  const { bound, edge, allowDataOverflow } = options
+  if (typeof item === 'number') {
+    if (allowDataOverflow) return item
+
+    return edge === 0 ? Math.min(item, bound) : Math.max(item, bound)
+  }
 
   if (typeof item === 'function') return item(bound)
   if (item === 'auto' || item === 'dataMin' || item === 'dataMax') return bound
   const match = item.match(DATA_BOUND)
   if (match) {
     const delta = Number(match[3])
+
     return match[2] === '-' ? bound - delta : bound + delta
   }
 
   const numeric = Number(item)
 
-  return Number.isFinite(numeric)
-    ? resolveDomainItem(numeric, bound, edge, allowDataOverflow)
-    : bound
+  return Number.isFinite(numeric) ? resolveDomainItem(numeric, options) : bound
+}
+
+const resolveSpecifiedDomain = (
+  specified: ChartAxisDomain,
+  { extent, allowDataOverflow }: { extent: [number, number]; allowDataOverflow: boolean },
+): [number, number] => {
+  if (typeof specified === 'function') return specified(extent)
+
+  return [
+    resolveDomainItem(specified[0], { bound: extent[0], edge: 0, allowDataOverflow }),
+    resolveDomainItem(specified[1], { bound: extent[1], edge: 1, allowDataOverflow }),
+  ]
 }
 
 export type NumberDomainOptions = {
@@ -182,30 +230,20 @@ export const resolveNumberDomain = (
   const extent: [number, number] =
     Number.isFinite(dataExtent[0]) && Number.isFinite(dataExtent[1]) ? dataExtent : [0, 0]
 
-  let domain: [number, number]
-  let auto = false
-  if (typeof specified === 'function') {
-    domain = specified(extent)
-  } else {
-    auto = specified[0] === 'auto' || specified[1] === 'auto'
+  const isAuto =
+    typeof specified !== 'function' && (specified[0] === 'auto' || specified[1] === 'auto')
 
-    domain = [
-      resolveDomainItem(specified[0], extent[0], 0, allowDataOverflow),
-      resolveDomainItem(specified[1], extent[1], 1, allowDataOverflow),
-    ]
+  const domain = resolveSpecifiedDomain(specified, { extent, allowDataOverflow })
+  const customTicks = options.ticks?.length ? options.ticks : undefined
+  if (!isAuto)
+    return { domain, ticks: customTicks ?? fixedDomainTicks(domain, { tickCount, allowDecimals }) }
+
+  const ticks = niceTicks(domain, { tickCount, allowDecimals })
+
+  return {
+    domain: [Math.min(ticks[0]!, domain[0]), Math.max(ticks[ticks.length - 1]!, domain[1])],
+    ticks: customTicks ?? ticks,
   }
-
-  let ticks: number[]
-  if (auto) {
-    ticks = niceTicks(domain, tickCount, allowDecimals)
-    domain = [Math.min(ticks[0]!, domain[0]), Math.max(ticks[ticks.length - 1]!, domain[1])]
-  } else {
-    ticks = fixedDomainTicks(domain, tickCount, allowDecimals)
-  }
-
-  if (options.ticks?.length) ticks = options.ticks
-
-  return { domain, ticks }
 }
 
 /** A tick with its pixel position along the axis. */
@@ -219,16 +257,19 @@ export type ChartTick = {
   text: string
 }
 
-/**
- * Thins ticks whose labels would overlap. `size` measures a label along the axis;
- * `bounds` is the visible span (the whole SVG), labels may not cross it.
- */
+type ThinTicksOptions = {
+  interval: ChartAxisInterval
+  /** Measures a label along the axis. */
+  size: (tick: Omit<ChartTick, 'labelCoordinate'>) => number
+  /** The visible span (the whole SVG); labels may not cross it. */
+  bounds: [number, number]
+  minTickGap: number
+}
+
+/** Thins ticks whose labels would overlap. */
 export const thinTicks = (
   ticks: Omit<ChartTick, 'labelCoordinate'>[],
-  interval: ChartAxisInterval,
-  size: (tick: Omit<ChartTick, 'labelCoordinate'>) => number,
-  bounds: [number, number],
-  minTickGap: number,
+  { interval, size, bounds, minTickGap }: ThinTicksOptions,
 ): ChartTick[] => {
   const all = ticks.map((tick) => ({ ...tick, labelCoordinate: tick.coordinate }))
   if (!all.length) return all

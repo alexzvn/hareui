@@ -47,25 +47,32 @@ describe('makeRange', () => {
 
 describe('availableRun', () => {
   it('stops one day short of the first unavailable date on each side', () => {
-    const run = availableRun(d(15), unavailableOn(10, 12, 18, 20), { months: 1 })
+    const run = availableRun(d(15), {
+      isUnavailable: unavailableOn(10, 12, 18, 20),
+      span: { months: 1 },
+    })
+
     expect(iso(run.start)).toBe('2025-03-13')
     expect(iso(run.end)).toBe('2025-03-17')
   })
 
   it('is unbounded on a side with no unavailable date within the span', () => {
-    const run = availableRun(d(15), unavailableOn(18), { days: 5 })
+    const run = availableRun(d(15), { isUnavailable: unavailableOn(18), span: { days: 5 } })
     expect(run.start).toBeUndefined()
     expect(iso(run.end)).toBe('2025-03-17')
   })
 
   it('finds an unavailable day up to one past the span limit', () => {
-    expect(iso(availableRun(d(15), unavailableOn(20), { days: 5 }).end)).toBe('2025-03-19')
-    expect(iso(availableRun(d(15), unavailableOn(21), { days: 5 }).end)).toBe('2025-03-20')
-    expect(availableRun(d(15), unavailableOn(22), { days: 5 }).end).toBeUndefined()
+    const runUntil = (day: number) =>
+      availableRun(d(15), { isUnavailable: unavailableOn(day), span: { days: 5 } })
+
+    expect(iso(runUntil(20).end)).toBe('2025-03-19')
+    expect(iso(runUntil(21).end)).toBe('2025-03-20')
+    expect(runUntil(22).end).toBeUndefined()
   })
 
   it('collapses to the anchor when both neighbours are unavailable', () => {
-    const run = availableRun(d(15), unavailableOn(14, 16), { months: 1 })
+    const run = availableRun(d(15), { isUnavailable: unavailableOn(14, 16), span: { months: 1 } })
     expect(iso(run.start)).toBe('2025-03-15')
     expect(iso(run.end)).toBe('2025-03-15')
   })
@@ -73,32 +80,32 @@ describe('availableRun', () => {
 
 describe('boundsWithinRun', () => {
   it('takes the tighter of min/max and the run on each side', () => {
-    expect(boundsWithinRun(d(10), d(25), { start: d(12), end: d(28) })).toEqual({
+    expect(boundsWithinRun({ min: d(10), max: d(25) }, { start: d(12), end: d(28) })).toEqual({
       min: d(12),
       max: d(25),
     })
 
-    expect(boundsWithinRun(d(10), d(25), { start: d(5), end: d(20) })).toEqual({
+    expect(boundsWithinRun({ min: d(10), max: d(25) }, { start: d(5), end: d(20) })).toEqual({
       min: d(10),
       max: d(20),
     })
 
-    expect(boundsWithinRun(d(10), d(25), null)).toEqual({ min: d(10), max: d(25) })
+    expect(boundsWithinRun({ min: d(10), max: d(25) }, null)).toEqual({ min: d(10), max: d(25) })
   })
 })
 
 describe('exceedsMaximumDays', () => {
   it('disables days maximumDays or more away from the anchor on either side', () => {
-    expect(exceedsMaximumDays(d(17), d(15), 3)).toBe(false)
-    expect(exceedsMaximumDays(d(18), d(15), 3)).toBe(true)
-    expect(exceedsMaximumDays(d(13), d(15), 3)).toBe(false)
-    expect(exceedsMaximumDays(d(12), d(15), 3)).toBe(true)
+    expect(exceedsMaximumDays(d(17), { anchor: d(15), maximumDays: 3 })).toBe(false)
+    expect(exceedsMaximumDays(d(18), { anchor: d(15), maximumDays: 3 })).toBe(true)
+    expect(exceedsMaximumDays(d(13), { anchor: d(15), maximumDays: 3 })).toBe(false)
+    expect(exceedsMaximumDays(d(12), { anchor: d(15), maximumDays: 3 })).toBe(true)
   })
 
   it('does nothing without an anchor or a limit', () => {
-    expect(exceedsMaximumDays(d(30), null, 3)).toBe(false)
-    expect(exceedsMaximumDays(d(30), d(1), undefined)).toBe(false)
-    expect(exceedsMaximumDays(d(30), d(1), 0)).toBe(false)
+    expect(exceedsMaximumDays(d(30), { anchor: null, maximumDays: 3 })).toBe(false)
+    expect(exceedsMaximumDays(d(30), { anchor: d(1), maximumDays: undefined })).toBe(false)
+    expect(exceedsMaximumDays(d(30), { anchor: d(1), maximumDays: 0 })).toBe(false)
   })
 })
 

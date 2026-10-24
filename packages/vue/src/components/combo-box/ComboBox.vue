@@ -519,14 +519,20 @@ const shouldSubmitText = computed(() => props.allowsCustomValue || props.formVal
 const hiddenValues = computed(() => (selectedValues.value.length ? selectedValues.value : ['']))
 
 // ---- Classes ------------------------------------------------------------------------------------------------------
-const ui = useComponentUI('comboBox', theme, () => ({ fullWidth: props.fullWidth }))
+const ui = useComponentUI('comboBox', {
+  theme,
+  variantProps: () => ({ fullWidth: props.fullWidth }),
+})
 
-const inputUi = useComponentUI('input', inputTheme, () => ({
-  variant: props.variant,
-  fullWidth: false,
-}))
+const inputUi = useComponentUI('input', {
+  theme: inputTheme,
+  variantProps: () => ({
+    variant: props.variant,
+    fullWidth: false,
+  }),
+})
 
-const listBoxUi = useComponentUI('listBox', listBoxTheme, () => ({}))
+const listBoxUi = useComponentUI('listBox', { theme: listBoxTheme, variantProps: () => ({}) })
 
 const rowSlots = [
   'item',

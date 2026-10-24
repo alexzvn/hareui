@@ -24,6 +24,9 @@ afterEach(() => {
   wrapper = undefined
 })
 
+const renderItems = (overrides: Record<string, unknown> = {}) =>
+  features.map((f) => h(CheckboxButtonGroupItem, { key: f.value, ...f, ...overrides }))
+
 // `props` may be a getter so a controlled `modelValue` is read during render and stays reactive
 const mountGroup = (
   props: Record<string, unknown> | (() => Record<string, unknown>) = {},
@@ -125,10 +128,7 @@ describe('CheckboxButtonGroup', () => {
               modelValue: model.value,
               'onUpdate:modelValue': (v: string[] | undefined) => (model.value = v ?? []),
             },
-            () =>
-              features.map((f) =>
-                h(CheckboxButtonGroupItem, { key: f.value, ...f, disabled: false }),
-              ),
+            () => renderItems({ disabled: false }),
           ),
         ),
       { attachTo: document.body },
@@ -295,7 +295,7 @@ describe('CheckboxButtonGroup form integration', () => {
           h(
             CheckboxButtonGroup,
             { name: 'features', required: true, errorMessage: 'Pick at least one' },
-            () => features.map((f) => h(CheckboxButtonGroupItem, { key: f.value, ...f })),
+            () => renderItems(),
           ),
         ),
       { attachTo: document.body },
@@ -319,7 +319,7 @@ describe('CheckboxButtonGroup form integration', () => {
           'form',
           null,
           h(CheckboxButtonGroup, { name: 'features', defaultValue: ['security', 'storage'] }, () =>
-            features.map((f) => h(CheckboxButtonGroupItem, { key: f.value, ...f })),
+            renderItems(),
           ),
         ),
       { attachTo: document.body },
@@ -342,7 +342,7 @@ describe('CheckboxButtonGroup form integration', () => {
               errorMessage: 'Pick at least one',
               defaultValue: ['storage'],
             },
-            () => features.map((f) => h(CheckboxButtonGroupItem, { key: f.value, ...f })),
+            () => renderItems(),
           ),
         ),
       { attachTo: document.body },
@@ -368,7 +368,7 @@ describe('CheckboxButtonGroup form integration', () => {
               name: 'features',
               validate: (v: string[]) => (v.length > 1 ? 'Pick one at most' : null),
             },
-            () => features.map((f) => h(CheckboxButtonGroupItem, { key: f.value, ...f })),
+            () => renderItems(),
           ),
         ),
       { attachTo: document.body },
@@ -449,7 +449,7 @@ describe('CheckboxButtonGroup accessibility', () => {
           h(
             CheckboxButtonGroup,
             { label: 'Features', name: 'features', defaultValue: ['security'] },
-            () => features.map((f) => h(CheckboxButtonGroupItem, { key: f.value, ...f })),
+            () => renderItems(),
           ),
         ),
       { attachTo: document.body },

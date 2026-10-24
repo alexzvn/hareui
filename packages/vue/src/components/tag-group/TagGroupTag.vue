@@ -9,16 +9,16 @@
     :aria-disabled="disabled ? 'true' : undefined"
     :data-selected="selected ? 'true' : undefined"
     :data-disabled="disabled ? 'true' : undefined"
-    :data-pressed="pressed ? 'true' : undefined"
-    :data-focus-visible="focusVisible ? 'true' : undefined"
+    :data-pressed="isPressed ? 'true' : undefined"
+    :data-focus-visible="isFocusVisible ? 'true' : undefined"
     :class="classes.base({ class: ui?.tag })"
     @click="onClick"
     @pointerdown="onPointerdown"
     @mousedown="onMousedown"
-    @pointerup="pressed = false"
-    @pointercancel="pressed = false"
+    @pointerup="isPressed = false"
+    @pointercancel="isPressed = false"
     @focus="onFocus"
-    @blur="focusVisible = false"
+    @blur="isFocusVisible = false"
   >
     <div role="gridcell" style="display: contents">
       <slot :item="item" :index="index" :selected="selected" :disabled="disabled">
@@ -76,8 +76,8 @@ const emit = defineEmits<{ press: [event: MouseEvent | PointerEvent]; remove: []
 defineSlots<{ default?: TagGroupSlots['item']; removeButton?: TagGroupSlots['removeButton'] }>()
 
 // RAC render-prop states the CSS actually styles (`:active`/`data-pressed`, `:focus-visible`/`data-focus-visible`).
-const pressed = ref(false)
-const focusVisible = ref(false)
+const isPressed = ref(false)
+const isFocusVisible = ref(false)
 
 // RAC useTag: the row is named by its text, and each remove button by "Remove tag" plus that row, so the
 // buttons are distinguishable ("Remove tag News") instead of all sharing one name
@@ -85,23 +85,23 @@ const rowId = useId()
 const removeButtonId = `${rowId}-remove`
 
 const onFocus = (event: FocusEvent) => {
-  focusVisible.value = event.target instanceof Element && event.target.matches(':focus-visible')
+  isFocusVisible.value = event.target instanceof Element && event.target.matches(':focus-visible')
 }
 
 // RAC selects on press *start* for mouse (on release for touch/pen), so a held mouse button already
-// shows the selected state. `selectedOnDown` swallows the click that follows that same press.
-let selectedOnDown = false
+// shows the selected state. `isSelectedOnDown` swallows the click that follows that same press.
+let isSelectedOnDown = false
 
 const onPointerdown = (event: PointerEvent) => {
-  selectedOnDown = false
+  isSelectedOnDown = false
   if (props.disabled) return
-  pressed.value = true
+  isPressed.value = true
 
   const fromRemoveButton =
     event.target instanceof Element && event.target.closest('[data-slot=tag-remove-button]')
 
   if (fromRemoveButton || event.pointerType !== 'mouse' || event.button !== 0) return
-  selectedOnDown = true
+  isSelectedOnDown = true
   emit('press', event)
 }
 
@@ -111,8 +111,8 @@ const onMousedown = (event: MouseEvent) => {
 }
 
 const onClick = (event: MouseEvent) => {
-  if (selectedOnDown) {
-    selectedOnDown = false
+  if (isSelectedOnDown) {
+    isSelectedOnDown = false
     return
   }
 

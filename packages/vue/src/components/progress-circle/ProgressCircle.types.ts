@@ -5,6 +5,7 @@ import type theme from './theme'
 
 type ProgressCircle = typeof theme
 
+/** Props of the `ProgressCircle` component: a circular indicator of progress toward a value. */
 export type ProgressCircleProps = {
   /**
    * The current value (clamped to `minValue`–`maxValue`).

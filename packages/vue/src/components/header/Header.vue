@@ -88,11 +88,14 @@ const slots = defineSlots<HeaderSlots>()
 const open = defineModel<boolean>('open', { default: false })
 const hidden = defineModel<boolean>('hidden', { default: false })
 
-const ui = useComponentUI('header', theme, () => ({
-  toggleSide: props.toggleSide,
-  breakpoint: props.breakpoint,
-  mode: props.mode,
-}))
+const ui = useComponentUI('header', {
+  theme,
+  variantProps: () => ({
+    toggleSide: props.toggleSide,
+    breakpoint: props.breakpoint,
+    mode: props.mode,
+  }),
+})
 
 const root = useTemplateRef<{ $el: HTMLElement }>('root')
 const bar = useTemplateRef<HTMLElement>('bar')

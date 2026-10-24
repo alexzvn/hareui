@@ -134,11 +134,11 @@ describe('Toolbar', () => {
 
   it('handled arrow keys do not reach the focused control', async () => {
     const { button } = editor()
-    let reached = false
-    button('bold').addEventListener('keydown', () => (reached = true))
+    let hasReachedControl = false
+    button('bold').addEventListener('keydown', () => (hasReachedControl = true))
     button('bold').focus()
     await key(button('bold'), 'ArrowRight')
-    expect(reached).toBe(false)
+    expect(hasReachedControl).toBe(false)
   })
 
   it('tab leaves from the edge and focus returns to the last focused control on re-entry', async () => {

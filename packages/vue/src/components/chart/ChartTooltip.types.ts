@@ -3,6 +3,7 @@ import type { ClassValue } from '@/utils/tv'
 
 import type { ChartPoint, ChartTooltipPayloadEntry } from './types'
 
+/** Props of `ChartTooltip`: the panel and cursor that follow the hovered or keyboard-focused datum. */
 export type ChartTooltipProps = {
   /**
    * Hover cursor: a dashed line (`'line'`), a band behind the hovered category (`'band'`), or none.
@@ -51,6 +52,7 @@ export type ChartTooltipProps = {
   class?: ClassValue
 }
 
+/** Props of the `ChartTooltip` `#content` slot: what the panel shows for the active datum. */
 export type ChartTooltipSlotProps = {
   /** Whether a row is hovered or focused. */
   active: boolean
@@ -62,6 +64,7 @@ export type ChartTooltipSlotProps = {
   coordinate: ChartPoint | null
 }
 
+/** Slots of `ChartTooltip`. */
 export type ChartTooltipSlots = {
   /** Replaces the panel, e.g. with a composed `ChartTooltipContent`. */
   content?: (props: ChartTooltipSlotProps) => unknown

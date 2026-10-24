@@ -46,7 +46,11 @@ const props = withDefaults(defineProps<ChartTooltipContentProps>(), {
 
 const slots = defineSlots<ChartTooltipContentSlots>()
 
-const ui = useComponentUI('chartTooltip', theme, () => ({ indicator: props.indicator }))
+const ui = useComponentUI('chartTooltip', {
+  theme,
+  variantProps: () => ({ indicator: props.indicator }),
+})
+
 provide(chartTooltipContextKey, { classes: ui, ui: () => props.ui })
 
 const headerText = computed(() => {

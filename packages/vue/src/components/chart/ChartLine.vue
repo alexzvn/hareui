@@ -4,9 +4,9 @@
       data-slot="chart-line"
       :data-key="dataKey"
       :class="chart.classes('series', props.class)"
-      :clip-path="clipping ? `url(#${clipId})` : undefined"
+      :clip-path="isClipping ? `url(#${clipId})` : undefined"
     >
-      <defs v-if="clipping">
+      <defs v-if="isClipping">
         <clipPath :id="clipId">
           <rect v-bind="clip" />
         </clipPath>
@@ -52,7 +52,7 @@
 
 <script setup lang="ts">
 import { line as d3Line } from 'd3-shape'
-import { computed, shallowRef, watch } from 'vue'
+import { computed, shallowRef, useTemplateRef, watch } from 'vue'
 
 import ChartLayer from './ChartLayer.vue'
 import type { ChartLineProps, ChartLineSlots } from './ChartLine.types'
@@ -81,7 +81,7 @@ defineSlots<ChartLineSlots>()
 const rootSeries = useRootSeries(useChartContext('ChartLine'), () => props.dataKey)
 const stroke = computed(() => props.stroke ?? rootSeries.value?.color ?? DEFAULT_SERIES_COLOR)
 
-const series = usePointSeries('line', props, () => ({ stroke: stroke.value }))
+const series = usePointSeries({ kind: 'line', props, colors: () => ({ stroke: stroke.value }) })
 const { chart, cartesian, horizontal } = series
 const clipId = `${series.id}-clip`
 
@@ -101,14 +101,14 @@ const path = computed(() => {
 })
 
 // Mount animation: solid lines draw along their length; dashed lines are revealed with a clip.
-const pathElement = shallowRef<SVGPathElement | null>(null)
+const pathElement = useTemplateRef<SVGPathElement>('pathElement')
 const length = shallowRef(0)
-const revealing = computed(() => series.reveal.value < 1)
+const isRevealing = computed(() => series.reveal.value < 1)
 
 // Measure only when the path mounts, the reveal starts/ends, or the geometry changes mid-reveal (e.g. a resize);
 // `getTotalLength` forces layout, so it must not run every animation frame.
 watch(
-  [pathElement, revealing, () => (revealing.value ? path.value : null)],
+  [pathElement, isRevealing, () => (isRevealing.value ? path.value : null)],
   () => {
     const element = pathElement.value
     length.value =
@@ -117,14 +117,14 @@ watch(
   { flush: 'post' },
 )
 
-const drawing = computed(
+const isDrawing = computed(
   () => series.reveal.value < 1 && !props.strokeDasharray && length.value > 0,
 )
 
-const clipping = computed(() => series.reveal.value < 1 && !drawing.value)
+const isClipping = computed(() => series.reveal.value < 1 && !isDrawing.value)
 
 const dasharray = computed(() => {
-  if (drawing.value) return `${length.value * series.reveal.value}px ${length.value}px`
+  if (isDrawing.value) return `${length.value * series.reveal.value}px ${length.value}px`
   return props.strokeDasharray
 })
 
@@ -145,7 +145,7 @@ const dots = computed(() => {
     strokeWidth: 1,
   })
 
-  if (!attrs || series.animating.value) return []
+  if (!attrs || series.isAnimating.value) return []
 
   return series.points.value.flatMap((point) => (point ? [{ point, attrs }] : []))
 })

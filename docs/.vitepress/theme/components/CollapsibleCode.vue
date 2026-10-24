@@ -7,7 +7,7 @@
         <div
           :class="[
             'code-block-wrapper relative',
-            collapsible && !expanded && 'mask-to-bottom max-h-[150px] overflow-hidden',
+            collapsible && !isExpanded && 'mask-to-bottom max-h-[150px] overflow-hidden',
           ]"
         >
           <figure
@@ -55,9 +55,9 @@
           type="button"
           data-slot="button"
           :class="expandClass"
-          @click="expanded = !expanded"
+          @click="isExpanded = !isExpanded"
         >
-          {{ expanded ? 'Collapse code' : 'Expand code' }}
+          {{ isExpanded ? 'Collapse code' : 'Expand code' }}
         </button>
       </div>
     </div>
@@ -117,7 +117,7 @@ const render = async () => {
 onMounted(render)
 watch(() => [props.code, props.lang], render)
 
-const expanded = ref(!props.collapsible)
+const isExpanded = ref(!props.collapsible)
 
 const button = tv(buttonTheme)
 const copyClass = button({ variant: 'ghost', size: 'sm', iconOnly: true }).base({

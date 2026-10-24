@@ -24,8 +24,8 @@
       :required="required"
       data-slot="color-input-group"
       :data-invalid="invalid ? 'true' : undefined"
-      :data-focus-within="focusWithin ? 'true' : undefined"
-      :data-focus-visible="focusVisible ? 'true' : undefined"
+      :data-focus-within="isFocusWithin ? 'true' : undefined"
+      :data-focus-visible="isFocusVisible ? 'true' : undefined"
       :class="ui.group({ class: props.ui?.group })"
       @focusin="onFocusIn"
       @focusout="onFocusOut"
@@ -121,14 +121,14 @@ const modelValueForRoot = computed<string | Color | undefined>(() => {
 
 // Option A of the empty-value decision: React Aria's ColorField can be empty (`null`), Reka's always holds a colour
 // (`#000000`). While "empty" the input text is blanked (see colorFieldBridge.ts); Reka and the form keep `#000000`.
-// `filledByCommit` covers the gap between a commit and the parent re-rendering with the new `modelValue`.
-const uncontrolledEmpty = ref(props.defaultValue == null)
-const filledByCommit = ref(false)
+// `isFilledByCommit` covers the gap between a commit and the parent re-rendering with the new `modelValue`.
+const isUncontrolledEmpty = ref(props.defaultValue == null)
+const isFilledByCommit = ref(false)
 const empty = computed(() => {
-  if (filledByCommit.value) return false
+  if (isFilledByCommit.value) return false
   if (hasOwnModel.value) return props.modelValue === null
 
-  return !pickerCtx && uncontrolledEmpty.value
+  return !pickerCtx && isUncontrolledEmpty.value
 })
 
 // Reka only updates on commit (blur / Enter / stepper / page jump / wheel), like RAC's ColorField; tracked locally
@@ -156,7 +156,7 @@ const { validation, commitValidation } = useFieldValidation({
   root: () => root.value,
   onReset: () => {
     if (props.defaultValue == null && !pickerCtx) {
-      uncontrolledEmpty.value = true
+      isUncontrolledEmpty.value = true
       formColor.value = null
       emit('update:modelValue', null)
 
@@ -174,11 +174,11 @@ const invalid = computed(() => validation.value.isInvalid)
 
 const onUpdateColor = (color: Color) => {
   if (empty.value) {
-    filledByCommit.value = true
-    uncontrolledEmpty.value = false
+    isFilledByCommit.value = true
+    isUncontrolledEmpty.value = false
 
     nextTick(() => {
-      filledByCommit.value = false
+      isFilledByCommit.value = false
     })
   }
 
@@ -191,7 +191,7 @@ const onUpdateColor = (color: Color) => {
 const onClear = () => {
   if (pickerCtx && !hasOwnModel.value) return
 
-  uncontrolledEmpty.value = true
+  isUncontrolledEmpty.value = true
   formColor.value = null
   emit('update:modelValue', null)
   commitValidation()
@@ -259,18 +259,21 @@ onBeforeUpdate(() => {
   hasSuffix.value = !!slots.suffix
 })
 
-const ui = useComponentUI('colorField', theme, () => ({
-  variant: props.variant,
-  fullWidth: props.fullWidth,
-}))
+const ui = useComponentUI('colorField', {
+  theme,
+  variantProps: () => ({
+    variant: props.variant,
+    fullWidth: props.fullWidth,
+  }),
+})
 
 // RAC Group's `data-focus-within` / `data-focus-visible`
-const focusWithin = ref(false)
-const focusVisible = ref(false)
+const isFocusWithin = ref(false)
+const isFocusVisible = ref(false)
 
 const onFocusIn = (event: FocusEvent) => {
-  focusWithin.value = true
-  focusVisible.value = event.target instanceof Element && event.target.matches(':focus-visible')
+  isFocusWithin.value = true
+  isFocusVisible.value = event.target instanceof Element && event.target.matches(':focus-visible')
 }
 
 const onFocusOut = (event: FocusEvent) => {
@@ -281,7 +284,7 @@ const onFocusOut = (event: FocusEvent) => {
 
   if (isFocusStayingInside) return
 
-  focusWithin.value = false
-  focusVisible.value = false
+  isFocusWithin.value = false
+  isFocusVisible.value = false
 }
 </script>

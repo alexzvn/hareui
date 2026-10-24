@@ -8,6 +8,7 @@ import type theme from './theme'
 
 type ComposedChartTheme = typeof theme
 
+/** Props of the `ComposedChart` component: areas, bars and lines on shared cartesian axes. */
 export type ComposedChartProps<T extends object = Record<string, unknown>> = {
   /**
    * Stacks every area and bar on one stack; lines never stack. A series' own `stack` wins.
@@ -33,4 +34,5 @@ export type ComposedChartProps<T extends object = Record<string, unknown>> = {
   ui?: ComponentSlots<ComposedChartTheme>
 } & CartesianRootProps<T, ChartComposedSeries>
 
+/** Slots of the `ComposedChart` component, shared with the other cartesian charts. */
 export type ComposedChartSlots = {} & CartesianRootSlots

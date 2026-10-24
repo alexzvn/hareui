@@ -150,7 +150,10 @@ export const getAtPath = (data: unknown, path?: string): unknown => {
 }
 
 /** Writes `value` at a dotted path, creating objects (or arrays for numeric segments) along the way. An empty path merges into `data`. */
-export const setAtPath = <T extends object>(data: T, path: string, value: unknown): T => {
+export const setAtPath = <T extends object>(
+  data: T,
+  { path, value }: { path: string; value: unknown },
+): T => {
   if (!path) return Object.assign(data, value)
   const keys = path.split('.')
   if (keys.some((key) => UNSAFE_KEYS.has(key))) return data

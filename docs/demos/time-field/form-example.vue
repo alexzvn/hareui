@@ -1,5 +1,5 @@
 <template>
-  <Form class="flex w-[280px] flex-col gap-4" @submit="handleSubmit">
+  <Form class="flex w-[280px] flex-col gap-4" @submit="onSubmit">
     <TimeField
       v-model="value"
       required
@@ -44,7 +44,7 @@ const isInvalid = computed(
     value.value !== null && (value.value.compare(minTime) < 0 || value.value.compare(maxTime) > 0),
 )
 
-const handleSubmit = (e: Event) => {
+const onSubmit = (e: Event) => {
   e.preventDefault()
   if (!value.value || isInvalid.value) return
 

@@ -31,15 +31,20 @@ export const useToc = () => {
     observer = new IntersectionObserver(
       (entries) => {
         for (const entry of entries) {
-          if (entry.isIntersecting) visible.add(entry.target.id)
-          else visible.delete(entry.target.id)
+          if (entry.isIntersecting) {
+            visible.add(entry.target.id)
+            continue
+          }
+
+          visible.delete(entry.target.id)
         }
 
         if (visible.size > 0) {
           active.value = items.value.filter((item) => visible.has(item.id)).map((item) => item.id)
-        } else if (active.value.length > 1) {
-          active.value = active.value.slice(-1)
+          return
         }
+
+        if (active.value.length > 1) active.value = active.value.slice(-1)
       },
       { rootMargin: '0px', threshold: 0.98 },
     )

@@ -74,7 +74,10 @@ const props = withDefaults(defineProps<DashboardSidebarCollapseProps>(), {
 
 defineSlots<DashboardSidebarCollapseSlots>()
 
-const ui = useComponentUI('dashboardSidebarCollapse', theme, () => ({ side: props.side }))
+const ui = useComponentUI('dashboardSidebarCollapse', {
+  theme,
+  variantProps: () => ({ side: props.side }),
+})
 
 const dashboard = useDashboard()
 const sidebar = computed(() => dashboard?.sidebars[props.side])

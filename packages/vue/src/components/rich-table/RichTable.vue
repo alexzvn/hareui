@@ -349,14 +349,17 @@ const isExternalScroll = computed(
   () => typeof props.virtualize === 'object' && !!props.virtualize.getScrollElement,
 )
 
-const ui = useComponentUI('richTable', theme, () => ({
-  variant: props.variant,
-  sticky: props.sticky,
-  loading: props.loading,
-  loadingColor: props.loadingColor,
-  loadingAnimation: props.loadingAnimation,
-  externalScroll: isExternalScroll.value,
-}))
+const ui = useComponentUI('richTable', {
+  theme,
+  variantProps: () => ({
+    variant: props.variant,
+    sticky: props.sticky,
+    loading: props.loading,
+    loadingColor: props.loadingColor,
+    loadingAnimation: props.loadingAnimation,
+    externalScroll: isExternalScroll.value,
+  }),
+})
 
 const hasFooter = computed(() => hasColumnFooter(columns.value))
 

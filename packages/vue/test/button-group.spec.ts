@@ -74,7 +74,7 @@ describe('ButtonGroup', () => {
     })
 
     const classes = buttons(wrapper)[0]!.classes()
-    expect(classes.filter((c) => /^rounded/.test(c))).toEqual(['rounded-none'])
+    expect(classes.filter((c) => c.startsWith('rounded'))).toEqual(['rounded-none'])
   })
 
   it.each([

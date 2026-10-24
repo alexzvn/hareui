@@ -79,16 +79,15 @@ export const useAutocompleteTrigger = <T extends ListBoxItem>(
   const onTypeahead = (event: KeyboardEvent) => {
     const source = options.typeahead
 
-    typeahead.onKeydown(
-      event,
-      () => ({
+    typeahead.onKeydown(event, {
+      source: () => ({
         items: source.options(),
         text: itemText,
         disabled: (item) => !!item.disabled,
         isCurrent: (item) => item.value === source.currentValue(),
       }),
-      source.select,
-    )
+      select: source.select,
+    })
   }
 
   const onButtonKeydown = (event: KeyboardEvent) => {

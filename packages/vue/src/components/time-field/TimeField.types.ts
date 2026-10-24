@@ -17,6 +17,7 @@ type DateInputGroup = typeof dateInputGroupTheme
 type HourCycle = NonNullable<TimeFieldRootProps['hourCycle']>
 type TimeStep = NonNullable<TimeFieldRootProps['step']>
 
+/** Props of `TimeField`: a segmented input for entering a time of day. */
 export type TimeFieldProps = {
   /** Label text rendered above the group. */
   label?: string
@@ -109,6 +110,7 @@ export type TimeFieldProps = {
     >
 } & FormFieldProps
 
+/** Slots of `TimeField`. */
 export type TimeFieldSlots = {
   /** Label content. Replaces the `label` prop. */
   label?: () => VNode[]
@@ -122,6 +124,7 @@ export type TimeFieldSlots = {
   error?: (props: ValidationResult) => VNode[]
 }
 
+/** Events of `TimeField`. */
 export type TimeFieldEmits = {
   /** Emitted when the displayed placeholder time changes. */
   'update:placeholder': [value: TimeValue]

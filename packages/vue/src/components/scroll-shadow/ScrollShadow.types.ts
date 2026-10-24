@@ -8,8 +8,13 @@ import type theme from './theme'
 
 type ScrollShadow = typeof theme
 
+/**
+ * Which edges show a shadow: `auto` follows the scroll position, `none` hides both, and the edge
+ * names force those shadows.
+ */
 export type ScrollShadowVisibility = 'auto' | 'both' | 'top' | 'bottom' | 'left' | 'right' | 'none'
 
+/** Props of `ScrollShadow`, a scroll container that fades its edges while more content is hidden. */
 export type ScrollShadowProps = {
   /**
    * The element or component to render the root as.
@@ -58,11 +63,13 @@ export type ScrollShadowProps = {
   ui?: ComponentSlots<ScrollShadow>
 }
 
+/** Slots of `ScrollShadow`. */
 export type ScrollShadowSlots = {
   /** The scrollable content. */
   default?: () => VNode[]
 }
 
+/** Events of `ScrollShadow`. */
 export type ScrollShadowEmits = {
   /** Emitted when the visible shadows change (auto mode only). */
   visibilityChange: [visibility: ScrollShadowVisibility]

@@ -4,6 +4,7 @@ import type { ClassValue } from '@/utils/tv'
 
 import type { ChartAxisDomain } from './types'
 
+/** Props of `ChartPolarAngleAxis`: the category axis around a polar chart, with its outline and tick labels. */
 export type ChartPolarAngleAxisProps = {
   /** Key of the category shown around the chart. */
   dataKey?: string
@@ -77,6 +78,7 @@ export type ChartPolarAngleAxisProps = {
   class?: ClassValue
 }
 
+/** Slots of `ChartPolarAngleAxis`. */
 export type ChartPolarAngleAxisSlots = {
   /** Replaces a tick label. Render SVG (`<text>`, `<g>`). */
   tick?: (props: {

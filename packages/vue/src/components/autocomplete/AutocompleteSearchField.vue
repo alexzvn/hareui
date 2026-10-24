@@ -93,10 +93,13 @@ defineSlots<{ trailing?: () => VNode[] }>()
 const input = useTemplateRef<HTMLInputElement>('input')
 const isFocusVisible = ref(false)
 
-const searchUi = useComponentUI('searchField', searchFieldTheme, () => ({
-  variant: 'secondary',
-  fullWidth: false,
-}))
+const searchUi = useComponentUI('searchField', {
+  theme: searchFieldTheme,
+  variantProps: () => ({
+    variant: 'secondary',
+    fullWidth: false,
+  }),
+})
 
 const onInput = (event: Event) => {
   emit('update:value', (event.target as HTMLInputElement).value)

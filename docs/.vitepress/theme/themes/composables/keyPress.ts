@@ -4,18 +4,16 @@ import type { MaybeRefOrGetter } from 'vue'
 import { onBeforeUnmount, onMounted, toValue } from 'vue'
 
 export type UseKeyPressOptions = {
+  /** Called when the shortcut is pressed. */
+  onPress: (event: KeyboardEvent) => void
   alt?: boolean
   ctrl?: boolean
   shift?: boolean
   enabled?: MaybeRefOrGetter<boolean>
 }
 
-export const useKeyPress = (
-  key: string,
-  callback: (event: KeyboardEvent) => void,
-  options: UseKeyPressOptions = {},
-) => {
-  const { alt = false, ctrl = false, enabled = true, shift = false } = options
+export const useKeyPress = (key: string, options: UseKeyPressOptions) => {
+  const { onPress, alt = false, ctrl = false, enabled = true, shift = false } = options
 
   const onKeyDown = (event: KeyboardEvent) => {
     if (!toValue(enabled)) return
@@ -28,12 +26,12 @@ export const useKeyPress = (
     )
       return
 
-    const modifiersMatch =
+    const isModifierMatch =
       (event.ctrlKey || event.metaKey) === ctrl && event.shiftKey === shift && event.altKey === alt
 
-    if (event.key.toLowerCase() !== key.toLowerCase() || !modifiersMatch) return
+    if (event.key.toLowerCase() !== key.toLowerCase() || !isModifierMatch) return
     if (ctrl || shift || alt) event.preventDefault()
-    callback(event)
+    onPress(event)
   }
 
   onMounted(() => window.addEventListener('keydown', onKeyDown))

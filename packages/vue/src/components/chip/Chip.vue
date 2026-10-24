@@ -23,9 +23,12 @@ import theme from './theme'
 const props = withDefaults(defineProps<ChipProps>(), { as: 'span' })
 const slots = defineSlots<ChipSlots>()
 
-const ui = useComponentUI('chip', theme, () => ({
-  color: props.color,
-  variant: props.variant,
-  size: props.size,
-}))
+const ui = useComponentUI('chip', {
+  theme,
+  variantProps: () => ({
+    color: props.color,
+    variant: props.variant,
+    size: props.size,
+  }),
+})
 </script>

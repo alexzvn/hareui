@@ -24,13 +24,15 @@ const options: axe.RunOptions = {
   resultTypes: ['violations'],
 }
 
+const resolveAxeTarget = (target?: Element | VueWrapper): Element => {
+  if (!target) return document.body
+
+  return 'element' in target ? (target.element as Element) : target
+}
+
 /** axe violations under `target` (default `document.body`, which includes portalled overlays) as `rule: html` lines. */
 export const axeViolations = async (target?: Element | VueWrapper): Promise<string[]> => {
-  const context = !target
-    ? document.body
-    : 'element' in target
-      ? (target.element as Element)
-      : target
+  const context = resolveAxeTarget(target)
 
   const { violations } = await axe.run(context, options)
 

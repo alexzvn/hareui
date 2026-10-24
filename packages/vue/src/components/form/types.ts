@@ -49,22 +49,27 @@ export type FormFieldName<S extends FormSchema> = (keyof InferInput<S> & string)
 /** The field events that trigger validation. */
 export type FormInputEvents = 'input' | 'blur' | 'change' | 'focus'
 
+/** A validation error, from the `schema`, `validate`, or `setErrors`. */
 export type FormError<P extends string = string> = {
   /** The `name` of the field the error belongs to; empty for form-level errors. */
   name?: P
+  /** The error text shown under the field. */
   message: string
 }
 
+/** A {@link FormError} with the id of the field's control, as listed in `@error` and `errors`. */
 export type FormErrorWithId = {
   /** The id of the field's control, to focus or scroll to it. */
   id?: string
 } & FormError
 
+/** The `onSubmit` payload: the native submit event with the validated `data`. */
 export type FormSubmitEvent<T> = SubmitEvent & {
   /** The validated state: the schema's output unless `transform` is `false`. */
   data: T
 }
 
+/** The `@error` payload: the native submit event with the errors that blocked submission. */
 export type FormErrorEvent = SubmitEvent & {
   /** The errors that blocked submission. */
   errors: FormErrorWithId[]
@@ -83,6 +88,7 @@ export class FormValidationException extends Error {
   }
 }
 
+/** Options of the form's `validate()` method. */
 export type FormValidateOptions<S extends FormSchema, T extends boolean = false> = {
   /** Only validate these fields; errors on other fields are kept. */
   name?: FormFieldName<S> | FormFieldName<S>[]

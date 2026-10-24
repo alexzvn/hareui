@@ -9,6 +9,7 @@ import type theme from './theme'
 
 type DashboardSidebarCollapse = typeof theme
 
+/** Props of `DashboardSidebarCollapse`: an icon button that toggles the dashboard's sidebar on `side` between collapsed and expanded. */
 export type DashboardSidebarCollapseProps = {
   /**
    * The element or component to render as.
@@ -41,6 +42,7 @@ export type DashboardSidebarCollapseProps = {
   ui?: ComponentSlots<DashboardSidebarCollapse>
 }
 
+/** Slots of `DashboardSidebarCollapse`. */
 export type DashboardSidebarCollapseSlots = {
   /** The button content. Defaults to the gravity-ui `layout-side-content-left` icon (`-right` for `side="right"`). */
   default?: (props: { collapsed: boolean }) => unknown

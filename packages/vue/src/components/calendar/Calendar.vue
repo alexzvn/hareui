@@ -89,11 +89,11 @@ import type {
   CalendarProps,
   CalendarSlots,
 } from './Calendar.types'
+import { defaultMaxValue, defaultMinValue } from './calendarBounds'
 import { calendarCellDate, calendarCellFrom } from './calendarCells'
 import type { CalendarMonthShellExposed } from './CalendarMonthShell.types'
 import CalendarMonthShell from './CalendarMonthShell.vue'
 import theme from './theme'
-import { defaultMaxValue, defaultMinValue } from './useCalendarBounds'
 
 const props = withDefaults(defineProps<CalendarProps>(), {
   modelValue: undefined,
@@ -117,7 +117,10 @@ const viewKind = computed(() => {
   return props.visibleDuration?.weeks != null ? ('week' as const) : ('month' as const)
 })
 
-const ui = useComponentUI('calendar', theme, () => ({ view: viewKind.value }))
+const ui = useComponentUI('calendar', {
+  theme,
+  variantProps: () => ({ view: viewKind.value }),
+})
 
 const monthShell = useTemplateRef<CalendarMonthShellExposed>('shell')
 const minValue = computed(() => props.minValue ?? defaultMinValue())

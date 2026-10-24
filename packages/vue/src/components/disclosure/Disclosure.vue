@@ -59,6 +59,7 @@ import {
   ref,
   useId,
   useSlots,
+  useTemplateRef,
   watch,
 } from 'vue'
 
@@ -75,7 +76,7 @@ const emit = defineEmits<DisclosureEmits>()
 const slots = useSlots()
 defineSlots<DisclosureSlots>()
 
-const ui = useComponentUI('disclosure', theme, () => ({}))
+const ui = useComponentUI('disclosure', { theme, variantProps: () => ({}) })
 
 // Inside a DisclosureGroup the group owns the expanded state (HeroUI's DisclosureGroup `expandedKeys`).
 const group = inject(disclosureGroupContextKey, null)
@@ -157,7 +158,7 @@ const triggerAttrs = computed(() => ({
     : { 'data-slot': 'disclosure-trigger', class: ui.value.trigger({ class: props.ui?.trigger }) }),
 }))
 
-const panel = ref<HTMLElement>()
+const panel = useTemplateRef<HTMLElement>('panel')
 let stopReveal: (() => void) | undefined
 onMounted(() => {
   setPanelStatic(panel.value!, isOpen.value)

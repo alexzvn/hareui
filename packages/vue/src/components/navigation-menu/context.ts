@@ -20,6 +20,13 @@ type SlotArgs = {
   danger?: boolean
 }
 
+/** Where an item sits in the menu: its index in its list, nesting level and top-level list index. */
+export type NavigationMenuItemPosition = {
+  index: number
+  level: number
+  listIndex: number
+}
+
 /** The resolved slot class functions; link slots take per-item variants on top of the root ones. */
 export type NavigationMenuUI = Record<SlotName, (props?: SlotArgs) => string>
 
@@ -31,16 +38,10 @@ export type NavigationMenuContext = {
   tooltipProps: ComputedRef<TooltipProps>
   popoverProps: ComputedRef<NavigationMenuPopoverProps>
   getLabel: (item: NavigationMenuItem) => string | undefined
-  getItemValue: (
-    item: NavigationMenuItem,
-    index: number,
-    level: number,
-    listIndex: number,
-  ) => string
+  getItemValue: (item: NavigationMenuItem, position: NavigationMenuItemPosition) => string
   getAccordionDefaultValue: (
     list: NavigationMenuItem[],
-    level: number,
-    listIndex: number,
+    position: Omit<NavigationMenuItemPosition, 'index'>,
   ) => string | string[] | undefined
   /**
    * Tracks the width of a row's actions container and writes the end padding its link needs
@@ -70,15 +71,16 @@ export const get = (item: unknown, path: string): unknown => {
   return value
 }
 
+// Comments are empty; fragments count when any child has content.
+const isContentNode = (node: VNode): boolean => {
+  if (node.type === Comment) return false
+
+  return node.type === Fragment ? hasContent(node.children as VNode[]) : true
+}
+
 /** Whether rendered slot output has content (Vue's own rule for falling back to slot defaults). */
 export const hasContent = (nodes: VNode[] | undefined): boolean => {
-  return !!nodes?.some((node) =>
-    node.type === Comment
-      ? false
-      : node.type === Fragment
-        ? hasContent(node.children as VNode[])
-        : true,
-  )
+  return !!nodes?.some(isContentNode)
 }
 
 /** Slot names an item resolves to: its own `slot` field, falling back to the generic one. */

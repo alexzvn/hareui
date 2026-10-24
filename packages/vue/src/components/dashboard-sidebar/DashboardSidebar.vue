@@ -98,6 +98,7 @@ import { useResizable } from '@/composables/useResizable'
 import type { ClassValue } from '@/utils/tv'
 
 import type {
+  DashboardSidebarMode,
   DashboardSidebarProps,
   DashboardSidebarResizeHandleSlotProps,
   DashboardSidebarSlots,
@@ -216,11 +217,14 @@ watch(
   (value) => collapse(value),
 )
 
-const ui = useComponentUI('dashboardSidebar', theme, () => ({
-  side: props.side,
-  toggleSide: props.toggleSide,
-  mode: props.mode,
-}))
+const ui = useComponentUI('dashboardSidebar', {
+  theme,
+  variantProps: () => ({
+    side: props.side,
+    toggleSide: props.toggleSide,
+    mode: props.mode,
+  }),
+})
 
 const menuTitle = computed(() => (props.menu as { title?: string } | undefined)?.title ?? 'Sidebar')
 
@@ -229,12 +233,13 @@ const Menu = computed(() => (props.mode === 'modal' ? Modal : Drawer))
 const menuProps = computed(() => {
   const { title: _title, ui: _ui, ...rest } = (props.menu ?? {}) as Record<string, unknown>
 
-  const defaults: Record<string, unknown> =
-    props.mode === 'modal'
-      ? { size: 'full' }
-      : props.mode === 'slideover'
-        ? { placement: props.side, variant: 'blur' }
-        : { placement: 'bottom', variant: 'blur' }
+  const defaultsByMode = {
+    modal: { size: 'full' },
+    slideover: { placement: props.side, variant: 'blur' },
+    drawer: { placement: 'bottom', variant: 'blur' },
+  } satisfies Record<DashboardSidebarMode, Record<string, unknown>>
+
+  const defaults: Record<string, unknown> = defaultsByMode[props.mode]
 
   return { ...defaults, ...rest }
 })
@@ -256,16 +261,16 @@ const toggleOpen = () => {
 // The sheet slides in under a pointer that hasn't moved since it clicked the trigger, and a right sheet's close
 // button lands right where the navbar's toggle was. Its hover fill waits for the pointer to move over it, so the
 // sheet doesn't open with a grey circle that reads as focus.
-const toggleIdle = ref(false)
+const isToggleIdle = ref(false)
 watch(open, (value) => {
-  if (value) toggleIdle.value = true
+  if (value) isToggleIdle.value = true
 })
 
 const onMenuClick = (event: MouseEvent) => {
   if (props.autoClose && (event.target as Element | null)?.closest?.('a[href]')) open.value = false
 }
 
-const handleSlotProps = computed<DashboardSidebarResizeHandleSlotProps>(() => ({
+const resizeHandleSlotProps = computed<DashboardSidebarResizeHandleSlotProps>(() => ({
   onPointerDown,
   onMouseDown,
   onTouchStart,
@@ -279,10 +284,10 @@ const handleSlotProps = computed<DashboardSidebarResizeHandleSlotProps>(() => ({
 // Pieces rendered in more than one place, hence functional components rather than template duplication.
 const Handle: FunctionalComponent = () => {
   if (!props.resizable) return null
-  if (slots['resize-handle']) return slots['resize-handle'](handleSlotProps.value)
+  if (slots['resize-handle']) return slots['resize-handle'](resizeHandleSlotProps.value)
 
   return h(DashboardResizeHandle, {
-    ...handleSlotProps.value.attrs,
+    ...resizeHandleSlotProps.value.attrs,
     'data-dragging': isDragging.value,
     'data-side': props.side,
     class: ui.value.handle({ class: props.ui?.handle }),
@@ -307,11 +312,11 @@ const Toggle: FunctionalComponent = () => {
       'aria-label': 'Close sidebar',
       ...custom,
       'data-slot': 'dashboard-sidebar-toggle',
-      'data-idle': toggleIdle.value || undefined,
+      'data-idle': isToggleIdle.value || undefined,
       class: ui.value.toggle({ class: [props.ui?.toggle, custom.class] }),
       onClick: toggleOpen,
       onPointermove: () => {
-        toggleIdle.value = false
+        isToggleIdle.value = false
       },
     },
     () =>

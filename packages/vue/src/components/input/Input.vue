@@ -106,8 +106,11 @@ const invalid = computed(() =>
   own ? own.validation.value.isInvalid : (props.invalid ?? field?.invalid.value ?? false),
 )
 
-const ui = useComponentUI('input', theme, () => ({
-  variant: variant.value,
-  fullWidth: fullWidth.value,
-}))
+const ui = useComponentUI('input', {
+  theme,
+  variantProps: () => ({
+    variant: variant.value,
+    fullWidth: fullWidth.value,
+  }),
+})
 </script>

@@ -11,7 +11,9 @@ const paths = new WeakMap<Event, EventTarget[]>()
 if (typeof document !== 'undefined')
   document.addEventListener('click', (event) => paths.set(event, event.composedPath()), true)
 
-const shouldForward = (root: HTMLElement, path: EventTarget[], content: HTMLElement): boolean => {
+type ItemNodes = { root: HTMLElement; content: HTMLElement }
+
+const shouldForward = (path: EventTarget[], { root, content }: ItemNodes): boolean => {
   for (const node of path) {
     if (node === content) return false
     if (node === root) return true
@@ -33,7 +35,7 @@ export const forwardRootClick = (event: MouseEvent, contentSelector: string) => 
   const content = root.querySelector<HTMLElement>(contentSelector)
   if (!content) return
   const path = paths.get(event) ?? event.composedPath()
-  if (shouldForward(root, path, content)) content.click()
+  if (shouldForward(path, { root, content })) content.click()
 }
 
 /**
@@ -43,8 +45,7 @@ export const forwardRootClick = (event: MouseEvent, contentSelector: string) => 
  */
 export const keepFocusWhenReadonly = (
   event: MouseEvent,
-  readonly: boolean,
-  contentSelector: string,
+  { readonly, contentSelector }: { readonly: boolean; contentSelector: string },
 ) => {
   const root = event.currentTarget as HTMLElement | null
   const content = root?.querySelector<HTMLElement>(contentSelector)

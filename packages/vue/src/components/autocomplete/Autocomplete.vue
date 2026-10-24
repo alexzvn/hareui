@@ -549,12 +549,15 @@ const {
 const pressRelease = usePressRelease()
 
 // ---- Classes and slots ------------------------------------------------------------------------------------------
-const ui = useComponentUI('autocomplete', theme, () => ({
-  variant: props.variant,
-  fullWidth: props.fullWidth,
-}))
+const ui = useComponentUI('autocomplete', {
+  theme,
+  variantProps: () => ({
+    variant: props.variant,
+    fullWidth: props.fullWidth,
+  }),
+})
 
-const listBoxUi = useComponentUI('listBox', listBoxTheme, () => ({}))
+const listBoxUi = useComponentUI('listBox', { theme: listBoxTheme, variantProps: () => ({}) })
 
 const valueIndicatorClass = (item: ListBoxItem) => {
   return (listBoxUi.value.indicator as (options?: { variant?: string }) => string)({

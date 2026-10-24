@@ -8,6 +8,7 @@ import type theme from './theme'
 
 type Accordion = typeof theme
 
+/** One section of an `Accordion`: a trigger (`label`) and the body it expands. */
 export type AccordionItem = {
   /** The trigger text, shown unless `#label` is used. */
   label?: string
@@ -23,6 +24,7 @@ export type AccordionItem = {
   [key: string]: unknown
 }
 
+/** Props of `Accordion`: a stack of collapsible sections, one or several expanded at a time. */
 export type AccordionProps<T extends AccordionItem = AccordionItem> = {
   /** The items to render. */
   items: T[]
@@ -58,11 +60,15 @@ export type AccordionProps<T extends AccordionItem = AccordionItem> = {
 
 /** Props passed to every per-item slot. */
 export type ItemSlotProps<T extends AccordionItem = AccordionItem> = {
+  /** The item being rendered. */
   item: T
+  /** The item's position in `items`. */
   index: number
+  /** Whether the item is expanded. */
   open: boolean
 }
 
+/** Slots of `Accordion`. Each receives the item it renders. */
 export type AccordionSlots<T extends AccordionItem = AccordionItem> = {
   /** Rendered in the trigger before the label (e.g. an icon). */
   leading?: (props: ItemSlotProps<T>) => VNode[]
@@ -79,6 +85,7 @@ export type AccordionSlots<T extends AccordionItem = AccordionItem> = {
   [slot: string]: ((props: ItemSlotProps<T>) => VNode[]) | undefined
 }
 
+/** Events emitted by `Accordion`. */
 export type AccordionEmits = {
   /** Emitted when the expanded items change. */
   'update:modelValue': [value: ExpandedValue[]]

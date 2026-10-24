@@ -22,6 +22,7 @@ import type theme from './theme'
 
 type RadialChartTheme = typeof theme
 
+/** Props for `RadialChart`, which plots one ring per data row around a shared center. */
 export type RadialChartProps<T extends object = ChartDatum> = {
   /** Rows to plot. Each row becomes a ring, the first one innermost. */
   data: T[]
@@ -139,6 +140,7 @@ export type RadialChartProps<T extends object = ChartDatum> = {
   ui?: ComponentSlots<RadialChartTheme>
 }
 
+/** Slots for `RadialChart`. */
 export type RadialChartSlots = {
   /** Chart parts: `ChartRadialBar`, `ChartPolarAngleAxis`, `ChartPolarGrid`, `ChartTooltip`, a centered `ChartLabel`. With `index`, extra parts drawn over the generated rings. */
   default?: () => VNode[]
@@ -148,11 +150,25 @@ export type RadialChartSlots = {
   tooltip?: (props: ChartTooltipSlotProps) => VNode[]
   /** Content under the tooltip rows. */
   'tooltip-footer'?: (props: {
+    /** The hovered ring's name. */
     label?: number | string
+    /** The tooltip rows. */
     payload: ChartTooltipContentEntry[]
   }) => VNode[]
   /** Replaces the legend. */
-  legend?: (props: { items: ChartLegendItem[]; toggle: (key: string) => void }) => VNode[]
+  legend?: (props: {
+    /** The legend entries, one per ring. */
+    items: ChartLegendItem[]
+    /** Shows or hides the ring with the given key. */
+    toggle: (key: string) => void
+  }) => VNode[]
   /** Replaces each legend row. */
-  'legend-item'?: (props: { item: ChartLegendItem; index: number; toggle: () => void }) => VNode[]
+  'legend-item'?: (props: {
+    /** The legend entry for this row. */
+    item: ChartLegendItem
+    /** The row's position in the legend. */
+    index: number
+    /** Shows or hides this row's ring. */
+    toggle: () => void
+  }) => VNode[]
 }

@@ -7,6 +7,7 @@ import type { ThemeOverride } from './types/tv'
 /** Overlay portal target: `true` = `document.body`, a selector or element = that target, `false` = render in place. */
 export type PortalTarget = boolean | string | HTMLElement
 
+/** App-level configuration passed to `createHareUI()`. */
 export type HareUIConfig = {
   /** Per-component theme overrides merged on top of the default themes. */
   ui?: { [K in keyof Themes]?: ThemeOverride<Themes[K]> }
@@ -18,6 +19,7 @@ export type HareUIConfig = {
   portal?: PortalTarget
 }
 
+/** Injection key of the app-level `HareUIConfig` provided by `createHareUI()`. */
 export const hareUIConfigKey: InjectionKey<HareUIConfig> = Symbol('hareui-config')
 
 /** Vue plugin providing app-level HareUI configuration. Optional. */

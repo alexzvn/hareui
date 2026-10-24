@@ -7,6 +7,7 @@ import type theme from './theme'
 
 type Meter = typeof theme
 
+/** Props of `Meter`, a graphical display of a numeric value within a known range, such as storage used or battery level. */
 export type MeterProps = {
   /**
    * The current value (clamped to `minValue`–`maxValue`).
@@ -52,6 +53,7 @@ export type MeterProps = {
   ui?: ComponentSlots<Meter>
 }
 
+/** What the `#label` and `#output` slots of `Meter` receive. */
 export type MeterSlotProps = {
   /** The percentage of the meter (0–100). */
   percentage: number
@@ -59,6 +61,7 @@ export type MeterSlotProps = {
   valueText: string
 }
 
+/** Slots of `Meter`. */
 export type MeterSlots = {
   /** Replaces the label text. */
   label?: (props: MeterSlotProps) => VNode[]

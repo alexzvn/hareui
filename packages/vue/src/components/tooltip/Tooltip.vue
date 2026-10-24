@@ -8,11 +8,7 @@
     >
       <template #default="{ open: rootOpen }">
         <TooltipTrigger
-          :ref="
-            (c: any) => {
-              triggerEl = c?.$el
-            }
-          "
+          ref="triggerInstance"
           as-child
           @pointerenter="onPointerEnter"
           @pointerleave="onPointerLeave"
@@ -60,7 +56,7 @@ import {
   TooltipRoot,
   TooltipTrigger,
 } from 'reka-ui'
-import { computed, onBeforeUnmount, ref, watch } from 'vue'
+import { computed, onBeforeUnmount, ref, useTemplateRef, watch } from 'vue'
 
 import { TOOLTIP_OPEN_EVENT } from '@/composables/nestedLayer'
 import { useComponentUI } from '@/composables/useComponentUI'
@@ -86,7 +82,7 @@ const portalTarget = usePortal(() => props.portal)
 const emit = defineEmits<TooltipEmits>()
 defineSlots<TooltipSlots>()
 
-const ui = useComponentUI('tooltip', theme, () => ({}))
+const ui = useComponentUI('tooltip', { theme: theme, variantProps: () => ({}) })
 
 // The arrow SVG is 12px tall. Reka's PopperContent adds the arrow's height to `sideOffset`, but
 // React Aria measures `offset` from the trigger to the tooltip body (the arrow overlaps the gap),
@@ -111,8 +107,8 @@ watch(
 
 const isOpen = computed(() => props.open ?? internalOpen.value)
 
-const triggerEl = ref<HTMLElement>()
-const pointerLeft = ref(false)
+const triggerInstance = useTemplateRef<{ $el?: HTMLElement }>('triggerInstance')
+const hasPointerLeft = ref(false)
 let closeTimer: ReturnType<typeof setTimeout> | undefined
 
 const cancelClose = () => {
@@ -130,15 +126,15 @@ const commit = (value: boolean) => {
 const onRootUpdate = (value: boolean) => {
   if (value) {
     // Focus-only: ignore hover-driven opens (Reka opens on pointermove after `delay`).
-    const el = triggerEl.value
+    const el = triggerInstance.value?.$el
     if (props.trigger === 'focus' && !(el && el.contains(document.activeElement))) return
-    pointerLeft.value = false
+    hasPointerLeft.value = false
     commit(true)
 
     return
   }
 
-  if (pointerLeft.value) {
+  if (hasPointerLeft.value) {
     // Focus-only: hovering never closes a focus-opened tooltip.
     if (props.trigger === 'focus') return
 
@@ -153,30 +149,28 @@ const onRootUpdate = (value: boolean) => {
 }
 
 const onPointerLeave = (event: PointerEvent) => {
-  if (event.pointerType !== 'touch') pointerLeft.value = true
+  if (event.pointerType !== 'touch') hasPointerLeft.value = true
 }
 
 const onPointerEnter = () => {
   // Re-entering the trigger or the still-visible tooltip cancels a pending delayed close (RAC keeps
   // a tooltip open while it is hovered).
-  pointerLeft.value = false
+  hasPointerLeft.value = false
   cancelClose()
 }
 
 const resetPointerLeft = () => {
-  pointerLeft.value = false
+  hasPointerLeft.value = false
 }
 
-// Only needed while a delayed close is possible: any other interaction clears `pointerLeft`.
+// Only needed while a delayed close is possible: any other interaction clears `hasPointerLeft`.
 const RESET_EVENTS = ['pointerdown', 'keydown', 'blur', 'focus', TOOLTIP_OPEN_EVENT]
-const toggleResetListeners = (on: boolean) => {
-  for (const type of RESET_EVENTS) {
-    if (on) document.addEventListener(type, resetPointerLeft, true)
-    else document.removeEventListener(type, resetPointerLeft, true)
-  }
+const toggleResetListeners = (isOn: boolean) => {
+  const method = isOn ? 'addEventListener' : 'removeEventListener'
+  for (const type of RESET_EVENTS) document[method](type, resetPointerLeft, true)
 }
 
-watch(pointerLeft, toggleResetListeners, { flush: 'sync' })
+watch(hasPointerLeft, toggleResetListeners, { flush: 'sync' })
 
 onBeforeUnmount(() => {
   cancelClose()

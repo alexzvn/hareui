@@ -65,21 +65,20 @@ const color = ref(parseColor('hsb(219, 58%, 93%)'))
 const xChannel = ref<ColorChannel>('saturation')
 const yChannel = ref<ColorChannel>('brightness')
 
+// Sensible default channels for each colour space, applied when the space changes
+const defaultChannelsBySpace = {
+  rgb: { x: 'blue', y: 'green' },
+  hsl: { x: 'saturation', y: 'lightness' },
+  hsb: { x: 'saturation', y: 'brightness' },
+} as const satisfies Record<ColorSpace, { x: ColorChannel; y: ColorChannel }>
+
 const onSpaceChange = (space: SelectValue | undefined) => {
   if (!space || typeof space !== 'string') return
   colorSpace.value = space as ColorSpace
 
-  // Reset the channels to sensible defaults for the new colour space
-  if (space === 'rgb') {
-    xChannel.value = 'blue'
-    yChannel.value = 'green'
-  } else if (space === 'hsl') {
-    xChannel.value = 'saturation'
-    yChannel.value = 'lightness'
-  } else {
-    xChannel.value = 'saturation'
-    yChannel.value = 'brightness'
-  }
+  const defaults = defaultChannelsBySpace[colorSpace.value]
+  xChannel.value = defaults.x
+  yChannel.value = defaults.y
 }
 
 // A channel can't be on both axes, so each axis hides the other's channel

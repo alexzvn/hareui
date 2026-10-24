@@ -93,7 +93,10 @@ const emit = defineEmits<AccordionEmits>()
 const slots = useSlots()
 defineSlots<AccordionSlots<T>>()
 
-const ui = useComponentUI('accordion', theme, () => ({ variant: props.variant }))
+const ui = useComponentUI('accordion', {
+  theme,
+  variantProps: () => ({ variant: props.variant }),
+})
 
 const { isExpanded, setExpanded } = useExpandedValues(props, (value) =>
   emit('update:modelValue', value),

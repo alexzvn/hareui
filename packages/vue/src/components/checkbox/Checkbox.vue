@@ -11,7 +11,9 @@
     :data-required="required ? 'true' : undefined"
     :class="ui.base({ class: [props.ui?.base, props.class] })"
     @click="forwardRootClick($event, '[data-slot=checkbox-content]')"
-    @mousedown="keepFocusWhenReadonly($event, readonly, '[data-slot=checkbox-content]')"
+    @mousedown="
+      keepFocusWhenReadonly($event, { readonly, contentSelector: '[data-slot=checkbox-content]' })
+    "
   >
     <CheckboxRoot
       v-bind="$attrs"
@@ -109,15 +111,20 @@ const emit = defineEmits<{
 defineSlots<CheckboxSlots>()
 const slots = useSlots()
 
-const ui = useComponentUI('checkbox', theme, () => ({
-  variant: props.variant,
-}))
+const ui = useComponentUI('checkbox', {
+  theme,
+  variantProps: () => ({
+    variant: props.variant,
+  }),
+})
 
 const local = ref(props.defaultValue ?? false)
 const checked = computed(() => props.modelValue ?? local.value)
-const state = computed<CheckboxState>(() =>
-  checked.value === 'indeterminate' ? 'indeterminate' : checked.value ? 'checked' : 'unchecked',
-)
+const state = computed<CheckboxState>(() => {
+  if (checked.value === 'indeterminate') return 'indeterminate'
+
+  return checked.value ? 'checked' : 'unchecked'
+})
 
 const root = useTemplateRef<HTMLElement>('root')
 const isDisabled = useFieldsetDisabled(() => props.disabled)

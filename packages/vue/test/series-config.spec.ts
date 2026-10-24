@@ -224,21 +224,21 @@ describe('resolveChartPart', () => {
   const defaults = { tickMargin: 8 }
 
   it('maps the boolean and object forms to part props or null', () => {
-    expect(resolveChartPart(undefined, defaults)).toEqual({ tickMargin: 8 })
-    expect(resolveChartPart(true, defaults)).toEqual({ tickMargin: 8 })
-    expect(resolveChartPart(false, defaults)).toBeNull()
+    expect(resolveChartPart(undefined, { defaults })).toEqual({ tickMargin: 8 })
+    expect(resolveChartPart(true, { defaults })).toEqual({ tickMargin: 8 })
+    expect(resolveChartPart(false, { defaults })).toBeNull()
 
     expect(
       resolveChartPart(
         { tickMargin: 2, hide: true },
-        defaults as { tickMargin: number; hide?: boolean },
+        { defaults: defaults as { tickMargin: number; hide?: boolean } },
       ),
     ).toEqual({ tickMargin: 2, hide: true })
   })
 
   it('leaves disabled parts off unless passed explicitly', () => {
-    expect(resolveChartPart(undefined, defaults, false)).toBeNull()
-    expect(resolveChartPart(true, defaults, false)).toEqual({ tickMargin: 8 })
+    expect(resolveChartPart(undefined, { defaults, isEnabled: false })).toBeNull()
+    expect(resolveChartPart(true, { defaults, isEnabled: false })).toEqual({ tickMargin: 8 })
   })
 })
 

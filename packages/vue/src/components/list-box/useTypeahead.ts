@@ -34,6 +34,13 @@ export type TypeaheadSource<T> = {
   isCurrent?: (item: T) => boolean
 }
 
+export type TypeaheadHandlers<T> = {
+  /** Reads the candidates; called lazily, only for typeahead keys (it may query the DOM). */
+  source: () => TypeaheadSource<T>
+  /** Receives the first matching item. */
+  select: (match: T) => void
+}
+
 /** RAC `TYPEAHEAD_DEBOUNCE_WAIT_MS`: the buffer resets this long after the last typeahead key. */
 const RESET_MS = 1000
 
@@ -53,11 +60,16 @@ export const useTypeahead = (options: TypeaheadOptions) => {
     )
   }
 
+  const getSearchStart = (currentIndex: number) => {
+    if (options.start === 'current') return Math.max(currentIndex, 0)
+
+    return search.length > 1 ? 0 : currentIndex + 1
+  }
+
   const find = <T>({ items, text, disabled, isCurrent }: TypeaheadSource<T>): T | undefined => {
     const enabled = disabled ? items.filter((item) => !disabled(item)) : items
     const index = isCurrent ? enabled.findIndex(isCurrent) : -1
-    const from =
-      options.start === 'current' ? Math.max(index, 0) : search.length > 1 ? 0 : index + 1
+    const from = getSearchStart(index)
 
     for (let i = 0; i < enabled.length; i++) {
       const item = enabled[(from + i) % enabled.length]!
@@ -73,8 +85,7 @@ export const useTypeahead = (options: TypeaheadOptions) => {
    */
   const onKeydown = <T>(
     event: KeyboardEvent,
-    source: () => TypeaheadSource<T>,
-    select: (match: T) => void,
+    { source, select }: TypeaheadHandlers<T>,
   ): boolean => {
     if (!accepts(event)) return false
     search += event.key.toLowerCase()

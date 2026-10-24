@@ -16,6 +16,7 @@ export type ChartTooltipContentEntry = Partial<ChartTooltipPayloadEntry> & {
   fill?: string
 }
 
+/** Props for `ChartTooltipContent`, the tooltip panel of a chart: a header and one row per series of the hovered point. */
 export type ChartTooltipContentProps = {
   /**
    * Renders the panel. Nothing is rendered when `false`.
@@ -46,6 +47,7 @@ export type ChartTooltipContentProps = {
   ui?: ComponentSlots<ChartTooltip>
 }
 
+/** Slots for `ChartTooltipContent`: manual composition of the rows, or a footer under the generated ones. */
 export type ChartTooltipContentSlots = {
   /** Manual composition with `ChartTooltipHeader` and `ChartTooltipItem`. Replaces the rows built from `payload`. */
   default?: () => VNode[]

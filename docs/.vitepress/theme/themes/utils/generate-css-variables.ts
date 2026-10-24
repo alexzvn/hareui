@@ -66,6 +66,23 @@ const getBaseColorVariables = (
   }
 }
 
+type PredefinedFont = (typeof fontMap)[keyof typeof fontMap]
+
+/** The font label (for the comment) and `--font-sans` value, for a predefined or custom font. */
+const resolveFontValues = (
+  predefinedFont: PredefinedFont | undefined,
+  customFont: CustomFontInfo | undefined,
+): { label: string; sansValue: string } => {
+  if (predefinedFont)
+    return { label: predefinedFont.label, sansValue: `var(${predefinedFont.variable})` }
+
+  if (customFont)
+    return { label: customFont.label, sansValue: `"${customFont.fontFamily}", sans-serif` }
+
+  // Fallback for unknown font
+  return { label: 'your custom font', sansValue: 'var(--font-sans)' }
+}
+
 /**
  * Generates CSS output with only the variables users need to customize.
  * Derived variables are automatically computed by the default theme stylesheet.
@@ -138,21 +155,10 @@ export const generateMinimalCssVariables = (
     .map(([prop, val]) => `  ${prop}: ${val};`)
     .join('\n')
 
-  // Determine font values based on whether it's predefined or custom
-  let fontLabel: string
-  let fontSansValue: string
-
-  if (predefinedFont) {
-    fontLabel = predefinedFont.label
-    fontSansValue = `var(${predefinedFont.variable})`
-  } else if (customFont) {
-    fontLabel = customFont.label
-    fontSansValue = `"${customFont.fontFamily}", sans-serif`
-  } else {
-    // Fallback for unknown font
-    fontLabel = 'your custom font'
-    fontSansValue = 'var(--font-sans)'
-  }
+  const { label: fontLabel, sansValue: fontSansValue } = resolveFontValues(
+    predefinedFont,
+    customFont,
+  )
 
   const vibrantComment = variables.vibrantPalette
     ? `

@@ -9,6 +9,7 @@ import type theme from './theme'
 
 type DashboardNavbar = typeof theme
 
+/** Props of the `DashboardNavbar` component: the top bar of a dashboard panel, with a title, actions and the mobile sidebar toggle. */
 export type DashboardNavbarProps = {
   /**
    * The element or component to render as. An object sets the element per part (`{ root, title }`).
@@ -39,6 +40,7 @@ export type DashboardNavbarSlotProps = Pick<
   'sidebarOpen' | 'toggleSidebar' | 'sidebarCollapsed' | 'collapseSidebar' | 'sidebars'
 >
 
+/** Slots of the `DashboardNavbar` component. */
 export type DashboardNavbarSlots = {
   /** Replaces the `leading`, `title` and `trailing` content of the left group. */
   left?: (props: Partial<DashboardNavbarSlotProps>) => unknown

@@ -8,6 +8,7 @@ import type theme from './theme'
 
 type Avatar = typeof theme
 
+/** Props for `Avatar`, which shows a user's image, falling back to initials or an icon while it loads or when it fails. */
 export type AvatarProps = {
   /** Image source. The fallback shows until it loads, or if it fails. */
   src?: string
@@ -48,6 +49,7 @@ export type AvatarProps = {
   ui?: ComponentSlots<Avatar>
 }
 
+/** Slots for `Avatar`. */
 export type AvatarSlots = {
   /**
    * Custom image component (e.g. `<NuxtImg>`). Rendered in place of the `<img>`, receiving
@@ -58,6 +60,7 @@ export type AvatarSlots = {
   fallback?: () => VNode[]
 }
 
+/** Events emitted by `Avatar`. */
 export type AvatarEmits = {
   /** Emitted when the image loading status changes (`'loading'`, `'loaded'` or `'error'`). */
   loadingStatusChange: [value: 'idle' | 'loading' | 'loaded' | 'error']

@@ -30,8 +30,11 @@ const ctx = useColorPickerContext()
 
 const resolvedColor = computed(() => (props.color !== undefined ? props.color : ctx?.color.value))
 
-const ui = useComponentUI('colorSwatch', theme, () => ({
-  shape: props.shape,
-  size: props.size,
-}))
+const ui = useComponentUI('colorSwatch', {
+  theme,
+  variantProps: () => ({
+    shape: props.shape,
+    size: props.size,
+  }),
+})
 </script>

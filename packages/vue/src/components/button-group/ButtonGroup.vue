@@ -36,10 +36,13 @@ defineSlots<ButtonGroupSlots>()
 const toolbar = inject(toolbarContextKey, null)
 const orientation = computed(() => props.orientation ?? toolbar?.orientation.value ?? 'horizontal')
 
-const ui = useComponentUI('buttonGroup', theme, () => ({
-  orientation: orientation.value,
-  fullWidth: props.fullWidth,
-}))
+const ui = useComponentUI('buttonGroup', {
+  theme,
+  variantProps: () => ({
+    orientation: orientation.value,
+    fullWidth: props.fullWidth,
+  }),
+})
 
 const toolbarClass = computed(() =>
   toolbar?.ui.value.buttonGroup({ class: toolbar.uiOverrides.value?.buttonGroup }),

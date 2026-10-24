@@ -1,8 +1,8 @@
 <template>
   <div class="flex w-full flex-col gap-3">
     <div class="flex flex-wrap items-center gap-2">
-      <Button size="sm" variant="secondary" @click="loading = !loading">
-        {{ loading ? 'Stop loading' : 'Start loading' }}
+      <Button size="sm" variant="secondary" @click="isLoading = !isLoading">
+        {{ isLoading ? 'Stop loading' : 'Start loading' }}
       </Button>
       <Button
         v-for="animation in ['carousel', 'carousel-inverse', 'swing', 'elastic'] as const"
@@ -15,7 +15,7 @@
       </Button>
     </div>
     <RichTable
-      :loading="loading"
+      :loading="isLoading"
       :loading-animation="loadingAnimation"
       :data="data"
       :columns="columns"
@@ -44,7 +44,7 @@ const data: Payment[] = [
 const formatCurrency = (value: number) =>
   new Intl.NumberFormat('en-US', { style: 'currency', currency: 'USD' }).format(value)
 
-const loading = ref(true)
+const isLoading = ref(true)
 const loadingAnimation = ref<'carousel' | 'carousel-inverse' | 'swing' | 'elastic'>('carousel')
 
 const columns: RichTableColumn<Payment>[] = [

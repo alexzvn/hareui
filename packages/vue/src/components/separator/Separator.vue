@@ -32,10 +32,13 @@ const resolvedOrientation = computed(() => {
   return props.orientation ?? perpendicular
 })
 
-const ui = useComponentUI('separator', theme, () => ({
-  orientation: resolvedOrientation.value,
-  variant: props.variant,
-}))
+const ui = useComponentUI('separator', {
+  theme,
+  variantProps: () => ({
+    orientation: resolvedOrientation.value,
+    variant: props.variant,
+  }),
+})
 
 const toolbarClass = computed(() => {
   if (!toolbar) return undefined

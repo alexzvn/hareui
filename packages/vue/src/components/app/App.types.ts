@@ -3,6 +3,7 @@ import type { ConfigProviderProps } from 'reka-ui'
 import type { ToastProviderProps } from '@/components/toast-provider/ToastProvider.types'
 import type { PortalTarget } from '@/config'
 
+/** Props of `App`, the root wrapper that provides direction, locale, portal target and a toaster to everything inside it. */
 export type AppProps = {
   /**
    * The reading direction of the application, inherited by every directional primitive.
@@ -31,6 +32,7 @@ export type AppProps = {
   toaster?: ToastProviderProps | null
 }
 
+/** Slots of `App`. */
 export type AppSlots = {
   /** The application. */
   default?: () => unknown

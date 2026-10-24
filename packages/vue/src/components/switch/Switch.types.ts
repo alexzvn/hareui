@@ -10,6 +10,7 @@ import type theme from './theme'
 
 type Switch = typeof theme
 
+/** Props of `Switch`: a toggle between on and off states. */
 export type SwitchProps = {
   /** The checked state. Bind with `v-model`. */
   modelValue?: boolean
@@ -72,6 +73,7 @@ export type SwitchProps = {
   ui?: ComponentSlots<Switch>
 } & FormFieldProps
 
+/** Slots of `Switch`. */
 export type SwitchSlots = {
   /** The label content. Replaces the `label` prop. */
   label?: (props: { checked: boolean }) => VNode[]

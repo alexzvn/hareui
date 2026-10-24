@@ -149,9 +149,12 @@ const onUpdate = (value: unknown) => {
   emit('update:modelValue', out)
 }
 
-const ui = useComponentUI('colorSwatchPicker', theme, () => ({
-  size: props.size,
-  variant: props.variant,
-  layout: props.layout,
-}))
+const ui = useComponentUI('colorSwatchPicker', {
+  theme,
+  variantProps: () => ({
+    size: props.size,
+    variant: props.variant,
+    layout: props.layout,
+  }),
+})
 </script>

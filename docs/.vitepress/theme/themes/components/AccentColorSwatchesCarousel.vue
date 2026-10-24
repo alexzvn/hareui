@@ -82,11 +82,10 @@ const swatchPage = ref(
 )
 
 const navigateSwatches = (direction: 'left' | 'right') => {
-  if (direction === 'left') {
-    swatchPage.value = Math.max(0, swatchPage.value - 1)
-  } else {
-    swatchPage.value = Math.min(totalPages.value - 1, swatchPage.value + 1)
-  }
+  swatchPage.value =
+    direction === 'left'
+      ? Math.max(0, swatchPage.value - 1)
+      : Math.min(totalPages.value - 1, swatchPage.value + 1)
 }
 
 const isFirstPage = computed(() => swatchPage.value === 0)

@@ -72,11 +72,7 @@
       </button>
     </header>
     <table
-      :ref="
-        (el) => {
-          view.gridRef.value = el as HTMLElement
-        }
-      "
+      ref="grid"
       :data-slot="`${p}-grid`"
       role="grid"
       :aria-label="label"
@@ -184,7 +180,7 @@
 import { GregorianCalendar, isSameDay, toCalendar } from '@internationalized/date'
 import type { CalendarDate, DateValue } from '@internationalized/date'
 import { useDirection, useLocale } from 'reka-ui'
-import { computed, toRef } from 'vue'
+import { computed, toRef, useTemplateRef } from 'vue'
 import type { VNode } from 'vue'
 
 import type {
@@ -251,6 +247,8 @@ const alignment = () => {
   return rangeDays >= windowDays / 2 ? ('start' as const) : ('center' as const)
 }
 
+const gridRef = useTemplateRef<HTMLElement>('grid')
+
 const view = useCalendarDurationView({
   duration: () => props.duration,
   locale: () => locale.value,
@@ -261,6 +259,7 @@ const view = useCalendarDurationView({
   disabled: () => props.disabled,
   focused: props.focused,
   alignment,
+  gridRef,
 })
 
 const highlighted = computed(() => {
@@ -347,11 +346,11 @@ const onKeyDown = (event: KeyboardEvent) => {
     selection.cancel()
   }
 
-  view.onKeyDown(
-    event,
-    { select: (date) => select(date), escape: anchor.value ? cancelAnchor : undefined },
-    direction.value,
-  )
+  view.onKeyDown(event, {
+    select: (date) => select(date),
+    escape: anchor.value ? cancelAnchor : undefined,
+    dir: direction.value,
+  })
 }
 
 const cellState = (date: CalendarDate) => {

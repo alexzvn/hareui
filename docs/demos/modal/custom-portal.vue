@@ -10,11 +10,11 @@
       </p>
     </div>
     <div
-      ref="portalRef"
+      ref="container"
       class="relative flex h-[380px] items-center justify-center overflow-hidden rounded bg-muted/20"
       style="transform: translate(0)"
     >
-      <Modal v-if="portalRef" :portal="portalRef" :ui="{ backdrop: 'h-full' }">
+      <Modal v-if="container" :portal="container" :ui="{ backdrop: 'h-full' }">
         <Button>Open Modal</Button>
         <template #title> Custom Portal </template>
         <template #body>
@@ -44,7 +44,7 @@
 
 <script setup lang="ts">
 import { Button, Modal } from '@hareui/vue'
-import { ref } from 'vue'
+import { useTemplateRef } from 'vue'
 
-const portalRef = ref<HTMLElement>()
+const container = useTemplateRef<HTMLElement>('container')
 </script>

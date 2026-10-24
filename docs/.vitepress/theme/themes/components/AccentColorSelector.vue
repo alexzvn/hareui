@@ -12,14 +12,9 @@
         :model-value="value"
         :thumb-background="oklchColor"
         :track-background="trackBackground"
-        @update:model-value="handleHueSliderChange"
+        @update:model-value="onHueSliderChange"
       />
-      <AccentColorPicker
-        show-swatches
-        :show-alpha="false"
-        :value="value"
-        @change="handleColorChange"
-      >
+      <AccentColorPicker show-swatches :show-alpha="false" :value="value" @change="onColorChange">
         <template #trigger>
           <Button
             icon-only
@@ -86,14 +81,14 @@ const trackBackground = computed(() => {
 
 const value = computed(() => formatHsl(oklchColor.value) ?? 'hsl(253.67, 100%, 61.99%)')
 
-const handleHueSliderChange = (color: Color) => {
+const onHueSliderChange = (color: Color) => {
   setVariables({
     ...variables.value,
     hue: getHueFromColor(color),
   })
 }
 
-const handleColorChange = (color: Color) => {
+const onColorChange = (color: Color) => {
   const hsl = formatColor(color, 'hsl')
   const { chroma, hue, lightness } = getValuesFromOklch(hsl)
 

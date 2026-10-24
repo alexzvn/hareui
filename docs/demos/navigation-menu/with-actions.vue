@@ -6,11 +6,11 @@
         <button
           type="button"
           aria-label="Notify Dashboard"
-          :aria-pressed="notify"
+          :aria-pressed="shouldNotify"
           :class="ui.linkAction()"
-          @click="notify = !notify"
+          @click="shouldNotify = !shouldNotify"
         >
-          <Icon :icon="notify ? 'gravity-ui:bell' : 'gravity-ui:bell-slash'" />
+          <Icon :icon="shouldNotify ? 'gravity-ui:bell' : 'gravity-ui:bell-slash'" />
         </button>
       </template>
     </NavigationMenu>
@@ -29,7 +29,7 @@ import { h, ref } from 'vue'
 const icon = (name: string) => (attrs: Record<string, unknown>) =>
   h(Icon, { ...attrs, icon: `gravity-ui:${name}` })
 
-const notify = ref(true)
+const shouldNotify = ref(true)
 const status = ref('Hover a row, or tab to it, to show its actions.')
 
 const actions = (page: string): DropdownEntry[] => [

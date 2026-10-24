@@ -7,6 +7,7 @@ import type theme from './theme'
 
 type BarChartTheme = typeof theme
 
+/** Props of `BarChart`: a cartesian chart that compares values across categories with bars. */
 export type BarChartProps<T extends object = Record<string, unknown>> = {
   /**
    * Bar direction. Use `'vertical'` for horizontal bars: the category axis becomes the y-axis.
@@ -41,4 +42,5 @@ export type BarChartProps<T extends object = Record<string, unknown>> = {
   ui?: ComponentSlots<BarChartTheme>
 } & CartesianRootProps<T, ChartBarSeries>
 
+/** Slots of `BarChart`: chart parts, axis tick labels, legend and tooltip content. */
 export type BarChartSlots = {} & CartesianRootSlots

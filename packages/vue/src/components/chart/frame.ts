@@ -53,18 +53,21 @@ export const frameSlotNames = (
   return FRAME_SLOTS.filter((name) => slots[name] !== undefined)
 }
 
-/**
- * A root's legend: its `legend` prop, else the bottom when only a `legend` slot is given (the slot is the opt-in).
- * `defaults` go under the `legend` prop's own `ChartLegend` props.
- */
+type FrameLegendOptions = {
+  /** Whether the root was given a `legend` slot. */
+  hasLegendSlot: boolean
+  /** Root defaults placed under the `legend` prop's own `ChartLegend` props. */
+  defaults?: Partial<ChartLegendProps<object>>
+}
+
+/** A root's legend: its `legend` prop, else the bottom when only a `legend` slot is given (the slot is the opt-in). */
 export const resolveFrameLegend = (
   value:
     | boolean
     | ChartLegendPosition
     | (Partial<ChartLegendProps<object>> & { position?: ChartLegendPosition })
     | undefined,
-  hasLegendSlot: boolean,
-  defaults: Partial<ChartLegendProps<object>> = {},
+  { hasLegendSlot, defaults = {} }: FrameLegendOptions,
 ): ChartFrameLegend | null => {
   const legend = resolveChartLegend<Partial<ChartLegendProps<object>>>(value)
   if (legend) return { position: legend.position, props: { ...defaults, ...legend.props } }

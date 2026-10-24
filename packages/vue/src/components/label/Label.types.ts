@@ -8,6 +8,7 @@ import type theme from './theme'
 
 type Label = typeof theme
 
+/** Props of `Label`, the accessible name of a form control. */
 export type LabelProps = {
   /**
    * The element or component to render as. Use `span` for a group label named via `aria-labelledby`, which has no single control for `for`.
@@ -37,6 +38,7 @@ export type LabelProps = {
   ui?: ComponentSlots<Label>
 }
 
+/** Slots of `Label`. */
 export type LabelSlots = {
   /** The label content. */
   default?: () => VNode[]

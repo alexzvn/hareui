@@ -1,6 +1,6 @@
 <template>
   <header
-    :data-transparent="transparent"
+    :data-transparent="isTransparent"
     id="nd-subnav"
     class="data-[transparent=false]:bg-fd-background/80 layout:[--fd-header-height:--spacing(23)] sticky top-(--fd-docs-row-1) z-10 flex flex-col backdrop-blur-sm transition-colors [grid-area:header] md:layout:[--fd-header-height:--spacing(25)]"
   >
@@ -155,9 +155,9 @@ const searchIconButton = button({ iconOnly: true, size: 'sm', variant: 'tertiary
   class: 'size-[34px] border-none p-2',
 })
 
-const transparent = ref(true)
+const isTransparent = ref(true)
 const onScroll = () => {
-  transparent.value = window.scrollY < 10
+  isTransparent.value = window.scrollY < 10
 }
 
 onMounted(() => {

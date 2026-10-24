@@ -331,14 +331,14 @@ describe('NumberField', () => {
 
 describe('NumberField stepper button slots', () => {
   it('#decrement / #increment render inside the buttons; a parent v-if switches back to the default icons', async () => {
-    const show = ref(true)
+    const isShown = ref(true)
     const wrapper = mount(
       defineComponent({
         components: { NumberField },
-        setup: () => ({ show }),
+        setup: () => ({ isShown }),
         template: `<NumberField :default-value="1">
-        <template v-if="show" #decrement><i data-test="minus" /></template>
-        <template v-if="show" #increment><i data-test="plus" /></template>
+        <template v-if="isShown" #decrement><i data-test="minus" /></template>
+        <template v-if="isShown" #increment><i data-test="plus" /></template>
       </NumberField>`,
       }),
     )
@@ -350,14 +350,14 @@ describe('NumberField stepper button slots', () => {
     expect(decIcon().exists()).toBe(false)
     expect(incIcon().exists()).toBe(false)
 
-    show.value = false
+    isShown.value = false
     await nextTick()
     expect(wrapper.find('[data-test=minus]').exists()).toBe(false)
     expect(wrapper.find('[data-test=plus]').exists()).toBe(false)
     expect(decIcon().element.tagName.toLowerCase()).toBe('svg')
     expect(incIcon().element.tagName.toLowerCase()).toBe('svg')
 
-    show.value = true
+    isShown.value = true
     await nextTick()
     expect(wrapper.get(dec).find('[data-test=minus]').exists()).toBe(true)
     expect(wrapper.get(inc).find('[data-test=plus]').exists()).toBe(true)

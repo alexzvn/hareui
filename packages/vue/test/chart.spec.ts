@@ -44,12 +44,12 @@ describe('useChartTween', () => {
     const target = ref(10)
     const scope = effectScope()
     const tween = scope.run(() =>
-      useChartTween(
-        () => target.value,
-        (from, to, t) => lerp(from ?? 0, to, t),
-        target,
-        () => ({ animationDuration: 100, animationEasing: 'linear' }),
-      ),
+      useChartTween({
+        target: () => target.value,
+        interpolate: ({ from, to, t }) => lerp([from ?? 0, to], t),
+        key: target,
+        animation: () => ({ animationDuration: 100, animationEasing: 'linear' }),
+      }),
     )!
 
     expect(tween.value.value).toBe(0)
@@ -79,7 +79,7 @@ describe('chart scale helpers', () => {
 
   it('keeps a finite domain for a single value with tickCount below 2', () => {
     for (const count of [0, 1]) {
-      const ticks = niceTicks([5, 5], count)
+      const ticks = niceTicks([5, 5], { tickCount: count })
       expect(ticks.length).toBeGreaterThanOrEqual(2)
       expect(ticks.every(Number.isFinite)).toBe(true)
     }
@@ -120,24 +120,37 @@ describe('chart scale helpers', () => {
       text: String(index),
     }))
 
-    const kept = thinTicks(ticks, 'preserveEnd', () => 12, [0, 40], 5)
+    const kept = thinTicks(ticks, {
+      interval: 'preserveEnd',
+      size: () => 12,
+      bounds: [0, 40],
+      minTickGap: 5,
+    })
 
     // The last label is pulled inside the bounds (34), then labels are kept leftwards while they fit.
     expect(kept.map((tick) => tick.index)).toEqual([1, 4])
     expect(kept.at(-1)?.labelCoordinate).toBe(34)
-    expect(thinTicks(ticks, 1, () => 1, [0, 40], 0).map((tick) => tick.index)).toEqual([0, 2, 4])
+
+    const everyOther = thinTicks(ticks, {
+      interval: 1,
+      size: () => 1,
+      bounds: [0, 40],
+      minTickGap: 0,
+    })
+
+    expect(everyOther.map((tick) => tick.index)).toEqual([0, 2, 4])
   })
 })
 
 describe('chart shapes and curves', () => {
   it('draws plain and rounded bar rectangles', () => {
-    expect(rectanglePath(0, 0, 10, 20)).toBe('M 0,0 h 10 v 20 h -10 Z')
-    const rounded = rectanglePath(0, 0, 10, 20, [4, 4, 0, 0])
+    expect(rectanglePath({ x: 0, y: 0, width: 10, height: 20 })).toBe('M 0,0 h 10 v 20 h -10 Z')
+    const rounded = rectanglePath({ x: 0, y: 0, width: 10, height: 20 }, [4, 4, 0, 0])
     expect(rounded.startsWith('M0,4A 4,4,0,0,1,4,0')).toBe(true)
     expect(rounded.endsWith('Z')).toBe(true)
 
     // Radii clamp to half the shorter side.
-    expect(rectanglePath(0, 0, 4, 20, 10)).toContain('A 2,2')
+    expect(rectanglePath({ x: 0, y: 0, width: 4, height: 20 }, 10)).toContain('A 2,2')
   })
 
   it('maps curve types and follows the layout for monotone', () => {

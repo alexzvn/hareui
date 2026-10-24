@@ -428,7 +428,7 @@ const onTriggerKeydown = (event: KeyboardEvent) => {
     return
   }
 
-  typeahead.onKeydown(event, getTypeaheadSource, selectTypeaheadMatch)
+  typeahead.onKeydown(event, { source: getTypeaheadSource, select: selectTypeaheadMatch })
 }
 
 // RAC Button / Select interaction states
@@ -492,14 +492,17 @@ const itemSlots = [
 
 const forwarded = computed(() => itemSlots.filter((name) => slots[name]))
 
-const ui = useComponentUI('select', theme, () => ({
-  variant: props.variant,
-  fullWidth: props.fullWidth,
-}))
+const ui = useComponentUI('select', {
+  theme,
+  variantProps: () => ({
+    variant: props.variant,
+    fullWidth: props.fullWidth,
+  }),
+})
 
 // Classes for the hidden indicator copies inside the value (RAC renders the item's own indicator there);
 // per-item variant override, as in ListBoxOption
-const listBoxUi = useComponentUI('listBox', listBoxTheme, () => ({}))
+const listBoxUi = useComponentUI('listBox', { theme: listBoxTheme, variantProps: () => ({}) })
 
 const valueIndicatorClass = (item: ListBoxItem) => {
   const indicator = listBoxUi.value.indicator as (options?: { variant?: string }) => string

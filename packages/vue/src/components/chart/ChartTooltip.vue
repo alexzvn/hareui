@@ -16,14 +16,14 @@
         v-if="shown && (translate || !panel)"
         ref="panelElement"
         data-slot="chart-tooltip-wrapper"
-        :data-state="active ? 'open' : 'closed'"
+        :data-state="isActive ? 'open' : 'closed'"
         :data-panel="panel ? undefined : 'false'"
         role="status"
         aria-live="polite"
         :class="panel ? chart.classes('tooltip') : 'sr-only'"
         :style="wrapperStyle"
       >
-        <template v-if="panel || active">
+        <template v-if="panel || isActive">
           <slot name="content" v-bind="shown">
             <ChartTooltipContent
               :label="shown.label"
@@ -46,7 +46,15 @@
 </template>
 
 <script setup lang="ts">
-import { computed, inject, onBeforeUnmount, onMounted, shallowRef, watch } from 'vue'
+import {
+  computed,
+  inject,
+  onBeforeUnmount,
+  onMounted,
+  shallowRef,
+  useTemplateRef,
+  watch,
+} from 'vue'
 
 import ChartTooltipContent from '@/components/chart-tooltip/ChartTooltipContent.vue'
 
@@ -96,7 +104,7 @@ const payload = computed(() =>
   index.value === null ? [] : chart.payloadAt(index.value, chart.active.seriesId),
 )
 
-const active = computed(() => index.value !== null && payload.value.length > 0)
+const isActive = computed(() => index.value !== null && payload.value.length > 0)
 
 const label = computed(() =>
   index.value === null ? undefined : chart.tooltipLabel.value(index.value),
@@ -104,7 +112,7 @@ const label = computed(() =>
 
 // Cursor (cartesian charts only). The default kind comes from the chart type (a band in bar charts).
 const cursor = computed(() => {
-  if (!cartesian || props.cursor === false || index.value === null || !active.value) return null
+  if (!cartesian || props.cursor === false || index.value === null || !isActive.value) return null
   const axis = cartesian.categoryAxis.value
   const kind = props.cursor === true ? chart.cursor : props.cursor
   const plot = cartesian.offset.value
@@ -143,28 +151,32 @@ const cursor = computed(() => {
 // last rows), and the next hover slides it from where it was instead of mounting a new panel.
 const shown = shallowRef<ChartTooltipSlotProps | null>(null)
 watch(
-  [active, label, payload, () => chart.active.coordinate],
+  [isActive, label, payload, () => chart.active.coordinate],
   () => {
-    if (active.value)
+    if (isActive.value) {
       shown.value = {
         active: true,
         label: label.value,
         payload: payload.value,
         coordinate: chart.active.coordinate,
       }
-    else if (shown.value?.active) shown.value = { ...shown.value, active: false }
+
+      return
+    }
+
+    if (shown.value?.active) shown.value = { ...shown.value, active: false }
   },
   { immediate: true },
 )
 
 // Panel position: beside the anchor, flipped to stay inside the plot area.
-const panelElement = shallowRef<HTMLElement | null>(null)
+const panelElement = useTemplateRef<HTMLElement>('panelElement')
 const size = shallowRef({ width: 0, height: 0 })
 
 // Measured only when the content can change (not on every pointer move), and assigned only when it differs so
 // moving the pointer does not trigger a second render.
 watch(
-  [panelElement, active, label, payload],
+  [panelElement, isActive, label, payload],
   () => {
     const element = panelElement.value
     if (!element) return
@@ -184,7 +196,16 @@ const bounds = computed(() => {
   return { x: 0, y: 0, width: chart.width.value, height: chart.height.value }
 })
 
-const place = (coordinate: number, dimension: number, start: number, extent: number) => {
+type PlacementSpan = {
+  /** Panel size along this axis. */
+  dimension: number
+  /** Where the plot area starts along this axis. */
+  start: number
+  /** Length of the plot area along this axis. */
+  extent: number
+}
+
+const place = (coordinate: number, { dimension, start, extent }: PlacementSpan) => {
   const after = coordinate + props.offset
   if (after + dimension > start + extent)
     return Math.max(coordinate - dimension - props.offset, start)
@@ -198,8 +219,8 @@ const translate = computed(() => {
   const box = bounds.value
 
   return {
-    x: place(point.x, size.value.width, box.x, box.width),
-    y: place(point.y, size.value.height, box.y, box.height),
+    x: place(point.x, { dimension: size.value.width, start: box.x, extent: box.width }),
+    y: place(point.y, { dimension: size.value.height, start: box.y, extent: box.height }),
   }
 })
 
@@ -211,10 +232,10 @@ const wrapperStyle = computed(() => {
   return {
     transform: position ? `translate(${position.x}px, ${position.y}px)` : undefined,
     transition:
-      active.value && props.isAnimationActive && !prefersReducedMotion()
+      isActive.value && props.isAnimationActive && !prefersReducedMotion()
         ? `transform ${props.animationDuration}ms ease`
         : undefined,
-    visibility: active.value ? undefined : ('hidden' as const),
+    visibility: isActive.value ? undefined : ('hidden' as const),
   }
 })
 </script>

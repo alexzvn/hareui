@@ -54,15 +54,21 @@ const buildVarsCSS = (vars: Record<string, string>) => {
     .join('\n    ')
 }
 
+type CssVariables = Record<string, string>
+
 /**
  * Radius and font apply to both modes. Derived radius values are re-declared on the scoped elements
  * because custom properties resolve `var()` where they are defined.
  */
-const getCommonVariables = (
-  radius: string,
-  fieldRadius: string,
-  fontVariable: string,
-): Record<string, string> => {
+const getCommonVariables = ({
+  radius,
+  fieldRadius,
+  fontVariable,
+}: {
+  radius: string
+  fieldRadius: string
+  fontVariable: string
+}): CssVariables => {
   return {
     '--field-radius': fieldRadius,
     '--font-sans': `var(${fontVariable})`,
@@ -71,22 +77,26 @@ const getCommonVariables = (
   }
 }
 
-const scopedCSS = (
-  colorLightVars: Record<string, string>,
-  colorDarkVars: Record<string, string>,
-  commonVars: Record<string, string>,
-) => {
-  const fullLightVars = { ...commonVars, ...colorLightVars }
-  const fullDarkVars = { ...commonVars, ...colorDarkVars }
+const scopedCSS = ({
+  light,
+  dark,
+  common,
+}: {
+  light: CssVariables
+  dark: CssVariables
+  common: CssVariables
+}) => {
+  const fullLightVars = { ...common, ...light }
+  const fullDarkVars = { ...common, ...dark }
 
   return `
   /* Page level: colors only */
   :is([data-theme="light"], .light) ${PAGE_SELECTORS},
   ${PAGE_SELECTORS}:not(:is([data-theme="dark"] *, .dark *)) {
-    ${buildVarsCSS(colorLightVars)}
+    ${buildVarsCSS(light)}
   }
   :is([data-theme="dark"], .dark) ${PAGE_SELECTORS} {
-    ${buildVarsCSS(colorDarkVars)}
+    ${buildVarsCSS(dark)}
   }
   /* Content level: colors + radius + fonts */
   :is([data-theme="light"], .light) :is(${CONTENT_SELECTORS}),
@@ -99,15 +109,21 @@ const scopedCSS = (
   `
 }
 
+type ThemeColorOptions = {
+  chroma: number
+  hue: number
+  lightness: number
+  /** Chroma of the gray scale (the builder's `base`). */
+  grayChroma: number
+  commonVars: CssVariables
+  semanticOverrides?: SemanticOverrides
+  vibrant?: boolean
+}
+
 /** Adaptive accents (e.g. black/white) use a different accent value in light and dark mode. */
 const getAdaptiveColorCSS = (
   accentColor: string,
-  chroma: number,
-  hue: number,
-  lightness: number,
-  commonVars: Record<string, string>,
-  semanticOverrides?: SemanticOverrides,
-  vibrant?: boolean,
+  { chroma, hue, lightness, commonVars, semanticOverrides, vibrant }: ThemeColorOptions,
 ): string | null => {
   const adaptiveConfig = adaptiveColors[accentColor]
   if (!adaptiveConfig) return null
@@ -152,32 +168,32 @@ const getAdaptiveColorCSS = (
     '--focus': adaptiveConfig.dark,
   }
 
-  return scopedCSS(colorLightVars, colorDarkVars, commonVars)
+  return scopedCSS({ light: colorLightVars, dark: colorDarkVars, common: commonVars })
 }
 
-const getThemeColorsCSS = (
-  chroma: number,
-  hue: number,
-  lightness: number,
-  grayChroma: number,
-  commonVars: Record<string, string>,
-  semanticOverrides?: SemanticOverrides,
-  vibrant?: boolean,
-) => {
+const getThemeColorsCSS = ({
+  chroma,
+  hue,
+  lightness,
+  grayChroma,
+  commonVars,
+  semanticOverrides,
+  vibrant,
+}: ThemeColorOptions) => {
   const colors = generateThemeColors({ chroma, grayChroma, hue, lightness, semanticOverrides })
   const derivedOpts = { vibrant }
 
-  return scopedCSS(
-    {
+  return scopedCSS({
+    light: {
       ...getColorVariablesForElement(colors, 'light'),
       ...getDerivedColorFormulas('light', derivedOpts),
     },
-    {
+    dark: {
       ...getColorVariablesForElement(colors, 'dark'),
       ...getDerivedColorFormulas('dark', derivedOpts),
     },
-    commonVars,
-  )
+    common: commonVars,
+  })
 }
 
 const injectStyleElement = (id: string, css: string) => {
@@ -192,6 +208,49 @@ const removeInjected = () => {
   for (const id of [ADAPTIVE_STYLE_ID, THEME_COLORS_STYLE_ID]) document.getElementById(id)?.remove()
 }
 
+/** Every font (predefined or custom URL) is loaded on demand from its CDN stylesheet. */
+const loadFont = (fontFamily: string): { variable: string; name: string } => {
+  const customFontInfo = isCustomFontUrl(fontFamily)
+    ? getCustomFontInfoFromUrl(fontFamily)
+    : undefined
+
+  if (customFontInfo) {
+    injectFontLink(customFontInfo.variable, fontFamily)
+
+    return { variable: customFontInfo.variable, name: customFontInfo.fontFamily }
+  }
+
+  // Unparseable custom URLs fall back to Inter, like unknown ids.
+  const font =
+    (!isCustomFontUrl(fontFamily) && fontMap[fontFamily as keyof typeof fontMap]) || fontMap.inter
+
+  injectFontLink(font.variable, font.cdnUrl)
+
+  return { variable: font.variable, name: font.label }
+}
+
+const setVibrantPaletteAttribute = (isVibrant: boolean) => {
+  if (!isVibrant) {
+    document.documentElement.removeAttribute('data-vibrant-palette')
+
+    return
+  }
+
+  document.documentElement.setAttribute('data-vibrant-palette', 'true')
+}
+
+const injectColorCSS = (accentColor: string, options: ThemeColorOptions) => {
+  if (!(accentColor in adaptiveColors)) {
+    injectStyleElement(THEME_COLORS_STYLE_ID, getThemeColorsCSS(options))
+
+    return
+  }
+
+  const css = getAdaptiveColorCSS(accentColor, options)
+
+  if (css) injectStyleElement(ADAPTIVE_STYLE_ID, css)
+}
+
 /** Syncs the builder variables to injected `<style>` elements. Call once, from the page root (client only). */
 export const useCssSync = () => {
   const [variables] = useVariablesState()
@@ -204,71 +263,28 @@ export const useCssSync = () => {
       ? themeValuesById[matchingThemeId].semanticOverrides
       : undefined
 
-    // Every font (predefined or custom URL) is loaded on demand from its CDN stylesheet.
-    let fontVariable: string
-    let fontFamilyName: string
+    const font = loadFont(v.fontFamily)
+    const commonVars = getCommonVariables({
+      radius: radiusCssMap[v.radius],
+      fieldRadius: radiusCssMap[v.formRadius],
+      fontVariable: font.variable,
+    })
 
-    const customFontInfo = isCustomFontUrl(v.fontFamily)
-      ? getCustomFontInfoFromUrl(v.fontFamily)
-      : undefined
-
-    if (customFontInfo) {
-      injectFontLink(customFontInfo.variable, v.fontFamily)
-      fontVariable = customFontInfo.variable
-      fontFamilyName = customFontInfo.fontFamily
-    } else {
-      // Unparseable custom URLs fall back to Inter, like unknown ids.
-      const font =
-        (!isCustomFontUrl(v.fontFamily) && fontMap[v.fontFamily as keyof typeof fontMap]) ||
-        fontMap.inter
-
-      injectFontLink(font.variable, font.cdnUrl)
-      fontVariable = font.variable
-      fontFamilyName = font.label
-    }
-
-    const commonVars = getCommonVariables(
-      radiusCssMap[v.radius],
-      radiusCssMap[v.formRadius],
-      fontVariable,
-    )
-
-    injectStyleElement(
-      FONT_VAR_STYLE_ID,
-      `:root { ${fontVariable}: "${fontFamilyName}", sans-serif; }`,
-    )
+    injectStyleElement(FONT_VAR_STYLE_ID, `:root { ${font.variable}: "${font.name}", sans-serif; }`)
 
     removeInjected()
-    const vibrant = v.vibrantPalette
-    if (vibrant) document.documentElement.setAttribute('data-vibrant-palette', 'true')
-    else document.documentElement.removeAttribute('data-vibrant-palette')
+    const isVibrant = v.vibrantPalette
+    setVibrantPaletteAttribute(isVibrant)
 
-    if (accentColor in adaptiveColors) {
-      const css = getAdaptiveColorCSS(
-        accentColor,
-        v.chroma,
-        v.hue,
-        v.lightness,
-        commonVars,
-        semanticOverrides,
-        vibrant,
-      )
-
-      if (css) injectStyleElement(ADAPTIVE_STYLE_ID, css)
-    } else {
-      injectStyleElement(
-        THEME_COLORS_STYLE_ID,
-        getThemeColorsCSS(
-          v.chroma,
-          v.hue,
-          v.lightness,
-          v.base,
-          commonVars,
-          semanticOverrides,
-          vibrant,
-        ),
-      )
-    }
+    injectColorCSS(accentColor, {
+      chroma: v.chroma,
+      hue: v.hue,
+      lightness: v.lightness,
+      grayChroma: v.base,
+      commonVars,
+      semanticOverrides,
+      vibrant: isVibrant,
+    })
   }
 
   let stop: (() => void) | undefined

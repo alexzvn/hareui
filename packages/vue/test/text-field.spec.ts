@@ -304,13 +304,13 @@ describe('TextField label / description / error slots', () => {
   })
 
   it('a parent toggling `<template v-if #label>` switches between slot content and the `label` prop', async () => {
-    const show = ref(true)
+    const isCustomLabelShown = ref(true)
     const wrapper = mount(
       defineComponent({
         components: { TextField },
-        setup: () => ({ show }),
+        setup: () => ({ isCustomLabelShown }),
         template:
-          '<TextField id="f" label="Email"><template v-if="show" #label><b data-test="custom">Custom</b></template></TextField>',
+          '<TextField id="f" label="Email"><template v-if="isCustomLabelShown" #label><b data-test="custom">Custom</b></template></TextField>',
       }),
     )
 
@@ -318,13 +318,13 @@ describe('TextField label / description / error slots', () => {
     expect(label().find('[data-test=custom]').exists()).toBe(true)
     expect(label().text()).toBe('Custom')
 
-    show.value = false
+    isCustomLabelShown.value = false
     await nextTick()
     expect(label().find('[data-test=custom]').exists()).toBe(false)
     expect(label().text()).toBe('Email')
     expect(label().attributes('for')).toBe('f')
 
-    show.value = true
+    isCustomLabelShown.value = true
     await nextTick()
     expect(label().find('[data-test=custom]').exists()).toBe(true)
     expect(label().text()).toBe('Custom')

@@ -12,17 +12,17 @@ const control = '[data-slot=switch-content]'
 
 describe('Switch', () => {
   it('click toggles v-model and the root selected state', async () => {
-    const model = ref(false)
+    const isChecked = ref(false)
     const wrapper = mount(() =>
       h(Switch, {
         label: 'Wi-Fi',
-        modelValue: model.value,
-        'onUpdate:modelValue': (v: boolean) => (model.value = v === true),
+        modelValue: isChecked.value,
+        'onUpdate:modelValue': (v: boolean) => (isChecked.value = v === true),
       }),
     )
 
     await wrapper.find(control).trigger('click')
-    expect(model.value).toBe(true)
+    expect(isChecked.value).toBe(true)
     expect(wrapper.find('[data-slot=switch]').attributes('data-selected')).toBe('true')
     expect(wrapper.find(control).attributes('aria-checked')).toBe('true')
   })
@@ -35,13 +35,13 @@ describe('Switch', () => {
   })
 
   it('an external Label pointing at the id toggles the switch', async () => {
-    const model = ref(false)
+    const isChecked = ref(false)
     const wrapper = mount(
       defineComponent(() => () => [
         h(Switch, {
           id: 'wifi',
-          modelValue: model.value,
-          'onUpdate:modelValue': (v: boolean) => (model.value = v === true),
+          modelValue: isChecked.value,
+          'onUpdate:modelValue': (v: boolean) => (isChecked.value = v === true),
         }),
         h(Label, { for: 'wifi' }, () => 'Wi-Fi'),
       ]),
@@ -49,7 +49,7 @@ describe('Switch', () => {
     )
 
     await wrapper.find('label[for=wifi]').trigger('click')
-    expect(model.value).toBe(true)
+    expect(isChecked.value).toBe(true)
     wrapper.unmount()
   })
 

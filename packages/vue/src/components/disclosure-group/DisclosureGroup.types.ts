@@ -9,6 +9,7 @@ import type theme from './theme'
 
 type DisclosureGroup = typeof theme
 
+/** Props of `DisclosureGroup`: groups `Disclosure`s so their expanded state is managed together, one or several open at a time. */
 export type DisclosureGroupProps = {
   /**
    * The element or component to render the root as.
@@ -35,11 +36,13 @@ export type DisclosureGroupProps = {
   ui?: ComponentSlots<DisclosureGroup>
 }
 
+/** Slots of `DisclosureGroup`. */
 export type DisclosureGroupSlots = {
   /** The `Disclosure` items (and anything between them, e.g. `Separator`). */
   default?: (props: { expanded: ExpandedValue[]; disabled: boolean }) => VNode[]
 }
 
+/** Events emitted by `DisclosureGroup`. */
 export type DisclosureGroupEmits = {
   /** Emitted when the expanded disclosures change. */
   'update:modelValue': [value: ExpandedValue[]]

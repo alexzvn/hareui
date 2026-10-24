@@ -27,6 +27,7 @@ import type theme from './theme'
 
 type RadarChartTheme = typeof theme
 
+/** Props of the `RadarChart` component: one or more series plotted on radial spokes. */
 export type RadarChartProps<T extends object = ChartDatum> = {
   /** Rows to plot. Each row is one spoke; each radar reads one field of every row. */
   data: T[]
@@ -139,6 +140,7 @@ export type RadarChartProps<T extends object = ChartDatum> = {
   ui?: ComponentSlots<RadarChartTheme>
 }
 
+/** Slots of the `RadarChart` component. */
 export type RadarChartSlots = {
   /** Chart parts: `ChartPolarGrid`, `ChartPolarAngleAxis`, `ChartPolarRadiusAxis`, `ChartRadar`, `ChartTooltip`. With `index` or `series`, extra parts drawn over the generated ones. */
   default?: () => VNode[]

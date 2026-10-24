@@ -26,6 +26,7 @@
 import { useId } from 'reka-ui'
 import { computed, watchEffect } from 'vue'
 
+import type { ChartTweenStep } from './animation'
 import { lerp, useChartTween } from './animation'
 import { provideChartCells } from './cells'
 import ChartLayer from './ChartLayer.vue'
@@ -108,21 +109,21 @@ const target = computed<PieSector[]>(() => {
 
 // Mount: the slices fan open from `startAngle`. Data change: each slice moves from the slice at the same relative
 // position in the previous drawing, so adding or removing rows doesn't make every slice jump.
-const interpolate = (from: PieSector[] | null, to: PieSector[], t: number): PieSector[] => {
+const interpolate = ({ from, to, t }: ChartTweenStep<PieSector[]>): PieSector[] => {
   return to.map((sector, index) => {
     const previous = from?.length ? from[Math.floor((index * from.length) / to.length)] : undefined
     return {
       ...sector,
-      startAngle: lerp(previous?.startAngle ?? props.startAngle, sector.startAngle, t),
-      endAngle: lerp(previous?.endAngle ?? props.startAngle, sector.endAngle, t),
+      startAngle: lerp([previous?.startAngle ?? props.startAngle, sector.startAngle], t),
+      endAngle: lerp([previous?.endAngle ?? props.startAngle, sector.endAngle], t),
     }
   })
 }
 
-const tween = useChartTween(
-  () => target.value,
+const tween = useChartTween({
+  target: () => target.value,
   interpolate,
-  () => [
+  key: () => [
     data.value,
     props.dataKey,
     props.startAngle,
@@ -131,8 +132,8 @@ const tween = useChartTween(
     props.minAngle,
     props.hide,
   ],
-  () => props,
-)
+  animation: () => props,
+})
 
 const sectors = computed(() =>
   tween.value.value.map((sector) => ({

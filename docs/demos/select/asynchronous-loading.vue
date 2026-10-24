@@ -4,7 +4,7 @@
     label="Pick a Pokemon"
     placeholder="Select a Pokemon"
     :items="pokemon.map((p) => ({ value: p.name, label: p.name }))"
-    :loading="loading"
+    :loading="isLoading"
     @load-more="loadMore"
   >
     <template #loading>
@@ -26,19 +26,19 @@ type Pokemon = {
 
 // HeroUI's `useAsyncList` equivalent: fetch the first page, then the next cursor on `load-more`
 const pokemon = ref<Pokemon[]>([])
-const loading = ref(false)
+const isLoading = ref(false)
 let cursor: string | null = 'https://pokeapi.co/api/v2/pokemon'
 
 const loadMore = async () => {
-  if (!cursor || loading.value) return
-  loading.value = true
+  if (!cursor || isLoading.value) return
+  isLoading.value = true
 
   try {
     const json = await (await fetch(cursor)).json()
     cursor = json.next
     pokemon.value = [...pokemon.value, ...json.results]
   } finally {
-    loading.value = false
+    isLoading.value = false
   }
 }
 

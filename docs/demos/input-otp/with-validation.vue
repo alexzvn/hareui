@@ -8,7 +8,7 @@
       :invalid="isInvalid"
       error-message="Invalid code. Please try again."
       :groups="[3, 3]"
-      @update:model-value="handleChange"
+      @update:model-value="onChange"
     />
     <Button :disabled="value.length !== 6" type="submit"> Submit </Button>
   </Form>
@@ -36,7 +36,7 @@ const onSubmit = (e: Event) => {
   console.log('Code verified successfully!')
 }
 
-const handleChange = (val: string | undefined) => {
+const onChange = (val: string | undefined) => {
   value.value = val ?? ''
   isInvalid.value = false
 }

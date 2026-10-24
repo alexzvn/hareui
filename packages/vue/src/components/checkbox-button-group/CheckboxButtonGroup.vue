@@ -54,14 +54,20 @@ defineSlots<CheckboxButtonGroupSlots>()
 const modelValue = defineModel<string[]>()
 const slots = useSlots()
 
-const ui = useComponentUI('checkboxButtonGroup', theme, () => ({
-  layout: props.layout,
-  variant: props.variant,
-}))
+const ui = useComponentUI('checkboxButtonGroup', {
+  theme,
+  variantProps: () => ({
+    layout: props.layout,
+    variant: props.variant,
+  }),
+})
 
-const checkboxUi = useComponentUI('checkbox', checkboxTheme, () => ({
-  variant: props.variant,
-}))
+const checkboxUi = useComponentUI('checkbox', {
+  theme: checkboxTheme,
+  variantProps: () => ({
+    variant: props.variant,
+  }),
+})
 
 // `[]` (not `undefined`): Reka self-manages its state when `modelValue` is undefined, which would let
 // `readonly` items change selection behind our back.

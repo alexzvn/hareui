@@ -59,22 +59,25 @@ const notifyDesignThemeChange = (themeId: DesignThemeId) => {
   window.dispatchEvent(new CustomEvent(DESIGN_THEME_CHANGE_EVENT, { detail: { themeId } }))
 }
 
-export const setStoredDesignTheme = (themeId: DesignThemeId) => {
+/** Sets `name` on `<html>`, or removes it when `value` is `null`. */
+const setRootAttribute = (name: string, value: string | null) => {
   const root = document.documentElement
+  if (value === null) {
+    root.removeAttribute(name)
+    return
+  }
+
+  root.setAttribute(name, value)
+}
+
+export const setStoredDesignTheme = (themeId: DesignThemeId) => {
   localStorage.setItem(DESIGN_THEME_STORAGE_KEY, themeId)
-
-  if (themeId === DEFAULT_DESIGN_THEME) root.removeAttribute('data-design-theme')
-  else root.setAttribute('data-design-theme', themeId)
-
+  setRootAttribute('data-design-theme', themeId === DEFAULT_DESIGN_THEME ? null : themeId)
   notifyDesignThemeChange(themeId)
 }
 
 export const setStoredVibrantPalette = (enabled: boolean) => {
-  const root = document.documentElement
   localStorage.setItem(VIBRANT_STORAGE_KEY, String(enabled))
-
-  if (enabled) root.setAttribute('data-vibrant-palette', 'true')
-  else root.removeAttribute('data-vibrant-palette')
-
+  setRootAttribute('data-vibrant-palette', enabled ? 'true' : null)
   notifyDesignThemeChange(getStoredDesignTheme())
 }

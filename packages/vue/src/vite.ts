@@ -5,6 +5,7 @@ import type { Plugin } from 'vite'
 
 import type { HareUIConfig } from './config'
 
+/** Options for `HareUIResolver`, the unplugin-vue-components resolver for HareUI components. */
 export type HareUIResolverOptions = {
   /**
    * Prefix of HareUI components in templates. `'H'` resolves `<HButton>` and `<h-button>` to `Button`.
@@ -14,6 +15,7 @@ export type HareUIResolverOptions = {
   prefix?: string
 }
 
+/** Options for the `hareui()` Vite plugin; also accepts every `HareUIResolverOptions` key. */
 export type HareUIPluginOptions = {
   /**
    * App-wide component theme overrides, same shape as `createHareUI({ ui })`. Applied above the default

@@ -15,6 +15,7 @@ import {
 } from 'vue'
 
 import type { ClassValue } from '@/utils/tv'
+import { warn } from '@/utils/warn'
 
 import type {
   ChartActiveState,
@@ -35,7 +36,7 @@ export type ChartRootOptions = {
   data: () => ChartDatum[] | undefined
   margin: () => ChartMargin | undefined
   layout: () => ChartLayout
-  /** The root's resolved theme (`useComponentUI(name, theme, …)`). */
+  /** The root's resolved theme (`useComponentUI(name, { theme: theme, variantProps: … })`). */
   ui: ComputedRef<object>
   /** The root's `ui` prop. */
   uiProps: () => Partial<Record<string, ClassValue>> | undefined
@@ -101,6 +102,44 @@ export type ChartRootConfig = {
 export const chartContextKey: InjectionKey<ChartContext> = Symbol('hareui-chart')
 
 const DEFAULT_MARGIN: Required<ChartMargin> = { top: 8, right: 8, bottom: 0, left: 0 }
+
+// Each duplicate warns once.
+const warnDuplicateParts = ({
+  tooltipEnabled,
+  series,
+}: {
+  tooltipEnabled: Ref<number>
+  series: ComputedRef<ChartSeries[]>
+}) => {
+  const warned = new Set<string>()
+  const warnOnce = (key: string, message: string) => {
+    if (warned.has(key)) return
+
+    warned.add(key)
+    warn(message)
+  }
+
+  watchEffect(() => {
+    if (tooltipEnabled.value > 1)
+      warnOnce(
+        'tooltip',
+        'Two ChartTooltips in one chart. When the chart root draws its tooltip from props, pass `:tooltip="false"` before adding a ChartTooltip.',
+      )
+
+    const seen = new Set<string>()
+    for (const entry of series.value) {
+      if (entry.entries || entry.hide) continue
+      const key = `${entry.kind}:${entry.dataKey}`
+      if (seen.has(key))
+        warnOnce(
+          key,
+          `Two ${entry.kind} series read "${entry.dataKey}" in one chart. When the chart root draws its series from \`series\`, leave that key out of \`series\` or remove the child part.`,
+        )
+
+      seen.add(key)
+    }
+  })
+}
 
 /** Creates the chart context of a root and provides it to its parts. Call in the root's setup. */
 export const useChartRoot = (options: ChartRootOptions): ChartContext => {
@@ -199,36 +238,7 @@ export const useChartRoot = (options: ChartRootOptions): ChartContext => {
 
   // Duplicates usually mean the root draws a part from its props (`series`, `tooltip`) and the same part was also
   // added as a child.
-  if (import.meta.env?.DEV) {
-    const warned = new Set<string>()
-    const warn = (key: string, message: string) => {
-      if (!warned.has(key)) {
-        warned.add(key)
-        console.warn(`[hareui] ${message}`)
-      }
-    }
-
-    watchEffect(() => {
-      if (tooltipEnabled.value > 1)
-        warn(
-          'tooltip',
-          'Two ChartTooltips in one chart. When the chart root draws its tooltip from props, pass `:tooltip="false"` before adding a ChartTooltip.',
-        )
-
-      const seen = new Set<string>()
-      for (const entry of series.value) {
-        if (entry.entries || entry.hide) continue
-        const key = `${entry.kind}:${entry.dataKey}`
-        if (seen.has(key))
-          warn(
-            key,
-            `Two ${entry.kind} series read "${entry.dataKey}" in one chart. When the chart root draws its series from \`series\`, leave that key out of \`series\` or remove the child part.`,
-          )
-
-        seen.add(key)
-      }
-    })
-  }
+  warnDuplicateParts({ tooltipEnabled, series })
 
   const context: ChartContext = {
     id,

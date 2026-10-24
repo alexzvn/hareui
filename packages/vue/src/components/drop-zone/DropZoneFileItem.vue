@@ -122,7 +122,7 @@ const emit = defineEmits<{
 defineSlots<DropZoneFileItemSlots>()
 
 const context = inject(dropZoneContextKey, null)
-const ui = useComponentUI('dropZone', theme, () => ({}))
+const ui = useComponentUI('dropZone', { theme: theme, variantProps: () => ({}) })
 
 // The surrounding DropZone's `ui` applies first, then this item's own overrides
 const cls = (key: keyof FileItemSlots, extra?: ClassValue) =>

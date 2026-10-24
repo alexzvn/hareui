@@ -1,5 +1,6 @@
 import type { InjectionKey, Ref } from 'vue'
 
+/** State a `TextField` provides to the `Input`, `TextArea` and field parts rendered inside it. */
 export type TextFieldContext = {
   /** Id applied to the field's input. */
   id: Readonly<Ref<string>>
@@ -19,6 +20,7 @@ export type TextFieldContext = {
   type: Readonly<Ref<string>>
 }
 
+/** Injection key for the enclosing `TextField`'s {@link TextFieldContext}; `inject` it to build a custom field control. */
 export const textFieldContextKey: InjectionKey<TextFieldContext> = Symbol('hareui-textfield')
 
 // Attributes passed to a field component that belong to its input (as in HeroUI, where the field passes them to its
@@ -61,8 +63,12 @@ export const splitInputAttrs = (attrs: Record<string, unknown>) => {
   const input: Record<string, unknown> = {}
   const root: Record<string, unknown> = {}
   for (const [key, value] of Object.entries(attrs)) {
-    if (INPUT_ATTRS.has(key.toLowerCase())) input[key] = value
-    else if (key !== 'aria-describedby') root[key] = value
+    if (INPUT_ATTRS.has(key.toLowerCase())) {
+      input[key] = value
+      continue
+    }
+
+    if (key !== 'aria-describedby') root[key] = value
   }
 
   return { input, root }

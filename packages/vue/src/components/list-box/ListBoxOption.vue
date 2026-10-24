@@ -8,30 +8,30 @@
     data-slot="list-box-item"
     :aria-selected="selectable ? selected : undefined"
     :aria-disabled="state.disabled ? 'true' : undefined"
-    :aria-labelledby="rich && hasLabel ? labelId : undefined"
-    :aria-describedby="rich ? descriptionId : undefined"
+    :aria-labelledby="isRich && hasLabel ? labelId : undefined"
+    :aria-describedby="isRich ? descriptionId : undefined"
     :data-selected="selected ? 'true' : undefined"
     :data-selection-mode="selectable ? selectionMode : undefined"
-    :data-hovered="hovered ? 'true' : undefined"
-    :data-pressed="pressed ? 'true' : undefined"
+    :data-hovered="isHovered ? 'true' : undefined"
+    :data-pressed="isPressed ? 'true' : undefined"
     :data-focused="isFocused ? 'true' : undefined"
     :data-focus-visible="isFocusVisible ? 'true' : undefined"
     :class="classes.item({ variant: item.variant, class: [ui?.item, item.class] })"
     @select="onSelect"
-    @pointerenter="hovered = $event.pointerType === 'mouse'"
+    @pointerenter="isHovered = $event.pointerType === 'mouse'"
     @pointerleave="onPointerleave"
-    @pointerdown="pressed = true"
+    @pointerdown="isPressed = true"
     @pointermove="onPointermove"
     @mousedown="onMousedown"
-    @pointerup="pressed = false"
-    @pointercancel="pressed = false"
+    @pointerup="isPressed = false"
+    @pointercancel="isPressed = false"
     @focus="onFocus"
-    @blur="focused = false"
+    @blur="isDomFocused = false"
   >
     <slot name="item" v-bind="state">
       <slot name="item-leading" v-bind="state" />
       <!-- With a description: Label + Description (HeroUI's rich item). Label only: plain text (HeroUI's `<ListBox.Item>Text</ListBox.Item>`). -->
-      <div v-if="rich" class="flex flex-col">
+      <div v-if="isRich" class="flex flex-col">
         <Label v-if="hasLabel" :id="labelId" :disabled="state.disabled">
           <slot name="item-label" v-bind="state">
             {{ item.label }}
@@ -122,9 +122,9 @@ const emit = defineEmits<{
 const slots = defineSlots<Omit<ListBoxSlots, 'section-label' | 'empty'>>()
 
 // RAC interaction states that Reka doesn't expose
-const hovered = ref(false)
-const pressed = ref(false)
-const focused = ref(false)
+const isHovered = ref(false)
+const isPressed = ref(false)
+const isDomFocused = ref(false)
 
 // RAC interaction modality: DOM focus is focus-visible only after keyboard use (Reka focuses options on open and hover)
 const keyboardModality = inject(keyboardModalityKey, null)
@@ -143,7 +143,7 @@ onMounted(dropSelectedState)
 onUpdated(dropSelectedState)
 
 const onFocus = () => {
-  focused.value = true
+  isDomFocused.value = true
 
   // DOM focus is the keyboard cursor (RAC focusedKey): a mouse press or `focus()` must move Reka's highlight too
   const el = option.value?.$el
@@ -152,8 +152,8 @@ const onFocus = () => {
 }
 
 const onPointerleave = () => {
-  hovered.value = false
-  pressed.value = false
+  isHovered.value = false
+  isPressed.value = false
 }
 
 const onPointermove = (event: PointerEvent) => {
@@ -174,24 +174,28 @@ const onMousedown = (event: MouseEvent) => {
 }
 
 // With `virtualFocus.value` the owner tracks focus by value (virtualized rows unmount), else by Reka's highlighted element
-const highlighted = computed(() =>
+const isHighlighted = computed(() =>
   props.virtualFocus && 'value' in props.virtualFocus
     ? props.virtualFocus.value === props.item.value
     : !!listbox && !!option.value && listbox.highlightedElement.value === option.value.$el,
 )
 
-const isFocused = computed(() => (props.virtualFocus ? highlighted.value : focused.value))
+const isFocused = computed(() => (props.virtualFocus ? isHighlighted.value : isDomFocused.value))
 
 const isFocusVisible = computed(() =>
   props.virtualFocus
-    ? highlighted.value && props.virtualFocus.keyboard
-    : focused.value && !!keyboardModality?.value,
+    ? isHighlighted.value && props.virtualFocus.keyboard
+    : isDomFocused.value && !!keyboardModality?.value,
 )
 
 // RAC useOption: a rich item is named by its label and described by its description
 const labelId = useId()
 const descriptionId = useId()
-const rich = computed(() => !slots.item && !!(props.item.description || slots['item-description']))
+
+const isRich = computed(
+  () => !slots.item && !!(props.item.description || slots['item-description']),
+)
+
 const hasLabel = computed(() => !!(props.item.label || slots['item-label']))
 
 const state = computed<ListBoxItemSlotProps>(() => ({

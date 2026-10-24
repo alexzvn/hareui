@@ -121,5 +121,5 @@ import theme from './theme'
 const props = withDefaults(defineProps<AlertProps>(), { as: 'div', indicator: true })
 const slots = defineSlots<AlertSlots>()
 
-const ui = useComponentUI('alert', theme, () => ({ status: props.status }))
+const ui = useComponentUI('alert', { theme: theme, variantProps: () => ({ status: props.status }) })
 </script>

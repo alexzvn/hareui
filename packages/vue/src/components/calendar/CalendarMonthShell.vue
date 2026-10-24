@@ -135,7 +135,9 @@
         :kind="kind"
         :ui="ui"
         :ui-overrides="uiOverrides"
-        :label="formatGridLabel(ariaLabel, resolvedLocale, resolveDisplayedMonth(grid))"
+        :label="
+          formatGridLabel(ariaLabel, { locale: resolvedLocale, month: resolveDisplayedMonth(grid) })
+        "
         :multiselectable="isMultiselectable"
         :week-days="weekDays"
         :rows="grid[0]?.rows ?? []"
@@ -210,7 +212,7 @@
           :kind="kind"
           :ui="ui"
           :ui-overrides="uiOverrides"
-          :label="formatGridLabel(ariaLabel, resolvedLocale, month.value)"
+          :label="formatGridLabel(ariaLabel, { locale: resolvedLocale, month: month.value })"
           :multiselectable="isMultiselectable"
           :week-days="weekDays"
           :rows="month.rows"
@@ -258,6 +260,7 @@
 import type { DateValue } from '@internationalized/date'
 import { computed, ref, shallowRef, useTemplateRef } from 'vue'
 
+import { weekStartsOnFromFirstDay } from './calendarBounds'
 import CalendarChevronIcon from './CalendarChevronIcon.vue'
 import type { CalendarDurationValue } from './CalendarDurationView.types'
 import CalendarDurationView from './CalendarDurationView.vue'
@@ -267,11 +270,10 @@ import type {
   CalendarMonthShellProps,
   CalendarMonthShellSlots,
 } from './CalendarMonthShell.types'
+import { formatGridLabel, formatPanelHeading } from './calendarPanelHeading'
 import { REKA_PARTS, SLOT_PREFIXES } from './calendarRekaParts'
-import { weekStartsOnFromFirstDay } from './useCalendarBounds'
 import { isDurationView } from './useCalendarDurationView'
 import { useCalendarMonthKeys } from './useCalendarMonthKeys'
-import { formatGridLabel, formatPanelHeading } from './useCalendarPanelHeading'
 import { useCalendarPlaceholder } from './useCalendarPlaceholder'
 import { useCalendarYearPicker, yearPickerLabel } from './useCalendarYearPicker'
 
@@ -301,11 +303,11 @@ const nextButtonEl = useTemplateRef<HTMLElement>('nextButton')
 const yearPickerGridEl = useTemplateRef<HTMLElement>('yearPickerGrid')
 const rootEl = computed(() => rootInstance.value?.$el)
 
-const placeholderModel = useCalendarPlaceholder(
-  () => props.placeholder,
-  props.defaultPlaceholder,
-  (value) => emit('update:placeholder', value),
-)
+const placeholderModel = useCalendarPlaceholder({
+  placeholder: () => props.placeholder,
+  seed: props.defaultPlaceholder,
+  onUpdate: (value) => emit('update:placeholder', value),
+})
 
 // The single-month heading and grid show the displayed date until Reka builds the first month
 const resolveDisplayedMonth = (months: readonly { value: DateValue }[]) => {

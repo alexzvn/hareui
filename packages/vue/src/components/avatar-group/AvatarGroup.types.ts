@@ -8,6 +8,7 @@ import type theme from './theme'
 
 type AvatarGroup = typeof theme
 
+/** Props of `AvatarGroup`: a stack (or grid) of Avatars sharing size, color and variant, cut at `max`. */
 export type AvatarGroupProps = {
   /**
    * Size applied to child Avatars (and the overflow count) that don't set `size`.
@@ -36,6 +37,7 @@ export type AvatarGroupProps = {
   ui?: ComponentSlots<AvatarGroup>
 }
 
+/** Slots of `AvatarGroup`. */
 export type AvatarGroupSlots = {
   /** The `Avatar` components. Only direct `Avatar` children inherit `size`, `color` and `variant`. */
   default?: () => VNode[]

@@ -8,6 +8,7 @@ import type theme from './theme'
 
 type ColorSwatch = typeof theme
 
+/** Props for `ColorSwatch`, a preview of a colour, with a checkerboard behind transparent ones. */
 export type ColorSwatchProps = {
   /**
    * The color to display, as a hex/CSS color string or a `Color` object.
@@ -32,6 +33,7 @@ export type ColorSwatchProps = {
   ui?: ComponentSlots<ColorSwatch>
 }
 
+/** Slots for `ColorSwatch`. */
 export type ColorSwatchSlots = {
   /** Replaces the swatch content. Receives the resolved color as a CSS string and its alpha channel (0–1). */
   default?: (props: { color: string; alpha: number }) => VNode[]

@@ -26,5 +26,5 @@ import theme from './theme'
 const props = withDefaults(defineProps<DashboardToolbarProps>(), { as: 'div' })
 defineSlots<DashboardToolbarSlots>()
 
-const ui = useComponentUI('dashboardToolbar', theme, () => ({}))
+const ui = useComponentUI('dashboardToolbar', { theme: theme, variantProps: () => ({}) })
 </script>

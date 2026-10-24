@@ -12,7 +12,7 @@
         :title="`${name} preview`"
         :class="[
           'block size-full border-0 bg-transparent transition-opacity duration-150 ease-out motion-reduce:transition-none',
-          !ready && 'opacity-0',
+          !isReady && 'opacity-0',
         ]"
       />
     </div>
@@ -28,8 +28,8 @@
       :data-preview-theme="theme"
       :src="src"
       :title="`${name} preview`"
-      :class="['block size-full border-0 bg-transparent', !(ready && visible) && 'opacity-0']"
-      :inert="!(ready && visible)"
+      :class="['block size-full border-0 bg-transparent', !(isReady && visible) && 'opacity-0']"
+      :inert="!(isReady && visible)"
     />
   </div>
 </template>
@@ -70,7 +70,7 @@ const emit = defineEmits<{ ready: [] }>()
 // `<html>`) before its first paint and then live, so the src carries no theme and is set once.
 const iframe = useTemplateRef<HTMLIFrameElement>('iframe')
 const src = shallowRef<string>()
-const ready = ref(false)
+const isReady = ref(false)
 const onMessage = (event: MessageEvent) => {
   if (
     !iframe.value ||
@@ -79,7 +79,7 @@ const onMessage = (event: MessageEvent) => {
   )
     return
 
-  ready.value = true
+  isReady.value = true
   emit('ready')
 }
 

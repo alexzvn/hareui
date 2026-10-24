@@ -7,13 +7,13 @@ import { onBeforeUnmount, onMounted, readonly, ref } from 'vue'
  * keyboard modality, so opening a list with the mouse shows no focus ring on its options.
  */
 export const useKeyboardModality = (): Readonly<Ref<boolean>> => {
-  const keyboard = ref(true)
+  const isKeyboard = ref(true)
   const onPointerdown = () => {
-    keyboard.value = false
+    isKeyboard.value = false
   }
 
   const onKeydown = () => {
-    keyboard.value = true
+    isKeyboard.value = true
   }
 
   onMounted(() => {
@@ -26,7 +26,7 @@ export const useKeyboardModality = (): Readonly<Ref<boolean>> => {
     document.removeEventListener('keydown', onKeydown, true)
   })
 
-  return readonly(keyboard)
+  return readonly(isKeyboard)
 }
 
 /**

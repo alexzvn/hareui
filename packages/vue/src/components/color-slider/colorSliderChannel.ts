@@ -1,6 +1,8 @@
 import type { Color, ColorChannel, ColorSpace } from 'reka-ui'
 import { convertToHsb, convertToHsl, convertToRgb } from 'reka-ui'
 
+import { warn } from '@/utils/warn'
+
 /** Channels that require a specific color space (HeroUI auto-corrects a conflicting `colorSpace`). */
 const CHANNEL_TO_REQUIRED_COLOR_SPACE: Partial<Record<ColorChannel, ColorSpace>> = {
   red: 'rgb',
@@ -16,10 +18,6 @@ const HSL_HSB_ONLY_CHANNELS = new Set<ColorChannel>(['hue', 'saturation'])
 /** Channels whose value text is a percentage. */
 const PERCENT_CHANNELS = new Set<ColorChannel>(['saturation', 'lightness', 'brightness', 'alpha'])
 
-const warnInDev = (message: string) => {
-  if (import.meta.env?.DEV) console.warn(message)
-}
-
 /**
  * Validates and corrects the `colorSpace` prop for the given `channel`, exactly like HeroUI's
  * React ColorSlider: an incompatible combination (e.g. `channel="red"` with `colorSpace="hsl"`)
@@ -31,16 +29,16 @@ export const resolveColorSpace = (
 ): ColorSpace | undefined => {
   const required = CHANNEL_TO_REQUIRED_COLOR_SPACE[channel]
   if (required && colorSpace && colorSpace !== required) {
-    warnInDev(
-      `[HareUI ColorSlider] Invalid combination: channel="${channel}" requires colorSpace="${required}", but received colorSpace="${colorSpace}". Auto-correcting to "${required}".`,
+    warn(
+      `ColorSlider: invalid combination: channel="${channel}" requires colorSpace="${required}", but received colorSpace="${colorSpace}". Auto-correcting to "${required}".`,
     )
 
     return required
   }
 
   if (HSL_HSB_ONLY_CHANNELS.has(channel) && colorSpace === 'rgb') {
-    warnInDev(
-      `[HareUI ColorSlider] Invalid combination: channel="${channel}" is not available in RGB color space. Use colorSpace="hsl" or colorSpace="hsb" instead. Auto-correcting to "hsl".`,
+    warn(
+      `ColorSlider: invalid combination: channel="${channel}" is not available in RGB color space. Use colorSpace="hsl" or colorSpace="hsb" instead. Auto-correcting to "hsl".`,
     )
 
     return 'hsl'

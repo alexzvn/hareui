@@ -10,6 +10,7 @@ import type theme from './theme'
 
 type CellColorPicker = typeof theme
 
+/** Props of `CellColorPicker`, a settings-list row that shows a color and opens a color picker popover. */
 export type CellColorPickerProps = {
   /** Text shown at the start of the row. */
   label?: string
@@ -60,6 +61,7 @@ export type CellColorPickerProps = {
   ui?: ComponentSlots<CellColorPicker>
 }
 
+/** Slots of `CellColorPicker`. */
 export type CellColorPickerSlots = {
   /** Row label content. Replaces `label`. */
   label?: () => VNode[]
@@ -69,6 +71,7 @@ export type CellColorPickerSlots = {
   default?: (props: { color: Color; close: () => void }) => VNode[]
 }
 
+/** Events emitted by `CellColorPicker`. */
 export type CellColorPickerEmits = {
   /** The color changed (`v-model`). */
   'update:modelValue': [value: Color]

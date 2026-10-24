@@ -25,14 +25,15 @@ const props = defineProps<DropZoneFileListProps>()
 defineSlots<DropZoneFileListSlots>()
 
 const context = inject(dropZoneContextKey, null)
-const ui = useComponentUI('dropZone', theme, () => ({}))
+const ui = useComponentUI('dropZone', { theme: theme, variantProps: () => ({}) })
 
-const animate = (
-  el: Element,
-  keyframes: Keyframe[],
-  options: KeyframeAnimationOptions,
-  done: () => void,
-) => {
+type AnimateOptions = {
+  keyframes: Keyframe[]
+  timing: KeyframeAnimationOptions
+  done: () => void
+}
+
+const animate = (el: Element, { keyframes, timing, done }: AnimateOptions) => {
   const reduced =
     typeof window !== 'undefined' && window.matchMedia?.('(prefers-reduced-motion: reduce)').matches
 
@@ -41,21 +42,20 @@ const animate = (
     return
   }
 
-  const animation = (el as HTMLElement).animate(keyframes, options)
+  const animation = (el as HTMLElement).animate(keyframes, timing)
   animation.onfinish = done
   animation.oncancel = done
 }
 
 const onEnter = (el: Element, done: () => void) => {
-  animate(
-    el,
-    [
+  animate(el, {
+    keyframes: [
       { opacity: 0, transform: 'translateY(-8px)' },
       { opacity: 1, transform: 'none' },
     ],
-    { duration: 300, easing: 'ease-out' },
+    timing: { duration: 300, easing: 'ease-out' },
     done,
-  )
+  })
 }
 
 // Leaving items are taken out of the flow at their current spot, so the remaining items slide into place right away
@@ -70,6 +70,10 @@ const onLeave = (el: Element, done: () => void) => {
     margin: '0',
   })
 
-  animate(item, [{ opacity: 1 }, { opacity: 0 }], { duration: 200, easing: 'ease-out' }, done)
+  animate(item, {
+    keyframes: [{ opacity: 1 }, { opacity: 0 }],
+    timing: { duration: 200, easing: 'ease-out' },
+    done,
+  })
 }
 </script>

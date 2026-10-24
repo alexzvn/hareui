@@ -80,11 +80,14 @@ const props = withDefaults(defineProps<ChartLegendProps<T>>(), {
 const slots = defineSlots<ChartLegendSlots>()
 const hidden = defineModel<string[]>('hidden', { default: () => [] })
 
-const ui = useComponentUI('chartLegend', theme, () => ({
-  orientation: props.orientation,
-  indicator: props.indicator,
-  toggleable: props.toggleable,
-}))
+const ui = useComponentUI('chartLegend', {
+  theme,
+  variantProps: () => ({
+    orientation: props.orientation,
+    indicator: props.indicator,
+    toggleable: props.toggleable,
+  }),
+})
 
 const rows = computed<ChartLegendItem[]>(() => {
   const hiddenKeys = hidden.value

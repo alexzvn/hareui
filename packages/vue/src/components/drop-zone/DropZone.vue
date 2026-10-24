@@ -9,8 +9,8 @@
   >
     <div
       data-slot="drop-zone-area"
-      :data-drop-target="dropTarget ? 'true' : undefined"
-      :data-focus-visible="focusVisible ? 'true' : undefined"
+      :data-drop-target="isDropTarget ? 'true' : undefined"
+      :data-focus-visible="isFocusVisible ? 'true' : undefined"
       :data-disabled="isDisabled ? 'true' : undefined"
       :class="ui.area({ class: props.ui?.area })"
       @dragenter="onDragEnter"
@@ -32,7 +32,7 @@
         @click="open"
         @paste="onPaste"
         @focus="onFocus"
-        @blur="focusVisible = false"
+        @blur="isFocusVisible = false"
       />
       <span data-slot="drop-zone-icon" :class="ui.icon({ class: props.ui?.icon })">
         <slot name="icon" v-bind="slotProps">
@@ -146,7 +146,7 @@ const props = withDefaults(defineProps<DropZoneProps>(), {
 const emit = defineEmits<DropZoneEmits>()
 const slots = defineSlots<DropZoneSlots>()
 
-const ui = useComponentUI('dropZone', theme, () => ({}))
+const ui = useComponentUI('dropZone', { theme, variantProps: () => ({}) })
 provide(dropZoneContextKey, { ui: toRef(() => props.ui) })
 
 const local = ref<File[]>(props.defaultValue ?? [])
@@ -202,14 +202,24 @@ const setFiles = (next: File[]) => {
   emit('update:modelValue', next)
 }
 
+const resolveRejection = (file: File): DropZoneRejection['reason'] | undefined => {
+  if (!matchesAccept(file, props.accept)) return 'type'
+  if (props.maxSize != null && file.size > props.maxSize) return 'size'
+
+  return undefined
+}
+
 const addFiles = (incoming: File[]) => {
   const accepted: File[] = []
   const rejected: DropZoneRejection[] = []
   for (const file of incoming) {
-    if (!matchesAccept(file, props.accept)) rejected.push({ file, reason: 'type' })
-    else if (props.maxSize != null && file.size > props.maxSize)
-      rejected.push({ file, reason: 'size' })
-    else accepted.push(file)
+    const reason = resolveRejection(file)
+    if (reason) {
+      rejected.push({ file, reason })
+      continue
+    }
+
+    accepted.push(file)
   }
 
   // `add` comes first, so a handler that clears an old rejection message runs before `reject` sets a new one
@@ -235,8 +245,12 @@ const removeFile = (file: File | number) => {
 const itemElements = new Map<File, Element>()
 const setItemElement = (file: File, item: unknown) => {
   const el = item && typeof item === 'object' && '$el' in item ? item.$el : undefined
-  if (el instanceof Element) itemElements.set(file, el)
-  else itemElements.delete(file)
+  if (el instanceof Element) {
+    itemElements.set(file, el)
+    return
+  }
+
+  itemElements.delete(file)
 }
 
 // Removing the item that holds focus would drop focus to the page: it moves to the next file's remove button,
@@ -267,7 +281,7 @@ const open = () => {
 // The file input is hidden, so focus sent to it (e.g. by a failed form submission) moves to the area's button
 const onInputFocus = () => {
   focusTarget.value?.focus({ focusVisible: true } as FocusOptions)
-  focusVisible.value = true
+  isFocusVisible.value = true
 }
 
 const onInputChange = (event: Event) => {
@@ -285,7 +299,7 @@ const fileKey = (file: File) => {
 }
 
 // Drag state. `dragenter` / `dragleave` fire for every child, so a counter tells when the drag really leaves.
-const dropTarget = ref(false)
+const isDropTarget = ref(false)
 let dragDepth = 0
 
 const hasFiles = (event: DragEvent) =>
@@ -295,7 +309,7 @@ const onDragEnter = (event: DragEvent) => {
   if (isDisabled.value || !hasFiles(event)) return
   event.preventDefault()
   dragDepth++
-  dropTarget.value = dragMatchesAccept(event.dataTransfer?.items, props.accept)
+  isDropTarget.value = dragMatchesAccept(event.dataTransfer?.items, props.accept)
 }
 
 // A disabled area still cancels `dragover`, with no drop effect, so a stray drop doesn't make the browser open the file
@@ -304,17 +318,17 @@ const onDragOver = (event: DragEvent) => {
   event.preventDefault()
   const allowed = !isDisabled.value && dragMatchesAccept(event.dataTransfer?.items, props.accept)
   if (event.dataTransfer) event.dataTransfer.dropEffect = allowed ? 'copy' : 'none'
-  dropTarget.value = allowed
+  isDropTarget.value = allowed
 }
 
 const onDragLeave = () => {
   dragDepth = Math.max(0, dragDepth - 1)
-  if (dragDepth === 0) dropTarget.value = false
+  if (dragDepth === 0) isDropTarget.value = false
 }
 
 const onDrop = (event: DragEvent) => {
   dragDepth = 0
-  dropTarget.value = false
+  isDropTarget.value = false
   if (!hasFiles(event)) return
   event.preventDefault()
   if (!isDisabled.value) addFiles(Array.from(event.dataTransfer?.files ?? []))
@@ -328,17 +342,17 @@ const onPaste = (event: ClipboardEvent) => {
 }
 
 // Mirrors React Aria's `data-focus-visible`: keyboard focus on the area's hidden button rings the whole area
-const focusVisible = ref(false)
+const isFocusVisible = ref(false)
 const onFocus = (event: FocusEvent) => {
   try {
-    focusVisible.value = (event.target as Element).matches(':focus-visible')
+    isFocusVisible.value = (event.target as Element).matches(':focus-visible')
   } catch {
-    focusVisible.value = true
+    isFocusVisible.value = true
   }
 }
 
 const slotProps = computed<DropZoneSlotProps>(() => ({
-  dropTarget: dropTarget.value,
+  dropTarget: isDropTarget.value,
   disabled: isDisabled.value,
 }))
 

@@ -2,7 +2,7 @@
   <DashboardGroup unit="rem" :persistent="false">
     <DashboardSidebar
       id="app-layout-with-aside"
-      v-model:collapsed="navCollapsed"
+      v-model:collapsed="isNavCollapsed"
       collapsible
       :default-size="15"
       :collapsed-size="3"
@@ -344,5 +344,5 @@ const sections = [
 const expanded = ref<(string | number)[]>(['user'])
 
 // Starts on the icon rail so the conversation keeps room next to the aside.
-const navCollapsed = ref(true)
+const isNavCollapsed = ref(true)
 </script>

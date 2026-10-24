@@ -8,6 +8,7 @@ import type theme from './theme'
 
 type Breadcrumbs = typeof theme
 
+/** One entry of the `Breadcrumbs` trail. */
 export type BreadcrumbsItem = {
   /** The item text, shown unless `#item` is used. */
   label?: string
@@ -19,6 +20,7 @@ export type BreadcrumbsItem = {
   [key: string]: unknown
 }
 
+/** Props of `Breadcrumbs`, the navigation trail from the root to the current page. */
 export type BreadcrumbsProps<T extends BreadcrumbsItem = BreadcrumbsItem> = {
   /**
    * The element or component to render the list as.
@@ -40,11 +42,15 @@ export type BreadcrumbsProps<T extends BreadcrumbsItem = BreadcrumbsItem> = {
 
 /** What the `#item` and `#separator` slots receive for each item. */
 export type ItemSlotProps<T extends BreadcrumbsItem = BreadcrumbsItem> = {
+  /** The item the slot renders. */
   item: T
+  /** Position of the item in `items`. */
   index: number
+  /** Whether the item is the current page (the last one). */
   current: boolean
 }
 
+/** Slots of `Breadcrumbs`. */
 export type BreadcrumbsSlots<T extends BreadcrumbsItem = BreadcrumbsItem> = {
   /** Replaces an item's label. */
   item?: (props: ItemSlotProps<T>) => VNode[]

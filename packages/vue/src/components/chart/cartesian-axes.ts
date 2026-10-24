@@ -125,13 +125,12 @@ const layoutTicks = (
 
   return {
     allTicks: ticks.map((tick) => ({ ...tick, labelCoordinate: tick.coordinate })),
-    ticks: thinTicks(
-      ticks,
-      config.interval ?? 'preserveEnd',
-      labelSize,
-      [0, chartLength],
-      config.minTickGap ?? 5,
-    ),
+    ticks: thinTicks(ticks, {
+      interval: config.interval ?? 'preserveEnd',
+      size: labelSize,
+      bounds: [0, chartLength],
+      minTickGap: config.minTickGap ?? 5,
+    }),
   }
 }
 

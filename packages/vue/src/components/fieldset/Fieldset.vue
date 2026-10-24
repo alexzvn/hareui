@@ -78,5 +78,5 @@ const baseId = useId()
 const legendId = `${baseId}-legend`
 const descriptionId = `${baseId}-description`
 
-const ui = useComponentUI('fieldset', theme, () => ({}))
+const ui = useComponentUI('fieldset', { theme: theme, variantProps: () => ({}) })
 </script>

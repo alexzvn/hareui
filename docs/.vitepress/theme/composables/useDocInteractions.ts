@@ -29,12 +29,12 @@ const selectTab = (trigger: HTMLElement) => {
   if (!tabs) return
 
   for (const t of tabs.querySelectorAll<HTMLElement>(':scope > [role=tablist] > [role=tab]')) {
-    const selected = t === trigger
-    t.dataset.state = selected ? 'active' : 'inactive'
-    t.setAttribute('aria-selected', String(selected))
-    t.tabIndex = selected ? 0 : -1
+    const isSelected = t === trigger
+    t.dataset.state = isSelected ? 'active' : 'inactive'
+    t.setAttribute('aria-selected', String(isSelected))
+    t.tabIndex = isSelected ? 0 : -1
     const panel = document.getElementById(t.getAttribute('aria-controls') ?? '')
-    if (panel) panel.dataset.state = selected ? 'active' : 'inactive'
+    if (panel) panel.dataset.state = isSelected ? 'active' : 'inactive'
   }
 }
 

@@ -6,7 +6,7 @@
       class="w-fit min-w-72"
       :granularity="granularity"
       :hour-cycle="hourCycle"
-      :hide-time-zone="hideTimeZone"
+      :hide-time-zone="shouldHideTimeZone"
       name="date"
       label="Date and time"
       calendar-label="Event date"
@@ -30,7 +30,7 @@
               "
               :granularity="timeGranularity"
               :hour-cycle="hourCycle"
-              :hide-time-zone="hideTimeZone"
+              :hide-time-zone="shouldHideTimeZone"
               aria-label="Time"
               @update:model-value="
                 (time) => time && onSelect(mergeTime(time, calendarValue) as DateValue)
@@ -61,7 +61,7 @@
     </div>
 
     <div class="flex min-w-80 flex-col gap-2">
-      <Switch v-model="hideTimeZone" label="Hide timezone" />
+      <Switch v-model="shouldHideTimeZone" label="Hide timezone" />
     </div>
   </div>
 </template>
@@ -91,7 +91,7 @@ const hourCycleOptions: ListBoxItem[] = [
 
 const granularity = ref<Granularity>('minute')
 const hourCycle = ref<HourCycle>(12)
-const hideTimeZone = ref(false)
+const shouldHideTimeZone = ref(false)
 
 const timeGranularity = computed(() =>
   granularity.value === 'day' ? undefined : granularity.value,

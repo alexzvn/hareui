@@ -10,6 +10,7 @@ import type theme from './theme'
 
 type RadioButtonGroup = typeof theme
 
+/** Props of `RadioButtonGroup`: a single-selection group of card-style radio buttons. */
 export type RadioButtonGroupProps = {
   /** The value selected initially when uncontrolled. */
   defaultValue?: string
@@ -69,6 +70,7 @@ export type RadioButtonGroupProps = {
   ui?: ComponentSlots<RadioButtonGroup>
 } & FormFieldProps
 
+/** Slots of `RadioButtonGroup`. */
 export type RadioButtonGroupSlots = {
   /** The `RadioButtonGroupItem` components. */
   default?: () => VNode[]

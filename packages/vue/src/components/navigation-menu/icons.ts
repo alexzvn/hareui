@@ -17,11 +17,18 @@ const EXTERNAL =
 const ELLIPSIS_VERTICAL =
   'M8 4.5a1.5 1.5 0 1 0 0-3 1.5 1.5 0 0 0 0 3M9.5 8a1.5 1.5 0 1 1-3 0 1.5 1.5 0 0 1 3 0m0 5a1.5 1.5 0 1 1-3 0 1.5 1.5 0 0 1 3 0'
 
-const svg = (
-  viewBox: string,
-  d: string,
-  evenodd = false,
-): FunctionalComponent<{ class?: IconClass }> => {
+type SvgIconOptions = {
+  viewBox: string
+  d: string
+  /** Fill with the even-odd rule (glyphs with cut-outs). */
+  isEvenOdd?: boolean
+}
+
+const svg = ({
+  viewBox,
+  d,
+  isEvenOdd = false,
+}: SvgIconOptions): FunctionalComponent<{ class?: IconClass }> => {
   const icon: FunctionalComponent<{ class?: IconClass }> = (props) =>
     h(
       'svg',
@@ -37,7 +44,7 @@ const svg = (
         h('path', {
           d: d,
           fill: 'currentColor',
-          ...(evenodd ? { 'clip-rule': 'evenodd', 'fill-rule': 'evenodd' } : {}),
+          ...(isEvenOdd ? { 'clip-rule': 'evenodd', 'fill-rule': 'evenodd' } : {}),
         }),
       ],
     )
@@ -47,10 +54,15 @@ const svg = (
   return icon
 }
 
-export const ChevronRightIcon = svg('0 0 16 16', CHEVRON_RIGHT, true)
-export const ChevronDownIcon = svg('0 0 16 16', CHEVRON_DOWN, true)
-export const ExternalIcon = svg('0 0 7 7', EXTERNAL)
-export const EllipsisVerticalIcon = svg('0 0 16 16', ELLIPSIS_VERTICAL, true)
+export const ChevronRightIcon = svg({ viewBox: '0 0 16 16', d: CHEVRON_RIGHT, isEvenOdd: true })
+export const ChevronDownIcon = svg({ viewBox: '0 0 16 16', d: CHEVRON_DOWN, isEvenOdd: true })
+export const ExternalIcon = svg({ viewBox: '0 0 7 7', d: EXTERNAL })
+
+export const EllipsisVerticalIcon = svg({
+  viewBox: '0 0 16 16',
+  d: ELLIPSIS_VERTICAL,
+  isEvenOdd: true,
+})
 
 /**
  * Renders an item icon. A string is applied as a class on an empty `<span>` (icon-font / CSS-mask

@@ -19,6 +19,7 @@ type NavigationMenu = typeof theme
 /** An icon: a class string (icon-font / CSS-mask utilities such as `i-lucide-house`) or a component. */
 export type NavigationMenuIconValue = string | Component
 
+/** A link inside an item's dropdown content (horizontal) or popover (collapsed vertical). */
 export type NavigationMenuChildItem = {
   /** Description, only shown when `orientation` is `horizontal`. */
   description?: string
@@ -144,6 +145,7 @@ type NavigationMenuItemFields = {
   >
 }
 
+/** One entry of `items`: a link, a trigger for nested `children`, or a group label (vertical only). */
 export type NavigationMenuItem = NavigationMenuItemFields & {
   /** Extra fields are passed through to the slots as `item`. */
   [key: string]: unknown
@@ -160,6 +162,10 @@ export type NavigationMenuContentOptions = Omit<
   onInteractOutside?: (event: Event) => void
 }
 
+/**
+ * Props of the `NavigationMenu` component: a list of links for site or app navigation, as a
+ * horizontal bar with dropdown content or a vertical (optionally collapsible) sidebar menu.
+ */
 export type NavigationMenuProps<T extends NavigationMenuItem = NavigationMenuItem> = {
   /**
    * The element or component this component should render as.
@@ -286,6 +292,7 @@ export type NavigationMenuProps<T extends NavigationMenuItem = NavigationMenuIte
   ui?: ComponentSlots<NavigationMenu>
 }
 
+/** Events emitted by the `NavigationMenu` component. */
 export type NavigationMenuEmits = {
   /**
    * Emitted when the open item(s) change: a `string` (horizontal and vertical `single`) or a `string[]` (vertical `multiple`).
@@ -300,6 +307,7 @@ type ItemSlotProps<T extends NavigationMenuItem = NavigationMenuItem> = {
   ui: Record<string, (props?: object) => string>
 }
 
+/** Slots of the `NavigationMenu` component. */
 export type NavigationMenuSlots<T extends NavigationMenuItem = NavigationMenuItem> = {
   /** Replaces the whole content of an item's link. */
   item?: (props: ItemSlotProps<T>) => VNode[]

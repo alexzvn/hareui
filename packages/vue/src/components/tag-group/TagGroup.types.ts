@@ -9,6 +9,7 @@ import type theme from './theme'
 type TagGroup = typeof theme
 type Tag = typeof tagTheme
 
+/** One tag of a `TagGroup`. */
 export type TagGroupItem = {
   /** Unique identifier. Selected via `v-model:selected`, removed via the `remove` event. */
   id: string
@@ -18,6 +19,7 @@ export type TagGroupItem = {
   disabled?: boolean
 }
 
+/** Props of `TagGroup`: a keyboard-navigable list of tags that can be selected and removed. */
 export type TagGroupProps<T extends TagGroupItem = TagGroupItem> = {
   /** The tags to render. */
   items?: T[]
@@ -78,6 +80,7 @@ export type TagGroupProps<T extends TagGroupItem = TagGroupItem> = {
   }
 }
 
+/** Slots of `TagGroup`. */
 export type TagGroupSlots<T extends TagGroupItem = TagGroupItem> = {
   /** The group label content. Replaces the `label` prop. */
   label?: () => VNode[]
@@ -96,6 +99,7 @@ export type TagGroupSlots<T extends TagGroupItem = TagGroupItem> = {
   empty?: () => VNode[]
 }
 
+/** Events emitted by `TagGroup`. */
 export type TagGroupEmits = {
   /** Emitted with the removed ids, via the remove button or Delete / Backspace. */
   remove: [ids: string[]]

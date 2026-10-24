@@ -12,6 +12,7 @@ export type ChartTooltipPayloadEntry = {
   fill?: string
 }
 
+/** Space around the plot area, in px; sides left out keep the chart's default (8 at top and right, 0 elsewhere). */
 export type ChartMargin = {
   top?: number
   right?: number
@@ -19,6 +20,7 @@ export type ChartMargin = {
   left?: number
 }
 
+/** A chart row: the category and series values, keyed by name. */
 export type ChartDatum = Record<string, number | string>
 
 /** `horizontal`/`vertical`: cartesian charts (category axis on x / on y). `centric`/`radial`: polar charts. */
@@ -65,10 +67,16 @@ export type ChartCurveType =
  */
 export type ChartAxisDomainItem = number | string | ((value: number) => number)
 
+/** Axis domain: `[min, max]` ends, or a function from the data extent to the domain. */
 export type ChartAxisDomain =
   | [ChartAxisDomainItem, ChartAxisDomainItem]
   | ((range: [number, number]) => [number, number])
 
+/**
+ * Which tick labels an axis keeps when they would overlap: a number skips that many labels between kept ones
+ * (`0` keeps all); the others keep as many as fit while keeping the first, last or both ticks, and
+ * `equidistantPreserveStart` keeps an even spacing from the first.
+ */
 export type ChartAxisInterval =
   | number
   | 'preserveStart'
@@ -130,6 +138,7 @@ export type ChartSeries = {
   entries?: (index: number) => ChartTooltipPayloadEntry[]
 }
 
+/** The hovered or keyboard-focused datum of a chart, shared by its tooltip and series. */
 export type ChartActiveState = {
   /** Hovered or focused datum. */
   index: number | null
@@ -137,6 +146,7 @@ export type ChartActiveState = {
   seriesId: string | null
   /** Tooltip anchor in SVG pixels. */
   coordinate: ChartPoint | null
+  /** What picked the datum; keyboard picks are cleared on blur. */
   source: 'pointer' | 'keyboard' | null
 }
 

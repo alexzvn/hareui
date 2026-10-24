@@ -1,6 +1,8 @@
 import type { ComputedRef } from 'vue'
 import { computed, onScopeDispose, shallowReactive, watchEffect } from 'vue'
 
+import { warn } from '@/utils/warn'
+
 import { isSameAxisId } from './cartesian-values'
 import type { ChartAxisConfig, ChartAxisId } from './cartesian.types'
 import type { ChartContext } from './context'
@@ -12,7 +14,7 @@ const duplicateAxisMessage = (config: ChartAxisConfig) => {
   const prop = `:${config.axis}-axis="false"`
   const component = `Chart${config.axis.toUpperCase()}Axis`
 
-  return `[hareui] Two ${config.axis} axes with id "${id}" in one chart. When the chart root draws its axes from props, turn its axis off (\`${prop}\`) before adding a ${component}, or give the extra axis its own id.`
+  return `Two ${config.axis} axes with id "${id}" in one chart. When the chart root draws its axes from props, turn its axis off (\`${prop}\`) before adding a ${component}, or give the extra axis its own id.`
 }
 
 // Two axes with the same id usually mean a root config prop (`x-axis`, `y-axis`) and a child `ChartXAxis` /
@@ -29,7 +31,7 @@ const warnDuplicateAxes = (registry: AxisRegistry) => {
 
       if (seen.has(key) && !warned.has(key)) {
         warned.add(key)
-        console.warn(duplicateAxisMessage(config))
+        warn(duplicateAxisMessage(config))
       }
 
       seen.add(key)
@@ -81,7 +83,7 @@ export const useCartesianAxisConfigs = (
     return list
   })
 
-  if (import.meta.env?.DEV) warnDuplicateAxes(registry)
+  warnDuplicateAxes(registry)
 
   return { registerAxis, configs }
 }

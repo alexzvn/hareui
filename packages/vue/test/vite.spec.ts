@@ -25,7 +25,10 @@ describe('HareUIResolver', () => {
       .map(([name]) => name)
 
     expect(exported.length).toBeGreaterThan(80)
-    for (const name of exported) expect(resolve(name), name).toEqual({ name, from: '@hareui/vue' })
+
+    expect(exported.map((name) => [name, resolve(name)])).toEqual(
+      exported.map((name) => [name, { name, from: '@hareui/vue' }]),
+    )
   })
 
   it('resolves chart components to the charts subpath', () => {
@@ -39,8 +42,9 @@ describe('HareUIResolver', () => {
     expect(exported).toContain('AreaChart')
     expect(exported).toContain('ChartTooltipContent')
 
-    for (const name of exported)
-      expect(resolve(name), name).toEqual({ name, from: '@hareui/vue/charts' })
+    expect(exported.map((name) => [name, resolve(name)])).toEqual(
+      exported.map((name) => [name, { name, from: '@hareui/vue/charts' }]),
+    )
 
     expect(resolve('HChartArea', 'H')).toEqual({ name: 'ChartArea', from: '@hareui/vue/charts' })
   })

@@ -1,6 +1,6 @@
 <template>
   <DashboardGroup unit="rem" :persistent="false">
-    <DashboardSidebar id="mode" v-model:open="open" :mode="mode">
+    <DashboardSidebar id="mode" v-model:open="isOpen" :mode="mode">
       <template #header>
         <div class="flex min-w-0 items-center gap-3 px-1 py-2">
           <span
@@ -21,7 +21,7 @@
             icon-only
             size="sm"
             variant="ghost"
-            @click="open = true"
+            @click="isOpen = true"
           >
             <Icon icon="gravity-ui:bars" />
           </Button>
@@ -75,5 +75,5 @@ const items: NavigationMenuItem[] = [
 
 const modes = ['slideover', 'drawer', 'modal'] as const
 const mode = ref<(typeof modes)[number]>('drawer')
-const open = ref(false)
+const isOpen = ref(false)
 </script>

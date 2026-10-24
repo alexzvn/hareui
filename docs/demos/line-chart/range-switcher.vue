@@ -48,8 +48,10 @@ type Point = {
   value: number
 }
 
+type Span = { span: number; unit: 'hour' | 'day' | 'week' }
+
 /** Labels each point by how long ago it was: `span` units before the last point, which is "Now". */
-const points = (values: number[], span: number, unit: 'hour' | 'day' | 'week'): Point[] => {
+const points = (values: number[], { span, unit }: Span): Point[] => {
   const last = values.length - 1
   return values.map((value, index) => {
     const ago = Math.round((span * (last - index)) / last)
@@ -63,14 +65,16 @@ const ranges: Record<Range, { total: string; change: string; data: Point[] }> = 
     change: '+96 (0.5%)',
     data: points(
       [18144, 18150, 18149, 18162, 18171, 18168, 18183, 18190, 18204, 18199, 18216, 18229, 18240],
-      24,
-      'hour',
+      { span: 24, unit: 'hour' },
     ),
   },
   '7D': {
     total: '18,240',
     change: '+410 (2.3%)',
-    data: points([17830, 17874, 17901, 17962, 17950, 18031, 18088, 18102, 18175, 18240], 7, 'day'),
+    data: points([17830, 17874, 17901, 17962, 17950, 18031, 18088, 18102, 18175, 18240], {
+      span: 7,
+      unit: 'day',
+    }),
   },
   '30D': {
     total: '18,240',
@@ -80,8 +84,7 @@ const ranges: Record<Range, { total: string; change: string; data: Point[] }> = 
         17600, 17580, 17660, 17720, 17690, 17810, 17870, 17840, 17950, 18020, 17990, 18110, 18160,
         18240,
       ],
-      30,
-      'day',
+      { span: 30, unit: 'day' },
     ),
   },
   '90D': {
@@ -92,8 +95,7 @@ const ranges: Record<Range, { total: string; change: string; data: Point[] }> = 
         16320, 16410, 16380, 16620, 16790, 16740, 17030, 17210, 17160, 17480, 17690, 17820, 18010,
         18240,
       ],
-      90,
-      'day',
+      { span: 90, unit: 'day' },
     ),
   },
   '1Y': {
@@ -104,8 +106,7 @@ const ranges: Record<Range, { total: string; change: string; data: Point[] }> = 
         11135, 11620, 12240, 12110, 12980, 13650, 13420, 14380, 15210, 15030, 16140, 16890, 17540,
         18240,
       ],
-      52,
-      'week',
+      { span: 52, unit: 'week' },
     ),
   },
 }

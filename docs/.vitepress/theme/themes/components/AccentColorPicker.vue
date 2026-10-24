@@ -15,7 +15,7 @@
           :color="colorValue"
           :initial-color-hex="initialColorHex"
           :swatches="swatches"
-          @select="handleColorChange"
+          @select="onColorChange"
         />
 
         <!-- Color Area -->
@@ -29,7 +29,7 @@
           }"
           x-channel="saturation"
           y-channel="lightness"
-          @change="handleColorChange"
+          @change="onColorChange"
         />
 
         <!-- Hue Slider with Shuffle -->
@@ -39,7 +39,7 @@
             class="h-5 max-w-[184px] flex-1"
             color-space="hsl"
             :model-value="colorValue"
-            @update:model-value="handleColorChange"
+            @update:model-value="onColorChange"
           />
           <Button
             v-if="showShuffle"
@@ -47,7 +47,7 @@
             class="size-8 min-w-8 shrink-0 rounded-full"
             size="sm"
             variant="tertiary"
-            @click="handleShuffle"
+            @click="onShuffle"
           >
             <Icon icon="gravity-ui:shuffle" class="size-4" />
           </Button>
@@ -58,21 +58,21 @@
           v-if="showAlpha"
           channel="alpha"
           :model-value="colorValue"
-          @update:model-value="handleColorChange"
+          @update:model-value="onColorChange"
         />
 
         <!-- Color Field with Color Space Selector -->
-        <TextField v-if="showColorField" aria-labelledby="Accent color" :invalid="inputError">
+        <TextField v-if="showColorField" aria-labelledby="Accent color" :invalid="hasInputError">
           <InputGroup
             full-width
             class="rounded-xl"
             variant="secondary"
             :model-value="displayedInputValue"
             :ui="{ input: 'w-full flex-1 px-4 text-sm', suffix: 'border-s border-separator px-0' }"
-            @update:model-value="handleInputChange"
-            @focusin="handleInputFocus"
-            @focusout="handleInputBlur"
-            @keydown="handleInputKeyDown"
+            @update:model-value="onInputChange"
+            @focusin="onInputFocus"
+            @focusout="onInputBlur"
+            @keydown="onInputKeyDown"
           >
             <template #suffix>
               <Select
@@ -152,12 +152,12 @@ const FORMAT_ITEMS = [
 
 const currentColorFormat = ref<ColorFormat>('hex')
 const editingValue = ref<string | null>(null)
-const inputError = ref(false)
+const hasInputError = ref(false)
 
 const colorValue = computed(() => safeParseColor(props.value))
 const initialColorHex = computed(() => props.value.toLowerCase())
 
-const handleColorChange = (newColor: Color) => {
+const onColorChange = (newColor: Color) => {
   emit('change', newColor)
 }
 
@@ -167,7 +167,7 @@ const displayedInputValue = computed(
 )
 
 // Handle input change - validate on every change
-const handleInputChange = (newValue: string | number | undefined) => {
+const onInputChange = (newValue: string | number | undefined) => {
   const value = String(newValue ?? '')
 
   editingValue.value = value
@@ -179,45 +179,43 @@ const handleInputChange = (newValue: string | number | undefined) => {
   currentColorFormat.value = colorFormat
   const validatedColor = validateColorInput(value, colorFormat)
 
-  if (validatedColor) {
-    handleColorChange(validatedColor)
-    inputError.value = false
-  } else {
-    inputError.value = true
+  if (!validatedColor) {
+    hasInputError.value = true
+
+    return
   }
+
+  onColorChange(validatedColor)
+  hasInputError.value = false
 }
 
 const isInput = (event: Event) => (event.target as HTMLElement).matches('input')
 
-// On blur, reset to the current valid color if there was an error
-const handleInputBlur = (event: FocusEvent) => {
+// On blur, drop the in-progress text (and any error) so the field shows the current valid color
+const onInputBlur = (event: FocusEvent) => {
   if (!isInput(event)) return
 
-  if (inputError.value) {
-    editingValue.value = null
-    inputError.value = false
-  } else {
-    editingValue.value = null
-  }
+  editingValue.value = null
+  hasInputError.value = false
 }
 
-const handleInputKeyDown = (event: KeyboardEvent) => {
+const onInputKeyDown = (event: KeyboardEvent) => {
   if (!isInput(event)) return
 
   if (event.key === 'Escape') {
     editingValue.value = null
-    inputError.value = false
+    hasInputError.value = false
     ;(event.target as HTMLInputElement).blur()
   }
 }
 
-const handleInputFocus = (event: FocusEvent) => {
+const onInputFocus = (event: FocusEvent) => {
   if (!isInput(event)) return
   editingValue.value = formatColor(colorValue.value, currentColorFormat.value)
 }
 
-const handleShuffle = () => {
-  handleColorChange(randomColor())
+const onShuffle = () => {
+  onColorChange(randomColor())
 }
 
 const onFormatChange = (key: unknown) => {

@@ -198,14 +198,35 @@ const centre = (src: PNG): PNG => {
   return out
 }
 
+type ShotOptions = { clip: Box; captureBeyondViewport?: boolean }
+
 // Capturing beyond the viewport enlarges it, which moves anything fixed to it, so open overlays are shot within it.
-const shoot = async (page: Page, clip: Box, captureBeyondViewport = true): Promise<PNG> => {
+const shoot = async (
+  page: Page,
+  { clip, captureBeyondViewport = true }: ShotOptions,
+): Promise<PNG> => {
   return PNG.sync.read(
     Buffer.from(await page.screenshot({ clip, omitBackground: true, captureBeyondViewport })),
   )
 }
 
-const thumbnail = async (page: Page, slug: string, theme: 'light' | 'dark'): Promise<PNG> => {
+/** Pass 1 at 1x finds the demo's ink inside `clip`; the result is the box pass 2 shoots at the thumbnail's zoom. */
+const findInkCrop = async (page: Page, options: ShotOptions): Promise<Box> => {
+  const ink = inkBox(await shoot(page, options))
+  if (!ink) throw new Error('demo renders nothing')
+
+  // 2px of padding keeps antialiased edges that only appear at the higher zoom.
+  return {
+    x: options.clip.x + ink.x - 2,
+    y: options.clip.y + ink.y - 2,
+    width: ink.width + 4,
+    height: ink.height + 4,
+  }
+}
+
+type ThumbnailTarget = { slug: string; theme: 'light' | 'dark' }
+
+const thumbnail = async (page: Page, { slug, theme }: ThumbnailTarget): Promise<PNG> => {
   const pick = PICKS[slug] ?? {}
   const viewport = pick.page ?? pick.viewport ?? { width: 1440, height: 900 }
   await page.setViewport({ ...viewport, deviceScaleFactor: 1 })
@@ -234,11 +255,9 @@ const thumbnail = async (page: Page, slug: string, theme: 'light' | 'dark'): Pro
       if (pick.page) {
         // The preview route renders the demo inside the app root's full-viewport page wrapper.
         const wrapper = document.body.firstElementChild?.firstElementChild
-        const targets = !wrapper
-          ? []
-          : pick.select
-            ? [...wrapper.querySelectorAll(pick.select)]
-            : [wrapper]
+        if (!wrapper) return 0
+
+        const targets = pick.select ? [...wrapper.querySelectorAll(pick.select)] : [wrapper]
 
         targets.forEach((el) => el.setAttribute('data-thumbnail', ''))
 
@@ -259,12 +278,8 @@ const thumbnail = async (page: Page, slug: string, theme: 'light' | 'dark'): Pro
 
       trigger?.setAttribute('data-thumbnail-open', '')
 
-      const targets =
-        root && pick.select
-          ? [...root.querySelectorAll(pick.select)]
-          : demo && !pick.overlay
-            ? [demo]
-            : []
+      const overlayTargets = demo && !pick.overlay ? [demo] : []
+      const targets = root && pick.select ? [...root.querySelectorAll(pick.select)] : overlayTargets
 
       targets.forEach((el) => el.setAttribute('data-thumbnail', ''))
 
@@ -309,23 +324,10 @@ const thumbnail = async (page: Page, slug: string, theme: 'light' | 'dark'): Pro
   })
 
   // Full-page demos are fixed to the viewport, which capturing beyond it would resize.
-  const beyond = !pick.open && !pick.page
-  let box: Box
-  if (pick.crop) {
-    box = pick.crop
-  } else {
-    // Pass 1 at 1x finds the demo's ink; pass 2 shoots just that box at the thumbnail's zoom.
-    const ink = inkBox(await shoot(page, rect, beyond))
-    if (!ink) throw new Error('demo renders nothing')
-
-    // 2px of padding keeps antialiased edges that only appear at the higher zoom.
-    box = {
-      x: rect.x + ink.x - 2,
-      y: rect.y + ink.y - 2,
-      width: ink.width + 4,
-      height: ink.height + 4,
-    }
-  }
+  const shouldCaptureBeyondViewport = !pick.open && !pick.page
+  const box =
+    pick.crop ??
+    (await findInkCrop(page, { clip: rect, captureBeyondViewport: shouldCaptureBeyondViewport }))
 
   const max = pick.crop ? CROP_CONTENT : MAX_CONTENT
   const scale = Math.min(MAX_SCALE, max.width / box.width, max.height / box.height)
@@ -336,7 +338,7 @@ const thumbnail = async (page: Page, slug: string, theme: 'light' | 'dark'): Pro
     await sleep(300)
   }
 
-  const shot = await shoot(page, box, beyond)
+  const shot = await shoot(page, { clip: box, captureBeyondViewport: shouldCaptureBeyondViewport })
 
   return centre(pick.crop ? frame(shot, scale) : shot)
 }
@@ -367,6 +369,20 @@ const frame = (png: PNG, scale: number): PNG => {
 mkdirSync(OUT, { recursive: true })
 const browser = await puppeteer.launch({ headless: true })
 const failed: string[] = []
+
+const writeThumbnails = async (page: Page, slug: string) => {
+  for (const theme of ['light', 'dark'] as const) {
+    try {
+      writeFileSync(
+        `${OUT}${theme}-${slug}.png`,
+        PNG.sync.write(await thumbnail(page, { slug, theme })),
+      )
+    } catch (error) {
+      failed.push(`${theme}-${slug}: ${(error as Error).message}`)
+    }
+  }
+}
+
 try {
   const page = await browser.newPage()
 
@@ -374,17 +390,7 @@ try {
   await page.emulateMediaFeatures([{ name: 'prefers-reduced-motion', value: 'reduce' }])
 
   for (const slug of slugs) {
-    for (const theme of ['light', 'dark'] as const) {
-      try {
-        writeFileSync(
-          `${OUT}${theme}-${slug}.png`,
-          PNG.sync.write(await thumbnail(page, slug, theme)),
-        )
-      } catch (error) {
-        failed.push(`${theme}-${slug}: ${(error as Error).message}`)
-      }
-    }
-
+    await writeThumbnails(page, slug)
     console.log(slug)
   }
 } finally {

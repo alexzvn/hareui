@@ -87,9 +87,11 @@ export type ChartAxisProps = {
   class?: ClassValue
 }
 
+/** Props of the axis `#tick` slot, one call per tick label. */
 export type ChartAxisTickSlotProps = {
-  /** Label position in SVG px. */
+  /** Horizontal label position in SVG px. */
   x: number
+  /** Vertical label position in SVG px. */
   y: number
   /** Raw tick value. */
   value: number | string
@@ -97,9 +99,11 @@ export type ChartAxisTickSlotProps = {
   index: number
   /** Formatted label. */
   text: string
+  /** `text-anchor` that keeps the label clear of the axis line on this side of the plot. */
   textAnchor: 'start' | 'middle' | 'end'
 }
 
+/** Slots of `ChartXAxis` and `ChartYAxis`. */
 export type ChartAxisSlots = {
   /** Replaces each tick label. Render SVG (`<text>`). */
   tick?: (props: ChartAxisTickSlotProps) => unknown

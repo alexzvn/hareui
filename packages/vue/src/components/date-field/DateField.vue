@@ -84,7 +84,10 @@ const disabled = useFieldsetDisabled(() => props.disabled)
 /** The selected date. Bind with `v-model`. */
 const modelValue = defineModel<DateValue | null>()
 
-const ui = useComponentUI('dateField', theme, () => ({ fullWidth: props.fullWidth }))
+const ui = useComponentUI('dateField', {
+  theme,
+  variantProps: () => ({ fullWidth: props.fullWidth }),
+})
 
 const root = useTemplateRef<ComponentPublicInstance>('root')
 

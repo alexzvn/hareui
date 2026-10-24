@@ -4,6 +4,7 @@ import type { ClassValue } from '@/utils/tv'
 
 import type { ChartAxisDomain } from './types'
 
+/** Props of `ChartPolarRadiusAxis`: the value axis from the center outwards, drawn along one angle. */
 export type ChartPolarRadiusAxisProps = {
   /**
    * Direction of the axis line, in degrees. 0 is at 3 o'clock; 90 points up.
@@ -67,6 +68,7 @@ export type ChartPolarRadiusAxisProps = {
   class?: ClassValue
 }
 
+/** Slots of `ChartPolarRadiusAxis`. */
 export type ChartPolarRadiusAxisSlots = {
   /** Replaces a tick label. Render SVG (`<text>`, `<g>`). */
   tick?: (props: {

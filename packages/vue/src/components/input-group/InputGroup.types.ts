@@ -10,6 +10,7 @@ import type theme from './theme'
 
 type InputGroup = typeof theme
 
+/** Props of `InputGroup`, a text input (or textarea) with prefix and suffix content inside one field frame. */
 export type InputGroupProps = {
   /**
    * The native input type.
@@ -79,6 +80,7 @@ export type InputGroupProps = {
   ui?: ComponentSlots<InputGroup>
 } & FormFieldProps
 
+/** Slots of `InputGroup`. */
 export type InputGroupSlots = {
   /** Content rendered before the input (icon, text or a button). Replaces the `prefix` prop. */
   prefix?: () => VNode[]

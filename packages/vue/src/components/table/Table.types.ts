@@ -8,10 +8,16 @@ import type theme from './theme'
 
 type Table = typeof theme
 
+/** Key identifying a row for selection, expansion and `disabledKeys`: the row's `id`, or its index when it has none. */
 export type TableSelectionKey = string | number
+
+/** Selected (or expanded) row keys, or `'all'` when every selectable row is selected. */
 export type TableSelection = Set<TableSelectionKey> | 'all'
+
+/** Direction of a column sort. */
 export type TableSortDirection = 'ascending' | 'descending'
 
+/** The column the table is sorted by and in which direction, used by `v-model:sortDescriptor`. */
 export type TableSortDescriptor = {
   /** Key of the column being sorted. */
   column: string
@@ -19,6 +25,7 @@ export type TableSortDescriptor = {
   direction: TableSortDirection
 }
 
+/** Definition of one table column: its key, header label, alignment, sizing and sorting. */
 export type TableColumn = {
   /** Unique column key. Looked up as `row[key]` for the default cell content and matched against `sortDescriptor.column`. */
   key: string
@@ -48,6 +55,7 @@ export type TableColumn = {
   class?: ClassValue
 }
 
+/** One row of table data. Cell values are read by column key; `children` nests rows under it. */
 export type TableRow = {
   /** Unique row key. Falls back to the row's index among its siblings when omitted — provide one explicitly for nested, filtered or reordered rows. */
   id?: string | number
@@ -59,6 +67,7 @@ export type TableRow = {
   [key: string]: unknown
 }
 
+/** Props of the `Table` component. */
 export type TableProps<T extends TableRow = TableRow> = {
   /** Column definitions, in display order. */
   columns: TableColumn[]
@@ -102,6 +111,7 @@ export type TableProps<T extends TableRow = TableRow> = {
   ui?: ComponentSlots<Table>
 }
 
+/** Props passed to a `#<column.key>-cell` slot. */
 export type TableCellSlotProps<T extends TableRow = TableRow> = {
   /** The row being rendered. */
   row: T
@@ -121,6 +131,7 @@ export type TableCellSlotProps<T extends TableRow = TableRow> = {
   toggle: () => void
 }
 
+/** Props passed to a `#<column.key>-header` slot. */
 export type TableHeaderSlotProps = {
   /** The column being rendered. */
   column: TableColumn
@@ -128,6 +139,7 @@ export type TableHeaderSlotProps = {
   sortDirection: TableSortDirection | undefined
 }
 
+/** Slots of the `Table` component. */
 export type TableSlots<T extends TableRow = TableRow> = {
   /** Header content for a column, replacing `column.label`. Named dynamically per column: `#<column.key>-header="{ column, sortDirection }"`. */
   [slot: `${string}-header`]: ((props: TableHeaderSlotProps) => VNode[]) | undefined

@@ -9,7 +9,7 @@
           class="inline-flex h-9 cursor-(--cursor-interactive) items-center rounded-full border p-1"
           data-theme-toggle=""
           type="button"
-          @click="handleModeSwitch"
+          @click="onModeSwitch"
         >
           <svg
             :class="[
@@ -71,9 +71,9 @@ import { useKeyPress } from '../composables/keyPress'
 
 defineProps<{ label?: string }>()
 
-const { isDark, toggle: handleModeSwitch } = useColorMode()
+const { isDark, toggle: onModeSwitch } = useColorMode()
 
-useKeyPress('s', handleModeSwitch)
+useKeyPress('s', { onPress: onModeSwitch })
 
 const ITEM = 'size-6.5 rounded-full p-1.5'
 </script>

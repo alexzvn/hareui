@@ -1,5 +1,6 @@
 import type { ClassValue } from '@/utils/tv'
 
+/** Props of `ChartGrid`: reference lines across the plot area at the axis ticks. */
 export type ChartGridProps = {
   /**
    * Draws horizontal lines at the y axis ticks.

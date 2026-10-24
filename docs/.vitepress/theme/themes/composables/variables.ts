@@ -128,9 +128,14 @@ const setVariables = (update: Partial<ThemeBuilderState>) => {
     if (!(key in update)) continue
     const value = update[key] as never
     const parser = parsers[key] as Parser<unknown>
-    if (value === null || value === undefined || parser.eq(value, parser.defaultValue))
+    const isDefault = value === null || value === undefined || parser.eq(value, parser.defaultValue)
+
+    if (isDefault) {
       params.delete(key)
-    else params.set(key, parser.serialize(value))
+      continue
+    }
+
+    params.set(key, parser.serialize(value))
   }
 
   const query = renderQuery(params)
@@ -187,7 +192,7 @@ export const useRandomizeVariables = () => {
       formRadius: locked('formRadius') ? variables.formRadius : randomPick([...radiusIds]),
       hue: locked('hue') ? variables.hue : Math.floor(Math.random() * 360),
       lightness: locked('lightness') ? variables.lightness : randomInRange(0.5, 0.85),
-      radius: locked('radius') ? variables.radius : randomPick([...radiusOptions.map((r) => r.id)]),
+      radius: locked('radius') ? variables.radius : randomPick(radiusOptions.map((r) => r.id)),
     })
   }
 }

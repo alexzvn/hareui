@@ -8,6 +8,7 @@ import type theme from './theme'
 
 type Fieldset = typeof theme
 
+/** Props of the `Fieldset` component: groups related form fields under a legend. */
 export type FieldsetProps = {
   /**
    * The element or component to render as.
@@ -29,6 +30,7 @@ export type FieldsetProps = {
   ui?: ComponentSlots<Fieldset>
 }
 
+/** Slots of the `Fieldset` component. */
 export type FieldsetSlots = {
   /** The legend content. Replaces the `legend` prop. */
   legend?: () => VNode[]

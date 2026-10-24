@@ -9,6 +9,10 @@ import type theme from './theme'
 
 type DashboardGroup = typeof theme
 
+/**
+ * Props of `DashboardGroup`, the layout root of a dashboard: it holds the sidebars and panels and decides how
+ * their sizes and collapsed state are persisted.
+ */
 export type DashboardGroupProps = {
   /**
    * The element or component this component should render as.
@@ -41,6 +45,7 @@ export type DashboardGroupProps = {
   ui?: ComponentSlots<DashboardGroup>
 }
 
+/** Slots of `DashboardGroup`. */
 export type DashboardGroupSlots = {
   /** The sidebars and panels. */
   default?: () => VNode[]

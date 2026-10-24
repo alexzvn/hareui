@@ -67,7 +67,7 @@
           </div>
           <Switch
             aria-label="Vibrant palette"
-            :model-value="vibrant"
+            :model-value="isVibrant"
             @update:model-value="setStoredVibrantPalette(!!$event)"
           />
         </div>
@@ -133,16 +133,16 @@ const THEMES: { id: DesignThemeId; label: string; image: string }[] = [
 ]
 
 const active = ref<DesignThemeId>('default')
-const vibrant = ref(false)
-const mounted = ref(false)
+const isVibrant = ref(false)
+const isMounted = ref(false)
 
 const syncAppearance = () => {
   active.value = getStoredDesignTheme()
-  vibrant.value = getStoredVibrantPalette()
+  isVibrant.value = getStoredVibrantPalette()
 }
 
 onMounted(() => {
-  mounted.value = true
+  isMounted.value = true
   syncAppearance()
   window.addEventListener(DESIGN_THEME_CHANGE_EVENT, syncAppearance)
 })
@@ -150,7 +150,7 @@ onMounted(() => {
 onBeforeUnmount(() => window.removeEventListener(DESIGN_THEME_CHANGE_EVENT, syncAppearance))
 
 const current = computed(() => THEMES.find((t) => t.id === active.value))
-const showAvatar = computed(() => mounted.value && active.value !== 'default' && !!current.value)
+const showAvatar = computed(() => isMounted.value && active.value !== 'default' && !!current.value)
 
 // HeroUI links to its own /themes builder; HareUI ports it, so link to ours.
 const themeBuilderHref = computed(() => {
@@ -176,9 +176,13 @@ const onOptionKeydown = (event: KeyboardEvent, index: number) => {
   if (step) {
     event.preventDefault()
     focusOption(index + step)
-  } else if (event.key === 'Enter' || event.key === ' ') {
-    event.preventDefault()
-    setStoredDesignTheme(THEMES[index]!.id)
+
+    return
   }
+
+  if (event.key !== 'Enter' && event.key !== ' ') return
+
+  event.preventDefault()
+  setStoredDesignTheme(THEMES[index]!.id)
 }
 </script>

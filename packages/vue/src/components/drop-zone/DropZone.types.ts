@@ -16,6 +16,7 @@ export type DropZoneRejection = {
   reason: 'type' | 'size'
 }
 
+/** Props of `DropZone`: a file drop area with a picker button, accept/size filtering, form validation and a built-in file list. */
 export type DropZoneProps = {
   /** The selected files. Bind with `v-model`. */
   modelValue?: File[]
@@ -77,6 +78,7 @@ export type DropZoneProps = {
   ui?: ComponentSlots<DropZone>
 } & FormFieldProps
 
+/** Props passed to the `icon`, `label`, `description` and `trigger` slots. */
 export type DropZoneSlotProps = {
   /** Whether files are dragged over the area. */
   dropTarget: boolean
@@ -84,6 +86,7 @@ export type DropZoneSlotProps = {
   disabled: boolean
 }
 
+/** Props passed to the `files` slot. */
 export type DropZoneFilesSlotProps = {
   /** The selected files. */
   files: File[]
@@ -91,6 +94,7 @@ export type DropZoneFilesSlotProps = {
   removeFile: (file: File | number) => void
 }
 
+/** Slots of `DropZone`. */
 export type DropZoneSlots = {
   /** The area icon. Replaces the default upload icon. */
   icon?: (props: DropZoneSlotProps) => VNode[]
@@ -106,6 +110,7 @@ export type DropZoneSlots = {
   error?: (props: ValidationResult) => VNode[]
 }
 
+/** Events emitted by `DropZone`. */
 export type DropZoneEmits = {
   /** Emitted with the new selection when files are added or removed. */
   'update:modelValue': [files: File[]]

@@ -44,10 +44,12 @@ export type {
 export { default as ChartPie } from './ChartPie.vue'
 export type { ChartPieProps, ChartPieSlots } from './ChartPie.types'
 export { default as ChartPolarAngleAxis } from './ChartPolarAngleAxis.vue'
+
 export type {
   ChartPolarAngleAxisProps,
   ChartPolarAngleAxisSlots,
 } from './ChartPolarAngleAxis.types'
+
 export { default as ChartPolarGrid } from './ChartPolarGrid.vue'
 export type { ChartPolarGridProps } from './ChartPolarGrid.types'
 export { default as ChartPolarRadiusAxis } from './ChartPolarRadiusAxis.vue'

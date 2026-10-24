@@ -220,31 +220,31 @@ describe('useFieldChrome', () => {
   })
 
   it('re-renders a part when its slot goes from absent to present', async () => {
-    const show = ref(false)
+    const isShown = ref(false)
     const Parent = defineComponent({
       setup: () => () =>
         h(
           Harness,
           { id: 'f', description: 'Prop' },
-          show.value ? { description: () => 'From slot' } : {},
+          isShown.value ? { description: () => 'From slot' } : {},
         ),
     })
 
     const w = mount(Parent)
     expect(w.get('#f-description').text()).toBe('Prop')
-    show.value = true
+    isShown.value = true
     await nextTick()
     expect(w.get('#f-description').text()).toBe('From slot')
 
-    const labelShow = ref(false)
+    const isLabelShown = ref(false)
     const LabelParent = defineComponent({
       setup: () => () =>
-        h(Harness, { id: 'g' }, labelShow.value ? { label: () => 'Late label' } : {}),
+        h(Harness, { id: 'g' }, isLabelShown.value ? { label: () => 'Late label' } : {}),
     })
 
     const lw = mount(LabelParent)
     expect(lw.find('[data-slot=label]').exists()).toBe(false)
-    labelShow.value = true
+    isLabelShown.value = true
     await nextTick()
     expect(lw.get('[data-slot=label]').text()).toBe('Late label')
   })

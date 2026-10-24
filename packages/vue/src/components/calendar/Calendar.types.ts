@@ -9,6 +9,7 @@ import type { PageBehavior, VisibleDuration } from './useCalendarDurationView'
 
 type Calendar = typeof theme
 
+/** Props of `Calendar`: a month (or week/day) grid for picking one or several dates. */
 export type CalendarProps = {
   /** Accessible label for the calendar. */
   ariaLabel?: string
@@ -115,6 +116,7 @@ export type CalendarProps = {
   ui?: ComponentSlots<Calendar>
 }
 
+/** Slots of `Calendar`, for replacing the nav icons and the content of each day cell. */
 export type CalendarSlots = {
   /** Replaces the chevron icon inside a nav button. */
   navIcon?: (props: { direction: 'previous' | 'next' }) => VNode[]
@@ -129,6 +131,7 @@ export type CalendarSlots = {
   }) => VNode[]
 }
 
+/** Events emitted by `Calendar`. */
 export type CalendarEmits = {
   /** Emitted when the selected date(s) change. */
   'update:modelValue': [value: DateValue | DateValue[] | undefined]

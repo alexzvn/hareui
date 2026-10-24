@@ -7,9 +7,9 @@
           v-model:hidden="hidden"
           :items="config.legendItems"
           toggleable
-          :orientation="stackedLegend ? 'horizontal' : 'vertical'"
+          :orientation="isLegendStacked ? 'horizontal' : 'vertical'"
           v-bind="config.legend.props"
-          :class="[stackedLegend && 'justify-center', chart.classes('legend')]"
+          :class="[isLegendStacked && 'justify-center', chart.classes('legend')]"
         >
           <template v-if="$slots['legend-item']" #item="item">
             <slot name="legend-item" v-bind="item" />
@@ -69,7 +69,7 @@ const toggle = (key: string) => {
   hidden.value = toggleHiddenKey(hidden.value, key)
 }
 
-const stackedLegend = computed(
+const isLegendStacked = computed(
   () => props.config.legend?.position === 'top' || props.config.legend?.position === 'bottom',
 )
 </script>

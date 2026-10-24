@@ -2,6 +2,7 @@ import type { ClassValue } from '@/utils/tv'
 
 import type { ChartLabelPosition } from './label'
 
+/** Props of `ChartLabel`: value labels on each datum of a series, or one label inside a reference shape. */
 export type ChartLabelProps = {
   /** Key of the label value in each row. Inside a series it defaults to the series values. */
   dataKey?: string
@@ -26,6 +27,7 @@ export type ChartLabelProps = {
   class?: ClassValue
 }
 
+/** Props of the `ChartLabel` default slot, one call per label. */
 export type ChartLabelSlotProps = {
   /** Raw value. */
   value: number | string | undefined
@@ -33,13 +35,17 @@ export type ChartLabelSlotProps = {
   text: string
   /** Data index (`-1` for a single label). */
   index: number
-  /** Anchor point in SVG px. */
+  /** Horizontal anchor point in SVG px. */
   x: number
+  /** Vertical anchor point in SVG px. */
   y: number
+  /** `text-anchor` that keeps the label clear of its shape at this position. */
   textAnchor: 'start' | 'middle' | 'end'
+  /** `dominant-baseline` that keeps the label clear of its shape at this position. */
   dominantBaseline: 'auto' | 'central' | 'hanging'
 }
 
+/** Slots of `ChartLabel`. */
 export type ChartLabelSlots = {
   /** Replaces each label. Render SVG (`<text>`, `<g>`). */
   default?: (props: ChartLabelSlotProps) => unknown

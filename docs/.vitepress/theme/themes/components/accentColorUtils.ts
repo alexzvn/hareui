@@ -39,18 +39,21 @@ export type ColorFormat = 'hex' | 'hsl' | 'rgb' | 'hsb' | 'oklch'
  * -----------------------------------------------------------------------------------------------*/
 
 const toFixed2 = (value: number) => Math.round(value * 100) / 100
-const clamp = (value: number, min: number, max: number) => Math.min(Math.max(value, min), max)
+
+const clamp = (value: number, [min, max]: readonly [number, number]) =>
+  Math.min(Math.max(value, min), max)
+
 const wrapHue = (hue: number) => ((hue % 360) + 360) % 360
 
 /** React Aria clamps channels (and keeps two decimals) when it parses a color; Reka's `normalizeColor` does neither. */
 const clampColor = (color: Color): Color => {
-  const alpha = clamp(color.alpha, 0, 1)
+  const alpha = clamp(color.alpha, [0, 1])
   if (color.space === 'rgb')
     return {
       ...color,
-      r: clamp(color.r, 0, 255),
-      g: clamp(color.g, 0, 255),
-      b: clamp(color.b, 0, 255),
+      r: clamp(color.r, [0, 255]),
+      g: clamp(color.g, [0, 255]),
+      b: clamp(color.b, [0, 255]),
       alpha,
     }
 
@@ -58,16 +61,16 @@ const clampColor = (color: Color): Color => {
     return {
       ...color,
       h: toFixed2(wrapHue(color.h)),
-      s: toFixed2(clamp(color.s, 0, 100)),
-      l: toFixed2(clamp(color.l, 0, 100)),
+      s: toFixed2(clamp(color.s, [0, 100])),
+      l: toFixed2(clamp(color.l, [0, 100])),
       alpha,
     }
 
   return {
     ...color,
     h: toFixed2(wrapHue(color.h)),
-    s: toFixed2(clamp(color.s, 0, 100)),
-    b: toFixed2(clamp(color.b, 0, 100)),
+    s: toFixed2(clamp(color.s, [0, 100])),
+    b: toFixed2(clamp(color.b, [0, 100])),
     alpha,
   }
 }
@@ -186,42 +189,43 @@ export const detectColorFormat = (value: string): ColorFormat | null => {
  * Format Color
  * -----------------------------------------------------------------------------------------------*/
 
+const formatOklch = (color: Color) => {
+  const oklchColor = converter('oklch')(toCss(color))
+
+  if (!oklchColor) return toHex(color)
+
+  // Round each channel value
+  const roundedColor = mapper(round(4), 'oklch')(oklchColor)
+
+  return formatCss(roundedColor)
+}
+
+const COLOR_FORMATTERS = {
+  hex: toHex,
+  rgb: (color: Color) => {
+    const rgb = convertToRgb(color)
+
+    return `rgb(${Math.round(rgb.r)}, ${Math.round(rgb.g)}, ${Math.round(rgb.b)})`
+  },
+  hsl: (color: Color) => {
+    const hsl = convertToHsl(color)
+
+    return `hsl(${toFixed2(hsl.h)}, ${toFixed2(hsl.s)}%, ${toFixed2(hsl.l)}%)`
+  },
+  hsb: (color: Color) => {
+    const hsb = convertToHsb(color)
+
+    return `hsb(${toFixed2(hsb.h)}, ${toFixed2(hsb.s)}%, ${toFixed2(hsb.b)}%)`
+  },
+  oklch: formatOklch,
+} as const satisfies Record<ColorFormat, (color: Color) => string>
+
 /**
  * Formats a Color object to a string in the specified format.
  * Handles OKLCH conversion using culori.
  */
-export const formatColor = (color: Color, format: ColorFormat): string => {
-  switch (format) {
-    case 'hex':
-      return toHex(color)
-    case 'rgb': {
-      const rgb = convertToRgb(color)
-      return `rgb(${Math.round(rgb.r)}, ${Math.round(rgb.g)}, ${Math.round(rgb.b)})`
-    }
-    case 'hsl': {
-      const hsl = convertToHsl(color)
-      return `hsl(${toFixed2(hsl.h)}, ${toFixed2(hsl.s)}%, ${toFixed2(hsl.l)}%)`
-    }
-    case 'hsb': {
-      const hsb = convertToHsb(color)
-      return `hsb(${toFixed2(hsb.h)}, ${toFixed2(hsb.s)}%, ${toFixed2(hsb.b)}%)`
-    }
-    default: {
-      const oklch = converter('oklch')
-      const roundTo4 = round(4)
-      const oklchColor = oklch(toCss(color))
-
-      if (!oklchColor) {
-        return toHex(color)
-      }
-
-      // Round each channel value
-      const roundedColor = mapper(roundTo4, 'oklch')(oklchColor)
-
-      return formatCss(roundedColor)
-    }
-  }
-}
+export const formatColor = (color: Color, format: ColorFormat): string =>
+  COLOR_FORMATTERS[format](color)
 
 export const getHueFromColor = (color: Color): number => {
   const oklch = converter('oklch')(formatColor(color, 'hsl'))
@@ -254,6 +258,34 @@ export const getValuesFromOklch = (
  * Validates if a string is a valid color for the given format.
  * Returns the parsed Color if valid, null otherwise.
  */
+// Accepts a functional notation (both comma and space-separated) matching `pattern`.
+const parseFunctionalColor = (pattern: RegExp) => (input: string) =>
+  pattern.test(input) ? parseColor(normalizeColorSyntax(input)) : null
+
+const COLOR_INPUT_PARSERS = {
+  // Accept hex colors (with or without #)
+  hex: (input: string) => {
+    if (!/^#?([0-9A-Fa-f]{3}|[0-9A-Fa-f]{6}|[0-9A-Fa-f]{8})$/.test(input)) return null
+
+    return parseColor(input.startsWith('#') ? input : `#${input}`)
+  },
+  hsl: parseFunctionalColor(/^hsla?\s*\(/i),
+  rgb: parseFunctionalColor(/^rgba?\s*\(/i),
+  hsb: parseFunctionalColor(/^hsba?\s*\(/i),
+  oklch: (input: string) => {
+    if (!/^oklch\s*\(/i.test(input)) return null
+
+    // Convert oklch to hsl for the color parser
+    const hsl = formatHsl(input)
+
+    return hsl ? parseColor(hsl) : null
+  },
+} as const satisfies Record<ColorFormat, (input: string) => Color | null>
+
+/**
+ * Validates if a string is a valid color for the given format.
+ * Returns the parsed Color if valid, null otherwise.
+ */
 export const validateColorInput = (input: string, format: ColorFormat): Color | null => {
   const trimmed = input.trim()
 
@@ -265,64 +297,7 @@ export const validateColorInput = (input: string, format: ColorFormat): Color | 
 
     if (!parsed) return null
 
-    // For format-specific validation
-    switch (format) {
-      case 'hex':
-        // Accept hex colors (with or without #)
-        if (/^#?([0-9A-Fa-f]{3}|[0-9A-Fa-f]{6}|[0-9A-Fa-f]{8})$/.test(trimmed)) {
-          const hexValue = trimmed.startsWith('#') ? trimmed : `#${trimmed}`
-
-          return parseColor(hexValue)
-        }
-
-        return null
-
-      case 'hsl':
-        // Accept hsl/hsla format (both comma and space-separated)
-        if (/^hsla?\s*\(/i.test(trimmed)) {
-          const normalized = normalizeColorSyntax(trimmed)
-
-          return parseColor(normalized)
-        }
-
-        return null
-
-      case 'rgb':
-        // Accept rgb/rgba format (both comma and space-separated)
-        if (/^rgba?\s*\(/i.test(trimmed)) {
-          const normalized = normalizeColorSyntax(trimmed)
-
-          return parseColor(normalized)
-        }
-
-        return null
-
-      case 'hsb':
-        // Accept hsb/hsba format (both comma and space-separated)
-        if (/^hsba?\s*\(/i.test(trimmed)) {
-          const normalized = normalizeColorSyntax(trimmed)
-
-          return parseColor(normalized)
-        }
-
-        return null
-
-      case 'oklch':
-        // Accept oklch format
-        if (/^oklch\s*\(/i.test(trimmed)) {
-          // Convert oklch to hsl for the color parser
-          const hsl = formatHsl(trimmed)
-
-          if (hsl) {
-            return parseColor(hsl)
-          }
-        }
-
-        return null
-
-      default:
-        return null
-    }
+    return COLOR_INPUT_PARSERS[format](trimmed)
   } catch {
     return null
   }

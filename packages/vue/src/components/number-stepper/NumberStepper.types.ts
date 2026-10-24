@@ -11,6 +11,7 @@ import type theme from './theme'
 
 type NumberStepper = typeof theme
 
+/** Props for `NumberStepper`, a numeric value adjusted with increment and decrement buttons. */
 export type NumberStepperProps = {
   /** Label text rendered above the stepper. */
   label?: string
@@ -94,13 +95,19 @@ export type NumberStepperProps = {
   ui?: ComponentSlots<NumberStepper>
 } & FormFieldProps
 
+/** Slots for `NumberStepper`. */
 export type NumberStepperSlots = {
   /** Label content. Replaces the `label` prop. */
   label?: () => VNode[]
   /** Decrement button content. Defaults to a minus icon. */
   decrement?: () => VNode[]
   /** Value content. Defaults to the formatted value. */
-  value?: (props: { value: number | undefined; formattedValue: string }) => VNode[]
+  value?: (props: {
+    /** The current value; `undefined` while empty. */
+    value: number | undefined
+    /** The value formatted with `formatOptions` and `locale`. */
+    formattedValue: string
+  }) => VNode[]
   /** Increment button content. Defaults to a plus icon. */
   increment?: () => VNode[]
   /** Description content. Replaces the `description` prop. */

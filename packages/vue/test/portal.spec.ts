@@ -164,6 +164,7 @@ describe('nested dismissable layers in a shadow root', () => {
 
     // Reka looks the DialogTitle up with document.getElementById, which can't see into a shadow root, so it warns
     // about the title the Modal does render. Drop only that warning.
+    // oxlint-disable-next-line eslint/no-console -- keeps the real console.warn so every other warning still reaches the test output
     const warn = console.warn
     const spy = vi.spyOn(console, 'warn').mockImplementation((...args: unknown[]) => {
       if (!String(args[0]).includes('requires a `DialogTitle`')) warn(...args)

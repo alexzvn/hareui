@@ -8,6 +8,7 @@ import type theme from './theme'
 
 type DashboardResizeHandle = typeof theme
 
+/** Props of `DashboardResizeHandle`, a handle that resizes a `DashboardSidebar` or `DashboardPanel`; render it in their `resize-handle` slot. */
 export type DashboardResizeHandleProps = {
   /**
    * The element or component this component should render as.
@@ -20,6 +21,7 @@ export type DashboardResizeHandleProps = {
   ui?: ComponentSlots<DashboardResizeHandle>
 }
 
+/** Slots of `DashboardResizeHandle`. */
 export type DashboardResizeHandleSlots = {
   /** Custom handle content. */
   default?: () => VNode[]

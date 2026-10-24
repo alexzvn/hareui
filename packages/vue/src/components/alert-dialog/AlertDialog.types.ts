@@ -8,6 +8,7 @@ import type theme from './theme'
 
 type AlertDialog = typeof theme
 
+/** Props of `AlertDialog`, a modal dialog that interrupts the user with an important message and requires a response. */
 export type AlertDialogProps = {
   /** The controlled open state of the alert dialog. Use with `v-model:open`. */
   open?: boolean
@@ -66,6 +67,7 @@ export type AlertDialogProps = {
   ui?: ComponentSlots<AlertDialog>
 }
 
+/** Slots of `AlertDialog`. */
 export type AlertDialogSlots = {
   /** The trigger element. Omit to control the alert dialog purely via `v-model:open`. */
   default?: (props: { open: boolean }) => VNode[]
@@ -85,6 +87,7 @@ export type AlertDialogSlots = {
   content?: (props: { close: () => void }) => VNode[]
 }
 
+/** Events emitted by `AlertDialog`. */
 export type AlertDialogEmits = {
   /** Emitted when the open state changes. */
   'update:open': [value: boolean]

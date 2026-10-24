@@ -132,9 +132,16 @@ const onPointerEnd = (event: PointerEvent) => {
 
   isDragging.value = false
 
-  if (event.type !== 'pointercancel' && (offset > SNAP_HEIGHT * 0.5 || velocity > 10))
+  const shouldDismiss =
+    event.type !== 'pointercancel' && (offset > SNAP_HEIGHT * 0.5 || velocity > 10)
+
+  if (shouldDismiss) {
     emit('update:isOpen', false)
-  else y.value = SNAP_OFFSET
+
+    return
+  }
+
+  y.value = SNAP_OFFSET
 }
 
 // React Aria focuses the dialog itself on open (see HareUI's Modal).

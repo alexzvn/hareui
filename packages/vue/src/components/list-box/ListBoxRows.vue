@@ -79,7 +79,7 @@
     <ListBoxOption v-else v-bind="optionProps(block) as any" />
   </template>
   <!-- RAC renders the empty state inside an option row (a listbox owns only options and groups) -->
-  <div v-if="empty && (slots.empty || emptyText)" role="option" style="display: contents">
+  <div v-if="isEmpty && (slots.empty || emptyText)" role="option" style="display: contents">
     <div data-slot="empty-state" :class="classes.emptyState()">
       <slot name="empty">
         {{ emptyText }}
@@ -159,12 +159,16 @@ const itemSlots = [
 
 const forwarded = computed(() => itemSlots.filter((name) => slots[name]))
 const sectionLabelled = (section: ListBoxSection) => !!(section.label || slots['section-label'])
-const empty = computed(() => countRows(props.blocks) === 0)
+const isEmpty = computed(() => countRows(props.blocks) === 0)
+
+const getBlockRows = (block: CollectionBlock): CollectionRow[] => {
+  if (block.kind === 'item') return [block]
+
+  return block.kind === 'section' ? block.rows : []
+}
 
 // Virtualized: flat option rows, looked up by value
-const flatRows = computed(() =>
-  props.blocks.flatMap((b) => (b.kind === 'item' ? [b] : b.kind === 'section' ? b.rows : [])),
-)
+const flatRows = computed(() => props.blocks.flatMap(getBlockRows))
 
 const virtualOptions = computed(() =>
   typeof props.virtualize === 'object' ? props.virtualize : {},
@@ -209,14 +213,14 @@ const optionProps = (row: CollectionRow) => {
 
 // Load-more sentinel, as in ListBox
 const sentinel = useTemplateRef<HTMLElement>('sentinel')
-const sentinelVisible = ref(false)
+const isSentinelVisible = ref(false)
 let observer: IntersectionObserver | undefined
 watch(sentinel, (el) => {
   observer?.disconnect()
   if (!el) return
 
   observer = new IntersectionObserver(([entry]) => {
-    sentinelVisible.value = !!entry?.isIntersecting
+    isSentinelVisible.value = !!entry?.isIntersecting
   })
 
   observer.observe(el)
@@ -224,7 +228,7 @@ watch(sentinel, (el) => {
 
 onBeforeUnmount(() => observer?.disconnect())
 
-watch([sentinelVisible, () => props.loading, () => countRows(props.blocks)], () => {
-  if (sentinelVisible.value && props.loading === false) emit('loadMore')
+watch([isSentinelVisible, () => props.loading, () => countRows(props.blocks)], () => {
+  if (isSentinelVisible.value && props.loading === false) emit('loadMore')
 })
 </script>

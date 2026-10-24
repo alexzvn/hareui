@@ -18,8 +18,13 @@ import type theme from './theme'
 
 type Autocomplete = typeof theme
 
+/** The selected value: one option value (`null` when empty), or an array of values in multiple selection mode. */
 export type AutocompleteValue = ListBoxValue | ListBoxValue[] | null
 
+/**
+ * Props of the `Autocomplete` component: a select-style trigger whose popover holds a search
+ * field that filters the listbox options.
+ */
 export type AutocompleteProps<T extends ListBoxItem = ListBoxItem> = {
   /**
    * Renders the listbox popover in a portal. `true` portals to `document.body`, a selector string or element is used as the teleport target, and `false` disables portalling.
@@ -135,6 +140,7 @@ export type AutocompleteProps<T extends ListBoxItem = ListBoxItem> = {
   ui?: ComponentSlots<Autocomplete> & { searchClearButton?: ClassValue }
 } & FormFieldProps
 
+/** Props passed to the `#value` slot, for rendering the trigger's value. */
 export type AutocompleteValueSlotProps<T extends ListBoxItem = ListBoxItem> = {
   /** The selected options, in selection order. */
   selectedItems: T[]
@@ -144,6 +150,7 @@ export type AutocompleteValueSlotProps<T extends ListBoxItem = ListBoxItem> = {
   text: string
 }
 
+/** Slots of the `Autocomplete` component. */
 export type AutocompleteSlots<T extends ListBoxItem = ListBoxItem> = {
   /** Label content. Replaces `label`. */
   label?: () => VNode[]
@@ -179,6 +186,7 @@ export type AutocompleteSlots<T extends ListBoxItem = ListBoxItem> = {
   loading?: () => VNode[]
 }
 
+/** Events emitted by the `Autocomplete` component. */
 export type AutocompleteEmits = {
   /** The selection was cleared with the clear button or Backspace / Delete. */
   clear: []

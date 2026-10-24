@@ -1,6 +1,6 @@
 <template>
   <DashboardGroup unit="rem" :persistent="false">
-    <DashboardSidebar id="toggle-side" v-model:open="open" toggle-side="left">
+    <DashboardSidebar id="toggle-side" v-model:open="isOpen" toggle-side="left">
       <template #header>
         <div class="flex min-w-0 items-center gap-3 px-1 py-2">
           <span
@@ -21,7 +21,7 @@
             icon-only
             size="sm"
             variant="ghost"
-            @click="open = true"
+            @click="isOpen = true"
           >
             <Icon icon="gravity-ui:bars" />
           </Button>
@@ -58,5 +58,5 @@ const items: NavigationMenuItem[] = [
   { label: 'Settings', icon: gravityIcon('gear'), href: '#' },
 ]
 
-const open = ref(false)
+const isOpen = ref(false)
 </script>

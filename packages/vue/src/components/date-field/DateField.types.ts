@@ -19,6 +19,7 @@ type HourCycle = NonNullable<DateFieldRootProps['hourCycle']>
 type DateStep = NonNullable<DateFieldRootProps['step']>
 type DateUnavailableMatcher = NonNullable<DateFieldRootProps['isDateUnavailable']>
 
+/** Props of the `DateField` component: a date (and optional time) input edited segment by segment. */
 export type DateFieldProps = {
   /** Label text rendered above the group. */
   label?: string
@@ -113,6 +114,7 @@ export type DateFieldProps = {
     >
 } & FormFieldProps
 
+/** Slots of the `DateField` component. */
 export type DateFieldSlots = {
   /** Label content. Replaces the `label` prop. */
   label?: () => VNode[]
@@ -126,6 +128,7 @@ export type DateFieldSlots = {
   error?: (props: ValidationResult) => VNode[]
 }
 
+/** Events emitted by the `DateField` component. */
 export type DateFieldEmits = {
   /** Emitted when the displayed placeholder date changes. */
   'update:placeholder': [value: DateValue]

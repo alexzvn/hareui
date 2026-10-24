@@ -384,17 +384,17 @@ describe('ColorField', () => {
       // behaviour-final-check F3: happy-dom has no native implicit submission, so either the keydown must be left
       // un-prevented (browser submits) or the form must be submitted explicitly.
       const { wrapper, form, el } = mountField({ name: 'brand', defaultValue: '#0485F7' }, true)
-      let submitted = false
+      let isSubmitted = false
       form.addEventListener('submit', (e) => {
         e.preventDefault()
-        submitted = true
+        isSubmitted = true
       })
 
       await type(el, '#ff0000')
       const enter = new KeyboardEvent('keydown', { key: 'Enter', bubbles: true, cancelable: true })
       el.element.dispatchEvent(enter)
       await el.trigger('keyup', { key: 'Enter' })
-      expect(submitted || !enter.defaultPrevented).toBe(true)
+      expect(isSubmitted || !enter.defaultPrevented).toBe(true)
       wrapper.unmount()
       form.remove()
     })
@@ -474,14 +474,14 @@ describe('ColorField', () => {
 
 describe('colorField slot outlets', () => {
   it('#prefix / #suffix toggled by a parent v-if switch between custom content and no wrapper', async () => {
-    const show = ref(true)
+    const isShown = ref(true)
     const wrapper = mount(
       defineComponent({
         components: { ColorField },
-        setup: () => ({ show }),
+        setup: () => ({ isShown }),
         template: `<ColorField default-value="#000000">
-        <template v-if="show" #prefix><i data-test="pre" /></template>
-        <template v-if="show" #suffix><i data-test="suf" /></template>
+        <template v-if="isShown" #prefix><i data-test="pre" /></template>
+        <template v-if="isShown" #suffix><i data-test="suf" /></template>
       </ColorField>`,
       }),
     )
@@ -495,10 +495,10 @@ describe('colorField slot outlets', () => {
       ].map((s) => wrapper.find(s).exists())
 
     expect(parts()).toEqual([true, true, true, true])
-    show.value = false
+    isShown.value = false
     await nextTick()
     expect(parts()).toEqual([false, false, false, false])
-    show.value = true
+    isShown.value = true
     await nextTick()
     expect(parts()).toEqual([true, true, true, true])
     wrapper.unmount()

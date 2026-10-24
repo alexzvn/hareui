@@ -17,6 +17,15 @@ const WIDTH = 400
 const HEIGHT = 200
 const margin = { top: 0, right: 0, bottom: 0, left: 0 }
 
+/** Per SVG path command: numbers per point, and the offsets of the end point's x / y in each point. */
+const PATH_COMMANDS: Partial<Record<string, { stride: number; x?: number; y?: number }>> = {
+  M: { stride: 2, x: 0, y: 1 },
+  L: { stride: 2, x: 0, y: 1 },
+  H: { stride: 1, x: 0 },
+  V: { stride: 1, y: 0 },
+  A: { stride: 7, x: 5, y: 6 },
+}
+
 /** Bounding box of an SVG path made of M/L/H/V/A/Z commands (absolute or relative). */
 const bbox = (d: string) => {
   const xs: number[] = []
@@ -24,42 +33,21 @@ const bbox = (d: string) => {
   let x = 0
   let y = 0
   for (const [, cmd, args] of d.matchAll(/([MLHVAZmlhvaz])([^MLHVAZmlhvaz]*)/g)) {
+    const command = PATH_COMMANDS[cmd.toUpperCase()]
+    if (!command) continue
+
     const n = (args.match(/-?\d*\.?\d+(?:e-?\d+)?/g) ?? []).map(Number)
-    const rel = cmd === cmd.toLowerCase()
-    switch (cmd.toUpperCase()) {
-      case 'M':
-      case 'L':
-        for (let i = 0; i < n.length; i += 2) {
-          x = rel ? x + n[i] : n[i]
-          y = rel ? y + n[i + 1] : n[i + 1]
-          xs.push(x)
-          ys.push(y)
-        }
+    const isRelative = cmd === cmd.toLowerCase()
+    for (let i = 0; i < n.length; i += command.stride) {
+      if (command.x !== undefined) {
+        x = isRelative ? x + n[i + command.x] : n[i + command.x]
+        xs.push(x)
+      }
 
-        break
-      case 'H':
-        for (const v of n) {
-          x = rel ? x + v : v
-          xs.push(x)
-        }
-
-        break
-      case 'V':
-        for (const v of n) {
-          y = rel ? y + v : v
-          ys.push(y)
-        }
-
-        break
-      case 'A':
-        for (let i = 0; i < n.length; i += 7) {
-          x = rel ? x + n[i + 5] : n[i + 5]
-          y = rel ? y + n[i + 6] : n[i + 6]
-          xs.push(x)
-          ys.push(y)
-        }
-
-        break
+      if (command.y !== undefined) {
+        y = isRelative ? y + n[i + command.y] : n[i + command.y]
+        ys.push(y)
+      }
     }
   }
 
@@ -128,10 +116,10 @@ describe('ComposedChart', () => {
   })
 
   it('keeps template order when a series is shown again', async () => {
-    const showRevenue = ref(true)
+    const isRevenueShown = ref(true)
     const wrapper = mountChart(() => [
       h(ChartXAxis, { dataKey: 'month', hide: true }),
-      showRevenue.value
+      isRevenueShown.value
         ? h(ChartLine, {
             dataKey: 'revenue',
             name: 'Revenue',
@@ -150,10 +138,10 @@ describe('ComposedChart', () => {
 
     await hover(wrapper, 100, 100)
     expect(labels()).toEqual(['Revenue', 'Orders'])
-    showRevenue.value = false
+    isRevenueShown.value = false
     await settle()
     expect(labels()).toEqual(['Orders'])
-    showRevenue.value = true
+    isRevenueShown.value = true
     await settle()
     await hover(wrapper, 110, 100)
     expect(labels()).toEqual(['Revenue', 'Orders'])

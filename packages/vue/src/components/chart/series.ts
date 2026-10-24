@@ -4,7 +4,7 @@ import { computed } from 'vue'
 
 import type { ClassValue } from '@/utils/tv'
 
-import type { ChartAnimationProps } from './animation'
+import type { ChartAnimationProps, ChartTweenStep } from './animation'
 import { lerp, useChartTween } from './animation'
 import { useCartesianContext } from './cartesian'
 import type { CartesianContext } from './cartesian.types'
@@ -104,7 +104,7 @@ export type PointSeries = {
   target: ComputedRef<(ChartSeriesPoint | null)[]>
   /** Clip width/height (0–1) of the mount animation; 1 when not animating. */
   reveal: ComputedRef<number>
-  animating: ComputedRef<boolean>
+  isAnimating: ComputedRef<boolean>
   /** The hovered point, when the tooltip is active. */
   activePoint: ComputedRef<ChartSeriesPoint | null>
   horizontal: ComputedRef<boolean>
@@ -118,11 +118,7 @@ export const useRootSeries = (chart: ChartContext, dataKey: () => string) => {
   return computed(() => config.series(dataKey()))
 }
 
-const interpolatePoints = (
-  from: (ChartSeriesPoint | null)[] | null,
-  to: (ChartSeriesPoint | null)[],
-  t: number,
-) => {
+const interpolatePoints = ({ from, to, t }: ChartTweenStep<(ChartSeriesPoint | null)[]>) => {
   if (!from || !from.length) return to
 
   return to.map((point, index) => {
@@ -134,24 +130,37 @@ const interpolatePoints = (
 
     return {
       ...point,
-      x: lerp(previous.x, point.x, t),
-      y: lerp(previous.y, point.y, t),
-      baseX: lerp(previous.baseX, point.baseX, t),
-      baseY: lerp(previous.baseY, point.baseY, t),
+      x: lerp([previous.x, point.x], t),
+      y: lerp([previous.y, point.y], t),
+      baseX: lerp([previous.baseX, point.baseX], t),
+      baseY: lerp([previous.baseY, point.baseY], t),
     }
   })
 }
 
-/** Registers an area or line series and computes its animated points. Call in the series' setup. */
-export const usePointSeries = (
-  kind: 'area' | 'line',
+/** `baseValue` resolved against the value axis domain. */
+const resolveBaseline = (
+  baseValue: number | 'dataMin' | 'dataMax',
+  [low, high]: [number, number],
+): number => {
+  if (baseValue === 'dataMin') return Math.min(low, high)
+  if (baseValue === 'dataMax') return Math.max(low, high)
+
+  return baseValue
+}
+
+type PointSeriesOptions = {
+  kind: 'area' | 'line'
   props: ChartCurveSeriesProps & {
     stackId?: string | number
     fill?: string
     baseValue?: number | 'dataMin' | 'dataMax'
-  },
-  colors: () => { stroke?: string; fill?: string },
-): PointSeries => {
+  }
+  colors: () => { stroke?: string; fill?: string }
+}
+
+/** Registers an area or line series and computes its animated points. Call in the series' setup. */
+export const usePointSeries = ({ kind, props, colors }: PointSeriesOptions): PointSeries => {
   const chart = useChartContext(kind === 'area' ? 'ChartArea' : 'ChartLine')
   const cartesian = useCartesianContext(kind === 'area' ? 'ChartArea' : 'ChartLine')
   const id = useId(undefined, `hareui-chart-${kind}`)
@@ -189,16 +198,10 @@ export const usePointSeries = (
     const valueAxis = horizontal.value ? yAxis : xAxis
 
     // `baseValue` moves the baseline of an unstacked area.
-    let base: number | undefined
-    if (props.baseValue !== undefined && props.stackId === undefined) {
-      const [low, high] = valueAxis.domain as [number, number]
-      base =
-        props.baseValue === 'dataMin'
-          ? Math.min(low, high)
-          : props.baseValue === 'dataMax'
-            ? Math.max(low, high)
-            : props.baseValue
-    }
+    const base =
+      props.baseValue !== undefined && props.stackId === undefined
+        ? resolveBaseline(props.baseValue, valueAxis.domain as [number, number])
+        : undefined
 
     return values.map((pair, index) => {
       if (!pair) return null
@@ -227,15 +230,15 @@ export const usePointSeries = (
     })
   })
 
-  const tween = useChartTween(
-    () => target.value,
-    interpolatePoints,
-    () => [chart.data.value, props.dataKey, props.stackId, hidden.value],
-    () => props,
-  )
+  const tween = useChartTween({
+    target: () => target.value,
+    interpolate: interpolatePoints,
+    key: () => [chart.data.value, props.dataKey, props.stackId, hidden.value],
+    animation: () => props,
+  })
 
-  const reveal = computed(() => (tween.entering.value ? tween.progress.value : 1))
-  const animating = computed(() => tween.progress.value < 1)
+  const reveal = computed(() => (tween.isEntering.value ? tween.progress.value : 1))
+  const isAnimating = computed(() => tween.progress.value < 1)
 
   const activePoint = computed(() => {
     const index = chart.active.index
@@ -253,7 +256,7 @@ export const usePointSeries = (
   // Labels appear once the series has finished animating.
   provideChartLabels(
     () =>
-      (animating.value ? [] : target.value).flatMap((point): ChartLabelItem[] =>
+      (isAnimating.value ? [] : target.value).flatMap((point): ChartLabelItem[] =>
         point
           ? [
               {
@@ -275,7 +278,7 @@ export const usePointSeries = (
     points: tween.value,
     target,
     reveal,
-    animating,
+    isAnimating,
     activePoint,
     horizontal,
     hidden,

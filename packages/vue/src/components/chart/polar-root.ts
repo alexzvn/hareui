@@ -55,9 +55,14 @@ export const usePolarRoot = (options: PolarRootOptions): ComputedRef<ChartFrameC
     if (!options.generated()) return { legend: null, legendItems: [], tooltip: null }
 
     return {
-      legend: resolveFrameLegend(props.legend, options.hasLegendSlot(), options.legend?.()),
+      legend: resolveFrameLegend(props.legend, {
+        hasLegendSlot: options.hasLegendSlot(),
+        defaults: options.legend?.(),
+      }),
       legendItems: options.legendItems(),
-      tooltip: resolveChartPart<Partial<ChartTooltipProps>>(props.tooltip, options.tooltip()),
+      tooltip: resolveChartPart<Partial<ChartTooltipProps>>(props.tooltip, {
+        defaults: options.tooltip(),
+      }),
     }
   })
 }
@@ -138,11 +143,16 @@ export const useSliceRoot = <T extends object>(options: SliceRootOptions<T>) => 
  * A `ChartLabel` placed directly in a pie or radial root sits on the polar center, inside a disc of `radius` (the pie,
  * or the hole inside the innermost ring).
  */
-export const providePolarCenterLabel = (
-  chart: ChartContext,
-  polar: PolarContext,
-  radius: () => number,
-): void => {
+export const providePolarCenterLabel = ({
+  chart,
+  polar,
+  radius,
+}: {
+  chart: ChartContext
+  polar: PolarContext
+  /** Radius of the disc the label sits in. */
+  radius: () => number
+}): void => {
   const viewBox = computed(() => ({
     cx: polar.cx.value,
     cy: polar.cy.value,

@@ -15,7 +15,10 @@ import theme from './theme'
 const props = defineProps<SwitchGroupProps>()
 defineSlots<SwitchGroupSlots>()
 
-const ui = useComponentUI('switchGroup', theme, () => ({
-  orientation: props.orientation,
-}))
+const ui = useComponentUI('switchGroup', {
+  theme,
+  variantProps: () => ({
+    orientation: props.orientation,
+  }),
+})
 </script>

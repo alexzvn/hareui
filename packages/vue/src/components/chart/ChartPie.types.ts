@@ -4,6 +4,7 @@ import type { ClassValue } from '@/utils/tv'
 
 import type { ChartAnimationProps } from './animation'
 
+/** Props of `ChartPie`: one sector per row, sized by its share of the total. */
 export type ChartPieProps = {
   /** Slices of the pie. Defaults to the chart's `data`. Rows may leave keys out, e.g. a `fill` set on some rows only. */
   data?: object[]
@@ -81,6 +82,7 @@ export type ChartPieProps = {
   class?: ClassValue
 } & ChartAnimationProps
 
+/** Slots of `ChartPie`. */
 export type ChartPieSlots = {
   /** `ChartCell` per slice (in data order) and `ChartLabel`. */
   default?: () => VNode[]

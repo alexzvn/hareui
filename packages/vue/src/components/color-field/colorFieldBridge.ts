@@ -51,10 +51,10 @@ export default defineComponent({
     const hex = (color: Color) => colorToString(color, 'hex')
 
     // True between the user's first keystroke and the next commit
-    let typing = false
+    let isTyping = false
 
     // True while this bridge writes raw numbers through Reka's commit
-    let writing = false
+    let isWriting = false
     const pinned = shallowRef<{ value: number; hex: string } | null>(null)
 
     const channelValue = (): number => {
@@ -97,23 +97,23 @@ export default defineComponent({
 
     const updateValue = ctx.updateValue
     ctx.updateValue = (value: string) => {
-      typing = true
+      isTyping = true
       updateValue(value)
     }
 
     watch(
       [ctx.inputValue, ctx.color, () => props.isEmpty()],
       ([value, color, empty]) => {
-        if (writing) return
+        if (isWriting) return
 
         if (empty) {
-          if (value !== '' && !typing) ctx.inputValue.value = ''
+          if (value !== '' && !isTyping) ctx.inputValue.value = ''
           return
         }
 
         if (ctx.channel.value) {
           const formatted = format(channelValue())
-          if (!typing && value !== formatted) ctx.inputValue.value = formatted
+          if (!isTyping && value !== formatted) ctx.inputValue.value = formatted
 
           return
         }
@@ -134,14 +134,14 @@ export default defineComponent({
       const range = getChannelRange(channel)
       const clamped = Math.max(range.min, Math.min(range.max, value))
       const target = hex(setChannelValue(ctx.color.value, channel, clamped))
-      typing = false
-      writing = true
+      isTyping = false
+      isWriting = true
 
       try {
         ctx.inputValue.value = String(clamped)
         commit()
       } finally {
-        writing = false
+        isWriting = false
       }
 
       pinned.value = { value: clamped, hex: target }
@@ -149,7 +149,7 @@ export default defineComponent({
     }
 
     ctx.commit = () => {
-      typing = false
+      isTyping = false
       const text = ctx.inputValue.value.trim()
       if (text === '' && !props.isEmpty() && editable()) {
         props.onClear()
@@ -160,8 +160,13 @@ export default defineComponent({
 
       if (ctx.channel.value) {
         const number = Number.parseFloat(text.replace(/[^\d.-]/g, ''))
-        if (editable() && !Number.isNaN(number)) setChannel(number)
-        else ctx.inputValue.value = props.isEmpty() ? '' : format(channelValue())
+        if (editable() && !Number.isNaN(number)) {
+          setChannel(number)
+
+          return
+        }
+
+        ctx.inputValue.value = props.isEmpty() ? '' : format(channelValue())
 
         return
       }

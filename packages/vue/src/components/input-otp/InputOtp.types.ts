@@ -10,6 +10,7 @@ import type theme from './theme'
 
 type InputOtp = typeof theme
 
+/** Props of `InputOtp`, a field for one-time codes split into one slot per character. */
 export type InputOtpProps = {
   /** The current code. Bind with `v-model`. */
   modelValue?: string
@@ -75,6 +76,7 @@ export type InputOtpProps = {
   ui?: ComponentSlots<InputOtp>
 } & FormFieldProps
 
+/** Slots of `InputOtp`. */
 export type InputOtpSlots = {
   /** Label content. Replaces the `label` prop. */
   label?: () => VNode[]
@@ -84,6 +86,7 @@ export type InputOtpSlots = {
   error?: (props: ValidationResult) => VNode[]
 }
 
+/** Events emitted by `InputOtp`. */
 export type InputOtpEmits = {
   /** Emitted once, when every slot has just become filled. */
   complete: [value: string]

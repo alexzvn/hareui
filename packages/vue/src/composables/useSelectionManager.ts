@@ -30,7 +30,7 @@ export const useSelectionManager = <K>(options: SelectionManagerOptions<K>) => {
   let current: K | undefined
 
   // A Shift range right after select-all starts over from the target key
-  let fromAll = false
+  let isFromAll = false
 
   const isSelected = (key: K) => options.selected().includes(key)
 
@@ -46,7 +46,7 @@ export const useSelectionManager = <K>(options: SelectionManagerOptions<K>) => {
   }
 
   const write = (keys: K[]) => {
-    fromAll = false
+    isFromAll = false
     options.setSelected(keys)
   }
 
@@ -79,13 +79,13 @@ export const useSelectionManager = <K>(options: SelectionManagerOptions<K>) => {
       return
     }
 
-    if (fromAll || (anchor !== undefined && !options.keys().includes(anchor))) {
-      anchor = fromAll ? to : undefined
+    if (isFromAll || (anchor !== undefined && !options.keys().includes(anchor))) {
+      anchor = isFromAll ? to : undefined
       current = undefined
     }
 
     const start = anchor ?? from ?? to
-    const next = new Set(fromAll ? [] : options.selected())
+    const next = new Set(isFromAll ? [] : options.selected())
     for (const key of range(start, current ?? to)) next.delete(key)
     for (const key of range(to, start)) next.add(key)
     anchor = start
@@ -98,7 +98,7 @@ export const useSelectionManager = <K>(options: SelectionManagerOptions<K>) => {
     if (options.mode() !== 'multiple') return false
     write(options.keys().filter((key) => !options.isDisabled(key)))
     anchor = current = undefined
-    fromAll = true
+    isFromAll = true
 
     return true
   }
@@ -114,24 +114,31 @@ export const useSelectionManager = <K>(options: SelectionManagerOptions<K>) => {
     return true
   }
 
+  const runShortcut = (event: KeyboardEvent): boolean => {
+    if (event.key === 'Escape') return clear()
+    if (isSelectAllKey(event)) return selectAll()
+
+    return false
+  }
+
   /**
    * Handles the selection shortcuts that don't move focus (Escape, Meta/Ctrl+A). Returns whether the event was
    * consumed; it is then default-prevented and stopped, as RAC does.
    */
   const onKeydown = (event: KeyboardEvent): boolean => {
-    const handled = event.key === 'Escape' ? clear() : isSelectAllKey(event) ? selectAll() : false
-    if (handled) {
+    const isHandled = runShortcut(event)
+    if (isHandled) {
       event.preventDefault()
       event.stopPropagation()
     }
 
-    return handled
+    return isHandled
   }
 
   /** Records `key` as the anchor without changing the selection (e.g. a toggle made elsewhere). */
   const setAnchor = (key: K | undefined) => {
     anchor = current = key
-    fromAll = false
+    isFromAll = false
   }
 
   return { isSelected, toggle, extend, selectAll, clear, onKeydown, setAnchor }

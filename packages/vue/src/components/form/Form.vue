@@ -223,7 +223,7 @@ const mergeNestedOutputs = (nestedResults: NestedResult[]) => {
 
   for (const result of nestedResults) {
     if (result.name && output && typeof output === 'object') {
-      setAtPath(output, result.name, result.output)
+      setAtPath(output, { path: result.name, value: result.output })
       continue
     }
 

@@ -100,7 +100,11 @@ const props = withDefaults(defineProps<CellColorPickerProps>(), {
 const emit = defineEmits<CellColorPickerEmits>()
 defineSlots<CellColorPickerSlots>()
 
-const ui = useComponentUI('cellColorPicker', theme, () => ({ variant: props.variant }))
+const ui = useComponentUI('cellColorPicker', {
+  theme,
+  variantProps: () => ({ variant: props.variant }),
+})
+
 const disabled = useFieldsetDisabled(() => props.disabled)
 
 // React Aria's `color.toString('hex')`: uppercase, no alpha

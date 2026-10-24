@@ -11,6 +11,10 @@ import type theme from './theme'
 
 type Header = typeof theme
 
+/**
+ * How `Header` presents its mobile menu: a `Modal` under the bar, a side `Drawer` (`slideover`), or a
+ * bottom `Drawer` sheet.
+ */
 export type HeaderMode = 'modal' | 'slideover' | 'drawer'
 
 /** Modal props accepted by `menu` in `modal` mode. */
@@ -23,6 +27,10 @@ type MenuProps =
   | Omit<ModalProps, 'open' | 'defaultOpen'>
   | Omit<DrawerProps, 'open' | 'defaultOpen'>
 
+/**
+ * Props of `Header`: a responsive site header with a title link, centered navigation, actions and a
+ * collapsible mobile menu.
+ */
 export type HeaderProps = {
   /**
    * The element or component to render as.
@@ -109,6 +117,7 @@ export type HeaderProps = {
   ui?: ComponentSlots<Header>
 }
 
+/** Slots of `Header`, one per area of the bar plus the mobile menu's body and content. */
 export type HeaderSlots = {
   /** Replaces the title text inside the default title link. */
   title?: () => VNode[]
@@ -130,6 +139,7 @@ export type HeaderSlots = {
   content?: (props: { close: () => void }) => VNode[]
 }
 
+/** Events emitted by `Header`. */
 export type HeaderEmits = {
   /** Emitted when the menu opens or closes. */
   'update:open': [value: boolean]

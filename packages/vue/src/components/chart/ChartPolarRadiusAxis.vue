@@ -78,19 +78,28 @@ polar.registerRadiusAxis(() => ({
 
 const line = computed(() => {
   const [r0, r1] = polar.radiusAxis.value.range
-  const from = polarToCartesian(polar.cx.value, polar.cy.value, r0, props.angle)
-  const to = polarToCartesian(polar.cx.value, polar.cy.value, r1, props.angle)
+  const center = { cx: polar.cx.value, cy: polar.cy.value }
+  const from = polarToCartesian(center, { radius: r0, angle: props.angle })
+  const to = polarToCartesian(center, { radius: r1, angle: props.angle })
 
   return { x1: from.x, y1: from.y, x2: to.x, y2: to.y }
 })
 
-const textAnchor = computed(() =>
-  props.orientation === 'left' ? 'end' : props.orientation === 'right' ? 'start' : 'middle',
-)
+const tickAnchors = {
+  left: 'end',
+  right: 'start',
+  middle: 'middle',
+} as const satisfies Record<NonNullable<ChartPolarRadiusAxisProps['orientation']>, string>
+
+const textAnchor = computed(() => tickAnchors[props.orientation])
 
 const ticks = computed(() =>
   polar.radiusAxis.value.ticks.map((tick) => {
-    const point = polarToCartesian(polar.cx.value, polar.cy.value, tick.coordinate, props.angle)
+    const point = polarToCartesian(
+      { cx: polar.cx.value, cy: polar.cy.value },
+      { radius: tick.coordinate, angle: props.angle },
+    )
+
     return {
       key: `${tick.index}-${tick.value}`,
       index: tick.index,

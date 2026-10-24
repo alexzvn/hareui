@@ -30,6 +30,7 @@ export { default as select } from './select/theme'
 export { default as comboBox } from './combo-box/theme'
 export { default as autocomplete } from './autocomplete/theme'
 
+/** Map of every component's default theme by config key (`button`, `textField`, …); the keys accepted by `HareUIConfig['ui']`. */
 export type Themes = typeof themes
 export { default as meter } from './meter/theme'
 export { default as switchGroup } from './switch-group/theme'

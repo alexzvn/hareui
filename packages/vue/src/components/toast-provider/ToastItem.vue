@@ -102,7 +102,16 @@
 </template>
 
 <script setup lang="ts">
-import { computed, onBeforeUnmount, onMounted, onUpdated, ref, useId, watch } from 'vue'
+import {
+  computed,
+  onBeforeUnmount,
+  onMounted,
+  onUpdated,
+  ref,
+  useId,
+  useTemplateRef,
+  watch,
+} from 'vue'
 
 import Button from '@/components/button/Button.vue'
 import CloseButton from '@/components/close-button/CloseButton.vue'
@@ -125,10 +134,13 @@ const emit = defineEmits<{
 
 const content = computed(() => (props.toast.content ?? {}) as ToastContentValue)
 
-const ui = useComponentUI('toast', theme, () => ({
-  placement: props.placement,
-  variant: content.value.variant ?? 'default',
-}))
+const ui = useComponentUI('toast', {
+  theme,
+  variantProps: () => ({
+    placement: props.placement,
+    variant: content.value.variant ?? 'default',
+  }),
+})
 
 const titleId = useId()
 const descId = useId()
@@ -147,24 +159,24 @@ const hasDescription = computed(
 
 // A #toast slot renders its own title / description: reference the ids handed to it only once an element carries
 // them (as RAC's useSlotId does), so the toast never points at a missing element.
-const slotHasTitle = ref(false)
-const slotHasDescription = ref(false)
+const hasSlotTitle = ref(false)
+const hasSlotDescription = ref(false)
 const syncSlotIds = () => {
   const el = rootEl.value
   if (!el || !props.toastSlot) return
-  slotHasTitle.value = !!el.querySelector(`[id="${titleId}"]`)
-  slotHasDescription.value = !!el.querySelector(`[id="${descId}"]`)
+  hasSlotTitle.value = !!el.querySelector(`[id="${titleId}"]`)
+  hasSlotDescription.value = !!el.querySelector(`[id="${descId}"]`)
 }
 
 onMounted(syncSlotIds)
 onUpdated(syncSlotIds)
 
 const labelledBy = computed(() =>
-  (props.toastSlot ? slotHasTitle.value : hasTitle.value) ? titleId : undefined,
+  (props.toastSlot ? hasSlotTitle.value : hasTitle.value) ? titleId : undefined,
 )
 
 const describedBy = computed(() =>
-  (props.toastSlot ? slotHasDescription.value : hasDescription.value) ? descId : undefined,
+  (props.toastSlot ? hasSlotDescription.value : hasDescription.value) ? descId : undefined,
 )
 
 // React Aria's `contentProps`: the content is the live `role="alert"` region. It starts aria-hidden and is revealed
@@ -214,7 +226,7 @@ onBeforeUnmount(() => {
 /* ------------------------------------------------------------------------------------------------
  * Height measurement: reported up so siblings can compute their collapsed/expanded offsets.
  * -------------------------------------------------------------------------------------------- */
-const rootEl = ref<HTMLElement | null>(null)
+const rootEl = useTemplateRef<HTMLElement>('rootEl')
 const toastHeight = ref<number | undefined>()
 
 // Same as HeroUI's useMeasuredHeight: `scrollHeight` at `height: auto` (padding box, no border),
@@ -292,20 +304,24 @@ const syncHidden = (shouldHide: boolean) => {
   const el = rootEl.value
   if (!el) return
 
-  if (shouldHide) {
-    if (el.contains(document.activeElement)) emit('focus-leave', el)
-    if (el.contains(document.activeElement)) (document.activeElement as HTMLElement | null)?.blur()
-    el.setAttribute('aria-hidden', 'true')
-
-    if (props.isExiting) {
-      for (const control of el.querySelectorAll<HTMLElement>('button, a')) control.tabIndex = -1
-    } else {
-      el.setAttribute('inert', '')
-    }
-  } else {
+  if (!shouldHide) {
     el.removeAttribute('aria-hidden')
     el.removeAttribute('inert')
+
+    return
   }
+
+  if (el.contains(document.activeElement)) emit('focus-leave', el)
+  if (el.contains(document.activeElement)) (document.activeElement as HTMLElement | null)?.blur()
+  el.setAttribute('aria-hidden', 'true')
+
+  if (!props.isExiting) {
+    el.setAttribute('inert', '')
+
+    return
+  }
+
+  for (const control of el.querySelectorAll<HTMLElement>('button, a')) control.tabIndex = -1
 }
 
 watch(() => props.isHidden || props.isExiting, syncHidden)

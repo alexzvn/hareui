@@ -33,12 +33,25 @@ import type theme from './theme'
 
 type RichTableTheme = typeof theme
 
+/** Shape of a row's source data: any object type passed in `data`. */
 export type RichTableData = RowData
+
+/** A TanStack row: the source data (`original`) plus its id, depth, sub rows and feature state. */
 export type RichTableRow<T extends RichTableData> = Row<T>
+
+/** A TanStack header cell of a column, as rendered in `thead`/`tfoot`. */
 export type RichTableHeader<T extends RichTableData, D = unknown> = Header<T, D>
+
+/** A TanStack body cell: one column of one row. */
 export type RichTableCell<T extends RichTableData, D = unknown> = Cell<T, D>
+
+/** A TanStack column instance, as returned by `tableApi.getColumn()`. */
 export type RichTableColumnInstance<T extends RichTableData, D = unknown> = Column<T, D>
+
+/** Props of a `#<column-id>-header` / `#<column-id>-footer` slot and of a column's `header`/`footer` render function. */
 export type RichTableHeaderContext<T extends RichTableData, D = unknown> = HeaderContext<T, D>
+
+/** Props of a `#<column-id>-cell` slot and of a column's `cell` render function. */
 export type RichTableCellContext<T extends RichTableData, D = unknown> = CellContext<T, D>
 
 /** The TanStack Table instance, exposed as `tableApi`. */
@@ -80,6 +93,7 @@ export type RichTableColumn<T extends RichTableData, D = unknown> = ColumnDef<T,
   meta?: RichTableColumnMeta<T, D>
 }
 
+/** Props of `RichTable`: a data table driven by TanStack Table, with sorting, filtering, selection, pinning, grouping and virtualization. */
 export type RichTableProps<T extends RichTableData = RichTableData> = {
   /**
    * The element or component this component should render as.
@@ -162,18 +176,24 @@ export type RichTableProps<T extends RichTableData = RichTableData> = {
   _features?: CoreOptions<T>['_features']
   /** Resets every `auto reset` behavior (page index, expanded rows...) when set. */
   autoResetAll?: boolean
+  /** Logs debugging information for every table feature to the console. */
   debugAll?: boolean
+  /** Logs cell debugging information to the console. */
   debugCells?: boolean
+  /** Logs column debugging information to the console. */
   debugColumns?: boolean
+  /** Logs header debugging information to the console. */
   debugHeaders?: boolean
+  /** Logs row debugging information to the console. */
   debugRows?: boolean
+  /** Logs table debugging information to the console. */
   debugTable?: boolean
   /** Properties every column definition inherits. */
   defaultColumn?: Partial<ColumnDef<T, unknown>>
   /** Derives each row's id from its data. Defaults to the row's index (its path for sub rows). */
-  getRowId?: (originalRow: T, index: number, parent?: Row<T>) => string
+  getRowId?: CoreOptions<T>['getRowId']
   /** Returns the sub rows of a row, for expandable trees. */
-  getSubRows?: (originalRow: T, index: number) => undefined | T[]
+  getSubRows?: CoreOptions<T>['getSubRows']
   /** State the table starts with when a slice isn't bound with `v-model`. */
   initialState?: CoreOptions<T>['initialState']
   /** Merges the default and the given table options. */
@@ -249,6 +269,7 @@ export type RichTableProps<T extends RichTableData = RichTableData> = {
   ui?: ComponentSlots<RichTableTheme>
 }
 
+/** Slots of `RichTable`. Per-column slots are named after the column id. */
 export type RichTableSlots<T extends RichTableData = RichTableData> = {
   /** Header content of a column, replacing its `header` definition. Named per column id: `#<column-id>-header`. */
   [slot: `${string}-header`]: ((props: HeaderContext<T, unknown>) => unknown) | undefined

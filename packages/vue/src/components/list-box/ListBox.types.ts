@@ -7,8 +7,10 @@ import type theme from './theme'
 
 type ListBox = typeof theme
 
+/** Value identifying a ListBox item; the selection (`v-model`) holds these. */
 export type ListBoxValue = string | number
 
+/** One selectable option of a ListBox. Extra fields are kept and typed in the item slots. */
 export type ListBoxItem = {
   /** Unique value; bound to `v-model` when selected and passed to `action`. */
   value: ListBoxValue
@@ -29,22 +31,29 @@ export type ListBoxItem = {
   class?: ClassValue
 }
 
+/** A labelled group of items (`{ type: 'section', label, items }`), rendered as an ARIA `group`. */
 export type ListBoxSection<T extends ListBoxItem = ListBoxItem> = {
+  /** Marks the entry as a section. */
   type: 'section'
   /** Section heading, rendered as a `<header>`. */
   label?: string
+  /** The options of the section. */
   items: T[]
 }
 
+/** A visual divider between items or sections (`{ type: 'separator' }`). */
 export type ListBoxSeparator = {
+  /** Marks the entry as a separator. */
   type: 'separator'
 }
 
+/** An entry of ListBox `items`: an option, a section of options or a separator. */
 export type ListBoxEntry<T extends ListBoxItem = ListBoxItem> =
   | T
   | ListBoxSection<T>
   | ListBoxSeparator
 
+/** Props for `ListBox`, a list of options that can be selected, single or multiple, or activated. */
 export type ListBoxProps<T extends ListBoxItem = ListBoxItem> = {
   /**
    * Items, sections (`{ type: 'section', label, items }`) and separators (`{ type: 'separator' }`).
@@ -97,13 +106,19 @@ export type ListBoxProps<T extends ListBoxItem = ListBoxItem> = {
   ui?: ComponentSlots<ListBox>
 }
 
+/** Props passed to the ListBox item slots. */
 export type ListBoxItemSlotProps<T extends ListBoxItem = ListBoxItem> = {
+  /** The item being rendered. */
   item: T
+  /** Position of the item among all options, counted across sections. */
   index: number
+  /** Whether the item is selected. */
   selected: boolean
+  /** Whether the item is disabled, by itself or because the whole list is. */
   disabled: boolean
 }
 
+/** Slots for `ListBox`: item content (whole or per part), section headings, and empty/loading states. */
 export type ListBoxSlots<T extends ListBoxItem = ListBoxItem> = {
   /** Whole content of each item. Replaces leading, label, description, trailing and indicator. */
   item?: (props: ListBoxItemSlotProps<T>) => VNode[]
@@ -125,6 +140,7 @@ export type ListBoxSlots<T extends ListBoxItem = ListBoxItem> = {
   loading?: () => VNode[]
 }
 
+/** Events emitted by `ListBox` (besides `update:modelValue`). */
 export type ListBoxEmits = {
   /** An item was activated (click, Enter or Space) while `selectionMode` is `'none'`. */
   action: [value: ListBoxValue]

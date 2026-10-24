@@ -15,19 +15,19 @@
   </Popover>
   <HoverCardRoot
     v-else
-    :open="open"
+    :open="isOpen"
     :open-delay="openDelay"
     :close-delay="closeDelay"
     @update:open="onOpenChange"
   >
     <HoverCardTrigger
-      :ref="setTrigger"
+      ref="trigger"
       as-child
-      :aria-expanded="open"
-      :aria-controls="open ? contentId : undefined"
+      :aria-expanded="isOpen"
+      :aria-controls="isOpen ? contentId : undefined"
       @keydown="onTriggerKeydown"
-      @blur="suppressOpen = false"
-      @pointerleave="suppressOpen = false"
+      @blur="shouldSuppressOpen = false"
+      @pointerleave="shouldSuppressOpen = false"
     >
       <slot />
     </HoverCardTrigger>
@@ -51,7 +51,7 @@
           name="content"
           :close="
             () => {
-              open = false
+              isOpen = false
             }
           "
         />
@@ -62,7 +62,7 @@
 
 <script setup lang="ts">
 import { HoverCardContent, HoverCardPortal, HoverCardRoot, HoverCardTrigger } from 'reka-ui'
-import { nextTick, onBeforeUnmount, onMounted, ref, useId, watch } from 'vue'
+import { nextTick, onBeforeUnmount, onMounted, ref, useId, useTemplateRef, watch } from 'vue'
 
 import Popover from '@/components/popover/Popover.vue'
 import popoverTheme from '@/components/popover/theme'
@@ -92,23 +92,24 @@ defineSlots<{
   content?: (props: { close: () => void }) => unknown
 }>()
 
-const ui = useComponentUI('popover', popoverTheme, () => ({}))
+const ui = useComponentUI('popover', { theme: popoverTheme, variantProps: () => ({}) })
 const portalTarget = usePortal(() => props.portal)
-const open = ref(false)
+const isOpen = ref(false)
 
 // Reka's `tooltip.open` event closes every other tooltip at once. Opening a hover popover sends it too,
 // and listens for it, so moving down a collapsed rail swaps tooltips and popovers instantly instead of
 // the previous one lingering for its close delay next to the new one.
-let announcing = false
-watch(open, (value) => {
+let isAnnouncing = false
+watch(isOpen, (value) => {
   if (!value) return
-  announcing = true
+
+  isAnnouncing = true
   document.dispatchEvent(new CustomEvent(TOOLTIP_OPEN_EVENT))
-  announcing = false
+  isAnnouncing = false
 })
 
 const onOtherOpen = () => {
-  if (!announcing) open.value = false
+  if (!isAnnouncing) isOpen.value = false
 }
 
 onMounted(() => document.addEventListener(TOOLTIP_OPEN_EVENT, onOtherOpen))
@@ -118,15 +119,22 @@ onBeforeUnmount(() => document.removeEventListener(TOOLTIP_OPEN_EVENT, onOtherOp
 // on a button trigger) opens it and moves focus to its first link; it stays open while focus is inside, Escape
 // or the opposite arrow closes it and returns focus to the trigger, and focus leaving it closes it.
 const contentId = useId()
-const triggerEl = ref<HTMLElement>()
-const contentEl = ref<HTMLElement>()
+const trigger = useTemplateRef<{ $el?: HTMLElement }>('trigger')
+
+// The element a keyboard open came from; it takes focus back when the card closes from the keyboard.
+let keyboardTriggerEl: HTMLElement | undefined
+const getTriggerEl = () => keyboardTriggerEl ?? trigger.value?.$el
+
+// The card's element. Set by a function ref rather than `useTemplateRef`: Vue calls it on every render,
+// which is how a keyboard-opened card learns it has mounted and can take focus. Nothing renders from it.
+let contentEl: HTMLElement | undefined
 
 // After a keyboard close, the trigger's focus must not reopen the card (Reka opens it on focus) until the
 // trigger blurs or the pointer leaves it.
-const suppressOpen = ref(false)
+const shouldSuppressOpen = ref(false)
 
 // Set by a keyboard open: the first focusable element of the card takes focus once it mounts.
-let focusOnMount = false
+let shouldFocusOnMount = false
 
 const ENTRY_KEYS = {
   right: 'ArrowRight',
@@ -146,8 +154,8 @@ const FOCUSABLE =
   'a[href], button:not([disabled]), input:not([disabled]), select:not([disabled]), textarea:not([disabled]), [tabindex]:not([tabindex="-1"])'
 
 const focusFirst = () => {
-  focusOnMount = false
-  contentEl.value?.querySelector<HTMLElement>(FOCUSABLE)?.focus()
+  shouldFocusOnMount = false
+  contentEl?.querySelector<HTMLElement>(FOCUSABLE)?.focus()
 }
 
 // Enter / Space keep their default, so a button trigger still clicks (and runs its `onSelect`).
@@ -158,48 +166,43 @@ const onTriggerKeydown = (event: KeyboardEvent) => {
     return
 
   if (isEntryKey) event.preventDefault()
-  triggerEl.value = target
-  suppressOpen.value = false
+  keyboardTriggerEl = target
+  shouldSuppressOpen.value = false
 
-  if (open.value && contentEl.value) {
+  if (isOpen.value && contentEl) {
     focusFirst()
     return
   }
 
-  focusOnMount = true
-  open.value = true
+  shouldFocusOnMount = true
+  isOpen.value = true
 }
 
 const onContentKeydown = (event: KeyboardEvent) => {
   if (event.key !== 'Escape' && event.key !== EXIT_KEYS[props.side]) return
   event.preventDefault()
   event.stopPropagation()
-  suppressOpen.value = true
-  open.value = false
-  triggerEl.value?.focus()
+  shouldSuppressOpen.value = true
+  isOpen.value = false
+  getTriggerEl()?.focus()
 }
 
 // Focus moving to another element outside the card and its trigger closes it.
 const onContentFocusout = (event: FocusEvent) => {
   const next = event.relatedTarget as Node | null
-  if (next && !contentEl.value?.contains(next) && !triggerEl.value?.contains(next))
-    open.value = false
+  if (next && !contentEl?.contains(next) && !getTriggerEl()?.contains(next)) isOpen.value = false
 }
 
 const onOpenChange = (value: boolean) => {
-  if (value && suppressOpen.value) return
+  if (value && shouldSuppressOpen.value) return
 
   // Reka closes on the trigger's blur or a pointer leave; focus inside the card keeps it open.
-  if (!value && contentEl.value?.contains(document.activeElement)) return
-  open.value = value
-}
-
-const setTrigger = (el: unknown) => {
-  triggerEl.value = (el as { $el?: HTMLElement } | null)?.$el
+  if (!value && contentEl?.contains(document.activeElement)) return
+  isOpen.value = value
 }
 
 const setContent = (el: unknown) => {
-  contentEl.value = (el as { $el?: HTMLElement } | null)?.$el
-  if (contentEl.value && focusOnMount) nextTick(focusFirst)
+  contentEl = (el as { $el?: HTMLElement } | null)?.$el
+  if (contentEl && shouldFocusOnMount) nextTick(focusFirst)
 }
 </script>

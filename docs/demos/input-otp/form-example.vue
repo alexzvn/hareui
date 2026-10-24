@@ -1,5 +1,5 @@
 <template>
-  <Form class="flex w-[280px] flex-col gap-4" @submit="handleSubmit">
+  <Form class="flex w-[280px] flex-col gap-4" @submit="onSubmit">
     <InputOtp
       v-model="value"
       label="Two-factor authentication"
@@ -37,7 +37,18 @@ const value = ref('')
 const error = ref('')
 const isSubmitting = ref(false)
 
-const handleSubmit = (e: Event) => {
+const verifyCode = () => {
+  if (value.value !== '123456') {
+    error.value = 'Invalid code. Please try again.'
+    return
+  }
+
+  // eslint-disable-next-line no-console
+  console.log('Code verified successfully!')
+  value.value = ''
+}
+
+const onSubmit = (e: Event) => {
   e.preventDefault()
   error.value = ''
 
@@ -50,14 +61,7 @@ const handleSubmit = (e: Event) => {
 
   // Simulate API call
   setTimeout(() => {
-    if (value.value === '123456') {
-      // eslint-disable-next-line no-console
-      console.log('Code verified successfully!')
-      value.value = ''
-    } else {
-      error.value = 'Invalid code. Please try again.'
-    }
-
+    verifyCode()
     isSubmitting.value = false
   }, 1500)
 }

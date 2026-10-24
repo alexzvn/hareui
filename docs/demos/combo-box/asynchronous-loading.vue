@@ -7,7 +7,7 @@
     placeholder="Star Wars characters..."
     :filter="false"
     :items="characters.map((c) => ({ value: c.name, label: c.name }))"
-    :loading="loading"
+    :loading="isLoading"
     @load-more="loadMore"
   >
     <template #empty>
@@ -33,14 +33,14 @@ type Character = {
 // HeroUI's `useAsyncList` equivalent: refetch on every input change, follow the `next` cursor on `load-more`
 const filterText = ref('')
 const characters = ref<Character[]>([])
-const loading = ref(false)
+const isLoading = ref(false)
 let cursor: string | null = null
 let controller: AbortController | undefined
 
 const load = async (url: string, append: boolean) => {
   controller?.abort()
   controller = new AbortController()
-  loading.value = true
+  isLoading.value = true
 
   try {
     const json = await (
@@ -49,14 +49,14 @@ const load = async (url: string, append: boolean) => {
 
     cursor = json.next
     characters.value = append ? [...characters.value, ...json.results] : json.results
-    loading.value = false
+    isLoading.value = false
   } catch (error) {
-    if ((error as Error).name !== 'AbortError') loading.value = false
+    if ((error as Error).name !== 'AbortError') isLoading.value = false
   }
 }
 
 const loadMore = () => {
-  if (cursor && !loading.value) load(cursor, true)
+  if (cursor && !isLoading.value) load(cursor, true)
 }
 
 watch(filterText, (text) => load(`https://swapi.py4e.com/api/people/?search=${text}`, false))

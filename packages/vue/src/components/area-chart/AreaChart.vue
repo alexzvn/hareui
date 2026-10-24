@@ -46,7 +46,7 @@ const slots = useSlots()
 // Every slot is forwarded to the frame, which places it.
 const slotNames = () => Object.keys(slots) as Array<keyof AreaChartSlots>
 
-const ui = useComponentUI('areaChart', theme, () => ({}))
+const ui = useComponentUI('areaChart', { theme: theme, variantProps: () => ({}) })
 const chart = useChartRoot({
   data: () => props.data as ChartDatum[],
   margin: () => rootMargin(props),

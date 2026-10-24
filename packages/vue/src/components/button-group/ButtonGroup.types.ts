@@ -9,6 +9,7 @@ import type theme from './theme'
 
 type ButtonGroup = typeof theme
 
+/** Props of `ButtonGroup`: joins related Buttons into one control and shares `variant`, `size` and `disabled` with them. */
 export type ButtonGroupProps = {
   /**
    * The element or component to render as.
@@ -45,6 +46,7 @@ export type ButtonGroupProps = {
   ui?: ComponentSlots<ButtonGroup>
 }
 
+/** Slots of `ButtonGroup`. */
 export type ButtonGroupSlots = {
   /** The Buttons. Buttons placed directly in the group read its props. */
   default?: () => VNode[]

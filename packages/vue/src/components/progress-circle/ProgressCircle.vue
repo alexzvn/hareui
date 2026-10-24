@@ -59,11 +59,14 @@ const props = withDefaults(defineProps<ProgressCircleProps>(), {
   strokeWidth: 4,
 })
 
-const ui = useComponentUI('progressCircle', theme, () => ({
-  color: props.color,
-  size: props.size,
-  indeterminate: props.indeterminate,
-}))
+const ui = useComponentUI('progressCircle', {
+  theme,
+  variantProps: () => ({
+    color: props.color,
+    size: props.size,
+    indeterminate: props.indeterminate,
+  }),
+})
 
 const range = useRangeValue(() => props)
 

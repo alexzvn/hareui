@@ -7,7 +7,7 @@
         <tr ref="sentinel">
           <td :colspan="columns.length" class="py-3">
             <div class="flex items-center justify-center py-2">
-              <Spinner v-if="loading" aria-label="Loading more payments" />
+              <Spinner v-if="isLoading" aria-label="Loading more payments" />
               <span v-else class="size-6" />
             </div>
           </td>
@@ -47,16 +47,16 @@ const all = Array.from({ length: TOTAL }, (_, i): Payment => ({
 }))
 
 const items = ref(all.slice(0, PAGE))
-const loading = ref(false)
+const isLoading = ref(false)
 const hasMore = () => items.value.length < all.length
 
 const loadMore = () => {
-  if (loading.value || !hasMore()) return
-  loading.value = true
+  if (isLoading.value || !hasMore()) return
+  isLoading.value = true
 
   setTimeout(() => {
     items.value = all.slice(0, items.value.length + PAGE)
-    loading.value = false
+    isLoading.value = false
   }, 1200)
 }
 

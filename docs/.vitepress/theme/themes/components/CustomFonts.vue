@@ -32,7 +32,7 @@
       :disabled="!cdnUrl.trim() || validationError !== null || isImporting"
       size="sm"
       variant="secondary"
-      @click="handleImport"
+      @click="onImport"
     >
       {{ isImporting ? 'Importing...' : 'Import font' }}
     </Button>
@@ -84,7 +84,7 @@ const onCdnUrlChange = (value: string | number | undefined) => {
   importError.value = null
 }
 
-const handleImport = () => {
+const onImport = () => {
   if (validationError.value) return
 
   isImporting.value = true
@@ -111,13 +111,15 @@ const handleImport = () => {
 
     importError.value = message
     isImporting.value = false
-  } else {
-    // Store the URL directly in the query params (makes it shareable!)
-    setVariable('fontFamily', cdnUrl.value)
-    cdnUrl.value = ''
-    hasBlurred.value = false
-    isImporting.value = false
-    emit('goToSuggested')
+
+    return
   }
+
+  // Store the URL directly in the query params (makes it shareable!)
+  setVariable('fontFamily', cdnUrl.value)
+  cdnUrl.value = ''
+  hasBlurred.value = false
+  isImporting.value = false
+  emit('goToSuggested')
 }
 </script>

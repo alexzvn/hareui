@@ -7,6 +7,7 @@ import type theme from './theme'
 
 type SwitchGroup = typeof theme
 
+/** Props of `SwitchGroup`: lays out related `Switch` components vertically or horizontally. */
 export type SwitchGroupProps = {
   /**
    * The axis the switches are laid out along.
@@ -19,6 +20,7 @@ export type SwitchGroupProps = {
   ui?: ComponentSlots<SwitchGroup>
 }
 
+/** Slots of `SwitchGroup`. */
 export type SwitchGroupSlots = {
   /** The `Switch` items to render. */
   default?: () => VNode[]

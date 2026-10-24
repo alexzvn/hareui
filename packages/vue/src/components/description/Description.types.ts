@@ -7,6 +7,7 @@ import type theme from './theme'
 
 type Description = typeof theme
 
+/** Props of the `Description` component: helper text that describes a form control. */
 export type DescriptionProps = {
   /** The id of the element, referenced by `aria-describedby` of the described control. */
   id?: string
@@ -16,6 +17,7 @@ export type DescriptionProps = {
   ui?: ComponentSlots<Description>
 }
 
+/** Slots of the `Description` component. */
 export type DescriptionSlots = {
   /** The description content. */
   default?: () => VNode[]

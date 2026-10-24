@@ -3,20 +3,20 @@
     <TextField
       v-model="username"
       required
-      :invalid="usernameInvalid"
+      :invalid="isUsernameInvalid"
       label="Username"
       name="username"
       placeholder="jane_doe"
-      :description="usernameInvalid ? undefined : 'Choose a unique username for your profile.'"
+      :description="isUsernameInvalid ? undefined : 'Choose a unique username for your profile.'"
       error-message="Username must be at least 3 characters."
     />
     <TextField
       v-model="bio"
       required
-      :invalid="bioInvalid"
+      :invalid="isBioInvalid"
       label="Bio"
       name="bio"
-      :description="bioInvalid ? undefined : `Minimum 20 characters (${bio.length}/20).`"
+      :description="isBioInvalid ? undefined : `Minimum 20 characters (${bio.length}/20).`"
       error-message="Bio must contain at least 20 characters."
     >
       <TextArea placeholder="Tell us about yourself..." />
@@ -30,6 +30,6 @@ import { computed, ref } from 'vue'
 
 const username = ref('')
 const bio = ref('')
-const usernameInvalid = computed(() => username.value.length > 0 && username.value.length < 3)
-const bioInvalid = computed(() => bio.value.length > 0 && bio.value.length < 20)
+const isUsernameInvalid = computed(() => username.value.length > 0 && username.value.length < 3)
+const isBioInvalid = computed(() => bio.value.length > 0 && bio.value.length < 20)
 </script>

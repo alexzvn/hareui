@@ -35,32 +35,36 @@ export const filterEntries = (
   match: (item: ListBoxItem) => boolean,
 ): CollectionBlock[] => {
   const all = flattenEntries(entries)
-  const blocks: CollectionBlock[] = []
-  ;(entries ?? []).forEach((entry, key) => {
-    if ('type' in entry && entry.type === 'section') {
-      const rows = entry.items
-        .filter(match)
-        .map((item) => ({ kind: 'item' as const, item, index: all.indexOf(item) }))
-
-      if (rows.length) blocks.push({ kind: 'section', section: entry, rows, key })
-    } else if ('type' in entry && entry.type === 'separator') {
-      blocks.push({ kind: 'separator', key })
-    } else if (match(entry as ListBoxItem)) {
-      blocks.push({
-        kind: 'item',
-        item: entry as ListBoxItem,
-        index: all.indexOf(entry as ListBoxItem),
-      })
-    }
+  const toRow = (item: ListBoxItem): CollectionRow => ({
+    kind: 'item',
+    item,
+    index: all.indexOf(item),
   })
 
-  return blocks
+  const toBlocks = (entry: ListBoxEntry, key: number): CollectionBlock[] => {
+    if ('type' in entry && entry.type === 'section') {
+      const rows = entry.items.filter(match).map(toRow)
+
+      return rows.length ? [{ kind: 'section', section: entry, rows, key }] : []
+    }
+
+    if ('type' in entry && entry.type === 'separator') return [{ kind: 'separator', key }]
+
+    const item = entry as ListBoxItem
+
+    return match(item) ? [toRow(item)] : []
+  }
+
+  return (entries ?? []).flatMap(toBlocks)
+}
+
+const getBlockRowCount = (block: CollectionBlock): number => {
+  if (block.kind === 'section') return block.rows.length
+
+  return block.kind === 'item' ? 1 : 0
 }
 
 /** Number of option rows in `blocks`. */
 export const countRows = (blocks: CollectionBlock[]): number => {
-  return blocks.reduce(
-    (n, b) => n + (b.kind === 'item' ? 1 : b.kind === 'section' ? b.rows.length : 0),
-    0,
-  )
+  return blocks.reduce((n, block) => n + getBlockRowCount(block), 0)
 }

@@ -8,6 +8,7 @@ import type theme from './theme'
 
 type ColorSwatchPicker = typeof theme
 
+/** A swatch in a `ColorSwatchPicker`: a color string, or an object with a label and disabled state. */
 export type ColorSwatchPickerItem =
   | string
   | {
@@ -19,6 +20,7 @@ export type ColorSwatchPickerItem =
       disabled?: boolean
     }
 
+/** Props for `ColorSwatchPicker`, a listbox of color swatches for picking one color from a palette. */
 export type ColorSwatchPickerProps = {
   /** The swatches to render. */
   items: ColorSwatchPickerItem[]
@@ -61,6 +63,7 @@ export type ColorSwatchPickerProps = {
   ui?: ComponentSlots<ColorSwatchPicker>
 }
 
+/** Props passed to the `ColorSwatchPicker` item slots. */
 export type ColorSwatchPickerSlotProps = {
   /** The item's color string. */
   value: string
@@ -70,6 +73,7 @@ export type ColorSwatchPickerSlotProps = {
   selected: boolean
 }
 
+/** Slots for `ColorSwatchPicker`. */
 export type ColorSwatchPickerSlots = {
   /** Replaces the whole content of an item (swatch and indicator). */
   default?: (props: ColorSwatchPickerSlotProps) => VNode[]
@@ -77,6 +81,7 @@ export type ColorSwatchPickerSlots = {
   indicator?: (props: ColorSwatchPickerSlotProps) => VNode[]
 }
 
+/** Events emitted by `ColorSwatchPicker`. */
 export type ColorSwatchPickerEmits = {
   /** Emitted when the selection changes. Emits a `Color` when the current value is a `Color`, else the item's string. */
   'update:modelValue': [value: string | Color]

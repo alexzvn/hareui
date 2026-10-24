@@ -12,6 +12,7 @@ import type theme from './theme'
 type CheckboxGroup = typeof theme
 type Checkbox = typeof checkboxTheme
 
+/** One checkbox rendered by `CheckboxGroup` from its `items` prop. */
 export type CheckboxGroupItem = {
   /** The value added to / removed from `v-model` when the item is toggled. */
   value: string
@@ -23,6 +24,7 @@ export type CheckboxGroupItem = {
   disabled?: boolean
 }
 
+/** Props of `CheckboxGroup`: a labelled group of checkboxes rendered from `items`, with validation. Bind the checked values with `v-model`. */
 export type CheckboxGroupProps<T extends CheckboxGroupItem = CheckboxGroupItem> = {
   /** The checkbox items. */
   items?: T[]
@@ -81,6 +83,7 @@ export type CheckboxGroupProps<T extends CheckboxGroupItem = CheckboxGroupItem> 
     Pick<ComponentSlots<Checkbox>, 'content' | 'control' | 'indicator'> & { item?: ClassValue }
 } & FormFieldProps
 
+/** Slots of `CheckboxGroup`: overrides for the group label, description and error, and for each item's label, description and indicator. */
 export type CheckboxGroupSlots<T extends CheckboxGroupItem = CheckboxGroupItem> = {
   /** The group label content. Replaces the `label` prop. */
   label?: () => VNode[]

@@ -7,6 +7,7 @@ import type theme from './theme'
 
 type Main = typeof theme
 
+/** Props of the `Main` component: the page's main content landmark. */
 export type MainProps = {
   /**
    * The element or component to render as.
@@ -19,6 +20,7 @@ export type MainProps = {
   ui?: ComponentSlots<Main>
 }
 
+/** Slots of the `Main` component. */
 export type MainSlots = {
   /** The page content. */
   default?: () => unknown

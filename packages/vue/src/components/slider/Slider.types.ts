@@ -7,6 +7,7 @@ import type theme from './theme'
 
 type Slider = typeof theme
 
+/** Props of `Slider`: picks a single value or a range within `min`/`max` by dragging thumbs or with the keyboard. */
 export type SliderProps = {
   /**
    * The current value(s). Bind with `v-model`. A plain number renders a single thumb; an array
@@ -64,6 +65,7 @@ export type SliderProps = {
   ui?: ComponentSlots<Slider>
 }
 
+/** Slots of `Slider`: overrides for the label and the formatted value output. */
 export type SliderSlots = {
   /** The label content. Replaces the `label` prop. */
   label?: () => VNode[]

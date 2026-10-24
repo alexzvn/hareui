@@ -7,6 +7,7 @@ import type theme from './theme'
 
 type Container = typeof theme
 
+/** Props of `Container`, a centered wrapper that constrains page content to a maximum width. */
 export type ContainerProps = {
   /**
    * The element or component to render as.
@@ -19,6 +20,7 @@ export type ContainerProps = {
   ui?: ComponentSlots<Container>
 }
 
+/** Slots of `Container`. */
 export type ContainerSlots = {
   /** The container content. */
   default?: () => unknown

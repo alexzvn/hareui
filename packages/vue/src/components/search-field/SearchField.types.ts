@@ -10,6 +10,7 @@ import type theme from './theme'
 
 type SearchField = typeof theme
 
+/** Props of `SearchField`, a text input for search queries with a search icon and a clear button. */
 export type SearchFieldProps = {
   /** Label text rendered above the field. */
   label?: string
@@ -72,6 +73,7 @@ export type SearchFieldProps = {
   ui?: ComponentSlots<SearchField>
 } & FormFieldProps
 
+/** Slots of `SearchField`. */
 export type SearchFieldSlots = {
   /** Label content. Replaces the `label` prop. */
   label?: () => VNode[]
@@ -85,6 +87,7 @@ export type SearchFieldSlots = {
   error?: (props: ValidationResult) => VNode[]
 }
 
+/** Events emitted by `SearchField`. */
 export type SearchFieldEmits = {
   /** Emitted when the value changes. */
   'update:modelValue': [value: string]

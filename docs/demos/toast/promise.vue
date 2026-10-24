@@ -99,8 +99,13 @@ const createEvent = (): Promise<never> => {
 const saveData = (): Promise<{ count: number }> => {
   const { promise, resolve, reject } = Promise.withResolvers<{ count: number }>()
   setTimeout(() => {
-    if (Math.random() > 0.5) resolve({ count: 42 })
-    else reject(new Error('Failed to save data'))
+    if (Math.random() > 0.5) {
+      resolve({ count: 42 })
+
+      return
+    }
+
+    reject(new Error('Failed to save data'))
   }, 2000)
 
   return promise

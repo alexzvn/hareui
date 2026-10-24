@@ -138,12 +138,15 @@ const hasCustomIndicator = computed(() => !!slots.indicator)
 const hasIcon = computed(() => !!(props.icon || slots.icon))
 
 // Resolved per item: the indicator and icon variants depend on this item's slots / props.
-const itemUi = useComponentUI('checkboxButtonGroup', theme, () => ({
-  layout: group.layout.value,
-  variant: group.variant.value,
-  customIndicator: hasCustomIndicator.value,
-  withIcon: hasIcon.value,
-}))
+const itemUi = useComponentUI('checkboxButtonGroup', {
+  theme,
+  variantProps: () => ({
+    layout: group.layout.value,
+    variant: group.variant.value,
+    customIndicator: hasCustomIndicator.value,
+    withIcon: hasIcon.value,
+  }),
+})
 
 // Named by the title alone; the description and the default slot content are announced through aria-describedby.
 const { id, labelId, descriptionId, hasLabel, hasDescription, describedBy } = useFieldChrome({

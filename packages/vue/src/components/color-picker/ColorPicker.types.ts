@@ -9,6 +9,7 @@ import type theme from './theme'
 
 type ColorPicker = typeof theme
 
+/** Props for `ColorPicker`, a swatch trigger that opens a popover of colour controls sharing one value. */
 export type ColorPickerProps = {
   /** The current colour (controlled). Use with `v-model`. */
   modelValue?: string | Color
@@ -46,6 +47,7 @@ export type ColorPickerProps = {
   ui?: ComponentSlots<ColorPicker>
 }
 
+/** Slots for `ColorPicker`: the trigger content and the popover's colour controls. */
 export type ColorPickerSlots = {
   /** Content of the trigger button, typically a ColorSwatch and a Label. Receives the current colour and open state. */
   trigger?: (props: { color: Color; open: boolean }) => VNode[]
@@ -56,6 +58,7 @@ export type ColorPickerSlots = {
   default?: (props: { color: Color; close: () => void }) => VNode[]
 }
 
+/** Events emitted by `ColorPicker`. */
 export type ColorPickerEmits = {
   /** Emitted when the colour changes. */
   'update:modelValue': [value: Color]

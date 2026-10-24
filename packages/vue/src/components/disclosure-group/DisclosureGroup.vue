@@ -33,7 +33,7 @@ const props = withDefaults(defineProps<DisclosureGroupProps>(), {
 const emit = defineEmits<DisclosureGroupEmits>()
 defineSlots<DisclosureGroupSlots>()
 
-const ui = useComponentUI('disclosureGroup', theme, () => ({}))
+const ui = useComponentUI('disclosureGroup', { theme: theme, variantProps: () => ({}) })
 
 const { expanded, isExpanded, setExpanded } = useExpandedValues(props, (value) =>
   emit('update:modelValue', value),

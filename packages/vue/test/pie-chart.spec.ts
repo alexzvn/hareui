@@ -59,10 +59,10 @@ const hoverAt = async (wrapper: ReturnType<typeof mountChart>, radius: number, a
 
 describe('polar geometry', () => {
   it('resolves percentages against a total', () => {
-    expect(percentValue('80%', 100)).toBe(80)
-    expect(percentValue(30, 100)).toBe(30)
-    expect(percentValue('40', 100)).toBe(40)
-    expect(percentValue(undefined, 100, 7)).toBe(7)
+    expect(percentValue('80%', { total: 100 })).toBe(80)
+    expect(percentValue(30, { total: 100 })).toBe(30)
+    expect(percentValue('40', { total: 100 })).toBe(40)
+    expect(percentValue(undefined, { total: 100, fallback: 7 })).toBe(7)
   })
 
   it('caps the sweep at one turn and keeps its direction', () => {

@@ -1,5 +1,5 @@
 <template>
-  <Form class="flex w-80 flex-col gap-3" @submit="handleSubmit">
+  <Form class="flex w-80 flex-col gap-3" @submit="onSubmit">
     <DateRangePicker
       v-model="value"
       required
@@ -34,7 +34,7 @@ const isInvalid = computed(
     (value.value.start.compare(currentDate) < 0 || value.value.end.compare(value.value.start) < 0),
 )
 
-const handleSubmit = (event: Event) => {
+const onSubmit = (event: Event) => {
   event.preventDefault()
   if (!value.value || isInvalid.value) return
 

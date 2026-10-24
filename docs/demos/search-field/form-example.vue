@@ -1,5 +1,5 @@
 <template>
-  <Form class="flex w-[280px] flex-col gap-4" @submit="handleSubmit">
+  <Form class="flex w-[280px] flex-col gap-4" @submit="onSubmit">
     <SearchField
       v-model="value"
       required
@@ -36,7 +36,7 @@ const isSubmitting = ref(false)
 const MIN_LENGTH = 3
 const isInvalid = computed(() => value.value.length > 0 && value.value.length < MIN_LENGTH)
 
-const handleSubmit = (e: Event) => {
+const onSubmit = (e: Event) => {
   e.preventDefault()
   if (value.value.length < MIN_LENGTH) return
   isSubmitting.value = true

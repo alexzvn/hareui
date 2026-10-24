@@ -22,10 +22,13 @@ const props = withDefaults(defineProps<AvatarGroupProps>(), {
 
 const slots = defineSlots<AvatarGroupSlots>()
 
-const ui = useComponentUI('avatarGroup', theme, () => ({
-  grid: props.grid,
-  overlap: props.overlap,
-}))
+const ui = useComponentUI('avatarGroup', {
+  theme,
+  variantProps: () => ({
+    grid: props.grid,
+    overlap: props.overlap,
+  }),
+})
 
 const flatten = (nodes: VNode[]): VNode[] => {
   return nodes.flatMap((node) => {

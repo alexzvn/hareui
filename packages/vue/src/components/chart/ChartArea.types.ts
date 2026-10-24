@@ -1,5 +1,6 @@
 import type { ChartCurveSeriesProps } from './series'
 
+/** Props of `ChartArea`: a series drawn as a line with the space down to its baseline filled. */
 export type ChartAreaProps = {
   /**
    * Fill color, `url(#gradient-id)`, or `'gradient'`: a fade of the stroke color from `fillOpacity[0]` at the top
@@ -17,6 +18,7 @@ export type ChartAreaProps = {
   baseValue?: number | 'dataMin' | 'dataMax'
 } & ChartCurveSeriesProps
 
+/** Slots of `ChartArea`. */
 export type ChartAreaSlots = {
   /** `ChartLabel` to label every point. */
   default?: () => unknown

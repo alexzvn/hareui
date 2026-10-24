@@ -1,5 +1,6 @@
 import { computed, ref } from 'vue'
 
+/** The `value` that identifies an Accordion or DisclosureGroup item in the expanded list. */
 export type ExpandedValue = string | number
 
 /**
@@ -15,14 +16,14 @@ export const useExpandedValues = (
   const expanded = computed(() => props.modelValue ?? uncontrolled.value)
 
   const isExpanded = (value: ExpandedValue) => expanded.value.includes(value)
+
+  const getExpandedWith = (value: ExpandedValue) =>
+    props.multiple ? [...expanded.value, value] : [value]
+
   const setExpanded = (value: ExpandedValue, open: boolean) => {
     if (open === isExpanded(value)) return
 
-    const next = open
-      ? props.multiple
-        ? [...expanded.value, value]
-        : [value]
-      : expanded.value.filter((v) => v !== value)
+    const next = open ? getExpandedWith(value) : expanded.value.filter((v) => v !== value)
 
     uncontrolled.value = next
     emit(next)

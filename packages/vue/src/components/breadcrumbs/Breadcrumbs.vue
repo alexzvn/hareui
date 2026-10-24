@@ -53,7 +53,7 @@ const props = withDefaults(defineProps<BreadcrumbsProps<T>>(), { as: 'ol' })
 const slots = useSlots()
 defineSlots<BreadcrumbsSlots<T>>()
 
-const ui = useComponentUI('breadcrumbs', theme, () => ({}))
+const ui = useComponentUI('breadcrumbs', { theme: theme, variantProps: () => ({}) })
 
 const CHEVRON_RIGHT =
   'M5.47 2.97a.75.75 0 0 1 1.06 0l4.5 4.5a.75.75 0 0 1 0 1.06l-4.5 4.5a.75.75 0 1 1-1.06-1.06L9.44 8 5.47 4.03a.75.75 0 0 1 0-1.06Z'

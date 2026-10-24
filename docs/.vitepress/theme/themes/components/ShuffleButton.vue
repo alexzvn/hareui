@@ -3,7 +3,7 @@
     <Tooltip :delay="0">
       <!-- HeroUI `Tooltip.Trigger` renders this focusable wrapper -->
       <div class="inline-block w-min" data-slot="tooltip-trigger" role="button" tabindex="0">
-        <Button icon-only size="md" variant="tertiary" @click="handleModalTrigger">
+        <Button icon-only size="md" variant="tertiary" @click="onModalTrigger">
           <Icon icon="gravity-ui:shuffle" />
         </Button>
       </div>
@@ -17,7 +17,7 @@
       dismissible
       title="Are you sure you want to randomize?"
       :ui="{ footer: 'flex-col sm:flex-row sm:items-center' }"
-      @update:open="handleOpenChange"
+      @update:open="onOpenChange"
     >
       <template #icon>
         <Icon icon="gravity-ui:shuffle" />
@@ -28,10 +28,10 @@
           class="order-2 w-full sm:order-2 sm:w-auto"
           size="md"
           variant="tertiary"
-          @click="handleClose"
+          @click="onClose"
           >Cancel</Button
         >
-        <Button class="order-1 w-full sm:order-3 sm:w-auto" size="md" @click="handleRandomize"
+        <Button class="order-1 w-full sm:order-3 sm:w-auto" size="md" @click="onRandomize"
           >Confirm</Button
         >
         <div class="order-3 flex flex-1 items-center gap-2 self-start sm:order-1 sm:self-center">
@@ -65,7 +65,7 @@ const [variables] = useVariablesState()
 let snapshotVariables = variables.value
 let isRandomizing = false
 
-const handleRandomize = () => {
+const onRandomize = () => {
   isRandomizing = true
   randomize()
 
@@ -76,7 +76,7 @@ const handleRandomize = () => {
   isOpen.value = false
 }
 
-const handleModalTrigger = () => {
+const onModalTrigger = () => {
   const dontShowAgain = localStorage.getItem(LOCAL_STORAGE_KEYS.SHUFFLE_WARNING_SHOWN)
   const isSame = compareThemeVariables(variables.value, snapshotVariables)
 
@@ -88,14 +88,17 @@ const handleModalTrigger = () => {
   isOpen.value = true
 }
 
-useKeyPress('r', handleModalTrigger, { enabled: () => props.enableKeyboardShortcut })
+useKeyPress('r', {
+  onPress: onModalTrigger,
+  enabled: () => props.enableKeyboardShortcut,
+})
 
-const handleOpenChange = (open: boolean) => {
+const onOpenChange = (open: boolean) => {
   isDontShowAgainChecked.value = false
   isOpen.value = open
 }
 
-const handleClose = () => {
+const onClose = () => {
   isDontShowAgainChecked.value = false
   isOpen.value = false
 }

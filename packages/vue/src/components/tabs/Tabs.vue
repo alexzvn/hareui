@@ -172,7 +172,7 @@
 
 <script setup lang="ts" generic="T extends TabsItem = TabsItem">
 import { TabsContent, TabsList, TabsRoot, TabsTrigger } from 'reka-ui'
-import { computed, nextTick, onBeforeUnmount, onMounted, ref, watch } from 'vue'
+import { computed, nextTick, onBeforeUnmount, onMounted, ref, useTemplateRef, watch } from 'vue'
 
 import type { ScrollShadowVisibility } from '@/components/scroll-shadow/ScrollShadow.types'
 import ScrollShadow from '@/components/scroll-shadow/ScrollShadow.vue'
@@ -190,11 +190,14 @@ const props = withDefaults(defineProps<TabsProps<T>>(), {
 const modelValue = defineModel<string | number>()
 defineSlots<TabsSlots<T>>()
 
-const ui = useComponentUI('tabs', theme, () => ({
-  variant: props.variant,
-  align: props.align,
-  orientation: props.orientation,
-}))
+const ui = useComponentUI('tabs', {
+  theme,
+  variantProps: () => ({
+    variant: props.variant,
+    align: props.align,
+    orientation: props.orientation,
+  }),
+})
 
 const itemValue = (item: TabsItem, index: number): string | number => {
   return item.value ?? String(index)
@@ -249,7 +252,7 @@ const isSeparatorHidden = (index: number): boolean => {
 // right after that tab. We keep one persistent indicator (so it slides instead of being
 // recreated) and move *it* next to the selected tab. Letting Vue's keyed diff reorder an
 // interleaved list instead could move the focused tab node, which drops keyboard focus.
-const indicatorRef = ref<HTMLElement | null>(null)
+const indicatorRef = useTemplateRef<HTMLElement>('indicatorRef')
 
 // Reka's roving focus maps PageUp/PageDown to the first/last tab; RAC's tab list ignores them.
 // RAC's TabsKeyboardDelegate also moves with ArrowLeft/ArrowRight (flipped in RTL) in a vertical
@@ -293,7 +296,7 @@ const placeIndicator = () => {
 // SelectionIndicator, which uses getBoundingClientRect). We track geometry ourselves —
 // from the active trigger's bounding box relative to the list — so the indicator fills
 // the exact same box React renders (HeroUI's indicator is `size-full` of its own tab).
-const listRef = ref<{ $el: HTMLElement } | null>(null)
+const listRef = useTemplateRef<{ $el: HTMLElement }>('listRef')
 const indicatorGeometry = ref<Record<string, string>>({})
 
 // React Aria's SelectionIndicator only transitions when a *previous* instance existed to
@@ -333,7 +336,7 @@ const measureIndicator = () => {
 
 // HeroUI's Tabs.ListContainer wraps the list in a ScrollShadow (size 64, scrollbar hidden) and
 // shows prev/next chevrons while there's hidden content on that side.
-const scrollerRef = ref<InstanceType<typeof ScrollShadow> | null>(null)
+const scrollerRef = useTemplateRef<InstanceType<typeof ScrollShadow>>('scrollerRef')
 const scrollState = ref({ before: false, after: false })
 
 const onScrollVisibility = (visibility: ScrollShadowVisibility) => {
@@ -398,7 +401,7 @@ onBeforeUnmount(() => {
 const PANEL_TABBABLE =
   'a[href],area[href],button:not([disabled]),input:not([disabled]):not([type=hidden]),select:not([disabled]),textarea:not([disabled]),iframe,[contenteditable]:not([contenteditable=false]),[tabindex]:not([tabindex^="-"])'
 
-const panelRef = ref<{ $el: HTMLElement } | null>(null)
+const panelRef = useTemplateRef<{ $el: HTMLElement }>('panelRef')
 let panelObserver: MutationObserver | null = null
 
 const syncPanelTabStop = () => {

@@ -51,8 +51,12 @@ const props = withDefaults(defineProps<MeterProps>(), {
 
 const slots = defineSlots<MeterSlots>()
 
-const ui = useComponentUI('meter', theme, () => ({ color: props.color, size: props.size }))
-const labelUi = useComponentUI('label', labelTheme, () => ({}))
+const ui = useComponentUI('meter', {
+  theme,
+  variantProps: () => ({ color: props.color, size: props.size }),
+})
+
+const labelUi = useComponentUI('label', { theme: labelTheme, variantProps: () => ({}) })
 const labelId = useId(undefined, 'hareui-meter-label')
 
 const range = useRangeValue(() => props)

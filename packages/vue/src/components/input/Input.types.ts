@@ -8,6 +8,7 @@ import type theme from './theme'
 
 type Input = typeof theme
 
+/** Props of `Input`: a styled native `<input>`, used on its own or inside a `TextField`, which supplies its id, label and validation. */
 export type InputProps = {
   /**
    * The native input type.

@@ -18,5 +18,5 @@ import theme from './theme'
 const props = defineProps<ErrorMessageProps>()
 defineSlots<ErrorMessageSlots>()
 
-const ui = useComponentUI('errorMessage', theme, () => ({}))
+const ui = useComponentUI('errorMessage', { theme: theme, variantProps: () => ({}) })
 </script>

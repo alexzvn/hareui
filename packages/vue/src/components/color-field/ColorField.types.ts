@@ -11,6 +11,7 @@ import type theme from './theme'
 
 type ColorField = typeof theme
 
+/** Props for `ColorField`, a text input for editing a color as hex or a single channel value. */
 export type ColorFieldProps = {
   /** Label text rendered above the field. */
   label?: string
@@ -94,6 +95,7 @@ export type ColorFieldProps = {
   ui?: ComponentSlots<ColorField>
 } & FormFieldProps
 
+/** Slots for `ColorField`. */
 export type ColorFieldSlots = {
   /** Label content. Replaces the `label` prop. */
   label?: () => VNode[]
@@ -107,6 +109,7 @@ export type ColorFieldSlots = {
   error?: (props: ValidationResult) => VNode[]
 }
 
+/** Events emitted by `ColorField`. */
 export type ColorFieldEmits = {
   /**
    * Emitted when the committed color changes (on blur, Enter, stepper or wheel). `null` when the

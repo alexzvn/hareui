@@ -8,6 +8,7 @@ import type theme from './theme'
 
 type Link = typeof theme
 
+/** Props of `Link`: a styled anchor (or router link via `as`) with an optional external-link icon. */
 export type LinkProps = {
   /**
    * The element or component to render as, e.g. a router link component.
@@ -34,6 +35,7 @@ export type LinkProps = {
   ui?: ComponentSlots<Link>
 }
 
+/** Slots of `Link`: the link text and a custom icon. */
 export type LinkSlots = {
   /** The link text. */
   default?: () => VNode[]

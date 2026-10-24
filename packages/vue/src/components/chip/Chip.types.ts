@@ -8,6 +8,7 @@ import type theme from './theme'
 
 type Chip = typeof theme
 
+/** Props of `Chip`: a small label for a status, category or attribute, with optional leading/trailing content. */
 export type ChipProps = {
   /**
    * The element or component to render as.
@@ -37,6 +38,7 @@ export type ChipProps = {
   ui?: ComponentSlots<Chip>
 }
 
+/** Slots of `Chip`. */
 export type ChipSlots = {
   /** Content rendered before the label (e.g. an icon or status dot). */
   leading?: () => VNode[]

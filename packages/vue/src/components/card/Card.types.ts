@@ -8,6 +8,7 @@ import type theme from './theme'
 
 type Card = typeof theme
 
+/** Props for `Card`, a surface that groups related content with an optional header and footer. */
 export type CardProps = {
   /**
    * The element or component to render as.
@@ -29,6 +30,7 @@ export type CardProps = {
   ui?: ComponentSlots<Card>
 }
 
+/** Slots for `Card`. */
 export type CardSlots = {
   /**
    * Content rendered directly inside the root, before the header, without a wrapper

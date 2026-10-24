@@ -84,7 +84,10 @@ const props = withDefaults(defineProps<DashboardNavbarProps>(), {
 
 const slots = defineSlots<DashboardNavbarSlots>()
 
-const ui = useComponentUI('dashboardNavbar', theme, () => ({ toggleSide: props.toggleSide }))
+const ui = useComponentUI('dashboardNavbar', {
+  theme,
+  variantProps: () => ({ toggleSide: props.toggleSide }),
+})
 
 const as = computed(() => resolveAs(props.as, { root: 'div', title: 'h1' }))
 

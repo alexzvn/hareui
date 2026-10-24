@@ -5,6 +5,7 @@ import type { ClassValue } from '@/utils/tv'
 
 import type theme from './theme'
 
+/** Props of `CheckboxButtonGroupItem`: one selectable card inside a `CheckboxButtonGroup`. */
 export type CheckboxButtonGroupItemProps = {
   /** The value added to / removed from the group's `v-model` when the item is toggled. */
   value: string
@@ -32,6 +33,7 @@ export type CheckboxButtonGroupItemProps = {
   ui?: Omit<ComponentSlots<typeof theme>, 'base'>
 }
 
+/** Selection state passed to every `CheckboxButtonGroupItem` slot. */
 export type CheckboxButtonGroupItemSlotProps = {
   /** Whether the item is selected. */
   selected: boolean
@@ -39,6 +41,7 @@ export type CheckboxButtonGroupItemSlotProps = {
   disabled: boolean
 }
 
+/** Slots of `CheckboxButtonGroupItem`: extra content plus overrides for the title, description, icon and selection indicator. */
 export type CheckboxButtonGroupItemSlots = {
   /** Extra content rendered after the title and description. */
   default?: (props: CheckboxButtonGroupItemSlotProps) => VNode[]

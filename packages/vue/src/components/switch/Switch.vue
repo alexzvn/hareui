@@ -10,7 +10,9 @@
     :data-required="required ? 'true' : undefined"
     :class="ui.base({ class: [props.ui?.base, props.class] })"
     @click="forwardRootClick($event, '[data-slot=switch-content]')"
-    @mousedown="keepFocusWhenReadonly($event, readonly, '[data-slot=switch-content]')"
+    @mousedown="
+      keepFocusWhenReadonly($event, { readonly, contentSelector: '[data-slot=switch-content]' })
+    "
   >
     <SwitchRoot
       v-bind="$attrs"
@@ -82,9 +84,12 @@ const emit = defineEmits<{
 defineSlots<SwitchSlots>()
 const slots = useSlots()
 
-const ui = useComponentUI('switch', theme, () => ({
-  size: props.size,
-}))
+const ui = useComponentUI('switch', {
+  theme,
+  variantProps: () => ({
+    size: props.size,
+  }),
+})
 
 const local = ref(props.defaultValue ?? false)
 const checked = computed(() => props.modelValue ?? local.value)

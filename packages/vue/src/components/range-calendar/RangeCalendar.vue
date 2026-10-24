@@ -55,6 +55,7 @@ import {
   watch,
 } from 'vue'
 
+import { defaultMaxValue, defaultMinValue } from '@/components/calendar/calendarBounds'
 import {
   calendarCellDate,
   calendarCellFrom,
@@ -63,7 +64,6 @@ import {
 } from '@/components/calendar/calendarCells'
 import type { CalendarMonthShellExposed } from '@/components/calendar/CalendarMonthShell.types'
 import CalendarMonthShell from '@/components/calendar/CalendarMonthShell.vue'
-import { defaultMaxValue, defaultMinValue } from '@/components/calendar/useCalendarBounds'
 import {
   exceedsMaximumDays,
   isDaySelectedInRange,
@@ -107,7 +107,10 @@ const viewKind = computed(() => {
   return props.visibleDuration?.weeks != null ? ('week' as const) : ('month' as const)
 })
 
-const ui = useComponentUI('rangeCalendar', theme, () => ({ view: viewKind.value }))
+const ui = useComponentUI('rangeCalendar', {
+  theme,
+  variantProps: () => ({ view: viewKind.value }),
+})
 
 const monthShell = useTemplateRef<CalendarMonthShellExposed>('shell')
 const rootEl = () => monthShell.value?.rootEl
@@ -165,7 +168,7 @@ const {
 // Reka only applies `maximumDays` to its own start value, which isn't fed, so it is passed back in as
 // `is-date-disabled`.
 const isDateDisabledByMaximumDays = (date: DateValue) => {
-  return exceedsMaximumDays(date, anchor.value, props.maximumDays)
+  return exceedsMaximumDays(date, { anchor: anchor.value, maximumDays: props.maximumDays })
 }
 
 const highlightedRange = computed(() => {

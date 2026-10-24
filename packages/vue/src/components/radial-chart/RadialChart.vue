@@ -93,7 +93,7 @@ const endAngle = computed(
   () => props.endAngle ?? (props.gauge ? chartDefaults.gauge.endAngle : -270),
 )
 
-const ui = useComponentUI('radialChart', theme, () => ({}))
+const ui = useComponentUI('radialChart', { theme: theme, variantProps: () => ({}) })
 const chart = useChartRoot({
   // Generated mode: only the visible rings reach the chart, so the active index points into them.
   data: () =>
@@ -120,5 +120,5 @@ const polar = usePolarChart(chart, {
 })
 
 // The hole inside the innermost ring.
-providePolarCenterLabel(chart, polar, () => polar.innerRadius.value)
+providePolarCenterLabel({ chart, polar, radius: () => polar.innerRadius.value })
 </script>

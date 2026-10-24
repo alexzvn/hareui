@@ -115,7 +115,7 @@ const randomizeTheme = () => {
   }
 }
 
-useKeyPress('t', randomizeTheme)
+useKeyPress('t', { onPress: randomizeTheme })
 
 const onSelectionChange = (selected: unknown) => {
   if (typeof selected === 'string') applyTheme(selected as ThemeId)

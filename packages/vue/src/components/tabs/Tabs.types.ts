@@ -7,6 +7,7 @@ import type theme from './theme'
 
 type Tabs = typeof theme
 
+/** One tab of `Tabs`: its trigger label, value and panel content. Extend it to carry extra data into the slots. */
 export type TabsItem = {
   /** The tab's label, shown in the trigger unless `#tab` is used. */
   label?: string
@@ -20,6 +21,7 @@ export type TabsItem = {
   content?: string
 }
 
+/** Props for `Tabs`, which organizes content into panels shown one at a time, switched by a tab list. */
 export type TabsProps<T extends TabsItem = TabsItem> = {
   /** The tabs to render. */
   items: T[]
@@ -62,6 +64,7 @@ export type TabsProps<T extends TabsItem = TabsItem> = {
   ui?: ComponentSlots<Tabs>
 }
 
+/** Slots for `Tabs`: tab labels and panel content, per item or shared. */
 export type TabsSlots<T extends TabsItem = TabsItem> = {
   /** Replaces a tab's label. */
   tab?: (props: { item: T; index: number; selected: boolean }) => VNode[]

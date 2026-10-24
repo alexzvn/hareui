@@ -11,6 +11,7 @@ import type theme from './theme'
 
 type InlineSelect = typeof theme
 
+/** Props of `InlineSelect`, a `Select` whose trigger reads as part of a sentence or heading. */
 export type InlineSelectProps<T extends ListBoxItem = ListBoxItem> = {
   /** The selected value(s). Use with `v-model`. */
   modelValue?: SelectValue
@@ -28,8 +29,10 @@ export type InlineSelectProps<T extends ListBoxItem = ListBoxItem> = {
   ui?: ComponentSlots<InlineSelect>
 } & Omit<SelectProps<T>, 'variant' | 'fullWidth' | 'clearable' | 'side' | 'align' | 'ui'>
 
+/** Slots of `InlineSelect`: every `Select` slot except `clear`. */
 export type InlineSelectSlots<T extends ListBoxItem = ListBoxItem> = Omit<SelectSlots<T>, 'clear'>
 
+/** Events of `InlineSelect`: the `Select` events except `clear`. */
 export type InlineSelectEmits = {
   /** The selection changed (`v-model`). */
   'update:modelValue': [value: SelectValue]

@@ -6,7 +6,10 @@ import { h, ref } from 'vue'
 import Fieldset from '@/components/fieldset/Fieldset.vue'
 import Form from '@/components/form/Form.vue'
 import RadioButtonGroup from '@/components/radio-button-group/RadioButtonGroup.vue'
-import type { RadioButtonGroupItemSlotProps } from '@/components/radio-button-group/RadioButtonGroupItem.types'
+import type {
+  RadioButtonGroupItemProps,
+  RadioButtonGroupItemSlotProps,
+} from '@/components/radio-button-group/RadioButtonGroupItem.types'
 import RadioButtonGroupItem from '@/components/radio-button-group/RadioButtonGroupItem.vue'
 
 import { expectAccessible } from './a11y'
@@ -33,6 +36,9 @@ const group = (
 }
 
 const cards = (w: ReturnType<typeof mount>) => w.findAll('[data-slot=radio-button-group-item]')
+
+const renderItems = (items: RadioButtonGroupItemProps[]) =>
+  items.map((item) => h(RadioButtonGroupItem, { key: item.value, ...item }))
 
 describe('RadioButtonGroup', () => {
   it('clicking a card updates v-model and the selected state', async () => {
@@ -146,9 +152,7 @@ describe('RadioButtonGroup disabled', () => {
     const w = mount(
       () =>
         h(Fieldset, { disabled: true }, () =>
-          h(RadioButtonGroup, { defaultValue: 'starter' }, () =>
-            plans.map((plan) => h(RadioButtonGroupItem, { key: plan.value, ...plan })),
-          ),
+          h(RadioButtonGroup, { defaultValue: 'starter' }, () => renderItems(plans)),
         ),
       { attachTo: document.body },
     )
@@ -247,7 +251,7 @@ describe('RadioButtonGroup form', () => {
       () =>
         h(Form, null, () =>
           h(RadioButtonGroup, { name: 'plan', required: true, errorMessage: 'Pick a plan' }, () =>
-            plans.map((plan) => h(RadioButtonGroupItem, { key: plan.value, ...plan })),
+            renderItems(plans),
           ),
         ),
       { attachTo: document.body },
@@ -274,9 +278,7 @@ describe('RadioButtonGroup form', () => {
     const w = mount(
       () =>
         h(Form, null, () =>
-          h(RadioButtonGroup, { name: 'slot', required: true }, () =>
-            items.map((item) => h(RadioButtonGroupItem, { key: item.value, ...item })),
-          ),
+          h(RadioButtonGroup, { name: 'slot', required: true }, () => renderItems(items)),
         ),
       { attachTo: document.body },
     )

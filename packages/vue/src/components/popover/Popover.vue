@@ -53,7 +53,7 @@
 
 <script setup lang="ts">
 import { PopoverArrow, PopoverContent, PopoverPortal, PopoverRoot, PopoverTrigger } from 'reka-ui'
-import { computed, ref, useId, useSlots, watch } from 'vue'
+import { computed, ref, useId, useSlots, useTemplateRef, watch } from 'vue'
 
 import { useComponentUI } from '@/composables/useComponentUI'
 import { useInertOutside } from '@/composables/useInertOutside'
@@ -80,10 +80,10 @@ const emit = defineEmits<PopoverEmits>()
 const slots = useSlots()
 defineSlots<PopoverSlots>()
 
-const ui = useComponentUI('popover', theme, () => ({}))
+const ui = useComponentUI('popover', { theme: theme, variantProps: () => ({}) })
 
-const contentRef = ref<{ $el: HTMLElement } | null>(null)
-const dialogRef = ref<HTMLElement>()
+const contentRef = useTemplateRef<{ $el: HTMLElement }>('contentRef')
+const dialogRef = useTemplateRef<HTMLElement>('dialogRef')
 const hasHeading = computed(() => !!(props.title || slots.title))
 
 // React Aria labels the dialog by its title heading (Reka labels it by the trigger).

@@ -16,11 +16,16 @@
 
 <script setup lang="ts">
 import { Primitive } from 'reka-ui'
-import { computed, onBeforeUnmount, ref, watch } from 'vue'
+import { computed, onBeforeUnmount, ref, useTemplateRef, watch } from 'vue'
 
 import { useComponentUI } from '@/composables/useComponentUI'
 
-import type { ScrollShadowProps, ScrollShadowSlots, ScrollShadowEmits } from './ScrollShadow.types'
+import type {
+  ScrollShadowProps,
+  ScrollShadowSlots,
+  ScrollShadowEmits,
+  ScrollShadowVisibility,
+} from './ScrollShadow.types'
 import theme from './theme'
 
 const props = withDefaults(defineProps<ScrollShadowProps>(), {
@@ -37,13 +42,16 @@ const props = withDefaults(defineProps<ScrollShadowProps>(), {
 const emit = defineEmits<ScrollShadowEmits>()
 defineSlots<ScrollShadowSlots>()
 
-const ui = useComponentUI('scrollShadow', theme, () => ({
-  orientation: props.orientation,
-  variant: props.variant,
-  hideScrollBar: props.hideScrollBar,
-}))
+const ui = useComponentUI('scrollShadow', {
+  theme,
+  variantProps: () => ({
+    orientation: props.orientation,
+    variant: props.variant,
+    hideScrollBar: props.hideScrollBar,
+  }),
+})
 
-const root = ref<{ $el: HTMLElement } | null>(null)
+const root = useTemplateRef<{ $el: HTMLElement }>('root')
 const auto = computed(() => props.enabled && props.visibility === 'auto')
 
 // Ported from HeroUI's `useScrollShadow`: measure on scroll / resize / content mutation and
@@ -52,24 +60,36 @@ const auto = computed(() => props.enabled && props.visibility === 'auto')
 const state = ref<{ before: boolean; after: boolean } | null>(null)
 let frame: number | null = null
 
+type EdgeState = { isVertical: boolean; hasHiddenBefore: boolean; hasHiddenAfter: boolean }
+
+const toVisibility = (edges: EdgeState): ScrollShadowVisibility => {
+  const [start, end] = edges.isVertical
+    ? (['top', 'bottom'] as const)
+    : (['left', 'right'] as const)
+
+  if (edges.hasHiddenBefore && edges.hasHiddenAfter) return 'both'
+  if (edges.hasHiddenBefore) return start
+
+  return edges.hasHiddenAfter ? end : 'none'
+}
+
 const measure = () => {
   const el = root.value?.$el
   if (!el) return
-  const vertical = props.orientation === 'vertical'
-  const start = vertical ? el.scrollTop : Math.abs(el.scrollLeft)
-  const size = vertical ? el.scrollHeight : el.scrollWidth
-  const client = vertical ? el.clientHeight : el.clientWidth
-  const before = start > props.offset
-  const after = start + client + props.offset < size - 1
+  const isVertical = props.orientation === 'vertical'
+  const start = isVertical ? el.scrollTop : Math.abs(el.scrollLeft)
+  const size = isVertical ? el.scrollHeight : el.scrollWidth
+  const client = isVertical ? el.clientHeight : el.clientWidth
+  const hasHiddenBefore = start > props.offset
+  const hasHiddenAfter = start + client + props.offset < size - 1
   const prev = state.value
-  if (prev && prev.before === before && prev.after === after) return
+  if (prev && prev.before === hasHiddenBefore && prev.after === hasHiddenAfter) return
   if (frame !== null) cancelAnimationFrame(frame)
 
   frame = requestAnimationFrame(() => {
     frame = null
-    state.value = { before, after }
-    const [start, end] = vertical ? (['top', 'bottom'] as const) : (['left', 'right'] as const)
-    emit('visibilityChange', before && after ? 'both' : before ? start : after ? end : 'none')
+    state.value = { before: hasHiddenBefore, after: hasHiddenAfter }
+    emit('visibilityChange', toVisibility({ isVertical, hasHiddenBefore, hasHiddenAfter }))
   })
 }
 

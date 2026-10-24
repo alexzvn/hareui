@@ -15,5 +15,5 @@ import theme from './theme'
 const props = withDefaults(defineProps<MainProps>(), { as: 'main' })
 defineSlots<MainSlots>()
 
-const ui = useComponentUI('main', theme, () => ({}))
+const ui = useComponentUI('main', { theme: theme, variantProps: () => ({}) })
 </script>

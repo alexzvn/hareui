@@ -10,6 +10,7 @@ import type theme from './theme'
 
 type NumberField = typeof theme
 
+/** Props of `NumberField`: a numeric input with increment/decrement buttons, locale-aware formatting, label, description and validation. */
 export type NumberFieldProps = {
   /** Label text rendered above the group. */
   label?: string
@@ -96,6 +97,7 @@ export type NumberFieldProps = {
   ui?: ComponentSlots<NumberField>
 } & FormFieldProps
 
+/** Slots of `NumberField`. */
 export type NumberFieldSlots = {
   /** Label content. Replaces the `label` prop. */
   label?: () => VNode[]

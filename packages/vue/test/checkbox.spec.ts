@@ -12,20 +12,20 @@ const control = '[data-slot=checkbox-content]'
 
 describe('Checkbox', () => {
   it('click toggles v-model and the root selected state', async () => {
-    const model = ref<boolean | 'indeterminate'>(false)
+    const isChecked = ref<boolean | 'indeterminate'>(false)
     const wrapper = mount(() =>
       h(Checkbox, {
         label: 'Terms',
-        modelValue: model.value,
-        'onUpdate:modelValue': (v: boolean | 'indeterminate') => (model.value = v),
+        modelValue: isChecked.value,
+        'onUpdate:modelValue': (v: boolean | 'indeterminate') => (isChecked.value = v),
       }),
     )
 
     await wrapper.find(control).trigger('click')
-    expect(model.value).toBe(true)
+    expect(isChecked.value).toBe(true)
     expect(wrapper.find('[data-slot=checkbox]').attributes('data-selected')).toBe('true')
     await wrapper.find(control).trigger('click')
-    expect(model.value).toBe(false)
+    expect(isChecked.value).toBe(false)
     expect(wrapper.find('[data-slot=checkbox]').attributes('data-selected')).toBeUndefined()
   })
 
@@ -56,13 +56,13 @@ describe('Checkbox', () => {
   })
 
   it('an external Label pointing at the id toggles the checkbox', async () => {
-    const model = ref(false)
+    const isChecked = ref(false)
     const wrapper = mount(
       defineComponent(() => () => [
         h(Checkbox, {
           id: 'marketing',
-          modelValue: model.value,
-          'onUpdate:modelValue': (v: boolean | 'indeterminate') => (model.value = v === true),
+          modelValue: isChecked.value,
+          'onUpdate:modelValue': (v: boolean | 'indeterminate') => (isChecked.value = v === true),
         }),
         h(Label, { for: 'marketing' }, () => 'Send me marketing emails'),
       ]),
@@ -70,7 +70,7 @@ describe('Checkbox', () => {
     )
 
     await wrapper.find('label[for=marketing]').trigger('click')
-    expect(model.value).toBe(true)
+    expect(isChecked.value).toBe(true)
     wrapper.unmount()
   })
 

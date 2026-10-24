@@ -5,7 +5,9 @@ import { ToastQueue } from './toastQueue'
 
 const DEFAULT_TOAST_TIMEOUT = 4000
 
+/** Options for a toast shown with `toast()` and its variant helpers. */
 export type ToastOptions = {
+  /** Secondary text rendered below the title. */
   description?: VNodeChild
   /** `null` hides the indicator. */
   indicator?: VNodeChild | null
@@ -23,12 +25,20 @@ export type ToastOptions = {
   onClose?: () => void
 }
 
+/** Messages for each phase of `toast.promise()`. */
 export type ToastPromiseOptions<T = unknown> = {
+  /** Title shown while the promise is pending. */
   loading: VNodeChild
+  /** Title shown when the promise resolves; a function receives the resolved value. */
   success: ((data: T) => VNodeChild) | VNodeChild
+  /** Title shown when the promise rejects; a function receives the rejection error. */
   error: ((error: Error) => VNodeChild) | VNodeChild
 }
 
+/**
+ * The `toast` function: call it to show a toast, or use its methods for variants,
+ * updates, promise tracking and queue control.
+ */
 export type ToastFunction = {
   /** Shows a toast; returns its key. */
   (message: VNodeChild, options?: ToastOptions): string
@@ -45,6 +55,7 @@ export type ToastFunction = {
    * a new toast when the id no longer exists. Omitting `timeout` keeps the
    * existing countdown; omitting `onClose` keeps the existing handler.
    */
+  // oxlint-disable-next-line eslint/max-params -- mirrors `toast(message, options)` with the target id in front; folding message into options would make the two calls differ
   update: (id: string, message: VNodeChild, options?: ToastOptions) => string
   /**
    * Shows a loading toast that settles in place when the promise resolves or
@@ -96,6 +107,7 @@ const createToastFunction = (queue: ToastQueue<ToastContentValue>): ToastFunctio
   toastFn.info = (message, options) => toastFn(message, { ...options, variant: 'accent' })
   toastFn.warning = (message, options) => toastFn(message, { ...options, variant: 'warning' })
 
+  // oxlint-disable-next-line eslint/max-params -- mirrors `toast(message, options)` with the target id in front; folding message into options would make the two calls differ
   toastFn.update = (id, message, options) => {
     const content = createContent(message, options)
     if (queue.update(id, content, createUpdateOptions(options))) return id

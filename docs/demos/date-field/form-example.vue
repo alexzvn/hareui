@@ -1,5 +1,5 @@
 <template>
-  <Form class="flex w-[280px] flex-col gap-4" @submit="handleSubmit">
+  <Form class="flex w-[280px] flex-col gap-4" @submit="onSubmit">
     <DateField
       v-model="value"
       required
@@ -39,7 +39,7 @@ const isSubmitting = ref(false)
 const todayDate = today(getLocalTimeZone())
 const isInvalid = computed(() => value.value !== null && value.value.compare(todayDate) < 0)
 
-const handleSubmit = (e: Event) => {
+const onSubmit = (e: Event) => {
   e.preventDefault()
   if (!value.value || isInvalid.value) return
 

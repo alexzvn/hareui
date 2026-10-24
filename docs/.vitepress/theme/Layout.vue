@@ -1,7 +1,7 @@
 <template>
   <PreviewPage v-if="frontmatter.layout === 'preview'" />
   <div v-else class="flex min-h-screen flex-col font-sans">
-    <Home v-if="frontmatter.layout === 'home'" :sections="sections" @search="searchOpen = true" />
+    <Home v-if="frontmatter.layout === 'home'" :sections="sections" @search="isSearchOpen = true" />
     <ThemesPage v-else-if="frontmatter.layout === 'themes'" />
     <div
       v-else
@@ -31,8 +31,8 @@
       <DocsHeader
         :sections="sections"
         :active-section="activeSection"
-        @search="searchOpen = true"
-        @open-sidebar="mobileSidebarOpen = true"
+        @search="isSearchOpen = true"
+        @open-sidebar="isMobileSidebarOpen = true"
       />
 
       <TocPopover v-if="!page.isNotFound" :title="title" :items="tocItems" :active="tocActive" />
@@ -90,11 +90,11 @@
       </div>
     </div>
 
-    <template v-if="mobileSidebarOpen">
+    <template v-if="isMobileSidebarOpen">
       <div
         data-state="open"
         class="data-[state=open]:animate-fd-fade-in data-[state=closed]:animate-fd-fade-out fixed inset-0 z-40 backdrop-blur-xs"
-        @click="mobileSidebarOpen = false"
+        @click="isMobileSidebarOpen = false"
       />
       <aside
         id="nd-sidebar-mobile"
@@ -128,7 +128,7 @@
       </aside>
     </template>
 
-    <SearchDialog v-if="searchEverOpened" v-model:open="searchOpen" />
+    <SearchDialog v-if="hasSearchOpened" v-model:open="isSearchOpen" />
 
     <!-- Shared default-queue provider: several toast/* demos call the global `toast()`
          function directly (matching HeroUI's own docs, which mount one Toast.Provider
@@ -186,18 +186,18 @@ const toastTheme = computed(() =>
     : undefined,
 )
 
-const searchOpen = ref(false)
+const isSearchOpen = ref(false)
 
 // SearchDialog (and its minisearch chunk) loads on first open, then stays mounted so it can animate out.
-const searchEverOpened = ref(false)
-watch(searchOpen, (isOpen) => isOpen && (searchEverOpened.value = true))
-const mobileSidebarOpen = ref(false)
-watch(path, () => (mobileSidebarOpen.value = false))
+const hasSearchOpened = ref(false)
+watch(isSearchOpen, (isOpen) => isOpen && (hasSearchOpened.value = true))
+const isMobileSidebarOpen = ref(false)
+watch(path, () => (isMobileSidebarOpen.value = false))
 
 const onKeydown = (event: KeyboardEvent) => {
   if (event.key.toLowerCase() === 'k' && (event.metaKey || event.ctrlKey)) {
     event.preventDefault()
-    searchOpen.value = true
+    isSearchOpen.value = true
   }
 }
 

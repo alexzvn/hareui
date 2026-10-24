@@ -46,7 +46,7 @@ export const useNumberValue = (options: NumberValueOptions): NumberValue => {
   const instance = getCurrentInstance()
 
   const snap = <T extends number | null | undefined>(value: T): T => {
-    return snapNumber(value, options.min(), options.max(), options.step())
+    return snapNumber(value, { min: options.min(), max: options.max(), step: options.step() })
   }
 
   const effectiveStep = computed(
@@ -73,13 +73,20 @@ export const useNumberValue = (options: NumberValueOptions): NumberValue => {
   // RAC commits an emptied input as "no value" (`onChange(NaN)`, an empty form value). Reka's applyInputValue
   // clears its own state but, in uncontrolled mode, never emits `undefined` (its passive v-model only emits values
   // that differ from the absent prop), so commit the empty value here.
+  const clearModel = () => {
+    if (model.value == null) {
+      instance?.emit('update:modelValue', undefined)
+
+      return
+    }
+
+    model.value = undefined
+  }
+
   const commitEmpty = () => {
     if (formValue.value == null) return
     formValue.value = undefined
-
-    if (model.value == null) instance?.emit('update:modelValue', undefined)
-    else model.value = undefined
-
+    clearModel()
     onCommit?.()
   }
 

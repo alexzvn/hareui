@@ -267,11 +267,14 @@ const autoId = useId(undefined, 'hareui-color-slider-label')
 const hasLabel = computed(() => !!(props.label || slots.label))
 const hasOutput = computed(() => props.showOutput ?? hasLabel.value)
 
-const ui = useComponentUI('colorSlider', theme, () => ({
-  orientation: props.orientation,
-  hasLabel: hasLabel.value,
-  hasOutput: hasOutput.value,
-}))
+const ui = useComponentUI('colorSlider', {
+  theme,
+  variantProps: () => ({
+    orientation: props.orientation,
+    hasLabel: hasLabel.value,
+    hasOutput: hasOutput.value,
+  }),
+})
 
 // RAC labels the slider's input with the visible label, or with the group's own `aria-label`/`aria-labelledby`
 // (fallthrough on the root here); Reka's thumb only carries the channel name.

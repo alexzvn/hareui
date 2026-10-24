@@ -8,6 +8,7 @@ import type theme from './theme'
 
 type ColorSlider = typeof theme
 
+/** Props for `ColorSlider`, a slider that adjusts one channel (hue, alpha, red, …) of a colour. */
 export type ColorSliderProps = {
   /** The color channel that this slider manipulates. */
   channel: ColorChannel
@@ -54,6 +55,7 @@ export type ColorSliderProps = {
   ui?: ComponentSlots<ColorSlider>
 }
 
+/** Props passed to the ColorSlider `output` and `thumb` slots. */
 export type ColorSliderSlotProps = {
   /** The display name of the current channel (e.g. `'Hue'`). */
   channelName: string
@@ -63,6 +65,7 @@ export type ColorSliderSlotProps = {
   valueText: string
 }
 
+/** Slots for `ColorSlider`: the label, value output and thumb content. */
 export type ColorSliderSlots = {
   /** Label content. Replaces the `label` prop. */
   label?: () => VNode[]
@@ -72,6 +75,7 @@ export type ColorSliderSlots = {
   thumb?: (props: ColorSliderSlotProps) => VNode[]
 }
 
+/** Events emitted by `ColorSlider`. */
 export type ColorSliderEmits = {
   /** Emitted on every value change with the new color, in the channel's native color space. */
   'update:modelValue': [value: Color]

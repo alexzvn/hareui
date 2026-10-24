@@ -15,6 +15,17 @@ const WIDTH = 400
 const HEIGHT = 200
 const margin = { top: 0, right: 0, bottom: 0, left: 0 }
 
+type PathCommand = { stride: number; xAt?: number; yAt?: number }
+
+/** Per command: arguments per segment and which of them are the end point's x/y. `Z` draws no point. */
+const PATH_COMMANDS: Partial<Record<string, PathCommand>> = {
+  M: { stride: 2, xAt: 0, yAt: 1 },
+  L: { stride: 2, xAt: 0, yAt: 1 },
+  H: { stride: 1, xAt: 0 },
+  V: { stride: 1, yAt: 0 },
+  A: { stride: 7, xAt: 5, yAt: 6 },
+}
+
 /** Bounding box of an SVG path made of M/L/H/V/A/Z commands (absolute or relative). */
 const bbox = (d: string) => {
   const xs: number[] = []
@@ -22,42 +33,21 @@ const bbox = (d: string) => {
   let x = 0
   let y = 0
   for (const [, cmd, args] of d.matchAll(/([MLHVAZmlhvaz])([^MLHVAZmlhvaz]*)/g)) {
+    const command = PATH_COMMANDS[cmd.toUpperCase()]
+    if (!command) continue
+
     const n = (args.match(/-?\d*\.?\d+(?:e-?\d+)?/g) ?? []).map(Number)
-    const rel = cmd === cmd.toLowerCase()
-    switch (cmd.toUpperCase()) {
-      case 'M':
-      case 'L':
-        for (let i = 0; i < n.length; i += 2) {
-          x = rel ? x + n[i] : n[i]
-          y = rel ? y + n[i + 1] : n[i + 1]
-          xs.push(x)
-          ys.push(y)
-        }
+    const isRelative = cmd === cmd.toLowerCase()
+    for (let i = 0; i < n.length; i += command.stride) {
+      if (command.xAt !== undefined) {
+        x = isRelative ? x + n[i + command.xAt] : n[i + command.xAt]
+        xs.push(x)
+      }
 
-        break
-      case 'H':
-        for (const v of n) {
-          x = rel ? x + v : v
-          xs.push(x)
-        }
-
-        break
-      case 'V':
-        for (const v of n) {
-          y = rel ? y + v : v
-          ys.push(y)
-        }
-
-        break
-      case 'A':
-        for (let i = 0; i < n.length; i += 7) {
-          x = rel ? x + n[i + 5] : n[i + 5]
-          y = rel ? y + n[i + 6] : n[i + 6]
-          xs.push(x)
-          ys.push(y)
-        }
-
-        break
+      if (command.yAt !== undefined) {
+        y = isRelative ? y + n[i + command.yAt] : n[i + command.yAt]
+        ys.push(y)
+      }
     }
   }
 

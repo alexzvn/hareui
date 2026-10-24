@@ -20,6 +20,7 @@ type HourCycle = NonNullable<DateFieldRootProps['hourCycle']>
 type DateStep = NonNullable<DateFieldRootProps['step']>
 type DateUnavailableMatcher = NonNullable<DateFieldRootProps['isDateUnavailable']>
 
+/** Props of `DatePicker`, a date field with a button that opens a calendar popover to pick the date. */
 export type DatePickerProps = {
   /**
    * Renders the calendar popover in a portal. `true` portals to `document.body`, a selector string or element is used as the teleport target, and `false` disables portalling.
@@ -130,6 +131,7 @@ export type DatePickerProps = {
     >
 } & FormFieldProps
 
+/** Slots of `DatePicker`. */
 export type DatePickerSlots = {
   /** Label content. Replaces the `label` prop. */
   label?: () => VNode[]
@@ -149,6 +151,7 @@ export type DatePickerSlots = {
   }) => VNode[]
 }
 
+/** Events emitted by `DatePicker`. */
 export type DatePickerEmits = {
   /** Emitted when the displayed placeholder date changes. */
   'update:placeholder': [value: DateValue]

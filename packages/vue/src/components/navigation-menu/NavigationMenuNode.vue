@@ -172,7 +172,9 @@
     >
       <AccordionRoot
         v-bind="ctx.accordionProps.value"
-        :default-value="ctx.getAccordionDefaultValue(item.children!, level + 1, listIndex)"
+        :default-value="
+          ctx.getAccordionDefaultValue(item.children!, { level: level + 1, listIndex })
+        "
         as="ul"
         data-slot="childList"
         :class="ui.childList({ class: [ctx.props.ui?.childList, item.ui?.childList] })"
@@ -242,40 +244,46 @@ const { ui } = ctx
 const Passthrough = (_: unknown, { slots }: { slots: { default?: () => unknown } }) =>
   slots.default?.()
 
-const vertical = computed(() => ctx.props.orientation === 'vertical')
-const collapsed = computed(() => !!ctx.props.collapsed)
-const accordion = computed(() => vertical.value && !collapsed.value)
+const isVertical = computed(() => ctx.props.orientation === 'vertical')
+const isCollapsed = computed(() => !!ctx.props.collapsed)
+const accordion = computed(() => isVertical.value && !isCollapsed.value)
 const hasChildren = computed(() => !!props.item.children?.length)
 const hasContentSlot = computed(() => !!ctx.slots[slotName(props.item, 'content')])
 const horizontalContent = computed(
-  () => !vertical.value && (hasChildren.value || hasContentSlot.value),
+  () => !isVertical.value && (hasChildren.value || hasContentSlot.value),
 )
 
 const label = computed(() => ctx.getLabel(props.item))
 
 const value = computed(() =>
-  ctx.getItemValue(props.item, props.index, props.level, props.listIndex),
+  ctx.getItemValue(props.item, {
+    index: props.index,
+    level: props.level,
+    listIndex: props.listIndex,
+  }),
 )
 
-const isGroupLabel = computed(() => vertical.value && props.item.type === 'label')
+const isGroupLabel = computed(() => isVertical.value && props.item.type === 'label')
 
 const popoverEnabled = computed(
   () =>
-    vertical.value &&
-    collapsed.value &&
+    isVertical.value &&
+    isCollapsed.value &&
     hasChildren.value &&
     (!!ctx.props.popover || !!props.item.popover),
 )
 
 const tooltipEnabled = computed(
   () =>
-    (vertical.value && collapsed.value && (!!ctx.props.tooltip || !!props.item.tooltip)) ||
-    (!vertical.value && !!props.item.tooltip),
+    (isVertical.value && isCollapsed.value && (!!ctx.props.tooltip || !!props.item.tooltip)) ||
+    (!isVertical.value && !!props.item.tooltip),
 )
 
-const outer = computed(() =>
-  popoverEnabled.value ? NavigationMenuPopover : tooltipEnabled.value ? Tooltip : Passthrough,
-)
+const outer = computed(() => {
+  if (popoverEnabled.value) return NavigationMenuPopover
+
+  return tooltipEnabled.value ? Tooltip : Passthrough
+})
 
 const outerProps = computed(() => {
   if (popoverEnabled.value) {
@@ -308,7 +316,7 @@ const linkClass = (active: boolean) => {
     class: [ctx.props.ui?.link, props.item.ui?.link, props.item.class],
     active: active || !!props.item.active,
     disabled: !!props.item.disabled,
-    level: !vertical.value || props.level > 0,
+    level: !isVertical.value || props.level > 0,
     actions: hasActions.value,
   })
 }
@@ -388,23 +396,29 @@ const disclosure = computed(() =>
     : undefined,
 )
 
+// Which arrow collapses or expands the disclosure: ArrowLeft / ArrowRight, mirrored in RTL.
+const DISCLOSURE_TOGGLE_KEYS = {
+  ltr: { collapse: 'ArrowLeft', expand: 'ArrowRight' },
+  rtl: { collapse: 'ArrowRight', expand: 'ArrowLeft' },
+} as const
+
 const onDisclosureKeydown = (event: KeyboardEvent) => {
   if (event.altKey || event.ctrlKey || event.metaKey || event.shiftKey) return
-  const rtl = accordionRoot?.direction.value === 'rtl'
-  if (
-    event.key ===
-    (expanded.value ? (rtl ? 'ArrowRight' : 'ArrowLeft') : rtl ? 'ArrowLeft' : 'ArrowRight')
-  ) {
-    event.preventDefault()
-    toggleExpanded()
-  }
+
+  const isRtl = accordionRoot?.direction.value === 'rtl'
+  const keys = isRtl ? DISCLOSURE_TOGGLE_KEYS.rtl : DISCLOSURE_TOGGLE_KEYS.ltr
+  const toggleKey = expanded.value ? keys.collapse : keys.expand
+  if (event.key !== toggleKey) return
+
+  event.preventDefault()
+  toggleExpanded()
 }
 
 const linkAttrs = (link: ResolvedLink) => {
   const attrs: Record<string, unknown> = { ...link.attrs }
 
   // The collapsed rail hides labels: name the icon-only link by its label.
-  if (vertical.value && collapsed.value && label.value) attrs['aria-label'] = label.value
+  if (isVertical.value && isCollapsed.value && label.value) attrs['aria-label'] = label.value
 
   // A link (not an AccordionTrigger button, which names the region itself) labels its nested list.
   if (disclosure.value && kindOf(link) === NavigationMenuLink) attrs.id = disclosureIds.link

@@ -1,6 +1,7 @@
 import type { ChartSeriesProps } from './series'
 import type { ChartRadius } from './shapes'
 
+/** Props of `ChartBar`: a series drawn as one bar per row, grouped or stacked per category. */
 export type ChartBarProps = {
   /**
    * Bar color or `url(#gradient-id)`.
@@ -26,6 +27,7 @@ export type ChartBarProps = {
   radius?: ChartRadius
 } & ChartSeriesProps
 
+/** Slots of `ChartBar`. */
 export type ChartBarSlots = {
   /** `ChartCell` per bar to override its fill, and `ChartLabel` to label every bar. */
   default?: () => unknown

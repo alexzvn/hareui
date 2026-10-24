@@ -18,6 +18,10 @@ type ChartLegendTheme = typeof theme
 export type ChartLegendEntry = Pick<ChartLegendItem, 'key' | 'name' | 'color'> &
   Partial<ChartLegendItem>
 
+/**
+ * Props of `ChartLegend`: colored rows naming a chart's series (or a pie's slices), optionally with
+ * values and shares, and optionally toggleable to hide rows.
+ */
 export type ChartLegendProps<T extends object = Record<string, unknown>> = {
   /** Explicit rows. Wins over `series` and `data`. */
   items?: ChartLegendEntry[]
@@ -71,13 +75,17 @@ export type ChartLegendProps<T extends object = Record<string, unknown>> = {
   ui?: ComponentSlots<ChartLegendTheme>
 }
 
+/** Props passed to `ChartLegend`'s `item` slot. */
 export type ChartLegendItemSlotProps = {
+  /** The resolved row: its key, name, color and hidden state, plus value and share for slice rows. */
   item: ChartLegendItem
+  /** The row's position in the legend. */
   index: number
   /** Toggles the row's key in `hidden`. */
   toggle: () => void
 }
 
+/** Slots of `ChartLegend`. */
 export type ChartLegendSlots = {
   /** Replaces the content of a row; the row element and its toggle button stay. */
   item?: (props: ChartLegendItemSlotProps) => VNode[]

@@ -75,7 +75,7 @@ const pie = computed(() => {
   return { ...(props.donut ? chartDefaults.donut : {}), ...defined }
 })
 
-const ui = useComponentUI('pieChart', theme, () => ({}))
+const ui = useComponentUI('pieChart', { theme: theme, variantProps: () => ({}) })
 const chart = useChartRoot({
   // Generated mode: only the visible slices reach the pie, so the active index points into them.
   data: () =>
@@ -90,5 +90,5 @@ const chart = useChartRoot({
 
 // The center follows the first pie drawn (see `usePolarChart`), so the root passes no geometry of its own.
 const polar = usePolarChart(chart, { kind: 'pie', slices: () => slices.value })
-providePolarCenterLabel(chart, polar, () => polar.outerRadius.value)
+providePolarCenterLabel({ chart, polar, radius: () => polar.outerRadius.value })
 </script>

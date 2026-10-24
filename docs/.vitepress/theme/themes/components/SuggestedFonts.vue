@@ -36,7 +36,7 @@
               class="size-5 min-h-0 min-w-0 p-0 opacity-0 group-data-[hovered=true]:opacity-100"
               size="sm"
               variant="ghost"
-              @click.stop="handleDeleteCustomFont(fontById.get(item.value as string)!.url)"
+              @click.stop="onDeleteCustomFont(fontById.get(item.value as string)!.url)"
               @keydown.stop
             >
               <Icon icon="gravity-ui:trash-bin" class="size-3 text-danger" />
@@ -130,7 +130,7 @@ const fontById = computed(() => new Map(allFonts.value.map((font) => [font.id, f
 // The selected key is the fontFamily value (either a font ID or a CDN URL)
 const selectedKey = computed(() => variables.value.fontFamily)
 
-const handleDeleteCustomFont = (fontUrl: string) => {
+const onDeleteCustomFont = (fontUrl: string) => {
   // Find the font by URL and remove it
   const font = props.customFonts.find((f) => f.url === fontUrl)
 

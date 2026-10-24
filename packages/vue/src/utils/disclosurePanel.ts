@@ -19,36 +19,46 @@ const afterAnimations = (el: HTMLElement) => Promise.all(el.getAnimations().map(
 
 /** Applies the open/closed state without animating (first render, or no Web Animations API). */
 export const setPanelStatic = (el: HTMLElement, open: boolean) => {
-  if (open) el.removeAttribute('hidden')
-  else el.setAttribute('hidden', 'until-found')
-
   setSize(el, open ? 'auto' : '0px')
+
+  if (open) {
+    el.removeAttribute('hidden')
+
+    return
+  }
+
+  el.setAttribute('hidden', 'until-found')
+}
+
+const animateOpen = (el: HTMLElement) => {
+  el.removeAttribute('hidden')
+
+  // Pixel size so it can animate; back to auto afterwards so the content can resize.
+  setSize(el, 'measure')
+
+  afterAnimations(el)
+    .then(() => setSize(el, 'auto'))
+    .catch(() => {})
+}
+
+const animateClose = (el: HTMLElement) => {
+  setSize(el, 'measure')
+
+  // Force style recalculation so the change to 0px animates.
+  void getComputedStyle(el).height
+  setSize(el, '0px')
+
+  afterAnimations(el)
+    .then(() => el.setAttribute('hidden', 'until-found'))
+    .catch(() => {})
 }
 
 /** Animates the panel to its new open/closed state. */
 export const animatePanel = (el: HTMLElement, open: boolean) => {
   if (typeof el.getAnimations !== 'function') return setPanelStatic(el, open)
+  if (open) return animateOpen(el)
 
-  if (open) {
-    el.removeAttribute('hidden')
-
-    // Pixel size so it can animate; back to auto afterwards so the content can resize.
-    setSize(el, 'measure')
-
-    afterAnimations(el)
-      .then(() => setSize(el, 'auto'))
-      .catch(() => {})
-  } else {
-    setSize(el, 'measure')
-
-    // Force style recalculation so the change to 0px animates.
-    void getComputedStyle(el).height
-    setSize(el, '0px')
-
-    afterAnimations(el)
-      .then(() => el.setAttribute('hidden', 'until-found'))
-      .catch(() => {})
-  }
+  animateClose(el)
 }
 
 /**

@@ -26,7 +26,7 @@ const read = (): CustomFont[] => {
 
 // Empty during SSR; filled on the client so server and first client render agree.
 const customFonts = ref<CustomFont[]>([])
-let loaded = false
+let isLoaded = false
 
 const save = (fonts: CustomFont[]) => {
   try {
@@ -53,8 +53,8 @@ export type AddCustomFontResult =
   | { error: 'already-imported'; label: string }
 
 export const useCustomFonts = () => {
-  if (!loaded && typeof window !== 'undefined') {
-    loaded = true
+  if (!isLoaded && typeof window !== 'undefined') {
+    isLoaded = true
     customFonts.value = read()
 
     // Other tabs.

@@ -83,7 +83,10 @@ const disabled = useFieldsetDisabled(() => props.disabled)
 /** The selected time. Bind with `v-model`. */
 const modelValue = defineModel<TimeValue | null>()
 
-const ui = useComponentUI('timeField', theme, () => ({ fullWidth: props.fullWidth }))
+const ui = useComponentUI('timeField', {
+  theme,
+  variantProps: () => ({ fullWidth: props.fullWidth }),
+})
 
 const root = useTemplateRef<ComponentPublicInstance>('root')
 

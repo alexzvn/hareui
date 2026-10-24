@@ -51,7 +51,7 @@ const labels = computed<ChartLabelSlotProps[]>(() => {
         value,
         text: format(value, item.index),
         index: item.index,
-        ...labelAttrs(item.viewBox, position, props.offset),
+        ...labelAttrs(item.viewBox, { position, offset: props.offset }),
       }
     })
   }
@@ -64,7 +64,7 @@ const labels = computed<ChartLabelSlotProps[]>(() => {
       value: props.value,
       text: format(props.value, -1),
       index: -1,
-      ...labelAttrs(viewBox, position, props.offset),
+      ...labelAttrs(viewBox, { position, offset: props.offset }),
     },
   ]
 })

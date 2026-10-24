@@ -72,13 +72,16 @@ const props = withDefaults(defineProps<ProgressBarProps>(), {
 
 const slots = defineSlots<ProgressBarSlots>()
 
-const ui = useComponentUI('progressBar', theme, () => ({
-  color: props.color,
-  size: props.size,
-  indeterminate: props.indeterminate,
-}))
+const ui = useComponentUI('progressBar', {
+  theme,
+  variantProps: () => ({
+    color: props.color,
+    size: props.size,
+    indeterminate: props.indeterminate,
+  }),
+})
 
-const labelUi = useComponentUI('label', labelTheme, () => ({}))
+const labelUi = useComponentUI('label', { theme: labelTheme, variantProps: () => ({}) })
 
 const labelId = useId(undefined, 'hareui-progress-bar-label')
 

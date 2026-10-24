@@ -9,6 +9,7 @@ import type theme from './theme'
 
 type ToggleButtonGroup = typeof theme
 
+/** Props of `ToggleButtonGroup`: a set of ToggleButtons with single or multiple selection by `value`. */
 export type ToggleButtonGroupProps = {
   /**
    * The element or component to render as.
@@ -66,6 +67,7 @@ export type ToggleButtonGroupProps = {
   ui?: ComponentSlots<ToggleButtonGroup>
 }
 
+/** Slots of `ToggleButtonGroup`. */
 export type ToggleButtonGroupSlots = {
   /** The ToggleButtons, each with a `value`. */
   default?: (props: { selected: string[] }) => VNode[]

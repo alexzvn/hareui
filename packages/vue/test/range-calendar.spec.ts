@@ -203,11 +203,11 @@ describe('rangeCalendar', () => {
 
   it('#cell follows parent state and switches back to the day number when the slot is removed', async () => {
     const tag = ref('a')
-    const show = ref(true)
+    const isCellSlotShown = ref(true)
     const App = defineComponent({
       components: { RangeCalendar },
-      setup: () => ({ tag, show, focused }),
-      template: `<RangeCalendar :default-placeholder="focused"><template v-if="show" #cell="{ date }">{{ tag }}{{ date.day }}</template></RangeCalendar>`,
+      setup: () => ({ tag, isCellSlotShown, focused }),
+      template: `<RangeCalendar :default-placeholder="focused"><template v-if="isCellSlotShown" #cell="{ date }">{{ tag }}{{ date.day }}</template></RangeCalendar>`,
     })
 
     const wrapper = mount(App)
@@ -218,10 +218,10 @@ describe('rangeCalendar', () => {
     tag.value = 'b'
     await nextTick()
     expect(day15().text()).toBe('b15')
-    show.value = false
+    isCellSlotShown.value = false
     await nextTick()
     expect(day15().text()).toBe('15')
-    show.value = true
+    isCellSlotShown.value = true
     await nextTick()
     expect(day15().text()).toBe('b15')
     wrapper.unmount()

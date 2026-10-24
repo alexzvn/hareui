@@ -1,4 +1,4 @@
-import type { Ref } from 'vue'
+import type { Ref, ShallowRef } from 'vue'
 import { onBeforeUnmount, onMounted, shallowRef, watch } from 'vue'
 
 /**
@@ -7,7 +7,8 @@ import { onBeforeUnmount, onMounted, shallowRef, watch } from 'vue'
  * separator element only when they are not this element (keeps the `[data-slot]` sequence identical).
  */
 export const useFirstChild = (root: Ref<Element | { $el?: unknown } | null | undefined>) => {
-  const firstChild = shallowRef<Element | null>(null)
+  // Observed DOM state, not a template ref: no element binds it.
+  const firstChild: ShallowRef<Element | null> = shallowRef(null)
   let observer: MutationObserver | undefined
 
   const resolve = () => refElement(root.value)

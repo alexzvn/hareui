@@ -9,11 +9,15 @@ import type theme from './theme'
 
 type RangeCalendar = typeof theme
 
+/** A date range selected in a `RangeCalendar`; either end is `undefined` while the range is incomplete. */
 export type DateRange = {
+  /** The first day of the range. */
   start: DateValue | undefined
+  /** The last day of the range (inclusive). */
   end: DateValue | undefined
 }
 
+/** Props of `RangeCalendar`: a calendar for selecting a contiguous range of dates. */
 export type RangeCalendarProps = {
   /** Accessible label for the calendar. */
   ariaLabel?: string
@@ -123,6 +127,7 @@ export type RangeCalendarProps = {
   ui?: ComponentSlots<RangeCalendar>
 }
 
+/** Slots of `RangeCalendar`. */
 export type RangeCalendarSlots = {
   /** Replaces the chevron icon inside a nav button. */
   navIcon?: (props: { direction: 'previous' | 'next' }) => VNode[]
@@ -139,6 +144,7 @@ export type RangeCalendarSlots = {
   }) => VNode[]
 }
 
+/** Events of `RangeCalendar`. */
 export type RangeCalendarEmits = {
   /** Emitted when the selected date range changes. */
   'update:modelValue': [value: DateRange | undefined]

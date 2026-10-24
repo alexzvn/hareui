@@ -3,7 +3,7 @@
     <!-- Any `Button` prop customizes the close button of the menu header. -->
     <DashboardSidebar
       id="toggle"
-      v-model:open="open"
+      v-model:open="isOpen"
       :toggle="{ variant: 'secondary', class: 'rounded-full' }"
     >
       <template #header>
@@ -26,7 +26,7 @@
             icon-only
             size="sm"
             variant="ghost"
-            @click="open = true"
+            @click="isOpen = true"
           >
             <Icon icon="gravity-ui:bars" />
           </Button>
@@ -63,5 +63,5 @@ const items: NavigationMenuItem[] = [
   { label: 'Settings', icon: gravityIcon('gear'), href: '#' },
 ]
 
-const open = ref(false)
+const isOpen = ref(false)
 </script>

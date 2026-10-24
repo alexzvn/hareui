@@ -72,7 +72,10 @@ const props = withDefaults(defineProps<DashboardSidebarToggleProps>(), {
 
 defineSlots<DashboardSidebarToggleSlots>()
 
-const ui = useComponentUI('dashboardSidebarToggle', theme, () => ({ side: props.side }))
+const ui = useComponentUI('dashboardSidebarToggle', {
+  theme,
+  variantProps: () => ({ side: props.side }),
+})
 
 const dashboard = useDashboard()
 const sidebar = computed(() => dashboard?.sidebars[props.side])

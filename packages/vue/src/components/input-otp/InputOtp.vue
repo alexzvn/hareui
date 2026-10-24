@@ -60,7 +60,7 @@
         :data-invalid="invalid ? 'true' : undefined"
         :class="ui.input({ class: props.ui?.input })"
         :style="
-          pushPwmBadge
+          shouldPushPwmBadge
             ? {
                 width: `calc(100% + ${PWM_BADGE_SPACE}px)`,
                 clipPath: `inset(0 ${PWM_BADGE_SPACE}px 0 0)`,
@@ -86,6 +86,7 @@ import {
   computed,
   onBeforeUnmount,
   onMounted,
+  onWatcherCleanup,
   ref,
   useAttrs,
   useSlots,
@@ -127,13 +128,13 @@ const box = useTemplateRef<HTMLElement>('box')
 // Like the `input-otp` library: the invisible input's glyphs are sized to the box height via `--root-height`
 watch(
   box,
-  (el, _, onCleanup) => {
+  (el) => {
     if (!el || typeof ResizeObserver === 'undefined') return
     const measure = () => el.style.setProperty('--root-height', `${el.clientHeight}px`)
     measure()
     const observer = new ResizeObserver(measure)
     observer.observe(el)
-    onCleanup(() => observer.disconnect())
+    onWatcherCleanup(() => observer.disconnect())
   },
   { flush: 'post' },
 )
@@ -154,7 +155,10 @@ const { validation } = useFieldValidation({
 const disabled = useFieldsetDisabled(() => props.disabled)
 const invalid = computed(() => validation.value.isInvalid)
 
-const ui = useComponentUI('inputOtp', theme, () => ({ variant: props.variant }))
+const ui = useComponentUI('inputOtp', {
+  theme,
+  variantProps: () => ({ variant: props.variant }),
+})
 
 const { id, describedBy, FieldLabel, FieldDescription, FieldError } = useFieldChrome({
   props,
@@ -200,56 +204,58 @@ const isFocused = ref(false)
 // default): once focused while the box is at least 40px wide, the invisible input is widened by 40px and clipped
 // back, so a manager's badge sits outside the visible box. It stays on for the component's lifetime, as there.
 const PWM_BADGE_SPACE = 40
-const pushPwmBadge = ref(false)
+const shouldPushPwmBadge = ref(false)
 const selStart = ref<number | null>(null)
 const selEnd = ref<number | null>(null)
 
+type CaretSelection = [number | null, number | null]
+
+type SlotSelection = { start: number; end: number; direction?: 'forward' | 'backward' }
+
 // The selection last mirrored, as the library's `inputMetadataRef.prev`: tells a backward caret move from a forward one
-let prevSelection: [number | null, number | null] = [null, null]
+let prevSelection: CaretSelection = [null, null]
 
 // The `input-otp` library's selection model (its `selectionchange` listener): outside insert mode (caret at the
 // end of a partial value) a collapsed caret is widened to select the active slot's character, so typing replaces
-// it and Delete removes it. On a full field that is the last character.
+// it and Delete removes it. On a full field that is the last character. `null` leaves the caret as is.
+const resolveSlotSelection = (options: {
+  caret: number
+  value: string
+  max: number
+  prev: CaretSelection
+}): SlotSelection | null => {
+  const { caret, value, max, prev } = options
+  const isInsertMode = caret === value.length && value.length < max
+  if (isInsertMode) return null
+  if (caret === 0) return { start: 0, end: 1, direction: 'forward' }
+  if (caret === max) return { start: caret - 1, end: caret, direction: 'backward' }
+  if (max <= 1 || value.length <= 1) return null
+
+  const [prevStart, prevEnd] = prev
+  if (prevStart === null || prevEnd === null) return { start: caret, end: caret + 1 }
+
+  const direction = caret < prevEnd ? 'backward' : 'forward'
+  const isPrevInsertCaret = prevStart === prevEnd && prevStart < max
+  const offset = direction === 'backward' && !isPrevInsertCaret ? -1 : 0
+
+  return { start: offset + caret, end: offset + caret + 1, direction }
+}
+
 const syncSelection = () => {
   const el = input.value
   if (!el) return
-  const value = el.value
-  const max = props.length
-  let start = -1
-  let end = -1
-  let direction: 'forward' | 'backward' | undefined
+
   const caret = el.selectionStart
-  if (
-    value.length !== 0 &&
-    caret !== null &&
-    el.selectionEnd !== null &&
-    caret === el.selectionEnd
-  ) {
-    const insertMode = caret === value.length && value.length < max
-    if (!insertMode) {
-      if (caret === 0) {
-        start = 0
-        end = 1
-        direction = 'forward'
-      } else if (caret === max) {
-        start = caret - 1
-        end = caret
-        direction = 'backward'
-      } else if (max > 1 && value.length > 1) {
-        let offset = 0
-        const [prevStart, prevEnd] = prevSelection
-        if (prevStart !== null && prevEnd !== null) {
-          direction = caret < prevEnd ? 'backward' : 'forward'
-          const wasInserting = prevStart === prevEnd && prevStart < max
-          if (direction === 'backward' && !wasInserting) offset = -1
-        }
+  const isCollapsed = caret !== null && caret === el.selectionEnd
+  if (el.value.length !== 0 && isCollapsed) {
+    const range = resolveSlotSelection({
+      caret,
+      value: el.value,
+      max: props.length,
+      prev: prevSelection,
+    })
 
-        start = offset + caret
-        end = offset + caret + 1
-      }
-    }
-
-    if (start !== -1 && end !== -1 && start !== end) el.setSelectionRange(start, end, direction)
+    if (range) el.setSelectionRange(range.start, range.end, range.direction)
   }
 
   selStart.value = el.selectionStart
@@ -281,7 +287,7 @@ const commit = (next: string) => {
 
 const onFocus = () => {
   isFocused.value = true
-  if (box.value && box.value.offsetWidth >= PWM_BADGE_SPACE) pushPwmBadge.value = true
+  if (box.value && box.value.offsetWidth >= PWM_BADGE_SPACE) shouldPushPwmBadge.value = true
   const el = input.value
   if (el) {
     const length = (modelValue.value ?? '').length

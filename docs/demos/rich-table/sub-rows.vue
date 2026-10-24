@@ -80,13 +80,20 @@ const expandToggle = (row: RichTableRow<Node>) => {
   )
 }
 
+const nodeIcon = (row: RichTableRow<Node>) => {
+  if (row.original.type !== 'Folder') return 'gravity-ui:file'
+
+  return row.getIsExpanded() ? 'gravity-ui:folder-open' : 'gravity-ui:folder'
+}
+
 const columns: RichTableColumn<Node>[] = [
   {
     accessorKey: 'name',
     header: 'Name',
     // Indent 16px a level; rows without sub rows keep the toggle's space so siblings line up
     cell: ({ row }) => {
-      const folder = row.original.type === 'Folder'
+      const isFolder = row.original.type === 'Folder'
+
       return h(
         'div',
         { class: 'flex h-6 items-center gap-1', style: { paddingInlineStart: `${row.depth}rem` } },
@@ -94,12 +101,8 @@ const columns: RichTableColumn<Node>[] = [
           row.getCanExpand() ? expandToggle(row) : h('span', { class: 'w-7 shrink-0' }),
           h('span', { class: 'flex items-center gap-2' }, [
             h(Icon, {
-              icon: folder
-                ? row.getIsExpanded()
-                  ? 'gravity-ui:folder-open'
-                  : 'gravity-ui:folder'
-                : 'gravity-ui:file',
-              class: ['size-4 shrink-0', folder ? 'text-warning' : 'text-muted'],
+              icon: nodeIcon(row),
+              class: ['size-4 shrink-0', isFolder ? 'text-warning' : 'text-muted'],
             }),
             row.original.name,
           ]),

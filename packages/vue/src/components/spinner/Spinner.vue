@@ -57,6 +57,10 @@ import theme from './theme'
 
 const props = defineProps<SpinnerProps>()
 
-const ui = useComponentUI('spinner', theme, () => ({ size: props.size, color: props.color }))
+const ui = useComponentUI('spinner', {
+  theme,
+  variantProps: () => ({ size: props.size, color: props.color }),
+})
+
 const id = useId()
 </script>

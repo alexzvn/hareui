@@ -1,6 +1,6 @@
 <template>
   <DashboardGroup unit="rem" :persistent="false">
-    <DashboardSidebar id="control-open" v-model:open="open">
+    <DashboardSidebar id="control-open" v-model:open="isOpen">
       <template #header>
         <div class="flex min-w-0 items-center gap-3 px-1 py-2">
           <span
@@ -18,8 +18,8 @@
         <div class="flex h-16 shrink-0 items-center gap-3 px-4">
           <DashboardSidebarToggle />
           <p class="min-w-0 truncate text-sm font-semibold text-foreground">Dashboard</p>
-          <Button size="sm" variant="secondary" class="ms-auto" @click="open = !open">
-            {{ open ? 'Close' : 'Open' }} menu
+          <Button size="sm" variant="secondary" class="ms-auto" @click="isOpen = !isOpen">
+            {{ isOpen ? 'Close' : 'Open' }} menu
             <Kbd>O</Kbd>
           </Button>
         </div>
@@ -56,7 +56,7 @@ const items: NavigationMenuItem[] = [
   { label: 'Settings', icon: gravityIcon('gear'), href: '#' },
 ]
 
-const open = ref(false)
+const isOpen = ref(false)
 
 const onKeydown = (event: KeyboardEvent) => {
   const target = event.target as HTMLElement
@@ -66,7 +66,7 @@ const onKeydown = (event: KeyboardEvent) => {
     !event.ctrlKey &&
     !/input|textarea|select/i.test(target.tagName)
   )
-    open.value = !open.value
+    isOpen.value = !isOpen.value
 }
 
 onMounted(() => window.addEventListener('keydown', onKeydown))

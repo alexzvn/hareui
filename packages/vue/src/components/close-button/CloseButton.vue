@@ -38,5 +38,8 @@ import theme from './theme'
 const props = withDefaults(defineProps<CloseButtonProps>(), { ariaLabel: 'Close' })
 defineSlots<CloseButtonSlots>()
 
-const ui = useComponentUI('closeButton', theme, () => ({ variant: props.variant }))
+const ui = useComponentUI('closeButton', {
+  theme,
+  variantProps: () => ({ variant: props.variant }),
+})
 </script>

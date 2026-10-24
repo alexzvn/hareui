@@ -139,9 +139,9 @@ const target = computed<(BarRect | null)[]>(() => {
   })
 })
 
-const tween = useChartTween(
-  () => target.value,
-  (from, to, t) =>
+const tween = useChartTween({
+  target: () => target.value,
+  interpolate: ({ from, to, t }) =>
     to.map((rect, index) => {
       if (!rect) return null
 
@@ -153,10 +153,10 @@ const tween = useChartTween(
       if (previous)
         return {
           ...rect,
-          x: lerp(previous.x, rect.x, t),
-          y: lerp(previous.y, rect.y, t),
-          width: lerp(previous.width, rect.width, t),
-          height: lerp(previous.height, rect.height, t),
+          x: lerp([previous.x, rect.x], t),
+          y: lerp([previous.y, rect.y], t),
+          width: lerp([previous.width, rect.width], t),
+          height: lerp([previous.height, rect.height], t),
         }
 
       // Bars grow out of their baseline.
@@ -167,9 +167,9 @@ const tween = useChartTween(
 
       return { ...rect, width: rect.width * t }
     }),
-  () => [chart.data.value, props.dataKey, props.stackId, hidden.value],
-  () => props,
-)
+  key: () => [chart.data.value, props.dataKey, props.stackId, hidden.value],
+  animation: () => props,
+})
 
 const bars = computed(() =>
   tween.value.value.flatMap((rect) => {
@@ -179,7 +179,7 @@ const bars = computed(() =>
     return [
       {
         rect,
-        d: rectanglePath(rect.x, rect.y, rect.width, rect.height, props.radius),
+        d: rectanglePath(rect, props.radius),
         fill: cell?.fill ?? fill.value,
         fillOpacity: cell?.fillOpacity ?? props.fillOpacity,
         stroke: cell?.stroke ?? props.stroke,

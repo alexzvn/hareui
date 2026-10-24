@@ -23,9 +23,11 @@ import theme from './theme'
 const props = withDefaults(defineProps<KbdProps>(), { as: 'kbd' })
 const slots = defineSlots<KbdSlots>()
 
-const ui = useComponentUI('kbd', theme, () => ({ variant: props.variant }))
+const ui = useComponentUI('kbd', { theme, variantProps: () => ({ variant: props.variant }) })
 
-const keyList = computed(() =>
-  props.keys === undefined ? [] : Array.isArray(props.keys) ? props.keys : [props.keys],
-)
+const keyList = computed(() => {
+  if (props.keys === undefined) return []
+
+  return Array.isArray(props.keys) ? props.keys : [props.keys]
+})
 </script>

@@ -8,6 +8,7 @@ import type theme from './theme'
 
 type Popover = typeof theme
 
+/** Props of `Popover`, an overlay anchored to its trigger that shows rich content in context. */
 export type PopoverProps = {
   /**
    * The controlled open state of the popover.
@@ -63,6 +64,7 @@ export type PopoverProps = {
   ui?: ComponentSlots<Popover>
 }
 
+/** Slots of `Popover`. */
 export type PopoverSlots = {
   /** The trigger element. Receives the current open state. */
   default?: (props: { open: boolean }) => VNode[]
@@ -72,6 +74,7 @@ export type PopoverSlots = {
   content?: (props: { close: () => void }) => VNode[]
 }
 
+/** Events emitted by `Popover`. */
 export type PopoverEmits = {
   /** Emitted when the open state changes. */
   'update:open': [value: boolean]

@@ -8,6 +8,7 @@ import type theme from './theme'
 
 type Tooltip = typeof theme
 
+/** Props of the `Tooltip` component: a short label shown next to its trigger on hover or focus. */
 export type TooltipProps = {
   /** The text content of the tooltip. Ignored when the `content` slot is used. */
   text?: string
@@ -69,6 +70,7 @@ export type TooltipProps = {
   ui?: ComponentSlots<Tooltip>
 }
 
+/** Slots of the `Tooltip` component. */
 export type TooltipSlots = {
   /** The trigger element. */
   default?: (props: { open: boolean }) => VNode[]
@@ -76,6 +78,7 @@ export type TooltipSlots = {
   content?: () => VNode[]
 }
 
+/** Events emitted by the `Tooltip` component. */
 export type TooltipEmits = {
   /** Emitted when the open state changes. */
   'update:open': [value: boolean]

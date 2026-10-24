@@ -11,8 +11,8 @@
     :style="{
       background: `linear-gradient(to right, oklch(0.7 0 ${hue}), oklch(0.7 ${MAX_CHROMA} ${hue}))`,
     }"
-    @keydown="handleKeyDown"
-    @pointerdown="handlePointerDown"
+    @keydown="onKeyDown"
+    @pointerdown="onPointerDown"
   >
     <div
       :class="SLIDER_THUMB"
@@ -59,52 +59,47 @@ const getValueFromPosition = (clientX: number) => {
   return Math.round(percentage * MAX_CHROMA * 10000) / 10000
 }
 
-const handlePointerDown = (e: PointerEvent) => {
+const onPointerDown = (e: PointerEvent) => {
   isDragging = true
 
   // Capture pointer to receive events even when pointer leaves the element
   ;(e.target as HTMLElement).setPointerCapture(e.pointerId)
   emit('change', getValueFromPosition(e.clientX))
 
-  const handlePointerMove = (e: PointerEvent) => {
+  const onPointerMove = (e: PointerEvent) => {
     if (isDragging) {
       emit('change', getValueFromPosition(e.clientX))
     }
   }
 
-  const handlePointerUp = (e: PointerEvent) => {
+  const onPointerUp = (e: PointerEvent) => {
     isDragging = false
     ;(e.target as HTMLElement).releasePointerCapture(e.pointerId)
-    document.removeEventListener('pointermove', handlePointerMove)
-    document.removeEventListener('pointerup', handlePointerUp)
+    document.removeEventListener('pointermove', onPointerMove)
+    document.removeEventListener('pointerup', onPointerUp)
   }
 
-  document.addEventListener('pointermove', handlePointerMove)
-  document.addEventListener('pointerup', handlePointerUp)
+  document.addEventListener('pointermove', onPointerMove)
+  document.addEventListener('pointerup', onPointerUp)
 }
 
-const handleKeyDown = (e: KeyboardEvent) => {
-  let newValue = props.value
-  const step = e.shiftKey ? 0.002 : 0.0002
+// Next value per handled key, from the current value and step (Shift = coarse step)
+const KEY_VALUES = {
+  ArrowLeft: (value: number, step: number) => Math.max(0, value - step),
+  ArrowDown: (value: number, step: number) => Math.max(0, value - step),
+  ArrowRight: (value: number, step: number) => Math.min(MAX_CHROMA, value + step),
+  ArrowUp: (value: number, step: number) => Math.min(MAX_CHROMA, value + step),
+  Home: () => 0,
+  End: () => MAX_CHROMA,
+} as const satisfies Record<string, (value: number, step: number) => number>
 
-  switch (e.key) {
-    case 'ArrowLeft':
-    case 'ArrowDown':
-      newValue = Math.max(0, props.value - step)
-      break
-    case 'ArrowRight':
-    case 'ArrowUp':
-      newValue = Math.min(MAX_CHROMA, props.value + step)
-      break
-    case 'Home':
-      newValue = 0
-      break
-    case 'End':
-      newValue = MAX_CHROMA
-      break
-    default:
-      return
-  }
+const isHandledKey = (key: string): key is keyof typeof KEY_VALUES => Object.hasOwn(KEY_VALUES, key)
+
+const onKeyDown = (e: KeyboardEvent) => {
+  if (!isHandledKey(e.key)) return
+
+  const step = e.shiftKey ? 0.002 : 0.0002
+  const newValue = KEY_VALUES[e.key](props.value, step)
 
   e.preventDefault()
   emit('change', Math.round(newValue * 10000) / 10000)

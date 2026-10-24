@@ -25,7 +25,10 @@ onMounted(() => {
   cssAnimation.value = readCssAnimation()
 })
 
-const ui = useComponentUI('skeleton', theme, () => ({
-  animationType: props.animationType ?? cssAnimation.value,
-}))
+const ui = useComponentUI('skeleton', {
+  theme,
+  variantProps: () => ({
+    animationType: props.animationType ?? cssAnimation.value,
+  }),
+})
 </script>

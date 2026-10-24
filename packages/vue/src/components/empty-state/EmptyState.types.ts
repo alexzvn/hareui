@@ -7,6 +7,7 @@ import type theme from './theme'
 
 type EmptyState = typeof theme
 
+/** Props of `EmptyState`, the placeholder shown when a collection such as a `Table` has no items. */
 export type EmptyStateProps = {
   /** Additional classes merged into the root element. */
   class?: ClassValue
@@ -14,6 +15,7 @@ export type EmptyStateProps = {
   ui?: ComponentSlots<EmptyState>
 }
 
+/** Slots of `EmptyState`. */
 export type EmptyStateSlots = {
   /** The empty-state content. Defaults to "No results found". */
   default?: () => VNode[]

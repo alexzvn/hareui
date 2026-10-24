@@ -96,25 +96,30 @@ polar.registerAngleAxis(() => ({
 }))
 
 const axisPath = computed(() => {
-  const cx = polar.cx.value
-  const cy = polar.cy.value
+  const center = { cx: polar.cx.value, cy: polar.cy.value }
   const radius = polar.outerRadius.value
   if (props.axisLineType === 'circle') return ''
 
   return polygonPath(
-    polar.angleAxis.value.ticks.map((tick) => polarToCartesian(cx, cy, radius, tick.coordinate)),
+    polar.angleAxis.value.ticks.map((tick) =>
+      polarToCartesian(center, { radius, angle: tick.coordinate }),
+    ),
   )
 })
 
 const ticks = computed(() => {
-  const cx = polar.cx.value
-  const cy = polar.cy.value
+  const center = { cx: polar.cx.value, cy: polar.cy.value }
   const radius = polar.outerRadius.value
   const sign = props.orientation === 'outer' ? 1 : -1
 
   return polar.angleAxis.value.ticks.map((tick) => {
-    const start = polarToCartesian(cx, cy, radius, tick.coordinate)
-    const end = polarToCartesian(cx, cy, radius + sign * props.tickSize, tick.coordinate)
+    const start = polarToCartesian(center, { radius, angle: tick.coordinate })
+
+    const end = polarToCartesian(center, {
+      radius: radius + sign * props.tickSize,
+      angle: tick.coordinate,
+    })
+
     const value = tick.value
 
     return {

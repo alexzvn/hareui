@@ -20,16 +20,22 @@ export const makeRange = <T extends DateValue>(a: T, b: T): DayRange<T> => {
   return compareDay(a, b) <= 0 ? { start: a, end: b } : { start: b, end: a }
 }
 
+/** How the available run around an anchor is searched: the consumer matcher and the search distance. */
+export type RunSearch<T extends DateValue = DateValue> = {
+  isUnavailable: (date: T) => boolean
+  /** How far from the anchor to look for an unavailable day (react-stately: the visible duration). */
+  span: DateDuration
+}
+
 /**
  * One edge of react-stately's `getAvailableRange`: the last available day before the first unavailable one in
  * direction `dir`, or `undefined` when no unavailable day is found within `span` of `from`.
  */
 export const edgeOfAvailableRun = <T extends DateValue>(
   from: T,
-  dir: 1 | -1,
-  isUnavailable: (date: T) => boolean,
-  span: DateDuration,
+  search: RunSearch<T> & { dir: 1 | -1 },
 ): T | undefined => {
+  const { dir, isUnavailable, span } = search
   const limit = (dir < 0 ? from.subtract(span) : from.add(span)) as T
   let next = from.add({ days: dir }) as T
   while (
@@ -44,21 +50,21 @@ export const edgeOfAvailableRun = <T extends DateValue>(
 /** The run of available days around `anchor`; either side is `undefined` when unbounded within `span`. */
 export const availableRun = <T extends DateValue>(
   anchor: T,
-  isUnavailable: (date: T) => boolean,
-  span: DateDuration,
+  search: RunSearch<T>,
 ): { start?: T; end?: T } => {
   return {
-    start: edgeOfAvailableRun(anchor, -1, isUnavailable, span),
-    end: edgeOfAvailableRun(anchor, 1, isUnavailable, span),
+    start: edgeOfAvailableRun(anchor, { ...search, dir: -1 }),
+    end: edgeOfAvailableRun(anchor, { ...search, dir: 1 }),
   }
 }
 
 /** Narrows `[min, max]` to the available run (the tighter bound wins on each side). */
 export const boundsWithinRun = (
-  min: DateValue,
-  max: DateValue,
+  bounds: { min: DateValue; max: DateValue },
   run: { start?: DateValue; end?: DateValue } | null,
 ): { min: DateValue; max: DateValue } => {
+  const { min, max } = bounds
+
   return {
     min: run?.start && compareDay(run.start, min) > 0 ? run.start : min,
     max: run?.end && compareDay(run.end, max) < 0 ? run.end : max,
@@ -71,9 +77,10 @@ export const boundsWithinRun = (
  */
 export const exceedsMaximumDays = (
   date: DateValue,
-  anchor: DateValue | null,
-  maximumDays: number | undefined,
+  limit: { anchor: DateValue | null; maximumDays: number | undefined },
 ): boolean => {
+  const { anchor, maximumDays } = limit
+
   return !!maximumDays && !!anchor && Math.abs(compareDay(date, anchor)) >= maximumDays
 }
 
@@ -148,10 +155,13 @@ export const useRangeSelection = <T extends DateValue = DateValue>(
     const matcher = isUnavailable.value
     if (!enabled() || !from || !matcher || options.allowNonContiguousRanges()) return null
 
-    return availableRun(from, matcher, options.span())
+    return availableRun(from, { isUnavailable: matcher, span: options.span() })
   })
 
-  const bounds = computed(() => boundsWithinRun(options.minValue(), options.maxValue(), run.value))
+  const bounds = computed(() =>
+    boundsWithinRun({ min: options.minValue(), max: options.maxValue() }, run.value),
+  )
+
   const effectiveMin = computed(() => bounds.value.min)
   const effectiveMax = computed(() => bounds.value.max)
 
@@ -159,7 +169,7 @@ export const useRangeSelection = <T extends DateValue = DateValue>(
     return (
       compareDay(date, effectiveMin.value) < 0 ||
       compareDay(date, effectiveMax.value) > 0 ||
-      exceedsMaximumDays(date, anchor.value, options.maximumDays?.())
+      exceedsMaximumDays(date, { anchor: anchor.value, maximumDays: options.maximumDays?.() })
     )
   }
 

@@ -8,6 +8,7 @@ import type theme from './theme'
 
 type Typography = typeof theme
 
+/** Props of `Typography`: text in one of the theme's semantic `type` styles, rendered as its element. */
 export type TypographyProps = {
   /**
    * The element or component to render as, overriding the element implied by `type`
@@ -49,6 +50,7 @@ export type TypographyProps = {
   ui?: ComponentSlots<Typography>
 }
 
+/** Slots of `Typography`. */
 export type TypographySlots = {
   /** Typography content. */
   default?: () => VNode[]

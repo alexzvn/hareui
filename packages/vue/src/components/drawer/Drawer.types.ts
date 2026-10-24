@@ -8,6 +8,7 @@ import type theme from './theme'
 
 type Drawer = typeof theme
 
+/** Props for `Drawer`, a modal panel that slides in from an edge of the screen and can be dragged to dismiss. */
 export type DrawerProps = {
   /** The controlled open state of the drawer. Use with `v-model:open`. */
   open?: boolean
@@ -56,6 +57,7 @@ export type DrawerProps = {
   ui?: ComponentSlots<Drawer>
 }
 
+/** Slots for `Drawer`: the trigger and the panel's header, body, footer and close button. */
 export type DrawerSlots = {
   /** The trigger element. Omit to control the drawer purely via `v-model:open`. */
   default?: (props: { open: boolean }) => VNode[]
@@ -73,6 +75,7 @@ export type DrawerSlots = {
   content?: (props: { close: () => void }) => VNode[]
 }
 
+/** Events emitted by `Drawer`. */
 export type DrawerEmits = {
   /** Emitted when the open state changes. */
   'update:open': [value: boolean]

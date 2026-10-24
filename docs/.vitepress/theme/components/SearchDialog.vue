@@ -14,7 +14,7 @@
             aria-hidden="true"
             :class="[
               'lucide lucide-search size-5 text-fd-muted-foreground',
-              loading && 'animate-pulse duration-400',
+              isLoading && 'animate-pulse duration-400',
             ]"
             fill="none"
             height="24"
@@ -38,7 +38,7 @@
           <Kbd @click="open = false">ESC</Kbd>
         </div>
         <div
-          ref="listRef"
+          ref="list"
           class="overflow-hidden h-(--fd-animated-height) transition-[height] **:aria-selected:bg-default **:aria-selected:text-foreground"
           :data-empty="items === null"
           :style="
@@ -151,7 +151,16 @@ import localSearchIndex from '@localSearchIndex'
 import MiniSearch from 'minisearch'
 import { DialogContent, DialogOverlay, DialogPortal, DialogRoot, DialogTitle } from 'reka-ui'
 import { useData, useRouter } from 'vitepress'
-import { computed, nextTick, onBeforeUnmount, onMounted, ref, shallowRef, watch } from 'vue'
+import {
+  computed,
+  nextTick,
+  onBeforeUnmount,
+  onMounted,
+  ref,
+  shallowRef,
+  useTemplateRef,
+  watch,
+} from 'vue'
 
 import { normalizePath, sectionLinks, type SidebarLink, type ThemeConfig } from '../../sidebar'
 
@@ -192,12 +201,12 @@ const pageByPath = computed(
 
 /* Index: loaded on first open, as VPLocalSearchBox does. */
 const index = shallowRef<MiniSearch<Section>>()
-const loading = ref(false)
+const isLoading = ref(false)
 watch(
   open,
   async (isOpen) => {
-    if (!isOpen || index.value || loading.value) return
-    loading.value = true
+    if (!isOpen || index.value || isLoading.value) return
+    isLoading.value = true
 
     try {
       const json = (await localSearchIndex[localeIndex.value]?.())?.default
@@ -209,7 +218,7 @@ watch(
         })
       }
     } finally {
-      loading.value = false
+      isLoading.value = false
     }
   },
   { immediate: true },
@@ -365,15 +374,15 @@ const onKeydown = (e: KeyboardEvent) => {
   if (!open.value || !list || e.isComposing) return
 
   if (e.key === 'ArrowDown' || e.key === 'ArrowUp') {
-    let idx = list.findIndex((item) => item.id === active.value)
-    if (idx === -1) idx = 0
-    else idx += e.key === 'ArrowDown' ? 1 : -1
+    const current = list.findIndex((item) => item.id === active.value)
+    const step = e.key === 'ArrowDown' ? 1 : -1
+    const idx = current === -1 ? 0 : current + step
 
     active.value = list.at(idx % list.length)?.id ?? null
     e.preventDefault()
 
     nextTick(() =>
-      listRef.value?.querySelector('[aria-selected="true"]')?.scrollIntoView({ block: 'nearest' }),
+      listEl.value?.querySelector('[aria-selected="true"]')?.scrollIntoView({ block: 'nearest' }),
     )
   }
 
@@ -387,18 +396,22 @@ const onKeydown = (e: KeyboardEvent) => {
 // The window listener is client-only: the watch is not immediate (it would run during SSR),
 // and onMounted covers a dialog that mounts already open.
 const listenKeys = (isOpen: boolean) => {
-  if (isOpen) window.addEventListener('keydown', onKeydown)
-  else window.removeEventListener('keydown', onKeydown)
+  if (!isOpen) {
+    window.removeEventListener('keydown', onKeydown)
+    return
+  }
+
+  window.addEventListener('keydown', onKeydown)
 }
 
 watch(open, listenKeys)
 onMounted(() => listenKeys(open.value))
 
 /* The list animates its height to the content's (fumadocs' --fd-animated-height). */
-const listRef = ref<HTMLElement>()
+const listEl = useTemplateRef<HTMLElement>('list')
 const animatedHeight = ref<number>()
 let resizeObserver: ResizeObserver | undefined
-watch(listRef, (el) => {
+watch(listEl, (el) => {
   resizeObserver?.disconnect()
   const viewport = el?.firstElementChild
   if (!viewport) return

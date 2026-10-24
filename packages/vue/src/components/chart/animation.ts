@@ -1,8 +1,10 @@
 import type { ComputedRef, Ref, WatchSource } from 'vue'
 import { computed, onScopeDispose, ref, shallowRef, watch } from 'vue'
 
+/** CSS timing function a chart series animates with. */
 export type ChartEasing = 'ease' | 'ease-in' | 'ease-out' | 'ease-in-out' | 'linear'
 
+/** Animation props shared by every chart series (`ChartLine`, `ChartBar`, `ChartPie`, …). */
 export type ChartAnimationProps = {
   /**
    * Animates the series on mount and when its data changes. Always off when the user prefers reduced motion.
@@ -86,21 +88,33 @@ export type ChartTween<T> = {
   /** Eased progress, 0 → 1. */
   progress: Ref<number>
   /** True while the mount animation runs (no previous geometry to start from). */
-  entering: Ref<boolean>
+  isEntering: Ref<boolean>
+}
+
+/** One interpolation step: `from` is `null` on mount, `t` the eased progress (0–1). */
+export type ChartTweenStep<T> = { from: T | null; to: T; t: number }
+
+type ChartTweenOptions<T> = {
+  /** Geometry the tween ends on. */
+  target: () => T
+  interpolate: (step: ChartTweenStep<T>) => T
+  /** Restarts the animation from the drawn geometry when it changes. */
+  key: WatchSource
+  animation: () => ChartAnimationProps
 }
 
 /**
  * Tweens a series' geometry: on mount from `null` (the series decides how it enters), and from the
  * currently drawn geometry whenever `key` changes (new data or series props). Size changes alone jump.
  */
-export const useChartTween = <T>(
-  target: () => T,
-  interpolate: (from: T | null, to: T, t: number) => T,
-  key: WatchSource,
-  options: () => ChartAnimationProps,
-): ChartTween<T> => {
+export const useChartTween = <T>({
+  target,
+  interpolate,
+  key,
+  animation,
+}: ChartTweenOptions<T>): ChartTween<T> => {
   const progress = ref(1)
-  const entering = ref(false)
+  const isEntering = ref(false)
   const from = shallowRef<T | null>(null)
   let frame = 0
   let timer: ReturnType<typeof setTimeout> | undefined
@@ -111,7 +125,7 @@ export const useChartTween = <T>(
 
   const value = computed(() => {
     const to = target()
-    drawn = progress.value >= 1 ? to : interpolate(from.value, to, progress.value)
+    drawn = progress.value >= 1 ? to : interpolate({ from: from.value, to, t: progress.value })
 
     return drawn
   })
@@ -129,7 +143,7 @@ export const useChartTween = <T>(
       animationBegin = 0,
       animationDuration = 1500,
       animationEasing = 'ease',
-    } = options()
+    } = animation()
 
     const snapshot = initial ? null : drawn
     stop()
@@ -140,14 +154,14 @@ export const useChartTween = <T>(
       typeof requestAnimationFrame === 'undefined' ||
       prefersReducedMotion()
     ) {
-      entering.value = false
+      isEntering.value = false
       progress.value = 1
 
       return
     }
 
     from.value = snapshot
-    entering.value = initial
+    isEntering.value = initial
     progress.value = 0
     const ease = easings[animationEasing] ?? easings.ease
     const run = () => {
@@ -158,27 +172,34 @@ export const useChartTween = <T>(
 
         if (elapsed < 1) {
           frame = requestAnimationFrame(tick)
-        } else {
-          frame = 0
-          entering.value = false
+
+          return
         }
+
+        frame = 0
+        isEntering.value = false
       }
 
       frame = requestAnimationFrame(tick)
     }
 
-    if (animationBegin > 0) timer = setTimeout(run, animationBegin)
-    else run()
+    if (animationBegin > 0) {
+      timer = setTimeout(run, animationBegin)
+
+      return
+    }
+
+    run()
   }
 
   start(true)
   watch(key, () => start(false))
   onScopeDispose(stop)
 
-  return { value, progress, entering }
+  return { value, progress, isEntering }
 }
 
-/** Linear interpolation. */
-export const lerp = (from: number, to: number, t: number): number => {
+/** Linear interpolation between `[from, to]`. */
+export const lerp = ([from, to]: [number, number], t: number): number => {
   return from + (to - from) * t
 }

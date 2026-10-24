@@ -8,6 +8,7 @@ import type theme from './theme'
 
 type Button = typeof theme
 
+/** Props of the `Button` component. */
 export type ButtonProps = {
   /**
    * The element or component to render as.
@@ -55,6 +56,7 @@ export type ButtonProps = {
   ui?: ComponentSlots<Button>
 }
 
+/** Slots of the `Button` component. */
 export type ButtonSlots = {
   /** Content rendered before the label. Replaces the pending spinner. */
   leading?: (props: { pending: boolean }) => VNode[]

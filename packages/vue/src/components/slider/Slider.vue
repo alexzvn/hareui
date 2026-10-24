@@ -133,7 +133,7 @@ const emit = defineEmits<{
 defineSlots<SliderSlots>()
 const slots = useSlots()
 
-const ui = useComponentUI('slider', theme, () => ({}))
+const ui = useComponentUI('slider', { theme: theme, variantProps: () => ({}) })
 
 const autoId = useId()
 const id = computed(() => props.id ?? autoId)
@@ -153,7 +153,7 @@ const isRange = computed(() => Array.isArray(modelValue.value ?? props.defaultVa
 // Values outside `[min, max]` are clamped, as RAC does.
 const current = computed<number[]>(() =>
   (toArray(modelValue.value ?? props.defaultValue) ?? [props.min]).map((v) =>
-    clamp(v, props.min, props.max),
+    clamp(v, { min: props.min, max: props.max }),
   ),
 )
 
@@ -193,7 +193,7 @@ const constrain = (values: number[]): number[] => {
   const value = changedValue(previous, values)
   if (value === undefined) return previous
   const next = [...previous]
-  next[index] = clamp(value, thumbMin(previous, index), thumbMax(previous, index))
+  next[index] = clamp(value, { min: thumbMin(previous, index), max: thumbMax(previous, index) })
 
   return next
 }
@@ -234,17 +234,17 @@ const pageDirection = (event: KeyboardEvent): number => {
   if (!event.shiftKey || !event.key.startsWith('Arrow')) return 0
 
   // Reka reads the direction from the `dir` it renders on the root
-  const rtl =
+  const isRtl =
     props.orientation === 'horizontal' &&
     (event.currentTarget as Element).closest('[dir]')?.getAttribute('dir') === 'rtl'
 
-  const decrease = event.key === 'ArrowDown' || event.key === (rtl ? 'ArrowRight' : 'ArrowLeft')
+  const isDecrease = event.key === 'ArrowDown' || event.key === (isRtl ? 'ArrowRight' : 'ArrowLeft')
 
-  return decrease ? -1 : 1
+  return isDecrease ? -1 : 1
 }
 
 const onThumbKeydown = (event: KeyboardEvent, index: number) => {
-  pointerActive = false
+  isPointerActive = false
   focusVisibleIndex.value = index
   movingIndex = index
   activeThumbIndex.value = index
@@ -260,15 +260,13 @@ const onThumbKeydown = (event: KeyboardEvent, index: number) => {
 
   // The page snaps relative to `min` but not limited by `max`: the clamp below limits it to the thumb's own range,
   // so a `max` off the step grid stays reachable
+  const edgeTargets: Partial<Record<string, number>> = { Home: low, End: high }
   const target =
-    event.key === 'Home'
-      ? low
-      : event.key === 'End'
-        ? high
-        : snapValueToStep(values[index]! + page * pageSize.value, props.min, undefined, props.step)
+    edgeTargets[event.key] ??
+    snapValueToStep(values[index]! + page * pageSize.value, { min: props.min, step: props.step })
 
   const next = [...values]
-  next[index] = clamp(target, low, high)
+  next[index] = clamp(target, { min: low, max: high })
   if (next[index] === values[index]) return
   modelValue.value = isRange.value ? next : next[0]
   emit('changeEnd', isRange.value ? [...next] : next[0]!)
@@ -282,7 +280,7 @@ const outputText = computed(() => formattedValues.value.join(' – '))
 // (a single thumb fills from its edge toward the value; a range fills between its two thumbs).
 const fraction = (value: number) => {
   const range = props.max - props.min
-  return range <= 0 ? 0 : clamp((value - props.min) / range, 0, 1)
+  return range <= 0 ? 0 : clamp((value - props.min) / range, { min: 0, max: 1 })
 }
 
 const sortedEdges = computed(() => {
@@ -312,9 +310,9 @@ const fillEnd = computed(() =>
 const isSliding = ref(false)
 const activeThumbIndex = ref(0)
 const focusVisibleIndex = ref(-1)
-let pointerActive = false
+let isPointerActive = false
 const onPointerDownCapture = () => {
-  pointerActive = true
+  isPointerActive = true
   focusVisibleIndex.value = -1
 
   // Reka focuses the thumb closest to the press (unless it already has focus) before its first update; that
@@ -328,13 +326,13 @@ const onPointerDown = () => {
 
 const onPointerEnd = () => {
   isSliding.value = false
-  pointerActive = false
+  isPointerActive = false
 }
 
 const onThumbFocus = (index: number) => {
   // While a thumb is moving, Reka may focus its neighbour (it hands crossing moves over); `onUpdate` moves focus back
   if (movingIndex === null) activeThumbIndex.value = index
-  focusVisibleIndex.value = pointerActive ? -1 : index
+  focusVisibleIndex.value = isPointerActive ? -1 : index
 }
 
 const onThumbBlur = () => {

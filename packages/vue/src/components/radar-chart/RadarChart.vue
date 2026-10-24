@@ -110,24 +110,28 @@ const resolved = computed(() => {
 })
 
 const grid = computed(() =>
-  generated.value ? resolveChartPart<Partial<ChartPolarGridProps>>(props.grid, {}) : null,
+  generated.value
+    ? resolveChartPart<Partial<ChartPolarGridProps>>(props.grid, { defaults: {} })
+    : null,
 )
 
 const angleAxis = computed(() =>
   generated.value
-    ? resolveChartPart<Partial<ChartPolarAngleAxisProps>>(
-        props.angleAxis,
-        definedProps({
+    ? resolveChartPart<Partial<ChartPolarAngleAxisProps>>(props.angleAxis, {
+        defaults: definedProps({
           dataKey: props.index as string | undefined,
           tickFormatter: props.indexFormatter,
         }),
-      )
+      })
     : null,
 )
 
 const radiusAxis = computed(() =>
   generated.value
-    ? resolveChartPart<Partial<ChartPolarRadiusAxisProps>>(props.radiusAxis, {}, false)
+    ? resolveChartPart<Partial<ChartPolarRadiusAxisProps>>(props.radiusAxis, {
+        defaults: {},
+        isEnabled: false,
+      })
     : null,
 )
 
@@ -143,7 +147,7 @@ const config = usePolarRoot({
   hasLegendSlot: () => !!slots.legend,
 })
 
-const ui = useComponentUI('radarChart', theme, () => ({}))
+const ui = useComponentUI('radarChart', { theme: theme, variantProps: () => ({}) })
 const chart = useChartRoot({
   data: () => props.data as ChartDatum[],
   margin: () => props.margin,

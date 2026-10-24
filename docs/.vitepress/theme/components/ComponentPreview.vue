@@ -14,7 +14,7 @@
       @preset="customWidth = undefined"
       @preload="preload"
     />
-    <div v-if="paged" ref="stage" class="relative">
+    <div v-if="isPaged" ref="stage" class="relative">
       <DevicePreview
         mode="page"
         :name="name"
@@ -23,7 +23,7 @@
         :theme="theme"
       />
       <PreviewResizeHandle
-        v-model:dragging="dragging"
+        v-model:dragging="isDragging"
         :width="viewport ?? fullWidth"
         :min="minWidth"
         :max="fullWidth"
@@ -45,19 +45,19 @@
       @keydown.capture="claimOverlays"
     >
       <div
-        :class="['isolate flex w-full', alignClass, frameShown && 'invisible']"
+        :class="['isolate flex w-full', alignClass, isFrameShown && 'invisible']"
         :style="minHeight ? { minHeight } : undefined"
       >
         <component :is="demo" />
       </div>
       <DevicePreview
-        v-if="frameMounted"
+        v-if="isFrameMounted"
         mode="inline"
         :name="name"
         :width="viewport"
         :theme="theme"
-        :visible="frameVisible"
-        @ready="frameReady = true"
+        :visible="isFrameVisible"
+        @ready="isFrameReady = true"
       />
       <div
         v-if="displayWidth !== undefined && displayWidth < fullWidth"
@@ -66,7 +66,7 @@
         :style="{ left: `${displayWidth}px` }"
       />
       <PreviewResizeHandle
-        v-model:dragging="dragging"
+        v-model:dragging="isDragging"
         :width="viewport ?? fullWidth"
         :min="minWidth"
         :max="fullWidth"
@@ -78,7 +78,7 @@
     <div
       :class="[
         'code-section relative border border-separator bg-transparent',
-        paged ? 'mt-4 rounded-xl' : 'rounded-b-xl',
+        isPaged ? 'mt-4 rounded-xl' : 'rounded-b-xl',
       ]"
     >
       <div class="code-block-wrapper">
@@ -87,7 +87,7 @@
             <div
               :class="[
                 'code-block-wrapper relative',
-                !expanded && 'mask-to-bottom max-h-[150px] overflow-hidden',
+                !isCodeExpanded && 'mask-to-bottom max-h-[150px] overflow-hidden',
               ]"
             >
               <figure
@@ -130,9 +130,9 @@
               type="button"
               data-slot="button"
               :class="expandClass"
-              @click="expanded = !expanded"
+              @click="isCodeExpanded = !isCodeExpanded"
             >
-              {{ expanded ? 'Collapse code' : 'Expand code' }}
+              {{ isCodeExpanded ? 'Collapse code' : 'Expand code' }}
             </button>
           </div>
         </div>
@@ -186,22 +186,20 @@ const props = withDefaults(
   },
 )
 
-const frameHeight = computed(() =>
-  props.contain === false
-    ? undefined
-    : props.contain === true || props.contain === ''
-      ? '26rem'
-      : props.contain,
-)
+const frameHeight = computed(() => {
+  if (props.contain === false) return undefined
+
+  return props.contain === true || props.contain === '' ? '26rem' : props.contain
+})
 
 /** The demo renders in a fixed-height iframe rather than the plain preview box. */
-const paged = frameHeight.value !== undefined
+const isPaged = frameHeight.value !== undefined
 
 // Same breakpoint as the toolbar's `md:` device switch and the resize handle: below it (as on heroui.pro) the preview
 // is always the column width.
-const compact = ref(false)
+const isCompact = ref(false)
 let compactQuery: MediaQueryList | undefined
-const onCompactChange = () => (compact.value = !compactQuery!.matches)
+const onCompactChange = () => (isCompact.value = !compactQuery!.matches)
 
 const device = ref<PreviewDevice>(props.device)
 
@@ -237,15 +235,15 @@ const minWidth = computed(() => Math.min(MIN_WIDTH, fullWidth.value))
 
 /** `undefined`: the frame fills the row (not measured yet, or a phone-sized docs page). */
 const viewport = computed(() => {
-  if (compact.value || !fullWidth.value) return undefined
+  if (isCompact.value || !fullWidth.value) return undefined
   const target = customWidth.value ?? PRESETS[device.value] ?? fullWidth.value
 
   return Math.min(fullWidth.value, Math.max(minWidth.value, target))
 })
 
-const narrow = computed(() => viewport.value !== undefined && viewport.value < fullWidth.value)
-const dragging = ref(false)
-const pageEdge = computed(() => (narrow.value ? viewport.value! + 2 : undefined))
+const isNarrow = computed(() => viewport.value !== undefined && viewport.value < fullWidth.value)
+const isDragging = ref(false)
+const pageEdge = computed(() => (isNarrow.value ? viewport.value! + 2 : undefined))
 
 let stageObserver: ResizeObserver | undefined
 onMounted(() => {
@@ -254,7 +252,7 @@ onMounted(() => {
   compactQuery.addEventListener('change', onCompactChange)
 
   stageObserver = new ResizeObserver(() => {
-    if (stage.value) fullWidth.value = stage.value.clientWidth - (paged ? 2 : 0)
+    if (stage.value) fullWidth.value = stage.value.clientWidth - (isPaged ? 2 : 0)
   })
 
   if (stage.value) stageObserver.observe(stage.value)
@@ -270,30 +268,30 @@ onBeforeUnmount(() => {
 // breakpoints: the box mounts the standalone page in an iframe over itself, invisible until it reports its demo
 // rendered, then swaps from the inline render (which keeps the box height) to it in one paint. The iframe stays
 // mounted once loaded, so later swaps are instant; hovering the device switch or the handle preloads it.
-const frameMounted = ref(false)
-const frameReady = ref(false)
-const frameVisible = computed(() => narrow.value || dragging.value)
+const isFrameMounted = ref(false)
+const isFrameReady = ref(false)
+const isFrameVisible = computed(() => isNarrow.value || isDragging.value)
 watchEffect(() => {
-  if (!paged && frameVisible.value) frameMounted.value = true
+  if (!isPaged && isFrameVisible.value) isFrameMounted.value = true
 })
 
 const preload = () => {
-  if (!paged && !compact.value) frameMounted.value = true
+  if (!isPaged && !isCompact.value) isFrameMounted.value = true
 }
 
-const frameShown = computed(() => frameReady.value && frameVisible.value)
+const isFrameShown = computed(() => isFrameReady.value && isFrameVisible.value)
 
 /** Where the frame's right edge shows: dragging moves it with the pointer even before the iframe is ready. */
 const displayWidth = computed(() =>
-  frameShown.value || dragging.value ? viewport.value : undefined,
+  isFrameShown.value || isDragging.value ? viewport.value : undefined,
 )
 
 // Overlays opened from an inline preview pinned to the other theme portal into a body-level element scoped like the
 // box; the docs-wide toast region (Layout.vue) follows the preview last interacted with.
-const overlayScoped = computed(() => !paged && pinnedTheme.value !== undefined)
+const isOverlayScoped = computed(() => !isPaged && pinnedTheme.value !== undefined)
 const portalTarget = shallowRef<HTMLElement>()
 watchEffect(() => {
-  if (!portalTarget.value && overlayScoped.value) {
+  if (!portalTarget.value && isOverlayScoped.value) {
     const target = markRaw(document.createElement('div'))
     target.dataset.previewPortal = props.name
     document.body.append(target)
@@ -308,8 +306,12 @@ watchEffect(() => {
 
   for (const name of DESIGN_ATTRIBUTES) {
     const value = scopeAttributes.value[name]
-    if (value === undefined) target.removeAttribute(name)
-    else target.setAttribute(name, value)
+    if (value === undefined) {
+      target.removeAttribute(name)
+      continue
+    }
+
+    target.setAttribute(name, value)
   }
 })
 
@@ -320,12 +322,12 @@ provide(hareUIConfigKey, {
     return parentConfig.ui
   },
   get portal() {
-    return overlayScoped.value ? portalTarget.value : parentConfig.portal
+    return isOverlayScoped.value ? portalTarget.value : parentConfig.portal
   },
 } satisfies HareUIConfig)
 
 const claimOverlays = () => {
-  previewOverlayTheme.value = overlayScoped.value ? theme.value : undefined
+  previewOverlayTheme.value = isOverlayScoped.value ? theme.value : undefined
 }
 
 const sources = import.meta.glob<string>('../../../demos/**/*.vue', {
@@ -370,7 +372,7 @@ onMounted(async () => {
   codeHtml.value = html.match(/<code[^>]*>([\s\S]*)<\/code>/)?.[1]
 })
 
-const expanded = ref(false)
+const isCodeExpanded = ref(false)
 
 const button = tv(buttonTheme)
 const copyClass = button({ variant: 'ghost', size: 'sm', iconOnly: true }).base({

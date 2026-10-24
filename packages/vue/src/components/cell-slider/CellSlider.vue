@@ -52,9 +52,12 @@ const props = withDefaults(defineProps<CellSliderProps>(), {
 const emit = defineEmits<CellSliderEmits>()
 const slots = defineSlots<CellSliderSlots>()
 
-const ui = useComponentUI('cellSlider', theme, () => ({
-  variant: props.variant,
-}))
+const ui = useComponentUI('cellSlider', {
+  theme,
+  variantProps: () => ({
+    variant: props.variant,
+  }),
+})
 
 // Always horizontal: the row is the track, so a press anywhere on it moves the value. The root's `data-slot`
 // replaces Slider's, so the theme repeats the Slider rule that keys off `[data-slot=slider]`.

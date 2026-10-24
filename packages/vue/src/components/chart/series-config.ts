@@ -40,6 +40,7 @@ export type ChartIndexKey<T> =
         [K in StringKey<T>]-?: NonNullable<T[K]> extends string | number | Date ? K : never
       }[StringKey<T>]
 
+/** Config every series accepts in a root's `series` prop, whatever the chart kind. */
 export type ChartSeriesBase = {
   /**
    * Legend and tooltip label.
@@ -67,11 +68,13 @@ export type ChartSeriesBase = {
   class?: ClassValue
 }
 
+/** Stacking config of series that can stack (areas and bars). */
 export type ChartStackableSeries = {
   /** Series with the same string share a stack; `true` joins the chart's shared stack, `false` opts out of `stacked`. */
   stack?: string | boolean
 }
 
+/** Axis config of series drawn against a cartesian value axis. */
 export type ChartAxisSeries = {
   /**
    * Value axis the series is drawn against. `'right'` adds a right y axis.
@@ -80,6 +83,7 @@ export type ChartAxisSeries = {
   yAxis?: 'left' | 'right'
 }
 
+/** A `LineChart` (or `ComposedChart` line) series: `ChartLine` props settable per series. */
 export type ChartLineSeries = {
   curve?: ChartCurveType
   strokeWidth?: number
@@ -93,6 +97,7 @@ export type ChartLineSeries = {
 /** `'gradient'` fades the series color from `fillOpacity[0]` at the top to `fillOpacity[1]` at the bottom. */
 export type ChartAreaFill = 'gradient' | 'solid' | 'none' | (string & {})
 
+/** An `AreaChart` (or `ComposedChart` area) series: line config plus its fill. */
 export type ChartAreaSeries = {
   fill?: ChartAreaFill
   /** One opacity, or `[top, bottom]` stop opacities for the gradient fill. */
@@ -100,6 +105,7 @@ export type ChartAreaSeries = {
 } & ChartLineSeries &
   ChartStackableSeries
 
+/** A `BarChart` (or `ComposedChart` bar) series. */
 export type ChartBarSeries = {
   /** Corner radius of the bar's outer end. Only the last bar of a stack is rounded. */
   radius?: ChartRadius
@@ -109,11 +115,13 @@ export type ChartBarSeries = {
   ChartAxisSeries &
   ChartStackableSeries
 
+/** A `ComposedChart` series: `type` picks whether it draws as an area, bars or a line. */
 export type ChartComposedSeries =
   | (ChartAreaSeries & { type: 'area' })
   | (ChartBarSeries & { type: 'bar' })
   | (ChartLineSeries & { type: 'line' })
 
+/** A `RadarChart` series: `ChartRadar` props settable per series. */
 export type ChartRadarSeries = {
   fillOpacity?: number
   strokeWidth?: number
@@ -151,8 +159,11 @@ export type ChartResolvedSeries<S = ChartSeriesBase> = Omit<
 
 /** Root props that turn on the generated parts. */
 export type ChartModeProps = {
+  /** Category key of the rows; setting it turns on the generated parts. */
   index?: unknown
+  /** Series config; setting it turns on the generated parts. */
   series?: unknown
+  /** Draws a bare chart without axes, grid or tooltip; turns on the generated parts. */
   sparkline?: boolean
 }
 
@@ -208,7 +219,9 @@ export const chartColorAt = (
   return palette[position % palette.length]!
 }
 
+/** Options of `resolveSeries`. */
 export type ResolveSeriesOptions<T, S> = {
+  /** The chart rows. */
   data: readonly T[]
   /** Category key, left out of the inferred series. */
   index?: string
@@ -224,6 +237,17 @@ export type ResolveSeriesOptions<T, S> = {
   stacked?: boolean
 }
 
+/** `true` joins the chart's shared stack; a string names its own stack. */
+const resolveStackId = (setting: string | boolean | undefined): string | undefined => {
+  if (setting === true) return CHART_STACK_ID
+
+  return typeof setting === 'string' ? setting : undefined
+}
+
+/**
+ * A root's series in order, with final names, colors, hidden state and stack ids. Without `series`, every numeric key
+ * of `data` (except `index`) becomes a series.
+ */
 export const resolveSeries = <T extends object, S extends ChartSeriesBase = ChartSeriesBase>(
   options: ResolveSeriesOptions<T, S>,
 ): ChartResolvedSeries<S>[] => {
@@ -237,13 +261,7 @@ export const resolveSeries = <T extends object, S extends ChartSeriesBase = Char
   return entries.map(([key, config], position) => {
     const merged = { ...options.defaults, ...config } as S & ChartStackableSeries
     const { name, color, hide, stack, ...rest } = merged
-    const stackSetting = stack ?? (options.stacked ? true : undefined)
-    const stackId =
-      stackSetting === true
-        ? CHART_STACK_ID
-        : typeof stackSetting === 'string'
-          ? stackSetting
-          : undefined
+    const stackId = resolveStackId(stack ?? (options.stacked ? true : undefined))
 
     return {
       ...rest,
@@ -260,6 +278,16 @@ export const resolveSeries = <T extends object, S extends ChartSeriesBase = Char
 /** Adds or removes a key from a `hidden` list, without mutating it. */
 export const toggleHiddenKey = (hidden: readonly string[], key: string): string[] => {
   return hidden.includes(key) ? hidden.filter((item) => item !== key) : [...hidden, key]
+}
+
+// Bars of a `vertical` layout grow rightwards, so their right corners round; upright bars round their top ones.
+const endRadius = (
+  radius: ChartRadius,
+  layout: Extract<ChartLayout, 'horizontal' | 'vertical'>,
+): ChartRadius => {
+  if (typeof radius !== 'number') return radius
+
+  return layout === 'vertical' ? [0, radius, radius, 0] : [radius, radius, 0, 0]
 }
 
 /**
@@ -281,10 +309,7 @@ export const barEndRadius = (
   for (const item of series) {
     const radius = item.radius ?? 0
     const isEnd = item.stackId === undefined || lastInStack.get(item.stackId) === item.key
-    if (!isEnd || radius === 0) result[item.key] = 0
-    else if (typeof radius === 'number')
-      result[item.key] = layout === 'vertical' ? [0, radius, radius, 0] : [radius, radius, 0, 0]
-    else result[item.key] = radius
+    result[item.key] = !isEnd || radius === 0 ? 0 : endRadius(radius, layout)
   }
 
   return result
@@ -295,6 +320,7 @@ export const chartGradientId = (chartId: string, key: string): string => {
   return `${chartId}-fill-${key}`.replace(/[^\w-]/g, '_')
 }
 
+/** `ChartArea` fill props resolved from an area series by `resolveAreaFill`. */
 export type ChartAreaFillResult = {
   /** `fill` for `ChartArea`: a color, `url(#id)` or `'none'`. */
   fill: string
@@ -349,21 +375,28 @@ export const seriesValueFormatter = (
   }
 }
 
+type ChartPartOptions<P> = {
+  /** Part props used for `true` and `undefined`, and under an object value. */
+  defaults: P
+  /** Whether an `undefined` value draws the part (false in sparklines). @defaultValue true */
+  isEnabled?: boolean
+}
+
 /**
  * A root's `grid` / `xAxis` / `yAxis` / `tooltip` prop to the part's props, or `null` when the part is off.
- * `undefined` follows `enabled` (false in sparklines); `true` means the defaults; an object is merged over them.
+ * `undefined` follows `isEnabled`; `true` means the defaults; an object is merged over them.
  */
 export const resolveChartPart = <P extends object>(
   value: boolean | Partial<P> | undefined,
-  defaults: P,
-  enabled = true,
+  { defaults, isEnabled = true }: ChartPartOptions<P>,
 ): P | null => {
-  if (value === false || (value === undefined && !enabled)) return null
+  if (value === false || (value === undefined && !isEnabled)) return null
   if (value === true || value === undefined) return { ...defaults }
 
   return { ...defaults, ...value }
 }
 
+/** Side of the plot an in-chart legend sits on. */
 export type ChartLegendPosition = 'top' | 'bottom' | 'left' | 'right'
 
 /** A root's `legend` prop to its position and `ChartLegend` props, or `null` when there is no in-chart legend. */
@@ -395,13 +428,16 @@ export type ChartLegendItem = {
   percent?: number
 }
 
+/** A pie or radial row as a slice: its legend row plus the value, position and source row. */
 export type ChartSlice<T = object> = {
   value: number
   position: number
   row: T
 } & ChartLegendItem
 
+/** Options of `resolveSlices`. */
 export type ResolveSlicesOptions<T> = {
+  /** The chart rows, one slice each. */
   data: readonly T[]
   /** Slice name key. */
   index: string
@@ -411,6 +447,14 @@ export type ResolveSlicesOptions<T> = {
   colors?: readonly string[] | Readonly<Record<string, string>>
   /** Names of hidden slices. */
   hidden?: readonly string[]
+}
+
+// Share of the visible total, 0–100; hidden slices have none.
+const slicePercent = (slice: { hidden: boolean; value: number }, total: number) => {
+  if (slice.hidden) return undefined
+  if (total === 0) return 0
+
+  return (slice.value / total) * 100
 }
 
 /** Rows of a pie or radial chart as slices with name, color, value and share. */
@@ -445,10 +489,7 @@ export const resolveSlices = <T extends object>(
 
   const total = slices.reduce((sum, slice) => (slice.hidden ? sum : sum + slice.value), 0)
 
-  return slices.map((slice) => ({
-    ...slice,
-    percent: slice.hidden ? undefined : total === 0 ? 0 : (slice.value / total) * 100,
-  }))
+  return slices.map((slice) => ({ ...slice, percent: slicePercent(slice, total) }))
 }
 
 /** Legend rows of resolved series. */

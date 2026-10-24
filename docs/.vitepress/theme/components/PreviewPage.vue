@@ -2,11 +2,11 @@
   <div
     :class="[
       'flex min-h-dvh bg-background font-sans text-foreground',
-      centered ? ['p-4 sm:p-10', alignClass] : 'flex-col',
+      isCentered ? ['p-4 sm:p-10', alignClass] : 'flex-col',
     ]"
   >
     <Suspense v-if="demo" @resolve="announceReady">
-      <div v-if="centered" :class="['flex w-full', alignClass]" :style="minHeight">
+      <div v-if="isCentered" :class="['flex w-full', alignClass]" :style="minHeight">
         <component :is="demo" />
       </div>
       <component :is="demo" v-else />
@@ -44,7 +44,7 @@ const demo = computed(() => {
 
 // `centered` demos are laid out exactly as in the docs preview box (padding, alignment, `minHeight`), so the box can
 // swap between its inline render and this page without a jump; `page` demos (full layouts) fill the viewport.
-const centered = computed(() => params.value?.layout === 'centered')
+const isCentered = computed(() => params.value?.layout === 'centered')
 
 const alignClass = computed(
   () =>
@@ -72,8 +72,12 @@ const syncTheme = () => {
     const value = design[name]
     if (root.getAttribute(name) === (value ?? null)) continue
 
-    if (value === undefined) root.removeAttribute(name)
-    else root.setAttribute(name, value)
+    if (value === undefined) {
+      root.removeAttribute(name)
+      continue
+    }
+
+    root.setAttribute(name, value)
   }
 }
 

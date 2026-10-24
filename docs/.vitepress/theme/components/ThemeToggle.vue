@@ -63,10 +63,10 @@ const current = ref<Mode>('auto')
 let media: MediaQueryList | undefined
 
 const apply = (mode: Mode) => {
-  const dark = mode === 'dark' || (mode === 'auto' && !!media?.matches)
+  const isDark = mode === 'dark' || (mode === 'auto' && !!media?.matches)
   const root = document.documentElement
-  root.classList.toggle('dark', dark)
-  root.style.colorScheme = dark ? 'dark' : 'light'
+  root.classList.toggle('dark', isDark)
+  root.style.colorScheme = isDark ? 'dark' : 'light'
 }
 
 const select = (mode: Mode) => {

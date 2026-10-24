@@ -140,10 +140,13 @@ const emit = defineEmits<DrawerEmits>()
 const slots = useSlots()
 defineSlots<DrawerSlots>()
 
-const ui = useComponentUI('drawer', theme, () => ({
-  placement: props.placement,
-  variant: props.variant,
-}))
+const ui = useComponentUI('drawer', {
+  theme,
+  variantProps: () => ({
+    placement: props.placement,
+    variant: props.variant,
+  }),
+})
 
 const dialogContent = useTemplateRef<{ $el: HTMLElement }>('dialogContent')
 const {
@@ -170,8 +173,8 @@ const DRAG_THRESHOLD = 8
 const DISMISS_FRACTION = 0.3
 const VELOCITY_THRESHOLD = 0.5
 const isVertical = computed(() => props.placement === 'top' || props.placement === 'bottom')
-let dragging = false
-let active = false
+let isDragging = false
+let isDragActive = false
 let startPos = 0
 let offset = 0
 let velocity = 0
@@ -183,13 +186,22 @@ const pointerPos = (event: PointerEvent) => {
 }
 
 const clampDelta = (delta: number) => {
-  switch (props.placement) {
-    case 'top':
-    case 'left':
-      return Math.min(0, delta)
-    default:
-      return Math.max(0, delta)
-  }
+  const isTowardsNegative = props.placement === 'top' || props.placement === 'left'
+
+  return isTowardsNegative ? Math.min(0, delta) : Math.max(0, delta)
+}
+
+const springBack = (el: HTMLElement) => {
+  el.style.transition = 'transform 300ms cubic-bezier(0.32, 0.72, 0, 1)'
+  el.style.transform = ''
+
+  el.addEventListener(
+    'transitionend',
+    () => {
+      el.style.transition = ''
+    },
+    { once: true },
+  )
 }
 
 const onDragStart = (event: PointerEvent) => {
@@ -203,8 +215,8 @@ const onDragStart = (event: PointerEvent) => {
   )
     return
 
-  dragging = true
-  active = false
+  isDragging = true
+  isDragActive = false
   startPos = pointerPos(event)
   lastPos = startPos
   lastTime = Date.now()
@@ -213,15 +225,15 @@ const onDragStart = (event: PointerEvent) => {
 }
 
 const onDragMove = (event: PointerEvent) => {
-  if (!dragging) return
+  if (!isDragging) return
   const el = event.currentTarget as HTMLElement
   const pos = pointerPos(event)
   const rawDelta = pos - startPos
   const delta = clampDelta(rawDelta)
 
-  if (!active) {
+  if (!isDragActive) {
     if (Math.abs(rawDelta) < DRAG_THRESHOLD) return
-    active = true
+    isDragActive = true
     el.style.transition = 'none'
     el.setPointerCapture(event.pointerId)
   }
@@ -239,33 +251,30 @@ const onDragMove = (event: PointerEvent) => {
 }
 
 const onDragEnd = (event: PointerEvent, close: () => void) => {
-  if (!dragging) return
-  dragging = false
+  if (!isDragging) return
+  isDragging = false
   const el = event.currentTarget as HTMLElement
-  if (!active) return
-  active = false
+  if (!isDragActive) return
+  isDragActive = false
 
   try {
     el.releasePointerCapture(event.pointerId)
-  } catch {}
+  } catch {
+    // The capture may already be gone (pointer cancelled / element detached); nothing to release.
+  }
 
   const size = isVertical.value ? el.offsetHeight : el.offsetWidth
-  if (Math.abs(offset) > size * DISMISS_FRACTION || Math.abs(velocity) > VELOCITY_THRESHOLD) {
-    close()
-  } else {
-    el.style.transition = 'transform 300ms cubic-bezier(0.32, 0.72, 0, 1)'
-    el.style.transform = ''
-
-    el.addEventListener(
-      'transitionend',
-      () => {
-        el.style.transition = ''
-      },
-      { once: true },
-    )
-  }
+  const shouldDismiss =
+    Math.abs(offset) > size * DISMISS_FRACTION || Math.abs(velocity) > VELOCITY_THRESHOLD
 
   offset = 0
   velocity = 0
+
+  if (shouldDismiss) {
+    close()
+    return
+  }
+
+  springBack(el)
 }
 </script>

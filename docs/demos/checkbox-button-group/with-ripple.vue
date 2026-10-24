@@ -67,7 +67,8 @@ const setHover = (card: HTMLElement, on: boolean) => {
   ;(layer(card).firstElementChild as HTMLElement).style.opacity = on ? HOVER_OPACITY : '0'
 }
 
-const press = (card: HTMLElement, x: number, y: number) => {
+// `x`/`y`: where the wave starts, relative to the card.
+const press = (card: HTMLElement, { x, y }: { x: number; y: number }) => {
   const { width, height } = card.getBoundingClientRect()
   const maxDim = Math.max(width, height)
   const size = Math.floor(maxDim * 0.2)
@@ -131,7 +132,7 @@ const ripple = {
     if (!e.isPrimary || e.button !== 0) return
     const card = e.currentTarget as HTMLElement
     const rect = card.getBoundingClientRect()
-    press(card, e.clientX - rect.left, e.clientY - rect.top)
+    press(card, { x: e.clientX - rect.left, y: e.clientY - rect.top })
   },
   pointerup: (e: PointerEvent) => release(e.currentTarget as HTMLElement),
   pointercancel: (e: PointerEvent) => release(e.currentTarget as HTMLElement),
@@ -139,7 +140,7 @@ const ripple = {
   click: (e: MouseEvent) => {
     if (e.detail !== 0) return
     const card = e.currentTarget as HTMLElement
-    press(card, card.offsetWidth / 2, card.offsetHeight / 2)
+    press(card, { x: card.offsetWidth / 2, y: card.offsetHeight / 2 })
     release(card)
   },
 }

@@ -38,13 +38,16 @@ const props = withDefaults(defineProps<TypographyProps>(), {
 
 defineSlots<TypographySlots>()
 
-const ui = useComponentUI('typography', theme, () => ({
-  type: props.type,
-  align: props.align,
-  color: props.color,
-  weight: props.weight,
-  truncate: props.truncate,
-}))
+const ui = useComponentUI('typography', {
+  theme,
+  variantProps: () => ({
+    type: props.type,
+    align: props.align,
+    color: props.color,
+    weight: props.weight,
+    truncate: props.truncate,
+  }),
+})
 
 const element = computed(() => props.as ?? defaultElementByType[props.type ?? 'body'])
 </script>

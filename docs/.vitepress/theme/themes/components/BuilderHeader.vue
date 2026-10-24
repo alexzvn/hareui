@@ -52,7 +52,7 @@
         </div>
         <Tooltip :delay="100" arrow>
           <div class="inline-block" data-slot="tooltip-trigger" role="button" tabindex="0">
-            <Button icon-only size="md" variant="tertiary" @click="handleShare">
+            <Button icon-only size="md" variant="tertiary" @click="onShare">
               <Icon icon="gravity-ui:nodes-right" />
             </Button>
           </div>
@@ -104,7 +104,7 @@ import SwitchMode from './SwitchMode.vue'
 const { canRedo, canUndo, redo, undo } = useUndoRedo()
 const { isCodeVisible, toggleCode } = useCodePanel()
 
-const handleShare = () => {
+const onShare = () => {
   navigator.clipboard.writeText(window.location.href)
 
   toast('Link copied', {
@@ -114,6 +114,6 @@ const handleShare = () => {
   })
 }
 
-useKeyPress('ArrowLeft', () => undo(), { enabled: canUndo })
-useKeyPress('ArrowRight', () => redo(), { enabled: canRedo })
+useKeyPress('ArrowLeft', { onPress: () => undo(), enabled: canUndo })
+useKeyPress('ArrowRight', { onPress: () => redo(), enabled: canRedo })
 </script>
