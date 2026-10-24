@@ -17,6 +17,12 @@ const EXEMPT = new Set([
   'should',
   'can',
   'render',
+  'allow',
+  'show',
+  'hide',
+  'disable',
+  'enable',
+  'validate',
 ])
 
 const getPrefix = (key) => {
