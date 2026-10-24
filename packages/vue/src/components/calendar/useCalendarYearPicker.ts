@@ -1,5 +1,5 @@
 import type { DateValue } from '@internationalized/date'
-import type { ComputedRef, Ref } from 'vue'
+import type { ComputedRef, Ref, ShallowRef } from 'vue'
 import { computed, nextTick, onMounted, onScopeDispose, ref, watch } from 'vue'
 
 export interface UseCalendarYearPickerOptions {
@@ -11,6 +11,8 @@ export interface UseCalendarYearPickerOptions {
   maxValue: ComputedRef<DateValue>
   /** The calendar's root DOM element, used to size the overlay to the day grid beneath it. */
   rootEl: ComputedRef<HTMLElement | undefined>
+  /** The year grid element (the component's `useTemplateRef`). */
+  gridRef: Readonly<ShallowRef<HTMLElement | null>>
   /** `data-slot` of the day grid to measure (`calendar-grid` or `range-calendar-grid`). */
   gridSlot: string
   onSelect: (year: number) => void
@@ -22,8 +24,7 @@ export interface UseCalendarYearPickerOptions {
  * since Reka has no year-picker primitive (recorded as a reka-limitation).
  */
 export function useCalendarYearPicker(options: UseCalendarYearPickerOptions) {
-  const { focusedYear, gridSlot, maxValue, minValue, onSelect, open, rootEl } = options
-  const gridRef = ref<HTMLElement>()
+  const { focusedYear, gridRef, gridSlot, maxValue, minValue, onSelect, open, rootEl } = options
   const activeYear = ref(focusedYear.value)
   // The 200 year cells stay out of the mount (so a DatePicker popover opens faster) and are rendered in
   // the first idle period after it, so the year grid's first fade-in doesn't pay for them either.
@@ -130,7 +131,7 @@ export function useCalendarYearPicker(options: UseCalendarYearPickerOptions) {
     }
   }
 
-  return { activeYear, gridRef, onKeyDown, selectYear, years }
+  return { activeYear, onKeyDown, selectYear, years }
 }
 
 /** React Aria's `useCalendarYearPicker` label for the year listbox: the locale's name for the year field. */

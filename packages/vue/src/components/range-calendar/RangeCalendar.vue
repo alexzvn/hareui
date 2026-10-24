@@ -1,7 +1,7 @@
 <script lang="ts">
 import type { DateValue } from '@internationalized/date'
-import type { PageBehavior, VisibleDuration } from '../calendar/useCalendarDurationView'
-import type { ComponentSlots } from '../../types/tv'
+import type { PageBehavior, VisibleDuration } from '@/components/calendar/useCalendarDurationView'
+import type { ComponentSlots } from '@/types/tv'
 import theme from './theme'
 
 type RangeCalendar = typeof theme
@@ -142,33 +142,25 @@ export interface RangeCalendarEmits {
   /** Emitted when the displayed month/year changes. */
   'update:placeholder': [value: DateValue]
 }
+type RangeCalendarCellSlotProps = Parameters<NonNullable<RangeCalendarSlots['cell']>>[0]
 </script>
 
 <script setup lang="ts">
-import {
-  CalendarHeadCell,
-  RangeCalendarGrid,
-  RangeCalendarGridBody,
-  RangeCalendarGridHead,
-  RangeCalendarGridRow,
-  RangeCalendarHeading,
-  RangeCalendarNext,
-  RangeCalendarPrev,
-  RangeCalendarRoot,
-} from 'reka-ui'
+import type { CalendarMonthShellExposed } from '@/components/calendar/CalendarMonthShell.vue'
 import { isSameDay, isSameMonth } from '@internationalized/date'
-import { computed, nextTick, onBeforeUnmount, onMounted, provide, ref, shallowRef, watch } from 'vue'
+import { computed, nextTick, onBeforeUnmount, onMounted, provide, shallowRef, useTemplateRef, watch } from 'vue'
+import { calendarCellDate, calendarCellFrom, compareDay, focusCalendarCell } from '@/components/calendar/calendarCells'
+import CalendarMonthShell from '@/components/calendar/CalendarMonthShell.vue'
+import { defaultMaxValue, defaultMinValue } from '@/components/calendar/useCalendarBounds'
+import {
+  exceedsMaximumDays,
+  isDaySelectedInRange,
+  makeRange,
+  useRangeSelection,
+} from '@/components/calendar/useRangeSelection'
+import { useComponentUI } from '@/composables/useComponentUI'
+import { useSlotOutlet } from '@/composables/useSlotOutlet'
 import RangeCalendarDay, { rangeCalendarDayKey } from './RangeCalendarDay.vue'
-import { isDurationView } from '../calendar/useCalendarDurationView'
-import { useComponentUI } from '../../composables/useComponentUI'
-import { useSlotOutlet } from '../../composables/useSlotOutlet'
-import CalendarDurationView from '../calendar/CalendarDurationView.vue'
-import { defaultMaxValue, defaultMinValue, weekStartsOnFromFirstDay } from '../calendar/useCalendarBounds'
-import { formatGridLabel, formatPanelHeading } from '../calendar/useCalendarPanelHeading'
-import { calendarCellDate, calendarCellFrom, compareDay, focusCalendarCell, useCalendarMonthKeys } from '../calendar/useCalendarMonthKeys'
-import { useCalendarPlaceholder } from '../calendar/useCalendarPlaceholder'
-import { useCalendarYearPicker, yearPickerLabel } from '../calendar/useCalendarYearPicker'
-import { exceedsMaximumDays, isDaySelectedInRange, makeRange, useRangeSelection } from '../calendar/useRangeSelection'
 
 const props = withDefaults(defineProps<RangeCalendarProps>(), {
   modelValue: undefined,
@@ -183,45 +175,20 @@ const props = withDefaults(defineProps<RangeCalendarProps>(), {
   invalid: false,
   pageBehavior: 'visible',
 })
-const effectivePagedNavigation = computed(() => props.numberOfMonths > 1 ? true : props.pagedNavigation)
 const emit = defineEmits<RangeCalendarEmits>()
 const slots = defineSlots<RangeCalendarSlots>()
 
-const viewKind = computed(() => props.visibleDuration?.days != null ? 'day' as const : props.visibleDuration?.weeks != null ? 'week' as const : 'month' as const)
-const durationView = computed(() => isDurationView(props.visibleDuration))
+const viewKind = computed(() => {
+  if (props.visibleDuration?.days != null) return 'day' as const
+  return props.visibleDuration?.weeks != null ? ('week' as const) : ('month' as const)
+})
 const ui = useComponentUI('rangeCalendar', theme, () => ({ view: viewKind.value }))
 
-const rootInstance = ref<{ $el: HTMLElement } | null>(null)
-const rootEl = computed(() => rootInstance.value?.$el)
+const monthShell = useTemplateRef<CalendarMonthShellExposed>('shell')
+const rootEl = () => monthShell.value?.rootEl
 const minValue = computed(() => props.minValue ?? defaultMinValue())
 const maxValue = computed(() => props.maxValue ?? defaultMaxValue())
-const weekStartsOn = computed(() => weekStartsOnFromFirstDay(props.firstDayOfWeek))
-
-const placeholderModel = useCalendarPlaceholder(
-  () => props.placeholder,
-  props.defaultPlaceholder ?? (props.modelValue ?? props.defaultValue)?.start ?? undefined,
-  value => emit('update:placeholder', value),
-)
-
-const isYearPickerOpen = ref(false)
-const focusedYear = computed(() => placeholderModel.value.year)
-
-// React Aria's year picker keeps the focused month/day and only swaps the year.
-function onSelectYear(year: number) {
-  placeholderModel.value = placeholderModel.value.set({ year })
-  isYearPickerOpen.value = false
-}
-
-const yearPickerState = useCalendarYearPicker({
-  open: isYearPickerOpen,
-  focusedYear,
-  minValue,
-  maxValue,
-  rootEl,
-  gridSlot: 'range-calendar-grid',
-  onSelect: onSelectYear,
-})
-const { activeYear: yearPickerActiveYear, gridRef: yearPickerGridRef, onKeyDown: onYearPickerKeyDown, selectYear: selectYearPickerYear, years: yearPickerYears } = yearPickerState
+const placeholderSeed = props.defaultPlaceholder ?? (props.modelValue ?? props.defaultValue)?.start ?? undefined
 
 // The month view runs React Aria's range state machine (`useRangeCalendarState` + `useCalendarCell`) here and uses
 // Reka only for the grid, focus movement and paging. Reka's own selection is never fed (its model stays empty) and its
@@ -319,8 +286,8 @@ function focusNearestAvailableDate(from: DateValue) {
   if (outside(next))
     return
   focusedDate.value = next
-  placeholderModel.value = next
-  nextTick(() => focusCalendarCell(rootEl.value, next))
+  monthShell.value!.placeholder = next
+  nextTick(() => focusCalendarCell(rootEl(), next))
 }
 
 // RAC's `usePress` focuses the pressed cell from script and flags pointer focus with `data-focused` (no
@@ -400,7 +367,7 @@ function onWindowPointerUp(event: PointerEvent) {
   const wasDragging = dragging
   dragging = false
   press = null
-  const root = rootEl.value
+  const root = rootEl()
   if (!wasDragging || !anchor.value || !root?.contains(document.activeElement))
     return
   const target = event.target as Element | null
@@ -420,7 +387,7 @@ function onCellMouseEnter(event: MouseEvent, date: DateValue) {
   if (!anchor.value || !isSelectableCell(el))
     return
   focusedDate.value = date
-  if (rootEl.value?.contains(document.activeElement) && document.activeElement !== el)
+  if (rootEl()?.contains(document.activeElement) && document.activeElement !== el)
     pointerFocus(el)
 }
 // Each day reads its range state through this, so a hover re-renders only the days whose state flips
@@ -436,14 +403,14 @@ provide(rangeCalendarDayKey, {
   CellOutlet: useSlotOutlet(slots, 'cell'),
 })
 function onRootFocusIn(event: FocusEvent) {
-  const cell = calendarCellFrom(event.target, rootEl.value)
+  const cell = calendarCellFrom(event.target, rootEl())
   if (cell && !cell.hasAttribute('data-disabled') && !cell.hasAttribute('data-outside-view'))
-    focusedDate.value = calendarCellDate(cell, placeholderModel.value)
+    focusedDate.value = calendarCellDate(cell, monthShell.value!.placeholder)
 }
 // Clicks without a handled mouse press (keyboard-less screen readers, touch taps, scripted clicks) select directly.
 // Outside-month cells are inert, as in React Aria. Runs in the capture phase so Reka's cell handler never sees it.
 function onRootClickCapture(event: MouseEvent) {
-  const cell = calendarCellFrom(event.target, rootEl.value)
+  const cell = calendarCellFrom(event.target, rootEl())
   if (!cell)
     return
   event.stopPropagation()
@@ -452,10 +419,10 @@ function onRootClickCapture(event: MouseEvent) {
     return
   }
   if (isSelectableCell(cell))
-    selectDate(calendarCellDate(cell, placeholderModel.value))
+    selectDate(calendarCellDate(cell, monthShell.value!.placeholder))
 }
 function onRootKeyDownCapture(event: KeyboardEvent) {
-  const cell = calendarCellFrom(event.target, rootEl.value)
+  const cell = calendarCellFrom(event.target, rootEl())
   if (!cell)
     return
   // `useCalendarGrid`: Escape cancels an in-progress selection (and keeps propagating, e.g. to close a popover)
@@ -469,232 +436,80 @@ function onRootKeyDownCapture(event: KeyboardEvent) {
   event.stopPropagation()
   if (!isSelectableCell(cell))
     return
-  const date = calendarCellDate(cell, placeholderModel.value)
+  const date = calendarCellDate(cell, monthShell.value!.placeholder)
   const wasAnchored = !!anchor.value
   selectDate(date)
   if (!wasAnchored && anchor.value)
     focusNearestAvailableDate(date)
 }
 
-const { onKeyDown: onMonthKeyDown, onHeaderClickCapture } = useCalendarMonthKeys({
-  placeholder: placeholderModel,
-  minValue: () => effectiveMinValue.value,
-  maxValue: () => effectiveMaxValue.value,
-  rootEl: () => rootEl.value,
-  numberOfMonths: () => props.numberOfMonths,
-})
-const prevButton = ref<HTMLElement | null>(null)
-const nextButton = ref<HTMLElement | null>(null)
-
 // Reka re-centred the view on the range start whenever the value changed; keep that for values set from outside
 // (e.g. typed into a DateRangePicker's fields), but not for this calendar's own picks.
 watch(() => props.modelValue?.start, (start) => {
-  if (!start || (lastEmitted?.start && isSameDay(start, lastEmitted.start)) || isSameDay(start, placeholderModel.value))
+  const shell = monthShell.value
+  if (!start || !shell || (lastEmitted?.start && isSameDay(start, lastEmitted.start)) || isSameDay(start, shell.placeholder))
     return
-  placeholderModel.value = start
+  shell.placeholder = start
 })
 
-// Week/day views run outside Reka, so they keep the (uncontrolled) selection here
-const focusedAccessor = { get value() { return placeholderModel.value }, set value(v: DateValue) { placeholderModel.value = v } }
-const durationValue = shallowRef<DateRange | undefined>(props.modelValue ?? props.defaultValue)
-const currentValue = computed(() => props.modelValue !== undefined ? props.modelValue : durationValue.value)
-function onDurationSelect(value: DateRange) {
-  durationValue.value = value
-  emit('update:modelValue', value)
-}
+const monthBounds = computed(() => ({ minValue: effectiveMinValue.value, maxValue: effectiveMaxValue.value }))
+const rootBindings = computed(() => ({
+  modelValue: EMPTY_RANGE,
+  isDateUnavailable: wrappedIsDateUnavailable.value,
+  isDateDisabled: isDateDisabledByMaximumDays,
+  allowNonContiguousRanges: props.allowNonContiguousRanges,
+  onClickCapture: onRootClickCapture,
+  onKeydownCapture: onRootKeyDownCapture,
+  onFocusin: onRootFocusIn,
+}))
+// The week/day view selects with the configured matcher; the month view's anchor-bound one is in `rootBindings`
+const shellSelection = computed(() => ({
+  value: props.modelValue,
+  defaultValue: props.defaultValue,
+  isDateUnavailable: props.isDateUnavailable,
+  allowNonContiguousRanges: props.allowNonContiguousRanges,
+}))
 </script>
 
 <template>
-  <CalendarDurationView
-    v-if="durationView"
+  <CalendarMonthShell
+    ref="shell"
     kind="range"
-    :ui="ui as any"
+    :ui="ui"
     :ui-overrides="props.ui"
     :root-class="props.class"
     :aria-label="ariaLabel"
-    :duration="visibleDuration!"
-    :page-behavior="pageBehavior"
-    :focused="focusedAccessor"
-    :value="currentValue"
+    :placeholder="placeholder"
+    :default-placeholder="placeholderSeed"
     :min-value="minValue"
     :max-value="maxValue"
-    :is-date-unavailable="isDateUnavailable"
-    :allow-non-contiguous-ranges="allowNonContiguousRanges"
+    :month-bounds="monthBounds"
+    :selection="shellSelection"
+    :root-bindings="rootBindings"
     :disabled="disabled"
     :readonly="readonly"
     :invalid="invalid"
     :locale="locale"
     :first-day-of-week="firstDayOfWeek"
-    :indicator="indicator"
+    :fixed-weeks="fixedWeeks"
+    :year-picker="yearPicker"
+    :paged-navigation="pagedNavigation"
+    :number-of-months="numberOfMonths"
     :dir="dir"
-    @select="onDurationSelect"
+    :visible-duration="visibleDuration"
+    :page-behavior="pageBehavior"
+    :indicator="indicator"
+    @update:placeholder="emit('update:placeholder', $event)"
+    @select="emit('update:modelValue', $event)"
   >
     <template v-if="$slots.navIcon" #navIcon="slotProps">
       <slot name="navIcon" v-bind="slotProps" />
     </template>
     <template v-if="$slots.cell" #cell="slotProps">
-      <slot name="cell" v-bind="(slotProps as any)" />
+      <slot name="cell" v-bind="(slotProps as RangeCalendarCellSlotProps)" />
     </template>
-  </CalendarDurationView>
-  <RangeCalendarRoot
-    v-else
-    ref="rootInstance"
-    v-slot="{ weekDays, grid, locale: resolvedLocale }"
-    :model-value="EMPTY_RANGE"
-    v-model:placeholder="placeholderModel"
-    :min-value="effectiveMinValue"
-    :max-value="effectiveMaxValue"
-    :is-date-unavailable="wrappedIsDateUnavailable"
-    :is-date-disabled="isDateDisabledByMaximumDays"
-    :disabled="disabled"
-    :readonly="readonly"
-    :allow-non-contiguous-ranges="allowNonContiguousRanges"
-    :fixed-weeks="fixedWeeks"
-    :locale="locale"
-    :week-starts-on="weekStartsOn"
-    weekday-format="short"
-    :paged-navigation="effectivePagedNavigation"
-    :number-of-months="numberOfMonths"
-    :aria-invalid="invalid || undefined"
-    :data-invalid="invalid ? '' : undefined"
-    :dir="dir"
-    :calendar-label="ariaLabel"
-    data-slot="range-calendar"
-    role="application"
-    :class="ui.base({ class: [props.ui?.base, props.class] })"
-    @click.capture="onRootClickCapture"
-    @keydown.capture="onRootKeyDownCapture"
-    @keydown="onMonthKeyDown"
-    @focusin="onRootFocusIn"
-  >
-    <template v-if="numberOfMonths <= 1">
-    <header data-slot="range-calendar-header" role="presentation" :class="ui.header({ class: props.ui?.header })" @click.capture="onHeaderClickCapture($event, prevButton, nextButton)">
-      <template v-if="yearPicker">
-        <button
-          type="button"
-          data-slot="calendar-year-picker-trigger"
-          :data-open="isYearPickerOpen ? 'true' : undefined"
-          :aria-expanded="isYearPickerOpen"
-          :aria-label="`${formatPanelHeading(resolvedLocale, grid[0]?.value ?? placeholderModel)}, year selector`"
-          :class="ui.yearPickerTrigger({ class: props.ui?.yearPickerTrigger })"
-          @click="isYearPickerOpen = !isYearPickerOpen"
-        >
-          <RangeCalendarHeading as-child>
-            <span data-slot="calendar-year-picker-trigger-heading" :class="ui.yearPickerTriggerHeading({ class: props.ui?.yearPickerTriggerHeading })">{{ formatPanelHeading(resolvedLocale, grid[0]?.value ?? placeholderModel) }}</span>
-          </RangeCalendarHeading>
-          <span data-slot="calendar-year-picker-trigger-indicator" aria-hidden="true" :class="ui.yearPickerTriggerIndicator({ class: props.ui?.yearPickerTriggerIndicator })">
-            <svg height="1em" width="1em" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg">
-              <path fill-rule="evenodd" clip-rule="evenodd" d="M5.47 2.97a.75.75 0 0 1 1.06 0l4.5 4.5a.75.75 0 0 1 0 1.06l-4.5 4.5a.75.75 0 1 1-1.06-1.06L9.44 8 5.47 4.03a.75.75 0 0 1 0-1.06Z" fill="currentColor" />
-            </svg>
-          </span>
-        </button>
-      </template>
-      <RangeCalendarHeading v-else data-slot="range-calendar-heading" :class="ui.heading({ class: props.ui?.heading })">{{ formatPanelHeading(resolvedLocale, grid[0]?.value ?? placeholderModel) }}</RangeCalendarHeading>
-      <RangeCalendarPrev data-slot="range-calendar-nav-button" as-child>
-        <button ref="prevButton" type="button" aria-label="Previous" :class="ui.navButton({ class: props.ui?.navButton })">
-          <slot name="navIcon" direction="previous">
-            <svg data-slot="range-calendar-nav-button-icon" height="16" width="16" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg" :class="ui.navButtonIcon({ class: props.ui?.navButtonIcon })">
-              <path fill-rule="evenodd" clip-rule="evenodd" d="M10.53 2.97a.75.75 0 0 1 0 1.06L6.56 8l3.97 3.97a.75.75 0 1 1-1.06 1.06l-4.5-4.5a.75.75 0 0 1 0-1.06l4.5-4.5a.75.75 0 0 1 1.06 0" fill="currentColor" />
-            </svg>
-          </slot>
-        </button>
-      </RangeCalendarPrev>
-      <RangeCalendarNext data-slot="range-calendar-nav-button" as-child>
-        <button ref="nextButton" type="button" aria-label="Next" :class="ui.navButton({ class: props.ui?.navButton })">
-          <slot name="navIcon" direction="next">
-            <svg data-slot="range-calendar-nav-button-icon" height="16" width="16" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg" :class="ui.navButtonIcon({ class: props.ui?.navButtonIcon })">
-              <path fill-rule="evenodd" clip-rule="evenodd" d="M5.47 2.97a.75.75 0 0 1 1.06 0l4.5 4.5a.75.75 0 0 1 0 1.06l-4.5 4.5a.75.75 0 1 1-1.06-1.06L9.44 8 5.47 4.03a.75.75 0 0 1 0-1.06Z" fill="currentColor" />
-            </svg>
-          </slot>
-        </button>
-      </RangeCalendarNext>
-    </header>
-    <RangeCalendarGrid data-slot="range-calendar-grid" role="grid" :aria-label="formatGridLabel(ariaLabel, resolvedLocale, grid[0]?.value ?? placeholderModel)" aria-multiselectable="true" :class="ui.grid({ class: props.ui?.grid })">
-      <RangeCalendarGridHead data-slot="range-calendar-grid-header" :class="ui.gridHeader({ class: props.ui?.gridHeader })">
-        <RangeCalendarGridRow :class="ui.gridRow({ class: props.ui?.gridRow })">
-          <CalendarHeadCell v-for="(day, i) in weekDays" :key="`weekday-${i}`" data-slot="range-calendar-header-cell" :class="ui.headerCell({ class: props.ui?.headerCell })">
-            {{ day }}
-          </CalendarHeadCell>
-        </RangeCalendarGridRow>
-      </RangeCalendarGridHead>
-      <RangeCalendarGridBody data-slot="range-calendar-grid-body" :class="ui.gridBody({ class: props.ui?.gridBody })">
-        <RangeCalendarGridRow v-for="(weekDates, index) in grid[0]?.rows ?? []" :key="`week-${index}`" :class="ui.gridRow({ class: props.ui?.gridRow })">
-          <RangeCalendarDay v-for="weekDate in weekDates" :key="weekDate.toString()" :date="weekDate" :month="grid[0]?.value ?? weekDate" />
-        </RangeCalendarGridRow>
-      </RangeCalendarGridBody>
-    </RangeCalendarGrid>
+    <template #monthCell="{ date, month }">
+      <RangeCalendarDay :date="date" :month="month" />
     </template>
-    <template v-else>
-      <div data-slot="calendar-panels" :class="ui.panels({ class: props.ui?.panels })">
-        <div v-for="(month, panelIndex) in grid" :key="panelIndex" data-slot="calendar-panel" :class="ui.panel({ class: props.ui?.panel })">
-          <header data-slot="range-calendar-header" role="presentation" :class="ui.header({ class: props.ui?.header })">
-            <RangeCalendarPrev v-if="panelIndex === 0" data-slot="range-calendar-nav-button" as-child>
-              <button type="button" aria-label="Previous" :class="ui.navButton({ class: props.ui?.navButton })">
-                <slot name="navIcon" direction="previous">
-                  <svg data-slot="range-calendar-nav-button-icon" height="16" width="16" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg" :class="ui.navButtonIcon({ class: props.ui?.navButtonIcon })">
-                    <path fill-rule="evenodd" clip-rule="evenodd" d="M10.53 2.97a.75.75 0 0 1 0 1.06L6.56 8l3.97 3.97a.75.75 0 1 1-1.06 1.06l-4.5-4.5a.75.75 0 0 1 0-1.06l4.5-4.5a.75.75 0 0 1 1.06 0" fill="currentColor" />
-                  </svg>
-                </slot>
-              </button>
-            </RangeCalendarPrev>
-            <div v-else aria-hidden="true" class="size-6" />
-            <span data-slot="range-calendar-heading" :class="ui.heading({ class: props.ui?.heading })">{{ formatPanelHeading(resolvedLocale, month.value) }}</span>
-            <RangeCalendarNext v-if="panelIndex === grid.length - 1" data-slot="range-calendar-nav-button" as-child>
-              <button type="button" aria-label="Next" :class="ui.navButton({ class: props.ui?.navButton })">
-                <slot name="navIcon" direction="next">
-                  <svg data-slot="range-calendar-nav-button-icon" height="16" width="16" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg" :class="ui.navButtonIcon({ class: props.ui?.navButtonIcon })">
-                    <path fill-rule="evenodd" clip-rule="evenodd" d="M5.47 2.97a.75.75 0 0 1 1.06 0l4.5 4.5a.75.75 0 0 1 0 1.06l-4.5 4.5a.75.75 0 1 1-1.06-1.06L9.44 8 5.47 4.03a.75.75 0 0 1 0-1.06Z" fill="currentColor" />
-                  </svg>
-                </slot>
-              </button>
-            </RangeCalendarNext>
-            <div v-else aria-hidden="true" class="size-6" />
-          </header>
-          <RangeCalendarGrid data-slot="range-calendar-grid" role="grid" :aria-label="formatGridLabel(ariaLabel, resolvedLocale, month.value)" aria-multiselectable="true" :class="ui.grid({ class: props.ui?.grid })">
-            <RangeCalendarGridHead data-slot="range-calendar-grid-header" :class="ui.gridHeader({ class: props.ui?.gridHeader })">
-              <RangeCalendarGridRow :class="ui.gridRow({ class: props.ui?.gridRow })">
-                <CalendarHeadCell v-for="(day, i) in weekDays" :key="`weekday-${i}`" data-slot="range-calendar-header-cell" :class="ui.headerCell({ class: props.ui?.headerCell })">
-                  {{ day }}
-                </CalendarHeadCell>
-              </RangeCalendarGridRow>
-            </RangeCalendarGridHead>
-            <RangeCalendarGridBody data-slot="range-calendar-grid-body" :class="ui.gridBody({ class: props.ui?.gridBody })">
-              <RangeCalendarGridRow v-for="(weekDates, index) in month.rows" :key="`week-${index}`" :class="ui.gridRow({ class: props.ui?.gridRow })">
-                <RangeCalendarDay v-for="weekDate in weekDates" :key="weekDate.toString()" :date="weekDate" :month="month.value" />
-              </RangeCalendarGridRow>
-            </RangeCalendarGridBody>
-          </RangeCalendarGrid>
-        </div>
-      </div>
-    </template>
-    <div
-      v-if="yearPicker"
-      ref="yearPickerGridRef"
-      data-slot="calendar-year-picker-grid"
-      role="listbox"
-      :aria-label="yearPickerLabel(resolvedLocale)"
-      tabindex="-1"
-      :aria-hidden="!isYearPickerOpen"
-      :data-open="isYearPickerOpen ? 'true' : undefined"
-      :class="ui.yearPickerGrid({ class: props.ui?.yearPickerGrid })"
-      @keydown="onYearPickerKeyDown"
-    >
-      <button
-        v-for="year in yearPickerYears"
-        :key="year"
-        type="button"
-        role="option"
-        data-slot="calendar-year-picker-year-cell"
-        :data-year="year"
-        :data-selected="year === focusedYear ? true : undefined"
-        :aria-selected="year === focusedYear"
-        :tabindex="isYearPickerOpen && year === yearPickerActiveYear ? 0 : -1"
-        :class="ui.yearPickerYearCell({ class: props.ui?.yearPickerYearCell })"
-        @click="selectYearPickerYear(year)"
-        @focus="yearPickerActiveYear = year"
-      >
-        {{ year }}
-      </button>
-    </div>
-  </RangeCalendarRoot>
+  </CalendarMonthShell>
 </template>

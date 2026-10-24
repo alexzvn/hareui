@@ -1,7 +1,7 @@
 import type { DateDuration, DateValue } from '@internationalized/date'
 import type { ComputedRef, ShallowRef } from 'vue'
 import { computed, shallowRef } from 'vue'
-import { compareDay } from './useCalendarMonthKeys'
+import { compareDay } from './calendarCells'
 
 /**
  * The DOM-free core of react-stately's `useRangeCalendarState`, shared by RangeCalendar's month view and
