@@ -57,7 +57,7 @@ const breadcrumbs: BreadcrumbsItem[] = [
       </template>
 
       <template #footer="{ collapsed }">
-        <NavigationMenu :items="footerItems" orientation="vertical" :collapsed="collapsed" tooltip class="w-full" />
+        <NavigationMenu aria-label="Secondary" :items="footerItems" orientation="vertical" :collapsed="collapsed" tooltip class="w-full" />
       </template>
     </DashboardSidebar>
 

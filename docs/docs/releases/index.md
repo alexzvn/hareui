@@ -7,6 +7,7 @@ Release notes for `@hareui/vue`, newest first.
 
 | Version | Date | Highlights |
 | --- | --- | --- |
+| [v0.3.0](./v0-3-0) | 2026-10-24 | Charts in `@hareui/vue/charts`; CellSwitch, CellSlider, CellSelect, CellColorPicker, CheckboxButtonGroup, RadioButtonGroup, DropZone, InlineSelect, NativeSelect, NumberStepper; axe audit of every component and docs demo; faster rendering |
 | [v0.2.0](./v0-2-0) | 2026-10-21 | Dashboard and layout components, RichTable, NavigationMenu; `@hareui/vue/vite` plugin: component auto import with an optional prefix, build-time theme overrides; Form schema validation |
 | [v0.1.3](./v0-1-3) | 2026-10-04 | Keyboard, focus and selection parity with React Aria; ColorSlider submits the channel value; modal Popover |
 | [v0.1.2](./v0-1-2) | 2026-10-03 | ComboBox `v-model` input fix, SSR fix |

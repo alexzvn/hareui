@@ -41,7 +41,7 @@ function onRemove(ids: string[]) {
       @remove="onRemove"
     >
       <template #item="{ item }">
-        <Avatar class="size-4" size="sm" :src="(item as User).avatar" :fallback="(item as User).fallback" />
+        <Avatar class="size-4" size="sm" alt="" :src="(item as User).avatar" :fallback="(item as User).fallback" />
         {{ item.label }}
       </template>
       <template #empty>
@@ -60,7 +60,7 @@ function onRemove(ids: string[]) {
           :key="`${user.id}-selected`"
           class="flex items-center gap-2 rounded-lg bg-surface-tertiary px-2 py-1"
         >
-          <Avatar class="size-4" size="sm" :src="user.avatar" :fallback="user.fallback" />
+          <Avatar class="size-4" size="sm" alt="" :src="user.avatar" :fallback="user.fallback" />
           <span class="text-sm">{{ user.label }}</span>
         </div>
       </div>

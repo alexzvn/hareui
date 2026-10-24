@@ -3,6 +3,7 @@ import { describe, expect, it } from 'vitest'
 import { h, nextTick, ref } from 'vue'
 import Accordion from '../src/components/accordion/Accordion.vue'
 import { useDisclosureGroupNavigation } from '../src/components/disclosure-group/useDisclosureGroupNavigation'
+import { expectAccessible } from './a11y'
 
 const items = [
   { value: 'a', label: 'A', content: 'Panel A' },
@@ -88,5 +89,71 @@ describe('accordion', () => {
 
     await wrapper.find('[data-slot=accordion-trigger]').trigger('click')
     expect(wrapper.find('[data-slot=accordion-indicator]').attributes('data-expanded')).toBeUndefined()
+  })
+})
+
+describe('Accordion accessibility', () => {
+  const triggers = (wrapper: ReturnType<typeof mount>) => wrapper.findAll('[data-slot=accordion-trigger]')
+  const panels = (wrapper: ReturnType<typeof mount>) => wrapper.findAll('[data-slot=accordion-panel]')
+
+  it('passes axe collapsed, expanded, multiple-expanded and disabled', async () => {
+    const cases = [
+      {},
+      { defaultValue: ['b'] },
+      { multiple: true, defaultValue: ['a', 'c'] },
+      { disabled: true },
+      { items: [items[0]!, { ...items[1]!, disabled: true }, items[2]!], defaultValue: ['a'] },
+    ]
+    for (const props of cases) {
+      const wrapper = mount(Accordion, { props: { items, ...props }, attachTo: document.body })
+      await expectAccessible(wrapper)
+      wrapper.unmount()
+    }
+  })
+
+  it('each trigger is a button inside a heading that controls a group panel named by that trigger', () => {
+    const wrapper = mount(Accordion, { props: { items, defaultValue: ['a'] }, attachTo: document.body })
+    triggers(wrapper).forEach((trigger, index) => {
+      const panel = panels(wrapper)[index]!
+      expect(trigger.element.tagName).toBe('BUTTON')
+      expect(trigger.attributes('type')).toBe('button')
+      expect(trigger.element.parentElement!.tagName).toMatch(/^H[1-6]$/)
+      expect(trigger.attributes('aria-controls')).toBe(panel.attributes('id'))
+      expect(panel.attributes('role')).toBe('group')
+      expect(document.getElementById(panel.attributes('aria-labelledby')!)).toBe(trigger.element)
+      expect(trigger.text()).toBe(items[index]!.label)
+    })
+    wrapper.unmount()
+  })
+
+  it('collapsed panels are hidden from assistive tech and find-in-page searchable; expanded ones are exposed', async () => {
+    const wrapper = mount(Accordion, { props: { items, defaultValue: ['a'] }, attachTo: document.body })
+    const hiddenStates = () => panels(wrapper).map(p => [p.attributes('aria-hidden'), p.attributes('hidden') ?? null])
+    expect(hiddenStates()).toEqual([['false', null], ['true', 'until-found'], ['true', 'until-found']])
+
+    await triggers(wrapper)[1]!.trigger('click')
+    expect(panels(wrapper).map(p => p.attributes('aria-hidden'))).toEqual(['true', 'false', 'true'])
+    expect(panels(wrapper)[1]!.attributes('hidden')).toBeUndefined()
+    expect(triggers(wrapper).map(t => t.attributes('aria-expanded'))).toEqual(['false', 'true', 'false'])
+    wrapper.unmount()
+  })
+
+  it('every enabled trigger is a Tab stop, disabled triggers are skipped, and focus stays on the trigger it toggles', async () => {
+    const wrapper = mount(Accordion, {
+      props: { items: [items[0]!, { ...items[1]!, disabled: true }, items[2]!] },
+      attachTo: document.body,
+    })
+    const [first, disabled, last] = triggers(wrapper)
+    expect([first, last].map(t => t!.attributes('tabindex'))).toEqual([undefined, undefined])
+    expect((disabled!.element as HTMLButtonElement).disabled).toBe(true)
+
+    ;(last!.element as HTMLElement).focus()
+    await last!.trigger('click')
+    expect(last!.attributes('aria-expanded')).toBe('true')
+    expect(document.activeElement).toBe(last!.element)
+    await last!.trigger('click')
+    expect(last!.attributes('aria-expanded')).toBe('false')
+    expect(document.activeElement).toBe(last!.element)
+    wrapper.unmount()
   })
 })

@@ -79,6 +79,9 @@ const items = [
       </span>
     </template>
 
+    <template #actions-header>
+      <span class="sr-only">Actions</span>
+    </template>
     <template #actions-cell>
       <div class="flex justify-end">
         <Dropdown :items="items">

@@ -338,6 +338,16 @@ const columns = computed<RichTableColumn<T>[]>(() => processColumns(props.column
   ...(props.defaultColumn?.header === undefined && { header: accessorKey.charAt(0).toUpperCase() + accessorKey.slice(1) }),
 }))))
 
+// the injected default cell renders plain text, so the template prints it inline instead of mounting a
+// FlexRender component plus a functional component per cell.
+function defaultCell({ getValue }: CellContext<T, unknown>) {
+  const value = getValue()
+  if (value === '' || value === null || value === undefined) {
+    return '\u00A0'
+  }
+  return String(value)
+}
+
 function processColumns(columns: RichTableColumn<T>[]): RichTableColumn<T>[] {
   return columns.map((column) => {
     const col = { ...column }
@@ -347,13 +357,7 @@ function processColumns(columns: RichTableColumn<T>[]): RichTableColumn<T>[] {
     }
 
     if (!col.cell && !props.defaultColumn?.cell) {
-      col.cell = ({ getValue }) => {
-        const value = getValue()
-        if (value === '' || value === null || value === undefined) {
-          return '\u00A0'
-        }
-        return String(value)
-      }
+      col.cell = defaultCell
     }
 
     return col
@@ -431,7 +435,10 @@ const tableOptions = computed<TableOptionsWithReactiveData<T>>(() => ({
   initialState: props.initialState,
   mergeOptions: props.mergeOptions,
   renderFallbackValue: props.renderFallbackValue,
-  data: data.value,
+  // Pass the ref, not its value. With a ref, vue-table's `mergeOptions` spreads each `setOptions` result into a flat
+  // object; with a plain array it returns `mergeProxy(prev, …)`, and every recompute of these options nests another
+  // proxy layer whose lookups walk all the layers below, until the page freezes.
+  data,
   columns: columns.value,
   meta: props.meta ?? {},
   getCoreRowModel: getCoreRowModel(),
@@ -541,9 +548,19 @@ const virtualPaddingBottom = computed(() => {
 const virtualizerInstance = virtualizer ? virtualizer.value : undefined
 
 // Register each rendered row with the virtualizer so its actual height is measured (and re-measured on resize).
+// Vue calls a function ref on every patch, and `measureElement` reads `offsetHeight`, forcing a layout
+// between row patches. An element already registered under the same item key is observed by the virtualizer's
+// ResizeObserver, so it is skipped.
+const registeredRows = new WeakMap<Element, unknown>()
 function measureRow(el: Element | ComponentPublicInstance | null) {
-  if (el instanceof Element) {
-    virtualizerInstance?.measureElement(el)
+  if (el instanceof Element && virtualizerInstance) {
+    const index = virtualizerInstance.indexFromElement(el)
+    const key = virtualizerInstance.options.getItemKey(index)
+    if (registeredRows.get(el) === key && virtualizerInstance.elementsCache.get(key) === el) {
+      return
+    }
+    registeredRows.set(el, key)
+    virtualizerInstance.measureElement(el)
   }
 }
 
@@ -703,6 +720,16 @@ function columnMeta(column: Column<T, unknown>): RichTableColumnMeta<T> | undefi
   return (column.columnDef as RichTableColumn<T>).meta
 }
 
+// a cell's pinning, edge and width depend only on its column, so they are resolved once per column
+// per change instead of three TanStack proxy walks per cell.
+const columnLayouts = computed(() => {
+  const layouts = new Map<string, { pinned: 'left' | 'right' | undefined, edge: 'left' | 'right' | undefined, styles: Record<string, string> }>()
+  for (const column of tableApi.getAllLeafColumns()) {
+    layouts.set(column.id, { pinned: column.getIsPinned() || undefined, edge: getColumnEdge(column), styles: getColumnStyles(column) })
+  }
+  return layouts
+})
+
 // Group rows render a column's `aggregatedCell` (falling back to `cell`) and leave the cells of grouped-by columns in their rows empty.
 // TanStack v8 also reports cells of rows with sub rows as aggregated and gives every column a default `aggregatedCell`, so only group rows use it.
 function cellRenderer(cell: Cell<T, unknown>) {
@@ -787,6 +814,16 @@ function getAriaSort(header: Header<T, unknown>): AriaAttributes['aria-sort'] {
   return sorted === 'asc' ? 'ascending' : 'descending'
 }
 
+// A placeholder header (the slot above a column outside a group) and the footer of a column that defines none are
+// layout fillers, not headers: an empty `th` would be announced as a nameless column header, so they are plain cells.
+function isEmptyHeader(header: Header<T, unknown>) {
+  return header.isPlaceholder && !slots[`${header.id}-header`]
+}
+
+function isEmptyFooter(header: Header<T, unknown>) {
+  return (header.isPlaceholder || header.column.columnDef.footer === undefined) && !slots[`${header.id}-footer`]
+}
+
 defineExpose({
   get $el() {
     return rootRef.value?.$el as HTMLElement
@@ -818,7 +855,8 @@ defineExpose({
             :key="header.id"
             :data-pinned="header.column.getIsPinned() || undefined"
             :data-edge="getColumnEdge(header.column)"
-            :scope="header.colSpan > 1 ? 'colgroup' : 'col'"
+            :role="isEmptyHeader(header) ? 'cell' : undefined"
+            :scope="isEmptyHeader(header) ? undefined : header.colSpan > 1 ? 'colgroup' : 'col'"
             :colspan="header.colSpan > 1 ? header.colSpan : undefined"
             :rowspan="header.rowSpan > 1 ? header.rowSpan : undefined"
             :aria-sort="getAriaSort(header)"
@@ -876,8 +914,8 @@ defineExpose({
                 <td
                   v-for="cell in entry.row.getVisibleCells()"
                   :key="cell.id"
-                  :data-pinned="cell.column.getIsPinned() || undefined"
-                  :data-edge="getColumnEdge(cell.column)"
+                  :data-pinned="columnLayouts.get(cell.column.id)?.pinned"
+                  :data-edge="columnLayouts.get(cell.column.id)?.edge"
                   :colspan="resolveValue(columnMeta(cell.column)?.colspan?.td, cell)"
                   :rowspan="resolveValue(columnMeta(cell.column)?.rowspan?.td, cell)"
                   data-slot="rich-table-cell"
@@ -888,12 +926,15 @@ defineExpose({
                     ],
                   })"
                   :style="[
-                    getColumnStyles(cell.column),
+                    columnLayouts.get(cell.column.id)?.styles,
                     resolveStyle(columnMeta(cell.column)?.style?.td, cell),
                   ]"
                 >
                   <slot :name="`${cell.column.id}-cell`" v-bind="cell.getContext()">
-                    <FlexRender v-if="!cell.getIsPlaceholder()" :render="cellRenderer(cell)" :props="cell.getContext()" />
+                    <template v-if="!cell.getIsPlaceholder()">
+                      <template v-if="cellRenderer(cell) === defaultCell">{{ defaultCell(cell.getContext()) }}</template>
+                      <FlexRender v-else :render="cellRenderer(cell)" :props="cell.getContext()" />
+                    </template>
                   </slot>
                 </td>
               </tr>
@@ -943,6 +984,7 @@ defineExpose({
             :data-edge="getColumnEdge(header.column)"
             :colspan="header.colSpan > 1 ? header.colSpan : undefined"
             :rowspan="header.rowSpan > 1 ? header.rowSpan : undefined"
+            :role="isEmptyFooter(header) ? 'cell' : undefined"
             data-slot="rich-table-column"
             :class="ui.th({
               class: [

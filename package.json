@@ -17,7 +17,8 @@
     "reference": "bun run --cwd reference dev",
     "parity": "bun parity/compare.ts",
     "docs:dev": "bun run --cwd docs dev",
-    "docs:build": "bun run --cwd docs build"
+    "docs:build": "bun run --cwd docs build",
+    "a11y": "bun run --cwd docs a11y"
   },
   "devDependencies": {
     "puppeteer": "^25.12.0",

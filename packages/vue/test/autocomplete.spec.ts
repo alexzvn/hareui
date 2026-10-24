@@ -1,7 +1,9 @@
+import type { ComponentOptions } from 'vue'
 import { mount } from '@vue/test-utils'
 import { afterEach, describe, expect, it } from 'vitest'
 import { h, nextTick } from 'vue'
 import Autocomplete from '../src/components/autocomplete/Autocomplete.vue'
+import { expectAccessible } from './a11y'
 
 const items = [
   { value: 'florida', label: 'Florida' },
@@ -148,6 +150,25 @@ describe('Autocomplete', () => {
     expect(wrapper.emitted('update:inputValue')?.at(-1)).toEqual(['flo'])
     wrapper.unmount()
   })
+
+  it('ArrowDown re-renders only the previously and newly focused options', async () => {
+    const updated = new Set<string>()
+    const countOptionUpdates: ComponentOptions = {
+      updated() {
+        if (this.$el instanceof Element && this.$el.matches('[role=option]'))
+          updated.add(this.$el.textContent!.trim())
+      },
+    }
+    const wrapper = mount(Autocomplete, { props: { items, label: 'State' }, attachTo: document.body, global: { mixins: [countOptionUpdates] } })
+    await wrapper.get('[data-slot=autocomplete-trigger]').trigger('click')
+    await flush()
+    await key(search()!, 'ArrowDown')
+    updated.clear()
+    await key(search()!, 'ArrowDown')
+    expect(options()[3]!.getAttribute('data-focused')).toBe('true')
+    expect([...updated].sort()).toEqual(['Delaware', 'Texas'])
+    wrapper.unmount()
+  })
 })
 
 describe('Autocomplete behaviour parity (React Aria)', () => {
@@ -208,6 +229,203 @@ describe('Autocomplete virtualize', () => {
     // Typing focuses the first match, even when its row isn't mounted
     expect(search()!.getAttribute('aria-activedescendant')).toMatch(/-option-29$/)
     expect(texts().every(t => t?.startsWith('User 29'))).toBe(true)
+    wrapper.unmount()
+  })
+})
+
+describe('Autocomplete accessibility', () => {
+  /** The text an `aria-labelledby` / `aria-describedby` list points at; fails on dangling ids. */
+  const refText = (ids: string | null | undefined) => (ids ?? '').split(' ').filter(Boolean).map((id) => {
+    const el = document.getElementById(id)
+    expect(el, `#${id} exists`).not.toBeNull()
+    return el!.getAttribute('aria-label') ?? el!.textContent!.trim()
+  }).join(' ')
+  const listbox = () => document.querySelector<HTMLElement>('[role=listbox]')
+  const popover = () => document.querySelector<HTMLElement>('[data-slot=autocomplete-popover]')
+  async function open(wrapper: ReturnType<typeof setup>['wrapper']) {
+    await wrapper.get('[data-slot=autocomplete-trigger]').trigger('click')
+    await flush()
+  }
+
+  it('has no axe violations closed: placeholder, selected, with a description, clearable and disabled', async () => {
+    for (const props of [{}, { defaultValue: 'texas', description: 'Where you live' }, { clearable: true, defaultValue: 'florida' }, { clearable: true }, { disabled: true }]) {
+      const { wrapper } = setup(props)
+      await flush()
+      await expectAccessible()
+      wrapper.unmount()
+    }
+  })
+
+  it('has no axe violations when invalid with an error message', async () => {
+    const { wrapper, button } = setup({ invalid: true, errorMessage: 'Pick a state' })
+    await flush()
+    expect(button.attributes('aria-invalid')).toBe('true')
+    expect(refText(button.attributes('aria-describedby'))).toBe('Pick a state')
+    await expectAccessible()
+    wrapper.unmount()
+  })
+
+  it('required sits on the hidden select and the label mark, as RAC Select does, not on the trigger button', async () => {
+    const { wrapper, button } = setup({ required: true })
+    await flush()
+    expect(button.attributes('aria-required')).toBeUndefined()
+    expect(wrapper.get('select').attributes('required')).toBeDefined()
+    expect(wrapper.attributes('data-required')).toBe('true')
+    expect(wrapper.get('[data-slot=label]').classes()).toContain('after:content-[\'*\']')
+    await expectAccessible()
+    wrapper.unmount()
+  })
+
+  it('has no axe violations open with the search field, a focused, a selected and a disabled option', async () => {
+    const { wrapper } = setup({ defaultValue: 'delaware' })
+    await open(wrapper)
+    await key(search()!, 'ArrowDown')
+    expect(search()!.getAttribute('aria-activedescendant')).toBeTruthy()
+    await expectAccessible()
+    wrapper.unmount()
+  })
+
+  it('has no axe violations open without search, in multiple mode and with the empty state', async () => {
+    for (const props of [{ search: false }, { selectionMode: 'multiple', defaultValue: ['texas'] }]) {
+      const { wrapper } = setup(props)
+      await open(wrapper)
+      await expectAccessible()
+      wrapper.unmount()
+    }
+    const { wrapper } = setup({}, { empty: () => 'No results found' })
+    await open(wrapper)
+    await typeSearch('zzz')
+    expect(document.querySelector('[data-slot=empty-state]')).not.toBeNull()
+    await expectAccessible()
+    wrapper.unmount()
+  })
+
+  it('names the trigger from the value and the label, and the popup parts from the label', async () => {
+    const { wrapper, button } = setup({ defaultValue: 'texas', description: 'Where you live' })
+    expect(refText(button.attributes('aria-labelledby'))).toBe('Texas State')
+    expect(refText(button.attributes('aria-describedby'))).toBe('Where you live')
+    await open(wrapper)
+    expect(popover()!.getAttribute('role')).toBe('dialog')
+    expect(refText(popover()!.getAttribute('aria-labelledby'))).toBe('State')
+    expect(search()!.getAttribute('aria-label')).toBe('Search options')
+    expect(refText(listbox()!.getAttribute('aria-labelledby'))).toBe('Suggestions State')
+    wrapper.unmount()
+  })
+
+  it('an aria-label still names the trigger and the popup when there is no visible label', async () => {
+    const wrapper = mount(Autocomplete, { props: { items, placeholder: 'Select one' }, attrs: { 'aria-label': 'State' }, attachTo: document.body })
+    const button = wrapper.get('button[aria-haspopup=listbox]')
+    expect(refText(button.attributes('aria-labelledby'))).toBe('Select one State')
+    await open(wrapper)
+    expect(refText(popover()!.getAttribute('aria-labelledby'))).toBe('State')
+    await expectAccessible()
+    wrapper.unmount()
+  })
+
+  it('aria-expanded / aria-controls follow the popup; the search field controls the listbox', async () => {
+    const { wrapper, button } = setup()
+    expect(button.attributes('aria-haspopup')).toBe('listbox')
+    expect(button.attributes('aria-expanded')).toBe('false')
+    expect(button.attributes('aria-controls')).toBeUndefined()
+    await open(wrapper)
+    expect(button.attributes('aria-expanded')).toBe('true')
+    expect(button.attributes('aria-controls')).toBe(listbox()!.id)
+    expect(search()!.getAttribute('aria-controls')).toBe(listbox()!.id)
+    expect(search()!.getAttribute('aria-autocomplete')).toBe('list')
+    wrapper.unmount()
+  })
+
+  it('options expose aria-selected and aria-disabled; multiple mode is aria-multiselectable', async () => {
+    const single = setup({ defaultValue: 'texas' })
+    try {
+      await open(single.wrapper)
+      expect(options().map(o => o.getAttribute('aria-selected'))).toEqual(['false', 'false', 'false', 'true'])
+      expect(listbox()!.getAttribute('aria-multiselectable')).not.toBe('true')
+      expect(options()[2]!.getAttribute('aria-disabled')).toBe('true')
+    }
+    finally {
+      single.wrapper.unmount()
+    }
+    const multi = setup({ selectionMode: 'multiple', defaultValue: ['florida', 'texas'] })
+    await open(multi.wrapper)
+    expect(listbox()!.getAttribute('aria-multiselectable')).toBe('true')
+    expect(options().map(o => o.getAttribute('aria-selected'))).toEqual(['true', 'false', 'false', 'true'])
+    multi.wrapper.unmount()
+  })
+
+  it('Enter, Space and ArrowDown on the trigger open on the first option, ArrowUp on the last enabled one', async () => {
+    for (const k of ['Enter', ' ', 'ArrowDown']) {
+      const { wrapper, button } = setup()
+      await key(button.element, k)
+      expect(button.attributes('aria-expanded')).toBe('true')
+      expect(search()!.getAttribute('aria-activedescendant')).toBe(options()[0]!.id)
+      wrapper.unmount()
+    }
+    const { wrapper, button } = setup({ items: [...items.slice(0, 3), { value: 'utah', label: 'Utah', disabled: true }] })
+    await key(button.element, 'ArrowUp')
+    // Utah (last) and California are disabled
+    expect(search()!.getAttribute('aria-activedescendant')).toBe(options()[1]!.id)
+    wrapper.unmount()
+  })
+
+  it('Home / End in the search field move to the first / last enabled option', async () => {
+    const { wrapper } = setup()
+    await open(wrapper)
+    await key(search()!, 'End')
+    expect(search()!.getAttribute('aria-activedescendant')).toBe(options()[3]!.id)
+    await key(search()!, 'Home')
+    expect(search()!.getAttribute('aria-activedescendant')).toBe(options()[0]!.id)
+    wrapper.unmount()
+  })
+
+  it('focus moves into the search field on open and back to the trigger on Escape', async () => {
+    const { wrapper, button } = setup()
+    ;(button.element as HTMLElement).focus()
+    await key(button.element, 'Enter')
+    expect(document.activeElement).toBe(search())
+    await typeSearch('tex')
+    // The first Escape clears the search, the second closes
+    await key(search()!, 'Escape')
+    expect(search()!.value).toBe('')
+    expect(button.attributes('aria-expanded')).toBe('true')
+    await key(search()!, 'Escape')
+    expect(button.attributes('aria-expanded')).toBe('false')
+    expect(document.activeElement).toBe(button.element)
+    wrapper.unmount()
+  })
+
+  it('focus moves to the popover without search and back to the trigger after a selection', async () => {
+    const { wrapper, button } = setup({ search: false })
+    ;(button.element as HTMLElement).focus()
+    await key(button.element, 'ArrowDown')
+    expect(document.activeElement).toBe(popover())
+    expect(popover()!.getAttribute('tabindex')).toBe('-1')
+    await key(popover()!, 'Enter')
+    expect(wrapper.emitted('update:modelValue')?.at(-1)).toEqual(['florida'])
+    expect(button.attributes('aria-expanded')).toBe('false')
+    expect(document.activeElement).toBe(button.element)
+    wrapper.unmount()
+  })
+
+  it('the clear button stays out of the tab order; Backspace on the trigger clears instead', async () => {
+    const { wrapper, button } = setup({ clearable: true, defaultValue: 'florida' })
+    const clear = wrapper.get('[data-slot=autocomplete-clear-button]')
+    expect(clear.attributes('tabindex')).toBe('-1')
+    expect(clear.attributes('aria-label')).toBe('Clear selection')
+    expect(clear.attributes('aria-hidden')).toBeUndefined()
+    await key(button.element, 'Backspace')
+    expect(wrapper.emitted('clear')).toHaveLength(1)
+    // With nothing to clear it is hidden from assistive technology
+    expect(clear.attributes('aria-hidden')).toBe('true')
+    expect(button.attributes('aria-expanded')).toBe('false')
+    wrapper.unmount()
+  })
+
+  it('a disabled autocomplete is not focusable and does not open from the keyboard', async () => {
+    const { wrapper, button } = setup({ disabled: true })
+    expect((button.element as HTMLButtonElement).disabled).toBe(true)
+    await key(button.element, 'ArrowDown')
+    expect(button.attributes('aria-expanded')).toBe('false')
     wrapper.unmount()
   })
 })

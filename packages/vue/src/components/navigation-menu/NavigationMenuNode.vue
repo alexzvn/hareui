@@ -5,13 +5,14 @@ import {
   AccordionItem,
   AccordionRoot,
   AccordionTrigger,
+  injectAccordionRootContext,
   NavigationMenuContent,
   NavigationMenuItem as RekaNavigationMenuItem,
   NavigationMenuLink,
   NavigationMenuTrigger,
 } from 'reka-ui'
 import type { DropdownEntry, DropdownItem, DropdownValue } from '../dropdown/Dropdown.vue'
-import { computed } from 'vue'
+import { computed, useId } from 'vue'
 import Dropdown from '../dropdown/Dropdown.vue'
 import Tooltip from '../tooltip/Tooltip.vue'
 import { SlotOutlet, slotName, useNavigationMenu } from './context'
@@ -21,6 +22,7 @@ import NavigationMenuAccordionContent from './NavigationMenuAccordionContent.vue
 import NavigationMenuChildLink from './NavigationMenuChildLink.vue'
 import NavigationMenuLinkBody from './NavigationMenuLinkBody.vue'
 import NavigationMenuPopover from './NavigationMenuPopover.vue'
+import NavigationMenuTabBridge from './NavigationMenuTabBridge'
 
 // One item of the menu (recursive for vertical children).
 const props = withDefaults(defineProps<{
@@ -122,6 +124,46 @@ function kindProps(kind: Kind, link: ResolvedLink) {
 }
 
 const activeOf = (link: ResolvedLink) => link.active || !!props.item.active
+
+// A vertical link with children: its chevron sits inside the anchor, so it can't be a button. The link itself
+// carries the disclosure state (`aria-expanded` / `aria-controls`) and toggles with the arrow keys (ArrowRight
+// expands, ArrowLeft collapses; mirrored in RTL, like Reka's vertical entry key); the chevron toggles on click.
+const accordionRoot = injectAccordionRootContext(null)
+const disclosureIds = { link: useId(), region: useId() }
+const expanded = computed(() => {
+  const open = accordionRoot?.modelValue.value
+  return Array.isArray(open) ? open.includes(value.value) : open === value.value
+})
+function toggleExpanded() {
+  // Same guard as Reka's AccordionTrigger: a single, non-collapsible accordion keeps its open item open.
+  if (!accordionRoot || props.item.disabled || (accordionRoot.isSingle.value && expanded.value && !accordionRoot.collapsible))
+    return
+  accordionRoot.changeModelValue(value.value)
+}
+const disclosure = computed(() => accordion.value && hasChildren.value ? { open: expanded.value, toggle: toggleExpanded } : undefined)
+
+function onDisclosureKeydown(event: KeyboardEvent) {
+  if (event.altKey || event.ctrlKey || event.metaKey || event.shiftKey)
+    return
+  const rtl = accordionRoot?.direction.value === 'rtl'
+  if (event.key === (expanded.value ? (rtl ? 'ArrowRight' : 'ArrowLeft') : (rtl ? 'ArrowLeft' : 'ArrowRight'))) {
+    event.preventDefault()
+    toggleExpanded()
+  }
+}
+
+function linkAttrs(link: ResolvedLink) {
+  const attrs: Record<string, unknown> = { ...link.attrs }
+  // The collapsed rail hides labels: name the icon-only link by its label.
+  if (vertical.value && collapsed.value && label.value)
+    attrs['aria-label'] = label.value
+  // A link (not an AccordionTrigger button, which names the region itself) labels its nested list.
+  if (disclosure.value && kindOf(link) === NavigationMenuLink)
+    attrs.id = disclosureIds.link
+  if (disclosure.value && link.attrs.href)
+    Object.assign(attrs, { 'aria-expanded': expanded.value, 'aria-controls': disclosureIds.region, 'onKeydown': onDisclosureKeydown })
+  return attrs
+}
 </script>
 
 <template>
@@ -135,8 +177,8 @@ const activeOf = (link: ResolvedLink) => link.active || !!props.item.active
       ? ui.childItem({ class: [ctx.props.ui?.childItem, item.ui?.childItem] })
       : ui.item({ class: [ctx.props.ui?.item, item.ui?.item] })"
   >
-    <div v-if="isGroupLabel" data-slot="label" :class="ui.label({ class: [ctx.props.ui?.label, item.ui?.label, item.class] })">
-      <NavigationMenuLinkBody :item="item" :index="index" :active="false" trailing-trigger />
+    <div v-if="isGroupLabel" :id="disclosure ? disclosureIds.link : undefined" data-slot="label" :class="ui.label({ class: [ctx.props.ui?.label, item.ui?.label, item.class] })">
+      <NavigationMenuLinkBody :item="item" :index="index" :active="false" :disclosure="disclosure" />
     </div>
 
     <LinkResolver v-else-if="item.type !== 'label'" v-slot="link" :item="item" :button="accordion && hasChildren && item.type === 'trigger'">
@@ -147,9 +189,9 @@ const activeOf = (link: ResolvedLink) => link.active || !!props.item.active
               :is="link.as"
               data-slot="link"
               :class="linkClass(link.active)"
-              v-bind="link.attrs"
+              v-bind="linkAttrs(link)"
             >
-              <NavigationMenuLinkBody :item="item" :index="index" :active="activeOf(link)" :trailing-trigger="!!link.attrs.href" />
+              <NavigationMenuLinkBody :item="item" :index="index" :active="activeOf(link)" :disclosure="link.attrs.href ? disclosure : undefined" />
             </component>
           </component>
 
@@ -193,6 +235,7 @@ const activeOf = (link: ResolvedLink) => link.active || !!props.item.active
         </div>
       </component>
 
+      <NavigationMenuTabBridge v-if="horizontalContent" />
       <NavigationMenuContent v-if="horizontalContent" v-bind="ctx.props.content" data-slot="content" :class="ui.content({ class: [ctx.props.ui?.content, item.ui?.content] })">
         <SlotOutlet :name="slotName(item, 'content')" :slot-props="{ item, active: activeOf(link), index, ui }">
           <ul data-slot="childList" :class="ui.childList({ class: [ctx.props.ui?.childList, item.ui?.childList] })">
@@ -202,7 +245,13 @@ const activeOf = (link: ResolvedLink) => link.active || !!props.item.active
       </NavigationMenuContent>
     </LinkResolver>
 
-    <NavigationMenuAccordionContent v-if="accordion && hasChildren" data-slot="content" :class="ui.content({ class: [ctx.props.ui?.content, item.ui?.content] })">
+    <NavigationMenuAccordionContent
+      v-if="accordion && hasChildren"
+      :id="disclosureIds.region"
+      :labelledby="disclosureIds.link"
+      data-slot="content"
+      :class="ui.content({ class: [ctx.props.ui?.content, item.ui?.content] })"
+    >
       <AccordionRoot
         v-bind="ctx.accordionProps.value"
         :default-value="ctx.getAccordionDefaultValue(item.children!, level + 1, listIndex)"

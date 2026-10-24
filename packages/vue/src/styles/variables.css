@@ -44,6 +44,13 @@
     --success: oklch(0.7329 0.1935 150.81);
     --success-foreground: var(--eclipse);
 
+    /* Chart series colors: lightness steps around the accent, same in light and dark */
+    --chart-1: oklch(from var(--accent) calc(l - 0.24) c h);
+    --chart-2: oklch(from var(--accent) calc(l - 0.12) c h);
+    --chart-3: var(--accent);
+    --chart-4: oklch(from var(--accent) calc(l + 0.12) c h);
+    --chart-5: oklch(from var(--accent) calc(l + 0.24) c h);
+
     /* no border by default on form fields */
     --field-border: transparent;
 

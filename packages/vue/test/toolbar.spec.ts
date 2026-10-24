@@ -7,6 +7,7 @@ import Separator from '../src/components/separator/Separator.vue'
 import ToggleButton from '../src/components/toggle-button/ToggleButton.vue'
 import ToggleButtonGroup from '../src/components/toggle-button-group/ToggleButtonGroup.vue'
 import Toolbar from '../src/components/toolbar/Toolbar.vue'
+import { expectAccessible } from './a11y'
 
 const mounted: { unmount: () => void }[] = []
 afterEach(() => mounted.splice(0).forEach(w => w.unmount()))
@@ -37,7 +38,10 @@ describe('Toolbar', () => {
   it('passes its orientation to ToggleButtonGroups and ButtonGroups and the perpendicular one to Separators', () => {
     const { wrapper } = editor({ orientation: 'vertical' })
     expect(wrapper.attributes()).toMatchObject({ 'role': 'toolbar', 'aria-orientation': 'vertical' })
-    expect(wrapper.find('[data-slot=toggle-button-group]').attributes('aria-orientation')).toBe('vertical')
+    const group = wrapper.find('[data-slot=toggle-button-group]')
+    expect(group.attributes('data-orientation')).toBe('vertical')
+    // A multiple-selection group inside is `role="group"`, which doesn't support aria-orientation.
+    expect(group.attributes('aria-orientation')).toBeUndefined()
     const separator = wrapper.find('[data-slot=separator]')
     expect(separator.attributes('data-orientation')).toBe('horizontal')
     expect(separator.classes()).toEqual(expect.arrayContaining(['w-1/2', 'justify-self-center']))
@@ -128,5 +132,33 @@ describe('Toolbar', () => {
     b.focus()
     await key(b, 'ArrowLeft')
     expect(document.activeElement).toBe(wrapper.find('[aria-label=a]').element)
+  })
+
+  it.each([
+    ['horizontal', {}],
+    ['vertical', { orientation: 'vertical' }],
+    ['attached', { attached: true }],
+  ])('is accessible: %s, labelled, with groups, a separator and a disabled control', async (_, props) => {
+    const { wrapper } = editor(props)
+    expect(wrapper.attributes('aria-label')).toBe('Text formatting')
+    await expectAccessible(wrapper)
+  })
+
+  it('is accessible with a nested toolbar and a single-selection group inside', async () => {
+    const wrapper = mount(Toolbar, { attachTo: document.body, attrs: { 'aria-label': 'Editor' }, slots: { default: () => [
+      h(ToggleButtonGroup, { 'aria-label': 'Alignment', 'defaultValue': ['l'] }, () => ['l', 'r'].map(v => h(ToggleButton, { value: v }, () => v))),
+      h(Toolbar, { 'aria-label': 'History' }, () => [h(Button, () => 'Undo'), h(Button, () => 'Redo')]),
+    ] } })
+    mounted.push(wrapper)
+    await expectAccessible(wrapper)
+  })
+
+  it('Shift+Tab leaves from the first control and arrows stop at the first control', async () => {
+    const { button } = editor()
+    button('paste').focus()
+    await key(button('paste'), 'Tab', true)
+    expect(document.activeElement).toBe(button('bold'))
+    await key(button('bold'), 'ArrowLeft')
+    expect(document.activeElement).toBe(button('bold'))
   })
 })

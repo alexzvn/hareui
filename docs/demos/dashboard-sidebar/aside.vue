@@ -48,7 +48,7 @@ const items: NavigationMenuItem[] = [
     </DashboardPanel>
 
     <!-- The aside is a right sidebar with its own state: `useDashboard().sidebars.right`. -->
-    <DashboardSidebar id="aside-details" collapsible resizable side="right" :collapsed-size="0" :default-size="16" :max-size="24" :min-size="12">
+    <DashboardSidebar id="aside-details" aria-label="Details" collapsible resizable side="right" :collapsed-size="0" :default-size="16" :max-size="24" :min-size="12">
       <template #header="{ collapsed }">
         <span v-if="!collapsed" class="truncate text-sm font-semibold">Details</span>
       </template>

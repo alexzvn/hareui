@@ -6,5 +6,5 @@ const colors: ColorSwatchPickerItem[] = ['#F43F5E', '#D946EF', '#8B5CF6', '#3B82
 </script>
 
 <template>
-  <ColorSwatchPicker :items="colors" disabled />
+  <ColorSwatchPicker aria-label="Color" :items="colors" disabled />
 </template>

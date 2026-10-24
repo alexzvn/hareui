@@ -93,7 +93,7 @@ export interface SearchFieldEmits {
 </script>
 
 <script setup lang="ts">
-import { computed, ref, useId, useSlots, useTemplateRef } from 'vue'
+import { computed, ref, useAttrs, useId, useSlots, useTemplateRef } from 'vue'
 import { useComponentUI } from '../../composables/useComponentUI'
 import { useFieldValidation } from '../../composables/useFieldValidation'
 import CloseButton from '../close-button/CloseButton.vue'
@@ -101,11 +101,20 @@ import Description from '../description/Description.vue'
 import FieldError from '../field-error/FieldError.vue'
 import { useFieldsetDisabled } from '../fieldset/context'
 import Label from '../label/Label.vue'
+import { splitInputAttrs } from '../text-field/context'
+
+defineOptions({ inheritAttrs: false })
 
 const props = withDefaults(defineProps<SearchFieldProps>(), { invalid: undefined })
 const emit = defineEmits<SearchFieldEmits>()
 const slots = useSlots()
 defineSlots<SearchFieldSlots>()
+
+// `aria-label`, `autocomplete` and other input attributes go to the input, as in HeroUI; the rest stay on the root
+const attrs = useAttrs()
+const splitAttrs = computed(() => splitInputAttrs(attrs))
+const inputAttrs = computed(() => splitAttrs.value.input)
+const rootAttrs = computed(() => splitAttrs.value.root)
 
 /** The search query. */
 const modelValue = defineModel<string>()
@@ -152,11 +161,13 @@ function onEnter(event: KeyboardEvent) {
     return
   emit('submit', modelValue.value ?? '')
 }
-// Matches RAC: Escape clears the field, but does nothing (and doesn't blur) when it's already empty,
-// disabled or readonly.
-function onEscape() {
+// Matches RAC: Escape clears the field and stops there (an enclosing dialog stays open), but does nothing and lets
+// the key through when the field is already empty, disabled or readonly.
+function onEscape(event: KeyboardEvent) {
   if (disabled.value || props.readonly || !modelValue.value)
     return
+  event.preventDefault()
+  event.stopPropagation()
   modelValue.value = ''
   emit('clear')
 }
@@ -175,6 +186,7 @@ const hasError = computed(() => invalid.value && !!(props.errorMessage || slots.
 const descriptionId = computed(() => `${id.value}-description`)
 const errorId = computed(() => `${id.value}-error`)
 const describedBy = computed(() => [
+  attrs['aria-describedby'] as string | undefined,
   hasDescription.value ? descriptionId.value : undefined,
   hasError.value ? errorId.value : undefined,
 ].filter(Boolean).join(' ') || undefined)
@@ -185,6 +197,7 @@ const ui = useComponentUI('searchField', theme, () => ({ variant: props.variant,
 <template>
   <div
     ref="root"
+    v-bind="rootAttrs"
     data-slot="search-field"
     :data-disabled="disabled ? 'true' : undefined"
     :data-invalid="invalid ? 'true' : undefined"
@@ -193,13 +206,18 @@ const ui = useComponentUI('searchField', theme, () => ({ variant: props.variant,
     :data-empty="isEmpty ? 'true' : undefined"
     :class="ui.base({ class: [props.ui?.base, props.class] })"
   >
-    <Label v-if="hasLabel" :for="id" :disabled="disabled" :invalid="invalid" :required="required">
+    <!-- Each part renders the `<slot>` outlet only when that slot is passed: a forwarded slot would otherwise make Vue force-update the child on every render -->
+    <Label v-if="hasLabel && $slots.label" :for="id" :disabled="disabled" :invalid="invalid" :required="required">
       <slot name="label">
         {{ label }}
       </slot>
     </Label>
+    <Label v-else-if="hasLabel" :for="id" :disabled="disabled" :invalid="invalid" :required="required">
+      {{ label }}
+    </Label>
     <div
       data-slot="search-field-group"
+      role="group"
       :data-invalid="invalid ? 'true' : undefined"
       :data-disabled="disabled ? 'true' : undefined"
       :data-focus-within="focusWithin ? 'true' : undefined"
@@ -216,6 +234,7 @@ const ui = useComponentUI('searchField', theme, () => ({ variant: props.variant,
         </slot>
       </span>
       <input
+        v-bind="inputAttrs"
         :id="id"
         ref="input"
         v-model="modelValue"
@@ -234,6 +253,7 @@ const ui = useComponentUI('searchField', theme, () => ({ variant: props.variant,
         @keydown.esc="onEscape"
       >
       <CloseButton
+        v-if="slots.clearIcon"
         data-slot="search-field-clear-button"
         aria-label="Clear search"
         tabindex="-1"
@@ -242,20 +262,34 @@ const ui = useComponentUI('searchField', theme, () => ({ variant: props.variant,
         @mousedown.prevent
         @click="onClear"
       >
-        <template v-if="slots.clearIcon" #default>
-          <slot name="clearIcon" />
-        </template>
+        <slot name="clearIcon" />
       </CloseButton>
+      <CloseButton
+        v-else
+        data-slot="search-field-clear-button"
+        aria-label="Clear search"
+        tabindex="-1"
+        :disabled="disabled || readonly || undefined"
+        :class="ui.clearButton({ class: props.ui?.clearButton })"
+        @mousedown.prevent
+        @click="onClear"
+      />
     </div>
-    <Description v-if="hasDescription" :id="descriptionId">
+    <Description v-if="hasDescription && $slots.description" :id="descriptionId">
       <slot name="description">
         {{ description }}
       </slot>
     </Description>
-    <FieldError v-if="hasError" :id="errorId">
+    <Description v-else-if="hasDescription" :id="descriptionId">
+      {{ description }}
+    </Description>
+    <FieldError v-if="hasError && $slots.error" :id="errorId">
       <slot name="error" v-bind="validation">
         {{ errorMessage ?? validation.validationErrors.join(' ') }}
       </slot>
+    </FieldError>
+    <FieldError v-else-if="hasError" :id="errorId">
+      {{ errorMessage ?? validation.validationErrors.join(' ') }}
     </FieldError>
   </div>
 </template>

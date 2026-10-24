@@ -44,6 +44,13 @@
     --scroll-shadow-offset: 0px;
   }
 
+  /* `--scroll-linear-gradient` is read only by the element's own `mask-image`; reset it on children so its
+     per-frame changes don't restyle the scrolled subtree. A reset rather than `@property { inherits: false }`,
+     which shadow roots ignore. */
+  [data-slot="scroll-shadow"] > * {
+    --scroll-linear-gradient: initial;
+  }
+
   /* Vertical */
   [data-slot="scroll-shadow"][data-orientation="vertical"]:where(
     [data-top-scroll="true"],

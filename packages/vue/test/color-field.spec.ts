@@ -1,14 +1,119 @@
 import { mount } from '@vue/test-utils'
 import { parseColor } from 'reka-ui'
 import { describe, expect, it } from 'vitest'
-import { h } from 'vue'
+import type { ComponentOptions } from 'vue'
+import { defineComponent, h, nextTick, ref } from 'vue'
+import type { ColorFieldProps } from '../src/components/color-field/ColorField.vue'
 import ColorField from '../src/components/color-field/ColorField.vue'
 import { ColorPickerContextKey } from '../src/components/color-picker/context'
+import ColorSwatch from '../src/components/color-swatch/ColorSwatch.vue'
+import { expectAccessible } from './a11y'
 
 const input = '[data-slot=color-input-group-input]'
 const group = '[data-slot=color-input-group]'
 
-describe('colorField', () => {
+describe('ColorField', () => {
+  it('passes axe labelled, with description, invalid with an error, disabled, read-only and required', async () => {
+    const cases: ColorFieldProps[] = [
+      { label: 'Brand colour', defaultValue: '#0485F7' },
+      { label: 'Brand colour', description: 'Used for buttons and links', defaultValue: '#0485F7' },
+      { label: 'Brand colour', description: 'Used for buttons and links', invalid: true, errorMessage: 'Pick a darker colour' },
+      { label: 'Brand colour', disabled: true, defaultValue: '#0485F7' },
+      { label: 'Brand colour', readonly: true, defaultValue: '#0485F7' },
+      { label: 'Brand colour', required: true },
+      { label: 'Hue', channel: 'hue', colorSpace: 'hsl', defaultValue: '#0485F7' },
+    ]
+    for (const props of cases) {
+      const wrapper = mount(ColorField, { props, attachTo: document.body })
+      await expectAccessible(wrapper)
+      wrapper.unmount()
+    }
+  })
+
+  it('passes axe with only an aria-label and a colour swatch prefix', async () => {
+    const wrapper = mount(ColorField, {
+      props: { defaultValue: '#0485F7' },
+      attrs: { 'aria-label': 'Hex colour' },
+      slots: { prefix: () => h(ColorSwatch, { size: 'xs' }) },
+      attachTo: document.body,
+    })
+    await expectAccessible(wrapper)
+    wrapper.unmount()
+  })
+
+  it('label, description and error ids resolve to the rendered text', () => {
+    const wrapper = mount(ColorField, { props: { label: 'Brand colour', description: 'Used for links', errorMessage: 'Too light', invalid: true }, attachTo: document.body })
+    const el = wrapper.get(input).element as HTMLInputElement
+    expect(el.labels?.[0]?.textContent?.trim()).toBe('Brand colour')
+    const described = el.getAttribute('aria-describedby')!.split(' ').map(id => document.getElementById(id)?.textContent?.trim())
+    expect(described).toEqual(['Used for links', 'Too light'])
+    wrapper.unmount()
+  })
+
+  it('a validate error marks the input invalid and describes it with the message', async () => {
+    const wrapper = mount(ColorField, {
+      props: { label: 'Brand colour', defaultValue: '#000000', validationBehavior: 'aria', validate: c => (c && c.space === 'rgb' && c.r > 200 ? 'Too red' : undefined) },
+      attachTo: document.body,
+    })
+    const el = wrapper.get(input)
+    expect(el.attributes('aria-invalid')).toBeUndefined()
+    ;(el.element as HTMLInputElement).value = '#ff0000'
+    await el.trigger('input')
+    await el.trigger('blur')
+    expect(el.attributes('aria-invalid')).toBe('true')
+    const errorId = el.attributes('aria-describedby')!
+    expect(document.getElementById(errorId)?.textContent?.trim()).toBe('Too red')
+    await expectAccessible(wrapper)
+    wrapper.unmount()
+  })
+
+  it('exposes required and read-only on the input', () => {
+    const required = mount(ColorField, { props: { label: 'Brand colour', required: true } })
+    expect(required.get(input).attributes('aria-required')).toBe('true')
+    const readonly = mount(ColorField, { props: { label: 'Brand colour', readonly: true, defaultValue: '#0485F7' } })
+    expect(readonly.get(input).attributes('readonly')).toBeDefined()
+    required.unmount()
+    readonly.unmount()
+  })
+
+  it('aria-label and aria-labelledby name the input, not the wrapper', () => {
+    const wrapper = mount(ColorField, { attrs: { 'aria-label': 'Hex colour', 'aria-labelledby': 'heading' } })
+    expect(wrapper.get(input).attributes('aria-label')).toBe('Hex colour')
+    expect(wrapper.get(input).attributes('aria-labelledby')).toBe('heading')
+    expect(wrapper.attributes('aria-label')).toBeUndefined()
+    expect(wrapper.attributes('aria-labelledby')).toBeUndefined()
+    wrapper.unmount()
+  })
+
+  it('hex mode: ArrowUp/ArrowDown step, End jumps to white and Home to black, Enter commits', async () => {
+    const wrapper = mount(ColorField, { props: { label: 'Brand colour', defaultValue: '#000010' }, attachTo: document.body })
+    const el = wrapper.get(input)
+    const node = el.element as HTMLInputElement
+    await el.trigger('keydown', { key: 'ArrowUp' })
+    expect(node.value).toBe('#000011')
+    await el.trigger('keydown', { key: 'ArrowDown' })
+    expect(node.value).toBe('#000010')
+    await el.trigger('keydown', { key: 'End' })
+    expect(node.value).toBe('#FFFFFF')
+    await el.trigger('keydown', { key: 'Home' })
+    expect(node.value).toBe('#000000')
+    node.value = '#00ff00'
+    await el.trigger('input')
+    await el.trigger('keydown', { key: 'Enter' })
+    expect(node.value).toBe('#00FF00')
+    expect(wrapper.emitted('update:modelValue')!.at(-1)![0]).toMatchObject({ r: 0, g: 255, b: 0 })
+    wrapper.unmount()
+  })
+
+  it('read-only ignores stepping keys', async () => {
+    const wrapper = mount(ColorField, { props: { label: 'Brand colour', readonly: true, defaultValue: '#000010' } })
+    await wrapper.get(input).trigger('keydown', { key: 'ArrowUp' })
+    await wrapper.get(input).trigger('keydown', { key: 'End' })
+    expect((wrapper.get(input).element as HTMLInputElement).value).toBe('#000010')
+    expect(wrapper.emitted('update:modelValue')).toBeUndefined()
+    wrapper.unmount()
+  })
+
   it('commits a typed hex value on blur and emits update:modelValue', async () => {
     const wrapper = mount(ColorField, { props: { defaultValue: '#000000' } })
     const el = wrapper.get(input)
@@ -255,5 +360,51 @@ describe('colorField', () => {
       expect(node.value).toBe('214°')
       wrapper.unmount()
     })
+  })
+})
+
+describe('colorField slot outlets', () => {
+  it('#prefix / #suffix toggled by a parent v-if switch between custom content and no wrapper', async () => {
+    const show = ref(true)
+    const wrapper = mount(defineComponent({
+      components: { ColorField },
+      setup: () => ({ show }),
+      template: `<ColorField default-value="#000000">
+        <template v-if="show" #prefix><i data-test="pre" /></template>
+        <template v-if="show" #suffix><i data-test="suf" /></template>
+      </ColorField>`,
+    }))
+    const parts = () => ['[data-test=pre]', '[data-test=suf]', '[data-slot=color-input-group-prefix]', '[data-slot=color-input-group-suffix]'].map(s => wrapper.find(s).exists())
+    expect(parts()).toEqual([true, true, true, true])
+    show.value = false
+    await nextTick()
+    expect(parts()).toEqual([false, false, false, false])
+    show.value = true
+    await nextTick()
+    expect(parts()).toEqual([true, true, true, true])
+    wrapper.unmount()
+  })
+
+  it('changing only `description` does not re-render the group root', async () => {
+    let groupUpdates = 0
+    const countGroupUpdates: ComponentOptions = {
+      updated() {
+        if (this.$el instanceof Element && this.$el.matches(group))
+          groupUpdates++
+      },
+    }
+    const wrapper = mount(ColorField, {
+      props: { label: 'Color', description: 'A', defaultValue: '#000000' },
+      slots: { prefix: () => h('i', { 'data-test': 'pre' }), suffix: () => h('i', { 'data-test': 'suf' }) },
+      global: { mixins: [countGroupUpdates] },
+    })
+    // warm-up: anything settling on the first update of any kind
+    await wrapper.setProps({ description: 'B' })
+    groupUpdates = 0
+    await wrapper.setProps({ description: 'C' })
+    expect(wrapper.get('[data-slot=description]').text()).toBe('C')
+    expect(wrapper.find('[data-test=pre]').exists()).toBe(true)
+    expect(groupUpdates).toBe(0)
+    wrapper.unmount()
   })
 })

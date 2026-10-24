@@ -5,10 +5,11 @@ import { flushPromises, mount } from '@vue/test-utils'
 import { describe, expect, it, vi } from 'vitest'
 import { h, nextTick, reactive } from 'vue'
 import RichTable from '../src/components/rich-table/RichTable.vue'
+import { expectAccessible } from './a11y'
 
 // `mount` cannot infer a generic SFC's type parameter (it resolves `T` to `unknown`): this checks the props against
 // `RichTableProps<T>` with `T` inferred from `data`; the `v-model` props (`sorting`, `rowSelection`...) go through the index signature.
-function mountTable<T extends RichTableData>(options: { props: RichTableProps<T> & Record<string, unknown>, slots?: Record<string, string> }): VueWrapper {
+function mountTable<T extends RichTableData>(options: { props: RichTableProps<T> & Record<string, unknown>, slots?: Record<string, string>, attachTo?: Element }): VueWrapper {
   return mount(RichTable as unknown as Parameters<typeof mount>[0], options) as VueWrapper
 }
 
@@ -291,6 +292,7 @@ describe('RichTable', () => {
       await wrapper.setProps({ columnPinning: { left: ['age'], right: [] } })
       expect(wrapper.findAll('th').map(th => th.text())).toEqual(['Age', 'Name', 'Role', 'Id'])
       expect(wrapper.findAll('th')[0]!.attributes('data-pinned')).toBe('left')
+      expect(bodyRows(wrapper)[0]!.findAll('td')[0]!.attributes('data-pinned')).toBe('left')
     })
 
     it('pins rows to the top and bottom', async () => {
@@ -313,7 +315,7 @@ describe('RichTable', () => {
       expect(wrapper.findAll('th').map(th => th.text())).toEqual(['Role', 'Name'])
     })
 
-    it('only sets widths once sizing is enabled', () => {
+    it('only sets widths once sizing is enabled, and body cells follow sizing changes', async () => {
       const plain = mountTable({ props: { data: people, columns: [{ accessorKey: 'name', size: 120 }] } })
       expect(plain.find('th').attributes('style') ?? '').not.toContain('width')
       const sized = mountTable({
@@ -321,6 +323,8 @@ describe('RichTable', () => {
       })
       expect(sized.find('th').attributes('style')).toContain('width: 120px')
       expect(sized.find('td').attributes('style')).toContain('width: 120px')
+      await sized.setProps({ columnSizing: { name: 200 } })
+      expect(sized.find('td').attributes('style')).toContain('width: 200px')
     })
   })
 
@@ -454,5 +458,166 @@ describe('RichTable', () => {
       const many = Array.from({ length: 200 }, (_, i) => ({ id: String(i), name: `P${i}`, role: 'x', age: i }))
       expect(bodyRows(mountTable({ props: { data: many, columns } }))).toHaveLength(200)
     })
+  })
+})
+
+describe('RichTable option updates', () => {
+  it('stays fast across many data and sorting updates', async () => {
+    const wrapper = mountTable({ props: { data: people, columns, getRowId: (row: Person) => row.id } })
+    const started = performance.now()
+    for (let i = 0; i < 40; i++) {
+      await wrapper.setProps({ data: [...people, { id: `n${i}`, name: `New ${i}`, role: 'Dev', age: i }], getRowId: (row: Person) => row.id })
+      await wrapper.get('[data-testid="sort-name"]').trigger('click')
+    }
+    expect(wrapper.findAll('tbody tr')).toHaveLength(4)
+    expect(wrapper.text()).toContain('New 39')
+    expect(performance.now() - started).toBeLessThan(2000)
+  })
+})
+
+describe('RichTable accessibility', () => {
+  // Realistic accessible usage: a caption, a sort button, labelled selection and expand controls
+  const sortable: RichTableColumn<Person>[] = [
+    {
+      accessorKey: 'name',
+      header: ({ column }) => h('button', { 'type': 'button', 'data-testid': 'sort-name', 'onClick': column.getToggleSortingHandler() }, 'Name'),
+      enableSorting: true,
+    },
+    { accessorKey: 'role', header: 'Role' },
+  ]
+  const interactive: RichTableColumn<Person>[] = [
+    {
+      id: 'select',
+      header: ({ table }) => h('input', { 'type': 'checkbox', 'aria-label': 'Select all', 'checked': table.getIsAllRowsSelected(), 'onChange': table.getToggleAllRowsSelectedHandler() }),
+      cell: ({ row }) => h('input', { 'type': 'checkbox', 'aria-label': `Select ${row.original.name}`, 'checked': row.getIsSelected(), 'onChange': row.getToggleSelectedHandler() }),
+    },
+    {
+      id: 'expand',
+      header: 'Details',
+      cell: ({ row }) => h('button', { 'type': 'button', 'aria-expanded': String(row.getIsExpanded()), 'onClick': () => row.toggleExpanded() }, `Details for ${row.original.name}`),
+    },
+    ...sortable,
+  ]
+
+  it('is accessible idle and sorted, named by its caption', async () => {
+    const wrapper = mountTable({ props: { data: people, columns: sortable, caption: 'Team' }, attachTo: document.body })
+    expect(wrapper.get('table caption').text()).toBe('Team')
+    await expectAccessible(wrapper)
+    await wrapper.get('[data-testid="sort-name"]').trigger('click')
+    expect(wrapper.get('th').attributes('aria-sort')).toBe('ascending')
+    await expectAccessible(wrapper)
+    wrapper.unmount()
+  })
+
+  it('names the table from the caption slot', () => {
+    const wrapper = mountTable({ props: { data: people, columns }, slots: { caption: '<b>Staff</b>' } })
+    expect(wrapper.get('table > caption').text()).toBe('Staff')
+  })
+
+  it('is accessible with selected, selectable and expanded rows', async () => {
+    const wrapper = mountTable({
+      props: { data: people, columns: interactive, caption: 'Team', rowSelection: { 1: true }, expanded: { 0: true }, expandedOptions: { getRowCanExpand: () => true }, onSelect: () => {} },
+      slots: { expanded: '<template #expanded="{ row }"><p>{{ row.original.role }}</p></template>' },
+      attachTo: document.body,
+    })
+    expect(wrapper.find('[data-slot="rich-table-expanded-row"]').exists()).toBe(true)
+    await expectAccessible(wrapper)
+    wrapper.unmount()
+  })
+
+  it('is accessible empty, loading with no rows, and loading with rows', async () => {
+    const wrappers = [
+      mountTable({ props: { data: [], columns, caption: 'Team' }, attachTo: document.body }),
+      mountTable({ props: { data: [], columns, caption: 'Team', loading: true }, slots: { loading: 'Loading people' }, attachTo: document.body }),
+      mountTable({ props: { data: people, columns, caption: 'Team', loading: true }, attachTo: document.body }),
+    ]
+    for (const wrapper of wrappers) {
+      await expectAccessible(wrapper)
+      wrapper.unmount()
+    }
+  })
+
+  it('is accessible with grouped headers and a partial footer, exposing the empty filler slots as cells', async () => {
+    const grouped: RichTableColumn<Person>[] = [
+      { id: 'person', header: 'Person', columns: [{ accessorKey: 'name', header: 'Name', footer: 'Total' }, { accessorKey: 'role', header: 'Role' }] },
+      { accessorKey: 'age', header: 'Age' },
+    ]
+    const wrapper = mountTable({ props: { data: people, columns: grouped, caption: 'Team' }, attachTo: document.body })
+    const [groupRow, leafRow] = wrapper.findAll('thead tr')
+    const [person, ageFiller] = groupRow!.findAll('th')
+    expect(person!.attributes()).toMatchObject({ scope: 'colgroup', colspan: '2' })
+    expect(ageFiller!.attributes('role')).toBe('cell')
+    expect(ageFiller!.attributes('scope')).toBeUndefined()
+    expect(leafRow!.findAll('th').map(th => [th.text(), th.attributes('scope'), th.attributes('role')])).toEqual([
+      ['Name', 'col', undefined],
+      ['Role', 'col', undefined],
+      ['Age', 'col', undefined],
+    ])
+    const footer = wrapper.findAll('tfoot th')
+    // One footer row per header row: only "Total" is a real footer header, every other slot is an empty filler
+    expect(footer.map(th => [th.text(), th.attributes('role')])).toEqual([['Total', undefined], ['', 'cell'], ['', 'cell'], ['', 'cell'], ['', 'cell']])
+    await expectAccessible(wrapper)
+    wrapper.unmount()
+  })
+
+  it('keeps a filler header that a slot fills as a column header', () => {
+    const grouped: RichTableColumn<Person>[] = [
+      { id: 'person', header: 'Person', columns: [{ accessorKey: 'name', header: 'Name' }] },
+      { accessorKey: 'age', header: 'Age' },
+    ]
+    const wrapper = mountTable({ props: { data: people, columns: grouped } })
+    const filler = wrapper.findAll('thead tr')[0]!.findAll('th')[1]!
+    const id = tableApiOf(wrapper).getHeaderGroups()[0]!.headers[1]!.id
+    const filled = mountTable({ props: { data: people, columns: grouped }, slots: { [`${id}-header`]: 'Years' } })
+    expect(filler.attributes('role')).toBe('cell')
+    expect(filled.findAll('thead tr')[0]!.findAll('th')[1]!.attributes()).toMatchObject({ scope: 'col' })
+    expect(filled.findAll('thead tr')[0]!.findAll('th')[1]!.attributes('role')).toBeUndefined()
+  })
+
+  it('is accessible virtualized, hiding the spacer rows', async () => {
+    const height = vi.spyOn(HTMLElement.prototype, 'clientHeight', 'get').mockReturnValue(200)
+    const width = vi.spyOn(HTMLElement.prototype, 'clientWidth', 'get').mockReturnValue(400)
+    const many = Array.from({ length: 300 }, (_, i) => ({ id: String(i), name: `P${i}`, role: 'x', age: i }))
+    // Measured detached like the virtualize spec above (attached, happy-dom's zero rects would render no window)
+    const wrapper = mountTable({ props: { data: many, columns, caption: 'Team', virtualize: { estimateSize: 40, overscan: 2 } } })
+    await flushPromises()
+    height.mockRestore()
+    width.mockRestore()
+    expect(wrapper.find('tbody tr[aria-hidden="true"]').exists()).toBe(true)
+    document.body.append(wrapper.element)
+    await expectAccessible(wrapper)
+    wrapper.element.remove()
+    wrapper.unmount()
+  })
+
+  it('reports the direction on the primary sorted column only, and none on the others', async () => {
+    const both: RichTableColumn<Person>[] = [
+      { accessorKey: 'name', header: 'Name', enableSorting: true },
+      { accessorKey: 'role', header: 'Role', enableSorting: true },
+    ]
+    const wrapper = mountTable({ props: { data: people, columns: both, sorting: [{ id: 'role', desc: true }, { id: 'name', desc: false }] } })
+    expect(wrapper.findAll('th').map(th => th.attributes('aria-sort'))).toEqual(['none', 'descending'])
+  })
+
+  it('activates a focusable row with Space, ignoring key repeats, modified keys and keys from cell controls', async () => {
+    const onSelect = vi.fn()
+    const wrapper = mountTable({ props: { data: people, columns: interactive, caption: 'Team', onSelect }, attachTo: document.body })
+    const row = bodyRows(wrapper)[0]!
+    ;(row.element as HTMLElement).focus()
+    expect(document.activeElement).toBe(row.element)
+    await row.trigger('keydown', { key: ' ' })
+    expect(onSelect).toHaveBeenCalledTimes(1)
+    expect(onSelect.mock.calls[0]![1].original.name).toBe('Kate')
+    await row.trigger('keydown', { key: ' ', repeat: true })
+    await row.trigger('keydown', { key: 'Enter', shiftKey: true })
+    await row.get('button').trigger('keydown', { key: 'Enter' })
+    await row.get('input').trigger('keydown', { key: ' ' })
+    expect(onSelect).toHaveBeenCalledTimes(1)
+    wrapper.unmount()
+  })
+
+  it('leaves rows out of the tab order unless they can be activated', () => {
+    const hoverOnly = mountTable({ props: { data: people, columns, onHover: () => {} } })
+    expect(bodyRows(hoverOnly).map(r => r.attributes('tabindex'))).toEqual([undefined, undefined, undefined])
   })
 })

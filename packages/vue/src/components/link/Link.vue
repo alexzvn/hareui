@@ -62,8 +62,22 @@ const Icon = () => h('span', {
   'data-slot': 'link-icon',
 }, slots.icon ? slots.icon() : defaultIcon())
 
+// React Aria renders a Link without an href (or a disabled one) as `role="link"`, focusable unless disabled and
+// activated by Enter; a native anchor only gets that from its href.
+const hrefless = computed(() => props.as === 'a' && (isDisabled.value || !props.href))
+
 function onClick(event: MouseEvent) {
-  if (isDisabled.value) event.preventDefault()
+  if (isDisabled.value) {
+    event.preventDefault()
+    event.stopImmediatePropagation()
+  }
+}
+
+function onKeydown(event: KeyboardEvent) {
+  if (hrefless.value && !isDisabled.value && event.key === 'Enter' && !event.repeat) {
+    event.preventDefault()
+    ;(event.currentTarget as HTMLElement).click()
+  }
 }
 </script>
 
@@ -71,11 +85,14 @@ function onClick(event: MouseEvent) {
   <Primitive
     :as="as"
     :href="isDisabled ? undefined : href"
+    :role="hrefless ? 'link' : undefined"
+    :tabindex="hrefless && !isDisabled ? 0 : undefined"
     :aria-disabled="isDisabled ? 'true' : undefined"
     :data-disabled="isDisabled ? 'true' : undefined"
     data-slot="link"
     :class="ui.base({ class: [props.ui?.base, props.class] })"
     @click="onClick"
+    @keydown="onKeydown"
   >
     <Icon v-if="showIcon && iconPlacement === 'start'" />
     <slot />

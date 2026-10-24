@@ -78,6 +78,7 @@ const open = computed(() => sidebar.value?.open.value ?? false)
     :disabled="disabled"
     :aria-label="open ? 'Close sidebar' : 'Open sidebar'"
     :aria-expanded="open"
+    :aria-controls="open && sidebar?.id.value ? `${sidebar.id.value}-menu` : undefined"
     :class="ui.base({ class: [props.ui?.base, props.class] })"
     @click="sidebar?.toggle()"
   >

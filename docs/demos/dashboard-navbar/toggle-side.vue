@@ -38,7 +38,7 @@ const items: NavigationMenuItem[] = [
       </template>
     </DashboardPanel>
 
-    <DashboardSidebar id="navbar-toggle-side-aside" side="right" :default-size="14" :min-size="12" :max-size="18">
+    <DashboardSidebar id="navbar-toggle-side-aside" aria-label="Details" side="right" :default-size="14" :min-size="12" :max-size="18">
       <div class="min-h-24 flex-1 rounded-xl border border-dashed border-separator bg-surface/50" />
     </DashboardSidebar>
   </DashboardGroup>

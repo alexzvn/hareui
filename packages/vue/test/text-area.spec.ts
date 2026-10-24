@@ -3,6 +3,7 @@ import { describe, expect, it } from 'vitest'
 import { h } from 'vue'
 import TextArea from '../src/components/text-area/TextArea.vue'
 import TextField from '../src/components/text-field/TextField.vue'
+import { expectAccessible } from './a11y'
 
 describe('TextArea', () => {
   it('renders a textarea with HeroUI data-slot and forwards native attributes', () => {
@@ -38,5 +39,40 @@ describe('TextArea', () => {
     await wrapper.get('textarea').setValue('too long')
     await wrapper.get('textarea').trigger('blur')
     expect(wrapper.get('textarea').attributes('aria-invalid')).toBe('true')
+  })
+
+  it.each([
+    ['idle', {}],
+    ['disabled', { disabled: true }],
+    ['read-only', { readonly: true, defaultValue: 'Read me' }],
+    ['invalid', { invalid: true }],
+  ])('standalone with aria-label (%s) has no axe violations', async (_, props) => {
+    const wrapper = mount(TextArea, { props, attrs: { 'aria-label': 'Notes' }, attachTo: document.body })
+    await expectAccessible(wrapper)
+    wrapper.unmount()
+  })
+
+  it.each([
+    ['with description', {}],
+    ['invalid with error message', { invalid: true, errorMessage: 'Keep it under 500 characters' }],
+    ['disabled', { disabled: true }],
+    ['read-only', { readonly: true }],
+    ['required', { required: true }],
+  ])('inside a labelled TextField (%s) is named, described and has no axe violations', async (_, props: Record<string, unknown>) => {
+    const wrapper = mount(TextField, {
+      props: { label: 'Message', description: 'Max 500 characters', ...props },
+      slots: { default: () => h(TextArea) },
+      attachTo: document.body,
+    })
+    const el = wrapper.get('textarea').element as HTMLTextAreaElement
+    expect([...el.labels!].map(l => l.textContent?.trim())).toEqual(['Message'])
+    const described = el.getAttribute('aria-describedby')!.split(' ').map(id => document.getElementById(id)?.textContent?.trim())
+    expect(described).toEqual(props.errorMessage ? ['Max 500 characters', props.errorMessage] : ['Max 500 characters'])
+    expect(el.getAttribute('aria-invalid')).toBe(props.invalid ? 'true' : null)
+    expect(el.disabled).toBe(!!props.disabled)
+    expect(el.readOnly).toBe(!!props.readonly)
+    expect(el.required).toBe(!!props.required)
+    await expectAccessible(wrapper)
+    wrapper.unmount()
   })
 })

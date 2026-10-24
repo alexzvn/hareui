@@ -2,6 +2,7 @@ import { mount } from '@vue/test-utils'
 import { describe, expect, it } from 'vitest'
 import { h } from 'vue'
 import Error from '../src/components/error/Error.vue'
+import { expectAccessible } from './a11y'
 
 // Local stand-in for Promise.withResolvers, so the library's tsconfig `lib` doesn't need ES2024.
 function withResolvers<T>() {
@@ -78,5 +79,27 @@ describe('error', () => {
     const wrapper = mount(Error, { props: { error, as: { root: 'div', statusMessage: 'h2' } } })
     expect(wrapper.element.tagName).toBe('DIV')
     expect(wrapper.get('[data-slot=error-status-message]').element.tagName).toBe('H2')
+  })
+
+  it.each([
+    ['link', {}],
+    ['button', { redirect: '' }],
+  ])('is a main landmark with a level-1 heading and a named %s action, with no axe violations', async (kind, props) => {
+    const wrapper = mount(Error, { props: { error, ...props }, attachTo: document.body })
+    expect(wrapper.element.tagName).toBe('MAIN')
+    expect(wrapper.get('h1').text()).toBe('Page not found')
+    const action = wrapper.get(`[data-slot=error-links] ${kind === 'link' ? 'a[href]' : 'button'}`)
+    expect(action.text()).toBe('Back to home')
+    // Reachable by Tab: a real link / button, not removed from the tab order
+    expect(action.attributes('tabindex') ?? '0').toBe('0')
+    await expectAccessible(wrapper)
+    wrapper.unmount()
+  })
+
+  it('a status code alone, without a heading, has no axe violations', async () => {
+    const wrapper = mount(Error, { props: { error: { statusCode: 500 } }, attachTo: document.body })
+    expect(wrapper.find('h1').exists()).toBe(false)
+    await expectAccessible(wrapper)
+    wrapper.unmount()
   })
 })

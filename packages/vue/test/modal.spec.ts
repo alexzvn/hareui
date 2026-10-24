@@ -1,7 +1,9 @@
 import { mount } from '@vue/test-utils'
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest'
+import type { VNodeChild } from 'vue'
 import { h, nextTick, ref } from 'vue'
 import Modal from '../src/components/modal/Modal.vue'
+import { expectAccessible } from './a11y'
 
 function escapeKeydown() {
   document.dispatchEvent(new KeyboardEvent('keydown', { key: 'Escape', bubbles: true, cancelable: true }))
@@ -254,6 +256,7 @@ describe('modal', () => {
         open.value = true
         await nextTick()
         expect(pageRoot.getAttribute('aria-hidden'), `open, cycle ${cycle}`).toBe('true')
+        expect(pageRoot.hasAttribute('inert'), `inert while open, cycle ${cycle}`).toBe(true)
         close(open)
         await waitUnmount()
         // the container's exit animation must not run empty
@@ -262,7 +265,39 @@ describe('modal', () => {
         expect(open.value, `closed, cycle ${cycle}`).toBe(false)
         expect(document.querySelector('[data-slot=modal-dialog]'), `unmounted, cycle ${cycle}`).toBeNull()
         expect(pageRoot.getAttribute('aria-hidden'), `aria-hidden after cycle ${cycle}`).toBeNull()
+        expect(pageRoot.hasAttribute('inert'), `inert after cycle ${cycle}`).toBe(false)
       }
+    })
+
+    it('makes the page inert again when reopened during the exit animation', async () => {
+      const { open, pageRoot } = mountControlled()
+      open.value = true
+      await nextTick()
+      escapeKeydown()
+      await waitUnmount()
+      expect(document.querySelector('[data-slot=modal-dialog]')).not.toBeNull()
+      expect(pageRoot.hasAttribute('inert')).toBe(false)
+      open.value = true
+      await nextTick()
+      await nextTick()
+      expect(pageRoot.hasAttribute('inert')).toBe(true)
+    })
+
+    it('keeps the page inert while a controlled parent refuses to close', async () => {
+      const wrapper = mount({
+        render: () => h('div', [
+          h('main', { id: 'page' }, 'Page content'),
+          h(Modal, { 'open': true, 'onUpdate:open': () => {} }, { body: () => 'Content' }),
+        ]),
+      }, { attachTo: document.body })
+      mounted.push(wrapper)
+      const pageRoot = document.querySelector<HTMLElement>('#page')!.parentElement!.parentElement!
+      await nextTick()
+      expect(pageRoot.hasAttribute('inert')).toBe(true)
+      escapeKeydown()
+      await waitUnmount()
+      expect(document.querySelector('[data-slot=modal-dialog]')).not.toBeNull()
+      expect(pageRoot.hasAttribute('inert')).toBe(true)
     })
   })
 
@@ -301,5 +336,144 @@ describe('modal', () => {
     tab(true)
     expect(name()).toBe('Confirm')
     wrapper.unmount()
+  })
+
+  describe('accessibility', () => {
+    const mounted: Array<{ unmount: () => void }> = []
+    afterEach(() => {
+      mounted.splice(0).forEach(w => w.unmount())
+      document.body.innerHTML = ''
+    })
+
+    const dialogEl = () => document.querySelector<HTMLElement>('[role=dialog]')
+    const closeTrigger = () => document.querySelector<HTMLButtonElement>('[data-slot=modal-close-trigger]')!
+
+    // `undefined` drops a default slot, so a test can check the dialog without it.
+    type SlotFns = Partial<Record<string, (props: { close: () => void }) => VNodeChild>>
+
+    function mountWithTrigger(props: Record<string, unknown> = {}, slots: SlotFns = {}) {
+      const all: SlotFns = {
+        default: () => h('button', { id: 'trigger' }, 'Open'),
+        description: () => h('p', 'We reply within a day.'),
+        body: () => h('label', ['Email', h('input', { type: 'email' })]),
+        footer: () => [h('button', 'Cancel'), h('button', 'Send')],
+        ...slots,
+      }
+      const wrapper = mount(Modal, {
+        props: { title: 'Contact us', ...props },
+        slots: Object.fromEntries(Object.entries(all).filter(([, fn]) => fn)),
+        attachTo: document.body,
+      })
+      mounted.push(wrapper)
+      const trigger = document.querySelector<HTMLButtonElement>('#trigger')!
+      return { wrapper, trigger }
+    }
+
+    async function openWith(trigger: HTMLButtonElement) {
+      trigger.focus()
+      trigger.click()
+      await nextTick()
+      await nextTick()
+    }
+
+    it('has no axe violations closed, with the trigger only', async () => {
+      const { wrapper } = mountWithTrigger()
+      await expectAccessible(wrapper)
+    })
+
+    it('has no axe violations open with a title, description, body and footer', async () => {
+      const { trigger } = mountWithTrigger()
+      await openWith(trigger)
+      expect(dialogEl()).not.toBeNull()
+      await expectAccessible()
+    })
+
+    const variants: Array<[string, Record<string, unknown>, SlotFns]> = [
+      ['a custom #header and a `title`', {}, { header: () => h('h2', 'Contact us') }],
+      ['#content replacing the whole content', {}, { content: () => h('button', 'Done') }],
+      ['an icon and no close button', { closeButton: false }, { icon: () => h('svg', { 'aria-hidden': 'true' }) }],
+      ['dismissible=false', { dismissible: false }, {}],
+    ]
+    it.each(variants)('has no axe violations open with %s', async (_name, props, slots) => {
+      const { trigger } = mountWithTrigger(props, slots)
+      await openWith(trigger)
+      expect(dialogEl()).not.toBeNull()
+      await expectAccessible()
+    })
+
+    it('trigger announces a dialog popup and reflects the open state', async () => {
+      const { trigger } = mountWithTrigger()
+      expect(trigger.getAttribute('aria-haspopup')).toBe('dialog')
+      expect(trigger.getAttribute('aria-expanded')).toBe('false')
+      await openWith(trigger)
+      expect(trigger.getAttribute('aria-expanded')).toBe('true')
+      expect(trigger.getAttribute('aria-controls')).toBe(dialogEl()!.id)
+    })
+
+    it('names the dialog from its visible heading and describes it with #description', async () => {
+      const { trigger } = mountWithTrigger()
+      await openWith(trigger)
+      const dialog = dialogEl()!
+      const heading = document.getElementById(dialog.getAttribute('aria-labelledby')!)!
+      expect(heading.getAttribute('data-slot')).toBe('modal-heading')
+      expect(heading.textContent?.trim()).toBe('Contact us')
+      expect(document.getElementById(dialog.getAttribute('aria-describedby')!)?.textContent).toBe('We reply within a day.')
+    })
+
+    it('has no dangling aria-describedby without #description', async () => {
+      const { trigger } = mountWithTrigger({}, { description: undefined })
+      await openWith(trigger)
+      expect(dialogEl()!.hasAttribute('aria-describedby')).toBe(false)
+    })
+
+    it('the default close button is named "Close"', async () => {
+      const { trigger } = mountWithTrigger()
+      await openWith(trigger)
+      expect(closeTrigger().tagName).toBe('BUTTON')
+      expect(closeTrigger().getAttribute('aria-label')).toBe('Close')
+    })
+
+    it('focuses the dialog on open and returns focus to the trigger on Escape', async () => {
+      const { trigger } = mountWithTrigger()
+      await openWith(trigger)
+      expect(document.activeElement).toBe(dialogEl())
+      expect(dialogEl()!.tabIndex).toBe(-1)
+
+      escapeKeydown()
+      await waitUnmount()
+      expect(dialogEl()).toBeNull()
+      expect(document.activeElement).toBe(trigger)
+      expect(trigger.getAttribute('aria-expanded')).toBe('false')
+    })
+
+    it('returns focus to the trigger when closed with the close button or a footer close()', async () => {
+      const { trigger } = mountWithTrigger({}, {
+        footer: ({ close }: { close: () => void }) => h('button', { id: 'done', onClick: close }, 'Done'),
+      })
+      await openWith(trigger)
+      closeTrigger().focus()
+      closeTrigger().click()
+      await waitUnmount()
+      expect(dialogEl()).toBeNull()
+      expect(document.activeElement).toBe(trigger)
+
+      await openWith(trigger)
+      document.querySelector<HTMLButtonElement>('#done')!.focus()
+      document.querySelector<HTMLButtonElement>('#done')!.click()
+      await waitUnmount()
+      expect(dialogEl()).toBeNull()
+      expect(document.activeElement).toBe(trigger)
+    })
+
+    it('keeps focus inside the dialog when focus moves to the page behind it', async () => {
+      const outside = document.createElement('button')
+      outside.textContent = 'Outside'
+      document.body.prepend(outside)
+      const { trigger } = mountWithTrigger()
+      await openWith(trigger)
+      outside.focus()
+      await nextTick()
+      expect(dialogEl()!.contains(document.activeElement)).toBe(true)
+    })
   })
 })

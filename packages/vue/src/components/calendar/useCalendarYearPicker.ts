@@ -1,6 +1,6 @@
 import type { DateValue } from '@internationalized/date'
 import type { ComputedRef, Ref } from 'vue'
-import { computed, nextTick, onMounted, ref, watch } from 'vue'
+import { computed, nextTick, onMounted, onScopeDispose, ref, watch } from 'vue'
 
 export interface UseCalendarYearPickerOptions {
   /** Whether the year grid is open. Mutated directly to close on selection/Escape. */
@@ -25,8 +25,33 @@ export function useCalendarYearPicker(options: UseCalendarYearPickerOptions) {
   const { focusedYear, gridSlot, maxValue, minValue, onSelect, open, rootEl } = options
   const gridRef = ref<HTMLElement>()
   const activeYear = ref(focusedYear.value)
+  // The 200 year cells stay out of the mount (so a DatePicker popover opens faster) and are rendered in
+  // the first idle period after it, so the year grid's first fade-in doesn't pay for them either.
+  // Opening before then renders them synchronously, ahead of the focus-on-open watcher below.
+  const everOpened = ref(open.value)
+  watch(open, (isOpen) => {
+    if (isOpen)
+      everOpened.value = true
+  }, { flush: 'sync' })
+  let cancelIdle: (() => void) | undefined
+  onMounted(() => {
+    if (everOpened.value)
+      return
+    const render = () => everOpened.value = true
+    if (typeof requestIdleCallback === 'function') {
+      const id = requestIdleCallback(render, { timeout: 1000 })
+      cancelIdle = () => cancelIdleCallback(id)
+    }
+    else {
+      const id = setTimeout(render, 200)
+      cancelIdle = () => clearTimeout(id)
+    }
+  })
+  onScopeDispose(() => cancelIdle?.())
 
   const years = computed(() => {
+    if (!everOpened.value)
+      return []
     const start = minValue.value.year
     const end = maxValue.value.year
     const list: number[] = []
@@ -51,8 +76,13 @@ export function useCalendarYearPicker(options: UseCalendarYearPickerOptions) {
   }
 
   watch(open, (isOpen) => {
-    if (!isOpen)
+    if (!isOpen) {
+      // The closed grid is aria-hidden and its cells leave the tab order: hand focus back to the trigger
+      // (HeroUI leaves it on the hidden year cell)
+      if (gridRef.value?.contains(document.activeElement))
+        rootEl.value?.querySelector<HTMLElement>('[data-slot="calendar-year-picker-trigger"]')?.focus()
       return
+    }
     activeYear.value = years.value.includes(focusedYear.value) ? focusedYear.value : (years.value[0] ?? focusedYear.value)
     nextTick(() => {
       syncPosition()
@@ -101,4 +131,9 @@ export function useCalendarYearPicker(options: UseCalendarYearPickerOptions) {
   }
 
   return { activeYear, gridRef, onKeyDown, selectYear, years }
+}
+
+/** React Aria's `useCalendarYearPicker` label for the year listbox: the locale's name for the year field. */
+export function yearPickerLabel(locale: string | undefined): string {
+  return new Intl.DisplayNames(locale ?? 'en-US', { type: 'dateTimeField' }).of('year') ?? 'Year'
 }

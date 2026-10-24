@@ -69,10 +69,12 @@ function key(entry: DropdownEntry, index: number) {
       :aria-labelledby="entry.label || ctx.slots['section-label'] ? `${baseId}-${index}` : undefined"
       :class="ctx.classes().section!({ class: [ctx.ui()?.section, entry.class] })"
     >
+      <!-- RAC `useMenuSection`: menus can't own headings, so the header is presentational and only labels the group -->
       <DropdownMenuLabel
         v-if="entry.label || ctx.slots['section-label']"
         :id="`${baseId}-${index}`"
         as="header"
+        role="presentation"
         data-slot="header"
         :class="ctx.classes().header!({ class: ctx.ui()?.header })"
       >

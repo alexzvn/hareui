@@ -7,6 +7,10 @@ description: Explore the full list of components available in the library. More 
 
 <ComponentsCategory category="Buttons" />
 
+## Charts
+
+<ComponentsCategory category="Charts" />
+
 ## Collections
 
 <ComponentsCategory category="Collections" />

@@ -183,7 +183,7 @@ const label = computed(() => [props.ariaLabel, view.rangeLabel.value].filter(Boo
     :data-readonly="readonly ? '' : undefined"
     :class="ui.base({ class: [uiOverrides?.base, rootClass] })"
   >
-    <header :data-slot="`${p}-header`" :class="cls('header')">
+    <header :data-slot="`${p}-header`" role="presentation" :class="cls('header')">
       <div :data-slot="`${p}-heading`" aria-hidden="true" :class="cls('heading')">
         {{ view.heading.value }}
       </div>

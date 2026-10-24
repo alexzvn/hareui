@@ -66,6 +66,16 @@ export interface SelectProps<T extends ListBoxItem = ListBoxItem> extends FormFi
    */
   fullWidth?: boolean
   /**
+   * Side of the trigger the popover opens on.
+   * @defaultValue 'bottom'
+   */
+  side?: 'top' | 'right' | 'bottom' | 'left'
+  /**
+   * Alignment of the popover against the trigger.
+   * @defaultValue 'center'
+   */
+  align?: 'start' | 'center' | 'end'
+  /**
    * Whether the select is disabled.
    * @defaultValue false
    */
@@ -104,6 +114,8 @@ export interface SelectValueSlotProps<T extends ListBoxItem = ListBoxItem> {
 export interface SelectSlots<T extends ListBoxItem = ListBoxItem> {
   /** Label content. Replaces `label`. */
   'label'?: () => any
+  /** Content inside the trigger before the value. */
+  'leading'?: () => any
   /** Trigger value content. Defaults to the selected label(s) or the placeholder. */
   'value'?: (props: SelectValueSlotProps<T>) => any
   /** Trigger indicator content. Defaults to a chevron. */
@@ -145,10 +157,11 @@ export interface SelectEmits {
 </script>
 
 <script setup lang="ts" generic="T extends ListBoxItem = ListBoxItem">
-import { PopoverContent, PopoverPortal, PopoverRoot, PopoverTrigger } from 'reka-ui'
-import { computed, ref, useAttrs, useId, useTemplateRef, watch } from 'vue'
+import { injectPopoverRootContext, PopoverContent, PopoverPortal, PopoverRoot, PopoverTrigger } from 'reka-ui'
+import { computed, defineComponent, provide, ref, useAttrs, useId, useTemplateRef, watch, watchEffect } from 'vue'
 import { useComponentUI } from '../../composables/useComponentUI'
 import { useFieldValidation } from '../../composables/useFieldValidation'
+import { keyboardModalityKey, useKeyboardModality } from '../../composables/useKeyboardModality'
 import { usePortal } from '../../composables/usePortal'
 import { useFieldsetDisabled } from '../fieldset/context'
 import listBoxTheme from '../list-box/theme'
@@ -160,12 +173,17 @@ import { usePressRelease } from './pressRelease'
 
 defineOptions({ inheritAttrs: false })
 
+// The popover's options mount after the press that opens it, so the modality is tracked from here
+provide(keyboardModalityKey, useKeyboardModality())
+
 // Absent booleans stay `undefined` (not `false`): `open` → uncontrolled, `invalid` → validation decides, `loading` → no sentinel
 const props = withDefaults(defineProps<SelectProps<T>>(), {
   portal: undefined,
   selectionMode: 'single',
   defaultValue: undefined,
   placeholder: 'Select an item',
+  side: 'bottom',
+  align: 'center',
   open: undefined,
   invalid: undefined,
   loading: undefined,
@@ -219,6 +237,7 @@ const options = computed<ListBoxItem[]>(() => (props.items ?? []).flatMap((entry
 }))
 const textOf = (item: ListBoxItem) => item.textValue ?? item.label ?? String(item.value)
 const selectedItems = computed(() => options.value.filter(item => selectedValues.value.includes(item.value)) as T[])
+const selectedSet = computed(() => new Set(selectedValues.value))
 const listFormat = computed(() => new Intl.ListFormat(undefined, { type: 'conjunction' }))
 const valueText = computed(() => selectedItems.value.length
   ? (multiple.value ? listFormat.value.format(selectedItems.value.map(textOf)) : textOf(selectedItems.value[0]!))
@@ -390,12 +409,28 @@ const describedBy = computed(() => [
   hasDescription.value ? descriptionId.value : undefined,
   hasError.value ? errorId.value : undefined,
 ].filter(Boolean).join(' ') || undefined)
+// `aria-labelledby` overrides `aria-label`, so an `aria-label`-only trigger references itself to keep that name (as RAC does)
 const triggerLabelledBy = computed(() => [
   attrs['aria-labelledby'] as string | undefined,
   hasLabel.value ? labelId.value : undefined,
+  attrs['aria-label'] && !attrs['aria-labelledby'] && !hasLabel.value ? id.value : undefined,
   valueId.value,
 ].filter(Boolean).join(' '))
 const listLabelledBy = computed(() => (attrs['aria-labelledby'] as string | undefined) ?? (hasLabel.value ? labelId.value : undefined))
+// RAC names the popover dialog like the listbox (or after an `aria-label`-only trigger). Reka labels its content with
+// its own trigger id, which the trigger's `id` replaces, so point that id at the label instead (set before the trigger's
+// setup, which only fills it when empty)
+const popoverLabelledBy = computed(() => listLabelledBy.value ?? id.value)
+const PopoverLabel = defineComponent({
+  setup() {
+    const popover = injectPopoverRootContext()
+    watchEffect(() => {
+      popover.triggerId = popoverLabelledBy.value
+    })
+    return () => null
+  },
+})
+// Bound after the root's `data-slot`, so a wrapping component (CellSelect, InlineSelect) can rename the root
 const rootAttrs = computed(() => {
   const { 'aria-label': _label, 'aria-labelledby': _labelledby, ...rest } = attrs
   return rest
@@ -422,8 +457,8 @@ watch(disabled, (disabled) => {
 <template>
   <div
     ref="root"
-    v-bind="rootAttrs"
     data-slot="select"
+    v-bind="rootAttrs"
     :data-focused="focused || isOpen ? 'true' : undefined"
     :data-focus-visible="focusVisible ? 'true' : undefined"
     :data-open="isOpen ? 'true' : undefined"
@@ -432,8 +467,9 @@ watch(disabled, (disabled) => {
     :data-required="required ? 'true' : undefined"
     :class="ui.base({ class: [props.ui?.base, props.class] })"
   >
+    <!-- Each slot site is split so the no-slot branch isn't compiled as a forwarded slot, which would force-update the child on every render -->
     <Label
-      v-if="hasLabel"
+      v-if="hasLabel && $slots.label"
       :id="labelId"
       as="span"
       :disabled="disabled"
@@ -445,7 +481,19 @@ watch(disabled, (disabled) => {
         {{ label }}
       </slot>
     </Label>
+    <Label
+      v-else-if="hasLabel"
+      :id="labelId"
+      as="span"
+      :disabled="disabled"
+      :invalid="invalid"
+      :required="required"
+      @click="triggerEl()?.focus()"
+    >
+      {{ label }}
+    </Label>
     <PopoverRoot :open="isOpen" :modal="false" @update:open="onRootOpenChange">
+      <PopoverLabel />
       <PopoverTrigger as-child>
         <button
           :id="id"
@@ -457,7 +505,6 @@ watch(disabled, (disabled) => {
           :aria-labelledby="triggerLabelledBy"
           :aria-describedby="describedBy"
           :aria-invalid="invalid ? 'true' : undefined"
-          :aria-required="required ? 'true' : undefined"
           :disabled="disabled"
           :data-disabled="disabled ? 'true' : undefined"
           :data-pressed="isOpen ? 'true' : undefined"
@@ -473,6 +520,7 @@ watch(disabled, (disabled) => {
           @pointerenter="hovered = $event.pointerType === 'mouse'"
           @pointerleave="hovered = false"
         >
+          <slot name="leading" />
           <span
             :id="valueId"
             data-slot="select-value"
@@ -534,8 +582,8 @@ watch(disabled, (disabled) => {
         <PopoverContent
           ref="content"
           data-slot="select-popover"
-          side="bottom"
-          align="center"
+          :side="side"
+          :align="align"
           :side-offset="8"
           :collision-padding="12"
           :class="ui.popover({ class: props.ui?.popover })"
@@ -567,15 +615,21 @@ watch(disabled, (disabled) => {
         </PopoverContent>
       </PopoverPortal>
     </PopoverRoot>
-    <Description v-if="hasDescription" :id="descriptionId">
+    <Description v-if="hasDescription && $slots.description" :id="descriptionId">
       <slot name="description">
         {{ description }}
       </slot>
     </Description>
-    <FieldError v-if="hasError" :id="errorId">
+    <Description v-else-if="hasDescription" :id="descriptionId">
+      {{ description }}
+    </Description>
+    <FieldError v-if="hasError && $slots.error" :id="errorId">
       <slot name="error" v-bind="validation">
         {{ errorMessage ?? validation.validationErrors.join(' ') }}
       </slot>
+    </FieldError>
+    <FieldError v-else-if="hasError" :id="errorId">
+      {{ errorMessage ?? validation.validationErrors.join(' ') }}
     </FieldError>
     <!-- RAC HiddenSelect: carries form data and native `required` validity -->
     <div aria-hidden="true" data-a11y-ignore="aria-hidden-focus" style="border: 0; clip-path: inset(50%); height: 1px; margin: -1px; overflow: hidden; padding: 0; position: absolute; white-space: nowrap; width: 1px;">
@@ -589,7 +643,7 @@ watch(disabled, (disabled) => {
         @invalid="onHiddenInvalid"
       >
         <option value="" />
-        <option v-for="item in options" :key="item.value" :value="item.value" :selected="selectedValues.includes(item.value)">
+        <option v-for="item in options" :key="item.value" :value="item.value" :selected="selectedSet.has(item.value)">
           {{ textOf(item) }}
         </option>
       </select>

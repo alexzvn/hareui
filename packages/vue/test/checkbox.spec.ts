@@ -1,8 +1,10 @@
 import { mount } from '@vue/test-utils'
 import { describe, expect, it, vi } from 'vitest'
-import { defineComponent, h, ref } from 'vue'
+import { defineComponent, h, nextTick, ref } from 'vue'
+import type { CheckboxProps } from '../src/components/checkbox/Checkbox.vue'
 import Checkbox from '../src/components/checkbox/Checkbox.vue'
 import Label from '../src/components/label/Label.vue'
+import { expectAccessible } from './a11y'
 
 const control = '[data-slot=checkbox-content]'
 
@@ -152,5 +154,119 @@ describe('Checkbox root click timing', () => {
     expect(wrapper.emitted('update:modelValue')).toEqual([[true]])
     wrapper.unmount()
     now.mockRestore()
+  })
+})
+
+// A native button toggles on Space unless a handler cancelled the key; happy-dom has no activation behaviour, so
+// the press helper performs it when the keys get through.
+async function pressSpace(el: Element) {
+  const down = new KeyboardEvent('keydown', { key: ' ', code: 'Space', bubbles: true, cancelable: true })
+  const up = new KeyboardEvent('keyup', { key: ' ', code: 'Space', bubbles: true, cancelable: true })
+  el.dispatchEvent(down)
+  el.dispatchEvent(up)
+  if (el instanceof HTMLButtonElement && !el.disabled && !down.defaultPrevented && !up.defaultPrevented)
+    el.click()
+  await nextTick()
+}
+
+describe('Checkbox accessibility', () => {
+  it.each<[string, CheckboxProps]>([
+    ['unchecked', {}],
+    ['checked', { defaultValue: true }],
+    ['indeterminate', { defaultValue: 'indeterminate' }],
+    ['disabled', { disabled: true }],
+    ['read-only', { readonly: true, defaultValue: true }],
+    ['required', { required: true }],
+    ['described', { description: 'We only send product news' }],
+    ['invalid with an error message', { description: 'Required to continue', invalid: true, errorMessage: 'Accept the terms' }],
+  ])('has no axe violations when %s', async (_, props) => {
+    const wrapper = mount(Checkbox, { props: { label: 'Accept terms', ...props }, attachTo: document.body })
+    await expectAccessible(wrapper)
+    wrapper.unmount()
+  })
+
+  it('has no axe violations inside a form, with its hidden input', async () => {
+    const wrapper = mount(() => h('form', null, h(Checkbox, { label: 'Accept terms', name: 'terms', required: true })), { attachTo: document.body })
+    await nextTick()
+    await expectAccessible(wrapper)
+    wrapper.unmount()
+  })
+
+  it('is named by an external Label pointing at its id', async () => {
+    const wrapper = mount(defineComponent(() => () => h('div', [
+      h(Checkbox, { id: 'news' }),
+      h(Label, { for: 'news' }, () => 'Send me news'),
+    ])), { attachTo: document.body })
+    await nextTick()
+    await expectAccessible(wrapper)
+    wrapper.unmount()
+  })
+
+  it('is named by aria-label when it has no visible label', async () => {
+    const wrapper = mount(Checkbox, { attrs: { 'aria-label': 'Select row' }, attachTo: document.body })
+    expect(wrapper.get(control).attributes('aria-label')).toBe('Select row')
+    await expectAccessible(wrapper)
+    wrapper.unmount()
+  })
+
+  it('is named by its label text', () => {
+    const wrapper = mount(Checkbox, { props: { label: 'Accept terms' } })
+    expect(wrapper.get(control).attributes('role')).toBe('checkbox')
+    expect(wrapper.get(control).text()).toBe('Accept terms')
+    expect(wrapper.get('[data-slot=checkbox-indicator]').attributes('aria-hidden')).toBe('true')
+  })
+
+  it('aria-checked tracks the state, and required is announced', async () => {
+    const wrapper = mount(Checkbox, { props: { label: 'All', required: true } })
+    const content = wrapper.get(control)
+    expect(content.attributes('aria-checked')).toBe('false')
+    expect(content.attributes('aria-required')).toBe('true')
+    await content.trigger('click')
+    expect(content.attributes('aria-checked')).toBe('true')
+    await wrapper.setProps({ modelValue: 'indeterminate' })
+    expect(content.attributes('aria-checked')).toBe('mixed')
+  })
+
+  it('aria-describedby points at the rendered description and error text', async () => {
+    const wrapper = mount(Checkbox, { props: { label: 'Terms', description: 'Read them first', errorMessage: 'Accept the terms', invalid: true }, attachTo: document.body })
+    const ids = wrapper.get(control).attributes('aria-describedby')!.split(' ')
+    expect(ids.map(id => document.getElementById(id)?.textContent?.trim())).toEqual(['Read them first', 'Accept the terms'])
+    wrapper.unmount()
+  })
+
+  it('is a single tab stop that Space toggles', async () => {
+    const wrapper = mount(Checkbox, { props: { label: 'Terms' }, attachTo: document.body })
+    const content = wrapper.get(control).element as HTMLButtonElement
+    expect(content.tagName).toBe('BUTTON')
+    expect(content.tabIndex).toBe(0)
+    content.focus()
+    await pressSpace(content)
+    expect(wrapper.emitted('update:modelValue')).toEqual([[true]])
+    expect(content.getAttribute('aria-checked')).toBe('true')
+    await pressSpace(content)
+    expect(wrapper.emitted('update:modelValue')).toEqual([[true], [false]])
+    expect(document.activeElement).toBe(content)
+    wrapper.unmount()
+  })
+
+  it('a read-only checkbox stays focusable but Space does not change it', async () => {
+    const wrapper = mount(Checkbox, { props: { label: 'Terms', readonly: true }, attachTo: document.body })
+    const content = wrapper.get(control).element as HTMLButtonElement
+    expect(content.disabled).toBe(false)
+    content.focus()
+    expect(document.activeElement).toBe(content)
+    await pressSpace(content)
+    expect(wrapper.emitted('update:modelValue')).toBeUndefined()
+    expect(content.getAttribute('aria-checked')).toBe('false')
+    wrapper.unmount()
+  })
+
+  it('a disabled checkbox is removed from the tab order', () => {
+    const wrapper = mount(Checkbox, { props: { label: 'Terms', disabled: true }, attachTo: document.body })
+    const content = wrapper.get(control).element as HTMLButtonElement
+    expect(content.disabled).toBe(true)
+    content.focus()
+    expect(document.activeElement).not.toBe(content)
+    wrapper.unmount()
   })
 })

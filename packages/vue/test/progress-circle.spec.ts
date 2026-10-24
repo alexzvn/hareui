@@ -1,6 +1,8 @@
 import { mount } from '@vue/test-utils'
 import { describe, expect, it } from 'vitest'
+import type { ProgressCircleProps } from '../src/components/progress-circle/ProgressCircle.vue'
 import ProgressCircle from '../src/components/progress-circle/ProgressCircle.vue'
+import { expectAccessible } from './a11y'
 
 const CIRCUMFERENCE = 2 * Math.PI * 16
 
@@ -48,5 +50,31 @@ describe('ProgressCircle', () => {
     expect(wrapper.get('[data-slot="progress-circle-track-circle"]').classes()).toEqual(['stroke-neutral-200'])
     expect(fill(wrapper).classes()).toContain('stroke-neutral-700')
     expect(fill(wrapper).classes()).not.toContain('stroke-(--progress-circle-stroke)')
+  })
+
+  it.each<[string, ProgressCircleProps & { 'aria-label'?: string, 'aria-labelledby'?: string }]>([
+    ['determinate', { 'aria-label': 'Loading', 'value': 60 }],
+    ['indeterminate', { 'aria-label': 'Loading', 'indeterminate': true }],
+    ['labelled by an external element', { 'aria-labelledby': 'pc-heading', 'value': 30 }],
+  ])('has no axe violations: %s', async (_, props) => {
+    const heading = document.createElement('h2')
+    heading.id = 'pc-heading'
+    heading.textContent = 'Sync'
+    document.body.append(heading)
+    const wrapper = mount(ProgressCircle, { props, attachTo: document.body })
+    await expectAccessible(wrapper)
+    wrapper.unmount()
+    heading.remove()
+  })
+
+  it('is a named, non-focusable progressbar whose state follows the value', async () => {
+    const wrapper = mount(ProgressCircle, { props: { 'aria-label': 'Loading', 'value': 10 } })
+    const root = wrapper.get('[data-slot="progress-circle"]')
+    expect(root.attributes('role')).toBe('progressbar')
+    expect(wrapper.find('[tabindex]').exists()).toBe(false)
+    await wrapper.setProps({ value: 90 })
+    expect(root.attributes()).toMatchObject({ 'aria-valuenow': '90', 'aria-valuetext': '90%' })
+    await wrapper.setProps({ valueLabel: '9 of 10 files' })
+    expect(root.attributes('aria-valuetext')).toBe('9 of 10 files')
   })
 })

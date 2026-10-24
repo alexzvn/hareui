@@ -14,18 +14,25 @@ const ITEM = '[data-slot=color-swatch-picker-item]'
  * - reka-limitation: Reka focuses (and scrolls to) the selected item whenever the value changes from outside, stealing
  *   focus from the area/slider/field that changed the colour. React Aria only moves its focus key. While focus is
  *   outside the picker, the items' `focus`/`scrollIntoView` are no-ops until Reka's deferred highlight has run.
+ * - Reka keeps a disabled listbox in the tab order (its root stays `tabindex="0"` when no item can be highlighted),
+ *   so a disabled picker turns the listbox's focusability off.
  */
 export default defineComponent({
   name: 'ColorSwatchPickerBridge',
   props: {
     selected: { type: String, required: true },
     stack: { type: Boolean, default: false },
+    disabled: { type: Boolean, default: false },
   },
   setup(props) {
     const listbox = injectListboxRootContext()
     const instance = getCurrentInstance()
     // The renderless child's placeholder node sits directly inside the listbox element
     const root = () => (instance?.vnode.el as Node | null | undefined)?.parentElement ?? null
+
+    watch(() => props.disabled, (disabled) => {
+      listbox.focusable.value = !disabled
+    }, { immediate: true })
 
     function onFocusIn(event: FocusEvent) {
       const item = event.target instanceof Element ? event.target.closest<HTMLElement>(ITEM) : null

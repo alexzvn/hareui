@@ -4,7 +4,8 @@
     "lib": ["ES2024", "DOM", "DOM.Iterable"],
     "types": ["vitepress/client"],
     "paths": {
-      "@hareui/vue": ["../packages/vue/src/index.ts"]
+      "@hareui/vue": ["../packages/vue/src/index.ts"],
+      "@hareui/vue/charts": ["../packages/vue/src/charts.ts"]
     },
     "noEmit": true
   },

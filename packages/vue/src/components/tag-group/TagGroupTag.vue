@@ -7,7 +7,7 @@
 import type { ComponentUI } from '../../types/tv'
 import type tagTheme from './tagTheme'
 import type { TagGroupItem, TagGroupSlots } from './TagGroup.vue'
-import { ref } from 'vue'
+import { ref, useId } from 'vue'
 import CloseButton from '../close-button/CloseButton.vue'
 
 const props = defineProps<{
@@ -28,6 +28,11 @@ defineSlots<{ default?: TagGroupSlots['item'], removeButton?: TagGroupSlots['rem
 // RAC render-prop states the CSS actually styles (`:active`/`data-pressed`, `:focus-visible`/`data-focus-visible`).
 const pressed = ref(false)
 const focusVisible = ref(false)
+
+// RAC useTag: the row is named by its text, and each remove button by "Remove tag" plus that row, so the
+// buttons are distinguishable ("Remove tag News") instead of all sharing one name
+const rowId = useId()
+const removeButtonId = `${rowId}-remove`
 
 function onFocus(event: FocusEvent) {
   focusVisible.value = event.target instanceof Element && event.target.matches(':focus-visible')
@@ -73,8 +78,10 @@ function onRemoveClick(event: MouseEvent) {
 
 <template>
   <div
+    :id="rowId"
     data-slot="tag"
     role="row"
+    :aria-label="item.label"
     :tabindex="disabled ? undefined : tabindex"
     :aria-selected="selectionMode !== 'none' ? (selected ? 'true' : 'false') : undefined"
     :aria-disabled="disabled ? 'true' : undefined"
@@ -97,8 +104,10 @@ function onRemoveClick(event: MouseEvent) {
       </slot>
       <CloseButton
         v-if="removable"
+        :id="removeButtonId"
         data-slot="tag-remove-button"
         aria-label="Remove tag"
+        :aria-labelledby="`${removeButtonId} ${rowId}`"
         :disabled="disabled"
         :class="classes.removeButton({ class: ui?.removeButton })"
         @click="onRemoveClick"

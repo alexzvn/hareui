@@ -1,7 +1,7 @@
 import type { PropType } from 'vue'
 import type { Color, ColorChannel } from 'reka-ui'
 import { colorToString, getChannelRange, getChannelValue, injectColorFieldRootContext, isValidColor, parseColor, setChannelValue, useLocale } from 'reka-ui'
-import { defineComponent, h, shallowRef, watch } from 'vue'
+import { computed, defineComponent, h, shallowRef, watch } from 'vue'
 
 const PERCENT_CHANNELS = new Set<ColorChannel>(['saturation', 'lightness', 'brightness', 'alpha'])
 
@@ -52,14 +52,18 @@ export default defineComponent({
         return pinned.value.value
       return getChannelValue(ctx.color.value, channel)
     }
-    function format(value: number): string {
+    // Rebuilt only when the locale or channel changes, not per keystroke/step.
+    const channelFormat = computed(() => {
       const channel = ctx.channel.value!
       const locale = props.locale ?? configLocale.value
       if (channel === 'hue')
-        return new Intl.NumberFormat(locale, { style: 'unit', unit: 'degree', unitDisplay: 'narrow', maximumFractionDigits: 0 }).format(value)
+        return { formatter: new Intl.NumberFormat(locale, { style: 'unit', unit: 'degree', unitDisplay: 'narrow', maximumFractionDigits: 0 }), divisor: 1 }
       if (PERCENT_CHANNELS.has(channel))
-        return new Intl.NumberFormat(locale, { style: 'percent', maximumFractionDigits: 0 }).format(value / 100)
-      return new Intl.NumberFormat(locale, { maximumFractionDigits: 0, useGrouping: false }).format(value)
+        return { formatter: new Intl.NumberFormat(locale, { style: 'percent', maximumFractionDigits: 0 }), divisor: 100 }
+      return { formatter: new Intl.NumberFormat(locale, { maximumFractionDigits: 0, useGrouping: false }), divisor: 1 }
+    })
+    function format(value: number): string {
+      return channelFormat.value.formatter.format(value / channelFormat.value.divisor)
     }
 
     const updateValue = ctx.updateValue

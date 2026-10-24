@@ -26,13 +26,16 @@ export interface HareUIPluginOptions extends HareUIResolverOptions {
   components?: ComponentsOptions | false
 }
 
-const components = new Set(componentNames)
+const components = new Map(Object.entries(componentNames))
 
 function pascalCase(value: string): string {
   return value.split(/[-_]/).map(part => part.charAt(0).toUpperCase() + part.slice(1)).join('')
 }
 
-/** unplugin-vue-components resolver for HareUI components, for setups that register unplugin-vue-components themselves. */
+/**
+ * unplugin-vue-components resolver for HareUI components, for setups that register unplugin-vue-components themselves.
+ * Chart components resolve to `@hareui/vue/charts`.
+ */
 export function HareUIResolver(options: HareUIResolverOptions = {}): ComponentResolver {
   const prefix = pascalCase(options.prefix ?? '')
   return {
@@ -41,8 +44,9 @@ export function HareUIResolver(options: HareUIResolverOptions = {}): ComponentRe
       if (!name.startsWith(prefix))
         return
       const component = name.slice(prefix.length)
-      if (components.has(component))
-        return { name: component, from: '@hareui/vue' }
+      const from = components.get(component)
+      if (from)
+        return { name: component, from }
     },
   }
 }

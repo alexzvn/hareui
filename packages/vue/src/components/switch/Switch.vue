@@ -91,6 +91,8 @@ import { useFieldsetDisabled } from '../fieldset/context'
 import Description from '../description/Description.vue'
 import FieldError from '../field-error/FieldError.vue'
 
+// Attributes go to the switch button; a `data-slot` attribute also renames the root, so a wrapper (CellSwitch) can
+// claim it while the button keeps `switch-content`
 defineOptions({ inheritAttrs: false })
 
 // `undefined` defaults stop Vue casting absent boolean props to `false`: uncontrolled mode and `defaultValue` apply,
@@ -150,7 +152,7 @@ function onUpdate(value: boolean) {
 <template>
   <div
     ref="root"
-    data-slot="switch"
+    :data-slot="($attrs['data-slot'] as string | undefined) ?? 'switch'"
     :data-state="checked ? 'checked' : 'unchecked'"
     :data-selected="checked ? 'true' : undefined"
     :data-disabled="isDisabled ? 'true' : undefined"
@@ -186,11 +188,14 @@ function onUpdate(value: boolean) {
       </span>
       <slot name="label" :checked="checked">{{ label }}</slot>
     </SwitchRoot>
-    <Description v-if="hasDescription" :id="descriptionId">
+    <!-- Split so the no-slot branch has no forwarded `<slot>` and doesn't force-update the child on every render -->
+    <Description v-if="hasDescription && $slots.description" :id="descriptionId">
       <slot name="description" :checked="checked">{{ description }}</slot>
     </Description>
-    <FieldError v-if="hasError" :id="errorId">
+    <Description v-else-if="hasDescription" :id="descriptionId">{{ description }}</Description>
+    <FieldError v-if="hasError && $slots.error" :id="errorId">
       <slot name="error" v-bind="validation">{{ errorMessage ?? validation.validationErrors.join(' ') }}</slot>
     </FieldError>
+    <FieldError v-else-if="hasError" :id="errorId">{{ errorMessage ?? validation.validationErrors.join(' ') }}</FieldError>
   </div>
 </template>

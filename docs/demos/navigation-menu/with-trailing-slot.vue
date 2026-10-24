@@ -1,6 +1,6 @@
 <script setup lang="ts">
-import type { DropdownEntry, NavigationMenuItem } from '@hareui/vue'
-import { Button, Dropdown, NavigationMenu } from '@hareui/vue'
+import type { NavigationMenuItem } from '@hareui/vue'
+import { Button, NavigationMenu } from '@hareui/vue'
 import { Icon } from '@iconify/vue'
 import { h } from 'vue'
 
@@ -19,16 +19,17 @@ const items: NavigationMenuItem[][] = [
   ],
 ]
 
-const actions: DropdownEntry[] = [
-  { value: 'view', label: 'View Project', icon: 'gravity-ui:folder-open' },
-  { value: 'share', label: 'Share Project', icon: 'gravity-ui:link' },
-  { type: 'separator' },
-  { value: 'delete', label: 'Delete Project', icon: 'gravity-ui:trash-bin', variant: 'danger' },
-]
+const updated: Record<string, string> = {
+  'Design System': '2h',
+  'Travel': '3d',
+  'Engineering': '5m',
+  'Marketing': '1w',
+}
+const updatedOf = (item: NavigationMenuItem) => updated[item.label ?? '']
 </script>
 
 <template>
-  <NavigationMenu orientation="vertical" :items="items" :ui="{ link: 'group/link overflow-hidden has-data-[state=open]:bg-default' }" class="w-64">
+  <NavigationMenu orientation="vertical" :items="items" class="w-64">
     <template #personal-label-trailing>
       <Button aria-label="New personal project" class="size-6" icon-only size="sm" variant="ghost">
         <Icon icon="gravity-ui:plus" />
@@ -39,17 +40,10 @@ const actions: DropdownEntry[] = [
         <Icon icon="gravity-ui:plus" />
       </Button>
     </template>
-    <template #item-trailing>
-      <div class="-mr-1.5 flex translate-x-full transition-transform group-hover/link:translate-x-0 has-data-[state=open]:translate-x-0">
-        <Dropdown :items="actions" align="start">
-          <Button as="div" aria-label="Project actions" class="mr-1.5 size-6 text-muted" icon-only size="sm" variant="ghost">
-            <Icon icon="gravity-ui:ellipsis" />
-          </Button>
-          <template #item-leading="{ item }">
-            <Icon class="size-4 shrink-0" :class="item.variant === 'danger' ? 'text-danger' : 'text-muted'" :icon="item.icon" />
-          </template>
-        </Dropdown>
-      </div>
+    <template #item-trailing="{ item }">
+      <span class="ms-auto text-xs text-muted opacity-0 transition-opacity group-hover:opacity-100 group-focus-visible:opacity-100">
+        {{ updatedOf(item) }}
+      </span>
     </template>
   </NavigationMenu>
 </template>

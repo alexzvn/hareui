@@ -9,7 +9,7 @@ const avatarSrc = 'https://heroui-assets.nyc3.cdn.digitaloceanspaces.com/avatars
   <div class="flex items-center gap-8">
     <div v-for="placement in placements" :key="placement" class="flex flex-col items-center gap-2">
       <Badge color="accent" :placement="placement" size="sm">
-        <Avatar fallback="JD" :src="avatarSrc" />
+        <Avatar alt="John Doe" fallback="JD" :src="avatarSrc" />
       </Badge>
       <span class="text-xs text-muted">{{ placement }}</span>
     </div>

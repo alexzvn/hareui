@@ -46,7 +46,7 @@ const breadcrumbs: BreadcrumbsItem[] = [{ label: 'Dashboard', icon: 'gravity-ui:
       </template>
 
       <template #footer="{ collapsed }">
-        <NavigationMenu :items="footerItems" orientation="vertical" :collapsed="collapsed" tooltip class="w-full" />
+        <NavigationMenu aria-label="Secondary" :items="footerItems" orientation="vertical" :collapsed="collapsed" tooltip class="w-full" />
       </template>
     </DashboardSidebar>
 
@@ -74,7 +74,7 @@ const breadcrumbs: BreadcrumbsItem[] = [{ label: 'Dashboard', icon: 'gravity-ui:
               <Icon icon="gravity-ui:bell" />
             </Button>
             <Separator orientation="vertical" class="h-6 min-h-0 self-center @max-xs:hidden" />
-            <Button aria-label="Account" variant="ghost" icon-only>
+            <Button aria-label="JG account" variant="ghost" icon-only>
               <Avatar fallback="JG" color="success" variant="soft" class="size-6" :ui="{ fallback: 'text-xs font-semibold' }" />
             </Button>
           </template>

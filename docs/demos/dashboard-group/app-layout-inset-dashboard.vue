@@ -89,7 +89,7 @@ const episodes = [
       </template>
 
       <template #footer="{ collapsed }">
-        <NavigationMenu :items="footerItems" orientation="vertical" :collapsed="collapsed" tooltip class="w-full" />
+        <NavigationMenu aria-label="Secondary" :items="footerItems" orientation="vertical" :collapsed="collapsed" tooltip class="w-full" />
       </template>
     </DashboardSidebar>
 
@@ -109,9 +109,9 @@ const episodes = [
           </template>
 
           <template #right>
-            <button type="button" class="flex items-center gap-2 rounded-full ps-2 text-sm font-medium text-foreground outline-none focus-visible:ring-2 focus-visible:ring-focus">
+            <button type="button" aria-label="Nora Kim" class="flex items-center gap-2 rounded-full ps-2 text-sm font-medium text-foreground outline-none focus-visible:ring-2 focus-visible:ring-focus">
               <span class="max-sm:hidden">Nora Kim</span>
-              <Avatar src="https://heroui-assets.nyc3.cdn.digitaloceanspaces.com/avatars/purple.jpg" alt="Nora Kim" class="size-6" />
+              <Avatar src="https://heroui-assets.nyc3.cdn.digitaloceanspaces.com/avatars/purple.jpg" alt="" class="size-6" />
             </button>
           </template>
         </DashboardNavbar>

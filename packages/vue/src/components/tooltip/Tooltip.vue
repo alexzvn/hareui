@@ -80,7 +80,7 @@ export interface TooltipEmits {
 </script>
 
 <script setup lang="ts">
-import { computed, onBeforeUnmount, onMounted, ref, watch } from 'vue'
+import { computed, onBeforeUnmount, ref, watch } from 'vue'
 import { TooltipArrow, TooltipContent, TooltipPortal, TooltipProvider, TooltipRoot, TooltipTrigger } from 'reka-ui'
 import { useComponentUI } from '../../composables/useComponentUI'
 import { usePortal } from '../../composables/usePortal'
@@ -175,15 +175,20 @@ function resetPointerLeft() {
   pointerLeft.value = false
 }
 
+// Only needed while a delayed close is possible: any other interaction clears `pointerLeft`.
 const RESET_EVENTS = ['pointerdown', 'keydown', 'blur', 'focus', 'tooltip.open']
-onMounted(() => {
-  for (const type of RESET_EVENTS)
-    document.addEventListener(type, resetPointerLeft, true)
-})
+function toggleResetListeners(on: boolean) {
+  for (const type of RESET_EVENTS) {
+    if (on)
+      document.addEventListener(type, resetPointerLeft, true)
+    else
+      document.removeEventListener(type, resetPointerLeft, true)
+  }
+}
+watch(pointerLeft, toggleResetListeners, { flush: 'sync' })
 onBeforeUnmount(() => {
   cancelClose()
-  for (const type of RESET_EVENTS)
-    document.removeEventListener(type, resetPointerLeft, true)
+  toggleResetListeners(false)
 })
 </script>
 

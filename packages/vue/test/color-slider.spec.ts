@@ -2,13 +2,105 @@ import { mount } from '@vue/test-utils'
 import { parseColor } from 'reka-ui'
 import { describe, expect, it, vi } from 'vitest'
 import { h, nextTick } from 'vue'
+import type { ColorSliderProps } from '../src/components/color-slider/ColorSlider.vue'
 import ColorSlider from '../src/components/color-slider/ColorSlider.vue'
 import { ColorPickerContextKey } from '../src/components/color-picker/context'
+import { expectAccessible } from './a11y'
 
 const thumb = '[data-slot=color-slider-thumb]'
 const track = '[data-slot=color-slider-track]'
 
-describe('colorSlider', () => {
+describe('ColorSlider', () => {
+  it('passes axe with a visible label, with an aria-label only, vertical, alpha and disabled', async () => {
+    const cases: { props: ColorSliderProps, attrs?: Record<string, string> }[] = [
+      { props: { channel: 'hue', label: 'Hue', defaultValue: 'hsl(120, 100%, 50%)' } },
+      { props: { channel: 'saturation', defaultValue: '#0485F7' }, attrs: { 'aria-label': 'Saturation' } },
+      { props: { channel: 'lightness', label: 'Lightness', orientation: 'vertical', defaultValue: '#0485F7' } },
+      { props: { channel: 'alpha', label: 'Opacity', defaultValue: 'hsla(0, 100%, 50%, 0.5)' } },
+      { props: { channel: 'hue', label: 'Hue', disabled: true } },
+    ]
+    for (const options of cases) {
+      const wrapper = mount(ColorSlider, { ...options, attachTo: document.body })
+      await nextTick()
+      await expectAccessible(wrapper)
+      wrapper.unmount()
+    }
+  })
+
+  it('a visible label names the group and the thumb', () => {
+    const wrapper = mount(ColorSlider, { props: { channel: 'hue', label: 'Background hue' }, attachTo: document.body })
+    const root = wrapper.get('[data-slot=color-slider]')
+    const label = wrapper.get('[data-slot=label]')
+    expect(root.attributes('role')).toBe('group')
+    expect(root.attributes('aria-labelledby')).toBe(label.attributes('id'))
+    expect(wrapper.get(thumb).attributes('aria-labelledby')).toBe(label.attributes('id'))
+    wrapper.unmount()
+  })
+
+  it('a consumer aria-label names the group and the thumb', () => {
+    const wrapper = mount(ColorSlider, { props: { channel: 'alpha' }, attrs: { 'aria-label': 'Background opacity' } })
+    expect(wrapper.get('[data-slot=color-slider]').attributes('aria-label')).toBe('Background opacity')
+    expect(wrapper.get(thumb).attributes('aria-label')).toBe('Background opacity')
+    wrapper.unmount()
+  })
+
+  it('the thumb reports the formatted channel value as aria-valuetext', async () => {
+    const wrapper = mount(ColorSlider, { props: { channel: 'hue', label: 'Hue', defaultValue: 'hsl(120, 100%, 50%)' } })
+    await nextTick()
+    expect(wrapper.get(thumb).attributes('aria-valuenow')).toBe('120')
+    expect(wrapper.get(thumb).attributes('aria-valuetext')).toBe('120°')
+    const alpha = mount(ColorSlider, { props: { channel: 'alpha', label: 'Alpha', defaultValue: 'hsla(0, 100%, 50%, 0.5)' } })
+    expect(alpha.get(thumb).attributes('aria-valuetext')).toBe('50%')
+    wrapper.unmount()
+    alpha.unmount()
+  })
+
+  it('arrows step by one, Shift and Page keys by ten, Home/End jump to the ends', async () => {
+    const wrapper = mount(ColorSlider, { props: { channel: 'hue', label: 'Hue', defaultValue: 'hsl(100, 100%, 50%)' }, attachTo: document.body })
+    const t = wrapper.get(thumb)
+    // Reka resolves the thumb's collection index a tick after mount; a key pressed before that targets index -1
+    await nextTick()
+    const press = async (key: string, shiftKey = false) => {
+      await t.trigger('keydown', { key, shiftKey })
+      return t.attributes('aria-valuenow')
+    }
+    expect(await press('ArrowRight')).toBe('101')
+    expect(await press('ArrowUp')).toBe('102')
+    expect(await press('ArrowLeft')).toBe('101')
+    expect(await press('ArrowDown')).toBe('100')
+    expect(await press('ArrowRight', true)).toBe('110')
+    expect(await press('PageUp')).toBe('120')
+    expect(await press('PageDown')).toBe('110')
+    expect(await press('Home')).toBe('0')
+    expect(await press('End')).toBe('360')
+    wrapper.unmount()
+  })
+
+  it('a vertical slider exposes its orientation and ArrowUp increases', async () => {
+    const wrapper = mount(ColorSlider, { props: { channel: 'hue', label: 'Hue', orientation: 'vertical', defaultValue: 'hsl(100, 100%, 50%)' }, attachTo: document.body })
+    const t = wrapper.get(thumb)
+    expect(t.attributes('aria-orientation')).toBe('vertical')
+    await t.trigger('keydown', { key: 'ArrowUp' })
+    expect(t.attributes('aria-valuenow')).toBe('101')
+    wrapper.unmount()
+  })
+
+  it('disabled takes the thumb out of the tab order and ignores keys', async () => {
+    const wrapper = mount(ColorSlider, { props: { channel: 'hue', label: 'Hue', disabled: true, defaultValue: 'hsl(100, 100%, 50%)' }, attachTo: document.body })
+    const t = wrapper.get(thumb)
+    expect(t.attributes('tabindex')).toBeUndefined()
+    expect(wrapper.get('[data-slot=color-slider]').attributes('aria-disabled')).toBe('true')
+    await t.trigger('keydown', { key: 'ArrowRight' })
+    expect(wrapper.emitted('update:modelValue')).toBeUndefined()
+    wrapper.unmount()
+  })
+
+  it('the thumb is the only tab stop', () => {
+    const wrapper = mount(ColorSlider, { props: { channel: 'hue', label: 'Hue' } })
+    expect(wrapper.findAll('[tabindex="0"]').map(el => el.attributes('data-slot'))).toEqual(['color-slider-thumb'])
+    wrapper.unmount()
+  })
+
   it('renders label, output, track and thumb with the channel value', () => {
     const wrapper = mount(ColorSlider, { props: { channel: 'hue', label: 'Hue', defaultValue: 'hsl(120, 100%, 50%)' } })
     expect(wrapper.get('[data-slot=label]').text()).toBe('Hue')

@@ -18,7 +18,7 @@ const items: DropdownEntry[] = [
       Selected: {{ selected.length > 0 ? selected.join(', ') : 'None' }}
     </p>
     <Dropdown v-model="selected" :items="items" selection-mode="multiple">
-      <Button aria-label="Menu" variant="secondary">
+      <Button variant="secondary">
         Actions
       </Button>
     </Dropdown>

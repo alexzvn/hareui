@@ -78,6 +78,7 @@ export const sidebar: SidebarSection[] = [
       { separator: 'Overview' },
       { text: 'All Releases', link: r('') },
       { separator: 'Versions' },
+      { text: 'v0.3.0', link: r('v0-3-0') },
       { text: 'v0.2.0', link: r('v0-2-0') },
       { text: 'v0.1.3', link: r('v0-1-3') },
       { text: 'v0.1.2', link: r('v0-1-2') },

@@ -177,12 +177,14 @@ import type { ComponentPublicInstance } from 'vue'
 import { computed, ref, shallowRef, useAttrs, useId, useTemplateRef, watch } from 'vue'
 import { useComponentUI } from '../../composables/useComponentUI'
 import { useFieldValidation } from '../../composables/useFieldValidation'
+import { useInertOutside } from '../../composables/useInertOutside'
 import { usePortal } from '../../composables/usePortal'
 import DateInputGroup, { dropDanglingTimeZoneSeparator, wrapBidiIsolate } from '../date-input-group/DateInputGroup.vue'
 import Description from '../description/Description.vue'
 import FieldError from '../field-error/FieldError.vue'
 import Label from '../label/Label.vue'
 import { useFieldsetDisabled } from '../fieldset/context'
+import PopoverLabelledBy from '../date-picker/PopoverLabelledBy'
 import RangeCalendar from '../range-calendar/RangeCalendar.vue'
 
 // `invalid: undefined`/`open: undefined`: an absent boolean would cast to `false`, which would count as
@@ -195,7 +197,12 @@ const emit = defineEmits<DateRangePickerEmits>()
 const slots = defineSlots<DateRangePickerSlots>()
 /** The selected range (`null` when empty). Bind with `v-model`. Only complete ranges are emitted, as in React Aria. */
 const modelValue = defineModel<DateRangeValue | null>()
-const openLocal = ref(props.defaultOpen ?? false)
+// Also mirrors a controlled `open` synchronously, so `useInertOutside` releases before Reka refocuses the trigger.
+const openLocal = ref(props.open ?? props.defaultOpen ?? false)
+watch(() => props.open, (open) => {
+  if (open !== undefined)
+    openLocal.value = open
+}, { flush: 'sync' })
 const isOpen = computed({
   get: () => props.open ?? openLocal.value,
   set: (value: boolean) => {
@@ -203,6 +210,7 @@ const isOpen = computed({
     emit('update:open', value)
   },
 })
+useInertOutside(useTemplateRef<ComponentPublicInstance>('popoverContent'), openLocal)
 
 const ui = useComponentUI('dateRangePicker', theme, () => ({ fullWidth: props.fullWidth }))
 
@@ -372,8 +380,8 @@ function onFieldKeydown(event: KeyboardEvent) {
   isOpen.value = true
 }
 
-// React Aria returns focus to the trigger whenever the popover closes, outside clicks included; Reka's
-// non-modal popover skips that after an outside interaction.
+// React Aria returns focus to the trigger whenever the popover closes; Reka's modal popover skips that after a
+// right-click outside.
 function onCloseAutoFocus(event: Event) {
   event.preventDefault()
   trigger.value?.focus()
@@ -391,6 +399,7 @@ function focusFirstSegment() {
 </script>
 
 <template>
+  <!-- Modal like HeroUI's (React Aria) popover dialog: focus stays inside, the page behind is hidden from assistive tech -->
   <DateRangePickerRoot
     :id="id"
     v-model:open="isOpen"
@@ -407,10 +416,11 @@ function focusFirstSegment() {
     :is-date-unavailable="isDateUnavailable ? fieldIsDateUnavailable : undefined"
     :disabled="disabled"
     :readonly="readonly"
-    :modal="false"
+    modal
     @update:model-value="onFieldUpdate"
     @update:placeholder="emit('update:placeholder', $event)"
   >
+    <PopoverLabelledBy :labelledby="hasLabel ? `${triggerId} ${labelId}` : triggerId" />
     <DateRangePickerField
       ref="root"
       v-slot="{ segments }"
@@ -422,8 +432,12 @@ function focusFirstSegment() {
       @keydown.capture="onFieldKeydown"
       @focusout="onFieldFocusOut"
     >
-      <Label v-if="hasLabel" :id="labelId" as="span" :disabled="disabled" :invalid="invalid" :required="required">
+      <!-- Each slot site is split so the no-slot branch isn't compiled as a forwarded slot, which would force-update the child on every render -->
+      <Label v-if="hasLabel && $slots.label" :id="labelId" as="span" :disabled="disabled" :invalid="invalid" :required="required">
         <slot name="label">{{ label }}</slot>
+      </Label>
+      <Label v-else-if="hasLabel" :id="labelId" as="span" :disabled="disabled" :invalid="invalid" :required="required">
+        {{ label }}
       </Label>
       <DateRangePickerAnchor as-child>
         <DateInputGroup
@@ -435,7 +449,9 @@ function focusFirstSegment() {
           :full-width="fullWidth"
           :disabled="disabled"
           :invalid="invalid"
-          :aria-labelledby="hasLabel ? labelId : undefined"
+          :aria-label="attrs['aria-label'] as string | undefined"
+          :labelledby="hasLabel ? labelId : undefined"
+          :describedby="describedBy"
           :ui="groupUiProps"
         >
           <template #separator>
@@ -451,9 +467,10 @@ function focusFirstSegment() {
                 type="button"
                 aria-label="Calendar"
                 :aria-labelledby="hasLabel ? `${triggerId} ${labelId}` : undefined"
+                :aria-describedby="describedBy"
                 :data-reka-date-field-segment="undefined"
                 data-slot="date-range-picker-trigger"
-                :disabled="disabled"
+                :disabled="disabled || readonly"
                 :class="ui.trigger({ class: props.ui?.trigger })"
               >
                 <span aria-hidden="true" data-slot="date-range-picker-trigger-indicator" :class="ui.triggerIndicator({ class: props.ui?.triggerIndicator })">
@@ -482,15 +499,22 @@ function focusFirstSegment() {
         :disabled="disabled"
         @focus="focusFirstSegment"
       />
-      <Description v-if="hasDescription" :id="descriptionId">
+      <Description v-if="hasDescription && $slots.description" :id="descriptionId">
         <slot name="description">{{ description }}</slot>
       </Description>
-      <FieldError v-if="hasError" :id="errorId">
+      <Description v-else-if="hasDescription" :id="descriptionId">
+        {{ description }}
+      </Description>
+      <FieldError v-if="hasError && $slots.error" :id="errorId">
         <slot name="error" v-bind="validation">{{ errorMessage ?? validation.validationErrors.join(' ') }}</slot>
+      </FieldError>
+      <FieldError v-else-if="hasError" :id="errorId">
+        {{ errorMessage ?? validation.validationErrors.join(' ') }}
       </FieldError>
     </DateRangePickerField>
     <PopoverPortal :disabled="portalTarget.disabled" :to="portalTarget.to">
       <PopoverContent
+        ref="popoverContent"
         data-slot="date-range-picker-popover"
         side="bottom"
         align="center"

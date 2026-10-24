@@ -42,6 +42,8 @@ InputGroup wraps an input with optional prefix and suffix elements in one visual
 
 Inside a TextField, the group takes the field's id, name, type, value, `variant`, `fullWidth` and its disabled, invalid, required and read-only states. Its own props win when set. Clicking anywhere in the group outside the input focuses the input, except on interactive content such as a suffix button, which keeps focus.
 
+Input attributes you pass to `InputGroup` (`aria-label`, `aria-labelledby`, `autocomplete`, `maxlength`, `inputmode`, …) go to the input, and `aria-describedby` is added to the field's description and error ids. Everything else stays on the group `div`.
+
 ## Examples
 
 ### Variants

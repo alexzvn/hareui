@@ -41,7 +41,7 @@ function expandToggle(row: RichTableRow<Payment>) {
 
 const columns: RichTableColumn<Payment>[] = [
   // A narrow first column that fits the toggle
-  { id: 'expand', cell: ({ row }) => h('div', { class: 'flex' }, expandToggle(row)), meta: { class: { th: 'w-11 pe-0', td: 'w-11 pe-0' } } },
+  { id: 'expand', header: () => h('span', { class: 'sr-only' }, 'Expand'), cell: ({ row }) => h('div', { class: 'flex' }, expandToggle(row)), meta: { class: { th: 'w-11 pe-0', td: 'w-11 pe-0' } } },
   { accessorKey: 'name', header: 'Customer' },
   { accessorKey: 'status', header: 'Status', meta: { class: { td: 'capitalize' } } },
   { accessorKey: 'amount', header: 'Amount', cell: ({ row }) => currency.format(row.original.amount) },

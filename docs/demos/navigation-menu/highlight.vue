@@ -15,7 +15,7 @@ const links = [
 
 <template>
   <div class="flex w-full flex-col gap-10">
-    <NavigationMenu highlight :items="links" :ui="{ linkLabel: 'max-sm:sr-only' }" class="w-full justify-center" />
-    <NavigationMenu highlight :items="links" orientation="vertical" class="w-64 self-center" />
+    <NavigationMenu highlight aria-label="Horizontal" :items="links" :ui="{ linkLabel: 'max-sm:sr-only' }" class="w-full justify-center" />
+    <NavigationMenu highlight aria-label="Vertical" :items="links" orientation="vertical" class="w-64 self-center" />
   </div>
 </template>

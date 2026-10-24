@@ -1,6 +1,6 @@
 import type { Component } from 'vue'
 import { mount } from '@vue/test-utils'
-import { afterEach, describe, expect, it } from 'vitest'
+import { afterEach, describe, expect, it, vi } from 'vitest'
 import { defineComponent, h, nextTick } from 'vue'
 import AlertDialog from '../src/components/alert-dialog/AlertDialog.vue'
 import Autocomplete from '../src/components/autocomplete/Autocomplete.vue'
@@ -123,8 +123,15 @@ describe('nested dismissable layers in a shadow root', () => {
     const overlays = document.createElement('div')
     const outside = document.createElement('button')
     shadow.append(app, overlays, outside)
+    // Reka looks the DialogTitle up with document.getElementById, which can't see into a shadow root, so it warns
+    // about the title the Modal does render. Drop only that warning.
+    const warn = console.warn
+    const spy = vi.spyOn(console, 'warn').mockImplementation((...args: unknown[]) => {
+      if (!String(args[0]).includes('requires a `DialogTitle`'))
+        warn(...args)
+    })
     const wrapper = mount(component, { props, slots, attachTo: app, global: { plugins: [createHareUI({ portal: overlays })] } })
-    cleanups.push(() => wrapper.unmount())
+    cleanups.push(() => wrapper.unmount(), () => spy.mockRestore())
     await settle()
     return { wrapper, host, overlays, outside }
   }

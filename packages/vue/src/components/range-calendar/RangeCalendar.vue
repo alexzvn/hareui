@@ -147,8 +147,6 @@ export interface RangeCalendarEmits {
 <script setup lang="ts">
 import {
   CalendarHeadCell,
-  RangeCalendarCell,
-  RangeCalendarCellTrigger,
   RangeCalendarGrid,
   RangeCalendarGridBody,
   RangeCalendarGridHead,
@@ -159,15 +157,17 @@ import {
   RangeCalendarRoot,
 } from 'reka-ui'
 import { isSameDay, isSameMonth } from '@internationalized/date'
-import { computed, nextTick, onBeforeUnmount, onMounted, ref, shallowRef, watch } from 'vue'
+import { computed, nextTick, onBeforeUnmount, onMounted, provide, ref, shallowRef, watch } from 'vue'
+import RangeCalendarDay, { rangeCalendarDayKey } from './RangeCalendarDay.vue'
 import { isDurationView } from '../calendar/useCalendarDurationView'
 import { useComponentUI } from '../../composables/useComponentUI'
+import { useSlotOutlet } from '../../composables/useSlotOutlet'
 import CalendarDurationView from '../calendar/CalendarDurationView.vue'
 import { defaultMaxValue, defaultMinValue, weekStartsOnFromFirstDay } from '../calendar/useCalendarBounds'
-import { formatPanelHeading } from '../calendar/useCalendarPanelHeading'
+import { formatGridLabel, formatPanelHeading } from '../calendar/useCalendarPanelHeading'
 import { calendarCellDate, calendarCellFrom, compareDay, focusCalendarCell, useCalendarMonthKeys } from '../calendar/useCalendarMonthKeys'
 import { useCalendarPlaceholder } from '../calendar/useCalendarPlaceholder'
-import { useCalendarYearPicker } from '../calendar/useCalendarYearPicker'
+import { useCalendarYearPicker, yearPickerLabel } from '../calendar/useCalendarYearPicker'
 
 const props = withDefaults(defineProps<RangeCalendarProps>(), {
   modelValue: undefined,
@@ -184,7 +184,7 @@ const props = withDefaults(defineProps<RangeCalendarProps>(), {
 })
 const effectivePagedNavigation = computed(() => props.numberOfMonths > 1 ? true : props.pagedNavigation)
 const emit = defineEmits<RangeCalendarEmits>()
-defineSlots<RangeCalendarSlots>()
+const slots = defineSlots<RangeCalendarSlots>()
 
 const viewKind = computed(() => props.visibleDuration?.days != null ? 'day' as const : props.visibleDuration?.weeks != null ? 'week' as const : 'month' as const)
 const durationView = computed(() => isDurationView(props.visibleDuration))
@@ -310,16 +310,6 @@ function cellState(date: DateValue, month: DateValue) {
     selectionStart: !!range && isSameDay(date, range.start),
     selectionEnd: !!range && isSameDay(date, range.end),
     invalid,
-  }
-}
-function cellAttrs(date: DateValue, month: DateValue) {
-  const state = cellState(date, month)
-  return {
-    'data-selected': state.selected || undefined,
-    'data-selection-start': state.selectionStart || undefined,
-    'data-selection-end': state.selectionEnd || undefined,
-    'data-invalid': state.invalid ? '' : undefined,
-    'aria-invalid': state.invalid || undefined,
   }
 }
 
@@ -461,6 +451,18 @@ function onCellMouseEnter(event: MouseEvent, date: DateValue) {
   if (rootEl.value?.contains(document.activeElement) && document.activeElement !== el)
     pointerFocus(el)
 }
+// Each day reads its range state through this, so a hover re-renders only the days whose state flips
+provide(rangeCalendarDayKey, {
+  cellState,
+  onPointerDown: onCellPointerDown,
+  onPointerUp: onCellPointerUp,
+  onMouseEnter: onCellMouseEnter,
+  cellClass: computed(() => ui.value.cell({ class: props.ui?.cell })),
+  cellButtonClass: computed(() => ui.value.cellButton({ class: props.ui?.cellButton })),
+  indicatorClass: computed(() => ui.value.cellIndicator({ class: props.ui?.cellIndicator })),
+  indicator: () => props.indicator,
+  CellOutlet: useSlotOutlet(slots, 'cell'),
+})
 function onRootFocusIn(event: FocusEvent) {
   const cell = calendarCellFrom(event.target, rootEl.value)
   if (cell && !cell.hasAttribute('data-disabled') && !cell.hasAttribute('data-outside-view'))
@@ -586,6 +588,7 @@ function onDurationSelect(value: DateRange) {
     :dir="dir"
     :calendar-label="ariaLabel"
     data-slot="range-calendar"
+    role="application"
     :class="ui.base({ class: [props.ui?.base, props.class] })"
     @click.capture="onRootClickCapture"
     @keydown.capture="onRootKeyDownCapture"
@@ -593,7 +596,7 @@ function onDurationSelect(value: DateRange) {
     @focusin="onRootFocusIn"
   >
     <template v-if="numberOfMonths <= 1">
-    <header data-slot="range-calendar-header" :class="ui.header({ class: props.ui?.header })" @click.capture="onHeaderClickCapture($event, prevButton, nextButton)">
+    <header data-slot="range-calendar-header" role="presentation" :class="ui.header({ class: props.ui?.header })" @click.capture="onHeaderClickCapture($event, prevButton, nextButton)">
       <template v-if="yearPicker">
         <button
           type="button"
@@ -634,7 +637,7 @@ function onDurationSelect(value: DateRange) {
         </button>
       </RangeCalendarNext>
     </header>
-    <RangeCalendarGrid data-slot="range-calendar-grid" :class="ui.grid({ class: props.ui?.grid })">
+    <RangeCalendarGrid data-slot="range-calendar-grid" role="grid" :aria-label="formatGridLabel(ariaLabel, resolvedLocale, grid[0]?.value ?? placeholderModel)" aria-multiselectable="true" :class="ui.grid({ class: props.ui?.grid })">
       <RangeCalendarGridHead data-slot="range-calendar-grid-header" :class="ui.gridHeader({ class: props.ui?.gridHeader })">
         <RangeCalendarGridRow :class="ui.gridRow({ class: props.ui?.gridRow })">
           <CalendarHeadCell v-for="(day, i) in weekDays" :key="`weekday-${i}`" data-slot="range-calendar-header-cell" :class="ui.headerCell({ class: props.ui?.headerCell })">
@@ -644,41 +647,7 @@ function onDurationSelect(value: DateRange) {
       </RangeCalendarGridHead>
       <RangeCalendarGridBody data-slot="range-calendar-grid-body" :class="ui.gridBody({ class: props.ui?.gridBody })">
         <RangeCalendarGridRow v-for="(weekDates, index) in grid[0]?.rows ?? []" :key="`week-${index}`" :class="ui.gridRow({ class: props.ui?.gridRow })">
-          <RangeCalendarCell
-            v-for="weekDate in weekDates"
-            :key="weekDate.toString()"
-            :date="weekDate"
-            :aria-selected="cellState(weekDate, grid[0]?.value ?? weekDate).selected || undefined"
-          >
-            <RangeCalendarCellTrigger
-              :day="weekDate"
-              :month="grid[0]?.value ?? weekDate"
-              v-bind="cellAttrs(weekDate, grid[0]?.value ?? weekDate)"
-              @pointerdown="onCellPointerDown($event, weekDate)"
-              @pointerup="onCellPointerUp($event, weekDate)"
-              @mouseenter="onCellMouseEnter($event, weekDate)"
-              data-slot="range-calendar-cell"
-              :class="ui.cell({ class: props.ui?.cell })"
-              v-slot="{ dayValue, today, disabled: cellDisabled, unavailable, outsideView }"
-            >
-              <span data-slot="range-calendar-cell-button" :class="ui.cellButton({ class: props.ui?.cellButton })">
-                <slot
-                  name="cell"
-                  :date="weekDate"
-                  :today="today"
-                  :selected="cellState(weekDate, grid[0]?.value ?? weekDate).selected"
-                  :disabled="cellDisabled"
-                  :unavailable="unavailable"
-                  :outside-view="outsideView"
-                  :selection-start="cellState(weekDate, grid[0]?.value ?? weekDate).selectionStart"
-                  :selection-end="cellState(weekDate, grid[0]?.value ?? weekDate).selectionEnd"
-                >
-                  {{ dayValue }}
-                </slot>
-                <span v-if="indicator?.(weekDate)" data-slot="range-calendar-cell-indicator" aria-hidden="true" :class="ui.cellIndicator({ class: props.ui?.cellIndicator })" />
-              </span>
-            </RangeCalendarCellTrigger>
-          </RangeCalendarCell>
+          <RangeCalendarDay v-for="weekDate in weekDates" :key="weekDate.toString()" :date="weekDate" :month="grid[0]?.value ?? weekDate" />
         </RangeCalendarGridRow>
       </RangeCalendarGridBody>
     </RangeCalendarGrid>
@@ -686,7 +655,7 @@ function onDurationSelect(value: DateRange) {
     <template v-else>
       <div data-slot="calendar-panels" :class="ui.panels({ class: props.ui?.panels })">
         <div v-for="(month, panelIndex) in grid" :key="panelIndex" data-slot="calendar-panel" :class="ui.panel({ class: props.ui?.panel })">
-          <header data-slot="range-calendar-header" :class="ui.header({ class: props.ui?.header })">
+          <header data-slot="range-calendar-header" role="presentation" :class="ui.header({ class: props.ui?.header })">
             <RangeCalendarPrev v-if="panelIndex === 0" data-slot="range-calendar-nav-button" as-child>
               <button type="button" aria-label="Previous" :class="ui.navButton({ class: props.ui?.navButton })">
                 <slot name="navIcon" direction="previous">
@@ -709,7 +678,7 @@ function onDurationSelect(value: DateRange) {
             </RangeCalendarNext>
             <div v-else aria-hidden="true" class="size-6" />
           </header>
-          <RangeCalendarGrid data-slot="range-calendar-grid" :class="ui.grid({ class: props.ui?.grid })">
+          <RangeCalendarGrid data-slot="range-calendar-grid" role="grid" :aria-label="formatGridLabel(ariaLabel, resolvedLocale, month.value)" aria-multiselectable="true" :class="ui.grid({ class: props.ui?.grid })">
             <RangeCalendarGridHead data-slot="range-calendar-grid-header" :class="ui.gridHeader({ class: props.ui?.gridHeader })">
               <RangeCalendarGridRow :class="ui.gridRow({ class: props.ui?.gridRow })">
                 <CalendarHeadCell v-for="(day, i) in weekDays" :key="`weekday-${i}`" data-slot="range-calendar-header-cell" :class="ui.headerCell({ class: props.ui?.headerCell })">
@@ -719,41 +688,7 @@ function onDurationSelect(value: DateRange) {
             </RangeCalendarGridHead>
             <RangeCalendarGridBody data-slot="range-calendar-grid-body" :class="ui.gridBody({ class: props.ui?.gridBody })">
               <RangeCalendarGridRow v-for="(weekDates, index) in month.rows" :key="`week-${index}`" :class="ui.gridRow({ class: props.ui?.gridRow })">
-                <RangeCalendarCell
-                  v-for="weekDate in weekDates"
-                  :key="weekDate.toString()"
-                  :date="weekDate"
-                  :aria-selected="cellState(weekDate, month.value).selected || undefined"
-                >
-                  <RangeCalendarCellTrigger
-                    :day="weekDate"
-                    :month="month.value"
-                    v-bind="cellAttrs(weekDate, month.value)"
-                    @pointerdown="onCellPointerDown($event, weekDate)"
-                    @pointerup="onCellPointerUp($event, weekDate)"
-                    @mouseenter="onCellMouseEnter($event, weekDate)"
-                    data-slot="range-calendar-cell"
-                    :class="ui.cell({ class: props.ui?.cell })"
-                    v-slot="{ dayValue, today, disabled: cellDisabled, unavailable, outsideView }"
-                  >
-                    <span data-slot="range-calendar-cell-button" :class="ui.cellButton({ class: props.ui?.cellButton })">
-                      <slot
-                        name="cell"
-                        :date="weekDate"
-                        :today="today"
-                        :selected="cellState(weekDate, month.value).selected"
-                        :disabled="cellDisabled"
-                        :unavailable="unavailable"
-                        :outside-view="outsideView"
-                        :selection-start="cellState(weekDate, month.value).selectionStart"
-                        :selection-end="cellState(weekDate, month.value).selectionEnd"
-                      >
-                        {{ dayValue }}
-                      </slot>
-                      <span v-if="indicator?.(weekDate)" data-slot="range-calendar-cell-indicator" aria-hidden="true" :class="ui.cellIndicator({ class: props.ui?.cellIndicator })" />
-                    </span>
-                  </RangeCalendarCellTrigger>
-                </RangeCalendarCell>
+                <RangeCalendarDay v-for="weekDate in weekDates" :key="weekDate.toString()" :date="weekDate" :month="month.value" />
               </RangeCalendarGridRow>
             </RangeCalendarGridBody>
           </RangeCalendarGrid>
@@ -765,6 +700,7 @@ function onDurationSelect(value: DateRange) {
       ref="yearPickerGridRef"
       data-slot="calendar-year-picker-grid"
       role="listbox"
+      :aria-label="yearPickerLabel(resolvedLocale)"
       tabindex="-1"
       :aria-hidden="!isYearPickerOpen"
       :data-open="isYearPickerOpen ? 'true' : undefined"
@@ -775,6 +711,7 @@ function onDurationSelect(value: DateRange) {
         v-for="year in yearPickerYears"
         :key="year"
         type="button"
+        role="option"
         data-slot="calendar-year-picker-year-cell"
         :data-year="year"
         :data-selected="year === focusedYear ? true : undefined"

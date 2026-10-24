@@ -7,6 +7,7 @@ const colors: ColorSwatchPickerItem[] = ['#F43F5E', '#D946EF', '#8B5CF6', '#3B82
 
 <template>
   <ColorSwatchPicker
+    aria-label="Color"
     :items="colors"
     default-value="#8B5CF6"
     variant="square"

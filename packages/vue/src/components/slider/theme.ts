@@ -20,7 +20,8 @@ export default {
       'data-[orientation=vertical]:text-center',
     ],
     track: [
-      'relative rounded-xl bg-default [grid-area:track]',
+      // `touch-none`: a touch drag moves the thumb instead of scrolling the page (RAC sets `touch-action: none`)
+      'relative touch-none rounded-xl bg-default [grid-area:track]',
       'data-[orientation=horizontal]:h-5 data-[orientation=horizontal]:w-full data-[orientation=horizontal]:border-x-[0.75rem] data-[orientation=horizontal]:border-x-transparent',
       'data-[orientation=horizontal]:data-[fill-start=true]:border-s-accent data-[orientation=horizontal]:data-[fill-end=true]:border-e-accent',
       'data-[orientation=vertical]:h-full data-[orientation=vertical]:w-5 data-[orientation=vertical]:justify-self-center data-[orientation=vertical]:border-y-[0.75rem] data-[orientation=vertical]:border-y-transparent',

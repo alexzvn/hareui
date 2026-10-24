@@ -84,6 +84,21 @@ export interface DateInputGroupProps {
   disabled?: boolean
   /** Whether the group is invalid. */
   invalid?: boolean
+  /**
+   * The field's `aria-label` (fields without a visible label). Names the group and is appended to every segment's
+   * own name, as React Aria does.
+   */
+  ariaLabel?: string
+  /**
+   * Id(s) of the field's label. Names the group, and is appended to every segment's own name, as React Aria does
+   * (VoiceOver on iOS doesn't announce groups).
+   */
+  labelledby?: string
+  /**
+   * Id(s) of the field's description/error. Describes the first segment of each input, or every segment while
+   * invalid, as React Aria does (so it isn't re-read on every segment).
+   */
+  describedby?: string
   /** Additional classes merged into the root element. */
   class?: any
   /** Per-slot class overrides. */
@@ -103,7 +118,7 @@ export interface DateInputGroupSlots {
 <script setup lang="ts">
 import type { DateValue } from '@internationalized/date'
 import type { FunctionalComponent, Ref } from 'vue'
-import { computed } from 'vue'
+import { computed, useId } from 'vue'
 import { injectDateFieldRootContext, injectDateRangeFieldRootContext, injectTimeFieldRootContext } from 'reka-ui'
 import { useComponentUI } from '../../composables/useComponentUI'
 
@@ -125,6 +140,7 @@ interface SegmentState {
   step: Ref<Record<string, number | undefined>>
   disabled: Ref<boolean>
   readonly: Ref<boolean>
+  locale: Ref<string>
 }
 const rangeContext = injectDateRangeFieldRootContext(null as any)
 const timeContext = injectTimeFieldRootContext(null as any)
@@ -236,19 +252,40 @@ function onSegmentKeydown(event: KeyboardEvent) {
     state.modelValue.value = state.placeholder.value.set({ ...values }).copy()
 }
 
+// React Aria's `useDateSegment` names each segment with its localized field name (`useDisplayNames`); Reka's are
+// fixed English strings ("month, ")
+const segmentIdBase = useId()
+const displayNames = computed(() => {
+  const locale = segmentState('start')?.locale.value
+  return new Intl.DisplayNames(locale ?? 'en-US', { type: 'dateTimeField' })
+})
+// React Aria's `useDateRangePicker` start/end field labels
+const RANGE_FIELD_NAMES = { start: 'Start Date', end: 'End Date' } as const
+
 /**
  * ARIA fixes over Reka's segment attributes (fall-through attrs win over the component's own):
  * the forced `invalid` state on every segment (Reka only reflects its own min/max check), zero-padded
  * minute/second `aria-valuetext`, and the 12-hour hour's `aria-valuenow`/`aria-valuetext` (Reka reports 24-hour).
+ * Also React Aria's segment naming (field name, range end, then the field label via `aria-labelledby`), the field
+ * description on the first segment (every segment while invalid) and `aria-readonly`.
  */
 function segmentAttrs(part: string, type?: 'start' | 'end') {
+  const state = segmentState(type)
+  const id = `${segmentIdBase}-${type ?? 'field'}-${part}`
+  const name = [displayNames.value.of(part), type ? RANGE_FIELD_NAMES[type] : undefined].filter(Boolean).join(', ')
+  const firstEditable = (type === 'end' ? props.endSegments : props.segments)?.find(s => s.part !== 'literal')?.part === part
   const attrs: Record<string, unknown> = {
+    'id': id,
+    'aria-label': `${[name, props.ariaLabel].filter(Boolean).join(', ')}${props.labelledby ? ', ' : ''}`,
+    'aria-labelledby': props.labelledby ? `${id} ${props.labelledby}` : undefined,
+    'aria-describedby': props.describedby && (firstEditable || props.invalid) ? props.describedby : undefined,
+    'aria-readonly': state?.readonly.value ? 'true' : undefined,
     'aria-invalid': props.invalid ? 'true' : undefined,
     'data-invalid': props.invalid ? 'true' : undefined,
   }
   if (type)
     attrs.type = type
-  const values = segmentState(type)?.segmentValues.value
+  const values = state?.segmentValues.value
   const value = values?.[part]
   if ((part === 'minute' || part === 'second') && typeof value === 'number')
     attrs['aria-valuetext'] = String(value).padStart(2, '0')
@@ -265,6 +302,9 @@ function segmentAttrs(part: string, type?: 'start' | 'end') {
   <div
     role="group"
     data-slot="date-input-group"
+    :aria-labelledby="labelledby"
+    :aria-label="ariaLabel"
+    :aria-describedby="describedby"
     :data-disabled="disabled ? '' : undefined"
     :data-invalid="invalid ? 'true' : undefined"
     :class="ui.base({ class: [props.ui?.base, props.class] })"

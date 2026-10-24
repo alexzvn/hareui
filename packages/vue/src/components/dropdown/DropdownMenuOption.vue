@@ -4,10 +4,8 @@ import type { DropdownItem } from './Dropdown.vue'
 import type { DropdownSelectionGroup } from './context'
 import { DropdownMenuCheckboxItem, DropdownMenuItem, DropdownMenuSubTrigger, useId } from 'reka-ui'
 import { computed, h, inject, ref, renderSlot } from 'vue'
-import Description from '../description/Description.vue'
 import { dropdownContextKey } from './context'
 import Kbd from '../kbd/Kbd.vue'
-import Label from '../label/Label.vue'
 
 const props = defineProps<{
   item: DropdownItem
@@ -19,6 +17,12 @@ const props = defineProps<{
 const ctx = inject(dropdownContextKey)!
 const classes = computed(() => ctx.classes())
 const slots = ctx.slots
+
+// Reka's Label guard: a double click on the label must not select its text.
+function onLabelMousedown(event: MouseEvent) {
+  if (!event.defaultPrevented && event.detail > 1)
+    event.preventDefault()
+}
 
 // RAC interaction states that Reka doesn't expose
 const hovered = ref(false)
@@ -143,25 +147,25 @@ const SubmenuIndicatorContent = () => renderSlot(slots as Record<string, any>, '
       </span>
       <component :is="slots['item-leading']" v-if="slots['item-leading']" v-bind="state" />
       <div v-if="item.description || slots['item-description']" class="flex flex-col">
-        <Label :id="`${id}-label`" :disabled="item.disabled">
+        <label data-slot="label" :class="ctx.labelClass(item.disabled)" :id="`${id}-label`" @mousedown="onLabelMousedown">
           <component :is="slots['item-label']" v-if="slots['item-label']" v-bind="state" />
           <template v-else>
             {{ item.label }}
           </template>
-        </Label>
-        <Description :id="`${id}-description`">
+        </label>
+        <span :id="`${id}-description`" data-slot="description" :class="ctx.descriptionClass()">
           <component :is="slots['item-description']" v-if="slots['item-description']" v-bind="state" />
           <template v-else>
             {{ item.description }}
           </template>
-        </Description>
+        </span>
       </div>
-      <Label v-else :id="`${id}-label`" :disabled="item.disabled">
+      <label v-else data-slot="label" :class="ctx.labelClass(item.disabled)" :id="`${id}-label`" @mousedown="onLabelMousedown">
         <component :is="slots['item-label']" v-if="slots['item-label']" v-bind="state" />
         <template v-else>
           {{ item.label }}
         </template>
-      </Label>
+      </label>
       <component :is="slots['item-trailing']" v-if="slots['item-trailing']" v-bind="state" />
       <Kbd v-else-if="item.kbd" :id="`${id}-kbd`" class="ms-auto" variant="light" :keys="item.kbd.keys">
         <template v-if="item.kbd.content">

@@ -5,7 +5,10 @@ import { h, nextTick } from 'vue'
 import ColorArea from '../src/components/color-area/ColorArea.vue'
 import ColorField from '../src/components/color-field/ColorField.vue'
 import ColorPicker from '../src/components/color-picker/ColorPicker.vue'
+import ColorSlider from '../src/components/color-slider/ColorSlider.vue'
 import ColorSwatch from '../src/components/color-swatch/ColorSwatch.vue'
+import ColorSwatchPicker from '../src/components/color-swatch-picker/ColorSwatchPicker.vue'
+import { expectAccessible } from './a11y'
 
 const wrappers: { unmount: () => void }[] = []
 const mount = ((...a: any[]) => {
@@ -22,13 +25,92 @@ const slots = {
   trigger: () => h(ColorSwatch, { size: 'lg' }),
   default: () => [h(ColorArea, { colorSpace: 'hsb', xChannel: 'saturation', yChannel: 'brightness' }), h(ColorField, { 'aria-label': 'Hex' })],
 }
+// Realistic HeroUI composition: a swatch plus visible text in the trigger, every popover control labelled
+const fullSlots = {
+  trigger: () => [h(ColorSwatch, { size: 'sm' }), h('span', 'Brand colour')],
+  default: () => [
+    h(ColorSwatchPicker, { 'items': ['#F43F5E', '#0485F7'], 'aria-label': 'Presets' }),
+    h(ColorArea, { 'colorSpace': 'hsb', 'xChannel': 'saturation', 'yChannel': 'brightness', 'aria-label': 'Colour' }),
+    h(ColorSlider, { channel: 'hue', colorSpace: 'hsb', label: 'Hue' }),
+    h(ColorField, { 'aria-label': 'Hex' }),
+  ],
+}
+const settle = () => new Promise(resolve => setTimeout(resolve, 30))
+async function open() {
+  trigger().click()
+  await nextTick()
+  await settle()
+}
 
 afterEach(() => {
   wrappers.splice(0).forEach(w => w.unmount())
   document.body.innerHTML = ''
 })
 
-describe('colorPicker', () => {
+describe('ColorPicker', () => {
+  it('passes axe closed, open and disabled', async () => {
+    mount(ColorPicker, { props: { defaultValue: '#0485F7' }, slots: fullSlots, attachTo: document.body })
+    await expectAccessible()
+    await open()
+    expect(popover()).not.toBeNull()
+    await expectAccessible()
+    wrappers.splice(0).forEach(w => w.unmount())
+    mount(ColorPicker, { props: { disabled: true }, slots: fullSlots, attachTo: document.body })
+    await expectAccessible()
+  })
+
+  it('the trigger is a button that announces and controls the popover dialog', async () => {
+    mount(ColorPicker, { props: { defaultValue: '#0485F7' }, slots: fullSlots, attachTo: document.body })
+    const t = trigger()
+    expect(t.tagName).toBe('BUTTON')
+    expect(t.getAttribute('type')).toBe('button')
+    expect(t.getAttribute('aria-haspopup')).toBe('dialog')
+    expect(t.getAttribute('aria-expanded')).toBe('false')
+    await open()
+    expect(t.getAttribute('aria-expanded')).toBe('true')
+    const dialog = popover()!
+    expect(dialog.getAttribute('role')).toBe('dialog')
+    expect(t.getAttribute('aria-controls')).toBe(dialog.id)
+  })
+
+  it('the popover dialog is named by the trigger', async () => {
+    mount(ColorPicker, { props: { defaultValue: '#0485F7' }, slots: fullSlots, attachTo: document.body })
+    await open()
+    const labelledBy = popover()!.getAttribute('aria-labelledby')
+    expect(labelledBy).toBe(trigger().id)
+    expect(document.getElementById(labelledBy!)?.textContent).toContain('Brand colour')
+  })
+
+  it('opening moves focus to the popover, so Tab starts at its first control', async () => {
+    mount(ColorPicker, { props: { defaultValue: '#0485F7' }, slots: fullSlots, attachTo: document.body })
+    trigger().focus()
+    await open()
+    expect(document.activeElement).toBe(popover())
+  })
+
+  it('Escape closes the popover and returns focus to the trigger', async () => {
+    const w = mount(ColorPicker, { props: { defaultValue: '#0485F7' }, slots: fullSlots, attachTo: document.body })
+    trigger().focus()
+    await open()
+    const field = document.body.querySelector<HTMLElement>('[data-slot=color-input-group-input]')!
+    field.focus()
+    field.dispatchEvent(new KeyboardEvent('keydown', { key: 'Escape', bubbles: true, cancelable: true }))
+    await nextTick()
+    await settle()
+    expect(w.emitted('update:open')?.at(-1)).toEqual([false])
+    expect(trigger().getAttribute('aria-expanded')).toBe('false')
+    expect(document.activeElement).toBe(trigger())
+  })
+
+  it('a disabled trigger is a disabled button and does not open', async () => {
+    const w = mount(ColorPicker, { props: { disabled: true }, slots: fullSlots, attachTo: document.body })
+    expect(trigger().hasAttribute('disabled')).toBe(true)
+    trigger().click()
+    await nextTick()
+    expect(w.emitted('update:open')).toBeUndefined()
+    expect(popover()).toBeNull()
+  })
+
   it('renders a closed trigger whose ColorSwatch follows the picker colour, defaulting to black', async () => {
     const w = mount(ColorPicker, { slots, attachTo: document.body })
     expect(popover()).toBeNull()

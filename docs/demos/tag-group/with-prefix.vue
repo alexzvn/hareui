@@ -37,7 +37,7 @@ const people: Person[] = [
     </TagGroup>
     <TagGroup selection-mode="single" label="With Avatars" description="Tags with avatars" :items="people">
       <template #item="{ item }">
-        <Avatar class="size-4" :src="item.avatar" :fallback="item.fallback" />
+        <Avatar class="size-4" alt="" :src="item.avatar" :fallback="item.fallback" />
         {{ item.label }}
       </template>
     </TagGroup>

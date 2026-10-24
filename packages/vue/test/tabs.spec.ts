@@ -1,6 +1,10 @@
 import { flushPromises, mount } from '@vue/test-utils'
+import { ConfigProvider } from 'reka-ui'
 import { afterEach, describe, expect, it } from 'vitest'
+import { h } from 'vue'
+import type { TabsProps } from '../src/components/tabs/Tabs.vue'
 import Tabs from '../src/components/tabs/Tabs.vue'
+import { expectAccessible } from './a11y'
 
 const items = [
   { label: 'Overview', value: 'overview', content: 'Overview content' },
@@ -178,6 +182,163 @@ describe('Tabs keyboard and focus parity', () => {
     const wrapper = mount(Tabs, { props: { items, defaultValue: 'overview' }, attachTo: document.body })
     await flushPromises()
     expect(wrapper.get('[data-slot=tabs-panel]').attributes('tabindex')).toBe('0')
+    wrapper.unmount()
+  })
+})
+
+describe('Tabs accessibility', () => {
+  afterEach(() => {
+    document.body.innerHTML = ''
+  })
+
+  const withDisabled = [
+    { label: 'Overview', value: 'overview', content: 'Overview content' },
+    { label: 'Analytics', value: 'analytics', content: 'Analytics content', disabled: true },
+    { label: 'Reports', value: 'reports', content: 'Reports content' },
+  ]
+  const press = async (key: string) => {
+    document.activeElement!.dispatchEvent(new KeyboardEvent('keydown', { key, bubbles: true, cancelable: true }))
+    await flushPromises()
+  }
+  const focused = () => document.activeElement?.textContent?.trim()
+
+  it('passes axe with the default, vertical, separator, disabled-tab, tabbable-panel and panel-less setups', async () => {
+    const cases: Pick<TabsProps, keyof TabsProps>[] = [
+      { items, defaultValue: 'overview' },
+      { items, defaultValue: 'analytics', orientation: 'vertical' },
+      { items, defaultValue: 'reports', separator: true, variant: 'secondary' },
+      { items: withDisabled },
+      { items, content: false },
+    ]
+    for (const props of cases) {
+      const wrapper = mount(Tabs, { props, attachTo: document.body })
+      await flushPromises()
+      await expectAccessible(wrapper)
+      wrapper.unmount()
+    }
+    const tabbable = mount(Tabs, { props: { items }, slots: { content: '<button type="button">Inner action</button>' }, attachTo: document.body })
+    await flushPromises()
+    await expectAccessible(tabbable)
+    tabbable.unmount()
+  })
+
+  it('wires tablist, tabs and the panel: only the selected tab controls the rendered panel, which it names', async () => {
+    const wrapper = mount(Tabs, { props: { items, defaultValue: 'analytics' }, attachTo: document.body })
+    await flushPromises()
+    const list = wrapper.get('[role=tablist]')
+    expect(list.attributes('aria-orientation')).toBe('horizontal')
+    const tabs = wrapper.findAll('[role=tab]')
+    expect(tabs.map(t => t.attributes('aria-selected'))).toEqual(['false', 'true', 'false'])
+    const panel = wrapper.get('[role=tabpanel]')
+    expect(tabs[1]!.attributes('aria-controls')).toBe(panel.attributes('id'))
+    expect(tabs.filter((_, i) => i !== 1).map(t => t.attributes('aria-controls'))).toEqual([undefined, undefined])
+    expect(document.getElementById(panel.attributes('aria-labelledby')!)).toBe(tabs[1]!.element)
+
+    await tabs[2]!.trigger('mousedown', { button: 0 })
+    await flushPromises()
+    const next = wrapper.get('[role=tabpanel]')
+    expect(wrapper.findAll('[role=tab]').map(t => t.attributes('aria-selected'))).toEqual(['false', 'false', 'true'])
+    expect(wrapper.findAll('[role=tab]')[2]!.attributes('aria-controls')).toBe(next.attributes('id'))
+    expect(document.getElementById(next.attributes('aria-labelledby')!)).toBe(wrapper.findAll('[role=tab]')[2]!.element)
+    wrapper.unmount()
+  })
+
+  it('a vertical tab list reports its orientation', async () => {
+    const wrapper = mount(Tabs, { props: { items, orientation: 'vertical' }, attachTo: document.body })
+    await flushPromises()
+    expect(wrapper.get('[role=tablist]').attributes('aria-orientation')).toBe('vertical')
+    wrapper.unmount()
+  })
+
+  it('arrow keys wrap around the ends, Home / End jump to the first / last tab, and selection follows focus', async () => {
+    const wrapper = mount(Tabs, { props: { items, defaultValue: 'overview' }, attachTo: document.body })
+    await flushPromises()
+    ;(wrapper.findAll('[role=tab]')[0]!.element as HTMLElement).focus()
+
+    await press('ArrowLeft')
+    expect(focused()).toBe('Reports')
+    expect(wrapper.get('[role=tabpanel]').text()).toBe('Reports content')
+    await press('ArrowRight')
+    expect(focused()).toBe('Overview')
+    await press('End')
+    expect(focused()).toBe('Reports')
+    await press('Home')
+    expect(focused()).toBe('Overview')
+    expect(wrapper.get('[role=tabpanel]').text()).toBe('Overview content')
+    expect(wrapper.emitted('update:modelValue')!.map(([v]) => v)).toEqual(['reports', 'overview', 'reports', 'overview'])
+    wrapper.unmount()
+  })
+
+  it('horizontal tabs ignore ArrowUp / ArrowDown', async () => {
+    const wrapper = mount(Tabs, { props: { items, defaultValue: 'analytics' }, attachTo: document.body })
+    await flushPromises()
+    ;(wrapper.findAll('[role=tab]')[1]!.element as HTMLElement).focus()
+    await press('ArrowDown')
+    await press('ArrowUp')
+    expect(focused()).toBe('Analytics')
+    expect(wrapper.emitted('update:modelValue')).toBeUndefined()
+    wrapper.unmount()
+  })
+
+  it('vertical tabs move with ArrowDown / ArrowUp, and also with ArrowRight / ArrowLeft like React Aria', async () => {
+    const wrapper = mount(Tabs, { props: { items, defaultValue: 'overview', orientation: 'vertical' }, attachTo: document.body })
+    await flushPromises()
+    ;(wrapper.findAll('[role=tab]')[0]!.element as HTMLElement).focus()
+    await press('ArrowDown')
+    expect(focused()).toBe('Analytics')
+    await press('ArrowUp')
+    expect(focused()).toBe('Overview')
+    await press('ArrowRight')
+    expect(focused()).toBe('Analytics')
+    await press('ArrowLeft')
+    expect(focused()).toBe('Overview')
+    expect(wrapper.get('[role=tabpanel]').text()).toBe('Overview content')
+    wrapper.unmount()
+  })
+
+  it('in a right-to-left vertical list ArrowLeft moves to the next tab', async () => {
+    const wrapper = mount(() => h(ConfigProvider, { dir: 'rtl' }, () => h(Tabs, { items, defaultValue: 'overview', orientation: 'vertical' })), { attachTo: document.body })
+    await flushPromises()
+    ;(wrapper.findAll('[role=tab]')[0]!.element as HTMLElement).focus()
+    await press('ArrowLeft')
+    expect(focused()).toBe('Analytics')
+    await press('ArrowRight')
+    expect(focused()).toBe('Overview')
+    wrapper.unmount()
+  })
+
+  it('keyboard navigation skips disabled tabs, which are exposed as disabled', async () => {
+    const wrapper = mount(Tabs, { props: { items: withDisabled, defaultValue: 'overview' }, attachTo: document.body })
+    await flushPromises()
+    const tabs = wrapper.findAll('[role=tab]')
+    expect((tabs[1]!.element as HTMLButtonElement).disabled).toBe(true)
+    ;(tabs[0]!.element as HTMLElement).focus()
+    await press('ArrowRight')
+    expect(focused()).toBe('Reports')
+    await press('ArrowLeft')
+    expect(focused()).toBe('Overview')
+    expect(wrapper.emitted('update:modelValue')!.map(([v]) => v)).not.toContain('analytics')
+    wrapper.unmount()
+  })
+
+  it('Enter and Space on a focused tab keep it selected without moving focus', async () => {
+    const wrapper = mount(Tabs, { props: { items, defaultValue: 'overview' }, attachTo: document.body })
+    await flushPromises()
+    ;(wrapper.findAll('[role=tab]')[2]!.element as HTMLElement).focus()
+    await flushPromises()
+    for (const key of ['Enter', ' ']) {
+      await press(key)
+      expect(focused()).toBe('Reports')
+      expect(wrapper.get('[role=tabpanel]').text()).toBe('Reports content')
+    }
+    wrapper.unmount()
+  })
+
+  it('the scroll buttons are named and kept out of the Tab order', async () => {
+    const wrapper = mount(Tabs, { props: { items }, attachTo: document.body })
+    await flushPromises()
+    const buttons = wrapper.findAll('[data-slot=tabs-list-container] > button')
+    expect(buttons.map(b => [b.attributes('aria-label'), b.attributes('tabindex')])).toEqual([['Scroll tabs left', '-1'], ['Scroll tabs right', '-1']])
     wrapper.unmount()
   })
 })

@@ -132,7 +132,7 @@ import {
   useId,
   useLocale,
 } from 'reka-ui'
-import { computed, ref, watch } from 'vue'
+import { computed, ref, useAttrs, watch } from 'vue'
 import { useColorPickerContext } from '../color-picker/context'
 import { useComponentUI } from '../../composables/useComponentUI'
 import { useFieldsetDisabled } from '../fieldset/context'
@@ -204,21 +204,22 @@ const channelName = computed(() => getChannelName(props.channel))
 
 const locale = useLocale()
 // Mirrors RAC's `formatChannelValue`: hue in degrees, percentages for saturation / lightness /
-// brightness / alpha, plain numbers for red / green / blue.
-const valueText = computed(() => {
-  const value = channelValue.value
+// brightness / alpha, plain numbers for red / green / blue. The formatter is rebuilt only when the
+// locale or channel changes, not on every drag move.
+const channelFormat = computed(() => {
   switch (props.channel) {
     case 'hue':
-      return new Intl.NumberFormat(locale.value, { style: 'unit', unit: 'degree', unitDisplay: 'narrow', maximumFractionDigits: 0 }).format(value)
+      return { formatter: new Intl.NumberFormat(locale.value, { style: 'unit', unit: 'degree', unitDisplay: 'narrow', maximumFractionDigits: 0 }), divisor: 1 }
     case 'saturation':
     case 'lightness':
     case 'brightness':
     case 'alpha':
-      return new Intl.NumberFormat(locale.value, { style: 'percent' }).format(value / 100)
+      return { formatter: new Intl.NumberFormat(locale.value, { style: 'percent' }), divisor: 100 }
     default:
-      return new Intl.NumberFormat(locale.value, { maximumFractionDigits: 0 }).format(value)
+      return { formatter: new Intl.NumberFormat(locale.value, { maximumFractionDigits: 0 }), divisor: 1 }
   }
 })
+const valueText = computed(() => channelFormat.value.formatter.format(channelValue.value / channelFormat.value.divisor))
 
 // React Aria's alpha channel ranges 0..1, while Reka's runs 0..100. The submitted form value and the
 // thumb's `aria-value*` use RAC's scale (the value text stays "50%" either way).
@@ -301,6 +302,12 @@ const hasLabel = computed(() => !!(props.label || slots.label))
 const hasOutput = computed(() => props.showOutput ?? hasLabel.value)
 const ui = useComponentUI('colorSlider', theme, () => ({ orientation: props.orientation, hasLabel: hasLabel.value, hasOutput: hasOutput.value }))
 
+// RAC labels the slider's input with the visible label, or with the group's own `aria-label`/`aria-labelledby`
+// (fallthrough on the root here); Reka's thumb only carries the channel name.
+const attrs = useAttrs()
+const thumbLabel = computed(() => typeof attrs['aria-label'] === 'string' && attrs['aria-label'] ? attrs['aria-label'] : channelName.value)
+const thumbLabelledBy = computed(() => hasLabel.value ? autoId : attrs['aria-labelledby'] as string | undefined)
+
 // reka-limitation: Reka's thumb exposes no `isDragging` state (RAC's `data-dragging`), so it is tracked
 // here: a press anywhere on the slider starts a drag of its single thumb.
 const isDragging = ref(false)
@@ -324,6 +331,7 @@ function onPointerEnd() {
     :disabled="isDisabled"
     :step="step"
     data-slot="color-slider"
+    role="group"
     :aria-labelledby="hasLabel ? autoId : undefined"
     :class="ui.base({ class: [props.ui?.base, props.class] })"
     @update:color="handleUpdate"
@@ -334,8 +342,9 @@ function onPointerEnd() {
     @pointercancel="onPointerEnd"
     @gotpointercapture="captureOnDraggedThumb"
   >
+    <!-- Split so Label's slot is only forwarded (and force-updated) when a `label` slot is passed. -->
     <Label
-      v-if="hasLabel"
+      v-if="hasLabel && $slots.label"
       :id="autoId"
       :disabled="isDisabled"
       :class="ui.label({ class: props.ui?.label })"
@@ -343,6 +352,14 @@ function onPointerEnd() {
       <slot name="label">
         {{ label }}
       </slot>
+    </Label>
+    <Label
+      v-else-if="hasLabel"
+      :id="autoId"
+      :disabled="isDisabled"
+      :class="ui.label({ class: props.ui?.label })"
+    >
+      {{ label }}
     </Label>
     <span
       v-if="hasOutput"
@@ -359,6 +376,9 @@ function onPointerEnd() {
       <ColorSliderThumb
         ref="thumbRef"
         data-slot="color-slider-thumb"
+        :aria-label="thumbLabel"
+        :aria-labelledby="thumbLabelledBy"
+        :aria-valuetext="valueText"
         :data-dragging="isDragging ? 'true' : undefined"
         :style="thumbStyle"
         :class="ui.thumb({ class: props.ui?.thumb })"

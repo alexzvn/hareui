@@ -67,6 +67,8 @@ const PICKS: Record<string, Pick> = {
   'main': { width: 360 },
   'rich-table': { width: 600 },
   'alert': { select: ':scope > [data-slot="alert-root"]:nth-of-type(2)', width: 380 },
+  // The basic demo pairs the zone with an empty file panel; the zone alone reads better at card size.
+  'drop-zone': { select: '[data-slot="drop-zone"]' },
   // The bottom drawer, as its height fits its content; the narrow viewport keeps it from spanning 1440px.
   'drawer': { demo: 'drawer/placements', open: 'button', overlay: '[data-slot="drawer-dialog"]', viewport: { width: 560, height: 900 } },
   'button-group': { demo: 'button-group/variants', select: ':scope > :first-child [data-slot="button-group"]' },
@@ -240,6 +242,8 @@ const browser = await puppeteer.launch({ headless: true })
 const failed: string[] = []
 try {
   const page = await browser.newPage()
+  // Charts draw in over ~1s; reduced motion renders their final geometry at once.
+  await page.emulateMediaFeatures([{ name: 'prefers-reduced-motion', value: 'reduce' }])
   for (const slug of slugs) {
     for (const theme of ['light', 'dark'] as const) {
       try {

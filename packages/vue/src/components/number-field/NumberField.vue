@@ -7,30 +7,6 @@ import theme from './theme'
 
 type NumberField = typeof theme
 
-function roundToStepPrecision(value: number, step: number) {
-  const pointIndex = step.toString().indexOf('.')
-  const precision = pointIndex >= 0 ? step.toString().length - pointIndex : 0
-  return precision > 0 ? Math.round(value * 10 ** precision) / 10 ** precision : value
-}
-
-// react-stately's (and Reka's internal) snapValueToStep; reka-ui doesn't export it
-function snapValueToStep(value: number, min: number | undefined, max: number | undefined, step: number) {
-  const lo = Number(min)
-  const hi = Number(max)
-  const remainder = (value - (Number.isNaN(lo) ? 0 : lo)) % step
-  let snapped = roundToStepPrecision(Math.abs(remainder) * 2 >= step ? value + Math.sign(remainder) * (step - Math.abs(remainder)) : value - remainder, step)
-  if (!Number.isNaN(lo)) {
-    if (snapped < lo)
-      snapped = lo
-    else if (!Number.isNaN(hi) && snapped > hi)
-      snapped = lo + Math.floor(roundToStepPrecision((hi - lo) / step, step)) * step
-  }
-  else if (!Number.isNaN(hi) && snapped > hi) {
-    snapped = Math.floor(roundToStepPrecision(hi / step, step)) * step
-  }
-  return roundToStepPrecision(snapped, step)
-}
-
 export interface NumberFieldProps extends FormFieldProps {
   /** Label text rendered above the group. */
   label?: string
@@ -133,9 +109,11 @@ export interface NumberFieldSlots {
 
 <script setup lang="ts">
 import { NumberFieldDecrement, NumberFieldIncrement, NumberFieldInput, NumberFieldRoot } from 'reka-ui'
-import { computed, getCurrentInstance, ref, useAttrs, useId, useTemplateRef, watch } from 'vue'
+import { computed, getCurrentInstance, onBeforeUnmount, onMounted, ref, useAttrs, useId, useTemplateRef, watch } from 'vue'
 import { useComponentUI } from '../../composables/useComponentUI'
 import { useFieldValidation } from '../../composables/useFieldValidation'
+import { useSlotOutlet } from '../../composables/useSlotOutlet'
+import { snapNumber } from '../../utils/number'
 import { useFieldsetDisabled } from '../fieldset/context'
 import Description from '../description/Description.vue'
 import FieldError from '../field-error/FieldError.vue'
@@ -146,6 +124,8 @@ defineOptions({ inheritAttrs: false })
 // `invalid: undefined`: an absent boolean would cast to `false`, which counts as controlled-valid and hides validation errors
 const props = withDefaults(defineProps<NumberFieldProps>(), { increment: true, decrement: true, invalid: undefined })
 const slots = defineSlots<NumberFieldSlots>()
+const DecrementOutlet = useSlotOutlet(slots, 'decrement')
+const IncrementOutlet = useSlotOutlet(slots, 'increment')
 /** The numeric value; `undefined` while the input is empty. */
 const modelValue = defineModel<number | null>()
 // A second `defineEmits` for `update:modelValue` would clash with defineModel's emit type, so the forced emit below
@@ -156,12 +136,7 @@ const instance = getCurrentInstance()
 // (and snapped to `step` when one is given) before display; the step falls back to 0.01 for percents.
 const effectiveStep = computed(() => props.step ?? (props.formatOptions?.style === 'percent' ? 0.01 : undefined))
 function snap<T extends number | null | undefined>(value: T): T {
-  if (value == null || Number.isNaN(value))
-    return value
-  const { min, max, step } = props
-  if (step === undefined)
-    return Math.min(max ?? Infinity, Math.max(min ?? -Infinity, value)) as T
-  return snapValueToStep(value, min, max, step) as T
+  return snapNumber(value, props.min, props.max, props.step)
 }
 const displayValue = computed(() => snap(modelValue.value))
 
@@ -218,14 +193,19 @@ function onKeydown(event: KeyboardEvent) {
 }
 
 // RAC's spin button moves PageUp / PageDown by a single step (`onIncrementPage` = `onIncrement`); Reka moves 10 steps.
-// Runs in the capture phase, ahead of Reka's handler on the same input, and hands Reka the matching arrow key.
+// A capture listener on the root runs ahead of Reka's handler on the input and hands Reka the matching arrow key.
+// It is attached natively: a Vue `@keydown.capture` invoker would timestamp the re-dispatched event, and Vue's
+// invoker on the input then drops it as "dispatched before attach" when the key lands right after mount.
 function onKeydownCapture(event: KeyboardEvent) {
-  if ((event.key !== 'PageUp' && event.key !== 'PageDown') || event.isComposing)
+  const target = event.target as HTMLElement
+  if ((event.key !== 'PageUp' && event.key !== 'PageDown') || event.isComposing || target.dataset.slot !== 'number-field-input')
     return
   event.preventDefault()
   event.stopImmediatePropagation()
-  event.target!.dispatchEvent(new KeyboardEvent('keydown', { key: event.key === 'PageUp' ? 'ArrowUp' : 'ArrowDown', cancelable: true }))
+  target.dispatchEvent(new KeyboardEvent('keydown', { key: event.key === 'PageUp' ? 'ArrowUp' : 'ArrowDown', cancelable: true }))
 }
+onMounted(() => root.value?.addEventListener('keydown', onKeydownCapture, true))
+onBeforeUnmount(() => root.value?.removeEventListener('keydown', onKeydownCapture, true))
 
 // `aria-label` / `aria-labelledby` name the input (as in HeroUI), not the wrapper div
 const attrs = useAttrs()
@@ -245,6 +225,11 @@ const describedBy = computed(() => [
   hasDescription.value ? descriptionId.value : undefined,
   hasError.value ? errorId.value : undefined,
 ].filter(Boolean).join(' ') || undefined)
+
+// As in RAC: the stepper buttons are named after the field ("Increase Width") and control its input
+const fieldName = computed(() => (attrs['aria-label'] as string | undefined) ?? props.label)
+const incrementLabel = computed(() => fieldName.value ? `Increase ${fieldName.value}` : 'Increase')
+const decrementLabel = computed(() => fieldName.value ? `Decrease ${fieldName.value}` : 'Decrease')
 
 const ui = useComponentUI('numberField', theme, () => ({ variant: props.variant, fullWidth: props.fullWidth }))
 
@@ -274,10 +259,14 @@ function onFocusOut(event: FocusEvent) {
     :data-readonly="readonly ? 'true' : undefined"
     :class="ui.base({ class: [props.ui?.base, props.class] })"
   >
-    <Label v-if="hasLabel" :for="id" :disabled="isDisabled" :invalid="invalid" :required="required">
+    <!-- Each part renders the `<slot>` outlet only when that slot is passed: a forwarded slot would otherwise make Vue force-update the child on every render -->
+    <Label v-if="hasLabel && $slots.label" :for="id" :disabled="isDisabled" :invalid="invalid" :required="required">
       <slot name="label">
         {{ label }}
       </slot>
+    </Label>
+    <Label v-else-if="hasLabel" :for="id" :disabled="isDisabled" :invalid="invalid" :required="required">
+      {{ label }}
     </Label>
     <NumberFieldRoot
       :id="id"
@@ -305,9 +294,11 @@ function onFocusOut(event: FocusEvent) {
         v-if="decrement"
         slot="decrement"
         data-slot="number-field-decrement-button"
+        :aria-label="decrementLabel"
+        :aria-controls="id"
         :class="ui.decrementButton({ class: props.ui?.decrementButton })"
       >
-        <slot name="decrement">
+        <DecrementOutlet>
           <svg
             aria-hidden="true"
             data-slot="number-field-decrement-button-icon"
@@ -320,7 +311,7 @@ function onFocusOut(event: FocusEvent) {
           >
             <path clip-rule="evenodd" d="M1.75 8a.75.75 0 0 1 .75-.75h11a.75.75 0 0 1 0 1.5h-11A.75.75 0 0 1 1.75 8" fill="currentColor" fill-rule="evenodd" />
           </svg>
-        </slot>
+        </DecrementOutlet>
       </NumberFieldDecrement>
       <NumberFieldInput
         data-slot="number-field-input"
@@ -333,15 +324,16 @@ function onFocusOut(event: FocusEvent) {
         :class="ui.input({ class: props.ui?.input })"
         @blur="onCommitEmpty"
         @keydown="onKeydown"
-        @keydown.capture="onKeydownCapture"
       />
       <NumberFieldIncrement
         v-if="increment"
         slot="increment"
         data-slot="number-field-increment-button"
+        :aria-label="incrementLabel"
+        :aria-controls="id"
         :class="ui.incrementButton({ class: props.ui?.incrementButton })"
       >
-        <slot name="increment">
+        <IncrementOutlet>
           <svg
             aria-hidden="true"
             data-slot="number-field-increment-button-icon"
@@ -354,18 +346,24 @@ function onFocusOut(event: FocusEvent) {
           >
             <path clip-rule="evenodd" d="M8 1.75a.75.75 0 0 1 .75.75v4.75h4.75a.75.75 0 0 1 0 1.5H8.75v4.75a.75.75 0 0 1-1.5 0V8.75H2.5a.75.75 0 0 1 0-1.5h4.75V2.5A.75.75 0 0 1 8 1.75" fill="currentColor" fill-rule="evenodd" />
           </svg>
-        </slot>
+        </IncrementOutlet>
       </NumberFieldIncrement>
     </NumberFieldRoot>
-    <Description v-if="hasDescription" :id="descriptionId">
+    <Description v-if="hasDescription && $slots.description" :id="descriptionId">
       <slot name="description">
         {{ description }}
       </slot>
     </Description>
-    <FieldError v-if="hasError" :id="errorId">
+    <Description v-else-if="hasDescription" :id="descriptionId">
+      {{ description }}
+    </Description>
+    <FieldError v-if="hasError && $slots.error" :id="errorId">
       <slot name="error" v-bind="validation">
         {{ errorMessage ?? validation.validationErrors.join(' ') }}
       </slot>
+    </FieldError>
+    <FieldError v-else-if="hasError" :id="errorId">
+      {{ errorMessage ?? validation.validationErrors.join(' ') }}
     </FieldError>
   </div>
   <input v-if="name" type="hidden" :name="name" :value="formValue ?? ''" :disabled="isDisabled || undefined">

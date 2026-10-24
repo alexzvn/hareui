@@ -1,7 +1,10 @@
 import { mount } from '@vue/test-utils'
 import { describe, expect, it } from 'vitest'
+import type { Component, VNode } from 'vue'
 import { h, nextTick, ref } from 'vue'
+import type { DisclosureProps } from '../src/components/disclosure/Disclosure.vue'
 import Disclosure from '../src/components/disclosure/Disclosure.vue'
+import { expectAccessible } from './a11y'
 
 describe('disclosure', () => {
   it('uncontrolled: starts collapsed and toggles on trigger click', async () => {
@@ -107,6 +110,68 @@ describe('disclosure', () => {
     expect(panel().attributes('aria-hidden')).toBe('false')
     expect(panel().attributes('hidden')).toBeUndefined()
     expect(wrapper.find('[data-slot=disclosure-trigger]').attributes('aria-controls')).toBe(panel().attributes('id'))
+    wrapper.unmount()
+  })
+})
+
+describe('Disclosure accessibility', () => {
+  it('passes axe collapsed, expanded, disabled and with a custom #trigger', async () => {
+    const cases: { props: DisclosureProps, trigger?: (slotProps: { indicator: Component }) => VNode }[] = [
+      { props: { title: 'Details' } },
+      { props: { title: 'Details', defaultOpen: true } },
+      { props: { title: 'Details', disabled: true } },
+      { props: { defaultOpen: true }, trigger: ({ indicator }) => h('button', null, ['Details', h(indicator)]) },
+    ]
+    for (const { props, trigger } of cases) {
+      const wrapper = mount(Disclosure, {
+        props,
+        slots: { default: () => 'Panel content', ...(trigger ? { trigger } : {}) },
+        attachTo: document.body,
+      })
+      await expectAccessible(wrapper)
+      wrapper.unmount()
+    }
+  })
+
+  it('the trigger is a button in a heading, and the panel is a group named by the trigger', () => {
+    const wrapper = mount(Disclosure, { props: { title: 'Details', defaultOpen: true }, slots: { default: () => 'Content' }, attachTo: document.body })
+    const trigger = wrapper.get('[data-slot=disclosure-trigger]')
+    const panel = wrapper.get('[data-slot=disclosure-content]')
+    expect(trigger.element.tagName).toBe('BUTTON')
+    expect(trigger.attributes('type')).toBe('button')
+    expect(trigger.element.parentElement!.tagName).toMatch(/^H[1-6]$/)
+    expect(panel.attributes('role')).toBe('group')
+    expect(document.getElementById(panel.attributes('aria-labelledby')!)).toBe(trigger.element)
+    expect(trigger.text()).toBe('Details')
+    expect(wrapper.get('[data-slot=disclosure-indicator]').attributes('aria-hidden')).toBe('true')
+    wrapper.unmount()
+  })
+
+  it('a custom #trigger receives the id, aria-controls and disabled state', () => {
+    const wrapper = mount(Disclosure, {
+      props: { disabled: true },
+      slots: { trigger: () => h('button', { class: 'custom' }, 'Details'), default: () => 'Content' },
+      attachTo: document.body,
+    })
+    const trigger = wrapper.get('button.custom')
+    const panel = wrapper.get('[data-slot=disclosure-content]')
+    expect(trigger.attributes('aria-controls')).toBe(panel.attributes('id'))
+    expect(document.getElementById(panel.attributes('aria-labelledby')!)).toBe(trigger.element)
+    expect((trigger.element as HTMLButtonElement).disabled).toBe(true)
+    wrapper.unmount()
+  })
+
+  it('the trigger is a Tab stop and keeps focus while it toggles the panel', async () => {
+    const wrapper = mount(Disclosure, { props: { title: 'Details' }, slots: { default: () => 'Content' }, attachTo: document.body })
+    const trigger = wrapper.get('[data-slot=disclosure-trigger]')
+    expect(trigger.attributes('tabindex')).toBeUndefined()
+    ;(trigger.element as HTMLElement).focus()
+    await trigger.trigger('click')
+    expect(trigger.attributes('aria-expanded')).toBe('true')
+    expect(document.activeElement).toBe(trigger.element)
+    await trigger.trigger('click')
+    expect(trigger.attributes('aria-expanded')).toBe('false')
+    expect(document.activeElement).toBe(trigger.element)
     wrapper.unmount()
   })
 })

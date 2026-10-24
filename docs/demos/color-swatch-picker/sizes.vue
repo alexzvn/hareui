@@ -10,7 +10,7 @@ const sizes = ['xs', 'sm', 'md', 'lg', 'xl'] as const
   <div class="flex flex-col gap-6">
     <div v-for="size in sizes" :key="size" class="flex items-center gap-4">
       <span class="w-8 text-sm text-muted">{{ size }}</span>
-      <ColorSwatchPicker :items="colors" :size="size" />
+      <ColorSwatchPicker :aria-label="`Color, ${size}`" :items="colors" :size="size" />
     </div>
   </div>
 </template>

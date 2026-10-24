@@ -6,7 +6,8 @@
     "api": "bun scripts/gen-api.ts",
     "dev": "bun run api && vitepress dev",
     "build": "bun run api && vitepress build && bun scripts/gen-llms.ts",
-    "typecheck": "../packages/vue/node_modules/.bin/vue-tsc -p tsconfig.json"
+    "typecheck": "../packages/vue/node_modules/.bin/vue-tsc -p tsconfig.json",
+    "a11y": "bun scripts/a11y.ts"
   },
   "dependencies": {
     "@hareui/vue": "workspace:*",

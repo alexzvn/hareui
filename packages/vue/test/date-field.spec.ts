@@ -3,6 +3,7 @@ import { CalendarDate, CalendarDateTime } from '@internationalized/date'
 import { mount } from '@vue/test-utils'
 import { describe, expect, it } from 'vitest'
 import DateField from '../src/components/date-field/DateField.vue'
+import { expectAccessible } from './a11y'
 
 // Local stand-in for Promise.withResolvers, so the library's tsconfig `lib` doesn't need ES2024.
 function withResolvers<T>() {
@@ -174,5 +175,80 @@ describe('dateField', () => {
   it('invalid: marks the input element data-invalid', () => {
     const wrapper = mount(DateField, { props: { invalid: true, defaultValue: new CalendarDate(2024, 3, 15) } })
     expect(wrapper.get('[data-slot="date-input-group-input"]').attributes('data-invalid')).toBeDefined()
+  })
+})
+
+describe('DateField accessibility', () => {
+  const date = new CalendarDate(2025, 1, 15)
+  const spinbuttons = (wrapper: { element: Element }) => [...wrapper.element.querySelectorAll<HTMLElement>('[role=spinbutton]')]
+  const textOf = (ids: string | null) => ids?.split(' ').map(id => document.getElementById(id)?.textContent?.trim()).join(' ')
+
+  it('passes axe idle, filled with description, aria-labelled, invalid with error, disabled, read-only, required and with time', async () => {
+    const cases = [
+      { label: 'Due date' },
+      { label: 'Due date', description: 'Pick a weekday', defaultValue: date },
+      { 'aria-label': 'Due date' },
+      { label: 'Due date', invalid: true, errorMessage: 'Pick a later date', defaultValue: date },
+      { label: 'Due date', disabled: true, defaultValue: date },
+      { label: 'Due date', readonly: true, defaultValue: date },
+      { label: 'Due date', required: true },
+      { label: 'Meeting', granularity: 'minute' as const, defaultValue: new CalendarDateTime(2025, 1, 15, 9, 30) },
+    ]
+    for (const props of cases) {
+      const wrapper = mount(DateField, { props: props as any, attachTo: document.body })
+      await expectAccessible(wrapper)
+      wrapper.unmount()
+    }
+  })
+
+  it('the visible label names the group and every segment; the description describes the group and first segment', () => {
+    const wrapper = mount(DateField, { props: { label: 'Due date', description: 'Pick a weekday', defaultValue: date }, attachTo: document.body })
+    const group = wrapper.get('[data-slot=date-input-group]')
+    expect(textOf(group.attributes('aria-labelledby')!)).toBe('Due date')
+    expect(textOf(group.attributes('aria-describedby')!)).toBe('Pick a weekday')
+    const segments = spinbuttons(wrapper)
+    for (const segment of segments) {
+      const [self, ...label] = segment.getAttribute('aria-labelledby')!.split(' ')
+      expect(self).toBe(segment.id)
+      expect(textOf(label.join(' '))).toBe('Due date')
+    }
+    expect(segments.map(s => s.getAttribute('aria-label'))).toEqual(['month, ', 'day, ', 'year, '])
+    expect(textOf(segments[0]!.getAttribute('aria-describedby'))).toBe('Pick a weekday')
+    wrapper.unmount()
+  })
+
+  it('aria-label without a visible label names the group and is appended to every segment name', () => {
+    const wrapper = mount(DateField, { props: { 'aria-label': 'Due date' } as any, attachTo: document.body })
+    expect(wrapper.get('[data-slot=date-input-group]').attributes('aria-label')).toBe('Due date')
+    expect(spinbuttons(wrapper).map(s => s.getAttribute('aria-label'))).toEqual(['month, Due date', 'day, Due date', 'year, Due date'])
+    wrapper.unmount()
+  })
+
+  it('invalid: every segment is aria-invalid and described by the error message', () => {
+    const wrapper = mount(DateField, { props: { label: 'Due date', description: 'Pick a weekday', invalid: true, errorMessage: 'Pick a later date' }, attachTo: document.body })
+    for (const segment of spinbuttons(wrapper)) {
+      expect(segment.getAttribute('aria-invalid')).toBe('true')
+      expect(textOf(segment.getAttribute('aria-describedby'))).toBe('Pick a later date')
+    }
+    wrapper.unmount()
+  })
+
+  it('read-only segments stay in the tab order with aria-readonly; disabled segments are aria-disabled and leave it', () => {
+    const readonly = mount(DateField, { props: { label: 'Due date', readonly: true, defaultValue: date } })
+    expect(spinbuttons(readonly).every(s => s.getAttribute('aria-readonly') === 'true' && s.tabIndex === 0)).toBe(true)
+    readonly.unmount()
+    const disabled = mount(DateField, { props: { label: 'Due date', disabled: true, defaultValue: date } })
+    expect(spinbuttons(disabled).every(s => s.getAttribute('aria-disabled') === 'true' && !s.hasAttribute('tabindex'))).toBe(true)
+    disabled.unmount()
+  })
+
+  it('keyboard: every editable segment is a tab stop in order, and ArrowLeft moves back to the previous segment', async () => {
+    const wrapper = mount(DateField, { props: { label: 'Due date', defaultValue: date }, attachTo: document.body })
+    const segments = spinbuttons(wrapper)
+    expect(segments.map(s => s.tabIndex)).toEqual([0, 0, 0])
+    segments[2]!.focus()
+    await wrapper.get('[data-slot=date-input-group]').trigger('keydown', { key: 'ArrowLeft' })
+    expect(document.activeElement).toBe(segments[1])
+    wrapper.unmount()
   })
 })

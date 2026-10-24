@@ -159,16 +159,20 @@ const ui = useComponentUI('colorSwatchPicker', theme, () => ({
     :as-child="asChild"
     :orientation="layout === 'stack' ? 'vertical' : 'horizontal'"
     data-slot="color-swatch-picker"
+    :aria-disabled="isDisabled ? 'true' : undefined"
     :class="ui.base({ class: [props.ui?.base, props.class] })"
     @update:model-value="onUpdate"
   >
-    <ColorSwatchPickerBridge :selected="selected" :stack="layout === 'stack'" />
+    <ColorSwatchPickerBridge :selected="selected" :stack="layout === 'stack'" :disabled="isDisabled" />
+    <!-- `aria-label` only when given: an undefined attr would override Reka's derived colour name on the option.
+         `aria-disabled` because Reka marks disabled options with a `disabled` attribute, which a div doesn't expose. -->
     <ItemPrimitive
       v-for="item in normalized"
       :key="item.value"
       :value="item.value"
       :disabled="item.disabled"
-      :aria-label="item.label"
+      :aria-disabled="item.disabled || isDisabled ? 'true' : undefined"
+      v-bind="item.label ? { 'aria-label': item.label } : {}"
       data-slot="color-swatch-picker-item"
       :style="{ '--color-swatch-current': item.value }"
       :class="ui.item({ class: props.ui?.item })"

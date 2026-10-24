@@ -6,8 +6,8 @@ import type { ValidationBehavior } from '../form/context'
 import type { FormFieldProps } from '../form/types'
 import type { ListBoxEntry, ListBoxItem, ListBoxItemSlotProps, ListBoxSection, ListBoxValue } from '../list-box/ListBox.vue'
 import type { CollectionRow } from '../list-box/listBoxCollection'
-import { injectListboxRootContext } from 'reka-ui'
-import { defineComponent } from 'vue'
+import { injectListboxRootContext, injectPopoverRootContext } from 'reka-ui'
+import { defineComponent, watchEffect } from 'vue'
 import theme from './theme'
 
 type Autocomplete = typeof theme
@@ -197,14 +197,28 @@ const ListboxBridge = defineComponent({
     return () => null
   },
 })
+
+// Internal: Reka names the popover dialog after its PopoverTrigger (`aria-labelledby` = `triggerId`, overriding ours).
+// The trigger here is an anchor, so hand Reka the field's label instead, as RAC Select labels its popover.
+const PopoverLabelBridge = defineComponent({
+  props: { labelledBy: { type: String, default: undefined } },
+  setup(props) {
+    const popover = injectPopoverRootContext()
+    watchEffect(() => {
+      popover.triggerId = props.labelledBy ?? ''
+    })
+    return () => null
+  },
+})
 </script>
 
 <script setup lang="ts" generic="T extends ListBoxItem = ListBoxItem">
 import { ListboxContent, ListboxRoot, PopoverAnchor, PopoverContent, PopoverPortal, PopoverRoot, Primitive, useFilter } from 'reka-ui'
-import { computed, getCurrentInstance, nextTick, onBeforeUnmount, onMounted, ref, shallowRef, useAttrs, useId, useTemplateRef, watch } from 'vue'
+import { computed, getCurrentInstance, nextTick, reactive, ref, shallowRef, useAttrs, useId, useTemplateRef, watch } from 'vue'
 import { outsideEventTarget } from '../../composables/nestedLayer'
 import { useComponentUI } from '../../composables/useComponentUI'
 import { useFieldValidation } from '../../composables/useFieldValidation'
+import { useKeyboardModality } from '../../composables/useKeyboardModality'
 import { usePortal } from '../../composables/usePortal'
 import { useFieldsetDisabled } from '../fieldset/context'
 import listBoxTheme from '../list-box/theme'
@@ -309,21 +323,7 @@ watch(isOpen, (value) => {
 })
 
 // ---- Interaction modality (RAC): keyboard focus is focus-visible, hover moves focus only after pointer use ----
-const keyboardModality = ref(true)
-const onDocPointerdown = () => {
-  keyboardModality.value = false
-}
-const onDocKeydown = () => {
-  keyboardModality.value = true
-}
-onMounted(() => {
-  document.addEventListener('pointerdown', onDocPointerdown, true)
-  document.addEventListener('keydown', onDocKeydown, true)
-})
-onBeforeUnmount(() => {
-  document.removeEventListener('pointerdown', onDocPointerdown, true)
-  document.removeEventListener('keydown', onDocKeydown, true)
-})
+const keyboardModality = useKeyboardModality()
 
 // ---- Virtual focus (RAC `focusedKey`): DOM focus stays in the search field or on the popover --------------------
 // Tracked by value, not element: virtualized rows unmount when scrolled out
@@ -663,12 +663,13 @@ const describedBy = computed(() => [
   hasDescription.value ? descriptionId.value : undefined,
   hasError.value ? errorId.value : undefined,
 ].filter(Boolean).join(' ') || undefined)
-const buttonLabelledBy = computed(() => [
-  attrs['aria-labelledby'] as string | undefined,
-  valueId.value,
-  hasLabel.value ? labelId.value : undefined,
-].filter(Boolean).join(' '))
-const listLabelledBy = computed(() => [listboxId.value, (attrs['aria-labelledby'] as string | undefined) ?? (hasLabel.value ? labelId.value : undefined)].filter(Boolean).join(' '))
+// RAC useSelect: the label (then any `aria-labelledby`) names the field; a bare `aria-label` on the trigger is
+// referenced by the trigger's own id, so it still counts next to the value
+const fieldLabelledBy = computed(() => [hasLabel.value ? labelId.value : undefined, attrs['aria-labelledby'] as string | undefined].filter(Boolean).join(' ') || undefined)
+const selfLabelledBy = computed(() => attrs['aria-label'] && !fieldLabelledBy.value ? id.value : undefined)
+const buttonLabelledBy = computed(() => [valueId.value, fieldLabelledBy.value, selfLabelledBy.value].filter(Boolean).join(' '))
+const popupLabelledBy = computed(() => fieldLabelledBy.value ?? selfLabelledBy.value)
+const listLabelledBy = computed(() => [listboxId.value, popupLabelledBy.value].filter(Boolean).join(' '))
 const rootAttrs = computed(() => {
   const { 'aria-label': _label, 'aria-labelledby': _labelledby, ...rest } = attrs
   return rest
@@ -683,21 +684,28 @@ function valueIndicatorClass(item: ListBoxItem) {
 }
 const rowSlots = ['item', 'item-leading', 'item-label', 'item-description', 'item-trailing', 'section-label', 'empty', 'loading'] as const
 const forwarded = computed(() => rowSlots.filter(name => slots[name]))
-const virtualFocus = computed(() => ({ keyboard: keyboardModality.value, value: focusedKey.value }))
+// One stable object (reactive unwraps the refs): a fresh object per change would re-render every option
+const virtualFocus = reactive({ keyboard: keyboardModality, value: focusedKey })
+// The option under the pointer, from the `id` its attrs write
+const itemById = computed(() => new Map(options.value.map(item => [optionId(item.value), item])))
+function eventItem(event: Event) {
+  return itemById.value.get((event.currentTarget as HTMLElement).id)
+}
+// RAC `shouldFocusOnHover`: hover moves focus unless the last interaction was a keyboard one
+function onOptionPointermove(event: PointerEvent) {
+  const item = eventItem(event)
+  if (item && !keyboardModality.value && focusedKey.value !== item.value && !item.disabled && !disabled.value)
+    setFocusKey(item.value, false)
+}
+// Pointer selection focuses the picked option (it stays focused in multiple mode)
+function onOptionPointerdown(event: PointerEvent) {
+  const item = eventItem(event)
+  if (item && !item.disabled && !disabled.value)
+    setFocusKey(item.value, false)
+}
+// No closures per row: options re-render only when their own props change
 function optionAttrs(row: CollectionRow) {
-  return {
-    id: optionId(row.item.value),
-    // RAC `shouldFocusOnHover`: hover moves focus unless the last interaction was a keyboard one
-    onPointermove: () => {
-      if (!keyboardModality.value && focusedKey.value !== row.item.value && !row.item.disabled && !disabled.value)
-        setFocusKey(row.item.value, false)
-    },
-    // Pointer selection focuses the picked option (it stays focused in multiple mode)
-    onPointerdown: () => {
-      if (!row.item.disabled && !disabled.value)
-        setFocusKey(row.item.value, false)
-    },
-  }
+  return { id: optionId(row.item.value), onPointermove: onOptionPointermove, onPointerdown: onOptionPointerdown }
 }
 watch(isOpen, (value) => {
   if (!value)
@@ -723,8 +731,9 @@ watch(disabled, (disabled) => {
     :data-required="required ? 'true' : undefined"
     :class="ui.base({ class: [props.ui?.base, props.class] })"
   >
+    <!-- Each slot site is split so the no-slot branch isn't compiled as a forwarded slot, which would force-update the child on every render -->
     <Label
-      v-if="hasLabel"
+      v-if="hasLabel && $slots.label"
       :id="labelId"
       as="span"
       :disabled="disabled"
@@ -737,7 +746,20 @@ watch(disabled, (disabled) => {
         {{ label }}
       </slot>
     </Label>
+    <Label
+      v-else-if="hasLabel"
+      :id="labelId"
+      as="span"
+      :disabled="disabled"
+      :invalid="invalid"
+      :required="required"
+      :class="ui.label({ class: props.ui?.label })"
+      @click="button?.focus()"
+    >
+      {{ label }}
+    </Label>
     <PopoverRoot :open="isOpen" :modal="false" @update:open="setOpen">
+      <PopoverLabelBridge :labelled-by="popupLabelledBy" />
       <PopoverAnchor as-child>
         <div
           ref="trigger"
@@ -800,7 +822,6 @@ watch(disabled, (disabled) => {
             :aria-labelledby="buttonLabelledBy"
             :aria-describedby="describedBy"
             :aria-invalid="invalid ? 'true' : undefined"
-            :aria-required="required ? 'true' : undefined"
             :disabled="disabled"
             :data-pressed="isOpen ? 'true' : undefined"
             @keydown="onButtonKeydown"
@@ -843,7 +864,6 @@ watch(disabled, (disabled) => {
           align="center"
           :side-offset="8"
           :collision-padding="12"
-          :aria-labelledby="hasLabel ? labelId : undefined"
           :class="ui.popover({ class: props.ui?.popover })"
           @open-auto-focus="onOpenAutoFocus"
           @close-auto-focus="onCloseAutoFocus"
@@ -924,6 +944,7 @@ watch(disabled, (disabled) => {
               @pointerup="pressRelease.onPointerup"
             >
               <ListBoxRows
+                v-if="forwarded.length || slots['item-indicator']"
                 ref="rows"
                 :blocks="blocks"
                 :selected-values="selectedValues"
@@ -943,20 +964,41 @@ watch(disabled, (disabled) => {
                   <slot name="item-indicator" v-bind="state as ListBoxItemSlotProps<T>" />
                 </template>
               </ListBoxRows>
+              <!-- Slot-less branch: forwarded (dynamic) slots would force-update the rows on every render -->
+              <ListBoxRows
+                v-else
+                ref="rows"
+                :blocks="blocks"
+                :selected-values="selectedValues"
+                :selection-mode="selectionMode"
+                :disabled="disabled"
+                :classes="listBoxUi as any"
+                :virtual-focus="virtualFocus"
+                :option-attrs="optionAttrs"
+                :loading="loading"
+                :virtualize="virtualize"
+                @load-more="emit('loadMore')"
+              />
             </ListboxContent>
           </ListboxRoot>
         </PopoverContent>
       </PopoverPortal>
     </PopoverRoot>
-    <Description v-if="hasDescription" :id="descriptionId">
+    <Description v-if="hasDescription && $slots.description" :id="descriptionId">
       <slot name="description">
         {{ description }}
       </slot>
     </Description>
-    <FieldError v-if="hasError" :id="errorId">
+    <Description v-else-if="hasDescription" :id="descriptionId">
+      {{ description }}
+    </Description>
+    <FieldError v-if="hasError && $slots.error" :id="errorId">
       <slot name="error" v-bind="validation">
         {{ errorMessage ?? validation.validationErrors.join(' ') }}
       </slot>
+    </FieldError>
+    <FieldError v-else-if="hasError" :id="errorId">
+      {{ errorMessage ?? validation.validationErrors.join(' ') }}
     </FieldError>
     <!-- RAC HiddenSelect: carries form data and native `required` validity -->
     <div aria-hidden="true" data-a11y-ignore="aria-hidden-focus" style="border: 0; clip-path: inset(50%); height: 1px; margin: -1px; overflow: hidden; padding: 0; position: absolute; white-space: nowrap; width: 1px;">

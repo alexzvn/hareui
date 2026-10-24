@@ -48,8 +48,8 @@ export interface ColorAreaEmits {
 </script>
 
 <script setup lang="ts">
-import { ColorAreaArea, ColorAreaRoot, ColorAreaThumb, colorToString, normalizeColor } from 'reka-ui'
-import { computed, onBeforeUnmount, onMounted, ref, watch } from 'vue'
+import { ColorAreaArea, ColorAreaRoot, ColorAreaThumb, colorToString, getChannelName, normalizeColor } from 'reka-ui'
+import { computed, onBeforeUnmount, onMounted, ref, useAttrs, useId, watch } from 'vue'
 import { useComponentUI } from '../../composables/useComponentUI'
 import { useFieldsetDisabled } from '../fieldset/context'
 import { useColorPickerContext } from '../color-picker/context'
@@ -188,6 +188,20 @@ onBeforeUnmount(() => window.removeEventListener('pointerup', onPointerUp))
 const ui = useComponentUI('colorArea', theme, () => ({
   showDots: props.showDots,
 }))
+
+// The group gets the consumer's `aria-label`/`aria-labelledby` (fallthrough); the focusable thumb carries it too, as
+// React Aria's channel inputs are labelled "<label>, <channel>". Reka's thumb only names the channels.
+const attrs = useAttrs()
+const thumbId = useId()
+const thumbLabel = computed(() => {
+  const channels = `${getChannelName(axes.value.x)}, ${getChannelName(axes.value.y)}`
+  const label = attrs['aria-label']
+  return typeof label === 'string' && label ? `${label}, ${channels}` : channels
+})
+const thumbLabelledBy = computed(() => {
+  const ids = attrs['aria-labelledby']
+  return typeof ids === 'string' && ids ? `${ids} ${thumbId}` : undefined
+})
 </script>
 
 <template>
@@ -215,7 +229,10 @@ const ui = useComponentUI('colorArea', theme, () => ({
         @keyup="onKeyup"
       >
         <ColorAreaThumb
+          :id="thumbId"
           data-slot="color-area-thumb"
+          :aria-label="thumbLabel"
+          :aria-labelledby="thumbLabelledBy"
           :style="{ '--color-area-thumb-color': thumbColor, 'backgroundColor': thumbColor }"
           :data-dragging="isDragging ? 'true' : undefined"
           :data-focus-visible="focusVisible ? 'true' : undefined"

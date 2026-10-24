@@ -1,9 +1,10 @@
 import { mount } from '@vue/test-utils'
-import { describe, expect, it } from 'vitest'
+import { describe, expect, it, vi } from 'vitest'
 import { h, nextTick } from 'vue'
 import Fieldset from '../src/components/fieldset/Fieldset.vue'
 import ToggleButton from '../src/components/toggle-button/ToggleButton.vue'
 import ToggleButtonGroup from '../src/components/toggle-button-group/ToggleButtonGroup.vue'
+import { expectAccessible } from './a11y'
 
 describe('ToggleButton', () => {
   it('toggles uncontrolled from defaultValue and emits the new state', async () => {
@@ -26,6 +27,53 @@ describe('ToggleButton', () => {
   it('is disabled by an ancestor Fieldset', () => {
     const wrapper = mount(Fieldset, { props: { disabled: true }, slots: { default: () => h(ToggleButton, () => 'x') } })
     expect(wrapper.find('[data-slot="toggle-button"]').attributes('disabled')).toBeDefined()
+  })
+
+  it.each([
+    ['unpressed', {}, {}],
+    ['pressed', { defaultValue: true }, {}],
+    ['disabled', { disabled: true }, {}],
+    ['icon-only with aria-label', { iconOnly: true, defaultValue: true }, { 'aria-label': 'Bold' }],
+  ])('is accessible %s', async (_, props, attrs) => {
+    const wrapper = mount(ToggleButton, {
+      props,
+      attrs,
+      attachTo: document.body,
+      slots: { default: () => ('aria-label' in attrs ? h('svg', { 'aria-hidden': 'true' }) : 'Bold') },
+    })
+    await expectAccessible(wrapper)
+    wrapper.unmount()
+  })
+
+  it('is a focusable native toggle that reports aria-pressed="false" until pressed', async () => {
+    const wrapper = mount(ToggleButton, { attachTo: document.body, slots: { default: () => 'Bold' } })
+    const button = wrapper.get('button').element
+    expect(button.getAttribute('aria-pressed')).toBe('false')
+    button.focus()
+    expect(document.activeElement).toBe(button)
+    // Enter / Space on a native button dispatch `click`.
+    button.click()
+    await nextTick()
+    expect(button.getAttribute('aria-pressed')).toBe('true')
+    expect(document.activeElement).toBe(button)
+    wrapper.unmount()
+  })
+
+  it('disabled leaves the tab order, keeps its pressed state exposed and ignores presses', async () => {
+    const onUpdate = vi.fn()
+    const wrapper = mount(ToggleButton, {
+      props: { 'disabled': true, 'defaultValue': true, 'onUpdate:modelValue': onUpdate },
+      attachTo: document.body,
+      slots: { default: () => 'Bold' },
+    })
+    const button = wrapper.get('button').element
+    button.focus()
+    expect(document.activeElement).not.toBe(button)
+    expect(button.getAttribute('aria-pressed')).toBe('true')
+    button.click()
+    await nextTick()
+    expect(onUpdate).not.toHaveBeenCalled()
+    wrapper.unmount()
   })
 })
 

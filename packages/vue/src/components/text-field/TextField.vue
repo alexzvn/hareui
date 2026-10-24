@@ -109,7 +109,7 @@ import FieldError from '../field-error/FieldError.vue'
 import { useFieldsetDisabled } from '../fieldset/context'
 import Input from '../input/Input.vue'
 import Label from '../label/Label.vue'
-import { textFieldContextKey } from './context'
+import { splitInputAttrs, textFieldContextKey } from './context'
 
 defineOptions({ inheritAttrs: false })
 
@@ -136,17 +136,10 @@ const value = computed<string | number | undefined>({
   },
 })
 
-// Attributes that belong to the input (as in HeroUI, where TextField passes them to its Input), matched case-insensitively
-// so `maxlength` and `maxLength` both work. Everything else stays on the wrapper div.
-const INPUT_ATTRS = new Set([
-  'autofocus', 'autocomplete', 'autocapitalize', 'autocorrect', 'spellcheck', 'inputmode', 'enterkeyhint',
-  'maxlength', 'minlength', 'pattern', 'min', 'max', 'step', 'size', 'list', 'form', 'dirname',
-  'aria-label', 'aria-labelledby', 'aria-details', 'aria-errormessage', 'aria-controls', 'aria-activedescendant', 'aria-autocomplete', 'aria-haspopup',
-  'onfocus', 'onblur',
-])
 const attrs = useAttrs()
-const inputAttrs = computed(() => Object.fromEntries(Object.entries(attrs).filter(([key]) => INPUT_ATTRS.has(key.toLowerCase()))))
-const rootAttrs = computed(() => Object.fromEntries(Object.entries(attrs).filter(([key]) => !INPUT_ATTRS.has(key.toLowerCase()) && key !== 'aria-describedby')))
+const splitAttrs = computed(() => splitInputAttrs(attrs))
+const inputAttrs = computed(() => splitAttrs.value.input)
+const rootAttrs = computed(() => splitAttrs.value.root)
 
 const root = useTemplateRef<HTMLElement>('root')
 const { validation } = useFieldValidation({
@@ -223,23 +216,33 @@ const ui = useComponentUI('textField', theme, () => ({ fullWidth: props.fullWidt
     @focusin="onFocusIn"
     @focusout="onFocusOut"
   >
-    <Label v-if="hasLabel" :for="id" :disabled="disabled" :invalid="invalid" :required="required">
+    <!-- Each part renders the `<slot>` outlet only when that slot is passed: a forwarded slot would otherwise make Vue force-update the child on every render -->
+    <Label v-if="hasLabel && $slots.label" :for="id" :disabled="disabled" :invalid="invalid" :required="required">
       <slot name="label">
         {{ label }}
       </slot>
     </Label>
+    <Label v-else-if="hasLabel" :for="id" :disabled="disabled" :invalid="invalid" :required="required">
+      {{ label }}
+    </Label>
     <slot v-bind="{ id, describedBy, invalid, disabled, required, readonly, focusWithin, focusVisible }">
       <Input :placeholder="placeholder" />
     </slot>
-    <Description v-if="hasDescription" :id="descriptionId">
+    <Description v-if="hasDescription && $slots.description" :id="descriptionId">
       <slot name="description">
         {{ description }}
       </slot>
     </Description>
-    <FieldError v-if="hasError" :id="errorId">
+    <Description v-else-if="hasDescription" :id="descriptionId">
+      {{ description }}
+    </Description>
+    <FieldError v-if="hasError && $slots.error" :id="errorId">
       <slot name="error" v-bind="validation">
         {{ errorMessage ?? validation.validationErrors.join(' ') }}
       </slot>
+    </FieldError>
+    <FieldError v-else-if="hasError" :id="errorId">
+      {{ errorMessage ?? validation.validationErrors.join(' ') }}
     </FieldError>
   </div>
 </template>

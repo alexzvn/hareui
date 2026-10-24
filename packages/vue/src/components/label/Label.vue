@@ -1,11 +1,17 @@
 <script lang="ts">
+import type { PrimitiveProps } from 'reka-ui'
 import type { ComponentSlots } from '../../types/tv'
 import theme from './theme'
 
 type Label = typeof theme
 
 export interface LabelProps {
-  /** The id of the form control the label is associated with. */
+  /**
+   * The element or component to render as. Use `span` for a group label named via `aria-labelledby`, which has no single control for `for`.
+   * @defaultValue 'label'
+   */
+  as?: PrimitiveProps['as']
+  /** The id of the form control the label is associated with. Only applied when rendered as a `label`. */
   for?: string
   /**
    * Whether the label is disabled.
@@ -35,10 +41,9 @@ export interface LabelSlots {
 </script>
 
 <script setup lang="ts">
-import { Label } from 'reka-ui'
 import { useComponentUI } from '../../composables/useComponentUI'
 
-const props = defineProps<LabelProps>()
+const props = withDefaults(defineProps<LabelProps>(), { as: 'label' })
 defineSlots<LabelSlots>()
 
 const ui = useComponentUI('label', theme, () => ({
@@ -46,10 +51,17 @@ const ui = useComponentUI('label', theme, () => ({
   invalid: props.invalid,
   required: props.required,
 }))
+
+// Same as reka's `Label` (for any element it renders): block text selection on double-click. A plain element keeps
+// `<Label>` from mounting a reka `Label` + `Primitive` pair per field. A user `@mousedown` falls through and runs after this.
+function onMousedown(event: MouseEvent) {
+  if (!event.defaultPrevented && event.detail > 1)
+    event.preventDefault()
+}
 </script>
 
 <template>
-  <Label :for="props.for" data-slot="label" :class="ui.base({ class: [props.ui?.base, props.class] })">
+  <component :is="as" :for="as === 'label' ? props.for : undefined" data-slot="label" :class="ui.base({ class: [props.ui?.base, props.class] })" @mousedown="onMousedown">
     <slot />
-  </Label>
+  </component>
 </template>

@@ -100,7 +100,7 @@ Add keyboard shortcuts to quickly focus the search field.
 
 ### Render Function
 
-HeroUI's `render` prop replaces the root element. In Vue, attributes you pass to `SearchField` (other than `aria-label` / `aria-labelledby`, which go to the input) fall through to the root `div`.
+HeroUI's `render` prop replaces the root element. In Vue, input attributes you pass to `SearchField` (`aria-label`, `aria-labelledby`, `autocomplete`, `maxlength`, `inputmode`, …) go to the input, and `aria-describedby` is added to the input's description and error ids. Everything else falls through to the root `div`.
 
 <ComponentPreview name="search-field/render-function" />
 
@@ -166,7 +166,7 @@ SearchField sets these data attributes:
 ## Accessibility
 
 - The label's `for` points to the input id (auto-generated with `useId()` unless `id` is set)
-- The input's `aria-describedby` lists the ids of the rendered description (`<id>-description`) and error (`<id>-error`)
+- The input's `aria-describedby` lists any ids you pass, then the rendered description (`<id>-description`) and error (`<id>-error`)
 - `invalid` sets `aria-invalid="true"` on the input; the error is announced via `role="alert"`
 - `required` and `disabled` set the native attributes on the input
 - The clear button is excluded from the tab order (`tabindex="-1"`) and labeled `"Clear search"`; clicking it refocuses the input instead of moving focus away

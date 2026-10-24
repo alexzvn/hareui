@@ -84,7 +84,8 @@ const emit = defineEmits<{
 }>()
 defineSlots<ToggleButtonGroupSlots>()
 
-// Inside a Toolbar the group takes the toolbar's orientation and leaves arrow keys to it.
+// Inside a Toolbar the group takes the toolbar's orientation and leaves arrow keys to it. As a multiple-selection
+// `role="group"` there it omits `aria-orientation`, which that role doesn't support (React Aria sets it anyway).
 const toolbar = inject(toolbarContextKey, null)
 const orientation = computed(() => props.orientation ?? toolbar?.orientation.value ?? 'horizontal')
 
@@ -141,7 +142,7 @@ provide(toggleButtonGroupContextKey, {
     :as="as"
     v-bind="toolbar ? {} : { orientation, loop: false }"
     :role="selectionMode === 'single' ? 'radiogroup' : toolbar ? 'group' : 'toolbar'"
-    :aria-orientation="orientation"
+    :aria-orientation="toolbar && selectionMode !== 'single' ? undefined : orientation"
     :aria-disabled="isDisabled || undefined"
     data-slot="toggle-button-group"
     :data-orientation="orientation"

@@ -218,11 +218,14 @@ function onUpdate(value: boolean | 'indeterminate') {
       </span>
       <slot name="label" :state="state">{{ label }}</slot>
     </CheckboxRoot>
-    <Description v-if="hasDescription" :id="descriptionId">
+    <!-- Split so the no-slot branch has no forwarded `<slot>` and doesn't force-update the child on every render -->
+    <Description v-if="hasDescription && $slots.description" :id="descriptionId">
       <slot name="description" :state="state">{{ description }}</slot>
     </Description>
-    <FieldError v-if="hasError" :id="errorId">
+    <Description v-else-if="hasDescription" :id="descriptionId">{{ description }}</Description>
+    <FieldError v-if="hasError && $slots.error" :id="errorId">
       <slot name="error" v-bind="validation">{{ errorMessage ?? validation.validationErrors.join(' ') }}</slot>
     </FieldError>
+    <FieldError v-else-if="hasError" :id="errorId">{{ errorMessage ?? validation.validationErrors.join(' ') }}</FieldError>
   </div>
 </template>

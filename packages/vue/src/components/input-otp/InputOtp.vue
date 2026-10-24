@@ -88,7 +88,7 @@ export interface InputOtpEmits {
 </script>
 
 <script setup lang="ts">
-import { computed, onBeforeUnmount, onMounted, ref, useId, useSlots, useTemplateRef, watch } from 'vue'
+import { computed, onBeforeUnmount, onMounted, ref, useAttrs, useId, useSlots, useTemplateRef, watch } from 'vue'
 import { useComponentUI } from '../../composables/useComponentUI'
 import { useFieldValidation } from '../../composables/useFieldValidation'
 import Description from '../description/Description.vue'
@@ -96,10 +96,19 @@ import FieldError from '../field-error/FieldError.vue'
 import { useFieldsetDisabled } from '../fieldset/context'
 import Label from '../label/Label.vue'
 
+defineOptions({ inheritAttrs: false })
+
 const props = withDefaults(defineProps<InputOtpProps>(), { length: 6, invalid: undefined })
 const emit = defineEmits<InputOtpEmits>()
 const slots = useSlots()
 defineSlots<InputOtpSlots>()
+
+// `aria-label` / `aria-labelledby` name the input (as the `input-otp` library spreads them onto it), not the wrapper div
+const attrs = useAttrs()
+const rootAttrs = computed(() => {
+  const { 'aria-label': _label, 'aria-labelledby': _labelledby, ...rest } = attrs
+  return rest
+})
 
 /** The code. Bind with `v-model`. */
 const modelValue = defineModel<string>()
@@ -320,12 +329,15 @@ function onPaste(event: ClipboardEvent) {
 <template>
   <div
     ref="root"
+    v-bind="rootAttrs"
     :class="ui.base({ class: [props.ui?.base, props.class] })"
   >
     <!-- `base` is HareUI's own wrapper (HeroUI composes Label/InputOTP/Description itself), so it carries no data-slot -->
-    <Label v-if="hasLabel" :for="id" :disabled="disabled" :invalid="invalid" :required="required">
+    <!-- Each part renders the `<slot>` outlet only when that slot is passed: a forwarded slot would otherwise make Vue force-update the child on every render -->
+    <Label v-if="hasLabel && $slots.label" :for="id" :disabled="disabled" :invalid="invalid" :required="required">
       <slot name="label">{{ label }}</slot>
     </Label>
+    <Label v-else-if="hasLabel" :for="id" :disabled="disabled" :invalid="invalid" :required="required">{{ label }}</Label>
     <!-- Like the `input-otp` library's container: HeroUI's `data-slot="input-otp"` and state attributes land on the <input> -->
     <div
       ref="box"
@@ -371,6 +383,8 @@ function onPaste(event: ClipboardEvent) {
         autocapitalize="off"
         autocorrect="off"
         spellcheck="false"
+        :aria-label="attrs['aria-label'] as string | undefined"
+        :aria-labelledby="attrs['aria-labelledby'] as string | undefined"
         :aria-invalid="invalid ? 'true' : undefined"
         :aria-describedby="describedBy"
         data-slot="input-otp"
@@ -387,11 +401,13 @@ function onPaste(event: ClipboardEvent) {
         @select="syncSelection"
       >
     </div>
-    <Description v-if="hasDescription" :id="descriptionId">
+    <Description v-if="hasDescription && $slots.description" :id="descriptionId">
       <slot name="description">{{ description }}</slot>
     </Description>
-    <FieldError v-if="hasError" :id="errorId">
+    <Description v-else-if="hasDescription" :id="descriptionId">{{ description }}</Description>
+    <FieldError v-if="hasError && $slots.error" :id="errorId">
       <slot name="error" v-bind="validation">{{ errorMessage ?? validation.validationErrors.join(' ') }}</slot>
     </FieldError>
+    <FieldError v-else-if="hasError" :id="errorId">{{ errorMessage ?? validation.validationErrors.join(' ') }}</FieldError>
   </div>
 </template>

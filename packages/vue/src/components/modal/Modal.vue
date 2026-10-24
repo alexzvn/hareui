@@ -93,11 +93,13 @@ import {
   DialogTrigger,
   VisuallyHidden,
 } from 'reka-ui'
-import { computed, onBeforeUnmount, onMounted, ref, useSlots } from 'vue'
+import { computed, ref, useSlots, watch } from 'vue'
 import { preventNestedLayerDismiss } from '../../composables/nestedLayer'
 import { useComponentUI } from '../../composables/useComponentUI'
+import { useInertOutside } from '../../composables/useInertOutside'
 import { usePortal } from '../../composables/usePortal'
 import { useTabbableFocusLoop } from '../../composables/useTabbableFocusLoop'
+import { useVisualViewportHeight } from '../../composables/useVisualViewportHeight'
 import CloseButton from '../close-button/CloseButton.vue'
 
 // `open: undefined` stops Vue casting an absent boolean prop to `false`, so uncontrolled mode and `defaultOpen` apply
@@ -141,6 +143,19 @@ function onInteractOutside(event: PointerDownOutsideEvent | FocusOutsideEvent) {
 // Tab skips scrollable containers such as an overflowing body, as React Aria's FocusScope does.
 const dialogContent = ref<{ $el: HTMLElement } | null>(null)
 useTabbableFocusLoop(() => dialogContent.value?.$el)
+// Mirrors DialogRoot's open state synchronously: set from the `open` prop and from Reka's `update:open`.
+const openState = ref(props.open ?? props.defaultOpen ?? false)
+watch(() => props.open, (open) => {
+  if (open !== undefined)
+    openState.value = open
+}, { flush: 'sync' })
+function onOpenChange(open: boolean) {
+  // Controlled: the `open` watcher follows the parent, which may keep the dialog open.
+  if (props.open === undefined)
+    openState.value = open
+  emit('update:open', open)
+}
+useInertOutside(dialogContent, openState)
 
 // React Aria's Dialog focuses the dialog container itself on open, not the first
 // tabbable descendant (Reka's FocusScope default). Match that so e.g. a footer
@@ -150,25 +165,11 @@ function onOpenAutoFocus(event: Event) {
   ;(event.target as HTMLElement | null)?.focus({ preventScroll: true })
 }
 
-// Mirrors HeroUI's visual-viewport-aware height so the overlay never gets clipped by
-// mobile browser chrome / the on-screen keyboard, instead of a static `100dvh`.
-const visualViewportHeight = ref(typeof window !== 'undefined' ? `${window.innerHeight}px` : '100dvh')
-function updateVisualViewportHeight() {
-  visualViewportHeight.value = `${window.visualViewport?.height ?? window.innerHeight}px`
-}
-onMounted(() => {
-  updateVisualViewportHeight()
-  window.visualViewport?.addEventListener('resize', updateVisualViewportHeight)
-  window.addEventListener('resize', updateVisualViewportHeight)
-})
-onBeforeUnmount(() => {
-  window.visualViewport?.removeEventListener('resize', updateVisualViewportHeight)
-  window.removeEventListener('resize', updateVisualViewportHeight)
-})
+const visualViewportHeight = useVisualViewportHeight()
 </script>
 
 <template>
-  <DialogRoot :open="open" :default-open="defaultOpen" modal v-slot="{ open: isOpen, close }" @update:open="emit('update:open', $event)">
+  <DialogRoot :open="open" :default-open="defaultOpen" modal v-slot="{ open: isOpen, close }" @update:open="onOpenChange">
     <DialogTrigger v-if="!!slots.default" as-child>
       <slot :open="isOpen" />
     </DialogTrigger>

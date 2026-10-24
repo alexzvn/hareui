@@ -1,0 +1,44 @@
+/*
+ * Toast stacking variables are set inline (ToastItem) or by the toast slot's own utilities and read only
+ * by that same element's transform/height, so non-inherited registration keeps per-frame changes from
+ * restyling the toast's subtree.
+ */
+@property --offset-collapsed {
+  syntax: "*";
+  inherits: false;
+}
+
+@property --offset-expanded {
+  syntax: "*";
+  inherits: false;
+}
+
+@property --scale-collapsed {
+  syntax: "*";
+  inherits: false;
+}
+
+@property --front-height {
+  syntax: "*";
+  inherits: false;
+}
+
+@property --toast-height {
+  syntax: "*";
+  inherits: false;
+}
+
+@property --toast-y {
+  syntax: "*";
+  inherits: false;
+}
+
+@property --toast-scale {
+  syntax: "*";
+  inherits: false;
+}
+
+@property --toast-enter {
+  syntax: "*";
+  inherits: false;
+}

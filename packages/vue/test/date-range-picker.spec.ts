@@ -2,6 +2,7 @@ import { CalendarDate } from '@internationalized/date'
 import { mount } from '@vue/test-utils'
 import { describe, expect, it } from 'vitest'
 import DateRangePicker from '../src/components/date-range-picker/DateRangePicker.vue'
+import { expectAccessible } from './a11y'
 
 const trigger = '[data-slot=date-range-picker-trigger]'
 const flush = () => new Promise(r => setTimeout(r, 0))
@@ -180,4 +181,134 @@ describe('dateRangePicker', () => {
     wrapper.unmount()
   })
 
+})
+
+describe('DateRangePicker accessibility', () => {
+  const popover = () => document.querySelector<HTMLElement>('[data-slot=date-range-picker-popover]')
+  const nameOf = (ids: string) => ids.split(' ').map((id) => {
+    const el = document.getElementById(id)!
+    return el.getAttribute('aria-label') ?? el.textContent!.trim()
+  }).join(' ')
+
+  async function open(props: Record<string, unknown> = { label: 'Trip dates', defaultValue: range }) {
+    const wrapper = mount(DateRangePicker, { props: props as any, attachTo: document.body })
+    await wrapper.get(trigger).trigger('click')
+    await flush()
+    return wrapper
+  }
+
+  it('passes axe idle, filled with description, aria-labelled, invalid with error, disabled and read-only', async () => {
+    const cases = [
+      { label: 'Trip dates' },
+      { label: 'Trip dates', description: 'Up to two weeks', defaultValue: range },
+      { 'aria-label': 'Trip dates' },
+      { label: 'Trip dates', invalid: true, errorMessage: 'Too long', defaultValue: range },
+      { label: 'Trip dates', disabled: true, defaultValue: range },
+      { label: 'Trip dates', readonly: true, defaultValue: range },
+      { label: 'Trip dates', inputContainer: true, defaultValue: range },
+    ]
+    for (const props of cases) {
+      const wrapper = mount(DateRangePicker, { props: props as any, attachTo: document.body })
+      await expectAccessible(wrapper)
+      wrapper.unmount()
+    }
+  })
+
+  it('passes axe with the range calendar popover open', async () => {
+    const wrapper = await open()
+    try {
+      await expectAccessible()
+    }
+    finally {
+      wrapper.unmount()
+    }
+  })
+
+  it('passes axe with the popover\'s year picker open', async () => {
+    const wrapper = await open({ label: 'Trip dates', defaultValue: range, yearPicker: true })
+    document.querySelector<HTMLElement>('[data-slot=calendar-year-picker-trigger]')!.click()
+    await flush()
+    try {
+      await expectAccessible()
+    }
+    finally {
+      wrapper.unmount()
+    }
+  })
+
+  it('the trigger announces a dialog popup, the field description and its expanded state, and controls the open dialog', async () => {
+    const wrapper = mount(DateRangePicker, { props: { label: 'Trip dates', description: 'Up to two weeks' }, attachTo: document.body })
+    const button = wrapper.get(trigger)
+    expect(button.attributes('aria-haspopup')).toBe('dialog')
+    expect(nameOf(button.attributes('aria-labelledby')!)).toBe('Calendar Trip dates')
+    expect(nameOf(button.attributes('aria-describedby')!)).toBe('Up to two weeks')
+    expect(button.attributes('aria-expanded')).toBe('false')
+    await button.trigger('click')
+    await flush()
+    expect(button.attributes('aria-expanded')).toBe('true')
+    expect(button.attributes('aria-controls')).toBe(popover()!.id)
+    wrapper.unmount()
+  })
+
+  it('the popover is a dialog named by the trigger and the field label', async () => {
+    const wrapper = await open()
+    expect(popover()!.getAttribute('role')).toBe('dialog')
+    expect(nameOf(popover()!.getAttribute('aria-labelledby')!)).toBe('Calendar Trip dates')
+    wrapper.unmount()
+  })
+
+  it('focus is contained in the open dialog', async () => {
+    const outside = document.createElement('button')
+    document.body.appendChild(outside)
+    const wrapper = await open()
+    outside.focus()
+    await flush()
+    expect(popover()!.contains(document.activeElement)).toBe(true)
+    wrapper.unmount()
+    outside.remove()
+  })
+
+  it('Escape on a day closes the dialog, collapses the trigger and returns focus to it', async () => {
+    const wrapper = await open()
+    expect(popover()!.contains(document.activeElement)).toBe(true)
+    document.activeElement!.dispatchEvent(new KeyboardEvent('keydown', { key: 'Escape', bubbles: true, cancelable: true }))
+    await flush()
+    expect(popover()).toBeNull()
+    expect(wrapper.get(trigger).attributes('aria-expanded')).toBe('false')
+    expect(document.activeElement).toBe(wrapper.get(trigger).element)
+    wrapper.unmount()
+  })
+
+  it('Alt+ArrowDown on a segment opens the dialog; disabled and read-only pickers cannot open it', async () => {
+    const wrapper = mount(DateRangePicker, { props: { label: 'Trip dates', defaultValue: range }, attachTo: document.body })
+    await wrapper.get('[role=spinbutton]').trigger('keydown', { key: 'ArrowDown', altKey: true })
+    await flush()
+    expect(popover()).not.toBeNull()
+    wrapper.unmount()
+
+    for (const props of [{ disabled: true }, { readonly: true }]) {
+      const blocked = mount(DateRangePicker, { props: { label: 'Trip dates', defaultValue: range, ...props }, attachTo: document.body })
+      expect(blocked.get(trigger).attributes('disabled')).toBeDefined()
+      await blocked.get(trigger).trigger('click')
+      await blocked.get('[role=spinbutton]').trigger('keydown', { key: 'ArrowDown', altKey: true })
+      await flush()
+      expect(popover()).toBeNull()
+      blocked.unmount()
+    }
+  })
+
+  it('start and end segments are named Start Date / End Date with the label, and the first one carries the description', () => {
+    const wrapper = mount(DateRangePicker, { props: { label: 'Trip dates', description: 'Up to two weeks', defaultValue: range }, attachTo: document.body })
+    const segments = wrapper.findAll('[role=spinbutton]')
+    expect(segments.map(s => nameOf(s.attributes('aria-labelledby')!))).toEqual([
+      'month, Start Date,  Trip dates',
+      'day, Start Date,  Trip dates',
+      'year, Start Date,  Trip dates',
+      'month, End Date,  Trip dates',
+      'day, End Date,  Trip dates',
+      'year, End Date,  Trip dates',
+    ])
+    expect(segments.map(s => s.attributes('aria-describedby') && nameOf(s.attributes('aria-describedby')!))).toEqual(['Up to two weeks', undefined, undefined, 'Up to two weeks', undefined, undefined])
+    wrapper.unmount()
+  })
 })

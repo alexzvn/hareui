@@ -77,7 +77,7 @@ const theme = ref(['system'])
       </template>
 
       <template #footer>
-        <NavigationMenu :items="footerItems" orientation="vertical" class="w-full" />
+        <NavigationMenu aria-label="Secondary" :items="footerItems" orientation="vertical" class="w-full" />
       </template>
     </DashboardSidebar>
 

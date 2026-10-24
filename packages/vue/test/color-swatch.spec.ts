@@ -4,8 +4,39 @@ import { h } from 'vue'
 import ColorSwatch from '../src/components/color-swatch/ColorSwatch.vue'
 import { ColorPickerContextKey } from '../src/components/color-picker/context'
 import { parseColor } from 'reka-ui'
+import { expectAccessible } from './a11y'
 
-describe('colorSwatch', () => {
+describe('ColorSwatch', () => {
+  it('passes axe for a named colour, a custom colorName and a transparent colour', async () => {
+    const named = mount(ColorSwatch, { attachTo: document.body, props: { color: '#0485F7' } })
+    await expectAccessible(named)
+    const custom = mount(ColorSwatch, { attachTo: document.body, props: { color: '#0485F7', colorName: 'Ocean Blue', shape: 'square', size: 'lg' } })
+    await expectAccessible(custom)
+    const transparent = mount(ColorSwatch, { attachTo: document.body, props: { color: 'rgba(0, 0, 0, 0)' } })
+    await expectAccessible(transparent)
+    named.unmount()
+    custom.unmount()
+    transparent.unmount()
+  })
+
+  it('describes itself as a colour swatch and names a transparent colour', () => {
+    const wrapper = mount(ColorSwatch, { props: { color: 'rgba(0, 0, 0, 0)' } })
+    const el = wrapper.get('[data-slot=color-swatch]')
+    expect(el.attributes('aria-roledescription')).toBe('color swatch')
+    expect(el.attributes('aria-label')).toBe('transparent')
+    expect(el.attributes('tabindex')).toBeUndefined()
+    wrapper.unmount()
+  })
+
+  it('updates its accessible name when the colour changes', async () => {
+    const wrapper = mount(ColorSwatch, { props: { color: '#FF0000' } })
+    const el = wrapper.get('[data-slot=color-swatch]')
+    expect(el.attributes('aria-label')).toMatch(/red/i)
+    await wrapper.setProps({ color: '#00FF00' })
+    expect(el.attributes('aria-label')).toMatch(/green|lime/i)
+    wrapper.unmount()
+  })
+
   it('renders as an accessible img with a derived color name', () => {
     const wrapper = mount(ColorSwatch, { props: { color: '#0485F7' } })
     const el = wrapper.find('[data-slot=color-swatch]')

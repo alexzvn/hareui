@@ -25,12 +25,12 @@ export interface ToastItemProps {
   /** Closes this toast on its owning queue. */
   close: () => void
   providerUi?: ComponentSlots<Toast>
-  toastSlot?: (props: { content: ToastContentValue, close: () => void }) => any
+  toastSlot?: (props: { content: ToastContentValue, close: () => void, titleId: string, descriptionId: string }) => any
 }
 </script>
 
 <script setup lang="ts">
-import { computed, onBeforeUnmount, onMounted, ref, useId, watch } from 'vue'
+import { computed, onBeforeUnmount, onMounted, onUpdated, ref, useId, watch } from 'vue'
 import { useComponentUI } from '../../composables/useComponentUI'
 import renderValue from './renderValue'
 import Button from '../button/Button.vue'
@@ -56,6 +56,27 @@ const titleId = useId()
 const descId = useId()
 const hasTitle = computed(() => content.value.title !== undefined && content.value.title !== null && content.value.title !== '')
 const hasDescription = computed(() => content.value.description !== undefined && content.value.description !== null && content.value.description !== '')
+// A #toast slot renders its own title / description: reference the ids handed to it only once an element carries
+// them (as RAC's useSlotId does), so the toast never points at a missing element.
+const slotHasTitle = ref(false)
+const slotHasDescription = ref(false)
+function syncSlotIds() {
+  const el = rootEl.value
+  if (!el || !props.toastSlot)
+    return
+  slotHasTitle.value = !!el.querySelector(`[id="${titleId}"]`)
+  slotHasDescription.value = !!el.querySelector(`[id="${descId}"]`)
+}
+onMounted(syncSlotIds)
+onUpdated(syncSlotIds)
+const labelledBy = computed(() => (props.toastSlot ? slotHasTitle.value : hasTitle.value) ? titleId : undefined)
+const describedBy = computed(() => (props.toastSlot ? slotHasDescription.value : hasDescription.value) ? descId : undefined)
+// React Aria's `contentProps`: the content is the live `role="alert"` region. It starts aria-hidden and is revealed
+// right after mount; NVDA only announces the toast on that change.
+const isContentVisible = ref(false)
+onMounted(() => {
+  isContentVisible.value = true
+})
 
 const tabIndex = computed(() => (props.isFrontmost || (props.isExpanded && !props.isHidden && !props.isExiting)) ? 0 : -1)
 
@@ -154,7 +175,7 @@ watch(toastHeight, (height) => {
  * aria-hidden around a focused element, so focus moves out first: the provider moves it to a
  * neighbouring toast (RAC's useToastRegion), and it is blurred if it is still inside.
  * -------------------------------------------------------------------------------------------- */
-watch(() => props.isHidden || props.isExiting, (shouldHide) => {
+function syncHidden(shouldHide: boolean) {
   const el = rootEl.value
   if (!el)
     return
@@ -176,7 +197,11 @@ watch(() => props.isHidden || props.isExiting, (shouldHide) => {
     el.removeAttribute('aria-hidden')
     el.removeAttribute('inert')
   }
-}, { immediate: true })
+}
+watch(() => props.isHidden || props.isExiting, syncHidden)
+// A toast can mount already hidden (several shown in one tick, or queued before the provider mounted);
+// the root element only exists from here on.
+onMounted(() => syncHidden(props.isHidden || props.isExiting))
 
 /* ------------------------------------------------------------------------------------------------
  * Indicator: tracks the "kind" of content shown so the swap between a spinner, a default icon,
@@ -222,8 +247,8 @@ function onActionClick(event: MouseEvent) {
     role="alertdialog"
     aria-modal="false"
     data-slot="toast"
-    :aria-labelledby="hasTitle ? titleId : undefined"
-    :aria-describedby="hasDescription ? descId : undefined"
+    :aria-labelledby="labelledBy"
+    :aria-describedby="describedBy"
     :tabindex="tabIndex"
     :data-entering="isEntering ? 'true' : undefined"
     :data-exiting="isExiting ? 'true' : undefined"
@@ -236,7 +261,7 @@ function onActionClick(event: MouseEvent) {
     :class="ui.toast({ class: providerUi?.toast })"
   >
     <template v-if="toastSlot">
-      <component :is="renderValue" :value="toastSlot({ content, close: props.close })" />
+      <component :is="renderValue" :value="toastSlot({ content, close: props.close, titleId, descriptionId: descId })" />
     </template>
     <template v-else>
       <div v-if="hasIndicator" data-slot="toast-indicator" :data-swapped="hasSwapped ? 'true' : undefined" :class="ui.indicator({ class: providerUi?.indicator })">
@@ -246,7 +271,7 @@ function onActionClick(event: MouseEvent) {
           <path clip-rule="evenodd" :d="defaultIconPath" fill="currentColor" fill-rule="evenodd" />
         </svg>
       </div>
-      <div data-slot="toast-content" :class="ui.content({ class: providerUi?.content })">
+      <div data-slot="toast-content" role="alert" aria-atomic="true" :aria-hidden="isContentVisible ? undefined : 'true'" :class="ui.content({ class: providerUi?.content })">
         <p v-if="hasTitle" :id="titleId" data-slot="toast-title" :class="ui.title({ class: providerUi?.title })">
           <component :is="renderValue" :value="content.title" />
         </p>
