@@ -22,7 +22,7 @@ export const getDerivedColorFormulas = (
 
   // A vibrant palette tints soft foregrounds with the color itself instead of the accessible mix
   const resolveSoftForeground = (colorVar: string, accessibleFormula: string) =>
-    isVibrant ? VIBRANT_SOFT_FOREGROUND.replace('--VAR', colorVar) : accessibleFormula
+    isVibrant ? VIBRANT_SOFT_FOREGROUND.replace('VAR', colorVar) : accessibleFormula
 
   return {
     '--accent-hover': 'color-mix(in oklab, var(--accent) 90%, var(--accent-foreground) 10%)',
