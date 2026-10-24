@@ -1,5 +1,5 @@
-import { readFile, writeFile } from 'node:fs/promises'
-import { join, resolve } from 'node:path'
+import { mkdir, readFile, writeFile } from 'node:fs/promises'
+import { dirname, join, resolve } from 'node:path'
 import { normalizePath, sectionLinks, sidebar, type SidebarLink } from '../.vitepress/sidebar'
 import type { ComponentApi } from './api-types'
 
@@ -162,7 +162,7 @@ for (const section of sidebar) {
     pages.push({
       section: section.text,
       link,
-      url: `${SITE_URL}${link.link}`,
+      url: `${SITE_URL}${link.link}${link.link.endsWith('/') ? 'index' : ''}.md`,
       title: data.title ?? link.text,
       description: data.description ?? '',
       body: await toMarkdown(body),
@@ -201,6 +201,11 @@ const full = pages
   )
   .join('\n\n')
 
+for (const p of pages) {
+  const file = join(distDir, new URL(p.url).pathname)
+  await mkdir(dirname(file), { recursive: true })
+  await writeFile(file, `# ${p.title}\n\n> ${p.description}\n\n${p.body}\n`)
+}
 await writeFile(join(distDir, 'llms.txt'), `${index.trimEnd()}\n`)
 await writeFile(join(distDir, 'llms-full.txt'), `${full}\n`)
 console.log(`llms: ${pages.length} pages → llms.txt, llms-full.txt`)
