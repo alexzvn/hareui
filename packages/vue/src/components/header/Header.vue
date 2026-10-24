@@ -217,6 +217,7 @@ const props = withDefaults(defineProps<HeaderProps>(), {
   closeLabel: 'Close menu',
   menuTitle: 'Navigation menu',
 })
+
 const slots = defineSlots<HeaderSlots>()
 
 const open = defineModel<boolean>('open', { default: false })
@@ -230,6 +231,7 @@ const ui = useComponentUI('header', theme, () => ({
 
 const hasMenu = computed(() => !!(slots.body || slots.content))
 const showToggle = computed(() => !!slots.toggle || (!!props.toggle && hasMenu.value))
+
 // Applied inline so it also reaches the menu's header, which is teleported out of the root.
 const heightStyle = computed(() => (props.height ? { '--header-height': props.height } : undefined))
 
@@ -243,10 +245,12 @@ const iconOpen = ref(open.value)
 let iconFrame = 0
 watch(open, (value) => {
   cancelAnimationFrame(iconFrame)
+
   if (!value) {
     iconOpen.value = false
     return
   }
+
   iconFrame = requestAnimationFrame(() => {
     iconFrame = requestAnimationFrame(() => {
       iconOpen.value = true
@@ -258,8 +262,10 @@ watch(open, (value) => {
 const Toggle: FunctionalComponent = () => {
   if (slots.toggle) return slots.toggle({ open: open.value, toggle: toggleOpen, ui: ui.value })
   if (!showToggle.value) return null
+
   const options: Omit<ButtonProps, 'as' | 'iconOnly'> =
     typeof props.toggle === 'object' ? props.toggle : {}
+
   return h(
     Button,
     {
@@ -292,6 +298,7 @@ const titleAttrs = computed(() => ({
   'data-slot': 'header-title',
   class: ui.value.title({ class: props.ui?.title }),
 }))
+
 const titleContent = () => (slots.title ? slots.title() : props.title)
 
 const Left: FunctionalComponent = () =>
@@ -342,6 +349,7 @@ const barOffsetY = (el: HTMLElement) => {
   if (!y) return 0
   const value = Number.parseFloat(y)
   if (Number.isNaN(value)) return 0
+
   return y.endsWith('%') ? (value * el.offsetHeight) / 100 : value
 }
 
@@ -356,9 +364,11 @@ const transformProps = [
   'filter',
   'backdropFilter',
 ] as const
+
 const fixedContainingBlock = (from: Element | null | undefined): HTMLElement | null => {
   for (let el = from; el && el !== document.documentElement; el = el.parentElement) {
     const style = getComputedStyle(el)
+
     // Unsupported properties read as empty, so only an explicit non-`none` value counts.
     if (
       transformProps.some((key) => style[key] && style[key] !== 'none') ||
@@ -368,6 +378,7 @@ const fixedContainingBlock = (from: Element | null | undefined): HTMLElement | n
       return el as HTMLElement
     }
   }
+
   return null
 }
 
@@ -376,6 +387,7 @@ const updateAnchor = () => {
   if (!el || !bar.value) return
   const box = el.getBoundingClientRect()
   const viewportHeight = window.visualViewport?.height ?? window.innerHeight
+
   // The region runs from the bar's top edge to the bottom of the viewport, clamped to the containing block when there is one.
   let originTop = 0
   let originLeft = 0
@@ -387,6 +399,7 @@ const updateAnchor = () => {
     originLeft = rect.left + block.clientLeft
     bottom = Math.min(bottom, originTop + block.clientHeight)
   }
+
   const top = Math.max(0, originTop, bar.value.getBoundingClientRect().top - barOffsetY(el))
   anchorStyle.value = {
     '--header-menu-top': `${top - originTop}px`,
@@ -403,6 +416,7 @@ let anchorScheduled = false
 const scheduleAnchorUpdate = () => {
   if (anchorScheduled) return
   anchorScheduled = true
+
   anchorFrame = requestAnimationFrame(() => {
     anchorScheduled = false
     updateAnchor()
@@ -412,6 +426,7 @@ const scheduleAnchorUpdate = () => {
 const stopAnchorTracking = () => {
   window.removeEventListener('resize', scheduleAnchorUpdate)
   window.removeEventListener('scroll', scheduleAnchorUpdate, true)
+
   if (anchorScheduled) {
     cancelAnimationFrame(anchorFrame)
     anchorScheduled = false
@@ -474,6 +489,7 @@ const onMenuClick = (event: MouseEvent) => {
 
 const MenuContent: FunctionalComponent<{ close: () => void }> = ({ close }) => {
   if (slots.content) return slots.content({ close })
+
   return [
     h(VisuallyHidden, { asChild: true }, () => h(DialogTitle, null, () => props.menuTitle)),
     props.mode === 'drawer'
@@ -525,6 +541,7 @@ let scrollLockObserver: MutationObserver | null = null
 
 const restoreBodyStyles = () => {
   if (!bodyStyles) return
+
   // Only write on a difference: writing an identical value still queues a mutation record, which would loop the observer.
   const { style } = document.body
   for (const key of ['overflow', 'paddingRight', 'marginRight'] as const) {
@@ -567,6 +584,7 @@ const resolveScroller = (): HTMLElement | Window => {
   const target = props.scrollTarget
   if (typeof target === 'string') return document.querySelector<HTMLElement>(target) ?? window
   if (target) return target
+
   // The nearest scrollable ancestor: that is what a sticky bar sticks to.
   for (
     let el = root.value?.$el?.parentElement;
@@ -576,6 +594,7 @@ const resolveScroller = (): HTMLElement | Window => {
     const { overflowY } = getComputedStyle(el)
     if (overflowY === 'auto' || overflowY === 'scroll' || overflowY === 'overlay') return el
   }
+
   return window
 }
 
@@ -588,6 +607,7 @@ const update = () => {
   const y = scrollY()
   const delta = y - lastY
   lastY = y
+
   // Keep the bar while the menu is open, and whenever the page sits within its own height of the top.
   if (open.value || y <= (root.value?.$el?.offsetHeight ?? 0)) hidden.value = false
   else if (delta > 0) hidden.value = true
@@ -603,6 +623,7 @@ const onScroll = () => {
 const stopScrollTracking = () => {
   scroller?.removeEventListener('scroll', onScroll)
   scroller = null
+
   if (frameScheduled) {
     cancelAnimationFrame(frame)
     frameScheduled = false

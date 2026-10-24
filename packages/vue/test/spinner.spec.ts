@@ -21,6 +21,7 @@ describe('Spinner', () => {
       h(Spinner, { size: 'sm', color: 'danger' }),
       h(Spinner, { size: 'lg', color: 'current' }),
     ])
+
     await expectAccessible(wrapper)
     wrapper.unmount()
   })
@@ -29,10 +30,12 @@ describe('Spinner', () => {
     const wrapper = mount(Spinner, { attachTo: document.body })
     expect(wrapper.attributes()).toMatchObject({ role: 'status', 'aria-label': 'Loading' })
     expect(wrapper.get('svg').attributes('aria-hidden')).toBe('true')
+
     // aria-label is a fallthrough attr, not a declared prop; setProps forwards it all the same.
     const localized: Partial<SpinnerProps> & { 'aria-label': string } = {
       'aria-label': 'Chargement',
     }
+
     await wrapper.setProps(localized)
     expect(wrapper.attributes('aria-label')).toBe('Chargement')
     await expectAccessible(wrapper)
@@ -43,8 +46,10 @@ describe('Spinner', () => {
     const wrapper = mountAll(() => [h(Spinner), h(Spinner)])
     const ids = wrapper.findAll('linearGradient').map((g) => g.attributes('id'))
     expect(new Set(ids).size).toBe(4)
+
     for (const path of wrapper.findAll('path[fill^="url("]'))
       expect(ids).toContain(path.attributes('fill')!.slice(5, -1))
+
     wrapper.unmount()
   })
 

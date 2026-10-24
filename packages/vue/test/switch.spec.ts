@@ -20,6 +20,7 @@ describe('Switch', () => {
         'onUpdate:modelValue': (v: boolean) => (model.value = v === true),
       }),
     )
+
     await wrapper.find(control).trigger('click')
     expect(model.value).toBe(true)
     expect(wrapper.find('[data-slot=switch]').attributes('data-selected')).toBe('true')
@@ -46,6 +47,7 @@ describe('Switch', () => {
       ]),
       { attachTo: document.body },
     )
+
     await wrapper.find('label[for=wifi]').trigger('click')
     expect(model.value).toBe(true)
     wrapper.unmount()
@@ -55,6 +57,7 @@ describe('Switch', () => {
     const wrapper = mount(Switch, {
       slots: { icon: ({ checked }: { checked: boolean }) => (checked ? 'on' : 'off') },
     })
+
     expect(wrapper.find('[data-slot=switch-thumb] [data-slot=switch-icon]').text()).toBe('off')
     await wrapper.find(control).trigger('click')
     expect(wrapper.find('[data-slot=switch-icon]').text()).toBe('on')
@@ -102,6 +105,7 @@ describe('Switch keyboard parity', () => {
       e.preventDefault()
       submitted++
     })
+
     const wrapper = mount(Switch, { props: { label: 'Wi-Fi' }, attachTo: form })
     await wrapper.get(control).trigger('keydown', { key: 'Enter' })
     expect(wrapper.emitted('update:modelValue')).toBeUndefined()
@@ -120,6 +124,7 @@ describe('Switch keyboard parity', () => {
       e.preventDefault()
       clicked++
     })
+
     const host = document.createElement('div')
     form.append(host, submit)
     document.body.append(form)
@@ -153,14 +158,17 @@ const pressSpace = async (el: Element) => {
     bubbles: true,
     cancelable: true,
   })
+
   const up = new KeyboardEvent('keyup', {
     key: ' ',
     code: 'Space',
     bubbles: true,
     cancelable: true,
   })
+
   el.dispatchEvent(down)
   el.dispatchEvent(up)
+
   if (
     el instanceof HTMLButtonElement &&
     !el.disabled &&
@@ -168,6 +176,7 @@ const pressSpace = async (el: Element) => {
     !up.defaultPrevented
   )
     el.click()
+
   await nextTick()
 }
 
@@ -196,6 +205,7 @@ describe('Switch accessibility', () => {
       slots: { icon: () => h('svg', { 'aria-hidden': 'true', viewBox: '0 0 24 24' }) },
       attachTo: document.body,
     })
+
     await expectAccessible(wrapper)
     wrapper.unmount()
   })
@@ -205,6 +215,7 @@ describe('Switch accessibility', () => {
       () => h('form', null, h(Switch, { label: 'Wi-Fi', name: 'wifi', required: true })),
       { attachTo: document.body },
     )
+
     await nextTick()
     await expectAccessible(wrapper)
     wrapper.unmount()
@@ -221,6 +232,7 @@ describe('Switch accessibility', () => {
       ),
       { attachTo: document.body },
     )
+
     await nextTick()
     await expectAccessible(wrapper)
     wrapper.unmount()
@@ -256,11 +268,13 @@ describe('Switch accessibility', () => {
       },
       attachTo: document.body,
     })
+
     const ids = wrapper.get(control).attributes('aria-describedby')!.split(' ')
     expect(ids.map((id) => document.getElementById(id)?.textContent?.trim())).toEqual([
       'Connect automatically',
       'Turn Wi-Fi on',
     ])
+
     wrapper.unmount()
   })
 
@@ -284,6 +298,7 @@ describe('Switch accessibility', () => {
       props: { label: 'Wi-Fi', readonly: true },
       attachTo: document.body,
     })
+
     const content = wrapper.get(control).element as HTMLButtonElement
     const down = new MouseEvent('mousedown', { bubbles: true, cancelable: true })
     content.dispatchEvent(down)
@@ -301,6 +316,7 @@ describe('Switch accessibility', () => {
       props: { label: 'Wi-Fi', disabled: true },
       attachTo: document.body,
     })
+
     const content = wrapper.get(control).element as HTMLButtonElement
     expect(content.disabled).toBe(true)
     content.focus()

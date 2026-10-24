@@ -17,6 +17,7 @@ const columns: TableColumn[] = [
   { key: 'status', label: 'Status' },
   { key: 'email', label: 'Email' },
 ]
+
 const rows: TableRow[] = [
   { id: 1, name: 'Kate Moore', role: 'CEO', status: 'Active', email: 'kate@acme.com' },
   { id: 2, name: 'John Smith', role: 'CTO', status: 'Active', email: 'john@acme.com' },

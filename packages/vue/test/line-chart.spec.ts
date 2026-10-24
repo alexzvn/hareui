@@ -28,6 +28,7 @@ const hover = async (
   wrapper
     .find('[data-slot=chart-surface]')
     .element.dispatchEvent(new PointerEvent('pointermove', { clientX, clientY, bubbles: true }))
+
   await settle()
 }
 
@@ -51,9 +52,11 @@ describe('LineChart', () => {
       h(ChartLine, { dataKey: 'organic', type: 'linear', dot: false, isAnimationActive: false }),
       h(ChartLine, { dataKey: 'paid', type: 'linear', dot: false, isAnimationActive: false }),
     ])
+
     await settle()
     const paths = wrapper.findAll('[data-slot=chart-line-curve]')
     expect(paths).toHaveLength(2)
+
     // Point scale over [0, 400]; implicit y domain [0, 20] over [200, 0].
     expect(paths[0].attributes('d')).toBe('M0,200L200,100L400,0')
     expect(paths[1].attributes('d')).toBe('M0,100L200,150L400,200')
@@ -71,6 +74,7 @@ describe('LineChart', () => {
         isAnimationActive: false,
       }),
     ])
+
     await settle()
     const path = wrapper.find('[data-slot=chart-line-curve]')
     expect(path.attributes('stroke')).toBe('var(--chart-2)')
@@ -87,6 +91,7 @@ describe('LineChart', () => {
         isAnimationActive: false,
       }),
     ])
+
     await settle()
     const dots = wrapper.findAll('[data-slot=chart-dot]')
     expect(dots).toHaveLength(3)
@@ -102,19 +107,24 @@ describe('LineChart', () => {
       h(ChartLine, { dataKey: 'paid', name: 'Paid', dot: false, isAnimationActive: false }),
       h(ChartTooltip, { isAnimationActive: false }),
     ])
+
     await settle()
+
     // Between Feb (x=200) and Mar (x=400), nearer Feb.
     await hover(wrapper, 290, 50)
     const panel = wrapper.find('[data-slot=chart-tooltip]')
     expect(panel.find('[data-slot=chart-tooltip-header]').text()).toBe('Feb')
+
     expect(panel.findAll('[data-slot=chart-tooltip-label]').map((label) => label.text())).toEqual([
       'Organic',
       'Paid',
     ])
+
     expect(panel.findAll('[data-slot=chart-tooltip-value]').map((value) => value.text())).toEqual([
       '10',
       '5',
     ])
+
     wrapper.unmount()
   })
 
@@ -123,6 +133,7 @@ describe('LineChart', () => {
       label: unknown
       payload: Array<{ dataKey: string; value: unknown; color: string }>
     }> = []
+
     const wrapper = mountChart(() => [
       h(ChartXAxis, { dataKey: 'month', hide: true }),
       h(ChartLine, {
@@ -142,15 +153,18 @@ describe('LineChart', () => {
         },
       ),
     ])
+
     await settle()
     await hover(wrapper, 395, 10)
     const last = seen.at(-1)!
     expect(last.label).toBe('Mar')
+
     expect(last.payload[0]).toMatchObject({
       dataKey: 'organic',
       value: 20,
       color: 'var(--chart-3)',
     })
+
     wrapper.unmount()
   })
 
@@ -160,8 +174,10 @@ describe('LineChart', () => {
       h(ChartLine, { dataKey: 'organic', name: 'Organic', dot: false, isAnimationActive: false }),
       h(ChartTooltip, { isAnimationActive: false }),
     ])
+
     await settle()
     const surface = wrapper.find('[data-slot=chart-surface]')
+
     // Keyboard focus activates the first point; arrows move from there.
     ;(surface.element as SVGElement).focus()
     await settle()
@@ -174,9 +190,11 @@ describe('LineChart', () => {
     expect(wrapper.find('[data-slot=chart-tooltip]').text()).toContain('Mar')
     await surface.trigger('keydown', { key: 'Escape' })
     await settle()
+
     expect(wrapper.find('[data-slot=chart-tooltip-wrapper]').attributes('data-state')).toBe(
       'closed',
     )
+
     wrapper.unmount()
   })
 
@@ -193,6 +211,7 @@ describe('LineChart', () => {
       },
       attachTo: document.body,
     })
+
     await settle()
     await expectAccessible(wrapper)
     ;(wrapper.find('[data-slot=chart-surface]').element as SVGElement).focus()
@@ -209,6 +228,7 @@ describe('LineChart', () => {
     const proto = Object.getPrototypeOf(
       document.createElementNS('http://www.w3.org/2000/svg', 'path'),
     ) as { getTotalLength?: () => number }
+
     const hadLength = Object.prototype.hasOwnProperty.call(proto, 'getTotalLength')
 
     afterEach(() => {
@@ -219,22 +239,28 @@ describe('LineChart', () => {
 
     it('measures the path length once per series, not every frame of the reveal', async () => {
       if (!hadLength) proto.getTotalLength = () => 0
+
       const getTotalLength = vi
         .spyOn(proto as Required<typeof proto>, 'getTotalLength')
         .mockReturnValue(500)
+
       let queue: FrameRequestCallback[] = []
       vi.spyOn(performance, 'now').mockReturnValue(0)
+
       vi.stubGlobal('requestAnimationFrame', (callback: FrameRequestCallback) =>
         queue.push(callback),
       )
+
       vi.stubGlobal('cancelAnimationFrame', () => {
         queue = []
       })
+
       const frame = (time: number) => {
         const run = queue
         queue = []
         run.forEach((callback) => callback(time))
       }
+
       const wrapper = mountChart(() => [
         h(ChartLine, {
           dataKey: 'organic',
@@ -249,16 +275,20 @@ describe('LineChart', () => {
           animationEasing: 'linear',
         }),
       ])
+
       await settle()
+
       for (const time of [100, 200, 300, 400, 500, 600]) {
         frame(time)
         await settle()
       }
+
       // Still drawing on: the dash grows with the reveal.
       const [dash, gap] = wrapper
         .find('[data-slot=chart-line-curve]')
         .attributes('stroke-dasharray')!
         .split(' ')
+
       expect(Number.parseFloat(dash!)).toBeCloseTo(300, 3)
       expect(gap).toBe('500px')
       expect(getTotalLength.mock.calls.length).toBeLessThanOrEqual(2)

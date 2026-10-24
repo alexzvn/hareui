@@ -103,6 +103,7 @@ const props = withDefaults(defineProps<TypographyProps>(), {
   truncate: false,
   prose: false,
 })
+
 defineSlots<TypographySlots>()
 
 const ui = useComponentUI('typography', theme, () => ({

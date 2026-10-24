@@ -43,7 +43,9 @@ const props = defineProps<{
   /** Distance of the frame's right edge from the stage's left edge (px); `undefined` pins the handle to the right. */
   edge?: number
 }>()
+
 const emit = defineEmits<{ resize: [width: number]; preload: [] }>()
+
 /** True while the pointer drags the handle. */
 const dragging = defineModel<boolean>('dragging', { default: false })
 
@@ -52,15 +54,18 @@ const clamp = (value: number) => Math.round(Math.min(props.max, Math.max(props.m
 let start: { x: number; width: number } | undefined
 const onPointerDown = (event: PointerEvent) => {
   if (event.button !== 0) return
+
   // No text selection or focus change: the drag owns the pointer.
   event.preventDefault()
   ;(event.currentTarget as HTMLElement).setPointerCapture(event.pointerId)
   start = { x: event.clientX, width: props.width }
   dragging.value = true
 }
+
 const onPointerMove = (event: PointerEvent) => {
   if (start) emit('resize', clamp(start.width + event.clientX - start.x))
 }
+
 const onPointerEnd = () => {
   start = undefined
   dragging.value = false
@@ -72,6 +77,7 @@ const onKeydown = (event: KeyboardEvent) => {
   if (event.key in STEPS) next = props.width + STEPS[event.key] * (event.shiftKey ? 5 : 1)
   else if (event.key === 'Home') next = props.min
   else if (event.key === 'End') next = props.max
+
   if (next === undefined) return
   event.preventDefault()
   emit('resize', clamp(next))

@@ -14,8 +14,10 @@ describe('disclosure', () => {
       props: { title: 'Toggle content' },
       slots: { default: () => 'Panel content' },
     })
+
     const trigger = wrapper.find('[data-slot=disclosure-trigger]')
     expect(trigger.attributes('aria-expanded')).toBe('false')
+
     expect(
       wrapper.find('[data-slot=disclosure-content]').attributes('data-expanded'),
     ).toBeUndefined()
@@ -26,6 +28,7 @@ describe('disclosure', () => {
 
     await trigger.trigger('click')
     expect(trigger.attributes('aria-expanded')).toBe('false')
+
     expect(
       wrapper.find('[data-slot=disclosure-content]').attributes('data-expanded'),
     ).toBeUndefined()
@@ -54,6 +57,7 @@ describe('disclosure', () => {
           )
       },
     }
+
     const wrapper = mount(Wrapper)
     expect(wrapper.find('[data-slot=disclosure-trigger]').attributes('aria-expanded')).toBe('false')
 
@@ -81,6 +85,7 @@ describe('disclosure', () => {
         default: () => 'Content',
       },
     })
+
     expect(wrapper.find('[data-slot=disclosure-trigger]').exists()).toBe(false)
     const trigger = wrapper.find('button.custom-trigger')
     expect(trigger.text()).toBe('Expand')
@@ -99,6 +104,7 @@ describe('disclosure', () => {
       props: { title: 'Toggle' },
       slots: { default: () => 'Content' },
     })
+
     expect(withContent.find('[data-slot=disclosure-body]').exists()).toBe(true)
   })
 
@@ -110,12 +116,14 @@ describe('disclosure', () => {
         default: () => 'Content',
       },
     })
+
     const trigger = wrapper.find('button')
     expect(trigger.attributes('data-slot')).toBe('button')
     const indicator = trigger.find('[data-slot=disclosure-indicator]')
     expect(indicator.classes()).toContain('extra')
     expect(indicator.attributes('data-expanded')).toBeUndefined()
     await trigger.trigger('click')
+
     expect(wrapper.find('[data-slot=disclosure-indicator]').attributes('data-expanded')).toBe(
       'true',
     )
@@ -127,15 +135,18 @@ describe('disclosure', () => {
       slots: { default: () => 'Content' },
       attachTo: document.body,
     })
+
     const panel = () => wrapper.find('[data-slot=disclosure-content]')
     expect(panel().attributes('aria-hidden')).toBe('true')
     expect(panel().attributes('hidden')).toBe('until-found')
     await wrapper.find('[data-slot=disclosure-trigger]').trigger('click')
     expect(panel().attributes('aria-hidden')).toBe('false')
     expect(panel().attributes('hidden')).toBeUndefined()
+
     expect(wrapper.find('[data-slot=disclosure-trigger]').attributes('aria-controls')).toBe(
       panel().attributes('id'),
     )
+
     wrapper.unmount()
   })
 })
@@ -154,12 +165,14 @@ describe('Disclosure accessibility', () => {
         trigger: ({ indicator }) => h('button', null, ['Details', h(indicator)]),
       },
     ]
+
     for (const { props, trigger } of cases) {
       const wrapper = mount(Disclosure, {
         props,
         slots: { default: () => 'Panel content', ...(trigger ? { trigger } : {}) },
         attachTo: document.body,
       })
+
       await expectAccessible(wrapper)
       wrapper.unmount()
     }
@@ -171,6 +184,7 @@ describe('Disclosure accessibility', () => {
       slots: { default: () => 'Content' },
       attachTo: document.body,
     })
+
     const trigger = wrapper.get('[data-slot=disclosure-trigger]')
     const panel = wrapper.get('[data-slot=disclosure-content]')
     expect(trigger.element.tagName).toBe('BUTTON')
@@ -192,6 +206,7 @@ describe('Disclosure accessibility', () => {
       },
       attachTo: document.body,
     })
+
     const trigger = wrapper.get('button.custom')
     const panel = wrapper.get('[data-slot=disclosure-content]')
     expect(trigger.attributes('aria-controls')).toBe(panel.attributes('id'))
@@ -206,6 +221,7 @@ describe('Disclosure accessibility', () => {
       slots: { default: () => 'Content' },
       attachTo: document.body,
     })
+
     const trigger = wrapper.get('[data-slot=disclosure-trigger]')
     expect(trigger.attributes('tabindex')).toBeUndefined()
     ;(trigger.element as HTMLElement).focus()

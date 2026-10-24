@@ -58,6 +58,7 @@ export const useTypeahead = (options: TypeaheadOptions) => {
     const index = isCurrent ? enabled.findIndex(isCurrent) : -1
     const from =
       options.start === 'current' ? Math.max(index, 0) : search.length > 1 ? 0 : index + 1
+
     for (let i = 0; i < enabled.length; i++) {
       const item = enabled[(from + i) % enabled.length]!
       if (text(item).toLowerCase().startsWith(search)) return item
@@ -78,11 +79,14 @@ export const useTypeahead = (options: TypeaheadOptions) => {
     if (!accepts(event)) return false
     search += event.key.toLowerCase()
     clearTimeout(timer)
+
     timer = setTimeout(() => {
       search = ''
     }, RESET_MS)
+
     const match = find(source())
     if (match !== undefined) select(match)
+
     return true
   }
 

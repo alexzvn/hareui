@@ -20,6 +20,7 @@ const mountSkeleton = async (props: Record<string, unknown> = {}) => {
   const { default: Skeleton } = await import('@/components/skeleton/Skeleton.vue')
   const wrapper = mount(Skeleton, { props, attachTo: document.body })
   await nextTick()
+
   return wrapper
 }
 

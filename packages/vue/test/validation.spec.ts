@@ -51,6 +51,7 @@ describe('validation: native (default)', () => {
     await commit(input)
     expect(error()).toBe('Too short')
     expect(input.getAttribute('aria-invalid')).toBe('true')
+
     expect(input.getAttribute('aria-describedby')).toContain(
       document.querySelector('[data-slot="field-error"]')!.id,
     )
@@ -67,6 +68,7 @@ describe('validation: native (default)', () => {
       h(TextField, { label: 'A', name: 'a', required: true }),
       h(TextField, { label: 'B', name: 'b', required: true }),
     ])
+
     const [a, b] = w.findAll('input').map((i) => i.element)
     w.get('form').element.checkValidity()
     await flushPromises()
@@ -81,6 +83,7 @@ describe('validation: native (default)', () => {
     const w = mountInForm(() =>
       h(TextField, { label: 'Name', name: 'name', defaultValue: 'x', validate: minLength3 }),
     )
+
     const input = w.get('input').element
     await commit(input)
     expect(error()).toBe('Too short')
@@ -98,6 +101,7 @@ describe('validation: aria', () => {
       () => h(TextField, { label: 'Name', name: 'name', validate: minLength3 }),
       { validationBehavior: 'aria' },
     )
+
     expect(w.get('form').attributes('novalidate')).toBeDefined()
     const input = w.get('input').element
     expect(error()).toBe('Too short')
@@ -117,6 +121,7 @@ describe('validation: aria', () => {
         validationBehavior: 'aria',
       }),
     )
+
     await nextTick()
     expect(error()).toBe('Too short')
   })
@@ -136,6 +141,7 @@ describe('validation: precedence', () => {
         }),
       { attachTo: document.body },
     )
+
     expect(error()).toBeUndefined()
     invalid.value = true
     await nextTick()
@@ -155,6 +161,7 @@ describe('validation: precedence', () => {
         ),
       { attachTo: document.body },
     )
+
     const input = wrapper.get('input').element
     expect(error()).toBe('Email taken')
     expect(wrapper.get('form').element.checkValidity()).toBe(false)
@@ -178,6 +185,7 @@ describe('validation: toggles', () => {
         errorMessage: 'Accept the terms',
       }),
     )
+
     await flushPromises()
     w.get('form').element.checkValidity()
     await flushPromises()
@@ -199,6 +207,7 @@ describe('validation: toggles', () => {
         errorMessage: 'Accept the terms',
       }),
     )
+
     await flushPromises()
     await w.get('[role="checkbox"]').trigger('click')
     await w.get('[role="checkbox"]').trigger('click')
@@ -220,6 +229,7 @@ describe('validation: toggles', () => {
         validate: (n: number) => (n > 2 ? 'Max 2' : null),
       }),
     )
+
     await flushPromises()
     const inc = w.get('[data-slot="number-field-increment-button"]')
     await inc.trigger('pointerdown')
@@ -240,6 +250,7 @@ describe('validation: toggles', () => {
         h(Switch, { label: 'Wi-Fi', name: 'wifi', validate: (on: boolean) => on || 'Turn it on' }),
       { validationBehavior: 'aria' },
     )
+
     await nextTick()
     expect(error()).toBe('Turn it on')
     await wrapper!.get('[role="switch"]').trigger('click')
@@ -264,6 +275,7 @@ describe('validation: toggles', () => {
         },
       ),
     )
+
     await flushPromises()
     w.get('form').element.checkValidity()
     await flushPromises()
@@ -286,6 +298,7 @@ describe('validation: toggles', () => {
         }),
       { validationBehavior: 'aria' },
     )
+
     await nextTick()
     expect(error()).toBeUndefined()
     await wrapper!.findAll('[role="radio"]')[1]!.trigger('click')
@@ -302,6 +315,7 @@ describe('TextField with a slotted Input', () => {
         { default: () => h(Input, { class: 'custom' }) },
       ),
     )
+
     const input = w.get('input.custom').element as HTMLInputElement
     expect(input.name).toBe('email')
     expect(input.type).toBe('email')
@@ -337,6 +351,7 @@ describe('TextField with a slotted Input', () => {
         ),
       { attachTo: document.body },
     )
+
     await nextTick()
     expect(error()).toBe('Too short')
     value.value = 'abcd'
@@ -362,6 +377,7 @@ describe('TextField with a slotted Input', () => {
         },
       ),
     )
+
     w.get('form').element.reset()
     await flushPromises()
     expect(value.value).toBe('seed')
@@ -379,6 +395,7 @@ describe('NumberField reset', () => {
         validate: (n: number) => (n > 2 ? 'Max 2' : null),
       }),
     )
+
     await flushPromises()
     w.get('form').element.checkValidity()
     await flushPromises()
@@ -404,6 +421,7 @@ describe('TextField input attributes', () => {
       },
       props: { description: 'Desc' },
     })
+
     const input = wrapper.get('input')
     expect(input.attributes()).toMatchObject({
       maxlength: '5',
@@ -412,6 +430,7 @@ describe('TextField input attributes', () => {
       inputmode: 'email',
       pattern: '[a-z]+',
     })
+
     expect(input.attributes('aria-describedby')).toMatch(/^hint \S+-description$/)
     expect(wrapper.attributes('data-testid')).toBe('field')
     expect(wrapper.attributes('maxlength')).toBeUndefined()
@@ -423,6 +442,7 @@ describe('TextField input attributes', () => {
     wrapper = mount(TextField, {
       attrs: { onFocus: () => events.push('focus'), onBlur: () => events.push('blur') },
     })
+
     await wrapper.get('input').trigger('focus')
     await wrapper.get('input').trigger('blur')
     expect(events).toEqual(['focus', 'blur'])

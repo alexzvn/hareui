@@ -31,7 +31,9 @@ export const axeViolations = async (target?: Element | VueWrapper): Promise<stri
     : 'element' in target
       ? (target.element as Element)
       : target
+
   const { violations } = await axe.run(context, options)
+
   return violations.flatMap((v) => v.nodes.map((n) => `${v.id}: ${n.html.slice(0, 160)}`))
 }
 

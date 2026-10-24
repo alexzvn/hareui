@@ -25,6 +25,7 @@ const ownDisabled: TagGroupItem[] = [
   { id: 'travel', label: 'Travel' },
   { id: 'gaming', label: 'Gaming', disabled: true },
 ]
+
 const keyedItems: TagGroupItem[] = [
   { id: 'news', label: 'News' },
   { id: 'travel', label: 'Travel' },

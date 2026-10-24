@@ -32,6 +32,7 @@ describe('ChartTooltipContent', () => {
     const wrapper = mount(ChartTooltipContent, { props: { label: 'February', payload } })
     expect(wrapper.attributes('data-slot')).toBe('chart-tooltip')
     expect(wrapper.get('[data-slot="chart-tooltip-header"]').text()).toBe('February')
+
     expect(rows(wrapper)).toEqual([
       { color: 'var(--chart-3)', label: 'Revenue', value: '18200' },
       { color: 'var(--chart-1)', label: 'Expenses', value: '9800' },
@@ -48,6 +49,7 @@ describe('ChartTooltipContent', () => {
         valueFormatter: (value: number | string) => `$${Number(value).toFixed(1)}`,
       },
     })
+
     expect(wrapper.get('[data-slot="chart-tooltip-header"]').text()).toBe('Month: Jan')
     expect(wrapper.get('[data-slot="chart-tooltip-value"]').text()).toBe('$24801.3')
   })
@@ -58,6 +60,7 @@ describe('ChartTooltipContent', () => {
         .find('[data-slot="chart-tooltip-header"]')
         .exists(),
     ).toBe(false)
+
     expect(
       mount(ChartTooltipContent, { props: { payload } })
         .find('[data-slot="chart-tooltip-header"]')
@@ -87,6 +90,7 @@ describe('ChartTooltipContent', () => {
         ],
       },
     })
+
     expect(rows(wrapper)).toEqual([
       { color: 'red', label: 'Bars', value: '4' },
       { color: 'blue', label: 'Trend', value: '' },
@@ -107,8 +111,10 @@ describe('ChartTooltipContent', () => {
         ],
       },
     })
+
     expect(wrapper.get('[data-slot="chart-tooltip-header"]').text()).toBe('March 2025')
     expect(rows(wrapper)).toEqual([{ color: 'var(--chart-3)', label: 'Organic', value: '15,200' }])
+
     expect(wrapper.get('[data-slot="chart-tooltip-indicator"]').attributes('aria-hidden')).toBe(
       'true',
     )
@@ -132,8 +138,10 @@ describe('ChartTooltipContent', () => {
           ),
       },
     })
+
     const children = [...wrapper.element.children]
     expect(children.at(-1)?.getAttribute('data-test')).toBe('footer')
+
     expect(wrapper.get('[data-test=footer]').text()).toBe(
       `Jan total ${payload.reduce((sum, row) => sum + Number(row.value), 0)}`,
     )
@@ -146,6 +154,7 @@ describe('ChartTooltipContent', () => {
         slots: { footer: () => h('div', 'Total 28,000') },
         attachTo: document.body,
       })
+
       await expectAccessible(wrapper)
       wrapper.unmount()
     }
@@ -165,6 +174,7 @@ describe('ChartTooltipContent', () => {
       },
       attachTo: document.body,
     })
+
     await expectAccessible(wrapper)
     wrapper.unmount()
   })
@@ -173,6 +183,7 @@ describe('ChartTooltipContent', () => {
     const wrapper = mount(ChartTooltipContent, {
       props: { payload, class: 'min-w-48', ui: { base: 'rounded-2xl' } },
     })
+
     expect(wrapper.classes()).toEqual(expect.arrayContaining(['min-w-48', 'rounded-2xl']))
   })
 

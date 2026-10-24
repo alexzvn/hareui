@@ -19,6 +19,7 @@ const icons: Record<string, string> = {
   'default-gaming': 'gravity-ui:rocket',
   'default-shopping': 'gravity-ui:shopping-bag',
 }
+
 const items: TagGroupItem[] = [
   { id: 'default-news', label: 'News' },
   { id: 'default-travel', label: 'Travel' },

@@ -162,7 +162,9 @@ const props = withDefaults(defineProps<InputGroupProps>(), {
   required: undefined,
   readonly: undefined,
 })
+
 const slots = defineSlots<InputGroupSlots>()
+
 /** The input value. */
 const modelValue = defineModel<string | number>()
 
@@ -173,6 +175,7 @@ const field = inject(textFieldContextKey, null)
 const vnodeProps = getCurrentInstance()?.vnode.props ?? {}
 const ownModel =
   !field || ['modelValue', 'model-value', 'onUpdate:modelValue'].some((key) => key in vnodeProps)
+
 const value = computed({
   get: () => (ownModel ? modelValue.value : field!.model.value),
   set: (v) => {
@@ -180,7 +183,9 @@ const value = computed({
     if (field) field.model.value = v
   },
 })
+
 if (value.value === undefined && props.defaultValue !== undefined) value.value = props.defaultValue
+
 if (field && ownModel) {
   watch(
     modelValue,
@@ -189,6 +194,7 @@ if (field && ownModel) {
     },
     { immediate: true },
   )
+
   // The field writes its model on form reset; pass that back to the parent's v-model
   watch(field.model, (v) => {
     if (v !== modelValue.value) modelValue.value = v
@@ -221,6 +227,7 @@ const own = field
         value.value = props.defaultValue ?? ''
       },
     })
+
 const invalid = computed(() =>
   own ? own.validation.value.isInvalid : (props.invalid ?? field?.invalid.value ?? false),
 )
@@ -233,6 +240,7 @@ const hasSuffix = computed(() => !!(props.suffix || slots.suffix))
 // so the button keeps focus, and Enter/Space on it don't land in the input.
 const INTERACTIVE =
   'a[href], button, input, select, textarea, label, [role=button], [role=link], [tabindex]:not([tabindex="-1"]), [contenteditable=""], [contenteditable=true]'
+
 const onClick = (event: MouseEvent) => {
   const target = event.target as Element
   if (!input.value || target === input.value || input.value.contains(target)) return
@@ -243,6 +251,7 @@ const onClick = (event: MouseEvent) => {
     (event.currentTarget as Element).contains(interactive)
   )
     return
+
   input.value.focus()
 }
 

@@ -91,6 +91,7 @@ const createToastFunction = (queue: ToastQueue<ToastContentValue>): ToastFunctio
 
   toastFn.success = (message, options) => toastFn(message, { ...options, variant: 'success' })
   toastFn.danger = (message, options) => toastFn(message, { ...options, variant: 'danger' })
+
   // Maps to the accent variant.
   toastFn.info = (message, options) => toastFn(message, { ...options, variant: 'accent' })
   toastFn.warning = (message, options) => toastFn(message, { ...options, variant: 'warning' })
@@ -98,6 +99,7 @@ const createToastFunction = (queue: ToastQueue<ToastContentValue>): ToastFunctio
   toastFn.update = (id, message, options) => {
     const content = createContent(message, options)
     if (queue.update(id, content, createUpdateOptions(options))) return id
+
     // A brand new toast has nothing to inherit, so it resolves the defaults instead.
     return queue.add(content, createAddOptions(options))
   }
@@ -115,6 +117,7 @@ const createToastFunction = (queue: ToastQueue<ToastContentValue>): ToastFunctio
           typeof options.success === 'function'
             ? (options.success as (data: T) => VNodeChild)(data)
             : options.success
+
         toastFn.update(loadingId, message, {
           isLoading: false,
           timeout: DEFAULT_TOAST_TIMEOUT,
@@ -126,6 +129,7 @@ const createToastFunction = (queue: ToastQueue<ToastContentValue>): ToastFunctio
           typeof options.error === 'function'
             ? (options.error as (error: Error) => VNodeChild)(error)
             : options.error
+
         toastFn.update(loadingId, message, {
           isLoading: false,
           timeout: DEFAULT_TOAST_TIMEOUT,

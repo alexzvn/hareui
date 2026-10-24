@@ -29,7 +29,9 @@ describe('Footer', () => {
       },
       attachTo: document.body,
     })
+
     const footer = document.querySelector('footer')!
+
     // A footer outside sectioning content maps to the contentinfo landmark.
     expect(footer.closest('article, aside, main, nav, section')).toBeNull()
     expect(footer.querySelector('nav[aria-label=Footer]')).not.toBeNull()
@@ -49,6 +51,7 @@ describe('Footer', () => {
       slots: { default: links },
       attachTo: document.body,
     })
+
     expect(wrapper.element.tagName).toBe('DIV')
     expect(wrapper.find('footer').exists()).toBe(false)
     await expectAccessible(wrapper)

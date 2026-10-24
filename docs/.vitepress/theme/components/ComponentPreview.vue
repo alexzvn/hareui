@@ -193,6 +193,7 @@ const frameHeight = computed(() =>
       ? '26rem'
       : props.contain,
 )
+
 /** The demo renders in a fixed-height iframe rather than the plain preview box. */
 const paged = frameHeight.value !== undefined
 
@@ -203,6 +204,7 @@ let compactQuery: MediaQueryList | undefined
 const onCompactChange = () => (compact.value = !compactQuery!.matches)
 
 const device = ref<PreviewDevice>(props.device)
+
 // The preview follows the docs theme (and its design preset) unless the toolbar pins the other one; a docs theme change
 // drops the pin, so the toggle and the page can't drift apart.
 const { dark: docDark, design } = useDocTheme()
@@ -210,10 +212,12 @@ const pageTheme = computed<PreviewTheme>(() => (docDark.value ? 'dark' : 'light'
 const pinnedTheme = ref<PreviewTheme>()
 const theme = computed(() => pinnedTheme.value ?? pageTheme.value)
 watch(pageTheme, () => (pinnedTheme.value = undefined))
+
 const toggleTheme = () => {
   const next = theme.value === 'dark' ? 'light' : 'dark'
   pinnedTheme.value = next === pageTheme.value ? undefined : next
 }
+
 /** Scopes a pinned theme to the box (and its overlays): `.light`/`.dark` plus the preset attributes, which the preset
  * rules need on the same element. Unpinned, the box inherits `<html>`, so the SSR markup is right before hydration. */
 const scopeAttributes = computed(() => (pinnedTheme.value ? design.value : {}))
@@ -225,16 +229,20 @@ const href = computed(() => `${withBase(demoPreviewPath(props.name))}?theme=${th
 const PRESETS: Partial<Record<PreviewDevice, number>> = { mobile: 375, tablet: 768 }
 const MIN_WIDTH = 320
 const stage = useTemplateRef<HTMLElement>('stage')
+
 /** The Desktop viewport width: the box inside its side borders, or the row minus the page frame's borders. */
 const fullWidth = ref(0)
 const customWidth = ref<number>()
 const minWidth = computed(() => Math.min(MIN_WIDTH, fullWidth.value))
+
 /** `undefined`: the frame fills the row (not measured yet, or a phone-sized docs page). */
 const viewport = computed(() => {
   if (compact.value || !fullWidth.value) return undefined
   const target = customWidth.value ?? PRESETS[device.value] ?? fullWidth.value
+
   return Math.min(fullWidth.value, Math.max(minWidth.value, target))
 })
+
 const narrow = computed(() => viewport.value !== undefined && viewport.value < fullWidth.value)
 const dragging = ref(false)
 const pageEdge = computed(() => (narrow.value ? viewport.value! + 2 : undefined))
@@ -244,11 +252,14 @@ onMounted(() => {
   compactQuery = window.matchMedia('(min-width: 48rem)')
   onCompactChange()
   compactQuery.addEventListener('change', onCompactChange)
+
   stageObserver = new ResizeObserver(() => {
     if (stage.value) fullWidth.value = stage.value.clientWidth - (paged ? 2 : 0)
   })
+
   if (stage.value) stageObserver.observe(stage.value)
 })
+
 onBeforeUnmount(() => {
   compactQuery?.removeEventListener('change', onCompactChange)
   stageObserver?.disconnect()
@@ -265,10 +276,13 @@ const frameVisible = computed(() => narrow.value || dragging.value)
 watchEffect(() => {
   if (!paged && frameVisible.value) frameMounted.value = true
 })
+
 const preload = () => {
   if (!paged && !compact.value) frameMounted.value = true
 }
+
 const frameShown = computed(() => frameReady.value && frameVisible.value)
+
 /** Where the frame's right edge shows: dragging moves it with the pointer even before the iframe is ready. */
 const displayWidth = computed(() =>
   frameShown.value || dragging.value ? viewport.value : undefined,
@@ -285,16 +299,20 @@ watchEffect(() => {
     document.body.append(target)
     portalTarget.value = target
   }
+
   const target = portalTarget.value
   if (!target) return
+
   // `text-foreground`: overlays inherit their text colour, which body sets from the docs theme.
   target.className = `${theme.value} text-foreground`
+
   for (const name of DESIGN_ATTRIBUTES) {
     const value = scopeAttributes.value[name]
     if (value === undefined) target.removeAttribute(name)
     else target.setAttribute(name, value)
   }
 })
+
 onBeforeUnmount(() => portalTarget.value?.remove())
 const parentConfig = inject(hareUIConfigKey, {})
 provide(hareUIConfigKey, {
@@ -305,6 +323,7 @@ provide(hareUIConfigKey, {
     return overlayScoped.value ? portalTarget.value : parentConfig.portal
   },
 } satisfies HareUIConfig)
+
 const claimOverlays = () => {
   previewOverlayTheme.value = overlayScoped.value ? theme.value : undefined
 }
@@ -337,8 +356,10 @@ const highlight = (name: string, code: string): Promise<string> => {
         defaultColor: false,
       }),
     )
+
     highlighted.set(name, cached)
   }
+
   return cached
 }
 
@@ -355,12 +376,15 @@ const button = tv(buttonTheme)
 const copyClass = button({ variant: 'ghost', size: 'sm', iconOnly: true }).base({
   class: '-mt-0.5 bg-transparent text-muted',
 })
+
 const expandClass = button({ variant: 'tertiary', size: 'sm' }).base({
   class: 'absolute end-1/2 bottom-2 translate-x-1/2 bg-surface text-xs shadow-sm shadow-black/5',
 })
+
 const copyIcon = `<svg aria-hidden="true" height="1em" role="img" viewBox="0 0 16 16" width="1em" xmlns="http://www.w3.org/2000/svg">${gravity.icons.copy.body}</svg>`
 
 const dataName = computed(() => props.name.replace(/\//g, '-'))
+
 const alignClass = computed(
   () =>
     ({

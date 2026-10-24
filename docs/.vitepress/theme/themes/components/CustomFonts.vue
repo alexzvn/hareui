@@ -65,6 +65,7 @@ const validationError = computed<string | null>(() => {
     const parsedUrl = new URL(cdnUrl.value)
 
     if (parsedUrl.protocol !== 'https:') return 'URL must use https protocol'
+
     if (!isValidFontCdnUrl(cdnUrl.value))
       return 'URL must be from a supported CDN (Google Fonts, Fontsource, Bunny Fonts, etc.)'
 
@@ -73,6 +74,7 @@ const validationError = computed<string | null>(() => {
     return 'Please enter a valid URL'
   }
 })
+
 const showValidationError = computed(() => hasBlurred.value && validationError.value !== null)
 const showError = computed(() => showValidationError.value || importError.value !== null)
 const errorMessage = computed(() => importError.value ?? validationError.value)

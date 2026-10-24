@@ -28,8 +28,10 @@ const MONTH_KEY_MOVES = {
 const constrain = (date: DateValue, bounds: { min?: DateValue; max?: DateValue }) => {
   if (bounds.min && compareDay(date, bounds.min) < 0)
     return date.add({ days: -compareDay(date, bounds.min) })
+
   if (bounds.max && compareDay(date, bounds.max) > 0)
     return date.subtract({ days: compareDay(date, bounds.max) })
+
   return date
 }
 
@@ -55,6 +57,7 @@ export const useCalendarMonthKeys = (options: UseCalendarMonthKeysOptions) => {
       !Object.hasOwn(MONTH_KEY_MOVES, event.key)
     )
       return
+
     const cell = calendarCellFrom(event.target, options.rootEl())
     if (!cell) return
     const move: MonthKeyMove = MONTH_KEY_MOVES[event.key as keyof typeof MONTH_KEY_MOVES]

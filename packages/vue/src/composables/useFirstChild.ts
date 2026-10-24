@@ -16,9 +16,11 @@ export const useFirstChild = (root: Ref<Element | { $el?: unknown } | null | und
     observer?.disconnect()
     const el = resolve()
     if (!el) return
+
     const update = () => {
       firstChild.value = el.firstElementChild
     }
+
     update()
     observer = new MutationObserver(update)
     observer.observe(el, { childList: true })
@@ -36,5 +38,6 @@ export const refElement = (value: unknown): Element | null => {
   if (typeof Element === 'undefined') return null
   if (value instanceof Element) return value
   const el = (value as { $el?: unknown } | null | undefined)?.$el
+
   return el instanceof Element ? el : null
 }

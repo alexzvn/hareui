@@ -36,6 +36,7 @@ const mountGroup = (
       ),
     { attachTo: document.body },
   )
+
   return wrapper
 }
 
@@ -48,6 +49,7 @@ describe('CheckboxButtonGroup', () => {
       modelValue: model.value,
       'onUpdate:modelValue': (v: string[]) => (model.value = v),
     }))
+
     await items()[1]!.trigger('click')
     expect(model.value).toEqual(['storage'])
     await nextTick()
@@ -80,6 +82,7 @@ describe('CheckboxButtonGroup', () => {
       modelValue: model.value,
       'onUpdate:modelValue': (v: string[]) => (model.value = v),
     })
+
     const card = items()[2]!
     expect(card.attributes('data-disabled')).toBe('')
     expect(card.attributes('disabled')).toBeDefined()
@@ -89,10 +92,12 @@ describe('CheckboxButtonGroup', () => {
 
   it('a disabled group disables every item', async () => {
     mountGroup({ disabled: true })
+
     for (const card of items()) {
       expect(card.attributes('data-disabled')).toBe('')
       expect(card.attributes('disabled')).toBeDefined()
     }
+
     expect(wrapper!.get('[data-slot=checkbox-button-group]').attributes('aria-disabled')).toBe(
       'true',
     )
@@ -102,6 +107,7 @@ describe('CheckboxButtonGroup', () => {
     const onUpdate = (v: string[]) => {
       throw new Error(`unexpected update ${v}`)
     }
+
     mountGroup({ readonly: true, defaultValue: ['security'], 'onUpdate:modelValue': onUpdate })
     await items()[1]!.trigger('click')
     expect(items()[1]!.attributes('data-selected')).toBeUndefined()
@@ -127,10 +133,12 @@ describe('CheckboxButtonGroup', () => {
         ),
       { attachTo: document.body },
     )
+
     for (const card of items()) {
       expect(card.attributes('disabled')).toBeDefined()
       await card.trigger('click')
     }
+
     expect(model.value).toEqual([])
   })
 })
@@ -163,6 +171,7 @@ describe('CheckboxButtonGroupItem indicator', () => {
       { defaultValue: ['security'] },
       { indicator: ({ selected }: { selected: boolean }) => (selected ? 'on' : 'off') },
     )
+
     const indicator = items()[0]!.get('[data-slot=checkbox-button-group-indicator]')
     expect(indicator.attributes('data-custom')).toBe('true')
     expect(indicator.text()).toBe('on')
@@ -175,6 +184,7 @@ describe('CheckboxButtonGroupItem indicator', () => {
         h(CheckboxButtonGroupItem, { value: 'a', label: 'A', indicator: false }),
       ),
     )
+
     expect(wrapper.find('[data-slot=checkbox-button-group-indicator]').exists()).toBe(false)
   })
 
@@ -191,6 +201,7 @@ describe('CheckboxButtonGroupItem indicator', () => {
         ),
       ),
     )
+
     const text = wrapper.get('[data-slot=checkbox-button-group-item-text]')
     expect(text.element.textContent).toBe('TitleDescpicked')
   })
@@ -208,6 +219,7 @@ describe('CheckboxButtonGroupItem indicator', () => {
         ),
       ),
     )
+
     const card = wrapper.get('[data-slot=checkbox-button-group-item]')
     expect(wrapper.get(`#${card.attributes('aria-labelledby')}`).text()).toBe('Slot title')
     expect(wrapper.get(`#${card.attributes('aria-describedby')}`).text()).toBe('Slot desc')
@@ -219,10 +231,12 @@ describe('CheckboxButtonGroupItem indicator', () => {
         h(CheckboxButtonGroupItem, { value: 'a', label: 'A', icon: 'i-test-icon' }),
       ),
     )
+
     const content = wrapper.get('[data-slot=checkbox-button-group-item-content]')
     expect(content.find('[data-slot=checkbox-button-group-item-icon] .i-test-icon').exists()).toBe(
       true,
     )
+
     expect(content.get('[data-slot=checkbox-button-group-item-text]').text()).toBe('A')
   })
 })
@@ -243,10 +257,13 @@ describe('CheckboxButtonGroup keyboard', () => {
       e.preventDefault()
       submitted++
     })
+
     document.body.append(form)
+
     const onUpdate = (v: string[] | undefined) => {
       throw new Error(`unexpected update ${v}`)
     }
+
     wrapper = mount(
       () =>
         h(CheckboxButtonGroup, { 'onUpdate:modelValue': onUpdate }, () =>
@@ -254,11 +271,14 @@ describe('CheckboxButtonGroup keyboard', () => {
         ),
       { attachTo: form },
     )
+
     await wrapper.get('[data-slot=checkbox-button-group-item]').trigger('keydown', { key: 'Enter' })
     expect(submitted).toBe(1)
+
     expect(wrapper.get('[data-slot=checkbox-button-group-item]').attributes('aria-checked')).toBe(
       'false',
     )
+
     wrapper.unmount()
     wrapper = undefined
     form.remove()
@@ -280,6 +300,7 @@ describe('CheckboxButtonGroup form integration', () => {
         ),
       { attachTo: document.body },
     )
+
     await flushPromises()
     expect(wrapper.get('form').element.checkValidity()).toBe(false)
     await flushPromises()
@@ -303,6 +324,7 @@ describe('CheckboxButtonGroup form integration', () => {
         ),
       { attachTo: document.body },
     )
+
     await flushPromises()
     const data = new FormData(wrapper.get('form').element as HTMLFormElement)
     expect([data.get('features[0]'), data.get('features[1]')]).toEqual(['security', 'storage'])
@@ -325,6 +347,7 @@ describe('CheckboxButtonGroup form integration', () => {
         ),
       { attachTo: document.body },
     )
+
     await items()[1]!.trigger('click')
     await flushPromises()
     expect(error()).toBe('Pick at least one')
@@ -350,6 +373,7 @@ describe('CheckboxButtonGroup form integration', () => {
         ),
       { attachTo: document.body },
     )
+
     await items()[0]!.trigger('click')
     expect(error()).toBeUndefined()
     await items()[1]!.trigger('click')
@@ -367,14 +391,17 @@ const pressSpace = async (el: Element) => {
     bubbles: true,
     cancelable: true,
   })
+
   const up = new KeyboardEvent('keyup', {
     key: ' ',
     code: 'Space',
     bubbles: true,
     cancelable: true,
   })
+
   el.dispatchEvent(down)
   el.dispatchEvent(up)
+
   if (
     el instanceof HTMLButtonElement &&
     !el.disabled &&
@@ -382,6 +409,7 @@ const pressSpace = async (el: Element) => {
     !up.defaultPrevented
   )
     el.click()
+
   await nextTick()
 }
 
@@ -408,6 +436,7 @@ describe('CheckboxButtonGroup accessibility', () => {
         default: () => h('span', '2 GB included'),
       },
     )
+
     await expectAccessible(wrapper)
   })
 
@@ -425,6 +454,7 @@ describe('CheckboxButtonGroup accessibility', () => {
         ),
       { attachTo: document.body },
     )
+
     await flushPromises()
     await expectAccessible(wrapper)
   })
@@ -437,16 +467,20 @@ describe('CheckboxButtonGroup accessibility', () => {
       invalid: true,
       errorMessage: 'Pick at least one',
     })
+
     const group = wrapper!.get('[role=group]')
     expect(document.getElementById(group.attributes('aria-labelledby')!)?.textContent).toBe(
       'Features',
     )
+
     const card = items()[0]!
     const text = card
       .attributes('aria-describedby')!
       .split(' ')
       .map((id) => document.getElementById(id)?.textContent?.trim())
+
     expect(text).toEqual(['Threat detection', 'Add-ons for your plan', 'Pick at least one'])
+
     expect(
       items().every(
         (c) => c.attributes('role') === 'checkbox' && c.attributes('aria-invalid') === 'true',
@@ -457,9 +491,11 @@ describe('CheckboxButtonGroup accessibility', () => {
   it('aria-checked reflects the selection; the indicator and icon are hidden from assistive tech', async () => {
     mountGroup({ defaultValue: ['storage'] }, { icon: () => h('svg') })
     expect(items().map((c) => c.attributes('aria-checked'))).toEqual(['false', 'true', 'false'])
+
     expect(
       items()[0]!.get('[data-slot=checkbox-button-group-indicator]').attributes('aria-hidden'),
     ).toBe('true')
+
     expect(
       items()[0]!.get('[data-slot=checkbox-button-group-item-icon]').attributes('aria-hidden'),
     ).toBe('true')
@@ -471,6 +507,7 @@ describe('CheckboxButtonGroup accessibility', () => {
       modelValue: model.value,
       'onUpdate:modelValue': (v: string[]) => (model.value = v),
     }))
+
     const card = items()[1]!.element as HTMLButtonElement
     card.focus()
     await pressSpace(card)
@@ -488,6 +525,7 @@ describe('CheckboxButtonGroup accessibility', () => {
         throw new Error('unexpected update')
       },
     })
+
     const card = items()[0]!.element as HTMLButtonElement
     card.focus()
     expect(document.activeElement).toBe(card)

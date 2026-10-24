@@ -39,10 +39,13 @@ export const curveFactory = (
   layout: ChartLayout = 'horizontal',
 ): CurveFactory => {
   if (typeof type === 'function') return type
+
   if (type === 'monotone' || type === 'bump') {
     const vertical = layout === 'vertical'
     if (type === 'monotone') return vertical ? curveMonotoneY : curveMonotoneX
+
     return vertical ? curveBumpY : curveBumpX
   }
+
   return curves[type] ?? curveLinear
 }

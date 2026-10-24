@@ -46,6 +46,7 @@ const tags = ref<TagGroupItem[]>([
   { id: 'gaming', label: 'Gaming' },
   { id: 'shopping', label: 'Shopping' },
 ])
+
 const frameworks = ref<TagGroupItem[]>([
   { id: 'react', label: 'React' },
   { id: 'vue', label: 'Vue' },
@@ -56,6 +57,7 @@ const frameworks = ref<TagGroupItem[]>([
 const onRemoveTags = (ids: string[]) => {
   tags.value = tags.value.filter((tag) => !ids.includes(tag.id))
 }
+
 const onRemoveFrameworks = (ids: string[]) => {
   frameworks.value = frameworks.value.filter((framework) => !ids.includes(framework.id))
 }

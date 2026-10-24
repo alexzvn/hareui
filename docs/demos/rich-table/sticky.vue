@@ -21,6 +21,7 @@ const customers = [
   { name: 'Liam Johnson', email: 'liam@example.com' },
   { name: 'William Kim', email: 'will@example.com' },
 ]
+
 const statuses = ['paid', 'processing', 'paid', 'refunded', 'failed']
 
 // Enough rows to scroll under the sticky header and footer.

@@ -80,6 +80,7 @@ const data: Payment[] = [
 ]
 
 const currency = new Intl.NumberFormat('en-US', { style: 'currency', currency: 'USD' })
+
 const dateTime = new Intl.DateTimeFormat('en-US', {
   day: 'numeric',
   month: 'short',
@@ -87,6 +88,7 @@ const dateTime = new Intl.DateTimeFormat('en-US', {
   minute: '2-digit',
   hour12: false,
 })
+
 const expanded = ref({ 0: true })
 
 // A ghost button whose muted chevron turns from right to down.

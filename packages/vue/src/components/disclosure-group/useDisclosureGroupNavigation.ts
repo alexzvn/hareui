@@ -27,6 +27,7 @@ export const useDisclosureGroupNavigation = (options: UseDisclosureGroupNavigati
     const ids = toValue(options.itemIds)
     const expanded = toValue(options.expandedKeys)
     const current = ids.find((id) => expanded.includes(id)) ?? ids[0]
+
     return current === undefined ? -1 : ids.indexOf(current)
   })
 

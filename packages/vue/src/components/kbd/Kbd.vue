@@ -56,6 +56,7 @@ const props = withDefaults(defineProps<KbdProps>(), { as: 'kbd' })
 const slots = defineSlots<KbdSlots>()
 
 const ui = useComponentUI('kbd', theme, () => ({ variant: props.variant }))
+
 const keyList = computed(() =>
   props.keys === undefined ? [] : Array.isArray(props.keys) ? props.keys : [props.keys],
 )

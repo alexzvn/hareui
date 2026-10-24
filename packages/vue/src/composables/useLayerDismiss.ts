@@ -61,6 +61,7 @@ export const useLayerDismiss = (options: LayerDismissOptions) => {
   const onEscapeKeyDown = (event: KeyboardEvent) => {
     if (!shouldDismissOnEscape(resolvePolicy())) event.preventDefault()
   }
+
   const onInteractOutside = (event: OutsideEvent) => {
     const isHandled = event.detail.originalEvent === handledPress
     if (isHandled || !shouldDismissOnOutside(event, resolvePolicy())) event.preventDefault()
@@ -70,17 +71,20 @@ export const useLayerDismiss = (options: LayerDismissOptions) => {
   if (earlyPress) {
     let openedAt = 0
     let isListening = false
+
     const onDocumentPointerDown = (event: PointerEvent) => {
       if (event.timeStamp < openedAt || !shouldDismissOnPress(event, resolvePolicy())) return
       handledPress = event
       earlyPress.onDismiss()
     }
+
     const stopListening = () => {
       // Guarded: the immediate watcher also runs during server rendering, where `document` is undefined.
       if (!isListening) return
       isListening = false
       document.removeEventListener('pointerdown', onDocumentPointerDown, true)
     }
+
     const listen = (content: Node | null | undefined) => {
       stopListening()
       if (!content) return
@@ -88,11 +92,13 @@ export const useLayerDismiss = (options: LayerDismissOptions) => {
       openedAt = performance.now()
       document.addEventListener('pointerdown', onDocumentPointerDown, true)
     }
+
     // Post flush: the content's `$el` isn't reactive and is only current after the render that opens the Layer.
     watch(() => (toValue(earlyPress.isOpen) ? toValue(options.content) : null), listen, {
       flush: 'post',
       immediate: true,
     })
+
     onScopeDispose(stopListening)
   }
 

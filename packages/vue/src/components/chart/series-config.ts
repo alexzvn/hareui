@@ -177,6 +177,7 @@ export const inferValueKeys = (data: readonly object[], index?: string): string[
       numeric.set(key, (numeric.get(key) ?? true) && isFiniteNumber(value))
     }
   }
+
   return [...numeric].filter(([, isNumeric]) => isNumeric).map(([key]) => key)
 }
 
@@ -188,9 +189,11 @@ export const normalizeSeriesInput = <S extends object>(
     return series.map((entry: string | (S & { key: string })) => {
       if (typeof entry === 'string') return [entry, {}]
       const { key, ...config } = entry
+
       return [key, config as unknown as Partial<S>]
     })
   }
+
   return Object.entries(series as Record<string, S | undefined>)
     .filter((entry): entry is [string, S] => entry[1] !== undefined)
     .map(([key, config]) => [key, config])
@@ -228,7 +231,9 @@ export const resolveSeries = <T extends object, S extends ChartSeriesBase = Char
     options.series === undefined
       ? inferValueKeys(options.data, options.index).map((key) => [key, {}])
       : normalizeSeriesInput(options.series)
+
   const hidden = new Set(options.hidden ?? [])
+
   return entries.map(([key, config], position) => {
     const merged = { ...options.defaults, ...config } as S & ChartStackableSeries
     const { name, color, hide, stack, ...rest } = merged
@@ -239,6 +244,7 @@ export const resolveSeries = <T extends object, S extends ChartSeriesBase = Char
         : typeof stackSetting === 'string'
           ? stackSetting
           : undefined
+
     return {
       ...rest,
       key,
@@ -270,6 +276,7 @@ export const barEndRadius = (
   for (const item of series) {
     if (!item.hidden && item.stackId !== undefined) lastInStack.set(item.stackId, item.key)
   }
+
   const result: Record<string, ChartRadius> = {}
   for (const item of series) {
     const radius = item.radius ?? 0
@@ -279,6 +286,7 @@ export const barEndRadius = (
       result[item.key] = layout === 'vertical' ? [0, radius, radius, 0] : [radius, radius, 0, 0]
     else result[item.key] = radius
   }
+
   return result
 }
 
@@ -306,11 +314,14 @@ export const resolveAreaFill = (
   const fill = series.fill ?? chartDefaults.area.fill
   const opacity = series.fillOpacity ?? chartDefaults.area.fillOpacity
   if (fill === 'none') return { fill: 'none', fillOpacity: 0 }
+
   if (fill === 'gradient') {
     const [from, to] = typeof opacity === 'number' ? [opacity, 0] : opacity
     const id = chartGradientId(chartId, series.key)
+
     return { fill: `url(#${id})`, fillOpacity: 1, gradient: { id, color: series.color, from, to } }
   }
+
   return {
     fill: fill === 'solid' ? series.color : fill,
     fillOpacity: typeof opacity === 'number' ? opacity : opacity[0],
@@ -327,11 +338,13 @@ export const seriesValueFormatter = (
 ): ((value: number | string, entry?: { dataKey?: string }) => string) | undefined => {
   if (!rootFormatter && !series.some((item) => item.valueFormatter)) return undefined
   const byKey = new Map(series.map((item) => [item.key, item.valueFormatter]))
+
   return (value, entry) => {
     if (typeof value !== 'number') return String(value)
     const key = entry?.dataKey ?? ''
     const own = byKey.get(key)
     if (own) return own(value)
+
     return rootFormatter ? rootFormatter(value, key) : String(value)
   }
 }
@@ -347,6 +360,7 @@ export const resolveChartPart = <P extends object>(
 ): P | null => {
   if (value === false || (value === undefined && !enabled)) return null
   if (value === true || value === undefined) return { ...defaults }
+
   return { ...defaults, ...value }
 }
 
@@ -365,6 +379,7 @@ export const resolveChartLegend = <P extends object>(
   if (value === true) return { position: defaultPosition, props: {} }
   if (typeof value === 'string') return { position: value, props: {} }
   const { position, ...props } = value
+
   return { position: position ?? defaultPosition, props: props as Partial<P> }
 }
 
@@ -410,10 +425,13 @@ export const resolveSlices = <T extends object>(
     const name = String(record[options.index] ?? position)
     const raw = valueKey === undefined ? undefined : record[valueKey]
     const ownFill = typeof record.fill === 'string' ? record.fill : undefined
+
     const mapped =
       colors && !Array.isArray(colors) ? (colors as Record<string, string>)[name] : undefined
+
     const color =
       ownFill ?? mapped ?? chartColorAt(position, Array.isArray(colors) ? colors : undefined)
+
     return {
       key: name,
       name,
@@ -424,7 +442,9 @@ export const resolveSlices = <T extends object>(
       row,
     }
   })
+
   const total = slices.reduce((sum, slice) => (slice.hidden ? sum : sum + slice.value), 0)
+
   return slices.map((slice) => ({
     ...slice,
     percent: slice.hidden ? undefined : total === 0 ? 0 : (slice.value / total) * 100,

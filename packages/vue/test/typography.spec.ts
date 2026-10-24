@@ -61,6 +61,7 @@ describe('Typography', () => {
       props: { prose: true, type: 'h1' },
       slots: { default: '<h1>Title</h1><p>Body</p>' },
     })
+
     expect(wrapper.element.tagName).toBe('DIV')
     expect(wrapper.attributes('data-slot')).toBe('prose')
     expect(wrapper.attributes('data-type')).toBeUndefined()
@@ -92,6 +93,7 @@ describe('Typography', () => {
         () => 'A very long heading',
       ),
     ])
+
     await expectAccessible(wrapper)
     wrapper.unmount()
   })
@@ -105,6 +107,7 @@ describe('Typography', () => {
       },
       attachTo: document.body,
     })
+
     expect(wrapper.element.tagName).toBe('ARTICLE')
     await expectAccessible(wrapper)
     wrapper.unmount()

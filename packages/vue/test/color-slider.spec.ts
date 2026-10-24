@@ -31,6 +31,7 @@ describe('ColorSlider', () => {
       { props: { channel: 'alpha', label: 'Opacity', defaultValue: 'hsla(0, 100%, 50%, 0.5)' } },
       { props: { channel: 'hue', label: 'Hue', disabled: true } },
     ]
+
     for (const options of cases) {
       const wrapper = mount(ColorSlider, { ...options, attachTo: document.body })
       await nextTick()
@@ -44,6 +45,7 @@ describe('ColorSlider', () => {
       props: { channel: 'hue', label: 'Background hue' },
       attachTo: document.body,
     })
+
     const root = wrapper.get('[data-slot=color-slider]')
     const label = wrapper.get('[data-slot=label]')
     expect(root.attributes('role')).toBe('group')
@@ -57,9 +59,11 @@ describe('ColorSlider', () => {
       props: { channel: 'alpha' },
       attrs: { 'aria-label': 'Background opacity' },
     })
+
     expect(wrapper.get('[data-slot=color-slider]').attributes('aria-label')).toBe(
       'Background opacity',
     )
+
     expect(wrapper.get(thumb).attributes('aria-label')).toBe('Background opacity')
     wrapper.unmount()
   })
@@ -68,12 +72,15 @@ describe('ColorSlider', () => {
     const wrapper = mount(ColorSlider, {
       props: { channel: 'hue', label: 'Hue', defaultValue: 'hsl(120, 100%, 50%)' },
     })
+
     await nextTick()
     expect(wrapper.get(thumb).attributes('aria-valuenow')).toBe('120')
     expect(wrapper.get(thumb).attributes('aria-valuetext')).toBe('120°')
+
     const alpha = mount(ColorSlider, {
       props: { channel: 'alpha', label: 'Alpha', defaultValue: 'hsla(0, 100%, 50%, 0.5)' },
     })
+
     expect(alpha.get(thumb).attributes('aria-valuetext')).toBe('50%')
     wrapper.unmount()
     alpha.unmount()
@@ -84,13 +91,17 @@ describe('ColorSlider', () => {
       props: { channel: 'hue', label: 'Hue', defaultValue: 'hsl(100, 100%, 50%)' },
       attachTo: document.body,
     })
+
     const t = wrapper.get(thumb)
+
     // Reka resolves the thumb's collection index a tick after mount; a key pressed before that targets index -1
     await nextTick()
+
     const press = async (key: string, shiftKey = false) => {
       await t.trigger('keydown', { key, shiftKey })
       return t.attributes('aria-valuenow')
     }
+
     expect(await press('ArrowRight')).toBe('101')
     expect(await press('ArrowUp')).toBe('102')
     expect(await press('ArrowLeft')).toBe('101')
@@ -113,6 +124,7 @@ describe('ColorSlider', () => {
       },
       attachTo: document.body,
     })
+
     const t = wrapper.get(thumb)
     expect(t.attributes('aria-orientation')).toBe('vertical')
     await t.trigger('keydown', { key: 'ArrowUp' })
@@ -125,6 +137,7 @@ describe('ColorSlider', () => {
       props: { channel: 'hue', label: 'Hue', disabled: true, defaultValue: 'hsl(100, 100%, 50%)' },
       attachTo: document.body,
     })
+
     const t = wrapper.get(thumb)
     expect(t.attributes('tabindex')).toBeUndefined()
     expect(wrapper.get('[data-slot=color-slider]').attributes('aria-disabled')).toBe('true')
@@ -138,6 +151,7 @@ describe('ColorSlider', () => {
     expect(wrapper.findAll('[tabindex="0"]').map((el) => el.attributes('data-slot'))).toEqual([
       'color-slider-thumb',
     ])
+
     wrapper.unmount()
   })
 
@@ -145,6 +159,7 @@ describe('ColorSlider', () => {
     const wrapper = mount(ColorSlider, {
       props: { channel: 'hue', label: 'Hue', defaultValue: 'hsl(120, 100%, 50%)' },
     })
+
     expect(wrapper.get('[data-slot=label]').text()).toBe('Hue')
     expect(wrapper.get('[data-slot=color-slider-output]').text()).toBe('120°')
     expect(wrapper.find(track).exists()).toBe(true)
@@ -155,6 +170,7 @@ describe('ColorSlider', () => {
     const a = mount(ColorSlider, {
       props: { channel: 'alpha', label: 'Alpha', defaultValue: 'hsla(0, 100%, 50%, 0.5)' },
     })
+
     expect(a.get('[data-slot=color-slider-output]').text()).toBe('50%')
     const b = mount(ColorSlider, { props: { channel: 'hue' }, attrs: { 'aria-label': 'Hue' } })
     expect(b.find('[data-slot=color-slider-output]').exists()).toBe(false)
@@ -166,6 +182,7 @@ describe('ColorSlider', () => {
       props: { channel: 'hue', defaultValue: parseColor('hsl(100, 100%, 50%)') },
       attachTo: document.body,
     })
+
     await wrapper.get(thumb).trigger('keydown', { key: 'ArrowRight' })
     const emitted = wrapper.emitted('update:modelValue')
     expect(emitted).toBeTruthy()
@@ -177,6 +194,7 @@ describe('ColorSlider', () => {
     const wrapper = mount(ColorSlider, {
       props: { channel: 'hue', label: 'Hue', modelValue: parseColor('hsl(10, 100%, 50%)') },
     })
+
     expect(wrapper.get('[data-slot=color-slider-output]').text()).toBe('10°')
     await wrapper.setProps({ modelValue: parseColor('hsl(200, 100%, 50%)') })
     expect(wrapper.get('[data-slot=color-slider-output]').text()).toBe('200°')
@@ -184,9 +202,11 @@ describe('ColorSlider', () => {
 
   it('corrects an incompatible colorSpace with a dev warning', () => {
     const warn = vi.spyOn(console, 'warn').mockImplementation(() => {})
+
     const wrapper = mount(ColorSlider, {
       props: { channel: 'red', colorSpace: 'hsl', label: 'Red', defaultValue: 'rgb(255, 100, 50)' },
     })
+
     expect(warn).toHaveBeenCalled()
     expect(wrapper.get('[data-slot=color-slider-output]').text()).toBe('255')
     warn.mockRestore()
@@ -197,6 +217,7 @@ describe('ColorSlider', () => {
       props: { channel: 'hue', disabled: true, orientation: 'vertical' },
       attrs: { 'aria-label': 'Hue' },
     })
+
     expect(wrapper.get('[data-slot=color-slider]').attributes('data-disabled')).toBeDefined()
     expect(wrapper.get(track).attributes('data-orientation')).toBe('vertical')
   })
@@ -206,6 +227,7 @@ describe('ColorSlider', () => {
       props: { channel: 'alpha', defaultValue: '#ff0000' },
       attrs: { 'aria-label': 'Alpha' },
     })
+
     const style = wrapper.get(track).attributes('style')!
     expect(style).toContain('--track-start-color')
     expect(style).toContain('--track-end-color')
@@ -230,6 +252,7 @@ describe('ColorSlider', () => {
         },
       },
     )
+
     expect(wrapper.get('[data-slot=color-slider-output]').text()).toBe('50°')
     await wrapper.get(thumb).trigger('keydown', { key: 'ArrowRight' })
     expect(received).toMatchObject({ h: 51 })
@@ -241,6 +264,7 @@ describe('ColorSlider', () => {
     const wrapper = mount(ColorSlider, {
       props: { channel: 'alpha', label: 'Alpha', defaultValue: 'hsla(0, 100%, 50%, 0.5)' },
     })
+
     await nextTick()
     expect(wrapper.get(thumb).attributes('aria-valuenow')).toBe('0.5')
   })
@@ -249,10 +273,12 @@ describe('ColorSlider', () => {
     // behaviour-final-check S2
     const form = document.createElement('form')
     document.body.append(form)
+
     const wrapper = mount(ColorSlider, {
       props: { channel: 'hue', name: 'hue', label: 'Hue', defaultValue: 'hsl(200, 100%, 50%)' },
       attachTo: form,
     })
+
     expect(new FormData(form).get('hue')).toBe('200')
     wrapper.unmount()
     form.remove()

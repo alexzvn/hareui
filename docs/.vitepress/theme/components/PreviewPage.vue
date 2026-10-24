@@ -41,15 +41,18 @@ const demo = computed(() => {
   const loader = demoLoader(name.value)
   return loader ? defineAsyncComponent(loader) : undefined
 })
+
 // `centered` demos are laid out exactly as in the docs preview box (padding, alignment, `minHeight`), so the box can
 // swap between its inline render and this page without a jump; `page` demos (full layouts) fill the viewport.
 const centered = computed(() => params.value?.layout === 'centered')
+
 const alignClass = computed(
   () =>
     (
       { start: 'items-start justify-start', end: 'items-end justify-end' } as Record<string, string>
     )[String(params.value?.align)] ?? 'items-center justify-center',
 )
+
 const minHeight = computed(() =>
   params.value?.minHeight ? { minHeight: String(params.value.minHeight) } : undefined,
 )
@@ -60,6 +63,7 @@ const syncTheme = () => {
   const theme = frame
     ? frame.getAttribute('data-preview-theme')
     : new URLSearchParams(location.search).get('theme')
+
   // A no-op when unchanged, so observing our own class can't loop.
   if (theme === 'light' || theme === 'dark') root.classList.toggle('dark', theme === 'dark')
   if (!frame) return
@@ -67,6 +71,7 @@ const syncTheme = () => {
   for (const name of DESIGN_ATTRIBUTES) {
     const value = design[name]
     if (root.getAttribute(name) === (value ?? null)) continue
+
     if (value === undefined) root.removeAttribute(name)
     else root.setAttribute(name, value)
   }
@@ -75,6 +80,7 @@ const syncTheme = () => {
 /** Tells the embedding page the demo is on screen: the frame painted after this rAF shows it. */
 const announceReady = () => {
   if (window.parent === window) return
+
   requestAnimationFrame(() => {
     const message: PreviewReadyMessage = { type: 'hareui-preview-ready' }
     window.parent.postMessage(message, location.origin)
@@ -85,19 +91,24 @@ let observer: MutationObserver | undefined
 onMounted(() => {
   syncTheme()
   observer = new MutationObserver(syncTheme)
+
   // VitePress re-applies the stored appearance (on load, and when another tab or the parent changes it).
   observer.observe(document.documentElement, { attributes: true, attributeFilter: ['class'] })
+
   if (window.frameElement) {
     observer.observe(window.frameElement, {
       attributes: true,
       attributeFilter: ['data-preview-theme'],
     })
+
     observer.observe(window.parent.document.documentElement, {
       attributes: true,
       attributeFilter: [...DESIGN_ATTRIBUTES],
     })
   }
+
   if (!demo.value) announceReady()
 })
+
 onBeforeUnmount(() => observer?.disconnect())
 </script>

@@ -256,6 +256,7 @@ const count = (label: string) => ({
   variant: 'tertiary' as const,
   class: 'text-xs text-muted',
 })
+
 // A colored dot centred in the icon box (`attrs` carries the menu's icon size classes).
 const dot = (color: string) => (attrs: Record<string, unknown>) =>
   h('span', { ...attrs, class: [attrs.class, 'flex items-center justify-center'] }, [
@@ -339,6 +340,7 @@ const sections = [
     ],
   },
 ]
+
 const expanded = ref<(string | number)[]>(['user'])
 
 // Starts on the icon rail so the conversation keeps room next to the aside.

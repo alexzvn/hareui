@@ -122,8 +122,10 @@ const items = [
 ]
 
 const theme = ref(['system'])
+
 const itemClass =
   'inline-flex h-8 items-center rounded-lg px-2 text-sm text-muted no-underline outline-none transition-colors hover:text-foreground focus-visible:status-focused data-[current=true]:text-foreground'
+
 // Theme switch: ghost icons, muted until hovered or selected, no fill on the selected one.
 const themeButtonClass =
   'size-7 [--toggle-button-fg:var(--muted)] hover:[--toggle-button-fg:var(--foreground)] [--toggle-button-bg-selected:transparent] [--toggle-button-bg-selected-hover:var(--default)] [--toggle-button-fg-selected:var(--foreground)]'

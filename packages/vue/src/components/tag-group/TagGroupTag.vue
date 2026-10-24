@@ -71,6 +71,7 @@ const props = defineProps<{
     removeButton?: ComponentSlots<typeof tagTheme>['removeButton']
   }
 }>()
+
 const emit = defineEmits<{ press: [event: MouseEvent | PointerEvent]; remove: [] }>()
 defineSlots<{ default?: TagGroupSlots['item']; removeButton?: TagGroupSlots['removeButton'] }>()
 
@@ -95,8 +96,10 @@ const onPointerdown = (event: PointerEvent) => {
   selectedOnDown = false
   if (props.disabled) return
   pressed.value = true
+
   const fromRemoveButton =
     event.target instanceof Element && event.target.closest('[data-slot=tag-remove-button]')
+
   if (fromRemoveButton || event.pointerType !== 'mouse' || event.button !== 0) return
   selectedOnDown = true
   emit('press', event)
@@ -112,6 +115,7 @@ const onClick = (event: MouseEvent) => {
     selectedOnDown = false
     return
   }
+
   if (props.disabled) return
   emit('press', event)
 }

@@ -24,6 +24,7 @@ describe('CheckboxGroup', () => {
         }),
       { attachTo: document.body },
     )
+
     const boxes = wrapper.findAll('[data-slot=checkbox]')
     await boxes[1]!.find('[data-slot=checkbox-content]').trigger('click')
     expect(model.value).toEqual(['design'])
@@ -42,6 +43,7 @@ describe('CheckboxGroup', () => {
       props: { items, defaultValue: ['coding'] },
       attachTo: document.body,
     })
+
     await wrapper.findAll('[data-slot=checkbox-content]')[2]!.trigger('click')
     expect(wrapper.emitted('update:modelValue')).toBeUndefined()
     expect(wrapper.findAll('[data-slot=checkbox]')[2]!.attributes('data-selected')).toBeUndefined()
@@ -52,6 +54,7 @@ describe('CheckboxGroup', () => {
     const wrapper = mount(CheckboxGroup, {
       props: { id: 'interests', items, label: 'Interests', errorMessage: 'Pick at least one' },
     })
+
     const root = wrapper.find('[role=group]')
     expect(root.attributes('aria-labelledby')).toBe('interests-label')
     expect(wrapper.find('#interests-label').text()).toBe('Interests')
@@ -66,6 +69,7 @@ describe('CheckboxGroup', () => {
       props: { items, readonly: true, defaultValue: ['coding'] },
       attachTo: document.body,
     })
+
     const boxes = wrapper.findAll('[data-slot=checkbox]')
     await boxes[0]!.find('[data-slot=checkbox-content]').trigger('click')
     expect(boxes[0]!.attributes('data-selected')).toBe('true')
@@ -89,6 +93,7 @@ describe('CheckboxGroup row click', () => {
     const boxes = wrapper.findAll('[data-slot=checkbox]')
     await boxes[0]!.trigger('click')
     expect(wrapper.emitted('update:modelValue')!.at(-1)).toEqual([['coding']])
+
     // A disabled item ignores row clicks too
     await boxes[2]!.trigger('click')
     expect(wrapper.emitted('update:modelValue')).toHaveLength(1)
@@ -101,6 +106,7 @@ describe('CheckboxGroup state parity', () => {
   it('exposes a disabled group as aria-disabled', () => {
     const wrapper = mount(CheckboxGroup, { props: { items, disabled: true } })
     expect(wrapper.get('[data-slot=checkbox-group]').attributes('aria-disabled')).toBe('true')
+
     expect(
       mount(CheckboxGroup, { props: { items } })
         .get('[data-slot=checkbox-group]')
@@ -118,14 +124,17 @@ const pressSpace = async (el: Element) => {
     bubbles: true,
     cancelable: true,
   })
+
   const up = new KeyboardEvent('keyup', {
     key: ' ',
     code: 'Space',
     bubbles: true,
     cancelable: true,
   })
+
   el.dispatchEvent(down)
   el.dispatchEvent(up)
+
   if (
     el instanceof HTMLButtonElement &&
     !el.disabled &&
@@ -133,6 +142,7 @@ const pressSpace = async (el: Element) => {
     !up.defaultPrevented
   )
     el.click()
+
   await nextTick()
 }
 
@@ -159,6 +169,7 @@ describe('CheckboxGroup accessibility', () => {
       props: { label: 'Interests', items: described, ...props },
       attachTo: document.body,
     })
+
     await expectAccessible(wrapper)
     wrapper.unmount()
   })
@@ -178,6 +189,7 @@ describe('CheckboxGroup accessibility', () => {
         ),
       { attachTo: document.body },
     )
+
     await nextTick()
     await expectAccessible(wrapper)
     wrapper.unmount()
@@ -195,24 +207,30 @@ describe('CheckboxGroup accessibility', () => {
       },
       attachTo: document.body,
     })
+
     const group = wrapper.get('[role=group]')
     expect(document.getElementById(group.attributes('aria-labelledby')!)?.textContent).toBe(
       'Interests',
     )
+
     const controls = wrapper.findAll('[data-slot=checkbox-content]')
     expect(controls.map((c) => c.attributes('role'))).toEqual(['checkbox', 'checkbox', 'checkbox'])
     expect(controls.map((c) => c.text())).toEqual(['Coding', 'Design', 'Writing'])
+
     const text = (ids: string | undefined) =>
       ids!.split(' ').map((id) => document.getElementById(id)?.textContent?.trim())
+
     expect(text(controls[0]!.attributes('aria-describedby'))).toEqual([
       'Write software',
       'Pick what you enjoy',
       'Pick at least one',
     ])
+
     expect(text(controls[2]!.attributes('aria-describedby'))).toEqual([
       'Pick what you enjoy',
       'Pick at least one',
     ])
+
     expect(controls.every((c) => c.attributes('aria-invalid') === 'true')).toBe(true)
     wrapper.unmount()
   })
@@ -222,13 +240,16 @@ describe('CheckboxGroup accessibility', () => {
       props: { items, defaultValue: ['design'] },
       attachTo: document.body,
     })
+
     const controls = wrapper.findAll('[data-slot=checkbox-content]')
     expect(controls.map((c) => c.attributes('aria-checked'))).toEqual(['false', 'true', 'false'])
+
     expect(controls.map((c) => (c.element as HTMLButtonElement).disabled)).toEqual([
       false,
       false,
       true,
     ])
+
     wrapper.unmount()
   })
 
@@ -250,9 +271,11 @@ describe('CheckboxGroup accessibility', () => {
         }),
       { attachTo: document.body },
     )
+
     const controls = wrapper
       .findAll('[data-slot=checkbox-content]')
       .map((c) => c.element as HTMLButtonElement)
+
     expect(controls.map((c) => c.tabIndex)).toEqual([0, 0, 0])
     expect(controls[2]!.disabled).toBe(true)
     controls[1]!.focus()
@@ -280,9 +303,11 @@ describe('CheckboxGroup accessibility', () => {
       props: { items, readonly: true, defaultValue: ['coding'] },
       attachTo: document.body,
     })
+
     const controls = wrapper
       .findAll('[data-slot=checkbox-content]')
       .map((c) => c.element as HTMLButtonElement)
+
     controls[1]!.focus()
     expect(document.activeElement).toBe(controls[1])
     await pressSpace(controls[1]!)

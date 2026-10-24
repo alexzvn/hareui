@@ -14,6 +14,7 @@ import {
 
 const d = (day: number, month = 3) => new CalendarDate(2025, month, day)
 const iso = (date: DateValue | undefined) => date?.toString()
+
 const unavailableOn =
   (...days: number[]) =>
   (date: DateValue) =>
@@ -32,6 +33,7 @@ const setup = (overrides: Partial<UseRangeSelectionOptions> = {}) => {
     onCommit: (range) => committed.push(range),
     ...overrides,
   })
+
   return { selection, anchored, committed }
 }
 
@@ -75,10 +77,12 @@ describe('boundsWithinRun', () => {
       min: d(12),
       max: d(25),
     })
+
     expect(boundsWithinRun(d(10), d(25), { start: d(5), end: d(20) })).toEqual({
       min: d(10),
       max: d(20),
     })
+
     expect(boundsWithinRun(d(10), d(25), null)).toEqual({ min: d(10), max: d(25) })
   })
 })
@@ -103,9 +107,11 @@ describe('isDaySelectedInRange', () => {
     expect(
       isDaySelectedInRange({ inRange: true, disabled: false, unavailable: true, invalid: false }),
     ).toBe(false)
+
     expect(
       isDaySelectedInRange({ inRange: true, disabled: false, unavailable: true, invalid: true }),
     ).toBe(true)
+
     expect(
       isDaySelectedInRange({ inRange: true, disabled: false, unavailable: false, invalid: false }),
     ).toBe(true)
@@ -115,6 +121,7 @@ describe('isDaySelectedInRange', () => {
     expect(
       isDaySelectedInRange({ inRange: true, disabled: true, unavailable: false, invalid: true }),
     ).toBe(false)
+
     expect(
       isDaySelectedInRange({ inRange: false, disabled: false, unavailable: false, invalid: true }),
     ).toBe(false)
@@ -150,8 +157,10 @@ describe('useRangeSelection', () => {
       minValue: () => d(12),
       maxValue: () => d(31),
     })
+
     expect(iso(selection.effectiveMin.value)).toBe('2025-03-12')
     selection.select(d(15))
+
     // min beats the run on the left (12 > 11), the run beats max on the right
     expect(iso(selection.effectiveMin.value)).toBe('2025-03-12')
     expect(iso(selection.effectiveMax.value)).toBe('2025-03-19')
@@ -170,6 +179,7 @@ describe('useRangeSelection', () => {
         return false
       },
     })
+
     selection.isUnavailable.value!(d(1))
     selection.select(d(15))
     selection.isUnavailable.value!(d(1))

@@ -113,16 +113,19 @@ const props = defineProps<{
   /** Mouse hover focuses the option (RAC `shouldFocusOnHover`). */
   focusOnHover?: boolean
 }>()
+
 const emit = defineEmits<{
   action: [event: Event]
   select: [event: CustomEvent<{ originalEvent?: Event }>]
 }>()
+
 const slots = defineSlots<Omit<ListBoxSlots, 'section-label' | 'empty'>>()
 
 // RAC interaction states that Reka doesn't expose
 const hovered = ref(false)
 const pressed = ref(false)
 const focused = ref(false)
+
 // RAC interaction modality: DOM focus is focus-visible only after keyboard use (Reka focuses options on open and hover)
 const keyboardModality = inject(keyboardModalityKey, null)
 
@@ -135,11 +138,13 @@ const option = useTemplateRef<{ $el: HTMLElement }>('option')
 const dropSelectedState = () => {
   if (!props.selectable) option.value?.$el.removeAttribute?.('aria-selected')
 }
+
 onMounted(dropSelectedState)
 onUpdated(dropSelectedState)
 
 const onFocus = () => {
   focused.value = true
+
   // DOM focus is the keyboard cursor (RAC focusedKey): a mouse press or `focus()` must move Reka's highlight too
   const el = option.value?.$el
   if (!props.virtualFocus && listbox && el && listbox.highlightedElement.value !== el)
@@ -167,13 +172,16 @@ const onPointermove = (event: PointerEvent) => {
 const onMousedown = (event: MouseEvent) => {
   if (state.value.disabled) event.preventDefault()
 }
+
 // With `virtualFocus.value` the owner tracks focus by value (virtualized rows unmount), else by Reka's highlighted element
 const highlighted = computed(() =>
   props.virtualFocus && 'value' in props.virtualFocus
     ? props.virtualFocus.value === props.item.value
     : !!listbox && !!option.value && listbox.highlightedElement.value === option.value.$el,
 )
+
 const isFocused = computed(() => (props.virtualFocus ? highlighted.value : focused.value))
+
 const isFocusVisible = computed(() =>
   props.virtualFocus
     ? highlighted.value && props.virtualFocus.keyboard
@@ -196,6 +204,7 @@ const state = computed<ListBoxItemSlotProps>(() => ({
 const onSelect = (event: CustomEvent<{ originalEvent?: Event }>) => {
   emit('select', event)
   if (event.defaultPrevented) return
+
   if (!props.selectable) {
     event.preventDefault()
     emit('action', event)

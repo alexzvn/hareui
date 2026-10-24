@@ -39,11 +39,14 @@ const descriptions = new Map(pages.map((page) => [page.url, page.description]))
 
 const neighbours = computed(() => {
   if (!props.section) return []
+
   const links = sectionLinks(props.section).filter((link) =>
     descriptions.has(normalizePath(link.link)),
   )
+
   const index = links.findIndex((link) => normalizePath(link.link) === props.path)
   if (index === -1) return []
+
   return [
     { link: links[index - 1], next: false },
     { link: links[index + 1], next: true },

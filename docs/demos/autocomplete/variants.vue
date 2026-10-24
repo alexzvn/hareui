@@ -110,6 +110,7 @@ const selectedKeys2 = ref<string[]>([])
 const onRemoveTags1 = (ids: string[]) => {
   selectedKeys1.value = selectedKeys1.value.filter((key) => !ids.includes(key))
 }
+
 const onRemoveTags2 = (ids: string[]) => {
   selectedKeys2.value = selectedKeys2.value.filter((key) => !ids.includes(key))
 }

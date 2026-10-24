@@ -19,12 +19,14 @@ const withResolvers = <T>() => {
     resolve = res
     reject = rej
   })
+
   return { promise, resolve, reject }
 }
 
 const delay = (ms: number): Promise<void> => {
   const { promise, resolve } = withResolvers<void>()
   setTimeout(resolve, ms)
+
   return promise
 }
 
@@ -51,10 +53,12 @@ describe('toast', () => {
 
   it('forwards non-prop attributes to the region without an extraneous-attrs warning', async () => {
     const warn = vi.spyOn(console, 'warn').mockImplementation(() => {})
+
     const wrapper = mount(ToastProvider, {
       props: { portal: false },
       attrs: { 'data-design-theme': 'kumo', id: 'toasts' },
     })
+
     toast('Scoped', { timeout: 0 })
     await nextTick()
 
@@ -77,6 +81,7 @@ describe('toast', () => {
     expect(wrapper.find('[data-slot=toast]').exists()).toBe(true)
 
     toast.close(key)
+
     // exitDuration defaults to 300ms; the toast stays mounted (exiting) until it elapses.
     await nextTick()
     expect(wrapper.find('[data-slot=toast]').attributes('data-exiting')).toBe('true')
@@ -130,6 +135,7 @@ describe('toast', () => {
       success: (data) => `Done: ${data}`,
       error: 'Failed',
     })
+
     await nextTick()
     expect(wrapper.find('[data-slot=toast-title]').text()).toBe('Loading…')
     expect(wrapper.find('[data-slot=spinner]').exists()).toBe(true)
@@ -153,6 +159,7 @@ describe('toast', () => {
       success: 'Done',
       error: (error) => `Failed: ${error.message}`,
     })
+
     await nextTick()
 
     rejectPromise(new Error('boom'))
@@ -188,6 +195,7 @@ describe('toast', () => {
       trigger.dispatchEvent(
         new KeyboardEvent('keydown', { key: 'F6', code: 'F6', bubbles: true, cancelable: true }),
       )
+
       await nextTick()
 
       const region = document.querySelector<HTMLElement>('[data-slot=toast-region]')!
@@ -207,6 +215,7 @@ describe('toast', () => {
       const close = closing.querySelector<HTMLButtonElement>('[data-slot=toast-close]')!
       close.focus()
       expect(document.activeElement).toBe(close)
+
       // Enter / Space on a focused button activates it as a click
       close.click()
       await nextTick()
@@ -260,6 +269,7 @@ describe('toast', () => {
       titleId: string
       descriptionId: string
     }
+
     const mountRegion = (
       props: Record<string, unknown> = {},
       slots: Record<string, (p: ToastSlotProps) => unknown> = {},
@@ -269,9 +279,12 @@ describe('toast', () => {
         slots,
         attachTo: document.body,
       })
+
       return mounted
     }
+
     const toastEl = () => document.querySelector<HTMLElement>('[data-slot=toast]')!
+
     // The provider's root is a (possibly disabled) Teleport, so audit the region element itself.
     const region = () => document.querySelector<HTMLElement>('[data-slot=toast-region]')!
 
@@ -295,6 +308,7 @@ describe('toast', () => {
         () => ['One', 'Two', 'Three', 'Four', 'Five'].forEach((t) => toast(t, { timeout: 0 })),
       ],
     ]
+
     it.each(cases)('has no axe violations with %s', async (_name, show) => {
       mountRegion()
       show()
@@ -317,13 +331,16 @@ describe('toast', () => {
           ],
         },
       )
+
       toast('Custom', { description: 'Rendered by the slot', timeout: 0 })
       await nextTick()
       await nextTick()
       await expectAccessible(region())
+
       expect(document.getElementById(toastEl().getAttribute('aria-labelledby')!)?.textContent).toBe(
         'Custom',
       )
+
       expect(
         document.getElementById(toastEl().getAttribute('aria-describedby')!)?.textContent,
       ).toBe('Rendered by the slot')
@@ -336,6 +353,7 @@ describe('toast', () => {
           toast: ({ content }) => h('p', String(content.title)),
         },
       )
+
       toast('Custom', { description: 'Detail', timeout: 0 })
       await nextTick()
       await nextTick()
@@ -361,9 +379,11 @@ describe('toast', () => {
       const el = toastEl()
       expect(el.getAttribute('role')).toBe('alertdialog')
       expect(el.getAttribute('aria-modal')).toBe('false')
+
       expect(document.getElementById(el.getAttribute('aria-labelledby')!)?.textContent).toBe(
         'Saved',
       )
+
       expect(document.getElementById(el.getAttribute('aria-describedby')!)?.textContent).toBe(
         'Your changes are live.',
       )
@@ -374,6 +394,7 @@ describe('toast', () => {
       toast('Saved', { timeout: 0 })
       await nextTick()
       expect(toastEl().hasAttribute('aria-describedby')).toBe(false)
+
       expect(document.getElementById(toastEl().getAttribute('aria-labelledby')!)?.textContent).toBe(
         'Saved',
       )
@@ -399,6 +420,7 @@ describe('toast', () => {
       const close = toastEl().querySelector<HTMLButtonElement>('[data-slot=toast-close]')!
       expect(close.tagName).toBe('BUTTON')
       expect(close.getAttribute('aria-label')).toBe('Close')
+
       expect(
         toastEl().querySelector('[data-slot=toast-default-icon]')!.getAttribute('aria-hidden'),
       ).toBe('true')
@@ -417,6 +439,7 @@ describe('toast', () => {
       expect(byTitle('Three').tabIndex).toBe(0)
       const hidden = els.filter((el) => el.getAttribute('data-hidden') === 'true')
       expect(hidden.length).toBeGreaterThan(0)
+
       for (const el of hidden) {
         expect(el.getAttribute('aria-hidden')).toBe('true')
         expect(el.hasAttribute('inert')).toBe(true)
@@ -430,6 +453,7 @@ describe('toast', () => {
       toast.close(key)
       await nextTick()
       expect(toastEl().getAttribute('aria-hidden')).toBe('true')
+
       for (const control of toastEl().querySelectorAll<HTMLElement>('button'))
         expect(control.tabIndex).toBe(-1)
     })
@@ -439,6 +463,7 @@ describe('toast', () => {
       toast('Saved', { timeout: 0 })
       await nextTick()
       const region = document.querySelector<HTMLElement>('[data-slot=toast-region]')!
+
       document.body.dispatchEvent(
         new KeyboardEvent('keydown', {
           key: '†',
@@ -448,13 +473,16 @@ describe('toast', () => {
           cancelable: true,
         }),
       )
+
       expect(document.activeElement).toBe(region)
 
       const close = toastEl().querySelector<HTMLButtonElement>('[data-slot=toast-close]')!
       close.focus()
+
       close.dispatchEvent(
         new KeyboardEvent('keydown', { key: 'Escape', bubbles: true, cancelable: true }),
       )
+
       expect(region.contains(document.activeElement)).toBe(false)
     })
   })

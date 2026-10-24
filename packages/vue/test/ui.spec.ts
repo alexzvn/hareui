@@ -14,6 +14,7 @@ describe('class precedence', () => {
       props: { ui: { base: 'px-2' }, class: 'px-3' },
       global: { plugins: [createHareUI({ ui: { button: { slots: { base: 'px-1' } } } })] },
     })
+
     const classes = wrapper.classes()
     expect(classes).toContain('px-3')
     expect(classes).not.toContain('px-1')
@@ -25,6 +26,7 @@ describe('class precedence', () => {
     const wrapper = mount(Button, {
       global: { plugins: [createHareUI({ ui: { button: { slots: { base: 'px-1' } } } })] },
     })
+
     expect(wrapper.classes()).toContain('px-1')
     expect(wrapper.classes()).not.toContain('px-4')
   })
@@ -33,6 +35,7 @@ describe('class precedence', () => {
     const wrapper = mount(Button, {
       global: { plugins: [createHareUI({ ui: { button: { defaultVariants: { size: 'lg' } } } })] },
     })
+
     expect(wrapper.classes()).toContain('[--button-height:--spacing(11)]')
   })
 
@@ -111,6 +114,7 @@ describe('shared theme components', () => {
       }),
       { global: { plugins: [createHareUI()] } },
     )
+
     const lg = '[--button-height:--spacing(11)]'
     expect(wrapper.find('#a').classes()).not.toContain(lg)
     expect(wrapper.find('#b').classes()).toContain(lg)

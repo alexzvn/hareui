@@ -133,7 +133,9 @@ const props = defineProps<{
   /** Render only the visible rows (Reka `ListboxVirtualizer`); sections and separators are skipped, as in ListBox. */
   virtualize?: boolean | { estimateSize?: number; overscan?: number }
 }>()
+
 const emit = defineEmits<{ loadMore: [] }>()
+
 const slots = defineSlots<{
   item?: (props: ListBoxItemSlotProps) => VNode[]
   'item-leading'?: (props: ListBoxItemSlotProps) => VNode[]
@@ -154,6 +156,7 @@ const itemSlots = [
   'item-trailing',
   'indicator',
 ] as const
+
 const forwarded = computed(() => itemSlots.filter((name) => slots[name]))
 const sectionLabelled = (section: ListBoxSection) => !!(section.label || slots['section-label'])
 const empty = computed(() => countRows(props.blocks) === 0)
@@ -162,18 +165,23 @@ const empty = computed(() => countRows(props.blocks) === 0)
 const flatRows = computed(() =>
   props.blocks.flatMap((b) => (b.kind === 'item' ? [b] : b.kind === 'section' ? b.rows : [])),
 )
+
 const virtualOptions = computed(() =>
   typeof props.virtualize === 'object' ? props.virtualize : {},
 )
+
 type Virtualizer = {
   scrollToIndex: (index: number, options?: { align?: 'start' | 'center' | 'end' | 'auto' }) => void
 }
+
 let virtualizer: Virtualizer | undefined
+
 // The tanstack virtualizer is only reachable through the slot; keep it for `scrollToIndex` (renders nothing)
 const captureVirtualizer = (v: Virtualizer) => {
   virtualizer = v
   return undefined
 }
+
 defineExpose({
   /** Virtualized: scroll the row at `index` (of the flat, filtered rows) into view. */
   scrollToIndex: (index: number, align: 'start' | 'center' | 'end' | 'auto' = 'auto') =>
@@ -206,12 +214,16 @@ let observer: IntersectionObserver | undefined
 watch(sentinel, (el) => {
   observer?.disconnect()
   if (!el) return
+
   observer = new IntersectionObserver(([entry]) => {
     sentinelVisible.value = !!entry?.isIntersecting
   })
+
   observer.observe(el)
 })
+
 onBeforeUnmount(() => observer?.disconnect())
+
 watch([sentinelVisible, () => props.loading, () => countRows(props.blocks)], () => {
   if (sentinelVisible.value && props.loading === false) emit('loadMore')
 })

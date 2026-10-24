@@ -19,6 +19,7 @@ const columns: TableColumn[] = [
   { key: 'status', label: 'Status', sortable: true },
   { key: 'email', label: 'Email', sortable: true },
 ]
+
 const users = [
   { id: 1, name: 'Kate Moore', role: 'CEO', status: 'Active', email: 'kate@acme.com' },
   { id: 2, name: 'John Smith', role: 'CTO', status: 'Active', email: 'john@acme.com' },
@@ -39,6 +40,7 @@ const rows = computed(() => {
   const sorted = [...users].sort((a, b) =>
     String(a[column as keyof typeof a]).localeCompare(String(b[column as keyof typeof b])),
   )
+
   return direction === 'descending' ? sorted.reverse() : sorted
 })
 </script>

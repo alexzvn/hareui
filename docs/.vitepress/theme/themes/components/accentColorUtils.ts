@@ -53,6 +53,7 @@ const clampColor = (color: Color): Color => {
       b: clamp(color.b, 0, 255),
       alpha,
     }
+
   if (color.space === 'hsl')
     return {
       ...color,
@@ -61,6 +62,7 @@ const clampColor = (color: Color): Color => {
       l: toFixed2(clamp(color.l, 0, 100)),
       alpha,
     }
+
   return {
     ...color,
     h: toFixed2(wrapHue(color.h)),
@@ -80,13 +82,16 @@ const toCss = (color: Color): string => {
   if (color.space === 'rgb') {
     return `rgb(${Math.round(color.r)}, ${Math.round(color.g)}, ${Math.round(color.b)})`
   }
+
   const hsl = convertToHsl(color)
+
   return `hsl(${toFixed2(hsl.h)}, ${toFixed2(hsl.s)}%, ${toFixed2(hsl.l)}%)`
 }
 
 const toHex = (color: Color): string => {
   const rgb = convertToRgb(color)
   const channel = (value: number) => Math.round(value).toString(16).padStart(2, '0')
+
   return `#${channel(rgb.r)}${channel(rgb.g)}${channel(rgb.b)}`.toUpperCase()
 }
 
@@ -170,6 +175,7 @@ export const detectColorFormat = (value: string): ColorFormat | null => {
   if (trimmed.startsWith('hsl(') || trimmed.startsWith('hsla(')) return 'hsl'
   if (trimmed.startsWith('rgb(') || trimmed.startsWith('rgba(')) return 'rgb'
   if (trimmed.startsWith('hsb(') || trimmed.startsWith('hsba(')) return 'hsb'
+
   // Detect hex format (with or without #)
   if (/^#?[0-9a-f]{3,8}$/i.test(trimmed)) return 'hex'
 

@@ -120,9 +120,11 @@ const props = withDefaults(defineProps<ToggleButtonProps>(), {
   modelValue: undefined,
   disabled: undefined,
 })
+
 const emit = defineEmits<{
   'update:modelValue': [value: boolean]
 }>()
+
 defineSlots<ToggleButtonSlots>()
 
 const group = inject(toggleButtonGroupContextKey, null)
@@ -132,11 +134,13 @@ watch(
   () => props.defaultValue,
   (value) => (local.value = value ?? false),
 )
+
 const selected = computed(() =>
   group
     ? props.value !== undefined && group.selected.value.includes(props.value)
     : (props.modelValue ?? local.value),
 )
+
 const isDisabled = useFieldsetDisabled(() => props.disabled || group?.disabled.value || undefined)
 
 const onUpdate = (value: boolean) => {
@@ -144,6 +148,7 @@ const onUpdate = (value: boolean) => {
     if (props.value !== undefined) group.toggle(props.value)
     return
   }
+
   local.value = value
   emit('update:modelValue', value)
 }

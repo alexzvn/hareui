@@ -3,6 +3,7 @@ export {
   dropDanglingTimeZoneSeparator,
   wrapBidiIsolate,
 } from './DateInputGroup.vue'
+
 export type {
   DateInputGroupProps,
   DateInputGroupSegment,

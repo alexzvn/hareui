@@ -12,15 +12,19 @@ describe('ColorSwatch', () => {
   it('passes axe for a named colour, a custom colorName and a transparent colour', async () => {
     const named = mount(ColorSwatch, { attachTo: document.body, props: { color: '#0485F7' } })
     await expectAccessible(named)
+
     const custom = mount(ColorSwatch, {
       attachTo: document.body,
       props: { color: '#0485F7', colorName: 'Ocean Blue', shape: 'square', size: 'lg' },
     })
+
     await expectAccessible(custom)
+
     const transparent = mount(ColorSwatch, {
       attachTo: document.body,
       props: { color: 'rgba(0, 0, 0, 0)' },
     })
+
     await expectAccessible(transparent)
     named.unmount()
     custom.unmount()
@@ -65,16 +69,19 @@ describe('ColorSwatch', () => {
           h('span', { 'data-testid': 'slot' }, `${props.color}:${props.alpha}`),
       },
     })
+
     expect(wrapper.find('[data-testid=slot]').exists()).toBe(true)
   })
 
   it('falls back to the enclosing ColorPicker context color when no color prop is given', () => {
     const color = parseColor('#D946EF')
+
     const Wrapper = {
       setup() {
         return () => h(ColorSwatch, {})
       },
     }
+
     const wrapper = mount(Wrapper, {
       global: {
         provide: {
@@ -85,17 +92,20 @@ describe('ColorSwatch', () => {
         },
       },
     })
+
     const el = wrapper.find('[data-slot=color-swatch]')
     expect(el.attributes('style')).toContain('--reka-color-swatch-color')
   })
 
   it('an explicit color prop takes priority over the ColorPicker context', () => {
     const contextColor = parseColor('#D946EF')
+
     const Wrapper = {
       setup() {
         return () => h(ColorSwatch, { color: '#0485F7' })
       },
     }
+
     const wrapper = mount(Wrapper, {
       global: {
         provide: {
@@ -106,6 +116,7 @@ describe('ColorSwatch', () => {
         },
       },
     })
+
     expect(wrapper.find('[data-slot=color-swatch]').attributes('style')).toContain('#0485F7')
   })
 })

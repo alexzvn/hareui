@@ -43,6 +43,7 @@ export const formatColor = (extension: string): DropZoneFileColor => {
 export const formatFileSize = (bytes: number): string => {
   if (bytes < 1024) return `${bytes} B`
   if (bytes < 1024 * 1024) return `${(bytes / 1024).toFixed(0)} KB`
+
   return `${(bytes / (1024 * 1024)).toFixed(1)} MB`
 }
 
@@ -56,6 +57,7 @@ const acceptEntries = (accept: string | undefined): string[] => {
 const mimeMatches = (type: string, entry: string): boolean => {
   if (entry === '*' || entry === '*/*') return true
   if (entry.endsWith('/*')) return type.startsWith(entry.slice(0, -1))
+
   return type === entry
 }
 
@@ -68,6 +70,7 @@ export const matchesAccept = (
   if (!entries.length) return true
   const name = file.name.toLowerCase()
   const type = file.type.toLowerCase()
+
   return entries.some((entry) =>
     entry.startsWith('.') ? name.endsWith(entry) : mimeMatches(type, entry),
   )
@@ -84,6 +87,7 @@ export const dragMatchesAccept = (
   const entries = acceptEntries(accept)
   if (!entries.length || !items?.length || entries.some((entry) => entry.startsWith('.')))
     return true
+
   return Array.from(items).some(
     (item) =>
       item.kind === 'file' &&

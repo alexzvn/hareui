@@ -382,14 +382,18 @@ const props = withDefaults(defineProps<TableProps<T>>(), {
   hasMore: false,
   loading: false,
 })
+
 const emit = defineEmits<{
   /** Emitted when the load-more sentinel scrolls into view while `hasMore` is true and `loading` is false. */
   loadMore: []
 }>()
+
 /** Controlled selected row keys. Use `v-model:selected-keys`. */
 const selectedKeysModel = defineModel<TableSelection>('selectedKeys')
+
 /** Controlled expanded row keys (tree rows). Use `v-model:expanded-keys`. */
 const expandedKeysModel = defineModel<TableSelection>('expandedKeys')
+
 /** Controlled sort state. Use `v-model:sort-descriptor`. */
 const sortDescriptorModel = defineModel<TableSortDescriptor | undefined>('sortDescriptor')
 defineSlots<TableSlots<T>>()
@@ -427,8 +431,10 @@ const toggleExpanded = (key: TableSelectionKey) => {
   const next = new Set(
     current === 'all' ? flatRows.value.filter((r) => r.hasChildItems).map((r) => r.key) : current,
   )
+
   if (next.has(key)) next.delete(key)
   else next.add(key)
+
   localExpanded.value = next
   expandedKeysModel.value = next
 }
@@ -442,6 +448,7 @@ const toggleSort = (column: TableColumn) => {
   const current = sortDescriptor.value
   const direction: TableSortDirection =
     current?.column === column.key && current.direction === 'ascending' ? 'descending' : 'ascending'
+
   const next = { column: column.key, direction }
   localSort.value = next
   sortDescriptorModel.value = next
@@ -468,24 +475,30 @@ const flatRows = computed<FlatRow[]>(() => {
       const key = row.id ?? i
       const hasChildItems = !!row.children?.length
       acc.push({ row, key, depth, hasChildItems, index: index++ })
+
       // Nested rows are rendered with the caller's row type: `children` holds rows of the same shape.
       if (hasChildItems && props.treeColumn && isRowExpanded(key))
         visit(row.children as T[], depth + 1)
     })
   }
+
   visit(props.rows, 1)
+
   return acc
 })
 
 const selectableKeys = computed(() =>
   flatRows.value.filter((r) => isSelectable(r.key, r.row)).map((r) => r.key),
 )
+
 const allSelected = computed(
   () => selectableKeys.value.length > 0 && selectableKeys.value.every((k) => isSelected(k)),
 )
+
 const someSelected = computed(
   () => !allSelected.value && selectableKeys.value.some((k) => isSelected(k)),
 )
+
 const selectAllModel = computed<boolean | 'indeterminate'>(() =>
   allSelected.value ? true : someSelected.value ? 'indeterminate' : false,
 )
@@ -516,12 +529,14 @@ const scrollRootRef = ref<HTMLElement>()
 // widths and keeps the ones to the right flexible.
 const hasResizableColumns = computed(() => props.columns.some((c) => c.resizable))
 const containerWidth = ref(0)
+
 /** Widths set by resizing, replacing `column.width` for every column once a resize happened. */
 const resizedWidths = ref<Record<string, ColumnWidth>>()
 const resizingKey = ref<string>()
 
 const columnWidths = computed<Record<string, number>>(() => {
   if (!hasResizableColumns.value || !containerWidth.value) return {}
+
   const sizes = calculateColumnSizes(
     containerWidth.value,
     props.columns.map((column) => ({
@@ -530,6 +545,7 @@ const columnWidths = computed<Record<string, number>>(() => {
       maxWidth: column.maxWidth,
     })),
   )
+
   return Object.fromEntries(props.columns.map((column, i) => [column.key, sizes[i]]))
 })
 
@@ -550,6 +566,7 @@ const columnWidthOf = (column: TableColumn): number => {
 }
 
 const baseId = useId()
+
 // By position, not key: a key may hold characters (spaces) that would split an `aria-labelledby` id list
 const columnHeaderId = (column: TableColumn) => {
   return `${baseId}-column-${props.columns.indexOf(column)}`
@@ -560,6 +577,7 @@ const resizeColumn = (column: TableColumn, width: number) => {
     minWidthOf(column),
     Math.min(column.maxWidth ?? Number.MAX_SAFE_INTEGER, Math.floor(width)),
   )
+
   const index = props.columns.indexOf(column)
   resizedWidths.value = Object.fromEntries(
     props.columns.map((c, i) => [
@@ -581,9 +599,11 @@ watch(
     containerObserver = undefined
     if (!resizable || !el) return
     containerWidth.value = el.clientWidth
+
     containerObserver = new ResizeObserver(() => {
       containerWidth.value = el.clientWidth
     })
+
     containerObserver.observe(el)
   },
   { flush: 'post' },
@@ -636,12 +656,14 @@ const observeSentinel = () => {
   observedState = state
   observer?.disconnect()
   if (!props.hasMore || !sentinelRef.value) return
+
   observer = new IntersectionObserver(
     (entries) => {
       if (entries[0]?.isIntersecting && !props.loading) emit('loadMore')
     },
     { root: scrollRootRef.value ?? null },
   )
+
   observer.observe(sentinelRef.value)
 }
 
@@ -652,6 +674,7 @@ watch(
   () => nextTick(observeSentinel),
   { immediate: true },
 )
+
 onBeforeUnmount(() => observer?.disconnect())
 
 /* ---------------- Row focus / keyboard navigation ----------------
@@ -667,11 +690,13 @@ const focusTarget = ref<FocusTarget>()
 const activeRowKey = computed(() =>
   focusTarget.value?.kind === 'row' ? focusTarget.value.key : undefined,
 )
+
 watch(
   flatRows,
   (rowsNow) => {
     const target = focusTarget.value
     if (target?.kind === 'header' || (target && rowsNow.some((r) => r.key === target.key))) return
+
     focusTarget.value = rowsNow.length
       ? { kind: 'row', key: rowsNow[0]!.key }
       : { kind: 'header', index: 0 }
@@ -681,6 +706,7 @@ watch(
 
 const focusRow = (key: TableSelectionKey) => {
   focusTarget.value = { kind: 'row', key }
+
   nextTick(() => {
     tableRef.value
       ?.querySelector<HTMLElement>(`[data-row-key="${CSS.escape(String(key))}"]`)
@@ -708,6 +734,7 @@ const onHeaderKeydown = (event: KeyboardEvent) => {
   const cells = headerCells()
   const index = cells.indexOf(event.target as HTMLElement)
   if (index === -1) return
+
   if (event.key === 'ArrowRight' || event.key === 'ArrowLeft') {
     event.preventDefault()
     focusHeader(index + (event.key === 'ArrowRight' ? 1 : -1))
@@ -730,6 +757,7 @@ const onHeaderKeydown = (event: KeyboardEvent) => {
 const onRowKeydown = (flat: FlatRow, event: KeyboardEvent) => {
   // Keys typed into interactive cell content (inputs, buttons) are theirs
   if (event.target !== event.currentTarget) return
+
   // Escape clears the selection, Meta/Ctrl+A selects every row
   if (props.selectionMode !== 'none' && manager.onKeydown(event)) return
   const rowsNow = flatRows.value
@@ -739,16 +767,20 @@ const onRowKeydown = (flat: FlatRow, event: KeyboardEvent) => {
   else if (event.key === 'ArrowUp' && i === 0 && headerCells().length) {
     event.preventDefault()
     focusHeader(0)
+
     return
   } else if (event.key === 'ArrowUp') next = rowsNow[i - 1]
   else if (event.key === 'Home') next = rowsNow[0]
   else if (event.key === 'End') next = rowsNow.at(-1)
   else if ((event.key === 'Enter' || event.key === ' ') && props.selectionMode !== 'none') {
     event.preventDefault()
+
     if (event.shiftKey) manager.extend(flat.key)
     else manager.toggle(flat.key)
+
     return
   }
+
   if (!next) return
   event.preventDefault()
   focusRow(next.key)
@@ -759,6 +791,7 @@ const onRowClick = (flat: FlatRow, event: MouseEvent) => {
   if (props.selectionMode === 'none') return
   const target = event.target as HTMLElement
   if (target.closest('button, a, input, [data-slot="table-column-resizer"]')) return
+
   if (event.shiftKey) manager.extend(flat.key)
   else manager.toggle(flat.key)
 }
@@ -773,6 +806,7 @@ const cellValue = (row: TableRow, column: TableColumn) => {
 const alignClass = (column: TableColumn) => {
   if (column.align === 'center') return 'text-center'
   if (column.align === 'end') return 'text-end'
+
   return undefined
 }
 </script>

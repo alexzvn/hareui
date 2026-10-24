@@ -8,6 +8,7 @@ const setSize = (el: HTMLElement, size: 'auto' | '0px' | 'measure') => {
     '--disclosure-panel-width',
     size === 'measure' ? `${el.scrollWidth}px` : size,
   )
+
   el.style.setProperty(
     '--disclosure-panel-height',
     size === 'measure' ? `${el.scrollHeight}px` : size,
@@ -20,24 +21,30 @@ const afterAnimations = (el: HTMLElement) => Promise.all(el.getAnimations().map(
 export const setPanelStatic = (el: HTMLElement, open: boolean) => {
   if (open) el.removeAttribute('hidden')
   else el.setAttribute('hidden', 'until-found')
+
   setSize(el, open ? 'auto' : '0px')
 }
 
 /** Animates the panel to its new open/closed state. */
 export const animatePanel = (el: HTMLElement, open: boolean) => {
   if (typeof el.getAnimations !== 'function') return setPanelStatic(el, open)
+
   if (open) {
     el.removeAttribute('hidden')
+
     // Pixel size so it can animate; back to auto afterwards so the content can resize.
     setSize(el, 'measure')
+
     afterAnimations(el)
       .then(() => setSize(el, 'auto'))
       .catch(() => {})
   } else {
     setSize(el, 'measure')
+
     // Force style recalculation so the change to 0px animates.
     void getComputedStyle(el).height
     setSize(el, '0px')
+
     afterAnimations(el)
       .then(() => el.setAttribute('hidden', 'until-found'))
       .catch(() => {})
@@ -54,6 +61,8 @@ export const onPanelReveal = (el: HTMLElement, toggle: () => void) => {
     requestAnimationFrame(() => el.setAttribute('hidden', 'until-found'))
     toggle()
   }
+
   el.addEventListener('beforematch', handler)
+
   return () => el.removeEventListener('beforematch', handler)
 }

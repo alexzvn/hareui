@@ -70,6 +70,7 @@ const props = withDefaults(defineProps<DashboardGroupProps>(), {
   persistent: true,
   unit: '%',
 })
+
 defineSlots<DashboardGroupSlots>()
 
 const ui = useComponentUI('dashboardGroup', theme, () => ({}))

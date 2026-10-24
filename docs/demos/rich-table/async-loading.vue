@@ -53,6 +53,7 @@ const hasMore = () => items.value.length < all.length
 const loadMore = () => {
   if (loading.value || !hasMore()) return
   loading.value = true
+
   setTimeout(() => {
     items.value = all.slice(0, items.value.length + PAGE)
     loading.value = false
@@ -76,10 +77,13 @@ let observer: IntersectionObserver | undefined
 watch(sentinel, (el) => {
   observer?.disconnect()
   if (!el) return
+
   observer = new IntersectionObserver((entries) => entries[0]?.isIntersecting && loadMore(), {
     root: table.value?.$el,
   })
+
   observer.observe(el)
 })
+
 onBeforeUnmount(() => observer?.disconnect())
 </script>

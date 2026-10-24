@@ -28,10 +28,13 @@ const stubExitAnimations = () => {
   const original = window.getComputedStyle.bind(window)
   vi.spyOn(window, 'getComputedStyle').mockImplementation((el: Element, pseudo?: string | null) => {
     const real = original(el, pseudo)
+
     const animatesClosed =
       el.getAttribute?.('data-state') === 'closed' &&
       /\[data-state=closed\]\)\]:animate-(?!none)/.test(el.getAttribute('class') ?? '')
+
     if (!animatesClosed) return real
+
     return new Proxy(real, {
       get: (target, key) => (key === 'animationName' ? 'exit' : Reflect.get(target, key)),
     })
@@ -79,6 +82,7 @@ const cases: DialogCase[] = [
 const mounted: Array<{ unmount: () => void }> = []
 
 beforeEach(() => stubExitAnimations())
+
 // A failing assertion must not leave an open dialog behind for the next test.
 afterEach(() => {
   vi.restoreAllMocks()
@@ -91,12 +95,15 @@ describe.each(cases)('dialog shell: $name', ({ component, slot, escapeOn, escape
 
   const finishExit = async () => {
     await waitUnmount()
+
     const event = Object.assign(new Event('animationend', { bubbles: true }), {
       animationName: 'exit',
     })
+
     document
       .querySelectorAll(`[data-slot=${slot}-backdrop][data-state=closed]`)
       .forEach((el) => el.dispatchEvent(event))
+
     await waitUnmount()
   }
 
@@ -124,9 +131,12 @@ describe.each(cases)('dialog shell: $name', ({ component, slot, escapeOn, escape
       },
       { attachTo: document.body },
     )
+
     mounted.push(wrapper)
+
     // The mount container is the sibling of the portalled dialog (the `#app` of a real page).
     const pageRoot = document.querySelector<HTMLElement>('#page')!.parentElement!.parentElement!
+
     return { open, pageRoot }
   }
 
@@ -138,6 +148,7 @@ describe.each(cases)('dialog shell: $name', ({ component, slot, escapeOn, escape
     await nextTick()
     expect(dialog()).not.toBeNull()
     expect(pageRoot.hasAttribute('inert')).toBe(true)
+
     // The dialog's own subtree stays interactive.
     expect(dialog()!.closest('[inert]')).toBeNull()
 
@@ -155,6 +166,7 @@ describe.each(cases)('dialog shell: $name', ({ component, slot, escapeOn, escape
 
     open.value = false
     await nextTick()
+
     // Still mounted for its exit animation, but already closed: the page is usable again at once.
     expect(dialog()).not.toBeNull()
     expect(pageRoot.hasAttribute('inert')).toBe(false)
@@ -198,6 +210,7 @@ describe.each(cases)('dialog shell: $name', ({ component, slot, escapeOn, escape
       initial: true,
       onUpdate: (value) => updates.push(value),
     })
+
     await nextTick()
     expect(pageRoot.hasAttribute('inert')).toBe(true)
 
@@ -220,6 +233,7 @@ describe.each(cases)('dialog shell: $name', ({ component, slot, escapeOn, escape
 
 describe('dialog shell: header', () => {
   type Slots = Record<string, () => VNodeChild>
+
   const headerCases: Array<[string, Component, string, Record<string, unknown>, Slots, boolean]> = [
     ['Modal without title or header parts', Modal, 'modal', {}, {}, false],
     [
@@ -252,6 +266,7 @@ describe('dialog shell: header', () => {
           h(component, { defaultOpen: true, ...props }, { body: () => 'Content', ...slots }),
       }),
     )
+
     await nextTick()
     expect(document.querySelector(`[data-slot=${slot}-dialog]`)).not.toBeNull()
     expect(!!document.querySelector(`[data-slot=${slot}-header]`)).toBe(rendered)
@@ -262,6 +277,7 @@ describe('dialog shell: header', () => {
     ['Drawer', Drawer, 'drawer'],
     ['AlertDialog', AlertDialog, 'alert-dialog'],
   ]
+
   it.each(headerSlotCases)(
     '%s: a #header slot replaces the visible heading, the title stays as the accessible name',
     async (_name, component, slot) => {
@@ -275,6 +291,7 @@ describe('dialog shell: header', () => {
             ),
         }),
       )
+
       await nextTick()
       expect(document.querySelector(`[data-slot=${slot}-header] #custom`)).not.toBeNull()
       expect(document.querySelector(`[data-slot=${slot}-heading]`)).toBeNull()

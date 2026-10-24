@@ -22,5 +22,6 @@ const devices = reactive([
   { id: 'blinds', name: 'Blinds', on: true },
   { id: 'lock', name: 'Lock front door', on: true },
 ])
+
 const onCount = computed(() => devices.filter((device) => device.on).length)
 </script>

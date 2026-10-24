@@ -26,6 +26,7 @@ export type RangeValue = {
  */
 export const useRangeValue = (options: () => RangeValueOptions): ComputedRef<RangeValue> => {
   const locale = useLocale()
+
   // Reused while locale and options are unchanged: a progress/meter value can tick every frame.
   let formatter: Intl.NumberFormat | undefined
   let formatterKey: string | undefined
@@ -35,8 +36,10 @@ export const useRangeValue = (options: () => RangeValueOptions): ComputedRef<Ran
       formatter = new Intl.NumberFormat(locale.value, formatOptions)
       formatterKey = key
     }
+
     return formatter.format(value)
   }
+
   return computed(() => {
     const {
       value,
@@ -45,11 +48,13 @@ export const useRangeValue = (options: () => RangeValueOptions): ComputedRef<Ran
       formatOptions = { style: 'percent' },
       valueLabel,
     } = options()
+
     const clamped = Math.min(Math.max(value, minValue), maxValue)
     const range = maxValue - minValue
     const fraction = range === 0 ? 0 : (clamped - minValue) / range
     const valueText =
       valueLabel ?? format(formatOptions.style === 'percent' ? fraction : clamped, formatOptions)
+
     return { clamped, percentage: fraction * 100, valueText }
   })
 }

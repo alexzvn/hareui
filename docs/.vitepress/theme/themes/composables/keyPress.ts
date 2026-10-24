@@ -27,8 +27,10 @@ export const useKeyPress = (
       target.isContentEditable
     )
       return
+
     const modifiersMatch =
       (event.ctrlKey || event.metaKey) === ctrl && event.shiftKey === shift && event.altKey === alt
+
     if (event.key.toLowerCase() !== key.toLowerCase() || !modifiersMatch) return
     if (ctrl || shift || alt) event.preventDefault()
     callback(event)

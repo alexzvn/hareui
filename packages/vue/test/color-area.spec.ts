@@ -22,18 +22,23 @@ describe('ColorArea', () => {
         yChannel: 'brightness',
       },
     })
+
     await expectAccessible(idle)
+
     const labelled = mount(ColorArea, {
       attachTo: document.body,
       props: { defaultValue: '#0485F7' },
       attrs: { 'aria-label': 'Background colour' },
     })
+
     await expectAccessible(labelled)
+
     const disabled = mount(ColorArea, {
       attachTo: document.body,
       props: { defaultValue: '#0485F7', disabled: true },
       attrs: { 'aria-label': 'Background colour' },
     })
+
     await expectAccessible(disabled)
     idle.unmount()
     labelled.unmount()
@@ -45,6 +50,7 @@ describe('ColorArea', () => {
       attachTo: document.body,
       props: { defaultValue: '#0485F7' },
     })
+
     ;(wrapper.get(thumb).element as HTMLElement).focus()
     await wrapper.get(thumb).trigger('keydown', { key: 'ArrowRight' })
     await expectAccessible(wrapper)
@@ -60,6 +66,7 @@ describe('ColorArea', () => {
         yChannel: 'brightness',
       },
     })
+
     const t = wrapper.get(thumb)
     expect(t.attributes('tabindex')).toBe('0')
     expect(wrapper.findAll('[tabindex="0"]')).toHaveLength(1)
@@ -79,11 +86,13 @@ describe('ColorArea', () => {
         yChannel: 'brightness',
       },
     })
+
     const t = wrapper.get(thumb)
     const press = async (key: string, shiftKey = false) => {
       await t.trigger('keydown', { key, shiftKey })
       return t.attributes('aria-valuetext')
     }
+
     expect(await press('ArrowRight')).toBe('Saturation 51, Brightness 50')
     expect(await press('ArrowLeft')).toBe('Saturation 50, Brightness 50')
     expect(await press('ArrowUp')).toBe('Saturation 50, Brightness 51')
@@ -107,6 +116,7 @@ describe('ColorArea', () => {
         disabled: true,
       },
     })
+
     await wrapper.get(area).trigger('keydown', { key: 'ArrowRight' })
     expect(wrapper.emitted('update:modelValue')).toBeUndefined()
     expect(wrapper.get(area).attributes('aria-disabled')).toBe('true')
@@ -119,6 +129,7 @@ describe('ColorArea', () => {
       attachTo: document.body,
       props: { defaultValue: '#0485F7' },
     })
+
     await wrapper.get(area).trigger('pointerdown', { pointerId: 1, clientX: 0, clientY: 0 })
     expect(document.activeElement).toBe(wrapper.get(thumb).element)
     wrapper.unmount()
@@ -134,10 +145,13 @@ describe('ColorArea', () => {
       },
       attrs: { 'aria-label': 'Background colour' },
     })
+
     expect(wrapper.get('[role=group]').attributes('aria-label')).toBe('Background colour')
+
     expect(wrapper.get(thumb).attributes('aria-label')).toBe(
       'Background colour, Saturation, Brightness',
     )
+
     wrapper.unmount()
   })
 
@@ -150,9 +164,11 @@ describe('ColorArea', () => {
       },
       { attachTo: document.body },
     )
+
     const t = wrapper.get(thumb).element
     const ids = t.getAttribute('aria-labelledby')!.split(' ')
     expect(ids[0]).toBe('area-label')
+
     expect(
       ids.map(
         (id) =>
@@ -160,6 +176,7 @@ describe('ColorArea', () => {
           document.getElementById(id)?.textContent,
       ),
     ).toEqual(['Accent', 'Saturation, Brightness'])
+
     wrapper.unmount()
   })
 
@@ -167,6 +184,7 @@ describe('ColorArea', () => {
     const wrapper = mount(ColorArea, {
       props: { defaultValue: 'hsb(219, 58%, 93%)', xChannel: 'saturation', yChannel: 'brightness' },
     })
+
     expect(wrapper.find(area).exists()).toBe(true)
     const t = wrapper.find(thumb)
     expect(t.attributes('role')).toBe('slider')
@@ -182,6 +200,7 @@ describe('ColorArea', () => {
         yChannel: 'brightness',
       },
     })
+
     await wrapper.find(thumb).trigger('keydown', { key: 'ArrowRight' })
     const updates = wrapper.emitted('update:modelValue')!
     expect(colorToString(updates.at(-1)![0] as Color, 'hsb')).toBe('hsb(200, 51%, 50%)')
@@ -204,6 +223,7 @@ describe('ColorArea', () => {
         defaultValue: 'rgb(255, 100, 50)',
       },
     })
+
     const text = wrapper.find(thumb).attributes('aria-valuetext')
     expect(text).toContain('Red 255')
     expect(text).toContain('Green 100')
@@ -226,6 +246,7 @@ describe('ColorArea', () => {
     const wrapper = mount(ColorArea, {
       props: { class: 'size-44 rounded-3xl', defaultValue: '#0485F7' },
     })
+
     const cls = wrapper.find(area).classes()
     expect(cls).toContain('size-44')
     expect(cls).toContain('rounded-3xl')
@@ -245,6 +266,7 @@ describe('ColorArea', () => {
         },
       },
     })
+
     expect(wrapper.find(thumb).attributes('aria-valuetext')).toContain('Saturation 50')
     await wrapper.find(thumb).trigger('keydown', { key: 'ArrowUp' })
     expect(commits.length).toBe(1)
@@ -255,6 +277,7 @@ describe('ColorArea', () => {
       attachTo: document.body,
       props: { defaultValue: '#0485F7' },
     })
+
     const t = wrapper.find(thumb)
     await wrapper.find(area).trigger('pointerdown', { pointerId: 1 })
     ;(t.element as HTMLElement).focus()
@@ -275,6 +298,7 @@ describe('ColorArea', () => {
         yChannel: 'brightness',
       },
     })
+
     const text = wrapper.find(thumb).attributes('aria-valuetext')
     expect(text).toContain('Saturation 74')
     expect(text).toContain('Brightness 96')
@@ -290,7 +314,9 @@ describe('ColorArea', () => {
         yChannel: 'brightness',
       },
     })
+
     await wrapper.setProps({ modelValue: '#22C55E' })
+
     // #22C55E is hsb(142.1, 83%, 77%) but hsl(142.1, 71%, 45%)
     expect(wrapper.find(thumb).attributes('aria-valuetext')).toContain('Saturation 83')
   })

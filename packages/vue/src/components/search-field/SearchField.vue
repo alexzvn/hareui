@@ -220,6 +220,7 @@ if (modelValue.value === undefined && props.defaultValue !== undefined)
 
 const root = useTemplateRef<HTMLElement>('root')
 const input = useTemplateRef<HTMLInputElement>('input')
+
 const { validation } = useFieldValidation({
   value: () => modelValue.value ?? '',
   validate: () => props.validate,
@@ -232,6 +233,7 @@ const { validation } = useFieldValidation({
     modelValue.value = props.defaultValue ?? ''
   },
 })
+
 const invalid = computed(() => validation.value.isInvalid)
 const disabled = useFieldsetDisabled(() => props.disabled)
 const isEmpty = computed(() => !modelValue.value)
@@ -242,6 +244,7 @@ const onFocusIn = (event: FocusEvent) => {
   focusWithin.value = true
   focusVisible.value = event.target instanceof Element && event.target.matches(':focus-visible')
 }
+
 const onFocusOut = (event: FocusEvent) => {
   if (
     event.currentTarget instanceof Element &&
@@ -249,6 +252,7 @@ const onFocusOut = (event: FocusEvent) => {
     event.currentTarget.contains(event.relatedTarget)
   )
     return
+
   focusWithin.value = false
   focusVisible.value = false
 }
@@ -261,6 +265,7 @@ const onEnter = (event: KeyboardEvent) => {
   if (disabled.value || props.readonly) return
   emit('submit', modelValue.value ?? '')
 }
+
 // Matches RAC: Escape clears the field and stops there (an enclosing dialog stays open), but does nothing and lets
 // the key through when the field is already empty, disabled or readonly.
 const onEscape = (event: KeyboardEvent) => {
@@ -270,6 +275,7 @@ const onEscape = (event: KeyboardEvent) => {
   modelValue.value = ''
   emit('clear')
 }
+
 const onClear = () => {
   // RAC focuses the input before the click reaches the button, so it never leaves the input
   input.value?.focus()

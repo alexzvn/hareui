@@ -16,6 +16,7 @@ import { CellSelect } from '@hareui/vue'
 import { computed, ref } from 'vue'
 
 const fareInEuro = 240
+
 const currencies = [
   { value: 'EUR', label: 'Euro', rate: 1 },
   { value: 'USD', label: 'US Dollar', rate: 1.08 },

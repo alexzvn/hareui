@@ -17,10 +17,12 @@ import puppeteer from 'puppeteer'
 
 const WIDTH = 874
 const HEIGHT = 594
+
 // Largest area the demo may cover, and the largest zoom: HeroUI's thumbnails leave about a quarter
 // of the width and half the height as margin, and show small components at roughly 2.4x.
 const MAX_CONTENT = { width: 620, height: 300 }
 const MAX_SCALE = 2.4
+
 // Crops of full-page layouts are opaque, so they may cover more of the card; they stay within the width the
 // cards show (they crop the thumbnail's sides) and are framed as a rounded window.
 const CROP_CONTENT = { width: 660, height: 480 }
@@ -48,6 +50,7 @@ type Pick = {
   crop?: Box
   pointer?: { x: number; y: number }
 }
+
 const PICKS: Record<string, Pick> = {
   'alert-dialog': { open: 'button', overlay: '[data-slot="alert-dialog-dialog"]' },
   accordion: { select: '[data-slot="accordion-item"]:nth-child(-n+3)', width: 320 },
@@ -141,6 +144,7 @@ const OUT = fileURLToPath(new URL('../public/related-components/', import.meta.u
 const args = process.argv.slice(2)
 const baseIndex = args.indexOf('--base')
 const base = baseIndex >= 0 ? args.splice(baseIndex, 2)[1]! : 'http://localhost:5183'
+
 const slugs = args.length
   ? args
   : readdirSync(PAGES)
@@ -175,6 +179,7 @@ const inkBox = (png: PNG): Box | null => {
       }
     }
   }
+
   return x1 < 0 ? null : { x: x0, y: y0, width: x1 - x0 + 1, height: y1 - y0 + 1 }
 }
 
@@ -189,6 +194,7 @@ const centre = (src: PNG): PNG => {
     const len = (Math.min(WIDTH, dx + src.width) - Math.max(0, dx)) * 4
     src.data.copy(out.data, to, from, from + len)
   }
+
   return out
 }
 
@@ -203,22 +209,28 @@ const thumbnail = async (page: Page, slug: string, theme: 'light' | 'dark'): Pro
   const pick = PICKS[slug] ?? {}
   const viewport = pick.page ?? pick.viewport ?? { width: 1440, height: 900 }
   await page.setViewport({ ...viewport, deviceScaleFactor: 1 })
+
   if (pick.page && (!pick.demo || !pick.select === !pick.crop))
     throw new Error('`page` needs a `demo` to load from /preview, and either `select` or `crop`')
+
   const url = pick.page
     ? `${base}/preview/${pick.demo}?theme=${theme}`
     : `${base}/docs/components/${slug}`
+
   // Previews take their theme from VitePress' `isDark`, which reads the stored appearance on load.
   const appearance = await page.evaluateOnNewDocument(
     (t) => localStorage.setItem('vitepress-theme-appearance', t),
     theme,
   )
+
   await page.goto(url, { waitUntil: 'networkidle0', timeout: 120_000 })
   await page.removeScriptToEvaluateOnNewDocument(appearance.identifier)
+
   let found = await page.evaluate(
     (theme, pick) => {
       document.documentElement.classList.toggle('dark', theme === 'dark')
       document.documentElement.style.colorScheme = theme
+
       if (pick.page) {
         // The preview route renders the demo inside the app root's full-viewport page wrapper.
         const wrapper = document.body.firstElementChild?.firstElementChild
@@ -227,47 +239,61 @@ const thumbnail = async (page: Page, slug: string, theme: 'light' | 'dark'): Pro
           : pick.select
             ? [...wrapper.querySelectorAll(pick.select)]
             : [wrapper]
+
         targets.forEach((el) => el.setAttribute('data-thumbnail', ''))
+
         return targets.length
       }
+
       const preview = pick.demo
         ? `.preview[data-name="${pick.demo.replace(/\//g, '-')}"]`
         : '.preview'
+
       const demo = document.querySelector(`${preview} > div`)
       const root = demo?.firstElementChild as HTMLElement | null | undefined
       if (root && pick.width) root.style.width = root.style.maxWidth = `${pick.width}px`
+
       // The demo's root can be the trigger itself (a Modal renders its trigger slot as its root).
       const trigger =
         pick.open && root && (root.matches(pick.open) ? root : root.querySelector(pick.open))
+
       trigger?.setAttribute('data-thumbnail-open', '')
+
       const targets =
         root && pick.select
           ? [...root.querySelectorAll(pick.select)]
           : demo && !pick.overlay
             ? [demo]
             : []
+
       targets.forEach((el) => el.setAttribute('data-thumbnail', ''))
+
       return targets.length
     },
     theme,
     pick,
   )
+
   if (pick.open) {
     const trigger = await page.$('[data-thumbnail-open]')
     if (!trigger) throw new Error(`no ${pick.open} to open in the demo`)
     await trigger.scrollIntoView()
     await (pick.hover ? trigger.hover() : trigger.click())
+
     // Let the overlay's enter animation finish before the transitions are switched off.
     await sleep(800)
+
     found += await page.$$eval(
       pick.overlay!,
       (els) => els.map((el) => el.setAttribute('data-thumbnail', '')).length,
     )
   }
+
   if (!found)
     throw new Error(
       `no demo on the page${pick.demo || pick.select ? ` for ${JSON.stringify(pick)}` : ''}`,
     )
+
   await page.addStyleTag({ content: ISOLATE })
   await page.evaluate(() => document.fonts.ready)
   await sleep(300)
@@ -278,8 +304,10 @@ const thumbnail = async (page: Page, slug: string, theme: 'light' | 'dark'): Pro
     const y = Math.floor(Math.min(...rs.map((r) => r.top)) + scrollY)
     const right = Math.ceil(Math.max(...rs.map((r) => r.right)) + scrollX)
     const bottom = Math.ceil(Math.max(...rs.map((r) => r.bottom)) + scrollY)
+
     return { x, y, width: right - x, height: bottom - y }
   })
+
   // Full-page demos are fixed to the viewport, which capturing beyond it would resize.
   const beyond = !pick.open && !pick.page
   let box: Box
@@ -289,6 +317,7 @@ const thumbnail = async (page: Page, slug: string, theme: 'light' | 'dark'): Pro
     // Pass 1 at 1x finds the demo's ink; pass 2 shoots just that box at the thumbnail's zoom.
     const ink = inkBox(await shoot(page, rect, beyond))
     if (!ink) throw new Error('demo renders nothing')
+
     // 2px of padding keeps antialiased edges that only appear at the higher zoom.
     box = {
       x: rect.x + ink.x - 2,
@@ -297,14 +326,18 @@ const thumbnail = async (page: Page, slug: string, theme: 'light' | 'dark'): Pro
       height: ink.height + 4,
     }
   }
+
   const max = pick.crop ? CROP_CONTENT : MAX_CONTENT
   const scale = Math.min(MAX_SCALE, max.width / box.width, max.height / box.height)
   await page.setViewport({ ...viewport, deviceScaleFactor: scale })
+
   if (pick.pointer) {
     await page.mouse.move(pick.pointer.x, pick.pointer.y)
     await sleep(300)
   }
+
   const shot = await shoot(page, box, beyond)
+
   return centre(pick.crop ? frame(shot, scale) : shot)
 }
 
@@ -320,12 +353,14 @@ const frame = (png: PNG, scale: number): PNG => {
       const d = Math.hypot(Math.max(qx, 0), Math.max(qy, 0)) + Math.min(Math.max(qx, qy), 0) - r
       const i = (y * w + x) * 4
       png.data[i + 3] = Math.round(png.data[i + 3]! * Math.min(1, Math.max(0, 0.5 - d)))
+
       // A 1 CSS px outline, blended 30% towards grey.
       const outline = Math.min(1, Math.max(0, d + scale + 0.5)) * 0.3
       for (let c = 0; c < 3; c++)
         png.data[i + c] = Math.round(png.data[i + c]! * (1 - outline) + 128 * outline)
     }
   }
+
   return png
 }
 
@@ -334,8 +369,10 @@ const browser = await puppeteer.launch({ headless: true })
 const failed: string[] = []
 try {
   const page = await browser.newPage()
+
   // Charts draw in over ~1s; reduced motion renders their final geometry at once.
   await page.emulateMediaFeatures([{ name: 'prefers-reduced-motion', value: 'reduce' }])
+
   for (const slug of slugs) {
     for (const theme of ['light', 'dark'] as const) {
       try {
@@ -347,11 +384,13 @@ try {
         failed.push(`${theme}-${slug}: ${(error as Error).message}`)
       }
     }
+
     console.log(slug)
   }
 } finally {
   await browser.close()
 }
+
 if (failed.length) {
   console.error(`failed:\n  ${failed.join('\n  ')}`)
   process.exit(1)

@@ -114,12 +114,14 @@ const Separator = (p: ItemSlotProps) => {
     class: ui.value.separator({ class: props.ui?.separator }),
     'data-slot': 'breadcrumbs-separator',
   }
+
   if (slots.separator) {
     const nodes = slots.separator(p).filter((v: VNode) => v.type !== Comment)
     return nodes.length === 1 && isVNode(nodes[0]) && typeof nodes[0].type !== 'symbol'
       ? cloneVNode(nodes[0], shared, true)
       : nodes
   }
+
   return h(
     'svg',
     {

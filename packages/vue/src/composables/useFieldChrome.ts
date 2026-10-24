@@ -123,12 +123,14 @@ export const useFieldChrome = (options: FieldChromeOptions) => {
     description: !!slots.description,
     error: !!slots[errorSlot],
   })
+
   onBeforeUpdate(() => {
     const next = {
       label: !!slots.label,
       description: !!slots.description,
       error: !!slots[errorSlot],
     }
+
     const prev = present.value
     if (
       next.label !== prev.label ||
@@ -141,21 +143,27 @@ export const useFieldChrome = (options: FieldChromeOptions) => {
   const invalid = computed(() => !!toValue(options.invalid))
   const validation = computed(() => toValue(options.validation) ?? VALID_RESULT)
   const hasLabel = computed(() => !!(props.label || present.value.label))
+
   const hasDescription = computed(
     () =>
       !!(props.description || present.value.description) &&
       !(options.hideDescriptionWhenInvalid && invalid.value),
   )
+
   const hasMessageError = computed(() => props.errorMessage !== undefined || present.value.error)
+
   const hasInvalidError = computed(
     () =>
       invalid.value &&
       !!(props.errorMessage || present.value.error || validation.value.validationErrors.length),
   )
+
   const hasError = isMessagePart ? hasMessageError : hasInvalidError
+
   const errorText = computed(
     () => props.errorMessage ?? validation.value.validationErrors.join(' '),
   )
+
   const describedBy = computed(() => {
     const description = hasDescription.value ? descriptionId.value : undefined
     const ids = toValue(options.describedByIds) ?? []
@@ -163,6 +171,7 @@ export const useFieldChrome = (options: FieldChromeOptions) => {
       options.describedByIdsPosition === 'afterDescription'
         ? [description, ...ids]
         : [...ids, description]
+
     return (
       [toValue(options.ariaDescribedBy), ...around, hasError.value ? errorId.value : undefined]
         .filter(Boolean)
@@ -222,11 +231,14 @@ export const useFieldChrome = (options: FieldChromeOptions) => {
         h(ErrorMessage, { ...attrs, class: normalizeClass(attrs.class), id: errorId.value }, () =>
           h(ErrorOutlet, null, () => props.errorMessage),
         )
+
       const renderFieldError = () =>
         h(FieldError, { ...attrs, class: normalizeClass(attrs.class), id: errorId.value }, () =>
           h(ErrorOutlet, validation.value, () => errorText.value),
         )
+
       const render = isMessagePart ? renderMessage : renderFieldError
+
       return () => (hasError.value ? render() : null)
     },
   })

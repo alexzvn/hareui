@@ -49,6 +49,7 @@ const layer = (card: HTMLElement) => {
   root = document.createElement('span')
   root.dataset.ripple = ''
   root.setAttribute('aria-hidden', 'true')
+
   Object.assign(root.style, {
     position: 'absolute',
     inset: '0',
@@ -57,6 +58,7 @@ const layer = (card: HTMLElement) => {
     pointerEvents: 'none',
     color: 'color-mix(in oklab, var(--muted) 50%, transparent)',
   })
+
   const hover = document.createElement('span')
   Object.assign(hover.style, {
     position: 'absolute',
@@ -65,8 +67,10 @@ const layer = (card: HTMLElement) => {
     opacity: '0',
     transition: 'opacity 150ms',
   })
+
   root.append(hover)
   card.prepend(root)
+
   return root
 }
 
@@ -81,6 +85,7 @@ const press = (card: HTMLElement, x: number, y: number) => {
   const scale = (Math.hypot(width, height) + 12 + Math.max(maxDim * 0.35, 75)) / size
   const wave = document.createElement('span')
   wave.dataset.wave = String(performance.now())
+
   Object.assign(wave.style, {
     position: 'absolute',
     left: '0',
@@ -93,7 +98,9 @@ const press = (card: HTMLElement, x: number, y: number) => {
     opacity: '0',
     transition: 'opacity 75ms',
   })
+
   layer(card).append(wave)
+
   wave.animate(
     {
       transform: [
@@ -103,6 +110,7 @@ const press = (card: HTMLElement, x: number, y: number) => {
     },
     { duration: 150, fill: 'forwards' },
   )
+
   requestAnimationFrame(() => (wave.style.opacity = PRESSED_OPACITY))
 }
 
@@ -111,6 +119,7 @@ const release = (card: HTMLElement) => {
     '[data-ripple] > [data-wave]:not([data-released])',
   )) {
     wave.dataset.released = ''
+
     setTimeout(
       () => {
         wave.style.transition = 'opacity 375ms'

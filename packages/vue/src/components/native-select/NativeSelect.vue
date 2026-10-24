@@ -196,10 +196,12 @@ defineOptions({ inheritAttrs: false })
 
 // `undefined` defaults keep an absent `invalid` from counting as controlled-valid
 const props = withDefaults(defineProps<NativeSelectProps>(), { invalid: undefined })
+
 const emit = defineEmits<{
   /** Emitted when the user picks an option. */
   'update:modelValue': [value: string]
 }>()
+
 defineSlots<NativeSelectSlots>()
 const slots = useSlots()
 const attrs = useAttrs()
@@ -215,6 +217,7 @@ const isDisabled = useFieldsetDisabled(() => props.disabled)
 
 const local = ref(props.defaultValue ?? '')
 const current = computed(() => props.modelValue ?? local.value)
+
 // The value form reset restores: `defaultValue`, or the option the browser picked at mount
 let initial = local.value
 
@@ -222,11 +225,13 @@ let initial = local.value
 // Read it from the DOM: binding `value=""` with no empty option leaves the browser with nothing selected.
 onMounted(() => {
   if (props.defaultValue !== undefined || !select.value) return
+
   const first = [...select.value.options].find(
     (option) =>
       !option.disabled &&
       !(option.parentElement instanceof HTMLOptGroupElement && option.parentElement.disabled),
   )
+
   initial = first?.value ?? ''
   if (props.modelValue === undefined) local.value = initial
 })
@@ -242,6 +247,7 @@ const { validation, commitValidation } = useFieldValidation({
   onReset: () => {
     local.value = props.defaultValue ?? initial
     emit('update:modelValue', local.value)
+
     // The browser resets the `<select>` after the `reset` listeners run, and microtasks run in between
     // when the reset comes from a user click, so restore the bound value in a new task
     setTimeout(() => {
@@ -249,6 +255,7 @@ const { validation, commitValidation } = useFieldValidation({
     })
   },
 })
+
 const invalid = computed(() => validation.value.isInvalid)
 
 const { id, describedBy, FieldLabel, FieldDescription, FieldError } = useFieldChrome({
@@ -263,6 +270,7 @@ const { id, describedBy, FieldLabel, FieldDescription, FieldError } = useFieldCh
 })
 
 const rootAttrs = computed(() => ({ style: attrs.style }))
+
 const selectAttrs = computed(() => {
   const { class: _class, style: _style, ...rest } = attrs
   return rest
@@ -273,6 +281,7 @@ const optionOf = (option: NativeSelectOption) => {
     ? { value: option, label: option, disabled: false }
     : { ...option, label: option.label ?? option.value }
 }
+
 const isGroup = (item: NativeSelectItem): item is NativeSelectGroup => {
   return typeof item === 'object' && 'items' in item
 }

@@ -23,6 +23,7 @@ const allOptions = ['coding', 'design', 'writing']
 const indeterminate = computed(
   () => selected.value.length > 0 && selected.value.length < allOptions.length,
 )
+
 const allSelected = computed(() => selected.value.length === allOptions.length)
 
 const onToggleAll = (isSelected: boolean | 'indeterminate') => {

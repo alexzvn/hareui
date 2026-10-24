@@ -124,11 +124,14 @@ const interpolatePoints = (
   t: number,
 ) => {
   if (!from || !from.length) return to
+
   return to.map((point, index) => {
     if (!point) return null
+
     // When the number of points changes, each point starts from the old point at the same relative position.
     const previous = from[Math.min(Math.floor((index * from.length) / to.length), from.length - 1)]
     if (!previous) return point
+
     return {
       ...point,
       x: lerp(previous.x, point.x, t),
@@ -152,6 +155,7 @@ export const usePointSeries = (
   const chart = useChartContext(kind === 'area' ? 'ChartArea' : 'ChartLine')
   const cartesian = useCartesianContext(kind === 'area' ? 'ChartArea' : 'ChartLine')
   const id = useId(undefined, `hareui-chart-${kind}`)
+
   // The root's `series` config of this key: default name, and hidden through the root's `hidden` list.
   const rootSeries = useRootSeries(chart, () => props.dataKey)
   const hidden = computed(() => props.hide || !!rootSeries.value?.hidden)
@@ -183,6 +187,7 @@ export const usePointSeries = (
     const xAxis = cartesian.xAxis(props.xAxisId)
     const yAxis = cartesian.yAxis(props.yAxisId)
     const valueAxis = horizontal.value ? yAxis : xAxis
+
     // `baseValue` moves the baseline of an unstacked area.
     let base: number | undefined
     if (props.baseValue !== undefined && props.stackId === undefined) {
@@ -194,6 +199,7 @@ export const usePointSeries = (
             ? Math.max(low, high)
             : props.baseValue
     }
+
     return values.map((pair, index) => {
       if (!pair) return null
       const raw = data[index]?.[props.dataKey]
@@ -215,6 +221,7 @@ export const usePointSeries = (
             baseX: lower,
             value: raw,
           }
+
       // A row without a position on a number category axis is a gap.
       return Number.isFinite(point.x) && Number.isFinite(point.y) ? point : null
     })
@@ -239,6 +246,7 @@ export const usePointSeries = (
       chart.interaction.value?.trigger !== 'axis'
     )
       return null
+
     return target.value[index] ?? null
   })
 

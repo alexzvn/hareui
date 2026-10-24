@@ -58,10 +58,13 @@ let checkBoundsAfterContextMenu = false
 watchEffect(() => {
   const style = surface.value?.style
   if (!style) return
+
   if (props.hoverOpacity !== undefined)
     style.setProperty('--ripple-hover-opacity', `${props.hoverOpacity}`)
+
   if (props.pressedOpacity !== undefined)
     style.setProperty('--ripple-pressed-opacity', `${props.pressedOpacity}`)
+
   if (props.duration !== 150) style.setProperty('--ripple-duration', `${props.duration}ms`)
 })
 
@@ -72,15 +75,18 @@ const shouldReactToEvent = (event: PointerEvent) => {
     | (HTMLElement & { disabled?: boolean })
     | null
     | undefined
+
   if (props.disabled || parent?.disabled || !event.isPrimary) return false
   if (rippleStartEvent && rippleStartEvent.pointerId !== event.pointerId) return false
   if (event.type === 'pointerenter' || event.type === 'pointerleave') return !isTouch(event)
+
   return isTouch(event) || event.buttons === 1
 }
 
 const inBounds = ({ x, y }: PointerEvent) => {
   const rect = root.value?.getBoundingClientRect()
   if (!rect) return false
+
   return x >= rect.left && x <= rect.right && y >= rect.top && y <= rect.bottom
 }
 
@@ -98,6 +104,7 @@ const determineRippleSize = () => {
 const getNormalizedPointerEventCoords = (event: PointerEvent) => {
   const rect = root.value?.getBoundingClientRect()
   if (!rect) return { x: 0, y: 0 }
+
   return {
     x: event.pageX - (window.scrollX + rect.left),
     y: event.pageY - (window.scrollY + rect.top),
@@ -109,6 +116,7 @@ const getTranslationCoordinates = (event?: PointerEvent) => {
   if (!parent) return { startPoint: { x: 0, y: 0 }, endPoint: { x: 0, y: 0 } }
   const { height, width } = parent.getBoundingClientRect()
   const endPoint = { x: (width - initialSize) / 2, y: (height - initialSize) / 2 }
+
   // Keyboard activation starts in the centre.
   return { startPoint: event ? getNormalizedPointerEventCoords(event) : endPoint, endPoint }
 }
@@ -138,10 +146,12 @@ const endPressAnimation = () => {
   const animation = growAnimation
   const pressAnimationPlayState =
     typeof animation?.currentTime === 'number' ? animation.currentTime : Infinity
+
   if (pressAnimationPlayState >= props.minimumPressDuration) {
     pressed.value = false
     return
   }
+
   setTimeout(() => {
     if (growAnimation === animation) pressed.value = false
   }, props.minimumPressDuration - pressAnimationPlayState)
@@ -159,10 +169,12 @@ const onPointerLeave = (event: PointerEvent) => {
 
 const onPointerUp = (event: PointerEvent) => {
   if (!shouldReactToEvent(event)) return
+
   if (state === State.Holding) {
     state = State.WaitingForClick
     return
   }
+
   if (state === State.TouchDelay) {
     state = State.WaitingForClick
     startPressAnimation(rippleStartEvent)
@@ -172,14 +184,18 @@ const onPointerUp = (event: PointerEvent) => {
 const onPointerDown = (event: PointerEvent) => {
   if (!shouldReactToEvent(event)) return
   rippleStartEvent = event
+
   if (!isTouch(event)) {
     state = State.WaitingForClick
     startPressAnimation(event)
+
     return
   }
+
   if (checkBoundsAfterContextMenu && !inBounds(event)) return
   checkBoundsAfterContextMenu = false
   state = State.TouchDelay
+
   setTimeout(() => {
     if (state !== State.TouchDelay) return
     state = State.Holding
@@ -189,10 +205,12 @@ const onPointerDown = (event: PointerEvent) => {
 
 const onClick = () => {
   if (props.disabled) return
+
   if (state === State.WaitingForClick) {
     endPressAnimation()
     return
   }
+
   if (state === State.Inactive) {
     startPressAnimation()
     endPressAnimation()
@@ -223,6 +241,7 @@ onMounted(() => {
   parent.addEventListener('pointerleave', onPointerLeave, options)
   parent.addEventListener('pointerup', onPointerUp, options)
 })
+
 onBeforeUnmount(() => listenersController?.abort())
 </script>
 

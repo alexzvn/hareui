@@ -14,6 +14,7 @@ describe('ToggleButton', () => {
       props: { defaultValue: true },
       slots: { default: () => 'Like' },
     })
+
     const button = wrapper.find('button')
     expect(button.attributes()).toMatchObject({ 'aria-pressed': 'true', 'data-selected': 'true' })
     await button.trigger('click')
@@ -34,6 +35,7 @@ describe('ToggleButton', () => {
       props: { disabled: true },
       slots: { default: () => h(ToggleButton, () => 'x') },
     })
+
     expect(wrapper.find('[data-slot="toggle-button"]').attributes('disabled')).toBeDefined()
   })
 
@@ -51,6 +53,7 @@ describe('ToggleButton', () => {
         default: () => ('aria-label' in attrs ? h('svg', { 'aria-hidden': 'true' }) : 'Bold'),
       },
     })
+
     await expectAccessible(wrapper)
     wrapper.unmount()
   })
@@ -60,10 +63,12 @@ describe('ToggleButton', () => {
       attachTo: document.body,
       slots: { default: () => 'Bold' },
     })
+
     const button = wrapper.get('button').element
     expect(button.getAttribute('aria-pressed')).toBe('false')
     button.focus()
     expect(document.activeElement).toBe(button)
+
     // Enter / Space on a native button dispatch `click`.
     button.click()
     await nextTick()
@@ -79,6 +84,7 @@ describe('ToggleButton', () => {
       attachTo: document.body,
       slots: { default: () => 'Bold' },
     })
+
     const button = wrapper.get('button').element
     button.focus()
     expect(document.activeElement).not.toBe(button)
@@ -95,6 +101,7 @@ const group = (props: Record<string, unknown>) =>
     props,
     slots: { default: () => ['a', 'b', 'c'].map((v) => h(ToggleButton, { value: v }, () => v)) },
   })
+
 const items = (wrapper: ReturnType<typeof mount>) => wrapper.findAll('[data-slot="toggle-button"]')
 
 describe('ToggleButtonGroup', () => {
@@ -105,6 +112,7 @@ describe('ToggleButtonGroup', () => {
     expect(items(wrapper)[0]!.attributes('aria-pressed')).toBeUndefined()
     await items(wrapper)[1]!.trigger('click')
     expect(wrapper.emitted('update:modelValue')!.at(-1)).toEqual([['b']])
+
     expect(items(wrapper).map((b) => b.attributes('data-selected'))).toEqual([
       undefined,
       'true',
@@ -118,12 +126,14 @@ describe('ToggleButtonGroup', () => {
       defaultValue: ['a'],
       disallowEmptySelection: true,
     })
+
     expect(wrapper.attributes('role')).toBe('toolbar')
     await items(wrapper)[2]!.trigger('click')
     expect(wrapper.emitted('update:modelValue')!.at(-1)).toEqual([['a', 'c']])
     await items(wrapper)[0]!.trigger('click')
     await items(wrapper)[2]!.trigger('click')
     await nextTick()
+
     expect(items(wrapper).map((b) => b.attributes('data-selected'))).toEqual([
       undefined,
       undefined,
@@ -134,9 +144,11 @@ describe('ToggleButtonGroup', () => {
   it('renders separators in every button but the first, only with `separator`, and passes group size', async () => {
     const wrapper = group({ separator: true, size: 'sm' })
     await nextTick()
+
     expect(items(wrapper)[0]!.find('[data-slot="toggle-button-group-separator"]').exists()).toBe(
       false,
     )
+
     expect(wrapper.findAll('[data-slot="toggle-button-group-separator"]')).toHaveLength(2)
     expect(items(wrapper)[0]!.classes()).toContain('px-3')
   })

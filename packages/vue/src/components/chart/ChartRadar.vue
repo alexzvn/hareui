@@ -132,6 +132,7 @@ const props = withDefaults(defineProps<ChartRadarProps>(), {
   animationDuration: 1500,
   animationEasing: 'ease',
 })
+
 defineSlots<ChartRadarSlots>()
 
 const chart = useChartContext('ChartRadar')
@@ -160,12 +161,14 @@ const target = computed<RadarPoint[]>(() => {
   const cy = polar.cy.value
   const angleAxis = polar.angleAxis.value
   const radiusAxis = polar.radiusAxis.value
+
   return chart.data.value.flatMap((datum, index) => {
     const raw = datum[props.dataKey]
     const value = Number(raw)
     if (raw === undefined || raw === '' || !Number.isFinite(value)) return []
     const angle = angleAxis.at(index)
     const radius = radiusAxis.scale(value)
+
     return [{ index, angle, radius, value: raw, ...polarToCartesian(cx, cy, radius, angle) }]
   })
 })
@@ -174,9 +177,11 @@ const target = computed<RadarPoint[]>(() => {
 const interpolate = (from: RadarPoint[] | null, to: RadarPoint[], t: number): RadarPoint[] => {
   const cx = polar.cx.value
   const cy = polar.cy.value
+
   return to.map((point) => {
     const previous = from?.find((item) => item.index === point.index)
     const radius = lerp(previous?.radius ?? 0, point.radius, t)
+
     return { ...point, radius, ...polarToCartesian(cx, cy, radius, point.angle) }
   })
 }
@@ -212,6 +217,7 @@ const activePoint = computed(() => {
     chart.interaction.value?.trigger !== 'axis'
   )
     return null
+
   return target.value.find((point) => point.index === index) ?? null
 })
 

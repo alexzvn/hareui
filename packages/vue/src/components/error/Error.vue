@@ -143,6 +143,7 @@ const props = withDefaults(defineProps<ErrorProps>(), {
   redirect: '/',
   clear: true,
 })
+
 const emit = defineEmits<ErrorEmits>()
 const slots = defineSlots<ErrorSlots>()
 
@@ -151,10 +152,13 @@ const ui = useComponentUI('error', theme, () => ({}))
 const as = computed(() => resolveAs(props.as, { root: 'main', statusMessage: 'h1' }))
 const statusCode = computed(() => props.error?.statusCode || props.error?.status)
 const statusMessage = computed(() => props.error?.statusMessage || props.error?.statusText)
+
 const clearProps = computed<ErrorClearProps>(() =>
   typeof props.clear === 'object' ? props.clear : {},
 )
+
 const clearLabel = computed(() => clearProps.value.label ?? 'Back to home')
+
 const clearButtonProps = computed(() => {
   const { label: _label, ...button } = clearProps.value
   return button

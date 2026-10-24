@@ -32,6 +32,7 @@ describe('scrollShadow', () => {
     const auto = mount(ScrollShadow)
     expect(auto.attributes('data-scroll-shadow-mode')).toBe('auto')
     expect(Object.keys(auto.attributes()).filter((a) => a.endsWith('-scroll'))).toEqual([])
+
     expect(
       mount(ScrollShadow, { props: { enabled: false } }).attributes('data-scroll-shadow-mode'),
     ).toBe('manual')
@@ -44,6 +45,7 @@ describe('scrollShadow', () => {
         h('p', 'Wide text'),
       ),
     ])
+
     await nextTick()
     await expectAccessible(wrapper)
     wrapper.unmount()
@@ -55,11 +57,13 @@ describe('scrollShadow', () => {
       slots: { default: () => h('p', 'Long text') },
       attachTo: document.body,
     })
+
     expect(region.attributes()).toMatchObject({
       tabindex: '0',
       role: 'region',
       'aria-label': 'Terms of service',
     })
+
     await expectAccessible(region)
     ;(region.element as HTMLElement).focus()
     expect(document.activeElement).toBe(region.element)
@@ -71,6 +75,7 @@ describe('scrollShadow', () => {
       props: { visibility: 'both' },
       slots: { default: () => h('p', 'Long text') },
     })
+
     await wrapper.setProps({ visibility: 'none' })
     expect(wrapper.attributes('aria-hidden')).toBeUndefined()
     expect(wrapper.text()).toBe('Long text')

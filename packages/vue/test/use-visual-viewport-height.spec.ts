@@ -29,6 +29,7 @@ describe('useVisualViewportHeight', () => {
     vi.spyOn(window, 'innerHeight', 'get').mockReturnValue(432)
     window.dispatchEvent(new Event('resize'))
     await nextTick()
+
     for (const w of [a, b])
       expect((w.element as HTMLElement).style.getPropertyValue('--visual-viewport-height')).toBe(
         '432px',

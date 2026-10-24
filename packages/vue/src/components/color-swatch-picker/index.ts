@@ -1,4 +1,5 @@
 export { default as ColorSwatchPicker } from './ColorSwatchPicker.vue'
+
 export type {
   ColorSwatchPickerEmits,
   ColorSwatchPickerItem,

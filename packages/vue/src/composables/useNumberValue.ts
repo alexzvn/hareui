@@ -40,6 +40,7 @@ export type NumberValue = {
  */
 export const useNumberValue = (options: NumberValueOptions): NumberValue => {
   const { model, onCommit } = options
+
   // A second `defineEmits` for `update:modelValue` would clash with defineModel's emit type, so the forced emit in
   // `commitEmpty` goes through the instance.
   const instance = getCurrentInstance()
@@ -51,6 +52,7 @@ export const useNumberValue = (options: NumberValueOptions): NumberValue => {
   const effectiveStep = computed(
     () => options.step() ?? (options.formatOptions()?.style === 'percent' ? 0.01 : undefined),
   )
+
   const displayValue = computed(() => snap(model.value))
   const defaultDisplayValue = computed(() => snap(options.defaultValue()))
 
@@ -74,8 +76,10 @@ export const useNumberValue = (options: NumberValueOptions): NumberValue => {
   const commitEmpty = () => {
     if (formValue.value == null) return
     formValue.value = undefined
+
     if (model.value == null) instance?.emit('update:modelValue', undefined)
     else model.value = undefined
+
     onCommit?.()
   }
 

@@ -32,6 +32,7 @@ export const provideChartCells = (): ComputedRef<ChartCellStyle[]> => {
       onScopeDispose(() => registry.delete(key))
     },
   })
+
   return computed(() => [...registry.values()].map((get) => get()))
 }
 

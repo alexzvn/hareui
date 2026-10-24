@@ -56,5 +56,6 @@ const series = {
   rides: { type: 'bar', name: 'Rides', barSize: 16, valueFormatter: formatNumber },
   distance: { type: 'area', name: 'Avg. distance', yAxis: 'right', valueFormatter: formatKm },
 } satisfies Record<string, ChartComposedSeries>
+
 const colors = ['var(--chart-3)', 'var(--chart-5)']
 </script>

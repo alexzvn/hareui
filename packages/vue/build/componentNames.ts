@@ -23,6 +23,7 @@ export const componentNames = (): Record<string, string> => {
       for (const [, name] of source.matchAll(/^export \{ default as (\w+)\b/gm)) names[name!] = from
     }
   }
+
   return Object.fromEntries(Object.entries(names).sort(([a], [b]) => a.localeCompare(b)))
 }
 

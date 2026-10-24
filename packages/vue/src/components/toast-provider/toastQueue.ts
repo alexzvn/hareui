@@ -5,6 +5,7 @@ import type { ClassValue } from '@/utils/tv'
 
 // How long a closing toast stays mounted for its exit animation, in milliseconds.
 const DEFAULT_EXIT_DURATION = 300
+
 // Auto-dismiss timeout in milliseconds.
 const DEFAULT_TOAST_TIMEOUT = 4000
 
@@ -59,6 +60,7 @@ class ManagedToastTimer {
   resume(): void {
     if (this.remaining <= 0 || this.timerId != null) return
     this.startTime = now()
+
     this.timerId = setTimeout(() => {
       this.timerId = null
       this.remaining = 0
@@ -133,7 +135,9 @@ export class ToastQueue<T extends object = ToastContentValue> {
       toast.timer = markRaw(timer)
       if (this.suspensions.size === 0) timer.resume()
     }
+
     this._visibleToasts.unshift(toast)
+
     return key
   }
 
@@ -153,6 +157,7 @@ export class ToastQueue<T extends object = ToastContentValue> {
     if (options?.timeout !== undefined) {
       toast.timer?.pause()
       toast.timeout = options.timeout
+
       if (options.timeout > 0) {
         const timer = new ManagedToastTimer(() => this.close(key), options.timeout)
         toast.timer = markRaw(timer)
@@ -161,6 +166,7 @@ export class ToastQueue<T extends object = ToastContentValue> {
         toast.timer = undefined
       }
     }
+
     return true
   }
 
@@ -174,14 +180,17 @@ export class ToastQueue<T extends object = ToastContentValue> {
     const canAnimate = this.exitDuration > 0 && !prefersReducedMotion()
 
     toast.timer?.pause()
+
     if (!canAnimate) {
       this._visibleToasts.splice(index, 1)
       onClose?.()
+
       return
     }
 
     toast.onClose = undefined
     this._exitingKeys.add(key)
+
     this.exitTimers.set(
       key,
       setTimeout(() => {
@@ -191,6 +200,7 @@ export class ToastQueue<T extends object = ToastContentValue> {
         if (i !== -1) this._visibleToasts.splice(i, 1)
       }, this.exitDuration),
     )
+
     onClose?.()
   }
 
@@ -213,6 +223,7 @@ export class ToastQueue<T extends object = ToastContentValue> {
   suspendTimers(source: string): void {
     const wasEmpty = this.suspensions.size === 0
     this.suspensions.add(source)
+
     if (wasEmpty) {
       for (const t of this._visibleToasts) t.timer?.pause()
     }
@@ -221,6 +232,7 @@ export class ToastQueue<T extends object = ToastContentValue> {
   /** @internal */
   resumeTimers(source: string): void {
     this.suspensions.delete(source)
+
     if (this.suspensions.size === 0) {
       for (const t of this._visibleToasts) t.timer?.resume()
     }

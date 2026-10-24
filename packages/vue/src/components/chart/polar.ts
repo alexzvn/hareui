@@ -25,6 +25,7 @@ export const cartesianToPolar = (
 ): { radius: number; angle: number } => {
   const dx = x - cx
   const dy = y - cy
+
   // `|| 0` turns -0 (from atan2(-0, …)) into 0.
   return { radius: Math.sqrt(dx * dx + dy * dy), angle: Math.atan2(-dy, dx) / RADIAN || 0 }
 }
@@ -84,6 +85,7 @@ export const angleInSweep = (angle: number, startAngle: number, endAngle: number
   if (Math.abs(sweep) >= 360) return true
   const from = Math.min(startAngle, startAngle + sweep)
   const offset = (((angle - from) % 360) + 360) % 360
+
   return offset <= Math.abs(sweep) + 1e-9
 }
 
@@ -101,9 +103,12 @@ export const angleTickAnchor = (
   const eps = 1e-5
   const textAnchor =
     cos > eps ? (outer ? 'start' : 'end') : cos < -eps ? (outer ? 'end' : 'start') : 'middle'
+
   if (Math.abs(cos) > eps) return { textAnchor, dy: '0.355em' }
+
   // Top of the circle: text sits above the point; bottom: below it.
   const above = outer ? sin < 0 : sin > 0
+
   return { textAnchor, dy: above ? '0em' : '0.71em' }
 }
 
@@ -127,10 +132,12 @@ export const sectorPath = (sector: Omit<ChartSector, 'cx' | 'cy'>): string => {
   const innerRadius = Math.max(0, Math.min(sector.innerRadius, sector.outerRadius))
   const outerRadius = Math.max(0, sector.outerRadius)
   if (outerRadius <= 0 || sector.startAngle === sector.endAngle) return ''
+
   const cornerRadius = Math.min(
     Math.max(sector.cornerRadius ?? 0, 0),
     (outerRadius - innerRadius) / 2,
   )
+
   // d3: radians, 0 at 12 o'clock, clockwise.
   return (
     sectorArc({
@@ -190,8 +197,10 @@ export const computePieSectors = (values: number[], options: PieLayoutOptions): 
     paddingAngle = 0,
     minAngle = 0,
   } = options
+
   const delta = deltaAngle(startAngle, endAngle)
   const sign = Math.sign(delta)
+
   // Negative values would sweep backwards over their neighbors; they count as empty slices.
   const clean = values.map((value) => (Number.isFinite(value) ? Math.max(0, value) : 0))
   const nonZero = clean.filter((value) => value !== 0).length
@@ -207,6 +216,7 @@ export const computePieSectors = (values: number[], options: PieLayoutOptions): 
     const sectorStart = previous
       ? previous.endAngle + sign * paddingAngle * (value !== 0 ? 1 : 0)
       : startAngle
+
     const sectorEnd = sectorStart + sign * ((value !== 0 ? minAngle : 0) + percent * realTotalAngle)
     const midAngle = (sectorStart + sectorEnd) / 2
     sectors.push({
@@ -224,6 +234,7 @@ export const computePieSectors = (values: number[], options: PieLayoutOptions): 
       tooltipPosition: polarToCartesian(cx, cy, middleRadius, midAngle),
     })
   })
+
   return sectors
 }
 
@@ -254,6 +265,7 @@ export const bandBarPositions = (
   const sizes = bars.map((bar) => bar.barSize ?? options.barSize)
   const fixed =
     sizes[0] !== undefined && Number.isFinite(percentValue(sizes[0], bandSize, Number.NaN))
+
   if (fixed) {
     const resolved = sizes.map((size) => percentValue(size, bandSize, 0))
     let sum = resolved.reduce((total, size) => total + size, 0) + (count - 1) * gap
@@ -261,6 +273,7 @@ export const bandBarPositions = (
       sum -= (count - 1) * gap
       gap = 0
     }
+
     let fullSize = bandSize / count
     let useFull = false
     if (sum >= bandSize && fullSize > 0) {
@@ -268,22 +281,28 @@ export const bandBarPositions = (
       fullSize *= 0.9
       sum = count * fullSize
     }
+
     // The centering offset is truncated to an integer, which keeps bar edges on whole pixels.
     let offset = Math.trunc((bandSize - sum) / 2) - gap
     let previousSize = 0
+
     return resolved.map((size) => {
       offset += previousSize + gap
       previousSize = useFull ? fullSize : size
+
       return { offset, size: previousSize }
     })
   }
+
   const categoryGap = percentValue(options.barCategoryGap ?? '10%', bandSize, 0)
   if (bandSize - 2 * categoryGap - (count - 1) * gap <= 0) gap = 0
   let originalSize = Math.max(0, (bandSize - 2 * categoryGap - (count - 1) * gap) / count)
   if (originalSize > 1) originalSize = Math.trunc(originalSize)
+
   return bars.map((bar, index) => {
     const max = bar.maxBarSize ?? options.maxBarSize
     const size = max !== undefined ? Math.min(originalSize, max) : originalSize
+
     return { offset: categoryGap + (originalSize + gap) * index + (originalSize - size) / 2, size }
   })
 }
@@ -409,6 +428,7 @@ const numbersOf = (data: ChartDatum[], keys: string[]): number[] => {
         values.push(value)
     }
   }
+
   return values
 }
 
@@ -424,6 +444,7 @@ const categoryAxis = (
   const bandwidth = count ? (end - start) / count : 0
   const at = (index: number) => start + index * bandwidth
   const domain = data.map((datum, index) => (dataKey ? (datum[dataKey] ?? index) : index))
+
   return {
     type: 'category',
     dataKey,
@@ -449,6 +470,7 @@ const numberAxis = (
   const extent: [number, number] = values.length
     ? [Math.min(...values), Math.max(...values)]
     : [0, 0]
+
   const { domain, ticks } = resolveNumberDomain(extent, {
     domain: config.domain ?? fallbackDomain,
     tickCount: config.tickCount ?? 5,
@@ -456,10 +478,12 @@ const numberAxis = (
     allowDataOverflow: config.allowDataOverflow ?? false,
     ticks: config.ticks,
   })
+
   const [start, end] = config.reversed ? [range[1], range[0]] : range
   const span = domain[1] - domain[0]
   const scale = (value: number) =>
     span === 0 ? start : start + ((value - domain[0]) / span) * (end - start)
+
   return {
     type: 'number',
     dataKey: config.dataKey,
@@ -488,6 +512,7 @@ export const usePolarChart = (chart: ChartContext, options: PolarChartOptions): 
     map.set(key, get)
     const unregister = () => map.delete(key)
     onScopeDispose(unregister)
+
     return unregister
   }
 
@@ -500,6 +525,7 @@ export const usePolarChart = (chart: ChartContext, options: PolarChartOptions): 
       height: Math.max(0, chart.height.value - margin.top - margin.bottom),
     }
   })
+
   const resolveGeometry = (input: PolarGeometryInput) => resolvePolarGeometry(box.value, input)
   const rootGeometry = computed(() =>
     resolveGeometry({
@@ -509,12 +535,14 @@ export const usePolarChart = (chart: ChartContext, options: PolarChartOptions): 
       outerRadius: options.outerRadius?.(),
     }),
   )
+
   // A pie chart's root has no center of its own: it follows the pie actually drawn, so the `#center` slot and a
   // centered `ChartLabel` sit on it wherever its `cx`/`cy` put it. With several pies the first registered (first in
   // the template) wins; before any pie mounts, the defaults apply.
   const geometry = computed(
     () => (kind === 'pie' ? [...items.values()][0]?.().geometry : undefined) ?? rootGeometry.value,
   )
+
   const cx = computed(() => geometry.value.cx)
   const cy = computed(() => geometry.value.cy)
   const innerRadius = computed(() => geometry.value.innerRadius)
@@ -527,6 +555,7 @@ export const usePolarChart = (chart: ChartContext, options: PolarChartOptions): 
       (series) => !series.hide && (series.kind === 'radar' || series.kind === 'radialBar'),
     ),
   )
+
   const seriesValues = computed(() =>
     numbersOf(
       chart.data.value,
@@ -540,10 +569,12 @@ export const usePolarChart = (chart: ChartContext, options: PolarChartOptions): 
 
   const angleAxis = computed<ResolvedPolarAxis>(() => {
     const config = angleConfig.value
+
     const range: [number, number] = [
       startAngle.value,
       startAngle.value + deltaAngle(startAngle.value, endAngle.value),
     ]
+
     const type = config?.type ?? (kind === 'radialBar' ? 'number' : 'category')
     if (type === 'category')
       return categoryAxis(
@@ -553,6 +584,7 @@ export const usePolarChart = (chart: ChartContext, options: PolarChartOptions): 
         config?.dataKey,
         config?.reversed,
       )
+
     // Radial bars fill the sweep up to the largest value; no rounding of the domain.
     return numberAxis(seriesValues.value, range, config ?? {}, [0, 'dataMax'])
   })
@@ -570,6 +602,7 @@ export const usePolarChart = (chart: ChartContext, options: PolarChartOptions): 
         config?.reversed,
         true,
       )
+
     return numberAxis(seriesValues.value, range, config ?? {}, [0, 'auto'])
   })
 
@@ -585,6 +618,7 @@ export const usePolarChart = (chart: ChartContext, options: PolarChartOptions): 
         maxBarSize: options.maxBarSize?.(),
       },
     )
+
     return new Map(bars.map((bar, index) => [bar.id, positions[index]!]))
   })
 
@@ -596,6 +630,7 @@ export const usePolarChart = (chart: ChartContext, options: PolarChartOptions): 
     if (slices) {
       const visible = slices.filter((slice) => !slice.hidden)
       const slice = index === null ? undefined : visible[index]
+
       return {
         total: visible.reduce((sum, item) => sum + item.value, 0),
         active: slice
@@ -610,25 +645,31 @@ export const usePolarChart = (chart: ChartContext, options: PolarChartOptions): 
           : null,
       }
     }
+
     const series =
       chart.series.value.find((item) => item.id === chart.active.seriesId) ??
       chart.series.value.find(
         (item) => !item.hide && (item.kind === 'pie' || item.kind === 'radialBar'),
       )
+
     if (!series) return { total: 0, active: null }
+
     const count =
       series.kind === 'pie'
         ? (items.get(series.id)?.().sectors.length ?? 0)
         : chart.data.value.length
+
     const entries = Array.from(
       { length: count },
       (_, position) => chart.payloadAt(position, series.id)[0],
     )
+
     const valueOf = (raw: unknown) => (Number.isFinite(Number(raw)) ? Number(raw) : 0)
     const total = entries.reduce((sum, entry) => sum + valueOf(entry?.value), 0)
     const entry = index === null ? undefined : entries[index]
     if (!entry) return { total, active: null }
     const value = valueOf(entry.value)
+
     return {
       total,
       active: {
@@ -660,6 +701,7 @@ export const usePolarChart = (chart: ChartContext, options: PolarChartOptions): 
       items.set(seriesId, get)
       const unregister = () => items.delete(seriesId)
       onScopeDispose(unregister)
+
       return unregister
     },
     center,
@@ -679,6 +721,7 @@ export const usePolarChart = (chart: ChartContext, options: PolarChartOptions): 
         !angleInSweep(angle, startAngle.value, endAngle.value))
     )
       return null
+
     const count = chart.data.value.length
     if (!count) return null
     let index: number
@@ -698,6 +741,7 @@ export const usePolarChart = (chart: ChartContext, options: PolarChartOptions): 
       const step = (axis.range[1] - axis.range[0]) / count
       index = Math.min(count - 1, Math.max(0, Math.floor((radius - axis.range[0]) / step)))
     }
+
     return { index, coordinate: { x, y } }
   }
 
@@ -715,10 +759,12 @@ export const usePolarChart = (chart: ChartContext, options: PolarChartOptions): 
       const inner = Math.min(first.innerRadius, first.outerRadius)
       const outer = Math.max(first.innerRadius, first.outerRadius)
       const distance = radius < inner ? inner - radius : radius > outer ? radius - outer : 0
+
       return [
         { seriesId: series.id, sectors: group.sectors, angle, distance, beyond: radius > outer },
       ]
     })
+
     // Pies later in the template draw on top, so they win where bands overlap.
     let pie = pies.filter((item) => item.distance === 0).at(-1)
     if (!pie) {
@@ -729,34 +775,41 @@ export const usePolarChart = (chart: ChartContext, options: PolarChartOptions): 
           (best, item) => (!best || item.distance < best.distance ? item : best),
           undefined,
         )
+
       const above = pies
         .filter((item) => !item.beyond)
         .reduce<(typeof pies)[number] | undefined>(
           (best, item) => (!best || item.distance < best.distance ? item : best),
           undefined,
         )
+
       if (!below || !above) return null
+
       // The ring the pointer came from keeps the tooltip until the pointer reaches the other one, so it doesn't flicker midway.
       pie =
         [below, above].find((item) => item.seriesId === chart.active.seriesId) ??
         (below.distance <= above.distance ? below : above)
     }
+
     let hit: PieSector | undefined
     let best = Infinity
     for (const sector of pie.sectors) {
       if (sector.startAngle === sector.endAngle) continue
+
       const distance = angleInSweep(pie.angle, sector.startAngle, sector.endAngle)
         ? 0
         : Math.min(
             angleDistance(pie.angle, sector.startAngle),
             angleDistance(pie.angle, sector.endAngle),
           )
+
       // `<=`: overlapping slices (negative padding) resolve to the later one, which is drawn on top.
       if (distance <= best) {
         best = distance
         hit = sector
       }
     }
+
     return hit
       ? { index: hit.index, seriesId: pie.seriesId, coordinate: hit.tooltipPosition }
       : null
@@ -778,6 +831,7 @@ export const usePolarChart = (chart: ChartContext, options: PolarChartOptions): 
 
   const coordinateOf = (index: number): ChartPoint | null => {
     if (kind === 'pie') return pieItems()[index]?.coordinate ?? null
+
     if (kind === 'radar') {
       // Anchor at the first visible radar's point, where its active dot is drawn.
       const angle = angleAxis.value.at(index)
@@ -785,10 +839,14 @@ export const usePolarChart = (chart: ChartContext, options: PolarChartOptions): 
       const raw = visibleSeries.value
         .map((series) => datum?.[series.dataKey])
         .find((value) => value !== undefined && value !== '' && Number.isFinite(Number(value)))
+
       const radius = raw === undefined ? outerRadius.value : radiusAxis.value.scale(Number(raw))
+
       return polarToCartesian(cx.value, cy.value, radius, angle)
     }
+
     const band = radiusAxis.value
+
     return polarToCartesian(
       cx.value,
       cy.value,
@@ -804,6 +862,7 @@ export const usePolarChart = (chart: ChartContext, options: PolarChartOptions): 
     coordinateOf,
     count: () => (kind === 'pie' ? pieItems().length : chart.data.value.length),
   }
+
   // Radar and radial rows come from the chart data: a shorter array drops an active row that no longer exists.
   if (kind !== 'pie') {
     watchEffect(() => {
@@ -811,14 +870,17 @@ export const usePolarChart = (chart: ChartContext, options: PolarChartOptions): 
       if (index !== null && index >= chart.data.value.length) chart.setActive(null)
     })
   }
+
   chart.tooltipLabel.value = (index) => {
     if (kind !== 'radar') return undefined
     const key = angleConfig.value?.dataKey
     const value = key ? chart.data.value[index]?.[key] : undefined
+
     return value ?? undefined
   }
 
   provide(polarContextKey, context)
+
   return context
 }
 
@@ -827,6 +889,7 @@ export const usePolarContext = (component = 'Polar chart part'): PolarContext =>
   const context = inject(polarContextKey, null)
   if (!context)
     throw new Error(`${component} must be used inside a PieChart, RadarChart or RadialChart.`)
+
   return context
 }
 
@@ -834,5 +897,6 @@ export const usePolarContext = (component = 'Polar chart part'): PolarContext =>
 export const polygonPath = (points: ChartPoint[]): string => {
   if (!points.length) return ''
   const round = (value: number) => Math.round(value * 1e4) / 1e4
+
   return `${points.map((point, index) => `${index ? 'L' : 'M'}${round(point.x)},${round(point.y)}`).join('')}L${round(points[0]!.x)},${round(points[0]!.y)}Z`
 }

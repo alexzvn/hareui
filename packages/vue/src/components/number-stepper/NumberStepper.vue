@@ -330,10 +330,12 @@ const props = withDefaults(defineProps<NumberStepperProps>(), {
   decrement: true,
   invalid: undefined,
 })
+
 const slots = defineSlots<NumberStepperSlots>()
 const DecrementOutlet = useSlotOutlet(slots, 'decrement')
 const IncrementOutlet = useSlotOutlet(slots, 'increment')
 const ValueOutlet = useSlotOutlet(slots, 'value')
+
 /** The numeric value; `undefined` while empty. */
 const modelValue = defineModel<number | null>()
 
@@ -362,15 +364,19 @@ const { validation, commitValidation } = useFieldValidation({
   root: () => root.value,
   onReset: reset,
 })
+
 const invalid = computed(() => validation.value.isInvalid)
 
 // The value rolls digit by digit (number-flow, as in HeroUI Pro), with the same locale and format as the spin button.
 // number-flow skips the motion under `prefers-reduced-motion`.
 const locale = useLocale(toRef(() => props.locale))
+
 const flowFormat = computed<Format | undefined>(() => {
   if (!props.formatOptions) return undefined
+
   // number-flow supports only standard and compact notation
   const { notation, ...rest } = props.formatOptions
+
   return notation === 'standard' || notation === 'compact' ? { ...rest, notation } : rest
 })
 
@@ -378,9 +384,11 @@ const flowFormat = computed<Format | undefined>(() => {
 const onCommitEmpty = (event: Event) => {
   if ((event.target as HTMLInputElement).value === '') commitEmpty()
 }
+
 const onKeydown = (event: KeyboardEvent) => {
   if (event.key === 'Enter' && !event.isComposing) onCommitEmpty(event)
 }
+
 // PageUp / PageDown move by a single step, as in NumberField (Reka moves 10). Attached natively on the root for the
 // same reason as NumberField: a Vue capture invoker would make Vue drop the re-dispatched key right after mount.
 const onKeydownCapture = (event: KeyboardEvent) => {
@@ -391,8 +399,10 @@ const onKeydownCapture = (event: KeyboardEvent) => {
     target.dataset.slot !== 'number-stepper-input'
   )
     return
+
   event.preventDefault()
   event.stopImmediatePropagation()
+
   target.dispatchEvent(
     new KeyboardEvent('keydown', {
       key: event.key === 'PageUp' ? 'ArrowUp' : 'ArrowDown',
@@ -400,6 +410,7 @@ const onKeydownCapture = (event: KeyboardEvent) => {
     }),
   )
 }
+
 onMounted(() => root.value?.addEventListener('keydown', onKeydownCapture, true))
 onBeforeUnmount(() => root.value?.removeEventListener('keydown', onKeydownCapture, true))
 
@@ -425,12 +436,15 @@ const fieldName = computed(() => (attrs['aria-label'] as string | undefined) ?? 
 const incrementLabel = computed(() =>
   fieldName.value ? `Increase ${fieldName.value}` : 'Increase',
 )
+
 const decrementLabel = computed(() =>
   fieldName.value ? `Decrease ${fieldName.value}` : 'Decrease',
 )
+
 const incrementButton = computed(() =>
   typeof props.increment === 'object' ? props.increment : undefined,
 )
+
 const decrementButton = computed(() =>
   typeof props.decrement === 'object' ? props.decrement : undefined,
 )

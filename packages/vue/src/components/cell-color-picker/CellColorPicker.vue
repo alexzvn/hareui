@@ -168,6 +168,7 @@ const props = withDefaults(defineProps<CellColorPickerProps>(), {
   side: 'bottom',
   align: 'end',
 })
+
 const emit = defineEmits<CellColorPickerEmits>()
 defineSlots<CellColorPickerSlots>()
 

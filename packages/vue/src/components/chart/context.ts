@@ -107,24 +107,29 @@ export const useChartRoot = (options: ChartRootOptions): ChartContext => {
   const id = useId(undefined, 'hareui-chart')
   const width = ref(0)
   const height = ref(0)
+
   // Each series keeps its component's DOM anchor, so the list follows template order: a series shown again with
   // `v-if` goes back to its place in the stack and the tooltip instead of moving to the end.
   const registry = shallowReactive(
     new Map<number, { get: () => ChartSeries; anchor: () => Node | null }>(),
   )
+
   const mountedSeries = ref(0)
   let nextSeries = 0
 
   const layers = shallowReactive(
     Object.fromEntries(chartLayerNames.map((name) => [name, null])),
   ) as Record<ChartLayerName, Element | null>
+
   const active = reactive<ChartActiveState>({
     index: null,
     seriesId: null,
     coordinate: null,
     source: null,
   })
+
   const data = computed(() => options.data() ?? [])
+
   const series = computed(() => {
     void mountedSeries.value
     return [...registry.values()].sort(byTemplateOrder).map((entry) => entry.get())
@@ -134,6 +139,7 @@ export const useChartRoot = (options: ChartRootOptions): ChartContext => {
     const first = a.anchor()
     const second = b.anchor()
     if (!first?.isConnected || !second?.isConnected || first === second) return 0
+
     return first.compareDocumentPosition(second) & Node.DOCUMENT_POSITION_FOLLOWING ? -1 : 1
   }
 
@@ -144,9 +150,11 @@ export const useChartRoot = (options: ChartRootOptions): ChartContext => {
       get,
       anchor: () => (instance?.vnode.el as Node | null | undefined) ?? null,
     })
+
     if (instance) onMounted(() => mountedSeries.value++)
     const unregister = () => registry.delete(key)
     onScopeDispose(unregister)
+
     return unregister
   }
 
@@ -155,6 +163,7 @@ export const useChartRoot = (options: ChartRootOptions): ChartContext => {
       Object.assign(active, { index: null, seriesId: null, coordinate: null, source: null })
       return
     }
+
     Object.assign(active, { seriesId: null, coordinate: null, source: 'pointer', ...state })
   }
 
@@ -171,6 +180,7 @@ export const useChartRoot = (options: ChartRootOptions): ChartContext => {
         if (entry.entries) return entry.entries(index)
         const value = datum?.[entry.dataKey]
         if (!datum || value === undefined || value === null) return []
+
         return [
           {
             dataKey: entry.dataKey,
@@ -197,12 +207,14 @@ export const useChartRoot = (options: ChartRootOptions): ChartContext => {
         console.warn(`[hareui] ${message}`)
       }
     }
+
     watchEffect(() => {
       if (tooltipEnabled.value > 1)
         warn(
           'tooltip',
           'Two ChartTooltips in one chart. When the chart root draws its tooltip from props, pass `:tooltip="false"` before adding a ChartTooltip.',
         )
+
       const seen = new Set<string>()
       for (const entry of series.value) {
         if (entry.entries || entry.hide) continue
@@ -212,6 +224,7 @@ export const useChartRoot = (options: ChartRootOptions): ChartContext => {
             key,
             `Two ${entry.kind} series read "${entry.dataKey}" in one chart. When the chart root draws its series from \`series\`, leave that key out of \`series\` or remove the child part.`,
           )
+
         seen.add(key)
       }
     })
@@ -243,6 +256,7 @@ export const useChartRoot = (options: ChartRootOptions): ChartContext => {
   }
 
   provide(chartContextKey, context)
+
   return context
 }
 
@@ -251,5 +265,6 @@ export const useChartContext = (component = 'Chart part'): ChartContext => {
   const context = inject(chartContextKey, null)
   if (!context)
     throw new Error(`${component} must be used inside a chart (AreaChart, BarChart, LineChart, …).`)
+
   return context
 }

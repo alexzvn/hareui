@@ -33,6 +33,7 @@ const handleKeyDown = (e: KeyboardEvent) => {
     e.preventDefault()
     input()?.focus()
   }
+
   // Check for ESC key to blur the input
   if (e.key === 'Escape' && document.activeElement === input()) input()?.blur()
 }

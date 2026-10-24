@@ -57,6 +57,7 @@ describe('resolveSeries', () => {
       ['paid', 'paid', 'var(--chart-1)'],
       ['referral', 'referral', 'var(--chart-4)'],
     ])
+
     expect(CHART_PALETTE).toEqual([
       'var(--chart-3)',
       'var(--chart-1)',
@@ -68,11 +69,14 @@ describe('resolveSeries', () => {
 
   it('accepts the map and array forms with the same result', () => {
     const fromMap = resolveSeries({ data: rows, series: { paid: { name: 'Paid' }, organic: {} } })
+
     const fromArray = resolveSeries({
       data: rows,
       series: [{ key: 'paid', name: 'Paid' }, 'organic'],
     })
+
     expect(fromMap).toEqual(fromArray)
+
     expect(fromMap.map((item) => [item.key, item.name, item.position])).toEqual([
       ['paid', 'Paid', 0],
       ['organic', 'organic', 1],
@@ -85,6 +89,7 @@ describe('resolveSeries', () => {
       series: { organic: {}, paid: { color: 'red' }, referral: {} },
       colors: ['blue', 'green'],
     })
+
     expect(series.map((item) => item.color)).toEqual(['blue', 'red', 'blue'])
     expect(chartColorAt(7)).toBe('var(--chart-4)')
     expect(chartColorAt(1, [])).toBe('var(--chart-1)')
@@ -96,6 +101,7 @@ describe('resolveSeries', () => {
       series: { organic: { strokeWidth: 3 }, paid: {} },
       defaults: { strokeWidth: 2, curve: 'monotone' as const },
     })
+
     expect(organic).toMatchObject({ strokeWidth: 3, curve: 'monotone' })
     expect(paid).toMatchObject({ strokeWidth: 2, curve: 'monotone' })
   })
@@ -106,6 +112,7 @@ describe('resolveSeries', () => {
       series: { organic: { hide: true }, paid: {}, referral: {} },
       hidden: ['paid'],
     })
+
     expect(series.map((item) => [item.key, item.hidden, item.color])).toEqual([
       ['organic', true, 'var(--chart-3)'],
       ['paid', true, 'var(--chart-1)'],
@@ -119,11 +126,14 @@ describe('resolveSeries', () => {
       series: { organic: {}, paid: { stack: false }, referral: { stack: 'other' } },
       stacked: true,
     })
+
     expect(stacked.map((item) => item.stackId)).toEqual(['stack', undefined, 'other'])
+
     const opted = resolveSeries<Row, ChartAreaSeries>({
       data: rows,
       series: { organic: { stack: true }, paid: {} },
     })
+
     expect(opted.map((item) => item.stackId)).toEqual(['stack', undefined])
   })
 })
@@ -145,6 +155,7 @@ describe('barEndRadius', () => {
       { key: 'c', hidden: true, stackId: 'stack', radius: 4 },
       { key: 'd', hidden: false, radius: 4 },
     ]
+
     expect(barEndRadius(bars)).toEqual({ a: 0, b: [4, 4, 0, 0], c: 0, d: [4, 4, 0, 0] })
   })
 
@@ -152,9 +163,11 @@ describe('barEndRadius', () => {
     expect(barEndRadius([{ key: 'a', hidden: false, radius: 6 }], 'vertical')).toEqual({
       a: [0, 6, 6, 0],
     })
+
     expect(barEndRadius([{ key: 'a', hidden: false, radius: [1, 2, 3, 4] }])).toEqual({
       a: [1, 2, 3, 4],
     })
+
     expect(barEndRadius([{ key: 'a', hidden: false }])).toEqual({ a: 0 })
   })
 })
@@ -162,11 +175,13 @@ describe('barEndRadius', () => {
 describe('area fills', () => {
   it('builds a gradient with a valid id per chart and series', () => {
     expect(chartGradientId('v:1', 'paid ads')).toBe('v_1-fill-paid_ads')
+
     expect(resolveAreaFill({ key: 'organic', color: 'var(--chart-3)' }, 'c1')).toEqual({
       fill: 'url(#c1-fill-organic)',
       fillOpacity: 1,
       gradient: { id: 'c1-fill-organic', color: 'var(--chart-3)', from: 0.2, to: 0.02 },
     })
+
     expect(
       resolveAreaFill({ key: 'a', color: 'red', fillOpacity: 0.5 }, 'c1').gradient,
     ).toMatchObject({ from: 0.5, to: 0 })
@@ -176,10 +191,12 @@ describe('area fills', () => {
     expect(
       resolveAreaFill({ key: 'a', color: 'red', fill: 'solid', fillOpacity: [0.3, 0.1] }, 'c'),
     ).toEqual({ fill: 'red', fillOpacity: 0.3 })
+
     expect(resolveAreaFill({ key: 'a', color: 'red', fill: 'none' }, 'c')).toEqual({
       fill: 'none',
       fillOpacity: 0,
     })
+
     expect(
       resolveAreaFill({ key: 'a', color: 'red', fill: 'url(#mine)', fillOpacity: 0.4 }, 'c'),
     ).toEqual({ fill: 'url(#mine)', fillOpacity: 0.4 })
@@ -196,6 +213,7 @@ describe('seriesValueFormatter', () => {
       [{ key: 'price', valueFormatter: (value) => `$${value}` }, { key: 'units' }],
       (value, key) => `${value} ${key}`,
     )!
+
     expect(format(5, { dataKey: 'price' })).toBe('$5')
     expect(format(5, { dataKey: 'units' })).toBe('5 units')
     expect(format('n/a', { dataKey: 'price' })).toBe('n/a')
@@ -209,6 +227,7 @@ describe('resolveChartPart', () => {
     expect(resolveChartPart(undefined, defaults)).toEqual({ tickMargin: 8 })
     expect(resolveChartPart(true, defaults)).toEqual({ tickMargin: 8 })
     expect(resolveChartPart(false, defaults)).toBeNull()
+
     expect(
       resolveChartPart(
         { tickMargin: 2, hide: true },
@@ -229,10 +248,12 @@ describe('resolveChartLegend', () => {
     expect(resolveChartLegend(false)).toBeNull()
     expect(resolveChartLegend(true)).toEqual({ position: 'bottom', props: {} })
     expect(resolveChartLegend('right')).toEqual({ position: 'right', props: {} })
+
     expect(resolveChartLegend({ position: 'top', showValue: true })).toEqual({
       position: 'top',
       props: { showValue: true },
     })
+
     expect(resolveChartLegend({ showValue: true }, 'top')).toEqual({
       position: 'top',
       props: { showValue: true },
@@ -254,6 +275,7 @@ describe('resolveSlices', () => {
       ['Desktop', 'pink', 30, 30],
       ['Tablet', 'var(--chart-4)', 10, 10],
     ])
+
     expect(slices[1]!.row).toBe(devices[1])
   })
 
@@ -263,6 +285,7 @@ describe('resolveSlices', () => {
       index: 'name',
       colors: { Mobile: 'blue', Desktop: 'green' },
     })
+
     expect(slices.map((slice) => slice.color)).toEqual(['blue', 'pink', 'var(--chart-4)'])
   })
 
@@ -273,6 +296,7 @@ describe('resolveSlices', () => {
       [false, 75],
       [false, 25],
     ])
+
     expect(resolveSlices({ data: [{ name: 'A', value: 0 }], index: 'name' })[0]!.percent).toBe(0)
   })
 })

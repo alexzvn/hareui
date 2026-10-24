@@ -15,6 +15,7 @@ const STORAGE_KEY = 'theme-builder-custom-fonts'
 
 const read = (): CustomFont[] => {
   if (typeof window === 'undefined') return []
+
   try {
     const stored = localStorage.getItem(STORAGE_KEY)
     return stored ? (JSON.parse(stored) as CustomFont[]) : []
@@ -42,6 +43,7 @@ const generateFontId = (fontFamily: string, existing: CustomFont[]) => {
   if (!ids.has(baseId)) return baseId
   let counter = 2
   while (ids.has(`${baseId}-${counter}`)) counter++
+
   return `${baseId}-${counter}`
 }
 
@@ -54,6 +56,7 @@ export const useCustomFonts = () => {
   if (!loaded && typeof window !== 'undefined') {
     loaded = true
     customFonts.value = read()
+
     // Other tabs.
     window.addEventListener('storage', (e) => e.key === STORAGE_KEY && (customFonts.value = read()))
   }
@@ -68,6 +71,7 @@ export const useCustomFonts = () => {
     const id = generateFontId(fontFamily, current)
     const font: CustomFont = { fontFamily, id, label: fontFamily, url, variable: `--font-${id}` }
     save([...current, font])
+
     return { font }
   }
 

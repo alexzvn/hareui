@@ -137,6 +137,7 @@ const props = withDefaults(defineProps<ChartPolarRadiusAxisProps>(), {
   orientation: 'right',
   hide: false,
 })
+
 defineSlots<ChartPolarRadiusAxisSlots>()
 
 const chart = useChartContext('ChartPolarRadiusAxis')
@@ -157,6 +158,7 @@ const line = computed(() => {
   const [r0, r1] = polar.radiusAxis.value.range
   const from = polarToCartesian(polar.cx.value, polar.cy.value, r0, props.angle)
   const to = polarToCartesian(polar.cx.value, polar.cy.value, r1, props.angle)
+
   return { x1: from.x, y1: from.y, x2: to.x, y2: to.y }
 })
 

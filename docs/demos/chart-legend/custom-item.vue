@@ -56,6 +56,7 @@ const total = (key: string) => {
 const change = (key: string) => {
   const first = data[0]![key as Plan]
   const last = data.at(-1)![key as Plan]
+
   return Math.round(((last - first) / first) * 100)
 }
 </script>

@@ -68,5 +68,6 @@ export const resolveFrameLegend = (
 ): ChartFrameLegend | null => {
   const legend = resolveChartLegend<Partial<ChartLegendProps<object>>>(value)
   if (legend) return { position: legend.position, props: { ...defaults, ...legend.props } }
+
   return hasLegendSlot ? { position: 'bottom', props: { ...defaults } } : null
 }

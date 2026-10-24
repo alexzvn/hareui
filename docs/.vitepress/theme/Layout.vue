@@ -187,6 +187,7 @@ const toastTheme = computed(() =>
 )
 
 const searchOpen = ref(false)
+
 // SearchDialog (and its minisearch chunk) loads on first open, then stays mounted so it can animate out.
 const searchEverOpened = ref(false)
 watch(searchOpen, (isOpen) => isOpen && (searchEverOpened.value = true))
@@ -199,6 +200,7 @@ const onKeydown = (event: KeyboardEvent) => {
     searchOpen.value = true
   }
 }
+
 onMounted(() => window.addEventListener('keydown', onKeydown))
 onBeforeUnmount(() => window.removeEventListener('keydown', onKeydown))
 

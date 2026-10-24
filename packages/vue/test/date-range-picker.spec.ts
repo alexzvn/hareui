@@ -34,6 +34,7 @@ describe('dateRangePicker', () => {
     const wrapper = mount(DateRangePicker, {
       props: { startName: 'from', endName: 'to', defaultValue: range },
     })
+
     expect((wrapper.get('input[name=from]').element as HTMLInputElement).value).toBe('2025-01-10')
     expect((wrapper.get('input[name=to]').element as HTMLInputElement).value).toBe('2025-01-15')
   })
@@ -43,12 +44,14 @@ describe('dateRangePicker', () => {
       props: { label: 'Trip dates', defaultPlaceholder: new CalendarDate(2025, 1, 1) },
       attachTo: document.body,
     })
+
     await wrapper.get(trigger).trigger('click')
     await flush()
     expect(document.querySelector('[data-slot=date-range-picker-popover]')).not.toBeNull()
 
     cell(5).click()
     await flush()
+
     // A half-picked range is not emitted (React Aria only emits complete ranges)
     expect(wrapper.emitted('update:modelValue')).toBeUndefined()
     cell(9).click()
@@ -83,6 +86,7 @@ describe('dateRangePicker', () => {
     const wrapper = mount(DateRangePicker, { props: { modelValue: range } })
     await wrapper.setProps({ modelValue: null })
     await flush()
+
     for (const input of wrapper.findAll('[data-slot=date-input-group-input]'))
       expect(input.text()).toContain('mm')
   })
@@ -97,6 +101,7 @@ describe('dateRangePicker', () => {
     const wrapper = mount(DateRangePicker, {
       props: { invalid: true, description: 'Help', errorMessage: 'Bad range' },
     })
+
     expect(wrapper.find('[data-slot=description]').exists()).toBe(false)
     expect(wrapper.get('[data-slot=field-error]').text()).toBe('Bad range')
     expect(wrapper.get('[data-slot=date-input-group]').attributes('data-invalid')).toBe('true')
@@ -110,6 +115,7 @@ describe('dateRangePicker', () => {
         validationBehavior: 'aria',
       },
     })
+
     expect(wrapper.get('[data-slot=field-error]').text()).toContain('or later')
   })
 
@@ -122,6 +128,7 @@ describe('dateRangePicker', () => {
       },
       { attachTo: document.body },
     )
+
     ;(wrapper.find('form').element as HTMLFormElement).requestSubmit()
     await flush()
     expect(wrapper.find('[data-slot=field-error]').exists()).toBe(true)
@@ -145,6 +152,7 @@ describe('dateRangePicker', () => {
       },
       attachTo: document.body,
     })
+
     expect(wrapper.find('[data-testid=icon]').exists()).toBe(true)
     expect(wrapper.get('[data-slot=date-range-picker-range-separator]').text()).toBe('to')
     await wrapper.get(trigger).trigger('click')
@@ -163,6 +171,7 @@ describe('dateRangePicker', () => {
       },
       attachTo: document.body,
     })
+
     await wrapper.get(trigger).trigger('click')
     await flush()
 
@@ -176,9 +185,11 @@ describe('dateRangePicker', () => {
       props: { label: 'Trip dates', defaultPlaceholder: new CalendarDate(2024, 3, 1) },
       attachTo: document.body,
     })
+
     const endSegments = wrapper
       .findAll('[data-slot=date-input-group-input]')[1]
       .findAll('[role=spinbutton]')
+
     const endYear = endSegments[endSegments.length - 1]
     ;(endYear.element as HTMLElement).focus()
     for (const key of ['2', '0', '2', '4']) await endYear.trigger('keydown', { key })
@@ -197,10 +208,13 @@ describe('dateRangePicker', () => {
       },
       attachTo: document.body,
     })
+
     const startMonth = wrapper
       .findAll('[data-slot=date-input-group-input]')[0]
       .find('[role=spinbutton]')
+
     ;(startMonth.element as HTMLElement).focus()
+
     // March -> April: the start (Apr 15) now falls after the end (Mar 20)
     await startMonth.trigger('keydown', { key: 'ArrowUp' })
     await flush()
@@ -208,6 +222,7 @@ describe('dateRangePicker', () => {
     expect(
       wrapper.findAll('[role=spinbutton]').map((s) => s.attributes('aria-invalid')),
     ).not.toContain('true')
+
     expect(wrapper.get('[data-slot=date-input-group]').attributes('data-invalid')).toBeUndefined()
     expect(wrapper.find('[data-slot=field-error]').exists()).toBe(false)
     wrapper.unmount()
@@ -216,6 +231,7 @@ describe('dateRangePicker', () => {
 
 describe('DateRangePicker accessibility', () => {
   const popover = () => document.querySelector<HTMLElement>('[data-slot=date-range-picker-popover]')
+
   const nameOf = (ids: string) =>
     ids
       .split(' ')
@@ -234,6 +250,7 @@ describe('DateRangePicker accessibility', () => {
     const wrapper = mount(DateRangePicker, { props, attachTo: document.body })
     await wrapper.get(trigger).trigger('click')
     await flush()
+
     return wrapper
   }
 
@@ -247,6 +264,7 @@ describe('DateRangePicker accessibility', () => {
       { label: 'Trip dates', readonly: true, defaultValue: range },
       { label: 'Trip dates', inputContainer: true, defaultValue: range },
     ]
+
     for (const props of cases) {
       const wrapper = mount(DateRangePicker, { props, attachTo: document.body })
       await expectAccessible(wrapper)
@@ -267,6 +285,7 @@ describe('DateRangePicker accessibility', () => {
     const wrapper = await open({ label: 'Trip dates', defaultValue: range, yearPicker: true })
     document.querySelector<HTMLElement>('[data-slot=calendar-year-picker-trigger]')!.click()
     await flush()
+
     try {
       await expectAccessible()
     } finally {
@@ -279,6 +298,7 @@ describe('DateRangePicker accessibility', () => {
       props: { label: 'Trip dates', description: 'Up to two weeks' },
       attachTo: document.body,
     })
+
     const button = wrapper.get(trigger)
     expect(button.attributes('aria-haspopup')).toBe('dialog')
     expect(nameOf(button.attributes('aria-labelledby')!)).toBe('Calendar Trip dates')
@@ -312,9 +332,11 @@ describe('DateRangePicker accessibility', () => {
   it('Escape on a day closes the dialog, collapses the trigger and returns focus to it', async () => {
     const wrapper = await open()
     expect(popover()!.contains(document.activeElement)).toBe(true)
+
     document.activeElement!.dispatchEvent(
       new KeyboardEvent('keydown', { key: 'Escape', bubbles: true, cancelable: true }),
     )
+
     await flush()
     expect(popover()).toBeNull()
     expect(wrapper.get(trigger).attributes('aria-expanded')).toBe('false')
@@ -327,6 +349,7 @@ describe('DateRangePicker accessibility', () => {
       props: { label: 'Trip dates', defaultValue: range },
       attachTo: document.body,
     })
+
     await wrapper.get('[role=spinbutton]').trigger('keydown', { key: 'ArrowDown', altKey: true })
     await flush()
     expect(popover()).not.toBeNull()
@@ -337,6 +360,7 @@ describe('DateRangePicker accessibility', () => {
         props: { label: 'Trip dates', defaultValue: range, ...props },
         attachTo: document.body,
       })
+
       expect(blocked.get(trigger).attributes('disabled')).toBeDefined()
       await blocked.get(trigger).trigger('click')
       await blocked.get('[role=spinbutton]').trigger('keydown', { key: 'ArrowDown', altKey: true })
@@ -351,6 +375,7 @@ describe('DateRangePicker accessibility', () => {
       props: { label: 'Trip dates', description: 'Up to two weeks', defaultValue: range },
       attachTo: document.body,
     })
+
     const segments = wrapper.findAll('[role=spinbutton]')
     expect(segments.map((s) => nameOf(s.attributes('aria-labelledby')!))).toEqual([
       'month, Start Date,  Trip dates',
@@ -360,11 +385,13 @@ describe('DateRangePicker accessibility', () => {
       'day, End Date,  Trip dates',
       'year, End Date,  Trip dates',
     ])
+
     expect(
       segments.map(
         (s) => s.attributes('aria-describedby') && nameOf(s.attributes('aria-describedby')!),
       ),
     ).toEqual(['Up to two weeks', undefined, undefined, 'Up to two weeks', undefined, undefined])
+
     wrapper.unmount()
   })
 })

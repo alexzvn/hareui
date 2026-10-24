@@ -9,6 +9,7 @@ import NativeSelect from '@/components/native-select/NativeSelect.vue'
 import { expectAccessible } from './a11y'
 
 const select = '[data-slot=native-select-select]'
+
 const items = [
   'todo',
   { value: 'done', label: 'Done' },
@@ -21,6 +22,7 @@ describe('NativeSelect', () => {
       props: { placeholder: 'Select', items: [...items, { label: 'More', items: ['a', 'b'] }] },
       slots: { default: () => h('option', { value: 'slot' }, 'Slot') },
     })
+
     const options = wrapper.findAll('option')
     expect(options.map((o) => o.attributes('value'))).toEqual([
       '',
@@ -31,6 +33,7 @@ describe('NativeSelect', () => {
       'b',
       'slot',
     ])
+
     expect(options[3]!.attributes('disabled')).toBeDefined()
     expect(wrapper.find('optgroup').attributes('label')).toBe('More')
   })
@@ -44,6 +47,7 @@ describe('NativeSelect', () => {
         'onUpdate:modelValue': (v: string) => (model.value = v),
       }),
     )
+
     const el = wrapper.find(select).element as HTMLSelectElement
     expect(el.value).toBe('done')
     await wrapper.find(select).setValue('todo')
@@ -54,6 +58,7 @@ describe('NativeSelect', () => {
     const wrapper = mount(NativeSelect, {
       props: { placeholder: 'Select', items, defaultValue: '' },
     })
+
     expect(wrapper.find(select).attributes('data-placeholder')).toBe('true')
     await wrapper.find(select).setValue('todo')
     expect(wrapper.find(select).attributes('data-placeholder')).toBeUndefined()
@@ -64,6 +69,7 @@ describe('NativeSelect', () => {
     const wrapper = mount(NativeSelect, {
       props: { id: 's', invalid: true, errorMessage: 'Required', items },
     })
+
     expect(wrapper.attributes('data-invalid')).toBe('true')
     expect(wrapper.find(select).attributes('aria-invalid')).toBe('true')
     expect(wrapper.find('[data-slot=field-error]').text()).toBe('Required')
@@ -73,10 +79,12 @@ describe('NativeSelect', () => {
   it('submits its value with the form and blocks an empty required submit', async () => {
     const form = document.createElement('form')
     document.body.append(form)
+
     const wrapper = mount(NativeSelect, {
       props: { name: 'status', required: true, placeholder: 'Select', items },
       attachTo: form,
     })
+
     const el = wrapper.find(select).element as HTMLSelectElement
     expect(el.required).toBe(true)
     expect(form.checkValidity()).toBe(false)
@@ -99,6 +107,7 @@ describe('NativeSelect', () => {
         validate: (v: string) => (v === 'todo' ? 'Not allowed' : true),
       },
     })
+
     await wrapper.find(select).setValue('todo')
     expect(wrapper.find('[data-slot=field-error]').text()).toBe('Not allowed')
   })
@@ -107,13 +116,16 @@ describe('NativeSelect', () => {
     const form = document.createElement('form')
     document.body.append(form)
     const first = mount(NativeSelect, { props: { name: 'a', items }, attachTo: form })
+
     const second = mount(NativeSelect, {
       props: { name: 'b', items, defaultValue: 'done' },
       attachTo: form,
     })
+
     await first.find(select).setValue('done')
     await second.find(select).setValue('todo')
     form.reset()
+
     // The component restores the bound value in a task after the reset
     await new Promise((resolve) => setTimeout(resolve))
     expect((first.find(select).element as HTMLSelectElement).value).toBe('todo')
@@ -129,11 +141,14 @@ describe('NativeSelect', () => {
   it('form reset keeps defaultValue when the user never changed it', async () => {
     const form = document.createElement('form')
     document.body.append(form)
+
     const wrapper = mount(NativeSelect, {
       props: { name: 'a', placeholder: 'Select', items, defaultValue: 'done' },
       attachTo: form,
     })
+
     form.reset()
+
     // The component restores the bound value in a task after the reset
     await new Promise((resolve) => setTimeout(resolve))
     expect((wrapper.find(select).element as HTMLSelectElement).value).toBe('done')
@@ -161,6 +176,7 @@ describe('NativeSelect', () => {
       },
       { label: 'Status', disabled: true, items },
     ]
+
     for (const props of cases) {
       const wrapper = mount(NativeSelect, { props, attachTo: document.body })
       await expectAccessible(wrapper)
@@ -174,6 +190,7 @@ describe('NativeSelect', () => {
       attrs: { 'aria-label': 'Status' },
       attachTo: document.body,
     })
+
     expect(wrapper.get(select).attributes('aria-label')).toBe('Status')
     await expectAccessible(wrapper)
     wrapper.unmount()
@@ -184,11 +201,14 @@ describe('NativeSelect', () => {
       props: { label: 'Status', items },
       attachTo: document.body,
     })
+
     const label = wrapper.get('label')
     expect(label.attributes('for')).toBe(wrapper.get(select).attributes('id'))
+
     expect(
       (wrapper.get(select).element as HTMLSelectElement).labels?.[0]?.textContent?.trim(),
     ).toBe('Status')
+
     wrapper.unmount()
   })
 
@@ -204,6 +224,7 @@ describe('NativeSelect', () => {
       },
       attrs: { 'aria-describedby': 'extra' },
     })
+
     expect(wrapper.get(select).attributes('aria-describedby')).toBe('extra s-error')
     expect(wrapper.find('#s-description').exists()).toBe(false)
     expect(wrapper.get('#s-error').text()).toBe('Bad')
@@ -227,6 +248,7 @@ describe('NativeSelect', () => {
     expect(wrapper.get('[data-slot=native-select-indicator]').attributes('aria-hidden')).toBe(
       'true',
     )
+
     wrapper.unmount()
   })
 
@@ -235,6 +257,7 @@ describe('NativeSelect', () => {
       props: { disabled: true },
       slots: { default: () => h(NativeSelect, { name: 'status', items, defaultValue: 'done' }) },
     })
+
     expect(wrapper.find(select).attributes('disabled')).toBeDefined()
     expect(wrapper.find('[data-slot=native-select]').attributes('data-disabled')).toBe('true')
   })

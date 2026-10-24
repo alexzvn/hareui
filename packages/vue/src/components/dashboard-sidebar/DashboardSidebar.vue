@@ -244,18 +244,21 @@ const props = withDefaults(defineProps<DashboardSidebarProps>(), {
   collapsible: false,
   collapsedSize: 0,
 })
+
 const slots = defineSlots<DashboardSidebarSlots>()
 
 const open = defineModel<boolean>('open', { default: false })
 const collapsedModel = defineModel<boolean>('collapsed', { default: false })
 
 const dashboard = useDashboard()
+
 // Outside a `DashboardGroup` the sidebar keeps its own (unshared) state.
 const standalone = createDashboardSidebarState()
 const state = computed(() => dashboard?.sidebars[props.side] ?? standalone)
 
 const fallbackId = useId()
 const id = `${dashboard?.storageKey ?? 'dashboard'}-sidebar-${props.id ?? fallbackId}`
+
 // The menu content wrapper, referenced by the toggle's `aria-controls` while the menu is open.
 const menuId = `${id}-menu`
 
@@ -268,6 +271,7 @@ watch(
   },
   { immediate: true },
 )
+
 onBeforeUnmount(() => {
   if (state.value.id.value === id) state.value.id.value = undefined
 })
@@ -312,6 +316,7 @@ watch(
   },
   { immediate: true },
 )
+
 watch(
   () => state.value.open.value,
   (value) => {
@@ -328,7 +333,9 @@ watch(
   },
   { immediate: true },
 )
+
 watch(collapsedModel, (value) => collapse(value))
+
 watch(
   () => state.value.collapsed.value,
   (value) => collapse(value),
@@ -343,16 +350,20 @@ const ui = useComponentUI('dashboardSidebar', theme, () => ({
 const menuTitle = computed(() => (props.menu as { title?: string } | undefined)?.title ?? 'Sidebar')
 
 const Menu = computed(() => (props.mode === 'modal' ? Modal : Drawer))
+
 const menuProps = computed(() => {
   const { title: _title, ui: _ui, ...rest } = (props.menu ?? {}) as Record<string, unknown>
+
   const defaults: Record<string, unknown> =
     props.mode === 'modal'
       ? { size: 'full' }
       : props.mode === 'slideover'
         ? { placement: props.side, variant: 'blur' }
         : { placement: 'bottom', variant: 'blur' }
+
   return { ...defaults, ...rest }
 })
+
 // The user's `menu.ui` is forwarded as is; `backdrop` / `dialog` are merged with the sidebar's `overlay` / `content` slots.
 const menuClasses = computed(() => {
   const user: Partial<Record<string, ClassValue>> = props.menu?.ui ?? {}
@@ -394,6 +405,7 @@ const handleSlotProps = computed<DashboardSidebarResizeHandleSlotProps>(() => ({
 const Handle: FunctionalComponent = () => {
   if (!props.resizable) return null
   if (slots['resize-handle']) return slots['resize-handle'](handleSlotProps.value)
+
   return h(DashboardResizeHandle, {
     ...handleSlotProps.value.attrs,
     'data-dragging': isDragging.value,
@@ -410,6 +422,7 @@ const Toggle: FunctionalComponent = () => {
   if (slots.toggle) return slots.toggle(slotProps)
   if (!props.toggle) return null
   const custom = typeof props.toggle === 'object' ? props.toggle : {}
+
   return h(
     Button,
     {

@@ -113,6 +113,7 @@ const props = withDefaults(defineProps<DashboardSidebarToggleProps>(), {
   size: 'sm',
   disabled: undefined,
 })
+
 defineSlots<DashboardSidebarToggleSlots>()
 
 const ui = useComponentUI('dashboardSidebarToggle', theme, () => ({ side: props.side }))

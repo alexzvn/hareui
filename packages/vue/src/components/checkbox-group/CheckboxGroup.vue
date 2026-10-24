@@ -212,7 +212,9 @@ const props = withDefaults(defineProps<CheckboxGroupProps<T>>(), {
   items: () => [],
   invalid: undefined,
 })
+
 defineSlots<CheckboxGroupSlots<T>>()
+
 /** The selected values. Bind with `v-model`. */
 const modelValue = defineModel<string[]>()
 const slots = useSlots()
@@ -220,6 +222,7 @@ const slots = useSlots()
 const ui = useComponentUI('checkboxGroup', theme, () => ({
   variant: props.variant,
 }))
+
 // Items are literally HeroUI's `<Checkbox>` inside `<CheckboxGroup>`: reuse its theme/classes verbatim.
 const itemUi = useComponentUI('checkbox', checkboxTheme, () => ({
   variant: props.variant,
@@ -244,6 +247,7 @@ const { validation, commitValidation } = useFieldValidation({
     modelValue.value = props.defaultValue
   },
 })
+
 const invalid = computed(() => validation.value.isInvalid)
 
 const { id, labelId, hasLabel, describedBy, FieldLabel, FieldDescription, FieldError } =

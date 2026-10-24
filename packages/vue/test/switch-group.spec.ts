@@ -12,6 +12,7 @@ describe('SwitchGroup', () => {
     const wrapper = mount(SwitchGroup, {
       slots: { default: () => [h(Switch, { label: 'A' }), h(Switch, { label: 'B' })] },
     })
+
     expect(wrapper.attributes('data-slot')).toBe('switch-group')
     const items = wrapper.find('[data-slot=switch-group-items]')
     expect(items.exists()).toBe(true)
@@ -47,11 +48,14 @@ describe('SwitchGroup accessibility', () => {
         ]),
       { attachTo: document.body },
     )
+
     const root = wrapper.get('[data-slot=switch-group]')
     expect(root.attributes('role')).toBe('group')
+
     expect(document.getElementById(root.attributes('aria-labelledby')!)?.textContent).toBe(
       'Notifications',
     )
+
     await expectAccessible(wrapper)
     wrapper.unmount()
   })
@@ -62,6 +66,7 @@ describe('SwitchGroup accessibility', () => {
       slots: { default: () => [h(Switch, { label: 'A' }), h(Switch, { label: 'B' })] },
       attachTo: document.body,
     })
+
     await expectAccessible(wrapper)
     wrapper.unmount()
   })
@@ -77,6 +82,7 @@ describe('SwitchGroup accessibility', () => {
       },
       attachTo: document.body,
     })
+
     expect(wrapper.attributes('tabindex')).toBeUndefined()
     const controls = wrapper.findAll('[role=switch]').map((c) => c.element as HTMLButtonElement)
     expect(controls.map((c) => c.tabIndex)).toEqual([0, 0, 0])

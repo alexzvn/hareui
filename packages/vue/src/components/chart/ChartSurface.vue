@@ -75,12 +75,14 @@ const isSvgAttr = (name: string) => name === 'role' || name.startsWith('aria-')
 const rootAttrs = computed(() =>
   Object.fromEntries(Object.entries(attrs).filter(([name]) => !isSvgAttr(name))),
 )
+
 const svgAttrs = computed(() =>
   Object.fromEntries(Object.entries(attrs).filter(([name]) => isSvgAttr(name))),
 )
 
 const stacked = computed(() => props.legend === 'top' || props.legend === 'bottom')
 const legendFirst = computed(() => props.legend === 'top' || props.legend === 'left')
+
 // A legend beside the plot takes part of a fixed width, so the plot box is measured then too.
 const fixedWidth = computed(() =>
   typeof props.width === 'number' && (!props.legend || stacked.value) ? props.width : null,
@@ -92,6 +94,7 @@ watchEffect(() => {
 })
 
 let observer: ResizeObserver | undefined
+
 const measure = () => {
   if (fixedWidth.value !== null || !root.value) return
   chart.width.value = Math.floor(root.value.getBoundingClientRect().width)
@@ -99,12 +102,15 @@ const measure = () => {
 
 onMounted(() => {
   measure()
+
   if (typeof ResizeObserver !== 'undefined' && root.value) {
     observer = new ResizeObserver(measure)
     observer.observe(root.value)
   }
 })
+
 onBeforeUnmount(() => observer?.disconnect())
+
 // Switching between a fixed and a measured width.
 watch(fixedWidth, () => measure(), { flush: 'post' })
 
@@ -112,10 +118,13 @@ const rootStyle = computed(() => ({
   width: typeof props.width === 'number' ? `${props.width}px` : props.width,
   height: props.legend ? undefined : `${props.height}px`,
 }))
+
 const plotStyle = computed(() => (props.legend ? { height: `${props.height}px` } : undefined))
+
 const frameClass = computed(() =>
   props.legend ? ['flex gap-3', stacked.value ? 'flex-col' : 'items-center'] : undefined,
 )
+
 const plotClass = computed(() => [
   'relative',
   !props.legend ? 'h-full' : stacked.value ? 'w-full' : 'min-w-0 flex-1',
@@ -178,28 +187,34 @@ const nextPosition = (key: string, current: number | null, count: number) => {
 const onKeydown = (event: KeyboardEvent) => {
   const interaction = chart.interaction.value
   if (!tracking.value || !interaction) return
+
   if (event.key === 'Escape') {
     chart.setActive(null)
     return
   }
+
   // Item-triggered charts with several series (nested pies) walk every item, series by series.
   if (interaction.items) {
     const items = interaction.items()
     const current = items.findIndex(
       (item) => item.seriesId === chart.active.seriesId && item.index === chart.active.index,
     )
+
     const position = nextPosition(event.key, current < 0 ? null : current, items.length)
     const item = position === undefined ? undefined : items[position]
     if (!item) return
     event.preventDefault()
+
     chart.setActive({
       index: item.index,
       seriesId: item.seriesId,
       coordinate: item.coordinate,
       source: 'keyboard',
     })
+
     return
   }
+
   const count = interaction.count()
   const index = count ? nextPosition(event.key, chart.active.index, count) : undefined
   if (index === undefined) return

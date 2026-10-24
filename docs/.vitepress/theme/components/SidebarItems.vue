@@ -60,13 +60,16 @@ defineProps<{ items: SidebarEntry[]; activePath: string }>()
 
 const LINK_CLASS =
   'text-fd-muted-foreground relative flex flex-row items-center gap-2 rounded-lg p-2 text-start [&_svg]:size-4 [&_svg]:shrink-0 hover:bg-fd-accent/50 hover:text-fd-accent-foreground/80 data-[active=true]:bg-fd-primary/10 data-[active=true]:text-fd-primary transition-colors hover:transition-none data-[active=true]:hover:transition-colors'
+
 const INDENT = 'padding-inline-start:calc(2 * var(--spacing))'
+
 // heroui.pro sidebar chip size (16px tall, 10px text); the label never truncates
 const BADGE_CLASS = 'h-4 shrink-0 rounded-full px-1 text-[10px] leading-4 font-semibold order-last'
 const BADGES = {
   new: { label: 'New', class: `${BADGE_CLASS} bg-pink-400/8 text-pink-400/90` },
   updated: { label: 'Updated', class: `${BADGE_CLASS} bg-sky-400/8 text-sky-400/90` },
 } as const
+
 const key = (entry: SidebarEntry) =>
   isSeparator(entry)
     ? `sep-${entry.separator}`

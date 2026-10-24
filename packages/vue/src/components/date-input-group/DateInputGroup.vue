@@ -132,11 +132,14 @@ export const wrapBidiIsolate = (segments: DateInputGroupSegment[]) => {
       break
     }
   }
+
   const result = segments.slice()
   result.splice(close + 1, 0, { part: 'literal', value: '\u2069' })
   result.splice(open, 0, { part: 'literal', value: '\u2066' })
+
   return result
 }
+
 const isTimeUnitPart = (part: string) => {
   return part === 'hour' || part === 'minute' || part === 'second'
 }
@@ -238,13 +241,17 @@ const PAGE_STEP = {
   minute: 15,
   second: 15,
 } as const satisfies Record<string, number>
+
 type NumericPart = keyof typeof PAGE_STEP
 type DateFields = Partial<Record<NumericPart, number>>
+
 type SegmentValues = Partial<Record<NumericPart, number | null>> & {
   dayPeriod?: 'AM' | 'PM' | null
 }
+
 const isNumericPart = (part: string): part is NumericPart => Object.hasOwn(PAGE_STEP, part)
 type CompleteSegmentValues = { [K in keyof SegmentValues]: Exclude<SegmentValues[K], null> }
+
 const isComplete = (values: SegmentValues): values is CompleteSegmentValues =>
   Object.values(values).every((value) => value !== null)
 
@@ -259,6 +266,7 @@ type SegmentState = {
   readonly: Ref<boolean>
   locale: Ref<string>
 }
+
 const rangeContext = injectDateRangeFieldRootContext(null)
 const timeContext = injectTimeFieldRootContext(null)
 const dateContext = injectDateFieldRootContext(null)
@@ -266,12 +274,14 @@ const segmentState = (type?: string | null): SegmentState | undefined => {
   if (props.endSegments) {
     if (!rangeContext) return undefined
     const end = type === 'end'
+
     return {
       ...rangeContext,
       modelValue: end ? rangeContext.endValue : rangeContext.startValue,
       segmentValues: end ? rangeContext.segmentValues.end : rangeContext.segmentValues.start,
     }
   }
+
   return timeContext ?? dateContext ?? undefined
 }
 
@@ -298,6 +308,7 @@ const segmentBounds = (
       if (values.year) fields.year = values.year
       if (values.month) fields.month = values.month
       const date = placeholder.set({ ...fields, day: 1 })
+
       return [1, date.calendar.getDaysInMonth(date)]
     }
     case 'hour': {
@@ -306,6 +317,7 @@ const segmentBounds = (
       const placeholderFields: DateFields = placeholder
       const hour = values.hour ?? placeholderFields.hour ?? 0
       const pm = values.dayPeriod ? values.dayPeriod === 'PM' : hour >= 12
+
       return pm ? [12, 23] : [0, 11]
     }
     case 'minute':
@@ -326,6 +338,7 @@ const onSegmentKeydown = (event: KeyboardEvent) => {
   const part =
     el.getAttribute('data-reka-date-field-segment') ??
     el.getAttribute('data-reka-time-field-segment')
+
   if (!part) return
   const state = segmentState(el.getAttribute('data-reka-date-range-field-segment-type'))
   if (!state || state.disabled.value || state.readonly.value) return
@@ -343,6 +356,7 @@ const onSegmentKeydown = (event: KeyboardEvent) => {
           : key === 'PageUp' || key === 'PageDown'
             ? !isPM
             : undefined
+
     if (toPM === undefined) return
     patch.dayPeriod = toPM ? 'PM' : 'AM'
     if (values.hour != null && toPM !== isPM) patch.hour = values.hour + (toPM ? 12 : -12)
@@ -365,6 +379,7 @@ const onSegmentKeydown = (event: KeyboardEvent) => {
         const amount =
           (arrow ? (state.step.value[part] ?? 1) : PAGE_STEP[part]) *
           (key === 'ArrowUp' || key === 'PageUp' ? 1 : -1)
+
         const size = max - min + 1
         patch[part] = min + ((((prev - min + amount) % size) + size) % size)
       }
@@ -372,9 +387,11 @@ const onSegmentKeydown = (event: KeyboardEvent) => {
       return
     }
   }
+
   event.preventDefault()
   event.stopPropagation()
   Object.assign(values, patch)
+
   // Same commit rule as Reka's segment handler: a complete set of segments becomes the value
   if (isComplete(values)) state.modelValue.value = state.placeholder.value.set({ ...values }).copy()
 }
@@ -382,10 +399,12 @@ const onSegmentKeydown = (event: KeyboardEvent) => {
 // React Aria's `useDateSegment` names each segment with its localized field name (`useDisplayNames`); Reka's are
 // fixed English strings ("month, ")
 const segmentIdBase = useId()
+
 const displayNames = computed(() => {
   const locale = segmentState('start')?.locale.value
   return new Intl.DisplayNames(locale ?? 'en-US', { type: 'dateTimeField' })
 })
+
 // React Aria's `useDateRangePicker` start/end field labels
 const RANGE_FIELD_NAMES = { start: 'Start Date', end: 'End Date' } as const
 
@@ -399,12 +418,15 @@ const RANGE_FIELD_NAMES = { start: 'Start Date', end: 'End Date' } as const
 const segmentAttrs = (part: string, type?: 'start' | 'end') => {
   const state = segmentState(type)
   const id = `${segmentIdBase}-${type ?? 'field'}-${part}`
+
   const name = [displayNames.value.of(part), type ? RANGE_FIELD_NAMES[type] : undefined]
     .filter(Boolean)
     .join(', ')
+
   const firstEditable =
     (type === 'end' ? props.endSegments : props.segments)?.find((s) => s.part !== 'literal')
       ?.part === part
+
   const attrs: Record<string, unknown> = {
     id: id,
     'aria-label': `${[name, props.ariaLabel].filter(Boolean).join(', ')}${props.labelledby ? ', ' : ''}`,
@@ -415,16 +437,19 @@ const segmentAttrs = (part: string, type?: 'start' | 'end') => {
     'aria-invalid': props.invalid ? 'true' : undefined,
     'data-invalid': props.invalid ? 'true' : undefined,
   }
+
   if (type) attrs.type = type
   const values = state?.segmentValues.value
   const value = values && isNumericPart(part) ? values[part] : undefined
   if ((part === 'minute' || part === 'second') && typeof value === 'number')
     attrs['aria-valuetext'] = String(value).padStart(2, '0')
+
   if (part === 'hour' && is12Hour.value && typeof value === 'number') {
     const hour = value % 12 || 12
     attrs['aria-valuenow'] = hour
     attrs['aria-valuetext'] = values?.dayPeriod ? `${hour} ${values.dayPeriod}` : `${hour}`
   }
+
   return attrs
 }
 </script>

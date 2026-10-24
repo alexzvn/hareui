@@ -71,6 +71,7 @@ const data: Payment[] = [
 ]
 
 const currency = new Intl.NumberFormat('en-US', { style: 'currency', currency: 'USD' })
+
 const dateTime = new Intl.DateTimeFormat('en-US', {
   day: 'numeric',
   month: 'short',

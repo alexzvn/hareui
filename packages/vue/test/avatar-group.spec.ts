@@ -36,6 +36,7 @@ describe('AvatarGroup', () => {
       props: { max: 2 },
       slots: { default: avatars(5), count: () => '+9' },
     })
+
     const counts = wrapper.findAll('[data-slot="avatar-group-count"]')
     expect(counts).toHaveLength(1)
     expect(counts[0].text()).toBe('+9')
@@ -49,6 +50,7 @@ describe('AvatarGroup', () => {
         default: () => [h(Avatar, { fallback: 'A' }), h(Avatar, { fallback: 'B', size: 'sm' })],
       },
     })
+
     const [first, second] = wrapper.element.children
     expect(first.className).toContain('size-12')
     expect(second.className).toContain('size-8')
@@ -68,6 +70,7 @@ describe('AvatarGroup', () => {
       h(AvatarGroup, { max: 3, role: 'group', 'aria-label': 'Assignees' }, avatars(5)),
       h(AvatarGroup, { grid: true }, avatars(2)),
     ])
+
     await expectAccessible(wrapper)
     wrapper.unmount()
   })
@@ -78,6 +81,7 @@ describe('AvatarGroup', () => {
       attrs: { role: 'group', 'aria-label': 'Viewers' },
       slots: { default: avatars(4) },
     })
+
     expect(wrapper.attributes()).toMatchObject({ role: 'group', 'aria-label': 'Viewers' })
     expect(wrapper.text()).toBe('A0A1+2')
     wrapper.unmount()

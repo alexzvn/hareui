@@ -84,6 +84,7 @@ const props = withDefaults(defineProps<NavigationMenuPopoverProps>(), {
   closeDelay: 100,
   portal: undefined,
 })
+
 defineSlots<{
   /** The trigger element. */
   default?: () => unknown
@@ -105,9 +106,11 @@ watch(open, (value) => {
   document.dispatchEvent(new CustomEvent(TOOLTIP_OPEN_EVENT))
   announcing = false
 })
+
 const onOtherOpen = () => {
   if (!announcing) open.value = false
 }
+
 onMounted(() => document.addEventListener(TOOLTIP_OPEN_EVENT, onOtherOpen))
 onBeforeUnmount(() => document.removeEventListener(TOOLTIP_OPEN_EVENT, onOtherOpen))
 
@@ -117,9 +120,11 @@ onBeforeUnmount(() => document.removeEventListener(TOOLTIP_OPEN_EVENT, onOtherOp
 const contentId = useId()
 const triggerEl = ref<HTMLElement>()
 const contentEl = ref<HTMLElement>()
+
 // After a keyboard close, the trigger's focus must not reopen the card (Reka opens it on focus) until the
 // trigger blurs or the pointer leaves it.
 const suppressOpen = ref(false)
+
 // Set by a keyboard open: the first focusable element of the card takes focus once it mounts.
 let focusOnMount = false
 
@@ -129,12 +134,14 @@ const ENTRY_KEYS = {
   top: 'ArrowUp',
   bottom: 'ArrowDown',
 } as const
+
 const EXIT_KEYS = {
   right: 'ArrowLeft',
   left: 'ArrowRight',
   top: 'ArrowDown',
   bottom: 'ArrowUp',
 } as const
+
 const FOCUSABLE =
   'a[href], button:not([disabled]), input:not([disabled]), select:not([disabled]), textarea:not([disabled]), [tabindex]:not([tabindex="-1"])'
 
@@ -149,13 +156,16 @@ const onTriggerKeydown = (event: KeyboardEvent) => {
   const isEntryKey = event.key === ENTRY_KEYS[props.side]
   if (!isEntryKey && !(target.tagName === 'BUTTON' && (event.key === 'Enter' || event.key === ' ')))
     return
+
   if (isEntryKey) event.preventDefault()
   triggerEl.value = target
   suppressOpen.value = false
+
   if (open.value && contentEl.value) {
     focusFirst()
     return
   }
+
   focusOnMount = true
   open.value = true
 }
@@ -178,6 +188,7 @@ const onContentFocusout = (event: FocusEvent) => {
 
 const onOpenChange = (value: boolean) => {
   if (value && suppressOpen.value) return
+
   // Reka closes on the trigger's blur or a pointer leave; focus inside the card keeps it open.
   if (!value && contentEl.value?.contains(document.activeElement)) return
   open.value = value
@@ -186,6 +197,7 @@ const onOpenChange = (value: boolean) => {
 const setTrigger = (el: unknown) => {
   triggerEl.value = (el as { $el?: HTMLElement } | null)?.$el
 }
+
 const setContent = (el: unknown) => {
   contentEl.value = (el as { $el?: HTMLElement } | null)?.$el
   if (contentEl.value && focusOnMount) nextTick(focusFirst)

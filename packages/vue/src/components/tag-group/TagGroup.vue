@@ -190,8 +190,10 @@ const props = withDefaults(defineProps<TagGroupProps<T>>(), {
   items: () => [],
   selectionMode: 'none',
 })
+
 const emit = defineEmits<TagGroupEmits>()
 const slots = defineSlots<TagGroupSlots<T>>()
+
 /** The selected tag ids. Bind with `v-model:selected`. */
 const selectedModel = defineModel<string[]>('selected')
 
@@ -202,6 +204,7 @@ const selected = computed(() => selectedModel.value ?? props.defaultSelected ?? 
 const isSelected = (itemId: string) => {
   return selected.value.includes(itemId)
 }
+
 const isItemDisabled = (item: TagGroupItem) => {
   return !!(props.disabled || item.disabled || props.disabledKeys?.includes(item.id))
 }
@@ -234,6 +237,7 @@ const removeOne = (item: TagGroupItem) => {
   emit('remove', [item.id])
   dropPendingFocus()
 }
+
 const removeViaKeyboard = (item: TagGroupItem) => {
   if (isItemDisabled(item)) return
   restoreFocusAfterRemoval(item)
@@ -254,6 +258,7 @@ const restoreFocusAfterRemoval = (item: TagGroupItem) => {
     index: index === -1 ? props.items.findIndex((it) => it.id === item.id) : index,
   }
 }
+
 // Called after `emit('remove')`, so this tick runs after the re-render of a consumer that removed the tags;
 // nothing is left to repair when the consumer kept them
 const dropPendingFocus = () => {
@@ -261,6 +266,7 @@ const dropPendingFocus = () => {
     pendingFocus = undefined
   })
 }
+
 watch(
   () => props.items,
   (items) => {
@@ -290,9 +296,11 @@ const defaultFocusableId = computed(() => props.items.find((it) => !isItemDisabl
 const tabindexFor = (item: TagGroupItem): 0 | -1 => {
   return item.id === (focusedId.value ?? defaultFocusableId.value) ? 0 : -1
 }
+
 const tagElements = () => {
   return Array.from(listEl.value?.querySelectorAll<HTMLElement>(':scope > [data-slot=tag]') ?? [])
 }
+
 const onListFocusIn = (event: FocusEvent) => {
   const index = tagElements().indexOf(event.target as HTMLElement)
   if (index !== -1) focusedId.value = props.items[index]?.id
@@ -306,15 +314,20 @@ const onListKeydown = (event: KeyboardEvent) => {
 
   // Escape clears (RAC `escapeKeyBehavior: 'clearSelection'`), Meta/Ctrl+A selects every enabled tag
   if (manager.onKeydown(event)) return
+
   if (event.key === 'Enter' || event.key === ' ') {
     event.preventDefault()
+
     if (event.shiftKey && props.selectionMode === 'multiple') manager.extend(item.id)
     else manager.toggle(item.id)
+
     return
   }
+
   if (props.removable && (event.key === 'Delete' || event.key === 'Backspace')) {
     event.preventDefault()
     removeViaKeyboard(item)
+
     return
   }
 
@@ -324,12 +337,15 @@ const onListKeydown = (event: KeyboardEvent) => {
       : event.key === 'ArrowLeft' || event.key === 'ArrowUp'
         ? -1
         : undefined
+
   const edge = event.key === 'Home' ? 'first' : event.key === 'End' ? 'last' : undefined
   if (step === undefined && edge === undefined) return
   event.preventDefault()
+
   const enabledIndices = props.items
     .map((_, i) => i)
     .filter((i) => !isItemDisabled(props.items[i]!))
+
   if (!enabledIndices.length) return
   let nextIndex: number
   if (edge === 'first') nextIndex = enabledIndices[0]!
@@ -339,9 +355,11 @@ const onListKeydown = (event: KeyboardEvent) => {
     const nextPos = ((pos === -1 ? 0 : pos) + step! + enabledIndices.length) % enabledIndices.length
     nextIndex = enabledIndices[nextPos]!
   }
+
   const next = props.items[nextIndex]!
   focusedId.value = next.id
   tagEls[nextIndex]?.focus()
+
   // Shift+navigation extends the selection from the anchor; Ctrl+navigation only moves focus
   if (event.shiftKey && props.selectionMode === 'multiple') manager.extend(next.id, item.id)
 }

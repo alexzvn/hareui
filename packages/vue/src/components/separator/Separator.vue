@@ -76,8 +76,10 @@ const ui = useComponentUI('separator', theme, () => ({
 
 const toolbarClass = computed(() => {
   if (!toolbar) return undefined
+
   const slot =
     resolvedOrientation.value === 'vertical' ? 'separatorVertical' : 'separatorHorizontal'
+
   return toolbar.ui.value[slot]({ class: toolbar.uiOverrides.value?.[slot] })
 })
 </script>

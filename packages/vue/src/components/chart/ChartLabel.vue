@@ -94,6 +94,7 @@ const labels = computed<ChartLabelSlotProps[]>(() => {
       const value = props.dataKey
         ? (item.datum[props.dataKey] as number | string | undefined)
         : item.value
+
       return {
         value,
         text: format(value, item.index),
@@ -102,8 +103,10 @@ const labels = computed<ChartLabelSlotProps[]>(() => {
       }
     })
   }
+
   const viewBox = source.viewBox?.()
   if (!viewBox) return []
+
   return [
     {
       value: props.value,

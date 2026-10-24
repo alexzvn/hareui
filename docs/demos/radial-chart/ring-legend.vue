@@ -29,6 +29,7 @@ import { Card } from '@hareui/vue'
 import { RadialChart } from '@hareui/vue/charts'
 
 const budget = 3000
+
 const data = [
   { category: 'Rent', spent: 1200, fill: 'var(--chart-4)' },
   { category: 'Groceries', spent: 540, fill: 'var(--chart-3)' },

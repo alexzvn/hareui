@@ -30,6 +30,7 @@ describe('ColorField', () => {
       { label: 'Brand colour', required: true },
       { label: 'Hue', channel: 'hue', colorSpace: 'hsl', defaultValue: '#0485F7' },
     ]
+
     for (const props of cases) {
       const wrapper = mount(ColorField, { props, attachTo: document.body })
       await expectAccessible(wrapper)
@@ -44,6 +45,7 @@ describe('ColorField', () => {
       slots: { prefix: () => h(ColorSwatch, { size: 'xs' }) },
       attachTo: document.body,
     })
+
     await expectAccessible(wrapper)
     wrapper.unmount()
   })
@@ -53,14 +55,18 @@ describe('ColorField', () => {
       props: { label: 'Brand colour', description: 'Used for links', errorMessage: 'Too light' },
       attachTo: document.body,
     })
+
     const el = wrapper.get(input).element as HTMLInputElement
     expect(el.labels?.[0]?.textContent?.trim()).toBe('Brand colour')
+
     const described = () =>
       el
         .getAttribute('aria-describedby')!
         .split(' ')
         .map((id) => document.getElementById(id)?.textContent?.trim())
+
     expect(described()).toEqual(['Used for links'])
+
     // While invalid the error replaces the description.
     await wrapper.setProps({ invalid: true })
     expect(described()).toEqual(['Too light'])
@@ -77,6 +83,7 @@ describe('ColorField', () => {
       },
       attachTo: document.body,
     })
+
     const el = wrapper.get(input)
     expect(el.attributes('aria-invalid')).toBeUndefined()
     ;(el.element as HTMLInputElement).value = '#ff0000'
@@ -92,9 +99,11 @@ describe('ColorField', () => {
   it('exposes required and read-only on the input', () => {
     const required = mount(ColorField, { props: { label: 'Brand colour', required: true } })
     expect(required.get(input).attributes('aria-required')).toBe('true')
+
     const readonly = mount(ColorField, {
       props: { label: 'Brand colour', readonly: true, defaultValue: '#0485F7' },
     })
+
     expect(readonly.get(input).attributes('readonly')).toBeDefined()
     required.unmount()
     readonly.unmount()
@@ -104,6 +113,7 @@ describe('ColorField', () => {
     const wrapper = mount(ColorField, {
       attrs: { 'aria-label': 'Hex colour', 'aria-labelledby': 'heading' },
     })
+
     expect(wrapper.get(input).attributes('aria-label')).toBe('Hex colour')
     expect(wrapper.get(input).attributes('aria-labelledby')).toBe('heading')
     expect(wrapper.attributes('aria-label')).toBeUndefined()
@@ -116,6 +126,7 @@ describe('ColorField', () => {
       props: { label: 'Brand colour', defaultValue: '#000010' },
       attachTo: document.body,
     })
+
     const el = wrapper.get(input)
     const node = el.element as HTMLInputElement
     await el.trigger('keydown', { key: 'ArrowUp' })
@@ -138,6 +149,7 @@ describe('ColorField', () => {
     const wrapper = mount(ColorField, {
       props: { label: 'Brand colour', readonly: true, defaultValue: '#000010' },
     })
+
     await wrapper.get(input).trigger('keydown', { key: 'ArrowUp' })
     await wrapper.get(input).trigger('keydown', { key: 'End' })
     expect((wrapper.get(input).element as HTMLInputElement).value).toBe('#000010')
@@ -168,6 +180,7 @@ describe('ColorField', () => {
       props: { defaultValue: '#000000' },
       attachTo: document.body,
     })
+
     const el = wrapper.get(input)
     const node = el.element as HTMLInputElement
     node.value = '#abcdef'
@@ -182,6 +195,7 @@ describe('ColorField', () => {
     const wrapper = mount(ColorField, {
       props: { channel: 'hue', colorSpace: 'hsl', defaultValue: parseColor('#7F007F') },
     })
+
     await wrapper.get(input).trigger('keydown', { key: 'ArrowUp' })
     const emitted = wrapper.emitted('update:modelValue')
     expect(emitted).toBeTruthy()
@@ -198,9 +212,11 @@ describe('ColorField', () => {
         invalid: true,
       },
     })
+
     const el = wrapper.get(input)
     expect(wrapper.get('label').attributes('for')).toBe('c')
     expect(el.attributes('id')).toBe('c')
+
     // The theme hides the description while invalid, so it's dropped from aria-describedby too
     expect(el.attributes('aria-describedby')).toBe('c-error')
     expect(el.attributes('aria-invalid')).toBe('true')
@@ -216,10 +232,12 @@ describe('ColorField', () => {
   it('submits the hex string under `name`', async () => {
     const form = document.createElement('form')
     document.body.append(form)
+
     const wrapper = mount(ColorField, {
       props: { name: 'brand', defaultValue: '#0485F7' },
       attachTo: form,
     })
+
     expect(new FormData(form).get('brand')).toBe('#0485f7')
     const el = wrapper.get(input)
     ;(el.element as HTMLInputElement).value = '#ff0000'
@@ -237,9 +255,11 @@ describe('ColorField', () => {
         suffix: () => h('span', { 'data-testid': 'suffix' }),
       },
     })
+
     expect(wrapper.find('[data-slot=color-input-group-prefix] [data-testid=prefix]').exists()).toBe(
       true,
     )
+
     expect(wrapper.find('[data-slot=color-input-group-suffix] [data-testid=suffix]').exists()).toBe(
       true,
     )
@@ -248,11 +268,13 @@ describe('ColorField', () => {
   it('falls back to the enclosing ColorPicker context color and forwards commits to it when uncontrolled', async () => {
     const color = parseColor('#D946EF')
     let received: unknown
+
     const Wrapper = {
       setup() {
         return () => h(ColorField, {})
       },
     }
+
     const wrapper = mount(Wrapper, {
       global: {
         provide: {
@@ -265,6 +287,7 @@ describe('ColorField', () => {
         },
       },
     })
+
     expect((wrapper.get(input).element as HTMLInputElement).value).toBe('#D946EF')
     const el = wrapper.get(input)
     ;(el.element as HTMLInputElement).value = '#00ff00'
@@ -279,6 +302,7 @@ describe('ColorField', () => {
         { render: () => h('form', [h(ColorField, { name: 'color', placeholder: '#000000' })]) },
         { attachTo: document.body },
       )
+
       const node = wrapper.get(input).element as HTMLInputElement
       expect(node.value).toBe('')
       expect(node.placeholder).toBe('#000000')
@@ -334,10 +358,12 @@ describe('ColorField', () => {
       ;(el.element as HTMLInputElement).value = text
       await el.trigger('input')
     }
+
     const mountField = (props: Record<string, unknown> = {}, inForm = false) => {
       const form = document.createElement('form')
       document.body.append(form)
       const wrapper = mount(ColorField, { props, attachTo: inForm ? form : document.body })
+
       return {
         wrapper,
         form,
@@ -363,6 +389,7 @@ describe('ColorField', () => {
         e.preventDefault()
         submitted = true
       })
+
       await type(el, '#ff0000')
       const enter = new KeyboardEvent('keydown', { key: 'Enter', bubbles: true, cancelable: true })
       el.element.dispatchEvent(enter)
@@ -398,6 +425,7 @@ describe('ColorField', () => {
         colorSpace: 'hsl',
         defaultValue: 'hsl(213, 50%, 50%)',
       })
+
       expect(node.value).toBe('213°')
       wrapper.unmount()
     })
@@ -409,6 +437,7 @@ describe('ColorField', () => {
         colorSpace: 'hsl',
         defaultValue: 'hsl(213, 50%, 50%)',
       })
+
       await el.trigger('keydown', { key: 'End' })
       expect(node.value).toBe('360°')
       wrapper.unmount()
@@ -421,6 +450,7 @@ describe('ColorField', () => {
         colorSpace: 'hsl',
         defaultValue: 'hsl(213, 50%, 50%)',
       })
+
       await type(el, '400')
       await el.trigger('blur')
       expect(node.value).toBe('360°')
@@ -434,6 +464,7 @@ describe('ColorField', () => {
         colorSpace: 'hsl',
         defaultValue: 'hsl(213, 50%, 50%)',
       })
+
       await el.trigger('keydown', { key: 'PageUp' })
       expect(node.value).toBe('214°')
       wrapper.unmount()
@@ -454,6 +485,7 @@ describe('colorField slot outlets', () => {
       </ColorField>`,
       }),
     )
+
     const parts = () =>
       [
         '[data-test=pre]',
@@ -461,6 +493,7 @@ describe('colorField slot outlets', () => {
         '[data-slot=color-input-group-prefix]',
         '[data-slot=color-input-group-suffix]',
       ].map((s) => wrapper.find(s).exists())
+
     expect(parts()).toEqual([true, true, true, true])
     show.value = false
     await nextTick()
@@ -478,6 +511,7 @@ describe('colorField slot outlets', () => {
         if (this.$el instanceof Element && this.$el.matches(group)) groupUpdates++
       },
     }
+
     const wrapper = mount(ColorField, {
       props: { label: 'Color', description: 'A', defaultValue: '#000000' },
       slots: {
@@ -486,6 +520,7 @@ describe('colorField slot outlets', () => {
       },
       global: { mixins: [countGroupUpdates] },
     })
+
     // warm-up: anything settling on the first update of any kind
     await wrapper.setProps({ description: 'B' })
     groupUpdates = 0

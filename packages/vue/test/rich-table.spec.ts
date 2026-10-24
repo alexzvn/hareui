@@ -69,6 +69,7 @@ describe('RichTable', () => {
     const wrapper = mountTable({ props: { data: people } })
     expect(wrapper.findAll('th').map((th) => th.text())).toEqual(['Id', 'Name', 'Role', 'Age'])
     expect(bodyRows(wrapper)).toHaveLength(3)
+
     expect(
       bodyRows(wrapper)[0]!
         .findAll('td')
@@ -91,6 +92,7 @@ describe('RichTable', () => {
         'name-footer': '<template #name-footer><u>total</u></template>',
       },
     })
+
     expect(bodyRows(wrapper)[0]!.findAll('td')[0]!.html()).toContain('<b>Kate!</b>')
     expect(wrapper.find('thead th').html()).toContain('<i>name</i>')
     expect(wrapper.find('tfoot th').html()).toContain('<u>total</u>')
@@ -102,9 +104,11 @@ describe('RichTable', () => {
         .find('tfoot')
         .exists(),
     ).toBe(false)
+
     const withFooter = mountTable({
       props: { data: people, columns: [{ accessorKey: 'name', footer: 'x' }] },
     })
+
     expect(withFooter.find('tfoot').exists()).toBe(true)
   })
 
@@ -137,6 +141,7 @@ describe('RichTable', () => {
       const wrapper = mountTable({
         props: { data: people, columns, sorting: [{ id: 'name', desc: true }] },
       })
+
       expect(names(wrapper)).toEqual(['Sara', 'Kate', 'John'])
       await wrapper.setProps({ sorting: [{ id: 'name', desc: false }] })
       expect(names(wrapper)).toEqual(['John', 'Kate', 'Sara'])
@@ -163,6 +168,7 @@ describe('RichTable', () => {
       tableApiOf(wrapper).getColumn('role')!.setFilterValue('CTO')
       await nextTick()
       expect(names(wrapper)).toEqual(['John'])
+
       expect(wrapper.emitted('update:columnFilters')?.at(-1)).toEqual([
         [{ id: 'role', value: 'CTO' }],
       ])
@@ -188,9 +194,11 @@ describe('RichTable', () => {
       const wrapper = mountTable({
         props: { data: people, columns: selectColumns, getRowId: (row) => row.id },
       })
+
       // `getToggleSelectedHandler` reads the checkbox's `checked`: check it, then dispatch `change`
       await wrapper.findAll('[data-testid="pick"]')[1]!.setValue(true)
       expect(wrapper.emitted('update:rowSelection')?.at(-1)).toEqual([{ b: true }])
+
       expect(bodyRows(wrapper).map((row) => row.attributes('data-selected'))).toEqual([
         'false',
         'true',
@@ -202,12 +210,15 @@ describe('RichTable', () => {
       const wrapper = mountTable({
         props: { data: people, columns: selectColumns, rowSelection: { 0: true, 2: true } },
       })
+
       expect(bodyRows(wrapper).map((row) => row.attributes('data-selected'))).toEqual([
         'true',
         'false',
         'true',
       ])
+
       await wrapper.setProps({ rowSelection: {} })
+
       expect(bodyRows(wrapper).every((row) => row.attributes('data-selected') === 'false')).toBe(
         true,
       )
@@ -227,6 +238,7 @@ describe('RichTable', () => {
           onSelect,
         },
       })
+
       const row = bodyRows(wrapper)[1]!
       expect(row.attributes('tabindex')).toBe('0')
       expect(row.attributes('data-selectable')).toBe('true')
@@ -246,6 +258,7 @@ describe('RichTable', () => {
       const wrapper = mountTable({
         props: { data: people, columns, onHover, onContextmenu: [onContextmenu, second] },
       })
+
       const row = bodyRows(wrapper)[0]!
       await row.trigger('pointerenter')
       expect(onHover.mock.calls[0]![1]!.original.name).toBe('Kate')
@@ -277,6 +290,7 @@ describe('RichTable', () => {
             '<template #expanded="{ row }"><p data-testid="detail">{{ row.original.role }}</p></template>',
         },
       })
+
       const rows = wrapper.findAll('tbody tr')
       expect(rows).toHaveLength(4)
       expect(rows[1]!.attributes('data-expanded')).toBe('true')
@@ -303,6 +317,7 @@ describe('RichTable', () => {
         },
         slots: { expanded: '<template #expanded>more</template>' },
       })
+
       await wrapper.findAll('[data-testid="toggle"]')[0]!.trigger('click')
       expect(wrapper.emitted('update:expanded')?.at(-1)).toEqual([{ 0: true }])
       expect(wrapper.findAll('[data-slot="rich-table-expanded-row"]')).toHaveLength(1)
@@ -313,6 +328,7 @@ describe('RichTable', () => {
         name: string
         children?: TreeNode[]
       }
+
       const tree: TreeNode[] = [{ name: 'Root', children: [{ name: 'Leaf' }] }]
       const wrapper = mountTable({
         props: {
@@ -328,11 +344,13 @@ describe('RichTable', () => {
           expanded: true,
         },
       })
+
       // Rows with sub rows still render the column's `cell`, not TanStack's default `aggregatedCell`
       expect(wrapper.findAll('[data-slot="rich-table-row"]').map((row) => row.text())).toEqual([
         '0:Root',
         '1:Leaf',
       ])
+
       // Without an `#expanded` slot, expanding only reveals sub rows
       expect(wrapper.findAll('tbody tr')).toHaveLength(2)
     })
@@ -348,6 +366,7 @@ describe('RichTable', () => {
           groupingOptions: { getGroupedRowModel: getGroupedRowModel() },
         },
       })
+
       expect(bodyRows(wrapper)).toHaveLength(2)
       await wrapper.setProps({ expanded: true })
       expect(bodyRows(wrapper)).toHaveLength(5)
@@ -363,6 +382,7 @@ describe('RichTable', () => {
           aggregatedCell: ({ getValue }) => `Total ${getValue<number>()}`,
         },
       ]
+
       const wrapper = mountTable({
         props: {
           data: people,
@@ -372,6 +392,7 @@ describe('RichTable', () => {
           groupingOptions: { getGroupedRowModel: getGroupedRowModel() },
         },
       })
+
       const cells = bodyRows(wrapper).map((row) => row.findAll('td').map((td) => td.text()))
       expect(cells).toEqual([
         ['CEO', 'Total 70'],
@@ -399,7 +420,9 @@ describe('RichTable', () => {
           columnPinning: { left: ['name', 'role'], right: ['id', 'age'] },
         },
       })
+
       const cells = bodyRows(wrapper)[0]!.findAll('td')
+
       // Visual order: pinned left, center, pinned right
       expect(cells.map((td) => td.attributes('data-pinned'))).toEqual([
         'left',
@@ -407,11 +430,14 @@ describe('RichTable', () => {
         'right',
         'right',
       ])
+
       expect(cells[0]!.attributes('style')).toContain('--rich-table-pin: 0px')
       expect(cells[1]!.attributes('style')).toContain('--rich-table-pin: 100px')
+
       // `right` offsets count the sizes of the pinned columns after, in the right group
       expect(cells[3]!.attributes('style')).toContain('--rich-table-pin: 0px')
       expect(cells[2]!.attributes('style')).toContain('--rich-table-pin: 60px')
+
       expect(wrapper.findAll('th').map((th) => th.attributes('data-pinned'))).toEqual([
         'left',
         'left',
@@ -424,9 +450,11 @@ describe('RichTable', () => {
       const wrapper = mountTable({
         props: { data: people, columns: wide, columnPinning: { left: [], right: [] } },
       })
+
       expect(wrapper.findAll('th').every((th) => th.attributes('data-pinned') === undefined)).toBe(
         true,
       )
+
       await wrapper.setProps({ columnPinning: { left: ['age'], right: [] } })
       expect(wrapper.findAll('th').map((th) => th.text())).toEqual(['Age', 'Name', 'Role', 'Id'])
       expect(wrapper.findAll('th')[0]!.attributes('data-pinned')).toBe('left')
@@ -442,7 +470,9 @@ describe('RichTable', () => {
           getRowId: (row: Person) => row.id,
         },
       })
+
       expect(names(wrapper)).toEqual(['John', 'Sara', 'Kate'])
+
       expect(bodyRows(wrapper).map((row) => row.attributes('data-pinned'))).toEqual([
         'top',
         undefined,
@@ -456,6 +486,7 @@ describe('RichTable', () => {
       const wrapper = mountTable({
         props: { data: people, columns, columnVisibility: { role: false } },
       })
+
       expect(wrapper.findAll('th').map((th) => th.text())).toEqual(['Name'])
       await wrapper.setProps({ columnVisibility: {} })
       expect(wrapper.findAll('th')).toHaveLength(2)
@@ -465,6 +496,7 @@ describe('RichTable', () => {
       const wrapper = mountTable({
         props: { data: people, columns, columnOrder: ['role', 'name'] },
       })
+
       expect(wrapper.findAll('th').map((th) => th.text())).toEqual(['Role', 'Name'])
     })
 
@@ -472,7 +504,9 @@ describe('RichTable', () => {
       const plain = mountTable({
         props: { data: people, columns: [{ accessorKey: 'name', size: 120 }] },
       })
+
       expect(plain.find('th').attributes('style') ?? '').not.toContain('width')
+
       const sized = mountTable({
         props: {
           data: people,
@@ -480,6 +514,7 @@ describe('RichTable', () => {
           columnSizingOptions: { enableColumnResizing: true },
         },
       })
+
       expect(sized.find('th').attributes('style')).toContain('width: 120px')
       expect(sized.find('td').attributes('style')).toContain('width: 120px')
       await sized.setProps({ columnSizing: { name: 200 } })
@@ -495,6 +530,7 @@ describe('RichTable', () => {
         role: 'x',
         age: i,
       }))
+
       expect(bodyRows(mountTable({ props: { data: many, columns } }))).toHaveLength(5)
 
       const wrapper = mountTable({
@@ -505,6 +541,7 @@ describe('RichTable', () => {
           pagination: { pageIndex: 0, pageSize: 2 },
         },
       })
+
       expect(names(wrapper)).toEqual(['P0', 'P1'])
       await wrapper.setProps({ pagination: { pageIndex: 2, pageSize: 2 } })
       expect(names(wrapper)).toEqual(['P4'])
@@ -517,6 +554,7 @@ describe('RichTable', () => {
         role: 'x',
         age: i,
       }))
+
       const wrapper = mountTable({
         props: {
           data: many,
@@ -525,6 +563,7 @@ describe('RichTable', () => {
           initialState: { pagination: { pageIndex: 0, pageSize: 2 } },
         },
       })
+
       tableApiOf(wrapper).nextPage()
       await nextTick()
       expect(wrapper.emitted('update:pagination')?.at(-1)).toEqual([{ pageIndex: 1, pageSize: 2 }])
@@ -544,10 +583,12 @@ describe('RichTable', () => {
           .get('[data-slot="rich-table-empty"]')
           .text(),
       ).toBe('Nothing here')
+
       const slotted = mountTable({
         props: { data: [], columns },
         slots: { empty: '<template #empty><em>Custom</em></template>' },
       })
+
       expect(slotted.get('[data-slot="rich-table-empty"]').html()).toContain('<em>Custom</em>')
     })
 
@@ -556,6 +597,7 @@ describe('RichTable', () => {
         props: { data: [], columns, loading: true },
         slots: { loading: '<template #loading>Loading…</template>' },
       })
+
       expect(wrapper.find('[data-slot="rich-table-empty"]').exists()).toBe(false)
       expect(wrapper.get('[data-slot="rich-table-loading"]').text()).toBe('Loading…')
       await wrapper.setProps({ loading: false })
@@ -573,6 +615,7 @@ describe('RichTable', () => {
           loadingAnimation: 'swing',
         },
       })
+
       expect(bodyRows(wrapper)).toHaveLength(3)
       const thead = wrapper.get('thead').classes().join(' ')
       expect(thead).toContain('after:bg-danger')
@@ -591,6 +634,7 @@ describe('RichTable', () => {
       const wrapper = mountTable({
         props: { data: people, columns: [{ accessorKey: 'name', footer: 'x' }], sticky },
       })
+
       expect(wrapper.get('thead').classes().includes('sticky')).toBe(header)
       expect(wrapper.get('tfoot').classes().includes('sticky')).toBe(footer)
     })
@@ -622,6 +666,7 @@ describe('RichTable', () => {
           },
         },
       })
+
       expect(wrapper.find('th').classes()).toContain('th-meta')
       const rows = bodyRows(wrapper)
       expect(rows.map((row) => row.classes().find((c) => c.startsWith('row-')))).toEqual([
@@ -629,6 +674,7 @@ describe('RichTable', () => {
         'row-b',
         'row-c',
       ])
+
       expect(rows[0]!.attributes('style')).toContain('opacity: 0.5')
       const cells = rows.map((row) => row.find('td'))
       expect(cells[0]!.classes()).toContain('td-meta')
@@ -643,12 +689,14 @@ describe('RichTable', () => {
       // happy-dom has no layout: the virtualizer measures its scroll element's client box, so give it one
       const height = vi.spyOn(HTMLElement.prototype, 'clientHeight', 'get').mockReturnValue(200)
       const width = vi.spyOn(HTMLElement.prototype, 'clientWidth', 'get').mockReturnValue(400)
+
       const many = Array.from({ length: 1000 }, (_, i) => ({
         id: String(i),
         name: `P${i}`,
         role: 'x',
         age: i,
       }))
+
       const wrapper = mountTable({
         props: {
           data: many,
@@ -656,6 +704,7 @@ describe('RichTable', () => {
           virtualize: { estimateSize: 40, overscan: 2 },
         },
       })
+
       await flushPromises()
       height.mockRestore()
       width.mockRestore()
@@ -663,11 +712,13 @@ describe('RichTable', () => {
       expect(rendered.length).toBeGreaterThan(0)
       expect(rendered.length).toBeLessThan(50)
       expect(rendered[0]!.attributes('data-index')).toBe('0')
+
       // The rows below the window are stood in for by a spacer of their estimated height
       const spacer = wrapper.get('tbody tr[aria-hidden="true"]')
       const spacerHeight = Number.parseInt(
         spacer.attributes('style')!.match(/height:\s*(\d+)/)![1]!,
       )
+
       expect(spacerHeight).toBeGreaterThan(30_000)
     })
 
@@ -678,6 +729,7 @@ describe('RichTable', () => {
         role: 'x',
         age: i,
       }))
+
       expect(bodyRows(mountTable({ props: { data: many, columns } }))).toHaveLength(200)
     })
   })
@@ -688,14 +740,18 @@ describe('RichTable option updates', () => {
     const wrapper = mountTable({
       props: { data: people, columns, getRowId: (row: Person) => row.id },
     })
+
     const started = performance.now()
+
     for (let i = 0; i < 40; i++) {
       await wrapper.setProps({
         data: [...people, { id: `n${i}`, name: `New ${i}`, role: 'Dev', age: i }],
         getRowId: (row: Person) => row.id,
       })
+
       await wrapper.get('[data-testid="sort-name"]').trigger('click')
     }
+
     expect(wrapper.findAll('tbody tr')).toHaveLength(4)
     expect(wrapper.text()).toContain('New 39')
     expect(performance.now() - started).toBeLessThan(2000)
@@ -717,6 +773,7 @@ describe('RichTable accessibility', () => {
     },
     { accessorKey: 'role', header: 'Role' },
   ]
+
   const interactive: RichTableColumn<Person>[] = [
     {
       id: 'select',
@@ -757,6 +814,7 @@ describe('RichTable accessibility', () => {
       props: { data: people, columns: sortable, caption: 'Team' },
       attachTo: document.body,
     })
+
     expect(wrapper.get('table caption').text()).toBe('Team')
     await expectAccessible(wrapper)
     await wrapper.get('[data-testid="sort-name"]').trigger('click')
@@ -770,6 +828,7 @@ describe('RichTable accessibility', () => {
       props: { data: people, columns },
       slots: { caption: '<b>Staff</b>' },
     })
+
     expect(wrapper.get('table > caption').text()).toBe('Staff')
   })
 
@@ -789,6 +848,7 @@ describe('RichTable accessibility', () => {
       },
       attachTo: document.body,
     })
+
     expect(wrapper.find('[data-slot="rich-table-expanded-row"]').exists()).toBe(true)
     await expectAccessible(wrapper)
     wrapper.unmount()
@@ -807,6 +867,7 @@ describe('RichTable accessibility', () => {
         attachTo: document.body,
       }),
     ]
+
     for (const wrapper of wrappers) {
       await expectAccessible(wrapper)
       wrapper.unmount()
@@ -825,15 +886,18 @@ describe('RichTable accessibility', () => {
       },
       { accessorKey: 'age', header: 'Age' },
     ]
+
     const wrapper = mountTable({
       props: { data: people, columns: grouped, caption: 'Team' },
       attachTo: document.body,
     })
+
     const [groupRow, leafRow] = wrapper.findAll('thead tr')
     const [person, ageFiller] = groupRow!.findAll('th')
     expect(person!.attributes()).toMatchObject({ scope: 'colgroup', colspan: '2' })
     expect(ageFiller!.attributes('role')).toBe('cell')
     expect(ageFiller!.attributes('scope')).toBeUndefined()
+
     expect(
       leafRow!
         .findAll('th')
@@ -843,7 +907,9 @@ describe('RichTable accessibility', () => {
       ['Role', 'col', undefined],
       ['Age', 'col', undefined],
     ])
+
     const footer = wrapper.findAll('tfoot th')
+
     // One footer row per header row: only "Total" is a real footer header, every other slot is an empty filler
     expect(footer.map((th) => [th.text(), th.attributes('role')])).toEqual([
       ['Total', undefined],
@@ -852,6 +918,7 @@ describe('RichTable accessibility', () => {
       ['', 'cell'],
       ['', 'cell'],
     ])
+
     await expectAccessible(wrapper)
     wrapper.unmount()
   })
@@ -861,6 +928,7 @@ describe('RichTable accessibility', () => {
       { id: 'person', header: 'Person', columns: [{ accessorKey: 'name', header: 'Name' }] },
       { accessorKey: 'age', header: 'Age' },
     ]
+
     const wrapper = mountTable({ props: { data: people, columns: grouped } })
     const filler = wrapper.findAll('thead tr')[0]!.findAll('th')[1]!
     const id = tableApiOf(wrapper).getHeaderGroups()[0]!.headers[1]!.id
@@ -868,22 +936,27 @@ describe('RichTable accessibility', () => {
       props: { data: people, columns: grouped },
       slots: { [`${id}-header`]: 'Years' },
     })
+
     expect(filler.attributes('role')).toBe('cell')
+
     expect(filled.findAll('thead tr')[0]!.findAll('th')[1]!.attributes()).toMatchObject({
       scope: 'col',
     })
+
     expect(filled.findAll('thead tr')[0]!.findAll('th')[1]!.attributes('role')).toBeUndefined()
   })
 
   it('is accessible virtualized, hiding the spacer rows', async () => {
     const height = vi.spyOn(HTMLElement.prototype, 'clientHeight', 'get').mockReturnValue(200)
     const width = vi.spyOn(HTMLElement.prototype, 'clientWidth', 'get').mockReturnValue(400)
+
     const many = Array.from({ length: 300 }, (_, i) => ({
       id: String(i),
       name: `P${i}`,
       role: 'x',
       age: i,
     }))
+
     // Measured detached like the virtualize spec above (attached, happy-dom's zero rects would render no window)
     const wrapper = mountTable({
       props: {
@@ -893,6 +966,7 @@ describe('RichTable accessibility', () => {
         virtualize: { estimateSize: 40, overscan: 2 },
       },
     })
+
     await flushPromises()
     height.mockRestore()
     width.mockRestore()
@@ -908,6 +982,7 @@ describe('RichTable accessibility', () => {
       { accessorKey: 'name', header: 'Name', enableSorting: true },
       { accessorKey: 'role', header: 'Role', enableSorting: true },
     ]
+
     const wrapper = mountTable({
       props: {
         data: people,
@@ -918,6 +993,7 @@ describe('RichTable accessibility', () => {
         ],
       },
     })
+
     expect(wrapper.findAll('th').map((th) => th.attributes('aria-sort'))).toEqual([
       'none',
       'descending',
@@ -930,6 +1006,7 @@ describe('RichTable accessibility', () => {
       props: { data: people, columns: interactive, caption: 'Team', onSelect },
       attachTo: document.body,
     })
+
     const row = bodyRows(wrapper)[0]!
     ;(row.element as HTMLElement).focus()
     expect(document.activeElement).toBe(row.element)

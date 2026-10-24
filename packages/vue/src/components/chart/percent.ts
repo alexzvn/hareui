@@ -13,11 +13,14 @@ export const percentValue = (
   options: { keepNonFinite?: boolean } = {},
 ): number => {
   if (value === undefined || value === null || value === '') return fallback
+
   if (typeof value === 'number')
     return Number.isFinite(value) || options.keepNonFinite ? value : fallback
+
   const text = value.trim()
   const number = Number.parseFloat(text)
   if (text.endsWith('%'))
     return Number.isFinite(number) || options.keepNonFinite ? (number / 100) * total : fallback
+
   return Number.isFinite(number) ? number : fallback
 }

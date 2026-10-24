@@ -32,6 +32,7 @@ describe('CellSwitch', () => {
         }),
       { attachTo: document.body },
     )
+
     await wrapper.get('[data-slot=cell-switch-label]').trigger('click')
     expect(model.value).toBe(true)
     expect(wrapper.get('[data-slot=cell-switch]').attributes('data-selected')).toBe('true')
@@ -69,6 +70,7 @@ describe('CellSwitch', () => {
     const wrapper = mount(CellSwitch, {
       slots: { label: ({ checked }: { checked: boolean }) => (checked ? 'On' : 'Off') },
     })
+
     expect(wrapper.get('[data-slot=cell-switch-label]').text()).toBe('Off')
     await wrapper.get(row).trigger('click')
     expect(wrapper.get('[data-slot=cell-switch-label]').text()).toBe('On')
@@ -79,6 +81,7 @@ describe('CellSwitch', () => {
       props: { disabled: true },
       slots: { default: () => h(CellSwitch, { label: 'Animations' }) },
     })
+
     await wrapper.get(row).trigger('click')
     expect(wrapper.get(row).attributes('disabled')).toBeDefined()
     expect(wrapper.get(row).attributes('aria-checked')).toBe('false')
@@ -87,6 +90,7 @@ describe('CellSwitch', () => {
 
   it('required inside a Form fails validation and shows the error until the row is toggled on', async () => {
     const error = () => document.querySelector('[data-slot=field-error]')?.textContent?.trim()
+
     const wrapper = mount(
       () =>
         h(Form, null, () =>
@@ -99,6 +103,7 @@ describe('CellSwitch', () => {
         ),
       { attachTo: document.body },
     )
+
     // The hidden form input renders once the switch finds its form
     await flushPromises()
     const form = wrapper.get('form').element as HTMLFormElement
@@ -126,14 +131,17 @@ const pressSpace = async (el: Element) => {
     bubbles: true,
     cancelable: true,
   })
+
   const up = new KeyboardEvent('keyup', {
     key: ' ',
     code: 'Space',
     bubbles: true,
     cancelable: true,
   })
+
   el.dispatchEvent(down)
   el.dispatchEvent(up)
+
   if (
     el instanceof HTMLButtonElement &&
     !el.disabled &&
@@ -141,6 +149,7 @@ const pressSpace = async (el: Element) => {
     !up.defaultPrevented
   )
     el.click()
+
   await nextTick()
 }
 
@@ -158,6 +167,7 @@ describe('CellSwitch accessibility', () => {
       props: { label: 'Animations', ...props },
       attachTo: document.body,
     })
+
     await expectAccessible(wrapper)
     wrapper.unmount()
   })
@@ -168,6 +178,7 @@ describe('CellSwitch accessibility', () => {
         h('form', null, h(CellSwitch, { label: 'Animations', name: 'animations', required: true })),
       { attachTo: document.body },
     )
+
     await flushPromises()
     await expectAccessible(wrapper)
     wrapper.unmount()
@@ -179,6 +190,7 @@ describe('CellSwitch accessibility', () => {
       slots: { icon: () => h('svg', { 'aria-hidden': 'true' }) },
       attachTo: document.body,
     })
+
     expect(wrapper.get(row).attributes('aria-label')).toBe('Animations')
     await expectAccessible(wrapper)
     wrapper.unmount()
@@ -194,6 +206,7 @@ describe('CellSwitch accessibility', () => {
       },
       attachTo: document.body,
     })
+
     const trigger = wrapper.get(row)
     expect(trigger.attributes('aria-required')).toBe('true')
     expect(trigger.attributes('aria-invalid')).toBe('true')
@@ -201,6 +214,7 @@ describe('CellSwitch accessibility', () => {
     expect(ids.map((id) => document.getElementById(id)?.textContent?.trim())).toEqual([
       'Turn animations on',
     ])
+
     wrapper.unmount()
   })
 
@@ -222,6 +236,7 @@ describe('CellSwitch accessibility', () => {
       props: { label: 'Animations', readonly: true, defaultValue: true },
       attachTo: document.body,
     })
+
     const trigger = wrapper.get(row).element as HTMLButtonElement
     expect(trigger.getAttribute('aria-readonly')).toBe('true')
     trigger.focus()
@@ -237,6 +252,7 @@ describe('CellSwitch accessibility', () => {
       props: { label: 'Animations', disabled: true },
       attachTo: document.body,
     })
+
     const trigger = wrapper.get(row).element as HTMLButtonElement
     trigger.focus()
     expect(document.activeElement).not.toBe(trigger)

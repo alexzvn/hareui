@@ -37,6 +37,7 @@ export const TOOLTIP_OPEN_EVENT = 'tooltip.open'
 const getDeepActiveElement = (): Element | null => {
   let active = document.activeElement
   while (active?.shadowRoot?.activeElement) active = active.shadowRoot.activeElement
+
   return active
 }
 
@@ -48,6 +49,7 @@ const getDeepActiveElement = (): Element | null => {
 export const outsideEventTarget = (event: OutsideEvent): EventTarget | null => {
   const original = event.detail.originalEvent
   const fallback = event.type.endsWith('focusOutside') ? getDeepActiveElement() : original.target
+
   return original.composedPath()[0] ?? fallback
 }
 
@@ -69,9 +71,11 @@ const isInLayerOrAbove = (layer: Element, target: Element): boolean => {
   if (layer.contains(target)) return true
   const targetLayer = target.closest(LAYER_SELECTOR)
   if (!targetLayer) return false
+
   const layers = [
     ...(layer.getRootNode() as Document | ShadowRoot).querySelectorAll(LAYER_SELECTOR),
   ]
+
   return layers.indexOf(layer) < layers.indexOf(targetLayer)
 }
 
@@ -112,9 +116,11 @@ export const shouldDismissOnOutside = (
  */
 export const shouldDismissOnPress = (event: PointerEvent, policy: LayerDismissPolicy): boolean => {
   const layer = resolveLayer(policy.content)
+
   // The composed path's first node: inside a shadow root `event.target` is the shadow host.
   const target = event.composedPath()[0] ?? null
   if (!layer || !(target instanceof Element) || isKeptOpen(event, policy)) return false
+
   return isTopmostLayer(layer) && !isInLayerStack(layer, target)
 }
 

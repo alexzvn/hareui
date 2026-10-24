@@ -137,6 +137,7 @@ const props = withDefaults(defineProps<ChartTooltipProps>(), {
   isAnimationActive: true,
   animationDuration: 400,
 })
+
 const slots = defineSlots<ChartTooltipSlots>()
 
 const chart = useChartContext('ChartTooltip')
@@ -152,6 +153,7 @@ onMounted(() => {
       source: 'pointer',
     })
 })
+
 onBeforeUnmount(() => {
   chart.tooltipEnabled.value--
   chart.setActive(null)
@@ -161,7 +163,9 @@ const index = computed(() => chart.active.index)
 const payload = computed(() =>
   index.value === null ? [] : chart.payloadAt(index.value, chart.active.seriesId),
 )
+
 const active = computed(() => index.value !== null && payload.value.length > 0)
+
 const label = computed(() =>
   index.value === null ? undefined : chart.tooltipLabel.value(index.value),
 )
@@ -179,9 +183,12 @@ const cursor = computed(() => {
     const extent = horizontal ? plot.width : plot.height
     const band =
       axis.bandwidth || (count > 1 ? Math.abs(axis.position(1) - axis.position(0)) : extent)
+
     const start =
       (axis.bandwidth ? axis.scale(index.value) : axis.position(index.value) - band / 2) + 0.5
+
     const size = Math.max(band - 1, 0)
+
     return {
       kind,
       d: horizontal
@@ -189,7 +196,9 @@ const cursor = computed(() => {
         : `M ${plot.left},${start} h ${plot.width} v ${size} h ${-plot.width} Z`,
     }
   }
+
   const position = axis.position(index.value)
+
   return {
     kind,
     d: horizontal
@@ -219,6 +228,7 @@ watch(
 // Panel position: beside the anchor, flipped to stay inside the plot area.
 const panelElement = shallowRef<HTMLElement | null>(null)
 const size = shallowRef({ width: 0, height: 0 })
+
 // Measured only when the content can change (not on every pointer move), and assigned only when it differs so
 // moving the pointer does not trigger a second render.
 watch(
@@ -238,6 +248,7 @@ const bounds = computed(() => {
     const plot = cartesian.offset.value
     return { x: plot.left, y: plot.top, width: plot.width, height: plot.height }
   }
+
   return { x: 0, y: 0, width: chart.width.value, height: chart.height.value }
 })
 
@@ -245,6 +256,7 @@ const place = (coordinate: number, dimension: number, start: number, extent: num
   const after = coordinate + props.offset
   if (after + dimension > start + extent)
     return Math.max(coordinate - dimension - props.offset, start)
+
   return after
 }
 
@@ -252,6 +264,7 @@ const translate = computed(() => {
   const point = shown.value?.coordinate
   if (!point) return null
   const box = bounds.value
+
   return {
     x: place(point.x, size.value.width, box.x, box.width),
     y: place(point.y, size.value.height, box.y, box.height),
@@ -262,6 +275,7 @@ const translate = computed(() => {
 const wrapperStyle = computed(() => {
   if (!props.panel) return undefined
   const position = translate.value
+
   return {
     transform: position ? `translate(${position.x}px, ${position.y}px)` : undefined,
     transition:

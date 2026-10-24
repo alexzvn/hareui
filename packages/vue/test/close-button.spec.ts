@@ -37,6 +37,7 @@ describe('CloseButton', () => {
       attachTo: document.body,
       slots: { default: () => h('svg', { 'aria-hidden': 'true' }) },
     })
+
     expect(wrapper.attributes('aria-label')).toBe('Close')
     await expectAccessible(wrapper)
     wrapper.unmount()
@@ -54,6 +55,7 @@ describe('CloseButton', () => {
       },
       { attachTo: document.body },
     )
+
     const on = wrapper.get('#on').element as HTMLButtonElement
     on.focus()
     expect(document.activeElement).toBe(on)

@@ -39,6 +39,7 @@ const handleSubmit = (e: Event) => {
   if (!value.value) return
 
   isSubmitting.value = true
+
   // Simulate API call
   setTimeout(() => {
     console.log('Color submitted:', { color: colorToString(value.value!, 'hex') })

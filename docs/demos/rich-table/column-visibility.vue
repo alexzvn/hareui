@@ -53,6 +53,7 @@ const items: DropdownEntry[] = [
   { value: 'status', label: 'Status' },
   { value: 'amount', label: 'Amount' },
 ]
+
 const ids = ['name', 'email', 'status', 'amount']
 
 // The dropdown's selection holds the ids of the visible columns.

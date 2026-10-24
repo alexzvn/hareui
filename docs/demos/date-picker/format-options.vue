@@ -83,6 +83,7 @@ const granularityOptions: ListBoxItem[] = [
   { value: 'minute', label: 'Minute' },
   { value: 'second', label: 'Second' },
 ]
+
 const hourCycleOptions: ListBoxItem[] = [
   { value: 12, label: '12-hour' },
   { value: 24, label: '24-hour' },
@@ -91,6 +92,7 @@ const hourCycleOptions: ListBoxItem[] = [
 const granularity = ref<Granularity>('minute')
 const hourCycle = ref<HourCycle>(12)
 const hideTimeZone = ref(false)
+
 const timeGranularity = computed(() =>
   granularity.value === 'day' ? undefined : granularity.value,
 )
@@ -100,11 +102,13 @@ const defaultValueFor = (g: Granularity): DateValue => {
     ? parseDate('2026-02-03')
     : parseZonedDateTime('2026-02-03T08:45:00[America/Los_Angeles]')
 }
+
 const value = shallowRef<DateValue | null>(defaultValueFor(granularity.value))
 
 const hasTime = (v: DateValue | null | undefined): v is CalendarDateTime | ZonedDateTime => {
   return !!v && 'hour' in v
 }
+
 // Reka's embedded Calendar only edits date fields and the TimeField below only edits time fields;
 // each merges onto the other's current value instead of replacing it outright.
 const mergeDate = (picked: DateValue, current: DateValue | null | undefined): DateValue => {
@@ -112,6 +116,7 @@ const mergeDate = (picked: DateValue, current: DateValue | null | undefined): Da
     ? current.set({ year: picked.year, month: picked.month, day: picked.day })
     : picked
 }
+
 const mergeTime = (time: TimeValue, current: DateValue | null | undefined): DateValue | null => {
   return hasTime(current)
     ? current.set({ hour: time.hour, minute: time.minute, second: time.second })

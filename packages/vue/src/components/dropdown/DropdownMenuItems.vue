@@ -102,8 +102,10 @@ const baseId = useId(undefined, 'hareui-dropdown-section')
 
 const isSeparator = (entry: DropdownEntry): entry is DropdownSeparator =>
   (entry as DropdownSeparator).type === 'separator'
+
 const isSection = (entry: DropdownEntry): entry is DropdownSection =>
   (entry as DropdownSection).type === 'section'
+
 const hasSubmenu = (entry: DropdownEntry): entry is DropdownItem & { items: DropdownEntry[] } =>
   !!(entry as DropdownItem).items?.length
 

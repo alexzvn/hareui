@@ -25,12 +25,15 @@ describe('ChartLegend', () => {
     const wrapper = mount(ChartLegend, {
       props: { series: { organic: { name: 'Organic' }, paid: {}, direct: { color: 'red' } } },
     })
+
     expect(wrapper.element.tagName).toBe('UL')
+
     expect(rows(wrapper)).toEqual([
       { color: 'var(--chart-3)', label: 'Organic' },
       { color: 'var(--chart-1)', label: 'paid' },
       { color: 'red', label: 'direct' },
     ])
+
     expect(wrapper.get('[data-slot="chart-legend-indicator"]').attributes('aria-hidden')).toBe(
       'true',
     )
@@ -50,6 +53,7 @@ describe('ChartLegend', () => {
         index: 'name',
       },
     })
+
     expect(rows(wrapper)).toEqual([{ color: 'blue', label: 'X' }])
   })
 
@@ -63,17 +67,21 @@ describe('ChartLegend', () => {
         orientation: 'vertical',
       },
     })
+
     expect(wrapper.attributes('data-orientation')).toBe('vertical')
+
     expect(rows(wrapper)).toEqual([
       { color: 'var(--chart-3)', label: 'Mobile' },
       { color: 'pink', label: 'Desktop' },
       { color: 'var(--chart-4)', label: 'Tablet' },
     ])
+
     expect(wrapper.findAll('[data-slot="chart-legend-value"]').map((node) => node.text())).toEqual([
       '600',
       '300',
       '100',
     ])
+
     expect(
       wrapper.findAll('[data-slot="chart-legend-percent"]').map((node) => node.text()),
     ).toEqual(['60%', '30%', '10%'])
@@ -83,6 +91,7 @@ describe('ChartLegend', () => {
     const plain = mount(ChartLegend, { props: { data: devices, index: 'name' } })
     expect(plain.find('[data-slot="chart-legend-value"]').exists()).toBe(false)
     expect(plain.find('[data-slot="chart-legend-percent"]').exists()).toBe(false)
+
     const formatted = mount(ChartLegend, {
       props: {
         data: devices,
@@ -93,9 +102,11 @@ describe('ChartLegend', () => {
         percentFormatter: (percent: number) => `(${percent.toFixed(1)}%)`,
       },
     })
+
     expect(
       formatted.findAll('[data-slot="chart-legend-value"]').map((node) => node.text()),
     ).toEqual(['Mobile: 600 units', 'Desktop: 300 units', 'Tablet: 100 units'])
+
     expect(formatted.get('[data-slot="chart-legend-percent"]').text()).toBe('(60.0%)')
   })
 
@@ -118,6 +129,7 @@ describe('ChartLegend', () => {
         'onUpdate:hidden': (value: string[]) => wrapper.setProps({ hidden: value }),
       },
     })
+
     const buttons = wrapper.findAll('button')
     expect(buttons).toHaveLength(2)
     expect(buttons.map((button) => button.attributes('type'))).toEqual(['button', 'button'])
@@ -125,6 +137,7 @@ describe('ChartLegend', () => {
 
     await buttons[0]!.trigger('click')
     expect(wrapper.emitted('update:hidden')!.at(-1)).toEqual([['b', 'a']])
+
     expect(wrapper.findAll('button').map((button) => button.attributes('aria-pressed'))).toEqual([
       'false',
       'false',
@@ -132,6 +145,7 @@ describe('ChartLegend', () => {
 
     await wrapper.findAll('button')[1]!.trigger('click')
     expect(wrapper.emitted('update:hidden')!.at(-1)).toEqual([['a']])
+
     expect(wrapper.findAll('button').map((button) => button.attributes('aria-pressed'))).toEqual([
       'false',
       'true',
@@ -149,6 +163,7 @@ describe('ChartLegend', () => {
     const wrapper = mount(ChartLegend, {
       props: { data: devices, index: 'name', showPercent: true, hidden: ['Mobile'] },
     })
+
     expect(
       wrapper.findAll('[data-slot="chart-legend-percent"]').map((node) => node.text()),
     ).toEqual(['75%', '25%'])
@@ -180,6 +195,7 @@ describe('ChartLegend', () => {
           ),
       },
     })
+
     expect(wrapper.find('[data-slot="chart-legend-label"]').exists()).toBe(false)
     expect(wrapper.get('button .custom').text()).toBe('0:Alpha:false')
     await wrapper.get('.custom').trigger('click')
@@ -199,13 +215,16 @@ describe('ChartLegend', () => {
       },
       attachTo: document.body,
     })
+
     expect(wrapper.element.tagName).toBe('UL')
     expect(wrapper.findAll('ul > li')).toHaveLength(3)
+
     expect(
       wrapper
         .findAll('[data-slot="chart-legend-indicator"]')
         .every((swatch) => swatch.attributes('aria-hidden') === 'true'),
     ).toBe(true)
+
     await expectAccessible(wrapper)
     wrapper.unmount()
   })
@@ -219,8 +238,10 @@ describe('ChartLegend', () => {
       },
       attachTo: document.body,
     })
+
     const buttons = wrapper.findAll('button')
     expect(buttons.map((button) => button.text())).toEqual(['Alpha', 'Beta'])
+
     expect(
       buttons.every(
         (button) =>
@@ -228,6 +249,7 @@ describe('ChartLegend', () => {
           button.attributes('disabled') === undefined,
       ),
     ).toBe(true)
+
     await expectAccessible(wrapper)
     ;(buttons[0]!.element as HTMLButtonElement).focus()
     await buttons[0]!.trigger('click')
@@ -241,6 +263,7 @@ describe('ChartLegend', () => {
     const wrapper = mount(ChartLegend, {
       props: { series: ['a'], class: 'mt-4', ui: { label: 'text-danger' } },
     })
+
     expect(wrapper.classes()).toContain('mt-4')
     expect(wrapper.get('[data-slot="chart-legend-label"]').classes()).toContain('text-danger')
   })

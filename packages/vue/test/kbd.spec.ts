@@ -13,12 +13,14 @@ describe('Kbd', () => {
       props: { keys: ['command', 'shift'] },
       slots: { default: () => 'Z' },
     })
+
     expect(wrapper.element.tagName).toBe('KBD')
     const abbrs = wrapper.findAll('abbr')
     expect(abbrs.map((a) => [a.text(), a.attributes('title')])).toEqual([
       ['⌘', 'Command'],
       ['⇧', 'Shift'],
     ])
+
     expect(wrapper.find('span').text()).toBe('Z')
   })
 
@@ -32,6 +34,7 @@ describe('Kbd', () => {
     const wrapper = mount(Kbd, {
       props: { variant: 'light', keys: 'up', ui: { abbr: 'font-bold' } },
     })
+
     expect(wrapper.classes()).toContain('bg-transparent')
     expect(wrapper.classes()).not.toContain('bg-default')
     expect(wrapper.get('abbr').classes()).toContain('font-bold')
@@ -48,6 +51,7 @@ describe('Kbd', () => {
       attachTo: document.body,
       slots: content ? { default: () => content } : {},
     })
+
     await expectAccessible(wrapper)
     wrapper.unmount()
   })

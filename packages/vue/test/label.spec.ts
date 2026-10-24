@@ -10,6 +10,7 @@ import { expectAccessible } from './a11y'
 const mousedown = (el: Element, detail: number) => {
   const event = new MouseEvent('mousedown', { detail, bubbles: true, cancelable: true })
   el.dispatchEvent(event)
+
   return event
 }
 
@@ -27,10 +28,12 @@ describe('Label', () => {
       props: { for: 'email', required: true },
       slots: { default: () => 'Email' },
     })
+
     const span = mount(Label, {
       props: { as: 'span', for: 'email', required: true },
       slots: { default: () => 'Email' },
     })
+
     expect(span.element.tagName).toBe('SPAN')
     expect(span.attributes('data-slot')).toBe('label')
     expect(span.classes()).toEqual(label.classes())
@@ -71,6 +74,7 @@ describe('Label', () => {
       slots: { default: () => 'Email' },
       attachTo: host,
     })
+
     expect(mousedown(wrapper.element, 1).defaultPrevented).toBe(true)
     expect(mousedown(wrapper.element, 2).defaultPrevented).toBe(true)
     expect(onMousedown).toHaveBeenCalledTimes(2)
@@ -95,6 +99,7 @@ describe('Label', () => {
       attrs: { id: 'l', title: 'Hint', 'data-testid': 'lbl', 'aria-hidden': 'true' },
       slots: { default: () => 'Email' },
     })
+
     expect(wrapper.attributes('id')).toBe('l')
     expect(wrapper.attributes('title')).toBe('Hint')
     expect(wrapper.attributes('data-testid')).toBe('lbl')
@@ -123,6 +128,7 @@ describe('Label', () => {
           ]),
         { attachTo: document.body },
       )
+
       const input = wrapper.get('input').element as HTMLInputElement
       expect([...input.labels!].map((label) => label.textContent)).toEqual(['Email'])
       await expectAccessible(wrapper)

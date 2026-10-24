@@ -129,7 +129,9 @@ const props = withDefaults(defineProps<RadioButtonGroupProps>(), {
   variant: 'primary',
   invalid: undefined,
 })
+
 defineSlots<RadioButtonGroupSlots>()
+
 /** The value of the selected item. Bind with `v-model`. */
 const modelValue = defineModel<string>()
 const slots = useSlots()
@@ -158,6 +160,7 @@ const { validation, commitValidation } = useFieldValidation({
     modelValue.value = props.defaultValue
   },
 })
+
 const invalid = computed(() => validation.value.isInvalid)
 
 const { labelId, hasLabel, describedBy, FieldLabel, FieldDescription, FieldError } = useFieldChrome(

@@ -27,6 +27,7 @@ describe('EmptyState', () => {
       props: { class: 'p-1' },
       slots: { default: () => 'No team members' },
     })
+
     expect(wrapper.text()).toBe('No team members')
     expect(wrapper.classes()).toContain('p-1')
     expect(wrapper.classes()).not.toContain('p-2')
@@ -37,6 +38,7 @@ describe('EmptyState', () => {
       props: { 'aria-label': 'Team', items: [] },
       slots: { empty: () => 'No team members' },
     })
+
     const list = wrapper.get('[data-slot=tag-group-list]')
     expect(list.attributes('data-empty')).toBe('true')
     expect(list.text()).toBe('No team members')
@@ -49,6 +51,7 @@ describe('EmptyState', () => {
       h(EmptyState),
       h(EmptyState, { role: 'status' }, () => 'No team members'),
     ])
+
     expect(wrapper.get('[role=status]').text()).toBe('No team members')
     await expectAccessible(wrapper)
     wrapper.unmount()

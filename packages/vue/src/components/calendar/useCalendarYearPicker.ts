@@ -26,6 +26,7 @@ export type UseCalendarYearPickerOptions = {
 export const useCalendarYearPicker = (options: UseCalendarYearPickerOptions) => {
   const { focusedYear, gridRef, gridSlot, maxValue, minValue, onSelect, open, rootEl } = options
   const activeYear = ref(focusedYear.value)
+
   // The 200 year cells stay out of the mount (so a DatePicker popover opens faster) and are rendered in
   // the first idle period after it, so the year grid's first fade-in doesn't pay for them either.
   // Opening before then renders them synchronously, ahead of the focus-on-open watcher below.
@@ -37,6 +38,7 @@ export const useCalendarYearPicker = (options: UseCalendarYearPickerOptions) => 
     },
     { flush: 'sync' },
   )
+
   let cancelIdle: (() => void) | undefined
   onMounted(() => {
     if (everOpened.value) return
@@ -49,6 +51,7 @@ export const useCalendarYearPicker = (options: UseCalendarYearPickerOptions) => 
       cancelIdle = () => clearTimeout(id)
     }
   })
+
   onScopeDispose(() => cancelIdle?.())
 
   const years = computed(() => {
@@ -57,6 +60,7 @@ export const useCalendarYearPicker = (options: UseCalendarYearPickerOptions) => 
     const end = maxValue.value.year
     const list: number[] = []
     for (let y = start; y <= end; y++) list.push(y)
+
     return list
   })
 
@@ -82,11 +86,14 @@ export const useCalendarYearPicker = (options: UseCalendarYearPickerOptions) => 
         rootEl.value
           ?.querySelector<HTMLElement>('[data-slot="calendar-year-picker-trigger"]')
           ?.focus()
+
       return
     }
+
     activeYear.value = years.value.includes(focusedYear.value)
       ? focusedYear.value
       : (years.value[0] ?? focusedYear.value)
+
     nextTick(() => {
       syncPosition()
       focusYear(activeYear.value)
@@ -106,8 +113,10 @@ export const useCalendarYearPicker = (options: UseCalendarYearPickerOptions) => 
     if (event.key === 'Escape' && open.value) {
       event.preventDefault()
       open.value = false
+
       return
     }
+
     if (!open.value || years.value.length === 0) return
     const currentIndex = years.value.indexOf(activeYear.value)
     if (currentIndex === -1) return
@@ -134,6 +143,7 @@ export const useCalendarYearPicker = (options: UseCalendarYearPickerOptions) => 
       default:
         return
     }
+
     if (nextIndex !== currentIndex) {
       event.preventDefault()
       const nextYear = years.value[nextIndex]

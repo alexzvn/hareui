@@ -10,6 +10,7 @@ import type { NavigationMenuPopoverProps } from './types'
 
 type Theme = typeof theme
 type SlotName = keyof Theme['slots']
+
 type SlotArgs = {
   class?: ClassValue
   active?: boolean
@@ -54,6 +55,7 @@ export const navigationMenuKey: InjectionKey<NavigationMenuContext> =
 export const useNavigationMenu = (): NavigationMenuContext => {
   const context = inject(navigationMenuKey)
   if (!context) throw new Error('NavigationMenu parts must be used inside <NavigationMenu>')
+
   return context
 }
 
@@ -64,6 +66,7 @@ export const get = (item: unknown, path: string): unknown => {
     if (value === null || typeof value !== 'object') return undefined
     value = (value as Record<string, unknown>)[key]
   }
+
   return value
 }
 
@@ -101,7 +104,9 @@ export const SlotOutlet = (
     const nodes = render(props.slotProps ?? {})
     if (hasContent(nodes)) return nodes
   }
+
   // An empty array without a fallback: the server renderer can't render a Fragment with `null` children.
   return h(Fragment, null, slots.default?.() ?? [])
 }
+
 SlotOutlet.props = ['name', 'slotProps']

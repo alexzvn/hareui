@@ -21,6 +21,7 @@ const code = computed(() => {
     throw new Error(
       `ApiTheme: missing docs/.vitepress/api/theme/${props.component}.ts (run \`bun run api\`)`,
     )
+
   return source
 })
 </script>

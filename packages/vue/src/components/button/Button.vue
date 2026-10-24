@@ -114,6 +114,7 @@ const props = withDefaults(defineProps<ButtonProps>(), {
   disabled: undefined,
   fullWidth: undefined,
 })
+
 defineSlots<ButtonSlots>()
 
 // A ButtonGroup's props apply to its own Buttons only (HeroUI marks direct children), so hide it from nested ones.
@@ -132,6 +133,7 @@ const groupClass = computed(() => {
   if (!group) return undefined
   const groupUI = group.ui.value
   const overrides = group.uiOverrides.value
+
   return [
     groupUI.button({ class: overrides?.button }),
     variant.value === 'outline' && groupUI.buttonOutline({ class: overrides?.buttonOutline }),
@@ -155,6 +157,7 @@ const attrs = computed(() => {
       'aria-disabled': props.pending ? 'true' : undefined,
     }
   }
+
   // React Aria `useButton`: non-button elements get `role="button"` and join the tab order. Disabled ones leave it
   // (-1 rather than omitted, so a disabled `<a href>` stays out too).
   return {

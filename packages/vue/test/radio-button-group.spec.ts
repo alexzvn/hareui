@@ -41,6 +41,7 @@ describe('RadioButtonGroup', () => {
       modelValue: model.value,
       'onUpdate:modelValue': (v: string) => (model.value = v),
     }))
+
     await cards(w)[1]!.trigger('click')
     expect(model.value).toBe('pro')
     await w.vm.$nextTick()
@@ -83,12 +84,14 @@ describe('RadioButtonGroup', () => {
         h(RadioButtonGroupItem, { value: 'a', label: 'A', indicator: false }),
       ),
     )
+
     expect(none.find('[data-slot=radio-button-group-indicator]').exists()).toBe(false)
   })
 
   it('passes selected and disabled to the item slots', () => {
     const state = ({ selected, disabled }: RadioButtonGroupItemSlotProps) =>
       `${selected ? 'on' : 'off'}${disabled ? '-disabled' : ''}`
+
     const w = group(
       { defaultValue: 'pro' },
       {
@@ -96,6 +99,7 @@ describe('RadioButtonGroup', () => {
         default: (p: RadioButtonGroupItemSlotProps) => h('span', { class: 'state' }, state(p)),
       },
     )
+
     expect(w.findAll('.state').map((s) => s.text())).toEqual(['off', 'on', 'off-disabled'])
     expect(w.findAll('.label-state').map((s) => s.text())).toEqual(['off', 'on', 'off-disabled'])
     w.unmount()
@@ -130,6 +134,7 @@ describe('RadioButtonGroup disabled', () => {
     const onUpdate = (v: string) => {
       throw new Error(`unexpected ${v}`)
     }
+
     const w = group({ disabled: true, defaultValue: 'pro', 'onUpdate:modelValue': onUpdate })
     await cards(w)[0]!.trigger('click')
     expect(cards(w)[1]!.attributes('data-selected')).toBe('true')
@@ -147,6 +152,7 @@ describe('RadioButtonGroup disabled', () => {
         ),
       { attachTo: document.body },
     )
+
     await cards(w)[1]!.trigger('click')
     expect(cards(w)[0]!.attributes('data-selected')).toBe('true')
     expect(cards(w)[1]!.attributes('data-selected')).toBeUndefined()
@@ -179,27 +185,37 @@ describe('RadioButtonGroup keyboard', () => {
       modelValue: model.value,
       'onUpdate:modelValue': (v: string) => (model.value = v),
     }))
+
     await flushPromises()
     ;(cards(w)[0]!.element as HTMLElement).focus()
+
     // Real key timing: Reka flags arrow keys on window keydown (cleared on keyup), its roving group moves focus
     // on the next tick, and the focused radio clicks itself in a timeout while the flag is still set.
     const tick = () => {
       const { promise, resolve } = Promise.withResolvers<void>()
       setTimeout(resolve)
+
       return promise
     }
+
     const press = async (key: string) => {
       const card = document.activeElement as HTMLElement
       card.dispatchEvent(new KeyboardEvent('keydown', { key, bubbles: true, cancelable: true }))
-      await flushPromises() // focus moves
-      await tick() // the focused radio clicks itself
+
+      // focus moves
+      await flushPromises()
+
+      // the focused radio clicks itself
+      await tick()
       await flushPromises()
       card.dispatchEvent(new KeyboardEvent('keyup', { key, bubbles: true }))
       await flushPromises()
     }
+
     await press('ArrowDown')
     expect(document.activeElement).toBe(cards(w)[1]!.element)
     expect(model.value).toBe('pro')
+
     // Enterprise is disabled, so focus wraps to Starter.
     await press('ArrowDown')
     expect(document.activeElement).toBe(cards(w)[0]!.element)
@@ -214,11 +230,13 @@ describe('RadioButtonGroup keyboard', () => {
     const w = group({ defaultValue: 'pro' })
     const card = cards(w)[1]!
     ;(card.element as HTMLElement).focus()
+
     for (const key of ['Home', 'End']) {
       await card.trigger('keydown', { key })
       await flushPromises()
       expect(document.activeElement).toBe(card.element)
     }
+
     w.unmount()
   })
 })
@@ -234,6 +252,7 @@ describe('RadioButtonGroup form', () => {
         ),
       { attachTo: document.body },
     )
+
     await flushPromises()
     w.get('form').element.checkValidity()
     await flushPromises()
@@ -251,6 +270,7 @@ describe('RadioButtonGroup form', () => {
       { value: 'open', label: 'Open' },
       { value: 'later', label: 'Later' },
     ]
+
     const w = mount(
       () =>
         h(Form, null, () =>
@@ -260,6 +280,7 @@ describe('RadioButtonGroup form', () => {
         ),
       { attachTo: document.body },
     )
+
     await flushPromises()
     w.get('form').element.checkValidity()
     await flushPromises()
@@ -277,14 +298,17 @@ const pressSpace = async (el: Element) => {
     bubbles: true,
     cancelable: true,
   })
+
   const up = new KeyboardEvent('keyup', {
     key: ' ',
     code: 'Space',
     bubbles: true,
     cancelable: true,
   })
+
   el.dispatchEvent(down)
   el.dispatchEvent(up)
+
   if (
     el instanceof HTMLButtonElement &&
     !el.disabled &&
@@ -292,6 +316,7 @@ const pressSpace = async (el: Element) => {
     !up.defaultPrevented
   )
     el.click()
+
   await flushPromises()
 }
 
@@ -330,6 +355,7 @@ describe('RadioButtonGroup accessibility', () => {
         default: () => h('span', '€12 / month'),
       },
     )
+
     await expectAccessible(w)
     w.unmount()
   })
@@ -348,6 +374,7 @@ describe('RadioButtonGroup accessibility', () => {
         ),
       { attachTo: document.body },
     )
+
     await flushPromises()
     await expectAccessible(w)
     w.unmount()
@@ -357,10 +384,12 @@ describe('RadioButtonGroup accessibility', () => {
     const w = group({ description: 'Billed monthly', invalid: true, errorMessage: 'Pick a plan' })
     const radiogroup = w.get('[role=radiogroup]')
     expect(radiogroup.attributes('aria-invalid')).toBe('true')
+
     const text = cards(w)[1]!
       .attributes('aria-describedby')!
       .split(' ')
       .map((id) => document.getElementById(id)?.textContent?.trim())
+
     expect(text).toEqual(['For teams', 'Billed monthly', 'Pick a plan'])
     w.unmount()
   })
@@ -368,17 +397,21 @@ describe('RadioButtonGroup accessibility', () => {
   it('aria-checked and disabled reflect each card; the indicator and icon are hidden from assistive tech', () => {
     const w = group({ defaultValue: 'pro' }, { icon: () => h('svg') })
     expect(cards(w).map((c) => c.attributes('aria-checked'))).toEqual(['false', 'true', 'false'])
+
     expect(cards(w).map((c) => (c.element as HTMLButtonElement).disabled)).toEqual([
       false,
       false,
       true,
     ])
+
     expect(
       cards(w)[0]!.get('[data-slot=radio-button-group-indicator]').attributes('aria-hidden'),
     ).toBe('true')
+
     expect(
       cards(w)[0]!.get('[data-slot=radio-button-group-item-icon]').attributes('aria-hidden'),
     ).toBe('true')
+
     w.unmount()
   })
 
@@ -407,6 +440,7 @@ describe('RadioButtonGroup accessibility', () => {
     const onUpdate = (v: string) => {
       throw new Error(`unexpected ${v}`)
     }
+
     const w = group({ readonly: true, defaultValue: 'starter', 'onUpdate:modelValue': onUpdate })
     await flushPromises()
     ;(cards(w)[0]!.element as HTMLElement).focus()

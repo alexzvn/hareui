@@ -74,5 +74,6 @@ const sections = (dangerDisabled: boolean): ListBoxEntry<FileAction>[] => [
     ],
   },
 ]
+
 const alert = (message: string) => window.alert(message)
 </script>

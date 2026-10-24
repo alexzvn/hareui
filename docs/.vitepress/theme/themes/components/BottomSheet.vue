@@ -50,16 +50,26 @@ import {
 import type { VNode } from 'vue'
 import { ref, watch } from 'vue'
 
-const SHEET_HEIGHT = 600 // Total height of the sheet
-const SNAP_HEIGHT = 320 // Height visible at snap position
-const SNAP_OFFSET = SHEET_HEIGHT - SNAP_HEIGHT // Offset to show snap height
-const DRAG_THRESHOLD = 3 // framer-motion starts a drag after 3px
-const ELASTIC = 0.5 // framer-motion's default `dragElastic`
+// Total height of the sheet
+const SHEET_HEIGHT = 600
+
+// Height visible at snap position
+const SNAP_HEIGHT = 320
+
+// Offset to show snap height
+const SNAP_OFFSET = SHEET_HEIGHT - SNAP_HEIGHT
+
+// framer-motion starts a drag after 3px
+const DRAG_THRESHOLD = 3
+
+// framer-motion's default `dragElastic`
+const ELASTIC = 0.5
 
 const props = defineProps<{
   id?: string
   isOpen: boolean
 }>()
+
 const emit = defineEmits<{ 'update:isOpen': [isOpen: boolean] }>()
 defineSlots<{ default?: () => VNode[] }>()
 
@@ -83,6 +93,7 @@ type Session = {
   active: boolean
   samples: { t: number; y: number }[]
 }
+
 let session: Session | null = null
 
 const onPointerDown = (event: PointerEvent) => {
@@ -99,6 +110,7 @@ const onPointerMove = (event: PointerEvent) => {
     isDragging.value = true
     ;(event.currentTarget as HTMLElement).setPointerCapture(event.pointerId)
   }
+
   // `dragConstraints.top`: dragging above the snap position is elastic.
   y.value = SNAP_OFFSET + (offset < 0 ? offset * ELASTIC : offset)
   const now = performance.now()
@@ -119,6 +131,7 @@ const onPointerEnd = (event: PointerEvent) => {
     first && last && last.t > first.t ? ((last.y - first.y) / (last.t - first.t)) * 1000 : 0
 
   isDragging.value = false
+
   if (event.type !== 'pointercancel' && (offset > SNAP_HEIGHT * 0.5 || velocity > 10))
     emit('update:isOpen', false)
   else y.value = SNAP_OFFSET

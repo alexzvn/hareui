@@ -139,6 +139,7 @@ const props = withDefaults(
     showShuffle: true,
   },
 )
+
 const emit = defineEmits<{ change: [color: Color] }>()
 
 const FORMAT_ITEMS = [
@@ -191,6 +192,7 @@ const isInput = (event: Event) => (event.target as HTMLElement).matches('input')
 // On blur, reset to the current valid color if there was an error
 const handleInputBlur = (event: FocusEvent) => {
   if (!isInput(event)) return
+
   if (inputError.value) {
     editingValue.value = null
     inputError.value = false
@@ -201,6 +203,7 @@ const handleInputBlur = (event: FocusEvent) => {
 
 const handleInputKeyDown = (event: KeyboardEvent) => {
   if (!isInput(event)) return
+
   if (event.key === 'Escape') {
     editingValue.value = null
     inputError.value = false

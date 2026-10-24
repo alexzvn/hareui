@@ -55,9 +55,11 @@ describe('header menu', () => {
     expect(open.value).toBe(true)
     expect(document.querySelector('[data-slot=modal-dialog]')).not.toBeNull()
     expect(document.querySelector('[data-slot=header-menu-body]')?.textContent).toBe('Menu body')
+
     expect(document.querySelector('[data-slot=header]')?.getAttribute('data-menu-open')).toBe(
       'true',
     )
+
     // The menu repeats the bar's toggle (now a close button) in its own header.
     const toggles = document.querySelectorAll('[data-slot=header-toggle]')
     expect(toggles).toHaveLength(2)
@@ -95,10 +97,12 @@ describe('header menu', () => {
       await click(toggle())
       await settle()
       expect(document.querySelector(selector), mode).not.toBeNull()
+
       // Only `drawer` has no menu header.
       expect(!!document.querySelector('[data-slot=header-menu-header]'), mode).toBe(
         mode !== 'drawer',
       )
+
       wrapper.unmount()
       await settle()
     }
@@ -108,8 +112,10 @@ describe('header menu', () => {
     const wrapper = mountHeader()
     const bar = document.querySelector<HTMLElement>('[data-slot=header-container]')!
     bar.getBoundingClientRect = () => DOMRect.fromRect({ x: 0, y: 120, width: 390, height: 64 })
+
     document.querySelector<HTMLElement>('[data-slot=header]')!.getBoundingClientRect = () =>
       DOMRect.fromRect({ x: 24, y: 120, width: 342, height: 64 })
+
     await click(toggle())
     await settle()
     const anchor = document.querySelector<HTMLElement>('[data-slot=header-menu-anchor]')!
@@ -118,9 +124,11 @@ describe('header menu', () => {
     expect(anchor.style.getPropertyValue('--header-menu-top')).toBe('120px')
     expect(anchor.style.getPropertyValue('--header-menu-left')).toBe('24px')
     expect(anchor.style.getPropertyValue('--header-menu-width')).toBe('342px')
+
     expect(anchor.style.getPropertyValue('--header-menu-height')).toBe(
       `${window.innerHeight - 120}px`,
     )
+
     wrapper.unmount()
   })
 
@@ -133,14 +141,18 @@ describe('header menu', () => {
     Object.defineProperty(frame, 'clientHeight', { value: 286 })
     frame.getBoundingClientRect = () => DOMRect.fromRect({ x: 41, y: 278, width: 308, height: 288 })
     const wrapper = mountHeader({ menu: { portal: frame } })
+
     document.querySelector<HTMLElement>('[data-slot=header-container]')!.getBoundingClientRect =
       () => DOMRect.fromRect({ x: 42, y: 279, width: 306, height: 64 })
+
     document.querySelector<HTMLElement>('[data-slot=header]')!.getBoundingClientRect = () =>
       DOMRect.fromRect({ x: 42, y: 279, width: 306, height: 64 })
+
     await click(toggle())
     await settle()
     const anchor = document.querySelector<HTMLElement>('[data-slot=header-menu-anchor]')!
     expect(anchor.parentElement).toBe(frame)
+
     // Coordinates are relative to the frame's padding box, and the region ends at the frame's bottom.
     expect(anchor.style.getPropertyValue('--header-menu-top')).toBe('0px')
     expect(anchor.style.getPropertyValue('--header-menu-left')).toBe('0px')
@@ -217,15 +229,18 @@ describe('header hideOnScroll', () => {
       cb(0)
       return 1
     })
+
     vi.stubGlobal('cancelAnimationFrame', () => {})
     Object.defineProperty(window, 'scrollY', { configurable: true, writable: true, value: 0 })
   })
+
   afterEach(() => {
     vi.unstubAllGlobals()
     Object.defineProperty(window, 'scrollY', { configurable: true, writable: true, value: 0 })
   })
 
   const root = () => document.querySelector<HTMLElement>('[data-slot=header]')!
+
   const scrollTo = (y: number) => {
     Object.assign(window, { scrollY: y })
     window.dispatchEvent(new Event('scroll'))
@@ -244,9 +259,11 @@ describe('header hideOnScroll', () => {
       },
       { attachTo: document.body },
     )
+
     Object.defineProperty(root(), 'offsetHeight', { configurable: true, value: 64 })
 
-    scrollTo(40) // still within the bar's own height
+    // still within the bar's own height
+    scrollTo(40)
     await nextTick()
     expect(hidden.value).toBe(false)
 
@@ -287,6 +304,7 @@ describe('header hideOnScroll', () => {
       { hideOnScroll: true },
       { right: () => h('button', { id: 'action' }, 'x') },
     )
+
     scrollTo(300)
     await nextTick()
     expect(root().getAttribute('data-hidden')).toBe('true')
@@ -312,7 +330,8 @@ describe('header hideOnScroll', () => {
     document.body.appendChild(container)
     const wrapper = mountHeader({ hideOnScroll: true, scrollTarget: container })
 
-    scrollTo(500) // window scroll is ignored
+    // window scroll is ignored
+    scrollTo(500)
     await nextTick()
     expect(root().getAttribute('data-hidden')).toBeNull()
 
@@ -382,7 +401,9 @@ describe('header accessibility', () => {
         right: () => h('button', { type: 'button' }, 'Sign in'),
       },
     )
+
     const header = document.querySelector('header')!
+
     // A header outside sectioning content maps to the banner landmark.
     expect(header.closest('article, aside, main, nav, section')).toBeNull()
     const home = header.querySelector<HTMLAnchorElement>('[data-slot=header-title]')!
@@ -403,9 +424,11 @@ describe('header accessibility', () => {
         default: () => h('nav', { 'aria-label': 'Main' }, [h('a', { href: '/docs' }, 'Docs')]),
       },
     )
+
     expect(document.querySelector('[data-slot=header-title]')!.getAttribute('aria-label')).toBe(
       'Acme',
     )
+
     expect(document.querySelector('[data-slot=header-toggle]')).toBeNull()
     await expectAccessible(document.body)
     wrapper.unmount()
@@ -420,6 +443,7 @@ describe('header accessibility', () => {
       expect(document.getElementById(el.getAttribute('aria-labelledby')!)?.textContent).toBe(
         'Site menu',
       )
+
       expect(toggle().getAttribute('aria-expanded')).toBe('true')
       expect(toggle().getAttribute('aria-label')).toBe('Close menu')
       await expectAccessible(document.body)
@@ -439,13 +463,17 @@ describe('header accessibility', () => {
     const first = focusables[0]!
     const last = focusables.at(-1)!
     last.focus()
+
     last.dispatchEvent(
       new KeyboardEvent('keydown', { key: 'Tab', bubbles: true, cancelable: true }),
     )
+
     expect(document.activeElement).toBe(first)
+
     first.dispatchEvent(
       new KeyboardEvent('keydown', { key: 'Tab', shiftKey: true, bubbles: true, cancelable: true }),
     )
+
     expect(document.activeElement).toBe(last)
     wrapper.unmount()
   })
@@ -455,9 +483,11 @@ describe('header accessibility', () => {
     toggle().focus()
     await click(toggle())
     await settle()
+
     document.activeElement!.dispatchEvent(
       new KeyboardEvent('keydown', { key: 'Escape', bubbles: true, cancelable: true }),
     )
+
     await settle()
     expect(dialog()).toBeNull()
     expect(toggle().getAttribute('aria-expanded')).toBe('false')

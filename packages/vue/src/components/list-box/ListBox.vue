@@ -309,6 +309,7 @@ const props = withDefaults(defineProps<ListBoxProps<T>>(), {
   loading: undefined,
   escapeKeyBehavior: 'clearSelection',
 })
+
 const emit = defineEmits<ListBoxEmits>()
 const slots = defineSlots<ListBoxSlots<T>>()
 const modelValue = defineModel<ListBoxValue | ListBoxValue[] | null>()
@@ -325,12 +326,16 @@ let observer: IntersectionObserver | undefined
 watch(sentinel, (el) => {
   observer?.disconnect()
   if (!el) return
+
   observer = new IntersectionObserver(([entry]) => {
     sentinelVisible.value = !!entry?.isIntersecting
   })
+
   observer.observe(el)
 })
+
 onBeforeUnmount(() => observer?.disconnect())
+
 // Re-check after each page arrives: the sentinel may still be in view
 watch([sentinelVisible, () => props.loading, () => props.items?.length], () => {
   if (sentinelVisible.value && props.loading === false) emit('loadMore')
@@ -342,10 +347,12 @@ type Row = {
   item: T
   index: number
 }
+
 type Block =
   | Row
   | { kind: 'section'; section: ListBoxSection<T>; rows: Row[]; key: number }
   | { kind: 'separator'; key: number }
+
 const blocks = computed<Block[]>(() => {
   let index = 0
   return (props.items ?? []).map((entry, key): Block => {
@@ -356,7 +363,9 @@ const blocks = computed<Block[]>(() => {
         rows: entry.items.map((item) => ({ kind: 'item', item, index: index++ })),
         key,
       }
+
     if ('type' in entry && entry.type === 'separator') return { kind: 'separator', key }
+
     return { kind: 'item', item: entry as T, index: index++ }
   })
 })
@@ -364,12 +373,14 @@ const blocks = computed<Block[]>(() => {
 // Virtualized mode renders flat item rows by value
 const flatRows = computed(() => blocks.value.filter((b): b is Row => b.kind === 'item'))
 const rowByValue = computed(() => new Map(flatRows.value.map((row) => [row.item.value, row])))
+
 const virtualOptions = computed(() =>
   typeof props.virtualize === 'object' ? props.virtualize : {},
 )
 
 const selectable = computed(() => props.selectionMode !== 'none')
 const multiple = computed(() => props.selectionMode === 'multiple')
+
 // `v-model` wins when bound; otherwise the selection lives here, seeded from `defaultValue`
 type Selection = ListBoxValue | ListBoxValue[] | undefined
 const uncontrolled = ref<Selection>(props.defaultValue ?? (multiple.value ? [] : undefined))
@@ -380,13 +391,16 @@ const selection = computed<Selection>({
     modelValue.value = value ?? null
   },
 })
+
 // O(1) membership per option render (a multiple selection can be large)
 const selectedSet = computed(() =>
   Array.isArray(selection.value) ? new Set(selection.value) : undefined,
 )
+
 const isSelected = (item: ListBoxItem) => {
   const current = selection.value
   if (!selectable.value || current == null) return false
+
   return selectedSet.value ? selectedSet.value.has(item.value) : current === item.value
 }
 
@@ -400,6 +414,7 @@ const itemSlots = [
   'item-trailing',
   'indicator',
 ] as const
+
 const forwarded = computed(() => itemSlots.filter((name) => slots[name]))
 const sectionLabelled = (section: ListBoxSection<T>) => !!(section.label || slots['section-label'])
 
@@ -426,6 +441,7 @@ const optionProps = (row: Row) => {
  */
 type RekaListbox = ReturnType<typeof injectListboxRootContext>
 let reka: RekaListbox | undefined
+
 // Renderless child: the Reka root context is only injectable below ListboxRoot
 const RekaContext = defineComponent({
   setup() {
@@ -438,6 +454,7 @@ const enabledValue = (value: ListBoxValue) => {
   const item = rowByValue.value.get(value)?.item
   return !!item && !item.disabled && !props.disabled
 }
+
 const manager = useSelectionManager<ListBoxValue>({
   mode: () => props.selectionMode,
   keys: () => flatRows.value.map((row) => row.item.value),
@@ -460,10 +477,12 @@ const markUserAction = () => {
 }
 
 type RekaItem = { ref: HTMLElement; value: unknown }
+
 /** The enabled option elements, in DOM order. */
 const enabledOptions = (items: RekaItem[] = listboxRoot.value?.getItems() ?? []): HTMLElement[] => {
   return (reka ? items.map((item) => item.ref) : []).filter((el) => el.dataset.disabled !== '')
 }
+
 const valueOf = (el: HTMLElement) =>
   listboxRoot.value?.getItems().find((item) => item.ref === el)?.value as ListBoxValue | undefined
 
@@ -479,6 +498,7 @@ const scrollParent = (el: HTMLElement | null): HTMLElement | undefined => {
       return el
   }
 }
+
 const pageTarget = (
   options: HTMLElement[],
   from: HTMLElement | undefined,
@@ -490,6 +510,7 @@ const pageTarget = (
   const page = scroller.clientHeight - from.offsetHeight
   const top = from.getBoundingClientRect().top
   const offset = (el: HTMLElement) => el.getBoundingClientRect().top - top
+
   return down
     ? options.filter((el) => offset(el) >= 0 && offset(el) <= page).at(-1)
     : options.find((el) => offset(el) <= 0 && -offset(el) <= page)
@@ -505,11 +526,13 @@ const onTypeahead = (event: KeyboardEvent, focused: HTMLElement | undefined): bo
       // One (DOM-querying) `getItems()` per key, not one per option checked
       const items = listboxRoot.value?.getItems() ?? []
       const valueByEl = new Map(items.map((item) => [item.ref, item.value as ListBoxValue]))
+
       return {
         items: enabledOptions(items),
         text: (el: HTMLElement) => {
           const value = valueByEl.get(el)
           const item = value === undefined ? undefined : rowByValue.value.get(value)?.item
+
           return (item?.textValue ?? item?.label ?? el.textContent ?? '').trim()
         },
         isCurrent: (el) => el === focused,
@@ -517,10 +540,12 @@ const onTypeahead = (event: KeyboardEvent, focused: HTMLElement | undefined): bo
     },
     highlight,
   )
+
   if (handled) {
     event.stopPropagation()
     if (event.key === ' ') event.preventDefault()
   }
+
   return handled
 }
 
@@ -528,6 +553,7 @@ const onKeydownCapture = (event: KeyboardEvent) => {
   if (!reka || props.disabled || event.isComposing) return
   const list = event.currentTarget as HTMLElement
   const focused = (event.target as Element).closest?.<HTMLElement>('[role=option]') ?? undefined
+
   // The keyboard continues from the focused option, even after Reka dropped its highlight (pointer leave)
   if (
     !props.virtualize &&
@@ -536,8 +562,10 @@ const onKeydownCapture = (event: KeyboardEvent) => {
     reka.highlightedElement.value !== focused
   )
     reka.highlightedElement.value = focused
+
   // Escape clears the selection, Meta/Ctrl+A selects every enabled option and keeps focus
   if (selectable.value && manager.onKeydown(event)) return
+
   // Reka's virtualizer pages and searches over the unrendered rows itself
   if (props.virtualize) return
   if (onTypeahead(event, focused)) return
@@ -554,6 +582,7 @@ const onKeydownCapture = (event: KeyboardEvent) => {
     else if (event.key === 'Home') target = options[0]
     else if (event.key === 'End') target = options.at(-1)
   }
+
   if (!target) return
   event.preventDefault()
   event.stopPropagation()
@@ -570,8 +599,10 @@ const onOptionSelect = (item: ListBoxItem, event: CustomEvent<{ originalEvent?: 
   if (multiple.value && original?.shiftKey) {
     event.preventDefault()
     manager.extend(item.value)
+
     return
   }
+
   if (!isSelected(item)) manager.setAnchor(item.value)
 }
 
@@ -580,6 +611,7 @@ const listboxRoot = useTemplateRef<{
   highlightSelected: () => Promise<void>
   getItems: () => RekaItem[]
 }>('listboxRoot')
+
 defineExpose({
   /** Highlight and focus the first selected option, or the first option when nothing is selected. */
   highlightSelected: () => listboxRoot.value?.highlightSelected(),

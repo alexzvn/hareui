@@ -28,6 +28,7 @@ const items: TagGroupItem[] = [
   { id: 'gaming', label: 'Gaming' },
   { id: 'shopping', label: 'Shopping' },
 ]
+
 const single = ref<string[]>(['news'])
 const multiple = ref<string[]>(['news', 'travel'])
 </script>

@@ -27,6 +27,7 @@ const props = defineProps<ChartCellProps>()
 
 const registry = useChartCellRegistry()
 if (!registry) throw new Error('ChartCell must be used inside ChartBar or ChartPie.')
+
 registry.register(() => ({
   fill: props.fill,
   fillOpacity: props.fillOpacity,

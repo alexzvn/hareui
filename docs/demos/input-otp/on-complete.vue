@@ -33,6 +33,7 @@ const isSubmitting = ref(false)
 
 const handleComplete = (code: string) => {
   isComplete.value = true
+
   // eslint-disable-next-line no-console
   console.log('Code complete:', code)
 }
@@ -40,6 +41,7 @@ const handleComplete = (code: string) => {
 const handleSubmit = (e: Event) => {
   e.preventDefault()
   isSubmitting.value = true
+
   // Simulate API call
   setTimeout(() => {
     isSubmitting.value = false

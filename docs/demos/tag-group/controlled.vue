@@ -21,6 +21,7 @@ const items: TagGroupItem[] = [
   { id: 'gaming', label: 'Gaming' },
   { id: 'shopping', label: 'Shopping' },
 ]
+
 const selected = ref<string[]>(['news', 'travel'])
 const description = computed(
   () => `Selected: ${selected.value.length ? selected.value.join(', ') : 'None'}`,

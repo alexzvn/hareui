@@ -48,7 +48,9 @@ const Harness = defineComponent({
       describedByIdsPosition: props.position,
       errorPart: props.errorPart,
     })
+
     const { FieldLabel, FieldDescription, FieldError } = chrome
+
     return () =>
       h('div', [
         props.group
@@ -75,6 +77,7 @@ describe('useFieldChrome', () => {
       },
       attrs: { 'aria-describedby': 'outer' },
     })
+
     expect(describedBy(w)).toBe('outer f-value f-description f-error')
   })
 
@@ -90,11 +93,13 @@ describe('useFieldChrome', () => {
       },
       attrs: { 'aria-describedby': 'outer' },
     })
+
     expect(describedBy(w)).toBe('outer f-description f-extra group-help f-error')
 
     const noDescription = mount(Harness, {
       props: { id: 'g', extra: ['g-extra'], position: 'afterDescription' },
     })
+
     expect(describedBy(noDescription)).toBe('g-extra')
   })
 
@@ -119,6 +124,7 @@ describe('useFieldChrome', () => {
       props: { id: 'f', errorPart: 'errorMessage' },
       slots: { errorMessage: () => 'From slot', error: () => 'Ignored' },
     })
+
     expect(w.get('#f-error').text()).toBe('From slot')
     expect(describedBy(w)).toBe('f-error')
 
@@ -126,6 +132,7 @@ describe('useFieldChrome', () => {
       props: { id: 'g', errorPart: 'errorMessage' },
       slots: { error: () => 'Ignored' },
     })
+
     expect(errorSlotOnly.find('#g-error').exists()).toBe(false)
   })
 
@@ -137,6 +144,7 @@ describe('useFieldChrome', () => {
     const w = mount(Harness, {
       props: { id: 'f', description: 'Help', errorMessage: 'Bad', hide: true },
     })
+
     expect(describedBy(w)).toBe('f-description')
     await w.setProps({ invalid: true })
     expect(w.find('#f-description').exists()).toBe(false)
@@ -147,6 +155,7 @@ describe('useFieldChrome', () => {
     const w = mount(Harness, {
       props: { id: 'f', description: 'Help', errorMessage: 'Bad', invalid: true },
     })
+
     expect(w.get('#f-description').text()).toBe('Help')
     expect(describedBy(w)).toBe('f-description f-error')
   })
@@ -171,6 +180,7 @@ describe('useFieldChrome', () => {
       props: { id: 'g', invalid: true },
       slots: { error: () => 'Slotted' },
     })
+
     expect(slotOnly.get('#g-error').text()).toBe('Slotted')
   })
 
@@ -190,6 +200,7 @@ describe('useFieldChrome', () => {
         error: (v: ValidationResult) => `errors: ${v.validationErrors.join(',')}`,
       },
     })
+
     expect(w.get('[data-slot=label]').text()).toBe('Slot label')
     expect(w.get('#f-description').text()).toBe('Slot description')
     expect(w.get('#f-error').text()).toBe('errors: v1')
@@ -218,6 +229,7 @@ describe('useFieldChrome', () => {
           show.value ? { description: () => 'From slot' } : {},
         ),
     })
+
     const w = mount(Parent)
     expect(w.get('#f-description').text()).toBe('Prop')
     show.value = true
@@ -229,6 +241,7 @@ describe('useFieldChrome', () => {
       setup: () => () =>
         h(Harness, { id: 'g' }, labelShow.value ? { label: () => 'Late label' } : {}),
     })
+
     const lw = mount(LabelParent)
     expect(lw.find('[data-slot=label]').exists()).toBe(false)
     labelShow.value = true
@@ -247,6 +260,7 @@ describe('useFieldChrome', () => {
         group: true,
       },
     })
+
     expect(w.find('#custom-label').exists()).toBe(true)
     expect(w.find('#custom-description').exists()).toBe(true)
     expect(w.find('#custom-error').exists()).toBe(true)
@@ -260,6 +274,7 @@ describe('converted fields', () => {
       props: { id: 't', label: 'L', description: 'D', errorMessage: 'E' },
       attrs: { 'aria-describedby': 'x' },
     })
+
     expect(w.get('input').attributes('aria-describedby')).toBe('x t-description')
     expect(w.get('label').attributes('for')).toBe('t')
     await w.setProps({ invalid: true })
@@ -271,6 +286,7 @@ describe('converted fields', () => {
     const w = mount(DateField, {
       props: { id: 'd', label: 'Date', description: 'D', errorMessage: 'E' },
     })
+
     expect(w.find('#d-label').exists()).toBe(true)
     expect(w.find('#d-description').exists()).toBe(true)
     await w.setProps({ invalid: true })
@@ -284,6 +300,7 @@ describe('converted fields', () => {
       props: { id: 'c', label: 'Agree', errorMessage: 'E', invalid: true },
       slots: { description: ({ state }: { state: string }) => `state: ${state}` },
     })
+
     expect(w.get('#c-description').text()).toBe('state: unchecked')
     expect(w.get('[role=checkbox]').attributes('aria-describedby')).toBe('c-description c-error')
   })
@@ -298,6 +315,7 @@ describe('converted fields', () => {
         ),
       ),
     )
+
     const ids = w.get('#r').attributes('aria-describedby')!.split(' ')
     expect(ids.slice(0, 2)).toEqual(['r-description', 'r-extra'])
     expect(ids.slice(2).map((id) => w.get(`#${id}`).text())).toContain('Pick one')
@@ -307,6 +325,7 @@ describe('converted fields', () => {
     const w = mount(TagGroup, {
       props: { id: 't', items: [{ id: 'a', label: 'A' }], description: 'D', errorMessage: '' },
     })
+
     expect(w.get('#t-error').attributes('data-slot')).toBe('error-message')
     expect(w.get('[role=grid]').attributes('aria-describedby')).toBe('t-description t-error')
   })

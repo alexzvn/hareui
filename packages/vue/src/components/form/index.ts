@@ -2,6 +2,7 @@ export { default as Form } from './Form.vue'
 export type { FormEmits, FormProps, FormSlotProps, FormSlots } from './Form.vue'
 export type { ValidationBehavior, ValidationError, ValidationErrors } from './context'
 export { FormValidationException } from './types'
+
 export type {
   Form as FormInstance,
   FormData,

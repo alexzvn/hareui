@@ -72,15 +72,18 @@ describe('DashboardGroup', () => {
 
   it('passes axe with the sidebar collapsed to its rail from the shared context', async () => {
     const wrapper = mountDashboard()
+
     // Past the millisecond Vue attached the listener in: it drops a click fired within it.
     const { promise, resolve } = Promise.withResolvers<void>()
     setTimeout(resolve, 2)
     await promise
     document.querySelector<HTMLElement>('[data-slot=dashboard-sidebar-collapse]')!.click()
     await nextTick()
+
     expect(document.querySelector('#dashboard-sidebar-main')!.getAttribute('data-collapsed')).toBe(
       'true',
     )
+
     await expectAccessible(document.body)
     wrapper.unmount()
   })

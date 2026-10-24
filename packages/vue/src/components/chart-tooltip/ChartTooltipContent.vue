@@ -94,6 +94,7 @@ const props = withDefaults(defineProps<ChartTooltipContentProps>(), {
   indicator: 'dot',
   hideHeader: false,
 })
+
 const slots = defineSlots<ChartTooltipContentSlots>()
 
 const ui = useComponentUI('chartTooltip', theme, () => ({ indicator: props.indicator }))
@@ -108,6 +109,7 @@ const formatValue = (entry: ChartTooltipContentEntry) => {
   const value = entry.value
   if (value === undefined || value === null) return ''
   if (props.valueFormatter) return props.valueFormatter(value, entry)
+
   return String(value)
 }
 

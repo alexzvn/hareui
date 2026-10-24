@@ -13,5 +13,6 @@ export const captureOnDraggedThumb = (event: PointerEvent): void => {
   const active = document.activeElement
   const thumb =
     [...thumbs].find((el) => el === active) ?? (thumbs.length === 1 ? thumbs[0] : undefined)
+
   if (thumb && thumb !== target) thumb.setPointerCapture(event.pointerId)
 }

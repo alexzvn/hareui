@@ -212,6 +212,7 @@ const props = withDefaults(defineProps<ModalProps>(), {
   dismissible: true,
   placement: 'auto',
 })
+
 const emit = defineEmits<ModalEmits>()
 const slots = useSlots()
 defineSlots<ModalSlots>()

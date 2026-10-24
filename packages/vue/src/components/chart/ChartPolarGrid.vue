@@ -71,6 +71,7 @@ const polar = usePolarContext('ChartPolarGrid')
 const angles = computed(
   () => props.polarAngles ?? polar.angleAxis.value.ticks.map((tick) => tick.coordinate),
 )
+
 const radii = computed(
   () => props.polarRadius ?? polar.radiusAxis.value.ticks.map((tick) => tick.coordinate),
 )
@@ -79,9 +80,11 @@ const spokes = computed(() => {
   if (!props.radialLines) return []
   const cx = polar.cx.value
   const cy = polar.cy.value
+
   return angles.value.map((angle) => {
     const from = polarToCartesian(cx, cy, polar.innerRadius.value, angle)
     const to = polarToCartesian(cx, cy, polar.outerRadius.value, angle)
+
     return { x1: from.x, y1: from.y, x2: to.x, y2: to.y }
   })
 })
@@ -89,6 +92,7 @@ const spokes = computed(() => {
 const rings = computed(() => {
   const cx = polar.cx.value
   const cy = polar.cy.value
+
   return radii.value.map((radius) =>
     props.gridType === 'circle'
       ? { radius, d: '' }

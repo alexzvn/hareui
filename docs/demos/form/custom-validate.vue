@@ -25,8 +25,10 @@ const validate = (state: Partial<State>): FormError[] => {
   const errors: FormError[] = []
   if (!state.email) errors.push({ name: 'email', message: 'Email is required' })
   if (!state.password) errors.push({ name: 'password', message: 'Password is required' })
+
   if (state.confirm !== state.password)
     errors.push({ name: 'confirm', message: 'Passwords do not match' })
+
   return errors
 }
 

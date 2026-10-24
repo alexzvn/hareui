@@ -193,11 +193,13 @@ const hasTrailingSlot = computed(() => !!ctx.slots[slotName(props.item, 'trailin
 const disabled = computed(() => !!props.item.disabled)
 const label = computed(() => ctx.getLabel(props.item))
 const hasBadge = computed(() => !!props.item.badge || props.item.badge === 0)
+
 const hasIndicator = computed(
   () =>
     (!vertical.value && (hasChildren.value || hasContentSlot.value)) ||
     (vertical.value && hasChildren.value),
 )
+
 const hasTrailing = computed(
   () =>
     hasBadge.value ||
@@ -206,6 +208,7 @@ const hasTrailing = computed(
     !!props.item.trailingIcon ||
     hasTrailingSlot.value,
 )
+
 const trailingIsTrigger = computed(
   () => vertical.value && hasChildren.value && !ctx.props.collapsed && !!props.disclosure,
 )
@@ -213,7 +216,9 @@ const trailingIsTrigger = computed(
 const badgeProps = computed(() =>
   typeof props.item.badge === 'object' ? props.item.badge : { label: props.item.badge },
 )
+
 const chipProps = computed(() => (typeof props.item.chip === 'object' ? props.item.chip : {}))
+
 const kbd = computed(() => {
   const keys: (keyof typeof kbdKeysMap)[] = []
   const text: string[] = []
@@ -221,13 +226,16 @@ const kbd = computed(() => {
     if (key in kbdKeysMap) keys.push(key as keyof typeof kbdKeysMap)
     else text.push(key)
   }
+
   return { keys, text: text.join('') }
 })
 
 const indicatorIcon = computed(() => props.item.trailingIcon || ctx.props.trailingIcon)
+
 const externalIcon = computed(() =>
   typeof ctx.props.externalIcon === 'boolean' ? undefined : ctx.props.externalIcon,
 )
+
 const showExternal = computed(
   () => props.item.target === '_blank' && ctx.props.externalIcon !== false,
 )

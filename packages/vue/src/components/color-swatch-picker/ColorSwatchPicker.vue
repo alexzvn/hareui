@@ -178,6 +178,7 @@ const pickerCtx = useColorPickerContext()
 
 const keyOf = (value: string | Color | undefined): string => {
   if (value === undefined || value === '') return ''
+
   try {
     return colorToString(normalizeColor(value), 'hex').toLowerCase()
   } catch {
@@ -191,6 +192,7 @@ const normalized = computed(() =>
       typeof item === 'string'
         ? ({ value: item } as { value: string; label?: string; disabled?: boolean })
         : item
+
     return { ...obj, key: keyOf(obj.value) }
   }),
 )
@@ -200,6 +202,7 @@ const hasOwnModel = computed(() => props.modelValue !== undefined)
 const current = computed<string | Color | undefined>(() => {
   if (hasOwnModel.value) return props.modelValue
   if (pickerCtx) return pickerCtx.color.value
+
   return internal.value
 })
 
@@ -221,6 +224,7 @@ const onUpdate = (value: unknown) => {
     internal.value = out
     if (pickerCtx) pickerCtx.setColor(out)
   }
+
   emit('update:modelValue', out)
 }
 

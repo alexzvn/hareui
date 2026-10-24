@@ -40,10 +40,13 @@ export const cubicBezier = ([x1, y1, x2, y2]: [number, number, number, number]):
 ) => number) => {
   const curve = (a: number, b: number) => (t: number) =>
     3 * a * (1 - t) ** 2 * t + 3 * b * (1 - t) * t ** 2 + t ** 3
+
   const x = curve(x1, x2)
   const y = curve(y1, y2)
+
   const dx = (t: number) =>
     3 * x1 * (1 - t) ** 2 + 6 * (x2 - x1) * (1 - t) * t + 3 * (1 - x2) * t ** 2
+
   return (time: number) => {
     if (time <= 0 || time >= 1) return Math.min(Math.max(time, 0), 1)
     let t = time
@@ -53,6 +56,7 @@ export const cubicBezier = ([x1, y1, x2, y2]: [number, number, number, number]):
       if (Math.abs(error) < 1e-6 || slope === 0) break
       t -= error / slope
     }
+
     return y(Math.min(Math.max(t, 0), 1))
   }
 }
@@ -67,10 +71,12 @@ let reducedMotionQuery: MediaQueryList | undefined
 
 export const prefersReducedMotion = (): boolean => {
   if (typeof window === 'undefined' || typeof window.matchMedia !== 'function') return false
+
   if (reducedMotionSource !== window.matchMedia || !reducedMotionQuery) {
     reducedMotionSource = window.matchMedia
     reducedMotionQuery = window.matchMedia('(prefers-reduced-motion: reduce)')
   }
+
   return !!reducedMotionQuery?.matches
 }
 
@@ -98,6 +104,7 @@ export const useChartTween = <T>(
   const from = shallowRef<T | null>(null)
   let frame = 0
   let timer: ReturnType<typeof setTimeout> | undefined
+
   // Geometry of the last read, i.e. the last render. `value` is lazy, so when `key` changes this still holds what is on
   // screen (reading `value` there would already give the new target).
   let drawn: T | null = null
@@ -105,6 +112,7 @@ export const useChartTween = <T>(
   const value = computed(() => {
     const to = target()
     drawn = progress.value >= 1 ? to : interpolate(from.value, to, progress.value)
+
     return drawn
   })
 
@@ -122,8 +130,10 @@ export const useChartTween = <T>(
       animationDuration = 1500,
       animationEasing = 'ease',
     } = options()
+
     const snapshot = initial ? null : drawn
     stop()
+
     if (
       !isAnimationActive ||
       animationDuration <= 0 ||
@@ -132,8 +142,10 @@ export const useChartTween = <T>(
     ) {
       entering.value = false
       progress.value = 1
+
       return
     }
+
     from.value = snapshot
     entering.value = initial
     progress.value = 0
@@ -143,6 +155,7 @@ export const useChartTween = <T>(
       const tick = (now: number) => {
         const elapsed = Math.min((now - startTime) / animationDuration, 1)
         progress.value = ease(elapsed)
+
         if (elapsed < 1) {
           frame = requestAnimationFrame(tick)
         } else {
@@ -150,8 +163,10 @@ export const useChartTween = <T>(
           entering.value = false
         }
       }
+
       frame = requestAnimationFrame(tick)
     }
+
     if (animationBegin > 0) timer = setTimeout(run, animationBegin)
     else run()
   }

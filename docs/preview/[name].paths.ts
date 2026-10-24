@@ -13,17 +13,20 @@ type Usage = {
   align: string
   minHeight: string
 }
+
 export default {
   paths() {
     const root = fileURLToPath(new URL('../', import.meta.url))
     const usage = new Map<string, Usage>()
     for (const file of readdirSync(join(root, 'docs'), { recursive: true, encoding: 'utf8' })) {
       if (!file.endsWith('.md')) continue
+
       for (const [tag] of readFileSync(join(root, 'docs', file), 'utf8').matchAll(
         /<ComponentPreview\b[^>]*>/g,
       )) {
         const name = /\sname="([^"]+)"/.exec(tag)?.[1]
         if (!name || usage.has(name)) continue
+
         usage.set(name, {
           layout: /\scontain\b/.test(tag) ? 'page' : 'centered',
           align: /\salign="(\w+)"/.exec(tag)?.[1] ?? 'center',
@@ -31,6 +34,7 @@ export default {
         })
       }
     }
+
     return readdirSync(join(root, 'demos'), { recursive: true, encoding: 'utf8' })
       .filter((file) => file.endsWith('.vue'))
       .map((file) => file.slice(0, -'.vue'.length).replaceAll('\\', '/'))

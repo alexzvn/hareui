@@ -249,6 +249,7 @@ import { makeRange, useRangeSelection } from './useRangeSelection'
 
 const props = defineProps<CalendarDurationViewProps>()
 const emit = defineEmits<{ select: [value: CalendarDurationValue] }>()
+
 defineSlots<{
   navIcon?: (props: { direction: 'previous' | 'next' }) => VNode[]
   cell?: (props: CalendarDurationCellSlotProps) => VNode[]
@@ -261,6 +262,7 @@ const cls = (slot: string) => props.ui[slot]?.({ class: props.uiOverrides?.[slot
 
 const isRange = (value: CalendarDurationValue): value is DurationRange =>
   !Array.isArray(value) && 'start' in value
+
 const isCompleteRange = (
   value: CalendarDurationValue | null | undefined,
 ): value is { start: DateValue; end: DateValue } =>
@@ -270,6 +272,7 @@ const isCompleteRange = (
 const range = computed<{ start: DateValue; end: DateValue } | null>(() =>
   props.kind === 'range' && isCompleteRange(props.value) ? props.value : null,
 )
+
 // No `onAnchor`: unlike the month view, the first pick emits nothing until the range commits.
 const selection = useRangeSelection<CalendarDate>({
   isDateUnavailable: () => props.isDateUnavailable,
@@ -285,12 +288,14 @@ const selection = useRangeSelection<CalendarDate>({
       end: convert(r.end, range.value?.end),
     }),
 })
+
 const anchor = selection.anchor
 const unavailable = (date: DateValue) => selection.isUnavailable.value?.(date) ?? false
 
 // react-stately aligns a range that doesn't fit the centered window to its start
 const alignment = () => {
   if (!range.value) return 'center' as const
+
   return range.value.end.compare(range.value.start) >=
     (props.duration.days ?? (props.duration.weeks ?? 1) * 7) / 2
     ? ('start' as const)
@@ -312,6 +317,7 @@ const view = useCalendarDurationView({
 const highlighted = computed(() => {
   if (props.kind !== 'range') return null
   if (anchor.value) return makeRange(anchor.value, view.focusedDate.value)
+
   return range.value
     ? makeRange(view.toDisplay(range.value.start), view.toDisplay(range.value.end))
     : null
@@ -324,8 +330,10 @@ const isSelected = (date: CalendarDate) => {
       date.compare(highlighted.value.start) >= 0 &&
       date.compare(highlighted.value.end) <= 0
     )
+
   if (Array.isArray(props.value)) return props.value.some((v: DateValue) => isSameDay(v, date))
   const single = singleValue()
+
   return !!single && isSameDay(single, date)
 }
 
@@ -340,13 +348,16 @@ const convert = (date: CalendarDate, old: DateValue | undefined): DateValue => {
   const converted = toCalendar(date, old?.calendar ?? new GregorianCalendar())
   return old && 'hour' in old ? old.set(converted) : converted
 }
+
 const select = (date: CalendarDate) => {
   if (props.disabled || props.readonly || view.isCellDisabled(date) || unavailable(date)) return
   view.focusedDate.value = date
+
   if (props.kind === 'range') {
     selection.select(date)
     return
   }
+
   if (props.selectionMode === 'multiple') {
     const single = singleValue()
     const current: DateValue[] = Array.isArray(props.value) ? props.value : single ? [single] : []
@@ -355,15 +366,19 @@ const select = (date: CalendarDate) => {
       'select',
       index >= 0 ? current.filter((_, i) => i !== index) : [...current, convert(date, current[0])],
     )
+
     return
   }
+
   emit('select', convert(date, singleValue()))
 }
+
 const onPointerEnter = (date: CalendarDate) => {
   // `highlightDate`: while a range is anchored, hovering moves the focused date (and the preview)
   if (anchor.value && !view.isCellDisabled(date) && !unavailable(date))
     view.focusedDate.value = date
 }
+
 const onKeyDown = (event: KeyboardEvent) => {
   view.onKeyDown(
     event,
@@ -384,6 +399,7 @@ const cellState = (date: CalendarDate) => {
   const isUnavailable = unavailable(date)
   const selectable = !disabled && !isUnavailable
   const selected = isSelected(date) && selectable
+
   return {
     date,
     disabled,
@@ -404,5 +420,6 @@ const cellState = (date: CalendarDate) => {
       selectable,
   }
 }
+
 const label = computed(() => [props.ariaLabel, view.rangeLabel.value].filter(Boolean).join(', '))
 </script>

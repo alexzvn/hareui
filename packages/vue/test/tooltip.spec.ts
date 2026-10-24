@@ -27,6 +27,7 @@ const pointer = (el: Element, type: string) => {
 }
 
 enableAutoUnmount(afterEach)
+
 afterEach(() => {
   vi.useRealTimers()
 })
@@ -151,6 +152,7 @@ describe('Tooltip', () => {
     trigger.dispatchEvent(
       new KeyboardEvent('keydown', { key: 'Escape', bubbles: true, cancelable: true }),
     )
+
     await sleep(0)
     expect(wrapper.emitted('update:open')?.at(-1)).toEqual([false])
     expect(document.querySelector('[role=tooltip]')).toBeNull()

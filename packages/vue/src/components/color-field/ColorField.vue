@@ -225,6 +225,7 @@ const SuffixOutlet = useSlotOutlet(slots, 'suffix')
 defineSlots<ColorFieldSlots>()
 
 const pickerCtx = useColorPickerContext()
+
 // Uncontrolled (`modelValue === undefined`) and inside a `ColorPicker`: the context drives the value, and we still
 // forward every commit to it (and emit `update:modelValue`) so sibling colour components stay in sync.
 const hasOwnModel = computed(() => props.modelValue !== undefined)
@@ -241,6 +242,7 @@ const filledByCommit = ref(false)
 const empty = computed(() => {
   if (filledByCommit.value) return false
   if (hasOwnModel.value) return props.modelValue === null
+
   return !pickerCtx && uncontrolledEmpty.value
 })
 
@@ -249,9 +251,11 @@ const empty = computed(() => {
 const formColor = ref<Color | null>(
   empty.value ? null : normalizeColor(modelValueForRoot.value ?? props.defaultValue ?? '#000000'),
 )
+
 watch(modelValueForRoot, (value) => {
   if (value !== undefined) formColor.value = normalizeColor(value)
 })
+
 watch(empty, (isEmpty) => {
   if (isEmpty) formColor.value = null
 })
@@ -270,24 +274,29 @@ const { validation, commitValidation } = useFieldValidation({
       uncontrolledEmpty.value = true
       formColor.value = null
       emit('update:modelValue', null)
+
       return
     }
+
     const next = normalizeColor(props.defaultValue ?? '#000000')
     formColor.value = next
     emit('update:modelValue', next)
     if (pickerCtx && !hasOwnModel.value) pickerCtx.setColor(next)
   },
 })
+
 const invalid = computed(() => validation.value.isInvalid)
 
 const onUpdateColor = (color: Color) => {
   if (empty.value) {
     filledByCommit.value = true
     uncontrolledEmpty.value = false
+
     nextTick(() => {
       filledByCommit.value = false
     })
   }
+
   formColor.value = color
   emit('update:modelValue', color)
   if (pickerCtx && !hasOwnModel.value) pickerCtx.setColor(color)
@@ -311,9 +320,11 @@ const onInputKeydown = (event: KeyboardEvent) => {
     !(event.currentTarget instanceof HTMLInputElement)
   )
     return
+
   const form = event.currentTarget.form
   if (form) nextTick(() => submitImplicitly(form))
 }
+
 const submitImplicitly = (form: HTMLFormElement) => {
   const elements = [...form.elements]
   const submitter = elements.find(
@@ -321,10 +332,12 @@ const submitImplicitly = (form: HTMLFormElement) => {
       (el instanceof HTMLButtonElement || el instanceof HTMLInputElement) &&
       (el.type === 'submit' || el.type === 'image'),
   )
+
   if (submitter) {
     if (!submitter.disabled) submitter.click()
     return
   }
+
   // Without a submit button, browsers only submit implicitly when a single field blocks it
   const blocking = elements.filter(
     (el) =>
@@ -333,6 +346,7 @@ const submitImplicitly = (form: HTMLFormElement) => {
         el.type,
       ),
   )
+
   if (blocking.length <= 1) form.requestSubmit()
 }
 
@@ -352,6 +366,7 @@ const { id, describedBy, FieldLabel, FieldDescription, FieldError } = useFieldCh
   required: () => props.required,
   hideDescriptionWhenInvalid: true,
 })
+
 // `slots` isn't reactive and the root no longer re-renders with this component, so mirror slot swaps into refs
 const hasPrefix = shallowRef(!!slots.prefix)
 const hasSuffix = shallowRef(!!slots.suffix)
@@ -372,6 +387,7 @@ const onFocusIn = (event: FocusEvent) => {
   focusWithin.value = true
   focusVisible.value = event.target instanceof Element && event.target.matches(':focus-visible')
 }
+
 const onFocusOut = (event: FocusEvent) => {
   if (
     event.currentTarget instanceof Element &&
@@ -379,6 +395,7 @@ const onFocusOut = (event: FocusEvent) => {
     event.currentTarget.contains(event.relatedTarget)
   )
     return
+
   focusWithin.value = false
   focusVisible.value = false
 }

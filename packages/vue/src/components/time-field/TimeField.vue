@@ -205,6 +205,7 @@ const props = withDefaults(defineProps<TimeFieldProps>(), { invalid: undefined }
 const emit = defineEmits<TimeFieldEmits>()
 const slots = defineSlots<TimeFieldSlots>()
 const disabled = useFieldsetDisabled(() => props.disabled)
+
 /** The selected time. Bind with `v-model`. */
 const modelValue = defineModel<TimeValue | null>()
 
@@ -224,26 +225,33 @@ const compareTimeOfDay = (a: AnyTime, b: AnyTime) => {
     a.hour - b.hour || a.minute - b.minute || a.second - b.second || a.millisecond - b.millisecond
   )
 }
+
 const formatTimeBoundary = (value: AnyTime) => {
   const reference = new Date(2020, 0, 1, value.hour, value.minute, value.second, value.millisecond)
   const hourCycle = props.hourCycle === 12 ? 'h12' : props.hourCycle === 24 ? 'h23' : undefined
+
   return new Intl.DateTimeFormat(props.locale ?? 'en-US', {
     hour: 'numeric',
     minute: '2-digit',
     hourCycle,
   }).format(reference)
 }
+
 const builtinValidate = (value: TimeValue) => {
   if (props.minValue && compareTimeOfDay(value, props.minValue) < 0)
     return `Value must be ${formatTimeBoundary(props.minValue)} or later.`
+
   if (props.maxValue && compareTimeOfDay(value, props.maxValue) > 0)
     return `Value must be ${formatTimeBoundary(props.maxValue)} or earlier.`
+
   return undefined
 }
+
 const validate = (value: TimeValue) => {
   const custom = props.validate?.(value)
   return custom && custom !== true ? custom : builtinValidate(value)
 }
+
 const { validation, commitValidation } = useFieldValidation({
   // Untouched + uncontrolled: `modelValue` is `undefined` until the first `onUpdate`, so fall back to
   // `defaultValue`. A controlled field explicitly cleared to `null` stays `null`, not fall back.
@@ -259,10 +267,12 @@ const { validation, commitValidation } = useFieldValidation({
     modelValue.value = props.defaultValue
   },
 })
+
 const invalid = computed(() => props.invalid ?? validation.value.isInvalid)
 
 const onUpdate = (value: TimeValue | undefined) => {
   modelValue.value = value
+
   // No real `change` event bubbles from Reka's hidden mirror input while typing segments
   commitValidation()
 }

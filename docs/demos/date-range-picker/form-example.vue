@@ -39,6 +39,7 @@ const handleSubmit = (event: Event) => {
   if (!value.value || isInvalid.value) return
 
   isSubmitting.value = true
+
   setTimeout(() => {
     value.value = null
     isSubmitting.value = false

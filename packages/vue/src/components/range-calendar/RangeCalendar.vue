@@ -189,6 +189,7 @@ export type RangeCalendarEmits = {
   /** Emitted when the displayed month/year changes. */
   'update:placeholder': [value: DateValue]
 }
+
 type RangeCalendarCellSlotProps = Parameters<NonNullable<RangeCalendarSlots['cell']>>[0]
 </script>
 
@@ -238,6 +239,7 @@ const props = withDefaults(defineProps<RangeCalendarProps>(), {
   invalid: false,
   pageBehavior: 'visible',
 })
+
 const emit = defineEmits<RangeCalendarEmits>()
 const slots = defineSlots<RangeCalendarSlots>()
 
@@ -245,12 +247,14 @@ const viewKind = computed(() => {
   if (props.visibleDuration?.days != null) return 'day' as const
   return props.visibleDuration?.weeks != null ? ('week' as const) : ('month' as const)
 })
+
 const ui = useComponentUI('rangeCalendar', theme, () => ({ view: viewKind.value }))
 
 const monthShell = useTemplateRef<CalendarMonthShellExposed>('shell')
 const rootEl = () => monthShell.value?.rootEl
 const minValue = computed(() => props.minValue ?? defaultMinValue())
 const maxValue = computed(() => props.maxValue ?? defaultMaxValue())
+
 const placeholderSeed =
   props.defaultPlaceholder ?? (props.modelValue ?? props.defaultValue)?.start ?? undefined
 
@@ -265,6 +269,7 @@ const internalValue = shallowRef<DateRange | undefined>(props.defaultValue)
 const committed = computed(() =>
   props.modelValue !== undefined ? props.modelValue : internalValue.value,
 )
+
 // react-stately's `focusedDate` (keyboard focus, or the hovered day while anchored): the preview's moving end
 const focusedDate = shallowRef<DateValue | null>(null)
 let lastEmitted: DateRange | undefined
@@ -290,12 +295,14 @@ const selection = useRangeSelection({
     emitValue(range)
   },
 })
+
 const {
   anchor,
   isUnavailable: wrappedIsDateUnavailable,
   effectiveMin: effectiveMinValue,
   effectiveMax: effectiveMaxValue,
 } = selection
+
 // Reka only applies `maximumDays` to its own start value, which isn't fed, so it is passed back in as
 // `is-date-disabled`.
 const isDateDisabledByMaximumDays = (date: DateValue) => {
@@ -305,16 +312,20 @@ const isDateDisabledByMaximumDays = (date: DateValue) => {
 const highlightedRange = computed(() => {
   if (anchor.value) return makeRange(anchor.value, focusedDate.value ?? anchor.value)
   const value = committed.value
+
   return value?.start && value.end ? makeRange(value.start, value.end) : null
 })
+
 // react-stately's `isInvalidSelection` (+ the `invalid` prop): a committed range whose ends are unavailable or out of
 // bounds. Its cells are flagged `data-invalid` and stay selected even where unavailable.
 const isValueInvalid = computed(() => {
   if (props.invalid) return true
   const value = committed.value
   if (anchor.value || !value?.start || !value.end) return false
+
   const outOfBounds = (date: DateValue) =>
     compareDay(date, minValue.value) < 0 || compareDay(date, maxValue.value) > 0
+
   return (
     !!wrappedIsDateUnavailable.value?.(value.start) ||
     !!wrappedIsDateUnavailable.value?.(value.end) ||
@@ -322,6 +333,7 @@ const isValueInvalid = computed(() => {
     outOfBounds(value.end)
   )
 })
+
 // `useCalendarCell`: outside-month and disabled days are never selected, unavailable ones only inside an invalid range
 const cellState = (date: DateValue, month: DateValue) => {
   const range = highlightedRange.value
@@ -334,6 +346,7 @@ const cellState = (date: DateValue, month: DateValue) => {
     unavailable: !!wrappedIsDateUnavailable.value?.(date),
     invalid,
   })
+
   return {
     selected,
     selectionStart: !!range && isSameDay(date, range.start),
@@ -346,10 +359,12 @@ const emitValue = (value: DateRange) => {
   lastEmitted = value
   emit('update:modelValue', value)
 }
+
 const selectDate = (date: DateValue) => {
   if (props.readonly || props.disabled) return
   selection.select(date)
 }
+
 // A cell React Aria would let you press: not outside the month, disabled or unavailable
 const isSelectableCell = (el: HTMLElement) => {
   return (
@@ -358,11 +373,13 @@ const isSelectableCell = (el: HTMLElement) => {
     !el.hasAttribute('data-outside-view')
   )
 }
+
 // `focusNearestAvailableDate`: anchoring with the keyboard advances focus one day (back one at the end of the
 // available run) so the preview shows a range immediately.
 const focusNearestAvailableDate = (from: DateValue) => {
   const outside = (date: DateValue) =>
     compareDay(date, effectiveMinValue.value) < 0 || compareDay(date, effectiveMaxValue.value) > 0
+
   let next = from.add({ days: 1 })
   if (outside(next)) next = from.subtract({ days: 1 })
   if (outside(next)) return
@@ -379,11 +396,13 @@ const pointerFocus = (el: HTMLElement) => {
   el.addEventListener('blur', () => el.removeAttribute('data-pointer-focus'), { once: true })
   el.focus()
 }
+
 // The current mouse press (`useCalendarCell`'s per-cell refs): `anchor` when the press started the selection,
 // `boundary` when it grabbed an end of the committed range. Leaving the pressed cell cancels it, as RAC's
 // `shouldCancelOnPointerExit` does while anchored.
 let press: { el: HTMLElement; anchor: boolean; boundary: boolean } | null = null
 let dragging = false
+
 // A mouse press is handled on pointerdown/pointerup, so the click that follows it is swallowed
 let swallowClick = false
 
@@ -393,6 +412,7 @@ const onCellPointerDown = (event: PointerEvent, date: DateValue) => {
   if (!isSelectableCell(el)) return
   event.preventDefault()
   pointerFocus(el)
+
   // Chrome drops `:active` once Reka re-renders the pressed cell, so mirror RAC's `data-pressed` (which HeroUI's
   // CSS styles alongside `:active`) until the press ends.
   el.setAttribute('data-pressed', 'true')
@@ -402,9 +422,11 @@ const onCellPointerDown = (event: PointerEvent, date: DateValue) => {
   if (event.pointerType === 'touch' || props.disabled || props.readonly) return
   swallowClick = true
   press = { el, anchor: false, boundary: false }
+
   // A second press (anchor already set) commits on release
   if (anchor.value) return
   dragging = true
+
   // Pressing an end of the committed range re-anchors on the opposite end, so dragging adjusts that end
   const range = highlightedRange.value
   if (
@@ -415,12 +437,15 @@ const onCellPointerDown = (event: PointerEvent, date: DateValue) => {
     anchor.value = isSameDay(date, range.start) ? range.end : range.start
     focusedDate.value = date
     press.boundary = true
+
     return
   }
+
   // React Aria anchors on press start so the user can drag out the range
   selectDate(date)
   press.anchor = true
 }
+
 const onCellPointerUp = (event: PointerEvent, date: DateValue) => {
   if (event.button !== 0 || event.pointerType === 'touch') return
   const el = event.currentTarget as HTMLElement
@@ -428,6 +453,7 @@ const onCellPointerUp = (event: PointerEvent, date: DateValue) => {
   press = null
   dragging = false
   if (props.disabled || props.readonly || !isSelectableCell(el)) return
+
   // Releasing on a grabbed range end without dragging starts a new selection there
   if (pressedHere?.boundary) {
     anchor.value = date
@@ -438,11 +464,13 @@ const onCellPointerUp = (event: PointerEvent, date: DateValue) => {
     selectDate(date)
   }
 }
+
 // `useRangeCalendar`'s `endDragging`: releasing a drag outside the cells commits the focused date
 const onWindowPointerUp = (event: PointerEvent) => {
   setTimeout(() => {
     swallowClick = false
   })
+
   const wasDragging = dragging
   dragging = false
   press = null
@@ -452,6 +480,7 @@ const onWindowPointerUp = (event: PointerEvent) => {
   if (target && root.contains(target) && target.closest('button, [role="button"]')) return
   selectDate(focusedDate.value ?? anchor.value)
 }
+
 onMounted(() => window.addEventListener('pointerup', onWindowPointerUp))
 onBeforeUnmount(() => window.removeEventListener('pointerup', onWindowPointerUp))
 
@@ -464,6 +493,7 @@ const onCellMouseEnter = (event: MouseEvent, date: DateValue) => {
   focusedDate.value = date
   if (rootEl()?.contains(document.activeElement) && document.activeElement !== el) pointerFocus(el)
 }
+
 // Each day reads its range state through this, so a hover re-renders only the days whose state flips
 provide(rangeCalendarDayKey, {
   cellState,
@@ -476,31 +506,38 @@ provide(rangeCalendarDayKey, {
   indicator: () => props.indicator,
   CellOutlet: useSlotOutlet(slots, 'cell'),
 })
+
 const onRootFocusIn = (event: FocusEvent) => {
   const cell = calendarCellFrom(event.target, rootEl())
   if (cell && !cell.hasAttribute('data-disabled') && !cell.hasAttribute('data-outside-view'))
     focusedDate.value = calendarCellDate(cell, monthShell.value!.placeholder)
 }
+
 // Clicks without a handled mouse press (keyboard-less screen readers, touch taps, scripted clicks) select directly.
 // Outside-month cells are inert, as in React Aria. Runs in the capture phase so Reka's cell handler never sees it.
 const onRootClickCapture = (event: MouseEvent) => {
   const cell = calendarCellFrom(event.target, rootEl())
   if (!cell) return
   event.stopPropagation()
+
   if (swallowClick) {
     swallowClick = false
     return
   }
+
   if (isSelectableCell(cell)) selectDate(calendarCellDate(cell, monthShell.value!.placeholder))
 }
+
 const onRootKeyDownCapture = (event: KeyboardEvent) => {
   const cell = calendarCellFrom(event.target, rootEl())
   if (!cell) return
+
   // `useCalendarGrid`: Escape cancels an in-progress selection (and keeps propagating, e.g. to close a popover)
   if (event.key === 'Escape') {
     selection.cancel()
     return
   }
+
   if (
     (event.key !== 'Enter' && event.key !== ' ') ||
     event.altKey ||
@@ -508,6 +545,7 @@ const onRootKeyDownCapture = (event: KeyboardEvent) => {
     event.metaKey
   )
     return
+
   event.preventDefault()
   event.stopPropagation()
   if (!isSelectableCell(cell)) return
@@ -530,6 +568,7 @@ watch(
       isSameDay(start, shell.placeholder)
     )
       return
+
     shell.placeholder = start
   },
 )
@@ -538,6 +577,7 @@ const monthBounds = computed(() => ({
   minValue: effectiveMinValue.value,
   maxValue: effectiveMaxValue.value,
 }))
+
 const rootBindings = computed(() => ({
   modelValue: EMPTY_RANGE,
   isDateUnavailable: wrappedIsDateUnavailable.value,
@@ -547,6 +587,7 @@ const rootBindings = computed(() => ({
   onKeydownCapture: onRootKeyDownCapture,
   onFocusin: onRootFocusIn,
 }))
+
 // The week/day view selects with the configured matcher; the month view's anchor-bound one is in `rootBindings`
 const shellSelection = computed(() => ({
   value: props.modelValue,

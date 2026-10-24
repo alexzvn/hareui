@@ -13,6 +13,7 @@ import { expectAccessible } from './a11y'
 const items = ['#F43F5E', '#8B5CF6', { value: '#3B82F6', label: 'Sky' }]
 const opts = (c: VueWrapper) => c.findAll('[data-slot=color-swatch-picker-item]')
 const label = { 'aria-label': 'Brand colours' }
+
 // Reka highlights the selected (or first) option a couple of ticks after mount
 const settle = () => new Promise((resolve) => setTimeout(resolve, 0))
 
@@ -28,6 +29,7 @@ describe('ColorSwatchPicker', () => {
       { items, disabled: true, defaultValue: '#8B5CF6' },
       { items, layout: 'stack', defaultValue: '#F43F5E' },
     ]
+
     for (const props of cases) {
       const w = mount(ColorSwatchPicker, { props, attrs: label, attachTo: document.body })
       await settle()
@@ -42,6 +44,7 @@ describe('ColorSwatchPicker', () => {
       attrs: label,
       attachTo: document.body,
     })
+
     await settle()
     ;(opts(w)[1].element as HTMLElement).focus()
     await nextTick()
@@ -66,6 +69,7 @@ describe('ColorSwatchPicker', () => {
       },
       attrs: label,
     })
+
     expect(opts(w).map((o) => o.attributes('aria-selected'))).toEqual(['true', 'false', 'false'])
     expect(opts(w)[1].attributes('aria-disabled')).toBe('true')
     await opts(w)[2].trigger('click')
@@ -79,6 +83,7 @@ describe('ColorSwatchPicker', () => {
       attrs: label,
       attachTo: document.body,
     })
+
     await settle()
     const tabbable = w.findAll('[tabindex="0"]')
     expect(tabbable).toHaveLength(1)
@@ -100,15 +105,20 @@ describe('ColorSwatchPicker', () => {
       attrs: label,
       attachTo: document.body,
     })
+
     await settle()
+
     const press = async (key: string) => {
       ;(document.activeElement as HTMLElement).dispatchEvent(
         new KeyboardEvent('keydown', { key, bubbles: true, cancelable: true }),
       )
+
       await nextTick()
       await nextTick()
+
       return opts(w).findIndex((o) => o.element === document.activeElement)
     }
+
     ;(opts(w)[1].element as HTMLElement).focus()
     expect(await press('ArrowRight')).toBe(2)
     expect(await press('ArrowRight')).toBe(3)
@@ -123,9 +133,11 @@ describe('ColorSwatchPicker', () => {
     await settle()
     const node = opts(w)[1].element as HTMLElement
     node.focus()
+
     node.dispatchEvent(
       new KeyboardEvent('keydown', { key: 'Enter', bubbles: true, cancelable: true }),
     )
+
     await nextTick()
     expect(w.emitted('update:modelValue')?.at(-1)).toEqual(['#8B5CF6'])
     const next = opts(w)[2].element as HTMLElement
@@ -143,6 +155,7 @@ describe('ColorSwatchPicker', () => {
       attrs: label,
       attachTo: document.body,
     })
+
     await settle()
     expect(w.findAll('[tabindex="0"]')).toHaveLength(0)
     expect(w.get('[role=listbox]').attributes('aria-disabled')).toBe('true')
@@ -165,6 +178,7 @@ describe('ColorSwatchPicker', () => {
       'checked',
       'unchecked',
     ])
+
     expect(w.findAll('[data-slot=color-swatch-picker-indicator]')).toHaveLength(3)
   })
 
@@ -188,6 +202,7 @@ describe('ColorSwatchPicker', () => {
     const w = mount(ColorSwatchPicker, {
       props: { items: [{ value: '#F43F5E', disabled: true }, '#8B5CF6'] },
     })
+
     await opts(w)[0].trigger('click')
     expect(w.emitted('update:modelValue')).toBeUndefined()
   })
@@ -205,6 +220,7 @@ describe('ColorSwatchPicker', () => {
         },
       },
     })
+
     expect(opts(w)[1].attributes('data-state')).toBe('checked')
     await opts(w)[0].trigger('click')
     expect(calls.map((c) => colorToString(c, 'hex'))).toEqual(['#f43f5e'])
@@ -215,6 +231,7 @@ describe('ColorSwatchPicker', () => {
       props: { items, defaultValue: '#F43F5E' },
       slots: { indicator: () => h('i', { 'data-testid': 'x' }) },
     })
+
     expect(w.findAll('[data-testid=x]')).toHaveLength(3)
     expect(w.find('[data-slot=color-swatch-picker-checkmark]').exists()).toBe(false)
   })
@@ -226,8 +243,10 @@ describe('ColorSwatchPicker', () => {
       await nextTick()
       await nextTick()
     }
+
     const activeIndex = (w: VueWrapper) =>
       opts(w).findIndex((o) => o.element === document.activeElement)
+
     const colors = ['#F43F5E', '#8B5CF6', '#3B82F6', '#22C55E', '#EAB308']
 
     it('stack layout: ArrowRight and ArrowLeft move focus like ArrowDown and ArrowUp', async () => {
@@ -236,6 +255,7 @@ describe('ColorSwatchPicker', () => {
         props: { items: colors, layout: 'stack' },
         attachTo: document.body,
       })
+
       ;(opts(w)[1].element as HTMLElement).focus()
       expect(activeIndex(w)).toBe(1)
       await press('ArrowRight')
@@ -251,6 +271,7 @@ describe('ColorSwatchPicker', () => {
         props: { items: colors, layout: 'stack' },
         attachTo: document.body,
       })
+
       ;(opts(w)[2].element as HTMLElement).focus()
       await press('PageDown')
       expect(activeIndex(w)).toBe(4)
@@ -272,10 +293,12 @@ describe('ColorSwatchPicker', () => {
       // behaviour-final-check SP2 / A2
       const field = document.createElement('input')
       document.body.append(field)
+
       const w = mount(ColorSwatchPicker, {
         props: { items: colors, modelValue: '#000000' },
         attachTo: document.body,
       })
+
       field.focus()
       expect(document.activeElement).toBe(field)
       await w.setProps({ modelValue: '#8B5CF6' })

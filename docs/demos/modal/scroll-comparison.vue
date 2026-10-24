@@ -28,6 +28,7 @@ import { Button, Modal, RadioGroup } from '@hareui/vue'
 import { ref } from 'vue'
 
 const scroll = ref<'inside' | 'outside'>('inside')
+
 const items: RadioGroupItem[] = [
   { value: 'inside', label: 'Inside' },
   { value: 'outside', label: 'Outside' },

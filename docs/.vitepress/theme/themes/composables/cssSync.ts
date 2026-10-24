@@ -29,6 +29,7 @@ const THEME_COLORS_STYLE_ID = 'theme-builder-theme-colors'
 const FONT_VAR_STYLE_ID = 'theme-builder-font-var'
 
 const PAGE_SELECTORS = `#${THEME_BUILDER_PAGE_ID}`
+
 const CONTENT_SELECTORS = [
   `#${THEME_BUILDER_BOTTOM_SHEET_ID}`,
   `#${THEME_BUILDER_CONTENT_ID}`,
@@ -39,6 +40,7 @@ const CONTENT_SELECTORS = [
 const parseOklch = (oklch: string): { lightness: number; chroma: number; hue: number } | null => {
   const match = oklch.match(/oklch\(\s*([\d.]+)\s+([\d.]+)\s+([\d.]+)\s*\)/)
   if (!match?.[1] || !match[2] || !match[3]) return null
+
   return {
     chroma: Number.parseFloat(match[2]),
     hue: Number.parseFloat(match[3]),
@@ -76,6 +78,7 @@ const scopedCSS = (
 ) => {
   const fullLightVars = { ...commonVars, ...colorLightVars }
   const fullDarkVars = { ...commonVars, ...colorDarkVars }
+
   return `
   /* Page level: colors only */
   :is([data-theme="light"], .light) ${PAGE_SELECTORS},
@@ -111,9 +114,11 @@ const getAdaptiveColorCSS = (
 
   const lightAccent = parseOklch(adaptiveConfig.light)
   const darkAccent = parseOklch(adaptiveConfig.dark)
+
   const lightFg = lightAccent
     ? calculateAccentForeground(lightAccent.lightness, lightAccent.chroma, lightAccent.hue)
     : calculateAccentForeground(0, 0, 0)
+
   const darkFg = darkAccent
     ? calculateAccentForeground(darkAccent.lightness, darkAccent.chroma, darkAccent.hue)
     : calculateAccentForeground(1, 0, 0)
@@ -129,6 +134,7 @@ const getAdaptiveColorCSS = (
     '--accent-soft-foreground': adaptiveConfig.light,
     '--focus': adaptiveConfig.light,
   }
+
   const colorDarkVars = {
     ...getColorVariablesForElement(colors, 'dark'),
     ...getDerivedColorFormulas('dark', derivedOpts),
@@ -137,6 +143,7 @@ const getAdaptiveColorCSS = (
     '--accent-soft-foreground': adaptiveConfig.dark,
     '--focus': adaptiveConfig.dark,
   }
+
   return scopedCSS(colorLightVars, colorDarkVars, commonVars)
 }
 
@@ -151,6 +158,7 @@ const getThemeColorsCSS = (
 ) => {
   const colors = generateThemeColors({ chroma, grayChroma, hue, lightness, semanticOverrides })
   const derivedOpts = { vibrant }
+
   return scopedCSS(
     {
       ...getColorVariablesForElement(colors, 'light'),
@@ -191,9 +199,11 @@ export const useCssSync = () => {
     // Every font (predefined or custom URL) is loaded on demand from its CDN stylesheet.
     let fontVariable: string
     let fontFamilyName: string
+
     const customFontInfo = isCustomFontUrl(v.fontFamily)
       ? getCustomFontInfoFromUrl(v.fontFamily)
       : undefined
+
     if (customFontInfo) {
       injectFontLink(customFontInfo.variable, v.fontFamily)
       fontVariable = customFontInfo.variable
@@ -203,6 +213,7 @@ export const useCssSync = () => {
       const font =
         (!isCustomFontUrl(v.fontFamily) && fontMap[v.fontFamily as keyof typeof fontMap]) ||
         fontMap.inter
+
       injectFontLink(font.variable, font.cdnUrl)
       fontVariable = font.variable
       fontFamilyName = font.label
@@ -213,6 +224,7 @@ export const useCssSync = () => {
       radiusCssMap[v.formRadius],
       fontVariable,
     )
+
     injectStyleElement(
       FONT_VAR_STYLE_ID,
       `:root { ${fontVariable}: "${fontFamilyName}", sans-serif; }`,
@@ -233,6 +245,7 @@ export const useCssSync = () => {
         semanticOverrides,
         vibrant,
       )
+
       if (css) injectStyleElement(ADAPTIVE_STYLE_ID, css)
     } else {
       injectStyleElement(
@@ -271,6 +284,7 @@ export const useCssSync = () => {
       { immediate: true },
     )
   })
+
   onBeforeUnmount(() => {
     stop?.()
     removeInjected()

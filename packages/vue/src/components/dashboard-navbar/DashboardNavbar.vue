@@ -140,6 +140,7 @@ const props = withDefaults(defineProps<DashboardNavbarProps>(), {
   toggle: true,
   toggleSide: 'left',
 })
+
 const slots = defineSlots<DashboardNavbarSlots>()
 
 const ui = useComponentUI('dashboardNavbar', theme, () => ({ toggleSide: props.toggleSide }))
@@ -163,8 +164,10 @@ const context = computed<Partial<DashboardNavbarSlotProps>>(() =>
 const toggleProps = computed(() => {
   if (typeof props.toggle !== 'object') return {}
   const { class: _class, ...rest } = props.toggle
+
   return rest
 })
+
 const toggleClass = computed(() =>
   ui.value.toggle({
     class: [props.ui?.toggle, typeof props.toggle === 'object' ? props.toggle.class : undefined],

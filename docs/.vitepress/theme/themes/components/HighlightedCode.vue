@@ -45,7 +45,9 @@ const highlight = async () => {
     dirty = true
     return
   }
+
   running = true
+
   try {
     const { codeToHtml } = await import('shiki')
     do {
@@ -60,6 +62,7 @@ const highlight = async () => {
           result = await codeToHtml(code, { lang: 'text', theme })
         }
       }
+
       if (unmounted) return
       html.value = result
       loaded.value = true

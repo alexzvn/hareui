@@ -97,6 +97,7 @@ const defaultIcon = () =>
       }),
     ],
   )
+
 const Icon = () =>
   h(
     'span',

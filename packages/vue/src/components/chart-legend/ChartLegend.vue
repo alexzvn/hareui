@@ -159,6 +159,7 @@ const props = withDefaults(defineProps<ChartLegendProps<T>>(), {
   showPercent: false,
   toggleable: false,
 })
+
 const slots = defineSlots<ChartLegendSlots>()
 const hidden = defineModel<string[]>('hidden', { default: () => [] })
 
@@ -176,6 +177,7 @@ const rows = computed<ChartLegendItem[]>(() => {
       hidden: item.hidden ?? hiddenKeys.includes(item.key),
     }))
   }
+
   if (props.series) {
     return seriesLegendItems(
       resolveSeries<T>({
@@ -187,6 +189,7 @@ const rows = computed<ChartLegendItem[]>(() => {
       }),
     )
   }
+
   if (props.data && props.index !== undefined) {
     return resolveSlices({
       data: props.data,
@@ -203,6 +206,7 @@ const rows = computed<ChartLegendItem[]>(() => {
       percent: slice.percent,
     }))
   }
+
   return []
 })
 

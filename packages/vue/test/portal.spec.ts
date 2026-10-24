@@ -22,6 +22,7 @@ const withResolvers = <T>() => {
   const promise = new Promise<T>((res) => {
     resolve = res
   })
+
   return { promise, resolve }
 }
 
@@ -29,6 +30,7 @@ const items = [
   { value: 'a', label: 'Alpha' },
   { value: 'b', label: 'Beta' },
 ]
+
 const trigger = { trigger: () => h('button', 'Open') }
 
 // Every overlay that portals, opened on mount. `slots` gives each the content it needs to render.
@@ -57,6 +59,7 @@ const target = (id: string) => {
   const el = document.createElement('div')
   el.id = id
   document.body.append(el)
+
   return el
 }
 
@@ -73,8 +76,10 @@ const open = async (
     attachTo: host,
     global: { plugins: portal === undefined ? [] : [createHareUI({ portal })] },
   })
+
   cleanups.push(() => wrapper.unmount())
   for (let i = 0; i < 4; i++) await nextTick()
+
   return { wrapper, host }
 }
 
@@ -95,12 +100,14 @@ describe.each(overlays)('%s portal', (_name, component, props, slots) => {
 
   it('renders in place when the app-wide portal is false', async () => {
     const { host } = await open(component, props, slots, false)
+
     // Reka's focus guards always go to the body; nothing else may leave the host.
     expect(
       [...document.body.children].filter(
         (el) => el !== host && !el.hasAttribute('data-reka-focus-guard'),
       ),
     ).toEqual([])
+
     expect(
       host.querySelector(
         '[role=dialog], [role=alertdialog], [role=listbox], [role=menu], [role=grid]',
@@ -129,10 +136,12 @@ describe('shadow root', () => {
       trigger,
       global,
     )
+
     const submenuTrigger = global.querySelector<HTMLElement>('[data-slot=menu-item]')!
     submenuTrigger.dispatchEvent(new KeyboardEvent('keydown', { key: 'ArrowRight', bubbles: true }))
     for (let i = 0; i < 4; i++) await nextTick()
     expect(global.querySelectorAll('[role=menu]').length).toBe(2)
+
     expect(wrapper.element.ownerDocument.body.querySelectorAll(':scope > [role=menu]').length).toBe(
       0,
     )
@@ -152,23 +161,28 @@ describe('nested dismissable layers in a shadow root', () => {
     const overlays = document.createElement('div')
     const outside = document.createElement('button')
     shadow.append(app, overlays, outside)
+
     // Reka looks the DialogTitle up with document.getElementById, which can't see into a shadow root, so it warns
     // about the title the Modal does render. Drop only that warning.
     const warn = console.warn
     const spy = vi.spyOn(console, 'warn').mockImplementation((...args: unknown[]) => {
       if (!String(args[0]).includes('requires a `DialogTitle`')) warn(...args)
     })
+
     const wrapper = mount(component, {
       props,
       slots,
       attachTo: app,
       global: { plugins: [createHareUI({ portal: overlays })] },
     })
+
     cleanups.push(
       () => wrapper.unmount(),
       () => spy.mockRestore(),
     )
+
     await settle()
+
     return { wrapper, host, overlays, outside }
   }
 
@@ -189,6 +203,7 @@ describe('nested dismissable layers in a shadow root', () => {
       button: 0,
       pointerType: 'mouse',
     })
+
     const path: EventTarget[] = []
     for (
       let node: Node | null = real;
@@ -196,9 +211,11 @@ describe('nested dismissable layers in a shadow root', () => {
       node = node.parentNode ?? (node as ShadowRoot).host ?? null
     )
       path.push(node)
+
     Object.defineProperty(event, 'composedPath', {
       value: () => [...path, host, document.body, document.documentElement, document, window],
     })
+
     host.dispatchEvent(event)
     await settle()
   }
@@ -228,6 +245,7 @@ describe('nested dismissable layers in a shadow root', () => {
     const mounted = await mountInShadow(SelectInModal, {}, {})
     await mounted.wrapper.setProps({ selectOpen: true })
     await settle()
+
     return mounted
   }
 
@@ -259,6 +277,7 @@ describe('nested dismissable layers in a shadow root', () => {
       },
       trigger,
     )
+
     const submenuTrigger = overlays.querySelector<HTMLElement>('[data-slot=menu-item]')!
     submenuTrigger.focus()
     submenuTrigger.dispatchEvent(new KeyboardEvent('keydown', { key: 'ArrowRight', bubbles: true }))

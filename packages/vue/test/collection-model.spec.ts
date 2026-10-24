@@ -35,6 +35,7 @@ const setup = ({ model: initial, isMultiple = false, ...rest }: Setup = {}) => {
     isMultiple: () => isMultiple,
     ...rest,
   })
+
   return { model, collection }
 }
 
@@ -77,6 +78,7 @@ describe('useCollectionModel', () => {
     const { collection } = setup({ isMultiple: true, model: [3, 'a'] })
     expect(collection.selectedKey.value).toBeNull()
     expect(collection.selectedItems.value.map((item) => item.value)).toEqual([3, 'a'])
+
     expect(collection.valueText.value).toBe(
       new Intl.ListFormat(undefined, { type: 'conjunction' }).format(['3', 'Apple']),
     )

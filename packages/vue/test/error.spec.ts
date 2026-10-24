@@ -12,6 +12,7 @@ const withResolvers = <T>() => {
   const promise = new Promise<T>((res) => {
     resolve = res
   })
+
   return { promise, resolve }
 }
 
@@ -26,6 +27,7 @@ describe('error', () => {
     const wrapper = mount(Error, { props: { error } })
     expect(wrapper.get('[data-slot=error-status-code]').text()).toBe('404')
     expect(wrapper.get('h1').text()).toBe('Page not found')
+
     expect(wrapper.get('[data-slot=error-message]').text()).toBe(
       'The page you are looking for does not exist.',
     )
@@ -41,6 +43,7 @@ describe('error', () => {
     const wrapper = mount(Error, {
       props: { error: { statusCode: 404, statusMessage: 'Not found', message: 'Not found' } },
     })
+
     expect(wrapper.find('[data-slot=error-message]').exists()).toBe(false)
   })
 
@@ -55,7 +58,9 @@ describe('error', () => {
     setTimeout(resolve, 2)
     await promise
     const event = new MouseEvent('click', { bubbles: true, cancelable: true })
-    link.element.addEventListener('click', (e) => e.preventDefault()) // keep happy-dom from navigating
+
+    // keep happy-dom from navigating
+    link.element.addEventListener('click', (e) => e.preventDefault())
     link.element.dispatchEvent(event)
     expect(wrapper.emitted('clear')).toHaveLength(1)
     expect(wrapper.emitted('clear')![0][0]).toBe(event)
@@ -67,6 +72,7 @@ describe('error', () => {
         .get('a')
         .attributes('href'),
     ).toBe('/docs')
+
     const wrapper = mount(Error, { props: { error, redirect: '' } })
     expect(wrapper.find('a').exists()).toBe(false)
     expect(wrapper.get('[data-slot=error-links] button').attributes('type')).toBe('button')
@@ -78,9 +84,11 @@ describe('error', () => {
         .find('[data-slot=error-links]')
         .exists(),
     ).toBe(false)
+
     const custom = mount(Error, {
       props: { error, clear: { label: 'Go back', class: 'rounded-full' } },
     })
+
     expect(custom.get('[data-slot=error-links] a').text()).toBe('Go back')
     expect(custom.get('[data-slot=error-links] a').classes()).toContain('rounded-full')
   })
@@ -90,6 +98,7 @@ describe('error', () => {
       props: { error },
       slots: { leading: () => h('i', { id: 'logo' }), links: () => h('span', { id: 'custom' }) },
     })
+
     expect(wrapper.find('[data-slot=error-leading] #logo').exists()).toBe(true)
     expect(wrapper.find('a').exists()).toBe(false)
     expect(wrapper.find('[data-slot=error-links] #custom').exists()).toBe(true)
@@ -110,10 +119,13 @@ describe('error', () => {
       const wrapper = mount(Error, { props: { error, ...props }, attachTo: document.body })
       expect(wrapper.element.tagName).toBe('MAIN')
       expect(wrapper.get('h1').text()).toBe('Page not found')
+
       const action = wrapper.get(
         `[data-slot=error-links] ${kind === 'link' ? 'a[href]' : 'button'}`,
       )
+
       expect(action.text()).toBe('Back to home')
+
       // Reachable by Tab: a real link / button, not removed from the tab order
       expect(action.attributes('tabindex') ?? '0').toBe('0')
       await expectAccessible(wrapper)

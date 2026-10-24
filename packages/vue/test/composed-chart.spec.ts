@@ -35,18 +35,21 @@ const bbox = (d: string) => {
           xs.push(x)
           ys.push(y)
         }
+
         break
       case 'H':
         for (const v of n) {
           x = rel ? x + v : v
           xs.push(x)
         }
+
         break
       case 'V':
         for (const v of n) {
           y = rel ? y + v : v
           ys.push(y)
         }
+
         break
       case 'A':
         for (let i = 0; i < n.length; i += 7) {
@@ -55,9 +58,11 @@ const bbox = (d: string) => {
           xs.push(x)
           ys.push(y)
         }
+
         break
     }
   }
+
   return {
     x: Math.min(...xs),
     y: Math.min(...ys),
@@ -79,6 +84,7 @@ const hover = async (
   wrapper
     .find('[data-slot=chart-surface]')
     .element.dispatchEvent(new PointerEvent('pointermove', { clientX, clientY, bubbles: true }))
+
   await settle()
 }
 
@@ -103,13 +109,17 @@ describe('ComposedChart', () => {
       h(ChartArea, { dataKey: 'views', stackId: 'a', isAnimationActive: false }),
       h(ChartTooltip, { isAnimationActive: false }),
     ])
+
     await settle()
+
     // Totals 150 and 300 -> domain [0, 300]. The Feb bar (200) ends at 200 - 200 * 200 / 300.
     const bar = bbox(wrapper.findAll('[data-slot=chart-bar-rectangle]')[1].attributes('d')!)
     expect(bar.y).toBeCloseTo(66.667, 2)
+
     // The area sits on the bar: its Feb top is the stack total, 300, the top of the plot.
     await hover(wrapper, 300, 100)
     expect(Number(wrapper.find('[data-slot=chart-active-dot]').attributes('cy'))).toBeCloseTo(0)
+
     // The cursor follows the chart type, not the band scale: a ComposedChart draws a dashed line.
     const cursor = wrapper.find('[data-slot=chart-cursor]')
     expect(cursor.attributes('data-kind')).toBe('line')
@@ -132,9 +142,12 @@ describe('ComposedChart', () => {
       h(ChartLine, { dataKey: 'orders', name: 'Orders', dot: false, isAnimationActive: false }),
       h(ChartTooltip, { isAnimationActive: false }),
     ])
+
     await settle()
+
     const labels = () =>
       wrapper.findAll('[data-slot=chart-tooltip-label]').map((label) => label.text())
+
     await hover(wrapper, 100, 100)
     expect(labels()).toEqual(['Revenue', 'Orders'])
     showRevenue.value = false
@@ -164,10 +177,13 @@ describe('ComposedChart', () => {
       },
       attachTo: document.body,
     })
+
     await settle()
+
     expect(
       wrapper.findAll('[data-slot=chart-dot]').map((dot) => Number(dot.attributes('cx'))),
     ).toEqual([0, 400])
+
     wrapper.unmount()
   })
 
@@ -177,6 +193,7 @@ describe('ComposedChart', () => {
       h(ChartBar, { dataKey: 'revenue', barSize: 16, isAnimationActive: false }),
       h(ChartLine, { dataKey: 'orders', dot: false, isAnimationActive: false }),
     ])
+
     await settle()
     expect(wrapper.findAll('[data-slot=chart-bar-rectangle]')).toHaveLength(2)
     expect(wrapper.find('[data-slot=chart-line-curve]').exists()).toBe(true)
@@ -189,6 +206,7 @@ describe('ComposedChart', () => {
       h(ChartBar, { dataKey: 'revenue', barSize: 16, isAnimationActive: false }),
       h(ChartLine, { dataKey: 'orders', type: 'linear', dot: { r: 3 }, isAnimationActive: false }),
     ])
+
     await settle()
     const bar = wrapper.findAll('[data-slot=chart-bar-rectangle]')[0]
     const box = bbox(bar.attributes('d')!)
@@ -210,7 +228,9 @@ describe('ComposedChart', () => {
         isAnimationActive: false,
       }),
     ])
+
     await settle()
+
     // Both maxima (200 on the left, 2 on the right) reach the top of the plot.
     const bar = wrapper.findAll('[data-slot=chart-bar-rectangle]')[1]
     const box = bbox(bar.attributes('d')!)
@@ -233,18 +253,22 @@ describe('ComposedChart', () => {
       }),
       h(ChartTooltip, { isAnimationActive: false }),
     ])
+
     await settle()
     await hover(wrapper, 100, 100)
     const panel = wrapper.find('[data-slot=chart-tooltip]')
     expect(panel.find('[data-slot=chart-tooltip-header]').text()).toBe('Jan')
+
     expect(panel.findAll('[data-slot=chart-tooltip-label]').map((label) => label.text())).toEqual([
       'Revenue',
       'Orders',
     ])
+
     expect(panel.findAll('[data-slot=chart-tooltip-value]').map((value) => value.text())).toEqual([
       '100',
       '1',
     ])
+
     wrapper.unmount()
   })
 
@@ -256,15 +280,18 @@ describe('ComposedChart', () => {
       h(ChartLine, { dataKey: 'orders', name: 'Orders', dot: false, isAnimationActive: false }),
       h(ChartTooltip, { isAnimationActive: false }),
     ])
+
     await settle()
     const svg = wrapper.find('[data-slot=chart-surface]')
     const header = () => wrapper.find('[data-slot=chart-tooltip-header]').text()
     ;(svg.element as SVGElement).focus()
     await settle()
     expect(header()).toBe('Jan')
+
     expect(wrapper.findAll('[data-slot=chart-tooltip-label]').map((label) => label.text())).toEqual(
       ['Views', 'Revenue', 'Orders'],
     )
+
     await svg.trigger('keydown', { key: 'End' })
     await settle()
     expect(header()).toBe('Feb')
@@ -291,6 +318,7 @@ describe('ComposedChart', () => {
       },
       attachTo: document.body,
     })
+
     await settle()
     await expectAccessible(wrapper)
     ;(wrapper.find('[data-slot=chart-surface]').element as SVGElement).focus()

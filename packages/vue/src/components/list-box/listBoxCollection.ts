@@ -7,6 +7,7 @@ export type CollectionRow = {
   item: ListBoxItem
   index: number
 }
+
 export type CollectionBlock =
   | CollectionRow
   | { kind: 'section'; section: ListBoxSection; rows: CollectionRow[]; key: number }
@@ -17,6 +18,7 @@ export const flattenEntries = (entries: ListBoxEntry[] | undefined): ListBoxItem
   return (entries ?? []).flatMap((entry) => {
     if ('type' in entry && entry.type === 'section') return entry.items
     if ('type' in entry && entry.type === 'separator') return []
+
     return [entry as ListBoxItem]
   })
 }
@@ -39,6 +41,7 @@ export const filterEntries = (
       const rows = entry.items
         .filter(match)
         .map((item) => ({ kind: 'item' as const, item, index: all.indexOf(item) }))
+
       if (rows.length) blocks.push({ kind: 'section', section: entry, rows, key })
     } else if ('type' in entry && entry.type === 'separator') {
       blocks.push({ kind: 'separator', key })
@@ -50,6 +53,7 @@ export const filterEntries = (
       })
     }
   })
+
   return blocks
 }
 

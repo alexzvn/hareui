@@ -50,5 +50,6 @@ const users: User[] = [
     avatar: 'https://heroui-assets.nyc3.cdn.digitaloceanspaces.com/avatars/purple.jpg',
   },
 ]
+
 const selected = ref<string[]>(['1'])
 </script>

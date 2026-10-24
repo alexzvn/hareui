@@ -31,6 +31,7 @@ const parseFrontmatter = (raw: string): { data: Record<string, string>; body: st
     const kv = line.match(/^(\w+):\s*(.*)$/)
     if (kv && kv[2]) data[kv[1]] = kv[2].replace(/^(['"])(.*)\1$/, '$2')
   }
+
   return { data, body: raw.slice(match[0].length) }
 }
 
@@ -50,6 +51,7 @@ const apiTable = async (component: string, kind: string): Promise<string> => {
   const api: ComponentApi = JSON.parse(
     await readFile(join(docsRoot, '.vitepress/api', `${component}.json`), 'utf8'),
   )
+
   if (kind === 'props') {
     return [
       '| Prop | Type | Default | Description |',
@@ -60,6 +62,7 @@ const apiTable = async (component: string, kind: string): Promise<string> => {
       ),
     ].join('\n')
   }
+
   if (kind === 'slots') {
     return [
       '| Slot | Props | Description |',
@@ -69,6 +72,7 @@ const apiTable = async (component: string, kind: string): Promise<string> => {
       ),
     ].join('\n')
   }
+
   return [
     '| Event | Payload | Description |',
     '| --- | --- | --- |',
@@ -89,7 +93,9 @@ const replaceAsync = async (
     parts.push(input.slice(last, m.index), fn(m[0]))
     last = m.index + m[0].length
   }
+
   parts.push(input.slice(last))
+
   return (await Promise.all(parts)).join('')
 }
 
@@ -100,6 +106,7 @@ const tagProps = (tag: string): Record<string, unknown> => {
     if (name!.startsWith(':')) props[name!.slice(1)] = new Function(`return (${value})`)()
     else props[name!] = value
   }
+
   return props
 }
 
@@ -109,8 +116,10 @@ const tokenRows = (value: unknown): [string, string][] => {
     const m = /^(--[\w-]+):\s*([\s\S]+)$/.exec(value)
     return m ? [[m[1]!, m[2]!]] : []
   }
+
   if (Array.isArray(value)) return value.flatMap(tokenRows)
   if (value && typeof value === 'object') return Object.values(value).flatMap(tokenRows)
+
   return []
 }
 
@@ -123,7 +132,9 @@ const colorSectionTable = (tag: string): string => {
       ...light.map(([v]) => v),
       ...[...dark.keys()].filter((v) => !light.some(([l]) => l === v)),
     ]
+
     const lightMap = new Map(light)
+
     return [
       '| Variable | Light | Dark |',
       '| --- | --- | --- |',
@@ -132,8 +143,10 @@ const colorSectionTable = (tag: string): string => {
       ),
     ].join('\n')
   }
+
   const rows = tokenRows(props)
   if (!rows.length) throw new Error(`Color section without tooltips: ${tag.slice(0, 80)}`)
+
   return [
     '| Variable | Value |',
     '| --- | --- |',
@@ -145,33 +158,43 @@ const toMarkdown = async (body: string): Promise<string> => {
   let out = body
     .replace(/<script\b[\s\S]*?<\/script>\n?/g, '')
     .replace(/<style\b[\s\S]*?<\/style>\n?/g, '')
+
   out = await replaceAsync(out, /<ComponentPreview\b[^>]*\/>/g, async (tag) => {
     const name = attr(tag, 'name')
     if (!name) throw new Error(`ComponentPreview without name: ${tag}`)
     const src = await readFile(join(docsRoot, 'demos', `${name}.vue`), 'utf8')
+
     return `\`\`\`vue\n${src.trimEnd()}\n\`\`\``
   })
+
   out = await replaceAsync(out, /<ApiTable\b[^>]*\/>/g, async (tag) => {
     const component = attr(tag, 'component')
     const kind = attr(tag, 'kind')
     if (!component || !kind) throw new Error(`ApiTable missing attributes: ${tag}`)
+
     return apiTable(component, kind)
   })
+
   out = out.replace(/<ColorSection\w+\b[\s\S]*?\/>/g, colorSectionTable)
+
   out = out.replace(/<CollapsibleCode\b[\s\S]*?\/>/g, (tag) => {
     const { lang = '', code: src } = tagProps(tag) as { lang?: string; code?: string }
     if (typeof src !== 'string')
       throw new Error(`CollapsibleCode without :code: ${tag.slice(0, 80)}`)
+
     return `\`\`\`${lang}\n${src.trimEnd()}\n\`\`\``
   })
+
   out = out.replace(/<FaqItem\b[^>]*>/g, (tag) => `**${attr(tag, 'question')}**`)
   const fences: string[] = []
   out = out.replace(
     /^(```|~~~)[\s\S]*?^\1\s*$/gm,
     (fence) => `\u0000${fences.push(fence) - 1}\u0000`,
   )
+
   out = out.replace(/<\/?[A-Z][\w.]*\b[^>]*>/g, '')
   out = out.replace(/\u0000(\d+)\u0000/g, (_, i) => fences[Number(i)])
+
   return out.replace(/\n{3,}/g, '\n\n').trim()
 }
 
@@ -185,10 +208,12 @@ for (const section of sidebar) {
         throw error
       },
     )
+
     if (raw === undefined) {
       console.warn(`llms: skipping ${link.link} (no source page yet)`)
       continue
     }
+
     const { data, body } = parseFrontmatter(raw)
     pages.push({
       section: section.text,
@@ -244,6 +269,7 @@ for (const p of pages) {
   await mkdir(dirname(file), { recursive: true })
   await writeFile(file, `# ${p.title}\n\n> ${p.description}\n\n${p.body}\n`)
 }
+
 await writeFile(join(distDir, 'llms.txt'), `${index.trimEnd()}\n`)
 await writeFile(join(distDir, 'llms-full.txt'), `${full}\n`)
 console.log(`llms: ${pages.length} pages → llms.txt, llms-full.txt`)

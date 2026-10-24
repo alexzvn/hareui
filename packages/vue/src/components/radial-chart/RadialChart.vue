@@ -224,6 +224,7 @@ const props = withDefaults(defineProps<RadialChartProps<T>>(), {
   tooltip: undefined,
   legend: undefined,
 })
+
 const slots = defineSlots<RadialChartSlots>()
 const hidden = defineModel<string[]>('hidden', { default: () => [] })
 
@@ -232,6 +233,7 @@ const { valueKey, slices, visibleSlices, config } = useSliceRoot({
   hidden,
   hasLegendSlot: () => !!slots.legend,
 })
+
 // Full bar: `max`, or the largest value of every ring (hidden ones too, so toggling a ring keeps the scale).
 const domainMax = computed(
   () => props.max ?? Math.max(0, ...(slices.value ?? []).map((slice) => slice.value)),
@@ -240,6 +242,7 @@ const domainMax = computed(
 const startAngle = computed(
   () => props.startAngle ?? (props.gauge ? chartDefaults.gauge.startAngle : 90),
 )
+
 const endAngle = computed(
   () => props.endAngle ?? (props.gauge ? chartDefaults.gauge.endAngle : -270),
 )
@@ -254,6 +257,7 @@ const chart = useChartRoot({
   ui,
   uiProps: () => props.ui,
 })
+
 const polar = usePolarChart(chart, {
   kind: 'radialBar',
   cx: () => props.cx,
@@ -268,6 +272,7 @@ const polar = usePolarChart(chart, {
   maxBarSize: () => props.maxBarSize,
   slices: () => slices.value,
 })
+
 // The hole inside the innermost ring.
 providePolarCenterLabel(chart, polar, () => polar.innerRadius.value)
 </script>

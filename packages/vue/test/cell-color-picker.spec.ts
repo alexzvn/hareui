@@ -13,13 +13,16 @@ const wrappers: { unmount: () => void }[] = []
 const mount: typeof rawMount = (...args) => {
   const wrapper = rawMount(...args)
   wrappers.push(wrapper)
+
   return wrapper
 }
 
 const trigger = () => document.body.querySelector<HTMLElement>('[data-slot=color-picker-trigger]')!
 const popover = () => document.body.querySelector('[data-slot=color-picker-popover]')
+
 const valueText = () =>
   document.body.querySelector('[data-slot=cell-color-picker-value-display]')!.textContent!.trim()
+
 const settle = () => new Promise((resolve) => setTimeout(resolve, 30))
 const open = async () => {
   trigger().click()
@@ -38,11 +41,13 @@ describe('CellColorPicker', () => {
       props: { label: 'Accent', defaultValue: '#3B82F6' },
       attachTo: document.body,
     })
+
     await expectAccessible()
     await open()
     expect(popover()).not.toBeNull()
     await expectAccessible()
     wrappers.splice(0).forEach((w) => w.unmount())
+
     mount(CellColorPicker, {
       props: {
         label: 'Accent',
@@ -51,6 +56,7 @@ describe('CellColorPicker', () => {
       },
       attachTo: document.body,
     })
+
     await open()
     expect(document.body.querySelector('[role=listbox]')).not.toBeNull()
     await expectAccessible()
@@ -64,6 +70,7 @@ describe('CellColorPicker', () => {
       props: { label: 'Accent', defaultValue: '#3B82F6' },
       attachTo: document.body,
     })
+
     const row = trigger()
     expect(row.tagName).toBe('BUTTON')
     expect(row.textContent).toContain('Accent')
@@ -79,13 +86,17 @@ describe('CellColorPicker', () => {
       props: { label: 'Accent', defaultValue: '#3B82F6', presets: ['#EF4444', '#22C55E'] },
       attachTo: document.body,
     })
+
     await open()
+
     expect(document.body.querySelector('[role=listbox]')!.getAttribute('aria-label')).toBe(
       'Color presets',
     )
+
     expect(
       document.body.querySelector('[data-slot=color-area-thumb]')!.getAttribute('aria-label'),
     ).toBe('Color area, Saturation, Brightness')
+
     const hue = document.body.querySelector('[data-slot=color-slider-thumb]')!
     expect(document.getElementById(hue.getAttribute('aria-labelledby')!)?.textContent?.trim()).toBe(
       'Hue',
@@ -97,14 +108,17 @@ describe('CellColorPicker', () => {
       props: { label: 'Accent', defaultValue: '#3B82F6' },
       attachTo: document.body,
     })
+
     trigger().focus()
     await open()
     expect(document.activeElement).toBe(popover())
     const thumb = document.body.querySelector<HTMLElement>('[data-slot=color-area-thumb]')!
     thumb.focus()
+
     thumb.dispatchEvent(
       new KeyboardEvent('keydown', { key: 'Escape', bubbles: true, cancelable: true }),
     )
+
     await nextTick()
     await settle()
     expect(w.emitted('update:open')?.at(-1)).toEqual([false])
@@ -116,15 +130,18 @@ describe('CellColorPicker', () => {
       props: { label: 'Accent', defaultValue: '#FF0000' },
       attachTo: document.body,
     })
+
     await open()
     const hue = document.body.querySelector<HTMLElement>('[data-slot=color-slider-thumb]')!
     hue.focus()
     hue.dispatchEvent(new KeyboardEvent('keydown', { key: 'End', bubbles: true, cancelable: true }))
     await nextTick()
     expect(hue.getAttribute('aria-valuenow')).toBe('360')
+
     hue.dispatchEvent(
       new KeyboardEvent('keydown', { key: 'PageDown', bubbles: true, cancelable: true }),
     )
+
     await nextTick()
     expect(hue.getAttribute('aria-valuenow')).toBe('350')
     expect(valueText()).not.toBe('#FF0000')
@@ -135,10 +152,12 @@ describe('CellColorPicker', () => {
       props: { label: 'Accent', defaultValue: '#3b82f6' },
       attachTo: document.body,
     })
+
     const row = trigger()
     expect(row.querySelector('[data-slot=cell-color-picker-label]')!.textContent!.trim()).toBe(
       'Accent',
     )
+
     expect(valueText()).toBe('#3B82F6')
     expect(row.querySelector('[data-slot=color-swatch]')).not.toBeNull()
     expect(w.attributes('data-slot')).toBe('cell-color-picker')
@@ -150,6 +169,7 @@ describe('CellColorPicker', () => {
       props: { label: 'Accent', defaultValue: '#3B82F6' },
       attachTo: document.body,
     })
+
     trigger().click()
     await nextTick()
     await nextTick()
@@ -170,10 +190,13 @@ describe('CellColorPicker', () => {
       },
       attachTo: document.body,
     })
+
     await nextTick()
+
     const items = document.body.querySelectorAll<HTMLElement>(
       '[data-slot=color-swatch-picker-item]',
     )
+
     expect(items).toHaveLength(2)
     items[1]!.click()
     await nextTick()
@@ -187,6 +210,7 @@ describe('CellColorPicker', () => {
       props: { label: 'Accent', modelValue: '#3B82F6' },
       attachTo: document.body,
     })
+
     await w.setProps({ modelValue: '#EF4444' })
     expect(valueText()).toBe('#EF4444')
   })
@@ -205,9 +229,11 @@ describe('CellColorPicker', () => {
       slots: { default: () => h(CellColorPicker, { label: 'Accent' }) },
       attachTo: document.body,
     })
+
     expect(
       document.body.querySelector('[data-slot=cell-color-picker]')!.getAttribute('data-disabled'),
     ).toBe('true')
+
     expect(trigger().hasAttribute('disabled')).toBe(true)
     trigger().click()
     await nextTick()

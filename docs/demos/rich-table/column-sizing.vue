@@ -38,6 +38,7 @@ const resizer = (header: RichTableHeader<Payment>, label: string) => {
     header
       .getContext()
       .table.setColumnSizing((sizing) => ({ ...sizing, [column.id]: column.getSize() + delta }))
+
   return h('div', { class: 'flex items-center' }, [
     label,
     h('div', {
@@ -59,6 +60,7 @@ const resizer = (header: RichTableHeader<Payment>, label: string) => {
         const delta = { ArrowLeft: -10, ArrowRight: 10 }[event.key]
         if (delta) {
           event.preventDefault()
+
           resizeBy(
             getComputedStyle(event.currentTarget as Element).direction === 'rtl' ? -delta : delta,
           )

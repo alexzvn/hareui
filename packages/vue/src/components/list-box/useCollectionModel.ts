@@ -76,11 +76,14 @@ export const useCollectionModel = <T extends ListBoxItem>(
       model.value = next
     },
   })
+
   const selectedValues = computed<ListBoxValue[]>(() => {
     const value = selection.value
     if (value == null) return []
+
     return Array.isArray(value) ? value : [value]
   })
+
   const selectedSet = computed(() => new Set(selectedValues.value))
   const selectedKey = computed(() => (isMultiple() ? null : (selectedValues.value[0] ?? null)))
 
@@ -90,14 +93,18 @@ export const useCollectionModel = <T extends ListBoxItem>(
 
   const selectedItems = computed<T[]>(() => {
     if (order === 'collection') return allOptions.value.filter((item) => isSelected(item.value))
+
     return selectedValues.value
       .map((value) => itemByValue.value.get(value))
       .filter((item): item is T => !!item)
   })
+
   const isPlaceholder = computed(() => selectedItems.value.length === 0)
+
   const valueText = computed(() => {
     const [first] = selectedItems.value
     if (!first) return placeholder() ?? ''
+
     return isMultiple() ? formatList(selectedItems.value.map(itemText)) : itemText(first)
   })
 
@@ -105,12 +112,15 @@ export const useCollectionModel = <T extends ListBoxItem>(
     const item = value == null ? undefined : itemByValue.value.get(value)
     return item ? itemText(item) : ''
   }
+
   const clear = () => {
     selection.value = null
   }
+
   const reset = () => {
     const value = defaultValue() ?? emptyValue()
     selection.value = value
+
     return value
   }
 

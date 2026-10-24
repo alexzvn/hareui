@@ -125,6 +125,7 @@ const granularityOptions: ListBoxItem[] = [
   { label: 'Minute', value: 'minute' },
   { label: 'Second', value: 'second' },
 ]
+
 const hourCycleOptions: ListBoxItem[] = [
   { label: '12-hour', value: 12 },
   { label: '24-hour', value: 24 },
@@ -133,6 +134,7 @@ const hourCycleOptions: ListBoxItem[] = [
 const granularity = ref<Granularity>('minute')
 const hourCycle = ref<HourCycle>(12)
 const hideTimeZone = ref(false)
+
 const timeGranularity = computed(() =>
   granularity.value === 'day' ? undefined : granularity.value,
 )
@@ -140,11 +142,13 @@ const timeGranularity = computed(() =>
 const defaultValueFor = (g: Granularity): DateRangeValue => {
   const tz = getLocalTimeZone()
   if (g === 'day') return { start: parseDate('2025-02-03'), end: parseDate('2025-02-10') }
+
   return {
     start: parseZonedDateTime(`2026-02-03T08:45:00[${tz}]`),
     end: parseZonedDateTime(`2026-02-10T18:45:00[${tz}]`),
   }
 }
+
 const value = shallowRef<DateRangeValue | null>(defaultValueFor(granularity.value))
 
 const onGranularityChange = (next: string | number) => {
@@ -157,24 +161,29 @@ const dateFormatter = new DateFormatter('en-US', {
   month: 'short',
   year: 'numeric',
 })
+
 const formatRange = (range: DateRangeValue) => {
   const tz = getLocalTimeZone()
   return dateFormatter.formatRange(range.start.toDate(tz), range.end.toDate(tz))
 }
 
 type WithTime = CalendarDateTime | ZonedDateTime
+
 const hasTime = (v: DateValue | undefined): v is WithTime => {
   return !!v && 'hour' in v
 }
+
 const timeOf = (v: DateValue | undefined) => {
   return hasTime(v) ? new Time(v.hour, v.minute, v.second) : undefined
 }
+
 // The calendar only edits the date and the time fields only edit the time; each merges onto the other.
 const withDate = (picked: DateValue, current: DateValue | undefined): DateValue => {
   return hasTime(current)
     ? current.set({ year: picked.year, month: picked.month, day: picked.day })
     : picked
 }
+
 const withTime = (time: TimeValue, current: DateValue): DateValue => {
   return hasTime(current)
     ? current.set({ hour: time.hour, minute: time.minute, second: time.second })

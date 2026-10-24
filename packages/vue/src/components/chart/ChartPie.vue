@@ -145,6 +145,7 @@ const props = withDefaults(defineProps<ChartPieProps>(), {
   animationDuration: 1500,
   animationEasing: 'ease',
 })
+
 defineSlots<ChartPieSlots>()
 
 const chart = useChartContext('ChartPie')
@@ -157,6 +158,7 @@ const data = computed(() => (props.data ?? chart.data.value) as ChartDatum[])
 const sliceFill = (index: number): string => {
   const datum = data.value[index]
   const own = typeof datum?.fill === 'string' ? datum.fill : undefined
+
   return cells.value[index]?.fill ?? own ?? props.fill ?? DEFAULT_SERIES_COLOR
 }
 
@@ -178,6 +180,7 @@ const geometry = computed(() =>
 
 const target = computed<PieSector[]>(() => {
   if (props.hide) return []
+
   return computePieSectors(
     data.value.map((datum) => Number(datum[props.dataKey])),
     {
@@ -232,6 +235,7 @@ const entries = (index: number): ChartTooltipPayloadEntry[] => {
   const value = datum?.[props.dataKey]
   if (!datum || value === undefined || value === null) return []
   const fill = sliceFill(index)
+
   return [
     { dataKey: props.dataKey, name: sliceName(index), value, color: fill, fill, payload: datum },
   ]
@@ -249,6 +253,7 @@ chart.registerSeries((): ChartSeries => ({
   tooltip: props.tooltipType !== 'none',
   entries,
 }))
+
 polar.registerItems(id, () => ({
   sectors: target.value,
   startAngle: props.startAngle,

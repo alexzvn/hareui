@@ -66,6 +66,7 @@ import { injectFontLink, isCustomFontUrl } from '../utils/font-utils'
 const props = defineProps<{
   customFonts: readonly CustomFont[]
 }>()
+
 const emit = defineEmits<{ goToCustom: [] }>()
 
 const { setVariable, variables } = useVariableSetter()
@@ -123,6 +124,7 @@ const items = computed(() =>
       'group border-separator-on-surface relative flex h-[83px] w-[95px] flex-col items-center justify-center gap-[5px] rounded-2xl border data-[selected=true]:border-foreground data-[hovered=true]:bg-default',
   })),
 )
+
 const fontById = computed(() => new Map(allFonts.value.map((font) => [font.id, font])))
 
 // The selected key is the fontFamily value (either a font ID or a CDN URL)
@@ -135,6 +137,7 @@ const handleDeleteCustomFont = (fontUrl: string) => {
   if (font) {
     removeCustomFont(font.id)
   }
+
   // If the deleted font was selected, switch to Inter
   if (variables.value.fontFamily === fontUrl) {
     setVariable('fontFamily', defaultThemeVariables.fontFamily)

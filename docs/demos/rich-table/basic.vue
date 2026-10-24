@@ -60,6 +60,7 @@ const statusColor = {
   refunded: 'default',
   processing: 'warning',
 } as const
+
 const currency = new Intl.NumberFormat('en-US', { style: 'currency', currency: 'USD' })
 
 const columns: RichTableColumn<Payment>[] = [

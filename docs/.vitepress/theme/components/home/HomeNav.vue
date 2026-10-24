@@ -187,6 +187,7 @@ const links = [
 
 const NAV_LINK =
   '[&_svg]:size-4 inline-flex items-center gap-1 p-2 text-fd-muted-foreground transition-colors hover:text-fd-accent-foreground data-[active=true]:text-fd-primary'
+
 const MENU_LINK =
   'inline-flex items-center gap-2 py-1.5 transition-colors hover:text-fd-popover-foreground/50 data-[active=true]:font-medium data-[active=true]:text-fd-primary [&_svg]:size-4'
 
@@ -195,9 +196,11 @@ const transparent = ref(true)
 const onScroll = () => {
   transparent.value = window.scrollY < 10
 }
+
 onMounted(() => {
   onScroll()
   window.addEventListener('scroll', onScroll, { passive: true })
 })
+
 onBeforeUnmount(() => window.removeEventListener('scroll', onScroll))
 </script>

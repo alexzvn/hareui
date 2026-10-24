@@ -81,6 +81,7 @@ const props = withDefaults(defineProps<ButtonGroupProps>(), {
   disabled: undefined,
   fullWidth: undefined,
 })
+
 defineSlots<ButtonGroupSlots>()
 
 // Inside a Toolbar the group takes the toolbar's orientation (HeroUI reads React Aria's ToggleButtonGroupContext).
@@ -91,6 +92,7 @@ const ui = useComponentUI('buttonGroup', theme, () => ({
   orientation: orientation.value,
   fullWidth: props.fullWidth,
 }))
+
 const toolbarClass = computed(() =>
   toolbar?.ui.value.buttonGroup({ class: toolbar.uiOverrides.value?.buttonGroup }),
 )

@@ -65,6 +65,7 @@ const props = withDefaults(defineProps<ChartYAxisProps>(), {
   minTickGap: 5,
   interval: 'preserveEnd',
 })
+
 defineSlots<ChartYAxisSlots>()
 
 const cartesian = useCartesianContext('ChartYAxis')

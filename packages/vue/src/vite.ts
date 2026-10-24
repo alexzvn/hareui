@@ -64,6 +64,7 @@ export const hareui = (options: HareUIPluginOptions = {}): Plugin[] => {
       config: () => ({ define: { __HAREUI_UI__: JSON.stringify(ui) } }),
     })
   }
+
   if (options.components !== false) {
     const { resolvers = [], ...rest } = options.components ?? {}
     plugins.push(
@@ -73,6 +74,7 @@ export const hareui = (options: HareUIPluginOptions = {}): Plugin[] => {
       }),
     )
   }
+
   return plugins
 }
 

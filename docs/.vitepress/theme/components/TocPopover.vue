@@ -108,5 +108,6 @@ const currentIndex = computed(() => props.items.findIndex((item) => item.id === 
 const progress = computed(() =>
   props.items.length ? (currentIndex.value + 1) / props.items.length : 0,
 )
+
 const currentText = computed(() => props.items[currentIndex.value]?.text)
 </script>

@@ -20,6 +20,7 @@ describe('DashboardToolbar', () => {
       },
       attachTo: document.body,
     })
+
     expect(wrapper.element.getAttribute('role')).toBeNull()
     for (const el of wrapper.findAll('a, button')) expect(el.attributes('tabindex')).toBeUndefined()
     await expectAccessible(wrapper)
@@ -33,6 +34,7 @@ describe('DashboardToolbar', () => {
       slots: { left: () => h('a', { href: '#all' }, 'All') },
       attachTo: document.body,
     })
+
     expect(document.querySelector('nav[aria-label="Inbox filters"]')).not.toBeNull()
     await expectAccessible(wrapper)
     wrapper.unmount()

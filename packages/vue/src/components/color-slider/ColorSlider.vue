@@ -109,14 +109,18 @@ const getValidColorSpace = (
     warnInDev(
       `[HareUI ColorSlider] Invalid combination: channel="${channel}" requires colorSpace="${required}", but received colorSpace="${colorSpace}". Auto-correcting to "${required}".`,
     )
+
     return required
   }
+
   if (HSL_HSB_ONLY_CHANNELS.has(channel) && colorSpace === 'rgb') {
     warnInDev(
       `[HareUI ColorSlider] Invalid combination: channel="${channel}" is not available in RGB color space. Use colorSpace="hsl" or colorSpace="hsb" instead. Auto-correcting to "hsl".`,
     )
+
     return 'hsl'
   }
+
   return colorSpace
 }
 
@@ -227,17 +231,20 @@ const props = withDefaults(defineProps<ColorSliderProps>(), {
   defaultValue: '#000000',
   showOutput: undefined,
 })
+
 const isDisabled = useFieldsetDisabled(() => props.disabled)
 const emit = defineEmits<ColorSliderEmits>()
 const slots = defineSlots<ColorSliderSlots>()
 
 const pickerCtx = useColorPickerContext()
+
 // Uncontrolled-and-no-ColorPicker state: tracked locally, as NumberField tracks `formValue`.
 const localValue = ref<string | Color>(props.defaultValue ?? '#000000')
 const isControlled = computed(() => props.modelValue !== undefined)
 const boundValue = computed<string | Color>(() => {
   if (isControlled.value) return props.modelValue!
   if (pickerCtx) return pickerCtx.color.value
+
   return localValue.value
 })
 
@@ -246,6 +253,7 @@ const handleUpdate = (color: Color) => {
     if (pickerCtx) pickerCtx.setColor(color)
     else localValue.value = color
   }
+
   emit('update:modelValue', color)
 }
 
@@ -278,10 +286,12 @@ const toNativeSpace = (color: Color, channel: ColorChannel, space: ColorSpace): 
 const nativeColor = computed(() =>
   toNativeSpace(normalizeColor(boundValue.value), props.channel, effectiveColorSpace.value),
 )
+
 const channelValue = computed(() => getChannelValue(nativeColor.value, props.channel))
 const channelName = computed(() => getChannelName(props.channel))
 
 const locale = useLocale()
+
 // Mirrors RAC's `formatChannelValue`: hue in degrees, percentages for saturation / lightness /
 // brightness / alpha, plain numbers for red / green / blue. The formatter is rebuilt only when the
 // locale or channel changes, not on every drag move.
@@ -309,6 +319,7 @@ const channelFormat = computed(() => {
       }
   }
 })
+
 const valueText = computed(() =>
   channelFormat.value.formatter.format(channelValue.value / channelFormat.value.divisor),
 )
@@ -318,6 +329,7 @@ const valueText = computed(() =>
 const formValue = computed(() =>
   String(props.channel === 'alpha' ? channelValue.value / 100 : channelValue.value),
 )
+
 // reka-limitation: `SliderThumbImpl` binds `aria-valuenow/min/max` after `$attrs`, so they can't be
 // overridden by props; they're rewritten on the thumb element after each render instead.
 const thumbRef = ref<{ $el?: Element } | null>(null)
@@ -345,12 +357,15 @@ const displayColor = computed<Color>(() => {
   const native = nativeColor.value
   if (props.channel === 'hue') return { ...convertToHsl(native), s: 100, l: 50, alpha: 1 } as Color
   if (props.channel === 'alpha') return native
+
   return { ...native, alpha: 1 } as Color
 })
+
 const thumbPercent = computed(() => {
   const { min, max } = getChannelRange(props.channel)
   return ((channelValue.value - min) / (max - min)) * 100
 })
+
 // RAC positions the thumb with `translate(-50%, -50%)` and a plain percentage along the main axis (and
 // `left`/`top: 50%` from the theme on the cross axis). Reka offsets the main axis by a thumb-size
 // correction and, vertically, anchors to `bottom`; both are overridden here.
@@ -373,11 +388,13 @@ const trackMainGradient = computed(() => {
     const opaque = { ...convertToRgb(nativeColor.value), alpha: 1 }
     return `linear-gradient(${direction}, ${colorToString({ ...opaque, alpha: 0 } as Color, 'rgb')}, ${colorToString(opaque, 'rgb')})`
   }
+
   const gradient = getSliderBackgroundStyle(
     nativeColor.value,
     props.channel,
     effectiveColorSpace.value,
   ).background
+
   return gradient.replace(/to right/g, direction)
 })
 
@@ -385,6 +402,7 @@ const edgeColors = computed(() => {
   const range = getChannelRange(props.channel)
   const start = setChannelValue(displayColor.value, props.channel, range.min)
   const end = setChannelValue(displayColor.value, props.channel, range.max)
+
   return { start: colorToString(start, 'rgb'), end: colorToString(end, 'rgb') }
 })
 
@@ -413,6 +431,7 @@ const thumbLabel = computed(() =>
     ? attrs['aria-label']
     : channelName.value,
 )
+
 const thumbLabelledBy = computed(() =>
   hasLabel.value ? autoId : (attrs['aria-labelledby'] as string | undefined),
 )
@@ -423,6 +442,7 @@ const isDragging = ref(false)
 const onPointerDown = () => {
   if (!isDisabled.value) isDragging.value = true
 }
+
 const onPointerEnd = () => {
   isDragging.value = false
 }

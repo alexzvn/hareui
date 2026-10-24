@@ -111,7 +111,9 @@ import { Icon } from '@iconify/vue'
 import { ref } from 'vue'
 
 const expandedKeys = ref<ExpandedValue[]>(['preview'])
-const itemIds = ['preview', 'download'] // Track our disclosure items
+
+// Track our disclosure items
+const itemIds = ['preview', 'download']
 
 const { isNextDisabled, isPrevDisabled, onNext, onPrevious } = useDisclosureGroupNavigation({
   expandedKeys,

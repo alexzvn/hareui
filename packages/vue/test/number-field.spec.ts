@@ -18,6 +18,7 @@ describe('NumberField', () => {
       props: { defaultValue: 10, step: 5 },
       attachTo: document.body,
     })
+
     await wrapper.get(input).trigger('keydown', { key: 'ArrowUp' })
     expect(wrapper.emitted('update:modelValue')?.at(-1)).toEqual([15])
     await nextTick()
@@ -32,6 +33,7 @@ describe('NumberField', () => {
       props: { defaultValue: 0, min: 0, max: 10 },
       attachTo: document.body,
     })
+
     expect(wrapper.get(dec).attributes('disabled')).toBeDefined()
     expect(wrapper.get(inc).attributes('disabled')).toBeUndefined()
     const el = wrapper.get(input)
@@ -47,6 +49,7 @@ describe('NumberField', () => {
       props: { defaultValue: 3, readonly: true },
       attachTo: document.body,
     })
+
     expect(wrapper.get(inc).attributes('disabled')).toBeDefined()
     await wrapper.get(input).trigger('keydown', { key: 'ArrowUp' })
     expect(wrapper.emitted('update:modelValue')).toBeUndefined()
@@ -63,6 +66,7 @@ describe('NumberField', () => {
         invalid: true,
       },
     })
+
     const el = wrapper.get(input)
     expect(wrapper.get('label').attributes('for')).toBe('w')
     expect(el.attributes('id')).toBe('w')
@@ -80,10 +84,12 @@ describe('NumberField', () => {
   it('submits the raw number (not the formatted text) under `name`', async () => {
     const form = document.createElement('form')
     document.body.append(form)
+
     const wrapper = mount(NumberField, {
       props: { name: 'pct', defaultValue: 0.5, step: 0.1, formatOptions: { style: 'percent' } },
       attachTo: form,
     })
+
     expect((wrapper.get(input).element as HTMLInputElement).value).toBe('50%')
     expect(new FormData(form).getAll('pct')).toEqual(['0.5'])
     await wrapper.get(input).trigger('keydown', { key: 'ArrowUp' })
@@ -95,16 +101,20 @@ describe('NumberField', () => {
   it('clamps an out-of-range value for display and submission without emitting (RAC snap)', () => {
     const form = document.createElement('form')
     document.body.append(form)
+
     const wrapper = mount(NumberField, {
       props: { name: 'q', modelValue: -5, min: 0 },
       attachTo: form,
     })
+
     expect((wrapper.get(input).element as HTMLInputElement).value).toBe('0')
     expect(new FormData(form).get('q')).toBe('0')
     expect(wrapper.emitted('update:modelValue')).toBeUndefined()
+
     const pct = mount(NumberField, {
       props: { modelValue: 1.5, min: 0, max: 1, step: 0.1, formatOptions: { style: 'percent' } },
     })
+
     expect((pct.get(input).element as HTMLInputElement).value).toBe('100%')
     wrapper.unmount()
     form.remove()
@@ -121,13 +131,16 @@ describe('NumberField', () => {
     await el.trigger('input')
     await commit(wrapper)
     await nextTick()
+
     const result = {
       emitted: wrapper.emitted('update:modelValue')?.at(-1)?.[0],
       formValue: new FormData(form).get('qty'),
       shown: (el.element as HTMLInputElement).value,
     }
+
     wrapper.unmount()
     form.remove()
+
     return result
   }
 
@@ -151,6 +164,7 @@ describe('NumberField', () => {
       props: { defaultValue: 10, step: 5 },
       attachTo: document.body,
     })
+
     await wrapper.get(input).trigger('keydown', { key: 'PageUp' })
     expect(wrapper.emitted('update:modelValue')?.at(-1)).toEqual([15])
     await wrapper.get(input).trigger('keydown', { key: 'PageDown' })
@@ -190,6 +204,7 @@ describe('NumberField', () => {
       props: { label: 'Width', defaultValue: 5, min: 1, max: 9 },
       attachTo: document.body,
     })
+
     const el = wrapper.get(input)
     await el.trigger('keydown', { key: 'ArrowDown' })
     expect(wrapper.emitted('update:modelValue')?.at(-1)).toEqual([4])
@@ -205,6 +220,7 @@ describe('NumberField', () => {
       props: { label: 'Width', defaultValue: 5 },
       attachTo: document.body,
     })
+
     const el = wrapper.get(input)
     ;(el.element as HTMLInputElement).value = '12'
     await el.trigger('input')
@@ -218,20 +234,25 @@ describe('NumberField', () => {
       props: { label: 'Width', defaultValue: 5 },
       attachTo: document.body,
     })
+
     await flushPromises()
     ;(wrapper.get(input).element as HTMLElement).focus()
+
     const down = new PointerEvent('pointerdown', {
       bubbles: true,
       cancelable: true,
       button: 0,
       pointerType: 'mouse',
     })
+
     wrapper.get(inc).element.dispatchEvent(down)
+
     wrapper
       .get(inc)
       .element.dispatchEvent(
         new PointerEvent('pointerup', { bubbles: true, button: 0, pointerType: 'mouse' }),
       )
+
     await nextTick()
     expect(down.defaultPrevented).toBe(true)
     expect(document.activeElement).toBe(wrapper.get(input).element)
@@ -244,6 +265,7 @@ describe('NumberField', () => {
       props: { id: 'w', label: 'Width', defaultValue: 5, min: 0, max: 10 },
       attachTo: document.body,
     })
+
     const el = wrapper.get(input)
     expect(el.attributes()).toMatchObject({
       role: 'spinbutton',
@@ -251,14 +273,17 @@ describe('NumberField', () => {
       'aria-valuemin': '0',
       'aria-valuemax': '10',
     })
+
     expect(wrapper.get(inc).attributes()).toMatchObject({
       'aria-label': 'Increase Width',
       'aria-controls': 'w',
     })
+
     expect(wrapper.get(dec).attributes()).toMatchObject({
       'aria-label': 'Decrease Width',
       'aria-controls': 'w',
     })
+
     await el.trigger('keydown', { key: 'ArrowUp' })
     expect(el.attributes('aria-valuenow')).toBe('6')
     wrapper.unmount()
@@ -275,9 +300,11 @@ describe('NumberField', () => {
     const disabled = mount(NumberField, { props: { label: 'Width', disabled: true } })
     expect(disabled.get(input).attributes('disabled')).toBeDefined()
     expect([inc, dec].map((s) => disabled.get(s).attributes('disabled'))).toEqual(['', ''])
+
     const readonly = mount(NumberField, {
       props: { label: 'Width', readonly: true, required: true },
     })
+
     expect(readonly.get(input).attributes('readonly')).toBeDefined()
     expect(readonly.get(input).attributes('required')).toBeDefined()
   })
@@ -292,6 +319,7 @@ describe('NumberField', () => {
         invalid: true,
       },
     })
+
     expect(wrapper.get('#w-error').text()).toBe('Too small')
     expect(wrapper.find('#w-description').exists()).toBe(false)
     await wrapper.setProps({ invalid: false })
@@ -314,6 +342,7 @@ describe('NumberField stepper button slots', () => {
       </NumberField>`,
       }),
     )
+
     const decIcon = () => wrapper.get(dec).find('[data-slot=number-field-decrement-button-icon]')
     const incIcon = () => wrapper.get(inc).find('[data-slot=number-field-increment-button-icon]')
     expect(wrapper.get(dec).find('[data-test=minus]').exists()).toBe(true)
@@ -343,10 +372,12 @@ describe('NumberField stepper button slots', () => {
         if (this.$el instanceof Element && this.$el.matches(`${inc}, ${dec}`)) buttonUpdates++
       },
     }
+
     const wrapper = mount(NumberField, {
       props: { label: 'Width', description: 'A', defaultValue: 1 },
       global: { mixins: [countButtonUpdates] },
     })
+
     // reka's form-control check is computed before the input mounts and catches up on the first update of any kind
     await wrapper.setProps({ description: 'B' })
     buttonUpdates = 0

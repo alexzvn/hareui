@@ -38,6 +38,7 @@ const series = {
   storage: { name: 'Storage' },
   network: { name: 'Network' },
 }
+
 const colors = ['var(--chart-2)', 'var(--chart-3)', 'var(--chart-5)']
 
 const formatTick = (value: number | string) => {

@@ -17,11 +17,13 @@ export const useUndoRedo = () => {
     (current) => {
       if (current === lastSearch) return
       lastSearch = current
+
       if (isNavigating) {
         // This change came from our own undo/redo navigation.
         isNavigating = false
         return
       }
+
       // A new change from the user: drop any forward history and add the entry.
       historyStack = historyStack.slice(0, currentIndex + 1)
       historyStack.push(current)
@@ -43,6 +45,7 @@ export const useUndoRedo = () => {
       canRedo.value = newIndex < historyStack.length - 1
     }
   }
+
   onMounted(() => window.addEventListener('popstate', onPopState))
   onBeforeUnmount(() => window.removeEventListener('popstate', onPopState))
 

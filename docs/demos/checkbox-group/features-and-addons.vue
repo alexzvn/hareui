@@ -26,6 +26,7 @@ import { Icon } from '@iconify/vue'
 
 const contentClass =
   'w-full items-start gap-3 rounded-xl border border-border/50 bg-default px-4 py-3 transition-colors hover:bg-default-hover data-[selected=true]:border-primary/30 data-[selected=true]:bg-primary-soft'
+
 const controlClass = 'mt-0.5'
 
 type AddOn = {

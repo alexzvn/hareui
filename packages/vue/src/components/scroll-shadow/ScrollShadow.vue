@@ -102,6 +102,7 @@ const props = withDefaults(defineProps<ScrollShadowProps>(), {
   visibility: 'auto',
   enabled: true,
 })
+
 const emit = defineEmits<ScrollShadowEmits>()
 defineSlots<ScrollShadowSlots>()
 
@@ -132,6 +133,7 @@ const measure = () => {
   const prev = state.value
   if (prev && prev.before === before && prev.after === after) return
   if (frame !== null) cancelAnimationFrame(frame)
+
   frame = requestAnimationFrame(() => {
     frame = null
     state.value = { before, after }
@@ -165,6 +167,7 @@ watch(
       childList: true,
       subtree: true,
     })
+
     cleanup = () => {
       el.removeEventListener('scroll', measure)
       resize.disconnect()
@@ -175,6 +178,7 @@ watch(
   },
   { flush: 'post' },
 )
+
 onBeforeUnmount(() => cleanup?.())
 
 const scrollAttrs = computed<Record<string, string>>(() => {
@@ -183,8 +187,10 @@ const scrollAttrs = computed<Record<string, string>>(() => {
     if (props.visibility === 'both') return { [`data-${start}-${end}-scroll`]: 'true' }
     return props.visibility === 'none' ? {} : { [`data-${props.visibility}-scroll`]: 'true' }
   }
+
   if (!auto.value || !state.value) return {}
   const { before, after } = state.value
+
   return before && after
     ? { [`data-${start}-${end}-scroll`]: 'true' }
     : { [`data-${start}-scroll`]: String(before), [`data-${end}-scroll`]: String(after) }

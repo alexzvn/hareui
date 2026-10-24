@@ -61,6 +61,7 @@ const props = defineProps<{
   /** The current color (the swatch matching it is selected) */
   color: Color
 }>()
+
 const emit = defineEmits<{ select: [color: Color] }>()
 
 // Chunk swatches into pages
@@ -71,6 +72,7 @@ const totalPages = computed(() => swatchPages.value.length)
 const swatchPage = ref(
   (() => {
     if (!props.initialColorHex) return 0
+
     const swatchIndex = props.swatches.findIndex(
       (s) => s.toLowerCase() === props.initialColorHex!.toLowerCase(),
     )

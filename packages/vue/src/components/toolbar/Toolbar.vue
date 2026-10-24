@@ -84,6 +84,7 @@ provide(toolbarContextKey, {
 })
 
 const root = ref<{ $el: HTMLElement }>()
+
 const FOCUSABLE = [
   'input:not([disabled]):not([type=hidden])',
   'select:not([disabled])',
@@ -110,12 +111,15 @@ const focusable = (el: HTMLElement) => {
 const move = (el: HTMLElement, step: 1 | -1, edge?: 'first' | 'last') => {
   const nodes = focusable(el)
   if (nodes.length === 0) return
+
   if (edge) {
     nodes[edge === 'first' ? 0 : nodes.length - 1]!.focus()
     return
   }
+
   const active = document.activeElement as HTMLElement | null
   const index = active ? nodes.indexOf(active) : -1
+
   // No wrapping: focus stays on the first/last control (React Aria's focus manager default).
   const next = index === -1 ? (step === 1 ? nodes[0] : undefined) : nodes[index + step]
   next?.focus()
@@ -138,10 +142,12 @@ const onKeydown = (event: KeyboardEvent) => {
     // Jump to the edge and let the browser's Tab carry focus out of the toolbar.
     lastFocused = document.activeElement as HTMLElement | null
     move(el, 1, event.shiftKey ? 'first' : 'last')
+
     return
   } else {
     return
   }
+
   event.stopPropagation()
   event.preventDefault()
 }

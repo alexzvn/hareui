@@ -47,6 +47,7 @@ const handleSubmit = (e: Event) => {
   }
 
   isSubmitting.value = true
+
   // Simulate API call
   setTimeout(() => {
     if (value.value === '123456') {
@@ -56,6 +57,7 @@ const handleSubmit = (e: Event) => {
     } else {
       error.value = 'Invalid code. Please try again.'
     }
+
     isSubmitting.value = false
   }, 1500)
 }

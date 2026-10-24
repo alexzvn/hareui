@@ -77,6 +77,7 @@ defineProps<{
   /** Theme the preview currently shows. */
   theme: PreviewTheme
 }>()
+
 const emit = defineEmits<{ toggleTheme: []; preset: [device: PreviewDevice]; preload: [] }>()
 const device = defineModel<PreviewDevice>('device', { required: true })
 const select = (value: PreviewDevice) => {
@@ -93,15 +94,19 @@ const DEVICES: { value: PreviewDevice; label: string }[] = [
 // HeroUI `Segment` (size sm): a radiogroup whose selected pill slides between items.
 const items = useTemplateRef<HTMLButtonElement[]>('items')
 const indicator = ref<{ x: number; width: number }>()
+
 /** The pill slides only when the device changes; layout remeasures (fonts, resize, unhiding) snap it in place. */
 const sliding = ref(false)
+
 const measureIndicator = () => {
   const item = items.value?.[DEVICES.findIndex((d) => d.value === device.value)]
   if (!item?.offsetWidth || !group.value) return
+
   // Fractional geometry: offsetLeft/offsetWidth round, leaving the pill up to half a pixel off its item.
   const rect = item.getBoundingClientRect()
   indicator.value = { x: rect.left - group.value.getBoundingClientRect().left, width: rect.width }
 }
+
 // The group is hidden below `md` (items measure 0) and its font may load late: remeasure whenever it resizes.
 const group = useTemplateRef<HTMLElement>('group')
 let resizeObserver: ResizeObserver | undefined
@@ -110,27 +115,35 @@ onMounted(() => {
     sliding.value = false
     measureIndicator()
   })
+
   if (group.value) resizeObserver.observe(group.value)
 })
+
 onBeforeUnmount(() => resizeObserver?.disconnect())
+
 watch(device, () => {
   sliding.value = true
   nextTick(measureIndicator)
 })
+
 const onSegmentKeydown = (event: KeyboardEvent) => {
   const step = (
     { ArrowRight: 1, ArrowDown: 1, ArrowLeft: -1, ArrowUp: -1 } as Record<string, number>
   )[event.key]
+
   if (!step) return
   event.preventDefault()
+
   const index =
     (DEVICES.findIndex((d) => d.value === device.value) + step + DEVICES.length) % DEVICES.length
+
   select(DEVICES[index].value)
   items.value?.[index]?.focus()
 }
 
 const icon = (name: 'moon' | 'sun' | 'arrow-up-right') =>
   `<svg aria-hidden="true" class="size-3.5" viewBox="0 0 16 16" xmlns="http://www.w3.org/2000/svg">${gravity.icons[name].body}</svg>`
+
 const iconButtonClass =
   'flex size-7 cursor-(--cursor-interactive) items-center justify-center rounded-lg text-muted outline-none transition-colors hover:bg-default hover:text-foreground focus-visible:status-focused motion-reduce:transition-none'
 </script>

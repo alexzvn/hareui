@@ -56,6 +56,7 @@ const series = {
     valueFormatter: formatPercent,
   },
 } satisfies Record<string, ChartComposedSeries>
+
 const colors = [
   'var(--chart-4)',
   'var(--chart-3)',

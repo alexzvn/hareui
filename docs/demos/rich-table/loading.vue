@@ -43,6 +43,7 @@ const data: Payment[] = [
 
 const formatCurrency = (value: number) =>
   new Intl.NumberFormat('en-US', { style: 'currency', currency: 'USD' }).format(value)
+
 const loading = ref(true)
 const loadingAnimation = ref<'carousel' | 'carousel-inverse' | 'swing' | 'elastic'>('carousel')
 

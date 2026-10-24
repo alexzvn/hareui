@@ -57,6 +57,7 @@ const log = ref('Click, hover or right-click a row')
 
 const onSelect = (_: Event, row: RichTableRow<Payment>) =>
   (log.value = `Selected ${row.original.name}`)
+
 const onHover = (_: Event, row: RichTableRow<Payment> | null) =>
   row && (log.value = `Hovering ${row.original.name}`)
 
@@ -66,6 +67,7 @@ const items = [
   { value: 'view', label: 'View customer' },
   { value: 'refund', label: 'Refund payment', variant: 'danger' as const },
 ]
+
 const root = useTemplateRef('root')
 const menuOpen = ref(false)
 const menuRow = ref<Payment>()

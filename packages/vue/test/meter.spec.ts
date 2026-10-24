@@ -21,9 +21,11 @@ describe('Meter', () => {
       'aria-valuenow': '60',
       'aria-valuetext': '60%',
     })
+
     expect(root.attributes('aria-labelledby')).toBe(
       wrapper.get('[data-slot="label"]').attributes('id'),
     )
+
     expect(wrapper.get('[data-slot="meter-output"]').text()).toBe('60%')
     expect(wrapper.get('[data-slot="meter-fill"]').attributes('style')).toContain('width: 60%')
   })
@@ -37,11 +39,13 @@ describe('Meter', () => {
         formatOptions: { style: 'currency', currency: 'USD' },
       },
     })
+
     const root = wrapper.get('[data-slot="meter"]')
     expect(root.attributes()).toMatchObject({
       'aria-valuenow': '1000',
       'aria-valuetext': '$1,000.00',
     })
+
     expect(wrapper.get('[data-slot="meter-fill"]').attributes('style')).toContain('width: 100%')
   })
 
@@ -51,9 +55,11 @@ describe('Meter', () => {
       'meter-track',
       'meter-fill',
     ])
+
     expect(slots(mount(Meter, { props: { value: 10, showOutput: true } }))).toContain(
       'meter-output',
     )
+
     expect(
       slots(mount(Meter, { props: { label: 'L', value: 10, showOutput: false } })),
     ).not.toContain('meter-output')
@@ -78,12 +84,14 @@ describe('Meter', () => {
     ],
   ])('has no axe violations: %s', async (_, props) => {
     const wrapper = mount(Meter, { props, attachTo: document.body })
+
     // React Aria's useMeter (and so HeroUI) sets `role="meter progressbar"` so browsers without `meter` fall back to
     // `progressbar`. axe doesn't resolve fallback roles and rejects the aria-value* attributes for that one node only.
     const violations = await axeViolations(wrapper)
     expect(
       violations.filter((v) => !v.startsWith('aria-allowed-attr: <div role="meter progressbar"')),
     ).toEqual([])
+
     wrapper.unmount()
   })
 
@@ -99,11 +107,13 @@ describe('Meter', () => {
     const wrapper = mount(Meter, {
       props: { label: 'Battery', value: 3, maxValue: 4, valueLabel: '3 of 4 bars' },
     })
+
     const root = wrapper.get('[data-slot="meter"]')
     expect(root.attributes()).toMatchObject({
       'aria-valuenow': '3',
       'aria-valuetext': '3 of 4 bars',
     })
+
     await wrapper.setProps({ value: 1, valueLabel: undefined })
     expect(root.attributes()).toMatchObject({ 'aria-valuenow': '1', 'aria-valuetext': '25%' })
   })

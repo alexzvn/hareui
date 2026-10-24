@@ -15,6 +15,7 @@ const createLayer = (parent: ParentNode = document.body) => {
   layer.setAttribute('data-dismissable-layer', '')
   layer.append(document.createElement('button'))
   parent.append(layer)
+
   return layer
 }
 
@@ -33,10 +34,13 @@ const press = <T>(
   const listener = (event: Event) => {
     result = decide(event as PointerEvent)
   }
+
   document.addEventListener('pointerdown', listener, { capture: true, once: true })
+
   target.dispatchEvent(
     new PointerEvent('pointerdown', { bubbles: true, composed: true, button: 0, ...init }),
   )
+
   return result as T
 }
 
@@ -87,24 +91,31 @@ describe('shouldDismissOnOutside', () => {
     const layer = createLayer(root)
     const nested = createLayer(root)
     const outside = root.appendChild(document.createElement('button'))
+
     // What a document listener sees in a browser (happy-dom doesn't retarget): the host as `target`, the real
     // element first in the composed path.
     const retargeted = (inner: Element) => {
       const event = new PointerEvent('pointerdown', { button: 0 })
       Object.defineProperty(event, 'target', { value: host })
+
       Object.defineProperty(event, 'composedPath', {
         value: () => [inner, root, host, document.body],
       })
+
       return event
     }
+
     const policy = { content: layer }
     expect(
       shouldDismissOnOutside(toOutsideEvent(retargeted(nested.firstElementChild!)), policy),
     ).toBe(false)
+
     expect(shouldDismissOnOutside(toOutsideEvent(retargeted(outside)), policy)).toBe(true)
+
     expect(shouldDismissOnPress(retargeted(layer.firstElementChild!), { content: nested })).toBe(
       true,
     )
+
     expect(shouldDismissOnPress(retargeted(nested.firstElementChild!), { content: nested })).toBe(
       false,
     )
@@ -141,9 +152,11 @@ describe('shouldDismissOnEscape', () => {
   it('follows `isDismissible` unless `isKeyboardDismissible` is set', () => {
     expect(shouldDismissOnEscape({ content: null })).toBe(true)
     expect(shouldDismissOnEscape({ content: null, isDismissible: false })).toBe(false)
+
     expect(
       shouldDismissOnEscape({ content: null, isDismissible: false, isKeyboardDismissible: true }),
     ).toBe(true)
+
     expect(shouldDismissOnEscape({ content: null, isKeyboardDismissible: false })).toBe(false)
   })
 })
@@ -172,6 +185,7 @@ describe('shouldDismissOnPress', () => {
     expect(
       pressRaw(outside, { content: layer, shouldIgnoreSecondaryButton: true }, { button: 2 }),
     ).toBe(false)
+
     expect(pressRaw(outside, { content: layer, isDismissible: false })).toBe(false)
   })
 })
@@ -184,6 +198,7 @@ describe('useLayerDismiss', () => {
     const { onEscapeKeyDown, onInteractOutside } = scope.run(() =>
       useLayerDismiss({ content: layer, isDismissible }),
     )!
+
     const escape = new KeyboardEvent('keydown', { key: 'Escape', cancelable: true })
     onEscapeKeyDown(escape)
     expect(escape.defaultPrevented).toBe(true)
@@ -191,8 +206,10 @@ describe('useLayerDismiss', () => {
     const prevented = press(outside, (event) => {
       const outsideEvent = toOutsideEvent(event)
       onInteractOutside(outsideEvent)
+
       return outsideEvent.defaultPrevented
     })
+
     expect(prevented).toBe(true)
     scope.stop()
   })
@@ -205,17 +222,21 @@ describe('useLayerDismiss', () => {
     const { onInteractOutside } = scope.run(() =>
       useLayerDismiss({ content: layer, earlyPress: { isOpen, onDismiss } }),
     )!
+
     const outside = document.body.appendChild(document.createElement('button'))
     press(outside, () => undefined)
     expect(onDismiss).not.toHaveBeenCalled()
 
     isOpen.value = true
     await nextTick()
+
     const isPreventedByReka = press(outside, (event) => {
       const outsideEvent = toOutsideEvent(event)
       onInteractOutside(outsideEvent)
+
       return outsideEvent.defaultPrevented
     })
+
     expect(onDismiss).toHaveBeenCalledOnce()
     expect(isPreventedByReka).toBe(true)
 

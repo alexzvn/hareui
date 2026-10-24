@@ -23,6 +23,7 @@ describe('calendar', () => {
       month: 1,
       day: 10,
     })
+
     expect(day10.attributes('data-selected')).toBe('true')
     wrapper.unmount()
   })
@@ -35,6 +36,7 @@ describe('calendar', () => {
         maxValue: new CalendarDate(2025, 1, 20),
       },
     })
+
     const day5 = wrapper.findAll('[data-slot=calendar-cell]').find((cell) => cell.text() === '5')!
     expect(day5.attributes('data-disabled')).toBe('')
 
@@ -50,6 +52,7 @@ describe('calendar', () => {
         isDateUnavailable: (date) => date.day === 18,
       },
     })
+
     const day18 = wrapper.findAll('[data-slot=calendar-cell]').find((cell) => cell.text() === '18')!
     expect(day18.attributes('data-unavailable')).toBe('')
 
@@ -74,6 +77,7 @@ describe('calendar', () => {
 
     await trigger.trigger('click')
     await nextTick()
+
     expect(wrapper.find('[data-slot=calendar-year-picker-grid]').attributes('data-open')).toBe(
       'true',
     )
@@ -81,26 +85,32 @@ describe('calendar', () => {
     const year2030 = wrapper
       .findAll('[data-slot=calendar-year-picker-year-cell]')
       .find((cell) => cell.text() === '2030')!
+
     await year2030.trigger('click')
     await nextTick()
 
     expect(
       wrapper.find('[data-slot=calendar-year-picker-grid]').attributes('data-open'),
     ).toBeUndefined()
+
     expect(trigger.text()).toContain('2030')
+
     expect(wrapper.emitted('update:placeholder')?.[0]?.[0]).toMatchObject({
       year: 2030,
       month: 1,
       day: 15,
     })
+
     wrapper.unmount()
   })
+
   it('numberOfMonths renders one panel per month with shared prev/next paging by the full width', async () => {
     const wrapper = mount(Calendar, { props: { defaultPlaceholder: focused, numberOfMonths: 2 } })
     const panels = wrapper.findAll('[data-slot=calendar-panel]')
     expect(panels).toHaveLength(2)
     expect(panels[0].text()).toContain('January')
     expect(panels[1].text()).toContain('February')
+
     // Only the first panel gets a prev button, only the last gets a next button.
     expect(panels[0].find('[data-slot=calendar-nav-button]').exists()).toBe(true)
     expect(panels[1].findAll('[data-slot=calendar-nav-button]')).toHaveLength(1)
@@ -132,10 +142,13 @@ describe('calendar week/day view (visibleDuration)', () => {
         defaultPlaceholder: parseDate('2025-01-15'),
       },
     })
+
     expect(cells(wrapper).map((c) => c.text())).toEqual(['12', '13', '14', '15', '16', '17', '18'])
+
     expect(wrapper.get('[data-slot=calendar-heading]').text().replace(/\s/g, ' ')).toBe(
       'January 12 – 18, 2025',
     )
+
     await wrapper.findAll('[data-slot=calendar-nav-button]')[1]!.trigger('click')
     expect(cells(wrapper)[0]!.text()).toBe('19')
   })
@@ -149,7 +162,9 @@ describe('calendar week/day view (visibleDuration)', () => {
         defaultPlaceholder: parseDate('2025-01-15'),
       },
     })
+
     expect(cells(wrapper).map((c) => c.text())).toEqual(['13', '14', '15', '16', '17'])
+
     expect(wrapper.findAll('[data-slot=calendar-header-cell]').map((c) => c.text())).toEqual([
       'Mon',
       'Tue',
@@ -168,6 +183,7 @@ describe('calendar week/day view (visibleDuration)', () => {
         defaultPlaceholder: parseDate('2025-01-15'),
       },
     })
+
     const all = cells(wrapper)
     expect(all[0]!.text()).toBe('5')
     expect(all[0]!.attributes('data-disabled')).toBe('')
@@ -185,17 +201,22 @@ describe('calendar week/day view (visibleDuration)', () => {
       },
       attachTo: document.body,
     })
+
     await cells(wrapper)[1]!.trigger('click')
+
     expect((wrapper.emitted('update:modelValue')!.at(-1)![0] as DateValue).toString()).toBe(
       '2025-01-13',
     )
+
     const grid = wrapper.get('[data-slot=calendar-grid]')
     for (let i = 0; i < 6; i++) await grid.trigger('keydown', { key: 'ArrowRight' })
     expect(cells(wrapper)[0]!.text()).toBe('19')
     await grid.trigger('keydown', { key: 'Enter' })
+
     expect((wrapper.emitted('update:modelValue')!.at(-1)![0] as DateValue).toString()).toBe(
       '2025-01-19',
     )
+
     wrapper.unmount()
   })
 })
@@ -203,20 +224,25 @@ describe('calendar week/day view (visibleDuration)', () => {
 describe('calendar keyboard paging and re-selection', () => {
   const heading = (w: { get: (s: string) => { text: () => string } }) =>
     w.get('[data-slot=calendar-heading]').text()
+
   const activeDate = () => document.activeElement?.getAttribute('data-value')
   const mountFocused = async () => {
     const wrapper = mount(Calendar, {
       props: { locale: 'en-US', defaultValue: parseDate('2025-01-15') },
       attachTo: document.body,
     })
+
     ;(wrapper.get('[data-value="2025-01-15"]').element as HTMLElement).focus()
     expect(activeDate()).toBe('2025-01-15')
+
     return wrapper
   }
+
   const press = async (init: KeyboardEventInit) => {
     document.activeElement!.dispatchEvent(
       new KeyboardEvent('keydown', { bubbles: true, cancelable: true, ...init }),
     )
+
     await nextTick()
     await nextTick()
   }
@@ -263,6 +289,7 @@ describe('calendar keyboard paging and re-selection', () => {
     const wrapper = mount(Calendar, {
       props: { locale: 'en-US', defaultValue: parseDate('2025-01-15') },
     })
+
     const cell = wrapper.get('[data-value="2025-01-15"]')
     expect(cell.attributes('data-selected')).toBe('true')
     await cell.trigger('click')
@@ -286,6 +313,7 @@ describe('calendar keyboard paging and re-selection', () => {
     const wrapper = mount(Calendar, {
       props: { locale: 'en-US', defaultValue: parseDate('2025-01-15') },
     })
+
     const outside = wrapper.get('[data-value="2024-12-30"]')
     expect(outside.attributes('data-outside-view')).toBeDefined()
     await outside.trigger('click')
@@ -301,6 +329,7 @@ describe('calendar keyboard paging and re-selection', () => {
     const wrapper = mount(Calendar, {
       props: { locale: 'en-US', defaultValue: parseDate('2025-01-15') },
     })
+
     const outside = wrapper.get('[data-value="2025-02-01"]')
     expect(outside.attributes('data-outside-view')).toBeDefined()
     await outside.trigger('click')
@@ -317,11 +346,13 @@ describe('calendar navigation buttons', () => {
     const wrapper = mount(Calendar, {
       props: { locale: 'en-US', defaultValue: parseDate('2025-01-15') },
     })
+
     const [prev, next] = wrapper.findAll('[data-slot=calendar-nav-button]')
     expect([prev!.attributes('aria-label'), next!.attributes('aria-label')]).toEqual([
       'Previous',
       'Next',
     ])
+
     await next!.trigger('click')
     expect(wrapper.get('[data-slot=calendar-heading]').text()).toBe('February 2025')
     expect(wrapper.get('[data-value="2025-02-15"]').attributes('tabindex')).toBe('0')
@@ -340,10 +371,12 @@ describe('calendar navigation buttons', () => {
 
 describe('Calendar accessibility', () => {
   const flush = () => new Promise((r) => setTimeout(r, 0))
+
   const press = (key: string) =>
     document.activeElement!.dispatchEvent(
       new KeyboardEvent('keydown', { key, code: key, bubbles: true, cancelable: true }),
     )
+
   const date = new CalendarDate(2025, 1, 15)
 
   it('passes axe idle, selected, disabled, read-only, invalid, unavailable, multi-select, multi-month and week view', async () => {
@@ -363,6 +396,7 @@ describe('Calendar accessibility', () => {
       { defaultValue: date, visibleDuration: { weeks: 1 } },
       { defaultValue: date, yearPicker: true },
     ]
+
     for (const props of cases) {
       const wrapper = mount(Calendar, { props, attachTo: document.body })
       await nextTick()
@@ -376,6 +410,7 @@ describe('Calendar accessibility', () => {
       props: { defaultValue: date, yearPicker: true },
       attachTo: document.body,
     })
+
     await wrapper.get('[data-slot=calendar-year-picker-trigger]').trigger('click')
     await flush()
     await expectAccessible(wrapper)
@@ -387,14 +422,17 @@ describe('Calendar accessibility', () => {
       props: { defaultValue: date, ariaLabel: 'Event date', numberOfMonths: 2 },
       attachTo: document.body,
     })
+
     expect(wrapper.attributes('role')).toBe('application')
     expect(wrapper.attributes('aria-label')).toContain('Event date')
     const grids = wrapper.findAll('[data-slot=calendar-grid]')
     expect(grids.map((g) => g.attributes('role'))).toEqual(['grid', 'grid'])
+
     expect(grids.map((g) => g.attributes('aria-label'))).toEqual([
       'Event date, January 2025',
       'Event date, February 2025',
     ])
+
     expect(grids[0]!.attributes('aria-multiselectable')).toBeUndefined()
     wrapper.unmount()
   })
@@ -404,10 +442,13 @@ describe('Calendar accessibility', () => {
       props: { defaultValue: [date, date.add({ days: 2 })], selectionMode: 'multiple' },
       attachTo: document.body,
     })
+
     expect(wrapper.get('[data-slot=calendar-grid]').attributes('aria-multiselectable')).toBe('true')
+
     const selected = wrapper
       .findAll('td[aria-selected=true] [data-slot=calendar-cell]')
       .map((c) => c.attributes('data-value'))
+
     expect(selected).toEqual(['2025-01-15', '2025-01-17'])
     wrapper.unmount()
   })
@@ -416,17 +457,22 @@ describe('Calendar accessibility', () => {
     const wrapper = mount(Calendar, {
       props: { defaultValue: date, minValue: new CalendarDate(2025, 1, 5) },
     })
+
     const selected = wrapper.get('[data-value="2025-01-15"]')
     expect(selected.attributes('role')).toBe('button')
     expect(selected.attributes('aria-label')).toBe('Wednesday, January 15, 2025')
     expect(selected.element.closest('td')!.getAttribute('aria-selected')).toBe('true')
+
     expect(
       wrapper.get('[data-value="2025-01-16"]').element.closest('td')!.hasAttribute('aria-selected'),
     ).toBe(false)
+
     expect(wrapper.get('[data-value="2025-01-04"]').attributes('aria-disabled')).toBe('true')
+
     expect(
       wrapper.get('[data-value="2025-01-04"]').element.closest('td')!.getAttribute('aria-disabled'),
     ).toBe('true')
+
     wrapper.unmount()
   })
 
@@ -436,6 +482,7 @@ describe('Calendar accessibility', () => {
       wrapper
         .findAll('[data-slot=calendar-cell][tabindex="0"]')
         .map((c) => c.attributes('data-value'))
+
     expect(tabbable()).toEqual(['2025-01-15'])
     ;(wrapper.get('[data-value="2025-01-15"]').element as HTMLElement).focus()
     press('ArrowDown')
@@ -450,6 +497,7 @@ describe('Calendar accessibility', () => {
       props: { defaultValue: date, yearPicker: true },
       attachTo: document.body,
     })
+
     const trigger = wrapper.get('[data-slot=calendar-year-picker-trigger]')
     const grid = wrapper.get('[data-slot=calendar-year-picker-grid]')
     expect(trigger.attributes('aria-expanded')).toBe('false')
@@ -486,15 +534,18 @@ describe('Calendar accessibility', () => {
       props: { defaultValue: date, yearPicker: true },
       attachTo: document.body,
     })
+
     const trigger = wrapper.get('[data-slot=calendar-year-picker-trigger]')
     await trigger.trigger('click')
     await flush()
     press('Escape')
     await flush()
     expect(trigger.attributes('aria-expanded')).toBe('false')
+
     expect(wrapper.get('[data-slot=calendar-year-picker-grid]').attributes('aria-hidden')).toBe(
       'true',
     )
+
     expect(document.activeElement).toBe(trigger.element)
     wrapper.unmount()
   })
@@ -504,6 +555,7 @@ describe('Calendar accessibility', () => {
       props: { defaultValue: date, yearPicker: true },
       attachTo: document.body,
     })
+
     const trigger = wrapper.get('[data-slot=calendar-year-picker-trigger]')
     await trigger.trigger('click')
     await flush()

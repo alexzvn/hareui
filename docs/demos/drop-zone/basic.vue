@@ -63,6 +63,7 @@ const addDocuments = (files: File[]) => {
   documents.value.push(
     ...files.map((file) => ({ key: `doc-${added++}`, name: file.name, bytes: file.size, sent: 0 })),
   )
+
   resume()
 }
 
@@ -84,12 +85,14 @@ const pump = (now: number) => {
     frame = 0
     return
   }
+
   const elapsed = Math.min(now - lastTime, 100)
   for (const doc of sending)
     doc.sent = Math.min(
       doc.bytes,
       doc.sent + Math.max((BYTES_PER_MS * elapsed) / sending.length, (doc.bytes * elapsed) / 1200),
     )
+
   lastTime = now
   frame = requestAnimationFrame(pump)
 }

@@ -157,10 +157,12 @@ const props = withDefaults(defineProps<SwitchProps>(), {
   modelValue: undefined,
   invalid: undefined,
 })
+
 const emit = defineEmits<{
   /** Emitted when the checked state changes. */
   'update:modelValue': [value: boolean]
 }>()
+
 defineSlots<SwitchSlots>()
 const slots = useSlots()
 
@@ -187,6 +189,7 @@ const { validation, commitValidation } = useFieldValidation({
     emit('update:modelValue', local.value)
   },
 })
+
 const invalid = computed(() => validation.value.isInvalid)
 
 const { id, describedBy, FieldDescription, FieldError } = useFieldChrome({

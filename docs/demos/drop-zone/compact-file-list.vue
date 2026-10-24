@@ -86,6 +86,7 @@ const pump = (now: number) => {
     frame = 0
     return
   }
+
   const elapsed = Math.min(now - lastTime, 100)
   for (const file of syncing)
     file.sent = Math.min(
@@ -93,6 +94,7 @@ const pump = (now: number) => {
       file.sent +
         Math.max((BYTES_PER_MS * elapsed) / syncing.length, (file.bytes * elapsed) / 1200),
     )
+
   lastTime = now
   frame = requestAnimationFrame(pump)
 }
@@ -118,6 +120,7 @@ watch(
 )
 
 onMounted(resume)
+
 onBeforeUnmount(() => {
   cancelAnimationFrame(frame)
   clearTimeout(refill)

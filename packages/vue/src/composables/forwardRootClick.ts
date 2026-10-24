@@ -17,6 +17,7 @@ const shouldForward = (root: HTMLElement, path: EventTarget[], content: HTMLElem
     if (node === root) return true
     if (node instanceof Element && node.matches(INTERACTIVE)) return false
   }
+
   return false
 }
 
@@ -48,10 +49,12 @@ export const keepFocusWhenReadonly = (
   const root = event.currentTarget as HTMLElement | null
   const content = root?.querySelector<HTMLElement>(contentSelector)
   if (!readonly || !root || !content) return
+
   for (let node = event.target as Element | null; node; node = node.parentElement) {
     if (node === content || node === root) break
     if (node.matches(INTERACTIVE)) return
   }
+
   event.preventDefault()
 }
 
@@ -74,20 +77,24 @@ export const submitOnEnter = (event: KeyboardEvent) => {
     event.shiftKey
   )
     return
+
   event.preventDefault()
   event.stopImmediatePropagation()
   const control = event.currentTarget as HTMLButtonElement
   const form = control.form ?? control.closest('form')
   if (!form) return
+
   const submitter = [...form.elements].find(
     (el): el is HTMLButtonElement | HTMLInputElement =>
       (el instanceof HTMLButtonElement && el.type === 'submit') ||
       (el instanceof HTMLInputElement && (el.type === 'submit' || el.type === 'image')),
   )
+
   if (submitter) {
     if (!submitter.disabled) submitter.click()
     return
   }
+
   if ([...form.elements].filter((el) => el.matches(BLOCKS_IMPLICIT_SUBMISSION)).length > 1) return
   form.requestSubmit()
 }

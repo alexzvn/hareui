@@ -186,10 +186,12 @@ const props = withDefaults(defineProps<CheckboxProps>(), {
   modelValue: undefined,
   invalid: undefined,
 })
+
 const emit = defineEmits<{
   /** Emitted when the checked state changes. */
   'update:modelValue': [value: boolean | 'indeterminate']
 }>()
+
 defineSlots<CheckboxSlots>()
 const slots = useSlots()
 
@@ -219,6 +221,7 @@ const { validation, commitValidation } = useFieldValidation({
     emit('update:modelValue', local.value)
   },
 })
+
 const invalid = computed(() => validation.value.isInvalid)
 
 const { id, describedBy, FieldDescription, FieldError } = useFieldChrome({

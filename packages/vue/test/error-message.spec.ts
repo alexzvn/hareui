@@ -12,12 +12,15 @@ describe('ErrorMessage', () => {
       props: { id: 'err' },
       slots: { default: () => 'Pick one' },
     })
+
     expect(wrapper.element.tagName).toBe('SPAN')
+
     expect(wrapper.attributes()).toMatchObject({
       id: 'err',
       slot: 'errorMessage',
       'data-slot': 'error-message',
     })
+
     expect(wrapper.text()).toBe('Pick one')
   })
 
@@ -38,9 +41,11 @@ describe('ErrorMessage', () => {
         ]),
       { attachTo: document.body },
     )
+
     expect(
       document.getElementById(wrapper.get('input').attributes('aria-describedby')!)?.textContent,
     ).toBe('Pick one')
+
     await expectAccessible(wrapper)
     wrapper.unmount()
   })

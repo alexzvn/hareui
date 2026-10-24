@@ -1,9 +1,11 @@
 export { default as ChartTooltipContent } from './ChartTooltipContent.vue'
+
 export type {
   ChartTooltipContentEntry,
   ChartTooltipContentProps,
   ChartTooltipContentSlots,
 } from './ChartTooltipContent.vue'
+
 export { default as ChartTooltipHeader } from './ChartTooltipHeader.vue'
 export type { ChartTooltipHeaderProps, ChartTooltipHeaderSlots } from './ChartTooltipHeader.vue'
 export { default as ChartTooltipIndicator } from './ChartTooltipIndicator.vue'

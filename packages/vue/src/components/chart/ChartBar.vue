@@ -88,12 +88,14 @@ const props = withDefaults(defineProps<ChartBarProps>(), {
   xAxisId: 0,
   yAxisId: 0,
 })
+
 defineSlots<ChartBarSlots>()
 
 const chart = useChartContext('ChartBar')
 const cartesian = useCartesianContext('ChartBar')
 const id = useId(undefined, 'hareui-chart-bar')
 const cells = provideChartCells()
+
 // Name, color and visibility default from the root's `series` config of this key.
 const rootSeries = useRootSeries(chart, () => props.dataKey)
 const fill = computed(() => props.fill ?? rootSeries.value?.color ?? DEFAULT_SERIES_COLOR)
@@ -121,6 +123,7 @@ chart.registerSeries(() => ({
     const value = datum?.[props.dataKey]
     if (!datum || value === undefined || value === null) return []
     const color = cells.value[index]?.fill ?? fill.value
+
     return [
       {
         dataKey: props.dataKey,
@@ -141,10 +144,13 @@ const target = computed<(BarRect | null)[]>(() => {
   const position = cartesian.barPosition(id)
   if (hidden.value || !position) return []
   const category = cartesian.categoryAxis.value
+
   const valueAxis = horizontal.value
     ? cartesian.yAxis(props.yAxisId)
     : cartesian.xAxis(props.xAxisId)
+
   const data = chart.data.value
+
   return cartesian.seriesValues(id).map((pair, index) => {
     if (!pair) return null
     const start = category.scale(index) + position.offset
@@ -160,7 +166,9 @@ const target = computed<(BarRect | null)[]>(() => {
         value,
       }
     }
+
     const x = valueAxis.scale(pair[0])
+
     return { index, y: start, height: position.size, x, width: valueAxis.scale(pair[1]) - x, value }
   })
 })
@@ -170,10 +178,12 @@ const tween = useChartTween(
   (from, to, t) =>
     to.map((rect, index) => {
       if (!rect) return null
+
       // When the number of bars changes, each bar starts from the old bar at the same relative position.
       const previous = from?.length
         ? from[Math.min(Math.floor((index * from.length) / to.length), from.length - 1)]
         : null
+
       if (previous)
         return {
           ...rect,
@@ -182,11 +192,13 @@ const tween = useChartTween(
           width: lerp(previous.width, rect.width, t),
           height: lerp(previous.height, rect.height, t),
         }
+
       // Bars grow out of their baseline.
       if (horizontal.value) {
         const height = rect.height * t
         return { ...rect, y: rect.y + rect.height - height, height }
       }
+
       return { ...rect, width: rect.width * t }
     }),
   () => [chart.data.value, props.dataKey, props.stackId, hidden.value],
@@ -197,6 +209,7 @@ const bars = computed(() =>
   tween.value.value.flatMap((rect) => {
     if (!rect) return []
     const cell = cells.value[rect.index]
+
     return [
       {
         rect,

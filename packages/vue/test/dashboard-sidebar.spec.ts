@@ -27,18 +27,22 @@ const cookieValue = (key: string): unknown => {
     .split(';')
     .map((p) => p.trim())
     .find((p) => p.startsWith(`${encodeURIComponent(key)}=`))
+
   return entry ? JSON.parse(decodeURIComponent(entry.slice(entry.indexOf('=') + 1))) : undefined
 }
 
 const aside = (root: ParentNode = document) =>
   root.querySelector<HTMLElement>('[data-slot=dashboard-sidebar]')!
+
 const handle = (root: ParentNode = document) =>
   root.querySelector<HTMLElement>('[data-slot=dashboard-resize-handle]')!
+
 const width = (el: HTMLElement) => el.style.getPropertyValue('--width')
 
 /** happy-dom has no layout: give the sidebar and its parent a width for the drag maths (parent 1000px). */
 const layout = (el: HTMLElement, elWidth: number, parentWidth = 1000) => {
   vi.spyOn(el, 'getBoundingClientRect').mockReturnValue({ width: elWidth } as DOMRect)
+
   vi.spyOn(el.parentElement!, 'getBoundingClientRect').mockReturnValue({
     width: parentWidth,
   } as DOMRect)
@@ -55,16 +59,19 @@ const press = (target: Element, clientX: number) => {
     }),
   )
 }
+
 const move = (clientX: number) => {
   document.dispatchEvent(
     new PointerEvent('pointermove', { bubbles: true, clientX, pointerId: 1, pointerType: 'mouse' }),
   )
 }
+
 const release = () => {
   document.dispatchEvent(
     new PointerEvent('pointerup', { bubbles: true, pointerId: 1, pointerType: 'mouse' }),
   )
 }
+
 /** Press the handle at `from`, drag to `to`, release (release flushes the pending animation frame). */
 const drag = async (from: number, to: number) => {
   press(handle(), from)
@@ -77,10 +84,12 @@ const key = async (target: Element, k: string, init: KeyboardEventInit = {}) => 
   target.dispatchEvent(
     new KeyboardEvent('keydown', { key: k, bubbles: true, cancelable: true, ...init }),
   )
+
   await nextTick()
 }
 
 type Props = Record<string, unknown>
+
 const mountSidebar = (sidebar: Props = {}, group: Props = {}) => {
   return mount(DashboardGroup, {
     props: { class: 'relative', ...group },
@@ -97,6 +106,7 @@ describe('dashboard sidebar', () => {
     clearCookies()
     localStorage.clear()
   })
+
   afterEach(() => {
     vi.restoreAllMocks()
     document.body.innerHTML = ''
@@ -109,15 +119,20 @@ describe('dashboard sidebar', () => {
       expect(width(aside())).toBe('15%')
       layout(aside(), 150)
 
-      await drag(150, 400) // 400px = 40%
+      // 400px = 40%
+      await drag(150, 400)
       expect(width(aside())).toBe('20%')
 
       layout(aside(), 200)
-      await drag(200, 50) // 50px = 5%
+
+      // 50px = 5%
+      await drag(200, 50)
       expect(width(aside())).toBe('10%')
 
       layout(aside(), 100)
-      await drag(100, 160) // 160px = 16%
+
+      // 160px = 16%
+      await drag(100, 160)
       expect(width(aside())).toBe('16%')
       wrapper.unmount()
     })
@@ -125,7 +140,9 @@ describe('dashboard sidebar', () => {
     it('a right sidebar grows when dragged to the left', async () => {
       const wrapper = mountSidebar({ side: 'right', minSize: 10, maxSize: 30, defaultSize: 15 })
       layout(aside(), 150)
-      await drag(850, 750) // 100px to the left: 150 + 100 = 250px
+
+      // 100px to the left: 150 + 100 = 250px
+      await drag(850, 750)
       expect(width(aside())).toBe('25%')
       wrapper.unmount()
     })
@@ -137,12 +154,16 @@ describe('dashboard sidebar', () => {
       await drag(200, 280)
       expect(width(aside())).toBe('280px')
       px.unmount()
-      clearCookies() // same storage key: a persisted px size must not leak into the rem mount
+
+      // same storage key: a persisted px size must not leak into the rem mount
+      clearCookies()
 
       const rem = mountSidebar({ minSize: 5, maxSize: 30, defaultSize: 10 }, { unit: 'rem' })
       expect(width(aside())).toBe('10rem')
       layout(aside(), 160)
-      await drag(160, 240) // +80px at a 16px root font size = +5rem
+
+      // +80px at a 16px root font size = +5rem
+      await drag(160, 240)
       expect(width(aside())).toBe('15rem')
       rem.unmount()
     })
@@ -153,6 +174,7 @@ describe('dashboard sidebar', () => {
         frames.push(cb)
         return frames.length
       })
+
       const wrapper = mountSidebar({ minSize: 10, maxSize: 40, defaultSize: 15 })
       layout(aside(), 150)
 
@@ -161,7 +183,9 @@ describe('dashboard sidebar', () => {
       move(250)
       move(300)
       expect(frames).toHaveLength(1)
-      expect(width(aside())).toBe('15%') // nothing applied before the frame
+
+      // nothing applied before the frame
+      expect(width(aside())).toBe('15%')
 
       frames[0]!(0)
       await nextTick()
@@ -203,6 +227,7 @@ describe('dashboard sidebar', () => {
           pointerType: 'mouse',
         }),
       )
+
       move(300)
       expect(width(aside())).toBe('15%')
 
@@ -249,15 +274,19 @@ describe('dashboard sidebar', () => {
         defaultSize: 15,
         collapsedSize: 0,
       })
+
       layout(aside(), 150)
 
-      await drag(150, 20) // 20px = 2% < 4%
+      // 20px = 2% < 4%
+      await drag(150, 20)
       await nextTick()
       expect(aside().dataset.collapsed).toBe('true')
       expect(width(aside())).toBe('0%')
 
       layout(aside(), 48)
-      await drag(48, 200) // 200px = 20%
+
+      // 200px = 20%
+      await drag(48, 200)
       await nextTick()
       expect(aside().dataset.collapsed).toBe('false')
       expect(width(aside())).toBe('20%')
@@ -286,6 +315,7 @@ describe('dashboard sidebar', () => {
           disconnect() {}
         },
       )
+
       const resized = async (el: HTMLElement, w: number) => {
         layout(el, w)
         for (const cb of observers) cb()
@@ -299,6 +329,7 @@ describe('dashboard sidebar', () => {
         defaultSize: 15,
         collapsedSize: 0,
       })
+
       await resized(aside(), 150)
       expect(handle().hidden).toBe(false)
       await drag(150, 20)
@@ -346,6 +377,7 @@ describe('dashboard sidebar', () => {
                   collapse: (v: boolean) => void
                 }) => {
                   seen.push(collapsed)
+
                   return h(
                     'button',
                     { id: 'c', onClick: () => collapse(!collapsed) },
@@ -357,6 +389,7 @@ describe('dashboard sidebar', () => {
         },
         attachTo: document.body,
       })
+
       expect(width(aside())).toBe('15%')
       document.querySelector<HTMLElement>('#c')!.click()
       await nextTick()
@@ -381,6 +414,7 @@ describe('dashboard sidebar', () => {
       first.unmount()
 
       const second = mountSidebar({ minSize: 10, maxSize: 40, defaultSize: 15 })
+
       // Read synchronously at setup: the very first render already has the stored size.
       expect(width(aside())).toBe('25%')
       second.unmount()
@@ -388,19 +422,23 @@ describe('dashboard sidebar', () => {
 
     it('local: reads and writes localStorage under `${storageKey}-sidebar-${id}`', async () => {
       localStorage.setItem('app-sidebar-main', JSON.stringify({ size: 18, collapsed: false }))
+
       const wrapper = mountSidebar(
         { minSize: 10, maxSize: 40 },
         { storage: 'local', storageKey: 'app' },
       )
+
       expect(width(aside())).toBe('18%')
       expect(aside().id).toBe('app-sidebar-main')
 
       layout(aside(), 180)
       await drag(180, 300)
+
       expect(JSON.parse(localStorage.getItem('app-sidebar-main')!)).toEqual({
         size: 30,
         collapsed: false,
       })
+
       expect(document.cookie).not.toContain('app-sidebar-main')
       wrapper.unmount()
     })
@@ -409,20 +447,24 @@ describe('dashboard sidebar', () => {
       const data = new Map<string, string>([
         ['dashboard-sidebar-main', JSON.stringify({ size: 22, collapsed: false })],
       ])
+
       const adapter: DashboardStorageAdapter = {
         getItem: vi.fn<DashboardStorageAdapter['getItem']>((k) => data.get(k)),
         setItem: vi.fn<DashboardStorageAdapter['setItem']>((k, v) => void data.set(k, v)),
       }
+
       const wrapper = mountSidebar({ minSize: 10, maxSize: 40 }, { storage: adapter })
       expect(adapter.getItem).toHaveBeenCalledWith('dashboard-sidebar-main')
       expect(width(aside())).toBe('22%')
 
       layout(aside(), 220)
       await drag(220, 320)
+
       expect(adapter.setItem).toHaveBeenLastCalledWith(
         'dashboard-sidebar-main',
         JSON.stringify({ size: 32, collapsed: false }),
       )
+
       wrapper.unmount()
     })
 
@@ -441,16 +483,19 @@ describe('dashboard sidebar', () => {
 
     it('persistent=false neither reads nor writes', async () => {
       localStorage.setItem('dashboard-sidebar-main', JSON.stringify({ size: 30, collapsed: false }))
+
       const adapter: DashboardStorageAdapter = {
         getItem: vi.fn<DashboardStorageAdapter['getItem']>(() =>
           JSON.stringify({ size: 30, collapsed: false }),
         ),
         setItem: vi.fn<DashboardStorageAdapter['setItem']>(),
       }
+
       const wrapper = mountSidebar(
         { minSize: 10, maxSize: 40, defaultSize: 15 },
         { storage: adapter, persistent: false },
       )
+
       expect(adapter.getItem).not.toHaveBeenCalled()
       expect(width(aside())).toBe('15%')
 
@@ -467,6 +512,7 @@ describe('dashboard sidebar', () => {
         getItem: vi.fn<DashboardStorageAdapter['getItem']>(),
         setItem: vi.fn<DashboardStorageAdapter['setItem']>(),
       }
+
       const wrapper = mountSidebar({ resizable: false, collapsible: false }, { storage: adapter })
       expect(adapter.getItem).not.toHaveBeenCalled()
       wrapper.unmount()
@@ -492,10 +538,12 @@ describe('dashboard sidebar', () => {
           throw new Error('denied')
         },
       }
+
       const broken = mountSidebar(
         { minSize: 10, maxSize: 40, defaultSize: 15 },
         { storage: failing },
       )
+
       expect(width(aside())).toBe('15%')
       layout(aside(), 150)
       await expect(drag(150, 250)).resolves.toBeUndefined()
@@ -513,6 +561,7 @@ describe('dashboard sidebar', () => {
         collapsible: true,
         collapsedSize: 4,
       })
+
       const el = handle()
       expect(el.getAttribute('role')).toBe('separator')
       expect(el.getAttribute('aria-orientation')).toBe('vertical')
@@ -607,6 +656,7 @@ describe('dashboard sidebar', () => {
         bubbles: true,
         cancelable: true,
       })
+
       handle().dispatchEvent(arrow)
       expect(arrow.defaultPrevented).toBe(true)
       wrapper.unmount()
@@ -622,6 +672,7 @@ describe('dashboard sidebar', () => {
           return () => null
         },
       })
+
       const open = ref(false)
       const collapsed = ref(false)
       const wrapper = mount(
@@ -648,6 +699,7 @@ describe('dashboard sidebar', () => {
         },
         { attachTo: document.body },
       )
+
       return { wrapper, ctx: () => ctx, open, collapsed }
     }
 
@@ -690,7 +742,9 @@ describe('dashboard sidebar', () => {
     it('dragging and keyboard collapse are reported through v-model:collapsed and the context', async () => {
       const { wrapper, ctx, collapsed } = mountWithContext({ resizable: true })
       layout(aside(), 150)
-      await drag(150, 10) // within the collapse threshold of collapsedSize (0)
+
+      // within the collapse threshold of collapsedSize (0)
+      await drag(150, 10)
       await settle()
       expect(collapsed.value).toBe(true)
       expect(ctx().sidebarCollapsed.value).toBe(true)
@@ -720,6 +774,7 @@ describe('dashboard sidebar', () => {
           return () => null
         },
       })
+
       const wrapper = mount(DashboardGroup, {
         slots: {
           default: () => [
@@ -734,6 +789,7 @@ describe('dashboard sidebar', () => {
         },
         attachTo: document.body,
       })
+
       expect(ctx.sidebarOpen).toBe(ctx.sidebars.left.open)
       expect(ctx.sidebarCollapsed).toBe(ctx.sidebars.left.collapsed)
 
@@ -755,6 +811,7 @@ describe('dashboard sidebar', () => {
         slots: { default: () => 'Body' },
         attachTo: document.body,
       })
+
       expect(aside().id).toBe('dashboard-sidebar-solo')
       wrapper.unmount()
     })
@@ -785,15 +842,19 @@ describe('dashboard sidebar', () => {
         },
         { attachTo: document.body },
       )
+
       await settle()
 
       const dialog = document.querySelector('[data-slot=drawer-dialog]')!
       expect(dialog).not.toBeNull()
       expect(dialog.getAttribute('data-placement')).toBe('left')
+
       expect(dialog.querySelector('[data-slot=dashboard-sidebar-header]')!.textContent).toContain(
         'Header',
       )
+
       expect(dialog.querySelector('[data-slot=dashboard-sidebar-body]')!.textContent).toBe('Body')
+
       expect(dialog.querySelector('[data-slot=dashboard-sidebar-footer]')!.textContent).toBe(
         'Footer',
       )
@@ -828,6 +889,7 @@ describe('dashboard sidebar', () => {
         },
         { attachTo: document.body },
       )
+
       const close = () =>
         document.querySelector<HTMLElement>(
           '[data-slot=drawer-dialog] [data-slot=dashboard-sidebar-toggle]',
@@ -860,6 +922,7 @@ describe('dashboard sidebar', () => {
         },
         attachTo: document.body,
       })
+
       await settle()
       const dialog = document.querySelector('[data-slot=modal-dialog]')!
       expect(dialog).not.toBeNull()
@@ -879,20 +942,26 @@ describe('dashboard sidebar', () => {
         },
         attachTo: document.body,
       })
+
       await settle()
+
       expect(
         document.querySelector('[data-slot=drawer-dialog]')!.getAttribute('data-placement'),
       ).toBe('bottom')
+
       expect(document.querySelector('[data-slot=dashboard-sidebar-toggle]')).toBeNull()
       bottom.unmount()
     })
 
     it('autoClose closes the menu when a link inside is clicked, unless disabled', async () => {
       const open = ref(true)
+
       // The default slot renders twice (desktop aside + menu): click the copy inside the menu.
       const link = () =>
         h('a', { href: '#x', class: 'lnk', onClick: (e: Event) => e.preventDefault() }, 'Go')
+
       const menuLink = () => document.querySelector<HTMLElement>('[data-slot=drawer-dialog] .lnk')!
+
       const wrapper = mount(
         {
           render: () =>
@@ -912,6 +981,7 @@ describe('dashboard sidebar', () => {
         },
         { attachTo: document.body },
       )
+
       await settle()
       menuLink().click()
       await settle()
@@ -938,6 +1008,7 @@ describe('dashboard sidebar', () => {
         },
         { attachTo: document.body },
       )
+
       await settle()
       menuLink().click()
       await settle()
@@ -961,6 +1032,7 @@ describe('dashboard sidebar', () => {
         },
         attachTo: document.body,
       })
+
       const panel = document.querySelector<HTMLElement>('#dashboard-panel-inbox')!
       expect(panel.className).toContain('flex-1')
       expect(width(panel)).toBe('')
@@ -988,11 +1060,13 @@ describe('dashboard sidebar', () => {
         h('a', { href: '#inbox' }, 'Inbox'),
         h('a', { href: '#settings' }, 'Settings'),
       ])
+
     const sidebarSlots = {
       header: () => h('a', { href: '#home' }, 'Acme'),
       default: nav,
       footer: () => h('button', { type: 'button' }, 'Account'),
     }
+
     const dialog = () => document.querySelector<HTMLElement>('[role=dialog]')
     const toggleButton = () => document.querySelector<HTMLButtonElement>('[data-testid=toggle]')!
 
@@ -1015,6 +1089,7 @@ describe('dashboard sidebar', () => {
         { 'aria-label': 'Main', collapsible: true },
         { persistent: false },
       )
+
       const el = aside()
       expect(el.tagName).toBe('ASIDE')
       expect(el.id).toBe('dashboard-sidebar-main')
@@ -1029,6 +1104,7 @@ describe('dashboard sidebar', () => {
         { 'aria-label': 'Main', collapsible: true, collapsedSize: 4, collapsed: true },
         { persistent: false },
       )
+
       await nextTick()
       expect(aside().dataset.collapsed).toBe('true')
       expect(handle().getAttribute('aria-valuenow')).toBe('4')
@@ -1049,6 +1125,7 @@ describe('dashboard sidebar', () => {
     const pause = () => {
       const { promise, resolve } = Promise.withResolvers<void>()
       setTimeout(resolve, 2)
+
       return promise
     }
 
@@ -1075,9 +1152,11 @@ describe('dashboard sidebar', () => {
     it("the menu's close button is named", async () => {
       const wrapper = mountWithToggle()
       await openMenu()
+
       const close = dialog()!.querySelector<HTMLButtonElement>(
         '[data-slot=dashboard-sidebar-toggle]',
       )!
+
       expect(close.getAttribute('aria-label')).toBe('Close sidebar')
       wrapper.unmount()
     })
@@ -1092,10 +1171,13 @@ describe('dashboard sidebar', () => {
       const first = links[0]!
       const last = links.at(-1)!
       last.focus()
+
       last.dispatchEvent(
         new KeyboardEvent('keydown', { key: 'Tab', bubbles: true, cancelable: true }),
       )
+
       expect(document.activeElement).toBe(first)
+
       first.dispatchEvent(
         new KeyboardEvent('keydown', {
           key: 'Tab',
@@ -1104,6 +1186,7 @@ describe('dashboard sidebar', () => {
           cancelable: true,
         }),
       )
+
       expect(document.activeElement).toBe(last)
       wrapper.unmount()
     })
@@ -1111,9 +1194,11 @@ describe('dashboard sidebar', () => {
     it('Escape closes the menu and returns focus to the toggle that opened it', async () => {
       const wrapper = mountWithToggle()
       await openMenu()
+
       document.activeElement!.dispatchEvent(
         new KeyboardEvent('keydown', { key: 'Escape', bubbles: true, cancelable: true }),
       )
+
       await settle()
       expect(dialog()).toBeNull()
       expect(toggleButton().getAttribute('aria-expanded')).toBe('false')

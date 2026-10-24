@@ -151,6 +151,7 @@ const ui = useComponentUI('radioButtonGroup', theme, () => ({
   withIcon: hasIcon.value,
   customIndicator: customIndicator.value,
 }))
+
 // The default indicator is the radio dot of `RadioGroup`, so it follows that theme (and its overrides).
 const radioUI = useComponentUI('radioGroup', radioGroupTheme, () => ({
   variant: group.variant.value,
@@ -164,6 +165,7 @@ const cls = (
 }
 
 const selected = computed(() => group.selected.value === props.value)
+
 // Reka merges the group's disabled state into the radio and sets `data-disabled=""` on it.
 const isDisabled = computed(() => group.disabled.value || props.disabled)
 const slotProps = computed(() => ({ selected: selected.value, disabled: isDisabled.value }))
@@ -175,5 +177,6 @@ const { id, labelId, descriptionId, hasLabel, hasDescription, describedBy } = us
   describedByIds: () => [slots.default && extraId.value, group.describedBy.value],
   describedByIdsPosition: 'afterDescription',
 })
+
 const extraId = computed(() => `${id.value}-extra`)
 </script>

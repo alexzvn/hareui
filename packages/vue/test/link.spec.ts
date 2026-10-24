@@ -23,10 +23,12 @@ describe('Link', () => {
     expect(order(end.element)).toEqual(['b', 'link-icon'])
     expect(end.get('[data-slot="link-icon"]').attributes('data-default-icon')).toBe('true')
     expect(end.find('[data-slot="link-default-icon"]').exists()).toBe(true)
+
     const start = mount(Link, {
       props: { icon: true, iconPlacement: 'start' },
       slots: { default: () => h('b', 'Go') },
     })
+
     expect(order(start.element)).toEqual(['link-icon', 'b'])
   })
 
@@ -54,10 +56,12 @@ describe('Link', () => {
             h('span', { ...attrs, 'data-custom': 'foo' }, slots.default?.()),
       ),
     )
+
     const wrapper = mount(Link, {
       props: { as: Custom, href: '#' },
       slots: { default: () => 'Go' },
     })
+
     expect(wrapper.element.tagName).toBe('SPAN')
     expect(wrapper.attributes('data-custom')).toBe('foo')
     expect(wrapper.attributes('data-slot')).toBe('link')
@@ -75,6 +79,7 @@ describe('Link', () => {
       attachTo: document.body,
       slots: { default: () => 'Docs' },
     })
+
     await expectAccessible(wrapper)
     wrapper.unmount()
   })
@@ -85,6 +90,7 @@ describe('Link', () => {
       attachTo: document.body,
       slots: { default: () => 'Docs' },
     })
+
     expect(wrapper.attributes('role')).toBeUndefined()
     expect(wrapper.attributes('tabindex')).toBeUndefined()
     ;(wrapper.element as HTMLElement).focus()
@@ -99,6 +105,7 @@ describe('Link', () => {
       attachTo: document.body,
       slots: { default: () => 'Open' },
     })
+
     expect(wrapper.attributes()).toMatchObject({ role: 'link', tabindex: '0' })
     const link = wrapper.element as HTMLElement
     link.focus()
@@ -118,7 +125,9 @@ describe('Link', () => {
       attachTo: document.body,
       slots: { default: () => 'Docs' },
     })
+
     expect(wrapper.attributes()).toMatchObject({ role: 'link', 'aria-disabled': 'true' })
+
     // No href and no tabindex: a native anchor is then out of the tab order (happy-dom still focuses it).
     expect(wrapper.attributes('href')).toBeUndefined()
     expect(wrapper.attributes('tabindex')).toBeUndefined()
@@ -133,6 +142,7 @@ describe('Link', () => {
       props: { href: '/x', icon: true },
       slots: { default: () => 'Docs' },
     })
+
     expect(wrapper.get('[data-slot="link-default-icon"]').attributes('aria-hidden')).toBe('true')
     expect(wrapper.text()).toBe('Docs')
     wrapper.unmount()

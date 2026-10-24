@@ -51,8 +51,10 @@ const order = reactive<Record<(typeof items)[number]['key'], number | null>>({
 })
 
 const euro = new Intl.NumberFormat('en-IE', { style: 'currency', currency: 'EUR' })
+
 const total = computed(() =>
   items.reduce((sum, item) => sum + item.price * (order[item.key] ?? 0), 0),
 )
+
 const count = computed(() => items.reduce((sum, item) => sum + (order[item.key] ?? 0), 0))
 </script>

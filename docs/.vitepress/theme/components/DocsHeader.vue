@@ -159,10 +159,12 @@ const transparent = ref(true)
 const onScroll = () => {
   transparent.value = window.scrollY < 10
 }
+
 onMounted(() => {
   onScroll()
   window.addEventListener('scroll', onScroll, { passive: true })
 })
+
 onBeforeUnmount(() => window.removeEventListener('scroll', onScroll))
 
 const TAB =

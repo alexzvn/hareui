@@ -38,5 +38,6 @@ onMounted(() => {
     isMounted.value = true
   })
 })
+
 onBeforeUnmount(() => clearTimeout(timer))
 </script>

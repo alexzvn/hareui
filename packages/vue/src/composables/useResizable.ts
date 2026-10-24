@@ -55,6 +55,7 @@ const readCookie = (key: string): string | undefined => {
     const entry = part.trim()
     if (entry.startsWith(name)) return decodeURIComponent(entry.slice(name.length))
   }
+
   return undefined
 }
 
@@ -72,10 +73,13 @@ export const readDashboardStorage = (
   } catch {
     return undefined
   }
+
   if (!raw) return undefined
+
   try {
     const value = JSON.parse(raw)
     if (!value || typeof value !== 'object') return undefined
+
     return {
       size: Number.isFinite(value.size) ? value.size : undefined,
       collapsed: typeof value.collapsed === 'boolean' ? value.collapsed : undefined,
@@ -106,6 +110,7 @@ export const writeDashboardStorage = (
 
 /** Dragging closer than this (in `unit`) to the collapsed size collapses a `collapsible` panel. */
 const COLLAPSE_THRESHOLD: Record<DashboardUnit, number> = { '%': 4, rem: 4, px: 64 }
+
 /** Keyboard resize step in `unit`. Shift multiplies it by 5. */
 const KEYBOARD_STEP: Record<DashboardUnit, number> = { '%': 1, rem: 1, px: 16 }
 
@@ -166,6 +171,7 @@ export const useResizable = ({
       ? clamp(stored.size)
       : opts.value.defaultSize,
   )
+
   const isCollapsed = ref(opts.value.collapsible ? (stored?.collapsed ?? initialCollapsed) : false)
   const isDragging = ref(false)
   const currentSize = computed(() => (isCollapsed.value ? opts.value.collapsedSize : size.value))
@@ -207,6 +213,7 @@ export const useResizable = ({
     const width = s.startWidth + (s.rtl ? -toward : toward)
     if (opts.value.unit === 'rem') return width / s.rootFontSize
     if (opts.value.unit === 'px') return width
+
     return (width / s.parentWidth) * 100
   }
 
@@ -220,6 +227,7 @@ export const useResizable = ({
       setCollapsed(true)
       return
     }
+
     setCollapsed(false)
     size.value = clamp(value)
   }
@@ -227,6 +235,7 @@ export const useResizable = ({
   const schedule = (clientX: number) => {
     pendingX = clientX
     if (frame) return
+
     frame = requestAnimationFrame(() => {
       frame = 0
       applyPointer(pendingX)
@@ -235,20 +244,24 @@ export const useResizable = ({
 
   const finish = () => {
     if (!session) return
+
     if (frame) {
       cancelAnimationFrame(frame)
       frame = 0
       applyPointer(pendingX)
     }
+
     session = undefined
     isDragging.value = false
     detach?.()
     detach = undefined
+
     if (bodyStyle) {
       document.body.style.userSelect = bodyStyle.userSelect
       document.body.style.cursor = bodyStyle.cursor
       bodyStyle = undefined
     }
+
     persist()
   }
 
@@ -260,6 +273,7 @@ export const useResizable = ({
     if (!node || !opts.value.resizable || session) return false
     const startWidth = node.getBoundingClientRect().width
     if (!startWidth) return false
+
     session = {
       startX,
       startWidth,
@@ -270,11 +284,13 @@ export const useResizable = ({
           : 1,
       rtl: getComputedStyle(node).direction === 'rtl',
     }
+
     isDragging.value = true
     bodyStyle = { userSelect: document.body.style.userSelect, cursor: document.body.style.cursor }
     document.body.style.userSelect = 'none'
     document.body.style.cursor = 'col-resize'
     detach = attach(schedule, finish)
+
     return true
   }
 
@@ -288,19 +304,24 @@ export const useResizable = ({
       try {
         target?.setPointerCapture?.(id)
       } catch {}
+
       const onMove = (ev: PointerEvent) => {
         if (ev.pointerId === id) move(ev.clientX)
       }
+
       const onEnd = (ev: PointerEvent) => {
         if (ev.pointerId === id) end()
       }
+
       document.addEventListener('pointermove', onMove)
       document.addEventListener('pointerup', onEnd)
       document.addEventListener('pointercancel', onEnd)
+
       return () => {
         document.removeEventListener('pointermove', onMove)
         document.removeEventListener('pointerup', onEnd)
         document.removeEventListener('pointercancel', onEnd)
+
         try {
           target?.releasePointerCapture?.(id)
         } catch {}
@@ -314,10 +335,12 @@ export const useResizable = ({
     if (!el.value || !opts.value.resizable || e.button !== 0) return
     e.preventDefault()
     e.stopPropagation()
+
     start(e.clientX, (move, end) => {
       const onMove = (ev: MouseEvent) => move(ev.clientX)
       document.addEventListener('mousemove', onMove)
       document.addEventListener('mouseup', end)
+
       return () => {
         document.removeEventListener('mousemove', onMove)
         document.removeEventListener('mouseup', end)
@@ -330,6 +353,7 @@ export const useResizable = ({
     if (!el.value || !opts.value.resizable || !touch) return
     e.preventDefault()
     e.stopPropagation()
+
     start(touch.clientX, (move, end) => {
       const onMove = (ev: TouchEvent) => {
         const t = ev.touches[0]
@@ -338,9 +362,11 @@ export const useResizable = ({
           move(t.clientX)
         }
       }
+
       document.addEventListener('touchmove', onMove, { passive: false })
       document.addEventListener('touchend', end)
       document.addEventListener('touchcancel', end)
+
       return () => {
         document.removeEventListener('touchmove', onMove)
         document.removeEventListener('touchend', end)
@@ -369,6 +395,7 @@ export const useResizable = ({
         e.preventDefault()
         collapse()
       }
+
       return
     }
 
@@ -376,6 +403,7 @@ export const useResizable = ({
       e.preventDefault()
       setCollapsed(false)
       setSize(e.key === 'Home' ? minSize : maxSize)
+
       return
     }
 
@@ -389,8 +417,10 @@ export const useResizable = ({
     if (grows) {
       if (isCollapsed.value) setCollapsed(false)
       else setSize(clamp(size.value + step))
+
       return
     }
+
     if (isCollapsed.value) return
     const next = size.value - step
     if (collapsible && next < minSize) setCollapsed(true)
@@ -405,9 +435,11 @@ export const useResizable = ({
     el,
     (node, _, onCleanup) => {
       if (!node || typeof ResizeObserver === 'undefined') return
+
       const observer = new ResizeObserver(() => {
         zeroWidth.value = node.getBoundingClientRect().width === 0
       })
+
       observer.observe(node)
       onCleanup(() => observer.disconnect())
     },

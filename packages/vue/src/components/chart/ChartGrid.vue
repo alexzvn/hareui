@@ -85,6 +85,7 @@ const tickCoordinates = (axis: 'x' | 'y', id: string | number) => {
   const resolved = cartesian.axes.value.find(
     (entry) => entry.axis === axis && String(entry.id ?? 0) === String(id),
   )
+
   return resolved?.allTicks.map((tick) => tick.coordinate) ?? []
 }
 
@@ -99,6 +100,7 @@ const horizontalLines = computed(() => {
   const points =
     props.horizontalPoints ??
     withEdges(tickCoordinates('y', props.yAxisId), plot.top, plot.top + plot.height)
+
   return points.map((y) => ({ x1: plot.left, x2: plot.left + plot.width, y1: y, y2: y }))
 })
 
@@ -108,6 +110,7 @@ const verticalLines = computed(() => {
   const points =
     props.verticalPoints ??
     withEdges(tickCoordinates('x', props.xAxisId), plot.left, plot.left + plot.width)
+
   return points.map((x) => ({ x1: x, x2: x, y1: plot.top, y2: plot.top + plot.height }))
 })
 </script>

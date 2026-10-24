@@ -114,16 +114,20 @@ export const labelAttrs = (
     const { cx, cy, innerRadius, outerRadius, startAngle, endAngle } = viewBox
     const midAngle = (startAngle + endAngle) / 2
     const midRadius = (innerRadius + outerRadius) / 2
+
     if (position === 'outside') {
       const point = polarToCartesian(cx, cy, outerRadius + offset, midAngle)
       const cos = Math.cos(-RADIAN * midAngle)
       const sin = Math.sin(-RADIAN * midAngle)
       const vertical = Math.abs(cos) < 1e-6
       const textAnchor = vertical ? 'middle' : cos > 0 ? 'start' : 'end'
+
       // Straight up or down, the text sits above / below the point instead of across it.
       const dominantBaseline = !vertical ? 'central' : sin < 0 ? 'auto' : 'hanging'
+
       return { ...point, textAnchor, dominantBaseline }
     }
+
     if (position === 'insideStart' || position === 'insideEnd' || position === 'end') {
       const sign = endAngle >= startAngle ? 1 : -1
       const angle =
@@ -132,14 +136,17 @@ export const labelAttrs = (
           : position === 'insideEnd'
             ? endAngle - (sign * (offset / Math.max(midRadius, 1))) / RADIAN
             : endAngle + (sign * (offset / Math.max(midRadius, 1))) / RADIAN
+
       return {
         ...polarToCartesian(cx, cy, midRadius, angle),
         textAnchor: 'middle',
         dominantBaseline: 'central',
       }
     }
+
     if (position === 'center')
       return { x: cx, y: cy, textAnchor: 'middle', dominantBaseline: 'central' }
+
     return {
       ...polarToCartesian(cx, cy, midRadius, midAngle),
       textAnchor: 'middle',
@@ -148,6 +155,7 @@ export const labelAttrs = (
   }
 
   const { x, y, width, height } = viewBox
+
   // Negative sizes (bars below the baseline / drawn leftwards) flip the outer side.
   const vSign = height >= 0 ? 1 : -1
   const hSign = width >= 0 ? 1 : -1

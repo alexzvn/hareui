@@ -50,6 +50,7 @@ const airports = [
     ],
   },
 ]
+
 const cabins = [
   { value: 'economy', label: 'Economy' },
   { value: 'premium', label: 'Premium economy' },

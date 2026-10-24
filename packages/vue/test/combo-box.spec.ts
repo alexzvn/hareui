@@ -16,12 +16,14 @@ const items = [
   { value: 'dog', label: 'Dog' },
   { value: 'kangaroo', label: 'Kangaroo', disabled: true },
 ]
+
 const flush = async () => {
   for (let i = 0; i < 4; i++) {
     await nextTick()
     await new Promise((r) => setTimeout(r, 0))
   }
 }
+
 const options = () => [...document.querySelectorAll<HTMLElement>('[role=option]')]
 const texts = () => options().map((o) => o.textContent?.trim())
 
@@ -38,7 +40,9 @@ const setup = (
     slots,
     attachTo: document.body,
   })
+
   const input = wrapper.get<HTMLInputElement>('input[role=combobox]')
+
   return { wrapper, input }
 }
 
@@ -99,6 +103,7 @@ describe('ComboBox', () => {
       'onUpdate:modelValue': (value: ComboBoxValue | undefined) =>
         wrapper.setProps({ modelValue: value }),
     })
+
     expect(input.element.value).toBe('Cat')
     await input.trigger('focus')
     await flush()
@@ -135,6 +140,7 @@ describe('ComboBox', () => {
       name: 'animal',
       defaultValue: 'cat',
     })
+
     expect(input.attributes('name')).toBe('animal')
     await input.trigger('focus')
     await type(input, 'Unicorn')
@@ -174,6 +180,7 @@ describe('ComboBox', () => {
       modelValue: ['dog'],
       valuePlaceholder: 'None',
     })
+
     expect(wrapper.get('[data-slot=combo-box-value]').text()).toBe('Dog')
     await input.trigger('focus')
     await type(input, 'aa')
@@ -208,12 +215,15 @@ describe('ComboBox', () => {
       description: 'Pick one',
       validate: (v: ComboBoxValidationValue) => (v.selectedKey === 'cat' ? 'No cats' : true),
     })
+
     await flush()
     expect(wrapper.get('[data-slot=combo-box]').attributes('data-invalid')).toBe('true')
     expect(wrapper.get('[data-slot=field-error]').text()).toBe('No cats')
+
     expect(wrapper.get('input[role=combobox]').attributes('aria-describedby')).toContain(
       wrapper.get('[data-slot=field-error]').attributes('id'),
     )
+
     wrapper.unmount()
   })
 
@@ -223,6 +233,7 @@ describe('ComboBox', () => {
       { type: 'separator' },
       { type: 'section', label: 'B', items: [{ value: 'b1', label: 'Banana' }] },
     ]
+
     const { wrapper, input } = setup(
       { items: sections, allowsEmptyCollection: true },
       {
@@ -230,17 +241,22 @@ describe('ComboBox', () => {
         indicator: () => h('i', { class: 'custom' }),
       },
     )
+
     expect(wrapper.find('[data-slot=combo-box-trigger] i.custom').exists()).toBe(true)
     await input.trigger('focus')
     await flush()
+
     expect(
       [...document.querySelectorAll('[data-slot=header]')].map((e) => e.textContent?.trim()),
     ).toEqual(['A', 'B'])
+
     expect(document.querySelectorAll('[data-slot=separator]').length).toBe(1)
     await type(input, 'ban')
+
     expect(
       [...document.querySelectorAll('[data-slot=header]')].map((e) => e.textContent?.trim()),
     ).toEqual(['B'])
+
     await type(input, 'xyz')
     expect(document.querySelector('[data-slot=empty-state]')?.textContent).toBe('Nothing')
     wrapper.unmount()
@@ -261,6 +277,7 @@ describe('ComboBox', () => {
   describe('behaviour parity (React Aria)', () => {
     const hidden = (wrapper: ReturnType<typeof setup>['wrapper']) =>
       wrapper.get<HTMLInputElement>('input[type=hidden]').element.value
+
     const pointer = (el: Element, type: string, init: PointerEventInit = {}) =>
       el.dispatchEvent(
         new PointerEvent(type, {
@@ -310,6 +327,7 @@ describe('ComboBox', () => {
         .spyOn(window, 'getComputedStyle')
         .mockImplementation((el: Element, pseudo?: string | null) => {
           if (!el.matches('[data-slot=combo-box-popover]')) return realComputedStyle(el, pseudo)
+
           return {
             display: 'block',
             get animationName() {
@@ -317,6 +335,7 @@ describe('ComboBox', () => {
             },
           } as CSSStyleDeclaration
         })
+
       try {
         const { wrapper, input } = setup()
         await input.trigger('focus')
@@ -328,9 +347,11 @@ describe('ComboBox', () => {
         await flush()
         expect(input.element.value).toBe('Aardvark')
         expect(input.attributes('aria-expanded')).toBe('false')
+
         expect(
           document.querySelector('[data-slot=combo-box-popover]')?.getAttribute('data-state'),
         ).toBe('closed')
+
         expect(texts()).toEqual(['Aardvark', 'Cat', 'Kangaroo'])
         wrapper.unmount()
       } finally {
@@ -381,15 +402,18 @@ describe('ComboBox', () => {
           updated.push(this.$el.textContent!.trim())
       },
     }
+
     const wrapper = mount(ComboBox, {
       props: { items, label: 'Animal' },
       attachTo: document.body,
       global: { mixins: [countOptionUpdates] },
     })
+
     const input = wrapper.get<HTMLInputElement>('input[role=combobox]')
     await input.trigger('focus')
     await type(input, 'a')
     updated.length = 0
+
     // Aardvark stays the first row; Kangaroo moves up a row (new props)
     await type(input, 'ar')
     expect(texts()).toEqual(['Aardvark', 'Kangaroo'])
@@ -406,9 +430,11 @@ describe('ComboBox', () => {
         .map((id) => {
           const el = document.getElementById(id)
           expect(el, `#${id} exists`).not.toBeNull()
+
           return el!.getAttribute('aria-label') ?? el!.textContent!.trim()
         })
         .join(' ')
+
     const listbox = () => document.querySelector<HTMLElement>('[role=listbox]')
 
     it('has no axe violations closed, with a description, disabled and read-only', async () => {
@@ -457,10 +483,12 @@ describe('ComboBox', () => {
         { type: 'separator' },
         { type: 'section', label: 'B', items: [{ value: 'b1', label: 'Banana' }] },
       ]
+
       const { wrapper, input } = setup({ items: sections })
       try {
         await input.trigger('focus')
         await flush()
+
         // Each section is a group named by its header
         const groups = [...document.querySelectorAll('[role=listbox] > [role=group]')]
         expect(groups.map((g) => refText(g.getAttribute('aria-labelledby')))).toEqual(['A', 'B'])
@@ -476,6 +504,7 @@ describe('ComboBox', () => {
         errorMessage: 'Pick an animal',
         description: 'Required',
       })
+
       await flush()
       expect(input.attributes('aria-invalid')).toBe('true')
       await expectAccessible()
@@ -485,9 +514,11 @@ describe('ComboBox', () => {
     it('names the input, the trigger and the listbox from the label', async () => {
       const { wrapper, input } = setup({ description: 'Pick one' })
       expect(refText(input.attributes('aria-labelledby'))).toBe('Animal')
+
       expect(
         document.querySelector(`label[for="${input.attributes('id')}"]`)?.textContent?.trim(),
       ).toBe('Animal')
+
       expect(refText(input.attributes('aria-describedby'))).toBe('Pick one')
       const trigger = wrapper.get('[data-slot=combo-box-trigger]')
       expect(refText(trigger.attributes('aria-labelledby'))).toBe('Show suggestions Animal')
@@ -503,6 +534,7 @@ describe('ComboBox', () => {
         attrs: { 'aria-label': 'Animal' },
         attachTo: document.body,
       })
+
       const input = wrapper.get('input[role=combobox]')
       expect(input.attributes('aria-label')).toBe('Animal')
       expect(input.attributes('aria-labelledby')).toBeUndefined()
@@ -529,12 +561,14 @@ describe('ComboBox', () => {
       const single = setup({ defaultValue: 'cat' })
       await single.input.trigger('focus')
       await flush()
+
       expect(options().map((o) => o.getAttribute('aria-selected'))).toEqual([
         'false',
         'true',
         'false',
         'false',
       ])
+
       expect(listbox()!.hasAttribute('aria-multiselectable')).toBe(false)
       single.wrapper.unmount()
 
@@ -542,12 +576,14 @@ describe('ComboBox', () => {
       await multi.input.trigger('focus')
       await flush()
       expect(listbox()!.getAttribute('aria-multiselectable')).toBe('true')
+
       expect(options().map((o) => o.getAttribute('aria-selected'))).toEqual([
         'true',
         'false',
         'true',
         'false',
       ])
+
       expect(refText(multi.input.attributes('aria-describedby'))).toBe('Aardvark and Dog')
       multi.wrapper.unmount()
     })
@@ -558,6 +594,7 @@ describe('ComboBox', () => {
         await input.trigger('focus')
         await flush()
         expect(options()[3]!.getAttribute('aria-disabled')).toBe('true')
+
         expect(
           options()
             .slice(0, 3)
@@ -581,6 +618,7 @@ describe('ComboBox', () => {
       await up.input.trigger('focus')
       await up.input.trigger('keydown', { key: 'ArrowUp' })
       await flush()
+
       // Kangaroo (last) is disabled
       expect(up.input.attributes('aria-activedescendant')).toBe(options()[2]!.id)
       up.wrapper.unmount()
@@ -622,6 +660,7 @@ describe('ComboBox', () => {
     it('focus stays in the input while options are highlighted and after the trigger toggles the popup', async () => {
       const { wrapper, input } = setup({ menuTrigger: 'manual' })
       const trigger = wrapper.get<HTMLButtonElement>('[data-slot=combo-box-trigger]')
+
       // The trigger is a pointer affordance: Tab goes to the input only
       expect(trigger.attributes('tabindex')).toBe('-1')
       trigger.element.dispatchEvent(new MouseEvent('click', { bubbles: true, detail: 0 }))
@@ -639,9 +678,11 @@ describe('ComboBox', () => {
     it('a disabled field is out of the tab order and its trigger is disabled', async () => {
       const { wrapper, input } = setup({ disabled: true })
       expect((input.element as HTMLInputElement).disabled).toBe(true)
+
       expect(wrapper.get<HTMLButtonElement>('[data-slot=combo-box-trigger]').element.disabled).toBe(
         true,
       )
+
       wrapper.unmount()
     })
   })

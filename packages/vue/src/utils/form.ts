@@ -98,6 +98,7 @@ const validateStandardSchema = async <T>(
       })),
       result: null,
     }
+
   return { errors: null, result: result.value }
 }
 
@@ -113,6 +114,7 @@ const validateSuperstructSchema = <T>(
         .map((failure) => ({ name: failure.path.map(String).join('.'), message: failure.message })),
       result: null,
     }
+
   return { errors: null, result: result ?? null }
 }
 
@@ -125,7 +127,9 @@ export const validateSchema = async <T>(
   const raw = toRaw(schema)
   if (isStandardSchema(raw))
     return validateStandardSchema(state, raw as StandardSchemaV1<unknown, T>)
+
   if (isSuperstructSchema(raw)) return validateSuperstructSchema(state, raw as SuperstructSchema<T>)
+
   throw new Error(
     'Form validation failed: unsupported schema. Pass a Standard Schema or a Superstruct struct.',
   )
@@ -141,6 +145,7 @@ export const getAtPath = (data: unknown, path?: string): unknown => {
     if (!hasKeys(node)) return undefined
     node = (node as Record<string, unknown>)[key]
   }
+
   return node
 }
 
@@ -155,8 +160,10 @@ export const setAtPath = <T extends object>(data: T, path: string, value: unknow
       node[key] = value
       return
     }
+
     if (!hasKeys(node[key])) node[key] = /^\d+$/.test(keys[i + 1]!) ? [] : {}
     node = node[key] as Record<string, unknown>
   })
+
   return data
 }

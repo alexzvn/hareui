@@ -12,6 +12,7 @@ describe('Main', () => {
       slots: { default: () => [h('h1', 'Inbox'), h('p', 'No messages.')] },
       attachTo: document.body,
     })
+
     const main = document.querySelector('main')!
     expect(main).not.toBeNull()
     expect(main.textContent).toContain('Inbox')
@@ -26,6 +27,7 @@ describe('Main', () => {
       slots: { default: () => 'Content' },
       attachTo: document.body,
     })
+
     expect(document.querySelector('main, [role=main]')).toBeNull()
     expect(wrapper.element.tagName).toBe('DIV')
     await expectAccessible(wrapper)

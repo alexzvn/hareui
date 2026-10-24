@@ -25,6 +25,7 @@ describe('RadioGroup', () => {
         }),
       { attachTo: document.body },
     )
+
     const radios = wrapper.findAll('[data-slot=radio]')
     await radios[1]!.find('[data-slot=radio-content]').trigger('click')
     expect(model.value).toBe('premium')
@@ -38,6 +39,7 @@ describe('RadioGroup', () => {
       props: { items, defaultValue: 'basic' },
       attachTo: document.body,
     })
+
     await wrapper.findAll('[data-slot=radio-content]')[2]!.trigger('click')
     expect(wrapper.emitted('update:modelValue')).toBeUndefined()
     expect(wrapper.findAll('[data-slot=radio]')[0]!.attributes('data-selected')).toBe('true')
@@ -48,6 +50,7 @@ describe('RadioGroup', () => {
     const wrapper = mount(RadioGroup, {
       props: { id: 'plan', items, label: 'Plan', errorMessage: 'Pick one' },
     })
+
     const root = wrapper.find('[role=radiogroup]')
     expect(root.attributes('aria-labelledby')).toBe('plan-label')
     expect(wrapper.find('#plan-label').text()).toBe('Plan')
@@ -86,6 +89,7 @@ describe('RadioGroup row click', () => {
       },
       attachTo: document.body,
     })
+
     await wrapper.findAll('[data-slot=radio]')[1]!.trigger('click')
     expect(wrapper.emitted('update:modelValue')).toEqual([['b']])
     wrapper.unmount()
@@ -99,13 +103,16 @@ describe('RadioGroup keyboard and state parity', () => {
       props: { items, defaultValue: 'premium' },
       attachTo: document.body,
     })
+
     const radios = wrapper.findAll('[data-slot=radio-content]')
     ;(radios[1]!.element as HTMLElement).focus()
+
     for (const key of ['Home', 'End', 'PageUp', 'PageDown']) {
       await radios[1]!.trigger('keydown', { key })
       await new Promise((resolve) => setTimeout(resolve))
       expect(document.activeElement).toBe(radios[1]!.element)
     }
+
     expect(wrapper.emitted('update:modelValue')).toBeUndefined()
     wrapper.unmount()
   })
@@ -114,6 +121,7 @@ describe('RadioGroup keyboard and state parity', () => {
   it('exposes a disabled group as aria-disabled', () => {
     const wrapper = mount(RadioGroup, { props: { items, disabled: true } })
     expect(wrapper.get('[data-slot=radio-group]').attributes('aria-disabled')).toBe('true')
+
     expect(
       mount(RadioGroup, { props: { items } })
         .get('[data-slot=radio-group]')
@@ -130,6 +138,7 @@ describe('RadioGroup keyboard and state parity', () => {
       e.preventDefault()
       submitted++
     })
+
     const wrapper = mount(RadioGroup, { props: { items }, attachTo: form })
     await wrapper.findAll('[data-slot=radio-content]')[0]!.trigger('keydown', { key: 'Enter' })
     expect(submitted).toBe(1)
@@ -148,14 +157,17 @@ const pressSpace = async (el: Element) => {
     bubbles: true,
     cancelable: true,
   })
+
   const up = new KeyboardEvent('keyup', {
     key: ' ',
     code: 'Space',
     bubbles: true,
     cancelable: true,
   })
+
   el.dispatchEvent(down)
   el.dispatchEvent(up)
+
   if (
     el instanceof HTMLButtonElement &&
     !el.disabled &&
@@ -163,6 +175,7 @@ const pressSpace = async (el: Element) => {
     !up.defaultPrevented
   )
     el.click()
+
   await flushPromises()
 }
 
@@ -202,6 +215,7 @@ describe('RadioGroup accessibility', () => {
       props: { label: 'Plan', items: described, ...props },
       attachTo: document.body,
     })
+
     await expectAccessible(wrapper)
     wrapper.unmount()
   })
@@ -222,6 +236,7 @@ describe('RadioGroup accessibility', () => {
         ),
       { attachTo: document.body },
     )
+
     await flushPromises()
     await expectAccessible(wrapper)
     wrapper.unmount()
@@ -239,23 +254,28 @@ describe('RadioGroup accessibility', () => {
       },
       attachTo: document.body,
     })
+
     const group = wrapper.get('[role=radiogroup]')
     expect(document.getElementById(group.attributes('aria-labelledby')!)?.textContent).toBe('Plan')
     expect(group.attributes('aria-invalid')).toBe('true')
     const radios = wrapper.findAll('[data-slot=radio-content]')
     expect(radios.map((r) => r.attributes('role'))).toEqual(['radio', 'radio', 'radio'])
     expect(radios.map((r) => r.text())).toEqual(['Basic', 'Premium', 'Business'])
+
     const text = (ids: string | undefined) =>
       ids!.split(' ').map((id) => document.getElementById(id)?.textContent?.trim())
+
     expect(text(radios[0]!.attributes('aria-describedby'))).toEqual([
       'For one person',
       'Billed monthly',
       'Pick a plan',
     ])
+
     expect(text(radios[2]!.attributes('aria-describedby'))).toEqual([
       'Billed monthly',
       'Pick a plan',
     ])
+
     expect(wrapper.get('[data-slot=radio-indicator]').attributes('aria-hidden')).toBe('true')
     wrapper.unmount()
   })
@@ -264,11 +284,13 @@ describe('RadioGroup accessibility', () => {
     const wrapper = mount(RadioGroup, {
       props: { items, required: true, orientation: 'horizontal', defaultValue: 'premium' },
     })
+
     const group = wrapper.get('[role=radiogroup]')
     expect(group.attributes('aria-required')).toBe('true')
     expect(group.attributes('aria-orientation')).toBe('horizontal')
     const radios = wrapper.findAll('[data-slot=radio-content]')
     expect(radios.map((r) => r.attributes('aria-checked'))).toEqual(['false', 'true', 'false'])
+
     expect(radios.map((r) => (r.element as HTMLButtonElement).disabled)).toEqual([
       false,
       false,
@@ -282,6 +304,7 @@ describe('RadioGroup accessibility', () => {
       props: { items, defaultValue: 'premium' },
       attachTo: document.body,
     })
+
     await flushPromises()
     const group = selected.get('[role=radiogroup]').element as HTMLElement
     const radios = selected.findAll('[data-slot=radio-content]').map((r) => r.element)
@@ -297,6 +320,7 @@ describe('RadioGroup accessibility', () => {
       { value: 'closed', label: 'Closed', disabled: true },
       ...items.slice(0, 2),
     ]
+
     const empty = mount(RadioGroup, { props: { items: firstDisabled }, attachTo: document.body })
     await flushPromises()
     ;(empty.get('[role=radiogroup]').element as HTMLElement).focus()
@@ -316,6 +340,7 @@ describe('RadioGroup accessibility', () => {
         }),
       { attachTo: document.body },
     )
+
     await flushPromises()
     const radios = wrapper.findAll('[data-slot=radio-content]').map((r) => r.element)
     ;(radios[0] as HTMLElement).focus()
@@ -349,6 +374,7 @@ describe('RadioGroup accessibility', () => {
       props: { items, readonly: true, defaultValue: 'basic' },
       attachTo: document.body,
     })
+
     await flushPromises()
     const radios = wrapper.findAll('[data-slot=radio-content]').map((r) => r.element)
     ;(radios[0] as HTMLElement).focus()
@@ -365,6 +391,7 @@ describe('RadioGroup accessibility', () => {
     const radios = wrapper
       .findAll('[data-slot=radio-content]')
       .map((r) => r.element as HTMLButtonElement)
+
     expect(radios.every((r) => r.disabled)).toBe(true)
     radios[0]!.focus()
     expect(document.activeElement).not.toBe(radios[0])

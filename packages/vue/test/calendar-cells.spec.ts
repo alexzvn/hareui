@@ -15,7 +15,9 @@ const createGrid = () => {
     <div data-reka-calendar-cell-trigger data-value="2025-03-01" tabindex="-1"><span>1</span></div>
     <div data-reka-calendar-cell-trigger data-value="2025-03-02T00:00:00" tabindex="-1"></div>
   `
+
   document.body.append(root)
+
   return root
 }
 
@@ -27,6 +29,7 @@ describe('compareDay', () => {
   it('compares by day, ignoring time of day', () => {
     expect(compareDay(new CalendarDateTime(2025, 3, 1, 23), new CalendarDate(2025, 3, 1))).toBe(0)
     expect(compareDay(new CalendarDate(2025, 3, 1), new CalendarDate(2025, 3, 4))).toBeLessThan(0)
+
     expect(
       compareDay(new CalendarDate(2025, 3, 4), new CalendarDateTime(2025, 3, 1, 8)),
     ).toBeGreaterThan(0)

@@ -9,6 +9,7 @@ import { defineComponent, h, ref } from 'vue'
 const CustomButton = defineComponent((_, { attrs, slots }) => {
   const pressed = ref(false)
   const release = () => (pressed.value = false)
+
   return () =>
     h(
       'button',

@@ -97,6 +97,7 @@ const props = withDefaults(defineProps<TextAreaProps>(), {
   required: undefined,
   readonly: undefined,
 })
+
 /** The textarea value. */
 const modelValue = defineModel<string | number>()
 
@@ -107,6 +108,7 @@ const field = inject(textFieldContextKey, null)
 const vnodeProps = getCurrentInstance()?.vnode.props ?? {}
 const ownModel =
   !field || ['modelValue', 'model-value', 'onUpdate:modelValue'].some((key) => key in vnodeProps)
+
 const value = computed({
   get: () => (ownModel ? modelValue.value : field!.model.value),
   set: (v) => {
@@ -114,7 +116,9 @@ const value = computed({
     if (field) field.model.value = v
   },
 })
+
 if (value.value === undefined && props.defaultValue !== undefined) value.value = props.defaultValue
+
 if (field && ownModel) {
   watch(
     modelValue,
@@ -123,6 +127,7 @@ if (field && ownModel) {
     },
     { immediate: true },
   )
+
   // The field writes its model on form reset; pass that back to the parent's v-model
   watch(field.model, (v) => {
     if (v !== modelValue.value) modelValue.value = v
@@ -154,6 +159,7 @@ const own = field
         value.value = props.defaultValue ?? ''
       },
     })
+
 const invalid = computed(() =>
   own ? own.validation.value.isInvalid : (props.invalid ?? field?.invalid.value ?? false),
 )

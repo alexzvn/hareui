@@ -134,6 +134,7 @@ const props = withDefaults(defineProps<ChartRadialBarProps>(), {
   animationDuration: 1500,
   animationEasing: 'ease',
 })
+
 defineSlots<ChartRadialBarSlots>()
 
 const chart = useChartContext('ChartRadialBar')
@@ -161,6 +162,7 @@ const entries = (index: number): ChartTooltipPayloadEntry[] => {
   const value = datum?.[props.dataKey]
   if (!datum || value === undefined || value === null || value === '') return []
   const fill = ringFill(index)
+
   return [
     { dataKey: props.dataKey, name: ringName(index), value, color: fill, fill, payload: datum },
   ]
@@ -185,6 +187,7 @@ chart.registerSeries((): ChartSeries => ({
 const rings = computed(() => {
   const axis = polar.radiusAxis.value
   const { offset, size } = polar.radialBarPosition(id)
+
   return chart.data.value.map((_, index) => {
     const innerRadius = axis.at(index) + offset
     return { innerRadius, outerRadius: innerRadius + size }
@@ -198,6 +201,7 @@ const target = computed<RadialBarSector[]>(() => {
   const startAngle = polar.startAngle.value
   const sweepSign = Math.sign(deltaAngle(startAngle, polar.endAngle.value)) || 1
   const angleAxis = polar.angleAxis.value
+
   return chart.data.value.flatMap((datum, index) => {
     const raw = datum[props.dataKey]
     const value = Number(raw)
@@ -205,6 +209,7 @@ const target = computed<RadialBarSector[]>(() => {
     let endAngle = angleAxis.scale(value)
     if (props.minPointSize > 0 && Math.abs(endAngle - startAngle) < props.minPointSize)
       endAngle = startAngle + sweepSign * props.minPointSize
+
     return [{ index, value: raw, cx, cy, ...rings.value[index]!, startAngle, endAngle }]
   })
 })
@@ -213,6 +218,7 @@ const tracks = computed(() => {
   if (!props.background || props.hide) return []
   const startAngle = polar.startAngle.value
   const endAngle = startAngle + deltaAngle(startAngle, polar.endAngle.value)
+
   return rings.value.map((ring, index) => ({
     index,
     d: sectorPath({ ...ring, startAngle, endAngle, cornerRadius: props.cornerRadius }),

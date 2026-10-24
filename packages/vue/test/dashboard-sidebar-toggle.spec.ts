@@ -61,6 +61,7 @@ describe('DashboardSidebarToggle', () => {
   it('is a named native button, collapsed and controlling nothing while the menu is closed, and passes axe', async () => {
     const wrapper = mountDashboard()
     const el = toggle()
+
     // A native <button type="button">: Tab reaches it, Enter and Space activate it.
     expect(el.tagName).toBe('BUTTON')
     expect(el.getAttribute('type')).toBe('button')
@@ -81,6 +82,7 @@ describe('DashboardSidebarToggle', () => {
     const menu = document.getElementById(el.getAttribute('aria-controls')!)!
     expect(menu.closest('[role=dialog]')).not.toBeNull()
     expect(menu.textContent).toContain('Inbox')
+
     // The right toggle controls the right sidebar only.
     expect(toggle('right').getAttribute('aria-expanded')).toBe('false')
     wrapper.unmount()

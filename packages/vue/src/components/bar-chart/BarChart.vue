@@ -82,9 +82,11 @@ const props = withDefaults(defineProps<BarChartProps<T>>(), {
   barGap: 4,
   stacked: undefined,
 })
+
 defineSlots<BarChartSlots>()
 const hidden = defineModel<string[]>('hidden', { default: () => [] })
 const slots = useSlots()
+
 // Every slot is forwarded to the frame, which places it.
 const slotNames = () => Object.keys(slots) as Array<keyof BarChartSlots>
 
@@ -97,12 +99,14 @@ const chart = useChartRoot({
   ui,
   uiProps: () => props.ui,
 })
+
 useCartesianChart(chart, {
   barCategoryGap: () => props.barCategoryGap,
   barGap: () => props.barGap,
   barSize: () => props.barSize,
   maxBarSize: () => props.maxBarSize,
 })
+
 const root = useCartesianRoot<T, ChartBarSeries>({
   chart,
   props,

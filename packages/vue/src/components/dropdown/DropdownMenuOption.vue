@@ -175,6 +175,7 @@ const aria = computed(() =>
 
 const selectable = computed(() => !props.submenu && props.group.mode !== 'none')
 const state = computed(() => ctx.slotProps(props.item, props.group))
+
 const component = computed(() =>
   props.submenu
     ? DropdownMenuSubTrigger
@@ -182,6 +183,7 @@ const component = computed(() =>
       ? DropdownMenuCheckboxItem
       : DropdownMenuItem,
 )
+
 // Only bound when set: an `undefined` fallthrough attr would erase Reka's own `role="menuitemcheckbox"`
 const extraAttrs = computed(() => ({
   ...aria.value,
@@ -216,6 +218,7 @@ const onSelect = (event: Event) => {
     ctx.action(props.item)
     return
   }
+
   props.group.toggle(props.item.value)
   const key = ctx.lastKey()
   const shouldClose = key !== null ? key === 'Enter' : props.group.mode !== 'multiple'
@@ -246,6 +249,7 @@ const chevron = () => {
     ],
   )
 }
+
 const SubmenuIndicatorContent = () =>
   renderSlot(slots, 'submenu-indicator', { ...state.value }, () => [chevron()])
 </script>

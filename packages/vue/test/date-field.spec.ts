@@ -14,6 +14,7 @@ const withResolvers = <T>() => {
   const promise = new Promise<T>((res) => {
     resolve = res
   })
+
   return { promise, resolve }
 }
 
@@ -22,10 +23,13 @@ describe('dateField', () => {
     const wrapper = mount(DateField, {
       props: { id: 'd', label: 'Date', description: 'Pick a date' },
     })
+
     expect(wrapper.find('[data-slot="label"]').text()).toBe('Date')
+
     expect(wrapper.find('[data-slot="date-input-group"]').attributes('aria-labelledby')).toBe(
       'd-label',
     )
+
     expect(wrapper.find('[data-slot="description"]').attributes('id')).toBe('d-description')
     expect(wrapper.attributes('aria-describedby')).toBe('d-description')
   })
@@ -38,6 +42,7 @@ describe('dateField', () => {
           wrapper.setProps({ modelValue: v }),
       },
     })
+
     const month = wrapper.find('[data-slot="date-input-group-segment"]')
     await month.trigger('focus')
     await month.trigger('keydown', { key: 'ArrowUp' })
@@ -50,6 +55,7 @@ describe('dateField', () => {
       props: { defaultValue: new CalendarDate(2024, 3, 15) },
       attachTo: document.body,
     })
+
     const segments = wrapper.findAll('[data-slot="date-input-group-segment"]')
     const month = segments[0].element as HTMLElement
     const day = segments[2].element as HTMLElement
@@ -63,7 +69,9 @@ describe('dateField', () => {
     const wrapper = mount(DateField, {
       props: { disabled: true, defaultValue: new CalendarDate(2024, 3, 15) },
     })
+
     expect(wrapper.find('[data-slot="date-input-group"]').attributes('data-disabled')).toBe('')
+
     expect(
       wrapper.find('[data-slot="date-input-group-segment"]').attributes('contenteditable'),
     ).toBe('false')
@@ -73,6 +81,7 @@ describe('dateField', () => {
     const wrapper = mount(DateField, {
       props: { invalid: true, description: 'help', errorMessage: 'Enter a valid date' },
     })
+
     expect(wrapper.find('[data-slot="description"]').exists()).toBe(false)
     expect(wrapper.find('[data-slot="field-error"]').text()).toBe('Enter a valid date')
     expect(wrapper.find('[data-slot="date-input-group"]').attributes('data-invalid')).toBe('true')
@@ -86,6 +95,7 @@ describe('dateField', () => {
       },
       { attachTo: document.body },
     )
+
     const form = wrapper.find('form').element as HTMLFormElement
     form.requestSubmit()
     await wrapper.vm.$nextTick()
@@ -104,6 +114,7 @@ describe('dateField', () => {
         isDateUnavailable: (date: DateValue) => date.compare(target) === 0,
       },
     })
+
     const segments = wrapper.findAll('[data-slot="date-input-group-segment"]')
     expect(segments.some((s) => s.attributes('data-invalid') === '')).toBe(true)
   })
@@ -112,9 +123,11 @@ describe('dateField', () => {
     const wrapper = mount(DateField, {
       props: { defaultValue: new CalendarDate(2024, 1, 1), minValue: new CalendarDate(2024, 6, 1) },
     })
+
     expect(
       wrapper.find('[data-slot="date-input-group"]').attributes('data-invalid'),
     ).toBeUndefined()
+
     expect(wrapper.find('[data-slot="field-error"]').exists()).toBe(false)
 
     const month = wrapper.find('[data-slot="date-input-group-segment"]')
@@ -132,6 +145,7 @@ describe('dateField', () => {
         validationBehavior: 'aria',
       },
     })
+
     expect(wrapper.find('[data-slot="date-input-group"]').attributes('data-invalid')).toBe('true')
     expect(wrapper.find('[data-slot="field-error"]').text()).toContain('or later')
   })
@@ -144,6 +158,7 @@ describe('dateField', () => {
         invalid: false,
       },
     })
+
     expect(
       wrapper.find('[data-slot="date-input-group"]').attributes('data-invalid'),
     ).toBeUndefined()
@@ -157,9 +172,11 @@ describe('dateField', () => {
         suffix: '<span data-testid="suffix-icon" />',
       },
     })
+
     expect(
       wrapper.find('[data-slot="date-input-group-prefix"] [data-testid="prefix-icon"]').exists(),
     ).toBe(true)
+
     expect(
       wrapper.find('[data-slot="date-input-group-suffix"] [data-testid="suffix-icon"]').exists(),
     ).toBe(true)
@@ -180,11 +197,13 @@ describe('dateField', () => {
         hourCycle: 12,
       },
     })
+
     const hour = wrapper.find('[data-reka-date-field-segment="hour"]')
     await hour.trigger('focus')
     await hour.trigger('keydown', { key: 'ArrowUp' })
     await hour.trigger('keydown', { key: 'ArrowUp' })
     const emitted = wrapper.emitted('update:modelValue')!
+
     // 10 AM -> 11 AM -> 12 AM (hour 0), not 12 PM (hour 12)
     expect((emitted[emitted.length - 1][0] as CalendarDateTime).hour).toBe(0)
   })
@@ -206,6 +225,7 @@ describe('dateField', () => {
     const day = wrapper.find('[data-reka-date-field-segment="day"]')
     await day.trigger('focus')
     await day.trigger('keydown', { key: 'PageUp' })
+
     // React Aria PAGE_STEP: day is 7
     expect(day.text()).toBe('22')
     await day.trigger('keydown', { key: 'PageDown' })
@@ -217,6 +237,7 @@ describe('dateField', () => {
     const wrapper = mount(DateField, {
       props: { invalid: true, defaultValue: new CalendarDate(2024, 3, 15) },
     })
+
     const segments = wrapper.findAll('[role=spinbutton]')
     expect(segments.length).toBe(3)
     expect(segments.map((s) => s.attributes('aria-invalid'))).toEqual(['true', 'true', 'true'])
@@ -227,6 +248,7 @@ describe('dateField', () => {
     const wrapper = mount(DateField, {
       props: { invalid: true, defaultValue: new CalendarDate(2024, 3, 15) },
     })
+
     expect(
       wrapper.get('[data-slot="date-input-group-input"]').attributes('data-invalid'),
     ).toBeDefined()
@@ -235,9 +257,11 @@ describe('dateField', () => {
 
 describe('DateField accessibility', () => {
   const date = new CalendarDate(2025, 1, 15)
+
   const spinbuttons = (wrapper: { element: Element }) => [
     ...wrapper.element.querySelectorAll<HTMLElement>('[role=spinbutton]'),
   ]
+
   const textOf = (ids: string | null) =>
     ids
       ?.split(' ')
@@ -259,6 +283,7 @@ describe('DateField accessibility', () => {
         defaultValue: new CalendarDateTime(2025, 1, 15, 9, 30),
       },
     ]
+
     for (const props of cases) {
       const wrapper = mount(DateField, { props, attachTo: document.body })
       await expectAccessible(wrapper)
@@ -271,6 +296,7 @@ describe('DateField accessibility', () => {
       props: { label: 'Due date', description: 'Pick a weekday', defaultValue: date },
       attachTo: document.body,
     })
+
     const group = wrapper.get('[data-slot=date-input-group]')
     expect(textOf(group.attributes('aria-labelledby')!)).toBe('Due date')
     expect(textOf(group.attributes('aria-describedby')!)).toBe('Pick a weekday')
@@ -280,11 +306,13 @@ describe('DateField accessibility', () => {
       expect(self).toBe(segment.id)
       expect(textOf(label.join(' '))).toBe('Due date')
     }
+
     expect(segments.map((s) => s.getAttribute('aria-label'))).toEqual([
       'month, ',
       'day, ',
       'year, ',
     ])
+
     expect(textOf(segments[0]!.getAttribute('aria-describedby'))).toBe('Pick a weekday')
     wrapper.unmount()
   })
@@ -294,12 +322,15 @@ describe('DateField accessibility', () => {
       attrs: { 'aria-label': 'Due date' },
       attachTo: document.body,
     })
+
     expect(wrapper.get('[data-slot=date-input-group]').attributes('aria-label')).toBe('Due date')
+
     expect(spinbuttons(wrapper).map((s) => s.getAttribute('aria-label'))).toEqual([
       'month, Due date',
       'day, Due date',
       'year, Due date',
     ])
+
     wrapper.unmount()
   })
 
@@ -313,10 +344,12 @@ describe('DateField accessibility', () => {
       },
       attachTo: document.body,
     })
+
     for (const segment of spinbuttons(wrapper)) {
       expect(segment.getAttribute('aria-invalid')).toBe('true')
       expect(textOf(segment.getAttribute('aria-describedby'))).toBe('Pick a later date')
     }
+
     wrapper.unmount()
   })
 
@@ -324,20 +357,25 @@ describe('DateField accessibility', () => {
     const readonly = mount(DateField, {
       props: { label: 'Due date', readonly: true, defaultValue: date },
     })
+
     expect(
       spinbuttons(readonly).every(
         (s) => s.getAttribute('aria-readonly') === 'true' && s.tabIndex === 0,
       ),
     ).toBe(true)
+
     readonly.unmount()
+
     const disabled = mount(DateField, {
       props: { label: 'Due date', disabled: true, defaultValue: date },
     })
+
     expect(
       spinbuttons(disabled).every(
         (s) => s.getAttribute('aria-disabled') === 'true' && !s.hasAttribute('tabindex'),
       ),
     ).toBe(true)
+
     disabled.unmount()
   })
 
@@ -346,6 +384,7 @@ describe('DateField accessibility', () => {
       props: { label: 'Due date', defaultValue: date },
       attachTo: document.body,
     })
+
     const segments = spinbuttons(wrapper)
     expect(segments.map((s) => s.tabIndex)).toEqual([0, 0, 0])
     segments[2]!.focus()

@@ -31,6 +31,7 @@ const props = defineProps<{
   thumbBackground?: string
   class?: ColorSliderProps['class']
 }>()
+
 const emit = defineEmits<{ 'update:modelValue': [value: Color] }>()
 
 const ui = computed(() => ({

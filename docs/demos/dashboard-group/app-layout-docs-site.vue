@@ -195,5 +195,6 @@ const themes = [
   { value: 'dark', label: 'Dark', icon: 'gravity-ui:moon' },
   { value: 'system', label: 'System', icon: 'gravity-ui:display' },
 ]
+
 const theme = ref(['system'])
 </script>

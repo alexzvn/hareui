@@ -261,6 +261,7 @@ const props = withDefaults(defineProps<TabsProps<T>>(), {
   content: true,
   separator: false,
 })
+
 const modelValue = defineModel<string | number>()
 defineSlots<TabsSlots<T>>()
 
@@ -279,6 +280,7 @@ const itemValue = (item: TabsItem, index: number): string | number => {
 const defaultValue = computed(() => {
   if (props.defaultValue !== undefined) return props.defaultValue
   const index = props.items.findIndex((item) => !item.disabled)
+
   return index === -1 ? (props.items[0]?.value ?? '0') : itemValue(props.items[index]!, index)
 })
 
@@ -289,10 +291,12 @@ const tabStopValue = computed(() => {
   const selected = props.items.findIndex(
     (item, index) => itemValue(item, index) === selectedValue.value,
   )
+
   const index =
     selected !== -1 && !props.items[selected]!.disabled
       ? selected
       : props.items.findIndex((item) => !item.disabled)
+
   return index === -1 ? undefined : itemValue(props.items[index]!, index)
 })
 
@@ -302,6 +306,7 @@ const tabStopValue = computed(() => {
 const visiblePanel = computed(() => {
   if (!props.content) return null
   const index = props.items.findIndex((item, i) => itemValue(item, i) === selectedValue.value)
+
   return index === -1 ? null : { item: props.items[index]!, index }
 })
 
@@ -310,6 +315,7 @@ const isSeparatorHidden = (index: number): boolean => {
   if (current === selectedValue.value) return true
   if (index === 0) return false
   const previous = itemValue(props.items[index - 1]!, index - 1)
+
   return previous === selectedValue.value
 }
 
@@ -327,8 +333,10 @@ const onListKeydown = (event: KeyboardEvent) => {
     event.stopPropagation()
     return
   }
+
   if (props.orientation !== 'vertical' || (event.key !== 'ArrowLeft' && event.key !== 'ArrowRight'))
     return
+
   const list = event.currentTarget as HTMLElement
   const tabs = [...list.querySelectorAll<HTMLElement>('[data-slot="tabs-tab"]:not([disabled])')]
   const index = tabs.indexOf(document.activeElement as HTMLElement)
@@ -342,9 +350,11 @@ const onListKeydown = (event: KeyboardEvent) => {
 
 const placeIndicator = () => {
   const indicator = indicatorRef.value
+
   const activeTab = listRef.value?.$el?.querySelector?.(
     '[data-slot="tabs-tab"][data-state="active"]',
   )
+
   if (indicator && activeTab && activeTab.nextElementSibling !== indicator)
     activeTab.after(indicator)
 }
@@ -356,6 +366,7 @@ const placeIndicator = () => {
 // the exact same box React renders (HeroUI's indicator is `size-full` of its own tab).
 const listRef = ref<{ $el: HTMLElement } | null>(null)
 const indicatorGeometry = ref<Record<string, string>>({})
+
 // React Aria's SelectionIndicator only transitions when a *previous* instance existed to
 // FLIP from; a brand-new indicator (first mount, no prior snapshot) just appears at its
 // final geometry. Our indicator starts with no geometry vars (collapsed to 0×0 at the
@@ -368,6 +379,7 @@ const indicatorStyle = computed(() =>
     ? indicatorGeometry.value
     : { ...indicatorGeometry.value, transition: 'none' },
 )
+
 let resizeObserver: ResizeObserver | null = null
 
 const measureIndicator = () => {
@@ -378,6 +390,7 @@ const measureIndicator = () => {
     indicatorGeometry.value = {}
     return
   }
+
   const listRect = listEl.getBoundingClientRect()
   const tabRect = activeTab.getBoundingClientRect()
   indicatorGeometry.value = {
@@ -413,6 +426,7 @@ const scrollByPage = (direction: 1 | -1) => {
     rtl ? 0 : maxScroll,
     Math.max(rtl ? -maxScroll : 0, current + direction * size * 0.8 * (rtl ? -1 : 1)),
   )
+
   if (next !== current) el.scrollTo({ behavior: 'smooth', [vertical ? 'top' : 'left']: next })
 }
 
@@ -429,9 +443,11 @@ onMounted(() => {
   placeIndicator()
   observeGeometry()
   measureIndicator()
+
   requestAnimationFrame(() => {
     indicatorReady.value = true
   })
+
   window.addEventListener('resize', measureIndicator)
 })
 
@@ -445,6 +461,7 @@ onBeforeUnmount(() => {
 // toggled on the element directly and kept in sync with the panel's content.
 const PANEL_TABBABLE =
   'a[href],area[href],button:not([disabled]),input:not([disabled]):not([type=hidden]),select:not([disabled]),textarea:not([disabled]),iframe,[contenteditable]:not([contenteditable=false]),[tabindex]:not([tabindex^="-"])'
+
 const panelRef = ref<{ $el: HTMLElement } | null>(null)
 let panelObserver: MutationObserver | null = null
 
@@ -463,8 +480,10 @@ watch(
     panelObserver = null
     if (!(panel instanceof HTMLElement)) return
     syncPanelTabStop()
+
     if (typeof MutationObserver !== 'undefined') {
       panelObserver = new MutationObserver(syncPanelTabStop)
+
       panelObserver.observe(panel, {
         subtree: true,
         childList: true,
@@ -482,6 +501,7 @@ watch(
   [selectedValue, () => props.items, () => props.orientation],
   async () => {
     await nextTick()
+
     // Move before measuring: the measurement flushes styles, so the indicator transitions from its old geometry.
     placeIndicator()
     observeGeometry()

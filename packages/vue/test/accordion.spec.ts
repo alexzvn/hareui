@@ -39,6 +39,7 @@ describe('accordion', () => {
     const whole = mount(Accordion, { props: { items, disabled: true } })
     await whole.findAll('[data-slot=accordion-trigger]')[0]!.trigger('click')
     expect(expandedStates(whole)).toEqual(['false', 'false', 'false'])
+
     expect(
       whole
         .findAll('[data-slot=accordion-trigger]')
@@ -48,6 +49,7 @@ describe('accordion', () => {
     const one = mount(Accordion, {
       props: { items: [items[0]!, { ...items[1]!, disabled: true }] },
     })
+
     await one.findAll('[data-slot=accordion-trigger]')[1]!.trigger('click')
     expect(expandedStates(one)).toEqual(['false', 'false'])
     await one.findAll('[data-slot=accordion-trigger]')[0]!.trigger('click')
@@ -63,6 +65,7 @@ describe('accordion', () => {
         expanded.value = keys
       },
     })
+
     const wrapper = mount({
       setup: () => () =>
         h(Accordion, {
@@ -73,6 +76,7 @@ describe('accordion', () => {
           },
         }),
     })
+
     expect(nav.isPrevDisabled.value).toBe(true)
 
     nav.onNext()
@@ -94,6 +98,7 @@ describe('accordion', () => {
       props: { items: [items[0]!], defaultValue: ['a'] },
       slots: { indicator: () => h('i', { class: 'custom' }) },
     })
+
     const indicator = wrapper.find('[data-slot=accordion-indicator]')
     expect(indicator.element.tagName).toBe('I')
     expect(indicator.classes()).toContain('custom')
@@ -101,6 +106,7 @@ describe('accordion', () => {
     expect(indicator.attributes('data-expanded')).toBe('true')
 
     await wrapper.find('[data-slot=accordion-trigger]').trigger('click')
+
     expect(
       wrapper.find('[data-slot=accordion-indicator]').attributes('data-expanded'),
     ).toBeUndefined()
@@ -110,6 +116,7 @@ describe('accordion', () => {
 describe('Accordion accessibility', () => {
   const triggers = (wrapper: ReturnType<typeof mount>) =>
     wrapper.findAll('[data-slot=accordion-trigger]')
+
   const panels = (wrapper: ReturnType<typeof mount>) =>
     wrapper.findAll('[data-slot=accordion-panel]')
 
@@ -121,6 +128,7 @@ describe('Accordion accessibility', () => {
       { disabled: true },
       { items: [items[0]!, { ...items[1]!, disabled: true }, items[2]!], defaultValue: ['a'] },
     ]
+
     for (const props of cases) {
       const wrapper = mount(Accordion, { props: { items, ...props }, attachTo: document.body })
       await expectAccessible(wrapper)
@@ -133,6 +141,7 @@ describe('Accordion accessibility', () => {
       props: { items, defaultValue: ['a'] },
       attachTo: document.body,
     })
+
     triggers(wrapper).forEach((trigger, index) => {
       const panel = panels(wrapper)[index]!
       expect(trigger.element.tagName).toBe('BUTTON')
@@ -143,6 +152,7 @@ describe('Accordion accessibility', () => {
       expect(document.getElementById(panel.attributes('aria-labelledby')!)).toBe(trigger.element)
       expect(trigger.text()).toBe(items[index]!.label)
     })
+
     wrapper.unmount()
   })
 
@@ -151,8 +161,10 @@ describe('Accordion accessibility', () => {
       props: { items, defaultValue: ['a'] },
       attachTo: document.body,
     })
+
     const hiddenStates = () =>
       panels(wrapper).map((p) => [p.attributes('aria-hidden'), p.attributes('hidden') ?? null])
+
     expect(hiddenStates()).toEqual([
       ['false', null],
       ['true', 'until-found'],
@@ -160,17 +172,21 @@ describe('Accordion accessibility', () => {
     ])
 
     await triggers(wrapper)[1]!.trigger('click')
+
     expect(panels(wrapper).map((p) => p.attributes('aria-hidden'))).toEqual([
       'true',
       'false',
       'true',
     ])
+
     expect(panels(wrapper)[1]!.attributes('hidden')).toBeUndefined()
+
     expect(triggers(wrapper).map((t) => t.attributes('aria-expanded'))).toEqual([
       'false',
       'true',
       'false',
     ])
+
     wrapper.unmount()
   })
 
@@ -179,6 +195,7 @@ describe('Accordion accessibility', () => {
       props: { items: [items[0]!, { ...items[1]!, disabled: true }, items[2]!] },
       attachTo: document.body,
     })
+
     const [first, disabled, last] = triggers(wrapper)
     expect([first, last].map((t) => t!.attributes('tabindex'))).toEqual([undefined, undefined])
     expect((disabled!.element as HTMLButtonElement).disabled).toBe(true)

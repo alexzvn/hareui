@@ -71,9 +71,11 @@ const props = withDefaults(defineProps<ComposedChartProps<T>>(), {
   ...cartesianRootDefaults,
   stacked: undefined,
 })
+
 defineSlots<ComposedChartSlots>()
 const hidden = defineModel<string[]>('hidden', { default: () => [] })
 const slots = useSlots()
+
 // Every slot is forwarded to the frame, which places it.
 const slotNames = () => Object.keys(slots) as Array<keyof ComposedChartSlots>
 
@@ -85,7 +87,9 @@ const chart = useChartRoot({
   ui,
   uiProps: () => props.ui,
 })
+
 useCartesianChart(chart, {})
+
 const root = useCartesianRoot<T, ChartComposedSeries>({
   chart,
   props,

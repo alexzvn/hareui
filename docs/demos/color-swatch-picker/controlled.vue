@@ -21,5 +21,6 @@ const colors: ColorSwatchPickerItem[] = [
   '#10B981',
   '#84CC16',
 ]
+
 const value = ref(parseColor('#F43F5E'))
 </script>

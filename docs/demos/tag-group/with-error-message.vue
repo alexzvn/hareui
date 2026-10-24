@@ -21,10 +21,12 @@ const items: TagGroupItem[] = [
   { id: 'pool', label: 'Swimming pool' },
   { id: 'breakfast', label: 'Breakfast' },
 ]
+
 const selected = ref<string[]>([])
 const isInvalid = computed(() => selected.value.length === 0)
 const description = computed(() =>
   isInvalid.value ? 'Select at least one category' : `Selected: ${selected.value.join(', ')}`,
 )
+
 const errorMessage = computed(() => (isInvalid.value ? 'Please select at least one category' : ''))
 </script>

@@ -17,7 +17,8 @@ export const DEFAULT_ACCENT = {
   lightness: 0.6204,
 }
 
-const SEMANTIC_HUE_BLEND_FACTOR = 0.12 // 12% influence from base hue
+// 12% influence from base hue
+const SEMANTIC_HUE_BLEND_FACTOR = 0.12
 
 // Default theme values from variables.css - these are the baseline that will be adjusted
 const DEFAULT_THEME_VALUES = {
@@ -265,7 +266,8 @@ const calculateSemanticHue = (semanticDefaultHue: number, baseHue: number): numb
 export const calculateForeground = (oklchString: string): string => {
   const color = parseOklch(oklchString)
 
-  if (!color) return 'oklch(99.11% 0 0)' // fallback to snow
+  // fallback to snow
+  if (!color) return 'oklch(99.11% 0 0)'
 
   const { c, h, l } = color
 
@@ -294,7 +296,8 @@ export const calculateAccentForeground = (
   if (lightness > 0.65) {
     return `oklch(15% ${Math.min(chroma * 0.2, 0.03).toFixed(4)} ${hue.toFixed(2)})`
   } else {
-    return `oklch(99.11% 0 0)` // Snow white for dark accents
+    // Snow white for dark accents
+    return `oklch(99.11% 0 0)`
   }
 }
 
@@ -309,6 +312,7 @@ const generateSemanticColor = (
 ): { color: ThemeColor; foreground: ThemeColor } => {
   // Calculate blended hue
   const adjustedHue = calculateSemanticHue(config.hue, baseHue)
+
   const adjustedHueDark = calculateSemanticHue(
     'hueDark' in config ? (config.hueDark as number) : config.hue,
     baseHue,
@@ -326,15 +330,16 @@ const generateSemanticColor = (
   // Threshold ~0.67: Success (0.73), Warning (0.78) → dark fg; Danger (0.65) → light fg
   const LIGHTNESS_THRESHOLD = 0.67
 
+  // Above the threshold: Eclipse-like (dark) foreground; otherwise Snow (white)
   const fgLightTheme =
     config.lightnessLight > LIGHTNESS_THRESHOLD
-      ? formatOklch({ c: 0.0059, h: adjustedHue, l: 0.2103 }) // Eclipse-like (dark)
-      : 'oklch(99.11% 0 0)' // Snow (white)
+      ? formatOklch({ c: 0.0059, h: adjustedHue, l: 0.2103 })
+      : 'oklch(99.11% 0 0)'
 
   const fgDarkTheme =
     config.lightnessDark > LIGHTNESS_THRESHOLD
-      ? formatOklch({ c: 0.0059, h: adjustedHueDark, l: 0.2103 }) // Eclipse-like (dark)
-      : 'oklch(99.11% 0 0)' // Snow (white)
+      ? formatOklch({ c: 0.0059, h: adjustedHueDark, l: 0.2103 })
+      : 'oklch(99.11% 0 0)'
 
   return {
     color: {
@@ -377,7 +382,9 @@ export const generateThemeColors = (params: ColorGenerationParams): GeneratedThe
 
   // --accent: Apply all three parameters (lightness, chroma, hue)
   const accentLight = formatOklch({ c: chroma, h: hue, l: lightness })
-  const accentDark = formatOklch({ c: chroma, h: hue, l: lightness }) // Same for both modes typically
+
+  // Same for both modes typically
+  const accentDark = formatOklch({ c: chroma, h: hue, l: lightness })
 
   const accent: ThemeColor = {
     name: '--accent',

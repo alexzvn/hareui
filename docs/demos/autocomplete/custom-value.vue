@@ -39,6 +39,7 @@ const currencies = [
   { value: 'jpy', code: 'JPY', name: 'Japanese Yen', symbol: '¥' },
   { value: 'chf', code: 'CHF', name: 'Swiss Franc', symbol: '₣' },
 ]
+
 const items: Currency[] = currencies.map((c) => ({
   ...c,
   label: c.code,

@@ -49,8 +49,10 @@ export default defineComponent({
     const ctx = injectColorFieldRootContext()
     const configLocale = useLocale()
     const hex = (color: Color) => colorToString(color, 'hex')
+
     // True between the user's first keystroke and the next commit
     let typing = false
+
     // True while this bridge writes raw numbers through Reka's commit
     let writing = false
     const pinned = shallowRef<{ value: number; hex: string } | null>(null)
@@ -58,8 +60,10 @@ export default defineComponent({
     const channelValue = (): number => {
       const channel = ctx.channel.value!
       if (pinned.value && pinned.value.hex === hex(ctx.color.value)) return pinned.value.value
+
       return getChannelValue(ctx.color.value, channel)
     }
+
     // Rebuilt only when the locale or channel changes, not per keystroke/step.
     const channelFormat = computed(() => {
       const channel = ctx.channel.value!
@@ -74,16 +78,19 @@ export default defineComponent({
           }),
           divisor: 1,
         }
+
       if (PERCENT_CHANNELS.has(channel))
         return {
           formatter: new Intl.NumberFormat(locale, { style: 'percent', maximumFractionDigits: 0 }),
           divisor: 100,
         }
+
       return {
         formatter: new Intl.NumberFormat(locale, { maximumFractionDigits: 0, useGrouping: false }),
         divisor: 1,
       }
     })
+
     const format = (value: number): string => {
       return channelFormat.value.formatter.format(value / channelFormat.value.divisor)
     }
@@ -98,15 +105,19 @@ export default defineComponent({
       [ctx.inputValue, ctx.color, () => props.isEmpty()],
       ([value, color, empty]) => {
         if (writing) return
+
         if (empty) {
           if (value !== '' && !typing) ctx.inputValue.value = ''
           return
         }
+
         if (ctx.channel.value) {
           const formatted = format(channelValue())
           if (!typing && value !== formatted) ctx.inputValue.value = formatted
+
           return
         }
+
         if (value !== hex(color)) return
         const upper = value.toUpperCase()
         if (upper !== value) ctx.inputValue.value = upper
@@ -125,12 +136,14 @@ export default defineComponent({
       const target = hex(setChannelValue(ctx.color.value, channel, clamped))
       typing = false
       writing = true
+
       try {
         ctx.inputValue.value = String(clamped)
         commit()
       } finally {
         writing = false
       }
+
       pinned.value = { value: clamped, hex: target }
       ctx.inputValue.value = props.isEmpty() ? '' : format(clamped)
     }
@@ -141,19 +154,25 @@ export default defineComponent({
       if (text === '' && !props.isEmpty() && editable()) {
         props.onClear()
         ctx.inputValue.value = ''
+
         return
       }
+
       if (ctx.channel.value) {
         const number = Number.parseFloat(text.replace(/[^\d.-]/g, ''))
         if (editable() && !Number.isNaN(number)) setChannel(number)
         else ctx.inputValue.value = props.isEmpty() ? '' : format(channelValue())
+
         return
       }
+
       const before = hex(ctx.color.value)
+
       // React Aria's hex field has no alpha: `#FF0000AA` commits as `#FF0000`
       if (isValidColor(text)) ctx.inputValue.value = hex({ ...parseColor(text), alpha: 1 } as Color)
       commit()
       if (!props.isEmpty()) return
+
       if (
         editable() &&
         isValidColor(text) &&
@@ -161,8 +180,10 @@ export default defineComponent({
       ) {
         props.onFill(ctx.color.value)
         ctx.inputValue.value = ctx.inputValue.value.toUpperCase()
+
         return
       }
+
       ctx.inputValue.value = ''
     }
 
@@ -170,24 +191,29 @@ export default defineComponent({
     const step = (direction: 1 | -1) => {
       if (!editable()) return
       if (!ctx.channel.value) return direction > 0 ? increment() : decrement()
+
       setChannel(
         channelValue() + direction * (props.step ?? getChannelRange(ctx.channel.value).step),
       )
     }
+
     const { increment, decrement, incrementToMax, decrementToMin } = ctx
     ctx.increment = () => step(1)
     ctx.decrement = () => step(-1)
     ctx.incrementPage = () => step(1)
     ctx.decrementPage = () => step(-1)
+
     // Reka's hue max (360) wraps to 0 through the hex round-trip; React Aria shows 360°.
     ctx.incrementToMax = () => {
       if (!ctx.channel.value) return incrementToMax()
       if (editable()) setChannel(getChannelRange(ctx.channel.value).max)
     }
+
     ctx.decrementToMin = () => {
       if (!ctx.channel.value) return decrementToMin()
       if (editable()) setChannel(getChannelRange(ctx.channel.value).min)
     }
+
     ctx.handleWheel = (event: WheelEvent) => {
       if (ctx.disableWheelChange.value || !editable()) return
       event.preventDefault()
@@ -199,6 +225,7 @@ export default defineComponent({
       const channel = ctx.channel.value
       if (!channel) return hex({ ...ctx.color.value, alpha: 1 } as Color).toLowerCase()
       const value = channelValue()
+
       return String(channel === 'alpha' ? value / 100 : value)
     }
 

@@ -33,6 +33,7 @@ describe('DashboardResizeHandle', () => {
       },
       { attachTo: document.body },
     )
+
     const handle = document.querySelector<HTMLElement>('[data-slot=dashboard-resize-handle]')!
     expect(handle.getAttribute('role')).toBe('separator')
     expect(handle.getAttribute('aria-valuenow')).toBe('30')

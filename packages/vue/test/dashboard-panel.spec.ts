@@ -51,14 +51,17 @@ describe('DashboardPanel', () => {
     expect(el.getAttribute('aria-label')).toBe('Resize panel')
     expect(el.getAttribute('aria-orientation')).toBe('vertical')
     expect(el.getAttribute('aria-controls')).toBe('dashboard-panel-inbox')
+
     expect(document.getElementById(el.getAttribute('aria-controls')!)!.dataset.slot).toBe(
       'dashboard-panel',
     )
+
     expect([
       el.getAttribute('aria-valuenow'),
       el.getAttribute('aria-valuemin'),
       el.getAttribute('aria-valuemax'),
     ]).toEqual(['40', '20', '60'])
+
     el.focus()
     expect(document.activeElement).toBe(el)
     await expectAccessible(document.body)
@@ -98,6 +101,7 @@ describe('DashboardPanel', () => {
           }),
       },
     )
+
     expect(handle().getAttribute('aria-label')).toBe('Resize panel')
     await key('ArrowRight')
     expect(handle().getAttribute('aria-valuenow')).toBe('41')

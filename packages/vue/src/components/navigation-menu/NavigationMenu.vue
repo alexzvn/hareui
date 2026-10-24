@@ -425,6 +425,7 @@ const props = withDefaults(defineProps<NavigationMenuProps<T>>(), {
   modelValue: undefined,
   defaultValue: undefined,
 })
+
 const emit = defineEmits<NavigationMenuEmits>()
 const slots = useSlots()
 defineSlots<NavigationMenuSlots<T>>()
@@ -452,16 +453,19 @@ const rootProps = computed(() => ({
   disablePointerLeaveClose: props.disablePointerLeaveClose,
   unmountOnHide: props.unmountOnHide,
 }))
+
 const accordionProps = computed(() => ({
   collapsible: props.collapsible,
   disabled: props.disabled,
   type: props.type,
   unmountOnHide: props.unmountOnHide,
 }))
+
 const tooltipProps = computed<TooltipProps>(() => ({
   ...(vertical.value ? { delay: 0, side: 'right' as const } : {}),
   ...(typeof props.tooltip === 'object' ? props.tooltip : {}),
 }))
+
 const popoverProps = computed<NavigationMenuPopoverProps>(() => ({
   mode: 'hover',
   side: 'right',
@@ -472,6 +476,7 @@ const popoverProps = computed<NavigationMenuPopoverProps>(() => ({
 const lists = computed<NavigationMenuItem[][]>(() => {
   const items = props.items
   if (!items?.length) return []
+
   return Array.isArray(items[0])
     ? (items as NavigationMenuItem[][])
     : [items as NavigationMenuItem[]]
@@ -499,11 +504,13 @@ const getAccordionDefaultValue = (list: NavigationMenuItem[], level = 0, listInd
     if (item.defaultOpen || item.open) acc.push(getItemValue(item, index, level, listIndex))
     return acc
   }, [])
+
   return props.type === 'single' ? open[0] : open
 }
 
 const listProps = (list: NavigationMenuItem[], listIndex: number) => {
   if (!vertical.value || collapsed.value) return {}
+
   return {
     ...accordionProps.value,
     modelValue: props.modelValue,
@@ -519,6 +526,7 @@ const listProps = (list: NavigationMenuItem[], listIndex: number) => {
 let actionsObserver: ResizeObserver | undefined
 const observeActions = (el: HTMLElement) => {
   if (typeof ResizeObserver === 'undefined') return () => {}
+
   actionsObserver ??= new ResizeObserver((entries) => {
     for (const { target } of entries) {
       const row = target.parentElement
@@ -528,17 +536,22 @@ const observeActions = (el: HTMLElement) => {
         row.style.removeProperty('--navigation-menu-actions-inset')
         continue
       }
+
       const rowBox = row.getBoundingClientRect()
       const covered =
         getComputedStyle(row).direction === 'rtl'
           ? box.right - rowBox.left
           : rowBox.right - box.left
+
       row.style.setProperty('--navigation-menu-actions-inset', `${covered + 12}px`)
     }
   })
+
   actionsObserver.observe(el)
+
   return () => actionsObserver?.unobserve(el)
 }
+
 onBeforeUnmount(() => actionsObserver?.disconnect())
 
 provide(navigationMenuKey, {

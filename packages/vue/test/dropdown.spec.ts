@@ -21,6 +21,7 @@ const open = (props: Record<string, unknown>) => {
     slots: { default: () => h('button', { 'data-testid': 'trigger' }, 'Open') },
     attachTo: document.body,
   })
+
   return wrapper
 }
 
@@ -33,6 +34,7 @@ const item = (label: string) =>
   [...document.querySelectorAll<HTMLElement>('[data-slot=menu-item]')].find((el) =>
     el.textContent?.includes(label),
   )!
+
 const menuOpen = () => document.querySelector('[data-slot=dropdown-popover]') !== null
 
 const settle = async () => {
@@ -123,6 +125,7 @@ describe('dropdown', () => {
         },
       ],
     })
+
     await settle()
     item('Right').click()
     await settle()
@@ -147,15 +150,18 @@ describe('dropdown', () => {
   it('long press trigger ignores a plain click and opens after the hold threshold', async () => {
     // Timeouts only: a frozen `Date` makes Vue's event invoker skip listeners attached at the same instant
     vi.useFakeTimers({ toFake: ['setTimeout', 'clearTimeout'] })
+
     try {
       const w = open({ items: fruits, trigger: 'longPress', defaultOpen: false })
       const trigger = w.get('[data-testid=trigger]').element as HTMLElement
       trigger.dispatchEvent(
         new PointerEvent('pointerdown', { bubbles: true, button: 0, pointerType: 'mouse' }),
       )
+
       trigger.dispatchEvent(
         new PointerEvent('pointerup', { bubbles: true, button: 0, pointerType: 'mouse' }),
       )
+
       trigger.click()
       await settle()
       expect(menuOpen()).toBe(false)
@@ -163,13 +169,16 @@ describe('dropdown', () => {
       trigger.dispatchEvent(
         new PointerEvent('pointerdown', { bubbles: true, button: 0, pointerType: 'mouse' }),
       )
+
       vi.advanceTimersByTime(500)
       await settle()
       expect(menuOpen()).toBe(true)
+
       // Releasing after the long press clicks the trigger; that click must not toggle the menu shut.
       trigger.dispatchEvent(
         new PointerEvent('pointerup', { bubbles: true, button: 0, pointerType: 'mouse' }),
       )
+
       trigger.click()
       await settle()
       expect(menuOpen()).toBe(true)
@@ -194,6 +203,7 @@ describe('dropdown keyboard navigation', () => {
     from.focus()
     key(from, k)
     await settle()
+
     return document.activeElement
   }
 
@@ -294,6 +304,7 @@ describe('dropdown keyboard navigation', () => {
     await settle()
     const trigger = w.get('[data-testid=trigger]').element as HTMLElement
     trigger.focus()
+
     trigger.dispatchEvent(
       new KeyboardEvent('keydown', {
         key: 'ArrowUp',
@@ -302,6 +313,7 @@ describe('dropdown keyboard navigation', () => {
         cancelable: true,
       }),
     )
+
     await settle()
     expect(document.activeElement).toBe(item('Delete file'))
   })
@@ -309,12 +321,14 @@ describe('dropdown keyboard navigation', () => {
   it('a long press opens the menu with the first item focused', async () => {
     // behaviour-final-check D5
     vi.useFakeTimers({ toFake: ['setTimeout', 'clearTimeout'] })
+
     try {
       const w = open({ items: actions, trigger: 'longPress', defaultOpen: false })
       const trigger = w.get('[data-testid=trigger]').element as HTMLElement
       trigger.dispatchEvent(
         new PointerEvent('pointerdown', { bubbles: true, button: 0, pointerType: 'mouse' }),
       )
+
       vi.advanceTimersByTime(500)
       await settle()
       expect(document.activeElement).toBe(item('New file'))
@@ -353,9 +367,11 @@ describe('dropdown accessibility', () => {
 
   const trigger = () => document.querySelector<HTMLElement>('[data-testid=trigger]')!
   const menu = () => document.querySelector<HTMLElement>('[role=menu]')
+
   const key = (el: Element, k: string) => {
     el.dispatchEvent(new KeyboardEvent('keydown', { key: k, bubbles: true, cancelable: true }))
   }
+
   // Vue drops an event stamped no later than the millisecond its listener was attached, so a key
   // dispatched right after mount can miss Reka's trigger listener. Real presses come later.
   const pastMount = () => new Promise((r) => setTimeout(r, 2))
@@ -392,6 +408,7 @@ describe('dropdown accessibility', () => {
       indicator: 'dot',
       defaultValue: ['apple', 'banana'],
     })
+
     await settle()
     await expectAccessible()
   })
@@ -412,6 +429,7 @@ describe('dropdown accessibility', () => {
       },
       attachTo: document.body,
     })
+
     await settle()
     expect(menu()!.textContent).toContain('jane@example.com')
     await expectAccessible()
@@ -444,13 +462,16 @@ describe('dropdown accessibility', () => {
     await settle()
     const newFile = item('New file')
     expect(newFile.getAttribute('role')).toBe('menuitem')
+
     expect(
       document.getElementById(newFile.getAttribute('aria-labelledby')!)!.textContent?.trim(),
     ).toBe('New file')
+
     const described = newFile
       .getAttribute('aria-describedby')!
       .split(' ')
       .map((id) => document.getElementById(id))
+
     expect(described.every(Boolean)).toBe(true)
     expect(described[0]!.textContent?.trim()).toBe('Create a new file')
     expect(described[1]!.textContent).toContain('N')
@@ -463,6 +484,7 @@ describe('dropdown accessibility', () => {
     expect(
       document.getElementById(group.getAttribute('aria-labelledby')!)!.textContent?.trim(),
     ).toBe('Danger zone')
+
     expect(group.contains(item('Delete file'))).toBe(true)
     expect(document.querySelector('[role=menu] [role=separator], [role=menu] hr')).not.toBeNull()
     expect(item('Archive').getAttribute('aria-disabled')).toBe('true')
@@ -504,6 +526,7 @@ describe('dropdown accessibility', () => {
         { value: 'c', label: 'Gamma', disabled: true },
       ],
     })
+
     await settle()
     item('Alpha').focus()
     key(item('Alpha'), 'End')
@@ -526,6 +549,7 @@ describe('dropdown accessibility', () => {
         { value: 'delete', label: 'Delete file' },
       ],
     })
+
     await settle()
     item('New file').focus()
     key(item('New file'), 'd')

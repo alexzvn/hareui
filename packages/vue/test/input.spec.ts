@@ -21,6 +21,7 @@ describe('Input', () => {
     const wrapper = mount(Input, {
       props: { defaultValue: 'seed', modelValue: 'bound', 'onUpdate:modelValue': () => {} },
     })
+
     expect(wrapper.get('input').element.value).toBe('bound')
   })
 
@@ -36,6 +37,7 @@ describe('Input', () => {
       attrs: { 'aria-label': 'Email' },
       attachTo: document.body,
     })
+
     expect(wrapper.get('input').attributes('aria-label')).toBe('Email')
     await expectAccessible(wrapper)
     wrapper.unmount()
@@ -46,11 +48,13 @@ describe('Input', () => {
       () => h('div', [h(Label, { for: 'q' }, () => 'Query'), h(Input, { id: 'q' })]),
       { attachTo: document.body },
     )
+
     expect(
       [...(wrapper.get('input').element as HTMLInputElement).labels!].map((l) =>
         l.textContent?.trim(),
       ),
     ).toEqual(['Query'])
+
     await expectAccessible(wrapper)
     wrapper.unmount()
   })
@@ -60,12 +64,14 @@ describe('Input', () => {
     const input = () => wrapper.get('input')
     expect(input().attributes('aria-invalid')).toBeUndefined()
     await wrapper.setProps({ invalid: true, disabled: true, readonly: true, required: true })
+
     expect(input().attributes()).toMatchObject({
       'aria-invalid': 'true',
       disabled: '',
       readonly: '',
       required: '',
     })
+
     await wrapper.setProps({ invalid: false })
     expect(input().attributes('aria-invalid')).toBeUndefined()
     wrapper.unmount()
@@ -75,6 +81,7 @@ describe('Input', () => {
     const wrapper = mount(Input, {
       attrs: { 'aria-label': 'Code', 'aria-describedby': 'code-hint' },
     })
+
     expect(wrapper.get('input').attributes('aria-describedby')).toBe('code-hint')
     wrapper.unmount()
   })
@@ -87,6 +94,7 @@ describe('Input', () => {
       },
       attrs: { 'aria-label': 'Name' },
     })
+
     await wrapper.get('input').setValue('ab')
     expect(wrapper.get('input').attributes('aria-invalid')).toBe('true')
     await wrapper.get('input').setValue('abc')

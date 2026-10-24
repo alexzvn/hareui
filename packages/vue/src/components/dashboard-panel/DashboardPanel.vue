@@ -115,6 +115,7 @@ const props = withDefaults(defineProps<DashboardPanelProps>(), {
   defaultSize: 0,
   resizable: false,
 })
+
 defineSlots<DashboardPanelSlots>()
 
 const dashboard = useDashboard()
@@ -149,6 +150,7 @@ const {
 const ui = useComponentUI('dashboardPanel', theme, () => ({ size: !!size.value }))
 
 const unit = computed(() => dashboard?.unit ?? '%')
+
 const handleSlotProps = computed<DashboardPanelResizeHandleSlotProps>(() => ({
   onPointerDown,
   onMouseDown,

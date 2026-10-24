@@ -18,6 +18,7 @@ const checker = createChecker(join(root, 'packages/vue/tsconfig.json'), {
 const defaultValue = (prop: PropertyMeta): string | undefined => {
   if (prop.default !== undefined) return prop.default
   const tag = prop.tags.find((t) => t.name === 'defaultValue' || t.name === 'default')
+
   return tag?.text?.trim() || undefined
 }
 
@@ -45,12 +46,15 @@ const entry = (
     ['index.ts', 'charts.ts'].map((file) => Bun.file(join(componentsDir, '..', file)).text()),
   )
 ).join('\n')
+
 const isPublic = async (file: string) => {
   const dir = dirname(file)
   if (!entry.includes(`from './components/${dir}'`)) return false
   const index = await Bun.file(join(componentsDir, dir, 'index.ts')).text()
+
   return index.includes(`from './${basename(file)}'`)
 }
+
 const files: string[] = []
 for (const f of (await readdir(componentsDir, { recursive: true })).sort()) {
   if (f.endsWith('.vue') && (await isPublic(f))) files.push(f)
@@ -67,6 +71,7 @@ const stripComments = (source: string): string => {
     ts.LanguageVariant.Standard,
     source,
   )
+
   let text = source
   for (let kind = scanner.scan(); kind !== ts.SyntaxKind.EndOfFileToken; kind = scanner.scan()) {
     if (
@@ -74,10 +79,12 @@ const stripComments = (source: string): string => {
       kind !== ts.SyntaxKind.MultiLineCommentTrivia
     )
       continue
+
     const start = scanner.getTokenStart()
     const end = scanner.getTokenEnd()
     text = text.slice(0, start) + text.slice(start, end).replace(/[^\n]/g, '\0') + text.slice(end)
   }
+
   return `${text
     .split('\n')
     .filter((line) => !line.includes('\0') || line.replaceAll('\0', '').trim() !== '')
@@ -115,6 +122,7 @@ for (const file of files) {
       description: e.description,
     })),
   }
+
   // `ui?: ComponentSlots<typeof theme>` prints the whole theme; show the slot keys and publish the theme source instead.
   const ui = api.props.find((p) => p.name === 'ui')
   if (ui && /^import theme from '\.\/theme'$/m.test(source)) {
@@ -123,7 +131,9 @@ for (const file of files) {
     ui.type = `{ ${Object.keys(theme.slots)
       .map((k) => `${/^\w+$/.test(k) ? k : `'${k}'`}?: ClassValue`)
       .join('; ')} }`
+
     ui.description = `${ui.description} Keys are the theme slots; see Theme below.`
+
     // Chart roots spread the shared `chartSlots`; publish the resolved slots so the page shows every class.
     const themeSource = await Bun.file(themePath).text()
     const published = /^\s*\.\.\.\w+,?$/m.test(themeSource)
@@ -131,9 +141,12 @@ for (const file of files) {
           .replace(/"(\w+)":/g, '$1:')
           .replace(/"/g, "'")}\n`
       : stripComments(themeSource)
+
     await writeFile(join(outDir, 'theme', `${name}.ts`), published)
   }
+
   await writeFile(join(outDir, `${name}.json`), `${JSON.stringify(api, null, 2)}\n`)
+
   console.log(
     `api: ${name} (${api.props.length} props, ${api.slots.length} slots, ${api.events.length} events)`,
   )

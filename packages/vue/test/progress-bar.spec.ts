@@ -20,11 +20,15 @@ describe('ProgressBar', () => {
       'aria-valuenow': '60',
       'aria-valuetext': '60%',
     })
+
     expect(root.attributes('aria-label')).toBeUndefined()
+
     expect(root.attributes('aria-labelledby')).toBe(
       wrapper.get('[data-slot="label"]').attributes('id'),
     )
+
     expect(wrapper.get('[data-slot="progress-bar-output"]').text()).toBe('60%')
+
     expect(wrapper.get('[data-slot="progress-bar-fill"]').attributes('style')).toContain(
       'width: 60%',
     )
@@ -40,6 +44,7 @@ describe('ProgressBar', () => {
         formatOptions: { style: 'currency', currency: 'USD' },
       },
     })
+
     const root = wrapper.get('[role="progressbar"]')
     expect(root.attributes()).toMatchObject({
       'aria-valuemin': '500',
@@ -47,6 +52,7 @@ describe('ProgressBar', () => {
       'aria-valuenow': '750',
       'aria-valuetext': '$750.00',
     })
+
     expect(wrapper.get('[data-slot="progress-bar-fill"]').attributes('style')).toContain(
       'width: 50%',
     )
@@ -62,6 +68,7 @@ describe('ProgressBar', () => {
     const wrapper = mount(ProgressBar, {
       props: { label: 'Steps', value: 3, maxValue: 4, valueLabel: '3 of 4' },
     })
+
     expect(wrapper.get('[role="progressbar"]').attributes('aria-valuetext')).toBe('3 of 4')
     expect(wrapper.get('[data-slot="progress-bar-output"]').text()).toBe('3 of 4')
   })
@@ -71,12 +78,14 @@ describe('ProgressBar', () => {
     const root = wrapper.get('[role="progressbar"]')
     expect(root.attributes('aria-valuenow')).toBeUndefined()
     expect(root.attributes('aria-valuetext')).toBeUndefined()
+
     expect(slots(wrapper)).toEqual([
       'progress-bar',
       'label',
       'progress-bar-track',
       'progress-bar-fill',
     ])
+
     expect(wrapper.get('[data-slot="progress-bar-fill"]').attributes('style')).toBeUndefined()
   })
 
@@ -86,9 +95,11 @@ describe('ProgressBar', () => {
       'progress-bar-track',
       'progress-bar-fill',
     ])
+
     expect(slots(mount(ProgressBar, { props: { value: 10, showOutput: true } }))).toContain(
       'progress-bar-output',
     )
+
     expect(
       slots(mount(ProgressBar, { props: { label: 'L', value: 10, showOutput: false } })),
     ).not.toContain('progress-bar-output')
@@ -101,6 +112,7 @@ describe('ProgressBar', () => {
         output: `<template #output="{ percentage, valueText }">{{ percentage }}|{{ valueText }}</template>`,
       },
     })
+
     expect(wrapper.get('[data-slot="progress-bar-output"]').text()).toBe('25|25%')
   })
 
@@ -131,6 +143,7 @@ describe('ProgressBar', () => {
     await wrapper.setProps({ indeterminate: true })
     expect(root.attributes('aria-valuenow')).toBeUndefined()
     expect(root.attributes('aria-valuetext')).toBeUndefined()
+
     expect(root.attributes('aria-labelledby')).toBe(
       wrapper.get('[data-slot="label"]').attributes('id'),
     )

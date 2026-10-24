@@ -1,4 +1,5 @@
 export { default as RichTable } from './RichTable.vue'
+
 export type {
   RichTableApi,
   RichTableCell,

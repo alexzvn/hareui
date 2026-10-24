@@ -68,7 +68,9 @@ const VALID: ValidationDetails = {
   valueMissing: false,
   valid: true,
 }
+
 const CUSTOM: ValidationDetails = { ...VALID, customError: true, valid: false }
+
 const DEFAULT: ValidationResult = {
   isInvalid: false,
   validationErrors: [],
@@ -77,6 +79,7 @@ const DEFAULT: ValidationResult = {
 
 type Control = HTMLInputElement | HTMLSelectElement | HTMLTextAreaElement
 const CONTROLS = 'input:not([type="hidden"]), select, textarea'
+
 // Where focus goes when the field is the form's first invalid one: the visible control, or Reka's checkbox / switch / radio
 // button (the first enabled radio, so a mouse-submitted form still shows the focus ring on a card or radio)
 const FOCUSABLE =
@@ -114,11 +117,14 @@ const nativeValidity = (controls: Control[]): ValidationResult => {
   const details = { ...VALID }
   for (const el of controls) {
     if (el.validationMessage) errors.add(el.validationMessage)
+
     for (const k of Object.keys(VALID) as (keyof ValidationDetails)[]) {
       if (k !== 'valid') details[k] ||= el.validity[k]
     }
   }
+
   details.valid = controls.every((el) => el.validity.valid)
+
   return { isInvalid: !details.valid, validationErrors: [...errors], validationDetails: details }
 }
 
@@ -138,17 +144,20 @@ export const useFieldValidation = <T>(
   const behavior = computed(
     () => options.validationBehavior() ?? form?.validationBehavior.value ?? 'native',
   )
+
   const controlledError = computed<ValidationResult | null>(() => {
     const invalid = options.invalid()
     return invalid === undefined
       ? null
       : { isInvalid: invalid, validationErrors: [], validationDetails: CUSTOM }
   })
+
   const clientError = computed(() => {
     const validate = options.validate()
     const value = options.value()
     if (!validate || value == null) return null
     const error = validate(value)
+
     return errorResult(error && typeof error !== 'boolean' ? asArray(error) : [])
   })
 
@@ -157,16 +166,20 @@ export const useFieldValidation = <T>(
     const name = options.name()
     const pattern = options.formField?.errorPattern
     if (!form || (!name && !pattern)) return null
+
     const match = form.errors.value.find(
       (error) =>
         (!!name && error.name === name) ||
         (!!pattern && error.name !== undefined && pattern.test(error.name)),
     )
+
     return match ? errorResult([match.message]) : null
   })
+
   const withFormError = (shown: ValidationResult): ValidationResult => {
     const error = formError.value
     if (!error) return shown
+
     return shown.isInvalid
       ? {
           isInvalid: true,
@@ -184,6 +197,7 @@ export const useFieldValidation = <T>(
       serverErrorCleared.value = false
     },
   )
+
   const serverError = computed(() => {
     const name = options.name()
     return serverErrorCleared.value || !name
@@ -192,12 +206,14 @@ export const useFieldValidation = <T>(
   })
 
   const current = shallowRef(DEFAULT)
+
   // Native validity captured while no custom error is set, committed on change / invalid
   let nextValidation = DEFAULT
 
   const realtime = computed(
     () => controlledError.value ?? serverError.value ?? clientError.value ?? DEFAULT,
   )
+
   const validation = computed(
     () =>
       controlledError.value ??
@@ -216,13 +232,17 @@ export const useFieldValidation = <T>(
       native && realtime.value.isInvalid
         ? realtime.value.validationErrors.join(' ') || 'Invalid value.'
         : ''
+
     for (const el of els) {
       el.setCustomValidity(message)
+
       // Suppress the browser's validation tooltip on hover
       if (native && !el.hasAttribute('title')) el.title = ''
     }
+
     if (native && !realtime.value.isInvalid) nextValidation = nativeValidity(els)
   }
+
   watch([realtime, () => options.value(), behavior], sync, { flush: 'post' })
 
   // Reports a field event to the surrounding `Form`, which tracks it and validates the field per its `validateOn`
@@ -230,7 +250,9 @@ export const useFieldValidation = <T>(
     const name = options.name()
     if (form && name) form.emit({ type, name, ...flags })
   }
+
   let inputTimer: ReturnType<typeof setTimeout> | undefined
+
   // Tracked right away so a submit within the delay isn't followed by a late dirty mark or validation
   const emitFormInput = (eager: boolean) => {
     emitFormEvent('input', { validate: false })
@@ -238,11 +260,13 @@ export const useFieldValidation = <T>(
     const delay = options.formField?.validateOnInputDelay ?? form?.validateOnInputDelay.value ?? 0
     inputTimer = setTimeout(() => emitFormEvent('input', { eager, track: false }), delay)
   }
+
   onBeforeUnmount(() => clearTimeout(inputTimer))
 
   const commit = () => {
     serverErrorCleared.value = true
     if (behavior.value !== 'native') return
+
     // After the next render, so the latest value has been validated
     nextTick(() => {
       sync()
@@ -268,6 +292,7 @@ export const useFieldValidation = <T>(
   const isWithin = (root: Element, node: EventTarget | null) => {
     if (!(node instanceof Node)) return false
     if (root.contains(node)) return true
+
     return [...root.querySelectorAll('[aria-controls]')].some((el) =>
       el
         .getAttribute('aria-controls')!
@@ -280,6 +305,7 @@ export const useFieldValidation = <T>(
     () => options.name(),
     (name, _, onCleanup) => {
       if (!form || !name) return
+
       onCleanup(
         form.registerInput(name, {
           id: () => {
@@ -304,9 +330,11 @@ export const useFieldValidation = <T>(
     attached = root
     if (!root) return
     const formEl = root.closest('form')
+
     const onInvalid = (event: Event) => {
       if (!(event.target instanceof Element) || !controls(root).includes(event.target as Control))
         return
+
       // Only commit when nothing is displayed yet, so server errors the user didn't fix stay visible
       if (!validation.value.isInvalid) commit()
       const targetForm = (event.target as Control).form
@@ -314,38 +342,47 @@ export const useFieldValidation = <T>(
         (root.querySelector<HTMLElement>(FOCUSABLE) ?? (root as HTMLElement)).focus({
           focusVisible: true,
         } as FocusOptions)
+
       // No browser error bubble
       event.preventDefault()
     }
+
     // Reka's hidden mirror inputs (checkbox, switch, radio) fire `input` / `change` on every value change, programmatic
     // or form reset included; those components commit from their user-driven update handler instead
     const fromUser = (event: Event) =>
       !(event.target instanceof Element) || event.target.getAttribute('aria-hidden') !== 'true'
+
     const onChange = (event: Event) => {
       if (!fromUser(event)) return
       commit()
       emitFormEvent('change')
     }
+
     // Typing validates once the field was first left, unless `eagerValidation`
     const onInput = (event: Event) => {
       if (fromUser(event)) emitFormInput(!!options.formField?.eagerValidation)
     }
+
     const onFocusIn = (event: FocusEvent) => {
       if (!isWithin(root, event.relatedTarget)) emitFormEvent('focus')
     }
+
     const onFocusOut = (event: FocusEvent) => {
       if (!isWithin(root, event.relatedTarget)) emitFormEvent('blur')
     }
+
     const onReset = () => {
       resetValidation()
       options.onReset?.()
     }
+
     root.addEventListener('invalid', onInvalid, true)
     root.addEventListener('change', onChange)
     root.addEventListener('input', onInput)
     root.addEventListener('focusin', onFocusIn as EventListener)
     root.addEventListener('focusout', onFocusOut as EventListener)
     formEl?.addEventListener('reset', onReset)
+
     detach = () => {
       root.removeEventListener('invalid', onInvalid, true)
       root.removeEventListener('change', onChange)
@@ -354,8 +391,10 @@ export const useFieldValidation = <T>(
       root.removeEventListener('focusout', onFocusOut as EventListener)
       formEl?.removeEventListener('reset', onReset)
     }
+
     sync()
   }
+
   onMounted(attach)
   watch(() => options.root(), attach, { flush: 'post' })
   onBeforeUnmount(() => detach?.())

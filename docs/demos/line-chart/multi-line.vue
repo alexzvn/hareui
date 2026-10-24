@@ -45,6 +45,7 @@ const series = {
   asiaPacific: { name: 'Asia Pacific' },
   southAmerica: { name: 'South America' },
 }
+
 const colors = ['var(--chart-5)', 'var(--chart-3)', 'var(--chart-2)', 'var(--chart-1)']
 
 const formatLatency = (value: number) => {

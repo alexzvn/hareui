@@ -26,6 +26,7 @@ const links = [
   { label: 'Inbox', icon: icon('envelope'), href: '#inbox', active: true },
   { label: 'Reports', icon: icon('chart-column'), href: '#reports' },
 ]
+
 const colors: NonNullable<NavigationMenuProps['color']>[] = [
   'default',
   'accent',

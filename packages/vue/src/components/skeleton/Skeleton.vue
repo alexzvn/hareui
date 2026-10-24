@@ -45,6 +45,7 @@ const readCssAnimation = (): string | undefined => {
     cssAnimationCache =
       getComputedStyle(document.documentElement).getPropertyValue('--skeleton-animation').trim() ||
       undefined
+
   return cssAnimationCache
 }
 </script>

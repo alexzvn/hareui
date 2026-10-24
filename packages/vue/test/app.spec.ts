@@ -12,6 +12,7 @@ const Probe = defineComponent({
   setup() {
     const portal = usePortal(() => undefined)
     const config = inject(hareUIConfigKey, {})
+
     return () =>
       h('span', {
         'data-to': String(portal.value.to),
@@ -28,6 +29,7 @@ const probe = (props: Record<string, unknown>, parentConfig?: object) => {
       return () => h(App, { toaster: null, ...props }, () => h(Probe))
     },
   })
+
   return mount(Parent).get('span')
 }
 
@@ -55,6 +57,7 @@ describe('app', () => {
       },
       attachTo: document.body,
     })
+
     // Mounted into a container appended to <body>: no wrapper element in between.
     expect(document.querySelector('main')!.parentElement!.parentElement).toBe(document.body)
     await expectAccessible(document.body)
@@ -68,6 +71,7 @@ describe('app', () => {
       slots: { default: () => h('main', 'Home') },
       attachTo: document.body,
     })
+
     await expectAccessible(document.body)
     wrapper.unmount()
     document.body.innerHTML = ''

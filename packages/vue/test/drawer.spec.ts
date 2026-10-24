@@ -37,6 +37,7 @@ describe('drawer', () => {
       props: { defaultOpen: true, handle: true, title: 'T' },
       slots: { footer: () => 'F' },
     })
+
     await nextTick()
     let order = [...dialog()!.children].map((c) => c.getAttribute('data-slot'))
     expect(order.indexOf('drawer-handle')).toBeLessThan(order.indexOf('drawer-header'))
@@ -47,6 +48,7 @@ describe('drawer', () => {
       props: { defaultOpen: true, handle: true, placement: 'top', title: 'T' },
       slots: { footer: () => 'F' },
     })
+
     await nextTick()
     order = [...dialog()!.children].map((c) => c.getAttribute('data-slot'))
     expect(order.at(-1)).toBe('drawer-handle')
@@ -55,16 +57,20 @@ describe('drawer', () => {
 
   it('names the dialog from `title` when #content replaces the whole content', async () => {
     const warn = vi.spyOn(console, 'warn').mockImplementation(() => {})
+
     const wrapper = mount(Drawer, {
       props: { defaultOpen: true, title: 'Custom content' },
       slots: {
         content: ({ close }: { close: () => void }) => h('button', { onClick: close }, 'Done'),
       },
     })
+
     await nextTick()
+
     expect(document.getElementById(dialog()!.getAttribute('aria-labelledby')!)?.textContent).toBe(
       'Custom content',
     )
+
     expect(warn).not.toHaveBeenCalledWith(expect.stringContaining('requires a `DialogTitle`'))
     wrapper.unmount()
     warn.mockRestore()
@@ -75,12 +81,15 @@ describe('drawer', () => {
       props: { defaultOpen: true, title: 'T' },
       attachTo: document.body,
     })
+
     await nextTick()
+
     // The velocity check uses Date.now(); freeze time so only distance decides. The frozen value
     // must be later than mount: Vue's event invoker drops events stamped before the listener was attached.
     const now = Date.now
     const frozen = now() + 10_000
     Date.now = () => frozen
+
     try {
       drag(dialog()!, 40)
       await waitUnmount()
@@ -103,6 +112,7 @@ describe('drawer', () => {
     const now = Date.now
     const frozen = now() + 10_000
     Date.now = () => frozen
+
     try {
       drag(dialog()!, 300)
       await waitUnmount()
@@ -123,21 +133,26 @@ describe('drawer', () => {
       },
       attachTo: document.body,
     })
+
     await nextTick()
     await nextTick()
+
     const tab = () =>
       (document.activeElement as HTMLElement).dispatchEvent(
         new KeyboardEvent('keydown', { key: 'Tab', bubbles: true, cancelable: true }),
       )
+
     const name = () => {
       const el = document.activeElement as HTMLElement
       return el.dataset.slot ?? el.textContent
     }
+
     const seen: Array<string | null> = []
     for (let i = 0; i < 4; i++) {
       tab()
       seen.push(name())
     }
+
     expect(seen).toEqual(['drawer-close-trigger', 'Cancel', 'Done', 'drawer-close-trigger'])
     wrapper.unmount()
   })
@@ -153,6 +168,7 @@ describe('drawer', () => {
       document.dispatchEvent(
         new KeyboardEvent('keydown', { key: 'Escape', bubbles: true, cancelable: true }),
       )
+
     const closeTrigger = () =>
       document.querySelector<HTMLButtonElement>('[data-slot=drawer-close-trigger]')!
 
@@ -166,13 +182,16 @@ describe('drawer', () => {
         footer: () => [h('button', 'Cancel'), h('button', 'Save')],
         ...slots,
       }
+
       const wrapper = mount(Drawer, {
         props: { title: 'Settings', handle: true, ...props },
         slots: Object.fromEntries(Object.entries(all).filter(([, fn]) => fn)),
         attachTo: document.body,
       })
+
       mounted.push(wrapper)
       const trigger = document.querySelector<HTMLButtonElement>('#trigger')!
+
       return { wrapper, trigger }
     }
 
@@ -200,6 +219,7 @@ describe('drawer', () => {
         {},
       ],
     ]
+
     it.each(variants)('has no axe violations open with %s', async (_name, props, slots) => {
       const { trigger } = mountWithTrigger(props, slots)
       await openWith(trigger)
@@ -229,6 +249,7 @@ describe('drawer', () => {
     it('names the dialog from `title` when #header replaces the visible heading', async () => {
       const { trigger } = mountWithTrigger({}, { header: () => h('div', 'Custom') })
       await openWith(trigger)
+
       expect(document.getElementById(dialog()!.getAttribute('aria-labelledby')!)?.textContent).toBe(
         'Settings',
       )
@@ -237,9 +258,11 @@ describe('drawer', () => {
     it('hides the decorative handle and names the close button "Close"', async () => {
       const { trigger } = mountWithTrigger()
       await openWith(trigger)
+
       expect(document.querySelector('[data-slot=drawer-handle]')!.getAttribute('aria-hidden')).toBe(
         'true',
       )
+
       expect(closeTrigger().tagName).toBe('BUTTON')
       expect(closeTrigger().getAttribute('aria-label')).toBe('Close')
     })
@@ -278,6 +301,7 @@ describe('drawer', () => {
       const { trigger } = mountWithTrigger()
       await openWith(trigger)
       closeTrigger().focus()
+
       closeTrigger().dispatchEvent(
         new KeyboardEvent('keydown', {
           key: 'Tab',
@@ -286,6 +310,7 @@ describe('drawer', () => {
           cancelable: true,
         }),
       )
+
       expect(document.activeElement?.textContent).toBe('Save')
     })
 

@@ -52,6 +52,7 @@ import { Avatar, Separator } from '@hareui/vue'
 import { Icon } from '@iconify/vue'
 
 const colors = ['accent', 'default', 'success', 'warning', 'danger'] as const
+
 const rows = [
   { label: 'letter', content: 'AG', icon: false, variant: 'default' as const },
   { label: 'letter soft', content: 'AG', icon: false, variant: 'soft' as const },

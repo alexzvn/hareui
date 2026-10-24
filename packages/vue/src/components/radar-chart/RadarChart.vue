@@ -239,6 +239,7 @@ const props = withDefaults(defineProps<RadarChartProps<T>>(), {
   tooltip: undefined,
   legend: undefined,
 })
+
 const slots = defineSlots<RadarChartSlots>()
 const hidden = defineModel<string[]>('hidden', { default: () => [] })
 
@@ -247,6 +248,7 @@ const resolved = computed(() => {
   if (!generated.value) return []
   const own = { fillOpacity: props.fillOpacity, strokeWidth: props.strokeWidth, dot: props.dot }
   const defined = Object.fromEntries(Object.entries(own).filter(([, value]) => value !== undefined))
+
   return resolveSeries<T, ChartRadarSeries>({
     data: props.data,
     index: props.index,
@@ -260,6 +262,7 @@ const resolved = computed(() => {
 const grid = computed(() =>
   generated.value ? resolveChartPart<Partial<ChartPolarGridProps>>(props.grid, {}) : null,
 )
+
 const angleAxis = computed(() =>
   generated.value
     ? resolveChartPart<Partial<ChartPolarAngleAxisProps>>(
@@ -271,6 +274,7 @@ const angleAxis = computed(() =>
       )
     : null,
 )
+
 const radiusAxis = computed(() =>
   generated.value
     ? resolveChartPart<Partial<ChartPolarRadiusAxisProps>>(props.radiusAxis, {}, false)
@@ -297,6 +301,7 @@ const chart = useChartRoot({
   ui,
   uiProps: () => props.ui,
 })
+
 usePolarChart(chart, {
   kind: 'radar',
   cx: () => props.cx,

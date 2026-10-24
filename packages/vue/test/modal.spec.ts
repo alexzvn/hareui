@@ -30,10 +30,13 @@ const stubExitAnimations = () => {
   const original = window.getComputedStyle.bind(window)
   vi.spyOn(window, 'getComputedStyle').mockImplementation((el: Element, pseudo?: string | null) => {
     const real = original(el, pseudo)
+
     const animatesClosed =
       el.getAttribute?.('data-state') === 'closed' &&
       /\[data-state=closed\]\)\]:animate-(?!none)/.test(el.getAttribute('class') ?? '')
+
     if (!animatesClosed) return real
+
     return new Proxy(real, {
       get: (target, key) => (key === 'animationName' ? 'exit' : Reflect.get(target, key)),
     })
@@ -42,12 +45,15 @@ const stubExitAnimations = () => {
 
 const finishExit = async () => {
   await waitUnmount()
+
   const event = Object.assign(new Event('animationend', { bubbles: true }), {
     animationName: 'exit',
   })
+
   document
     .querySelectorAll('[data-slot=modal-backdrop][data-state=closed]')
     .forEach((el) => el.dispatchEvent(event))
+
   await waitUnmount()
 }
 
@@ -63,12 +69,14 @@ describe('modal', () => {
           { body: () => 'Content' },
         ),
     })
+
     await nextTick()
     const container = () => document.querySelector<HTMLElement>('[data-slot=modal-container]')
     expect(container()?.dataset.state).toBe('open')
 
     open.value = false
     await nextTick()
+
     // Presence keeps it mounted until the exit animation check; it must already be marked closed.
     expect(container()?.dataset.state).toBe('closed')
 
@@ -79,6 +87,7 @@ describe('modal', () => {
     const wrapper = mount(Modal, {
       slots: { default: () => h('button', 'Open'), body: () => 'Content' },
     })
+
     expect(document.querySelector('[data-slot=modal-dialog]')).toBeNull()
 
     await wrapper.find('button').trigger('click')
@@ -93,6 +102,7 @@ describe('modal', () => {
       props: { defaultOpen: true },
       slots: { body: () => 'Content' },
     })
+
     await nextTick()
     expect(document.querySelector('[data-slot=modal-dialog]')).not.toBeNull()
 
@@ -108,6 +118,7 @@ describe('modal', () => {
       props: { defaultOpen: true, dismissible: false },
       slots: { body: () => 'Content' },
     })
+
     await nextTick()
     expect(document.querySelector('[data-slot=modal-dialog]')).not.toBeNull()
 
@@ -135,6 +146,7 @@ describe('modal', () => {
           )
       },
     }
+
     const wrapper = mount(Wrapper)
     expect(document.querySelector('[data-slot=modal-dialog]')).toBeNull()
 
@@ -162,6 +174,7 @@ describe('modal', () => {
         footer: () => 'Actions',
       },
     })
+
     await nextTick()
     const body = document.querySelector('[data-slot=modal-body]')!
     expect(body.previousElementSibling?.getAttribute('data-slot')).toBe('modal-header')
@@ -176,6 +189,7 @@ describe('modal', () => {
       props: { defaultOpen: true, title: 'Contact Us' },
       slots: { header: () => h('div', 'Custom'), body: () => 'Content' },
     })
+
     await nextTick()
     const dialog = document.querySelector('[role=dialog]')!
     expect(document.getElementById(dialog.getAttribute('aria-labelledby')!)?.textContent).toBe(
@@ -187,17 +201,20 @@ describe('modal', () => {
 
   it('names the dialog from `title` when #content replaces the whole content', async () => {
     const warn = vi.spyOn(console, 'warn').mockImplementation(() => {})
+
     const wrapper = mount(Modal, {
       props: { defaultOpen: true, title: 'Custom content' },
       slots: {
         content: ({ close }: { close: () => void }) => h('button', { onClick: close }, 'Done'),
       },
     })
+
     await nextTick()
     const dialog = document.querySelector('[role=dialog]')!
     expect(document.getElementById(dialog.getAttribute('aria-labelledby')!)?.textContent).toBe(
       'Custom content',
     )
+
     expect(warn).not.toHaveBeenCalledWith(expect.stringContaining('requires a `DialogTitle`'))
 
     wrapper.unmount()
@@ -212,6 +229,7 @@ describe('modal', () => {
         body: () => 'Content',
       },
     })
+
     await nextTick()
     const dialog = document.querySelector('[role=dialog]')!
     const description = document.getElementById(dialog.getAttribute('aria-describedby')!)!
@@ -225,6 +243,7 @@ describe('modal', () => {
   describe('page content behind the dialog (aria-hidden)', () => {
     beforeEach(() => stubExitAnimations())
     const mounted: Array<{ unmount: () => void }> = []
+
     // A failing assertion must not leave an open dialog behind for the next test.
     afterEach(() => {
       vi.restoreAllMocks()
@@ -248,9 +267,12 @@ describe('modal', () => {
         },
         { attachTo: document.body },
       )
+
       mounted.push(wrapper)
+
       // The mount container is the sibling of the portalled dialog (the `#app` of a real page).
       const pageRoot = document.querySelector<HTMLElement>('#page')!.parentElement!.parentElement!
+
       return { open, wrapper, pageRoot }
     }
 
@@ -279,6 +301,7 @@ describe('modal', () => {
         },
         { attachTo: document.body },
       )
+
       mounted.push(wrapper)
       const pageRoot = document.querySelector<HTMLElement>('#page')!.parentElement!.parentElement!
       await nextTick()
@@ -315,6 +338,7 @@ describe('modal', () => {
         },
       ],
     ]
+
     it.each(closePaths)(
       'releases aria-hidden on the page after every open/close cycle closed with %s',
       async (_name, close) => {
@@ -327,21 +351,26 @@ describe('modal', () => {
           expect(pageRoot.hasAttribute('inert'), `inert while open, cycle ${cycle}`).toBe(true)
           close(open)
           await waitUnmount()
+
           // the container's exit animation must not run empty
           expect(
             document.querySelector('[data-slot=modal-dialog]'),
             `mounted while exiting, cycle ${cycle}`,
           ).not.toBeNull()
+
           await finishExit()
           expect(open.value, `closed, cycle ${cycle}`).toBe(false)
+
           expect(
             document.querySelector('[data-slot=modal-dialog]'),
             `unmounted, cycle ${cycle}`,
           ).toBeNull()
+
           expect(
             pageRoot.getAttribute('aria-hidden'),
             `aria-hidden after cycle ${cycle}`,
           ).toBeNull()
+
           expect(pageRoot.hasAttribute('inert'), `inert after cycle ${cycle}`).toBe(false)
         }
       },
@@ -372,6 +401,7 @@ describe('modal', () => {
         },
         { attachTo: document.body },
       )
+
       mounted.push(wrapper)
       const pageRoot = document.querySelector<HTMLElement>('#page')!.parentElement!.parentElement!
       await nextTick()
@@ -396,22 +426,28 @@ describe('modal', () => {
       },
       attachTo: document.body,
     })
+
     await nextTick()
     await nextTick()
+
     const tab = (shiftKey = false) => {
       const target = (document.activeElement ?? document.body) as HTMLElement
+
       const event = new KeyboardEvent('keydown', {
         key: 'Tab',
         shiftKey,
         bubbles: true,
         cancelable: true,
       })
+
       target.dispatchEvent(event)
     }
+
     const name = () => {
       const el = document.activeElement as HTMLElement
       return el.dataset.slot ?? el.getAttribute('aria-label') ?? el.textContent
     }
+
     expect(name()).toBe('modal-dialog')
     tab()
     expect(name()).toBe('Cancel')
@@ -436,6 +472,7 @@ describe('modal', () => {
     })
 
     const dialogEl = () => document.querySelector<HTMLElement>('[role=dialog]')
+
     const closeTrigger = () =>
       document.querySelector<HTMLButtonElement>('[data-slot=modal-close-trigger]')!
 
@@ -450,13 +487,16 @@ describe('modal', () => {
         footer: () => [h('button', 'Cancel'), h('button', 'Send')],
         ...slots,
       }
+
       const wrapper = mount(Modal, {
         props: { title: 'Contact us', ...props },
         slots: Object.fromEntries(Object.entries(all).filter(([, fn]) => fn)),
         attachTo: document.body,
       })
+
       mounted.push(wrapper)
       const trigger = document.querySelector<HTMLButtonElement>('#trigger')!
+
       return { wrapper, trigger }
     }
 
@@ -489,6 +529,7 @@ describe('modal', () => {
       ],
       ['dismissible=false', { dismissible: false }, {}],
     ]
+
     it.each(variants)('has no axe violations open with %s', async (_name, props, slots) => {
       const { trigger } = mountWithTrigger(props, slots)
       await openWith(trigger)
@@ -512,6 +553,7 @@ describe('modal', () => {
       const heading = document.getElementById(dialog.getAttribute('aria-labelledby')!)!
       expect(heading.getAttribute('data-slot')).toBe('modal-heading')
       expect(heading.textContent?.trim()).toBe('Contact us')
+
       expect(document.getElementById(dialog.getAttribute('aria-describedby')!)?.textContent).toBe(
         'We reply within a day.',
       )
@@ -551,6 +593,7 @@ describe('modal', () => {
             h('button', { id: 'done', onClick: close }, 'Done'),
         },
       )
+
       await openWith(trigger)
       closeTrigger().focus()
       closeTrigger().click()

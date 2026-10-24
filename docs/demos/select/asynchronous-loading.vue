@@ -32,6 +32,7 @@ let cursor: string | null = 'https://pokeapi.co/api/v2/pokemon'
 const loadMore = async () => {
   if (!cursor || loading.value) return
   loading.value = true
+
   try {
     const json = await (await fetch(cursor)).json()
     cursor = json.next
@@ -40,6 +41,7 @@ const loadMore = async () => {
     loading.value = false
   }
 }
+
 // Client only: VitePress SSR-renders demos
 onMounted(loadMore)
 </script>

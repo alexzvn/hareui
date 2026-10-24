@@ -74,6 +74,7 @@ const assets = ref<ShopAsset[]>([
     lostConnection: true,
   },
 ])
+
 let added = 0
 
 const statusOf = (asset: ShopAsset): DropZoneFileStatus => {
@@ -93,6 +94,7 @@ const addAssets = (files: File[]) => {
       lostConnection: false,
     })),
   )
+
   resume()
 }
 
@@ -117,6 +119,7 @@ const pump = (now: number) => {
     frame = 0
     return
   }
+
   const elapsed = Math.min(now - lastTime, 100)
   for (const asset of sending)
     asset.sent = Math.min(
@@ -124,6 +127,7 @@ const pump = (now: number) => {
       asset.sent +
         Math.max((BYTES_PER_MS * elapsed) / sending.length, (asset.bytes * elapsed) / 1200),
     )
+
   lastTime = now
   frame = requestAnimationFrame(pump)
 }

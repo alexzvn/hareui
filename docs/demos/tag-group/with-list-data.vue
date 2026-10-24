@@ -88,6 +88,7 @@ const users = ref<User[]>([
     fallback: 'C',
   },
 ])
+
 const selected = ref<string[]>(['fred', 'michael'])
 
 const selectedUsers = computed(() =>

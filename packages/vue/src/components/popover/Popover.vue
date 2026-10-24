@@ -152,6 +152,7 @@ const props = withDefaults(defineProps<PopoverProps>(), {
   dismissible: true,
   portal: undefined,
 })
+
 const portalTarget = usePortal(() => props.portal)
 const emit = defineEmits<PopoverEmits>()
 const slots = useSlots()
@@ -162,15 +163,18 @@ const ui = useComponentUI('popover', theme, () => ({}))
 const contentRef = ref<{ $el: HTMLElement } | null>(null)
 const dialogRef = ref<HTMLElement>()
 const hasHeading = computed(() => !!(props.title || slots.title))
+
 // React Aria labels the dialog by its title heading (Reka labels it by the trigger).
 const headingId = useId()
 
 const openState = ref(props.defaultOpen ?? false)
 const isOpen = computed(() => props.open ?? openState.value)
+
 const setOpen = (value: boolean) => {
   openState.value = value
   emit('update:open', value)
 }
+
 // `isOpen` turns false synchronously in `setOpen` (Reka's `update:open`) and with the `open` prop. The
 // content instance stays mounted while closed and its `$el` isn't reactive, so re-read it on every open.
 useInertOutside(() => (isOpen.value ? contentRef.value?.$el : null), isOpen)

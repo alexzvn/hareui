@@ -46,12 +46,14 @@ export default defineComponent({
       const item = props.item
       const disabled = !!item.disabled
       const explicit = typeof item.active === 'boolean' ? item.active : undefined
+
       const common: Record<string, unknown> = {
         target: item.target,
         rel: item.rel ?? (item.target === '_blank' ? 'noopener noreferrer' : undefined),
         download: item.download,
         'aria-disabled': disabled ? 'true' : undefined,
       }
+
       // Undefined attributes are dropped: an explicit `undefined` would override the attributes Reka's link sets (`aria-current`, `data-active`) when merged.
       const render = (resolved: ResolvedLink) =>
         slots.default?.({ ...resolved, attrs: defined(resolved.attrs) })

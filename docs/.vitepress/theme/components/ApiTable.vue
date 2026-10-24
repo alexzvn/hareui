@@ -39,6 +39,7 @@ const api = computed(() => {
     throw new Error(
       `ApiTable: missing docs/.vitepress/api/${props.component}.json (run \`bun run api\`)`,
     )
+
   return data
 })
 
@@ -50,12 +51,14 @@ const table = computed(() => {
       rows: data.props.map((p) => [p.name, p.type, p.default ?? '-', p.description]),
     }
   }
+
   if (props.kind === 'slots') {
     return {
       head: ['Slot', 'Props', 'Description'],
       rows: data.slots.map((s) => [s.name, s.type, s.description]),
     }
   }
+
   return {
     head: ['Event', 'Payload', 'Description'],
     rows: data.events.map((e) => [e.name, e.type, e.description]),

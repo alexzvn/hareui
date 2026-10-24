@@ -10,6 +10,7 @@ import { h } from 'vue'
 
 const icon = (name: string) => (attrs: Record<string, unknown>) =>
   h(Icon, { ...attrs, icon: `gravity-ui:${name}` })
+
 const file = icon('file-text')
 
 const items: NavigationMenuItem[] = [

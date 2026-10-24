@@ -62,15 +62,19 @@ const notifyDesignThemeChange = (themeId: DesignThemeId) => {
 export const setStoredDesignTheme = (themeId: DesignThemeId) => {
   const root = document.documentElement
   localStorage.setItem(DESIGN_THEME_STORAGE_KEY, themeId)
+
   if (themeId === DEFAULT_DESIGN_THEME) root.removeAttribute('data-design-theme')
   else root.setAttribute('data-design-theme', themeId)
+
   notifyDesignThemeChange(themeId)
 }
 
 export const setStoredVibrantPalette = (enabled: boolean) => {
   const root = document.documentElement
   localStorage.setItem(VIBRANT_STORAGE_KEY, String(enabled))
+
   if (enabled) root.setAttribute('data-vibrant-palette', 'true')
   else root.removeAttribute('data-vibrant-palette')
+
   notifyDesignThemeChange(getStoredDesignTheme())
 }

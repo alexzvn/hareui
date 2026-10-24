@@ -70,12 +70,15 @@ type WithTime = DateValue & {
   second: number
   set: (fields: object) => DateValue
 }
+
 const timeOf = (v: DateValue) =>
   new Time((v as WithTime).hour, (v as WithTime).minute, (v as WithTime).second)
+
 const withDate = (picked: DateValue, current: DateValue | undefined) =>
   current
     ? (current as WithTime).set({ year: picked.year, month: picked.month, day: picked.day })
     : picked
+
 const withTime = (time: Time, current: DateValue) =>
   (current as WithTime).set({ hour: time.hour, minute: time.minute, second: time.second })
 </script>

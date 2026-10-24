@@ -36,12 +36,14 @@ const icons: Record<string, string> = {
   gaming: 'gravity-ui:rocket',
   shopping: 'gravity-ui:shopping-bag',
 }
+
 const iconItems: TagGroupItem[] = [
   { id: 'news', label: 'News' },
   { id: 'travel', label: 'Travel' },
   { id: 'gaming', label: 'Gaming' },
   { id: 'shopping', label: 'Shopping' },
 ]
+
 type Person = {
   avatar: string
   fallback: string

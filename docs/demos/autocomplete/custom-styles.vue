@@ -66,6 +66,7 @@ const TEAMMATES = [
   { id: 'jordan', name: 'Jordan Kim', role: 'Customer Success' },
   { id: 'alex', name: 'Alex Rivera', role: 'Marketing' },
 ] as const
+
 const itemClass =
   'rounded-lg data-[focused=true]:bg-accent/10 data-[selected=true]:bg-accent/5 dark:data-[focused=true]:bg-accent/15 dark:data-[selected=true]:bg-accent/8'
 

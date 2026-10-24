@@ -111,6 +111,7 @@ const BAR_LENGTH = { keepNonFinite: true }
 const toNumber = (value: unknown): number | null => {
   if (value === null || value === undefined || value === '') return null
   const number = typeof value === 'number' ? value : Number(value)
+
   return Number.isFinite(number) ? number : null
 }
 
@@ -127,6 +128,7 @@ export const useCartesianChart = (
     registry.set(key, get)
     const unregister = () => registry.delete(key)
     onScopeDispose(unregister)
+
     return unregister
   }
 
@@ -143,12 +145,15 @@ export const useCartesianChart = (
         list.push({ axis, id: id ?? 0, hide: true, type: category ? 'category' : 'number' })
       }
     }
+
     ensure('x', 0)
     ensure('y', 0)
+
     for (const series of chart.series.value) {
       ensure('x', series.xAxisId)
       ensure('y', series.yAxisId)
     }
+
     return list
   })
 
@@ -163,10 +168,12 @@ export const useCartesianChart = (
         const key = `${config.axis}:${String(config.id ?? 0)}`
         if (seen.has(key) && !warned.has(key)) {
           warned.add(key)
+
           console.warn(
             `[hareui] Two ${config.axis} axes with id "${String(config.id ?? 0)}" in one chart. When the chart root draws its axes from props, turn its axis off (\`:${config.axis}-axis="false"\`) before adding a Chart${config.axis.toUpperCase()}Axis, or give the extra axis its own id.`,
           )
         }
+
         seen.add(key)
       }
     })
@@ -174,6 +181,7 @@ export const useCartesianChart = (
 
   const axisType = (config: ChartAxisConfig) =>
     config.type ?? (config.axis === 'x' ? 'category' : 'number')
+
   // Tick values and labels of a number axis. They depend on the data, not on the plot box.
   const numberTicks = (config: ChartAxisConfig) => {
     const data = chart.data.value
@@ -183,9 +191,11 @@ export const useCartesianChart = (
           const values = data
             .map((datum) => toNumber(datum[config.dataKey!]))
             .filter((value): value is number => value !== null)
+
           return values.length ? [Math.min(...values), Math.max(...values)] : [0, 0]
         })()
       : valueExtent(config.axis, config.id)
+
     return {
       alongData,
       ...resolveNumberDomain(extent, {
@@ -214,31 +224,38 @@ export const useCartesianChart = (
       axisType(config) === 'category'
         ? chart.data.value.map((_, index) => tickText(config, categoryOf(config, index), index))
         : numberTicks(config).ticks.map((value, index) => tickText(config, value, index))
+
     const widest = texts.reduce(
       (max, text) => Math.max(max, measureText(text, config.fontSize ?? 10)),
       0,
     )
+
     return Math.ceil(widest + (config.tickSpace ?? 8))
   }
 
   const axisSize = (config: ChartAxisConfig) => {
     if (config.hide) return 0
     if (config.size === 'auto') return config.axis === 'y' ? autoSize(config) : 30
+
     return config.size ?? (config.axis === 'x' ? 30 : 60)
   }
+
   const axisOrientation = (config: ChartAxisConfig) =>
     config.orientation ?? (config.axis === 'x' ? 'bottom' : 'left')
 
   const offset = computed<ChartOffset>(() => {
     const margin = chart.margin.value
+
     const sum = (side: string) =>
       configs.value
         .filter((config) => axisOrientation(config) === side)
         .reduce((total, config) => total + axisSize(config), 0)
+
     const left = margin.left + sum('left')
     const right = margin.right + sum('right')
     const top = margin.top + sum('top')
     const bottom = margin.bottom + sum('bottom')
+
     return {
       left,
       top,
@@ -256,10 +273,12 @@ export const useCartesianChart = (
     for (const series of visibleSeries.value) {
       if (series.stackId === undefined || (series.kind !== 'area' && series.kind !== 'bar'))
         continue
+
       const valueAxisId = horizontal.value ? series.yAxisId : series.xAxisId
       const key = `${String(valueAxisId ?? 0)}:${String(series.stackId)}`
       groups.set(key, [...(groups.get(key) ?? []), series])
     }
+
     const data = chart.data.value
     for (const members of groups.values()) {
       const layers = d3Stack<Record<string, unknown>, string>()
@@ -270,6 +289,7 @@ export const useCartesianChart = (
         )
         .order(stackOrderNone)
         .offset(stackOffsetNone)(data)
+
       layers.forEach((layer, layerIndex) => {
         const series = members[layerIndex]!
         result.set(
@@ -280,6 +300,7 @@ export const useCartesianChart = (
         )
       })
     }
+
     return result
   })
 
@@ -296,17 +317,20 @@ export const useCartesianChart = (
       const values = stacked
         ? stacked.flatMap((pair) => pair ?? [])
         : rawValues(series).filter((value): value is number => value !== null)
+
       for (const value of values) {
         if (value < min) min = value
         if (value > max) max = value
       }
     }
+
     return [min, max]
   }
 
   const axes = computed<ResolvedAxis[]>(() => {
     const plot = offset.value
     const data = chart.data.value
+
     const sideCursor: Record<string, number> = {
       left: plot.left,
       right: plot.left + plot.width,
@@ -323,9 +347,11 @@ export const useCartesianChart = (
       let range: [number, number] = isX
         ? [plot.left + padStart, plot.left + plot.width - padEnd]
         : [plot.top + plot.height - padEnd, plot.top + padStart]
+
       // Category axes run top → bottom on y (first row on top).
       if (!isX && type === 'category')
         range = [plot.top + padStart, plot.top + plot.height - padEnd]
+
       if (config.reversed) range = [range[1], range[0]]
 
       let box: ResolvedAxis['box']
@@ -333,19 +359,23 @@ export const useCartesianChart = (
         const y = orientation === 'top' ? sideCursor.top! - size : sideCursor.bottom!
         if (orientation === 'top') sideCursor.top = y
         else sideCursor.bottom = y + size
+
         box = { x: plot.left, y, width: plot.width, height: size }
       } else {
         const x = orientation === 'right' ? sideCursor.right! : sideCursor.left! - size
         if (orientation === 'right') sideCursor.right = x + size
         else sideCursor.left = x
+
         box = { x, y: plot.top, width: size, height: plot.height }
       }
 
       const fontSize = config.fontSize ?? 10
       const format = (value: number | string, index: number) => tickText(config, value, index)
       const bounds: [number, number] = isX ? [0, chart.width.value] : [0, chart.height.value]
+
       const labelSize = (tick: { text: string }) =>
         isX ? measureText(tick.text, fontSize) : fontSize * 1.2
+
       const finish = (raw: Omit<ChartTick, 'labelCoordinate'>[]) => ({
         allTicks: raw.map((tick) => ({ ...tick, labelCoordinate: tick.coordinate })),
         ticks: thinTicks(
@@ -363,9 +393,11 @@ export const useCartesianChart = (
         const scale = band
           ? scaleBand<number>().domain(indexes).range(range)
           : scalePoint<number>().domain(indexes).range(range)
+
         const bandwidth = band ? scale.bandwidth() : 0
         const start = (index: number) => scale(index) ?? range[0]
         const position = (index: number) => start(index) + bandwidth / 2
+
         const tickIndexes = config.ticks?.length
           ? config.ticks
               .map((tick) =>
@@ -373,10 +405,12 @@ export const useCartesianChart = (
               )
               .filter((index): index is number => index !== undefined)
           : indexes
+
         const raw = tickIndexes.map((index, order) => {
           const value = categoryOf(config, index)
           return { value, coordinate: position(index), index, text: format(value, order) }
         })
+
         return {
           id: config.id,
           axis: config.axis,
@@ -399,15 +433,18 @@ export const useCartesianChart = (
       // Number axis. Along the category direction (e.g. a numeric x axis in a line chart) it positions data by `dataKey`.
       const { domain, ticks } = numberTicks(config)
       const scale = scaleLinear().domain(domain).range(range)
+
       // A row without a numeric value has no position (NaN); series skip it.
       const position = (index: number) =>
         scale(toNumber(data[index]?.[config.dataKey ?? '']) ?? Number.NaN)
+
       const raw = ticks.map((value, index) => ({
         value,
         coordinate: scale(value),
         index,
         text: format(value, index),
       }))
+
       return {
         id: config.id,
         axis: config.axis,
@@ -456,6 +493,7 @@ export const useCartesianChart = (
     const max = Math.max(a, b)
     if (min >= 0) return min
     if (max <= 0) return max
+
     return 0
   }
 
@@ -465,6 +503,7 @@ export const useCartesianChart = (
     const stacked = stacks.value.get(series.id)
     if (stacked) return stacked
     const base = baseValue(valueAxisOf(series))
+
     return rawValues(series).map((value) => (value === null ? null : [base, value]))
   }
 
@@ -478,10 +517,12 @@ export const useCartesianChart = (
     const stackSlots = new Map<string, { ids: string[]; size?: number; max?: number }>()
     for (const series of visibleSeries.value) {
       if (series.kind !== 'bar') continue
+
       const size =
         series.barSize === undefined
           ? undefined
           : percentValue(series.barSize, bandSize, 0, BAR_LENGTH)
+
       if (series.stackId !== undefined) {
         const key = String(series.stackId)
         const slot = stackSlots.get(key)
@@ -491,18 +532,23 @@ export const useCartesianChart = (
           slot.max ??= series.maxBarSize
           continue
         }
+
         const created = { ids: [series.id], size, max: series.maxBarSize }
         stackSlots.set(key, created)
         slots.push(created)
         continue
       }
+
       slots.push({ ids: [series.id], size, max: series.maxBarSize })
     }
+
     if (!slots.length) return result
+
     const rootSize =
       options.barSize?.() === undefined
         ? undefined
         : percentValue(options.barSize!(), bandSize, 0, BAR_LENGTH)
+
     for (const slot of slots) slot.size ??= rootSize
     let gap = percentValue(options.barGap?.() ?? 4, bandSize, 0, BAR_LENGTH)
     const count = slots.length
@@ -511,14 +557,17 @@ export const useCartesianChart = (
     if (slots[0]!.size !== undefined) {
       let total = slots.reduce((sum, slot) => sum + (slot.size ?? 0), 0) + (count - 1) * gap
       let full = 0
+
       if (total >= bandSize) {
         total -= (count - 1) * gap
         gap = 0
       }
+
       if (total >= bandSize) {
         full = (bandSize / count) * 0.9
         total = count * full
       }
+
       let cursor = Math.trunc((bandSize - total) / 2) - gap
       let previous = 0
       for (const slot of slots) {
@@ -527,14 +576,17 @@ export const useCartesianChart = (
         previous = size
         for (const id of slot.ids) result.set(id, { offset: cursor, size })
       }
+
       return result
     }
 
     const categoryGap = percentValue(options.barCategoryGap?.() ?? '10%', bandSize, 0, BAR_LENGTH)
     if (bandSize - 2 * categoryGap - (count - 1) * gap <= 0) gap = 0
+
     // A category gap over half the band leaves no room: bars collapse to 0 instead of drawing inverted.
     let original = Math.max(0, (bandSize - 2 * categoryGap - (count - 1) * gap) / count)
     if (original > 1) original = Math.trunc(original)
+
     slots.forEach((slot, index) => {
       const limit = slot.max ?? maxBarSize
       const size = limit !== undefined ? Math.min(original, limit) : original
@@ -544,6 +596,7 @@ export const useCartesianChart = (
           size,
         })
     })
+
     return result
   })
 
@@ -567,6 +620,7 @@ export const useCartesianChart = (
       const plot = offset.value
       if (x < plot.left || x > plot.left + plot.width || y < plot.top || y > plot.top + plot.height)
         return null
+
       const axis = categoryAxis.value
       const count = chart.data.value.length
       if (!count) return null
@@ -580,20 +634,24 @@ export const useCartesianChart = (
           best = index
         }
       }
+
       const coordinate: ChartPoint = horizontal.value
         ? { x: axis.position(best), y }
         : { x, y: axis.position(best) }
+
       return { index: best, coordinate }
     },
     coordinateOf(index) {
       if (index < 0 || index >= chart.data.value.length) return null
       const plot = offset.value
       const position = categoryAxis.value.position(index)
+
       return horizontal.value
         ? { x: position, y: plot.top + plot.height / 2 }
         : { x: plot.left + plot.width / 2, y: position }
     },
   }
+
   chart.tooltipLabel.value = (index) => {
     // Sparklines draw no category axis; the root's `index` still names each row.
     const key = categoryAxis.value.config.dataKey ?? chart.config.value?.()?.index
@@ -601,11 +659,13 @@ export const useCartesianChart = (
   }
 
   provide(cartesianContextKey, context)
+
   // A `ChartLabel` placed directly in the chart is positioned against the plot area.
   provideChartLabelViewBox(() => {
     const plot = offset.value
     return { x: plot.left, y: plot.top, width: plot.width, height: plot.height }
   })
+
   return context
 }
 
@@ -616,5 +676,6 @@ export const useCartesianContext = (component = 'Chart part'): CartesianContext 
     throw new Error(
       `${component} must be used inside AreaChart, BarChart, LineChart or ComposedChart.`,
     )
+
   return context
 }

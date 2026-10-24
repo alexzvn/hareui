@@ -23,6 +23,7 @@ describe('HareUIResolver', () => {
           typeof value === 'object' && value !== null && ('setup' in value || 'render' in value),
       )
       .map(([name]) => name)
+
     expect(exported.length).toBeGreaterThan(80)
     for (const name of exported) expect(resolve(name), name).toEqual({ name, from: '@hareui/vue' })
   })
@@ -34,10 +35,13 @@ describe('HareUIResolver', () => {
           typeof value === 'object' && value !== null && ('setup' in value || 'render' in value),
       )
       .map(([name]) => name)
+
     expect(exported).toContain('AreaChart')
     expect(exported).toContain('ChartTooltipContent')
+
     for (const name of exported)
       expect(resolve(name), name).toEqual({ name, from: '@hareui/vue/charts' })
+
     expect(resolve('HChartArea', 'H')).toEqual({ name: 'ChartArea', from: '@hareui/vue/charts' })
   })
 
@@ -74,6 +78,7 @@ describe('vite plugin ui option', () => {
     expect(fromApp).toContain('px-2')
     expect(fromApp).not.toContain('px-1')
     expect(fromApp).toContain('uppercase')
+
     expect(mount(Button, { props: { class: 'px-3' }, global: { plugins } }).classes()).toContain(
       'px-3',
     )

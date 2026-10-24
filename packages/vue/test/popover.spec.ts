@@ -14,6 +14,7 @@ const mountPopover = (props: Record<string, unknown> = {}) => {
   outside.id = 'outside'
   outside.textContent = 'Outside'
   document.body.appendChild(outside)
+
   wrapper = mount(Popover, {
     props: { title: 'Title', ...props },
     slots: {
@@ -22,6 +23,7 @@ const mountPopover = (props: Record<string, unknown> = {}) => {
     },
     attachTo: document.body,
   })
+
   return wrapper
 }
 
@@ -43,6 +45,7 @@ const hiddenFromAT = (el: HTMLElement): boolean => {
   for (let node: HTMLElement | null = el; node; node = node.parentElement) {
     if (node.getAttribute('aria-hidden') === 'true' || node.hasAttribute('inert')) return true
   }
+
   return false
 }
 
@@ -60,9 +63,11 @@ describe('popover', () => {
     // behaviour-final-check H9 / P1
     const w = mountPopover({ defaultOpen: true })
     await settle()
+
     const locked = () =>
       getComputedStyle(document.documentElement).overflow === 'hidden' ||
       getComputedStyle(document.body).overflow === 'hidden'
+
     expect(locked()).toBe(true)
     await w.setProps({ open: false })
     await settle()
@@ -76,6 +81,7 @@ describe('popover', () => {
     expect(content()).not.toBeNull()
 
     outside!.focus()
+
     outside!.dispatchEvent(
       new PointerEvent('pointerdown', {
         bubbles: true,
@@ -84,9 +90,11 @@ describe('popover', () => {
         ctrlKey: false,
       }),
     )
+
     outside!.dispatchEvent(
       new PointerEvent('pointerup', { bubbles: true, button: 0, pointerType: 'mouse' }),
     )
+
     outside!.click()
     await settle()
 
@@ -117,13 +125,17 @@ describe('popover', () => {
   it('stays open on a right click outside, like React Aria', async () => {
     const w = mountPopover({ defaultOpen: true })
     await settle()
+
     outside!.dispatchEvent(
       new PointerEvent('pointerdown', { bubbles: true, button: 2, pointerType: 'mouse' }),
     )
+
     await new Promise((r) => setTimeout(r, 0))
+
     outside!.dispatchEvent(
       new PointerEvent('pointerdown', { bubbles: true, button: 2, pointerType: 'mouse' }),
     )
+
     await settle()
     expect(w.emitted('update:open')).toBeUndefined()
     expect(content()).not.toBeNull()
@@ -132,13 +144,17 @@ describe('popover', () => {
   it('stays open on an outside click when not dismissible', async () => {
     const w = mountPopover({ defaultOpen: true, dismissible: false })
     await settle()
+
     outside!.dispatchEvent(
       new PointerEvent('pointerdown', { bubbles: true, button: 0, pointerType: 'mouse' }),
     )
+
     await new Promise((r) => setTimeout(r, 0))
+
     outside!.dispatchEvent(
       new PointerEvent('pointerdown', { bubbles: true, button: 0, pointerType: 'mouse' }),
     )
+
     await settle()
     expect(w.emitted('update:open')).toBeUndefined()
   })
@@ -193,6 +209,7 @@ describe('popover', () => {
       },
       attachTo: document.body,
     })
+
     triggerEl().focus()
     triggerEl().click()
     await settle()
@@ -201,9 +218,11 @@ describe('popover', () => {
 
     const last = document.getElementById('last')!
     last.focus()
+
     last.dispatchEvent(
       new KeyboardEvent('keydown', { key: 'Tab', bubbles: true, cancelable: true }),
     )
+
     await settle()
     expect(document.activeElement).toBe(document.getElementById('first'))
 
@@ -211,12 +230,14 @@ describe('popover', () => {
     first.dispatchEvent(
       new KeyboardEvent('keydown', { key: 'Tab', shiftKey: true, bubbles: true, cancelable: true }),
     )
+
     await settle()
     expect(document.activeElement).toBe(last)
 
     last.dispatchEvent(
       new KeyboardEvent('keydown', { key: 'Escape', bubbles: true, cancelable: true }),
     )
+
     await settle()
     expect(content()).toBeNull()
     expect(wrapper.emitted('update:open')?.at(-1)).toEqual([false])
@@ -226,11 +247,13 @@ describe('popover', () => {
   it('ignores Escape when not dismissible', async () => {
     const w = mountPopover({ defaultOpen: true, dismissible: false })
     await settle()
+
     document
       .querySelector<HTMLElement>('[data-slot=popover-dialog]')!
       .dispatchEvent(
         new KeyboardEvent('keydown', { key: 'Escape', bubbles: true, cancelable: true }),
       )
+
     await settle()
     expect(w.emitted('update:open')).toBeUndefined()
     expect(content()).not.toBeNull()

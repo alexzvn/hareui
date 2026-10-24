@@ -52,6 +52,7 @@ const generateUsers = (n: number): User[] => {
     'Ella',
     'Benjamin',
   ]
+
   const lastNames = [
     'Smith',
     'Johnson',
@@ -74,9 +75,11 @@ const generateUsers = (n: number): User[] => {
     'Robinson',
     'Walker',
   ]
+
   return Array.from({ length: n }, (_, i) => {
     const firstName = firstNames[i % firstNames.length]!
     const lastName = lastNames[Math.floor(i / firstNames.length) % lastNames.length]!
+
     return {
       value: i + 1,
       label: `${firstName} ${lastName}`,
@@ -89,6 +92,7 @@ const allUsers = generateUsers(1000)
 const selectedKey = ref<number | null>(null)
 const searchQuery = ref('')
 const { contains } = useFilter({ sensitivity: 'base' })
+
 // Filter on name or email ourselves; `:filter="false"` shows the items as given
 const filteredUsers = computed(() =>
   searchQuery.value

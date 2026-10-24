@@ -43,6 +43,7 @@ const columns: TableColumn[] = [
   { key: 'type', label: 'Type' },
   { key: 'date', label: 'Date Modified' },
 ]
+
 const rows: TableRow[] = [
   {
     id: '1',
@@ -73,5 +74,6 @@ const rows: TableRow[] = [
     ],
   },
 ]
+
 const expandedKeys = ref<TableSelection>(new Set(['1']))
 </script>

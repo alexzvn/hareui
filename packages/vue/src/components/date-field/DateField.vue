@@ -210,6 +210,7 @@ const props = withDefaults(defineProps<DateFieldProps>(), { invalid: undefined }
 const emit = defineEmits<DateFieldEmits>()
 const slots = defineSlots<DateFieldSlots>()
 const disabled = useFieldsetDisabled(() => props.disabled)
+
 /** The selected date. Bind with `v-model`. */
 const modelValue = defineModel<DateValue | null>()
 
@@ -226,18 +227,24 @@ const formatDateBoundary = (value: DateValue) => {
     value.toDate(getLocalTimeZone()),
   )
 }
+
 const builtinValidate = (value: DateValue) => {
   if (props.minValue && value.compare(props.minValue) < 0)
     return `Value must be ${formatDateBoundary(props.minValue)} or later.`
+
   if (props.maxValue && value.compare(props.maxValue) > 0)
     return `Value must be ${formatDateBoundary(props.maxValue)} or earlier.`
+
   if (props.isDateUnavailable?.(value)) return 'Selected date unavailable.'
+
   return undefined
 }
+
 const validate = (value: DateValue) => {
   const custom = props.validate?.(value)
   return custom && custom !== true ? custom : builtinValidate(value)
 }
+
 const { validation, commitValidation } = useFieldValidation({
   // Untouched + uncontrolled: `modelValue` is `undefined` until the first `onUpdate`, so fall back to
   // `defaultValue`. A controlled field explicitly cleared to `null` stays `null`, not fall back.
@@ -253,10 +260,12 @@ const { validation, commitValidation } = useFieldValidation({
     modelValue.value = props.defaultValue
   },
 })
+
 const invalid = computed(() => props.invalid ?? validation.value.isInvalid)
 
 const onUpdate = (value: DateValue | undefined) => {
   modelValue.value = value
+
   // No real `change` event bubbles from Reka's hidden mirror input while typing segments
   commitValidation()
 }

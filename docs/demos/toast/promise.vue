@@ -85,12 +85,14 @@ import { Button, toast } from '@hareui/vue'
 const uploadFile = (): Promise<{ filename: string; size: number }> => {
   const { promise, resolve } = Promise.withResolvers<{ filename: string; size: number }>()
   setTimeout(() => resolve({ filename: 'document.pdf', size: 1024 }), 2000)
+
   return promise
 }
 
 const createEvent = (): Promise<never> => {
   const { promise, reject } = Promise.withResolvers<never>()
   setTimeout(() => reject(new Error('Network error. Please try again.')), 2000)
+
   return promise
 }
 
@@ -100,12 +102,14 @@ const saveData = (): Promise<{ count: number }> => {
     if (Math.random() > 0.5) resolve({ count: 42 })
     else reject(new Error('Failed to save data'))
   }, 2000)
+
   return promise
 }
 
 const fetchUser = (): Promise<{ name: string; email: string }> => {
   const { promise, resolve } = Promise.withResolvers<{ name: string; email: string }>()
   setTimeout(() => resolve({ email: 'john@example.com', name: 'John Doe' }), 2000)
+
   return promise
 }
 
@@ -115,6 +119,7 @@ const uploadWithLoading = () => {
     isLoading: true,
     timeout: 0,
   })
+
   setTimeout(() => {
     toast.update(loadingId, 'File uploaded', {
       description: 'Your file has been uploaded successfully',

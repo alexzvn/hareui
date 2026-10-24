@@ -246,10 +246,13 @@ const hasContentSlot = computed(() => !!ctx.slots[slotName(props.item, 'content'
 const horizontalContent = computed(
   () => !vertical.value && (hasChildren.value || hasContentSlot.value),
 )
+
 const label = computed(() => ctx.getLabel(props.item))
+
 const value = computed(() =>
   ctx.getItemValue(props.item, props.index, props.level, props.listIndex),
 )
+
 const isGroupLabel = computed(() => vertical.value && props.item.type === 'label')
 
 const popoverEnabled = computed(
@@ -259,14 +262,17 @@ const popoverEnabled = computed(
     hasChildren.value &&
     (!!ctx.props.popover || !!props.item.popover),
 )
+
 const tooltipEnabled = computed(
   () =>
     (vertical.value && collapsed.value && (!!ctx.props.tooltip || !!props.item.tooltip)) ||
     (!vertical.value && !!props.item.tooltip),
 )
+
 const outer = computed(() =>
   popoverEnabled.value ? NavigationMenuPopover : tooltipEnabled.value ? Tooltip : Passthrough,
 )
+
 const outerProps = computed(() => {
   if (popoverEnabled.value) {
     return {
@@ -275,12 +281,14 @@ const outerProps = computed(() => {
       class: ui.value.content({ class: [ctx.props.ui?.content, props.item.ui?.content] }),
     }
   }
+
   if (tooltipEnabled.value)
     return {
       text: label.value,
       ...ctx.tooltipProps.value,
       ...(typeof props.item.tooltip === 'object' ? props.item.tooltip : {}),
     }
+
   return {}
 })
 
@@ -315,6 +323,7 @@ const findAction = (entries: DropdownEntry[], value: DropdownValue): DropdownIte
     const nested = 'items' in entry && entry.items ? findAction(entry.items, value) : undefined
     if (nested) return nested
   }
+
   return undefined
 }
 
@@ -324,9 +333,11 @@ const onAction = (value: DropdownValue) => {
 }
 
 type Kind = typeof NavigationMenuTrigger | typeof AccordionTrigger | typeof NavigationMenuLink
+
 const kindOf = (link: ResolvedLink): Kind => {
   if (horizontalContent.value) return NavigationMenuTrigger
   if (accordion.value && hasChildren.value && !link.attrs.href) return AccordionTrigger
+
   return NavigationMenuLink
 }
 
@@ -338,6 +349,7 @@ const onSelect = (event: Event) => {
 const kindProps = (kind: Kind, link: ResolvedLink) => {
   if (kind === NavigationMenuLink)
     return { asChild: true, active: link.active || !!props.item.active, onSelect: onSelect }
+
   return { asChild: true, disabled: !!props.item.disabled, onClick: onSelect }
 }
 
@@ -348,10 +360,12 @@ const activeOf = (link: ResolvedLink) => link.active || !!props.item.active
 // expands, ArrowLeft collapses; mirrored in RTL, like Reka's vertical entry key); the chevron toggles on click.
 const accordionRoot = injectAccordionRootContext(null)
 const disclosureIds = { link: useId(), region: useId() }
+
 const expanded = computed(() => {
   const open = accordionRoot?.modelValue.value
   return Array.isArray(open) ? open.includes(value.value) : open === value.value
 })
+
 const toggleExpanded = () => {
   // Same guard as Reka's AccordionTrigger: a single, non-collapsible accordion keeps its open item open.
   if (
@@ -360,8 +374,10 @@ const toggleExpanded = () => {
     (accordionRoot.isSingle.value && expanded.value && !accordionRoot.collapsible)
   )
     return
+
   accordionRoot.changeModelValue(value.value)
 }
+
 const disclosure = computed(() =>
   accordion.value && hasChildren.value
     ? { open: expanded.value, toggle: toggleExpanded }
@@ -382,16 +398,20 @@ const onDisclosureKeydown = (event: KeyboardEvent) => {
 
 const linkAttrs = (link: ResolvedLink) => {
   const attrs: Record<string, unknown> = { ...link.attrs }
+
   // The collapsed rail hides labels: name the icon-only link by its label.
   if (vertical.value && collapsed.value && label.value) attrs['aria-label'] = label.value
+
   // A link (not an AccordionTrigger button, which names the region itself) labels its nested list.
   if (disclosure.value && kindOf(link) === NavigationMenuLink) attrs.id = disclosureIds.link
+
   if (disclosure.value && link.attrs.href)
     Object.assign(attrs, {
       'aria-expanded': expanded.value,
       'aria-controls': disclosureIds.region,
       onKeydown: onDisclosureKeydown,
     })
+
   return attrs
 }
 </script>

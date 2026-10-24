@@ -48,5 +48,6 @@ const updated: Record<string, string> = {
   Engineering: '5m',
   Marketing: '1w',
 }
+
 const updatedOf = (item: NavigationMenuItem) => updated[item.label ?? '']
 </script>

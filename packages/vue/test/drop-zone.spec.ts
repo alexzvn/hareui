@@ -28,6 +28,7 @@ const dragEvent = (type: string, files: File[]) => {
       dropEffect: 'none',
     },
   })
+
   return event
 }
 
@@ -56,6 +57,7 @@ const mountModel = (props: Record<string, unknown> = {}) => {
       onReject,
     }),
   )
+
   return { wrapper, model, onAdd, onReject }
 }
 
@@ -95,12 +97,14 @@ describe('DropZone', () => {
       accept: 'image/*,.pdf',
       maxSize: 10,
     })
+
     const image = file('a.png', 'image/png')
     const pdf = file('b.pdf', '')
     const text = file('c.txt', 'text/plain')
     const large = file('d.jpg', 'image/jpeg', 20)
     await drop(wrapper.find(area).element, [image, pdf, text, large])
     expect(model.value).toEqual([image, pdf])
+
     expect(onReject).toHaveBeenCalledWith([
       { file: text, reason: 'type' },
       { file: large, reason: 'size' },
@@ -112,6 +116,7 @@ describe('DropZone', () => {
     await select(wrapper.find(input).element as HTMLInputElement, [
       file('a.pdf', 'application/pdf'),
     ])
+
     expect(model.value).toEqual([])
     expect(onAdd).not.toHaveBeenCalled()
     expect(onReject).toHaveBeenCalledOnce()
@@ -134,6 +139,7 @@ describe('DropZone', () => {
   it('the area button and the trigger open the file picker', async () => {
     const { wrapper } = mountModel()
     const click = vi.spyOn(wrapper.find(input).element as HTMLInputElement, 'click')
+
     // Enter and Space on a native button dispatch `click`
     await wrapper.find('[data-slot=drop-zone-focus-target]').trigger('click')
     await wrapper.find('[data-slot=drop-zone-trigger]').trigger('click')
@@ -144,6 +150,7 @@ describe('DropZone', () => {
     const wrapper = mount(DropZone, {
       props: { label: 'Upload', description: 'PDF only', id: 'dz' },
     })
+
     const button = wrapper.find('[data-slot=drop-zone-focus-target]')
     expect(button.attributes('aria-labelledby')).toBe('dz-label')
     expect(wrapper.find('#dz-label').text()).toBe('Upload')
@@ -174,6 +181,7 @@ describe('DropZone', () => {
         'onUpdate:modelValue': (files: File[]) => (model.value = files),
       }),
     )
+
     const remove = wrapper.find('[aria-label="Remove a.pdf"]')
     expect(remove.exists()).toBe(true)
     await remove.trigger('click')
@@ -207,6 +215,7 @@ describe('DropZone', () => {
         },
       ),
     )
+
     expect(wrapper.find('[data-slot=drop-zone-file-list]').exists()).toBe(false)
     await wrapper.find('.custom').trigger('click')
     expect(model.value).toEqual([])
@@ -217,6 +226,7 @@ describe('DropZone', () => {
       props: { defaultValue: [file('a.pdf', 'application/pdf')] },
       slots: { files: () => [] },
     })
+
     expect(wrapper.find('[data-slot=drop-zone-file-list]').exists()).toBe(false)
     expect(wrapper.find('[data-slot=drop-zone-file-item]').exists()).toBe(false)
   })
@@ -228,6 +238,7 @@ describe('DropZone', () => {
     await select(el, [a])
     await wrapper.find('[aria-label="Remove a.pdf"]').trigger('click')
     expect(model.value).toEqual([])
+
     // Browsers skip `change` when the input still holds the picked file; `open` must empty it first
     const values: string[] = []
     Object.defineProperty(el, 'value', {
@@ -235,6 +246,7 @@ describe('DropZone', () => {
       get: () => 'C:\\fakepath\\a.pdf',
       set: (v: string) => values.push(v),
     })
+
     vi.spyOn(el, 'click').mockImplementation(() => {})
     await wrapper.find('[data-slot=drop-zone-focus-target]').trigger('click')
     expect(values).toContain('')
@@ -258,6 +270,7 @@ describe('DropZone', () => {
           h('a', { class: 'browse', onClick: open }, 'Browse'),
       },
     })
+
     const click = vi.spyOn(wrapper.find(input).element as HTMLInputElement, 'click')
     expect(wrapper.find('[data-slot=drop-zone-trigger]').exists()).toBe(false)
     await wrapper.find('.browse').trigger('click')
@@ -276,6 +289,7 @@ describe('DropZoneFileItem', () => {
     const wrapper = mount(DropZoneFileItem, {
       props: { name: 'Annual report.pdf', size: 2306867, status: 'failed' },
     })
+
     expect(wrapper.attributes('data-status')).toBe('failed')
     expect(wrapper.find('[data-slot=drop-zone-file-name]').text()).toBe('Annual report.pdf')
     expect(wrapper.find('[data-slot=drop-zone-file-meta]').text()).toBe('2.2 MB')
@@ -288,6 +302,7 @@ describe('DropZoneFileItem', () => {
     const wrapper = mount(DropZoneFileItem, {
       props: { name: 'a.png', progress: 40, status: 'uploading' },
     })
+
     const bar = wrapper.find('[data-slot=drop-zone-file-progress]')
     expect(bar.attributes('aria-valuenow')).toBe('40')
     expect(bar.attributes('aria-label')).toBe('Upload progress for a.png')
@@ -297,6 +312,7 @@ describe('DropZoneFileItem', () => {
     const wrapper = mount(DropZoneFileItem, {
       props: { name: 'a.mp4', status: 'failed', retryable: true },
     })
+
     await wrapper.find('[data-slot=drop-zone-file-retry-trigger]').trigger('click')
     await wrapper.find('[data-slot=drop-zone-file-remove-trigger]').trigger('click')
     expect(wrapper.emitted('retry')).toHaveLength(1)
@@ -307,6 +323,7 @@ describe('DropZoneFileItem', () => {
     const wrapper = mount(DropZoneFileItem, {
       props: { name: 'a.mp4', status: 'uploading', retryable: true, removable: false },
     })
+
     expect(wrapper.find('[data-slot=drop-zone-file-retry-trigger]').exists()).toBe(false)
     expect(wrapper.find('[data-slot=drop-zone-file-remove-trigger]').exists()).toBe(false)
   })
@@ -315,7 +332,9 @@ describe('DropZoneFileItem', () => {
     const wrapper = mount(DropZoneFileList, {
       slots: { default: () => [h(DropZoneFileItem, { key: 1, name: 'a.txt' })] },
     })
+
     expect(wrapper.attributes('data-slot')).toBe('drop-zone-file-list')
+
     expect(
       wrapper.find('[data-slot=drop-zone-file-format-icon-badge]').attributes('data-color'),
     ).toBe('gray')
@@ -326,9 +345,11 @@ describe('matchesAccept', () => {
   it('matches MIME wildcards, exact types and extensions', () => {
     expect(matchesAccept({ name: 'a.PNG', type: 'image/png' }, 'image/*')).toBe(true)
     expect(matchesAccept({ name: 'a.csv', type: '' }, '.csv,.xlsx')).toBe(true)
+
     expect(matchesAccept({ name: 'a.pdf', type: 'application/pdf' }, 'image/png, image/jpeg')).toBe(
       false,
     )
+
     expect(matchesAccept({ name: 'a.pdf', type: 'application/pdf' }, undefined)).toBe(true)
   })
 })
@@ -349,7 +370,9 @@ describe('DropZone accessibility', () => {
         }),
       { attachTo: document.body },
     )
+
     const remove = (name: string) => wrapper.get<HTMLButtonElement>(`[aria-label="Remove ${name}"]`)
+
     return { wrapper, model, remove }
   }
 
@@ -374,6 +397,7 @@ describe('DropZone accessibility', () => {
         attachTo: document.body,
       }),
     ]
+
     for (const wrapper of wrappers) {
       await expectAccessible(wrapper)
       wrapper.unmount()
@@ -391,12 +415,15 @@ describe('DropZone accessibility', () => {
       },
       attachTo: document.body,
     })
+
     const area = wrapper.get(button)
     expect(area.attributes('aria-invalid')).toBe('true')
+
     const described = area
       .attributes('aria-describedby')!
       .split(' ')
       .map((id) => document.getElementById(id)?.textContent)
+
     expect(described).toEqual(['PDF only', 'Add a file'])
     await expectAccessible(wrapper)
     wrapper.unmount()
@@ -429,16 +456,19 @@ describe('DropZone accessibility', () => {
       props: { label: 'Upload', multiple: true, defaultValue: [pdf(), file('b.png', 'image/png')] },
       attachTo: document.body,
     })
+
     const root: Element = wrapper.element
     const tabbable = Array.from(root.querySelectorAll<HTMLElement>('button, input, [tabindex]'))
       .filter((el) => el.tabIndex >= 0 && !el.hasAttribute('disabled'))
       .map((el) => el.getAttribute('aria-label') ?? el.getAttribute('data-slot'))
+
     expect(tabbable).toEqual([
       'drop-zone-focus-target',
       'drop-zone-trigger',
       'Remove a.pdf',
       'Remove b.png',
     ])
+
     wrapper.unmount()
   })
 
@@ -505,6 +535,7 @@ describe('DropZoneFileItem accessibility', () => {
       },
       attachTo: document.body,
     })
+
     await expectAccessible(wrapper)
     wrapper.unmount()
   })
@@ -513,10 +544,13 @@ describe('DropZoneFileItem accessibility', () => {
     const wrapper = mount(DropZoneFileItem, {
       props: { name: 'Report.pdf', status: 'failed', retryable: true },
     })
+
     expect(wrapper.get('[data-slot=drop-zone-file-remove-trigger]').attributes('aria-label')).toBe(
       'Remove Report.pdf',
     )
+
     expect(wrapper.get('[data-slot=drop-zone-file-retry-trigger]').text()).toBe('Retry')
+
     expect(wrapper.get('[data-slot=drop-zone-file-format-icon]').attributes('aria-hidden')).toBe(
       'true',
     )

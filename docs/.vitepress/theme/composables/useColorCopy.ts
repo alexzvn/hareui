@@ -37,6 +37,7 @@ export const copyColorValue = async (event: MouseEvent, fallback?: string): Prom
 /** Briefly pulses the clicked swatch to indicate the value was copied, without disturbing its label. */
 const flashSwatch = (target: HTMLElement): void => {
   target.classList.add('outline', 'outline-2', 'outline-offset-2', 'outline-current')
+
   window.setTimeout(() => {
     target.classList.remove('outline', 'outline-2', 'outline-offset-2', 'outline-current')
   }, 600)

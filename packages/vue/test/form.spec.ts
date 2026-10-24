@@ -31,6 +31,7 @@ const signUp = (formProps: Record<string, unknown> = {}) => {
       ]),
     { attachTo: document.body },
   )
+
   return wrapper
 }
 
@@ -54,6 +55,7 @@ describe('Form', () => {
     await flushPromises()
     const email = w.get('input[name=email]').element
     expect(email.getAttribute('aria-invalid')).toBe('true')
+
     // TextField drops its description while invalid
     expect(descriptions(email)).toEqual(['This email is already registered'])
     expect(w.get('input[name=name]').attributes('aria-invalid')).toBeUndefined()
@@ -77,6 +79,7 @@ describe('Form', () => {
     const w = signUp({ disabled: true })
     for (const control of w.findAll('input, button'))
       expect((control.element as HTMLInputElement).disabled).toBe(true)
+
     await expectAccessible(w)
   })
 })

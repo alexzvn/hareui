@@ -39,6 +39,7 @@ describe('breadcrumbs', () => {
       props: { items },
       slots: { separator: () => h('i', { class: 'dot' }) },
     })
+
     const sep = wrapper.find('[data-slot=breadcrumbs-separator]')
     expect(sep.element.tagName).toBe('I')
     expect(sep.classes()).toEqual(expect.arrayContaining(['dot', 'size-3', 'text-muted']))
@@ -58,6 +59,7 @@ describe('Breadcrumbs accessibility', () => {
       { props: { items }, slots: { separator: () => [h('span', { 'aria-hidden': 'true' }, '/')] } },
       { props: { items }, slots: { separator: () => [h('i')] } },
     ]
+
     for (const options of cases) {
       const wrapper = mount(Breadcrumbs, { ...options, attachTo: document.body })
       await expectAccessible(wrapper)
@@ -85,6 +87,7 @@ describe('Breadcrumbs accessibility', () => {
       expect(link.attributes('tabindex')).not.toBe('-1')
       expect(link.attributes('aria-disabled')).toBeUndefined()
     }
+
     const current = links[2]!
     expect(current.attributes('role')).toBe('link')
     expect(current.attributes('aria-disabled')).toBe('true')
@@ -108,6 +111,7 @@ describe('Breadcrumbs accessibility', () => {
       ['link', undefined],
       ['link', undefined],
     ])
+
     off.unmount()
   })
 
@@ -116,6 +120,7 @@ describe('Breadcrumbs accessibility', () => {
     expect(
       wrapper.findAll('[data-slot=breadcrumbs-separator]').map((s) => s.attributes('aria-hidden')),
     ).toEqual(['true', 'true'])
+
     wrapper.unmount()
   })
 })

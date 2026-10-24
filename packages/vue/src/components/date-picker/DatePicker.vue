@@ -329,13 +329,16 @@ const props = withDefaults(defineProps<DatePickerProps>(), {
   portal: undefined,
   defaultOpen: false,
 })
+
 const disabled = useFieldsetDisabled(() => props.disabled)
 const portalTarget = usePortal(() => props.portal)
 defineOptions({ inheritAttrs: false })
 const emit = defineEmits<DatePickerEmits>()
 const slots = defineSlots<DatePickerSlots>()
+
 /** The selected date. Bind with `v-model`. */
 const modelValue = defineModel<DateValue | null>()
+
 /** The popover's open state. Bind with `v-model:open`. */
 // Also mirrors a controlled `open` synchronously, so `useInertOutside` releases before Reka refocuses the trigger.
 const openLocal = ref(props.open ?? props.defaultOpen ?? false)
@@ -346,6 +349,7 @@ watch(
   },
   { flush: 'sync' },
 )
+
 const isOpen = computed({
   get: () => props.open ?? openLocal.value,
   set: (value: boolean) => {
@@ -353,12 +357,14 @@ const isOpen = computed({
     emit('update:open', value)
   },
 })
+
 useInertOutside(useTemplateRef<ComponentPublicInstance>('popoverContent'), openLocal)
 
 const ui = useComponentUI('datePicker', theme, () => ({ fullWidth: props.fullWidth }))
 
 const root = useTemplateRef<ComponentPublicInstance>('root')
 const trigger = useTemplateRef<HTMLButtonElement>('trigger')
+
 // `PopoverRoot` (the template root) has no DOM element of its own to auto-inherit attrs onto;
 // forward them manually to `DateFieldRoot`, the field's actual visual/semantic root.
 const attrs = useAttrs()
@@ -372,18 +378,24 @@ const formatDateBoundary = (value: DateValue) => {
     value.toDate(getLocalTimeZone()),
   )
 }
+
 const builtinValidate = (value: DateValue) => {
   if (props.minValue && value.compare(props.minValue) < 0)
     return `Value must be ${formatDateBoundary(props.minValue)} or later.`
+
   if (props.maxValue && value.compare(props.maxValue) > 0)
     return `Value must be ${formatDateBoundary(props.maxValue)} or earlier.`
+
   if (props.isDateUnavailable?.(value)) return 'Selected date unavailable.'
+
   return undefined
 }
+
 const validate = (value: DateValue) => {
   const custom = props.validate?.(value)
   return custom && custom !== true ? custom : builtinValidate(value)
 }
+
 const { validation, commitValidation } = useFieldValidation({
   // Untouched + uncontrolled: `modelValue` is `undefined` until the first `onUpdate`, so fall back to
   // `defaultValue`. A controlled field explicitly cleared to `null` stays `null`, not fall back.
@@ -399,13 +411,16 @@ const { validation, commitValidation } = useFieldValidation({
     modelValue.value = props.defaultValue
   },
 })
+
 const invalid = computed(() => props.invalid ?? validation.value.isInvalid)
 
 const onFieldUpdate = (value: DateValue | undefined) => {
   modelValue.value = value
+
   // No real `change` event bubbles from Reka's hidden mirror input while typing segments
   commitValidation()
 }
+
 // Selecting a date in the calendar closes the popover and restores focus to the trigger,
 // matching HeroUI's own DatePicker behavior.
 const onCalendarSelect = (value: DateValue) => {
@@ -414,6 +429,7 @@ const onCalendarSelect = (value: DateValue) => {
   isOpen.value = false
   trigger.value?.focus()
 }
+
 // Also runs when the already-selected date is picked again (the Calendar re-emits it): React Aria still closes.
 const onCalendarUpdate = (value: DateValue | DateValue[] | undefined) => {
   if (value && !Array.isArray(value)) onCalendarSelect(value)
@@ -429,6 +445,7 @@ const onFieldKeydown = (event: KeyboardEvent) => {
     props.readonly
   )
     return
+
   event.preventDefault()
   event.stopPropagation()
   isOpen.value = true
@@ -440,6 +457,7 @@ const onCloseAutoFocus = (event: Event) => {
   event.preventDefault()
   trigger.value?.focus()
 }
+
 // Escape closes the whole popover even while the calendar's year picker is open (the year picker marks the
 // event handled to close itself, which would otherwise stop Reka's dismissal).
 const onEscapeKeyDown = (event: KeyboardEvent) => {
@@ -450,10 +468,12 @@ const onEscapeKeyDown = (event: KeyboardEvent) => {
 // the first available day). Reka's PopoverContent would focus the first tabbable (the year-picker trigger) instead.
 const onOpenAutoFocus = (event: Event) => {
   const content = event.target as HTMLElement | null
+
   const focusDate =
     (modelValue.value === undefined ? props.defaultValue : modelValue.value) ??
     props.placeholder ??
     props.defaultPlaceholder
+
   const cell =
     (focusDate
       ? content?.querySelector<HTMLElement>(
@@ -464,6 +484,7 @@ const onOpenAutoFocus = (event: Event) => {
     content?.querySelector<HTMLElement>(
       '[data-value]:not([data-outside-view]):not([data-disabled]):not([data-unavailable])',
     )
+
   if (cell) {
     event.preventDefault()
     cell.focus()
@@ -481,6 +502,7 @@ const { id, labelId, hasLabel, describedBy, FieldLabel, FieldDescription, FieldE
     // Matches DateField/TimeField's own convention: hide the description while invalid
     hideDescriptionWhenInvalid: true,
   })
+
 const triggerId = computed(() => `${id.value}-trigger`)
 
 const groupUiProps = computed<DateInputGroupProps['ui']>(() => ({

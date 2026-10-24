@@ -436,6 +436,7 @@ const props = withDefaults(defineProps<SelectProps<T>>(), {
   invalid: undefined,
   loading: undefined,
 })
+
 const portalTarget = usePortal(() => props.portal)
 const disabled = useFieldsetDisabled(() => props.disabled)
 const emit = defineEmits<SelectEmits>()
@@ -475,6 +476,7 @@ const isOpen = computed({
     emit('update:open', value)
   },
 })
+
 const setOpen = (value: boolean) => {
   if (value && disabled.value) return
   isOpen.value = value
@@ -497,11 +499,13 @@ const { validation, commitValidation } = useFieldValidation<SelectValue>({
   root: () => root.value,
   onReset: reset,
 })
+
 const invalid = computed(() => validation.value.isInvalid)
 
 const onListUpdate = (value: ListBoxValue | ListBoxValue[] | null | undefined) => {
   selection.value = value
   commitValidation()
+
   // Single selection closes the popover; focus returns to the trigger
   if (!multiple.value) setOpen(false)
 }
@@ -520,8 +524,10 @@ const typeahead = useTypeahead({ start: 'current' })
 const onTriggerKeydown = (event: KeyboardEvent) => {
   triggerPress = false
   if (disabled.value) return
+
   if (event.key === 'ArrowDown' || event.key === 'ArrowUp') {
     event.preventDefault()
+
     // RAC focus strategy: ArrowUp opens on the last option (unless one is selected)
     openStrategy = event.key === 'ArrowUp' ? 'last' : 'first'
     setOpen(true)
@@ -559,6 +565,7 @@ const onTriggerFocus = (event: FocusEvent) => {
   focused.value = true
   focusVisible.value = event.target instanceof Element && event.target.matches(':focus-visible')
 }
+
 const onTriggerBlur = () => {
   focused.value = false
   focusVisible.value = false
@@ -575,11 +582,14 @@ const onOpenAutoFocus = async (event: Event) => {
   openStrategy = 'first'
   await listBox.value?.highlightSelected()
   const list = content.value?.$el.querySelector<HTMLElement>('[data-slot=list-box]')
+
   // Reka's End key moves the highlight (and focus) to the last enabled option
   if (list && strategy === 'last' && isPlaceholder.value)
     list.dispatchEvent(new KeyboardEvent('keydown', { key: 'End', cancelable: true }))
+
   if (list && !list.contains(document.activeElement)) list.focus()
 }
+
 // Reka's non-modal popover skips the trigger refocus after an outside press; RAC restores focus to the trigger
 // unless the press moved it to another element
 const onCloseAutoFocus = (event: Event) => {
@@ -593,24 +603,30 @@ const onCloseAutoFocus = (event: Event) => {
 let triggerPress = false
 const onTriggerPointerdown = (event: PointerEvent) => {
   if (event.pointerType !== 'mouse' || event.button !== 0 || disabled.value) return
+
   // The click that ends this press must not toggle again
   triggerPress = true
   triggerEl()?.focus()
   setOpen(!isOpen.value)
+
   const release = () =>
     setTimeout(() => {
       triggerPress = false
     })
+
   window.addEventListener('pointerup', release, { once: true, capture: true })
   window.addEventListener('pointercancel', release, { once: true, capture: true })
 }
+
 const onTriggerMousedown = (event: MouseEvent) => {
   // Focus stays where the press put it (the trigger, or the list once open)
   if (triggerPress) event.preventDefault()
 }
+
 const onRootOpenChange = (value: boolean) => {
   if (!triggerPress) setOpen(value)
 }
+
 const pressRelease = usePressRelease()
 
 // The validation composable focuses the first native control of an invalid field; the hidden <select>
@@ -626,6 +642,7 @@ const onHiddenInvalid = () => {
 }
 
 const attrs = useAttrs()
+
 const { id, labelId, hasLabel, describedBy, FieldLabel, FieldDescription, FieldError } =
   useFieldChrome({
     props,
@@ -636,7 +653,9 @@ const { id, labelId, hasLabel, describedBy, FieldLabel, FieldDescription, FieldE
     required: () => props.required,
     hideDescriptionWhenInvalid: true,
   })
+
 const valueId = computed(() => `${id.value}-value`)
+
 // `aria-labelledby` overrides `aria-label`, so an `aria-label`-only trigger references itself to keep that name (as RAC does)
 const triggerLabelledBy = computed(() =>
   [
@@ -648,11 +667,13 @@ const triggerLabelledBy = computed(() =>
     .filter(Boolean)
     .join(' '),
 )
+
 const listLabelledBy = computed(
   () =>
     (attrs['aria-labelledby'] as string | undefined) ??
     (hasLabel.value ? labelId.value : undefined),
 )
+
 // RAC names the popover dialog like the listbox (or after an `aria-label`-only trigger). Reka labels its content with
 // its own trigger id, which the trigger's `id` replaces, so point that id at the label instead (set before the trigger's
 // setup, which only fills it when empty)
@@ -663,9 +684,11 @@ const PopoverLabel = defineComponent({
     watchEffect(() => {
       popover.triggerId = popoverLabelledBy.value
     })
+
     return () => null
   },
 })
+
 // Bound after the root's `data-slot`, so a wrapping component (CellSelect, InlineSelect) can rename the root
 const rootAttrs = computed(() => {
   const { 'aria-label': _label, 'aria-labelledby': _labelledby, ...rest } = attrs
@@ -683,12 +706,14 @@ const itemSlots = [
   'empty',
   'loading',
 ] as const
+
 const forwarded = computed(() => itemSlots.filter((name) => slots[name]))
 
 const ui = useComponentUI('select', theme, () => ({
   variant: props.variant,
   fullWidth: props.fullWidth,
 }))
+
 // Classes for the hidden indicator copies inside the value (RAC renders the item's own indicator there);
 // per-item variant override, as in ListBoxOption
 const listBoxUi = useComponentUI('listBox', listBoxTheme, () => ({}))

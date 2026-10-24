@@ -27,9 +27,11 @@ describe('useChartTween', () => {
     let queue: FrameRequestCallback[] = []
     vi.spyOn(performance, 'now').mockReturnValue(0)
     vi.stubGlobal('requestAnimationFrame', (callback: FrameRequestCallback) => queue.push(callback))
+
     vi.stubGlobal('cancelAnimationFrame', () => {
       queue = []
     })
+
     return (time: number) => {
       const run = queue
       queue = []
@@ -49,9 +51,11 @@ describe('useChartTween', () => {
         () => ({ animationDuration: 100, animationEasing: 'linear' }),
       ),
     )!
+
     expect(tween.value.value).toBe(0)
     frame(50)
     expect(tween.value.value).toBe(5)
+
     // Interrupted halfway: the new animation runs 5 -> 20, it doesn't jump back to 10 first.
     target.value = 20
     await nextTick()
@@ -88,18 +92,23 @@ describe('chart scale helpers', () => {
 
   it('resolves domain definitions', () => {
     expect(resolveNumberDomain([0, 11500]).domain).toEqual([0, 12000])
+
     expect(
       resolveNumberDomain([5000, 9000], { domain: ['dataMin - 1000', 'dataMax + 1000'] }).domain,
     ).toEqual([4000, 10000])
+
     expect(resolveNumberDomain([2, 6], { domain: [0, 8] })).toEqual({
       domain: [0, 8],
       ticks: [0, 2, 4, 6, 8],
     })
+
     // A fixed max below the data grows unless overflow is allowed.
     expect(resolveNumberDomain([0, 12], { domain: [0, 8] }).domain).toEqual([0, 12])
+
     expect(
       resolveNumberDomain([0, 12], { domain: [0, 8], allowDataOverflow: true }).domain,
     ).toEqual([0, 8])
+
     expect(resolveNumberDomain([0, 20], { ticks: [0, 10, 20] }).ticks).toEqual([0, 10, 20])
   })
 
@@ -110,7 +119,9 @@ describe('chart scale helpers', () => {
       index,
       text: String(index),
     }))
+
     const kept = thinTicks(ticks, 'preserveEnd', () => 12, [0, 40], 5)
+
     // The last label is pulled inside the bounds (34), then labels are kept leftwards while they fit.
     expect(kept.map((tick) => tick.index)).toEqual([1, 4])
     expect(kept.at(-1)?.labelCoordinate).toBe(34)
@@ -124,6 +135,7 @@ describe('chart shapes and curves', () => {
     const rounded = rectanglePath(0, 0, 10, 20, [4, 4, 0, 0])
     expect(rounded.startsWith('M0,4A 4,4,0,0,1,4,0')).toBe(true)
     expect(rounded.endsWith('Z')).toBe(true)
+
     // Radii clamp to half the shorter side.
     expect(rectanglePath(0, 0, 4, 20, 10)).toContain('A 2,2')
   })
@@ -171,6 +183,7 @@ describe('Chart', () => {
   const keydown = (target: Element, key: string) => {
     const event = new KeyboardEvent('keydown', { key, bubbles: true, cancelable: true })
     target.dispatchEvent(event)
+
     return event
   }
 
@@ -179,25 +192,32 @@ describe('Chart', () => {
       id: 'chart-title',
       textContent: 'Traffic',
     })
+
     const description = Object.assign(document.createElement('p'), {
       id: 'chart-description',
       textContent: 'Organic and paid sessions, Q1',
     })
+
     document.body.append(title, description)
+
     const wrapper = mountChart({
       'aria-label': undefined,
       'aria-labelledby': 'chart-title',
       'aria-describedby': 'chart-description',
     })
+
     await settle()
     const svg = surface(wrapper)
     expect(svg.getAttribute('role')).toBe('application')
+
     expect(document.getElementById(svg.getAttribute('aria-labelledby')!)?.textContent).toBe(
       'Traffic',
     )
+
     expect(document.getElementById(svg.getAttribute('aria-describedby')!)?.textContent).toBe(
       'Organic and paid sessions, Q1',
     )
+
     expect(wrapper.attributes('aria-labelledby')).toBeUndefined()
     await expectAccessible()
     wrapper.unmount()
@@ -228,9 +248,11 @@ describe('Chart', () => {
     expect(wrapper.find('[data-slot=chart-tooltip-wrapper]').attributes('data-state')).toBe('open')
     keydown(svg, 'Escape')
     await settle()
+
     expect(wrapper.find('[data-slot=chart-tooltip-wrapper]').attributes('data-state')).toBe(
       'closed',
     )
+
     expect(document.activeElement).toBe(svg)
     wrapper.unmount()
   })
@@ -242,21 +264,26 @@ describe('Chart', () => {
         element.getAttribute('data-slot'),
       )
     }
+
     const below = mountChart({ legend: 'bottom' })
     await settle()
+
     expect(focusables(below)).toEqual([
       'chart-surface',
       'chart-legend-trigger',
       'chart-legend-trigger',
     ])
+
     below.unmount()
     const above = mountChart({ legend: 'top' })
     await settle()
+
     expect(focusables(above)).toEqual([
       'chart-legend-trigger',
       'chart-legend-trigger',
       'chart-surface',
     ])
+
     above.unmount()
   })
 

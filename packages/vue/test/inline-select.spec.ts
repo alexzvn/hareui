@@ -12,15 +12,18 @@ const items = [
   { value: 'fr', label: 'French' },
   { value: 'ja', label: 'Japanese' },
 ]
+
 const trigger = '[data-slot=select-trigger]'
 const value = '[data-slot=select-value]'
 const flush = flushPromises
 const optionEls = () => [...document.querySelectorAll<HTMLElement>('[role=option]')]
 const focusedText = () => document.activeElement?.textContent?.trim()
+
 const press = async (key: string) => {
   document.activeElement!.dispatchEvent(
     new KeyboardEvent('keydown', { key, bubbles: true, cancelable: true }),
   )
+
   await flush()
 }
 
@@ -34,6 +37,7 @@ describe('InlineSelect', () => {
       props: { items, defaultValue: 'en' },
       attrs: { 'aria-label': 'Language' },
     })
+
     expect(wrapper.attributes('data-slot')).toBe('inline-select')
     expect(wrapper.get(value).text()).toBe('English')
     const indicator = wrapper.get('[data-slot=select-indicator]')
@@ -47,6 +51,7 @@ describe('InlineSelect', () => {
       props: { items, defaultValue: 'en', id: 'lang' },
       attrs: { 'aria-label': 'Language' },
     })
+
     const t = wrapper.get(trigger)
     expect(t.attributes('aria-label')).toBe('Language')
     expect(t.attributes('aria-labelledby')).toBe('lang lang-value')
@@ -69,6 +74,7 @@ describe('InlineSelect', () => {
           ])
       },
     })
+
     const wrapper = mount(Host, { attachTo: document.body })
     await wrapper.get(trigger).trigger('click')
     await flush()
@@ -85,6 +91,7 @@ describe('InlineSelect', () => {
       props: { items, defaultValue: 'es' },
       attachTo: document.body,
     })
+
     expect(wrapper.get(value).text()).toBe('Spanish')
     await wrapper.get(trigger).trigger('click')
     await flush()
@@ -100,6 +107,7 @@ describe('InlineSelect', () => {
       props: { items, defaultValue: 'es' },
       attachTo: document.body,
     })
+
     wrapper.get<HTMLElement>(trigger).element.focus()
     await wrapper.get(trigger).trigger('keydown', { key: 'ArrowDown' })
     await flush()
@@ -122,6 +130,7 @@ describe('InlineSelect', () => {
       props: { items, defaultValue: 'en' },
       attachTo: document.body,
     })
+
     wrapper.get<HTMLElement>(trigger).element.focus()
     await wrapper.get(trigger).trigger('keydown', { key: 'ArrowDown' })
     await flush()
@@ -139,6 +148,7 @@ describe('InlineSelect', () => {
       props: { items, selectionMode: 'multiple', modelValue: ['en'] },
       attachTo: document.body,
     })
+
     await wrapper.get(trigger).trigger('click')
     await flush()
     optionEls()[2]!.click()
@@ -156,6 +166,7 @@ describe('InlineSelect', () => {
       props: { items, defaultOpen: true },
       attachTo: document.body,
     })
+
     await flush()
     const popover = () => document.querySelector<HTMLElement>('[data-slot=select-popover]')!
     expect(popover().getAttribute('data-side')).toBe('bottom')
@@ -166,6 +177,7 @@ describe('InlineSelect', () => {
       props: { items, defaultOpen: true, side: 'top', align: 'start' },
       attachTo: document.body,
     })
+
     await flush()
     expect(popover().getAttribute('data-side')).toBe('top')
     expect(popover().getAttribute('data-align')).toBe('start')
@@ -180,6 +192,7 @@ describe('InlineSelect', () => {
         leading: () => h('span', { class: 'team-icon' }, 'N'),
       },
     })
+
     const indicator = wrapper.get('[data-slot=select-indicator]')
     expect(indicator.find('.custom-indicator').exists()).toBe(true)
     expect(indicator.find('svg').exists()).toBe(false)
@@ -194,10 +207,12 @@ describe('InlineSelect', () => {
       attrs: { 'aria-label': 'Language' },
       attachTo: document.body,
     })
+
     wrapper.get<HTMLElement>(trigger).element.focus()
     await wrapper.get(trigger).trigger('keydown', { key: 'ArrowDown' })
     await flush()
     await flush()
+
     return wrapper
   }
 
@@ -241,6 +256,7 @@ describe('InlineSelect', () => {
       selectionMode: 'multiple',
       defaultValue: ['en', 'fr'],
     })
+
     await expectAccessible()
     multiple.unmount()
   })
@@ -251,15 +267,18 @@ describe('InlineSelect', () => {
     expect(t.attributes('aria-haspopup')).toBe('listbox')
     expect(t.attributes('aria-expanded')).toBe('true')
     expect(document.querySelector('[role=listbox]')!.getAttribute('aria-label')).toBe('Language')
+
     expect(
       document.querySelector('[data-slot=select-popover]')!.getAttribute('aria-labelledby'),
     ).toBe('lang')
+
     expect(optionEls().map((o) => o.getAttribute('aria-selected'))).toEqual([
       'true',
       'false',
       'false',
       'false',
     ])
+
     wrapper.unmount()
   })
 
@@ -287,6 +306,7 @@ describe('InlineSelect', () => {
       props: { items, disabled: true },
       attachTo: document.body,
     })
+
     expect(wrapper.get(trigger).attributes('disabled')).toBeDefined()
     await wrapper.get(trigger).trigger('keydown', { key: 'ArrowDown' })
     await nextTick()

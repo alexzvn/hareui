@@ -90,6 +90,7 @@ const props = defineProps<{
 }>()
 
 const baseStyle = computed(() => contrastStyle(props.baseVariable))
+
 const softHoverToken = computed(() =>
   props.soft ? getTokenName(props.soft.hoverTooltip, props.soft.hoverVariable) : '',
 )

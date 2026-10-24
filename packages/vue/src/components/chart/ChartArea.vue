@@ -127,6 +127,7 @@ const props = withDefaults(defineProps<ChartAreaProps>(), {
   xAxisId: 0,
   yAxisId: 0,
 })
+
 defineSlots<ChartAreaSlots>()
 
 const rootSeries = useRootSeries(useChartContext('ChartArea'), () => props.dataKey)
@@ -134,6 +135,7 @@ const stroke = computed(() => props.stroke ?? rootSeries.value?.color ?? DEFAULT
 const color = computed(() =>
   stroke.value === 'none' ? (rootSeries.value?.color ?? DEFAULT_SERIES_COLOR) : stroke.value,
 )
+
 const areaFill = computed(() => {
   if (props.fill === 'gradient') {
     const fillOpacity = props.fillOpacity ?? chartDefaults.area.fillOpacity
@@ -142,13 +144,16 @@ const areaFill = computed(() => {
       series.chart.id,
     )
   }
+
   const opacity = props.fillOpacity ?? 0.6
+
   return {
     fill: props.fill ?? color.value,
     fillOpacity: typeof opacity === 'number' ? opacity : opacity[0],
     gradient: undefined,
   }
 })
+
 // The tooltip and active dot use the series color, not a gradient url.
 const fill = computed(() => (props.fill === 'gradient' ? color.value : areaFill.value.fill))
 
@@ -165,6 +170,7 @@ const segments = computed(() => {
 
 const areaPath = computed(() => {
   const curve = curveFactory(props.type, chart.layout.value)
+
   const generator = horizontal.value
     ? d3Area<ChartSeriesPoint | null>()
         .x((point) => point!.x)
@@ -174,6 +180,7 @@ const areaPath = computed(() => {
         .y((point) => point!.y)
         .x0((point) => point!.baseX)
         .x1((point) => point!.x)
+
   return generator.defined((point) => point !== null).curve(curve)(segments.value) ?? ''
 })
 
@@ -192,6 +199,7 @@ const curvePath = computed(() => {
 const clip = computed(() => {
   const plot = cartesian.offset.value
   const reveal = series.reveal.value
+
   return horizontal.value
     ? { x: plot.left, y: 0, width: plot.width * reveal, height: chart.height.value }
     : { x: 0, y: plot.top, width: chart.width.value, height: plot.height * reveal }
@@ -204,7 +212,9 @@ const dots = computed(() => {
     stroke: stroke.value,
     strokeWidth: 1,
   })
+
   if (!attrs || series.animating.value) return []
+
   return series.points.value.flatMap((point) => (point ? [{ point, attrs }] : []))
 })
 
@@ -213,6 +223,7 @@ const activeDot = computed(() => {
   const point = series.activePoint.value
   if (!point || !props.activeDot) return null
   const custom = props.activeDot === true ? {} : props.activeDot
+
   return {
     point,
     r: custom.r ?? 4,

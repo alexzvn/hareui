@@ -66,6 +66,7 @@ const props = withDefaults(defineProps<AppProps>(), {
   portal: undefined,
   toaster: () => ({}),
 })
+
 defineSlots<AppSlots>()
 
 // A child config that reads through to the parent one: `portal` from this component's prop when set.

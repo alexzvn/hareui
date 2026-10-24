@@ -459,12 +459,14 @@ const props = withDefaults(defineProps<ComboBoxProps<T>>(), {
   invalid: undefined,
   loading: undefined,
 })
+
 const portalTarget = usePortal(() => props.portal)
 const disabled = useFieldsetDisabled(() => props.disabled)
 const emit = defineEmits<ComboBoxEmits>()
 const slots = defineSlots<ComboBoxSlots<T>>()
 const modelValue = defineModel<ComboBoxValue>()
 const inputModel = defineModel<string>('inputValue')
+
 // Whether the parent binds `v-model:input-value` (defineModel keeps a local value when it doesn't)
 const vnodeProps = getCurrentInstance()?.vnode.props ?? {}
 const inputControlled = () => ['inputValue', 'input-value'].some((key) => key in vnodeProps)
@@ -490,6 +492,7 @@ const {
   isMultiple: () => multiple.value,
   placeholder: () => props.valuePlaceholder,
 })
+
 const selectedText = computed(() => resolveItemText(selectedKey.value))
 
 // ---- Input text (`v-model:input-value` wins when bound) ---------------------------------------------------------
@@ -501,6 +504,7 @@ const inputValue = computed<string>({
     inputModel.value = value
   },
 })
+
 // Takes the key explicitly after a write: a bound `v-model` only reflects it once the parent re-renders
 const resetInputValue = (key = selectedKey.value) => {
   inputValue.value = multiple.value ? '' : resolveItemText(key)
@@ -508,24 +512,31 @@ const resetInputValue = (key = selectedKey.value) => {
 
 // ---- Filtering (RAC `useComboBoxState` + `useFilter({ sensitivity: 'base' })`) ----------------------------------
 const { contains } = useFilter({ sensitivity: 'base' })
+
 // Shows every option when the popover was opened by focus / trigger / arrow keys, until the text changes
 const showAll = ref(!!(props.open ?? props.defaultOpen))
 let openingFromInput = false
+
 const matches = computed(() => {
   const text = inputValue.value
   const filter = props.filter
   if (filter === false || showAll.value) return (_item: ListBoxItem) => true
+
   return (item: ListBoxItem) => (filter ?? contains)(itemText(item), text)
 })
+
 const liveBlocks = computed(() => filterEntries(props.items, matches.value))
+
 // What the popover renders: the live collection while open; RAC keeps the last one while the popover animates out
 // (committing rewrites the text to the selected label, which would collapse the list mid-exit)
 const blocks = shallowRef(liveBlocks.value)
 const visibleCount = computed(() => countRows(blocks.value))
+
 // What the open checks see: the filtered list of the current text (RAC `filteredCollection`)
 const filteredCount = computed(() => {
   const filter = props.filter
   if (filter === false) return options.value.length
+
   return options.value.filter((item) => (filter ?? contains)(itemText(item), inputValue.value))
     .length
 })
@@ -536,6 +547,7 @@ const isOpen = computed(() => (props.open ?? uncontrolledOpen.value) && !disable
 watch([liveBlocks, isOpen], ([live, open]) => {
   if (open) blocks.value = live
 })
+
 const setOpenState = (value: boolean) => {
   if (value === isOpen.value) return
   uncontrolledOpen.value = value
@@ -544,6 +556,7 @@ const setOpenState = (value: boolean) => {
 
 type FocusStrategy = 'first' | 'last' | null
 type OpenTrigger = 'focus' | 'input' | 'manual'
+
 // RAC `state.open(focusStrategy, trigger)`
 const open = (strategy: FocusStrategy, trigger: OpenTrigger) => {
   if (disabled.value || props.readonly) return
@@ -560,6 +573,7 @@ const open = (strategy: FocusStrategy, trigger: OpenTrigger) => {
     highlightOnOpen(strategy)
   }
 }
+
 const close = () => {
   setOpenState(false)
 }
@@ -569,18 +583,22 @@ const commitSelection = () => {
   resetInputValue()
   close()
 }
+
 // RAC sets `lastValueRef` first so clearing the selection doesn't reset the custom text
 let keepText = false
 const commitCustomValue = () => {
   if (!multiple.value) {
     keepText = true
     selection.value = null
+
     nextTick(() => {
       keepText = false
     })
   }
+
   close()
 }
+
 const commitValue = () => {
   if (props.allowsCustomValue) {
     if (inputValue.value === selectedText.value) commitSelection()
@@ -589,6 +607,7 @@ const commitValue = () => {
     commitSelection()
   }
 }
+
 const revert = () => {
   if (props.allowsCustomValue && selectedKey.value == null) commitCustomValue()
   else commitSelection()
@@ -604,9 +623,12 @@ const onReady = (listboxContext: ListboxContext, comboboxContext: ComboboxContex
   listboxRef.value = listboxContext
   combobox = comboboxContext
 }
+
 const highlighted = computed(() => listboxRef.value?.highlightedElement.value ?? null)
+
 // RAC interaction modality: the highlight is focus-visible after keyboard interaction
 const keyboardModality = useKeyboardModality()
+
 onMounted(() => {
   if (input.value) combobox?.onInputElementChange(input.value)
   if (isOpen.value) highlightOnOpen(null)
@@ -617,12 +639,15 @@ const enabledOptions = (): HTMLElement[] => {
   const el = content.value?.$el as HTMLElement | undefined
   return el ? [...el.querySelectorAll<HTMLElement>('[role=option]:not([data-disabled])')] : []
 }
+
 const setHighlight = (el: HTMLElement | null | undefined) => {
   const listbox = listboxRef.value
   if (!listbox) return
+
   if (el) listbox.changeHighlight(el, true, false)
   else listbox.highlightedElement.value = null
 }
+
 // RAC `useSelectableCollection` autoFocus: the first selected option, else first / last per strategy, else none
 // Reka's own `highlightSelected` (which falls back to the first option) runs a few ticks after a model change
 const afterRekaHighlight = async () => {
@@ -630,6 +655,7 @@ const afterRekaHighlight = async () => {
   await nextTick()
   await nextTick()
 }
+
 const highlightOnOpen = async (strategy: FocusStrategy) => {
   await afterRekaHighlight()
   const list = enabledOptions()
@@ -638,6 +664,7 @@ const highlightOnOpen = async (strategy: FocusStrategy) => {
     selected ?? (strategy === 'first' ? list[0] : strategy === 'last' ? list.at(-1) : null),
   )
 }
+
 const navigate = (key: 'ArrowDown' | 'ArrowUp' | 'Home' | 'End' | 'PageUp' | 'PageDown') => {
   const list = enabledOptions()
   if (!list.length) return
@@ -648,11 +675,13 @@ const navigate = (key: 'ArrowDown' | 'ArrowUp' | 'Home' | 'End' | 'PageUp' | 'Pa
   else if (current === -1) next = key === 'ArrowDown' ? list[0] : list.at(-1)
   // RAC doesn't wrap (`shouldFocusWrap` defaults to false)
   else next = list[Math.min(Math.max(current + (key === 'ArrowDown' ? 1 : -1), 0), list.length - 1)]
+
   setHighlight(next)
 }
 
 // ---- Input events -----------------------------------------------------------------------------------------------
 const input = useTemplateRef<HTMLInputElement>('input')
+
 // ComboboxRoot renders a fragment (PopperRoot), so its `$el` isn't the element; find it from the input
 const rootEl = () => input.value?.closest<HTMLElement>('[data-slot=combo-box]') ?? undefined
 const focused = ref(false)
@@ -666,17 +695,21 @@ const onInput = (event: Event) => {
   inputValue.value = value
   onInputTextChange()
 }
+
 // RAC `useComboBoxState` effect when the text changes
 const onInputTextChange = () => {
   setHighlight(null)
   showAll.value = false
+
   if (!multiple.value && inputValue.value === '') {
     const hadSelection = selection.value != null
     selection.value = null
+
     // Reka re-highlights its first option when the model changes; RAC keeps no focused option, so Tab / Enter
     // commit the cleared value
     if (hadSelection) afterRekaHighlight().then(() => setHighlight(null))
   }
+
   if (
     focused.value &&
     (filteredCount.value > 0 || props.allowsEmptyCollection) &&
@@ -694,9 +727,11 @@ const onFocus = (event: FocusEvent) => {
   valueOnFocus = snapshot()
   if (props.menuTrigger === 'focus' && !suppressFocusOpen) open(null, 'focus')
 }
+
 const onBlur = (event: FocusEvent) => {
   focusVisible.value = false
   const next = event.relatedTarget as Node | null
+
   // Focus moving to the trigger or into the popover isn't a blur of the field
   if (next && (rootEl()?.contains(next) || content.value?.$el?.contains?.(next))) return
   focused.value = false
@@ -709,19 +744,24 @@ const selectHighlighted = () => {
   const el = highlighted.value
   if (el?.isConnected) el.click()
 }
+
 const onKeydown = (event: KeyboardEvent) => {
   if (event.isComposing || props.readonly) return
+
   switch (event.key) {
     case 'Enter': {
       if (isOpen.value) event.preventDefault()
+
       if (isOpen.value && highlighted.value) {
         const value = itemValueOf(highlighted.value)
+
         // Re-picking the selected option just commits
         if (!multiple.value && value !== undefined && value === selectedKey.value) commitSelection()
         else selectHighlighted()
       } else {
         commitValue()
       }
+
       break
     }
     case 'Tab':
@@ -729,6 +769,7 @@ const onKeydown = (event: KeyboardEvent) => {
         if (highlighted.value) selectHighlighted()
         else commitValue()
       }
+
       break
     case 'Escape':
       if (isOpen.value || inputValue.value !== selectedText.value) event.preventDefault()
@@ -737,8 +778,10 @@ const onKeydown = (event: KeyboardEvent) => {
     case 'ArrowDown':
     case 'ArrowUp':
       event.preventDefault()
+
       if (!isOpen.value) open(event.key === 'ArrowDown' ? 'first' : 'last', 'manual')
       else navigate(event.key)
+
       break
     case 'Home':
     case 'End':
@@ -748,6 +791,7 @@ const onKeydown = (event: KeyboardEvent) => {
         event.preventDefault()
         navigate(event.key)
       }
+
       break
     case 'ArrowLeft':
     case 'ArrowRight':
@@ -755,30 +799,36 @@ const onKeydown = (event: KeyboardEvent) => {
       break
   }
 }
+
 const valueAttr = 'data-combo-box-value'
 const itemValueOf = (el: HTMLElement): ListBoxValue | undefined => {
   const raw = el.getAttribute(valueAttr)
   if (raw == null) return undefined
+
   return options.value.find((item) => String(item.value) === raw)?.value
 }
 
 // ---- Trigger button (RAC: press start toggles, focus stays in the input) ----------------------------------------
 let suppressFocusOpen = false
 const triggerHovered = ref(false)
+
 const pressTrigger = (strategy: FocusStrategy) => {
   if (disabled.value || props.readonly) return
   const wasOpen = isOpen.value
   suppressFocusOpen = true
   input.value?.focus()
   suppressFocusOpen = false
+
   if (wasOpen) close()
   else open(strategy, 'manual')
 }
+
 const onTriggerPointerdown = (event: PointerEvent) => {
   if (event.button !== 0) return
   event.preventDefault()
   pressTrigger(null)
 }
+
 const onTriggerClick = (event: MouseEvent) => {
   // Keyboard / programmatic clicks (pointer presses are handled on pointerdown)
   if (event.detail === 0) pressTrigger('first')
@@ -786,12 +836,15 @@ const onTriggerClick = (event: MouseEvent) => {
 
 // ---- Selection from the list (Reka ComboboxItem / ListboxRoot) --------------------------------------------------
 const pressRelease = usePressRelease()
+
 const rekaValue = computed(() =>
   multiple.value ? selectedValues.value : (selectedKey.value ?? undefined),
 )
+
 const onRekaValue = (value: unknown) => {
   if (multiple.value) {
     selection.value = Array.isArray(value) ? (value as ListBoxValue[]) : []
+
     // RAC resets the text and keeps the popover open. Reka keeps the picked option highlighted; RAC drops the
     // virtual focus after a pointer pick and keeps it after a keyboard one
     inputValue.value = ''
@@ -802,8 +855,10 @@ const onRekaValue = (value: unknown) => {
     selection.value = key
     resetInputValue(key)
   }
+
   commitValidation()
 }
+
 const onRekaOpen = (value: boolean) => {
   // Reka closes on single selection and on dismiss (outside press, Escape, focus outside)
   if (!value) {
@@ -817,6 +872,7 @@ watch(selectedText, () => {
   if (!multiple.value && !focused.value && !keepText && !inputControlled())
     uncontrolledInput.value = selectedText.value
 })
+
 // Opened from outside (`v-model:open`): show every option, like RAC's manual open
 watch(
   isOpen,
@@ -825,6 +881,7 @@ watch(
   },
   { flush: 'sync' },
 )
+
 watch(disabled, (disabled) => {
   if (disabled) close()
 })
@@ -848,7 +905,9 @@ const { validation, commitValidation } = useFieldValidation<ComboBoxValidationVa
       (multiple.value ? '' : resolveItemText(value as ListBoxValue | null))
   },
 })
+
 const invalid = computed(() => validation.value.isInvalid)
+
 const nativeRequired = computed(
   () =>
     !!props.required &&
@@ -864,6 +923,7 @@ const triggerId = `${autoId}-trigger`
 const listboxId = `${autoId}-listbox`
 const valueId = `${autoId}-value`
 const showValue = computed(() => multiple.value || !!slots.value)
+
 // Chrome ids derive from `autoId` even with an `id` prop (that one names the input)
 const { labelId, hasLabel, describedBy, FieldLabel, FieldDescription, FieldError } = useFieldChrome(
   {
@@ -879,11 +939,13 @@ const { labelId, hasLabel, describedBy, FieldLabel, FieldDescription, FieldError
     describedByIds: () => [showValue.value && valueId],
   },
 )
+
 const inputLabelledBy = computed(
   () =>
     (attrs['aria-labelledby'] as string | undefined) ??
     (hasLabel.value ? labelId.value : undefined),
 )
+
 const rootAttrs = computed(() => {
   const {
     'aria-label': _label,
@@ -891,18 +953,23 @@ const rootAttrs = computed(() => {
     'aria-describedby': _describedby,
     ...rest
   } = attrs
+
   return rest
 })
+
 const submitText = computed(() => props.allowsCustomValue || props.formValue === 'text')
 const hiddenValues = computed(() => (selectedValues.value.length ? selectedValues.value : ['']))
 
 // ---- Classes ------------------------------------------------------------------------------------------------------
 const ui = useComponentUI('comboBox', theme, () => ({ fullWidth: props.fullWidth }))
+
 const inputUi = useComponentUI('input', inputTheme, () => ({
   variant: props.variant,
   fullWidth: false,
 }))
+
 const listBoxUi = useComponentUI('listBox', listBoxTheme, () => ({}))
+
 const rowSlots = [
   'item',
   'item-leading',
@@ -913,15 +980,19 @@ const rowSlots = [
   'empty',
   'loading',
 ] as const
+
 const forwarded = computed(() => rowSlots.filter((name) => slots[name]))
+
 // One stable object (reactive unwraps the ref): a fresh object per change would re-render every option
 const virtualFocus = reactive({ keyboard: keyboardModality })
+
 // RAC `shouldFocusOnHover`: hover moves the virtual focus unless the last interaction was a keyboard one
 const onOptionPointermove = (event: PointerEvent) => {
   const el = event.currentTarget as HTMLElement
   if (!keyboardModality.value && highlighted.value !== el && !el.hasAttribute('data-disabled'))
     setHighlight(el)
 }
+
 // No closures per row: options re-render only when their own props change
 const optionAttrs = (row: CollectionRow) => {
   return { [valueAttr]: String(row.item.value), onPointermove: onOptionPointermove }

@@ -56,6 +56,7 @@ let token = 0
 // motion's critically damped spring for `duration: 0.24`: the natural frequency solves e^(-wd)(1 + wd) = 0.001.
 const OMEGA = 9.2335 / 240
 const springProgress = (t: number) => 1 - Math.exp(-OMEGA * t) * (1 + OMEGA * t)
+
 // motion runs the spring until it is within 0.5px of the target and slower than 2px/s.
 const springDuration = (distance: number) => {
   let t = 1
@@ -65,16 +66,20 @@ const springDuration = (distance: number) => {
       distance * OMEGA * OMEGA * t * Math.exp(-OMEGA * t) * 1000 > 2)
   )
     t += 1
+
   return t
 }
+
 const springEasing = (duration: number) => {
   const end = springProgress(duration)
   const points = Array.from(
     { length: 33 },
     (_, i) => +(springProgress((duration * i) / 32) / end).toFixed(4),
   )
+
   return `linear(${points.join(', ')})`
 }
+
 const supportsLinear =
   typeof CSS !== 'undefined' && CSS.supports('transition-timing-function', 'linear(0, 1)')
 
@@ -85,6 +90,7 @@ const animatable = (): HTMLElement | undefined => {
   const reduced =
     flag === 'true' ||
     (flag !== 'false' && !!window.matchMedia?.('(prefers-reduced-motion: reduce)').matches)
+
   return reduced ? undefined : node
 }
 
@@ -110,22 +116,28 @@ watch(
   (open) => {
     const node = el.value
     if (!node) return
+
     if (!animatable()) {
       token++
       settle(node)
+
       return
     }
+
     const interrupted = running.length > 0
     const fromHeight = interrupted || !open ? node.getBoundingClientRect().height : 0
     const fromOpacity = interrupted ? Number(getComputedStyle(node).opacity) : open ? 0 : 1
     settle(node)
     const toHeight = open ? node.getBoundingClientRect().height : 0
+
     // Nothing to travel (no layout, or a hidden ancestor): switch at once.
     if (toHeight === fromHeight) {
       token++
       exiting.value = false
+
       return
     }
+
     node.style.overflow = 'clip'
     if (!open) node.style.pointerEvents = 'none'
 
@@ -165,6 +177,7 @@ watch(
       () => {
         if (current !== token) return
         if (open) return settle(node)
+
         // Unmount (or hide) the rows first, then drop the held end state: no frame shows them at full height.
         exiting.value = false
         nextTick(() => current === token && settle(node))

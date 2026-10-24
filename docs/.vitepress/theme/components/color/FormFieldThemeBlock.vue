@@ -84,6 +84,7 @@ const foregroundStyle = computed(() => contrastStyle(props.colors.foreground))
 const onPlaceholderClick = (event: MouseEvent) => {
   void copyColorValue(event, props.colors.placeholder)
 }
+
 const onForegroundClick = (event: MouseEvent) => {
   void copyColorValue(event, props.colors.foreground)
 }

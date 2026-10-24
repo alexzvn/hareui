@@ -33,18 +33,21 @@ const bbox = (d: string) => {
           xs.push(x)
           ys.push(y)
         }
+
         break
       case 'H':
         for (const v of n) {
           x = rel ? x + v : v
           xs.push(x)
         }
+
         break
       case 'V':
         for (const v of n) {
           y = rel ? y + v : v
           ys.push(y)
         }
+
         break
       case 'A':
         for (let i = 0; i < n.length; i += 7) {
@@ -53,9 +56,11 @@ const bbox = (d: string) => {
           xs.push(x)
           ys.push(y)
         }
+
         break
     }
   }
+
   return {
     x: Math.min(...xs),
     y: Math.min(...ys),
@@ -77,6 +82,7 @@ const hover = async (
   wrapper
     .find('[data-slot=chart-surface]')
     .element.dispatchEvent(new PointerEvent('pointermove', { clientX, clientY, bubbles: true }))
+
   await settle()
 }
 
@@ -102,13 +108,16 @@ describe('BarChart', () => {
     const wrapper = mountChart(() => [
       h(ChartBar, { dataKey: 'low', barSize: 20, isAnimationActive: false }),
     ])
+
     await settle()
     const [a, b] = bars(wrapper)
     expect(a.width).toBeCloseTo(20)
     expect(b.width).toBeCloseTo(20)
     expect(b.height).toBeCloseTo(a.height * 2)
+
     // Bars grow from the bottom edge of the plot.
     expect(a.y + a.height).toBeCloseTo(HEIGHT)
+
     // Band scale: the second category sits to the right of the first.
     expect(b.x).toBeGreaterThan(a.x)
     wrapper.unmount()
@@ -119,6 +128,7 @@ describe('BarChart', () => {
       h(ChartBar, { dataKey: 'low', barSize: 10, isAnimationActive: false }),
       h(ChartBar, { dataKey: 'high', barSize: 10, isAnimationActive: false }),
     ])
+
     await settle()
     const [lowA, , highA] = bars(wrapper)
     expect(highA.x).toBeGreaterThanOrEqual(lowA.x + lowA.width)
@@ -130,13 +140,17 @@ describe('BarChart', () => {
       h(ChartBar, { dataKey: 'low', stackId: 's', barSize: 20, isAnimationActive: false }),
       h(ChartBar, { dataKey: 'high', stackId: 's', isAnimationActive: false }),
     ])
+
     await settle()
     const [lowA, lowB, highA, highB] = bars(wrapper)
+
     // Same x and width (size inherited from the first bar in the stack).
     expect(highA.x).toBeCloseTo(lowA.x)
     expect(highA.width).toBeCloseTo(20)
+
     // The upper segment starts where the lower one ends.
     expect(highA.y + highA.height).toBeCloseTo(lowA.y)
+
     // Totals are 40 for both categories, so both stacks reach the same top.
     expect(highA.y).toBeCloseTo(highB.y)
     expect(lowB.height).toBeCloseTo(lowA.height * 2)
@@ -152,6 +166,7 @@ describe('BarChart', () => {
       ],
       { layout: 'vertical' },
     )
+
     await settle()
     const [a, b] = bars(wrapper)
     expect(a.height).toBeCloseTo(14)
@@ -178,18 +193,22 @@ describe('BarChart', () => {
       }),
       h(ChartTooltip, { isAnimationActive: false }),
     ])
+
     await settle()
     await hover(wrapper, 300, 100)
     const panel = wrapper.find('[data-slot=chart-tooltip]')
     expect(panel.find('[data-slot=chart-tooltip-header]').text()).toBe('B')
+
     expect(panel.findAll('[data-slot=chart-tooltip-label]').map((label) => label.text())).toEqual([
       'Low',
       'High',
     ])
+
     expect(panel.findAll('[data-slot=chart-tooltip-value]').map((value) => value.text())).toEqual([
       '20',
       '20',
     ])
+
     expect(wrapper.find('[data-slot=chart-cursor]').attributes('data-kind')).toBe('band')
     wrapper.unmount()
   })
@@ -200,9 +219,11 @@ describe('BarChart', () => {
       h(ChartBar, { dataKey: 'low', barSize: 20, isAnimationActive: false }),
       h(ChartTooltip, { isAnimationActive: false }),
     ])
+
     await settle()
     const header = () => wrapper.find('[data-slot=chart-tooltip-header]').text()
     const state = () => wrapper.find('[data-slot=chart-tooltip-wrapper]').attributes('data-state')
+
     // Bands are [0, 200] and [200, 400]; 20px bars sit in their middle, so these points miss every bar.
     await hover(wrapper, 5, 10)
     expect([state(), header()]).toEqual(['open', 'A'])
@@ -225,16 +246,19 @@ describe('BarChart', () => {
       ],
       { layout: 'vertical' },
     )
+
     await settle()
     const header = () => wrapper.find('[data-slot=chart-tooltip-header]').text()
     await hover(wrapper, 390, 90)
     expect(header()).toBe('A')
     await hover(wrapper, 10, 110)
     expect(header()).toBe('B')
+
     // The band is inset by half a pixel on each side.
     expect(wrapper.find('[data-slot=chart-cursor]').attributes('d')).toBe(
       'M 0,100.5 h 400 v 99 h -400 Z',
     )
+
     wrapper.unmount()
   })
 
@@ -242,6 +266,7 @@ describe('BarChart', () => {
     const wrapper = mountChart(() => [h(ChartBar, { dataKey: 'low', isAnimationActive: false })], {
       barCategoryGap: '60%',
     })
+
     await settle()
     for (const bar of bars(wrapper)) expect(bar.width).toBeGreaterThanOrEqual(0)
     expect(wrapper.find('[data-slot=chart-bar-rectangle]').attributes('d')).not.toContain('NaN')
@@ -259,6 +284,7 @@ describe('BarChart', () => {
       ],
       { layout: 'vertical' },
     )
+
     await settle()
     const svg = wrapper.find('[data-slot=chart-surface]')
     const live = () => wrapper.find('[data-slot=chart-tooltip-wrapper]')
@@ -269,15 +295,18 @@ describe('BarChart', () => {
     await svg.trigger('keydown', { key: 'ArrowDown' })
     await settle()
     expect(live().find('[data-slot=chart-tooltip-header]').text()).toBe('B')
+
     expect(
       live()
         .findAll('[data-slot=chart-tooltip-label]')
         .map((label) => label.text()),
     ).toEqual(['Low', 'High'])
+
     // The band cursor is decoration.
     expect(
       wrapper.find('[data-slot=chart-cursor]').element.closest('[aria-hidden=true]'),
     ).not.toBeNull()
+
     await svg.trigger('keydown', { key: 'ArrowUp' })
     await settle()
     expect(live().find('[data-slot=chart-tooltip-header]').text()).toBe('A')
@@ -298,13 +327,16 @@ describe('BarChart', () => {
         },
         attachTo: document.body,
       })
+
       await settle()
       await expectAccessible(wrapper)
       ;(wrapper.find('[data-slot=chart-surface]').element as SVGElement).focus()
       await settle()
+
       expect(wrapper.find('[data-slot=chart-tooltip-wrapper]').attributes('data-state')).toBe(
         'open',
       )
+
       await expectAccessible(wrapper)
       wrapper.unmount()
     }

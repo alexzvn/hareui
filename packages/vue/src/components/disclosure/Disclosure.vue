@@ -150,11 +150,14 @@ const uncontrolled = ref(props.defaultOpen)
 const isOpen = computed(() =>
   group ? group.isExpanded(value.value) : (props.open ?? uncontrolled.value),
 )
+
 const setOpen = (open: boolean) => {
   if (group) group.setExpanded(value.value, open)
   else uncontrolled.value = open
+
   emit('update:open', open)
 }
+
 const toggle = () => {
   if (!isDisabled.value) setOpen(!isOpen.value)
 }
@@ -216,6 +219,7 @@ onMounted(() => {
   setPanelStatic(panel.value!, isOpen.value)
   stopReveal = onPanelReveal(panel.value!, () => setOpen(!isOpen.value))
 })
+
 onBeforeUnmount(() => stopReveal?.())
 
 watch(

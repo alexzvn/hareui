@@ -16,6 +16,7 @@ describe('InputGroup', () => {
           wrapper.setProps({ modelValue: v }),
       },
     })
+
     const input = wrapper.get('[data-slot=input-group-input]')
     expect((input.element as HTMLInputElement).value).toBe('a')
     await input.setValue('abc')
@@ -41,6 +42,7 @@ describe('InputGroup', () => {
     const withSlots = mount(InputGroup, {
       slots: { prefix: () => 'https://', suffix: () => '.com' },
     })
+
     expect(withSlots.get('[data-slot=input-group-prefix]').text()).toBe('https://')
     expect(withSlots.get('[data-slot=input-group-suffix]').text()).toBe('.com')
   })
@@ -52,10 +54,12 @@ describe('InputGroup', () => {
         default: () => [h(InputGroup, { 'data-test': 'ctx' })],
       },
     })
+
     const input = wrapper.get('[data-test=ctx] [data-slot=input-group-input]')
     expect(input.attributes('id')).toBe('f')
     expect(input.attributes('disabled')).toBeDefined()
     expect(input.attributes('aria-invalid')).toBe('true')
+
     // While invalid the field describes the control by its error, not its description.
     expect(input.attributes('aria-describedby')).toBe('f-error')
     expect(wrapper.get('[data-test=ctx]').attributes('data-disabled')).toBe('true')
@@ -65,6 +69,7 @@ describe('InputGroup', () => {
       props: { id: 'g', disabled: true },
       slots: { default: () => h(InputGroup, { disabled: false }) },
     })
+
     expect(ownOverride.get('[data-slot=input-group-input]').attributes('disabled')).toBeUndefined()
   })
 
@@ -73,6 +78,7 @@ describe('InputGroup', () => {
       props: { variant: 'secondary' },
       slots: { default: () => h(InputGroup, { 'data-test': 'g' }) },
     })
+
     // secondary variant drops the shadow utility present on primary
     expect(wrapper.get('[data-test=g]').classes()).not.toContain('shadow-field')
   })
@@ -100,6 +106,7 @@ describe('InputGroup', () => {
       },
       slots: { default: () => h(InputGroup, { textarea: true, rows: 4 }) },
     })
+
     expect(wrapper.find('[data-slot=input-group-input]').exists()).toBe(false)
     const area = wrapper.get('textarea[data-slot=input-group-textarea]')
     expect(area.attributes()).toMatchObject({ id: 't', name: 'bio', rows: '4' })
@@ -115,9 +122,11 @@ describe('InputGroup', () => {
       slots: { suffix: () => h('button', { type: 'button', 'data-test': 'copy' }, 'Copy') },
       attachTo: document.body,
     })
+
     const button = wrapper.get('[data-test=copy]')
     ;(button.element as HTMLElement).focus()
     expect(document.activeElement).toBe(button.element)
+
     // Enter / Space on a focused button, and a mouse click, all arrive as a click event
     await button.trigger('click')
     expect(document.activeElement).toBe(button.element)
@@ -148,11 +157,14 @@ describe('InputGroup', () => {
         },
         attachTo: document.body,
       })
+
       const input = wrapper.get('[data-slot=input-group-input]').element as HTMLInputElement
       expect([...input.labels!].map((l) => l.textContent?.trim())).toEqual(['Website'])
+
       expect(wrapper.get('[data-slot=input-group]').attributes('aria-disabled')).toBe(
         props.disabled ? 'true' : undefined,
       )
+
       await expectAccessible(wrapper)
       wrapper.unmount()
     },
@@ -171,9 +183,11 @@ describe('InputGroup', () => {
       },
       attachTo: document.body,
     })
+
     expect(wrapper.get('textarea').attributes('aria-describedby')).toBe(
       wrapper.get('[data-slot=description]').attributes('id'),
     )
+
     await expectAccessible(wrapper)
     wrapper.unmount()
   })
@@ -190,6 +204,7 @@ describe('InputGroup', () => {
       slots: { prefix: searchIcon },
       attachTo: document.body,
     })
+
     const group = wrapper.get('[data-slot=input-group]')
     const input = wrapper.get('[data-slot=input-group-input]')
     expect(input.attributes()).toMatchObject({
@@ -197,17 +212,20 @@ describe('InputGroup', () => {
       autocomplete: 'email',
       'aria-describedby': 'hint',
     })
+
     expect(group.attributes('aria-label')).toBeUndefined()
     expect(group.attributes('aria-describedby')).toBeUndefined()
     expect(group.attributes('data-testid')).toBe('group')
     expect(group.attributes('role')).toBe('group')
     wrapper.unmount()
+
     // Audit without the dangling `hint` reference
     const labelled = mount(InputGroup, {
       attrs: { 'aria-label': 'Email' },
       slots: { prefix: searchIcon },
       attachTo: document.body,
     })
+
     await expectAccessible(labelled)
     labelled.unmount()
   })
@@ -221,6 +239,7 @@ describe('InputGroup', () => {
         ]),
       { attachTo: document.body },
     )
+
     const input = wrapper.get('[data-slot=input-group-input]').element as HTMLInputElement
     expect([...input.labels!].map((l) => l.textContent)).toEqual(['Price'])
     await expectAccessible(wrapper)
@@ -232,6 +251,7 @@ describe('InputGroup', () => {
       attrs: { 'aria-label': 'Link' },
       slots: { suffix: () => h('button', { type: 'button' }, 'Copy') },
     })
+
     const focusable = wrapper.findAll('input, button').map((el) => el.element)
     expect(focusable.map((el) => el.tagName)).toEqual(['INPUT', 'BUTTON'])
     expect(focusable.every((el) => !el.hasAttribute('tabindex'))).toBe(true)

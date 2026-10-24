@@ -17,11 +17,13 @@ export const useExpandedValues = (
   const isExpanded = (value: ExpandedValue) => expanded.value.includes(value)
   const setExpanded = (value: ExpandedValue, open: boolean) => {
     if (open === isExpanded(value)) return
+
     const next = open
       ? props.multiple
         ? [...expanded.value, value]
         : [value]
       : expanded.value.filter((v) => v !== value)
+
     uncontrolled.value = next
     emit(next)
   }

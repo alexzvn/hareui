@@ -377,13 +377,16 @@ const props = withDefaults(defineProps<DateRangePickerProps>(), {
   defaultOpen: false,
   inputContainer: false,
 })
+
 const disabled = useFieldsetDisabled(() => props.disabled)
 const portalTarget = usePortal(() => props.portal)
 defineOptions({ inheritAttrs: false })
 const emit = defineEmits<DateRangePickerEmits>()
 const slots = defineSlots<DateRangePickerSlots>()
+
 /** The selected range (`null` when empty). Bind with `v-model`. Only complete ranges are emitted, as in React Aria. */
 const modelValue = defineModel<DateRangeValue | null>()
+
 // Also mirrors a controlled `open` synchronously, so `useInertOutside` releases before Reka refocuses the trigger.
 const openLocal = ref(props.open ?? props.defaultOpen ?? false)
 watch(
@@ -393,6 +396,7 @@ watch(
   },
   { flush: 'sync' },
 )
+
 const isOpen = computed({
   get: () => props.open ?? openLocal.value,
   set: (value: boolean) => {
@@ -400,6 +404,7 @@ const isOpen = computed({
     emit('update:open', value)
   },
 })
+
 useInertOutside(useTemplateRef<ComponentPublicInstance>('popoverContent'), openLocal)
 
 const ui = useComponentUI('dateRangePicker', theme, () => ({ fullWidth: props.fullWidth }))
@@ -409,13 +414,16 @@ const trigger = useTemplateRef<HTMLButtonElement>('trigger')
 const attrs = useAttrs()
 
 const EMPTY: DateRange = { start: undefined, end: undefined }
+
 const isComplete = (value: DateRange | null | undefined): value is DateRangeValue => {
   return !!value?.start && !!value.end
 }
+
 // The committed value: `v-model` once set, else `defaultValue`.
 const committed = computed<DateRangeValue | null>(
   () => (modelValue.value === undefined ? props.defaultValue : modelValue.value) ?? null,
 )
+
 // What the segments show: React Aria's `useDateRangePickerState` keeps a partially typed range as a local
 // placeholder and only emits complete ranges (or `null`), so Reka is driven from this draft instead of `v-model`.
 const draft = shallowRef<DateRange>(committed.value ?? EMPTY)
@@ -430,16 +438,20 @@ const commit = (value: DateRangeValue | null, validate = true) => {
   modelValue.value = value
   if (validate) commitValidation()
 }
+
 // React Aria commits a segment-edited range's validation when focus leaves the field, not on every keystroke,
 // so e.g. a range that is briefly reversed mid-edit isn't flagged until the user is done.
 let validationPending = false
 const onFieldUpdate = (value: DateRange) => {
   draft.value = value
+
   if (isComplete(value)) commit(value, false)
   else if (!value.start && !value.end && committed.value) commit(null, false)
   else return
+
   validationPending = true
 }
+
 const onFieldFocusOut = (event: FocusEvent) => {
   const field = root.value?.$el as HTMLElement | undefined
   if (
@@ -447,6 +459,7 @@ const onFieldFocusOut = (event: FocusEvent) => {
     (event.relatedTarget instanceof Node && field?.contains(event.relatedTarget))
   )
     return
+
   validationPending = false
   commitValidation()
 }
@@ -459,6 +472,7 @@ const hasTimeGranularity = computed(
     props.granularity === 'minute' ||
     props.granularity === 'second',
 )
+
 const withTime = (date: DateValue, current: DateValue | undefined): DateValue => {
   if (current && 'hour' in current)
     return current.set({
@@ -467,18 +481,23 @@ const withTime = (date: DateValue, current: DateValue | undefined): DateValue =>
       month: date.month,
       day: date.day,
     })
+
   if (hasTimeGranularity.value && !('hour' in date)) return toCalendarDateTime(date)
+
   return date
 }
+
 const mergeTime = (range: DateRangeValue): DateRangeValue => {
   return {
     start: withTime(range.start, draft.value.start),
     end: withTime(range.end, draft.value.end),
   }
 }
+
 const onCalendarChange = (range: DateRangeValue) => {
   commit(range)
 }
+
 // Completing a range in the calendar closes the popover and refocuses the trigger (React Aria's
 // `shouldCloseOnSelect` default).
 const onCalendarSelect = (range: DateRangeValue) => {
@@ -487,6 +506,7 @@ const onCalendarSelect = (range: DateRangeValue) => {
   isOpen.value = false
   trigger.value?.focus()
 }
+
 const onCalendarUpdate = (value: DateRange | undefined) => {
   if (isComplete(value)) onCalendarSelect(mergeTime(value))
 }
@@ -498,24 +518,32 @@ const formatDateBoundary = (value: DateValue) => {
     value.toDate(getLocalTimeZone()),
   )
 }
+
 const validateDate = (value: DateValue) => {
   const errors: string[] = []
   if (props.minValue && value.compare(props.minValue) < 0)
     errors.push(`Value must be ${formatDateBoundary(props.minValue)} or later.`)
+
   if (props.maxValue && value.compare(props.maxValue) > 0)
     errors.push(`Value must be ${formatDateBoundary(props.maxValue)} or earlier.`)
+
   if (props.isDateUnavailable?.(value, null)) errors.push('Selected date unavailable.')
+
   return errors
 }
+
 const builtinValidate = (value: DateRangeValue) => {
   const errors = [...new Set([...validateDate(value.start), ...validateDate(value.end)])]
   if (value.end.compare(value.start) < 0) errors.push('Start date must be before end date.')
+
   return errors.length ? errors : undefined
 }
+
 const validate = (value: DateRangeValue) => {
   const custom = props.validate?.(value)
   return custom && custom !== true ? custom : builtinValidate(value)
 }
+
 const { validation, commitValidation } = useFieldValidation<DateRangeValue>({
   value: () => committed.value ?? undefined,
   validate: () => validate,
@@ -528,6 +556,7 @@ const { validation, commitValidation } = useFieldValidation<DateRangeValue>({
     commit(props.defaultValue ?? null)
   },
 })
+
 const invalid = computed(() => props.invalid ?? validation.value.isInvalid)
 
 // Reka's matcher is single-argument and read once at setup; outside the calendar React Aria calls it with a `null` anchor.
@@ -543,6 +572,7 @@ const { id, labelId, hasLabel, describedBy, FieldLabel, FieldDescription, FieldE
     required: () => props.required,
     hideDescriptionWhenInvalid: true,
   })
+
 const triggerId = computed(() => `${id.value}-trigger`)
 
 const groupUiProps = computed<DateInputGroupProps['ui']>(() => ({
@@ -570,6 +600,7 @@ const onOpenAutoFocus = (event: Event) => {
     content?.querySelector<HTMLElement>(
       '[data-value]:not([data-outside-view]):not([data-disabled]):not([data-unavailable])',
     )
+
   if (cell) {
     event.preventDefault()
     cell.focus()
@@ -586,6 +617,7 @@ const onFieldKeydown = (event: KeyboardEvent) => {
     props.readonly
   )
     return
+
   event.preventDefault()
   event.stopPropagation()
   isOpen.value = true
@@ -597,6 +629,7 @@ const onCloseAutoFocus = (event: Event) => {
   event.preventDefault()
   trigger.value?.focus()
 }
+
 // Escape closes the whole popover even while the calendar's year picker is open (the year picker marks the
 // event handled to close itself, which would otherwise stop Reka's dismissal).
 const onEscapeKeyDown = (event: KeyboardEvent) => {

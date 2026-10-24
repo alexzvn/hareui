@@ -10,6 +10,7 @@ export const readDesignAttributes = (root: Element): DesignAttributes => {
     const value = root.getAttribute(name)
     if (value !== null) attributes[name] = value
   }
+
   return attributes
 }
 
@@ -32,11 +33,14 @@ export const useDocTheme = () => {
       const next = readDesignAttributes(root)
       if (DESIGN_ATTRIBUTES.some((name) => next[name] !== design.value[name])) design.value = next
     }
+
     read()
+
     new MutationObserver(read).observe(root, {
       attributes: true,
       attributeFilter: ['class', ...DESIGN_ATTRIBUTES],
     })
   })
+
   return { dark: readonly(dark), design: readonly(design) }
 }

@@ -287,6 +287,7 @@ const props = withDefaults(defineProps<AlertDialogProps>(), {
   closeButton: true,
   placement: 'auto',
 })
+
 const emit = defineEmits<AlertDialogEmits>()
 const slots = useSlots()
 defineSlots<AlertDialogSlots>()

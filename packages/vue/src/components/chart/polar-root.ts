@@ -53,6 +53,7 @@ export const usePolarRoot = (options: PolarRootOptions): ComputedRef<ChartFrameC
   const { props } = options
   return computed<ChartFrameConfig>(() => {
     if (!options.generated()) return { legend: null, legendItems: [], tooltip: null }
+
     return {
       legend: resolveFrameLegend(props.legend, options.hasLegendSlot(), options.legend?.()),
       legendItems: options.legendItems(),
@@ -85,11 +86,13 @@ export const useSliceRoot = <T extends object>(options: SliceRootOptions<T>) => 
   const { props, hidden } = options
 
   const generated = computed(() => isChartGenerated(props))
+
   const valueKey = computed(
     () =>
       props.valueKey ??
       (props.index === undefined ? undefined : inferValueKeys(props.data ?? [], props.index)[0]),
   )
+
   const slices = computed<ChartSlice<T>[] | undefined>(() =>
     generated.value && props.index !== undefined
       ? resolveSlices({
@@ -101,6 +104,7 @@ export const useSliceRoot = <T extends object>(options: SliceRootOptions<T>) => 
         })
       : undefined,
   )
+
   const visibleSlices = computed(() => slices.value?.filter((slice) => !slice.hidden) ?? [])
 
   const config = usePolarRoot({
@@ -147,5 +151,6 @@ export const providePolarCenterLabel = (
     startAngle: 0,
     endAngle: 360,
   }))
+
   provideChartLabelViewBox(() => (chart.width.value > 0 ? viewBox.value : null), 'center')
 }

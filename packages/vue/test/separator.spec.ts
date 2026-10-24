@@ -51,6 +51,7 @@ describe('Separator', () => {
       },
       attachTo: document.body,
     })
+
     const sep = wrapper.get('[data-slot=separator]')
     expect(sep.attributes('role')).toBe('separator')
     expect(sep.attributes('aria-orientation')).toBe('vertical')

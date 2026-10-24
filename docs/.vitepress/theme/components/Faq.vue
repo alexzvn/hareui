@@ -24,8 +24,10 @@ const slots = useSlots()
 const faqItems = (nodes: VNode[]): VNode[] => {
   return nodes.flatMap((node) => {
     if (node.type === FaqItem) return [node]
+
     if (node.type === Fragment && Array.isArray(node.children))
       return faqItems(node.children as VNode[])
+
     return []
   })
 }

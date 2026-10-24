@@ -37,6 +37,7 @@ export const edgeOfAvailableRun = <T extends DateValue>(
     !isUnavailable(next)
   )
     next = next.add({ days: dir }) as T
+
   return isUnavailable(next) ? (next.add({ days: -dir }) as T) : undefined
 }
 
@@ -132,20 +133,24 @@ export const useRangeSelection = <T extends DateValue = DateValue>(
   // the ref is typed through its declared shape instead.
   const anchor = shallowRef<T | null>(null) as ShallowRef<T | null>
   const enabled = () => options.enabled?.() ?? true
+
   // Reka's `Matcher` (and our cell code) is single-argument, so the consumer's 2-arg callback is wrapped, reading the
   // anchor at call time.
   const isUnavailable = computed(() => {
     const matcher = options.isDateUnavailable()
     return matcher ? (date: DateValue) => matcher(date, anchor.value) : undefined
   })
+
   // react-stately's `getAvailableRange`: while anchored (and non-contiguous ranges are off), the selectable window
   // shrinks to the run of available days around the anchor, which also disables paging past it.
   const run = computed(() => {
     const from = anchor.value
     const matcher = isUnavailable.value
     if (!enabled() || !from || !matcher || options.allowNonContiguousRanges()) return null
+
     return availableRun(from, matcher, options.span())
   })
+
   const bounds = computed(() => boundsWithinRun(options.minValue(), options.maxValue(), run.value))
   const effectiveMin = computed(() => bounds.value.min)
   const effectiveMax = computed(() => bounds.value.max)
@@ -157,20 +162,26 @@ export const useRangeSelection = <T extends DateValue = DateValue>(
       exceedsMaximumDays(date, anchor.value, options.maximumDays?.())
     )
   }
+
   const select = (date: T) => {
     if (!anchor.value) {
       anchor.value = date
       options.onAnchor?.(date)
+
       return
     }
+
     const range = makeRange(anchor.value, date)
     anchor.value = null
     options.onCommit(range)
   }
+
   const cancel = () => {
     if (!anchor.value) return false
     anchor.value = null
+
     return true
   }
+
   return { anchor, isUnavailable, effectiveMin, effectiveMax, isOutsideWindow, select, cancel }
 }

@@ -146,8 +146,10 @@ defineOptions({ inheritAttrs: false })
 // `invalid: undefined`: an absent boolean would cast to `false`, which counts as controlled-valid and hides validation errors
 const props = withDefaults(defineProps<TextFieldProps>(), { type: 'text', invalid: undefined })
 const slots = defineSlots<TextFieldSlots>()
+
 /** The input value. */
 const modelValue = defineModel<string | number>()
+
 // `defaultValue` seeds the field without emitting `update:modelValue` on mount (RAC's `onChange` only reports
 // changes). Writes that don't change the value (an inner Input mirroring the same value) don't emit either.
 const uncontrolledValue = ref(props.defaultValue)
@@ -155,6 +157,7 @@ watch(modelValue, (v) => {
   // A parent clearing its v-model clears the field, not back to an earlier typed value
   if (v === undefined) uncontrolledValue.value = undefined
 })
+
 const value = computed<string | number | undefined>({
   get: () => modelValue.value ?? uncontrolledValue.value,
   set: (v) => {
@@ -182,6 +185,7 @@ const { validation } = useFieldValidation({
     value.value = props.defaultValue ?? ''
   },
 })
+
 const invalid = computed(() => validation.value.isInvalid)
 const disabled = useFieldsetDisabled(() => props.disabled)
 
@@ -191,6 +195,7 @@ const onFocusIn = (event: FocusEvent) => {
   focusWithin.value = true
   focusVisible.value = event.target instanceof Element && event.target.matches(':focus-visible')
 }
+
 const onFocusOut = (event: FocusEvent) => {
   if (
     event.currentTarget instanceof Element &&
@@ -198,6 +203,7 @@ const onFocusOut = (event: FocusEvent) => {
     event.currentTarget.contains(event.relatedTarget)
   )
     return
+
   focusWithin.value = false
   focusVisible.value = false
 }

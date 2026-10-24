@@ -19,6 +19,7 @@ import { NativeSelect } from '@hareui/vue'
 import { ref } from 'vue'
 
 const timezone = ref('cet')
+
 const items = [
   { value: 'utc', label: 'UTC' },
   { value: 'cet', label: 'Central European' },

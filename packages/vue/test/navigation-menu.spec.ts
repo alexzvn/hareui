@@ -24,7 +24,9 @@ const mountMenu = (
     global,
     attachTo: document.body,
   }) as VueWrapper
+
   wrapper = mounted
+
   return mounted
 }
 
@@ -66,6 +68,7 @@ describe('NavigationMenu items', () => {
         { label: 'B', href: '#b', active: true },
       ],
     })
+
     const links = menu.findAll('a')
     expect(links[0]!.attributes('aria-current')).toBeUndefined()
     expect(links[1]!.attributes('aria-current')).toBe('page')
@@ -80,6 +83,7 @@ describe('NavigationMenu items', () => {
         { label: 'Disabled', href: '#d', disabled: true, onSelect: onDisabled },
       ],
     })
+
     await menu.get('button').trigger('click')
     expect(onSelect).toHaveBeenCalledTimes(1)
     expect(onSelect.mock.calls[0]![0]).toBeInstanceOf(Event)
@@ -111,6 +115,7 @@ describe('NavigationMenu items', () => {
     const menu = mountMenu({
       items: [{ label: 'Inbox', icon: 'i-test-inbox', badge: 3, kbds: ['command', 'K'] }],
     })
+
     expect(menu.get('[data-slot=linkLeadingIcon]').classes()).toContain('i-test-inbox')
     expect(menu.get('[data-slot=linkTrailingBadge]').text()).toBe('3')
     const kbd = menu.get('[data-slot=linkTrailingKbd]')
@@ -133,6 +138,7 @@ describe('NavigationMenu items', () => {
         { label: 'B', href: '#b', active: true },
       ],
     })
+
     const [a, b] = menu.findAll('a')
     expect(b!.classes()).toContain('text-accent')
     expect(b!.classes()).toContain('after:bg-success')
@@ -144,6 +150,7 @@ describe('NavigationMenu items', () => {
     const menu = mountMenu({
       items: [{ label: 'A', href: '#a', class: 'item-class', ui: { link: 'item-ui' } }],
     })
+
     const link = menu.get('a')
     expect(link.classes()).toContain('item-class')
     expect(link.classes()).toContain('item-ui')
@@ -154,6 +161,7 @@ describe('NavigationMenu items', () => {
       orientation: 'vertical',
       items: [[{ label: 'A' }], [{ label: 'B' }], [{ label: 'C' }]],
     })
+
     expect(menu.findAll('[data-slot=list]')).toHaveLength(3)
     expect(menu.findAll('[role=separator]')).toHaveLength(2)
   })
@@ -163,6 +171,7 @@ describe('NavigationMenu items', () => {
       { label: 'Section', type: 'label' },
       { label: 'Item', href: '#i' },
     ]
+
     const vertical = mountMenu({ orientation: 'vertical', items })
     expect(vertical.get('[data-slot=label]').text()).toBe('Section')
     vertical.unmount()
@@ -186,6 +195,7 @@ describe('NavigationMenu slots', () => {
           h('em', `${item.label}:${active}`),
       },
     )
+
     expect(menu.findAll('em').map((e) => e.text())).toEqual(['A:false', 'B:true'])
   })
 
@@ -203,6 +213,7 @@ describe('NavigationMenu slots', () => {
         'special-trailing': () => h('i', 'trail'),
       },
     )
+
     expect(menu.findAll('em').map((e) => e.text())).toEqual(['generic'])
     expect(menu.get('strong').text()).toBe('custom')
     expect(menu.get('[data-slot=linkTrailing]').text()).toBe('trail')
@@ -216,6 +227,7 @@ describe('NavigationMenu slots', () => {
         'list-trailing': () => h('span', { id: 'trail' }),
       },
     )
+
     const html = menu.html()
     expect(html.indexOf('id="lead"')).toBeLessThan(html.indexOf('<ul'))
     expect(html.indexOf('id="trail"')).toBeGreaterThan(html.indexOf('</ul>'))
@@ -251,6 +263,7 @@ describe('NavigationMenu router links', () => {
       {},
       { components: { RouterLink: routerStub(navigate) } },
     )
+
     const [a, b] = menu.findAll('a')
     expect(a!.attributes('href')).toBe('/app/a')
     expect(a!.attributes('aria-current')).toBeUndefined()
@@ -272,6 +285,7 @@ describe('NavigationMenu router links', () => {
       {},
       { components: { RouterLink: routerStub(vi.fn<(to: unknown) => void>()) } },
     )
+
     const [forcedOff, partial, exact] = menu.findAll('a')
     expect(forcedOff!.attributes('data-active')).toBeUndefined()
     expect(forcedOff!.attributes('aria-current')).toBeUndefined()
@@ -316,6 +330,7 @@ describe('NavigationMenu vertical', () => {
       orientation: 'vertical',
       items: [{ label: 'Guide', defaultOpen: true, children }, items[1]],
     })
+
     await flushPromises()
     expect(menu.text()).toContain('Introduction')
     expect(menu.text()).not.toContain('Elsewhere')
@@ -330,6 +345,7 @@ describe('NavigationMenu vertical', () => {
     multiple.unmount()
 
     const single = mountMenu({ orientation: 'vertical', type: 'single', items })
+
     // Top-level triggers only: once Guide opens, its children render as buttons too.
     const triggers = () => single.findAll('[data-slot=item] > button')
     await triggers()[0]!.trigger('click')
@@ -347,6 +363,7 @@ describe('NavigationMenu vertical', () => {
       modelValue: ['group'],
       items: [{ label: 'Guide', value: 'group', children }, items[1]],
     })
+
     await flushPromises()
     expect(menu.text()).toContain('Introduction')
 
@@ -362,6 +379,7 @@ describe('NavigationMenu vertical', () => {
       options: KeyframeAnimationOptions
       finish: () => void
     }[] = []
+
     const rect = vi
       .spyOn(HTMLElement.prototype, 'getBoundingClientRect')
       .mockImplementation(function (this: HTMLElement) {
@@ -369,23 +387,28 @@ describe('NavigationMenu vertical', () => {
           height: this.dataset.slot === 'content' && this.childElementCount ? 80 : 0,
         } as DOMRect
       })
+
     const animate = vi
       .spyOn(HTMLElement.prototype, 'animate')
       .mockImplementation((keyframes, options) => {
         let finish!: () => void
         const finished = new Promise<void>((resolve) => (finish = resolve))
+
         calls.push({
           keyframes: keyframes as Keyframe[],
           options: options as KeyframeAnimationOptions,
           finish,
         })
+
         return { finished, cancel() {} } as unknown as Animation
       })
+
     try {
       const menu = mountMenu({
         orientation: 'vertical',
         items: [{ label: 'Guide', defaultOpen: true, children }],
       })
+
       await flushPromises()
       expect(calls).toHaveLength(0)
       const trigger = menu.get('[data-slot=item] > button')
@@ -393,10 +416,12 @@ describe('NavigationMenu vertical', () => {
 
       await trigger.trigger('click')
       await flushPromises()
+
       expect(calls.map((c) => [c.keyframes, c.options.duration])).toEqual([
         [[{ height: '80px' }, { height: '0px' }], 180],
         [[{ opacity: 1 }, { opacity: 0 }], 100],
       ])
+
       expect(content().attributes('data-state')).toBe('closed')
       expect(content().attributes('style')).toContain('overflow: clip')
       expect(menu.text()).toContain('Introduction')
@@ -407,10 +432,12 @@ describe('NavigationMenu vertical', () => {
 
       await trigger.trigger('click')
       await flushPromises()
+
       expect(calls.map((c) => c.keyframes)).toEqual([
         [{ height: '0px' }, { height: '80px' }],
         [{ opacity: 0 }, { opacity: 1 }],
       ])
+
       expect(menu.text()).toContain('Introduction')
       calls.splice(0).forEach((c) => c.finish())
       await flushPromises()
@@ -434,6 +461,7 @@ describe('NavigationMenu vertical', () => {
       orientation: 'vertical',
       items: [{ label: 'Guide', href: '#guide', children, onSelect }],
     })
+
     const chevron = menu.get('[data-slot=linkTrailing]')
     const click = new MouseEvent('click', { bubbles: true, cancelable: true })
     chevron.element.dispatchEvent(click)
@@ -451,6 +479,7 @@ describe('NavigationMenu vertical', () => {
       orientation: 'vertical',
       items: [{ label: 'Guide', href: '#guide', type: 'trigger', children }],
     })
+
     expect(menu.find('a').exists()).toBe(false)
     await menu.get('button').trigger('click')
     await flushPromises()
@@ -462,6 +491,7 @@ describe('NavigationMenu vertical', () => {
       orientation: 'vertical',
       items: [{ label: 'Guide', disabled: true, children }],
     })
+
     await menu.get('button').trigger('click')
     await flushPromises()
     expect(menu.text()).not.toContain('Introduction')
@@ -479,6 +509,7 @@ describe('NavigationMenu vertical', () => {
         },
       ],
     })
+
     await flushPromises()
     const child = menu.findAll('a').find((a) => a.text() === 'Introduction')!
     expect(child.attributes('aria-current')).toBe('page')
@@ -506,6 +537,7 @@ describe('NavigationMenu collapsed', () => {
       tooltip: { defaultOpen: true, delay: 0 },
       items,
     })
+
     await flushPromises()
     expect(tooltips()).toEqual(['Home', 'Guide'])
   })
@@ -519,6 +551,7 @@ describe('NavigationMenu collapsed', () => {
         { label: 'Other', icon: 'i-test-other' },
       ],
     })
+
     await flushPromises()
     expect(tooltips()).toEqual(['Go home'])
   })
@@ -530,6 +563,7 @@ describe('NavigationMenu collapsed', () => {
       popover: { mode: 'click' },
       items,
     })
+
     const trigger = menu.findAll('button')[0]!
     await trigger.trigger('click')
     await flushPromises()
@@ -548,6 +582,7 @@ describe('NavigationMenu collapsed', () => {
           h('p', { id: 'custom' }, `custom ${item.label}`),
       },
     )
+
     await menu.findAll('button')[0]!.trigger('click')
     await flushPromises()
     expect(document.querySelector('#custom')?.textContent).toBe('custom Guide')
@@ -572,15 +607,19 @@ describe('NavigationMenu collapsed', () => {
         { label: 'Docs', icon: 'i-test-docs', children },
       ],
     })
+
     await flushPromises()
     expect(tooltips()).toEqual(['Home'])
+
     const hover = async (index: number) => {
       menu
         .findAll('[data-slot=link]')
         [index]!.element.dispatchEvent(new PointerEvent('pointerenter', { pointerType: 'mouse' }))
+
       await new Promise((resolve) => setTimeout(resolve, 10))
       await flushPromises()
     }
+
     await hover(1)
     expect(tooltips()).toEqual([])
     expect(document.querySelectorAll('[data-slot=popover][data-state=open]')).toHaveLength(1)
@@ -597,6 +636,7 @@ describe('NavigationMenu item actions', () => {
     { value: 'duplicate', label: 'Duplicate' },
     { value: 'delete', label: 'Delete', variant: 'danger' },
   ]
+
   const items = [
     { label: 'Dashboard', href: '#dashboard', actions: rowActions },
     {
@@ -611,11 +651,14 @@ describe('NavigationMenu item actions', () => {
 
   const actionButton = (label: string) =>
     document.querySelector<HTMLElement>(`[aria-label="More actions for ${label}"]`)
+
   const menuItem = (label: string) =>
     [...document.querySelectorAll<HTMLElement>('[data-slot=menu-item]')].find((el) =>
       el.textContent?.includes(label),
     )
+
   const menuOpen = () => document.querySelector('[data-slot=dropdown-popover]') !== null
+
   // The document's tab sequence: enabled links and buttons without a negative tabindex, in DOM order.
   const tabOrder = () =>
     [...document.querySelectorAll<HTMLElement>('a[href], button:not([disabled])')].filter(
@@ -625,6 +668,7 @@ describe('NavigationMenu item actions', () => {
   it('renders the action button as a sibling of the link at every level, never inside it', async () => {
     const menu = mountMenu({ orientation: 'vertical', items })
     await flushPromises()
+
     for (const label of ['Dashboard', 'Reports']) {
       const button = actionButton(label)!
       expect(button).not.toBeNull()
@@ -634,6 +678,7 @@ describe('NavigationMenu item actions', () => {
       expect(link.contains(button)).toBe(false)
       expect(button.closest('a, [data-slot=link]')).toBeNull()
     }
+
     // Rows without actions keep the plain structure.
     expect(menu.findAll('[data-slot=linkRow]')).toHaveLength(2)
   })
@@ -657,6 +702,7 @@ describe('NavigationMenu item actions', () => {
       press(document.activeElement!, 'Escape')
       await flushPromises()
       expect(menuOpen()).toBe(false)
+
       // Reka's focus scope hands focus back on a timer after the content unmounts.
       await vi.waitFor(() => expect(document.activeElement).toBe(button))
     }
@@ -668,11 +714,14 @@ describe('NavigationMenu item actions', () => {
     const button = actionButton('Reports')!
     const row = button.closest('[data-slot=linkRow]')!
     const link = row.querySelector('[data-slot=link]')!
+
     // The link's fill follows an expanded trigger inside its row's actions (the CSS `:has()` the class compiles
     // to; jsdom's `:has` mishandles descendant combinators, so the same query runs from the row).
     const lit = 'group-has-[[data-slot=linkActions]_[aria-expanded=true]]/row:bg-default'
+
     const expanded = () =>
       row.querySelector('[data-slot=linkActions] [aria-expanded=true]') !== null
+
     expect(link.classList).toContain(lit)
     expect(expanded()).toBe(false)
 
@@ -680,6 +729,7 @@ describe('NavigationMenu item actions', () => {
     await flushPromises()
     expect(menuOpen()).toBe(true)
     expect(expanded()).toBe(true)
+
     // The actions stay visible while the menu is open.
     expect(row.querySelector('[data-slot=linkActions]')!.classList).toContain(
       'has-aria-expanded:opacity-100',
@@ -697,6 +747,7 @@ describe('NavigationMenu item actions', () => {
       { type: 'section', items: [{ value: 'duplicate', label: 'Duplicate', onSelect }] },
       { value: 'delete', label: 'Delete', icon: 'i-test-trash', variant: 'danger' },
     ]
+
     mountMenu({ orientation: 'vertical', items: [{ label: 'Reports', href: '#r', actions }] })
     await flushPromises()
     actionButton('Reports')!.click()
@@ -729,11 +780,13 @@ describe('NavigationMenu item actions', () => {
           h('button', { 'aria-label': `Pin ${item.label}` }),
       },
     )
+
     await flushPromises()
     const dashboard = actionButton('Dashboard')!.parentElement!
     expect(
       [...dashboard.querySelectorAll('button')].map((b) => b.getAttribute('aria-label')),
     ).toEqual(['Notify Dashboard', 'More actions for Dashboard'])
+
     const inbox = document.querySelector('[aria-label="Pin Inbox"]')!
     expect(inbox.closest('[data-slot=linkActions]')).not.toBeNull()
     expect(document.querySelector('[aria-label="Pin Dashboard"]')).toBeNull()
@@ -745,6 +798,7 @@ describe('NavigationMenu item actions', () => {
         render: () => h(NavigationMenu as never, { orientation: 'vertical', items }),
       }),
     )
+
     expect(html).toContain('aria-label="More actions for Reports"')
     expect(html).toContain('data-slot="linkActions"')
   })
@@ -803,11 +857,14 @@ describe('NavigationMenu horizontal', () => {
       items: [{ label: 'Guide', children: [{ label: 'Introduction', href: '#intro', onSelect }] }],
       modelValue: 'item-0',
     })
+
     await flushPromises()
+
     await menu
       .findAll('a')
       .find((a) => a.text() === 'Introduction')!
       .trigger('click')
+
     expect(onSelect).toHaveBeenCalledTimes(1)
   })
 
@@ -819,6 +876,7 @@ describe('NavigationMenu horizontal', () => {
           h('p', { id: 'custom' }, `custom ${item.label}`),
       },
     )
+
     await flushPromises()
     expect(menu.get('#custom').text()).toBe('custom Guide')
   })
@@ -831,6 +889,7 @@ describe('NavigationMenu horizontal', () => {
         { label: 'Three', href: '#3' },
       ],
     })
+
     await flushPromises()
     const [one, two, three] = menu.findAll('a').map((a) => a.element as HTMLElement)
     one!.focus()
@@ -852,6 +911,7 @@ describe('NavigationMenu horizontal', () => {
     mountMenu({
       items: [{ label: 'Home', href: '#h', tooltip: { text: 'Go home', defaultOpen: true } }],
     })
+
     await nextTick()
     await flushPromises()
     expect(tooltips()).toEqual(['Go home'])
@@ -861,6 +921,7 @@ describe('NavigationMenu horizontal', () => {
     const without = mountMenu({ items })
     expect(without.find('[data-slot=arrow]').exists()).toBe(false)
     without.unmount()
+
     // The indicator renders once a trigger is open; the viewport wrapper is always there.
     const withArrow = mountMenu({ items, arrow: true })
     expect(withArrow.find('[data-slot=viewportWrapper]').exists()).toBe(true)
@@ -880,6 +941,7 @@ describe('NavigationMenu accessibility', () => {
     { label: 'Docs', href: '#docs', active: true },
     { label: 'Blog', href: '#blog', disabled: true },
   ]
+
   const vertical = [
     [
       { label: 'Workspace', type: 'label' },
@@ -915,6 +977,7 @@ describe('NavigationMenu accessibility', () => {
       },
     ],
   ]
+
   const collapsedItems = [
     { label: 'Home', icon: 'i-test-home', href: '#home' },
     {
@@ -929,11 +992,14 @@ describe('NavigationMenu accessibility', () => {
 
   const trigger = (menu: VueWrapper, label: string) =>
     menu.findAll('button').find((b) => b.text().includes(label))!.element as HTMLElement
+
   const link = (label: string) =>
     [...document.querySelectorAll<HTMLElement>('a')].find((a) => a.textContent?.includes(label))!
+
   const wait = (ms: number) => {
     const { promise, resolve } = Promise.withResolvers<void>()
     setTimeout(resolve, ms)
+
     return promise
   }
 
@@ -950,6 +1016,7 @@ describe('NavigationMenu accessibility', () => {
       arrow: true,
       'aria-label': 'Main',
     })
+
     await flushPromises()
     expect(menu.text()).toContain('Get started')
     await expectAccessible(menu)
@@ -966,6 +1033,7 @@ describe('NavigationMenu accessibility', () => {
         'children' in item && !('disabled' in item) ? { ...item, defaultOpen: true } : item,
       ),
     )
+
     const expanded = mountMenu({ orientation: 'vertical', items: open, 'aria-label': 'Sidebar' })
     await flushPromises()
     expect(expanded.text()).toContain('Introduction')
@@ -987,6 +1055,7 @@ describe('NavigationMenu accessibility', () => {
         },
       ],
     })
+
     await flushPromises()
     const button = document.querySelector<HTMLElement>('[aria-label="More actions for Dashboard"]')!
     button.focus()
@@ -1003,6 +1072,7 @@ describe('NavigationMenu accessibility', () => {
       items: collapsedItems,
       'aria-label': 'Sidebar',
     })
+
     await flushPromises()
     await expectAccessible(idle)
     idle.unmount()
@@ -1014,6 +1084,7 @@ describe('NavigationMenu accessibility', () => {
       items: collapsedItems,
       'aria-label': 'Sidebar',
     })
+
     await flushPromises()
     expect(tooltips()).toEqual(['Home', 'Guide'])
     await expectAccessible()
@@ -1026,6 +1097,7 @@ describe('NavigationMenu accessibility', () => {
       items: collapsedItems,
       'aria-label': 'Sidebar',
     })
+
     await trigger(click, 'Guide').click()
     await flushPromises()
     expect(document.querySelector('[data-slot=popover]')).not.toBeNull()
@@ -1040,10 +1112,13 @@ describe('NavigationMenu accessibility', () => {
       items: collapsedItems,
       'aria-label': 'Sidebar',
     })
+
     await flushPromises()
+
     menu
       .findAll('[data-slot=link]')[1]!
       .element.dispatchEvent(new PointerEvent('pointerenter', { pointerType: 'mouse' }))
+
     await wait(10)
     await flushPromises()
     expect(document.querySelector('[data-slot=popover][data-state=open]')).not.toBeNull()
@@ -1087,6 +1162,7 @@ describe('NavigationMenu accessibility', () => {
       guide.dispatchEvent(
         new KeyboardEvent('keydown', { key: ' ', keyCode: 32, bubbles: true, cancelable: true }),
       )
+
     guide.focus()
     space()
     await flushPromises()
@@ -1114,6 +1190,7 @@ describe('NavigationMenu accessibility', () => {
     const menu = mountMenu({ items: horizontal })
     await flushPromises()
     const guide = trigger(menu, 'Guide')
+
     const tab = (el: Element, shiftKey = false) => {
       const event = new KeyboardEvent('keydown', {
         key: 'Tab',
@@ -1121,9 +1198,12 @@ describe('NavigationMenu accessibility', () => {
         bubbles: true,
         cancelable: true,
       })
+
       el.dispatchEvent(event)
+
       return event
     }
+
     guide.focus()
     guide.click()
     await flushPromises()
@@ -1164,6 +1244,7 @@ describe('NavigationMenu accessibility', () => {
         { label: 'Other', children: [{ label: 'Elsewhere' }] },
       ],
     })
+
     await flushPromises()
     const guide = trigger(menu, 'Guide')
     const other = trigger(menu, 'Other')
@@ -1193,6 +1274,7 @@ describe('NavigationMenu accessibility', () => {
       orientation: 'vertical',
       items: [{ label: 'Reference', href: '#ref', children: [{ label: 'API', href: '#api' }] }],
     })
+
     await flushPromises()
     const reference = link('Reference')
     expect(reference.getAttribute('aria-expanded')).toBe('false')
@@ -1222,11 +1304,13 @@ describe('NavigationMenu accessibility', () => {
       orientation: 'vertical',
       items: [{ label: 'Archive', children, disabled: true }],
     })
+
     await flushPromises()
     const archive = trigger(menu, 'Archive')
     expect(
       archive.hasAttribute('disabled') || archive.getAttribute('aria-disabled') === 'true',
     ).toBe(true)
+
     archive.click()
     await flushPromises()
     expect(archive.getAttribute('aria-expanded')).toBe('false')
@@ -1239,6 +1323,7 @@ describe('NavigationMenu accessibility', () => {
       popover: { mode: 'click' },
       items: collapsedItems,
     })
+
     const guide = trigger(menu, 'Guide')
     guide.focus()
     guide.click()
@@ -1258,6 +1343,7 @@ describe('NavigationMenu accessibility', () => {
       popover: true,
       items: collapsedItems,
     })
+
     await flushPromises()
     const guide = trigger(menu, 'Guide')
     guide.focus()

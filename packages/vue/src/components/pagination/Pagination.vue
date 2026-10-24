@@ -218,6 +218,7 @@ const props = withDefaults(defineProps<PaginationProps>(), {
   prevDisabled: undefined,
   nextDisabled: undefined,
 })
+
 const emit = defineEmits<PaginationEmits>()
 defineSlots<PaginationSlots>()
 
@@ -241,15 +242,18 @@ const entries = computed<PaginationEntry[]>(() => {
   for (let i = Math.max(2, page - 1); i <= Math.min(props.total - 1, page + 1); i++) list.push(i)
   if (page < props.total - 2) list.push('ellipsis')
   list.push(props.total)
+
   return list
 })
 
 const isPrevDisabled = computed(() => props.disabled || (props.prevDisabled ?? current.value <= 1))
+
 const isNextDisabled = computed(
   () => props.disabled || (props.nextDisabled ?? current.value >= props.total),
 )
 
 const linkClass = computed(() => ui.value.link({ class: props.ui?.link }))
+
 const navClass = computed(() =>
   ui.value.link({ class: [ui.value.nav(), props.ui?.link, props.ui?.nav] }),
 )

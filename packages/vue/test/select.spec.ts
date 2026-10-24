@@ -12,6 +12,7 @@ const items = [
   { value: 'emu', label: 'Emu', disabled: true },
   { value: 'eel', label: 'Eel' },
 ]
+
 const trigger = '[data-slot=select-trigger]'
 const value = '[data-slot=select-value]'
 const flush = () => new Promise((r) => setTimeout(r, 0))
@@ -26,6 +27,7 @@ describe('Select', () => {
       props: { items, label: 'Pet', placeholder: 'Pick one' },
       attachTo: document.body,
     })
+
     expect(wrapper.get(value).text()).toBe('Pick one')
     expect(wrapper.get(value).attributes('data-placeholder')).toBe('true')
 
@@ -49,6 +51,7 @@ describe('Select', () => {
       props: { items, defaultValue: 'eel' },
       attachTo: document.body,
     })
+
     await selected.get(trigger).trigger('click')
     await flush()
     await flush()
@@ -68,6 +71,7 @@ describe('Select', () => {
       props: { items, selectionMode: 'multiple', modelValue: ['eel'] },
       attachTo: document.body,
     })
+
     await wrapper.get(trigger).trigger('click')
     await flush()
     document.querySelectorAll<HTMLElement>('[role=option]')[0]!.click()
@@ -85,6 +89,7 @@ describe('Select', () => {
       props: { items, clearable: true, defaultValue: 'cat' },
       attachTo: document.body,
     })
+
     const clear = wrapper.get('[data-slot=select-clear-button]')
     expect(clear.attributes('data-empty')).toBeUndefined()
     await clear.trigger('click')
@@ -112,6 +117,7 @@ describe('Select', () => {
       props: { items: [...items, { value: 'cow', label: 'Cow' }] },
       attachTo: document.body,
     })
+
     await wrapper.get(trigger).trigger('keydown', { key: 'c' })
     expect(wrapper.emitted('update:modelValue')?.at(-1)).toEqual(['cat'])
     await new Promise((r) => setTimeout(r, 1100))
@@ -125,10 +131,12 @@ describe('Select', () => {
   it('submits the selection through the hidden select and blocks required forms natively', async () => {
     const form = document.createElement('form')
     document.body.append(form)
+
     const wrapper = mount(Select, {
       props: { items, name: 'pet', required: true, label: 'Pet' },
       attachTo: form,
     })
+
     expect(form.checkValidity()).toBe(false)
     await wrapper.setProps({ modelValue: 'dog' })
     await nextTick()
@@ -149,6 +157,7 @@ describe('Select', () => {
       },
       attachTo: document.body,
     })
+
     const btn = wrapper.get(trigger)
     expect(btn.attributes('aria-labelledby')).toBe('s-label s-value')
     expect(btn.attributes('aria-describedby')).toBe('s-error')
@@ -169,6 +178,7 @@ describe('Select', () => {
       slots: { leading: () => h('i', { class: 'lead' }) },
       attachTo: document.body,
     })
+
     await flush()
     const children = [...wrapper.get(trigger).element.children]
     expect(children[0]!.classList.contains('lead')).toBe(true)
@@ -209,15 +219,19 @@ describe('Select', () => {
         ],
       },
     ]
+
     const listbox = () => document.querySelector<HTMLElement>('[role=listbox]')
     const optionEls = () => [...document.querySelectorAll<HTMLElement>('[role=option]')]
     const focusedText = () => document.activeElement?.textContent?.trim()
+
     const press = async (key: string, init: KeyboardEventInit = {}) => {
       document.activeElement!.dispatchEvent(
         new KeyboardEvent('keydown', { key, bubbles: true, cancelable: true, ...init }),
       )
+
       await flush()
     }
+
     const openWithKeyboard = async (
       props: Record<string, unknown>,
       attrs: Record<string, unknown> = {},
@@ -227,10 +241,12 @@ describe('Select', () => {
         attrs,
         attachTo: document.body,
       })
+
       wrapper.get<HTMLElement>(trigger).element.focus()
       await wrapper.get(trigger).trigger('keydown', { key: 'ArrowDown' })
       await flush()
       await flush()
+
       return wrapper
     }
 
@@ -254,6 +270,7 @@ describe('Select', () => {
         attrs: { 'aria-label': 'Pet' },
         attachTo: document.body,
       })
+
       await expectAccessible(wrapper)
       wrapper.unmount()
     })
@@ -264,6 +281,7 @@ describe('Select', () => {
         defaultValue: 'dog',
         description: 'Your favourite',
       })
+
       expect(listbox()).not.toBeNull()
       await expectAccessible()
       single.unmount()
@@ -273,6 +291,7 @@ describe('Select', () => {
         selectionMode: 'multiple',
         defaultValue: ['cat', 'eel'],
       })
+
       expect(listbox()).not.toBeNull()
       await expectAccessible()
       multiple.unmount()
@@ -298,9 +317,11 @@ describe('Select', () => {
       expect(controls).toBeTruthy()
       const controlled = document.getElementById(controls!)
       expect(controlled).not.toBeNull()
+
       expect(
         controlled!.matches('[role=listbox]') || !!controlled!.querySelector('[role=listbox]'),
       ).toBe(true)
+
       wrapper.unmount()
     })
 
@@ -321,6 +342,7 @@ describe('Select', () => {
         attrs: { 'aria-label': 'Pet' },
         attachTo: document.body,
       })
+
       await wrapper.get(trigger).trigger('keydown', { key: 'ArrowDown' })
       await flush()
       expect(listbox()!.getAttribute('aria-label')).toBe('Pet')
@@ -331,6 +353,7 @@ describe('Select', () => {
       const wrapper = mount(Select, {
         props: { items, id: 's', label: 'Pet', defaultValue: 'dog' },
       })
+
       const ids = wrapper.get(trigger).attributes('aria-labelledby')!.split(' ')
       expect(ids.map((id) => wrapper.find(`[id="${id}"]`).text())).toEqual(['Pet', 'Dog'])
       wrapper.unmount()
@@ -405,6 +428,7 @@ describe('Select', () => {
         props: { items, label: 'Pet', clearable: true, defaultValue: 'cat' },
         attachTo: document.body,
       })
+
       expect(wrapper.get('[data-slot=select-clear-button]').attributes('aria-hidden')).toBe('true')
       wrapper.get<HTMLElement>(trigger).element.focus()
       await wrapper.get(trigger).trigger('keydown', { key: 'Delete' })
@@ -442,8 +466,10 @@ describe('Select', () => {
       { value: 'cherry', label: 'Cherry' },
       { value: 'tomato', label: 'Tomato' },
     ]
+
     const optionEls = () => [...document.querySelectorAll<HTMLElement>('[role=option]')]
     const focusedText = () => document.activeElement?.textContent?.trim()
+
     const pointer = (el: Element, type: string, init: PointerEventInit = {}) =>
       el.dispatchEvent(
         new PointerEvent(type, {
@@ -454,17 +480,21 @@ describe('Select', () => {
           ...init,
         }),
       )
+
     const press = async (k: string) => {
       document.activeElement!.dispatchEvent(
         new KeyboardEvent('keydown', { key: k, bubbles: true, cancelable: true }),
       )
+
       await flush()
     }
+
     const openByClick = async (props: Record<string, unknown>) => {
       const wrapper = mount(Select, { props: { items, ...props }, attachTo: document.body })
       await wrapper.get(trigger).trigger('click')
       await flush()
       await flush()
+
       return wrapper
     }
 
@@ -502,6 +532,7 @@ describe('Select', () => {
         props: { items, defaultValue: 'dog' },
         attachTo: document.body,
       })
+
       wrapper.get<HTMLElement>(trigger).element.focus()
       await wrapper.get(trigger).trigger('keydown', { key: 'ArrowUp' })
       await flush()
@@ -522,6 +553,7 @@ describe('Select', () => {
         await flush()
         expect(wrapper.get(trigger).attributes('aria-expanded')).toBe(i === 0 ? 'true' : 'false')
       }
+
       wrapper.unmount()
     })
 
@@ -578,6 +610,7 @@ describe('Select', () => {
         { value: 2, label: 'Option 2' },
         { value: 3, label: 'Option 3' },
       ]
+
       const wrapper = await openByClick({ items: numbered })
       for (const k of ['o', 'p', 't', 'i', 'o', 'n', ' ', '2']) await press(k)
       expect(wrapper.emitted('update:modelValue')).toBeUndefined()

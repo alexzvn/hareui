@@ -32,6 +32,7 @@ export type SidebarSection = {
 const gs = (page: string) => `/docs/getting-started/${page}`
 const c = (page: string) => `/docs/components/${page}`
 const r = (page: string) => `/docs/releases/${page}`
+
 // `color-swatch-picker` → `ColorSwatchPicker`, the component name
 const pascal = (slug: string) => slug.replace(/(^|-)(\w)/g, (_, __, ch: string) => ch.toUpperCase())
 
@@ -111,11 +112,13 @@ export const sectionLinks = (section: SidebarSection): SidebarLink[] => {
     isSeparator(entry) ? [] : isGroup(entry) ? entry.items : [entry],
   )
 }
+
 export const normalizePath = (path: string): string => {
   const p = path
     .replace(/[?#].*$/, '')
     .replace(/\.html$/, '')
     .replace(/\/index$/, '')
+
   return p.length > 1 ? p.replace(/\/$/, '') : p
 }
 

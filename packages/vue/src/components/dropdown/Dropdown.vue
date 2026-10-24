@@ -224,11 +224,13 @@ const props = withDefaults(defineProps<DropdownProps<T>>(), {
   align: 'start',
   sideOffset: 8,
 })
+
 const portalTarget = usePortal(() => props.portal)
 const emit = defineEmits<DropdownEmits>()
 const slots = defineSlots<DropdownSlots<T>>()
 
 const ui = useComponentUI('dropdown', theme, () => ({}))
+
 // Same classes the Label / Description components would build, resolved once for every item.
 const labelUI = useComponentUI('label', labelTheme, () => ({}))
 const disabledLabelUI = useComponentUI('label', labelTheme, () => ({ disabled: true }))
@@ -237,19 +239,23 @@ const contentRef = ref<{ $el: HTMLElement } | null>(null)
 
 const openState = ref(props.defaultOpen)
 const isOpen = computed(() => props.open ?? openState.value)
+
 const setOpen = (value: boolean) => {
   openState.value = value
   emit('update:open', value)
 }
+
 // Reka hides the page for the root menu only (submenus portal in later, after this runs, and stay
 // interactive). `isOpen` turns false synchronously in `setOpen` and with the `open` prop. The content
 // instance stays mounted while closed and its `$el` isn't reactive, so re-read it on every open.
 useInertOutside(() => (isOpen.value ? contentRef.value?.$el : null), isOpen)
+
 // Reka's menu dismisses on any button outside (unlike Popover) and on every Escape; only the Layer stack is checked here.
 const { onInteractOutside } = useLayerDismiss({ content: () => contentRef.value?.$el })
 
 const selectedState = ref<DropdownValue[]>(props.defaultValue ?? [])
 const selected = computed(() => props.modelValue ?? selectedState.value)
+
 const setSelected = (value: DropdownValue[]) => {
   selectedState.value = value
   emit('update:modelValue', value)
@@ -288,9 +294,11 @@ const rootValues = computed(() =>
     return 'value' in entry ? [entry.value] : []
   }),
 )
+
 const rootGroup = computed(() =>
   makeGroup(props.selectionMode, props.indicator, () => rootValues.value),
 )
+
 const sectionGroups = new WeakMap<DropdownSection, DropdownSelectionGroup>()
 
 // RAC's global interaction modality: the key of the last keyboard interaction, `null` after a pointer one.
@@ -298,6 +306,7 @@ const lastKey = ref<string | null>(null)
 const onKeydown = (event: KeyboardEvent) => {
   lastKey.value = event.key
 }
+
 const onPointerdown = () => {
   lastKey.value = null
 }
@@ -332,8 +341,10 @@ const ctx: DropdownContext = {
       group = makeGroup(section.selectionMode, section.indicator ?? 'checkmark', () =>
         section.items.map((item) => item.value),
       )
+
       sectionGroups.set(section, group)
     }
+
     return group
   },
   lastKey: () => lastKey.value,
@@ -345,6 +356,7 @@ const ctx: DropdownContext = {
   }),
   onMenuKeydown,
 }
+
 provide(dropdownContextKey, ctx)
 
 // RAC's `menuTriggerState.open(focusStrategy)`: ArrowUp opens on the last item, a long press on the first.
@@ -367,6 +379,7 @@ const onOpenAutoFocus = (event: Event) => {
     content.querySelector<HTMLElement>(
       '[data-slot=menu-item][aria-checked=true]:not([data-disabled])',
     ) ?? (strategy === 'first' ? items[0] : strategy === 'last' ? items.at(-1) : undefined)
+
   if (!item) return
   event.preventDefault()
   item.focus()
@@ -412,8 +425,10 @@ const onTriggerKeydownCapture = (event: KeyboardEvent) => {
       event.preventDefault()
       openWithFocus('last')
     }
+
     return
   }
+
   if (event.altKey && (event.key === 'ArrowDown' || event.key === 'ArrowUp')) {
     event.preventDefault()
     event.stopImmediatePropagation()
@@ -426,6 +441,7 @@ const onTriggerKeydownCapture = (event: KeyboardEvent) => {
 onMounted(() => {
   document.addEventListener('keydown', onKeydown, true)
   document.addEventListener('pointerdown', onPointerdown, true)
+
   if (props.trigger === 'longPress') {
     ensureLongPressDescription()
     describedBy.value = LONG_PRESS_DESCRIPTION_ID

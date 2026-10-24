@@ -13,6 +13,7 @@ const isVisible = (el: HTMLElement, container: HTMLElement) => {
     const style = getComputedStyle(node)
     if (style.display === 'none' || style.visibility === 'hidden') return false
   }
+
   return true
 }
 
@@ -27,6 +28,7 @@ export const getTabbables = (container: HTMLElement): HTMLElement[] => {
       if (el.tabIndex < 0 || (el as HTMLButtonElement).disabled) return false
       if (el instanceof HTMLInputElement && el.type === 'hidden') return false
       if (!el.hasAttribute('tabindex') && !el.matches(NATIVE_FOCUSABLE)) return false
+
       return isVisible(el, container)
     },
   )
@@ -48,6 +50,7 @@ export const useTabbableFocusLoop = (getContainer: () => HTMLElement | null | un
       event.defaultPrevented
     )
       return
+
     const container = getContainer()
     const active = document.activeElement as HTMLElement | null
     if (!container || !active || !container.contains(active)) return
@@ -63,6 +66,7 @@ export const useTabbableFocusLoop = (getContainer: () => HTMLElement | null | un
         const after = tabbables.findIndex(
           (el) => active.compareDocumentPosition(el) & Node.DOCUMENT_POSITION_FOLLOWING,
         )
+
         next = event.shiftKey
           ? (tabbables[(after === -1 ? tabbables.length : after) - 1] ??
             tabbables[tabbables.length - 1])
@@ -71,6 +75,7 @@ export const useTabbableFocusLoop = (getContainer: () => HTMLElement | null | un
         next = tabbables[(index + (event.shiftKey ? -1 : 1) + tabbables.length) % tabbables.length]
       }
     }
+
     if (!next || next === active) return
     event.preventDefault()
     next.focus()

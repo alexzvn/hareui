@@ -32,6 +32,7 @@ describe('Card', () => {
       props: { title: 'T' },
       slots: { header: '<strong>Custom</strong>' },
     })
+
     expect(wrapper.find('[data-slot=card-header] strong').exists()).toBe(true)
     expect(wrapper.find('[data-slot=card-title]').exists()).toBe(false)
   })
@@ -46,9 +47,11 @@ describe('Card', () => {
       props: { title: 'T' },
       slots: { leading: '<img alt="a"><i>b</i>', default: 'Body' },
     })
+
     const children = [...wrapper.element.children].map(
       (el) => el.getAttribute('data-slot') ?? el.tagName.toLowerCase(),
     )
+
     expect(children).toEqual(['img', 'i', 'card-header', 'card-content'])
   })
 
@@ -68,6 +71,7 @@ describe('Card', () => {
         { title: () => h('span', { id: 'card-title' }, 'Article Title') },
       ),
     ])
+
     await expectAccessible(wrapper)
     wrapper.unmount()
   })
@@ -78,6 +82,7 @@ describe('Card', () => {
       attrs: { href: '/details', 'aria-label': 'View product details' },
       attachTo: document.body,
     })
+
     expect(wrapper.element.tagName).toBe('A')
     expect(wrapper.attributes('aria-label')).toBe('View product details')
     await expectAccessible(wrapper)
@@ -91,10 +96,13 @@ describe('Card', () => {
       slots: { title: () => h('span', { id: 'plan-title' }, 'Pro plan') },
       attachTo: document.body,
     })
+
     expect(wrapper.get('[data-slot=card-title]').element.tagName).toBe('H3')
+
     expect(document.getElementById(wrapper.attributes('aria-labelledby')!)?.textContent).toBe(
       'Pro plan',
     )
+
     wrapper.unmount()
   })
 })

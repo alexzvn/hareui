@@ -1,4 +1,5 @@
 export { default as ChartLegend } from './ChartLegend.vue'
+
 export type {
   ChartLegendEntry,
   ChartLegendItemSlotProps,

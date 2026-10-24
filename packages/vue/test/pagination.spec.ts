@@ -63,6 +63,7 @@ describe('Pagination accessibility', () => {
       { props: { total: 5, hidePages: true } },
       { props: { total: 5, disabled: true } },
     ]
+
     for (const options of cases) {
       const wrapper = mount(Pagination, { ...options, attachTo: document.body })
       await expectAccessible(wrapper)
@@ -78,6 +79,7 @@ describe('Pagination accessibility', () => {
     expect(current().map((el) => [el.text(), el.attributes('aria-current')])).toEqual([
       ['2', 'page'],
     ])
+
     await wrapper.findAll('[data-slot=pagination-link]')[3]!.trigger('click')
     expect(current().map((el) => el.text())).toEqual(['4'])
     wrapper.unmount()
@@ -85,25 +87,31 @@ describe('Pagination accessibility', () => {
 
   it('previous / next are named by their text, or by a fallback label when icon-only; icons and ellipses are hidden', () => {
     const named = mount(Pagination, { props: { total: 12, ellipsis: true } })
+
     const name = (el: Element) =>
       el.getAttribute('aria-label') ??
       [...el.querySelectorAll('span:not([aria-hidden])')].map((s) => s.textContent).join('')
+
     expect(name(named.get('[data-slot=pagination-previous]').element)).toBe('Previous')
     expect(name(named.get('[data-slot=pagination-next]').element)).toBe('Next')
+
     expect(
       named
         .findAll('[data-slot=pagination-ellipsis]')
         .every((e) => e.attributes('aria-hidden') === 'true'),
     ).toBe(true)
+
     expect(
       named.findAll('[data-slot$=-icon]').every((e) => e.attributes('aria-hidden') === 'true'),
     ).toBe(true)
+
     named.unmount()
 
     const iconOnly = mount(Pagination, { props: { total: 3, prevLabel: '', nextLabel: '' } })
     expect(iconOnly.get('[data-slot=pagination-previous]').attributes('aria-label')).toBe(
       'Previous page',
     )
+
     expect(iconOnly.get('[data-slot=pagination-next]').attributes('aria-label')).toBe('Next page')
     iconOnly.unmount()
   })
@@ -116,6 +124,7 @@ describe('Pagination accessibility', () => {
         (b) => b.attributes('type') === 'button' && b.attributes('tabindex') === undefined,
       ),
     ).toBe(true)
+
     expect(buttons.map((b) => (b.element as HTMLButtonElement).disabled)).toEqual([
       true,
       false,
@@ -123,6 +132,7 @@ describe('Pagination accessibility', () => {
       false,
       false,
     ])
+
     wrapper.unmount()
   })
 
@@ -131,6 +141,7 @@ describe('Pagination accessibility', () => {
       props: { total: 12, ellipsis: true, defaultPage: 5 },
       attachTo: document.body,
     })
+
     const six = wrapper.findAll('[data-slot=pagination-link]').find((b) => b.text() === '6')!
     ;(six.element as HTMLElement).focus()
     await six.trigger('click')

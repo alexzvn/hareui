@@ -31,6 +31,7 @@ const onSubmit = (e: Event) => {
 
   isInvalid.value = false
   value.value = ''
+
   // eslint-disable-next-line no-console
   console.log('Code verified successfully!')
 }

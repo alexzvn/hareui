@@ -143,6 +143,7 @@ const props = withDefaults(defineProps<ProgressBarProps>(), {
   indeterminate: false,
   showOutput: undefined,
 })
+
 const slots = defineSlots<ProgressBarSlots>()
 
 const ui = useComponentUI('progressBar', theme, () => ({
@@ -150,12 +151,14 @@ const ui = useComponentUI('progressBar', theme, () => ({
   size: props.size,
   indeterminate: props.indeterminate,
 }))
+
 const labelUi = useComponentUI('label', labelTheme, () => ({}))
 
 const labelId = useId(undefined, 'hareui-progress-bar-label')
 
 const range = useRangeValue(() => props)
 const clamped = computed(() => range.value.clamped)
+
 const state = computed<ProgressBarSlotProps>(() =>
   props.indeterminate
     ? { percentage: undefined, valueText: undefined, indeterminate: true }

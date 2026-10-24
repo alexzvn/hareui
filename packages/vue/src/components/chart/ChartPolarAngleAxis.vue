@@ -165,6 +165,7 @@ const props = withDefaults(defineProps<ChartPolarAngleAxisProps>(), {
   orientation: 'outer',
   hide: false,
 })
+
 defineSlots<ChartPolarAngleAxisSlots>()
 
 const chart = useChartContext('ChartPolarAngleAxis')
@@ -186,6 +187,7 @@ const axisPath = computed(() => {
   const cy = polar.cy.value
   const radius = polar.outerRadius.value
   if (props.axisLineType === 'circle') return ''
+
   return polygonPath(
     polar.angleAxis.value.ticks.map((tick) => polarToCartesian(cx, cy, radius, tick.coordinate)),
   )
@@ -196,10 +198,12 @@ const ticks = computed(() => {
   const cy = polar.cy.value
   const radius = polar.outerRadius.value
   const sign = props.orientation === 'outer' ? 1 : -1
+
   return polar.angleAxis.value.ticks.map((tick) => {
     const start = polarToCartesian(cx, cy, radius, tick.coordinate)
     const end = polarToCartesian(cx, cy, radius + sign * props.tickSize, tick.coordinate)
     const value = tick.value
+
     return {
       key: `${tick.index}-${value}`,
       index: tick.index,

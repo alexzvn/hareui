@@ -47,6 +47,7 @@ const series = {
   glass: { name: 'Glass' },
   metal: { name: 'Metal' },
 }
+
 const colors = ['var(--chart-5)', 'var(--chart-3)', 'var(--chart-2)', 'var(--chart-1)']
 
 const formatTonnes = (value: number) => {

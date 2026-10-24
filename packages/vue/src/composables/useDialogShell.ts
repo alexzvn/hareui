@@ -58,6 +58,7 @@ export const useDialogShell = (options: DialogShellOptions) => {
 
   // Tab skips scrollable containers such as an overflowing body, as React Aria's FocusScope does.
   useTabbableFocusLoop(() => dialogContent.value?.$el)
+
   // Mirrors DialogRoot's open state synchronously: set from the `open` prop and from Reka's `update:open`.
   const openState = ref(props.open ?? props.defaultOpen ?? false)
   watch(
@@ -67,11 +68,13 @@ export const useDialogShell = (options: DialogShellOptions) => {
     },
     { flush: 'sync' },
   )
+
   const onOpenChange = (open: boolean) => {
     // Controlled: the `open` watcher follows the parent, which may keep the dialog open.
     if (props.open === undefined) openState.value = open
     emit('update:open', open)
   }
+
   useInertOutside(dialogContent, openState)
 
   // Reka's DialogContent already keeps right and Ctrl+left clicks outside from dismissing.
@@ -93,6 +96,7 @@ export const useDialogShell = (options: DialogShellOptions) => {
 
   const hasTitle = computed(() => !!(props.title || slots.title))
   const showHeaderTitle = computed(() => !slots.header && hasTitle.value)
+
   const hasHeader = computed(
     () => !!(slots.header || toValue(options.headerExtras) || hasTitle.value),
   )

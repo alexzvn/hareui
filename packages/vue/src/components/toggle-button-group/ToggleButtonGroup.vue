@@ -107,9 +107,11 @@ const props = withDefaults(defineProps<ToggleButtonGroupProps>(), {
   as: 'div',
   selectionMode: 'single',
 })
+
 const emit = defineEmits<{
   'update:modelValue': [value: string[]]
 }>()
+
 defineSlots<ToggleButtonGroupSlots>()
 
 // Inside a Toolbar the group takes the toolbar's orientation and leaves arrow keys to it. As a multiple-selection
@@ -122,6 +124,7 @@ watch(
   () => props.defaultValue,
   (value) => (local.value = value ?? []),
 )
+
 const selected = computed(() => props.modelValue ?? local.value)
 const isDisabled = useFieldsetDisabled(() => props.disabled)
 
@@ -136,6 +139,7 @@ const toggle = (value: string) => {
       : isSelected
         ? selected.value.filter((v) => v !== value)
         : [...selected.value, value]
+
   if (props.disallowEmptySelection && next.length === 0) return
   local.value = next
   emit('update:modelValue', next)

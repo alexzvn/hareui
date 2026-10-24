@@ -163,6 +163,7 @@ const props = withDefaults(defineProps<TooltipProps>(), {
   arrow: false,
   portal: undefined,
 })
+
 const portalTarget = usePortal(() => props.portal)
 const emit = defineEmits<TooltipEmits>()
 defineSlots<TooltipSlots>()
@@ -189,6 +190,7 @@ watch(
     if (value !== undefined) internalOpen.value = value
   },
 )
+
 const isOpen = computed(() => props.open ?? internalOpen.value)
 
 const triggerEl = ref<HTMLElement>()
@@ -199,6 +201,7 @@ const cancelClose = () => {
   clearTimeout(closeTimer)
   closeTimer = undefined
 }
+
 const commit = (value: boolean) => {
   cancelClose()
   if (value === isOpen.value) return
@@ -213,29 +216,35 @@ const onRootUpdate = (value: boolean) => {
     if (props.trigger === 'focus' && !(el && el.contains(document.activeElement))) return
     pointerLeft.value = false
     commit(true)
+
     return
   }
+
   if (pointerLeft.value) {
     // Focus-only: hovering never closes a focus-opened tooltip.
     if (props.trigger === 'focus') return
+
     // A second close request while one is pending comes from something else: close now.
     if (props.closeDelay > 0 && closeTimer === undefined) {
       closeTimer = setTimeout(() => commit(false), props.closeDelay)
       return
     }
   }
+
   commit(false)
 }
 
 const onPointerLeave = (event: PointerEvent) => {
   if (event.pointerType !== 'touch') pointerLeft.value = true
 }
+
 const onPointerEnter = () => {
   // Re-entering the trigger or the still-visible tooltip cancels a pending delayed close (RAC keeps
   // a tooltip open while it is hovered).
   pointerLeft.value = false
   cancelClose()
 }
+
 const resetPointerLeft = () => {
   pointerLeft.value = false
 }
@@ -248,7 +257,9 @@ const toggleResetListeners = (on: boolean) => {
     else document.removeEventListener(type, resetPointerLeft, true)
   }
 }
+
 watch(pointerLeft, toggleResetListeners, { flush: 'sync' })
+
 onBeforeUnmount(() => {
   cancelClose()
   toggleResetListeners(false)

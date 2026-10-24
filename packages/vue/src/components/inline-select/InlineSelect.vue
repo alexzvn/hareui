@@ -90,6 +90,7 @@ const props = withDefaults(defineProps<InlineSelectProps<T>>(), {
   side: 'bottom',
   align: 'end',
 })
+
 const emit = defineEmits<InlineSelectEmits>()
 const slots = defineSlots<InlineSelectSlots<T>>()
 
@@ -99,6 +100,7 @@ const selectProps = computed(() => {
   const { ui: _ui, modelValue: _modelValue, ...rest } = props
   return rest
 })
+
 const selectUi = computed(() => ({
   base: ui.value.base({ class: props.ui?.base }),
   trigger: ui.value.trigger({ class: props.ui?.trigger }),
@@ -117,10 +119,12 @@ type UnionToIntersection<U> = (U extends unknown ? (u: U) => void : never) exten
 ) => void
   ? I
   : never
+
 // With a dynamic `#[name]`, TS types the received props as the union over every slot and the forwarded ones as their
 // intersection; at runtime each slot gets back exactly the props Select passed to it
 type ForwardedSlotProps = UnionToIntersection<
   Exclude<Parameters<NonNullable<InlineSelectSlots<T>[keyof InlineSelectSlots<T>]>>[0], undefined>
 >
+
 const forwardProps = (state: unknown) => state as ForwardedSlotProps
 </script>

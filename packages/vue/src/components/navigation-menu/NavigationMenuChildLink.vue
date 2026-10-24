@@ -160,6 +160,7 @@ const onSelect = (event: Event) => {
 
 const label = () => get(props.child, ctx.props.labelKey as string) as string | undefined
 const showExternal = () => props.child.target === '_blank' && ctx.props.externalIcon !== false
+
 const customExternal = () =>
   typeof ctx.props.externalIcon === 'boolean' ? undefined : ctx.props.externalIcon
 </script>

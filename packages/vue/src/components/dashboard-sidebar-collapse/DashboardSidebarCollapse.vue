@@ -115,6 +115,7 @@ const props = withDefaults(defineProps<DashboardSidebarCollapseProps>(), {
   size: 'sm',
   disabled: undefined,
 })
+
 defineSlots<DashboardSidebarCollapseSlots>()
 
 const ui = useComponentUI('dashboardSidebarCollapse', theme, () => ({ side: props.side }))

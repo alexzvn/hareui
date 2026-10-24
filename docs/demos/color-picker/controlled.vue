@@ -70,6 +70,7 @@ import {
 import { ref } from 'vue'
 
 const color = ref(parseColor('#325578'))
+
 const presets: ColorSwatchPickerItem[] = [
   '#ef4444',
   '#f97316',

@@ -179,6 +179,7 @@ if (!injected) throw new Error('CheckboxButtonGroupItem must be used inside a Ch
 const group = injected
 
 const selected = computed(() => group.selected.value.includes(props.value))
+
 // Reka merges the group's disabled state into the control; mirror it on the card for styling.
 const isDisabled = computed(() => group.disabled.value || props.disabled)
 const slotProps = computed(() => ({ selected: selected.value, disabled: isDisabled.value }))
@@ -193,6 +194,7 @@ const itemUi = useComponentUI('checkboxButtonGroup', theme, () => ({
   customIndicator: hasCustomIndicator.value,
   withIcon: hasIcon.value,
 }))
+
 // Named by the title alone; the description and the default slot content are announced through aria-describedby.
 const { id, labelId, descriptionId, hasLabel, hasDescription, describedBy } = useFieldChrome({
   props,
@@ -200,6 +202,7 @@ const { id, labelId, descriptionId, hasLabel, hasDescription, describedBy } = us
   describedByIds: () => [slots.default && extraId.value, group.describedBy.value],
   describedByIdsPosition: 'afterDescription',
 })
+
 const extraId = computed(() => `${id.value}-extra`)
 
 const cls = (slot: keyof NonNullable<CheckboxButtonGroupItemProps['ui']>, extra?: ClassValue) => {

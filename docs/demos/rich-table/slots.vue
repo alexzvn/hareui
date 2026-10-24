@@ -114,6 +114,7 @@ const statusColor = {
   refunded: 'default',
   processing: 'warning',
 } as const
+
 const currency = new Intl.NumberFormat('en-US', { style: 'currency', currency: 'USD' })
 const total = data.reduce((sum, payment) => sum + payment.amount, 0)
 

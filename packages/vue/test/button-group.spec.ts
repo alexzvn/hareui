@@ -15,6 +15,7 @@ describe('ButtonGroup', () => {
       props: { variant: 'outline', size: 'sm' },
       slots: { default: () => [h(Button, () => 'A'), h(Button, { variant: 'danger' }, () => 'B')] },
     })
+
     const [a, b] = buttons(wrapper)
     expect(a!.classes()).toContain('border')
     expect(a!.classes()).toContain('px-3')
@@ -26,11 +27,13 @@ describe('ButtonGroup', () => {
       props: { disabled: true },
       slots: { default: () => [h(Button, () => 'A'), h(Button, { disabled: false }, () => 'B')] },
     })
+
     expect(wrapper.attributes()).toMatchObject({
       role: 'group',
       'aria-disabled': 'true',
       'data-disabled': 'true',
     })
+
     const [a, b] = buttons(wrapper)
     expect(a!.attributes('disabled')).toBeDefined()
     expect(b!.attributes('disabled')).toBeUndefined()
@@ -40,9 +43,11 @@ describe('ButtonGroup', () => {
     const slots = {
       default: () => [h(Button, () => 'A'), h(Button, () => 'B'), h(Button, () => 'C')],
     }
+
     expect(
       mount(ButtonGroup, { slots }).findAll('[data-slot="button-group-separator"]'),
     ).toHaveLength(0)
+
     const wrapper = mount(ButtonGroup, { props: { separator: true }, slots })
     await nextTick()
     const buttons = wrapper.findAll('[data-slot="button"]')
@@ -57,6 +62,7 @@ describe('ButtonGroup', () => {
       props: { variant: 'outline', disabled: true },
       slots: { default: () => h(Button, { as: 'div' }, () => h(Button, () => 'inner')) },
     })
+
     const inner = wrapper.find('button[data-slot="button"]')
     expect(inner.attributes('disabled')).toBeUndefined()
     expect(inner.classes()).not.toContain('border')
@@ -66,6 +72,7 @@ describe('ButtonGroup', () => {
     const wrapper = mount(ButtonGroup, {
       slots: { default: () => h(Button, { class: 'rounded-none' }, () => 'A') },
     })
+
     const classes = buttons(wrapper)[0]!.classes()
     expect(classes.filter((c) => /^rounded/.test(c))).toEqual(['rounded-none'])
   })
@@ -89,6 +96,7 @@ describe('ButtonGroup', () => {
         ],
       },
     })
+
     await nextTick()
     expect(wrapper.attributes()).toMatchObject({ role: 'group', 'aria-label': 'Text alignment' })
     await expectAccessible(wrapper)
@@ -106,6 +114,7 @@ describe('ButtonGroup', () => {
         ],
       },
     })
+
     const [a, b] = ['#a', '#b'].map((id) => wrapper.get(id).element as HTMLElement)
     a!.focus()
     expect(document.activeElement).not.toBe(a)

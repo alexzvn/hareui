@@ -20,11 +20,13 @@
 <script setup lang="ts">
 import type { ListBoxItem } from '@hareui/vue'
 import { ListBox, Surface } from '@hareui/vue'
+
 const modes = [
   { id: 'heroui', label: 'HeroUI thin', scrollbar: 'thin' },
   { id: 'browser', label: 'Browser default', scrollbar: 'default' },
   { id: 'hidden', label: 'Hidden', scrollbar: 'none' },
 ]
+
 const animals = [
   'Aardvark',
   'Alpaca',
@@ -46,6 +48,7 @@ const animals = [
   'Wombat',
   'Zebra',
 ]
+
 const itemsFor = (mode: string): ListBoxItem[] =>
   animals.map((name) => ({
     value: `${mode}-${name.toLowerCase()}`,

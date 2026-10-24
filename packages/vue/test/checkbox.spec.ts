@@ -20,6 +20,7 @@ describe('Checkbox', () => {
         'onUpdate:modelValue': (v: boolean | 'indeterminate') => (model.value = v),
       }),
     )
+
     await wrapper.find(control).trigger('click')
     expect(model.value).toBe(true)
     expect(wrapper.find('[data-slot=checkbox]').attributes('data-selected')).toBe('true')
@@ -43,9 +44,11 @@ describe('Checkbox', () => {
           wrapper.setProps({ modelValue: v }),
       },
     })
+
     expect(wrapper.find('[data-slot=checkbox-default-indicator--indeterminate]').exists()).toBe(
       true,
     )
+
     expect(wrapper.find(control).attributes('aria-checked')).toBe('mixed')
     await wrapper.find(control).trigger('click')
     expect(wrapper.emitted('update:modelValue')![0]).toEqual([true])
@@ -65,6 +68,7 @@ describe('Checkbox', () => {
       ]),
       { attachTo: document.body },
     )
+
     await wrapper.find('label[for=marketing]').trigger('click')
     expect(model.value).toBe(true)
     wrapper.unmount()
@@ -81,6 +85,7 @@ describe('Checkbox', () => {
     const wrapper = mount(Checkbox, {
       props: { id: 'c', description: 'Help', errorMessage: 'Required' },
     })
+
     expect(wrapper.find('[data-slot=field-error]').exists()).toBe(false)
     expect(wrapper.find(control).attributes('aria-describedby')).toBe('c-description')
     await wrapper.setProps({ invalid: true })
@@ -107,6 +112,7 @@ describe('Checkbox row click', () => {
       slots: { description: () => h('a', { href: '#x' }, 'terms') },
       attachTo: document.body,
     })
+
     await wrapper.find('[data-slot=checkbox]').trigger('click')
     expect(wrapper.emitted('update:modelValue')).toEqual([[true]])
     await wrapper.find('a').trigger('click')
@@ -124,6 +130,7 @@ describe('Checkbox indeterminate glyph click', () => {
       props: { defaultValue: 'indeterminate' },
       attachTo: document.body,
     })
+
     wrapper.find(control).element.addEventListener('click', () => wrapper.vm.$.update())
     await wrapper.find('[data-slot=checkbox-default-indicator--indeterminate]').trigger('click')
     expect(wrapper.emitted('update:modelValue')).toEqual([[true]])
@@ -146,6 +153,7 @@ describe('Checkbox indeterminate glyph click', () => {
         }),
       { attachTo: document.body },
     )
+
     wrapper.find(control).element.addEventListener('click', () => wrapper.vm.$.update())
     await wrapper.find('[data-slot=checkbox-default-indicator--indeterminate]').trigger('click')
     expect(seen).toEqual([true])
@@ -164,6 +172,7 @@ describe('Checkbox keyboard and readonly parity', () => {
       e.preventDefault()
       submitted++
     })
+
     const wrapper = mount(Checkbox, { props: { label: 'Terms' }, attachTo: form })
     await wrapper.get(control).trigger('keydown', { key: 'Enter' })
     expect(submitted).toBe(1)
@@ -178,6 +187,7 @@ describe('Checkbox keyboard and readonly parity', () => {
       props: { label: 'Terms', readonly: true },
       attachTo: document.body,
     })
+
     const down = new MouseEvent('mousedown', { bubbles: true, cancelable: true })
     wrapper.get(control).element.dispatchEvent(down)
     expect(down.defaultPrevented).toBe(true)
@@ -212,14 +222,17 @@ const pressSpace = async (el: Element) => {
     bubbles: true,
     cancelable: true,
   })
+
   const up = new KeyboardEvent('keyup', {
     key: ' ',
     code: 'Space',
     bubbles: true,
     cancelable: true,
   })
+
   el.dispatchEvent(down)
   el.dispatchEvent(up)
+
   if (
     el instanceof HTMLButtonElement &&
     !el.disabled &&
@@ -227,6 +240,7 @@ const pressSpace = async (el: Element) => {
     !up.defaultPrevented
   )
     el.click()
+
   await nextTick()
 }
 
@@ -248,6 +262,7 @@ describe('Checkbox accessibility', () => {
       props: { label: 'Accept terms', ...props },
       attachTo: document.body,
     })
+
     await expectAccessible(wrapper)
     wrapper.unmount()
   })
@@ -257,6 +272,7 @@ describe('Checkbox accessibility', () => {
       () => h('form', null, h(Checkbox, { label: 'Accept terms', name: 'terms', required: true })),
       { attachTo: document.body },
     )
+
     await nextTick()
     await expectAccessible(wrapper)
     wrapper.unmount()
@@ -270,6 +286,7 @@ describe('Checkbox accessibility', () => {
       ),
       { attachTo: document.body },
     )
+
     await nextTick()
     await expectAccessible(wrapper)
     wrapper.unmount()
@@ -280,6 +297,7 @@ describe('Checkbox accessibility', () => {
       attrs: { 'aria-label': 'Select row' },
       attachTo: document.body,
     })
+
     expect(wrapper.get(control).attributes('aria-label')).toBe('Select row')
     await expectAccessible(wrapper)
     wrapper.unmount()
@@ -313,11 +331,13 @@ describe('Checkbox accessibility', () => {
       },
       attachTo: document.body,
     })
+
     const ids = wrapper.get(control).attributes('aria-describedby')!.split(' ')
     expect(ids.map((id) => document.getElementById(id)?.textContent?.trim())).toEqual([
       'Read them first',
       'Accept the terms',
     ])
+
     wrapper.unmount()
   })
 
@@ -341,6 +361,7 @@ describe('Checkbox accessibility', () => {
       props: { label: 'Terms', readonly: true },
       attachTo: document.body,
     })
+
     const content = wrapper.get(control).element as HTMLButtonElement
     expect(content.disabled).toBe(false)
     content.focus()
@@ -356,6 +377,7 @@ describe('Checkbox accessibility', () => {
       props: { label: 'Terms', disabled: true },
       attachTo: document.body,
     })
+
     const content = wrapper.get(control).element as HTMLButtonElement
     expect(content.disabled).toBe(true)
     content.focus()

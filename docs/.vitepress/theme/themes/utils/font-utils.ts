@@ -83,6 +83,7 @@ export const extractFontFamilyFromUrl = (url: string): string | null => {
     if (familyParam) {
       // Handle multiple families (take the first one)
       const firstFamily = familyParam.split('|')[0] ?? ''
+
       // Remove weight/style specifiers (everything after :)
       const familyName = firstFamily.split(':')[0] ?? ''
 

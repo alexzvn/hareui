@@ -40,6 +40,7 @@ const hover = async (wrapper: ReturnType<typeof mountChart>, clientX: number, cl
   wrapper
     .find('[data-slot=chart-surface]')
     .element.dispatchEvent(new PointerEvent('pointermove', { clientX, clientY, bubbles: true }))
+
   await settle()
 }
 
@@ -56,10 +57,13 @@ describe('AreaChart', () => {
     const wrapper = mountChart(() => [
       h(ChartArea, { dataKey: 'organic', isAnimationActive: false }),
     ])
+
     await settle()
+
     expect(wrapper.find('[data-slot=chart-area-curve]').attributes('d')).toBe(
       'M0,200L200,100L400,0',
     )
+
     const fill = wrapper.find('[data-slot=chart-area-fill]')
     expect(fill.attributes('d')).toBe('M0,200L200,100L400,0L400,200L200,200L0,200Z')
     expect(fill.attributes('fill-opacity')).toBe('0.6')
@@ -79,6 +83,7 @@ describe('AreaChart', () => {
         isAnimationActive: false,
       }),
     ])
+
     await settle()
     const svg = wrapper.find('[data-slot=chart-surface]')
     expect(svg.find('#g').exists()).toBe(true)
@@ -92,6 +97,7 @@ describe('AreaChart', () => {
     const wrapper = mountChart(() => [
       h(ChartArea, { dataKey: 'organic', stroke: 'none', isAnimationActive: false }),
     ])
+
     await settle()
     expect(wrapper.find('[data-slot=chart-area-curve]').exists()).toBe(false)
     expect(wrapper.find('[data-slot=chart-area-fill]').exists()).toBe(true)
@@ -103,14 +109,18 @@ describe('AreaChart', () => {
       h(ChartArea, { dataKey: 'organic', stackId: 'a', type: 'linear', isAnimationActive: false }),
       h(ChartArea, { dataKey: 'paid', stackId: 'a', type: 'linear', isAnimationActive: false }),
     ])
+
     await settle()
+
     // Totals [10, 20, 20] → y domain [0, 20]; the second area sits on top of the first.
     const curves = wrapper.findAll('[data-slot=chart-area-curve]')
     expect(curves[0].attributes('d')).toBe('M0,200L200,100L400,0')
     expect(curves[1].attributes('d')).toBe('M0,100L200,0L400,0')
+
     expect(wrapper.findAll('[data-slot=chart-area-fill]')[1].attributes('d')).toBe(
       'M0,100L200,0L400,0L400,0L200,100L0,200Z',
     )
+
     wrapper.unmount()
   })
 
@@ -123,10 +133,12 @@ describe('AreaChart', () => {
       ],
       { margin: { top: 10, right: 0, bottom: 10, left: 0 } },
     )
+
     await settle()
     const ticks = wrapper.findAll('[data-slot=chart-tick]')
     expect(ticks.map((tick) => tick.text())).toEqual(['0', '5', '10', '15', '20'])
     expect(ticks[0].attributes('text-anchor')).toBe('end')
+
     // Axis width shifts the plot: the first point sits at x = 40.
     expect(wrapper.find('[data-slot=chart-area-curve]').attributes('d')).toMatch(/^M40,190/)
     expect(wrapper.find('[data-slot=chart-axis-line]').classes()).toContain('stroke-none')
@@ -138,6 +150,7 @@ describe('AreaChart', () => {
       h(ChartGrid, { vertical: false }),
       h(ChartArea, { dataKey: 'organic', isAnimationActive: false }),
     ])
+
     await settle()
     const lines = wrapper.findAll('[data-slot=chart-grid-line]')
     expect(lines.map((line) => line.attributes('y1'))).toEqual(['200', '150', '100', '50', '0'])
@@ -152,6 +165,7 @@ describe('AreaChart', () => {
       h(ChartGrid, { horizontal: false, xAxisId: 'missing', syncWithTicks: true }),
       h(ChartArea, { dataKey: 'organic', isAnimationActive: false }),
     ])
+
     await settle()
     const lines = wrapper.findAll('[data-slot=chart-grid-line]')
     expect(lines.map((line) => [line.attributes('data-direction'), line.attributes('y1')])).toEqual(
@@ -160,6 +174,7 @@ describe('AreaChart', () => {
         ['horizontal', '200'],
       ],
     )
+
     wrapper.unmount()
   })
 
@@ -180,10 +195,12 @@ describe('AreaChart', () => {
       }),
       h(ChartTooltip, { isAnimationActive: false }),
     ])
+
     await settle()
     await hover(wrapper, 190, 120)
     const tooltip = wrapper.find('[data-slot=chart-tooltip-wrapper]')
     expect(tooltip.exists()).toBe(true)
+
     // Mounted from inside the <svg>, the panel must still be an HTML element to render.
     expect(tooltip.element.namespaceURI).toBe('http://www.w3.org/1999/xhtml')
     expect(tooltip.text()).toContain('Feb')
@@ -198,6 +215,7 @@ describe('AreaChart', () => {
     const surface = wrapper.find('[data-slot=chart-surface]')
     surface.element.dispatchEvent(new PointerEvent('pointerleave', { bubbles: true }))
     await settle()
+
     // Hidden, not unmounted: the next hover slides the same panel from here.
     expect(tooltip.attributes('data-state')).toBe('closed')
     expect(tooltip.isVisible()).toBe(false)
@@ -212,7 +230,9 @@ describe('AreaChart', () => {
       h(ChartArea, { dataKey: 'organic', name: 'Organic', isAnimationActive: false }),
       h(ChartTooltip, { isAnimationActive: false }),
     ])
+
     await settle()
+
     // Points sit at x = 0, 200 and 400.
     await hover(wrapper, 130, 190)
     const tooltip = wrapper.find('[data-slot=chart-tooltip-wrapper]')
@@ -221,6 +241,7 @@ describe('AreaChart', () => {
     expect(wrapper.find('[data-slot=chart-cursor]').attributes('d')).toBe('M200,0L200,200')
     await hover(wrapper, 90, 190)
     const moved = wrapper.find('[data-slot=chart-tooltip-wrapper]')
+
     // Same element: the panel moves instead of being re-mounted.
     expect(moved.element).toBe(tooltip.element)
     expect(moved.attributes('data-state')).toBe('open')
@@ -239,10 +260,12 @@ describe('AreaChart', () => {
       ],
       { margin: { top: 10, right: 10, bottom: 10, left: 10 } },
     )
+
     await settle()
     await hover(wrapper, 100, 100)
     const tooltip = wrapper.find('[data-slot=chart-tooltip-wrapper]')
     expect((tooltip.element as HTMLElement).style.transition).toBe('transform 250ms ease')
+
     // Inside the svg but in the margin: no datum.
     await hover(wrapper, 100, 5)
     expect(tooltip.attributes('data-state')).toBe('closed')
@@ -274,12 +297,14 @@ describe('AreaChart', () => {
         },
       ),
     ])
+
     await settle()
     await hover(wrapper, 390, 50)
     expect(wrapper.find('[data-test=custom]').text()).toBe('Mar')
     expect(received?.active).toBe(true)
     expect(received?.coordinate).toEqual({ x: 400, y: 50 })
     expect(received?.payload).toHaveLength(1)
+
     expect(received?.payload[0]).toMatchObject({
       dataKey: 'organic',
       name: 'Organic',
@@ -288,6 +313,7 @@ describe('AreaChart', () => {
       stroke: 'var(--chart-3)',
       fill: 'url(#g)',
     })
+
     expect(received?.payload[0]?.payload).toEqual(data[2])
     wrapper.unmount()
   })
@@ -298,6 +324,7 @@ describe('AreaChart', () => {
       h(ChartArea, { dataKey: 'organic', isAnimationActive: false }),
       h(ChartTooltip, { isAnimationActive: false }),
     ])
+
     await settle()
     const header = () => wrapper.find('[data-slot=chart-tooltip-header]').text()
     expect(wrapper.find('[data-slot=chart-surface]').attributes('tabindex')).toBe('0')
@@ -321,6 +348,7 @@ describe('AreaChart', () => {
     expect(tooltip.attributes('data-state')).toBe('closed')
     expect(tooltip.isVisible()).toBe(false)
     await press(wrapper, 'ArrowLeft')
+
     // From nothing, ArrowLeft starts at the last datum.
     expect(header()).toBe('Mar')
     await wrapper.find('[data-slot=chart-surface]').trigger('blur')
@@ -335,6 +363,7 @@ describe('AreaChart', () => {
       h(ChartArea, { dataKey: 'organic', isAnimationActive: false }),
       h(ChartTooltip, { isAnimationActive: false }),
     ])
+
     await settle()
     const svg = wrapper.find('[data-slot=chart-surface]')
     ;(svg.element as SVGElement).focus()
@@ -344,10 +373,12 @@ describe('AreaChart', () => {
     ;(svg.element as SVGElement).blur()
     await settle()
     expect(wrapper.find('[data-slot=chart-active-dot]').exists()).toBe(false)
+
     // A press focuses the chart too: the pressed datum wins, focus doesn't reset it to the first.
     svg.element.dispatchEvent(
       new PointerEvent('pointerdown', { clientX: 390, clientY: 100, bubbles: true }),
     )
+
     ;(svg.element as SVGElement).focus()
     await settle()
     expect(wrapper.find('[data-slot=chart-tooltip-header]').text()).toBe('Mar')
@@ -363,25 +394,31 @@ describe('AreaChart', () => {
     it('tweens from the drawn shape when the number of points changes', async () => {
       let queue: FrameRequestCallback[] = []
       vi.spyOn(performance, 'now').mockReturnValue(0)
+
       vi.stubGlobal('requestAnimationFrame', (callback: FrameRequestCallback) =>
         queue.push(callback),
       )
+
       vi.stubGlobal('cancelAnimationFrame', () => {
         queue = []
       })
+
       const frame = (time: number) => {
         const run = queue
         queue = []
         run.forEach((callback) => callback(time))
       }
+
       const wrapper = mountChart(() => [
         h(ChartArea, { dataKey: 'organic', animationDuration: 100, animationEasing: 'linear' }),
       ])
+
       await settle()
       frame(100)
       await settle()
       const curve = () => wrapper.find('[data-slot=chart-area-curve]').attributes('d')
       expect(curve()).toBe('M0,200L200,100L400,0')
+
       // Three points become two: each new point starts from the old point at the same relative position.
       await wrapper.setProps({
         data: [
@@ -389,6 +426,7 @@ describe('AreaChart', () => {
           { month: 'Mar', organic: 20 },
         ],
       })
+
       await settle()
       expect(curve()).toBe('M0,200L200,100')
       frame(50)
@@ -410,16 +448,20 @@ describe('AreaChart', () => {
       ],
       { 'aria-label': 'Organic sessions per month', id: 'sessions' },
     )
+
     await settle()
     const svg = wrapper.find('[data-slot=chart-surface]')
     expect(svg.attributes('role')).toBe('application')
     expect(svg.attributes('aria-label')).toBe('Organic sessions per month')
+
     // Other attributes stay on the container.
     expect(wrapper.attributes('id')).toBe('sessions')
     expect(wrapper.attributes('aria-label')).toBeUndefined()
+
     expect(
       svg.findAll('[data-layer]').every((layer) => layer.attributes('aria-hidden') === 'true'),
     ).toBe(true)
+
     await press(wrapper, 'ArrowRight')
     const tooltip = wrapper.find('[data-slot=chart-tooltip-wrapper]')
     expect(tooltip.attributes('role')).toBe('status')
@@ -433,6 +475,7 @@ describe('AreaChart', () => {
       h(ChartArea, { dataKey: 'organic', name: 'Organic', isAnimationActive: false }),
       h(ChartTooltip, { cursor: false, panel: false, isAnimationActive: false }),
     ])
+
     await settle()
     await hover(wrapper, 190, 100)
     expect(wrapper.find('[data-slot=chart-active-dot]').attributes('cx')).toBe('200')
@@ -440,15 +483,18 @@ describe('AreaChart', () => {
     const live = wrapper.find('[data-slot=chart-tooltip-wrapper]')
     expect(live.attributes('role')).toBe('status')
     expect(live.attributes('data-panel')).toBe('false')
+
     // Visually hidden, not positioned: no floating panel.
     expect(live.classes()).toContain('sr-only')
     expect(live.attributes('style')).toBeUndefined()
     expect(live.text()).toContain('Feb')
     expect(live.text()).toContain('Organic')
     expect(live.text()).toContain('10')
+
     wrapper
       .find('[data-slot=chart-surface]')
       .element.dispatchEvent(new PointerEvent('pointerleave', { bubbles: true }))
+
     await settle()
     expect(live.text()).toBe('')
     expect(wrapper.find('[data-slot=chart-active-dot]').exists()).toBe(false)
@@ -459,6 +505,7 @@ describe('AreaChart', () => {
     const wrapper = mountChart(() => [
       h(ChartArea, { dataKey: 'organic', isAnimationActive: false }),
     ])
+
     await settle()
     const svg = wrapper.find('[data-slot=chart-surface]')
     expect(svg.attributes('tabindex')).toBeUndefined()
@@ -480,6 +527,7 @@ describe('AreaChart', () => {
       },
       attachTo: document.body,
     })
+
     await settle()
     await expectAccessible(wrapper)
     await press(wrapper, 'ArrowRight')
@@ -501,6 +549,7 @@ describe('AreaChart', () => {
       },
       attachTo: document.body,
     })
+
     await settle()
     const svg = wrapper.find('[data-slot=chart-surface]')
     expect(svg.attributes('role')).toBe('img')
@@ -514,9 +563,11 @@ describe('AreaChart', () => {
       () => [h(ChartArea, { dataKey: 'organic', isAnimationActive: false })],
       { height: 40 },
     )
+
     await settle()
     expect(wrapper.find('[data-slot=chart-x-axis]').exists()).toBe(false)
     expect(wrapper.find('[data-slot=chart-grid]').exists()).toBe(false)
+
     // organic = [0, 10, 20] → y domain [0, 20] over [40, 0].
     expect(wrapper.find('[data-slot=chart-area-curve]').attributes('d')).toBe('M0,40L200,20L400,0')
     wrapper.unmount()
@@ -530,6 +581,7 @@ describe('AreaChart', () => {
       ],
       { ui: { tick: 'fill-foreground', series: 'custom-series' } },
     )
+
     await settle()
     expect(wrapper.find('[data-slot=chart-tick]').classes()).toContain('fill-foreground')
     expect(wrapper.find('[data-slot=chart-area]').classes()).toContain('custom-series')
@@ -540,15 +592,19 @@ describe('AreaChart', () => {
     const wrapper = mountChart(() => [
       h(ChartArea, { dataKey: 'organic', isAnimationActive: false }),
     ])
+
     await settle()
     await wrapper.setProps({ data: data.map((row) => ({ ...row, organic: row.organic * 2 })) })
     await settle()
+
     // y domain grows to [0, 40] with the data, so the shape keeps its pixels.
     expect(wrapper.find('[data-slot=chart-area-curve]').attributes('d')).toBe(
       'M0,200L200,100L400,0',
     )
+
     await wrapper.setProps({ data: data.map((row) => ({ ...row, organic: 5 })) })
     await settle()
+
     // Constant 5 → nice ticks 0…8 (step 2): the line sits at 5/8 of the height.
     expect(wrapper.find('[data-slot=chart-area-curve]').attributes('d')).toBe('M0,75L200,75L400,75')
     wrapper.unmount()

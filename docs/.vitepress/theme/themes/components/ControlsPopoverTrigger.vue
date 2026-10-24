@@ -16,6 +16,7 @@
 // React Aria's `Pressable` makes it focusable and activates it with Enter/Space.
 const onKeydown = (event: KeyboardEvent) => {
   if (event.target !== event.currentTarget) return
+
   if (event.key === 'Enter' || event.key === ' ') {
     event.preventDefault()
     ;(event.currentTarget as HTMLElement).click()

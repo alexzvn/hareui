@@ -10,6 +10,7 @@
 <script setup lang="ts">
 import type { ListBoxItem } from '@hareui/vue'
 import { ListBox } from '@hareui/vue'
+
 const firstNames = [
   'Emma',
   'Liam',
@@ -32,6 +33,7 @@ const firstNames = [
   'Ella',
   'Benjamin',
 ]
+
 const lastNames = [
   'Smith',
   'Johnson',
@@ -54,9 +56,11 @@ const lastNames = [
   'Robinson',
   'Walker',
 ]
+
 const users: ListBoxItem[] = Array.from({ length: 1000 }, (_, i) => {
   const first = firstNames[i % firstNames.length]!
   const last = lastNames[Math.floor(i / firstNames.length) % lastNames.length]!
+
   return {
     value: i + 1,
     label: `${first} ${last}`,

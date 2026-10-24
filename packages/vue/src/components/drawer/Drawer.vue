@@ -214,6 +214,7 @@ const props = withDefaults(defineProps<DrawerProps>(), {
   keyboardDismissible: true,
   placement: 'bottom',
 })
+
 const emit = defineEmits<DrawerEmits>()
 const slots = useSlots()
 defineSlots<DrawerSlots>()
@@ -259,6 +260,7 @@ let lastPos = 0
 const pointerPos = (event: PointerEvent) => {
   return isVertical.value ? event.clientY : event.clientX
 }
+
 const clampDelta = (delta: number) => {
   switch (props.placement) {
     case 'top':
@@ -268,15 +270,18 @@ const clampDelta = (delta: number) => {
       return Math.max(0, delta)
   }
 }
+
 const onDragStart = (event: PointerEvent) => {
   if (!props.dismissible || event.button !== 0) return
   const target = event.target as HTMLElement
   const dialog = event.currentTarget as HTMLElement
   if (target.closest('[data-slot="drawer-dialog"]') !== dialog) return
+
   if (
     target.closest("input, textarea, button, [role='button'], select, a, [data-slot='drawer-body']")
   )
     return
+
   dragging = true
   active = false
   startPos = pointerPos(event)
@@ -285,18 +290,21 @@ const onDragStart = (event: PointerEvent) => {
   offset = 0
   velocity = 0
 }
+
 const onDragMove = (event: PointerEvent) => {
   if (!dragging) return
   const el = event.currentTarget as HTMLElement
   const pos = pointerPos(event)
   const rawDelta = pos - startPos
   const delta = clampDelta(rawDelta)
+
   if (!active) {
     if (Math.abs(rawDelta) < DRAG_THRESHOLD) return
     active = true
     el.style.transition = 'none'
     el.setPointerCapture(event.pointerId)
   }
+
   offset = delta
   const now = Date.now()
   const dt = now - lastTime
@@ -305,23 +313,28 @@ const onDragMove = (event: PointerEvent) => {
     lastTime = now
     lastPos = pos
   }
+
   el.style.transform = `translate${isVertical.value ? 'Y' : 'X'}(${delta}px)`
 }
+
 const onDragEnd = (event: PointerEvent, close: () => void) => {
   if (!dragging) return
   dragging = false
   const el = event.currentTarget as HTMLElement
   if (!active) return
   active = false
+
   try {
     el.releasePointerCapture(event.pointerId)
   } catch {}
+
   const size = isVertical.value ? el.offsetHeight : el.offsetWidth
   if (Math.abs(offset) > size * DISMISS_FRACTION || Math.abs(velocity) > VELOCITY_THRESHOLD) {
     close()
   } else {
     el.style.transition = 'transform 300ms cubic-bezier(0.32, 0.72, 0, 1)'
     el.style.transform = ''
+
     el.addEventListener(
       'transitionend',
       () => {
@@ -330,6 +343,7 @@ const onDragEnd = (event: PointerEvent, close: () => void) => {
       { once: true },
     )
   }
+
   offset = 0
   velocity = 0
 }

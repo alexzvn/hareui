@@ -1,4 +1,5 @@
 export { default as DashboardPanel } from './DashboardPanel.vue'
+
 export type {
   DashboardPanelProps,
   DashboardPanelResizeHandleSlotProps,

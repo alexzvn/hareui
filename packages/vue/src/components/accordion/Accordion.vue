@@ -195,11 +195,14 @@ const renderIndicator = (item: AccordionItem, index: number, open: boolean) => {
     'data-slot': 'accordion-indicator',
     'data-expanded': open ? 'true' : undefined,
   }
+
   const children = (slots.indicator?.({ item, index, open }) ?? []).filter(
     (v: VNode) => v.type !== Comment,
   )
+
   if (children.length === 1 && isVNode(children[0]) && typeof children[0].type !== 'symbol')
     return cloneVNode(children[0], shared, true)
+
   return h(
     'svg',
     {
@@ -222,6 +225,7 @@ const renderIndicator = (item: AccordionItem, index: number, open: boolean) => {
     ],
   )
 }
+
 const Indicator = (p: { item: AccordionItem; index: number; open: boolean }) =>
   renderIndicator(p.item, p.index, p.open)
 
@@ -235,6 +239,7 @@ const registerPanel = (value: ExpandedValue, el: unknown) => {
   setPanelStatic(el, isExpanded(value))
   panels.set(value, { el, stop: onPanelReveal(el, () => setExpanded(value, !isExpanded(value))) })
 }
+
 onBeforeUnmount(() => panels.forEach((p) => p.stop()))
 
 const openStates = computed(() =>
@@ -242,6 +247,7 @@ const openStates = computed(() =>
     (item, index) => [valueOf(item, index), isExpanded(valueOf(item, index))] as const,
   ),
 )
+
 watch(
   openStates,
   (next, prev) => {

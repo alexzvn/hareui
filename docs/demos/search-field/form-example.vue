@@ -40,6 +40,7 @@ const handleSubmit = (e: Event) => {
   e.preventDefault()
   if (value.value.length < MIN_LENGTH) return
   isSubmitting.value = true
+
   // Simulate API call
   setTimeout(() => {
     console.log('Search submitted:', { query: value.value })

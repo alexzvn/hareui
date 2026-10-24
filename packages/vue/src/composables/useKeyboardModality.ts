@@ -11,17 +11,21 @@ export const useKeyboardModality = (): Readonly<Ref<boolean>> => {
   const onPointerdown = () => {
     keyboard.value = false
   }
+
   const onKeydown = () => {
     keyboard.value = true
   }
+
   onMounted(() => {
     document.addEventListener('pointerdown', onPointerdown, true)
     document.addEventListener('keydown', onKeydown, true)
   })
+
   onBeforeUnmount(() => {
     document.removeEventListener('pointerdown', onPointerdown, true)
     document.removeEventListener('keydown', onKeydown, true)
   })
+
   return readonly(keyboard)
 }
 

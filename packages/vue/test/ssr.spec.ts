@@ -27,6 +27,7 @@ describe('server rendering of overlays', () => {
     const html = await renderToString(
       createSSRApp({ render: () => h(component as never, { label: 'Field' }, slots) }),
     )
+
     expect(html).toMatch(/^</)
   })
 })

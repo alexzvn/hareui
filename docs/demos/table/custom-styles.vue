@@ -27,6 +27,7 @@ const columns: TableColumn[] = [
   { key: 'role', label: 'Role' },
   { key: 'status', label: 'Status' },
 ]
+
 const rows: TableRow[] = [
   { id: 1, name: 'Kate Moore', role: 'CEO', status: 'Active' },
   { id: 2, name: 'John Smith', role: 'CTO', status: 'Active' },

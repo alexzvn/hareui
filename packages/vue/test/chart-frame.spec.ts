@@ -118,15 +118,18 @@ describe('chart frame', () => {
       const wrapper = mountChart({ legend: true })
       await settle()
       expect(wrapper.attributes('data-legend')).toBe('bottom')
+
       expect(wrapper.findAll('[data-slot=chart-legend-item]').map((item) => item.text())).toEqual(
         keys,
       )
+
       expect(wrapper.findAll(series)).toHaveLength(2)
 
       await wrapper.findAll('[data-slot=chart-legend-trigger]')[0]!.trigger('click')
       await settle()
       expect(wrapper.emitted('update:hidden')?.[0]).toEqual([[keys[0]]])
       expect(wrapper.findAll(series)).toHaveLength(1)
+
       expect(wrapper.findAll('[data-slot=chart-legend-item]')[0]!.attributes('data-hidden')).toBe(
         'true',
       )
@@ -150,6 +153,7 @@ describe('chart frame', () => {
             ),
         },
       )
+
       await settle()
       expect(wrapper.attributes('data-legend')).toBe('bottom')
       expect(wrapper.find('[data-slot=chart-legend]').exists()).toBe(false)
@@ -167,6 +171,7 @@ describe('chart frame', () => {
             h('span', { 'data-test': 'tip' }, `rows:${p.payload.length}`),
         },
       )
+
       await settle()
       ;(custom.find('[data-slot=chart-surface]').element as SVGElement).focus()
       await settle()
@@ -180,6 +185,7 @@ describe('chart frame', () => {
             h('span', { 'data-test': 'footer' }, `rows:${p.payload.length}`),
         },
       )
+
       await settle()
       ;(footer.find('[data-slot=chart-surface]').element as SVGElement).focus()
       await settle()
@@ -193,6 +199,7 @@ describe('chart frame', () => {
       { name: 'Chrome', value: 1 },
       { name: 'Safari', value: 3 },
     ]
+
     const pie = (props: Record<string, unknown>) =>
       h(ChartPie, { data, dataKey: 'value', isAnimationActive: false, ...props })
 
@@ -210,9 +217,11 @@ describe('chart frame', () => {
     it('keeps the #center slot and a centered ChartLabel on a composed pie moved by cx/cy', async () => {
       const wrapper = mountPies(() => [pie({ cx: '30%', cy: 120, outerRadius: 50 })])
       await settle()
+
       expect(wrapper.find('[data-slot=chart-pie-sector]').attributes('transform')).toBe(
         'translate(60, 120)',
       )
+
       const center = wrapper.find('[data-slot=chart-center]')
       expect(center.attributes('style')).toContain('left: 60px')
       expect(center.attributes('style')).toContain('top: 120px')
@@ -228,6 +237,7 @@ describe('chart frame', () => {
         pie({ cx: '30%', outerRadius: 40 }),
         pie({ cx: '70%', outerRadius: 40 }),
       ])
+
       await settle()
       expect(wrapper.find('[data-slot=chart-center]').attributes('style')).toContain('left: 60px')
       const label = wrapper.findAll('text').find((text) => text.text() === 'mid')
@@ -255,6 +265,7 @@ describe('resolveFrameLegend', () => {
   it('takes the position from the prop, over the slot default', () => {
     expect(resolveFrameLegend('left', true)?.position).toBe('left')
     expect(resolveFrameLegend(true, false)?.position).toBe('bottom')
+
     expect(resolveFrameLegend({ showValue: true }, false)).toEqual({
       position: 'bottom',
       props: { showValue: true },
@@ -312,11 +323,14 @@ describe('percentValue', () => {
 
   it('falls back on non-finite input unless keepNonFinite is set (cartesian bar layout)', () => {
     expect(percentValue(Number.POSITIVE_INFINITY, 80, 7)).toBe(7)
+
     expect(percentValue(Number.POSITIVE_INFINITY, 80, 7, { keepNonFinite: true })).toBe(
       Number.POSITIVE_INFINITY,
     )
+
     expect(percentValue('abc%', 80, 7)).toBe(7)
     expect(percentValue('abc%', 80, 7, { keepNonFinite: true })).toBeNaN()
+
     // A plain string that isn't a number falls back either way.
     expect(percentValue('abc', 80, 7, { keepNonFinite: true })).toBe(7)
   })

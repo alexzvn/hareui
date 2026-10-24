@@ -17,13 +17,16 @@ describe('Fieldset', () => {
       props: { legend: 'Profile', description: 'Update it.' },
       slots: { default: () => h('input'), actions: () => h('button') },
     })
+
     expect(wrapper.element.tagName).toBe('FIELDSET')
+
     expect(order(wrapper.element)).toEqual([
       'fieldset-legend',
       'description',
       'fieldset-field-group',
       'fieldset-actions',
     ])
+
     expect(wrapper.find('legend').text()).toBe('Profile')
   })
 
@@ -43,6 +46,7 @@ describe('Fieldset', () => {
         ],
       },
     })
+
     expect(wrapper.attributes()).toMatchObject({ disabled: '', 'data-disabled': 'true' })
     const [native, div] = wrapper.findAll('[data-slot="button"]')
     expect(native!.attributes('disabled')).toBeDefined()
@@ -56,6 +60,7 @@ describe('Fieldset', () => {
     const wrapper = mount(Fieldset, {
       slots: { default: () => h(Link, { href: '/x' }, () => 'Help') },
     })
+
     expect(wrapper.attributes('disabled')).toBeUndefined()
     expect(wrapper.find('a').attributes('href')).toBe('/x')
   })
@@ -86,6 +91,7 @@ describe('Fieldset', () => {
       expect(document.getElementById(describedBy)?.textContent?.trim()).toBe(
         'Shown on your public page.',
       )
+
       await expectAccessible(wrapper)
       wrapper.unmount()
     },
@@ -95,6 +101,7 @@ describe('Fieldset', () => {
     const wrapper = profile({ disabled: true })
     for (const control of wrapper.findAll('input, button'))
       expect((control.element as HTMLInputElement).disabled).toBe(true)
+
     wrapper.unmount()
   })
 
@@ -103,6 +110,7 @@ describe('Fieldset', () => {
       props: { legend: 'Profile' },
       slots: { default: () => h('input', { 'aria-label': 'Name' }) },
     })
+
     expect(wrapper.attributes('aria-describedby')).toBeUndefined()
     wrapper.unmount()
   })
@@ -113,13 +121,17 @@ describe('Fieldset', () => {
       slots: { default: () => h(TextField, { label: 'Street', name: 'street' }) },
       attachTo: document.body,
     })
+
     expect(wrapper.attributes('role')).toBe('group')
+
     expect(
       document.getElementById(wrapper.attributes('aria-labelledby')!)?.textContent?.trim(),
     ).toBe('Shipping')
+
     expect(
       document.getElementById(wrapper.attributes('aria-describedby')!)?.textContent?.trim(),
     ).toBe('Where we send it.')
+
     expect(wrapper.attributes('aria-disabled')).toBe('true')
     expect((wrapper.get('input').element as HTMLInputElement).disabled).toBe(true)
     await expectAccessible(wrapper)

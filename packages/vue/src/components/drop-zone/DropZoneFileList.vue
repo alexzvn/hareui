@@ -54,10 +54,12 @@ const animate = (
 ) => {
   const reduced =
     typeof window !== 'undefined' && window.matchMedia?.('(prefers-reduced-motion: reduce)').matches
+
   if (reduced || typeof (el as HTMLElement).animate !== 'function') {
     done()
     return
   }
+
   const animation = (el as HTMLElement).animate(keyframes, options)
   animation.onfinish = done
   animation.oncancel = done
@@ -86,6 +88,7 @@ const onLeave = (el: Element, done: () => void) => {
     width: `${offsetWidth}px`,
     margin: '0',
   })
+
   animate(item, [{ opacity: 1 }, { opacity: 0 }], { duration: 200, easing: 'ease-out' }, done)
 }
 </script>

@@ -21,6 +21,7 @@ const input = '[data-slot=number-stepper-input]'
 const press = async (target: { element: Element }) => {
   // Reka's press-and-hold binds its pointerdown listener in a post-flush watcher, after mount
   await flushPromises()
+
   target.element.dispatchEvent(
     new PointerEvent('pointerdown', {
       bubbles: true,
@@ -29,9 +30,11 @@ const press = async (target: { element: Element }) => {
       pointerType: 'mouse',
     }),
   )
+
   target.element.dispatchEvent(
     new PointerEvent('pointerup', { bubbles: true, button: 0, pointerType: 'mouse' }),
   )
+
   await nextTick()
 }
 
@@ -58,6 +61,7 @@ describe('NumberStepper', () => {
       props: { defaultValue: 4, min: 0, max: 5 },
       attachTo: document.body,
     })
+
     await wrapper.get(input).trigger('keydown', { key: 'ArrowUp' })
     expect(wrapper.emitted('update:modelValue')?.at(-1)).toEqual([5])
     await nextTick()
@@ -76,6 +80,7 @@ describe('NumberStepper', () => {
       props: { defaultValue: 10, step: 5 },
       attachTo: document.body,
     })
+
     await wrapper.get(input).trigger('keydown', { key: 'PageUp' })
     expect(wrapper.emitted('update:modelValue')?.at(-1)).toEqual([15])
     await wrapper.get(input).trigger('keydown', { key: 'PageDown' })
@@ -89,6 +94,7 @@ describe('NumberStepper', () => {
       props: { modelValue: 0, min: 0, step: 5 },
       attachTo: document.body,
     })
+
     await wrapper.get(input).trigger('keydown', { key: 'ArrowUp' })
     expect(wrapper.emitted('update:modelValue')?.at(-1)).toEqual([5])
     await wrapper.setProps({ modelValue: -20 })
@@ -106,6 +112,7 @@ describe('NumberStepper', () => {
   it('formats the value with formatOptions and submits the raw number', () => {
     const form = document.createElement('form')
     document.body.append(form)
+
     const wrapper = mount(NumberStepper, {
       props: {
         name: 'price',
@@ -115,6 +122,7 @@ describe('NumberStepper', () => {
       },
       attachTo: form,
     })
+
     const flow = wrapper.findComponent(NumberFlow)
     expect(flow.props('value')).toBe(10)
     expect(flow.props('format')).toEqual({ style: 'currency', currency: 'USD' })
@@ -138,6 +146,7 @@ describe('NumberStepper', () => {
         }) => `${formattedValue} items (${v})`,
       },
     })
+
     expect(wrapper.get(value).text()).toBe('3 items (3)')
   })
 
@@ -146,6 +155,7 @@ describe('NumberStepper', () => {
       props: { defaultValue: 3, disabled: true },
       attachTo: document.body,
     })
+
     expect(wrapper.get('[data-slot=number-stepper]').attributes('data-disabled')).toBe('true')
     expect(wrapper.get(inc).attributes('disabled')).toBeDefined()
     expect(wrapper.get(dec).attributes('disabled')).toBeDefined()
@@ -159,6 +169,7 @@ describe('NumberStepper', () => {
     const wrapper = mount(NumberStepper, {
       props: { id: 'g', label: 'Guests', description: 'Up to 10' },
     })
+
     expect(wrapper.get('label').attributes('for')).toBe('g')
     expect(wrapper.get(input).attributes('id')).toBe('g')
     expect(wrapper.get(input).attributes('aria-describedby')).toBe('g-description')
@@ -171,6 +182,7 @@ describe('NumberStepper', () => {
       props: { defaultValue: 1, increment: { variant: 'primary', size: 'sm' }, decrement: false },
       attachTo: document.body,
     })
+
     expect(wrapper.find(dec).exists()).toBe(false)
     const button = wrapper.get(inc)
     expect(button.attributes('data-slot')).toBe('number-stepper-increment-button')
@@ -198,10 +210,12 @@ describe('NumberStepper', () => {
         ),
       { attachTo: document.body },
     )
+
     const submit = () => {
       wrapper.get('form').element.dispatchEvent(new Event('submit', { cancelable: true }))
       return flushPromises()
     }
+
     await submit()
     expect(wrapper.get('[data-slot=field-error]').text()).toBe('At least 2 guests')
     expect(wrapper.get(input).attributes('aria-invalid')).toBe('true')
@@ -247,6 +261,7 @@ describe('NumberStepper', () => {
       { label: 'Guests' },
       { label: 'Guests', increment: { variant: 'primary' }, decrement: { variant: 'primary' } },
     ]
+
     for (const props of cases) {
       const wrapper = mount(NumberStepper, { props })
       expect(wrapper.get(input).attributes('tabindex')).not.toBe('-1')
@@ -261,6 +276,7 @@ describe('NumberStepper', () => {
       props: { label: 'Guests', defaultValue: 5, min: 1, max: 9 },
       attachTo: document.body,
     })
+
     await wrapper.get(input).trigger('keydown', { key: 'ArrowDown' })
     expect(wrapper.emitted('update:modelValue')?.at(-1)).toEqual([4])
     await wrapper.get(input).trigger('keydown', { key: 'End' })
@@ -273,20 +289,25 @@ describe('NumberStepper', () => {
       props: { label: 'Guests', defaultValue: 5 },
       attachTo: document.body,
     })
+
     await flushPromises()
     ;(wrapper.get(input).element as HTMLElement).focus()
+
     const down = new PointerEvent('pointerdown', {
       bubbles: true,
       cancelable: true,
       button: 0,
       pointerType: 'mouse',
     })
+
     wrapper.get(dec).element.dispatchEvent(down)
+
     wrapper
       .get(dec)
       .element.dispatchEvent(
         new PointerEvent('pointerup', { bubbles: true, button: 0, pointerType: 'mouse' }),
       )
+
     await nextTick()
     expect(down.defaultPrevented).toBe(true)
     expect(document.activeElement).toBe(wrapper.get(input).element)
@@ -298,12 +319,14 @@ describe('NumberStepper', () => {
     const wrapper = mount(NumberStepper, {
       props: { id: 'g', label: 'Guests', defaultValue: 3, min: 1, max: 9 },
     })
+
     expect(wrapper.get(input).attributes()).toMatchObject({
       role: 'spinbutton',
       'aria-valuenow': '3',
       'aria-valuemin': '1',
       'aria-valuemax': '9',
     })
+
     expect(wrapper.get(value).attributes('aria-hidden')).toBe('true')
     expect(wrapper.get(inc).attributes('aria-controls')).toBe('g')
     expect(wrapper.get(dec).attributes('aria-controls')).toBe('g')
@@ -327,6 +350,7 @@ describe('NumberStepper', () => {
         invalid: true,
       },
     })
+
     expect(wrapper.get(input).attributes('aria-invalid')).toBe('true')
     expect(wrapper.get(input).attributes('aria-describedby')).toBe('g-error')
     expect(wrapper.get('#g-error').text()).toBe('Too many')
@@ -340,6 +364,7 @@ describe('NumberStepper', () => {
       props: { label: 'Guests', defaultValue: 3, readonly: true },
       attachTo: document.body,
     })
+
     expect(wrapper.get(input).attributes('readonly')).toBeDefined()
     expect(wrapper.get(inc).attributes('disabled')).toBeDefined()
     await wrapper.get(input).trigger('keydown', { key: 'ArrowUp' })
@@ -362,8 +387,10 @@ describe('NumberStepper slot outlets', () => {
       </NumberStepper>`,
       }),
     )
+
     const custom = () =>
       ['minus', 'plus', 'value'].map((t) => wrapper.find(`[data-test=${t}]`).exists())
+
     expect(custom()).toEqual([true, true, true])
     expect(wrapper.get('[data-test=value]').text()).toBe('1|1')
     expect(wrapper.get(dec).find('svg').exists()).toBe(false)
@@ -389,10 +416,12 @@ describe('NumberStepper slot outlets', () => {
         if (this.$el instanceof Element && this.$el.matches(`${inc}, ${dec}`)) buttonUpdates++
       },
     }
+
     const wrapper = mount(NumberStepper, {
       props: { label: 'Guests', description: 'A', defaultValue: 1 },
       global: { mixins: [countButtonUpdates] },
     })
+
     // reka's form-control check is computed before the input mounts and catches up on the first update of any kind
     await wrapper.setProps({ description: 'B' })
     buttonUpdates = 0

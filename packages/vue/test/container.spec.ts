@@ -12,6 +12,7 @@ describe('Container', () => {
       slots: { default: () => [h('h2', 'Pricing'), h('p', 'Plans for every team.')] },
       attachTo: document.body,
     })
+
     expect(wrapper.element.tagName).toBe('DIV')
     expect(wrapper.element.hasAttribute('role')).toBe(false)
     await expectAccessible(wrapper)
@@ -25,6 +26,7 @@ describe('Container', () => {
       slots: { default: () => h('h2', { id: 'pricing' }, 'Pricing') },
       attachTo: document.body,
     })
+
     const section = document.querySelector('section')!
     expect(section.getAttribute('aria-labelledby')).toBe('pricing')
     expect(document.getElementById('pricing')!.textContent).toBe('Pricing')

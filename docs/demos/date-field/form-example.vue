@@ -44,6 +44,7 @@ const handleSubmit = (e: Event) => {
   if (!value.value || isInvalid.value) return
 
   isSubmitting.value = true
+
   // Simulate API call
   setTimeout(() => {
     console.log('Date submitted:', { date: value.value })

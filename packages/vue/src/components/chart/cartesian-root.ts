@@ -196,8 +196,10 @@ export const definedProps = <P extends object>(values: P): Partial<P> => {
 const kindDefaults = (kind: CartesianSeriesKind, sparkline: boolean): Partial<AnySeries> => {
   const thin =
     sparkline && kind !== 'bar' ? { strokeWidth: chartDefaults.sparkline.strokeWidth } : {}
+
   // Lines never stack, even in a `stacked` chart.
   const stack = kind === 'line' ? { stack: false } : {}
+
   return { ...(chartDefaults[kind] as Partial<AnySeries>), ...thin, ...stack }
 }
 
@@ -216,6 +218,7 @@ export const useCartesianRoot = <T extends object, S extends ChartSeriesBase>(
   const resolved = computed(() => {
     const sparkline = !!props.sparkline
     const rootDefaults = options.rootDefaults() as Partial<AnySeries>
+
     // Kind defaults go under root props and series config; a ComposedChart picks them per series `type`.
     const series =
       props.series === undefined
@@ -228,6 +231,7 @@ export const useCartesianRoot = <T extends object, S extends ChartSeriesBase>(
               key,
             }),
           )
+
     return resolveSeries<T, AnySeries>({
       data: props.data,
       index: props.index as string | undefined,
@@ -259,6 +263,7 @@ export const useCartesianRoot = <T extends object, S extends ChartSeriesBase>(
 
     const series = all.map((entry, position): CartesianAutoSeries => {
       const kind = kinds[position]!
+
       const common = definedProps({
         dataKey: entry.key,
         name: entry.name,
@@ -267,6 +272,7 @@ export const useCartesianRoot = <T extends object, S extends ChartSeriesBase>(
         yAxisId: entry.yAxis === 'right' && !vertical ? 'right' : undefined,
         class: entry.class,
       })
+
       if (kind === 'bar') {
         return {
           key: entry.key,
@@ -283,6 +289,7 @@ export const useCartesianRoot = <T extends object, S extends ChartSeriesBase>(
           },
         }
       }
+
       const curve = {
         ...common,
         ...definedProps({
@@ -295,12 +302,15 @@ export const useCartesianRoot = <T extends object, S extends ChartSeriesBase>(
           connectNulls: entry.connectNulls,
         }),
       }
+
       if (kind === 'line') return { key: entry.key, kind, props: curve }
+
       // `ChartArea` draws the `'gradient'` fill itself. A custom fill (e.g. `url(#id)`) carries its own opacity, so the
       // default `[top, bottom]` pair doesn't dim it; only a number does.
       const custom = entry.fill !== undefined && !['gradient', 'solid', 'none'].includes(entry.fill)
       const fill = entry.fill === 'solid' ? entry.color : entry.fill
       const fillOpacity = custom && typeof entry.fillOpacity !== 'number' ? 1 : entry.fillOpacity
+
       return {
         key: entry.key,
         kind,
@@ -311,10 +321,12 @@ export const useCartesianRoot = <T extends object, S extends ChartSeriesBase>(
     const valueTicks = props.valueFormatter
       ? (value: number | string) => props.valueFormatter!(Number(value), '')
       : undefined
+
     const categoryAxis = definedProps({
       dataKey: props.index as string | undefined,
       tickFormatter: props.indexFormatter,
     })
+
     const valueAxis = definedProps({ tickFormatter: valueTicks })
     const xAxis = resolveChartPart<Partial<ChartXAxisProps>>(
       props.xAxis,
@@ -323,6 +335,7 @@ export const useCartesianRoot = <T extends object, S extends ChartSeriesBase>(
         : { ...chartDefaults.xAxis, ...categoryAxis },
       enabled,
     )
+
     const yAxis = resolveChartPart<Partial<ChartYAxisProps>>(
       props.yAxis,
       vertical
@@ -330,6 +343,7 @@ export const useCartesianRoot = <T extends object, S extends ChartSeriesBase>(
         : { ...chartDefaults.yAxis, width: 'auto', ...valueAxis },
       enabled,
     )
+
     const usesRight = series.some((entry) => entry.props.yAxisId === 'right')
     const yAxisRight = vertical
       ? null

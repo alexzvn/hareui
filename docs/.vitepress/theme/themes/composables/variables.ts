@@ -35,24 +35,28 @@ const float = (defaultValue: number): Parser<number> => ({
   },
   serialize: String,
 })
+
 const string = (defaultValue: string): Parser<string> => ({
   defaultValue,
   eq: (a, b) => a === b,
   parse: (raw) => raw,
   serialize: String,
 })
+
 const literal = <T extends string>(values: readonly T[], defaultValue: T): Parser<T> => ({
   defaultValue,
   eq: (a, b) => a === b,
   parse: (raw) => (values.includes(raw as T) ? (raw as T) : null),
   serialize: String,
 })
+
 const literalArray = <T extends string>(values: readonly T[]): Parser<T[]> => ({
   defaultValue: [],
   eq: (a, b) => a.length === b.length && a.every((v, i) => v === b[i]),
   parse: (raw) => (raw === '' ? [] : raw.split(',').filter((v): v is T => values.includes(v as T))),
   serialize: (value) => value.join(','),
 })
+
 const boolean = (defaultValue: boolean): Parser<boolean> => ({
   defaultValue,
   eq: (a, b) => a === b,
@@ -72,6 +76,7 @@ const parsers: { [K in keyof ThemeBuilderState]: Parser<ThemeBuilderState[K]> } 
   radius: literal<RadiusId>(radiusIds, defaultThemeVariables.radius),
   vibrantPalette: boolean(false),
 }
+
 const keys = Object.keys(parsers) as (keyof ThemeBuilderState)[]
 
 /** The current query string without `?`. Updated by `setVariables` and by browser navigation. */
@@ -89,6 +94,7 @@ const parse = (query: string): ThemeBuilderState => {
     const raw = params.get(key)
     state[key] = (raw === null ? null : parsers[key].parse(raw)) ?? parsers[key].defaultValue
   }
+
   return state as unknown as ThemeBuilderState
 }
 
@@ -126,9 +132,11 @@ const setVariables = (update: Partial<ThemeBuilderState>) => {
       params.delete(key)
     else params.set(key, parser.serialize(value))
   }
+
   const query = renderQuery(params)
   if (query === search.value) return
   search.value = query
+
   window.history.pushState(
     window.history.state,
     '',
@@ -145,6 +153,7 @@ export const useVariableSetter = () => {
     variable: K,
     value: ThemeBuilderState[K],
   ) => setVariables({ ...state.value, [variable]: value })
+
   return { setVariable, variables: state }
 }
 
@@ -159,6 +168,7 @@ export const useToggleLockedVariable = (key: LockableThemeVariableKey) => {
         : [...lockedVariables, key],
     })
   }
+
   return { isLocked, toggleLockedVariable }
 }
 

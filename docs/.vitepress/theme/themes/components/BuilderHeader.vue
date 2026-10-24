@@ -106,6 +106,7 @@ const { isCodeVisible, toggleCode } = useCodePanel()
 
 const handleShare = () => {
   navigator.clipboard.writeText(window.location.href)
+
   toast('Link copied', {
     description: 'Your theme link is copied to the clipboard.',
     indicator: h(Icon, { icon: 'gravity-ui:link' }),

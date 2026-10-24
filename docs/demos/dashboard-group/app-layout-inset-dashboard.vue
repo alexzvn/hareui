@@ -230,7 +230,9 @@ const sparkline = (values: number[]) => {
   const points = values.map(
     (v, i) => `${(i * step).toFixed(1)},${(36 - ((v - min) / (max - min || 1)) * 28).toFixed(1)}`,
   )
+
   const line = `M${points.join(' L')}`
+
   return { line, area: `${line} L100,48 L0,48 Z` }
 }
 

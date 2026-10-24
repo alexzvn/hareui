@@ -17,17 +17,21 @@ type AxeNode = {
     expectedContrastRatio?: string
   }
 }
+
 type AxeViolation = {
   id: string
   impact: string | null
   help: string
   nodes: AxeNode[]
 }
+
 type State = 'idle' | 'open'
+
 type Audit = {
   violations: AxeViolation[]
   accepted: AxeViolation[]
 }
+
 type Result = {
   demo: string
   component: string
@@ -35,6 +39,7 @@ type Result = {
   trigger?: string
   error?: string
 } & Audit
+
 type Accepted = {
   rule: string
   selector: string
@@ -72,6 +77,7 @@ const INTERNATIONAL_CALENDARS = [
   'date-range-picker',
   'range-calendar',
 ].map((c) => `${c}/international-calendar`)
+
 const SCROLL_BODIES = [
   'modal-body',
   'drawer-body',
@@ -138,6 +144,7 @@ const ACCEPTED: Accepted[] = [
 ]
 
 const DEMOS = fileURLToPath(new URL('../demos/', import.meta.url))
+
 const AXE_SOURCE = readFileSync(
   join(
     dirname(
@@ -149,6 +156,7 @@ const AXE_SOURCE = readFileSync(
   ),
   'utf8',
 )
+
 const AXE_OPTIONS = {
   runOnly: {
     type: 'tag',
@@ -162,6 +170,7 @@ const AXE_OPTIONS = {
   resultTypes: ['violations'],
   elementRef: true,
 }
+
 const TRIGGER = '[aria-haspopup]:not([aria-expanded="true"]), [aria-expanded="false"]'
 
 const args = process.argv.slice(2)
@@ -196,6 +205,7 @@ const audit = async (page: Page, demo: string): Promise<Audit> => {
           },
           accepted: accepted.find((a) => a.rule === v.id && n.element?.matches(a.selector))?.reason,
         }))
+
         for (const [list, keep] of [
           [out.violations, false],
           [out.accepted, true],
@@ -203,10 +213,12 @@ const audit = async (page: Page, demo: string): Promise<Audit> => {
           const kept = nodes
             .filter((n) => !!n.accepted === keep)
             .map((n) => (keep ? { ...n.node, reason: n.accepted } : n.node))
+
           if (kept.length)
             list.push({ id: v.id, impact: v.impact ?? null, help: v.help, nodes: kept })
         }
       }
+
       return out
     },
     AXE_OPTIONS,
@@ -216,10 +228,12 @@ const audit = async (page: Page, demo: string): Promise<Audit> => {
 
 const load = async (page: Page, demo: string) => {
   await page.goto(`${base}/preview/${demo}`, { waitUntil: 'load', timeout: 60000 })
+
   await page.waitForFunction(
     () => {
       const app = document.querySelector('#app')
       const shown = app?.querySelector('.min-h-dvh')?.firstElementChild
+
       return (
         !!app &&
         '__vue_app__' in app &&
@@ -231,6 +245,7 @@ const load = async (page: Page, demo: string) => {
     },
     { timeout: 15000 },
   )
+
   if (await page.$('#app .min-h-dvh > p.text-danger')) throw new Error('demo not found')
   await page.waitForNetworkIdle({ idleTime: 100, timeout: 5000 }).catch(() => {})
   await page.evaluate(() => document.fonts.ready)
@@ -252,20 +267,26 @@ const open = async (page: Page): Promise<string | undefined> => {
       }) ?? null
     )
   }, TRIGGER)
+
   const el = handle.asElement()
   if (!el) return undefined
+
   const label = await el.evaluate(
     (e) =>
       `<${e.tagName.toLowerCase()}${e.getAttribute('data-slot') ? ` data-slot="${e.getAttribute('data-slot')}"` : ''} aria-haspopup="${e.getAttribute('aria-haspopup') ?? ''}"> ${(e.getAttribute('aria-label') ?? e.textContent ?? '').trim().slice(0, 40)}`,
   )
+
   await el.click()
   await Bun.sleep(400)
+
   await page.evaluate(() => {
     for (const a of document.getAnimations()) {
       if (a.effect?.getComputedTiming().iterations !== Infinity) a.finish()
     }
   })
+
   await nextFrames(page)
+
   return label
 }
 
@@ -283,6 +304,7 @@ const newTab = async (): Promise<Tab> => {
   const tab = { page, loads: 0 }
   page.on('domcontentloaded', () => tab.loads++)
   page.on('dialog', (dialog) => void dialog.dismiss().catch(() => {}))
+
   return tab
 }
 
@@ -294,6 +316,7 @@ const auditDemo = async (tab: Tab, demo: string): Promise<Result[] | undefined> 
   const trigger = await open(tab.page)
   if (trigger)
     results.push({ demo, component, state: 'open', trigger, ...(await audit(tab.page, demo)) })
+
   return tab.loads === loaded ? results : undefined
 }
 
@@ -314,6 +337,7 @@ const run = async (tab: Tab, demo: string): Promise<{ tab: Tab; results: Result[
       },
     ],
   })
+
   for (let attempt = 1; attempt <= 3; attempt++) {
     let timer: Timer | undefined
     try {
@@ -327,6 +351,7 @@ const run = async (tab: Tab, demo: string): Promise<{ tab: Tab; results: Result[
             )),
         ),
       ])
+
       if (results) return { tab, results }
       if (attempt === 3) return failed('page kept reloading during the audit')
     } catch (e) {
@@ -334,11 +359,13 @@ const run = async (tab: Tab, demo: string): Promise<{ tab: Tab; results: Result[
         await tab.page.close().catch(() => {})
         tab = await newTab()
       }
+
       if (attempt === 3) return failed(String((e as Error).message ?? e))
     } finally {
       clearTimeout(timer)
     }
   }
+
   return failed('unreachable')
 }
 
@@ -353,11 +380,13 @@ const short = (html: string) => (html.length > 160 ? `${html.slice(0, 157)}...` 
 const report = (results: Result[]): number => {
   const failing = (r: Result) => r.violations.filter((v) => v.id !== 'color-contrast')
   console.log('\nPer demo:')
+
   for (const r of results) {
     const v = failing(r)
     if (r.error) console.log(`  ✗ ${r.demo} [${r.state}] error: ${r.error}`)
     if (!v.length) continue
     console.log(`  ✗ ${r.demo} [${r.state}]${r.trigger ? ` after ${r.trigger}` : ''}`)
+
     for (const x of v) {
       for (const n of x.nodes) console.log(`      ${x.id}: ${short(n.html)}`)
     }
@@ -372,8 +401,10 @@ const report = (results: Result[]): number => {
       byRule.set(v.id, entry)
     }
   }
+
   if (byRule.size) {
     console.log('\nViolations by rule (rule → nodes → components):')
+
     for (const [id, e] of [...byRule].sort((a, b) => b[1].nodes - a[1].nodes))
       console.log(`  ${id} → ${e.nodes} → ${[...e.components].sort().join(', ')}\n    ${e.help}`)
   }
@@ -383,8 +414,10 @@ const report = (results: Result[]): number => {
       .filter((v) => v.id === 'color-contrast')
       .flatMap((v) => v.nodes.map((n) => ({ r, n }))),
   )
+
   if (contrast.length) {
     console.log(`\nColour contrast (report only, ${contrast.length} nodes):`)
+
     for (const { r, n } of contrast) {
       const d = n.data ?? {}
       console.log(
@@ -396,8 +429,10 @@ const report = (results: Result[]): number => {
   const accepted = results.flatMap((r) =>
     r.accepted.flatMap((v) => v.nodes.map((n) => ({ r, v, n }))),
   )
+
   if (accepted.length) {
     console.log(`\nAccepted (not counted, ${accepted.length} nodes):`)
+
     for (const { r, v, n } of accepted)
       console.log(`  ${r.demo} [${r.state}] ${v.id}: ${n.reason}\n    ${short(n.html)}`)
   }
@@ -409,6 +444,7 @@ const report = (results: Result[]): number => {
   console.log(
     `\n${demos} demos, ${audited.length} states audited, ${failed} states with violations, ${errors} errors, ${contrast.length} contrast nodes, ${accepted.length} accepted nodes`,
   )
+
   return failed + errors
 }
 
@@ -419,8 +455,10 @@ const main = async () => {
     console.error(
       `no docs server at ${base}: build the docs (\`bun run docs:build\`) and serve them (\`bunx vitepress preview --port 5299 --strictPort\` in docs/), or run \`bun run docs:dev -- --port 5299 --strictPort\``,
     )
+
     process.exit(1)
   }
+
   const only = flag('demo')
   const component = flag('component')
   const demos = readdirSync(DEMOS, { recursive: true, encoding: 'utf8' })
@@ -428,6 +466,7 @@ const main = async () => {
     .map((file) => file.slice(0, -'.vue'.length).replaceAll('\\', '/'))
     .filter((name) => (!only || name === only) && (!component || name.split('/')[0] === component))
     .sort()
+
   if (!demos.length) {
     console.error('no matching demos')
     process.exit(1)
@@ -450,6 +489,7 @@ const main = async () => {
           const outcome = await run(tab, demo)
           tab = outcome.tab
           results.push(...outcome.results)
+
           const status = outcome.results
             .map((r) =>
               r.error
@@ -462,18 +502,23 @@ const main = async () => {
                   }`,
             )
             .join(' | ')
+
           console.log(
             `[${++done}/${demos.length}] ${demo} ${((performance.now() - t) / 1000).toFixed(1)}s ${status}`,
           )
+
           if (done === FAIL_FAST && results.every((r) => r.error))
             throw new Error(
               `the first ${FAIL_FAST} demos all failed (${results[0]!.error}): is ${base} serving the current docs build? Restart \`vitepress preview\` after every \`docs:build\`.`,
             )
+
           if (json && done % 50 === 0) writeFileSync(json, JSON.stringify(results, null, 2))
         }
+
         await tab.page.close()
       }),
     )
+
     results.sort((a, b) => a.demo.localeCompare(b.demo) || a.state.localeCompare(b.state))
     failures = report(results)
     console.log(`total ${((performance.now() - started) / 1000).toFixed(1)}s`)
@@ -484,6 +529,7 @@ const main = async () => {
   } finally {
     await browser?.close()
   }
+
   process.exit(failures ? 1 : 0)
 }
 

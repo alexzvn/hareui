@@ -24,6 +24,7 @@ describe('Tabs', () => {
       props: { items, defaultValue: 'overview' },
       attachTo: document.body,
     })
+
     expect(wrapper.find('[data-slot=tabs-panel]').text()).toBe('Overview content')
 
     const tabs = wrapper.findAll('[data-slot=tabs-tab]')
@@ -42,6 +43,7 @@ describe('Tabs', () => {
         custom: 'custom slot content',
       },
     })
+
     expect(wrapper.find('[data-slot=tabs-panel]').text()).toBe('custom slot content')
   })
 
@@ -50,6 +52,7 @@ describe('Tabs', () => {
       props: { items: [{ label: 'A', value: 'a' }], defaultValue: 'a' },
       slots: { content: 'fallback content' },
     })
+
     expect(wrapper.find('[data-slot=tabs-panel]').text()).toBe('fallback content')
   })
 
@@ -70,6 +73,7 @@ describe('Tabs', () => {
       props: { items, defaultValue: 'overview' },
       attachTo: document.body,
     })
+
     await flushPromises()
     const getTabs = () => wrapper.findAll('[data-slot=tabs-tab]')
     ;(getTabs()[0]!.element as HTMLElement).focus()
@@ -105,6 +109,7 @@ describe('Tabs', () => {
       slots: { content: '<button type="button">Inner action</button>' },
       attachTo: document.body,
     })
+
     const panel = wrapper.find('[data-slot=tabs-panel]')
     expect(panel.find('button').exists()).toBe(true)
     expect(panel.attributes('tabindex')).not.toBe('0')
@@ -123,6 +128,7 @@ describe('Tabs', () => {
       },
       attachTo: document.body,
     })
+
     await wrapper.vm.$nextTick()
 
     const tabs = wrapper.findAll('[data-slot=tabs-tab]')
@@ -143,6 +149,7 @@ describe('Tabs', () => {
       },
       attachTo: document.body,
     })
+
     await flushPromises()
 
     const tabs = wrapper.findAll('[data-slot=tabs-tab]')
@@ -162,17 +169,21 @@ describe('Tabs keyboard and focus parity', () => {
       props: { items, defaultValue: 'analytics' },
       attachTo: document.body,
     })
+
     await flushPromises()
     const tab = wrapper.findAll('[data-slot=tabs-tab]')[1]!
     ;(tab.element as HTMLElement).focus()
+
     for (const key of ['PageUp', 'PageDown']) {
       tab.element.dispatchEvent(
         new KeyboardEvent('keydown', { key, bubbles: true, cancelable: true }),
       )
+
       await flushPromises()
       expect(document.activeElement).toBe(tab.element)
       expect(wrapper.find('[data-slot=tabs-panel]').text()).toBe('Analytics content')
     }
+
     wrapper.unmount()
   })
 
@@ -182,13 +193,16 @@ describe('Tabs keyboard and focus parity', () => {
       props: { items, defaultValue: 'reports' },
       attachTo: document.body,
     })
+
     await flushPromises()
     expect(wrapper.get('[role=tablist]').attributes('tabindex')).toBeUndefined()
+
     expect(wrapper.findAll('[data-slot=tabs-tab]').map((t) => t.attributes('tabindex'))).toEqual([
       '-1',
       '-1',
       '0',
     ])
+
     wrapper.unmount()
   })
 
@@ -198,13 +212,16 @@ describe('Tabs keyboard and focus parity', () => {
       props: { items, defaultValue: 'overview' },
       attachTo: document.body,
     })
+
     await flushPromises()
+
     const order = () =>
       [...wrapper.get('[data-slot=tabs-list]').element.children]
         .map((el) =>
           el.getAttribute('data-slot') === 'tabs-indicator' ? '|' : el.textContent!.trim(),
         )
         .join(' ')
+
     expect(order()).toBe('Overview | Analytics Reports')
     await wrapper.findAll('[data-slot=tabs-tab]')[1]!.trigger('mousedown')
     await flushPromises()
@@ -219,6 +236,7 @@ describe('Tabs keyboard and focus parity', () => {
       props: { items, defaultValue: 'overview' },
       attachTo: document.body,
     })
+
     await flushPromises()
     expect(wrapper.get('[data-slot=tabs-panel]').attributes('tabindex')).toBe('0')
     wrapper.unmount()
@@ -235,12 +253,15 @@ describe('Tabs accessibility', () => {
     { label: 'Analytics', value: 'analytics', content: 'Analytics content', disabled: true },
     { label: 'Reports', value: 'reports', content: 'Reports content' },
   ]
+
   const press = async (key: string) => {
     document.activeElement!.dispatchEvent(
       new KeyboardEvent('keydown', { key, bubbles: true, cancelable: true }),
     )
+
     await flushPromises()
   }
+
   const focused = () => document.activeElement?.textContent?.trim()
 
   it('passes axe with the default, vertical, separator, disabled-tab, tabbable-panel and panel-less setups', async () => {
@@ -251,17 +272,20 @@ describe('Tabs accessibility', () => {
       { items: withDisabled },
       { items, content: false },
     ]
+
     for (const props of cases) {
       const wrapper = mount(Tabs, { props, attachTo: document.body })
       await flushPromises()
       await expectAccessible(wrapper)
       wrapper.unmount()
     }
+
     const tabbable = mount(Tabs, {
       props: { items },
       slots: { content: '<button type="button">Inner action</button>' },
       attachTo: document.body,
     })
+
     await flushPromises()
     await expectAccessible(tabbable)
     tabbable.unmount()
@@ -272,6 +296,7 @@ describe('Tabs accessibility', () => {
       props: { items, defaultValue: 'analytics' },
       attachTo: document.body,
     })
+
     await flushPromises()
     const list = wrapper.get('[role=tablist]')
     expect(list.attributes('aria-orientation')).toBe('horizontal')
@@ -279,26 +304,32 @@ describe('Tabs accessibility', () => {
     expect(tabs.map((t) => t.attributes('aria-selected'))).toEqual(['false', 'true', 'false'])
     const panel = wrapper.get('[role=tabpanel]')
     expect(tabs[1]!.attributes('aria-controls')).toBe(panel.attributes('id'))
+
     expect(tabs.filter((_, i) => i !== 1).map((t) => t.attributes('aria-controls'))).toEqual([
       undefined,
       undefined,
     ])
+
     expect(document.getElementById(panel.attributes('aria-labelledby')!)).toBe(tabs[1]!.element)
 
     await tabs[2]!.trigger('mousedown', { button: 0 })
     await flushPromises()
     const next = wrapper.get('[role=tabpanel]')
+
     expect(wrapper.findAll('[role=tab]').map((t) => t.attributes('aria-selected'))).toEqual([
       'false',
       'false',
       'true',
     ])
+
     expect(wrapper.findAll('[role=tab]')[2]!.attributes('aria-controls')).toBe(
       next.attributes('id'),
     )
+
     expect(document.getElementById(next.attributes('aria-labelledby')!)).toBe(
       wrapper.findAll('[role=tab]')[2]!.element,
     )
+
     wrapper.unmount()
   })
 
@@ -307,6 +338,7 @@ describe('Tabs accessibility', () => {
       props: { items, orientation: 'vertical' },
       attachTo: document.body,
     })
+
     await flushPromises()
     expect(wrapper.get('[role=tablist]').attributes('aria-orientation')).toBe('vertical')
     wrapper.unmount()
@@ -317,6 +349,7 @@ describe('Tabs accessibility', () => {
       props: { items, defaultValue: 'overview' },
       attachTo: document.body,
     })
+
     await flushPromises()
     ;(wrapper.findAll('[role=tab]')[0]!.element as HTMLElement).focus()
 
@@ -330,12 +363,14 @@ describe('Tabs accessibility', () => {
     await press('Home')
     expect(focused()).toBe('Overview')
     expect(wrapper.get('[role=tabpanel]').text()).toBe('Overview content')
+
     expect(wrapper.emitted('update:modelValue')!.map(([v]) => v)).toEqual([
       'reports',
       'overview',
       'reports',
       'overview',
     ])
+
     wrapper.unmount()
   })
 
@@ -344,6 +379,7 @@ describe('Tabs accessibility', () => {
       props: { items, defaultValue: 'analytics' },
       attachTo: document.body,
     })
+
     await flushPromises()
     ;(wrapper.findAll('[role=tab]')[1]!.element as HTMLElement).focus()
     await press('ArrowDown')
@@ -358,6 +394,7 @@ describe('Tabs accessibility', () => {
       props: { items, defaultValue: 'overview', orientation: 'vertical' },
       attachTo: document.body,
     })
+
     await flushPromises()
     ;(wrapper.findAll('[role=tab]')[0]!.element as HTMLElement).focus()
     await press('ArrowDown')
@@ -380,6 +417,7 @@ describe('Tabs accessibility', () => {
         ),
       { attachTo: document.body },
     )
+
     await flushPromises()
     ;(wrapper.findAll('[role=tab]')[0]!.element as HTMLElement).focus()
     await press('ArrowLeft')
@@ -394,6 +432,7 @@ describe('Tabs accessibility', () => {
       props: { items: withDisabled, defaultValue: 'overview' },
       attachTo: document.body,
     })
+
     await flushPromises()
     const tabs = wrapper.findAll('[role=tab]')
     expect((tabs[1]!.element as HTMLButtonElement).disabled).toBe(true)
@@ -411,14 +450,17 @@ describe('Tabs accessibility', () => {
       props: { items, defaultValue: 'overview' },
       attachTo: document.body,
     })
+
     await flushPromises()
     ;(wrapper.findAll('[role=tab]')[2]!.element as HTMLElement).focus()
     await flushPromises()
+
     for (const key of ['Enter', ' ']) {
       await press(key)
       expect(focused()).toBe('Reports')
       expect(wrapper.get('[role=tabpanel]').text()).toBe('Reports content')
     }
+
     wrapper.unmount()
   })
 
@@ -430,6 +472,7 @@ describe('Tabs accessibility', () => {
       ['Scroll tabs left', '-1'],
       ['Scroll tabs right', '-1'],
     ])
+
     wrapper.unmount()
   })
 })

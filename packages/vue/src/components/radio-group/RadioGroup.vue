@@ -192,7 +192,9 @@ const props = withDefaults(defineProps<RadioGroupProps<T>>(), {
   orientation: 'vertical',
   invalid: undefined,
 })
+
 defineSlots<RadioGroupSlots<T>>()
+
 /** The value of the selected item. Bind with `v-model`. */
 const modelValue = defineModel<string>()
 const slots = useSlots()
@@ -221,6 +223,7 @@ const { validation, commitValidation } = useFieldValidation({
     modelValue.value = props.defaultValue
   },
 })
+
 const invalid = computed(() => validation.value.isInvalid)
 
 const { id, labelId, hasLabel, describedBy, FieldLabel, FieldDescription, FieldError } =

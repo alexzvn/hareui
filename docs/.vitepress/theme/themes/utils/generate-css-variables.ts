@@ -112,6 +112,7 @@ export const generateMinimalCssVariables = (
     const lightFg = lightAccent
       ? calculateAccentForeground(lightAccent.l, lightAccent.c, lightAccent.h)
       : calculateAccentForeground(0, 0, 0)
+
     const darkFg = darkAccent
       ? calculateAccentForeground(darkAccent.l, darkAccent.c, darkAccent.h)
       : calculateAccentForeground(1, 0, 0)

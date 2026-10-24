@@ -269,6 +269,7 @@ export type RichTableCell<T extends RichTableData, D = unknown> = Cell<T, D>
 export type RichTableColumnInstance<T extends RichTableData, D = unknown> = Column<T, D>
 export type RichTableHeaderContext<T extends RichTableData, D = unknown> = HeaderContext<T, D>
 export type RichTableCellContext<T extends RichTableData, D = unknown> = CellContext<T, D>
+
 /** The TanStack Table instance, exposed as `tableApi`. */
 export type RichTableApi<T extends RichTableData> = Table<T>
 
@@ -539,33 +540,46 @@ const props = withDefaults(defineProps<RichTableProps<T>>(), {
   debugRows: undefined,
   debugTable: undefined,
 })
+
 const slots = defineSlots<RichTableSlots<T>>()
 
 /** Controlled global filter. Use `v-model:global-filter`. */
 const globalFilterState = defineModel<string>('globalFilter')
+
 /** Controlled column filters. Use `v-model:column-filters`. */
 const columnFiltersState = defineModel<ColumnFiltersState>('columnFilters')
+
 /** Controlled column order. Use `v-model:column-order`. */
 const columnOrderState = defineModel<ColumnOrderState>('columnOrder')
+
 /** Controlled column visibility. Use `v-model:column-visibility`. */
 const columnVisibilityState = defineModel<VisibilityState>('columnVisibility')
+
 /** Controlled column pinning (`{ left, right }`). Use `v-model:column-pinning`. */
 const columnPinningState = defineModel<ColumnPinningState>('columnPinning')
+
 /** Controlled column sizes. Use `v-model:column-sizing`. */
 const columnSizingState = defineModel<ColumnSizingState>('columnSizing')
+
 /** Controlled column resizing info. Use `v-model:column-sizing-info`. */
 const columnSizingInfoState = defineModel<ColumnSizingInfoState>('columnSizingInfo')
+
 /** Controlled row selection. Use `v-model:row-selection`. */
 const rowSelectionState = defineModel<RowSelectionState>('rowSelection')
+
 /** Controlled row pinning. Use `v-model:row-pinning`. */
 const rowPinningState = defineModel<RowPinningState>('rowPinning')
+
 /** Controlled sorting. Use `v-model:sorting`. */
 const sortingState = defineModel<SortingState>('sorting')
+
 /** Controlled grouping. Use `v-model:grouping`. */
 const groupingState = defineModel<GroupingState>('grouping')
+
 /** Controlled expanded rows. Use `v-model:expanded`. */
 // `ExpandedState` may be `true`, so Vue would cast an absent model to `false` (collapsing everything and pinning the state): keep it unset.
 const expandedState = defineModel<ExpandedState | undefined>('expanded', { default: undefined })
+
 /** Controlled pagination. Use `v-model:pagination`. */
 const paginationState = defineModel<PaginationState>('pagination')
 
@@ -604,6 +618,7 @@ const defaultCell = ({ getValue }: CellContext<T, unknown>) => {
   if (value === '' || value === null || value === undefined) {
     return '\u00A0'
   }
+
   return String(value)
 }
 
@@ -643,10 +658,12 @@ const hasFooter = computed(() => {
       if ('footer' in column) {
         return true
       }
+
       if ('columns' in column && column.columns && hasFooterRecursive(column.columns)) {
         return true
       }
     }
+
     return false
   }
 
@@ -784,6 +801,7 @@ const bottomRows = computed(() => (props.virtualize ? [] : tableApi.getBottomRow
 const centerRows = computed(() =>
   topRows.value.length || bottomRows.value.length ? tableApi.getCenterRows() : rows.value,
 )
+
 const columnCount = computed(() => tableApi.getVisibleLeafColumns().length)
 
 /* ---------------- Virtualization ---------------- */
@@ -802,6 +820,7 @@ const indexAttribute = computed(() => virtualizerProps.value.indexAttribute ?? '
 const getScrollElement = () =>
   (isExternalScroll.value ? virtualizerProps.value.getScrollElement?.() : rootRef.value?.$el) ??
   null
+
 // Offset applied to the spacer rows: `scrollMargin` is the table's offset within the scroll element (0 unless set).
 const scrollMargin = computed(() => virtualizerProps.value.scrollMargin ?? 0)
 
@@ -810,6 +829,7 @@ const scrollMargin = computed(() => virtualizerProps.value.scrollMargin ?? 0)
 const getItemKey = computed(() => {
   const rows = centerRows.value
   const getKey = virtualizerProps.value.getItemKey
+
   return getKey ? (index: number) => getKey(index) : (index: number) => rows[index]?.id ?? index
 })
 
@@ -822,7 +842,9 @@ const measureRowElement = (
   const height = measure
     ? measure(el, entry, instance)
     : (entry?.borderBoxSize?.[0]?.blockSize ?? (el as HTMLElement).offsetHeight)
+
   const expanded = el.nextElementSibling
+
   return Math.round(
     height +
       (expanded && expandedRows.get(expanded) === el ? (expanded as HTMLElement).offsetHeight : 0),
@@ -859,6 +881,7 @@ const virtualPaddingBottom = computed(() => {
   if (!virtualizer || !virtualItems.value.length) {
     return 0
   }
+
   return (
     virtualizer.value.getTotalSize() -
     (virtualItems.value[virtualItems.value.length - 1]?.end ?? 0) +
@@ -881,6 +904,7 @@ const measureRow = (el: Element | ComponentPublicInstance | null) => {
     if (registeredRows.get(el) === key && virtualizerInstance.elementsCache.get(key) === el) {
       return
     }
+
     registeredRows.set(el, key)
     virtualizerInstance.measureElement(el)
   }
@@ -896,6 +920,7 @@ const remeasureRow = (el: Element | null | undefined) => {
   if (!el?.isConnected || !virtualizer) {
     return
   }
+
   const instance = virtualizer.value
   instance.resizeItem(
     instance.indexFromElement(el),
@@ -907,15 +932,19 @@ const onExpandedRowMounted = ({ el }: { el: unknown }) => {
   if (!virtualizer || !(el instanceof Element) || !el.previousElementSibling) {
     return
   }
+
   expandedRows.set(el, el.previousElementSibling)
   remeasureRow(el.previousElementSibling)
+
   if (typeof ResizeObserver === 'undefined') {
     return
   }
+
   // Keep the row's size in sync when the expanded content resizes (e.g. async content).
   expandedRowsObserver ??= new ResizeObserver((entries) =>
     entries.forEach((entry) => remeasureRow(expandedRows.get(entry.target))),
   )
+
   expandedRowsObserver.observe(el)
 }
 
@@ -923,9 +952,11 @@ const onExpandedRowUnmounted = ({ el }: { el: unknown }) => {
   if (!(el instanceof Element)) {
     return
   }
+
   const row = expandedRows.get(el)
   expandedRows.delete(el)
   expandedRowsObserver?.unobserve(el)
+
   // Collapsed while its row stays rendered: shrink it back to the row's own height.
   remeasureRow(row)
 }
@@ -944,12 +975,14 @@ const bodyEntries = computed<BodyEntry[]>(() => {
     if (virtualPaddingTop.value > 0) {
       entries.push({ kind: 'spacer', key: 'spacer-top', height: virtualPaddingTop.value })
     }
+
     for (const virtualRow of virtualItems.value) {
       const row = centerRows.value[virtualRow.index]
       if (row) {
         entries.push({ kind: 'row', key: row.id, row, index: virtualRow.index })
       }
     }
+
     if (virtualPaddingBottom.value > 0) {
       entries.push({ kind: 'spacer', key: 'spacer-bottom', height: virtualPaddingBottom.value })
     }
@@ -977,28 +1010,36 @@ const updateDetached = () => {
   if (!scrollElement) {
     return
   }
+
   const { scrollLeft, scrollWidth, clientWidth } = scrollElement
   const range = scrollWidth - clientWidth
+
   // RTL scrolls from 0 (start, right edge) to -range (left edge).
   const fromLeft =
     getComputedStyle(scrollElement).direction === 'rtl' ? scrollLeft + range : scrollLeft
+
   leftDetached.value = fromLeft > 0.5
   rightDetached.value = fromLeft < range - 0.5
 }
 
 onMounted(() => {
   scrollElement = rootRef.value?.$el as HTMLElement | undefined
+
   if (!scrollElement || isExternalScroll.value) {
     return
   }
+
   scrollElement.addEventListener('scroll', updateDetached, { passive: true })
+
   if (typeof ResizeObserver !== 'undefined') {
     resizeObserver = new ResizeObserver(updateDetached)
     resizeObserver.observe(scrollElement)
+
     if (tableRef.value) {
       resizeObserver.observe(tableRef.value)
     }
   }
+
   updateDetached()
 })
 
@@ -1018,7 +1059,9 @@ const getColumnEdge = (column: Column<T, unknown>): 'left' | 'right' | undefined
   if (!pinned || !(pinned === 'left' ? leftDetached.value : rightDetached.value)) {
     return undefined
   }
+
   const edgeId = pinnedEdgeIds.value[pinned]
+
   return column.getLeafColumns().some((leaf) => leaf.id === edgeId) ? pinned : undefined
 }
 
@@ -1040,6 +1083,7 @@ const getColumnStyles = (
   } else if (pinned === 'right') {
     styles['--rich-table-pin'] = `${column.getAfter('right')}px`
   }
+
   return styles
 }
 
@@ -1059,6 +1103,7 @@ const columnLayouts = computed(() => {
       styles: Record<string, string>
     }
   >()
+
   for (const column of tableApi.getAllLeafColumns()) {
     layouts.set(column.id, {
       pinned: column.getIsPinned() || undefined,
@@ -1066,6 +1111,7 @@ const columnLayouts = computed(() => {
       styles: getColumnStyles(column),
     })
   }
+
   return layouts
 })
 
@@ -1081,6 +1127,7 @@ const onRowSelect = (e: Event, row: Row<T>) => {
   if (!props.onSelect) {
     return
   }
+
   const target = e.target as HTMLElement
   const isInteractive = target.closest('a, button, input, label, select, textarea')
   if (isInteractive) {
@@ -1150,6 +1197,7 @@ const getAriaSort = (header: Header<T, unknown>): AriaAttributes['aria-sort'] =>
       .filter(isSortable)
       .map((column) => column.id),
   )
+
   const primary = tableApi.getState().sorting.find(({ id }) => sortableIds.has(id))
 
   if (primary?.id !== header.column.id) {

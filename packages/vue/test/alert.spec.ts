@@ -21,6 +21,7 @@ describe('Alert', () => {
     const wrapper = mount(Alert, { props: { title: 'T', description: 'D' } })
     expect(order(wrapper.element)).toEqual(['alert-indicator', 'alert-content'])
     expect(wrapper.find('[data-slot=alert-content] p[data-slot=alert-title]').text()).toBe('T')
+
     expect(wrapper.find('[data-slot=alert-content] span[data-slot=alert-description]').text()).toBe(
       'D',
     )
@@ -32,6 +33,7 @@ describe('Alert', () => {
         .find('[data-slot=alert-default-icon] path')
         .attributes('d'),
     )
+
     // default and accent share the info icon; the other statuses each have their own
     expect(paths[0]).toBe(paths[1])
     expect(new Set(paths).size).toBe(4)
@@ -63,7 +65,9 @@ describe('Alert', () => {
         trailing: '<button>out</button>',
       },
     })
+
     expect(order(wrapper.element)).toEqual(['b', 'alert-indicator', 'alert-content', 'button'])
+
     expect(order(wrapper.find('[data-slot=alert-content]').element)).toEqual([
       'alert-title',
       'button',
@@ -77,6 +81,7 @@ describe('Alert', () => {
         props: { status, title: 'Update available', description: 'Restart to apply it.' },
         attachTo: document.body,
       })
+
       await expectAccessible(wrapper)
       wrapper.unmount()
     },
@@ -94,6 +99,7 @@ describe('Alert', () => {
       ),
       h(Alert, { indicator: false, title: 'Heads up' }),
     ])
+
     await expectAccessible(wrapper)
     wrapper.unmount()
   })
@@ -111,12 +117,15 @@ describe('Alert', () => {
       attrs: { role: 'status', 'aria-live': 'polite', 'aria-labelledby': 'alert-title' },
       slots: { title: () => h('span', { id: 'alert-title' }, 'Saved') },
     })
+
     expect(wrapper.element.tagName).toBe('SECTION')
+
     expect(wrapper.attributes()).toMatchObject({
       role: 'status',
       'aria-live': 'polite',
       'aria-labelledby': 'alert-title',
     })
+
     expect(wrapper.get('#alert-title').text()).toBe('Saved')
     wrapper.unmount()
   })

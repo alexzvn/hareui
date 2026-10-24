@@ -7,6 +7,7 @@ export const clamp = (value: number, min = -Infinity, max = Infinity) => {
 const decimalPlaces = (value: number) => {
   const [mantissa = '', exponent = '0'] = String(value).toLowerCase().split('e')
   const point = mantissa.indexOf('.')
+
   return Math.max(0, (point >= 0 ? mantissa.length - point - 1 : 0) - Number(exponent))
 }
 
@@ -20,6 +21,7 @@ const precisionOf = (value: number) => {
 const roundToPrecision = (value: number, precision: number) => {
   if (precision <= 0) return value
   const pow = 10 ** precision
+
   return Math.round(value * pow) / pow
 }
 
@@ -46,6 +48,7 @@ export const snapValueToStep = (
       : value - remainder,
     precision,
   )
+
   if (!Number.isNaN(lo)) {
     if (snapped < lo) snapped = lo
     else if (!Number.isNaN(hi) && snapped > hi)
@@ -53,6 +56,7 @@ export const snapValueToStep = (
   } else if (!Number.isNaN(hi) && snapped > hi) {
     snapped = Math.floor(roundToPrecision(hi / step, stepPrecision)) * step
   }
+
   return roundToPrecision(snapped, precision)
 }
 
@@ -68,5 +72,6 @@ export const snapNumber = <T extends number | null | undefined>(
 ): T => {
   if (value == null || Number.isNaN(value)) return value
   if (step === undefined) return clamp(value, min, max) as T
+
   return snapValueToStep(value, min, max, step) as T
 }

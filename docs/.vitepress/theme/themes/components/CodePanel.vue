@@ -97,7 +97,9 @@ const props = withDefaults(
   }>(),
   { lang: 'tsx', showLineNumbers: true, title: 'Source code' },
 )
+
 const emit = defineEmits<{ close: [] }>()
+
 defineSlots<{
   /** Pre-rendered content (takes precedence over `sourceCode`) */
   default?: () => VNode[]
@@ -112,6 +114,7 @@ const onCopy = () => {
   copied.value = true
   copiedTimer = setTimeout(() => (copied.value = false), 1500)
 }
+
 onBeforeUnmount(() => clearTimeout(copiedTimer))
 
 const handleDownload = () => {

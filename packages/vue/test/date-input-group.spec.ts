@@ -69,11 +69,13 @@ const spinbuttons = (root: ParentNode) => [
 const accessibleName = (el: HTMLElement) => {
   const ids = el.getAttribute('aria-labelledby')
   if (!ids) return el.getAttribute('aria-label')
+
   return ids
     .split(' ')
     .map((id) => {
       const target = document.getElementById(id)
       expect(target, `aria-labelledby id "${id}" exists`).not.toBeNull()
+
       return target === el ? el.getAttribute('aria-label') : target!.textContent
     })
     .join('')
@@ -90,6 +92,7 @@ describe('DateInputGroup', () => {
       field({ labelledby: 'lbl', disabled: true }, { disabled: true }),
       rangeField({ labelledby: 'lbl' }),
     ]
+
     for (const component of cases) {
       const wrapper = mount(component, { attachTo: document.body })
       await expectAccessible(wrapper)
@@ -102,11 +105,13 @@ describe('DateInputGroup', () => {
     const group = wrapper.get('[data-slot=date-input-group]')
     expect(group.attributes('role')).toBe('group')
     expect(group.attributes('aria-labelledby')).toBe('lbl')
+
     expect(spinbuttons(wrapper.element).map(accessibleName)).toEqual([
       'month, Due date',
       'day, Due date',
       'year, Due date',
     ])
+
     const ids = spinbuttons(wrapper.element).map((s) => s.id)
     expect(new Set(ids).size).toBe(ids.length)
     wrapper.unmount()
@@ -115,11 +120,13 @@ describe('DateInputGroup', () => {
   it('an aria-label (no visible label) names the group and is appended to every segment name', () => {
     const wrapper = mount(field({ ariaLabel: 'Due date' }), { attachTo: document.body })
     expect(wrapper.get('[data-slot=date-input-group]').attributes('aria-label')).toBe('Due date')
+
     expect(spinbuttons(wrapper.element).map(accessibleName)).toEqual([
       'month, Due date',
       'day, Due date',
       'year, Due date',
     ])
+
     wrapper.unmount()
   })
 
@@ -135,21 +142,26 @@ describe('DateInputGroup', () => {
     const wrapper = mount(field({ labelledby: 'lbl', describedby: 'desc' }), {
       attachTo: document.body,
     })
+
     expect(wrapper.get('[data-slot=date-input-group]').attributes('aria-describedby')).toBe('desc')
+
     expect(spinbuttons(wrapper.element).map((s) => s.getAttribute('aria-describedby'))).toEqual([
       'desc',
       null,
       null,
     ])
+
     wrapper.unmount()
 
     const invalid = mount(field({ labelledby: 'lbl', describedby: 'desc', invalid: true }), {
       attachTo: document.body,
     })
+
     for (const segment of spinbuttons(invalid.element)) {
       expect(segment.getAttribute('aria-describedby')).toBe('desc')
       expect(segment.getAttribute('aria-invalid')).toBe('true')
     }
+
     invalid.unmount()
   })
 
@@ -159,6 +171,7 @@ describe('DateInputGroup', () => {
       expect(segment.getAttribute('aria-readonly')).toBe('true')
       expect(segment.getAttribute('tabindex')).toBe('0')
     }
+
     readonly.unmount()
 
     const disabled = mount(field({ labelledby: 'lbl', disabled: true }, { disabled: true }))
@@ -166,6 +179,7 @@ describe('DateInputGroup', () => {
       expect(segment.getAttribute('aria-disabled')).toBe('true')
       expect(segment.hasAttribute('tabindex')).toBe(false)
     }
+
     disabled.unmount()
   })
 
@@ -180,6 +194,7 @@ describe('DateInputGroup', () => {
       'day, End Date, Trip',
       'year, End Date, Trip',
     ])
+
     expect(new Set(segments.map((s) => s.id)).size).toBe(6)
     expect(segments.every((s) => s.getAttribute('tabindex') === '0')).toBe(true)
     wrapper.unmount()

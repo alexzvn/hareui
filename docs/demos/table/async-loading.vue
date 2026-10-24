@@ -114,6 +114,7 @@ const allUsers: { id: number; name: string; role: string; status: Status; email:
     email: 'william@acme.com',
   },
 ]
+
 const ITEMS_PER_PAGE = 6
 
 const columns: TableColumn[] = [
@@ -130,6 +131,7 @@ const hasMore = computed(() => items.value.length < allUsers.length)
 const loadMore = () => {
   if (!hasMore.value || loading.value) return
   loading.value = true
+
   setTimeout(() => {
     items.value = allUsers.slice(0, items.value.length + ITEMS_PER_PAGE)
     loading.value = false

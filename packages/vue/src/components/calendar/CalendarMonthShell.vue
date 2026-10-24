@@ -480,11 +480,13 @@ import { useCalendarPlaceholder } from './useCalendarPlaceholder'
 import { useCalendarYearPicker, yearPickerLabel } from './useCalendarYearPicker'
 
 const props = defineProps<CalendarMonthShellProps<TValue>>()
+
 const emit = defineEmits<{
   'update:placeholder': [value: DateValue]
   /** A week/day view pick. */
   select: [value: TValue]
 }>()
+
 defineSlots<{
   navIcon?: (props: { direction: 'previous' | 'next' }) => unknown
   /** The root's public `#cell`, rendered by the week/day view. */
@@ -516,10 +518,12 @@ const REKA_PARTS = {
     GridRow: RangeCalendarGridRow,
   },
 } as const
+
 const SLOT_PREFIXES = { calendar: 'calendar', range: 'range-calendar' } as const satisfies Record<
   CalendarKind,
   string
 >
+
 const CHEVRON_PATHS = {
   previous:
     'M10.53 2.97a.75.75 0 0 1 0 1.06L6.56 8l3.97 3.97a.75.75 0 1 1-1.06 1.06l-4.5-4.5a.75.75 0 0 1 0-1.06l4.5-4.5a.75.75 0 0 1 1.06 0',
@@ -532,9 +536,11 @@ const prefix = SLOT_PREFIXES[props.kind]
 
 const isWeekOrDayView = computed(() => isDurationView(props.visibleDuration))
 const isPagedNavigation = computed(() => props.numberOfMonths > 1 || props.pagedNavigation)
+
 const isMultiselectable = computed(
   () => props.kind === 'range' || props.selection.mode === 'multiple',
 )
+
 const weekStartsOn = computed(() => weekStartsOnFromFirstDay(props.firstDayOfWeek))
 
 const rootInstance = useTemplateRef<{ $el: HTMLElement }>('root')
@@ -542,6 +548,7 @@ const prevButtonEl = useTemplateRef<HTMLElement>('prevButton')
 const nextButtonEl = useTemplateRef<HTMLElement>('nextButton')
 const yearPickerGridEl = useTemplateRef<HTMLElement>('yearPickerGrid')
 const rootEl = computed(() => rootInstance.value?.$el)
+
 const gridBounds = computed(
   () => props.monthBounds ?? { minValue: props.minValue, maxValue: props.maxValue },
 )
@@ -554,11 +561,13 @@ const placeholderModel = useCalendarPlaceholder(
 
 const isYearPickerOpen = ref(false)
 const focusedYear = computed(() => placeholderModel.value.year)
+
 // React Aria's year picker keeps the focused month/day and only swaps the year
 const onSelectYear = (year: number) => {
   placeholderModel.value = placeholderModel.value.set({ year })
   isYearPickerOpen.value = false
 }
+
 const {
   activeYear: yearPickerActiveYear,
   onKeyDown: onYearPickerKeyDown,
@@ -595,10 +604,12 @@ const durationFocus = {
     placeholderModel.value = date
   },
 }
+
 const durationValue = shallowRef(props.selection.value ?? props.selection.defaultValue)
 const durationCurrentValue = computed(() =>
   props.selection.value !== undefined ? props.selection.value : durationValue.value,
 )
+
 // The week/day view picks a value of the shape `kind` implies, which is the root's `TValue`
 const onDurationSelect = (picked: CalendarDurationValue) => {
   const value = picked as TValue

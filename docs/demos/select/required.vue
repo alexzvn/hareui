@@ -32,6 +32,7 @@ const states: ListBoxItem[] = [
   { value: 'new-york', label: 'New York' },
   { value: 'washington', label: 'Washington' },
 ]
+
 const countries: ListBoxItem[] = [
   { value: 'usa', label: 'United States' },
   { value: 'canada', label: 'Canada' },

@@ -58,6 +58,7 @@ export const createDashboardSidebarState = (): DashboardSidebarState => {
   const open = ref(false)
   const collapsed = ref(false)
   const id = ref<string>()
+
   return {
     open,
     collapsed,

@@ -44,17 +44,21 @@ describe('ToggleButtonGroup', () => {
       },
       attachTo: document.body,
     })
+
     await flushPromises()
     const middle = wrapper.get('#italic').element as HTMLElement
     middle.focus()
+
     for (const key of ['Home', 'End']) {
       middle.dispatchEvent(new KeyboardEvent('keydown', { key, bubbles: true, cancelable: true }))
       await flushPromises()
       expect(document.activeElement).toBe(middle)
     }
+
     middle.dispatchEvent(
       new KeyboardEvent('keydown', { key: 'ArrowRight', bubbles: true, cancelable: true }),
     )
+
     await flushPromises()
     expect(document.activeElement).toBe(wrapper.get('#underline').element)
     wrapper.unmount()
@@ -86,6 +90,7 @@ describe('ToggleButtonGroup', () => {
       'aria-orientation': 'horizontal',
       'aria-label': 'Text alignment',
     })
+
     expect(IDS.map((id) => el(id).getAttribute('aria-checked'))).toEqual(['true', 'false', 'false'])
     el('right').click()
     await flushPromises()
@@ -107,10 +112,12 @@ describe('ToggleButtonGroup', () => {
   it('is a single tab stop that lands on the selected button', async () => {
     const wrapper = group({ defaultValue: ['center'] })
     await flushPromises()
+
     // Tab reaches the group's one tab stop; the roving group hands focus to the selected button.
     const tabbable = [wrapper.element, ...IDS.map(el)].filter(
       (node) => (node as HTMLElement).tabIndex >= 0,
     )
+
     expect(tabbable).toHaveLength(1)
     ;(tabbable[0] as HTMLElement).focus()
     await flushPromises()
@@ -167,11 +174,13 @@ describe('ToggleButtonGroup', () => {
     const wrapper = group({ disabled: true })
     await flushPromises()
     expect(wrapper.attributes('aria-disabled')).toBe('true')
+
     for (const id of IDS) {
       expect(el(id).hasAttribute('disabled')).toBe(true)
       el(id).focus()
       expect(document.activeElement).not.toBe(el(id))
     }
+
     wrapper.unmount()
   })
 })

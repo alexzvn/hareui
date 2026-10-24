@@ -3,12 +3,14 @@ import { onBeforeUnmount, onMounted } from 'vue'
 
 const svg = (name: 'copy' | 'check') =>
   `<svg aria-hidden="true" height="1em" role="img" viewBox="0 0 16 16" width="1em" xmlns="http://www.w3.org/2000/svg">${gravity.icons[name].body}</svg>`
+
 const COPY_ICON = svg('copy')
 const CHECK_ICON = svg('check')
 
 export const flashCopied = (button: HTMLElement) => {
   button.setAttribute('aria-label', 'Copied Text')
   button.innerHTML = CHECK_ICON
+
   window.setTimeout(() => {
     button.setAttribute('aria-label', 'Copy Text')
     button.innerHTML = COPY_ICON
@@ -18,12 +20,14 @@ export const flashCopied = (button: HTMLElement) => {
 const codeText = (figure: Element): string => {
   const lines = figure.querySelectorAll('pre code > .line')
   if (lines.length === 0) return figure.querySelector('pre')?.textContent ?? ''
+
   return Array.from(lines, (line) => line.textContent ?? '').join('\n')
 }
 
 const selectTab = (trigger: HTMLElement) => {
   const tabs = trigger.closest('[data-fd-tabs]')
   if (!tabs) return
+
   for (const t of tabs.querySelectorAll<HTMLElement>(':scope > [role=tablist] > [role=tab]')) {
     const selected = t === trigger
     t.dataset.state = selected ? 'active' : 'inactive'
@@ -40,14 +44,18 @@ const onClick = (event: MouseEvent) => {
   if (copy) {
     const figure = copy.closest('figure')
     if (figure) void navigator.clipboard.writeText(codeText(figure)).then(() => flashCopied(copy))
+
     return
   }
+
   const anchor = target?.closest<HTMLElement>('[data-copy-anchor]')
   if (anchor) {
     const id = anchor.closest('[id]')?.id
     if (id) void navigator.clipboard.writeText(`${location.origin}${location.pathname}#${id}`)
+
     return
   }
+
   const tab = target?.closest<HTMLElement>('[data-fd-tabs] > [role=tablist] > [role=tab]')
   if (tab) selectTab(tab)
 }

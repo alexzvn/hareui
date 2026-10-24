@@ -36,6 +36,7 @@ const series = {
   intermediate: { name: 'Intermediate' },
   advanced: { name: 'Advanced' },
 }
+
 const colors = ['var(--chart-4)', 'var(--chart-3)', 'var(--chart-1)']
 
 const formatValue = (value: number | string) => {

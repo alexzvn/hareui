@@ -73,6 +73,7 @@ const onKeydown = (event: KeyboardEvent) => {
   )
     collapsed.value = !collapsed.value
 }
+
 onMounted(() => window.addEventListener('keydown', onKeydown))
 onBeforeUnmount(() => window.removeEventListener('keydown', onKeydown))
 </script>

@@ -41,10 +41,12 @@ const load = async (url: string, append: boolean) => {
   controller?.abort()
   controller = new AbortController()
   loading.value = true
+
   try {
     const json = await (
       await fetch(url.replace(/^http:\/\//i, 'https://'), { signal: controller.signal })
     ).json()
+
     cursor = json.next
     characters.value = append ? [...characters.value, ...json.results] : json.results
     loading.value = false
@@ -52,10 +54,13 @@ const load = async (url: string, append: boolean) => {
     if ((error as Error).name !== 'AbortError') loading.value = false
   }
 }
+
 const loadMore = () => {
   if (cursor && !loading.value) load(cursor, true)
 }
+
 watch(filterText, (text) => load(`https://swapi.py4e.com/api/people/?search=${text}`, false))
+
 // Client only: VitePress SSR-renders demos
 onMounted(() => load('https://swapi.py4e.com/api/people/?search=', false))
 </script>

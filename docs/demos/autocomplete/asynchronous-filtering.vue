@@ -45,17 +45,21 @@ const load = async (text: string) => {
   controller?.abort()
   controller = new AbortController()
   isLoading.value = true
+
   try {
     const res = await fetch(`https://swapi.py4e.com/api/people/?search=${text}`, {
       signal: controller.signal,
     })
+
     characters.value = (await res.json()).results
     isLoading.value = false
   } catch (error) {
     if ((error as Error).name !== 'AbortError') isLoading.value = false
   }
 }
+
 watch(filterText, load)
+
 // Client only: VitePress SSR-renders demos
 onMounted(() => load(''))
 </script>

@@ -84,6 +84,7 @@ const isSubmitting = ref(false)
 const handleSubmit = () => {
   if (!value.value.trim()) return
   isSubmitting.value = true
+
   setTimeout(() => {
     isSubmitting.value = false
     value.value = ''

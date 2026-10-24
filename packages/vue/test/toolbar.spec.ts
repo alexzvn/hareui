@@ -32,8 +32,10 @@ const editor = (props: Record<string, unknown> = {}) => {
       ],
     },
   })
+
   mounted.push(wrapper)
   const button = (label: string) => wrapper.find(`[aria-label="${label}"]`).element as HTMLElement
+
   return { wrapper, button }
 }
 
@@ -49,11 +51,13 @@ describe('Toolbar', () => {
     expect(wrapper.attributes()).toMatchObject({ role: 'toolbar', 'aria-orientation': 'vertical' })
     const group = wrapper.find('[data-slot=toggle-button-group]')
     expect(group.attributes('data-orientation')).toBe('vertical')
+
     // A multiple-selection group inside is `role="group"`, which doesn't support aria-orientation.
     expect(group.attributes('aria-orientation')).toBeUndefined()
     const separator = wrapper.find('[data-slot=separator]')
     expect(separator.attributes('data-orientation')).toBe('horizontal')
     expect(separator.classes()).toEqual(expect.arrayContaining(['w-1/2', 'justify-self-center']))
+
     expect(wrapper.find('[data-slot=button-group]').classes()).toEqual(
       expect.arrayContaining(['justify-start', 'flex-col']),
     )
@@ -70,10 +74,12 @@ describe('Toolbar', () => {
         ],
       },
     })
+
     const separator = wrapper.find('[data-slot=separator]')
     expect(separator.attributes('data-orientation')).toBe('horizontal')
     expect(separator.classes()).toContain('w-4')
     expect(separator.classes()).not.toContain('w-1/2')
+
     expect(wrapper.find('[data-slot=toggle-button-group]').attributes('aria-orientation')).toBe(
       'vertical',
     )
@@ -84,14 +90,17 @@ describe('Toolbar', () => {
     const group = wrapper.find('[data-slot=toggle-button-group]')
     expect(group.attributes('role')).toBe('group')
     expect(group.attributes('tabindex')).toBeUndefined()
+
     expect(
       wrapper.findAll('[data-slot=toggle-button]').map((b) => b.attributes('tabindex')),
     ).toEqual([undefined, undefined])
+
     const single = mount(Toolbar, {
       slots: {
         default: () => h(ToggleButtonGroup, null, () => h(ToggleButton, { value: 'a' }, () => 'a')),
       },
     })
+
     expect(single.find('[data-slot=toggle-button-group]').attributes('role')).toBe('radiogroup')
   })
 
@@ -157,6 +166,7 @@ describe('Toolbar', () => {
         ],
       },
     })
+
     mounted.push(wrapper)
     const inner = wrapper.findAll('[data-slot=toolbar]')[1]!
     expect(inner.attributes('role')).toBe('group')
@@ -195,6 +205,7 @@ describe('Toolbar', () => {
         ],
       },
     })
+
     mounted.push(wrapper)
     await expectAccessible(wrapper)
   })

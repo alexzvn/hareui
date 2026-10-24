@@ -36,9 +36,11 @@ export default defineComponent({
       const onTriggerKeydown = (event: KeyboardEvent) => {
         if (!isTab(event) || event.shiftKey || !proxy.isConnected) return
         item.onFocusProxyEnter('start')
+
         // Without a tabbable in the content, Tab goes on from the trigger as usual.
         if (content.contains(document.activeElement)) event.preventDefault()
       }
+
       // Added after Reka's own listener, so it sees where Reka's Tab handling left focus.
       const onContentKeydown = (event: KeyboardEvent) => {
         if (isTab(event) && event.shiftKey && document.activeElement === proxy) {
@@ -46,8 +48,10 @@ export default defineComponent({
           trigger.focus()
         }
       }
+
       trigger.addEventListener('keydown', onTriggerKeydown)
       content.addEventListener('keydown', onContentKeydown)
+
       onCleanup(() => {
         trigger.removeEventListener('keydown', onTriggerKeydown)
         content.removeEventListener('keydown', onContentKeydown)

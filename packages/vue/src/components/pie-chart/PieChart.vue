@@ -153,6 +153,7 @@ const props = withDefaults(defineProps<PieChartProps<T>>(), {
   tooltip: undefined,
   legend: undefined,
 })
+
 const slots = defineSlots<PieChartSlots>()
 const hidden = defineModel<string[]>('hidden', { default: () => [] })
 
@@ -171,7 +172,9 @@ const pie = computed(() => {
     startAngle: props.startAngle,
     endAngle: props.endAngle,
   }
+
   const defined = Object.fromEntries(Object.entries(own).filter(([, value]) => value !== undefined))
+
   return { ...(props.donut ? chartDefaults.donut : {}), ...defined }
 })
 
@@ -187,6 +190,7 @@ const chart = useChartRoot({
   ui,
   uiProps: () => props.ui,
 })
+
 // The center follows the first pie drawn (see `usePolarChart`), so the root passes no geometry of its own.
 const polar = usePolarChart(chart, { kind: 'pie', slices: () => slices.value })
 providePolarCenterLabel(chart, polar, () => polar.outerRadius.value)

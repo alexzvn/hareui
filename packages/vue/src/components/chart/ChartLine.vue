@@ -85,6 +85,7 @@ const props = withDefaults(defineProps<ChartLineProps>(), {
   xAxisId: 0,
   yAxisId: 0,
 })
+
 defineSlots<ChartLineSlots>()
 
 const rootSeries = useRootSeries(useChartContext('ChartLine'), () => props.dataKey)
@@ -99,6 +100,7 @@ const path = computed(() => {
   const segments = props.connectNulls
     ? points.filter((point): point is ChartSeriesPoint => point !== null)
     : points
+
   return (
     d3Line<ChartSeriesPoint | null>()
       .x((point) => point!.x)
@@ -112,6 +114,7 @@ const path = computed(() => {
 const pathElement = shallowRef<SVGPathElement | null>(null)
 const length = shallowRef(0)
 const revealing = computed(() => series.reveal.value < 1)
+
 // Measure only when the path mounts, the reveal starts/ends, or the geometry changes mid-reveal (e.g. a resize);
 // `getTotalLength` forces layout, so it must not run every animation frame.
 watch(
@@ -127,6 +130,7 @@ watch(
 const drawing = computed(
   () => series.reveal.value < 1 && !props.strokeDasharray && length.value > 0,
 )
+
 const clipping = computed(() => series.reveal.value < 1 && !drawing.value)
 
 const dasharray = computed(() => {
@@ -137,6 +141,7 @@ const dasharray = computed(() => {
 const clip = computed(() => {
   const plot = cartesian.offset.value
   const reveal = series.reveal.value
+
   return horizontal.value
     ? { x: plot.left, y: 0, width: plot.width * reveal, height: chart.height.value }
     : { x: 0, y: plot.top, width: chart.width.value, height: plot.height * reveal }
@@ -149,7 +154,9 @@ const dots = computed(() => {
     stroke: stroke.value,
     strokeWidth: 1,
   })
+
   if (!attrs || series.animating.value) return []
+
   return series.points.value.flatMap((point) => (point ? [{ point, attrs }] : []))
 })
 
@@ -158,6 +165,7 @@ const activeDot = computed(() => {
   const point = series.activePoint.value
   if (!point || !props.activeDot) return null
   const custom = props.activeDot === true ? {} : props.activeDot
+
   return {
     point,
     r: custom.r ?? 4,

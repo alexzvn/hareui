@@ -253,6 +253,7 @@ const props = withDefaults(defineProps<DropZoneProps>(), {
   invalid: undefined,
   triggerLabel: 'Select files',
 })
+
 const emit = defineEmits<DropZoneEmits>()
 const slots = defineSlots<DropZoneSlots>()
 
@@ -277,6 +278,7 @@ const { validation, commitValidation } = useFieldValidation({
   root: () => root.value,
   onReset: () => setFiles(props.defaultValue ?? []),
 })
+
 const invalid = computed(() => validation.value.isInvalid)
 
 const { id, labelId, descriptionId, hasLabel, hasDescription, describedBy, FieldError } =
@@ -292,6 +294,7 @@ const { id, labelId, descriptionId, hasLabel, hasDescription, describedBy, Field
 const syncInput = () => {
   const el = input.value
   if (!el) return
+
   try {
     const transfer = new DataTransfer()
     for (const file of files.value) transfer.items.add(file)
@@ -301,6 +304,7 @@ const syncInput = () => {
     el.value = ''
   }
 }
+
 watch(files, syncInput, { flush: 'post' })
 onMounted(syncInput)
 
@@ -318,6 +322,7 @@ const addFiles = (incoming: File[]) => {
       rejected.push({ file, reason: 'size' })
     else accepted.push(file)
   }
+
   // `add` comes first, so a handler that clears an old rejection message runs before `reject` sets a new one
   if (accepted.length) {
     const added = props.multiple ? accepted : accepted.slice(0, 1)
@@ -325,6 +330,7 @@ const addFiles = (incoming: File[]) => {
     emit('add', added)
     commitValidation()
   }
+
   if (rejected.length) emit('reject', rejected)
   syncInput()
 }
@@ -352,11 +358,13 @@ const onItemRemove = (file: File, index: number) => {
   const hadFocus = itemElements.get(file)?.contains(document.activeElement) ?? false
   removeFile(file)
   if (!hadFocus) return
+
   const next =
     neighbour &&
     itemElements
       .get(neighbour)
       ?.querySelector<HTMLElement>('[data-slot=drop-zone-file-remove-trigger]')
+
   ;(next ?? focusTarget.value)?.focus()
 }
 
@@ -390,6 +398,7 @@ const fileKey = (file: File) => {
 // Drag state. `dragenter` / `dragleave` fire for every child, so a counter tells when the drag really leaves.
 const dropTarget = ref(false)
 let dragDepth = 0
+
 const hasFiles = (event: DragEvent) =>
   !!event.dataTransfer && Array.from(event.dataTransfer.types).includes('Files')
 

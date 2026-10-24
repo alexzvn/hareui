@@ -118,6 +118,7 @@ const props = withDefaults(defineProps<CellSelectProps<T>>(), {
   side: 'bottom',
   align: 'end',
 })
+
 const emit = defineEmits<CellSelectEmits>()
 const slots = defineSlots<CellSelectSlots<T>>()
 
@@ -132,8 +133,10 @@ const selectProps = computed(() => {
     modelValue: _modelValue,
     ...rest
   } = props
+
   return rest
 })
+
 const selectUi = computed(() => ({
   base: ui.value.base({ class: props.ui?.base }),
   trigger: ui.value.trigger({ class: props.ui?.trigger }),

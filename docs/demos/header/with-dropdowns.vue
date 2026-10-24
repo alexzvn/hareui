@@ -87,6 +87,7 @@ const teams: DropdownEntry[] = [
   { type: 'separator' },
   { value: 'new-team', label: 'Create team' },
 ]
+
 const userMenu: DropdownEntry[] = [
   { value: 'profile', label: 'Profile' },
   { value: 'settings', label: 'Settings' },

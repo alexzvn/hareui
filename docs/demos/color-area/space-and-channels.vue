@@ -68,6 +68,7 @@ const yChannel = ref<ColorChannel>('brightness')
 const onSpaceChange = (space: SelectValue | undefined) => {
   if (!space || typeof space !== 'string') return
   colorSpace.value = space as ColorSpace
+
   // Reset the channels to sensible defaults for the new colour space
   if (space === 'rgb') {
     xChannel.value = 'blue'
@@ -85,6 +86,7 @@ const onSpaceChange = (space: SelectValue | undefined) => {
 const xChannelOptions = computed(() =>
   channelsBySpace[colorSpace.value].filter((c) => c.value !== yChannel.value),
 )
+
 const yChannelOptions = computed(() =>
   channelsBySpace[colorSpace.value].filter((c) => c.value !== xChannel.value),
 )

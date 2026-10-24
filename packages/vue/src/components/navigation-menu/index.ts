@@ -1,4 +1,5 @@
 export { default as NavigationMenu } from './NavigationMenu.vue'
+
 export type {
   NavigationMenuChildItem,
   NavigationMenuContentOptions,

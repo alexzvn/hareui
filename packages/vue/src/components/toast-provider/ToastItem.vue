@@ -151,6 +151,7 @@ import { useComponentUI } from '@/composables/useComponentUI'
 import renderValue from './renderValue'
 
 const props = defineProps<ToastItemProps>()
+
 const emit = defineEmits<{
   'height-change': [key: string, height: number]
   'height-remove': [key: string]
@@ -167,16 +168,19 @@ const ui = useComponentUI('toast', theme, () => ({
 
 const titleId = useId()
 const descId = useId()
+
 const hasTitle = computed(
   () =>
     content.value.title !== undefined && content.value.title !== null && content.value.title !== '',
 )
+
 const hasDescription = computed(
   () =>
     content.value.description !== undefined &&
     content.value.description !== null &&
     content.value.description !== '',
 )
+
 // A #toast slot renders its own title / description: reference the ids handed to it only once an element carries
 // them (as RAC's useSlotId does), so the toast never points at a missing element.
 const slotHasTitle = ref(false)
@@ -187,14 +191,18 @@ const syncSlotIds = () => {
   slotHasTitle.value = !!el.querySelector(`[id="${titleId}"]`)
   slotHasDescription.value = !!el.querySelector(`[id="${descId}"]`)
 }
+
 onMounted(syncSlotIds)
 onUpdated(syncSlotIds)
+
 const labelledBy = computed(() =>
   (props.toastSlot ? slotHasTitle.value : hasTitle.value) ? titleId : undefined,
 )
+
 const describedBy = computed(() =>
   (props.toastSlot ? slotHasDescription.value : hasDescription.value) ? descId : undefined,
 )
+
 // React Aria's `contentProps`: the content is the live `role="alert"` region. It starts aria-hidden and is revealed
 // right after mount; NVDA only announces the toast on that change.
 const isContentVisible = ref(false)
@@ -214,7 +222,9 @@ const styleVars = computed(() => {
     '--front-height': `${props.frontHeight}px`,
     'z-index': `${props.zIndex}`,
   }
+
   if (toastHeight.value != null) vars['--toast-height'] = `${toastHeight.value}px`
+
   return vars
 })
 
@@ -231,6 +241,7 @@ onMounted(() => {
     })
   })
 })
+
 onBeforeUnmount(() => {
   cancelAnimationFrame(enterOuterFrame)
   cancelAnimationFrame(enterInnerFrame)
@@ -241,11 +252,13 @@ onBeforeUnmount(() => {
  * -------------------------------------------------------------------------------------------- */
 const rootEl = ref<HTMLElement | null>(null)
 const toastHeight = ref<number | undefined>()
+
 // Same as HeroUI's useMeasuredHeight: `scrollHeight` at `height: auto` (padding box, no border),
 // re-measured on DOM mutations and on inline-size changes only, not on the animated block size.
 let mutationObserver: MutationObserver | null = null
 let resizeObserver: ResizeObserver | null = null
 let measureFrame = 0
+
 const measure = () => {
   const el = rootEl.value
   if (!el) return
@@ -255,18 +268,22 @@ const measure = () => {
   el.style.height = previous
   if (toastHeight.value !== measured) toastHeight.value = measured
 }
+
 const scheduleMeasure = () => {
   if (measureFrame) return
+
   measureFrame = requestAnimationFrame(() => {
     measureFrame = 0
     measure()
   })
 }
+
 onMounted(() => {
   const el = rootEl.value
   if (!el) return
   measure()
   mutationObserver = new MutationObserver(scheduleMeasure)
+
   mutationObserver.observe(el, {
     attributeFilter: ['class'],
     attributes: true,
@@ -274,6 +291,7 @@ onMounted(() => {
     childList: true,
     subtree: true,
   })
+
   if (typeof ResizeObserver === 'undefined') return
   let lastWidth = el.getBoundingClientRect().width
   resizeObserver = new ResizeObserver(([entry]) => {
@@ -282,14 +300,17 @@ onMounted(() => {
     lastWidth = width
     scheduleMeasure()
   })
+
   resizeObserver.observe(el)
 })
+
 onBeforeUnmount(() => {
   mutationObserver?.disconnect()
   resizeObserver?.disconnect()
   cancelAnimationFrame(measureFrame)
   emit('height-remove', props.toast.key)
 })
+
 watch(
   toastHeight,
   (height) => {
@@ -306,10 +327,12 @@ watch(
 const syncHidden = (shouldHide: boolean) => {
   const el = rootEl.value
   if (!el) return
+
   if (shouldHide) {
     if (el.contains(document.activeElement)) emit('focus-leave', el)
     if (el.contains(document.activeElement)) (document.activeElement as HTMLElement | null)?.blur()
     el.setAttribute('aria-hidden', 'true')
+
     if (props.isExiting) {
       for (const control of el.querySelectorAll<HTMLElement>('button, a')) control.tabIndex = -1
     } else {
@@ -320,7 +343,9 @@ const syncHidden = (shouldHide: boolean) => {
     el.removeAttribute('inert')
   }
 }
+
 watch(() => props.isHidden || props.isExiting, syncHidden)
+
 // A toast can mount already hidden (several shown in one tick, or queued before the provider mounted);
 // the root element only exists from here on.
 onMounted(() => syncHidden(props.isHidden || props.isExiting))
@@ -341,15 +366,20 @@ const DEFAULT_ICON_PATHS: Record<string, string> = {
   danger:
     'M8 13.5a5.5 5.5 0 1 0 0-11a5.5 5.5 0 0 0 0 11M8 15A7 7 0 1 0 8 1a7 7 0 0 0 0 14m1-4.5a1 1 0 1 1-2 0a1 1 0 0 1 2 0M8.75 5a.75.75 0 0 0-1.5 0v2.5a.75.75 0 0 0 1.5 0z',
 }
+
 const hasIndicator = computed(() => content.value.indicator !== null)
+
 const defaultIconPath = computed(
   () => DEFAULT_ICON_PATHS[content.value.variant ?? 'default'] ?? DEFAULT_ICON_PATHS.default,
 )
+
 const indicatorKind = computed(() => {
   if (content.value.isLoading) return 'loading'
   if (content.value.indicator !== undefined) return 'custom'
+
   return `default-${content.value.variant ?? 'default'}`
 })
+
 const hasSwapped = ref(false)
 let previousKind = indicatorKind.value
 watch(indicatorKind, (kind) => {

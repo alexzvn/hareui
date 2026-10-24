@@ -14,6 +14,7 @@ describe('Button', () => {
       attrs: { onClick },
       slots: { default: 'Save' },
     })
+
     expect(wrapper.find('[data-slot=spinner]').exists()).toBe(true)
     expect(wrapper.attributes('aria-busy')).toBe('true')
     expect(wrapper.attributes('disabled')).toBeUndefined()
@@ -26,6 +27,7 @@ describe('Button', () => {
       props: { pending: true },
       slots: { leading: () => h('i', { id: 'icon' }) },
     })
+
     expect(wrapper.find('#icon').exists()).toBe(true)
     expect(wrapper.find('[data-slot=spinner]').exists()).toBe(false)
   })
@@ -41,6 +43,7 @@ describe('Button', () => {
       props: { as: 'a', disabled: true },
       attrs: { href: '#x', onClick },
     })
+
     expect(wrapper.element.tagName).toBe('A')
     expect(wrapper.attributes('aria-disabled')).toBe('true')
     expect(wrapper.attributes('tabindex')).toBe('-1')
@@ -85,6 +88,7 @@ describe('Button', () => {
       },
       { attachTo: document.body },
     )
+
     const pending = wrapper.get('#pending').element as HTMLButtonElement
     pending.focus()
     expect(document.activeElement).toBe(pending)
@@ -97,6 +101,7 @@ describe('Button', () => {
 
   it('as="div" is a tabbable, named button activated once by Enter (keydown) and Space (keyup)', async () => {
     const onClick = vi.fn<(event: MouseEvent) => void>()
+
     // Attached: happy-dom's `element.click()` doesn't dispatch on detached nodes.
     const wrapper = mount(Button, {
       props: { as: 'div' },
@@ -104,6 +109,7 @@ describe('Button', () => {
       slots: { default: 'Open' },
       attachTo: document.body,
     })
+
     // Vue drops events stamped in the same millisecond its listeners were attached; real key presses never are.
     const tick = Promise.withResolvers<void>()
     setTimeout(tick.resolve, 2)
@@ -133,6 +139,7 @@ describe('Button', () => {
       slots: { default: 'Open' },
       attachTo: document.body,
     })
+
     expect(wrapper.attributes('role')).toBe('button')
     expect(wrapper.attributes('aria-disabled')).toBe('true')
     expect(wrapper.attributes('tabindex')).toBe('-1')
@@ -153,6 +160,7 @@ describe('Button', () => {
       slots: { default: 'Open' },
       attachTo: document.body,
     })
+
     await expectAccessible(wrapper)
     wrapper.unmount()
   })

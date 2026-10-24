@@ -17,6 +17,7 @@ describe('Description', () => {
         ]),
       { attachTo: document.body },
     )
+
     const ref = wrapper.get('input').attributes('aria-describedby')!
     expect(document.getElementById(ref)?.textContent).toBe('At least 8 characters')
     expect(wrapper.get('[data-slot=description]').attributes('id')).toBe('pw-hint')

@@ -38,6 +38,7 @@ export const chartLayerNames = [
   'active-dot',
   'label',
 ] as const
+
 export type ChartLayerName = (typeof chartLayerNames)[number]
 
 /** Curve interpolation of areas and lines. `monotone` follows the layout (x in horizontal charts, y in vertical ones). */
@@ -63,6 +64,7 @@ export type ChartCurveType =
  * `'dataMin - 10'`/`'dataMax + 10'`, or a function of the data bound.
  */
 export type ChartAxisDomainItem = number | string | ((value: number) => number)
+
 export type ChartAxisDomain =
   | [ChartAxisDomainItem, ChartAxisDomainItem]
   | ((range: [number, number]) => [number, number])

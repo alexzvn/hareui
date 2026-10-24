@@ -16,6 +16,7 @@ const controlled = (initial: string, attachTo?: HTMLElement) => {
       }),
     { attachTo },
   )
+
   return { model, wrapper, field: wrapper.findComponent(SearchField) }
 }
 
@@ -67,6 +68,7 @@ describe('searchField', () => {
     const wrapper = mount(SearchField, {
       props: { modelValue: 'ab', validate: (v: string) => (v.length < 3 ? 'Too short' : null) },
     })
+
     await wrapper.get('input').trigger('change')
     expect(wrapper.get('input').attributes('aria-invalid')).toBe('true')
     expect(wrapper.get('[data-slot=field-error]').text()).toBe('Too short')
@@ -75,12 +77,14 @@ describe('searchField', () => {
   it('disabled and readonly reach the input and disable the clear button', () => {
     const disabled = mount(SearchField, { props: { disabled: true } })
     expect(disabled.get('input').attributes('disabled')).toBeDefined()
+
     expect(
       disabled.get('[data-slot=search-field-clear-button]').attributes('disabled'),
     ).toBeDefined()
 
     const readonly = mount(SearchField, { props: { readonly: true } })
     expect(readonly.get('input').attributes('readonly')).toBeDefined()
+
     expect(
       readonly.get('[data-slot=search-field-clear-button]').attributes('disabled'),
     ).toBeDefined()
@@ -89,9 +93,11 @@ describe('searchField', () => {
   it('defaultValue seeds an uncontrolled field; v-model wins when bound', async () => {
     const wrapper = mount(SearchField, { props: { defaultValue: 'jane' } })
     expect(wrapper.get('input').element.value).toBe('jane')
+
     const bound = mount(SearchField, {
       props: { defaultValue: 'jane', modelValue: 'bound', 'onUpdate:modelValue': () => {} },
     })
+
     expect(bound.get('input').element.value).toBe('bound')
   })
 
@@ -102,6 +108,7 @@ describe('searchField', () => {
         clearIcon: '<span data-test="custom-clear" />',
       },
     })
+
     expect(wrapper.find('[data-test=custom-icon]').exists()).toBe(true)
     expect(wrapper.find('[data-test=custom-clear]').exists()).toBe(true)
     expect(wrapper.get('[data-slot=search-field-search-icon]').find('svg').exists()).toBe(false)
@@ -117,6 +124,7 @@ describe('searchField', () => {
         'onUpdate:modelValue': (v: unknown) => (model.value = String(v ?? '')),
       }),
     )
+
     await wrapper.get('input').trigger('keydown', { key: 'Escape' })
     expect(model.value).toBe('cats')
     expect(wrapper.get('input').element.value).toBe('cats')
@@ -144,6 +152,7 @@ describe('searchField', () => {
         props: { label: 'Search users', ...props },
         attachTo: document.body,
       })
+
       const input = wrapper.get('input').element as HTMLInputElement
       expect([...input.labels!].map((l) => l.textContent?.trim())).toEqual(['Search users'])
       await expectAccessible(wrapper)
@@ -156,6 +165,7 @@ describe('searchField', () => {
       attrs: { 'aria-label': 'Search docs', 'data-testid': 'search' },
       attachTo: document.body,
     })
+
     expect(wrapper.get('input').attributes('aria-label')).toBe('Search docs')
     expect(wrapper.attributes('aria-label')).toBeUndefined()
     expect(wrapper.attributes('data-testid')).toBe('search')
@@ -168,8 +178,10 @@ describe('searchField', () => {
       props: { id: 's', description: 'Help', invalid: true, errorMessage: 'Bad' },
       attrs: { 'aria-labelledby': 'heading', 'aria-describedby': 'tips' },
     })
+
     const input = wrapper.get('input')
     expect(input.attributes('aria-labelledby')).toBe('heading')
+
     // The theme hides the description while invalid, so it's dropped from aria-describedby too
     expect(input.attributes('aria-describedby')).toBe('tips s-error')
     expect(input.attributes('aria-invalid')).toBe('true')
@@ -184,9 +196,11 @@ describe('searchField', () => {
     const clear = wrapper.get('[data-slot=search-field-clear-button]')
     expect(clear.attributes('aria-label')).toBe('Clear search')
     expect(clear.attributes('tabindex')).toBe('-1')
+
     expect(wrapper.get('[data-slot=search-field-search-icon] svg').attributes('aria-hidden')).toBe(
       'true',
     )
+
     wrapper.unmount()
   })
 

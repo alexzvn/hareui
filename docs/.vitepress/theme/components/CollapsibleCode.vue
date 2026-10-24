@@ -99,8 +99,10 @@ const highlight = (code: string, lang: string): Promise<string> => {
         defaultColor: false,
       }),
     )
+
     highlighted.set(key, cached)
   }
+
   return cached
 }
 
@@ -111,6 +113,7 @@ const render = async () => {
   const html = await highlight(trimmed, props.lang)
   codeHtml.value = html.match(/<code[^>]*>([\s\S]*)<\/code>/)?.[1]
 }
+
 onMounted(render)
 watch(() => [props.code, props.lang], render)
 
@@ -120,9 +123,11 @@ const button = tv(buttonTheme)
 const copyClass = button({ variant: 'ghost', size: 'sm', iconOnly: true }).base({
   class: '-mt-0.5 bg-transparent text-muted',
 })
+
 const expandClass = button({ variant: 'tertiary', size: 'sm' }).base({
   class: 'absolute end-1/2 bottom-2 translate-x-1/2 bg-surface text-xs shadow-sm shadow-black/5',
 })
+
 const copyIcon = `<svg aria-hidden="true" height="1em" role="img" viewBox="0 0 16 16" width="1em" xmlns="http://www.w3.org/2000/svg">${gravity.icons.copy.body}</svg>`
 
 const copy = (event: MouseEvent) => {

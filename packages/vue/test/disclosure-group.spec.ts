@@ -73,10 +73,12 @@ describe('DisclosureGroup accessibility', () => {
     const panels = wrapper.findAll('[data-slot=disclosure-content]')
     const ids = [...triggers, ...panels].map((el) => el.attributes('id'))
     expect(new Set(ids).size).toBe(4)
+
     triggers.forEach((trigger, index) => {
       expect(trigger.attributes('aria-controls')).toBe(panels[index]!.attributes('id'))
       expect(panels[index]!.attributes('aria-labelledby')).toBe(trigger.attributes('id'))
     })
+
     expect(panels.map((p) => p.attributes('aria-hidden'))).toEqual(['false', 'true'])
 
     await triggers[1]!.trigger('click')
@@ -100,6 +102,7 @@ describe('DisclosureGroup accessibility', () => {
         .findAll('[data-slot=disclosure-trigger]')
         .every((t) => (t.element as HTMLButtonElement).disabled),
     ).toBe(true)
+
     off.unmount()
   })
 })

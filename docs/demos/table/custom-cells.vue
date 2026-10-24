@@ -123,6 +123,7 @@ const rows = computed(() => {
     const cmp = String(a[column as keyof typeof a]).localeCompare(
       String(b[column as keyof typeof b]),
     )
+
     return direction === 'descending' ? -cmp : cmp
   })
 })

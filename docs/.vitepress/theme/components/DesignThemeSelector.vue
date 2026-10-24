@@ -140,11 +140,13 @@ const syncAppearance = () => {
   active.value = getStoredDesignTheme()
   vibrant.value = getStoredVibrantPalette()
 }
+
 onMounted(() => {
   mounted.value = true
   syncAppearance()
   window.addEventListener(DESIGN_THEME_CHANGE_EVENT, syncAppearance)
 })
+
 onBeforeUnmount(() => window.removeEventListener(DESIGN_THEME_CHANGE_EVENT, syncAppearance))
 
 const current = computed(() => THEMES.find((t) => t.id === active.value))
@@ -158,6 +160,7 @@ const themeBuilderHref = computed(() => {
     chroma: String(values.chroma),
     hue: String(values.hue),
   })
+
   return `/themes?${params}`
 })
 
@@ -167,6 +170,7 @@ const options = ref<HTMLElement[]>([])
 const focusOption = (index: number) => {
   options.value[(index + THEMES.length) % THEMES.length]?.focus()
 }
+
 const onOptionKeydown = (event: KeyboardEvent, index: number) => {
   const step = { ArrowRight: 1, ArrowLeft: -1, ArrowDown: 4, ArrowUp: -4 }[event.key]
   if (step) {

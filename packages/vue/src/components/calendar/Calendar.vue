@@ -213,6 +213,7 @@ export type CalendarEmits = {
   /** Emitted when the displayed month/year changes. */
   'update:placeholder': [value: DateValue]
 }
+
 type CalendarCellSlotProps = Parameters<NonNullable<CalendarSlots['cell']>>[0]
 </script>
 
@@ -241,6 +242,7 @@ const props = withDefaults(defineProps<CalendarProps>(), {
   invalid: false,
   pageBehavior: 'visible',
 })
+
 const emit = defineEmits<CalendarEmits>()
 defineSlots<CalendarSlots>()
 
@@ -248,6 +250,7 @@ const viewKind = computed(() => {
   if (props.visibleDuration?.days != null) return 'day' as const
   return props.visibleDuration?.weeks != null ? ('week' as const) : ('month' as const)
 })
+
 const ui = useComponentUI('calendar', theme, () => ({ view: viewKind.value }))
 
 const monthShell = useTemplateRef<CalendarMonthShellExposed>('shell')
@@ -255,6 +258,7 @@ const minValue = computed(() => props.minValue ?? defaultMinValue())
 const maxValue = computed(() => props.maxValue ?? defaultMaxValue())
 
 const initial = props.modelValue ?? props.defaultValue
+
 // React Aria's useCalendarState resolves the initial focused date via
 // `constrainValue(Array.isArray(value) ? value[0] : value, minValue, maxValue)` whenever a
 // value/defaultValue was passed at all (even an empty array, which is truthy). constrainValue's
@@ -275,6 +279,7 @@ const reselect = (event: Event, cell: HTMLElement) => {
     !props.disabled &&
     cell.hasAttribute('data-selected') &&
     !cell.hasAttribute('data-disabled')
+
   if (!isReselectable) return
   event.preventDefault()
   event.stopPropagation()
@@ -285,16 +290,21 @@ const reselect = (event: Event, cell: HTMLElement) => {
     current && !Array.isArray(current) && isSameDay(current, date) ? current : date,
   )
 }
+
 const onRootClickCapture = (event: MouseEvent) => {
   const cell = calendarCellFrom(event.target, monthShell.value?.rootEl)
   if (!cell) return
+
   if (cell.hasAttribute('data-outside-view')) {
     event.preventDefault()
     event.stopPropagation()
+
     return
   }
+
   reselect(event, cell)
 }
+
 const onRootKeyDownCapture = (event: KeyboardEvent) => {
   if (
     (event.key !== 'Enter' && event.key !== ' ') ||
@@ -303,6 +313,7 @@ const onRootKeyDownCapture = (event: KeyboardEvent) => {
     event.metaKey
   )
     return
+
   const cell = calendarCellFrom(event.target, monthShell.value?.rootEl)
   if (cell) reselect(event, cell)
 }
@@ -318,6 +329,7 @@ const rootBindings = computed(() => ({
   onClickCapture: onRootClickCapture,
   onKeydownCapture: onRootKeyDownCapture,
 }))
+
 const selection = computed(() => ({
   value: props.modelValue,
   defaultValue: props.defaultValue,

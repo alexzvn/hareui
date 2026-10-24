@@ -115,6 +115,7 @@ const props = withDefaults(defineProps<MeterProps>(), {
   maxValue: 100,
   showOutput: undefined,
 })
+
 const slots = defineSlots<MeterSlots>()
 
 const ui = useComponentUI('meter', theme, () => ({ color: props.color, size: props.size }))

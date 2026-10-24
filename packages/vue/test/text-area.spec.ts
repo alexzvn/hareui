@@ -32,11 +32,14 @@ describe('TextArea', () => {
       props: { label: 'Message', description: 'Max 500', variant: 'secondary', defaultValue: 'hi' },
       slots: { default: () => h(TextArea) },
     })
+
     const el = wrapper.get('textarea')
     expect(wrapper.get('label').attributes('for')).toBe(el.attributes('id'))
+
     expect(el.attributes('aria-describedby')).toBe(
       wrapper.get('[data-slot="description"]').attributes('id'),
     )
+
     expect(el.classes()).toContain('bg-(--textarea-bg)')
     expect(el.element.value).toBe('hi')
   })
@@ -48,6 +51,7 @@ describe('TextArea', () => {
         validationBehavior: 'aria',
       },
     })
+
     await wrapper.get('textarea').setValue('too long')
     await wrapper.get('textarea').trigger('blur')
     expect(wrapper.get('textarea').attributes('aria-invalid')).toBe('true')
@@ -64,6 +68,7 @@ describe('TextArea', () => {
       attrs: { 'aria-label': 'Notes' },
       attachTo: document.body,
     })
+
     await expectAccessible(wrapper)
     wrapper.unmount()
   })
@@ -82,12 +87,15 @@ describe('TextArea', () => {
         slots: { default: () => h(TextArea) },
         attachTo: document.body,
       })
+
       const el = wrapper.get('textarea').element as HTMLTextAreaElement
       expect([...el.labels!].map((l) => l.textContent?.trim())).toEqual(['Message'])
+
       const described = el
         .getAttribute('aria-describedby')!
         .split(' ')
         .map((id) => document.getElementById(id)?.textContent?.trim())
+
       // While invalid the error replaces the description.
       expect(described).toEqual(props.errorMessage ? [props.errorMessage] : ['Max 500 characters'])
       expect(el.getAttribute('aria-invalid')).toBe(props.invalid ? 'true' : null)

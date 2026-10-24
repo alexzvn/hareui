@@ -17,6 +17,7 @@ export const usePressRelease = () => {
       const option = optionAt(event.target)
       const from = pressed
       pressed = null
+
       if (event.pointerType === 'mouse' && event.button === 0 && option && option !== from)
         option.click()
     },

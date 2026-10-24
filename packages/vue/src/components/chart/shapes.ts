@@ -24,6 +24,7 @@ export const rectanglePath = (
       number,
       number,
     ]
+
     let path = `M${x},${y + ySign * tl}`
     if (tl > 0) path += `A ${tl},${tl},0,0,${clockwise},${x + xSign * tl},${y}`
     path += `L ${x + width - xSign * tr},${y}`
@@ -32,7 +33,9 @@ export const rectanglePath = (
     if (br > 0) path += `A ${br},${br},0,0,${clockwise},${x + width - xSign * br},${y + height}`
     path += `L ${x + xSign * bl},${y + height}`
     if (bl > 0) path += `A ${bl},${bl},0,0,${clockwise},${x},${y + height - ySign * bl}`
+
     return `${path}Z`
   }
+
   return `M ${x},${y} h ${width} v ${height} h ${-width} Z`
 }

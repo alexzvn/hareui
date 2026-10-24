@@ -59,11 +59,13 @@ const columns: RichTableColumn<Payment>[] = [
 ]
 
 const pageCount = computed(() => Math.ceil(data.length / pagination.value.pageSize))
+
 // `Pagination` is 1-based while TanStack's `pageIndex` is 0-based.
 const page = computed({
   get: () => pagination.value.pageIndex + 1,
   set: (value) => (pagination.value = { ...pagination.value, pageIndex: value - 1 }),
 })
+
 const first = computed(() => pagination.value.pageIndex * pagination.value.pageSize + 1)
 const last = computed(() => Math.min(first.value + pagination.value.pageSize - 1, data.length))
 </script>

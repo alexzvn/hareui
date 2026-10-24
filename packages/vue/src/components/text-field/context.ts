@@ -64,5 +64,6 @@ export const splitInputAttrs = (attrs: Record<string, unknown>) => {
     if (INPUT_ATTRS.has(key.toLowerCase())) input[key] = value
     else if (key !== 'aria-describedby') root[key] = value
   }
+
   return { input, root }
 }

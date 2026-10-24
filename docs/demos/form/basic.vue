@@ -36,16 +36,19 @@ const onSubmit = (e: Event) => {
   e.preventDefault()
   const formData = new FormData(e.currentTarget as HTMLFormElement)
   const data: Record<string, string> = {}
+
   // Convert FormData to plain object
   formData.forEach((value, key) => {
     data[key] = value.toString()
   })
+
   alert(`Form submitted with: ${JSON.stringify(data, null, 2)}`)
 }
 
 const validateEmail = (value: string | number) => {
   if (!/^[\w.%+-]+@[A-Z0-9.-]+\.[A-Z]{2,}$/i.test(String(value)))
     return 'Please enter a valid email address'
+
   return null
 }
 
@@ -54,6 +57,7 @@ const validatePassword = (value: string | number) => {
   if (password.length < 8) return 'Password must be at least 8 characters'
   if (!/[A-Z]/.test(password)) return 'Password must contain at least one uppercase letter'
   if (!/\d/.test(password)) return 'Password must contain at least one number'
+
   return null
 }
 </script>

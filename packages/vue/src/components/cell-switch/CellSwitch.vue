@@ -135,6 +135,7 @@ const props = withDefaults(defineProps<CellSwitchProps>(), {
   modelValue: undefined,
   invalid: undefined,
 })
+
 const emit = defineEmits<CellSwitchEmits>()
 const slots = defineSlots<CellSwitchSlots>()
 

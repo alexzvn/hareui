@@ -112,6 +112,7 @@ const CHANNELS: Record<ColorSpace, ColorChannel[]> = {
   hsl: ['hue', 'saturation', 'lightness'],
   hsb: ['hue', 'saturation', 'brightness'],
 }
+
 const FIELD: Record<string, string> = {
   hue: 'h',
   saturation: 's',
@@ -121,6 +122,7 @@ const FIELD: Record<string, string> = {
   green: 'g',
   blue: 'b',
 }
+
 const toSpace = (color: Color, to: ColorSpace): Color => {
   return color.space === to ? color : normalizeColor(colorToString(color, to))
 }
@@ -137,6 +139,7 @@ const usesContext = computed(() => modelValue.value === undefined && !!ctx)
 const rootModelValue = computed<string | Color | undefined>(() => {
   if (modelValue.value !== undefined) return modelValue.value
   if (usesContext.value) return ctx!.color.value
+
   return undefined
 })
 
@@ -145,26 +148,33 @@ const rootModelValue = computed<string | Color | undefined>(() => {
 const currentColor = ref<Color>(
   normalizeColor(rootModelValue.value ?? props.defaultValue ?? '#ff0000'),
 )
+
 watch(rootModelValue, (value) => {
   if (value !== undefined) currentColor.value = normalizeColor(value)
 })
+
 const space = computed<ColorSpace>(
   () => props.colorSpace ?? (currentColor.value.space as ColorSpace),
 )
+
 const channels = computed(() => CHANNELS[space.value])
+
 // Reka reads channels off the value as-is (a hex string is treated as HSL for `hsb`), so hand it a colour already in the area's space.
 const rootValue = computed(() =>
   rootModelValue.value === undefined
     ? undefined
     : toSpace(normalizeColor(rootModelValue.value), space.value),
 )
+
 const rootDefault = computed(() =>
   toSpace(normalizeColor(props.defaultValue ?? '#ff0000'), space.value),
 )
+
 const axes = computed(() => {
   const x = props.xChannel ?? channels.value.find((c) => c !== props.yChannel)!
   const y = props.yChannel ?? channels.value.find((c) => c !== x)!
   const z = channels.value.find((c) => c !== x && c !== y)!
+
   return { x, y, z }
 })
 
@@ -176,6 +186,7 @@ const areaStyle = computed(() => {
   if (space.value === 'rgb') {
     const channel = (name: ColorChannel, value: number) =>
       `rgb(${['red', 'green', 'blue'].map((c) => (c === name ? value : 0)).join(', ')})`
+
     return {
       background: [
         `linear-gradient(to right, ${channel(x, 0)}, ${channel(x, 255)})`,
@@ -185,39 +196,50 @@ const areaStyle = computed(() => {
       backgroundBlendMode: 'screen',
     }
   }
+
   const hsl = space.value === 'hsl'
   const base: Record<string, number> = hsl ? { h: 0, s: 100, l: 50 } : { h: 0, s: 100, b: 100 }
   base[FIELD[z]] = zValue
+
   const css = (v: Record<string, number>) =>
     hsl
       ? `hsl(${v.h}, ${v.s}%, ${v.l}%)`
       : colorToString({ space: 'hsb', h: v.h, s: v.s, b: v.b, alpha: 1 } as Color, 'rgb')
+
   const stops: Record<string, string> = {
     hue: [0, 60, 120, 180, 240, 300, 360].map((h) => css({ ...base, h })).join(', '),
     saturation: `${css({ ...base, s: 0 })}, transparent`,
     lightness: 'black, transparent, white',
     brightness: 'black, transparent',
   }
+
   const layers = channels.value
     .filter((c) => c !== z)
     .map((c) => `linear-gradient(to ${c === x ? 'right' : 'top'}, ${stops[c]})`)
     .reverse()
+
   if (z === 'hue') layers.push(css(base))
+
   return { background: layers.join(', ') }
 })
+
 const thumbColor = computed(() => colorToString(currentColor.value, 'rgb'))
 
 const onUpdateColor = (color: Color) => {
   // Inside a ColorPicker the context owns the colour; writing the local model would detach from it.
   currentColor.value = color
+
   if (usesContext.value) ctx!.setColor(color)
   else modelValue.value = color
+
   // Reka never fires its own `change`; every committed colour update is a change.
   emit('change', color)
 }
+
 const onChangeEnd = () => {
   emit('changeEnd', currentColor.value)
 }
+
 // Reka only commits on pointer-up; React Aria also ends a change when a keyboard step ends.
 const commitKeys = new Set([
   'ArrowUp',
@@ -229,6 +251,7 @@ const commitKeys = new Set([
   'Home',
   'End',
 ])
+
 const onKeyup = (event: KeyboardEvent) => {
   if (commitKeys.has(event.key)) onChangeEnd()
 }
@@ -237,6 +260,7 @@ const onKeyup = (event: KeyboardEvent) => {
 // Reka tracks `isDragging` privately inside `ColorAreaArea`), so it's tracked locally for the thumb's
 // enlarged drag size, matching HeroUI's `[data-dragging="true"]` styling.
 const isDragging = ref(false)
+
 // Keyboard-modality focus ring, as RAC's `useFocusRing`: Reka focuses the thumb on a pointer press as well.
 const focusVisible = ref(false)
 let pointerActive = false
@@ -245,17 +269,21 @@ const onPointerDownCapture = () => {
   focusVisible.value = false
   if (!isDisabled.value) isDragging.value = true
 }
+
 const onPointerUp = () => {
   isDragging.value = false
   pointerActive = false
 }
+
 const onThumbFocus = () => {
   focusVisible.value = !pointerActive
 }
+
 const onThumbKeydown = () => {
   pointerActive = false
   focusVisible.value = true
 }
+
 onMounted(() => window.addEventListener('pointerup', onPointerUp))
 onBeforeUnmount(() => window.removeEventListener('pointerup', onPointerUp))
 
@@ -267,11 +295,14 @@ const ui = useComponentUI('colorArea', theme, () => ({
 // React Aria's channel inputs are labelled "<label>, <channel>". Reka's thumb only names the channels.
 const attrs = useAttrs()
 const thumbId = useId()
+
 const thumbLabel = computed(() => {
   const channels = `${getChannelName(axes.value.x)}, ${getChannelName(axes.value.y)}`
   const label = attrs['aria-label']
+
   return typeof label === 'string' && label ? `${label}, ${channels}` : channels
 })
+
 const thumbLabelledBy = computed(() => {
   const ids = attrs['aria-labelledby']
   return typeof ids === 'string' && ids ? `${ids} ${thumbId}` : undefined

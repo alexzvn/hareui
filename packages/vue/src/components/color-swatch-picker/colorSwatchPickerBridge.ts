@@ -26,6 +26,7 @@ export default defineComponent({
   setup(props) {
     const listbox = injectListboxRootContext()
     const instance = getCurrentInstance()
+
     // The renderless child's placeholder node sits directly inside the listbox element
     const root = () => (instance?.vnode.el as Node | null | undefined)?.parentElement ?? null
 
@@ -47,11 +48,14 @@ export default defineComponent({
     const onKeydown = (event: KeyboardEvent) => {
       const el = root()
       if (!el || event.altKey || event.ctrlKey || event.metaKey || !listbox.focusable.value) return
+
       const items = [...el.querySelectorAll<HTMLElement>(ITEM)].filter(
         (item) => !item.hasAttribute('data-disabled'),
       )
+
       const current =
         event.target instanceof Element ? event.target.closest<HTMLElement>(ITEM) : null
+
       const index = current ? items.indexOf(current) : -1
       let target: HTMLElement | undefined
       if (event.key === 'PageUp') target = items[0]
@@ -62,6 +66,7 @@ export default defineComponent({
       } else {
         return
       }
+
       event.preventDefault()
       if (target) listbox.changeHighlight(target)
     }
@@ -77,7 +82,9 @@ export default defineComponent({
           item.focus = () => {}
           item.scrollIntoView = () => {}
         }
+
         clearTimeout(restoreTimer)
+
         restoreTimer = setTimeout(() => {
           for (const item of items) {
             delete (item as Partial<HTMLElement>).focus
@@ -94,6 +101,7 @@ export default defineComponent({
       attached?.addEventListener('focusin', onFocusIn)
       attached?.addEventListener('keydown', onKeydown)
     })
+
     onBeforeUnmount(() => {
       clearTimeout(restoreTimer)
       attached?.removeEventListener('focusin', onFocusIn)

@@ -186,12 +186,14 @@ import { dropZoneContextKey } from './context'
 import { fileExtension, formatColor, formatFileSize } from './utils'
 
 const props = withDefaults(defineProps<DropZoneFileItemProps>(), { removable: true })
+
 const emit = defineEmits<{
   /** Emitted when the remove button is pressed. */
   remove: []
   /** Emitted when the retry button is pressed. */
   retry: []
 }>()
+
 defineSlots<DropZoneFileItemSlots>()
 
 const context = inject(dropZoneContextKey, null)
@@ -203,10 +205,12 @@ const name = computed(() => props.name ?? props.file?.name ?? '')
 const extension = computed(() => fileExtension(name.value))
 const format = computed(() => props.format ?? extension.value.toUpperCase())
 const color = computed(() => props.color ?? formatColor(extension.value))
+
 const size = computed(() => {
   const bytes = props.size ?? props.file?.size
   return bytes == null ? '' : formatFileSize(bytes)
 })
+
 const progressColor = computed(() =>
   props.status === 'complete' ? 'success' : props.status === 'failed' ? 'danger' : 'accent',
 )

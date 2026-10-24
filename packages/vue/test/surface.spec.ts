@@ -32,9 +32,11 @@ describe('Surface', () => {
     expect(mount(Surface, { props: { variant: 'secondary' } }).classes()).toContain(
       'bg-surface-secondary',
     )
+
     expect(mount(Surface, { props: { variant: 'tertiary' } }).classes()).toContain(
       'bg-surface-tertiary',
     )
+
     expect(mount(Surface, { props: { variant: 'transparent' } }).classes()).toContain(
       'bg-transparent',
     )
@@ -45,6 +47,7 @@ describe('Surface', () => {
       props: { variant: 'secondary' },
       slots: { default: () => h(VariantReader) },
     })
+
     expect(wrapper.text()).toBe('secondary')
   })
 
@@ -55,6 +58,7 @@ describe('Surface', () => {
         h('p', 'Content'),
       ),
     ])
+
     expect(wrapper.get('section').attributes('aria-label')).toBe('Settings')
     await expectAccessible(wrapper)
     wrapper.unmount()

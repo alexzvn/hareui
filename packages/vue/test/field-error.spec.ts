@@ -17,11 +17,14 @@ describe('FieldError', () => {
         ]),
       { attachTo: document.body },
     )
+
     const input = wrapper.get('input')
     expect(input.attributes('aria-invalid')).toBe('true')
+
     expect(document.getElementById(input.attributes('aria-describedby')!)?.textContent).toBe(
       'Enter a valid email',
     )
+
     await expectAccessible(wrapper)
     wrapper.unmount()
   })

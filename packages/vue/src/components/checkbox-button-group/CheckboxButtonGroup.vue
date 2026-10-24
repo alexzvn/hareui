@@ -129,6 +129,7 @@ import { checkboxButtonGroupContextKey } from './context'
 // `invalid: undefined`: an absent boolean would cast to `false`, which counts as controlled-valid and hides validation errors
 const props = withDefaults(defineProps<CheckboxButtonGroupProps>(), { invalid: undefined })
 defineSlots<CheckboxButtonGroupSlots>()
+
 /** The selected values. Bind with `v-model`. */
 const modelValue = defineModel<string[]>()
 const slots = useSlots()
@@ -137,6 +138,7 @@ const ui = useComponentUI('checkboxButtonGroup', theme, () => ({
   layout: props.layout,
   variant: props.variant,
 }))
+
 const checkboxUi = useComponentUI('checkbox', checkboxTheme, () => ({
   variant: props.variant,
 }))
@@ -160,6 +162,7 @@ const { validation, commitValidation } = useFieldValidation({
     modelValue.value = props.defaultValue
   },
 })
+
 const invalid = computed(() => validation.value.isInvalid)
 
 const { labelId, hasLabel, describedBy, FieldLabel, FieldDescription, FieldError } = useFieldChrome(

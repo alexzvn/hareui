@@ -20,5 +20,6 @@ const colors: ColorSwatchPickerItem[] = [
   '#10B981',
   '#84CC16',
 ]
+
 const sizes = ['xs', 'sm', 'md', 'lg', 'xl'] as const
 </script>

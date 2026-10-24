@@ -38,6 +38,7 @@ const onSubmit = (e: Event) => {
 
 const validateName = (value: string | number) =>
   String(value).length < 3 ? 'Name must be at least 3 characters' : null
+
 const validateBio = (value: string | number) =>
   String(value).length < 10 ? 'Bio must be at least 10 characters' : null
 </script>

@@ -33,11 +33,13 @@ import type { ColorChannel, ColorSpace } from 'reka-ui'
 import { ref } from 'vue'
 
 const colorSpace = ref<ColorSpace>('hsl')
+
 const channels: Record<ColorSpace, ColorChannel[]> = {
   hsb: ['hue', 'saturation', 'brightness', 'alpha'],
   hsl: ['hue', 'saturation', 'lightness', 'alpha'],
   rgb: ['red', 'green', 'blue', 'alpha'],
 }
+
 const spaces: ListBoxItem[] = Object.keys(channels).map((value) => ({ value, label: value }))
 const title = (s: string) => s[0].toUpperCase() + s.slice(1)
 </script>

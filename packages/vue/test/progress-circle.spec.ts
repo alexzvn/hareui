@@ -17,6 +17,7 @@ describe('ProgressCircle', () => {
     const wrapper = mount(ProgressCircle, {
       props: { 'aria-label': 'Loading', minValue: 50, maxValue: 150, value: 75 },
     })
+
     expect(wrapper.get('[data-slot="progress-circle"]').attributes()).toMatchObject({
       role: 'progressbar',
       'aria-label': 'Loading',
@@ -25,6 +26,7 @@ describe('ProgressCircle', () => {
       'aria-valuenow': '75',
       'aria-valuetext': '25%',
     })
+
     expect(Number(fill(wrapper).attributes('stroke-dashoffset'))).toBeCloseTo(CIRCUMFERENCE * 0.75)
   })
 
@@ -34,6 +36,7 @@ describe('ProgressCircle', () => {
         fill(mount(ProgressCircle, { props: { value: 140 } })).attributes('stroke-dashoffset'),
       ),
     ).toBeCloseTo(0)
+
     expect(
       Number(fill(mount(ProgressCircle, { props: { value: -5 } })).attributes('stroke-dashoffset')),
     ).toBeCloseTo(CIRCUMFERENCE)
@@ -45,6 +48,7 @@ describe('ProgressCircle', () => {
     expect(root.attributes('aria-valuenow')).toBeUndefined()
     expect(root.attributes('aria-valuetext')).toBeUndefined()
     expect(Number(fill(wrapper).attributes('stroke-dashoffset'))).toBeCloseTo(CIRCUMFERENCE * 0.75)
+
     expect(wrapper.get('[data-slot="progress-circle-track"]').classes()).toContain(
       'animate-progress-circle-spin',
     )
@@ -54,6 +58,7 @@ describe('ProgressCircle', () => {
     const wrapper = mount(ProgressCircle, { props: { strokeWidth: 6, value: 60 } })
     for (const circle of wrapper.findAll('circle'))
       expect(circle.attributes()).toMatchObject({ r: '15', 'stroke-width': '6' })
+
     expect(Number(fill(wrapper).attributes('stroke-dasharray'))).toBeCloseTo(CIRCUMFERENCE)
   })
 
@@ -61,9 +66,11 @@ describe('ProgressCircle', () => {
     const wrapper = mount(ProgressCircle, {
       props: { ui: { trackCircle: 'stroke-neutral-200', fillCircle: 'stroke-neutral-700' } },
     })
+
     expect(wrapper.get('[data-slot="progress-circle-track-circle"]').classes()).toEqual([
       'stroke-neutral-200',
     ])
+
     expect(fill(wrapper).classes()).toContain('stroke-neutral-700')
     expect(fill(wrapper).classes()).not.toContain('stroke-(--progress-circle-stroke)')
   })

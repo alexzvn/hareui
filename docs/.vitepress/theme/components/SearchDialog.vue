@@ -161,8 +161,10 @@ const open = defineModel<boolean>('open', { required: true })
 const SUGGESTED_PAGES = ['', 'quick-start', 'design-principles', 'colors', 'theming'].map(
   (page) => `/docs/getting-started/${page}`,
 )
+
 /** Sections searched per query; each page's hits are grouped under it like fumadocs' results. */
 const MAX_SECTIONS = 16
+
 /** Matched paragraphs listed per section. */
 const MAX_TEXTS_PER_SECTION = 3
 
@@ -196,6 +198,7 @@ watch(
   async (isOpen) => {
     if (!isOpen || index.value || loading.value) return
     loading.value = true
+
     try {
       const json = (await localSearchIndex[localeIndex.value]?.())?.default
       if (json) {
@@ -223,6 +226,7 @@ const CODE_CLASS = 'border rounded-md px-px bg-fd-secondary text-fd-secondary-fo
 const decodeEntities = (text: string): string => {
   const el = document.createElement('textarea')
   el.innerHTML = text
+
   return el.value
 }
 
@@ -257,6 +261,7 @@ const renderInline = (markdown: string): string => {
     .map((part) => {
       if (part.length > 2 && part.startsWith('`') && part.endsWith('`'))
         return `<code class="${CODE_CLASS}">${escapeHtml(part.slice(1, -1))}</code>`
+
       return highlight(escapeHtml(part)).replace(
         /\*\*([\s\S]+?)\*\*/g,
         '<strong class="text-fd-accent-foreground font-medium">$1</strong>',
@@ -292,6 +297,7 @@ const suggestions = computed<Item[]>(() =>
 const jump = computed<Item | undefined>(() => {
   const query = search.value.toLowerCase()
   const page = pages.value.find((link: SidebarLink) => link.text.toLowerCase().startsWith(query))
+
   return page && { id: 'quick-action', type: 'jump', url: page.link, name: page.text }
 })
 
@@ -308,6 +314,7 @@ const results = computed<Item[] | null>(() => {
       group = [{ id: `page-${pagePath}`, type: 'page', url: path, html: renderInline(name) }]
       groups.set(pagePath, group)
     }
+
     const url = anchor ? `${path}#${anchor}` : path
     if (anchor && matches(section.title))
       group.push({
@@ -316,6 +323,7 @@ const results = computed<Item[] | null>(() => {
         url,
         html: renderInline(section.title),
       })
+
     // `text` is stored by the docs config (`storeFields`); an index without it shows no excerpts.
     const lines = (section.text ?? '').split('\n')
     lines
@@ -326,12 +334,14 @@ const results = computed<Item[] | null>(() => {
         group.push({ id: `text-${section.id}-${i}`, type: 'text', url, html: renderInline(line) }),
       )
   }
+
   return [...groups.values()].flat()
 })
 
 const items = computed<Item[] | null>(() => {
   if (!search.value) return suggestions.value
   if (!results.value) return null
+
   return jump.value ? [jump.value, ...results.value] : results.value
 })
 
@@ -353,28 +363,34 @@ const select = (item: Item) => {
 const onKeydown = (e: KeyboardEvent) => {
   const list = items.value
   if (!open.value || !list || e.isComposing) return
+
   if (e.key === 'ArrowDown' || e.key === 'ArrowUp') {
     let idx = list.findIndex((item) => item.id === active.value)
     if (idx === -1) idx = 0
     else idx += e.key === 'ArrowDown' ? 1 : -1
+
     active.value = list.at(idx % list.length)?.id ?? null
     e.preventDefault()
+
     nextTick(() =>
       listRef.value?.querySelector('[aria-selected="true"]')?.scrollIntoView({ block: 'nearest' }),
     )
   }
+
   if (e.key === 'Enter') {
     const selected = list.find((item) => item.id === active.value)
     if (selected) select(selected)
     e.preventDefault()
   }
 }
+
 // The window listener is client-only: the watch is not immediate (it would run during SSR),
 // and onMounted covers a dialog that mounts already open.
 const listenKeys = (isOpen: boolean) => {
   if (isOpen) window.addEventListener('keydown', onKeydown)
   else window.removeEventListener('keydown', onKeydown)
 }
+
 watch(open, listenKeys)
 onMounted(() => listenKeys(open.value))
 

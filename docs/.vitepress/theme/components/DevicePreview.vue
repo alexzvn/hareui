@@ -63,6 +63,7 @@ const props = withDefaults(
   }>(),
   { visible: true },
 )
+
 const emit = defineEmits<{ ready: [] }>()
 
 // The preview page takes its theme from the frame's `data-preview-theme` (and the design preset from this page's
@@ -77,20 +78,25 @@ const onMessage = (event: MessageEvent) => {
     !isPreviewReadyMessage(event.data)
   )
     return
+
   ready.value = true
   emit('ready')
 }
 
 const root = useTemplateRef<HTMLElement>('root')
 let visibilityObserver: IntersectionObserver | undefined
+
 const load = () => {
   src.value = withBase(demoPreviewPath(props.name))
 }
+
 onMounted(() => {
   window.addEventListener('message', onMessage)
+
   // `inline` frames mount on demand. `page` frames boot the demo only once they near the viewport: a page can hold a
   // dozen of them, and each is a whole app.
   if (props.mode === 'inline' || !root.value) return load()
+
   visibilityObserver = new IntersectionObserver(
     ([entry]) => {
       if (!entry.isIntersecting) return
@@ -99,8 +105,10 @@ onMounted(() => {
     },
     { rootMargin: '200px 0px' },
   )
+
   visibilityObserver.observe(root.value)
 })
+
 onBeforeUnmount(() => {
   window.removeEventListener('message', onMessage)
   visibilityObserver?.disconnect()

@@ -65,6 +65,7 @@ const props = withDefaults(defineProps<AvatarGroupProps>(), {
   grid: false,
   overlap: 'clip',
 })
+
 const slots = defineSlots<AvatarGroupSlots>()
 
 const ui = useComponentUI('avatarGroup', theme, () => ({
@@ -76,6 +77,7 @@ const flatten = (nodes: VNode[]): VNode[] => {
   return nodes.flatMap((node) => {
     if (node.type === Fragment && Array.isArray(node.children))
       return flatten(node.children as VNode[])
+
     return node.type === Comment ? [] : [node]
   })
 }
@@ -95,6 +97,7 @@ const inherit = (node: VNode): VNode => {
       ([key, value]) => value !== undefined && own[key] == null,
     ),
   )
+
   return Object.keys(extra).length ? cloneVNode(node, extra) : node
 }
 
@@ -116,6 +119,7 @@ const Items = () => {
       ),
     )
   }
+
   return nodes
 }
 </script>

@@ -90,6 +90,7 @@ describe('DashboardSidebarCollapse', () => {
       slots: { default: () => h(DashboardSidebarCollapse, { 'data-testid': 'collapse-left' }) },
       attachTo: document.body,
     })
+
     expect(button().hasAttribute('aria-controls')).toBe(false)
     await expectAccessible(document.body)
     wrapper.unmount()

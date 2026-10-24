@@ -121,6 +121,7 @@ const props = withDefaults(defineProps<ColorPickerProps>(), {
   sideOffset: 8,
   portal: undefined,
 })
+
 const portalTarget = usePortal(() => props.portal)
 const emit = defineEmits<ColorPickerEmits>()
 defineSlots<ColorPickerSlots>()
@@ -144,9 +145,11 @@ provide(ColorPickerContextKey, { color, setColor })
 // RAC focuses the popover itself on open (not the first tabbable child like Reka), so Tab starts at the first control.
 const focusContent = (event: Event) => {
   event.preventDefault()
+
   const el = (event.target as HTMLElement | null)?.querySelector<HTMLElement>(
     '[data-slot=color-picker-popover]',
   )
+
   // The event targets Reka's positioning wrapper; the popover is its child. It can't take focus until positioned.
   requestAnimationFrame(() => el?.focus({ preventScroll: true }))
 }
@@ -163,14 +166,17 @@ watch(
     if (value !== undefined) openNow = value
   },
 )
+
 const focusTrigger = () => {
   const el = triggerRef.value?.$el
   if (el instanceof HTMLElement && !openNow) el.focus({ preventScroll: true })
 }
+
 const onOutsideClick = () => {
   document.removeEventListener('click', onOutsideClick, true)
   focusTrigger()
 }
+
 const contentRef = ref<{ $el: HTMLElement } | null>(null)
 const onInteractOutside = (event: CustomEvent<{ originalEvent: Event }>) => {
   preventNestedLayerDismiss(event, contentRef.value?.$el)
@@ -181,14 +187,18 @@ const onInteractOutside = (event: CustomEvent<{ originalEvent: Event }>) => {
     (el instanceof Node && target instanceof Node && el.contains(target))
   )
     return
+
   closedByOutside = true
+
   // A mouse press closes the popover on pointerdown; the browser then moves focus on mousedown
   if (event.detail.originalEvent.type === 'pointerdown')
     document.addEventListener('click', onOutsideClick, true)
 }
+
 const onUpdateOpen = (value: boolean) => {
   openNow = value
   emit('update:open', value)
+
   if (value) {
     closedByOutside = false
     document.removeEventListener('click', onOutsideClick, true)
@@ -196,6 +206,7 @@ const onUpdateOpen = (value: boolean) => {
     nextTick(focusTrigger)
   }
 }
+
 const onCloseAutoFocus = (event: Event) => {
   document.removeEventListener('click', onOutsideClick, true)
   closedByOutside = false
@@ -203,5 +214,6 @@ const onCloseAutoFocus = (event: Event) => {
   event.preventDefault()
   focusTrigger()
 }
+
 onBeforeUnmount(() => document.removeEventListener('click', onOutsideClick, true))
 </script>

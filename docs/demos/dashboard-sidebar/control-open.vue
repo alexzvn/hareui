@@ -68,6 +68,7 @@ const onKeydown = (event: KeyboardEvent) => {
   )
     open.value = !open.value
 }
+
 onMounted(() => window.addEventListener('keydown', onKeydown))
 onBeforeUnmount(() => window.removeEventListener('keydown', onKeydown))
 </script>

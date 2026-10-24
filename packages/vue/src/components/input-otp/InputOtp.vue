@@ -213,6 +213,7 @@ if (modelValue.value === undefined && props.defaultValue !== undefined)
 const root = useTemplateRef<HTMLElement>('root')
 const input = useTemplateRef<HTMLInputElement>('input')
 const box = useTemplateRef<HTMLElement>('box')
+
 // Like the `input-otp` library: the invisible input's glyphs are sized to the box height via `--root-height`
 watch(
   box,
@@ -226,6 +227,7 @@ watch(
   },
   { flush: 'post' },
 )
+
 const { validation } = useFieldValidation({
   value: () => modelValue.value ?? '',
   validate: () => props.validate,
@@ -238,6 +240,7 @@ const { validation } = useFieldValidation({
     modelValue.value = props.defaultValue ?? ''
   },
 })
+
 const disabled = useFieldsetDisabled(() => props.disabled)
 const invalid = computed(() => validation.value.isInvalid)
 
@@ -264,8 +267,10 @@ const patternRegex = computed(() => {
   if (props.pattern === 'digits') return /^\d+$/
   if (props.pattern === 'chars') return /^[a-z]+$/i
   if (props.pattern === 'alphanumeric') return /^[a-z0-9]+$/i
+
   return null
 })
+
 // A numeric virtual keyboard makes no sense once letters are allowed
 const inputMode = computed(() =>
   props.pattern === 'chars' || props.pattern === 'alphanumeric' ? 'text' : 'numeric',
@@ -280,6 +285,7 @@ const charAt = (index: number) => {
 // behavior, not custom per-slot focus management. `selStart`/`selEnd` mirror the input's own selection
 // so each slot can tell whether it's the active one (or part of an active range selection).
 const isFocused = ref(false)
+
 // The `input-otp` library's password-manager badge push (`pushPasswordManagerStrategy: 'increase-width'`, its
 // default): once focused while the box is at least 40px wide, the invisible input is widened by 40px and clipped
 // back, so a manager's badge sits outside the visible box. It stays on for the component's lifetime, as there.
@@ -287,8 +293,10 @@ const PWM_BADGE_SPACE = 40
 const pushPwmBadge = ref(false)
 const selStart = ref<number | null>(null)
 const selEnd = ref<number | null>(null)
+
 // The selection last mirrored, as the library's `inputMetadataRef.prev`: tells a backward caret move from a forward one
 let prevSelection: [number | null, number | null] = [null, null]
+
 // The `input-otp` library's selection model (its `selectionchange` listener): outside insert mode (caret at the
 // end of a partial value) a collapsed caret is widened to select the active slot's character, so typing replaces
 // it and Delete removes it. On a full field that is the last character.
@@ -325,16 +333,20 @@ const syncSelection = () => {
           const wasInserting = prevStart === prevEnd && prevStart < max
           if (direction === 'backward' && !wasInserting) offset = -1
         }
+
         start = offset + caret
         end = offset + caret + 1
       }
     }
+
     if (start !== -1 && end !== -1 && start !== end) el.setSelectionRange(start, end, direction)
   }
+
   selStart.value = el.selectionStart
   selEnd.value = el.selectionEnd
   prevSelection = [selStart.value, selEnd.value]
 }
+
 // The browser fires `selectionchange` for every caret move (arrow keys, clicks, typing), as the library listens to
 const onSelectionChange = () => {
   if (document.activeElement === input.value) syncSelection()
@@ -343,8 +355,10 @@ const onSelectionChange = () => {
 const isActive = (index: number) => {
   if (!isFocused.value || selStart.value === null || selEnd.value === null) return false
   if (selStart.value === selEnd.value) return index === Math.min(selStart.value, props.length - 1)
+
   return index >= selStart.value && index < selEnd.value
 }
+
 const hasFakeCaret = (index: number) => {
   return isActive(index) && !charAt(index)
 }
@@ -364,14 +378,17 @@ const onFocus = () => {
     const start = Math.min(length, props.length - 1)
     el.setSelectionRange(start, length)
   }
+
   syncSelection()
 }
+
 const onBlur = () => {
   isFocused.value = false
   selStart.value = null
   selEnd.value = null
   prevSelection = [null, null]
 }
+
 onMounted(() => document.addEventListener('selectionchange', onSelectionChange))
 onBeforeUnmount(() => document.removeEventListener('selectionchange', onSelectionChange))
 
@@ -385,8 +402,10 @@ const onInput = (event: Event) => {
     const pos = Math.min(previous.length, props.length)
     el.setSelectionRange(pos, pos)
     syncSelection()
+
     return
   }
+
   if (el.value.length > next.length) el.value = next
   commit(next)
   syncSelection()

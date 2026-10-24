@@ -23,6 +23,7 @@ export const useInertOutside = (
     for (const node of added) node.removeAttribute('inert')
     added = []
   }
+
   const apply = (el: Element) => {
     const body = el.ownerDocument.body
     const keep = new Set<Element>()
@@ -30,9 +31,11 @@ export const useInertOutside = (
       for (let node: Element | null = kept; node && !keep.has(node); node = node.parentElement)
         keep.add(node)
     }
+
     const walk = (parent: Element) => {
       for (const child of parent.children) {
         if (child === el) continue
+
         if (keep.has(child)) {
           walk(child)
         } else if (!child.hasAttribute('inert')) {
@@ -41,6 +44,7 @@ export const useInertOutside = (
         }
       }
     }
+
     if (keep.has(body)) walk(body)
   }
 
@@ -48,12 +52,15 @@ export const useInertOutside = (
     const value = toValue(target)
     return value && '$el' in value ? value.$el : value
   }
+
   const sync = (el: Element | null | undefined) => {
     release()
+
     // The immediate watcher also runs during server rendering, where `el` is always empty and `Element` is undefined:
     // check emptiness first so the global is never read there.
     if (el && el instanceof Element && el.isConnected && toValue(open)) apply(el)
   }
+
   // Reopening while the content is still mounted (a close animation held by Presence) keeps the same element, so the
   // element watcher doesn't fire: the open watcher re-applies in that case.
   watch(
@@ -61,6 +68,7 @@ export const useInertOutside = (
     (isOpen) => (isOpen ? sync(element()) : release()),
     { flush: 'sync' },
   )
+
   watch(element, sync, { flush: 'post', immediate: true })
   onScopeDispose(release)
 }

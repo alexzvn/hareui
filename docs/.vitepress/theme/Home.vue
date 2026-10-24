@@ -83,6 +83,7 @@ const firstLink = (base: string) => {
   const section = props.sections.find((s) => s.base === base)
   return (section && sectionLinks(section)[0]?.link) ?? base
 }
+
 const docsHref = firstLink('/docs/getting-started')
 const componentsHref = firstLink('/docs/components')
 const year = new Date().getFullYear()

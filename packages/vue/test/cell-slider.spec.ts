@@ -32,6 +32,7 @@ describe('CellSlider', () => {
         }),
       { attachTo: document.body },
     )
+
     // Reka resolves each thumb's index on the tick after mount; a step before that focuses the thumb with index -1
     await nextTick()
     await thumb(w).trigger('keydown', { key: 'ArrowRight' })
@@ -65,6 +66,7 @@ describe('CellSlider', () => {
         formatOptions: { minimumFractionDigits: 2 },
       },
     })
+
     expect(output(w)).toBe('0.50')
     await thumb(w).trigger('keydown', { key: 'ArrowRight' })
     expect(output(w)).toBe('0.51')
@@ -91,6 +93,7 @@ describe('CellSlider', () => {
           `${value}|${formatted}%`,
       },
     })
+
     expect(output(w)).toBe('40|40%')
   })
 
@@ -99,6 +102,7 @@ describe('CellSlider', () => {
       props: { disabled: true },
       slots: { default: () => h(CellSlider, { label: 'Volume', defaultValue: 30 }) },
     })
+
     const slider = w.findComponent(CellSlider)
     await w.get('[data-slot=slider-thumb]').trigger('keydown', { key: 'ArrowRight' })
     expect(w.get('[data-slot=slider-output]').text()).toBe('30')
@@ -135,6 +139,7 @@ describe('CellSlider', () => {
       props: { label: 'Volume', defaultValue: 40 },
       attachTo: document.body,
     })
+
     await nextTick()
     ;(thumb(w).element as HTMLElement).focus()
     await thumb(w).trigger('keydown', { key: 'ArrowRight' })
@@ -148,6 +153,7 @@ describe('CellSlider', () => {
       props: { label: 'Volume', defaultValue: 40 },
       attachTo: document.body,
     })
+
     await nextTick()
     expect(thumb(w).attributes('tabindex')).toBe('0')
     await thumb(w).trigger('keydown', { key: 'PageUp' })
@@ -171,7 +177,9 @@ describe('CellSlider', () => {
       },
       attachTo: document.body,
     })
+
     await nextTick()
+
     expect(thumb(w).attributes()).toMatchObject({
       role: 'slider',
       'aria-orientation': 'horizontal',
@@ -180,6 +188,7 @@ describe('CellSlider', () => {
       'aria-valuenow': '0.4',
       'aria-valuetext': '40%',
     })
+
     w.unmount()
   })
 
@@ -188,6 +197,7 @@ describe('CellSlider', () => {
       props: { 'aria-label': 'Volume', defaultValue: 40 },
       attachTo: document.body,
     })
+
     await nextTick()
     expect(thumb(w).attributes('aria-label')).toBe('Volume')
     expect(thumb(w).attributes('aria-labelledby')).toBeUndefined()
@@ -199,6 +209,7 @@ describe('CellSlider', () => {
       props: { label: 'Volume', defaultValue: 40, disabled: true },
       attachTo: document.body,
     })
+
     await nextTick()
     expect(thumb(w).attributes('aria-disabled')).toBe('true')
     expect(thumb(w).attributes('tabindex')).toBeUndefined()

@@ -17,11 +17,13 @@ const wrappers: { unmount: () => void }[] = []
 const mount: typeof rawMount = (...args) => {
   const wrapper = rawMount(...args)
   wrappers.push(wrapper)
+
   return wrapper
 }
 
 const trigger = () => document.body.querySelector<HTMLElement>('[data-slot=color-picker-trigger]')!
 const popover = () => document.body.querySelector('[data-slot=color-picker-popover]')
+
 const swatchColor = () =>
   document.body.querySelector('[data-slot=color-swatch]')!.getAttribute('aria-label')
 
@@ -32,6 +34,7 @@ const slots = {
     h(ColorField, { 'aria-label': 'Hex' }),
   ],
 }
+
 // Realistic HeroUI composition: a swatch plus visible text in the trigger, every popover control labelled
 const fullSlots = {
   trigger: () => [h(ColorSwatch, { size: 'sm' }), h('span', 'Brand colour')],
@@ -47,6 +50,7 @@ const fullSlots = {
     h(ColorField, { 'aria-label': 'Hex' }),
   ],
 }
+
 const settle = () => new Promise((resolve) => setTimeout(resolve, 30))
 const open = async () => {
   trigger().click()
@@ -66,6 +70,7 @@ describe('ColorPicker', () => {
       slots: fullSlots,
       attachTo: document.body,
     })
+
     await expectAccessible()
     await open()
     expect(popover()).not.toBeNull()
@@ -81,6 +86,7 @@ describe('ColorPicker', () => {
       slots: fullSlots,
       attachTo: document.body,
     })
+
     const t = trigger()
     expect(t.tagName).toBe('BUTTON')
     expect(t.getAttribute('type')).toBe('button')
@@ -99,6 +105,7 @@ describe('ColorPicker', () => {
       slots: fullSlots,
       attachTo: document.body,
     })
+
     await open()
     const labelledBy = popover()!.getAttribute('aria-labelledby')
     expect(labelledBy).toBe(trigger().id)
@@ -111,6 +118,7 @@ describe('ColorPicker', () => {
       slots: fullSlots,
       attachTo: document.body,
     })
+
     trigger().focus()
     await open()
     expect(document.activeElement).toBe(popover())
@@ -122,13 +130,16 @@ describe('ColorPicker', () => {
       slots: fullSlots,
       attachTo: document.body,
     })
+
     trigger().focus()
     await open()
     const field = document.body.querySelector<HTMLElement>('[data-slot=color-input-group-input]')!
     field.focus()
+
     field.dispatchEvent(
       new KeyboardEvent('keydown', { key: 'Escape', bubbles: true, cancelable: true }),
     )
+
     await nextTick()
     await settle()
     expect(w.emitted('update:open')?.at(-1)).toEqual([false])
@@ -142,6 +153,7 @@ describe('ColorPicker', () => {
       slots: fullSlots,
       attachTo: document.body,
     })
+
     expect(trigger().hasAttribute('disabled')).toBe(true)
     trigger().click()
     await nextTick()
@@ -164,11 +176,13 @@ describe('ColorPicker', () => {
       slots,
       attachTo: document.body,
     })
+
     trigger().click()
     await nextTick()
     await nextTick()
     expect(popover()).not.toBeNull()
     expect(w.emitted('update:open')).toEqual([[true]])
+
     expect(
       (
         document.body.querySelector('[data-slot=color-input-group-input]') as HTMLInputElement
@@ -182,10 +196,13 @@ describe('ColorPicker', () => {
       slots,
       attachTo: document.body,
     })
+
     await nextTick()
+
     const input = document.body.querySelector(
       '[data-slot=color-input-group-input]',
     ) as HTMLInputElement
+
     input.value = '#FF0000'
     input.dispatchEvent(new Event('input', { bubbles: true }))
     input.dispatchEvent(new Event('change', { bubbles: true }))
@@ -202,6 +219,7 @@ describe('ColorPicker', () => {
       slots,
       attachTo: document.body,
     })
+
     trigger().click()
     await nextTick()
     expect(popover()).toBeNull()
@@ -225,12 +243,14 @@ describe('ColorPicker', () => {
       },
       attachTo: document.body,
     })
+
     await nextTick()
     expect(popover()).not.toBeNull()
     close()
     await nextTick()
     expect(trigger().getAttribute('aria-expanded')).toBe('false')
     mount(ColorPicker, { props: { disabled: true }, slots, attachTo: document.body })
+
     expect(
       document.body
         .querySelectorAll('[data-slot=color-picker-trigger]')[1]
@@ -242,17 +262,20 @@ describe('ColorPicker', () => {
     // behaviour-final-check P1
     const outside = document.createElement('button')
     document.body.append(outside)
+
     const w = mount(ColorPicker, {
       props: { defaultValue: '#0485F7' },
       slots,
       attachTo: document.body,
     })
+
     trigger().click()
     await nextTick()
     await nextTick()
     expect(popover()).not.toBeNull()
 
     outside.focus()
+
     outside.dispatchEvent(
       new PointerEvent('pointerdown', {
         bubbles: true,
@@ -261,9 +284,11 @@ describe('ColorPicker', () => {
         ctrlKey: false,
       }),
     )
+
     outside.dispatchEvent(
       new PointerEvent('pointerup', { bubbles: true, button: 0, pointerType: 'mouse' }),
     )
+
     outside.click()
     for (let i = 0; i < 4; i++) await nextTick()
 

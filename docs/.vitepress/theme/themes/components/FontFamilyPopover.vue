@@ -54,9 +54,11 @@ const mode = ref<'suggested' | 'custom'>('suggested')
 const currentFontLabel = computed(() => {
   const fontFamily = variables.value.fontFamily
   const currentSuggestedFont = fonts.find((f) => f.id === fontFamily)
+
   const currentUrlFontLabel = isCustomFontUrl(fontFamily)
     ? extractFontFamilyFromUrl(fontFamily)
     : null
+
   return currentSuggestedFont?.label ?? currentUrlFontLabel ?? 'Inter'
 })
 </script>

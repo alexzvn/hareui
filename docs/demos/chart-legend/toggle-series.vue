@@ -38,6 +38,7 @@ const series = {
   hillside: { name: 'Hillside' },
   airport: { name: 'Airport' },
 }
+
 const hidden = ref<string[]>(['airport'])
 
 const formatTemperature = (value: number) => {

@@ -28,6 +28,7 @@ export const useSelectionManager = <K>(options: SelectionManagerOptions<K>) => {
   // RAC keeps the anchor and the range's moving end on the Selection object
   let anchor: K | undefined
   let current: K | undefined
+
   // A Shift range right after select-all starts over from the target key
   let fromAll = false
 
@@ -40,6 +41,7 @@ export const useSelectionManager = <K>(options: SelectionManagerOptions<K>) => {
     let to = keys.indexOf(b)
     if (from === -1 || to === -1) return []
     if (from > to) [from, to] = [to, from]
+
     return keys.slice(from, to + 1).filter((key) => !options.isDisabled(key))
   }
 
@@ -52,10 +54,12 @@ export const useSelectionManager = <K>(options: SelectionManagerOptions<K>) => {
   const toggle = (key: K) => {
     const mode = options.mode()
     if (mode === 'none' || options.isDisabled(key)) return
+
     if (isSelected(key)) {
       write(mode === 'single' ? [] : options.selected().filter((k) => k !== key))
       return
     }
+
     anchor = current = key
     write(mode === 'single' ? [key] : [...options.selected(), key])
   }
@@ -67,15 +71,19 @@ export const useSelectionManager = <K>(options: SelectionManagerOptions<K>) => {
   const extend = (to: K, from?: K) => {
     const mode = options.mode()
     if (mode === 'none' || options.isDisabled(to)) return
+
     if (mode === 'single') {
       anchor = current = to
       write([to])
+
       return
     }
+
     if (fromAll || (anchor !== undefined && !options.keys().includes(anchor))) {
       anchor = fromAll ? to : undefined
       current = undefined
     }
+
     const start = anchor ?? from ?? to
     const next = new Set(fromAll ? [] : options.selected())
     for (const key of range(start, current ?? to)) next.delete(key)
@@ -91,6 +99,7 @@ export const useSelectionManager = <K>(options: SelectionManagerOptions<K>) => {
     write(options.keys().filter((key) => !options.isDisabled(key)))
     anchor = current = undefined
     fromAll = true
+
     return true
   }
 
@@ -98,8 +107,10 @@ export const useSelectionManager = <K>(options: SelectionManagerOptions<K>) => {
   const clear = () => {
     if (options.mode() === 'none' || options.keepOnEscape?.() || options.selected().length === 0)
       return false
+
     write([])
     anchor = current = undefined
+
     return true
   }
 
@@ -113,6 +124,7 @@ export const useSelectionManager = <K>(options: SelectionManagerOptions<K>) => {
       event.preventDefault()
       event.stopPropagation()
     }
+
     return handled
   }
 

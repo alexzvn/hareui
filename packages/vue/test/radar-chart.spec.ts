@@ -45,11 +45,13 @@ const hover = async (wrapper: ReturnType<typeof mountChart>, clientX: number, cl
   wrapper
     .find('[data-slot=chart-surface]')
     .element.dispatchEvent(new PointerEvent('pointermove', { clientX, clientY, bubbles: true }))
+
   await settle()
 }
 
 const radar = (props: Record<string, unknown> = {}, children?: () => VNode[]) =>
   h(ChartRadar, { dataKey: 'score', name: 'Score', isAnimationActive: false, ...props }, children)
+
 const angleAxis = () => h(ChartPolarAngleAxis, { dataKey: 'category' })
 
 describe('polar helpers', () => {
@@ -77,6 +79,7 @@ describe('polar helpers', () => {
         { x: 10, y: 10 },
       ]),
     ).toBe('M0,0L10,0L10,10L0,0Z')
+
     expect(polygonPath([])).toBe('')
   })
 })
@@ -93,6 +96,7 @@ describe('RadarChart', () => {
     const wrapper = mountChart(() => [
       radar({ stroke: 'red', fill: 'red', fillOpacity: 0.15, strokeWidth: 2 }),
     ])
+
     await settle()
     const polygon = wrapper.find('[data-slot=chart-radar-polygon]')
     expect(polygon.attributes('d')).toBe('M100,20L140,100L100,180L60,100L100,20Z')
@@ -107,6 +111,7 @@ describe('RadarChart', () => {
     const wrapper = mountChart(() => [h(ChartPolarGrid), angleAxis(), radar()])
     await settle()
     const rings = wrapper.findAll('[data-slot=chart-polar-grid-ring]')
+
     // Ticks 0, 25, 50, 75, 100 → radii 0, 20, 40, 60, 80.
     expect(rings).toHaveLength(5)
     expect(rings[4]!.attributes('d')).toBe('M100,20L180,100L100,180L20,100L100,20Z')
@@ -143,26 +148,33 @@ describe('RadarChart', () => {
     await settle()
     const labels = wrapper.findAll('[data-slot=chart-label]')
     expect(labels.map((label) => label.text())).toEqual(['100', '50', '100', '50'])
+
     // N: 80px up, plus the 5px offset; the text sits above the point.
     expect(labels[0]!.attributes()).toMatchObject({
       'text-anchor': 'middle',
       'dominant-baseline': 'auto',
     })
+
     expect(Number(labels[0]!.attributes('x'))).toBeCloseTo(100)
     expect(Number(labels[0]!.attributes('y'))).toBeCloseTo(15)
+
     // E: 40px right, plus 5px; starts at the point and grows outwards.
     expect(labels[1]!.attributes()).toMatchObject({
       'text-anchor': 'start',
       'dominant-baseline': 'central',
     })
+
     expect(Number(labels[1]!.attributes('x'))).toBeCloseTo(145)
     expect(Number(labels[1]!.attributes('y'))).toBeCloseTo(100)
+
     // S: below the point.
     expect(labels[2]!.attributes()).toMatchObject({
       'text-anchor': 'middle',
       'dominant-baseline': 'hanging',
     })
+
     expect(Number(labels[2]!.attributes('y'))).toBeCloseTo(185)
+
     // W: ends at the point.
     expect(labels[3]!.attributes('text-anchor')).toBe('end')
     expect(Number(labels[3]!.attributes('x'))).toBeCloseTo(55)
@@ -177,16 +189,20 @@ describe('RadarChart', () => {
       }),
       radar(),
     ])
+
     await settle()
+
     expect(
       wrapper.findAll('[data-slot=chart-polar-angle-axis-tick] text').map((label) => label.text()),
     ).toEqual(['n', 'e', 's', 'w'])
+
     wrapper.unmount()
 
     const hidden = mountChart(() => [
       h(ChartPolarAngleAxis, { dataKey: 'category', tick: false }),
       radar(),
     ])
+
     await settle()
     expect(hidden.find('[data-slot=chart-polar-angle-axis-tick] text').exists()).toBe(false)
     hidden.unmount()
@@ -197,6 +213,7 @@ describe('RadarChart', () => {
       h(ChartPolarRadiusAxis, { angle: 90, domain: [0, 200] }),
       radar(),
     ])
+
     await settle()
     const ticks = wrapper.findAll('[data-slot=chart-polar-radius-axis-tick] text')
     expect(ticks.map((tick) => tick.text())).toEqual(['0', '50', '100', '150', '200'])
@@ -205,10 +222,12 @@ describe('RadarChart', () => {
     expect(ticks[0]!.attributes('text-anchor')).toBe('start')
     const line = wrapper.find('[data-slot=chart-polar-radius-axis-line]')
     expect(Number(line.attributes('y2'))).toBeCloseTo(20)
+
     // score 100 of 200 → half the radius.
     expect(wrapper.find('[data-slot=chart-radar-polygon]').attributes('d')).toBe(
       'M100,60L120,100L100,140L80,100L100,60Z',
     )
+
     wrapper.unmount()
   })
 
@@ -216,9 +235,11 @@ describe('RadarChart', () => {
     const wrapper = mountChart(() => [
       radar({ fill: 'red', fillOpacity: 0.15, dot: { r: 3, strokeWidth: 0 } }),
     ])
+
     await settle()
     const dots = wrapper.findAll('[data-slot=chart-dot]')
     expect(dots).toHaveLength(4)
+
     expect(dots[0]!.attributes()).toMatchObject({
       cx: '100',
       cy: '20',
@@ -227,6 +248,7 @@ describe('RadarChart', () => {
       'fill-opacity': '0.15',
       'stroke-width': '0',
     })
+
     wrapper.unmount()
 
     const plain = mountChart(() => [radar()])
@@ -247,6 +269,7 @@ describe('RadarChart', () => {
         {
           content: (props: ChartTooltipSlotProps) => {
             received = props
+
             return h(
               'div',
               { 'data-test': 'custom' },
@@ -256,7 +279,9 @@ describe('RadarChart', () => {
         },
       ),
     ])
+
     await settle()
+
     // Pointer slightly right of the top spoke: closest category is N.
     await hover(wrapper, 110, 50)
     expect(wrapper.find('[data-test=custom]').text()).toBe('N|Score:100,Other:50')
@@ -278,9 +303,11 @@ describe('RadarChart', () => {
 
     await wrapper.find('[data-slot=chart-surface]').trigger('pointerleave')
     await settle()
+
     expect(wrapper.find('[data-slot=chart-tooltip-wrapper]').attributes('data-state')).toBe(
       'closed',
     )
+
     expect(wrapper.find('[data-slot=chart-active-dot]').exists()).toBe(false)
     wrapper.unmount()
   })
@@ -291,6 +318,7 @@ describe('RadarChart', () => {
       radar(),
       h(ChartTooltip, { isAnimationActive: false }),
     ])
+
     await settle()
     const seen: string[] = []
     for (let angle = 80; angle >= -260; angle -= 10) {
@@ -301,6 +329,7 @@ describe('RadarChart', () => {
       const name = data.find((row) => tooltip.text().startsWith(row.category))!.category
       if (seen.at(-1) !== name) seen.push(name)
     }
+
     expect(seen).toEqual(['N', 'E', 'S', 'W', 'N'])
     wrapper.unmount()
   })
@@ -311,6 +340,7 @@ describe('RadarChart', () => {
       radar(),
       h(ChartTooltip, { isAnimationActive: false }),
     ])
+
     await settle()
     await hover(wrapper, 100, 50)
     expect(wrapper.find('[data-slot=chart-tooltip-wrapper]').exists()).toBe(true)
@@ -334,17 +364,20 @@ describe('RadarChart', () => {
         },
       ),
     ])
+
     await settle()
     const svg = wrapper.find('[data-slot=chart-surface]')
     await svg.trigger('keydown', { key: 'ArrowRight' })
     await settle()
     expect(received?.label).toBe('N')
+
     // N scores 100: the outer ring, straight up.
     expect(received?.coordinate?.x).toBeCloseTo(100)
     expect(received?.coordinate?.y).toBeCloseTo(20)
     await svg.trigger('keydown', { key: 'End' })
     await settle()
     expect(received?.label).toBe('W')
+
     // W scores 50: half the radius, left of the center, where the active dot is.
     expect(received?.coordinate?.x).toBeCloseTo(60)
     expect(received?.coordinate?.y).toBeCloseTo(100)
@@ -358,6 +391,7 @@ describe('RadarChart', () => {
       radar(),
       h(ChartTooltip, { isAnimationActive: false }),
     ])
+
     await settle()
     const svg = wrapper.find('[data-slot=chart-surface]')
     await svg.trigger('keydown', { key: 'End' })
@@ -365,15 +399,18 @@ describe('RadarChart', () => {
     expect(wrapper.find('[data-slot=chart-tooltip-wrapper]').text()).toContain('W')
     await wrapper.setProps({ data: data.slice(0, 3) })
     await settle()
+
     // Three spokes, clockwise from 12 o'clock at 120° steps; S (100) sits on the outer ring.
     expect(wrapper.findAll('[data-slot=chart-polar-angle-axis-tick]')).toHaveLength(3)
     const d = wrapper.find('[data-slot=chart-radar-polygon]').attributes('d')!
     expect(d.match(/[ML]/g)).toHaveLength(4)
     expect(d.startsWith('M100,20')).toBe(true)
     expect(wrapper.find('[data-slot=chart-active-dot]').exists()).toBe(false)
+
     expect(wrapper.find('[data-slot=chart-tooltip-wrapper]').attributes('data-state')).toBe(
       'closed',
     )
+
     wrapper.unmount()
   })
 
@@ -414,18 +451,23 @@ describe('RadarChart generated mode', () => {
     const wrapper = mountGenerated()
     await settle()
     expect(wrapper.find('[data-slot=chart-polar-grid]').exists()).toBe(true)
+
     expect(
       wrapper.findAll('[data-slot=chart-polar-angle-axis-tick] text').map((label) => label.text()),
     ).toEqual(['N', 'E', 'S', 'W'])
+
     expect(wrapper.find('[data-slot=chart-polar-radius-axis-tick]').exists()).toBe(false)
     const shapes = polygons(wrapper)
     expect(shapes).toHaveLength(2)
+
     expect(shapes.map((shape) => shape.attributes('stroke'))).toEqual([
       'var(--chart-3)',
       'var(--chart-1)',
     ])
+
     expect(shapes[0]!.attributes('fill-opacity')).toBe('0.15')
     expect(shapes[0]!.attributes('stroke-width')).toBe('2')
+
     // Same polygon as the hand-composed radar: score 100 / 50 on a 0–100 radius axis of 80px.
     expect(shapes[0]!.attributes('d')).toBe(
       polygonPath([
@@ -435,6 +477,7 @@ describe('RadarChart generated mode', () => {
         { x: 60, y: 100 },
       ]),
     )
+
     wrapper.unmount()
   })
 
@@ -444,6 +487,7 @@ describe('RadarChart generated mode', () => {
       colors: ['blue', 'green'],
       strokeWidth: 3,
     })
+
     await settle()
     const shapes = polygons(wrapper)
     expect(shapes.map((shape) => shape.attributes('stroke'))).toEqual(['red', 'green'])
@@ -459,6 +503,7 @@ describe('RadarChart generated mode', () => {
       radiusAxis: { angle: 90 },
       dot: true,
     })
+
     await settle()
     expect(wrapper.find('[data-slot=chart-polar-grid]').exists()).toBe(false)
     expect(wrapper.find('[data-slot=chart-polar-angle-axis-tick]').exists()).toBe(false)
@@ -475,13 +520,16 @@ describe('RadarChart generated mode', () => {
           h('text', { 'data-test': 'tick', x: p.x, y: p.y }, `[${p.text}]`),
       },
     )
+
     await settle()
+
     expect(wrapper.findAll('[data-test=tick]').map((tick) => tick.text())).toEqual([
       '[N]',
       '[E]',
       '[S]',
       '[W]',
     ])
+
     wrapper.unmount()
   })
 
@@ -493,6 +541,7 @@ describe('RadarChart generated mode', () => {
       },
       valueFormatter: (value: number, key: string) => `${key}:${value}`,
     })
+
     await settle()
     await wrapper.find('[data-slot=chart-surface]').trigger('keydown', { key: 'ArrowRight' })
     await settle()
@@ -506,9 +555,11 @@ describe('RadarChart generated mode', () => {
   it('formats the spoke labels and the tooltip header with indexFormatter', async () => {
     const wrapper = mountGenerated({ indexFormatter: (value: number | string) => `<${value}>` })
     await settle()
+
     expect(
       wrapper.findAll('[data-slot=chart-polar-angle-axis-tick] text').map((label) => label.text()),
     ).toEqual(['<N>', '<E>', '<S>', '<W>'])
+
     await wrapper.find('[data-slot=chart-surface]').trigger('keydown', { key: 'ArrowRight' })
     await settle()
     expect(wrapper.find('[data-slot=chart-tooltip-wrapper]').text()).toContain('<N>')
@@ -519,10 +570,12 @@ describe('RadarChart generated mode', () => {
     const wrapper = mountGenerated({ legend: 'top' })
     await settle()
     expect(wrapper.attributes('data-legend')).toBe('top')
+
     expect(wrapper.findAll('[data-slot=chart-legend-item]').map((row) => row.text())).toEqual([
       'score',
       'other',
     ])
+
     await wrapper.findAll('[data-slot=chart-legend-trigger]')[0]!.trigger('click')
     await settle()
     expect(wrapper.emitted('update:hidden')?.[0]).toEqual([['score']])
@@ -544,6 +597,7 @@ describe('RadarChart generated mode', () => {
           ),
       },
     )
+
     await settle()
     expect(wrapper.attributes('data-legend')).toBe('bottom')
     expect(wrapper.find('[data-test=legend]').text()).toBe('score,other')
@@ -569,9 +623,11 @@ describe('RadarChart generated mode', () => {
     expect(header()).toBe('E')
     await svg.trigger('keydown', { key: 'Escape' })
     await settle()
+
     expect(wrapper.find('[data-slot=chart-tooltip-wrapper]').attributes('data-state')).toBe(
       'closed',
     )
+
     expect(wrapper.find('[data-slot=chart-active-dot]').exists()).toBe(false)
     wrapper.unmount()
   })
@@ -582,6 +638,7 @@ describe('RadarChart generated mode', () => {
       hidden: ['other'],
       'aria-label': 'Scores by direction',
     })
+
     await settle()
     await expectAccessible(wrapper)
     ;(wrapper.find('[data-slot=chart-surface]').element as SVGElement).focus()

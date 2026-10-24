@@ -46,15 +46,19 @@ const activeSet = computed(() => new Set(props.active))
 const measure = () => {
   const el = container.value
   if (!el || props.active.length === 0) return
+
   const anchors = props.active
     .map((id) => el.querySelector<HTMLElement>(`a[href="#${CSS.escape(id)}"]`))
     .filter((a): a is HTMLElement => !!a)
+
   if (anchors.length === 0) return
   const first = anchors[0]
   const last = anchors[anchors.length - 1]
   const top = first.offsetTop + parseFloat(getComputedStyle(first).paddingTop)
+
   const bottom =
     last.offsetTop + last.clientHeight - parseFloat(getComputedStyle(last).paddingBottom)
+
   rail.value = { top, height: bottom - top }
 }
 

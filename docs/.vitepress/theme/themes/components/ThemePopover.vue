@@ -90,6 +90,7 @@ const items = themes.map((theme) => ({
   class:
     'group relative flex w-10 flex-col items-center justify-center gap-1.5 p-0 hover:bg-transparent data-[hovered=true]:bg-transparent',
 }))
+
 const images = Object.fromEntries(themes.map((theme) => [theme.id, theme.image]))
 
 const applyTheme = (themeId: ThemeId) => {

@@ -20,11 +20,13 @@ export const useVisualViewportHeight = () => {
       window.addEventListener('resize', update)
     }
   })
+
   onBeforeUnmount(() => {
     if (--subscribers === 0) {
       window.visualViewport?.removeEventListener('resize', update)
       window.removeEventListener('resize', update)
     }
   })
+
   return height
 }

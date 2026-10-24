@@ -30,9 +30,11 @@ const mountInDashboard = (render: () => VNode) => {
         collapseSidebar: left.collapse,
         sidebars: { left, right },
       })
+
       return render
     },
   })
+
   return { wrapper: mount(Harness), left, right }
 }
 
@@ -60,6 +62,7 @@ describe('dashboardSidebarToggle', () => {
     const { wrapper, left, right } = mountInDashboard(() =>
       h(DashboardSidebarToggle, { side: 'right' }),
     )
+
     await wrapper.get(toggle).trigger('click')
     expect(right.open.value).toBe(true)
     expect(left.open.value).toBe(false)
@@ -97,6 +100,7 @@ describe('dashboardSidebarToggle', () => {
     const { wrapper, left } = mountInDashboard(() =>
       h(DashboardSidebarToggle, { 'aria-label': 'Menu', onClick: () => clicks++ }),
     )
+
     await wrapper.get(toggle).trigger('click')
     expect(clicks).toBe(1)
     expect(left.open.value).toBe(true)
@@ -125,9 +129,11 @@ describe('dashboardSidebarCollapse', () => {
     const leftIcon = mountInDashboard(() => h(DashboardSidebarCollapse))
       .wrapper.get(`${collapse} path`)
       .attributes('d')
+
     const { wrapper, left, right } = mountInDashboard(() =>
       h(DashboardSidebarCollapse, { side: 'right' }),
     )
+
     await wrapper.get(collapse).trigger('click')
     expect(right.collapsed.value).toBe(true)
     expect(left.collapsed.value).toBe(false)
@@ -146,9 +152,11 @@ describe('dashboardNavbar', () => {
   it('renders the title as an h1 and the toggle on the left, driving the left sidebar', async () => {
     const { wrapper, left, right } = mountInDashboard(() => h(DashboardNavbar, { title: 'Inbox' }))
     expect(wrapper.get('h1').text()).toBe('Inbox')
+
     const button = wrapper.get(
       '[data-slot=dashboard-navbar-left] [data-slot=dashboard-navbar-toggle]',
     )
+
     expect(
       wrapper
         .find('[data-slot=dashboard-navbar-right] [data-slot=dashboard-navbar-toggle]')
@@ -164,14 +172,17 @@ describe('dashboardNavbar', () => {
     const { wrapper, left, right } = mountInDashboard(() =>
       h(DashboardNavbar, { title: 'Inbox', toggleSide: 'right' }),
     )
+
     expect(
       wrapper
         .find('[data-slot=dashboard-navbar-left] [data-slot=dashboard-navbar-toggle]')
         .exists(),
     ).toBe(false)
+
     await wrapper
       .get('[data-slot=dashboard-navbar-right] [data-slot=dashboard-navbar-toggle]')
       .trigger('click')
+
     expect(right.open.value).toBe(true)
     expect(left.open.value).toBe(false)
   })
@@ -180,6 +191,7 @@ describe('dashboardNavbar', () => {
     const { wrapper, left, right } = mountInDashboard(() =>
       h(DashboardNavbar, { toggle: { side: 'right' } }),
     )
+
     await wrapper.get('[data-slot=dashboard-navbar-toggle]').trigger('click')
     expect(right.open.value).toBe(true)
     expect(left.open.value).toBe(false)
@@ -189,6 +201,7 @@ describe('dashboardNavbar', () => {
     const custom = mountInDashboard(() =>
       h(DashboardNavbar, { toggle: { variant: 'secondary', class: 'rounded-full' } }),
     ).wrapper.get('[data-slot=dashboard-navbar-toggle]')
+
     expect(custom.classes()).toContain('rounded-full')
     expect(custom.classes()).toEqual(expect.arrayContaining(['md:hidden']))
 
@@ -200,11 +213,13 @@ describe('dashboardNavbar', () => {
     const ghost = mountInDashboard(() => h(DashboardNavbar)).wrapper.get(
       '[data-slot=dashboard-navbar-toggle]',
     )
+
     expect(ghost.classes()).toEqual(expect.arrayContaining(['-ms-2.5', 'md:-ms-2']))
 
     const filled = mountInDashboard(() =>
       h(DashboardNavbar, { toggle: { variant: 'secondary', class: 'ms-0 md:ms-0' } }),
     ).wrapper.get('[data-slot=dashboard-navbar-toggle]')
+
     expect(filled.classes()).toEqual(expect.arrayContaining(['ms-0', 'md:ms-0']))
     expect(filled.classes()).not.toContain('-ms-2.5')
     expect(filled.classes()).not.toContain('md:-ms-2')
@@ -217,6 +232,7 @@ describe('dashboardNavbar', () => {
           h('button', { id: 'custom', onClick: ctx.toggleSidebar }, 'Menu'),
       }),
     )
+
     expect(wrapper.find('[data-slot=dashboard-navbar-toggle]').exists()).toBe(false)
     await wrapper.get('#custom').trigger('click')
     expect(left.open.value).toBe(true)
@@ -233,6 +249,7 @@ describe('dashboardNavbar', () => {
         right: () => h('span', { id: 'actions' }, 'Actions'),
       }),
     )
+
     expect(wrapper.get('[data-slot=dashboard-navbar-center] #center').text()).toBe('Search')
     expect(wrapper.get('[data-slot=dashboard-navbar-right] #actions').text()).toBe('Actions')
     expect(seen).toEqual({ sidebarOpen: false, hasRight: true })
@@ -259,9 +276,11 @@ describe('dashboardNavbar', () => {
         },
       ),
     )
+
     const order = [...wrapper.get('[data-slot=dashboard-navbar-left]').element.children].map(
       (c) => c.id || c.getAttribute('data-slot'),
     )
+
     expect(order).toEqual(['lead', 'dashboard-navbar-title', 'trail'])
   })
 
@@ -269,6 +288,7 @@ describe('dashboardNavbar', () => {
     const { wrapper } = mountInDashboard(() =>
       h(DashboardNavbar, { title: 'Inbox', as: { root: 'header', title: 'h2' } }),
     )
+
     expect(wrapper.get('[data-slot=dashboard-navbar]').element.tagName).toBe('HEADER')
     expect(wrapper.get('[data-slot=dashboard-navbar-title]').element.tagName).toBe('H2')
   })
@@ -296,6 +316,7 @@ describe('dashboardToolbar', () => {
     const wrapper = mount(DashboardToolbar, {
       slots: { default: () => h('span', { id: 'x' }, 'Menu') },
     })
+
     expect(wrapper.find('#x').exists()).toBe(true)
     expect(wrapper.find('[data-slot=dashboard-toolbar-left]').exists()).toBe(false)
   })
@@ -342,11 +363,13 @@ describe('dashboardNavbar accessibility', () => {
   it('passes axe with the toggle on the right and a custom title level', async () => {
     const wrapper = mountNavbar({ toggleSide: 'right', as: { title: 'h2' } })
     expect(document.querySelector('[data-slot=dashboard-navbar-title]')!.tagName).toBe('H2')
+
     expect(
       document.querySelector(
         '[data-slot=dashboard-navbar-right] [data-slot=dashboard-navbar-toggle]',
       ),
     ).not.toBeNull()
+
     await expectAccessible(document.body)
     wrapper.unmount()
     document.body.innerHTML = ''

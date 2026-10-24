@@ -18,6 +18,7 @@ const items: TagGroupItem[] = [
   { id: 'default-gaming', label: 'Gaming' },
   { id: 'default-shopping', label: 'Shopping' },
 ]
+
 const icons: Record<string, string> = {
   'default-news': 'gravity-ui:square-article',
   'default-travel': 'gravity-ui:planet-earth',

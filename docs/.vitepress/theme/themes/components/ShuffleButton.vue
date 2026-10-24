@@ -68,9 +68,11 @@ let isRandomizing = false
 const handleRandomize = () => {
   isRandomizing = true
   randomize()
+
   if (isDontShowAgainChecked.value) {
     localStorage.setItem(LOCAL_STORAGE_KEYS.SHUFFLE_WARNING_SHOWN, JSON.stringify(true))
   }
+
   isOpen.value = false
 }
 

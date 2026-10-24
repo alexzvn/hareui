@@ -164,6 +164,7 @@ const props = withDefaults(defineProps<ToastProviderProps>(), {
   width: DEFAULT_TOAST_WIDTH,
   portal: undefined,
 })
+
 const portalTarget = usePortal(() => props.portal)
 const slots = useSlots()
 defineSlots<ToastProviderSlots>()
@@ -191,39 +192,48 @@ const collapseIfOutside = () => {
   if (node && !pointerWithin && !node.contains(document.activeElement))
     isPointerOrFocusWithin.value = false
 }
+
 const onPointerEnterOrMove = (event: PointerEvent) => {
   if (event.pointerType === 'touch') return
   pointerWithin = true
   isPointerOrFocusWithin.value = true
 }
+
 const onPointerLeave = (event: PointerEvent) => {
   if (event.pointerType === 'touch') return
   pointerWithin = false
   collapseIfOutside()
 }
+
 const onFocusIn = (event: FocusEvent) => {
   isPointerOrFocusWithin.value = true
   const node = regionEl.value
   const target = event.target as HTMLElement
   if (node && target !== node) lastFocusedInRegion = target
+
   if (node && event.relatedTarget instanceof HTMLElement && !node.contains(event.relatedTarget))
     lastFocusedOutside = event.relatedTarget
 }
+
 const onFocusOut = (event: FocusEvent) => {
   const node = regionEl.value
   if (node && event.relatedTarget instanceof Node && node.contains(event.relatedTarget)) return
   lastFocusedOutside = null
   collapseIfOutside()
 }
+
 const onGlobalPointerOver = (event: PointerEvent) => {
   const node = regionEl.value
+
   // The composed path's first node: inside a shadow root `event.target` is the shadow host.
   const target = event.composedPath()[0]
   if (!node || event.pointerType === 'touch' || (target instanceof Node && node.contains(target)))
     return
+
   pointerWithin = false
   collapseIfOutside()
 }
+
 const onRegionKeyDown = (event: KeyboardEvent) => {
   const node = regionEl.value
   if (!node || event.key !== 'Escape') return
@@ -231,6 +241,7 @@ const onRegionKeyDown = (event: KeyboardEvent) => {
   pointerWithin = false
   isPointerOrFocusWithin.value = false
 }
+
 /* ------------------------------------------------------------------------------------------------
  * Focus management (RAC useToastRegion / useLandmark). The region is the page's only landmark, so
  * F6 / Shift+F6 move focus into it, back to the element last focused there when it still exists.
@@ -243,6 +254,7 @@ let pointerModality = false
 const onModalityPointer = () => {
   pointerModality = true
 }
+
 const onModalityKey = () => {
   pointerModality = false
 }
@@ -251,6 +263,7 @@ const onLandmarkKeyDown = (event: KeyboardEvent) => {
   const node = regionEl.value
   if (!node || event.key !== 'F6' || event.altKey || node.closest('[aria-hidden=true]')) return
   event.preventDefault()
+
   if (lastFocusedInRegion?.isConnected && node.contains(lastFocusedInRegion))
     lastFocusedInRegion.focus()
   else node.focus()
@@ -266,12 +279,15 @@ const onFocusLeave = (el: HTMLElement) => {
   if (pointerModality && lastFocusedOutside?.isConnected) return restoreOutsideFocus()
   const toasts = [...node.querySelectorAll<HTMLElement>('[data-slot=toast]')]
   const index = toasts.indexOf(el)
+
   const available = (toast: HTMLElement) =>
     toast !== el &&
     !toast.hasAttribute('data-exiting') &&
     toast.getAttribute('aria-hidden') !== 'true'
+
   const next =
     toasts.slice(0, index).reverse().find(available) ?? toasts.slice(index + 1).find(available)
+
   if (next) next.focus({ preventScroll: true })
   else restoreOutsideFocus()
 }
@@ -281,12 +297,15 @@ const onDocumentKeyDown = (event: KeyboardEvent) => {
   const node = regionEl.value
   const hotkey = props.hotkey
   if (!node || hotkey.length === 0) return
+
   const hasExpectedModifiers = MODIFIER_PROPS.every(
     (modifier) => event[modifier] === hotkey.includes(modifier),
   )
+
   const hasExpectedCodes = hotkey.every(
     (key) => (MODIFIER_PROPS as readonly string[]).includes(key) || event.code === key,
   )
+
   if (!hasExpectedModifiers || !hasExpectedCodes) return
   event.preventDefault()
   node.focus()
@@ -298,6 +317,7 @@ onMounted(() => {
   document.addEventListener('pointerdown', onModalityPointer, true)
   document.addEventListener('keydown', onModalityKey, true)
 })
+
 onBeforeUnmount(() => {
   document.removeEventListener('pointerover', onGlobalPointerOver, true)
   document.removeEventListener('keydown', onDocumentKeyDown)
@@ -307,12 +327,14 @@ onBeforeUnmount(() => {
 
 // A single remaining toast never expands; exiting toasts don't count.
 const activeToastCount = computed(() => visibleToasts.value.length - exitingKeys.value.size)
+
 // RAC's default region label (`toastRegion.notifications` in @react-aria/toast's en-US strings).
 const regionLabel = computed(
   () =>
     props.ariaLabel ??
     `${activeToastCount.value} notification${activeToastCount.value === 1 ? '' : 's'}.`,
 )
+
 const resolvedIsExpanded = computed(
   () => (props.isExpanded || isPointerOrFocusWithin.value) && activeToastCount.value > 1,
 )
@@ -330,7 +352,9 @@ const onVisibilityChange = () => {
   if (document.hidden) activeQueue.value.suspendTimers('visibility')
   else activeQueue.value.resumeTimers('visibility')
 }
+
 onMounted(() => document.addEventListener('visibilitychange', onVisibilityChange))
+
 onBeforeUnmount(() => {
   document.removeEventListener('visibilitychange', onVisibilityChange)
   activeQueue.value.resumeTimers('visibility')
@@ -343,15 +367,19 @@ onBeforeUnmount(() => {
 const isMobile = ref(
   typeof window !== 'undefined' ? window.matchMedia('(max-width: 768px)').matches : false,
 )
+
 let mobileQuery: MediaQueryList | null = null
+
 const onMobileChange = (event: MediaQueryListEvent) => {
   isMobile.value = event.matches
 }
+
 onMounted(() => {
   mobileQuery = window.matchMedia('(max-width: 768px)')
   isMobile.value = mobileQuery.matches
   mobileQuery.addEventListener('change', onMobileChange)
 })
+
 onBeforeUnmount(() => {
   mobileQuery?.removeEventListener('change', onMobileChange)
 })
@@ -364,6 +392,7 @@ const heights = reactive<Record<string, number>>({})
 const onHeightChange = (key: string, height: number) => {
   heights[key] = height
 }
+
 const onHeightRemove = (key: string) => {
   delete heights[key]
 }
@@ -384,6 +413,7 @@ type RenderItem = {
 const renderItems = computed<RenderItem[]>(() => {
   const vis = visibleToasts.value
   const exiting = exitingKeys.value
+
   // Exiting toasts are excluded from layout (siblings reposition during the exit animation)
   // but keep their own slot while fading out.
   const common = vis.filter((t) => !exiting.has(t.key))
@@ -418,6 +448,7 @@ const renderItems = computed<RenderItem[]>(() => {
       frontHeight: frontHeightVal,
     })
   }
+
   return items
 })
 </script>

@@ -46,6 +46,7 @@ describe('snapValueToStep', () => {
     expect(snapValueToStep(12, 0, 10, 3)).toBe(9)
     expect(snapValueToStep(1.5, 0.1, 1, 0.2)).toBe(0.9)
     expect(snapValueToStep(12, undefined, 10, 3)).toBe(9)
+
     // no max: a page past an off-grid max stays on the grid (Slider clamps it afterwards)
     expect(snapValueToStep(12, 0, undefined, 3)).toBe(12)
   })
@@ -84,6 +85,7 @@ const setup = (initial: Setup = {}) => {
   const model = ref<number | null | undefined>(initial.modelValue)
   const onCommit = vi.fn<() => void>()
   let value!: NumberValue
+
   const options: NumberValueOptions = {
     model,
     defaultValue: () => props.value.defaultValue,
@@ -93,6 +95,7 @@ const setup = (initial: Setup = {}) => {
     formatOptions: () => props.value.formatOptions,
     onCommit,
   }
+
   const wrapper = mount(
     defineComponent({
       emits: ['update:modelValue'],
@@ -102,6 +105,7 @@ const setup = (initial: Setup = {}) => {
       },
     }),
   )
+
   return { wrapper, props, model, onCommit, value }
 }
 
@@ -125,6 +129,7 @@ describe('useNumberValue', () => {
       max: 1,
       step: 0.1,
     })
+
     expect(value.displayValue.value).toBe(0.3)
     expect(value.defaultDisplayValue.value).toBe(1)
     model.value = null
