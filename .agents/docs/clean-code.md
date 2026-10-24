@@ -28,7 +28,7 @@ no semicolons, single quotes, printWidth 100, trailingComma all. Import order by
 | N2 | Boolean variables named `is/has/should/can` + PascalCase; `isNot*`/`hasNo*` banned. Props/`defineModel` names exempt (HTML/HeroUI names like `disabled`, `open`) | `hareui/boolean-prefix` |
 | N3 | One verb per concept: `get` = pure read, `resolve` = read with fallback/merge, `create` = new instance, `use` = composable, `on` = handler, `to` = conversion | review-only, glossary in AGENTS.md |
 | I1 | Path alias `@/` → `packages/vue/src` for any cross-directory import inside packages/vue (src + test); relative imports only for same folder (`./x`) | `hareui/no-parent-import` (autofix to `@/…`) |
-| I2 | Sorted imports | Prettier plugin |
+| I2 | Sorted imports | oxfmt `sortImports` |
 | V1 | SFC block order: `<template>` → `<script>` → `<style>` (src AND docs demos AND markdown code samples) | `hareui/sfc-block-order` (reads file from disk); one-off fixer `tooling/scripts/fix-sfc-block-order.ts` |
 | V2 | Composables: one `useX` per file, named export, no default export (`src/composables/**`, any `use*.ts`) | `hareui/composable-export` |
 | V3 | Template element refs via Vue 3.5 `useTemplateRef('name')`, one per element; `ref<HTMLElement>()` etc. banned | `hareui/use-template-ref` |
@@ -41,7 +41,55 @@ no semicolons, single quotes, printWidth 100, trailingComma all. Import order by
 | D1 | Dead code / unused exports / unused deps removed | knip (CI) |
 | C1 | JSDoc on everything publicly importable from `@hareui/vue` entries (`src/index.ts`, `src/charts.ts`, `src/vite.ts`): exported functions, types, and every member of public Props/Emits/Slots types | `hareui/public-jsdoc` |
 | C2 | Internal comments explain WHY only (invariants, RAC/HeroUI parity, workarounds with links), concise; delete comments restating code; no commented-out code | review-only |
-| S1 | No hard file-size limit; depth over size, review judgment | review-only |
+| S1 | A file stays ≤ 600 lines (template + script + style). Over that, split by concern: public types → `<Component>.types.ts`, logic → `use<Component><Concern>.ts` composables or pure `<concern>.ts` modules, repeated markup → child components | `hareui/max-file-lines` |
+| S2 | Public component types (Props, Emits, Slots, item/slot-prop types) live in `<Component>.types.ts` next to the SFC, imported with `import type … from './<Component>.types'`; SFCs keep no separate type-only `<script lang="ts">` block. Not `.d.ts`: hand-written declaration files are not emitted to `dist`, so consumers would lose the types | review-only |
+
+## Readability
+Code is read far more than written; give it room to breathe.
+
+| # | Rule | Enforced by |
+|---|------|-------------|
+| R1 | Blank line before and after every multi-line statement (block, multi-line call or literal) unless it is first/last in its block; blank line before a `return` that follows other statements | `hareui/padding-lines` (autofix) |
+| R2 | A comment sits on its own line(s) directly above the code it explains, preceded by a blank line (unless first in its block). No trailing comments after code | `hareui/padding-lines` (autofix), review |
+| R3 | Max nesting depth 3 blocks, max 3 nested callbacks; deeper → extract a named function | `eslint/max-depth`, `eslint/max-nested-callbacks` |
+| R4 | Name intermediate values instead of chaining them inside conditions (`const rows = list.rows() ?? []` then `rows.findIndex(…)`); one idea per line | review-only |
+| R5 | Hoist inner helper closures to setup/module level when they don't need the enclosing function's locals beyond their parameters | review-only |
+
+Before → after (R1–R5):
+
+```ts
+// Before: no breathing room, nested closure, chained lookups inside conditions
+const setFocusKey = (value: ListBoxValue | null, scroll = true) => {
+  focusedKey.value = value
+  if (value == null || !scroll) return
+  // Virtualized: render the row first, then scroll it into view like any other
+  const reveal = () => document.getElementById(optionId(value))?.scrollIntoView({ block: 'nearest' })
+  const list = listEl.value?.$el as HTMLElement | undefined
+  if (props.virtualize && list && !document.getElementById(optionId(value))) {
+    …
+  } else {
+    nextTick(reveal)
+  }
+}
+
+// After
+const revealOption = (value: ListBoxValue) => {
+  document.getElementById(optionId(value))?.scrollIntoView({ block: 'nearest' })
+}
+
+const setFocusKey = (value: ListBoxValue | null, scroll = true) => {
+  focusedKey.value = value
+  if (value === null || !scroll) return
+
+  const isRendered = document.getElementById(optionId(value)) !== null
+  if (props.virtualize && !isRendered) {
+    scrollVirtualRowIntoView(value)
+    return
+  }
+
+  nextTick(() => revealOption(value))
+}
+```
 
 ## Tests
 - One behavior per `it` (several expects OK); name states the behavior.
