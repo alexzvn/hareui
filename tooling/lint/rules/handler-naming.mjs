@@ -1,5 +1,9 @@
 // N1: event handlers are named `onX`; `handleX` is banned.
+// Only function values are handlers: `handleAttrs` (attributes for a resize handle) is a noun and stays.
 const HANDLE_NAME = /^handle([A-Z].*)$/
+
+const isFunction = (node) =>
+  node?.type === 'ArrowFunctionExpression' || node?.type === 'FunctionExpression'
 
 export default {
   meta: {
@@ -24,20 +28,20 @@ export default {
 
     return {
       VariableDeclarator(node) {
-        check(node.id)
+        if (isFunction(node.init)) check(node.id)
       },
       FunctionDeclaration(node) {
         check(node.id)
       },
       Property(node) {
         if (node.parent.type !== 'ObjectExpression' || node.computed) return
-        check(node.key)
+        if (isFunction(node.value)) check(node.key)
       },
       MethodDefinition(node) {
         if (!node.computed) check(node.key)
       },
       PropertyDefinition(node) {
-        if (!node.computed) check(node.key)
+        if (!node.computed && isFunction(node.value)) check(node.key)
       },
     }
   },
