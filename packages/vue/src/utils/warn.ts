@@ -1,3 +1,6 @@
+// Module-scoped so every program that reaches this file (library, docs) sees it; replaced by the consumer's bundler.
+declare const process: { env: { NODE_ENV?: string } }
+
 /**
  * Logs a `[hareui]`-prefixed warning in development.
  *
