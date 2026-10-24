@@ -52,7 +52,7 @@ const themeButtonClass = 'size-7 [--toggle-button-fg:var(--muted)] hover:[--togg
     <template #right>
       <!-- A search trigger with a ⌘K hint. In a narrow bar it shrinks: the label truncates and the hint drops out
            below 10rem (a container query on the button). -->
-      <Button aria-label="Search docs" class="@container hidden h-8 w-50 min-w-0 shrink justify-between overflow-hidden rounded-xl px-3 font-normal text-muted sm:inline-flex" size="sm" variant="tertiary">
+      <Button class="@container hidden h-8 w-50 min-w-0 shrink justify-between overflow-hidden rounded-xl px-3 font-normal text-muted sm:inline-flex" size="sm" variant="tertiary">
         <span class="flex min-w-0 items-center gap-2">
           <Icon class="shrink-0" icon="gravity-ui:magnifier" />
           <span class="truncate">Search docs</span>

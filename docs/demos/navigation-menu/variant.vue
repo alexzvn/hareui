@@ -15,11 +15,11 @@ const links = [
 
 <template>
   <div class="flex w-full flex-col gap-10">
-    <NavigationMenu variant="pill" :items="links" :ui="{ linkLabel: 'max-sm:sr-only' }" class="w-full justify-center" />
-    <NavigationMenu variant="link" :items="links" :ui="{ linkLabel: 'max-sm:sr-only' }" class="w-full justify-center" />
+    <NavigationMenu variant="pill" aria-label="Pill" :items="links" :ui="{ linkLabel: 'max-sm:sr-only' }" class="w-full justify-center" />
+    <NavigationMenu variant="link" aria-label="Link" :items="links" :ui="{ linkLabel: 'max-sm:sr-only' }" class="w-full justify-center" />
     <div class="flex justify-center gap-16">
-      <NavigationMenu variant="pill" :items="links" orientation="vertical" class="w-48" />
-      <NavigationMenu variant="link" :items="links" orientation="vertical" class="w-48" />
+      <NavigationMenu variant="pill" aria-label="Pill, vertical" :items="links" orientation="vertical" class="w-48" />
+      <NavigationMenu variant="link" aria-label="Link, vertical" :items="links" orientation="vertical" class="w-48" />
     </div>
   </div>
 </template>

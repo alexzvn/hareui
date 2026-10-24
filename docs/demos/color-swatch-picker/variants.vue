@@ -9,11 +9,11 @@ const colors: ColorSwatchPickerItem[] = ['#F43F5E', '#D946EF', '#8B5CF6', '#3B82
   <div class="flex flex-col gap-6">
     <div class="flex flex-col gap-2">
       <span class="text-sm text-muted">Circle (default)</span>
-      <ColorSwatchPicker :items="colors" variant="circle" />
+      <ColorSwatchPicker aria-label="Color, circle" :items="colors" variant="circle" />
     </div>
     <div class="flex flex-col gap-2">
       <span class="text-sm text-muted">Square</span>
-      <ColorSwatchPicker :items="colors" variant="square" />
+      <ColorSwatchPicker aria-label="Color, square" :items="colors" variant="square" />
     </div>
   </div>
 </template>

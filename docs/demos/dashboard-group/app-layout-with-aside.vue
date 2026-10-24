@@ -70,7 +70,7 @@ const navCollapsed = ref(true)
       </template>
 
       <template #footer="{ collapsed }">
-        <NavigationMenu :items="footerItems" orientation="vertical" :collapsed="collapsed" tooltip class="w-full" />
+        <NavigationMenu aria-label="Secondary" :items="footerItems" orientation="vertical" :collapsed="collapsed" tooltip class="w-full" />
       </template>
     </DashboardSidebar>
 
@@ -93,7 +93,7 @@ const navCollapsed = ref(true)
             <Button aria-label="Search" variant="ghost" size="sm" class="h-7 w-10 rounded-lg p-0 text-muted hover:text-foreground">
               <Icon icon="gravity-ui:magnifier" />
             </Button>
-            <Button aria-label="Account" variant="ghost" icon-only>
+            <Button aria-label="JG account" variant="ghost" icon-only>
               <Avatar fallback="JG" color="success" variant="soft" class="size-6" :ui="{ fallback: 'text-xs font-semibold' }" />
             </Button>
             <!-- `side="right"` targets the aside instead of the navigation sidebar: the collapse button from `lg` up, the sheet toggle below. -->
@@ -139,6 +139,7 @@ const navCollapsed = ref(true)
     <!-- The aside is a right sidebar with its own state: `useDashboard().sidebars.right`. -->
     <DashboardSidebar
       id="app-layout-with-aside-details"
+      aria-label="Details"
       side="right"
       collapsible
       :default-size="18"

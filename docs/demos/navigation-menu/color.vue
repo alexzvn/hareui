@@ -16,6 +16,6 @@ const colors: NonNullable<NavigationMenuProps['color']>[] = ['default', 'accent'
 
 <template>
   <div class="flex w-full flex-col gap-3">
-    <NavigationMenu v-for="color in colors" :key="color" :color="color" :items="links" :ui="{ linkLabel: 'max-sm:sr-only' }" class="w-full justify-center" />
+    <NavigationMenu v-for="color in colors" :key="color" :aria-label="`${color} links`" :color="color" :items="links" :ui="{ linkLabel: 'max-sm:sr-only' }" class="w-full justify-center" />
   </div>
 </template>

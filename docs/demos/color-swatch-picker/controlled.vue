@@ -9,7 +9,7 @@ const value = ref(parseColor('#F43F5E'))
 
 <template>
   <div class="flex flex-col gap-4">
-    <ColorSwatchPicker v-model="value" :items="colors" />
+    <ColorSwatchPicker v-model="value" aria-label="Color" :items="colors" />
     <p class="text-sm text-muted">
       Selected: <span class="font-medium">{{ colorToString(value, 'hex') }}</span>
     </p>

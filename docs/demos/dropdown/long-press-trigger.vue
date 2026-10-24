@@ -12,7 +12,7 @@ const items: DropdownEntry[] = [
 
 <template>
   <Dropdown :items="items" trigger="longPress">
-    <Button aria-label="Menu" variant="secondary">
+    <Button variant="secondary">
       Long Press
     </Button>
   </Dropdown>

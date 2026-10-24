@@ -28,7 +28,7 @@ const items: DropdownEntry[] = [
 
 <template>
   <Dropdown :items="items" @action="(key) => console.log(`Selected: ${key}`)">
-    <Button aria-label="Menu" variant="secondary">
+    <Button variant="secondary">
       Share
     </Button>
   </Dropdown>

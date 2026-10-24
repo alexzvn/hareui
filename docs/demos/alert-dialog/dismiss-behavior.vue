@@ -14,7 +14,7 @@ import { Icon } from '@iconify/vue'
         dialogs typically require explicit action, so this defaults to <code>false</code>. Set to
         <code>true</code> for less critical confirmations.
       </p>
-      <AlertDialog class="sm:max-w-[400px]" :dismissible="false">
+      <AlertDialog class="sm:max-w-[400px]" :dismissible="false" title="dismissible = false">
         <Button variant="secondary">
           Open Alert Dialog
         </Button>
@@ -55,7 +55,7 @@ import { Icon } from '@iconify/vue'
         explicit action, so this defaults to <code>false</code>. When set to <code>true</code>,
         the ESC key will be enabled.
       </p>
-      <AlertDialog class="sm:max-w-[400px]" :keyboard-dismissible="false">
+      <AlertDialog class="sm:max-w-[400px]" :keyboard-dismissible="false" title="keyboardDismissible = false">
         <Button variant="secondary">
           Open Alert Dialog
         </Button>

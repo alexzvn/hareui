@@ -43,7 +43,7 @@ const defaultValue = computed<DateValue>(() => granularity.value === 'day'
           </template>
         </Tooltip>
       </div>
-      <Select v-model="selectValue" class="w-[110px]" placeholder="Select granularity" variant="secondary" :items="granularityOptions" />
+      <Select v-model="selectValue" aria-label="Granularity" class="w-[110px]" placeholder="Select granularity" variant="secondary" :items="granularityOptions" />
     </div>
   </div>
 </template>

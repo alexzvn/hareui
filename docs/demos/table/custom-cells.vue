@@ -60,7 +60,7 @@ const initials = (name: string) => name.split(' ').map(n => n[0]).join('')
     </template>
     <template #name-cell="{ row }">
       <div class="flex items-center gap-3">
-        <Avatar :fallback="initials(row.name)" size="sm" :src="row.image_url" />
+        <Avatar alt="" :fallback="initials(row.name)" size="sm" :src="row.image_url" />
         <div class="flex flex-col">
           <span class="text-xs">{{ row.name }}</span>
           <span class="text-xs text-muted">{{ row.email }}</span>

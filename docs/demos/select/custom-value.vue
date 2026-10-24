@@ -26,12 +26,12 @@ const users: User[] = [
         {{ selectedItems.length }} users selected
       </template>
       <div v-else class="flex items-center gap-2">
-        <Avatar class="size-4" size="sm" :src="selectedItems[0]!.avatarUrl" :fallback="selectedItems[0]!.fallback" />
+        <Avatar class="size-4" size="sm" alt="" :src="selectedItems[0]!.avatarUrl" :fallback="selectedItems[0]!.fallback" />
         <span>{{ selectedItems[0]!.label }}</span>
       </div>
     </template>
     <template #item-leading="{ item }">
-      <Avatar size="sm" :src="item.avatarUrl" :fallback="item.fallback" />
+      <Avatar size="sm" alt="" :src="item.avatarUrl" :fallback="item.fallback" />
     </template>
   </Select>
 </template>

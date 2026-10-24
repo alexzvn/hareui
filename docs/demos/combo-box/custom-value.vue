@@ -19,7 +19,7 @@ const users: User[] = [
 <template>
   <ComboBox class="w-[256px]" label="User" placeholder="Search users..." :items="users">
     <template #item-leading="{ item }">
-      <Avatar size="sm" :src="item.avatarUrl" :fallback="item.fallback" />
+      <Avatar size="sm" alt="" :src="item.avatarUrl" :fallback="item.fallback" />
     </template>
   </ComboBox>
 </template>

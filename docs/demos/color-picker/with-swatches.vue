@@ -13,6 +13,6 @@ const presets: ColorSwatchPickerItem[] = ['#ef4444', '#f97316', '#eab308', '#22c
     </template>
     <ColorArea aria-label="Color area" class="max-w-full" color-space="hsb" x-channel="saturation" y-channel="brightness" />
     <ColorSlider aria-label="Hue slider" channel="hue" class="gap-1 px-1" color-space="hsb" label="Hue" :ui="{ output: 'text-muted' }" />
-    <ColorSwatchPicker :items="presets" class="justify-center px-1" size="xs" />
+    <ColorSwatchPicker aria-label="Presets" :items="presets" class="justify-center px-1" size="xs" />
   </ColorPicker>
 </template>

@@ -28,7 +28,7 @@ const items: DropdownEntry[] = [
     <template #content-top>
       <div class="px-3 pt-3 pb-1">
         <div class="flex items-center gap-2">
-          <Avatar alt="Jane" :delay-ms="600" fallback="JD" size="sm" src="https://heroui-assets.nyc3.cdn.digitaloceanspaces.com/avatars/orange.jpg" />
+          <Avatar alt="" :delay-ms="600" fallback="JD" size="sm" src="https://heroui-assets.nyc3.cdn.digitaloceanspaces.com/avatars/orange.jpg" />
           <div class="flex flex-col gap-0">
             <p class="text-sm leading-5 font-medium">
               Jane Doe

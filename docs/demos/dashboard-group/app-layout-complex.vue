@@ -102,8 +102,8 @@ const avatar = 'https://heroui-assets.nyc3.cdn.digitaloceanspaces.com/avatars/gr
             </Button>
           </div>
           <Dropdown :items="accountItems">
-            <button type="button" data-slot="dropdown-trigger" class="flex w-full min-w-0 items-center gap-2 rounded-xl px-2 py-1.5 text-start outline-none hover:bg-default focus-visible:ring-2 focus-visible:ring-focus">
-              <Avatar :src="avatar" alt="Junior Garcia" size="sm" class="shrink-0" />
+            <button type="button" data-slot="dropdown-trigger" aria-label="Junior Garcia" class="flex w-full min-w-0 items-center gap-2 rounded-xl px-2 py-1.5 text-start outline-none hover:bg-default focus-visible:ring-2 focus-visible:ring-focus">
+              <Avatar :src="avatar" alt="" size="sm" class="shrink-0" />
               <template v-if="!collapsed">
                 <span class="truncate text-sm font-medium text-foreground">Junior Garcia</span>
                 <Icon icon="gravity-ui:chevron-down" class="ms-auto size-3 shrink-0 text-muted" />

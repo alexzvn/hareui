@@ -24,7 +24,7 @@ const triggerClass = 'inline-block outline-none focus-visible:status-focused'
 
     <Tooltip class="flex items-center gap-1.5" :delay="0">
       <template #default>
-        <div aria-label="Status chip" :class="triggerClass" role="button" tabindex="0">
+        <div :class="triggerClass" role="button" tabindex="0">
           <Chip color="success">
             <template #leading>
               <!-- @gravity-ui/icons with only `width` keeps its default height="16" -->

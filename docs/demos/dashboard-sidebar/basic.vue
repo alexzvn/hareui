@@ -39,7 +39,7 @@ const secondary: NavigationMenuItem[] = [
 
       <template #default="{ collapsed }">
         <Button
-          aria-label="Search"
+          :aria-label="collapsed ? 'Search' : undefined"
           class="w-full justify-start gap-2 px-2.75 text-muted"
           :icon-only="collapsed"
           variant="outline"
@@ -52,7 +52,7 @@ const secondary: NavigationMenuItem[] = [
         </Button>
 
         <NavigationMenu :items="items" orientation="vertical" :collapsed="collapsed" tooltip />
-        <NavigationMenu :items="secondary" orientation="vertical" :collapsed="collapsed" tooltip class="mt-auto" />
+        <NavigationMenu aria-label="Secondary" :items="secondary" orientation="vertical" :collapsed="collapsed" tooltip class="mt-auto" />
       </template>
 
       <template #footer="{ collapsed }">

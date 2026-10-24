@@ -27,6 +27,7 @@ const columns: RichTableColumn<Payment>[] = [
   { accessorKey: 'amount', header: 'Amount', cell: ({ row }) => currency.format(row.original.amount) },
   {
     id: 'pin',
+    header: () => h('span', { class: 'sr-only' }, 'Pin'),
     cell: ({ row }) => h('div', { class: 'flex justify-end' }, h(Button, {
       variant: 'ghost',
       size: 'sm',

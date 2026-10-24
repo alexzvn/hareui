@@ -67,7 +67,7 @@ function selectTeam(value: string | number) {
         <Icon icon="gravity-ui:bell" />
       </Button>
       <Dropdown :items="userMenu" align="end">
-        <button aria-label="User menu" class="rounded-full outline-none focus-visible:status-focused" type="button">
+        <button aria-label="JD user menu" class="rounded-full outline-none focus-visible:status-focused" type="button">
           <Avatar class="size-9 [--avatar-size:2.25rem]" fallback="JD" size="sm" />
         </button>
       </Dropdown>

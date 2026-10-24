@@ -50,7 +50,7 @@ const breadcrumbs: BreadcrumbsItem[] = [{ label: 'Inbox', icon: 'gravity-ui:enve
             <Button aria-label="Notifications" variant="ghost" size="sm" class="h-7 w-10 rounded-lg p-0 text-muted hover:text-foreground @max-sm:hidden">
               <Icon icon="gravity-ui:bell" />
             </Button>
-            <Button aria-label="Account" variant="ghost" icon-only>
+            <Button aria-label="JG account" variant="ghost" icon-only>
               <Avatar fallback="JG" color="success" variant="soft" class="size-6" :ui="{ fallback: 'text-xs font-semibold' }" />
             </Button>
             <!-- Below `lg` the aside is a sheet, opened by the toggle. -->
@@ -77,6 +77,7 @@ const breadcrumbs: BreadcrumbsItem[] = [{ label: 'Inbox', icon: 'gravity-ui:enve
     <!-- A resizable right sidebar that also collapses fully from the navbar trigger. -->
     <DashboardSidebar
       id="app-layout-resizable-aside-details"
+      aria-label="Details"
       side="right"
       resizable
       collapsible

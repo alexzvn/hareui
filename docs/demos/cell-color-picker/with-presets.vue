@@ -9,7 +9,7 @@ const folderColors = ['#B45309', '#65A30D', '#0F766E', '#1D4ED8', '#7C3AED', '#B
     <CellColorPicker default-value="#0F766E" label="Folder color">
       <ColorField full-width label="Hex" />
       <ColorSlider channel="lightness" color-space="hsl" label="Lightness" />
-      <ColorSwatchPicker class="grid grid-cols-8 gap-1" :items="folderColors" size="sm" variant="square" />
+      <ColorSwatchPicker aria-label="Presets" class="grid grid-cols-8 gap-1" :items="folderColors" size="sm" variant="square" />
     </CellColorPicker>
   </div>
 </template>
