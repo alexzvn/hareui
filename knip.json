@@ -1,0 +1,39 @@
+{
+  "$schema": "https://unpkg.com/knip@6/schema.json",
+  "ignore": ["tooling/parity/**", "packages/herouse/**"],
+  "ignoreWorkspaces": ["tooling/playground", "tooling/reference"],
+  "workspaces": {
+    ".": {
+      "entry": ["tooling/lint/**/*.mjs", "tooling/scripts/**/*.ts"],
+      "project": ["tooling/lint/**/*.mjs", "tooling/scripts/**/*.ts"]
+    },
+    "packages/vue": {
+      "entry": [
+        "src/index.ts",
+        "src/charts.ts",
+        "src/vite.ts",
+        "build/*.ts",
+        "vite.config.ts",
+        "vitest.config.ts",
+        "test/**/*.spec.ts"
+      ],
+      "project": ["src/**/*.{ts,vue}", "test/**/*.ts", "build/**/*.ts"]
+    },
+    "docs": {
+      "entry": [
+        ".vitepress/config.ts",
+        ".vitepress/theme/index.ts",
+        "scripts/*.ts",
+        "demos/**/*.vue",
+        "docs/**/*.paths.ts"
+      ],
+      "project": [
+        ".vitepress/**/*.{ts,vue}",
+        "scripts/**/*.ts",
+        "demos/**/*.vue",
+        "docs/**/*.ts",
+        "!.vitepress/{cache,dist,api}/**"
+      ]
+    }
+  }
+}
