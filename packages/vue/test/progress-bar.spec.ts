@@ -1,6 +1,8 @@
 import { mount } from '@vue/test-utils'
 import { describe, expect, it } from 'vitest'
+import type { ProgressBarProps } from '../src/components/progress-bar/ProgressBar.vue'
 import ProgressBar from '../src/components/progress-bar/ProgressBar.vue'
+import { expectAccessible } from './a11y'
 
 function slots(wrapper: ReturnType<typeof mount>) {
   return wrapper.findAll('[data-slot]').map(el => el.attributes('data-slot'))
@@ -59,5 +61,35 @@ describe('ProgressBar', () => {
       slots: { output: `<template #output="{ percentage, valueText }">{{ percentage }}|{{ valueText }}</template>` },
     })
     expect(wrapper.get('[data-slot="progress-bar-output"]').text()).toBe('25|25%')
+  })
+
+  it.each<[string, ProgressBarProps & { 'aria-label'?: string }]>([
+    ['with a visible label', { label: 'Uploading', value: 60 }],
+    ['named by aria-label only', { 'aria-label': 'Uploading', 'value': 60 }],
+    ['indeterminate', { label: 'Loading', indeterminate: true }],
+    ['with a custom value label', { label: 'Steps', value: 3, maxValue: 4, valueLabel: '3 of 4' }],
+  ])('has no axe violations: %s', async (_, props) => {
+    const wrapper = mount(ProgressBar, { props, attachTo: document.body })
+    await expectAccessible(wrapper)
+    wrapper.unmount()
+  })
+
+  it('aria-label names the progress bar itself and it is not focusable', () => {
+    const wrapper = mount(ProgressBar, { props: { 'aria-label': 'Uploading', 'value': 10 } })
+    const root = wrapper.get('[role="progressbar"]')
+    expect(root.attributes('aria-label')).toBe('Uploading')
+    expect(root.attributes('aria-labelledby')).toBeUndefined()
+    expect(wrapper.find('[tabindex]').exists()).toBe(false)
+  })
+
+  it('state attributes follow the value and switching to indeterminate', async () => {
+    const wrapper = mount(ProgressBar, { props: { label: 'Uploading', value: 20 } })
+    const root = wrapper.get('[role="progressbar"]')
+    await wrapper.setProps({ value: 80 })
+    expect(root.attributes()).toMatchObject({ 'aria-valuenow': '80', 'aria-valuetext': '80%' })
+    await wrapper.setProps({ indeterminate: true })
+    expect(root.attributes('aria-valuenow')).toBeUndefined()
+    expect(root.attributes('aria-valuetext')).toBeUndefined()
+    expect(root.attributes('aria-labelledby')).toBe(wrapper.get('[data-slot="label"]').attributes('id'))
   })
 })

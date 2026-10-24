@@ -8,6 +8,7 @@ import ChartTooltipIndicator from '../src/components/chart-tooltip/ChartTooltipI
 import ChartTooltipItem from '../src/components/chart-tooltip/ChartTooltipItem.vue'
 import ChartTooltipLabel from '../src/components/chart-tooltip/ChartTooltipLabel.vue'
 import ChartTooltipValue from '../src/components/chart-tooltip/ChartTooltipValue.vue'
+import { expectAccessible } from './a11y'
 
 const payload = [
   { name: 'Revenue', color: 'var(--chart-3)', value: 18200 },
@@ -111,6 +112,36 @@ describe('ChartTooltipContent', () => {
     const children = [...wrapper.element.children]
     expect(children.at(-1)?.getAttribute('data-test')).toBe('footer')
     expect(wrapper.get('[data-test=footer]').text()).toBe(`Jan total ${payload.reduce((sum, row) => sum + Number(row.value), 0)}`)
+  })
+
+  it('is accessible with payload rows, each indicator variant and a footer', async () => {
+    for (const indicator of ['dot', 'line'] as const) {
+      const wrapper = mount(ChartTooltipContent, {
+        props: { label: 'Jan', payload, indicator },
+        slots: { footer: () => h('div', 'Total 28,000') },
+        attachTo: document.body,
+      })
+      await expectAccessible(wrapper)
+      wrapper.unmount()
+    }
+  })
+
+  it('is accessible when composed by hand', async () => {
+    const wrapper = mount(ChartTooltipContent, {
+      slots: {
+        default: () => [
+          h(ChartTooltipHeader, () => 'March 2025'),
+          h(ChartTooltipItem, () => [
+            h(ChartTooltipIndicator, { color: 'var(--chart-3)' }),
+            h(ChartTooltipLabel, () => 'Organic'),
+            h(ChartTooltipValue, () => '15,200'),
+          ]),
+        ],
+      },
+      attachTo: document.body,
+    })
+    await expectAccessible(wrapper)
+    wrapper.unmount()
   })
 
   it('merges class and ui into the panel', () => {

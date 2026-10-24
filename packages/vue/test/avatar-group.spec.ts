@@ -1,10 +1,14 @@
+import type { VNode } from 'vue'
 import { mount } from '@vue/test-utils'
 import { describe, expect, it } from 'vitest'
-import { h } from 'vue'
+import { defineComponent, h } from 'vue'
 import Avatar from '../src/components/avatar/Avatar.vue'
 import AvatarGroup from '../src/components/avatar-group/AvatarGroup.vue'
+import { expectAccessible } from './a11y'
 
 const avatars = (n: number) => () => Array.from({ length: n }, (_, i) => h(Avatar, { fallback: `A${i}` }))
+
+const mountAll = (children: () => VNode[]) => mount(defineComponent(() => () => h('div', children())), { attachTo: document.body })
 
 describe('AvatarGroup', () => {
   it('max truncates avatars and appends an automatic +N count', () => {
@@ -45,5 +49,25 @@ describe('AvatarGroup', () => {
     expect(stacked.classes().join(' ')).toContain('mask-image')
     expect(grid.classes().join(' ')).not.toContain('mask-image')
     expect(grid.classes()).toContain('flex-wrap')
+  })
+
+  it('is accessible as a labelled group with an overflow count, and as a plain stack', async () => {
+    const wrapper = mountAll(() => [
+      h(AvatarGroup, { 'max': 3, 'role': 'group', 'aria-label': 'Assignees' }, avatars(5)),
+      h(AvatarGroup, { grid: true }, avatars(2)),
+    ])
+    await expectAccessible(wrapper)
+    wrapper.unmount()
+  })
+
+  it('forwards role and name to the root and exposes only the visible avatars plus the count', () => {
+    const wrapper = mount(AvatarGroup, {
+      props: { max: 2 },
+      attrs: { 'role': 'group', 'aria-label': 'Viewers' },
+      slots: { default: avatars(4) },
+    })
+    expect(wrapper.attributes()).toMatchObject({ 'role': 'group', 'aria-label': 'Viewers' })
+    expect(wrapper.text()).toBe('A0A1+2')
+    wrapper.unmount()
   })
 })

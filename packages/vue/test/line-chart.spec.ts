@@ -5,6 +5,7 @@ import ChartLine from '../src/components/chart/ChartLine.vue'
 import ChartTooltip from '../src/components/chart/ChartTooltip.vue'
 import ChartXAxis from '../src/components/chart/ChartXAxis.vue'
 import LineChart from '../src/components/line-chart/LineChart.vue'
+import { expectAccessible } from './a11y'
 
 const WIDTH = 400
 const HEIGHT = 200
@@ -132,6 +133,22 @@ describe('LineChart', () => {
     await surface.trigger('keydown', { key: 'Escape' })
     await settle()
     expect(wrapper.find('[data-slot=chart-tooltip-wrapper]').attributes('data-state')).toBe('closed')
+    wrapper.unmount()
+  })
+
+  it('is accessible idle, with a hidden series, and with a point focused', async () => {
+    const wrapper = mount(LineChart, {
+      props: { 'data': data, 'index': 'month', 'width': WIDTH, 'height': HEIGHT, 'legend': true, 'hidden': ['paid'], 'aria-label': 'Sessions per month' },
+      attachTo: document.body,
+    })
+    await settle()
+    await expectAccessible(wrapper)
+    ;(wrapper.find('[data-slot=chart-surface]').element as SVGElement).focus()
+    await settle()
+    const live = wrapper.find('[data-slot=chart-tooltip-wrapper]')
+    expect(live.attributes('role')).toBe('status')
+    expect(live.text()).toContain('Jan')
+    await expectAccessible(wrapper)
     wrapper.unmount()
   })
 

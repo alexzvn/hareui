@@ -6,6 +6,7 @@ import ChartTooltip from '../src/components/chart/ChartTooltip.vue'
 import ChartXAxis from '../src/components/chart/ChartXAxis.vue'
 import ChartYAxis from '../src/components/chart/ChartYAxis.vue'
 import BarChart from '../src/components/bar-chart/BarChart.vue'
+import { expectAccessible } from './a11y'
 
 const WIDTH = 400
 const HEIGHT = 200
@@ -208,5 +209,48 @@ describe('BarChart', () => {
       expect(bar.width).toBeGreaterThanOrEqual(0)
     expect(wrapper.find('[data-slot=chart-bar-rectangle]').attributes('d')).not.toContain('NaN')
     wrapper.unmount()
+  })
+
+  it('walks the categories with the keyboard in the vertical layout and announces both series', async () => {
+    const wrapper = mountChart(() => [
+      h(ChartXAxis, { type: 'number', hide: true }),
+      h(ChartYAxis, { dataKey: 'name', type: 'category', hide: true }),
+      h(ChartBar, { dataKey: 'low', name: 'Low', isAnimationActive: false }),
+      h(ChartBar, { dataKey: 'high', name: 'High', isAnimationActive: false }),
+      h(ChartTooltip, { isAnimationActive: false }),
+    ], { layout: 'vertical' })
+    await settle()
+    const svg = wrapper.find('[data-slot=chart-surface]')
+    const live = () => wrapper.find('[data-slot=chart-tooltip-wrapper]')
+    expect(svg.attributes('tabindex')).toBe('0')
+    ;(svg.element as SVGElement).focus()
+    await settle()
+    expect(live().find('[data-slot=chart-tooltip-header]').text()).toBe('A')
+    await svg.trigger('keydown', { key: 'ArrowDown' })
+    await settle()
+    expect(live().find('[data-slot=chart-tooltip-header]').text()).toBe('B')
+    expect(live().findAll('[data-slot=chart-tooltip-label]').map(label => label.text())).toEqual(['Low', 'High'])
+    // The band cursor is decoration.
+    expect(wrapper.find('[data-slot=chart-cursor]').element.closest('[aria-hidden=true]')).not.toBeNull()
+    await svg.trigger('keydown', { key: 'ArrowUp' })
+    await settle()
+    expect(live().find('[data-slot=chart-tooltip-header]').text()).toBe('A')
+    wrapper.unmount()
+  })
+
+  it('is accessible idle and with a category focused, horizontal and vertical', async () => {
+    for (const layout of ['horizontal', 'vertical'] as const) {
+      const wrapper = mount(BarChart, {
+        props: { 'data': data, 'index': 'name', 'layout': layout, 'width': WIDTH, 'height': HEIGHT, 'legend': true, 'aria-label': 'Low and high by group' },
+        attachTo: document.body,
+      })
+      await settle()
+      await expectAccessible(wrapper)
+      ;(wrapper.find('[data-slot=chart-surface]').element as SVGElement).focus()
+      await settle()
+      expect(wrapper.find('[data-slot=chart-tooltip-wrapper]').attributes('data-state')).toBe('open')
+      await expectAccessible(wrapper)
+      wrapper.unmount()
+    }
   })
 })

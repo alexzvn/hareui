@@ -1,8 +1,10 @@
+import type { VNode } from 'vue'
 import { mount } from '@vue/test-utils'
-import { defineComponent, inject, h } from 'vue'
+import { defineComponent, h, inject } from 'vue'
 import { describe, expect, it } from 'vitest'
 import Surface from '../src/components/surface/Surface.vue'
 import { surfaceContextKey } from '../src/components/surface/context'
+import { expectAccessible } from './a11y'
 
 const VariantReader = defineComponent({
   setup() {
@@ -10,6 +12,8 @@ const VariantReader = defineComponent({
     return () => h('span', ctx?.variant.value)
   },
 })
+
+const mountAll = (children: () => VNode[]) => mount(defineComponent(() => () => h('div', children())), { attachTo: document.body })
 
 describe('Surface', () => {
   it('defaults to the default variant and carries data-slot', () => {
@@ -30,5 +34,15 @@ describe('Surface', () => {
       slots: { default: () => h(VariantReader) },
     })
     expect(wrapper.text()).toBe('secondary')
+  })
+
+  it('is accessible as a plain container and as a labelled section', async () => {
+    const wrapper = mountAll(() => [
+      h(Surface, null, () => h('p', 'Content')),
+      h(Surface, { 'as': 'section', 'variant': 'secondary', 'aria-label': 'Settings' }, () => h('p', 'Content')),
+    ])
+    expect(wrapper.get('section').attributes('aria-label')).toBe('Settings')
+    await expectAccessible(wrapper)
+    wrapper.unmount()
   })
 })

@@ -8,6 +8,7 @@ import ChartRadialBar from '../src/components/chart/ChartRadialBar.vue'
 import ChartTooltip from '../src/components/chart/ChartTooltip.vue'
 import { bandBarPositions } from '../src/components/chart/polar'
 import RadialChart from '../src/components/radial-chart/RadialChart.vue'
+import { expectAccessible } from './a11y'
 
 // 200 × 200 without margins: center (100, 100); inner radius 30% = 30px, outer 80% = 80px.
 // Two rings → bands of 25px; a 10px bar is centered in its band: 37–47 and 62–72.
@@ -324,6 +325,36 @@ describe('RadialChart generated mode', () => {
     await wrapper.find('[data-slot=chart-surface]').trigger('keydown', { key: 'ArrowRight' })
     await settle()
     expect(wrapper.find('[data-test=center]').text()).toBe('120:Move')
+    wrapper.unmount()
+  })
+
+  it('activates the first ring on keyboard focus and walks to the last with End', async () => {
+    const wrapper = mountGenerated({ 'aria-label': 'Goal progress' })
+    await settle()
+    const svg = wrapper.find('[data-slot=chart-surface]')
+    const live = () => wrapper.find('[data-slot=chart-tooltip-wrapper]').text()
+    ;(svg.element as SVGElement).focus()
+    await settle()
+    expect(live()).toContain('Move')
+    await svg.trigger('keydown', { key: 'End' })
+    await settle()
+    expect(live()).toContain('Exercise')
+    await svg.trigger('keydown', { key: 'Home' })
+    await settle()
+    expect(live()).toContain('Move')
+    wrapper.unmount()
+  })
+
+  it('is accessible idle and with a ring focused, with legend and center', async () => {
+    const wrapper = mountGenerated({ 'legend': true, 'aria-label': 'Goal progress' }, {
+      center: (p: { total: number }) => h('span', `${p.total} points`),
+    })
+    await settle()
+    await expectAccessible(wrapper)
+    ;(wrapper.find('[data-slot=chart-surface]').element as SVGElement).focus()
+    await settle()
+    expect(wrapper.find('[data-slot=chart-tooltip-wrapper]').attributes('data-state')).toBe('open')
+    await expectAccessible(wrapper)
     wrapper.unmount()
   })
 

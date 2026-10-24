@@ -1,7 +1,12 @@
+import type { VNode } from 'vue'
 import { mount } from '@vue/test-utils'
 import { describe, expect, it } from 'vitest'
+import { defineComponent, h } from 'vue'
 import EmptyState from '../src/components/empty-state/EmptyState.vue'
 import TagGroup from '../src/components/tag-group/TagGroup.vue'
+import { expectAccessible } from './a11y'
+
+const mountAll = (children: () => VNode[]) => mount(defineComponent(() => () => h('div', children())), { attachTo: document.body })
 
 describe('EmptyState', () => {
   it('renders "No results found" by default with the empty-state slot', () => {
@@ -28,5 +33,15 @@ describe('EmptyState', () => {
     expect(list.text()).toBe('No team members')
     await wrapper.setProps({ items: [{ id: 'fred', label: 'Fred' }] })
     expect(wrapper.get('[data-slot=tag-group-list]').text()).toBe('Fred')
+  })
+
+  it('is accessible with the default and custom content, and can be announced as a status', async () => {
+    const wrapper = mountAll(() => [
+      h(EmptyState),
+      h(EmptyState, { role: 'status' }, () => 'No team members'),
+    ])
+    expect(wrapper.get('[role=status]').text()).toBe('No team members')
+    await expectAccessible(wrapper)
+    wrapper.unmount()
   })
 })

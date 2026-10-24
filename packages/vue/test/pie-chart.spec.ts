@@ -8,6 +8,7 @@ import ChartPie from '../src/components/chart/ChartPie.vue'
 import ChartTooltip from '../src/components/chart/ChartTooltip.vue'
 import { cartesianToPolar, computePieSectors, deltaAngle, percentValue, sectorPath } from '../src/components/chart/polar'
 import PieChart from '../src/components/pie-chart/PieChart.vue'
+import { expectAccessible } from './a11y'
 
 // 200 × 200 without margins: center (100, 100), percentages of a 100px radius.
 const SIZE = 200
@@ -529,6 +530,38 @@ describe('PieChart generated mode', () => {
     })
     await settle()
     expect(wrapper.find('[data-test=center]').text()).toBe('4')
+    wrapper.unmount()
+  })
+
+  it('is accessible idle and with a slice focused, as a donut with legend and center', async () => {
+    const wrapper = mountGenerated({ 'donut': true, 'legend': true, 'hidden': ['Edge'], 'aria-label': 'Visits by browser' }, {
+      center: (p: { total: number }) => h('span', `${p.total} visits`),
+    })
+    await settle()
+    expect(wrapper.find('[data-slot=chart-surface]').attributes('aria-label')).toBe('Visits by browser')
+    await expectAccessible(wrapper)
+    ;(wrapper.find('[data-slot=chart-surface]').element as SVGElement).focus()
+    await settle()
+    expect(wrapper.find('[data-slot=chart-tooltip-wrapper]').text()).toContain('Chrome')
+    await expectAccessible(wrapper)
+    wrapper.unmount()
+  })
+
+  it('announces the first visible slice on keyboard focus, also without a panel', async () => {
+    const wrapper = mountGenerated({ 'hidden': ['Chrome'], 'tooltip': { panel: false }, 'aria-label': 'Visits by browser' })
+    await settle()
+    const svg = wrapper.find('[data-slot=chart-surface]')
+    ;(svg.element as SVGElement).focus()
+    await settle()
+    const live = wrapper.find('[data-slot=chart-tooltip-wrapper]')
+    expect(live.attributes('role')).toBe('status')
+    expect(live.classes()).toContain('sr-only')
+    expect(live.text()).toContain('Safari')
+    expect(wrapper.find('[data-slot=chart-pie-sector][data-active=true]').attributes('fill')).toBe('var(--chart-1)')
+    await expectAccessible(wrapper)
+    ;(svg.element as SVGElement).blur()
+    await settle()
+    expect(live.text()).toBe('')
     wrapper.unmount()
   })
 

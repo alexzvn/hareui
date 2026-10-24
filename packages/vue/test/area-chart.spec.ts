@@ -8,6 +8,7 @@ import ChartGrid from '../src/components/chart/ChartGrid.vue'
 import ChartTooltip from '../src/components/chart/ChartTooltip.vue'
 import ChartXAxis from '../src/components/chart/ChartXAxis.vue'
 import ChartYAxis from '../src/components/chart/ChartYAxis.vue'
+import { expectAccessible } from './a11y'
 
 const WIDTH = 400
 const HEIGHT = 200
@@ -384,6 +385,32 @@ describe('AreaChart', () => {
     expect(svg.attributes('role')).toBeUndefined()
     await hover(wrapper, 200, 100)
     expect(wrapper.find('[data-slot=chart-active-dot]').exists()).toBe(false)
+    wrapper.unmount()
+  })
+
+  it('is accessible idle and with a datum focused, legend included', async () => {
+    const wrapper = mount(AreaChart, {
+      props: { 'data': data, 'index': 'month', 'width': WIDTH, 'height': HEIGHT, 'legend': 'top', 'aria-label': 'Sessions per month' },
+      attachTo: document.body,
+    })
+    await settle()
+    await expectAccessible(wrapper)
+    await press(wrapper, 'ArrowRight')
+    expect(wrapper.find('[data-slot=chart-tooltip-wrapper]').attributes('data-state')).toBe('open')
+    await expectAccessible(wrapper)
+    wrapper.unmount()
+  })
+
+  it('exposes a named sparkline as one image', async () => {
+    const wrapper = mount(AreaChart, {
+      props: { 'data': data, 'index': 'month', 'width': WIDTH, 'height': 40, 'sparkline': true, 'role': 'img', 'aria-label': 'Organic sessions, rising' },
+      attachTo: document.body,
+    })
+    await settle()
+    const svg = wrapper.find('[data-slot=chart-surface]')
+    expect(svg.attributes('role')).toBe('img')
+    expect(svg.attributes('tabindex')).toBeUndefined()
+    await expectAccessible(wrapper)
     wrapper.unmount()
   })
 

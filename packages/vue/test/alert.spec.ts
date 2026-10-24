@@ -1,8 +1,13 @@
+import type { VNode } from 'vue'
 import { mount } from '@vue/test-utils'
 import { describe, expect, it } from 'vitest'
+import { defineComponent, h } from 'vue'
 import Alert from '../src/components/alert/Alert.vue'
+import { expectAccessible } from './a11y'
 
 const order = (el: Element) => [...el.children].map(c => c.getAttribute('data-slot') ?? c.tagName.toLowerCase())
+
+const mountAll = (children: () => VNode[]) => mount(defineComponent(() => () => h('div', children())), { attachTo: document.body })
 
 describe('Alert', () => {
   it('renders indicator, then content with title and description', () => {
@@ -44,5 +49,42 @@ describe('Alert', () => {
     })
     expect(order(wrapper.element)).toEqual(['b', 'alert-indicator', 'alert-content', 'button'])
     expect(order(wrapper.find('[data-slot=alert-content]').element)).toEqual(['alert-title', 'button'])
+  })
+
+  it.each(['default', 'accent', 'success', 'warning', 'danger'] as const)('is accessible with status %s, title and description', async (status) => {
+    const wrapper = mount(Alert, { props: { status, title: 'Update available', description: 'Restart to apply it.' }, attachTo: document.body })
+    await expectAccessible(wrapper)
+    wrapper.unmount()
+  })
+
+  it('is accessible as a live alert with an action and a labelled close button, and without an indicator', async () => {
+    const wrapper = mountAll(() => [
+      h(Alert, { role: 'alert', status: 'danger', title: 'Payment failed' }, {
+        default: () => h('button', { type: 'button' }, 'Retry'),
+        trailing: () => h('button', { 'type': 'button', 'aria-label': 'Dismiss' }, '×'),
+      }),
+      h(Alert, { indicator: false, title: 'Heads up' }),
+    ])
+    await expectAccessible(wrapper)
+    wrapper.unmount()
+  })
+
+  it('hides the default status icon from assistive tech so the text is the announcement', () => {
+    const wrapper = mount(Alert, { props: { status: 'warning', title: 'Low disk space' } })
+    expect(wrapper.get('[data-slot=alert-default-icon]').attributes('aria-hidden')).toBe('true')
+    expect(wrapper.text()).toBe('Low disk space')
+    wrapper.unmount()
+  })
+
+  it('forwards role, aria-live and labelling attributes to the root element', () => {
+    const wrapper = mount(Alert, {
+      props: { as: 'section' },
+      attrs: { 'role': 'status', 'aria-live': 'polite', 'aria-labelledby': 'alert-title' },
+      slots: { title: () => h('span', { id: 'alert-title' }, 'Saved') },
+    })
+    expect(wrapper.element.tagName).toBe('SECTION')
+    expect(wrapper.attributes()).toMatchObject({ 'role': 'status', 'aria-live': 'polite', 'aria-labelledby': 'alert-title' })
+    expect(wrapper.get('#alert-title').text()).toBe('Saved')
+    wrapper.unmount()
   })
 })

@@ -10,6 +10,7 @@ import ChartRadar from '../src/components/chart/ChartRadar.vue'
 import ChartTooltip from '../src/components/chart/ChartTooltip.vue'
 import { angleInSweep, angleTickAnchor, polygonPath } from '../src/components/chart/polar'
 import RadarChart from '../src/components/radar-chart/RadarChart.vue'
+import { expectAccessible } from './a11y'
 
 // 200 × 200 without margins: center (100, 100), outer radius 80% of 100px = 80px.
 const SIZE = 200
@@ -420,6 +421,39 @@ describe('RadarChart generated mode', () => {
     expect(wrapper.find('[data-test=legend]').text()).toBe('score,other')
     await wrapper.find('[data-test=legend]').trigger('click')
     expect(wrapper.emitted('update:hidden')?.[0]).toEqual([['other']])
+    wrapper.unmount()
+  })
+
+  it('activates the first spoke on keyboard focus and keeps the walk inside the spokes', async () => {
+    const wrapper = mountGenerated({ 'aria-label': 'Scores by direction' })
+    await settle()
+    const svg = wrapper.find('[data-slot=chart-surface]')
+    const header = () => wrapper.find('[data-slot=chart-tooltip-header]').text()
+    expect(svg.attributes('role')).toBe('application')
+    ;(svg.element as SVGElement).focus()
+    await settle()
+    expect(header()).toBe('N')
+    await svg.trigger('keydown', { key: 'ArrowLeft' })
+    await settle()
+    expect(header()).toBe('N')
+    await svg.trigger('keydown', { key: 'ArrowDown' })
+    await settle()
+    expect(header()).toBe('E')
+    await svg.trigger('keydown', { key: 'Escape' })
+    await settle()
+    expect(wrapper.find('[data-slot=chart-tooltip-wrapper]').attributes('data-state')).toBe('closed')
+    expect(wrapper.find('[data-slot=chart-active-dot]').exists()).toBe(false)
+    wrapper.unmount()
+  })
+
+  it('is accessible idle and with a spoke focused', async () => {
+    const wrapper = mountGenerated({ 'legend': 'top', 'hidden': ['other'], 'aria-label': 'Scores by direction' })
+    await settle()
+    await expectAccessible(wrapper)
+    ;(wrapper.find('[data-slot=chart-surface]').element as SVGElement).focus()
+    await settle()
+    expect(wrapper.find('[data-slot=chart-tooltip-wrapper]').attributes('data-state')).toBe('open')
+    await expectAccessible(wrapper)
     wrapper.unmount()
   })
 

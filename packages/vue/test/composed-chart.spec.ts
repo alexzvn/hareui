@@ -8,6 +8,7 @@ import ChartTooltip from '../src/components/chart/ChartTooltip.vue'
 import ChartXAxis from '../src/components/chart/ChartXAxis.vue'
 import ChartYAxis from '../src/components/chart/ChartYAxis.vue'
 import ComposedChart from '../src/components/composed-chart/ComposedChart.vue'
+import { expectAccessible } from './a11y'
 
 const WIDTH = 400
 const HEIGHT = 200
@@ -196,6 +197,52 @@ describe('ComposedChart', () => {
     expect(panel.find('[data-slot=chart-tooltip-header]').text()).toBe('Jan')
     expect(panel.findAll('[data-slot=chart-tooltip-label]').map(label => label.text())).toEqual(['Revenue', 'Orders'])
     expect(panel.findAll('[data-slot=chart-tooltip-value]').map(value => value.text())).toEqual(['100', '1'])
+    wrapper.unmount()
+  })
+
+  it('walks the months with the keyboard and announces every series kind', async () => {
+    const wrapper = mountChart(() => [
+      h(ChartXAxis, { dataKey: 'month', hide: true }),
+      h(ChartArea, { dataKey: 'views', name: 'Views', isAnimationActive: false }),
+      h(ChartBar, { dataKey: 'revenue', name: 'Revenue', isAnimationActive: false }),
+      h(ChartLine, { dataKey: 'orders', name: 'Orders', dot: false, isAnimationActive: false }),
+      h(ChartTooltip, { isAnimationActive: false }),
+    ])
+    await settle()
+    const svg = wrapper.find('[data-slot=chart-surface]')
+    const header = () => wrapper.find('[data-slot=chart-tooltip-header]').text()
+    ;(svg.element as SVGElement).focus()
+    await settle()
+    expect(header()).toBe('Jan')
+    expect(wrapper.findAll('[data-slot=chart-tooltip-label]').map(label => label.text())).toEqual(['Views', 'Revenue', 'Orders'])
+    await svg.trigger('keydown', { key: 'End' })
+    await settle()
+    expect(header()).toBe('Feb')
+    await svg.trigger('keydown', { key: 'Home' })
+    await settle()
+    expect(header()).toBe('Jan')
+    wrapper.unmount()
+  })
+
+  it('is accessible idle and with a month focused', async () => {
+    const wrapper = mount(ComposedChart, {
+      props: {
+        'data': data,
+        'index': 'month',
+        'series': { revenue: { type: 'bar' }, orders: { type: 'line', yAxis: 'right' }, views: { type: 'area' } },
+        'width': WIDTH,
+        'height': HEIGHT,
+        'legend': true,
+        'aria-label': 'Revenue, orders and views per month',
+      },
+      attachTo: document.body,
+    })
+    await settle()
+    await expectAccessible(wrapper)
+    ;(wrapper.find('[data-slot=chart-surface]').element as SVGElement).focus()
+    await settle()
+    expect(wrapper.find('[data-slot=chart-tooltip-wrapper]').attributes('data-state')).toBe('open')
+    await expectAccessible(wrapper)
     wrapper.unmount()
   })
 })

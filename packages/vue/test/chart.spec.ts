@@ -1,10 +1,13 @@
-import { afterEach, describe, expect, it, vi } from 'vitest'
+import { flushPromises, mount } from '@vue/test-utils'
+import { afterAll, afterEach, beforeAll, describe, expect, it, vi } from 'vitest'
 import { effectScope, nextTick, ref } from 'vue'
 import { curveMonotoneX, curveMonotoneY, curveStep } from 'd3-shape'
 import { lerp, useChartTween } from '../src/components/chart/animation'
 import { curveFactory } from '../src/components/chart/curve'
 import { fixedDomainTicks, niceTicks, resolveNumberDomain, thinTicks } from '../src/components/chart/scale'
 import { rectanglePath } from '../src/components/chart/shapes'
+import LineChart from '../src/components/line-chart/LineChart.vue'
+import { expectAccessible } from './a11y'
 
 describe('useChartTween', () => {
   afterEach(() => {
@@ -106,5 +109,111 @@ describe('chart shapes and curves', () => {
     expect(curveFactory('monotone', 'horizontal')).toBe(curveMonotoneX)
     expect(curveFactory('monotone', 'vertical')).toBe(curveMonotoneY)
     expect(curveFactory('step')).toBe(curveStep)
+  })
+})
+
+describe('Chart', () => {
+  // No tweens: shapes land on their final geometry at once.
+  beforeAll(() => vi.stubGlobal('matchMedia', () => ({ matches: true })))
+  afterAll(() => vi.unstubAllGlobals())
+
+  const data = [
+    { month: 'Jan', organic: 0, paid: 10 },
+    { month: 'Feb', organic: 10, paid: 5 },
+    { month: 'Mar', organic: 20, paid: 0 },
+  ]
+
+  async function settle() {
+    await flushPromises()
+    await nextTick()
+  }
+
+  function mountChart(props: Record<string, unknown> = {}) {
+    return mount(LineChart, {
+      props: { 'data': data, 'index': 'month', 'width': 400, 'height': 200, 'aria-label': 'Sessions per month', ...props },
+      attachTo: document.body,
+    })
+  }
+
+  const surface = (wrapper: ReturnType<typeof mountChart>) => wrapper.find('[data-slot=chart-surface]').element as SVGSVGElement
+
+  function keydown(target: Element, key: string) {
+    const event = new KeyboardEvent('keydown', { key, bubbles: true, cancelable: true })
+    target.dispatchEvent(event)
+    return event
+  }
+
+  it('names the interactive chart from aria-labelledby and aria-describedby on the svg', async () => {
+    const title = Object.assign(document.createElement('h2'), { id: 'chart-title', textContent: 'Traffic' })
+    const description = Object.assign(document.createElement('p'), { id: 'chart-description', textContent: 'Organic and paid sessions, Q1' })
+    document.body.append(title, description)
+    const wrapper = mountChart({ 'aria-label': undefined, 'aria-labelledby': 'chart-title', 'aria-describedby': 'chart-description' })
+    await settle()
+    const svg = surface(wrapper)
+    expect(svg.getAttribute('role')).toBe('application')
+    expect(document.getElementById(svg.getAttribute('aria-labelledby')!)?.textContent).toBe('Traffic')
+    expect(document.getElementById(svg.getAttribute('aria-describedby')!)?.textContent).toBe('Organic and paid sessions, Q1')
+    expect(wrapper.attributes('aria-labelledby')).toBeUndefined()
+    await expectAccessible()
+    wrapper.unmount()
+    title.remove()
+    description.remove()
+  })
+
+  it('takes role="img" and a name when it has no tooltip, and stays out of the tab order', async () => {
+    const wrapper = mountChart({ tooltip: false, role: 'img' })
+    await settle()
+    const svg = surface(wrapper)
+    expect(svg.getAttribute('role')).toBe('img')
+    expect(svg.getAttribute('aria-label')).toBe('Sessions per month')
+    expect(svg.hasAttribute('tabindex')).toBe(false)
+    await expectAccessible(wrapper)
+    wrapper.unmount()
+  })
+
+  it('lets Tab leave the chart and keeps focus on it when Escape dismisses the tooltip', async () => {
+    const wrapper = mountChart()
+    await settle()
+    const svg = surface(wrapper)
+    svg.focus()
+    await settle()
+    expect(keydown(svg, 'Tab').defaultPrevented).toBe(false)
+    expect(keydown(svg, 'ArrowRight').defaultPrevented).toBe(true)
+    await settle()
+    expect(wrapper.find('[data-slot=chart-tooltip-wrapper]').attributes('data-state')).toBe('open')
+    keydown(svg, 'Escape')
+    await settle()
+    expect(wrapper.find('[data-slot=chart-tooltip-wrapper]').attributes('data-state')).toBe('closed')
+    expect(document.activeElement).toBe(svg)
+    wrapper.unmount()
+  })
+
+  it('puts the chart and its legend toggles in the tab order in reading order', async () => {
+    const focusables = (wrapper: ReturnType<typeof mountChart>) => {
+      const root: Element = wrapper.element
+      return Array.from(root.querySelectorAll('[tabindex="0"], button'), element => element.getAttribute('data-slot'))
+    }
+    const below = mountChart({ legend: 'bottom' })
+    await settle()
+    expect(focusables(below)).toEqual(['chart-surface', 'chart-legend-trigger', 'chart-legend-trigger'])
+    below.unmount()
+    const above = mountChart({ legend: 'top' })
+    await settle()
+    expect(focusables(above)).toEqual(['chart-legend-trigger', 'chart-legend-trigger', 'chart-surface'])
+    above.unmount()
+  })
+
+  it('keeps focus on a legend toggle that hides its series, and stays accessible', async () => {
+    const wrapper = mountChart({ legend: true })
+    await settle()
+    const toggle = wrapper.findAll('[data-slot=chart-legend-trigger]')[1]!
+    ;(toggle.element as HTMLButtonElement).focus()
+    await toggle.trigger('click')
+    await settle()
+    expect(document.activeElement).toBe(toggle.element)
+    expect(toggle.attributes('aria-pressed')).toBe('false')
+    expect(wrapper.findAll('[data-slot=chart-line-curve]')).toHaveLength(1)
+    await expectAccessible(wrapper)
+    wrapper.unmount()
   })
 })

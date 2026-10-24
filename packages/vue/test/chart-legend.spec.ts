@@ -2,6 +2,7 @@ import { mount } from '@vue/test-utils'
 import { describe, expect, it } from 'vitest'
 import { h } from 'vue'
 import ChartLegend from '../src/components/chart-legend/ChartLegend.vue'
+import { expectAccessible } from './a11y'
 
 const devices = [
   { name: 'Mobile', value: 600 },
@@ -125,6 +126,35 @@ describe('ChartLegend', () => {
     expect(wrapper.get('button .custom').text()).toBe('0:Alpha:false')
     await wrapper.get('.custom').trigger('click')
     expect(wrapper.get('.custom').text()).toBe('0:Alpha:true')
+  })
+
+  it('is accessible as a static list with values and shares, swatches hidden', async () => {
+    const wrapper = mount(ChartLegend, {
+      props: { data: devices, index: 'name', orientation: 'vertical', indicator: 'line', showValue: true, showPercent: true, hidden: ['Tablet'] },
+      attachTo: document.body,
+    })
+    expect(wrapper.element.tagName).toBe('UL')
+    expect(wrapper.findAll('ul > li')).toHaveLength(3)
+    expect(wrapper.findAll('[data-slot="chart-legend-indicator"]').every(swatch => swatch.attributes('aria-hidden') === 'true')).toBe(true)
+    await expectAccessible(wrapper)
+    wrapper.unmount()
+  })
+
+  it('names each toggle by its series, keeps it in the tab order and focused after toggling', async () => {
+    const wrapper = mount(ChartLegend, {
+      props: { series: { a: { name: 'Alpha' }, b: { name: 'Beta' } }, toggleable: true, hidden: ['b'] },
+      attachTo: document.body,
+    })
+    const buttons = wrapper.findAll('button')
+    expect(buttons.map(button => button.text())).toEqual(['Alpha', 'Beta'])
+    expect(buttons.every(button => button.attributes('tabindex') === undefined && button.attributes('disabled') === undefined)).toBe(true)
+    await expectAccessible(wrapper)
+    ;(buttons[0]!.element as HTMLButtonElement).focus()
+    await buttons[0]!.trigger('click')
+    expect(document.activeElement).toBe(buttons[0]!.element)
+    expect(buttons[0]!.attributes('aria-pressed')).toBe('false')
+    await expectAccessible(wrapper)
+    wrapper.unmount()
   })
 
   it('merges class and ui overrides', () => {
