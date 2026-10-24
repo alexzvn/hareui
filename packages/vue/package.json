@@ -60,6 +60,7 @@
     "@number-flow/vue": "^0.5.2",
     "@tanstack/vue-table": "^8.21.3",
     "@tanstack/vue-virtual": "^3.13.47",
+    "defu": "^6.1.7",
     "reka-ui": "^2.10.5",
     "tailwind-merge": "^3.7.0",
     "tailwind-variants": "^3.3.1",
