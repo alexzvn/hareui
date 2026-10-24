@@ -1,5 +1,5 @@
 <script lang="ts">
-import type { ValidateFn, ValidationResult } from '../../composables/useFieldValidation'
+import type { ValidateFn } from '../../composables/useFieldValidation'
 import type { ComponentSlots, ComponentVariants } from '../../types/tv'
 import type { ValidationBehavior } from '../form/context'
 import type { FormFieldProps } from '../form/types'

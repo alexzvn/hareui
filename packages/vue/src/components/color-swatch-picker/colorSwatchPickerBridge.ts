@@ -1,4 +1,3 @@
-import type { PropType } from 'vue'
 import { injectListboxRootContext } from 'reka-ui'
 import { defineComponent, getCurrentInstance, onBeforeUnmount, onMounted, watch } from 'vue'
 

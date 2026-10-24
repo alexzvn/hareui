@@ -63,7 +63,7 @@ export interface DashboardPanelSlots {
 </script>
 
 <script setup lang="ts">
-import { computed, useId } from 'vue'
+import { computed, useId, useTemplateRef } from 'vue'
 import { useComponentUI } from '../../composables/useComponentUI'
 import { useDashboard } from '../../composables/useDashboard'
 import { useResizable } from '../../composables/useResizable'
@@ -83,16 +83,21 @@ const dashboard = useDashboard()
 const fallbackId = useId()
 const id = `${dashboard?.storageKey ?? 'dashboard'}-panel-${props.id ?? fallbackId}`
 
-const { el, size, isDragging, onPointerDown, onMouseDown, onTouchStart, onDoubleClick, onKeyDown, handleAttrs } = useResizable(id, () => ({
-  side: 'left',
-  minSize: props.minSize,
-  maxSize: props.maxSize,
-  defaultSize: props.defaultSize,
-  resizable: props.resizable,
-  storage: dashboard?.storage,
-  persistent: dashboard?.persistent,
-  unit: dashboard?.unit,
-}))
+const el = useTemplateRef<HTMLElement>('el')
+const { size, isDragging, onPointerDown, onMouseDown, onTouchStart, onDoubleClick, onKeyDown, handleAttrs } = useResizable({
+  key: id,
+  options: () => ({
+    side: 'left',
+    minSize: props.minSize,
+    maxSize: props.maxSize,
+    defaultSize: props.defaultSize,
+    resizable: props.resizable,
+    storage: dashboard?.storage,
+    persistent: dashboard?.persistent,
+    unit: dashboard?.unit,
+  }),
+  element: el,
+})
 
 const ui = useComponentUI('dashboardPanel', theme, () => ({ size: !!size.value }))
 

@@ -8,6 +8,8 @@
       "@hareui/vue/charts": ["../packages/vue/src/charts.ts"],
       "@/*": ["../packages/vue/src/*"]
     },
+    "noUnusedLocals": true,
+    "noUnusedParameters": true,
     "noEmit": true
   },
   "include": ["demos"]

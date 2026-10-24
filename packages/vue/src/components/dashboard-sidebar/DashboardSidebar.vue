@@ -130,7 +130,7 @@ export interface DashboardSidebarSlots {
 <script setup lang="ts">
 import type { FunctionalComponent } from 'vue'
 import { DialogTitle, VisuallyHidden } from 'reka-ui'
-import { computed, h, onBeforeUnmount, ref, useId, watch } from 'vue'
+import { computed, h, onBeforeUnmount, ref, useId, useTemplateRef, watch } from 'vue'
 import { useComponentUI } from '../../composables/useComponentUI'
 import { createDashboardSidebarState, useDashboard } from '../../composables/useDashboard'
 import { useResizable } from '../../composables/useResizable'
@@ -180,18 +180,24 @@ onBeforeUnmount(() => {
     state.value.id.value = undefined
 })
 
-const { el, size, isDragging, isCollapsed, collapse, onPointerDown, onMouseDown, onTouchStart, onDoubleClick, onKeyDown, handleAttrs } = useResizable(id, () => ({
-  side: props.side,
-  minSize: props.minSize,
-  maxSize: props.maxSize,
-  defaultSize: props.defaultSize,
-  resizable: props.resizable,
-  collapsible: props.collapsible,
-  collapsedSize: props.collapsedSize,
-  storage: dashboard?.storage,
-  persistent: dashboard?.persistent,
-  unit: dashboard?.unit,
-}), { initialCollapsed: collapsedModel.value })
+const el = useTemplateRef<HTMLElement>('el')
+const { size, isDragging, isCollapsed, collapse, onPointerDown, onMouseDown, onTouchStart, onDoubleClick, onKeyDown, handleAttrs } = useResizable({
+  key: id,
+  options: () => ({
+    side: props.side,
+    minSize: props.minSize,
+    maxSize: props.maxSize,
+    defaultSize: props.defaultSize,
+    resizable: props.resizable,
+    collapsible: props.collapsible,
+    collapsedSize: props.collapsedSize,
+    storage: dashboard?.storage,
+    persistent: dashboard?.persistent,
+    unit: dashboard?.unit,
+  }),
+  element: el,
+  initialCollapsed: collapsedModel.value,
+})
 
 const unit = computed(() => dashboard?.unit ?? '%')
 

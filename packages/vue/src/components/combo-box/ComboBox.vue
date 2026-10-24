@@ -326,12 +326,6 @@ function open(strategy: FocusStrategy, trigger: OpenTrigger) {
 function close() {
   setOpenState(false)
 }
-function toggle(strategy: FocusStrategy, trigger: OpenTrigger) {
-  if (isOpen.value)
-    close()
-  else
-    open(strategy, trigger)
-}
 
 // RAC `commitSelection` / `commitCustomValue` / `commitValue` / `revert`
 function commitSelection() {

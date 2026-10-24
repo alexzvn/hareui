@@ -251,7 +251,7 @@ describe('modal', () => {
     ]
     it.each(closePaths)('releases aria-hidden on the page after every open/close cycle closed with %s', async (_name, close) => {
       // behaviour-final-check H1
-      const { open, wrapper, pageRoot } = mountControlled()
+      const { open, pageRoot } = mountControlled()
       for (let cycle = 1; cycle <= 4; cycle++) {
         open.value = true
         await nextTick()

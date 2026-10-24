@@ -319,7 +319,7 @@ function dragging(index: number) {
         :class="ui.fill({ class: props.ui?.fill })"
       />
       <SliderThumb
-        v-for="(value, index) in current"
+        v-for="index in current.keys()"
         :key="index"
         data-slot="slider-thumb"
         :data-dragging="dragging(index)"

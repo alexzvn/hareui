@@ -1,4 +1,4 @@
-import type { MaybeRefOrGetter, Ref } from 'vue'
+import type { MaybeRefOrGetter, Ref, ShallowRef } from 'vue'
 import type { DashboardStorage, DashboardUnit } from './useDashboard'
 import { computed, getCurrentScope, onScopeDispose, ref, toValue, watch } from 'vue'
 
@@ -17,7 +17,6 @@ export interface UseResizableOptions {
 }
 
 export interface UseResizableReturn {
-  el: Ref<HTMLElement | null>
   /** The rendered size in `unit`: `collapsedSize` while collapsed. */
   size: Readonly<Ref<number>>
   isDragging: Readonly<Ref<boolean>>
@@ -113,6 +112,16 @@ interface DragSession {
   rtl: boolean
 }
 
+interface UseResizableSetup {
+  /** Persistence key (cookie or storage entry name). */
+  key: string
+  /** Reactive resize options. */
+  options: MaybeRefOrGetter<UseResizableOptions>
+  /** The resized panel (the component's `useTemplateRef`). */
+  element: Readonly<ShallowRef<HTMLElement | null>>
+  initialCollapsed?: boolean
+}
+
 /**
  * Pointer/keyboard resizing with collapse and persistence for a dashboard sidebar or panel.
  *
@@ -120,12 +129,12 @@ interface DragSession {
  * only writes: pointer moves are coalesced into one reactive update per animation frame. While dragging,
  * `body` gets `user-select: none` and a `col-resize` cursor; nothing is persisted until the drag ends.
  */
-export function useResizable(
-  key: string,
-  options: MaybeRefOrGetter<UseResizableOptions> = {},
-  { initialCollapsed = false }: { initialCollapsed?: boolean } = {},
-): UseResizableReturn {
-  const el = ref<HTMLElement | null>(null)
+export function useResizable({
+  key,
+  options,
+  element: el,
+  initialCollapsed = false,
+}: UseResizableSetup): UseResizableReturn {
   const opts = computed(() => {
     const value = toValue(options)
     return {
@@ -419,7 +428,6 @@ export function useResizable(
     onScopeDispose(finish)
 
   return {
-    el,
     size: currentSize,
     isDragging,
     isCollapsed,
