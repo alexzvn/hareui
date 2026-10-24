@@ -107,8 +107,9 @@
 </template>
 
 <script lang="ts">
-import type { PortalTarget } from '../../config'
-import type { ComponentSlots, ComponentVariants } from '../../types/tv'
+import type { PortalTarget } from '@/config'
+import type { ComponentSlots, ComponentVariants } from '@/types/tv'
+
 import theme from './theme'
 
 type Drawer = typeof theme
@@ -197,9 +198,9 @@ import {
 } from 'reka-ui'
 import { computed, useSlots, useTemplateRef } from 'vue'
 
-import { useComponentUI } from '../../composables/useComponentUI'
-import { useDialogShell } from '../../composables/useDialogShell'
-import CloseButton from '../close-button/CloseButton.vue'
+import CloseButton from '@/components/close-button/CloseButton.vue'
+import { useComponentUI } from '@/composables/useComponentUI'
+import { useDialogShell } from '@/composables/useDialogShell'
 
 // `open: undefined` stops Vue casting an absent boolean prop to `false`, so uncontrolled mode and `defaultOpen` apply
 const props = withDefaults(defineProps<DrawerProps>(), {

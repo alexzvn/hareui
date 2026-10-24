@@ -21,7 +21,8 @@
 <script lang="ts">
 import type { PrimitiveProps } from 'reka-ui'
 
-import type { ComponentSlots, ComponentVariants } from '../../types/tv'
+import type { ComponentSlots, ComponentVariants } from '@/types/tv'
+
 import theme from './theme'
 
 type Typography = typeof theme
@@ -91,7 +92,7 @@ export interface TypographySlots {
 import { Primitive } from 'reka-ui'
 import { computed } from 'vue'
 
-import { useComponentUI } from '../../composables/useComponentUI'
+import { useComponentUI } from '@/composables/useComponentUI'
 
 const props = withDefaults(defineProps<TypographyProps>(), {
   type: 'body',

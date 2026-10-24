@@ -1,7 +1,8 @@
 import type { ComputedRef, Ref } from 'vue'
 import { computed } from 'vue'
 
-import type { ChartLegendProps } from '../chart-legend'
+import type { ChartLegendProps } from '@/components/chart-legend'
+
 import type { ChartAxisTickSlotProps } from './axis'
 import type { ChartGridProps } from './ChartGrid.vue'
 import type { ChartTooltipProps } from './ChartTooltip.vue'

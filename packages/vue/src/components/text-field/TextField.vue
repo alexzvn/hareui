@@ -25,11 +25,12 @@
 </template>
 
 <script lang="ts">
-import type { ValidateFn, ValidationResult } from '../../composables/useFieldValidation'
-import type { ComponentSlots } from '../../types/tv'
-import type { ValidationBehavior } from '../form/context'
-import type { FormFieldProps } from '../form/types'
-import type { InputProps } from '../input/Input.vue'
+import type { ValidationBehavior } from '@/components/form/context'
+import type { FormFieldProps } from '@/components/form/types'
+import type { InputProps } from '@/components/input/Input.vue'
+import type { ValidateFn, ValidationResult } from '@/composables/useFieldValidation'
+import type { ComponentSlots } from '@/types/tv'
+
 import theme from './theme'
 
 type TextField = typeof theme
@@ -129,11 +130,12 @@ export interface TextFieldSlots {
 <script setup lang="ts">
 import { computed, provide, ref, toRef, useAttrs, useTemplateRef, watch } from 'vue'
 
-import { useComponentUI } from '../../composables/useComponentUI'
-import { useFieldChrome } from '../../composables/useFieldChrome'
-import { useFieldValidation } from '../../composables/useFieldValidation'
-import { useFieldsetDisabled } from '../fieldset/context'
-import Input from '../input/Input.vue'
+import { useFieldsetDisabled } from '@/components/fieldset/context'
+import Input from '@/components/input/Input.vue'
+import { useComponentUI } from '@/composables/useComponentUI'
+import { useFieldChrome } from '@/composables/useFieldChrome'
+import { useFieldValidation } from '@/composables/useFieldValidation'
+
 import { splitInputAttrs, textFieldContextKey } from './context'
 
 defineOptions({ inheritAttrs: false })

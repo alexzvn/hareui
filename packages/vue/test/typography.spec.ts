@@ -3,7 +3,8 @@ import { describe, expect, it } from 'vitest'
 import type { VNode } from 'vue'
 import { defineComponent, h } from 'vue'
 
-import Typography from '../src/components/typography/Typography.vue'
+import Typography from '@/components/typography/Typography.vue'
+
 import { expectAccessible } from './a11y'
 
 const mountAll = (children: () => VNode[]) =>

@@ -3,7 +3,8 @@ import { afterEach, describe, expect, it } from 'vitest'
 import type { ComponentOptions } from 'vue'
 import { h, nextTick } from 'vue'
 
-import Autocomplete from '../src/components/autocomplete/Autocomplete.vue'
+import Autocomplete from '@/components/autocomplete/Autocomplete.vue'
+
 import { expectAccessible } from './a11y'
 
 const items = [

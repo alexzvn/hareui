@@ -2,8 +2,9 @@ import { mount } from '@vue/test-utils'
 import { describe, expect, it } from 'vitest'
 import { h } from 'vue'
 
-import InputGroup from '../src/components/input-group/InputGroup.vue'
-import TextField from '../src/components/text-field/TextField.vue'
+import InputGroup from '@/components/input-group/InputGroup.vue'
+import TextField from '@/components/text-field/TextField.vue'
+
 import { expectAccessible } from './a11y'
 
 describe('InputGroup', () => {

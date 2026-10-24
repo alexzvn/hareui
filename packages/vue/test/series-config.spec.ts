@@ -1,6 +1,6 @@
 import { describe, expect, it } from 'vitest'
 
-import type { ChartAreaSeries } from '../src/components/chart/series-config'
+import type { ChartAreaSeries } from '@/components/chart/series-config'
 import {
   barEndRadius,
   CHART_PALETTE,
@@ -15,7 +15,7 @@ import {
   resolveSlices,
   seriesValueFormatter,
   toggleHiddenKey,
-} from '../src/components/chart/series-config'
+} from '@/components/chart/series-config'
 
 type Row = Record<string, string | number | null>
 

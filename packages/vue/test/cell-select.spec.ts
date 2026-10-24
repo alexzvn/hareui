@@ -2,9 +2,10 @@ import { mount } from '@vue/test-utils'
 import { afterEach, describe, expect, it } from 'vitest'
 import { h, ref } from 'vue'
 
-import type { CellSelectProps } from '../src/components/cell-select/CellSelect.vue'
-import CellSelect from '../src/components/cell-select/CellSelect.vue'
-import Fieldset from '../src/components/fieldset/Fieldset.vue'
+import type { CellSelectProps } from '@/components/cell-select/CellSelect.vue'
+import CellSelect from '@/components/cell-select/CellSelect.vue'
+import Fieldset from '@/components/fieldset/Fieldset.vue'
+
 import { expectAccessible } from './a11y'
 
 const items = [

@@ -6,9 +6,10 @@ import type { ComponentOptions } from 'vue'
 import { defineComponent, h, nextTick, reactive, ref } from 'vue'
 import * as z from 'zod'
 
-import Form from '../src/components/form/Form.vue'
-import type { NumberStepperProps } from '../src/components/number-stepper/NumberStepper.vue'
-import NumberStepper from '../src/components/number-stepper/NumberStepper.vue'
+import Form from '@/components/form/Form.vue'
+import type { NumberStepperProps } from '@/components/number-stepper/NumberStepper.vue'
+import NumberStepper from '@/components/number-stepper/NumberStepper.vue'
+
 import { expectAccessible } from './a11y'
 
 const inc = '[data-slot=number-stepper-increment-button]'

@@ -42,7 +42,8 @@
 </template>
 
 <script lang="ts">
-import type { ComponentSlots, ComponentVariants } from '../../types/tv'
+import type { ComponentSlots, ComponentVariants } from '@/types/tv'
+
 import theme from './theme'
 
 type ProgressCircle = typeof theme
@@ -101,8 +102,8 @@ export interface ProgressCircleProps {
 import { ProgressRoot } from 'reka-ui'
 import { computed } from 'vue'
 
-import { useComponentUI } from '../../composables/useComponentUI'
-import { useRangeValue } from '../../composables/useRangeValue'
+import { useComponentUI } from '@/composables/useComponentUI'
+import { useRangeValue } from '@/composables/useRangeValue'
 
 const props = withDefaults(defineProps<ProgressCircleProps>(), {
   value: 0,

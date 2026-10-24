@@ -3,16 +3,14 @@ import { describe, expect, it } from 'vitest'
 import type { VNode } from 'vue'
 import { defineComponent, h } from 'vue'
 
-import DashboardGroup from '../src/components/dashboard-group/DashboardGroup.vue'
-import DashboardNavbar from '../src/components/dashboard-navbar/DashboardNavbar.vue'
-import DashboardSidebarCollapse from '../src/components/dashboard-sidebar-collapse/DashboardSidebarCollapse.vue'
-import DashboardSidebarToggle from '../src/components/dashboard-sidebar-toggle/DashboardSidebarToggle.vue'
-import DashboardSidebar from '../src/components/dashboard-sidebar/DashboardSidebar.vue'
-import DashboardToolbar from '../src/components/dashboard-toolbar/DashboardToolbar.vue'
-import {
-  createDashboardSidebarState,
-  provideDashboardContext,
-} from '../src/composables/useDashboard'
+import DashboardGroup from '@/components/dashboard-group/DashboardGroup.vue'
+import DashboardNavbar from '@/components/dashboard-navbar/DashboardNavbar.vue'
+import DashboardSidebarCollapse from '@/components/dashboard-sidebar-collapse/DashboardSidebarCollapse.vue'
+import DashboardSidebarToggle from '@/components/dashboard-sidebar-toggle/DashboardSidebarToggle.vue'
+import DashboardSidebar from '@/components/dashboard-sidebar/DashboardSidebar.vue'
+import DashboardToolbar from '@/components/dashboard-toolbar/DashboardToolbar.vue'
+import { createDashboardSidebarState, provideDashboardContext } from '@/composables/useDashboard'
+
 import { expectAccessible } from './a11y'
 
 // Provides the dashboard context the way DashboardGroup does, without depending on the group.

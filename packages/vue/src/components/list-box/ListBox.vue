@@ -139,7 +139,8 @@
 </template>
 
 <script lang="ts">
-import type { ComponentSlots } from '../../types/tv'
+import type { ComponentSlots } from '@/types/tv'
+
 import theme from './theme'
 
 type ListBox = typeof theme
@@ -290,9 +291,10 @@ import {
   watch,
 } from 'vue'
 
-import { useComponentUI } from '../../composables/useComponentUI'
-import { keyboardModalityKey, useKeyboardModality } from '../../composables/useKeyboardModality'
-import { useSelectionManager } from '../../composables/useSelectionManager'
+import { useComponentUI } from '@/composables/useComponentUI'
+import { keyboardModalityKey, useKeyboardModality } from '@/composables/useKeyboardModality'
+import { useSelectionManager } from '@/composables/useSelectionManager'
+
 import ListBoxOption from './ListBoxOption.vue'
 import { useTypeahead } from './useTypeahead'
 

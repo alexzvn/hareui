@@ -44,9 +44,10 @@
 </template>
 
 <script lang="ts">
-import type { PortalTarget } from '../../config'
-import type { ComponentSlots } from '../../types/tv'
-import type { KbdKey } from '../kbd/kbdKeys'
+import type { KbdKey } from '@/components/kbd/kbdKeys'
+import type { PortalTarget } from '@/config'
+import type { ComponentSlots } from '@/types/tv'
+
 import theme from './theme'
 
 type Dropdown = typeof theme
@@ -195,13 +196,13 @@ import {
 } from 'reka-ui'
 import { computed, onBeforeUnmount, onMounted, provide, ref } from 'vue'
 
+import descriptionTheme from '@/components/description/theme'
+import labelTheme from '@/components/label/theme'
+import { useComponentUI } from '@/composables/useComponentUI'
+import { useInertOutside } from '@/composables/useInertOutside'
 import { useLayerDismiss } from '@/composables/useLayerDismiss'
+import { usePortal } from '@/composables/usePortal'
 
-import { useComponentUI } from '../../composables/useComponentUI'
-import { useInertOutside } from '../../composables/useInertOutside'
-import { usePortal } from '../../composables/usePortal'
-import descriptionTheme from '../description/theme'
-import labelTheme from '../label/theme'
 import type { DropdownContext, DropdownSelectionGroup } from './context'
 import { dropdownContextKey, enabledMenuItems } from './context'
 import DropdownMenuItems from './DropdownMenuItems.vue'

@@ -3,8 +3,9 @@ import { describe, expect, it } from 'vitest'
 import type { VNode } from 'vue'
 import { defineComponent, h } from 'vue'
 
-import Avatar from '../src/components/avatar/Avatar.vue'
-import Badge from '../src/components/badge/Badge.vue'
+import Avatar from '@/components/avatar/Avatar.vue'
+import Badge from '@/components/badge/Badge.vue'
+
 import { expectAccessible } from './a11y'
 
 const mountAll = (children: () => VNode[]) =>

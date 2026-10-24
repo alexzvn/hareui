@@ -3,8 +3,9 @@ import { describe, expect, it } from 'vitest'
 import type { VNode } from 'vue'
 import { defineComponent, h, inject } from 'vue'
 
-import { surfaceContextKey } from '../src/components/surface/context'
-import Surface from '../src/components/surface/Surface.vue'
+import { surfaceContextKey } from '@/components/surface/context'
+import Surface from '@/components/surface/Surface.vue'
+
 import { expectAccessible } from './a11y'
 
 const VariantReader = defineComponent({

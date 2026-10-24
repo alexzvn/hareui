@@ -3,8 +3,9 @@ import { parseColor } from 'reka-ui'
 import { describe, expect, it } from 'vitest'
 import { h } from 'vue'
 
-import { ColorPickerContextKey } from '../src/components/color-picker/context'
-import ColorSwatch from '../src/components/color-swatch/ColorSwatch.vue'
+import { ColorPickerContextKey } from '@/components/color-picker/context'
+import ColorSwatch from '@/components/color-swatch/ColorSwatch.vue'
+
 import { expectAccessible } from './a11y'
 
 describe('ColorSwatch', () => {

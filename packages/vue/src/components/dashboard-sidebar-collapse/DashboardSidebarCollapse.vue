@@ -54,10 +54,11 @@
 <script lang="ts">
 import type { PrimitiveProps } from 'reka-ui'
 
-import type { DashboardSidebarSide } from '../../composables/useDashboard'
-import type { ComponentSlots } from '../../types/tv'
-import type { ClassValue } from '../../utils/tv'
-import type { ButtonProps } from '../button/Button.vue'
+import type { ButtonProps } from '@/components/button/Button.vue'
+import type { DashboardSidebarSide } from '@/composables/useDashboard'
+import type { ComponentSlots } from '@/types/tv'
+import type { ClassValue } from '@/utils/tv'
+
 import theme from './theme'
 
 type DashboardSidebarCollapse = typeof theme
@@ -103,9 +104,9 @@ export interface DashboardSidebarCollapseSlots {
 <script setup lang="ts">
 import { computed } from 'vue'
 
-import { useComponentUI } from '../../composables/useComponentUI'
-import { useDashboard } from '../../composables/useDashboard'
-import Button from '../button/Button.vue'
+import Button from '@/components/button/Button.vue'
+import { useComponentUI } from '@/composables/useComponentUI'
+import { useDashboard } from '@/composables/useDashboard'
 
 const props = withDefaults(defineProps<DashboardSidebarCollapseProps>(), {
   as: 'button',

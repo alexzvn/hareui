@@ -4,7 +4,8 @@ import { afterEach, describe, expect, it, vi } from 'vitest'
 import { createSSRApp, defineComponent, h, nextTick } from 'vue'
 import { renderToString } from 'vue/server-renderer'
 
-import NavigationMenu from '../src/components/navigation-menu/NavigationMenu.vue'
+import NavigationMenu from '@/components/navigation-menu/NavigationMenu.vue'
+
 import { expectAccessible } from './a11y'
 
 type Props = Record<string, unknown>

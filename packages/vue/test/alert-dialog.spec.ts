@@ -3,7 +3,8 @@ import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest'
 import type { VNodeChild } from 'vue'
 import { h, nextTick, ref } from 'vue'
 
-import AlertDialog from '../src/components/alert-dialog/AlertDialog.vue'
+import AlertDialog from '@/components/alert-dialog/AlertDialog.vue'
+
 import { expectAccessible } from './a11y'
 
 function escapeKeydown() {

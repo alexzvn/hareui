@@ -9,8 +9,9 @@ import type {
   RichTableColumn,
   RichTableData,
   RichTableProps,
-} from '../src/components/rich-table'
-import RichTable from '../src/components/rich-table/RichTable.vue'
+} from '@/components/rich-table'
+import RichTable from '@/components/rich-table/RichTable.vue'
+
 import { expectAccessible } from './a11y'
 
 // `mount` cannot infer a generic SFC's type parameter (it resolves `T` to `unknown`): this checks the props against

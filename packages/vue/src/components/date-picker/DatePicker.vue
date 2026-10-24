@@ -135,13 +135,14 @@
 <script lang="ts">
 import type { DateFieldRootProps, DateValue } from 'reka-ui'
 
-import type { ValidateFn, ValidationResult } from '../../composables/useFieldValidation'
-import type { PortalTarget } from '../../config'
-import type { ComponentSlots } from '../../types/tv'
-import type { DateInputGroupProps } from '../date-input-group/DateInputGroup.vue'
-import dateInputGroupTheme from '../date-input-group/theme'
-import type { ValidationBehavior } from '../form/context'
-import type { FormFieldProps } from '../form/types'
+import type { DateInputGroupProps } from '@/components/date-input-group/DateInputGroup.vue'
+import dateInputGroupTheme from '@/components/date-input-group/theme'
+import type { ValidationBehavior } from '@/components/form/context'
+import type { FormFieldProps } from '@/components/form/types'
+import type { ValidateFn, ValidationResult } from '@/composables/useFieldValidation'
+import type { PortalTarget } from '@/config'
+import type { ComponentSlots } from '@/types/tv'
+
 import theme from './theme'
 
 type DatePicker = typeof theme
@@ -304,17 +305,18 @@ import {
 import type { ComponentPublicInstance } from 'vue'
 import { computed, ref, useAttrs, useTemplateRef, watch } from 'vue'
 
-import { useComponentUI } from '../../composables/useComponentUI'
-import { useFieldChrome } from '../../composables/useFieldChrome'
-import { useFieldValidation } from '../../composables/useFieldValidation'
-import { useInertOutside } from '../../composables/useInertOutside'
-import { usePortal } from '../../composables/usePortal'
-import Calendar from '../calendar/Calendar.vue'
+import Calendar from '@/components/calendar/Calendar.vue'
 import DateInputGroup, {
   dropDanglingTimeZoneSeparator,
   wrapBidiIsolate,
-} from '../date-input-group/DateInputGroup.vue'
-import { useFieldsetDisabled } from '../fieldset/context'
+} from '@/components/date-input-group/DateInputGroup.vue'
+import { useFieldsetDisabled } from '@/components/fieldset/context'
+import { useComponentUI } from '@/composables/useComponentUI'
+import { useFieldChrome } from '@/composables/useFieldChrome'
+import { useFieldValidation } from '@/composables/useFieldValidation'
+import { useInertOutside } from '@/composables/useInertOutside'
+import { usePortal } from '@/composables/usePortal'
+
 import PopoverLabelledBy from './PopoverLabelledBy'
 
 // `invalid: undefined`/`open: undefined`: an absent boolean would cast to `false`, which would count as

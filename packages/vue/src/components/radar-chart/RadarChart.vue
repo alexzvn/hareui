@@ -42,24 +42,25 @@
 </template>
 
 <script lang="ts">
-import type { ComponentSlots } from '../../types/tv'
-import type { ChartLegendProps } from '../chart-legend/ChartLegend.vue'
-import type { ChartTooltipContentEntry } from '../chart-tooltip/ChartTooltipContent.vue'
+import type { ChartLegendProps } from '@/components/chart-legend/ChartLegend.vue'
+import type { ChartTooltipContentEntry } from '@/components/chart-tooltip/ChartTooltipContent.vue'
 import type {
   ChartPolarAngleAxisProps,
   ChartPolarAngleAxisSlots,
-} from '../chart/ChartPolarAngleAxis.vue'
-import type { ChartPolarGridProps } from '../chart/ChartPolarGrid.vue'
-import type { ChartPolarRadiusAxisProps } from '../chart/ChartPolarRadiusAxis.vue'
-import type { ChartTooltipProps, ChartTooltipSlotProps } from '../chart/ChartTooltip.vue'
+} from '@/components/chart/ChartPolarAngleAxis.vue'
+import type { ChartPolarGridProps } from '@/components/chart/ChartPolarGrid.vue'
+import type { ChartPolarRadiusAxisProps } from '@/components/chart/ChartPolarRadiusAxis.vue'
+import type { ChartTooltipProps, ChartTooltipSlotProps } from '@/components/chart/ChartTooltip.vue'
 import type {
   ChartIndexKey,
   ChartLegendItem,
   ChartLegendPosition,
   ChartRadarSeries,
   ChartSeriesInput,
-} from '../chart/series-config'
-import type { ChartDatum, ChartDotProps, ChartMargin } from '../chart/types'
+} from '@/components/chart/series-config'
+import type { ChartDatum, ChartDotProps, ChartMargin } from '@/components/chart/types'
+import type { ComponentSlots } from '@/types/tv'
+
 import theme from './theme'
 
 type RadarChartTheme = typeof theme
@@ -198,17 +199,16 @@ export interface RadarChartSlots {
 <script setup lang="ts" generic="T extends object">
 import { computed } from 'vue'
 
-import { useComponentUI } from '../../composables/useComponentUI'
-import { definedProps } from '../chart/cartesian-root'
-import ChartFrame from '../chart/ChartFrame.vue'
-import ChartPolarAngleAxis from '../chart/ChartPolarAngleAxis.vue'
-import ChartPolarGrid from '../chart/ChartPolarGrid.vue'
-import ChartPolarRadiusAxis from '../chart/ChartPolarRadiusAxis.vue'
-import ChartRadar from '../chart/ChartRadar.vue'
-import { useChartRoot } from '../chart/context'
-import { frameSlotNames } from '../chart/frame'
-import { usePolarChart } from '../chart/polar'
-import { usePolarRoot } from '../chart/polar-root'
+import { definedProps } from '@/components/chart/cartesian-root'
+import ChartFrame from '@/components/chart/ChartFrame.vue'
+import ChartPolarAngleAxis from '@/components/chart/ChartPolarAngleAxis.vue'
+import ChartPolarGrid from '@/components/chart/ChartPolarGrid.vue'
+import ChartPolarRadiusAxis from '@/components/chart/ChartPolarRadiusAxis.vue'
+import ChartRadar from '@/components/chart/ChartRadar.vue'
+import { useChartRoot } from '@/components/chart/context'
+import { frameSlotNames } from '@/components/chart/frame'
+import { usePolarChart } from '@/components/chart/polar'
+import { usePolarRoot } from '@/components/chart/polar-root'
 import {
   chartDefaults,
   isChartGenerated,
@@ -216,7 +216,8 @@ import {
   resolveSeries,
   seriesLegendItems,
   seriesValueFormatter,
-} from '../chart/series-config'
+} from '@/components/chart/series-config'
+import { useComponentUI } from '@/composables/useComponentUI'
 
 const props = withDefaults(defineProps<RadarChartProps<T>>(), {
   height: 300,

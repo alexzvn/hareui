@@ -2,13 +2,14 @@ import { flushPromises, mount } from '@vue/test-utils'
 import { describe, expect, it } from 'vitest'
 import { h, nextTick, ref } from 'vue'
 
-import ChartArea from '../src/components/chart/ChartArea.vue'
-import ChartBar from '../src/components/chart/ChartBar.vue'
-import ChartLine from '../src/components/chart/ChartLine.vue'
-import ChartTooltip from '../src/components/chart/ChartTooltip.vue'
-import ChartXAxis from '../src/components/chart/ChartXAxis.vue'
-import ChartYAxis from '../src/components/chart/ChartYAxis.vue'
-import ComposedChart from '../src/components/composed-chart/ComposedChart.vue'
+import ChartArea from '@/components/chart/ChartArea.vue'
+import ChartBar from '@/components/chart/ChartBar.vue'
+import ChartLine from '@/components/chart/ChartLine.vue'
+import ChartTooltip from '@/components/chart/ChartTooltip.vue'
+import ChartXAxis from '@/components/chart/ChartXAxis.vue'
+import ChartYAxis from '@/components/chart/ChartYAxis.vue'
+import ComposedChart from '@/components/composed-chart/ComposedChart.vue'
+
 import { expectAccessible } from './a11y'
 
 const WIDTH = 400

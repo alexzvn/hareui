@@ -48,7 +48,8 @@
 <script lang="ts">
 import type { ClassValue } from 'tailwind-variants'
 
-import type { ChartTooltipContentEntry, ChartTooltipContentProps } from '../chart-tooltip'
+import type { ChartTooltipContentEntry, ChartTooltipContentProps } from '@/components/chart-tooltip'
+
 import type { ChartPoint, ChartTooltipPayloadEntry } from './types'
 
 export interface ChartTooltipProps {
@@ -121,7 +122,8 @@ export interface ChartTooltipSlots {
 <script setup lang="ts">
 import { computed, inject, onBeforeUnmount, onMounted, shallowRef, watch } from 'vue'
 
-import ChartTooltipContent from '../chart-tooltip/ChartTooltipContent.vue'
+import ChartTooltipContent from '@/components/chart-tooltip/ChartTooltipContent.vue'
+
 import { prefersReducedMotion } from './animation'
 import { cartesianContextKey } from './cartesian'
 import ChartLayer from './ChartLayer.vue'

@@ -5,7 +5,8 @@
 </template>
 
 <script lang="ts">
-import type { ComponentSlots } from '../../types/tv'
+import type { ComponentSlots } from '@/types/tv'
+
 import theme from './theme'
 
 type EmptyState = typeof theme
@@ -24,7 +25,7 @@ export interface EmptyStateSlots {
 </script>
 
 <script setup lang="ts">
-import { useComponentUI } from '../../composables/useComponentUI'
+import { useComponentUI } from '@/composables/useComponentUI'
 
 const props = defineProps<EmptyStateProps>()
 defineSlots<EmptyStateSlots>()

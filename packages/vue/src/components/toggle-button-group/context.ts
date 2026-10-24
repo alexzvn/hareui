@@ -1,7 +1,8 @@
 import type { ComputedRef, InjectionKey, Ref } from 'vue'
 
-import type { ComponentSlots, ComponentUI } from '../../types/tv'
-import type { ToggleButtonProps } from '../toggle-button/ToggleButton.vue'
+import type { ToggleButtonProps } from '@/components/toggle-button/ToggleButton.vue'
+import type { ComponentSlots, ComponentUI } from '@/types/tv'
+
 import type toggleButtonGroupTheme from './theme'
 
 export interface ToggleButtonGroupContext {

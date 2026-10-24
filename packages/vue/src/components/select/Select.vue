@@ -219,18 +219,19 @@
 </template>
 
 <script lang="ts">
-import type { ValidateFn, ValidationResult } from '../../composables/useFieldValidation'
-import type { PortalTarget } from '../../config'
-import type { ComponentSlots } from '../../types/tv'
-import type { ValidationBehavior } from '../form/context'
-import type { FormFieldProps } from '../form/types'
+import type { ValidationBehavior } from '@/components/form/context'
+import type { FormFieldProps } from '@/components/form/types'
 import type {
   ListBoxEntry,
   ListBoxItem,
   ListBoxItemSlotProps,
   ListBoxSection,
   ListBoxValue,
-} from '../list-box/ListBox.vue'
+} from '@/components/list-box/ListBox.vue'
+import type { ValidateFn, ValidationResult } from '@/composables/useFieldValidation'
+import type { PortalTarget } from '@/config'
+import type { ComponentSlots } from '@/types/tv'
+
 import theme from './theme'
 
 type Select = typeof theme
@@ -401,17 +402,18 @@ import {
   watchEffect,
 } from 'vue'
 
-import { useComponentUI } from '../../composables/useComponentUI'
-import { useFieldChrome } from '../../composables/useFieldChrome'
-import { useFieldValidation } from '../../composables/useFieldValidation'
-import { keyboardModalityKey, useKeyboardModality } from '../../composables/useKeyboardModality'
-import { usePortal } from '../../composables/usePortal'
-import { useFieldsetDisabled } from '../fieldset/context'
-import ListBox from '../list-box/ListBox.vue'
-import { itemText } from '../list-box/listBoxCollection'
-import listBoxTheme from '../list-box/theme'
-import { useCollectionModel } from '../list-box/useCollectionModel'
-import { useTypeahead } from '../list-box/useTypeahead'
+import { useFieldsetDisabled } from '@/components/fieldset/context'
+import ListBox from '@/components/list-box/ListBox.vue'
+import { itemText } from '@/components/list-box/listBoxCollection'
+import listBoxTheme from '@/components/list-box/theme'
+import { useCollectionModel } from '@/components/list-box/useCollectionModel'
+import { useTypeahead } from '@/components/list-box/useTypeahead'
+import { useComponentUI } from '@/composables/useComponentUI'
+import { useFieldChrome } from '@/composables/useFieldChrome'
+import { useFieldValidation } from '@/composables/useFieldValidation'
+import { keyboardModalityKey, useKeyboardModality } from '@/composables/useKeyboardModality'
+import { usePortal } from '@/composables/usePortal'
+
 import { usePressRelease } from './pressRelease'
 
 defineOptions({ inheritAttrs: false })

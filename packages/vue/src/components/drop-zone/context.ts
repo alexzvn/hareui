@@ -1,6 +1,7 @@
 import type { InjectionKey, Ref } from 'vue'
 
-import type { ComponentSlots } from '../../types/tv'
+import type { ComponentSlots } from '@/types/tv'
+
 import type theme from './theme'
 
 export interface DropZoneContext {

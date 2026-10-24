@@ -3,9 +3,10 @@ import { colorToString, parseColor } from 'reka-ui'
 import { describe, expect, it } from 'vitest'
 import { h, nextTick } from 'vue'
 
-import { ColorPickerContextKey } from '../src/components/color-picker/context'
-import type { ColorSwatchPickerProps } from '../src/components/color-swatch-picker/ColorSwatchPicker.vue'
-import ColorSwatchPicker from '../src/components/color-swatch-picker/ColorSwatchPicker.vue'
+import { ColorPickerContextKey } from '@/components/color-picker/context'
+import type { ColorSwatchPickerProps } from '@/components/color-swatch-picker/ColorSwatchPicker.vue'
+import ColorSwatchPicker from '@/components/color-swatch-picker/ColorSwatchPicker.vue'
+
 import { expectAccessible } from './a11y'
 
 const items = ['#F43F5E', '#8B5CF6', { value: '#3B82F6', label: 'Sky' }]

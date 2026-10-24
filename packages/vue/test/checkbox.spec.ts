@@ -2,9 +2,10 @@ import { mount } from '@vue/test-utils'
 import { describe, expect, it, vi } from 'vitest'
 import { defineComponent, h, nextTick, ref } from 'vue'
 
-import type { CheckboxProps } from '../src/components/checkbox/Checkbox.vue'
-import Checkbox from '../src/components/checkbox/Checkbox.vue'
-import Label from '../src/components/label/Label.vue'
+import type { CheckboxProps } from '@/components/checkbox/Checkbox.vue'
+import Checkbox from '@/components/checkbox/Checkbox.vue'
+import Label from '@/components/label/Label.vue'
+
 import { expectAccessible } from './a11y'
 
 const control = '[data-slot=checkbox-content]'

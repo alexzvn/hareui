@@ -10,7 +10,8 @@
 </template>
 
 <script lang="ts">
-import type { ComponentSlots } from '../../types/tv'
+import type { ComponentSlots } from '@/types/tv'
+
 import theme from './theme'
 
 type ErrorMessage = typeof theme
@@ -31,7 +32,7 @@ export interface ErrorMessageSlots {
 </script>
 
 <script setup lang="ts">
-import { useComponentUI } from '../../composables/useComponentUI'
+import { useComponentUI } from '@/composables/useComponentUI'
 
 const props = defineProps<ErrorMessageProps>()
 defineSlots<ErrorMessageSlots>()

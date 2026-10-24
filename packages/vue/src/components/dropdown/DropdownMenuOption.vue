@@ -127,7 +127,8 @@
 import { DropdownMenuCheckboxItem, DropdownMenuItem, DropdownMenuSubTrigger, useId } from 'reka-ui'
 import { computed, h, inject, ref, renderSlot } from 'vue'
 
-import Kbd from '../kbd/Kbd.vue'
+import Kbd from '@/components/kbd/Kbd.vue'
+
 import type { DropdownSelectionGroup } from './context'
 import { dropdownContextKey } from './context'
 // Internal: one Dropdown menu item (action item, selectable item or submenu trigger). Not exported.

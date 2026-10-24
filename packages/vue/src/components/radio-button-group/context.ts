@@ -1,7 +1,8 @@
 import type { ComputedRef, InjectionKey } from 'vue'
 import { inject } from 'vue'
 
-import type { ComponentSlots, ComponentVariants } from '../../types/tv'
+import type { ComponentSlots, ComponentVariants } from '@/types/tv'
+
 import type theme from './theme'
 
 export interface RadioButtonGroupContext {

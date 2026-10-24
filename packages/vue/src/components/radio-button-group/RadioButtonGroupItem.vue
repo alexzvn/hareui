@@ -73,7 +73,8 @@
 <script lang="ts">
 import type { Component } from 'vue'
 
-import type { ComponentSlots } from '../../types/tv'
+import type { ComponentSlots } from '@/types/tv'
+
 import theme from './theme'
 
 export interface RadioButtonGroupItemProps {
@@ -128,10 +129,11 @@ export interface RadioButtonGroupItemSlots {
 import { RadioGroupItem } from 'reka-ui'
 import { computed, useSlots } from 'vue'
 
-import { submitOnEnter } from '../../composables/forwardRootClick'
-import { useComponentUI } from '../../composables/useComponentUI'
-import { useFieldChrome } from '../../composables/useFieldChrome'
-import radioGroupTheme from '../radio-group/theme'
+import radioGroupTheme from '@/components/radio-group/theme'
+import { submitOnEnter } from '@/composables/forwardRootClick'
+import { useComponentUI } from '@/composables/useComponentUI'
+import { useFieldChrome } from '@/composables/useFieldChrome'
+
 import { useRadioButtonGroup } from './context'
 
 const props = withDefaults(defineProps<RadioButtonGroupItemProps>(), { indicator: true })

@@ -76,10 +76,11 @@
 </template>
 
 <script lang="ts">
-import type { ValidateFn, ValidationResult } from '../../composables/useFieldValidation'
-import type { ComponentSlots, ComponentVariants } from '../../types/tv'
-import type { ValidationBehavior } from '../form/context'
-import type { FormFieldProps } from '../form/types'
+import type { ValidationBehavior } from '@/components/form/context'
+import type { FormFieldProps } from '@/components/form/types'
+import type { ValidateFn, ValidationResult } from '@/composables/useFieldValidation'
+import type { ComponentSlots, ComponentVariants } from '@/types/tv'
+
 import theme from './theme'
 
 type Checkbox = typeof theme
@@ -164,15 +165,15 @@ export interface CheckboxSlots {
 import { CheckboxRoot } from 'reka-ui'
 import { computed, ref, useSlots, useTemplateRef } from 'vue'
 
+import { useFieldsetDisabled } from '@/components/fieldset/context'
 import {
   forwardRootClick,
   keepFocusWhenReadonly,
   submitOnEnter,
-} from '../../composables/forwardRootClick'
-import { useComponentUI } from '../../composables/useComponentUI'
-import { useFieldChrome } from '../../composables/useFieldChrome'
-import { useFieldValidation } from '../../composables/useFieldValidation'
-import { useFieldsetDisabled } from '../fieldset/context'
+} from '@/composables/forwardRootClick'
+import { useComponentUI } from '@/composables/useComponentUI'
+import { useFieldChrome } from '@/composables/useFieldChrome'
+import { useFieldValidation } from '@/composables/useFieldValidation'
 
 defineOptions({ inheritAttrs: false })
 

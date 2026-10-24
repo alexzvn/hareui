@@ -105,7 +105,8 @@
 <script lang="ts">
 import type { Component } from 'vue'
 
-import type { ComponentSlots } from '../../types/tv'
+import type { ComponentSlots } from '@/types/tv'
+
 import theme from './theme'
 
 export interface CheckboxButtonGroupItemProps {
@@ -160,9 +161,10 @@ export interface CheckboxButtonGroupItemSlots {
 import { CheckboxRoot } from 'reka-ui'
 import { computed, inject, useSlots } from 'vue'
 
-import { submitOnEnter } from '../../composables/forwardRootClick'
-import { useComponentUI } from '../../composables/useComponentUI'
-import { useFieldChrome } from '../../composables/useFieldChrome'
+import { submitOnEnter } from '@/composables/forwardRootClick'
+import { useComponentUI } from '@/composables/useComponentUI'
+import { useFieldChrome } from '@/composables/useFieldChrome'
+
 import { checkboxButtonGroupContextKey } from './context'
 
 defineOptions({ inheritAttrs: false })

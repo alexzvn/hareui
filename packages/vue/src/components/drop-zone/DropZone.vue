@@ -115,10 +115,11 @@
 </template>
 
 <script lang="ts">
-import type { ValidateFn, ValidationResult } from '../../composables/useFieldValidation'
-import type { ComponentSlots } from '../../types/tv'
-import type { ValidationBehavior } from '../form/context'
-import type { FormFieldProps } from '../form/types'
+import type { ValidationBehavior } from '@/components/form/context'
+import type { FormFieldProps } from '@/components/form/types'
+import type { ValidateFn, ValidationResult } from '@/composables/useFieldValidation'
+import type { ComponentSlots } from '@/types/tv'
+
 import theme from './theme'
 
 type DropZone = typeof theme
@@ -232,11 +233,12 @@ export interface DropZoneEmits {
 <script setup lang="ts">
 import { computed, onMounted, provide, ref, toRef, useTemplateRef, watch } from 'vue'
 
-import { useComponentUI } from '../../composables/useComponentUI'
-import { useFieldChrome } from '../../composables/useFieldChrome'
-import { useFieldValidation } from '../../composables/useFieldValidation'
-import Button from '../button/Button.vue'
-import { useFieldsetDisabled } from '../fieldset/context'
+import Button from '@/components/button/Button.vue'
+import { useFieldsetDisabled } from '@/components/fieldset/context'
+import { useComponentUI } from '@/composables/useComponentUI'
+import { useFieldChrome } from '@/composables/useFieldChrome'
+import { useFieldValidation } from '@/composables/useFieldValidation'
+
 import { dropZoneContextKey } from './context'
 import DropZoneFileItem from './DropZoneFileItem.vue'
 import DropZoneFileList from './DropZoneFileList.vue'

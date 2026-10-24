@@ -29,7 +29,8 @@
 </template>
 
 <script lang="ts">
-import type { ComponentSlots, ComponentVariants } from '../../types/tv'
+import type { ComponentSlots, ComponentVariants } from '@/types/tv'
+
 import theme from './theme'
 
 type Badge = typeof theme
@@ -60,7 +61,7 @@ export interface BadgeSlots {
 </script>
 
 <script setup lang="ts">
-import { useComponentUI } from '../../composables/useComponentUI'
+import { useComponentUI } from '@/composables/useComponentUI'
 
 const props = defineProps<BadgeProps>()
 const slots = defineSlots<BadgeSlots>()

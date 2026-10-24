@@ -1,5 +1,6 @@
-import type { ChartLegendProps } from '../chart-legend'
-import type { ChartTooltipContentEntry } from '../chart-tooltip'
+import type { ChartLegendProps } from '@/components/chart-legend'
+import type { ChartTooltipContentEntry } from '@/components/chart-tooltip'
+
 import type { ChartTooltipProps, ChartTooltipSlotProps } from './ChartTooltip.vue'
 import type { ChartLegendItem, ChartLegendPosition } from './series-config'
 import { resolveChartLegend } from './series-config'

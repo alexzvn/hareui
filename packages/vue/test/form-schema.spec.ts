@@ -7,11 +7,11 @@ import { afterEach, describe, expect, it, vi } from 'vitest'
 import { h, nextTick, reactive, ref } from 'vue'
 import * as z from 'zod'
 
-import type { FormErrorEvent, FormInstance } from '../src/components/form'
-import Form from '../src/components/form/Form.vue'
-import TextField from '../src/components/text-field/TextField.vue'
-import type { StandardSchemaV1 } from '../src/utils/form'
-import { setAtPath } from '../src/utils/form'
+import type { FormErrorEvent, FormInstance } from '@/components/form'
+import Form from '@/components/form/Form.vue'
+import TextField from '@/components/text-field/TextField.vue'
+import type { StandardSchemaV1 } from '@/utils/form'
+import { setAtPath } from '@/utils/form'
 
 let wrapper: VueWrapper | undefined
 afterEach(() => {

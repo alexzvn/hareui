@@ -2,10 +2,7 @@ import type { DateValue } from '@internationalized/date'
 import { CalendarDate } from '@internationalized/date'
 import { describe, expect, it } from 'vitest'
 
-import type {
-  DayRange,
-  UseRangeSelectionOptions,
-} from '../src/components/calendar/useRangeSelection'
+import type { DayRange, UseRangeSelectionOptions } from '@/components/calendar/useRangeSelection'
 import {
   availableRun,
   boundsWithinRun,
@@ -13,7 +10,7 @@ import {
   isDaySelectedInRange,
   makeRange,
   useRangeSelection,
-} from '../src/components/calendar/useRangeSelection'
+} from '@/components/calendar/useRangeSelection'
 
 const d = (day: number, month = 3) => new CalendarDate(2025, month, day)
 const iso = (date: DateValue | undefined) => date?.toString()

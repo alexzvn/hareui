@@ -2,13 +2,14 @@ import { mount } from '@vue/test-utils'
 import { describe, expect, it } from 'vitest'
 import { h } from 'vue'
 
-import type { ChartTooltipContentEntry } from '../src/components/chart-tooltip/ChartTooltipContent.vue'
-import ChartTooltipContent from '../src/components/chart-tooltip/ChartTooltipContent.vue'
-import ChartTooltipHeader from '../src/components/chart-tooltip/ChartTooltipHeader.vue'
-import ChartTooltipIndicator from '../src/components/chart-tooltip/ChartTooltipIndicator.vue'
-import ChartTooltipItem from '../src/components/chart-tooltip/ChartTooltipItem.vue'
-import ChartTooltipLabel from '../src/components/chart-tooltip/ChartTooltipLabel.vue'
-import ChartTooltipValue from '../src/components/chart-tooltip/ChartTooltipValue.vue'
+import type { ChartTooltipContentEntry } from '@/components/chart-tooltip/ChartTooltipContent.vue'
+import ChartTooltipContent from '@/components/chart-tooltip/ChartTooltipContent.vue'
+import ChartTooltipHeader from '@/components/chart-tooltip/ChartTooltipHeader.vue'
+import ChartTooltipIndicator from '@/components/chart-tooltip/ChartTooltipIndicator.vue'
+import ChartTooltipItem from '@/components/chart-tooltip/ChartTooltipItem.vue'
+import ChartTooltipLabel from '@/components/chart-tooltip/ChartTooltipLabel.vue'
+import ChartTooltipValue from '@/components/chart-tooltip/ChartTooltipValue.vue'
+
 import { expectAccessible } from './a11y'
 
 const payload = [

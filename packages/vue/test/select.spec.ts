@@ -2,7 +2,8 @@ import { mount } from '@vue/test-utils'
 import { afterEach, describe, expect, it } from 'vitest'
 import { h, nextTick } from 'vue'
 
-import Select from '../src/components/select/Select.vue'
+import Select from '@/components/select/Select.vue'
+
 import { axeViolations, expectAccessible } from './a11y'
 
 const items = [

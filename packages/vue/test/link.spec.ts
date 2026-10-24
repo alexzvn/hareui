@@ -2,7 +2,8 @@ import { mount } from '@vue/test-utils'
 import { describe, expect, it, vi } from 'vitest'
 import { defineComponent, h, markRaw } from 'vue'
 
-import Link from '../src/components/link/Link.vue'
+import Link from '@/components/link/Link.vue'
+
 import { expectAccessible } from './a11y'
 
 const order = (el: Element) =>

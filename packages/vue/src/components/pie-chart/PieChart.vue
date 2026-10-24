@@ -25,18 +25,19 @@
 </template>
 
 <script lang="ts">
-import type { ComponentSlots } from '../../types/tv'
-import type { ChartLegendProps } from '../chart-legend/ChartLegend.vue'
-import type { ChartTooltipContentEntry } from '../chart-tooltip/ChartTooltipContent.vue'
-import type { ChartTooltipProps, ChartTooltipSlotProps } from '../chart/ChartTooltip.vue'
-import type { ChartPolarCenterSlotProps } from '../chart/polar'
+import type { ChartLegendProps } from '@/components/chart-legend/ChartLegend.vue'
+import type { ChartTooltipContentEntry } from '@/components/chart-tooltip/ChartTooltipContent.vue'
+import type { ChartTooltipProps, ChartTooltipSlotProps } from '@/components/chart/ChartTooltip.vue'
+import type { ChartPolarCenterSlotProps } from '@/components/chart/polar'
 import type {
   ChartIndexKey,
   ChartLegendItem,
   ChartLegendPosition,
   ChartValueKey,
-} from '../chart/series-config'
-import type { ChartDatum, ChartMargin } from '../chart/types'
+} from '@/components/chart/series-config'
+import type { ChartDatum, ChartMargin } from '@/components/chart/types'
+import type { ComponentSlots } from '@/types/tv'
+
 import theme from './theme'
 
 type PieChartTheme = typeof theme
@@ -130,16 +131,16 @@ export interface PieChartSlots {
 <script setup lang="ts" generic="T extends object">
 import { computed } from 'vue'
 
-import { useComponentUI } from '../../composables/useComponentUI'
-import ChartCell from '../chart/ChartCell.vue'
-import ChartFrame from '../chart/ChartFrame.vue'
-import ChartPie from '../chart/ChartPie.vue'
-import ChartPolarCenter from '../chart/ChartPolarCenter.vue'
-import { useChartRoot } from '../chart/context'
-import { frameSlotNames } from '../chart/frame'
-import { usePolarChart } from '../chart/polar'
-import { providePolarCenterLabel, useSliceRoot } from '../chart/polar-root'
-import { chartDefaults } from '../chart/series-config'
+import ChartCell from '@/components/chart/ChartCell.vue'
+import ChartFrame from '@/components/chart/ChartFrame.vue'
+import ChartPie from '@/components/chart/ChartPie.vue'
+import ChartPolarCenter from '@/components/chart/ChartPolarCenter.vue'
+import { useChartRoot } from '@/components/chart/context'
+import { frameSlotNames } from '@/components/chart/frame'
+import { usePolarChart } from '@/components/chart/polar'
+import { providePolarCenterLabel, useSliceRoot } from '@/components/chart/polar-root'
+import { chartDefaults } from '@/components/chart/series-config'
+import { useComponentUI } from '@/composables/useComponentUI'
 
 const props = withDefaults(defineProps<PieChartProps<T>>(), {
   height: 300,

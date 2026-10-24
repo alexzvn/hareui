@@ -3,7 +3,8 @@ import { mount } from '@vue/test-utils'
 import { describe, expect, it } from 'vitest'
 import { nextTick } from 'vue'
 
-import TimeField from '../src/components/time-field/TimeField.vue'
+import TimeField from '@/components/time-field/TimeField.vue'
+
 import { expectAccessible } from './a11y'
 
 // Local stand-in for Promise.withResolvers, so the library's tsconfig `lib` doesn't need ES2024.

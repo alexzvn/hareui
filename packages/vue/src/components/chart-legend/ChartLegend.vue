@@ -55,14 +55,15 @@
 </template>
 
 <script lang="ts">
-import type { ComponentSlots, ComponentVariants } from '../../types/tv'
 import type {
   ChartIndexKey,
   ChartLegendItem,
   ChartSeriesBase,
   ChartSeriesInput,
   ChartValueKey,
-} from '../chart/series-config'
+} from '@/components/chart/series-config'
+import type { ComponentSlots, ComponentVariants } from '@/types/tv'
+
 import theme from './theme'
 
 type ChartLegendTheme = typeof theme
@@ -140,13 +141,13 @@ export interface ChartLegendSlots {
 <script setup lang="ts" generic="T extends object">
 import { computed } from 'vue'
 
-import { useComponentUI } from '../../composables/useComponentUI'
 import {
   resolveSeries,
   resolveSlices,
   seriesLegendItems,
   toggleHiddenKey,
-} from '../chart/series-config'
+} from '@/components/chart/series-config'
+import { useComponentUI } from '@/composables/useComponentUI'
 
 const props = withDefaults(defineProps<ChartLegendProps<T>>(), {
   orientation: 'horizontal',

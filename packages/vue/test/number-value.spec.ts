@@ -2,9 +2,9 @@ import { mount } from '@vue/test-utils'
 import { describe, expect, it, vi } from 'vitest'
 import { defineComponent, nextTick, ref } from 'vue'
 
-import type { NumberValue, NumberValueOptions } from '../src/composables/useNumberValue'
-import { useNumberValue } from '../src/composables/useNumberValue'
-import { clamp, snapNumber, snapValueToStep } from '../src/utils/number'
+import type { NumberValue, NumberValueOptions } from '@/composables/useNumberValue'
+import { useNumberValue } from '@/composables/useNumberValue'
+import { clamp, snapNumber, snapValueToStep } from '@/utils/number'
 
 describe('clamp', () => {
   it('limits to the bounds and treats an absent bound as unlimited', () => {

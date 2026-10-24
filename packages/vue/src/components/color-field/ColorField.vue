@@ -74,10 +74,11 @@
 <script lang="ts">
 import type { Color, ColorChannel, ColorSpace } from 'reka-ui'
 
-import type { ValidateFn, ValidationResult } from '../../composables/useFieldValidation'
-import type { ComponentSlots } from '../../types/tv'
-import type { ValidationBehavior } from '../form/context'
-import type { FormFieldProps } from '../form/types'
+import type { ValidationBehavior } from '@/components/form/context'
+import type { FormFieldProps } from '@/components/form/types'
+import type { ValidateFn, ValidationResult } from '@/composables/useFieldValidation'
+import type { ComponentSlots } from '@/types/tv'
+
 import theme from './theme'
 
 type ColorField = typeof theme
@@ -201,12 +202,13 @@ import {
   watch,
 } from 'vue'
 
-import { useComponentUI } from '../../composables/useComponentUI'
-import { useFieldChrome } from '../../composables/useFieldChrome'
-import { useFieldValidation } from '../../composables/useFieldValidation'
-import { useSlotOutlet } from '../../composables/useSlotOutlet'
-import { useColorPickerContext } from '../color-picker/context'
-import { useFieldsetDisabled } from '../fieldset/context'
+import { useColorPickerContext } from '@/components/color-picker/context'
+import { useFieldsetDisabled } from '@/components/fieldset/context'
+import { useComponentUI } from '@/composables/useComponentUI'
+import { useFieldChrome } from '@/composables/useFieldChrome'
+import { useFieldValidation } from '@/composables/useFieldValidation'
+import { useSlotOutlet } from '@/composables/useSlotOutlet'
+
 import ColorFieldBridge from './colorFieldBridge'
 
 defineOptions({ inheritAttrs: false })

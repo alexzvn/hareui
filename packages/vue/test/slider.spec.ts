@@ -2,8 +2,9 @@ import { mount } from '@vue/test-utils'
 import { describe, expect, it } from 'vitest'
 import { h, nextTick, ref } from 'vue'
 
-import type { SliderProps } from '../src/components/slider/Slider.vue'
-import Slider from '../src/components/slider/Slider.vue'
+import type { SliderProps } from '@/components/slider/Slider.vue'
+import Slider from '@/components/slider/Slider.vue'
+
 import { expectAccessible } from './a11y'
 
 const thumbs = (w: ReturnType<typeof mount>) => w.findAll('[data-slot=slider-thumb]')

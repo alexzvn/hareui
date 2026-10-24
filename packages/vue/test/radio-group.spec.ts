@@ -2,8 +2,9 @@ import { flushPromises, mount } from '@vue/test-utils'
 import { describe, expect, it } from 'vitest'
 import { h, ref } from 'vue'
 
-import type { RadioGroupProps } from '../src/components/radio-group/RadioGroup.vue'
-import RadioGroup from '../src/components/radio-group/RadioGroup.vue'
+import type { RadioGroupProps } from '@/components/radio-group/RadioGroup.vue'
+import RadioGroup from '@/components/radio-group/RadioGroup.vue'
+
 import { expectAccessible } from './a11y'
 
 const items = [

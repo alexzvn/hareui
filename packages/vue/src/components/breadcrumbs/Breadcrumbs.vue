@@ -36,7 +36,8 @@
 <script lang="ts">
 import type { PrimitiveProps } from 'reka-ui'
 
-import type { ComponentSlots } from '../../types/tv'
+import type { ComponentSlots } from '@/types/tv'
+
 import theme from './theme'
 
 type Breadcrumbs = typeof theme
@@ -93,8 +94,8 @@ import { Primitive } from 'reka-ui'
 import type { VNode } from 'vue'
 import { cloneVNode, Comment, h, isVNode, useSlots } from 'vue'
 
-import { useComponentUI } from '../../composables/useComponentUI'
-import Link from '../link/Link.vue'
+import Link from '@/components/link/Link.vue'
+import { useComponentUI } from '@/composables/useComponentUI'
 
 const props = withDefaults(defineProps<BreadcrumbsProps<T>>(), { as: 'ol' })
 const slots = useSlots()

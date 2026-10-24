@@ -2,7 +2,8 @@ import { mount } from '@vue/test-utils'
 import { describe, expect, it } from 'vitest'
 import { h, nextTick, ref } from 'vue'
 
-import CheckboxGroup from '../src/components/checkbox-group/CheckboxGroup.vue'
+import CheckboxGroup from '@/components/checkbox-group/CheckboxGroup.vue'
+
 import { expectAccessible } from './a11y'
 
 const items = [

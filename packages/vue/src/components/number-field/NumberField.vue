@@ -114,10 +114,11 @@
 </template>
 
 <script lang="ts">
-import type { ValidateFn, ValidationResult } from '../../composables/useFieldValidation'
-import type { ComponentSlots } from '../../types/tv'
-import type { ValidationBehavior } from '../form/context'
-import type { FormFieldProps } from '../form/types'
+import type { ValidationBehavior } from '@/components/form/context'
+import type { FormFieldProps } from '@/components/form/types'
+import type { ValidateFn, ValidationResult } from '@/composables/useFieldValidation'
+import type { ComponentSlots } from '@/types/tv'
+
 import theme from './theme'
 
 type NumberField = typeof theme
@@ -231,12 +232,12 @@ import {
 } from 'reka-ui'
 import { computed, onBeforeUnmount, onMounted, ref, useAttrs, useTemplateRef } from 'vue'
 
-import { useComponentUI } from '../../composables/useComponentUI'
-import { useFieldChrome } from '../../composables/useFieldChrome'
-import { useFieldValidation } from '../../composables/useFieldValidation'
-import { useNumberValue } from '../../composables/useNumberValue'
-import { useSlotOutlet } from '../../composables/useSlotOutlet'
-import { useFieldsetDisabled } from '../fieldset/context'
+import { useFieldsetDisabled } from '@/components/fieldset/context'
+import { useComponentUI } from '@/composables/useComponentUI'
+import { useFieldChrome } from '@/composables/useFieldChrome'
+import { useFieldValidation } from '@/composables/useFieldValidation'
+import { useNumberValue } from '@/composables/useNumberValue'
+import { useSlotOutlet } from '@/composables/useSlotOutlet'
 
 defineOptions({ inheritAttrs: false })
 

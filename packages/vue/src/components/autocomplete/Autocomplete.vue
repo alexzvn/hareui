@@ -350,19 +350,20 @@
 import { injectListboxRootContext, injectPopoverRootContext } from 'reka-ui'
 import { defineComponent, watchEffect } from 'vue'
 
-import type { ValidateFn, ValidationResult } from '../../composables/useFieldValidation'
-import type { PortalTarget } from '../../config'
-import type { ComponentSlots } from '../../types/tv'
-import type { ValidationBehavior } from '../form/context'
-import type { FormFieldProps } from '../form/types'
+import type { ValidationBehavior } from '@/components/form/context'
+import type { FormFieldProps } from '@/components/form/types'
 import type {
   ListBoxEntry,
   ListBoxItem,
   ListBoxItemSlotProps,
   ListBoxSection,
   ListBoxValue,
-} from '../list-box/ListBox.vue'
-import type { CollectionRow } from '../list-box/listBoxCollection'
+} from '@/components/list-box/ListBox.vue'
+import type { CollectionRow } from '@/components/list-box/listBoxCollection'
+import type { ValidateFn, ValidationResult } from '@/composables/useFieldValidation'
+import type { PortalTarget } from '@/config'
+import type { ComponentSlots } from '@/types/tv'
+
 import theme from './theme'
 
 type Autocomplete = typeof theme
@@ -590,22 +591,22 @@ import {
   watch,
 } from 'vue'
 
-import { outsideEventTarget } from '../../composables/nestedLayer'
-import { useComponentUI } from '../../composables/useComponentUI'
-import { useFieldChrome } from '../../composables/useFieldChrome'
-import { useFieldValidation } from '../../composables/useFieldValidation'
-import { useKeyboardModality } from '../../composables/useKeyboardModality'
-import { usePortal } from '../../composables/usePortal'
-import CloseButton from '../close-button/CloseButton.vue'
-import { useFieldsetDisabled } from '../fieldset/context'
-import Label from '../label/Label.vue'
-import { countRows, filterEntries, itemText } from '../list-box/listBoxCollection'
-import ListBoxRows from '../list-box/ListBoxRows.vue'
-import listBoxTheme from '../list-box/theme'
-import { useCollectionModel } from '../list-box/useCollectionModel'
-import { useTypeahead } from '../list-box/useTypeahead'
-import searchFieldTheme from '../search-field/theme'
-import { usePressRelease } from '../select/pressRelease'
+import CloseButton from '@/components/close-button/CloseButton.vue'
+import { useFieldsetDisabled } from '@/components/fieldset/context'
+import Label from '@/components/label/Label.vue'
+import { countRows, filterEntries, itemText } from '@/components/list-box/listBoxCollection'
+import ListBoxRows from '@/components/list-box/ListBoxRows.vue'
+import listBoxTheme from '@/components/list-box/theme'
+import { useCollectionModel } from '@/components/list-box/useCollectionModel'
+import { useTypeahead } from '@/components/list-box/useTypeahead'
+import searchFieldTheme from '@/components/search-field/theme'
+import { usePressRelease } from '@/components/select/pressRelease'
+import { outsideEventTarget } from '@/composables/nestedLayer'
+import { useComponentUI } from '@/composables/useComponentUI'
+import { useFieldChrome } from '@/composables/useFieldChrome'
+import { useFieldValidation } from '@/composables/useFieldValidation'
+import { useKeyboardModality } from '@/composables/useKeyboardModality'
+import { usePortal } from '@/composables/usePortal'
 
 defineOptions({ inheritAttrs: false })
 

@@ -3,7 +3,8 @@ import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest'
 import type { VNodeChild } from 'vue'
 import { h, nextTick, ref } from 'vue'
 
-import Modal from '../src/components/modal/Modal.vue'
+import Modal from '@/components/modal/Modal.vue'
+
 import { expectAccessible } from './a11y'
 
 function escapeKeydown() {

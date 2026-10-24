@@ -39,8 +39,9 @@
 <script lang="ts">
 import type { Color } from 'reka-ui'
 
-import type { PortalTarget } from '../../config'
-import type { ComponentSlots } from '../../types/tv'
+import type { PortalTarget } from '@/config'
+import type { ComponentSlots } from '@/types/tv'
+
 import theme from './theme'
 
 type ColorPicker = typeof theme
@@ -104,9 +105,10 @@ export interface ColorPickerEmits {
 import { normalizeColor, PopoverContent, PopoverPortal, PopoverRoot, PopoverTrigger } from 'reka-ui'
 import { computed, nextTick, onBeforeUnmount, provide, ref, watch } from 'vue'
 
-import { outsideEventTarget, preventNestedLayerDismiss } from '../../composables/nestedLayer'
-import { useComponentUI } from '../../composables/useComponentUI'
-import { usePortal } from '../../composables/usePortal'
+import { outsideEventTarget, preventNestedLayerDismiss } from '@/composables/nestedLayer'
+import { useComponentUI } from '@/composables/useComponentUI'
+import { usePortal } from '@/composables/usePortal'
+
 import { ColorPickerContextKey } from './context'
 
 // `open: undefined` stops Vue casting an absent boolean prop to `false`, so uncontrolled mode and `defaultOpen` apply.

@@ -113,7 +113,8 @@
 <script lang="ts">
 import type { PrimitiveProps } from 'reka-ui'
 
-import type { ComponentSlots, ComponentVariants } from '../../types/tv'
+import type { ComponentSlots, ComponentVariants } from '@/types/tv'
+
 import theme from './theme'
 
 type Alert = typeof theme
@@ -163,7 +164,7 @@ export interface AlertSlots {
 <script setup lang="ts">
 import { Primitive } from 'reka-ui'
 
-import { useComponentUI } from '../../composables/useComponentUI'
+import { useComponentUI } from '@/composables/useComponentUI'
 
 const props = withDefaults(defineProps<AlertProps>(), { as: 'div', indicator: true })
 const slots = defineSlots<AlertSlots>()

@@ -3,8 +3,9 @@ import { describe, expect, it } from 'vitest'
 import type { ComponentOptions } from 'vue'
 import { defineComponent, h, nextTick, ref } from 'vue'
 
-import Input from '../src/components/input/Input.vue'
-import TextField from '../src/components/text-field/TextField.vue'
+import Input from '@/components/input/Input.vue'
+import TextField from '@/components/text-field/TextField.vue'
+
 import { expectAccessible } from './a11y'
 
 describe('TextField', () => {

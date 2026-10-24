@@ -82,9 +82,10 @@ import { injectListboxRootContext, ListboxItem } from 'reka-ui'
 import type { Component } from 'vue'
 import { computed, inject, onMounted, onUpdated, ref, useId, useTemplateRef } from 'vue'
 
-import { keyboardModalityKey } from '../../composables/useKeyboardModality'
-import Description from '../description/Description.vue'
-import Label from '../label/Label.vue'
+import Description from '@/components/description/Description.vue'
+import Label from '@/components/label/Label.vue'
+import { keyboardModalityKey } from '@/composables/useKeyboardModality'
+
 import type { ListBoxItem, ListBoxItemSlotProps, ListBoxSlots, ListBoxValue } from './ListBox.vue'
 
 const props = defineProps<{

@@ -14,8 +14,8 @@
 <script lang="ts">
 import type { ConfigProviderProps } from 'reka-ui'
 
-import type { PortalTarget } from '../../config'
-import type { ToastProviderProps } from '../toast-provider/ToastProvider.vue'
+import type { ToastProviderProps } from '@/components/toast-provider/ToastProvider.vue'
+import type { PortalTarget } from '@/config'
 
 export interface AppProps {
   /**
@@ -55,8 +55,8 @@ export interface AppSlots {
 import { ConfigProvider } from 'reka-ui'
 import { inject, provide, useId } from 'vue'
 
-import { hareUIConfigKey } from '../../config'
-import ToastProvider from '../toast-provider/ToastProvider.vue'
+import ToastProvider from '@/components/toast-provider/ToastProvider.vue'
+import { hareUIConfigKey } from '@/config'
 
 const props = withDefaults(defineProps<AppProps>(), {
   dir: undefined,

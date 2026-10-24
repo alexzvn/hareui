@@ -51,8 +51,9 @@
 </template>
 
 <script lang="ts">
-import type { PortalTarget } from '../../config'
-import type { ComponentSlots, ComponentVariants } from '../../types/tv'
+import type { PortalTarget } from '@/config'
+import type { ComponentSlots, ComponentVariants } from '@/types/tv'
+
 import theme from './theme'
 import type { ToastQueue, ToastContentValue as ToastContentValueType } from './toastQueue'
 
@@ -142,8 +143,9 @@ const MODIFIER_PROPS = ['altKey', 'ctrlKey', 'metaKey', 'shiftKey'] as const
 <script setup lang="ts">
 import { computed, onBeforeUnmount, onMounted, reactive, ref, useSlots, watch } from 'vue'
 
-import { useComponentUI } from '../../composables/useComponentUI'
-import { usePortal } from '../../composables/usePortal'
+import { useComponentUI } from '@/composables/useComponentUI'
+import { usePortal } from '@/composables/usePortal'
+
 import ToastItem from './ToastItem.vue'
 import type { QueuedToast } from './toastQueue'
 import { toastQueue as defaultToastQueue } from './useToast'

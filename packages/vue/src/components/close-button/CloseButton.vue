@@ -30,7 +30,8 @@
 </template>
 
 <script lang="ts">
-import type { ComponentSlots, ComponentVariants } from '../../types/tv'
+import type { ComponentSlots, ComponentVariants } from '@/types/tv'
+
 import theme from './theme'
 
 type CloseButton = typeof theme
@@ -64,7 +65,7 @@ export interface CloseButtonSlots {
 </script>
 
 <script setup lang="ts">
-import { useComponentUI } from '../../composables/useComponentUI'
+import { useComponentUI } from '@/composables/useComponentUI'
 
 const props = withDefaults(defineProps<CloseButtonProps>(), { ariaLabel: 'Close' })
 defineSlots<CloseButtonSlots>()

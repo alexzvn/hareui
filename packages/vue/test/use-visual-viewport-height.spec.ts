@@ -2,7 +2,7 @@ import { mount } from '@vue/test-utils'
 import { afterEach, describe, expect, it, vi } from 'vitest'
 import { defineComponent, h, nextTick } from 'vue'
 
-import { useVisualViewportHeight } from '../src/composables/useVisualViewportHeight'
+import { useVisualViewportHeight } from '@/composables/useVisualViewportHeight'
 
 const Probe = defineComponent({
   setup() {

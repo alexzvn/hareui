@@ -165,14 +165,15 @@
 import type { DateValue } from '@internationalized/date'
 import type { DateRangePickerRootProps } from 'reka-ui'
 
-import type { ValidateFn, ValidationResult } from '../../composables/useFieldValidation'
-import type { PortalTarget } from '../../config'
-import type { ComponentSlots } from '../../types/tv'
-import type { DateInputGroupProps } from '../date-input-group/DateInputGroup.vue'
-import dateInputGroupTheme from '../date-input-group/theme'
-import type { ValidationBehavior } from '../form/context'
-import type { FormFieldProps } from '../form/types'
-import type { DateRange } from '../range-calendar/RangeCalendar.vue'
+import type { DateInputGroupProps } from '@/components/date-input-group/DateInputGroup.vue'
+import dateInputGroupTheme from '@/components/date-input-group/theme'
+import type { ValidationBehavior } from '@/components/form/context'
+import type { FormFieldProps } from '@/components/form/types'
+import type { DateRange } from '@/components/range-calendar/RangeCalendar.vue'
+import type { ValidateFn, ValidationResult } from '@/composables/useFieldValidation'
+import type { PortalTarget } from '@/config'
+import type { ComponentSlots } from '@/types/tv'
+
 import theme from './theme'
 
 type DateRangePicker = typeof theme
@@ -352,18 +353,18 @@ import {
 import type { ComponentPublicInstance } from 'vue'
 import { computed, ref, shallowRef, useAttrs, useTemplateRef, watch } from 'vue'
 
-import { useComponentUI } from '../../composables/useComponentUI'
-import { useFieldChrome } from '../../composables/useFieldChrome'
-import { useFieldValidation } from '../../composables/useFieldValidation'
-import { useInertOutside } from '../../composables/useInertOutside'
-import { usePortal } from '../../composables/usePortal'
 import DateInputGroup, {
   dropDanglingTimeZoneSeparator,
   wrapBidiIsolate,
-} from '../date-input-group/DateInputGroup.vue'
-import PopoverLabelledBy from '../date-picker/PopoverLabelledBy'
-import { useFieldsetDisabled } from '../fieldset/context'
-import RangeCalendar from '../range-calendar/RangeCalendar.vue'
+} from '@/components/date-input-group/DateInputGroup.vue'
+import PopoverLabelledBy from '@/components/date-picker/PopoverLabelledBy'
+import { useFieldsetDisabled } from '@/components/fieldset/context'
+import RangeCalendar from '@/components/range-calendar/RangeCalendar.vue'
+import { useComponentUI } from '@/composables/useComponentUI'
+import { useFieldChrome } from '@/composables/useFieldChrome'
+import { useFieldValidation } from '@/composables/useFieldValidation'
+import { useInertOutside } from '@/composables/useInertOutside'
+import { usePortal } from '@/composables/usePortal'
 
 // `invalid: undefined`/`open: undefined`: an absent boolean would cast to `false`, which would count as
 // controlled-valid/controlled-closed and hide validation errors / force the popover shut

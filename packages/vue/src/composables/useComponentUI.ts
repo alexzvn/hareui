@@ -1,11 +1,11 @@
 import type { ComputedRef } from 'vue'
 import { computed, inject } from 'vue'
 
-import type { Themes } from '../components/themes'
-import type { HareUIConfig } from '../config'
-import { hareUIConfigKey } from '../config'
-import type { ComponentUI, ThemeShape } from '../types/tv'
-import { tv } from '../utils/tv'
+import type { Themes } from '@/components/themes'
+import type { HareUIConfig } from '@/config'
+import { hareUIConfigKey } from '@/config'
+import type { ComponentUI, ThemeShape } from '@/types/tv'
+import { tv } from '@/utils/tv'
 
 /** Theme overrides inlined by the `@hareui/vue/vite` plugin's `ui` option; undeclared without it. */
 declare const __HAREUI_UI__: HareUIConfig['ui'] | undefined

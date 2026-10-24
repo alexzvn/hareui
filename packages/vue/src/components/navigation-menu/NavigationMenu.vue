@@ -70,12 +70,13 @@
 import type { AccordionRootProps, NavigationMenuContentProps } from 'reka-ui'
 import type { Component } from 'vue'
 
-import type { ComponentSlots, ComponentVariants } from '../../types/tv'
-import type { AvatarProps } from '../avatar/Avatar.vue'
-import type { BadgeProps } from '../badge/Badge.vue'
-import type { ChipProps } from '../chip/Chip.vue'
-import type { DropdownEntry } from '../dropdown/Dropdown.vue'
-import type { TooltipProps } from '../tooltip/Tooltip.vue'
+import type { AvatarProps } from '@/components/avatar/Avatar.vue'
+import type { BadgeProps } from '@/components/badge/Badge.vue'
+import type { ChipProps } from '@/components/chip/Chip.vue'
+import type { DropdownEntry } from '@/components/dropdown/Dropdown.vue'
+import type { TooltipProps } from '@/components/tooltip/Tooltip.vue'
+import type { ComponentSlots, ComponentVariants } from '@/types/tv'
+
 import theme from './theme'
 import type { NavigationMenuPopoverProps } from './types'
 
@@ -396,7 +397,8 @@ import {
 } from 'reka-ui'
 import { computed, onBeforeUnmount, provide, useSlots } from 'vue'
 
-import { useComponentUI } from '../../composables/useComponentUI'
+import { useComponentUI } from '@/composables/useComponentUI'
+
 import { get, navigationMenuKey } from './context'
 import NavigationMenuNode from './NavigationMenuNode.vue'
 

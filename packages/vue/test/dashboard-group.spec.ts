@@ -2,11 +2,12 @@ import { mount } from '@vue/test-utils'
 import { afterEach, describe, expect, it } from 'vitest'
 import { h, nextTick } from 'vue'
 
-import DashboardGroup from '../src/components/dashboard-group/DashboardGroup.vue'
-import DashboardNavbar from '../src/components/dashboard-navbar/DashboardNavbar.vue'
-import DashboardPanel from '../src/components/dashboard-panel/DashboardPanel.vue'
-import DashboardSidebarCollapse from '../src/components/dashboard-sidebar-collapse/DashboardSidebarCollapse.vue'
-import DashboardSidebar from '../src/components/dashboard-sidebar/DashboardSidebar.vue'
+import DashboardGroup from '@/components/dashboard-group/DashboardGroup.vue'
+import DashboardNavbar from '@/components/dashboard-navbar/DashboardNavbar.vue'
+import DashboardPanel from '@/components/dashboard-panel/DashboardPanel.vue'
+import DashboardSidebarCollapse from '@/components/dashboard-sidebar-collapse/DashboardSidebarCollapse.vue'
+import DashboardSidebar from '@/components/dashboard-sidebar/DashboardSidebar.vue'
+
 import { expectAccessible } from './a11y'
 
 const nav = (label: string) =>

@@ -2,9 +2,10 @@ import { mount } from '@vue/test-utils'
 import { describe, expect, it, vi } from 'vitest'
 import { defineComponent, h, nextTick, ref } from 'vue'
 
-import Label from '../src/components/label/Label.vue'
-import type { SwitchProps } from '../src/components/switch/Switch.vue'
-import Switch from '../src/components/switch/Switch.vue'
+import Label from '@/components/label/Label.vue'
+import type { SwitchProps } from '@/components/switch/Switch.vue'
+import Switch from '@/components/switch/Switch.vue'
+
 import { expectAccessible } from './a11y'
 
 const control = '[data-slot=switch-content]'

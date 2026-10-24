@@ -2,8 +2,9 @@ import { mount } from '@vue/test-utils'
 import { afterEach, describe, expect, it, vi } from 'vitest'
 import { h, nextTick } from 'vue'
 
-import ToastProvider from '../src/components/toast-provider/ToastProvider.vue'
-import { toast, toastQueue, useToast } from '../src/components/toast-provider/useToast'
+import ToastProvider from '@/components/toast-provider/ToastProvider.vue'
+import { toast, toastQueue, useToast } from '@/components/toast-provider/useToast'
+
 import { expectAccessible } from './a11y'
 
 function mountProvider() {

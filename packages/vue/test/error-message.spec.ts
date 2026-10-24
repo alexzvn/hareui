@@ -2,7 +2,8 @@ import { mount } from '@vue/test-utils'
 import { describe, expect, it } from 'vitest'
 import { h } from 'vue'
 
-import ErrorMessage from '../src/components/error-message/ErrorMessage.vue'
+import ErrorMessage from '@/components/error-message/ErrorMessage.vue'
+
 import { expectAccessible } from './a11y'
 
 describe('ErrorMessage', () => {

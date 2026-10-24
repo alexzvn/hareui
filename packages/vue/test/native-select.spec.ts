@@ -2,9 +2,10 @@ import { flushPromises, mount } from '@vue/test-utils'
 import { describe, expect, it } from 'vitest'
 import { h, ref } from 'vue'
 
-import Fieldset from '../src/components/fieldset/Fieldset.vue'
-import type { NativeSelectProps } from '../src/components/native-select/NativeSelect.vue'
-import NativeSelect from '../src/components/native-select/NativeSelect.vue'
+import Fieldset from '@/components/fieldset/Fieldset.vue'
+import type { NativeSelectProps } from '@/components/native-select/NativeSelect.vue'
+import NativeSelect from '@/components/native-select/NativeSelect.vue'
+
 import { expectAccessible } from './a11y'
 
 const select = '[data-slot=native-select-select]'

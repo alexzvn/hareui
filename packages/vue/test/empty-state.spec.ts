@@ -3,8 +3,9 @@ import { describe, expect, it } from 'vitest'
 import type { VNode } from 'vue'
 import { defineComponent, h } from 'vue'
 
-import EmptyState from '../src/components/empty-state/EmptyState.vue'
-import TagGroup from '../src/components/tag-group/TagGroup.vue'
+import EmptyState from '@/components/empty-state/EmptyState.vue'
+import TagGroup from '@/components/tag-group/TagGroup.vue'
+
 import { expectAccessible } from './a11y'
 
 const mountAll = (children: () => VNode[]) =>

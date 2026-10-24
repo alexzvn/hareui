@@ -2,7 +2,8 @@ import { mount } from '@vue/test-utils'
 import { describe, expect, it } from 'vitest'
 import { h } from 'vue'
 
-import Footer from '../src/components/footer/Footer.vue'
+import Footer from '@/components/footer/Footer.vue'
+
 import { expectAccessible } from './a11y'
 
 const links = () =>

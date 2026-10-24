@@ -2,9 +2,10 @@ import { mount } from '@vue/test-utils'
 import { afterEach, describe, expect, it } from 'vitest'
 import { h, nextTick } from 'vue'
 
-import DashboardGroup from '../src/components/dashboard-group/DashboardGroup.vue'
-import DashboardSidebarCollapse from '../src/components/dashboard-sidebar-collapse/DashboardSidebarCollapse.vue'
-import DashboardSidebar from '../src/components/dashboard-sidebar/DashboardSidebar.vue'
+import DashboardGroup from '@/components/dashboard-group/DashboardGroup.vue'
+import DashboardSidebarCollapse from '@/components/dashboard-sidebar-collapse/DashboardSidebarCollapse.vue'
+import DashboardSidebar from '@/components/dashboard-sidebar/DashboardSidebar.vue'
+
 import { expectAccessible } from './a11y'
 
 /** Clicks like a user, past the millisecond Vue attached the listener in (it drops a click fired within it). */

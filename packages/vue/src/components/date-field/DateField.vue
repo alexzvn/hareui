@@ -57,12 +57,13 @@
 <script lang="ts">
 import type { DateFieldRootProps, DateValue } from 'reka-ui'
 
-import type { ValidateFn, ValidationResult } from '../../composables/useFieldValidation'
-import type { ComponentSlots } from '../../types/tv'
-import type { DateInputGroupProps } from '../date-input-group/DateInputGroup.vue'
-import dateInputGroupTheme from '../date-input-group/theme'
-import type { ValidationBehavior } from '../form/context'
-import type { FormFieldProps } from '../form/types'
+import type { DateInputGroupProps } from '@/components/date-input-group/DateInputGroup.vue'
+import dateInputGroupTheme from '@/components/date-input-group/theme'
+import type { ValidationBehavior } from '@/components/form/context'
+import type { FormFieldProps } from '@/components/form/types'
+import type { ValidateFn, ValidationResult } from '@/composables/useFieldValidation'
+import type { ComponentSlots } from '@/types/tv'
+
 import theme from './theme'
 
 type DateField = typeof theme
@@ -193,14 +194,14 @@ import { DateFieldInput, DateFieldRoot } from 'reka-ui'
 import type { ComponentPublicInstance } from 'vue'
 import { computed, useTemplateRef } from 'vue'
 
-import { useComponentUI } from '../../composables/useComponentUI'
-import { useFieldChrome } from '../../composables/useFieldChrome'
-import { useFieldValidation } from '../../composables/useFieldValidation'
 import DateInputGroup, {
   dropDanglingTimeZoneSeparator,
   wrapBidiIsolate,
-} from '../date-input-group/DateInputGroup.vue'
-import { useFieldsetDisabled } from '../fieldset/context'
+} from '@/components/date-input-group/DateInputGroup.vue'
+import { useFieldsetDisabled } from '@/components/fieldset/context'
+import { useComponentUI } from '@/composables/useComponentUI'
+import { useFieldChrome } from '@/composables/useFieldChrome'
+import { useFieldValidation } from '@/composables/useFieldValidation'
 
 // `invalid: undefined`: an absent boolean would cast to `false`, which counts as controlled-valid and hides validation errors
 const props = withDefaults(defineProps<DateFieldProps>(), { invalid: undefined })

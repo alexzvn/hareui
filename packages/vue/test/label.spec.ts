@@ -2,8 +2,9 @@ import { mount } from '@vue/test-utils'
 import { describe, expect, it, vi } from 'vitest'
 import { h } from 'vue'
 
-import DateField from '../src/components/date-field/DateField.vue'
-import Label from '../src/components/label/Label.vue'
+import DateField from '@/components/date-field/DateField.vue'
+import Label from '@/components/label/Label.vue'
+
 import { expectAccessible } from './a11y'
 
 function mousedown(el: Element, detail: number) {

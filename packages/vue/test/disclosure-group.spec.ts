@@ -2,8 +2,9 @@ import { enableAutoUnmount, mount } from '@vue/test-utils'
 import { afterEach, describe, expect, it } from 'vitest'
 import { h } from 'vue'
 
-import DisclosureGroup from '../src/components/disclosure-group/DisclosureGroup.vue'
-import Disclosure from '../src/components/disclosure/Disclosure.vue'
+import DisclosureGroup from '@/components/disclosure-group/DisclosureGroup.vue'
+import Disclosure from '@/components/disclosure/Disclosure.vue'
+
 import { expectAccessible } from './a11y'
 
 const group = (props: Record<string, unknown> = {}) =>

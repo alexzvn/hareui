@@ -2,11 +2,12 @@ import { mount } from '@vue/test-utils'
 import { describe, expect, it, vi } from 'vitest'
 import { h, nextTick, ref } from 'vue'
 
-import type { DropZoneRejection } from '../src/components/drop-zone'
-import DropZone from '../src/components/drop-zone/DropZone.vue'
-import DropZoneFileItem from '../src/components/drop-zone/DropZoneFileItem.vue'
-import DropZoneFileList from '../src/components/drop-zone/DropZoneFileList.vue'
-import { matchesAccept } from '../src/components/drop-zone/utils'
+import type { DropZoneRejection } from '@/components/drop-zone'
+import DropZone from '@/components/drop-zone/DropZone.vue'
+import DropZoneFileItem from '@/components/drop-zone/DropZoneFileItem.vue'
+import DropZoneFileList from '@/components/drop-zone/DropZoneFileList.vue'
+import { matchesAccept } from '@/components/drop-zone/utils'
+
 import { expectAccessible } from './a11y'
 
 const area = '[data-slot=drop-zone-area]'

@@ -256,7 +256,8 @@ import type { PrimitiveProps } from 'reka-ui'
 import type { ClassValue } from 'tailwind-variants'
 import type { AriaAttributes, ComponentPublicInstance, StyleValue, WatchOptions } from 'vue'
 
-import type { ComponentSlots, ComponentVariants } from '../../types/tv'
+import type { ComponentSlots, ComponentVariants } from '@/types/tv'
+
 import theme from './theme'
 
 type RichTableTheme = typeof theme
@@ -520,7 +521,7 @@ import {
   watch,
 } from 'vue'
 
-import { useComponentUI } from '../../composables/useComponentUI'
+import { useComponentUI } from '@/composables/useComponentUI'
 
 defineOptions({ inheritAttrs: false })
 

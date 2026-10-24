@@ -3,8 +3,9 @@ import { describe, expect, it } from 'vitest'
 import type { VNode } from 'vue'
 import { defineComponent, h } from 'vue'
 
-import AvatarGroup from '../src/components/avatar-group/AvatarGroup.vue'
-import Avatar from '../src/components/avatar/Avatar.vue'
+import AvatarGroup from '@/components/avatar-group/AvatarGroup.vue'
+import Avatar from '@/components/avatar/Avatar.vue'
+
 import { expectAccessible } from './a11y'
 
 const avatars = (n: number) => () =>

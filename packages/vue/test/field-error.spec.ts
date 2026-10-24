@@ -2,7 +2,8 @@ import { mount } from '@vue/test-utils'
 import { describe, expect, it } from 'vitest'
 import { h } from 'vue'
 
-import FieldError from '../src/components/field-error/FieldError.vue'
+import FieldError from '@/components/field-error/FieldError.vue'
+
 import { expectAccessible } from './a11y'
 
 describe('FieldError', () => {

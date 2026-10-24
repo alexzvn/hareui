@@ -43,7 +43,8 @@
 <script lang="ts">
 import type { Color, ColorChannel, ColorSpace } from 'reka-ui'
 
-import type { ComponentSlots } from '../../types/tv'
+import type { ComponentSlots } from '@/types/tv'
+
 import theme from './theme'
 
 type ColorArea = typeof theme
@@ -101,9 +102,9 @@ import {
 } from 'reka-ui'
 import { computed, onBeforeUnmount, onMounted, ref, useAttrs, useId, watch } from 'vue'
 
-import { useComponentUI } from '../../composables/useComponentUI'
-import { useColorPickerContext } from '../color-picker/context'
-import { useFieldsetDisabled } from '../fieldset/context'
+import { useColorPickerContext } from '@/components/color-picker/context'
+import { useFieldsetDisabled } from '@/components/fieldset/context'
+import { useComponentUI } from '@/composables/useComponentUI'
 
 const CHANNELS: Record<ColorSpace, ColorChannel[]> = {
   rgb: ['red', 'green', 'blue'],

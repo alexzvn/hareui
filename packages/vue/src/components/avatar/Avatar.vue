@@ -32,7 +32,8 @@
 <script lang="ts">
 import type { AvatarImageProps } from 'reka-ui'
 
-import type { ComponentSlots, ComponentVariants } from '../../types/tv'
+import type { ComponentSlots, ComponentVariants } from '@/types/tv'
+
 import theme from './theme'
 
 type Avatar = typeof theme
@@ -96,7 +97,7 @@ export interface AvatarEmits {
 <script setup lang="ts">
 import { AvatarFallback, AvatarImage, AvatarRoot } from 'reka-ui'
 
-import { useComponentUI } from '../../composables/useComponentUI'
+import { useComponentUI } from '@/composables/useComponentUI'
 
 const props = defineProps<AvatarProps>()
 const emit = defineEmits<AvatarEmits>()

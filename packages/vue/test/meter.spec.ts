@@ -1,8 +1,9 @@
 import { mount } from '@vue/test-utils'
 import { describe, expect, it } from 'vitest'
 
-import type { MeterProps } from '../src/components/meter/Meter.vue'
-import Meter from '../src/components/meter/Meter.vue'
+import type { MeterProps } from '@/components/meter/Meter.vue'
+import Meter from '@/components/meter/Meter.vue'
+
 import { axeViolations } from './a11y'
 
 function slots(wrapper: ReturnType<typeof mount>) {

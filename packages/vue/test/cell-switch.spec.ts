@@ -2,10 +2,11 @@ import { flushPromises, mount } from '@vue/test-utils'
 import { describe, expect, it } from 'vitest'
 import { h, nextTick, ref } from 'vue'
 
-import type { CellSwitchProps } from '../src/components/cell-switch/CellSwitch.vue'
-import CellSwitch from '../src/components/cell-switch/CellSwitch.vue'
-import Fieldset from '../src/components/fieldset/Fieldset.vue'
-import Form from '../src/components/form/Form.vue'
+import type { CellSwitchProps } from '@/components/cell-switch/CellSwitch.vue'
+import CellSwitch from '@/components/cell-switch/CellSwitch.vue'
+import Fieldset from '@/components/fieldset/Fieldset.vue'
+import Form from '@/components/form/Form.vue'
+
 import { expectAccessible } from './a11y'
 
 const row = '[data-slot=switch-content]'

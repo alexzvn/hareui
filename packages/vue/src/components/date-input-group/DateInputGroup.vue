@@ -88,7 +88,8 @@
 <script lang="ts">
 import type { Component } from 'vue'
 
-import type { ComponentSlots } from '../../types/tv'
+import type { ComponentSlots } from '@/types/tv'
+
 import theme from './theme'
 
 type DateInputGroup = typeof theme
@@ -214,7 +215,7 @@ import {
 import type { FunctionalComponent, Ref } from 'vue'
 import { computed, useId } from 'vue'
 
-import { useComponentUI } from '../../composables/useComponentUI'
+import { useComponentUI } from '@/composables/useComponentUI'
 
 // Renders its children without a wrapper element (used when `inputContainer` is off)
 const Passthrough: FunctionalComponent = (_, { slots }) => slots.default?.()

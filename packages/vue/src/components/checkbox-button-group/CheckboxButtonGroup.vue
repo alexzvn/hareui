@@ -29,10 +29,11 @@
 </template>
 
 <script lang="ts">
-import type { ValidateFn, ValidationResult } from '../../composables/useFieldValidation'
-import type { ComponentSlots, ComponentVariants } from '../../types/tv'
-import type { ValidationBehavior } from '../form/context'
-import type { FormFieldProps } from '../form/types'
+import type { ValidationBehavior } from '@/components/form/context'
+import type { FormFieldProps } from '@/components/form/types'
+import type { ValidateFn, ValidationResult } from '@/composables/useFieldValidation'
+import type { ComponentSlots, ComponentVariants } from '@/types/tv'
+
 import theme from './theme'
 
 type CheckboxButtonGroup = typeof theme
@@ -114,11 +115,12 @@ import { CheckboxGroupRoot } from 'reka-ui'
 import type { ComponentPublicInstance } from 'vue'
 import { computed, provide, toRef, useSlots, useTemplateRef } from 'vue'
 
-import { useComponentUI } from '../../composables/useComponentUI'
-import { useFieldChrome } from '../../composables/useFieldChrome'
-import { useFieldValidation } from '../../composables/useFieldValidation'
-import checkboxTheme from '../checkbox/theme'
-import { useFieldsetDisabled } from '../fieldset/context'
+import checkboxTheme from '@/components/checkbox/theme'
+import { useFieldsetDisabled } from '@/components/fieldset/context'
+import { useComponentUI } from '@/composables/useComponentUI'
+import { useFieldChrome } from '@/composables/useFieldChrome'
+import { useFieldValidation } from '@/composables/useFieldValidation'
+
 import { checkboxButtonGroupContextKey } from './context'
 
 // `invalid: undefined`: an absent boolean would cast to `false`, which counts as controlled-valid and hides validation errors

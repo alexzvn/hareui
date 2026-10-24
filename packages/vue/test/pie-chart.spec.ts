@@ -2,19 +2,20 @@ import { flushPromises, mount } from '@vue/test-utils'
 import { afterAll, beforeAll, describe, expect, it, vi } from 'vitest'
 import { h, nextTick } from 'vue'
 
-import ChartCell from '../src/components/chart/ChartCell.vue'
-import ChartLabel from '../src/components/chart/ChartLabel.vue'
-import ChartPie from '../src/components/chart/ChartPie.vue'
-import type { ChartTooltipSlotProps } from '../src/components/chart/ChartTooltip.vue'
-import ChartTooltip from '../src/components/chart/ChartTooltip.vue'
-import { percentValue } from '../src/components/chart/percent'
+import ChartCell from '@/components/chart/ChartCell.vue'
+import ChartLabel from '@/components/chart/ChartLabel.vue'
+import ChartPie from '@/components/chart/ChartPie.vue'
+import type { ChartTooltipSlotProps } from '@/components/chart/ChartTooltip.vue'
+import ChartTooltip from '@/components/chart/ChartTooltip.vue'
+import { percentValue } from '@/components/chart/percent'
 import {
   cartesianToPolar,
   computePieSectors,
   deltaAngle,
   sectorPath,
-} from '../src/components/chart/polar'
-import PieChart from '../src/components/pie-chart/PieChart.vue'
+} from '@/components/chart/polar'
+import PieChart from '@/components/pie-chart/PieChart.vue'
+
 import { expectAccessible } from './a11y'
 
 // 200 × 200 without margins: center (100, 100), percentages of a 100px radius.

@@ -2,9 +2,10 @@ import { mount } from '@vue/test-utils'
 import { describe, expect, it } from 'vitest'
 import { h, nextTick, ref } from 'vue'
 
-import type { CellSliderProps } from '../src/components/cell-slider/CellSlider.vue'
-import CellSlider from '../src/components/cell-slider/CellSlider.vue'
-import Fieldset from '../src/components/fieldset/Fieldset.vue'
+import type { CellSliderProps } from '@/components/cell-slider/CellSlider.vue'
+import CellSlider from '@/components/cell-slider/CellSlider.vue'
+import Fieldset from '@/components/fieldset/Fieldset.vue'
+
 import { expectAccessible } from './a11y'
 
 const thumb = (w: ReturnType<typeof mount>) => w.get('[data-slot=slider-thumb]')

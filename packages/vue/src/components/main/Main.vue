@@ -7,8 +7,9 @@
 <script lang="ts">
 import type { PrimitiveProps } from 'reka-ui'
 
-import type { ComponentSlots } from '../../types/tv'
-import type { ClassValue } from '../../utils/tv'
+import type { ComponentSlots } from '@/types/tv'
+import type { ClassValue } from '@/utils/tv'
+
 import theme from './theme'
 
 type Main = typeof theme
@@ -34,7 +35,7 @@ export interface MainSlots {
 <script setup lang="ts">
 import { Primitive } from 'reka-ui'
 
-import { useComponentUI } from '../../composables/useComponentUI'
+import { useComponentUI } from '@/composables/useComponentUI'
 
 const props = withDefaults(defineProps<MainProps>(), { as: 'main' })
 defineSlots<MainSlots>()

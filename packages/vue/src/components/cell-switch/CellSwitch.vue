@@ -39,10 +39,11 @@
 </template>
 
 <script lang="ts">
-import type { ValidateFn, ValidationResult } from '../../composables/useFieldValidation'
-import type { ComponentSlots, ComponentVariants } from '../../types/tv'
-import type { ValidationBehavior } from '../form/context'
-import type { FormFieldProps } from '../form/types'
+import type { ValidationBehavior } from '@/components/form/context'
+import type { FormFieldProps } from '@/components/form/types'
+import type { ValidateFn, ValidationResult } from '@/composables/useFieldValidation'
+import type { ComponentSlots, ComponentVariants } from '@/types/tv'
+
 import theme from './theme'
 
 type CellSwitch = typeof theme
@@ -123,8 +124,8 @@ export interface CellSwitchSlots {
 </script>
 
 <script setup lang="ts">
-import { useComponentUI } from '../../composables/useComponentUI'
-import Switch from '../switch/Switch.vue'
+import Switch from '@/components/switch/Switch.vue'
+import { useComponentUI } from '@/composables/useComponentUI'
 
 // `undefined` defaults keep uncontrolled mode and validation working, as in Switch
 const props = withDefaults(defineProps<CellSwitchProps>(), {

@@ -20,10 +20,11 @@
 </template>
 
 <script lang="ts">
-import type { ValidateFn } from '../../composables/useFieldValidation'
-import type { ComponentSlots, ComponentVariants } from '../../types/tv'
-import type { ValidationBehavior } from '../form/context'
-import type { FormFieldProps } from '../form/types'
+import type { ValidationBehavior } from '@/components/form/context'
+import type { FormFieldProps } from '@/components/form/types'
+import type { ValidateFn } from '@/composables/useFieldValidation'
+import type { ComponentSlots, ComponentVariants } from '@/types/tv'
+
 import theme from './theme'
 
 type Input = typeof theme
@@ -89,10 +90,10 @@ export interface InputProps extends FormFieldProps {
 <script setup lang="ts">
 import { computed, getCurrentInstance, inject, useTemplateRef, watch } from 'vue'
 
-import { useComponentUI } from '../../composables/useComponentUI'
-import { useFieldValidation } from '../../composables/useFieldValidation'
-import { useFieldsetDisabled } from '../fieldset/context'
-import { textFieldContextKey } from '../text-field/context'
+import { useFieldsetDisabled } from '@/components/fieldset/context'
+import { textFieldContextKey } from '@/components/text-field/context'
+import { useComponentUI } from '@/composables/useComponentUI'
+import { useFieldValidation } from '@/composables/useFieldValidation'
 
 const props = withDefaults(defineProps<InputProps>(), {
   type: undefined,

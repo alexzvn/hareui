@@ -1,8 +1,8 @@
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest'
 import { effectScope } from 'vue'
 
-import type { TypeaheadOptions } from '../src/components/list-box/useTypeahead'
-import { useTypeahead } from '../src/components/list-box/useTypeahead'
+import type { TypeaheadOptions } from '@/components/list-box/useTypeahead'
+import { useTypeahead } from '@/components/list-box/useTypeahead'
 
 interface Item {
   label: string

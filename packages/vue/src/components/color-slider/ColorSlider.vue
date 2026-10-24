@@ -71,7 +71,8 @@
 <script lang="ts">
 import type { Color, ColorChannel, ColorSpace } from 'reka-ui'
 
-import type { ComponentSlots } from '../../types/tv'
+import type { ComponentSlots } from '@/types/tv'
+
 import theme from './theme'
 
 type ColorSlider = typeof theme
@@ -211,12 +212,12 @@ import {
 } from 'reka-ui'
 import { computed, ref, useAttrs, watch } from 'vue'
 
-import { captureOnDraggedThumb } from '../../composables/thumbPointerCapture'
-import { useComponentUI } from '../../composables/useComponentUI'
-import { refElement } from '../../composables/useFirstChild'
-import { useColorPickerContext } from '../color-picker/context'
-import { useFieldsetDisabled } from '../fieldset/context'
-import Label from '../label/Label.vue'
+import { useColorPickerContext } from '@/components/color-picker/context'
+import { useFieldsetDisabled } from '@/components/fieldset/context'
+import Label from '@/components/label/Label.vue'
+import { captureOnDraggedThumb } from '@/composables/thumbPointerCapture'
+import { useComponentUI } from '@/composables/useComponentUI'
+import { refElement } from '@/composables/useFirstChild'
 
 const props = withDefaults(defineProps<ColorSliderProps>(), {
   orientation: 'horizontal',

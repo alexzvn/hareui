@@ -21,8 +21,9 @@
 </template>
 
 <script lang="ts">
-import type { ComponentSlots, ComponentVariants } from '../../types/tv'
-import type { ChartTooltipPayloadEntry } from '../chart/types'
+import type { ChartTooltipPayloadEntry } from '@/components/chart/types'
+import type { ComponentSlots, ComponentVariants } from '@/types/tv'
+
 import theme from './theme'
 
 type ChartTooltip = typeof theme
@@ -76,7 +77,8 @@ export interface ChartTooltipContentSlots {
 <script setup lang="ts">
 import { computed, provide } from 'vue'
 
-import { useComponentUI } from '../../composables/useComponentUI'
+import { useComponentUI } from '@/composables/useComponentUI'
+
 import ChartTooltipHeader from './ChartTooltipHeader.vue'
 import ChartTooltipIndicator from './ChartTooltipIndicator.vue'
 import ChartTooltipItem from './ChartTooltipItem.vue'

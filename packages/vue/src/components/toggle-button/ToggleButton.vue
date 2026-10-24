@@ -45,7 +45,8 @@
 <script lang="ts">
 import type { PrimitiveProps } from 'reka-ui'
 
-import type { ComponentSlots, ComponentVariants } from '../../types/tv'
+import type { ComponentSlots, ComponentVariants } from '@/types/tv'
+
 import theme from './theme'
 
 type ToggleButton = typeof theme
@@ -106,10 +107,10 @@ export interface ToggleButtonSlots {
 import { RovingFocusItem, Toggle } from 'reka-ui'
 import { computed, inject, ref, useTemplateRef, watch } from 'vue'
 
-import { useComponentUI } from '../../composables/useComponentUI'
-import { refElement } from '../../composables/useFirstChild'
-import { useFieldsetDisabled } from '../fieldset/context'
-import { toggleButtonGroupContextKey } from '../toggle-button-group/context'
+import { useFieldsetDisabled } from '@/components/fieldset/context'
+import { toggleButtonGroupContextKey } from '@/components/toggle-button-group/context'
+import { useComponentUI } from '@/composables/useComponentUI'
+import { refElement } from '@/composables/useFirstChild'
 
 // `undefined` stops Vue casting an absent `modelValue` to `false`, so uncontrolled mode applies.
 const props = withDefaults(defineProps<ToggleButtonProps>(), {

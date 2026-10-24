@@ -4,7 +4,8 @@ import { DateFieldInput, DateFieldRoot, DateRangeFieldInput, DateRangeFieldRoot 
 import { describe, expect, it } from 'vitest'
 import { defineComponent, h } from 'vue'
 
-import DateInputGroup from '../src/components/date-input-group/DateInputGroup.vue'
+import DateInputGroup from '@/components/date-input-group/DateInputGroup.vue'
+
 import { expectAccessible } from './a11y'
 
 const date = new CalendarDate(2025, 1, 15)

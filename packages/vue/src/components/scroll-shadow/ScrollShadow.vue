@@ -17,7 +17,8 @@
 <script lang="ts">
 import type { PrimitiveProps } from 'reka-ui'
 
-import type { ComponentSlots, ComponentVariants } from '../../types/tv'
+import type { ComponentSlots, ComponentVariants } from '@/types/tv'
+
 import theme from './theme'
 
 type ScrollShadow = typeof theme
@@ -87,7 +88,7 @@ export interface ScrollShadowEmits {
 import { Primitive } from 'reka-ui'
 import { computed, onBeforeUnmount, ref, watch } from 'vue'
 
-import { useComponentUI } from '../../composables/useComponentUI'
+import { useComponentUI } from '@/composables/useComponentUI'
 
 const props = withDefaults(defineProps<ScrollShadowProps>(), {
   as: 'div',

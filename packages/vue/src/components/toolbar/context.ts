@@ -1,6 +1,7 @@
 import type { ComputedRef, InjectionKey, Ref } from 'vue'
 
-import type { ComponentSlots, ComponentUI } from '../../types/tv'
+import type { ComponentSlots, ComponentUI } from '@/types/tv'
+
 import type toolbarTheme from './theme'
 
 export interface ToolbarContext {

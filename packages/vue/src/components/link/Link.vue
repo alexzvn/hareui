@@ -20,7 +20,8 @@
 <script lang="ts">
 import type { PrimitiveProps } from 'reka-ui'
 
-import type { ComponentSlots } from '../../types/tv'
+import type { ComponentSlots } from '@/types/tv'
+
 import theme from './theme'
 
 type Link = typeof theme
@@ -63,8 +64,8 @@ export interface LinkSlots {
 import { Primitive } from 'reka-ui'
 import { computed, h } from 'vue'
 
-import { useComponentUI } from '../../composables/useComponentUI'
-import { useFieldsetDisabled } from '../fieldset/context'
+import { useFieldsetDisabled } from '@/components/fieldset/context'
+import { useComponentUI } from '@/composables/useComponentUI'
 
 const props = withDefaults(defineProps<LinkProps>(), { as: 'a', iconPlacement: 'end' })
 const slots = defineSlots<LinkSlots>()

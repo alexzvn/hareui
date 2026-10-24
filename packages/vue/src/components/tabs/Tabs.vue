@@ -171,7 +171,8 @@
 </template>
 
 <script lang="ts">
-import type { ComponentSlots, ComponentVariants } from '../../types/tv'
+import type { ComponentSlots, ComponentVariants } from '@/types/tv'
+
 import theme from './theme'
 
 type Tabs = typeof theme
@@ -248,9 +249,9 @@ export interface TabsSlots<T extends TabsItem = TabsItem> {
 import { TabsContent, TabsList, TabsRoot, TabsTrigger } from 'reka-ui'
 import { computed, nextTick, onBeforeUnmount, onMounted, ref, watch } from 'vue'
 
-import { useComponentUI } from '../../composables/useComponentUI'
-import ScrollShadow from '../scroll-shadow/ScrollShadow.vue'
-import type { ScrollShadowVisibility } from '../scroll-shadow/ScrollShadow.vue'
+import ScrollShadow from '@/components/scroll-shadow/ScrollShadow.vue'
+import type { ScrollShadowVisibility } from '@/components/scroll-shadow/ScrollShadow.vue'
+import { useComponentUI } from '@/composables/useComponentUI'
 
 const props = withDefaults(defineProps<TabsProps<T>>(), {
   orientation: 'horizontal',

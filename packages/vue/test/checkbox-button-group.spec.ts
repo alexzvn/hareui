@@ -3,10 +3,11 @@ import { flushPromises, mount } from '@vue/test-utils'
 import { afterEach, describe, expect, it } from 'vitest'
 import { h, nextTick, ref } from 'vue'
 
-import CheckboxButtonGroup from '../src/components/checkbox-button-group/CheckboxButtonGroup.vue'
-import CheckboxButtonGroupItem from '../src/components/checkbox-button-group/CheckboxButtonGroupItem.vue'
-import Fieldset from '../src/components/fieldset/Fieldset.vue'
-import Form from '../src/components/form/Form.vue'
+import CheckboxButtonGroup from '@/components/checkbox-button-group/CheckboxButtonGroup.vue'
+import CheckboxButtonGroupItem from '@/components/checkbox-button-group/CheckboxButtonGroupItem.vue'
+import Fieldset from '@/components/fieldset/Fieldset.vue'
+import Form from '@/components/form/Form.vue'
+
 import { expectAccessible } from './a11y'
 
 const features = [

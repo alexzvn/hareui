@@ -2,7 +2,8 @@ import { CalendarDate } from '@internationalized/date'
 import { mount } from '@vue/test-utils'
 import { describe, expect, it } from 'vitest'
 
-import DateRangePicker from '../src/components/date-range-picker/DateRangePicker.vue'
+import DateRangePicker from '@/components/date-range-picker/DateRangePicker.vue'
+
 import { expectAccessible } from './a11y'
 
 const trigger = '[data-slot=date-range-picker-trigger]'

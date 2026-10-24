@@ -51,7 +51,8 @@
 import type { PrimitiveProps } from 'reka-ui'
 import type { Component } from 'vue'
 
-import type { ComponentSlots } from '../../types/tv'
+import type { ComponentSlots } from '@/types/tv'
+
 import theme from './theme'
 
 type Disclosure = typeof theme
@@ -126,9 +127,9 @@ import {
   watch,
 } from 'vue'
 
-import { useComponentUI } from '../../composables/useComponentUI'
-import { animatePanel, onPanelReveal, setPanelStatic } from '../../utils/disclosurePanel'
-import { disclosureGroupContextKey } from '../disclosure-group/context'
+import { disclosureGroupContextKey } from '@/components/disclosure-group/context'
+import { useComponentUI } from '@/composables/useComponentUI'
+import { animatePanel, onPanelReveal, setPanelStatic } from '@/utils/disclosurePanel'
 
 // `open: undefined` stops Vue casting an absent boolean prop to `false`, so uncontrolled mode and `defaultOpen` apply
 const props = withDefaults(defineProps<DisclosureProps>(), { as: 'div', open: undefined })

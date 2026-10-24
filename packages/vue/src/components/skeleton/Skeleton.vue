@@ -7,7 +7,8 @@
 <script lang="ts">
 import type { PrimitiveProps } from 'reka-ui'
 
-import type { ComponentSlots, ComponentVariants } from '../../types/tv'
+import type { ComponentSlots, ComponentVariants } from '@/types/tv'
+
 import theme from './theme'
 
 type Skeleton = typeof theme
@@ -50,7 +51,7 @@ function readCssAnimation(): string | undefined {
 import { Primitive } from 'reka-ui'
 import { onMounted, ref } from 'vue'
 
-import { useComponentUI } from '../../composables/useComponentUI'
+import { useComponentUI } from '@/composables/useComponentUI'
 
 const props = withDefaults(defineProps<SkeletonProps>(), { as: 'div' })
 defineSlots<SkeletonSlots>()

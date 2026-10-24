@@ -31,7 +31,8 @@
 <script lang="ts">
 import type { PrimitiveProps } from 'reka-ui'
 
-import type { ComponentSlots } from '../../types/tv'
+import type { ComponentSlots } from '@/types/tv'
+
 import theme from './theme'
 
 type Footer = typeof theme
@@ -65,7 +66,7 @@ export interface FooterSlots {
 <script setup lang="ts">
 import { Primitive } from 'reka-ui'
 
-import { useComponentUI } from '../../composables/useComponentUI'
+import { useComponentUI } from '@/composables/useComponentUI'
 
 const props = withDefaults(defineProps<FooterProps>(), { as: 'footer' })
 const slots = defineSlots<FooterSlots>()

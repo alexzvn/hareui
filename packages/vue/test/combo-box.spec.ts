@@ -3,8 +3,9 @@ import { afterEach, describe, expect, it, vi } from 'vitest'
 import type { ComponentOptions } from 'vue'
 import { h, nextTick } from 'vue'
 
-import type { ComboBoxValue } from '../src/components/combo-box/ComboBox.vue'
-import ComboBox from '../src/components/combo-box/ComboBox.vue'
+import type { ComboBoxValue } from '@/components/combo-box/ComboBox.vue'
+import ComboBox from '@/components/combo-box/ComboBox.vue'
+
 import { expectAccessible } from './a11y'
 
 const items = [

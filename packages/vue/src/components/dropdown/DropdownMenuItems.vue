@@ -80,7 +80,8 @@ import {
 import type { ComponentPublicInstance } from 'vue'
 import { inject, ref } from 'vue'
 
-import { preventNestedLayerDismiss } from '../../composables/nestedLayer'
+import { preventNestedLayerDismiss } from '@/composables/nestedLayer'
+
 import type { DropdownSelectionGroup } from './context'
 import { dropdownContextKey } from './context'
 import type {

@@ -11,8 +11,9 @@
 <script lang="ts">
 import type { PrimitiveProps } from 'reka-ui'
 
-import type { DashboardStorage, DashboardUnit } from '../../composables/useDashboard'
-import type { ComponentSlots } from '../../types/tv'
+import type { DashboardStorage, DashboardUnit } from '@/composables/useDashboard'
+import type { ComponentSlots } from '@/types/tv'
+
 import theme from './theme'
 
 type DashboardGroup = typeof theme
@@ -58,11 +59,8 @@ export interface DashboardGroupSlots {
 <script setup lang="ts">
 import { Primitive } from 'reka-ui'
 
-import { useComponentUI } from '../../composables/useComponentUI'
-import {
-  createDashboardSidebarState,
-  provideDashboardContext,
-} from '../../composables/useDashboard'
+import { useComponentUI } from '@/composables/useComponentUI'
+import { createDashboardSidebarState, provideDashboardContext } from '@/composables/useDashboard'
 
 const props = withDefaults(defineProps<DashboardGroupProps>(), {
   storage: 'cookie',

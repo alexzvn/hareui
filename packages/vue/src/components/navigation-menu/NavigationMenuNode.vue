@@ -203,9 +203,10 @@ import {
 } from 'reka-ui'
 import { computed, useId } from 'vue'
 
-import type { DropdownEntry, DropdownItem, DropdownValue } from '../dropdown/Dropdown.vue'
-import Dropdown from '../dropdown/Dropdown.vue'
-import Tooltip from '../tooltip/Tooltip.vue'
+import type { DropdownEntry, DropdownItem, DropdownValue } from '@/components/dropdown/Dropdown.vue'
+import Dropdown from '@/components/dropdown/Dropdown.vue'
+import Tooltip from '@/components/tooltip/Tooltip.vue'
+
 import { SlotOutlet, slotName, useNavigationMenu } from './context'
 import { EllipsisVerticalIcon, NavigationMenuIcon } from './icons'
 import type { ResolvedLink } from './LinkResolver'

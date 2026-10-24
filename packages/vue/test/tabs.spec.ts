@@ -3,8 +3,9 @@ import { ConfigProvider } from 'reka-ui'
 import { afterEach, describe, expect, it } from 'vitest'
 import { h } from 'vue'
 
-import type { TabsProps } from '../src/components/tabs/Tabs.vue'
-import Tabs from '../src/components/tabs/Tabs.vue'
+import type { TabsProps } from '@/components/tabs/Tabs.vue'
+import Tabs from '@/components/tabs/Tabs.vue'
+
 import { expectAccessible } from './a11y'
 
 const items = [

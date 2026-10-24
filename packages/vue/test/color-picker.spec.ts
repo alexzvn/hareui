@@ -3,12 +3,13 @@ import { colorToString, parseColor } from 'reka-ui'
 import { afterEach, describe, expect, it } from 'vitest'
 import { h, nextTick } from 'vue'
 
-import ColorArea from '../src/components/color-area/ColorArea.vue'
-import ColorField from '../src/components/color-field/ColorField.vue'
-import ColorPicker from '../src/components/color-picker/ColorPicker.vue'
-import ColorSlider from '../src/components/color-slider/ColorSlider.vue'
-import ColorSwatchPicker from '../src/components/color-swatch-picker/ColorSwatchPicker.vue'
-import ColorSwatch from '../src/components/color-swatch/ColorSwatch.vue'
+import ColorArea from '@/components/color-area/ColorArea.vue'
+import ColorField from '@/components/color-field/ColorField.vue'
+import ColorPicker from '@/components/color-picker/ColorPicker.vue'
+import ColorSlider from '@/components/color-slider/ColorSlider.vue'
+import ColorSwatchPicker from '@/components/color-swatch-picker/ColorSwatchPicker.vue'
+import ColorSwatch from '@/components/color-swatch/ColorSwatch.vue'
+
 import { expectAccessible } from './a11y'
 
 const wrappers: { unmount: () => void }[] = []

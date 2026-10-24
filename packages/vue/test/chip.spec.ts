@@ -2,8 +2,9 @@ import { mount } from '@vue/test-utils'
 import { describe, expect, it } from 'vitest'
 import { h } from 'vue'
 
-import type { ChipProps, ChipSlots } from '../src/components/chip/Chip.vue'
-import Chip from '../src/components/chip/Chip.vue'
+import type { ChipProps, ChipSlots } from '@/components/chip/Chip.vue'
+import Chip from '@/components/chip/Chip.vue'
+
 import { expectAccessible } from './a11y'
 
 describe('Chip', () => {

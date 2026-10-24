@@ -73,7 +73,8 @@
 </template>
 
 <script lang="ts">
-import type { ComponentSlots, ComponentVariants } from '../../types/tv'
+import type { ComponentSlots, ComponentVariants } from '@/types/tv'
+
 import tagTheme from './tagTheme'
 import theme from './theme'
 
@@ -171,9 +172,10 @@ export interface TagGroupEmits {
 <script setup lang="ts" generic="T extends TagGroupItem = TagGroupItem">
 import { computed, nextTick, ref, useTemplateRef, watch } from 'vue'
 
-import { useComponentUI } from '../../composables/useComponentUI'
-import { useFieldChrome } from '../../composables/useFieldChrome'
-import { useSelectionManager } from '../../composables/useSelectionManager'
+import { useComponentUI } from '@/composables/useComponentUI'
+import { useFieldChrome } from '@/composables/useFieldChrome'
+import { useSelectionManager } from '@/composables/useSelectionManager'
+
 import TagGroupTag from './TagGroupTag.vue'
 
 const props = withDefaults(defineProps<TagGroupProps<T>>(), {

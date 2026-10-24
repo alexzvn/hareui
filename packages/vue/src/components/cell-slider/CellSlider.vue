@@ -35,7 +35,8 @@
 </template>
 
 <script lang="ts">
-import type { ComponentSlots, ComponentVariants } from '../../types/tv'
+import type { ComponentSlots, ComponentVariants } from '@/types/tv'
+
 import theme from './theme'
 
 type CellSlider = typeof theme
@@ -112,8 +113,8 @@ export interface CellSliderSlots {
 <script setup lang="ts">
 import { computed, ref } from 'vue'
 
-import { useComponentUI } from '../../composables/useComponentUI'
-import Slider from '../slider/Slider.vue'
+import Slider from '@/components/slider/Slider.vue'
+import { useComponentUI } from '@/composables/useComponentUI'
 
 const props = withDefaults(defineProps<CellSliderProps>(), {
   min: 0,

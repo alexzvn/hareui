@@ -2,8 +2,9 @@ import { enableAutoUnmount, mount } from '@vue/test-utils'
 import { afterEach, describe, expect, it } from 'vitest'
 import { h } from 'vue'
 
-import TextArea from '../src/components/text-area/TextArea.vue'
-import TextField from '../src/components/text-field/TextField.vue'
+import TextArea from '@/components/text-area/TextArea.vue'
+import TextField from '@/components/text-field/TextField.vue'
+
 import { expectAccessible } from './a11y'
 
 // A failing assertion must not leave a mounted field (and its colliding `useId()` ids) behind for the next test.

@@ -222,7 +222,8 @@
 </template>
 
 <script lang="ts">
-import type { ComponentSlots, ComponentVariants } from '../../types/tv'
+import type { ComponentSlots, ComponentVariants } from '@/types/tv'
+
 import type { ColumnWidth } from './columnSizes'
 import theme from './theme'
 
@@ -365,10 +366,11 @@ export interface TableSlots {
 <script setup lang="ts">
 import { computed, nextTick, onBeforeUnmount, ref, useId, useSlots, watch } from 'vue'
 
-import { useComponentUI } from '../../composables/useComponentUI'
-import { useSelectionManager } from '../../composables/useSelectionManager'
-import Checkbox from '../checkbox/Checkbox.vue'
-import Spinner from '../spinner/Spinner.vue'
+import Checkbox from '@/components/checkbox/Checkbox.vue'
+import Spinner from '@/components/spinner/Spinner.vue'
+import { useComponentUI } from '@/composables/useComponentUI'
+import { useSelectionManager } from '@/composables/useSelectionManager'
+
 import { calculateColumnSizes, DEFAULT_MIN_COLUMN_WIDTH } from './columnSizes'
 
 const props = withDefaults(defineProps<TableProps>(), {

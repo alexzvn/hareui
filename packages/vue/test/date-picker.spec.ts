@@ -2,7 +2,8 @@ import { CalendarDate } from '@internationalized/date'
 import { mount } from '@vue/test-utils'
 import { describe, expect, it } from 'vitest'
 
-import DatePicker from '../src/components/date-picker/DatePicker.vue'
+import DatePicker from '@/components/date-picker/DatePicker.vue'
+
 import { expectAccessible } from './a11y'
 
 // Local stand-in for Promise.withResolvers, so the library's tsconfig `lib` doesn't need ES2024.

@@ -33,7 +33,8 @@
 <script setup lang="ts">
 import { computed } from 'vue'
 
-import ChartLegend from '../chart-legend/ChartLegend.vue'
+import ChartLegend from '@/components/chart-legend/ChartLegend.vue'
+
 import ChartSurface from './ChartSurface.vue'
 import ChartTooltip from './ChartTooltip.vue'
 import { useChartContext } from './context'

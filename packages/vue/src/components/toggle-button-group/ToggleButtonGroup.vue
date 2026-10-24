@@ -20,8 +20,9 @@
 <script lang="ts">
 import type { PrimitiveProps } from 'reka-ui'
 
-import type { ComponentSlots, ComponentVariants } from '../../types/tv'
-import type { ToggleButtonProps } from '../toggle-button/ToggleButton.vue'
+import type { ToggleButtonProps } from '@/components/toggle-button/ToggleButton.vue'
+import type { ComponentSlots, ComponentVariants } from '@/types/tv'
+
 import theme from './theme'
 
 type ToggleButtonGroup = typeof theme
@@ -93,10 +94,11 @@ export interface ToggleButtonGroupSlots {
 import { Primitive, RovingFocusGroup } from 'reka-ui'
 import { computed, inject, provide, ref, toRef, useTemplateRef, watch } from 'vue'
 
-import { useComponentUI } from '../../composables/useComponentUI'
-import { useFirstChild } from '../../composables/useFirstChild'
-import { useFieldsetDisabled } from '../fieldset/context'
-import { toolbarContextKey } from '../toolbar/context'
+import { useFieldsetDisabled } from '@/components/fieldset/context'
+import { toolbarContextKey } from '@/components/toolbar/context'
+import { useComponentUI } from '@/composables/useComponentUI'
+import { useFirstChild } from '@/composables/useFirstChild'
+
 import { toggleButtonGroupContextKey } from './context'
 
 const props = withDefaults(defineProps<ToggleButtonGroupProps>(), {

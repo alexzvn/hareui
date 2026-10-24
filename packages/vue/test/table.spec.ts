@@ -1,7 +1,8 @@
 import { flushPromises, mount } from '@vue/test-utils'
 import { afterEach, describe, expect, it, vi } from 'vitest'
 
-import Table from '../src/components/table/Table.vue'
+import Table from '@/components/table/Table.vue'
+
 import { expectAccessible } from './a11y'
 
 const columns = [

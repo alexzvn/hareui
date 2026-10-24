@@ -3,9 +3,9 @@ import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest'
 import type { Component, VNodeChild } from 'vue'
 import { h, nextTick, ref } from 'vue'
 
-import AlertDialog from '../src/components/alert-dialog/AlertDialog.vue'
-import Drawer from '../src/components/drawer/Drawer.vue'
-import Modal from '../src/components/modal/Modal.vue'
+import AlertDialog from '@/components/alert-dialog/AlertDialog.vue'
+import Drawer from '@/components/drawer/Drawer.vue'
+import Modal from '@/components/modal/Modal.vue'
 
 // The lifecycle `useDialogShell` gives Modal, Drawer and AlertDialog, checked through each of them.
 

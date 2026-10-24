@@ -1,4 +1,4 @@
-import type { PortalTarget } from '../../config'
+import type { PortalTarget } from '@/config'
 
 /** Options of the hover/click popover shown for a collapsed item with children. */
 export interface NavigationMenuPopoverProps {

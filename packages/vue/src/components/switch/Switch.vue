@@ -47,10 +47,11 @@
 </template>
 
 <script lang="ts">
-import type { ValidateFn, ValidationResult } from '../../composables/useFieldValidation'
-import type { ComponentSlots, ComponentVariants } from '../../types/tv'
-import type { ValidationBehavior } from '../form/context'
-import type { FormFieldProps } from '../form/types'
+import type { ValidationBehavior } from '@/components/form/context'
+import type { FormFieldProps } from '@/components/form/types'
+import type { ValidateFn, ValidationResult } from '@/composables/useFieldValidation'
+import type { ComponentSlots, ComponentVariants } from '@/types/tv'
+
 import theme from './theme'
 
 type Switch = typeof theme
@@ -133,15 +134,15 @@ export interface SwitchSlots {
 import { SwitchRoot } from 'reka-ui'
 import { computed, ref, useSlots, useTemplateRef } from 'vue'
 
+import { useFieldsetDisabled } from '@/components/fieldset/context'
 import {
   forwardRootClick,
   keepFocusWhenReadonly,
   submitOnEnter,
-} from '../../composables/forwardRootClick'
-import { useComponentUI } from '../../composables/useComponentUI'
-import { useFieldChrome } from '../../composables/useFieldChrome'
-import { useFieldValidation } from '../../composables/useFieldValidation'
-import { useFieldsetDisabled } from '../fieldset/context'
+} from '@/composables/forwardRootClick'
+import { useComponentUI } from '@/composables/useComponentUI'
+import { useFieldChrome } from '@/composables/useFieldChrome'
+import { useFieldValidation } from '@/composables/useFieldValidation'
 
 // Attributes go to the switch button; a `data-slot` attribute also renames the root, so a wrapper (CellSwitch) can
 // claim it while the button keeps `switch-content`

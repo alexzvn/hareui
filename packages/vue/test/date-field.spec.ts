@@ -3,7 +3,8 @@ import { CalendarDate, CalendarDateTime } from '@internationalized/date'
 import { mount } from '@vue/test-utils'
 import { describe, expect, it } from 'vitest'
 
-import DateField from '../src/components/date-field/DateField.vue'
+import DateField from '@/components/date-field/DateField.vue'
+
 import { expectAccessible } from './a11y'
 
 // Local stand-in for Promise.withResolvers, so the library's tsconfig `lib` doesn't need ES2024.

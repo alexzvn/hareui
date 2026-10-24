@@ -1,7 +1,7 @@
 import type { ComputedRef, Ref } from 'vue'
 import { computed, getCurrentInstance, readonly, ref, watch } from 'vue'
 
-import { snapNumber } from '../utils/number'
+import { snapNumber } from '@/utils/number'
 
 export interface NumberValueOptions {
   /** The component's `defineModel<number | null>()` ref. */

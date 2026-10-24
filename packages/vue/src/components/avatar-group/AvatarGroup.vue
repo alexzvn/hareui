@@ -7,8 +7,9 @@
 <script lang="ts">
 import type { VNode } from 'vue'
 
-import type { ComponentSlots, ComponentVariants } from '../../types/tv'
-import type { AvatarProps } from '../avatar/Avatar.vue'
+import type { AvatarProps } from '@/components/avatar/Avatar.vue'
+import type { ComponentSlots, ComponentVariants } from '@/types/tv'
+
 import theme from './theme'
 
 type AvatarGroup = typeof theme
@@ -55,8 +56,8 @@ export interface AvatarGroupSlots {
 <script setup lang="ts">
 import { cloneVNode, Comment, computed, Fragment, h } from 'vue'
 
-import { useComponentUI } from '../../composables/useComponentUI'
-import Avatar from '../avatar/Avatar.vue'
+import Avatar from '@/components/avatar/Avatar.vue'
+import { useComponentUI } from '@/composables/useComponentUI'
 
 const props = withDefaults(defineProps<AvatarGroupProps>(), {
   size: 'md',

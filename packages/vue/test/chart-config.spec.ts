@@ -2,13 +2,13 @@ import { flushPromises, mount } from '@vue/test-utils'
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest'
 import { h, nextTick } from 'vue'
 
-import AreaChart from '../src/components/area-chart/AreaChart.vue'
-import BarChart from '../src/components/bar-chart/BarChart.vue'
-import ChartArea from '../src/components/chart/ChartArea.vue'
-import ChartXAxis from '../src/components/chart/ChartXAxis.vue'
-import ChartYAxis from '../src/components/chart/ChartYAxis.vue'
-import ComposedChart from '../src/components/composed-chart/ComposedChart.vue'
-import LineChart from '../src/components/line-chart/LineChart.vue'
+import AreaChart from '@/components/area-chart/AreaChart.vue'
+import BarChart from '@/components/bar-chart/BarChart.vue'
+import ChartArea from '@/components/chart/ChartArea.vue'
+import ChartXAxis from '@/components/chart/ChartXAxis.vue'
+import ChartYAxis from '@/components/chart/ChartYAxis.vue'
+import ComposedChart from '@/components/composed-chart/ComposedChart.vue'
+import LineChart from '@/components/line-chart/LineChart.vue'
 
 const WIDTH = 400
 const HEIGHT = 200

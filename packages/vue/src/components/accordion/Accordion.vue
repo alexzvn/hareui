@@ -60,8 +60,9 @@
 </template>
 
 <script lang="ts">
-import type { ExpandedValue } from '../../composables/useExpandedValues'
-import type { ComponentSlots, ComponentVariants } from '../../types/tv'
+import type { ExpandedValue } from '@/composables/useExpandedValues'
+import type { ComponentSlots, ComponentVariants } from '@/types/tv'
+
 import theme from './theme'
 
 type Accordion = typeof theme
@@ -156,9 +157,9 @@ import {
   watch,
 } from 'vue'
 
-import { useComponentUI } from '../../composables/useComponentUI'
-import { useExpandedValues } from '../../composables/useExpandedValues'
-import { animatePanel, onPanelReveal, setPanelStatic } from '../../utils/disclosurePanel'
+import { useComponentUI } from '@/composables/useComponentUI'
+import { useExpandedValues } from '@/composables/useExpandedValues'
+import { animatePanel, onPanelReveal, setPanelStatic } from '@/utils/disclosurePanel'
 
 // `modelValue: undefined` keeps the uncontrolled mode when no `v-model` is bound.
 const props = withDefaults(defineProps<AccordionProps<T>>(), { modelValue: undefined })

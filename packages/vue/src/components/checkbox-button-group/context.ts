@@ -1,7 +1,8 @@
 import type { ComputedRef, InjectionKey, Ref } from 'vue'
 
-import type { ComponentSlots, ComponentUI, ComponentVariants } from '../../types/tv'
-import type checkboxTheme from '../checkbox/theme'
+import type checkboxTheme from '@/components/checkbox/theme'
+import type { ComponentSlots, ComponentUI, ComponentVariants } from '@/types/tv'
+
 import type theme from './theme'
 
 export interface CheckboxButtonGroupContext {

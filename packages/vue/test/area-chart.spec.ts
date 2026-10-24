@@ -2,13 +2,14 @@ import { flushPromises, mount } from '@vue/test-utils'
 import { afterEach, describe, expect, it, vi } from 'vitest'
 import { h, nextTick } from 'vue'
 
-import AreaChart from '../src/components/area-chart/AreaChart.vue'
-import ChartArea from '../src/components/chart/ChartArea.vue'
-import ChartGrid from '../src/components/chart/ChartGrid.vue'
-import type { ChartTooltipSlotProps } from '../src/components/chart/ChartTooltip.vue'
-import ChartTooltip from '../src/components/chart/ChartTooltip.vue'
-import ChartXAxis from '../src/components/chart/ChartXAxis.vue'
-import ChartYAxis from '../src/components/chart/ChartYAxis.vue'
+import AreaChart from '@/components/area-chart/AreaChart.vue'
+import ChartArea from '@/components/chart/ChartArea.vue'
+import ChartGrid from '@/components/chart/ChartGrid.vue'
+import type { ChartTooltipSlotProps } from '@/components/chart/ChartTooltip.vue'
+import ChartTooltip from '@/components/chart/ChartTooltip.vue'
+import ChartXAxis from '@/components/chart/ChartXAxis.vue'
+import ChartYAxis from '@/components/chart/ChartYAxis.vue'
+
 import { expectAccessible } from './a11y'
 
 const WIDTH = 400

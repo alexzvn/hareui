@@ -52,8 +52,9 @@
 </template>
 
 <script lang="ts">
-import type { PortalTarget } from '../../config'
-import type { ComponentSlots } from '../../types/tv'
+import type { PortalTarget } from '@/config'
+import type { ComponentSlots } from '@/types/tv'
+
 import theme from './theme'
 
 type Tooltip = typeof theme
@@ -144,9 +145,8 @@ import {
 import { computed, onBeforeUnmount, ref, watch } from 'vue'
 
 import { TOOLTIP_OPEN_EVENT } from '@/composables/nestedLayer'
-
-import { useComponentUI } from '../../composables/useComponentUI'
-import { usePortal } from '../../composables/usePortal'
+import { useComponentUI } from '@/composables/useComponentUI'
+import { usePortal } from '@/composables/usePortal'
 
 // `open: undefined` stops Vue casting an absent boolean prop to `false`, so uncontrolled mode and `defaultOpen` apply
 const props = withDefaults(defineProps<TooltipProps>(), {

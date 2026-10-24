@@ -3,8 +3,9 @@ import { describe, expect, it } from 'vitest'
 import type { VNode } from 'vue'
 import { defineComponent, h } from 'vue'
 
-import type { SpinnerProps } from '../src/components/spinner/Spinner.vue'
-import Spinner from '../src/components/spinner/Spinner.vue'
+import type { SpinnerProps } from '@/components/spinner/Spinner.vue'
+import Spinner from '@/components/spinner/Spinner.vue'
+
 import { expectAccessible } from './a11y'
 
 const mountAll = (children: () => VNode[]) =>

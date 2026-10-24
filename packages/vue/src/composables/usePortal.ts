@@ -1,8 +1,8 @@
 import type { ComputedRef, MaybeRefOrGetter } from 'vue'
 import { computed, inject, toValue } from 'vue'
 
-import type { PortalTarget } from '../config'
-import { hareUIConfigKey } from '../config'
+import type { PortalTarget } from '@/config'
+import { hareUIConfigKey } from '@/config'
 
 export interface ResolvedPortal {
   /** Teleport target; `'body'` when portalling is on without an explicit target. */

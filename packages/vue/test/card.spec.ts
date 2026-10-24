@@ -3,7 +3,8 @@ import { describe, expect, it } from 'vitest'
 import type { VNode } from 'vue'
 import { defineComponent, h } from 'vue'
 
-import Card from '../src/components/card/Card.vue'
+import Card from '@/components/card/Card.vue'
+
 import { expectAccessible } from './a11y'
 
 const mountAll = (children: () => VNode[]) =>

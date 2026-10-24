@@ -3,13 +3,13 @@ import { describe, expect, it } from 'vitest'
 import { createSSRApp, h } from 'vue'
 import { renderToString } from 'vue/server-renderer'
 
-import AlertDialog from '../src/components/alert-dialog/AlertDialog.vue'
-import DatePicker from '../src/components/date-picker/DatePicker.vue'
-import DateRangePicker from '../src/components/date-range-picker/DateRangePicker.vue'
-import Drawer from '../src/components/drawer/Drawer.vue'
-import Dropdown from '../src/components/dropdown/Dropdown.vue'
-import Modal from '../src/components/modal/Modal.vue'
-import Popover from '../src/components/popover/Popover.vue'
+import AlertDialog from '@/components/alert-dialog/AlertDialog.vue'
+import DatePicker from '@/components/date-picker/DatePicker.vue'
+import DateRangePicker from '@/components/date-range-picker/DateRangePicker.vue'
+import Drawer from '@/components/drawer/Drawer.vue'
+import Dropdown from '@/components/dropdown/Dropdown.vue'
+import Modal from '@/components/modal/Modal.vue'
+import Popover from '@/components/popover/Popover.vue'
 
 // No DOM globals here (no `Element`, `document`), as in Nuxt or VitePress server rendering.
 const trigger = { trigger: (): string => 'Open' }

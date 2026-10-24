@@ -49,10 +49,11 @@
 <script lang="ts">
 import type { PrimitiveProps } from 'reka-ui'
 
-import type { ComponentSlots, ComponentUI, ComponentVariants } from '../../types/tv'
-import type { ButtonProps } from '../button/Button.vue'
-import type { DrawerProps } from '../drawer/Drawer.vue'
-import type { ModalProps } from '../modal/Modal.vue'
+import type { ButtonProps } from '@/components/button/Button.vue'
+import type { DrawerProps } from '@/components/drawer/Drawer.vue'
+import type { ModalProps } from '@/components/modal/Modal.vue'
+import type { ComponentSlots, ComponentUI, ComponentVariants } from '@/types/tv'
+
 import theme from './theme'
 
 type Header = typeof theme
@@ -192,11 +193,11 @@ import {
 } from 'vue'
 import type { FunctionalComponent } from 'vue'
 
-import { useComponentUI } from '../../composables/useComponentUI'
-import { usePortal } from '../../composables/usePortal'
-import Button from '../button/Button.vue'
-import Drawer from '../drawer/Drawer.vue'
-import Modal from '../modal/Modal.vue'
+import Button from '@/components/button/Button.vue'
+import Drawer from '@/components/drawer/Drawer.vue'
+import Modal from '@/components/modal/Modal.vue'
+import { useComponentUI } from '@/composables/useComponentUI'
+import { usePortal } from '@/composables/usePortal'
 
 defineOptions({ inheritAttrs: false })
 

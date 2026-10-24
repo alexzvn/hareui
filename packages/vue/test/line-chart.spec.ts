@@ -2,10 +2,11 @@ import { flushPromises, mount } from '@vue/test-utils'
 import { afterEach, describe, expect, it, vi } from 'vitest'
 import { h, nextTick } from 'vue'
 
-import ChartLine from '../src/components/chart/ChartLine.vue'
-import ChartTooltip from '../src/components/chart/ChartTooltip.vue'
-import ChartXAxis from '../src/components/chart/ChartXAxis.vue'
-import LineChart from '../src/components/line-chart/LineChart.vue'
+import ChartLine from '@/components/chart/ChartLine.vue'
+import ChartTooltip from '@/components/chart/ChartTooltip.vue'
+import ChartXAxis from '@/components/chart/ChartXAxis.vue'
+import LineChart from '@/components/line-chart/LineChart.vue'
+
 import { expectAccessible } from './a11y'
 
 const WIDTH = 400

@@ -84,10 +84,11 @@
 </template>
 
 <script lang="ts">
-import type { ComponentSlots, ComponentUI } from '../../types/tv'
-import type { ButtonProps } from '../button/Button.vue'
-import type { DrawerProps } from '../drawer/Drawer.vue'
-import type { ModalProps } from '../modal/Modal.vue'
+import type { ButtonProps } from '@/components/button/Button.vue'
+import type { DrawerProps } from '@/components/drawer/Drawer.vue'
+import type { ModalProps } from '@/components/modal/Modal.vue'
+import type { ComponentSlots, ComponentUI } from '@/types/tv'
+
 import theme from './theme'
 
 type DashboardSidebar = typeof theme
@@ -217,13 +218,13 @@ import { DialogTitle, VisuallyHidden } from 'reka-ui'
 import type { FunctionalComponent } from 'vue'
 import { computed, h, onBeforeUnmount, ref, useId, useTemplateRef, watch } from 'vue'
 
-import { useComponentUI } from '../../composables/useComponentUI'
-import { createDashboardSidebarState, useDashboard } from '../../composables/useDashboard'
-import { useResizable } from '../../composables/useResizable'
-import Button from '../button/Button.vue'
-import DashboardResizeHandle from '../dashboard-resize-handle/DashboardResizeHandle.vue'
-import Drawer from '../drawer/Drawer.vue'
-import Modal from '../modal/Modal.vue'
+import Button from '@/components/button/Button.vue'
+import DashboardResizeHandle from '@/components/dashboard-resize-handle/DashboardResizeHandle.vue'
+import Drawer from '@/components/drawer/Drawer.vue'
+import Modal from '@/components/modal/Modal.vue'
+import { useComponentUI } from '@/composables/useComponentUI'
+import { createDashboardSidebarState, useDashboard } from '@/composables/useDashboard'
+import { useResizable } from '@/composables/useResizable'
 
 defineOptions({ inheritAttrs: false })
 

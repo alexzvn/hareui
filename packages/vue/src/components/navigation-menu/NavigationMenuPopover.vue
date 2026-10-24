@@ -64,12 +64,12 @@
 import { HoverCardContent, HoverCardPortal, HoverCardRoot, HoverCardTrigger } from 'reka-ui'
 import { nextTick, onBeforeUnmount, onMounted, ref, useId, watch } from 'vue'
 
+import Popover from '@/components/popover/Popover.vue'
+import popoverTheme from '@/components/popover/theme'
 import { TOOLTIP_OPEN_EVENT } from '@/composables/nestedLayer'
+import { useComponentUI } from '@/composables/useComponentUI'
+import { usePortal } from '@/composables/usePortal'
 
-import { useComponentUI } from '../../composables/useComponentUI'
-import { usePortal } from '../../composables/usePortal'
-import Popover from '../popover/Popover.vue'
-import popoverTheme from '../popover/theme'
 import type { NavigationMenuPopoverProps } from './types'
 
 // The popover shown for a collapsed item with children. HareUI's `Popover` opens on click only, so

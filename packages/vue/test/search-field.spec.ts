@@ -2,7 +2,8 @@ import { mount } from '@vue/test-utils'
 import { describe, expect, it, vi } from 'vitest'
 import { h, ref } from 'vue'
 
-import SearchField from '../src/components/search-field/SearchField.vue'
+import SearchField from '@/components/search-field/SearchField.vue'
+
 import { expectAccessible } from './a11y'
 
 function controlled(initial: string, attachTo?: HTMLElement) {

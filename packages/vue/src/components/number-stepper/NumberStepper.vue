@@ -190,11 +190,12 @@
 </template>
 
 <script lang="ts">
-import type { ValidateFn, ValidationResult } from '../../composables/useFieldValidation'
-import type { ComponentSlots } from '../../types/tv'
-import type { ButtonProps } from '../button/Button.vue'
-import type { ValidationBehavior } from '../form/context'
-import type { FormFieldProps } from '../form/types'
+import type { ButtonProps } from '@/components/button/Button.vue'
+import type { ValidationBehavior } from '@/components/form/context'
+import type { FormFieldProps } from '@/components/form/types'
+import type { ValidateFn, ValidationResult } from '@/composables/useFieldValidation'
+import type { ComponentSlots } from '@/types/tv'
+
 import theme from './theme'
 
 type NumberStepper = typeof theme
@@ -310,13 +311,13 @@ import {
 } from 'reka-ui'
 import { computed, onBeforeUnmount, onMounted, toRef, useAttrs, useTemplateRef } from 'vue'
 
-import { useComponentUI } from '../../composables/useComponentUI'
-import { useFieldChrome } from '../../composables/useFieldChrome'
-import { useFieldValidation } from '../../composables/useFieldValidation'
-import { useNumberValue } from '../../composables/useNumberValue'
-import { useSlotOutlet } from '../../composables/useSlotOutlet'
-import Button from '../button/Button.vue'
-import { useFieldsetDisabled } from '../fieldset/context'
+import Button from '@/components/button/Button.vue'
+import { useFieldsetDisabled } from '@/components/fieldset/context'
+import { useComponentUI } from '@/composables/useComponentUI'
+import { useFieldChrome } from '@/composables/useFieldChrome'
+import { useFieldValidation } from '@/composables/useFieldValidation'
+import { useNumberValue } from '@/composables/useNumberValue'
+import { useSlotOutlet } from '@/composables/useSlotOutlet'
 
 defineOptions({ inheritAttrs: false })
 

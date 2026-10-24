@@ -2,14 +2,14 @@ import { mount } from '@vue/test-utils'
 import { describe, expect, it } from 'vitest'
 import { defineComponent, h, nextTick, ref } from 'vue'
 
-import Checkbox from '../src/components/checkbox/Checkbox.vue'
-import DateField from '../src/components/date-field/DateField.vue'
-import RadioButtonGroup from '../src/components/radio-button-group/RadioButtonGroup.vue'
-import RadioButtonGroupItem from '../src/components/radio-button-group/RadioButtonGroupItem.vue'
-import TagGroup from '../src/components/tag-group/TagGroup.vue'
-import TextField from '../src/components/text-field/TextField.vue'
-import { useFieldChrome } from '../src/composables/useFieldChrome'
-import type { ValidationResult } from '../src/composables/useFieldValidation'
+import Checkbox from '@/components/checkbox/Checkbox.vue'
+import DateField from '@/components/date-field/DateField.vue'
+import RadioButtonGroup from '@/components/radio-button-group/RadioButtonGroup.vue'
+import RadioButtonGroupItem from '@/components/radio-button-group/RadioButtonGroupItem.vue'
+import TagGroup from '@/components/tag-group/TagGroup.vue'
+import TextField from '@/components/text-field/TextField.vue'
+import { useFieldChrome } from '@/composables/useFieldChrome'
+import type { ValidationResult } from '@/composables/useFieldValidation'
 
 function result(errors: string[] = []): ValidationResult {
   return {

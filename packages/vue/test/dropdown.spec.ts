@@ -2,8 +2,9 @@ import { mount } from '@vue/test-utils'
 import { afterEach, describe, expect, it, vi } from 'vitest'
 import { h, nextTick } from 'vue'
 
-import type { DropdownEntry } from '../src/components/dropdown/Dropdown.vue'
-import Dropdown from '../src/components/dropdown/Dropdown.vue'
+import type { DropdownEntry } from '@/components/dropdown/Dropdown.vue'
+import Dropdown from '@/components/dropdown/Dropdown.vue'
+
 import { expectAccessible } from './a11y'
 
 const fruits: DropdownEntry[] = [

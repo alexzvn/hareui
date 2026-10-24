@@ -11,7 +11,8 @@
 <script lang="ts">
 import type { PrimitiveProps } from 'reka-ui'
 
-import type { ComponentSlots, ComponentVariants } from '../../types/tv'
+import type { ComponentSlots, ComponentVariants } from '@/types/tv'
+
 import theme from './theme'
 
 type Surface = typeof theme
@@ -43,7 +44,8 @@ export interface SurfaceSlots {
 import { Primitive } from 'reka-ui'
 import { computed, provide, toRef } from 'vue'
 
-import { useComponentUI } from '../../composables/useComponentUI'
+import { useComponentUI } from '@/composables/useComponentUI'
+
 import { surfaceContextKey } from './context'
 
 const props = withDefaults(defineProps<SurfaceProps>(), { as: 'div', variant: 'default' })

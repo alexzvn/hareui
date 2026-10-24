@@ -13,7 +13,8 @@
 <script lang="ts">
 import type { PrimitiveProps } from 'reka-ui'
 
-import type { ComponentSlots, ComponentVariants } from '../../types/tv'
+import type { ComponentSlots, ComponentVariants } from '@/types/tv'
+
 import type { KbdKey } from './kbdKeys'
 import theme from './theme'
 
@@ -45,7 +46,8 @@ export interface KbdSlots {
 import { Primitive } from 'reka-ui'
 import { computed } from 'vue'
 
-import { useComponentUI } from '../../composables/useComponentUI'
+import { useComponentUI } from '@/composables/useComponentUI'
+
 import { kbdKeysLabelMap, kbdKeysMap } from './kbdKeys'
 
 const props = withDefaults(defineProps<KbdProps>(), { as: 'kbd' })

@@ -7,7 +7,8 @@
 </template>
 
 <script lang="ts">
-import type { ComponentSlots, ComponentVariants } from '../../types/tv'
+import type { ComponentSlots, ComponentVariants } from '@/types/tv'
+
 import theme from './theme'
 
 type SwitchGroup = typeof theme
@@ -31,7 +32,7 @@ export interface SwitchGroupSlots {
 </script>
 
 <script setup lang="ts">
-import { useComponentUI } from '../../composables/useComponentUI'
+import { useComponentUI } from '@/composables/useComponentUI'
 
 const props = defineProps<SwitchGroupProps>()
 defineSlots<SwitchGroupSlots>()

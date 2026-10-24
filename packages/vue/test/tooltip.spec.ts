@@ -3,7 +3,8 @@ import { TooltipRoot } from 'reka-ui'
 import { afterEach, describe, expect, it, vi } from 'vitest'
 import { h, nextTick } from 'vue'
 
-import Tooltip from '../src/components/tooltip/Tooltip.vue'
+import Tooltip from '@/components/tooltip/Tooltip.vue'
+
 import { expectAccessible } from './a11y'
 
 const sleep = (ms: number) => new Promise((r) => setTimeout(r, ms))

@@ -2,11 +2,11 @@ import { mount } from '@vue/test-utils'
 import { describe, expect, it } from 'vitest'
 import { defineComponent, nextTick, reactive, ref } from 'vue'
 
-import Button from '../src/components/button/Button.vue'
-import Description from '../src/components/description/Description.vue'
-import Input from '../src/components/input/Input.vue'
-import type { HareUIConfig } from '../src/config'
-import { createHareUI, hareUIConfigKey } from '../src/config'
+import Button from '@/components/button/Button.vue'
+import Description from '@/components/description/Description.vue'
+import Input from '@/components/input/Input.vue'
+import type { HareUIConfig } from '@/config'
+import { createHareUI, hareUIConfigKey } from '@/config'
 
 describe('class precedence', () => {
   it('class prop beats :ui, which beats app config, which beats the theme', () => {

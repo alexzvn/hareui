@@ -2,8 +2,9 @@ import { mount } from '@vue/test-utils'
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest'
 import { h, nextTick, ref } from 'vue'
 
-import Header from '../src/components/header/Header.vue'
-import type { HeaderProps } from '../src/components/header/Header.vue'
+import Header from '@/components/header/Header.vue'
+import type { HeaderProps } from '@/components/header/Header.vue'
+
 import { expectAccessible } from './a11y'
 
 // Reka's Presence needs three ticks before a closed dialog leaves the DOM (see modal.spec.ts).

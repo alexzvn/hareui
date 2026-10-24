@@ -1,10 +1,11 @@
 import type { MaybeRefOrGetter, Slot } from 'vue'
 import { computed, defineComponent, h, onBeforeUpdate, shallowRef, toValue, useId } from 'vue'
 
-import Description from '../components/description/Description.vue'
-import ErrorMessage from '../components/error-message/ErrorMessage.vue'
-import FieldError from '../components/field-error/FieldError.vue'
-import Label from '../components/label/Label.vue'
+import Description from '@/components/description/Description.vue'
+import ErrorMessage from '@/components/error-message/ErrorMessage.vue'
+import FieldError from '@/components/field-error/FieldError.vue'
+import Label from '@/components/label/Label.vue'
+
 import type { ValidationResult } from './useFieldValidation'
 import { useSlotOutlet } from './useSlotOutlet'
 

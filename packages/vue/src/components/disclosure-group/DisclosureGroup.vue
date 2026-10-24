@@ -12,8 +12,9 @@
 <script lang="ts">
 import type { PrimitiveProps } from 'reka-ui'
 
-import type { ExpandedValue } from '../../composables/useExpandedValues'
-import type { ComponentSlots } from '../../types/tv'
+import type { ExpandedValue } from '@/composables/useExpandedValues'
+import type { ComponentSlots } from '@/types/tv'
+
 import theme from './theme'
 
 type DisclosureGroup = typeof theme
@@ -59,8 +60,9 @@ export interface DisclosureGroupEmits {
 import { Primitive } from 'reka-ui'
 import { computed, provide } from 'vue'
 
-import { useComponentUI } from '../../composables/useComponentUI'
-import { useExpandedValues } from '../../composables/useExpandedValues'
+import { useComponentUI } from '@/composables/useComponentUI'
+import { useExpandedValues } from '@/composables/useExpandedValues'
+
 import { disclosureGroupContextKey } from './context'
 
 // `modelValue: undefined` keeps the uncontrolled mode when no `v-model` is bound.

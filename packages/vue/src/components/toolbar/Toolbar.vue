@@ -20,7 +20,8 @@
 <script lang="ts">
 import type { PrimitiveProps } from 'reka-ui'
 
-import type { ComponentSlots, ComponentVariants } from '../../types/tv'
+import type { ComponentSlots, ComponentVariants } from '@/types/tv'
+
 import theme from './theme'
 
 type Toolbar = typeof theme
@@ -58,7 +59,8 @@ export interface ToolbarSlots {
 import { Primitive } from 'reka-ui'
 import { inject, provide, ref, toRef } from 'vue'
 
-import { useComponentUI } from '../../composables/useComponentUI'
+import { useComponentUI } from '@/composables/useComponentUI'
+
 import { toolbarContextKey } from './context'
 
 const props = withDefaults(defineProps<ToolbarProps>(), { as: 'div', orientation: 'horizontal' })

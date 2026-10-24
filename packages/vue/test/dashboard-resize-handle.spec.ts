@@ -2,7 +2,8 @@ import { mount } from '@vue/test-utils'
 import { describe, expect, it } from 'vitest'
 import { h } from 'vue'
 
-import DashboardResizeHandle from '../src/components/dashboard-resize-handle/DashboardResizeHandle.vue'
+import DashboardResizeHandle from '@/components/dashboard-resize-handle/DashboardResizeHandle.vue'
+
 import { expectAccessible } from './a11y'
 
 describe('DashboardResizeHandle', () => {

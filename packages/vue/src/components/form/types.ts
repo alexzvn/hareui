@@ -1,4 +1,4 @@
-import type { StandardSchemaV1, SuperstructSchema } from '../../utils/form'
+import type { StandardSchemaV1, SuperstructSchema } from '@/utils/form'
 
 /** A schema the form can validate with: any Standard Schema (Zod, Valibot, ArkType, Yup, Effect Schema, …) or a Superstruct struct. */
 export type FormSchema<I extends object = object, O extends object = I> =

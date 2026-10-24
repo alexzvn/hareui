@@ -2,7 +2,8 @@ import { mount } from '@vue/test-utils'
 import { afterEach, describe, expect, it } from 'vitest'
 import { h, nextTick } from 'vue'
 
-import Popover from '../src/components/popover/Popover.vue'
+import Popover from '@/components/popover/Popover.vue'
+
 import { expectAccessible } from './a11y'
 
 let wrapper: ReturnType<typeof mount> | undefined

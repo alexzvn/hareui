@@ -2,13 +2,14 @@ import { flushPromises, mount } from '@vue/test-utils'
 import { afterAll, beforeAll, describe, expect, it, vi } from 'vitest'
 import { h, nextTick } from 'vue'
 
-import ChartCell from '../src/components/chart/ChartCell.vue'
-import ChartPolarAngleAxis from '../src/components/chart/ChartPolarAngleAxis.vue'
-import ChartRadialBar from '../src/components/chart/ChartRadialBar.vue'
-import type { ChartTooltipSlotProps } from '../src/components/chart/ChartTooltip.vue'
-import ChartTooltip from '../src/components/chart/ChartTooltip.vue'
-import { bandBarPositions } from '../src/components/chart/polar'
-import RadialChart from '../src/components/radial-chart/RadialChart.vue'
+import ChartCell from '@/components/chart/ChartCell.vue'
+import ChartPolarAngleAxis from '@/components/chart/ChartPolarAngleAxis.vue'
+import ChartRadialBar from '@/components/chart/ChartRadialBar.vue'
+import type { ChartTooltipSlotProps } from '@/components/chart/ChartTooltip.vue'
+import ChartTooltip from '@/components/chart/ChartTooltip.vue'
+import { bandBarPositions } from '@/components/chart/polar'
+import RadialChart from '@/components/radial-chart/RadialChart.vue'
+
 import { expectAccessible } from './a11y'
 
 // 200 × 200 without margins: center (100, 100); inner radius 30% = 30px, outer 80% = 80px.

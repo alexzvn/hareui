@@ -12,7 +12,8 @@
 <script lang="ts">
 import type { PrimitiveProps } from 'reka-ui'
 
-import type { ComponentSlots, ComponentVariants } from '../../types/tv'
+import type { ComponentSlots, ComponentVariants } from '@/types/tv'
+
 import theme from './theme'
 
 type Separator = typeof theme
@@ -49,8 +50,8 @@ export interface SeparatorSlots {
 import { Separator as SeparatorPrimitive } from 'reka-ui'
 import { computed, inject } from 'vue'
 
-import { useComponentUI } from '../../composables/useComponentUI'
-import { toolbarContextKey } from '../toolbar/context'
+import { toolbarContextKey } from '@/components/toolbar/context'
+import { useComponentUI } from '@/composables/useComponentUI'
 
 const props = defineProps<SeparatorProps>()
 defineSlots<SeparatorSlots>()

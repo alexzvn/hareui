@@ -64,9 +64,10 @@
 <script lang="ts">
 import type { PrimitiveProps } from 'reka-ui'
 
-import type { ComponentSlots, ComponentUI } from '../../types/tv'
-import type { ClassValue } from '../../utils/tv'
-import type { ButtonProps } from '../button/Button.vue'
+import type { ButtonProps } from '@/components/button/Button.vue'
+import type { ComponentSlots, ComponentUI } from '@/types/tv'
+import type { ClassValue } from '@/utils/tv'
+
 import theme from './theme'
 
 type ErrorTheme = typeof theme
@@ -133,9 +134,9 @@ export interface ErrorEmits {
 import { Primitive } from 'reka-ui'
 import { computed } from 'vue'
 
-import { useComponentUI } from '../../composables/useComponentUI'
-import { resolveAs } from '../../utils/resolveAs'
-import Button from '../button/Button.vue'
+import Button from '@/components/button/Button.vue'
+import { useComponentUI } from '@/composables/useComponentUI'
+import { resolveAs } from '@/utils/resolveAs'
 
 const props = withDefaults(defineProps<ErrorProps>(), {
   as: 'main',

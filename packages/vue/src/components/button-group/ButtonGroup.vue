@@ -15,8 +15,9 @@
 <script lang="ts">
 import type { PrimitiveProps } from 'reka-ui'
 
-import type { ComponentSlots, ComponentVariants } from '../../types/tv'
-import type { ButtonProps } from '../button/Button.vue'
+import type { ButtonProps } from '@/components/button/Button.vue'
+import type { ComponentSlots, ComponentVariants } from '@/types/tv'
+
 import theme from './theme'
 
 type ButtonGroup = typeof theme
@@ -67,9 +68,10 @@ export interface ButtonGroupSlots {
 import { Primitive } from 'reka-ui'
 import { computed, inject, provide, toRef, useTemplateRef } from 'vue'
 
-import { useComponentUI } from '../../composables/useComponentUI'
-import { useFirstChild } from '../../composables/useFirstChild'
-import { toolbarContextKey } from '../toolbar/context'
+import { toolbarContextKey } from '@/components/toolbar/context'
+import { useComponentUI } from '@/composables/useComponentUI'
+import { useFirstChild } from '@/composables/useFirstChild'
+
 import { buttonGroupContextKey } from './context'
 
 const props = withDefaults(defineProps<ButtonGroupProps>(), {

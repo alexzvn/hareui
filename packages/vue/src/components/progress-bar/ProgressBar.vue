@@ -52,7 +52,8 @@
 </template>
 
 <script lang="ts">
-import type { ComponentSlots, ComponentVariants } from '../../types/tv'
+import type { ComponentSlots, ComponentVariants } from '@/types/tv'
+
 import theme from './theme'
 
 type ProgressBar = typeof theme
@@ -128,9 +129,9 @@ export interface ProgressBarSlots {
 import { ProgressIndicator, ProgressRoot, useId } from 'reka-ui'
 import { computed } from 'vue'
 
-import { useComponentUI } from '../../composables/useComponentUI'
-import { useRangeValue } from '../../composables/useRangeValue'
-import labelTheme from '../label/theme'
+import labelTheme from '@/components/label/theme'
+import { useComponentUI } from '@/composables/useComponentUI'
+import { useRangeValue } from '@/composables/useRangeValue'
 
 const props = withDefaults(defineProps<ProgressBarProps>(), {
   value: 0,

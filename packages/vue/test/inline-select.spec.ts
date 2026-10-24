@@ -2,7 +2,8 @@ import { flushPromises, mount } from '@vue/test-utils'
 import { afterEach, describe, expect, it } from 'vitest'
 import { defineComponent, h, nextTick, ref } from 'vue'
 
-import InlineSelect from '../src/components/inline-select/InlineSelect.vue'
+import InlineSelect from '@/components/inline-select/InlineSelect.vue'
+
 import { expectAccessible } from './a11y'
 
 const items = [

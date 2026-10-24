@@ -3,9 +3,10 @@ import { parseColor } from 'reka-ui'
 import { describe, expect, it, vi } from 'vitest'
 import { h, nextTick } from 'vue'
 
-import { ColorPickerContextKey } from '../src/components/color-picker/context'
-import type { ColorSliderProps } from '../src/components/color-slider/ColorSlider.vue'
-import ColorSlider from '../src/components/color-slider/ColorSlider.vue'
+import { ColorPickerContextKey } from '@/components/color-picker/context'
+import type { ColorSliderProps } from '@/components/color-slider/ColorSlider.vue'
+import ColorSlider from '@/components/color-slider/ColorSlider.vue'
+
 import { expectAccessible } from './a11y'
 
 const thumb = '[data-slot=color-slider-thumb]'

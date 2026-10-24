@@ -3,7 +3,8 @@ import { describe, expect, it } from 'vitest'
 import type { VNode } from 'vue'
 import { defineComponent, h } from 'vue'
 
-import Alert from '../src/components/alert/Alert.vue'
+import Alert from '@/components/alert/Alert.vue'
+
 import { expectAccessible } from './a11y'
 
 const order = (el: Element) =>

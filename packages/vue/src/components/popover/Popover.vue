@@ -52,8 +52,9 @@
 </template>
 
 <script lang="ts">
-import type { PortalTarget } from '../../config'
-import type { ComponentSlots } from '../../types/tv'
+import type { PortalTarget } from '@/config'
+import type { ComponentSlots } from '@/types/tv'
+
 import theme from './theme'
 
 type Popover = typeof theme
@@ -132,11 +133,10 @@ export interface PopoverEmits {
 import { PopoverArrow, PopoverContent, PopoverPortal, PopoverRoot, PopoverTrigger } from 'reka-ui'
 import { computed, ref, useId, useSlots, watch } from 'vue'
 
+import { useComponentUI } from '@/composables/useComponentUI'
+import { useInertOutside } from '@/composables/useInertOutside'
 import { useLayerDismiss } from '@/composables/useLayerDismiss'
-
-import { useComponentUI } from '../../composables/useComponentUI'
-import { useInertOutside } from '../../composables/useInertOutside'
-import { usePortal } from '../../composables/usePortal'
+import { usePortal } from '@/composables/usePortal'
 
 // `open: undefined` stops Vue casting an absent boolean prop to `false`, so uncontrolled mode and `defaultOpen` apply
 const props = withDefaults(defineProps<PopoverProps>(), {

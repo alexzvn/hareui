@@ -123,7 +123,8 @@
 </template>
 
 <script lang="ts">
-import type { ComponentSlots, ComponentVariants } from '../../types/tv'
+import type { ComponentSlots, ComponentVariants } from '@/types/tv'
+
 import theme from './theme'
 
 type Pagination = typeof theme
@@ -203,7 +204,7 @@ export interface PaginationEmits {
 <script setup lang="ts">
 import { computed, ref } from 'vue'
 
-import { useComponentUI } from '../../composables/useComponentUI'
+import { useComponentUI } from '@/composables/useComponentUI'
 
 // `page`/`prevDisabled`/`nextDisabled: undefined` keep the derived defaults when unbound.
 const props = withDefaults(defineProps<PaginationProps>(), {

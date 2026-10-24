@@ -57,7 +57,8 @@
 <script lang="ts">
 import type { PrimitiveProps } from 'reka-ui'
 
-import type { ComponentSlots } from '../../types/tv'
+import type { ComponentSlots } from '@/types/tv'
+
 import theme from './theme'
 
 type Fieldset = typeof theme
@@ -99,8 +100,9 @@ export interface FieldsetSlots {
 import { Primitive } from 'reka-ui'
 import { computed, provide, useId } from 'vue'
 
-import { useComponentUI } from '../../composables/useComponentUI'
-import Description from '../description/Description.vue'
+import Description from '@/components/description/Description.vue'
+import { useComponentUI } from '@/composables/useComponentUI'
+
 import { fieldsetContextKey, useFieldsetDisabled } from './context'
 
 const props = withDefaults(defineProps<FieldsetProps>(), { as: 'fieldset' })

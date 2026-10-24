@@ -2,7 +2,8 @@ import { mount } from '@vue/test-utils'
 import { describe, expect, it } from 'vitest'
 import { h } from 'vue'
 
-import Error from '../src/components/error/Error.vue'
+import Error from '@/components/error/Error.vue'
+
 import { expectAccessible } from './a11y'
 
 // Local stand-in for Promise.withResolvers, so the library's tsconfig `lib` doesn't need ES2024.

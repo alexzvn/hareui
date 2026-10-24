@@ -1,7 +1,7 @@
 import { toRaw } from 'vue'
 
 // Standard Schema v1 interface (https://standardschema.dev), copied as the spec allows so no runtime dependency is needed.
-import type { FormError } from '../components/form/types'
+import type { FormError } from '@/components/form/types'
 
 export interface StandardSchemaV1<Input = unknown, Output = Input> {
   readonly '~standard': StandardSchemaV1.Props<Input, Output>

@@ -3,8 +3,9 @@ import { colorToString } from 'reka-ui'
 import { afterEach, describe, expect, it } from 'vitest'
 import { h, nextTick } from 'vue'
 
-import CellColorPicker from '../src/components/cell-color-picker/CellColorPicker.vue'
-import Fieldset from '../src/components/fieldset/Fieldset.vue'
+import CellColorPicker from '@/components/cell-color-picker/CellColorPicker.vue'
+import Fieldset from '@/components/fieldset/Fieldset.vue'
+
 import { expectAccessible } from './a11y'
 
 const wrappers: { unmount: () => void }[] = []

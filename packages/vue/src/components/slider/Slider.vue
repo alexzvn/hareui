@@ -103,7 +103,8 @@
 </template>
 
 <script lang="ts">
-import type { ComponentSlots } from '../../types/tv'
+import type { ComponentSlots } from '@/types/tv'
+
 import theme from './theme'
 
 type Slider = typeof theme
@@ -177,11 +178,11 @@ export interface SliderSlots {
 import { SliderRange, SliderRoot, SliderThumb, SliderTrack } from 'reka-ui'
 import { computed, ref, useId, useSlots } from 'vue'
 
-import { captureOnDraggedThumb } from '../../composables/thumbPointerCapture'
-import { useComponentUI } from '../../composables/useComponentUI'
-import { clamp, snapValueToStep } from '../../utils/number'
-import { useFieldsetDisabled } from '../fieldset/context'
-import Label from '../label/Label.vue'
+import { useFieldsetDisabled } from '@/components/fieldset/context'
+import Label from '@/components/label/Label.vue'
+import { captureOnDraggedThumb } from '@/composables/thumbPointerCapture'
+import { useComponentUI } from '@/composables/useComponentUI'
+import { clamp, snapValueToStep } from '@/utils/number'
 
 const props = withDefaults(defineProps<SliderProps>(), {
   min: 0,

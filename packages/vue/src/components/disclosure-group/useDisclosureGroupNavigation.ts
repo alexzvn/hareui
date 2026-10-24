@@ -1,7 +1,7 @@
 import type { MaybeRefOrGetter } from 'vue'
 import { computed, toValue } from 'vue'
 
-import type { ExpandedValue } from '../../composables/useExpandedValues'
+import type { ExpandedValue } from '@/composables/useExpandedValues'
 
 export interface UseDisclosureGroupNavigationOptions {
   /** The currently expanded values (the Accordion / DisclosureGroup `v-model`). */

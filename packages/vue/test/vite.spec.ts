@@ -1,12 +1,12 @@
 import { mount } from '@vue/test-utils'
 import { afterEach, describe, expect, it } from 'vitest'
 
-import * as charts from '../src/charts'
-import Button from '../src/components/button/Button.vue'
-import type { HareUIConfig } from '../src/config'
-import { createHareUI } from '../src/config'
-import * as lib from '../src/index'
-import { HareUIResolver } from '../src/vite'
+import * as charts from '@/charts'
+import Button from '@/components/button/Button.vue'
+import type { HareUIConfig } from '@/config'
+import { createHareUI } from '@/config'
+import * as lib from '@/index'
+import { HareUIResolver } from '@/vite'
 
 const globals = globalThis as { __HAREUI_UI__?: HareUIConfig['ui'] }
 

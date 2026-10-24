@@ -2,8 +2,9 @@ import { mount } from '@vue/test-utils'
 import { describe, expect, it } from 'vitest'
 import { h, ref } from 'vue'
 
-import type { InputOtpProps } from '../src/components/input-otp/InputOtp.vue'
-import InputOtp from '../src/components/input-otp/InputOtp.vue'
+import type { InputOtpProps } from '@/components/input-otp/InputOtp.vue'
+import InputOtp from '@/components/input-otp/InputOtp.vue'
+
 import { expectAccessible } from './a11y'
 
 function controlled(initial = '', props: Record<string, unknown> = {}) {

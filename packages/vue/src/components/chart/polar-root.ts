@@ -1,8 +1,9 @@
 import type { ComputedRef, Ref } from 'vue'
 import { computed } from 'vue'
 
-import type { ChartLegendProps } from '../chart-legend'
-import type { ChartTooltipContentEntry } from '../chart-tooltip'
+import type { ChartLegendProps } from '@/components/chart-legend'
+import type { ChartTooltipContentEntry } from '@/components/chart-tooltip'
+
 import { definedProps } from './cartesian-root'
 import type { ChartTooltipProps } from './ChartTooltip.vue'
 import type { ChartContext } from './context'

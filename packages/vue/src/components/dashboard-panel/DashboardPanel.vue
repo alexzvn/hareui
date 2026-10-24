@@ -32,7 +32,8 @@
 </template>
 
 <script lang="ts">
-import type { ComponentSlots } from '../../types/tv'
+import type { ComponentSlots } from '@/types/tv'
+
 import theme from './theme'
 
 type DashboardPanel = typeof theme
@@ -98,10 +99,10 @@ export interface DashboardPanelSlots {
 <script setup lang="ts">
 import { computed, useId, useTemplateRef } from 'vue'
 
-import { useComponentUI } from '../../composables/useComponentUI'
-import { useDashboard } from '../../composables/useDashboard'
-import { useResizable } from '../../composables/useResizable'
-import DashboardResizeHandle from '../dashboard-resize-handle/DashboardResizeHandle.vue'
+import DashboardResizeHandle from '@/components/dashboard-resize-handle/DashboardResizeHandle.vue'
+import { useComponentUI } from '@/composables/useComponentUI'
+import { useDashboard } from '@/composables/useDashboard'
+import { useResizable } from '@/composables/useResizable'
 
 defineOptions({ inheritAttrs: false })
 

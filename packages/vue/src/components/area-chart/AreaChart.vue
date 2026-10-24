@@ -14,10 +14,11 @@
 </template>
 
 <script lang="ts">
-import type { ComponentSlots } from '../../types/tv'
-import type { CartesianRootProps, CartesianRootSlots } from '../chart/cartesian-root'
-import type { ChartAreaSeries } from '../chart/series-config'
-import type { ChartCurveType } from '../chart/types'
+import type { CartesianRootProps, CartesianRootSlots } from '@/components/chart/cartesian-root'
+import type { ChartAreaSeries } from '@/components/chart/series-config'
+import type { ChartCurveType } from '@/components/chart/types'
+import type { ComponentSlots } from '@/types/tv'
+
 import theme from './theme'
 
 type AreaChartTheme = typeof theme
@@ -71,17 +72,17 @@ export interface AreaChartSlots extends CartesianRootSlots {}
 <script setup lang="ts" generic="T extends object">
 import { useSlots } from 'vue'
 
-import { useComponentUI } from '../../composables/useComponentUI'
-import { useCartesianChart } from '../chart/cartesian'
+import { useCartesianChart } from '@/components/chart/cartesian'
 import {
   cartesianRootDefaults,
   definedProps,
   rootMargin,
   useCartesianRoot,
-} from '../chart/cartesian-root'
-import ChartCartesianFrame from '../chart/ChartCartesianFrame.vue'
-import { useChartRoot } from '../chart/context'
-import type { ChartDatum } from '../chart/types'
+} from '@/components/chart/cartesian-root'
+import ChartCartesianFrame from '@/components/chart/ChartCartesianFrame.vue'
+import { useChartRoot } from '@/components/chart/context'
+import type { ChartDatum } from '@/components/chart/types'
+import { useComponentUI } from '@/composables/useComponentUI'
 
 const props = withDefaults(defineProps<AreaChartProps<T>>(), {
   ...cartesianRootDefaults,

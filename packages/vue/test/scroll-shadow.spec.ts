@@ -3,7 +3,8 @@ import { describe, expect, it } from 'vitest'
 import type { VNode } from 'vue'
 import { defineComponent, h, nextTick } from 'vue'
 
-import ScrollShadow from '../src/components/scroll-shadow/ScrollShadow.vue'
+import ScrollShadow from '@/components/scroll-shadow/ScrollShadow.vue'
+
 import { expectAccessible } from './a11y'
 
 const mountAll = (children: () => VNode[]) =>

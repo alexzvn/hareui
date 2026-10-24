@@ -2,7 +2,8 @@ import { mount } from '@vue/test-utils'
 import { describe, expect, it, vi } from 'vitest'
 import { h } from 'vue'
 
-import CloseButton from '../src/components/close-button/CloseButton.vue'
+import CloseButton from '@/components/close-button/CloseButton.vue'
+
 import { expectAccessible } from './a11y'
 
 describe('CloseButton', () => {

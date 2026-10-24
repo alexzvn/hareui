@@ -96,7 +96,8 @@
 <script lang="ts">
 import type { ClassValue } from 'tailwind-variants'
 
-import type { ComponentSlots } from '../../types/tv'
+import type { ComponentSlots } from '@/types/tv'
+
 import theme from './theme'
 import type { DropZoneFileColor } from './utils'
 
@@ -177,8 +178,9 @@ export interface DropZoneFileItemSlots {
 <script setup lang="ts">
 import { computed, inject } from 'vue'
 
-import { useComponentUI } from '../../composables/useComponentUI'
-import ProgressBar from '../progress-bar/ProgressBar.vue'
+import ProgressBar from '@/components/progress-bar/ProgressBar.vue'
+import { useComponentUI } from '@/composables/useComponentUI'
+
 import { dropZoneContextKey } from './context'
 import { fileExtension, formatColor, formatFileSize } from './utils'
 

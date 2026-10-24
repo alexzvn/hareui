@@ -33,7 +33,8 @@
 <script lang="ts">
 import type { PrimitiveProps } from 'reka-ui'
 
-import type { ComponentSlots, ComponentVariants } from '../../types/tv'
+import type { ComponentSlots, ComponentVariants } from '@/types/tv'
+
 import theme from './theme'
 
 type Button = typeof theme
@@ -99,11 +100,11 @@ export interface ButtonSlots {
 import { Primitive } from 'reka-ui'
 import { computed, inject, provide, useTemplateRef } from 'vue'
 
-import { useComponentUI } from '../../composables/useComponentUI'
-import { refElement } from '../../composables/useFirstChild'
-import { buttonGroupContextKey } from '../button-group/context'
-import { useFieldsetDisabled } from '../fieldset/context'
-import Spinner from '../spinner/Spinner.vue'
+import { buttonGroupContextKey } from '@/components/button-group/context'
+import { useFieldsetDisabled } from '@/components/fieldset/context'
+import Spinner from '@/components/spinner/Spinner.vue'
+import { useComponentUI } from '@/composables/useComponentUI'
+import { refElement } from '@/composables/useFirstChild'
 
 const props = withDefaults(defineProps<ButtonProps>(), {
   as: 'button',

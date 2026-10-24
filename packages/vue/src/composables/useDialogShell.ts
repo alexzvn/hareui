@@ -1,7 +1,8 @@
 import type { MaybeRefOrGetter, ShallowRef, Slot } from 'vue'
 import { computed, ref, toValue, watch } from 'vue'
 
-import type { PortalTarget } from '../config'
+import type { PortalTarget } from '@/config'
+
 import { useInertOutside } from './useInertOutside'
 import { useLayerDismiss } from './useLayerDismiss'
 import { usePortal } from './usePortal'

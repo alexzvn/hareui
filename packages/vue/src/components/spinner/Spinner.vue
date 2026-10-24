@@ -48,7 +48,8 @@
 </template>
 
 <script lang="ts">
-import type { ComponentSlots, ComponentVariants } from '../../types/tv'
+import type { ComponentSlots, ComponentVariants } from '@/types/tv'
+
 import theme from './theme'
 
 type Spinner = typeof theme
@@ -74,7 +75,7 @@ export interface SpinnerProps {
 <script setup lang="ts">
 import { useId } from 'vue'
 
-import { useComponentUI } from '../../composables/useComponentUI'
+import { useComponentUI } from '@/composables/useComponentUI'
 
 const props = defineProps<SpinnerProps>()
 

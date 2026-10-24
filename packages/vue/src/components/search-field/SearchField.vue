@@ -93,10 +93,11 @@
 </template>
 
 <script lang="ts">
-import type { ValidateFn, ValidationResult } from '../../composables/useFieldValidation'
-import type { ComponentSlots } from '../../types/tv'
-import type { ValidationBehavior } from '../form/context'
-import type { FormFieldProps } from '../form/types'
+import type { ValidationBehavior } from '@/components/form/context'
+import type { FormFieldProps } from '@/components/form/types'
+import type { ValidateFn, ValidationResult } from '@/composables/useFieldValidation'
+import type { ComponentSlots } from '@/types/tv'
+
 import theme from './theme'
 
 type SearchField = typeof theme
@@ -189,12 +190,12 @@ export interface SearchFieldEmits {
 <script setup lang="ts">
 import { computed, ref, useAttrs, useSlots, useTemplateRef } from 'vue'
 
-import { useComponentUI } from '../../composables/useComponentUI'
-import { useFieldChrome } from '../../composables/useFieldChrome'
-import { useFieldValidation } from '../../composables/useFieldValidation'
-import CloseButton from '../close-button/CloseButton.vue'
-import { useFieldsetDisabled } from '../fieldset/context'
-import { splitInputAttrs } from '../text-field/context'
+import CloseButton from '@/components/close-button/CloseButton.vue'
+import { useFieldsetDisabled } from '@/components/fieldset/context'
+import { splitInputAttrs } from '@/components/text-field/context'
+import { useComponentUI } from '@/composables/useComponentUI'
+import { useFieldChrome } from '@/composables/useFieldChrome'
+import { useFieldValidation } from '@/composables/useFieldValidation'
 
 defineOptions({ inheritAttrs: false })
 

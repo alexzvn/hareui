@@ -210,19 +210,20 @@
 import { injectComboboxRootContext, injectListboxRootContext } from 'reka-ui'
 import { defineComponent } from 'vue'
 
-import type { ValidateFn, ValidationResult } from '../../composables/useFieldValidation'
-import type { PortalTarget } from '../../config'
-import type { ComponentSlots } from '../../types/tv'
-import type { ValidationBehavior } from '../form/context'
-import type { FormFieldProps } from '../form/types'
+import type { ValidationBehavior } from '@/components/form/context'
+import type { FormFieldProps } from '@/components/form/types'
 import type {
   ListBoxEntry,
   ListBoxItem,
   ListBoxItemSlotProps,
   ListBoxSection,
   ListBoxValue,
-} from '../list-box/ListBox.vue'
-import type { CollectionRow } from '../list-box/listBoxCollection'
+} from '@/components/list-box/ListBox.vue'
+import type { CollectionRow } from '@/components/list-box/listBoxCollection'
+import type { ValidateFn, ValidationResult } from '@/composables/useFieldValidation'
+import type { PortalTarget } from '@/config'
+import type { ComponentSlots } from '@/types/tv'
+
 import theme from './theme'
 
 type ComboBox = typeof theme
@@ -429,18 +430,18 @@ import {
   watch,
 } from 'vue'
 
-import { useComponentUI } from '../../composables/useComponentUI'
-import { useFieldChrome } from '../../composables/useFieldChrome'
-import { useFieldValidation } from '../../composables/useFieldValidation'
-import { useKeyboardModality } from '../../composables/useKeyboardModality'
-import { usePortal } from '../../composables/usePortal'
-import { useFieldsetDisabled } from '../fieldset/context'
-import inputTheme from '../input/theme'
-import { countRows, filterEntries, itemText } from '../list-box/listBoxCollection'
-import ListBoxRows from '../list-box/ListBoxRows.vue'
-import listBoxTheme from '../list-box/theme'
-import { useCollectionModel } from '../list-box/useCollectionModel'
-import { usePressRelease } from '../select/pressRelease'
+import { useFieldsetDisabled } from '@/components/fieldset/context'
+import inputTheme from '@/components/input/theme'
+import { countRows, filterEntries, itemText } from '@/components/list-box/listBoxCollection'
+import ListBoxRows from '@/components/list-box/ListBoxRows.vue'
+import listBoxTheme from '@/components/list-box/theme'
+import { useCollectionModel } from '@/components/list-box/useCollectionModel'
+import { usePressRelease } from '@/components/select/pressRelease'
+import { useComponentUI } from '@/composables/useComponentUI'
+import { useFieldChrome } from '@/composables/useFieldChrome'
+import { useFieldValidation } from '@/composables/useFieldValidation'
+import { useKeyboardModality } from '@/composables/useKeyboardModality'
+import { usePortal } from '@/composables/usePortal'
 
 defineOptions({ inheritAttrs: false })
 

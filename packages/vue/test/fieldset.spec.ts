@@ -2,10 +2,11 @@ import { mount } from '@vue/test-utils'
 import { describe, expect, it } from 'vitest'
 import { h } from 'vue'
 
-import Button from '../src/components/button/Button.vue'
-import Fieldset from '../src/components/fieldset/Fieldset.vue'
-import Link from '../src/components/link/Link.vue'
-import TextField from '../src/components/text-field/TextField.vue'
+import Button from '@/components/button/Button.vue'
+import Fieldset from '@/components/fieldset/Fieldset.vue'
+import Link from '@/components/link/Link.vue'
+import TextField from '@/components/text-field/TextField.vue'
+
 import { expectAccessible } from './a11y'
 
 const order = (el: Element) => [...el.children].map((c) => c.getAttribute('data-slot'))

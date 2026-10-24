@@ -2,9 +2,10 @@ import { mount } from '@vue/test-utils'
 import { describe, expect, it } from 'vitest'
 import { defineComponent, h, inject, provide } from 'vue'
 
-import App from '../src/components/app/App.vue'
-import { usePortal } from '../src/composables/usePortal'
-import { hareUIConfigKey } from '../src/config'
+import App from '@/components/app/App.vue'
+import { usePortal } from '@/composables/usePortal'
+import { hareUIConfigKey } from '@/config'
+
 import { expectAccessible } from './a11y'
 
 const Probe = defineComponent({

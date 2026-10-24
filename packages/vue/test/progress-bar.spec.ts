@@ -1,8 +1,9 @@
 import { mount } from '@vue/test-utils'
 import { describe, expect, it } from 'vitest'
 
-import type { ProgressBarProps } from '../src/components/progress-bar/ProgressBar.vue'
-import ProgressBar from '../src/components/progress-bar/ProgressBar.vue'
+import type { ProgressBarProps } from '@/components/progress-bar/ProgressBar.vue'
+import ProgressBar from '@/components/progress-bar/ProgressBar.vue'
+
 import { expectAccessible } from './a11y'
 
 function slots(wrapper: ReturnType<typeof mount>) {

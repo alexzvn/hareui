@@ -16,7 +16,8 @@
 <script lang="ts">
 import type { Color } from 'reka-ui'
 
-import type { ComponentSlots, ComponentVariants } from '../../types/tv'
+import type { ComponentSlots, ComponentVariants } from '@/types/tv'
+
 import theme from './theme'
 
 type ColorSwatch = typeof theme
@@ -55,8 +56,8 @@ export interface ColorSwatchSlots {
 import { ColorSwatch as ColorSwatchPrimitive } from 'reka-ui'
 import { computed } from 'vue'
 
-import { useComponentUI } from '../../composables/useComponentUI'
-import { useColorPickerContext } from '../color-picker/context'
+import { useColorPickerContext } from '@/components/color-picker/context'
+import { useComponentUI } from '@/composables/useComponentUI'
 
 const props = defineProps<ColorSwatchProps>()
 defineSlots<ColorSwatchSlots>()

@@ -3,8 +3,9 @@ import { describe, expect, it } from 'vitest'
 import type { VNode } from 'vue'
 import { defineComponent, h } from 'vue'
 
-import Separator from '../src/components/separator/Separator.vue'
-import Toolbar from '../src/components/toolbar/Toolbar.vue'
+import Separator from '@/components/separator/Separator.vue'
+import Toolbar from '@/components/toolbar/Toolbar.vue'
+
 import { expectAccessible } from './a11y'
 
 const mountAll = (children: () => VNode[]) =>

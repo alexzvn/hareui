@@ -2,8 +2,9 @@ import { flushPromises, mount } from '@vue/test-utils'
 import { describe, expect, it } from 'vitest'
 import { h } from 'vue'
 
-import ToggleButtonGroup from '../src/components/toggle-button-group/ToggleButtonGroup.vue'
-import ToggleButton from '../src/components/toggle-button/ToggleButton.vue'
+import ToggleButtonGroup from '@/components/toggle-button-group/ToggleButtonGroup.vue'
+import ToggleButton from '@/components/toggle-button/ToggleButton.vue'
+
 import { expectAccessible } from './a11y'
 
 const IDS = ['left', 'center', 'right']

@@ -3,9 +3,10 @@ import { flushPromises, mount } from '@vue/test-utils'
 import { afterEach, describe, expect, it } from 'vitest'
 import { h } from 'vue'
 
-import Button from '../src/components/button/Button.vue'
-import Form from '../src/components/form/Form.vue'
-import TextField from '../src/components/text-field/TextField.vue'
+import Button from '@/components/button/Button.vue'
+import Form from '@/components/form/Form.vue'
+import TextField from '@/components/text-field/TextField.vue'
+
 import { expectAccessible } from './a11y'
 
 let wrapper: VueWrapper | undefined

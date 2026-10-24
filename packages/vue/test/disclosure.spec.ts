@@ -3,8 +3,9 @@ import { describe, expect, it } from 'vitest'
 import type { Component, VNode } from 'vue'
 import { h, nextTick, ref } from 'vue'
 
-import type { DisclosureProps } from '../src/components/disclosure/Disclosure.vue'
-import Disclosure from '../src/components/disclosure/Disclosure.vue'
+import type { DisclosureProps } from '@/components/disclosure/Disclosure.vue'
+import Disclosure from '@/components/disclosure/Disclosure.vue'
+
 import { expectAccessible } from './a11y'
 
 describe('disclosure', () => {

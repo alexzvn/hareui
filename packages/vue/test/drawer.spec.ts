@@ -3,7 +3,8 @@ import { afterEach, describe, expect, it, vi } from 'vitest'
 import type { VNodeChild } from 'vue'
 import { h, nextTick } from 'vue'
 
-import Drawer from '../src/components/drawer/Drawer.vue'
+import Drawer from '@/components/drawer/Drawer.vue'
+
 import { expectAccessible } from './a11y'
 
 // Reka's Presence needs three ticks before a closed dialog leaves the DOM (see modal.spec.ts).

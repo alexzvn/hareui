@@ -159,11 +159,12 @@
 <script setup lang="ts">
 import { computed } from 'vue'
 
-import Avatar from '../avatar/Avatar.vue'
-import Badge from '../badge/Badge.vue'
-import Chip from '../chip/Chip.vue'
-import Kbd from '../kbd/Kbd.vue'
-import { kbdKeysMap } from '../kbd/kbdKeys'
+import Avatar from '@/components/avatar/Avatar.vue'
+import Badge from '@/components/badge/Badge.vue'
+import Chip from '@/components/chip/Chip.vue'
+import Kbd from '@/components/kbd/Kbd.vue'
+import { kbdKeysMap } from '@/components/kbd/kbdKeys'
+
 import { SlotOutlet, slotName, useNavigationMenu } from './context'
 import { ChevronDownIcon, ChevronRightIcon, ExternalIcon, NavigationMenuIcon } from './icons'
 import type { NavigationMenuItem } from './NavigationMenu.vue'

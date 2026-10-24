@@ -2,7 +2,8 @@ import { mount } from '@vue/test-utils'
 import { describe, expect, it } from 'vitest'
 import { h } from 'vue'
 
-import Description from '../src/components/description/Description.vue'
+import Description from '@/components/description/Description.vue'
+
 import { expectAccessible } from './a11y'
 
 describe('Description', () => {

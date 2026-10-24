@@ -102,7 +102,8 @@
 </template>
 
 <script lang="ts">
-import type { ComponentSlots } from '../../types/tv'
+import type { ComponentSlots } from '@/types/tv'
+
 import theme from './theme'
 import type { QueuedToast, ToastContentValue } from './toastQueue'
 
@@ -140,10 +141,11 @@ export interface ToastItemProps {
 <script setup lang="ts">
 import { computed, onBeforeUnmount, onMounted, onUpdated, ref, useId, watch } from 'vue'
 
-import { useComponentUI } from '../../composables/useComponentUI'
-import Button from '../button/Button.vue'
-import CloseButton from '../close-button/CloseButton.vue'
-import Spinner from '../spinner/Spinner.vue'
+import Button from '@/components/button/Button.vue'
+import CloseButton from '@/components/close-button/CloseButton.vue'
+import Spinner from '@/components/spinner/Spinner.vue'
+import { useComponentUI } from '@/composables/useComponentUI'
+
 import renderValue from './renderValue'
 
 const props = defineProps<ToastItemProps>()

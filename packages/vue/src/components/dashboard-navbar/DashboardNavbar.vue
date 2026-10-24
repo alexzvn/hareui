@@ -61,10 +61,11 @@
 <script lang="ts">
 import type { PrimitiveProps } from 'reka-ui'
 
-import type { DashboardContext, DashboardSidebarSide } from '../../composables/useDashboard'
-import type { ComponentSlots, ComponentUI } from '../../types/tv'
-import type { ClassValue } from '../../utils/tv'
-import type { DashboardSidebarToggleProps } from '../dashboard-sidebar-toggle/DashboardSidebarToggle.vue'
+import type { DashboardSidebarToggleProps } from '@/components/dashboard-sidebar-toggle/DashboardSidebarToggle.vue'
+import type { DashboardContext, DashboardSidebarSide } from '@/composables/useDashboard'
+import type { ComponentSlots, ComponentUI } from '@/types/tv'
+import type { ClassValue } from '@/utils/tv'
+
 import theme from './theme'
 
 type DashboardNavbar = typeof theme
@@ -127,10 +128,10 @@ export interface DashboardNavbarSlots {
 import { Primitive } from 'reka-ui'
 import { computed } from 'vue'
 
-import { useComponentUI } from '../../composables/useComponentUI'
-import { useDashboard } from '../../composables/useDashboard'
-import { resolveAs } from '../../utils/resolveAs'
-import DashboardSidebarToggle from '../dashboard-sidebar-toggle/DashboardSidebarToggle.vue'
+import DashboardSidebarToggle from '@/components/dashboard-sidebar-toggle/DashboardSidebarToggle.vue'
+import { useComponentUI } from '@/composables/useComponentUI'
+import { useDashboard } from '@/composables/useDashboard'
+import { resolveAs } from '@/utils/resolveAs'
 
 defineOptions({ inheritAttrs: false })
 

@@ -1,8 +1,9 @@
 import { mount } from '@vue/test-utils'
 import { describe, expect, it } from 'vitest'
 
-import type { ProgressCircleProps } from '../src/components/progress-circle/ProgressCircle.vue'
-import ProgressCircle from '../src/components/progress-circle/ProgressCircle.vue'
+import type { ProgressCircleProps } from '@/components/progress-circle/ProgressCircle.vue'
+import ProgressCircle from '@/components/progress-circle/ProgressCircle.vue'
+
 import { expectAccessible } from './a11y'
 
 const CIRCUMFERENCE = 2 * Math.PI * 16

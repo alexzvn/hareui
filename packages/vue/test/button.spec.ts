@@ -2,7 +2,8 @@ import { mount } from '@vue/test-utils'
 import { describe, expect, it, vi } from 'vitest'
 import { h } from 'vue'
 
-import Button from '../src/components/button/Button.vue'
+import Button from '@/components/button/Button.vue'
+
 import { expectAccessible } from './a11y'
 
 describe('Button', () => {

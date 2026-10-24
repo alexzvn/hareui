@@ -2,12 +2,13 @@ import { mount } from '@vue/test-utils'
 import { afterEach, describe, expect, it } from 'vitest'
 import { h } from 'vue'
 
-import ButtonGroup from '../src/components/button-group/ButtonGroup.vue'
-import Button from '../src/components/button/Button.vue'
-import Separator from '../src/components/separator/Separator.vue'
-import ToggleButtonGroup from '../src/components/toggle-button-group/ToggleButtonGroup.vue'
-import ToggleButton from '../src/components/toggle-button/ToggleButton.vue'
-import Toolbar from '../src/components/toolbar/Toolbar.vue'
+import ButtonGroup from '@/components/button-group/ButtonGroup.vue'
+import Button from '@/components/button/Button.vue'
+import Separator from '@/components/separator/Separator.vue'
+import ToggleButtonGroup from '@/components/toggle-button-group/ToggleButtonGroup.vue'
+import ToggleButton from '@/components/toggle-button/ToggleButton.vue'
+import Toolbar from '@/components/toolbar/Toolbar.vue'
+
 import { expectAccessible } from './a11y'
 
 const mounted: { unmount: () => void }[] = []

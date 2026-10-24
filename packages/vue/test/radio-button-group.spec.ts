@@ -2,11 +2,12 @@ import { flushPromises, mount } from '@vue/test-utils'
 import { describe, expect, it } from 'vitest'
 import { h, ref } from 'vue'
 
-import Fieldset from '../src/components/fieldset/Fieldset.vue'
-import Form from '../src/components/form/Form.vue'
-import RadioButtonGroup from '../src/components/radio-button-group/RadioButtonGroup.vue'
-import type { RadioButtonGroupItemSlotProps } from '../src/components/radio-button-group/RadioButtonGroupItem.vue'
-import RadioButtonGroupItem from '../src/components/radio-button-group/RadioButtonGroupItem.vue'
+import Fieldset from '@/components/fieldset/Fieldset.vue'
+import Form from '@/components/form/Form.vue'
+import RadioButtonGroup from '@/components/radio-button-group/RadioButtonGroup.vue'
+import type { RadioButtonGroupItemSlotProps } from '@/components/radio-button-group/RadioButtonGroupItem.vue'
+import RadioButtonGroupItem from '@/components/radio-button-group/RadioButtonGroupItem.vue'
+
 import { expectAccessible } from './a11y'
 
 const plans = [

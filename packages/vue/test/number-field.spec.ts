@@ -3,8 +3,9 @@ import { describe, expect, it } from 'vitest'
 import type { ComponentOptions } from 'vue'
 import { defineComponent, nextTick, ref } from 'vue'
 
-import type { NumberFieldProps } from '../src/components/number-field/NumberField.vue'
-import NumberField from '../src/components/number-field/NumberField.vue'
+import type { NumberFieldProps } from '@/components/number-field/NumberField.vue'
+import NumberField from '@/components/number-field/NumberField.vue'
+
 import { expectAccessible } from './a11y'
 
 const inc = '[data-slot=number-field-increment-button]'

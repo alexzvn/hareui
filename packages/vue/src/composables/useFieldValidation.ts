@@ -8,13 +8,9 @@
 import type { ComputedRef } from 'vue'
 import { computed, inject, nextTick, onBeforeUnmount, onMounted, ref, shallowRef, watch } from 'vue'
 
-import type {
-  FormInputEvent,
-  ValidationBehavior,
-  ValidationError,
-} from '../components/form/context'
-import { formContextKey } from '../components/form/context'
-import type { FormFieldProps, FormInputEvents } from '../components/form/types'
+import type { FormInputEvent, ValidationBehavior, ValidationError } from '@/components/form/context'
+import { formContextKey } from '@/components/form/context'
+import type { FormFieldProps, FormInputEvents } from '@/components/form/types'
 
 /** Snapshot of the native `ValidityState` flags. */
 export interface ValidationDetails {

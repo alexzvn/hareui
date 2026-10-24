@@ -3,16 +3,17 @@ import { curveMonotoneX, curveMonotoneY, curveStep } from 'd3-shape'
 import { afterAll, afterEach, beforeAll, describe, expect, it, vi } from 'vitest'
 import { effectScope, nextTick, ref } from 'vue'
 
-import { lerp, useChartTween } from '../src/components/chart/animation'
-import { curveFactory } from '../src/components/chart/curve'
+import { lerp, useChartTween } from '@/components/chart/animation'
+import { curveFactory } from '@/components/chart/curve'
 import {
   fixedDomainTicks,
   niceTicks,
   resolveNumberDomain,
   thinTicks,
-} from '../src/components/chart/scale'
-import { rectanglePath } from '../src/components/chart/shapes'
-import LineChart from '../src/components/line-chart/LineChart.vue'
+} from '@/components/chart/scale'
+import { rectanglePath } from '@/components/chart/shapes'
+import LineChart from '@/components/line-chart/LineChart.vue'
+
 import { expectAccessible } from './a11y'
 
 describe('useChartTween', () => {

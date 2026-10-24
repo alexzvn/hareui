@@ -2,8 +2,9 @@ import { mount } from '@vue/test-utils'
 import { afterEach, describe, expect, it } from 'vitest'
 import { h, nextTick } from 'vue'
 
-import DashboardGroup from '../src/components/dashboard-group/DashboardGroup.vue'
-import DashboardPanel from '../src/components/dashboard-panel/DashboardPanel.vue'
+import DashboardGroup from '@/components/dashboard-group/DashboardGroup.vue'
+import DashboardPanel from '@/components/dashboard-panel/DashboardPanel.vue'
+
 import { expectAccessible } from './a11y'
 
 const handle = () => document.querySelector<HTMLElement>('[data-slot=dashboard-resize-handle]')!

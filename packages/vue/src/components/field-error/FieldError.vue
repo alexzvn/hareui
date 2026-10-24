@@ -11,7 +11,8 @@
 </template>
 
 <script lang="ts">
-import type { ComponentSlots } from '../../types/tv'
+import type { ComponentSlots } from '@/types/tv'
+
 import theme from './theme'
 
 type FieldError = typeof theme
@@ -32,7 +33,7 @@ export interface FieldErrorSlots {
 </script>
 
 <script setup lang="ts">
-import { useComponentUI } from '../../composables/useComponentUI'
+import { useComponentUI } from '@/composables/useComponentUI'
 
 const props = defineProps<FieldErrorProps>()
 defineSlots<FieldErrorSlots>()

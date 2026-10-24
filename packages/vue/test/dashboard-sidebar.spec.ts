@@ -2,12 +2,13 @@ import { mount } from '@vue/test-utils'
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest'
 import { defineComponent, h, nextTick, ref } from 'vue'
 
-import DashboardGroup from '../src/components/dashboard-group/DashboardGroup.vue'
-import DashboardPanel from '../src/components/dashboard-panel/DashboardPanel.vue'
-import DashboardSidebarToggle from '../src/components/dashboard-sidebar-toggle/DashboardSidebarToggle.vue'
-import DashboardSidebar from '../src/components/dashboard-sidebar/DashboardSidebar.vue'
-import type { DashboardContext, DashboardStorageAdapter } from '../src/composables/useDashboard'
-import { useDashboard } from '../src/composables/useDashboard'
+import DashboardGroup from '@/components/dashboard-group/DashboardGroup.vue'
+import DashboardPanel from '@/components/dashboard-panel/DashboardPanel.vue'
+import DashboardSidebarToggle from '@/components/dashboard-sidebar-toggle/DashboardSidebarToggle.vue'
+import DashboardSidebar from '@/components/dashboard-sidebar/DashboardSidebar.vue'
+import type { DashboardContext, DashboardStorageAdapter } from '@/composables/useDashboard'
+import { useDashboard } from '@/composables/useDashboard'
+
 import { expectAccessible } from './a11y'
 
 async function settle() {

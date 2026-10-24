@@ -70,9 +70,10 @@
 <script lang="ts">
 import type { Color } from 'reka-ui'
 
-import type { PortalTarget } from '../../config'
-import type { ComponentSlots } from '../../types/tv'
-import type { ColorSwatchPickerItem } from '../color-swatch-picker/ColorSwatchPicker.vue'
+import type { ColorSwatchPickerItem } from '@/components/color-swatch-picker/ColorSwatchPicker.vue'
+import type { PortalTarget } from '@/config'
+import type { ComponentSlots } from '@/types/tv'
+
 import theme from './theme'
 
 type CellColorPicker = typeof theme
@@ -147,13 +148,13 @@ export interface CellColorPickerEmits {
 <script setup lang="ts">
 import { colorToString } from 'reka-ui'
 
-import { useComponentUI } from '../../composables/useComponentUI'
-import ColorArea from '../color-area/ColorArea.vue'
-import ColorPicker from '../color-picker/ColorPicker.vue'
-import ColorSlider from '../color-slider/ColorSlider.vue'
-import ColorSwatchPicker from '../color-swatch-picker/ColorSwatchPicker.vue'
-import ColorSwatch from '../color-swatch/ColorSwatch.vue'
-import { useFieldsetDisabled } from '../fieldset/context'
+import ColorArea from '@/components/color-area/ColorArea.vue'
+import ColorPicker from '@/components/color-picker/ColorPicker.vue'
+import ColorSlider from '@/components/color-slider/ColorSlider.vue'
+import ColorSwatchPicker from '@/components/color-swatch-picker/ColorSwatchPicker.vue'
+import ColorSwatch from '@/components/color-swatch/ColorSwatch.vue'
+import { useFieldsetDisabled } from '@/components/fieldset/context'
+import { useComponentUI } from '@/composables/useComponentUI'
 
 // `open: undefined` keeps an absent `open` uncontrolled
 const props = withDefaults(defineProps<CellColorPickerProps>(), {

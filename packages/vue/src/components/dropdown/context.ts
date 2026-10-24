@@ -1,6 +1,7 @@
 import type { InjectionKey } from 'vue'
 
-import type { ResolvedPortal } from '../../composables/usePortal'
+import type { ResolvedPortal } from '@/composables/usePortal'
+
 import type {
   DropdownItem,
   DropdownItemSlotProps,

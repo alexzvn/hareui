@@ -2,7 +2,8 @@ import { mount } from '@vue/test-utils'
 import { describe, expect, it } from 'vitest'
 import { h } from 'vue'
 
-import ChartLegend from '../src/components/chart-legend/ChartLegend.vue'
+import ChartLegend from '@/components/chart-legend/ChartLegend.vue'
+
 import { expectAccessible } from './a11y'
 
 const devices = [

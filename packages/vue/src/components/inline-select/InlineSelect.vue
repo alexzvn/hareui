@@ -35,9 +35,15 @@
 </template>
 
 <script lang="ts">
-import type { ComponentSlots } from '../../types/tv'
-import type { ListBoxItem } from '../list-box/ListBox.vue'
-import type { SelectEmits, SelectProps, SelectSlots, SelectValue } from '../select/Select.vue'
+import type { ListBoxItem } from '@/components/list-box/ListBox.vue'
+import type {
+  SelectEmits,
+  SelectProps,
+  SelectSlots,
+  SelectValue,
+} from '@/components/select/Select.vue'
+import type { ComponentSlots } from '@/types/tv'
+
 import theme from './theme'
 
 type InlineSelect = typeof theme
@@ -73,8 +79,8 @@ export interface InlineSelectEmits extends Omit<SelectEmits, 'clear'> {
 <script setup lang="ts" generic="T extends ListBoxItem = ListBoxItem">
 import { computed } from 'vue'
 
-import { useComponentUI } from '../../composables/useComponentUI'
-import Select from '../select/Select.vue'
+import Select from '@/components/select/Select.vue'
+import { useComponentUI } from '@/composables/useComponentUI'
 
 // Absent booleans stay `undefined` so the wrapped Select keeps its own uncontrolled / validation defaults
 const props = withDefaults(defineProps<InlineSelectProps<T>>(), {

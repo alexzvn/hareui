@@ -1,9 +1,10 @@
 import { mount } from '@vue/test-utils'
 import { describe, expect, it } from 'vitest'
 
-import Kbd from '../src/components/kbd/Kbd.vue'
-import { kbdKeysLabelMap } from '../src/components/kbd/kbdKeys'
-import type { KbdKey } from '../src/components/kbd/kbdKeys'
+import Kbd from '@/components/kbd/Kbd.vue'
+import { kbdKeysLabelMap } from '@/components/kbd/kbdKeys'
+import type { KbdKey } from '@/components/kbd/kbdKeys'
+
 import { expectAccessible } from './a11y'
 
 describe('Kbd', () => {

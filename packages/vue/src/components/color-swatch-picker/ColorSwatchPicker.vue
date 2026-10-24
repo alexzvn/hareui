@@ -70,7 +70,8 @@
 <script lang="ts">
 import type { Color } from 'reka-ui'
 
-import type { ComponentSlots, ComponentVariants } from '../../types/tv'
+import type { ComponentSlots, ComponentVariants } from '@/types/tv'
+
 import theme from './theme'
 
 type ColorSwatchPicker = typeof theme
@@ -159,10 +160,11 @@ import {
 } from 'reka-ui'
 import { computed, ref } from 'vue'
 
-import { useComponentUI } from '../../composables/useComponentUI'
-import { useColorPickerContext } from '../color-picker/context'
-import ColorSwatch from '../color-swatch/ColorSwatch.vue'
-import { useFieldsetDisabled } from '../fieldset/context'
+import { useColorPickerContext } from '@/components/color-picker/context'
+import ColorSwatch from '@/components/color-swatch/ColorSwatch.vue'
+import { useFieldsetDisabled } from '@/components/fieldset/context'
+import { useComponentUI } from '@/composables/useComponentUI'
+
 import ColorSwatchPickerBridge from './colorSwatchPickerBridge'
 
 const props = defineProps<ColorSwatchPickerProps>()

@@ -2,8 +2,9 @@ import { mount } from '@vue/test-utils'
 import { describe, expect, it } from 'vitest'
 import { h, nextTick, ref } from 'vue'
 
-import Accordion from '../src/components/accordion/Accordion.vue'
-import { useDisclosureGroupNavigation } from '../src/components/disclosure-group/useDisclosureGroupNavigation'
+import Accordion from '@/components/accordion/Accordion.vue'
+import { useDisclosureGroupNavigation } from '@/components/disclosure-group/useDisclosureGroupNavigation'
+
 import { expectAccessible } from './a11y'
 
 const items = [

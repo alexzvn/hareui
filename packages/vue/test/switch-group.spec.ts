@@ -2,8 +2,9 @@ import { mount } from '@vue/test-utils'
 import { describe, expect, it } from 'vitest'
 import { h } from 'vue'
 
-import SwitchGroup from '../src/components/switch-group/SwitchGroup.vue'
-import Switch from '../src/components/switch/Switch.vue'
+import SwitchGroup from '@/components/switch-group/SwitchGroup.vue'
+import Switch from '@/components/switch/Switch.vue'
+
 import { expectAccessible } from './a11y'
 
 describe('SwitchGroup', () => {

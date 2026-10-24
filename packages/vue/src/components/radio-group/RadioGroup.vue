@@ -77,10 +77,11 @@
 </template>
 
 <script lang="ts">
-import type { ValidateFn, ValidationResult } from '../../composables/useFieldValidation'
-import type { ComponentSlots, ComponentVariants } from '../../types/tv'
-import type { ValidationBehavior } from '../form/context'
-import type { FormFieldProps } from '../form/types'
+import type { ValidationBehavior } from '@/components/form/context'
+import type { FormFieldProps } from '@/components/form/types'
+import type { ValidateFn, ValidationResult } from '@/composables/useFieldValidation'
+import type { ComponentSlots, ComponentVariants } from '@/types/tv'
+
 import theme from './theme'
 
 type RadioGroup = typeof theme
@@ -175,12 +176,12 @@ export interface RadioGroupSlots<T extends RadioGroupItem = RadioGroupItem> {
 import { RadioGroupItem as RekaRadioGroupItem, RadioGroupRoot } from 'reka-ui'
 import { computed, useSlots, useTemplateRef } from 'vue'
 
-import { forwardRootClick, submitOnEnter } from '../../composables/forwardRootClick'
-import { useComponentUI } from '../../composables/useComponentUI'
-import { useFieldChrome } from '../../composables/useFieldChrome'
-import { useFieldValidation } from '../../composables/useFieldValidation'
-import Description from '../description/Description.vue'
-import { useFieldsetDisabled } from '../fieldset/context'
+import Description from '@/components/description/Description.vue'
+import { useFieldsetDisabled } from '@/components/fieldset/context'
+import { forwardRootClick, submitOnEnter } from '@/composables/forwardRootClick'
+import { useComponentUI } from '@/composables/useComponentUI'
+import { useFieldChrome } from '@/composables/useFieldChrome'
+import { useFieldValidation } from '@/composables/useFieldValidation'
 
 // `invalid: undefined`: an absent boolean would cast to `false`, which counts as controlled-valid and hides validation errors
 const props = withDefaults(defineProps<RadioGroupProps<T>>(), {

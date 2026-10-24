@@ -13,7 +13,8 @@
 </template>
 
 <script lang="ts">
-import type { ComponentSlots } from '../../types/tv'
+import type { ComponentSlots } from '@/types/tv'
+
 import theme from './theme'
 
 export interface DropZoneFileListProps {
@@ -32,7 +33,8 @@ export interface DropZoneFileListSlots {
 <script setup lang="ts">
 import { inject } from 'vue'
 
-import { useComponentUI } from '../../composables/useComponentUI'
+import { useComponentUI } from '@/composables/useComponentUI'
+
 import { dropZoneContextKey } from './context'
 
 const props = defineProps<DropZoneFileListProps>()

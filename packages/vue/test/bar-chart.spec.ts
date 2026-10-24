@@ -2,11 +2,12 @@ import { flushPromises, mount } from '@vue/test-utils'
 import { describe, expect, it } from 'vitest'
 import { h, nextTick } from 'vue'
 
-import BarChart from '../src/components/bar-chart/BarChart.vue'
-import ChartBar from '../src/components/chart/ChartBar.vue'
-import ChartTooltip from '../src/components/chart/ChartTooltip.vue'
-import ChartXAxis from '../src/components/chart/ChartXAxis.vue'
-import ChartYAxis from '../src/components/chart/ChartYAxis.vue'
+import BarChart from '@/components/bar-chart/BarChart.vue'
+import ChartBar from '@/components/chart/ChartBar.vue'
+import ChartTooltip from '@/components/chart/ChartTooltip.vue'
+import ChartXAxis from '@/components/chart/ChartXAxis.vue'
+import ChartYAxis from '@/components/chart/ChartYAxis.vue'
+
 import { expectAccessible } from './a11y'
 
 const WIDTH = 400

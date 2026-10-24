@@ -3,7 +3,8 @@ import { afterEach, describe, expect, it, vi } from 'vitest'
 import type { VNode } from 'vue'
 import { defineComponent, h, nextTick } from 'vue'
 
-import Avatar from '../src/components/avatar/Avatar.vue'
+import Avatar from '@/components/avatar/Avatar.vue'
+
 import { expectAccessible } from './a11y'
 
 // happy-dom never loads images: capture the probe images reka creates and settle them by hand.
