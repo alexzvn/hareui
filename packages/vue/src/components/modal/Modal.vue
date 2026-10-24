@@ -1,5 +1,4 @@
 <script lang="ts">
-import type { FocusOutsideEvent, PointerDownOutsideEvent } from 'reka-ui'
 import type { PortalTarget } from '../../config'
 import type { ComponentSlots, ComponentVariants } from '../../types/tv'
 import theme from './theme'
@@ -93,13 +92,9 @@ import {
   DialogTrigger,
   VisuallyHidden,
 } from 'reka-ui'
-import { computed, ref, useSlots, watch } from 'vue'
-import { preventNestedLayerDismiss } from '../../composables/nestedLayer'
+import { useSlots } from 'vue'
 import { useComponentUI } from '../../composables/useComponentUI'
-import { useInertOutside } from '../../composables/useInertOutside'
-import { usePortal } from '../../composables/usePortal'
-import { useTabbableFocusLoop } from '../../composables/useTabbableFocusLoop'
-import { useVisualViewportHeight } from '../../composables/useVisualViewportHeight'
+import { useDialogShell } from '../../composables/useDialogShell'
 import CloseButton from '../close-button/CloseButton.vue'
 
 // `open: undefined` stops Vue casting an absent boolean prop to `false`, so uncontrolled mode and `defaultOpen` apply
@@ -110,7 +105,6 @@ const props = withDefaults(defineProps<ModalProps>(), {
   dismissible: true,
   placement: 'auto',
 })
-const portalTarget = usePortal(() => props.portal)
 const emit = defineEmits<ModalEmits>()
 const slots = useSlots()
 defineSlots<ModalSlots>()
@@ -122,50 +116,25 @@ const ui = useComponentUI('modal', theme, () => ({
   placement: props.placement,
 }))
 
-const hasTitle = computed(() => !!(props.title || slots.title))
-const showHeaderTitle = computed(() => !slots.header && hasTitle.value)
-const hasHeader = computed(() => !!(slots.header || slots.icon || slots.description || hasTitle.value))
-
-function onEscapeKeyDown(event: KeyboardEvent) {
-  if (!props.dismissible)
-    event.preventDefault()
-}
-function onPointerDownOutside(event: PointerDownOutsideEvent) {
-  if (!props.dismissible)
-    event.preventDefault()
-}
-function onInteractOutside(event: PointerDownOutsideEvent | FocusOutsideEvent) {
-  preventNestedLayerDismiss(event, dialogContent.value?.$el)
-  if (!props.dismissible)
-    event.preventDefault()
-}
-
-// Tab skips scrollable containers such as an overflowing body, as React Aria's FocusScope does.
-const dialogContent = ref<{ $el: HTMLElement } | null>(null)
-useTabbableFocusLoop(() => dialogContent.value?.$el)
-// Mirrors DialogRoot's open state synchronously: set from the `open` prop and from Reka's `update:open`.
-const openState = ref(props.open ?? props.defaultOpen ?? false)
-watch(() => props.open, (open) => {
-  if (open !== undefined)
-    openState.value = open
-}, { flush: 'sync' })
-function onOpenChange(open: boolean) {
-  // Controlled: the `open` watcher follows the parent, which may keep the dialog open.
-  if (props.open === undefined)
-    openState.value = open
-  emit('update:open', open)
-}
-useInertOutside(dialogContent, openState)
-
-// React Aria's Dialog focuses the dialog container itself on open, not the first
-// tabbable descendant (Reka's FocusScope default). Match that so e.g. a footer
-// button doesn't pick up an unwanted focus ring when the modal opens.
-function onOpenAutoFocus(event: Event) {
-  event.preventDefault()
-  ;(event.target as HTMLElement | null)?.focus({ preventScroll: true })
-}
-
-const visualViewportHeight = useVisualViewportHeight()
+const {
+  dialogContent,
+  portalTarget,
+  visualViewportHeight,
+  showHeaderTitle,
+  hasHeader,
+  onOpenChange,
+  onEscapeKeyDown,
+  onPointerDownOutside,
+  onInteractOutside,
+  onOpenAutoFocus,
+} = useDialogShell({
+  props,
+  slots,
+  emit,
+  // A modal has one switch for both the backdrop and Escape.
+  keyboardDismissible: () => props.dismissible,
+  headerExtras: () => !!(slots.icon || slots.description),
+})
 </script>
 
 <template>
