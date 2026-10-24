@@ -41,12 +41,15 @@ describe('ColorField', () => {
     wrapper.unmount()
   })
 
-  it('label, description and error ids resolve to the rendered text', () => {
-    const wrapper = mount(ColorField, { props: { label: 'Brand colour', description: 'Used for links', errorMessage: 'Too light', invalid: true }, attachTo: document.body })
+  it('label, description and error ids resolve to the rendered text', async () => {
+    const wrapper = mount(ColorField, { props: { label: 'Brand colour', description: 'Used for links', errorMessage: 'Too light' }, attachTo: document.body })
     const el = wrapper.get(input).element as HTMLInputElement
     expect(el.labels?.[0]?.textContent?.trim()).toBe('Brand colour')
-    const described = el.getAttribute('aria-describedby')!.split(' ').map(id => document.getElementById(id)?.textContent?.trim())
-    expect(described).toEqual(['Used for links', 'Too light'])
+    const described = () => el.getAttribute('aria-describedby')!.split(' ').map(id => document.getElementById(id)?.textContent?.trim())
+    expect(described()).toEqual(['Used for links'])
+    // While invalid the error replaces the description.
+    await wrapper.setProps({ invalid: true })
+    expect(described()).toEqual(['Too light'])
     wrapper.unmount()
   })
 
@@ -157,7 +160,8 @@ describe('ColorField', () => {
     const el = wrapper.get(input)
     expect(wrapper.get('label').attributes('for')).toBe('c')
     expect(el.attributes('id')).toBe('c')
-    expect(el.attributes('aria-describedby')).toBe('c-description c-error')
+    // The theme hides the description while invalid, so it's dropped from aria-describedby too
+    expect(el.attributes('aria-describedby')).toBe('c-error')
     expect(el.attributes('aria-invalid')).toBe('true')
     expect(wrapper.get(group).attributes('data-invalid')).toBe('true')
   })

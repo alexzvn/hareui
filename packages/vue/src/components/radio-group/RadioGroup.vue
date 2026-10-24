@@ -95,14 +95,13 @@ export interface RadioGroupSlots<T extends RadioGroupItem = RadioGroupItem> {
 
 <script setup lang="ts" generic="T extends RadioGroupItem = RadioGroupItem">
 import { RadioGroupItem as RekaRadioGroupItem, RadioGroupRoot } from 'reka-ui'
-import { computed, useId, useSlots, useTemplateRef } from 'vue'
+import { computed, useSlots, useTemplateRef } from 'vue'
 import { forwardRootClick, submitOnEnter } from '../../composables/forwardRootClick'
 import { useComponentUI } from '../../composables/useComponentUI'
+import { useFieldChrome } from '../../composables/useFieldChrome'
 import { useFieldValidation } from '../../composables/useFieldValidation'
 import { useFieldsetDisabled } from '../fieldset/context'
 import Description from '../description/Description.vue'
-import FieldError from '../field-error/FieldError.vue'
-import Label from '../label/Label.vue'
 
 // `invalid: undefined`: an absent boolean would cast to `false`, which counts as controlled-valid and hides validation errors
 const props = withDefaults(defineProps<RadioGroupProps<T>>(), { items: () => [], orientation: 'vertical', invalid: undefined })
@@ -115,12 +114,6 @@ const ui = useComponentUI('radioGroup', theme, () => ({
   variant: props.variant,
   orientation: props.orientation,
 }))
-
-const autoId = useId()
-const id = computed(() => props.id ?? autoId)
-const labelId = computed(() => `${id.value}-label`)
-const descriptionId = computed(() => `${id.value}-description`)
-const errorId = computed(() => `${id.value}-error`)
 
 // `null` (not `undefined`) when nothing is selected: Reka self-manages its state when `modelValue` is undefined,
 // which would let `readonly` items change selection behind our back.
@@ -143,10 +136,13 @@ const { validation, commitValidation } = useFieldValidation({
 })
 const invalid = computed(() => validation.value.isInvalid)
 
-const hasLabel = computed(() => !!(props.label || slots.label))
-const hasDescription = computed(() => !!(props.description || slots.description))
-const hasError = computed(() => invalid.value && !!(props.errorMessage || slots.error || validation.value.validationErrors.length))
-const describedBy = computed(() => [hasDescription.value && descriptionId.value, hasError.value && errorId.value].filter(Boolean).join(' ') || undefined)
+const { id, labelId, hasLabel, describedBy, FieldLabel, FieldDescription, FieldError } = useFieldChrome({
+  props,
+  slots,
+  invalid,
+  validation,
+  disabled: isDisabled,
+})
 
 function hasItemDescription(item: RadioGroupItem) {
   return !!(item.description || slots['item-description'])
@@ -191,15 +187,8 @@ function onUpdate(value: unknown) {
   >
     <!-- `as` falls through to Reka `Label`: a group label names the radiogroup via aria-labelledby, not a form control (HeroUI renders a span).
          `disabled` is passed explicitly because Reka sets the root's `data-disabled` to "". -->
-    <!-- Split so the no-slot branch has no forwarded `<slot>` and doesn't force-update the child on every render -->
-    <Label v-if="hasLabel && $slots.label" :id="labelId" as="span" :disabled="isDisabled">
-      <slot name="label">{{ label }}</slot>
-    </Label>
-    <Label v-else-if="hasLabel" :id="labelId" as="span" :disabled="isDisabled">{{ label }}</Label>
-    <Description v-if="hasDescription && $slots.description" :id="descriptionId">
-      <slot name="description">{{ description }}</slot>
-    </Description>
-    <Description v-else-if="hasDescription" :id="descriptionId">{{ description }}</Description>
+    <FieldLabel :id="labelId" as="span" :invalid="false" />
+    <FieldDescription />
     <div
       v-for="(item, index) in items"
       :key="item.value"
@@ -231,9 +220,6 @@ function onUpdate(value: unknown) {
       </Description>
       <Description v-else-if="hasItemDescription(item)" :id="`${id}-${index}-description`">{{ item.description }}</Description>
     </div>
-    <FieldError v-if="hasError && $slots.error" :id="errorId">
-      <slot name="error" v-bind="validation">{{ errorMessage ?? validation.validationErrors.join(' ') }}</slot>
-    </FieldError>
-    <FieldError v-else-if="hasError" :id="errorId">{{ errorMessage ?? validation.validationErrors.join(' ') }}</FieldError>
+    <FieldError />
   </RadioGroupRoot>
 </template>

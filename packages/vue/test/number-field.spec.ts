@@ -47,7 +47,7 @@ describe('NumberField', () => {
     const el = wrapper.get(input)
     expect(wrapper.get('label').attributes('for')).toBe('w')
     expect(el.attributes('id')).toBe('w')
-    expect(el.attributes('aria-describedby')).toBe('w-description w-error')
+    expect(el.attributes('aria-describedby')).toBe('w-error')
     expect(el.attributes('aria-invalid')).toBe('true')
     expect(wrapper.get('[data-slot=number-field-group]').attributes('data-invalid')).toBe('true')
   })
@@ -218,7 +218,7 @@ describe('NumberField', () => {
   it('drops the error from aria-describedby once the field is valid again', async () => {
     const wrapper = mount(NumberField, { props: { id: 'w', label: 'Width', description: 'Pixels', errorMessage: 'Too small', invalid: true } })
     expect(wrapper.get('#w-error').text()).toBe('Too small')
-    expect(wrapper.get('#w-description').text()).toBe('Pixels')
+    expect(wrapper.find('#w-description').exists()).toBe(false)
     await wrapper.setProps({ invalid: false })
     expect(wrapper.get(input).attributes('aria-describedby')).toBe('w-description')
     expect(wrapper.get(input).attributes('aria-invalid')).toBeUndefined()

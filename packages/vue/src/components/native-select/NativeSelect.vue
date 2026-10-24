@@ -104,13 +104,11 @@ export interface NativeSelectSlots {
 </script>
 
 <script setup lang="ts">
-import { computed, onMounted, ref, useAttrs, useId, useSlots, useTemplateRef } from 'vue'
+import { computed, onMounted, ref, useAttrs, useSlots, useTemplateRef } from 'vue'
 import { useComponentUI } from '../../composables/useComponentUI'
+import { useFieldChrome } from '../../composables/useFieldChrome'
 import { useFieldValidation } from '../../composables/useFieldValidation'
 import { useFieldsetDisabled } from '../fieldset/context'
-import Description from '../description/Description.vue'
-import FieldError from '../field-error/FieldError.vue'
-import Label from '../label/Label.vue'
 
 defineOptions({ inheritAttrs: false })
 
@@ -125,11 +123,6 @@ const slots = useSlots()
 const attrs = useAttrs()
 
 const ui = useComponentUI('nativeSelect', theme, () => ({ variant: props.variant, fullWidth: props.fullWidth }))
-
-const autoId = useId()
-const id = computed(() => props.id ?? autoId)
-const descriptionId = computed(() => `${id.value}-description`)
-const errorId = computed(() => `${id.value}-error`)
 
 const root = useTemplateRef<HTMLElement>('root')
 const select = useTemplateRef<HTMLSelectElement>('select')
@@ -172,10 +165,16 @@ const { validation, commitValidation } = useFieldValidation({
 })
 const invalid = computed(() => validation.value.isInvalid)
 
-const hasLabel = computed(() => !!(props.label || slots.label))
-const hasDescription = computed(() => !!(props.description || slots.description))
-const hasError = computed(() => invalid.value && !!(props.errorMessage || slots.error || validation.value.validationErrors.length))
-const describedBy = computed(() => [attrs['aria-describedby'], hasDescription.value && descriptionId.value, hasError.value && errorId.value].filter(Boolean).join(' ') || undefined)
+const { id, describedBy, FieldLabel, FieldDescription, FieldError } = useFieldChrome({
+  props,
+  slots,
+  invalid,
+  validation,
+  disabled: isDisabled,
+  required: () => props.required,
+  hideDescriptionWhenInvalid: true,
+  ariaDescribedBy: () => attrs['aria-describedby'] as string | undefined,
+})
 
 const rootAttrs = computed(() => ({ style: attrs.style }))
 const selectAttrs = computed(() => {
@@ -209,15 +208,7 @@ function onChange(event: Event) {
     :data-required="required ? 'true' : undefined"
     :class="ui.base({ class: [props.ui?.base, props.class] })"
   >
-    <!-- Each part renders the `<slot>` outlet only when that slot is passed: a forwarded slot would otherwise make Vue force-update the child on every render -->
-    <Label v-if="hasLabel && $slots.label" :for="id" :disabled="isDisabled" :invalid="invalid" :required="required">
-      <slot name="label">
-        {{ label }}
-      </slot>
-    </Label>
-    <Label v-else-if="hasLabel" :for="id" :disabled="isDisabled" :invalid="invalid" :required="required">
-      {{ label }}
-    </Label>
+    <FieldLabel :for="id" />
     <div data-slot="native-select-trigger" :class="ui.trigger({ class: props.ui?.trigger })">
       <select
         v-bind="selectAttrs"
@@ -259,21 +250,7 @@ function onChange(event: Event) {
         </slot>
       </span>
     </div>
-    <Description v-if="hasDescription && $slots.description" :id="descriptionId">
-      <slot name="description">
-        {{ description }}
-      </slot>
-    </Description>
-    <Description v-else-if="hasDescription" :id="descriptionId">
-      {{ description }}
-    </Description>
-    <FieldError v-if="hasError && $slots.error" :id="errorId">
-      <slot name="error" v-bind="validation">
-        {{ errorMessage ?? validation.validationErrors.join(' ') }}
-      </slot>
-    </FieldError>
-    <FieldError v-else-if="hasError" :id="errorId">
-      {{ errorMessage ?? validation.validationErrors.join(' ') }}
-    </FieldError>
+    <FieldDescription />
+    <FieldError />
   </div>
 </template>

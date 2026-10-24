@@ -85,13 +85,12 @@ export interface CheckboxSlots {
 
 <script setup lang="ts">
 import { CheckboxRoot } from 'reka-ui'
-import { computed, ref, useId, useSlots, useTemplateRef } from 'vue'
+import { computed, ref, useSlots, useTemplateRef } from 'vue'
 import { forwardRootClick, keepFocusWhenReadonly, submitOnEnter } from '../../composables/forwardRootClick'
 import { useComponentUI } from '../../composables/useComponentUI'
+import { useFieldChrome } from '../../composables/useFieldChrome'
 import { useFieldValidation } from '../../composables/useFieldValidation'
 import { useFieldsetDisabled } from '../fieldset/context'
-import Description from '../description/Description.vue'
-import FieldError from '../field-error/FieldError.vue'
 
 defineOptions({ inheritAttrs: false })
 
@@ -108,11 +107,6 @@ const slots = useSlots()
 const ui = useComponentUI('checkbox', theme, () => ({
   variant: props.variant,
 }))
-
-const autoId = useId()
-const id = computed(() => props.id ?? autoId)
-const descriptionId = computed(() => `${id.value}-description`)
-const errorId = computed(() => `${id.value}-error`)
 
 const local = ref(props.defaultValue ?? false)
 const checked = computed(() => props.modelValue ?? local.value)
@@ -136,9 +130,13 @@ const { validation, commitValidation } = useFieldValidation({
 })
 const invalid = computed(() => validation.value.isInvalid)
 
-const hasDescription = computed(() => !!(props.description || slots.description))
-const hasError = computed(() => invalid.value && !!(props.errorMessage || slots.error || validation.value.validationErrors.length))
-const describedBy = computed(() => [hasDescription.value && descriptionId.value, hasError.value && errorId.value].filter(Boolean).join(' ') || undefined)
+const { id, describedBy, FieldDescription, FieldError } = useFieldChrome({
+  props,
+  slots,
+  invalid,
+  validation,
+  slotProps: () => ({ state: state.value }),
+})
 
 function onUpdate(value: boolean | 'indeterminate') {
   // RAC `isReadOnly`: the control stays focusable but never changes state
@@ -218,14 +216,7 @@ function onUpdate(value: boolean | 'indeterminate') {
       </span>
       <slot name="label" :state="state">{{ label }}</slot>
     </CheckboxRoot>
-    <!-- Split so the no-slot branch has no forwarded `<slot>` and doesn't force-update the child on every render -->
-    <Description v-if="hasDescription && $slots.description" :id="descriptionId">
-      <slot name="description" :state="state">{{ description }}</slot>
-    </Description>
-    <Description v-else-if="hasDescription" :id="descriptionId">{{ description }}</Description>
-    <FieldError v-if="hasError && $slots.error" :id="errorId">
-      <slot name="error" v-bind="validation">{{ errorMessage ?? validation.validationErrors.join(' ') }}</slot>
-    </FieldError>
-    <FieldError v-else-if="hasError" :id="errorId">{{ errorMessage ?? validation.validationErrors.join(' ') }}</FieldError>
+    <FieldDescription />
+    <FieldError />
   </div>
 </template>

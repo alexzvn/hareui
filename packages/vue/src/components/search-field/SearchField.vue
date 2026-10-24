@@ -93,14 +93,12 @@ export interface SearchFieldEmits {
 </script>
 
 <script setup lang="ts">
-import { computed, ref, useAttrs, useId, useSlots, useTemplateRef } from 'vue'
+import { computed, ref, useAttrs, useSlots, useTemplateRef } from 'vue'
 import { useComponentUI } from '../../composables/useComponentUI'
+import { useFieldChrome } from '../../composables/useFieldChrome'
 import { useFieldValidation } from '../../composables/useFieldValidation'
 import CloseButton from '../close-button/CloseButton.vue'
-import Description from '../description/Description.vue'
-import FieldError from '../field-error/FieldError.vue'
 import { useFieldsetDisabled } from '../fieldset/context'
-import Label from '../label/Label.vue'
 import { splitInputAttrs } from '../text-field/context'
 
 defineOptions({ inheritAttrs: false })
@@ -178,18 +176,16 @@ function onClear() {
   emit('clear')
 }
 
-const autoId = useId()
-const id = computed(() => props.id ?? autoId)
-const hasLabel = computed(() => !!(props.label || slots.label))
-const hasDescription = computed(() => !!(props.description || slots.description))
-const hasError = computed(() => invalid.value && !!(props.errorMessage || slots.error || validation.value.validationErrors.length))
-const descriptionId = computed(() => `${id.value}-description`)
-const errorId = computed(() => `${id.value}-error`)
-const describedBy = computed(() => [
-  attrs['aria-describedby'] as string | undefined,
-  hasDescription.value ? descriptionId.value : undefined,
-  hasError.value ? errorId.value : undefined,
-].filter(Boolean).join(' ') || undefined)
+const { id, describedBy, FieldLabel, FieldDescription, FieldError } = useFieldChrome({
+  props,
+  slots,
+  invalid,
+  validation,
+  disabled,
+  required: () => props.required,
+  hideDescriptionWhenInvalid: true,
+  ariaDescribedBy: () => attrs['aria-describedby'] as string | undefined,
+})
 
 const ui = useComponentUI('searchField', theme, () => ({ variant: props.variant, fullWidth: props.fullWidth }))
 </script>
@@ -206,15 +202,7 @@ const ui = useComponentUI('searchField', theme, () => ({ variant: props.variant,
     :data-empty="isEmpty ? 'true' : undefined"
     :class="ui.base({ class: [props.ui?.base, props.class] })"
   >
-    <!-- Each part renders the `<slot>` outlet only when that slot is passed: a forwarded slot would otherwise make Vue force-update the child on every render -->
-    <Label v-if="hasLabel && $slots.label" :for="id" :disabled="disabled" :invalid="invalid" :required="required">
-      <slot name="label">
-        {{ label }}
-      </slot>
-    </Label>
-    <Label v-else-if="hasLabel" :for="id" :disabled="disabled" :invalid="invalid" :required="required">
-      {{ label }}
-    </Label>
+    <FieldLabel :for="id" />
     <div
       data-slot="search-field-group"
       role="group"
@@ -275,21 +263,7 @@ const ui = useComponentUI('searchField', theme, () => ({ variant: props.variant,
         @click="onClear"
       />
     </div>
-    <Description v-if="hasDescription && $slots.description" :id="descriptionId">
-      <slot name="description">
-        {{ description }}
-      </slot>
-    </Description>
-    <Description v-else-if="hasDescription" :id="descriptionId">
-      {{ description }}
-    </Description>
-    <FieldError v-if="hasError && $slots.error" :id="errorId">
-      <slot name="error" v-bind="validation">
-        {{ errorMessage ?? validation.validationErrors.join(' ') }}
-      </slot>
-    </FieldError>
-    <FieldError v-else-if="hasError" :id="errorId">
-      {{ errorMessage ?? validation.validationErrors.join(' ') }}
-    </FieldError>
+    <FieldDescription />
+    <FieldError />
   </div>
 </template>

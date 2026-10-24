@@ -127,13 +127,11 @@ export interface TimeFieldEmits {
 <script setup lang="ts">
 import { TimeFieldInput, TimeFieldRoot } from 'reka-ui'
 import type { ComponentPublicInstance } from 'vue'
-import { computed, useId, useSlots, useTemplateRef } from 'vue'
+import { computed, useTemplateRef } from 'vue'
 import { useComponentUI } from '../../composables/useComponentUI'
+import { useFieldChrome } from '../../composables/useFieldChrome'
 import { useFieldValidation } from '../../composables/useFieldValidation'
 import DateInputGroup, { dropDanglingTimeZoneSeparator, wrapBidiIsolate } from '../date-input-group/DateInputGroup.vue'
-import Description from '../description/Description.vue'
-import FieldError from '../field-error/FieldError.vue'
-import Label from '../label/Label.vue'
 import { useFieldsetDisabled } from '../fieldset/context'
 
 // `invalid: undefined`: an absent boolean would cast to `false`, which counts as controlled-valid and hides validation errors
@@ -196,19 +194,16 @@ function onUpdate(value: TimeValue | undefined) {
   commitValidation()
 }
 
-const autoId = useId()
-const id = computed(() => props.id ?? autoId)
-const hasLabel = computed(() => !!(props.label || slots.label))
-const labelId = computed(() => `${id.value}-label`)
-const hasError = computed(() => invalid.value && !!(props.errorMessage || slots.error || validation.value.validationErrors.length))
-// HeroUI's CSS always hides the description while invalid, regardless of whether an error message exists
-const hasDescription = computed(() => !!(props.description || slots.description) && !invalid.value)
-const descriptionId = computed(() => `${id.value}-description`)
-const errorId = computed(() => `${id.value}-error`)
-const describedBy = computed(() => [
-  hasDescription.value ? descriptionId.value : undefined,
-  hasError.value ? errorId.value : undefined,
-].filter(Boolean).join(' ') || undefined)
+const { id, labelId, hasLabel, describedBy, FieldLabel, FieldDescription, FieldError } = useFieldChrome({
+  props,
+  slots,
+  invalid,
+  validation,
+  disabled,
+  required: () => props.required,
+  // HeroUI's CSS always hides the description while invalid, regardless of whether an error message exists
+  hideDescriptionWhenInvalid: true,
+})
 
 const groupUiProps = computed<DateInputGroupProps['ui']>(() => ({
   input: props.ui?.input,
@@ -247,13 +242,7 @@ const groupUiProps = computed<DateInputGroupProps['ui']>(() => ({
   >
     <template #default="{ segments }">
       <!-- `as` falls through to Reka `Label`: the group label names the input group via aria-labelledby, not a single form control (HeroUI renders a span) -->
-      <!-- Each slot site is split so the no-slot branch isn't compiled as a forwarded slot, which would force-update the child on every render -->
-      <Label v-if="hasLabel && $slots.label" :id="labelId" as="span" :disabled="disabled" :invalid="invalid" :required="required">
-        <slot name="label">{{ label }}</slot>
-      </Label>
-      <Label v-else-if="hasLabel" :id="labelId" as="span" :disabled="disabled" :invalid="invalid" :required="required">
-        {{ label }}
-      </Label>
+      <FieldLabel :id="labelId" as="span" />
       <DateInputGroup
         :segments="wrapBidiIsolate(dropDanglingTimeZoneSeparator(segments))"
         :segment-input="TimeFieldInput"
@@ -273,18 +262,8 @@ const groupUiProps = computed<DateInputGroupProps['ui']>(() => ({
           <slot name="suffix" />
         </template>
       </DateInputGroup>
-      <Description v-if="hasDescription && $slots.description" :id="descriptionId">
-        <slot name="description">{{ description }}</slot>
-      </Description>
-      <Description v-else-if="hasDescription" :id="descriptionId">
-        {{ description }}
-      </Description>
-      <FieldError v-if="hasError && $slots.error" :id="errorId">
-        <slot name="error" v-bind="validation">{{ errorMessage ?? validation.validationErrors.join(' ') }}</slot>
-      </FieldError>
-      <FieldError v-else-if="hasError" :id="errorId">
-        {{ errorMessage ?? validation.validationErrors.join(' ') }}
-      </FieldError>
+      <FieldDescription />
+      <FieldError />
     </template>
   </TimeFieldRoot>
 </template>

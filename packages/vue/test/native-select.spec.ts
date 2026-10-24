@@ -134,13 +134,13 @@ describe('NativeSelect', () => {
     wrapper.unmount()
   })
 
-  it('describes the select by its description, then its error, keeping a consumer aria-describedby', () => {
+  it('describes the select by its error while invalid, keeping a consumer aria-describedby', () => {
     const wrapper = mount(NativeSelect, {
       props: { id: 's', label: 'Status', items, description: 'Help', invalid: true, errorMessage: 'Bad' },
       attrs: { 'aria-describedby': 'extra' },
     })
-    expect(wrapper.get(select).attributes('aria-describedby')).toBe('extra s-description s-error')
-    expect(wrapper.get('#s-description').text()).toBe('Help')
+    expect(wrapper.get(select).attributes('aria-describedby')).toBe('extra s-error')
+    expect(wrapper.find('#s-description').exists()).toBe(false)
     expect(wrapper.get('#s-error').text()).toBe('Bad')
     wrapper.unmount()
   })

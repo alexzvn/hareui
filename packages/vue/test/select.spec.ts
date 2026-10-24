@@ -124,7 +124,7 @@ describe('Select', () => {
     })
     const btn = wrapper.get(trigger)
     expect(btn.attributes('aria-labelledby')).toBe('s-label s-value')
-    expect(btn.attributes('aria-describedby')).toBe('s-description s-error')
+    expect(btn.attributes('aria-describedby')).toBe('s-error')
     expect(btn.attributes('aria-invalid')).toBe('true')
     expect(wrapper.attributes('data-invalid')).toBe('true')
     expect(wrapper.get('[data-slot=field-error]').text()).toBe('Bad')

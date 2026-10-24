@@ -22,7 +22,9 @@ describe('TextField', () => {
     expect(input().attributes('aria-describedby')).toBe('email-description')
 
     await wrapper.setProps({ invalid: true })
-    expect(input().attributes('aria-describedby')).toBe('email-description email-error')
+    // The theme hides the description while invalid, so it's dropped from the DOM and aria-describedby too
+    expect(input().attributes('aria-describedby')).toBe('email-error')
+    expect(wrapper.find('#email-description').exists()).toBe(false)
   })
 
   it('invalid sets aria-invalid on the input and shows errorMessage', () => {
@@ -51,7 +53,8 @@ describe('TextField', () => {
     expect(ctx.attributes('id')).toBe('f')
     expect(ctx.attributes('disabled')).toBeDefined()
     expect(ctx.attributes('aria-invalid')).toBe('true')
-    expect(ctx.attributes('aria-describedby')).toBe('f-description')
+    // Invalid: the description is dropped, and no error message exists, so nothing describes the input
+    expect(ctx.attributes('aria-describedby')).toBeUndefined()
     const own = wrapper.get('[data-test=own]')
     expect(own.attributes('id')).toBe('own')
     expect(own.attributes('disabled')).toBeUndefined()
@@ -121,8 +124,9 @@ describe('TextField', () => {
       h(TextField, { 'id': 'e', 'label': 'Email', 'description': 'Work address', 'invalid': true, 'errorMessage': 'Required', 'aria-describedby': 'policy' }),
     ]), { attachTo: document.body })
     const ids = wrapper.get('input').attributes('aria-describedby')!.split(' ')
-    expect(ids).toEqual(['policy', 'e-description', 'e-error'])
-    expect(ids.map(id => document.getElementById(id)?.textContent?.trim())).toEqual(['See our policy', 'Work address', 'Required'])
+    // The description is dropped while invalid
+    expect(ids).toEqual(['policy', 'e-error'])
+    expect(ids.map(id => document.getElementById(id)?.textContent?.trim())).toEqual(['See our policy', 'Required'])
     expect(wrapper.find('[data-slot=textfield]').attributes('aria-describedby')).toBeUndefined()
     wrapper.unmount()
   })
@@ -180,9 +184,9 @@ describe('TextField label / description / error slots', () => {
     expect(labelUpdates).toBe(0)
   })
 
-  it('#label, #description and #error render inside the same elements the prop text would', () => {
+  it('#label, #description and #error render inside the same elements the prop text would', async () => {
     const wrapper = mount(TextField, {
-      props: { id: 'f', invalid: true },
+      props: { id: 'f' },
       slots: {
         label: () => h('b', { 'data-test': 'label' }, 'Custom label'),
         description: () => h('b', { 'data-test': 'description' }, 'Custom help'),
@@ -196,10 +200,14 @@ describe('TextField label / description / error slots', () => {
     const description = wrapper.get('[data-slot=description]')
     expect(description.attributes('id')).toBe('f-description')
     expect(description.find('[data-test=description]').exists()).toBe(true)
+    expect(wrapper.get('input').attributes('aria-describedby')).toBe('f-description')
+    // The error renders while invalid, which drops the description
+    await wrapper.setProps({ invalid: true })
     const error = wrapper.get('[data-slot=field-error]')
     expect(error.attributes('id')).toBe('f-error')
     expect(error.find('[data-test=error]').exists()).toBe(true)
-    expect(wrapper.get('input').attributes('aria-describedby')).toBe('f-description f-error')
+    expect(wrapper.find('[data-slot=description]').exists()).toBe(false)
+    expect(wrapper.get('input').attributes('aria-describedby')).toBe('f-error')
   })
 
   it('a #label slot that renders nothing falls back to the `label` prop', () => {

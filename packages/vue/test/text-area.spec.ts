@@ -1,9 +1,12 @@
-import { mount } from '@vue/test-utils'
-import { describe, expect, it } from 'vitest'
+import { enableAutoUnmount, mount } from '@vue/test-utils'
+import { afterEach, describe, expect, it } from 'vitest'
 import { h } from 'vue'
 import TextArea from '../src/components/text-area/TextArea.vue'
 import TextField from '../src/components/text-field/TextField.vue'
 import { expectAccessible } from './a11y'
+
+// A failing assertion must not leave a mounted field (and its colliding `useId()` ids) behind for the next test.
+enableAutoUnmount(afterEach)
 
 describe('TextArea', () => {
   it('renders a textarea with HeroUI data-slot and forwards native attributes', () => {
@@ -67,7 +70,8 @@ describe('TextArea', () => {
     const el = wrapper.get('textarea').element as HTMLTextAreaElement
     expect([...el.labels!].map(l => l.textContent?.trim())).toEqual(['Message'])
     const described = el.getAttribute('aria-describedby')!.split(' ').map(id => document.getElementById(id)?.textContent?.trim())
-    expect(described).toEqual(props.errorMessage ? ['Max 500 characters', props.errorMessage] : ['Max 500 characters'])
+    // While invalid the error replaces the description.
+    expect(described).toEqual(props.errorMessage ? [props.errorMessage] : ['Max 500 characters'])
     expect(el.getAttribute('aria-invalid')).toBe(props.invalid ? 'true' : null)
     expect(el.disabled).toBe(!!props.disabled)
     expect(el.readOnly).toBe(!!props.readonly)

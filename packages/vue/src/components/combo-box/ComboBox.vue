@@ -195,15 +195,13 @@ const RekaBridge = defineComponent({
 import { ComboboxAnchor, ComboboxContent, ComboboxItem, ComboboxPortal, ComboboxRoot, useFilter } from 'reka-ui'
 import { computed, getCurrentInstance, nextTick, onMounted, reactive, ref, shallowRef, useAttrs, useId, useTemplateRef, watch } from 'vue'
 import { useComponentUI } from '../../composables/useComponentUI'
+import { useFieldChrome } from '../../composables/useFieldChrome'
 import { useFieldValidation } from '../../composables/useFieldValidation'
 import { useKeyboardModality } from '../../composables/useKeyboardModality'
 import { usePortal } from '../../composables/usePortal'
 import { useFieldsetDisabled } from '../fieldset/context'
 import inputTheme from '../input/theme'
 import listBoxTheme from '../list-box/theme'
-import Description from '../description/Description.vue'
-import FieldError from '../field-error/FieldError.vue'
-import Label from '../label/Label.vue'
 import { countRows, filterEntries, flattenEntries, itemText } from '../list-box/listBoxCollection'
 import ListBoxRows from '../list-box/ListBoxRows.vue'
 import { usePressRelease } from '../select/pressRelease'
@@ -665,23 +663,24 @@ const nativeRequired = computed(() => !!props.required && (props.validationBehav
 const attrs = useAttrs()
 const autoId = useId()
 const id = computed(() => props.id ?? `${autoId}-input`)
-const labelId = `${autoId}-label`
 const triggerId = `${autoId}-trigger`
 const listboxId = `${autoId}-listbox`
 const valueId = `${autoId}-value`
-const descriptionId = `${autoId}-description`
-const errorId = `${autoId}-error`
-const hasLabel = computed(() => !!(props.label || slots.label))
-const hasDescription = computed(() => !!(props.description || slots.description))
-const hasError = computed(() => invalid.value && !!(props.errorMessage || slots.error || validation.value.validationErrors.length))
 const showValue = computed(() => multiple.value || !!slots.value)
-const describedBy = computed(() => [
-  showValue.value ? valueId : undefined,
-  hasDescription.value ? descriptionId : undefined,
-  hasError.value ? errorId : undefined,
-  attrs['aria-describedby'] as string | undefined,
-].filter(Boolean).join(' ') || undefined)
-const inputLabelledBy = computed(() => (attrs['aria-labelledby'] as string | undefined) ?? (hasLabel.value ? labelId : undefined))
+// Chrome ids derive from `autoId` even with an `id` prop (that one names the input)
+const { labelId, hasLabel, describedBy, FieldLabel, FieldDescription, FieldError } = useFieldChrome({
+  props,
+  baseId: autoId,
+  slots,
+  invalid,
+  validation,
+  disabled,
+  required: () => props.required,
+  hideDescriptionWhenInvalid: true,
+  ariaDescribedBy: () => attrs['aria-describedby'] as string | undefined,
+  describedByIds: () => [showValue.value && valueId],
+})
+const inputLabelledBy = computed(() => (attrs['aria-labelledby'] as string | undefined) ?? (hasLabel.value ? labelId.value : undefined))
 const rootAttrs = computed(() => {
   const { 'aria-label': _label, 'aria-labelledby': _labelledby, 'aria-describedby': _describedby, ...rest } = attrs
   return rest
@@ -735,31 +734,7 @@ function optionAttrs(row: CollectionRow) {
     @update:open="onRekaOpen"
   >
     <RekaBridge @ready="onReady" />
-    <!-- Each slot site is split so the no-slot branch isn't compiled as a forwarded slot, which would force-update the child on every render -->
-    <Label
-      v-if="hasLabel && $slots.label"
-      :id="labelId"
-      :for="id"
-      :disabled="disabled"
-      :invalid="invalid"
-      :required="required"
-      :class="ui.label({ class: props.ui?.label })"
-    >
-      <slot name="label">
-        {{ label }}
-      </slot>
-    </Label>
-    <Label
-      v-else-if="hasLabel"
-      :id="labelId"
-      :for="id"
-      :disabled="disabled"
-      :invalid="invalid"
-      :required="required"
-      :class="ui.label({ class: props.ui?.label })"
-    >
-      {{ label }}
-    </Label>
+    <FieldLabel :id="labelId" :for="id" :class="ui.label({ class: props.ui?.label })" />
     <ComboboxAnchor
       as="div"
       role="group"
@@ -841,22 +816,8 @@ function optionAttrs(row: CollectionRow) {
     >
       <slot name="value" :selected-items="selectedItems" :is-placeholder="!selectedItems.length" :text="valueText">{{ valueText }}</slot>
     </div>
-    <Description v-if="hasDescription && $slots.description" :id="descriptionId">
-      <slot name="description">
-        {{ description }}
-      </slot>
-    </Description>
-    <Description v-else-if="hasDescription" :id="descriptionId">
-      {{ description }}
-    </Description>
-    <FieldError v-if="hasError && $slots.error" :id="errorId">
-      <slot name="error" v-bind="validation">
-        {{ errorMessage ?? validation.validationErrors.join(' ') }}
-      </slot>
-    </FieldError>
-    <FieldError v-else-if="hasError" :id="errorId">
-      {{ errorMessage ?? validation.validationErrors.join(' ') }}
-    </FieldError>
+    <FieldDescription />
+    <FieldError />
     <template v-if="name && !submitText">
       <input v-for="(value, i) in hiddenValues" :key="i" type="hidden" :name="name" :value="value">
     </template>

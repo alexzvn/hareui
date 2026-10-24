@@ -174,15 +174,13 @@ export interface DateRangePickerEmits {
 import { DateFormatter, getLocalTimeZone, toCalendarDateTime } from '@internationalized/date'
 import { DateRangePickerAnchor, DateRangePickerField, DateRangePickerInput, DateRangePickerRoot, DateRangePickerTrigger, PopoverContent, PopoverPortal, VisuallyHidden } from 'reka-ui'
 import type { ComponentPublicInstance } from 'vue'
-import { computed, ref, shallowRef, useAttrs, useId, useTemplateRef, watch } from 'vue'
+import { computed, ref, shallowRef, useAttrs, useTemplateRef, watch } from 'vue'
 import { useComponentUI } from '../../composables/useComponentUI'
+import { useFieldChrome } from '../../composables/useFieldChrome'
 import { useFieldValidation } from '../../composables/useFieldValidation'
 import { useInertOutside } from '../../composables/useInertOutside'
 import { usePortal } from '../../composables/usePortal'
 import DateInputGroup, { dropDanglingTimeZoneSeparator, wrapBidiIsolate } from '../date-input-group/DateInputGroup.vue'
-import Description from '../description/Description.vue'
-import FieldError from '../field-error/FieldError.vue'
-import Label from '../label/Label.vue'
 import { useFieldsetDisabled } from '../fieldset/context'
 import PopoverLabelledBy from '../date-picker/PopoverLabelledBy'
 import RangeCalendar from '../range-calendar/RangeCalendar.vue'
@@ -332,19 +330,16 @@ const invalid = computed(() => props.invalid ?? validation.value.isInvalid)
 // Reka's matcher is single-argument and read once at setup; outside the calendar React Aria calls it with a `null` anchor.
 const fieldIsDateUnavailable = (date: DateValue) => props.isDateUnavailable?.(date, null) ?? false
 
-const autoId = useId()
-const id = computed(() => props.id ?? autoId)
-const hasLabel = computed(() => !!(props.label || slots.label))
-const labelId = computed(() => `${id.value}-label`)
+const { id, labelId, hasLabel, describedBy, FieldLabel, FieldDescription, FieldError } = useFieldChrome({
+  props,
+  slots,
+  invalid,
+  validation,
+  disabled,
+  required: () => props.required,
+  hideDescriptionWhenInvalid: true,
+})
 const triggerId = computed(() => `${id.value}-trigger`)
-const hasError = computed(() => invalid.value && !!(props.errorMessage || slots.error || validation.value.validationErrors.length))
-const hasDescription = computed(() => !!(props.description || slots.description) && !invalid.value)
-const descriptionId = computed(() => `${id.value}-description`)
-const errorId = computed(() => `${id.value}-error`)
-const describedBy = computed(() => [
-  hasDescription.value ? descriptionId.value : undefined,
-  hasError.value ? errorId.value : undefined,
-].filter(Boolean).join(' ') || undefined)
 
 const groupUiProps = computed<DateInputGroupProps['ui']>(() => ({
   base: props.ui?.group,
@@ -432,13 +427,7 @@ function focusFirstSegment() {
       @keydown.capture="onFieldKeydown"
       @focusout="onFieldFocusOut"
     >
-      <!-- Each slot site is split so the no-slot branch isn't compiled as a forwarded slot, which would force-update the child on every render -->
-      <Label v-if="hasLabel && $slots.label" :id="labelId" as="span" :disabled="disabled" :invalid="invalid" :required="required">
-        <slot name="label">{{ label }}</slot>
-      </Label>
-      <Label v-else-if="hasLabel" :id="labelId" as="span" :disabled="disabled" :invalid="invalid" :required="required">
-        {{ label }}
-      </Label>
+      <FieldLabel :id="labelId" as="span" />
       <DateRangePickerAnchor as-child>
         <DateInputGroup
           :segments="wrapBidiIsolate(dropDanglingTimeZoneSeparator(segments.start))"
@@ -499,18 +488,8 @@ function focusFirstSegment() {
         :disabled="disabled"
         @focus="focusFirstSegment"
       />
-      <Description v-if="hasDescription && $slots.description" :id="descriptionId">
-        <slot name="description">{{ description }}</slot>
-      </Description>
-      <Description v-else-if="hasDescription" :id="descriptionId">
-        {{ description }}
-      </Description>
-      <FieldError v-if="hasError && $slots.error" :id="errorId">
-        <slot name="error" v-bind="validation">{{ errorMessage ?? validation.validationErrors.join(' ') }}</slot>
-      </FieldError>
-      <FieldError v-else-if="hasError" :id="errorId">
-        {{ errorMessage ?? validation.validationErrors.join(' ') }}
-      </FieldError>
+      <FieldDescription />
+      <FieldError />
     </DateRangePickerField>
     <PopoverPortal :disabled="portalTarget.disabled" :to="portalTarget.to">
       <PopoverContent

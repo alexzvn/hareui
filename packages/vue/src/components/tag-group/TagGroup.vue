@@ -95,12 +95,11 @@ export interface TagGroupEmits {
 </script>
 
 <script setup lang="ts" generic="T extends TagGroupItem = TagGroupItem">
-import { computed, nextTick, ref, useId, useTemplateRef, watch } from 'vue'
+import { computed, nextTick, ref, useTemplateRef, watch } from 'vue'
 import { useComponentUI } from '../../composables/useComponentUI'
+import { useFieldChrome } from '../../composables/useFieldChrome'
 import { useSelectionManager } from '../../composables/useSelectionManager'
-import Description from '../description/Description.vue'
 import ErrorMessage from '../error-message/ErrorMessage.vue'
-import Label from '../label/Label.vue'
 import TagGroupTag from './TagGroupTag.vue'
 
 const props = withDefaults(defineProps<TagGroupProps<T>>(), { items: () => [], selectionMode: 'none' })
@@ -111,12 +110,6 @@ const selectedModel = defineModel<string[]>('selected')
 
 const ui = useComponentUI('tagGroup', theme, () => ({}))
 const tagUi = useComponentUI('tag', tagTheme, () => ({ size: props.size, variant: props.variant }))
-
-const autoId = useId()
-const id = computed(() => props.id ?? autoId)
-const labelId = computed(() => `${id.value}-label`)
-const descriptionId = computed(() => `${id.value}-description`)
-const errorId = computed(() => `${id.value}-error`)
 
 const selected = computed(() => selectedModel.value ?? props.defaultSelected ?? [])
 function isSelected(itemId: string) {
@@ -271,10 +264,16 @@ function onListKeydown(event: KeyboardEvent) {
     manager.extend(next.id, item.id)
 }
 
-const hasLabel = computed(() => !!(props.label || slots.label))
-const hasDescription = computed(() => !!(props.description || slots.description))
+// The chrome covers label and description only: TagGroup's error is an always-shown `ErrorMessage` (`errorMessage`
+// prop or slot, no validation), so the chrome gets no `invalid` and the error is composed here.
+const { id, labelId, hasLabel, describedBy: chromeDescribedBy, FieldLabel, FieldDescription } = useFieldChrome({
+  props,
+  slots,
+  disabled: () => props.disabled,
+})
+const errorId = computed(() => `${id.value}-error`)
 const hasError = computed(() => props.errorMessage !== undefined || !!slots.errorMessage)
-const describedBy = computed(() => [hasDescription.value && descriptionId.value, hasError.value && errorId.value].filter(Boolean).join(' ') || undefined)
+const describedBy = computed(() => [chromeDescribedBy.value, hasError.value && errorId.value].filter(Boolean).join(' ') || undefined)
 </script>
 
 <template>
@@ -282,13 +281,7 @@ const describedBy = computed(() => [hasDescription.value && descriptionId.value,
     data-slot="tag-group"
     :class="ui.base({ class: [props.ui?.base, props.class] })"
   >
-    <!-- Each slot site is split so the no-slot branch isn't compiled as a forwarded slot, which would force-update the child on every render -->
-    <Label v-if="hasLabel && $slots.label" :id="labelId" as="span" :disabled="disabled">
-      <slot name="label">{{ label }}</slot>
-    </Label>
-    <Label v-else-if="hasLabel" :id="labelId" as="span" :disabled="disabled">
-      {{ label }}
-    </Label>
+    <FieldLabel :id="labelId" as="span" />
     <div
       ref="list"
       role="grid"
@@ -352,12 +345,7 @@ const describedBy = computed(() => [hasDescription.value && descriptionId.value,
         </div>
       </div>
     </div>
-    <Description v-if="hasDescription && $slots.description" :id="descriptionId">
-      <slot name="description">{{ description }}</slot>
-    </Description>
-    <Description v-else-if="hasDescription" :id="descriptionId">
-      {{ description }}
-    </Description>
+    <FieldDescription />
     <ErrorMessage v-if="hasError && $slots.errorMessage" :id="errorId">
       <slot name="errorMessage">{{ errorMessage }}</slot>
     </ErrorMessage>

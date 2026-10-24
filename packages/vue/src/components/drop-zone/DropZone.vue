@@ -114,11 +114,11 @@ export interface DropZoneEmits {
 </script>
 
 <script setup lang="ts">
-import { computed, onMounted, provide, ref, toRef, useId, useTemplateRef, watch } from 'vue'
+import { computed, onMounted, provide, ref, toRef, useTemplateRef, watch } from 'vue'
 import { useComponentUI } from '../../composables/useComponentUI'
+import { useFieldChrome } from '../../composables/useFieldChrome'
 import { useFieldValidation } from '../../composables/useFieldValidation'
 import Button from '../button/Button.vue'
-import FieldError from '../field-error/FieldError.vue'
 import { useFieldsetDisabled } from '../fieldset/context'
 import { dropZoneContextKey } from './context'
 import DropZoneFileItem from './DropZoneFileItem.vue'
@@ -132,12 +132,6 @@ const slots = defineSlots<DropZoneSlots>()
 
 const ui = useComponentUI('dropZone', theme, () => ({}))
 provide(dropZoneContextKey, { ui: toRef(() => props.ui) })
-
-const autoId = useId()
-const id = computed(() => props.id ?? autoId)
-const labelId = computed(() => `${id.value}-label`)
-const descriptionId = computed(() => `${id.value}-description`)
-const errorId = computed(() => `${id.value}-error`)
 
 const local = ref<File[]>(props.defaultValue ?? [])
 const files = computed(() => props.modelValue ?? local.value)
@@ -159,10 +153,13 @@ const { validation, commitValidation } = useFieldValidation({
 })
 const invalid = computed(() => validation.value.isInvalid)
 
-const hasLabel = computed(() => !!(props.label || slots.label))
-const hasDescription = computed(() => !!(props.description || slots.description))
-const hasError = computed(() => invalid.value && !!(props.errorMessage || slots.error || validation.value.validationErrors.length))
-const describedBy = computed(() => [hasDescription.value && descriptionId.value, hasError.value && errorId.value].filter(Boolean).join(' ') || undefined)
+const { id, labelId, descriptionId, hasLabel, hasDescription, describedBy, FieldError } = useFieldChrome({
+  props,
+  slots,
+  invalid,
+  validation,
+  disabled: isDisabled,
+})
 
 // Mirrors the selection into the file input, so native form submission and `required` see it
 function syncInput() {
@@ -425,11 +422,7 @@ defineExpose({
       @cancel="syncInput"
       @focus="onInputFocus"
     >
-    <!-- Split so FieldError's slot is only forwarded (and force-updated) when an `error` slot is passed. -->
-    <FieldError v-if="hasError && slots.error" :id="errorId">
-      <slot name="error" v-bind="validation">{{ errorMessage ?? validation.validationErrors.join(' ') }}</slot>
-    </FieldError>
-    <FieldError v-else-if="hasError" :id="errorId">{{ errorMessage ?? validation.validationErrors.join(' ') }}</FieldError>
+    <FieldError />
     <slot v-if="slots.files" name="files" :files="files" :remove-file="removeFile" />
     <DropZoneFileList v-else>
       <DropZoneFileItem

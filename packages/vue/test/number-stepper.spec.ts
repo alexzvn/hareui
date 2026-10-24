@@ -234,7 +234,7 @@ describe('NumberStepper', () => {
   it('wires an invalid field: aria-invalid and the error id in aria-describedby', async () => {
     const wrapper = mount(NumberStepper, { props: { id: 'g', label: 'Guests', description: 'Up to 10', errorMessage: 'Too many', invalid: true } })
     expect(wrapper.get(input).attributes('aria-invalid')).toBe('true')
-    expect(wrapper.get(input).attributes('aria-describedby')).toBe('g-description g-error')
+    expect(wrapper.get(input).attributes('aria-describedby')).toBe('g-error')
     expect(wrapper.get('#g-error').text()).toBe('Too many')
     await wrapper.setProps({ invalid: false })
     expect(wrapper.get(input).attributes('aria-invalid')).toBeUndefined()

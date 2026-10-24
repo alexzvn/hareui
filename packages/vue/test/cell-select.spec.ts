@@ -142,9 +142,12 @@ describe('CellSelect', () => {
     wrapper.unmount()
   })
 
-  it('describes the trigger by its description and error', () => {
+  it('describes the trigger by its description while valid, and only by the error while invalid', () => {
+    const valid = mount(CellSelect, { props: { items, label: 'Theme', id: 'v', description: 'Help', errorMessage: 'Bad' } })
+    expect(valid.get(trigger).attributes('aria-describedby')).toBe('v-description')
+    valid.unmount()
     const wrapper = mount(CellSelect, { props: { items, label: 'Theme', id: 'c', description: 'Help', invalid: true, errorMessage: 'Bad' } })
-    expect(wrapper.get(trigger).attributes('aria-describedby')).toBe('c-description c-error')
+    expect(wrapper.get(trigger).attributes('aria-describedby')).toBe('c-error')
     expect(wrapper.get('#c-error').text()).toBe('Bad')
     expect(wrapper.get(trigger).attributes('aria-invalid')).toBe('true')
     wrapper.unmount()

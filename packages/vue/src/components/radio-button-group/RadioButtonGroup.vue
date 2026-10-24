@@ -80,13 +80,11 @@ export interface RadioButtonGroupSlots {
 
 <script setup lang="ts">
 import { RadioGroupRoot } from 'reka-ui'
-import { computed, provide, useId, useSlots, useTemplateRef } from 'vue'
+import { computed, provide, useSlots, useTemplateRef } from 'vue'
 import { useComponentUI } from '../../composables/useComponentUI'
+import { useFieldChrome } from '../../composables/useFieldChrome'
 import { useFieldValidation } from '../../composables/useFieldValidation'
-import Description from '../description/Description.vue'
-import FieldError from '../field-error/FieldError.vue'
 import { useFieldsetDisabled } from '../fieldset/context'
-import Label from '../label/Label.vue'
 import { radioButtonGroupKey } from './context'
 
 // `invalid: undefined`: an absent boolean would cast to `false`, which counts as controlled-valid and hides validation errors
@@ -100,12 +98,6 @@ const ui = useComponentUI('radioButtonGroup', theme, () => ({
   layout: props.layout,
   variant: props.variant,
 }))
-
-const autoId = useId()
-const id = computed(() => props.id ?? autoId)
-const labelId = computed(() => `${id.value}-label`)
-const descriptionId = computed(() => `${id.value}-description`)
-const errorId = computed(() => `${id.value}-error`)
 
 // `null` (not `undefined`) when nothing is selected: Reka self-manages its state when `modelValue` is undefined,
 // which would let `readonly` items change selection behind our back.
@@ -128,10 +120,13 @@ const { validation, commitValidation } = useFieldValidation({
 })
 const invalid = computed(() => validation.value.isInvalid)
 
-const hasLabel = computed(() => !!(props.label || slots.label))
-const hasDescription = computed(() => !!(props.description || slots.description))
-const hasError = computed(() => invalid.value && !!(props.errorMessage || slots.error || validation.value.validationErrors.length))
-const describedBy = computed(() => [hasDescription.value && descriptionId.value, hasError.value && errorId.value].filter(Boolean).join(' ') || undefined)
+const { labelId, hasLabel, describedBy, FieldLabel, FieldDescription, FieldError } = useFieldChrome({
+  props,
+  slots,
+  invalid,
+  validation,
+  disabled: isDisabled,
+})
 
 provide(radioButtonGroupKey, {
   selected,
@@ -182,19 +177,9 @@ function onUpdate(value: unknown) {
     @keydown.capture="onKeydownCapture"
   >
     <!-- A group label names the radiogroup via aria-labelledby, not a form control. -->
-    <!-- Split so the no-slot branch has no forwarded `<slot>` and doesn't force-update the child on every render -->
-    <Label v-if="hasLabel && $slots.label" :id="labelId" as="span" :disabled="isDisabled">
-      <slot name="label">{{ label }}</slot>
-    </Label>
-    <Label v-else-if="hasLabel" :id="labelId" as="span" :disabled="isDisabled">{{ label }}</Label>
-    <Description v-if="hasDescription && $slots.description" :id="descriptionId">
-      <slot name="description">{{ description }}</slot>
-    </Description>
-    <Description v-else-if="hasDescription" :id="descriptionId">{{ description }}</Description>
+    <FieldLabel :id="labelId" as="span" :invalid="false" />
+    <FieldDescription />
     <slot />
-    <FieldError v-if="hasError && $slots.error" :id="errorId">
-      <slot name="error" v-bind="validation">{{ errorMessage ?? validation.validationErrors.join(' ') }}</slot>
-    </FieldError>
-    <FieldError v-else-if="hasError" :id="errorId">{{ errorMessage ?? validation.validationErrors.join(' ') }}</FieldError>
+    <FieldError />
   </RadioGroupRoot>
 </template>

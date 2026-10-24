@@ -39,7 +39,8 @@ describe('Form', () => {
     await flushPromises()
     const email = w.get('input[name=email]').element
     expect(email.getAttribute('aria-invalid')).toBe('true')
-    expect(descriptions(email)).toEqual(['We never share it.', 'This email is already registered'])
+    // TextField drops its description while invalid
+    expect(descriptions(email)).toEqual(['This email is already registered'])
     expect(w.get('input[name=name]').attributes('aria-invalid')).toBeUndefined()
     await expectAccessible(w)
   })

@@ -88,13 +88,11 @@ export interface InputOtpEmits {
 </script>
 
 <script setup lang="ts">
-import { computed, onBeforeUnmount, onMounted, ref, useAttrs, useId, useSlots, useTemplateRef, watch } from 'vue'
+import { computed, onBeforeUnmount, onMounted, ref, useAttrs, useSlots, useTemplateRef, watch } from 'vue'
 import { useComponentUI } from '../../composables/useComponentUI'
+import { useFieldChrome } from '../../composables/useFieldChrome'
 import { useFieldValidation } from '../../composables/useFieldValidation'
-import Description from '../description/Description.vue'
-import FieldError from '../field-error/FieldError.vue'
 import { useFieldsetDisabled } from '../fieldset/context'
-import Label from '../label/Label.vue'
 
 defineOptions({ inheritAttrs: false })
 
@@ -145,17 +143,14 @@ const invalid = computed(() => validation.value.isInvalid)
 
 const ui = useComponentUI('inputOtp', theme, () => ({ variant: props.variant }))
 
-const autoId = useId()
-const id = computed(() => props.id ?? autoId)
-const descriptionId = computed(() => `${id.value}-description`)
-const errorId = computed(() => `${id.value}-error`)
-const hasLabel = computed(() => !!(props.label || slots.label))
-const hasDescription = computed(() => !!(props.description || slots.description))
-const hasError = computed(() => invalid.value && !!(props.errorMessage || slots.error || validation.value.validationErrors.length))
-const describedBy = computed(() => [
-  hasDescription.value ? descriptionId.value : undefined,
-  hasError.value ? errorId.value : undefined,
-].filter(Boolean).join(' ') || undefined)
+const { id, describedBy, FieldLabel, FieldDescription, FieldError } = useFieldChrome({
+  props,
+  slots,
+  invalid,
+  validation,
+  disabled,
+  required: () => props.required,
+})
 
 // Slots are laid out in groups, a separator rendered between each; `[length]` (one group, no separator)
 // when `groups` isn't given.
@@ -333,11 +328,7 @@ function onPaste(event: ClipboardEvent) {
     :class="ui.base({ class: [props.ui?.base, props.class] })"
   >
     <!-- `base` is HareUI's own wrapper (HeroUI composes Label/InputOTP/Description itself), so it carries no data-slot -->
-    <!-- Each part renders the `<slot>` outlet only when that slot is passed: a forwarded slot would otherwise make Vue force-update the child on every render -->
-    <Label v-if="hasLabel && $slots.label" :for="id" :disabled="disabled" :invalid="invalid" :required="required">
-      <slot name="label">{{ label }}</slot>
-    </Label>
-    <Label v-else-if="hasLabel" :for="id" :disabled="disabled" :invalid="invalid" :required="required">{{ label }}</Label>
+    <FieldLabel :for="id" />
     <!-- Like the `input-otp` library's container: HeroUI's `data-slot="input-otp"` and state attributes land on the <input> -->
     <div
       ref="box"
@@ -401,13 +392,7 @@ function onPaste(event: ClipboardEvent) {
         @select="syncSelection"
       >
     </div>
-    <Description v-if="hasDescription && $slots.description" :id="descriptionId">
-      <slot name="description">{{ description }}</slot>
-    </Description>
-    <Description v-else-if="hasDescription" :id="descriptionId">{{ description }}</Description>
-    <FieldError v-if="hasError && $slots.error" :id="errorId">
-      <slot name="error" v-bind="validation">{{ errorMessage ?? validation.validationErrors.join(' ') }}</slot>
-    </FieldError>
-    <FieldError v-else-if="hasError" :id="errorId">{{ errorMessage ?? validation.validationErrors.join(' ') }}</FieldError>
+    <FieldDescription />
+    <FieldError />
   </div>
 </template>

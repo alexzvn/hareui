@@ -137,7 +137,8 @@ describe('searchField', () => {
     })
     const input = wrapper.get('input')
     expect(input.attributes('aria-labelledby')).toBe('heading')
-    expect(input.attributes('aria-describedby')).toBe('tips s-description s-error')
+    // The theme hides the description while invalid, so it's dropped from aria-describedby too
+    expect(input.attributes('aria-describedby')).toBe('tips s-error')
     expect(input.attributes('aria-invalid')).toBe('true')
     expect(wrapper.get('#s-error').text()).toBe('Bad')
     expect(wrapper.attributes('aria-describedby')).toBeUndefined()

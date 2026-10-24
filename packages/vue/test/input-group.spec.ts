@@ -37,7 +37,7 @@ describe('InputGroup', () => {
 
   it('inside a TextField reads field state; explicit props win', () => {
     const wrapper = mount(TextField, {
-      props: { id: 'f', disabled: true, invalid: true, description: 'Help' },
+      props: { id: 'f', disabled: true, invalid: true, description: 'Help', errorMessage: 'Bad' },
       slots: {
         default: () => [
           h(InputGroup, { 'data-test': 'ctx' }),
@@ -48,7 +48,8 @@ describe('InputGroup', () => {
     expect(input.attributes('id')).toBe('f')
     expect(input.attributes('disabled')).toBeDefined()
     expect(input.attributes('aria-invalid')).toBe('true')
-    expect(input.attributes('aria-describedby')).toBe('f-description')
+    // While invalid the field describes the control by its error, not its description.
+    expect(input.attributes('aria-describedby')).toBe('f-error')
     expect(wrapper.get('[data-test=ctx]').attributes('data-disabled')).toBe('true')
     expect(wrapper.get('[data-test=ctx]').attributes('data-invalid')).toBe('true')
 

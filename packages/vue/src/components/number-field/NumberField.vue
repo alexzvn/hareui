@@ -109,15 +109,13 @@ export interface NumberFieldSlots {
 
 <script setup lang="ts">
 import { NumberFieldDecrement, NumberFieldIncrement, NumberFieldInput, NumberFieldRoot } from 'reka-ui'
-import { computed, onBeforeUnmount, onMounted, ref, useAttrs, useId, useTemplateRef } from 'vue'
+import { computed, onBeforeUnmount, onMounted, ref, useAttrs, useTemplateRef } from 'vue'
 import { useComponentUI } from '../../composables/useComponentUI'
+import { useFieldChrome } from '../../composables/useFieldChrome'
 import { useFieldValidation } from '../../composables/useFieldValidation'
 import { useNumberValue } from '../../composables/useNumberValue'
 import { useSlotOutlet } from '../../composables/useSlotOutlet'
 import { useFieldsetDisabled } from '../fieldset/context'
-import Description from '../description/Description.vue'
-import FieldError from '../field-error/FieldError.vue'
-import Label from '../label/Label.vue'
 
 defineOptions({ inheritAttrs: false })
 
@@ -187,17 +185,15 @@ const rootAttrs = computed(() => {
   return rest
 })
 
-const autoId = useId()
-const id = computed(() => props.id ?? autoId)
-const hasLabel = computed(() => !!(props.label || slots.label))
-const hasDescription = computed(() => !!(props.description || slots.description))
-const hasError = computed(() => invalid.value && !!(props.errorMessage || slots.error || validation.value.validationErrors.length))
-const descriptionId = computed(() => `${id.value}-description`)
-const errorId = computed(() => `${id.value}-error`)
-const describedBy = computed(() => [
-  hasDescription.value ? descriptionId.value : undefined,
-  hasError.value ? errorId.value : undefined,
-].filter(Boolean).join(' ') || undefined)
+const { id, describedBy, FieldLabel, FieldDescription, FieldError } = useFieldChrome({
+  props,
+  slots,
+  invalid,
+  validation,
+  disabled: isDisabled,
+  required: () => props.required,
+  hideDescriptionWhenInvalid: true,
+})
 
 // As in RAC: the stepper buttons are named after the field ("Increase Width") and control its input
 const fieldName = computed(() => (attrs['aria-label'] as string | undefined) ?? props.label)
@@ -232,15 +228,7 @@ function onFocusOut(event: FocusEvent) {
     :data-readonly="readonly ? 'true' : undefined"
     :class="ui.base({ class: [props.ui?.base, props.class] })"
   >
-    <!-- Each part renders the `<slot>` outlet only when that slot is passed: a forwarded slot would otherwise make Vue force-update the child on every render -->
-    <Label v-if="hasLabel && $slots.label" :for="id" :disabled="isDisabled" :invalid="invalid" :required="required">
-      <slot name="label">
-        {{ label }}
-      </slot>
-    </Label>
-    <Label v-else-if="hasLabel" :for="id" :disabled="isDisabled" :invalid="invalid" :required="required">
-      {{ label }}
-    </Label>
+    <FieldLabel :for="id" />
     <NumberFieldRoot
       :id="id"
       :model-value="displayValue"
@@ -322,22 +310,8 @@ function onFocusOut(event: FocusEvent) {
         </IncrementOutlet>
       </NumberFieldIncrement>
     </NumberFieldRoot>
-    <Description v-if="hasDescription && $slots.description" :id="descriptionId">
-      <slot name="description">
-        {{ description }}
-      </slot>
-    </Description>
-    <Description v-else-if="hasDescription" :id="descriptionId">
-      {{ description }}
-    </Description>
-    <FieldError v-if="hasError && $slots.error" :id="errorId">
-      <slot name="error" v-bind="validation">
-        {{ errorMessage ?? validation.validationErrors.join(' ') }}
-      </slot>
-    </FieldError>
-    <FieldError v-else-if="hasError" :id="errorId">
-      {{ errorMessage ?? validation.validationErrors.join(' ') }}
-    </FieldError>
+    <FieldDescription />
+    <FieldError />
   </div>
   <input v-if="name" type="hidden" :name="name" :value="formValue ?? ''" :disabled="isDisabled || undefined">
 </template>

@@ -158,16 +158,14 @@ export interface SelectEmits {
 
 <script setup lang="ts" generic="T extends ListBoxItem = ListBoxItem">
 import { injectPopoverRootContext, PopoverContent, PopoverPortal, PopoverRoot, PopoverTrigger } from 'reka-ui'
-import { computed, defineComponent, provide, ref, useAttrs, useId, useTemplateRef, watch, watchEffect } from 'vue'
+import { computed, defineComponent, provide, ref, useAttrs, useTemplateRef, watch, watchEffect } from 'vue'
 import { useComponentUI } from '../../composables/useComponentUI'
+import { useFieldChrome } from '../../composables/useFieldChrome'
 import { useFieldValidation } from '../../composables/useFieldValidation'
 import { keyboardModalityKey, useKeyboardModality } from '../../composables/useKeyboardModality'
 import { usePortal } from '../../composables/usePortal'
 import { useFieldsetDisabled } from '../fieldset/context'
 import listBoxTheme from '../list-box/theme'
-import Description from '../description/Description.vue'
-import FieldError from '../field-error/FieldError.vue'
-import Label from '../label/Label.vue'
 import ListBox from '../list-box/ListBox.vue'
 import { useTypeahead } from '../list-box/useTypeahead'
 import { usePressRelease } from './pressRelease'
@@ -390,19 +388,16 @@ function onHiddenInvalid() {
 }
 
 const attrs = useAttrs()
-const autoId = useId()
-const id = computed(() => props.id ?? autoId)
-const labelId = computed(() => `${id.value}-label`)
+const { id, labelId, hasLabel, describedBy, FieldLabel, FieldDescription, FieldError } = useFieldChrome({
+  props,
+  slots,
+  invalid,
+  validation,
+  disabled,
+  required: () => props.required,
+  hideDescriptionWhenInvalid: true,
+})
 const valueId = computed(() => `${id.value}-value`)
-const hasLabel = computed(() => !!(props.label || slots.label))
-const hasDescription = computed(() => !!(props.description || slots.description))
-const hasError = computed(() => invalid.value && !!(props.errorMessage || slots.error || validation.value.validationErrors.length))
-const descriptionId = computed(() => `${id.value}-description`)
-const errorId = computed(() => `${id.value}-error`)
-const describedBy = computed(() => [
-  hasDescription.value ? descriptionId.value : undefined,
-  hasError.value ? errorId.value : undefined,
-].filter(Boolean).join(' ') || undefined)
 // `aria-labelledby` overrides `aria-label`, so an `aria-label`-only trigger references itself to keep that name (as RAC does)
 const triggerLabelledBy = computed(() => [
   attrs['aria-labelledby'] as string | undefined,
@@ -461,31 +456,7 @@ watch(disabled, (disabled) => {
     :data-required="required ? 'true' : undefined"
     :class="ui.base({ class: [props.ui?.base, props.class] })"
   >
-    <!-- Each slot site is split so the no-slot branch isn't compiled as a forwarded slot, which would force-update the child on every render -->
-    <Label
-      v-if="hasLabel && $slots.label"
-      :id="labelId"
-      as="span"
-      :disabled="disabled"
-      :invalid="invalid"
-      :required="required"
-      @click="triggerEl()?.focus()"
-    >
-      <slot name="label">
-        {{ label }}
-      </slot>
-    </Label>
-    <Label
-      v-else-if="hasLabel"
-      :id="labelId"
-      as="span"
-      :disabled="disabled"
-      :invalid="invalid"
-      :required="required"
-      @click="triggerEl()?.focus()"
-    >
-      {{ label }}
-    </Label>
+    <FieldLabel :id="labelId" as="span" @click="triggerEl()?.focus()" />
     <PopoverRoot :open="isOpen" :modal="false" @update:open="onRootOpenChange">
       <PopoverLabel />
       <PopoverTrigger as-child>
@@ -609,22 +580,8 @@ watch(disabled, (disabled) => {
         </PopoverContent>
       </PopoverPortal>
     </PopoverRoot>
-    <Description v-if="hasDescription && $slots.description" :id="descriptionId">
-      <slot name="description">
-        {{ description }}
-      </slot>
-    </Description>
-    <Description v-else-if="hasDescription" :id="descriptionId">
-      {{ description }}
-    </Description>
-    <FieldError v-if="hasError && $slots.error" :id="errorId">
-      <slot name="error" v-bind="validation">
-        {{ errorMessage ?? validation.validationErrors.join(' ') }}
-      </slot>
-    </FieldError>
-    <FieldError v-else-if="hasError" :id="errorId">
-      {{ errorMessage ?? validation.validationErrors.join(' ') }}
-    </FieldError>
+    <FieldDescription />
+    <FieldError />
     <!-- RAC HiddenSelect: carries form data and native `required` validity -->
     <div aria-hidden="true" data-a11y-ignore="aria-hidden-focus" style="border: 0; clip-path: inset(50%); height: 1px; margin: -1px; overflow: hidden; padding: 0; position: absolute; white-space: nowrap; width: 1px;">
       <select
