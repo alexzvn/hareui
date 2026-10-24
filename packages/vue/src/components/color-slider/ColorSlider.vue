@@ -132,7 +132,7 @@ import {
   useId,
   useLocale,
 } from 'reka-ui'
-import { computed, ref, watch } from 'vue'
+import { computed, ref, useAttrs, watch } from 'vue'
 import { useColorPickerContext } from '../color-picker/context'
 import { useComponentUI } from '../../composables/useComponentUI'
 import { useFieldsetDisabled } from '../fieldset/context'
@@ -302,6 +302,12 @@ const hasLabel = computed(() => !!(props.label || slots.label))
 const hasOutput = computed(() => props.showOutput ?? hasLabel.value)
 const ui = useComponentUI('colorSlider', theme, () => ({ orientation: props.orientation, hasLabel: hasLabel.value, hasOutput: hasOutput.value }))
 
+// RAC labels the slider's input with the visible label, or with the group's own `aria-label`/`aria-labelledby`
+// (fallthrough on the root here); Reka's thumb only carries the channel name.
+const attrs = useAttrs()
+const thumbLabel = computed(() => typeof attrs['aria-label'] === 'string' && attrs['aria-label'] ? attrs['aria-label'] : channelName.value)
+const thumbLabelledBy = computed(() => hasLabel.value ? autoId : attrs['aria-labelledby'] as string | undefined)
+
 // reka-limitation: Reka's thumb exposes no `isDragging` state (RAC's `data-dragging`), so it is tracked
 // here: a press anywhere on the slider starts a drag of its single thumb.
 const isDragging = ref(false)
@@ -325,6 +331,7 @@ function onPointerEnd() {
     :disabled="isDisabled"
     :step="step"
     data-slot="color-slider"
+    role="group"
     :aria-labelledby="hasLabel ? autoId : undefined"
     :class="ui.base({ class: [props.ui?.base, props.class] })"
     @update:color="handleUpdate"
@@ -369,6 +376,9 @@ function onPointerEnd() {
       <ColorSliderThumb
         ref="thumbRef"
         data-slot="color-slider-thumb"
+        :aria-label="thumbLabel"
+        :aria-labelledby="thumbLabelledBy"
+        :aria-valuetext="valueText"
         :data-dragging="isDragging ? 'true' : undefined"
         :style="thumbStyle"
         :class="ui.thumb({ class: props.ui?.thumb })"

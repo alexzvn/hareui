@@ -1,9 +1,11 @@
 import { flushPromises, mount } from '@vue/test-utils'
 import { describe, expect, it } from 'vitest'
-import { h, ref } from 'vue'
+import { h, nextTick, ref } from 'vue'
+import type { CellSwitchProps } from '../src/components/cell-switch/CellSwitch.vue'
 import CellSwitch from '../src/components/cell-switch/CellSwitch.vue'
 import Fieldset from '../src/components/fieldset/Fieldset.vue'
 import Form from '../src/components/form/Form.vue'
+import { expectAccessible } from './a11y'
 
 const row = '[data-slot=switch-content]'
 
@@ -85,6 +87,91 @@ describe('CellSwitch', () => {
     expect(error()).toBeUndefined()
     expect(wrapper.get(row).attributes('aria-invalid')).toBeUndefined()
     expect(form.checkValidity()).toBe(true)
+    wrapper.unmount()
+  })
+})
+
+// A native button toggles on Space unless a handler cancelled the key; happy-dom has no activation behaviour, so
+// the press helper performs it when the keys get through.
+async function pressSpace(el: Element) {
+  const down = new KeyboardEvent('keydown', { key: ' ', code: 'Space', bubbles: true, cancelable: true })
+  const up = new KeyboardEvent('keyup', { key: ' ', code: 'Space', bubbles: true, cancelable: true })
+  el.dispatchEvent(down)
+  el.dispatchEvent(up)
+  if (el instanceof HTMLButtonElement && !el.disabled && !down.defaultPrevented && !up.defaultPrevented)
+    el.click()
+  await nextTick()
+}
+
+describe('CellSwitch accessibility', () => {
+  it.each<[string, CellSwitchProps]>([
+    ['off', {}],
+    ['on', { defaultValue: true }],
+    ['secondary', { variant: 'secondary' }],
+    ['disabled', { disabled: true }],
+    ['read-only', { readonly: true, defaultValue: true }],
+    ['required', { required: true }],
+    ['invalid with an error message', { invalid: true, errorMessage: 'Turn animations on' }],
+  ])('has no axe violations when %s', async (_, props) => {
+    const wrapper = mount(CellSwitch, { props: { label: 'Animations', ...props }, attachTo: document.body })
+    await expectAccessible(wrapper)
+    wrapper.unmount()
+  })
+
+  it('has no axe violations inside a form, with its hidden input', async () => {
+    const wrapper = mount(() => h('form', null, h(CellSwitch, { label: 'Animations', name: 'animations', required: true })), { attachTo: document.body })
+    await flushPromises()
+    await expectAccessible(wrapper)
+    wrapper.unmount()
+  })
+
+  it('is named by aria-label when the row has no text', async () => {
+    const wrapper = mount(CellSwitch, { attrs: { 'aria-label': 'Animations' }, slots: { icon: () => h('svg', { 'aria-hidden': 'true' }) }, attachTo: document.body })
+    expect(wrapper.get(row).attributes('aria-label')).toBe('Animations')
+    await expectAccessible(wrapper)
+    wrapper.unmount()
+  })
+
+  it('the row is a switch named by its label, with required and the error wired up', () => {
+    const wrapper = mount(CellSwitch, { props: { label: 'Animations', required: true, invalid: true, errorMessage: 'Turn animations on' }, attachTo: document.body })
+    const trigger = wrapper.get(row)
+    expect(trigger.attributes('aria-required')).toBe('true')
+    expect(trigger.attributes('aria-invalid')).toBe('true')
+    const ids = trigger.attributes('aria-describedby')!.split(' ')
+    expect(ids.map(id => document.getElementById(id)?.textContent?.trim())).toEqual(['Turn animations on'])
+    wrapper.unmount()
+  })
+
+  it('the row is a single tab stop that Space toggles', async () => {
+    const wrapper = mount(CellSwitch, { props: { label: 'Animations' }, attachTo: document.body })
+    const trigger = wrapper.get(row).element as HTMLButtonElement
+    expect(trigger.tagName).toBe('BUTTON')
+    expect(trigger.tabIndex).toBe(0)
+    trigger.focus()
+    await pressSpace(trigger)
+    expect(wrapper.emitted('update:modelValue')).toEqual([[true]])
+    expect(trigger.getAttribute('aria-checked')).toBe('true')
+    expect(document.activeElement).toBe(trigger)
+    wrapper.unmount()
+  })
+
+  it('read-only stays focusable and announced, and Space does not change it', async () => {
+    const wrapper = mount(CellSwitch, { props: { label: 'Animations', readonly: true, defaultValue: true }, attachTo: document.body })
+    const trigger = wrapper.get(row).element as HTMLButtonElement
+    expect(trigger.getAttribute('aria-readonly')).toBe('true')
+    trigger.focus()
+    expect(document.activeElement).toBe(trigger)
+    await pressSpace(trigger)
+    expect(wrapper.emitted('update:modelValue')).toBeUndefined()
+    expect(trigger.getAttribute('aria-checked')).toBe('true')
+    wrapper.unmount()
+  })
+
+  it('a disabled row is removed from the tab order', () => {
+    const wrapper = mount(CellSwitch, { props: { label: 'Animations', disabled: true }, attachTo: document.body })
+    const trigger = wrapper.get(row).element as HTMLButtonElement
+    trigger.focus()
+    expect(document.activeElement).not.toBe(trigger)
     wrapper.unmount()
   })
 })

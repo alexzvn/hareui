@@ -141,6 +141,7 @@ const toHex = (color: Color) => colorToString(color, 'hex').slice(0, 7).toUpperC
           <ColorSwatchPicker
             v-if="presets?.length"
             :items="presets"
+            aria-label="Color presets"
             size="xs"
             :ui="{ indicator: 'hidden' }"
             :class="ui.presets({ class: props.ui?.presets })"

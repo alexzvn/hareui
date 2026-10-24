@@ -3,11 +3,99 @@ import { colorToString, parseColor } from 'reka-ui'
 import { describe, expect, it } from 'vitest'
 import ColorArea from '../src/components/color-area/ColorArea.vue'
 import { ColorPickerContextKey } from '../src/components/color-picker/context'
+import { expectAccessible } from './a11y'
 
 const area = '[data-slot=color-area]'
 const thumb = '[data-slot=color-area-thumb]'
 
-describe('colorArea', () => {
+describe('ColorArea', () => {
+  it('passes axe idle, labelled and disabled', async () => {
+    const idle = mount(ColorArea, { attachTo: document.body, props: { defaultValue: '#0485F7', colorSpace: 'hsb', xChannel: 'saturation', yChannel: 'brightness' } })
+    await expectAccessible(idle)
+    const labelled = mount(ColorArea, { attachTo: document.body, props: { defaultValue: '#0485F7' }, attrs: { 'aria-label': 'Background colour' } })
+    await expectAccessible(labelled)
+    const disabled = mount(ColorArea, { attachTo: document.body, props: { defaultValue: '#0485F7', disabled: true }, attrs: { 'aria-label': 'Background colour' } })
+    await expectAccessible(disabled)
+    idle.unmount()
+    labelled.unmount()
+    disabled.unmount()
+  })
+
+  it('passes axe while the thumb has keyboard focus', async () => {
+    const wrapper = mount(ColorArea, { attachTo: document.body, props: { defaultValue: '#0485F7' } })
+    ;(wrapper.get(thumb).element as HTMLElement).focus()
+    await wrapper.get(thumb).trigger('keydown', { key: 'ArrowRight' })
+    await expectAccessible(wrapper)
+    wrapper.unmount()
+  })
+
+  it('the thumb is a single tab stop with slider semantics and the x channel as its value', () => {
+    const wrapper = mount(ColorArea, { props: { defaultValue: 'hsb(200, 50%, 30%)', colorSpace: 'hsb', xChannel: 'saturation', yChannel: 'brightness' } })
+    const t = wrapper.get(thumb)
+    expect(t.attributes('tabindex')).toBe('0')
+    expect(wrapper.findAll('[tabindex="0"]')).toHaveLength(1)
+    expect(t.attributes('aria-valuenow')).toBe('50')
+    expect(t.attributes('aria-valuemin')).toBe('0')
+    expect(t.attributes('aria-valuemax')).toBe('100')
+    expect(t.attributes('aria-label')).toBe('Saturation, Brightness')
+    wrapper.unmount()
+  })
+
+  it('arrows, Page Up/Down, Home/End and Shift step both channels and update aria-valuetext', async () => {
+    const wrapper = mount(ColorArea, { props: { defaultValue: 'hsb(200, 50%, 50%)', colorSpace: 'hsb', xChannel: 'saturation', yChannel: 'brightness' } })
+    const t = wrapper.get(thumb)
+    const press = async (key: string, shiftKey = false) => {
+      await t.trigger('keydown', { key, shiftKey })
+      return t.attributes('aria-valuetext')
+    }
+    expect(await press('ArrowRight')).toBe('Saturation 51, Brightness 50')
+    expect(await press('ArrowLeft')).toBe('Saturation 50, Brightness 50')
+    expect(await press('ArrowUp')).toBe('Saturation 50, Brightness 51')
+    expect(await press('ArrowDown')).toBe('Saturation 50, Brightness 50')
+    expect(await press('PageUp')).toBe('Saturation 50, Brightness 60')
+    expect(await press('PageDown')).toBe('Saturation 50, Brightness 50')
+    expect(await press('Home')).toBe('Saturation 40, Brightness 50')
+    expect(await press('End')).toBe('Saturation 50, Brightness 50')
+    expect(await press('ArrowRight', true)).toBe('Saturation 60, Brightness 50')
+    expect(t.attributes('aria-valuenow')).toBe('60')
+    wrapper.unmount()
+  })
+
+  it('ignores the keyboard when disabled and exposes aria-disabled', async () => {
+    const wrapper = mount(ColorArea, { props: { defaultValue: 'hsb(200, 50%, 50%)', colorSpace: 'hsb', xChannel: 'saturation', yChannel: 'brightness', disabled: true } })
+    await wrapper.get(area).trigger('keydown', { key: 'ArrowRight' })
+    expect(wrapper.emitted('update:modelValue')).toBeUndefined()
+    expect(wrapper.get(area).attributes('aria-disabled')).toBe('true')
+    expect(wrapper.get('[role=group]').attributes('aria-disabled')).toBe('true')
+    wrapper.unmount()
+  })
+
+  it('a press on the area moves focus to the thumb', async () => {
+    const wrapper = mount(ColorArea, { attachTo: document.body, props: { defaultValue: '#0485F7' } })
+    await wrapper.get(area).trigger('pointerdown', { pointerId: 1, clientX: 0, clientY: 0 })
+    expect(document.activeElement).toBe(wrapper.get(thumb).element)
+    wrapper.unmount()
+  })
+
+  it('names the group and the thumb with a consumer aria-label, keeping the channel names', () => {
+    const wrapper = mount(ColorArea, { props: { defaultValue: '#0485F7', colorSpace: 'hsb', xChannel: 'saturation', yChannel: 'brightness' }, attrs: { 'aria-label': 'Background colour' } })
+    expect(wrapper.get('[role=group]').attributes('aria-label')).toBe('Background colour')
+    expect(wrapper.get(thumb).attributes('aria-label')).toBe('Background colour, Saturation, Brightness')
+    wrapper.unmount()
+  })
+
+  it('names the thumb from a consumer aria-labelledby, keeping the channel names', () => {
+    const wrapper = mount({
+      components: { ColorArea },
+      template: '<div><span id="area-label">Accent</span><ColorArea aria-labelledby="area-label" default-value="#0485F7" color-space="hsb" x-channel="saturation" y-channel="brightness" /></div>',
+    }, { attachTo: document.body })
+    const t = wrapper.get(thumb).element
+    const ids = t.getAttribute('aria-labelledby')!.split(' ')
+    expect(ids[0]).toBe('area-label')
+    expect(ids.map(id => document.getElementById(id)?.getAttribute('aria-label') ?? document.getElementById(id)?.textContent)).toEqual(['Accent', 'Saturation, Brightness'])
+    wrapper.unmount()
+  })
+
   it('renders the area with a slider thumb exposing both channels', () => {
     const wrapper = mount(ColorArea, { props: { defaultValue: 'hsb(219, 58%, 93%)', xChannel: 'saturation', yChannel: 'brightness' } })
     expect(wrapper.find(area).exists()).toBe(true)

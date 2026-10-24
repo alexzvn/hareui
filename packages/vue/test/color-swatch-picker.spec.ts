@@ -2,13 +2,118 @@ import { mount, type VueWrapper } from '@vue/test-utils'
 import { describe, expect, it } from 'vitest'
 import { h, nextTick } from 'vue'
 import { colorToString, parseColor } from 'reka-ui'
+import type { ColorSwatchPickerProps } from '../src/components/color-swatch-picker/ColorSwatchPicker.vue'
 import ColorSwatchPicker from '../src/components/color-swatch-picker/ColorSwatchPicker.vue'
 import { ColorPickerContextKey } from '../src/components/color-picker/context'
+import { expectAccessible } from './a11y'
 
 const items = ['#F43F5E', '#8B5CF6', { value: '#3B82F6', label: 'Sky' }]
 const opts = (c: VueWrapper) => c.findAll('[data-slot=color-swatch-picker-item]')
+const label = { 'aria-label': 'Brand colours' }
+// Reka highlights the selected (or first) option a couple of ticks after mount
+const settle = () => new Promise(resolve => setTimeout(resolve, 0))
 
-describe('colorSwatchPicker', () => {
+describe('ColorSwatchPicker', () => {
+  it('passes axe idle, selected, with a disabled item, fully disabled and stacked', async () => {
+    const cases: ColorSwatchPickerProps[] = [
+      { items },
+      { items, defaultValue: '#8B5CF6' },
+      { items: [{ value: '#F43F5E', disabled: true }, '#8B5CF6', '#3B82F6'], defaultValue: '#3B82F6' },
+      { items, disabled: true, defaultValue: '#8B5CF6' },
+      { items, layout: 'stack', defaultValue: '#F43F5E' },
+    ]
+    for (const props of cases) {
+      const w = mount(ColorSwatchPicker, { props, attrs: label, attachTo: document.body })
+      await settle()
+      await expectAccessible(w)
+      w.unmount()
+    }
+  })
+
+  it('passes axe while an option has keyboard focus', async () => {
+    const w = mount(ColorSwatchPicker, { props: { items, defaultValue: '#8B5CF6' }, attrs: label, attachTo: document.body })
+    await settle()
+    ;(opts(w)[1].element as HTMLElement).focus()
+    await nextTick()
+    await expectAccessible(w)
+    w.unmount()
+  })
+
+  it('names the listbox from aria-label and each option from its colour', () => {
+    const w = mount(ColorSwatchPicker, { props: { items }, attrs: label })
+    expect(w.get('[role=listbox]').attributes('aria-label')).toBe('Brand colours')
+    const names = opts(w).map(o => o.attributes('aria-label'))
+    expect(names[2]).toBe('Sky')
+    expect(names.every(n => !!n)).toBe(true)
+    w.unmount()
+  })
+
+  it('aria-selected follows the selection and disabled items expose aria-disabled', async () => {
+    const w = mount(ColorSwatchPicker, { props: { items: ['#F43F5E', { value: '#8B5CF6', disabled: true }, '#3B82F6'], defaultValue: '#F43F5E' }, attrs: label })
+    expect(opts(w).map(o => o.attributes('aria-selected'))).toEqual(['true', 'false', 'false'])
+    expect(opts(w)[1].attributes('aria-disabled')).toBe('true')
+    await opts(w)[2].trigger('click')
+    expect(opts(w).map(o => o.attributes('aria-selected'))).toEqual(['false', 'false', 'true'])
+    w.unmount()
+  })
+
+  it('is a single tab stop on the selected swatch (roving tabindex)', async () => {
+    const w = mount(ColorSwatchPicker, { props: { items, defaultValue: '#8B5CF6' }, attrs: label, attachTo: document.body })
+    await settle()
+    const tabbable = w.findAll('[tabindex="0"]')
+    expect(tabbable).toHaveLength(1)
+    expect(tabbable[0].element).toBe(opts(w)[1].element)
+    w.unmount()
+  })
+
+  it('arrow keys move focus, Home/End jump to the ends and skip disabled swatches', async () => {
+    const w = mount(ColorSwatchPicker, {
+      props: { items: [{ value: '#F43F5E', disabled: true }, '#8B5CF6', '#3B82F6', '#22C55E', { value: '#EAB308', disabled: true }] },
+      attrs: label,
+      attachTo: document.body,
+    })
+    await settle()
+    const press = async (key: string) => {
+      ;(document.activeElement as HTMLElement).dispatchEvent(new KeyboardEvent('keydown', { key, bubbles: true, cancelable: true }))
+      await nextTick()
+      await nextTick()
+      return opts(w).findIndex(o => o.element === document.activeElement)
+    }
+    ;(opts(w)[1].element as HTMLElement).focus()
+    expect(await press('ArrowRight')).toBe(2)
+    expect(await press('ArrowRight')).toBe(3)
+    expect(await press('ArrowLeft')).toBe(2)
+    expect(await press('End')).toBe(3)
+    expect(await press('Home')).toBe(1)
+    w.unmount()
+  })
+
+  it('Enter and Space select the focused swatch', async () => {
+    const w = mount(ColorSwatchPicker, { props: { items }, attrs: label, attachTo: document.body })
+    await settle()
+    const node = opts(w)[1].element as HTMLElement
+    node.focus()
+    node.dispatchEvent(new KeyboardEvent('keydown', { key: 'Enter', bubbles: true, cancelable: true }))
+    await nextTick()
+    expect(w.emitted('update:modelValue')?.at(-1)).toEqual(['#8B5CF6'])
+    const next = opts(w)[2].element as HTMLElement
+    next.focus()
+    next.dispatchEvent(new KeyboardEvent('keydown', { key: ' ', bubbles: true, cancelable: true }))
+    await nextTick()
+    expect(w.emitted('update:modelValue')?.at(-1)).toEqual(['#3B82F6'])
+    expect(opts(w)[2].attributes('aria-selected')).toBe('true')
+    w.unmount()
+  })
+
+  it('fully disabled removes every swatch from the tab order', async () => {
+    const w = mount(ColorSwatchPicker, { props: { items, disabled: true }, attrs: label, attachTo: document.body })
+    await settle()
+    expect(w.findAll('[tabindex="0"]')).toHaveLength(0)
+    expect(w.get('[role=listbox]').attributes('aria-disabled')).toBe('true')
+    expect(opts(w).map(o => o.attributes('aria-disabled'))).toEqual(['true', 'true', 'true'])
+    w.unmount()
+  })
+
   it('renders one listbox option per item with a ColorSwatch each', () => {
     const w = mount(ColorSwatchPicker, { props: { items } })
     expect(w.find('[data-slot=color-swatch-picker]').attributes('role')).toBe('listbox')
