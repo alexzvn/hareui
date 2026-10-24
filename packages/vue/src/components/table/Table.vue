@@ -140,7 +140,7 @@ export interface TableSlots {
 </script>
 
 <script setup lang="ts">
-import { computed, nextTick, onBeforeUnmount, ref, useSlots, watch } from 'vue'
+import { computed, nextTick, onBeforeUnmount, ref, useId, useSlots, watch } from 'vue'
 import { useComponentUI } from '../../composables/useComponentUI'
 import { useSelectionManager } from '../../composables/useSelectionManager'
 import { calculateColumnSizes, DEFAULT_MIN_COLUMN_WIDTH } from './columnSizes'
@@ -304,6 +304,17 @@ function minWidthOf(column: TableColumn): number {
   return column.minWidth ?? DEFAULT_MIN_COLUMN_WIDTH
 }
 
+/** A resizable column's laid-out width; its minimum until the container has been measured (the layout clamps a 0px container to the minimums). */
+function columnWidthOf(column: TableColumn): number {
+  return columnWidths.value[column.key] ?? minWidthOf(column)
+}
+
+const baseId = useId()
+// By position, not key: a key may hold characters (spaces) that would split an `aria-labelledby` id list
+function columnHeaderId(column: TableColumn) {
+  return `${baseId}-column-${props.columns.indexOf(column)}`
+}
+
 function resizeColumn(column: TableColumn, width: number) {
   width = Math.max(minWidthOf(column), Math.min(column.maxWidth ?? Number.MAX_SAFE_INTEGER, Math.floor(width)))
   const index = props.columns.indexOf(column)
@@ -352,7 +363,7 @@ function onResizerKeydown(column: TableColumn, event: KeyboardEvent) {
   event.preventDefault()
   const step = event.shiftKey ? 50 : 10
   const dir = event.key === 'ArrowRight' ? 1 : -1
-  resizeColumn(column, (columnWidths.value[column.key] ?? 0) + dir * step)
+  resizeColumn(column, columnWidthOf(column) + dir * step)
 }
 
 onBeforeUnmount(() => {
@@ -539,10 +550,18 @@ function alignClass(column: TableColumn) {
               @click.stop
               @focus="focusTarget = { kind: 'header', index: 0 }"
             >
-              <Checkbox :model-value="selectAllModel" aria-label="Select all" tabindex="-1" @update:model-value="toggleSelectAll" />
+              <!-- Like React Aria's select-all checkbox: only multiple selection can select every row, so single selection disables it and names it "Select". -->
+              <Checkbox
+                :model-value="selectAllModel"
+                :aria-label="selectionMode === 'multiple' ? 'Select all' : 'Select'"
+                :disabled="selectionMode !== 'multiple' || selectableKeys.length === 0"
+                tabindex="-1"
+                @update:model-value="toggleSelectAll"
+              />
             </th>
             <th
               v-for="(column, columnIndex) in columns"
+              :id="column.resizable ? columnHeaderId(column) : undefined"
               :key="column.key"
               scope="col"
               data-slot="table-column"
@@ -581,12 +600,17 @@ function alignClass(column: TableColumn) {
                 </svg>
               </span>
               <slot v-else :name="`${column.key}-header`" :column="column" :sort-direction="undefined">{{ column.label }}</slot>
+              <!-- Named and valued like React Aria's ColumnResizer input: "Resizer <column>", its width in pixels. -->
               <div
                 v-if="column.resizable"
+                :id="`${columnHeaderId(column)}-resizer`"
                 data-slot="table-column-resizer"
                 role="separator"
                 aria-orientation="vertical"
-                :aria-valuenow="columnWidths[column.key]"
+                aria-label="Resizer"
+                :aria-labelledby="`${columnHeaderId(column)}-resizer ${columnHeaderId(column)}`"
+                :aria-valuenow="columnWidthOf(column)"
+                :aria-valuetext="`${columnWidthOf(column)} pixels`"
                 :aria-valuemin="minWidthOf(column)"
                 :aria-valuemax="column.maxWidth"
                 tabindex="0"

@@ -1,6 +1,7 @@
 import { flushPromises, mount } from '@vue/test-utils'
 import { afterEach, describe, expect, it, vi } from 'vitest'
 import Table from '../src/components/table/Table.vue'
+import { expectAccessible } from './a11y'
 
 const columns = [
   { key: 'name', label: 'Name', isRowHeader: true, sortable: true },
@@ -236,6 +237,220 @@ describe('Table single tab stop', () => {
     await press(' ')
     expect(selectedIds(wrapper)).toEqual(['1'])
     wrapper.unmount()
+  })
+})
+
+describe('Table accessibility', () => {
+  const named = { columns, ariaLabel: 'People' }
+  const focused = () => document.activeElement as HTMLElement | null
+
+  it('is accessible idle, sorted, and with a disabled row', async () => {
+    const wrapper = mount(Table, { props: { ...named, rows, defaultSortDescriptor: { column: 'name', direction: 'ascending' } }, attachTo: document.body })
+    expect(wrapper.get('table').attributes('aria-label')).toBe('People')
+    await expectAccessible(wrapper)
+    wrapper.unmount()
+  })
+
+  it.each([
+    ['multiple, partly selected', { selectionMode: 'multiple', defaultSelectedKeys: new Set([1]) }],
+    ['multiple, all selected', { selectionMode: 'multiple', defaultSelectedKeys: 'all' }],
+    ['single', { selectionMode: 'single', defaultSelectedKeys: new Set([1]) }],
+  ] as const)('is accessible with %s selection', async (_name, selection) => {
+    const wrapper = mount(Table, { props: { ...named, rows, ...selection }, attachTo: document.body })
+    await expectAccessible(wrapper)
+    wrapper.unmount()
+  })
+
+  it('is accessible empty, loading more, as a tree and with resizable columns', async () => {
+    vi.stubGlobal('ResizeObserver', class { observe() {} disconnect() {} })
+    const tree = [{ id: 'a', name: 'Folder', role: '-', children: [{ id: 'b', name: 'File', role: '-' }] }]
+    const resizable = [{ key: 'name', label: 'Name', isRowHeader: true, resizable: true }, { key: 'role', label: 'Role', resizable: true }]
+    const wrappers = [
+      mount(Table, { props: { ...named, rows: [] }, slots: { empty: 'No people' }, attachTo: document.body }),
+      mount(Table, { props: { ...named, rows, hasMore: true, loading: true }, attachTo: document.body }),
+      mount(Table, { props: { ...named, rows: tree, treeColumn: 'name', defaultExpandedKeys: new Set(['a']) }, attachTo: document.body }),
+      mount(Table, { props: { ...named, rows, columns: resizable }, attachTo: document.body }),
+    ]
+    for (const wrapper of wrappers) {
+      await expectAccessible(wrapper)
+      wrapper.unmount()
+    }
+  })
+
+  it('reflects selection on rows and the select-all checkbox, and labels every checkbox', async () => {
+    const wrapper = mount(Table, { props: { ...named, rows: people, selectionMode: 'multiple', defaultSelectedKeys: new Set([2]) }, attachTo: document.body })
+    const selectAll = () => wrapper.get('thead [role="checkbox"]')
+    expect(selectAll().attributes('aria-label')).toBe('Select all')
+    expect(selectAll().attributes('aria-checked')).toBe('mixed')
+    expect(bodyRows(wrapper).map(r => r.attributes('aria-selected'))).toEqual(['false', 'true', 'false', 'false', 'false'])
+    expect(wrapper.findAll('tbody [role="checkbox"]').map(c => c.attributes('aria-label'))).toEqual(people.map((_, i) => `Select row ${i + 1}`))
+    row(wrapper, 1).element.focus()
+    await press('a', { ctrlKey: true })
+    expect(selectAll().attributes('aria-checked')).toBe('true')
+    expect(bodyRows(wrapper).every(r => r.attributes('aria-selected') === 'true')).toBe(true)
+    wrapper.unmount()
+  })
+
+  it('exposes no selection state without a selection mode', () => {
+    const wrapper = mount(Table, { props: { ...named, rows } })
+    expect(bodyRows(wrapper).map(r => r.attributes('aria-selected'))).toEqual([undefined, undefined])
+    expect(wrapper.find('[role="checkbox"]').exists()).toBe(false)
+  })
+
+  it('disables the header checkbox in single selection, so it can never select every row', async () => {
+    const wrapper = mount(Table, { props: { ...named, rows: people, selectionMode: 'single' }, attachTo: document.body })
+    const header = wrapper.get('thead [role="checkbox"]')
+    expect(header.attributes('aria-label')).toBe('Select')
+    expect(header.attributes('disabled')).toBeDefined()
+    await header.trigger('click')
+    expect(selectedIds(wrapper)).toEqual([])
+    wrapper.unmount()
+  })
+
+  it('exposes disabled rows and keeps them out of the selection, while still letting focus pass through', async () => {
+    const wrapper = mount(Table, { props: { ...named, rows, selectionMode: 'multiple' }, attachTo: document.body })
+    const john = row(wrapper, 2)
+    expect(john.attributes('aria-disabled')).toBe('true')
+    expect(john.get('[role="checkbox"]').attributes('disabled')).toBeDefined()
+    row(wrapper, 1).element.focus()
+    await press('ArrowDown')
+    expect(focused()).toBe(john.element)
+    await press(' ')
+    await press('Enter')
+    expect(selectedIds(wrapper)).toEqual([])
+    wrapper.unmount()
+  })
+
+  it('moves focus between rows with ArrowUp/ArrowDown/Home/End and keeps one roving tab stop', async () => {
+    const wrapper = mount(Table, { props: { ...named, rows: people }, attachTo: document.body })
+    row(wrapper, 1).element.focus()
+    await press('ArrowDown')
+    expect(focused()).toBe(row(wrapper, 2).element)
+    await press('End')
+    expect(focused()).toBe(row(wrapper, 5).element)
+    await press('ArrowDown')
+    expect(focused()).toBe(row(wrapper, 5).element)
+    await press('ArrowUp')
+    expect(focused()).toBe(row(wrapper, 4).element)
+    await press('Home')
+    expect(focused()).toBe(row(wrapper, 1).element)
+    await press('End')
+    expect(tabStops(wrapper)).toEqual([row(wrapper, 5).element])
+    wrapper.unmount()
+  })
+
+  it('ArrowUp from the first row enters the header row, Left/Right/Home/End move across it, ArrowDown returns', async () => {
+    const wrapper = mount(Table, { props: { ...named, rows: people, selectionMode: 'multiple' }, attachTo: document.body })
+    const headers = wrapper.findAll('th').map(th => th.element)
+    row(wrapper, 1).element.focus()
+    await press('ArrowUp')
+    expect(focused()).toBe(headers[0])
+    await press('ArrowRight')
+    expect(focused()).toBe(headers[1])
+    await press('End')
+    expect(focused()).toBe(headers[2])
+    await press('ArrowRight')
+    expect(focused()).toBe(headers[2])
+    await press('Home')
+    expect(focused()).toBe(headers[0])
+    expect(tabStops(wrapper)).toEqual([headers[0]])
+    await press('ArrowDown')
+    expect(focused()).toBe(row(wrapper, 1).element)
+    wrapper.unmount()
+  })
+
+  it('Space/Enter on the select-all header cell selects every row and clears them again', async () => {
+    const wrapper = mount(Table, { props: { ...named, rows: people, selectionMode: 'multiple' }, attachTo: document.body })
+    wrapper.get('th').element.focus()
+    await press(' ')
+    expect(selectedIds(wrapper)).toEqual(['1', '2', '3', '4', '5'])
+    await press('Enter')
+    expect(selectedIds(wrapper)).toEqual([])
+    wrapper.unmount()
+  })
+
+  it('Enter and Space on a focused sortable header sort it and update aria-sort', async () => {
+    const wrapper = mount(Table, { props: { ...named, rows }, attachTo: document.body })
+    const header = wrapper.get('th[data-allows-sorting="true"]')
+    row(wrapper, 1).element.focus()
+    await press('ArrowUp')
+    expect(focused()).toBe(header.element)
+    await press('Enter')
+    expect(header.attributes('aria-sort')).toBe('ascending')
+    await press(' ')
+    expect(header.attributes('aria-sort')).toBe('descending')
+    expect(wrapper.findAll('th')[1]!.attributes('aria-sort')).toBeUndefined()
+    wrapper.unmount()
+  })
+
+  it('Space selects only the focused row in single selection, replacing the previous one', async () => {
+    const wrapper = mount(Table, { props: { ...named, rows: people, selectionMode: 'single' }, attachTo: document.body })
+    row(wrapper, 1).element.focus()
+    await press(' ')
+    await press('ArrowDown')
+    await press(' ')
+    expect(selectedIds(wrapper)).toEqual(['2'])
+    expect(bodyRows(wrapper).map(r => r.attributes('aria-selected'))).toEqual(['false', 'true', 'false', 'false', 'false'])
+    wrapper.unmount()
+  })
+
+  it('leaves keys typed into interactive cell content to that content', async () => {
+    const wrapper = mount(Table, {
+      props: { ...named, rows: people, selectionMode: 'multiple' },
+      slots: { 'role-cell': '<template #role-cell="{ value }"><button type="button" class="edit">{{ value }}</button></template>' },
+      attachTo: document.body,
+    })
+    const edit = row(wrapper, 1).get<HTMLButtonElement>('.edit').element
+    edit.focus()
+    await press('ArrowDown')
+    await press('Enter')
+    expect(focused()).toBe(edit)
+    expect(selectedIds(wrapper)).toEqual([])
+    wrapper.unmount()
+  })
+
+  it('moves the tab stop to the first row when the focused row goes away', async () => {
+    const wrapper = mount(Table, { props: { ...named, rows: people }, attachTo: document.body })
+    row(wrapper, 3).element.focus()
+    await press('ArrowDown')
+    await wrapper.setProps({ rows: people.filter(p => p.id !== 4) })
+    expect(tabStops(wrapper)).toEqual([row(wrapper, 1).element])
+    wrapper.unmount()
+  })
+
+  it('names each column resizer after its column and announces its width, which arrows change', async () => {
+    vi.stubGlobal('ResizeObserver', class { observe() {} disconnect() {} })
+    Object.defineProperty(HTMLElement.prototype, 'clientWidth', { configurable: true, get: () => 400 })
+    try {
+      const wrapper = mount(Table, { props: { ...named, rows, columns: [
+        { key: 'name', label: 'Name', resizable: true },
+        { key: 'role', label: 'Role' },
+      ] }, attachTo: document.body })
+      await flushPromises()
+      const resizer = wrapper.get('[data-slot="table-column-resizer"]')
+      const ids = resizer.attributes('aria-labelledby')!.split(' ')
+      expect(ids.map(id => document.getElementById(id))).toEqual([resizer.element, wrapper.get('th').element])
+      expect(resizer.attributes('aria-label')).toBe('Resizer')
+      expect(wrapper.get('th').text()).toBe('Name')
+      expect(resizer.attributes('aria-valuenow')).toBe('200')
+      expect(resizer.attributes('aria-valuetext')).toBe('200 pixels')
+      ;(resizer.element as HTMLElement).focus()
+      await press('ArrowRight')
+      expect(resizer.attributes('aria-valuenow')).toBe('210')
+      await press('ArrowLeft', { shiftKey: true })
+      expect(resizer.attributes('aria-valuenow')).toBe('160')
+      expect(focused()).toBe(resizer.element)
+      wrapper.unmount()
+    }
+    finally {
+      Reflect.deleteProperty(HTMLElement.prototype, 'clientWidth')
+    }
+  })
+
+  it('gives a resizer of an unmeasured table its minimum width as value', () => {
+    vi.stubGlobal('ResizeObserver', class { observe() {} disconnect() {} })
+    const wrapper = mount(Table, { props: { ...named, rows, columns: [{ key: 'name', label: 'Name', resizable: true, minWidth: 90 }] } })
+    expect(wrapper.get('[data-slot="table-column-resizer"]').attributes('aria-valuenow')).toBe('90')
   })
 })
 

@@ -814,6 +814,16 @@ function getAriaSort(header: Header<T, unknown>): AriaAttributes['aria-sort'] {
   return sorted === 'asc' ? 'ascending' : 'descending'
 }
 
+// A placeholder header (the slot above a column outside a group) and the footer of a column that defines none are
+// layout fillers, not headers: an empty `th` would be announced as a nameless column header, so they are plain cells.
+function isEmptyHeader(header: Header<T, unknown>) {
+  return header.isPlaceholder && !slots[`${header.id}-header`]
+}
+
+function isEmptyFooter(header: Header<T, unknown>) {
+  return (header.isPlaceholder || header.column.columnDef.footer === undefined) && !slots[`${header.id}-footer`]
+}
+
 defineExpose({
   get $el() {
     return rootRef.value?.$el as HTMLElement
@@ -845,7 +855,8 @@ defineExpose({
             :key="header.id"
             :data-pinned="header.column.getIsPinned() || undefined"
             :data-edge="getColumnEdge(header.column)"
-            :scope="header.colSpan > 1 ? 'colgroup' : 'col'"
+            :role="isEmptyHeader(header) ? 'cell' : undefined"
+            :scope="isEmptyHeader(header) ? undefined : header.colSpan > 1 ? 'colgroup' : 'col'"
             :colspan="header.colSpan > 1 ? header.colSpan : undefined"
             :rowspan="header.rowSpan > 1 ? header.rowSpan : undefined"
             :aria-sort="getAriaSort(header)"
@@ -973,6 +984,7 @@ defineExpose({
             :data-edge="getColumnEdge(header.column)"
             :colspan="header.colSpan > 1 ? header.colSpan : undefined"
             :rowspan="header.rowSpan > 1 ? header.rowSpan : undefined"
+            :role="isEmptyFooter(header) ? 'cell' : undefined"
             data-slot="rich-table-column"
             :class="ui.th({
               class: [
