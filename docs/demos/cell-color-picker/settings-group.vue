@@ -10,11 +10,14 @@ const activities = [
 
 <template>
   <fieldset class="w-80 rounded-3xl border border-separator p-2">
-    <legend class="px-2 text-xs font-medium text-muted">
-      Chart colors
-    </legend>
+    <legend class="px-2 text-xs font-medium text-muted">Chart colors</legend>
     <div class="grid gap-1.5 pt-1">
-      <CellColorPicker v-for="activity in activities" :key="activity.name" :default-value="activity.color" :label="activity.name" />
+      <CellColorPicker
+        v-for="activity in activities"
+        :key="activity.name"
+        :default-value="activity.color"
+        :label="activity.name"
+      />
     </div>
   </fieldset>
 </template>

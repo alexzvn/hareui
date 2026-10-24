@@ -54,7 +54,8 @@ export default {
     variant: {
       primary: {},
       secondary: {
-        trigger: 'shadow-none [--select-trigger-bg:var(--default)] [--select-trigger-bg-hover:var(--default-hover)] [--select-trigger-bg-focus:var(--default)]',
+        trigger:
+          'shadow-none [--select-trigger-bg:var(--default)] [--select-trigger-bg-hover:var(--default-hover)] [--select-trigger-bg-focus:var(--default)]',
       },
     },
     fullWidth: {

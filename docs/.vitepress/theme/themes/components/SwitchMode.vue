@@ -1,6 +1,7 @@
 <script setup lang="ts">
 // Port of HeroUI docs `themes/components/switch-mode.tsx`. `next-themes` -> the docs' light/dark handling (see colorMode.ts).
 import { Kbd, Label, Tooltip } from '@hareui/vue'
+
 import { useColorMode } from '../composables/colorMode'
 import { useKeyPress } from '../composables/keyPress'
 
@@ -27,7 +28,10 @@ const ITEM = 'size-6.5 rounded-full p-1.5'
           @click="handleModeSwitch"
         >
           <svg
-            :class="[ITEM, isDark ? 'text-fd-muted-foreground' : 'bg-fd-accent text-fd-accent-foreground']"
+            :class="[
+              ITEM,
+              isDark ? 'text-fd-muted-foreground' : 'bg-fd-accent text-fd-accent-foreground',
+            ]"
             fill="currentColor"
             height="24"
             stroke="currentColor"
@@ -49,7 +53,10 @@ const ITEM = 'size-6.5 rounded-full p-1.5'
             <path d="m19.07 4.93-1.41 1.41" />
           </svg>
           <svg
-            :class="[ITEM, isDark ? 'bg-fd-accent text-fd-accent-foreground' : 'text-fd-muted-foreground']"
+            :class="[
+              ITEM,
+              isDark ? 'bg-fd-accent text-fd-accent-foreground' : 'text-fd-muted-foreground',
+            ]"
             fill="currentColor"
             height="24"
             stroke="currentColor"

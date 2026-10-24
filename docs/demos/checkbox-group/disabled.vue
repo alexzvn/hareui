@@ -9,5 +9,11 @@ const items: CheckboxGroupItem[] = [
 </script>
 
 <template>
-  <CheckboxGroup disabled name="disabled-features" label="Features" description="Feature selection is temporarily disabled" :items="items" />
+  <CheckboxGroup
+    disabled
+    name="disabled-features"
+    label="Features"
+    description="Feature selection is temporarily disabled"
+    :items="items"
+  />
 </template>

@@ -17,5 +17,11 @@ const rows: TableRow[] = [
 </script>
 
 <template>
-  <Table aria-label="Team members" variant="secondary" :columns="columns" :rows="rows" :ui="{ content: 'min-w-[600px]' }" />
+  <Table
+    aria-label="Team members"
+    variant="secondary"
+    :columns="columns"
+    :rows="rows"
+    :ui="{ content: 'min-w-[600px]' }"
+  />
 </template>

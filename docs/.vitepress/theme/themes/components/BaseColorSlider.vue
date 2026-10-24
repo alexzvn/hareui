@@ -16,7 +16,11 @@ function handleBaseSliderChange(value: number) {
 
 <template>
   <div class="flex flex-col gap-1">
-    <LockableLabel label="Base" tooltip="Controls how much gray is used in neutrals like backgrounds and surfaces" variable="base" />
+    <LockableLabel
+      label="Base"
+      tooltip="Controls how much gray is used in neutrals like backgrounds and surfaces"
+      variable="base"
+    />
     <ChromaSlider
       class="h-6 w-[160px]"
       :hue="variables.hue"

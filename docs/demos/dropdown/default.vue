@@ -12,8 +12,6 @@ const items: DropdownEntry[] = [
 
 <template>
   <Dropdown :items="items" @action="(key) => console.log(`Selected: ${key}`)">
-    <Button variant="secondary">
-      Actions
-    </Button>
+    <Button variant="secondary"> Actions </Button>
   </Dropdown>
 </template>

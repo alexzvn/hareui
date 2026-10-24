@@ -1,7 +1,8 @@
-import type { ChartTooltipContentEntry } from '../src/components/chart-tooltip/ChartTooltipContent.vue'
 import { mount } from '@vue/test-utils'
 import { describe, expect, it } from 'vitest'
 import { h } from 'vue'
+
+import type { ChartTooltipContentEntry } from '../src/components/chart-tooltip/ChartTooltipContent.vue'
 import ChartTooltipContent from '../src/components/chart-tooltip/ChartTooltipContent.vue'
 import ChartTooltipHeader from '../src/components/chart-tooltip/ChartTooltipHeader.vue'
 import ChartTooltipIndicator from '../src/components/chart-tooltip/ChartTooltipIndicator.vue'
@@ -17,8 +18,9 @@ const payload = [
 ]
 
 function rows(wrapper: ReturnType<typeof mount>) {
-  return wrapper.findAll('[data-slot="chart-tooltip-item"]').map(row => ({
-    color: (row.get('[data-slot="chart-tooltip-indicator"]').element as HTMLElement).style.backgroundColor,
+  return wrapper.findAll('[data-slot="chart-tooltip-item"]').map((row) => ({
+    color: (row.get('[data-slot="chart-tooltip-indicator"]').element as HTMLElement).style
+      .backgroundColor,
     label: row.get('[data-slot="chart-tooltip-label"]').text(),
     value: row.get('[data-slot="chart-tooltip-value"]').text(),
   }))
@@ -50,10 +52,16 @@ describe('ChartTooltipContent', () => {
   })
 
   it('hides the header with hideHeader or without a label', () => {
-    expect(mount(ChartTooltipContent, { props: { label: 'Jan', payload, hideHeader: true } })
-      .find('[data-slot="chart-tooltip-header"]').exists()).toBe(false)
-    expect(mount(ChartTooltipContent, { props: { payload } })
-      .find('[data-slot="chart-tooltip-header"]').exists()).toBe(false)
+    expect(
+      mount(ChartTooltipContent, { props: { label: 'Jan', payload, hideHeader: true } })
+        .find('[data-slot="chart-tooltip-header"]')
+        .exists(),
+    ).toBe(false)
+    expect(
+      mount(ChartTooltipContent, { props: { payload } })
+        .find('[data-slot="chart-tooltip-header"]')
+        .exists(),
+    ).toBe(false)
   })
 
   it('renders nothing when inactive', () => {
@@ -71,10 +79,12 @@ describe('ChartTooltipContent', () => {
 
   it('keeps one row per entry when entries share a dataKey, and prints null as empty', () => {
     const wrapper = mount(ChartTooltipContent, {
-      props: { payload: [
-        { dataKey: 'sales', name: 'Bars', color: 'red', value: 4 },
-        { dataKey: 'sales', name: 'Trend', color: 'blue', value: null as unknown as number },
-      ] },
+      props: {
+        payload: [
+          { dataKey: 'sales', name: 'Bars', color: 'red', value: 4 },
+          { dataKey: 'sales', name: 'Trend', color: 'blue', value: null as unknown as number },
+        ],
+      },
     })
     expect(rows(wrapper)).toEqual([
       { color: 'red', label: 'Bars', value: '4' },
@@ -98,20 +108,34 @@ describe('ChartTooltipContent', () => {
     })
     expect(wrapper.get('[data-slot="chart-tooltip-header"]').text()).toBe('March 2025')
     expect(rows(wrapper)).toEqual([{ color: 'var(--chart-3)', label: 'Organic', value: '15,200' }])
-    expect(wrapper.get('[data-slot="chart-tooltip-indicator"]').attributes('aria-hidden')).toBe('true')
+    expect(wrapper.get('[data-slot="chart-tooltip-indicator"]').attributes('aria-hidden')).toBe(
+      'true',
+    )
   })
 
   it('renders the footer slot under the payload rows with label and payload', () => {
     const wrapper = mount(ChartTooltipContent, {
       props: { label: 'Jan', payload },
       slots: {
-        footer: ({ label, payload: rows }: { label?: string | number, payload: ChartTooltipContentEntry[] }) =>
-          h('div', { 'data-test': 'footer' }, `${label} total ${rows.reduce((sum, row) => sum + Number(row.value), 0)}`),
+        footer: ({
+          label,
+          payload: rows,
+        }: {
+          label?: string | number
+          payload: ChartTooltipContentEntry[]
+        }) =>
+          h(
+            'div',
+            { 'data-test': 'footer' },
+            `${label} total ${rows.reduce((sum, row) => sum + Number(row.value), 0)}`,
+          ),
       },
     })
     const children = [...wrapper.element.children]
     expect(children.at(-1)?.getAttribute('data-test')).toBe('footer')
-    expect(wrapper.get('[data-test=footer]').text()).toBe(`Jan total ${payload.reduce((sum, row) => sum + Number(row.value), 0)}`)
+    expect(wrapper.get('[data-test=footer]').text()).toBe(
+      `Jan total ${payload.reduce((sum, row) => sum + Number(row.value), 0)}`,
+    )
   })
 
   it('is accessible with payload rows, each indicator variant and a footer', async () => {
@@ -145,7 +169,9 @@ describe('ChartTooltipContent', () => {
   })
 
   it('merges class and ui into the panel', () => {
-    const wrapper = mount(ChartTooltipContent, { props: { payload, class: 'min-w-48', ui: { base: 'rounded-2xl' } } })
+    const wrapper = mount(ChartTooltipContent, {
+      props: { payload, class: 'min-w-48', ui: { base: 'rounded-2xl' } },
+    })
     expect(wrapper.classes()).toEqual(expect.arrayContaining(['min-w-48', 'rounded-2xl']))
   })
 

@@ -38,11 +38,13 @@ export function isValidFontCdnUrl(url: string): boolean {
 
     // Special handling for jsdelivr - only allow Fontsource paths
     if (parsedUrl.hostname === 'cdn.jsdelivr.net') {
-      return JSDELIVR_ALLOWED_PATHS.some(prefix => parsedUrl.pathname.startsWith(prefix))
+      return JSDELIVR_ALLOWED_PATHS.some((prefix) => parsedUrl.pathname.startsWith(prefix))
     }
 
     // Must be from an allowed host
-    return ALLOWED_FONT_CDN_HOSTS.some(host => parsedUrl.hostname === host || parsedUrl.hostname.endsWith(`.${host}`))
+    return ALLOWED_FONT_CDN_HOSTS.some(
+      (host) => parsedUrl.hostname === host || parsedUrl.hostname.endsWith(`.${host}`),
+    )
   } catch {
     return false
   }
@@ -97,44 +99,46 @@ export function extractFontFamilyFromUrl(url: string): string | null {
 
       if (fontName) {
         // Capitalize first letter of each word
-        return fontName.replace(/-/g, ' ').replace(/\b\w/g, l => l.toUpperCase())
+        return fontName.replace(/-/g, ' ').replace(/\b\w/g, (l) => l.toUpperCase())
       }
     }
 
     // Fontsource npm format: /npm/@fontsource/font-name@version/...
     // or /npm/@fontsource-variable/font-name@version/...
-    const fontsourceNpmMatch = parsedUrl.pathname.match(/\/npm\/@fontsource(?:-variable)?\/([^@/]+)/)
+    const fontsourceNpmMatch = parsedUrl.pathname.match(
+      /\/npm\/@fontsource(?:-variable)?\/([^@/]+)/,
+    )
 
     if (fontsourceNpmMatch?.[1]) {
-      return fontsourceNpmMatch[1].replace(/-/g, ' ').replace(/\b\w/g, l => l.toUpperCase())
+      return fontsourceNpmMatch[1].replace(/-/g, ' ').replace(/\b\w/g, (l) => l.toUpperCase())
     }
 
     // Fontsource direct format: /fontsource/fonts/font-name@version/... or /fontsource/fonts/font-name:vf@version/...
     const fontsourceDirectMatch = parsedUrl.pathname.match(/\/fontsource\/fonts\/([^@/:]+)/)
 
     if (fontsourceDirectMatch?.[1]) {
-      return fontsourceDirectMatch[1].replace(/-/g, ' ').replace(/\b\w/g, l => l.toUpperCase())
+      return fontsourceDirectMatch[1].replace(/-/g, ' ').replace(/\b\w/g, (l) => l.toUpperCase())
     }
 
     // CDNfonts page format: /font-name.font (e.g., https://www.cdnfonts.com/stasiun.font)
     const cdnfontsPageMatch = parsedUrl.pathname.match(/\/([^/]+)\.font$/)
 
     if (cdnfontsPageMatch?.[1]) {
-      return cdnfontsPageMatch[1].replace(/-/g, ' ').replace(/\b\w/g, l => l.toUpperCase())
+      return cdnfontsPageMatch[1].replace(/-/g, ' ').replace(/\b\w/g, (l) => l.toUpperCase())
     }
 
     // CDNfonts CSS format: /css/font-name (e.g., https://fonts.cdnfonts.com/css/stasiun)
     const cdnfontsCssMatch = parsedUrl.pathname.match(/\/css\/([^/?]+)/)
 
     if (cdnfontsCssMatch?.[1]) {
-      return cdnfontsCssMatch[1].replace(/-/g, ' ').replace(/\b\w/g, l => l.toUpperCase())
+      return cdnfontsCssMatch[1].replace(/-/g, ' ').replace(/\b\w/g, (l) => l.toUpperCase())
     }
 
     // Generic CSS file format: /path/font-name.css
     const pathMatch = url.match(/\/([^/]+)\.css/)
 
     if (pathMatch?.[1]) {
-      return pathMatch[1].replace(/-/g, ' ').replace(/\b\w/g, l => l.toUpperCase())
+      return pathMatch[1].replace(/-/g, ' ').replace(/\b\w/g, (l) => l.toUpperCase())
     }
 
     return null
@@ -155,7 +159,7 @@ export function isFontFileUrl(url: string): boolean {
   try {
     const pathname = new URL(url).pathname.toLowerCase()
 
-    return FONT_FILE_EXTENSIONS.some(ext => pathname.endsWith(ext))
+    return FONT_FILE_EXTENSIONS.some((ext) => pathname.endsWith(ext))
   } catch {
     return false
   }

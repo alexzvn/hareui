@@ -48,20 +48,22 @@ prefer reduced motion.
 ### Global theme override
 
 ```ts
-app.use(createHareUI({
-  ui: {
-    spinner: {
-      defaultVariants: { color: 'current' },
+app.use(
+  createHareUI({
+    ui: {
+      spinner: {
+        defaultVariants: { color: 'current' },
+      },
     },
-  },
-}))
+  }),
+)
 ```
 
 ## Styling Reference
 
-| `ui` key | `data-slot` | Description |
-|---|---|---|
-| `base` | `spinner` | The root `<span role="status">` |
+| `ui` key | `data-slot` | Description                     |
+| -------- | ----------- | ------------------------------- |
+| `base`   | `spinner`   | The root `<span role="status">` |
 
 ## API Reference
 

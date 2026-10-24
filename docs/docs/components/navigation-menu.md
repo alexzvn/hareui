@@ -22,28 +22,28 @@ A horizontal menu doesn't wrap, so its labels truncate when it runs out of room.
 
 Use the `items` prop as an array of objects with the following properties. Pass an array of arrays to render groups, separated by a divider in a vertical menu.
 
-| Field | Type | Description |
-|---|---|---|
-| `label` | `string` | The item text |
-| `icon` | `string \| Component` | Leading icon, see [Icons](#icons) |
-| `avatar` | `AvatarProps` | Leading avatar, shown instead of the icon |
-| `badge` | `string \| number \| ChipProps` | Trailing [Chip](/docs/components/chip) |
-| `chip` | `boolean \| BadgeProps` | A [Badge](/docs/components/badge) dot anchored to the icon |
-| `kbds` | `string[]` | Keyboard shortcut: modifier names (`'command'`, `'shift'`, ...) render as symbols |
-| `tooltip` | `boolean \| TooltipProps` | A [Tooltip](/docs/components/tooltip) with the label (vertical `collapsed`, or any item when horizontal) |
-| `popover` | `boolean \| NavigationMenuPopoverProps` | A popover with the children when the vertical menu is `collapsed` |
-| `trailingIcon` | `string \| Component` | Replaces the chevron |
-| `type` | `'label' \| 'trigger' \| 'link'` | `label` is a group heading, `trigger` makes an item with `href` and `children` a collapsible button |
-| `defaultOpen` / `open` | `boolean` | Initially expanded (vertical) |
-| `value` | `string` | The value matched by `v-model` / `default-value` |
-| `active` | `boolean` | Marks the current item |
-| `disabled` | `boolean` | Disables the item |
-| `slot` | `string` | Name of the slots that render this item |
-| `onSelect` | `(e: Event) => void` | Called when the item is selected |
-| `actions` | `DropdownEntry[]` | A ⋮ menu at the end of a vertical row, see [With item actions](#with-item-actions) |
-| `children` | `NavigationMenuChildItem[]` | A submenu: an accordion (vertical) or dropdown content (horizontal) |
-| `href`, `to`, `as`, `target`, `rel`, `download`, `external`, `exact`, `replace` | | Link props, see [Links](#links) |
-| `class`, `ui` | | Classes for the item's link, per-slot classes |
+| Field                                                                           | Type                                    | Description                                                                                              |
+| ------------------------------------------------------------------------------- | --------------------------------------- | -------------------------------------------------------------------------------------------------------- |
+| `label`                                                                         | `string`                                | The item text                                                                                            |
+| `icon`                                                                          | `string \| Component`                   | Leading icon, see [Icons](#icons)                                                                        |
+| `avatar`                                                                        | `AvatarProps`                           | Leading avatar, shown instead of the icon                                                                |
+| `badge`                                                                         | `string \| number \| ChipProps`         | Trailing [Chip](/docs/components/chip)                                                                   |
+| `chip`                                                                          | `boolean \| BadgeProps`                 | A [Badge](/docs/components/badge) dot anchored to the icon                                               |
+| `kbds`                                                                          | `string[]`                              | Keyboard shortcut: modifier names (`'command'`, `'shift'`, ...) render as symbols                        |
+| `tooltip`                                                                       | `boolean \| TooltipProps`               | A [Tooltip](/docs/components/tooltip) with the label (vertical `collapsed`, or any item when horizontal) |
+| `popover`                                                                       | `boolean \| NavigationMenuPopoverProps` | A popover with the children when the vertical menu is `collapsed`                                        |
+| `trailingIcon`                                                                  | `string \| Component`                   | Replaces the chevron                                                                                     |
+| `type`                                                                          | `'label' \| 'trigger' \| 'link'`        | `label` is a group heading, `trigger` makes an item with `href` and `children` a collapsible button      |
+| `defaultOpen` / `open`                                                          | `boolean`                               | Initially expanded (vertical)                                                                            |
+| `value`                                                                         | `string`                                | The value matched by `v-model` / `default-value`                                                         |
+| `active`                                                                        | `boolean`                               | Marks the current item                                                                                   |
+| `disabled`                                                                      | `boolean`                               | Disables the item                                                                                        |
+| `slot`                                                                          | `string`                                | Name of the slots that render this item                                                                  |
+| `onSelect`                                                                      | `(e: Event) => void`                    | Called when the item is selected                                                                         |
+| `actions`                                                                       | `DropdownEntry[]`                       | A ⋮ menu at the end of a vertical row, see [With item actions](#with-item-actions)                       |
+| `children`                                                                      | `NavigationMenuChildItem[]`             | A submenu: an accordion (vertical) or dropdown content (horizontal)                                      |
+| `href`, `to`, `as`, `target`, `rel`, `download`, `external`, `exact`, `replace` |                                         | Link props, see [Links](#links)                                                                          |
+| `class`, `ui`                                                                   |                                         | Classes for the item's link, per-slot classes                                                            |
 
 Child items accept `label`, `icon`, `onSelect`, `class` and the link properties. A `description` is shown in the horizontal dropdown content.
 
@@ -208,23 +208,23 @@ A vertical menu in an app sidebar, with groups, a collapsible section, a badge, 
 
 ## Styling Reference
 
-| `ui` key | Description |
-|---|---|
-| `root` | The `<nav>` |
-| `list` | Each `<ul>` (one per group) |
-| `label` | A group heading |
-| `item` | An `<li>` |
-| `link` | The item's link or button |
-| `linkLeadingIcon`, `linkLeadingAvatar`, `linkLeadingChip` | Leading icon, avatar, chip |
-| `linkLabel` | The label |
-| `linkTrailing` | Wrapper of the trailing content |
-| `linkTrailingBadge`, `linkTrailingKbd`, `linkTrailingIcon` | Trailing badge, shortcut, chevron |
-| `linkRow` | Wrapper of a vertical link and its actions, only on items with actions |
-| `linkActions`, `linkAction` | The actions container and each of its buttons |
-| `linkActionsItemIcon` | The icons of the `actions` menu entries |
-| `childList`, `childItem`, `childLink` | The children list (accordion content, dropdown content or popover) |
-| `separator` | Divider between groups |
-| `viewport`, `content`, `indicator`, `arrow` | Horizontal dropdown parts |
+| `ui` key                                                   | Description                                                            |
+| ---------------------------------------------------------- | ---------------------------------------------------------------------- |
+| `root`                                                     | The `<nav>`                                                            |
+| `list`                                                     | Each `<ul>` (one per group)                                            |
+| `label`                                                    | A group heading                                                        |
+| `item`                                                     | An `<li>`                                                              |
+| `link`                                                     | The item's link or button                                              |
+| `linkLeadingIcon`, `linkLeadingAvatar`, `linkLeadingChip`  | Leading icon, avatar, chip                                             |
+| `linkLabel`                                                | The label                                                              |
+| `linkTrailing`                                             | Wrapper of the trailing content                                        |
+| `linkTrailingBadge`, `linkTrailingKbd`, `linkTrailingIcon` | Trailing badge, shortcut, chevron                                      |
+| `linkRow`                                                  | Wrapper of a vertical link and its actions, only on items with actions |
+| `linkActions`, `linkAction`                                | The actions container and each of its buttons                          |
+| `linkActionsItemIcon`                                      | The icons of the `actions` menu entries                                |
+| `childList`, `childItem`, `childLink`                      | The children list (accordion content, dropdown content or popover)     |
+| `separator`                                                | Divider between groups                                                 |
+| `viewport`, `content`, `indicator`, `arrow`                | Horizontal dropdown parts                                              |
 
 ### Interactive States
 

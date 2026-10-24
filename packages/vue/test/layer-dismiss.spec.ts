@@ -1,6 +1,7 @@
-import type { LayerDismissPolicy, OutsideEvent } from '@/composables/nestedLayer'
 import { afterEach, describe, expect, it, vi } from 'vitest'
 import { effectScope, nextTick, ref } from 'vue'
+
+import type { LayerDismissPolicy, OutsideEvent } from '@/composables/nestedLayer'
 import {
   resolveLayer,
   shouldDismissOnEscape,
@@ -17,11 +18,17 @@ const createLayer = (parent: ParentNode = document.body) => {
   return layer
 }
 
-const toOutsideEvent = (originalEvent: Event, type = 'dismissableLayer.pointerDownOutside'): OutsideEvent =>
-  new CustomEvent(type, { detail: { originalEvent }, cancelable: true })
+const toOutsideEvent = (
+  originalEvent: Event,
+  type = 'dismissableLayer.pointerDownOutside',
+): OutsideEvent => new CustomEvent(type, { detail: { originalEvent }, cancelable: true })
 
 // `composedPath()` is only filled while the event dispatches, so decide from a document listener, as Reka does.
-const press = <T>(target: Element, decide: (event: PointerEvent) => T, init: PointerEventInit = {}): T => {
+const press = <T>(
+  target: Element,
+  decide: (event: PointerEvent) => T,
+  init: PointerEventInit = {},
+): T => {
   let result: T | undefined
   const listener = (event: Event) => {
     result = decide(event as PointerEvent)
@@ -85,14 +92,22 @@ describe('shouldDismissOnOutside', () => {
     const retargeted = (inner: Element) => {
       const event = new PointerEvent('pointerdown', { button: 0 })
       Object.defineProperty(event, 'target', { value: host })
-      Object.defineProperty(event, 'composedPath', { value: () => [inner, root, host, document.body] })
+      Object.defineProperty(event, 'composedPath', {
+        value: () => [inner, root, host, document.body],
+      })
       return event
     }
     const policy = { content: layer }
-    expect(shouldDismissOnOutside(toOutsideEvent(retargeted(nested.firstElementChild!)), policy)).toBe(false)
+    expect(
+      shouldDismissOnOutside(toOutsideEvent(retargeted(nested.firstElementChild!)), policy),
+    ).toBe(false)
     expect(shouldDismissOnOutside(toOutsideEvent(retargeted(outside)), policy)).toBe(true)
-    expect(shouldDismissOnPress(retargeted(layer.firstElementChild!), { content: nested })).toBe(true)
-    expect(shouldDismissOnPress(retargeted(nested.firstElementChild!), { content: nested })).toBe(false)
+    expect(shouldDismissOnPress(retargeted(layer.firstElementChild!), { content: nested })).toBe(
+      true,
+    )
+    expect(shouldDismissOnPress(retargeted(nested.firstElementChild!), { content: nested })).toBe(
+      false,
+    )
   })
 
   it('judges a focus-outside inside a shadow root by the deepest focused element', () => {
@@ -126,7 +141,9 @@ describe('shouldDismissOnEscape', () => {
   it('follows `isDismissible` unless `isKeyboardDismissible` is set', () => {
     expect(shouldDismissOnEscape({ content: null })).toBe(true)
     expect(shouldDismissOnEscape({ content: null, isDismissible: false })).toBe(false)
-    expect(shouldDismissOnEscape({ content: null, isDismissible: false, isKeyboardDismissible: true })).toBe(true)
+    expect(
+      shouldDismissOnEscape({ content: null, isDismissible: false, isKeyboardDismissible: true }),
+    ).toBe(true)
     expect(shouldDismissOnEscape({ content: null, isKeyboardDismissible: false })).toBe(false)
   })
 })
@@ -152,7 +169,9 @@ describe('shouldDismissOnPress', () => {
   it('applies the button and dismissible options', () => {
     const layer = createLayer()
     const outside = document.body.appendChild(document.createElement('button'))
-    expect(pressRaw(outside, { content: layer, shouldIgnoreSecondaryButton: true }, { button: 2 })).toBe(false)
+    expect(
+      pressRaw(outside, { content: layer, shouldIgnoreSecondaryButton: true }, { button: 2 }),
+    ).toBe(false)
     expect(pressRaw(outside, { content: layer, isDismissible: false })).toBe(false)
   })
 })

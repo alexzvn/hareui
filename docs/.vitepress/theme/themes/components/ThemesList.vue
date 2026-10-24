@@ -1,21 +1,23 @@
 <script setup lang="ts">
-// Port of HeroUI docs `themes/components/themes-list.tsx`.
-import type { ThemeId } from '../constants'
 import { ListBox, ScrollShadow } from '@hareui/vue'
 import { computed } from 'vue'
+
 import { useVariablesState } from '../composables/variables'
+// Port of HeroUI docs `themes/components/themes-list.tsx`.
+import type { ThemeId } from '../constants'
 import { findMatchingTheme, themeValuesById, themes } from '../constants'
 
 const [variables, setVariables] = useVariablesState()
 const currentThemeId = computed(() => findMatchingTheme(variables.value))
 
-const items = themes.map(theme => ({
+const items = themes.map((theme) => ({
   value: theme.id,
   label: theme.label,
   textValue: theme.id,
-  class: 'group relative flex w-12 shrink-0 flex-col items-center justify-center gap-1.5 p-0 hover:bg-transparent data-[hovered=true]:bg-transparent',
+  class:
+    'group relative flex w-12 shrink-0 flex-col items-center justify-center gap-1.5 p-0 hover:bg-transparent data-[hovered=true]:bg-transparent',
 }))
-const images = Object.fromEntries(themes.map(theme => [theme.id, theme.image]))
+const images = Object.fromEntries(themes.map((theme) => [theme.id, theme.image]))
 
 function applyTheme(themeId: ThemeId) {
   const themeValues = themeValuesById[themeId]
@@ -32,8 +34,7 @@ function applyTheme(themeId: ThemeId) {
 }
 
 function onSelectionChange(selected: unknown) {
-  if (typeof selected === 'string')
-    applyTheme(selected as ThemeId)
+  if (typeof selected === 'string') applyTheme(selected as ThemeId)
 }
 </script>
 
@@ -59,8 +60,10 @@ function onSelectionChange(selected: unknown) {
           width="48"
           :src="images[item.value]"
           class="size-12 rounded-full bg-surface group-data-[selected=true]:ring-2 group-data-[selected=true]:ring-accent group-data-[selected=true]:ring-offset-2 group-data-[selected=true]:ring-offset-surface"
+        />
+        <span
+          class="text-[10px] font-medium text-muted capitalize group-data-[selected=true]:text-foreground"
         >
-        <span class="text-[10px] font-medium text-muted capitalize group-data-[selected=true]:text-foreground">
           {{ item.label }}
         </span>
       </template>

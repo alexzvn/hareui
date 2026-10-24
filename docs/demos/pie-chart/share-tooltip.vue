@@ -17,7 +17,11 @@ function formatShare(value: number) {
 </script>
 
 <template>
-  <Card class="w-full max-w-[360px] rounded-2xl" title="Orders by Drink" :ui="{ title: 'text-base' }">
+  <Card
+    class="w-full max-w-[360px] rounded-2xl"
+    title="Orders by Drink"
+    :ui="{ title: 'text-base' }"
+  >
     <PieChart
       :data="data"
       index="drink"

@@ -26,5 +26,10 @@ export interface PreviewReadyMessage {
 }
 
 export function isPreviewReadyMessage(data: unknown): data is PreviewReadyMessage {
-  return typeof data === 'object' && data !== null && 'type' in data && data.type === 'hareui-preview-ready'
+  return (
+    typeof data === 'object' &&
+    data !== null &&
+    'type' in data &&
+    data.type === 'hareui-preview-ready'
+  )
 }

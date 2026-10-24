@@ -1,9 +1,9 @@
 <script lang="ts">
 import type { ValidateFn, ValidationResult } from '../../composables/useFieldValidation'
 import type { ComponentSlots, ComponentVariants } from '../../types/tv'
+import checkboxTheme from '../checkbox/theme'
 import type { ValidationBehavior } from '../form/context'
 import type { FormFieldProps } from '../form/types'
-import checkboxTheme from '../checkbox/theme'
 import theme from './theme'
 
 type CheckboxGroup = typeof theme
@@ -20,7 +20,9 @@ export interface CheckboxGroupItem {
   disabled?: boolean
 }
 
-export interface CheckboxGroupProps<T extends CheckboxGroupItem = CheckboxGroupItem> extends FormFieldProps {
+export interface CheckboxGroupProps<
+  T extends CheckboxGroupItem = CheckboxGroupItem,
+> extends FormFieldProps {
   /** The checkbox items. */
   items?: T[]
   /**
@@ -74,22 +76,23 @@ export interface CheckboxGroupProps<T extends CheckboxGroupItem = CheckboxGroupI
   /** Additional classes merged into the root element. */
   class?: any
   /** Per-slot class overrides. `item` is each checkbox's root; `content`, `control` and `indicator` are the `checkbox` theme's. */
-  ui?: ComponentSlots<CheckboxGroup> & Pick<ComponentSlots<Checkbox>, 'content' | 'control' | 'indicator'> & { item?: any }
+  ui?: ComponentSlots<CheckboxGroup> &
+    Pick<ComponentSlots<Checkbox>, 'content' | 'control' | 'indicator'> & { item?: any }
 }
 
 export interface CheckboxGroupSlots<T extends CheckboxGroupItem = CheckboxGroupItem> {
   /** The group label content. Replaces the `label` prop. */
-  'label'?: () => any
+  label?: () => any
   /** The group description content. Replaces the `description` prop. */
-  'description'?: () => any
+  description?: () => any
   /** The error content, rendered while invalid. Replaces the `errorMessage` prop. */
-  'error'?: (props: ValidationResult) => any
+  error?: (props: ValidationResult) => any
   /** The label of each item. Replaces `item.label`. */
-  'item-label'?: (props: { item: T, index: number }) => any
+  'item-label'?: (props: { item: T; index: number }) => any
   /** The description of each item. Replaces `item.description`. */
-  'item-description'?: (props: { item: T, index: number }) => any
+  'item-description'?: (props: { item: T; index: number }) => any
   /** Custom content inside each control. Replaces the default checkmark. */
-  'indicator'?: (props: { item: T, checked: boolean }) => any
+  indicator?: (props: { item: T; checked: boolean }) => any
 }
 </script>
 
@@ -97,15 +100,23 @@ export interface CheckboxGroupSlots<T extends CheckboxGroupItem = CheckboxGroupI
 import { CheckboxGroupRoot, CheckboxRoot as RekaCheckboxRoot } from 'reka-ui'
 import type { ComponentPublicInstance } from 'vue'
 import { computed, useSlots, useTemplateRef } from 'vue'
-import { forwardRootClick, keepFocusWhenReadonly, submitOnEnter } from '../../composables/forwardRootClick'
+
+import {
+  forwardRootClick,
+  keepFocusWhenReadonly,
+  submitOnEnter,
+} from '../../composables/forwardRootClick'
 import { useComponentUI } from '../../composables/useComponentUI'
 import { useFieldChrome } from '../../composables/useFieldChrome'
 import { useFieldValidation } from '../../composables/useFieldValidation'
-import { useFieldsetDisabled } from '../fieldset/context'
 import Description from '../description/Description.vue'
+import { useFieldsetDisabled } from '../fieldset/context'
 
 // `invalid: undefined`: an absent boolean would cast to `false`, which counts as controlled-valid and hides validation errors
-const props = withDefaults(defineProps<CheckboxGroupProps<T>>(), { items: () => [], invalid: undefined })
+const props = withDefaults(defineProps<CheckboxGroupProps<T>>(), {
+  items: () => [],
+  invalid: undefined,
+})
 defineSlots<CheckboxGroupSlots<T>>()
 /** The selected values. Bind with `v-model`. */
 const modelValue = defineModel<string[]>()
@@ -140,13 +151,14 @@ const { validation, commitValidation } = useFieldValidation({
 })
 const invalid = computed(() => validation.value.isInvalid)
 
-const { id, labelId, hasLabel, describedBy, FieldLabel, FieldDescription, FieldError } = useFieldChrome({
-  props,
-  slots,
-  invalid,
-  validation,
-  disabled: isDisabled,
-})
+const { id, labelId, hasLabel, describedBy, FieldLabel, FieldDescription, FieldError } =
+  useFieldChrome({
+    props,
+    slots,
+    invalid,
+    validation,
+    disabled: isDisabled,
+  })
 
 function hasItemDescription(item: CheckboxGroupItem) {
   return !!(item.description || slots['item-description'])
@@ -154,8 +166,7 @@ function hasItemDescription(item: CheckboxGroupItem) {
 
 function onUpdate(value: string[]) {
   // `isReadOnly`: items stay focusable but the selection never changes
-  if (props.readonly)
-    return
+  if (props.readonly) return
   modelValue.value = value
   commitValidation()
 }
@@ -203,14 +214,22 @@ function onUpdate(value: string[]) {
         :disabled="item.disabled"
         :aria-invalid="invalid ? 'true' : undefined"
         :aria-readonly="readonly ? 'true' : undefined"
-        :aria-describedby="[hasItemDescription(item) && `${id}-${index}-description`, describedBy].filter(Boolean).join(' ') || undefined"
+        :aria-describedby="
+          [hasItemDescription(item) && `${id}-${index}-description`, describedBy]
+            .filter(Boolean)
+            .join(' ') || undefined
+        "
         data-slot="checkbox-content"
         :data-selected="selected.includes(item.value) ? 'true' : undefined"
         :class="itemUi.content({ class: props.ui?.content })"
         @keydown.capture="submitOnEnter"
       >
         <span data-slot="checkbox-control" :class="itemUi.control({ class: props.ui?.control })">
-          <span aria-hidden="true" data-slot="checkbox-indicator" :class="itemUi.indicator({ class: props.ui?.indicator })">
+          <span
+            aria-hidden="true"
+            data-slot="checkbox-indicator"
+            :class="itemUi.indicator({ class: props.ui?.indicator })"
+          >
             <slot name="indicator" :item="item" :checked="selected.includes(item.value)">
               <svg
                 aria-hidden="true"
@@ -232,10 +251,15 @@ function onUpdate(value: string[]) {
         </span>
         <slot name="item-label" :item="item" :index="index">{{ item.label }}</slot>
       </RekaCheckboxRoot>
-      <Description v-if="hasItemDescription(item) && $slots['item-description']" :id="`${id}-${index}-description`">
+      <Description
+        v-if="hasItemDescription(item) && $slots['item-description']"
+        :id="`${id}-${index}-description`"
+      >
         <slot name="item-description" :item="item" :index="index">{{ item.description }}</slot>
       </Description>
-      <Description v-else-if="hasItemDescription(item)" :id="`${id}-${index}-description`">{{ item.description }}</Description>
+      <Description v-else-if="hasItemDescription(item)" :id="`${id}-${index}-description`">{{
+        item.description
+      }}</Description>
     </div>
     <FieldError />
   </CheckboxGroupRoot>

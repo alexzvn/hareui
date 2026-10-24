@@ -7,7 +7,11 @@ const rooms = [
   { value: 'suite', title: 'Suite', description: 'Living room, sea view', price: 210 },
 ]
 
-const eur = new Intl.NumberFormat('en-IE', { style: 'currency', currency: 'EUR', maximumFractionDigits: 0 })
+const eur = new Intl.NumberFormat('en-IE', {
+  style: 'currency',
+  currency: 'EUR',
+  maximumFractionDigits: 0,
+})
 </script>
 
 <template>

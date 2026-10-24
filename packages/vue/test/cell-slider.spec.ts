@@ -1,6 +1,7 @@
 import { mount } from '@vue/test-utils'
 import { describe, expect, it } from 'vitest'
 import { h, nextTick, ref } from 'vue'
+
 import type { CellSliderProps } from '../src/components/cell-slider/CellSlider.vue'
 import CellSlider from '../src/components/cell-slider/CellSlider.vue'
 import Fieldset from '../src/components/fieldset/Fieldset.vue'
@@ -21,7 +22,15 @@ describe('CellSlider', () => {
 
   it('keyboard steps update v-model with a number and emit changeEnd', async () => {
     const model = ref(50)
-    const w = mount(() => h(CellSlider, { 'label': 'Volume', 'modelValue': model.value, 'onUpdate:modelValue': (v: number | undefined) => (model.value = v!) }), { attachTo: document.body })
+    const w = mount(
+      () =>
+        h(CellSlider, {
+          label: 'Volume',
+          modelValue: model.value,
+          'onUpdate:modelValue': (v: number | undefined) => (model.value = v!),
+        }),
+      { attachTo: document.body },
+    )
     // Reka resolves each thumb's index on the tick after mount; a step before that focuses the thumb with index -1
     await nextTick()
     await thumb(w).trigger('keydown', { key: 'ArrowRight' })
@@ -45,7 +54,16 @@ describe('CellSlider', () => {
   })
 
   it('fractional steps and formatOptions shape the value at the end of the row', async () => {
-    const w = mount(CellSlider, { props: { min: 0, max: 1, step: 0.01, defaultValue: 0.5, locale: 'en-US', formatOptions: { minimumFractionDigits: 2 } } })
+    const w = mount(CellSlider, {
+      props: {
+        min: 0,
+        max: 1,
+        step: 0.01,
+        defaultValue: 0.5,
+        locale: 'en-US',
+        formatOptions: { minimumFractionDigits: 2 },
+      },
+    })
     expect(output(w)).toBe('0.50')
     await thumb(w).trigger('keydown', { key: 'ArrowRight' })
     expect(output(w)).toBe('0.51')
@@ -67,13 +85,19 @@ describe('CellSlider', () => {
   it('the #output slot receives the value and its formatted text', () => {
     const w = mount(CellSlider, {
       props: { defaultValue: 40 },
-      slots: { output: ({ value, formatted }: { value: number, formatted: string }) => `${value}|${formatted}%` },
+      slots: {
+        output: ({ value, formatted }: { value: number; formatted: string }) =>
+          `${value}|${formatted}%`,
+      },
     })
     expect(output(w)).toBe('40|40%')
   })
 
   it('is disabled by an ancestor Fieldset', async () => {
-    const w = mount(Fieldset, { props: { disabled: true }, slots: { default: () => h(CellSlider, { label: 'Volume', defaultValue: 30 }) } })
+    const w = mount(Fieldset, {
+      props: { disabled: true },
+      slots: { default: () => h(CellSlider, { label: 'Volume', defaultValue: 30 }) },
+    })
     const slider = w.findComponent(CellSlider)
     await w.get('[data-slot=slider-thumb]').trigger('keydown', { key: 'ArrowRight' })
     expect(w.get('[data-slot=slider-output]').text()).toBe('30')
@@ -84,8 +108,19 @@ describe('CellSlider', () => {
 
   it.each<[string, CellSliderProps & { 'aria-label'?: string }]>([
     ['idle with a visible label', { label: 'Volume', defaultValue: 40 }],
-    ['named by aria-label only', { 'aria-label': 'Volume', 'defaultValue': 40 }],
-    ['secondary with a formatted value', { label: 'Opacity', defaultValue: 0.4, min: 0, max: 1, step: 0.1, variant: 'secondary', formatOptions: { style: 'percent' } }],
+    ['named by aria-label only', { 'aria-label': 'Volume', defaultValue: 40 }],
+    [
+      'secondary with a formatted value',
+      {
+        label: 'Opacity',
+        defaultValue: 0.4,
+        min: 0,
+        max: 1,
+        step: 0.1,
+        variant: 'secondary',
+        formatOptions: { style: 'percent' },
+      },
+    ],
     ['disabled', { label: 'Volume', defaultValue: 40, disabled: true }],
   ])('has no axe violations: %s', async (_, props) => {
     const w = mount(CellSlider, { props, attachTo: document.body })
@@ -95,7 +130,10 @@ describe('CellSlider', () => {
   })
 
   it('has no axe violations while the thumb has keyboard focus', async () => {
-    const w = mount(CellSlider, { props: { label: 'Volume', defaultValue: 40 }, attachTo: document.body })
+    const w = mount(CellSlider, {
+      props: { label: 'Volume', defaultValue: 40 },
+      attachTo: document.body,
+    })
     await nextTick()
     ;(thumb(w).element as HTMLElement).focus()
     await thumb(w).trigger('keydown', { key: 'ArrowRight' })
@@ -105,7 +143,10 @@ describe('CellSlider', () => {
   })
 
   it('the thumb is the tab stop and PageUp / PageDown move by a tenth of the range', async () => {
-    const w = mount(CellSlider, { props: { label: 'Volume', defaultValue: 40 }, attachTo: document.body })
+    const w = mount(CellSlider, {
+      props: { label: 'Volume', defaultValue: 40 },
+      attachTo: document.body,
+    })
     await nextTick()
     expect(thumb(w).attributes('tabindex')).toBe('0')
     await thumb(w).trigger('keydown', { key: 'PageUp' })
@@ -117,14 +158,35 @@ describe('CellSlider', () => {
   })
 
   it('the thumb is a horizontal slider exposing its range and formatted value text', async () => {
-    const w = mount(CellSlider, { props: { label: 'Opacity', defaultValue: 0.4, min: 0, max: 1, step: 0.1, locale: 'en-US', formatOptions: { style: 'percent' } }, attachTo: document.body })
+    const w = mount(CellSlider, {
+      props: {
+        label: 'Opacity',
+        defaultValue: 0.4,
+        min: 0,
+        max: 1,
+        step: 0.1,
+        locale: 'en-US',
+        formatOptions: { style: 'percent' },
+      },
+      attachTo: document.body,
+    })
     await nextTick()
-    expect(thumb(w).attributes()).toMatchObject({ 'role': 'slider', 'aria-orientation': 'horizontal', 'aria-valuemin': '0', 'aria-valuemax': '1', 'aria-valuenow': '0.4', 'aria-valuetext': '40%' })
+    expect(thumb(w).attributes()).toMatchObject({
+      role: 'slider',
+      'aria-orientation': 'horizontal',
+      'aria-valuemin': '0',
+      'aria-valuemax': '1',
+      'aria-valuenow': '0.4',
+      'aria-valuetext': '40%',
+    })
     w.unmount()
   })
 
   it('aria-label names the thumb when there is no visible label', async () => {
-    const w = mount(CellSlider, { props: { 'aria-label': 'Volume', 'defaultValue': 40 }, attachTo: document.body })
+    const w = mount(CellSlider, {
+      props: { 'aria-label': 'Volume', defaultValue: 40 },
+      attachTo: document.body,
+    })
     await nextTick()
     expect(thumb(w).attributes('aria-label')).toBe('Volume')
     expect(thumb(w).attributes('aria-labelledby')).toBeUndefined()
@@ -132,7 +194,10 @@ describe('CellSlider', () => {
   })
 
   it('a disabled row reports aria-disabled and leaves the tab order', async () => {
-    const w = mount(CellSlider, { props: { label: 'Volume', defaultValue: 40, disabled: true }, attachTo: document.body })
+    const w = mount(CellSlider, {
+      props: { label: 'Volume', defaultValue: 40, disabled: true },
+      attachTo: document.body,
+    })
     await nextTick()
     expect(thumb(w).attributes('aria-disabled')).toBe('true')
     expect(thumb(w).attributes('tabindex')).toBeUndefined()

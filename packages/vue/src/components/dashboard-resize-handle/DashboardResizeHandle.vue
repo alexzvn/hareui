@@ -1,5 +1,6 @@
 <script lang="ts">
 import type { PrimitiveProps } from 'reka-ui'
+
 import type { ComponentSlots } from '../../types/tv'
 import theme from './theme'
 
@@ -25,6 +26,7 @@ export interface DashboardResizeHandleSlots {
 
 <script setup lang="ts">
 import { Primitive } from 'reka-ui'
+
 import { useComponentUI } from '../../composables/useComponentUI'
 
 const props = defineProps<DashboardResizeHandleProps>()
@@ -34,7 +36,12 @@ const ui = useComponentUI('dashboardResizeHandle', theme, () => ({}))
 </script>
 
 <template>
-  <Primitive :as="as" role="separator" data-slot="dashboard-resize-handle" :class="ui.base({ class: [props.ui?.base, props.class] })">
+  <Primitive
+    :as="as"
+    role="separator"
+    data-slot="dashboard-resize-handle"
+    :class="ui.base({ class: [props.ui?.base, props.class] })"
+  >
     <slot />
   </Primitive>
 </template>

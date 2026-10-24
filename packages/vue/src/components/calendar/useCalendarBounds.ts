@@ -1,5 +1,5 @@
-import type { WeekStartsOn } from 'reka-ui/date'
 import { CalendarDate } from '@internationalized/date'
+import type { WeekStartsOn } from 'reka-ui/date'
 
 // HeroUI defaults Calendar/RangeCalendar bounds to 1900-01-01..2099-12-31 (Gregorian) when the
 // consumer passes none, giving the year picker a sane default range.
@@ -22,8 +22,9 @@ const DAY_INDEX: Record<string, WeekStartsOn> = {
 }
 
 /** Maps HeroUI's day-name `firstDayOfWeek` prop to Reka's numeric `weekStartsOn`. */
-export function weekStartsOnFromFirstDay(firstDayOfWeek: string | undefined): WeekStartsOn | undefined {
-  if (!firstDayOfWeek)
-    return undefined
+export function weekStartsOnFromFirstDay(
+  firstDayOfWeek: string | undefined,
+): WeekStartsOn | undefined {
+  if (!firstDayOfWeek) return undefined
   return DAY_INDEX[firstDayOfWeek]
 }

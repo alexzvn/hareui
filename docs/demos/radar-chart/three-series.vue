@@ -19,11 +19,21 @@ const series = {
 </script>
 
 <template>
-  <Card class="w-full max-w-[480px] rounded-2xl" :ui="{ header: 'flex-row items-center justify-between' }">
+  <Card
+    class="w-full max-w-[480px] rounded-2xl"
+    :ui="{ header: 'flex-row items-center justify-between' }"
+  >
     <template #header>
       <h3 class="text-base font-medium text-foreground">Class Attendance</h3>
       <ChartLegend :series="series" />
     </template>
-    <RadarChart :data="data" index="category" :series="series" :fill-opacity="0.1" :height="300" aria-label="Class attendance by weekday" />
+    <RadarChart
+      :data="data"
+      index="category"
+      :series="series"
+      :fill-opacity="0.1"
+      :height="300"
+      aria-label="Class attendance by weekday"
+    />
   </Card>
 </template>

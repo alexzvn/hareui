@@ -1,15 +1,16 @@
 <script setup lang="ts">
+import { Button, Description, Label, Popover, Switch } from '@hareui/vue'
+import { Icon } from '@iconify/vue'
 // Port of HeroUI docs `components/design-theme-selector.tsx`.
 import { computed, onBeforeUnmount, onMounted, ref } from 'vue'
-import { Icon } from '@iconify/vue'
-import { Button, Description, Label, Popover, Switch } from '@hareui/vue'
+
 import airbnb from '../assets/themes/airbnb.png'
 import black from '../assets/themes/black.png'
 import coinbase from '../assets/themes/coinbase.png'
 import defaultImage from '../assets/themes/default.png'
 import discord from '../assets/themes/discord.png'
-import lavender from '../assets/themes/lavender.png'
 import kumo from '../assets/themes/kumo.png'
+import lavender from '../assets/themes/lavender.png'
 import mint from '../assets/themes/mint.png'
 import netflix from '../assets/themes/netflix.png'
 import rabbit from '../assets/themes/rabbit.png'
@@ -98,7 +99,8 @@ function onOptionKeydown(event: KeyboardEvent, index: number) {
       variant="tertiary"
       :class="[
         'text-xs text-muted',
-        showAvatar && 'max-sm:min-w-0 max-sm:border-0 max-sm:bg-transparent max-sm:px-0 sm:gap-1.5 sm:ps-2 sm:pe-2.5',
+        showAvatar &&
+          'max-sm:min-w-0 max-sm:border-0 max-sm:bg-transparent max-sm:px-0 sm:gap-1.5 sm:ps-2 sm:pe-2.5',
       ]"
     >
       <img
@@ -141,7 +143,10 @@ function onOptionKeydown(event: KeyboardEvent, index: number) {
             :src="item.image"
             class="size-9 rounded-full bg-surface group-data-[selected=true]:ring-2 group-data-[selected=true]:ring-accent group-data-[selected=true]:ring-offset-2 group-data-[selected=true]:ring-offset-surface"
           />
-          <span class="text-[10px] font-medium text-muted capitalize group-data-[selected=true]:text-foreground">{{ item.label }}</span>
+          <span
+            class="text-[10px] font-medium text-muted capitalize group-data-[selected=true]:text-foreground"
+            >{{ item.label }}</span
+          >
         </div>
       </div>
       <div class="mt-4 border-t border-separator pt-4">
@@ -150,10 +155,23 @@ function onOptionKeydown(event: KeyboardEvent, index: number) {
             <Label class="text-xs">Vibrant palette</Label>
             <Description class="text-[10px]">More saturated, less contrast</Description>
           </div>
-          <Switch aria-label="Vibrant palette" :model-value="vibrant" @update:model-value="setStoredVibrantPalette(!!$event)" />
+          <Switch
+            aria-label="Vibrant palette"
+            :model-value="vibrant"
+            @update:model-value="setStoredVibrantPalette(!!$event)"
+          />
         </div>
       </div>
-      <Button as="a" :href="themeBuilderHref" target="_blank" rel="noreferrer" full-width size="sm" variant="outline" class="mt-3 rounded-full text-[13px] text-muted">
+      <Button
+        as="a"
+        :href="themeBuilderHref"
+        target="_blank"
+        rel="noreferrer"
+        full-width
+        size="sm"
+        variant="outline"
+        class="mt-3 rounded-full text-[13px] text-muted"
+      >
         <Icon icon="gravity-ui:palette" class="size-4" />
         Edit theme
       </Button>

@@ -1,8 +1,9 @@
 import type { ComponentResolver, Options as ComponentsOptions } from 'unplugin-vue-components/types'
-import type { Plugin } from 'vite'
-import type { HareUIConfig } from './config'
 import Components from 'unplugin-vue-components/vite'
 import componentNames from 'virtual:hareui-component-names'
+import type { Plugin } from 'vite'
+
+import type { HareUIConfig } from './config'
 
 export interface HareUIResolverOptions {
   /**
@@ -29,7 +30,10 @@ export interface HareUIPluginOptions extends HareUIResolverOptions {
 const components = new Map(Object.entries(componentNames))
 
 function pascalCase(value: string): string {
-  return value.split(/[-_]/).map(part => part.charAt(0).toUpperCase() + part.slice(1)).join('')
+  return value
+    .split(/[-_]/)
+    .map((part) => part.charAt(0).toUpperCase() + part.slice(1))
+    .join('')
 }
 
 /**
@@ -41,12 +45,10 @@ export function HareUIResolver(options: HareUIResolverOptions = {}): ComponentRe
   return {
     type: 'component',
     resolve(name) {
-      if (!name.startsWith(prefix))
-        return
+      if (!name.startsWith(prefix)) return
       const component = name.slice(prefix.length)
       const from = components.get(component)
-      if (from)
-        return { name: component, from }
+      if (from) return { name: component, from }
     },
   }
 }
@@ -57,11 +59,19 @@ export function hareui(options: HareUIPluginOptions = {}): Plugin[] {
   const { ui } = options
   if (ui) {
     // `useComponentUI` reads this global; Vite's `define` also reaches the pre-bundled `@hareui/vue`.
-    plugins.push({ name: 'hareui:ui', config: () => ({ define: { __HAREUI_UI__: JSON.stringify(ui) } }) })
+    plugins.push({
+      name: 'hareui:ui',
+      config: () => ({ define: { __HAREUI_UI__: JSON.stringify(ui) } }),
+    })
   }
   if (options.components !== false) {
     const { resolvers = [], ...rest } = options.components ?? {}
-    plugins.push(Components({ ...rest, resolvers: [...resolvers, HareUIResolver({ prefix: options.prefix })] }))
+    plugins.push(
+      Components({
+        ...rest,
+        resolvers: [...resolvers, HareUIResolver({ prefix: options.prefix })],
+      }),
+    )
   }
   return plugins
 }

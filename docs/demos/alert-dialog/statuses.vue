@@ -4,7 +4,7 @@ import { AlertDialog, Button } from '@hareui/vue'
 const examples = [
   {
     actions: { cancel: 'Stay Signed In', confirm: 'Sign Out' },
-    body: 'You\'ll need to sign in again to access your account. Any unsaved changes will be lost.',
+    body: "You'll need to sign in again to access your account. Any unsaved changes will be lost.",
     classNames: 'bg-accent-soft text-accent-soft-foreground',
     header: 'Sign out of your account?',
     status: 'accent',

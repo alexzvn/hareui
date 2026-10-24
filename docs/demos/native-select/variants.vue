@@ -13,7 +13,13 @@ const items = [
   <div class="grid w-[260px] gap-4">
     <NativeSelect full-width label="Priority (primary)" default-value="medium" :items="items" />
     <div class="rounded-2xl bg-surface p-4">
-      <NativeSelect full-width variant="secondary" label="Priority (secondary, on a surface)" default-value="high" :items="items" />
+      <NativeSelect
+        full-width
+        variant="secondary"
+        label="Priority (secondary, on a surface)"
+        default-value="high"
+        :items="items"
+      />
     </div>
   </div>
 </template>

@@ -1,12 +1,14 @@
 <script setup lang="ts">
-import type { NavigationMenuPopoverProps } from './types'
 import { HoverCardContent, HoverCardPortal, HoverCardRoot, HoverCardTrigger } from 'reka-ui'
 import { nextTick, onBeforeUnmount, onMounted, ref, useId, watch } from 'vue'
+
+import { TOOLTIP_OPEN_EVENT } from '@/composables/nestedLayer'
+
 import { useComponentUI } from '../../composables/useComponentUI'
 import { usePortal } from '../../composables/usePortal'
-import { TOOLTIP_OPEN_EVENT } from '@/composables/nestedLayer'
 import Popover from '../popover/Popover.vue'
 import popoverTheme from '../popover/theme'
+import type { NavigationMenuPopoverProps } from './types'
 
 // The popover shown for a collapsed item with children. HareUI's `Popover` opens on click only, so
 // `mode: 'hover'` (the default) is built on Reka's HoverCard with the same surface classes.
@@ -36,15 +38,13 @@ const open = ref(false)
 // the previous one lingering for its close delay next to the new one.
 let announcing = false
 watch(open, (value) => {
-  if (!value)
-    return
+  if (!value) return
   announcing = true
   document.dispatchEvent(new CustomEvent(TOOLTIP_OPEN_EVENT))
   announcing = false
 })
 function onOtherOpen() {
-  if (!announcing)
-    open.value = false
+  if (!announcing) open.value = false
 }
 onMounted(() => document.addEventListener(TOOLTIP_OPEN_EVENT, onOtherOpen))
 onBeforeUnmount(() => document.removeEventListener(TOOLTIP_OPEN_EVENT, onOtherOpen))
@@ -61,9 +61,20 @@ const suppressOpen = ref(false)
 // Set by a keyboard open: the first focusable element of the card takes focus once it mounts.
 let focusOnMount = false
 
-const ENTRY_KEYS = { right: 'ArrowRight', left: 'ArrowLeft', top: 'ArrowUp', bottom: 'ArrowDown' } as const
-const EXIT_KEYS = { right: 'ArrowLeft', left: 'ArrowRight', top: 'ArrowDown', bottom: 'ArrowUp' } as const
-const FOCUSABLE = 'a[href], button:not([disabled]), input:not([disabled]), select:not([disabled]), textarea:not([disabled]), [tabindex]:not([tabindex="-1"])'
+const ENTRY_KEYS = {
+  right: 'ArrowRight',
+  left: 'ArrowLeft',
+  top: 'ArrowUp',
+  bottom: 'ArrowDown',
+} as const
+const EXIT_KEYS = {
+  right: 'ArrowLeft',
+  left: 'ArrowRight',
+  top: 'ArrowDown',
+  bottom: 'ArrowUp',
+} as const
+const FOCUSABLE =
+  'a[href], button:not([disabled]), input:not([disabled]), select:not([disabled]), textarea:not([disabled]), [tabindex]:not([tabindex="-1"])'
 
 function focusFirst() {
   focusOnMount = false
@@ -76,8 +87,7 @@ function onTriggerKeydown(event: KeyboardEvent) {
   const isEntryKey = event.key === ENTRY_KEYS[props.side]
   if (!isEntryKey && !(target.tagName === 'BUTTON' && (event.key === 'Enter' || event.key === ' ')))
     return
-  if (isEntryKey)
-    event.preventDefault()
+  if (isEntryKey) event.preventDefault()
   triggerEl.value = target
   suppressOpen.value = false
   if (open.value && contentEl.value) {
@@ -89,8 +99,7 @@ function onTriggerKeydown(event: KeyboardEvent) {
 }
 
 function onContentKeydown(event: KeyboardEvent) {
-  if (event.key !== 'Escape' && event.key !== EXIT_KEYS[props.side])
-    return
+  if (event.key !== 'Escape' && event.key !== EXIT_KEYS[props.side]) return
   event.preventDefault()
   event.stopPropagation()
   suppressOpen.value = true
@@ -106,11 +115,9 @@ function onContentFocusout(event: FocusEvent) {
 }
 
 function onOpenChange(value: boolean) {
-  if (value && suppressOpen.value)
-    return
+  if (value && suppressOpen.value) return
   // Reka closes on the trigger's blur or a pointer leave; focus inside the card keeps it open.
-  if (!value && contentEl.value?.contains(document.activeElement))
-    return
+  if (!value && contentEl.value?.contains(document.activeElement)) return
   open.value = value
 }
 
@@ -119,8 +126,7 @@ function setTrigger(el: unknown) {
 }
 function setContent(el: unknown) {
   contentEl.value = (el as { $el?: HTMLElement } | null)?.$el
-  if (contentEl.value && focusOnMount)
-    nextTick(focusFirst)
+  if (contentEl.value && focusOnMount) nextTick(focusFirst)
 }
 </script>
 
@@ -139,7 +145,13 @@ function setContent(el: unknown) {
       <slot name="content" :close="close" />
     </template>
   </Popover>
-  <HoverCardRoot v-else :open="open" :open-delay="openDelay" :close-delay="closeDelay" @update:open="onOpenChange">
+  <HoverCardRoot
+    v-else
+    :open="open"
+    :open-delay="openDelay"
+    :close-delay="closeDelay"
+    @update:open="onOpenChange"
+  >
     <HoverCardTrigger
       :ref="setTrigger"
       as-child
@@ -161,11 +173,20 @@ function setContent(el: unknown) {
         :side-offset="sideOffset"
         :align-offset="alignOffset"
         :collision-padding="8"
-        :class="ui.base({ class: ['origin-(--reka-hover-card-content-transform-origin)', props.class] })"
+        :class="
+          ui.base({ class: ['origin-(--reka-hover-card-content-transform-origin)', props.class] })
+        "
         @keydown="onContentKeydown"
         @focusout="onContentFocusout"
       >
-        <slot name="content" :close="() => { open = false }" />
+        <slot
+          name="content"
+          :close="
+            () => {
+              open = false
+            }
+          "
+        />
       </HoverCardContent>
     </HoverCardPortal>
   </HoverCardRoot>

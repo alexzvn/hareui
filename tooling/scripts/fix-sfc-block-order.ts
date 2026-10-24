@@ -49,10 +49,13 @@ const reorder = (text: string) => {
 }
 
 const reorderMarkdown = (text: string) =>
-  text.replace(/^(```vue[^\n]*\n)([\s\S]*?\n)(```)$/gm, (_, open: string, body: string, close: string) => {
-    const hasBlocks = /^<(template|script)(?=[\s>])/m.test(body)
-    return open + (hasBlocks ? reorder(body) : body) + close
-  })
+  text.replace(
+    /^(```vue[^\n]*\n)([\s\S]*?\n)(```)$/gm,
+    (_, open: string, body: string, close: string) => {
+      const hasBlocks = /^<(template|script)(?=[\s>])/m.test(body)
+      return open + (hasBlocks ? reorder(body) : body) + close
+    },
+  )
 
 const walk = (path: string): string[] => {
   if (!statSync(path).isDirectory()) return [path]

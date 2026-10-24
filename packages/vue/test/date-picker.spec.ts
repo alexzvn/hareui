@@ -1,6 +1,7 @@
 import { CalendarDate } from '@internationalized/date'
 import { mount } from '@vue/test-utils'
 import { describe, expect, it } from 'vitest'
+
 import DatePicker from '../src/components/date-picker/DatePicker.vue'
 import { expectAccessible } from './a11y'
 
@@ -14,7 +15,7 @@ function withResolvers<T>() {
 }
 
 const trigger = '[data-slot=date-picker-trigger]'
-const flush = () => new Promise(r => setTimeout(r, 0))
+const flush = () => new Promise((r) => setTimeout(r, 0))
 
 describe('datePicker', () => {
   it('renders the label and links description/error via aria-describedby', () => {
@@ -36,14 +37,20 @@ describe('datePicker', () => {
   })
 
   it('defaultOpen: renders the popover open initially, uncontrolled', async () => {
-    const wrapper = mount(DatePicker, { props: { label: 'Date', defaultOpen: true }, attachTo: document.body })
+    const wrapper = mount(DatePicker, {
+      props: { label: 'Date', defaultOpen: true },
+      attachTo: document.body,
+    })
     await flush()
     expect(document.querySelector('[data-slot=date-picker-popover]')).not.toBeNull()
     wrapper.unmount()
   })
 
   it('open: a controlled prop keeps the popover state in sync and emits update:open', async () => {
-    const wrapper = mount(DatePicker, { props: { label: 'Date', open: false }, attachTo: document.body })
+    const wrapper = mount(DatePicker, {
+      props: { label: 'Date', open: false },
+      attachTo: document.body,
+    })
     expect(document.querySelector('[data-slot=date-picker-popover]')).toBeNull()
 
     await wrapper.get(trigger).trigger('click')
@@ -65,11 +72,17 @@ describe('datePicker', () => {
     })
     await wrapper.get(trigger).trigger('click')
     await flush()
-    const day10 = [...document.querySelectorAll<HTMLElement>('[data-slot=calendar-cell]')].find(cell => cell.textContent?.trim() === '10')!
+    const day10 = [...document.querySelectorAll<HTMLElement>('[data-slot=calendar-cell]')].find(
+      (cell) => cell.textContent?.trim() === '10',
+    )!
     day10.click()
     await flush()
 
-    expect(wrapper.emitted('update:modelValue')?.at(-1)?.[0]).toMatchObject({ year: 2025, month: 1, day: 10 })
+    expect(wrapper.emitted('update:modelValue')?.at(-1)?.[0]).toMatchObject({
+      year: 2025,
+      month: 1,
+      day: 10,
+    })
     expect(document.querySelector('[data-slot=date-picker-popover]')).toBeNull()
     expect(document.activeElement).toBe(wrapper.get(trigger).element)
     wrapper.unmount()
@@ -82,17 +95,22 @@ describe('datePicker', () => {
   })
 
   it('invalid: hides the description, shows the error, and marks the group invalid', () => {
-    const wrapper = mount(DatePicker, { props: { invalid: true, description: 'Help', errorMessage: 'Required' } })
+    const wrapper = mount(DatePicker, {
+      props: { invalid: true, description: 'Help', errorMessage: 'Required' },
+    })
     expect(wrapper.find('[data-slot=description]').exists()).toBe(false)
     expect(wrapper.get('[data-slot=field-error]').text()).toBe('Required')
     expect(wrapper.get('[data-slot=date-input-group]').attributes('data-invalid')).toBe('true')
   })
 
   it('required: shows a validation error once the (empty) field is submitted', async () => {
-    const wrapper = mount({
-      components: { DatePicker },
-      template: '<form><DatePicker required label="Date" name="d" /></form>',
-    }, { attachTo: document.body })
+    const wrapper = mount(
+      {
+        components: { DatePicker },
+        template: '<form><DatePicker required label="Date" name="d" /></form>',
+      },
+      { attachTo: document.body },
+    )
     const form = wrapper.find('form').element as HTMLFormElement
     form.requestSubmit()
     await wrapper.vm.$nextTick()
@@ -119,7 +137,11 @@ describe('datePicker', () => {
 
   it('invalid={false} overrides native min/max invalidity', () => {
     const wrapper = mount(DatePicker, {
-      props: { defaultValue: new CalendarDate(2024, 1, 1), minValue: new CalendarDate(2024, 6, 1), invalid: false },
+      props: {
+        defaultValue: new CalendarDate(2024, 1, 1),
+        minValue: new CalendarDate(2024, 6, 1),
+        invalid: false,
+      },
     })
     expect(wrapper.find('[data-slot=date-input-group]').attributes('data-invalid')).toBeUndefined()
   })
@@ -133,7 +155,9 @@ describe('datePicker', () => {
   it('slots: calendar slot replaces the default calendar, receiving value and onSelect', async () => {
     const wrapper = mount(DatePicker, {
       props: { label: 'Date' },
-      slots: { calendar: '<button data-testid="custom-calendar" @click="onSelect(value)">custom</button>' },
+      slots: {
+        calendar: '<button data-testid="custom-calendar" @click="onSelect(value)">custom</button>',
+      },
       attachTo: document.body,
     })
     await wrapper.get(trigger).trigger('click')
@@ -144,14 +168,19 @@ describe('datePicker', () => {
 
   // behaviour-final-check P1
   it('Alt+ArrowDown on a segment opens the popover and focuses the selected date, leaving the segment value alone', async () => {
-    const wrapper = mount(DatePicker, { props: { label: 'Date', defaultValue: new CalendarDate(2024, 3, 15) }, attachTo: document.body })
+    const wrapper = mount(DatePicker, {
+      props: { label: 'Date', defaultValue: new CalendarDate(2024, 3, 15) },
+      attachTo: document.body,
+    })
     const month = wrapper.get('[data-reka-date-field-segment="month"]')
     ;(month.element as HTMLElement).focus()
     await month.trigger('keydown', { key: 'ArrowDown', altKey: true })
     await flush()
 
     expect(document.querySelector('[data-slot=date-picker-popover]')).not.toBeNull()
-    expect(document.activeElement).toBe(document.querySelector('[data-slot=calendar-cell][data-value="2024-03-15"]'))
+    expect(document.activeElement).toBe(
+      document.querySelector('[data-slot=calendar-cell][data-value="2024-03-15"]'),
+    )
     expect(month.text()).toBe('3')
     wrapper.unmount()
   })
@@ -160,14 +189,26 @@ describe('datePicker', () => {
   it('returns focus to the trigger after an outside click closes the popover', async () => {
     const outside = document.createElement('button')
     document.body.appendChild(outside)
-    const wrapper = mount(DatePicker, { props: { label: 'Date', defaultValue: new CalendarDate(2025, 1, 15) }, attachTo: document.body })
+    const wrapper = mount(DatePicker, {
+      props: { label: 'Date', defaultValue: new CalendarDate(2025, 1, 15) },
+      attachTo: document.body,
+    })
     await wrapper.get(trigger).trigger('click')
     await flush()
     expect(document.querySelector('[data-slot=date-picker-popover]')).not.toBeNull()
 
     outside.focus()
-    outside.dispatchEvent(new PointerEvent('pointerdown', { bubbles: true, button: 0, pointerType: 'mouse', ctrlKey: false }))
-    outside.dispatchEvent(new PointerEvent('pointerup', { bubbles: true, button: 0, pointerType: 'mouse' }))
+    outside.dispatchEvent(
+      new PointerEvent('pointerdown', {
+        bubbles: true,
+        button: 0,
+        pointerType: 'mouse',
+        ctrlKey: false,
+      }),
+    )
+    outside.dispatchEvent(
+      new PointerEvent('pointerup', { bubbles: true, button: 0, pointerType: 'mouse' }),
+    )
     outside.click()
     await flush()
 
@@ -179,10 +220,15 @@ describe('datePicker', () => {
 
   // behaviour-final-check P3
   it('clicking the already-selected date closes the popover and returns focus to the trigger', async () => {
-    const wrapper = mount(DatePicker, { props: { label: 'Date', defaultValue: new CalendarDate(2025, 1, 15) }, attachTo: document.body })
+    const wrapper = mount(DatePicker, {
+      props: { label: 'Date', defaultValue: new CalendarDate(2025, 1, 15) },
+      attachTo: document.body,
+    })
     await wrapper.get(trigger).trigger('click')
     await flush()
-    document.querySelector<HTMLElement>('[data-slot=calendar-cell][data-value="2025-01-15"]')!.click()
+    document
+      .querySelector<HTMLElement>('[data-slot=calendar-cell][data-value="2025-01-15"]')!
+      .click()
     await flush()
 
     expect(document.querySelector('[data-slot=date-picker-popover]')).toBeNull()
@@ -192,15 +238,22 @@ describe('datePicker', () => {
 
   // behaviour-final-check P4
   it('Escape while the year picker is open closes the whole popover and focuses the trigger', async () => {
-    const wrapper = mount(DatePicker, { props: { label: 'Date', defaultValue: new CalendarDate(2025, 1, 15) }, attachTo: document.body })
+    const wrapper = mount(DatePicker, {
+      props: { label: 'Date', defaultValue: new CalendarDate(2025, 1, 15) },
+      attachTo: document.body,
+    })
     await wrapper.get(trigger).trigger('click')
     await flush()
     document.querySelector<HTMLElement>('[data-slot=calendar-year-picker-trigger]')!.click()
     await flush()
-    expect(document.querySelector('[data-slot=calendar-year-picker-grid]')?.getAttribute('data-open')).toBe('true')
+    expect(
+      document.querySelector('[data-slot=calendar-year-picker-grid]')?.getAttribute('data-open'),
+    ).toBe('true')
 
     const target = document.activeElement ?? document.body
-    target.dispatchEvent(new KeyboardEvent('keydown', { key: 'Escape', bubbles: true, cancelable: true }))
+    target.dispatchEvent(
+      new KeyboardEvent('keydown', { key: 'Escape', bubbles: true, cancelable: true }),
+    )
     await flush()
 
     expect(document.querySelector('[data-slot=date-picker-popover]')).toBeNull()
@@ -210,9 +263,17 @@ describe('datePicker', () => {
 
   // behaviour-final-check F5 (shared DateInputGroup)
   it('invalid: marks every segment aria-invalid and the input element data-invalid', () => {
-    const wrapper = mount(DatePicker, { props: { invalid: true, defaultValue: new CalendarDate(2024, 3, 15) } })
-    expect(wrapper.findAll('[role=spinbutton]').map(s => s.attributes('aria-invalid'))).toEqual(['true', 'true', 'true'])
-    expect(wrapper.get('[data-slot=date-input-group-input]').attributes('data-invalid')).toBeDefined()
+    const wrapper = mount(DatePicker, {
+      props: { invalid: true, defaultValue: new CalendarDate(2024, 3, 15) },
+    })
+    expect(wrapper.findAll('[role=spinbutton]').map((s) => s.attributes('aria-invalid'))).toEqual([
+      'true',
+      'true',
+      'true',
+    ])
+    expect(
+      wrapper.get('[data-slot=date-input-group-input]').attributes('data-invalid'),
+    ).toBeDefined()
   })
 
   // behaviour-final-check P6
@@ -229,10 +290,14 @@ describe('datePicker', () => {
 describe('DatePicker accessibility', () => {
   const date = new CalendarDate(2025, 1, 15)
   const popover = () => document.querySelector<HTMLElement>('[data-slot=date-picker-popover]')
-  const nameOf = (ids: string) => ids.split(' ').map((id) => {
-    const el = document.getElementById(id)!
-    return el.getAttribute('aria-label') ?? el.textContent!.trim()
-  }).join(' ')
+  const nameOf = (ids: string) =>
+    ids
+      .split(' ')
+      .map((id) => {
+        const el = document.getElementById(id)!
+        return el.getAttribute('aria-label') ?? el.textContent!.trim()
+      })
+      .join(' ')
 
   async function open(props: Record<string, unknown> = { label: 'Due date', defaultValue: date }) {
     const wrapper = mount(DatePicker, { props: props as any, attachTo: document.body })
@@ -261,26 +326,27 @@ describe('DatePicker accessibility', () => {
     const wrapper = await open()
     try {
       await expectAccessible()
-    }
-    finally {
+    } finally {
       wrapper.unmount()
     }
   })
 
-  it('passes axe with the popover\'s year picker open', async () => {
+  it("passes axe with the popover's year picker open", async () => {
     const wrapper = await open()
     document.querySelector<HTMLElement>('[data-slot=calendar-year-picker-trigger]')!.click()
     await flush()
     try {
       await expectAccessible()
-    }
-    finally {
+    } finally {
       wrapper.unmount()
     }
   })
 
   it('the trigger announces a dialog popup, the field description and its expanded state, and controls the open dialog', async () => {
-    const wrapper = mount(DatePicker, { props: { label: 'Due date', description: 'Pick a weekday' }, attachTo: document.body })
+    const wrapper = mount(DatePicker, {
+      props: { label: 'Due date', description: 'Pick a weekday' },
+      attachTo: document.body,
+    })
     const button = wrapper.get(trigger)
     expect(button.attributes('aria-haspopup')).toBe('dialog')
     expect(nameOf(button.attributes('aria-describedby')!)).toBe('Pick a weekday')
@@ -307,7 +373,9 @@ describe('DatePicker accessibility', () => {
 
   it('opening with the trigger moves focus to the selected date', async () => {
     const wrapper = await open()
-    expect(document.activeElement).toBe(document.querySelector('[data-slot=calendar-cell][data-value="2025-01-15"]'))
+    expect(document.activeElement).toBe(
+      document.querySelector('[data-slot=calendar-cell][data-value="2025-01-15"]'),
+    )
     wrapper.unmount()
   })
 
@@ -324,7 +392,9 @@ describe('DatePicker accessibility', () => {
 
   it('Escape on a day closes the dialog, collapses the trigger and returns focus to it', async () => {
     const wrapper = await open()
-    document.activeElement!.dispatchEvent(new KeyboardEvent('keydown', { key: 'Escape', bubbles: true, cancelable: true }))
+    document.activeElement!.dispatchEvent(
+      new KeyboardEvent('keydown', { key: 'Escape', bubbles: true, cancelable: true }),
+    )
     await flush()
     expect(popover()).toBeNull()
     expect(wrapper.get(trigger).attributes('aria-expanded')).toBe('false')
@@ -334,7 +404,10 @@ describe('DatePicker accessibility', () => {
 
   it('disabled and read-only pickers cannot open the dialog', async () => {
     for (const props of [{ disabled: true }, { readonly: true }]) {
-      const wrapper = mount(DatePicker, { props: { label: 'Due date', defaultValue: date, ...props }, attachTo: document.body })
+      const wrapper = mount(DatePicker, {
+        props: { label: 'Due date', defaultValue: date, ...props },
+        attachTo: document.body,
+      })
       expect(wrapper.get(trigger).attributes('disabled')).toBeDefined()
       await wrapper.get(trigger).trigger('click')
       const month = wrapper.get('[data-reka-date-field-segment="month"]')
@@ -346,9 +419,16 @@ describe('DatePicker accessibility', () => {
   })
 
   it('segments are named by their field and the label, and described by the description', () => {
-    const wrapper = mount(DatePicker, { props: { label: 'Due date', description: 'Pick a weekday', defaultValue: date }, attachTo: document.body })
+    const wrapper = mount(DatePicker, {
+      props: { label: 'Due date', description: 'Pick a weekday', defaultValue: date },
+      attachTo: document.body,
+    })
     const segments = wrapper.findAll('[role=spinbutton]')
-    expect(segments.map(s => nameOf(s.attributes('aria-labelledby')!))).toEqual(['month,  Due date', 'day,  Due date', 'year,  Due date'])
+    expect(segments.map((s) => nameOf(s.attributes('aria-labelledby')!))).toEqual([
+      'month,  Due date',
+      'day,  Due date',
+      'year,  Due date',
+    ])
     expect(nameOf(segments[0]!.attributes('aria-describedby')!)).toBe('Pick a weekday')
     wrapper.unmount()
   })

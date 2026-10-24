@@ -108,8 +108,14 @@ export interface NumberFieldSlots {
 </script>
 
 <script setup lang="ts">
-import { NumberFieldDecrement, NumberFieldIncrement, NumberFieldInput, NumberFieldRoot } from 'reka-ui'
+import {
+  NumberFieldDecrement,
+  NumberFieldIncrement,
+  NumberFieldInput,
+  NumberFieldRoot,
+} from 'reka-ui'
 import { computed, onBeforeUnmount, onMounted, ref, useAttrs, useTemplateRef } from 'vue'
+
 import { useComponentUI } from '../../composables/useComponentUI'
 import { useFieldChrome } from '../../composables/useFieldChrome'
 import { useFieldValidation } from '../../composables/useFieldValidation'
@@ -120,22 +126,27 @@ import { useFieldsetDisabled } from '../fieldset/context'
 defineOptions({ inheritAttrs: false })
 
 // `invalid: undefined`: an absent boolean would cast to `false`, which counts as controlled-valid and hides validation errors
-const props = withDefaults(defineProps<NumberFieldProps>(), { increment: true, decrement: true, invalid: undefined })
+const props = withDefaults(defineProps<NumberFieldProps>(), {
+  increment: true,
+  decrement: true,
+  invalid: undefined,
+})
 const slots = defineSlots<NumberFieldSlots>()
 const DecrementOutlet = useSlotOutlet(slots, 'decrement')
 const IncrementOutlet = useSlotOutlet(slots, 'increment')
 /** The numeric value; `undefined` while the input is empty. */
 const modelValue = defineModel<number | null>()
 
-const { effectiveStep, displayValue, defaultDisplayValue, formValue, commit, commitEmpty, reset } = useNumberValue({
-  model: modelValue,
-  defaultValue: () => props.defaultValue,
-  min: () => props.min,
-  max: () => props.max,
-  step: () => props.step,
-  formatOptions: () => props.formatOptions,
-  onCommit: () => commitValidation(),
-})
+const { effectiveStep, displayValue, defaultDisplayValue, formValue, commit, commitEmpty, reset } =
+  useNumberValue({
+    model: modelValue,
+    defaultValue: () => props.defaultValue,
+    min: () => props.min,
+    max: () => props.max,
+    step: () => props.step,
+    formatOptions: () => props.formatOptions,
+    onCommit: () => commitValidation(),
+  })
 
 const root = useTemplateRef<HTMLElement>('root')
 const isDisabled = useFieldsetDisabled(() => props.disabled)
@@ -155,12 +166,10 @@ const invalid = computed(() => validation.value.isInvalid)
 
 // Runs after Reka's blur / Enter handler, which has already applied a non-empty input
 function onCommitEmpty(event: Event) {
-  if ((event.target as HTMLInputElement).value === '')
-    commitEmpty()
+  if ((event.target as HTMLInputElement).value === '') commitEmpty()
 }
 function onKeydown(event: KeyboardEvent) {
-  if (event.key === 'Enter' && !event.isComposing)
-    onCommitEmpty(event)
+  if (event.key === 'Enter' && !event.isComposing) onCommitEmpty(event)
 }
 
 // RAC's spin button moves PageUp / PageDown by a single step (`onIncrementPage` = `onIncrement`); Reka moves 10 steps.
@@ -169,11 +178,20 @@ function onKeydown(event: KeyboardEvent) {
 // invoker on the input then drops it as "dispatched before attach" when the key lands right after mount.
 function onKeydownCapture(event: KeyboardEvent) {
   const target = event.target as HTMLElement
-  if ((event.key !== 'PageUp' && event.key !== 'PageDown') || event.isComposing || target.dataset.slot !== 'number-field-input')
+  if (
+    (event.key !== 'PageUp' && event.key !== 'PageDown') ||
+    event.isComposing ||
+    target.dataset.slot !== 'number-field-input'
+  )
     return
   event.preventDefault()
   event.stopImmediatePropagation()
-  target.dispatchEvent(new KeyboardEvent('keydown', { key: event.key === 'PageUp' ? 'ArrowUp' : 'ArrowDown', cancelable: true }))
+  target.dispatchEvent(
+    new KeyboardEvent('keydown', {
+      key: event.key === 'PageUp' ? 'ArrowUp' : 'ArrowDown',
+      cancelable: true,
+    }),
+  )
 }
 onMounted(() => root.value?.addEventListener('keydown', onKeydownCapture, true))
 onBeforeUnmount(() => root.value?.removeEventListener('keydown', onKeydownCapture, true))
@@ -197,10 +215,17 @@ const { id, describedBy, FieldLabel, FieldDescription, FieldError } = useFieldCh
 
 // As in RAC: the stepper buttons are named after the field ("Increase Width") and control its input
 const fieldName = computed(() => (attrs['aria-label'] as string | undefined) ?? props.label)
-const incrementLabel = computed(() => fieldName.value ? `Increase ${fieldName.value}` : 'Increase')
-const decrementLabel = computed(() => fieldName.value ? `Decrease ${fieldName.value}` : 'Decrease')
+const incrementLabel = computed(() =>
+  fieldName.value ? `Increase ${fieldName.value}` : 'Increase',
+)
+const decrementLabel = computed(() =>
+  fieldName.value ? `Decrease ${fieldName.value}` : 'Decrease',
+)
 
-const ui = useComponentUI('numberField', theme, () => ({ variant: props.variant, fullWidth: props.fullWidth }))
+const ui = useComponentUI('numberField', theme, () => ({
+  variant: props.variant,
+  fullWidth: props.fullWidth,
+}))
 
 // RAC Group's `data-focus-within` / `data-focus-visible`
 const focusWithin = ref(false)
@@ -210,7 +235,11 @@ function onFocusIn(event: FocusEvent) {
   focusVisible.value = event.target instanceof Element && event.target.matches(':focus-visible')
 }
 function onFocusOut(event: FocusEvent) {
-  if (event.currentTarget instanceof Element && event.relatedTarget instanceof Node && event.currentTarget.contains(event.relatedTarget))
+  if (
+    event.currentTarget instanceof Element &&
+    event.relatedTarget instanceof Node &&
+    event.currentTarget.contains(event.relatedTarget)
+  )
     return
   focusWithin.value = false
   focusVisible.value = false
@@ -270,7 +299,12 @@ function onFocusOut(event: FocusEvent) {
             width="16"
             xmlns="http://www.w3.org/2000/svg"
           >
-            <path clip-rule="evenodd" d="M1.75 8a.75.75 0 0 1 .75-.75h11a.75.75 0 0 1 0 1.5h-11A.75.75 0 0 1 1.75 8" fill="currentColor" fill-rule="evenodd" />
+            <path
+              clip-rule="evenodd"
+              d="M1.75 8a.75.75 0 0 1 .75-.75h11a.75.75 0 0 1 0 1.5h-11A.75.75 0 0 1 1.75 8"
+              fill="currentColor"
+              fill-rule="evenodd"
+            />
           </svg>
         </DecrementOutlet>
       </NumberFieldDecrement>
@@ -305,7 +339,12 @@ function onFocusOut(event: FocusEvent) {
             width="16"
             xmlns="http://www.w3.org/2000/svg"
           >
-            <path clip-rule="evenodd" d="M8 1.75a.75.75 0 0 1 .75.75v4.75h4.75a.75.75 0 0 1 0 1.5H8.75v4.75a.75.75 0 0 1-1.5 0V8.75H2.5a.75.75 0 0 1 0-1.5h4.75V2.5A.75.75 0 0 1 8 1.75" fill="currentColor" fill-rule="evenodd" />
+            <path
+              clip-rule="evenodd"
+              d="M8 1.75a.75.75 0 0 1 .75.75v4.75h4.75a.75.75 0 0 1 0 1.5H8.75v4.75a.75.75 0 0 1-1.5 0V8.75H2.5a.75.75 0 0 1 0-1.5h4.75V2.5A.75.75 0 0 1 8 1.75"
+              fill="currentColor"
+              fill-rule="evenodd"
+            />
           </svg>
         </IncrementOutlet>
       </NumberFieldIncrement>
@@ -313,5 +352,11 @@ function onFocusOut(event: FocusEvent) {
     <FieldDescription />
     <FieldError />
   </div>
-  <input v-if="name" type="hidden" :name="name" :value="formValue ?? ''" :disabled="isDisabled || undefined">
+  <input
+    v-if="name"
+    type="hidden"
+    :name="name"
+    :value="formValue ?? ''"
+    :disabled="isDisabled || undefined"
+  />
 </template>

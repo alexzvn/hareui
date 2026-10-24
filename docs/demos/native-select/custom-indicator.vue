@@ -12,7 +12,13 @@ const items = [
 
 <template>
   <div class="w-[220px]">
-    <NativeSelect full-width label="Indentation" name="indentation" default-value="2" :items="items">
+    <NativeSelect
+      full-width
+      label="Indentation"
+      name="indentation"
+      default-value="2"
+      :items="items"
+    >
       <template #indicator>
         <Icon icon="gravity-ui:chevrons-expand-vertical" />
       </template>

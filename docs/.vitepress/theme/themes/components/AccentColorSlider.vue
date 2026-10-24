@@ -1,8 +1,8 @@
 <script setup lang="ts">
+import { ColorSlider } from '@hareui/vue'
 // Port of the HeroUI docs' own `components/color-picker/components/color-slider.tsx` (horizontal only): a HareUI
 // ColorSlider restyled to the docs' pill track (`h-8 rounded-full`, no end caps) and round 16px thumb.
 import type { Color, ColorChannel, ColorSpace } from 'reka-ui'
-import { ColorSlider } from '@hareui/vue'
 import { computed } from 'vue'
 
 const props = defineProps<{

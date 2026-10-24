@@ -11,6 +11,12 @@ const items: CheckboxGroupItem[] = [
 
 <template>
   <Surface class="w-full rounded-3xl p-6">
-    <CheckboxGroup name="interests" variant="secondary" label="Select your interests" description="Choose all that apply" :items="items" />
+    <CheckboxGroup
+      name="interests"
+      variant="secondary"
+      label="Select your interests"
+      description="Choose all that apply"
+      :items="items"
+    />
   </Surface>
 </template>

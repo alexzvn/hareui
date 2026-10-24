@@ -12,7 +12,13 @@ const columns: TableColumn[] = [
 </script>
 
 <template>
-  <Table aria-label="Empty table" class="min-h-[200px]" :columns="columns" :rows="[]" :ui="{ content: 'h-full min-w-[600px]' }">
+  <Table
+    aria-label="Empty table"
+    class="min-h-[200px]"
+    :columns="columns"
+    :rows="[]"
+    :ui="{ content: 'h-full min-w-[600px]' }"
+  >
     <template #empty>
       <EmptyState class="flex h-full w-full flex-col items-center justify-center gap-4 text-center">
         <Icon class="size-6 text-muted" icon="gravity-ui:tray" />

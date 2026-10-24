@@ -1,6 +1,8 @@
 import { fileURLToPath } from 'node:url'
+
 import tailwindcss from '@tailwindcss/vite'
 import { defineConfigWithTheme } from 'vitepress'
+
 import { headingPermalink, markdownConfig, searchRender } from './markdown'
 import { sectionLinks, sidebar, type ThemeConfig } from './sidebar'
 import { DESIGN_THEME_IDS } from './theme/design-theme'
@@ -36,7 +38,10 @@ export default defineConfigWithTheme<ThemeConfig>({
     search: {
       provider: 'local',
       // SearchDialog renders matched paragraphs from the stored section text.
-      options: { _render: searchRender, miniSearch: { options: { storeFields: ['title', 'titles', 'text'] } } },
+      options: {
+        _render: searchRender,
+        miniSearch: { options: { storeFields: ['title', 'titles', 'text'] } },
+      },
     },
   },
   vite: {
@@ -48,9 +53,18 @@ export default defineConfigWithTheme<ThemeConfig>({
       // Exact matches: the `@hareui/vue/charts` subpath must not resolve as a path inside `@hareui/vue`.
       // `@/` is the library's internal alias for packages/vue/src, needed because the docs compile the library from source.
       alias: [
-        { find: /^@hareui\/vue\/charts$/, replacement: fileURLToPath(new URL('../../packages/vue/src/charts.ts', import.meta.url)) },
-        { find: /^@hareui\/vue$/, replacement: fileURLToPath(new URL('../../packages/vue/src/index.ts', import.meta.url)) },
-        { find: /^@\//, replacement: fileURLToPath(new URL('../../packages/vue/src/', import.meta.url)) },
+        {
+          find: /^@hareui\/vue\/charts$/,
+          replacement: fileURLToPath(new URL('../../packages/vue/src/charts.ts', import.meta.url)),
+        },
+        {
+          find: /^@hareui\/vue$/,
+          replacement: fileURLToPath(new URL('../../packages/vue/src/index.ts', import.meta.url)),
+        },
+        {
+          find: /^@\//,
+          replacement: fileURLToPath(new URL('../../packages/vue/src/', import.meta.url)),
+        },
       ],
     },
   },

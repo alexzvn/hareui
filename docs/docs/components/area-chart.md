@@ -61,7 +61,12 @@ Each series takes `name`, `color`, `hide`, `tooltip`, `valueFormatter`, `yAxis`,
 - A series' `valueFormatter` formats that series in the tooltip only.
 
 ```vue
-<AreaChart :data="data" index="month" :value-formatter="value => `$${value}`" :y-axis="{ tickFormatter: compact }" />
+<AreaChart
+  :data="data"
+  index="month"
+  :value-formatter="(value) => `$${value}`"
+  :y-axis="{ tickFormatter: compact }"
+/>
 ```
 
 ## Stacking
@@ -142,15 +147,17 @@ Gradient ids are global to the page. Use a unique id per chart when you render s
 Override the `areaChart` theme app-wide with `createHareUI`:
 
 ```ts
-app.use(createHareUI({
-  ui: {
-    areaChart: {
-      slots: {
-        tick: 'text-xs',
+app.use(
+  createHareUI({
+    ui: {
+      areaChart: {
+        slots: {
+          tick: 'text-xs',
+        },
       },
     },
-  },
-}))
+  }),
+)
 ```
 
 ## Composition
@@ -173,26 +180,26 @@ Without `index` or `series`, the chart draws only the parts you put in its defau
 
 Parts always draw in the same order (grid, series, axes, cursor), so template order doesn't matter. With `index` or `series` set, parts in the default slot draw next to the generated ones: turn a generated part off (for example `:x-axis="false"`) before adding your own. Hand-placed parts still read the root's `index` and `series`, so `<ChartXAxis />` picks up the categories and `<ChartArea data-key="paid" />` its name and color.
 
-| `ui` key | `data-slot` | Element | Description |
-|---|---|---|---|
-| `base` | `area-chart` | `<div>` | Responsive container |
-| `surface` | `chart-surface` | `<svg>` | Drawing surface, layered grid → series → axes → cursor |
-| `overlay` | `chart-overlay` | `<div>` | Layer over the svg that holds the tooltip |
-| `grid` | `chart-grid` | `<g>` | Grid lines (`chart-grid-line`) |
-| `axis` | `chart-x-axis`, `chart-y-axis` | `<g>` | One group per axis |
-| `axisLine` | `chart-axis-line` | `<line>` | Axis line, hidden by default |
-| `tickLine` | `chart-tick-line` | `<line>` | Tick marks, hidden by default |
-| `tick` | `chart-tick` | `<text>` | Axis labels |
-| `series` | `chart-area` | `<g>` | One group per `ChartArea` |
-| — | `chart-area-fill` | `<path>` | Filled area |
-| — | `chart-area-curve` | `<path>` | Line along the top of the area |
-| — | `chart-dots` | `<g>` | Group of point markers per series |
-| `dot` | `chart-dot` | `<circle>` | Point markers when `dot` is set |
-| `activeDot` | `chart-active-dot` | `<circle>` | Marker at the hovered point |
-| `cursor` | `chart-cursor` | `<path>` | Hover cursor |
-| `label` | `chart-label` | `<text>` | `ChartLabel` text |
-| `tooltip` | `chart-tooltip-wrapper` | `<div>` | Floating wrapper around the tooltip panel |
-| `legend` | `chart-legend` | `<ul>` | Legend drawn from the `legend` prop |
+| `ui` key    | `data-slot`                    | Element    | Description                                            |
+| ----------- | ------------------------------ | ---------- | ------------------------------------------------------ |
+| `base`      | `area-chart`                   | `<div>`    | Responsive container                                   |
+| `surface`   | `chart-surface`                | `<svg>`    | Drawing surface, layered grid → series → axes → cursor |
+| `overlay`   | `chart-overlay`                | `<div>`    | Layer over the svg that holds the tooltip              |
+| `grid`      | `chart-grid`                   | `<g>`      | Grid lines (`chart-grid-line`)                         |
+| `axis`      | `chart-x-axis`, `chart-y-axis` | `<g>`      | One group per axis                                     |
+| `axisLine`  | `chart-axis-line`              | `<line>`   | Axis line, hidden by default                           |
+| `tickLine`  | `chart-tick-line`              | `<line>`   | Tick marks, hidden by default                          |
+| `tick`      | `chart-tick`                   | `<text>`   | Axis labels                                            |
+| `series`    | `chart-area`                   | `<g>`      | One group per `ChartArea`                              |
+| —           | `chart-area-fill`              | `<path>`   | Filled area                                            |
+| —           | `chart-area-curve`             | `<path>`   | Line along the top of the area                         |
+| —           | `chart-dots`                   | `<g>`      | Group of point markers per series                      |
+| `dot`       | `chart-dot`                    | `<circle>` | Point markers when `dot` is set                        |
+| `activeDot` | `chart-active-dot`             | `<circle>` | Marker at the hovered point                            |
+| `cursor`    | `chart-cursor`                 | `<path>`   | Hover cursor                                           |
+| `label`     | `chart-label`                  | `<text>`   | `ChartLabel` text                                      |
+| `tooltip`   | `chart-tooltip-wrapper`        | `<div>`    | Floating wrapper around the tooltip panel              |
+| `legend`    | `chart-legend`                 | `<ul>`     | Legend drawn from the `legend` prop                    |
 
 ## Styling Reference
 

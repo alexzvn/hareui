@@ -1,5 +1,6 @@
 <script lang="ts">
 import type { PrimitiveProps } from 'reka-ui'
+
 import type { ComponentSlots, ComponentVariants } from '../../types/tv'
 import theme from './theme'
 
@@ -65,13 +66,19 @@ export interface ButtonSlots {
 <script setup lang="ts">
 import { Primitive } from 'reka-ui'
 import { computed, inject, provide, useTemplateRef } from 'vue'
+
 import { useComponentUI } from '../../composables/useComponentUI'
 import { refElement } from '../../composables/useFirstChild'
 import { buttonGroupContextKey } from '../button-group/context'
-import Spinner from '../spinner/Spinner.vue'
 import { useFieldsetDisabled } from '../fieldset/context'
+import Spinner from '../spinner/Spinner.vue'
 
-const props = withDefaults(defineProps<ButtonProps>(), { as: 'button', type: 'button', disabled: undefined, fullWidth: undefined })
+const props = withDefaults(defineProps<ButtonProps>(), {
+  as: 'button',
+  type: 'button',
+  disabled: undefined,
+  fullWidth: undefined,
+})
 defineSlots<ButtonSlots>()
 
 // A ButtonGroup's props apply to its own Buttons only (HeroUI marks direct children), so hide it from nested ones.
@@ -87,8 +94,7 @@ const ui = useComponentUI('button', theme, () => ({
 }))
 
 const groupClass = computed(() => {
-  if (!group)
-    return undefined
+  if (!group) return undefined
   const groupUI = group.ui.value
   const overrides = group.uiOverrides.value
   return [
@@ -99,7 +105,9 @@ const groupClass = computed(() => {
 
 // HeroUI renders `ButtonGroup.Separator` in every grouped Button except the first.
 const self = useTemplateRef<unknown>('self')
-const showSeparator = computed((): boolean => !!group?.separator.value && group.firstChild.value !== refElement(self.value))
+const showSeparator = computed(
+  (): boolean => !!group?.separator.value && group.firstChild.value !== refElement(self.value),
+)
 
 const isNativeButton = computed(() => props.as === 'button')
 const isDisabled = useFieldsetDisabled(() => props.disabled ?? group?.disabled.value)
@@ -107,17 +115,17 @@ const isDisabled = useFieldsetDisabled(() => props.disabled ?? group?.disabled.v
 const attrs = computed(() => {
   if (isNativeButton.value) {
     return {
-      'type': props.type,
-      'disabled': isDisabled.value || undefined,
+      type: props.type,
+      disabled: isDisabled.value || undefined,
       'aria-disabled': props.pending ? 'true' : undefined,
     }
   }
   // React Aria `useButton`: non-button elements get `role="button"` and join the tab order. Disabled ones leave it
   // (-1 rather than omitted, so a disabled `<a href>` stays out too).
   return {
-    'role': 'button',
+    role: 'button',
     'aria-disabled': isDisabled.value || props.pending ? 'true' : undefined,
-    'tabindex': isDisabled.value ? -1 : 0,
+    tabindex: isDisabled.value ? -1 : 0,
   }
 })
 
@@ -135,16 +143,16 @@ function isKeyboardTarget(event: KeyboardEvent) {
 }
 
 function onKeydown(event: KeyboardEvent) {
-  if (!isKeyboardTarget(event))
-    return
+  if (!isKeyboardTarget(event)) return
   const el = event.currentTarget as HTMLElement
   if (event.key === ' ') {
     event.preventDefault()
-  }
-  else if (event.key === 'Enter' && !(el instanceof HTMLAnchorElement && el.hasAttribute('href'))) {
+  } else if (
+    event.key === 'Enter' &&
+    !(el instanceof HTMLAnchorElement && el.hasAttribute('href'))
+  ) {
     event.preventDefault()
-    if (!event.repeat)
-      el.click()
+    if (!event.repeat) el.click()
   }
 }
 
@@ -176,7 +184,12 @@ function onKeyup(event: KeyboardEvent) {
       :class="group!.ui.value.separator({ class: group!.uiOverrides.value?.separator })"
     />
     <slot name="leading" :pending="pending">
-      <Spinner v-if="pending" size="sm" color="current" :class="ui.spinner({ class: props.ui?.spinner })" />
+      <Spinner
+        v-if="pending"
+        size="sm"
+        color="current"
+        :class="ui.spinner({ class: props.ui?.spinner })"
+      />
     </slot>
     <slot :pending="pending" />
     <slot name="trailing" :pending="pending" />

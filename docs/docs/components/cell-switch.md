@@ -24,22 +24,25 @@ CellSwitch is a [Switch](/docs/components/switch) styled as a row. The whole row
 ```vue
 <template>
   <CellSwitch label="…" error-message="…">
-    <template #label />  <!-- content at the start of the row -->
-    <template #icon />   <!-- icon inside the thumb -->
-    <template #error />  <!-- error below the row, rendered when invalid -->
+    <template #label />
+    <!-- content at the start of the row -->
+    <template #icon />
+    <!-- icon inside the thumb -->
+    <template #error />
+    <!-- error below the row, rendered when invalid -->
   </CellSwitch>
 </template>
 ```
 
-| `ui` key | `data-slot` | Element |
-|---|---|---|
-| `base` | `cell-switch` | `<div>` root |
-| `trigger` | `switch-content` | `<button role="switch">`, the visible row |
-| `label` | `cell-switch-label` | `<span>` at the start of the row |
-| `control` | `switch-control` | `<span>` track of the switch, at the end of the row |
-| `thumb` | `switch-thumb` | `<span>` inside the control |
-| — | `switch-icon` | `<span>` inside the thumb, holding the `#icon` slot (when used) |
-| — | `field-error` | [FieldError](/docs/components/field-error) below the row (while invalid) |
+| `ui` key  | `data-slot`         | Element                                                                  |
+| --------- | ------------------- | ------------------------------------------------------------------------ |
+| `base`    | `cell-switch`       | `<div>` root                                                             |
+| `trigger` | `switch-content`    | `<button role="switch">`, the visible row                                |
+| `label`   | `cell-switch-label` | `<span>` at the start of the row                                         |
+| `control` | `switch-control`    | `<span>` track of the switch, at the end of the row                      |
+| `thumb`   | `switch-thumb`      | `<span>` inside the control                                              |
+| —         | `switch-icon`       | `<span>` inside the thumb, holding the `#icon` slot (when used)          |
+| —         | `field-error`       | [FieldError](/docs/components/field-error) below the row (while invalid) |
 
 ## Examples
 
@@ -85,19 +88,18 @@ Pass classes per part with `ui`:
 
 ```vue
 <template>
-  <CellSwitch
-    label="Wi-Fi"
-    :ui="{ trigger: 'h-11 rounded-2xl', label: 'font-semibold' }"
-  />
+  <CellSwitch label="Wi-Fi" :ui="{ trigger: 'h-11 rounded-2xl', label: 'font-semibold' }" />
 </template>
 ```
 
 ### Global Configuration
 
 ```ts
-app.use(createHareUI({
-  ui: { cellSwitch: { slots: { trigger: 'h-10' } } },
-}))
+app.use(
+  createHareUI({
+    ui: { cellSwitch: { slots: { trigger: 'h-10' } } },
+  }),
+)
 ```
 
 The switch control keeps the [Switch](/docs/components/switch) theme, so `ui.switch` in the app config applies here too.

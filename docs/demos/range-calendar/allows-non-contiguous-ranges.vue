@@ -1,6 +1,6 @@
 <script setup lang="ts">
-import type { DateValue } from '@internationalized/date'
 import { Description, RangeCalendar } from '@hareui/vue'
+import type { DateValue } from '@internationalized/date'
 import { getLocalTimeZone, today } from '@internationalized/date'
 
 const now = today(getLocalTimeZone())

@@ -1,5 +1,6 @@
 <script lang="ts">
 import type { PrimitiveProps } from 'reka-ui'
+
 import type { ComponentSlots, ComponentVariants } from '../../types/tv'
 import theme from './theme'
 
@@ -36,6 +37,7 @@ export interface SeparatorSlots {
 <script setup lang="ts">
 import { Separator as SeparatorPrimitive } from 'reka-ui'
 import { computed, inject } from 'vue'
+
 import { useComponentUI } from '../../composables/useComponentUI'
 import { toolbarContextKey } from '../toolbar/context'
 
@@ -43,8 +45,15 @@ const props = defineProps<SeparatorProps>()
 defineSlots<SeparatorSlots>()
 
 const toolbar = inject(toolbarContextKey, null)
-const resolvedOrientation = computed(() => props.orientation
-  ?? (toolbar ? (toolbar.orientation.value === 'horizontal' ? 'vertical' : 'horizontal') : 'horizontal'))
+const resolvedOrientation = computed(
+  () =>
+    props.orientation ??
+    (toolbar
+      ? toolbar.orientation.value === 'horizontal'
+        ? 'vertical'
+        : 'horizontal'
+      : 'horizontal'),
+)
 
 const ui = useComponentUI('separator', theme, () => ({
   orientation: resolvedOrientation.value,
@@ -52,9 +61,9 @@ const ui = useComponentUI('separator', theme, () => ({
 }))
 
 const toolbarClass = computed(() => {
-  if (!toolbar)
-    return undefined
-  const slot = resolvedOrientation.value === 'vertical' ? 'separatorVertical' : 'separatorHorizontal'
+  if (!toolbar) return undefined
+  const slot =
+    resolvedOrientation.value === 'vertical' ? 'separatorVertical' : 'separatorHorizontal'
   return toolbar.ui.value[slot]({ class: toolbar.uiOverrides.value?.[slot] })
 })
 </script>

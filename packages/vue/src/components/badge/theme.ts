@@ -31,16 +31,62 @@ export default {
     },
   },
   compoundVariants: [
-    { variant: 'primary', color: 'accent', class: { base: '[--badge-bg:var(--accent)] [--badge-fg:var(--accent-foreground)]' } },
-    { variant: 'primary', color: 'default', class: { base: '[--badge-bg:var(--default)] [--badge-fg:var(--default-foreground)]' } },
-    { variant: 'primary', color: 'success', class: { base: '[--badge-bg:var(--success)] [--badge-fg:var(--success-foreground)]' } },
-    { variant: 'primary', color: 'warning', class: { base: '[--badge-bg:var(--warning)] [--badge-fg:var(--warning-foreground)]' } },
-    { variant: 'primary', color: 'danger', class: { base: '[--badge-bg:var(--danger)] [--badge-fg:var(--danger-foreground)]' } },
-    { variant: 'soft', color: 'accent', class: { base: '[--badge-bg:var(--accent-soft)] [--badge-fg:var(--accent-soft-foreground)]' } },
-    { variant: 'soft', color: 'default', class: { base: '[--badge-bg:var(--default-soft)] [--badge-fg:var(--default-soft-foreground)]' } },
-    { variant: 'soft', color: 'success', class: { base: '[--badge-bg:var(--success-soft)] [--badge-fg:var(--success-soft-foreground)]' } },
-    { variant: 'soft', color: 'warning', class: { base: '[--badge-bg:var(--warning-soft)] [--badge-fg:var(--warning-soft-foreground)]' } },
-    { variant: 'soft', color: 'danger', class: { base: '[--badge-bg:var(--danger-soft)] [--badge-fg:var(--danger-soft-foreground)]' } },
+    {
+      variant: 'primary',
+      color: 'accent',
+      class: { base: '[--badge-bg:var(--accent)] [--badge-fg:var(--accent-foreground)]' },
+    },
+    {
+      variant: 'primary',
+      color: 'default',
+      class: { base: '[--badge-bg:var(--default)] [--badge-fg:var(--default-foreground)]' },
+    },
+    {
+      variant: 'primary',
+      color: 'success',
+      class: { base: '[--badge-bg:var(--success)] [--badge-fg:var(--success-foreground)]' },
+    },
+    {
+      variant: 'primary',
+      color: 'warning',
+      class: { base: '[--badge-bg:var(--warning)] [--badge-fg:var(--warning-foreground)]' },
+    },
+    {
+      variant: 'primary',
+      color: 'danger',
+      class: { base: '[--badge-bg:var(--danger)] [--badge-fg:var(--danger-foreground)]' },
+    },
+    {
+      variant: 'soft',
+      color: 'accent',
+      class: { base: '[--badge-bg:var(--accent-soft)] [--badge-fg:var(--accent-soft-foreground)]' },
+    },
+    {
+      variant: 'soft',
+      color: 'default',
+      class: {
+        base: '[--badge-bg:var(--default-soft)] [--badge-fg:var(--default-soft-foreground)]',
+      },
+    },
+    {
+      variant: 'soft',
+      color: 'success',
+      class: {
+        base: '[--badge-bg:var(--success-soft)] [--badge-fg:var(--success-soft-foreground)]',
+      },
+    },
+    {
+      variant: 'soft',
+      color: 'warning',
+      class: {
+        base: '[--badge-bg:var(--warning-soft)] [--badge-fg:var(--warning-soft-foreground)]',
+      },
+    },
+    {
+      variant: 'soft',
+      color: 'danger',
+      class: { base: '[--badge-bg:var(--danger-soft)] [--badge-fg:var(--danger-soft-foreground)]' },
+    },
   ],
   defaultVariants: {
     color: 'default',

@@ -10,5 +10,10 @@ const items: CheckboxGroupItem[] = [
 </script>
 
 <template>
-  <CheckboxGroup name="interests" label="Select your interests" description="Choose all that apply" :items="items" />
+  <CheckboxGroup
+    name="interests"
+    label="Select your interests"
+    description="Choose all that apply"
+    :items="items"
+  />
 </template>

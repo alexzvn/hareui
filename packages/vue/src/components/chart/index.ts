@@ -13,7 +13,11 @@ export type { ChartLabelProps, ChartLabelSlotProps, ChartLabelSlots } from './Ch
 export { default as ChartLine } from './ChartLine.vue'
 export type { ChartLineProps, ChartLineSlots } from './ChartLine.vue'
 export { default as ChartTooltip } from './ChartTooltip.vue'
-export type { ChartTooltipProps, ChartTooltipSlotProps, ChartTooltipSlots } from './ChartTooltip.vue'
+export type {
+  ChartTooltipProps,
+  ChartTooltipSlotProps,
+  ChartTooltipSlots,
+} from './ChartTooltip.vue'
 export { default as ChartXAxis } from './ChartXAxis.vue'
 export type { ChartXAxisProps, ChartXAxisSlots } from './ChartXAxis.vue'
 export { default as ChartYAxis } from './ChartYAxis.vue'
@@ -40,9 +44,16 @@ export type { ChartPolarAngleAxisProps, ChartPolarAngleAxisSlots } from './Chart
 export { default as ChartPolarGrid } from './ChartPolarGrid.vue'
 export type { ChartPolarGridProps } from './ChartPolarGrid.vue'
 export { default as ChartPolarRadiusAxis } from './ChartPolarRadiusAxis.vue'
-export type { ChartPolarRadiusAxisProps, ChartPolarRadiusAxisSlots } from './ChartPolarRadiusAxis.vue'
+export type {
+  ChartPolarRadiusAxisProps,
+  ChartPolarRadiusAxisSlots,
+} from './ChartPolarRadiusAxis.vue'
 export { default as ChartRadar } from './ChartRadar.vue'
 export type { ChartRadarProps, ChartRadarSlots } from './ChartRadar.vue'
 export { default as ChartRadialBar } from './ChartRadialBar.vue'
-export type { ChartRadialBarBackground, ChartRadialBarProps, ChartRadialBarSlots } from './ChartRadialBar.vue'
+export type {
+  ChartRadialBarBackground,
+  ChartRadialBarProps,
+  ChartRadialBarSlots,
+} from './ChartRadialBar.vue'
 export type { ChartPolarCenterSlotProps } from './polar'

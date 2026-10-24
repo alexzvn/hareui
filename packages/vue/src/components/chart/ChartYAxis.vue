@@ -18,7 +18,7 @@ export interface ChartYAxisProps extends ChartAxisProps {
    */
   width?: number | 'auto'
   /** Space above the top and below the bottom value, in px. */
-  padding?: { top?: number, bottom?: number }
+  padding?: { top?: number; bottom?: number }
 }
 
 export type ChartYAxisSlots = ChartAxisSlots
@@ -26,6 +26,7 @@ export type ChartYAxisSlots = ChartAxisSlots
 
 <script setup lang="ts">
 import { computed } from 'vue'
+
 import { useCartesianContext } from './cartesian'
 import ChartCartesianAxis from './ChartCartesianAxis.vue'
 import { useChartConfig, useChartContext } from './context'

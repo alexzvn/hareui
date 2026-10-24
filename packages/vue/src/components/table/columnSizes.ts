@@ -22,8 +22,7 @@ function staticWidth(width: ColumnWidth, tableWidth: number): number {
 }
 
 function flexFactor(width: ColumnWidth): number {
-  if (typeof width === 'number')
-    return 1
+  if (typeof width === 'number') return 1
   const match = width.match(/^(.+)(?=fr$)/)
   return match ? Number.parseFloat(match[0]) : 1
 }
@@ -44,7 +43,11 @@ function cascadeRounding(sizes: number[]): number[] {
  * Resolves each column's pixel width for a table `availableWidth` wide. Widths default to
  * `'1fr'`, min widths to `defaultMinWidth`.
  */
-export function calculateColumnSizes(availableWidth: number, columns: ColumnSizeInput[], defaultMinWidth = DEFAULT_MIN_COLUMN_WIDTH): number[] {
+export function calculateColumnSizes(
+  availableWidth: number,
+  columns: ColumnSizeInput[],
+  defaultMinWidth = DEFAULT_MIN_COLUMN_WIDTH,
+): number[] {
   const flooredWidth = Math.floor(availableWidth)
   const fraction = availableWidth - flooredWidth
   availableWidth = flooredWidth
@@ -59,24 +62,23 @@ export function calculateColumnSizes(availableWidth: number, columns: ColumnSize
     if (isStatic(width)) {
       baseSize = staticWidth(width, availableWidth)
       frozen = true
-    }
-    else {
+    } else {
       flex = flexFactor(width)
-      if (flex <= 0)
-        frozen = true
+      if (flex <= 0) frozen = true
     }
     const min = staticWidth(column.minWidth ?? defaultMinWidth, availableWidth)
-    const max = column.maxWidth != null ? staticWidth(column.maxWidth, availableWidth) : Number.MAX_SAFE_INTEGER
+    const max =
+      column.maxWidth != null
+        ? staticWidth(column.maxWidth, availableWidth)
+        : Number.MAX_SAFE_INTEGER
     const hypothetical = Math.max(min, Math.min(baseSize, max))
     if (frozen) {
       target = hypothetical
-    }
-    else if (baseSize > hypothetical) {
+    } else if (baseSize > hypothetical) {
       frozen = true
       target = hypothetical
     }
-    if (!frozen)
-      hasNonFrozenItems = true
+    if (!frozen) hasNonFrozenItems = true
     return { frozen, baseSize, min, max, flex, target, violation: 0 }
   })
 
@@ -86,8 +88,7 @@ export function calculateColumnSizes(availableWidth: number, columns: ColumnSize
     for (const item of items) {
       if (item.frozen) {
         used += item.target
-      }
-      else {
+      } else {
         used += item.baseSize
         flexFactors += item.flex
       }
@@ -95,8 +96,7 @@ export function calculateColumnSizes(availableWidth: number, columns: ColumnSize
     const free = availableWidth - used
     if (free > 0) {
       for (const item of items) {
-        if (!item.frozen)
-          item.target = item.baseSize + (item.flex / flexFactors) * free
+        if (!item.frozen) item.target = item.baseSize + (item.flex / flexFactors) * free
       }
     }
     let totalViolation = 0
@@ -113,14 +113,12 @@ export function calculateColumnSizes(availableWidth: number, columns: ColumnSize
     for (const item of items) {
       if (totalViolation === 0 || Math.sign(totalViolation) === Math.sign(item.violation))
         item.frozen = true
-      else if (!item.frozen)
-        hasNonFrozenItems = true
+      else if (!item.frozen) hasNonFrozenItems = true
     }
   }
 
-  const sizes = cascadeRounding(items.map(item => item.target))
+  const sizes = cascadeRounding(items.map((item) => item.target))
   // The last column takes the sub-pixel remainder so the columns sum to the exact width.
-  if (fraction > 0 && sizes.length)
-    sizes[sizes.length - 1] += fraction
+  if (fraction > 0 && sizes.length) sizes[sizes.length - 1] += fraction
   return sizes
 }

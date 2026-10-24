@@ -17,9 +17,7 @@ import { Alert, Button, CloseButton } from '@hareui/vue'
           class="pointer-events-none absolute -top-8 -right-8 size-28 rounded-full bg-warning/15 blur-2xl dark:bg-warning/25"
         />
       </template>
-      <Button class="mt-3 sm:hidden" size="sm" variant="tertiary">
-        Update billing
-      </Button>
+      <Button class="mt-3 sm:hidden" size="sm" variant="tertiary"> Update billing </Button>
       <template #trailing>
         <Button class="relative hidden shrink-0 sm:inline-flex" size="sm" variant="tertiary">
           Update billing

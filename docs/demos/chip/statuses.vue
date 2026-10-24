@@ -28,7 +28,9 @@ import { Icon } from '@iconify/vue'
         <template #leading><Icon height="16" icon="gravity-ui:check" width="12" /></template>
       </Chip>
       <Chip color="warning" label="Beta">
-        <template #leading><Icon height="16" icon="gravity-ui:triangle-exclamation" width="12" /></template>
+        <template #leading
+          ><Icon height="16" icon="gravity-ui:triangle-exclamation" width="12"
+        /></template>
       </Chip>
       <Chip color="danger" label="Deprecated">
         <template #leading><Icon height="16" icon="gravity-ui:ban" width="12" /></template>

@@ -14,7 +14,11 @@ function formatMinutes(value: number) {
 </script>
 
 <template>
-  <Card class="w-full max-w-[380px] rounded-2xl" title="Study Time This Week" :ui="{ title: 'text-base', content: 'flex-row items-center gap-4' }">
+  <Card
+    class="w-full max-w-[380px] rounded-2xl"
+    title="Study Time This Week"
+    :ui="{ title: 'text-base', content: 'flex-row items-center gap-4' }"
+  >
     <div class="flex flex-1 flex-col gap-2 self-start">
       <div v-for="item in data" :key="item.subject" class="flex flex-col">
         <span class="text-xs text-muted">{{ item.subject }}</span>

@@ -1,8 +1,9 @@
 <script setup lang="ts">
+import { AlertDialog, Button, Kbd, Tooltip } from '@hareui/vue'
 // Port of HeroUI docs `themes/components/reset-button.tsx`.
 import { Icon } from '@iconify/vue'
-import { AlertDialog, Button, Kbd, Tooltip } from '@hareui/vue'
 import { computed, ref } from 'vue'
+
 import { useKeyPress } from '../composables/keyPress'
 import { useResetVariables, useVariablesState } from '../composables/variables'
 import { defaultThemeVariables } from '../constants'
@@ -46,11 +47,22 @@ useKeyPress('d', () => (isOpen.value = true), { enabled: () => !isDisabled.value
         </template>
         <template #body>This will restore all theme values to their default settings.</template>
         <template #footer="{ close }">
-          <Button class="order-2 w-full sm:order-1 sm:w-auto" size="md" variant="tertiary" @click="close()">Cancel</Button>
+          <Button
+            class="order-2 w-full sm:order-1 sm:w-auto"
+            size="md"
+            variant="tertiary"
+            @click="close()"
+            >Cancel</Button
+          >
           <Button
             class="order-1 w-full sm:order-2 sm:w-auto"
             size="md"
-            @click="() => { reset(); close() }"
+            @click="
+              () => {
+                reset()
+                close()
+              }
+            "
           >
             Confirm
           </Button>

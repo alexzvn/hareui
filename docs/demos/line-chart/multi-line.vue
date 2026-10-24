@@ -31,7 +31,10 @@ function formatLatency(value: number) {
 </script>
 
 <template>
-  <Card class="w-full max-w-[600px] rounded-2xl" :ui="{ header: 'flex-row flex-wrap items-center justify-between gap-2' }">
+  <Card
+    class="w-full max-w-[600px] rounded-2xl"
+    :ui="{ header: 'flex-row flex-wrap items-center justify-between gap-2' }"
+  >
     <template #header>
       <h3 class="text-base font-medium text-foreground">API Latency by Region</h3>
       <ChartLegend :series="series" :colors="colors" />

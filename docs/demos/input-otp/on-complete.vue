@@ -33,14 +33,18 @@ function handleSubmit(e: Event) {
       @complete="handleComplete"
       @update:model-value="isComplete = false"
     />
-    <Button class="mt-2 w-full" :disabled="!isComplete" :pending="isSubmitting" type="submit" variant="primary">
+    <Button
+      class="mt-2 w-full"
+      :disabled="!isComplete"
+      :pending="isSubmitting"
+      type="submit"
+      variant="primary"
+    >
       <template v-if="isSubmitting">
         <Spinner color="current" size="sm" />
         Verifying...
       </template>
-      <template v-else>
-        Verify Code
-      </template>
+      <template v-else> Verify Code </template>
     </Button>
   </Form>
 </template>

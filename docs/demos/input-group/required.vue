@@ -1,6 +1,6 @@
 <script setup lang="ts">
-import { Icon } from '@iconify/vue'
 import { InputGroup, TextField } from '@hareui/vue'
+import { Icon } from '@iconify/vue'
 </script>
 
 <template>
@@ -12,8 +12,20 @@ import { InputGroup, TextField } from '@hareui/vue'
         </template>
       </InputGroup>
     </TextField>
-    <TextField required class="w-full max-w-[280px]" name="price" label="Set a price" description="What customers would pay">
-      <InputGroup :ui="{ input: 'w-full max-w-[200px]' }" placeholder="0" type="number" prefix="$" suffix="USD" />
+    <TextField
+      required
+      class="w-full max-w-[280px]"
+      name="price"
+      label="Set a price"
+      description="What customers would pay"
+    >
+      <InputGroup
+        :ui="{ input: 'w-full max-w-[200px]' }"
+        placeholder="0"
+        type="number"
+        prefix="$"
+        suffix="USD"
+      />
     </TextField>
   </div>
 </template>

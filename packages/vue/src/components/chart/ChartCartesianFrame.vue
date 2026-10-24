@@ -1,6 +1,7 @@
 <script setup lang="ts">
-import type { CartesianAutoConfig, CartesianRootSlots } from './cartesian-root'
 import { useSlots } from 'vue'
+
+import type { CartesianAutoConfig, CartesianRootSlots } from './cartesian-root'
 import ChartArea from './ChartArea.vue'
 import ChartBar from './ChartBar.vue'
 import ChartFrame from './ChartFrame.vue'

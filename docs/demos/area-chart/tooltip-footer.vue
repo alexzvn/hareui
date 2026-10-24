@@ -1,6 +1,6 @@
 <script setup lang="ts">
-import type { ChartTooltipContentEntry } from '@hareui/vue/charts'
 import { Card } from '@hareui/vue'
+import type { ChartTooltipContentEntry } from '@hareui/vue/charts'
 import { AreaChart, ChartLegend } from '@hareui/vue/charts'
 
 const data = [
@@ -35,7 +35,10 @@ function total(payload: ChartTooltipContentEntry[]) {
 </script>
 
 <template>
-  <Card class="w-full max-w-[520px] rounded-2xl" :ui="{ header: 'flex-row items-center justify-between' }">
+  <Card
+    class="w-full max-w-[520px] rounded-2xl"
+    :ui="{ header: 'flex-row items-center justify-between' }"
+  >
     <template #header>
       <h3 class="text-base font-medium text-foreground">App Installs</h3>
       <ChartLegend :series="series" />

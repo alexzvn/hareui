@@ -9,11 +9,41 @@ interface User extends ListBoxItem {
 }
 
 const users: User[] = [
-  { value: '1', label: 'Bob', description: 'bob@heroui.com', avatarUrl: 'https://heroui-assets.nyc3.cdn.digitaloceanspaces.com/avatars/blue.jpg', fallback: 'B' },
-  { value: '2', label: 'Fred', description: 'fred@heroui.com', avatarUrl: 'https://heroui-assets.nyc3.cdn.digitaloceanspaces.com/avatars/green.jpg', fallback: 'F' },
-  { value: '3', label: 'Martha', description: 'martha@heroui.com', avatarUrl: 'https://heroui-assets.nyc3.cdn.digitaloceanspaces.com/avatars/purple.jpg', fallback: 'M' },
-  { value: '4', label: 'John', description: 'john@heroui.com', avatarUrl: 'https://heroui-assets.nyc3.cdn.digitaloceanspaces.com/avatars/red.jpg', fallback: 'J' },
-  { value: '5', label: 'Jane', description: 'jane@heroui.com', avatarUrl: 'https://heroui-assets.nyc3.cdn.digitaloceanspaces.com/avatars/orange.jpg', fallback: 'J' },
+  {
+    value: '1',
+    label: 'Bob',
+    description: 'bob@heroui.com',
+    avatarUrl: 'https://heroui-assets.nyc3.cdn.digitaloceanspaces.com/avatars/blue.jpg',
+    fallback: 'B',
+  },
+  {
+    value: '2',
+    label: 'Fred',
+    description: 'fred@heroui.com',
+    avatarUrl: 'https://heroui-assets.nyc3.cdn.digitaloceanspaces.com/avatars/green.jpg',
+    fallback: 'F',
+  },
+  {
+    value: '3',
+    label: 'Martha',
+    description: 'martha@heroui.com',
+    avatarUrl: 'https://heroui-assets.nyc3.cdn.digitaloceanspaces.com/avatars/purple.jpg',
+    fallback: 'M',
+  },
+  {
+    value: '4',
+    label: 'John',
+    description: 'john@heroui.com',
+    avatarUrl: 'https://heroui-assets.nyc3.cdn.digitaloceanspaces.com/avatars/red.jpg',
+    fallback: 'J',
+  },
+  {
+    value: '5',
+    label: 'Jane',
+    description: 'jane@heroui.com',
+    avatarUrl: 'https://heroui-assets.nyc3.cdn.digitaloceanspaces.com/avatars/orange.jpg',
+    fallback: 'J',
+  },
 ]
 
 const selectedKey = ref<string | null>(null)
@@ -34,15 +64,18 @@ const selectedKey = ref<string | null>(null)
         {{ text }}
       </template>
       <div v-else class="flex items-center gap-2">
-        <Avatar class="size-4" size="sm" :src="selectedItems[0]!.avatarUrl" :fallback="selectedItems[0]!.fallback" />
+        <Avatar
+          class="size-4"
+          size="sm"
+          :src="selectedItems[0]!.avatarUrl"
+          :fallback="selectedItems[0]!.fallback"
+        />
         <span>{{ selectedItems[0]!.label }}</span>
       </div>
     </template>
     <template #item-leading="{ item }">
       <Avatar size="sm" :src="item.avatarUrl" :fallback="item.fallback" />
     </template>
-    <template #empty>
-      No results found
-    </template>
+    <template #empty> No results found </template>
   </Autocomplete>
 </template>

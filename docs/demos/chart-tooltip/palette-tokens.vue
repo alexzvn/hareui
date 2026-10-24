@@ -1,5 +1,12 @@
 <script setup lang="ts">
-import { ChartTooltipContent, ChartTooltipHeader, ChartTooltipIndicator, ChartTooltipItem, ChartTooltipLabel, ChartTooltipValue } from '@hareui/vue/charts'
+import {
+  ChartTooltipContent,
+  ChartTooltipHeader,
+  ChartTooltipIndicator,
+  ChartTooltipItem,
+  ChartTooltipLabel,
+  ChartTooltipValue,
+} from '@hareui/vue/charts'
 
 const regions = [
   { name: 'Central', token: '--chart-5', value: '$1,980' },

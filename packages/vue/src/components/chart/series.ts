@@ -1,16 +1,17 @@
+import { useId } from 'reka-ui'
 import type { ClassValue } from 'tailwind-variants'
 import type { ComputedRef } from 'vue'
-import type { ChartAnimationProps } from './animation'
-import type { CartesianContext } from './cartesian'
-import type { ChartContext } from './context'
-import type { ChartLabelItem } from './label'
-import type { ChartCurveType, ChartDotProps, ChartSeries } from './types'
-import { useId } from 'reka-ui'
 import { computed } from 'vue'
+
+import type { ChartAnimationProps } from './animation'
 import { lerp, useChartTween } from './animation'
+import type { CartesianContext } from './cartesian'
 import { useCartesianContext } from './cartesian'
+import type { ChartContext } from './context'
 import { useChartConfig, useChartContext } from './context'
+import type { ChartLabelItem } from './label'
 import { provideChartLabels } from './label'
+import type { ChartCurveType, ChartDotProps, ChartSeries } from './types'
 
 /** Props shared by every cartesian series. */
 export interface ChartSeriesProps extends ChartAnimationProps {
@@ -89,7 +90,7 @@ export const DEFAULT_SERIES_COLOR = 'var(--chart-3)'
 
 /** Indicator color of a series: the stroke unless it is `none`, else the fill. */
 export function seriesColor(stroke: string | undefined, fill: string | undefined): string {
-  return stroke && stroke !== 'none' ? stroke : fill ?? DEFAULT_SERIES_COLOR
+  return stroke && stroke !== 'none' ? stroke : (fill ?? DEFAULT_SERIES_COLOR)
 }
 
 export interface PointSeries {
@@ -116,16 +117,17 @@ export function useRootSeries(chart: ChartContext, dataKey: () => string) {
   return computed(() => config.series(dataKey()))
 }
 
-function interpolatePoints(from: (ChartSeriesPoint | null)[] | null, to: (ChartSeriesPoint | null)[], t: number) {
-  if (!from || !from.length)
-    return to
+function interpolatePoints(
+  from: (ChartSeriesPoint | null)[] | null,
+  to: (ChartSeriesPoint | null)[],
+  t: number,
+) {
+  if (!from || !from.length) return to
   return to.map((point, index) => {
-    if (!point)
-      return null
+    if (!point) return null
     // When the number of points changes, each point starts from the old point at the same relative position.
     const previous = from[Math.min(Math.floor((index * from.length) / to.length), from.length - 1)]
-    if (!previous)
-      return point
+    if (!previous) return point
     return {
       ...point,
       x: lerp(previous.x, point.x, t),
@@ -139,8 +141,12 @@ function interpolatePoints(from: (ChartSeriesPoint | null)[] | null, to: (ChartS
 /** Registers an area or line series and computes its animated points. Call in the series' setup. */
 export function usePointSeries(
   kind: 'area' | 'line',
-  props: ChartCurveSeriesProps & { stackId?: string | number, fill?: string, baseValue?: number | 'dataMin' | 'dataMax' },
-  colors: () => { stroke?: string, fill?: string },
+  props: ChartCurveSeriesProps & {
+    stackId?: string | number
+    fill?: string
+    baseValue?: number | 'dataMin' | 'dataMax'
+  },
+  colors: () => { stroke?: string; fill?: string },
 ): PointSeries {
   const chart = useChartContext(kind === 'area' ? 'ChartArea' : 'ChartLine')
   const cartesian = useCartesianContext(kind === 'area' ? 'ChartArea' : 'ChartLine')
@@ -170,8 +176,7 @@ export function usePointSeries(
   const horizontal = cartesian.horizontal
 
   const target = computed<(ChartSeriesPoint | null)[]>(() => {
-    if (hidden.value)
-      return []
+    if (hidden.value) return []
     const data = chart.data.value
     const values = cartesian.seriesValues(id)
     const xAxis = cartesian.xAxis(props.xAxisId)
@@ -181,16 +186,34 @@ export function usePointSeries(
     let base: number | undefined
     if (props.baseValue !== undefined && props.stackId === undefined) {
       const [low, high] = valueAxis.domain as [number, number]
-      base = props.baseValue === 'dataMin' ? Math.min(low, high) : props.baseValue === 'dataMax' ? Math.max(low, high) : props.baseValue
+      base =
+        props.baseValue === 'dataMin'
+          ? Math.min(low, high)
+          : props.baseValue === 'dataMax'
+            ? Math.max(low, high)
+            : props.baseValue
     }
     return values.map((pair, index) => {
-      if (!pair)
-        return null
+      if (!pair) return null
       const raw = data[index]?.[props.dataKey]
       const lower = valueAxis.scale(base ?? pair[0])
       const point = horizontal.value
-        ? { index, x: xAxis.position(index), baseX: xAxis.position(index), y: yAxis.scale(pair[1]), baseY: lower, value: raw }
-        : { index, y: yAxis.position(index), baseY: yAxis.position(index), x: xAxis.scale(pair[1]), baseX: lower, value: raw }
+        ? {
+            index,
+            x: xAxis.position(index),
+            baseX: xAxis.position(index),
+            y: yAxis.scale(pair[1]),
+            baseY: lower,
+            value: raw,
+          }
+        : {
+            index,
+            y: yAxis.position(index),
+            baseY: yAxis.position(index),
+            x: xAxis.scale(pair[1]),
+            baseX: lower,
+            value: raw,
+          }
       // A row without a position on a number category axis is a gap.
       return Number.isFinite(point.x) && Number.isFinite(point.y) ? point : null
     })
@@ -208,22 +231,53 @@ export function usePointSeries(
 
   const activePoint = computed(() => {
     const index = chart.active.index
-    if (index === null || hidden.value || chart.tooltipEnabled.value === 0 || chart.interaction.value?.trigger !== 'axis')
+    if (
+      index === null ||
+      hidden.value ||
+      chart.tooltipEnabled.value === 0 ||
+      chart.interaction.value?.trigger !== 'axis'
+    )
       return null
     return target.value[index] ?? null
   })
 
   // Labels appear once the series has finished animating.
-  provideChartLabels(() => (animating.value ? [] : target.value).flatMap((point): ChartLabelItem[] => point
-    ? [{ index: point.index, value: point.value, datum: chart.data.value[point.index] ?? {}, viewBox: { x: point.x, y: point.y, width: 0, height: 0 } }]
-    : []), 'top')
+  provideChartLabels(
+    () =>
+      (animating.value ? [] : target.value).flatMap((point): ChartLabelItem[] =>
+        point
+          ? [
+              {
+                index: point.index,
+                value: point.value,
+                datum: chart.data.value[point.index] ?? {},
+                viewBox: { x: point.x, y: point.y, width: 0, height: 0 },
+              },
+            ]
+          : [],
+      ),
+    'top',
+  )
 
-  return { id, chart, cartesian, points: tween.value, target, reveal, animating, activePoint, horizontal, hidden }
+  return {
+    id,
+    chart,
+    cartesian,
+    points: tween.value,
+    target,
+    reveal,
+    animating,
+    activePoint,
+    horizontal,
+    hidden,
+  }
 }
 
 /** Normalizes a `dot` / `activeDot` prop into circle attributes, or `null` when disabled. */
-export function dotAttrs(option: boolean | ChartDotProps | undefined, defaults: Required<Omit<ChartDotProps, 'class'>>): (Required<Omit<ChartDotProps, 'class'>> & { class?: ClassValue }) | null {
-  if (!option)
-    return null
+export function dotAttrs(
+  option: boolean | ChartDotProps | undefined,
+  defaults: Required<Omit<ChartDotProps, 'class'>>,
+): (Required<Omit<ChartDotProps, 'class'>> & { class?: ClassValue }) | null {
+  if (!option) return null
   return option === true ? defaults : { ...defaults, ...option }
 }

@@ -6,7 +6,10 @@ import theme from './theme'
 
 type InlineSelect = typeof theme
 
-export interface InlineSelectProps<T extends ListBoxItem = ListBoxItem> extends Omit<SelectProps<T>, 'variant' | 'fullWidth' | 'clearable' | 'side' | 'align' | 'ui'> {
+export interface InlineSelectProps<T extends ListBoxItem = ListBoxItem> extends Omit<
+  SelectProps<T>,
+  'variant' | 'fullWidth' | 'clearable' | 'side' | 'align' | 'ui'
+> {
   /** The selected value(s). Use with `v-model`. */
   modelValue?: SelectValue
   /**
@@ -33,6 +36,7 @@ export interface InlineSelectEmits extends Omit<SelectEmits, 'clear'> {
 
 <script setup lang="ts" generic="T extends ListBoxItem = ListBoxItem">
 import { computed } from 'vue'
+
 import { useComponentUI } from '../../composables/useComponentUI'
 import Select from '../select/Select.vue'
 
@@ -65,12 +69,20 @@ const selectUi = computed(() => ({
 }))
 
 // Every Select slot passes through, except `indicator` (defaulted here)
-const forwarded = computed(() => (Object.keys(slots) as (keyof InlineSelectSlots<T>)[]).filter(name => name !== 'indicator'))
+const forwarded = computed(() =>
+  (Object.keys(slots) as (keyof InlineSelectSlots<T>)[]).filter((name) => name !== 'indicator'),
+)
 
-type UnionToIntersection<U> = (U extends unknown ? (u: U) => void : never) extends (i: infer I) => void ? I : never
+type UnionToIntersection<U> = (U extends unknown ? (u: U) => void : never) extends (
+  i: infer I,
+) => void
+  ? I
+  : never
 // With a dynamic `#[name]`, TS types the received props as the union over every slot and the forwarded ones as their
 // intersection; at runtime each slot gets back exactly the props Select passed to it
-type ForwardedSlotProps = UnionToIntersection<Exclude<Parameters<NonNullable<InlineSelectSlots<T>[keyof InlineSelectSlots<T>]>>[0], undefined>>
+type ForwardedSlotProps = UnionToIntersection<
+  Exclude<Parameters<NonNullable<InlineSelectSlots<T>[keyof InlineSelectSlots<T>]>>[0], undefined>
+>
 const forwardProps = (state: unknown) => state as ForwardedSlotProps
 </script>
 
@@ -86,8 +98,21 @@ const forwardProps = (state: unknown) => state as ForwardedSlotProps
   >
     <template #indicator="state">
       <slot name="indicator" v-bind="state">
-        <svg aria-hidden="true" fill="none" height="16" role="presentation" viewBox="0 0 16 16" width="16" xmlns="http://www.w3.org/2000/svg">
-          <path clip-rule="evenodd" d="M3.58 4.109a.75.75 0 0 0 1.061 1.06L8 1.811l3.354 3.353a.75.75 0 0 0 1.06-1.06L8.53.22a.75.75 0 0 0-1.06 0zm8.84 7.782a.75.75 0 1 0-1.061-1.06l-3.36 3.358-3.353-3.353a.75.75 0 1 0-1.06 1.06L7.47 15.78a.75.75 0 0 0 1.06 0z" fill="currentColor" fill-rule="evenodd" />
+        <svg
+          aria-hidden="true"
+          fill="none"
+          height="16"
+          role="presentation"
+          viewBox="0 0 16 16"
+          width="16"
+          xmlns="http://www.w3.org/2000/svg"
+        >
+          <path
+            clip-rule="evenodd"
+            d="M3.58 4.109a.75.75 0 0 0 1.061 1.06L8 1.811l3.354 3.353a.75.75 0 0 0 1.06-1.06L8.53.22a.75.75 0 0 0-1.06 0zm8.84 7.782a.75.75 0 1 0-1.061-1.06l-3.36 3.358-3.353-3.353a.75.75 0 1 0-1.06 1.06L7.47 15.78a.75.75 0 0 0 1.06 0z"
+            fill="currentColor"
+            fill-rule="evenodd"
+          />
         </svg>
       </slot>
     </template>

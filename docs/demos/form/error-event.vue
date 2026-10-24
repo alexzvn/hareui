@@ -5,7 +5,10 @@ import { reactive } from 'vue'
 import * as z from 'zod'
 
 const schema = z.object({
-  name: z.string('Name is required').min(1, 'Name is required').min(2, 'Name must be at least 2 characters'),
+  name: z
+    .string('Name is required')
+    .min(1, 'Name is required')
+    .min(2, 'Name must be at least 2 characters'),
   email: z.email('Please enter a valid email address'),
 })
 
@@ -29,11 +32,15 @@ function onError(event: FormErrorEvent) {
 </script>
 
 <template>
-  <Form class="flex w-96 flex-col gap-4" :schema="schema" :state="state" @submit="onSubmit" @error="onError">
+  <Form
+    class="flex w-96 flex-col gap-4"
+    :schema="schema"
+    :state="state"
+    @submit="onSubmit"
+    @error="onError"
+  >
     <TextField v-model="state.name" name="name" label="Name" />
     <TextField v-model="state.email" name="email" type="email" label="Email" />
-    <Button type="submit" class="self-start">
-      Submit
-    </Button>
+    <Button type="submit" class="self-start"> Submit </Button>
   </Form>
 </template>

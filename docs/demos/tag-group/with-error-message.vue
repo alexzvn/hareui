@@ -12,10 +12,19 @@ const items: TagGroupItem[] = [
 ]
 const selected = ref<string[]>([])
 const isInvalid = computed(() => selected.value.length === 0)
-const description = computed(() => isInvalid.value ? 'Select at least one category' : `Selected: ${selected.value.join(', ')}`)
-const errorMessage = computed(() => isInvalid.value ? 'Please select at least one category' : '')
+const description = computed(() =>
+  isInvalid.value ? 'Select at least one category' : `Selected: ${selected.value.join(', ')}`,
+)
+const errorMessage = computed(() => (isInvalid.value ? 'Please select at least one category' : ''))
 </script>
 
 <template>
-  <TagGroup v-model:selected="selected" selection-mode="multiple" label="Amenities" :description="description" :error-message="errorMessage" :items="items" />
+  <TagGroup
+    v-model:selected="selected"
+    selection-mode="multiple"
+    label="Amenities"
+    :description="description"
+    :error-message="errorMessage"
+    :items="items"
+  />
 </template>

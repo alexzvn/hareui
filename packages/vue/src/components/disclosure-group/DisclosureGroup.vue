@@ -1,5 +1,6 @@
 <script lang="ts">
 import type { PrimitiveProps } from 'reka-ui'
+
 import type { ExpandedValue } from '../../composables/useExpandedValues'
 import type { ComponentSlots } from '../../types/tv'
 import theme from './theme'
@@ -34,7 +35,7 @@ export interface DisclosureGroupProps {
 
 export interface DisclosureGroupSlots {
   /** The `Disclosure` items (and anything between them, e.g. `Separator`). */
-  default?: (props: { expanded: ExpandedValue[], disabled: boolean }) => any
+  default?: (props: { expanded: ExpandedValue[]; disabled: boolean }) => any
 }
 
 export interface DisclosureGroupEmits {
@@ -46,19 +47,29 @@ export interface DisclosureGroupEmits {
 <script setup lang="ts">
 import { Primitive } from 'reka-ui'
 import { computed, provide } from 'vue'
+
 import { useComponentUI } from '../../composables/useComponentUI'
 import { useExpandedValues } from '../../composables/useExpandedValues'
 import { disclosureGroupContextKey } from './context'
 
 // `modelValue: undefined` keeps the uncontrolled mode when no `v-model` is bound.
-const props = withDefaults(defineProps<DisclosureGroupProps>(), { as: 'div', modelValue: undefined })
+const props = withDefaults(defineProps<DisclosureGroupProps>(), {
+  as: 'div',
+  modelValue: undefined,
+})
 const emit = defineEmits<DisclosureGroupEmits>()
 defineSlots<DisclosureGroupSlots>()
 
 const ui = useComponentUI('disclosureGroup', theme, () => ({}))
 
-const { expanded, isExpanded, setExpanded } = useExpandedValues(props, value => emit('update:modelValue', value))
-provide(disclosureGroupContextKey, { isExpanded, setExpanded, disabled: computed(() => !!props.disabled) })
+const { expanded, isExpanded, setExpanded } = useExpandedValues(props, (value) =>
+  emit('update:modelValue', value),
+)
+provide(disclosureGroupContextKey, {
+  isExpanded,
+  setExpanded,
+  disabled: computed(() => !!props.disabled),
+})
 </script>
 
 <template>

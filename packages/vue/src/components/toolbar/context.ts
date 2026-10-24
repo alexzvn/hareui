@@ -1,6 +1,7 @@
 import type { ComputedRef, InjectionKey, Ref } from 'vue'
-import type toolbarTheme from './theme'
+
 import type { ComponentSlots, ComponentUI } from '../../types/tv'
+import type toolbarTheme from './theme'
 
 export interface ToolbarContext {
   orientation: Readonly<Ref<'horizontal' | 'vertical'>>

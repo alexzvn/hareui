@@ -6,7 +6,8 @@ export default {
     root: 'border-t border-separator text-sm text-muted',
     top: 'py-8 lg:py-12',
     bottom: 'py-8 lg:py-12',
-    container: 'mx-auto w-full max-w-(--container-max-width) px-(--container-padding) py-4 lg:flex lg:items-center lg:justify-between lg:gap-x-3 lg:py-3',
+    container:
+      'mx-auto w-full max-w-(--container-max-width) px-(--container-padding) py-4 lg:flex lg:items-center lg:justify-between lg:gap-x-3 lg:py-3',
     left: 'mt-2 flex items-center justify-center gap-x-2 lg:order-1 lg:mt-0 lg:flex-1 lg:justify-start',
     center: 'mt-2 flex items-center justify-center lg:order-2 lg:mt-0',
     right: 'flex items-center justify-center gap-x-2 lg:order-3 lg:flex-1 lg:justify-end',

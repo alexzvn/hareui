@@ -46,14 +46,14 @@ Attributes and listeners such as `action`, `method`, `@reset` and `data-*` fall 
 
 Bind each field to a reactive `state` object with `v-model` and give it the matching `name`. Pass the object to `state` and a schema to `schema`. The form accepts any [Standard Schema](https://standardschema.dev) (Zod, Valibot, ArkType, Yup, Effect Schema, …) or a Superstruct struct, with no adapter:
 
-| Library | Usage |
-| --- | --- |
-| Zod (3.24+, 4) | `z.object({ … })` |
-| Valibot (1+) | `v.object({ … })` |
-| ArkType | `type({ … })` |
-| Yup (1.7+) | the schema object |
-| Effect Schema | `Schema.standardSchemaV1(schema)` |
-| Superstruct | `object({ … })` |
+| Library        | Usage                             |
+| -------------- | --------------------------------- |
+| Zod (3.24+, 4) | `z.object({ … })`                 |
+| Valibot (1+)   | `v.object({ … })`                 |
+| ArkType        | `type({ … })`                     |
+| Yup (1.7+)     | the schema object                 |
+| Effect Schema  | `Schema.standardSchemaV1(schema)` |
+| Superstruct    | `object({ … })`                   |
 
 Each issue is shown by the field whose `name` matches the issue's path (dotted for nested values, e.g. `address.city`) through its built-in [FieldError](/docs/components/field-error). Issues without a matching field are listed in the default slot's `errors`.
 
@@ -123,9 +123,7 @@ const form = useTemplateRef<FormInstance<typeof schema>>('form')
   <Form ref="form" :schema="schema" :state="state" @submit="onSubmit">
     <!-- fields -->
   </Form>
-  <Button @click="form?.submit()">
-    Save
-  </Button>
+  <Button @click="form?.submit()"> Save </Button>
 </template>
 ```
 
@@ -194,30 +192,30 @@ import { useTemplateRef } from 'vue'
 const form = useTemplateRef<FormInstance<typeof schema>>('form')
 ```
 
-| Name | Type | Description |
-| --- | --- | --- |
-| `validate(opts?)` | `(opts?: { name?, silent?, nested?, transform? }) => Promise<data \| false>` | Validates the state and shows the errors. Resolves to the state (the schema's output with `transform: true`). Throws a `FormValidationException` when invalid, or resolves to `false` with `silent: true`. `name` limits validation to some fields; `nested` includes nested forms. |
-| `clear(path?)` | `(path?: string \| RegExp) => void` | Clears the errors of a field (by name or pattern), or all errors. |
-| `getErrors(path?)` | `(path?: string \| RegExp) => FormErrorWithId[]` | The errors of a field (by name or pattern), or all errors. |
-| `setErrors(errors, path?)` | `(errors: FormError[], path?: string \| RegExp) => void` | Replaces the errors of a field (by name or pattern), or all errors. |
-| `submit()` | `() => Promise<void>` | Runs native constraint validation, then submits like a submit button. |
-| `errors` | `FormErrorWithId[]` | The current `schema` / `validate` errors. |
-| `disabled` | `boolean` | Whether the fields are disabled: the `disabled` prop, or a submission in progress with `loading-auto`. |
-| `loading` | `boolean` | Whether a submission is in progress. |
-| `dirty` | `boolean` | Whether the user changed a field since the last successful submission. |
-| `dirtyFields` | `ReadonlySet<string>` | Fields the user changed. |
-| `touchedFields` | `ReadonlySet<string>` | Fields the user focused, changed or left. |
-| `blurredFields` | `ReadonlySet<string>` | Fields the user left. |
+| Name                       | Type                                                                         | Description                                                                                                                                                                                                                                                                         |
+| -------------------------- | ---------------------------------------------------------------------------- | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `validate(opts?)`          | `(opts?: { name?, silent?, nested?, transform? }) => Promise<data \| false>` | Validates the state and shows the errors. Resolves to the state (the schema's output with `transform: true`). Throws a `FormValidationException` when invalid, or resolves to `false` with `silent: true`. `name` limits validation to some fields; `nested` includes nested forms. |
+| `clear(path?)`             | `(path?: string \| RegExp) => void`                                          | Clears the errors of a field (by name or pattern), or all errors.                                                                                                                                                                                                                   |
+| `getErrors(path?)`         | `(path?: string \| RegExp) => FormErrorWithId[]`                             | The errors of a field (by name or pattern), or all errors.                                                                                                                                                                                                                          |
+| `setErrors(errors, path?)` | `(errors: FormError[], path?: string \| RegExp) => void`                     | Replaces the errors of a field (by name or pattern), or all errors.                                                                                                                                                                                                                 |
+| `submit()`                 | `() => Promise<void>`                                                        | Runs native constraint validation, then submits like a submit button.                                                                                                                                                                                                               |
+| `errors`                   | `FormErrorWithId[]`                                                          | The current `schema` / `validate` errors.                                                                                                                                                                                                                                           |
+| `disabled`                 | `boolean`                                                                    | Whether the fields are disabled: the `disabled` prop, or a submission in progress with `loading-auto`.                                                                                                                                                                              |
+| `loading`                  | `boolean`                                                                    | Whether a submission is in progress.                                                                                                                                                                                                                                                |
+| `dirty`                    | `boolean`                                                                    | Whether the user changed a field since the last successful submission.                                                                                                                                                                                                              |
+| `dirtyFields`              | `ReadonlySet<string>`                                                        | Fields the user changed.                                                                                                                                                                                                                                                            |
+| `touchedFields`            | `ReadonlySet<string>`                                                        | Fields the user focused, changed or left.                                                                                                                                                                                                                                           |
+| `blurredFields`            | `ReadonlySet<string>`                                                        | Fields the user left.                                                                                                                                                                                                                                                               |
 
 ### Field Props
 
 Every field that takes a `name` (TextField, Input, NumberField, Checkbox, Select, …) also accepts:
 
-| Prop | Type | Description |
-| --- | --- | --- |
-| `error-pattern` | `RegExp` | Also shows form errors whose name matches this pattern. |
-| `eager-validation` | `boolean` | Validates on input right away, instead of after the field is first left. Defaults to `false`. |
-| `validate-on-input-delay` | `number` | Delay in milliseconds before validating on input. Defaults to the form's `validate-on-input-delay`. |
+| Prop                      | Type      | Description                                                                                         |
+| ------------------------- | --------- | --------------------------------------------------------------------------------------------------- |
+| `error-pattern`           | `RegExp`  | Also shows form errors whose name matches this pattern.                                             |
+| `eager-validation`        | `boolean` | Validates on input right away, instead of after the field is first left. Defaults to `false`.       |
+| `validate-on-input-delay` | `number`  | Delay in milliseconds before validating on input. Defaults to the form's `validate-on-input-delay`. |
 
 ### Form Validation
 

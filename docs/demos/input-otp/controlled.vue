@@ -15,9 +15,7 @@ const value = ref('')
           Clear
         </button>
       </template>
-      <template v-else>
-        Enter a 6-digit code
-      </template>
+      <template v-else> Enter a 6-digit code </template>
     </p>
   </div>
 </template>

@@ -1,5 +1,6 @@
 <script lang="ts">
 import type { PrimitiveProps } from 'reka-ui'
+
 import type { ComponentSlots, ComponentVariants } from '../../types/tv'
 import type { ToggleButtonProps } from '../toggle-button/ToggleButton.vue'
 import theme from './theme'
@@ -72,13 +73,17 @@ export interface ToggleButtonGroupSlots {
 <script setup lang="ts">
 import { Primitive, RovingFocusGroup } from 'reka-ui'
 import { computed, inject, provide, ref, toRef, useTemplateRef, watch } from 'vue'
+
 import { useComponentUI } from '../../composables/useComponentUI'
 import { useFirstChild } from '../../composables/useFirstChild'
 import { useFieldsetDisabled } from '../fieldset/context'
-import { toggleButtonGroupContextKey } from './context'
 import { toolbarContextKey } from '../toolbar/context'
+import { toggleButtonGroupContextKey } from './context'
 
-const props = withDefaults(defineProps<ToggleButtonGroupProps>(), { as: 'div', selectionMode: 'single' })
+const props = withDefaults(defineProps<ToggleButtonGroupProps>(), {
+  as: 'div',
+  selectionMode: 'single',
+})
 const emit = defineEmits<{
   'update:modelValue': [value: string[]]
 }>()
@@ -90,18 +95,25 @@ const toolbar = inject(toolbarContextKey, null)
 const orientation = computed(() => props.orientation ?? toolbar?.orientation.value ?? 'horizontal')
 
 const local = ref(props.defaultValue ?? [])
-watch(() => props.defaultValue, value => (local.value = value ?? []))
+watch(
+  () => props.defaultValue,
+  (value) => (local.value = value ?? []),
+)
 const selected = computed(() => props.modelValue ?? local.value)
 const isDisabled = useFieldsetDisabled(() => props.disabled)
 
 // React Aria semantics: single selection replaces the selection, pressing the selected button clears it.
 function toggle(value: string) {
   const isSelected = selected.value.includes(value)
-  const next = props.selectionMode === 'single'
-    ? (isSelected ? [] : [value])
-    : (isSelected ? selected.value.filter(v => v !== value) : [...selected.value, value])
-  if (props.disallowEmptySelection && next.length === 0)
-    return
+  const next =
+    props.selectionMode === 'single'
+      ? isSelected
+        ? []
+        : [value]
+      : isSelected
+        ? selected.value.filter((v) => v !== value)
+        : [...selected.value, value]
+  if (props.disallowEmptySelection && next.length === 0) return
   local.value = next
   emit('update:modelValue', next)
 }
@@ -109,8 +121,7 @@ function toggle(value: string) {
 // Reka's roving focus jumps to the first / last button on Home / End (and PageUp / PageDown); RAC's toggle button
 // group only moves with the arrow keys. Inside a Toolbar the toolbar's own handler already ignores them.
 function onKeydownCapture(event: KeyboardEvent) {
-  if (!toolbar && ['Home', 'End', 'PageUp', 'PageDown'].includes(event.key))
-    event.stopPropagation()
+  if (!toolbar && ['Home', 'End', 'PageUp', 'PageDown'].includes(event.key)) event.stopPropagation()
 }
 
 const ui = useComponentUI('toggleButtonGroup', theme, () => ({

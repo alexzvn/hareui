@@ -25,26 +25,31 @@ DateField renders a [Label](/docs/components/label), a group holding an optional
 ```vue
 <template>
   <DateField label="…" description="…" error-message="…" :invalid="…">
-    <template #label />        <!-- Label content -->
-    <template #prefix />       <!-- content rendered before the segments, e.g. an icon -->
-    <template #suffix />       <!-- content rendered after the segments -->
-    <template #description />  <!-- Description content -->
-    <template #error />        <!-- FieldError content, rendered when invalid -->
+    <template #label />
+    <!-- Label content -->
+    <template #prefix />
+    <!-- content rendered before the segments, e.g. an icon -->
+    <template #suffix />
+    <!-- content rendered after the segments -->
+    <template #description />
+    <!-- Description content -->
+    <template #error />
+    <!-- FieldError content, rendered when invalid -->
   </DateField>
 </template>
 ```
 
-| `ui` key | `data-slot` | Element |
-|---|---|---|
-| `base` | `date-field` | `<div>` root |
-| — | `label` | [Label](/docs/components/label) (iff `label` / `#label`) |
-| `group` | `date-input-group` | `<div role="group">` holding the prefix, segments and suffix |
-| `prefix` | `date-input-group-prefix` | `<span>` (iff `#prefix`) |
-| `input` | `date-input-group-input` | `<div>` wrapping the segments |
-| `segment` | `date-input-group-segment` | one per date part (year, month, day, …) |
-| `suffix` | `date-input-group-suffix` | `<span>` (iff `#suffix`) |
-| — | `description` | [Description](/docs/components/description) (iff `description` / `#description`) |
-| — | `field-error` | [FieldError](/docs/components/field-error) (while invalid, iff `error-message` / `#error` / validation errors) |
+| `ui` key  | `data-slot`                | Element                                                                                                        |
+| --------- | -------------------------- | -------------------------------------------------------------------------------------------------------------- |
+| `base`    | `date-field`               | `<div>` root                                                                                                   |
+| —         | `label`                    | [Label](/docs/components/label) (iff `label` / `#label`)                                                       |
+| `group`   | `date-input-group`         | `<div role="group">` holding the prefix, segments and suffix                                                   |
+| `prefix`  | `date-input-group-prefix`  | `<span>` (iff `#prefix`)                                                                                       |
+| `input`   | `date-input-group-input`   | `<div>` wrapping the segments                                                                                  |
+| `segment` | `date-input-group-segment` | one per date part (year, month, day, …)                                                                        |
+| `suffix`  | `date-input-group-suffix`  | `<span>` (iff `#suffix`)                                                                                       |
+| —         | `description`              | [Description](/docs/components/description) (iff `description` / `#description`)                               |
+| —         | `field-error`              | [FieldError](/docs/components/field-error) (while invalid, iff `error-message` / `#error` / validation errors) |
 
 > **DateField** combines a label, segmented date input, description, and error into a single accessible component. Values are [`@internationalized/date`](https://react-aria.adobe.com/internationalized/date/) objects (`CalendarDate`, `CalendarDateTime` or `ZonedDateTime`) — the same types HeroUI uses.
 
@@ -134,9 +139,11 @@ HeroUI's `render` prop replaces the root element and lets sub-parts render-prop 
 ### Global Configuration
 
 ```ts
-app.use(createHareUI({
-  ui: { dateField: { slots: { group: 'rounded-xl', segment: 'font-mono' } } },
-}))
+app.use(
+  createHareUI({
+    ui: { dateField: { slots: { group: 'rounded-xl', segment: 'font-mono' } } },
+  }),
+)
 ```
 
 ## Styling Reference

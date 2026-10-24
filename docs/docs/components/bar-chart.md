@@ -69,7 +69,7 @@ Each series takes `name`, `color`, `hide`, `tooltip`, `valueFormatter`, `yAxis`,
 - A series' `valueFormatter` formats that series in the tooltip only.
 
 ```vue
-<BarChart :data="data" index="month" :value-formatter="value => `${value} mm`" />
+<BarChart :data="data" index="month" :value-formatter="(value) => `${value} mm`" />
 ```
 
 ## Stacking
@@ -145,15 +145,17 @@ Use `class` for the container and `ui` for the drawn parts. Series colors come f
 Override the `barChart` theme app-wide with `createHareUI`:
 
 ```ts
-app.use(createHareUI({
-  ui: {
-    barChart: {
-      slots: {
-        tick: 'text-xs',
+app.use(
+  createHareUI({
+    ui: {
+      barChart: {
+        slots: {
+          tick: 'text-xs',
+        },
       },
     },
-  },
-}))
+  }),
+)
 ```
 
 ## Composition
@@ -184,22 +186,22 @@ Parts always draw in the same order (grid, series, axes, cursor), so template or
 </BarChart>
 ```
 
-| `ui` key | `data-slot` | Element | Description |
-|---|---|---|---|
-| `base` | `bar-chart` | `<div>` | Responsive container |
-| `surface` | `chart-surface` | `<svg>` | Drawing surface, layered grid → series → axes → cursor |
-| `overlay` | `chart-overlay` | `<div>` | Layer over the svg that holds the tooltip |
-| `grid` | `chart-grid` | `<g>` | Grid lines (`chart-grid-line`) |
-| `axis` | `chart-x-axis`, `chart-y-axis` | `<g>` | One group per axis |
-| `axisLine` | `chart-axis-line` | `<line>` | Axis line, hidden by default |
-| `tickLine` | `chart-tick-line` | `<line>` | Tick marks, hidden by default |
-| `tick` | `chart-tick` | `<text>` | Axis labels |
-| `series` | `chart-bar` | `<g>` | One group per series |
-| — | `chart-bar-rectangle` | `<path>` | One shape per bar, with `data-index` |
-| `cursor` | `chart-cursor` | `<path>` | Hover cursor |
-| `tooltip` | `chart-tooltip-wrapper` | `<div>` | Floating wrapper around the tooltip panel |
-| `label` | `chart-label` | `<text>` | `ChartLabel` text |
-| `legend` | `chart-legend` | `<ul>` | Legend drawn from the `legend` prop |
+| `ui` key   | `data-slot`                    | Element  | Description                                            |
+| ---------- | ------------------------------ | -------- | ------------------------------------------------------ |
+| `base`     | `bar-chart`                    | `<div>`  | Responsive container                                   |
+| `surface`  | `chart-surface`                | `<svg>`  | Drawing surface, layered grid → series → axes → cursor |
+| `overlay`  | `chart-overlay`                | `<div>`  | Layer over the svg that holds the tooltip              |
+| `grid`     | `chart-grid`                   | `<g>`    | Grid lines (`chart-grid-line`)                         |
+| `axis`     | `chart-x-axis`, `chart-y-axis` | `<g>`    | One group per axis                                     |
+| `axisLine` | `chart-axis-line`              | `<line>` | Axis line, hidden by default                           |
+| `tickLine` | `chart-tick-line`              | `<line>` | Tick marks, hidden by default                          |
+| `tick`     | `chart-tick`                   | `<text>` | Axis labels                                            |
+| `series`   | `chart-bar`                    | `<g>`    | One group per series                                   |
+| —          | `chart-bar-rectangle`          | `<path>` | One shape per bar, with `data-index`                   |
+| `cursor`   | `chart-cursor`                 | `<path>` | Hover cursor                                           |
+| `tooltip`  | `chart-tooltip-wrapper`        | `<div>`  | Floating wrapper around the tooltip panel              |
+| `label`    | `chart-label`                  | `<text>` | `ChartLabel` text                                      |
+| `legend`   | `chart-legend`                 | `<ul>`   | Legend drawn from the `legend` prop                    |
 
 ## Styling Reference
 

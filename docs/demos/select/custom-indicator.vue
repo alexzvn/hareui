@@ -1,7 +1,7 @@
 <script setup lang="ts">
-import { Icon } from '@iconify/vue'
 import type { ListBoxItem } from '@hareui/vue'
 import { Select } from '@hareui/vue'
+import { Icon } from '@iconify/vue'
 
 const states: ListBoxItem[] = [
   { value: 'florida', label: 'Florida' },
@@ -14,7 +14,13 @@ const states: ListBoxItem[] = [
 </script>
 
 <template>
-  <Select class="w-[256px]" label="State" placeholder="Select one" :items="states" :ui="{ indicator: 'size-3' }">
+  <Select
+    class="w-[256px]"
+    label="State"
+    placeholder="Select one"
+    :items="states"
+    :ui="{ indicator: 'size-3' }"
+  >
     <template #indicator>
       <Icon icon="gravity-ui:chevrons-expand-vertical" />
     </template>

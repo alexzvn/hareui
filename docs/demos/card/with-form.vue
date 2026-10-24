@@ -8,7 +8,11 @@ function onSubmit(e: Event) {
 </script>
 
 <template>
-  <Card class="w-full max-w-md" description="Enter your credentials to access your account" title="Login">
+  <Card
+    class="w-full max-w-md"
+    description="Enter your credentials to access your account"
+    title="Login"
+  >
     <form @submit="onSubmit">
       <div class="flex flex-col gap-4">
         <TextField name="email" type="email">
@@ -22,9 +26,7 @@ function onSubmit(e: Event) {
       </div>
       <div class="mt-4 flex flex-col items-center gap-2">
         <Button class="w-full" type="submit">Sign In</Button>
-        <Link class="text-center text-sm" href="#">
-          Forgot password?
-        </Link>
+        <Link class="text-center text-sm" href="#"> Forgot password? </Link>
       </div>
     </form>
   </Card>

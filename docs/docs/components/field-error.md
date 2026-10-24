@@ -21,9 +21,9 @@ The FieldError component displays validation error messages for form fields. Fie
 
 ## Anatomy
 
-| `ui` key | `data-slot` | Element |
-|---|---|---|
-| `base` | `field-error` | `<span role="alert">` |
+| `ui` key | `data-slot`   | Element               |
+| -------- | ------------- | --------------------- |
+| `base`   | `field-error` | `<span role="alert">` |
 
 ## Examples
 
@@ -103,9 +103,11 @@ const invalid = computed(() => email.value.length > 0 && !email.value.includes('
 ### Global Configuration
 
 ```ts
-app.use(createHareUI({
-  ui: { fieldError: { slots: { base: 'font-medium text-danger' } } },
-}))
+app.use(
+  createHareUI({
+    ui: { fieldError: { slots: { base: 'font-medium text-danger' } } },
+  }),
+)
 ```
 
 ## Styling Reference

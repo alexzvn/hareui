@@ -1,8 +1,7 @@
+import { converter, formatCss, formatHsl, mapper, parse, round } from 'culori'
 // Port of HeroUI docs `components/color-picker/{constants,types}.ts` and `utils/*`, on Reka's `Color`
 // (`{ space: 'rgb' | 'hsl' | 'hsb', ..., alpha }`) instead of React Aria's `Color` class.
 import type { Color } from 'reka-ui'
-
-import { converter, formatCss, formatHsl, mapper, parse, round } from 'culori'
 import { convertToHsb, convertToHsl, convertToRgb, normalizeColor } from 'reka-ui'
 
 /* -------------------------------------------------------------------------------------------------
@@ -47,10 +46,28 @@ const wrapHue = (hue: number) => ((hue % 360) + 360) % 360
 function clampColor(color: Color): Color {
   const alpha = clamp(color.alpha, 0, 1)
   if (color.space === 'rgb')
-    return { ...color, r: clamp(color.r, 0, 255), g: clamp(color.g, 0, 255), b: clamp(color.b, 0, 255), alpha }
+    return {
+      ...color,
+      r: clamp(color.r, 0, 255),
+      g: clamp(color.g, 0, 255),
+      b: clamp(color.b, 0, 255),
+      alpha,
+    }
   if (color.space === 'hsl')
-    return { ...color, h: toFixed2(wrapHue(color.h)), s: toFixed2(clamp(color.s, 0, 100)), l: toFixed2(clamp(color.l, 0, 100)), alpha }
-  return { ...color, h: toFixed2(wrapHue(color.h)), s: toFixed2(clamp(color.s, 0, 100)), b: toFixed2(clamp(color.b, 0, 100)), alpha }
+    return {
+      ...color,
+      h: toFixed2(wrapHue(color.h)),
+      s: toFixed2(clamp(color.s, 0, 100)),
+      l: toFixed2(clamp(color.l, 0, 100)),
+      alpha,
+    }
+  return {
+    ...color,
+    h: toFixed2(wrapHue(color.h)),
+    s: toFixed2(clamp(color.s, 0, 100)),
+    b: toFixed2(clamp(color.b, 0, 100)),
+    alpha,
+  }
 }
 
 /** `parseColor` of React Aria: throws when the string is not a supported color. */
@@ -210,7 +227,11 @@ export function getHueFromColor(color: Color): number {
   return oklch.h
 }
 
-export function getValuesFromOklch(hsl: string): { lightness: number, chroma: number, hue: number } {
+export function getValuesFromOklch(hsl: string): {
+  lightness: number
+  chroma: number
+  hue: number
+} {
   const oklch = converter('oklch')
   const oklchColor = oklch(hsl)
 
@@ -294,8 +315,7 @@ export function validateColorInput(input: string, format: ColorFormat): Color | 
       default:
         return null
     }
-  }
-  catch {
+  } catch {
     return null
   }
 }
@@ -322,8 +342,7 @@ export function safeParseColor(color: string): Color {
     }
 
     return parseColor(color)
-  }
-  catch {
+  } catch {
     return parseColor(DEFAULT_COLOR)
   }
 }

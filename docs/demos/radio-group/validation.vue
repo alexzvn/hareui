@@ -28,9 +28,7 @@ function onSubmit(e: Event) {
       error-message="Choose a subscription before continuing."
       :items="items"
     />
-    <Button class="mt-2 w-fit" type="submit">
-      Submit
-    </Button>
+    <Button class="mt-2 w-fit" type="submit"> Submit </Button>
     <p v-if="!!message" class="text-sm text-muted">
       {{ message }}
     </p>

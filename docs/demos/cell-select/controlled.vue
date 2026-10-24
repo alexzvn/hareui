@@ -12,8 +12,12 @@ const currencies = [
 
 const currency = ref<SelectValue>('EUR')
 const fare = computed(() => {
-  const option = currencies.find(item => item.value === currency.value) ?? currencies[0]!
-  return new Intl.NumberFormat('en', { style: 'currency', currency: option.value, maximumFractionDigits: 0 }).format(fareInEuro * option.rate)
+  const option = currencies.find((item) => item.value === currency.value) ?? currencies[0]!
+  return new Intl.NumberFormat('en', {
+    style: 'currency',
+    currency: option.value,
+    maximumFractionDigits: 0,
+  }).format(fareInEuro * option.rate)
 })
 </script>
 

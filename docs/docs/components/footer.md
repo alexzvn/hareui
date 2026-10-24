@@ -51,22 +51,24 @@ Use the `top` and `bottom` slots to add full-width content above or below the fo
 ```ts
 import { createHareUI } from '@hareui/vue'
 
-app.use(createHareUI({
-  ui: { footer: { slots: { root: 'border-t border-border' } } },
-}))
+app.use(
+  createHareUI({
+    ui: { footer: { slots: { root: 'border-t border-border' } } },
+  }),
+)
 ```
 
 ## Styling Reference
 
-| `ui` key | `data-slot` | Element |
-|---|---|---|
-| `root` | `footer` | The `<footer>`; `class` merges here |
-| `top` | `footer-top` | Full-width area above the bar, rendered when `#top` is used |
+| `ui` key    | `data-slot`        | Element                                                                     |
+| ----------- | ------------------ | --------------------------------------------------------------------------- |
+| `root`      | `footer`           | The `<footer>`; `class` merges here                                         |
+| `top`       | `footer-top`       | Full-width area above the bar, rendered when `#top` is used                 |
 | `container` | `footer-container` | Width-limited bar (`--container-max-width`, same as Header and `Container`) |
-| `left` | `footer-left` | The `#left` slot |
-| `center` | `footer-center` | The default slot |
-| `right` | `footer-right` | The `#right` slot |
-| `bottom` | `footer-bottom` | Full-width area below the bar, rendered when `#bottom` is used |
+| `left`      | `footer-left`      | The `#left` slot                                                            |
+| `center`    | `footer-center`    | The default slot                                                            |
+| `right`     | `footer-right`     | The `#right` slot                                                           |
+| `bottom`    | `footer-bottom`    | Full-width area below the bar, rendered when `#bottom` is used              |
 
 ## API Reference
 

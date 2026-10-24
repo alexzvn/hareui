@@ -15,7 +15,12 @@ const currencies = [
   { value: 'jpy', code: 'JPY', name: 'Japanese Yen', symbol: '¥' },
   { value: 'chf', code: 'CHF', name: 'Swiss Franc', symbol: '₣' },
 ]
-const items: Currency[] = currencies.map(c => ({ ...c, label: c.code, description: c.name, textValue: `${c.code} ${c.name}` }))
+const items: Currency[] = currencies.map((c) => ({
+  ...c,
+  label: c.code,
+  description: c.name,
+  textValue: `${c.code} ${c.name}`,
+}))
 </script>
 
 <template>
@@ -38,8 +43,6 @@ const items: Currency[] = currencies.map(c => ({ ...c, label: c.code, descriptio
         <span class="truncate text-muted">{{ selectedItems[0]!.name }}</span>
       </span>
     </template>
-    <template #empty>
-      No results found
-    </template>
+    <template #empty> No results found </template>
   </Autocomplete>
 </template>

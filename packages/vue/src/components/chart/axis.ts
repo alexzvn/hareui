@@ -1,4 +1,5 @@
 import type { ClassValue } from 'tailwind-variants'
+
 import type { ChartAxisDomain, ChartAxisInterval } from './types'
 
 /** Props shared by `ChartXAxis` and `ChartYAxis`. */

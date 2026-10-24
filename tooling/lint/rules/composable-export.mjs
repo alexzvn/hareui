@@ -37,7 +37,8 @@ export default {
     return {
       ExportDefaultDeclaration: (node) => context.report({ node, messageId: 'noDefault' }),
       ExportNamedDeclaration(node) {
-        for (const name of getExportedNames(node)) if (COMPOSABLE.test(name)) found.push({ node, name })
+        for (const name of getExportedNames(node))
+          if (COMPOSABLE.test(name)) found.push({ node, name })
       },
       'Program:exit'(program) {
         for (const extra of found.slice(1))

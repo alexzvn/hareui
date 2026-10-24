@@ -5,6 +5,7 @@
 // is false, so there is no exit animation; neither here.
 import { Icon } from '@iconify/vue'
 import { onBeforeUnmount, ref } from 'vue'
+
 import HighlightedCode from './HighlightedCode.vue'
 
 const props = withDefaults(
@@ -55,7 +56,8 @@ function handleDownload() {
   URL.revokeObjectURL(url)
 }
 
-const ACTION = 'flex h-8 w-8 cursor-pointer items-center justify-center rounded-md text-foreground/40 transition-colors hover:bg-foreground/5 hover:text-foreground/60'
+const ACTION =
+  'flex h-8 w-8 cursor-pointer items-center justify-center rounded-md text-foreground/40 transition-colors hover:bg-foreground/5 hover:text-foreground/60'
 </script>
 
 <template>
@@ -82,10 +84,18 @@ const ACTION = 'flex h-8 w-8 cursor-pointer items-center justify-center rounded-
         ]"
       >
         <!-- Header -->
-        <header class="flex shrink-0 items-center justify-between border-b border-separator/50 px-6 py-3">
+        <header
+          class="flex shrink-0 items-center justify-between border-b border-separator/50 px-6 py-3"
+        >
           <h3 class="text-sm font-medium text-foreground/60">{{ title }}</h3>
           <div class="flex items-center gap-1">
-            <button v-if="!!sourceCode && !!fileName" aria-label="Download code" :class="ACTION" type="button" @click="handleDownload">
+            <button
+              v-if="!!sourceCode && !!fileName"
+              aria-label="Download code"
+              :class="ACTION"
+              type="button"
+              @click="handleDownload"
+            >
               <Icon height="1em" icon="gravity-ui:arrow-down-to-line" width="16" />
             </button>
             <button
@@ -96,7 +106,11 @@ const ACTION = 'flex h-8 w-8 cursor-pointer items-center justify-center rounded-
               type="button"
               @click="onCopy"
             >
-              <Icon height="1em" :icon="copied ? 'gravity-ui:check' : 'gravity-ui:copy'" width="16" />
+              <Icon
+                height="1em"
+                :icon="copied ? 'gravity-ui:check' : 'gravity-ui:copy'"
+                width="16"
+              />
             </button>
           </div>
         </header>
@@ -104,7 +118,12 @@ const ACTION = 'flex h-8 w-8 cursor-pointer items-center justify-center rounded-
         <!-- Code content -->
         <div class="flex-1 overflow-auto px-4 py-2">
           <slot>
-            <HighlightedCode v-if="sourceCode" :code="sourceCode" :lang="lang" :show-line-numbers="showLineNumbers" />
+            <HighlightedCode
+              v-if="sourceCode"
+              :code="sourceCode"
+              :lang="lang"
+              :show-line-numbers="showLineNumbers"
+            />
           </slot>
         </div>
       </aside>
@@ -121,7 +140,33 @@ const ACTION = 'flex h-8 w-8 cursor-pointer items-center justify-center rounded-
 }
 
 .code-panel-enter-active {
-  --code-panel-spring: linear(0, 0.0575, 0.1803, 0.3208, 0.4551, 0.5729, 0.6711, 0.7501, 0.8122, 0.8601, 0.8966, 0.924, 0.9445, 0.9596, 0.9708, 0.9789, 0.9848, 0.9891, 0.9922, 0.9944, 0.996, 0.9972, 0.998, 0.9986, 1);
+  --code-panel-spring: linear(
+    0,
+    0.0575,
+    0.1803,
+    0.3208,
+    0.4551,
+    0.5729,
+    0.6711,
+    0.7501,
+    0.8122,
+    0.8601,
+    0.8966,
+    0.924,
+    0.9445,
+    0.9596,
+    0.9708,
+    0.9789,
+    0.9848,
+    0.9891,
+    0.9922,
+    0.9944,
+    0.996,
+    0.9972,
+    0.998,
+    0.9986,
+    1
+  );
   transition:
     opacity 0.4s var(--code-panel-spring),
     transform 0.4s var(--code-panel-spring);

@@ -1,5 +1,5 @@
-import { inject, type InjectionKey, type Ref } from 'vue'
 import type { Color } from 'reka-ui'
+import { inject, type InjectionKey, type Ref } from 'vue'
 
 /**
  * Shared colour state a `ColorPicker` provides to the colour components rendered inside it,

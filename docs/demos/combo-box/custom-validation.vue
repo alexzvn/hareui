@@ -12,10 +12,8 @@ const animals: ListBoxItem[] = [
 ]
 
 function validate(value: ComboBoxValidationValue) {
-  if (value.selectedKey == null)
-    return 'Please select an animal'
-  if (value.selectedKey === 'snake')
-    return 'Snakes are not allowed'
+  if (value.selectedKey == null) return 'Please select an animal'
+  if (value.selectedKey === 'snake') return 'Snakes are not allowed'
   return true
 }
 
@@ -26,9 +24,15 @@ function onSubmit() {
 
 <template>
   <Form class="flex w-[256px] flex-col gap-4" @submit.prevent="onSubmit">
-    <ComboBox required class="w-full" name="animal" label="Favorite Animal" placeholder="Search animals..." :validate="validate" :items="animals" />
-    <Button class="w-fit" type="submit">
-      Submit
-    </Button>
+    <ComboBox
+      required
+      class="w-full"
+      name="animal"
+      label="Favorite Animal"
+      placeholder="Search animals..."
+      :validate="validate"
+      :items="animals"
+    />
+    <Button class="w-fit" type="submit"> Submit </Button>
   </Form>
 </template>

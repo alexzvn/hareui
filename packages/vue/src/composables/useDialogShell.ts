@@ -1,6 +1,7 @@
 import type { MaybeRefOrGetter, ShallowRef, Slot } from 'vue'
-import type { PortalTarget } from '../config'
 import { computed, ref, toValue, watch } from 'vue'
+
+import type { PortalTarget } from '../config'
 import { useInertOutside } from './useInertOutside'
 import { useLayerDismiss } from './useLayerDismiss'
 import { usePortal } from './usePortal'
@@ -9,9 +10,15 @@ import { useVisualViewportHeight } from './useVisualViewportHeight'
 
 export interface DialogShellOptions {
   /** The component's props; reads `open`, `defaultOpen`, `title`, `portal` and `dismissible`. */
-  props: { open?: boolean, defaultOpen?: boolean, title?: string, portal?: PortalTarget, dismissible?: boolean }
+  props: {
+    open?: boolean
+    defaultOpen?: boolean
+    title?: string
+    portal?: PortalTarget
+    dismissible?: boolean
+  }
   /** The component's slots (`useSlots()`); reads `header` and `title`. */
-  slots: { header?: Slot<any>, title?: Slot<any> }
+  slots: { header?: Slot<any>; title?: Slot<any> }
   /** The `DialogContent` instance (the component's `useTemplateRef`). */
   dialogContent: Readonly<ShallowRef<{ $el: HTMLElement } | null>>
   emit: (event: 'update:open', value: boolean) => void
@@ -49,14 +56,16 @@ export function useDialogShell(options: DialogShellOptions) {
   useTabbableFocusLoop(() => dialogContent.value?.$el)
   // Mirrors DialogRoot's open state synchronously: set from the `open` prop and from Reka's `update:open`.
   const openState = ref(props.open ?? props.defaultOpen ?? false)
-  watch(() => props.open, (open) => {
-    if (open !== undefined)
-      openState.value = open
-  }, { flush: 'sync' })
+  watch(
+    () => props.open,
+    (open) => {
+      if (open !== undefined) openState.value = open
+    },
+    { flush: 'sync' },
+  )
   function onOpenChange(open: boolean) {
     // Controlled: the `open` watcher follows the parent, which may keep the dialog open.
-    if (props.open === undefined)
-      openState.value = open
+    if (props.open === undefined) openState.value = open
     emit('update:open', open)
   }
   useInertOutside(dialogContent, openState)
@@ -80,7 +89,9 @@ export function useDialogShell(options: DialogShellOptions) {
 
   const hasTitle = computed(() => !!(props.title || slots.title))
   const showHeaderTitle = computed(() => !slots.header && hasTitle.value)
-  const hasHeader = computed(() => !!(slots.header || toValue(options.headerExtras) || hasTitle.value))
+  const hasHeader = computed(
+    () => !!(slots.header || toValue(options.headerExtras) || hasTitle.value),
+  )
 
   return {
     portalTarget,

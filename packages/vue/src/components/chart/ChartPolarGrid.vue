@@ -27,6 +27,7 @@ export interface ChartPolarGridProps {
 
 <script setup lang="ts">
 import { computed } from 'vue'
+
 import ChartLayer from './ChartLayer.vue'
 import { useChartContext } from './context'
 import { polarToCartesian, polygonPath, usePolarContext } from './polar'
@@ -39,12 +40,15 @@ const props = withDefaults(defineProps<ChartPolarGridProps>(), {
 const chart = useChartContext('ChartPolarGrid')
 const polar = usePolarContext('ChartPolarGrid')
 
-const angles = computed(() => props.polarAngles ?? polar.angleAxis.value.ticks.map(tick => tick.coordinate))
-const radii = computed(() => props.polarRadius ?? polar.radiusAxis.value.ticks.map(tick => tick.coordinate))
+const angles = computed(
+  () => props.polarAngles ?? polar.angleAxis.value.ticks.map((tick) => tick.coordinate),
+)
+const radii = computed(
+  () => props.polarRadius ?? polar.radiusAxis.value.ticks.map((tick) => tick.coordinate),
+)
 
 const spokes = computed(() => {
-  if (!props.radialLines)
-    return []
+  if (!props.radialLines) return []
   const cx = polar.cx.value
   const cy = polar.cy.value
   return angles.value.map((angle) => {
@@ -57,15 +61,25 @@ const spokes = computed(() => {
 const rings = computed(() => {
   const cx = polar.cx.value
   const cy = polar.cy.value
-  return radii.value.map(radius => props.gridType === 'circle'
-    ? { radius, d: '' }
-    : { radius, d: polygonPath(angles.value.map(angle => polarToCartesian(cx, cy, radius, angle))) })
+  return radii.value.map((radius) =>
+    props.gridType === 'circle'
+      ? { radius, d: '' }
+      : {
+          radius,
+          d: polygonPath(angles.value.map((angle) => polarToCartesian(cx, cy, radius, angle))),
+        },
+  )
 })
 </script>
 
 <template>
   <ChartLayer name="grid">
-    <g data-slot="chart-polar-grid" :class="chart.classes('polarGrid', props.class)" :style="stroke ? { stroke } : undefined" :stroke-dasharray="strokeDasharray">
+    <g
+      data-slot="chart-polar-grid"
+      :class="chart.classes('polarGrid', props.class)"
+      :style="stroke ? { stroke } : undefined"
+      :stroke-dasharray="strokeDasharray"
+    >
       <template v-for="ring in rings" :key="ring.radius">
         <circle
           v-if="gridType === 'circle'"

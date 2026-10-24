@@ -18,8 +18,7 @@ function precisionOf(value: number) {
 
 /** Rounds away floating-point noise (`0.1 + 0.2`); a precision of 0 leaves the value untouched. */
 function roundToPrecision(value: number, precision: number) {
-  if (precision <= 0)
-    return value
+  if (precision <= 0) return value
   const pow = 10 ** precision
   return Math.round(value * pow) / pow
 }
@@ -30,20 +29,28 @@ function roundToPrecision(value: number, precision: number) {
  * at or below `max`. An absent `min` snaps relative to 0.
  * Unlike react-stately, the result keeps `min`'s decimals too when it has more than `step` (`min` 0.05, `step` 0.1).
  */
-export function snapValueToStep(value: number, min: number | undefined, max: number | undefined, step: number) {
+export function snapValueToStep(
+  value: number,
+  min: number | undefined,
+  max: number | undefined,
+  step: number,
+) {
   const lo = Number(min)
   const hi = Number(max)
   const stepPrecision = precisionOf(step)
   const precision = Number.isNaN(lo) ? stepPrecision : Math.max(stepPrecision, precisionOf(lo))
   const remainder = (value - (Number.isNaN(lo) ? 0 : lo)) % step
-  let snapped = roundToPrecision(Math.abs(remainder) * 2 >= step ? value + Math.sign(remainder) * (step - Math.abs(remainder)) : value - remainder, precision)
+  let snapped = roundToPrecision(
+    Math.abs(remainder) * 2 >= step
+      ? value + Math.sign(remainder) * (step - Math.abs(remainder))
+      : value - remainder,
+    precision,
+  )
   if (!Number.isNaN(lo)) {
-    if (snapped < lo)
-      snapped = lo
+    if (snapped < lo) snapped = lo
     else if (!Number.isNaN(hi) && snapped > hi)
       snapped = lo + Math.floor(roundToPrecision((hi - lo) / step, stepPrecision)) * step
-  }
-  else if (!Number.isNaN(hi) && snapped > hi) {
+  } else if (!Number.isNaN(hi) && snapped > hi) {
     snapped = Math.floor(roundToPrecision(hi / step, stepPrecision)) * step
   }
   return roundToPrecision(snapped, precision)
@@ -53,10 +60,13 @@ export function snapValueToStep(value: number, min: number | undefined, max: num
  * As in react-stately's useNumberFieldState: clamps a value into `min`/`max`, and snaps it to `step`
  * (relative to `min`) when a step is given. Empty values (`null`, `undefined`, `NaN`) pass through.
  */
-export function snapNumber<T extends number | null | undefined>(value: T, min: number | undefined, max: number | undefined, step: number | undefined): T {
-  if (value == null || Number.isNaN(value))
-    return value
-  if (step === undefined)
-    return clamp(value, min, max) as T
+export function snapNumber<T extends number | null | undefined>(
+  value: T,
+  min: number | undefined,
+  max: number | undefined,
+  step: number | undefined,
+): T {
+  if (value == null || Number.isNaN(value)) return value
+  if (step === undefined) return clamp(value, min, max) as T
   return snapValueToStep(value, min, max, step) as T
 }

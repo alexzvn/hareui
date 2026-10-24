@@ -1,20 +1,22 @@
 <script setup lang="ts">
-import type { Time } from '@internationalized/date'
-import { parseTime } from '@internationalized/date'
 import { Button, Form, TimeField } from '@hareui/vue'
 import { Icon } from '@iconify/vue'
+import type { Time } from '@internationalized/date'
+import { parseTime } from '@internationalized/date'
 import { computed, ref, shallowRef } from 'vue'
 
 const value = shallowRef<Time | null>(null)
 const isSubmitting = ref(false)
 const minTime = parseTime('09:00')
 const maxTime = parseTime('17:00')
-const isInvalid = computed(() => value.value !== null && (value.value.compare(minTime) < 0 || value.value.compare(maxTime) > 0))
+const isInvalid = computed(
+  () =>
+    value.value !== null && (value.value.compare(minTime) < 0 || value.value.compare(maxTime) > 0),
+)
 
 function handleSubmit(e: Event) {
   e.preventDefault()
-  if (!value.value || isInvalid.value)
-    return
+  if (!value.value || isInvalid.value) return
 
   isSubmitting.value = true
   // Simulate API call
@@ -44,7 +46,13 @@ function handleSubmit(e: Event) {
         <Icon class="size-4 text-muted" icon="gravity-ui:clock" />
       </template>
     </TimeField>
-    <Button class="w-full" :disabled="!value || isInvalid" :pending="isSubmitting" type="submit" variant="primary">
+    <Button
+      class="w-full"
+      :disabled="!value || isInvalid"
+      :pending="isSubmitting"
+      type="submit"
+      variant="primary"
+    >
       {{ isSubmitting ? 'Submitting...' : 'Submit' }}
     </Button>
   </Form>

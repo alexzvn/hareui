@@ -1,5 +1,6 @@
 <script lang="ts">
 import type { ClassValue } from 'tailwind-variants'
+
 import type { ChartAnimationProps } from './animation'
 import type { ChartDatum } from './types'
 
@@ -87,18 +88,19 @@ export interface ChartPieSlots {
 </script>
 
 <script setup lang="ts">
-import type { ChartLabelItem } from './label'
-import type { PieSector } from './polar'
-import type { ChartSeries, ChartTooltipPayloadEntry } from './types'
 import { useId } from 'reka-ui'
 import { computed, watchEffect } from 'vue'
+
 import { lerp, useChartTween } from './animation'
 import { provideChartCells } from './cells'
 import ChartLayer from './ChartLayer.vue'
 import { useChartContext } from './context'
+import type { ChartLabelItem } from './label'
 import { provideChartLabels } from './label'
+import type { PieSector } from './polar'
 import { computePieSectors, sectorPath, usePolarContext } from './polar'
 import { DEFAULT_SERIES_COLOR } from './series'
+import type { ChartSeries, ChartTooltipPayloadEntry } from './types'
 
 const props = withDefaults(defineProps<ChartPieProps>(), {
   nameKey: 'name',
@@ -134,23 +136,32 @@ function sliceFill(index: number): string {
 
 function sliceName(index: number): string {
   const value = data.value[index]?.[props.nameKey]
-  return value !== undefined && value !== '' ? String(value) : props.name ?? String(index)
+  return value !== undefined && value !== '' ? String(value) : (props.name ?? String(index))
 }
 
 // The polar context resolves the geometry, and a pie chart's center (`#center`, centered `ChartLabel`) reads it back
 // from `registerItems`, so the two always agree.
-const geometry = computed(() => polar.resolveGeometry({ cx: props.cx, cy: props.cy, innerRadius: props.innerRadius, outerRadius: props.outerRadius }))
+const geometry = computed(() =>
+  polar.resolveGeometry({
+    cx: props.cx,
+    cy: props.cy,
+    innerRadius: props.innerRadius,
+    outerRadius: props.outerRadius,
+  }),
+)
 
 const target = computed<PieSector[]>(() => {
-  if (props.hide)
-    return []
-  return computePieSectors(data.value.map(datum => Number(datum[props.dataKey])), {
-    ...geometry.value,
-    startAngle: props.startAngle,
-    endAngle: props.endAngle,
-    paddingAngle: props.paddingAngle,
-    minAngle: props.minAngle,
-  })
+  if (props.hide) return []
+  return computePieSectors(
+    data.value.map((datum) => Number(datum[props.dataKey])),
+    {
+      ...geometry.value,
+      startAngle: props.startAngle,
+      endAngle: props.endAngle,
+      paddingAngle: props.paddingAngle,
+      minAngle: props.minAngle,
+    },
+  )
 })
 
 // Mount: the slices fan open from `startAngle`. Data change: each slice moves from the slice at the same relative
@@ -169,24 +180,35 @@ function interpolate(from: PieSector[] | null, to: PieSector[], t: number): PieS
 const tween = useChartTween(
   () => target.value,
   interpolate,
-  () => [data.value, props.dataKey, props.startAngle, props.endAngle, props.paddingAngle, props.minAngle, props.hide],
+  () => [
+    data.value,
+    props.dataKey,
+    props.startAngle,
+    props.endAngle,
+    props.paddingAngle,
+    props.minAngle,
+    props.hide,
+  ],
   () => props,
 )
 
-const sectors = computed(() => tween.value.value.map(sector => ({
-  ...sector,
-  d: sectorPath({ ...sector, cornerRadius: props.cornerRadius }),
-  fill: sliceFill(sector.index),
-  cell: cells.value[sector.index],
-})))
+const sectors = computed(() =>
+  tween.value.value.map((sector) => ({
+    ...sector,
+    d: sectorPath({ ...sector, cornerRadius: props.cornerRadius }),
+    fill: sliceFill(sector.index),
+    cell: cells.value[sector.index],
+  })),
+)
 
 function entries(index: number): ChartTooltipPayloadEntry[] {
   const datum = data.value[index]
   const value = datum?.[props.dataKey]
-  if (!datum || value === undefined || value === null)
-    return []
+  if (!datum || value === undefined || value === null) return []
   const fill = sliceFill(index)
-  return [{ dataKey: props.dataKey, name: sliceName(index), value, color: fill, fill, payload: datum }]
+  return [
+    { dataKey: props.dataKey, name: sliceName(index), value, color: fill, fill, payload: datum },
+  ]
 }
 
 chart.registerSeries((): ChartSeries => ({
@@ -201,26 +223,39 @@ chart.registerSeries((): ChartSeries => ({
   tooltip: props.tooltipType !== 'none',
   entries,
 }))
-polar.registerItems(id, () => ({ sectors: target.value, startAngle: props.startAngle, endAngle: props.endAngle, geometry: geometry.value }))
+polar.registerItems(id, () => ({
+  sectors: target.value,
+  startAngle: props.startAngle,
+  endAngle: props.endAngle,
+  geometry: geometry.value,
+}))
 
 // Labels read the tweened angles so they move with their slices.
-provideChartLabels(() => tween.value.value.map((sector): ChartLabelItem => ({
-  index: sector.index,
-  value: data.value[sector.index]?.[props.dataKey],
-  datum: data.value[sector.index] ?? {},
-  viewBox: {
-    cx: sector.cx,
-    cy: sector.cy,
-    innerRadius: sector.innerRadius,
-    outerRadius: sector.outerRadius,
-    startAngle: sector.startAngle,
-    endAngle: sector.endAngle,
-  },
-})), 'inside')
+provideChartLabels(
+  () =>
+    tween.value.value.map((sector): ChartLabelItem => ({
+      index: sector.index,
+      value: data.value[sector.index]?.[props.dataKey],
+      datum: data.value[sector.index] ?? {},
+      viewBox: {
+        cx: sector.cx,
+        cy: sector.cy,
+        innerRadius: sector.innerRadius,
+        outerRadius: sector.outerRadius,
+        startAngle: sector.startAngle,
+        endAngle: sector.endAngle,
+      },
+    })),
+  'inside',
+)
 
 // A hidden or emptied pie must not keep the tooltip open.
 watchEffect(() => {
-  if (chart.active.seriesId === id && chart.active.index !== null && !target.value[chart.active.index])
+  if (
+    chart.active.seriesId === id &&
+    chart.active.index !== null &&
+    !target.value[chart.active.index]
+  )
     chart.setActive(null)
 })
 </script>
@@ -233,7 +268,9 @@ watchEffect(() => {
         :key="sector.index"
         data-slot="chart-pie-sector"
         :data-index="sector.index"
-        :data-active="chart.active.seriesId === id && chart.active.index === sector.index ? 'true' : undefined"
+        :data-active="
+          chart.active.seriesId === id && chart.active.index === sector.index ? 'true' : undefined
+        "
         :d="sector.d"
         :transform="`translate(${sector.cx}, ${sector.cy})`"
         :fill="sector.fill"

@@ -13,5 +13,12 @@ const animals: ListBoxItem[] = [
 </script>
 
 <template>
-  <ComboBox allows-custom-value class="w-[256px]" label="Favorite Animal" placeholder="Search or type an animal..." description="You can type any animal name, even if it's not in the list" :items="animals" />
+  <ComboBox
+    allows-custom-value
+    class="w-[256px]"
+    label="Favorite Animal"
+    placeholder="Search or type an animal..."
+    description="You can type any animal name, even if it's not in the list"
+    :items="animals"
+  />
 </template>

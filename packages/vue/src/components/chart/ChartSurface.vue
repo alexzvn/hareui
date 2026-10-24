@@ -1,8 +1,9 @@
 <script setup lang="ts">
+import { computed, onBeforeUnmount, onMounted, shallowRef, useAttrs, watch, watchEffect } from 'vue'
+
+import { useChartContext } from './context'
 import type { ChartLegendPosition } from './series-config'
 import type { ChartLayerName } from './types'
-import { computed, onBeforeUnmount, onMounted, shallowRef, useAttrs, watch, watchEffect } from 'vue'
-import { useChartContext } from './context'
 import { chartLayerNames } from './types'
 
 // Internal: the responsive container every chart root renders. Measures its width, draws the `<svg>` with one
@@ -33,24 +34,28 @@ const svg = shallowRef<SVGSVGElement | null>(null)
 
 const attrs = useAttrs()
 const isSvgAttr = (name: string) => name === 'role' || name.startsWith('aria-')
-const rootAttrs = computed(() => Object.fromEntries(Object.entries(attrs).filter(([name]) => !isSvgAttr(name))))
-const svgAttrs = computed(() => Object.fromEntries(Object.entries(attrs).filter(([name]) => isSvgAttr(name))))
+const rootAttrs = computed(() =>
+  Object.fromEntries(Object.entries(attrs).filter(([name]) => !isSvgAttr(name))),
+)
+const svgAttrs = computed(() =>
+  Object.fromEntries(Object.entries(attrs).filter(([name]) => isSvgAttr(name))),
+)
 
 const stacked = computed(() => props.legend === 'top' || props.legend === 'bottom')
 const legendFirst = computed(() => props.legend === 'top' || props.legend === 'left')
 // A legend beside the plot takes part of a fixed width, so the plot box is measured then too.
-const fixedWidth = computed(() => (typeof props.width === 'number' && (!props.legend || stacked.value) ? props.width : null))
+const fixedWidth = computed(() =>
+  typeof props.width === 'number' && (!props.legend || stacked.value) ? props.width : null,
+)
 
 watchEffect(() => {
   chart.height.value = props.height
-  if (fixedWidth.value !== null)
-    chart.width.value = fixedWidth.value
+  if (fixedWidth.value !== null) chart.width.value = fixedWidth.value
 })
 
 let observer: ResizeObserver | undefined
 function measure() {
-  if (fixedWidth.value !== null || !root.value)
-    return
+  if (fixedWidth.value !== null || !root.value) return
   chart.width.value = Math.floor(root.value.getBoundingClientRect().width)
 }
 
@@ -70,8 +75,13 @@ const rootStyle = computed(() => ({
   height: props.legend ? undefined : `${props.height}px`,
 }))
 const plotStyle = computed(() => (props.legend ? { height: `${props.height}px` } : undefined))
-const frameClass = computed(() => (props.legend ? ['flex gap-3', stacked.value ? 'flex-col' : 'items-center'] : undefined))
-const plotClass = computed(() => ['relative', !props.legend ? 'h-full' : stacked.value ? 'w-full' : 'min-w-0 flex-1'])
+const frameClass = computed(() =>
+  props.legend ? ['flex gap-3', stacked.value ? 'flex-col' : 'items-center'] : undefined,
+)
+const plotClass = computed(() => [
+  'relative',
+  !props.legend ? 'h-full' : stacked.value ? 'w-full' : 'min-w-0 flex-1',
+])
 
 const tracking = computed(() => chart.tooltipEnabled.value > 0)
 
@@ -90,16 +100,23 @@ function localPoint(event: PointerEvent) {
 
 function onPointerMove(event: PointerEvent) {
   const interaction = chart.interaction.value
-  if (!tracking.value || !interaction?.hitTest)
-    return
+  if (!tracking.value || !interaction?.hitTest) return
   const { x, y } = localPoint(event)
   const hit = interaction.hitTest(x, y)
-  chart.setActive(hit ? { index: hit.index, seriesId: hit.seriesId ?? null, coordinate: hit.coordinate, source: 'pointer' } : null)
+  chart.setActive(
+    hit
+      ? {
+          index: hit.index,
+          seriesId: hit.seriesId ?? null,
+          coordinate: hit.coordinate,
+          source: 'pointer',
+        }
+      : null,
+  )
 }
 
 function onPointerLeave() {
-  if (chart.active.source === 'pointer')
-    chart.setActive(null)
+  if (chart.active.source === 'pointer') chart.setActive(null)
 }
 
 // Position after a navigation key in a list of `count` items, `undefined` for other keys.
@@ -122,8 +139,7 @@ function nextPosition(key: string, current: number | null, count: number) {
 
 function onKeydown(event: KeyboardEvent) {
   const interaction = chart.interaction.value
-  if (!tracking.value || !interaction)
-    return
+  if (!tracking.value || !interaction) return
   if (event.key === 'Escape') {
     chart.setActive(null)
     return
@@ -131,19 +147,24 @@ function onKeydown(event: KeyboardEvent) {
   // Item-triggered charts with several series (nested pies) walk every item, series by series.
   if (interaction.items) {
     const items = interaction.items()
-    const current = items.findIndex(item => item.seriesId === chart.active.seriesId && item.index === chart.active.index)
+    const current = items.findIndex(
+      (item) => item.seriesId === chart.active.seriesId && item.index === chart.active.index,
+    )
     const position = nextPosition(event.key, current < 0 ? null : current, items.length)
     const item = position === undefined ? undefined : items[position]
-    if (!item)
-      return
+    if (!item) return
     event.preventDefault()
-    chart.setActive({ index: item.index, seriesId: item.seriesId, coordinate: item.coordinate, source: 'keyboard' })
+    chart.setActive({
+      index: item.index,
+      seriesId: item.seriesId,
+      coordinate: item.coordinate,
+      source: 'keyboard',
+    })
     return
   }
   const count = interaction.count()
   const index = count ? nextPosition(event.key, chart.active.index, count) : undefined
-  if (index === undefined)
-    return
+  if (index === undefined) return
   event.preventDefault()
   chart.setActive({ index, coordinate: interaction.coordinateOf(index), source: 'keyboard' })
 }
@@ -160,19 +181,22 @@ function onFocus() {
   const interaction = chart.interaction.value
   const fromPointer = pointerFocus
   pointerFocus = false
-  if (fromPointer || !tracking.value || !interaction || chart.active.index !== null)
-    return
+  if (fromPointer || !tracking.value || !interaction || chart.active.index !== null) return
   const item = interaction.items?.()[0]
   if (item)
-    chart.setActive({ index: item.index, seriesId: item.seriesId, coordinate: item.coordinate, source: 'keyboard' })
+    chart.setActive({
+      index: item.index,
+      seriesId: item.seriesId,
+      coordinate: item.coordinate,
+      source: 'keyboard',
+    })
   else if (!interaction.items && interaction.count() > 0)
     chart.setActive({ index: 0, coordinate: interaction.coordinateOf(0), source: 'keyboard' })
 }
 
 function onBlur() {
   pointerFocus = false
-  if (chart.active.source === 'keyboard')
-    chart.setActive(null)
+  if (chart.active.source === 'keyboard') chart.setActive(null)
 }
 </script>
 
@@ -202,16 +226,12 @@ function onBlur() {
         <g
           v-for="name in chartLayerNames"
           :key="name"
-          :ref="element => setLayer(name, element)"
+          :ref="(element) => setLayer(name, element)"
           :data-layer="name"
           aria-hidden="true"
         />
       </svg>
-      <div
-        :ref="setOverlay"
-        data-slot="chart-overlay"
-        :class="chart.classes('overlay')"
-      />
+      <div :ref="setOverlay" data-slot="chart-overlay" :class="chart.classes('overlay')" />
     </div>
     <slot v-if="legend && !legendFirst" name="legend" />
   </div>

@@ -7,7 +7,9 @@ import theme from './theme'
 
 type AreaChartTheme = typeof theme
 
-export interface AreaChartProps<T extends object = Record<string, unknown>> extends CartesianRootProps<T, ChartAreaSeries> {
+export interface AreaChartProps<
+  T extends object = Record<string, unknown>,
+> extends CartesianRootProps<T, ChartAreaSeries> {
   /**
    * Stacks every area on one stack. A series' own `stack` wins.
    * @defaultValue false
@@ -52,15 +54,26 @@ export interface AreaChartSlots extends CartesianRootSlots {}
 </script>
 
 <script setup lang="ts" generic="T extends object">
-import type { ChartDatum } from '../chart/types'
 import { useSlots } from 'vue'
+
 import { useComponentUI } from '../../composables/useComponentUI'
 import { useCartesianChart } from '../chart/cartesian'
-import { cartesianRootDefaults, definedProps, rootMargin, useCartesianRoot } from '../chart/cartesian-root'
+import {
+  cartesianRootDefaults,
+  definedProps,
+  rootMargin,
+  useCartesianRoot,
+} from '../chart/cartesian-root'
 import ChartCartesianFrame from '../chart/ChartCartesianFrame.vue'
 import { useChartRoot } from '../chart/context'
+import type { ChartDatum } from '../chart/types'
 
-const props = withDefaults(defineProps<AreaChartProps<T>>(), { ...cartesianRootDefaults, stacked: undefined, dot: undefined, connectNulls: undefined })
+const props = withDefaults(defineProps<AreaChartProps<T>>(), {
+  ...cartesianRootDefaults,
+  stacked: undefined,
+  dot: undefined,
+  connectNulls: undefined,
+})
 defineSlots<AreaChartSlots>()
 const hidden = defineModel<string[]>('hidden', { default: () => [] })
 const slots = useSlots()
@@ -82,14 +95,15 @@ const root = useCartesianRoot<T, ChartAreaSeries>({
   hidden,
   kind: () => 'area',
   stacked: () => props.stacked,
-  rootDefaults: () => definedProps({
-    curve: props.curve,
-    strokeWidth: props.strokeWidth,
-    fill: props.fill,
-    fillOpacity: props.fillOpacity,
-    dot: props.dot,
-    connectNulls: props.connectNulls,
-  }),
+  rootDefaults: () =>
+    definedProps({
+      curve: props.curve,
+      strokeWidth: props.strokeWidth,
+      fill: props.fill,
+      fillOpacity: props.fillOpacity,
+      dot: props.dot,
+      connectNulls: props.connectNulls,
+    }),
   hasLegendSlot: () => !!slots.legend,
 })
 </script>

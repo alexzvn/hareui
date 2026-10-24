@@ -25,20 +25,23 @@ ColorSlider renders a [Label](/docs/components/label), an output with the format
 ```vue
 <template>
   <ColorSlider channel="hue" label="Hue">
-    <template #label />   <!-- Label content -->
-    <template #output="{ channelName, channelValue, valueText }" />  <!-- Output content -->
-    <template #thumb="{ channelName, channelValue, valueText }" />   <!-- Thumb content -->
+    <template #label />
+    <!-- Label content -->
+    <template #output="{ channelName, channelValue, valueText }" />
+    <!-- Output content -->
+    <template #thumb="{ channelName, channelValue, valueText }" />
+    <!-- Thumb content -->
   </ColorSlider>
 </template>
 ```
 
-| `ui` key | `data-slot` | Element |
-|---|---|---|
-| `base` | `color-slider` | root |
-| `label` | `label` | [Label](/docs/components/label) (iff `label` / `#label`) |
-| `output` | `color-slider-output` | formatted channel value |
-| `track` | `color-slider-track` | track with the channel gradient |
-| `thumb` | `color-slider-thumb` | thumb showing the current color |
+| `ui` key | `data-slot`           | Element                                                  |
+| -------- | --------------------- | -------------------------------------------------------- |
+| `base`   | `color-slider`        | root                                                     |
+| `label`  | `label`               | [Label](/docs/components/label) (iff `label` / `#label`) |
+| `output` | `color-slider-output` | formatted channel value                                  |
+| `track`  | `color-slider-track`  | track with the channel gradient                          |
+| `thumb`  | `color-slider-thumb`  | thumb showing the current color                          |
 
 ## Examples
 
@@ -89,9 +92,11 @@ HeroUI's `render` prop replaces the root element. In Vue, attributes you pass to
 ### Global Configuration
 
 ```ts
-app.use(createHareUI({
-  ui: { colorSlider: { slots: { output: 'text-muted', thumb: 'size-5' } } },
-}))
+app.use(
+  createHareUI({
+    ui: { colorSlider: { slots: { output: 'text-muted', thumb: 'size-5' } } },
+  }),
+)
 ```
 
 ## Styling Reference

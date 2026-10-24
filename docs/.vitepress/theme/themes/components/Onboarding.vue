@@ -26,8 +26,12 @@ onMounted(() => {
     :ui="{ header: 'mb-4' }"
   >
     <template #header>
-      <div class="flex h-64 w-full items-center justify-center rounded-xl border border-border bg-background">
-        <div class="onboarding-block h-[152px] w-[188px] bg-surface p-4 shadow-[0_2px_4px_0_rgba(0,0,0,0.04),0_1px_2px_0_rgba(0,0,0,0.06),0_0_1px_0_rgba(0,0,0,0.06)]">
+      <div
+        class="flex h-64 w-full items-center justify-center rounded-xl border border-border bg-background"
+      >
+        <div
+          class="onboarding-block h-[152px] w-[188px] bg-surface p-4 shadow-[0_2px_4px_0_rgba(0,0,0,0.04),0_1px_2px_0_rgba(0,0,0,0.06),0_0_1px_0_rgba(0,0,0,0.06)]"
+        >
           <div class="onboarding-block mb-3 size-10 bg-surface-secondary" />
           <div class="onboarding-block mb-2 h-2 w-[93px] bg-surface-secondary" />
           <div class="onboarding-block mb-3 h-4 w-[139px] bg-surface-secondary" />
@@ -41,9 +45,10 @@ onMounted(() => {
       <div class="flex flex-col gap-2">
         <p class="text-base font-medium text-foreground">Adapt HeroUI v3 to your brand</p>
         <p class="text-sm leading-5 text-muted">
-          Customize colors, radius, and typography using a token system that keeps every component consistent and production-ready.
-          <br>
-          <br>
+          Customize colors, radius, and typography using a token system that keeps every component
+          consistent and production-ready.
+          <br />
+          <br />
           More features and themes coming soon.
         </p>
       </div>

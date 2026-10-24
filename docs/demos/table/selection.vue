@@ -30,7 +30,13 @@ const selectedKeys = ref<TableSelection>(new Set())
     />
     <p class="text-sm text-muted">
       Selected:
-      <span class="font-medium">{{ selectedKeys === 'all' ? 'All' : selectedKeys.size > 0 ? [...selectedKeys].join(', ') : 'None' }}</span>
+      <span class="font-medium">{{
+        selectedKeys === 'all'
+          ? 'All'
+          : selectedKeys.size > 0
+            ? [...selectedKeys].join(', ')
+            : 'None'
+      }}</span>
     </p>
   </div>
 </template>

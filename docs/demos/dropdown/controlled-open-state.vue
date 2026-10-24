@@ -19,9 +19,7 @@ const items: DropdownEntry[] = [
       Dropdown is: <strong>{{ open ? 'open' : 'closed' }}</strong>
     </p>
     <Dropdown v-model:open="open" :items="items">
-      <Button variant="secondary">
-        Actions
-      </Button>
+      <Button variant="secondary"> Actions </Button>
     </Dropdown>
   </div>
 </template>

@@ -34,7 +34,9 @@ const metrics = [
         :aria-label="`${metric.name} usage`"
       >
         <template #center="{ total }">
-          <span class="text-lg font-bold text-foreground">{{ Math.round((total / metric.max) * 100) }}%</span>
+          <span class="text-lg font-bold text-foreground"
+            >{{ Math.round((total / metric.max) * 100) }}%</span
+          >
         </template>
       </RadialChart>
     </Card>

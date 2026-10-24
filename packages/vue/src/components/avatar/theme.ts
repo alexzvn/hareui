@@ -2,7 +2,8 @@
 export default {
   slots: {
     base: 'relative flex size-10 shrink-0 items-center justify-center overflow-hidden rounded-3xl bg-default',
-    image: 'absolute inset-0 aspect-square size-full transition-opacity duration-250 motion-reduce:transition-none',
+    image:
+      'absolute inset-0 aspect-square size-full transition-opacity duration-250 motion-reduce:transition-none',
     fallback: 'flex size-full items-center justify-center bg-default text-sm font-medium',
   },
   variants: {
@@ -24,11 +25,31 @@ export default {
     },
   },
   compoundVariants: [
-    { variant: 'soft', color: 'accent', class: { fallback: 'bg-accent-soft text-accent-soft-foreground' } },
-    { variant: 'soft', color: 'success', class: { fallback: 'bg-success-soft text-success-soft-foreground' } },
-    { variant: 'soft', color: 'warning', class: { fallback: 'bg-warning-soft text-warning-soft-foreground' } },
-    { variant: 'soft', color: 'default', class: { fallback: 'bg-default-soft text-default-soft-foreground' } },
-    { variant: 'soft', color: 'danger', class: { fallback: 'bg-danger-soft text-danger-soft-foreground' } },
+    {
+      variant: 'soft',
+      color: 'accent',
+      class: { fallback: 'bg-accent-soft text-accent-soft-foreground' },
+    },
+    {
+      variant: 'soft',
+      color: 'success',
+      class: { fallback: 'bg-success-soft text-success-soft-foreground' },
+    },
+    {
+      variant: 'soft',
+      color: 'warning',
+      class: { fallback: 'bg-warning-soft text-warning-soft-foreground' },
+    },
+    {
+      variant: 'soft',
+      color: 'default',
+      class: { fallback: 'bg-default-soft text-default-soft-foreground' },
+    },
+    {
+      variant: 'soft',
+      color: 'danger',
+      class: { fallback: 'bg-danger-soft text-danger-soft-foreground' },
+    },
   ],
   defaultVariants: {
     color: 'default',

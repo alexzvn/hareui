@@ -88,7 +88,17 @@ export interface InputOtpEmits {
 </script>
 
 <script setup lang="ts">
-import { computed, onBeforeUnmount, onMounted, ref, useAttrs, useSlots, useTemplateRef, watch } from 'vue'
+import {
+  computed,
+  onBeforeUnmount,
+  onMounted,
+  ref,
+  useAttrs,
+  useSlots,
+  useTemplateRef,
+  watch,
+} from 'vue'
+
 import { useComponentUI } from '../../composables/useComponentUI'
 import { useFieldChrome } from '../../composables/useFieldChrome'
 import { useFieldValidation } from '../../composables/useFieldValidation'
@@ -117,15 +127,18 @@ const root = useTemplateRef<HTMLElement>('root')
 const input = useTemplateRef<HTMLInputElement>('input')
 const box = useTemplateRef<HTMLElement>('box')
 // Like the `input-otp` library: the invisible input's glyphs are sized to the box height via `--root-height`
-watch(box, (el, _, onCleanup) => {
-  if (!el || typeof ResizeObserver === 'undefined')
-    return
-  const measure = () => el.style.setProperty('--root-height', `${el.clientHeight}px`)
-  measure()
-  const observer = new ResizeObserver(measure)
-  observer.observe(el)
-  onCleanup(() => observer.disconnect())
-}, { flush: 'post' })
+watch(
+  box,
+  (el, _, onCleanup) => {
+    if (!el || typeof ResizeObserver === 'undefined') return
+    const measure = () => el.style.setProperty('--root-height', `${el.clientHeight}px`)
+    measure()
+    const observer = new ResizeObserver(measure)
+    observer.observe(el)
+    onCleanup(() => observer.disconnect())
+  },
+  { flush: 'post' },
+)
 const { validation } = useFieldValidation({
   value: () => modelValue.value ?? '',
   validate: () => props.validate,
@@ -154,23 +167,22 @@ const { id, describedBy, FieldLabel, FieldDescription, FieldError } = useFieldCh
 
 // Slots are laid out in groups, a separator rendered between each; `[length]` (one group, no separator)
 // when `groups` isn't given.
-const groupSizes = computed(() => props.groups?.length ? props.groups : [props.length])
+const groupSizes = computed(() => (props.groups?.length ? props.groups : [props.length]))
 const groupSlots = computed(() => {
   let index = 0
-  return groupSizes.value.map(size => Array.from({ length: size }, () => index++))
+  return groupSizes.value.map((size) => Array.from({ length: size }, () => index++))
 })
 
 const patternRegex = computed(() => {
-  if (props.pattern === 'digits')
-    return /^\d+$/
-  if (props.pattern === 'chars')
-    return /^[a-z]+$/i
-  if (props.pattern === 'alphanumeric')
-    return /^[a-z0-9]+$/i
+  if (props.pattern === 'digits') return /^\d+$/
+  if (props.pattern === 'chars') return /^[a-z]+$/i
+  if (props.pattern === 'alphanumeric') return /^[a-z0-9]+$/i
   return null
 })
 // A numeric virtual keyboard makes no sense once letters are allowed
-const inputMode = computed(() => props.pattern === 'chars' || props.pattern === 'alphanumeric' ? 'text' : 'numeric')
+const inputMode = computed(() =>
+  props.pattern === 'chars' || props.pattern === 'alphanumeric' ? 'text' : 'numeric',
+)
 
 function charAt(index: number) {
   return (modelValue.value ?? '')[index]
@@ -195,42 +207,42 @@ let prevSelection: [number | null, number | null] = [null, null]
 // it and Delete removes it. On a full field that is the last character.
 function syncSelection() {
   const el = input.value
-  if (!el)
-    return
+  if (!el) return
   const value = el.value
   const max = props.length
   let start = -1
   let end = -1
   let direction: 'forward' | 'backward' | undefined
   const caret = el.selectionStart
-  if (value.length !== 0 && caret !== null && el.selectionEnd !== null && caret === el.selectionEnd) {
+  if (
+    value.length !== 0 &&
+    caret !== null &&
+    el.selectionEnd !== null &&
+    caret === el.selectionEnd
+  ) {
     const insertMode = caret === value.length && value.length < max
     if (!insertMode) {
       if (caret === 0) {
         start = 0
         end = 1
         direction = 'forward'
-      }
-      else if (caret === max) {
+      } else if (caret === max) {
         start = caret - 1
         end = caret
         direction = 'backward'
-      }
-      else if (max > 1 && value.length > 1) {
+      } else if (max > 1 && value.length > 1) {
         let offset = 0
         const [prevStart, prevEnd] = prevSelection
         if (prevStart !== null && prevEnd !== null) {
           direction = caret < prevEnd ? 'backward' : 'forward'
           const wasInserting = prevStart === prevEnd && prevStart < max
-          if (direction === 'backward' && !wasInserting)
-            offset = -1
+          if (direction === 'backward' && !wasInserting) offset = -1
         }
         start = offset + caret
         end = offset + caret + 1
       }
     }
-    if (start !== -1 && end !== -1 && start !== end)
-      el.setSelectionRange(start, end, direction)
+    if (start !== -1 && end !== -1 && start !== end) el.setSelectionRange(start, end, direction)
   }
   selStart.value = el.selectionStart
   selEnd.value = el.selectionEnd
@@ -238,15 +250,12 @@ function syncSelection() {
 }
 // The browser fires `selectionchange` for every caret move (arrow keys, clicks, typing), as the library listens to
 function onSelectionChange() {
-  if (document.activeElement === input.value)
-    syncSelection()
+  if (document.activeElement === input.value) syncSelection()
 }
 
 function isActive(index: number) {
-  if (!isFocused.value || selStart.value === null || selEnd.value === null)
-    return false
-  if (selStart.value === selEnd.value)
-    return index === Math.min(selStart.value, props.length - 1)
+  if (!isFocused.value || selStart.value === null || selEnd.value === null) return false
+  if (selStart.value === selEnd.value) return index === Math.min(selStart.value, props.length - 1)
   return index >= selStart.value && index < selEnd.value
 }
 function hasFakeCaret(index: number) {
@@ -256,14 +265,12 @@ function hasFakeCaret(index: number) {
 function commit(next: string) {
   const previous = modelValue.value ?? ''
   modelValue.value = next
-  if (next.length === props.length && previous.length < props.length)
-    emit('complete', next)
+  if (next.length === props.length && previous.length < props.length) emit('complete', next)
 }
 
 function onFocus() {
   isFocused.value = true
-  if (box.value && box.value.offsetWidth >= PWM_BADGE_SPACE)
-    pushPwmBadge.value = true
+  if (box.value && box.value.offsetWidth >= PWM_BADGE_SPACE) pushPwmBadge.value = true
   const el = input.value
   if (el) {
     const length = (modelValue.value ?? '').length
@@ -293,26 +300,22 @@ function onInput(event: Event) {
     syncSelection()
     return
   }
-  if (el.value.length > next.length)
-    el.value = next
+  if (el.value.length > next.length) el.value = next
   commit(next)
   syncSelection()
 }
 
 function onPaste(event: ClipboardEvent) {
-  if (disabled.value)
-    return
+  if (disabled.value) return
   event.preventDefault()
   const el = input.value
-  if (!el)
-    return
+  if (!el) return
   const text = event.clipboardData?.getData('text/plain') ?? ''
   const current = modelValue.value ?? ''
   const start = el.selectionStart ?? current.length
   const end = el.selectionEnd ?? start
   const next = (current.slice(0, start) + text + current.slice(end)).slice(0, props.length)
-  if (next.length > 0 && patternRegex.value && !patternRegex.value.test(next))
-    return
+  if (next.length > 0 && patternRegex.value && !patternRegex.value.test(next)) return
   el.value = next
   commit(next)
   const pos = Math.min(next.length, props.length - 1)
@@ -322,19 +325,11 @@ function onPaste(event: ClipboardEvent) {
 </script>
 
 <template>
-  <div
-    ref="root"
-    v-bind="rootAttrs"
-    :class="ui.base({ class: [props.ui?.base, props.class] })"
-  >
+  <div ref="root" v-bind="rootAttrs" :class="ui.base({ class: [props.ui?.base, props.class] })">
     <!-- `base` is HareUI's own wrapper (HeroUI composes Label/InputOTP/Description itself), so it carries no data-slot -->
     <FieldLabel :for="id" />
     <!-- Like the `input-otp` library's container: HeroUI's `data-slot="input-otp"` and state attributes land on the <input> -->
-    <div
-      ref="box"
-      data-input-otp-container="true"
-      :class="ui.root({ class: props.ui?.root })"
-    >
+    <div ref="box" data-input-otp-container="true" :class="ui.root({ class: props.ui?.root })">
       <template v-for="(indexes, groupIndex) in groupSlots" :key="groupIndex">
         <div data-slot="input-otp-group" :class="ui.group({ class: props.ui?.group })">
           <div
@@ -347,10 +342,18 @@ function onPaste(event: ClipboardEvent) {
             :data-invalid="invalid ? 'true' : undefined"
             :class="ui.slot({ class: props.ui?.slot })"
           >
-            <div v-if="charAt(index)" data-slot="input-otp-slot-value" :class="ui.slotValue({ class: props.ui?.slotValue })">
+            <div
+              v-if="charAt(index)"
+              data-slot="input-otp-slot-value"
+              :class="ui.slotValue({ class: props.ui?.slotValue })"
+            >
               {{ charAt(index) }}
             </div>
-            <div v-if="hasFakeCaret(index)" data-slot="input-otp-caret" :class="ui.caret({ class: props.ui?.caret })" />
+            <div
+              v-if="hasFakeCaret(index)"
+              data-slot="input-otp-caret"
+              :class="ui.caret({ class: props.ui?.caret })"
+            />
           </div>
         </div>
         <div
@@ -382,7 +385,14 @@ function onPaste(event: ClipboardEvent) {
         :data-disabled="disabled ? 'true' : undefined"
         :data-invalid="invalid ? 'true' : undefined"
         :class="ui.input({ class: props.ui?.input })"
-        :style="pushPwmBadge ? { width: `calc(100% + ${PWM_BADGE_SPACE}px)`, clipPath: `inset(0 ${PWM_BADGE_SPACE}px 0 0)` } : undefined"
+        :style="
+          pushPwmBadge
+            ? {
+                width: `calc(100% + ${PWM_BADGE_SPACE}px)`,
+                clipPath: `inset(0 ${PWM_BADGE_SPACE}px 0 0)`,
+              }
+            : undefined
+        "
         @input="onInput"
         @paste="onPaste"
         @focus="onFocus"
@@ -390,7 +400,7 @@ function onPaste(event: ClipboardEvent) {
         @click="syncSelection"
         @keyup="syncSelection"
         @select="syncSelection"
-      >
+      />
     </div>
     <FieldDescription />
     <FieldError />

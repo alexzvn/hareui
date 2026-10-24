@@ -1,13 +1,20 @@
 <script lang="ts">
+import { injectListboxRootContext, injectPopoverRootContext } from 'reka-ui'
+import { defineComponent, watchEffect } from 'vue'
+
 import type { ValidateFn, ValidationResult } from '../../composables/useFieldValidation'
 import type { PortalTarget } from '../../config'
 import type { ComponentSlots } from '../../types/tv'
 import type { ValidationBehavior } from '../form/context'
 import type { FormFieldProps } from '../form/types'
-import type { ListBoxEntry, ListBoxItem, ListBoxItemSlotProps, ListBoxSection, ListBoxValue } from '../list-box/ListBox.vue'
+import type {
+  ListBoxEntry,
+  ListBoxItem,
+  ListBoxItemSlotProps,
+  ListBoxSection,
+  ListBoxValue,
+} from '../list-box/ListBox.vue'
 import type { CollectionRow } from '../list-box/listBoxCollection'
-import { injectListboxRootContext, injectPopoverRootContext } from 'reka-ui'
-import { defineComponent, watchEffect } from 'vue'
 import theme from './theme'
 
 type Autocomplete = typeof theme
@@ -93,7 +100,7 @@ export interface AutocompleteProps<T extends ListBoxItem = ListBoxItem> extends 
    * Pass `{ estimateSize, overscan }` to tune; rows are `estimateSize` (default 50) px apart.
    * @defaultValue false
    */
-  virtualize?: boolean | { estimateSize?: number, overscan?: number }
+  virtualize?: boolean | { estimateSize?: number; overscan?: number }
   /**
    * Visual variant. Use `secondary` on surfaces.
    * @defaultValue 'primary'
@@ -140,21 +147,21 @@ export interface AutocompleteValueSlotProps<T extends ListBoxItem = ListBoxItem>
 
 export interface AutocompleteSlots<T extends ListBoxItem = ListBoxItem> {
   /** Label content. Replaces `label`. */
-  'label'?: () => any
+  label?: () => any
   /** Trigger value content. Defaults to the selected label(s) or the placeholder. */
-  'value'?: (props: AutocompleteValueSlotProps<T>) => any
+  value?: (props: AutocompleteValueSlotProps<T>) => any
   /** Trigger indicator content. Defaults to a chevron. */
-  'indicator'?: (props: { open: boolean }) => any
+  indicator?: (props: { open: boolean }) => any
   /** Clear button content. Defaults to a close icon. */
-  'clear'?: () => any
+  clear?: () => any
   /** Description content. Replaces `description`. */
-  'description'?: () => any
+  description?: () => any
   /** Error content, rendered while invalid. */
-  'error'?: (props: ValidationResult) => any
+  error?: (props: ValidationResult) => any
   /** Content after the search input (e.g. a Spinner while fetching). */
   'search-trailing'?: (props: { inputValue: string }) => any
   /** Whole content of each option (as ListBox `#item`). */
-  'item'?: (props: ListBoxItemSlotProps<T>) => any
+  item?: (props: ListBoxItemSlotProps<T>) => any
   /** Content before each option's text (ListBox `#item-leading`). */
   'item-leading'?: (props: ListBoxItemSlotProps<T>) => any
   /** Each option's label (ListBox `#item-label`). */
@@ -168,20 +175,20 @@ export interface AutocompleteSlots<T extends ListBoxItem = ListBoxItem> {
   /** Section heading (ListBox `#section-label`). */
   'section-label'?: (props: { section: ListBoxSection<T> }) => any
   /** Empty-state content, rendered when no option matches (HeroUI `renderEmptyState`). */
-  'empty'?: () => any
+  empty?: () => any
   /** Shown after the last option while `loading` is true. */
-  'loading'?: () => any
+  loading?: () => any
 }
 
 export interface AutocompleteEmits {
   /** The selection was cleared with the clear button or Backspace / Delete. */
-  'clear': []
+  clear: []
   /** The popover opened or closed (`v-model:open`). */
   'update:open': [value: boolean]
   /** The search text changed (`v-model:input-value`). */
   'update:inputValue': [value: string]
   /** The end of the option list scrolled into view while `loading` is false. */
-  'loadMore': []
+  loadMore: []
 }
 
 type ListboxContext = NonNullable<ReturnType<typeof injectListboxRootContext>>
@@ -213,23 +220,43 @@ const PopoverLabelBridge = defineComponent({
 </script>
 
 <script setup lang="ts" generic="T extends ListBoxItem = ListBoxItem">
-import { ListboxContent, ListboxRoot, PopoverAnchor, PopoverContent, PopoverPortal, PopoverRoot, Primitive, useFilter } from 'reka-ui'
-import { computed, getCurrentInstance, nextTick, reactive, ref, shallowRef, useAttrs, useTemplateRef, watch } from 'vue'
+import {
+  ListboxContent,
+  ListboxRoot,
+  PopoverAnchor,
+  PopoverContent,
+  PopoverPortal,
+  PopoverRoot,
+  Primitive,
+  useFilter,
+} from 'reka-ui'
+import {
+  computed,
+  getCurrentInstance,
+  nextTick,
+  reactive,
+  ref,
+  shallowRef,
+  useAttrs,
+  useTemplateRef,
+  watch,
+} from 'vue'
+
 import { outsideEventTarget } from '../../composables/nestedLayer'
 import { useComponentUI } from '../../composables/useComponentUI'
 import { useFieldChrome } from '../../composables/useFieldChrome'
 import { useFieldValidation } from '../../composables/useFieldValidation'
 import { useKeyboardModality } from '../../composables/useKeyboardModality'
 import { usePortal } from '../../composables/usePortal'
-import { useFieldsetDisabled } from '../fieldset/context'
-import listBoxTheme from '../list-box/theme'
-import searchFieldTheme from '../search-field/theme'
 import CloseButton from '../close-button/CloseButton.vue'
+import { useFieldsetDisabled } from '../fieldset/context'
 import Label from '../label/Label.vue'
 import { countRows, filterEntries, itemText } from '../list-box/listBoxCollection'
 import ListBoxRows from '../list-box/ListBoxRows.vue'
+import listBoxTheme from '../list-box/theme'
 import { useCollectionModel } from '../list-box/useCollectionModel'
 import { useTypeahead } from '../list-box/useTypeahead'
+import searchFieldTheme from '../search-field/theme'
 import { usePressRelease } from '../select/pressRelease'
 
 defineOptions({ inheritAttrs: false })
@@ -256,7 +283,7 @@ const modelValue = defineModel<AutocompleteValue>()
 const inputModel = defineModel<string>('inputValue')
 // Whether the parent binds `v-model:input-value` (defineModel keeps a local value when it doesn't)
 const vnodeProps = getCurrentInstance()?.vnode.props ?? {}
-const inputControlled = () => ['inputValue', 'input-value'].some(key => key in vnodeProps)
+const inputControlled = () => ['inputValue', 'input-value'].some((key) => key in vnodeProps)
 
 const multiple = computed(() => props.selectionMode === 'multiple')
 
@@ -284,7 +311,7 @@ const {
 // ---- Search text (`v-model:input-value` wins when bound) and filtering ------------------------------------------
 const uncontrolledInput = ref(props.defaultInputValue ?? '')
 const inputValue = computed<string>({
-  get: () => inputControlled() ? inputModel.value ?? '' : uncontrolledInput.value,
+  get: () => (inputControlled() ? (inputModel.value ?? '') : uncontrolledInput.value),
   set: (value) => {
     uncontrolledInput.value = value
     inputModel.value = value
@@ -294,7 +321,10 @@ const { contains } = useFilter({ sensitivity: 'base' })
 const blocks = computed(() => {
   const filter = props.filter
   const text = props.search ? inputValue.value : ''
-  return filterEntries(props.items, filter === false ? () => true : item => (filter ?? contains)(itemText(item), text))
+  return filterEntries(
+    props.items,
+    filter === false ? () => true : (item) => (filter ?? contains)(itemText(item), text),
+  )
 })
 
 // ---- Open state (the `open` prop wins when bound) ---------------------------------------------------------------
@@ -305,16 +335,14 @@ let openStrategy: FocusStrategy = null
 function setOpen(value: boolean, strategy: FocusStrategy = null) {
   if (value && (disabled.value || (!props.allowsEmptyCollection && options.value.length === 0)))
     return
-  if (value === isOpen.value)
-    return
+  if (value === isOpen.value) return
   openStrategy = strategy
   uncontrolledOpen.value = value
   emit('update:open', value)
 }
 watch(isOpen, (value) => {
   // The popover unmounts its search field, so uncontrolled search text starts empty on the next open
-  if (!value && !inputControlled())
-    uncontrolledInput.value = props.defaultInputValue ?? ''
+  if (!value && !inputControlled()) uncontrolledInput.value = props.defaultInputValue ?? ''
 })
 
 // ---- Interaction modality (RAC): keyboard focus is focus-visible, hover moves focus only after pointer use ----
@@ -327,21 +355,22 @@ const listEl = useTemplateRef<{ $el: HTMLElement }>('list')
 const rowsRef = useTemplateRef<InstanceType<typeof ListBoxRows>>('rows')
 const focusedKey = ref<ListBoxValue | null>(null)
 const optionId = (value: ListBoxValue) => `${listboxId.value}-option-${String(value)}`
-const activeDescendant = computed(() => focusedKey.value != null ? optionId(focusedKey.value) : undefined)
+const activeDescendant = computed(() =>
+  focusedKey.value != null ? optionId(focusedKey.value) : undefined,
+)
 function enabledRows() {
-  return disabled.value ? [] : (rowsRef.value?.rows() ?? []).filter(row => !row.item.disabled)
+  return disabled.value ? [] : (rowsRef.value?.rows() ?? []).filter((row) => !row.item.disabled)
 }
 function setFocusKey(value: ListBoxValue | null, scroll = true) {
   focusedKey.value = value
-  if (value == null || !scroll)
-    return
+  if (value == null || !scroll) return
   // Virtualized: render the row first, then scroll it into view like any other (RAC `scrollIntoViewport`)
-  const reveal = () => document.getElementById(optionId(value))?.scrollIntoView({ block: 'nearest' })
+  const reveal = () =>
+    document.getElementById(optionId(value))?.scrollIntoView({ block: 'nearest' })
   const list = listEl.value?.$el as HTMLElement | undefined
   if (props.virtualize && list && !document.getElementById(optionId(value))) {
-    const index = (rowsRef.value?.rows() ?? []).findIndex(row => row.item.value === value)
-    if (index === -1)
-      return
+    const index = (rowsRef.value?.rows() ?? []).findIndex((row) => row.item.value === value)
+    if (index === -1) return
     // tanstack's scrollToIndex aligns to the padded scroll ends; it only serves to mount the row here. Then go back
     // and scroll it to the nearest edge (the row stays mounted until the next scroll event)
     const from = list.scrollTop
@@ -350,18 +379,16 @@ function setFocusKey(value: ListBoxValue | null, scroll = true) {
       list.scrollTop = from
       reveal()
     })
-  }
-  else {
+  } else {
     nextTick(reveal)
   }
 }
 // RAC `ListKeyboardDelegate.getKeyPageBelow/Above`: a viewport height down / up when the list scrolls, else last / first
 function pageIndex(list: CollectionRow[], current: number, down: boolean): number {
   const el = listEl.value?.$el as HTMLElement | undefined
-  if (!el || current === -1 || el.scrollHeight <= el.clientHeight)
-    return down ? list.length - 1 : 0
+  if (!el || current === -1 || el.scrollHeight <= el.clientHeight) return down ? list.length - 1 : 0
   const all = rowsRef.value?.rows() ?? []
-  const size = typeof props.virtualize === 'object' ? props.virtualize.estimateSize ?? 50 : 50
+  const size = typeof props.virtualize === 'object' ? (props.virtualize.estimateSize ?? 50) : 50
   const listTop = el.getBoundingClientRect().top - el.scrollTop
   // Row rect in content coordinates: measured when mounted, from the virtualizer's fixed row size otherwise
   const rect = (row: CollectionRow) => {
@@ -376,75 +403,78 @@ function pageIndex(list: CollectionRow[], current: number, down: boolean): numbe
   let i = current
   if (down) {
     const pageY = Math.min(el.scrollHeight, start.y - start.height + el.clientHeight)
-    while (i < list.length - 1 && rect(list[i]!).y < pageY)
-      i++
-  }
-  else {
+    while (i < list.length - 1 && rect(list[i]!).y < pageY) i++
+  } else {
     const pageY = Math.max(0, start.y + start.height - el.clientHeight)
-    while (i > 0 && rect(list[i]!).y > pageY)
-      i--
+    while (i > 0 && rect(list[i]!).y > pageY) i--
   }
   return i
 }
 function navigate(key: string) {
   const list = enabledRows()
-  if (!list.length)
-    return
-  const current = list.findIndex(row => row.item.value === focusedKey.value)
+  if (!list.length) return
+  const current = list.findIndex((row) => row.item.value === focusedKey.value)
   let next
-  if (key === 'Home')
-    next = list[0]
-  else if (key === 'End')
-    next = list.at(-1)
+  if (key === 'Home') next = list[0]
+  else if (key === 'End') next = list.at(-1)
   else if (key === 'PageUp' || key === 'PageDown')
     next = list[pageIndex(list, current, key === 'PageDown')]
-  else if (current === -1)
-    next = key === 'ArrowDown' ? list[0] : list.at(-1)
-  else
-    next = list[Math.min(Math.max(current + (key === 'ArrowDown' ? 1 : -1), 0), list.length - 1)]
+  else if (current === -1) next = key === 'ArrowDown' ? list[0] : list.at(-1)
+  else next = list[Math.min(Math.max(current + (key === 'ArrowDown' ? 1 : -1), 0), list.length - 1)]
   setFocusKey(next?.item.value ?? null)
 }
 
 // ---- Popover focus ----------------------------------------------------------------------------------------------
 const searchInput = useTemplateRef<HTMLInputElement>('searchInput')
 const button = useTemplateRef<HTMLButtonElement>('button')
-const popoverEl = () => (listEl.value?.$el as HTMLElement | undefined)?.closest<HTMLElement>('[data-slot=autocomplete-popover]') ?? undefined
+const popoverEl = () =>
+  (listEl.value?.$el as HTMLElement | undefined)?.closest<HTMLElement>(
+    '[data-slot=autocomplete-popover]',
+  ) ?? undefined
 // RAC FocusScope `restoreFocus`: focus returns to what was focused before opening
 let focusBeforeOpen: Element | null = null
-watch(isOpen, (value) => {
-  if (value)
-    focusBeforeOpen = document.activeElement
-}, { flush: 'sync' })
+watch(
+  isOpen,
+  (value) => {
+    if (value) focusBeforeOpen = document.activeElement
+  },
+  { flush: 'sync' },
+)
 async function onOpenAutoFocus(event: Event) {
   event.preventDefault()
   // After Reka's own mount highlight (which falls back to the first option)
   await nextTick()
   await nextTick()
   await nextTick()
-  if (props.search)
-    searchInput.value?.focus()
-  else
-    popoverEl()?.focus()
+  if (props.search) searchInput.value?.focus()
+  else popoverEl()?.focus()
   // RAC: the first selected option, else the first / last option when opened from the keyboard, else nothing
   const list = enabledRows()
-  const selected = list.find(row => isSelected(row.item.value))
-  setFocusKey((selected ?? (openStrategy === 'first' ? list[0] : openStrategy === 'last' ? list.at(-1) : undefined))?.item.value ?? null)
+  const selected = list.find((row) => isSelected(row.item.value))
+  setFocusKey(
+    (
+      selected ??
+      (openStrategy === 'first' ? list[0] : openStrategy === 'last' ? list.at(-1) : undefined)
+    )?.item.value ?? null,
+  )
 }
 function onCloseAutoFocus(event: Event) {
   event.preventDefault()
   // Only when focus was still inside the popover (or lost), as RAC
   const active = document.activeElement
-  if (active && active !== document.body && !popoverEl()?.contains(active))
-    return
-  if (focusBeforeOpen instanceof HTMLElement && focusBeforeOpen !== document.body && focusBeforeOpen.isConnected)
+  if (active && active !== document.body && !popoverEl()?.contains(active)) return
+  if (
+    focusBeforeOpen instanceof HTMLElement &&
+    focusBeforeOpen !== document.body &&
+    focusBeforeOpen.isConnected
+  )
     focusBeforeOpen.focus()
 }
 // Presses on the trigger toggle it themselves; don't let them count as outside presses
 const trigger = useTemplateRef<HTMLElement>('trigger')
 function onOutside(event: Event) {
   const target = outsideEventTarget(event as CustomEvent<{ originalEvent: Event }>)
-  if (target instanceof Node && trigger.value?.contains(target))
-    event.preventDefault()
+  if (target instanceof Node && trigger.value?.contains(target)) event.preventDefault()
 }
 function onEscapeKeyDown(event: KeyboardEvent) {
   // RAC SearchField: Escape clears the text first; the next one closes
@@ -463,7 +493,7 @@ function onSearchInput(event: Event) {
 // RAC Autocomplete: typing focuses the first match; an empty search focuses nothing
 async function onSearchTextChange() {
   await nextTick()
-  setFocusKey(inputValue.value ? enabledRows()[0]?.item.value ?? null : null)
+  setFocusKey(inputValue.value ? (enabledRows()[0]?.item.value ?? null) : null)
 }
 function onSearchClear() {
   searchInput.value?.focus()
@@ -472,15 +502,12 @@ function onSearchClear() {
 }
 // Keys from the search field, or from the popover itself when there is none
 function onPopoverKeydown(event: KeyboardEvent) {
-  if (event.isComposing)
-    return
+  if (event.isComposing) return
   const fromSearch = event.target === searchInput.value
-  if (!fromSearch && event.target !== popoverEl())
-    return
+  if (!fromSearch && event.target !== popoverEl()) return
   switch (event.key) {
     case ' ':
-      if (fromSearch)
-        break
+      if (fromSearch) break
       event.preventDefault()
       selectFocused()
       break
@@ -502,32 +529,30 @@ function onPopoverKeydown(event: KeyboardEvent) {
 const searchFocusVisible = ref(false)
 
 // ---- Selection from the list ------------------------------------------------------------------------------------
-const listValue = computed(() => multiple.value ? selectedValues.value : (selectedKey.value ?? undefined))
+const listValue = computed(() =>
+  multiple.value ? selectedValues.value : (selectedKey.value ?? undefined),
+)
 // Keyboard selection of the focused option (it may be scrolled out and unmounted, so not a click)
 function selectFocused() {
   const value = focusedKey.value
-  if (value == null || !enabledRows().some(row => row.item.value === value))
-    return
+  if (value == null || !enabledRows().some((row) => row.item.value === value)) return
   // Through Reka, so it counts as a user selection (a programmatic model change makes Reka re-highlight and,
   // when virtualized, scroll to the top)
   listboxRef.value?.onValueChange(value)
 }
 function onListUpdate(value: unknown) {
   if (multiple.value) {
-    selection.value = Array.isArray(value) ? value as ListBoxValue[] : []
-  }
-  else {
+    selection.value = Array.isArray(value) ? (value as ListBoxValue[]) : []
+  } else {
     // Reka toggles a re-picked option off; RAC Select keeps it
-    if (value !== undefined)
-      selection.value = value as ListBoxValue
+    if (value !== undefined) selection.value = value as ListBoxValue
     setOpen(false)
   }
   commitValidation()
 }
 
 const clear = () => {
-  if (disabled.value || isPlaceholder.value)
-    return
+  if (disabled.value || isPlaceholder.value) return
   clearSelection()
   commitValidation()
   emit('clear')
@@ -552,12 +577,10 @@ function onTriggerPointerdown(event: PointerEvent) {
 }
 function onTriggerMousedown(event: MouseEvent) {
   // Focus stays where the press put it (the button, or the search field once open)
-  if (mousePress)
-    event.preventDefault()
+  if (mousePress) event.preventDefault()
 }
 function onTriggerClick(event: MouseEvent) {
-  if (disabled.value || !isOwnPress(event))
-    return
+  if (disabled.value || !isOwnPress(event)) return
   if (mousePress && event.detail !== 0) {
     mousePress = false
     return
@@ -569,32 +592,36 @@ const pressRelease = usePressRelease()
 // Typing on the closed trigger selects the next option whose text starts with the typed string (see `TypeaheadStart`)
 const typeahead = useTypeahead({ start: 'next' })
 function onButtonKeydown(event: KeyboardEvent) {
-  if (disabled.value)
-    return
+  if (disabled.value) return
   if (event.key === 'ArrowDown' || event.key === 'ArrowUp') {
     event.preventDefault()
     setOpen(true, event.key === 'ArrowDown' ? 'first' : 'last')
-  }
-  else if (event.key === 'Enter' || event.key === ' ') {
+  } else if (event.key === 'Enter' || event.key === ' ') {
     event.preventDefault()
     setOpen(!isOpen.value, 'first')
-  }
-  else if ((event.key === 'Backspace' || event.key === 'Delete') && props.clearable && !isOpen.value) {
+  } else if (
+    (event.key === 'Backspace' || event.key === 'Delete') &&
+    props.clearable &&
+    !isOpen.value
+  ) {
     event.preventDefault()
     clear()
-  }
-  else {
-    typeahead.onKeydown(event, () => ({
-      items: options.value,
-      text: itemText,
-      disabled: item => !!item.disabled,
-      isCurrent: item => item.value === selectedValues.value[0],
-    }), (match) => {
-      if (!multiple.value) {
-        selection.value = match.value
-        commitValidation()
-      }
-    })
+  } else {
+    typeahead.onKeydown(
+      event,
+      () => ({
+        items: options.value,
+        text: itemText,
+        disabled: (item) => !!item.disabled,
+        isCurrent: (item) => item.value === selectedValues.value[0],
+      }),
+      (match) => {
+        if (!multiple.value) {
+          selection.value = match.value
+          commitValidation()
+        }
+      },
+    )
   }
 }
 
@@ -604,11 +631,11 @@ const focusWithin = ref(false)
 const focusVisible = ref(false)
 function onFocusIn(event: FocusEvent) {
   focusWithin.value = true
-  focusVisible.value = event.target === button.value && button.value?.matches(':focus-visible') === true
+  focusVisible.value =
+    event.target === button.value && button.value?.matches(':focus-visible') === true
 }
 function onFocusOut(event: FocusEvent) {
-  if (event.relatedTarget instanceof Node && trigger.value?.contains(event.relatedTarget))
-    return
+  if (event.relatedTarget instanceof Node && trigger.value?.contains(event.relatedTarget)) return
   focusWithin.value = false
   focusVisible.value = false
 }
@@ -628,76 +655,115 @@ const { validation, commitValidation } = useFieldValidation<AutocompleteValue>({
 const invalid = computed(() => validation.value.isInvalid)
 function onHiddenInvalid() {
   requestAnimationFrame(() => {
-    if (document.activeElement instanceof HTMLSelectElement && root.value?.contains(document.activeElement))
+    if (
+      document.activeElement instanceof HTMLSelectElement &&
+      root.value?.contains(document.activeElement)
+    )
       button.value?.focus({ focusVisible: true } as FocusOptions)
   })
 }
 
 // ---- Ids / ARIA -------------------------------------------------------------------------------------------------
 const attrs = useAttrs()
-const { id, labelId, hasLabel, describedBy, FieldLabel, FieldDescription, FieldError } = useFieldChrome({
-  props,
-  slots,
-  invalid,
-  validation,
-  disabled,
-  required: () => props.required,
-})
+const { id, labelId, hasLabel, describedBy, FieldLabel, FieldDescription, FieldError } =
+  useFieldChrome({
+    props,
+    slots,
+    invalid,
+    validation,
+    disabled,
+    required: () => props.required,
+  })
 const valueId = computed(() => `${id.value}-value`)
 const listboxId = computed(() => `${id.value}-listbox`)
 const searchId = computed(() => `${id.value}-search`)
 // RAC useSelect: the label (then any `aria-labelledby`) names the field; a bare `aria-label` on the trigger is
 // referenced by the trigger's own id, so it still counts next to the value
-const fieldLabelledBy = computed(() => [hasLabel.value ? labelId.value : undefined, attrs['aria-labelledby'] as string | undefined].filter(Boolean).join(' ') || undefined)
-const selfLabelledBy = computed(() => attrs['aria-label'] && !fieldLabelledBy.value ? id.value : undefined)
-const buttonLabelledBy = computed(() => [valueId.value, fieldLabelledBy.value, selfLabelledBy.value].filter(Boolean).join(' '))
+const fieldLabelledBy = computed(
+  () =>
+    [hasLabel.value ? labelId.value : undefined, attrs['aria-labelledby'] as string | undefined]
+      .filter(Boolean)
+      .join(' ') || undefined,
+)
+const selfLabelledBy = computed(() =>
+  attrs['aria-label'] && !fieldLabelledBy.value ? id.value : undefined,
+)
+const buttonLabelledBy = computed(() =>
+  [valueId.value, fieldLabelledBy.value, selfLabelledBy.value].filter(Boolean).join(' '),
+)
 const popupLabelledBy = computed(() => fieldLabelledBy.value ?? selfLabelledBy.value)
-const listLabelledBy = computed(() => [listboxId.value, popupLabelledBy.value].filter(Boolean).join(' '))
+const listLabelledBy = computed(() =>
+  [listboxId.value, popupLabelledBy.value].filter(Boolean).join(' '),
+)
 const rootAttrs = computed(() => {
   const { 'aria-label': _label, 'aria-labelledby': _labelledby, ...rest } = attrs
   return rest
 })
 
 // ---- Classes ----------------------------------------------------------------------------------------------------
-const ui = useComponentUI('autocomplete', theme, () => ({ variant: props.variant, fullWidth: props.fullWidth }))
+const ui = useComponentUI('autocomplete', theme, () => ({
+  variant: props.variant,
+  fullWidth: props.fullWidth,
+}))
 const listBoxUi = useComponentUI('listBox', listBoxTheme, () => ({}))
-const searchUi = useComponentUI('searchField', searchFieldTheme, () => ({ variant: 'secondary', fullWidth: false }))
+const searchUi = useComponentUI('searchField', searchFieldTheme, () => ({
+  variant: 'secondary',
+  fullWidth: false,
+}))
 function valueIndicatorClass(item: ListBoxItem) {
-  return (listBoxUi.value.indicator as (options?: { variant?: string }) => string)({ variant: item.variant })
+  return (listBoxUi.value.indicator as (options?: { variant?: string }) => string)({
+    variant: item.variant,
+  })
 }
-const rowSlots = ['item', 'item-leading', 'item-label', 'item-description', 'item-trailing', 'section-label', 'empty', 'loading'] as const
-const forwarded = computed(() => rowSlots.filter(name => slots[name]))
+const rowSlots = [
+  'item',
+  'item-leading',
+  'item-label',
+  'item-description',
+  'item-trailing',
+  'section-label',
+  'empty',
+  'loading',
+] as const
+const forwarded = computed(() => rowSlots.filter((name) => slots[name]))
 // One stable object (reactive unwraps the refs): a fresh object per change would re-render every option
 const virtualFocus = reactive({ keyboard: keyboardModality, value: focusedKey })
 // The option under the pointer, from the `id` its attrs write
-const itemById = computed(() => new Map(options.value.map(item => [optionId(item.value), item])))
+const itemById = computed(() => new Map(options.value.map((item) => [optionId(item.value), item])))
 function eventItem(event: Event) {
   return itemById.value.get((event.currentTarget as HTMLElement).id)
 }
 // RAC `shouldFocusOnHover`: hover moves focus unless the last interaction was a keyboard one
 function onOptionPointermove(event: PointerEvent) {
   const item = eventItem(event)
-  if (item && !keyboardModality.value && focusedKey.value !== item.value && !item.disabled && !disabled.value)
+  if (
+    item &&
+    !keyboardModality.value &&
+    focusedKey.value !== item.value &&
+    !item.disabled &&
+    !disabled.value
+  )
     setFocusKey(item.value, false)
 }
 // Pointer selection focuses the picked option (it stays focused in multiple mode)
 function onOptionPointerdown(event: PointerEvent) {
   const item = eventItem(event)
-  if (item && !item.disabled && !disabled.value)
-    setFocusKey(item.value, false)
+  if (item && !item.disabled && !disabled.value) setFocusKey(item.value, false)
 }
 // No closures per row: options re-render only when their own props change
 function optionAttrs(row: CollectionRow) {
-  return { id: optionId(row.item.value), onPointermove: onOptionPointermove, onPointerdown: onOptionPointerdown }
+  return {
+    id: optionId(row.item.value),
+    onPointermove: onOptionPointermove,
+    onPointerdown: onOptionPointerdown,
+  }
 }
 watch(isOpen, (value) => {
-  if (!value)
-    focusedKey.value = null
+  if (!value) focusedKey.value = null
 })
 
 watch(disabled, (disabled) => {
-  if (disabled)
-    setOpen(false)
+  if (disabled) setOpen(false)
 })
 </script>
 
@@ -714,7 +780,12 @@ watch(disabled, (disabled) => {
     :data-required="required ? 'true' : undefined"
     :class="ui.base({ class: [props.ui?.base, props.class] })"
   >
-    <FieldLabel :id="labelId" as="span" :class="ui.label({ class: props.ui?.label })" @click="button?.focus()" />
+    <FieldLabel
+      :id="labelId"
+      as="span"
+      :class="ui.label({ class: props.ui?.label })"
+      @click="button?.focus()"
+    />
     <PopoverRoot :open="isOpen" :modal="false" @update:open="setOpen">
       <PopoverLabelBridge :labelled-by="popupLabelledBy" />
       <PopoverAnchor as-child>
@@ -743,8 +814,35 @@ watch(disabled, (disabled) => {
           >
             <!-- RAC SelectValue re-renders each selected item's children, indicator included; the value class hides it -->
             <!-- A rich item (with a description) re-renders as RAC does: its label only, in the item's column wrapper -->
-            <slot name="value" :selected-items="selectedItems" :is-placeholder="isPlaceholder" :text="valueText"><div v-if="!multiple && selectedItems[0]?.description" class="flex flex-col"><Label as="span">{{ selectedItems[0].label }}</Label></div><template v-else>{{ valueText }}</template><span v-for="item in selectedItems" :key="String(item.value)" aria-hidden="true" data-slot="list-box-item-indicator" :class="valueIndicatorClass(item)">
-                <svg aria-hidden="true" data-slot="list-box-item-indicator--checkmark" fill="none" role="presentation" stroke="currentColor" stroke-dasharray="22" stroke-dashoffset="66" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" viewBox="0 0 17 18">
+            <slot
+              name="value"
+              :selected-items="selectedItems"
+              :is-placeholder="isPlaceholder"
+              :text="valueText"
+              ><div v-if="!multiple && selectedItems[0]?.description" class="flex flex-col">
+                <Label as="span">{{ selectedItems[0].label }}</Label>
+              </div>
+              <template v-else>{{ valueText }}</template
+              ><span
+                v-for="item in selectedItems"
+                :key="String(item.value)"
+                aria-hidden="true"
+                data-slot="list-box-item-indicator"
+                :class="valueIndicatorClass(item)"
+              >
+                <svg
+                  aria-hidden="true"
+                  data-slot="list-box-item-indicator--checkmark"
+                  fill="none"
+                  role="presentation"
+                  stroke="currentColor"
+                  stroke-dasharray="22"
+                  stroke-dashoffset="66"
+                  stroke-linecap="round"
+                  stroke-linejoin="round"
+                  stroke-width="2"
+                  viewBox="0 0 17 18"
+                >
                   <polyline points="1 9 7 14 15 4" />
                 </svg>
               </span>
@@ -763,8 +861,22 @@ watch(disabled, (disabled) => {
             @click="clear"
           >
             <slot name="clear">
-              <svg aria-hidden="true" data-slot="autocomplete-clear-button-icon" fill="none" height="16" role="presentation" viewBox="0 0 16 16" width="16" xmlns="http://www.w3.org/2000/svg">
-                <path clip-rule="evenodd" d="M3.47 3.47a.75.75 0 0 1 1.06 0L8 6.94l3.47-3.47a.75.75 0 1 1 1.06 1.06L9.06 8l3.47 3.47a.75.75 0 1 1-1.06 1.06L8 9.06l-3.47 3.47a.75.75 0 0 1-1.06-1.06L6.94 8 3.47 4.53a.75.75 0 0 1 0-1.06Z" fill="currentColor" fill-rule="evenodd" />
+              <svg
+                aria-hidden="true"
+                data-slot="autocomplete-clear-button-icon"
+                fill="none"
+                height="16"
+                role="presentation"
+                viewBox="0 0 16 16"
+                width="16"
+                xmlns="http://www.w3.org/2000/svg"
+              >
+                <path
+                  clip-rule="evenodd"
+                  d="M3.47 3.47a.75.75 0 0 1 1.06 0L8 6.94l3.47-3.47a.75.75 0 1 1 1.06 1.06L9.06 8l3.47 3.47a.75.75 0 1 1-1.06 1.06L8 9.06l-3.47 3.47a.75.75 0 0 1-1.06-1.06L6.94 8 3.47 4.53a.75.75 0 0 1 0-1.06Z"
+                  fill="currentColor"
+                  fill-rule="evenodd"
+                />
               </svg>
             </slot>
           </button>
@@ -807,7 +919,12 @@ watch(disabled, (disabled) => {
               xmlns="http://www.w3.org/2000/svg"
               :class="ui.indicator({ class: props.ui?.indicator })"
             >
-              <path clip-rule="evenodd" d="M2.97 5.47a.75.75 0 0 1 1.06 0L8 9.44l3.97-3.97a.75.75 0 1 1 1.06 1.06l-4.5 4.5a.75.75 0 0 1-1.06 0l-4.5-4.5a.75.75 0 0 1 0-1.06" fill="currentColor" fill-rule="evenodd" />
+              <path
+                clip-rule="evenodd"
+                d="M2.97 5.47a.75.75 0 0 1 1.06 0L8 9.44l3.97-3.97a.75.75 0 1 1 1.06 1.06l-4.5 4.5a.75.75 0 0 1-1.06 0l-4.5-4.5a.75.75 0 0 1 0-1.06"
+                fill="currentColor"
+                fill-rule="evenodd"
+              />
             </svg>
           </button>
         </div>
@@ -850,9 +967,25 @@ watch(disabled, (disabled) => {
                 :data-focus-visible="searchFocusVisible ? 'true' : undefined"
                 :class="searchUi.group({ class: props.ui?.searchGroup })"
               >
-                <span data-slot="search-field-search-icon" :class="searchUi.searchIcon({ class: props.ui?.searchIcon })">
-                  <svg aria-hidden="true" fill="none" height="16" role="presentation" viewBox="0 0 16 16" width="16" xmlns="http://www.w3.org/2000/svg">
-                    <path clip-rule="evenodd" d="M11.5 7a4.5 4.5 0 1 1-9 0a4.5 4.5 0 0 1 9 0m-.82 4.74a6 6 0 1 1 1.06-1.06l2.79 2.79a.75.75 0 1 1-1.06 1.06z" fill="currentColor" fill-rule="evenodd" />
+                <span
+                  data-slot="search-field-search-icon"
+                  :class="searchUi.searchIcon({ class: props.ui?.searchIcon })"
+                >
+                  <svg
+                    aria-hidden="true"
+                    fill="none"
+                    height="16"
+                    role="presentation"
+                    viewBox="0 0 16 16"
+                    width="16"
+                    xmlns="http://www.w3.org/2000/svg"
+                  >
+                    <path
+                      clip-rule="evenodd"
+                      d="M11.5 7a4.5 4.5 0 1 1-9 0a4.5 4.5 0 0 1 9 0m-.82 4.74a6 6 0 1 1 1.06-1.06l2.79 2.79a.75.75 0 1 1-1.06 1.06z"
+                      fill="currentColor"
+                      fill-rule="evenodd"
+                    />
                   </svg>
                 </span>
                 <input
@@ -874,7 +1007,7 @@ watch(disabled, (disabled) => {
                   @input="onSearchInput"
                   @focus="searchFocusVisible = ($event.target as Element).matches(':focus-visible')"
                   @blur="searchFocusVisible = false"
-                >
+                />
                 <slot name="search-trailing" :input-value="inputValue" />
                 <CloseButton
                   data-slot="search-field-clear-button"
@@ -944,7 +1077,21 @@ watch(disabled, (disabled) => {
     <FieldDescription />
     <FieldError />
     <!-- RAC HiddenSelect: carries form data and native `required` validity -->
-    <div aria-hidden="true" data-a11y-ignore="aria-hidden-focus" style="border: 0; clip-path: inset(50%); height: 1px; margin: -1px; overflow: hidden; padding: 0; position: absolute; white-space: nowrap; width: 1px;">
+    <div
+      aria-hidden="true"
+      data-a11y-ignore="aria-hidden-focus"
+      style="
+        border: 0;
+        clip-path: inset(50%);
+        height: 1px;
+        margin: -1px;
+        overflow: hidden;
+        padding: 0;
+        position: absolute;
+        white-space: nowrap;
+        width: 1px;
+      "
+    >
       <select
         tabindex="-1"
         :name="name"
@@ -955,7 +1102,12 @@ watch(disabled, (disabled) => {
         @invalid="onHiddenInvalid"
       >
         <option value="" />
-        <option v-for="item in options" :key="item.value" :value="item.value" :selected="isSelected(item.value)">
+        <option
+          v-for="item in options"
+          :key="item.value"
+          :value="item.value"
+          :selected="isSelected(item.value)"
+        >
           {{ itemText(item) }}
         </option>
       </select>

@@ -1,8 +1,22 @@
 <script lang="ts">
 import type { ValidationBehavior, ValidationErrors } from './context'
-import type { FormData, FormError, FormErrorEvent, FormErrorWithId, FormInputEvents, FormSchema, FormState, FormSubmitEvent, InferInput } from './types'
+import type {
+  FormData,
+  FormError,
+  FormErrorEvent,
+  FormErrorWithId,
+  FormInputEvents,
+  FormSchema,
+  FormState,
+  FormSubmitEvent,
+  InferInput,
+} from './types'
 
-export interface FormProps<S extends FormSchema, T extends boolean = true, N extends boolean = false> {
+export interface FormProps<
+  S extends FormSchema,
+  T extends boolean = true,
+  N extends boolean = false,
+> {
   /**
    * Validation behavior for the fields inside. `native` blocks submission and shows errors on change or submit;
    * `aria` shows errors in realtime and never blocks submission. A field's own `validationBehavior` wins.
@@ -77,13 +91,31 @@ export interface FormSlots {
 }
 </script>
 
-<script setup lang="ts" generic="S extends FormSchema, T extends boolean = true, N extends boolean = false">
-import type { FormInput, FormInputEvent, NestedForm } from './context'
-import type { Form } from './types'
-import { computed, inject, nextTick, onBeforeUnmount, onMounted, provide, reactive, ref, shallowReactive, toRaw, useId, useTemplateRef } from 'vue'
+<script
+  setup
+  lang="ts"
+  generic="S extends FormSchema, T extends boolean = true, N extends boolean = false"
+>
+import {
+  computed,
+  inject,
+  nextTick,
+  onBeforeUnmount,
+  onMounted,
+  provide,
+  reactive,
+  ref,
+  shallowReactive,
+  toRaw,
+  useId,
+  useTemplateRef,
+} from 'vue'
+
 import { getAtPath, setAtPath, validateSchema } from '../../utils/form'
 import { fieldsetContextKey, useFieldsetDisabled } from '../fieldset/context'
+import type { FormInput, FormInputEvent, NestedForm } from './context'
 import { formContextKey } from './context'
+import type { Form } from './types'
 import { FormValidationException } from './types'
 
 const props = withDefaults(defineProps<FormProps<S, T, N>>(), {
@@ -106,21 +138,24 @@ const parent = props.nested ? parentForm : null
 
 const state = computed<unknown>(() => {
   const parentState = parent?.state.value
-  if (parentState)
-    return getAtPath(parentState, props.name)
+  if (parentState) return getAtPath(parentState, props.name)
   return props.state
 })
 
-const validationBehavior = computed<ValidationBehavior>(() => props.validationBehavior ?? parent?.validationBehavior.value ?? 'native')
+const validationBehavior = computed<ValidationBehavior>(
+  () => props.validationBehavior ?? parent?.validationBehavior.value ?? 'native',
+)
 // A nested form's fields are named relative to its `name`
 const validationErrors = computed<ValidationErrors | undefined>(() => {
   const inherited = parent?.validationErrors.value
   if (props.validationErrors || !inherited || !props.name)
     return props.validationErrors ?? inherited
   const prefix = `${props.name}.`
-  return Object.fromEntries(Object.entries(inherited)
-    .filter(([name]) => name.startsWith(prefix))
-    .map(([name, error]) => [name.slice(prefix.length), error]))
+  return Object.fromEntries(
+    Object.entries(inherited)
+      .filter(([name]) => name.startsWith(prefix))
+      .map(([name, error]) => [name.slice(prefix.length), error]),
+  )
 })
 
 const errors = ref<FormErrorWithId[]>([])
@@ -144,27 +179,28 @@ const disabled = useFieldsetDisabled(() => props.disabled || loading.value)
 function clearDirty() {
   // Fields edited since the last full validation (during an async `@submit`) stay dirty
   for (const field of dirtyFields) {
-    if (dirtyEpochs.get(field) !== epoch)
-      dirtyFields.delete(field)
+    if (dirtyEpochs.get(field) !== epoch) dirtyFields.delete(field)
   }
-  for (const form of nestedForms.values())
-    form.clearDirty()
+  for (const form of nestedForms.values()) form.clearDirty()
 }
 
 function resolveErrorIds(errs: FormError[]): FormErrorWithId[] {
-  return errs.map(error => ({ ...error, id: error.name ? inputs.get(error.name)?.id() : undefined }))
+  return errs.map((error) => ({
+    ...error,
+    id: error.name ? inputs.get(error.name)?.id() : undefined,
+  }))
 }
 
 let transformedState: unknown = null
 
 async function getErrors(): Promise<FormErrorWithId[]> {
-  let errs = props.validate ? (await props.validate(state.value as Partial<InferInput<S>>)) ?? [] : []
+  let errs = props.validate
+    ? ((await props.validate(state.value as Partial<InferInput<S>>)) ?? [])
+    : []
   if (props.schema) {
     const result = await validateSchema(state.value, props.schema)
-    if (result.errors)
-      errs = errs.concat(result.errors)
-    else
-      transformedState = result.result
+    if (result.errors) errs = errs.concat(result.errors)
+    else transformedState = result.result
   }
   return resolveErrorIds(errs)
 }
@@ -173,23 +209,27 @@ function addFormPath(error: FormErrorWithId, formPath?: string): FormErrorWithId
   return formPath && error.name ? { ...error, name: `${formPath}.${error.name}` } : error
 }
 
-type NestedResult = { name?: string, output: unknown, error?: undefined } | { name?: string, output?: undefined, error: FormValidationException }
+type NestedResult =
+  | { name?: string; output: unknown; error?: undefined }
+  | { name?: string; output?: undefined; error: FormValidationException }
 
 async function validateNestedForm(form: NestedForm, opts: ValidateOptions): Promise<NestedResult> {
   try {
     return { name: form.name, output: await form.validate({ ...opts, silent: false }) }
-  }
-  catch (error) {
-    if (!(error instanceof FormValidationException))
-      throw error
+  } catch (error) {
+    if (!(error instanceof FormValidationException)) throw error
     return { name: form.name, error }
   }
 }
 
 function nameMatcher(names: string[]): (error: FormErrorWithId) => boolean {
   const nameSet = new Set(names)
-  const patterns = names.map(name => inputs.get(name)?.pattern()).filter((pattern): pattern is RegExp => !!pattern)
-  return error => !!error.name && (nameSet.has(error.name) || patterns.some(pattern => pattern.test(error.name!)))
+  const patterns = names
+    .map((name) => inputs.get(name)?.pattern())
+    .filter((pattern): pattern is RegExp => !!pattern)
+  return (error) =>
+    !!error.name &&
+    (nameSet.has(error.name) || patterns.some((pattern) => pattern.test(error.name!)))
 }
 
 interface ValidateOptions {
@@ -201,22 +241,27 @@ interface ValidateOptions {
   isCurrent?: () => boolean
 }
 
-async function validate(opts: ValidateOptions = { silent: false, nested: false, transform: false }): Promise<unknown> {
-  const names = opts.name === undefined ? undefined : Array.isArray(opts.name) ? opts.name : [opts.name]
-  if (!names)
-    epoch++
+async function validate(
+  opts: ValidateOptions = { silent: false, nested: false, transform: false },
+): Promise<unknown> {
+  const names =
+    opts.name === undefined ? undefined : Array.isArray(opts.name) ? opts.name : [opts.name]
+  if (!names) epoch++
 
   let nestedResults: NestedResult[] = []
   let nestedErrors: FormErrorWithId[] = []
   if (!names && opts.nested) {
-    const results = await Promise.all([...nestedForms.values()].map(form => validateNestedForm(form, opts)))
-    nestedErrors = results.flatMap(r => r.error ? r.error.errors.map(e => addFormPath(e, r.name)) : [])
-    nestedResults = results.filter(r => r.output !== undefined)
+    const results = await Promise.all(
+      [...nestedForms.values()].map((form) => validateNestedForm(form, opts)),
+    )
+    nestedErrors = results.flatMap((r) =>
+      r.error ? r.error.errors.map((e) => addFormPath(e, r.name)) : [],
+    )
+    nestedResults = results.filter((r) => r.output !== undefined)
   }
 
   const currentErrors = await getErrors()
-  if (opts.isCurrent?.() === false)
-    return false
+  if (opts.isCurrent?.() === false) return false
 
   // Nested errors already carry their nested form's control ids
   const allErrors = [...currentErrors, ...nestedErrors]
@@ -226,15 +271,13 @@ async function validate(opts: ValidateOptions = { silent: false, nested: false, 
   if (names) {
     const matches = nameMatcher(names)
     failedErrors = allErrors.filter(matches)
-    errors.value = [...errors.value.filter(error => !matches(error)), ...failedErrors]
-  }
-  else {
+    errors.value = [...errors.value.filter((error) => !matches(error)), ...failedErrors]
+  } else {
     errors.value = allErrors
   }
 
   if (failedErrors.length) {
-    if (opts.silent)
-      return false
+    if (opts.silent) return false
     throw new FormValidationException(formId, failedErrors)
   }
 
@@ -254,21 +297,21 @@ async function validate(opts: ValidateOptions = { silent: false, nested: false, 
 
 async function onInputEvent(event: FormInputEvent) {
   if (event.track !== false) {
-    if (event.type === 'blur')
-      blurredFields.add(event.name)
+    if (event.type === 'blur') blurredFields.add(event.name)
     if (event.type === 'change' || event.type === 'input') {
       dirtyFields.add(event.name)
       dirtyEpochs.set(event.name, epoch)
     }
-    if (event.type === 'input')
-      inputEpochs.set(event.name, epoch)
+    if (event.type === 'input') inputEpochs.set(event.name, epoch)
     touchedFields.add(event.name)
   }
 
-  if (event.validate === false || !props.validateOn.includes(event.type) || loading.value)
-    return
+  if (event.validate === false || !props.validateOn.includes(event.type) || loading.value) return
   // Input validation waits for the field's first blur (unless eager), and is dropped if a full validation ran since
-  if (event.type === 'input' && (inputEpochs.get(event.name) !== epoch || !(event.eager || blurredFields.has(event.name))))
+  if (
+    event.type === 'input' &&
+    (inputEpochs.get(event.name) !== epoch || !(event.eager || blurredFields.has(event.name)))
+  )
     return
 
   const run = (validationRuns.get(event.name) ?? 0) + 1
@@ -283,7 +326,9 @@ async function onInputEvent(event: FormInputEvent) {
 }
 
 // Whether submission goes through validation; a bare form submits natively, as before
-const managed = computed(() => !!(props.schema || props.validate || props.state !== undefined || nestedForms.size))
+const managed = computed(
+  () => !!(props.schema || props.validate || props.state !== undefined || nestedForms.size),
+)
 
 async function onSubmit(payload: Event) {
   if (!managed.value) {
@@ -294,19 +339,16 @@ async function onSubmit(payload: Event) {
   loading.value = props.loadingAuto
   const event = payload as FormSubmitEvent<FormData<S, T>>
   try {
-    event.data = await validate({ nested: true, transform: props.transform }) as FormData<S, T>
+    event.data = (await validate({ nested: true, transform: props.transform })) as FormData<S, T>
     await props.onSubmit?.(event)
     clearDirty()
-  }
-  catch (error) {
-    if (!(error instanceof FormValidationException))
-      throw error
+  } catch (error) {
+    if (!(error instanceof FormValidationException)) throw error
     // Re-enable the fields first, so an `@error` handler can focus the first invalid one
     loading.value = false
     await nextTick()
     emit('error', Object.assign(payload as SubmitEvent, { errors: error.errors }))
-  }
-  finally {
+  } finally {
     loading.value = false
   }
 }
@@ -316,18 +358,14 @@ function isLocalError(error: FormError) {
 }
 
 function matchesTarget(target: string | RegExp | undefined, path?: string) {
-  if (!target || !path)
-    return true
-  if (target instanceof RegExp)
-    return target.test(path)
+  if (!target || !path) return true
+  if (target instanceof RegExp) return target.test(path)
   return path === target || target.startsWith(`${path}.`)
 }
 
 function nestedTarget(target: string | RegExp | undefined, formPath: string) {
-  if (!target || target instanceof RegExp)
-    return target
-  if (formPath === target)
-    return undefined
+  if (!target || target instanceof RegExp) return target
+  if (formPath === target) return undefined
   return target.startsWith(`${formPath}.`) ? target.slice(formPath.length + 1) : target
 }
 
@@ -336,20 +374,23 @@ function matchesName(error: FormError, name: string | RegExp) {
 }
 
 function nestedFormErrors(form: NestedForm): FormErrorWithId[] {
-  return form.getErrors().map(e => addFormPath(e, form.name))
+  return form.getErrors().map((e) => addFormPath(e, form.name))
 }
 
 // This form's own errors: the ones not collected from a nested form (an unnamed nested error looks local)
 function ownErrors(): FormErrorWithId[] {
-  const fromNested = new Set([...nestedForms.values()].flatMap(form => form.getErrors().map(e => toRaw(e))))
-  return errors.value.filter(error => !fromNested.has(toRaw(error)))
+  const fromNested = new Set(
+    [...nestedForms.values()].flatMap((form) => form.getErrors().map((e) => toRaw(e))),
+  )
+  return errors.value.filter((error) => !fromNested.has(toRaw(error)))
 }
 
 function stripFormPath(errs: FormError[], formPath?: string): FormError[] {
-  if (!formPath)
-    return errs
+  if (!formPath) return errs
   const prefix = `${formPath}.`
-  return errs.filter(e => e.name?.startsWith(prefix)).map(e => ({ ...e, name: e.name!.slice(prefix.length) }))
+  return errs
+    .filter((e) => e.name?.startsWith(prefix))
+    .map((e) => ({ ...e, name: e.name!.slice(prefix.length) }))
 }
 
 function setErrors(errs: FormError[], name?: string | RegExp) {
@@ -362,16 +403,22 @@ function setErrors(errs: FormError[], name?: string | RegExp) {
     }
   }
   errors.value = name
-    ? [...ownErrors().filter(error => !error.name || !matchesName(error, name)), ...localErrors, ...nested]
+    ? [
+        ...ownErrors().filter((error) => !error.name || !matchesName(error, name)),
+        ...localErrors,
+        ...nested,
+      ]
     : [...localErrors, ...nested]
 }
 
 function getFormErrors(name?: string | RegExp) {
-  return name ? errors.value.filter(error => matchesName(error, name)) : errors.value
+  return name ? errors.value.filter((error) => matchesName(error, name)) : errors.value
 }
 
 function clear(name?: string | RegExp) {
-  const localErrors = name ? ownErrors().filter(error => isLocalError(error) && !matchesName(error, name)) : []
+  const localErrors = name
+    ? ownErrors().filter((error) => isLocalError(error) && !matchesName(error, name))
+    : []
   const nested: FormErrorWithId[] = []
   for (const form of nestedForms.values()) {
     // A RegExp is written against this form's prefixed names, so it clears a nested form whole
@@ -382,11 +429,12 @@ function clear(name?: string | RegExp) {
   errors.value = [...localErrors, ...nested]
 }
 
-const dirty = computed(() => dirtyFields.size > 0 || [...nestedForms.values()].some(form => form.dirty()))
+const dirty = computed(
+  () => dirtyFields.size > 0 || [...nestedForms.values()].some((form) => form.dirty()),
+)
 
 async function submit() {
-  if (formEl.value instanceof HTMLFormElement && !formEl.value.reportValidity())
-    return
+  if (formEl.value instanceof HTMLFormElement && !formEl.value.reportValidity()) return
   await onSubmit(new Event('submit', { cancelable: true }))
 }
 
@@ -415,8 +463,7 @@ provide(formContextKey, {
   registerInput(name, input) {
     inputs.set(name, input)
     return () => {
-      if (inputs.get(name) === input)
-        inputs.delete(name)
+      if (inputs.get(name) === input) inputs.delete(name)
     }
   },
   attach(form) {
@@ -450,7 +497,7 @@ defineExpose({
     :is="parent ? 'div' : 'form'"
     ref="form"
     :name="parent ? undefined : name"
-    :novalidate="!parent && validationBehavior !== 'native' || undefined"
+    :novalidate="(!parent && validationBehavior !== 'native') || undefined"
     @submit="onSubmit"
     @reset="clear()"
   >

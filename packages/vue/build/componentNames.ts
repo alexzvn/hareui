@@ -1,6 +1,7 @@
-import type { Plugin } from 'vite'
 import { readFileSync } from 'node:fs'
 import { fileURLToPath } from 'node:url'
+
+import type { Plugin } from 'vite'
 
 const VIRTUAL_ID = 'virtual:hareui-component-names'
 const RESOLVED_ID = `\0${VIRTUAL_ID}`
@@ -19,8 +20,7 @@ export function componentNames(): Record<string, string> {
     const entry = readFileSync(`${srcDir}${file}`, 'utf8')
     for (const [, dir] of entry.matchAll(/^export \* from '\.\/components\/([\w-]+)'$/gm)) {
       const source = readFileSync(`${srcDir}components/${dir}/index.ts`, 'utf8')
-      for (const [, name] of source.matchAll(/^export \{ default as (\w+)\b/gm))
-        names[name!] = from
+      for (const [, name] of source.matchAll(/^export \{ default as (\w+)\b/gm)) names[name!] = from
     }
   }
   return Object.fromEntries(Object.entries(names).sort(([a], [b]) => a.localeCompare(b)))
@@ -30,7 +30,8 @@ export function componentNames(): Record<string, string> {
 export function componentNamesPlugin(): Plugin {
   return {
     name: 'hareui:component-names',
-    resolveId: id => (id === VIRTUAL_ID ? RESOLVED_ID : undefined),
-    load: id => (id === RESOLVED_ID ? `export default ${JSON.stringify(componentNames())}` : undefined),
+    resolveId: (id) => (id === VIRTUAL_ID ? RESOLVED_ID : undefined),
+    load: (id) =>
+      id === RESOLVED_ID ? `export default ${JSON.stringify(componentNames())}` : undefined,
   }
 }

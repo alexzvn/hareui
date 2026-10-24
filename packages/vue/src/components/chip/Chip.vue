@@ -1,5 +1,6 @@
 <script lang="ts">
 import type { PrimitiveProps } from 'reka-ui'
+
 import type { ComponentSlots, ComponentVariants } from '../../types/tv'
 import theme from './theme'
 
@@ -46,18 +47,27 @@ export interface ChipSlots {
 
 <script setup lang="ts">
 import { Primitive } from 'reka-ui'
+
 import { useComponentUI } from '../../composables/useComponentUI'
 
 const props = withDefaults(defineProps<ChipProps>(), { as: 'span' })
 const slots = defineSlots<ChipSlots>()
 
-const ui = useComponentUI('chip', theme, () => ({ color: props.color, variant: props.variant, size: props.size }))
+const ui = useComponentUI('chip', theme, () => ({
+  color: props.color,
+  variant: props.variant,
+  size: props.size,
+}))
 </script>
 
 <template>
   <Primitive :as="as" data-slot="chip" :class="ui.base({ class: [props.ui?.base, props.class] })">
     <slot name="leading" />
-    <span v-if="label !== undefined || !!slots.default" data-slot="chip-label" :class="ui.label({ class: props.ui?.label })">
+    <span
+      v-if="label !== undefined || !!slots.default"
+      data-slot="chip-label"
+      :class="ui.label({ class: props.ui?.label })"
+    >
       <slot>{{ label }}</slot>
     </span>
     <slot name="trailing" />

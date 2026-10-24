@@ -17,9 +17,7 @@ import { Button, ButtonGroup } from '@hareui/vue'
       <ButtonGroup disabled separator>
         <Button>First</Button>
         <Button>Second</Button>
-        <Button :disabled="false">
-          Third (enabled)
-        </Button>
+        <Button :disabled="false"> Third (enabled) </Button>
       </ButtonGroup>
     </div>
   </div>

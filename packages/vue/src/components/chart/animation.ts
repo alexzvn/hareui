@@ -27,28 +27,30 @@ export interface ChartAnimationProps {
 }
 
 const bezierPoints: Record<ChartEasing, [number, number, number, number]> = {
-  'ease': [0.25, 0.1, 0.25, 1],
+  ease: [0.25, 0.1, 0.25, 1],
   'ease-in': [0.42, 0, 1, 1],
   'ease-out': [0, 0, 0.58, 1],
   'ease-in-out': [0.42, 0, 0.58, 1],
-  'linear': [0, 0, 1, 1],
+  linear: [0, 0, 1, 1],
 }
 
 /** CSS `cubic-bezier()` timing function evaluated at `t` (0–1). */
-export function cubicBezier([x1, y1, x2, y2]: [number, number, number, number]): (t: number) => number {
-  const curve = (a: number, b: number) => (t: number) => 3 * a * (1 - t) ** 2 * t + 3 * b * (1 - t) * t ** 2 + t ** 3
+export function cubicBezier([x1, y1, x2, y2]: [number, number, number, number]): (
+  t: number,
+) => number {
+  const curve = (a: number, b: number) => (t: number) =>
+    3 * a * (1 - t) ** 2 * t + 3 * b * (1 - t) * t ** 2 + t ** 3
   const x = curve(x1, x2)
   const y = curve(y1, y2)
-  const dx = (t: number) => 3 * x1 * (1 - t) ** 2 + 6 * (x2 - x1) * (1 - t) * t + 3 * (1 - x2) * t ** 2
+  const dx = (t: number) =>
+    3 * x1 * (1 - t) ** 2 + 6 * (x2 - x1) * (1 - t) * t + 3 * (1 - x2) * t ** 2
   return (time: number) => {
-    if (time <= 0 || time >= 1)
-      return Math.min(Math.max(time, 0), 1)
+    if (time <= 0 || time >= 1) return Math.min(Math.max(time, 0), 1)
     let t = time
     for (let index = 0; index < 8; index++) {
       const error = x(t) - time
       const slope = dx(t)
-      if (Math.abs(error) < 1e-6 || slope === 0)
-        break
+      if (Math.abs(error) < 1e-6 || slope === 0) break
       t -= error / slope
     }
     return y(Math.min(Math.max(t, 0), 1))
@@ -64,8 +66,7 @@ let reducedMotionSource: typeof window.matchMedia | undefined
 let reducedMotionQuery: MediaQueryList | undefined
 
 export function prefersReducedMotion(): boolean {
-  if (typeof window === 'undefined' || typeof window.matchMedia !== 'function')
-    return false
+  if (typeof window === 'undefined' || typeof window.matchMedia !== 'function') return false
   if (reducedMotionSource !== window.matchMedia || !reducedMotionQuery) {
     reducedMotionSource = window.matchMedia
     reducedMotionQuery = window.matchMedia('(prefers-reduced-motion: reduce)')
@@ -108,18 +109,27 @@ export function useChartTween<T>(
   })
 
   function stop() {
-    if (frame)
-      cancelAnimationFrame(frame)
+    if (frame) cancelAnimationFrame(frame)
     clearTimeout(timer)
     frame = 0
     timer = undefined
   }
 
   function start(initial: boolean) {
-    const { isAnimationActive = true, animationBegin = 0, animationDuration = 1500, animationEasing = 'ease' } = options()
+    const {
+      isAnimationActive = true,
+      animationBegin = 0,
+      animationDuration = 1500,
+      animationEasing = 'ease',
+    } = options()
     const snapshot = initial ? null : drawn
     stop()
-    if (!isAnimationActive || animationDuration <= 0 || typeof requestAnimationFrame === 'undefined' || prefersReducedMotion()) {
+    if (
+      !isAnimationActive ||
+      animationDuration <= 0 ||
+      typeof requestAnimationFrame === 'undefined' ||
+      prefersReducedMotion()
+    ) {
       entering.value = false
       progress.value = 1
       return
@@ -135,18 +145,15 @@ export function useChartTween<T>(
         progress.value = ease(elapsed)
         if (elapsed < 1) {
           frame = requestAnimationFrame(tick)
-        }
-        else {
+        } else {
           frame = 0
           entering.value = false
         }
       }
       frame = requestAnimationFrame(tick)
     }
-    if (animationBegin > 0)
-      timer = setTimeout(run, animationBegin)
-    else
-      run()
+    if (animationBegin > 0) timer = setTimeout(run, animationBegin)
+    else run()
   }
 
   start(true)

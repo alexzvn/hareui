@@ -20,13 +20,28 @@ const currency = new Intl.NumberFormat('en-US', { style: 'currency', currency: '
 
 // `meta` on a column styles its header and cells, and can span cells; `meta` on the table styles rows.
 const columns: RichTableColumn<Payment>[] = [
-  { accessorKey: 'name', header: 'Customer', meta: { class: { th: 'text-foreground', td: 'font-medium' } } },
-  { accessorKey: 'status', header: 'Status', meta: { class: { td: cell => cell.getValue() === 'failed' ? 'capitalize text-danger' : 'capitalize' } } },
+  {
+    accessorKey: 'name',
+    header: 'Customer',
+    meta: { class: { th: 'text-foreground', td: 'font-medium' } },
+  },
+  {
+    accessorKey: 'status',
+    header: 'Status',
+    meta: {
+      class: {
+        td: (cell) => (cell.getValue() === 'failed' ? 'capitalize text-danger' : 'capitalize'),
+      },
+    },
+  },
   {
     accessorKey: 'amount',
     header: 'Amount',
     cell: ({ row }) => currency.format(row.original.amount),
-    meta: { class: { th: 'text-end', td: 'text-end' }, style: { td: { fontVariantNumeric: 'tabular-nums' } } },
+    meta: {
+      class: { th: 'text-end', td: 'text-end' },
+      style: { td: { fontVariantNumeric: 'tabular-nums' } },
+    },
   },
 ]
 </script>
@@ -35,7 +50,7 @@ const columns: RichTableColumn<Payment>[] = [
   <RichTable
     :data="data"
     :columns="columns"
-    :meta="{ class: { tr: row => row.original.status === 'failed' ? '*:bg-danger/5' : '' } }"
+    :meta="{ class: { tr: (row) => (row.original.status === 'failed' ? '*:bg-danger/5' : '') } }"
     class="w-full"
   />
 </template>

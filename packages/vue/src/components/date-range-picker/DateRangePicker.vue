@@ -1,14 +1,15 @@
 <script lang="ts">
 import type { DateValue } from '@internationalized/date'
 import type { DateRangePickerRootProps } from 'reka-ui'
+
 import type { ValidateFn, ValidationResult } from '../../composables/useFieldValidation'
 import type { PortalTarget } from '../../config'
 import type { ComponentSlots } from '../../types/tv'
 import type { DateInputGroupProps } from '../date-input-group/DateInputGroup.vue'
+import dateInputGroupTheme from '../date-input-group/theme'
 import type { ValidationBehavior } from '../form/context'
 import type { FormFieldProps } from '../form/types'
 import type { DateRange } from '../range-calendar/RangeCalendar.vue'
-import dateInputGroupTheme from '../date-input-group/theme'
 import theme from './theme'
 
 type DateRangePicker = typeof theme
@@ -135,7 +136,10 @@ export interface DateRangePickerProps extends FormFieldProps {
   /** Additional classes merged into the root element. */
   class?: any
   /** Per-slot class overrides. `group`, `inputContainer`, `input` and `segment` are the internal `date-input-group`'s. */
-  ui?: ComponentSlots<DateRangePicker> & { group?: ComponentSlots<DateInputGroup>['base'] } & Pick<ComponentSlots<DateInputGroup>, 'inputContainer' | 'input' | 'segment'>
+  ui?: ComponentSlots<DateRangePicker> & { group?: ComponentSlots<DateInputGroup>['base'] } & Pick<
+      ComponentSlots<DateInputGroup>,
+      'inputContainer' | 'input' | 'segment'
+    >
 }
 
 export interface DateRangePickerCalendarSlotProps {
@@ -172,22 +176,41 @@ export interface DateRangePickerEmits {
 
 <script setup lang="ts">
 import { DateFormatter, getLocalTimeZone, toCalendarDateTime } from '@internationalized/date'
-import { DateRangePickerAnchor, DateRangePickerField, DateRangePickerInput, DateRangePickerRoot, DateRangePickerTrigger, PopoverContent, PopoverPortal, VisuallyHidden } from 'reka-ui'
+import {
+  DateRangePickerAnchor,
+  DateRangePickerField,
+  DateRangePickerInput,
+  DateRangePickerRoot,
+  DateRangePickerTrigger,
+  PopoverContent,
+  PopoverPortal,
+  VisuallyHidden,
+} from 'reka-ui'
 import type { ComponentPublicInstance } from 'vue'
 import { computed, ref, shallowRef, useAttrs, useTemplateRef, watch } from 'vue'
+
 import { useComponentUI } from '../../composables/useComponentUI'
 import { useFieldChrome } from '../../composables/useFieldChrome'
 import { useFieldValidation } from '../../composables/useFieldValidation'
 import { useInertOutside } from '../../composables/useInertOutside'
 import { usePortal } from '../../composables/usePortal'
-import DateInputGroup, { dropDanglingTimeZoneSeparator, wrapBidiIsolate } from '../date-input-group/DateInputGroup.vue'
-import { useFieldsetDisabled } from '../fieldset/context'
+import DateInputGroup, {
+  dropDanglingTimeZoneSeparator,
+  wrapBidiIsolate,
+} from '../date-input-group/DateInputGroup.vue'
 import PopoverLabelledBy from '../date-picker/PopoverLabelledBy'
+import { useFieldsetDisabled } from '../fieldset/context'
 import RangeCalendar from '../range-calendar/RangeCalendar.vue'
 
 // `invalid: undefined`/`open: undefined`: an absent boolean would cast to `false`, which would count as
 // controlled-valid/controlled-closed and hide validation errors / force the popover shut
-const props = withDefaults(defineProps<DateRangePickerProps>(), { invalid: undefined, open: undefined, portal: undefined, defaultOpen: false, inputContainer: false })
+const props = withDefaults(defineProps<DateRangePickerProps>(), {
+  invalid: undefined,
+  open: undefined,
+  portal: undefined,
+  defaultOpen: false,
+  inputContainer: false,
+})
 const disabled = useFieldsetDisabled(() => props.disabled)
 const portalTarget = usePortal(() => props.portal)
 defineOptions({ inheritAttrs: false })
@@ -197,10 +220,13 @@ const slots = defineSlots<DateRangePickerSlots>()
 const modelValue = defineModel<DateRangeValue | null>()
 // Also mirrors a controlled `open` synchronously, so `useInertOutside` releases before Reka refocuses the trigger.
 const openLocal = ref(props.open ?? props.defaultOpen ?? false)
-watch(() => props.open, (open) => {
-  if (open !== undefined)
-    openLocal.value = open
-}, { flush: 'sync' })
+watch(
+  () => props.open,
+  (open) => {
+    if (open !== undefined) openLocal.value = open
+  },
+  { flush: 'sync' },
+)
 const isOpen = computed({
   get: () => props.open ?? openLocal.value,
   set: (value: boolean) => {
@@ -221,39 +247,39 @@ function isComplete(value: DateRange | null | undefined): value is DateRangeValu
   return !!value?.start && !!value.end
 }
 // The committed value: `v-model` once set, else `defaultValue`.
-const committed = computed<DateRangeValue | null>(() => (modelValue.value === undefined ? props.defaultValue : modelValue.value) ?? null)
+const committed = computed<DateRangeValue | null>(
+  () => (modelValue.value === undefined ? props.defaultValue : modelValue.value) ?? null,
+)
 // What the segments show: React Aria's `useDateRangePickerState` keeps a partially typed range as a local
 // placeholder and only emits complete ranges (or `null`), so Reka is driven from this draft instead of `v-model`.
 const draft = shallowRef<DateRange>(committed.value ?? EMPTY)
 watch(committed, (value) => {
   const current = draft.value
-  if (value?.start === current.start && value?.end === current.end)
-    return
+  if (value?.start === current.start && value?.end === current.end) return
   draft.value = value ?? EMPTY
 })
 
 function commit(value: DateRangeValue | null, validate = true) {
   draft.value = value ?? EMPTY
   modelValue.value = value
-  if (validate)
-    commitValidation()
+  if (validate) commitValidation()
 }
 // React Aria commits a segment-edited range's validation when focus leaves the field, not on every keystroke,
 // so e.g. a range that is briefly reversed mid-edit isn't flagged until the user is done.
 let validationPending = false
 function onFieldUpdate(value: DateRange) {
   draft.value = value
-  if (isComplete(value))
-    commit(value, false)
-  else if (!value.start && !value.end && committed.value)
-    commit(null, false)
-  else
-    return
+  if (isComplete(value)) commit(value, false)
+  else if (!value.start && !value.end && committed.value) commit(null, false)
+  else return
   validationPending = true
 }
 function onFieldFocusOut(event: FocusEvent) {
   const field = root.value?.$el as HTMLElement | undefined
-  if (!validationPending || (event.relatedTarget instanceof Node && field?.contains(event.relatedTarget)))
+  if (
+    !validationPending ||
+    (event.relatedTarget instanceof Node && field?.contains(event.relatedTarget))
+  )
     return
   validationPending = false
   commitValidation()
@@ -261,16 +287,28 @@ function onFieldFocusOut(event: FocusEvent) {
 
 // React Aria's `useDateRangePickerState`: picking dates in the calendar keeps the time of day already in the
 // field, and falls back to midnight when the field shows time segments but holds no value yet.
-const hasTimeGranularity = computed(() => props.granularity === 'hour' || props.granularity === 'minute' || props.granularity === 'second')
+const hasTimeGranularity = computed(
+  () =>
+    props.granularity === 'hour' ||
+    props.granularity === 'minute' ||
+    props.granularity === 'second',
+)
 function withTime(date: DateValue, current: DateValue | undefined): DateValue {
   if (current && 'hour' in current)
-    return (current as any).set({ era: (date as any).era, year: date.year, month: date.month, day: date.day })
-  if (hasTimeGranularity.value && !('hour' in date))
-    return toCalendarDateTime(date)
+    return (current as any).set({
+      era: (date as any).era,
+      year: date.year,
+      month: date.month,
+      day: date.day,
+    })
+  if (hasTimeGranularity.value && !('hour' in date)) return toCalendarDateTime(date)
   return date
 }
 function mergeTime(range: DateRangeValue): DateRangeValue {
-  return { start: withTime(range.start, draft.value.start), end: withTime(range.end, draft.value.end) }
+  return {
+    start: withTime(range.start, draft.value.start),
+    end: withTime(range.end, draft.value.end),
+  }
 }
 function onCalendarChange(range: DateRangeValue) {
   commit(range)
@@ -284,14 +322,15 @@ function onCalendarSelect(range: DateRangeValue) {
   trigger.value?.focus()
 }
 function onCalendarUpdate(value: DateRange | undefined) {
-  if (isComplete(value))
-    onCalendarSelect(mergeTime(value))
+  if (isComplete(value)) onCalendarSelect(mergeTime(value))
 }
 
 // React Aria's builtin range validation (`validateDateRange`): each end against min/max/unavailable, plus a
 // reversed range; combined with `validate` the way RAC's `mergeValidation` does (custom error wins).
 function formatDateBoundary(value: DateValue) {
-  return new DateFormatter(props.locale ?? 'en-US', { dateStyle: 'medium' }).format(value.toDate(getLocalTimeZone()))
+  return new DateFormatter(props.locale ?? 'en-US', { dateStyle: 'medium' }).format(
+    value.toDate(getLocalTimeZone()),
+  )
 }
 function validateDate(value: DateValue) {
   const errors: string[] = []
@@ -299,14 +338,12 @@ function validateDate(value: DateValue) {
     errors.push(`Value must be ${formatDateBoundary(props.minValue)} or later.`)
   if (props.maxValue && value.compare(props.maxValue) > 0)
     errors.push(`Value must be ${formatDateBoundary(props.maxValue)} or earlier.`)
-  if (props.isDateUnavailable?.(value, null))
-    errors.push('Selected date unavailable.')
+  if (props.isDateUnavailable?.(value, null)) errors.push('Selected date unavailable.')
   return errors
 }
 function builtinValidate(value: DateRangeValue) {
   const errors = [...new Set([...validateDate(value.start), ...validateDate(value.end)])]
-  if (value.end.compare(value.start) < 0)
-    errors.push('Start date must be before end date.')
+  if (value.end.compare(value.start) < 0) errors.push('Start date must be before end date.')
   return errors.length ? errors : undefined
 }
 function validate(value: DateRangeValue) {
@@ -330,15 +367,16 @@ const invalid = computed(() => props.invalid ?? validation.value.isInvalid)
 // Reka's matcher is single-argument and read once at setup; outside the calendar React Aria calls it with a `null` anchor.
 const fieldIsDateUnavailable = (date: DateValue) => props.isDateUnavailable?.(date, null) ?? false
 
-const { id, labelId, hasLabel, describedBy, FieldLabel, FieldDescription, FieldError } = useFieldChrome({
-  props,
-  slots,
-  invalid,
-  validation,
-  disabled,
-  required: () => props.required,
-  hideDescriptionWhenInvalid: true,
-})
+const { id, labelId, hasLabel, describedBy, FieldLabel, FieldDescription, FieldError } =
+  useFieldChrome({
+    props,
+    slots,
+    invalid,
+    validation,
+    disabled,
+    required: () => props.required,
+    hideDescriptionWhenInvalid: true,
+  })
 const triggerId = computed(() => `${id.value}-trigger`)
 
 const groupUiProps = computed<DateInputGroupProps['ui']>(() => ({
@@ -356,9 +394,16 @@ const groupUiProps = computed<DateInputGroupProps['ui']>(() => ({
 function onOpenAutoFocus(event: Event) {
   const content = event.target as HTMLElement | null
   const focusDate = committed.value?.start ?? props.placeholder ?? props.defaultPlaceholder
-  const cell = (focusDate ? content?.querySelector<HTMLElement>(`[data-value="${focusDate.toString().slice(0, 10)}"]:not([data-outside-view])`) : null)
-    ?? content?.querySelector<HTMLElement>('[data-today]:not([data-outside-view])')
-    ?? content?.querySelector<HTMLElement>('[data-value]:not([data-outside-view]):not([data-disabled]):not([data-unavailable])')
+  const cell =
+    (focusDate
+      ? content?.querySelector<HTMLElement>(
+          `[data-value="${focusDate.toString().slice(0, 10)}"]:not([data-outside-view])`,
+        )
+      : null) ??
+    content?.querySelector<HTMLElement>('[data-today]:not([data-outside-view])') ??
+    content?.querySelector<HTMLElement>(
+      '[data-value]:not([data-outside-view]):not([data-disabled]):not([data-unavailable])',
+    )
   if (cell) {
     event.preventDefault()
     cell.focus()
@@ -368,7 +413,12 @@ function onOpenAutoFocus(event: Event) {
 // React Aria's `useDatePickerGroup`: Alt+ArrowDown/ArrowUp on a segment opens the calendar instead of
 // stepping the segment. Captured on the field root so it runs before the segment's own handler.
 function onFieldKeydown(event: KeyboardEvent) {
-  if (!event.altKey || (event.key !== 'ArrowDown' && event.key !== 'ArrowUp') || disabled.value || props.readonly)
+  if (
+    !event.altKey ||
+    (event.key !== 'ArrowDown' && event.key !== 'ArrowUp') ||
+    disabled.value ||
+    props.readonly
+  )
     return
   event.preventDefault()
   event.stopPropagation()
@@ -384,12 +434,13 @@ function onCloseAutoFocus(event: Event) {
 // Escape closes the whole popover even while the calendar's year picker is open (the year picker marks the
 // event handled to close itself, which would otherwise stop Reka's dismissal).
 function onEscapeKeyDown(event: KeyboardEvent) {
-  if (event.defaultPrevented)
-    isOpen.value = false
+  if (event.defaultPrevented) isOpen.value = false
 }
 
 function focusFirstSegment() {
-  root.value?.$el?.querySelector?.('[data-slot=date-input-group-segment][contenteditable=true]')?.focus()
+  root.value?.$el
+    ?.querySelector?.('[data-slot=date-input-group-segment][contenteditable=true]')
+    ?.focus()
 }
 </script>
 
@@ -444,7 +495,11 @@ function focusFirstSegment() {
           :ui="groupUiProps"
         >
           <template #separator>
-            <span aria-hidden="true" data-slot="date-range-picker-range-separator" :class="ui.rangeSeparator({ class: props.ui?.rangeSeparator })">
+            <span
+              aria-hidden="true"
+              data-slot="date-range-picker-range-separator"
+              :class="ui.rangeSeparator({ class: props.ui?.rangeSeparator })"
+            >
               <slot name="separator">{{ ' - ' }}</slot>
             </span>
           </template>
@@ -462,10 +517,27 @@ function focusFirstSegment() {
                 :disabled="disabled || readonly"
                 :class="ui.trigger({ class: props.ui?.trigger })"
               >
-                <span aria-hidden="true" data-slot="date-range-picker-trigger-indicator" :class="ui.triggerIndicator({ class: props.ui?.triggerIndicator })">
+                <span
+                  aria-hidden="true"
+                  data-slot="date-range-picker-trigger-indicator"
+                  :class="ui.triggerIndicator({ class: props.ui?.triggerIndicator })"
+                >
                   <slot name="indicator">
-                    <svg aria-hidden="true" fill="none" height="1em" role="presentation" viewBox="0 0 13 14" width="1em" xmlns="http://www.w3.org/2000/svg">
-                      <path clip-rule="evenodd" d="M3.75 4.5A.75.75 0 0 1 3 3.75v-.748a1.5 1.5 0 0 0-1.5 1.5v1h10v-1a1.5 1.5 0 0 0-1.5-1.5v.75a.75.75 0 1 1-1.5 0v-.75h-4v.747a.75.75 0 0 1-.75.75ZM8.5 1.501h-4V.75a.75.75 0 0 0-1.5 0v.752a3 3 0 0 0-3 3v6a3 3 0 0 0 3 3h7a3 3 0 0 0 3-3v-6a3 3 0 0 0-3-3v-.75a.75.75 0 0 0-1.5 0v.75Zm-7 5.5v3.5a1.5 1.5 0 0 0 1.5 1.5h7a1.5 1.5 0 0 0 1.5-1.5v-3.5h-10Z" fill="currentColor" fill-rule="evenodd" />
+                    <svg
+                      aria-hidden="true"
+                      fill="none"
+                      height="1em"
+                      role="presentation"
+                      viewBox="0 0 13 14"
+                      width="1em"
+                      xmlns="http://www.w3.org/2000/svg"
+                    >
+                      <path
+                        clip-rule="evenodd"
+                        d="M3.75 4.5A.75.75 0 0 1 3 3.75v-.748a1.5 1.5 0 0 0-1.5 1.5v1h10v-1a1.5 1.5 0 0 0-1.5-1.5v.75a.75.75 0 1 1-1.5 0v-.75h-4v.747a.75.75 0 0 1-.75.75ZM8.5 1.501h-4V.75a.75.75 0 0 0-1.5 0v.752a3 3 0 0 0-3 3v6a3 3 0 0 0 3 3h7a3 3 0 0 0 3-3v-6a3 3 0 0 0-3-3v-.75a.75.75 0 0 0-1.5 0v.75Zm-7 5.5v3.5a1.5 1.5 0 0 0 1.5 1.5h7a1.5 1.5 0 0 0 1.5-1.5v-3.5h-10Z"
+                        fill="currentColor"
+                        fill-rule="evenodd"
+                      />
                     </svg>
                   </slot>
                 </span>
@@ -476,7 +548,7 @@ function focusFirstSegment() {
       </DateRangePickerAnchor>
       <!-- React Aria's HiddenDateInput pair: carries `startName`/`endName` and native `required` (Reka's own mirror input holds one combined string) -->
       <VisuallyHidden
-        v-for="part in (['start', 'end'] as const)"
+        v-for="part in ['start', 'end'] as const"
         :key="part"
         as="input"
         feature="focusable"
@@ -505,7 +577,12 @@ function focusFirstSegment() {
         @close-auto-focus="onCloseAutoFocus"
         @escape-key-down="onEscapeKeyDown"
       >
-        <slot name="calendar" :value="committed" :on-select="onCalendarSelect" :on-change="onCalendarChange">
+        <slot
+          name="calendar"
+          :value="committed"
+          :on-select="onCalendarSelect"
+          :on-change="onCalendarChange"
+        >
           <!--
             No `min-value`/`max-value`: HeroUI's composed `RangeCalendar` passes its own 1900/2099 defaults explicitly,
             which override the picker's bounds from React Aria's context, so the popover never greys out-of-range days

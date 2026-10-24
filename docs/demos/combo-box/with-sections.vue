@@ -39,5 +39,10 @@ const countries: ListBoxEntry[] = [
 </script>
 
 <template>
-  <ComboBox class="w-[256px]" label="Country" placeholder="Search countries..." :items="countries" />
+  <ComboBox
+    class="w-[256px]"
+    label="Country"
+    placeholder="Search countries..."
+    :items="countries"
+  />
 </template>

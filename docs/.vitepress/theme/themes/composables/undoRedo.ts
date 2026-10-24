@@ -1,6 +1,7 @@
 // Port of HeroUI docs `themes/hooks/use-undo-redo.ts`: tracks our own history stack of query strings
 // (browsers don't expose theirs) and moves through it with history.back()/forward().
 import { onBeforeUnmount, onMounted, ref, watch } from 'vue'
+
 import { search } from './variables'
 
 export function useUndoRedo() {

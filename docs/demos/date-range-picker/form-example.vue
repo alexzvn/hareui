@@ -1,18 +1,21 @@
 <script setup lang="ts">
 import type { DateRangeValue } from '@hareui/vue'
-import { getLocalTimeZone, today } from '@internationalized/date'
 import { Button, DateRangePicker, Form } from '@hareui/vue'
+import { getLocalTimeZone, today } from '@internationalized/date'
 import { computed, ref, shallowRef } from 'vue'
 
 const value = shallowRef<DateRangeValue | null>(null)
 const isSubmitting = ref(false)
 const currentDate = today(getLocalTimeZone())
-const isInvalid = computed(() => value.value != null && (value.value.start.compare(currentDate) < 0 || value.value.end.compare(value.value.start) < 0))
+const isInvalid = computed(
+  () =>
+    value.value != null &&
+    (value.value.start.compare(currentDate) < 0 || value.value.end.compare(value.value.start) < 0),
+)
 
 function handleSubmit(event: Event) {
   event.preventDefault()
-  if (!value.value || isInvalid.value)
-    return
+  if (!value.value || isInvalid.value) return
 
   isSubmitting.value = true
   setTimeout(() => {

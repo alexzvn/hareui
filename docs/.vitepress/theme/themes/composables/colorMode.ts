@@ -6,7 +6,9 @@ import { onBeforeUnmount, onMounted, ref } from 'vue'
 const STORAGE_KEY = 'vitepress-theme-appearance'
 
 export function useColorMode() {
-  const isDark = ref(typeof document !== 'undefined' && document.documentElement.classList.contains('dark'))
+  const isDark = ref(
+    typeof document !== 'undefined' && document.documentElement.classList.contains('dark'),
+  )
   let observer: MutationObserver | undefined
 
   const read = () => (isDark.value = document.documentElement.classList.contains('dark'))

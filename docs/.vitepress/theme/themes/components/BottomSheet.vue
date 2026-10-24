@@ -6,7 +6,14 @@
 //   `y -> backdrop rgba(0,0,0, 0.4 -> 0)` over [0, 600]               -> `--bottom-sheet-y` drives both the sheet and the backdrop alpha,
 //   `drag="y"`, `dragConstraints.top`, default elastic 0.5, dismissal `offset > 160 || velocity > 10` -> pointer events below,
 //   snap-back inertia (bounce)                                         -> a 0.4s CSS transition with the same easing.
-import { DialogContent, DialogOverlay, DialogPortal, DialogRoot, DialogTitle, VisuallyHidden } from 'reka-ui'
+import {
+  DialogContent,
+  DialogOverlay,
+  DialogPortal,
+  DialogRoot,
+  DialogTitle,
+  VisuallyHidden,
+} from 'reka-ui'
 import { ref, watch } from 'vue'
 
 const SHEET_HEIGHT = 600 // Total height of the sheet
@@ -40,7 +47,7 @@ interface Session {
   startY: number
   pointerId: number
   active: boolean
-  samples: { t: number, y: number }[]
+  samples: { t: number; y: number }[]
 }
 let session: Session | null = null
 
@@ -62,7 +69,7 @@ function onPointerMove(event: PointerEvent) {
   y.value = SNAP_OFFSET + (offset < 0 ? offset * ELASTIC : offset)
   const now = performance.now()
   session.samples.push({ t: now, y: event.clientY })
-  session.samples = session.samples.filter(sample => now - sample.t <= 100)
+  session.samples = session.samples.filter((sample) => now - sample.t <= 100)
 }
 
 function onPointerEnd(event: PointerEvent) {
@@ -74,10 +81,12 @@ function onPointerEnd(event: PointerEvent) {
   const offset = event.clientY - startY
   const first = samples[0]
   const last = samples[samples.length - 1]
-  const velocity = first && last && last.t > first.t ? ((last.y - first.y) / (last.t - first.t)) * 1000 : 0
+  const velocity =
+    first && last && last.t > first.t ? ((last.y - first.y) / (last.t - first.t)) * 1000 : 0
 
   isDragging.value = false
-  if (event.type !== 'pointercancel' && (offset > SNAP_HEIGHT * 0.5 || velocity > 10)) emit('update:isOpen', false)
+  if (event.type !== 'pointercancel' && (offset > SNAP_HEIGHT * 0.5 || velocity > 10))
+    emit('update:isOpen', false)
   else y.value = SNAP_OFFSET
 }
 

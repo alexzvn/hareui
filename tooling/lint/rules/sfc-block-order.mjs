@@ -22,14 +22,16 @@ export const getTopLevelBlocks = (text) => {
   return blocks
 }
 
-const isOrdered = (blocks) => blocks.every((kind, i) => i === 0 || RANK[blocks[i - 1]] <= RANK[kind])
+const isOrdered = (blocks) =>
+  blocks.every((kind, i) => i === 0 || RANK[blocks[i - 1]] <= RANK[kind])
 
 export default {
   meta: {
     type: 'suggestion',
     docs: { description: 'SFC blocks must be ordered template → script → style' },
     messages: {
-      order: 'SFC block order must be <template> → <script> → <style> (found {{found}}). Run scripts/fix-sfc-block-order.ts.',
+      order:
+        'SFC block order must be <template> → <script> → <style> (found {{found}}). Run scripts/fix-sfc-block-order.ts.',
     },
     schema: [],
   },
@@ -38,7 +40,8 @@ export default {
     if (!filename.endsWith('.vue')) return {}
     return {
       Program(node) {
-        if (!cache.has(filename)) cache.set(filename, getTopLevelBlocks(fs.readFileSync(filename, 'utf8')))
+        if (!cache.has(filename))
+          cache.set(filename, getTopLevelBlocks(fs.readFileSync(filename, 'utf8')))
         const blocks = cache.get(filename)
         if (isOrdered(blocks)) return
         context.report({

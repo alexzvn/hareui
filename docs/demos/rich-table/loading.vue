@@ -16,14 +16,19 @@ const data: Payment[] = [
   { name: 'Liam Johnson', status: 'refunded', amount: 150 },
 ]
 
-const formatCurrency = (value: number) => new Intl.NumberFormat('en-US', { style: 'currency', currency: 'USD' }).format(value)
+const formatCurrency = (value: number) =>
+  new Intl.NumberFormat('en-US', { style: 'currency', currency: 'USD' }).format(value)
 const loading = ref(true)
 const loadingAnimation = ref<'carousel' | 'carousel-inverse' | 'swing' | 'elastic'>('carousel')
 
 const columns: RichTableColumn<Payment>[] = [
   { accessorKey: 'name', header: 'Customer' },
   { accessorKey: 'status', header: 'Status' },
-  { accessorKey: 'amount', header: 'Amount', cell: ({ row }) => formatCurrency(row.original.amount) },
+  {
+    accessorKey: 'amount',
+    header: 'Amount',
+    cell: ({ row }) => formatCurrency(row.original.amount),
+  },
 ]
 </script>
 
@@ -34,7 +39,7 @@ const columns: RichTableColumn<Payment>[] = [
         {{ loading ? 'Stop loading' : 'Start loading' }}
       </Button>
       <Button
-        v-for="animation in (['carousel', 'carousel-inverse', 'swing', 'elastic'] as const)"
+        v-for="animation in ['carousel', 'carousel-inverse', 'swing', 'elastic'] as const"
         :key="animation"
         size="sm"
         :variant="loadingAnimation === animation ? 'primary' : 'tertiary'"
@@ -43,6 +48,11 @@ const columns: RichTableColumn<Payment>[] = [
         {{ animation }}
       </Button>
     </div>
-    <RichTable :loading="loading" :loading-animation="loadingAnimation" :data="data" :columns="columns" />
+    <RichTable
+      :loading="loading"
+      :loading-animation="loadingAnimation"
+      :data="data"
+      :columns="columns"
+    />
   </div>
 </template>

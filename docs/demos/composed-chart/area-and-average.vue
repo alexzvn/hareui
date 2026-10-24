@@ -1,6 +1,6 @@
 <script setup lang="ts">
-import type { ChartComposedSeries } from '@hareui/vue/charts'
 import { Card } from '@hareui/vue'
+import type { ChartComposedSeries } from '@hareui/vue/charts'
 import { ChartLegend, ComposedChart } from '@hareui/vue/charts'
 
 const data = [
@@ -29,7 +29,10 @@ function formatPercent(value: number) {
 </script>
 
 <template>
-  <Card class="w-full max-w-[560px] rounded-2xl" :ui="{ header: 'flex-row flex-wrap items-center justify-between gap-2' }">
+  <Card
+    class="w-full max-w-[560px] rounded-2xl"
+    :ui="{ header: 'flex-row flex-wrap items-center justify-between gap-2' }"
+  >
     <template #header>
       <h3 class="text-base font-medium text-foreground">Reservoir Level</h3>
       <ChartLegend :series="series" />

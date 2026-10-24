@@ -25,27 +25,32 @@ DatePicker renders a [Label](/docs/components/label), a segmented [date-input-gr
 ```vue
 <template>
   <DatePicker label="…" calendar-label="…" description="…" error-message="…" :invalid="…">
-    <template #label />       <!-- Label content -->
-    <template #indicator />   <!-- replaces the default calendar icon in the trigger -->
-    <template #description /> <!-- Description content -->
-    <template #error />       <!-- FieldError content, rendered when invalid -->
-    <template #calendar />    <!-- replaces the default Calendar rendered inside the popover -->
+    <template #label />
+    <!-- Label content -->
+    <template #indicator />
+    <!-- replaces the default calendar icon in the trigger -->
+    <template #description />
+    <!-- Description content -->
+    <template #error />
+    <!-- FieldError content, rendered when invalid -->
+    <template #calendar />
+    <!-- replaces the default Calendar rendered inside the popover -->
   </DatePicker>
 </template>
 ```
 
-| `ui` key | `data-slot` | Element |
-|---|---|---|
-| `base` | `date-picker` | `<div>` root (the field; also a [DateField](/docs/components/date-field)) |
-| — | `label` | [Label](/docs/components/label) (iff `label` / `#label`) |
-| `group` | `date-input-group` | `<div role="group">` holding the segments and the trigger |
-| `input` | `date-input-group-input` | `<div>` wrapping the segments |
-| `segment` | `date-input-group-segment` | one per date part (year, month, day, …) |
-| `trigger` | `date-picker-trigger` | `<button>` that opens the popover, rendered in the group's suffix |
-| `triggerIndicator` | `date-picker-trigger-indicator` | `<span>` holding the default/custom calendar icon |
-| — | `description` | [Description](/docs/components/description) (iff `description` / `#description`) |
-| — | `field-error` | [FieldError](/docs/components/field-error) (while invalid, iff `error-message` / `#error` / validation errors) |
-| `popover` | `date-picker-popover` | the popover content wrapping the [Calendar](/docs/components/calendar) |
+| `ui` key           | `data-slot`                     | Element                                                                                                        |
+| ------------------ | ------------------------------- | -------------------------------------------------------------------------------------------------------------- |
+| `base`             | `date-picker`                   | `<div>` root (the field; also a [DateField](/docs/components/date-field))                                      |
+| —                  | `label`                         | [Label](/docs/components/label) (iff `label` / `#label`)                                                       |
+| `group`            | `date-input-group`              | `<div role="group">` holding the segments and the trigger                                                      |
+| `input`            | `date-input-group-input`        | `<div>` wrapping the segments                                                                                  |
+| `segment`          | `date-input-group-segment`      | one per date part (year, month, day, …)                                                                        |
+| `trigger`          | `date-picker-trigger`           | `<button>` that opens the popover, rendered in the group's suffix                                              |
+| `triggerIndicator` | `date-picker-trigger-indicator` | `<span>` holding the default/custom calendar icon                                                              |
+| —                  | `description`                   | [Description](/docs/components/description) (iff `description` / `#description`)                               |
+| —                  | `field-error`                   | [FieldError](/docs/components/field-error) (while invalid, iff `error-message` / `#error` / validation errors) |
+| `popover`          | `date-picker-popover`           | the popover content wrapping the [Calendar](/docs/components/calendar)                                         |
 
 > **DatePicker** combines a segmented date field and a calendar popover into a single accessible component. Values are [`@internationalized/date`](https://react-aria.adobe.com/internationalized/date/) objects (`CalendarDate`, `CalendarDateTime` or `ZonedDateTime`) — the same types HeroUI uses.
 
@@ -110,9 +115,11 @@ The `#calendar` slot lets you fully restyle (or replace) the embedded Calendar; 
 ### Global Configuration
 
 ```ts
-app.use(createHareUI({
-  ui: { datePicker: { slots: { trigger: 'text-muted', popover: 'p-0' } } },
-}))
+app.use(
+  createHareUI({
+    ui: { datePicker: { slots: { trigger: 'text-muted', popover: 'p-0' } } },
+  }),
+)
 ```
 
 ## Styling Reference

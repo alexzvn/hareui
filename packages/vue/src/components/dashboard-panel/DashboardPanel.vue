@@ -64,6 +64,7 @@ export interface DashboardPanelSlots {
 
 <script setup lang="ts">
 import { computed, useId, useTemplateRef } from 'vue'
+
 import { useComponentUI } from '../../composables/useComponentUI'
 import { useDashboard } from '../../composables/useDashboard'
 import { useResizable } from '../../composables/useResizable'
@@ -84,7 +85,16 @@ const fallbackId = useId()
 const id = `${dashboard?.storageKey ?? 'dashboard'}-panel-${props.id ?? fallbackId}`
 
 const el = useTemplateRef<HTMLElement>('el')
-const { size, isDragging, onPointerDown, onMouseDown, onTouchStart, onDoubleClick, onKeyDown, handleAttrs } = useResizable({
+const {
+  size,
+  isDragging,
+  onPointerDown,
+  onMouseDown,
+  onTouchStart,
+  onDoubleClick,
+  onKeyDown,
+  handleAttrs,
+} = useResizable({
   key: id,
   options: () => ({
     side: 'left',

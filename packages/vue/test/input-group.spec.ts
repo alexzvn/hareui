@@ -1,6 +1,7 @@
 import { mount } from '@vue/test-utils'
 import { describe, expect, it } from 'vitest'
 import { h } from 'vue'
+
 import InputGroup from '../src/components/input-group/InputGroup.vue'
 import TextField from '../src/components/text-field/TextField.vue'
 import { expectAccessible } from './a11y'
@@ -8,7 +9,11 @@ import { expectAccessible } from './a11y'
 describe('InputGroup', () => {
   it('v-model syncs standalone', async () => {
     const wrapper = mount(InputGroup, {
-      props: { 'modelValue': 'a', 'onUpdate:modelValue': (v: string | number | undefined) => wrapper.setProps({ modelValue: v }) },
+      props: {
+        modelValue: 'a',
+        'onUpdate:modelValue': (v: string | number | undefined) =>
+          wrapper.setProps({ modelValue: v }),
+      },
     })
     const input = wrapper.get('[data-slot=input-group-input]')
     expect((input.element as HTMLInputElement).value).toBe('a')
@@ -18,7 +23,9 @@ describe('InputGroup', () => {
 
   it('defaultValue seeds an uncontrolled group', () => {
     const wrapper = mount(InputGroup, { props: { defaultValue: 'jane' } })
-    expect((wrapper.get('[data-slot=input-group-input]').element as HTMLInputElement).value).toBe('jane')
+    expect((wrapper.get('[data-slot=input-group-input]').element as HTMLInputElement).value).toBe(
+      'jane',
+    )
   })
 
   it('renders prefix and suffix only when provided, as props or slots', () => {
@@ -30,7 +37,9 @@ describe('InputGroup', () => {
     expect(withProps.get('[data-slot=input-group-prefix]').text()).toBe('$')
     expect(withProps.get('[data-slot=input-group-suffix]').text()).toBe('USD')
 
-    const withSlots = mount(InputGroup, { slots: { prefix: () => 'https://', suffix: () => '.com' } })
+    const withSlots = mount(InputGroup, {
+      slots: { prefix: () => 'https://', suffix: () => '.com' },
+    })
     expect(withSlots.get('[data-slot=input-group-prefix]').text()).toBe('https://')
     expect(withSlots.get('[data-slot=input-group-suffix]').text()).toBe('.com')
   })
@@ -39,9 +48,7 @@ describe('InputGroup', () => {
     const wrapper = mount(TextField, {
       props: { id: 'f', disabled: true, invalid: true, description: 'Help', errorMessage: 'Bad' },
       slots: {
-        default: () => [
-          h(InputGroup, { 'data-test': 'ctx' }),
-        ],
+        default: () => [h(InputGroup, { 'data-test': 'ctx' })],
       },
     })
     const input = wrapper.get('[data-test=ctx] [data-slot=input-group-input]')
@@ -84,7 +91,12 @@ describe('InputGroup', () => {
 
   it('textarea mode renders a textarea wired to the TextField like the input', async () => {
     const wrapper = mount(TextField, {
-      props: { id: 't', name: 'bio', validate: (v: string | number) => (String(v).length > 3 ? 'Too long' : null), validationBehavior: 'aria' },
+      props: {
+        id: 't',
+        name: 'bio',
+        validate: (v: string | number) => (String(v).length > 3 ? 'Too long' : null),
+        validationBehavior: 'aria',
+      },
       slots: { default: () => h(InputGroup, { textarea: true, rows: 4 }) },
     })
     expect(wrapper.find('[data-slot=input-group-input]').exists()).toBe(false)
@@ -111,7 +123,8 @@ describe('InputGroup', () => {
     wrapper.unmount()
   })
 
-  const searchIcon = () => h('svg', { 'aria-hidden': 'true', 'viewBox': '0 0 16 16' }, h('path', { d: 'M0 0h16v16H0z' }))
+  const searchIcon = () =>
+    h('svg', { 'aria-hidden': 'true', viewBox: '0 0 16 16' }, h('path', { d: 'M0 0h16v16H0z' }))
 
   it.each([
     ['idle', {}],
@@ -120,31 +133,46 @@ describe('InputGroup', () => {
     ['disabled', { disabled: true }],
     ['read-only', { readonly: true, defaultValue: 'jane' }],
     ['required', { required: true }],
-  ])('inside a labelled TextField with a prefix and a suffix button (%s), it has no axe violations', async (_, props: Record<string, unknown>) => {
-    const wrapper = mount(TextField, {
-      props: { label: 'Website', ...props },
-      slots: {
-        default: () => h(InputGroup, null, {
-          prefix: searchIcon,
-          suffix: () => h('button', { 'type': 'button', 'aria-label': 'Copy' }, searchIcon()),
-        }),
-      },
-      attachTo: document.body,
-    })
-    const input = wrapper.get('[data-slot=input-group-input]').element as HTMLInputElement
-    expect([...input.labels!].map(l => l.textContent?.trim())).toEqual(['Website'])
-    expect(wrapper.get('[data-slot=input-group]').attributes('aria-disabled')).toBe(props.disabled ? 'true' : undefined)
-    await expectAccessible(wrapper)
-    wrapper.unmount()
-  })
+  ])(
+    'inside a labelled TextField with a prefix and a suffix button (%s), it has no axe violations',
+    async (_, props: Record<string, unknown>) => {
+      const wrapper = mount(TextField, {
+        props: { label: 'Website', ...props },
+        slots: {
+          default: () =>
+            h(InputGroup, null, {
+              prefix: searchIcon,
+              suffix: () => h('button', { type: 'button', 'aria-label': 'Copy' }, searchIcon()),
+            }),
+        },
+        attachTo: document.body,
+      })
+      const input = wrapper.get('[data-slot=input-group-input]').element as HTMLInputElement
+      expect([...input.labels!].map((l) => l.textContent?.trim())).toEqual(['Website'])
+      expect(wrapper.get('[data-slot=input-group]').attributes('aria-disabled')).toBe(
+        props.disabled ? 'true' : undefined,
+      )
+      await expectAccessible(wrapper)
+      wrapper.unmount()
+    },
+  )
 
   it('textarea mode inside a labelled TextField has no axe violations', async () => {
     const wrapper = mount(TextField, {
       props: { label: 'Prompt', description: 'Markdown supported' },
-      slots: { default: () => h(InputGroup, { textarea: true }, { suffix: () => h('button', { 'type': 'button', 'aria-label': 'Send' }, 'Send') }) },
+      slots: {
+        default: () =>
+          h(
+            InputGroup,
+            { textarea: true },
+            { suffix: () => h('button', { type: 'button', 'aria-label': 'Send' }, 'Send') },
+          ),
+      },
       attachTo: document.body,
     })
-    expect(wrapper.get('textarea').attributes('aria-describedby')).toBe(wrapper.get('[data-slot=description]').attributes('id'))
+    expect(wrapper.get('textarea').attributes('aria-describedby')).toBe(
+      wrapper.get('[data-slot=description]').attributes('id'),
+    )
     await expectAccessible(wrapper)
     wrapper.unmount()
   })
@@ -152,37 +180,60 @@ describe('InputGroup', () => {
   it('standalone, aria-label and autocomplete go to the input, not the group, with no axe violations', async () => {
     const wrapper = mount(InputGroup, {
       props: { type: 'email' },
-      attrs: { 'aria-label': 'Email', 'autocomplete': 'email', 'aria-describedby': 'hint', 'data-testid': 'group' },
+      attrs: {
+        'aria-label': 'Email',
+        autocomplete: 'email',
+        'aria-describedby': 'hint',
+        'data-testid': 'group',
+      },
       slots: { prefix: searchIcon },
       attachTo: document.body,
     })
     const group = wrapper.get('[data-slot=input-group]')
     const input = wrapper.get('[data-slot=input-group-input]')
-    expect(input.attributes()).toMatchObject({ 'aria-label': 'Email', 'autocomplete': 'email', 'aria-describedby': 'hint' })
+    expect(input.attributes()).toMatchObject({
+      'aria-label': 'Email',
+      autocomplete: 'email',
+      'aria-describedby': 'hint',
+    })
     expect(group.attributes('aria-label')).toBeUndefined()
     expect(group.attributes('aria-describedby')).toBeUndefined()
     expect(group.attributes('data-testid')).toBe('group')
     expect(group.attributes('role')).toBe('group')
     wrapper.unmount()
     // Audit without the dangling `hint` reference
-    const labelled = mount(InputGroup, { attrs: { 'aria-label': 'Email' }, slots: { prefix: searchIcon }, attachTo: document.body })
+    const labelled = mount(InputGroup, {
+      attrs: { 'aria-label': 'Email' },
+      slots: { prefix: searchIcon },
+      attachTo: document.body,
+    })
     await expectAccessible(labelled)
     labelled.unmount()
   })
 
   it('a standalone Label names the input through the group id', async () => {
-    const wrapper = mount(() => h('div', [h('label', { for: 'price' }, 'Price'), h(InputGroup, { id: 'price', prefix: '$', suffix: 'USD' })]), { attachTo: document.body })
+    const wrapper = mount(
+      () =>
+        h('div', [
+          h('label', { for: 'price' }, 'Price'),
+          h(InputGroup, { id: 'price', prefix: '$', suffix: 'USD' }),
+        ]),
+      { attachTo: document.body },
+    )
     const input = wrapper.get('[data-slot=input-group-input]').element as HTMLInputElement
-    expect([...input.labels!].map(l => l.textContent)).toEqual(['Price'])
+    expect([...input.labels!].map((l) => l.textContent)).toEqual(['Price'])
     await expectAccessible(wrapper)
     wrapper.unmount()
   })
 
   it('a suffix button stays in the tab order after the input', () => {
-    const wrapper = mount(InputGroup, { attrs: { 'aria-label': 'Link' }, slots: { suffix: () => h('button', { type: 'button' }, 'Copy') } })
-    const focusable = wrapper.findAll('input, button').map(el => el.element)
-    expect(focusable.map(el => el.tagName)).toEqual(['INPUT', 'BUTTON'])
-    expect(focusable.every(el => !el.hasAttribute('tabindex'))).toBe(true)
+    const wrapper = mount(InputGroup, {
+      attrs: { 'aria-label': 'Link' },
+      slots: { suffix: () => h('button', { type: 'button' }, 'Copy') },
+    })
+    const focusable = wrapper.findAll('input, button').map((el) => el.element)
+    expect(focusable.map((el) => el.tagName)).toEqual(['INPUT', 'BUTTON'])
+    expect(focusable.every((el) => !el.hasAttribute('tabindex'))).toBe(true)
     wrapper.unmount()
   })
 })

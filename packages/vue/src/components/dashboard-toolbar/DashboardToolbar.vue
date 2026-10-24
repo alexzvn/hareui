@@ -1,7 +1,8 @@
 <script lang="ts">
 import type { PrimitiveProps } from 'reka-ui'
-import type { ClassValue } from '../../utils/tv'
+
 import type { ComponentSlots } from '../../types/tv'
+import type { ClassValue } from '../../utils/tv'
 import theme from './theme'
 
 type DashboardToolbar = typeof theme
@@ -30,6 +31,7 @@ export interface DashboardToolbarSlots {
 
 <script setup lang="ts">
 import { Primitive } from 'reka-ui'
+
 import { useComponentUI } from '../../composables/useComponentUI'
 
 const props = withDefaults(defineProps<DashboardToolbarProps>(), { as: 'div' })
@@ -39,7 +41,11 @@ const ui = useComponentUI('dashboardToolbar', theme, () => ({}))
 </script>
 
 <template>
-  <Primitive :as="as" data-slot="dashboard-toolbar" :class="ui.root({ class: [props.ui?.root, props.class] })">
+  <Primitive
+    :as="as"
+    data-slot="dashboard-toolbar"
+    :class="ui.root({ class: [props.ui?.root, props.class] })"
+  >
     <slot>
       <div data-slot="dashboard-toolbar-left" :class="ui.left({ class: props.ui?.left })">
         <slot name="left" />

@@ -16,6 +16,9 @@ const plans: ListBoxItem[] = [
     placeholder="Pick a plan"
     variant="secondary"
     :items="plans"
-    :ui="{ trigger: 'rounded-xl bg-default', popover: 'rounded-xl border border-border bg-surface p-1 shadow-lg' }"
+    :ui="{
+      trigger: 'rounded-xl bg-default',
+      popover: 'rounded-xl border border-border bg-surface p-1 shadow-lg',
+    }"
   />
 </template>

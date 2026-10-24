@@ -10,7 +10,9 @@ import { DashboardGroup, DashboardNavbar, DashboardPanel, DashboardResizeHandle 
       </template>
 
       <template #body>
-        <div class="h-full min-h-24 rounded-xl border border-dashed border-separator bg-surface/50" />
+        <div
+          class="h-full min-h-24 rounded-xl border border-dashed border-separator bg-surface/50"
+        />
       </template>
 
       <!-- The slot receives the pointer / keyboard handlers and the aria attributes of a `role="separator"`. -->
@@ -37,7 +39,9 @@ import { DashboardGroup, DashboardNavbar, DashboardPanel, DashboardResizeHandle 
       </template>
 
       <template #body>
-        <div class="h-full min-h-24 rounded-xl border border-dashed border-separator bg-surface/50" />
+        <div
+          class="h-full min-h-24 rounded-xl border border-dashed border-separator bg-surface/50"
+        />
       </template>
     </DashboardPanel>
   </DashboardGroup>

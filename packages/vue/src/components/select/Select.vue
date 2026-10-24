@@ -4,7 +4,13 @@ import type { PortalTarget } from '../../config'
 import type { ComponentSlots } from '../../types/tv'
 import type { ValidationBehavior } from '../form/context'
 import type { FormFieldProps } from '../form/types'
-import type { ListBoxEntry, ListBoxItem, ListBoxItemSlotProps, ListBoxSection, ListBoxValue } from '../list-box/ListBox.vue'
+import type {
+  ListBoxEntry,
+  ListBoxItem,
+  ListBoxItemSlotProps,
+  ListBoxSection,
+  ListBoxValue,
+} from '../list-box/ListBox.vue'
 import theme from './theme'
 
 type Select = typeof theme
@@ -113,21 +119,21 @@ export interface SelectValueSlotProps<T extends ListBoxItem = ListBoxItem> {
 
 export interface SelectSlots<T extends ListBoxItem = ListBoxItem> {
   /** Label content. Replaces `label`. */
-  'label'?: () => any
+  label?: () => any
   /** Content inside the trigger before the value. */
-  'leading'?: () => any
+  leading?: () => any
   /** Trigger value content. Defaults to the selected label(s) or the placeholder. */
-  'value'?: (props: SelectValueSlotProps<T>) => any
+  value?: (props: SelectValueSlotProps<T>) => any
   /** Trigger indicator content. Defaults to a chevron. */
-  'indicator'?: (props: { open: boolean }) => any
+  indicator?: (props: { open: boolean }) => any
   /** Clear button content. Defaults to a close icon. */
-  'clear'?: () => any
+  clear?: () => any
   /** Description content. Replaces `description`. */
-  'description'?: () => any
+  description?: () => any
   /** Error content, rendered while invalid. */
-  'error'?: (props: ValidationResult) => any
+  error?: (props: ValidationResult) => any
   /** Whole content of each option (forwarded to ListBox `#item`). */
-  'item'?: (props: ListBoxItemSlotProps<T>) => any
+  item?: (props: ListBoxItemSlotProps<T>) => any
   /** Content before each option's text (ListBox `#item-leading`). */
   'item-leading'?: (props: ListBoxItemSlotProps<T>) => any
   /** Each option's label (ListBox `#item-label`). */
@@ -141,9 +147,9 @@ export interface SelectSlots<T extends ListBoxItem = ListBoxItem> {
   /** Section heading (ListBox `#section-label`). */
   'section-label'?: (props: { section: ListBoxSection<T> }) => any
   /** Rendered in the popover when `items` is empty (ListBox `#empty`). */
-  'empty'?: () => any
+  empty?: () => any
   /** Shown after the last option while `loading` is true (ListBox `#loading`). */
-  'loading'?: () => any
+  loading?: () => any
 }
 
 export interface SelectEmits {
@@ -152,22 +158,38 @@ export interface SelectEmits {
   /** The popover opened or closed (`v-model:open`). */
   'update:open': [value: boolean]
   /** The end of the option list scrolled into view while `loading` is false (ListBox `load-more`). */
-  'loadMore': []
+  loadMore: []
 }
 </script>
 
 <script setup lang="ts" generic="T extends ListBoxItem = ListBoxItem">
-import { injectPopoverRootContext, PopoverContent, PopoverPortal, PopoverRoot, PopoverTrigger } from 'reka-ui'
-import { computed, defineComponent, provide, ref, useAttrs, useTemplateRef, watch, watchEffect } from 'vue'
+import {
+  injectPopoverRootContext,
+  PopoverContent,
+  PopoverPortal,
+  PopoverRoot,
+  PopoverTrigger,
+} from 'reka-ui'
+import {
+  computed,
+  defineComponent,
+  provide,
+  ref,
+  useAttrs,
+  useTemplateRef,
+  watch,
+  watchEffect,
+} from 'vue'
+
 import { useComponentUI } from '../../composables/useComponentUI'
 import { useFieldChrome } from '../../composables/useFieldChrome'
 import { useFieldValidation } from '../../composables/useFieldValidation'
 import { keyboardModalityKey, useKeyboardModality } from '../../composables/useKeyboardModality'
 import { usePortal } from '../../composables/usePortal'
 import { useFieldsetDisabled } from '../fieldset/context'
-import listBoxTheme from '../list-box/theme'
 import ListBox from '../list-box/ListBox.vue'
 import { itemText } from '../list-box/listBoxCollection'
+import listBoxTheme from '../list-box/theme'
 import { useCollectionModel } from '../list-box/useCollectionModel'
 import { useTypeahead } from '../list-box/useTypeahead'
 import { usePressRelease } from './pressRelease'
@@ -229,8 +251,7 @@ const isOpen = computed({
   },
 })
 function setOpen(value: boolean) {
-  if (value && disabled.value)
-    return
+  if (value && disabled.value) return
   isOpen.value = value
 }
 
@@ -257,13 +278,11 @@ const onListUpdate = (value: ListBoxValue | ListBoxValue[] | null | undefined) =
   selection.value = value
   commitValidation()
   // Single selection closes the popover; focus returns to the trigger
-  if (!multiple.value)
-    setOpen(false)
+  if (!multiple.value) setOpen(false)
 }
 
 const clear = () => {
-  if (disabled.value || isPlaceholder.value)
-    return
+  if (disabled.value || isPlaceholder.value) return
   clearSelection()
   commitValidation()
   emit('clear')
@@ -275,30 +294,35 @@ const typeahead = useTypeahead({ start: 'current' })
 
 function onTriggerKeydown(event: KeyboardEvent) {
   triggerPress = false
-  if (disabled.value)
-    return
+  if (disabled.value) return
   if (event.key === 'ArrowDown' || event.key === 'ArrowUp') {
     event.preventDefault()
     // RAC focus strategy: ArrowUp opens on the last option (unless one is selected)
     openStrategy = event.key === 'ArrowUp' ? 'last' : 'first'
     setOpen(true)
-  }
-  else if ((event.key === 'Backspace' || event.key === 'Delete') && props.clearable && !isOpen.value) {
+  } else if (
+    (event.key === 'Backspace' || event.key === 'Delete') &&
+    props.clearable &&
+    !isOpen.value
+  ) {
     event.preventDefault()
     clear()
-  }
-  else {
-    typeahead.onKeydown(event, () => ({
-      items: options.value,
-      text: itemText,
-      disabled: item => !!item.disabled,
-      isCurrent: item => item.value === selectedValues.value[0],
-    }), (match) => {
-      if (!multiple.value) {
-        selection.value = match.value
-        commitValidation()
-      }
-    })
+  } else {
+    typeahead.onKeydown(
+      event,
+      () => ({
+        items: options.value,
+        text: itemText,
+        disabled: (item) => !!item.disabled,
+        isCurrent: (item) => item.value === selectedValues.value[0],
+      }),
+      (match) => {
+        if (!multiple.value) {
+          selection.value = match.value
+          commitValidation()
+        }
+      },
+    )
   }
 }
 
@@ -329,8 +353,7 @@ async function onOpenAutoFocus(event: Event) {
   // Reka's End key moves the highlight (and focus) to the last enabled option
   if (list && strategy === 'last' && isPlaceholder.value)
     list.dispatchEvent(new KeyboardEvent('keydown', { key: 'End', cancelable: true }))
-  if (list && !list.contains(document.activeElement))
-    list.focus()
+  if (list && !list.contains(document.activeElement)) list.focus()
 }
 // Reka's non-modal popover skips the trigger refocus after an outside press; RAC restores focus to the trigger
 // unless the press moved it to another element
@@ -344,26 +367,24 @@ function onCloseAutoFocus(event: Event) {
 // RAC Select opens on mouse press start, and releasing over an option selects it (press-drag-release)
 let triggerPress = false
 function onTriggerPointerdown(event: PointerEvent) {
-  if (event.pointerType !== 'mouse' || event.button !== 0 || disabled.value)
-    return
+  if (event.pointerType !== 'mouse' || event.button !== 0 || disabled.value) return
   // The click that ends this press must not toggle again
   triggerPress = true
   triggerEl()?.focus()
   setOpen(!isOpen.value)
-  const release = () => setTimeout(() => {
-    triggerPress = false
-  })
+  const release = () =>
+    setTimeout(() => {
+      triggerPress = false
+    })
   window.addEventListener('pointerup', release, { once: true, capture: true })
   window.addEventListener('pointercancel', release, { once: true, capture: true })
 }
 function onTriggerMousedown(event: MouseEvent) {
   // Focus stays where the press put it (the trigger, or the list once open)
-  if (triggerPress)
-    event.preventDefault()
+  if (triggerPress) event.preventDefault()
 }
 function onRootOpenChange(value: boolean) {
-  if (!triggerPress)
-    setOpen(value)
+  if (!triggerPress) setOpen(value)
 }
 const pressRelease = usePressRelease()
 
@@ -371,30 +392,42 @@ const pressRelease = usePressRelease()
 // isn't focusable for users, so hand focus to the trigger (RAC marks it `data-react-aria-prevent-focus`)
 function onHiddenInvalid() {
   requestAnimationFrame(() => {
-    if (document.activeElement instanceof HTMLSelectElement && root.value?.contains(document.activeElement))
+    if (
+      document.activeElement instanceof HTMLSelectElement &&
+      root.value?.contains(document.activeElement)
+    )
       triggerEl()?.focus({ focusVisible: true } as FocusOptions)
   })
 }
 
 const attrs = useAttrs()
-const { id, labelId, hasLabel, describedBy, FieldLabel, FieldDescription, FieldError } = useFieldChrome({
-  props,
-  slots,
-  invalid,
-  validation,
-  disabled,
-  required: () => props.required,
-  hideDescriptionWhenInvalid: true,
-})
+const { id, labelId, hasLabel, describedBy, FieldLabel, FieldDescription, FieldError } =
+  useFieldChrome({
+    props,
+    slots,
+    invalid,
+    validation,
+    disabled,
+    required: () => props.required,
+    hideDescriptionWhenInvalid: true,
+  })
 const valueId = computed(() => `${id.value}-value`)
 // `aria-labelledby` overrides `aria-label`, so an `aria-label`-only trigger references itself to keep that name (as RAC does)
-const triggerLabelledBy = computed(() => [
-  attrs['aria-labelledby'] as string | undefined,
-  hasLabel.value ? labelId.value : undefined,
-  attrs['aria-label'] && !attrs['aria-labelledby'] && !hasLabel.value ? id.value : undefined,
-  valueId.value,
-].filter(Boolean).join(' '))
-const listLabelledBy = computed(() => (attrs['aria-labelledby'] as string | undefined) ?? (hasLabel.value ? labelId.value : undefined))
+const triggerLabelledBy = computed(() =>
+  [
+    attrs['aria-labelledby'] as string | undefined,
+    hasLabel.value ? labelId.value : undefined,
+    attrs['aria-label'] && !attrs['aria-labelledby'] && !hasLabel.value ? id.value : undefined,
+    valueId.value,
+  ]
+    .filter(Boolean)
+    .join(' '),
+)
+const listLabelledBy = computed(
+  () =>
+    (attrs['aria-labelledby'] as string | undefined) ??
+    (hasLabel.value ? labelId.value : undefined),
+)
 // RAC names the popover dialog like the listbox (or after an `aria-label`-only trigger). Reka labels its content with
 // its own trigger id, which the trigger's `id` replaces, so point that id at the label instead (set before the trigger's
 // setup, which only fills it when empty)
@@ -415,20 +448,33 @@ const rootAttrs = computed(() => {
 })
 
 // ListBox item slots are forwarded; the option checkmark is `item-indicator` here (`indicator` is the chevron)
-const itemSlots = ['item', 'item-leading', 'item-label', 'item-description', 'item-trailing', 'section-label', 'empty', 'loading'] as const
-const forwarded = computed(() => itemSlots.filter(name => slots[name]))
+const itemSlots = [
+  'item',
+  'item-leading',
+  'item-label',
+  'item-description',
+  'item-trailing',
+  'section-label',
+  'empty',
+  'loading',
+] as const
+const forwarded = computed(() => itemSlots.filter((name) => slots[name]))
 
-const ui = useComponentUI('select', theme, () => ({ variant: props.variant, fullWidth: props.fullWidth }))
+const ui = useComponentUI('select', theme, () => ({
+  variant: props.variant,
+  fullWidth: props.fullWidth,
+}))
 // Classes for the hidden indicator copies inside the value (RAC renders the item's own indicator there);
 // per-item variant override, as in ListBoxOption
 const listBoxUi = useComponentUI('listBox', listBoxTheme, () => ({}))
 function valueIndicatorClass(item: ListBoxItem) {
-  return (listBoxUi.value.indicator as (options?: { variant?: string }) => string)({ variant: item.variant })
+  return (listBoxUi.value.indicator as (options?: { variant?: string }) => string)({
+    variant: item.variant,
+  })
 }
 
 watch(disabled, (disabled) => {
-  if (disabled)
-    setOpen(false)
+  if (disabled) setOpen(false)
 })
 </script>
 
@@ -481,11 +527,34 @@ watch(disabled, (disabled) => {
             :data-placeholder="isPlaceholder ? 'true' : undefined"
             :class="ui.value({ class: props.ui?.value })"
           >
-            <slot name="value" :selected-items="selectedItems" :is-placeholder="isPlaceholder" :text="valueText">
+            <slot
+              name="value"
+              :selected-items="selectedItems"
+              :is-placeholder="isPlaceholder"
+              :text="valueText"
+            >
               {{ valueText }}
               <!-- RAC SelectValue re-renders each selected item's children, indicator included; the value class hides it -->
-              <span v-for="item in selectedItems" :key="String(item.value)" aria-hidden="true" data-slot="list-box-item-indicator" :class="valueIndicatorClass(item)">
-                <svg aria-hidden="true" data-slot="list-box-item-indicator--checkmark" fill="none" role="presentation" stroke="currentColor" stroke-dasharray="22" stroke-dashoffset="66" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" viewBox="0 0 17 18">
+              <span
+                v-for="item in selectedItems"
+                :key="String(item.value)"
+                aria-hidden="true"
+                data-slot="list-box-item-indicator"
+                :class="valueIndicatorClass(item)"
+              >
+                <svg
+                  aria-hidden="true"
+                  data-slot="list-box-item-indicator--checkmark"
+                  fill="none"
+                  role="presentation"
+                  stroke="currentColor"
+                  stroke-dasharray="22"
+                  stroke-dashoffset="66"
+                  stroke-linecap="round"
+                  stroke-linejoin="round"
+                  stroke-width="2"
+                  viewBox="0 0 17 18"
+                >
                   <polyline points="1 9 7 14 15 4" />
                 </svg>
               </span>
@@ -501,8 +570,22 @@ watch(disabled, (disabled) => {
             @click.stop.prevent="clear"
           >
             <slot name="clear">
-              <svg aria-hidden="true" data-slot="select-clear-button-icon" fill="none" height="16" role="presentation" viewBox="0 0 16 16" width="16" xmlns="http://www.w3.org/2000/svg">
-                <path clip-rule="evenodd" d="M3.47 3.47a.75.75 0 0 1 1.06 0L8 6.94l3.47-3.47a.75.75 0 1 1 1.06 1.06L9.06 8l3.47 3.47a.75.75 0 1 1-1.06 1.06L8 9.06l-3.47 3.47a.75.75 0 0 1-1.06-1.06L6.94 8 3.47 4.53a.75.75 0 0 1 0-1.06Z" fill="currentColor" fill-rule="evenodd" />
+              <svg
+                aria-hidden="true"
+                data-slot="select-clear-button-icon"
+                fill="none"
+                height="16"
+                role="presentation"
+                viewBox="0 0 16 16"
+                width="16"
+                xmlns="http://www.w3.org/2000/svg"
+              >
+                <path
+                  clip-rule="evenodd"
+                  d="M3.47 3.47a.75.75 0 0 1 1.06 0L8 6.94l3.47-3.47a.75.75 0 1 1 1.06 1.06L9.06 8l3.47 3.47a.75.75 0 1 1-1.06 1.06L8 9.06l-3.47 3.47a.75.75 0 0 1-1.06-1.06L6.94 8 3.47 4.53a.75.75 0 0 1 0-1.06Z"
+                  fill="currentColor"
+                  fill-rule="evenodd"
+                />
               </svg>
             </slot>
           </span>
@@ -528,7 +611,12 @@ watch(disabled, (disabled) => {
             xmlns="http://www.w3.org/2000/svg"
             :class="ui.indicator({ class: props.ui?.indicator })"
           >
-            <path clip-rule="evenodd" d="M2.97 5.47a.75.75 0 0 1 1.06 0L8 9.44l3.97-3.97a.75.75 0 1 1 1.06 1.06l-4.5 4.5a.75.75 0 0 1-1.06 0l-4.5-4.5a.75.75 0 0 1 0-1.06" fill="currentColor" fill-rule="evenodd" />
+            <path
+              clip-rule="evenodd"
+              d="M2.97 5.47a.75.75 0 0 1 1.06 0L8 9.44l3.97-3.97a.75.75 0 1 1 1.06 1.06l-4.5 4.5a.75.75 0 0 1-1.06 0l-4.5-4.5a.75.75 0 0 1 0-1.06"
+              fill="currentColor"
+              fill-rule="evenodd"
+            />
           </svg>
         </button>
       </PopoverTrigger>
@@ -572,7 +660,21 @@ watch(disabled, (disabled) => {
     <FieldDescription />
     <FieldError />
     <!-- RAC HiddenSelect: carries form data and native `required` validity -->
-    <div aria-hidden="true" data-a11y-ignore="aria-hidden-focus" style="border: 0; clip-path: inset(50%); height: 1px; margin: -1px; overflow: hidden; padding: 0; position: absolute; white-space: nowrap; width: 1px;">
+    <div
+      aria-hidden="true"
+      data-a11y-ignore="aria-hidden-focus"
+      style="
+        border: 0;
+        clip-path: inset(50%);
+        height: 1px;
+        margin: -1px;
+        overflow: hidden;
+        padding: 0;
+        position: absolute;
+        white-space: nowrap;
+        width: 1px;
+      "
+    >
       <select
         tabindex="-1"
         :name="name"
@@ -583,7 +685,12 @@ watch(disabled, (disabled) => {
         @invalid="onHiddenInvalid"
       >
         <option value="" />
-        <option v-for="item in options" :key="item.value" :value="item.value" :selected="isSelected(item.value)">
+        <option
+          v-for="item in options"
+          :key="item.value"
+          :value="item.value"
+          :selected="isSelected(item.value)"
+        >
           {{ itemText(item) }}
         </option>
       </select>

@@ -26,7 +26,11 @@ const columns: RichTableColumn<Payment>[] = [
   { accessorKey: 'name', header: 'Customer' },
   { accessorKey: 'email', header: 'Email' },
   { accessorKey: 'status', header: 'Status', meta: { class: { td: 'capitalize' } } },
-  { accessorKey: 'amount', header: 'Amount', cell: ({ row }) => currency.format(row.original.amount) },
+  {
+    accessorKey: 'amount',
+    header: 'Amount',
+    cell: ({ row }) => currency.format(row.original.amount),
+  },
 ]
 
 const items: DropdownEntry[] = [
@@ -39,9 +43,9 @@ const ids = ['name', 'email', 'status', 'amount']
 
 // The dropdown's selection holds the ids of the visible columns.
 const visible = computed({
-  get: () => ids.filter(id => columnVisibility.value[id] !== false),
+  get: () => ids.filter((id) => columnVisibility.value[id] !== false),
   set: (selected) => {
-    columnVisibility.value = Object.fromEntries(ids.map(id => [id, selected.includes(id)]))
+    columnVisibility.value = Object.fromEntries(ids.map((id) => [id, selected.includes(id)]))
   },
 })
 </script>

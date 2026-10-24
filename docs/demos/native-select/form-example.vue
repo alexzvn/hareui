@@ -2,9 +2,30 @@
 import { Button, NativeSelect } from '@hareui/vue'
 
 const airports = [
-  { label: 'Europe', items: [{ value: 'LIS', label: 'Lisbon (LIS)' }, { value: 'BER', label: 'Berlin (BER)' }, { value: 'FCO', label: 'Rome (FCO)' }] },
-  { label: 'Americas', items: [{ value: 'YVR', label: 'Vancouver (YVR)' }, { value: 'BOS', label: 'Boston (BOS)' }, { value: 'GRU', label: 'São Paulo (GRU)' }] },
-  { label: 'Asia-Pacific', items: [{ value: 'SIN', label: 'Singapore (SIN)' }, { value: 'ICN', label: 'Seoul (ICN)' }, { value: 'AKL', label: 'Auckland (AKL)' }] },
+  {
+    label: 'Europe',
+    items: [
+      { value: 'LIS', label: 'Lisbon (LIS)' },
+      { value: 'BER', label: 'Berlin (BER)' },
+      { value: 'FCO', label: 'Rome (FCO)' },
+    ],
+  },
+  {
+    label: 'Americas',
+    items: [
+      { value: 'YVR', label: 'Vancouver (YVR)' },
+      { value: 'BOS', label: 'Boston (BOS)' },
+      { value: 'GRU', label: 'São Paulo (GRU)' },
+    ],
+  },
+  {
+    label: 'Asia-Pacific',
+    items: [
+      { value: 'SIN', label: 'Singapore (SIN)' },
+      { value: 'ICN', label: 'Seoul (ICN)' },
+      { value: 'AKL', label: 'Auckland (AKL)' },
+    ],
+  },
 ]
 const cabins = [
   { value: 'economy', label: 'Economy' },
@@ -21,7 +42,14 @@ function onSubmit(event: Event) {
 
 <template>
   <form class="flex w-[300px] flex-col gap-4" @submit="onSubmit">
-    <NativeSelect required full-width label="From" name="origin" placeholder="Departure airport" :items="airports" />
+    <NativeSelect
+      required
+      full-width
+      label="From"
+      name="origin"
+      placeholder="Departure airport"
+      :items="airports"
+    />
     <NativeSelect
       required
       full-width
@@ -31,8 +59,6 @@ function onSubmit(event: Event) {
       description="Upgrades depend on seat availability"
       :items="cabins"
     />
-    <Button size="lg" type="submit">
-      Search flights
-    </Button>
+    <Button size="lg" type="submit"> Search flights </Button>
   </form>
 </template>

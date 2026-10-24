@@ -1,5 +1,11 @@
 <script setup lang="ts">
-import { Button, DashboardGroup, DashboardNavbar, DashboardPanel, DashboardToolbar } from '@hareui/vue'
+import {
+  Button,
+  DashboardGroup,
+  DashboardNavbar,
+  DashboardPanel,
+  DashboardToolbar,
+} from '@hareui/vue'
 import { Icon } from '@iconify/vue'
 </script>
 
@@ -18,9 +24,7 @@ import { Icon } from '@iconify/vue'
           </template>
 
           <template #right>
-            <Button variant="ghost" size="sm" class="max-sm:hidden">
-              Export
-            </Button>
+            <Button variant="ghost" size="sm" class="max-sm:hidden"> Export </Button>
             <Button size="sm">
               <Icon icon="gravity-ui:plus" />
               New customer
@@ -30,7 +34,9 @@ import { Icon } from '@iconify/vue'
       </template>
 
       <template #body>
-        <div class="h-full min-h-24 rounded-xl border border-dashed border-separator bg-surface/50" />
+        <div
+          class="h-full min-h-24 rounded-xl border border-dashed border-separator bg-surface/50"
+        />
       </template>
     </DashboardPanel>
   </DashboardGroup>

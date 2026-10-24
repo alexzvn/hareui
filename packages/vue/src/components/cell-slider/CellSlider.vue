@@ -62,19 +62,20 @@ export interface CellSliderEmits {
   /** Emitted when the value changes, on every step of a drag. */
   'update:modelValue': [value: number]
   /** Emitted with the final value when a drag or keyboard step commits a change. */
-  'changeEnd': [value: number]
+  changeEnd: [value: number]
 }
 
 export interface CellSliderSlots {
   /** The label content. Replaces the `label` prop. */
   label?: () => any
   /** The value shown at the end of the row. Replaces the formatted value. */
-  output?: (props: { value: number, formatted: string }) => any
+  output?: (props: { value: number; formatted: string }) => any
 }
 </script>
 
 <script setup lang="ts">
 import { computed, ref } from 'vue'
+
 import { useComponentUI } from '../../composables/useComponentUI'
 import Slider from '../slider/Slider.vue'
 

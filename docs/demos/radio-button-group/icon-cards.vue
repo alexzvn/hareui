@@ -3,10 +3,35 @@ import { Chip, RadioButtonGroup, RadioButtonGroupItem } from '@hareui/vue'
 import { Icon } from '@iconify/vue'
 
 const tracks = [
-  { value: 'frontend', title: 'Frontend', icon: 'gravity-ui:code', weeks: 10, summary: 'HTML, CSS and component-driven UIs.' },
-  { value: 'backend', title: 'Backend', icon: 'gravity-ui:server', weeks: 12, summary: 'APIs, queues and service design.' },
-  { value: 'data', title: 'Data', icon: 'gravity-ui:database', weeks: 14, summary: 'SQL, pipelines and dashboards.' },
-  { value: 'design', title: 'Product design', icon: 'gravity-ui:palette', weeks: 8, summary: 'Research, wireframes and prototyping.', isNew: true },
+  {
+    value: 'frontend',
+    title: 'Frontend',
+    icon: 'gravity-ui:code',
+    weeks: 10,
+    summary: 'HTML, CSS and component-driven UIs.',
+  },
+  {
+    value: 'backend',
+    title: 'Backend',
+    icon: 'gravity-ui:server',
+    weeks: 12,
+    summary: 'APIs, queues and service design.',
+  },
+  {
+    value: 'data',
+    title: 'Data',
+    icon: 'gravity-ui:database',
+    weeks: 14,
+    summary: 'SQL, pipelines and dashboards.',
+  },
+  {
+    value: 'design',
+    title: 'Product design',
+    icon: 'gravity-ui:palette',
+    weeks: 8,
+    summary: 'Research, wireframes and prototyping.',
+    isNew: true,
+  },
 ]
 </script>
 

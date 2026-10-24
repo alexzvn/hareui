@@ -11,7 +11,11 @@ const data = [
   { week: 'W6', starter: 171, team: 104, business: 29 },
 ]
 
-const series = { starter: { name: 'Starter' }, team: { name: 'Team' }, business: { name: 'Business' } } as const
+const series = {
+  starter: { name: 'Starter' },
+  team: { name: 'Team' },
+  business: { name: 'Business' },
+} as const
 
 type Plan = keyof typeof series
 
@@ -27,19 +31,31 @@ function change(key: string) {
 </script>
 
 <template>
-  <Card class="w-full max-w-[560px] rounded-2xl" title="New Signups" :ui="{ title: 'text-base', content: 'flex flex-col gap-4' }">
+  <Card
+    class="w-full max-w-[560px] rounded-2xl"
+    title="New Signups"
+    :ui="{ title: 'text-base', content: 'flex flex-col gap-4' }"
+  >
     <ChartLegend :series="series" :ui="{ base: 'gap-6' }">
       <template #item="{ item }">
         <span class="h-8 w-1 shrink-0 rounded-full" :style="{ backgroundColor: item.color }" />
         <span class="flex flex-col">
           <span class="text-xs text-muted">{{ item.name }}</span>
           <span class="flex items-baseline gap-1.5">
-            <span class="text-base font-semibold text-foreground tabular-nums">{{ total(item.key) }}</span>
+            <span class="text-base font-semibold text-foreground tabular-nums">{{
+              total(item.key)
+            }}</span>
             <span class="text-xs text-success tabular-nums">+{{ change(item.key) }}%</span>
           </span>
         </span>
       </template>
     </ChartLegend>
-    <AreaChart :data="data" index="week" :series="series" aria-label="New signups by plan" :height="180" />
+    <AreaChart
+      :data="data"
+      index="week"
+      :series="series"
+      aria-label="New signups by plan"
+      :height="180"
+    />
   </Card>
 </template>

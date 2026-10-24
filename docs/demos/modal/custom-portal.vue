@@ -23,30 +23,26 @@ const portalRef = ref<HTMLElement>()
     >
       <Modal v-if="portalRef" :portal="portalRef" :ui="{ backdrop: 'h-full' }">
         <Button>Open Modal</Button>
-        <template #title>
-          Custom Portal
-        </template>
+        <template #title> Custom Portal </template>
         <template #body>
           <p class="text-sm text-muted">
             Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed do eiusmod tempor
-            incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis
-            nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat.
+            incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud
+            exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat.
           </p>
           <p class="text-sm text-muted">
             Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed do eiusmod tempor
-            incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis
-            nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat.
+            incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud
+            exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat.
           </p>
           <p class="text-sm text-muted">
             Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed do eiusmod tempor
-            incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis
-            nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat.
+            incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud
+            exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat.
           </p>
         </template>
         <template #footer="{ close }">
-          <Button variant="secondary" @click="close">
-            Close
-          </Button>
+          <Button variant="secondary" @click="close"> Close </Button>
         </template>
       </Modal>
     </div>

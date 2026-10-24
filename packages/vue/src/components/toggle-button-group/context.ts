@@ -1,7 +1,8 @@
 import type { ComputedRef, InjectionKey, Ref } from 'vue'
-import type toggleButtonGroupTheme from './theme'
+
 import type { ComponentSlots, ComponentUI } from '../../types/tv'
 import type { ToggleButtonProps } from '../toggle-button/ToggleButton.vue'
+import type toggleButtonGroupTheme from './theme'
 
 export interface ToggleButtonGroupContext {
   selectionMode: Readonly<Ref<'single' | 'multiple'>>
@@ -19,4 +20,6 @@ export interface ToggleButtonGroupContext {
   uiOverrides: Readonly<Ref<ComponentSlots<typeof toggleButtonGroupTheme> | undefined>>
 }
 
-export const toggleButtonGroupContextKey: InjectionKey<ToggleButtonGroupContext> = Symbol('hareui-toggle-button-group')
+export const toggleButtonGroupContextKey: InjectionKey<ToggleButtonGroupContext> = Symbol(
+  'hareui-toggle-button-group',
+)

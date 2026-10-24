@@ -24,31 +24,44 @@ DateRangePicker renders a [Label](/docs/components/label), a segmented [date-inp
 
 ```vue
 <template>
-  <DateRangePicker label="…" calendar-label="…" start-name="…" end-name="…" description="…" error-message="…">
-    <template #label />       <!-- Label content -->
-    <template #separator />   <!-- replaces the default " - " between the inputs -->
-    <template #indicator />   <!-- replaces the default calendar icon in the trigger -->
-    <template #description /> <!-- Description content -->
-    <template #error />       <!-- FieldError content, rendered when invalid -->
-    <template #calendar />    <!-- replaces the default RangeCalendar rendered inside the popover -->
+  <DateRangePicker
+    label="…"
+    calendar-label="…"
+    start-name="…"
+    end-name="…"
+    description="…"
+    error-message="…"
+  >
+    <template #label />
+    <!-- Label content -->
+    <template #separator />
+    <!-- replaces the default " - " between the inputs -->
+    <template #indicator />
+    <!-- replaces the default calendar icon in the trigger -->
+    <template #description />
+    <!-- Description content -->
+    <template #error />
+    <!-- FieldError content, rendered when invalid -->
+    <template #calendar />
+    <!-- replaces the default RangeCalendar rendered inside the popover -->
   </DateRangePicker>
 </template>
 ```
 
-| `ui` key | `data-slot` | Element |
-|---|---|---|
-| `base` | `date-range-picker` | `<div role="group">` root |
-| — | `label` | [Label](/docs/components/label) (iff `label` / `#label`) |
-| `group` | `date-input-group` | `<div role="group">` holding the inputs and the trigger |
-| `inputContainer` | `date-input-group-input-container` | scrollable wrapper around both inputs (iff `input-container`) |
-| `input` | `date-input-group-input` | one per end (`slot="start"` / `slot="end"`) |
-| `segment` | `date-input-group-segment` | one per date part (year, month, day, …) |
-| `rangeSeparator` | `date-range-picker-range-separator` | `<span>` between the start and end inputs |
-| `trigger` | `date-range-picker-trigger` | `<button>` that opens the popover, rendered in the group's suffix |
-| `triggerIndicator` | `date-range-picker-trigger-indicator` | `<span>` holding the default/custom calendar icon |
-| — | `description` | [Description](/docs/components/description) (iff `description` / `#description`) |
-| — | `field-error` | [FieldError](/docs/components/field-error) (while invalid, iff `error-message` / `#error` / validation errors) |
-| `popover` | `date-range-picker-popover` | the popover content wrapping the [RangeCalendar](/docs/components/range-calendar) |
+| `ui` key           | `data-slot`                           | Element                                                                                                        |
+| ------------------ | ------------------------------------- | -------------------------------------------------------------------------------------------------------------- |
+| `base`             | `date-range-picker`                   | `<div role="group">` root                                                                                      |
+| —                  | `label`                               | [Label](/docs/components/label) (iff `label` / `#label`)                                                       |
+| `group`            | `date-input-group`                    | `<div role="group">` holding the inputs and the trigger                                                        |
+| `inputContainer`   | `date-input-group-input-container`    | scrollable wrapper around both inputs (iff `input-container`)                                                  |
+| `input`            | `date-input-group-input`              | one per end (`slot="start"` / `slot="end"`)                                                                    |
+| `segment`          | `date-input-group-segment`            | one per date part (year, month, day, …)                                                                        |
+| `rangeSeparator`   | `date-range-picker-range-separator`   | `<span>` between the start and end inputs                                                                      |
+| `trigger`          | `date-range-picker-trigger`           | `<button>` that opens the popover, rendered in the group's suffix                                              |
+| `triggerIndicator` | `date-range-picker-trigger-indicator` | `<span>` holding the default/custom calendar icon                                                              |
+| —                  | `description`                         | [Description](/docs/components/description) (iff `description` / `#description`)                               |
+| —                  | `field-error`                         | [FieldError](/docs/components/field-error) (while invalid, iff `error-message` / `#error` / validation errors) |
+| `popover`          | `date-range-picker-popover`           | the popover content wrapping the [RangeCalendar](/docs/components/range-calendar)                              |
 
 > **DateRangePicker** values are `{ start, end }` objects of [`@internationalized/date`](https://react-aria.adobe.com/internationalized/date/) values (`CalendarDate`, `CalendarDateTime` or `ZonedDateTime`) — the same types HeroUI uses. Like React Aria, `v-model` only emits complete ranges (or `null` once both ends are cleared).
 
@@ -113,9 +126,19 @@ Style the field parts through `:ui`; the `#calendar` slot lets you fully restyle
 ### Global Configuration
 
 ```ts
-app.use(createHareUI({
-  ui: { dateRangePicker: { slots: { triggerIndicator: 'text-muted', rangeSeparator: 'px-2 text-default', popover: 'p-0' } } },
-}))
+app.use(
+  createHareUI({
+    ui: {
+      dateRangePicker: {
+        slots: {
+          triggerIndicator: 'text-muted',
+          rangeSeparator: 'px-2 text-default',
+          popover: 'p-0',
+        },
+      },
+    },
+  }),
+)
 ```
 
 ## Styling Reference

@@ -1,7 +1,8 @@
 import type { InjectionKey, Plugin } from 'vue'
+import { markRaw, reactive } from 'vue'
+
 import type { Themes } from './components/themes'
 import type { ThemeOverride } from './types/tv'
-import { markRaw, reactive } from 'vue'
 
 /** Overlay portal target: `true` = `document.body`, a selector or element = that target, `false` = render in place. */
 export type PortalTarget = boolean | string | HTMLElement
@@ -24,8 +25,7 @@ export function createHareUI(config: HareUIConfig = {}): Plugin {
   return {
     install(app) {
       // A proxied element is not a DOM Node, so Teleport could not insert into it.
-      if (typeof config.portal === 'object')
-        markRaw(config.portal)
+      if (typeof config.portal === 'object') markRaw(config.portal)
       app.provide(hareUIConfigKey, reactive(config) as HareUIConfig)
     },
   }

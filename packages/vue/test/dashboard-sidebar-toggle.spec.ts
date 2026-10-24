@@ -1,14 +1,14 @@
 import { mount } from '@vue/test-utils'
 import { afterEach, describe, expect, it } from 'vitest'
 import { h, nextTick } from 'vue'
+
 import DashboardGroup from '../src/components/dashboard-group/DashboardGroup.vue'
-import DashboardSidebar from '../src/components/dashboard-sidebar/DashboardSidebar.vue'
 import DashboardSidebarToggle from '../src/components/dashboard-sidebar-toggle/DashboardSidebarToggle.vue'
+import DashboardSidebar from '../src/components/dashboard-sidebar/DashboardSidebar.vue'
 import { expectAccessible } from './a11y'
 
 async function settle() {
-  for (let i = 0; i < 4; i++)
-    await nextTick()
+  for (let i = 0; i < 4; i++) await nextTick()
 }
 
 /** Clicks like a user, past the millisecond Vue attached the listener in (it drops a click fired within it), then settles. */
@@ -20,19 +20,32 @@ async function click(el: HTMLElement) {
   await settle()
 }
 
-const toggle = (side: 'left' | 'right' = 'left') => document.querySelector<HTMLButtonElement>(`[data-testid=toggle-${side}]`)!
+const toggle = (side: 'left' | 'right' = 'left') =>
+  document.querySelector<HTMLButtonElement>(`[data-testid=toggle-${side}]`)!
 
 function mountDashboard(toggleProps: Record<string, unknown> = {}) {
   return mount(DashboardGroup, {
     props: { persistent: false },
     slots: {
       default: () => [
-        h(DashboardSidebar, { 'id': 'main', 'aria-label': 'Main' }, { default: () => h('a', { href: '#inbox' }, 'Inbox') }),
+        h(
+          DashboardSidebar,
+          { id: 'main', 'aria-label': 'Main' },
+          { default: () => h('a', { href: '#inbox' }, 'Inbox') },
+        ),
         h('div', [
           h(DashboardSidebarToggle, { 'data-testid': 'toggle-left', ...toggleProps }),
-          h(DashboardSidebarToggle, { 'data-testid': 'toggle-right', 'side': 'right', ...toggleProps }),
+          h(DashboardSidebarToggle, {
+            'data-testid': 'toggle-right',
+            side: 'right',
+            ...toggleProps,
+          }),
         ]),
-        h(DashboardSidebar, { 'id': 'details', 'side': 'right', 'aria-label': 'Details' }, { default: () => h('p', 'Details') }),
+        h(
+          DashboardSidebar,
+          { id: 'details', side: 'right', 'aria-label': 'Details' },
+          { default: () => h('p', 'Details') },
+        ),
       ],
     },
     attachTo: document.body,

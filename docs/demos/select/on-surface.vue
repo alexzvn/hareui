@@ -29,11 +29,25 @@ function onSubmit(event: SubmitEvent) {
 <template>
   <Surface class="w-[320px] rounded-3xl p-6">
     <Form class="flex w-full flex-col gap-4" @submit.prevent="onSubmit">
-      <Select required class="w-full" label="State" name="state" placeholder="Select one" variant="secondary" :items="states" />
-      <Select required class="w-full" label="Country" name="country" placeholder="Select a country" variant="secondary" :items="countries" />
-      <Button type="submit">
-        Submit
-      </Button>
+      <Select
+        required
+        class="w-full"
+        label="State"
+        name="state"
+        placeholder="Select one"
+        variant="secondary"
+        :items="states"
+      />
+      <Select
+        required
+        class="w-full"
+        label="Country"
+        name="country"
+        placeholder="Select a country"
+        variant="secondary"
+        :items="countries"
+      />
+      <Button type="submit"> Submit </Button>
     </Form>
   </Surface>
 </template>

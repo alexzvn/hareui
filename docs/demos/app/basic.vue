@@ -10,7 +10,9 @@ const queue = new ToastQueue()
   <App :toaster="{ queue }">
     <div class="flex flex-wrap items-center justify-center gap-3">
       <Button variant="secondary" @click="queue.add({ title: 'Event created' })">Show toast</Button>
-      <Button variant="secondary" @click="queue.add({ title: 'Changes saved', variant: 'success' })">Show success toast</Button>
+      <Button variant="secondary" @click="queue.add({ title: 'Changes saved', variant: 'success' })"
+        >Show success toast</Button
+      >
     </div>
   </App>
 </template>

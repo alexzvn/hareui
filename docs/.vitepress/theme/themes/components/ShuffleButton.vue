@@ -1,14 +1,17 @@
 <script setup lang="ts">
+import { AlertDialog, Button, Checkbox, Kbd, Label, Tooltip } from '@hareui/vue'
 // Port of HeroUI docs `themes/components/shuffle-button.tsx`.
 import { Icon } from '@iconify/vue'
-import { AlertDialog, Button, Checkbox, Kbd, Label, Tooltip } from '@hareui/vue'
 import { ref, watch } from 'vue'
+
 import { useKeyPress } from '../composables/keyPress'
 import { useRandomizeVariables, useVariablesState } from '../composables/variables'
 import { LOCAL_STORAGE_KEYS } from '../constants'
 import { compareThemeVariables } from '../utils/compare-theme-variables'
 
-const props = withDefaults(defineProps<{ enableKeyboardShortcut?: boolean }>(), { enableKeyboardShortcut: true })
+const props = withDefaults(defineProps<{ enableKeyboardShortcut?: boolean }>(), {
+  enableKeyboardShortcut: true,
+})
 
 const isDontShowAgainChecked = ref(false)
 const isOpen = ref(false)
@@ -85,8 +88,16 @@ watch(variables, (current) => {
       </template>
       <template #body>This will overwrite your current theme settings.</template>
       <template #footer>
-        <Button class="order-2 w-full sm:order-2 sm:w-auto" size="md" variant="tertiary" @click="handleClose">Cancel</Button>
-        <Button class="order-1 w-full sm:order-3 sm:w-auto" size="md" @click="handleRandomize">Confirm</Button>
+        <Button
+          class="order-2 w-full sm:order-2 sm:w-auto"
+          size="md"
+          variant="tertiary"
+          @click="handleClose"
+          >Cancel</Button
+        >
+        <Button class="order-1 w-full sm:order-3 sm:w-auto" size="md" @click="handleRandomize"
+          >Confirm</Button
+        >
         <div class="order-3 flex flex-1 items-center gap-2 self-start sm:order-1 sm:self-center">
           <Checkbox id="dont-show-again" v-model="isDontShowAgainChecked" variant="secondary" />
           <Label for="dont-show-again">Don't show again</Label>

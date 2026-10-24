@@ -5,7 +5,10 @@ import { reactive } from 'vue'
 import * as z from 'zod'
 
 const schema = z.object({
-  name: z.string('Name is required').min(1, 'Name is required').min(2, 'Name must be at least 2 characters'),
+  name: z
+    .string('Name is required')
+    .min(1, 'Name is required')
+    .min(2, 'Name must be at least 2 characters'),
   news: z.boolean().optional(),
 })
 
@@ -30,8 +33,6 @@ function onSubmit(event: FormSubmitEvent<Schema>) {
     <Form v-if="state.news" nested :schema="newsSchema">
       <TextField v-model="state.email" name="email" type="email" label="Email" />
     </Form>
-    <Button type="submit" class="self-start">
-      Submit
-    </Button>
+    <Button type="submit" class="self-start"> Submit </Button>
   </Form>
 </template>

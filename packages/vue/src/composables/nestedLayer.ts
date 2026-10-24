@@ -69,13 +69,16 @@ const isInLayerOrAbove = (layer: Element, target: Element): boolean => {
   if (layer.contains(target)) return true
   const targetLayer = target.closest(LAYER_SELECTOR)
   if (!targetLayer) return false
-  const layers = [...(layer.getRootNode() as Document | ShadowRoot).querySelectorAll(LAYER_SELECTOR)]
+  const layers = [
+    ...(layer.getRootNode() as Document | ShadowRoot).querySelectorAll(LAYER_SELECTOR),
+  ]
   return layers.indexOf(layer) < layers.indexOf(targetLayer)
 }
 
 /** Whether `layer` is the last Layer mounted in its root, the one an outside press is meant for. */
 const isTopmostLayer = (layer: Element): boolean =>
-  [...(layer.getRootNode() as Document | ShadowRoot).querySelectorAll(LAYER_SELECTOR)].at(-1) === layer
+  [...(layer.getRootNode() as Document | ShadowRoot).querySelectorAll(LAYER_SELECTOR)].at(-1) ===
+  layer
 
 const isKeptOpen = (event: Event, policy: LayerDismissPolicy): boolean => {
   if (!(policy.isDismissible ?? true)) return true
@@ -95,7 +98,10 @@ export const shouldDismissOnEscape = (policy: LayerDismissPolicy): boolean =>
  * submenu) counts as outside. This re-runs the check on the real target; outside a shadow root it agrees with Reka,
  * which never reports those events.
  */
-export const shouldDismissOnOutside = (event: OutsideEvent, policy: LayerDismissPolicy): boolean => {
+export const shouldDismissOnOutside = (
+  event: OutsideEvent,
+  policy: LayerDismissPolicy,
+): boolean => {
   if (isKeptOpen(event.detail.originalEvent, policy)) return false
   return !isInLayerStack(resolveLayer(policy.content), outsideEventTarget(event))
 }
@@ -116,6 +122,9 @@ export const shouldDismissOnPress = (event: PointerEvent, policy: LayerDismissPo
  * Keeps a Layer open when an outside interaction actually landed in its Layer stack (see `shouldDismissOnOutside`).
  * For Layers without their own dismiss options, e.g. Dropdown submenus.
  */
-export const preventNestedLayerDismiss = (event: OutsideEvent, content: Node | null | undefined): void => {
+export const preventNestedLayerDismiss = (
+  event: OutsideEvent,
+  content: Node | null | undefined,
+): void => {
   if (isInLayerStack(resolveLayer(content), outsideEventTarget(event))) event.preventDefault()
 }

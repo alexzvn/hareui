@@ -20,15 +20,9 @@ const value = ref<Color | null>(parseColor('#0485F7'))
       </template>
     </ColorField>
     <div class="flex gap-2">
-      <Button variant="tertiary" @click="value = parseColor('#EF4444')">
-        Set Red
-      </Button>
-      <Button variant="tertiary" @click="value = parseColor('#10B981')">
-        Set Green
-      </Button>
-      <Button variant="tertiary" @click="value = null">
-        Clear
-      </Button>
+      <Button variant="tertiary" @click="value = parseColor('#EF4444')"> Set Red </Button>
+      <Button variant="tertiary" @click="value = parseColor('#10B981')"> Set Green </Button>
+      <Button variant="tertiary" @click="value = null"> Clear </Button>
     </div>
   </div>
 </template>

@@ -14,5 +14,11 @@ const states: ListBoxItem[] = [
 
 <template>
   <!-- HeroUI's `render` prop has no Vue equivalent (plan drop: render functions); attributes fall through to the root instead. -->
-  <Select class="w-[256px]" data-custom="foo" label="State" placeholder="Select one" :items="states" />
+  <Select
+    class="w-[256px]"
+    data-custom="foo"
+    label="State"
+    placeholder="Select one"
+    :items="states"
+  />
 </template>

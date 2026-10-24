@@ -15,15 +15,19 @@ interface Placement extends ListBoxItem {
 }
 
 // One option per side / align pair, e.g. "Bottom · End"
-const placements: Placement[] = sides.flatMap(side => aligns.map(align => ({
-  value: `${side}-${align}`,
-  label: `${side[0]!.toUpperCase()}${side.slice(1)} · ${align[0]!.toUpperCase()}${align.slice(1)}`,
-  side,
-  align,
-})))
+const placements: Placement[] = sides.flatMap((side) =>
+  aligns.map((align) => ({
+    value: `${side}-${align}`,
+    label: `${side[0]!.toUpperCase()}${side.slice(1)} · ${align[0]!.toUpperCase()}${align.slice(1)}`,
+    side,
+    align,
+  })),
+)
 
 const placement = ref<SelectValue>('bottom-end')
-const current = computed(() => placements.find(p => p.value === placement.value) ?? placements[2]!)
+const current = computed(
+  () => placements.find((p) => p.value === placement.value) ?? placements[2]!,
+)
 </script>
 
 <template>

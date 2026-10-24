@@ -14,11 +14,18 @@ const environments: Environment[] = [
 ]
 
 const environment = ref<SelectValue>('staging')
-const current = computed(() => environments.find(e => e.value === environment.value) ?? environments[0]!)
+const current = computed(
+  () => environments.find((e) => e.value === environment.value) ?? environments[0]!,
+)
 </script>
 
 <template>
-  <InlineSelect v-model="environment" aria-label="Environment" :items="environments" :ui="{ popover: 'w-56' }">
+  <InlineSelect
+    v-model="environment"
+    aria-label="Environment"
+    :items="environments"
+    :ui="{ popover: 'w-56' }"
+  >
     <template #leading>
       <span aria-hidden="true" class="size-2 shrink-0 rounded-full" :class="current.dot" />
     </template>

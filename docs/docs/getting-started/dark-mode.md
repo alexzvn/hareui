@@ -45,7 +45,11 @@ watchEffect(() => {
 })
 
 export function useDark() {
-  return { theme, resolvedTheme: () => resolve(theme.value), setTheme: (value: Theme) => (theme.value = value) }
+  return {
+    theme,
+    resolvedTheme: () => resolve(theme.value),
+    setTheme: (value: Theme) => (theme.value = value),
+  }
 }
 ```
 
@@ -83,9 +87,7 @@ Theme-aware utilities work automatically because they read CSS variables:
 ```vue
 <template>
   <main class="min-h-screen bg-background text-foreground">
-    <section class="bg-surface text-surface-foreground shadow-surface">
-      Theme-aware content
-    </section>
+    <section class="bg-surface text-surface-foreground shadow-surface">Theme-aware content</section>
   </main>
 </template>
 ```

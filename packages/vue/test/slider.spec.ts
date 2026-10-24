@@ -1,6 +1,7 @@
 import { mount } from '@vue/test-utils'
 import { describe, expect, it } from 'vitest'
 import { h, nextTick, ref } from 'vue'
+
 import type { SliderProps } from '../src/components/slider/Slider.vue'
 import Slider from '../src/components/slider/Slider.vue'
 import { expectAccessible } from './a11y'
@@ -10,14 +11,26 @@ const output = (w: ReturnType<typeof mount>) => w.get('[data-slot=slider-output]
 const track = (w: ReturnType<typeof mount>) => w.get('[data-slot=slider-track]')
 // accessible name computation: aria-labelledby wins over aria-label
 function accessibleName(el: Element) {
-  const labelledBy = (el.getAttribute('aria-labelledby') ?? '').split(/\s+/).map(id => document.getElementById(id)?.textContent ?? '').join(' ').trim()
+  const labelledBy = (el.getAttribute('aria-labelledby') ?? '')
+    .split(/\s+/)
+    .map((id) => document.getElementById(id)?.textContent ?? '')
+    .join(' ')
+    .trim()
   return labelledBy || el.getAttribute('aria-label') || ''
 }
 
 describe('Slider', () => {
   it('keyboard steps update v-model by `step`, clamped to max, and emit changeEnd', async () => {
     const model = ref(90)
-    const w = mount(() => h(Slider, { 'step': 5, 'modelValue': model.value, 'onUpdate:modelValue': (v: number | number[] | undefined) => (model.value = v as number) }), { attachTo: document.body })
+    const w = mount(
+      () =>
+        h(Slider, {
+          step: 5,
+          modelValue: model.value,
+          'onUpdate:modelValue': (v: number | number[] | undefined) => (model.value = v as number),
+        }),
+      { attachTo: document.body },
+    )
     const thumb = thumbs(w)[0]!
     await thumb.trigger('keydown', { key: 'ArrowRight' })
     expect(model.value).toBe(95)
@@ -38,7 +51,12 @@ describe('Slider', () => {
 
   it('an array value renders one thumb per value and emits arrays', async () => {
     const model = ref<number[]>([20, 60])
-    const w = mount(() => h(Slider, { 'modelValue': model.value, 'onUpdate:modelValue': (v: number | number[] | undefined) => (model.value = v as number[]) }))
+    const w = mount(() =>
+      h(Slider, {
+        modelValue: model.value,
+        'onUpdate:modelValue': (v: number | number[] | undefined) => (model.value = v as number[]),
+      }),
+    )
     expect(thumbs(w)).toHaveLength(2)
     expect(output(w)).toBe('20 – 60')
     // `End` moves the last thumb (arrow keys follow the focused thumb, which Reka resolves via DOM order)
@@ -47,7 +65,14 @@ describe('Slider', () => {
   })
 
   it('formats the output with formatOptions and locale', () => {
-    const w = mount(Slider, { props: { defaultValue: [100, 500], max: 1000, locale: 'en-US', formatOptions: { style: 'currency', currency: 'USD', maximumFractionDigits: 0 } } })
+    const w = mount(Slider, {
+      props: {
+        defaultValue: [100, 500],
+        max: 1000,
+        locale: 'en-US',
+        formatOptions: { style: 'currency', currency: 'USD', maximumFractionDigits: 0 },
+      },
+    })
     expect(output(w)).toBe('$100 – $500')
   })
 
@@ -77,8 +102,12 @@ describe('Slider', () => {
 
   it('a disabled slider reports aria-disabled on every thumb', () => {
     const w = mount(Slider, { props: { defaultValue: [20, 60], disabled: true } })
-    expect(thumbs(w).map(t => t.attributes('aria-disabled'))).toEqual(['true', 'true'])
-    expect(mount(Slider, { props: { defaultValue: 30 } }).get('[data-slot=slider-thumb]').attributes('aria-disabled')).toBeUndefined()
+    expect(thumbs(w).map((t) => t.attributes('aria-disabled'))).toEqual(['true', 'true'])
+    expect(
+      mount(Slider, { props: { defaultValue: 30 } })
+        .get('[data-slot=slider-thumb]')
+        .attributes('aria-disabled'),
+    ).toBeUndefined()
   })
 
   it('the label names the slider', () => {
@@ -103,7 +132,10 @@ describe('Slider', () => {
 
   it('names each thumb: a slider role with a non-empty accessible name from the label', () => {
     // behaviour-final-check Slider-1
-    const w = mount(Slider, { props: { label: 'Volume', id: 's', defaultValue: 30 }, attachTo: document.body })
+    const w = mount(Slider, {
+      props: { label: 'Volume', id: 's', defaultValue: 30 },
+      attachTo: document.body,
+    })
     const thumb = thumbs(w)[0]!
     expect(thumb.attributes('role')).toBe('slider')
     expect(accessibleName(thumb.element)).toContain('Volume')
@@ -112,15 +144,29 @@ describe('Slider', () => {
 
   it('names every thumb of a range slider after the slider label', () => {
     // behaviour-final-check Slider-1
-    const w = mount(Slider, { props: { label: 'Price', id: 'r', defaultValue: [20, 60] }, attachTo: document.body })
-    expect(thumbs(w).map(t => accessibleName(t.element))).toEqual([expect.stringContaining('Price'), expect.stringContaining('Price')])
+    const w = mount(Slider, {
+      props: { label: 'Price', id: 'r', defaultValue: [20, 60] },
+      attachTo: document.body,
+    })
+    expect(thumbs(w).map((t) => accessibleName(t.element))).toEqual([
+      expect.stringContaining('Price'),
+      expect.stringContaining('Price'),
+    ])
     w.unmount()
   })
 
-  it('range thumbs cannot cross: the start thumb stops at the end thumb\'s value', async () => {
+  it("range thumbs cannot cross: the start thumb stops at the end thumb's value", async () => {
     // behaviour-final-check Slider-2
     const model = ref<number[]>([59, 60])
-    const w = mount(() => h(Slider, { 'modelValue': model.value, 'onUpdate:modelValue': (v: number | number[] | undefined) => (model.value = v as number[]) }), { attachTo: document.body })
+    const w = mount(
+      () =>
+        h(Slider, {
+          modelValue: model.value,
+          'onUpdate:modelValue': (v: number | number[] | undefined) =>
+            (model.value = v as number[]),
+        }),
+      { attachTo: document.body },
+    )
     await nextTick()
     const start = thumbs(w)[0]!
     ;(start.element as HTMLElement).focus()
@@ -130,10 +176,18 @@ describe('Slider', () => {
     w.unmount()
   })
 
-  it('range thumbs cannot cross: the end thumb stops at the start thumb\'s value', async () => {
+  it("range thumbs cannot cross: the end thumb stops at the start thumb's value", async () => {
     // behaviour-final-check Slider-2
     const model = ref<number[]>([20, 21])
-    const w = mount(() => h(Slider, { 'modelValue': model.value, 'onUpdate:modelValue': (v: number | number[] | undefined) => (model.value = v as number[]) }), { attachTo: document.body })
+    const w = mount(
+      () =>
+        h(Slider, {
+          modelValue: model.value,
+          'onUpdate:modelValue': (v: number | number[] | undefined) =>
+            (model.value = v as number[]),
+        }),
+      { attachTo: document.body },
+    )
     await nextTick()
     const end = thumbs(w)[1]!
     ;(end.element as HTMLElement).focus()
@@ -157,7 +211,10 @@ describe('Slider', () => {
 
   it('PageUp moves a tenth of a large range when that exceeds one step', async () => {
     // behaviour-final-check Slider-3
-    const w = mount(Slider, { props: { defaultValue: 500, min: 0, max: 1000, step: 1 }, attachTo: document.body })
+    const w = mount(Slider, {
+      props: { defaultValue: 500, min: 0, max: 1000, step: 1 },
+      attachTo: document.body,
+    })
     await thumbs(w)[0]!.trigger('keydown', { key: 'PageUp' })
     expect(output(w)).toBe('600')
     w.unmount()
@@ -188,7 +245,10 @@ describe('Slider', () => {
       return [...new FormData(w.get('form').element as HTMLFormElement).entries()]
     }
     expect(entries({ name: 'volume', defaultValue: 65 })).toEqual([['volume', '65']])
-    expect(entries({ name: 'price', defaultValue: [20, 60] })).toEqual([['price', '20'], ['price', '60']])
+    expect(entries({ name: 'price', defaultValue: [20, 60] })).toEqual([
+      ['price', '20'],
+      ['price', '60'],
+    ])
     // A disabled slider leaves its value out of the form, like a disabled input
     expect(entries({ name: 'volume', defaultValue: 65, disabled: true })).toEqual([])
     expect(entries({ defaultValue: 65 })).toEqual([])
@@ -200,11 +260,21 @@ describe('Slider', () => {
 
   it.each<[string, SliderProps & { 'aria-label'?: string }]>([
     ['idle with a visible label', { label: 'Volume', defaultValue: 30 }],
-    ['named by aria-label only', { 'aria-label': 'Volume', 'defaultValue': 30 }],
-    ['a labelled range', { label: 'Price', defaultValue: [20, 60], formatOptions: { style: 'currency', currency: 'USD' } }],
+    ['named by aria-label only', { 'aria-label': 'Volume', defaultValue: 30 }],
+    [
+      'a labelled range',
+      {
+        label: 'Price',
+        defaultValue: [20, 60],
+        formatOptions: { style: 'currency', currency: 'USD' },
+      },
+    ],
     ['vertical', { label: 'Volume', defaultValue: 30, orientation: 'vertical' }],
     ['disabled', { label: 'Volume', defaultValue: 30, disabled: true }],
-    ['in a form with a name', { label: 'Volume', defaultValue: 30, name: 'volume', required: true }],
+    [
+      'in a form with a name',
+      { label: 'Volume', defaultValue: 30, name: 'volume', required: true },
+    ],
   ])('has no axe violations: %s', async (_, props) => {
     const w = mount(Slider, { props, attachTo: document.body })
     await nextTick()
@@ -213,7 +283,10 @@ describe('Slider', () => {
   })
 
   it('has no axe violations while a thumb has keyboard focus', async () => {
-    const w = mount(Slider, { props: { label: 'Volume', defaultValue: 30 }, attachTo: document.body })
+    const w = mount(Slider, {
+      props: { label: 'Volume', defaultValue: 30 },
+      attachTo: document.body,
+    })
     await nextTick()
     const thumb = thumbs(w)[0]!
     ;(thumb.element as HTMLElement).focus()
@@ -224,18 +297,27 @@ describe('Slider', () => {
   })
 
   it('every thumb is a tab stop; a disabled slider has none', async () => {
-    const w = mount(Slider, { props: { label: 'Price', defaultValue: [20, 60] }, attachTo: document.body })
+    const w = mount(Slider, {
+      props: { label: 'Price', defaultValue: [20, 60] },
+      attachTo: document.body,
+    })
     await nextTick()
-    expect(thumbs(w).map(t => t.attributes('tabindex'))).toEqual(['0', '0'])
-    const off = mount(Slider, { props: { label: 'Price', defaultValue: [20, 60], disabled: true }, attachTo: document.body })
+    expect(thumbs(w).map((t) => t.attributes('tabindex'))).toEqual(['0', '0'])
+    const off = mount(Slider, {
+      props: { label: 'Price', defaultValue: [20, 60], disabled: true },
+      attachTo: document.body,
+    })
     await nextTick()
-    expect(thumbs(off).map(t => t.attributes('tabindex'))).toEqual([undefined, undefined])
+    expect(thumbs(off).map((t) => t.attributes('tabindex'))).toEqual([undefined, undefined])
     w.unmount()
     off.unmount()
   })
 
   it('ArrowUp / ArrowDown step a horizontal slider too; Home moves to min', async () => {
-    const w = mount(Slider, { props: { label: 'Volume', defaultValue: 30 }, attachTo: document.body })
+    const w = mount(Slider, {
+      props: { label: 'Volume', defaultValue: 30 },
+      attachTo: document.body,
+    })
     await nextTick()
     const thumb = thumbs(w)[0]!
     await thumb.trigger('keydown', { key: 'ArrowUp' })
@@ -249,7 +331,10 @@ describe('Slider', () => {
   })
 
   it('a vertical slider steps with ArrowUp / ArrowDown and reports its orientation', async () => {
-    const w = mount(Slider, { props: { label: 'Volume', defaultValue: 30, orientation: 'vertical' }, attachTo: document.body })
+    const w = mount(Slider, {
+      props: { label: 'Volume', defaultValue: 30, orientation: 'vertical' },
+      attachTo: document.body,
+    })
     await nextTick()
     const thumb = thumbs(w)[0]!
     expect(thumb.attributes('aria-orientation')).toBe('vertical')
@@ -262,7 +347,10 @@ describe('Slider', () => {
   })
 
   it('Shift + Arrow pages like PageUp / PageDown', async () => {
-    const w = mount(Slider, { props: { label: 'Volume', defaultValue: 50 }, attachTo: document.body })
+    const w = mount(Slider, {
+      props: { label: 'Volume', defaultValue: 50 },
+      attachTo: document.body,
+    })
     await nextTick()
     await thumbs(w)[0]!.trigger('keydown', { key: 'ArrowRight', shiftKey: true })
     expect(output(w)).toBe('60')
@@ -274,7 +362,16 @@ describe('Slider', () => {
 
   it('Home / End on a range thumb stop at its neighbour', async () => {
     const model = ref<number[]>([20, 60])
-    const w = mount(() => h(Slider, { 'label': 'Price', 'modelValue': model.value, 'onUpdate:modelValue': (v: number | number[] | undefined) => (model.value = v as number[]) }), { attachTo: document.body })
+    const w = mount(
+      () =>
+        h(Slider, {
+          label: 'Price',
+          modelValue: model.value,
+          'onUpdate:modelValue': (v: number | number[] | undefined) =>
+            (model.value = v as number[]),
+        }),
+      { attachTo: document.body },
+    )
     await nextTick()
     await thumbs(w)[0]!.trigger('keydown', { key: 'End' })
     expect(model.value).toEqual([60, 60])
@@ -286,7 +383,10 @@ describe('Slider', () => {
   })
 
   it('a keyboard step keeps focus on the thumb being moved', async () => {
-    const w = mount(Slider, { props: { label: 'Price', defaultValue: [20, 60] }, attachTo: document.body })
+    const w = mount(Slider, {
+      props: { label: 'Price', defaultValue: [20, 60] },
+      attachTo: document.body,
+    })
     await nextTick()
     const end = thumbs(w)[1]!
     ;(end.element as HTMLElement).focus()
@@ -296,21 +396,40 @@ describe('Slider', () => {
   })
 
   it('thumbs expose their range and the formatted value text, updated as they move', async () => {
-    const w = mount(Slider, { props: { label: 'Price', defaultValue: 30, min: 10, max: 90, formatOptions: { style: 'currency', currency: 'USD', maximumFractionDigits: 0 }, locale: 'en-US' }, attachTo: document.body })
+    const w = mount(Slider, {
+      props: {
+        label: 'Price',
+        defaultValue: 30,
+        min: 10,
+        max: 90,
+        formatOptions: { style: 'currency', currency: 'USD', maximumFractionDigits: 0 },
+        locale: 'en-US',
+      },
+      attachTo: document.body,
+    })
     await nextTick()
     const thumb = thumbs(w)[0]!
-    expect(thumb.attributes()).toMatchObject({ 'role': 'slider', 'aria-valuemin': '10', 'aria-valuemax': '90', 'aria-valuenow': '30', 'aria-valuetext': '$30' })
+    expect(thumb.attributes()).toMatchObject({
+      role: 'slider',
+      'aria-valuemin': '10',
+      'aria-valuemax': '90',
+      'aria-valuenow': '30',
+      'aria-valuetext': '$30',
+    })
     await thumb.trigger('keydown', { key: 'ArrowRight' })
     expect(thumb.attributes()).toMatchObject({ 'aria-valuenow': '31', 'aria-valuetext': '$31' })
     w.unmount()
   })
 
   it('aria-label names the group and every thumb when there is no visible label', async () => {
-    const w = mount(Slider, { props: { 'aria-label': 'Price', 'defaultValue': [20, 60] }, attachTo: document.body })
+    const w = mount(Slider, {
+      props: { 'aria-label': 'Price', defaultValue: [20, 60] },
+      attachTo: document.body,
+    })
     await nextTick()
     expect(w.get('[data-slot=slider]').attributes('role')).toBe('group')
     expect(w.get('[data-slot=slider]').attributes('aria-label')).toBe('Price')
-    expect(thumbs(w).map(t => accessibleName(t.element))).toEqual(['Price', 'Price'])
+    expect(thumbs(w).map((t) => accessibleName(t.element))).toEqual(['Price', 'Price'])
     w.unmount()
   })
 })

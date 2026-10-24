@@ -19,7 +19,10 @@ function formatRain(value: number) {
 </script>
 
 <template>
-  <Card class="w-full max-w-[480px] rounded-2xl" :ui="{ header: 'flex-row flex-wrap items-center justify-between gap-2' }">
+  <Card
+    class="w-full max-w-[480px] rounded-2xl"
+    :ui="{ header: 'flex-row flex-wrap items-center justify-between gap-2' }"
+  >
     <template #header>
       <div>
         <h3 class="text-base font-medium text-foreground">Rainfall</h3>

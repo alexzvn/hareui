@@ -1,7 +1,7 @@
 <script setup lang="ts">
+import { DateField } from '@hareui/vue'
 import type { DateValue } from '@internationalized/date'
 import { getLocalTimeZone, today } from '@internationalized/date'
-import { DateField } from '@hareui/vue'
 import { computed, shallowRef } from 'vue'
 
 const value = shallowRef<DateValue | null>(null)

@@ -8,7 +8,7 @@ export type ExpandedValue = string | number
  * expanding an item collapses the others.
  */
 export function useExpandedValues(
-  props: { modelValue?: ExpandedValue[], defaultValue?: ExpandedValue[], multiple?: boolean },
+  props: { modelValue?: ExpandedValue[]; defaultValue?: ExpandedValue[]; multiple?: boolean },
   emit: (value: ExpandedValue[]) => void,
 ) {
   const uncontrolled = ref<ExpandedValue[]>([...(props.defaultValue ?? [])])
@@ -18,8 +18,10 @@ export function useExpandedValues(
   function setExpanded(value: ExpandedValue, open: boolean) {
     if (open === isExpanded(value)) return
     const next = open
-      ? (props.multiple ? [...expanded.value, value] : [value])
-      : expanded.value.filter(v => v !== value)
+      ? props.multiple
+        ? [...expanded.value, value]
+        : [value]
+      : expanded.value.filter((v) => v !== value)
     uncontrolled.value = next
     emit(next)
   }

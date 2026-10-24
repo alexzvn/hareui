@@ -3,7 +3,8 @@ import { NavigationMenu } from '@hareui/vue'
 import { Icon } from '@iconify/vue'
 import { h } from 'vue'
 
-const icon = (name: string) => (attrs: Record<string, unknown>) => h(Icon, { ...attrs, icon: `gravity-ui:${name}` })
+const icon = (name: string) => (attrs: Record<string, unknown>) =>
+  h(Icon, { ...attrs, icon: `gravity-ui:${name}` })
 
 const links = [
   { label: 'Overview', icon: icon('house'), href: '#overview' },
@@ -15,7 +16,19 @@ const links = [
 
 <template>
   <div class="flex w-full flex-col gap-10">
-    <NavigationMenu highlight aria-label="Horizontal" :items="links" :ui="{ linkLabel: 'max-sm:sr-only' }" class="w-full justify-center" />
-    <NavigationMenu highlight aria-label="Vertical" :items="links" orientation="vertical" class="w-64 self-center" />
+    <NavigationMenu
+      highlight
+      aria-label="Horizontal"
+      :items="links"
+      :ui="{ linkLabel: 'max-sm:sr-only' }"
+      class="w-full justify-center"
+    />
+    <NavigationMenu
+      highlight
+      aria-label="Vertical"
+      :items="links"
+      orientation="vertical"
+      class="w-64 self-center"
+    />
   </div>
 </template>

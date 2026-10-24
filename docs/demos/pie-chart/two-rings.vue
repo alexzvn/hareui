@@ -24,13 +24,33 @@ function formatValue(value: number | string) {
 </script>
 
 <template>
-  <Card class="w-full max-w-[400px] rounded-2xl" title="Rainfall by Season" :ui="{ title: 'text-base', content: 'items-center gap-4' }">
+  <Card
+    class="w-full max-w-[400px] rounded-2xl"
+    title="Rainfall by Season"
+    :ui="{ title: 'text-base', content: 'items-center gap-4' }"
+  >
     <!-- Two rings with their own rows: the props draw a single pie, so this chart is built from parts. -->
     <PieChart :height="240" aria-label="Rainfall by season, 2024 inside and 2025 outside">
-      <ChartPie :data="previous" data-key="rainfall" name-key="label" inner-radius="34%" outer-radius="46%" :corner-radius="12" :padding-angle="-20">
+      <ChartPie
+        :data="previous"
+        data-key="rainfall"
+        name-key="label"
+        inner-radius="34%"
+        outer-radius="46%"
+        :corner-radius="12"
+        :padding-angle="-20"
+      >
         <ChartCell v-for="color in colors" :key="color" :fill="color" />
       </ChartPie>
-      <ChartPie :data="current" data-key="rainfall" name-key="label" inner-radius="56%" outer-radius="68%" :corner-radius="12" :padding-angle="-20">
+      <ChartPie
+        :data="current"
+        data-key="rainfall"
+        name-key="label"
+        inner-radius="56%"
+        outer-radius="68%"
+        :corner-radius="12"
+        :padding-angle="-20"
+      >
         <ChartCell v-for="color in colors" :key="color" :fill="color" />
       </ChartPie>
       <ChartTooltip :value-formatter="formatValue" />

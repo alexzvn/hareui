@@ -19,7 +19,8 @@ export default {
     ],
     label: 'min-w-0 flex-1 truncate text-start text-sm font-medium text-foreground',
     value: 'ms-auto min-w-0 flex-1 truncate text-end text-sm font-normal text-muted sm:text-sm',
-    indicator: 'static inset-auto my-0 size-3 shrink-0 text-muted data-[open=true]:rotate-0 [&>svg]:size-full',
+    indicator:
+      'static inset-auto my-0 size-3 shrink-0 text-muted data-[open=true]:rotate-0 [&>svg]:size-full',
     popover: 'min-w-(--reka-popover-trigger-width)',
   },
   variants: {

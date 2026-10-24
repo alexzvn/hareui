@@ -1,13 +1,20 @@
 <script lang="ts">
+import { injectComboboxRootContext, injectListboxRootContext } from 'reka-ui'
+import { defineComponent } from 'vue'
+
 import type { ValidateFn, ValidationResult } from '../../composables/useFieldValidation'
 import type { PortalTarget } from '../../config'
 import type { ComponentSlots } from '../../types/tv'
 import type { ValidationBehavior } from '../form/context'
 import type { FormFieldProps } from '../form/types'
-import type { ListBoxEntry, ListBoxItem, ListBoxItemSlotProps, ListBoxSection, ListBoxValue } from '../list-box/ListBox.vue'
+import type {
+  ListBoxEntry,
+  ListBoxItem,
+  ListBoxItemSlotProps,
+  ListBoxSection,
+  ListBoxValue,
+} from '../list-box/ListBox.vue'
 import type { CollectionRow } from '../list-box/listBoxCollection'
-import { injectComboboxRootContext, injectListboxRootContext } from 'reka-ui'
-import { defineComponent } from 'vue'
 import theme from './theme'
 
 type ComboBox = typeof theme
@@ -140,17 +147,17 @@ export interface ComboBoxValueSlotProps<T extends ListBoxItem = ListBoxItem> {
 
 export interface ComboBoxSlots<T extends ListBoxItem = ListBoxItem> {
   /** Label content. Replaces `label`. */
-  'label'?: () => any
+  label?: () => any
   /** Content of the selected-value element below the input (rendered in multiple mode, or whenever this slot is used). */
-  'value'?: (props: ComboBoxValueSlotProps<T>) => any
+  value?: (props: ComboBoxValueSlotProps<T>) => any
   /** Trigger button content. Defaults to a chevron. */
-  'indicator'?: (props: { open: boolean }) => any
+  indicator?: (props: { open: boolean }) => any
   /** Description content. Replaces `description`. */
-  'description'?: () => any
+  description?: () => any
   /** Error content, rendered while invalid. */
-  'error'?: (props: ValidationResult) => any
+  error?: (props: ValidationResult) => any
   /** Whole content of each option (as ListBox `#item`). */
-  'item'?: (props: ListBoxItemSlotProps<T>) => any
+  item?: (props: ListBoxItemSlotProps<T>) => any
   /** Content before each option's text (ListBox `#item-leading`). */
   'item-leading'?: (props: ListBoxItemSlotProps<T>) => any
   /** Each option's label (ListBox `#item-label`). */
@@ -164,9 +171,9 @@ export interface ComboBoxSlots<T extends ListBoxItem = ListBoxItem> {
   /** Section heading (ListBox `#section-label`). */
   'section-label'?: (props: { section: ListBoxSection<T> }) => any
   /** Rendered in the popover when no option matches and `allowsEmptyCollection` is set. */
-  'empty'?: () => any
+  empty?: () => any
   /** Shown after the last option while `loading` is true. */
-  'loading'?: () => any
+  loading?: () => any
 }
 
 export interface ComboBoxEmits {
@@ -175,7 +182,7 @@ export interface ComboBoxEmits {
   /** The input text changed (`v-model:input-value`). */
   'update:inputValue': [value: string]
   /** The end of the option list scrolled into view while `loading` is false. */
-  'loadMore': []
+  loadMore: []
 }
 
 type ListboxContext = NonNullable<ReturnType<typeof injectListboxRootContext>>
@@ -192,8 +199,28 @@ const RekaBridge = defineComponent({
 </script>
 
 <script setup lang="ts" generic="T extends ListBoxItem = ListBoxItem">
-import { ComboboxAnchor, ComboboxContent, ComboboxItem, ComboboxPortal, ComboboxRoot, useFilter } from 'reka-ui'
-import { computed, getCurrentInstance, nextTick, onMounted, reactive, ref, shallowRef, useAttrs, useId, useTemplateRef, watch } from 'vue'
+import {
+  ComboboxAnchor,
+  ComboboxContent,
+  ComboboxItem,
+  ComboboxPortal,
+  ComboboxRoot,
+  useFilter,
+} from 'reka-ui'
+import {
+  computed,
+  getCurrentInstance,
+  nextTick,
+  onMounted,
+  reactive,
+  ref,
+  shallowRef,
+  useAttrs,
+  useId,
+  useTemplateRef,
+  watch,
+} from 'vue'
+
 import { useComponentUI } from '../../composables/useComponentUI'
 import { useFieldChrome } from '../../composables/useFieldChrome'
 import { useFieldValidation } from '../../composables/useFieldValidation'
@@ -201,9 +228,9 @@ import { useKeyboardModality } from '../../composables/useKeyboardModality'
 import { usePortal } from '../../composables/usePortal'
 import { useFieldsetDisabled } from '../fieldset/context'
 import inputTheme from '../input/theme'
-import listBoxTheme from '../list-box/theme'
 import { countRows, filterEntries, itemText } from '../list-box/listBoxCollection'
 import ListBoxRows from '../list-box/ListBoxRows.vue'
+import listBoxTheme from '../list-box/theme'
 import { useCollectionModel } from '../list-box/useCollectionModel'
 import { usePressRelease } from '../select/pressRelease'
 
@@ -229,7 +256,7 @@ const modelValue = defineModel<ComboBoxValue>()
 const inputModel = defineModel<string>('inputValue')
 // Whether the parent binds `v-model:input-value` (defineModel keeps a local value when it doesn't)
 const vnodeProps = getCurrentInstance()?.vnode.props ?? {}
-const inputControlled = () => ['inputValue', 'input-value'].some(key => key in vnodeProps)
+const inputControlled = () => ['inputValue', 'input-value'].some((key) => key in vnodeProps)
 
 const multiple = computed(() => props.selectionMode === 'multiple')
 
@@ -257,7 +284,7 @@ const selectedText = computed(() => resolveItemText(selectedKey.value))
 // ---- Input text (`v-model:input-value` wins when bound) ---------------------------------------------------------
 const uncontrolledInput = ref(props.defaultInputValue ?? selectedText.value)
 const inputValue = computed<string>({
-  get: () => inputControlled() ? inputModel.value ?? '' : uncontrolledInput.value,
+  get: () => (inputControlled() ? (inputModel.value ?? '') : uncontrolledInput.value),
   set: (value) => {
     uncontrolledInput.value = value
     inputModel.value = value
@@ -276,8 +303,7 @@ let openingFromInput = false
 const matches = computed(() => {
   const text = inputValue.value
   const filter = props.filter
-  if (filter === false || showAll.value)
-    return (_item: ListBoxItem) => true
+  if (filter === false || showAll.value) return (_item: ListBoxItem) => true
   return (item: ListBoxItem) => (filter ?? contains)(itemText(item), text)
 })
 const liveBlocks = computed(() => filterEntries(props.items, matches.value))
@@ -288,21 +314,19 @@ const visibleCount = computed(() => countRows(blocks.value))
 // What the open checks see: the filtered list of the current text (RAC `filteredCollection`)
 const filteredCount = computed(() => {
   const filter = props.filter
-  if (filter === false)
-    return options.value.length
-  return options.value.filter(item => (filter ?? contains)(itemText(item), inputValue.value)).length
+  if (filter === false) return options.value.length
+  return options.value.filter((item) => (filter ?? contains)(itemText(item), inputValue.value))
+    .length
 })
 
 // ---- Open state (the `open` prop wins when bound) ---------------------------------------------------------------
 const uncontrolledOpen = ref(props.defaultOpen ?? false)
 const isOpen = computed(() => (props.open ?? uncontrolledOpen.value) && !disabled.value)
 watch([liveBlocks, isOpen], ([live, open]) => {
-  if (open)
-    blocks.value = live
+  if (open) blocks.value = live
 })
 function setOpenState(value: boolean) {
-  if (value === isOpen.value)
-    return
+  if (value === isOpen.value) return
   uncontrolledOpen.value = value
   emit('update:open', value)
 }
@@ -311,12 +335,14 @@ type FocusStrategy = 'first' | 'last' | null
 type OpenTrigger = 'focus' | 'input' | 'manual'
 // RAC `state.open(focusStrategy, trigger)`
 function open(strategy: FocusStrategy, trigger: OpenTrigger) {
-  if (disabled.value || props.readonly)
-    return
+  if (disabled.value || props.readonly) return
   const displayAll = trigger === 'manual' || (trigger === 'focus' && props.menuTrigger === 'focus')
-  if (props.allowsEmptyCollection || filteredCount.value > 0 || (displayAll && options.value.length > 0)) {
-    if (displayAll && !isOpen.value)
-      showAll.value = true
+  if (
+    props.allowsEmptyCollection ||
+    filteredCount.value > 0 ||
+    (displayAll && options.value.length > 0)
+  ) {
+    if (displayAll && !isOpen.value) showAll.value = true
     openingFromInput = trigger === 'input'
     setOpenState(true)
     openingFromInput = false
@@ -346,20 +372,15 @@ function commitCustomValue() {
 }
 function commitValue() {
   if (props.allowsCustomValue) {
-    if (inputValue.value === selectedText.value)
-      commitSelection()
-    else
-      commitCustomValue()
-  }
-  else {
+    if (inputValue.value === selectedText.value) commitSelection()
+    else commitCustomValue()
+  } else {
     commitSelection()
   }
 }
 function revert() {
-  if (props.allowsCustomValue && selectedKey.value == null)
-    commitCustomValue()
-  else
-    commitSelection()
+  if (props.allowsCustomValue && selectedKey.value == null) commitCustomValue()
+  else commitSelection()
 }
 
 // ---- Reka bridge: highlight (RAC virtual focus) -----------------------------------------------------------------
@@ -376,10 +397,8 @@ const highlighted = computed(() => listboxRef.value?.highlightedElement.value ??
 // RAC interaction modality: the highlight is focus-visible after keyboard interaction
 const keyboardModality = useKeyboardModality()
 onMounted(() => {
-  if (input.value)
-    combobox?.onInputElementChange(input.value)
-  if (isOpen.value)
-    highlightOnOpen(null)
+  if (input.value) combobox?.onInputElementChange(input.value)
+  if (isOpen.value) highlightOnOpen(null)
 })
 
 const content = useTemplateRef<{ $el: HTMLElement }>('content')
@@ -389,12 +408,9 @@ function enabledOptions(): HTMLElement[] {
 }
 function setHighlight(el: HTMLElement | null | undefined) {
   const listbox = listboxRef.value
-  if (!listbox)
-    return
-  if (el)
-    listbox.changeHighlight(el, true, false)
-  else
-    listbox.highlightedElement.value = null
+  if (!listbox) return
+  if (el) listbox.changeHighlight(el, true, false)
+  else listbox.highlightedElement.value = null
 }
 // RAC `useSelectableCollection` autoFocus: the first selected option, else first / last per strategy, else none
 // Reka's own `highlightSelected` (which falls back to the first option) runs a few ticks after a model change
@@ -406,24 +422,21 @@ async function afterRekaHighlight() {
 async function highlightOnOpen(strategy: FocusStrategy) {
   await afterRekaHighlight()
   const list = enabledOptions()
-  const selected = list.find(el => el.getAttribute('data-state') === 'checked')
-  setHighlight(selected ?? (strategy === 'first' ? list[0] : strategy === 'last' ? list.at(-1) : null))
+  const selected = list.find((el) => el.getAttribute('data-state') === 'checked')
+  setHighlight(
+    selected ?? (strategy === 'first' ? list[0] : strategy === 'last' ? list.at(-1) : null),
+  )
 }
 function navigate(key: 'ArrowDown' | 'ArrowUp' | 'Home' | 'End' | 'PageUp' | 'PageDown') {
   const list = enabledOptions()
-  if (!list.length)
-    return
+  if (!list.length) return
   const current = highlighted.value ? list.indexOf(highlighted.value) : -1
   let next: HTMLElement | undefined
-  if (key === 'Home' || key === 'PageUp')
-    next = list[0]
-  else if (key === 'End' || key === 'PageDown')
-    next = list.at(-1)
-  else if (current === -1)
-    next = key === 'ArrowDown' ? list[0] : list.at(-1)
+  if (key === 'Home' || key === 'PageUp') next = list[0]
+  else if (key === 'End' || key === 'PageDown') next = list.at(-1)
+  else if (current === -1) next = key === 'ArrowDown' ? list[0] : list.at(-1)
   // RAC doesn't wrap (`shouldFocusWrap` defaults to false)
-  else
-    next = list[Math.min(Math.max(current + (key === 'ArrowDown' ? 1 : -1), 0), list.length - 1)]
+  else next = list[Math.min(Math.max(current + (key === 'ArrowDown' ? 1 : -1), 0), list.length - 1)]
   setHighlight(next)
 }
 
@@ -438,8 +451,7 @@ const snapshot = (): [string, string] => [inputValue.value, JSON.stringify(selec
 
 function onInput(event: Event) {
   const value = (event.target as HTMLInputElement).value
-  if (props.readonly)
-    return
+  if (props.readonly) return
   inputValue.value = value
   onInputTextChange()
 }
@@ -452,82 +464,70 @@ function onInputTextChange() {
     selection.value = null
     // Reka re-highlights its first option when the model changes; RAC keeps no focused option, so Tab / Enter
     // commit the cleared value
-    if (hadSelection)
-      afterRekaHighlight().then(() => setHighlight(null))
+    if (hadSelection) afterRekaHighlight().then(() => setHighlight(null))
   }
-  if (focused.value && (filteredCount.value > 0 || props.allowsEmptyCollection) && !isOpen.value && props.menuTrigger !== 'manual')
+  if (
+    focused.value &&
+    (filteredCount.value > 0 || props.allowsEmptyCollection) &&
+    !isOpen.value &&
+    props.menuTrigger !== 'manual'
+  )
     open(null, 'input')
-  else if (isOpen.value && !props.allowsEmptyCollection && filteredCount.value === 0)
-    close()
+  else if (isOpen.value && !props.allowsEmptyCollection && filteredCount.value === 0) close()
 }
 
 function onFocus(event: FocusEvent) {
   focusVisible.value = event.target instanceof Element && event.target.matches(':focus-visible')
-  if (focused.value)
-    return
+  if (focused.value) return
   focused.value = true
   valueOnFocus = snapshot()
-  if (props.menuTrigger === 'focus' && !suppressFocusOpen)
-    open(null, 'focus')
+  if (props.menuTrigger === 'focus' && !suppressFocusOpen) open(null, 'focus')
 }
 function onBlur(event: FocusEvent) {
   focusVisible.value = false
   const next = event.relatedTarget as Node | null
   // Focus moving to the trigger or into the popover isn't a blur of the field
-  if (next && (rootEl()?.contains(next) || content.value?.$el?.contains?.(next)))
-    return
+  if (next && (rootEl()?.contains(next) || content.value?.$el?.contains?.(next))) return
   focused.value = false
   commitValue()
   const now = snapshot()
-  if (now[0] !== valueOnFocus[0] || now[1] !== valueOnFocus[1])
-    commitValidation()
+  if (now[0] !== valueOnFocus[0] || now[1] !== valueOnFocus[1]) commitValidation()
 }
 
 function selectHighlighted() {
   const el = highlighted.value
-  if (el?.isConnected)
-    el.click()
+  if (el?.isConnected) el.click()
 }
 function onKeydown(event: KeyboardEvent) {
-  if (event.isComposing || props.readonly)
-    return
+  if (event.isComposing || props.readonly) return
   switch (event.key) {
     case 'Enter': {
-      if (isOpen.value)
-        event.preventDefault()
+      if (isOpen.value) event.preventDefault()
       if (isOpen.value && highlighted.value) {
         const value = itemValueOf(highlighted.value)
         // Re-picking the selected option just commits
-        if (!multiple.value && value !== undefined && value === selectedKey.value)
-          commitSelection()
-        else
-          selectHighlighted()
-      }
-      else {
+        if (!multiple.value && value !== undefined && value === selectedKey.value) commitSelection()
+        else selectHighlighted()
+      } else {
         commitValue()
       }
       break
     }
     case 'Tab':
       if (isOpen.value) {
-        if (highlighted.value)
-          selectHighlighted()
-        else
-          commitValue()
+        if (highlighted.value) selectHighlighted()
+        else commitValue()
       }
       break
     case 'Escape':
-      if (isOpen.value || inputValue.value !== selectedText.value)
-        event.preventDefault()
+      if (isOpen.value || inputValue.value !== selectedText.value) event.preventDefault()
       revert()
       break
     case 'ArrowDown':
     case 'ArrowUp':
       event.preventDefault()
-      if (!isOpen.value)
-        open(event.key === 'ArrowDown' ? 'first' : 'last', 'manual')
-      else
-        navigate(event.key)
+      if (!isOpen.value) open(event.key === 'ArrowDown' ? 'first' : 'last', 'manual')
+      else navigate(event.key)
       break
     case 'Home':
     case 'End':
@@ -547,52 +547,46 @@ function onKeydown(event: KeyboardEvent) {
 const valueAttr = 'data-combo-box-value'
 function itemValueOf(el: HTMLElement): ListBoxValue | undefined {
   const raw = el.getAttribute(valueAttr)
-  if (raw == null)
-    return undefined
-  return options.value.find(item => String(item.value) === raw)?.value
+  if (raw == null) return undefined
+  return options.value.find((item) => String(item.value) === raw)?.value
 }
 
 // ---- Trigger button (RAC: press start toggles, focus stays in the input) ----------------------------------------
 let suppressFocusOpen = false
 const triggerHovered = ref(false)
 function pressTrigger(strategy: FocusStrategy) {
-  if (disabled.value || props.readonly)
-    return
+  if (disabled.value || props.readonly) return
   const wasOpen = isOpen.value
   suppressFocusOpen = true
   input.value?.focus()
   suppressFocusOpen = false
-  if (wasOpen)
-    close()
-  else
-    open(strategy, 'manual')
+  if (wasOpen) close()
+  else open(strategy, 'manual')
 }
 function onTriggerPointerdown(event: PointerEvent) {
-  if (event.button !== 0)
-    return
+  if (event.button !== 0) return
   event.preventDefault()
   pressTrigger(null)
 }
 function onTriggerClick(event: MouseEvent) {
   // Keyboard / programmatic clicks (pointer presses are handled on pointerdown)
-  if (event.detail === 0)
-    pressTrigger('first')
+  if (event.detail === 0) pressTrigger('first')
 }
 
 // ---- Selection from the list (Reka ComboboxItem / ListboxRoot) --------------------------------------------------
 const pressRelease = usePressRelease()
-const rekaValue = computed(() => multiple.value ? selectedValues.value : (selectedKey.value ?? undefined))
+const rekaValue = computed(() =>
+  multiple.value ? selectedValues.value : (selectedKey.value ?? undefined),
+)
 function onRekaValue(value: unknown) {
   if (multiple.value) {
-    selection.value = Array.isArray(value) ? value as ListBoxValue[] : []
+    selection.value = Array.isArray(value) ? (value as ListBoxValue[]) : []
     // RAC resets the text and keeps the popover open. Reka keeps the picked option highlighted; RAC drops the
     // virtual focus after a pointer pick and keeps it after a keyboard one
     inputValue.value = ''
     showAll.value = false
-    if (!keyboardModality.value)
-      afterRekaHighlight().then(() => setHighlight(null))
-  }
-  else {
+    if (!keyboardModality.value) afterRekaHighlight().then(() => setHighlight(null))
+  } else {
     const key = (value as ListBoxValue | undefined) ?? null
     selection.value = key
     resetInputValue(key)
@@ -602,10 +596,8 @@ function onRekaValue(value: unknown) {
 function onRekaOpen(value: boolean) {
   // Reka closes on single selection and on dismiss (outside press, Escape, focus outside)
   if (!value) {
-    if (focused.value && document.activeElement === input.value)
-      close()
-    else
-      commitValue()
+    if (focused.value && document.activeElement === input.value) close()
+    else commitValue()
   }
 }
 
@@ -615,21 +607,24 @@ watch(selectedText, () => {
     uncontrolledInput.value = selectedText.value
 })
 // Opened from outside (`v-model:open`): show every option, like RAC's manual open
-watch(isOpen, (value) => {
-  if (value && !openingFromInput)
-    showAll.value = true
-}, { flush: 'sync' })
+watch(
+  isOpen,
+  (value) => {
+    if (value && !openingFromInput) showAll.value = true
+  },
+  { flush: 'sync' },
+)
 watch(disabled, (disabled) => {
-  if (disabled)
-    close()
+  if (disabled) close()
 })
 
 // ---- Validation ---------------------------------------------------------------------------------------------------
 const { validation, commitValidation } = useFieldValidation<ComboBoxValidationValue>({
   formField: props,
-  value: () => multiple.value && selectedValues.value.length === 0
-    ? null
-    : { inputValue: inputValue.value, value: selection.value, selectedKey: selectedKey.value },
+  value: () =>
+    multiple.value && selectedValues.value.length === 0
+      ? null
+      : { inputValue: inputValue.value, value: selection.value, selectedKey: selectedKey.value },
   validate: () => props.validate,
   invalid: () => props.invalid,
   validationBehavior: () => props.validationBehavior,
@@ -637,12 +632,18 @@ const { validation, commitValidation } = useFieldValidation<ComboBoxValidationVa
   root: () => rootEl(),
   onReset: () => {
     const value = reset()
-    inputValue.value = props.defaultInputValue ?? (multiple.value ? '' : resolveItemText(value as ListBoxValue | null))
+    inputValue.value =
+      props.defaultInputValue ??
+      (multiple.value ? '' : resolveItemText(value as ListBoxValue | null))
   },
 })
 const invalid = computed(() => validation.value.isInvalid)
-const nativeRequired = computed(() => !!props.required && (props.validationBehavior ?? 'native') === 'native'
-  && (!multiple.value || selectedValues.value.length === 0))
+const nativeRequired = computed(
+  () =>
+    !!props.required &&
+    (props.validationBehavior ?? 'native') === 'native' &&
+    (!multiple.value || selectedValues.value.length === 0),
+)
 
 // ---- Ids / ARIA ---------------------------------------------------------------------------------------------------
 const attrs = useAttrs()
@@ -653,32 +654,55 @@ const listboxId = `${autoId}-listbox`
 const valueId = `${autoId}-value`
 const showValue = computed(() => multiple.value || !!slots.value)
 // Chrome ids derive from `autoId` even with an `id` prop (that one names the input)
-const { labelId, hasLabel, describedBy, FieldLabel, FieldDescription, FieldError } = useFieldChrome({
-  props,
-  baseId: autoId,
-  slots,
-  invalid,
-  validation,
-  disabled,
-  required: () => props.required,
-  hideDescriptionWhenInvalid: true,
-  ariaDescribedBy: () => attrs['aria-describedby'] as string | undefined,
-  describedByIds: () => [showValue.value && valueId],
-})
-const inputLabelledBy = computed(() => (attrs['aria-labelledby'] as string | undefined) ?? (hasLabel.value ? labelId.value : undefined))
+const { labelId, hasLabel, describedBy, FieldLabel, FieldDescription, FieldError } = useFieldChrome(
+  {
+    props,
+    baseId: autoId,
+    slots,
+    invalid,
+    validation,
+    disabled,
+    required: () => props.required,
+    hideDescriptionWhenInvalid: true,
+    ariaDescribedBy: () => attrs['aria-describedby'] as string | undefined,
+    describedByIds: () => [showValue.value && valueId],
+  },
+)
+const inputLabelledBy = computed(
+  () =>
+    (attrs['aria-labelledby'] as string | undefined) ??
+    (hasLabel.value ? labelId.value : undefined),
+)
 const rootAttrs = computed(() => {
-  const { 'aria-label': _label, 'aria-labelledby': _labelledby, 'aria-describedby': _describedby, ...rest } = attrs
+  const {
+    'aria-label': _label,
+    'aria-labelledby': _labelledby,
+    'aria-describedby': _describedby,
+    ...rest
+  } = attrs
   return rest
 })
 const submitText = computed(() => props.allowsCustomValue || props.formValue === 'text')
-const hiddenValues = computed(() => selectedValues.value.length ? selectedValues.value : [''])
+const hiddenValues = computed(() => (selectedValues.value.length ? selectedValues.value : ['']))
 
 // ---- Classes ------------------------------------------------------------------------------------------------------
 const ui = useComponentUI('comboBox', theme, () => ({ fullWidth: props.fullWidth }))
-const inputUi = useComponentUI('input', inputTheme, () => ({ variant: props.variant, fullWidth: false }))
+const inputUi = useComponentUI('input', inputTheme, () => ({
+  variant: props.variant,
+  fullWidth: false,
+}))
 const listBoxUi = useComponentUI('listBox', listBoxTheme, () => ({}))
-const rowSlots = ['item', 'item-leading', 'item-label', 'item-description', 'item-trailing', 'section-label', 'empty', 'loading'] as const
-const forwarded = computed(() => rowSlots.filter(name => slots[name]))
+const rowSlots = [
+  'item',
+  'item-leading',
+  'item-label',
+  'item-description',
+  'item-trailing',
+  'section-label',
+  'empty',
+  'loading',
+] as const
+const forwarded = computed(() => rowSlots.filter((name) => slots[name]))
 // One stable object (reactive unwraps the ref): a fresh object per change would re-render every option
 const virtualFocus = reactive({ keyboard: keyboardModality })
 // RAC `shouldFocusOnHover`: hover moves the virtual focus unless the last interaction was a keyboard one
@@ -761,7 +785,7 @@ function optionAttrs(row: CollectionRow) {
         @keydown="onKeydown"
         @focus="onFocus"
         @blur="onBlur"
-      >
+      />
       <button
         :id="triggerId"
         type="button"
@@ -784,8 +808,22 @@ function optionAttrs(row: CollectionRow) {
         @pointerleave="triggerHovered = false"
       >
         <slot name="indicator" :open="isOpen">
-          <svg aria-hidden="true" data-slot="combo-box-trigger-default-icon" fill="none" height="16" role="presentation" viewBox="0 0 16 16" width="16" xmlns="http://www.w3.org/2000/svg">
-            <path clip-rule="evenodd" d="M2.97 5.47a.75.75 0 0 1 1.06 0L8 9.44l3.97-3.97a.75.75 0 1 1 1.06 1.06l-4.5 4.5a.75.75 0 0 1-1.06 0l-4.5-4.5a.75.75 0 0 1 0-1.06" fill="currentColor" fill-rule="evenodd" />
+          <svg
+            aria-hidden="true"
+            data-slot="combo-box-trigger-default-icon"
+            fill="none"
+            height="16"
+            role="presentation"
+            viewBox="0 0 16 16"
+            width="16"
+            xmlns="http://www.w3.org/2000/svg"
+          >
+            <path
+              clip-rule="evenodd"
+              d="M2.97 5.47a.75.75 0 0 1 1.06 0L8 9.44l3.97-3.97a.75.75 0 1 1 1.06 1.06l-4.5 4.5a.75.75 0 0 1-1.06 0l-4.5-4.5a.75.75 0 0 1 0-1.06"
+              fill="currentColor"
+              fill-rule="evenodd"
+            />
           </svg>
         </slot>
       </button>
@@ -797,12 +835,24 @@ function optionAttrs(row: CollectionRow) {
       :data-placeholder="isPlaceholder ? 'true' : undefined"
       :class="ui.value({ class: props.ui?.value })"
     >
-      <slot name="value" :selected-items="selectedItems" :is-placeholder="isPlaceholder" :text="valueText">{{ valueText }}</slot>
+      <slot
+        name="value"
+        :selected-items="selectedItems"
+        :is-placeholder="isPlaceholder"
+        :text="valueText"
+        >{{ valueText }}</slot
+      >
     </div>
     <FieldDescription />
     <FieldError />
     <template v-if="name && !submitText">
-      <input v-for="(value, i) in hiddenValues" :key="i" type="hidden" :name="name" :value="value">
+      <input
+        v-for="(value, i) in hiddenValues"
+        :key="i"
+        type="hidden"
+        :name="name"
+        :value="value"
+      />
     </template>
     <ComboboxPortal :disabled="portalTarget.disabled" :to="portalTarget.to">
       <ComboboxContent

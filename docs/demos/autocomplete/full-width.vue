@@ -28,9 +28,7 @@ const selectedKey = ref<string | null>(null)
       search-placeholder="Search states..."
       :items="items"
     >
-      <template #empty>
-        No results found
-      </template>
+      <template #empty> No results found </template>
     </Autocomplete>
   </Surface>
 </template>

@@ -3,12 +3,16 @@
 // Shiki is loaded on demand; until the first highlight is ready, the loading skeleton of `code-panel.tsx` shows.
 import { Skeleton } from '@hareui/vue'
 import { onBeforeUnmount, ref, shallowRef, watch } from 'vue'
+
 import { useColorMode } from '../composables/colorMode'
 
-const props = withDefaults(defineProps<{ code: string, lang?: string, showLineNumbers?: boolean }>(), {
-  lang: 'tsx',
-  showLineNumbers: true,
-})
+const props = withDefaults(
+  defineProps<{ code: string; lang?: string; showLineNumbers?: boolean }>(),
+  {
+    lang: 'tsx',
+    showLineNumbers: true,
+  },
+)
 
 const { isDark } = useColorMode()
 
@@ -36,8 +40,7 @@ async function highlight() {
         const theme = isDark.value ? 'github-dark' : 'github-light'
         try {
           result = await codeToHtml(code, { lang: props.lang, theme })
-        }
-        catch {
+        } catch {
           result = await codeToHtml(code, { lang: 'text', theme })
         }
       }
@@ -45,8 +48,7 @@ async function highlight() {
       html.value = result
       loaded.value = true
     } while (dirty)
-  }
-  finally {
+  } finally {
     running = false
   }
 }
@@ -56,7 +58,21 @@ onBeforeUnmount(() => (unmounted = true))
 
 // 15 bars, widths as in HeroUI's `CodeLoadingSkeleton`
 const SKELETON_WIDTHS = [
-  'w-3/4', 'w-1/2', 'w-5/6', 'w-2/3', 'w-4/5', 'w-1/3', 'w-3/5', 'w-2/5', 'w-1/5', 'w-4/5', 'w-3/5', 'w-2/5', 'w-1/5', 'w-4/5', 'w-3/5',
+  'w-3/4',
+  'w-1/2',
+  'w-5/6',
+  'w-2/3',
+  'w-4/5',
+  'w-1/3',
+  'w-3/5',
+  'w-2/5',
+  'w-1/5',
+  'w-4/5',
+  'w-3/5',
+  'w-2/5',
+  'w-1/5',
+  'w-4/5',
+  'w-3/5',
 ]
 </script>
 

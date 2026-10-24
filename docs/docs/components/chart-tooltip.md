@@ -61,14 +61,14 @@ Inside a chart, `ChartTooltip` renders `ChartTooltipContent` for the hovered poi
 </template>
 ```
 
-| `ui` key | `data-slot` | Element | Description |
-|---|---|---|---|
-| `base` | `chart-tooltip` | `<div>` | The panel |
-| `header` | `chart-tooltip-header` | `<div>` | Title row, the hovered category |
-| `item` | `chart-tooltip-item` | `<div>` | One row per series |
-| `indicator` | `chart-tooltip-indicator` | `<span>` | Color marker, a dot or a line |
-| `label` | `chart-tooltip-label` | `<span>` | Series name |
-| `value` | `chart-tooltip-value` | `<span>` | Series value |
+| `ui` key    | `data-slot`               | Element  | Description                     |
+| ----------- | ------------------------- | -------- | ------------------------------- |
+| `base`      | `chart-tooltip`           | `<div>`  | The panel                       |
+| `header`    | `chart-tooltip-header`    | `<div>`  | Title row, the hovered category |
+| `item`      | `chart-tooltip-item`      | `<div>`  | One row per series              |
+| `indicator` | `chart-tooltip-indicator` | `<span>` | Color marker, a dot or a line   |
+| `label`     | `chart-tooltip-label`     | `<span>` | Series name                     |
+| `value`     | `chart-tooltip-value`     | `<span>` | Series value                    |
 
 ## Examples
 
@@ -121,16 +121,18 @@ Use `class` for the panel and `ui` for its parts. Keys in `ui` also apply to par
 Override the `chartTooltip` theme app-wide with `createHareUI`:
 
 ```ts
-app.use(createHareUI({
-  ui: {
-    chartTooltip: {
-      slots: {
-        base: 'rounded-xl',
-        value: 'font-medium',
+app.use(
+  createHareUI({
+    ui: {
+      chartTooltip: {
+        slots: {
+          base: 'rounded-xl',
+          value: 'font-medium',
+        },
       },
     },
-  },
-}))
+  }),
+)
 ```
 
 ## Styling Reference
@@ -149,7 +151,7 @@ app.use(createHareUI({
 The panel sets `[data-indicator="dot"]` or `[data-indicator="line"]`, so you can target either shape from CSS:
 
 ```css
-[data-slot="chart-tooltip"][data-indicator="line"] [data-slot="chart-tooltip-value"] {
+[data-slot='chart-tooltip'][data-indicator='line'] [data-slot='chart-tooltip-value'] {
   font-weight: 500;
 }
 ```

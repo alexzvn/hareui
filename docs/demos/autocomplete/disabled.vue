@@ -33,9 +33,7 @@ const countries: ListBoxItem[] = [
       default-value="california"
       :items="items"
     >
-      <template #empty>
-        No results found
-      </template>
+      <template #empty> No results found </template>
     </Autocomplete>
     <Autocomplete
       disabled
@@ -49,9 +47,7 @@ const countries: ListBoxItem[] = [
       search-placeholder="Search countries..."
       :items="countries"
     >
-      <template #empty>
-        No results found
-      </template>
+      <template #empty> No results found </template>
     </Autocomplete>
   </div>
 </template>

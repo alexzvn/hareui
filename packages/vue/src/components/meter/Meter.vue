@@ -67,6 +67,7 @@ export interface MeterSlots {
 <script setup lang="ts">
 import { useId } from 'reka-ui'
 import { computed } from 'vue'
+
 import { useComponentUI } from '../../composables/useComponentUI'
 import { useRangeValue } from '../../composables/useRangeValue'
 import labelTheme from '../label/theme'
@@ -84,7 +85,10 @@ const labelUi = useComponentUI('label', labelTheme, () => ({}))
 const labelId = useId(undefined, 'hareui-meter-label')
 
 const range = useRangeValue(() => props)
-const state = computed<MeterSlotProps>(() => ({ percentage: range.value.percentage, valueText: range.value.valueText }))
+const state = computed<MeterSlotProps>(() => ({
+  percentage: range.value.percentage,
+  valueText: range.value.valueText,
+}))
 
 const hasLabel = computed(() => !!props.label || !!slots.label)
 const hasOutput = computed(() => props.showOutput ?? (hasLabel.value || !!slots.output))
@@ -114,7 +118,11 @@ const hasOutput = computed(() => props.showOutput ?? (hasLabel.value || !!slots.
       <slot name="output" v-bind="state">{{ state.valueText }}</slot>
     </span>
     <div data-slot="meter-track" :class="ui.track({ class: props.ui?.track })">
-      <div data-slot="meter-fill" :class="ui.fill({ class: props.ui?.fill })" :style="{ width: `${state.percentage}%` }" />
+      <div
+        data-slot="meter-fill"
+        :class="ui.fill({ class: props.ui?.fill })"
+        :style="{ width: `${state.percentage}%` }"
+      />
     </div>
   </div>
 </template>

@@ -29,4 +29,6 @@ export function useKeyboardModality(): Readonly<Ref<boolean>> {
  * The modality ListBox options read. A component whose list mounts after the press that opens it (Select's popover)
  * provides its own, tracked since before that press; ListBox otherwise provides one for its options.
  */
-export const keyboardModalityKey: InjectionKey<Readonly<Ref<boolean>>> = Symbol('hareui-keyboard-modality')
+export const keyboardModalityKey: InjectionKey<Readonly<Ref<boolean>>> = Symbol(
+  'hareui-keyboard-modality',
+)

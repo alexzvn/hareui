@@ -20,15 +20,63 @@ function points(values: number[], span: number, unit: 'hour' | 'day' | 'week'): 
   })
 }
 
-const ranges: Record<Range, { total: string, change: string, data: Point[] }> = {
-  '24H': { total: '18,240', change: '+96 (0.5%)', data: points([18144, 18150, 18149, 18162, 18171, 18168, 18183, 18190, 18204, 18199, 18216, 18229, 18240], 24, 'hour') },
-  '7D': { total: '18,240', change: '+410 (2.3%)', data: points([17830, 17874, 17901, 17962, 17950, 18031, 18088, 18102, 18175, 18240], 7, 'day') },
-  '30D': { total: '18,240', change: '+640 (3.6%)', data: points([17600, 17580, 17660, 17720, 17690, 17810, 17870, 17840, 17950, 18020, 17990, 18110, 18160, 18240], 30, 'day') },
-  '90D': { total: '18,240', change: '+1,920 (11.8%)', data: points([16320, 16410, 16380, 16620, 16790, 16740, 17030, 17210, 17160, 17480, 17690, 17820, 18010, 18240], 90, 'day') },
-  '1Y': { total: '18,240', change: '+7,105 (63.8%)', data: points([11135, 11620, 12240, 12110, 12980, 13650, 13420, 14380, 15210, 15030, 16140, 16890, 17540, 18240], 52, 'week') },
+const ranges: Record<Range, { total: string; change: string; data: Point[] }> = {
+  '24H': {
+    total: '18,240',
+    change: '+96 (0.5%)',
+    data: points(
+      [18144, 18150, 18149, 18162, 18171, 18168, 18183, 18190, 18204, 18199, 18216, 18229, 18240],
+      24,
+      'hour',
+    ),
+  },
+  '7D': {
+    total: '18,240',
+    change: '+410 (2.3%)',
+    data: points([17830, 17874, 17901, 17962, 17950, 18031, 18088, 18102, 18175, 18240], 7, 'day'),
+  },
+  '30D': {
+    total: '18,240',
+    change: '+640 (3.6%)',
+    data: points(
+      [
+        17600, 17580, 17660, 17720, 17690, 17810, 17870, 17840, 17950, 18020, 17990, 18110, 18160,
+        18240,
+      ],
+      30,
+      'day',
+    ),
+  },
+  '90D': {
+    total: '18,240',
+    change: '+1,920 (11.8%)',
+    data: points(
+      [
+        16320, 16410, 16380, 16620, 16790, 16740, 17030, 17210, 17160, 17480, 17690, 17820, 18010,
+        18240,
+      ],
+      90,
+      'day',
+    ),
+  },
+  '1Y': {
+    total: '18,240',
+    change: '+7,105 (63.8%)',
+    data: points(
+      [
+        11135, 11620, 12240, 12110, 12980, 13650, 13420, 14380, 15210, 15030, 16140, 16890, 17540,
+        18240,
+      ],
+      52,
+      'week',
+    ),
+  },
 }
 
-const items: TabsItem[] = (Object.keys(ranges) as Range[]).map(range => ({ label: range, value: range }))
+const items: TabsItem[] = (Object.keys(ranges) as Range[]).map((range) => ({
+  label: range,
+  value: range,
+}))
 
 const range = ref<Range>('30D')
 const current = computed(() => ranges[range.value])
@@ -41,7 +89,10 @@ function formatSubscribers(value: number) {
 </script>
 
 <template>
-  <Card class="w-full max-w-[520px] rounded-2xl" :ui="{ header: 'flex-row items-start justify-between' }">
+  <Card
+    class="w-full max-w-[520px] rounded-2xl"
+    :ui="{ header: 'flex-row items-start justify-between' }"
+  >
     <template #header>
       <div class="flex flex-col gap-3">
         <h3 class="text-base font-medium text-foreground">Podcast Subscribers</h3>

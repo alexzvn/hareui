@@ -15,7 +15,11 @@ const allCities = [
   { country: 'Germany', name: 'Berlin' },
   { country: 'Spain', name: 'Madrid' },
 ]
-const items: ListBoxItem[] = allCities.map(city => ({ value: city.name, label: city.name, description: city.country }))
+const items: ListBoxItem[] = allCities.map((city) => ({
+  value: city.name,
+  label: city.name,
+  description: city.country,
+}))
 
 const selectedKey = ref<string | null>(null)
 const searchText = ref('')
@@ -23,8 +27,7 @@ const isLoading = ref(false)
 // Simulate async filtering
 let timer: ReturnType<typeof setTimeout> | undefined
 watch(searchText, (text) => {
-  if (!text)
-    return
+  if (!text) return
   isLoading.value = true
   clearTimeout(timer)
   timer = setTimeout(() => {

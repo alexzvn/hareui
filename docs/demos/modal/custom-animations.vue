@@ -63,7 +63,12 @@ const animations = [
     <Modal
       v-for="animation in animations"
       :key="animation.name"
-      :ui="{ backdrop: animation.classNames.backdrop, container: animation.classNames.container, dialog: 'sm:max-w-[360px]', icon: 'bg-default text-foreground' }"
+      :ui="{
+        backdrop: animation.classNames.backdrop,
+        container: animation.classNames.container,
+        dialog: 'sm:max-w-[360px]',
+        icon: 'bg-default text-foreground',
+      }"
     >
       <Button variant="secondary">
         {{ animation.name }}
@@ -71,21 +76,15 @@ const animations = [
       <template #icon>
         <Icon class="size-5" :icon="animation.icon" />
       </template>
-      <template #title>
-        {{ animation.name }} Animation
-      </template>
+      <template #title> {{ animation.name }} Animation </template>
       <template #body>
         <p class="mt-1">
           {{ animation.description }}
         </p>
       </template>
       <template #footer="{ close }">
-        <Button variant="tertiary" @click="close">
-          Close
-        </Button>
-        <Button @click="close">
-          Try Again
-        </Button>
+        <Button variant="tertiary" @click="close"> Close </Button>
+        <Button @click="close"> Try Again </Button>
       </template>
     </Modal>
   </div>

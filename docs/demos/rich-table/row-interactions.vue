@@ -22,13 +22,19 @@ const currency = new Intl.NumberFormat('en-US', { style: 'currency', currency: '
 const columns: RichTableColumn<Payment>[] = [
   { accessorKey: 'name', header: 'Customer' },
   { accessorKey: 'status', header: 'Status', meta: { class: { td: 'capitalize' } } },
-  { accessorKey: 'amount', header: 'Amount', cell: ({ row }) => currency.format(row.original.amount) },
+  {
+    accessorKey: 'amount',
+    header: 'Amount',
+    cell: ({ row }) => currency.format(row.original.amount),
+  },
 ]
 
 const log = ref('Click, hover or right-click a row')
 
-const onSelect = (_: Event, row: RichTableRow<Payment>) => (log.value = `Selected ${row.original.name}`)
-const onHover = (_: Event, row: RichTableRow<Payment> | null) => row && (log.value = `Hovering ${row.original.name}`)
+const onSelect = (_: Event, row: RichTableRow<Payment>) =>
+  (log.value = `Selected ${row.original.name}`)
+const onHover = (_: Event, row: RichTableRow<Payment> | null) =>
+  row && (log.value = `Hovering ${row.original.name}`)
 
 // The context menu is a Dropdown opened on an invisible anchor placed under the pointer.
 const items = [
@@ -51,7 +57,7 @@ function onContextmenu(e: Event, row: RichTableRow<Payment>) {
 }
 
 function onAction(value: DropdownValue) {
-  log.value = `${items.find(item => item.value === value)?.label}: ${menuRow.value?.name}`
+  log.value = `${items.find((item) => item.value === value)?.label}: ${menuRow.value?.name}`
 }
 </script>
 
@@ -67,7 +73,13 @@ function onAction(value: DropdownValue) {
     <p class="text-sm text-muted">
       {{ log }}
     </p>
-    <Dropdown v-model:open="menuOpen" :items="items" align="start" :side-offset="2" @action="onAction">
+    <Dropdown
+      v-model:open="menuOpen"
+      :items="items"
+      align="start"
+      :side-offset="2"
+      @action="onAction"
+    >
       <span aria-hidden="true" class="pointer-events-none absolute size-px" :style="anchor" />
     </Dropdown>
   </div>

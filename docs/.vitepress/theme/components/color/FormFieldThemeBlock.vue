@@ -1,9 +1,10 @@
 <script setup lang="ts">
 import { computed } from 'vue'
-import ThemeChip from './ThemeChip.vue'
-import ColorTooltip from './ColorTooltip.vue'
-import ColorBlock from './ColorBlock.vue'
+
 import { contrastStyle, copyColorValue } from '../../composables/useColorCopy'
+import ColorBlock from './ColorBlock.vue'
+import ColorTooltip from './ColorTooltip.vue'
+import ThemeChip from './ThemeChip.vue'
 
 export interface FormFieldColors {
   bg: string
@@ -41,10 +42,23 @@ function onForegroundClick(event: MouseEvent) {
           :style="{ backgroundColor: `var(${colors.bg})` }"
         >
           <ColorTooltip :content="colors.bgTooltip">
-            <span class="cursor-default text-base font-medium tracking-tight" :style="bgStyle">Bg</span>
+            <span class="cursor-default text-base font-medium tracking-tight" :style="bgStyle"
+              >Bg</span
+            >
           </ColorTooltip>
-          <ColorBlock has-border :bg-variable="colors.bg" :css-value="colors.bgHover" label="Hover" :tooltip="colors.bgHoverTooltip" />
-          <ColorBlock has-border :bg-variable="colors.bg" label="Focus" :tooltip="colors.bgFocusTooltip" />
+          <ColorBlock
+            has-border
+            :bg-variable="colors.bg"
+            :css-value="colors.bgHover"
+            label="Hover"
+            :tooltip="colors.bgHoverTooltip"
+          />
+          <ColorBlock
+            has-border
+            :bg-variable="colors.bg"
+            label="Focus"
+            :tooltip="colors.bgFocusTooltip"
+          />
         </div>
         <div class="flex min-w-0 flex-row gap-2 sm:w-40 sm:flex-col">
           <ColorTooltip tooltip-class="min-w-0 flex-1" :content="colors.placeholderTooltip">
@@ -53,7 +67,9 @@ function onForegroundClick(event: MouseEvent) {
               :style="{ backgroundColor: `var(${colors.placeholder})` }"
               @click="onPlaceholderClick"
             >
-              <span class="text-sm font-medium tracking-tight" :style="placeholderStyle">Placeholder</span>
+              <span class="text-sm font-medium tracking-tight" :style="placeholderStyle"
+                >Placeholder</span
+              >
             </div>
           </ColorTooltip>
           <ColorTooltip tooltip-class="min-w-0 flex-1" :content="colors.foregroundTooltip">
@@ -62,7 +78,9 @@ function onForegroundClick(event: MouseEvent) {
               :style="{ backgroundColor: `var(${colors.foreground})` }"
               @click="onForegroundClick"
             >
-              <span class="text-sm font-medium tracking-tight" :style="foregroundStyle">Foreground</span>
+              <span class="text-sm font-medium tracking-tight" :style="foregroundStyle"
+                >Foreground</span
+              >
             </div>
           </ColorTooltip>
         </div>

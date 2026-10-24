@@ -13,5 +13,11 @@ const animals: ListBoxItem[] = [
 </script>
 
 <template>
-  <ComboBox class="w-[256px]" label="Favorite Animal" placeholder="Search animals..." description="Search and select your favorite animal" :items="animals" />
+  <ComboBox
+    class="w-[256px]"
+    label="Favorite Animal"
+    placeholder="Search animals..."
+    description="Search and select your favorite animal"
+    :items="animals"
+  />
 </template>

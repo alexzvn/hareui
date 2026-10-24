@@ -13,14 +13,18 @@ const states: ListBoxItem[] = [
 ]
 
 const state = ref<string | null>('california')
-const selectedState = computed(() => states.find(s => s.value === state.value))
+const selectedState = computed(() => states.find((s) => s.value === state.value))
 </script>
 
 <template>
   <div class="space-y-2">
-    <Select v-model="state" class="w-[256px]" label="State (controlled)" placeholder="Select a state" :items="states" />
-    <p class="text-sm text-muted">
-      Selected: {{ selectedState?.label || 'None' }}
-    </p>
+    <Select
+      v-model="state"
+      class="w-[256px]"
+      label="State (controlled)"
+      placeholder="Select a state"
+      :items="states"
+    />
+    <p class="text-sm text-muted">Selected: {{ selectedState?.label || 'None' }}</p>
   </div>
 </template>

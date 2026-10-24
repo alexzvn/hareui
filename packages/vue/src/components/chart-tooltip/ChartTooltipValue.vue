@@ -20,7 +20,10 @@ const { classes, ui } = useChartTooltipContext('Value')
 </script>
 
 <template>
-  <span data-slot="chart-tooltip-value" :class="classes.value({ class: [ui()?.value, props.class] })">
+  <span
+    data-slot="chart-tooltip-value"
+    :class="classes.value({ class: [ui()?.value, props.class] })"
+  >
     <slot />
   </span>
 </template>

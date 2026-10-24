@@ -2,6 +2,7 @@ import { mount } from '@vue/test-utils'
 import { afterEach, describe, expect, it } from 'vitest'
 import type { ComponentOptions } from 'vue'
 import { h, ref } from 'vue'
+
 import type { TagGroupProps } from '../src/components/tag-group/TagGroup.vue'
 import TagGroup from '../src/components/tag-group/TagGroup.vue'
 import { expectAccessible } from './a11y'
@@ -34,7 +35,14 @@ describe('TagGroup', () => {
 
   it('selectionMode single selects one tag at a time via v-model:selected', async () => {
     const model = ref<string[]>([])
-    const w = mount(() => h(TagGroup, { items, 'selectionMode': 'single', 'selected': model.value, 'onUpdate:selected': (v: string[] | undefined) => (model.value = v ?? []) }))
+    const w = mount(() =>
+      h(TagGroup, {
+        items,
+        selectionMode: 'single',
+        selected: model.value,
+        'onUpdate:selected': (v: string[] | undefined) => (model.value = v ?? []),
+      }),
+    )
     const t = tags(w)
     await t[0]!.trigger('click')
     expect(model.value).toEqual(['news'])
@@ -50,7 +58,14 @@ describe('TagGroup', () => {
 
   it('selectionMode multiple accumulates selected ids', async () => {
     const model = ref<string[]>([])
-    const w = mount(() => h(TagGroup, { items, 'selectionMode': 'multiple', 'selected': model.value, 'onUpdate:selected': (v: string[] | undefined) => (model.value = v ?? []) }))
+    const w = mount(() =>
+      h(TagGroup, {
+        items,
+        selectionMode: 'multiple',
+        selected: model.value,
+        'onUpdate:selected': (v: string[] | undefined) => (model.value = v ?? []),
+      }),
+    )
     const t = tags(w)
     await t[0]!.trigger('click')
     await w.setProps({ selected: model.value })
@@ -75,7 +90,9 @@ describe('TagGroup', () => {
   })
 
   it('a disabled tag (own `disabled` or `disabledKeys`) cannot be selected', async () => {
-    const w = mount(TagGroup, { props: { items, selectionMode: 'multiple', disabledKeys: ['news'] } })
+    const w = mount(TagGroup, {
+      props: { items, selectionMode: 'multiple', disabledKeys: ['news'] },
+    })
     const t = tags(w)
     await t[0]!.trigger('click')
     expect(w.emitted('update:selected')).toBeUndefined()
@@ -95,7 +112,17 @@ describe('TagGroup', () => {
 
   it('Delete/Backspace on a focused tag removes it; removes the whole selection if it is selected', async () => {
     const model = ref<string[]>(['news', 'travel'])
-    const w = mount(() => h(TagGroup, { items, 'removable': true, 'selectionMode': 'multiple', 'selected': model.value, 'onUpdate:selected': (v: string[] | undefined) => (model.value = v ?? []) }), { attachTo: document.body })
+    const w = mount(
+      () =>
+        h(TagGroup, {
+          items,
+          removable: true,
+          selectionMode: 'multiple',
+          selected: model.value,
+          'onUpdate:selected': (v: string[] | undefined) => (model.value = v ?? []),
+        }),
+      { attachTo: document.body },
+    )
     const tagGroup = w.findComponent(TagGroup)
     const t = tags(w)
     // Shopping isn't selected: Backspace removes just that tag.
@@ -114,13 +141,23 @@ describe('TagGroup', () => {
     expect(button.attributes('disabled')).toBeDefined()
     await button.trigger('click')
     expect(w.emitted('remove')).toBeUndefined()
-    await t[2]!.element.dispatchEvent(new KeyboardEvent('keydown', { key: 'Delete', bubbles: true }))
+    await t[2]!.element.dispatchEvent(
+      new KeyboardEvent('keydown', { key: 'Delete', bubbles: true }),
+    )
     expect(w.emitted('remove')).toBeUndefined()
     w.unmount()
   })
 
   it('shows the error message after the description, and describes the list with both ids', () => {
-    const w = mount(TagGroup, { props: { id: 'cats', items, label: 'Categories', description: 'Pick a category', errorMessage: 'Required' } })
+    const w = mount(TagGroup, {
+      props: {
+        id: 'cats',
+        items,
+        label: 'Categories',
+        description: 'Pick a category',
+        errorMessage: 'Required',
+      },
+    })
     expect(w.find('#cats-label').text()).toBe('Categories')
     expect(w.find('#cats-description').text()).toBe('Pick a category')
     expect(w.find('#cats-error').text()).toBe('Required')
@@ -129,10 +166,12 @@ describe('TagGroup', () => {
     expect(list.attributes('aria-describedby')).toBe('cats-description cats-error')
   })
 
-  it('#removeButton replaces each remove button\'s icon and still removes its own tag', async () => {
+  it("#removeButton replaces each remove button's icon and still removes its own tag", async () => {
     const w = mount(TagGroup, {
       props: { items, removable: true },
-      slots: { removeButton: ({ item }: { item: { id: string } }) => h('i', { class: 'custom' }, item.id) },
+      slots: {
+        removeButton: ({ item }: { item: { id: string } }) => h('i', { class: 'custom' }, item.id),
+      },
     })
     const buttons = w.findAll('[data-slot=tag-remove-button]')
     expect(buttons[1]!.find('i.custom').text()).toBe('travel')
@@ -149,11 +188,15 @@ describe('TagGroup', () => {
       { id: 'shopping', label: 'Shopping' },
     ]
     const press = (el: Element, key: string, init: KeyboardEventInit = {}) =>
-      el.dispatchEvent(new KeyboardEvent('keydown', { key, bubbles: true, cancelable: true, ...init }))
+      el.dispatchEvent(
+        new KeyboardEvent('keydown', { key, bubbles: true, cancelable: true, ...init }),
+      )
     // The focused tag's label, or the element name when focus is somewhere else (e.g. `body`).
     const focusedId = () => {
       const el = document.activeElement
-      return el instanceof HTMLElement && el.dataset.slot === 'tag' ? el.textContent?.trim() : el?.tagName.toLowerCase()
+      return el instanceof HTMLElement && el.dataset.slot === 'tag'
+        ? el.textContent?.trim()
+        : el?.tagName.toLowerCase()
     }
 
     // Failed assertions skip `unmount()`; keep a leaked tree from polluting the next test's focus.
@@ -165,14 +208,18 @@ describe('TagGroup', () => {
     function mountRemovable(initial: typeof enabled) {
       const list = ref(initial)
       const removed: string[][] = []
-      const w = mount(() => h(TagGroup, {
-        items: list.value,
-        removable: true,
-        onRemove: (ids: string[]) => {
-          removed.push(ids)
-          list.value = list.value.filter(i => !ids.includes(i.id))
-        },
-      }), { attachTo: document.body })
+      const w = mount(
+        () =>
+          h(TagGroup, {
+            items: list.value,
+            removable: true,
+            onRemove: (ids: string[]) => {
+              removed.push(ids)
+              list.value = list.value.filter((i) => !ids.includes(i.id))
+            },
+          }),
+        { attachTo: document.body },
+      )
       return { w, removed }
     }
 
@@ -224,9 +271,17 @@ describe('TagGroup', () => {
     })
 
     function mountMultiple(defaultSelected: string[] = []) {
-      const w = mount(TagGroup, { props: { items, selectionMode: 'multiple', defaultSelected }, attachTo: document.body })
+      const w = mount(TagGroup, {
+        props: { items, selectionMode: 'multiple', defaultSelected },
+        attachTo: document.body,
+      })
       const t = tags(w)
-      return { w, t, el: (i: number) => t[i]!.element as HTMLElement, last: () => (w.emitted('update:selected')?.at(-1)?.[0] as string[] | undefined) }
+      return {
+        w,
+        t,
+        el: (i: number) => t[i]!.element as HTMLElement,
+        last: () => w.emitted('update:selected')?.at(-1)?.[0] as string[] | undefined,
+      }
     }
 
     it('Shift+ArrowRight extends the selection from the anchor, skipping disabled tags', async () => {
@@ -287,27 +342,45 @@ describe('TagGroup', () => {
       },
     }
     const list = ref(Array.from({ length: 20 }, (_, i) => ({ id: `t${i}`, label: `T${i}` })))
-    const onRemove = (ids: string[]) => (list.value = list.value.filter(it => !ids.includes(it.id)))
-    const w = mount(() => h(TagGroup, { items: list.value, removable: true, onRemove }), { global: { mixins: [countTagUpdates] } })
-    const removeTag = (label: string) => w.findAll('[data-slot=tag]').find(t => t.text() === label)!.get('[data-slot=tag-remove-button]').trigger('click')
+    const onRemove = (ids: string[]) =>
+      (list.value = list.value.filter((it) => !ids.includes(it.id)))
+    const w = mount(() => h(TagGroup, { items: list.value, removable: true, onRemove }), {
+      global: { mixins: [countTagUpdates] },
+    })
+    const removeTag = (label: string) =>
+      w
+        .findAll('[data-slot=tag]')
+        .find((t) => t.text() === label)!
+        .get('[data-slot=tag-remove-button]')
+        .trigger('click')
     await removeTag('T19')
     updatedTags.length = 0
     await removeTag('T10')
     expect(w.findAll('[data-slot=tag]')).toHaveLength(18)
-    expect(updatedTags.filter(t => Number(t.slice(1)) < 10)).toEqual([])
+    expect(updatedTags.filter((t) => Number(t.slice(1)) < 10)).toEqual([])
     w.unmount()
   })
 
   describe('accessibility', () => {
     /** The text an `aria-labelledby` / `aria-describedby` list points at; fails on dangling ids. */
-    const refText = (ids: string | null | undefined) => (ids ?? '').split(' ').filter(Boolean).map((id) => {
-      const el = document.getElementById(id)
-      expect(el, `#${id} exists`).not.toBeNull()
-      return el!.getAttribute('aria-label') ?? el!.textContent!.trim()
-    }).join(' ')
+    const refText = (ids: string | null | undefined) =>
+      (ids ?? '')
+        .split(' ')
+        .filter(Boolean)
+        .map((id) => {
+          const el = document.getElementById(id)
+          expect(el, `#${id} exists`).not.toBeNull()
+          return el!.getAttribute('aria-label') ?? el!.textContent!.trim()
+        })
+        .join(' ')
     const press = (el: Element, key: string, init: KeyboardEventInit = {}) =>
-      el.dispatchEvent(new KeyboardEvent('keydown', { key, bubbles: true, cancelable: true, ...init }))
-    const tabbable = (w: ReturnType<typeof mount>) => tags(w).filter(t => t.attributes('tabindex') === '0').map(t => t.text())
+      el.dispatchEvent(
+        new KeyboardEvent('keydown', { key, bubbles: true, cancelable: true, ...init }),
+      )
+    const tabbable = (w: ReturnType<typeof mount>) =>
+      tags(w)
+        .filter((t) => t.attributes('tabindex') === '0')
+        .map((t) => t.text())
 
     afterEach(() => {
       document.body.innerHTML = ''
@@ -316,7 +389,7 @@ describe('TagGroup', () => {
     it('has no axe violations: labelled, aria-label only, disabled, with a description and an error', async () => {
       const cases: Array<Pick<TagGroupProps, keyof TagGroupProps> & { 'aria-label'?: string }> = [
         { items, label: 'Categories' },
-        { 'items': items, 'aria-label': 'Categories' },
+        { items: items, 'aria-label': 'Categories' },
         { items, label: 'Categories', disabled: true },
         { items, label: 'Categories', description: 'Pick a category', errorMessage: 'Required' },
       ]
@@ -329,60 +402,120 @@ describe('TagGroup', () => {
 
     it('has no axe violations with single and multiple selection', async () => {
       for (const selectionMode of ['single', 'multiple'] as const) {
-        const w = mount(TagGroup, { props: { items, label: 'Categories', selectionMode, defaultSelected: ['travel'] }, attachTo: document.body })
+        const w = mount(TagGroup, {
+          props: { items, label: 'Categories', selectionMode, defaultSelected: ['travel'] },
+          attachTo: document.body,
+        })
         await expectAccessible(w)
         w.unmount()
       }
     })
 
     it('has no axe violations with removable tags, focused, and empty', async () => {
-      const w = mount(TagGroup, { props: { items, label: 'Categories', removable: true, selectionMode: 'multiple' }, attachTo: document.body })
+      const w = mount(TagGroup, {
+        props: { items, label: 'Categories', removable: true, selectionMode: 'multiple' },
+        attachTo: document.body,
+      })
       ;(tags(w)[1]!.element as HTMLElement).focus()
       await expectAccessible(w)
       w.unmount()
-      const empty = mount(TagGroup, { props: { items: [], label: 'Categories' }, slots: { empty: () => 'No categories' }, attachTo: document.body })
+      const empty = mount(TagGroup, {
+        props: { items: [], label: 'Categories' },
+        slots: { empty: () => 'No categories' },
+        attachTo: document.body,
+      })
       await expectAccessible(empty)
       empty.unmount()
     })
 
     it('the grid is named by the label and described by the description and error', () => {
-      const w = mount(TagGroup, { props: { items, label: 'Categories', description: 'Pick a category', errorMessage: 'Required' }, attachTo: document.body })
+      const w = mount(TagGroup, {
+        props: {
+          items,
+          label: 'Categories',
+          description: 'Pick a category',
+          errorMessage: 'Required',
+        },
+        attachTo: document.body,
+      })
       const list = w.get('[role=grid]')
       expect(refText(list.attributes('aria-labelledby'))).toBe('Categories')
       expect(refText(list.attributes('aria-describedby'))).toBe('Pick a category Required')
-      expect(tags(w).every(t => t.attributes('role') === 'row' && t.find('[role=gridcell]').exists())).toBe(true)
+      expect(
+        tags(w).every((t) => t.attributes('role') === 'row' && t.find('[role=gridcell]').exists()),
+      ).toBe(true)
       w.unmount()
     })
 
     it('each remove button is named after its own tag', () => {
-      const w = mount(TagGroup, { props: { items, label: 'Categories', removable: true }, attachTo: document.body })
-      const names = tags(w).map(t => refText(t.get('[data-slot=tag-remove-button]').attributes('aria-labelledby')))
-      expect(names).toEqual(['Remove tag News', 'Remove tag Travel', 'Remove tag Gaming', 'Remove tag Shopping'])
-      expect(tags(w).map(t => t.attributes('aria-label'))).toEqual(['News', 'Travel', 'Gaming', 'Shopping'])
+      const w = mount(TagGroup, {
+        props: { items, label: 'Categories', removable: true },
+        attachTo: document.body,
+      })
+      const names = tags(w).map((t) =>
+        refText(t.get('[data-slot=tag-remove-button]').attributes('aria-labelledby')),
+      )
+      expect(names).toEqual([
+        'Remove tag News',
+        'Remove tag Travel',
+        'Remove tag Gaming',
+        'Remove tag Shopping',
+      ])
+      expect(tags(w).map((t) => t.attributes('aria-label'))).toEqual([
+        'News',
+        'Travel',
+        'Gaming',
+        'Shopping',
+      ])
       w.unmount()
     })
 
     it('aria-selected reflects the selection only when selectable; aria-multiselectable only for multiple', async () => {
       const none = mount(TagGroup, { props: { items, label: 'Categories' } })
-      expect(tags(none).map(t => t.attributes('aria-selected'))).toEqual([undefined, undefined, undefined, undefined])
+      expect(tags(none).map((t) => t.attributes('aria-selected'))).toEqual([
+        undefined,
+        undefined,
+        undefined,
+        undefined,
+      ])
       expect(none.get('[role=grid]').attributes('aria-multiselectable')).toBeUndefined()
       none.unmount()
-      const single = mount(TagGroup, { props: { items, label: 'Categories', selectionMode: 'single', defaultSelected: ['shopping'] } })
-      expect(tags(single).map(t => t.attributes('aria-selected'))).toEqual(['false', 'false', 'false', 'true'])
+      const single = mount(TagGroup, {
+        props: {
+          items,
+          label: 'Categories',
+          selectionMode: 'single',
+          defaultSelected: ['shopping'],
+        },
+      })
+      expect(tags(single).map((t) => t.attributes('aria-selected'))).toEqual([
+        'false',
+        'false',
+        'false',
+        'true',
+      ])
       expect(single.get('[role=grid]').attributes('aria-multiselectable')).toBeUndefined()
       single.unmount()
     })
 
     it('disabled tags expose aria-disabled and are not focusable', () => {
       const w = mount(TagGroup, { props: { items, label: 'Categories', disabledKeys: ['news'] } })
-      expect(tags(w).map(t => t.attributes('aria-disabled'))).toEqual(['true', undefined, 'true', undefined])
+      expect(tags(w).map((t) => t.attributes('aria-disabled'))).toEqual([
+        'true',
+        undefined,
+        'true',
+        undefined,
+      ])
       expect(tags(w)[0]!.attributes('tabindex')).toBeUndefined()
       expect(tags(w)[2]!.attributes('tabindex')).toBeUndefined()
       w.unmount()
     })
 
     it('only one tag is in the tab order: the first enabled one, then the last focused one', async () => {
-      const w = mount(TagGroup, { props: { items, label: 'Categories', disabledKeys: ['news'] }, attachTo: document.body })
+      const w = mount(TagGroup, {
+        props: { items, label: 'Categories', disabledKeys: ['news'] },
+        attachTo: document.body,
+      })
       expect(tabbable(w)).toEqual(['Travel'])
       ;(tags(w)[1]!.element as HTMLElement).focus()
       press(document.activeElement!, 'ArrowRight')
@@ -393,7 +526,13 @@ describe('TagGroup', () => {
     })
 
     it('Home / End move focus to the first / last enabled tag; ArrowDown / ArrowUp move like Right / Left', async () => {
-      const w = mount(TagGroup, { props: { items: [...items, { id: 'music', label: 'Music', disabled: true }], label: 'Categories' }, attachTo: document.body })
+      const w = mount(TagGroup, {
+        props: {
+          items: [...items, { id: 'music', label: 'Music', disabled: true }],
+          label: 'Categories',
+        },
+        attachTo: document.body,
+      })
       const el = (i: number) => tags(w)[i]!.element as HTMLElement
       el(1).focus()
       press(el(1), 'End')
@@ -408,7 +547,10 @@ describe('TagGroup', () => {
     })
 
     it('Enter and Space toggle the focused tag; Escape clears the selection', async () => {
-      const w = mount(TagGroup, { props: { items, label: 'Categories', selectionMode: 'multiple' }, attachTo: document.body })
+      const w = mount(TagGroup, {
+        props: { items, label: 'Categories', selectionMode: 'multiple' },
+        attachTo: document.body,
+      })
       const last = () => w.emitted('update:selected')?.at(-1)?.[0]
       const el = (i: number) => tags(w)[i]!.element as HTMLElement
       el(0).focus()

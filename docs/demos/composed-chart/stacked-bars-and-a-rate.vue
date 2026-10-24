@@ -1,6 +1,6 @@
 <script setup lang="ts">
-import type { ChartComposedSeries } from '@hareui/vue/charts'
 import { Card } from '@hareui/vue'
+import type { ChartComposedSeries } from '@hareui/vue/charts'
 import { ChartLegend, ComposedChart } from '@hareui/vue/charts'
 
 const data = [
@@ -25,13 +25,28 @@ const series = {
   email: { type: 'bar', name: 'Email', barSize: 20 },
   phone: { type: 'bar', name: 'Phone', barSize: 20 },
   social: { type: 'bar', name: 'Social', barSize: 20 },
-  solved: { type: 'line', name: 'Solved same day', yAxis: 'right', strokeWidth: 1.5, valueFormatter: formatPercent },
+  solved: {
+    type: 'line',
+    name: 'Solved same day',
+    yAxis: 'right',
+    strokeWidth: 1.5,
+    valueFormatter: formatPercent,
+  },
 } satisfies Record<string, ChartComposedSeries>
-const colors = ['var(--chart-4)', 'var(--chart-3)', 'var(--chart-2)', 'var(--chart-1)', 'var(--muted)']
+const colors = [
+  'var(--chart-4)',
+  'var(--chart-3)',
+  'var(--chart-2)',
+  'var(--chart-1)',
+  'var(--muted)',
+]
 </script>
 
 <template>
-  <Card class="w-full max-w-[700px] rounded-2xl" :ui="{ header: 'flex-row flex-wrap items-center justify-between gap-2' }">
+  <Card
+    class="w-full max-w-[700px] rounded-2xl"
+    :ui="{ header: 'flex-row flex-wrap items-center justify-between gap-2' }"
+  >
     <template #header>
       <h3 class="text-base font-medium text-foreground">Support Tickets</h3>
       <ChartLegend :series="series" :colors="colors" />

@@ -18,7 +18,11 @@ const series = { parcels: { name: 'Parcels', color: 'var(--accent)' } }
 </script>
 
 <template>
-  <Card class="w-full max-w-[400px] rounded-2xl" title="Parcels Shipped" :ui="{ title: 'text-muted' }">
+  <Card
+    class="w-full max-w-[400px] rounded-2xl"
+    title="Parcels Shipped"
+    :ui="{ title: 'text-muted' }"
+  >
     <div class="flex flex-col gap-3">
       <div class="flex gap-3 self-start">
         <span class="text-3xl font-semibold text-foreground tabular-nums">1,854</span>

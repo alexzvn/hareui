@@ -13,7 +13,7 @@ const states: ListBoxItem[] = [
 ]
 
 const state = ref<string | null>('california')
-const selectedState = computed(() => states.find(s => s.value === state.value))
+const selectedState = computed(() => states.find((s) => s.value === state.value))
 </script>
 
 <template>
@@ -28,12 +28,8 @@ const selectedState = computed(() => states.find(s => s.value === state.value))
       search-placeholder="Search states..."
       :items="states"
     >
-      <template #empty>
-        No results found
-      </template>
+      <template #empty> No results found </template>
     </Autocomplete>
-    <p class="text-sm text-muted">
-      Selected: {{ selectedState?.label || 'None' }}
-    </p>
+    <p class="text-sm text-muted">Selected: {{ selectedState?.label || 'None' }}</p>
   </div>
 </template>

@@ -1,6 +1,12 @@
 <script setup lang="ts">
 import { Card } from '@hareui/vue'
-import { ChartLabel, ChartPolarAngleAxis, ChartRadialBar, ChartTooltip, RadialChart } from '@hareui/vue/charts'
+import {
+  ChartLabel,
+  ChartPolarAngleAxis,
+  ChartRadialBar,
+  ChartTooltip,
+  RadialChart,
+} from '@hareui/vue/charts'
 
 const data = [{ metric: 'CPU load', percent: 62, fill: 'var(--chart-3)' }]
 
@@ -10,7 +16,11 @@ function formatPercent(value: number | string) {
 </script>
 
 <template>
-  <Card class="w-full max-w-[280px] rounded-2xl" title="Build Server" :ui="{ title: 'text-base', content: 'items-center' }">
+  <Card
+    class="w-full max-w-[280px] rounded-2xl"
+    title="Build Server"
+    :ui="{ title: 'text-base', content: 'items-center' }"
+  >
     <RadialChart
       :data="data"
       :width="200"
@@ -25,7 +35,11 @@ function formatPercent(value: number | string) {
       <ChartPolarAngleAxis type="number" :domain="[0, 100]" :tick="false" />
       <ChartRadialBar data-key="percent" name-key="metric" background :corner-radius="12" />
       <ChartTooltip :value-formatter="formatPercent" />
-      <ChartLabel position="center" :value="formatPercent(data[0]!.percent)" class="fill-foreground text-xl font-bold" />
+      <ChartLabel
+        position="center"
+        :value="formatPercent(data[0]!.percent)"
+        class="fill-foreground text-xl font-bold"
+      />
     </RadialChart>
   </Card>
 </template>

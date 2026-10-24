@@ -1,6 +1,6 @@
 <script setup lang="ts">
-import type { DateValue } from '@internationalized/date'
 import { RangeCalendar } from '@hareui/vue'
+import type { DateValue } from '@internationalized/date'
 import { getLocalTimeZone, isToday } from '@internationalized/date'
 
 const datesWithEvents = [3, 7, 12, 15, 21, 28]

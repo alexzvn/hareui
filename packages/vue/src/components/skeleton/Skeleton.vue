@@ -1,5 +1,6 @@
 <script lang="ts">
 import type { PrimitiveProps } from 'reka-ui'
+
 import type { ComponentSlots, ComponentVariants } from '../../types/tv'
 import theme from './theme'
 
@@ -32,7 +33,9 @@ let cssAnimationCache: string | undefined | null = null
 
 function readCssAnimation(): string | undefined {
   if (cssAnimationCache === null)
-    cssAnimationCache = getComputedStyle(document.documentElement).getPropertyValue('--skeleton-animation').trim() || undefined
+    cssAnimationCache =
+      getComputedStyle(document.documentElement).getPropertyValue('--skeleton-animation').trim() ||
+      undefined
   return cssAnimationCache
 }
 </script>
@@ -40,6 +43,7 @@ function readCssAnimation(): string | undefined {
 <script setup lang="ts">
 import { Primitive } from 'reka-ui'
 import { onMounted, ref } from 'vue'
+
 import { useComponentUI } from '../../composables/useComponentUI'
 
 const props = withDefaults(defineProps<SkeletonProps>(), { as: 'div' })
@@ -52,7 +56,9 @@ onMounted(() => {
   cssAnimation.value = readCssAnimation()
 })
 
-const ui = useComponentUI('skeleton', theme, () => ({ animationType: props.animationType ?? cssAnimation.value }))
+const ui = useComponentUI('skeleton', theme, () => ({
+  animationType: props.animationType ?? cssAnimation.value,
+}))
 </script>
 
 <template>

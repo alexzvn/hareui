@@ -1,12 +1,13 @@
 <script setup lang="ts">
+import { injectListboxRootContext, ListboxItem } from 'reka-ui'
 // Internal: one ListBox item. Not exported.
 import type { Component } from 'vue'
-import type { ListBoxItem, ListBoxItemSlotProps, ListBoxSlots, ListBoxValue } from './ListBox.vue'
-import { injectListboxRootContext, ListboxItem } from 'reka-ui'
 import { computed, inject, onMounted, onUpdated, ref, useId, useTemplateRef } from 'vue'
+
 import { keyboardModalityKey } from '../../composables/useKeyboardModality'
 import Description from '../description/Description.vue'
 import Label from '../label/Label.vue'
+import type { ListBoxItem, ListBoxItemSlotProps, ListBoxSlots, ListBoxValue } from './ListBox.vue'
 
 const props = defineProps<{
   item: ListBoxItem
@@ -17,19 +18,22 @@ const props = defineProps<{
   indicator: boolean
   listDisabled: boolean
   /** Slot class functions of the parent ListBox; `variant` is applied per item. */
-  classes: Record<'item' | 'indicator', (options?: { variant?: string, class?: any }) => string>
-  ui?: { item?: any, indicator?: any }
+  classes: Record<'item' | 'indicator', (options?: { variant?: string; class?: any }) => string>
+  ui?: { item?: any; indicator?: any }
   /** The Reka item primitive to render (ComboBox passes `ComboboxItem`). */
   component?: Component
   /**
    * Virtual focus (ComboBox: DOM focus stays in the input). Focus state follows Reka's highlight; `keyboard` tells
    * whether the last interaction was a keyboard one, so the highlight shows as focus-visible (RAC modality).
    */
-  virtualFocus?: { keyboard: boolean, value?: ListBoxValue | null }
+  virtualFocus?: { keyboard: boolean; value?: ListBoxValue | null }
   /** Mouse hover focuses the option (RAC `shouldFocusOnHover`). */
   focusOnHover?: boolean
 }>()
-const emit = defineEmits<{ action: [event: Event], select: [event: CustomEvent<{ originalEvent?: Event }>] }>()
+const emit = defineEmits<{
+  action: [event: Event]
+  select: [event: CustomEvent<{ originalEvent?: Event }>]
+}>()
 const slots = defineSlots<Omit<ListBoxSlots, 'section-label' | 'empty'>>()
 
 // RAC interaction states that Reka doesn't expose
@@ -46,8 +50,7 @@ const option = useTemplateRef<{ $el: HTMLElement }>('option')
 // RAC omits `aria-selected` when nothing can be selected; Reka always renders it (as `false`), and never rewrites an
 // unchanged value, so removing it after each render sticks
 function dropSelectedState() {
-  if (!props.selectable)
-    option.value?.$el.removeAttribute?.('aria-selected')
+  if (!props.selectable) option.value?.$el.removeAttribute?.('aria-selected')
 }
 onMounted(dropSelectedState)
 onUpdated(dropSelectedState)
@@ -67,21 +70,32 @@ function onPointerleave() {
 
 function onPointermove(event: PointerEvent) {
   const el = option.value?.$el
-  if (props.focusOnHover && event.pointerType !== 'touch' && !state.value.disabled && el && document.activeElement !== el)
+  if (
+    props.focusOnHover &&
+    event.pointerType !== 'touch' &&
+    !state.value.disabled &&
+    el &&
+    document.activeElement !== el
+  )
     el.focus({ preventScroll: true })
 }
 
 // A disabled option isn't focusable: keep focus on the focused option instead of the list container (RAC)
 function onMousedown(event: MouseEvent) {
-  if (state.value.disabled)
-    event.preventDefault()
+  if (state.value.disabled) event.preventDefault()
 }
 // With `virtualFocus.value` the owner tracks focus by value (virtualized rows unmount), else by Reka's highlighted element
-const highlighted = computed(() => props.virtualFocus && 'value' in props.virtualFocus
-  ? props.virtualFocus.value === props.item.value
-  : !!listbox && !!option.value && listbox.highlightedElement.value === option.value.$el)
-const isFocused = computed(() => props.virtualFocus ? highlighted.value : focused.value)
-const isFocusVisible = computed(() => props.virtualFocus ? highlighted.value && props.virtualFocus.keyboard : focused.value && !!keyboardModality?.value)
+const highlighted = computed(() =>
+  props.virtualFocus && 'value' in props.virtualFocus
+    ? props.virtualFocus.value === props.item.value
+    : !!listbox && !!option.value && listbox.highlightedElement.value === option.value.$el,
+)
+const isFocused = computed(() => (props.virtualFocus ? highlighted.value : focused.value))
+const isFocusVisible = computed(() =>
+  props.virtualFocus
+    ? highlighted.value && props.virtualFocus.keyboard
+    : focused.value && !!keyboardModality?.value,
+)
 
 // RAC useOption: a rich item is named by its label and described by its description
 const labelId = useId()
@@ -98,8 +112,7 @@ const state = computed<ListBoxItemSlotProps>(() => ({
 
 function onSelect(event: CustomEvent<{ originalEvent?: Event }>) {
   emit('select', event)
-  if (event.defaultPrevented)
-    return
+  if (event.defaultPrevented) return
   if (!props.selectable) {
     event.preventDefault()
     emit('action', event)

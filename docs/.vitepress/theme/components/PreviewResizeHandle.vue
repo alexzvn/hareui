@@ -12,13 +12,13 @@ const props = defineProps<{
   /** Distance of the frame's right edge from the stage's left edge (px); `undefined` pins the handle to the right. */
   edge?: number
 }>()
-const emit = defineEmits<{ resize: [width: number], preload: [] }>()
+const emit = defineEmits<{ resize: [width: number]; preload: [] }>()
 /** True while the pointer drags the handle. */
 const dragging = defineModel<boolean>('dragging', { default: false })
 
 const clamp = (value: number) => Math.round(Math.min(props.max, Math.max(props.min, value)))
 
-let start: { x: number, width: number } | undefined
+let start: { x: number; width: number } | undefined
 function onPointerDown(event: PointerEvent) {
   if (event.button !== 0) return
   // No text selection or focus change: the drag owns the pointer.
@@ -70,7 +70,10 @@ function onKeydown(event: KeyboardEvent) {
   >
     <span
       aria-hidden="true"
-      :class="['h-10 w-1.5 rounded-full transition-colors group-focus-visible/handle:status-focused motion-reduce:transition-none', dragging ? 'bg-muted/30' : 'bg-muted/20 hover:bg-muted/30']"
+      :class="[
+        'h-10 w-1.5 rounded-full transition-colors group-focus-visible/handle:status-focused motion-reduce:transition-none',
+        dragging ? 'bg-muted/30' : 'bg-muted/20 hover:bg-muted/30',
+      ]"
     />
   </div>
 </template>

@@ -1,9 +1,13 @@
-import type { TypeaheadOptions } from '../src/components/list-box/useTypeahead'
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest'
 import { effectScope } from 'vue'
+
+import type { TypeaheadOptions } from '../src/components/list-box/useTypeahead'
 import { useTypeahead } from '../src/components/list-box/useTypeahead'
 
-interface Item { label: string, disabled?: boolean }
+interface Item {
+  label: string
+  disabled?: boolean
+}
 const item = (label: string, disabled?: boolean): Item => ({ label, disabled })
 
 // A list whose current item follows the typeahead, as the Select trigger and ListBox use it
@@ -14,11 +18,17 @@ function setup(options: TypeaheadOptions, items: Item[], initial?: Item) {
   const select = vi.fn((match: Item) => {
     current = match
   })
-  const type = (key: string, init: KeyboardEventInit = {}) => typeahead.onKeydown(
-    new KeyboardEvent('keydown', { key, ...init }),
-    () => ({ items, text: i => i.label, disabled: i => !!i.disabled, isCurrent: i => i === current }),
-    select,
-  )
+  const type = (key: string, init: KeyboardEventInit = {}) =>
+    typeahead.onKeydown(
+      new KeyboardEvent('keydown', { key, ...init }),
+      () => ({
+        items,
+        text: (i) => i.label,
+        disabled: (i) => !!i.disabled,
+        isCurrent: (i) => i === current,
+      }),
+      select,
+    )
   return { type, select, scope, current: () => current }
 }
 
@@ -184,8 +194,7 @@ describe('useTypeahead keys', () => {
   it('with `space`, Space extends a search in progress but never starts one', () => {
     const t = setup({ start: 'current', space: true }, items)
     expect(t.type(' ')).toBe(false)
-    for (const key of 'new')
-      t.type(key)
+    for (const key of 'new') t.type(key)
     expect(t.current()).toBe(newark)
     expect(t.type(' ')).toBe(true)
     expect(t.current()).toBe(newYork)
@@ -195,8 +204,7 @@ describe('useTypeahead keys', () => {
 
   it('without `space`, Space is never a typeahead key', () => {
     const t = setup({ start: 'current' }, items)
-    for (const key of 'new')
-      t.type(key)
+    for (const key of 'new') t.type(key)
     expect(t.type(' ')).toBe(false)
     // The buffer is still "new": "y" makes "newy", which matches nothing
     t.type('y')

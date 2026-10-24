@@ -69,13 +69,13 @@ export interface CheckboxButtonGroupProps extends FormFieldProps {
 
 export interface CheckboxButtonGroupSlots {
   /** The `CheckboxButtonGroupItem` components. */
-  'default'?: () => any
+  default?: () => any
   /** The group label content. Replaces the `label` prop. */
-  'label'?: () => any
+  label?: () => any
   /** The group description content. Replaces the `description` prop. */
-  'description'?: () => any
+  description?: () => any
   /** The error content, rendered while invalid. Replaces the `errorMessage` prop. */
-  'error'?: (props: ValidationResult) => any
+  error?: (props: ValidationResult) => any
 }
 </script>
 
@@ -83,11 +83,12 @@ export interface CheckboxButtonGroupSlots {
 import { CheckboxGroupRoot } from 'reka-ui'
 import type { ComponentPublicInstance } from 'vue'
 import { computed, provide, toRef, useSlots, useTemplateRef } from 'vue'
+
 import { useComponentUI } from '../../composables/useComponentUI'
 import { useFieldChrome } from '../../composables/useFieldChrome'
 import { useFieldValidation } from '../../composables/useFieldValidation'
-import { useFieldsetDisabled } from '../fieldset/context'
 import checkboxTheme from '../checkbox/theme'
+import { useFieldsetDisabled } from '../fieldset/context'
 import { checkboxButtonGroupContextKey } from './context'
 
 // `invalid: undefined`: an absent boolean would cast to `false`, which counts as controlled-valid and hides validation errors
@@ -126,13 +127,15 @@ const { validation, commitValidation } = useFieldValidation({
 })
 const invalid = computed(() => validation.value.isInvalid)
 
-const { labelId, hasLabel, describedBy, FieldLabel, FieldDescription, FieldError } = useFieldChrome({
-  props,
-  slots,
-  invalid,
-  validation,
-  disabled: isDisabled,
-})
+const { labelId, hasLabel, describedBy, FieldLabel, FieldDescription, FieldError } = useFieldChrome(
+  {
+    props,
+    slots,
+    invalid,
+    validation,
+    disabled: isDisabled,
+  },
+)
 
 provide(checkboxButtonGroupContextKey, {
   selected,
@@ -147,8 +150,7 @@ provide(checkboxButtonGroupContextKey, {
 })
 
 function onUpdate(value: string[]) {
-  if (props.readonly)
-    return
+  if (props.readonly) return
   modelValue.value = value
   commitValidation()
 }

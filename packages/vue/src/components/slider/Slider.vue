@@ -65,17 +65,18 @@ export interface SliderSlots {
   /** The label content. Replaces the `label` prop. */
   label?: () => any
   /** The output content, showing the formatted current value(s). Replaces the default `' – '`-joined format. */
-  output?: (props: { values: number[], formatted: string[] }) => any
+  output?: (props: { values: number[]; formatted: string[] }) => any
 }
 </script>
 
 <script setup lang="ts">
 import { SliderRange, SliderRoot, SliderThumb, SliderTrack } from 'reka-ui'
 import { computed, ref, useId, useSlots } from 'vue'
-import { useComponentUI } from '../../composables/useComponentUI'
-import { useFieldsetDisabled } from '../fieldset/context'
+
 import { captureOnDraggedThumb } from '../../composables/thumbPointerCapture'
+import { useComponentUI } from '../../composables/useComponentUI'
 import { clamp, snapValueToStep } from '../../utils/number'
+import { useFieldsetDisabled } from '../fieldset/context'
 import Label from '../label/Label.vue'
 
 const props = withDefaults(defineProps<SliderProps>(), {
@@ -102,8 +103,7 @@ const hasLabel = computed(() => !!(props.label || slots.label))
 
 // Reka's `SliderRoot` always works with `number[]`; a plain number renders a single thumb, an array a range.
 function toArray(value: number | number[] | undefined): number[] | undefined {
-  if (value === undefined)
-    return undefined
+  if (value === undefined) return undefined
   return Array.isArray(value) ? value : [value]
 }
 const isRange = computed(() => Array.isArray(modelValue.value ?? props.defaultValue))
@@ -111,7 +111,10 @@ const isRange = computed(() => Array.isArray(modelValue.value ?? props.defaultVa
 // controlled, the same technique Checkbox/RadioGroup use to avoid Reka owning uncontrolled state itself.
 // Values outside `[min, max]` are clamped, as RAC does.
 const current = computed<number[]>(() =>
-  (toArray(modelValue.value ?? props.defaultValue) ?? [props.min]).map(v => clamp(v, props.min, props.max)))
+  (toArray(modelValue.value ?? props.defaultValue) ?? [props.min]).map((v) =>
+    clamp(v, props.min, props.max),
+  ),
+)
 
 // RAC keeps every thumb between its neighbours (`getThumbMinValue` / `getThumbMaxValue`). Reka instead sorts the
 // values and hands the move over to the other thumb, so a thumb pushed past its neighbour swaps with it. Reka
@@ -129,8 +132,7 @@ function changedValue(previous: number[], next: number[]): number | undefined {
   const rest = [...previous]
   for (const value of next) {
     const at = rest.indexOf(value)
-    if (at === -1)
-      return value
+    if (at === -1) return value
     rest.splice(at, 1)
   }
   return undefined
@@ -142,19 +144,21 @@ function constrain(values: number[]): number[] {
   if (values.length < 2 || values.length !== previous.length || index >= previous.length)
     return values
   const value = changedValue(previous, values)
-  if (value === undefined)
-    return previous
+  if (value === undefined) return previous
   const next = [...previous]
   next[index] = clamp(value, thumbMin(previous, index), thumbMax(previous, index))
   return next
 }
 
 function onUpdate(values: number[] | undefined) {
-  if (!values)
-    return
+  if (!values) return
   const next = constrain(values)
   // Reka focuses the thumb it handed the move to; keep focus on the thumb that is moving.
-  if (next.length > 1 && movingIndex !== null && document.activeElement !== thumbRefs.value[movingIndex]?.$el)
+  if (
+    next.length > 1 &&
+    movingIndex !== null &&
+    document.activeElement !== thumbRefs.value[movingIndex]?.$el
+  )
     thumbRefs.value[movingIndex]?.$el?.focus?.()
   modelValue.value = isRange.value ? [...next] : next[0]
 }
@@ -173,14 +177,13 @@ const pageSize = computed(() => {
 })
 // +1 / -1 for a key that pages the value, 0 for keys left to Reka (plain arrows, which only step)
 function pageDirection(event: KeyboardEvent): number {
-  if (event.key === 'PageUp')
-    return 1
-  if (event.key === 'PageDown')
-    return -1
-  if (!event.shiftKey || !event.key.startsWith('Arrow'))
-    return 0
+  if (event.key === 'PageUp') return 1
+  if (event.key === 'PageDown') return -1
+  if (!event.shiftKey || !event.key.startsWith('Arrow')) return 0
   // Reka reads the direction from the `dir` it renders on the root
-  const rtl = props.orientation === 'horizontal' && (event.currentTarget as Element).closest('[dir]')?.getAttribute('dir') === 'rtl'
+  const rtl =
+    props.orientation === 'horizontal' &&
+    (event.currentTarget as Element).closest('[dir]')?.getAttribute('dir') === 'rtl'
   const decrease = event.key === 'ArrowDown' || event.key === (rtl ? 'ArrowRight' : 'ArrowLeft')
   return decrease ? -1 : 1
 }
@@ -190,8 +193,7 @@ function onThumbKeydown(event: KeyboardEvent, index: number) {
   movingIndex = index
   activeThumbIndex.value = index
   const page = pageDirection(event)
-  if (isDisabled.value || (page === 0 && event.key !== 'Home' && event.key !== 'End'))
-    return
+  if (isDisabled.value || (page === 0 && event.key !== 'Home' && event.key !== 'End')) return
   // Handled here instead of by Reka's root keydown handler
   event.preventDefault()
   event.stopPropagation()
@@ -200,21 +202,21 @@ function onThumbKeydown(event: KeyboardEvent, index: number) {
   const high = thumbMax(values, index)
   // The page snaps relative to `min` but not limited by `max`: the clamp below limits it to the thumb's own range,
   // so a `max` off the step grid stays reachable
-  const target = event.key === 'Home'
-    ? low
-    : event.key === 'End'
-      ? high
-      : snapValueToStep(values[index]! + page * pageSize.value, props.min, undefined, props.step)
+  const target =
+    event.key === 'Home'
+      ? low
+      : event.key === 'End'
+        ? high
+        : snapValueToStep(values[index]! + page * pageSize.value, props.min, undefined, props.step)
   const next = [...values]
   next[index] = clamp(target, low, high)
-  if (next[index] === values[index])
-    return
+  if (next[index] === values[index]) return
   modelValue.value = isRange.value ? next : next[0]
   emit('changeEnd', isRange.value ? [...next] : next[0]!)
 }
 
 const formatter = computed(() => new Intl.NumberFormat(props.locale, props.formatOptions))
-const formattedValues = computed(() => current.value.map(v => formatter.value.format(v)))
+const formattedValues = computed(() => current.value.map((v) => formatter.value.format(v)))
 const outputText = computed(() => formattedValues.value.join(' – '))
 
 // `data-fill-start` / `data-fill-end` on the track replicate `@heroui/react`'s `SliderTrack` exactly
@@ -231,8 +233,12 @@ const sortedEdges = computed(() => {
 })
 const fillFraction = computed(() => sortedEdges.value[1] - sortedEdges.value[0])
 const isSingleThumb = computed(() => current.value.length === 1)
-const fillStart = computed(() => isSingleThumb.value ? fillFraction.value > 0 : sortedEdges.value[0] === 0)
-const fillEnd = computed(() => isSingleThumb.value ? fillFraction.value === 1 : sortedEdges.value[0] + fillFraction.value === 1)
+const fillStart = computed(() =>
+  isSingleThumb.value ? fillFraction.value > 0 : sortedEdges.value[0] === 0,
+)
+const fillEnd = computed(() =>
+  isSingleThumb.value ? fillFraction.value === 1 : sortedEdges.value[0] + fillFraction.value === 1,
+)
 
 // reka-limitation: unlike RAC's `SliderThumb`, Reka's thumb exposes no `isDragging` state, so HareUI
 // tracks it itself. A pointer interaction anywhere on the slider starts a drag; the currently-focused
@@ -252,8 +258,7 @@ function onPointerDownCapture() {
   movingIndex = null
 }
 function onPointerDown() {
-  if (!isDisabled.value)
-    isSliding.value = true
+  if (!isDisabled.value) isSliding.value = true
 }
 function onPointerEnd() {
   isSliding.value = false
@@ -261,8 +266,7 @@ function onPointerEnd() {
 }
 function onThumbFocus(index: number) {
   // While a thumb is moving, Reka may focus its neighbour (it hands crossing moves over); `onUpdate` moves focus back
-  if (movingIndex === null)
-    activeThumbIndex.value = index
+  if (movingIndex === null) activeThumbIndex.value = index
   focusVisibleIndex.value = pointerActive ? -1 : index
 }
 function onThumbBlur() {
@@ -298,14 +302,38 @@ function dragging(index: number) {
     @gotpointercapture="captureOnDraggedThumb"
   >
     <!-- Split so slot content is only forwarded (and force-updated) when the slot is actually passed. -->
-    <Label v-if="hasLabel && $slots.label" :id="labelId" :disabled="isDisabled" :class="ui.label({ class: props.ui?.label })">
+    <Label
+      v-if="hasLabel && $slots.label"
+      :id="labelId"
+      :disabled="isDisabled"
+      :class="ui.label({ class: props.ui?.label })"
+    >
       <slot name="label">{{ label }}</slot>
     </Label>
-    <Label v-else-if="hasLabel" :id="labelId" :disabled="isDisabled" :class="ui.label({ class: props.ui?.label })">{{ label }}</Label>
-    <output v-if="$slots.output" data-slot="slider-output" aria-live="off" :data-orientation="orientation" :class="ui.output({ class: props.ui?.output })">
+    <Label
+      v-else-if="hasLabel"
+      :id="labelId"
+      :disabled="isDisabled"
+      :class="ui.label({ class: props.ui?.label })"
+      >{{ label }}</Label
+    >
+    <output
+      v-if="$slots.output"
+      data-slot="slider-output"
+      aria-live="off"
+      :data-orientation="orientation"
+      :class="ui.output({ class: props.ui?.output })"
+    >
       <slot name="output" :values="current" :formatted="formattedValues">{{ outputText }}</slot>
     </output>
-    <output v-else data-slot="slider-output" aria-live="off" :data-orientation="orientation" :class="ui.output({ class: props.ui?.output })">{{ outputText }}</output>
+    <output
+      v-else
+      data-slot="slider-output"
+      aria-live="off"
+      :data-orientation="orientation"
+      :class="ui.output({ class: props.ui?.output })"
+      >{{ outputText }}</output
+    >
     <SliderTrack
       data-slot="slider-track"
       :data-fill-start="fillStart ? 'true' : undefined"
@@ -324,7 +352,11 @@ function dragging(index: number) {
         data-slot="slider-thumb"
         :data-dragging="dragging(index)"
         :data-focus-visible="focusVisibleIndex === index ? 'true' : undefined"
-        :ref="(el: any) => { thumbRefs[index] = el }"
+        :ref="
+          (el: any) => {
+            thumbRefs[index] = el
+          }
+        "
         :aria-labelledby="hasLabel ? labelId : undefined"
         :aria-label="hasLabel ? undefined : ($attrs['aria-label'] as string | undefined)"
         :aria-valuetext="formattedValues[index]"
@@ -337,7 +369,14 @@ function dragging(index: number) {
     </SliderTrack>
     <!-- RAC submits one entry per thumb under the plain `name` (Reka would post `name[0]`, `name[1]`) -->
     <template v-if="name">
-      <input v-for="(value, index) in current" :key="index" type="hidden" :name="name" :value="value" :disabled="isDisabled">
+      <input
+        v-for="(value, index) in current"
+        :key="index"
+        type="hidden"
+        :name="name"
+        :value="value"
+        :disabled="isDisabled"
+      />
     </template>
   </SliderRoot>
 </template>

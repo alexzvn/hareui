@@ -1,5 +1,6 @@
 <script lang="ts">
 import type { Color, ColorChannel, ColorSpace } from 'reka-ui'
+
 import type { ComponentSlots } from '../../types/tv'
 import theme from './theme'
 
@@ -18,8 +19,7 @@ const CHANNEL_TO_REQUIRED_COLOR_SPACE: Partial<Record<ColorChannel, ColorSpace>>
 const HSL_HSB_ONLY_CHANNELS = new Set<ColorChannel>(['hue', 'saturation'])
 
 function warnInDev(message: string) {
-  if (import.meta.env?.DEV)
-    console.warn(message)
+  if (import.meta.env?.DEV) console.warn(message)
 }
 
 /**
@@ -27,14 +27,21 @@ function warnInDev(message: string) {
  * React ColorSlider: an incompatible combination (e.g. `channel="red"` with `colorSpace="hsl"`)
  * is auto-corrected with a dev warning instead of producing a broken gradient.
  */
-function getValidColorSpace(channel: ColorChannel, colorSpace?: ColorSpace): ColorSpace | undefined {
+function getValidColorSpace(
+  channel: ColorChannel,
+  colorSpace?: ColorSpace,
+): ColorSpace | undefined {
   const required = CHANNEL_TO_REQUIRED_COLOR_SPACE[channel]
   if (required && colorSpace && colorSpace !== required) {
-    warnInDev(`[HareUI ColorSlider] Invalid combination: channel="${channel}" requires colorSpace="${required}", but received colorSpace="${colorSpace}". Auto-correcting to "${required}".`)
+    warnInDev(
+      `[HareUI ColorSlider] Invalid combination: channel="${channel}" requires colorSpace="${required}", but received colorSpace="${colorSpace}". Auto-correcting to "${required}".`,
+    )
     return required
   }
   if (HSL_HSB_ONLY_CHANNELS.has(channel) && colorSpace === 'rgb') {
-    warnInDev(`[HareUI ColorSlider] Invalid combination: channel="${channel}" is not available in RGB color space. Use colorSpace="hsl" or colorSpace="hsb" instead. Auto-correcting to "hsl".`)
+    warnInDev(
+      `[HareUI ColorSlider] Invalid combination: channel="${channel}" is not available in RGB color space. Use colorSpace="hsl" or colorSpace="hsb" instead. Auto-correcting to "hsl".`,
+    )
     return 'hsl'
   }
   return colorSpace
@@ -133,11 +140,12 @@ import {
   useLocale,
 } from 'reka-ui'
 import { computed, ref, useAttrs, watch } from 'vue'
-import { useColorPickerContext } from '../color-picker/context'
-import { useComponentUI } from '../../composables/useComponentUI'
-import { useFieldsetDisabled } from '../fieldset/context'
+
 import { captureOnDraggedThumb } from '../../composables/thumbPointerCapture'
+import { useComponentUI } from '../../composables/useComponentUI'
 import { refElement } from '../../composables/useFirstChild'
+import { useColorPickerContext } from '../color-picker/context'
+import { useFieldsetDisabled } from '../fieldset/context'
 import Label from '../label/Label.vue'
 
 const props = withDefaults(defineProps<ColorSliderProps>(), {
@@ -155,19 +163,15 @@ const pickerCtx = useColorPickerContext()
 const localValue = ref<string | Color>(props.defaultValue ?? '#000000')
 const isControlled = computed(() => props.modelValue !== undefined)
 const boundValue = computed<string | Color>(() => {
-  if (isControlled.value)
-    return props.modelValue!
-  if (pickerCtx)
-    return pickerCtx.color.value
+  if (isControlled.value) return props.modelValue!
+  if (pickerCtx) return pickerCtx.color.value
   return localValue.value
 })
 
 function handleUpdate(color: Color) {
   if (!isControlled.value) {
-    if (pickerCtx)
-      pickerCtx.setColor(color)
-    else
-      localValue.value = color
+    if (pickerCtx) pickerCtx.setColor(color)
+    else localValue.value = color
   }
   emit('update:modelValue', color)
 }
@@ -198,7 +202,9 @@ function toNativeSpace(color: Color, channel: ColorChannel, space: ColorSpace): 
   }
 }
 
-const nativeColor = computed(() => toNativeSpace(normalizeColor(boundValue.value), props.channel, effectiveColorSpace.value))
+const nativeColor = computed(() =>
+  toNativeSpace(normalizeColor(boundValue.value), props.channel, effectiveColorSpace.value),
+)
 const channelValue = computed(() => getChannelValue(nativeColor.value, props.channel))
 const channelName = computed(() => getChannelName(props.channel))
 
@@ -209,32 +215,50 @@ const locale = useLocale()
 const channelFormat = computed(() => {
   switch (props.channel) {
     case 'hue':
-      return { formatter: new Intl.NumberFormat(locale.value, { style: 'unit', unit: 'degree', unitDisplay: 'narrow', maximumFractionDigits: 0 }), divisor: 1 }
+      return {
+        formatter: new Intl.NumberFormat(locale.value, {
+          style: 'unit',
+          unit: 'degree',
+          unitDisplay: 'narrow',
+          maximumFractionDigits: 0,
+        }),
+        divisor: 1,
+      }
     case 'saturation':
     case 'lightness':
     case 'brightness':
     case 'alpha':
       return { formatter: new Intl.NumberFormat(locale.value, { style: 'percent' }), divisor: 100 }
     default:
-      return { formatter: new Intl.NumberFormat(locale.value, { maximumFractionDigits: 0 }), divisor: 1 }
+      return {
+        formatter: new Intl.NumberFormat(locale.value, { maximumFractionDigits: 0 }),
+        divisor: 1,
+      }
   }
 })
-const valueText = computed(() => channelFormat.value.formatter.format(channelValue.value / channelFormat.value.divisor))
+const valueText = computed(() =>
+  channelFormat.value.formatter.format(channelValue.value / channelFormat.value.divisor),
+)
 
 // React Aria's alpha channel ranges 0..1, while Reka's runs 0..100. The submitted form value and the
 // thumb's `aria-value*` use RAC's scale (the value text stays "50%" either way).
-const formValue = computed(() => String(props.channel === 'alpha' ? channelValue.value / 100 : channelValue.value))
+const formValue = computed(() =>
+  String(props.channel === 'alpha' ? channelValue.value / 100 : channelValue.value),
+)
 // reka-limitation: `SliderThumbImpl` binds `aria-valuenow/min/max` after `$attrs`, so they can't be
 // overridden by props; they're rewritten on the thumb element after each render instead.
 const thumbRef = ref<{ $el?: Element } | null>(null)
-watch([channelValue, () => props.channel, thumbRef], () => {
-  const el = refElement(thumbRef.value)
-  if (props.channel !== 'alpha' || !el)
-    return
-  el.setAttribute('aria-valuenow', formValue.value)
-  el.setAttribute('aria-valuemin', '0')
-  el.setAttribute('aria-valuemax', '1')
-}, { flush: 'post', immediate: true })
+watch(
+  [channelValue, () => props.channel, thumbRef],
+  () => {
+    const el = refElement(thumbRef.value)
+    if (props.channel !== 'alpha' || !el) return
+    el.setAttribute('aria-valuenow', formValue.value)
+    el.setAttribute('aria-valuemin', '0')
+    el.setAttribute('aria-valuemax', '1')
+  },
+  { flush: 'post', immediate: true },
+)
 
 const slotProps = computed<ColorSliderSlotProps>(() => ({
   channelName: channelName.value,
@@ -246,10 +270,8 @@ const slotProps = computed<ColorSliderSlotProps>(() => ({
 // other channel is shown opaque. The thumb swatch and the track edge caps are derived from it.
 const displayColor = computed<Color>(() => {
   const native = nativeColor.value
-  if (props.channel === 'hue')
-    return { ...convertToHsl(native), s: 100, l: 50, alpha: 1 } as Color
-  if (props.channel === 'alpha')
-    return native
+  if (props.channel === 'hue') return { ...convertToHsl(native), s: 100, l: 50, alpha: 1 } as Color
+  if (props.channel === 'alpha') return native
   return { ...native, alpha: 1 } as Color
 })
 const thumbPercent = computed(() => {
@@ -278,7 +300,11 @@ const trackMainGradient = computed(() => {
     const opaque = { ...convertToRgb(nativeColor.value), alpha: 1 }
     return `linear-gradient(${direction}, ${colorToString({ ...opaque, alpha: 0 } as Color, 'rgb')}, ${colorToString(opaque, 'rgb')})`
   }
-  const gradient = getSliderBackgroundStyle(nativeColor.value, props.channel, effectiveColorSpace.value).background
+  const gradient = getSliderBackgroundStyle(
+    nativeColor.value,
+    props.channel,
+    effectiveColorSpace.value,
+  ).background
   return gradient.replace(/to right/g, direction)
 })
 
@@ -300,25 +326,33 @@ const trackStyle = computed(() => ({
 const autoId = useId(undefined, 'hareui-color-slider-label')
 const hasLabel = computed(() => !!(props.label || slots.label))
 const hasOutput = computed(() => props.showOutput ?? hasLabel.value)
-const ui = useComponentUI('colorSlider', theme, () => ({ orientation: props.orientation, hasLabel: hasLabel.value, hasOutput: hasOutput.value }))
+const ui = useComponentUI('colorSlider', theme, () => ({
+  orientation: props.orientation,
+  hasLabel: hasLabel.value,
+  hasOutput: hasOutput.value,
+}))
 
 // RAC labels the slider's input with the visible label, or with the group's own `aria-label`/`aria-labelledby`
 // (fallthrough on the root here); Reka's thumb only carries the channel name.
 const attrs = useAttrs()
-const thumbLabel = computed(() => typeof attrs['aria-label'] === 'string' && attrs['aria-label'] ? attrs['aria-label'] : channelName.value)
-const thumbLabelledBy = computed(() => hasLabel.value ? autoId : attrs['aria-labelledby'] as string | undefined)
+const thumbLabel = computed(() =>
+  typeof attrs['aria-label'] === 'string' && attrs['aria-label']
+    ? attrs['aria-label']
+    : channelName.value,
+)
+const thumbLabelledBy = computed(() =>
+  hasLabel.value ? autoId : (attrs['aria-labelledby'] as string | undefined),
+)
 
 // reka-limitation: Reka's thumb exposes no `isDragging` state (RAC's `data-dragging`), so it is tracked
 // here: a press anywhere on the slider starts a drag of its single thumb.
 const isDragging = ref(false)
 function onPointerDown() {
-  if (!isDisabled.value)
-    isDragging.value = true
+  if (!isDisabled.value) isDragging.value = true
 }
 function onPointerEnd() {
   isDragging.value = false
 }
-
 </script>
 
 <template>
@@ -387,12 +421,6 @@ function onPointerEnd() {
       </ColorSliderThumb>
     </SliderTrack>
     <!-- RAC submits the channel value from its `<input type="range">`; Reka's hidden input would submit the hex. -->
-    <input
-      v-if="name"
-      type="hidden"
-      :name="name"
-      :value="formValue"
-      :disabled="isDisabled"
-    >
+    <input v-if="name" type="hidden" :name="name" :value="formValue" :disabled="isDisabled" />
   </ColorSliderRoot>
 </template>

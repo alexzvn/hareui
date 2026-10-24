@@ -74,6 +74,7 @@ export interface ProgressBarSlots {
 <script setup lang="ts">
 import { ProgressIndicator, ProgressRoot, useId } from 'reka-ui'
 import { computed } from 'vue'
+
 import { useComponentUI } from '../../composables/useComponentUI'
 import { useRangeValue } from '../../composables/useRangeValue'
 import labelTheme from '../label/theme'
@@ -98,12 +99,20 @@ const labelId = useId(undefined, 'hareui-progress-bar-label')
 
 const range = useRangeValue(() => props)
 const clamped = computed(() => range.value.clamped)
-const state = computed<ProgressBarSlotProps>(() => props.indeterminate
-  ? { percentage: undefined, valueText: undefined, indeterminate: true }
-  : { percentage: range.value.percentage, valueText: range.value.valueText, indeterminate: false })
+const state = computed<ProgressBarSlotProps>(() =>
+  props.indeterminate
+    ? { percentage: undefined, valueText: undefined, indeterminate: true }
+    : {
+        percentage: range.value.percentage,
+        valueText: range.value.valueText,
+        indeterminate: false,
+      },
+)
 
 const hasLabel = computed(() => !!props.label || !!slots.label)
-const hasOutput = computed(() => props.showOutput ?? ((hasLabel.value || !!slots.output) && !props.indeterminate))
+const hasOutput = computed(
+  () => props.showOutput ?? ((hasLabel.value || !!slots.output) && !props.indeterminate),
+)
 </script>
 
 <template>
@@ -134,11 +143,21 @@ const hasOutput = computed(() => props.showOutput ?? ((hasLabel.value || !!slots
       :id="labelId"
       data-slot="label"
       :class="labelUi.base({ class: ui.label({ class: props.ui?.label }) })"
-    >{{ label }}</span>
-    <span v-if="hasOutput && $slots.output" data-slot="progress-bar-output" :class="ui.output({ class: props.ui?.output })">
+      >{{ label }}</span
+    >
+    <span
+      v-if="hasOutput && $slots.output"
+      data-slot="progress-bar-output"
+      :class="ui.output({ class: props.ui?.output })"
+    >
       <slot name="output" v-bind="state">{{ state.valueText }}</slot>
     </span>
-    <span v-else-if="hasOutput" data-slot="progress-bar-output" :class="ui.output({ class: props.ui?.output })">{{ state.valueText }}</span>
+    <span
+      v-else-if="hasOutput"
+      data-slot="progress-bar-output"
+      :class="ui.output({ class: props.ui?.output })"
+      >{{ state.valueText }}</span
+    >
     <div data-slot="progress-bar-track" :class="ui.track({ class: props.ui?.track })">
       <ProgressIndicator
         data-slot="progress-bar-fill"

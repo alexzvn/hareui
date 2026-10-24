@@ -1,7 +1,7 @@
 <script setup lang="ts">
-import { Icon } from '@iconify/vue'
 import type { TagGroupItem } from '@hareui/vue'
 import { TagGroup } from '@hareui/vue'
+import { Icon } from '@iconify/vue'
 
 const items: TagGroupItem[] = [
   { id: 'default-news', label: 'News' },

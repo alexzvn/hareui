@@ -4,7 +4,15 @@ import { NumberField } from '@hareui/vue'
 
 <template>
   <div class="flex w-full max-w-64 flex-col gap-4">
-    <NumberField disabled :default-value="1024" :min="0" name="width" label="Width" description="Enter the width in pixels" :ui="{ input: 'w-[120px]' }" />
+    <NumberField
+      disabled
+      :default-value="1024"
+      :min="0"
+      name="width"
+      label="Width"
+      description="Enter the width in pixels"
+      :ui="{ input: 'w-[120px]' }"
+    />
     <NumberField
       disabled
       :default-value="0.5"

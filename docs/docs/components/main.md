@@ -48,13 +48,15 @@ Use `Main` around your page content, below the [`Header`](/docs/components/heade
 Override the `main` theme app-wide with `createHareUI`:
 
 ```ts
-app.use(createHareUI({
-  ui: {
-    main: {
-      slots: { base: 'min-h-dvh bg-surface' },
+app.use(
+  createHareUI({
+    ui: {
+      main: {
+        slots: { base: 'min-h-dvh bg-surface' },
+      },
     },
-  },
-}))
+  }),
+)
 ```
 
 ## API

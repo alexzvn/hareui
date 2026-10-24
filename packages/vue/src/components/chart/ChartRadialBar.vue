@@ -1,5 +1,6 @@
 <script lang="ts">
 import type { ClassValue } from 'tailwind-variants'
+
 import type { ChartAnimationProps } from './animation'
 
 export interface ChartRadialBarBackground {
@@ -67,17 +68,18 @@ export interface ChartRadialBarSlots {
 </script>
 
 <script setup lang="ts">
-import type { ChartLabelItem, ChartPolarViewBox } from './label'
-import type { ChartSeries, ChartTooltipPayloadEntry } from './types'
 import { useId } from 'reka-ui'
 import { computed } from 'vue'
+
 import { lerp, useChartTween } from './animation'
 import { provideChartCells } from './cells'
 import ChartLayer from './ChartLayer.vue'
 import { useChartContext } from './context'
+import type { ChartLabelItem, ChartPolarViewBox } from './label'
 import { provideChartLabels } from './label'
 import { deltaAngle, sectorPath, usePolarContext } from './polar'
 import { DEFAULT_SERIES_COLOR } from './series'
+import type { ChartSeries, ChartTooltipPayloadEntry } from './types'
 
 interface RadialBarSector extends ChartPolarViewBox {
   index: number
@@ -104,21 +106,27 @@ const cells = provideChartCells()
 
 function ringFill(index: number): string {
   const own = chart.data.value[index]?.fill
-  return cells.value[index]?.fill ?? (typeof own === 'string' ? own : undefined) ?? props.fill ?? DEFAULT_SERIES_COLOR
+  return (
+    cells.value[index]?.fill ??
+    (typeof own === 'string' ? own : undefined) ??
+    props.fill ??
+    DEFAULT_SERIES_COLOR
+  )
 }
 
 function ringName(index: number): string {
   const value = chart.data.value[index]?.[props.nameKey]
-  return value !== undefined && value !== '' ? String(value) : props.name ?? props.dataKey
+  return value !== undefined && value !== '' ? String(value) : (props.name ?? props.dataKey)
 }
 
 function entries(index: number): ChartTooltipPayloadEntry[] {
   const datum = chart.data.value[index]
   const value = datum?.[props.dataKey]
-  if (!datum || value === undefined || value === null || value === '')
-    return []
+  if (!datum || value === undefined || value === null || value === '') return []
   const fill = ringFill(index)
-  return [{ dataKey: props.dataKey, name: ringName(index), value, color: fill, fill, payload: datum }]
+  return [
+    { dataKey: props.dataKey, name: ringName(index), value, color: fill, fill, payload: datum },
+  ]
 }
 
 chart.registerSeries((): ChartSeries => ({
@@ -147,8 +155,7 @@ const rings = computed(() => {
 })
 
 const target = computed<RadialBarSector[]>(() => {
-  if (props.hide)
-    return []
+  if (props.hide) return []
   const cx = polar.cx.value
   const cy = polar.cy.value
   const startAngle = polar.startAngle.value
@@ -157,8 +164,7 @@ const target = computed<RadialBarSector[]>(() => {
   return chart.data.value.flatMap((datum, index) => {
     const raw = datum[props.dataKey]
     const value = Number(raw)
-    if (raw === undefined || raw === '' || !Number.isFinite(value))
-      return []
+    if (raw === undefined || raw === '' || !Number.isFinite(value)) return []
     let endAngle = angleAxis.scale(value)
     if (props.minPointSize > 0 && Math.abs(endAngle - startAngle) < props.minPointSize)
       endAngle = startAngle + sweepSign * props.minPointSize
@@ -167,8 +173,7 @@ const target = computed<RadialBarSector[]>(() => {
 })
 
 const tracks = computed(() => {
-  if (!props.background || props.hide)
-    return []
+  if (!props.background || props.hide) return []
   const startAngle = polar.startAngle.value
   const endAngle = startAngle + deltaAngle(startAngle, polar.endAngle.value)
   return rings.value.map((ring, index) => ({
@@ -177,13 +182,22 @@ const tracks = computed(() => {
   }))
 })
 
-const backgroundStyle = computed(() => (typeof props.background === 'object' ? props.background : {}))
+const backgroundStyle = computed(() =>
+  typeof props.background === 'object' ? props.background : {},
+)
 
 // Mount: bars sweep out from the start angle. Data change: each bar moves from its previous end angle.
-function interpolate(from: RadialBarSector[] | null, to: RadialBarSector[], t: number): RadialBarSector[] {
+function interpolate(
+  from: RadialBarSector[] | null,
+  to: RadialBarSector[],
+  t: number,
+): RadialBarSector[] {
   return to.map((sector) => {
-    const previous = from?.find(item => item.index === sector.index)
-    return { ...sector, endAngle: lerp(previous?.endAngle ?? sector.startAngle, sector.endAngle, t) }
+    const previous = from?.find((item) => item.index === sector.index)
+    return {
+      ...sector,
+      endAngle: lerp(previous?.endAngle ?? sector.startAngle, sector.endAngle, t),
+    }
   })
 }
 
@@ -194,26 +208,32 @@ const tween = useChartTween(
   () => props,
 )
 
-const sectors = computed(() => tween.value.value.map(sector => ({
-  ...sector,
-  d: sectorPath({ ...sector, cornerRadius: props.cornerRadius }),
-  fill: ringFill(sector.index),
-  cell: cells.value[sector.index],
-})))
+const sectors = computed(() =>
+  tween.value.value.map((sector) => ({
+    ...sector,
+    d: sectorPath({ ...sector, cornerRadius: props.cornerRadius }),
+    fill: ringFill(sector.index),
+    cell: cells.value[sector.index],
+  })),
+)
 
-provideChartLabels(() => target.value.map((sector): ChartLabelItem => ({
-  index: sector.index,
-  value: sector.value,
-  datum: chart.data.value[sector.index] ?? {},
-  viewBox: {
-    cx: sector.cx,
-    cy: sector.cy,
-    innerRadius: sector.innerRadius,
-    outerRadius: sector.outerRadius,
-    startAngle: sector.startAngle,
-    endAngle: sector.endAngle,
-  },
-})), 'insideStart')
+provideChartLabels(
+  () =>
+    target.value.map((sector): ChartLabelItem => ({
+      index: sector.index,
+      value: sector.value,
+      datum: chart.data.value[sector.index] ?? {},
+      viewBox: {
+        cx: sector.cx,
+        cy: sector.cy,
+        innerRadius: sector.innerRadius,
+        outerRadius: sector.outerRadius,
+        startAngle: sector.startAngle,
+        endAngle: sector.endAngle,
+      },
+    })),
+  'insideStart',
+)
 </script>
 
 <template>

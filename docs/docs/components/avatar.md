@@ -71,24 +71,26 @@ Use the `class` prop for the root and `:ui="{ fallback: '…' }"` for the fallba
 Override the `avatar` theme app-wide with `createHareUI`:
 
 ```ts
-app.use(createHareUI({
-  ui: {
-    avatar: {
-      slots: {
-        base: 'size-16 border-2 border-accent',
-        fallback: 'bg-linear-to-br from-purple-500 to-pink-500',
+app.use(
+  createHareUI({
+    ui: {
+      avatar: {
+        slots: {
+          base: 'size-16 border-2 border-accent',
+          fallback: 'bg-linear-to-br from-purple-500 to-pink-500',
+        },
       },
     },
-  },
-}))
+  }),
+)
 ```
 
 ## Styling Reference
 
-| `ui` key | `data-slot` | Description |
-|---|---|---|
-| `base` | — | Base container with default size (`size-10`), Reka `AvatarRoot` |
-| `image` | — | Image element with aspect-square sizing, rendered when `src` is set |
+| `ui` key   | `data-slot`       | Description                                                         |
+| ---------- | ----------------- | ------------------------------------------------------------------- |
+| `base`     | —                 | Base container with default size (`size-10`), Reka `AvatarRoot`     |
+| `image`    | —                 | Image element with aspect-square sizing, rendered when `src` is set |
 | `fallback` | `avatar-fallback` | Fallback container with centered content (text or `#fallback` slot) |
 
 HeroUI's modifier classes correspond to props (HareUI renders utilities, not BEM classes, so

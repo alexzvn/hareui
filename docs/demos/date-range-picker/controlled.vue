@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import type { DateRangeValue } from '@hareui/vue'
-import { getLocalTimeZone, today } from '@internationalized/date'
 import { Button, DateRangePicker, Description } from '@hareui/vue'
+import { getLocalTimeZone, today } from '@internationalized/date'
 import { shallowRef } from 'vue'
 
 const start = today(getLocalTimeZone())
@@ -15,17 +15,21 @@ function setWeek() {
 
 <template>
   <div class="flex w-80 flex-col gap-4">
-    <DateRangePicker v-model="value" full-width start-name="startDate" end-name="endDate" label="Trip dates" calendar-label="Trip dates" />
+    <DateRangePicker
+      v-model="value"
+      full-width
+      start-name="startDate"
+      end-name="endDate"
+      label="Trip dates"
+      calendar-label="Trip dates"
+    />
     <Description>
-      Current value: {{ value ? `${value.start.toString()} -> ${value.end.toString()}` : '(empty)' }}
+      Current value:
+      {{ value ? `${value.start.toString()} -> ${value.end.toString()}` : '(empty)' }}
     </Description>
     <div class="flex gap-2">
-      <Button variant="tertiary" @click="setWeek">
-        Set week
-      </Button>
-      <Button variant="tertiary" @click="value = null">
-        Clear
-      </Button>
+      <Button variant="tertiary" @click="setWeek"> Set week </Button>
+      <Button variant="tertiary" @click="value = null"> Clear </Button>
     </div>
   </div>
 </template>

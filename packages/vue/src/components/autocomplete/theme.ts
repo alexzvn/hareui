@@ -65,7 +65,8 @@ export default {
     variant: {
       primary: {},
       secondary: {
-        trigger: 'shadow-none [--autocomplete-trigger-bg:var(--default)] [--autocomplete-trigger-bg-hover:var(--default-hover)] [--autocomplete-trigger-bg-focus:var(--default)]',
+        trigger:
+          'shadow-none [--autocomplete-trigger-bg:var(--default)] [--autocomplete-trigger-bg-hover:var(--default-hover)] [--autocomplete-trigger-bg-focus:var(--default)]',
       },
     },
     fullWidth: {

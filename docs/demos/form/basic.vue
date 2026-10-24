@@ -1,6 +1,6 @@
 <script setup lang="ts">
-import { Icon } from '@iconify/vue'
 import { Button, Form, TextField } from '@hareui/vue'
+import { Icon } from '@iconify/vue'
 
 function onSubmit(e: Event) {
   e.preventDefault()
@@ -21,12 +21,9 @@ function validateEmail(value: string | number) {
 
 function validatePassword(value: string | number) {
   const password = String(value)
-  if (password.length < 8)
-    return 'Password must be at least 8 characters'
-  if (!/[A-Z]/.test(password))
-    return 'Password must contain at least one uppercase letter'
-  if (!/\d/.test(password))
-    return 'Password must contain at least one number'
+  if (password.length < 8) return 'Password must be at least 8 characters'
+  if (!/[A-Z]/.test(password)) return 'Password must contain at least one uppercase letter'
+  if (!/\d/.test(password)) return 'Password must contain at least one number'
   return null
 }
 </script>
@@ -56,9 +53,7 @@ function validatePassword(value: string | number) {
         <Icon icon="gravity-ui:check" />
         Submit
       </Button>
-      <Button type="reset" variant="secondary">
-        Reset
-      </Button>
+      <Button type="reset" variant="secondary"> Reset </Button>
     </div>
   </Form>
 </template>

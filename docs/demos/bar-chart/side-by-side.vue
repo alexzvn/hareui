@@ -9,7 +9,11 @@ const data = [
   { term: 'Winter', beginner: 68, intermediate: 58, advanced: 39 },
 ]
 
-const series = { beginner: { name: 'Beginner' }, intermediate: { name: 'Intermediate' }, advanced: { name: 'Advanced' } }
+const series = {
+  beginner: { name: 'Beginner' },
+  intermediate: { name: 'Intermediate' },
+  advanced: { name: 'Advanced' },
+}
 const colors = ['var(--chart-4)', 'var(--chart-3)', 'var(--chart-1)']
 
 function formatValue(value: number | string) {
@@ -18,7 +22,10 @@ function formatValue(value: number | string) {
 </script>
 
 <template>
-  <Card class="w-full max-w-[480px] rounded-2xl" :ui="{ header: 'flex-row flex-wrap items-center justify-between gap-2' }">
+  <Card
+    class="w-full max-w-[480px] rounded-2xl"
+    :ui="{ header: 'flex-row flex-wrap items-center justify-between gap-2' }"
+  >
     <template #header>
       <h3 class="text-base font-medium text-foreground">Pottery Classes</h3>
       <ChartLegend :series="series" :colors="colors" />

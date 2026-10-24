@@ -11,7 +11,11 @@ function onClear() {
   <Error
     class="min-h-96"
     redirect=""
-    :error="{ statusCode: 500, statusMessage: 'Something went wrong', message: 'An unexpected error occurred.' }"
+    :error="{
+      statusCode: 500,
+      statusMessage: 'Something went wrong',
+      message: 'An unexpected error occurred.',
+    }"
     @clear="onClear"
   />
 </template>

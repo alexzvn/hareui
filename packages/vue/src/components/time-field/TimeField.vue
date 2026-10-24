@@ -1,12 +1,13 @@
 <script lang="ts">
 import type { AnyTime } from '@internationalized/date'
 import type { TimeFieldRootProps, TimeValue } from 'reka-ui'
+
 import type { ValidateFn, ValidationResult } from '../../composables/useFieldValidation'
 import type { ComponentSlots } from '../../types/tv'
 import type { DateInputGroupProps } from '../date-input-group/DateInputGroup.vue'
+import dateInputGroupTheme from '../date-input-group/theme'
 import type { ValidationBehavior } from '../form/context'
 import type { FormFieldProps } from '../form/types'
-import dateInputGroupTheme from '../date-input-group/theme'
 import theme from './theme'
 
 type TimeField = typeof theme
@@ -102,7 +103,10 @@ export interface TimeFieldProps extends FormFieldProps {
   /** Additional classes merged into the root element. */
   class?: any
   /** Per-slot class overrides. `group`, `input`, `segment`, `prefix` and `suffix` are the internal `date-input-group`'s. */
-  ui?: ComponentSlots<TimeField> & { group?: ComponentSlots<DateInputGroup>['base'] } & Pick<ComponentSlots<DateInputGroup>, 'input' | 'segment' | 'prefix' | 'suffix'>
+  ui?: ComponentSlots<TimeField> & { group?: ComponentSlots<DateInputGroup>['base'] } & Pick<
+      ComponentSlots<DateInputGroup>,
+      'input' | 'segment' | 'prefix' | 'suffix'
+    >
 }
 
 export interface TimeFieldSlots {
@@ -128,10 +132,14 @@ export interface TimeFieldEmits {
 import { TimeFieldInput, TimeFieldRoot } from 'reka-ui'
 import type { ComponentPublicInstance } from 'vue'
 import { computed, useTemplateRef } from 'vue'
+
 import { useComponentUI } from '../../composables/useComponentUI'
 import { useFieldChrome } from '../../composables/useFieldChrome'
 import { useFieldValidation } from '../../composables/useFieldValidation'
-import DateInputGroup, { dropDanglingTimeZoneSeparator, wrapBidiIsolate } from '../date-input-group/DateInputGroup.vue'
+import DateInputGroup, {
+  dropDanglingTimeZoneSeparator,
+  wrapBidiIsolate,
+} from '../date-input-group/DateInputGroup.vue'
 import { useFieldsetDisabled } from '../fieldset/context'
 
 // `invalid: undefined`: an absent boolean would cast to `false`, which counts as controlled-valid and hides validation errors
@@ -154,12 +162,18 @@ const root = useTemplateRef<ComponentPublicInstance>('root')
 // members, so bounds are compared by time-of-day fields directly instead (matches HeroUI/React Aria semantics,
 // where `minValue`/`maxValue` constrain the time of day regardless of any date part).
 function compareTimeOfDay(a: AnyTime, b: AnyTime) {
-  return (a.hour - b.hour) || (a.minute - b.minute) || (a.second - b.second) || (a.millisecond - b.millisecond)
+  return (
+    a.hour - b.hour || a.minute - b.minute || a.second - b.second || a.millisecond - b.millisecond
+  )
 }
 function formatTimeBoundary(value: AnyTime) {
   const reference = new Date(2020, 0, 1, value.hour, value.minute, value.second, value.millisecond)
   const hourCycle = props.hourCycle === 12 ? 'h12' : props.hourCycle === 24 ? 'h23' : undefined
-  return new Intl.DateTimeFormat(props.locale ?? 'en-US', { hour: 'numeric', minute: '2-digit', hourCycle }).format(reference)
+  return new Intl.DateTimeFormat(props.locale ?? 'en-US', {
+    hour: 'numeric',
+    minute: '2-digit',
+    hourCycle,
+  }).format(reference)
 }
 function builtinValidate(value: TimeValue) {
   if (props.minValue && compareTimeOfDay(value, props.minValue) < 0)
@@ -175,7 +189,8 @@ function validate(value: TimeValue) {
 const { validation, commitValidation } = useFieldValidation({
   // Untouched + uncontrolled: `modelValue` is `undefined` until the first `onUpdate`, so fall back to
   // `defaultValue`. A controlled field explicitly cleared to `null` stays `null`, not fall back.
-  value: () => (modelValue.value === undefined ? props.defaultValue : modelValue.value) ?? undefined,
+  value: () =>
+    (modelValue.value === undefined ? props.defaultValue : modelValue.value) ?? undefined,
   validate: () => validate,
   invalid: () => props.invalid,
   validationBehavior: () => props.validationBehavior,
@@ -194,16 +209,17 @@ function onUpdate(value: TimeValue | undefined) {
   commitValidation()
 }
 
-const { id, labelId, hasLabel, describedBy, FieldLabel, FieldDescription, FieldError } = useFieldChrome({
-  props,
-  slots,
-  invalid,
-  validation,
-  disabled,
-  required: () => props.required,
-  // HeroUI's CSS always hides the description while invalid, regardless of whether an error message exists
-  hideDescriptionWhenInvalid: true,
-})
+const { id, labelId, hasLabel, describedBy, FieldLabel, FieldDescription, FieldError } =
+  useFieldChrome({
+    props,
+    slots,
+    invalid,
+    validation,
+    disabled,
+    required: () => props.required,
+    // HeroUI's CSS always hides the description while invalid, regardless of whether an error message exists
+    hideDescriptionWhenInvalid: true,
+  })
 
 const groupUiProps = computed<DateInputGroupProps['ui']>(() => ({
   input: props.ui?.input,

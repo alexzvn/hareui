@@ -48,8 +48,6 @@ const countries: ListBoxEntry[] = [
     search-placeholder="Search countries..."
     :items="countries"
   >
-    <template #empty>
-      No results found
-    </template>
+    <template #empty> No results found </template>
   </Autocomplete>
 </template>

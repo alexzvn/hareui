@@ -31,7 +31,7 @@ export function provideChartCells(): ComputedRef<ChartCellStyle[]> {
       onScopeDispose(() => registry.delete(key))
     },
   })
-  return computed(() => [...registry.values()].map(get => get()))
+  return computed(() => [...registry.values()].map((get) => get()))
 }
 
 /** `ChartCell`: registers its style with the enclosing series. */

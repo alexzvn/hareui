@@ -1,6 +1,7 @@
 import { mount } from '@vue/test-utils'
 import { describe, expect, it, vi } from 'vitest'
 import { defineComponent, h, nextTick, ref } from 'vue'
+
 import Label from '../src/components/label/Label.vue'
 import type { SwitchProps } from '../src/components/switch/Switch.vue'
 import Switch from '../src/components/switch/Switch.vue'
@@ -11,7 +12,13 @@ const control = '[data-slot=switch-content]'
 describe('Switch', () => {
   it('click toggles v-model and the root selected state', async () => {
     const model = ref(false)
-    const wrapper = mount(() => h(Switch, { 'label': 'Wi-Fi', 'modelValue': model.value, 'onUpdate:modelValue': (v: boolean) => (model.value = v === true) }))
+    const wrapper = mount(() =>
+      h(Switch, {
+        label: 'Wi-Fi',
+        modelValue: model.value,
+        'onUpdate:modelValue': (v: boolean) => (model.value = v === true),
+      }),
+    )
     await wrapper.find(control).trigger('click')
     expect(model.value).toBe(true)
     expect(wrapper.find('[data-slot=switch]').attributes('data-selected')).toBe('true')
@@ -27,17 +34,26 @@ describe('Switch', () => {
 
   it('an external Label pointing at the id toggles the switch', async () => {
     const model = ref(false)
-    const wrapper = mount(defineComponent(() => () => [
-      h(Switch, { 'id': 'wifi', 'modelValue': model.value, 'onUpdate:modelValue': (v: boolean) => (model.value = v === true) }),
-      h(Label, { for: 'wifi' }, () => 'Wi-Fi'),
-    ]), { attachTo: document.body })
+    const wrapper = mount(
+      defineComponent(() => () => [
+        h(Switch, {
+          id: 'wifi',
+          modelValue: model.value,
+          'onUpdate:modelValue': (v: boolean) => (model.value = v === true),
+        }),
+        h(Label, { for: 'wifi' }, () => 'Wi-Fi'),
+      ]),
+      { attachTo: document.body },
+    )
     await wrapper.find('label[for=wifi]').trigger('click')
     expect(model.value).toBe(true)
     wrapper.unmount()
   })
 
   it('#icon renders inside the thumb with the checked state', async () => {
-    const wrapper = mount(Switch, { slots: { icon: ({ checked }: { checked: boolean }) => (checked ? 'on' : 'off') } })
+    const wrapper = mount(Switch, {
+      slots: { icon: ({ checked }: { checked: boolean }) => (checked ? 'on' : 'off') },
+    })
     expect(wrapper.find('[data-slot=switch-thumb] [data-slot=switch-icon]').text()).toBe('off')
     await wrapper.find(control).trigger('click')
     expect(wrapper.find('[data-slot=switch-icon]').text()).toBe('on')
@@ -94,7 +110,7 @@ describe('Switch keyboard parity', () => {
     form.remove()
   })
 
-  it('Enter clicks the form\'s default button instead when it has one', async () => {
+  it("Enter clicks the form's default button instead when it has one", async () => {
     const form = document.createElement('form')
     const submit = document.createElement('button')
     submit.type = 'submit'
@@ -130,11 +146,26 @@ describe('Switch root click timing', () => {
 // A native button toggles on Space unless a handler cancelled the key; happy-dom has no activation behaviour, so
 // the press helper performs it when the keys get through.
 async function pressSpace(el: Element) {
-  const down = new KeyboardEvent('keydown', { key: ' ', code: 'Space', bubbles: true, cancelable: true })
-  const up = new KeyboardEvent('keyup', { key: ' ', code: 'Space', bubbles: true, cancelable: true })
+  const down = new KeyboardEvent('keydown', {
+    key: ' ',
+    code: 'Space',
+    bubbles: true,
+    cancelable: true,
+  })
+  const up = new KeyboardEvent('keyup', {
+    key: ' ',
+    code: 'Space',
+    bubbles: true,
+    cancelable: true,
+  })
   el.dispatchEvent(down)
   el.dispatchEvent(up)
-  if (el instanceof HTMLButtonElement && !el.disabled && !down.defaultPrevented && !up.defaultPrevented)
+  if (
+    el instanceof HTMLButtonElement &&
+    !el.disabled &&
+    !down.defaultPrevented &&
+    !up.defaultPrevented
+  )
     el.click()
   await nextTick()
 }
@@ -148,7 +179,10 @@ describe('Switch accessibility', () => {
     ['required', { required: true }],
     ['small', { size: 'sm' }],
     ['described', { description: 'Connect automatically' }],
-    ['invalid with an error message', { description: 'Connect automatically', invalid: true, errorMessage: 'Turn Wi-Fi on' }],
+    [
+      'invalid with an error message',
+      { description: 'Connect automatically', invalid: true, errorMessage: 'Turn Wi-Fi on' },
+    ],
   ])('has no axe violations when %s', async (_, props) => {
     const wrapper = mount(Switch, { props: { label: 'Wi-Fi', ...props }, attachTo: document.body })
     await expectAccessible(wrapper)
@@ -156,23 +190,36 @@ describe('Switch accessibility', () => {
   })
 
   it('has no axe violations with a thumb icon', async () => {
-    const wrapper = mount(Switch, { props: { label: 'Dark mode' }, slots: { icon: () => h('svg', { 'aria-hidden': 'true', 'viewBox': '0 0 24 24' }) }, attachTo: document.body })
+    const wrapper = mount(Switch, {
+      props: { label: 'Dark mode' },
+      slots: { icon: () => h('svg', { 'aria-hidden': 'true', viewBox: '0 0 24 24' }) },
+      attachTo: document.body,
+    })
     await expectAccessible(wrapper)
     wrapper.unmount()
   })
 
   it('has no axe violations inside a form, with its hidden input', async () => {
-    const wrapper = mount(() => h('form', null, h(Switch, { label: 'Wi-Fi', name: 'wifi', required: true })), { attachTo: document.body })
+    const wrapper = mount(
+      () => h('form', null, h(Switch, { label: 'Wi-Fi', name: 'wifi', required: true })),
+      { attachTo: document.body },
+    )
     await nextTick()
     await expectAccessible(wrapper)
     wrapper.unmount()
   })
 
   it('is named by an external Label pointing at its id', async () => {
-    const wrapper = mount(defineComponent(() => () => h('div', [
-      h(Switch, { id: 'airplane' }),
-      h(Label, { for: 'airplane' }, () => 'Airplane mode'),
-    ])), { attachTo: document.body })
+    const wrapper = mount(
+      defineComponent(
+        () => () =>
+          h('div', [
+            h(Switch, { id: 'airplane' }),
+            h(Label, { for: 'airplane' }, () => 'Airplane mode'),
+          ]),
+      ),
+      { attachTo: document.body },
+    )
     await nextTick()
     await expectAccessible(wrapper)
     wrapper.unmount()
@@ -199,9 +246,20 @@ describe('Switch accessibility', () => {
   })
 
   it('aria-describedby points at the rendered description and error text', () => {
-    const wrapper = mount(Switch, { props: { label: 'Wi-Fi', description: 'Connect automatically', errorMessage: 'Turn Wi-Fi on', invalid: true }, attachTo: document.body })
+    const wrapper = mount(Switch, {
+      props: {
+        label: 'Wi-Fi',
+        description: 'Connect automatically',
+        errorMessage: 'Turn Wi-Fi on',
+        invalid: true,
+      },
+      attachTo: document.body,
+    })
     const ids = wrapper.get(control).attributes('aria-describedby')!.split(' ')
-    expect(ids.map(id => document.getElementById(id)?.textContent?.trim())).toEqual(['Connect automatically', 'Turn Wi-Fi on'])
+    expect(ids.map((id) => document.getElementById(id)?.textContent?.trim())).toEqual([
+      'Connect automatically',
+      'Turn Wi-Fi on',
+    ])
     wrapper.unmount()
   })
 
@@ -221,7 +279,10 @@ describe('Switch accessibility', () => {
   })
 
   it('a read-only switch stays focusable, keeps focus off on press, and Space does not change it', async () => {
-    const wrapper = mount(Switch, { props: { label: 'Wi-Fi', readonly: true }, attachTo: document.body })
+    const wrapper = mount(Switch, {
+      props: { label: 'Wi-Fi', readonly: true },
+      attachTo: document.body,
+    })
     const content = wrapper.get(control).element as HTMLButtonElement
     const down = new MouseEvent('mousedown', { bubbles: true, cancelable: true })
     content.dispatchEvent(down)
@@ -235,7 +296,10 @@ describe('Switch accessibility', () => {
   })
 
   it('a disabled switch is removed from the tab order', () => {
-    const wrapper = mount(Switch, { props: { label: 'Wi-Fi', disabled: true }, attachTo: document.body })
+    const wrapper = mount(Switch, {
+      props: { label: 'Wi-Fi', disabled: true },
+      attachTo: document.body,
+    })
     const content = wrapper.get(control).element as HTMLButtonElement
     expect(content.disabled).toBe(true)
     content.focus()

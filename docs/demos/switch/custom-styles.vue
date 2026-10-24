@@ -5,7 +5,10 @@ import { Description, Switch } from '@hareui/vue'
 <template>
   <Switch
     id="autosave"
-    :ui="{ control: '[--switch-control-bg-checked-hover:var(--success)] [--switch-control-bg-checked:var(--success)]' }"
+    :ui="{
+      control:
+        '[--switch-control-bg-checked-hover:var(--success)] [--switch-control-bg-checked:var(--success)]',
+    }"
   >
     <template #label>
       <span class="flex flex-col gap-0.5">

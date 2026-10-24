@@ -8,7 +8,11 @@ interface Row {
   email: string
 }
 
-const data: Row[] = Array.from({ length: 10_000 }, (_, i) => ({ id: i + 1, name: `User ${i + 1}`, email: `user${i + 1}@example.com` }))
+const data: Row[] = Array.from({ length: 10_000 }, (_, i) => ({
+  id: i + 1,
+  name: `User ${i + 1}`,
+  email: `user${i + 1}@example.com`,
+}))
 
 const columns: RichTableColumn<Row>[] = [
   { accessorKey: 'id', header: '#' },

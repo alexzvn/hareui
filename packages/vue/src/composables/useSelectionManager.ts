@@ -38,11 +38,9 @@ export function useSelectionManager<K>(options: SelectionManagerOptions<K>) {
     const keys = options.keys()
     let from = keys.indexOf(a)
     let to = keys.indexOf(b)
-    if (from === -1 || to === -1)
-      return []
-    if (from > to)
-      [from, to] = [to, from]
-    return keys.slice(from, to + 1).filter(key => !options.isDisabled(key))
+    if (from === -1 || to === -1) return []
+    if (from > to) [from, to] = [to, from]
+    return keys.slice(from, to + 1).filter((key) => !options.isDisabled(key))
   }
 
   function write(keys: K[]) {
@@ -53,10 +51,9 @@ export function useSelectionManager<K>(options: SelectionManagerOptions<K>) {
   /** Click / Space / Enter: toggles `key` (single mode replaces). Adding a key makes it the anchor. */
   function toggle(key: K) {
     const mode = options.mode()
-    if (mode === 'none' || options.isDisabled(key))
-      return
+    if (mode === 'none' || options.isDisabled(key)) return
     if (isSelected(key)) {
-      write(mode === 'single' ? [] : options.selected().filter(k => k !== key))
+      write(mode === 'single' ? [] : options.selected().filter((k) => k !== key))
       return
     }
     anchor = current = key
@@ -69,8 +66,7 @@ export function useSelectionManager<K>(options: SelectionManagerOptions<K>) {
    */
   function extend(to: K, from?: K) {
     const mode = options.mode()
-    if (mode === 'none' || options.isDisabled(to))
-      return
+    if (mode === 'none' || options.isDisabled(to)) return
     if (mode === 'single') {
       anchor = current = to
       write([to])
@@ -82,10 +78,8 @@ export function useSelectionManager<K>(options: SelectionManagerOptions<K>) {
     }
     const start = anchor ?? from ?? to
     const next = new Set(fromAll ? [] : options.selected())
-    for (const key of range(start, current ?? to))
-      next.delete(key)
-    for (const key of range(to, start))
-      next.add(key)
+    for (const key of range(start, current ?? to)) next.delete(key)
+    for (const key of range(to, start)) next.add(key)
     anchor = start
     current = to
     write([...next])
@@ -93,9 +87,8 @@ export function useSelectionManager<K>(options: SelectionManagerOptions<K>) {
 
   /** Meta/Ctrl+A: every selectable key. Focus stays where it is. */
   function selectAll() {
-    if (options.mode() !== 'multiple')
-      return false
-    write(options.keys().filter(key => !options.isDisabled(key)))
+    if (options.mode() !== 'multiple') return false
+    write(options.keys().filter((key) => !options.isDisabled(key)))
     anchor = current = undefined
     fromAll = true
     return true

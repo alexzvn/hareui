@@ -19,8 +19,6 @@ function handleSubmit(e: Event) {
       <Switch default-value name="newsletter" value="on" label="Subscribe to newsletter" />
       <Switch name="marketing" value="on" label="Receive marketing updates" />
     </SwitchGroup>
-    <Button class="mt-4" size="sm" type="submit" variant="primary">
-      Submit
-    </Button>
+    <Button class="mt-4" size="sm" type="submit" variant="primary"> Submit </Button>
   </form>
 </template>

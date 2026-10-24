@@ -23,7 +23,8 @@ const rows: TableRow[] = [
     :ui="{
       content: 'min-w-[600px]',
       header: 'bg-neutral-100/80 dark:bg-neutral-800/80',
-      column: 'text-xs font-semibold uppercase tracking-wide text-neutral-500 dark:text-neutral-400',
+      column:
+        'text-xs font-semibold uppercase tracking-wide text-neutral-500 dark:text-neutral-400',
       row: 'border-t border-border/60 transition-colors hover:bg-neutral-100/60 even:bg-neutral-50/50 dark:hover:bg-neutral-800/50 dark:even:bg-neutral-900/30',
     }"
   >

@@ -93,6 +93,7 @@ import {
   VisuallyHidden,
 } from 'reka-ui'
 import { useSlots, useTemplateRef } from 'vue'
+
 import { useComponentUI } from '../../composables/useComponentUI'
 import { useDialogShell } from '../../composables/useDialogShell'
 import CloseButton from '../close-button/CloseButton.vue'
@@ -138,7 +139,13 @@ const {
 </script>
 
 <template>
-  <DialogRoot :open="open" :default-open="defaultOpen" modal v-slot="{ open: isOpen, close }" @update:open="onOpenChange">
+  <DialogRoot
+    :open="open"
+    :default-open="defaultOpen"
+    modal
+    v-slot="{ open: isOpen, close }"
+    @update:open="onOpenChange"
+  >
     <DialogTrigger v-if="!!slots.default" as-child>
       <slot :open="isOpen" />
     </DialogTrigger>
@@ -152,7 +159,12 @@ const {
              The dialog has no visible exit animation; its theme runs `presence-hold` while closed so its own Presence keeps it
              mounted and the overlay's Presence removes it with the backdrop. Not `force-mount`: Reka's modal content then
              undoes `hideOthers` twice (on close and on unmount), leaving `aria-hidden` on the page after a few cycles. -->
-        <div data-slot="modal-container" :data-state="isOpen ? 'open' : 'closed'" :data-placement="placement" :class="ui.container({ class: props.ui?.container })">
+        <div
+          data-slot="modal-container"
+          :data-state="isOpen ? 'open' : 'closed'"
+          :data-placement="placement"
+          :class="ui.container({ class: props.ui?.container })"
+        >
           <DialogContent
             ref="dialogContent"
             data-slot="modal-dialog"
@@ -167,12 +179,24 @@ const {
               <DialogTitle>{{ title }}</DialogTitle>
             </VisuallyHidden>
             <slot name="content" :close="close">
-              <div v-if="hasHeader" data-slot="modal-header" :class="ui.header({ class: props.ui?.header })">
+              <div
+                v-if="hasHeader"
+                data-slot="modal-header"
+                :class="ui.header({ class: props.ui?.header })"
+              >
                 <slot name="header">
-                  <div v-if="!!slots.icon" data-slot="modal-icon" :class="ui.icon({ class: props.ui?.icon })">
+                  <div
+                    v-if="!!slots.icon"
+                    data-slot="modal-icon"
+                    :class="ui.icon({ class: props.ui?.icon })"
+                  >
                     <slot name="icon" />
                   </div>
-                  <DialogTitle v-if="showHeaderTitle" data-slot="modal-heading" :class="ui.heading({ class: props.ui?.heading })">
+                  <DialogTitle
+                    v-if="showHeaderTitle"
+                    data-slot="modal-heading"
+                    :class="ui.heading({ class: props.ui?.heading })"
+                  >
                     <slot name="title">
                       {{ title }}
                     </slot>
@@ -182,10 +206,18 @@ const {
                   </DialogDescription>
                 </slot>
               </div>
-              <div v-if="!!slots.body" data-slot="modal-body" :class="ui.body({ class: props.ui?.body })">
+              <div
+                v-if="!!slots.body"
+                data-slot="modal-body"
+                :class="ui.body({ class: props.ui?.body })"
+              >
                 <slot name="body" :close="close" />
               </div>
-              <div v-if="!!slots.footer" data-slot="modal-footer" :class="ui.footer({ class: props.ui?.footer })">
+              <div
+                v-if="!!slots.footer"
+                data-slot="modal-footer"
+                :class="ui.footer({ class: props.ui?.footer })"
+              >
                 <slot name="footer" :close="close" />
               </div>
               <!-- after header/body/footer so the theme's `header + body` / `body + footer` sibling margins still apply -->
@@ -194,7 +226,10 @@ const {
               </VisuallyHidden>
               <DialogClose v-if="closeButton" as-child>
                 <slot name="close" :close="close">
-                  <CloseButton data-slot="modal-close-trigger" :class="ui.closeTrigger({ class: props.ui?.closeTrigger })" />
+                  <CloseButton
+                    data-slot="modal-close-trigger"
+                    :class="ui.closeTrigger({ class: props.ui?.closeTrigger })"
+                  />
                 </slot>
               </DialogClose>
             </slot>

@@ -4,16 +4,33 @@ import { Button, NavigationMenu } from '@hareui/vue'
 import { Icon } from '@iconify/vue'
 import { h, ref } from 'vue'
 
-const icon = (name: string) => (attrs: Record<string, unknown>) => h(Icon, { ...attrs, icon: `gravity-ui:${name}` })
+const icon = (name: string) => (attrs: Record<string, unknown>) =>
+  h(Icon, { ...attrs, icon: `gravity-ui:${name}` })
 
 const collapsed = ref(false)
 const status = ref('Select a page to get started.')
 
 // The ⋮ menu of a project row: shown on hover, keyboard focus and on touch screens.
 const actions = (name: string): DropdownEntry[] => [
-  { value: 'open', label: 'Open', icon: icon('folder-open'), onSelect: () => status.value = `Opened ${name}.` },
-  { value: 'duplicate', label: 'Duplicate', icon: icon('copy'), onSelect: () => status.value = `Duplicated ${name}.` },
-  { value: 'delete', label: 'Delete', icon: icon('trash-bin'), variant: 'danger', onSelect: () => status.value = `Deleted ${name}.` },
+  {
+    value: 'open',
+    label: 'Open',
+    icon: icon('folder-open'),
+    onSelect: () => (status.value = `Opened ${name}.`),
+  },
+  {
+    value: 'duplicate',
+    label: 'Duplicate',
+    icon: icon('copy'),
+    onSelect: () => (status.value = `Duplicated ${name}.`),
+  },
+  {
+    value: 'delete',
+    label: 'Delete',
+    icon: icon('trash-bin'),
+    variant: 'danger',
+    onSelect: () => (status.value = `Deleted ${name}.`),
+  },
 ]
 
 const items: NavigationMenuItem[][] = [
@@ -35,7 +52,12 @@ const items: NavigationMenuItem[][] = [
         { label: 'Patterns', actions: actions('Patterns') },
       ],
     },
-    { label: 'Travel', icon: icon('folder'), actions: actions('Travel'), children: [{ label: 'Itinerary' }, { label: 'Bookings' }] },
+    {
+      label: 'Travel',
+      icon: icon('folder'),
+      actions: actions('Travel'),
+      children: [{ label: 'Itinerary' }, { label: 'Bookings' }],
+    },
   ],
   [
     { label: 'Settings', icon: icon('gear'), kbds: ['command', ','] },
@@ -64,13 +86,23 @@ const items: NavigationMenuItem[][] = [
       />
       <div :class="collapsed ? 'px-1.5' : 'px-3'">
         <!-- `mx-0.5` lines the glyph up with the menu icons, expanded and collapsed. -->
-        <Button aria-label="Toggle sidebar" icon-only size="sm" variant="ghost" class="mx-0.5" @click="collapsed = !collapsed">
+        <Button
+          aria-label="Toggle sidebar"
+          icon-only
+          size="sm"
+          variant="ghost"
+          class="mx-0.5"
+          @click="collapsed = !collapsed"
+        >
           <Icon icon="gravity-ui:layout-side-content-left" />
         </Button>
       </div>
     </aside>
     <!-- The divider is the content's border so it doesn't add to the sidebar's width. -->
-    <div class="flex-1 border-s border-separator p-6 text-sm text-muted" :class="{ 'max-sm:hidden': !collapsed }">
+    <div
+      class="flex-1 border-s border-separator p-6 text-sm text-muted"
+      :class="{ 'max-sm:hidden': !collapsed }"
+    >
       {{ status }}
     </div>
   </div>

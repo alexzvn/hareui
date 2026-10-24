@@ -1,5 +1,6 @@
 <script lang="ts">
 import type { VNode } from 'vue'
+
 import type { ComponentSlots, ComponentVariants } from '../../types/tv'
 import type { AvatarProps } from '../avatar/Avatar.vue'
 import theme from './theme'
@@ -47,13 +48,21 @@ export interface AvatarGroupSlots {
 
 <script setup lang="ts">
 import { cloneVNode, Comment, computed, Fragment, h } from 'vue'
+
 import { useComponentUI } from '../../composables/useComponentUI'
 import Avatar from '../avatar/Avatar.vue'
 
-const props = withDefaults(defineProps<AvatarGroupProps>(), { size: 'md', grid: false, overlap: 'clip' })
+const props = withDefaults(defineProps<AvatarGroupProps>(), {
+  size: 'md',
+  grid: false,
+  overlap: 'clip',
+})
 const slots = defineSlots<AvatarGroupSlots>()
 
-const ui = useComponentUI('avatarGroup', theme, () => ({ grid: props.grid, overlap: props.overlap }))
+const ui = useComponentUI('avatarGroup', theme, () => ({
+  grid: props.grid,
+  overlap: props.overlap,
+}))
 
 function flatten(nodes: VNode[]): VNode[] {
   return nodes.flatMap((node) => {
@@ -63,15 +72,20 @@ function flatten(nodes: VNode[]): VNode[] {
   })
 }
 
-const groupProps = computed(() => ({ size: props.size, color: props.color, variant: props.variant }))
+const groupProps = computed(() => ({
+  size: props.size,
+  color: props.color,
+  variant: props.variant,
+}))
 
 /** Fills in the group's size/color/variant on direct Avatar children that omit them, like HeroUI's context. */
 function inherit(node: VNode): VNode {
-  if (node.type !== Avatar)
-    return node
+  if (node.type !== Avatar) return node
   const own = node.props ?? {}
   const extra = Object.fromEntries(
-    Object.entries(groupProps.value).filter(([key, value]) => value !== undefined && own[key] == null),
+    Object.entries(groupProps.value).filter(
+      ([key, value]) => value !== undefined && own[key] == null,
+    ),
   )
   return Object.keys(extra).length ? cloneVNode(node, extra) : node
 }
@@ -82,11 +96,17 @@ function Items() {
   const remaining = children.length - visible.length
   const nodes = visible.map(inherit)
   if (slots.count || remaining > 0) {
-    nodes.push(h(Avatar, {
-      ...groupProps.value,
-      'data-slot': 'avatar-group-count',
-      'class': ui.value.count({ class: props.ui?.count }),
-    }, { fallback: slots.count ?? (() => `+${remaining}`) }))
+    nodes.push(
+      h(
+        Avatar,
+        {
+          ...groupProps.value,
+          'data-slot': 'avatar-group-count',
+          class: ui.value.count({ class: props.ui?.count }),
+        },
+        { fallback: slots.count ?? (() => `+${remaining}`) },
+      ),
+    )
   }
   return nodes
 }

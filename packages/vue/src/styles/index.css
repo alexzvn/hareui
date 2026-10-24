@@ -1,22 +1,22 @@
 /* HareUI styles — import after `@import "tailwindcss";` */
-@import "tw-animate-css";
+@import 'tw-animate-css';
 
 /* Tokens (HeroUI v3 shared theme + default variables) */
-@import "./theme.css";
-@import "./keyframes.css";
-@import "./variables.css" layer(theme);
+@import './theme.css';
+@import './keyframes.css';
+@import './variables.css' layer(theme);
 
 /* Base */
-@import "./base.css" layer(base);
-@import "./scrollbar.css" layer(base);
-@import "./shadow-root.css" layer(base);
-@import "./scroll-shadow.css";
-@import "./toast.css";
-@import "./dashboard.css";
+@import './base.css' layer(base);
+@import './scrollbar.css' layer(base);
+@import './shadow-root.css' layer(base);
+@import './scroll-shadow.css';
+@import './toast.css';
+@import './dashboard.css';
 
 /* Utilities and variants */
-@import "./utilities.css";
-@import "./variants.css";
+@import './utilities.css';
+@import './variants.css';
 
 /* Scan component sources/build output for classes */
 @source "../";

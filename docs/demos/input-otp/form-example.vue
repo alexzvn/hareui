@@ -22,8 +22,7 @@ function handleSubmit(e: Event) {
       // eslint-disable-next-line no-console
       console.log('Code verified successfully!')
       value.value = ''
-    }
-    else {
+    } else {
       error.value = 'Invalid code. Please try again.'
     }
     isSubmitting.value = false
@@ -42,20 +41,22 @@ function handleSubmit(e: Event) {
       :groups="[3, 3]"
       @update:model-value="error = ''"
     />
-    <Button class="w-full" :disabled="value.length !== 6" :pending="isSubmitting" type="submit" variant="primary">
+    <Button
+      class="w-full"
+      :disabled="value.length !== 6"
+      :pending="isSubmitting"
+      type="submit"
+      variant="primary"
+    >
       <template v-if="isSubmitting">
         <Spinner color="current" size="sm" />
         Verifying...
       </template>
-      <template v-else>
-        Verify
-      </template>
+      <template v-else> Verify </template>
     </Button>
     <div class="flex items-center justify-center gap-1">
       <p class="text-sm text-muted">Having trouble?</p>
-      <Link class="text-sm text-foreground underline" href="#">
-        Use backup code
-      </Link>
+      <Link class="text-sm text-foreground underline" href="#"> Use backup code </Link>
     </div>
   </Form>
 </template>

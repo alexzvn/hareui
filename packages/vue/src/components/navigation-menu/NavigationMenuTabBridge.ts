@@ -2,7 +2,13 @@ import { injectNavigationMenuItemContext } from 'reka-ui'
 import { defineComponent, watchPostEffect } from 'vue'
 
 function isTab(event: KeyboardEvent): boolean {
-  return event.key === 'Tab' && !event.altKey && !event.ctrlKey && !event.metaKey && !event.defaultPrevented
+  return (
+    event.key === 'Tab' &&
+    !event.altKey &&
+    !event.ctrlKey &&
+    !event.metaKey &&
+    !event.defaultPrevented
+  )
 }
 
 /**
@@ -24,17 +30,14 @@ export default defineComponent({
       const proxy = item.focusProxyRef.value
       const trigger = item.triggerRef.value
       const content = document.getElementById(item.contentId)
-      if (!proxy?.isConnected || !trigger || !content)
-        return
+      if (!proxy?.isConnected || !trigger || !content) return
       proxy.tabIndex = -1
 
       const onTriggerKeydown = (event: KeyboardEvent) => {
-        if (!isTab(event) || event.shiftKey || !proxy.isConnected)
-          return
+        if (!isTab(event) || event.shiftKey || !proxy.isConnected) return
         item.onFocusProxyEnter('start')
         // Without a tabbable in the content, Tab goes on from the trigger as usual.
-        if (content.contains(document.activeElement))
-          event.preventDefault()
+        if (content.contains(document.activeElement)) event.preventDefault()
       }
       // Added after Reka's own listener, so it sees where Reka's Tab handling left focus.
       const onContentKeydown = (event: KeyboardEvent) => {

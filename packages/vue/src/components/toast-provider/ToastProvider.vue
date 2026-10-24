@@ -1,8 +1,8 @@
 <script lang="ts">
-import type { ToastQueue, ToastContentValue as ToastContentValueType } from './toastQueue'
 import type { PortalTarget } from '../../config'
 import type { ComponentSlots, ComponentVariants } from '../../types/tv'
 import theme from './theme'
+import type { ToastQueue, ToastContentValue as ToastContentValueType } from './toastQueue'
 
 type Toast = typeof theme
 
@@ -70,7 +70,12 @@ export interface ToastProviderSlots {
    * Put `titleId` / `descriptionId` on the elements holding the title and description to name and describe
    * the toast, and wrap the message in a `role="alert"` element so screen readers announce it.
    */
-  toast?: (props: { content: ToastContentValueType, close: () => void, titleId: string, descriptionId: string }) => any
+  toast?: (props: {
+    content: ToastContentValueType
+    close: () => void
+    titleId: string
+    descriptionId: string
+  }) => any
 }
 
 // Module scope (not <script setup>): withDefaults() is hoisted out of setup() and can't see setup locals.
@@ -83,12 +88,13 @@ const MODIFIER_PROPS = ['altKey', 'ctrlKey', 'metaKey', 'shiftKey'] as const
 </script>
 
 <script setup lang="ts">
-import type { QueuedToast } from './toastQueue'
 import { computed, onBeforeUnmount, onMounted, reactive, ref, useSlots, watch } from 'vue'
+
 import { useComponentUI } from '../../composables/useComponentUI'
 import { usePortal } from '../../composables/usePortal'
-import { toastQueue as defaultToastQueue } from './useToast'
 import ToastItem from './ToastItem.vue'
+import type { QueuedToast } from './toastQueue'
+import { toastQueue as defaultToastQueue } from './useToast'
 
 defineOptions({ inheritAttrs: false })
 
@@ -111,7 +117,9 @@ const activeQueue = computed(() => props.queue ?? defaultToastQueue)
 const visibleToasts = computed(() => activeQueue.value.visibleToasts)
 const exitingKeys = computed(() => activeQueue.value.exitingKeys)
 
-const resolvedMaxVisibleToasts = computed(() => props.maxVisibleToasts ?? activeQueue.value.maxVisibleToasts ?? DEFAULT_MAX_VISIBLE_TOAST)
+const resolvedMaxVisibleToasts = computed(
+  () => props.maxVisibleToasts ?? activeQueue.value.maxVisibleToasts ?? DEFAULT_MAX_VISIBLE_TOAST,
+)
 
 /* ------------------------------------------------------------------------------------------------
  * Expansion: hover, keyboard focus, or the `isExpanded` prop. Native listeners on the region
@@ -127,14 +135,12 @@ function collapseIfOutside() {
     isPointerOrFocusWithin.value = false
 }
 function onPointerEnterOrMove(event: PointerEvent) {
-  if (event.pointerType === 'touch')
-    return
+  if (event.pointerType === 'touch') return
   pointerWithin = true
   isPointerOrFocusWithin.value = true
 }
 function onPointerLeave(event: PointerEvent) {
-  if (event.pointerType === 'touch')
-    return
+  if (event.pointerType === 'touch') return
   pointerWithin = false
   collapseIfOutside()
 }
@@ -142,15 +148,13 @@ function onFocusIn(event: FocusEvent) {
   isPointerOrFocusWithin.value = true
   const node = regionEl.value
   const target = event.target as HTMLElement
-  if (node && target !== node)
-    lastFocusedInRegion = target
+  if (node && target !== node) lastFocusedInRegion = target
   if (node && event.relatedTarget instanceof HTMLElement && !node.contains(event.relatedTarget))
     lastFocusedOutside = event.relatedTarget
 }
 function onFocusOut(event: FocusEvent) {
   const node = regionEl.value
-  if (node && event.relatedTarget instanceof Node && node.contains(event.relatedTarget))
-    return
+  if (node && event.relatedTarget instanceof Node && node.contains(event.relatedTarget)) return
   lastFocusedOutside = null
   collapseIfOutside()
 }
@@ -165,10 +169,8 @@ function onGlobalPointerOver(event: PointerEvent) {
 }
 function onRegionKeyDown(event: KeyboardEvent) {
   const node = regionEl.value
-  if (!node || event.key !== 'Escape')
-    return
-  if (node.contains(document.activeElement))
-    (document.activeElement as HTMLElement | null)?.blur()
+  if (!node || event.key !== 'Escape') return
+  if (node.contains(document.activeElement)) (document.activeElement as HTMLElement | null)?.blur()
   pointerWithin = false
   isPointerOrFocusWithin.value = false
 }
@@ -181,51 +183,54 @@ function onRegionKeyDown(event: KeyboardEvent) {
 let lastFocusedInRegion: HTMLElement | null = null
 let lastFocusedOutside: HTMLElement | null = null
 let pointerModality = false
-const onModalityPointer = () => { pointerModality = true }
-const onModalityKey = () => { pointerModality = false }
+const onModalityPointer = () => {
+  pointerModality = true
+}
+const onModalityKey = () => {
+  pointerModality = false
+}
 
 function onLandmarkKeyDown(event: KeyboardEvent) {
   const node = regionEl.value
-  if (!node || event.key !== 'F6' || event.altKey || node.closest('[aria-hidden=true]'))
-    return
+  if (!node || event.key !== 'F6' || event.altKey || node.closest('[aria-hidden=true]')) return
   event.preventDefault()
   if (lastFocusedInRegion?.isConnected && node.contains(lastFocusedInRegion))
     lastFocusedInRegion.focus()
-  else
-    node.focus()
+  else node.focus()
 }
 
 function restoreOutsideFocus() {
-  if (lastFocusedOutside?.isConnected)
-    lastFocusedOutside.focus({ preventScroll: true })
+  if (lastFocusedOutside?.isConnected) lastFocusedOutside.focus({ preventScroll: true })
 }
 
 function onFocusLeave(el: HTMLElement) {
   const node = regionEl.value
-  if (!node)
-    return
-  if (pointerModality && lastFocusedOutside?.isConnected)
-    return restoreOutsideFocus()
+  if (!node) return
+  if (pointerModality && lastFocusedOutside?.isConnected) return restoreOutsideFocus()
   const toasts = [...node.querySelectorAll<HTMLElement>('[data-slot=toast]')]
   const index = toasts.indexOf(el)
-  const available = (toast: HTMLElement) => toast !== el && !toast.hasAttribute('data-exiting') && toast.getAttribute('aria-hidden') !== 'true'
-  const next = toasts.slice(0, index).reverse().find(available) ?? toasts.slice(index + 1).find(available)
-  if (next)
-    next.focus({ preventScroll: true })
-  else
-    restoreOutsideFocus()
+  const available = (toast: HTMLElement) =>
+    toast !== el &&
+    !toast.hasAttribute('data-exiting') &&
+    toast.getAttribute('aria-hidden') !== 'true'
+  const next =
+    toasts.slice(0, index).reverse().find(available) ?? toasts.slice(index + 1).find(available)
+  if (next) next.focus({ preventScroll: true })
+  else restoreOutsideFocus()
 }
 
 function onDocumentKeyDown(event: KeyboardEvent) {
   onLandmarkKeyDown(event)
   const node = regionEl.value
   const hotkey = props.hotkey
-  if (!node || hotkey.length === 0)
-    return
-  const hasExpectedModifiers = MODIFIER_PROPS.every(modifier => event[modifier] === hotkey.includes(modifier))
-  const hasExpectedCodes = hotkey.every(key => (MODIFIER_PROPS as readonly string[]).includes(key) || event.code === key)
-  if (!hasExpectedModifiers || !hasExpectedCodes)
-    return
+  if (!node || hotkey.length === 0) return
+  const hasExpectedModifiers = MODIFIER_PROPS.every(
+    (modifier) => event[modifier] === hotkey.includes(modifier),
+  )
+  const hasExpectedCodes = hotkey.every(
+    (key) => (MODIFIER_PROPS as readonly string[]).includes(key) || event.code === key,
+  )
+  if (!hasExpectedModifiers || !hasExpectedCodes) return
   event.preventDefault()
   node.focus()
 }
@@ -246,25 +251,27 @@ onBeforeUnmount(() => {
 // A single remaining toast never expands; exiting toasts don't count.
 const activeToastCount = computed(() => visibleToasts.value.length - exitingKeys.value.size)
 // RAC's default region label (`toastRegion.notifications` in @react-aria/toast's en-US strings).
-const regionLabel = computed(() => props.ariaLabel ?? `${activeToastCount.value} notification${activeToastCount.value === 1 ? '' : 's'}.`)
-const resolvedIsExpanded = computed(() => (props.isExpanded || isPointerOrFocusWithin.value) && activeToastCount.value > 1)
+const regionLabel = computed(
+  () =>
+    props.ariaLabel ??
+    `${activeToastCount.value} notification${activeToastCount.value === 1 ? '' : 's'}.`,
+)
+const resolvedIsExpanded = computed(
+  () => (props.isExpanded || isPointerOrFocusWithin.value) && activeToastCount.value > 1,
+)
 
 // Interacting with the stack pauses every timer. A closing toast vanishing under the cursor
 // must not resume it early, so this isn't keyed on `resolvedIsExpanded` (forced expansion
 // via the `isExpanded` prop does not pause timers, per that prop's contract).
 watch(isPointerOrFocusWithin, (within) => {
-  if (within)
-    activeQueue.value.suspendTimers('interaction')
-  else
-    activeQueue.value.resumeTimers('interaction')
+  if (within) activeQueue.value.suspendTimers('interaction')
+  else activeQueue.value.resumeTimers('interaction')
 })
 
 // Pause timers while the page is hidden so toasts aren't missed in a background tab.
 function onVisibilityChange() {
-  if (document.hidden)
-    activeQueue.value.suspendTimers('visibility')
-  else
-    activeQueue.value.resumeTimers('visibility')
+  if (document.hidden) activeQueue.value.suspendTimers('visibility')
+  else activeQueue.value.resumeTimers('visibility')
 }
 onMounted(() => document.addEventListener('visibilitychange', onVisibilityChange))
 onBeforeUnmount(() => {
@@ -276,7 +283,9 @@ onBeforeUnmount(() => {
  * Mobile: HeroUI swaps the action button's DOM position with a real media query (not CSS
  * display), so only one instance is ever mounted. Mirrored here with a matchMedia listener.
  * -------------------------------------------------------------------------------------------- */
-const isMobile = ref(typeof window !== 'undefined' ? window.matchMedia('(max-width: 768px)').matches : false)
+const isMobile = ref(
+  typeof window !== 'undefined' ? window.matchMedia('(max-width: 768px)').matches : false,
+)
 let mobileQuery: MediaQueryList | null = null
 function onMobileChange(event: MediaQueryListEvent) {
   isMobile.value = event.matches
@@ -320,7 +329,7 @@ const renderItems = computed<RenderItem[]>(() => {
   const exiting = exitingKeys.value
   // Exiting toasts are excluded from layout (siblings reposition during the exit animation)
   // but keep their own slot while fading out.
-  const common = vis.filter(t => !exiting.has(t.key))
+  const common = vis.filter((t) => !exiting.has(t.key))
   const frontKey = common[0]?.key
   const frontHeightVal = (frontKey ? heights[frontKey] : undefined) ?? 0
 
@@ -337,8 +346,7 @@ const renderItems = computed<RenderItem[]>(() => {
     const t = vis[i]!
     const isExiting = exiting.has(t.key)
     const index = nonExitingBefore
-    if (!isExiting)
-      nonExitingBefore++
+    if (!isExiting) nonExitingBefore++
     const heightsBefore = prefix[index] ?? index * frontHeightVal
     items.push({
       toast: t,
@@ -368,7 +376,12 @@ const renderItems = computed<RenderItem[]>(() => {
       tabindex="-1"
       data-slot="toast-region"
       :data-expanded="resolvedIsExpanded ? 'true' : undefined"
-      :style="{ '--gap': `${gap}px`, '--placement': placement, '--scale-factor': scaleFactor, '--toast-width': typeof width === 'number' ? `${width}px` : width }"
+      :style="{
+        '--gap': `${gap}px`,
+        '--placement': placement,
+        '--scale-factor': scaleFactor,
+        '--toast-width': typeof width === 'number' ? `${width}px` : width,
+      }"
       :class="ui.region({ class: [props.ui?.region, props.class] })"
       @pointerenter="onPointerEnterOrMove"
       @pointermove="onPointerEnterOrMove"

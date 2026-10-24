@@ -33,12 +33,14 @@ const items: DropdownEntry[] = [
 
 <template>
   <Dropdown :items="items" @action="(key) => console.log(`Selected: ${key}`)">
-    <Button variant="secondary">
-      Share
-    </Button>
+    <Button variant="secondary"> Share </Button>
     <!-- Items the slot renders nothing for keep the default chevron -->
     <template #submenu-indicator="{ item }">
-      <Icon v-if="item.value === 'share'" class="size-3.5 text-muted" icon="gravity-ui:arrow-right" />
+      <Icon
+        v-if="item.value === 'share'"
+        class="size-3.5 text-muted"
+        icon="gravity-ui:arrow-right"
+      />
       <svg
         v-else-if="item.value === 'email'"
         class="size-3.5 text-muted"

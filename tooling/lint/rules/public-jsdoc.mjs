@@ -32,7 +32,8 @@ const buildSurface = (srcRoot) => {
   const visit = (file, name) => {
     if (!add(file, name)) return
     const text = readSource(file)
-    const exportFrom = /export\s+(type\s+)?(\*(?:\s+as\s+(\w+))?|\{([^}]*)\})\s+from\s+['"]([^'"]+)['"]/g
+    const exportFrom =
+      /export\s+(type\s+)?(\*(?:\s+as\s+(\w+))?|\{([^}]*)\})\s+from\s+['"]([^'"]+)['"]/g
     for (const match of text.matchAll(exportFrom)) {
       const target = resolveModule(file, match[5])
       if (!target) continue
@@ -42,7 +43,10 @@ const buildSurface = (srcRoot) => {
         continue
       }
       for (const raw of match[4].split(',')) {
-        const parts = raw.trim().replace(/^type\s+/, '').split(/\s+as\s+/)
+        const parts = raw
+          .trim()
+          .replace(/^type\s+/, '')
+          .split(/\s+as\s+/)
         if (!parts[0]) continue
         const exported = parts[1] ?? parts[0]
         if (name === '*' || name === exported) visit(target, parts[0])
@@ -64,7 +68,10 @@ const getSurface = (srcRoot) => {
 export default {
   meta: {
     type: 'suggestion',
-    docs: { description: 'Public exports of @hareui/vue and members of public Props/Emits/Slots need JSDoc' },
+    docs: {
+      description:
+        'Public exports of @hareui/vue and members of public Props/Emits/Slots need JSDoc',
+    },
     messages: {
       declaration: 'Public export `{{name}}` needs a JSDoc comment.',
       member: 'Member `{{name}}` of public type `{{type}}` needs a JSDoc comment.',
@@ -77,14 +84,20 @@ export default {
     if (index === -1) return {}
     const names = getSurface(filename.slice(0, index + SRC.length - 1)).get(filename)
     if (!names) return {}
-    const isPublic = (name) => names.has('*') || names.has(name) || (filename.endsWith('.vue') && MEMBER_TYPES.test(name))
+    const isPublic = (name) =>
+      names.has('*') || names.has(name) || (filename.endsWith('.vue') && MEMBER_TYPES.test(name))
     const hasJsdoc = (node) =>
-      context.sourceCode.getCommentsBefore(node).some((c) => c.type === 'Block' && c.value.startsWith('*'))
+      context.sourceCode
+        .getCommentsBefore(node)
+        .some((c) => c.type === 'Block' && c.value.startsWith('*'))
     const checkMembers = (typeName, members) => {
       for (const member of members) {
         if (member.type !== 'TSPropertySignature' && member.type !== 'TSMethodSignature') continue
         if (hasJsdoc(member)) continue
-        const name = member.key.type === 'Identifier' ? member.key.name : context.sourceCode.getText(member.key)
+        const name =
+          member.key.type === 'Identifier'
+            ? member.key.name
+            : context.sourceCode.getText(member.key)
         context.report({ node: member, messageId: 'member', data: { name, type: typeName } })
       }
     }

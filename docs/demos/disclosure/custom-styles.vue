@@ -10,7 +10,10 @@ const isExpanded = ref(false)
   <div class="w-full max-w-sm">
     <Disclosure
       v-model:open="isExpanded"
-      :ui="{ bodyInner: 'mt-2 rounded-xl border border-border/70 bg-surface/50 p-4 text-sm leading-relaxed text-muted dark:bg-neutral-900/50' }"
+      :ui="{
+        bodyInner:
+          'mt-2 rounded-xl border border-border/70 bg-surface/50 p-4 text-sm leading-relaxed text-muted dark:bg-neutral-900/50',
+      }"
     >
       <template #trigger="{ indicator }">
         <Button
@@ -24,8 +27,8 @@ const isExpanded = ref(false)
           <component :is="indicator" class="text-muted" />
         </Button>
       </template>
-      Orders ship within 2 business days. Standard delivery takes 3–5 days; express is
-      available at checkout.
+      Orders ship within 2 business days. Standard delivery takes 3–5 days; express is available at
+      checkout.
     </Disclosure>
   </div>
 </template>

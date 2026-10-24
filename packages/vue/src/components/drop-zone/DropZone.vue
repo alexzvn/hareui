@@ -107,14 +107,15 @@ export interface DropZoneEmits {
   /** Emitted with the new selection when files are added or removed. */
   'update:modelValue': [files: File[]]
   /** Emitted with the files just accepted from a drop, a paste or the picker. */
-  'add': [files: File[]]
+  add: [files: File[]]
   /** Emitted with the files that didn't match `accept` or exceeded `maxSize`. */
-  'reject': [rejections: DropZoneRejection[]]
+  reject: [rejections: DropZoneRejection[]]
 }
 </script>
 
 <script setup lang="ts">
 import { computed, onMounted, provide, ref, toRef, useTemplateRef, watch } from 'vue'
+
 import { useComponentUI } from '../../composables/useComponentUI'
 import { useFieldChrome } from '../../composables/useFieldChrome'
 import { useFieldValidation } from '../../composables/useFieldValidation'
@@ -126,7 +127,11 @@ import DropZoneFileList from './DropZoneFileList.vue'
 import { dragMatchesAccept, matchesAccept } from './utils'
 
 // `undefined` defaults keep uncontrolled mode and leave validation in charge of an unset `invalid`
-const props = withDefaults(defineProps<DropZoneProps>(), { modelValue: undefined, invalid: undefined, triggerLabel: 'Select files' })
+const props = withDefaults(defineProps<DropZoneProps>(), {
+  modelValue: undefined,
+  invalid: undefined,
+  triggerLabel: 'Select files',
+})
 const emit = defineEmits<DropZoneEmits>()
 const slots = defineSlots<DropZoneSlots>()
 
@@ -153,26 +158,24 @@ const { validation, commitValidation } = useFieldValidation({
 })
 const invalid = computed(() => validation.value.isInvalid)
 
-const { id, labelId, descriptionId, hasLabel, hasDescription, describedBy, FieldError } = useFieldChrome({
-  props,
-  slots,
-  invalid,
-  validation,
-  disabled: isDisabled,
-})
+const { id, labelId, descriptionId, hasLabel, hasDescription, describedBy, FieldError } =
+  useFieldChrome({
+    props,
+    slots,
+    invalid,
+    validation,
+    disabled: isDisabled,
+  })
 
 // Mirrors the selection into the file input, so native form submission and `required` see it
 function syncInput() {
   const el = input.value
-  if (!el)
-    return
+  if (!el) return
   try {
     const transfer = new DataTransfer()
-    for (const file of files.value)
-      transfer.items.add(file)
+    for (const file of files.value) transfer.items.add(file)
     el.files = transfer.files
-  }
-  catch {
+  } catch {
     // No DataTransfer constructor: clear the input so picking the same file again still fires `change`
     el.value = ''
   }
@@ -189,12 +192,10 @@ function addFiles(incoming: File[]) {
   const accepted: File[] = []
   const rejected: DropZoneRejection[] = []
   for (const file of incoming) {
-    if (!matchesAccept(file, props.accept))
-      rejected.push({ file, reason: 'type' })
+    if (!matchesAccept(file, props.accept)) rejected.push({ file, reason: 'type' })
     else if (props.maxSize != null && file.size > props.maxSize)
       rejected.push({ file, reason: 'size' })
-    else
-      accepted.push(file)
+    else accepted.push(file)
   }
   // `add` comes first, so a handler that clears an old rejection message runs before `reject` sets a new one
   if (accepted.length) {
@@ -203,15 +204,13 @@ function addFiles(incoming: File[]) {
     emit('add', added)
     commitValidation()
   }
-  if (rejected.length)
-    emit('reject', rejected)
+  if (rejected.length) emit('reject', rejected)
   syncInput()
 }
 
 function removeFile(file: File | number) {
   const index = typeof file === 'number' ? file : files.value.indexOf(file)
-  if (index < 0 || index >= files.value.length)
-    return
+  if (index < 0 || index >= files.value.length) return
   setFiles(files.value.filter((_, i) => i !== index))
   commitValidation()
 }
@@ -220,10 +219,8 @@ function removeFile(file: File | number) {
 const itemElements = new Map<File, Element>()
 function setItemElement(file: File, item: unknown) {
   const el = item && typeof item === 'object' && '$el' in item ? item.$el : undefined
-  if (el instanceof Element)
-    itemElements.set(file, el)
-  else
-    itemElements.delete(file)
+  if (el instanceof Element) itemElements.set(file, el)
+  else itemElements.delete(file)
 }
 
 // Removing the item that holds focus would drop focus to the page: it moves to the next file's remove button,
@@ -233,16 +230,18 @@ function onItemRemove(file: File, index: number) {
   const neighbour = files.value[index + 1] ?? files.value[index - 1]
   const hadFocus = itemElements.get(file)?.contains(document.activeElement) ?? false
   removeFile(file)
-  if (!hadFocus)
-    return
-  const next = neighbour && itemElements.get(neighbour)?.querySelector<HTMLElement>('[data-slot=drop-zone-file-remove-trigger]')
+  if (!hadFocus) return
+  const next =
+    neighbour &&
+    itemElements
+      .get(neighbour)
+      ?.querySelector<HTMLElement>('[data-slot=drop-zone-file-remove-trigger]')
   ;(next ?? focusTarget.value)?.focus()
 }
 
 // Clearing first makes the picker fire `change` even when the same file is picked again; a cancelled picker restores it
 function open() {
-  if (isDisabled.value || !input.value)
-    return
+  if (isDisabled.value || !input.value) return
   input.value.value = ''
   input.value.click()
 }
@@ -263,19 +262,18 @@ function onInputChange(event: Event) {
 const keys = new WeakMap<File, number>()
 let nextKey = 0
 function fileKey(file: File) {
-  if (!keys.has(file))
-    keys.set(file, nextKey++)
+  if (!keys.has(file)) keys.set(file, nextKey++)
   return keys.get(file)!
 }
 
 // Drag state. `dragenter` / `dragleave` fire for every child, so a counter tells when the drag really leaves.
 const dropTarget = ref(false)
 let dragDepth = 0
-const hasFiles = (event: DragEvent) => !!event.dataTransfer && Array.from(event.dataTransfer.types).includes('Files')
+const hasFiles = (event: DragEvent) =>
+  !!event.dataTransfer && Array.from(event.dataTransfer.types).includes('Files')
 
 function onDragEnter(event: DragEvent) {
-  if (isDisabled.value || !hasFiles(event))
-    return
+  if (isDisabled.value || !hasFiles(event)) return
   event.preventDefault()
   dragDepth++
   dropTarget.value = dragMatchesAccept(event.dataTransfer?.items, props.accept)
@@ -283,35 +281,29 @@ function onDragEnter(event: DragEvent) {
 
 // A disabled area still cancels `dragover`, with no drop effect, so a stray drop doesn't make the browser open the file
 function onDragOver(event: DragEvent) {
-  if (!hasFiles(event))
-    return
+  if (!hasFiles(event)) return
   event.preventDefault()
   const allowed = !isDisabled.value && dragMatchesAccept(event.dataTransfer?.items, props.accept)
-  if (event.dataTransfer)
-    event.dataTransfer.dropEffect = allowed ? 'copy' : 'none'
+  if (event.dataTransfer) event.dataTransfer.dropEffect = allowed ? 'copy' : 'none'
   dropTarget.value = allowed
 }
 
 function onDragLeave() {
   dragDepth = Math.max(0, dragDepth - 1)
-  if (dragDepth === 0)
-    dropTarget.value = false
+  if (dragDepth === 0) dropTarget.value = false
 }
 
 function onDrop(event: DragEvent) {
   dragDepth = 0
   dropTarget.value = false
-  if (!hasFiles(event))
-    return
+  if (!hasFiles(event)) return
   event.preventDefault()
-  if (!isDisabled.value)
-    addFiles(Array.from(event.dataTransfer?.files ?? []))
+  if (!isDisabled.value) addFiles(Array.from(event.dataTransfer?.files ?? []))
 }
 
 function onPaste(event: ClipboardEvent) {
   const pasted = Array.from(event.clipboardData?.files ?? [])
-  if (isDisabled.value || !pasted.length)
-    return
+  if (isDisabled.value || !pasted.length) return
   event.preventDefault()
   addFiles(pasted)
 }
@@ -321,13 +313,15 @@ const focusVisible = ref(false)
 function onFocus(event: FocusEvent) {
   try {
     focusVisible.value = (event.target as Element).matches(':focus-visible')
-  }
-  catch {
+  } catch {
     focusVisible.value = true
   }
 }
 
-const slotProps = computed<DropZoneSlotProps>(() => ({ dropTarget: dropTarget.value, disabled: isDisabled.value }))
+const slotProps = computed<DropZoneSlotProps>(() => ({
+  dropTarget: dropTarget.value,
+  disabled: isDisabled.value,
+}))
 
 defineExpose({
   /** Opens the file picker. */
@@ -375,7 +369,14 @@ defineExpose({
       />
       <span data-slot="drop-zone-icon" :class="ui.icon({ class: props.ui?.icon })">
         <slot name="icon" v-bind="slotProps">
-          <svg aria-hidden="true" fill="none" height="16" viewBox="0 0 16 16" width="16" xmlns="http://www.w3.org/2000/svg">
+          <svg
+            aria-hidden="true"
+            fill="none"
+            height="16"
+            viewBox="0 0 16 16"
+            width="16"
+            xmlns="http://www.w3.org/2000/svg"
+          >
             <path
               clip-rule="evenodd"
               d="M4.5 5.25a3.25 3.25 0 0 1 6.398-.811.75.75 0 0 0 .702.563A3 3 0 0 1 11.5 11h-.75a.75.75 0 0 0 0 1.5h.75a4.5 4.5 0 0 0 .687-8.948 4.751 4.751 0 0 0-9.184 1.522A3.751 3.751 0 0 0 3.75 12.5h1.5a.75.75 0 0 0 0-1.5H3.751a2.25 2.25 0 0 1-.003-4.5h.03a.75.75 0 0 0 .747-.843A3 3 0 0 1 4.5 5.25m4.25 3.31.72.72a.75.75 0 1 0 1.06-1.06l-2-2a.75.75 0 0 0-1.06 0l-2 2a.75.75 0 0 0 1.06 1.06l.72-.72v6.69a.75.75 0 0 0 1.5 0z"
@@ -385,10 +386,20 @@ defineExpose({
           </svg>
         </slot>
       </span>
-      <span v-if="hasLabel" :id="labelId" data-slot="drop-zone-label" :class="ui.label({ class: props.ui?.label })">
+      <span
+        v-if="hasLabel"
+        :id="labelId"
+        data-slot="drop-zone-label"
+        :class="ui.label({ class: props.ui?.label })"
+      >
         <slot name="label" v-bind="slotProps">{{ label }}</slot>
       </span>
-      <span v-if="hasDescription" :id="descriptionId" data-slot="drop-zone-description" :class="ui.description({ class: props.ui?.description })">
+      <span
+        v-if="hasDescription"
+        :id="descriptionId"
+        data-slot="drop-zone-description"
+        :class="ui.description({ class: props.ui?.description })"
+      >
         <slot name="description" v-bind="slotProps">{{ description }}</slot>
       </span>
       <slot name="trigger" v-bind="slotProps" :open="open">
@@ -421,7 +432,7 @@ defineExpose({
       @change="onInputChange"
       @cancel="syncInput"
       @focus="onInputFocus"
-    >
+    />
     <FieldError />
     <slot v-if="slots.files" name="files" :files="files" :remove-file="removeFile" />
     <DropZoneFileList v-else>

@@ -4,7 +4,8 @@ import { NavigationMenu } from '@hareui/vue'
 import { Icon } from '@iconify/vue'
 import { h } from 'vue'
 
-const icon = (name: string) => (attrs: Record<string, unknown>) => h(Icon, { ...attrs, icon: `gravity-ui:${name}` })
+const icon = (name: string) => (attrs: Record<string, unknown>) =>
+  h(Icon, { ...attrs, icon: `gravity-ui:${name}` })
 
 const items: NavigationMenuItem[] = [
   { label: 'Home', icon: icon('house'), active: true },

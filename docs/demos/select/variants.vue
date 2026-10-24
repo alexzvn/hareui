@@ -10,7 +10,19 @@ const options: ListBoxItem[] = [
 
 <template>
   <div class="flex flex-col gap-4">
-    <Select class="w-[256px]" label="Primary variant" placeholder="Select one" variant="primary" :items="options" />
-    <Select class="w-[256px]" label="Secondary variant" placeholder="Select one" variant="secondary" :items="options" />
+    <Select
+      class="w-[256px]"
+      label="Primary variant"
+      placeholder="Select one"
+      variant="primary"
+      :items="options"
+    />
+    <Select
+      class="w-[256px]"
+      label="Secondary variant"
+      placeholder="Select one"
+      variant="secondary"
+      :items="options"
+    />
   </div>
 </template>

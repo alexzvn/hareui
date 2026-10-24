@@ -57,6 +57,7 @@ export interface ProgressCircleProps {
 <script setup lang="ts">
 import { ProgressRoot } from 'reka-ui'
 import { computed } from 'vue'
+
 import { useComponentUI } from '../../composables/useComponentUI'
 import { useRangeValue } from '../../composables/useRangeValue'
 
@@ -80,9 +81,11 @@ const CENTER = 18
 // HeroUI's dash pattern always uses the default radius (16), even when the radius is overridden.
 const CIRCUMFERENCE = 2 * Math.PI * (CENTER - 4 / 2)
 const radius = computed(() => CENTER - props.strokeWidth / 2)
-const dashOffset = computed(() => props.indeterminate
-  ? CIRCUMFERENCE * 0.75
-  : CIRCUMFERENCE - (range.value.percentage / 100) * CIRCUMFERENCE)
+const dashOffset = computed(() =>
+  props.indeterminate
+    ? CIRCUMFERENCE * 0.75
+    : CIRCUMFERENCE - (range.value.percentage / 100) * CIRCUMFERENCE,
+)
 </script>
 
 <template>

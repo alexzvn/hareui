@@ -1,10 +1,11 @@
 <script setup lang="ts">
-import type { ChartFrameConfig, ChartFrameSlots } from './frame'
 import { computed } from 'vue'
+
 import ChartLegend from '../chart-legend/ChartLegend.vue'
 import ChartSurface from './ChartSurface.vue'
 import ChartTooltip from './ChartTooltip.vue'
 import { useChartContext } from './context'
+import type { ChartFrameConfig, ChartFrameSlots } from './frame'
 import { toggleHiddenKey } from './series-config'
 
 // Internal: what every chart root renders (cartesian and polar). The surface, the in-chart legend (clicking an item
@@ -17,12 +18,14 @@ const props = defineProps<{
   config: ChartFrameConfig
 }>()
 
-defineSlots<ChartFrameSlots & {
-  /** Parts the root draws from props, under the tooltip. */
-  parts?: () => any
-  /** The root's own default slot, and anything it draws over the tooltip. */
-  default?: () => any
-}>()
+defineSlots<
+  ChartFrameSlots & {
+    /** Parts the root draws from props, under the tooltip. */
+    parts?: () => any
+    /** The root's own default slot, and anything it draws over the tooltip. */
+    default?: () => any
+  }
+>()
 
 const hidden = defineModel<string[]>('hidden', { required: true })
 
@@ -32,7 +35,9 @@ function toggle(key: string) {
   hidden.value = toggleHiddenKey(hidden.value, key)
 }
 
-const stackedLegend = computed(() => props.config.legend?.position === 'top' || props.config.legend?.position === 'bottom')
+const stackedLegend = computed(
+  () => props.config.legend?.position === 'top' || props.config.legend?.position === 'bottom',
+)
 </script>
 
 <template>

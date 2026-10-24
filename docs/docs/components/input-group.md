@@ -25,20 +25,22 @@ InputGroup wraps an input with optional prefix and suffix elements in one visual
 <template>
   <TextField label="…">
     <InputGroup prefix="…" suffix="…">
-      <template #prefix />  <!-- content before the input; replaces `prefix` -->
-      <template #suffix />  <!-- content after the input; replaces `suffix` -->
+      <template #prefix />
+      <!-- content before the input; replaces `prefix` -->
+      <template #suffix />
+      <!-- content after the input; replaces `suffix` -->
     </InputGroup>
   </TextField>
 </template>
 ```
 
-| `ui` key | `data-slot` | Element |
-|---|---|---|
-| `base` | `input-group` | `<div role="group">` root |
-| `prefix` | `input-group-prefix` | `<div>` (iff `prefix` / `#prefix`) |
-| `input` | `input-group-input` | `<input>` |
-| `input` | `input-group-textarea` | `<textarea>` (instead of the input, iff `textarea`) |
-| `suffix` | `input-group-suffix` | `<div>` (iff `suffix` / `#suffix`) |
+| `ui` key | `data-slot`            | Element                                             |
+| -------- | ---------------------- | --------------------------------------------------- |
+| `base`   | `input-group`          | `<div role="group">` root                           |
+| `prefix` | `input-group-prefix`   | `<div>` (iff `prefix` / `#prefix`)                  |
+| `input`  | `input-group-input`    | `<input>`                                           |
+| `input`  | `input-group-textarea` | `<textarea>` (instead of the input, iff `textarea`) |
+| `suffix` | `input-group-suffix`   | `<div>` (iff `suffix` / `#suffix`)                  |
 
 Inside a TextField, the group takes the field's id, name, type, value, `variant`, `fullWidth` and its disabled, invalid, required and read-only states. Its own props win when set. Clicking anywhere in the group outside the input focuses the input, except on interactive content such as a suffix button, which keeps focus.
 
@@ -211,9 +213,11 @@ const feedback = ref('')
 ### Global Configuration
 
 ```ts
-app.use(createHareUI({
-  ui: { inputGroup: { slots: { prefix: 'px-2', suffix: 'px-2' } } },
-}))
+app.use(
+  createHareUI({
+    ui: { inputGroup: { slots: { prefix: 'px-2', suffix: 'px-2' } } },
+  }),
+)
 ```
 
 ## Styling Reference

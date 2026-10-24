@@ -3,7 +3,8 @@ import type { CheckboxGroupItem } from '@hareui/vue'
 import { CheckboxGroup } from '@hareui/vue'
 import { Icon } from '@iconify/vue'
 
-const contentClass = 'w-full items-start gap-3 rounded-xl border border-border/50 bg-default px-4 py-3 transition-colors hover:bg-default-hover data-[selected=true]:border-primary/30 data-[selected=true]:bg-primary-soft'
+const contentClass =
+  'w-full items-start gap-3 rounded-xl border border-border/50 bg-default px-4 py-3 transition-colors hover:bg-default-hover data-[selected=true]:border-primary/30 data-[selected=true]:bg-primary-soft'
 const controlClass = 'mt-0.5'
 
 interface AddOn extends CheckboxGroupItem {
@@ -12,9 +13,24 @@ interface AddOn extends CheckboxGroupItem {
 }
 
 const addOns: AddOn[] = [
-  { icon: 'gravity-ui:envelope', label: 'Email alerts', desc: 'Get notified by email about important changes', value: 'email-alerts' },
-  { icon: 'gravity-ui:comment', label: 'Comment mentions', desc: 'Receive a notification when someone mentions you', value: 'comment-mentions' },
-  { icon: 'gravity-ui:bell', label: 'Push notifications', desc: 'Get push notifications on your devices', value: 'push-notifications' },
+  {
+    icon: 'gravity-ui:envelope',
+    label: 'Email alerts',
+    desc: 'Get notified by email about important changes',
+    value: 'email-alerts',
+  },
+  {
+    icon: 'gravity-ui:comment',
+    label: 'Comment mentions',
+    desc: 'Receive a notification when someone mentions you',
+    value: 'comment-mentions',
+  },
+  {
+    icon: 'gravity-ui:bell',
+    label: 'Push notifications',
+    desc: 'Get push notifications on your devices',
+    value: 'push-notifications',
+  },
 ]
 </script>
 

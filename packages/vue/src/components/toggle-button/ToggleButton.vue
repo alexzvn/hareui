@@ -1,5 +1,6 @@
 <script lang="ts">
 import type { PrimitiveProps } from 'reka-ui'
+
 import type { ComponentSlots, ComponentVariants } from '../../types/tv'
 import theme from './theme'
 
@@ -60,13 +61,18 @@ export interface ToggleButtonSlots {
 <script setup lang="ts">
 import { RovingFocusItem, Toggle } from 'reka-ui'
 import { computed, inject, ref, useTemplateRef, watch } from 'vue'
+
 import { useComponentUI } from '../../composables/useComponentUI'
 import { refElement } from '../../composables/useFirstChild'
 import { useFieldsetDisabled } from '../fieldset/context'
 import { toggleButtonGroupContextKey } from '../toggle-button-group/context'
 
 // `undefined` stops Vue casting an absent `modelValue` to `false`, so uncontrolled mode applies.
-const props = withDefaults(defineProps<ToggleButtonProps>(), { as: 'button', modelValue: undefined, disabled: undefined })
+const props = withDefaults(defineProps<ToggleButtonProps>(), {
+  as: 'button',
+  modelValue: undefined,
+  disabled: undefined,
+})
 const emit = defineEmits<{
   'update:modelValue': [value: boolean]
 }>()
@@ -75,16 +81,20 @@ defineSlots<ToggleButtonSlots>()
 const group = inject(toggleButtonGroupContextKey, null)
 
 const local = ref(props.defaultValue ?? false)
-watch(() => props.defaultValue, value => (local.value = value ?? false))
-const selected = computed(() => group
-  ? props.value !== undefined && group.selected.value.includes(props.value)
-  : props.modelValue ?? local.value)
+watch(
+  () => props.defaultValue,
+  (value) => (local.value = value ?? false),
+)
+const selected = computed(() =>
+  group
+    ? props.value !== undefined && group.selected.value.includes(props.value)
+    : (props.modelValue ?? local.value),
+)
 const isDisabled = useFieldsetDisabled(() => props.disabled || group?.disabled.value || undefined)
 
 function onUpdate(value: boolean) {
   if (group) {
-    if (props.value !== undefined)
-      group.toggle(props.value)
+    if (props.value !== undefined) group.toggle(props.value)
     return
   }
   local.value = value
@@ -99,14 +109,20 @@ const ui = useComponentUI('toggleButton', theme, () => ({
 
 // HeroUI renders `ToggleButtonGroup.Separator` in every grouped button except the first.
 const self = useTemplateRef<unknown>('self')
-const showSeparator = computed((): boolean => !!group?.separator.value && group.firstChild.value !== refElement(self.value))
+const showSeparator = computed(
+  (): boolean => !!group?.separator.value && group.firstChild.value !== refElement(self.value),
+)
 
-const groupClass = computed(() => group?.ui.value.button({ class: group.uiOverrides.value?.button }))
+const groupClass = computed(() =>
+  group?.ui.value.button({ class: group.uiOverrides.value?.button }),
+)
 
 // Inside a single-selection group the buttons are radios, as in React Aria.
-const roleAttrs = computed(() => group?.selectionMode.value === 'single'
-  ? { 'role': 'radio', 'aria-checked': selected.value, 'aria-pressed': undefined }
-  : {})
+const roleAttrs = computed(() =>
+  group?.selectionMode.value === 'single'
+    ? { role: 'radio', 'aria-checked': selected.value, 'aria-pressed': undefined }
+    : {},
+)
 </script>
 
 <template>

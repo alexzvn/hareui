@@ -1,11 +1,16 @@
-import type { VNode } from 'vue'
 import { mount } from '@vue/test-utils'
 import { describe, expect, it } from 'vitest'
+import type { VNode } from 'vue'
 import { defineComponent, h } from 'vue'
+
 import Card from '../src/components/card/Card.vue'
 import { expectAccessible } from './a11y'
 
-const mountAll = (children: () => VNode[]) => mount(defineComponent(() => () => h('div', children())), { attachTo: document.body })
+const mountAll = (children: () => VNode[]) =>
+  mount(
+    defineComponent(() => () => h('div', children())),
+    { attachTo: document.body },
+  )
 
 describe('Card', () => {
   it('omits the header without title, description or #header', () => {
@@ -22,7 +27,10 @@ describe('Card', () => {
   })
 
   it('#header replaces title and description', () => {
-    const wrapper = mount(Card, { props: { title: 'T' }, slots: { header: '<strong>Custom</strong>' } })
+    const wrapper = mount(Card, {
+      props: { title: 'T' },
+      slots: { header: '<strong>Custom</strong>' },
+    })
     expect(wrapper.find('[data-slot=card-header] strong').exists()).toBe(true)
     expect(wrapper.find('[data-slot=card-title]').exists()).toBe(false)
   })
@@ -37,17 +45,27 @@ describe('Card', () => {
       props: { title: 'T' },
       slots: { leading: '<img alt="a"><i>b</i>', default: 'Body' },
     })
-    const children = [...wrapper.element.children].map(el => el.getAttribute('data-slot') ?? el.tagName.toLowerCase())
+    const children = [...wrapper.element.children].map(
+      (el) => el.getAttribute('data-slot') ?? el.tagName.toLowerCase(),
+    )
     expect(children).toEqual(['img', 'i', 'card-header', 'card-content'])
   })
 
   it('is accessible with header, content and footer, and as a labelled article (documented usage)', async () => {
     const wrapper = mountAll(() => [
-      h(Card, { title: 'Plan', description: 'Billed monthly' }, {
-        default: () => h('p', 'Includes 5 seats.'),
-        footer: () => h('button', { type: 'button' }, 'Upgrade'),
-      }),
-      h(Card, { 'as': 'article', 'aria-labelledby': 'card-title' }, { title: () => h('span', { id: 'card-title' }, 'Article Title') }),
+      h(
+        Card,
+        { title: 'Plan', description: 'Billed monthly' },
+        {
+          default: () => h('p', 'Includes 5 seats.'),
+          footer: () => h('button', { type: 'button' }, 'Upgrade'),
+        },
+      ),
+      h(
+        Card,
+        { as: 'article', 'aria-labelledby': 'card-title' },
+        { title: () => h('span', { id: 'card-title' }, 'Article Title') },
+      ),
     ])
     await expectAccessible(wrapper)
     wrapper.unmount()
@@ -56,7 +74,7 @@ describe('Card', () => {
   it('is accessible rendered as a link, its name coming from the contents or aria-label', async () => {
     const wrapper = mount(Card, {
       props: { as: 'a', title: 'Product Name' },
-      attrs: { 'href': '/details', 'aria-label': 'View product details' },
+      attrs: { href: '/details', 'aria-label': 'View product details' },
       attachTo: document.body,
     })
     expect(wrapper.element.tagName).toBe('A')
@@ -73,7 +91,9 @@ describe('Card', () => {
       attachTo: document.body,
     })
     expect(wrapper.get('[data-slot=card-title]').element.tagName).toBe('H3')
-    expect(document.getElementById(wrapper.attributes('aria-labelledby')!)?.textContent).toBe('Pro plan')
+    expect(document.getElementById(wrapper.attributes('aria-labelledby')!)?.textContent).toBe(
+      'Pro plan',
+    )
     wrapper.unmount()
   })
 })

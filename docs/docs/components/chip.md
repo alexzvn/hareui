@@ -56,29 +56,29 @@ Use the `class` prop for the root and `:ui="{ label: '…' }"` for the label (ta
 Override the `chip` theme app-wide with `createHareUI`:
 
 ```ts
-app.use(createHareUI({
-  ui: {
-    chip: {
-      slots: {
-        base: 'rounded-full text-xs',
-        label: 'font-medium',
+app.use(
+  createHareUI({
+    ui: {
+      chip: {
+        slots: {
+          base: 'rounded-full text-xs',
+          label: 'font-medium',
+        },
+        compoundVariants: [{ color: 'accent', class: { base: 'border-accent/20 text-accent' } }],
       },
-      compoundVariants: [
-        { color: 'accent', class: { base: 'border-accent/20 text-accent' } },
-      ],
     },
-  },
-}))
+  }),
+)
 ```
 
 ## Styling Reference
 
 Each rendered element carries the same `data-slot` string as HeroUI, so selectors translate 1:1.
 
-| `ui` key | `data-slot` | Description |
-|---|---|---|
-| `base` | `chip` | Base chip container styles (`as`, default `span`) |
-| `label` | `chip-label` | Label text slot styles, rendered when `label`/default slot is present |
+| `ui` key | `data-slot`  | Description                                                           |
+| -------- | ------------ | --------------------------------------------------------------------- |
+| `base`   | `chip`       | Base chip container styles (`as`, default `span`)                     |
+| `label`  | `chip-label` | Label text slot styles, rendered when `label`/default slot is present |
 
 HeroUI's `.chip--*` modifier classes correspond to these props (HareUI renders utilities, not BEM
 classes, so style through `class`, `ui` or `createHareUI`):

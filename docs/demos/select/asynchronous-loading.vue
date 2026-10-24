@@ -12,15 +12,13 @@ const loading = ref(false)
 let cursor: string | null = 'https://pokeapi.co/api/v2/pokemon'
 
 async function loadMore() {
-  if (!cursor || loading.value)
-    return
+  if (!cursor || loading.value) return
   loading.value = true
   try {
     const json = await (await fetch(cursor)).json()
     cursor = json.next
     pokemon.value = [...pokemon.value, ...json.results]
-  }
-  finally {
+  } finally {
     loading.value = false
   }
 }
@@ -33,7 +31,7 @@ onMounted(loadMore)
     class="w-[256px]"
     label="Pick a Pokemon"
     placeholder="Select a Pokemon"
-    :items="pokemon.map(p => ({ value: p.name, label: p.name }))"
+    :items="pokemon.map((p) => ({ value: p.name, label: p.name }))"
     :loading="loading"
     @load-more="loadMore"
   >

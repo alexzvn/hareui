@@ -1,5 +1,6 @@
 <script lang="ts">
 import type { PrimitiveProps } from 'reka-ui'
+
 import type { ComponentSlots } from '../../types/tv'
 import theme from './theme'
 
@@ -33,6 +34,7 @@ export interface FooterSlots {
 
 <script setup lang="ts">
 import { Primitive } from 'reka-ui'
+
 import { useComponentUI } from '../../composables/useComponentUI'
 
 const props = withDefaults(defineProps<FooterProps>(), { as: 'footer' })
@@ -61,7 +63,11 @@ const ui = useComponentUI('footer', theme, () => ({}))
       </div>
     </div>
 
-    <div v-if="!!slots.bottom" data-slot="footer-bottom" :class="ui.bottom({ class: props.ui?.bottom })">
+    <div
+      v-if="!!slots.bottom"
+      data-slot="footer-bottom"
+      :class="ui.bottom({ class: props.ui?.bottom })"
+    >
       <slot name="bottom" />
     </div>
   </Primitive>

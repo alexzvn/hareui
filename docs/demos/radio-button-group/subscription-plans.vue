@@ -50,7 +50,11 @@ const memberships = [
       :description="plan.billing"
       :icon="() => h(Icon, { icon: plan.icon })"
       :indicator="false"
-      :ui="{ content: 'flex-col items-start gap-3', icon: 'flex size-10 items-center justify-center rounded-xl bg-accent/10 text-accent', itemText: 'w-full gap-1' }"
+      :ui="{
+        content: 'flex-col items-start gap-3',
+        icon: 'flex size-10 items-center justify-center rounded-xl bg-accent/10 text-accent',
+        itemText: 'w-full gap-1',
+      }"
     >
       <template #default="{ selected }">
         <Chip
@@ -67,7 +71,11 @@ const memberships = [
           <span class="text-xs text-muted">{{ plan.period }}</span>
         </span>
         <span class="mt-3 flex flex-col gap-1.5 border-t border-border pt-3">
-          <span v-for="feature in plan.features" :key="feature" class="flex items-center gap-2 text-xs font-normal">
+          <span
+            v-for="feature in plan.features"
+            :key="feature"
+            class="flex items-center gap-2 text-xs font-normal"
+          >
             <Icon icon="gravity-ui:check" class="size-3.5 shrink-0 text-accent" />
             {{ feature }}
           </span>

@@ -4,16 +4,58 @@ import { Avatar, Button, Chip, Table } from '@hareui/vue'
 import { Icon } from '@iconify/vue'
 import { computed, ref } from 'vue'
 
-const statusColorMap = { 'Active': 'success', 'Inactive': 'danger', 'On Leave': 'warning' } as const
+const statusColorMap = { Active: 'success', Inactive: 'danger', 'On Leave': 'warning' } as const
 type Status = keyof typeof statusColorMap
 const AVATARS = 'https://heroui-assets.nyc3.cdn.digitaloceanspaces.com/avatars'
 
-const users: { id: number, name: string, image_url: string, role: string, status: Status, email: string }[] = [
-  { id: 4586932, name: 'Kate Moore', image_url: `${AVATARS}/red.jpg`, role: 'Chief Executive Officer', status: 'Active', email: 'kate@acme.com' },
-  { id: 5273849, name: 'John Smith', image_url: `${AVATARS}/green.jpg`, role: 'Chief Technology Officer', status: 'Active', email: 'john@acme.com' },
-  { id: 7492836, name: 'Sara Johnson', image_url: `${AVATARS}/blue.jpg`, role: 'Chief Marketing Officer', status: 'On Leave', email: 'sara@acme.com' },
-  { id: 8293746, name: 'Michael Brown', image_url: `${AVATARS}/purple.jpg`, role: 'Chief Financial Officer', status: 'Active', email: 'michael@acme.com' },
-  { id: 1234567, name: 'Emily Davis', image_url: `${AVATARS}/orange.jpg`, role: 'Product Manager', status: 'Inactive', email: 'emily@acme.com' },
+const users: {
+  id: number
+  name: string
+  image_url: string
+  role: string
+  status: Status
+  email: string
+}[] = [
+  {
+    id: 4586932,
+    name: 'Kate Moore',
+    image_url: `${AVATARS}/red.jpg`,
+    role: 'Chief Executive Officer',
+    status: 'Active',
+    email: 'kate@acme.com',
+  },
+  {
+    id: 5273849,
+    name: 'John Smith',
+    image_url: `${AVATARS}/green.jpg`,
+    role: 'Chief Technology Officer',
+    status: 'Active',
+    email: 'john@acme.com',
+  },
+  {
+    id: 7492836,
+    name: 'Sara Johnson',
+    image_url: `${AVATARS}/blue.jpg`,
+    role: 'Chief Marketing Officer',
+    status: 'On Leave',
+    email: 'sara@acme.com',
+  },
+  {
+    id: 8293746,
+    name: 'Michael Brown',
+    image_url: `${AVATARS}/purple.jpg`,
+    role: 'Chief Financial Officer',
+    status: 'Active',
+    email: 'michael@acme.com',
+  },
+  {
+    id: 1234567,
+    name: 'Emily Davis',
+    image_url: `${AVATARS}/orange.jpg`,
+    role: 'Product Manager',
+    status: 'Inactive',
+    email: 'emily@acme.com',
+  },
 ]
 
 const columns: TableColumn[] = [
@@ -29,12 +71,18 @@ const sortDescriptor = ref<TableSortDescriptor>({ column: 'name', direction: 'as
 const rows = computed(() => {
   const { column, direction } = sortDescriptor.value
   return [...users].sort((a, b) => {
-    const cmp = String(a[column as keyof typeof a]).localeCompare(String(b[column as keyof typeof b]))
+    const cmp = String(a[column as keyof typeof a]).localeCompare(
+      String(b[column as keyof typeof b]),
+    )
     return direction === 'descending' ? -cmp : cmp
   })
 })
 
-const initials = (name: string) => name.split(' ').map(n => n[0]).join('')
+const initials = (name: string) =>
+  name
+    .split(' ')
+    .map((n) => n[0])
+    .join('')
 </script>
 
 <template>
@@ -68,7 +116,9 @@ const initials = (name: string) => name.split(' ').map(n => n[0]).join('')
       </div>
     </template>
     <template #status-cell="{ row }">
-      <Chip :color="statusColorMap[row.status as Status]" size="sm" variant="soft">{{ row.status }}</Chip>
+      <Chip :color="statusColorMap[row.status as Status]" size="sm" variant="soft">{{
+        row.status
+      }}</Chip>
     </template>
     <template #actions-cell="{ row }">
       <div class="flex items-center gap-1">

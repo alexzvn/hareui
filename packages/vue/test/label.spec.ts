@@ -1,6 +1,7 @@
 import { mount } from '@vue/test-utils'
 import { describe, expect, it, vi } from 'vitest'
 import { h } from 'vue'
+
 import DateField from '../src/components/date-field/DateField.vue'
 import Label from '../src/components/label/Label.vue'
 import { expectAccessible } from './a11y'
@@ -21,8 +22,14 @@ describe('Label', () => {
   })
 
   it('renders as a span with the same slot and classes, and no `as` / `for` attribute', () => {
-    const label = mount(Label, { props: { for: 'email', required: true }, slots: { default: () => 'Email' } })
-    const span = mount(Label, { props: { as: 'span', for: 'email', required: true }, slots: { default: () => 'Email' } })
+    const label = mount(Label, {
+      props: { for: 'email', required: true },
+      slots: { default: () => 'Email' },
+    })
+    const span = mount(Label, {
+      props: { as: 'span', for: 'email', required: true },
+      slots: { default: () => 'Email' },
+    })
     expect(span.element.tagName).toBe('SPAN')
     expect(span.attributes('data-slot')).toBe('label')
     expect(span.classes()).toEqual(label.classes())
@@ -56,9 +63,13 @@ describe('Label', () => {
   it('leaves an already-prevented mousedown as-is', () => {
     const host = document.createElement('div')
     document.body.append(host)
-    host.addEventListener('mousedown', event => event.preventDefault(), { capture: true })
+    host.addEventListener('mousedown', (event) => event.preventDefault(), { capture: true })
     const onMousedown = vi.fn()
-    const wrapper = mount(Label, { attrs: { onMousedown }, slots: { default: () => 'Email' }, attachTo: host })
+    const wrapper = mount(Label, {
+      attrs: { onMousedown },
+      slots: { default: () => 'Email' },
+      attachTo: host,
+    })
     expect(mousedown(wrapper.element, 1).defaultPrevented).toBe(true)
     expect(mousedown(wrapper.element, 2).defaultPrevented).toBe(true)
     expect(onMousedown).toHaveBeenCalledTimes(2)
@@ -80,7 +91,7 @@ describe('Label', () => {
   it('passes attrs and classes through to the label element', () => {
     const wrapper = mount(Label, {
       props: { class: 'extra' },
-      attrs: { 'id': 'l', 'title': 'Hint', 'data-testid': 'lbl', 'aria-hidden': 'true' },
+      attrs: { id: 'l', title: 'Hint', 'data-testid': 'lbl', 'aria-hidden': 'true' },
       slots: { default: () => 'Email' },
     })
     expect(wrapper.attributes('id')).toBe('l')
@@ -95,14 +106,26 @@ describe('Label', () => {
     ['required', { required: true }],
     ['disabled', { disabled: true }],
     ['invalid', { invalid: true }],
-  ])('names the control it targets with `for` (%s), with no axe violations', async (_, props: { required?: boolean, disabled?: boolean, invalid?: boolean }) => {
-    const wrapper = mount(() => h('div', [
-      h(Label, { for: 'email', ...props }, () => 'Email'),
-      h('input', { 'id': 'email', 'required': props.required, 'disabled': props.disabled, 'aria-invalid': props.invalid ? 'true' : undefined }),
-    ]), { attachTo: document.body })
-    const input = wrapper.get('input').element as HTMLInputElement
-    expect([...input.labels!].map(label => label.textContent)).toEqual(['Email'])
-    await expectAccessible(wrapper)
-    wrapper.unmount()
-  })
+  ])(
+    'names the control it targets with `for` (%s), with no axe violations',
+    async (_, props: { required?: boolean; disabled?: boolean; invalid?: boolean }) => {
+      const wrapper = mount(
+        () =>
+          h('div', [
+            h(Label, { for: 'email', ...props }, () => 'Email'),
+            h('input', {
+              id: 'email',
+              required: props.required,
+              disabled: props.disabled,
+              'aria-invalid': props.invalid ? 'true' : undefined,
+            }),
+          ]),
+        { attachTo: document.body },
+      )
+      const input = wrapper.get('input').element as HTMLInputElement
+      expect([...input.labels!].map((label) => label.textContent)).toEqual(['Email'])
+      await expectAccessible(wrapper)
+      wrapper.unmount()
+    },
+  )
 })

@@ -1,21 +1,24 @@
 <script setup lang="ts">
-import { onBeforeUnmount, onMounted, ref } from 'vue'
 import { Icon } from '@iconify/vue'
-import { tv } from '../../../../packages/vue/src/utils/tv'
+import { onBeforeUnmount, onMounted, ref } from 'vue'
+
 import buttonTheme from '../../../../packages/vue/src/components/button/theme'
+import { tv } from '../../../../packages/vue/src/utils/tv'
 import { sectionLinks, type SidebarSection } from '../../sidebar'
-import FrameworkTabs from './FrameworkTabs.vue'
-import ThemeToggle from './ThemeToggle.vue'
-import DesignThemeSelector from './DesignThemeSelector.vue'
-import HareLogo from './HareLogo.vue'
-import BrandIcon from './BrandIcon.vue'
 import { REPO_URL } from '../repo'
+import BrandIcon from './BrandIcon.vue'
+import DesignThemeSelector from './DesignThemeSelector.vue'
+import FrameworkTabs from './FrameworkTabs.vue'
+import HareLogo from './HareLogo.vue'
+import ThemeToggle from './ThemeToggle.vue'
 
 defineProps<{ sections: SidebarSection[]; activeSection?: SidebarSection }>()
 const emit = defineEmits<{ search: []; openSidebar: [] }>()
 
 const button = tv(buttonTheme)
-const searchIconButton = button({ iconOnly: true, size: 'sm', variant: 'tertiary' }).base({ class: 'size-[34px] border-none p-2' })
+const searchIconButton = button({ iconOnly: true, size: 'sm', variant: 'tertiary' }).base({
+  class: 'size-[34px] border-none p-2',
+})
 
 const transparent = ref(true)
 function onScroll() {
@@ -27,7 +30,8 @@ onMounted(() => {
 })
 onBeforeUnmount(() => window.removeEventListener('scroll', onScroll))
 
-const TAB = 'hover:text-fd-accent-foreground inline-flex items-center gap-2 border-b-2 pb-1.5 text-sm font-medium text-nowrap transition-colors'
+const TAB =
+  'hover:text-fd-accent-foreground inline-flex items-center gap-2 border-b-2 pb-1.5 text-sm font-medium text-nowrap transition-colors'
 </script>
 
 <template>
@@ -51,7 +55,21 @@ const TAB = 'hover:text-fd-accent-foreground inline-flex items-center gap-2 bord
         class="bg-fd-secondary/50 text-fd-muted-foreground hover:bg-fd-accent hover:text-fd-accent-foreground inline-flex items-center gap-2 border p-1.5 text-sm transition-colors my-auto w-full max-md:hidden max-w-sm rounded-xl ps-2.5"
         @click="emit('search')"
       >
-        <svg fill="none" height="24" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" viewBox="0 0 24 24" width="24" xmlns="http://www.w3.org/2000/svg" class="size-4"><circle cx="11" cy="11" r="8" /><path d="m21 21-4.3-4.3" /></svg>
+        <svg
+          fill="none"
+          height="24"
+          stroke="currentColor"
+          stroke-linecap="round"
+          stroke-linejoin="round"
+          stroke-width="2"
+          viewBox="0 0 24 24"
+          width="24"
+          xmlns="http://www.w3.org/2000/svg"
+          class="size-4"
+        >
+          <circle cx="11" cy="11" r="8" />
+          <path d="m21 21-4.3-4.3" />
+        </svg>
         Search
         <div class="ms-auto inline-flex gap-0.5">
           <kbd class="bg-fd-background rounded-md border px-1.5">⌘</kbd>
@@ -64,8 +82,29 @@ const TAB = 'hover:text-fd-accent-foreground inline-flex items-center gap-2 bord
           <DesignThemeSelector />
         </div>
         <div class="flex items-center md:hidden">
-          <button data-slot="button" data-search="" type="button" aria-label="Open Search" :class="searchIconButton" @click="emit('search')">
-            <svg fill="none" height="24" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" viewBox="0 0 24 24" width="24" xmlns="http://www.w3.org/2000/svg" class="size-4"><circle cx="11" cy="11" r="8" /><path d="m21 21-4.3-4.3" /></svg>
+          <button
+            data-slot="button"
+            data-search=""
+            type="button"
+            aria-label="Open Search"
+            :class="searchIconButton"
+            @click="emit('search')"
+          >
+            <svg
+              fill="none"
+              height="24"
+              stroke="currentColor"
+              stroke-linecap="round"
+              stroke-linejoin="round"
+              stroke-width="2"
+              viewBox="0 0 24 24"
+              width="24"
+              xmlns="http://www.w3.org/2000/svg"
+              class="size-4"
+            >
+              <circle cx="11" cy="11" r="8" />
+              <path d="m21 21-4.3-4.3" />
+            </svg>
           </button>
           <button
             aria-label="Open Sidebar"
@@ -73,22 +112,49 @@ const TAB = 'hover:text-fd-accent-foreground inline-flex items-center gap-2 bord
             class="inline-flex items-center justify-center rounded-md text-sm font-medium transition-colors duration-100 disabled:pointer-events-none disabled:opacity-50 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-fd-ring hover:bg-fd-accent hover:text-fd-accent-foreground [&_svg]:size-4.5 -me-1.5 p-2"
             @click="emit('openSidebar')"
           >
-            <svg fill="none" height="24" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" viewBox="0 0 24 24" width="24" xmlns="http://www.w3.org/2000/svg"><rect height="18" rx="2" width="18" x="3" y="3" /><path d="M9 3v18" /></svg>
+            <svg
+              fill="none"
+              height="24"
+              stroke="currentColor"
+              stroke-linecap="round"
+              stroke-linejoin="round"
+              stroke-width="2"
+              viewBox="0 0 24 24"
+              width="24"
+              xmlns="http://www.w3.org/2000/svg"
+            >
+              <rect height="18" rx="2" width="18" x="3" y="3" />
+              <path d="M9 3v18" />
+            </svg>
           </button>
         </div>
         <div class="flex items-center gap-2 max-md:hidden">
-          <a :href="REPO_URL" aria-label="GitHub" rel="noopener noreferrer" target="_blank" :class="searchIconButton">
+          <a
+            :href="REPO_URL"
+            aria-label="GitHub"
+            rel="noopener noreferrer"
+            target="_blank"
+            :class="searchIconButton"
+          >
             <BrandIcon name="github" class="size-4" />
           </a>
           <ThemeToggle />
         </div>
       </div>
     </div>
-    <div class="flex flex-row items-end gap-6 h-10 overflow-x-auto border-b px-6" data-header-tabs="">
+    <div
+      class="flex flex-row items-end gap-6 h-10 overflow-x-auto border-b px-6"
+      data-header-tabs=""
+    >
       <a
         v-for="section in sections"
         :key="section.base"
-        :class="[TAB, section === activeSection ? 'border-fd-primary text-fd-primary' : 'text-fd-muted-foreground border-transparent']"
+        :class="[
+          TAB,
+          section === activeSection
+            ? 'border-fd-primary text-fd-primary'
+            : 'text-fd-muted-foreground border-transparent',
+        ]"
         :href="sectionLinks(section)[0]?.link ?? section.base"
       >
         <div :aria-label="section.text" class="flex items-center gap-2">

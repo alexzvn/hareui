@@ -1,12 +1,28 @@
 <script setup lang="ts">
-import { Icon } from '@iconify/vue'
 import type { DropdownEntry } from '@hareui/vue'
 import { Button, ButtonGroup, Chip, Dropdown } from '@hareui/vue'
+import { Icon } from '@iconify/vue'
 
 const mergeOptions: DropdownEntry[] = [
-  { value: 'merge', label: 'Create a merge commit', description: 'All commits from this branch will be added to the base branch', class: 'flex flex-col items-start gap-1 [&>div]:items-start [&>div]:gap-1' },
-  { value: 'squash-and-merge', label: 'Squash and merge', description: 'The 14 commits from this branch will be combined into one commit in the base branch', class: 'flex flex-col items-start gap-1 [&>div]:items-start [&>div]:gap-1' },
-  { value: 'rebase-and-merge', label: 'Rebase and merge', description: 'The 14 commits from this branch will be rebased and added to the base branch', class: 'flex flex-col items-start gap-1 [&>div]:items-start [&>div]:gap-1' },
+  {
+    value: 'merge',
+    label: 'Create a merge commit',
+    description: 'All commits from this branch will be added to the base branch',
+    class: 'flex flex-col items-start gap-1 [&>div]:items-start [&>div]:gap-1',
+  },
+  {
+    value: 'squash-and-merge',
+    label: 'Squash and merge',
+    description:
+      'The 14 commits from this branch will be combined into one commit in the base branch',
+    class: 'flex flex-col items-start gap-1 [&>div]:items-start [&>div]:gap-1',
+  },
+  {
+    value: 'rebase-and-merge',
+    label: 'Rebase and merge',
+    description: 'The 14 commits from this branch will be rebased and added to the base branch',
+    class: 'flex flex-col items-start gap-1 [&>div]:items-start [&>div]:gap-1',
+  },
 ]
 </script>
 
@@ -31,9 +47,7 @@ const mergeOptions: DropdownEntry[] = [
           <Button>
             <Icon class="size-3.5" icon="gravity-ui:code-fork" />
             Fork
-            <Chip color="accent" size="sm" variant="soft">
-              24
-            </Chip>
+            <Chip color="accent" size="sm" variant="soft"> 24 </Chip>
           </Button>
           <Button icon-only aria-label="More fork options">
             <Icon icon="gravity-ui:chevron-down" />
@@ -60,9 +74,7 @@ const mergeOptions: DropdownEntry[] = [
             Star
           </Button>
           <Button class="px-2">
-            <Chip color="accent" size="sm" variant="soft">
-              104
-            </Chip>
+            <Chip color="accent" size="sm" variant="soft"> 104 </Chip>
           </Button>
         </ButtonGroup>
         <ButtonGroup separator variant="tertiary">

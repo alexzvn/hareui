@@ -25,25 +25,30 @@ NumberField renders a [Label](/docs/components/label), a group holding the decre
 ```vue
 <template>
   <NumberField label="…" description="…" error-message="…" :invalid="…">
-    <template #label />        <!-- Label content -->
-    <template #decrement />    <!-- decrement button content (default: minus icon) -->
-    <template #increment />    <!-- increment button content (default: plus icon) -->
-    <template #description />  <!-- Description content -->
-    <template #error />        <!-- FieldError content, rendered when invalid -->
+    <template #label />
+    <!-- Label content -->
+    <template #decrement />
+    <!-- decrement button content (default: minus icon) -->
+    <template #increment />
+    <!-- increment button content (default: plus icon) -->
+    <template #description />
+    <!-- Description content -->
+    <template #error />
+    <!-- FieldError content, rendered when invalid -->
   </NumberField>
 </template>
 ```
 
-| `ui` key | `data-slot` | Element |
-|---|---|---|
-| `base` | `number-field` | `<div>` root |
-| — | `label` | [Label](/docs/components/label) (iff `label` / `#label`) |
-| `group` | `number-field-group` | `<div role="group">` holding the buttons and input |
-| `decrementButton` | `number-field-decrement-button` | `<button>` (iff `decrement`) |
-| `input` | `number-field-input` | `<input role="spinbutton">` |
-| `incrementButton` | `number-field-increment-button` | `<button>` (iff `increment`) |
-| — | `description` | [Description](/docs/components/description) (iff `description` / `#description`) |
-| — | `field-error` | [FieldError](/docs/components/field-error) (while invalid, iff `error-message` / `#error` / validation errors) |
+| `ui` key          | `data-slot`                     | Element                                                                                                        |
+| ----------------- | ------------------------------- | -------------------------------------------------------------------------------------------------------------- |
+| `base`            | `number-field`                  | `<div>` root                                                                                                   |
+| —                 | `label`                         | [Label](/docs/components/label) (iff `label` / `#label`)                                                       |
+| `group`           | `number-field-group`            | `<div role="group">` holding the buttons and input                                                             |
+| `decrementButton` | `number-field-decrement-button` | `<button>` (iff `decrement`)                                                                                   |
+| `input`           | `number-field-input`            | `<input role="spinbutton">`                                                                                    |
+| `incrementButton` | `number-field-increment-button` | `<button>` (iff `increment`)                                                                                   |
+| —                 | `description`                   | [Description](/docs/components/description) (iff `description` / `#description`)                               |
+| —                 | `field-error`                   | [FieldError](/docs/components/field-error) (while invalid, iff `error-message` / `#error` / validation errors) |
 
 > **NumberField** allows users to enter numeric values with optional increment/decrement buttons. It supports internationalized formatting, validation, and keyboard navigation.
 
@@ -143,9 +148,11 @@ HeroUI's `render` prop replaces the root element. In Vue, attributes you pass to
 ### Global Configuration
 
 ```ts
-app.use(createHareUI({
-  ui: { numberField: { slots: { group: 'rounded-xl', input: 'text-center' } } },
-}))
+app.use(
+  createHareUI({
+    ui: { numberField: { slots: { group: 'rounded-xl', input: 'text-center' } } },
+  }),
+)
 ```
 
 ## Styling Reference

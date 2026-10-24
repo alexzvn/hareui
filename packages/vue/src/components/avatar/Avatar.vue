@@ -1,5 +1,6 @@
 <script lang="ts">
 import type { AvatarImageProps } from 'reka-ui'
+
 import type { ComponentSlots, ComponentVariants } from '../../types/tv'
 import theme from './theme'
 
@@ -63,13 +64,18 @@ export interface AvatarEmits {
 
 <script setup lang="ts">
 import { AvatarFallback, AvatarImage, AvatarRoot } from 'reka-ui'
+
 import { useComponentUI } from '../../composables/useComponentUI'
 
 const props = defineProps<AvatarProps>()
 const emit = defineEmits<AvatarEmits>()
 const slots = defineSlots<AvatarSlots>()
 
-const ui = useComponentUI('avatar', theme, () => ({ color: props.color, size: props.size, variant: props.variant }))
+const ui = useComponentUI('avatar', theme, () => ({
+  color: props.color,
+  size: props.size,
+  variant: props.variant,
+}))
 </script>
 
 <template>
@@ -91,7 +97,11 @@ const ui = useComponentUI('avatar', theme, () => ({ color: props.color, size: pr
     >
       <slot name="image" />
     </AvatarImage>
-    <AvatarFallback data-slot="avatar-fallback" :delay-ms="delayMs" :class="ui.fallback({ class: props.ui?.fallback })">
+    <AvatarFallback
+      data-slot="avatar-fallback"
+      :delay-ms="delayMs"
+      :class="ui.fallback({ class: props.ui?.fallback })"
+    >
       <slot name="fallback">
         {{ fallback }}
       </slot>

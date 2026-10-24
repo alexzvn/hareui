@@ -1,6 +1,8 @@
 import { fileURLToPath } from 'node:url'
+
 import vue from '@vitejs/plugin-vue'
 import { defineConfig } from 'vitest/config'
+
 import { componentNamesPlugin } from './build/componentNames.ts'
 
 export default defineConfig({

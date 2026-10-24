@@ -1,14 +1,15 @@
 <script setup lang="ts">
+import { ref, useId } from 'vue'
+
 // Internal: one TagGroup tag. Not exported. Roving tabindex, selection toggling and Enter/Space,
 // Delete/Backspace and arrow-key navigation are all driven by the parent `TagGroup` (it owns the
 // collection and needs to skip disabled tags), so this component only renders and tracks hover-ish
 // visual state; it never attaches its own keydown handler. Presses are reported with their event so the
 // parent can tell Shift+press (range) from a toggle.
 import type { ComponentUI } from '../../types/tv'
-import type tagTheme from './tagTheme'
-import type { TagGroupItem, TagGroupSlots } from './TagGroup.vue'
-import { ref, useId } from 'vue'
 import CloseButton from '../close-button/CloseButton.vue'
+import type { TagGroupItem, TagGroupSlots } from './TagGroup.vue'
+import type tagTheme from './tagTheme'
 
 const props = defineProps<{
   item: TagGroupItem
@@ -20,10 +21,10 @@ const props = defineProps<{
   removable: boolean
   /** Slot class functions of the parent TagGroup's `tag` theme; size/variant are already baked in. */
   classes: ComponentUI<typeof tagTheme>
-  ui?: { tag?: any, removeButton?: any }
+  ui?: { tag?: any; removeButton?: any }
 }>()
-const emit = defineEmits<{ press: [event: MouseEvent | PointerEvent], remove: [] }>()
-defineSlots<{ default?: TagGroupSlots['item'], removeButton?: TagGroupSlots['removeButton'] }>()
+const emit = defineEmits<{ press: [event: MouseEvent | PointerEvent]; remove: [] }>()
+defineSlots<{ default?: TagGroupSlots['item']; removeButton?: TagGroupSlots['removeButton'] }>()
 
 // RAC render-prop states the CSS actually styles (`:active`/`data-pressed`, `:focus-visible`/`data-focus-visible`).
 const pressed = ref(false)
@@ -44,20 +45,18 @@ let selectedOnDown = false
 
 function onPointerdown(event: PointerEvent) {
   selectedOnDown = false
-  if (props.disabled)
-    return
+  if (props.disabled) return
   pressed.value = true
-  const fromRemoveButton = event.target instanceof Element && event.target.closest('[data-slot=tag-remove-button]')
-  if (fromRemoveButton || event.pointerType !== 'mouse' || event.button !== 0)
-    return
+  const fromRemoveButton =
+    event.target instanceof Element && event.target.closest('[data-slot=tag-remove-button]')
+  if (fromRemoveButton || event.pointerType !== 'mouse' || event.button !== 0) return
   selectedOnDown = true
   emit('press', event)
 }
 
 // A disabled tag isn't focusable: keep focus where it is instead of letting the press blur it to `body` (RAC)
 function onMousedown(event: MouseEvent) {
-  if (props.disabled)
-    event.preventDefault()
+  if (props.disabled) event.preventDefault()
 }
 
 function onClick(event: MouseEvent) {
@@ -65,8 +64,7 @@ function onClick(event: MouseEvent) {
     selectedOnDown = false
     return
   }
-  if (props.disabled)
-    return
+  if (props.disabled) return
   emit('press', event)
 }
 

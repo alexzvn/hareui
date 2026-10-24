@@ -27,15 +27,9 @@ const isOpen = ref(false)
       search-placeholder="Search states..."
       :items="items"
     >
-      <template #empty>
-        No results found
-      </template>
+      <template #empty> No results found </template>
     </Autocomplete>
-    <Button @click="isOpen = !isOpen">
-      {{ isOpen ? 'Close' : 'Open' }} Autocomplete
-    </Button>
-    <p class="text-sm text-muted">
-      Autocomplete is {{ isOpen ? 'open' : 'closed' }}
-    </p>
+    <Button @click="isOpen = !isOpen"> {{ isOpen ? 'Close' : 'Open' }} Autocomplete </Button>
+    <p class="text-sm text-muted">Autocomplete is {{ isOpen ? 'open' : 'closed' }}</p>
   </div>
 </template>

@@ -10,10 +10,30 @@ const deliverySlots = [
 ]
 
 const payments = [
-  { value: 'card', title: 'Card ending 4417', description: 'Expires 09/2029', icon: 'gravity-ui:credit-card' },
-  { value: 'wallet', title: 'Store balance', description: '€42.60 available', icon: 'gravity-ui:wallet' },
-  { value: 'voucher', title: 'Gift voucher', description: 'Enter a code at checkout', icon: 'gravity-ui:gift' },
-  { value: 'cash', title: 'Pay on delivery', description: 'Card or cash to the courier', icon: 'gravity-ui:hand-ok' },
+  {
+    value: 'card',
+    title: 'Card ending 4417',
+    description: 'Expires 09/2029',
+    icon: 'gravity-ui:credit-card',
+  },
+  {
+    value: 'wallet',
+    title: 'Store balance',
+    description: '€42.60 available',
+    icon: 'gravity-ui:wallet',
+  },
+  {
+    value: 'voucher',
+    title: 'Gift voucher',
+    description: 'Enter a code at checkout',
+    icon: 'gravity-ui:gift',
+  },
+  {
+    value: 'cash',
+    title: 'Pay on delivery',
+    description: 'Card or cash to the courier',
+    icon: 'gravity-ui:hand-ok',
+  },
 ]
 
 const eur = new Intl.NumberFormat('en-IE', { style: 'currency', currency: 'EUR' })
@@ -38,7 +58,9 @@ const eur = new Intl.NumberFormat('en-IE', { style: 'currency', currency: 'EUR' 
           :description="option.description"
           :ui="{ itemDescription: 'mt-1' }"
         >
-          <span class="mt-2 text-sm font-semibold">{{ option.fee ? eur.format(option.fee) : 'Free' }}</span>
+          <span class="mt-2 text-sm font-semibold">{{
+            option.fee ? eur.format(option.fee) : 'Free'
+          }}</span>
         </RadioButtonGroupItem>
       </RadioButtonGroup>
     </section>

@@ -1,6 +1,7 @@
 import { mount } from '@vue/test-utils'
 import { afterEach, describe, expect, it, vi } from 'vitest'
 import { defineComponent, h, nextTick } from 'vue'
+
 import { useVisualViewportHeight } from '../src/composables/useVisualViewportHeight'
 
 const Probe = defineComponent({
@@ -10,7 +11,8 @@ const Probe = defineComponent({
   },
 })
 
-const resizeCalls = (spy: { mock: { calls: unknown[][] } }) => spy.mock.calls.filter(([type]) => type === 'resize')
+const resizeCalls = (spy: { mock: { calls: unknown[][] } }) =>
+  spy.mock.calls.filter(([type]) => type === 'resize')
 
 describe('useVisualViewportHeight', () => {
   afterEach(() => {
@@ -28,7 +30,9 @@ describe('useVisualViewportHeight', () => {
     window.dispatchEvent(new Event('resize'))
     await nextTick()
     for (const w of [a, b])
-      expect((w.element as HTMLElement).style.getPropertyValue('--visual-viewport-height')).toBe('432px')
+      expect((w.element as HTMLElement).style.getPropertyValue('--visual-viewport-height')).toBe(
+        '432px',
+      )
 
     a.unmount()
     expect(resizeCalls(remove)).toHaveLength(0)

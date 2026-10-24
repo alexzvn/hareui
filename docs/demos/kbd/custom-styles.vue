@@ -7,8 +7,6 @@ import { Kbd } from '@hareui/vue'
     <Kbd class="rounded-lg bg-accent-soft px-2.5 text-accent-soft-foreground" keys="command">
       K
     </Kbd>
-    <Kbd class="rounded-lg bg-default px-2.5 text-muted" keys="shift">
-      P
-    </Kbd>
+    <Kbd class="rounded-lg bg-default px-2.5 text-muted" keys="shift"> P </Kbd>
   </div>
 </template>

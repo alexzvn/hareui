@@ -86,14 +86,15 @@ export interface SearchFieldEmits {
   /** Emitted when the value changes. */
   'update:modelValue': [value: string]
   /** Emitted when the user presses Enter inside the input. */
-  'submit': [value: string]
+  submit: [value: string]
   /** Emitted when the value is cleared, via the clear button or Escape. */
-  'clear': []
+  clear: []
 }
 </script>
 
 <script setup lang="ts">
 import { computed, ref, useAttrs, useSlots, useTemplateRef } from 'vue'
+
 import { useComponentUI } from '../../composables/useComponentUI'
 import { useFieldChrome } from '../../composables/useFieldChrome'
 import { useFieldValidation } from '../../composables/useFieldValidation'
@@ -144,7 +145,11 @@ function onFocusIn(event: FocusEvent) {
   focusVisible.value = event.target instanceof Element && event.target.matches(':focus-visible')
 }
 function onFocusOut(event: FocusEvent) {
-  if (event.currentTarget instanceof Element && event.relatedTarget instanceof Node && event.currentTarget.contains(event.relatedTarget))
+  if (
+    event.currentTarget instanceof Element &&
+    event.relatedTarget instanceof Node &&
+    event.currentTarget.contains(event.relatedTarget)
+  )
     return
   focusWithin.value = false
   focusVisible.value = false
@@ -155,15 +160,13 @@ function onFocusOut(event: FocusEvent) {
 // still swallow Enter but don't submit.
 function onEnter(event: KeyboardEvent) {
   event.preventDefault()
-  if (disabled.value || props.readonly)
-    return
+  if (disabled.value || props.readonly) return
   emit('submit', modelValue.value ?? '')
 }
 // Matches RAC: Escape clears the field and stops there (an enclosing dialog stays open), but does nothing and lets
 // the key through when the field is already empty, disabled or readonly.
 function onEscape(event: KeyboardEvent) {
-  if (disabled.value || props.readonly || !modelValue.value)
-    return
+  if (disabled.value || props.readonly || !modelValue.value) return
   event.preventDefault()
   event.stopPropagation()
   modelValue.value = ''
@@ -187,7 +190,10 @@ const { id, describedBy, FieldLabel, FieldDescription, FieldError } = useFieldCh
   ariaDescribedBy: () => attrs['aria-describedby'] as string | undefined,
 })
 
-const ui = useComponentUI('searchField', theme, () => ({ variant: props.variant, fullWidth: props.fullWidth }))
+const ui = useComponentUI('searchField', theme, () => ({
+  variant: props.variant,
+  fullWidth: props.fullWidth,
+}))
 </script>
 
 <template>
@@ -214,10 +220,26 @@ const ui = useComponentUI('searchField', theme, () => ({ variant: props.variant,
       @focusin="onFocusIn"
       @focusout="onFocusOut"
     >
-      <span data-slot="search-field-search-icon" :class="ui.searchIcon({ class: props.ui?.searchIcon })">
+      <span
+        data-slot="search-field-search-icon"
+        :class="ui.searchIcon({ class: props.ui?.searchIcon })"
+      >
         <slot name="icon">
-          <svg aria-hidden="true" fill="none" height="16" role="presentation" viewBox="0 0 16 16" width="16" xmlns="http://www.w3.org/2000/svg">
-            <path clip-rule="evenodd" d="M11.5 7a4.5 4.5 0 1 1-9 0a4.5 4.5 0 0 1 9 0m-.82 4.74a6 6 0 1 1 1.06-1.06l2.79 2.79a.75.75 0 1 1-1.06 1.06z" fill="currentColor" fill-rule="evenodd" />
+          <svg
+            aria-hidden="true"
+            fill="none"
+            height="16"
+            role="presentation"
+            viewBox="0 0 16 16"
+            width="16"
+            xmlns="http://www.w3.org/2000/svg"
+          >
+            <path
+              clip-rule="evenodd"
+              d="M11.5 7a4.5 4.5 0 1 1-9 0a4.5 4.5 0 0 1 9 0m-.82 4.74a6 6 0 1 1 1.06-1.06l2.79 2.79a.75.75 0 1 1-1.06 1.06z"
+              fill="currentColor"
+              fill-rule="evenodd"
+            />
           </svg>
         </slot>
       </span>
@@ -239,7 +261,7 @@ const ui = useComponentUI('searchField', theme, () => ({ variant: props.variant,
         :class="ui.input({ class: props.ui?.input })"
         @keydown.enter="onEnter"
         @keydown.esc="onEscape"
-      >
+      />
       <CloseButton
         v-if="slots.clearIcon"
         data-slot="search-field-clear-button"

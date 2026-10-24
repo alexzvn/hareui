@@ -1,12 +1,17 @@
-import type { VNode } from 'vue'
 import { mount } from '@vue/test-utils'
 import { describe, expect, it } from 'vitest'
+import type { VNode } from 'vue'
 import { defineComponent, h } from 'vue'
+
 import EmptyState from '../src/components/empty-state/EmptyState.vue'
 import TagGroup from '../src/components/tag-group/TagGroup.vue'
 import { expectAccessible } from './a11y'
 
-const mountAll = (children: () => VNode[]) => mount(defineComponent(() => () => h('div', children())), { attachTo: document.body })
+const mountAll = (children: () => VNode[]) =>
+  mount(
+    defineComponent(() => () => h('div', children())),
+    { attachTo: document.body },
+  )
 
 describe('EmptyState', () => {
   it('renders "No results found" by default with the empty-state slot', () => {
@@ -17,7 +22,10 @@ describe('EmptyState', () => {
   })
 
   it('renders slot content and merges class over the theme padding', () => {
-    const wrapper = mount(EmptyState, { props: { class: 'p-1' }, slots: { default: () => 'No team members' } })
+    const wrapper = mount(EmptyState, {
+      props: { class: 'p-1' },
+      slots: { default: () => 'No team members' },
+    })
     expect(wrapper.text()).toBe('No team members')
     expect(wrapper.classes()).toContain('p-1')
     expect(wrapper.classes()).not.toContain('p-2')
@@ -25,7 +33,7 @@ describe('EmptyState', () => {
 
   it('renders inside an empty TagGroup list via #empty, and disappears once items exist', async () => {
     const wrapper = mount(TagGroup, {
-      props: { 'aria-label': 'Team', 'items': [] },
+      props: { 'aria-label': 'Team', items: [] },
       slots: { empty: () => 'No team members' },
     })
     const list = wrapper.get('[data-slot=tag-group-list]')

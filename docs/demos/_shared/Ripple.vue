@@ -6,22 +6,30 @@
  */
 import { onBeforeUnmount, onMounted, ref, watchEffect } from 'vue'
 
-const props = withDefaults(defineProps<{
-  hoverOpacity?: number
-  pressedOpacity?: number
-  disabled?: boolean
-  easing?: string
-  duration?: number
-  minimumPressDuration?: number
-  touchDelay?: number
-}>(), { disabled: false, duration: 150, minimumPressDuration: 225, touchDelay: 150 })
+const props = withDefaults(
+  defineProps<{
+    hoverOpacity?: number
+    pressedOpacity?: number
+    disabled?: boolean
+    easing?: string
+    duration?: number
+    minimumPressDuration?: number
+    touchDelay?: number
+  }>(),
+  { disabled: false, duration: 150, minimumPressDuration: 225, touchDelay: 150 },
+)
 
 const INITIAL_ORIGIN_SCALE = 0.2
 const PADDING = 12
 const SOFT_EDGE_MINIMUM_SIZE = 75
 const SOFT_EDGE_CONTAINER_RATIO = 0.35
 
-const enum State { Inactive, TouchDelay, Holding, WaitingForClick }
+const enum State {
+  Inactive,
+  TouchDelay,
+  Holding,
+  WaitingForClick,
+}
 
 const hovered = ref(false)
 const pressed = ref(false)
@@ -39,15 +47,20 @@ let checkBoundsAfterContextMenu = false
 watchEffect(() => {
   const style = surface.value?.style
   if (!style) return
-  if (props.hoverOpacity !== undefined) style.setProperty('--ripple-hover-opacity', `${props.hoverOpacity}`)
-  if (props.pressedOpacity !== undefined) style.setProperty('--ripple-pressed-opacity', `${props.pressedOpacity}`)
+  if (props.hoverOpacity !== undefined)
+    style.setProperty('--ripple-hover-opacity', `${props.hoverOpacity}`)
+  if (props.pressedOpacity !== undefined)
+    style.setProperty('--ripple-pressed-opacity', `${props.pressedOpacity}`)
   if (props.duration !== 150) style.setProperty('--ripple-duration', `${props.duration}ms`)
 })
 
 const isTouch = ({ pointerType }: PointerEvent) => pointerType === 'touch'
 
 function shouldReactToEvent(event: PointerEvent) {
-  const parent = root.value?.parentElement as (HTMLElement & { disabled?: boolean }) | null | undefined
+  const parent = root.value?.parentElement as
+    | (HTMLElement & { disabled?: boolean })
+    | null
+    | undefined
   if (props.disabled || parent?.disabled || !event.isPrimary) return false
   if (rippleStartEvent && rippleStartEvent.pointerId !== event.pointerId) return false
   if (event.type === 'pointerenter' || event.type === 'pointerleave') return !isTouch(event)
@@ -74,7 +87,10 @@ function determineRippleSize() {
 function getNormalizedPointerEventCoords(event: PointerEvent) {
   const rect = root.value?.getBoundingClientRect()
   if (!rect) return { x: 0, y: 0 }
-  return { x: event.pageX - (window.scrollX + rect.left), y: event.pageY - (window.scrollY + rect.top) }
+  return {
+    x: event.pageX - (window.scrollX + rect.left),
+    y: event.pageY - (window.scrollY + rect.top),
+  }
 }
 
 function getTranslationCoordinates(event?: PointerEvent) {
@@ -109,7 +125,8 @@ function endPressAnimation() {
   rippleStartEvent = undefined
   state = State.Inactive
   const animation = growAnimation
-  const pressAnimationPlayState = typeof animation?.currentTime === 'number' ? animation.currentTime : Infinity
+  const pressAnimationPlayState =
+    typeof animation?.currentTime === 'number' ? animation.currentTime : Infinity
   if (pressAnimationPlayState >= props.minimumPressDuration) {
     pressed.value = false
     return
@@ -203,7 +220,10 @@ onBeforeUnmount(() => {
 
 <template>
   <div ref="root" class="salty-ripple" aria-hidden="true">
-    <div ref="surface" :class="['salty-ripple-surface', { '--hover': hovered, '--press': pressed }]" />
+    <div
+      ref="surface"
+      :class="['salty-ripple-surface', { '--hover': hovered, '--press': pressed }]"
+    />
   </div>
 </template>
 
@@ -256,7 +276,11 @@ onBeforeUnmount(() => {
 
 .salty-ripple .salty-ripple-surface::after {
   inset: 0;
-  background: radial-gradient(closest-side, var(--ripple-color, currentColor) max(100% - 70px, 65%), transparent 100%);
+  background: radial-gradient(
+    closest-side,
+    var(--ripple-color, currentColor) max(100% - 70px, 65%),
+    transparent 100%
+  );
   transform-origin: center center;
   transition: opacity 375ms;
 }

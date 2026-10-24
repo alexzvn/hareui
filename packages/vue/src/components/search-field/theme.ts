@@ -25,7 +25,8 @@ export default {
       'focus:outline-none focus-visible:outline-none',
       'autofill:shadow-[inset_0_0_0_1000px_transparent] autofill:[-webkit-text-fill-color:var(--field-foreground)] autofill:caret-(--field-foreground) autofill:[transition:background-color_9999s_ease-in-out_0s]',
     ],
-    searchIcon: 'pointer-events-none shrink-0 text-field-placeholder ms-3 me-0 size-4 [&>svg]:size-4',
+    searchIcon:
+      'pointer-events-none shrink-0 text-field-placeholder ms-3 me-0 size-4 [&>svg]:size-4',
     clearButton: 'me-2 size-5 shrink-0 [&_[data-slot=close-button-icon]]:size-3',
   },
   variants: {

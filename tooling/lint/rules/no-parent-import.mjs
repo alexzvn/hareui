@@ -36,7 +36,8 @@ export default {
         messageId: 'parent',
         data: { source: source.value },
         fix: isInside
-          ? (fixer) => fixer.replaceText(source, `${quote}@/${relative.split(path.sep).join('/')}${quote}`)
+          ? (fixer) =>
+              fixer.replaceText(source, `${quote}@/${relative.split(path.sep).join('/')}${quote}`)
           : undefined,
       })
     }

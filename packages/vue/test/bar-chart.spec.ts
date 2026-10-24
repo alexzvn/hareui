@@ -1,11 +1,12 @@
 import { flushPromises, mount } from '@vue/test-utils'
 import { describe, expect, it } from 'vitest'
 import { h, nextTick } from 'vue'
+
+import BarChart from '../src/components/bar-chart/BarChart.vue'
 import ChartBar from '../src/components/chart/ChartBar.vue'
 import ChartTooltip from '../src/components/chart/ChartTooltip.vue'
 import ChartXAxis from '../src/components/chart/ChartXAxis.vue'
 import ChartYAxis from '../src/components/chart/ChartYAxis.vue'
-import BarChart from '../src/components/bar-chart/BarChart.vue'
 import { expectAccessible } from './a11y'
 
 const WIDTH = 400
@@ -53,7 +54,12 @@ function bbox(d: string) {
         break
     }
   }
-  return { x: Math.min(...xs), y: Math.min(...ys), width: Math.max(...xs) - Math.min(...xs), height: Math.max(...ys) - Math.min(...ys) }
+  return {
+    x: Math.min(...xs),
+    y: Math.min(...ys),
+    width: Math.max(...xs) - Math.min(...xs),
+    height: Math.max(...ys) - Math.min(...ys),
+  }
 }
 
 async function settle() {
@@ -61,8 +67,14 @@ async function settle() {
   await nextTick()
 }
 
-async function hover(wrapper: { find: (s: string) => { element: Element } }, clientX: number, clientY: number) {
-  wrapper.find('[data-slot=chart-surface]').element.dispatchEvent(new PointerEvent('pointermove', { clientX, clientY, bubbles: true }))
+async function hover(
+  wrapper: { find: (s: string) => { element: Element } },
+  clientX: number,
+  clientY: number,
+) {
+  wrapper
+    .find('[data-slot=chart-surface]')
+    .element.dispatchEvent(new PointerEvent('pointermove', { clientX, clientY, bubbles: true }))
   await settle()
 }
 
@@ -80,7 +92,7 @@ function mountChart(children: () => any[], props: Record<string, unknown> = {}) 
 }
 
 function bars(wrapper: ReturnType<typeof mountChart>) {
-  return wrapper.findAll('[data-slot=chart-bar-rectangle]').map(bar => bbox(bar.attributes('d')!))
+  return wrapper.findAll('[data-slot=chart-bar-rectangle]').map((bar) => bbox(bar.attributes('d')!))
 }
 
 describe('BarChart', () => {
@@ -130,11 +142,14 @@ describe('BarChart', () => {
   })
 
   it('layout="vertical" draws horizontal bars from the left edge', async () => {
-    const wrapper = mountChart(() => [
-      h(ChartXAxis, { type: 'number', hide: true }),
-      h(ChartYAxis, { dataKey: 'name', type: 'category', hide: true }),
-      h(ChartBar, { dataKey: 'low', barSize: 14, isAnimationActive: false }),
-    ], { layout: 'vertical' })
+    const wrapper = mountChart(
+      () => [
+        h(ChartXAxis, { type: 'number', hide: true }),
+        h(ChartYAxis, { dataKey: 'name', type: 'category', hide: true }),
+        h(ChartBar, { dataKey: 'low', barSize: 14, isAnimationActive: false }),
+      ],
+      { layout: 'vertical' },
+    )
     await settle()
     const [a, b] = bars(wrapper)
     expect(a.height).toBeCloseTo(14)
@@ -147,16 +162,32 @@ describe('BarChart', () => {
   it('hovering a category shows both series in the tooltip', async () => {
     const wrapper = mountChart(() => [
       h(ChartXAxis, { dataKey: 'name', hide: true }),
-      h(ChartBar, { dataKey: 'low', name: 'Low', fill: 'var(--chart-1)', isAnimationActive: false }),
-      h(ChartBar, { dataKey: 'high', name: 'High', fill: 'var(--chart-2)', isAnimationActive: false }),
+      h(ChartBar, {
+        dataKey: 'low',
+        name: 'Low',
+        fill: 'var(--chart-1)',
+        isAnimationActive: false,
+      }),
+      h(ChartBar, {
+        dataKey: 'high',
+        name: 'High',
+        fill: 'var(--chart-2)',
+        isAnimationActive: false,
+      }),
       h(ChartTooltip, { isAnimationActive: false }),
     ])
     await settle()
     await hover(wrapper, 300, 100)
     const panel = wrapper.find('[data-slot=chart-tooltip]')
     expect(panel.find('[data-slot=chart-tooltip-header]').text()).toBe('B')
-    expect(panel.findAll('[data-slot=chart-tooltip-label]').map(label => label.text())).toEqual(['Low', 'High'])
-    expect(panel.findAll('[data-slot=chart-tooltip-value]').map(value => value.text())).toEqual(['20', '20'])
+    expect(panel.findAll('[data-slot=chart-tooltip-label]').map((label) => label.text())).toEqual([
+      'Low',
+      'High',
+    ])
+    expect(panel.findAll('[data-slot=chart-tooltip-value]').map((value) => value.text())).toEqual([
+      '20',
+      '20',
+    ])
     expect(wrapper.find('[data-slot=chart-cursor]').attributes('data-kind')).toBe('band')
     wrapper.unmount()
   })
@@ -183,12 +214,15 @@ describe('BarChart', () => {
   })
 
   it('picks the hovered category by y in the vertical layout', async () => {
-    const wrapper = mountChart(() => [
-      h(ChartXAxis, { type: 'number', hide: true }),
-      h(ChartYAxis, { dataKey: 'name', type: 'category', hide: true }),
-      h(ChartBar, { dataKey: 'low', isAnimationActive: false }),
-      h(ChartTooltip, { isAnimationActive: false }),
-    ], { layout: 'vertical' })
+    const wrapper = mountChart(
+      () => [
+        h(ChartXAxis, { type: 'number', hide: true }),
+        h(ChartYAxis, { dataKey: 'name', type: 'category', hide: true }),
+        h(ChartBar, { dataKey: 'low', isAnimationActive: false }),
+        h(ChartTooltip, { isAnimationActive: false }),
+      ],
+      { layout: 'vertical' },
+    )
     await settle()
     const header = () => wrapper.find('[data-slot=chart-tooltip-header]').text()
     await hover(wrapper, 390, 90)
@@ -196,29 +230,33 @@ describe('BarChart', () => {
     await hover(wrapper, 10, 110)
     expect(header()).toBe('B')
     // The band is inset by half a pixel on each side.
-    expect(wrapper.find('[data-slot=chart-cursor]').attributes('d')).toBe('M 0,100.5 h 400 v 99 h -400 Z')
+    expect(wrapper.find('[data-slot=chart-cursor]').attributes('d')).toBe(
+      'M 0,100.5 h 400 v 99 h -400 Z',
+    )
     wrapper.unmount()
   })
 
   it('never draws negative bar widths when the category gap exceeds half the band', async () => {
-    const wrapper = mountChart(() => [
-      h(ChartBar, { dataKey: 'low', isAnimationActive: false }),
-    ], { barCategoryGap: '60%' })
+    const wrapper = mountChart(() => [h(ChartBar, { dataKey: 'low', isAnimationActive: false })], {
+      barCategoryGap: '60%',
+    })
     await settle()
-    for (const bar of bars(wrapper))
-      expect(bar.width).toBeGreaterThanOrEqual(0)
+    for (const bar of bars(wrapper)) expect(bar.width).toBeGreaterThanOrEqual(0)
     expect(wrapper.find('[data-slot=chart-bar-rectangle]').attributes('d')).not.toContain('NaN')
     wrapper.unmount()
   })
 
   it('walks the categories with the keyboard in the vertical layout and announces both series', async () => {
-    const wrapper = mountChart(() => [
-      h(ChartXAxis, { type: 'number', hide: true }),
-      h(ChartYAxis, { dataKey: 'name', type: 'category', hide: true }),
-      h(ChartBar, { dataKey: 'low', name: 'Low', isAnimationActive: false }),
-      h(ChartBar, { dataKey: 'high', name: 'High', isAnimationActive: false }),
-      h(ChartTooltip, { isAnimationActive: false }),
-    ], { layout: 'vertical' })
+    const wrapper = mountChart(
+      () => [
+        h(ChartXAxis, { type: 'number', hide: true }),
+        h(ChartYAxis, { dataKey: 'name', type: 'category', hide: true }),
+        h(ChartBar, { dataKey: 'low', name: 'Low', isAnimationActive: false }),
+        h(ChartBar, { dataKey: 'high', name: 'High', isAnimationActive: false }),
+        h(ChartTooltip, { isAnimationActive: false }),
+      ],
+      { layout: 'vertical' },
+    )
     await settle()
     const svg = wrapper.find('[data-slot=chart-surface]')
     const live = () => wrapper.find('[data-slot=chart-tooltip-wrapper]')
@@ -229,9 +267,15 @@ describe('BarChart', () => {
     await svg.trigger('keydown', { key: 'ArrowDown' })
     await settle()
     expect(live().find('[data-slot=chart-tooltip-header]').text()).toBe('B')
-    expect(live().findAll('[data-slot=chart-tooltip-label]').map(label => label.text())).toEqual(['Low', 'High'])
+    expect(
+      live()
+        .findAll('[data-slot=chart-tooltip-label]')
+        .map((label) => label.text()),
+    ).toEqual(['Low', 'High'])
     // The band cursor is decoration.
-    expect(wrapper.find('[data-slot=chart-cursor]').element.closest('[aria-hidden=true]')).not.toBeNull()
+    expect(
+      wrapper.find('[data-slot=chart-cursor]').element.closest('[aria-hidden=true]'),
+    ).not.toBeNull()
     await svg.trigger('keydown', { key: 'ArrowUp' })
     await settle()
     expect(live().find('[data-slot=chart-tooltip-header]').text()).toBe('A')
@@ -241,14 +285,24 @@ describe('BarChart', () => {
   it('is accessible idle and with a category focused, horizontal and vertical', async () => {
     for (const layout of ['horizontal', 'vertical'] as const) {
       const wrapper = mount(BarChart, {
-        props: { 'data': data, 'index': 'name', 'layout': layout, 'width': WIDTH, 'height': HEIGHT, 'legend': true, 'aria-label': 'Low and high by group' },
+        props: {
+          data: data,
+          index: 'name',
+          layout: layout,
+          width: WIDTH,
+          height: HEIGHT,
+          legend: true,
+          'aria-label': 'Low and high by group',
+        },
         attachTo: document.body,
       })
       await settle()
       await expectAccessible(wrapper)
       ;(wrapper.find('[data-slot=chart-surface]').element as SVGElement).focus()
       await settle()
-      expect(wrapper.find('[data-slot=chart-tooltip-wrapper]').attributes('data-state')).toBe('open')
+      expect(wrapper.find('[data-slot=chart-tooltip-wrapper]').attributes('data-state')).toBe(
+        'open',
+      )
       await expectAccessible(wrapper)
       wrapper.unmount()
     }

@@ -1,6 +1,7 @@
 import { mount } from '@vue/test-utils'
 import { describe, expect, it } from 'vitest'
 import { h, nextTick, ref } from 'vue'
+
 import Accordion from '../src/components/accordion/Accordion.vue'
 import { useDisclosureGroupNavigation } from '../src/components/disclosure-group/useDisclosureGroupNavigation'
 import { expectAccessible } from './a11y'
@@ -12,7 +13,7 @@ const items = [
 ]
 
 const expandedStates = (wrapper: ReturnType<typeof mount>) =>
-  wrapper.findAll('[data-slot=accordion-trigger]').map(t => t.attributes('aria-expanded'))
+  wrapper.findAll('[data-slot=accordion-trigger]').map((t) => t.attributes('aria-expanded'))
 
 describe('accordion', () => {
   it('single mode: expanding an item collapses the previously expanded one', async () => {
@@ -37,9 +38,15 @@ describe('accordion', () => {
     const whole = mount(Accordion, { props: { items, disabled: true } })
     await whole.findAll('[data-slot=accordion-trigger]')[0]!.trigger('click')
     expect(expandedStates(whole)).toEqual(['false', 'false', 'false'])
-    expect(whole.findAll('[data-slot=accordion-trigger]').every(t => t.attributes('disabled') !== undefined)).toBe(true)
+    expect(
+      whole
+        .findAll('[data-slot=accordion-trigger]')
+        .every((t) => t.attributes('disabled') !== undefined),
+    ).toBe(true)
 
-    const one = mount(Accordion, { props: { items: [items[0]!, { ...items[1]!, disabled: true }] } })
+    const one = mount(Accordion, {
+      props: { items: [items[0]!, { ...items[1]!, disabled: true }] },
+    })
     await one.findAll('[data-slot=accordion-trigger]')[1]!.trigger('click')
     expect(expandedStates(one)).toEqual(['false', 'false'])
     await one.findAll('[data-slot=accordion-trigger]')[0]!.trigger('click')
@@ -50,15 +57,20 @@ describe('accordion', () => {
     const expanded = ref<(string | number)[]>(['a'])
     const nav = useDisclosureGroupNavigation({
       expandedKeys: expanded,
-      itemIds: items.map(i => i.value),
-      onExpandedChange: (keys) => { expanded.value = keys },
+      itemIds: items.map((i) => i.value),
+      onExpandedChange: (keys) => {
+        expanded.value = keys
+      },
     })
     const wrapper = mount({
-      setup: () => () => h(Accordion, {
-        'items': items,
-        'modelValue': expanded.value,
-        'onUpdate:modelValue': (v: (string | number)[]) => { expanded.value = v },
-      }),
+      setup: () => () =>
+        h(Accordion, {
+          items: items,
+          modelValue: expanded.value,
+          'onUpdate:modelValue': (v: (string | number)[]) => {
+            expanded.value = v
+          },
+        }),
     })
     expect(nav.isPrevDisabled.value).toBe(true)
 
@@ -88,13 +100,17 @@ describe('accordion', () => {
     expect(indicator.attributes('data-expanded')).toBe('true')
 
     await wrapper.find('[data-slot=accordion-trigger]').trigger('click')
-    expect(wrapper.find('[data-slot=accordion-indicator]').attributes('data-expanded')).toBeUndefined()
+    expect(
+      wrapper.find('[data-slot=accordion-indicator]').attributes('data-expanded'),
+    ).toBeUndefined()
   })
 })
 
 describe('Accordion accessibility', () => {
-  const triggers = (wrapper: ReturnType<typeof mount>) => wrapper.findAll('[data-slot=accordion-trigger]')
-  const panels = (wrapper: ReturnType<typeof mount>) => wrapper.findAll('[data-slot=accordion-panel]')
+  const triggers = (wrapper: ReturnType<typeof mount>) =>
+    wrapper.findAll('[data-slot=accordion-trigger]')
+  const panels = (wrapper: ReturnType<typeof mount>) =>
+    wrapper.findAll('[data-slot=accordion-panel]')
 
   it('passes axe collapsed, expanded, multiple-expanded and disabled', async () => {
     const cases = [
@@ -112,7 +128,10 @@ describe('Accordion accessibility', () => {
   })
 
   it('each trigger is a button inside a heading that controls a group panel named by that trigger', () => {
-    const wrapper = mount(Accordion, { props: { items, defaultValue: ['a'] }, attachTo: document.body })
+    const wrapper = mount(Accordion, {
+      props: { items, defaultValue: ['a'] },
+      attachTo: document.body,
+    })
     triggers(wrapper).forEach((trigger, index) => {
       const panel = panels(wrapper)[index]!
       expect(trigger.element.tagName).toBe('BUTTON')
@@ -127,14 +146,30 @@ describe('Accordion accessibility', () => {
   })
 
   it('collapsed panels are hidden from assistive tech and find-in-page searchable; expanded ones are exposed', async () => {
-    const wrapper = mount(Accordion, { props: { items, defaultValue: ['a'] }, attachTo: document.body })
-    const hiddenStates = () => panels(wrapper).map(p => [p.attributes('aria-hidden'), p.attributes('hidden') ?? null])
-    expect(hiddenStates()).toEqual([['false', null], ['true', 'until-found'], ['true', 'until-found']])
+    const wrapper = mount(Accordion, {
+      props: { items, defaultValue: ['a'] },
+      attachTo: document.body,
+    })
+    const hiddenStates = () =>
+      panels(wrapper).map((p) => [p.attributes('aria-hidden'), p.attributes('hidden') ?? null])
+    expect(hiddenStates()).toEqual([
+      ['false', null],
+      ['true', 'until-found'],
+      ['true', 'until-found'],
+    ])
 
     await triggers(wrapper)[1]!.trigger('click')
-    expect(panels(wrapper).map(p => p.attributes('aria-hidden'))).toEqual(['true', 'false', 'true'])
+    expect(panels(wrapper).map((p) => p.attributes('aria-hidden'))).toEqual([
+      'true',
+      'false',
+      'true',
+    ])
     expect(panels(wrapper)[1]!.attributes('hidden')).toBeUndefined()
-    expect(triggers(wrapper).map(t => t.attributes('aria-expanded'))).toEqual(['false', 'true', 'false'])
+    expect(triggers(wrapper).map((t) => t.attributes('aria-expanded'))).toEqual([
+      'false',
+      'true',
+      'false',
+    ])
     wrapper.unmount()
   })
 
@@ -144,7 +179,7 @@ describe('Accordion accessibility', () => {
       attachTo: document.body,
     })
     const [first, disabled, last] = triggers(wrapper)
-    expect([first, last].map(t => t!.attributes('tabindex'))).toEqual([undefined, undefined])
+    expect([first, last].map((t) => t!.attributes('tabindex'))).toEqual([undefined, undefined])
     expect((disabled!.element as HTMLButtonElement).disabled).toBe(true)
 
     ;(last!.element as HTMLElement).focus()

@@ -73,7 +73,11 @@ Use the `toggle-side` prop to place the toggle on the right of the navbar. The t
 Use the `class` prop for the root and `ui` for every part:
 
 ```vue
-<DashboardNavbar title="Inbox" class="border-b border-separator" :ui="{ title: 'text-base font-semibold' }" />
+<DashboardNavbar
+  title="Inbox"
+  class="border-b border-separator"
+  :ui="{ title: 'text-base font-semibold' }"
+/>
 ```
 
 ### Global theme override
@@ -81,13 +85,15 @@ Use the `class` prop for the root and `ui` for every part:
 Override the `dashboardNavbar` theme app-wide with `createHareUI`:
 
 ```ts
-app.use(createHareUI({
-  ui: {
-    dashboardNavbar: {
-      slots: { root: 'border-b border-separator' },
+app.use(
+  createHareUI({
+    ui: {
+      dashboardNavbar: {
+        slots: { root: 'border-b border-separator' },
+      },
     },
-  },
-}))
+  }),
+)
 ```
 
 ## API

@@ -1,12 +1,16 @@
 <script setup lang="ts">
 import type { DateRangeValue } from '@hareui/vue'
-import { getLocalTimeZone, today } from '@internationalized/date'
 import { DateRangePicker } from '@hareui/vue'
+import { getLocalTimeZone, today } from '@internationalized/date'
 import { computed, shallowRef } from 'vue'
 
 const value = shallowRef<DateRangeValue | null>(null)
 const currentDate = today(getLocalTimeZone())
-const isInvalid = computed(() => value.value != null && (value.value.start.compare(currentDate) < 0 || value.value.end.compare(value.value.start) < 0))
+const isInvalid = computed(
+  () =>
+    value.value != null &&
+    (value.value.start.compare(currentDate) < 0 || value.value.end.compare(value.value.start) < 0),
+)
 </script>
 
 <template>

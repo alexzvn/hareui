@@ -18,12 +18,12 @@ Use semantic naming (primary, secondary, tertiary) instead of visual description
 <Button variant="tertiary">Cancel</Button>
 ```
 
-| Variant | Purpose | Usage |
-|---------|---------|-------|
-| **Primary** | Main action to move forward | 1 per context |
-| **Secondary** | Alternative actions | Multiple allowed |
-| **Tertiary** | Dismissive actions (cancel, skip) | Sparingly |
-| **Danger** | Destructive actions | When needed |
+| Variant       | Purpose                           | Usage            |
+| ------------- | --------------------------------- | ---------------- |
+| **Primary**   | Main action to move forward       | 1 per context    |
+| **Secondary** | Alternative actions               | Multiple allowed |
+| **Tertiary**  | Dismissive actions (cancel, skip) | Sparingly        |
+| **Danger**    | Destructive actions               | When needed      |
 
 ### 2. Accessibility as Foundation — Reka UI
 
@@ -40,9 +40,7 @@ const isSaving = ref(false)
 <template>
   <!-- pending renders a Spinner, sets aria-busy/data-pending, and
        suppresses the click handler while true -->
-  <Button variant="primary" :pending="isSaving" @click="isSaving = true">
-    Save
-  </Button>
+  <Button variant="primary" :pending="isSaving" @click="isSaving = true"> Save </Button>
 </template>
 ```
 
@@ -53,9 +51,9 @@ HeroUI exposes compound parts like `Card.Header` / `Card.Title`. HareUI replaces
 ::: code-group
 
 ```tsx [HeroUI (React)]
-import { Card } from '@heroui/react';
+import { Card } from '@heroui/react'
 
-<Card>
+;<Card>
   <Card.Header>
     <Card.Title>Settings</Card.Title>
     <Card.Description>Manage your preferences</Card.Description>
@@ -119,7 +117,7 @@ import type { ButtonProps } from '@hareui/vue'
 // Type-safe props
 const props: ButtonProps = {
   variant: 'primary', // Autocomplete: primary | secondary | tertiary | ghost | outline | danger | danger-soft
-  size: 'md',          // Type checked: sm | md | lg
+  size: 'md', // Type checked: sm | md | lg
 }
 ```
 
@@ -165,11 +163,11 @@ Override any slot, any variant, at any scope — per instance with `:ui`, or app
 
 ## Differences from HeroUI React
 
-| HeroUI (React) | HareUI (Vue) |
-|---|---|
-| Compound parts (`Card.Header`, `Card.Title`) | Named slots (`#header`, `#title`) |
-| `isDisabled`, `isPending`, `isInvalid`, `isIconOnly` | `disabled`, `pending`, `invalid`, `iconOnly` |
-| `onPress` | `@click` (native DOM events) |
-| `onChange` / `isSelected` / `isOpen` | `v-model` / `v-model:open` |
-| `className` | `class` (root, tailwind-merged) / `:ui` (per-slot) |
-| `@heroui/styles` BEM classes | tailwind-variants slot theme per component |
+| HeroUI (React)                                       | HareUI (Vue)                                       |
+| ---------------------------------------------------- | -------------------------------------------------- |
+| Compound parts (`Card.Header`, `Card.Title`)         | Named slots (`#header`, `#title`)                  |
+| `isDisabled`, `isPending`, `isInvalid`, `isIconOnly` | `disabled`, `pending`, `invalid`, `iconOnly`       |
+| `onPress`                                            | `@click` (native DOM events)                       |
+| `onChange` / `isSelected` / `isOpen`                 | `v-model` / `v-model:open`                         |
+| `className`                                          | `class` (root, tailwind-merged) / `:ui` (per-slot) |
+| `@heroui/styles` BEM classes                         | tailwind-variants slot theme per component         |

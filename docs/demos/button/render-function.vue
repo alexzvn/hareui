@@ -10,11 +10,11 @@ const CustomButton = defineComponent((_, { attrs, slots }) => {
       'button',
       {
         ...attrs,
-        'type': 'button',
+        type: 'button',
         'data-custom': pressed.value ? 'pressed' : 'bar',
-        'onPointerdown': () => (pressed.value = true),
-        'onPointerup': release,
-        'onPointerleave': release,
+        onPointerdown: () => (pressed.value = true),
+        onPointerup: release,
+        onPointerleave: release,
       },
       slots.default?.(),
     )
@@ -22,7 +22,5 @@ const CustomButton = defineComponent((_, { attrs, slots }) => {
 </script>
 
 <template>
-  <Button :as="CustomButton">
-    Press me
-  </Button>
+  <Button :as="CustomButton"> Press me </Button>
 </template>

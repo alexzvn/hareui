@@ -6,6 +6,10 @@ import { Error } from '@hareui/vue'
   <Error
     class="min-h-96"
     redirect="/docs/components/button"
-    :error="{ statusCode: 404, statusMessage: 'Page not found', message: 'The page you are looking for does not exist.' }"
+    :error="{
+      statusCode: 404,
+      statusMessage: 'Page not found',
+      message: 'The page you are looking for does not exist.',
+    }"
   />
 </template>

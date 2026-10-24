@@ -22,22 +22,51 @@ const currency = new Intl.NumberFormat('en-US', { style: 'currency', currency: '
 const sorting = ref([{ id: 'amount', desc: true }])
 
 // The whole header cell toggles the sort; one chevron turns with the direction and stays hidden while unsorted.
-function sortableHeader(column: { getIsSorted: () => false | 'asc' | 'desc', toggleSorting: (desc?: boolean) => void }, label: string) {
+function sortableHeader(
+  column: { getIsSorted: () => false | 'asc' | 'desc'; toggleSorting: (desc?: boolean) => void },
+  label: string,
+) {
   const sorted = column.getIsSorted()
-  return h('button', {
-    type: 'button',
-    class: '-mx-1 inline-flex cursor-(--cursor-interactive) items-center gap-1 rounded-sm px-1 outline-none before:absolute before:inset-0 before:content-[\'\'] hover:text-foreground focus-visible:status-focused',
-    onClick: () => column.toggleSorting(sorted === 'asc'),
-  }, [
-    label,
-    h(Icon, { icon: 'gravity-ui:chevron-up', class: ['size-3 shrink-0 transition-transform duration-100 ease-out motion-reduce:transition-none', sorted === 'desc' && 'rotate-180', !sorted && 'opacity-0'] }),
-  ])
+  return h(
+    'button',
+    {
+      type: 'button',
+      class:
+        "-mx-1 inline-flex cursor-(--cursor-interactive) items-center gap-1 rounded-sm px-1 outline-none before:absolute before:inset-0 before:content-[''] hover:text-foreground focus-visible:status-focused",
+      onClick: () => column.toggleSorting(sorted === 'asc'),
+    },
+    [
+      label,
+      h(Icon, {
+        icon: 'gravity-ui:chevron-up',
+        class: [
+          'size-3 shrink-0 transition-transform duration-100 ease-out motion-reduce:transition-none',
+          sorted === 'desc' && 'rotate-180',
+          !sorted && 'opacity-0',
+        ],
+      }),
+    ],
+  )
 }
 
 const columns: RichTableColumn<Payment>[] = [
-  { accessorKey: 'name', header: ({ column }) => sortableHeader(column, 'Customer'), enableSorting: true },
-  { accessorKey: 'status', header: ({ column }) => sortableHeader(column, 'Status'), enableSorting: true, meta: { class: { td: 'capitalize' } } },
-  { accessorKey: 'amount', header: ({ column }) => sortableHeader(column, 'Amount'), enableSorting: true, cell: ({ row }) => currency.format(row.original.amount) },
+  {
+    accessorKey: 'name',
+    header: ({ column }) => sortableHeader(column, 'Customer'),
+    enableSorting: true,
+  },
+  {
+    accessorKey: 'status',
+    header: ({ column }) => sortableHeader(column, 'Status'),
+    enableSorting: true,
+    meta: { class: { td: 'capitalize' } },
+  },
+  {
+    accessorKey: 'amount',
+    header: ({ column }) => sortableHeader(column, 'Amount'),
+    enableSorting: true,
+    cell: ({ row }) => currency.format(row.original.amount),
+  },
 ]
 </script>
 

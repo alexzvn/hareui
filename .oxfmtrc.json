@@ -23,19 +23,7 @@
     "tooling/parity"
   ],
   "sortImports": {
-    "groups": [
-      "builtin",
-      "external",
-      "internal",
-      [
-        "parent",
-        "sibling",
-        "index"
-      ],
-      "unknown"
-    ],
-    "internalPattern": [
-      "@/"
-    ]
+    "groups": ["builtin", "external", "internal", ["parent", "sibling", "index"], "unknown"],
+    "internalPattern": ["@/"]
   }
 }

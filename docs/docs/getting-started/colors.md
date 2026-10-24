@@ -242,9 +242,7 @@ Primitive colors are mode agnostic values used as foundations for semantic color
 ```vue
 <template>
   <div class="bg-background text-foreground">
-    <button class="bg-accent text-accent-foreground hover:bg-accent-hover">
-      Click me
-    </button>
+    <button class="bg-accent text-accent-foreground hover:bg-accent-hover">Click me</button>
   </div>
 </template>
 ```
@@ -518,8 +516,8 @@ The complete theme definition lives in `packages/vue/src/styles/variables.css`. 
 
 ```css
 /* src/style.css */
-@import "tailwindcss";
-@import "@hareui/vue";
+@import 'tailwindcss';
+@import '@hareui/vue';
 
 :root {
   /* Override any color variable */
@@ -540,13 +538,13 @@ The complete theme definition lives in `packages/vue/src/styles/variables.css`. 
 
 ```css
 :root,
-[data-theme="light"] {
+[data-theme='light'] {
   --info: oklch(0.6 0.15 210);
   --info-foreground: oklch(0.98 0 0);
 }
 
 .dark,
-[data-theme="dark"] {
+[data-theme='dark'] {
   --info: oklch(0.7 0.12 210);
   --info-foreground: oklch(0.15 0 0);
 }

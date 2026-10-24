@@ -67,25 +67,25 @@ export interface TagGroupProps<T extends TagGroupItem = TagGroupItem> {
   /** Additional classes merged into the root element. */
   class?: any
   /** Per-slot class overrides. `tag` and `removeButton` are the `tag` theme's slots. */
-  ui?: ComponentSlots<TagGroup> & { tag?: any, removeButton?: any }
+  ui?: ComponentSlots<TagGroup> & { tag?: any; removeButton?: any }
 }
 
 export interface TagGroupSlots<T extends TagGroupItem = TagGroupItem> {
   /** The group label content. Replaces the `label` prop. */
-  'label'?: () => any
+  label?: () => any
   /** The group description content. Replaces the `description` prop. */
-  'description'?: () => any
+  description?: () => any
   /** The error content. Replaces the `errorMessage` prop. Rendered whenever either is given. */
-  'errorMessage'?: () => any
+  errorMessage?: () => any
   /** Content of each tag. Replaces `item.label`. */
-  'item'?: (props: { item: T, index: number, selected: boolean, disabled: boolean }) => any
+  item?: (props: { item: T; index: number; selected: boolean; disabled: boolean }) => any
   /** Content of each tag's remove button (shown when `removable`). Replaces the default close icon. */
-  'removeButton'?: (props: { item: T, index: number }) => any
+  removeButton?: (props: { item: T; index: number }) => any
   /**
    * Content rendered inside the list when `items` is empty (HeroUI's `renderEmptyState`), usually an
    * `<EmptyState>`. Nothing is rendered when omitted.
    */
-  'empty'?: () => any
+  empty?: () => any
 }
 
 export interface TagGroupEmits {
@@ -96,12 +96,16 @@ export interface TagGroupEmits {
 
 <script setup lang="ts" generic="T extends TagGroupItem = TagGroupItem">
 import { computed, nextTick, ref, useTemplateRef, watch } from 'vue'
+
 import { useComponentUI } from '../../composables/useComponentUI'
 import { useFieldChrome } from '../../composables/useFieldChrome'
 import { useSelectionManager } from '../../composables/useSelectionManager'
 import TagGroupTag from './TagGroupTag.vue'
 
-const props = withDefaults(defineProps<TagGroupProps<T>>(), { items: () => [], selectionMode: 'none' })
+const props = withDefaults(defineProps<TagGroupProps<T>>(), {
+  items: () => [],
+  selectionMode: 'none',
+})
 const emit = defineEmits<TagGroupEmits>()
 const slots = defineSlots<TagGroupSlots<T>>()
 /** The selected tag ids. Bind with `v-model:selected`. */
@@ -121,9 +125,9 @@ function isItemDisabled(item: TagGroupItem) {
 // Anchor + Shift ranges, select-all and Escape (RAC `SelectionManager`, toggle behaviour)
 const manager = useSelectionManager<string>({
   mode: () => props.selectionMode,
-  keys: () => props.items.map(it => it.id),
+  keys: () => props.items.map((it) => it.id),
   isDisabled: (itemId) => {
-    const item = props.items.find(it => it.id === itemId)
+    const item = props.items.find((it) => it.id === itemId)
     return !item || isItemDisabled(item)
   },
   selected: () => selected.value,
@@ -134,24 +138,20 @@ const manager = useSelectionManager<string>({
 
 // Shift+press extends the range from the anchor; other presses toggle (RAC `useSelectableItem`)
 function onPress(item: TagGroupItem, event?: MouseEvent | PointerEvent) {
-  if (event?.shiftKey && props.selectionMode === 'multiple')
-    manager.extend(item.id)
-  else
-    manager.toggle(item.id)
+  if (event?.shiftKey && props.selectionMode === 'multiple') manager.extend(item.id)
+  else manager.toggle(item.id)
 }
 
 // Clicking the remove button always removes just that one tag; Delete/Backspace while a tag is
 // focused removes the whole selection when that tag is part of it. Matches RAC's `useTag`.
 function removeOne(item: TagGroupItem) {
-  if (isItemDisabled(item))
-    return
+  if (isItemDisabled(item)) return
   restoreFocusAfterRemoval(item)
   emit('remove', [item.id])
   dropPendingFocus()
 }
 function removeViaKeyboard(item: TagGroupItem) {
-  if (isItemDisabled(item))
-    return
+  if (isItemDisabled(item)) return
   restoreFocusAfterRemoval(item)
   emit('remove', isSelected(item.id) ? [...selected.value] : [item.id])
   dropPendingFocus()
@@ -160,13 +160,15 @@ function removeViaKeyboard(item: TagGroupItem) {
 // The consumer drops the removed tags from `items`; the focused one unmounts with focus on it. Like RAC's
 // collection focus repair, move focus to the next remaining enabled tag, else the previous one, else the list.
 const listEl = useTemplateRef<HTMLElement>('list')
-let pendingFocus: { items: T[], index: number } | undefined
+let pendingFocus: { items: T[]; index: number } | undefined
 function restoreFocusAfterRemoval(item: TagGroupItem) {
-  if (!listEl.value?.contains(document.activeElement))
-    return
+  if (!listEl.value?.contains(document.activeElement)) return
   const focused = document.activeElement!.closest<HTMLElement>('[data-slot=tag]')
   const index = focused ? tagElements().indexOf(focused) : -1
-  pendingFocus = { items: [...props.items], index: index === -1 ? props.items.findIndex(it => it.id === item.id) : index }
+  pendingFocus = {
+    items: [...props.items],
+    index: index === -1 ? props.items.findIndex((it) => it.id === item.id) : index,
+  }
 }
 // Called after `emit('remove')`, so this tick runs after the re-render of a consumer that removed the tags;
 // nothing is left to repair when the consumer kept them
@@ -175,30 +177,32 @@ function dropPendingFocus() {
     pendingFocus = undefined
   })
 }
-watch(() => props.items, (items) => {
-  const pending = pendingFocus
-  pendingFocus = undefined
-  if (!pending || listEl.value?.contains(document.activeElement))
-    return
-  const remaining = (candidate: T) => items.includes(candidate) && !isItemDisabled(candidate)
-  const after = pending.items.slice(pending.index + 1).find(remaining)
-  const before = pending.items.slice(0, pending.index).reverse().find(remaining)
-  const target = after ?? before
-  if (target) {
-    focusedId.value = target.id
-    tagElements()[items.indexOf(target)]?.focus()
-  }
-  else {
-    focusedId.value = undefined
-    listEl.value?.focus()
-  }
-}, { flush: 'post' })
+watch(
+  () => props.items,
+  (items) => {
+    const pending = pendingFocus
+    pendingFocus = undefined
+    if (!pending || listEl.value?.contains(document.activeElement)) return
+    const remaining = (candidate: T) => items.includes(candidate) && !isItemDisabled(candidate)
+    const after = pending.items.slice(pending.index + 1).find(remaining)
+    const before = pending.items.slice(0, pending.index).reverse().find(remaining)
+    const target = after ?? before
+    if (target) {
+      focusedId.value = target.id
+      tagElements()[items.indexOf(target)]?.focus()
+    } else {
+      focusedId.value = undefined
+      listEl.value?.focus()
+    }
+  },
+  { flush: 'post' },
+)
 
 // Reka has no TagGroup/grid primitive, and its RovingFocus collection can't carry a `data-disabled`
 // value distinct from its own skip marker, so roving tabindex and arrow-key navigation (which must
 // skip disabled tags, matching RAC) are implemented directly here instead.
 const focusedId = ref<string>()
-const defaultFocusableId = computed(() => props.items.find(it => !isItemDisabled(it))?.id)
+const defaultFocusableId = computed(() => props.items.find((it) => !isItemDisabled(it))?.id)
 function tabindexFor(item: TagGroupItem): 0 | -1 {
   return item.id === (focusedId.value ?? defaultFocusableId.value) ? 0 : -1
 }
@@ -207,26 +211,21 @@ function tagElements() {
 }
 function onListFocusIn(event: FocusEvent) {
   const index = tagElements().indexOf(event.target as HTMLElement)
-  if (index !== -1)
-    focusedId.value = props.items[index]?.id
+  if (index !== -1) focusedId.value = props.items[index]?.id
 }
 
 function onListKeydown(event: KeyboardEvent) {
   const tagEls = tagElements()
   const currentIndex = tagEls.indexOf(event.target as HTMLElement)
   const item = props.items[currentIndex]
-  if (!item)
-    return
+  if (!item) return
 
   // Escape clears (RAC `escapeKeyBehavior: 'clearSelection'`), Meta/Ctrl+A selects every enabled tag
-  if (manager.onKeydown(event))
-    return
+  if (manager.onKeydown(event)) return
   if (event.key === 'Enter' || event.key === ' ') {
     event.preventDefault()
-    if (event.shiftKey && props.selectionMode === 'multiple')
-      manager.extend(item.id)
-    else
-      manager.toggle(item.id)
+    if (event.shiftKey && props.selectionMode === 'multiple') manager.extend(item.id)
+    else manager.toggle(item.id)
     return
   }
   if (props.removable && (event.key === 'Delete' || event.key === 'Backspace')) {
@@ -235,21 +234,22 @@ function onListKeydown(event: KeyboardEvent) {
     return
   }
 
-  const step = event.key === 'ArrowRight' || event.key === 'ArrowDown'
-    ? 1
-    : event.key === 'ArrowLeft' || event.key === 'ArrowUp' ? -1 : undefined
+  const step =
+    event.key === 'ArrowRight' || event.key === 'ArrowDown'
+      ? 1
+      : event.key === 'ArrowLeft' || event.key === 'ArrowUp'
+        ? -1
+        : undefined
   const edge = event.key === 'Home' ? 'first' : event.key === 'End' ? 'last' : undefined
-  if (step === undefined && edge === undefined)
-    return
+  if (step === undefined && edge === undefined) return
   event.preventDefault()
-  const enabledIndices = props.items.map((_, i) => i).filter(i => !isItemDisabled(props.items[i]!))
-  if (!enabledIndices.length)
-    return
+  const enabledIndices = props.items
+    .map((_, i) => i)
+    .filter((i) => !isItemDisabled(props.items[i]!))
+  if (!enabledIndices.length) return
   let nextIndex: number
-  if (edge === 'first')
-    nextIndex = enabledIndices[0]!
-  else if (edge === 'last')
-    nextIndex = enabledIndices.at(-1)!
+  if (edge === 'first') nextIndex = enabledIndices[0]!
+  else if (edge === 'last') nextIndex = enabledIndices.at(-1)!
   else {
     const pos = enabledIndices.indexOf(currentIndex)
     const nextPos = ((pos === -1 ? 0 : pos) + step! + enabledIndices.length) % enabledIndices.length
@@ -259,24 +259,22 @@ function onListKeydown(event: KeyboardEvent) {
   focusedId.value = next.id
   tagEls[nextIndex]?.focus()
   // Shift+navigation extends the selection from the anchor; Ctrl+navigation only moves focus
-  if (event.shiftKey && props.selectionMode === 'multiple')
-    manager.extend(next.id, item.id)
+  if (event.shiftKey && props.selectionMode === 'multiple') manager.extend(next.id, item.id)
 }
 
 // HeroUI's TagGroup has no validation: its error is the always-mounted `ErrorMessage`, so the chrome gets no `invalid`.
-const { labelId, hasLabel, describedBy, FieldLabel, FieldDescription, FieldError } = useFieldChrome({
-  props,
-  slots,
-  disabled: () => props.disabled,
-  errorPart: 'errorMessage',
-})
+const { labelId, hasLabel, describedBy, FieldLabel, FieldDescription, FieldError } = useFieldChrome(
+  {
+    props,
+    slots,
+    disabled: () => props.disabled,
+    errorPart: 'errorMessage',
+  },
+)
 </script>
 
 <template>
-  <div
-    data-slot="tag-group"
-    :class="ui.base({ class: [props.ui?.base, props.class] })"
-  >
+  <div data-slot="tag-group" :class="ui.base({ class: [props.ui?.base, props.class] })">
     <FieldLabel :id="labelId" as="span" />
     <div
       ref="list"
@@ -310,10 +308,13 @@ const { labelId, hasLabel, describedBy, FieldLabel, FieldDescription, FieldError
           @remove="removeOne(item)"
         >
           <template v-if="slots.item" #default="state">
-            <slot name="item" v-bind="state as { item: T, index: number, selected: boolean, disabled: boolean }" />
+            <slot
+              name="item"
+              v-bind="state as { item: T; index: number; selected: boolean; disabled: boolean }"
+            />
           </template>
           <template v-if="slots.removeButton" #removeButton="state">
-            <slot name="removeButton" v-bind="state as { item: T, index: number }" />
+            <slot name="removeButton" v-bind="state as { item: T; index: number }" />
           </template>
         </TagGroupTag>
       </template>

@@ -1,7 +1,8 @@
-import type { DropdownEntry } from '../src/components/dropdown/Dropdown.vue'
 import { mount } from '@vue/test-utils'
 import { afterEach, describe, expect, it, vi } from 'vitest'
 import { h, nextTick } from 'vue'
+
+import type { DropdownEntry } from '../src/components/dropdown/Dropdown.vue'
 import Dropdown from '../src/components/dropdown/Dropdown.vue'
 import { expectAccessible } from './a11y'
 
@@ -27,12 +28,14 @@ afterEach(() => {
   wrapper = undefined
 })
 
-const item = (label: string) => [...document.querySelectorAll<HTMLElement>('[data-slot=menu-item]')].find(el => el.textContent?.includes(label))!
+const item = (label: string) =>
+  [...document.querySelectorAll<HTMLElement>('[data-slot=menu-item]')].find((el) =>
+    el.textContent?.includes(label),
+  )!
 const menuOpen = () => document.querySelector('[data-slot=dropdown-popover]') !== null
 
 async function settle() {
-  for (let i = 0; i < 4; i++)
-    await nextTick()
+  for (let i = 0; i < 4; i++) await nextTick()
 }
 
 function press(el: HTMLElement, key: 'Enter' | ' ') {
@@ -100,8 +103,23 @@ describe('dropdown', () => {
       selectionMode: 'multiple',
       defaultValue: ['bold', 'left'],
       items: [
-        { type: 'section', label: 'Style', items: [{ value: 'bold', label: 'Bold' }, { value: 'italic', label: 'Italic' }] },
-        { type: 'section', label: 'Align', selectionMode: 'single', items: [{ value: 'left', label: 'Left' }, { value: 'right', label: 'Right' }] },
+        {
+          type: 'section',
+          label: 'Style',
+          items: [
+            { value: 'bold', label: 'Bold' },
+            { value: 'italic', label: 'Italic' },
+          ],
+        },
+        {
+          type: 'section',
+          label: 'Align',
+          selectionMode: 'single',
+          items: [
+            { value: 'left', label: 'Left' },
+            { value: 'right', label: 'Right' },
+          ],
+        },
       ],
     })
     await settle()
@@ -131,23 +149,30 @@ describe('dropdown', () => {
     try {
       const w = open({ items: fruits, trigger: 'longPress', defaultOpen: false })
       const trigger = w.get('[data-testid=trigger]').element as HTMLElement
-      trigger.dispatchEvent(new PointerEvent('pointerdown', { bubbles: true, button: 0, pointerType: 'mouse' }))
-      trigger.dispatchEvent(new PointerEvent('pointerup', { bubbles: true, button: 0, pointerType: 'mouse' }))
+      trigger.dispatchEvent(
+        new PointerEvent('pointerdown', { bubbles: true, button: 0, pointerType: 'mouse' }),
+      )
+      trigger.dispatchEvent(
+        new PointerEvent('pointerup', { bubbles: true, button: 0, pointerType: 'mouse' }),
+      )
       trigger.click()
       await settle()
       expect(menuOpen()).toBe(false)
 
-      trigger.dispatchEvent(new PointerEvent('pointerdown', { bubbles: true, button: 0, pointerType: 'mouse' }))
+      trigger.dispatchEvent(
+        new PointerEvent('pointerdown', { bubbles: true, button: 0, pointerType: 'mouse' }),
+      )
       vi.advanceTimersByTime(500)
       await settle()
       expect(menuOpen()).toBe(true)
       // Releasing after the long press clicks the trigger; that click must not toggle the menu shut.
-      trigger.dispatchEvent(new PointerEvent('pointerup', { bubbles: true, button: 0, pointerType: 'mouse' }))
+      trigger.dispatchEvent(
+        new PointerEvent('pointerup', { bubbles: true, button: 0, pointerType: 'mouse' }),
+      )
       trigger.click()
       await settle()
       expect(menuOpen()).toBe(true)
-    }
-    finally {
+    } finally {
       vi.useRealTimers()
     }
   })
@@ -196,7 +221,14 @@ describe('dropdown keyboard navigation', () => {
   }
 
   const submenuItems: DropdownEntry[] = [
-    { value: 'share', label: 'Share', items: [{ value: 'email', label: 'Email' }, { value: 'sms', label: 'Messages' }] },
+    {
+      value: 'share',
+      label: 'Share',
+      items: [
+        { value: 'email', label: 'Email' },
+        { value: 'sms', label: 'Messages' },
+      ],
+    },
     { value: 'delete', label: 'Delete file' },
   ]
 
@@ -261,7 +293,14 @@ describe('dropdown keyboard navigation', () => {
     await settle()
     const trigger = w.get('[data-testid=trigger]').element as HTMLElement
     trigger.focus()
-    trigger.dispatchEvent(new KeyboardEvent('keydown', { key: 'ArrowUp', altKey: true, bubbles: true, cancelable: true }))
+    trigger.dispatchEvent(
+      new KeyboardEvent('keydown', {
+        key: 'ArrowUp',
+        altKey: true,
+        bubbles: true,
+        cancelable: true,
+      }),
+    )
     await settle()
     expect(document.activeElement).toBe(item('Delete file'))
   })
@@ -272,12 +311,13 @@ describe('dropdown keyboard navigation', () => {
     try {
       const w = open({ items: actions, trigger: 'longPress', defaultOpen: false })
       const trigger = w.get('[data-testid=trigger]').element as HTMLElement
-      trigger.dispatchEvent(new PointerEvent('pointerdown', { bubbles: true, button: 0, pointerType: 'mouse' }))
+      trigger.dispatchEvent(
+        new PointerEvent('pointerdown', { bubbles: true, button: 0, pointerType: 'mouse' }),
+      )
       vi.advanceTimersByTime(500)
       await settle()
       expect(document.activeElement).toBe(item('New file'))
-    }
-    finally {
+    } finally {
       vi.useRealTimers()
     }
   })
@@ -285,10 +325,29 @@ describe('dropdown keyboard navigation', () => {
 
 describe('dropdown accessibility', () => {
   const rich: DropdownEntry[] = [
-    { value: 'new', label: 'New file', description: 'Create a new file', kbd: { keys: 'command', content: 'N' } },
-    { value: 'share', label: 'Share', items: [{ value: 'email', label: 'Email' }, { value: 'sms', label: 'Messages' }] },
+    {
+      value: 'new',
+      label: 'New file',
+      description: 'Create a new file',
+      kbd: { keys: 'command', content: 'N' },
+    },
+    {
+      value: 'share',
+      label: 'Share',
+      items: [
+        { value: 'email', label: 'Email' },
+        { value: 'sms', label: 'Messages' },
+      ],
+    },
     { type: 'separator' },
-    { type: 'section', label: 'Danger zone', items: [{ value: 'archive', label: 'Archive', disabled: true }, { value: 'delete', label: 'Delete file', variant: 'danger' }] },
+    {
+      type: 'section',
+      label: 'Danger zone',
+      items: [
+        { value: 'archive', label: 'Archive', disabled: true },
+        { value: 'delete', label: 'Delete file', variant: 'danger' },
+      ],
+    },
   ]
 
   const trigger = () => document.querySelector<HTMLElement>('[data-testid=trigger]')!
@@ -298,7 +357,7 @@ describe('dropdown accessibility', () => {
   }
   // Vue drops an event stamped no later than the millisecond its listener was attached, so a key
   // dispatched right after mount can miss Reka's trigger listener. Real presses come later.
-  const pastMount = () => new Promise(r => setTimeout(r, 2))
+  const pastMount = () => new Promise((r) => setTimeout(r, 2))
 
   it('passes axe while closed', async () => {
     const w = open({ items: fruits, defaultOpen: false })
@@ -326,7 +385,12 @@ describe('dropdown accessibility', () => {
   })
 
   it('passes axe while open with multiple selection and the dot indicator', async () => {
-    open({ items: fruits, selectionMode: 'multiple', indicator: 'dot', defaultValue: ['apple', 'banana'] })
+    open({
+      items: fruits,
+      selectionMode: 'multiple',
+      indicator: 'dot',
+      defaultValue: ['apple', 'banana'],
+    })
     await settle()
     await expectAccessible()
   })
@@ -337,12 +401,13 @@ describe('dropdown accessibility', () => {
     wrapper = mount(Dropdown, {
       props: { defaultOpen: true, items: fruits },
       slots: {
-        'default': () => h('button', { 'data-testid': 'trigger' }, 'Open'),
-        'content-top': () => h('div', { class: 'px-3 pt-3 pb-1' }, [
-          h('img', { src: '/jane.jpg', alt: '' }),
-          h('p', 'Jane Doe'),
-          h('p', 'jane@example.com'),
-        ]),
+        default: () => h('button', { 'data-testid': 'trigger' }, 'Open'),
+        'content-top': () =>
+          h('div', { class: 'px-3 pt-3 pb-1' }, [
+            h('img', { src: '/jane.jpg', alt: '' }),
+            h('p', 'Jane Doe'),
+            h('p', 'jane@example.com'),
+          ]),
       },
       attachTo: document.body,
     })
@@ -378,8 +443,13 @@ describe('dropdown accessibility', () => {
     await settle()
     const newFile = item('New file')
     expect(newFile.getAttribute('role')).toBe('menuitem')
-    expect(document.getElementById(newFile.getAttribute('aria-labelledby')!)!.textContent?.trim()).toBe('New file')
-    const described = newFile.getAttribute('aria-describedby')!.split(' ').map(id => document.getElementById(id))
+    expect(
+      document.getElementById(newFile.getAttribute('aria-labelledby')!)!.textContent?.trim(),
+    ).toBe('New file')
+    const described = newFile
+      .getAttribute('aria-describedby')!
+      .split(' ')
+      .map((id) => document.getElementById(id))
     expect(described.every(Boolean)).toBe(true)
     expect(described[0]!.textContent?.trim()).toBe('Create a new file')
     expect(described[1]!.textContent).toContain('N')
@@ -389,7 +459,9 @@ describe('dropdown accessibility', () => {
     open({ items: rich })
     await settle()
     const group = document.querySelector<HTMLElement>('[role=menu] [role=group]')!
-    expect(document.getElementById(group.getAttribute('aria-labelledby')!)!.textContent?.trim()).toBe('Danger zone')
+    expect(
+      document.getElementById(group.getAttribute('aria-labelledby')!)!.textContent?.trim(),
+    ).toBe('Danger zone')
     expect(group.contains(item('Delete file'))).toBe(true)
     expect(document.querySelector('[role=menu] [role=separator], [role=menu] hr')).not.toBeNull()
     expect(item('Archive').getAttribute('aria-disabled')).toBe('true')
@@ -424,7 +496,13 @@ describe('dropdown accessibility', () => {
   })
 
   it('Home and End move to the first and last enabled items, skipping disabled ones', async () => {
-    open({ items: [{ value: 'a', label: 'Alpha' }, { value: 'b', label: 'Beta' }, { value: 'c', label: 'Gamma', disabled: true }] })
+    open({
+      items: [
+        { value: 'a', label: 'Alpha' },
+        { value: 'b', label: 'Beta' },
+        { value: 'c', label: 'Gamma', disabled: true },
+      ],
+    })
     await settle()
     item('Alpha').focus()
     key(item('Alpha'), 'End')
@@ -440,7 +518,13 @@ describe('dropdown accessibility', () => {
   })
 
   it('typeahead focuses the next item starting with the typed text', async () => {
-    open({ items: [{ value: 'new', label: 'New file' }, { value: 'edit', label: 'Edit file' }, { value: 'delete', label: 'Delete file' }] })
+    open({
+      items: [
+        { value: 'new', label: 'New file' },
+        { value: 'edit', label: 'Edit file' },
+        { value: 'delete', label: 'Delete file' },
+      ],
+    })
     await settle()
     item('New file').focus()
     key(item('New file'), 'd')

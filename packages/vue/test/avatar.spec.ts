@@ -1,7 +1,8 @@
-import type { VNode } from 'vue'
 import { mount } from '@vue/test-utils'
 import { afterEach, describe, expect, it, vi } from 'vitest'
+import type { VNode } from 'vue'
 import { defineComponent, h, nextTick } from 'vue'
+
 import Avatar from '../src/components/avatar/Avatar.vue'
 import { expectAccessible } from './a11y'
 
@@ -24,7 +25,7 @@ function stubImages() {
       await nextTick()
     },
     async fail() {
-      probes.forEach(img => img.dispatchEvent(new Event('error')))
+      probes.forEach((img) => img.dispatchEvent(new Event('error')))
       await nextTick()
     },
   }
@@ -34,16 +35,31 @@ afterEach(() => {
   vi.restoreAllMocks()
 })
 
-const mountAll = (children: () => VNode[]) => mount(defineComponent(() => () => h('div', children())), { attachTo: document.body })
+const mountAll = (children: () => VNode[]) =>
+  mount(
+    defineComponent(() => () => h('div', children())),
+    { attachTo: document.body },
+  )
 
 describe('Avatar', () => {
   it('forwards image attributes to the <img>, not the root', async () => {
     const wrapper = mount(Avatar, {
-      props: { src: '/a.jpg', srcset: '/a.jpg 1x, /a@2x.jpg 2x', sizes: '40px', loading: 'lazy', crossOrigin: 'anonymous' },
+      props: {
+        src: '/a.jpg',
+        srcset: '/a.jpg 1x, /a@2x.jpg 2x',
+        sizes: '40px',
+        loading: 'lazy',
+        crossOrigin: 'anonymous',
+      },
     })
     await nextTick()
     const img = wrapper.find('img')
-    expect(img.attributes()).toMatchObject({ srcset: '/a.jpg 1x, /a@2x.jpg 2x', sizes: '40px', loading: 'lazy', crossorigin: 'anonymous' })
+    expect(img.attributes()).toMatchObject({
+      srcset: '/a.jpg 1x, /a@2x.jpg 2x',
+      sizes: '40px',
+      loading: 'lazy',
+      crossorigin: 'anonymous',
+    })
     expect(wrapper.attributes('loading')).toBeUndefined()
   })
 
@@ -72,7 +88,10 @@ describe('Avatar', () => {
     wrapper.unmount()
 
     const failed = stubImages()
-    const broken = mount(Avatar, { props: { src: '/missing.jpg', alt: 'Kate Wilson', fallback: 'KW' }, attachTo: document.body })
+    const broken = mount(Avatar, {
+      props: { src: '/missing.jpg', alt: 'Kate Wilson', fallback: 'KW' },
+      attachTo: document.body,
+    })
     await nextTick()
     await failed.fail()
     await expectAccessible(broken)
@@ -81,7 +100,10 @@ describe('Avatar', () => {
 
   it('exposes the image with its alt only once loaded, and the fallback text until then', async () => {
     const images = stubImages()
-    const wrapper = mount(Avatar, { props: { src: '/kate.jpg', alt: 'Kate Wilson', fallback: 'KW' }, attachTo: document.body })
+    const wrapper = mount(Avatar, {
+      props: { src: '/kate.jpg', alt: 'Kate Wilson', fallback: 'KW' },
+      attachTo: document.body,
+    })
     await nextTick()
     const img = wrapper.get('img')
     expect(img.attributes('alt')).toBe('Kate Wilson')
@@ -112,12 +134,12 @@ describe('Avatar', () => {
 
   it('an icon-only fallback can be named with role="img" and aria-label on the root', async () => {
     const wrapper = mount(Avatar, {
-      attrs: { 'role': 'img', 'aria-label': 'Unknown user' },
-      slots: { fallback: () => h('svg', { 'aria-hidden': 'true', 'viewBox': '0 0 16 16' }) },
+      attrs: { role: 'img', 'aria-label': 'Unknown user' },
+      slots: { fallback: () => h('svg', { 'aria-hidden': 'true', viewBox: '0 0 16 16' }) },
       attachTo: document.body,
     })
     await nextTick()
-    expect(wrapper.attributes()).toMatchObject({ 'role': 'img', 'aria-label': 'Unknown user' })
+    expect(wrapper.attributes()).toMatchObject({ role: 'img', 'aria-label': 'Unknown user' })
     await expectAccessible(wrapper)
     wrapper.unmount()
   })

@@ -1,6 +1,6 @@
 import type { DateValue } from '@internationalized/date'
-import type { WritableComputedRef } from 'vue'
 import { getLocalTimeZone, today } from '@internationalized/date'
+import type { WritableComputedRef } from 'vue'
 import { computed, shallowRef } from 'vue'
 
 /**

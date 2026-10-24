@@ -81,12 +81,8 @@ const animations = [
         </p>
       </template>
       <template #footer="{ close }">
-        <Button variant="tertiary" @click="close">
-          Close
-        </Button>
-        <Button @click="close">
-          Try Again
-        </Button>
+        <Button variant="tertiary" @click="close"> Close </Button>
+        <Button @click="close"> Try Again </Button>
       </template>
     </AlertDialog>
   </div>

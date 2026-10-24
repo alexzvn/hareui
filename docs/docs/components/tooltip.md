@@ -86,21 +86,23 @@ a `Chip`, an icon), wrap it in an `inline-block` element with `role="button"` an
 To customize the Tooltip classes for the whole app, extend the `tooltip` theme in `createHareUI`:
 
 ```ts
-app.use(createHareUI({
-  ui: {
-    tooltip: {
-      slots: { base: 'rounded-xl shadow-lg' },
+app.use(
+  createHareUI({
+    ui: {
+      tooltip: {
+        slots: { base: 'rounded-xl shadow-lg' },
+      },
     },
-  },
-}))
+  }),
+)
 ```
 
 ## Styling Reference
 
-| `ui` key | `data-slot` | Element |
-|---|---|---|
-| `base` | — | The floating content (Reka `TooltipContent`) |
-| `arrow` | `overlay-arrow` | The arrow SVG, rendered when `arrow` is `true` |
+| `ui` key | `data-slot`     | Element                                        |
+| -------- | --------------- | ---------------------------------------------- |
+| `base`   | —               | The floating content (Reka `TooltipContent`)   |
+| `arrow`  | `overlay-arrow` | The arrow SVG, rendered when `arrow` is `true` |
 
 ### Interactive States
 

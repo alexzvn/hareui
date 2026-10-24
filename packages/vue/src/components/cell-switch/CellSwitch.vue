@@ -87,7 +87,10 @@ import { useComponentUI } from '../../composables/useComponentUI'
 import Switch from '../switch/Switch.vue'
 
 // `undefined` defaults keep uncontrolled mode and validation working, as in Switch
-const props = withDefaults(defineProps<CellSwitchProps>(), { modelValue: undefined, invalid: undefined })
+const props = withDefaults(defineProps<CellSwitchProps>(), {
+  modelValue: undefined,
+  invalid: undefined,
+})
 const emit = defineEmits<CellSwitchEmits>()
 const slots = defineSlots<CellSwitchSlots>()
 

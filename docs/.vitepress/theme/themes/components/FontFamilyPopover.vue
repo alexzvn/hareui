@@ -1,8 +1,9 @@
 <script setup lang="ts">
+import { InputGroup, Popover } from '@hareui/vue'
 // Port of HeroUI docs `themes/components/font-family-popover.tsx`.
 import { Icon } from '@iconify/vue'
-import { InputGroup, Popover } from '@hareui/vue'
 import { computed, ref } from 'vue'
+
 import { useCustomFonts } from '../composables/customFonts'
 import { useVariableSetter } from '../composables/variables'
 import { fonts } from '../constants'
@@ -19,7 +20,7 @@ const mode = ref<'suggested' | 'custom'>('suggested')
 // Find current font label - check predefined fonts first, then URL-based custom fonts
 const currentFontLabel = computed(() => {
   const fontFamily = variables.value.fontFamily
-  const currentSuggestedFont = fonts.find(f => f.id === fontFamily)
+  const currentSuggestedFont = fonts.find((f) => f.id === fontFamily)
   const currentUrlFontLabel = isCustomFontUrl(fontFamily)
     ? extractFontFamilyFromUrl(fontFamily)
     : null
@@ -49,7 +50,11 @@ const currentFontLabel = computed(() => {
         </InputGroup>
       </ControlsPopoverTrigger>
       <template #content>
-        <SuggestedFonts v-if="mode === 'suggested'" :custom-fonts="customFonts" @go-to-custom="mode = 'custom'" />
+        <SuggestedFonts
+          v-if="mode === 'suggested'"
+          :custom-fonts="customFonts"
+          @go-to-custom="mode = 'custom'"
+        />
         <CustomFonts v-else @go-to-suggested="mode = 'suggested'" />
       </template>
     </Popover>

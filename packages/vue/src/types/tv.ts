@@ -21,7 +21,9 @@ export type ComponentUI<T extends ThemeShape> = {
 
 export interface ThemeOverride<T extends ThemeShape> {
   slots?: ComponentSlots<T>
-  variants?: { [K in keyof T['variants']]?: Record<string, ClassValue | Record<string, ClassValue>> }
+  variants?: {
+    [K in keyof T['variants']]?: Record<string, ClassValue | Record<string, ClassValue>>
+  }
   compoundVariants?: any[]
   defaultVariants?: { [K in keyof T['variants']]?: keyof T['variants'][K] }
 }

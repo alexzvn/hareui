@@ -141,11 +141,12 @@ export interface TableSlots {
 
 <script setup lang="ts">
 import { computed, nextTick, onBeforeUnmount, ref, useId, useSlots, watch } from 'vue'
+
 import { useComponentUI } from '../../composables/useComponentUI'
 import { useSelectionManager } from '../../composables/useSelectionManager'
-import { calculateColumnSizes, DEFAULT_MIN_COLUMN_WIDTH } from './columnSizes'
 import Checkbox from '../checkbox/Checkbox.vue'
 import Spinner from '../spinner/Spinner.vue'
+import { calculateColumnSizes, DEFAULT_MIN_COLUMN_WIDTH } from './columnSizes'
 
 const props = withDefaults(defineProps<TableProps>(), {
   variant: 'primary',
@@ -195,11 +196,11 @@ function isRowExpanded(key: TableSelectionKey): boolean {
 
 function toggleExpanded(key: TableSelectionKey) {
   const current = expandedKeys.value
-  const next = new Set(current === 'all' ? flatRows.value.filter(r => r.hasChildItems).map(r => r.key) : current)
-  if (next.has(key))
-    next.delete(key)
-  else
-    next.add(key)
+  const next = new Set(
+    current === 'all' ? flatRows.value.filter((r) => r.hasChildItems).map((r) => r.key) : current,
+  )
+  if (next.has(key)) next.delete(key)
+  else next.add(key)
   localExpanded.value = next
   expandedKeysModel.value = next
 }
@@ -209,10 +210,10 @@ const localSort = ref<TableSortDescriptor | undefined>(props.defaultSortDescript
 const sortDescriptor = computed(() => sortDescriptorModel.value ?? localSort.value)
 
 function toggleSort(column: TableColumn) {
-  if (!column.sortable)
-    return
+  if (!column.sortable) return
   const current = sortDescriptor.value
-  const direction: TableSortDirection = current?.column === column.key && current.direction === 'ascending' ? 'descending' : 'ascending'
+  const direction: TableSortDirection =
+    current?.column === column.key && current.direction === 'ascending' ? 'descending' : 'ascending'
   const next = { column: column.key, direction }
   localSort.value = next
   sortDescriptorModel.value = next
@@ -239,36 +240,41 @@ const flatRows = computed<FlatRow[]>(() => {
       const key = row.id ?? i
       const hasChildItems = !!row.children?.length
       acc.push({ row, key, depth, hasChildItems, index: index++ })
-      if (hasChildItems && props.treeColumn && isRowExpanded(key))
-        visit(row.children!, depth + 1)
+      if (hasChildItems && props.treeColumn && isRowExpanded(key)) visit(row.children!, depth + 1)
     })
   }
   visit(props.rows, 1)
   return acc
 })
 
-const selectableKeys = computed(() => flatRows.value.filter(r => isSelectable(r.key, r.row)).map(r => r.key))
-const allSelected = computed(() => selectableKeys.value.length > 0 && selectableKeys.value.every(k => isSelected(k)))
-const someSelected = computed(() => !allSelected.value && selectableKeys.value.some(k => isSelected(k)))
-const selectAllModel = computed<boolean | 'indeterminate'>(() => allSelected.value ? true : someSelected.value ? 'indeterminate' : false)
+const selectableKeys = computed(() =>
+  flatRows.value.filter((r) => isSelectable(r.key, r.row)).map((r) => r.key),
+)
+const allSelected = computed(
+  () => selectableKeys.value.length > 0 && selectableKeys.value.every((k) => isSelected(k)),
+)
+const someSelected = computed(
+  () => !allSelected.value && selectableKeys.value.some((k) => isSelected(k)),
+)
+const selectAllModel = computed<boolean | 'indeterminate'>(() =>
+  allSelected.value ? true : someSelected.value ? 'indeterminate' : false,
+)
 
 function toggleSelectAll() {
-  if (allSelected.value)
-    setSelected(new Set())
-  else
-    setSelected(new Set(selectableKeys.value))
+  if (allSelected.value) setSelected(new Set())
+  else setSelected(new Set(selectableKeys.value))
 }
 
 // Anchor + Shift ranges, select-all and Escape (RAC `SelectionManager`, toggle behaviour)
 const manager = useSelectionManager<TableSelectionKey>({
   mode: () => props.selectionMode,
-  keys: () => flatRows.value.map(r => r.key),
+  keys: () => flatRows.value.map((r) => r.key),
   isDisabled: (key) => {
-    const flat = flatRows.value.find(r => r.key === key)
+    const flat = flatRows.value.find((r) => r.key === key)
     return !flat || !isSelectable(key, flat.row)
   },
-  selected: () => selectedKeys.value === 'all' ? selectableKeys.value : [...selectedKeys.value],
-  setSelected: keys => setSelected(new Set(keys)),
+  selected: () => (selectedKeys.value === 'all' ? selectableKeys.value : [...selectedKeys.value]),
+  setSelected: (keys) => setSelected(new Set(keys)),
 })
 
 /** The scroll (or resizable) container: the column layout's width and the load-more observer root. */
@@ -278,26 +284,30 @@ const scrollRootRef = ref<HTMLElement>()
 // Like React Aria's ResizableTableContainer: columns are laid out against the container's width
 // with `calculateColumnSizes`; resizing freezes the columns to the left at their current pixel
 // widths and keeps the ones to the right flexible.
-const hasResizableColumns = computed(() => props.columns.some(c => c.resizable))
+const hasResizableColumns = computed(() => props.columns.some((c) => c.resizable))
 const containerWidth = ref(0)
 /** Widths set by resizing, replacing `column.width` for every column once a resize happened. */
 const resizedWidths = ref<Record<string, ColumnWidth>>()
 const resizingKey = ref<string>()
 
 const columnWidths = computed<Record<string, number>>(() => {
-  if (!hasResizableColumns.value || !containerWidth.value)
-    return {}
-  const sizes = calculateColumnSizes(containerWidth.value, props.columns.map(column => ({
-    width: resizedWidths.value?.[column.key] ?? column.width,
-    minWidth: column.minWidth,
-    maxWidth: column.maxWidth,
-  })))
+  if (!hasResizableColumns.value || !containerWidth.value) return {}
+  const sizes = calculateColumnSizes(
+    containerWidth.value,
+    props.columns.map((column) => ({
+      width: resizedWidths.value?.[column.key] ?? column.width,
+      minWidth: column.minWidth,
+      maxWidth: column.maxWidth,
+    })),
+  )
   return Object.fromEntries(props.columns.map((column, i) => [column.key, sizes[i]]))
 })
 
 function widthStyle(column: TableColumn) {
   const w = hasResizableColumns.value ? columnWidths.value[column.key] : column.width
-  return typeof w === 'number' ? { width: `${w}px`, minWidth: `${w}px`, maxWidth: `${w}px` } : undefined
+  return typeof w === 'number'
+    ? { width: `${w}px`, minWidth: `${w}px`, maxWidth: `${w}px` }
+    : undefined
 }
 
 function minWidthOf(column: TableColumn): number {
@@ -316,28 +326,40 @@ function columnHeaderId(column: TableColumn) {
 }
 
 function resizeColumn(column: TableColumn, width: number) {
-  width = Math.max(minWidthOf(column), Math.min(column.maxWidth ?? Number.MAX_SAFE_INTEGER, Math.floor(width)))
+  width = Math.max(
+    minWidthOf(column),
+    Math.min(column.maxWidth ?? Number.MAX_SAFE_INTEGER, Math.floor(width)),
+  )
   const index = props.columns.indexOf(column)
-  resizedWidths.value = Object.fromEntries(props.columns.map((c, i) => [
-    c.key,
-    i < index ? columnWidths.value[c.key] : i === index ? width : resizedWidths.value?.[c.key] ?? c.width ?? '1fr',
-  ]))
+  resizedWidths.value = Object.fromEntries(
+    props.columns.map((c, i) => [
+      c.key,
+      i < index
+        ? columnWidths.value[c.key]
+        : i === index
+          ? width
+          : (resizedWidths.value?.[c.key] ?? c.width ?? '1fr'),
+    ]),
+  )
 }
 
 let containerObserver: ResizeObserver | undefined
-watch([hasResizableColumns, () => scrollRootRef.value], ([resizable, el]) => {
-  containerObserver?.disconnect()
-  containerObserver = undefined
-  if (!resizable || !el)
-    return
-  containerWidth.value = el.clientWidth
-  containerObserver = new ResizeObserver(() => {
+watch(
+  [hasResizableColumns, () => scrollRootRef.value],
+  ([resizable, el]) => {
+    containerObserver?.disconnect()
+    containerObserver = undefined
+    if (!resizable || !el) return
     containerWidth.value = el.clientWidth
-  })
-  containerObserver.observe(el)
-}, { flush: 'post' })
+    containerObserver = new ResizeObserver(() => {
+      containerWidth.value = el.clientWidth
+    })
+    containerObserver.observe(el)
+  },
+  { flush: 'post' },
+)
 
-let resizeStart: { column: TableColumn, startX: number, startWidth: number } | null = null
+let resizeStart: { column: TableColumn; startX: number; startWidth: number } | null = null
 
 function onResizerPointerDown(column: TableColumn, event: PointerEvent) {
   resizeStart = { column, startX: event.clientX, startWidth: columnWidths.value[column.key] ?? 0 }
@@ -358,8 +380,7 @@ function onResizerPointerUp() {
 }
 
 function onResizerKeydown(column: TableColumn, event: KeyboardEvent) {
-  if (event.key !== 'ArrowLeft' && event.key !== 'ArrowRight')
-    return
+  if (event.key !== 'ArrowLeft' && event.key !== 'ArrowRight') return
   event.preventDefault()
   const step = event.shiftKey ? 50 : 10
   const dir = event.key === 'ArrowRight' ? 1 : -1
@@ -381,22 +402,26 @@ let observedState: unknown[] = []
 
 function observeSentinel() {
   const state = [props.hasMore, props.loading, props.rows.length, sentinelRef.value]
-  if (state.every((value, i) => value === observedState[i]))
-    return
+  if (state.every((value, i) => value === observedState[i])) return
   observedState = state
   observer?.disconnect()
-  if (!props.hasMore || !sentinelRef.value)
-    return
-  observer = new IntersectionObserver((entries) => {
-    if (entries[0]?.isIntersecting && !props.loading)
-      emit('loadMore')
-  }, { root: scrollRootRef.value ?? null })
+  if (!props.hasMore || !sentinelRef.value) return
+  observer = new IntersectionObserver(
+    (entries) => {
+      if (entries[0]?.isIntersecting && !props.loading) emit('loadMore')
+    },
+    { root: scrollRootRef.value ?? null },
+  )
   observer.observe(sentinelRef.value)
 }
 
 // Re-observing delivers a fresh initial entry, so a sentinel that stays in view after a page
 // loads (short pages, tall container) asks for the next one, like React Aria's useLoadMoreSentinel.
-watch([() => props.hasMore, () => props.loading, () => props.rows.length, sentinelRef], () => nextTick(observeSentinel), { immediate: true })
+watch(
+  [() => props.hasMore, () => props.loading, () => props.rows.length, sentinelRef],
+  () => nextTick(observeSentinel),
+  { immediate: true },
+)
 onBeforeUnmount(() => observer?.disconnect())
 
 /* ---------------- Row focus / keyboard navigation ----------------
@@ -407,20 +432,29 @@ onBeforeUnmount(() => observer?.disconnect())
  * than cells: this is a plain `<table>`, not a `role="grid"`, so there is no per-cell navigation.
  */
 const tableRef = ref<HTMLElement>()
-type FocusTarget = { kind: 'row', key: TableSelectionKey } | { kind: 'header', index: number }
+type FocusTarget = { kind: 'row'; key: TableSelectionKey } | { kind: 'header'; index: number }
 const focusTarget = ref<FocusTarget>()
-const activeRowKey = computed(() => focusTarget.value?.kind === 'row' ? focusTarget.value.key : undefined)
-watch(flatRows, (rowsNow) => {
-  const target = focusTarget.value
-  if (target?.kind === 'header' || (target && rowsNow.some(r => r.key === target.key)))
-    return
-  focusTarget.value = rowsNow.length ? { kind: 'row', key: rowsNow[0]!.key } : { kind: 'header', index: 0 }
-}, { immediate: true })
+const activeRowKey = computed(() =>
+  focusTarget.value?.kind === 'row' ? focusTarget.value.key : undefined,
+)
+watch(
+  flatRows,
+  (rowsNow) => {
+    const target = focusTarget.value
+    if (target?.kind === 'header' || (target && rowsNow.some((r) => r.key === target.key))) return
+    focusTarget.value = rowsNow.length
+      ? { kind: 'row', key: rowsNow[0]!.key }
+      : { kind: 'header', index: 0 }
+  },
+  { immediate: true },
+)
 
 function focusRow(key: TableSelectionKey) {
   focusTarget.value = { kind: 'row', key }
   nextTick(() => {
-    tableRef.value?.querySelector<HTMLElement>(`[data-row-key="${CSS.escape(String(key))}"]`)?.focus()
+    tableRef.value
+      ?.querySelector<HTMLElement>(`[data-row-key="${CSS.escape(String(key))}"]`)
+      ?.focus()
   })
 }
 
@@ -443,76 +477,60 @@ function headerTabindex(index: number) {
 function onHeaderKeydown(event: KeyboardEvent) {
   const cells = headerCells()
   const index = cells.indexOf(event.target as HTMLElement)
-  if (index === -1)
-    return
+  if (index === -1) return
   if (event.key === 'ArrowRight' || event.key === 'ArrowLeft') {
     event.preventDefault()
     focusHeader(index + (event.key === 'ArrowRight' ? 1 : -1))
-  }
-  else if (event.key === 'Home' || event.key === 'End') {
+  } else if (event.key === 'Home' || event.key === 'End') {
     event.preventDefault()
     focusHeader(event.key === 'Home' ? 0 : cells.length - 1)
-  }
-  else if (event.key === 'ArrowDown' && flatRows.value.length) {
+  } else if (event.key === 'ArrowDown' && flatRows.value.length) {
     event.preventDefault()
     focusRow(flatRows.value[0]!.key)
-  }
-  else if ((event.key === ' ' || event.key === 'Enter') && index === 0 && props.selectionMode !== 'none') {
+  } else if (
+    (event.key === ' ' || event.key === 'Enter') &&
+    index === 0 &&
+    props.selectionMode !== 'none'
+  ) {
     event.preventDefault()
-    if (props.selectionMode === 'multiple')
-      toggleSelectAll()
+    if (props.selectionMode === 'multiple') toggleSelectAll()
   }
 }
 
 function onRowKeydown(flat: FlatRow, event: KeyboardEvent) {
   // Keys typed into interactive cell content (inputs, buttons) are theirs
-  if (event.target !== event.currentTarget)
-    return
+  if (event.target !== event.currentTarget) return
   // Escape clears the selection, Meta/Ctrl+A selects every row
-  if (props.selectionMode !== 'none' && manager.onKeydown(event))
-    return
+  if (props.selectionMode !== 'none' && manager.onKeydown(event)) return
   const rowsNow = flatRows.value
-  const i = rowsNow.findIndex(r => r.key === flat.key)
+  const i = rowsNow.findIndex((r) => r.key === flat.key)
   let next: FlatRow | undefined
-  if (event.key === 'ArrowDown')
-    next = rowsNow[i + 1]
+  if (event.key === 'ArrowDown') next = rowsNow[i + 1]
   else if (event.key === 'ArrowUp' && i === 0 && headerCells().length) {
     event.preventDefault()
     focusHeader(0)
     return
-  }
-  else if (event.key === 'ArrowUp')
-    next = rowsNow[i - 1]
-  else if (event.key === 'Home')
-    next = rowsNow[0]
-  else if (event.key === 'End')
-    next = rowsNow.at(-1)
+  } else if (event.key === 'ArrowUp') next = rowsNow[i - 1]
+  else if (event.key === 'Home') next = rowsNow[0]
+  else if (event.key === 'End') next = rowsNow.at(-1)
   else if ((event.key === 'Enter' || event.key === ' ') && props.selectionMode !== 'none') {
     event.preventDefault()
-    if (event.shiftKey)
-      manager.extend(flat.key)
-    else
-      manager.toggle(flat.key)
+    if (event.shiftKey) manager.extend(flat.key)
+    else manager.toggle(flat.key)
     return
   }
-  if (!next)
-    return
+  if (!next) return
   event.preventDefault()
   focusRow(next.key)
-  if (event.shiftKey)
-    manager.extend(next.key, flat.key)
+  if (event.shiftKey) manager.extend(next.key, flat.key)
 }
 
 function onRowClick(flat: FlatRow, event: MouseEvent) {
-  if (props.selectionMode === 'none')
-    return
+  if (props.selectionMode === 'none') return
   const target = event.target as HTMLElement
-  if (target.closest('button, a, input, [data-slot="table-column-resizer"]'))
-    return
-  if (event.shiftKey)
-    manager.extend(flat.key)
-  else
-    manager.toggle(flat.key)
+  if (target.closest('button, a, input, [data-slot="table-column-resizer"]')) return
+  if (event.shiftKey) manager.extend(flat.key)
+  else manager.toggle(flat.key)
 }
 
 /* ---------------- Misc helpers ---------------- */
@@ -523,10 +541,8 @@ function cellValue(row: TableRow, column: TableColumn) {
 }
 
 function alignClass(column: TableColumn) {
-  if (column.align === 'center')
-    return 'text-center'
-  if (column.align === 'end')
-    return 'text-end'
+  if (column.align === 'center') return 'text-center'
+  if (column.align === 'end') return 'text-end'
   return undefined
 }
 </script>
@@ -536,9 +552,17 @@ function alignClass(column: TableColumn) {
     <div
       ref="scrollRootRef"
       :data-slot="hasResizableColumns ? 'table-resizable-container' : 'table-scroll-container'"
-      :class="hasResizableColumns ? ui.resizableContainer({ class: props.ui?.resizableContainer }) : ui.scrollContainer({ class: props.ui?.scrollContainer })"
+      :class="
+        hasResizableColumns
+          ? ui.resizableContainer({ class: props.ui?.resizableContainer })
+          : ui.scrollContainer({ class: props.ui?.scrollContainer })
+      "
     >
-      <table :aria-label="ariaLabel" data-slot="table-content" :class="ui.content({ class: props.ui?.content })">
+      <table
+        :aria-label="ariaLabel"
+        data-slot="table-content"
+        :class="ui.content({ class: props.ui?.content })"
+      >
         <thead data-slot="table-header" :class="ui.header({ class: props.ui?.header })">
           <tr @keydown="onHeaderKeydown">
             <th
@@ -571,12 +595,27 @@ function alignClass(column: TableColumn) {
               :style="widthStyle(column)"
               :class="ui.column({ class: [props.ui?.column, column.class, alignClass(column)] })"
               @click="toggleSort(column)"
-              @focus="focusTarget = { kind: 'header', index: columnIndex + (selectionMode !== 'none' ? 1 : 0) }"
+              @focus="
+                focusTarget = {
+                  kind: 'header',
+                  index: columnIndex + (selectionMode !== 'none' ? 1 : 0),
+                }
+              "
               @keydown.enter.prevent="toggleSort(column)"
               @keydown.space.prevent="toggleSort(column)"
             >
-              <span v-if="column.sortable" data-slot="table-sortable-column-header" :data-direction="sortDirectionFor(column)" :class="ui.sortableColumnHeader({ class: props.ui?.sortableColumnHeader })">
-                <slot :name="`${column.key}-header`" :column="column" :sort-direction="sortDirectionFor(column)">{{ column.label }}</slot>
+              <span
+                v-if="column.sortable"
+                data-slot="table-sortable-column-header"
+                :data-direction="sortDirectionFor(column)"
+                :class="ui.sortableColumnHeader({ class: props.ui?.sortableColumnHeader })"
+              >
+                <slot
+                  :name="`${column.key}-header`"
+                  :column="column"
+                  :sort-direction="sortDirectionFor(column)"
+                  >{{ column.label }}</slot
+                >
                 <!-- Like HeroUI's SortableColumnHeader: the indicator only shows on the sorted column. -->
                 <svg
                   v-if="sortDirectionFor(column)"
@@ -599,7 +638,13 @@ function alignClass(column: TableColumn) {
                   />
                 </svg>
               </span>
-              <slot v-else :name="`${column.key}-header`" :column="column" :sort-direction="undefined">{{ column.label }}</slot>
+              <slot
+                v-else
+                :name="`${column.key}-header`"
+                :column="column"
+                :sort-direction="undefined"
+                >{{ column.label }}</slot
+              >
               <!-- Named and valued like React Aria's ColumnResizer input: "Resizer <column>", its width in pixels. -->
               <div
                 v-if="column.resizable"
@@ -623,7 +668,11 @@ function alignClass(column: TableColumn) {
             </th>
           </tr>
         </thead>
-        <tbody data-slot="table-body" :data-empty="flatRows.length === 0 || undefined" :class="ui.body({ class: props.ui?.body })">
+        <tbody
+          data-slot="table-body"
+          :data-empty="flatRows.length === 0 || undefined"
+          :class="ui.body({ class: props.ui?.body })"
+        >
           <!-- Like React Aria's `renderEmptyState`: no row at all unless the slot is provided. -->
           <tr v-if="flatRows.length === 0 && !!slots.empty" role="row">
             <td role="rowheader" :colspan="colSpan">
@@ -691,9 +740,17 @@ function alignClass(column: TableColumn) {
               <div style="position: relative; height: 1px; width: 1px" />
             </td>
           </tr>
-          <tr v-if="hasMore && loading" role="row" data-slot="table-load-more" :class="ui.loadMore({ class: props.ui?.loadMore })">
+          <tr
+            v-if="hasMore && loading"
+            role="row"
+            data-slot="table-load-more"
+            :class="ui.loadMore({ class: props.ui?.loadMore })"
+          >
             <td role="rowheader" :colspan="colSpan">
-              <div data-slot="table-load-more-content" :class="ui.loadMoreContent({ class: props.ui?.loadMoreContent })">
+              <div
+                data-slot="table-load-more-content"
+                :class="ui.loadMoreContent({ class: props.ui?.loadMoreContent })"
+              >
                 <slot name="load-more">
                   <Spinner size="md" />
                 </slot>
@@ -703,7 +760,11 @@ function alignClass(column: TableColumn) {
         </tbody>
       </table>
     </div>
-    <div v-if="!!slots.footer" data-slot="table-footer" :class="ui.footer({ class: props.ui?.footer })">
+    <div
+      v-if="!!slots.footer"
+      data-slot="table-footer"
+      :class="ui.footer({ class: props.ui?.footer })"
+    >
       <slot name="footer" />
     </div>
   </div>

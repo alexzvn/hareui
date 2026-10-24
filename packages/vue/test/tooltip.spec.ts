@@ -2,10 +2,11 @@ import { enableAutoUnmount, mount } from '@vue/test-utils'
 import { TooltipRoot } from 'reka-ui'
 import { afterEach, describe, expect, it, vi } from 'vitest'
 import { h, nextTick } from 'vue'
+
 import Tooltip from '../src/components/tooltip/Tooltip.vue'
 import { expectAccessible } from './a11y'
 
-const sleep = (ms: number) => new Promise(r => setTimeout(r, ms))
+const sleep = (ms: number) => new Promise((r) => setTimeout(r, ms))
 
 function mountTooltip(props: Record<string, unknown> = {}) {
   return mount(Tooltip, {
@@ -16,7 +17,12 @@ function mountTooltip(props: Record<string, unknown> = {}) {
 }
 
 function pointer(el: Element, type: string) {
-  el.dispatchEvent(new PointerEvent(type, { bubbles: type !== 'pointerleave' && type !== 'pointerenter', pointerType: 'mouse' }))
+  el.dispatchEvent(
+    new PointerEvent(type, {
+      bubbles: type !== 'pointerleave' && type !== 'pointerenter',
+      pointerType: 'mouse',
+    }),
+  )
 }
 
 enableAutoUnmount(afterEach)
@@ -141,7 +147,9 @@ describe('Tooltip', () => {
     await sleep(0)
     expect(document.querySelector('[role=tooltip]')).not.toBeNull()
 
-    trigger.dispatchEvent(new KeyboardEvent('keydown', { key: 'Escape', bubbles: true, cancelable: true }))
+    trigger.dispatchEvent(
+      new KeyboardEvent('keydown', { key: 'Escape', bubbles: true, cancelable: true }),
+    )
     await sleep(0)
     expect(wrapper.emitted('update:open')?.at(-1)).toEqual([false])
     expect(document.querySelector('[role=tooltip]')).toBeNull()

@@ -11,7 +11,9 @@ import { DashboardGroup, DashboardNavbar, DashboardPanel } from '@hareui/vue'
       </template>
 
       <template #body>
-        <div class="h-full min-h-24 rounded-xl border border-dashed border-separator bg-surface/50" />
+        <div
+          class="h-full min-h-24 rounded-xl border border-dashed border-separator bg-surface/50"
+        />
       </template>
     </DashboardPanel>
 
@@ -22,7 +24,9 @@ import { DashboardGroup, DashboardNavbar, DashboardPanel } from '@hareui/vue'
       </template>
 
       <template #body>
-        <div class="h-full min-h-24 rounded-xl border border-dashed border-separator bg-surface/50" />
+        <div
+          class="h-full min-h-24 rounded-xl border border-dashed border-separator bg-surface/50"
+        />
       </template>
     </DashboardPanel>
   </DashboardGroup>

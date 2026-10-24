@@ -1,11 +1,16 @@
-import type { VNode } from 'vue'
 import { mount } from '@vue/test-utils'
 import { describe, expect, it } from 'vitest'
+import type { VNode } from 'vue'
 import { defineComponent, h } from 'vue'
+
 import Typography from '../src/components/typography/Typography.vue'
 import { expectAccessible } from './a11y'
 
-const mountAll = (children: () => VNode[]) => mount(defineComponent(() => () => h('div', children())), { attachTo: document.body })
+const mountAll = (children: () => VNode[]) =>
+  mount(
+    defineComponent(() => () => h('div', children())),
+    { attachTo: document.body },
+  )
 
 describe('Typography', () => {
   it('defaults to a <p> body element', () => {
@@ -80,7 +85,11 @@ describe('Typography', () => {
       h(Typography, { type: 'h2' }, () => 'Install'),
       h(Typography, { type: 'body-sm', color: 'muted' }, () => 'Run the command below.'),
       h(Typography, { type: 'code' }, () => 'bun add @hareui/vue'),
-      h(Typography, { type: 'h3', truncate: true, title: 'A very long heading' }, () => 'A very long heading'),
+      h(
+        Typography,
+        { type: 'h3', truncate: true, title: 'A very long heading' },
+        () => 'A very long heading',
+      ),
     ])
     await expectAccessible(wrapper)
     wrapper.unmount()
@@ -89,7 +98,10 @@ describe('Typography', () => {
   it('is accessible as prose with headings, links, lists and code', async () => {
     const wrapper = mount(Typography, {
       props: { prose: true, as: 'article' },
-      slots: { default: '<h2>Usage</h2><p>See <a href="/docs">the docs</a>.</p><ul><li>One</li><li>Two</li></ul><pre><code>x</code></pre>' },
+      slots: {
+        default:
+          '<h2>Usage</h2><p>See <a href="/docs">the docs</a>.</p><ul><li>One</li><li>Two</li></ul><pre><code>x</code></pre>',
+      },
       attachTo: document.body,
     })
     expect(wrapper.element.tagName).toBe('ARTICLE')

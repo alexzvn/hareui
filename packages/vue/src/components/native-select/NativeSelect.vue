@@ -8,14 +8,16 @@ import theme from './theme'
 type NativeSelect = typeof theme
 
 /** An `<option>`: a plain string is used as both value and label. */
-export type NativeSelectOption = string | {
-  /** The submitted value. */
-  value: string
-  /** The visible text. Defaults to `value`. */
-  label?: string
-  /** Whether the option can't be chosen. */
-  disabled?: boolean
-}
+export type NativeSelectOption =
+  | string
+  | {
+      /** The submitted value. */
+      value: string
+      /** The visible text. Defaults to `value`. */
+      label?: string
+      /** Whether the option can't be chosen. */
+      disabled?: boolean
+    }
 
 /** An `<optgroup>` holding options. */
 export interface NativeSelectGroup {
@@ -105,6 +107,7 @@ export interface NativeSelectSlots {
 
 <script setup lang="ts">
 import { computed, onMounted, ref, useAttrs, useSlots, useTemplateRef } from 'vue'
+
 import { useComponentUI } from '../../composables/useComponentUI'
 import { useFieldChrome } from '../../composables/useFieldChrome'
 import { useFieldValidation } from '../../composables/useFieldValidation'
@@ -122,7 +125,10 @@ defineSlots<NativeSelectSlots>()
 const slots = useSlots()
 const attrs = useAttrs()
 
-const ui = useComponentUI('nativeSelect', theme, () => ({ variant: props.variant, fullWidth: props.fullWidth }))
+const ui = useComponentUI('nativeSelect', theme, () => ({
+  variant: props.variant,
+  fullWidth: props.fullWidth,
+}))
 
 const root = useTemplateRef<HTMLElement>('root')
 const select = useTemplateRef<HTMLSelectElement>('select')
@@ -136,12 +142,14 @@ let initial = local.value
 // Without a default, the value form reset restores is the first enabled option, as for a native `<select>`.
 // Read it from the DOM: binding `value=""` with no empty option leaves the browser with nothing selected.
 onMounted(() => {
-  if (props.defaultValue !== undefined || !select.value)
-    return
-  const first = [...select.value.options].find(option => !option.disabled && !(option.parentElement instanceof HTMLOptGroupElement && option.parentElement.disabled))
+  if (props.defaultValue !== undefined || !select.value) return
+  const first = [...select.value.options].find(
+    (option) =>
+      !option.disabled &&
+      !(option.parentElement instanceof HTMLOptGroupElement && option.parentElement.disabled),
+  )
   initial = first?.value ?? ''
-  if (props.modelValue === undefined)
-    local.value = initial
+  if (props.modelValue === undefined) local.value = initial
 })
 
 const { validation, commitValidation } = useFieldValidation({
@@ -158,8 +166,7 @@ const { validation, commitValidation } = useFieldValidation({
     // The browser resets the `<select>` after the `reset` listeners run, and microtasks run in between
     // when the reset comes from a user click, so restore the bound value in a new task
     setTimeout(() => {
-      if (select.value)
-        select.value.value = current.value
+      if (select.value) select.value.value = current.value
     })
   },
 })
@@ -183,7 +190,9 @@ const selectAttrs = computed(() => {
 })
 
 function optionOf(option: NativeSelectOption) {
-  return typeof option === 'string' ? { value: option, label: option, disabled: false } : { ...option, label: option.label ?? option.value }
+  return typeof option === 'string'
+    ? { value: option, label: option, disabled: false }
+    : { ...option, label: option.label ?? option.value }
 }
 function isGroup(item: NativeSelectItem): item is NativeSelectGroup {
   return typeof item === 'object' && 'items' in item
@@ -232,7 +241,12 @@ function onChange(event: Event) {
         </option>
         <template v-for="(item, index) in items" :key="index">
           <optgroup v-if="isGroup(item)" :label="item.label" :disabled="item.disabled">
-            <option v-for="option in item.items.map(optionOf)" :key="option.value" :value="option.value" :disabled="option.disabled">
+            <option
+              v-for="option in item.items.map(optionOf)"
+              :key="option.value"
+              :value="option.value"
+              :disabled="option.disabled"
+            >
               {{ option.label }}
             </option>
           </optgroup>
@@ -242,9 +256,21 @@ function onChange(event: Event) {
         </template>
         <slot />
       </select>
-      <span aria-hidden="true" data-slot="native-select-indicator" :class="ui.indicator({ class: props.ui?.indicator })">
+      <span
+        aria-hidden="true"
+        data-slot="native-select-indicator"
+        :class="ui.indicator({ class: props.ui?.indicator })"
+      >
         <slot name="indicator">
-          <svg fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+          <svg
+            fill="none"
+            stroke="currentColor"
+            stroke-linecap="round"
+            stroke-linejoin="round"
+            stroke-width="2"
+            viewBox="0 0 24 24"
+            xmlns="http://www.w3.org/2000/svg"
+          >
             <path d="m6 9 6 6 6-6" />
           </svg>
         </slot>

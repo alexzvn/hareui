@@ -12,6 +12,11 @@ const items: RadioGroupItem[] = [
 <template>
   <div class="flex flex-col gap-4">
     <Label>Subscription plan</Label>
-    <RadioGroup default-value="pro" name="plan-orientation" orientation="horizontal" :items="items" />
+    <RadioGroup
+      default-value="pro"
+      name="plan-orientation"
+      orientation="horizontal"
+      :items="items"
+    />
   </div>
 </template>

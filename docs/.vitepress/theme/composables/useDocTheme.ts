@@ -30,10 +30,13 @@ export function useDocTheme() {
     const read = () => {
       dark.value = root.classList.contains('dark')
       const next = readDesignAttributes(root)
-      if (DESIGN_ATTRIBUTES.some(name => next[name] !== design.value[name])) design.value = next
+      if (DESIGN_ATTRIBUTES.some((name) => next[name] !== design.value[name])) design.value = next
     }
     read()
-    new MutationObserver(read).observe(root, { attributes: true, attributeFilter: ['class', ...DESIGN_ATTRIBUTES] })
+    new MutationObserver(read).observe(root, {
+      attributes: true,
+      attributeFilter: ['class', ...DESIGN_ATTRIBUTES],
+    })
   })
   return { dark: readonly(dark), design: readonly(design) }
 }

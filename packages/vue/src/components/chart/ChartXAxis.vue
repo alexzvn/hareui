@@ -18,7 +18,7 @@ export interface ChartXAxisProps extends ChartAxisProps {
    */
   height?: number
   /** Space before the first and after the last category, in px. */
-  padding?: { left?: number, right?: number }
+  padding?: { left?: number; right?: number }
 }
 
 export type ChartXAxisSlots = ChartAxisSlots
@@ -26,6 +26,7 @@ export type ChartXAxisSlots = ChartAxisSlots
 
 <script setup lang="ts">
 import { computed } from 'vue'
+
 import { useCartesianContext } from './cartesian'
 import ChartCartesianAxis from './ChartCartesianAxis.vue'
 import { useChartConfig, useChartContext } from './context'

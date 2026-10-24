@@ -10,12 +10,13 @@ export interface ChartLineSlots {
 </script>
 
 <script setup lang="ts">
-import type { ChartSeriesPoint } from './series'
 import { line as d3Line } from 'd3-shape'
 import { computed, shallowRef, watch } from 'vue'
+
 import ChartLayer from './ChartLayer.vue'
 import { useChartContext } from './context'
 import { curveFactory } from './curve'
+import type { ChartSeriesPoint } from './series'
 import { DEFAULT_SERIES_COLOR, dotAttrs, usePointSeries, useRootSeries } from './series'
 
 const props = withDefaults(defineProps<ChartLineProps>(), {
@@ -43,12 +44,16 @@ const clipId = `${series.id}-clip`
 
 const path = computed(() => {
   const points = series.points.value
-  const segments = props.connectNulls ? points.filter((point): point is ChartSeriesPoint => point !== null) : points
-  return d3Line<ChartSeriesPoint | null>()
-    .x(point => point!.x)
-    .y(point => point!.y)
-    .defined(point => point !== null)
-    .curve(curveFactory(props.type, chart.layout.value))(segments) ?? ''
+  const segments = props.connectNulls
+    ? points.filter((point): point is ChartSeriesPoint => point !== null)
+    : points
+  return (
+    d3Line<ChartSeriesPoint | null>()
+      .x((point) => point!.x)
+      .y((point) => point!.y)
+      .defined((point) => point !== null)
+      .curve(curveFactory(props.type, chart.layout.value))(segments) ?? ''
+  )
 })
 
 // Mount animation: solid lines draw along their length; dashed lines are revealed with a clip.
@@ -57,17 +62,23 @@ const length = shallowRef(0)
 const revealing = computed(() => series.reveal.value < 1)
 // Measure only when the path mounts, the reveal starts/ends, or the geometry changes mid-reveal (e.g. a resize);
 // `getTotalLength` forces layout, so it must not run every animation frame.
-watch([pathElement, revealing, () => (revealing.value ? path.value : null)], () => {
-  const element = pathElement.value
-  length.value = element && typeof element.getTotalLength === 'function' ? element.getTotalLength() : 0
-}, { flush: 'post' })
+watch(
+  [pathElement, revealing, () => (revealing.value ? path.value : null)],
+  () => {
+    const element = pathElement.value
+    length.value =
+      element && typeof element.getTotalLength === 'function' ? element.getTotalLength() : 0
+  },
+  { flush: 'post' },
+)
 
-const drawing = computed(() => series.reveal.value < 1 && !props.strokeDasharray && length.value > 0)
+const drawing = computed(
+  () => series.reveal.value < 1 && !props.strokeDasharray && length.value > 0,
+)
 const clipping = computed(() => series.reveal.value < 1 && !drawing.value)
 
 const dasharray = computed(() => {
-  if (drawing.value)
-    return `${length.value * series.reveal.value}px ${length.value}px`
+  if (drawing.value) return `${length.value * series.reveal.value}px ${length.value}px`
   return props.strokeDasharray
 })
 
@@ -80,17 +91,20 @@ const clip = computed(() => {
 })
 
 const dots = computed(() => {
-  const attrs = dotAttrs(props.dot, { r: 3, fill: 'var(--surface)', stroke: stroke.value, strokeWidth: 1 })
-  if (!attrs || series.animating.value)
-    return []
-  return series.points.value.flatMap(point => (point ? [{ point, attrs }] : []))
+  const attrs = dotAttrs(props.dot, {
+    r: 3,
+    fill: 'var(--surface)',
+    stroke: stroke.value,
+    strokeWidth: 1,
+  })
+  if (!attrs || series.animating.value) return []
+  return series.points.value.flatMap((point) => (point ? [{ point, attrs }] : []))
 })
 
 // Outline color and width come from the theme (`activeDot` slot); explicit `activeDot` props override them.
 const activeDot = computed(() => {
   const point = series.activePoint.value
-  if (!point || !props.activeDot)
-    return null
+  if (!point || !props.activeDot) return null
   const custom = props.activeDot === true ? {} : props.activeDot
   return {
     point,
@@ -104,7 +118,12 @@ const activeDot = computed(() => {
 
 <template>
   <ChartLayer v-if="!series.hidden.value" name="line">
-    <g data-slot="chart-line" :data-key="dataKey" :class="chart.classes('series', props.class)" :clip-path="clipping ? `url(#${clipId})` : undefined">
+    <g
+      data-slot="chart-line"
+      :data-key="dataKey"
+      :class="chart.classes('series', props.class)"
+      :clip-path="clipping ? `url(#${clipId})` : undefined"
+    >
       <defs v-if="clipping">
         <clipPath :id="clipId">
           <rect v-bind="clip" />

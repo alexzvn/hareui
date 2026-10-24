@@ -20,9 +20,14 @@ function onSubmit(event: SubmitEvent) {
 
 <template>
   <Form class="flex w-[256px] flex-col gap-4" @submit.prevent="onSubmit">
-    <ComboBox required class="w-full" name="animal" label="Favorite Animal" placeholder="Search animals..." :items="animals" />
-    <Button type="submit">
-      Submit
-    </Button>
+    <ComboBox
+      required
+      class="w-full"
+      name="animal"
+      label="Favorite Animal"
+      placeholder="Search animals..."
+      :items="animals"
+    />
+    <Button type="submit"> Submit </Button>
   </Form>
 </template>

@@ -84,7 +84,12 @@ export interface SwitchSlots {
 <script setup lang="ts">
 import { SwitchRoot } from 'reka-ui'
 import { computed, ref, useSlots, useTemplateRef } from 'vue'
-import { forwardRootClick, keepFocusWhenReadonly, submitOnEnter } from '../../composables/forwardRootClick'
+
+import {
+  forwardRootClick,
+  keepFocusWhenReadonly,
+  submitOnEnter,
+} from '../../composables/forwardRootClick'
 import { useComponentUI } from '../../composables/useComponentUI'
 import { useFieldChrome } from '../../composables/useFieldChrome'
 import { useFieldValidation } from '../../composables/useFieldValidation'
@@ -96,7 +101,10 @@ defineOptions({ inheritAttrs: false })
 
 // `undefined` defaults stop Vue casting absent boolean props to `false`: uncontrolled mode and `defaultValue` apply,
 // and an unset `invalid` leaves validation in charge
-const props = withDefaults(defineProps<SwitchProps>(), { modelValue: undefined, invalid: undefined })
+const props = withDefaults(defineProps<SwitchProps>(), {
+  modelValue: undefined,
+  invalid: undefined,
+})
 const emit = defineEmits<{
   /** Emitted when the checked state changes. */
   'update:modelValue': [value: boolean]
@@ -140,8 +148,7 @@ const { id, describedBy, FieldDescription, FieldError } = useFieldChrome({
 
 function onUpdate(value: boolean) {
   // RAC `isReadOnly`: the control stays focusable but never changes state
-  if (props.readonly)
-    return
+  if (props.readonly) return
   local.value = value
   emit('update:modelValue', value)
   commitValidation()
@@ -180,7 +187,11 @@ function onUpdate(value: boolean) {
     >
       <span data-slot="switch-control" :class="ui.control({ class: props.ui?.control })">
         <span data-slot="switch-thumb" :class="ui.thumb({ class: props.ui?.thumb })">
-          <span v-if="slots.icon" data-slot="switch-icon" :class="ui.icon({ class: props.ui?.icon })">
+          <span
+            v-if="slots.icon"
+            data-slot="switch-icon"
+            :class="ui.icon({ class: props.ui?.icon })"
+          >
             <slot name="icon" :checked="checked" />
           </span>
         </span>

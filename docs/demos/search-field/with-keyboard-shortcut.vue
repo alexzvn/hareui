@@ -13,8 +13,7 @@ function handleKeyDown(e: KeyboardEvent) {
     input()?.focus()
   }
   // Check for ESC key to blur the input
-  if (e.key === 'Escape' && document.activeElement === input())
-    input()?.blur()
+  if (e.key === 'Escape' && document.activeElement === input()) input()?.blur()
 }
 
 onMounted(() => window.addEventListener('keydown', handleKeyDown))
@@ -36,9 +35,7 @@ onBeforeUnmount(() => window.removeEventListener('keydown', handleKeyDown))
     </div>
     <div class="text-default-500 flex items-center gap-2 text-sm">
       <span>Press</span>
-      <Kbd keys="shift">
-        S
-      </Kbd>
+      <Kbd keys="shift"> S </Kbd>
       <span>to focus the search field</span>
     </div>
   </div>

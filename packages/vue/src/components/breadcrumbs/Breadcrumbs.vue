@@ -1,5 +1,6 @@
 <script lang="ts">
 import type { PrimitiveProps } from 'reka-ui'
+
 import type { ComponentSlots } from '../../types/tv'
 import theme from './theme'
 
@@ -35,7 +36,11 @@ export interface BreadcrumbsProps<T extends BreadcrumbsItem = BreadcrumbsItem> {
   ui?: ComponentSlots<Breadcrumbs>
 }
 
-type ItemSlotProps<T extends BreadcrumbsItem = BreadcrumbsItem> = { item: T, index: number, current: boolean }
+type ItemSlotProps<T extends BreadcrumbsItem = BreadcrumbsItem> = {
+  item: T
+  index: number
+  current: boolean
+}
 
 export interface BreadcrumbsSlots<T extends BreadcrumbsItem = BreadcrumbsItem> {
   /** Replaces an item's label. */
@@ -49,9 +54,10 @@ export interface BreadcrumbsSlots<T extends BreadcrumbsItem = BreadcrumbsItem> {
 </script>
 
 <script setup lang="ts" generic="T extends BreadcrumbsItem = BreadcrumbsItem">
-import type { VNode } from 'vue'
 import { Primitive } from 'reka-ui'
+import type { VNode } from 'vue'
 import { cloneVNode, Comment, h, isVNode, useSlots } from 'vue'
+
 import { useComponentUI } from '../../composables/useComponentUI'
 import Link from '../link/Link.vue'
 
@@ -61,21 +67,43 @@ defineSlots<BreadcrumbsSlots<T>>()
 
 const ui = useComponentUI('breadcrumbs', theme, () => ({}))
 
-const CHEVRON_RIGHT = 'M5.47 2.97a.75.75 0 0 1 1.06 0l4.5 4.5a.75.75 0 0 1 0 1.06l-4.5 4.5a.75.75 0 1 1-1.06-1.06L9.44 8 5.47 4.03a.75.75 0 0 1 0-1.06Z'
+const CHEVRON_RIGHT =
+  'M5.47 2.97a.75.75 0 0 1 1.06 0l4.5 4.5a.75.75 0 0 1 0 1.06l-4.5 4.5a.75.75 0 1 1-1.06-1.06L9.44 8 5.47 4.03a.75.75 0 0 1 0-1.06Z'
 
 // HeroUI clones a custom separator element with the separator classes (React's `cloneElement`);
 // anything else is rendered as-is, and no slot falls back to the chevron.
 function Separator(p: ItemSlotProps) {
-  const shared = { 'class': ui.value.separator({ class: props.ui?.separator }), 'data-slot': 'breadcrumbs-separator' }
+  const shared = {
+    class: ui.value.separator({ class: props.ui?.separator }),
+    'data-slot': 'breadcrumbs-separator',
+  }
   if (slots.separator) {
     const nodes = slots.separator(p).filter((v: VNode) => v.type !== Comment)
     return nodes.length === 1 && isVNode(nodes[0]) && typeof nodes[0].type !== 'symbol'
       ? cloneVNode(nodes[0], shared, true)
       : nodes
   }
-  return h('svg', { ...shared, 'aria-hidden': 'true', 'fill': 'none', 'height': '16', 'role': 'presentation', 'viewBox': '0 0 16 16', 'width': '16', 'xmlns': 'http://www.w3.org/2000/svg' }, [
-    h('path', { 'clip-rule': 'evenodd', 'd': CHEVRON_RIGHT, 'fill': 'currentColor', 'fill-rule': 'evenodd' }),
-  ])
+  return h(
+    'svg',
+    {
+      ...shared,
+      'aria-hidden': 'true',
+      fill: 'none',
+      height: '16',
+      role: 'presentation',
+      viewBox: '0 0 16 16',
+      width: '16',
+      xmlns: 'http://www.w3.org/2000/svg',
+    },
+    [
+      h('path', {
+        'clip-rule': 'evenodd',
+        d: CHEVRON_RIGHT,
+        fill: 'currentColor',
+        'fill-rule': 'evenodd',
+      }),
+    ],
+  )
 }
 </script>
 

@@ -1,14 +1,22 @@
 import { mount } from '@vue/test-utils'
 import { describe, expect, it } from 'vitest'
 import { h } from 'vue'
+
 import ErrorMessage from '../src/components/error-message/ErrorMessage.vue'
 import { expectAccessible } from './a11y'
 
 describe('ErrorMessage', () => {
   it('renders the errorMessage slot span with HeroUI data-slot and id', () => {
-    const wrapper = mount(ErrorMessage, { props: { id: 'err' }, slots: { default: () => 'Pick one' } })
+    const wrapper = mount(ErrorMessage, {
+      props: { id: 'err' },
+      slots: { default: () => 'Pick one' },
+    })
     expect(wrapper.element.tagName).toBe('SPAN')
-    expect(wrapper.attributes()).toMatchObject({ 'id': 'err', 'slot': 'errorMessage', 'data-slot': 'error-message' })
+    expect(wrapper.attributes()).toMatchObject({
+      id: 'err',
+      slot: 'errorMessage',
+      'data-slot': 'error-message',
+    })
     expect(wrapper.text()).toBe('Pick one')
   })
 
@@ -20,12 +28,18 @@ describe('ErrorMessage', () => {
   })
 
   it('describes the invalid control that references its id, with no axe violations', async () => {
-    const wrapper = mount(() => h('div', [
-      h('label', { for: 'plan' }, 'Plan'),
-      h('input', { 'id': 'plan', 'aria-invalid': 'true', 'aria-describedby': 'plan-error' }),
-      h(ErrorMessage, { id: 'plan-error' }, () => 'Pick one'),
-    ]), { attachTo: document.body })
-    expect(document.getElementById(wrapper.get('input').attributes('aria-describedby')!)?.textContent).toBe('Pick one')
+    const wrapper = mount(
+      () =>
+        h('div', [
+          h('label', { for: 'plan' }, 'Plan'),
+          h('input', { id: 'plan', 'aria-invalid': 'true', 'aria-describedby': 'plan-error' }),
+          h(ErrorMessage, { id: 'plan-error' }, () => 'Pick one'),
+        ]),
+      { attachTo: document.body },
+    )
+    expect(
+      document.getElementById(wrapper.get('input').attributes('aria-describedby')!)?.textContent,
+    ).toBe('Pick one')
     await expectAccessible(wrapper)
     wrapper.unmount()
   })

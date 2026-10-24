@@ -18,5 +18,10 @@ function toWeek(label: number | string) {
 </script>
 
 <template>
-  <ChartTooltipContent :label="27" :payload="sleep" :label-formatter="toWeek" :value-formatter="toHours" />
+  <ChartTooltipContent
+    :label="27"
+    :payload="sleep"
+    :label-formatter="toWeek"
+    :value-formatter="toHours"
+  />
 </template>

@@ -1,17 +1,20 @@
 import { mount } from '@vue/test-utils'
 import { describe, expect, it } from 'vitest'
 import { h, ref } from 'vue'
+
 import type { InputOtpProps } from '../src/components/input-otp/InputOtp.vue'
 import InputOtp from '../src/components/input-otp/InputOtp.vue'
 import { expectAccessible } from './a11y'
 
 function controlled(initial = '', props: Record<string, unknown> = {}) {
   const model = ref(initial)
-  const wrapper = mount(() => h(InputOtp, {
-    'modelValue': model.value,
-    'onUpdate:modelValue': (v: unknown) => (model.value = String(v ?? '')),
-    ...props,
-  }))
+  const wrapper = mount(() =>
+    h(InputOtp, {
+      modelValue: model.value,
+      'onUpdate:modelValue': (v: unknown) => (model.value = String(v ?? '')),
+      ...props,
+    }),
+  )
   return { model, wrapper, field: wrapper.findComponent(InputOtp), input: wrapper.get('input') }
 }
 
@@ -19,23 +22,26 @@ function controlled(initial = '', props: Record<string, unknown> = {}) {
 // key press, given the selection the component left on it: replace the selection, honour `maxlength`, leave a
 // collapsed caret after the edit, then fire `input`.
 type Wrapper = ReturnType<typeof controlled>['input']
-async function edit(input: Wrapper, replacement: string, deleting: 'backward' | 'forward' | null = null) {
+async function edit(
+  input: Wrapper,
+  replacement: string,
+  deleting: 'backward' | 'forward' | null = null,
+) {
   const el = input.element as HTMLInputElement
   let start = el.selectionStart ?? el.value.length
   const end = el.selectionEnd ?? start
-  if (start === end && deleting === 'backward')
-    start = Math.max(0, start - 1)
+  if (start === end && deleting === 'backward') start = Math.max(0, start - 1)
   const stop = start === end && deleting === 'forward' ? end + 1 : end
   const next = el.value.slice(0, start) + replacement + el.value.slice(stop)
-  if (next.length > el.maxLength)
-    return
+  if (next.length > el.maxLength) return
   el.value = next
   el.setSelectionRange(start + replacement.length, start + replacement.length)
   await input.trigger('input')
   await input.trigger('keyup')
 }
 const type = (input: Wrapper, text: string) => edit(input, text)
-const press = (input: Wrapper, key: 'Delete' | 'Backspace') => edit(input, '', key === 'Delete' ? 'forward' : 'backward')
+const press = (input: Wrapper, key: 'Delete' | 'Backspace') =>
+  edit(input, '', key === 'Delete' ? 'forward' : 'backward')
 // The browser moves the caret natively for navigation keys; `keyup` is where the component can observe it.
 async function moveCaret(input: Wrapper, key: string, position: number) {
   const el = input.element as HTMLInputElement
@@ -43,7 +49,10 @@ async function moveCaret(input: Wrapper, key: string, position: number) {
   el.setSelectionRange(position, position)
   await input.trigger('keyup', { key })
 }
-const selection = (input: Wrapper) => [(input.element as HTMLInputElement).selectionStart, (input.element as HTMLInputElement).selectionEnd]
+const selection = (input: Wrapper) => [
+  (input.element as HTMLInputElement).selectionStart,
+  (input.element as HTMLInputElement).selectionEnd,
+]
 
 describe('inputOtp', () => {
   it('renders HeroUI data-slots: the box, one group per size and a separator between groups', () => {
@@ -131,7 +140,7 @@ describe('inputOtp', () => {
       props: {
         modelValue: '123',
         length: 6,
-        validate: (v: string) => v.length < 6 ? 'Incomplete code' : null,
+        validate: (v: string) => (v.length < 6 ? 'Incomplete code' : null),
       },
     })
     await wrapper.get('input').trigger('change')
@@ -140,7 +149,9 @@ describe('inputOtp', () => {
   })
 
   it('renders the label and description and associates them with the input', () => {
-    const wrapper = mount(InputOtp, { props: { label: 'Verify account', description: 'Check your email', length: 4 } })
+    const wrapper = mount(InputOtp, {
+      props: { label: 'Verify account', description: 'Check your email', length: 4 },
+    })
     expect(wrapper.get('[data-slot=label]').text()).toBe('Verify account')
     const input = wrapper.get('input')
     const id = input.attributes('id')
@@ -153,8 +164,7 @@ describe('inputOtp', () => {
     // behaviour-final-check OTP-1
     const { model, input } = controlled('', { length: 6 })
     await input.trigger('focus')
-    for (const ch of '123456')
-      await type(input, ch)
+    for (const ch of '123456') await type(input, ch)
     expect(model.value).toBe('123456')
     await type(input, '7')
     expect(model.value).toBe('123457')
@@ -217,8 +227,19 @@ describe('inputOtp', () => {
     ['idle with a visible label', { label: 'Verification code' }],
     ['named by aria-label only', { 'aria-label': 'Verification code' }],
     ['with a description', { label: 'Verification code', description: 'Sent to your email' }],
-    ['partially filled, split in groups', { label: 'Verification code', modelValue: '123', groups: [3, 3] }],
-    ['invalid with an error message', { label: 'Verification code', modelValue: '12', invalid: true, errorMessage: 'Incomplete code' }],
+    [
+      'partially filled, split in groups',
+      { label: 'Verification code', modelValue: '123', groups: [3, 3] },
+    ],
+    [
+      'invalid with an error message',
+      {
+        label: 'Verification code',
+        modelValue: '12',
+        invalid: true,
+        errorMessage: 'Incomplete code',
+      },
+    ],
     ['required', { label: 'Verification code', required: true, name: 'otp' }],
     ['disabled', { label: 'Verification code', modelValue: '12', disabled: true }],
   ])('has no axe violations: %s', async (_, props) => {
@@ -228,7 +249,10 @@ describe('inputOtp', () => {
   })
 
   it('has no axe violations while focused with an active slot', async () => {
-    const wrapper = mount(InputOtp, { props: { label: 'Verification code', modelValue: '1' }, attachTo: document.body })
+    const wrapper = mount(InputOtp, {
+      props: { label: 'Verification code', modelValue: '1' },
+      attachTo: document.body,
+    })
     ;(wrapper.get('input').element as HTMLElement).focus()
     await wrapper.get('input').trigger('focus')
     expect(wrapper.find('[data-active=true]').exists()).toBe(true)
@@ -237,16 +261,26 @@ describe('inputOtp', () => {
   })
 
   it('is a single tab stop: one focusable input behind the slots, reached from its label', () => {
-    const wrapper = mount(InputOtp, { props: { id: 'otp-tab', label: 'Verification code', length: 6 }, attachTo: document.body })
-    const focusable = wrapper.findAll('input, button, [tabindex]').filter(el => el.attributes('tabindex') !== '-1')
+    const wrapper = mount(InputOtp, {
+      props: { id: 'otp-tab', label: 'Verification code', length: 6 },
+      attachTo: document.body,
+    })
+    const focusable = wrapper
+      .findAll('input, button, [tabindex]')
+      .filter((el) => el.attributes('tabindex') !== '-1')
     expect(focusable).toHaveLength(1)
     expect(focusable[0]!.element).toBe(wrapper.get('input').element)
-    expect(document.getElementById((wrapper.get('label').element as HTMLLabelElement).htmlFor)).toBe(wrapper.get('input').element)
+    expect(
+      document.getElementById((wrapper.get('label').element as HTMLLabelElement).htmlFor),
+    ).toBe(wrapper.get('input').element)
     wrapper.unmount()
   })
 
   it('aria-label / aria-labelledby name the input, not the wrapper', () => {
-    const wrapper = mount(InputOtp, { props: { 'aria-label': 'Verification code' }, attrs: { 'data-test': 'root' } })
+    const wrapper = mount(InputOtp, {
+      props: { 'aria-label': 'Verification code' },
+      attrs: { 'data-test': 'root' },
+    })
     expect(wrapper.get('input').attributes('aria-label')).toBe('Verification code')
     expect(wrapper.get('[data-test=root]').attributes('aria-label')).toBeUndefined()
     const labelled = mount(InputOtp, { attrs: { 'aria-labelledby': 'heading' } })
@@ -254,14 +288,32 @@ describe('inputOtp', () => {
   })
 
   it('exposes the code constraints to assistive tech and autofill', () => {
-    const wrapper = mount(InputOtp, { props: { label: 'Code', length: 4, pattern: 'digits', required: true } })
-    expect(wrapper.get('input').attributes()).toMatchObject({ autocomplete: 'one-time-code', maxlength: '4', inputmode: 'numeric' })
+    const wrapper = mount(InputOtp, {
+      props: { label: 'Code', length: 4, pattern: 'digits', required: true },
+    })
+    expect(wrapper.get('input').attributes()).toMatchObject({
+      autocomplete: 'one-time-code',
+      maxlength: '4',
+      inputmode: 'numeric',
+    })
     expect(wrapper.get('input').attributes('required')).toBeDefined()
-    expect(mount(InputOtp, { props: { pattern: 'alphanumeric' } }).get('input').attributes('inputmode')).toBe('text')
+    expect(
+      mount(InputOtp, { props: { pattern: 'alphanumeric' } })
+        .get('input')
+        .attributes('inputmode'),
+    ).toBe('text')
   })
 
   it('wires an invalid field: aria-invalid and the error id in aria-describedby, removed once valid', async () => {
-    const wrapper = mount(InputOtp, { props: { id: 'otp', label: 'Code', description: 'Check your email', errorMessage: 'Wrong code', invalid: true } })
+    const wrapper = mount(InputOtp, {
+      props: {
+        id: 'otp',
+        label: 'Code',
+        description: 'Check your email',
+        errorMessage: 'Wrong code',
+        invalid: true,
+      },
+    })
     const input = wrapper.get('input')
     expect(input.attributes('aria-invalid')).toBe('true')
     expect(input.attributes('aria-describedby')).toBe('otp-description otp-error')

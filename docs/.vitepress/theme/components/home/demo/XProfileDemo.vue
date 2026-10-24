@@ -1,11 +1,19 @@
 <script setup lang="ts">
 import { Avatar, Card } from '@hareui/vue'
+
 import HareLogo from '../../HareLogo.vue'
 import VerifiedBadgeIcon from '../icons/VerifiedBadgeIcon.vue'
 </script>
 
 <template>
-  <Card class="w-full items-start justify-center xl:w-[400px]" :ui="{ header: 'items-top w-full flex-row justify-between', content: 'flex-row text-start', footer: 'gap-2' }">
+  <Card
+    class="w-full items-start justify-center xl:w-[400px]"
+    :ui="{
+      header: 'items-top w-full flex-row justify-between',
+      content: 'flex-row text-start',
+      footer: 'gap-2',
+    }"
+  >
     <template #header>
       <div class="flex items-center gap-3">
         <Avatar size="sm">

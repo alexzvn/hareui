@@ -23,12 +23,8 @@ const capitalize = (s: string) => s.charAt(0).toUpperCase() + s.slice(1)
         </p>
       </template>
       <template #footer="{ close }">
-        <Button variant="secondary" @click="close">
-          Cancel
-        </Button>
-        <Button @click="close">
-          Done
-        </Button>
+        <Button variant="secondary" @click="close"> Cancel </Button>
+        <Button @click="close"> Done </Button>
       </template>
     </Drawer>
   </div>

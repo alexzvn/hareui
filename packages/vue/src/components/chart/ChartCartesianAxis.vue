@@ -1,11 +1,12 @@
 <script setup lang="ts">
 import type { ClassValue } from 'tailwind-variants'
+import { computed } from 'vue'
+
 import type { ChartAxisTickSlotProps } from './axis'
 import type { ResolvedAxis } from './cartesian'
-import type { ChartTick } from './scale'
-import { computed } from 'vue'
 import ChartLayer from './ChartLayer.vue'
 import { useChartContext } from './context'
+import type { ChartTick } from './scale'
 
 // Internal: draws one cartesian axis (line, tick lines, tick labels).
 
@@ -57,24 +58,40 @@ function tickGeometry(tick: ChartTick) {
   switch (orientation) {
     case 'top': {
       const y = box.y + box.height
-      return { line: { x1: tick.coordinate, y1: y, x2: tick.coordinate, y2: y - props.tickSize }, x: tick.labelCoordinate, y: y - gap }
+      return {
+        line: { x1: tick.coordinate, y1: y, x2: tick.coordinate, y2: y - props.tickSize },
+        x: tick.labelCoordinate,
+        y: y - gap,
+      }
     }
     case 'left': {
       const x = box.x + box.width
-      return { line: { x1: x, y1: tick.coordinate, x2: x - props.tickSize, y2: tick.coordinate }, x: x - gap, y: tick.labelCoordinate }
+      return {
+        line: { x1: x, y1: tick.coordinate, x2: x - props.tickSize, y2: tick.coordinate },
+        x: x - gap,
+        y: tick.labelCoordinate,
+      }
     }
     case 'right': {
       const x = box.x
-      return { line: { x1: x, y1: tick.coordinate, x2: x + props.tickSize, y2: tick.coordinate }, x: x + gap, y: tick.labelCoordinate }
+      return {
+        line: { x1: x, y1: tick.coordinate, x2: x + props.tickSize, y2: tick.coordinate },
+        x: x + gap,
+        y: tick.labelCoordinate,
+      }
     }
     default: {
       const y = box.y
-      return { line: { x1: tick.coordinate, y1: y, x2: tick.coordinate, y2: y + props.tickSize }, x: tick.labelCoordinate, y: y + gap }
+      return {
+        line: { x1: tick.coordinate, y1: y, x2: tick.coordinate, y2: y + props.tickSize },
+        x: tick.labelCoordinate,
+        y: y + gap,
+      }
     }
   }
 }
 
-const ticks = computed(() => props.axis.ticks.map(tick => ({ tick, ...tickGeometry(tick) })))
+const ticks = computed(() => props.axis.ticks.map((tick) => ({ tick, ...tickGeometry(tick) })))
 </script>
 
 <template>
@@ -84,7 +101,13 @@ const ticks = computed(() => props.axis.ticks.map(tick => ({ tick, ...tickGeomet
       :data-orientation="axis.orientation"
       :class="chart.classes('axis', props.class)"
     >
-      <line v-if="axisLine" data-slot="chart-axis-line" v-bind="line" fill="none" :class="chart.classes('axisLine')" />
+      <line
+        v-if="axisLine"
+        data-slot="chart-axis-line"
+        v-bind="line"
+        fill="none"
+        :class="chart.classes('axisLine')"
+      />
       <template v-if="tickLine">
         <line
           v-for="entry in ticks"
@@ -99,7 +122,14 @@ const ticks = computed(() => props.axis.ticks.map(tick => ({ tick, ...tickGeomet
         <template v-for="entry in ticks" :key="`tick-${entry.tick.index}`">
           <slot
             name="tick"
-            v-bind="{ x: entry.x, y: entry.y, value: entry.tick.value, index: entry.tick.index, text: entry.tick.text, textAnchor: anchor.textAnchor }"
+            v-bind="{
+              x: entry.x,
+              y: entry.y,
+              value: entry.tick.value,
+              index: entry.tick.index,
+              text: entry.tick.text,
+              textAnchor: anchor.textAnchor,
+            }"
           >
             <text
               data-slot="chart-tick"
@@ -108,7 +138,8 @@ const ticks = computed(() => props.axis.ticks.map(tick => ({ tick, ...tickGeomet
               :dy="anchor.dy"
               :text-anchor="anchor.textAnchor"
               :class="chart.classes('tick')"
-            >{{ entry.tick.text }}</text>
+              >{{ entry.tick.text }}</text
+            >
           </slot>
         </template>
       </template>

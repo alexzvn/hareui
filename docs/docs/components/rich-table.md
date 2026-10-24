@@ -197,16 +197,18 @@ Use the `class` prop to style the root and the `ui` prop to style each part.
 ### Global theme override
 
 ```ts
-app.use(createHareUI({
-  ui: {
-    richTable: {
-      slots: {
-        th: 'bg-gray-100',
-        td: 'px-6 py-4',
+app.use(
+  createHareUI({
+    ui: {
+      richTable: {
+        slots: {
+          th: 'bg-gray-100',
+          td: 'px-6 py-4',
+        },
       },
     },
-  },
-}))
+  }),
+)
 ```
 
 ## API
@@ -225,18 +227,18 @@ app.use(createHareUI({
 
 ## Styling Reference
 
-| `ui` key | `data-slot` | Description |
-|---|---|---|
-| `root` | `rich-table` | Scroll container |
-| `base` | `rich-table-content` | The `<table>` element |
-| `caption` | `rich-table-caption` | The `<caption>` element |
-| `thead` | `rich-table-header` | The `<thead>` element |
-| `tbody` | `rich-table-body` | The `<tbody>` element |
-| `tfoot` | `rich-table-footer` | The `<tfoot>` element |
-| `tr` | `rich-table-row`, `rich-table-header-row`, `rich-table-footer-row`, `rich-table-expanded-row` | Every row |
-| `th` | `rich-table-column` | Header and footer cells |
-| `td` | `rich-table-cell` | Body cells |
-| `empty` | `rich-table-empty` | Cell shown when there are no rows |
-| `loading` | `rich-table-loading` | Cell shown while loading with no rows |
+| `ui` key  | `data-slot`                                                                                   | Description                           |
+| --------- | --------------------------------------------------------------------------------------------- | ------------------------------------- |
+| `root`    | `rich-table`                                                                                  | Scroll container                      |
+| `base`    | `rich-table-content`                                                                          | The `<table>` element                 |
+| `caption` | `rich-table-caption`                                                                          | The `<caption>` element               |
+| `thead`   | `rich-table-header`                                                                           | The `<thead>` element                 |
+| `tbody`   | `rich-table-body`                                                                             | The `<tbody>` element                 |
+| `tfoot`   | `rich-table-footer`                                                                           | The `<tfoot>` element                 |
+| `tr`      | `rich-table-row`, `rich-table-header-row`, `rich-table-footer-row`, `rich-table-expanded-row` | Every row                             |
+| `th`      | `rich-table-column`                                                                           | Header and footer cells               |
+| `td`      | `rich-table-cell`                                                                             | Body cells                            |
+| `empty`   | `rich-table-empty`                                                                            | Cell shown when there are no rows     |
+| `loading` | `rich-table-loading`                                                                          | Cell shown while loading with no rows |
 
 Rows set `data-selected`, `data-expanded`, `data-selectable` and `data-pinned`; pinned cells set `data-pinned="left" | "right"` and, while content scrolls under them, `data-edge` on the column facing the scrolling columns.

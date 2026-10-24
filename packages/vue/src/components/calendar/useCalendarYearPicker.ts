@@ -30,20 +30,21 @@ export function useCalendarYearPicker(options: UseCalendarYearPickerOptions) {
   // the first idle period after it, so the year grid's first fade-in doesn't pay for them either.
   // Opening before then renders them synchronously, ahead of the focus-on-open watcher below.
   const everOpened = ref(open.value)
-  watch(open, (isOpen) => {
-    if (isOpen)
-      everOpened.value = true
-  }, { flush: 'sync' })
+  watch(
+    open,
+    (isOpen) => {
+      if (isOpen) everOpened.value = true
+    },
+    { flush: 'sync' },
+  )
   let cancelIdle: (() => void) | undefined
   onMounted(() => {
-    if (everOpened.value)
-      return
-    const render = () => everOpened.value = true
+    if (everOpened.value) return
+    const render = () => (everOpened.value = true)
     if (typeof requestIdleCallback === 'function') {
       const id = requestIdleCallback(render, { timeout: 1000 })
       cancelIdle = () => cancelIdleCallback(id)
-    }
-    else {
+    } else {
       const id = setTimeout(render, 200)
       cancelIdle = () => clearTimeout(id)
     }
@@ -51,8 +52,7 @@ export function useCalendarYearPicker(options: UseCalendarYearPickerOptions) {
   onScopeDispose(() => cancelIdle?.())
 
   const years = computed(() => {
-    if (!everOpened.value)
-      return []
+    if (!everOpened.value) return []
     const start = minValue.value.year
     const end = maxValue.value.year
     const list: number[] = []
@@ -63,11 +63,9 @@ export function useCalendarYearPicker(options: UseCalendarYearPickerOptions) {
   function syncPosition() {
     const root = rootEl.value
     const grid = gridRef.value
-    if (!root || !grid)
-      return
+    if (!root || !grid) return
     const dayGrid = root.querySelector<HTMLElement>(`[data-slot="${gridSlot}"]`)
-    if (!dayGrid)
-      return
+    if (!dayGrid) return
     grid.style.top = `${dayGrid.offsetTop}px`
     grid.style.height = `${dayGrid.offsetHeight}px`
   }
@@ -81,10 +79,14 @@ export function useCalendarYearPicker(options: UseCalendarYearPickerOptions) {
       // The closed grid is aria-hidden and its cells leave the tab order: hand focus back to the trigger
       // (HeroUI leaves it on the hidden year cell)
       if (gridRef.value?.contains(document.activeElement))
-        rootEl.value?.querySelector<HTMLElement>('[data-slot="calendar-year-picker-trigger"]')?.focus()
+        rootEl.value
+          ?.querySelector<HTMLElement>('[data-slot="calendar-year-picker-trigger"]')
+          ?.focus()
       return
     }
-    activeYear.value = years.value.includes(focusedYear.value) ? focusedYear.value : (years.value[0] ?? focusedYear.value)
+    activeYear.value = years.value.includes(focusedYear.value)
+      ? focusedYear.value
+      : (years.value[0] ?? focusedYear.value)
     nextTick(() => {
       syncPosition()
       focusYear(activeYear.value)
@@ -106,26 +108,36 @@ export function useCalendarYearPicker(options: UseCalendarYearPickerOptions) {
       open.value = false
       return
     }
-    if (!open.value || years.value.length === 0)
-      return
+    if (!open.value || years.value.length === 0) return
     const currentIndex = years.value.indexOf(activeYear.value)
-    if (currentIndex === -1)
-      return
+    if (currentIndex === -1) return
     let nextIndex = currentIndex
     switch (event.key) {
-      case 'ArrowRight': nextIndex = Math.min(currentIndex + 1, years.value.length - 1); break
-      case 'ArrowLeft': nextIndex = Math.max(currentIndex - 1, 0); break
-      case 'ArrowDown': nextIndex = Math.min(currentIndex + 3, years.value.length - 1); break
-      case 'ArrowUp': nextIndex = Math.max(currentIndex - 3, 0); break
-      case 'Home': nextIndex = 0; break
-      case 'End': nextIndex = years.value.length - 1; break
-      default: return
+      case 'ArrowRight':
+        nextIndex = Math.min(currentIndex + 1, years.value.length - 1)
+        break
+      case 'ArrowLeft':
+        nextIndex = Math.max(currentIndex - 1, 0)
+        break
+      case 'ArrowDown':
+        nextIndex = Math.min(currentIndex + 3, years.value.length - 1)
+        break
+      case 'ArrowUp':
+        nextIndex = Math.max(currentIndex - 3, 0)
+        break
+      case 'Home':
+        nextIndex = 0
+        break
+      case 'End':
+        nextIndex = years.value.length - 1
+        break
+      default:
+        return
     }
     if (nextIndex !== currentIndex) {
       event.preventDefault()
       const nextYear = years.value[nextIndex]
-      if (nextYear == null)
-        return
+      if (nextYear == null) return
       activeYear.value = nextYear
       focusYear(nextYear)
     }

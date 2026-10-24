@@ -1,7 +1,8 @@
-import type { NumberValue, NumberValueOptions } from '../src/composables/useNumberValue'
 import { mount } from '@vue/test-utils'
 import { describe, expect, it, vi } from 'vitest'
 import { defineComponent, nextTick, ref } from 'vue'
+
+import type { NumberValue, NumberValueOptions } from '../src/composables/useNumberValue'
 import { useNumberValue } from '../src/composables/useNumberValue'
 import { clamp, snapNumber, snapValueToStep } from '../src/utils/number'
 
@@ -92,13 +93,15 @@ function setup(initial: Setup = {}) {
     formatOptions: () => props.value.formatOptions,
     onCommit,
   }
-  const wrapper = mount(defineComponent({
-    emits: ['update:modelValue'],
-    setup() {
-      value = useNumberValue(options)
-      return () => null
-    },
-  }))
+  const wrapper = mount(
+    defineComponent({
+      emits: ['update:modelValue'],
+      setup() {
+        value = useNumberValue(options)
+        return () => null
+      },
+    }),
+  )
   return { wrapper, props, model, onCommit, value }
 }
 
@@ -115,7 +118,13 @@ describe('useNumberValue', () => {
   })
 
   it('displays the model and default clamped and snapped, and passes an empty model through', () => {
-    const { model, value } = setup({ modelValue: 0.1 + 0.2, defaultValue: 99, min: 0, max: 1, step: 0.1 })
+    const { model, value } = setup({
+      modelValue: 0.1 + 0.2,
+      defaultValue: 99,
+      min: 0,
+      max: 1,
+      step: 0.1,
+    })
     expect(value.displayValue.value).toBe(0.3)
     expect(value.defaultDisplayValue.value).toBe(1)
     model.value = null

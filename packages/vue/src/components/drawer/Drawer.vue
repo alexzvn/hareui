@@ -88,6 +88,7 @@ import {
   VisuallyHidden,
 } from 'reka-ui'
 import { computed, useSlots, useTemplateRef } from 'vue'
+
 import { useComponentUI } from '../../composables/useComponentUI'
 import { useDialogShell } from '../../composables/useDialogShell'
 import CloseButton from '../close-button/CloseButton.vue'
@@ -156,13 +157,13 @@ function clampDelta(delta: number) {
   }
 }
 function onDragStart(event: PointerEvent) {
-  if (!props.dismissible || event.button !== 0)
-    return
+  if (!props.dismissible || event.button !== 0) return
   const target = event.target as HTMLElement
   const dialog = event.currentTarget as HTMLElement
-  if (target.closest('[data-slot="drawer-dialog"]') !== dialog)
-    return
-  if (target.closest('input, textarea, button, [role=\'button\'], select, a, [data-slot=\'drawer-body\']'))
+  if (target.closest('[data-slot="drawer-dialog"]') !== dialog) return
+  if (
+    target.closest("input, textarea, button, [role='button'], select, a, [data-slot='drawer-body']")
+  )
     return
   dragging = true
   active = false
@@ -173,15 +174,13 @@ function onDragStart(event: PointerEvent) {
   velocity = 0
 }
 function onDragMove(event: PointerEvent) {
-  if (!dragging)
-    return
+  if (!dragging) return
   const el = event.currentTarget as HTMLElement
   const pos = pointerPos(event)
   const rawDelta = pos - startPos
   const delta = clampDelta(rawDelta)
   if (!active) {
-    if (Math.abs(rawDelta) < DRAG_THRESHOLD)
-      return
+    if (Math.abs(rawDelta) < DRAG_THRESHOLD) return
     active = true
     el.style.transition = 'none'
     el.setPointerCapture(event.pointerId)
@@ -197,27 +196,27 @@ function onDragMove(event: PointerEvent) {
   el.style.transform = `translate${isVertical.value ? 'Y' : 'X'}(${delta}px)`
 }
 function onDragEnd(event: PointerEvent, close: () => void) {
-  if (!dragging)
-    return
+  if (!dragging) return
   dragging = false
   const el = event.currentTarget as HTMLElement
-  if (!active)
-    return
+  if (!active) return
   active = false
   try {
     el.releasePointerCapture(event.pointerId)
-  }
-  catch {}
+  } catch {}
   const size = isVertical.value ? el.offsetHeight : el.offsetWidth
   if (Math.abs(offset) > size * DISMISS_FRACTION || Math.abs(velocity) > VELOCITY_THRESHOLD) {
     close()
-  }
-  else {
+  } else {
     el.style.transition = 'transform 300ms cubic-bezier(0.32, 0.72, 0, 1)'
     el.style.transform = ''
-    el.addEventListener('transitionend', () => {
-      el.style.transition = ''
-    }, { once: true })
+    el.addEventListener(
+      'transitionend',
+      () => {
+        el.style.transition = ''
+      },
+      { once: true },
+    )
   }
   offset = 0
   velocity = 0
@@ -225,7 +224,13 @@ function onDragEnd(event: PointerEvent, close: () => void) {
 </script>
 
 <template>
-  <DialogRoot :open="open" :default-open="defaultOpen" modal v-slot="{ open: isOpen, close }" @update:open="onOpenChange">
+  <DialogRoot
+    :open="open"
+    :default-open="defaultOpen"
+    modal
+    v-slot="{ open: isOpen, close }"
+    @update:open="onOpenChange"
+  >
     <DialogTrigger v-if="!!slots.default" as-child>
       <slot :open="isOpen" />
     </DialogTrigger>
@@ -235,7 +240,12 @@ function onDragEnd(event: PointerEvent, close: () => void) {
         :style="{ '--visual-viewport-height': visualViewportHeight }"
         :class="ui.backdrop({ class: props.ui?.backdrop })"
       >
-        <div data-slot="drawer-content" :data-state="isOpen ? 'open' : 'closed'" :data-placement="placement" :class="ui.content({ class: props.ui?.content })">
+        <div
+          data-slot="drawer-content"
+          :data-state="isOpen ? 'open' : 'closed'"
+          :data-placement="placement"
+          :class="ui.content({ class: props.ui?.content })"
+        >
           <DialogContent
             ref="dialogContent"
             data-slot="drawer-dialog"
@@ -256,32 +266,61 @@ function onDragEnd(event: PointerEvent, close: () => void) {
             <slot name="content" :close="close">
               <DialogClose v-if="closeButton" as-child>
                 <slot name="close" :close="close">
-                  <CloseButton data-slot="drawer-close-trigger" :class="ui.closeTrigger({ class: props.ui?.closeTrigger })" />
+                  <CloseButton
+                    data-slot="drawer-close-trigger"
+                    :class="ui.closeTrigger({ class: props.ui?.closeTrigger })"
+                  />
                 </slot>
               </DialogClose>
               <!-- Before the header so `handle + header` / `header + body` spacing selectors still match -->
               <VisuallyHidden v-if="!showHeaderTitle" as-child>
                 <DialogTitle>{{ title }}</DialogTitle>
               </VisuallyHidden>
-              <div v-if="handle && placement !== 'top'" aria-hidden="true" data-slot="drawer-handle" :class="ui.handle({ class: props.ui?.handle })">
+              <div
+                v-if="handle && placement !== 'top'"
+                aria-hidden="true"
+                data-slot="drawer-handle"
+                :class="ui.handle({ class: props.ui?.handle })"
+              >
                 <div data-slot="drawer-handle-bar" />
               </div>
-              <div v-if="hasHeader" data-slot="drawer-header" :class="ui.header({ class: props.ui?.header })">
+              <div
+                v-if="hasHeader"
+                data-slot="drawer-header"
+                :class="ui.header({ class: props.ui?.header })"
+              >
                 <slot name="header">
-                  <DialogTitle v-if="showHeaderTitle" data-slot="drawer-heading" :class="ui.heading({ class: props.ui?.heading })">
+                  <DialogTitle
+                    v-if="showHeaderTitle"
+                    data-slot="drawer-heading"
+                    :class="ui.heading({ class: props.ui?.heading })"
+                  >
                     <slot name="title">
                       {{ title }}
                     </slot>
                   </DialogTitle>
                 </slot>
               </div>
-              <div v-if="!!slots.body" data-slot="drawer-body" :class="ui.body({ class: props.ui?.body })">
+              <div
+                v-if="!!slots.body"
+                data-slot="drawer-body"
+                :class="ui.body({ class: props.ui?.body })"
+              >
                 <slot name="body" :close="close" />
               </div>
-              <div v-if="!!slots.footer" data-slot="drawer-footer" :class="ui.footer({ class: props.ui?.footer })">
+              <div
+                v-if="!!slots.footer"
+                data-slot="drawer-footer"
+                :class="ui.footer({ class: props.ui?.footer })"
+              >
                 <slot name="footer" :close="close" />
               </div>
-              <div v-if="handle && placement === 'top'" aria-hidden="true" data-slot="drawer-handle" :class="ui.handle({ class: props.ui?.handle })">
+              <div
+                v-if="handle && placement === 'top'"
+                aria-hidden="true"
+                data-slot="drawer-handle"
+                :class="ui.handle({ class: props.ui?.handle })"
+              >
                 <div data-slot="drawer-handle-bar" />
               </div>
             </slot>

@@ -14,5 +14,11 @@ const animals: ListBoxItem[] = [
 
 <template>
   <!-- HeroUI's `render` prop has no Vue equivalent (plan drop: render functions); attributes fall through to the root instead. -->
-  <ComboBox class="w-[256px]" data-custom="foo" label="Favorite Animal" placeholder="Search animals..." :items="animals" />
+  <ComboBox
+    class="w-[256px]"
+    data-custom="foo"
+    label="Favorite Animal"
+    placeholder="Search animals..."
+    :items="animals"
+  />
 </template>

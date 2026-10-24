@@ -1,9 +1,10 @@
 <script setup lang="ts">
 import { computed } from 'vue'
-import ColorHeader from './ColorHeader.vue'
-import ColorBlock from './ColorBlock.vue'
-import ColorTooltip from './ColorTooltip.vue'
+
 import { contrastStyle, copyColorValue, getTokenName } from '../../composables/useColorCopy'
+import ColorBlock from './ColorBlock.vue'
+import ColorHeader from './ColorHeader.vue'
+import ColorTooltip from './ColorTooltip.vue'
 
 export interface SoftProps {
   baseVariable: string
@@ -50,13 +51,27 @@ function onSoftHoverClick(event: MouseEvent) {
         :style="{ backgroundColor: `var(${baseVariable})` }"
       >
         <span class="text-base font-medium tracking-tight" :style="baseStyle">{{ name }}</span>
-        <ColorBlock :bg-variable="hoverVariable" :css-value="hoverCssValue" label="Hover" :tooltip="hoverTooltip" />
-        <ColorBlock :bg-variable="foregroundVariable" label="Foreground" :tooltip="foregroundTooltip" />
+        <ColorBlock
+          :bg-variable="hoverVariable"
+          :css-value="hoverCssValue"
+          label="Hover"
+          :tooltip="hoverTooltip"
+        />
+        <ColorBlock
+          :bg-variable="foregroundVariable"
+          label="Foreground"
+          :tooltip="foregroundTooltip"
+        />
       </div>
       <div v-if="soft" class="relative flex flex-1 flex-col gap-1.5 overflow-hidden rounded-xl p-3">
         <div class="absolute inset-0" style="background-color: var(--surface)" />
-        <div class="absolute inset-0" :style="{ backgroundColor: soft.baseCssValue || `var(${soft.baseVariable})` }" />
-        <span class="relative text-base font-medium tracking-tight text-foreground">{{ name }} Soft</span>
+        <div
+          class="absolute inset-0"
+          :style="{ backgroundColor: soft.baseCssValue || `var(${soft.baseVariable})` }"
+        />
+        <span class="relative text-base font-medium tracking-tight text-foreground"
+          >{{ name }} Soft</span
+        >
         <div class="relative">
           <ColorTooltip tooltip-class="block w-full" :content="soft.hoverTooltip">
             <div
@@ -65,7 +80,10 @@ function onSoftHoverClick(event: MouseEvent) {
               @click="onSoftHoverClick"
             >
               <span class="text-sm font-medium tracking-tight text-foreground">Hover</span>
-              <span class="font-mono text-[10px] leading-tight text-foreground opacity-60 sm:hidden">{{ softHoverToken }}</span>
+              <span
+                class="font-mono text-[10px] leading-tight text-foreground opacity-60 sm:hidden"
+                >{{ softHoverToken }}</span
+              >
             </div>
           </ColorTooltip>
         </div>

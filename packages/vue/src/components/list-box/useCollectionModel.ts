@@ -1,8 +1,9 @@
 // Internal: the selection model of a ListBox-backed field (Select, ComboBox, Autocomplete): which options are
 // selected, in which order, and the text the field shows for them.
 import type { ComputedRef, Ref, WritableComputedRef } from 'vue'
-import type { ListBoxEntry, ListBoxItem, ListBoxValue } from './ListBox.vue'
 import { computed, ref } from 'vue'
+
+import type { ListBoxEntry, ListBoxItem, ListBoxValue } from './ListBox.vue'
 import { flattenEntries, itemText } from './listBoxCollection'
 
 /** A field's selection: a value (or `null`) in single mode, an array in multiple mode. */

@@ -1,6 +1,6 @@
 <script setup lang="ts">
-import type { ChartTooltipContentEntry } from '@hareui/vue/charts'
 import { Card } from '@hareui/vue'
+import type { ChartTooltipContentEntry } from '@hareui/vue/charts'
 import { BarChart } from '@hareui/vue/charts'
 
 const data = [
@@ -28,7 +28,12 @@ function total(payload: ChartTooltipContentEntry[]) {
 </script>
 
 <template>
-  <Card class="w-full max-w-[480px] rounded-2xl" title="Museum Tickets" description="Tickets sold by channel" :ui="{ title: 'text-base', description: 'text-xs' }">
+  <Card
+    class="w-full max-w-[480px] rounded-2xl"
+    title="Museum Tickets"
+    description="Tickets sold by channel"
+    :ui="{ title: 'text-base', description: 'text-xs' }"
+  >
     <BarChart
       :data="data"
       index="month"

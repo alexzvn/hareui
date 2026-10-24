@@ -14,10 +14,8 @@ const state = reactive<State>({})
 // Return one error per invalid field, keyed by the field's `name`
 function validate(state: Partial<State>): FormError[] {
   const errors: FormError[] = []
-  if (!state.email)
-    errors.push({ name: 'email', message: 'Email is required' })
-  if (!state.password)
-    errors.push({ name: 'password', message: 'Password is required' })
+  if (!state.email) errors.push({ name: 'email', message: 'Email is required' })
+  if (!state.password) errors.push({ name: 'password', message: 'Password is required' })
   if (state.confirm !== state.password)
     errors.push({ name: 'confirm', message: 'Passwords do not match' })
   return errors
@@ -33,8 +31,6 @@ function onSubmit(event: FormSubmitEvent<State>) {
     <TextField v-model="state.email" name="email" type="email" label="Email" />
     <TextField v-model="state.password" name="password" type="password" label="Password" />
     <TextField v-model="state.confirm" name="confirm" type="password" label="Confirm password" />
-    <Button type="submit" class="self-start">
-      Submit
-    </Button>
+    <Button type="submit" class="self-start"> Submit </Button>
   </Form>
 </template>

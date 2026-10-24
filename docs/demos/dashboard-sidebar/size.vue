@@ -1,11 +1,18 @@
 <script setup lang="ts">
 import type { NavigationMenuItem } from '@hareui/vue'
-import { DashboardGroup, DashboardPanel, DashboardSidebar, DashboardSidebarToggle, NavigationMenu } from '@hareui/vue'
+import {
+  DashboardGroup,
+  DashboardPanel,
+  DashboardSidebar,
+  DashboardSidebarToggle,
+  NavigationMenu,
+} from '@hareui/vue'
 import { Icon } from '@iconify/vue'
 import { h } from 'vue'
 
 // NavigationMenu takes icon components: an Iconify Gravity UI icon that forwards the menu's icon classes.
-const gravityIcon = (name: string) => (attrs: Record<string, unknown>) => h(Icon, { ...attrs, icon: `gravity-ui:${name}` })
+const gravityIcon = (name: string) => (attrs: Record<string, unknown>) =>
+  h(Icon, { ...attrs, icon: `gravity-ui:${name}` })
 
 const items: NavigationMenuItem[] = [
   { label: 'Home', icon: gravityIcon('house'), href: '#', active: true },
@@ -36,9 +43,7 @@ const items: NavigationMenuItem[] = [
       <template #header>
         <div class="flex h-16 shrink-0 items-center gap-3 px-4">
           <DashboardSidebarToggle />
-          <p class="min-w-0 truncate text-sm font-semibold text-foreground">
-            Files
-          </p>
+          <p class="min-w-0 truncate text-sm font-semibold text-foreground">Files</p>
         </div>
       </template>
       <template #body>

@@ -15,25 +15,20 @@ import { Button, Popover } from '@hareui/vue'
         aria-hidden="true"
         class="pointer-events-none absolute inset-x-0 top-0 h-12 bg-linear-to-b from-neutral-500/6 to-transparent dark:from-neutral-400/8"
       />
-      <h3 data-slot="popover-heading" class="relative font-medium text-neutral-800 dark:text-neutral-100">
+      <h3
+        data-slot="popover-heading"
+        class="relative font-medium text-neutral-800 dark:text-neutral-100"
+      >
         Keyboard shortcuts
       </h3>
       <dl class="relative mt-3 space-y-2 text-sm">
         <div class="flex justify-between gap-4">
-          <dt class="text-muted">
-            Save
-          </dt>
-          <dd class="font-mono text-neutral-700 dark:text-neutral-300">
-            ⌘ S
-          </dd>
+          <dt class="text-muted">Save</dt>
+          <dd class="font-mono text-neutral-700 dark:text-neutral-300">⌘ S</dd>
         </div>
         <div class="flex justify-between gap-4">
-          <dt class="text-muted">
-            Search
-          </dt>
-          <dd class="font-mono text-neutral-700 dark:text-neutral-300">
-            ⌘ K
-          </dd>
+          <dt class="text-muted">Search</dt>
+          <dd class="font-mono text-neutral-700 dark:text-neutral-300">⌘ K</dd>
         </div>
       </dl>
     </template>

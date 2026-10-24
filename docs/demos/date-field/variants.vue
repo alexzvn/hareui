@@ -5,6 +5,11 @@ import { DateField } from '@hareui/vue'
 <template>
   <div class="flex flex-col gap-4">
     <DateField class="w-[256px]" name="primary-date" label="Primary variant" variant="primary" />
-    <DateField class="w-[256px]" name="secondary-date" label="Secondary variant" variant="secondary" />
+    <DateField
+      class="w-[256px]"
+      name="secondary-date"
+      label="Secondary variant"
+      variant="secondary"
+    />
   </div>
 </template>

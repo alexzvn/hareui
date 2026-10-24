@@ -7,13 +7,7 @@ const color = ref(parseColor('#0485F7'))
 
 <template>
   <!-- Attributes other than aria-label/aria-labelledby fall through to the root element (HeroUI's `render` prop) -->
-  <ColorField
-    v-model="color"
-    class="w-[280px]"
-    data-custom="foo"
-    name="color"
-    label="Color"
-  >
+  <ColorField v-model="color" class="w-[280px]" data-custom="foo" name="color" label="Color">
     <template #prefix>
       <ColorSwatch :color="color" size="xs" />
     </template>

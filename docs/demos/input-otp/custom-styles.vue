@@ -1,7 +1,8 @@
 <script setup lang="ts">
 import { InputOtp, Link } from '@hareui/vue'
 
-const slotClass = 'rounded-lg border-border/80 bg-default data-[active=true]:border-accent/40 data-[active=true]:bg-accent-soft'
+const slotClass =
+  'rounded-lg border-border/80 bg-default data-[active=true]:border-accent/40 data-[active=true]:bg-accent-soft'
 </script>
 
 <template>
@@ -11,8 +12,6 @@ const slotClass = 'rounded-lg border-border/80 bg-default data-[active=true]:bor
       :groups="[3, 3]"
       :ui="{ slot: slotClass, separator: 'bg-border' }"
     />
-    <Link class="text-sm text-link" href="#">
-      Resend code
-    </Link>
+    <Link class="text-sm text-link" href="#"> Resend code </Link>
   </div>
 </template>

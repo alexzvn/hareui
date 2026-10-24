@@ -1,6 +1,7 @@
 import { mount } from '@vue/test-utils'
 import { describe, expect, it } from 'vitest'
 import { h } from 'vue'
+
 import DashboardToolbar from '../src/components/dashboard-toolbar/DashboardToolbar.vue'
 import { expectAccessible } from './a11y'
 
@@ -9,14 +10,17 @@ describe('DashboardToolbar', () => {
   it('passes axe with links and buttons in both groups, all of them reachable with Tab', async () => {
     const wrapper = mount(DashboardToolbar, {
       slots: {
-        left: () => h('nav', { 'aria-label': 'Sections' }, [h('a', { href: '#all' }, 'All'), h('a', { href: '#unread' }, 'Unread')]),
+        left: () =>
+          h('nav', { 'aria-label': 'Sections' }, [
+            h('a', { href: '#all' }, 'All'),
+            h('a', { href: '#unread' }, 'Unread'),
+          ]),
         right: () => h('button', { type: 'button' }, 'Filter'),
       },
       attachTo: document.body,
     })
     expect(wrapper.element.getAttribute('role')).toBeNull()
-    for (const el of wrapper.findAll('a, button'))
-      expect(el.attributes('tabindex')).toBeUndefined()
+    for (const el of wrapper.findAll('a, button')) expect(el.attributes('tabindex')).toBeUndefined()
     await expectAccessible(wrapper)
     wrapper.unmount()
   })

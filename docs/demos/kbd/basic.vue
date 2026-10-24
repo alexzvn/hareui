@@ -4,17 +4,9 @@ import { Kbd } from '@hareui/vue'
 
 <template>
   <div class="flex items-center gap-4">
-    <Kbd keys="command">
-      K
-    </Kbd>
-    <Kbd keys="shift">
-      P
-    </Kbd>
-    <Kbd keys="ctrl">
-      C
-    </Kbd>
-    <Kbd keys="option">
-      D
-    </Kbd>
+    <Kbd keys="command"> K </Kbd>
+    <Kbd keys="shift"> P </Kbd>
+    <Kbd keys="ctrl"> C </Kbd>
+    <Kbd keys="option"> D </Kbd>
   </div>
 </template>

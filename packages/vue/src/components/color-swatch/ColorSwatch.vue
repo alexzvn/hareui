@@ -1,5 +1,6 @@
 <script lang="ts">
 import type { Color } from 'reka-ui'
+
 import type { ComponentSlots, ComponentVariants } from '../../types/tv'
 import theme from './theme'
 
@@ -31,13 +32,14 @@ export interface ColorSwatchProps {
 
 export interface ColorSwatchSlots {
   /** Replaces the swatch content. Receives the resolved color as a CSS string and its alpha channel (0–1). */
-  default?: (props: { color: string, alpha: number }) => any
+  default?: (props: { color: string; alpha: number }) => any
 }
 </script>
 
 <script setup lang="ts">
 import { ColorSwatch as ColorSwatchPrimitive } from 'reka-ui'
 import { computed } from 'vue'
+
 import { useComponentUI } from '../../composables/useComponentUI'
 import { useColorPickerContext } from '../color-picker/context'
 
@@ -46,7 +48,7 @@ defineSlots<ColorSwatchSlots>()
 
 const ctx = useColorPickerContext()
 
-const resolvedColor = computed(() => props.color !== undefined ? props.color : ctx?.color.value)
+const resolvedColor = computed(() => (props.color !== undefined ? props.color : ctx?.color.value))
 
 const ui = useComponentUI('colorSwatch', theme, () => ({
   shape: props.shape,

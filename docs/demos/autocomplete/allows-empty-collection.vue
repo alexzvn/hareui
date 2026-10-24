@@ -13,8 +13,6 @@ import { Autocomplete } from '@hareui/vue'
     search-placeholder="Search states..."
     :items="[]"
   >
-    <template #empty>
-      No results found
-    </template>
+    <template #empty> No results found </template>
   </Autocomplete>
 </template>

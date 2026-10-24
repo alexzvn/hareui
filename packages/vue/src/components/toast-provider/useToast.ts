@@ -1,4 +1,5 @@
 import type { VNodeChild } from 'vue'
+
 import type { ToastAction, ToastContentValue } from './toastQueue'
 import { ToastQueue } from './toastQueue'
 
@@ -96,30 +97,46 @@ function createToastFunction(queue: ToastQueue<ToastContentValue>): ToastFunctio
 
   toastFn.update = (id, message, options) => {
     const content = createContent(message, options)
-    if (queue.update(id, content, createUpdateOptions(options)))
-      return id
+    if (queue.update(id, content, createUpdateOptions(options))) return id
     // A brand new toast has nothing to inherit, so it resolves the defaults instead.
     return queue.add(content, createAddOptions(options))
   }
 
-  toastFn.promise = (<T>(promise: Promise<T> | (() => Promise<T>), options: ToastPromiseOptions<T>): string => {
+  toastFn.promise = (<T>(
+    promise: Promise<T> | (() => Promise<T>),
+    options: ToastPromiseOptions<T>,
+  ): string => {
     const promiseFn = typeof promise === 'function' ? promise() : promise
     const loadingId = queue.add(createContent(options.loading, { isLoading: true }), { timeout: 0 })
 
     promiseFn
       .then((data) => {
-        const message = typeof options.success === 'function' ? (options.success as (data: T) => VNodeChild)(data) : options.success
-        toastFn.update(loadingId, message, { isLoading: false, timeout: DEFAULT_TOAST_TIMEOUT, variant: 'success' })
+        const message =
+          typeof options.success === 'function'
+            ? (options.success as (data: T) => VNodeChild)(data)
+            : options.success
+        toastFn.update(loadingId, message, {
+          isLoading: false,
+          timeout: DEFAULT_TOAST_TIMEOUT,
+          variant: 'success',
+        })
       })
       .catch((error: Error) => {
-        const message = typeof options.error === 'function' ? (options.error as (error: Error) => VNodeChild)(error) : options.error
-        toastFn.update(loadingId, message, { isLoading: false, timeout: DEFAULT_TOAST_TIMEOUT, variant: 'danger' })
+        const message =
+          typeof options.error === 'function'
+            ? (options.error as (error: Error) => VNodeChild)(error)
+            : options.error
+        toastFn.update(loadingId, message, {
+          isLoading: false,
+          timeout: DEFAULT_TOAST_TIMEOUT,
+          variant: 'danger',
+        })
       })
 
     return loadingId
   }) as ToastFunction['promise']
 
-  toastFn.close = key => queue.close(key)
+  toastFn.close = (key) => queue.close(key)
   toastFn.clear = () => queue.clear()
   toastFn.pauseAll = () => queue.pauseAll()
   toastFn.resumeAll = () => queue.resumeAll()

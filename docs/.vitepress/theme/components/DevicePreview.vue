@@ -1,6 +1,7 @@
 <script setup lang="ts">
 import { withBase } from 'vitepress'
 import { onBeforeUnmount, onMounted, ref, shallowRef, useTemplateRef } from 'vue'
+
 import { demoPreviewPath, isPreviewReadyMessage, type PreviewTheme } from '../demos'
 
 /**
@@ -12,17 +13,20 @@ import { demoPreviewPath, isPreviewReadyMessage, type PreviewTheme } from '../de
  *   on mount and stays invisible until `visible` and the preview page reports its demo rendered, so the box swaps from
  *   its inline render to the frame in one paint.
  */
-const props = withDefaults(defineProps<{
-  name: string
-  theme: PreviewTheme
-  mode: 'page' | 'inline'
-  /** Viewport width (px); `undefined` fills the row. */
-  width?: number
-  /** `page` mode: frame height (CSS length). */
-  height?: string
-  /** `inline` mode: show the iframe once it's ready. */
-  visible?: boolean
-}>(), { visible: true })
+const props = withDefaults(
+  defineProps<{
+    name: string
+    theme: PreviewTheme
+    mode: 'page' | 'inline'
+    /** Viewport width (px); `undefined` fills the row. */
+    width?: number
+    /** `page` mode: frame height (CSS length). */
+    height?: string
+    /** `inline` mode: show the iframe once it's ready. */
+    visible?: boolean
+  }>(),
+  { visible: true },
+)
 const emit = defineEmits<{ ready: [] }>()
 
 // The preview page takes its theme from the frame's `data-preview-theme` (and the design preset from this page's
@@ -31,7 +35,12 @@ const iframe = useTemplateRef<HTMLIFrameElement>('iframe')
 const src = shallowRef<string>()
 const ready = ref(false)
 function onMessage(event: MessageEvent) {
-  if (!iframe.value || event.source !== iframe.value.contentWindow || !isPreviewReadyMessage(event.data)) return
+  if (
+    !iframe.value ||
+    event.source !== iframe.value.contentWindow ||
+    !isPreviewReadyMessage(event.data)
+  )
+    return
   ready.value = true
   emit('ready')
 }
@@ -46,11 +55,14 @@ onMounted(() => {
   // `inline` frames mount on demand. `page` frames boot the demo only once they near the viewport: a page can hold a
   // dozen of them, and each is a whole app.
   if (props.mode === 'inline' || !root.value) return load()
-  visibilityObserver = new IntersectionObserver(([entry]) => {
-    if (!entry.isIntersecting) return
-    visibilityObserver?.disconnect()
-    load()
-  }, { rootMargin: '200px 0px' })
+  visibilityObserver = new IntersectionObserver(
+    ([entry]) => {
+      if (!entry.isIntersecting) return
+      visibilityObserver?.disconnect()
+      load()
+    },
+    { rootMargin: '200px 0px' },
+  )
   visibilityObserver.observe(root.value)
 })
 onBeforeUnmount(() => {
@@ -71,11 +83,18 @@ onBeforeUnmount(() => {
         :data-preview-theme="theme"
         :src="src"
         :title="`${name} preview`"
-        :class="['block size-full border-0 bg-transparent transition-opacity duration-150 ease-out motion-reduce:transition-none', !ready && 'opacity-0']"
+        :class="[
+          'block size-full border-0 bg-transparent transition-opacity duration-150 ease-out motion-reduce:transition-none',
+          !ready && 'opacity-0',
+        ]"
       />
     </div>
   </div>
-  <div v-else class="absolute inset-y-0 start-0" :style="{ width: width === undefined ? '100%' : `${width}px` }">
+  <div
+    v-else
+    class="absolute inset-y-0 start-0"
+    :style="{ width: width === undefined ? '100%' : `${width}px` }"
+  >
     <iframe
       v-if="src"
       ref="iframe"

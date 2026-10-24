@@ -61,9 +61,9 @@ export interface PaginationProps {
 
 export interface PaginationSlots {
   /** Info shown before the links (HeroUI's `Pagination.Summary`). */
-  summary?: (props: { page: number, total: number }) => any
+  summary?: (props: { page: number; total: number }) => any
   /** Replaces a page link's number. */
-  link?: (props: { page: number, active: boolean }) => any
+  link?: (props: { page: number; active: boolean }) => any
   /** Replaces the previous icon (HeroUI's `Pagination.PreviousIcon` children). */
   prevIcon?: () => any
   /** Replaces the next icon (HeroUI's `Pagination.NextIcon` children). */
@@ -78,6 +78,7 @@ export interface PaginationEmits {
 
 <script setup lang="ts">
 import { computed, ref } from 'vue'
+
 import { useComponentUI } from '../../composables/useComponentUI'
 
 // `page`/`prevDisabled`/`nextDisabled: undefined` keep the derived defaults when unbound.
@@ -97,35 +98,33 @@ const ui = useComponentUI('pagination', theme, () => ({ size: props.size }))
 const uncontrolled = ref(props.defaultPage)
 const current = computed(() => props.page ?? uncontrolled.value)
 function go(page: number) {
-  if (props.disabled || page < 1 || page > props.total || page === current.value)
-    return
+  if (props.disabled || page < 1 || page > props.total || page === current.value) return
   uncontrolled.value = page
   emit('update:page', page)
 }
 
 const entries = computed<PaginationEntry[]>(() => {
-  if (props.pages)
-    return props.pages
+  if (props.pages) return props.pages
   const all = Array.from({ length: props.total }, (_, i) => i + 1)
-  if (!props.ellipsis || props.total <= 1)
-    return all
+  if (!props.ellipsis || props.total <= 1) return all
   const page = current.value
   const list: PaginationEntry[] = [1]
-  if (page > 3)
-    list.push('ellipsis')
-  for (let i = Math.max(2, page - 1); i <= Math.min(props.total - 1, page + 1); i++)
-    list.push(i)
-  if (page < props.total - 2)
-    list.push('ellipsis')
+  if (page > 3) list.push('ellipsis')
+  for (let i = Math.max(2, page - 1); i <= Math.min(props.total - 1, page + 1); i++) list.push(i)
+  if (page < props.total - 2) list.push('ellipsis')
   list.push(props.total)
   return list
 })
 
 const isPrevDisabled = computed(() => props.disabled || (props.prevDisabled ?? current.value <= 1))
-const isNextDisabled = computed(() => props.disabled || (props.nextDisabled ?? current.value >= props.total))
+const isNextDisabled = computed(
+  () => props.disabled || (props.nextDisabled ?? current.value >= props.total),
+)
 
 const linkClass = computed(() => ui.value.link({ class: props.ui?.link }))
-const navClass = computed(() => ui.value.link({ class: [ui.value.nav(), props.ui?.link, props.ui?.nav] }))
+const navClass = computed(() =>
+  ui.value.link({ class: [ui.value.nav(), props.ui?.link, props.ui?.nav] }),
+)
 </script>
 
 <template>
@@ -135,7 +134,12 @@ const navClass = computed(() => ui.value.link({ class: [ui.value.nav(), props.ui
     role="navigation"
     :class="ui.base({ class: [props.ui?.base, props.class] })"
   >
-    <div v-if="$slots.summary" data-slot="pagination-summary" dir="auto" :class="ui.summary({ class: props.ui?.summary })">
+    <div
+      v-if="$slots.summary"
+      data-slot="pagination-summary"
+      dir="auto"
+      :class="ui.summary({ class: props.ui?.summary })"
+    >
       <slot name="summary" :page="current" :total="total" />
     </div>
     <ul data-slot="pagination-content" :class="ui.content({ class: props.ui?.content })">
@@ -149,10 +153,27 @@ const navClass = computed(() => ui.value.link({ class: [ui.value.nav(), props.ui
           :class="navClass"
           @click="go(current - 1)"
         >
-          <span aria-hidden="true" data-slot="pagination-previous-icon" :class="ui.icon({ class: props.ui?.icon })">
+          <span
+            aria-hidden="true"
+            data-slot="pagination-previous-icon"
+            :class="ui.icon({ class: props.ui?.icon })"
+          >
             <slot name="prevIcon">
-              <svg aria-hidden="true" fill="none" height="16" role="presentation" viewBox="0 0 16 16" width="16" xmlns="http://www.w3.org/2000/svg">
-                <path clip-rule="evenodd" d="M10.53 2.97a.75.75 0 0 1 0 1.06L6.56 8l3.97 3.97a.75.75 0 1 1-1.06 1.06l-4.5-4.5a.75.75 0 0 1 0-1.06l4.5-4.5a.75.75 0 0 1 1.06 0" fill="currentColor" fill-rule="evenodd" />
+              <svg
+                aria-hidden="true"
+                fill="none"
+                height="16"
+                role="presentation"
+                viewBox="0 0 16 16"
+                width="16"
+                xmlns="http://www.w3.org/2000/svg"
+              >
+                <path
+                  clip-rule="evenodd"
+                  d="M10.53 2.97a.75.75 0 0 1 0 1.06L6.56 8l3.97 3.97a.75.75 0 1 1-1.06 1.06l-4.5-4.5a.75.75 0 0 1 0-1.06l4.5-4.5a.75.75 0 0 1 1.06 0"
+                  fill="currentColor"
+                  fill-rule="evenodd"
+                />
               </svg>
             </slot>
           </span>
@@ -160,8 +181,19 @@ const navClass = computed(() => ui.value.link({ class: [ui.value.nav(), props.ui
         </button>
       </li>
       <template v-if="!hidePages">
-        <li v-for="(entry, index) in entries" :key="entry === 'ellipsis' ? `ellipsis-${index}` : entry" data-slot="pagination-item" :class="ui.item({ class: props.ui?.item })">
-          <span v-if="entry === 'ellipsis'" aria-hidden="true" data-slot="pagination-ellipsis" :class="ui.ellipsis({ class: props.ui?.ellipsis })">&hellip;</span>
+        <li
+          v-for="(entry, index) in entries"
+          :key="entry === 'ellipsis' ? `ellipsis-${index}` : entry"
+          data-slot="pagination-item"
+          :class="ui.item({ class: props.ui?.item })"
+        >
+          <span
+            v-if="entry === 'ellipsis'"
+            aria-hidden="true"
+            data-slot="pagination-ellipsis"
+            :class="ui.ellipsis({ class: props.ui?.ellipsis })"
+            >&hellip;</span
+          >
           <button
             v-else
             type="button"
@@ -189,10 +221,27 @@ const navClass = computed(() => ui.value.link({ class: [ui.value.nav(), props.ui
           @click="go(current + 1)"
         >
           <span v-if="nextLabel">{{ nextLabel }}</span>
-          <span aria-hidden="true" data-slot="pagination-next-icon" :class="ui.icon({ class: props.ui?.icon })">
+          <span
+            aria-hidden="true"
+            data-slot="pagination-next-icon"
+            :class="ui.icon({ class: props.ui?.icon })"
+          >
             <slot name="nextIcon">
-              <svg aria-hidden="true" fill="none" height="16" role="presentation" viewBox="0 0 16 16" width="16" xmlns="http://www.w3.org/2000/svg">
-                <path clip-rule="evenodd" d="M5.47 2.97a.75.75 0 0 1 1.06 0l4.5 4.5a.75.75 0 0 1 0 1.06l-4.5 4.5a.75.75 0 1 1-1.06-1.06L9.44 8 5.47 4.03a.75.75 0 0 1 0-1.06Z" fill="currentColor" fill-rule="evenodd" />
+              <svg
+                aria-hidden="true"
+                fill="none"
+                height="16"
+                role="presentation"
+                viewBox="0 0 16 16"
+                width="16"
+                xmlns="http://www.w3.org/2000/svg"
+              >
+                <path
+                  clip-rule="evenodd"
+                  d="M5.47 2.97a.75.75 0 0 1 1.06 0l4.5 4.5a.75.75 0 0 1 0 1.06l-4.5 4.5a.75.75 0 1 1-1.06-1.06L9.44 8 5.47 4.03a.75.75 0 0 1 0-1.06Z"
+                  fill="currentColor"
+                  fill-rule="evenodd"
+                />
               </svg>
             </slot>
           </span>

@@ -19,23 +19,17 @@ const dialogClass = [
     variant="blur"
     :ui="{ backdrop: 'bg-overlay/50 dark:bg-overlay/60', header: 'relative', body: 'relative' }"
   >
-    <Button variant="secondary">
-      Sign out
-    </Button>
+    <Button variant="secondary"> Sign out </Button>
     <template #body>
       <p class="text-muted">
         You will be signed out on this device. Unsaved work in
-        <strong class="text-foreground">Acme Workspace</strong> may be lost unless it
-        was saved to the cloud.
+        <strong class="text-foreground">Acme Workspace</strong> may be lost unless it was saved to
+        the cloud.
       </p>
     </template>
     <template #footer="{ close }">
-      <Button variant="tertiary" @click="close">
-        Stay signed in
-      </Button>
-      <Button @click="close">
-        Sign out
-      </Button>
+      <Button variant="tertiary" @click="close"> Stay signed in </Button>
+      <Button @click="close"> Sign out </Button>
     </template>
   </AlertDialog>
 </template>

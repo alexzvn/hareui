@@ -1,5 +1,6 @@
 <script lang="ts">
 import type { PrimitiveProps } from 'reka-ui'
+
 import type { ComponentSlots, ComponentUI, ComponentVariants } from '../../types/tv'
 import type { ButtonProps } from '../button/Button.vue'
 import type { DrawerProps } from '../drawer/Drawer.vue'
@@ -10,7 +11,9 @@ type Header = typeof theme
 
 export type HeaderMode = 'modal' | 'slideover' | 'drawer'
 
-type MenuProps = Omit<ModalProps, 'open' | 'defaultOpen'> | Omit<DrawerProps, 'open' | 'defaultOpen'>
+type MenuProps =
+  | Omit<ModalProps, 'open' | 'defaultOpen'>
+  | Omit<DrawerProps, 'open' | 'defaultOpen'>
 
 export interface HeaderProps {
   /**
@@ -108,7 +111,7 @@ export interface HeaderSlots {
   /** End area (actions). The toggle is rendered after it when `toggleSide="right"`. */
   right?: () => any
   /** Replaces the toggle button. */
-  toggle?: (props: { open: boolean, toggle: () => void, ui: ComponentUI<Header> }) => any
+  toggle?: (props: { open: boolean; toggle: () => void; ui: ComponentUI<Header> }) => any
   /** Rendered above the bar, inside the root element. */
   top?: () => any
   /** Rendered below the bar, inside the root element. */
@@ -129,8 +132,18 @@ export interface HeaderEmits {
 
 <script setup lang="ts">
 import { DialogTitle, Primitive, VisuallyHidden } from 'reka-ui'
-import { computed, getCurrentInstance, h, onBeforeUnmount, onMounted, ref, useTemplateRef, watch } from 'vue'
+import {
+  computed,
+  getCurrentInstance,
+  h,
+  onBeforeUnmount,
+  onMounted,
+  ref,
+  useTemplateRef,
+  watch,
+} from 'vue'
 import type { FunctionalComponent } from 'vue'
+
 import { useComponentUI } from '../../composables/useComponentUI'
 import { usePortal } from '../../composables/usePortal'
 import Button from '../button/Button.vue'
@@ -158,12 +171,16 @@ const slots = defineSlots<HeaderSlots>()
 const open = defineModel<boolean>('open', { default: false })
 const hidden = defineModel<boolean>('hidden', { default: false })
 
-const ui = useComponentUI('header', theme, () => ({ toggleSide: props.toggleSide, breakpoint: props.breakpoint, mode: props.mode }))
+const ui = useComponentUI('header', theme, () => ({
+  toggleSide: props.toggleSide,
+  breakpoint: props.breakpoint,
+  mode: props.mode,
+}))
 
 const hasMenu = computed(() => !!(slots.body || slots.content))
 const showToggle = computed(() => !!slots.toggle || (!!props.toggle && hasMenu.value))
 // Applied inline so it also reaches the menu's header, which is teleported out of the root.
-const heightStyle = computed(() => props.height ? { '--header-height': props.height } : undefined)
+const heightStyle = computed(() => (props.height ? { '--header-height': props.height } : undefined))
 
 function toggleOpen() {
   open.value = !open.value
@@ -188,26 +205,30 @@ watch(open, (value) => {
 
 // Bar pieces rendered twice (in the bar and in the menu's own header), hence functional components rather than template duplication.
 const Toggle: FunctionalComponent = () => {
-  if (slots.toggle)
-    return slots.toggle({ open: open.value, toggle: toggleOpen, ui: ui.value })
-  if (!showToggle.value)
-    return null
-  const options: Omit<ButtonProps, 'as' | 'iconOnly'> = typeof props.toggle === 'object' ? props.toggle : {}
-  return h(Button, {
-    'variant': 'ghost',
-    ...options,
-    'iconOnly': true,
-    'aria-label': open.value ? props.closeLabel : props.openLabel,
-    'aria-expanded': open.value,
-    'data-slot': 'header-toggle',
-    'class': ui.value.toggle({ class: [props.ui?.toggle, options.class] }),
-    'onClick': toggleOpen,
-  }, () => h('span', {
-    'aria-hidden': 'true',
-    'data-slot': 'header-toggle-icon',
-    'data-open': iconOpen.value ? 'true' : 'false',
-    'class': ui.value.toggleIcon({ class: props.ui?.toggleIcon }),
-  }))
+  if (slots.toggle) return slots.toggle({ open: open.value, toggle: toggleOpen, ui: ui.value })
+  if (!showToggle.value) return null
+  const options: Omit<ButtonProps, 'as' | 'iconOnly'> =
+    typeof props.toggle === 'object' ? props.toggle : {}
+  return h(
+    Button,
+    {
+      variant: 'ghost',
+      ...options,
+      iconOnly: true,
+      'aria-label': open.value ? props.closeLabel : props.openLabel,
+      'aria-expanded': open.value,
+      'data-slot': 'header-toggle',
+      class: ui.value.toggle({ class: [props.ui?.toggle, options.class] }),
+      onClick: toggleOpen,
+    },
+    () =>
+      h('span', {
+        'aria-hidden': 'true',
+        'data-slot': 'header-toggle-icon',
+        'data-open': iconOpen.value ? 'true' : 'false',
+        class: ui.value.toggleIcon({ class: props.ui?.toggleIcon }),
+      }),
+  )
 }
 
 // With vue-router installed (a global `RouterLink`), a path `to` navigates client-side and the route drives `autoClose`.
@@ -215,24 +236,37 @@ const instance = getCurrentInstance()
 const RouterLink = instance?.appContext.components.RouterLink
 
 const titleAttrs = computed(() => ({
-  'to': props.to,
+  to: props.to,
   'aria-label': props.title.trim(),
   'data-slot': 'header-title',
-  'class': ui.value.title({ class: props.ui?.title }),
+  class: ui.value.title({ class: props.ui?.title }),
 }))
-const titleContent = () => slots.title ? slots.title() : props.title
+const titleContent = () => (slots.title ? slots.title() : props.title)
 
-const Left: FunctionalComponent = () => h('div', { 'data-slot': 'header-left', 'class': ui.value.left({ class: props.ui?.left }) }, [
-  props.toggleSide === 'left' ? h(Toggle) : null,
-  slots.left
-    ? slots.left()
-    : (RouterLink && props.to.startsWith('/') ? h(RouterLink, titleAttrs.value, () => titleContent()) : h('a', { 'aria-label': titleAttrs.value['aria-label'], 'data-slot': 'header-title', 'class': titleAttrs.value.class, 'href': props.to }, titleContent())),
-])
+const Left: FunctionalComponent = () =>
+  h('div', { 'data-slot': 'header-left', class: ui.value.left({ class: props.ui?.left }) }, [
+    props.toggleSide === 'left' ? h(Toggle) : null,
+    slots.left
+      ? slots.left()
+      : RouterLink && props.to.startsWith('/')
+        ? h(RouterLink, titleAttrs.value, () => titleContent())
+        : h(
+            'a',
+            {
+              'aria-label': titleAttrs.value['aria-label'],
+              'data-slot': 'header-title',
+              class: titleAttrs.value.class,
+              href: props.to,
+            },
+            titleContent(),
+          ),
+  ])
 
-const Right: FunctionalComponent = () => h('div', { 'data-slot': 'header-right', 'class': ui.value.right({ class: props.ui?.right }) }, [
-  slots.right?.(),
-  props.toggleSide === 'right' ? h(Toggle) : null,
-])
+const Right: FunctionalComponent = () =>
+  h('div', { 'data-slot': 'header-right', class: ui.value.right({ class: props.ui?.right }) }, [
+    slots.right?.(),
+    props.toggleSide === 'right' ? h(Toggle) : null,
+  ])
 
 // --- Mobile menu --------------------------------------------------------------------------------
 
@@ -254,23 +288,32 @@ const anchorStyle = ref<Record<string, string>>({})
 // The bar's hide-on-scroll offset (`translate`), so the region is where the bar rests, not where it is mid-slide.
 function barOffsetY(el: HTMLElement) {
   const y = getComputedStyle(el).translate.split(' ')[1]
-  if (!y)
-    return 0
+  if (!y) return 0
   const value = Number.parseFloat(y)
-  if (Number.isNaN(value))
-    return 0
-  return y.endsWith('%') ? value * el.offsetHeight / 100 : value
+  if (Number.isNaN(value)) return 0
+  return y.endsWith('%') ? (value * el.offsetHeight) / 100 : value
 }
 
 // The box `position: fixed` layers inside the portal target resolve against: the viewport, or the nearest ancestor that
 // becomes their containing block (a transform, filter or layout/paint containment, e.g. an app portalling into a panel).
-const transformProps = ['transform', 'translate', 'scale', 'rotate', 'perspective', 'filter', 'backdropFilter'] as const
+const transformProps = [
+  'transform',
+  'translate',
+  'scale',
+  'rotate',
+  'perspective',
+  'filter',
+  'backdropFilter',
+] as const
 function fixedContainingBlock(from: Element | null | undefined): HTMLElement | null {
   for (let el = from; el && el !== document.documentElement; el = el.parentElement) {
     const style = getComputedStyle(el)
     // Unsupported properties read as empty, so only an explicit non-`none` value counts.
-    if (transformProps.some(key => style[key] && style[key] !== 'none')
-      || /layout|paint|strict|content/.test(style.contain ?? '') || /transform|perspective|filter/.test(style.willChange ?? '')) {
+    if (
+      transformProps.some((key) => style[key] && style[key] !== 'none') ||
+      /layout|paint|strict|content/.test(style.contain ?? '') ||
+      /transform|perspective|filter/.test(style.willChange ?? '')
+    ) {
       return el as HTMLElement
     }
   }
@@ -279,8 +322,7 @@ function fixedContainingBlock(from: Element | null | undefined): HTMLElement | n
 
 function updateAnchor() {
   const el = root.value?.$el
-  if (!el || !bar.value)
-    return
+  if (!el || !bar.value) return
   const box = el.getBoundingClientRect()
   const viewportHeight = window.visualViewport?.height ?? window.innerHeight
   // The region runs from the bar's top edge to the bottom of the viewport, clamped to the containing block when there is one.
@@ -308,8 +350,7 @@ function updateAnchor() {
 let anchorFrame = 0
 let anchorScheduled = false
 function scheduleAnchorUpdate() {
-  if (anchorScheduled)
-    return
+  if (anchorScheduled) return
   anchorScheduled = true
   anchorFrame = requestAnimationFrame(() => {
     anchorScheduled = false
@@ -327,14 +368,17 @@ function stopAnchorTracking() {
 }
 
 // Measured before the menu renders (`flush: 'sync'`), so its first frame is already in place.
-watch(open, (value) => {
-  stopAnchorTracking()
-  if (!value)
-    return
-  updateAnchor()
-  window.addEventListener('resize', scheduleAnchorUpdate, { passive: true })
-  window.addEventListener('scroll', scheduleAnchorUpdate, { capture: true, passive: true })
-}, { flush: 'sync' })
+watch(
+  open,
+  (value) => {
+    stopAnchorTracking()
+    if (!value) return
+    updateAnchor()
+    window.addEventListener('resize', scheduleAnchorUpdate, { passive: true })
+    window.addEventListener('scroll', scheduleAnchorUpdate, { capture: true, passive: true })
+  },
+  { flush: 'sync' },
+)
 
 const modalProps = computed((): ModalMenuProps => {
   // In `modal` mode `menu` holds Modal props (the prop type is the union of both menus).
@@ -374,44 +418,66 @@ const drawerProps = computed((): DrawerMenuProps => {
 })
 
 function onMenuClick(event: MouseEvent) {
-  if (props.autoClose && (event.target as HTMLElement).closest('a[href]'))
-    open.value = false
+  if (props.autoClose && (event.target as HTMLElement).closest('a[href]')) open.value = false
 }
 
 const MenuContent: FunctionalComponent<{ close: () => void }> = ({ close }) => {
-  if (slots.content)
-    return slots.content({ close })
+  if (slots.content) return slots.content({ close })
   return [
     h(VisuallyHidden, { asChild: true }, () => h(DialogTitle, null, () => props.menuTitle)),
     props.mode === 'drawer'
       ? null
-      : h('div', { 'data-slot': 'header-menu-header', 'style': heightStyle.value, 'class': ui.value.header({ class: props.ui?.header }), 'onClick': onMenuClick }, [
-          h('div', { 'data-slot': 'header-menu-container', 'class': ui.value.container({ class: props.ui?.container }) }, [h(Left), h(Right)]),
-        ]),
-    h('div', { 'data-slot': 'header-menu-body', 'class': ui.value.body({ class: props.ui?.body }), 'onClick': onMenuClick }, slots.body?.()),
+      : h(
+          'div',
+          {
+            'data-slot': 'header-menu-header',
+            style: heightStyle.value,
+            class: ui.value.header({ class: props.ui?.header }),
+            onClick: onMenuClick,
+          },
+          [
+            h(
+              'div',
+              {
+                'data-slot': 'header-menu-container',
+                class: ui.value.container({ class: props.ui?.container }),
+              },
+              [h(Left), h(Right)],
+            ),
+          ],
+        ),
+    h(
+      'div',
+      {
+        'data-slot': 'header-menu-body',
+        class: ui.value.body({ class: props.ui?.body }),
+        onClick: onMenuClick,
+      },
+      slots.body?.(),
+    ),
   ]
 }
 
-watch(() => instance?.appContext.config.globalProperties.$route?.fullPath, () => closeOnNavigation())
+watch(
+  () => instance?.appContext.config.globalProperties.$route?.fullPath,
+  () => closeOnNavigation(),
+)
 
 function closeOnNavigation() {
-  if (props.autoClose)
-    open.value = false
+  if (props.autoClose) open.value = false
 }
 
 // Reka locks page scroll on every modal overlay. With `shouldBlockScroll: false` the body styles it applies are put
 // back as they land (it sets them a tick after the overlay mounts, hence the observer rather than a one-off reset).
-let bodyStyles: { overflow: string, paddingRight: string, marginRight: string } | null = null
+let bodyStyles: { overflow: string; paddingRight: string; marginRight: string } | null = null
 let scrollLockObserver: MutationObserver | null = null
 
 function restoreBodyStyles() {
-  if (!bodyStyles)
-    return
+  if (!bodyStyles) return
   // Only write on a difference: writing an identical value still queues a mutation record, which would loop the observer.
   const { style } = document.body
   for (const key of ['overflow', 'paddingRight', 'marginRight'] as const) {
-    if (style[key] !== bodyStyles[key])
-      style[key] = bodyStyles[key]
+    if (style[key] !== bodyStyles[key]) style[key] = bodyStyles[key]
   }
 }
 
@@ -420,17 +486,20 @@ function stopRestoringBodyStyles() {
   scrollLockObserver = null
 }
 
-watch(open, (value) => {
-  if (value) {
-    const { overflow, paddingRight, marginRight } = document.body.style
-    bodyStyles = { overflow, paddingRight, marginRight }
-  }
-}, { flush: 'sync' })
+watch(
+  open,
+  (value) => {
+    if (value) {
+      const { overflow, paddingRight, marginRight } = document.body.style
+      bodyStyles = { overflow, paddingRight, marginRight }
+    }
+  },
+  { flush: 'sync' },
+)
 
 watch([open, () => props.shouldBlockScroll], ([isOpen, block]) => {
   stopRestoringBodyStyles()
-  if (!isOpen || block)
-    return
+  if (!isOpen || block) return
   scrollLockObserver = new MutationObserver(restoreBodyStyles)
   scrollLockObserver.observe(document.body, { attributes: true, attributeFilter: ['style'] })
   restoreBodyStyles()
@@ -445,15 +514,16 @@ let frameScheduled = false
 
 function resolveScroller(): HTMLElement | Window {
   const target = props.scrollTarget
-  if (typeof target === 'string')
-    return document.querySelector<HTMLElement>(target) ?? window
-  if (target)
-    return target
+  if (typeof target === 'string') return document.querySelector<HTMLElement>(target) ?? window
+  if (target) return target
   // The nearest scrollable ancestor: that is what a sticky bar sticks to.
-  for (let el = root.value?.$el?.parentElement; el && el !== document.body && el !== document.documentElement; el = el.parentElement) {
+  for (
+    let el = root.value?.$el?.parentElement;
+    el && el !== document.body && el !== document.documentElement;
+    el = el.parentElement
+  ) {
     const { overflowY } = getComputedStyle(el)
-    if (overflowY === 'auto' || overflowY === 'scroll' || overflowY === 'overlay')
-      return el
+    if (overflowY === 'auto' || overflowY === 'scroll' || overflowY === 'overlay') return el
   }
   return window
 }
@@ -468,17 +538,13 @@ function update() {
   const delta = y - lastY
   lastY = y
   // Keep the bar while the menu is open, and whenever the page sits within its own height of the top.
-  if (open.value || y <= (root.value?.$el?.offsetHeight ?? 0))
-    hidden.value = false
-  else if (delta > 0)
-    hidden.value = true
-  else if (delta < 0)
-    hidden.value = false
+  if (open.value || y <= (root.value?.$el?.offsetHeight ?? 0)) hidden.value = false
+  else if (delta > 0) hidden.value = true
+  else if (delta < 0) hidden.value = false
 }
 
 function onScroll() {
-  if (frameScheduled)
-    return
+  if (frameScheduled) return
   frameScheduled = true
   frame = requestAnimationFrame(update)
 }
@@ -500,8 +566,7 @@ function startScrollTracking() {
 }
 
 onMounted(() => {
-  if (props.hideOnScroll)
-    startScrollTracking()
+  if (props.hideOnScroll) startScrollTracking()
   window.addEventListener('popstate', closeOnNavigation)
   window.addEventListener('hashchange', closeOnNavigation)
 })
@@ -516,24 +581,24 @@ onBeforeUnmount(() => {
 })
 
 watch(open, (value) => {
-  if (value)
-    hidden.value = false
+  if (value) hidden.value = false
 })
 
-watch(() => [props.hideOnScroll, props.scrollTarget] as const, ([enabled]) => {
-  if (enabled) {
-    startScrollTracking()
-  }
-  else {
-    stopScrollTracking()
-    hidden.value = false
-  }
-})
+watch(
+  () => [props.hideOnScroll, props.scrollTarget] as const,
+  ([enabled]) => {
+    if (enabled) {
+      startScrollTracking()
+    } else {
+      stopScrollTracking()
+      hidden.value = false
+    }
+  },
+)
 
 // A bar that holds the keyboard focus must not slide away.
 function onFocusIn() {
-  if (hidden.value)
-    hidden.value = false
+  if (hidden.value) hidden.value = false
 }
 </script>
 
@@ -551,7 +616,11 @@ function onFocusIn() {
   >
     <slot name="top" />
 
-    <div ref="bar" data-slot="header-container" :class="ui.container({ class: props.ui?.container })">
+    <div
+      ref="bar"
+      data-slot="header-container"
+      :class="ui.container({ class: props.ui?.container })"
+    >
       <Left />
 
       <div data-slot="header-center" :class="ui.center({ class: props.ui?.center })">

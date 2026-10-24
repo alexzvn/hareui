@@ -10,17 +10,18 @@ HareUI uses CSS variables for color/spacing tokens and [tailwind-variants](https
 HareUI's theming system is built on [Tailwind CSS v4](https://tailwindcss.com/docs/theme). The `@hareui/vue` stylesheet declares semantic CSS variables (`--accent`, `--surface`, `--radius`, …) for light and dark themes, maps them to Tailwind's `@theme inline` tokens, and each component's `.vue` file consumes them through a tailwind-variants slot object.
 
 **Naming pattern:**
+
 - Colors without a suffix are backgrounds (e.g. `--accent`)
 - Colors with `-foreground` are for text on that background (e.g. `--accent-foreground`)
 
 ## Two Ways to Customize
 
-| Layer | Scope | Mechanism |
-|---|---|---|
-| CSS variables | Global, affects every component that reads the token | Override in `:root` / `.dark` |
-| `createHareUI({ ui })` | Global, affects one component's slot classes/variants | App-level Vue plugin config |
-| `:ui` prop | Single instance | Prop on the component |
-| `class` prop | Single instance, root slot only | Prop on the component |
+| Layer                  | Scope                                                 | Mechanism                     |
+| ---------------------- | ----------------------------------------------------- | ----------------------------- |
+| CSS variables          | Global, affects every component that reads the token  | Override in `:root` / `.dark` |
+| `createHareUI({ ui })` | Global, affects one component's slot classes/variants | App-level Vue plugin config   |
+| `:ui` prop             | Single instance                                       | Prop on the component         |
+| `class` prop           | Single instance, root slot only                       | Prop on the component         |
 
 ## Overriding CSS Variables
 
@@ -28,8 +29,8 @@ Add overrides after the `@hareui/vue` import:
 
 ```css
 /* src/style.css */
-@import "tailwindcss";
-@import "@hareui/vue";
+@import 'tailwindcss';
+@import '@hareui/vue';
 
 :root {
   /* Override any color variable */
@@ -49,24 +50,27 @@ See [Colors](/docs/getting-started/colors) for the complete token reference and 
 Pass a `ui` config to `createHareUI()` to override a component's slot classes, variant classes, or default variants app-wide. Keys match the component's theme name (`button`, `card`, `checkbox`, …); values follow the same `slots` / `variants` / `defaultVariants` shape as the component's internal theme file.
 
 ```ts
+import { createHareUI } from '@hareui/vue'
 // main.ts
 import { createApp } from 'vue'
-import { createHareUI } from '@hareui/vue'
+
 import App from './App.vue'
 
 createApp(App)
-  .use(createHareUI({
-    ui: {
-      button: {
-        // Override the base slot class
-        slots: { base: 'uppercase tracking-wider' },
-        // Override one variant's class
-        variants: { variant: { primary: 'shadow-lg' } },
-        // Change the default variant
-        defaultVariants: { size: 'lg' },
+  .use(
+    createHareUI({
+      ui: {
+        button: {
+          // Override the base slot class
+          slots: { base: 'uppercase tracking-wider' },
+          // Override one variant's class
+          variants: { variant: { primary: 'shadow-lg' } },
+          // Change the default variant
+          defaultVariants: { size: 'lg' },
+        },
       },
-    },
-  }))
+    }),
+  )
   .mount('#app')
 ```
 
@@ -82,9 +86,7 @@ Use the `:ui` prop for per-slot overrides, or `class` for the root slot, on one 
   <Button class="rounded-none">Square corners</Button>
 
   <!-- Per-slot override -->
-  <Button :ui="{ base: 'uppercase', spinner: 'text-white' }">
-    Shout
-  </Button>
+  <Button :ui="{ base: 'uppercase', spinner: 'text-white' }"> Shout </Button>
 </template>
 ```
 
@@ -117,13 +119,13 @@ Add your own semantic colors to the theme:
 ```css
 /* Define in both light and dark themes */
 :root,
-[data-theme="light"] {
+[data-theme='light'] {
   --info: oklch(0.6 0.15 210);
   --info-foreground: oklch(0.98 0 0);
 }
 
 .dark,
-[data-theme="dark"] {
+[data-theme='dark'] {
   --info: oklch(0.7 0.12 210);
   --info-foreground: oklch(0.15 0 0);
 }
@@ -284,7 +286,6 @@ For a complete reference, see [Colors](/docs/getting-started/colors) and `packag
 }
 `" />
 
-
 Form controls rely on `--field-*` theme variables. Hover, focus, and border variants are calculated in `variables.css` and mapped to Tailwind in `theme.css` (e.g. `--color-field-hover: var(--field-hover)`). Override `--field-background`, `--field-hover`, and related tokens in your theme to restyle `Input`, `TextField`, `Checkbox`, `Switch`, and `RadioGroup` without affecting surfaces like `Card` or `Button`.
 
 ## Scrollbars
@@ -293,32 +294,30 @@ HareUI applies a shared scrollbar style to component scroll areas (currently `Mo
 
 **Modes** — set `data-scrollbar` on `<html>`, a component root, or a scroll slot:
 
-| Mode | `data-scrollbar` | Behavior |
-|------|------------------|----------|
-| HareUI thin | *(unset)* or `thin` | Thin thumb from theme tokens |
-| OS / browser | `default` | Native scrollbars (`auto`) |
-| Hidden | `none` | No visible scrollbar (`scrollbar-width: none`) |
+| Mode         | `data-scrollbar`    | Behavior                                       |
+| ------------ | ------------------- | ---------------------------------------------- |
+| HareUI thin  | _(unset)_ or `thin` | Thin thumb from theme tokens                   |
+| OS / browser | `default`           | Native scrollbars (`auto`)                     |
+| Hidden       | `none`              | No visible scrollbar (`scrollbar-width: none`) |
 
 ```html
 <!-- Native scrollbars everywhere -->
 <html data-scrollbar="default">
-
-<!-- Hide scrollbars in one subtree -->
-<div data-scrollbar="none">
-  ...
-</div>
+  <!-- Hide scrollbars in one subtree -->
+  <div data-scrollbar="none">...</div>
+</html>
 ```
 
 **Theme variables** — defined in the light and dark theme blocks in `variables.css`:
 
-| Variable | Description |
-|----------|-------------|
-| `--scrollbar-thumb` | Thumb color (default: 15% `--foreground` via `color-mix`) |
-| `--scrollbar-track` | Track color (default: `transparent`) |
-| `--scrollbar-gutter` | Gutter (default: `auto`) |
-| `--scrollbar-width` | `scrollbar-width` (default: `thin`) |
-| `--scrollbar-color` | `scrollbar-color` (default: thumb + track) |
-| `--scrollbar` | Legacy alias of `--scrollbar-thumb` |
+| Variable             | Description                                               |
+| -------------------- | --------------------------------------------------------- |
+| `--scrollbar-thumb`  | Thumb color (default: 15% `--foreground` via `color-mix`) |
+| `--scrollbar-track`  | Track color (default: `transparent`)                      |
+| `--scrollbar-gutter` | Gutter (default: `auto`)                                  |
+| `--scrollbar-width`  | `scrollbar-width` (default: `thin`)                       |
+| `--scrollbar-color`  | `scrollbar-color` (default: thumb + track)                |
+| `--scrollbar`        | Legacy alias of `--scrollbar-thumb`                       |
 
 **Customize globally:**
 
@@ -344,13 +343,13 @@ HareUI applies a shared scrollbar style to component scroll areas (currently `Mo
 By default, HareUI uses accessible soft foreground colors that mix the semantic color with the foreground for better contrast. If you prefer more saturated, vibrant soft foreground colors, add the `data-vibrant-palette` attribute to your root element:
 
 ```html
-<html data-vibrant-palette="true">
+<html data-vibrant-palette="true"></html>
 ```
 
 This switches all `*-soft-foreground` variables (accent, success, warning, danger) to use 92% of the semantic color with only 8% foreground mixed in — closer to the raw color but with a slight contrast boost.
 
-| Mode | Accessible (default) | Vibrant |
-|------|----------------------|---------|
+| Mode            | Accessible (default)                         | Vibrant                               |
+| --------------- | -------------------------------------------- | ------------------------------------- |
 | Soft foreground | `color-mix(color 70-80%, foreground 30-40%)` | `color-mix(color 92%, foreground 8%)` |
 
 :::: warning

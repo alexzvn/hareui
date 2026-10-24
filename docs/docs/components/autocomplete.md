@@ -25,33 +25,45 @@ Autocomplete is a [Select](/docs/components/select) whose popover starts with a 
 ```vue
 <template>
   <Autocomplete label="State" :items="items" clearable>
-    <template #label />                                  <!-- Label content -->
-    <template #value="{ selectedItems, isPlaceholder, text }" /> <!-- trigger value -->
-    <template #clear />                                  <!-- clear button content (with `clearable`) -->
-    <template #indicator="{ open }" />                   <!-- trigger indicator (default: chevron) -->
-    <template #description />                            <!-- Description content -->
-    <template #error="validation" />                     <!-- FieldError content -->
-    <template #search-trailing="{ inputValue }" />       <!-- after the search input -->
-    <template #item-leading="{ item, selected }" />      <!-- ListBox item slots -->
-    <template #item-indicator="{ selected }" />          <!-- option checkmark -->
-    <template #section-label="{ section }" />            <!-- section header -->
-    <template #empty />                                  <!-- no matching option -->
-    <template #loading />                                <!-- with `loading`: after the last option -->
+    <template #label />
+    <!-- Label content -->
+    <template #value="{ selectedItems, isPlaceholder, text }" />
+    <!-- trigger value -->
+    <template #clear />
+    <!-- clear button content (with `clearable`) -->
+    <template #indicator="{ open }" />
+    <!-- trigger indicator (default: chevron) -->
+    <template #description />
+    <!-- Description content -->
+    <template #error="validation" />
+    <!-- FieldError content -->
+    <template #search-trailing="{ inputValue }" />
+    <!-- after the search input -->
+    <template #item-leading="{ item, selected }" />
+    <!-- ListBox item slots -->
+    <template #item-indicator="{ selected }" />
+    <!-- option checkmark -->
+    <template #section-label="{ section }" />
+    <!-- section header -->
+    <template #empty />
+    <!-- no matching option -->
+    <template #loading />
+    <!-- with `loading`: after the last option -->
   </Autocomplete>
 </template>
 ```
 
-| `ui` key | `data-slot` | Element |
-|---|---|---|
-| `base` | `autocomplete` | root `<div>` |
-| `label` | `label` | Label |
-| `trigger` | `autocomplete-trigger` | `<div role="group">` holding the value, clear button and indicator button |
-| `value` | `autocomplete-value` | `<span>` inside the trigger |
-| `clearButton` | `autocomplete-clear-button` | `<button>` (with `clearable`) |
-| `indicator` | `autocomplete-indicator` / `autocomplete-default-indicator` | chevron |
-| `popover` | `autocomplete-popover` | popover |
-| `searchField`, `searchGroup`, `searchIcon`, `searchInput`, `searchClearButton` | `search-field*` | the search field (with `search`) |
-| `listBox` | `list-box` | the option list |
+| `ui` key                                                                       | `data-slot`                                                 | Element                                                                   |
+| ------------------------------------------------------------------------------ | ----------------------------------------------------------- | ------------------------------------------------------------------------- |
+| `base`                                                                         | `autocomplete`                                              | root `<div>`                                                              |
+| `label`                                                                        | `label`                                                     | Label                                                                     |
+| `trigger`                                                                      | `autocomplete-trigger`                                      | `<div role="group">` holding the value, clear button and indicator button |
+| `value`                                                                        | `autocomplete-value`                                        | `<span>` inside the trigger                                               |
+| `clearButton`                                                                  | `autocomplete-clear-button`                                 | `<button>` (with `clearable`)                                             |
+| `indicator`                                                                    | `autocomplete-indicator` / `autocomplete-default-indicator` | chevron                                                                   |
+| `popover`                                                                      | `autocomplete-popover`                                      | popover                                                                   |
+| `searchField`, `searchGroup`, `searchIcon`, `searchInput`, `searchClearButton` | `search-field*`                                             | the search field (with `search`)                                          |
+| `listBox`                                                                      | `list-box`                                                  | the option list                                                           |
 
 ### Typing items
 
@@ -188,19 +200,21 @@ Set `:search="false"` to drop the search field; the list then takes focus as in 
 ### Global Configuration
 
 ```ts
-app.use(createHareUI({
-  ui: {
-    autocomplete: {
-      slots: {
-        trigger: 'rounded-lg border border-border bg-surface p-2',
-        value: 'text-current',
-        clearButton: 'text-muted hover:text-foreground',
-        indicator: 'text-muted',
-        popover: 'rounded-lg border border-border bg-surface p-2',
+app.use(
+  createHareUI({
+    ui: {
+      autocomplete: {
+        slots: {
+          trigger: 'rounded-lg border border-border bg-surface p-2',
+          value: 'text-current',
+          clearButton: 'text-muted hover:text-foreground',
+          indicator: 'text-muted',
+          popover: 'rounded-lg border border-border bg-surface p-2',
+        },
       },
     },
-  },
-}))
+  }),
+)
 ```
 
 ## Styling Reference

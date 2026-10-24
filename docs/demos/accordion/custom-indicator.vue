@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import type { AccordionItem, ExpandedValue } from '@hareui/vue'
-import { Icon } from '@iconify/vue'
 import { Accordion } from '@hareui/vue'
+import { Icon } from '@iconify/vue'
 import { ref } from 'vue'
 
 interface IndicatorItem extends AccordionItem {
@@ -12,19 +12,22 @@ const items: IndicatorItem[] = [
   {
     value: '1',
     label: 'Using Plus/Minus Icon',
-    content: 'This accordion uses a plus icon that transforms when expanded. The icon automatically rotates 45 degrees to form an X.',
+    content:
+      'This accordion uses a plus icon that transforms when expanded. The icon automatically rotates 45 degrees to form an X.',
   },
   {
     value: '2',
     label: 'Using Caret Icon',
     icon: 'gravity-ui:circle-chevron-down',
-    content: 'This item uses a caret icon for the indicator. The rotation animation is applied automatically.',
+    content:
+      'This item uses a caret icon for the indicator. The rotation animation is applied automatically.',
   },
   {
     value: '3',
     label: 'Using Arrow Icon',
     icon: 'gravity-ui:chevrons-down',
-    content: 'This item uses an arrow icon. Any icon you pass will receive the rotation animation when the item expands.',
+    content:
+      'This item uses an arrow icon. Any icon you pass will receive the rotation animation when the item expands.',
   },
 ]
 

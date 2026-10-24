@@ -1,5 +1,6 @@
 <script lang="ts">
 import type { Color } from 'reka-ui'
+
 import type { PortalTarget } from '../../config'
 import type { ComponentSlots } from '../../types/tv'
 import type { ColorSwatchPickerItem } from '../color-swatch-picker/ColorSwatchPicker.vue'
@@ -61,9 +62,9 @@ export interface CellColorPickerSlots {
   /** Row label content. Replaces `label`. */
   label?: () => any
   /** Value text. Defaults to the color as uppercase hex, e.g. `#3B82F6`. */
-  value?: (props: { color: Color, hex: string }) => any
+  value?: (props: { color: Color; hex: string }) => any
   /** Popover content. Defaults to the presets, a saturation/brightness area and a hue slider. */
-  default?: (props: { color: Color, close: () => void }) => any
+  default?: (props: { color: Color; close: () => void }) => any
 }
 
 export interface CellColorPickerEmits {
@@ -76,13 +77,14 @@ export interface CellColorPickerEmits {
 
 <script setup lang="ts">
 import { colorToString } from 'reka-ui'
+
 import { useComponentUI } from '../../composables/useComponentUI'
-import { useFieldsetDisabled } from '../fieldset/context'
 import ColorArea from '../color-area/ColorArea.vue'
 import ColorPicker from '../color-picker/ColorPicker.vue'
 import ColorSlider from '../color-slider/ColorSlider.vue'
-import ColorSwatch from '../color-swatch/ColorSwatch.vue'
 import ColorSwatchPicker from '../color-swatch-picker/ColorSwatchPicker.vue'
+import ColorSwatch from '../color-swatch/ColorSwatch.vue'
+import { useFieldsetDisabled } from '../fieldset/context'
 
 // `open: undefined` keeps an absent `open` uncontrolled
 const props = withDefaults(defineProps<CellColorPickerProps>(), {
@@ -105,7 +107,11 @@ const toHex = (color: Color) => colorToString(color, 'hex').slice(0, 7).toUpperC
 </script>
 
 <template>
-  <div data-slot="cell-color-picker" :data-disabled="disabled ? 'true' : undefined" :class="ui.base({ class: [props.ui?.base, props.class] })">
+  <div
+    data-slot="cell-color-picker"
+    :data-disabled="disabled ? 'true' : undefined"
+    :class="ui.base({ class: [props.ui?.base, props.class] })"
+  >
     <ColorPicker
       :model-value="modelValue"
       :default-value="defaultValue"
@@ -129,7 +135,10 @@ const toHex = (color: Color) => colorToString(color, 'hex').slice(0, 7).toUpperC
             {{ label }}
           </slot>
         </span>
-        <span data-slot="cell-color-picker-value-display" :class="ui.valueDisplay({ class: props.ui?.valueDisplay })">
+        <span
+          data-slot="cell-color-picker-value-display"
+          :class="ui.valueDisplay({ class: props.ui?.valueDisplay })"
+        >
           <slot name="value" :color="color" :hex="toHex(color)">
             {{ toHex(color) }}
           </slot>
@@ -146,8 +155,20 @@ const toHex = (color: Color) => colorToString(color, 'hex').slice(0, 7).toUpperC
             :ui="{ indicator: 'hidden' }"
             :class="ui.presets({ class: props.ui?.presets })"
           />
-          <ColorArea aria-label="Color area" class="max-w-full" color-space="hsb" x-channel="saturation" y-channel="brightness" />
-          <ColorSlider channel="hue" class="gap-1 px-1" color-space="hsb" label="Hue" :ui="{ output: 'text-muted' }" />
+          <ColorArea
+            aria-label="Color area"
+            class="max-w-full"
+            color-space="hsb"
+            x-channel="saturation"
+            y-channel="brightness"
+          />
+          <ColorSlider
+            channel="hue"
+            class="gap-1 px-1"
+            color-space="hsb"
+            label="Hue"
+            :ui="{ output: 'text-muted' }"
+          />
         </slot>
       </template>
     </ColorPicker>

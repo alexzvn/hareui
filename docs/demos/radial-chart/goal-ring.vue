@@ -11,7 +11,11 @@ function formatValue(value: number) {
 </script>
 
 <template>
-  <Card class="w-full max-w-[300px] rounded-2xl" title="Water Intake" :ui="{ title: 'text-base', content: 'items-center' }">
+  <Card
+    class="w-full max-w-[300px] rounded-2xl"
+    title="Water Intake"
+    :ui="{ title: 'text-base', content: 'items-center' }"
+  >
     <RadialChart
       :data="data"
       index="drink"
@@ -25,7 +29,9 @@ function formatValue(value: number) {
       aria-label="Water intake against the daily goal"
     >
       <template #center="{ total }">
-        <span class="text-3xl font-bold text-foreground">{{ Math.round((total / goal) * 100) }}%</span>
+        <span class="text-3xl font-bold text-foreground"
+          >{{ Math.round((total / goal) * 100) }}%</span
+        >
         <span class="text-xs text-muted">{{ formatValue(total) }} of {{ formatValue(goal) }}</span>
       </template>
     </RadialChart>

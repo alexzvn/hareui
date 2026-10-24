@@ -4,7 +4,7 @@
    ============================================================================ */
 @layer base {
   /* Sky theme */
-  [data-design-theme="sky"]:not(.dark):not([data-theme="dark"]) {
+  [data-design-theme='sky']:not(.dark):not([data-theme='dark']) {
     --background: oklch(97.02% 0.015 230.34);
     --border: oklch(90% 0.015 230.34);
     --default: oklch(94% 0.015 230.34);
@@ -44,8 +44,8 @@
     --chart-5: oklch(from var(--accent) calc(l + 0.24) c h);
   }
 
-  [data-design-theme="sky"].dark,
-  [data-design-theme="sky"][data-theme="dark"] {
+  [data-design-theme='sky'].dark,
+  [data-design-theme='sky'][data-theme='dark'] {
     color-scheme: dark;
     --background: oklch(12% 0.015 230.34);
     --border: oklch(28% 0.015 230.34);
@@ -87,7 +87,7 @@
   }
 
   /* Lavender theme */
-  [data-design-theme="lavender"]:not(.dark):not([data-theme="dark"]) {
+  [data-design-theme='lavender']:not(.dark):not([data-theme='dark']) {
     --background: oklch(97.02% 0.015 305.49);
     --border: oklch(90% 0.015 305.49);
     --default: oklch(94% 0.015 305.49);
@@ -127,8 +127,8 @@
     --chart-5: oklch(from var(--accent) calc(l + 0.24) c h);
   }
 
-  [data-design-theme="lavender"].dark,
-  [data-design-theme="lavender"][data-theme="dark"] {
+  [data-design-theme='lavender'].dark,
+  [data-design-theme='lavender'][data-theme='dark'] {
     color-scheme: dark;
     --background: oklch(12% 0.015 305.49);
     --border: oklch(28% 0.015 305.49);
@@ -170,7 +170,7 @@
   }
 
   /* Mint theme */
-  [data-design-theme="mint"]:not(.dark):not([data-theme="dark"]) {
+  [data-design-theme='mint']:not(.dark):not([data-theme='dark']) {
     --background: oklch(97.02% 0.015 154.48);
     --border: oklch(90% 0.015 154.48);
     --default: oklch(94% 0.015 154.48);
@@ -210,8 +210,8 @@
     --chart-5: oklch(from var(--accent) calc(l + 0.24) c h);
   }
 
-  [data-design-theme="mint"].dark,
-  [data-design-theme="mint"][data-theme="dark"] {
+  [data-design-theme='mint'].dark,
+  [data-design-theme='mint'][data-theme='dark'] {
     color-scheme: dark;
     --background: oklch(12% 0.015 154.48);
     --border: oklch(28% 0.015 154.48);
@@ -253,7 +253,7 @@
   }
 
   /* Netflix theme */
-  [data-design-theme="netflix"]:not(.dark):not([data-theme="dark"]) {
+  [data-design-theme='netflix']:not(.dark):not([data-theme='dark']) {
     --background: oklch(97.02% 0.008 27.98);
     --border: oklch(90% 0.008 27.98);
     --default: oklch(94% 0.008 27.98);
@@ -295,8 +295,8 @@
     --chart-5: oklch(from var(--accent) calc(l + 0.24) c h);
   }
 
-  [data-design-theme="netflix"].dark,
-  [data-design-theme="netflix"][data-theme="dark"] {
+  [data-design-theme='netflix'].dark,
+  [data-design-theme='netflix'][data-theme='dark'] {
     color-scheme: dark;
     --background: oklch(12% 0.008 27.98);
     --border: oklch(28% 0.008 27.98);
@@ -340,7 +340,7 @@
   }
 
   /* Uber theme */
-  [data-design-theme="uber"]:not(.dark):not([data-theme="dark"]) {
+  [data-design-theme='uber']:not(.dark):not([data-theme='dark']) {
     --background: oklch(97.02% 0.005 0);
     --border: oklch(90% 0.005 0);
     --default: oklch(94% 0.005 0);
@@ -382,8 +382,8 @@
     --chart-5: oklch(from var(--accent) calc(l + 0.24) c h);
   }
 
-  [data-design-theme="uber"].dark,
-  [data-design-theme="uber"][data-theme="dark"] {
+  [data-design-theme='uber'].dark,
+  [data-design-theme='uber'][data-theme='dark'] {
     color-scheme: dark;
     --background: oklch(12% 0.005 0);
     --border: oklch(28% 0.005 0);
@@ -427,7 +427,7 @@
   }
 
   /* Spotify theme */
-  [data-design-theme="spotify"]:not(.dark):not([data-theme="dark"]) {
+  [data-design-theme='spotify']:not(.dark):not([data-theme='dark']) {
     --background: oklch(97.02% 0.002 148.69);
     --border: oklch(90% 0.002 148.69);
     --default: oklch(94% 0.002 148.69);
@@ -468,8 +468,8 @@
     --chart-5: oklch(from var(--accent) calc(l + 0.24) c h);
   }
 
-  [data-design-theme="spotify"].dark,
-  [data-design-theme="spotify"][data-theme="dark"] {
+  [data-design-theme='spotify'].dark,
+  [data-design-theme='spotify'][data-theme='dark'] {
     color-scheme: dark;
     --background: oklch(12% 0.002 148.69);
     --border: oklch(28% 0.002 148.69);
@@ -512,7 +512,7 @@
   }
 
   /* Coinbase theme */
-  [data-design-theme="coinbase"]:not(.dark):not([data-theme="dark"]) {
+  [data-design-theme='coinbase']:not(.dark):not([data-theme='dark']) {
     --background: oklch(97.02% 0.002 277.63);
     --border: oklch(90% 0.002 277.63);
     --default: oklch(94% 0.002 277.63);
@@ -553,8 +553,8 @@
     --chart-5: oklch(from var(--accent) calc(l + 0.24) c h);
   }
 
-  [data-design-theme="coinbase"].dark,
-  [data-design-theme="coinbase"][data-theme="dark"] {
+  [data-design-theme='coinbase'].dark,
+  [data-design-theme='coinbase'][data-theme='dark'] {
     color-scheme: dark;
     --background: oklch(12% 0.002 277.63);
     --border: oklch(28% 0.002 277.63);
@@ -597,7 +597,7 @@
   }
 
   /* Airbnb theme */
-  [data-design-theme="airbnb"]:not(.dark):not([data-theme="dark"]) {
+  [data-design-theme='airbnb']:not(.dark):not([data-theme='dark']) {
     --background: oklch(97.02% 0 22.37);
     --border: oklch(90% 0 22.37);
     --default: oklch(94% 0 22.37);
@@ -637,8 +637,8 @@
     --chart-5: oklch(from var(--accent) calc(l + 0.24) c h);
   }
 
-  [data-design-theme="airbnb"].dark,
-  [data-design-theme="airbnb"][data-theme="dark"] {
+  [data-design-theme='airbnb'].dark,
+  [data-design-theme='airbnb'][data-theme='dark'] {
     color-scheme: dark;
     --background: oklch(12% 0 22.37);
     --border: oklch(28% 0 22.37);
@@ -680,7 +680,7 @@
   }
 
   /* Discord theme */
-  [data-design-theme="discord"]:not(.dark):not([data-theme="dark"]) {
+  [data-design-theme='discord']:not(.dark):not([data-theme='dark']) {
     --background: oklch(97.02% 0.01 273.85);
     --border: oklch(90% 0.01 273.85);
     --default: oklch(94% 0.01 273.85);
@@ -721,8 +721,8 @@
     --chart-5: oklch(from var(--accent) calc(l + 0.24) c h);
   }
 
-  [data-design-theme="discord"].dark,
-  [data-design-theme="discord"][data-theme="dark"] {
+  [data-design-theme='discord'].dark,
+  [data-design-theme='discord'][data-theme='dark'] {
     color-scheme: dark;
     --background: oklch(12% 0.01 273.85);
     --border: oklch(28% 0.01 273.85);
@@ -765,7 +765,7 @@
   }
 
   /* Rabbit theme */
-  [data-design-theme="rabbit"]:not(.dark):not([data-theme="dark"]) {
+  [data-design-theme='rabbit']:not(.dark):not([data-theme='dark']) {
     --background: oklch(97.02% 0.01 43.48);
     --border: oklch(90% 0.01 43.48);
     --default: oklch(94% 0.01 43.48);
@@ -806,8 +806,8 @@
     --chart-5: oklch(from var(--accent) calc(l + 0.24) c h);
   }
 
-  [data-design-theme="rabbit"].dark,
-  [data-design-theme="rabbit"][data-theme="dark"] {
+  [data-design-theme='rabbit'].dark,
+  [data-design-theme='rabbit'][data-theme='dark'] {
     color-scheme: dark;
     --background: oklch(12% 0.01 43.48);
     --border: oklch(28% 0.01 43.48);

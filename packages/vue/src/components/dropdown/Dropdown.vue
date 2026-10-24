@@ -21,7 +21,7 @@ export interface DropdownItem {
   /** `danger` colours the label (and indicators) for destructive actions. */
   variant?: 'default' | 'danger'
   /** Keyboard shortcut rendered at the end of the item (as `<Kbd variant="light">`). */
-  kbd?: { keys?: KbdKey | KbdKey[], content?: string }
+  kbd?: { keys?: KbdKey | KbdKey[]; content?: string }
   /** Nested entries: the item becomes a submenu trigger. */
   items?: DropdownEntry[]
   /** Classes merged onto the item element. */
@@ -102,21 +102,21 @@ export interface DropdownItemSlotProps {
 
 export interface DropdownSlots {
   /** The trigger. Merged onto its single root element (`as-child`). */
-  'default'?: () => any
+  default?: () => any
   /**
    * Content above the menu, inside the popover (e.g. a user card). It renders inside the `role="menu"` element, so
    * keep it to text and decorative images (`alt=""`): a named image there is not an allowed menu child.
    */
   'content-top'?: () => any
   /** Replaces the whole item content. */
-  'item'?: (props: DropdownItemSlotProps) => any
+  item?: (props: DropdownItemSlotProps) => any
   'item-leading'?: (props: DropdownItemSlotProps) => any
   'item-label'?: (props: DropdownItemSlotProps) => any
   'item-description'?: (props: DropdownItemSlotProps) => any
   /** Replaces the keyboard shortcut. */
   'item-trailing'?: (props: DropdownItemSlotProps) => any
   /** Custom selection indicator content (rendered inside the indicator box). */
-  'indicator'?: (props: DropdownItemSlotProps) => any
+  indicator?: (props: DropdownItemSlotProps) => any
   /** Custom submenu chevron. */
   'submenu-indicator'?: (props: DropdownItemSlotProps) => any
   'section-label'?: (props: { section: DropdownSection }) => any
@@ -126,14 +126,13 @@ export interface DropdownEmits {
   'update:open': [value: boolean]
   'update:modelValue': [value: DropdownValue[]]
   /** An action item (not a selectable one, not a submenu trigger) was selected. */
-  'action': [value: DropdownValue]
+  action: [value: DropdownValue]
 }
 
 // React Aria's `useLongPress` accessibility description, shared by every long-press trigger.
 const LONG_PRESS_DESCRIPTION_ID = 'hareui-dropdown-long-press-description'
 function ensureLongPressDescription() {
-  if (document.getElementById(LONG_PRESS_DESCRIPTION_ID))
-    return
+  if (document.getElementById(LONG_PRESS_DESCRIPTION_ID)) return
   const el = document.createElement('div')
   el.id = LONG_PRESS_DESCRIPTION_ID
   el.style.display = 'none'
@@ -143,15 +142,22 @@ function ensureLongPressDescription() {
 </script>
 
 <script setup lang="ts">
-import type { DropdownContext, DropdownSelectionGroup } from './context'
-import { DropdownMenuContent, DropdownMenuPortal, DropdownMenuRoot, DropdownMenuTrigger } from 'reka-ui'
+import {
+  DropdownMenuContent,
+  DropdownMenuPortal,
+  DropdownMenuRoot,
+  DropdownMenuTrigger,
+} from 'reka-ui'
 import { computed, onBeforeUnmount, onMounted, provide, ref } from 'vue'
+
+import { useLayerDismiss } from '@/composables/useLayerDismiss'
+
 import { useComponentUI } from '../../composables/useComponentUI'
 import { useInertOutside } from '../../composables/useInertOutside'
 import { usePortal } from '../../composables/usePortal'
-import { useLayerDismiss } from '@/composables/useLayerDismiss'
 import descriptionTheme from '../description/theme'
 import labelTheme from '../label/theme'
+import type { DropdownContext, DropdownSelectionGroup } from './context'
 import { dropdownContextKey, enabledMenuItems } from './context'
 import DropdownMenuItems from './DropdownMenuItems.vue'
 
@@ -186,7 +192,7 @@ function setOpen(value: boolean) {
 // Reka hides the page for the root menu only (submenus portal in later, after this runs, and stay
 // interactive). `isOpen` turns false synchronously in `setOpen` and with the `open` prop. The content
 // instance stays mounted while closed and its `$el` isn't reactive, so re-read it on every open.
-useInertOutside(() => isOpen.value ? contentRef.value?.$el : null, isOpen)
+useInertOutside(() => (isOpen.value ? contentRef.value?.$el : null), isOpen)
 // Reka's menu dismisses on any button outside (unlike Popover) and on every Escape; only the Layer stack is checked here.
 const { onInteractOutside } = useLayerDismiss({ content: () => contentRef.value?.$el })
 
@@ -197,64 +203,83 @@ function setSelected(value: DropdownValue[]) {
   emit('update:modelValue', value)
 }
 
-const isSection = (entry: DropdownEntry): entry is DropdownSection => (entry as DropdownSection).type === 'section'
+const isSection = (entry: DropdownEntry): entry is DropdownSection =>
+  (entry as DropdownSection).type === 'section'
 
 /**
  * A selection scope (RAC's `SelectionManager` / `GroupSelectionManager`). `single` replaces only
  * this scope's values and deselects on re-select, as React Aria does without `disallowEmptySelection`.
  */
-function makeGroup(mode: DropdownSelectionGroup['mode'], indicator: DropdownSelectionGroup['indicator'], values: () => DropdownValue[]): DropdownSelectionGroup {
+function makeGroup(
+  mode: DropdownSelectionGroup['mode'],
+  indicator: DropdownSelectionGroup['indicator'],
+  values: () => DropdownValue[],
+): DropdownSelectionGroup {
   return {
     mode,
     indicator,
-    isSelected: value => selected.value.includes(value),
+    isSelected: (value) => selected.value.includes(value),
     toggle(value) {
       const current = selected.value
-      if (current.includes(value))
-        setSelected(current.filter(v => v !== value))
+      if (current.includes(value)) setSelected(current.filter((v) => v !== value))
       else if (mode === 'single')
-        setSelected([...current.filter(v => !values().includes(v)), value])
-      else
-        setSelected([...current, value])
+        setSelected([...current.filter((v) => !values().includes(v)), value])
+      else setSelected([...current, value])
     },
   }
 }
 
 // Values whose selection scope is the menu itself: top-level items plus sections without their own mode.
-const rootValues = computed(() => (props.items ?? []).flatMap((entry) => {
-  if (isSection(entry))
-    return entry.selectionMode ? [] : entry.items.map(item => item.value)
-  return 'value' in entry ? [entry.value] : []
-}))
-const rootGroup = computed(() => makeGroup(props.selectionMode, props.indicator, () => rootValues.value))
+const rootValues = computed(() =>
+  (props.items ?? []).flatMap((entry) => {
+    if (isSection(entry)) return entry.selectionMode ? [] : entry.items.map((item) => item.value)
+    return 'value' in entry ? [entry.value] : []
+  }),
+)
+const rootGroup = computed(() =>
+  makeGroup(props.selectionMode, props.indicator, () => rootValues.value),
+)
 const sectionGroups = new WeakMap<DropdownSection, DropdownSelectionGroup>()
 
 // RAC's global interaction modality: the key of the last keyboard interaction, `null` after a pointer one.
 const lastKey = ref<string | null>(null)
-const onKeydown = (event: KeyboardEvent) => { lastKey.value = event.key }
-const onPointerdown = () => { lastKey.value = null }
+const onKeydown = (event: KeyboardEvent) => {
+  lastKey.value = event.key
+}
+const onPointerdown = () => {
+  lastKey.value = null
+}
 
 const ctx: DropdownContext = {
   classes: () => ui.value as any,
   ui: () => props.ui,
-  labelClass: disabled => (disabled ? disabledLabelUI : labelUI).value.base(),
+  labelClass: (disabled) => (disabled ? disabledLabelUI : labelUI).value.base(),
   descriptionClass: () => descriptionUI.value.base(),
   portal: () => portalTarget.value,
   slots,
   rootGroup: () => rootGroup.value,
   sectionGroup(section, parent) {
-    if (!section.selectionMode)
-      return parent
+    if (!section.selectionMode) return parent
     let group = sectionGroups.get(section)
-    if (!group || group.mode !== section.selectionMode || group.indicator !== (section.indicator ?? 'checkmark')) {
-      group = makeGroup(section.selectionMode, section.indicator ?? 'checkmark', () => section.items.map(item => item.value))
+    if (
+      !group ||
+      group.mode !== section.selectionMode ||
+      group.indicator !== (section.indicator ?? 'checkmark')
+    ) {
+      group = makeGroup(section.selectionMode, section.indicator ?? 'checkmark', () =>
+        section.items.map((item) => item.value),
+      )
       sectionGroups.set(section, group)
     }
     return group
   },
   lastKey: () => lastKey.value,
-  action: item => emit('action', item.value),
-  slotProps: (item, group) => ({ item, selected: group.mode !== 'none' && group.isSelected(item.value), disabled: !!item.disabled }),
+  action: (item) => emit('action', item.value),
+  slotProps: (item, group) => ({
+    item,
+    selected: group.mode !== 'none' && group.isSelected(item.value),
+    disabled: !!item.disabled,
+  }),
   onMenuKeydown,
 }
 provide(dropdownContextKey, ctx)
@@ -275,10 +300,11 @@ function onOpenAutoFocus(event: Event) {
   focusOnOpen = null
   const content = event.target as HTMLElement
   const items = enabledMenuItems(content)
-  const item = content.querySelector<HTMLElement>('[data-slot=menu-item][aria-checked=true]:not([data-disabled])')
-    ?? (strategy === 'first' ? items[0] : strategy === 'last' ? items.at(-1) : undefined)
-  if (!item)
-    return
+  const item =
+    content.querySelector<HTMLElement>(
+      '[data-slot=menu-item][aria-checked=true]:not([data-disabled])',
+    ) ?? (strategy === 'first' ? items[0] : strategy === 'last' ? items.at(-1) : undefined)
+  if (!item) return
   event.preventDefault()
   item.focus()
 }
@@ -286,12 +312,10 @@ function onOpenAutoFocus(event: Event) {
 // RAC pages through the menu with PageUp / PageDown; the menu never outgrows one page, so that is the
 // first / last enabled item (as in ComboBox). Reka only handles them while the content itself is focused.
 function onMenuKeydown(event: KeyboardEvent) {
-  if (event.key !== 'PageUp' && event.key !== 'PageDown')
-    return
+  if (event.key !== 'PageUp' && event.key !== 'PageDown') return
   const items = enabledMenuItems(event.currentTarget as HTMLElement)
   const item = event.key === 'PageUp' ? items[0] : items.at(-1)
-  if (!item)
-    return
+  if (!item) return
   event.preventDefault()
   item.focus()
 }
@@ -310,8 +334,7 @@ function cancelLongPress() {
 }
 
 function onTriggerPointerdownCapture(event: PointerEvent) {
-  if (props.trigger !== 'longPress' || props.disabled || event.button !== 0)
-    return
+  if (props.trigger !== 'longPress' || props.disabled || event.button !== 0) return
   cancelLongPress()
   longPressTimer = setTimeout(() => openWithFocus('first'), LONG_PRESS_THRESHOLD)
 }
@@ -321,15 +344,13 @@ function onTriggerPointerdownCapture(event: PointerEvent) {
 // after each listener, which would clear the flag before Reka's bubble-phase listener runs.
 let suppressTriggerToggle = false
 function onTriggerClickCapture() {
-  if (props.trigger !== 'longPress')
-    return
+  if (props.trigger !== 'longPress') return
   suppressTriggerToggle = true
-  setTimeout(() => suppressTriggerToggle = false)
+  setTimeout(() => (suppressTriggerToggle = false))
 }
 
 function onRootOpenChange(open: boolean) {
-  if (!suppressTriggerToggle)
-    setOpen(open)
+  if (!suppressTriggerToggle) setOpen(open)
 }
 
 function onTriggerKeydownCapture(event: KeyboardEvent) {
@@ -344,10 +365,8 @@ function onTriggerKeydownCapture(event: KeyboardEvent) {
   if (event.altKey && (event.key === 'ArrowDown' || event.key === 'ArrowUp')) {
     event.preventDefault()
     event.stopImmediatePropagation()
-    if (!props.disabled)
-      openWithFocus(event.key === 'ArrowDown' ? 'first' : 'last')
-  }
-  else if (event.key === 'Enter' || event.key === ' ' || event.key === 'ArrowDown') {
+    if (!props.disabled) openWithFocus(event.key === 'ArrowDown' ? 'first' : 'last')
+  } else if (event.key === 'Enter' || event.key === ' ' || event.key === 'ArrowDown') {
     event.stopImmediatePropagation()
   }
 }

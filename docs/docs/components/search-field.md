@@ -24,25 +24,30 @@ SearchField renders a [Label](/docs/components/label), a group holding a search 
 ```vue
 <template>
   <SearchField label="…" description="…" error-message="…" :invalid="…">
-    <template #label />      <!-- Label content -->
-    <template #icon />       <!-- search icon content (default: magnifier icon) -->
-    <template #clearIcon />  <!-- clear button icon content (default: × icon) -->
-    <template #description />  <!-- Description content -->
-    <template #error="{ isInvalid, validationErrors, validationDetails }" /> <!-- FieldError content, rendered while invalid -->
+    <template #label />
+    <!-- Label content -->
+    <template #icon />
+    <!-- search icon content (default: magnifier icon) -->
+    <template #clearIcon />
+    <!-- clear button icon content (default: × icon) -->
+    <template #description />
+    <!-- Description content -->
+    <template #error="{ isInvalid, validationErrors, validationDetails }" />
+    <!-- FieldError content, rendered while invalid -->
   </SearchField>
 </template>
 ```
 
-| `ui` key | `data-slot` | Element |
-|---|---|---|
-| `base` | `search-field` | `<div>` root |
-| — | `label` | [Label](/docs/components/label) (iff `label` / `#label`) |
-| `group` | `search-field-group` | `<div>` wrapping the icon, input and clear button |
-| `searchIcon` | `search-field-search-icon` | `<span>` (default icon or `#icon`) |
-| `input` | `search-field-input` | `<input type="search">` |
-| `clearButton` | `search-field-clear-button` | [CloseButton](/docs/components/close-button) (default icon or `#clearIcon`), hidden via CSS while empty |
-| — | `description` | [Description](/docs/components/description) (iff `description` / `#description`) |
-| — | `field-error` | [FieldError](/docs/components/field-error) (while invalid, iff `error-message` / `#error` / validation errors) |
+| `ui` key      | `data-slot`                 | Element                                                                                                        |
+| ------------- | --------------------------- | -------------------------------------------------------------------------------------------------------------- |
+| `base`        | `search-field`              | `<div>` root                                                                                                   |
+| —             | `label`                     | [Label](/docs/components/label) (iff `label` / `#label`)                                                       |
+| `group`       | `search-field-group`        | `<div>` wrapping the icon, input and clear button                                                              |
+| `searchIcon`  | `search-field-search-icon`  | `<span>` (default icon or `#icon`)                                                                             |
+| `input`       | `search-field-input`        | `<input type="search">`                                                                                        |
+| `clearButton` | `search-field-clear-button` | [CloseButton](/docs/components/close-button) (default icon or `#clearIcon`), hidden via CSS while empty        |
+| —             | `description`               | [Description](/docs/components/description) (iff `description` / `#description`)                               |
+| —             | `field-error`               | [FieldError](/docs/components/field-error) (while invalid, iff `error-message` / `#error` / validation errors) |
 
 ## Examples
 
@@ -116,9 +121,11 @@ Use the `icon` and `clearIcon` slots to render custom icons, and `:ui` or `class
 ### Global Configuration
 
 ```ts
-app.use(createHareUI({
-  ui: { searchField: { slots: { base: 'gap-2' } } },
-}))
+app.use(
+  createHareUI({
+    ui: { searchField: { slots: { base: 'gap-2' } } },
+  }),
+)
 ```
 
 ## Styling Reference

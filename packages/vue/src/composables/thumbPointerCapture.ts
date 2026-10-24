@@ -11,7 +11,7 @@ export function captureOnDraggedThumb(event: PointerEvent): void {
   const target = event.target as HTMLElement
   const thumbs = root.querySelectorAll<HTMLElement>('[role="slider"]')
   const active = document.activeElement
-  const thumb = [...thumbs].find(el => el === active) ?? (thumbs.length === 1 ? thumbs[0] : undefined)
-  if (thumb && thumb !== target)
-    thumb.setPointerCapture(event.pointerId)
+  const thumb =
+    [...thumbs].find((el) => el === active) ?? (thumbs.length === 1 ? thumbs[0] : undefined)
+  if (thumb && thumb !== target) thumb.setPointerCapture(event.pointerId)
 }

@@ -3,9 +3,27 @@ import { CheckboxButtonGroup, CheckboxButtonGroupItem } from '@hareui/vue'
 import { Icon } from '@iconify/vue'
 
 const goals = [
-  { value: 'steps', label: 'Daily steps', description: 'Walk more between meetings', target: '8,000', unit: 'steps' },
-  { value: 'water', label: 'Hydration', description: 'Get a nudge every two hours', target: '2', unit: 'litres' },
-  { value: 'sleep', label: 'Sleep', description: 'Wind down at the same time each night', target: '7.5', unit: 'hours' },
+  {
+    value: 'steps',
+    label: 'Daily steps',
+    description: 'Walk more between meetings',
+    target: '8,000',
+    unit: 'steps',
+  },
+  {
+    value: 'water',
+    label: 'Hydration',
+    description: 'Get a nudge every two hours',
+    target: '2',
+    unit: 'litres',
+  },
+  {
+    value: 'sleep',
+    label: 'Sleep',
+    description: 'Wind down at the same time each night',
+    target: '7.5',
+    unit: 'hours',
+  },
 ]
 </script>
 

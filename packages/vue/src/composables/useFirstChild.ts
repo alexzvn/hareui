@@ -15,8 +15,7 @@ export function useFirstChild(root: Ref<Element | { $el?: unknown } | null | und
   function attach() {
     observer?.disconnect()
     const el = resolve()
-    if (!el)
-      return
+    if (!el) return
     const update = () => {
       firstChild.value = el.firstElementChild
     }
@@ -34,10 +33,8 @@ export function useFirstChild(root: Ref<Element | { $el?: unknown } | null | und
 
 /** Resolves a component/element template ref to its DOM element. `null` during SSR, where `Element` is undefined. */
 export function refElement(value: unknown): Element | null {
-  if (typeof Element === 'undefined')
-    return null
-  if (value instanceof Element)
-    return value
+  if (typeof Element === 'undefined') return null
+  if (value instanceof Element) return value
   const el = (value as { $el?: unknown } | null | undefined)?.$el
   return el instanceof Element ? el : null
 }

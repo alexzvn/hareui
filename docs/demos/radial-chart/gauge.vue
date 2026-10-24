@@ -10,7 +10,11 @@ function formatPercent(value: number) {
 </script>
 
 <template>
-  <Card class="w-full max-w-[280px] rounded-2xl" title="Build Server" :ui="{ title: 'text-base', content: 'items-center' }">
+  <Card
+    class="w-full max-w-[280px] rounded-2xl"
+    title="Build Server"
+    :ui="{ title: 'text-base', content: 'items-center' }"
+  >
     <RadialChart
       :data="data"
       index="metric"

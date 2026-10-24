@@ -84,10 +84,23 @@
           <span
             data-slot="calendar-year-picker-trigger-indicator"
             aria-hidden="true"
-            :class="ui.yearPickerTriggerIndicator({ class: uiOverrides?.yearPickerTriggerIndicator })"
+            :class="
+              ui.yearPickerTriggerIndicator({ class: uiOverrides?.yearPickerTriggerIndicator })
+            "
           >
-            <svg height="1em" width="1em" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg">
-              <path fill-rule="evenodd" clip-rule="evenodd" :d="CHEVRON_PATHS.next" fill="currentColor" />
+            <svg
+              height="1em"
+              width="1em"
+              viewBox="0 0 16 16"
+              fill="none"
+              xmlns="http://www.w3.org/2000/svg"
+            >
+              <path
+                fill-rule="evenodd"
+                clip-rule="evenodd"
+                :d="CHEVRON_PATHS.next"
+                fill="currentColor"
+              />
             </svg>
           </span>
         </button>
@@ -99,7 +112,12 @@
           >{{ formatPanelHeading(resolvedLocale, grid[0]?.value ?? placeholderModel) }}</component
         >
         <component :is="reka.Prev" :data-slot="`${prefix}-nav-button`" as-child>
-          <button ref="prevButton" type="button" aria-label="Previous" :class="ui.navButton({ class: uiOverrides?.navButton })">
+          <button
+            ref="prevButton"
+            type="button"
+            aria-label="Previous"
+            :class="ui.navButton({ class: uiOverrides?.navButton })"
+          >
             <slot name="navIcon" direction="previous">
               <svg
                 :data-slot="`${prefix}-nav-button-icon`"
@@ -110,13 +128,23 @@
                 xmlns="http://www.w3.org/2000/svg"
                 :class="ui.navButtonIcon({ class: uiOverrides?.navButtonIcon })"
               >
-                <path fill-rule="evenodd" clip-rule="evenodd" :d="CHEVRON_PATHS.previous" fill="currentColor" />
+                <path
+                  fill-rule="evenodd"
+                  clip-rule="evenodd"
+                  :d="CHEVRON_PATHS.previous"
+                  fill="currentColor"
+                />
               </svg>
             </slot>
           </button>
         </component>
         <component :is="reka.Next" :data-slot="`${prefix}-nav-button`" as-child>
-          <button ref="nextButton" type="button" aria-label="Next" :class="ui.navButton({ class: uiOverrides?.navButton })">
+          <button
+            ref="nextButton"
+            type="button"
+            aria-label="Next"
+            :class="ui.navButton({ class: uiOverrides?.navButton })"
+          >
             <slot name="navIcon" direction="next">
               <svg
                 :data-slot="`${prefix}-nav-button-icon`"
@@ -127,7 +155,12 @@
                 xmlns="http://www.w3.org/2000/svg"
                 :class="ui.navButtonIcon({ class: uiOverrides?.navButtonIcon })"
               >
-                <path fill-rule="evenodd" clip-rule="evenodd" :d="CHEVRON_PATHS.next" fill="currentColor" />
+                <path
+                  fill-rule="evenodd"
+                  clip-rule="evenodd"
+                  :d="CHEVRON_PATHS.next"
+                  fill="currentColor"
+                />
               </svg>
             </slot>
           </button>
@@ -141,7 +174,11 @@
         :aria-multiselectable="isMultiselectable || undefined"
         :class="ui.grid({ class: uiOverrides?.grid })"
       >
-        <component :is="reka.GridHead" :data-slot="`${prefix}-grid-header`" :class="ui.gridHeader({ class: uiOverrides?.gridHeader })">
+        <component
+          :is="reka.GridHead"
+          :data-slot="`${prefix}-grid-header`"
+          :class="ui.gridHeader({ class: uiOverrides?.gridHeader })"
+        >
           <component :is="reka.GridRow" :class="ui.gridRow({ class: uiOverrides?.gridRow })">
             <CalendarHeadCell
               v-for="(day, i) in weekDays"
@@ -153,7 +190,11 @@
             </CalendarHeadCell>
           </component>
         </component>
-        <component :is="reka.GridBody" :data-slot="`${prefix}-grid-body`" :class="ui.gridBody({ class: uiOverrides?.gridBody })">
+        <component
+          :is="reka.GridBody"
+          :data-slot="`${prefix}-grid-body`"
+          :class="ui.gridBody({ class: uiOverrides?.gridBody })"
+        >
           <component
             :is="reka.GridRow"
             v-for="(weekDates, index) in grid[0]?.rows ?? []"
@@ -174,9 +215,22 @@
         data-slot="calendar-panel"
         :class="ui.panel({ class: uiOverrides?.panel })"
       >
-        <header :data-slot="`${prefix}-header`" role="presentation" :class="ui.header({ class: uiOverrides?.header })">
-          <component v-if="panelIndex === 0" :is="reka.Prev" :data-slot="`${prefix}-nav-button`" as-child>
-            <button type="button" aria-label="Previous" :class="ui.navButton({ class: uiOverrides?.navButton })">
+        <header
+          :data-slot="`${prefix}-header`"
+          role="presentation"
+          :class="ui.header({ class: uiOverrides?.header })"
+        >
+          <component
+            v-if="panelIndex === 0"
+            :is="reka.Prev"
+            :data-slot="`${prefix}-nav-button`"
+            as-child
+          >
+            <button
+              type="button"
+              aria-label="Previous"
+              :class="ui.navButton({ class: uiOverrides?.navButton })"
+            >
               <slot name="navIcon" direction="previous">
                 <svg
                   :data-slot="`${prefix}-nav-button-icon`"
@@ -187,17 +241,33 @@
                   xmlns="http://www.w3.org/2000/svg"
                   :class="ui.navButtonIcon({ class: uiOverrides?.navButtonIcon })"
                 >
-                  <path fill-rule="evenodd" clip-rule="evenodd" :d="CHEVRON_PATHS.previous" fill="currentColor" />
+                  <path
+                    fill-rule="evenodd"
+                    clip-rule="evenodd"
+                    :d="CHEVRON_PATHS.previous"
+                    fill="currentColor"
+                  />
                 </svg>
               </slot>
             </button>
           </component>
           <div v-else aria-hidden="true" class="size-6" />
-          <span :data-slot="`${prefix}-heading`" :class="ui.heading({ class: uiOverrides?.heading })">{{
-            formatPanelHeading(resolvedLocale, month.value)
-          }}</span>
-          <component v-if="panelIndex === grid.length - 1" :is="reka.Next" :data-slot="`${prefix}-nav-button`" as-child>
-            <button type="button" aria-label="Next" :class="ui.navButton({ class: uiOverrides?.navButton })">
+          <span
+            :data-slot="`${prefix}-heading`"
+            :class="ui.heading({ class: uiOverrides?.heading })"
+            >{{ formatPanelHeading(resolvedLocale, month.value) }}</span
+          >
+          <component
+            v-if="panelIndex === grid.length - 1"
+            :is="reka.Next"
+            :data-slot="`${prefix}-nav-button`"
+            as-child
+          >
+            <button
+              type="button"
+              aria-label="Next"
+              :class="ui.navButton({ class: uiOverrides?.navButton })"
+            >
               <slot name="navIcon" direction="next">
                 <svg
                   :data-slot="`${prefix}-nav-button-icon`"
@@ -208,7 +278,12 @@
                   xmlns="http://www.w3.org/2000/svg"
                   :class="ui.navButtonIcon({ class: uiOverrides?.navButtonIcon })"
                 >
-                  <path fill-rule="evenodd" clip-rule="evenodd" :d="CHEVRON_PATHS.next" fill="currentColor" />
+                  <path
+                    fill-rule="evenodd"
+                    clip-rule="evenodd"
+                    :d="CHEVRON_PATHS.next"
+                    fill="currentColor"
+                  />
                 </svg>
               </slot>
             </button>
@@ -223,7 +298,11 @@
           :aria-multiselectable="isMultiselectable || undefined"
           :class="ui.grid({ class: uiOverrides?.grid })"
         >
-          <component :is="reka.GridHead" :data-slot="`${prefix}-grid-header`" :class="ui.gridHeader({ class: uiOverrides?.gridHeader })">
+          <component
+            :is="reka.GridHead"
+            :data-slot="`${prefix}-grid-header`"
+            :class="ui.gridHeader({ class: uiOverrides?.gridHeader })"
+          >
             <component :is="reka.GridRow" :class="ui.gridRow({ class: uiOverrides?.gridRow })">
               <CalendarHeadCell
                 v-for="(day, i) in weekDays"
@@ -235,7 +314,11 @@
               </CalendarHeadCell>
             </component>
           </component>
-          <component :is="reka.GridBody" :data-slot="`${prefix}-grid-body`" :class="ui.gridBody({ class: uiOverrides?.gridBody })">
+          <component
+            :is="reka.GridBody"
+            :data-slot="`${prefix}-grid-body`"
+            :class="ui.gridBody({ class: uiOverrides?.gridBody })"
+          >
             <component
               :is="reka.GridRow"
               v-for="(weekDates, index) in month.rows"
@@ -285,6 +368,7 @@
 <script lang="ts">
 import type { DateValue } from '@internationalized/date'
 import type { ClassValue } from 'tailwind-variants'
+
 import type { PageBehavior, VisibleDuration } from './useCalendarDurationView'
 
 type CalendarKind = 'calendar' | 'range'
@@ -384,6 +468,7 @@ import {
   RangeCalendarRoot,
 } from 'reka-ui'
 import { computed, ref, shallowRef, useTemplateRef } from 'vue'
+
 import CalendarDurationView from './CalendarDurationView.vue'
 import { weekStartsOnFromFirstDay } from './useCalendarBounds'
 import { isDurationView } from './useCalendarDurationView'
@@ -429,7 +514,10 @@ const REKA_PARTS = {
     GridRow: RangeCalendarGridRow,
   },
 } as const
-const SLOT_PREFIXES = { calendar: 'calendar', range: 'range-calendar' } as const satisfies Record<CalendarKind, string>
+const SLOT_PREFIXES = { calendar: 'calendar', range: 'range-calendar' } as const satisfies Record<
+  CalendarKind,
+  string
+>
 const CHEVRON_PATHS = {
   previous:
     'M10.53 2.97a.75.75 0 0 1 0 1.06L6.56 8l3.97 3.97a.75.75 0 1 1-1.06 1.06l-4.5-4.5a.75.75 0 0 1 0-1.06l4.5-4.5a.75.75 0 0 1 1.06 0',
@@ -442,7 +530,9 @@ const prefix = SLOT_PREFIXES[props.kind]
 
 const isWeekOrDayView = computed(() => isDurationView(props.visibleDuration))
 const isPagedNavigation = computed(() => props.numberOfMonths > 1 || props.pagedNavigation)
-const isMultiselectable = computed(() => props.kind === 'range' || props.selection.mode === 'multiple')
+const isMultiselectable = computed(
+  () => props.kind === 'range' || props.selection.mode === 'multiple',
+)
 const weekStartsOn = computed(() => weekStartsOnFromFirstDay(props.firstDayOfWeek))
 
 const rootInstance = useTemplateRef<{ $el: HTMLElement }>('root')
@@ -450,7 +540,9 @@ const prevButtonEl = useTemplateRef<HTMLElement>('prevButton')
 const nextButtonEl = useTemplateRef<HTMLElement>('nextButton')
 const yearPickerGridEl = useTemplateRef<HTMLElement>('yearPickerGrid')
 const rootEl = computed(() => rootInstance.value?.$el)
-const gridBounds = computed(() => props.monthBounds ?? { minValue: props.minValue, maxValue: props.maxValue })
+const gridBounds = computed(
+  () => props.monthBounds ?? { minValue: props.minValue, maxValue: props.maxValue },
+)
 
 const placeholderModel = useCalendarPlaceholder(
   () => props.placeholder,

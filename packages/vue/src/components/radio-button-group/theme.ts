@@ -4,9 +4,7 @@
 // and `controlIndicator` repeat those states keyed on the card.
 export default {
   slots: {
-    base: [
-      'flex flex-col gap-3 [--radio-button-group-item-radius:var(--radius-2xl)]',
-    ],
+    base: ['flex flex-col gap-3 [--radio-button-group-item-radius:var(--radius-2xl)]'],
     item: [
       'group/radio relative flex flex-col items-stretch gap-4 px-5 py-4 text-start text-sm font-medium text-foreground',
       'rounded-(--radio-button-group-item-radius) border border-border bg-surface',

@@ -3,9 +3,7 @@
 // control as a plain `Checkbox`.
 export default {
   slots: {
-    base: [
-      'flex flex-col gap-3 [--checkbox-button-group-item-radius:var(--radius-2xl)]',
-    ],
+    base: ['flex flex-col gap-3 [--checkbox-button-group-item-radius:var(--radius-2xl)]'],
     item: [
       'group/checkbox relative flex flex-col items-stretch gap-4 px-5 py-4 text-start text-sm font-medium text-foreground',
       'rounded-(--checkbox-button-group-item-radius) border border-border bg-surface',

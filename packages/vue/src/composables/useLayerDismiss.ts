@@ -1,6 +1,7 @@
 import type { MaybeRefOrGetter } from 'vue'
-import type { LayerDismissPolicy, OutsideEvent } from './nestedLayer'
 import { onScopeDispose, toValue, watch } from 'vue'
+
+import type { LayerDismissPolicy, OutsideEvent } from './nestedLayer'
 import { shouldDismissOnEscape, shouldDismissOnOutside, shouldDismissOnPress } from './nestedLayer'
 
 type LayerDismissOptions = {

@@ -1,14 +1,15 @@
 import { mount } from '@vue/test-utils'
 import { describe, expect, it } from 'vitest'
 import { h, nextTick } from 'vue'
-import Button from '../src/components/button/Button.vue'
+
 import ButtonGroup from '../src/components/button-group/ButtonGroup.vue'
+import Button from '../src/components/button/Button.vue'
 import { expectAccessible } from './a11y'
 
 const buttons = (wrapper: ReturnType<typeof mount>) => wrapper.findAll('[data-slot="button"]')
 
 describe('ButtonGroup', () => {
-  it('passes variant and size to its Buttons, a Button\'s own props win', () => {
+  it("passes variant and size to its Buttons, a Button's own props win", () => {
     const wrapper = mount(ButtonGroup, {
       props: { variant: 'outline', size: 'sm' },
       slots: { default: () => [h(Button, () => 'A'), h(Button, { variant: 'danger' }, () => 'B')] },
@@ -24,15 +25,23 @@ describe('ButtonGroup', () => {
       props: { disabled: true },
       slots: { default: () => [h(Button, () => 'A'), h(Button, { disabled: false }, () => 'B')] },
     })
-    expect(wrapper.attributes()).toMatchObject({ 'role': 'group', 'aria-disabled': 'true', 'data-disabled': 'true' })
+    expect(wrapper.attributes()).toMatchObject({
+      role: 'group',
+      'aria-disabled': 'true',
+      'data-disabled': 'true',
+    })
     const [a, b] = buttons(wrapper)
     expect(a!.attributes('disabled')).toBeDefined()
     expect(b!.attributes('disabled')).toBeUndefined()
   })
 
   it('renders a separator in each Button but the first, only with `separator` (like HeroUI)', async () => {
-    const slots = { default: () => [h(Button, () => 'A'), h(Button, () => 'B'), h(Button, () => 'C')] }
-    expect(mount(ButtonGroup, { slots }).findAll('[data-slot="button-group-separator"]')).toHaveLength(0)
+    const slots = {
+      default: () => [h(Button, () => 'A'), h(Button, () => 'B'), h(Button, () => 'C')],
+    }
+    expect(
+      mount(ButtonGroup, { slots }).findAll('[data-slot="button-group-separator"]'),
+    ).toHaveLength(0)
     const wrapper = mount(ButtonGroup, { props: { separator: true }, slots })
     await nextTick()
     const buttons = wrapper.findAll('[data-slot="button"]')
@@ -53,9 +62,11 @@ describe('ButtonGroup', () => {
   })
 
   it('lets a user rounded-* class replace the group edge radii', () => {
-    const wrapper = mount(ButtonGroup, { slots: { default: () => h(Button, { class: 'rounded-none' }, () => 'A') } })
+    const wrapper = mount(ButtonGroup, {
+      slots: { default: () => h(Button, { class: 'rounded-none' }, () => 'A') },
+    })
     const classes = buttons(wrapper)[0]!.classes()
-    expect(classes.filter(c => /^rounded/.test(c))).toEqual(['rounded-none'])
+    expect(classes.filter((c) => /^rounded/.test(c))).toEqual(['rounded-none'])
   })
 
   it.each([
@@ -67,10 +78,18 @@ describe('ButtonGroup', () => {
       props,
       attachTo: document.body,
       attrs: { 'aria-label': 'Text alignment' },
-      slots: { default: () => [h(Button, () => 'Left'), h(Button, () => 'Center'), h(Button, { 'iconOnly': true, 'aria-label': 'Right' }, () => h('svg', { 'aria-hidden': 'true' }))] },
+      slots: {
+        default: () => [
+          h(Button, () => 'Left'),
+          h(Button, () => 'Center'),
+          h(Button, { iconOnly: true, 'aria-label': 'Right' }, () =>
+            h('svg', { 'aria-hidden': 'true' }),
+          ),
+        ],
+      },
     })
     await nextTick()
-    expect(wrapper.attributes()).toMatchObject({ 'role': 'group', 'aria-label': 'Text alignment' })
+    expect(wrapper.attributes()).toMatchObject({ role: 'group', 'aria-label': 'Text alignment' })
     await expectAccessible(wrapper)
     wrapper.unmount()
   })
@@ -79,9 +98,14 @@ describe('ButtonGroup', () => {
     const wrapper = mount(ButtonGroup, {
       props: { disabled: true },
       attachTo: document.body,
-      slots: { default: () => [h(Button, { id: 'a' }, () => 'A'), h(Button, { id: 'b', disabled: false }, () => 'B')] },
+      slots: {
+        default: () => [
+          h(Button, { id: 'a' }, () => 'A'),
+          h(Button, { id: 'b', disabled: false }, () => 'B'),
+        ],
+      },
     })
-    const [a, b] = ['#a', '#b'].map(id => wrapper.get(id).element as HTMLElement)
+    const [a, b] = ['#a', '#b'].map((id) => wrapper.get(id).element as HTMLElement)
     a!.focus()
     expect(document.activeElement).not.toBe(a)
     b!.focus()

@@ -23,8 +23,6 @@ const items: ListBoxItem[] = [
     description="Select your state of residence"
     :items="items"
   >
-    <template #empty>
-      No results found
-    </template>
+    <template #empty> No results found </template>
   </Autocomplete>
 </template>

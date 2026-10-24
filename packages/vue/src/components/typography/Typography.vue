@@ -1,5 +1,6 @@
 <script lang="ts">
 import type { PrimitiveProps } from 'reka-ui'
+
 import type { ComponentSlots, ComponentVariants } from '../../types/tv'
 import theme from './theme'
 
@@ -7,16 +8,16 @@ type Typography = typeof theme
 
 /** The semantic element each `type` renders by default (overridden by `as`). */
 const defaultElementByType: Record<NonNullable<ComponentVariants<Typography>['type']>, string> = {
-  'h1': 'h1',
-  'h2': 'h2',
-  'h3': 'h3',
-  'h4': 'h4',
-  'h5': 'h5',
-  'h6': 'h6',
-  'body': 'p',
+  h1: 'h1',
+  h2: 'h2',
+  h3: 'h3',
+  h4: 'h4',
+  h5: 'h5',
+  h6: 'h6',
+  body: 'p',
   'body-sm': 'p',
   'body-xs': 'p',
-  'code': 'code',
+  code: 'code',
 }
 
 export interface TypographyProps {
@@ -69,6 +70,7 @@ export interface TypographySlots {
 <script setup lang="ts">
 import { Primitive } from 'reka-ui'
 import { computed } from 'vue'
+
 import { useComponentUI } from '../../composables/useComponentUI'
 
 const props = withDefaults(defineProps<TypographyProps>(), {
@@ -92,10 +94,21 @@ const element = computed(() => props.as ?? defaultElementByType[props.type ?? 'b
 </script>
 
 <template>
-  <Primitive v-if="prose" :as="as ?? 'div'" data-slot="prose" :class="ui.prose({ class: [props.ui?.prose, props.class] })">
+  <Primitive
+    v-if="prose"
+    :as="as ?? 'div'"
+    data-slot="prose"
+    :class="ui.prose({ class: [props.ui?.prose, props.class] })"
+  >
     <slot />
   </Primitive>
-  <Primitive v-else :as="element" data-slot="typography" :data-type="type" :class="ui.base({ class: [props.ui?.base, props.class] })">
+  <Primitive
+    v-else
+    :as="element"
+    data-slot="typography"
+    :data-type="type"
+    :class="ui.base({ class: [props.ui?.base, props.class] })"
+  >
     <slot />
   </Primitive>
 </template>

@@ -18,7 +18,8 @@ export const polarSlots = {
 
 /** `#center` content of PieChart and RadialChart: HTML centered on the chart center. */
 export const polarCenterSlots = {
-  center: 'pointer-events-none absolute flex w-max -translate-x-1/2 -translate-y-1/2 flex-col items-center justify-center text-center',
+  center:
+    'pointer-events-none absolute flex w-max -translate-x-1/2 -translate-y-1/2 flex-col items-center justify-center text-center',
 }
 
 export type PolarSlot = keyof typeof polarSlots

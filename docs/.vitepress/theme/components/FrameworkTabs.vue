@@ -4,7 +4,10 @@ import BrandIcon from './BrandIcon.vue'
 
 <template>
   <div data-slot="tabs" class="flex flex-col gap-2" data-orientation="horizontal">
-    <div class="relative rounded-[calc(var(--radius)*2.5)] bg-default" data-slot="tabs-list-container">
+    <div
+      class="relative rounded-[calc(var(--radius)*2.5)] bg-default"
+      data-slot="tabs-list-container"
+    >
       <div
         data-slot="tabs-list"
         aria-label="Documentation framework"
@@ -23,7 +26,10 @@ import BrandIcon from './BrandIcon.vue'
         >
           <BrandIcon name="vue" />
           Vue
-          <div data-slot="tabs-indicator" class="absolute start-0 top-0 -z-1 size-full rounded-3xl bg-segment shadow-surface" />
+          <div
+            data-slot="tabs-indicator"
+            class="absolute start-0 top-0 -z-1 size-full rounded-3xl bg-segment shadow-surface"
+          />
         </div>
       </div>
     </div>

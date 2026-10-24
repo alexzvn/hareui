@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import type { AccordionItem } from '@hareui/vue'
-import { Icon } from '@iconify/vue'
 import { Accordion } from '@hareui/vue'
+import { Icon } from '@iconify/vue'
 
 interface SetupItem extends AccordionItem {
   iconUrl: string
@@ -22,8 +22,10 @@ const items: SetupItem[] = [
     label: 'Set up Browser Extension',
   },
   {
-    content: 'Begin your journey into the world of digital collectibles by creating your first NFT. ',
-    iconUrl: 'https://heroui-assets.nyc3.cdn.digitaloceanspaces.com/docs/3dicons/mint-collective-small.png',
+    content:
+      'Begin your journey into the world of digital collectibles by creating your first NFT. ',
+    iconUrl:
+      'https://heroui-assets.nyc3.cdn.digitaloceanspaces.com/docs/3dicons/mint-collective-small.png',
     subtitle: 'Create your first collectible',
     label: 'Mint Collectible',
   },
@@ -38,13 +40,18 @@ const ui = {
 </script>
 
 <template>
-  <Accordion class="bg-surface-1/10 w-full max-w-md rounded-2xl" :items="items" :ui="ui" variant="surface">
+  <Accordion
+    class="bg-surface-1/10 w-full max-w-md rounded-2xl"
+    :items="items"
+    :ui="ui"
+    variant="surface"
+  >
     <template #leading="{ item }">
       <img
         :alt="item.label"
         class="h-11 w-11 transition-[scale,rotate] duration-300 ease-out group-hover/item:scale-120 group-hover/item:-rotate-10 group-hover/item:drop-shadow-lg"
         :src="item.iconUrl"
-      >
+      />
     </template>
     <template #label="{ item }">
       <div class="flex flex-col gap-0">

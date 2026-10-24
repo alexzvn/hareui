@@ -1,6 +1,6 @@
 <script setup lang="ts">
-import type { ChartComposedSeries } from '@hareui/vue/charts'
 import { Card } from '@hareui/vue'
+import type { ChartComposedSeries } from '@hareui/vue/charts'
 import { ChartLegend, ComposedChart } from '@hareui/vue/charts'
 
 const data = [
@@ -33,7 +33,12 @@ function formatPercent(value: number | string) {
 }
 
 const series = {
-  tickets: { type: 'area', name: 'Tickets', fillOpacity: [0.15, 0.02], valueFormatter: formatNumber },
+  tickets: {
+    type: 'area',
+    name: 'Tickets',
+    fillOpacity: [0.15, 0.02],
+    valueFormatter: formatNumber,
+  },
   screenings: { type: 'bar', name: 'Screenings', barSize: 14, valueFormatter: formatNumber },
   occupancy: {
     type: 'line',
@@ -47,7 +52,10 @@ const colors = ['var(--chart-3)', 'var(--chart-5)', 'var(--chart-1)']
 </script>
 
 <template>
-  <Card class="w-full max-w-[620px] rounded-2xl" :ui="{ header: 'flex-row flex-wrap items-center justify-between gap-2' }">
+  <Card
+    class="w-full max-w-[620px] rounded-2xl"
+    :ui="{ header: 'flex-row flex-wrap items-center justify-between gap-2' }"
+  >
     <template #header>
       <h3 class="text-base font-medium text-foreground">Cinema Attendance</h3>
       <ChartLegend :series="series" :colors="colors" />

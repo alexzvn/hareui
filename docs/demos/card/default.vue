@@ -10,7 +10,12 @@ import { Icon } from '@iconify/vue'
     title="Become an Acme Creator!"
   >
     <template #leading>
-      <Icon aria-label="Dollar sign icon" class="size-6" icon="gravity-ui:circle-dollar" role="img" />
+      <Icon
+        aria-label="Dollar sign icon"
+        class="size-6"
+        icon="gravity-ui:circle-dollar"
+        role="img"
+      />
     </template>
     <template #footer>
       <Link

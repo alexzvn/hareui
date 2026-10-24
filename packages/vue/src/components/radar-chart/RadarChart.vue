@@ -2,11 +2,20 @@
 import type { ComponentSlots } from '../../types/tv'
 import type { ChartLegendProps } from '../chart-legend/ChartLegend.vue'
 import type { ChartTooltipContentEntry } from '../chart-tooltip/ChartTooltipContent.vue'
-import type { ChartPolarAngleAxisProps, ChartPolarAngleAxisSlots } from '../chart/ChartPolarAngleAxis.vue'
+import type {
+  ChartPolarAngleAxisProps,
+  ChartPolarAngleAxisSlots,
+} from '../chart/ChartPolarAngleAxis.vue'
 import type { ChartPolarGridProps } from '../chart/ChartPolarGrid.vue'
 import type { ChartPolarRadiusAxisProps } from '../chart/ChartPolarRadiusAxis.vue'
 import type { ChartTooltipProps, ChartTooltipSlotProps } from '../chart/ChartTooltip.vue'
-import type { ChartIndexKey, ChartLegendItem, ChartLegendPosition, ChartRadarSeries, ChartSeriesInput } from '../chart/series-config'
+import type {
+  ChartIndexKey,
+  ChartLegendItem,
+  ChartLegendPosition,
+  ChartRadarSeries,
+  ChartSeriesInput,
+} from '../chart/series-config'
 import type { ChartDatum, ChartDotProps, ChartMargin } from '../chart/types'
 import theme from './theme'
 
@@ -63,7 +72,10 @@ export interface RadarChartProps<T extends object = ChartDatum> {
    */
   tooltip?: boolean | Partial<ChartTooltipProps>
   /** Legend of the radars: `true` (below), a side, or `ChartLegend` props with a `position`. Clicking a row hides its radar. */
-  legend?: boolean | ChartLegendPosition | (Partial<ChartLegendProps<T>> & { position?: ChartLegendPosition })
+  legend?:
+    | boolean
+    | ChartLegendPosition
+    | (Partial<ChartLegendProps<T>> & { position?: ChartLegendPosition })
   /** Formats values in the tooltip. A series' own `valueFormatter` wins. */
   valueFormatter?: (value: number, key: string) => string
   /** Formats the spoke labels and the tooltip header. */
@@ -123,34 +135,45 @@ export interface RadarChartProps<T extends object = ChartDatum> {
 
 export interface RadarChartSlots {
   /** Chart parts: `ChartPolarGrid`, `ChartPolarAngleAxis`, `ChartPolarRadiusAxis`, `ChartRadar`, `ChartTooltip`. With `index` or `series`, extra parts drawn over the generated ones. */
-  'default'?: () => any
+  default?: () => any
   /** Replaces each spoke label. Render SVG (`<text>`, `<g>`). */
   'angle-tick'?: ChartPolarAngleAxisSlots['tick']
   /** Replaces the tooltip panel. */
-  'tooltip'?: (props: ChartTooltipSlotProps) => any
+  tooltip?: (props: ChartTooltipSlotProps) => any
   /** Content under the tooltip rows. */
-  'tooltip-footer'?: (props: { label?: number | string, payload: ChartTooltipContentEntry[] }) => any
+  'tooltip-footer'?: (props: {
+    label?: number | string
+    payload: ChartTooltipContentEntry[]
+  }) => any
   /** Replaces the legend. */
-  'legend'?: (props: { items: ChartLegendItem[], toggle: (key: string) => void }) => any
+  legend?: (props: { items: ChartLegendItem[]; toggle: (key: string) => void }) => any
   /** Replaces each legend row. */
-  'legend-item'?: (props: { item: ChartLegendItem, index: number, toggle: () => void }) => any
+  'legend-item'?: (props: { item: ChartLegendItem; index: number; toggle: () => void }) => any
 }
 </script>
 
 <script setup lang="ts" generic="T extends object">
 import { computed } from 'vue'
+
 import { useComponentUI } from '../../composables/useComponentUI'
+import { definedProps } from '../chart/cartesian-root'
 import ChartFrame from '../chart/ChartFrame.vue'
 import ChartPolarAngleAxis from '../chart/ChartPolarAngleAxis.vue'
 import ChartPolarGrid from '../chart/ChartPolarGrid.vue'
 import ChartPolarRadiusAxis from '../chart/ChartPolarRadiusAxis.vue'
 import ChartRadar from '../chart/ChartRadar.vue'
-import { definedProps } from '../chart/cartesian-root'
 import { useChartRoot } from '../chart/context'
 import { frameSlotNames } from '../chart/frame'
 import { usePolarChart } from '../chart/polar'
 import { usePolarRoot } from '../chart/polar-root'
-import { chartDefaults, isChartGenerated, resolveChartPart, resolveSeries, seriesLegendItems, seriesValueFormatter } from '../chart/series-config'
+import {
+  chartDefaults,
+  isChartGenerated,
+  resolveChartPart,
+  resolveSeries,
+  seriesLegendItems,
+  seriesValueFormatter,
+} from '../chart/series-config'
 
 const props = withDefaults(defineProps<RadarChartProps<T>>(), {
   height: 300,
@@ -174,8 +197,7 @@ const hidden = defineModel<string[]>('hidden', { default: () => [] })
 
 const generated = computed(() => isChartGenerated(props))
 const resolved = computed(() => {
-  if (!generated.value)
-    return []
+  if (!generated.value) return []
   const own = { fillOpacity: props.fillOpacity, strokeWidth: props.strokeWidth, dot: props.dot }
   const defined = Object.fromEntries(Object.entries(own).filter(([, value]) => value !== undefined))
   return resolveSeries<T, ChartRadarSeries>({
@@ -188,20 +210,35 @@ const resolved = computed(() => {
   })
 })
 
-const grid = computed(() => (generated.value ? resolveChartPart<Partial<ChartPolarGridProps>>(props.grid, {}) : null))
-const angleAxis = computed(() => (generated.value
-  ? resolveChartPart<Partial<ChartPolarAngleAxisProps>>(props.angleAxis, definedProps({ dataKey: props.index as string | undefined, tickFormatter: props.indexFormatter }))
-  : null))
-const radiusAxis = computed(() => (generated.value ? resolveChartPart<Partial<ChartPolarRadiusAxisProps>>(props.radiusAxis, {}, false) : null))
+const grid = computed(() =>
+  generated.value ? resolveChartPart<Partial<ChartPolarGridProps>>(props.grid, {}) : null,
+)
+const angleAxis = computed(() =>
+  generated.value
+    ? resolveChartPart<Partial<ChartPolarAngleAxisProps>>(
+        props.angleAxis,
+        definedProps({
+          dataKey: props.index as string | undefined,
+          tickFormatter: props.indexFormatter,
+        }),
+      )
+    : null,
+)
+const radiusAxis = computed(() =>
+  generated.value
+    ? resolveChartPart<Partial<ChartPolarRadiusAxisProps>>(props.radiusAxis, {}, false)
+    : null,
+)
 
 const config = usePolarRoot({
   props,
   generated: () => generated.value,
   legendItems: () => seriesLegendItems(resolved.value),
-  tooltip: () => definedProps({
-    valueFormatter: seriesValueFormatter(resolved.value, props.valueFormatter),
-    labelFormatter: props.indexFormatter,
-  }),
+  tooltip: () =>
+    definedProps({
+      valueFormatter: seriesValueFormatter(resolved.value, props.valueFormatter),
+      labelFormatter: props.indexFormatter,
+    }),
   hasLegendSlot: () => !!slots.legend,
 })
 

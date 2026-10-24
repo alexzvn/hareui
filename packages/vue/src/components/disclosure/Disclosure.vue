@@ -1,6 +1,7 @@
 <script lang="ts">
 import type { PrimitiveProps } from 'reka-ui'
 import type { Component } from 'vue'
+
 import type { ComponentSlots } from '../../types/tv'
 import theme from './theme'
 
@@ -63,7 +64,19 @@ export interface DisclosureEmits {
 
 <script setup lang="ts">
 import { Primitive } from 'reka-ui'
-import { computed, defineComponent, h, inject, onBeforeUnmount, onMounted, ref, useId, useSlots, watch } from 'vue'
+import {
+  computed,
+  defineComponent,
+  h,
+  inject,
+  onBeforeUnmount,
+  onMounted,
+  ref,
+  useId,
+  useSlots,
+  watch,
+} from 'vue'
+
 import { useComponentUI } from '../../composables/useComponentUI'
 import { animatePanel, onPanelReveal, setPanelStatic } from '../../utils/disclosurePanel'
 import { disclosureGroupContextKey } from '../disclosure-group/context'
@@ -83,7 +96,9 @@ const value = computed(() => props.value ?? fallbackValue)
 const isDisabled = computed(() => props.disabled || !!group?.disabled.value)
 
 const uncontrolled = ref(props.defaultOpen)
-const isOpen = computed(() => group ? group.isExpanded(value.value) : props.open ?? uncontrolled.value)
+const isOpen = computed(() =>
+  group ? group.isExpanded(value.value) : (props.open ?? uncontrolled.value),
+)
 function setOpen(open: boolean) {
   if (group) group.setExpanded(value.value, open)
   else uncontrolled.value = open
@@ -99,24 +114,31 @@ const Indicator = defineComponent({
   name: 'DisclosureIndicator',
   inheritAttrs: false,
   setup(_, { attrs }) {
-    return () => h('svg', {
-      ...attrs,
-      'aria-hidden': 'true',
-      'data-slot': 'disclosure-indicator',
-      'fill': 'none',
-      'height': '16',
-      'role': 'presentation',
-      'viewBox': '0 0 16 16',
-      'width': '16',
-      'xmlns': 'http://www.w3.org/2000/svg',
-      'data-expanded': isOpen.value ? 'true' : undefined,
-      'class': ui.value.indicator({ class: [props.ui?.indicator, attrs.class as string] }),
-    }, [h('path', {
-      'clip-rule': 'evenodd',
-      'd': 'M2.97 5.47a.75.75 0 0 1 1.06 0L8 9.44l3.97-3.97a.75.75 0 1 1 1.06 1.06l-4.5 4.5a.75.75 0 0 1-1.06 0l-4.5-4.5a.75.75 0 0 1 0-1.06',
-      'fill': 'currentColor',
-      'fill-rule': 'evenodd',
-    })])
+    return () =>
+      h(
+        'svg',
+        {
+          ...attrs,
+          'aria-hidden': 'true',
+          'data-slot': 'disclosure-indicator',
+          fill: 'none',
+          height: '16',
+          role: 'presentation',
+          viewBox: '0 0 16 16',
+          width: '16',
+          xmlns: 'http://www.w3.org/2000/svg',
+          'data-expanded': isOpen.value ? 'true' : undefined,
+          class: ui.value.indicator({ class: [props.ui?.indicator, attrs.class as string] }),
+        },
+        [
+          h('path', {
+            'clip-rule': 'evenodd',
+            d: 'M2.97 5.47a.75.75 0 0 1 1.06 0L8 9.44l3.97-3.97a.75.75 0 1 1 1.06 1.06l-4.5 4.5a.75.75 0 0 1-1.06 0l-4.5-4.5a.75.75 0 0 1 0-1.06',
+            fill: 'currentColor',
+            'fill-rule': 'evenodd',
+          }),
+        ],
+      )
   },
 })
 
@@ -127,12 +149,14 @@ const panelId = useId()
 // slotted element. Keys are omitted rather than `undefined` so they don't erase the child's own attrs
 // (e.g. Button's `data-slot="button"`).
 const triggerAttrs = computed(() => ({
-  'id': triggerId,
-  'type': 'button',
+  id: triggerId,
+  type: 'button',
   'aria-expanded': isOpen.value ? 'true' : 'false',
   'aria-controls': panelId,
   ...(isDisabled.value ? { disabled: true } : {}),
-  ...(slots.trigger ? {} : { 'data-slot': 'disclosure-trigger', 'class': ui.value.trigger({ class: props.ui?.trigger }) }),
+  ...(slots.trigger
+    ? {}
+    : { 'data-slot': 'disclosure-trigger', class: ui.value.trigger({ class: props.ui?.trigger }) }),
 }))
 
 const panel = ref<HTMLElement>()
@@ -143,9 +167,13 @@ onMounted(() => {
 })
 onBeforeUnmount(() => stopReveal?.())
 
-watch(isOpen, (open) => {
-  if (panel.value) animatePanel(panel.value, open)
-}, { flush: 'post' })
+watch(
+  isOpen,
+  (open) => {
+    if (panel.value) animatePanel(panel.value, open)
+  },
+  { flush: 'post' },
+)
 </script>
 
 <template>
@@ -156,8 +184,16 @@ watch(isOpen, (open) => {
     :data-disabled="isDisabled ? 'true' : undefined"
     :class="ui.base({ class: [props.ui?.base, props.class] })"
   >
-    <h3 data-slot="disclosure-heading" :class="ui.heading({ class: props.ui?.heading }) || undefined">
-      <Primitive :as="slots.trigger ? undefined : 'button'" :as-child="!!slots.trigger" v-bind="triggerAttrs" @click="toggle">
+    <h3
+      data-slot="disclosure-heading"
+      :class="ui.heading({ class: props.ui?.heading }) || undefined"
+    >
+      <Primitive
+        :as="slots.trigger ? undefined : 'button'"
+        :as-child="!!slots.trigger"
+        v-bind="triggerAttrs"
+        @click="toggle"
+      >
         <slot name="trigger" :open="isOpen" :indicator="Indicator">
           {{ title }}
           <slot name="indicator" :open="isOpen">
@@ -176,7 +212,11 @@ watch(isOpen, (open) => {
       :data-expanded="isOpen ? 'true' : undefined"
       :class="ui.content({ class: props.ui?.content })"
     >
-      <div v-if="!!slots.default" data-slot="disclosure-body" :class="ui.body({ class: props.ui?.body })">
+      <div
+        v-if="!!slots.default"
+        data-slot="disclosure-body"
+        :class="ui.body({ class: props.ui?.body })"
+      >
         <div :class="ui.bodyInner({ class: props.ui?.bodyInner }) || undefined">
           <slot />
         </div>

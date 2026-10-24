@@ -24,9 +24,7 @@ const placements = ['auto', 'top', 'center', 'bottom'] as const
         </p>
       </template>
       <template #footer="{ close }">
-        <Button class="w-full" @click="close">
-          Continue
-        </Button>
+        <Button class="w-full" @click="close"> Continue </Button>
       </template>
     </Modal>
   </div>

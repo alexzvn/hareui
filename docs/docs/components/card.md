@@ -84,16 +84,18 @@ Use the `class` prop for the root and the `ui` prop for the inner elements (tail
 Override the `card` theme app-wide with `createHareUI`:
 
 ```ts
-app.use(createHareUI({
-  ui: {
-    card: {
-      variants: {
-        variant: { secondary: { base: 'bg-linear-to-br from-blue-50 to-purple-50' } },
+app.use(
+  createHareUI({
+    ui: {
+      card: {
+        variants: {
+          variant: { secondary: { base: 'bg-linear-to-br from-blue-50 to-purple-50' } },
+        },
+        slots: { title: 'text-xl font-bold' },
       },
-      slots: { title: 'text-xl font-bold' },
     },
-  },
-}))
+  }),
+)
 ```
 
 ### Title and description in custom wrappers
@@ -129,14 +131,14 @@ don't apply to these classes.
 
 Each rendered element carries the same `data-slot` string as HeroUI, so selectors translate 1:1.
 
-| `ui` key | `data-slot` | Description |
-|---|---|---|
-| `base` | `card` | Base container with padding and border radius |
-| `header` | `card-header` | Header section container |
-| `title` | `card-title` | Title with base font size and weight (renders as `h3`) |
-| `description` | `card-description` | Muted description text (renders as `p`) |
-| `content` | `card-content` | Flexible content container (default slot) |
-| `footer` | `card-footer` | Footer with row layout |
+| `ui` key      | `data-slot`        | Description                                            |
+| ------------- | ------------------ | ------------------------------------------------------ |
+| `base`        | `card`             | Base container with padding and border radius          |
+| `header`      | `card-header`      | Header section container                               |
+| `title`       | `card-title`       | Title with base font size and weight (renders as `h3`) |
+| `description` | `card-description` | Muted description text (renders as `p`)                |
+| `content`     | `card-content`     | Flexible content container (default slot)              |
+| `footer`      | `card-footer`      | Footer with row layout                                 |
 
 HeroUI's modifier classes correspond to the `variant` prop (HareUI renders utilities, not BEM
 classes, so style through `class`, `ui` or `createHareUI`): `.card--transparent`,

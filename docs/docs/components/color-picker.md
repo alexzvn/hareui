@@ -66,24 +66,26 @@ Use several `ColorSlider` components to adjust each channel.
 ### Global CSS
 
 ```ts
-app.use(createHareUI({
-  ui: {
-    colorPicker: {
-      slots: {
-        trigger: 'gap-4 rounded-lg',
-        popover: 'rounded-xl p-4',
+app.use(
+  createHareUI({
+    ui: {
+      colorPicker: {
+        slots: {
+          trigger: 'gap-4 rounded-lg',
+          popover: 'rounded-xl p-4',
+        },
       },
     },
-  },
-}))
+  }),
+)
 ```
 
 ## Styling Reference
 
-| `ui` key | `data-slot` | Description |
-|---|---|---|
-| `base` | `color-picker` | Wrapper (inline-flex) |
-| `trigger` | `color-picker-trigger` | Trigger button |
+| `ui` key  | `data-slot`            | Description                             |
+| --------- | ---------------------- | --------------------------------------- |
+| `base`    | `color-picker`         | Wrapper (inline-flex)                   |
+| `trigger` | `color-picker-trigger` | Trigger button                          |
 | `popover` | `color-picker-popover` | Popover container (portalled to `body`) |
 
 ### Interactive States

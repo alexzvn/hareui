@@ -1,6 +1,7 @@
 import type { MaybeRefOrGetter } from 'vue'
-import type { ExpandedValue } from '../../composables/useExpandedValues'
 import { computed, toValue } from 'vue'
+
+import type { ExpandedValue } from '../../composables/useExpandedValues'
 
 export interface UseDisclosureGroupNavigationOptions {
   /** The currently expanded values (the Accordion / DisclosureGroup `v-model`). */
@@ -25,7 +26,7 @@ export function useDisclosureGroupNavigation(options: UseDisclosureGroupNavigati
   const currentIndex = computed(() => {
     const ids = toValue(options.itemIds)
     const expanded = toValue(options.expandedKeys)
-    const current = ids.find(id => expanded.includes(id)) ?? ids[0]
+    const current = ids.find((id) => expanded.includes(id)) ?? ids[0]
     return current === undefined ? -1 : ids.indexOf(current)
   })
 
@@ -33,9 +34,13 @@ export function useDisclosureGroupNavigation(options: UseDisclosureGroupNavigati
     const id = toValue(options.itemIds)[index]
     if (id === undefined) return
     const expanded = toValue(options.expandedKeys)
-    options.onExpandedChange(toValue(options.multiple)
-      ? (expanded.includes(id) ? [...expanded] : [...expanded, id])
-      : [id])
+    options.onExpandedChange(
+      toValue(options.multiple)
+        ? expanded.includes(id)
+          ? [...expanded]
+          : [...expanded, id]
+        : [id],
+    )
   }
 
   return {

@@ -55,7 +55,10 @@ onBeforeUnmount(() => media?.removeEventListener('change', onSystemChange))
 </script>
 
 <template>
-  <div class="inline-flex cursor-(--cursor-interactive) items-center rounded-full border p-1" data-theme-toggle="">
+  <div
+    class="inline-flex cursor-(--cursor-interactive) items-center rounded-full border p-1"
+    data-theme-toggle=""
+  >
     <button
       v-for="item in modes"
       :key="item.mode"
@@ -63,7 +66,9 @@ onBeforeUnmount(() => media?.removeEventListener('change', onSystemChange))
       :aria-label="item.label"
       :class="[
         'size-6.5 rounded-full p-1.5',
-        current === item.mode ? 'bg-fd-accent text-fd-accent-foreground' : 'text-fd-muted-foreground',
+        current === item.mode
+          ? 'bg-fd-accent text-fd-accent-foreground'
+          : 'text-fd-muted-foreground',
       ]"
       @click="select(item.mode)"
     >

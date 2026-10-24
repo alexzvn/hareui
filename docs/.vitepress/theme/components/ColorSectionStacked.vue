@@ -1,6 +1,6 @@
 <script setup lang="ts">
-import ThemeChip from './color/ThemeChip.vue'
 import StackedSwatch from './color/StackedSwatch.vue'
+import ThemeChip from './color/ThemeChip.vue'
 
 interface StackedColor {
   label: string
@@ -19,7 +19,11 @@ defineProps<{ lightColors: StackedColor[]; darkColors: StackedColor[] }>()
       <div class="flex flex-col gap-2">
         <ThemeChip theme="Light" />
         <div class="flex flex-wrap gap-2 sm:flex-nowrap">
-          <StackedSwatch v-for="color in lightColors" :key="color.variable + color.label" v-bind="color" />
+          <StackedSwatch
+            v-for="color in lightColors"
+            :key="color.variable + color.label"
+            v-bind="color"
+          />
         </div>
       </div>
     </div>
@@ -27,7 +31,11 @@ defineProps<{ lightColors: StackedColor[]; darkColors: StackedColor[] }>()
       <div class="flex flex-col gap-2">
         <ThemeChip theme="Dark" />
         <div class="flex flex-wrap gap-2 sm:flex-nowrap">
-          <StackedSwatch v-for="color in darkColors" :key="color.variable + color.label" v-bind="color" />
+          <StackedSwatch
+            v-for="color in darkColors"
+            :key="color.variable + color.label"
+            v-bind="color"
+          />
         </div>
       </div>
     </div>

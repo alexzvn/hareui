@@ -3,12 +3,21 @@ import { RadioButtonGroup, RadioButtonGroupItem } from '@hareui/vue'
 import { ref } from 'vue'
 
 const seats = [
-  { value: 'standard', title: 'Standard', description: 'Reclining seat and a power outlet', price: 39 },
+  {
+    value: 'standard',
+    title: 'Standard',
+    description: 'Reclining seat and a power outlet',
+    price: 39,
+  },
   { value: 'comfort', title: 'Comfort', description: 'Extra legroom in a quiet coach', price: 58 },
   { value: 'first', title: 'First', description: 'Wide seat, meal served at your seat', price: 94 },
 ]
 
-const eur = new Intl.NumberFormat('en-IE', { style: 'currency', currency: 'EUR', maximumFractionDigits: 0 })
+const eur = new Intl.NumberFormat('en-IE', {
+  style: 'currency',
+  currency: 'EUR',
+  maximumFractionDigits: 0,
+})
 
 const seat = ref('comfort')
 </script>

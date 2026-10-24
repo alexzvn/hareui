@@ -22,7 +22,14 @@ const countries: ListBoxItem[] = [
 
 <template>
   <div class="flex flex-col gap-4">
-    <Select disabled class="w-[256px]" default-value="california" label="State" placeholder="Select one" :items="states" />
+    <Select
+      disabled
+      class="w-[256px]"
+      default-value="california"
+      label="State"
+      placeholder="Select one"
+      :items="states"
+    />
     <Select
       disabled
       class="w-[256px]"

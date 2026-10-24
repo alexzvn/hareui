@@ -4,11 +4,17 @@
 // (`hidden="until-found"`).
 
 function setSize(el: HTMLElement, size: 'auto' | '0px' | 'measure') {
-  el.style.setProperty('--disclosure-panel-width', size === 'measure' ? `${el.scrollWidth}px` : size)
-  el.style.setProperty('--disclosure-panel-height', size === 'measure' ? `${el.scrollHeight}px` : size)
+  el.style.setProperty(
+    '--disclosure-panel-width',
+    size === 'measure' ? `${el.scrollWidth}px` : size,
+  )
+  el.style.setProperty(
+    '--disclosure-panel-height',
+    size === 'measure' ? `${el.scrollHeight}px` : size,
+  )
 }
 
-const afterAnimations = (el: HTMLElement) => Promise.all(el.getAnimations().map(a => a.finished))
+const afterAnimations = (el: HTMLElement) => Promise.all(el.getAnimations().map((a) => a.finished))
 
 /** Applies the open/closed state without animating (first render, or no Web Animations API). */
 export function setPanelStatic(el: HTMLElement, open: boolean) {
@@ -24,14 +30,17 @@ export function animatePanel(el: HTMLElement, open: boolean) {
     el.removeAttribute('hidden')
     // Pixel size so it can animate; back to auto afterwards so the content can resize.
     setSize(el, 'measure')
-    afterAnimations(el).then(() => setSize(el, 'auto')).catch(() => {})
-  }
-  else {
+    afterAnimations(el)
+      .then(() => setSize(el, 'auto'))
+      .catch(() => {})
+  } else {
     setSize(el, 'measure')
     // Force style recalculation so the change to 0px animates.
     void getComputedStyle(el).height
     setSize(el, '0px')
-    afterAnimations(el).then(() => el.setAttribute('hidden', 'until-found')).catch(() => {})
+    afterAnimations(el)
+      .then(() => el.setAttribute('hidden', 'until-found'))
+      .catch(() => {})
   }
 }
 

@@ -1,8 +1,9 @@
 import { flushPromises, mount } from '@vue/test-utils'
 import { describe, expect, it } from 'vitest'
 import { h } from 'vue'
-import ToggleButton from '../src/components/toggle-button/ToggleButton.vue'
+
 import ToggleButtonGroup from '../src/components/toggle-button-group/ToggleButtonGroup.vue'
+import ToggleButton from '../src/components/toggle-button/ToggleButton.vue'
 import { expectAccessible } from './a11y'
 
 const IDS = ['left', 'center', 'right']
@@ -12,7 +13,16 @@ function group(props: Record<string, unknown> = {}, disabled: string[] = []) {
     props,
     attrs: { 'aria-label': 'Text alignment' },
     attachTo: document.body,
-    slots: { default: () => IDS.map(id => h(ToggleButton, { id, value: id, disabled: disabled.includes(id) || undefined }, () => id)) },
+    slots: {
+      default: () =>
+        IDS.map((id) =>
+          h(
+            ToggleButton,
+            { id, value: id, disabled: disabled.includes(id) || undefined },
+            () => id,
+          ),
+        ),
+    },
   })
 }
 
@@ -27,7 +37,10 @@ describe('ToggleButtonGroup', () => {
   it('Home / End do not move focus to the first / last button', async () => {
     const wrapper = mount(ToggleButtonGroup, {
       props: { selectionMode: 'multiple' },
-      slots: { default: () => ['bold', 'italic', 'underline'].map(id => h(ToggleButton, { id }, () => id)) },
+      slots: {
+        default: () =>
+          ['bold', 'italic', 'underline'].map((id) => h(ToggleButton, { id }, () => id)),
+      },
       attachTo: document.body,
     })
     await flushPromises()
@@ -38,7 +51,9 @@ describe('ToggleButtonGroup', () => {
       await flushPromises()
       expect(document.activeElement).toBe(middle)
     }
-    middle.dispatchEvent(new KeyboardEvent('keydown', { key: 'ArrowRight', bubbles: true, cancelable: true }))
+    middle.dispatchEvent(
+      new KeyboardEvent('keydown', { key: 'ArrowRight', bubbles: true, cancelable: true }),
+    )
     await flushPromises()
     expect(document.activeElement).toBe(wrapper.get('#underline').element)
     wrapper.unmount()
@@ -47,9 +62,15 @@ describe('ToggleButtonGroup', () => {
   it.each([
     ['single selection, nothing selected', {}],
     ['single selection with a selected button', { defaultValue: ['center'] }],
-    ['multiple selection with selected buttons', { selectionMode: 'multiple', defaultValue: ['left', 'right'] }],
+    [
+      'multiple selection with selected buttons',
+      { selectionMode: 'multiple', defaultValue: ['left', 'right'] },
+    ],
     ['disabled', { disabled: true, defaultValue: ['left'] }],
-    ['vertical with separators', { orientation: 'vertical', separator: true, defaultValue: ['left'] }],
+    [
+      'vertical with separators',
+      { orientation: 'vertical', separator: true, defaultValue: ['left'] },
+    ],
   ])('is accessible: %s', async (_, props) => {
     const wrapper = group(props)
     await flushPromises()
@@ -59,22 +80,26 @@ describe('ToggleButtonGroup', () => {
 
   it('single selection exposes a radiogroup of radios whose aria-checked follows the selection', async () => {
     const wrapper = group({ defaultValue: ['left'] })
-    expect(wrapper.attributes()).toMatchObject({ 'role': 'radiogroup', 'aria-orientation': 'horizontal', 'aria-label': 'Text alignment' })
-    expect(IDS.map(id => el(id).getAttribute('aria-checked'))).toEqual(['true', 'false', 'false'])
+    expect(wrapper.attributes()).toMatchObject({
+      role: 'radiogroup',
+      'aria-orientation': 'horizontal',
+      'aria-label': 'Text alignment',
+    })
+    expect(IDS.map((id) => el(id).getAttribute('aria-checked'))).toEqual(['true', 'false', 'false'])
     el('right').click()
     await flushPromises()
-    expect(IDS.map(id => el(id).getAttribute('aria-checked'))).toEqual(['false', 'false', 'true'])
+    expect(IDS.map((id) => el(id).getAttribute('aria-checked'))).toEqual(['false', 'false', 'true'])
     wrapper.unmount()
   })
 
   it('multiple selection exposes toggle buttons whose aria-pressed follows the selection', async () => {
     const wrapper = group({ selectionMode: 'multiple', defaultValue: ['left'] })
     expect(wrapper.attributes('role')).toBe('toolbar')
-    expect(IDS.map(id => el(id).getAttribute('role'))).toEqual([null, null, null])
-    expect(IDS.map(id => el(id).getAttribute('aria-pressed'))).toEqual(['true', 'false', 'false'])
+    expect(IDS.map((id) => el(id).getAttribute('role'))).toEqual([null, null, null])
+    expect(IDS.map((id) => el(id).getAttribute('aria-pressed'))).toEqual(['true', 'false', 'false'])
     el('center').click()
     await flushPromises()
-    expect(IDS.map(id => el(id).getAttribute('aria-pressed'))).toEqual(['true', 'true', 'false'])
+    expect(IDS.map((id) => el(id).getAttribute('aria-pressed'))).toEqual(['true', 'true', 'false'])
     wrapper.unmount()
   })
 
@@ -82,12 +107,14 @@ describe('ToggleButtonGroup', () => {
     const wrapper = group({ defaultValue: ['center'] })
     await flushPromises()
     // Tab reaches the group's one tab stop; the roving group hands focus to the selected button.
-    const tabbable = [wrapper.element, ...IDS.map(el)].filter(node => (node as HTMLElement).tabIndex >= 0)
+    const tabbable = [wrapper.element, ...IDS.map(el)].filter(
+      (node) => (node as HTMLElement).tabIndex >= 0,
+    )
     expect(tabbable).toHaveLength(1)
     ;(tabbable[0] as HTMLElement).focus()
     await flushPromises()
     expect(document.activeElement).toBe(el('center'))
-    expect(IDS.map(id => el(id).tabIndex)).toEqual([-1, 0, -1])
+    expect(IDS.map((id) => el(id).tabIndex)).toEqual([-1, 0, -1])
     wrapper.unmount()
   })
 

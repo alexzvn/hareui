@@ -1,8 +1,9 @@
-import type { DateRange } from '../src/components/range-calendar/RangeCalendar.vue'
 import { CalendarDate, parseDate } from '@internationalized/date'
 import { mount } from '@vue/test-utils'
 import { describe, expect, it } from 'vitest'
 import { defineComponent, nextTick, ref } from 'vue'
+
+import type { DateRange } from '../src/components/range-calendar/RangeCalendar.vue'
 import RangeCalendar from '../src/components/range-calendar/RangeCalendar.vue'
 import { expectAccessible } from './a11y'
 
@@ -11,8 +12,12 @@ const focused = new CalendarDate(2025, 1, 15)
 describe('rangeCalendar', () => {
   it('clicking a start then an end day selects the range and emits update:modelValue', async () => {
     const wrapper = mount(RangeCalendar, { props: { defaultPlaceholder: focused } })
-    const day10 = wrapper.findAll('[data-slot=range-calendar-cell]').find(cell => cell.text() === '10')!
-    const day20 = wrapper.findAll('[data-slot=range-calendar-cell]').find(cell => cell.text() === '20')!
+    const day10 = wrapper
+      .findAll('[data-slot=range-calendar-cell]')
+      .find((cell) => cell.text() === '10')!
+    const day20 = wrapper
+      .findAll('[data-slot=range-calendar-cell]')
+      .find((cell) => cell.text() === '20')!
     await day10.trigger('mouseenter')
     await day10.trigger('click')
     await day20.trigger('mouseenter')
@@ -32,7 +37,9 @@ describe('rangeCalendar', () => {
         maxValue: new CalendarDate(2025, 1, 20),
       },
     })
-    const day5 = wrapper.findAll('[data-slot=range-calendar-cell]').find(cell => cell.text() === '5')!
+    const day5 = wrapper
+      .findAll('[data-slot=range-calendar-cell]')
+      .find((cell) => cell.text() === '5')!
     expect(day5.attributes('data-disabled')).toBe('')
 
     await day5.trigger('click')
@@ -44,10 +51,12 @@ describe('rangeCalendar', () => {
     const wrapper = mount(RangeCalendar, {
       props: {
         defaultPlaceholder: focused,
-        isDateUnavailable: date => date.day === 18,
+        isDateUnavailable: (date) => date.day === 18,
       },
     })
-    const day18 = wrapper.findAll('[data-slot=range-calendar-cell]').find(cell => cell.text() === '18')!
+    const day18 = wrapper
+      .findAll('[data-slot=range-calendar-cell]')
+      .find((cell) => cell.text() === '18')!
     expect(day18.attributes('data-unavailable')).toBe('')
 
     await day18.trigger('click')
@@ -64,7 +73,8 @@ describe('rangeCalendar', () => {
         isDateUnavailable: (date, anchor) => anchor !== null && Math.abs(date.day - anchor.day) > 7,
       },
     })
-    const cell = (d: number) => wrapper.findAll('[data-slot=range-calendar-cell]').find(c => c.text() === String(d))!
+    const cell = (d: number) =>
+      wrapper.findAll('[data-slot=range-calendar-cell]').find((c) => c.text() === String(d))!
 
     expect(cell(25).attributes('data-unavailable')).toBeUndefined()
     await cell(10).trigger('mouseenter')
@@ -80,7 +90,9 @@ describe('rangeCalendar', () => {
 
   it('disabled prevents selecting any date', async () => {
     const wrapper = mount(RangeCalendar, { props: { defaultPlaceholder: focused, disabled: true } })
-    const day10 = wrapper.findAll('[data-slot=range-calendar-cell]').find(cell => cell.text() === '10')!
+    const day10 = wrapper
+      .findAll('[data-slot=range-calendar-cell]')
+      .find((cell) => cell.text() === '10')!
     await day10.trigger('click')
 
     expect(wrapper.emitted('update:modelValue')).toBeUndefined()
@@ -100,21 +112,33 @@ describe('rangeCalendar', () => {
 
     await trigger.trigger('click')
     await nextTick()
-    expect(wrapper.find('[data-slot=calendar-year-picker-grid]').attributes('data-open')).toBe('true')
+    expect(wrapper.find('[data-slot=calendar-year-picker-grid]').attributes('data-open')).toBe(
+      'true',
+    )
 
-    const year2030 = wrapper.findAll('[data-slot=calendar-year-picker-year-cell]').find(cell => cell.text() === '2030')!
+    const year2030 = wrapper
+      .findAll('[data-slot=calendar-year-picker-year-cell]')
+      .find((cell) => cell.text() === '2030')!
     await year2030.trigger('click')
     await nextTick()
 
-    expect(wrapper.find('[data-slot=calendar-year-picker-grid]').attributes('data-open')).toBeUndefined()
+    expect(
+      wrapper.find('[data-slot=calendar-year-picker-grid]').attributes('data-open'),
+    ).toBeUndefined()
     expect(trigger.text()).toContain('2030')
     expect(trigger.text()).toMatch(/June/)
-    expect(wrapper.emitted('update:placeholder')?.[0]?.[0]).toMatchObject({ year: 2030, month: 6, day: 5 })
+    expect(wrapper.emitted('update:placeholder')?.[0]?.[0]).toMatchObject({
+      year: 2030,
+      month: 6,
+      day: 5,
+    })
     wrapper.unmount()
   })
 
   it('numberOfMonths renders one panel per month with shared prev/next paging by the full width', async () => {
-    const wrapper = mount(RangeCalendar, { props: { defaultPlaceholder: focused, numberOfMonths: 2 } })
+    const wrapper = mount(RangeCalendar, {
+      props: { defaultPlaceholder: focused, numberOfMonths: 2 },
+    })
     const panels = wrapper.findAll('[data-slot=calendar-panel]')
     expect(panels).toHaveLength(2)
     expect(panels[0].text()).toContain('January')
@@ -130,8 +154,12 @@ describe('rangeCalendar', () => {
 
   it('maximumDays restricts how far the end date can be from the start', async () => {
     const wrapper = mount(RangeCalendar, { props: { defaultPlaceholder: focused, maximumDays: 5 } })
-    const day10 = wrapper.findAll('[data-slot=range-calendar-cell]').find(cell => cell.text() === '10')!
-    const day20 = wrapper.findAll('[data-slot=range-calendar-cell]').find(cell => cell.text() === '20')!
+    const day10 = wrapper
+      .findAll('[data-slot=range-calendar-cell]')
+      .find((cell) => cell.text() === '10')!
+    const day20 = wrapper
+      .findAll('[data-slot=range-calendar-cell]')
+      .find((cell) => cell.text() === '20')!
     await day10.trigger('mouseenter')
     await day10.trigger('click')
     await day20.trigger('mouseenter')
@@ -161,7 +189,8 @@ describe('rangeCalendar', () => {
       template: `<RangeCalendar :default-placeholder="focused"><template v-if="show" #cell="{ date }">{{ tag }}{{ date.day }}</template></RangeCalendar>`,
     })
     const wrapper = mount(App)
-    const day15 = () => wrapper.findAll('[data-slot=range-calendar-cell]').find(cell => cell.text().endsWith('15'))!
+    const day15 = () =>
+      wrapper.findAll('[data-slot=range-calendar-cell]').find((cell) => cell.text().endsWith('15'))!
     expect(day15().text()).toBe('a15')
     tag.value = 'b'
     await nextTick()
@@ -179,12 +208,15 @@ describe('rangeCalendar', () => {
     let dayUpdates = 0
     const countDayUpdates = {
       updated(this: { $el: unknown }) {
-        if (this.$el instanceof Element && this.$el.matches('[role=gridcell]'))
-          dayUpdates++
+        if (this.$el instanceof Element && this.$el.matches('[role=gridcell]')) dayUpdates++
       },
     }
-    const wrapper = mount(RangeCalendar, { props: { defaultPlaceholder: focused }, global: { mixins: [countDayUpdates] } })
-    const day = (n: number) => wrapper.findAll('[data-slot=range-calendar-cell]').find(cell => cell.text() === String(n))!
+    const wrapper = mount(RangeCalendar, {
+      props: { defaultPlaceholder: focused },
+      global: { mixins: [countDayUpdates] },
+    })
+    const day = (n: number) =>
+      wrapper.findAll('[data-slot=range-calendar-cell]').find((cell) => cell.text() === String(n))!
     await day(10).trigger('mouseenter')
     await day(10).trigger('click')
     await day(12).trigger('mouseenter')
@@ -206,10 +238,14 @@ describe('range calendar week/day view (visibleDuration)', () => {
         locale: 'en-US',
         visibleDuration: { days: 10 },
         defaultPlaceholder: parseDate('2025-01-15'),
-        isDateUnavailable: (_d: any, anchor: any) => { anchors.push(anchor?.toString() ?? null); return false },
+        isDateUnavailable: (_d: any, anchor: any) => {
+          anchors.push(anchor?.toString() ?? null)
+          return false
+        },
       },
     })
-    const cell = (day: string) => wrapper.findAll('[data-slot=range-calendar-cell]').find(c => c.text() === day)!
+    const cell = (day: string) =>
+      wrapper.findAll('[data-slot=range-calendar-cell]').find((c) => c.text() === day)!
     await cell('9').trigger('click')
     expect(anchors.at(-1)).toBe('2025-01-09')
     await cell('12').trigger('click')
@@ -226,7 +262,8 @@ describe('range calendar anchor-dependent unavailable dates', () => {
       props: {
         ariaLabel: 'Trip',
         defaultPlaceholder: parseDate('2025-01-15'),
-        isDateUnavailable: (date: any, anchor: any) => anchor != null && Math.abs(date.compare(anchor)) > 7,
+        isDateUnavailable: (date: any, anchor: any) =>
+          anchor != null && Math.abs(date.compare(anchor)) > 7,
       },
       attachTo: document.body,
     })
@@ -246,11 +283,16 @@ describe('range calendar anchor-dependent unavailable dates', () => {
 })
 
 describe('range calendar keyboard paging and outside days', () => {
-  const heading = (w: { get: (s: string) => { text: () => string } }) => w.get('[data-slot=range-calendar-heading]').text()
+  const heading = (w: { get: (s: string) => { text: () => string } }) =>
+    w.get('[data-slot=range-calendar-heading]').text()
   const activeDate = () => document.activeElement?.getAttribute('data-value')
   async function mountFocused() {
     const wrapper = mount(RangeCalendar, {
-      props: { locale: 'en-US', defaultPlaceholder: parseDate('2025-01-15'), defaultValue: { start: parseDate('2025-01-10'), end: parseDate('2025-01-12') } },
+      props: {
+        locale: 'en-US',
+        defaultPlaceholder: parseDate('2025-01-15'),
+        defaultValue: { start: parseDate('2025-01-10'), end: parseDate('2025-01-12') },
+      },
       attachTo: document.body,
     })
     ;(wrapper.get('[data-value="2025-01-15"]').element as HTMLElement).focus()
@@ -258,7 +300,9 @@ describe('range calendar keyboard paging and outside days', () => {
     return wrapper
   }
   async function press(init: KeyboardEventInit) {
-    document.activeElement!.dispatchEvent(new KeyboardEvent('keydown', { bubbles: true, cancelable: true, ...init }))
+    document.activeElement!.dispatchEvent(
+      new KeyboardEvent('keydown', { bubbles: true, cancelable: true, ...init }),
+    )
     await nextTick()
     await nextTick()
   }
@@ -303,7 +347,11 @@ describe('range calendar keyboard paging and outside days', () => {
   // behaviour-final-check R4
   it('clicking a leading outside-month day neither navigates nor changes the range', async () => {
     const wrapper = mount(RangeCalendar, {
-      props: { locale: 'en-US', defaultPlaceholder: parseDate('2025-01-15'), defaultValue: { start: parseDate('2025-01-10'), end: parseDate('2025-01-12') } },
+      props: {
+        locale: 'en-US',
+        defaultPlaceholder: parseDate('2025-01-15'),
+        defaultValue: { start: parseDate('2025-01-10'), end: parseDate('2025-01-12') },
+      },
     })
     const outside = wrapper.get('[data-value="2024-12-31"]')
     expect(outside.attributes('data-outside-view')).toBeDefined()
@@ -320,7 +368,11 @@ describe('range calendar keyboard paging and outside days', () => {
   // behaviour-final-check R4
   it('clicking a trailing outside-month day neither navigates nor changes the range', async () => {
     const wrapper = mount(RangeCalendar, {
-      props: { locale: 'en-US', defaultPlaceholder: parseDate('2025-01-15'), defaultValue: { start: parseDate('2025-01-10'), end: parseDate('2025-01-12') } },
+      props: {
+        locale: 'en-US',
+        defaultPlaceholder: parseDate('2025-01-15'),
+        defaultValue: { start: parseDate('2025-01-10'), end: parseDate('2025-01-12') },
+      },
     })
     const outside = wrapper.get('[data-value="2025-02-01"]')
     expect(outside.attributes('data-outside-view')).toBeDefined()
@@ -334,12 +386,23 @@ describe('range calendar keyboard paging and outside days', () => {
 })
 
 describe('range calendar live range preview', () => {
-  const selectedDays = (w: { findAll: (s: string) => { attributes: (n: string) => string | undefined, text: () => string }[] }) =>
-    w.findAll('[data-slot=range-calendar-cell]').filter(c => c.attributes('data-selected') === 'true' && c.attributes('data-outside-view') === undefined).map(c => c.text())
+  const selectedDays = (w: {
+    findAll: (s: string) => { attributes: (n: string) => string | undefined; text: () => string }[]
+  }) =>
+    w
+      .findAll('[data-slot=range-calendar-cell]')
+      .filter(
+        (c) =>
+          c.attributes('data-selected') === 'true' &&
+          c.attributes('data-outside-view') === undefined,
+      )
+      .map((c) => c.text())
 
   // behaviour-final-check R1
   it('hovering a later day after the first click marks anchor to hovered cells as selected', async () => {
-    const wrapper = mount(RangeCalendar, { props: { locale: 'en-US', defaultPlaceholder: parseDate('2025-01-15') } })
+    const wrapper = mount(RangeCalendar, {
+      props: { locale: 'en-US', defaultPlaceholder: parseDate('2025-01-15') },
+    })
     const cell = (d: string) => wrapper.get(`[data-value="2025-01-${d}"]`)
     await cell('10').trigger('mouseenter')
     await cell('10').trigger('click')
@@ -352,7 +415,9 @@ describe('range calendar live range preview', () => {
 
   // behaviour-final-check R1
   it('moving the hover back shrinks the preview and the end marker follows the pointer', async () => {
-    const wrapper = mount(RangeCalendar, { props: { locale: 'en-US', defaultPlaceholder: parseDate('2025-01-15') } })
+    const wrapper = mount(RangeCalendar, {
+      props: { locale: 'en-US', defaultPlaceholder: parseDate('2025-01-15') },
+    })
     const cell = (d: string) => wrapper.get(`[data-value="2025-01-${d}"]`)
     await cell('10').trigger('mouseenter')
     await cell('10').trigger('click')
@@ -366,16 +431,20 @@ describe('range calendar live range preview', () => {
 
   // behaviour-final-check R2 (live-preview part only; the RAC one-day focus offset is unconfirmed)
   it('keyboard anchoring with Enter then ArrowRight previews the range up to the focused day', async () => {
-    const wrapper = mount(RangeCalendar, { props: { locale: 'en-US', defaultPlaceholder: parseDate('2025-01-15') }, attachTo: document.body })
+    const wrapper = mount(RangeCalendar, {
+      props: { locale: 'en-US', defaultPlaceholder: parseDate('2025-01-15') },
+      attachTo: document.body,
+    })
     ;(wrapper.get('[data-value="2025-01-15"]').element as HTMLElement).focus()
     const press = async (init: KeyboardEventInit) => {
-      document.activeElement!.dispatchEvent(new KeyboardEvent('keydown', { bubbles: true, cancelable: true, ...init }))
+      document.activeElement!.dispatchEvent(
+        new KeyboardEvent('keydown', { bubbles: true, cancelable: true, ...init }),
+      )
       await nextTick()
       await nextTick()
     }
     await press({ key: 'Enter', code: 'Enter' })
-    for (let i = 0; i < 3; i++)
-      await press({ key: 'ArrowRight', code: 'ArrowRight' })
+    for (let i = 0; i < 3; i++) await press({ key: 'ArrowRight', code: 'ArrowRight' })
 
     const focusedDay = document.activeElement!.textContent!.trim()
     expect(Number(focusedDay)).toBeGreaterThanOrEqual(18)
@@ -387,8 +456,9 @@ describe('range calendar live range preview', () => {
 })
 
 describe('range calendar press-drag selection', () => {
-  const tick = () => new Promise<void>(resolve => setTimeout(resolve, 10))
-  const fire = (el: Element, type: string) => el.dispatchEvent(new PointerEvent(type, { bubbles: true, button: 0, pointerType: 'mouse' }))
+  const tick = () => new Promise<void>((resolve) => setTimeout(resolve, 10))
+  const fire = (el: Element, type: string) =>
+    el.dispatchEvent(new PointerEvent(type, { bubbles: true, button: 0, pointerType: 'mouse' }))
   // A real pointer drag ends with pointerup on the release cell and no click on either cell (the click targets the
   // common ancestor of the pressed and released elements).
   async function dragTo(wrapper: ReturnType<typeof mount>, from: string, ...over: string[]) {
@@ -404,7 +474,10 @@ describe('range calendar press-drag selection', () => {
 
   // behaviour-final-check R8
   it('dragging from a pressed day previews the range live under the pointer', async () => {
-    const wrapper = mount(RangeCalendar, { props: { locale: 'en-US', defaultPlaceholder: parseDate('2025-01-15') }, attachTo: document.body })
+    const wrapper = mount(RangeCalendar, {
+      props: { locale: 'en-US', defaultPlaceholder: parseDate('2025-01-15') },
+      attachTo: document.body,
+    })
     const cell = await dragTo(wrapper, '2025-01-06', '2025-01-08', '2025-01-10')
     expect(cell('2025-01-06').attributes('data-selection-start')).toBe('true')
     expect(cell('2025-01-08').attributes('data-selected')).toBe('true')
@@ -414,7 +487,10 @@ describe('range calendar press-drag selection', () => {
 
   // behaviour-final-check R8
   it('releasing a drag over another day commits the range from the pressed day to that day', async () => {
-    const wrapper = mount(RangeCalendar, { props: { locale: 'en-US', defaultPlaceholder: parseDate('2025-01-15') }, attachTo: document.body })
+    const wrapper = mount(RangeCalendar, {
+      props: { locale: 'en-US', defaultPlaceholder: parseDate('2025-01-15') },
+      attachTo: document.body,
+    })
     const cell = await dragTo(wrapper, '2025-01-06', '2025-01-08', '2025-01-14')
     fire(cell('2025-01-14').element, 'pointerup')
     await tick()
@@ -426,7 +502,10 @@ describe('range calendar press-drag selection', () => {
   // behaviour-final-check R9
   it('dragging from the end of an existing range adjusts that end while the start stays anchored', async () => {
     const wrapper = mount(RangeCalendar, {
-      props: { locale: 'en-US', defaultValue: { start: parseDate('2025-01-10'), end: parseDate('2025-01-15') } },
+      props: {
+        locale: 'en-US',
+        defaultValue: { start: parseDate('2025-01-10'), end: parseDate('2025-01-15') },
+      },
       attachTo: document.body,
     })
     const cell = await dragTo(wrapper, '2025-01-15', '2025-01-16', '2025-01-17')
@@ -440,7 +519,10 @@ describe('range calendar press-drag selection', () => {
   // behaviour-final-check R9
   it('dragging from the start of an existing range adjusts that start while the end stays anchored', async () => {
     const wrapper = mount(RangeCalendar, {
-      props: { locale: 'en-US', defaultValue: { start: parseDate('2025-01-10'), end: parseDate('2025-01-15') } },
+      props: {
+        locale: 'en-US',
+        defaultValue: { start: parseDate('2025-01-10'), end: parseDate('2025-01-15') },
+      },
       attachTo: document.body,
     })
     const cell = await dragTo(wrapper, '2025-01-10', '2025-01-09', '2025-01-08')
@@ -459,7 +541,7 @@ describe('range calendar non-contiguous ranges', () => {
       props: {
         locale: 'en-US',
         allowNonContiguousRanges: true,
-        isDateUnavailable: date => date.day === 18 || date.day === 19,
+        isDateUnavailable: (date) => date.day === 18 || date.day === 19,
         defaultValue: { start: parseDate('2025-01-17'), end: parseDate('2025-01-22') },
       },
     })
@@ -475,19 +557,23 @@ describe('range calendar non-contiguous ranges', () => {
 
 describe('range calendar keyboard commit', () => {
   const press = async (init: KeyboardEventInit) => {
-    document.activeElement!.dispatchEvent(new KeyboardEvent('keydown', { bubbles: true, cancelable: true, ...init }))
+    document.activeElement!.dispatchEvent(
+      new KeyboardEvent('keydown', { bubbles: true, cancelable: true, ...init }),
+    )
     await nextTick()
     await nextTick()
   }
 
   // behaviour-final-check R2: React Aria advances focus one day on the anchoring Enter, then commits the focused day
   it('Enter anchors, arrows extend and Enter commits the focused day', async () => {
-    const wrapper = mount(RangeCalendar, { props: { locale: 'en-US', defaultPlaceholder: parseDate('2025-01-15') }, attachTo: document.body })
+    const wrapper = mount(RangeCalendar, {
+      props: { locale: 'en-US', defaultPlaceholder: parseDate('2025-01-15') },
+      attachTo: document.body,
+    })
     ;(wrapper.get('[data-value="2025-01-15"]').element as HTMLElement).focus()
     await press({ key: 'Enter', code: 'Enter' })
     expect(document.activeElement?.getAttribute('data-value')).toBe('2025-01-16')
-    for (let i = 0; i < 3; i++)
-      await press({ key: 'ArrowRight', code: 'ArrowRight' })
+    for (let i = 0; i < 3; i++) await press({ key: 'ArrowRight', code: 'ArrowRight' })
     await press({ key: 'Enter', code: 'Enter' })
     const value = wrapper.emitted('update:modelValue')?.at(-1)?.[0] as DateRange
     expect([value.start?.toString(), value.end?.toString()]).toEqual(['2025-01-15', '2025-01-19'])
@@ -496,7 +582,10 @@ describe('range calendar keyboard commit', () => {
 
   it('Escape cancels an anchored selection and restores the committed range', async () => {
     const wrapper = mount(RangeCalendar, {
-      props: { locale: 'en-US', defaultValue: { start: parseDate('2025-01-10'), end: parseDate('2025-01-12') } },
+      props: {
+        locale: 'en-US',
+        defaultValue: { start: parseDate('2025-01-10'), end: parseDate('2025-01-12') },
+      },
       attachTo: document.body,
     })
     ;(wrapper.get('[data-value="2025-01-20"]').element as HTMLElement).focus()
@@ -511,8 +600,11 @@ describe('range calendar keyboard commit', () => {
 })
 
 describe('RangeCalendar accessibility', () => {
-  const flush = () => new Promise(r => setTimeout(r, 0))
-  const press = (key: string) => document.activeElement!.dispatchEvent(new KeyboardEvent('keydown', { key, code: key, bubbles: true, cancelable: true }))
+  const flush = () => new Promise((r) => setTimeout(r, 0))
+  const press = (key: string) =>
+    document.activeElement!.dispatchEvent(
+      new KeyboardEvent('keydown', { key, code: key, bubbles: true, cancelable: true }),
+    )
   const start = new CalendarDate(2025, 1, 15)
   const range = { start, end: start.add({ days: 3 }) }
 
@@ -523,7 +615,11 @@ describe('RangeCalendar accessibility', () => {
       { defaultValue: range, disabled: true },
       { defaultValue: range, readonly: true },
       { defaultValue: range, invalid: true },
-      { defaultValue: range, minValue: new CalendarDate(2025, 1, 5), isDateUnavailable: (d: CalendarDate) => d.day === 25 },
+      {
+        defaultValue: range,
+        minValue: new CalendarDate(2025, 1, 5),
+        isDateUnavailable: (d: CalendarDate) => d.day === 25,
+      },
       { defaultValue: range, numberOfMonths: 2 },
       { defaultPlaceholder: start, visibleDuration: { weeks: 1 } },
       { defaultValue: range, yearPicker: true },
@@ -537,7 +633,10 @@ describe('RangeCalendar accessibility', () => {
   })
 
   it('passes axe mid-selection (anchored) and with the year picker open', async () => {
-    const wrapper = mount(RangeCalendar, { props: { defaultPlaceholder: start, yearPicker: true }, attachTo: document.body })
+    const wrapper = mount(RangeCalendar, {
+      props: { defaultPlaceholder: start, yearPicker: true },
+      attachTo: document.body,
+    })
     ;(wrapper.get('[data-value="2025-01-10"]').element as HTMLElement).focus()
     press('Enter')
     press('ArrowRight')
@@ -550,28 +649,45 @@ describe('RangeCalendar accessibility', () => {
   })
 
   it('is an application whose month grids are multiselectable and named by the calendar label and month', () => {
-    const wrapper = mount(RangeCalendar, { props: { defaultValue: range, ariaLabel: 'Trip dates', numberOfMonths: 2 } })
+    const wrapper = mount(RangeCalendar, {
+      props: { defaultValue: range, ariaLabel: 'Trip dates', numberOfMonths: 2 },
+    })
     expect(wrapper.attributes('role')).toBe('application')
     expect(wrapper.attributes('aria-label')).toContain('Trip dates')
     const grids = wrapper.findAll('[data-slot=range-calendar-grid]')
-    expect(grids.map(g => g.attributes('role'))).toEqual(['grid', 'grid'])
-    expect(grids.map(g => g.attributes('aria-multiselectable'))).toEqual(['true', 'true'])
-    expect(grids.map(g => g.attributes('aria-label'))).toEqual(['Trip dates, January 2025', 'Trip dates, February 2025'])
+    expect(grids.map((g) => g.attributes('role'))).toEqual(['grid', 'grid'])
+    expect(grids.map((g) => g.attributes('aria-multiselectable'))).toEqual(['true', 'true'])
+    expect(grids.map((g) => g.attributes('aria-label'))).toEqual([
+      'Trip dates, January 2025',
+      'Trip dates, February 2025',
+    ])
     wrapper.unmount()
   })
 
   it('every day of the selected range is aria-selected; out-of-range days are aria-disabled', () => {
-    const wrapper = mount(RangeCalendar, { props: { defaultValue: range, minValue: new CalendarDate(2025, 1, 5) } })
-    const selected = wrapper.findAll('td[aria-selected=true] [data-slot=range-calendar-cell]').map(c => c.attributes('data-value'))
+    const wrapper = mount(RangeCalendar, {
+      props: { defaultValue: range, minValue: new CalendarDate(2025, 1, 5) },
+    })
+    const selected = wrapper
+      .findAll('td[aria-selected=true] [data-slot=range-calendar-cell]')
+      .map((c) => c.attributes('data-value'))
     expect(selected).toEqual(['2025-01-15', '2025-01-16', '2025-01-17', '2025-01-18'])
-    expect(wrapper.get('[data-value="2025-01-15"]').attributes('aria-label')).toBe('Wednesday, January 15, 2025')
+    expect(wrapper.get('[data-value="2025-01-15"]').attributes('aria-label')).toBe(
+      'Wednesday, January 15, 2025',
+    )
     expect(wrapper.get('[data-value="2025-01-04"]').attributes('aria-disabled')).toBe('true')
     wrapper.unmount()
   })
 
   it('only the range start is in the tab order, and the tab stop follows arrow-key focus', async () => {
-    const wrapper = mount(RangeCalendar, { props: { defaultValue: range }, attachTo: document.body })
-    const tabbable = () => wrapper.findAll('[data-slot=range-calendar-cell][tabindex="0"]').map(c => c.attributes('data-value'))
+    const wrapper = mount(RangeCalendar, {
+      props: { defaultValue: range },
+      attachTo: document.body,
+    })
+    const tabbable = () =>
+      wrapper
+        .findAll('[data-slot=range-calendar-cell][tabindex="0"]')
+        .map((c) => c.attributes('data-value'))
     expect(tabbable()).toEqual(['2025-01-15'])
     ;(wrapper.get('[data-value="2025-01-15"]').element as HTMLElement).focus()
     press('ArrowUp')
@@ -582,7 +698,10 @@ describe('RangeCalendar accessibility', () => {
   })
 
   it('year picker: focus lands on the selected year, arrows move it, and Escape returns focus to the trigger', async () => {
-    const wrapper = mount(RangeCalendar, { props: { defaultValue: range, yearPicker: true }, attachTo: document.body })
+    const wrapper = mount(RangeCalendar, {
+      props: { defaultValue: range, yearPicker: true },
+      attachTo: document.body,
+    })
     const trigger = wrapper.get('[data-slot=calendar-year-picker-trigger]')
     await trigger.trigger('click')
     await flush()

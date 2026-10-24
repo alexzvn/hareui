@@ -1,6 +1,7 @@
 import type { ComputedRef, InjectionKey, Ref } from 'vue'
-import type checkboxTheme from '../checkbox/theme'
+
 import type { ComponentSlots, ComponentUI, ComponentVariants } from '../../types/tv'
+import type checkboxTheme from '../checkbox/theme'
 import type theme from './theme'
 
 export interface CheckboxButtonGroupContext {
@@ -19,4 +20,6 @@ export interface CheckboxButtonGroupContext {
   uiOverrides: Readonly<Ref<ComponentSlots<typeof theme> | undefined>>
 }
 
-export const checkboxButtonGroupContextKey: InjectionKey<CheckboxButtonGroupContext> = Symbol('hareui-checkbox-button-group')
+export const checkboxButtonGroupContextKey: InjectionKey<CheckboxButtonGroupContext> = Symbol(
+  'hareui-checkbox-button-group',
+)

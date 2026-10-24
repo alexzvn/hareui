@@ -1,12 +1,12 @@
-@import "tailwindcss";
-@import "./fumadocs/black.css";
-@import "./fumadocs/preset.css";
-@import "../../../packages/vue/src/styles/index.css";
-@import "./global.css";
-@import "./theme-presets.css";
-@import "./theme-kumo.css";
-@import "@fontsource-variable/inter";
-@import "vitepress/dist/client/theme-default/styles/icons.css";
+@import 'tailwindcss';
+@import './fumadocs/black.css';
+@import './fumadocs/preset.css';
+@import '../../../packages/vue/src/styles/index.css';
+@import './global.css';
+@import './theme-presets.css';
+@import './theme-kumo.css';
+@import '@fontsource-variable/inter';
+@import 'vitepress/dist/client/theme-default/styles/icons.css';
 
 @source "../..";
 @source "../markdown.ts";
@@ -14,7 +14,7 @@
 @source "../../../packages/vue/src/components";
 
 :root {
-  --font-inter: "Inter Variable";
+  --font-inter: 'Inter Variable';
 }
 
 #nd-page .prose > div > :first-child {

@@ -1,6 +1,6 @@
 <script setup lang="ts">
-import type { DateValue } from '@internationalized/date'
 import { Button, Calendar, Description } from '@hareui/vue'
+import type { DateValue } from '@internationalized/date'
 import { parseDate } from '@internationalized/date'
 import { shallowRef } from 'vue'
 
@@ -11,9 +11,7 @@ const focusedDate = shallowRef<DateValue>(parseDate('2025-06-15'))
   <div class="flex flex-col items-center gap-4">
     <Calendar aria-label="Event date" v-model:placeholder="focusedDate" />
 
-    <Description class="text-center">
-      Focused: {{ focusedDate.toString() }}
-    </Description>
+    <Description class="text-center"> Focused: {{ focusedDate.toString() }} </Description>
 
     <div class="flex flex-wrap justify-center gap-2">
       <Button size="sm" variant="secondary" @click="focusedDate = parseDate('2025-01-01')">

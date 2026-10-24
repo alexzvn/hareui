@@ -1,7 +1,7 @@
 <script setup lang="ts">
+import { Button, DatePicker, Form } from '@hareui/vue'
 import type { DateValue } from '@internationalized/date'
 import { getLocalTimeZone, today } from '@internationalized/date'
-import { Button, DatePicker, Form } from '@hareui/vue'
 import { computed, ref, shallowRef } from 'vue'
 
 const value = shallowRef<DateValue | null>(null)
@@ -11,8 +11,7 @@ const isInvalid = computed(() => value.value !== null && value.value.compare(tod
 
 function handleSubmit(e: Event) {
   e.preventDefault()
-  if (!value.value || isInvalid.value)
-    return
+  if (!value.value || isInvalid.value) return
 
   isSubmitting.value = true
   // Simulate API call

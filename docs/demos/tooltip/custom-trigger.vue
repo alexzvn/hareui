@@ -11,7 +11,12 @@ const triggerClass = 'inline-block outline-none focus-visible:status-focused'
     <Tooltip arrow :delay="0">
       <template #default>
         <div aria-label="User avatar" :class="triggerClass" role="button" tabindex="0">
-          <Avatar alt="Jane Doe" fallback="JD" size="sm" src="https://img.heroui.chat/image/avatar?w=400&h=400&u=4" />
+          <Avatar
+            alt="Jane Doe"
+            fallback="JD"
+            size="sm"
+            src="https://img.heroui.chat/image/avatar?w=400&h=400&u=4"
+          />
         </div>
       </template>
       <template #content>
@@ -36,7 +41,9 @@ const triggerClass = 'inline-block outline-none focus-visible:status-focused'
       </template>
       <template #content>
         <span class="relative flex size-2">
-          <span class="absolute inline-flex h-full w-full animate-ping rounded-full bg-success opacity-75" />
+          <span
+            class="absolute inline-flex h-full w-full animate-ping rounded-full bg-success opacity-75"
+          />
           <span class="relative inline-flex size-2 rounded-full bg-success" />
         </span>
         <p>Jane is currently online</p>

@@ -2,6 +2,7 @@ import type { VueWrapper } from '@vue/test-utils'
 import { flushPromises, mount } from '@vue/test-utils'
 import { afterEach, describe, expect, it } from 'vitest'
 import { h } from 'vue'
+
 import Button from '../src/components/button/Button.vue'
 import Form from '../src/components/form/Form.vue'
 import TextField from '../src/components/text-field/TextField.vue'
@@ -14,17 +15,30 @@ afterEach(() => {
 })
 
 function signUp(formProps: Record<string, unknown> = {}) {
-  wrapper = mount(() => h(Form, { 'aria-label': 'Sign up', ...formProps }, () => [
-    h(TextField, { label: 'Name', name: 'name', required: true }),
-    h(TextField, { label: 'Email', name: 'email', type: 'email', required: true, description: 'We never share it.' }),
-    h(Button, { type: 'submit' }, () => 'Create account'),
-  ]), { attachTo: document.body })
+  wrapper = mount(
+    () =>
+      h(Form, { 'aria-label': 'Sign up', ...formProps }, () => [
+        h(TextField, { label: 'Name', name: 'name', required: true }),
+        h(TextField, {
+          label: 'Email',
+          name: 'email',
+          type: 'email',
+          required: true,
+          description: 'We never share it.',
+        }),
+        h(Button, { type: 'submit' }, () => 'Create account'),
+      ]),
+    { attachTo: document.body },
+  )
   return wrapper
 }
 
 /** The text of every element the control's `aria-describedby` points at. */
 function descriptions(el: Element) {
-  return (el.getAttribute('aria-describedby') ?? '').split(' ').filter(Boolean).map(id => document.getElementById(id)?.textContent?.trim())
+  return (el.getAttribute('aria-describedby') ?? '')
+    .split(' ')
+    .filter(Boolean)
+    .map((id) => document.getElementById(id)?.textContent?.trim())
 }
 
 describe('Form', () => {

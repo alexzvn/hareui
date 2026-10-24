@@ -2,6 +2,7 @@
 import { describe, expect, it } from 'vitest'
 import { createSSRApp, h } from 'vue'
 import { renderToString } from 'vue/server-renderer'
+
 import AlertDialog from '../src/components/alert-dialog/AlertDialog.vue'
 import DatePicker from '../src/components/date-picker/DatePicker.vue'
 import DateRangePicker from '../src/components/date-range-picker/DateRangePicker.vue'
@@ -23,7 +24,9 @@ describe('server rendering of overlays', () => {
     ['DatePicker', DatePicker, {}],
     ['DateRangePicker', DateRangePicker, {}],
   ])('%s renders to a string', async (_, component, slots) => {
-    const html = await renderToString(createSSRApp({ render: () => h(component as never, { label: 'Field' }, slots) }))
+    const html = await renderToString(
+      createSSRApp({ render: () => h(component as never, { label: 'Field' }, slots) }),
+    )
     expect(html).toMatch(/^</)
   })
 })

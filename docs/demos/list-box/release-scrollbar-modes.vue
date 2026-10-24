@@ -6,8 +6,33 @@ const modes = [
   { id: 'browser', label: 'Browser default', scrollbar: 'default' },
   { id: 'hidden', label: 'Hidden', scrollbar: 'none' },
 ]
-const animals = ['Aardvark', 'Alpaca', 'Antelope', 'Bear', 'Cat', 'Dog', 'Fox', 'Giraffe', 'Kangaroo', 'Koala', 'Lemur', 'Otter', 'Panda', 'Penguin', 'Rabbit', 'Snake', 'Turtle', 'Wombat', 'Zebra']
-const itemsFor = (mode: string): ListBoxItem[] => animals.map(name => ({ value: `${mode}-${name.toLowerCase()}`, label: name, class: 'text-sm leading-5 font-medium' }))
+const animals = [
+  'Aardvark',
+  'Alpaca',
+  'Antelope',
+  'Bear',
+  'Cat',
+  'Dog',
+  'Fox',
+  'Giraffe',
+  'Kangaroo',
+  'Koala',
+  'Lemur',
+  'Otter',
+  'Panda',
+  'Penguin',
+  'Rabbit',
+  'Snake',
+  'Turtle',
+  'Wombat',
+  'Zebra',
+]
+const itemsFor = (mode: string): ListBoxItem[] =>
+  animals.map((name) => ({
+    value: `${mode}-${name.toLowerCase()}`,
+    label: name,
+    class: 'text-sm leading-5 font-medium',
+  }))
 </script>
 
 <template>

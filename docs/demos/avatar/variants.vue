@@ -23,7 +23,11 @@ const images = [
   <div class="flex flex-col gap-4">
     <div class="flex items-center gap-3">
       <div class="w-24 shrink-0" />
-      <div v-for="color in colors" :key="color" class="flex w-20 shrink-0 items-center justify-center">
+      <div
+        v-for="color in colors"
+        :key="color"
+        class="flex w-20 shrink-0 items-center justify-center"
+      >
         <span class="text-xs text-muted capitalize">{{ color }}</span>
       </div>
     </div>
@@ -32,7 +36,11 @@ const images = [
 
     <div v-for="row in rows" :key="row.label" class="flex items-center gap-3">
       <div class="w-24 shrink-0 text-sm text-muted">{{ row.label }}</div>
-      <div v-for="color in colors" :key="color" class="flex w-20 shrink-0 items-center justify-center">
+      <div
+        v-for="color in colors"
+        :key="color"
+        class="flex w-20 shrink-0 items-center justify-center"
+      >
         <Avatar :color="color" :variant="row.variant">
           <template #fallback>
             <Icon v-if="row.icon" height="16" icon="gravity-ui:person" width="16" />
@@ -44,8 +52,17 @@ const images = [
 
     <div class="flex items-center gap-3">
       <div class="w-24 shrink-0 text-sm text-muted">img</div>
-      <div v-for="(image, colorIndex) in images" :key="image" class="flex w-20 shrink-0 items-center justify-center">
-        <Avatar :alt="`Avatar ${colors[colorIndex]}`" :color="colors[colorIndex]" :fallback="colors[colorIndex].charAt(0).toUpperCase()" :src="image" />
+      <div
+        v-for="(image, colorIndex) in images"
+        :key="image"
+        class="flex w-20 shrink-0 items-center justify-center"
+      >
+        <Avatar
+          :alt="`Avatar ${colors[colorIndex]}`"
+          :color="colors[colorIndex]"
+          :fallback="colors[colorIndex].charAt(0).toUpperCase()"
+          :src="image"
+        />
       </div>
     </div>
   </div>

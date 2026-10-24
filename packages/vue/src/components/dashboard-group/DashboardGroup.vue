@@ -1,7 +1,8 @@
 <script lang="ts">
 import type { PrimitiveProps } from 'reka-ui'
-import type { ComponentSlots } from '../../types/tv'
+
 import type { DashboardStorage, DashboardUnit } from '../../composables/useDashboard'
+import type { ComponentSlots } from '../../types/tv'
 import theme from './theme'
 
 type DashboardGroup = typeof theme
@@ -46,8 +47,12 @@ export interface DashboardGroupSlots {
 
 <script setup lang="ts">
 import { Primitive } from 'reka-ui'
-import { createDashboardSidebarState, provideDashboardContext } from '../../composables/useDashboard'
+
 import { useComponentUI } from '../../composables/useComponentUI'
+import {
+  createDashboardSidebarState,
+  provideDashboardContext,
+} from '../../composables/useDashboard'
 
 const props = withDefaults(defineProps<DashboardGroupProps>(), {
   storage: 'cookie',
@@ -64,10 +69,18 @@ const right = createDashboardSidebarState()
 
 // Getters keep the context live when the group's props change.
 provideDashboardContext({
-  get storage() { return props.storage },
-  get storageKey() { return props.storageKey },
-  get persistent() { return props.persistent },
-  get unit() { return props.unit },
+  get storage() {
+    return props.storage
+  },
+  get storageKey() {
+    return props.storageKey
+  },
+  get persistent() {
+    return props.persistent
+  },
+  get unit() {
+    return props.unit
+  },
   sidebarOpen: left.open,
   toggleSidebar: left.toggle,
   sidebarCollapsed: left.collapsed,
@@ -77,7 +90,11 @@ provideDashboardContext({
 </script>
 
 <template>
-  <Primitive :as="as" data-slot="dashboard-group" :class="ui.base({ class: [props.ui?.base, props.class] })">
+  <Primitive
+    :as="as"
+    data-slot="dashboard-group"
+    :class="ui.base({ class: [props.ui?.base, props.class] })"
+  >
     <slot />
   </Primitive>
 </template>

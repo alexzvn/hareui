@@ -1,8 +1,8 @@
 <script lang="ts">
+import type { ComponentSlots, ComponentUI } from '../../types/tv'
 import type { ButtonProps } from '../button/Button.vue'
 import type { DrawerProps } from '../drawer/Drawer.vue'
 import type { ModalProps } from '../modal/Modal.vue'
-import type { ComponentSlots, ComponentUI } from '../../types/tv'
 import theme from './theme'
 
 type DashboardSidebar = typeof theme
@@ -113,11 +113,11 @@ type DashboardSidebarUI = ComponentUI<DashboardSidebar>
 
 export interface DashboardSidebarSlots {
   /** The sidebar header (logo, team switcher...). Hidden when omitted. */
-  header?: (props: { collapsed: boolean, collapse: (value: boolean) => void }) => any
+  header?: (props: { collapsed: boolean; collapse: (value: boolean) => void }) => any
   /** The scrollable sidebar body. */
-  default?: (props: { collapsed: boolean, collapse: (value: boolean) => void }) => any
+  default?: (props: { collapsed: boolean; collapse: (value: boolean) => void }) => any
   /** The sidebar footer (user menu...). Hidden when omitted. */
-  footer?: (props: { collapsed: boolean, collapse: (value: boolean) => void }) => any
+  footer?: (props: { collapsed: boolean; collapse: (value: boolean) => void }) => any
   /** Replaces the toggle button of the menu header. */
   toggle?: (props: DashboardSidebarToggleSlotProps) => any
   /** Replaces the whole menu content (header, body and footer). */
@@ -128,9 +128,10 @@ export interface DashboardSidebarSlots {
 </script>
 
 <script setup lang="ts">
-import type { FunctionalComponent } from 'vue'
 import { DialogTitle, VisuallyHidden } from 'reka-ui'
+import type { FunctionalComponent } from 'vue'
 import { computed, h, onBeforeUnmount, ref, useId, useTemplateRef, watch } from 'vue'
+
 import { useComponentUI } from '../../composables/useComponentUI'
 import { createDashboardSidebarState, useDashboard } from '../../composables/useDashboard'
 import { useResizable } from '../../composables/useResizable'
@@ -170,18 +171,31 @@ const id = `${dashboard?.storageKey ?? 'dashboard'}-sidebar-${props.id ?? fallba
 const menuId = `${id}-menu`
 
 // The toggle and collapse buttons point their `aria-controls` at the sidebar through the shared state.
-watch(state, (current, previous) => {
-  if (previous?.id.value === id)
-    previous.id.value = undefined
-  current.id.value = id
-}, { immediate: true })
+watch(
+  state,
+  (current, previous) => {
+    if (previous?.id.value === id) previous.id.value = undefined
+    current.id.value = id
+  },
+  { immediate: true },
+)
 onBeforeUnmount(() => {
-  if (state.value.id.value === id)
-    state.value.id.value = undefined
+  if (state.value.id.value === id) state.value.id.value = undefined
 })
 
 const el = useTemplateRef<HTMLElement>('el')
-const { size, isDragging, isCollapsed, collapse, onPointerDown, onMouseDown, onTouchStart, onDoubleClick, onKeyDown, handleAttrs } = useResizable({
+const {
+  size,
+  isDragging,
+  isCollapsed,
+  collapse,
+  onPointerDown,
+  onMouseDown,
+  onTouchStart,
+  onDoubleClick,
+  onKeyDown,
+  handleAttrs,
+} = useResizable({
   key: id,
   options: () => ({
     side: props.side,
@@ -202,38 +216,58 @@ const { size, isDragging, isCollapsed, collapse, onPointerDown, onMouseDown, onT
 const unit = computed(() => dashboard?.unit ?? '%')
 
 // `v-model:open` <-> group context (the context toggles/collapses drive the sidebar from anywhere in the group).
-watch(open, (value) => {
-  state.value.open.value = value
-}, { immediate: true })
-watch(() => state.value.open.value, (value) => {
-  open.value = value
-})
+watch(
+  open,
+  (value) => {
+    state.value.open.value = value
+  },
+  { immediate: true },
+)
+watch(
+  () => state.value.open.value,
+  (value) => {
+    open.value = value
+  },
+)
 
 // `isCollapsed` is the source of truth (it applies `collapsible` and the persisted value); the models follow it and feed back through `collapse`.
-watch(isCollapsed, (value) => {
-  collapsedModel.value = value
-  state.value.collapsed.value = value
-}, { immediate: true })
-watch(collapsedModel, value => collapse(value))
-watch(() => state.value.collapsed.value, value => collapse(value))
+watch(
+  isCollapsed,
+  (value) => {
+    collapsedModel.value = value
+    state.value.collapsed.value = value
+  },
+  { immediate: true },
+)
+watch(collapsedModel, (value) => collapse(value))
+watch(
+  () => state.value.collapsed.value,
+  (value) => collapse(value),
+)
 
-const ui = useComponentUI('dashboardSidebar', theme, () => ({ side: props.side, toggleSide: props.toggleSide, mode: props.mode }))
+const ui = useComponentUI('dashboardSidebar', theme, () => ({
+  side: props.side,
+  toggleSide: props.toggleSide,
+  mode: props.mode,
+}))
 
 const menuTitle = computed(() => (props.menu as { title?: string } | undefined)?.title ?? 'Sidebar')
 
-const Menu = computed(() => props.mode === 'modal' ? Modal : Drawer)
+const Menu = computed(() => (props.mode === 'modal' ? Modal : Drawer))
 const menuProps = computed(() => {
   const { title: _title, ui: _ui, ...rest } = (props.menu ?? {}) as Record<string, unknown>
-  const defaults: Record<string, unknown> = props.mode === 'modal'
-    ? { size: 'full' }
-    : props.mode === 'slideover'
-      ? { placement: props.side, variant: 'blur' }
-      : { placement: 'bottom', variant: 'blur' }
+  const defaults: Record<string, unknown> =
+    props.mode === 'modal'
+      ? { size: 'full' }
+      : props.mode === 'slideover'
+        ? { placement: props.side, variant: 'blur' }
+        : { placement: 'bottom', variant: 'blur' }
   return { ...defaults, ...rest }
 })
 // The user's `menu.ui` is forwarded as is; `backdrop` / `dialog` are merged with the sidebar's `overlay` / `content` slots.
 const menuClasses = computed(() => {
-  const user: Record<string, any> = (props.menu as { ui?: Record<string, any> } | undefined)?.ui ?? {}
+  const user: Record<string, any> =
+    (props.menu as { ui?: Record<string, any> } | undefined)?.ui ?? {}
   return {
     ...user,
     backdrop: [ui.value.overlay({ class: props.ui?.overlay }), user.backdrop],
@@ -250,13 +284,11 @@ function toggleOpen() {
 // sheet doesn't open with a grey circle that reads as focus.
 const toggleIdle = ref(false)
 watch(open, (value) => {
-  if (value)
-    toggleIdle.value = true
+  if (value) toggleIdle.value = true
 })
 
 function onMenuClick(event: MouseEvent) {
-  if (props.autoClose && (event.target as Element | null)?.closest?.('a[href]'))
-    open.value = false
+  if (props.autoClose && (event.target as Element | null)?.closest?.('a[href]')) open.value = false
 }
 
 const handleSlotProps = computed<DashboardSidebarResizeHandleSlotProps>(() => ({
@@ -272,40 +304,54 @@ const handleSlotProps = computed<DashboardSidebarResizeHandleSlotProps>(() => ({
 
 // Pieces rendered in more than one place, hence functional components rather than template duplication.
 const Handle: FunctionalComponent = () => {
-  if (!props.resizable)
-    return null
-  if (slots['resize-handle'])
-    return slots['resize-handle'](handleSlotProps.value)
+  if (!props.resizable) return null
+  if (slots['resize-handle']) return slots['resize-handle'](handleSlotProps.value)
   return h(DashboardResizeHandle, {
     ...handleSlotProps.value.attrs,
     'data-dragging': isDragging.value,
     'data-side': props.side,
-    'class': ui.value.handle({ class: props.ui?.handle }),
-    'onPointerdown': onPointerDown,
-    'onDblclick': onDoubleClick,
-    'onKeydown': onKeyDown,
+    class: ui.value.handle({ class: props.ui?.handle }),
+    onPointerdown: onPointerDown,
+    onDblclick: onDoubleClick,
+    onKeydown: onKeyDown,
   })
 }
 
 const Toggle: FunctionalComponent = () => {
   const slotProps = { open: open.value, toggle: toggleOpen, ui: ui.value }
-  if (slots.toggle)
-    return slots.toggle(slotProps)
-  if (!props.toggle)
-    return null
+  if (slots.toggle) return slots.toggle(slotProps)
+  if (!props.toggle) return null
   const custom = typeof props.toggle === 'object' ? props.toggle : {}
-  return h(Button, {
-    'variant': 'ghost',
-    'size': 'sm',
-    'iconOnly': true,
-    'aria-label': 'Close sidebar',
-    ...custom,
-    'data-slot': 'dashboard-sidebar-toggle',
-    'data-idle': toggleIdle.value || undefined,
-    'class': ui.value.toggle({ class: [props.ui?.toggle, custom.class] }),
-    'onClick': toggleOpen,
-    'onPointermove': () => { toggleIdle.value = false },
-  }, () => h('svg', { 'aria-hidden': 'true', 'viewBox': '0 0 16 16', 'fill': 'none', 'stroke': 'currentColor', 'stroke-width': 1.5, 'stroke-linecap': 'round' }, [h('path', { d: 'M4 4l8 8M12 4l-8 8' })]))
+  return h(
+    Button,
+    {
+      variant: 'ghost',
+      size: 'sm',
+      iconOnly: true,
+      'aria-label': 'Close sidebar',
+      ...custom,
+      'data-slot': 'dashboard-sidebar-toggle',
+      'data-idle': toggleIdle.value || undefined,
+      class: ui.value.toggle({ class: [props.ui?.toggle, custom.class] }),
+      onClick: toggleOpen,
+      onPointermove: () => {
+        toggleIdle.value = false
+      },
+    },
+    () =>
+      h(
+        'svg',
+        {
+          'aria-hidden': 'true',
+          viewBox: '0 0 16 16',
+          fill: 'none',
+          stroke: 'currentColor',
+          'stroke-width': 1.5,
+          'stroke-linecap': 'round',
+        },
+        [h('path', { d: 'M4 4l8 8M12 4l-8 8' })],
+      ),
+  )
 }
 </script>
 
@@ -323,7 +369,11 @@ const Toggle: FunctionalComponent = () => {
     :class="ui.root({ class: [props.ui?.root, props.class] })"
     :style="{ '--width': `${size || 0}${unit}` }"
   >
-    <div v-if="!!slots.header" data-slot="dashboard-sidebar-header" :class="ui.header({ class: props.ui?.header })">
+    <div
+      v-if="!!slots.header"
+      data-slot="dashboard-sidebar-header"
+      :class="ui.header({ class: props.ui?.header })"
+    >
       <slot name="header" :collapsed="isCollapsed" :collapse="collapse" />
     </div>
 
@@ -331,7 +381,11 @@ const Toggle: FunctionalComponent = () => {
       <slot :collapsed="isCollapsed" :collapse="collapse" />
     </div>
 
-    <div v-if="!!slots.footer" data-slot="dashboard-sidebar-footer" :class="ui.footer({ class: props.ui?.footer })">
+    <div
+      v-if="!!slots.footer"
+      data-slot="dashboard-sidebar-footer"
+      :class="ui.footer({ class: props.ui?.footer })"
+    >
       <slot name="footer" :collapsed="isCollapsed" :collapse="collapse" />
     </div>
   </aside>
@@ -346,12 +400,21 @@ const Toggle: FunctionalComponent = () => {
             <DialogTitle>{{ menuTitle }}</DialogTitle>
           </VisuallyHidden>
 
-          <div v-if="mode === 'drawer'" aria-hidden="true" data-slot="drawer-handle" class="flex items-center justify-center pt-2 pb-1">
+          <div
+            v-if="mode === 'drawer'"
+            aria-hidden="true"
+            data-slot="drawer-handle"
+            class="flex items-center justify-center pt-2 pb-1"
+          >
             <div class="h-1 w-9 rounded-xs bg-separator" />
           </div>
 
           <div class="contents" @click="onMenuClick">
-            <div v-if="!!slots.header || mode !== 'drawer'" data-slot="dashboard-sidebar-header" :class="ui.header({ class: props.ui?.header })">
+            <div
+              v-if="!!slots.header || mode !== 'drawer'"
+              data-slot="dashboard-sidebar-header"
+              :class="ui.header({ class: props.ui?.header })"
+            >
               <Toggle v-if="mode !== 'drawer' && toggleSide === 'left'" />
 
               <slot name="header" :collapsed="false" :collapse="() => {}" />
@@ -363,7 +426,11 @@ const Toggle: FunctionalComponent = () => {
               <slot :collapsed="false" :collapse="() => {}" />
             </div>
 
-            <div v-if="!!slots.footer" data-slot="dashboard-sidebar-footer" :class="ui.footer({ class: props.ui?.footer })">
+            <div
+              v-if="!!slots.footer"
+              data-slot="dashboard-sidebar-footer"
+              :class="ui.footer({ class: props.ui?.footer })"
+            >
               <slot name="footer" :collapsed="false" :collapse="() => {}" />
             </div>
           </div>

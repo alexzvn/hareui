@@ -1,4 +1,5 @@
 import type { InjectionKey, Ref } from 'vue'
+
 import type { FormError, FormErrorWithId, FormInputEvents } from './types'
 
 /** A validation error: one message or several. */
@@ -35,7 +36,7 @@ export interface FormInput {
 export interface NestedForm {
   id: string
   name?: string
-  validate: (opts: { silent?: boolean, nested?: boolean, transform?: boolean }) => Promise<unknown>
+  validate: (opts: { silent?: boolean; nested?: boolean; transform?: boolean }) => Promise<unknown>
   clearDirty: () => void
   dirty: () => boolean
   getErrors: () => FormErrorWithId[]

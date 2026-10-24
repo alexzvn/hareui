@@ -10,6 +10,13 @@ const items = [
 
 <template>
   <div class="w-[220px]">
-    <NativeSelect disabled full-width label="Billing cycle" name="billing-cycle" default-value="yearly" :items="items" />
+    <NativeSelect
+      disabled
+      full-width
+      label="Billing cycle"
+      name="billing-cycle"
+      default-value="yearly"
+      :items="items"
+    />
   </div>
 </template>

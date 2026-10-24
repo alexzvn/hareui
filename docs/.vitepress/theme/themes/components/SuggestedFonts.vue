@@ -1,9 +1,10 @@
 <script setup lang="ts">
+import { Button, ListBox, ScrollShadow, Tooltip } from '@hareui/vue'
+import { Icon } from '@iconify/vue'
+import { computed, onMounted, watch } from 'vue'
+
 // Port of HeroUI docs `themes/components/suggested-fonts.tsx`.
 import type { CustomFont } from '../composables/customFonts'
-import { Icon } from '@iconify/vue'
-import { Button, ListBox, ScrollShadow, Tooltip } from '@hareui/vue'
-import { computed, onMounted, watch } from 'vue'
 import { useCustomFonts } from '../composables/customFonts'
 import { useVariableSetter } from '../composables/variables'
 import { defaultThemeVariables, fonts } from '../constants'
@@ -25,24 +26,32 @@ onMounted(() => {
 })
 
 // Inject font links for all custom fonts so they can be previewed
-watch(() => props.customFonts, (customFonts) => {
-  customFonts.forEach((font) => {
-    injectFontLink(font.id, font.url)
-  })
-}, { immediate: true })
+watch(
+  () => props.customFonts,
+  (customFonts) => {
+    customFonts.forEach((font) => {
+      injectFontLink(font.id, font.url)
+    })
+  },
+  { immediate: true },
+)
 
 // Also inject font link if current selection is a URL-based font
-watch(() => variables.value.fontFamily, (fontFamily) => {
-  if (isCustomFontUrl(fontFamily)) {
-    injectFontLink('current-url-font', fontFamily)
-  }
-}, { immediate: true })
+watch(
+  () => variables.value.fontFamily,
+  (fontFamily) => {
+    if (isCustomFontUrl(fontFamily)) {
+      injectFontLink('current-url-font', fontFamily)
+    }
+  },
+  { immediate: true },
+)
 
 // Combine suggested fonts with custom fonts for the list
 // For custom fonts, use the URL as the ID (for shareable links)
 const allFonts = computed(() => [
-  ...fonts.map(f => ({ ...f, isCustom: false, url: f.cdnUrl })),
-  ...props.customFonts.map(f => ({
+  ...fonts.map((f) => ({ ...f, isCustom: false, url: f.cdnUrl })),
+  ...props.customFonts.map((f) => ({
     cdnUrl: f.url,
     id: f.url, // Use URL as ID so it's stored in the URL params
     isCustom: true,
@@ -52,20 +61,23 @@ const allFonts = computed(() => [
   })),
 ])
 
-const items = computed(() => allFonts.value.map(font => ({
-  value: font.id,
-  label: font.label,
-  textValue: font.label,
-  class: 'group border-separator-on-surface relative flex h-[83px] w-[95px] flex-col items-center justify-center gap-[5px] rounded-2xl border data-[selected=true]:border-foreground data-[hovered=true]:bg-default',
-})))
-const fontById = computed(() => new Map(allFonts.value.map(font => [font.id, font])))
+const items = computed(() =>
+  allFonts.value.map((font) => ({
+    value: font.id,
+    label: font.label,
+    textValue: font.label,
+    class:
+      'group border-separator-on-surface relative flex h-[83px] w-[95px] flex-col items-center justify-center gap-[5px] rounded-2xl border data-[selected=true]:border-foreground data-[hovered=true]:bg-default',
+  })),
+)
+const fontById = computed(() => new Map(allFonts.value.map((font) => [font.id, font])))
 
 // The selected key is the fontFamily value (either a font ID or a CDN URL)
 const selectedKey = computed(() => variables.value.fontFamily)
 
 function handleDeleteCustomFont(fontUrl: string) {
   // Find the font by URL and remove it
-  const font = props.customFonts.find(f => f.url === fontUrl)
+  const font = props.customFonts.find((f) => f.url === fontUrl)
 
   if (font) {
     removeCustomFont(font.id)

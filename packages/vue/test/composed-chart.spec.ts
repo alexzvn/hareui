@@ -1,6 +1,7 @@
 import { flushPromises, mount } from '@vue/test-utils'
 import { describe, expect, it } from 'vitest'
 import { h, nextTick, ref } from 'vue'
+
 import ChartArea from '../src/components/chart/ChartArea.vue'
 import ChartBar from '../src/components/chart/ChartBar.vue'
 import ChartLine from '../src/components/chart/ChartLine.vue'
@@ -55,7 +56,12 @@ function bbox(d: string) {
         break
     }
   }
-  return { x: Math.min(...xs), y: Math.min(...ys), width: Math.max(...xs) - Math.min(...xs), height: Math.max(...ys) - Math.min(...ys) }
+  return {
+    x: Math.min(...xs),
+    y: Math.min(...ys),
+    width: Math.max(...xs) - Math.min(...xs),
+    height: Math.max(...ys) - Math.min(...ys),
+  }
 }
 
 async function settle() {
@@ -63,8 +69,14 @@ async function settle() {
   await nextTick()
 }
 
-async function hover(wrapper: { find: (s: string) => { element: Element } }, clientX: number, clientY: number) {
-  wrapper.find('[data-slot=chart-surface]').element.dispatchEvent(new PointerEvent('pointermove', { clientX, clientY, bubbles: true }))
+async function hover(
+  wrapper: { find: (s: string) => { element: Element } },
+  clientX: number,
+  clientY: number,
+) {
+  wrapper
+    .find('[data-slot=chart-surface]')
+    .element.dispatchEvent(new PointerEvent('pointermove', { clientX, clientY, bubbles: true }))
   await settle()
 }
 
@@ -107,12 +119,20 @@ describe('ComposedChart', () => {
     const showRevenue = ref(true)
     const wrapper = mountChart(() => [
       h(ChartXAxis, { dataKey: 'month', hide: true }),
-      showRevenue.value ? h(ChartLine, { dataKey: 'revenue', name: 'Revenue', dot: false, isAnimationActive: false }) : null,
+      showRevenue.value
+        ? h(ChartLine, {
+            dataKey: 'revenue',
+            name: 'Revenue',
+            dot: false,
+            isAnimationActive: false,
+          })
+        : null,
       h(ChartLine, { dataKey: 'orders', name: 'Orders', dot: false, isAnimationActive: false }),
       h(ChartTooltip, { isAnimationActive: false }),
     ])
     await settle()
-    const labels = () => wrapper.findAll('[data-slot=chart-tooltip-label]').map(label => label.text())
+    const labels = () =>
+      wrapper.findAll('[data-slot=chart-tooltip-label]').map((label) => label.text())
     await hover(wrapper, 100, 100)
     expect(labels()).toEqual(['Revenue', 'Orders'])
     showRevenue.value = false
@@ -128,15 +148,24 @@ describe('ComposedChart', () => {
   it('skips rows without a value on a number x axis', async () => {
     const wrapper = mount(ComposedChart, {
       // x domain: nice ticks 0, 3, ..., 12.
-      props: { data: [{ x: 0, y: 1 }, { y: 2 }, { x: 12, y: 3 }], width: WIDTH, height: HEIGHT, margin },
-      slots: { default: () => [
-        h(ChartXAxis, { dataKey: 'x', type: 'number', hide: true }),
-        h(ChartLine, { dataKey: 'y', dot: true, isAnimationActive: false }),
-      ] },
+      props: {
+        data: [{ x: 0, y: 1 }, { y: 2 }, { x: 12, y: 3 }],
+        width: WIDTH,
+        height: HEIGHT,
+        margin,
+      },
+      slots: {
+        default: () => [
+          h(ChartXAxis, { dataKey: 'x', type: 'number', hide: true }),
+          h(ChartLine, { dataKey: 'y', dot: true, isAnimationActive: false }),
+        ],
+      },
       attachTo: document.body,
     })
     await settle()
-    expect(wrapper.findAll('[data-slot=chart-dot]').map(dot => Number(dot.attributes('cx')))).toEqual([0, 400])
+    expect(
+      wrapper.findAll('[data-slot=chart-dot]').map((dot) => Number(dot.attributes('cx'))),
+    ).toEqual([0, 400])
     wrapper.unmount()
   })
 
@@ -171,7 +200,13 @@ describe('ComposedChart', () => {
       h(ChartYAxis, { yAxisId: 'left', hide: true }),
       h(ChartYAxis, { yAxisId: 'right', orientation: 'right', hide: true }),
       h(ChartBar, { dataKey: 'revenue', yAxisId: 'left', barSize: 16, isAnimationActive: false }),
-      h(ChartLine, { dataKey: 'orders', yAxisId: 'right', type: 'linear', dot: { r: 3 }, isAnimationActive: false }),
+      h(ChartLine, {
+        dataKey: 'orders',
+        yAxisId: 'right',
+        type: 'linear',
+        dot: { r: 3 },
+        isAnimationActive: false,
+      }),
     ])
     await settle()
     // Both maxima (200 on the left, 2 on the right) reach the top of the plot.
@@ -188,15 +223,26 @@ describe('ComposedChart', () => {
       h(ChartXAxis, { dataKey: 'month', hide: true }),
       h(ChartBar, { dataKey: 'revenue', name: 'Revenue', isAnimationActive: false }),
       h(ChartLine, { dataKey: 'orders', name: 'Orders', dot: false, isAnimationActive: false }),
-      h(ChartArea, { dataKey: 'views', name: 'Views', tooltipType: 'none', isAnimationActive: false }),
+      h(ChartArea, {
+        dataKey: 'views',
+        name: 'Views',
+        tooltipType: 'none',
+        isAnimationActive: false,
+      }),
       h(ChartTooltip, { isAnimationActive: false }),
     ])
     await settle()
     await hover(wrapper, 100, 100)
     const panel = wrapper.find('[data-slot=chart-tooltip]')
     expect(panel.find('[data-slot=chart-tooltip-header]').text()).toBe('Jan')
-    expect(panel.findAll('[data-slot=chart-tooltip-label]').map(label => label.text())).toEqual(['Revenue', 'Orders'])
-    expect(panel.findAll('[data-slot=chart-tooltip-value]').map(value => value.text())).toEqual(['100', '1'])
+    expect(panel.findAll('[data-slot=chart-tooltip-label]').map((label) => label.text())).toEqual([
+      'Revenue',
+      'Orders',
+    ])
+    expect(panel.findAll('[data-slot=chart-tooltip-value]').map((value) => value.text())).toEqual([
+      '100',
+      '1',
+    ])
     wrapper.unmount()
   })
 
@@ -214,7 +260,9 @@ describe('ComposedChart', () => {
     ;(svg.element as SVGElement).focus()
     await settle()
     expect(header()).toBe('Jan')
-    expect(wrapper.findAll('[data-slot=chart-tooltip-label]').map(label => label.text())).toEqual(['Views', 'Revenue', 'Orders'])
+    expect(wrapper.findAll('[data-slot=chart-tooltip-label]').map((label) => label.text())).toEqual(
+      ['Views', 'Revenue', 'Orders'],
+    )
     await svg.trigger('keydown', { key: 'End' })
     await settle()
     expect(header()).toBe('Feb')
@@ -227,12 +275,16 @@ describe('ComposedChart', () => {
   it('is accessible idle and with a month focused', async () => {
     const wrapper = mount(ComposedChart, {
       props: {
-        'data': data,
-        'index': 'month',
-        'series': { revenue: { type: 'bar' }, orders: { type: 'line', yAxis: 'right' }, views: { type: 'area' } },
-        'width': WIDTH,
-        'height': HEIGHT,
-        'legend': true,
+        data: data,
+        index: 'month',
+        series: {
+          revenue: { type: 'bar' },
+          orders: { type: 'line', yAxis: 'right' },
+          views: { type: 'area' },
+        },
+        width: WIDTH,
+        height: HEIGHT,
+        legend: true,
         'aria-label': 'Revenue, orders and views per month',
       },
       attachTo: document.body,

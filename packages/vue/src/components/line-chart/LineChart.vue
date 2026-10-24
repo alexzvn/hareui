@@ -7,7 +7,9 @@ import theme from './theme'
 
 type LineChartTheme = typeof theme
 
-export interface LineChartProps<T extends object = Record<string, unknown>> extends CartesianRootProps<T, ChartLineSeries> {
+export interface LineChartProps<
+  T extends object = Record<string, unknown>,
+> extends CartesianRootProps<T, ChartLineSeries> {
   /**
    * Curve of every series.
    * @defaultValue 'monotone'
@@ -36,15 +38,25 @@ export interface LineChartSlots extends CartesianRootSlots {}
 </script>
 
 <script setup lang="ts" generic="T extends object">
-import type { ChartDatum } from '../chart/types'
 import { useSlots } from 'vue'
+
 import { useComponentUI } from '../../composables/useComponentUI'
 import { useCartesianChart } from '../chart/cartesian'
-import { cartesianRootDefaults, definedProps, rootMargin, useCartesianRoot } from '../chart/cartesian-root'
+import {
+  cartesianRootDefaults,
+  definedProps,
+  rootMargin,
+  useCartesianRoot,
+} from '../chart/cartesian-root'
 import ChartCartesianFrame from '../chart/ChartCartesianFrame.vue'
 import { useChartRoot } from '../chart/context'
+import type { ChartDatum } from '../chart/types'
 
-const props = withDefaults(defineProps<LineChartProps<T>>(), { ...cartesianRootDefaults, dot: undefined, connectNulls: undefined })
+const props = withDefaults(defineProps<LineChartProps<T>>(), {
+  ...cartesianRootDefaults,
+  dot: undefined,
+  connectNulls: undefined,
+})
 defineSlots<LineChartSlots>()
 const hidden = defineModel<string[]>('hidden', { default: () => [] })
 const slots = useSlots()
@@ -65,12 +77,13 @@ const root = useCartesianRoot<T, ChartLineSeries>({
   props,
   hidden,
   kind: () => 'line',
-  rootDefaults: () => definedProps({
-    curve: props.curve,
-    strokeWidth: props.strokeWidth,
-    dot: props.dot,
-    connectNulls: props.connectNulls,
-  }),
+  rootDefaults: () =>
+    definedProps({
+      curve: props.curve,
+      strokeWidth: props.strokeWidth,
+      dot: props.dot,
+      connectNulls: props.connectNulls,
+    }),
   hasLegendSlot: () => !!slots.legend,
 })
 </script>

@@ -1,12 +1,13 @@
 <script lang="ts">
 import type { DateFieldRootProps, DateValue } from 'reka-ui'
+
 import type { ValidateFn, ValidationResult } from '../../composables/useFieldValidation'
 import type { PortalTarget } from '../../config'
 import type { ComponentSlots } from '../../types/tv'
 import type { DateInputGroupProps } from '../date-input-group/DateInputGroup.vue'
+import dateInputGroupTheme from '../date-input-group/theme'
 import type { ValidationBehavior } from '../form/context'
 import type { FormFieldProps } from '../form/types'
-import dateInputGroupTheme from '../date-input-group/theme'
 import theme from './theme'
 
 type DatePicker = typeof theme
@@ -122,7 +123,10 @@ export interface DatePickerProps extends FormFieldProps {
   /** Additional classes merged into the root element. */
   class?: any
   /** Per-slot class overrides. `group`, `input` and `segment` are the internal `date-input-group`'s. */
-  ui?: ComponentSlots<DatePicker> & { group?: ComponentSlots<DateInputGroup>['base'] } & Pick<ComponentSlots<DateInputGroup>, 'input' | 'segment'>
+  ui?: ComponentSlots<DatePicker> & { group?: ComponentSlots<DateInputGroup>['base'] } & Pick<
+      ComponentSlots<DateInputGroup>,
+      'input' | 'segment'
+    >
 }
 
 export interface DatePickerSlots {
@@ -138,7 +142,10 @@ export interface DatePickerSlots {
    * Replaces the default `Calendar` rendered inside the popover. Bind `value` and call `onSelect`
    * on your own `Calendar` to keep it wired to the picker (see the `custom-styles` demo).
    */
-  calendar?: (props: { value: DateValue | null | undefined, onSelect: (value: DateValue) => void }) => any
+  calendar?: (props: {
+    value: DateValue | null | undefined
+    onSelect: (value: DateValue) => void
+  }) => any
 }
 
 export interface DatePickerEmits {
@@ -151,22 +158,39 @@ export interface DatePickerEmits {
 
 <script setup lang="ts">
 import { DateFormatter, getLocalTimeZone } from '@internationalized/date'
-import { DateFieldInput, DateFieldRoot, PopoverAnchor, PopoverContent, PopoverPortal, PopoverRoot, PopoverTrigger } from 'reka-ui'
+import {
+  DateFieldInput,
+  DateFieldRoot,
+  PopoverAnchor,
+  PopoverContent,
+  PopoverPortal,
+  PopoverRoot,
+  PopoverTrigger,
+} from 'reka-ui'
 import type { ComponentPublicInstance } from 'vue'
 import { computed, ref, useAttrs, useTemplateRef, watch } from 'vue'
+
 import { useComponentUI } from '../../composables/useComponentUI'
 import { useFieldChrome } from '../../composables/useFieldChrome'
 import { useFieldValidation } from '../../composables/useFieldValidation'
 import { useInertOutside } from '../../composables/useInertOutside'
 import { usePortal } from '../../composables/usePortal'
 import Calendar from '../calendar/Calendar.vue'
-import DateInputGroup, { dropDanglingTimeZoneSeparator, wrapBidiIsolate } from '../date-input-group/DateInputGroup.vue'
+import DateInputGroup, {
+  dropDanglingTimeZoneSeparator,
+  wrapBidiIsolate,
+} from '../date-input-group/DateInputGroup.vue'
 import { useFieldsetDisabled } from '../fieldset/context'
 import PopoverLabelledBy from './PopoverLabelledBy'
 
 // `invalid: undefined`/`open: undefined`: an absent boolean would cast to `false`, which would count as
 // controlled-valid/controlled-closed and hide validation errors / force the popover shut
-const props = withDefaults(defineProps<DatePickerProps>(), { invalid: undefined, open: undefined, portal: undefined, defaultOpen: false })
+const props = withDefaults(defineProps<DatePickerProps>(), {
+  invalid: undefined,
+  open: undefined,
+  portal: undefined,
+  defaultOpen: false,
+})
 const disabled = useFieldsetDisabled(() => props.disabled)
 const portalTarget = usePortal(() => props.portal)
 defineOptions({ inheritAttrs: false })
@@ -177,10 +201,13 @@ const modelValue = defineModel<DateValue | null>()
 /** The popover's open state. Bind with `v-model:open`. */
 // Also mirrors a controlled `open` synchronously, so `useInertOutside` releases before Reka refocuses the trigger.
 const openLocal = ref(props.open ?? props.defaultOpen ?? false)
-watch(() => props.open, (open) => {
-  if (open !== undefined)
-    openLocal.value = open
-}, { flush: 'sync' })
+watch(
+  () => props.open,
+  (open) => {
+    if (open !== undefined) openLocal.value = open
+  },
+  { flush: 'sync' },
+)
 const isOpen = computed({
   get: () => props.open ?? openLocal.value,
   set: (value: boolean) => {
@@ -203,15 +230,16 @@ const attrs = useAttrs()
 // apply); Reka only tracks this internally per-segment (unreachable from outside), so it's computed here instead
 // and fed into `validate` so it follows `validationBehavior` like any other error.
 function formatDateBoundary(value: DateValue) {
-  return new DateFormatter(props.locale ?? 'en-US', { dateStyle: 'medium' }).format(value.toDate(getLocalTimeZone()))
+  return new DateFormatter(props.locale ?? 'en-US', { dateStyle: 'medium' }).format(
+    value.toDate(getLocalTimeZone()),
+  )
 }
 function builtinValidate(value: DateValue) {
   if (props.minValue && value.compare(props.minValue) < 0)
     return `Value must be ${formatDateBoundary(props.minValue)} or later.`
   if (props.maxValue && value.compare(props.maxValue) > 0)
     return `Value must be ${formatDateBoundary(props.maxValue)} or earlier.`
-  if (props.isDateUnavailable?.(value))
-    return 'Selected date unavailable.'
+  if (props.isDateUnavailable?.(value)) return 'Selected date unavailable.'
   return undefined
 }
 function validate(value: DateValue) {
@@ -221,7 +249,8 @@ function validate(value: DateValue) {
 const { validation, commitValidation } = useFieldValidation({
   // Untouched + uncontrolled: `modelValue` is `undefined` until the first `onUpdate`, so fall back to
   // `defaultValue`. A controlled field explicitly cleared to `null` stays `null`, not fall back.
-  value: () => (modelValue.value === undefined ? props.defaultValue : modelValue.value) ?? undefined,
+  value: () =>
+    (modelValue.value === undefined ? props.defaultValue : modelValue.value) ?? undefined,
   validate: () => validate,
   invalid: () => props.invalid,
   validationBehavior: () => props.validationBehavior,
@@ -249,14 +278,18 @@ function onCalendarSelect(value: DateValue) {
 }
 // Also runs when the already-selected date is picked again (the Calendar re-emits it): React Aria still closes.
 function onCalendarUpdate(value: DateValue | DateValue[] | undefined) {
-  if (value && !Array.isArray(value))
-    onCalendarSelect(value)
+  if (value && !Array.isArray(value)) onCalendarSelect(value)
 }
 
 // React Aria's `useDatePickerGroup`: Alt+ArrowDown/ArrowUp on a segment opens the calendar instead of
 // stepping the segment. Captured on the field root so it runs before the segment's own handler.
 function onFieldKeydown(event: KeyboardEvent) {
-  if (!event.altKey || (event.key !== 'ArrowDown' && event.key !== 'ArrowUp') || disabled.value || props.readonly)
+  if (
+    !event.altKey ||
+    (event.key !== 'ArrowDown' && event.key !== 'ArrowUp') ||
+    disabled.value ||
+    props.readonly
+  )
     return
   event.preventDefault()
   event.stopPropagation()
@@ -272,34 +305,44 @@ function onCloseAutoFocus(event: Event) {
 // Escape closes the whole popover even while the calendar's year picker is open (the year picker marks the
 // event handled to close itself, which would otherwise stop Reka's dismissal).
 function onEscapeKeyDown(event: KeyboardEvent) {
-  if (event.defaultPrevented)
-    isOpen.value = false
+  if (event.defaultPrevented) isOpen.value = false
 }
 
 // React Aria's calendar takes focus on open (its focused date: the value, else the placeholder, else today, else
 // the first available day). Reka's PopoverContent would focus the first tabbable (the year-picker trigger) instead.
 function onOpenAutoFocus(event: Event) {
   const content = event.target as HTMLElement | null
-  const focusDate = (modelValue.value === undefined ? props.defaultValue : modelValue.value) ?? props.placeholder ?? props.defaultPlaceholder
-  const cell = (focusDate ? content?.querySelector<HTMLElement>(`[data-value="${focusDate.toString().slice(0, 10)}"]:not([data-outside-view])`) : null)
-    ?? content?.querySelector<HTMLElement>('[data-today]:not([data-outside-view])')
-    ?? content?.querySelector<HTMLElement>('[data-value]:not([data-outside-view]):not([data-disabled]):not([data-unavailable])')
+  const focusDate =
+    (modelValue.value === undefined ? props.defaultValue : modelValue.value) ??
+    props.placeholder ??
+    props.defaultPlaceholder
+  const cell =
+    (focusDate
+      ? content?.querySelector<HTMLElement>(
+          `[data-value="${focusDate.toString().slice(0, 10)}"]:not([data-outside-view])`,
+        )
+      : null) ??
+    content?.querySelector<HTMLElement>('[data-today]:not([data-outside-view])') ??
+    content?.querySelector<HTMLElement>(
+      '[data-value]:not([data-outside-view]):not([data-disabled]):not([data-unavailable])',
+    )
   if (cell) {
     event.preventDefault()
     cell.focus()
   }
 }
 
-const { id, labelId, hasLabel, describedBy, FieldLabel, FieldDescription, FieldError } = useFieldChrome({
-  props,
-  slots,
-  invalid,
-  validation,
-  disabled,
-  required: () => props.required,
-  // Matches DateField/TimeField's own convention: hide the description while invalid
-  hideDescriptionWhenInvalid: true,
-})
+const { id, labelId, hasLabel, describedBy, FieldLabel, FieldDescription, FieldError } =
+  useFieldChrome({
+    props,
+    slots,
+    invalid,
+    validation,
+    disabled,
+    required: () => props.required,
+    // Matches DateField/TimeField's own convention: hide the description while invalid
+    hideDescriptionWhenInvalid: true,
+  })
 const triggerId = computed(() => `${id.value}-trigger`)
 
 const groupUiProps = computed<DateInputGroupProps['ui']>(() => ({
@@ -375,10 +418,27 @@ const groupUiProps = computed<DateInputGroupProps['ui']>(() => ({
                   :disabled="disabled || readonly"
                   :class="ui.trigger({ class: props.ui?.trigger })"
                 >
-                  <span aria-hidden="true" data-slot="date-picker-trigger-indicator" :class="ui.triggerIndicator({ class: props.ui?.triggerIndicator })">
+                  <span
+                    aria-hidden="true"
+                    data-slot="date-picker-trigger-indicator"
+                    :class="ui.triggerIndicator({ class: props.ui?.triggerIndicator })"
+                  >
                     <slot name="indicator">
-                      <svg aria-hidden="true" fill="none" height="1em" role="presentation" viewBox="0 0 13 14" width="1em" xmlns="http://www.w3.org/2000/svg">
-                        <path clip-rule="evenodd" d="M3.75 4.5A.75.75 0 0 1 3 3.75v-.748a1.5 1.5 0 0 0-1.5 1.5v1h10v-1a1.5 1.5 0 0 0-1.5-1.5v.75a.75.75 0 1 1-1.5 0v-.75h-4v.747a.75.75 0 0 1-.75.75ZM8.5 1.501h-4V.75a.75.75 0 0 0-1.5 0v.752a3 3 0 0 0-3 3v6a3 3 0 0 0 3 3h7a3 3 0 0 0 3-3v-6a3 3 0 0 0-3-3v-.75a.75.75 0 0 0-1.5 0v.75Zm-7 5.5v3.5a1.5 1.5 0 0 0 1.5 1.5h7a1.5 1.5 0 0 0 1.5-1.5v-3.5h-10Z" fill="currentColor" fill-rule="evenodd" />
+                      <svg
+                        aria-hidden="true"
+                        fill="none"
+                        height="1em"
+                        role="presentation"
+                        viewBox="0 0 13 14"
+                        width="1em"
+                        xmlns="http://www.w3.org/2000/svg"
+                      >
+                        <path
+                          clip-rule="evenodd"
+                          d="M3.75 4.5A.75.75 0 0 1 3 3.75v-.748a1.5 1.5 0 0 0-1.5 1.5v1h10v-1a1.5 1.5 0 0 0-1.5-1.5v.75a.75.75 0 1 1-1.5 0v-.75h-4v.747a.75.75 0 0 1-.75.75ZM8.5 1.501h-4V.75a.75.75 0 0 0-1.5 0v.752a3 3 0 0 0-3 3v6a3 3 0 0 0 3 3h7a3 3 0 0 0 3-3v-6a3 3 0 0 0-3-3v-.75a.75.75 0 0 0-1.5 0v.75Zm-7 5.5v3.5a1.5 1.5 0 0 0 1.5 1.5h7a1.5 1.5 0 0 0 1.5-1.5v-3.5h-10Z"
+                          fill="currentColor"
+                          fill-rule="evenodd"
+                        />
                       </svg>
                     </slot>
                   </span>

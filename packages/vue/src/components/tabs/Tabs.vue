@@ -61,17 +61,21 @@ export interface TabsProps<T extends TabsItem = TabsItem> {
 
 export interface TabsSlots<T extends TabsItem = TabsItem> {
   /** Replaces a tab's label. */
-  tab?: (props: { item: T, index: number, selected: boolean }) => any
+  tab?: (props: { item: T; index: number; selected: boolean }) => any
   /** Fallback panel content for every item, overridden by `[item.slot]`. */
-  content?: (props: { item: T, index: number }) => any
+  content?: (props: { item: T; index: number }) => any
   /** Panel content of the items whose `slot` names it. */
-  [slot: string]: ((props: { item: T, index: number, selected: boolean }) => any) | ((props: { item: T, index: number }) => any) | undefined
+  [slot: string]:
+    | ((props: { item: T; index: number; selected: boolean }) => any)
+    | ((props: { item: T; index: number }) => any)
+    | undefined
 }
 </script>
 
 <script setup lang="ts" generic="T extends TabsItem = TabsItem">
 import { TabsContent, TabsList, TabsRoot, TabsTrigger } from 'reka-ui'
 import { computed, nextTick, onBeforeUnmount, onMounted, ref, watch } from 'vue'
+
 import { useComponentUI } from '../../composables/useComponentUI'
 import ScrollShadow from '../scroll-shadow/ScrollShadow.vue'
 import type { ScrollShadowVisibility } from '../scroll-shadow/ScrollShadow.vue'
@@ -97,9 +101,8 @@ function itemValue(item: TabsItem, index: number): string | number {
 // RAC's useTabListState falls back to the first enabled tab, so a disabled first tab is never
 // selected (and the roving tab stop never lands on a disabled tab).
 const defaultValue = computed(() => {
-  if (props.defaultValue !== undefined)
-    return props.defaultValue
-  const index = props.items.findIndex(item => !item.disabled)
+  if (props.defaultValue !== undefined) return props.defaultValue
+  const index = props.items.findIndex((item) => !item.disabled)
   return index === -1 ? (props.items[0]?.value ?? '0') : itemValue(props.items[index]!, index)
 })
 
@@ -107,8 +110,13 @@ const selectedValue = computed(() => modelValue.value ?? defaultValue.value)
 
 // The one tab in the Tab order: the selected tab, or the first enabled one when that is disabled.
 const tabStopValue = computed(() => {
-  const selected = props.items.findIndex((item, index) => itemValue(item, index) === selectedValue.value)
-  const index = selected !== -1 && !props.items[selected]!.disabled ? selected : props.items.findIndex(item => !item.disabled)
+  const selected = props.items.findIndex(
+    (item, index) => itemValue(item, index) === selectedValue.value,
+  )
+  const index =
+    selected !== -1 && !props.items[selected]!.disabled
+      ? selected
+      : props.items.findIndex((item) => !item.disabled)
   return index === -1 ? undefined : itemValue(props.items[index]!, index)
 })
 
@@ -116,18 +124,15 @@ const tabStopValue = computed(() => {
 // always keeps the wrapper element (toggling `hidden` only), so only render the selected
 // panel ourselves to match data-slot presence 1:1.
 const visiblePanel = computed(() => {
-  if (!props.content)
-    return null
+  if (!props.content) return null
   const index = props.items.findIndex((item, i) => itemValue(item, i) === selectedValue.value)
   return index === -1 ? null : { item: props.items[index]!, index }
 })
 
 function isSeparatorHidden(index: number): boolean {
   const current = itemValue(props.items[index]!, index)
-  if (current === selectedValue.value)
-    return true
-  if (index === 0)
-    return false
+  if (current === selectedValue.value) return true
+  if (index === 0) return false
   const previous = itemValue(props.items[index - 1]!, index - 1)
   return previous === selectedValue.value
 }
@@ -151,8 +156,7 @@ function onListKeydown(event: KeyboardEvent) {
   const list = event.currentTarget as HTMLElement
   const tabs = [...list.querySelectorAll<HTMLElement>('[data-slot="tabs-tab"]:not([disabled])')]
   const index = tabs.indexOf(document.activeElement as HTMLElement)
-  if (index === -1)
-    return
+  if (index === -1) return
   event.preventDefault()
   event.stopPropagation()
   const rtl = list.closest('[dir]')?.getAttribute('dir') === 'rtl'
@@ -162,7 +166,9 @@ function onListKeydown(event: KeyboardEvent) {
 
 function placeIndicator() {
   const indicator = indicatorRef.value
-  const activeTab = listRef.value?.$el?.querySelector?.('[data-slot="tabs-tab"][data-state="active"]')
+  const activeTab = listRef.value?.$el?.querySelector?.(
+    '[data-slot="tabs-tab"][data-state="active"]',
+  )
   if (indicator && activeTab && activeTab.nextElementSibling !== indicator)
     activeTab.after(indicator)
 }
@@ -181,13 +187,16 @@ const indicatorGeometry = ref<Record<string, string>>({})
 // animate from that collapsed state into place on mount. Suppress the transition until
 // the first real measurement has painted, then let it animate normally on later changes.
 const indicatorReady = ref(false)
-const indicatorStyle = computed(() => indicatorReady.value ? indicatorGeometry.value : { ...indicatorGeometry.value, transition: 'none' })
+const indicatorStyle = computed(() =>
+  indicatorReady.value
+    ? indicatorGeometry.value
+    : { ...indicatorGeometry.value, transition: 'none' },
+)
 let resizeObserver: ResizeObserver | null = null
 
 function measureIndicator() {
   const listEl = listRef.value?.$el
-  if (!listEl)
-    return
+  if (!listEl) return
   const activeTab = listEl.querySelector<HTMLElement>('[data-slot="tabs-tab"][data-state="active"]')
   if (!activeTab) {
     indicatorGeometry.value = {}
@@ -218,33 +227,35 @@ function onScrollVisibility(visibility: ScrollShadowVisibility) {
 // Scrolls 80% of the visible size towards `direction`, clamped to the scroll range (RTL-aware).
 function scrollByPage(direction: 1 | -1) {
   const el = scrollerRef.value?.el
-  if (!el)
-    return
+  if (!el) return
   const vertical = props.orientation === 'vertical'
   const size = vertical ? el.clientHeight : el.clientWidth
   const maxScroll = Math.max(0, (vertical ? el.scrollHeight : el.scrollWidth) - size)
   const rtl = !vertical && getComputedStyle(el).direction === 'rtl'
   const current = vertical ? el.scrollTop : el.scrollLeft
-  const next = Math.min(rtl ? 0 : maxScroll, Math.max(rtl ? -maxScroll : 0, current + direction * size * 0.8 * (rtl ? -1 : 1)))
-  if (next !== current)
-    el.scrollTo({ behavior: 'smooth', [vertical ? 'top' : 'left']: next })
+  const next = Math.min(
+    rtl ? 0 : maxScroll,
+    Math.max(rtl ? -maxScroll : 0, current + direction * size * 0.8 * (rtl ? -1 : 1)),
+  )
+  if (next !== current) el.scrollTo({ behavior: 'smooth', [vertical ? 'top' : 'left']: next })
 }
 
 function observeGeometry() {
   const listEl = listRef.value?.$el
   resizeObserver?.disconnect()
-  if (!listEl)
-    return
+  if (!listEl) return
   resizeObserver = new ResizeObserver(() => measureIndicator())
   resizeObserver.observe(listEl)
-  listEl.querySelectorAll('[data-slot="tabs-tab"]').forEach(el => resizeObserver!.observe(el))
+  listEl.querySelectorAll('[data-slot="tabs-tab"]').forEach((el) => resizeObserver!.observe(el))
 }
 
 onMounted(() => {
   placeIndicator()
   observeGeometry()
   measureIndicator()
-  requestAnimationFrame(() => { indicatorReady.value = true })
+  requestAnimationFrame(() => {
+    indicatorReady.value = true
+  })
   window.addEventListener('resize', measureIndicator)
 })
 
@@ -256,42 +267,52 @@ onBeforeUnmount(() => {
 // RAC's useTabPanel makes the panel a tab stop only while it has no tabbable child; Reka's
 // TabsContent hardcodes `tabindex="0"`. Vue never re-patches that static attribute, so it is
 // toggled on the element directly and kept in sync with the panel's content.
-const PANEL_TABBABLE = 'a[href],area[href],button:not([disabled]),input:not([disabled]):not([type=hidden]),select:not([disabled]),textarea:not([disabled]),iframe,[contenteditable]:not([contenteditable=false]),[tabindex]:not([tabindex^="-"])'
+const PANEL_TABBABLE =
+  'a[href],area[href],button:not([disabled]),input:not([disabled]):not([type=hidden]),select:not([disabled]),textarea:not([disabled]),iframe,[contenteditable]:not([contenteditable=false]),[tabindex]:not([tabindex^="-"])'
 const panelRef = ref<{ $el: HTMLElement } | null>(null)
 let panelObserver: MutationObserver | null = null
 
 function syncPanelTabStop() {
   const panel = panelRef.value?.$el
-  if (!(panel instanceof HTMLElement))
-    return
+  if (!(panel instanceof HTMLElement)) return
   const tabbable = panel.querySelector(PANEL_TABBABLE) !== null
-  if (tabbable && panel.hasAttribute('tabindex'))
-    panel.removeAttribute('tabindex')
-  else if (!tabbable && panel.getAttribute('tabindex') !== '0')
-    panel.setAttribute('tabindex', '0')
+  if (tabbable && panel.hasAttribute('tabindex')) panel.removeAttribute('tabindex')
+  else if (!tabbable && panel.getAttribute('tabindex') !== '0') panel.setAttribute('tabindex', '0')
 }
 
-watch(() => panelRef.value?.$el as HTMLElement | undefined, (panel) => {
-  panelObserver?.disconnect()
-  panelObserver = null
-  if (!(panel instanceof HTMLElement))
-    return
-  syncPanelTabStop()
-  if (typeof MutationObserver !== 'undefined') {
-    panelObserver = new MutationObserver(syncPanelTabStop)
-    panelObserver.observe(panel, { subtree: true, childList: true, attributes: true, attributeFilter: ['tabindex', 'disabled', 'href', 'contenteditable'] })
-  }
-}, { flush: 'sync' })
+watch(
+  () => panelRef.value?.$el as HTMLElement | undefined,
+  (panel) => {
+    panelObserver?.disconnect()
+    panelObserver = null
+    if (!(panel instanceof HTMLElement)) return
+    syncPanelTabStop()
+    if (typeof MutationObserver !== 'undefined') {
+      panelObserver = new MutationObserver(syncPanelTabStop)
+      panelObserver.observe(panel, {
+        subtree: true,
+        childList: true,
+        attributes: true,
+        attributeFilter: ['tabindex', 'disabled', 'href', 'contenteditable'],
+      })
+    }
+  },
+  { flush: 'sync' },
+)
 
 onBeforeUnmount(() => panelObserver?.disconnect())
 
-watch([selectedValue, () => props.items, () => props.orientation], async () => {
-  await nextTick()
-  // Move before measuring: the measurement flushes styles, so the indicator transitions from its old geometry.
-  placeIndicator()
-  observeGeometry()
-  measureIndicator()
-}, { deep: true })
+watch(
+  [selectedValue, () => props.items, () => props.orientation],
+  async () => {
+    await nextTick()
+    // Move before measuring: the measurement flushes styles, so the indicator transitions from its old geometry.
+    placeIndicator()
+    observeGeometry()
+    measureIndicator()
+  },
+  { deep: true },
+)
 </script>
 
 <template>
@@ -303,7 +324,10 @@ watch([selectedValue, () => props.items, () => props.orientation], async () => {
     data-slot="tabs"
     :class="ui.base({ class: [props.ui?.base, props.class] })"
   >
-    <div :class="ui.tabListContainer({ class: props.ui?.tabListContainer })" data-slot="tabs-list-container">
+    <div
+      :class="ui.tabListContainer({ class: props.ui?.tabListContainer })"
+      data-slot="tabs-list-container"
+    >
       <ScrollShadow
         ref="scrollerRef"
         hide-scroll-bar
@@ -317,7 +341,12 @@ watch([selectedValue, () => props.items, () => props.orientation], async () => {
              focus it), and RAC keeps the selected tab as the single tab stop, where Reka's roving group
              leaves every tab at -1 until one has been focused. -->
         <TabsList ref="listRef" as-child>
-          <div :class="ui.tabList({ class: props.ui?.tabList })" :tabindex="undefined" data-slot="tabs-list" @keydown.capture="onListKeydown">
+          <div
+            :class="ui.tabList({ class: props.ui?.tabList })"
+            :tabindex="undefined"
+            data-slot="tabs-list"
+            @keydown.capture="onListKeydown"
+          >
             <TabsTrigger
               v-for="(item, index) in items"
               :key="itemValue(item, index)"
@@ -335,10 +364,22 @@ watch([selectedValue, () => props.items, () => props.orientation], async () => {
                   v-if="separator"
                   aria-hidden="true"
                   :data-orientation="orientation"
-                  :class="ui.separator({ class: [props.ui?.separator, isSeparatorHidden(index) ? 'opacity-0' : undefined] })"
+                  :class="
+                    ui.separator({
+                      class: [
+                        props.ui?.separator,
+                        isSeparatorHidden(index) ? 'opacity-0' : undefined,
+                      ],
+                    })
+                  "
                   data-slot="tabs-separator"
                 />
-                <slot name="tab" :item="item" :index="index" :selected="itemValue(item, index) === selectedValue">
+                <slot
+                  name="tab"
+                  :item="item"
+                  :index="index"
+                  :selected="itemValue(item, index) === selectedValue"
+                >
                   {{ item.label }}
                 </slot>
               </button>
@@ -356,26 +397,74 @@ watch([selectedValue, () => props.items, () => props.orientation], async () => {
       </ScrollShadow>
       <button
         :aria-label="orientation === 'vertical' ? 'Scroll tabs up' : 'Scroll tabs left'"
-        :class="ui.scrollPrev({ class: [props.ui?.scrollPrev, scrollState.before ? 'inline-flex' : undefined] })"
+        :class="
+          ui.scrollPrev({
+            class: [props.ui?.scrollPrev, scrollState.before ? 'inline-flex' : undefined],
+          })
+        "
         tabindex="-1"
         type="button"
         @click="scrollByPage(-1)"
       >
-        <svg aria-hidden="true" fill="none" height="16" role="presentation" viewBox="0 0 16 16" width="16" xmlns="http://www.w3.org/2000/svg">
-          <path v-if="orientation === 'vertical'" clip-rule="evenodd" d="M13.03 10.53a.75.75 0 0 1-1.06 0L8 6.56l-3.97 3.97a.75.75 0 0 1-1.06-1.06l4.5-4.5a.75.75 0 0 1 1.06 0l4.5 4.5a.75.75 0 0 1 0 1.06" fill="currentColor" fill-rule="evenodd" />
-          <path v-else clip-rule="evenodd" d="M10.53 2.97a.75.75 0 0 1 0 1.06L6.56 8l3.97 3.97a.75.75 0 1 1-1.06 1.06l-4.5-4.5a.75.75 0 0 1 0-1.06l4.5-4.5a.75.75 0 0 1 1.06 0" fill="currentColor" fill-rule="evenodd" />
+        <svg
+          aria-hidden="true"
+          fill="none"
+          height="16"
+          role="presentation"
+          viewBox="0 0 16 16"
+          width="16"
+          xmlns="http://www.w3.org/2000/svg"
+        >
+          <path
+            v-if="orientation === 'vertical'"
+            clip-rule="evenodd"
+            d="M13.03 10.53a.75.75 0 0 1-1.06 0L8 6.56l-3.97 3.97a.75.75 0 0 1-1.06-1.06l4.5-4.5a.75.75 0 0 1 1.06 0l4.5 4.5a.75.75 0 0 1 0 1.06"
+            fill="currentColor"
+            fill-rule="evenodd"
+          />
+          <path
+            v-else
+            clip-rule="evenodd"
+            d="M10.53 2.97a.75.75 0 0 1 0 1.06L6.56 8l3.97 3.97a.75.75 0 1 1-1.06 1.06l-4.5-4.5a.75.75 0 0 1 0-1.06l4.5-4.5a.75.75 0 0 1 1.06 0"
+            fill="currentColor"
+            fill-rule="evenodd"
+          />
         </svg>
       </button>
       <button
         :aria-label="orientation === 'vertical' ? 'Scroll tabs down' : 'Scroll tabs right'"
-        :class="ui.scrollNext({ class: [props.ui?.scrollNext, scrollState.after ? 'inline-flex' : undefined] })"
+        :class="
+          ui.scrollNext({
+            class: [props.ui?.scrollNext, scrollState.after ? 'inline-flex' : undefined],
+          })
+        "
         tabindex="-1"
         type="button"
         @click="scrollByPage(1)"
       >
-        <svg aria-hidden="true" fill="none" height="16" role="presentation" viewBox="0 0 16 16" width="16" xmlns="http://www.w3.org/2000/svg">
-          <path v-if="orientation === 'vertical'" clip-rule="evenodd" d="M2.97 5.47a.75.75 0 0 1 1.06 0L8 9.44l3.97-3.97a.75.75 0 1 1 1.06 1.06l-4.5 4.5a.75.75 0 0 1-1.06 0l-4.5-4.5a.75.75 0 0 1 0-1.06" fill="currentColor" fill-rule="evenodd" />
-          <path v-else clip-rule="evenodd" d="M5.47 2.97a.75.75 0 0 1 1.06 0l4.5 4.5a.75.75 0 0 1 0 1.06l-4.5 4.5a.75.75 0 1 1-1.06-1.06L9.44 8 5.47 4.03a.75.75 0 0 1 0-1.06Z" fill="currentColor" fill-rule="evenodd" />
+        <svg
+          aria-hidden="true"
+          fill="none"
+          height="16"
+          role="presentation"
+          viewBox="0 0 16 16"
+          width="16"
+          xmlns="http://www.w3.org/2000/svg"
+        >
+          <path
+            v-if="orientation === 'vertical'"
+            clip-rule="evenodd"
+            d="M2.97 5.47a.75.75 0 0 1 1.06 0L8 9.44l3.97-3.97a.75.75 0 1 1 1.06 1.06l-4.5 4.5a.75.75 0 0 1-1.06 0l-4.5-4.5a.75.75 0 0 1 0-1.06"
+            fill="currentColor"
+            fill-rule="evenodd"
+          />
+          <path
+            v-else
+            clip-rule="evenodd"
+            d="M5.47 2.97a.75.75 0 0 1 1.06 0l4.5 4.5a.75.75 0 0 1 0 1.06l-4.5 4.5a.75.75 0 1 1-1.06-1.06L9.44 8 5.47 4.03a.75.75 0 0 1 0-1.06Z"
+            fill="currentColor"
+            fill-rule="evenodd"
+          />
         </svg>
       </button>
     </div>
@@ -387,7 +476,11 @@ watch([selectedValue, () => props.items, () => props.orientation], async () => {
       :class="ui.tabPanel({ class: props.ui?.tabPanel })"
       data-slot="tabs-panel"
     >
-      <slot :name="(visiblePanel.item.slot || 'content') as 'content'" :item="visiblePanel.item" :index="visiblePanel.index">
+      <slot
+        :name="(visiblePanel.item.slot || 'content') as 'content'"
+        :item="visiblePanel.item"
+        :index="visiblePanel.index"
+      >
         {{ visiblePanel.item.content }}
       </slot>
     </TabsContent>

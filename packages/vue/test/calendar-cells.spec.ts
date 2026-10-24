@@ -1,5 +1,6 @@
 import { CalendarDate, CalendarDateTime } from '@internationalized/date'
 import { afterEach, describe, expect, it } from 'vitest'
+
 import {
   calendarCellDate,
   calendarCellFrom,
@@ -26,7 +27,9 @@ describe('compareDay', () => {
   it('compares by day, ignoring time of day', () => {
     expect(compareDay(new CalendarDateTime(2025, 3, 1, 23), new CalendarDate(2025, 3, 1))).toBe(0)
     expect(compareDay(new CalendarDate(2025, 3, 1), new CalendarDate(2025, 3, 4))).toBeLessThan(0)
-    expect(compareDay(new CalendarDate(2025, 3, 4), new CalendarDateTime(2025, 3, 1, 8))).toBeGreaterThan(0)
+    expect(
+      compareDay(new CalendarDate(2025, 3, 4), new CalendarDateTime(2025, 3, 1, 8)),
+    ).toBeGreaterThan(0)
   })
 })
 

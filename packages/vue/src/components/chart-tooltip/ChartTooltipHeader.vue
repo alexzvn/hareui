@@ -20,7 +20,10 @@ const { classes, ui } = useChartTooltipContext('Header')
 </script>
 
 <template>
-  <div data-slot="chart-tooltip-header" :class="classes.header({ class: [ui()?.header, props.class] })">
+  <div
+    data-slot="chart-tooltip-header"
+    :class="classes.header({ class: [ui()?.header, props.class] })"
+  >
     <slot />
   </div>
 </template>

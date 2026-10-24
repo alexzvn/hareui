@@ -7,7 +7,9 @@ import theme from './theme'
 
 type BarChartTheme = typeof theme
 
-export interface BarChartProps<T extends object = Record<string, unknown>> extends CartesianRootProps<T, ChartBarSeries> {
+export interface BarChartProps<
+  T extends object = Record<string, unknown>,
+> extends CartesianRootProps<T, ChartBarSeries> {
   /**
    * Bar direction. Use `'vertical'` for horizontal bars: the category axis becomes the y-axis.
    * @defaultValue 'horizontal'
@@ -45,13 +47,19 @@ export interface BarChartSlots extends CartesianRootSlots {}
 </script>
 
 <script setup lang="ts" generic="T extends object">
-import type { ChartDatum } from '../chart/types'
 import { useSlots } from 'vue'
+
 import { useComponentUI } from '../../composables/useComponentUI'
 import { useCartesianChart } from '../chart/cartesian'
-import { cartesianRootDefaults, definedProps, rootMargin, useCartesianRoot } from '../chart/cartesian-root'
+import {
+  cartesianRootDefaults,
+  definedProps,
+  rootMargin,
+  useCartesianRoot,
+} from '../chart/cartesian-root'
 import ChartCartesianFrame from '../chart/ChartCartesianFrame.vue'
 import { useChartRoot } from '../chart/context'
+import type { ChartDatum } from '../chart/types'
 
 const props = withDefaults(defineProps<BarChartProps<T>>(), {
   ...cartesianRootDefaults,

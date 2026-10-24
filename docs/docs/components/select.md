@@ -25,27 +25,36 @@ Select renders a [Label](/docs/components/label), a trigger button showing the s
 ```vue
 <template>
   <Select label="State" :items="items">
-    <template #label />                                  <!-- Label content -->
-    <template #value="{ selectedItems, isPlaceholder, text }" /> <!-- trigger value -->
-    <template #clear />                                  <!-- clear button content (with `clearable`) -->
-    <template #indicator="{ open }" />                   <!-- trigger indicator (default: chevron) -->
-    <template #description />                            <!-- Description content -->
-    <template #error="validation" />                     <!-- FieldError content -->
-    <template #item-leading="{ item, selected }" />      <!-- ListBox item slots, forwarded -->
-    <template #item-indicator="{ selected }" />          <!-- option checkmark -->
-    <template #loading />                                <!-- with `loading`: after the last option -->
+    <template #label />
+    <!-- Label content -->
+    <template #value="{ selectedItems, isPlaceholder, text }" />
+    <!-- trigger value -->
+    <template #clear />
+    <!-- clear button content (with `clearable`) -->
+    <template #indicator="{ open }" />
+    <!-- trigger indicator (default: chevron) -->
+    <template #description />
+    <!-- Description content -->
+    <template #error="validation" />
+    <!-- FieldError content -->
+    <template #item-leading="{ item, selected }" />
+    <!-- ListBox item slots, forwarded -->
+    <template #item-indicator="{ selected }" />
+    <!-- option checkmark -->
+    <template #loading />
+    <!-- with `loading`: after the last option -->
   </Select>
 </template>
 ```
 
-| `ui` key | `data-slot` | Element |
-|---|---|---|
-| `base` | `select` | root `<div>` |
-| `trigger` | `select-trigger` | `<button>` |
-| `value` | `select-value` | `<span>` inside the trigger |
-| `clearButton` | `select-clear-button` | `<span aria-hidden>` inside the trigger |
-| `indicator` | `select-indicator` / `select-default-indicator` | chevron |
-| `popover` | `select-popover` | popover holding the ListBox |
+| `ui` key      | `data-slot`                                     | Element                                 |
+| ------------- | ----------------------------------------------- | --------------------------------------- |
+| `base`        | `select`                                        | root `<div>`                            |
+| `trigger`     | `select-trigger`                                | `<button>`                              |
+| `value`       | `select-value`                                  | `<span>` inside the trigger             |
+| `clearButton` | `select-clear-button`                           | `<span aria-hidden>` inside the trigger |
+| `indicator`   | `select-indicator` / `select-default-indicator` | chevron                                 |
+| `popover`     | `select-popover`                                | popover holding the ListBox             |
 
 ### Typing items
 
@@ -156,9 +165,11 @@ Inside a [Surface](/docs/components/surface), use `variant="secondary"` for the 
 ### Global Configuration
 
 ```ts
-app.use(createHareUI({
-  ui: { select: { slots: { trigger: 'rounded-lg', popover: 'rounded-lg' } } },
-}))
+app.use(
+  createHareUI({
+    ui: { select: { slots: { trigger: 'rounded-lg', popover: 'rounded-lg' } } },
+  }),
+)
 ```
 
 ## Styling Reference

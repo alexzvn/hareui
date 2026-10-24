@@ -57,14 +57,16 @@ When used inside a [Surface](/docs/components/surface) component, use `variant="
 ### Global Configuration
 
 ```ts
-app.use(createHareUI({
-  ui: {
-    textArea: {
-      slots: { base: 'rounded-xl px-4 py-3 leading-6' },
-      defaultVariants: { variant: 'secondary' },
+app.use(
+  createHareUI({
+    ui: {
+      textArea: {
+        slots: { base: 'rounded-xl px-4 py-3 leading-6' },
+        defaultVariants: { variant: 'secondary' },
+      },
     },
-  },
-}))
+  }),
+)
 ```
 
 ## Styling Reference

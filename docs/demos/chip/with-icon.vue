@@ -9,7 +9,9 @@ import { Icon } from '@iconify/vue'
       <template #leading><Icon height="16" icon="gravity-ui:circle-fill" width="6" /></template>
     </Chip>
     <Chip color="success" label="Completed">
-      <template #leading><Icon height="16" icon="gravity-ui:circle-check-fill" width="12" /></template>
+      <template #leading
+        ><Icon height="16" icon="gravity-ui:circle-check-fill" width="12"
+      /></template>
     </Chip>
     <Chip color="warning" label="Pending">
       <template #leading><Icon height="16" icon="gravity-ui:clock" width="12" /></template>

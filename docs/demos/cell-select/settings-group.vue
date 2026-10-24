@@ -37,9 +37,7 @@ const settings = reactive([
 
 <template>
   <section class="w-80 rounded-3xl bg-surface p-2 shadow-surface">
-    <h3 class="px-3 pt-2 pb-3 text-sm font-semibold">
-      Calendar
-    </h3>
+    <h3 class="px-3 pt-2 pb-3 text-sm font-semibold">Calendar</h3>
     <div class="grid gap-1.5">
       <CellSelect
         v-for="setting in settings"

@@ -22,8 +22,6 @@ const items: DropdownEntry[] = [
 
 <template>
   <Dropdown v-model="selected" class="min-w-[256px]" :items="items" selection-mode="single">
-    <Button variant="secondary">
-      Fruit
-    </Button>
+    <Button variant="secondary"> Fruit </Button>
   </Dropdown>
 </template>

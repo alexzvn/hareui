@@ -12,8 +12,6 @@ const items: DropdownEntry[] = [
 
 <template>
   <Dropdown :items="items" trigger="longPress">
-    <Button variant="secondary">
-      Long Press
-    </Button>
+    <Button variant="secondary"> Long Press </Button>
   </Dropdown>
 </template>

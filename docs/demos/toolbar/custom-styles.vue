@@ -1,8 +1,9 @@
 <script setup lang="ts">
-import { Icon } from '@iconify/vue'
 import { ToggleButton, ToggleButtonGroup, Toolbar } from '@hareui/vue'
+import { Icon } from '@iconify/vue'
 
-const toggleClass = 'rounded-lg data-[selected=true]:bg-accent data-[selected=true]:text-accent-foreground'
+const toggleClass =
+  'rounded-lg data-[selected=true]:bg-accent data-[selected=true]:text-accent-foreground'
 </script>
 
 <template>

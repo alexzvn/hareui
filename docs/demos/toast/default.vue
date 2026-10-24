@@ -1,6 +1,6 @@
 <script setup lang="ts">
-import { Icon } from '@iconify/vue'
 import { Button, toast } from '@hareui/vue'
+import { Icon } from '@iconify/vue'
 import { h } from 'vue'
 
 function show() {
@@ -19,8 +19,6 @@ function show() {
 
 <template>
   <div class="flex h-full max-w-xl flex-col items-center justify-center">
-    <Button size="sm" variant="secondary" @click="show">
-      Show toast
-    </Button>
+    <Button size="sm" variant="secondary" @click="show"> Show toast </Button>
   </div>
 </template>

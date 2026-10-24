@@ -79,32 +79,37 @@ export interface RadioGroupProps<T extends RadioGroupItem = RadioGroupItem> exte
 
 export interface RadioGroupSlots<T extends RadioGroupItem = RadioGroupItem> {
   /** The group label content. Replaces the `label` prop. */
-  'label'?: () => any
+  label?: () => any
   /** The group description content. Replaces the `description` prop. */
-  'description'?: () => any
+  description?: () => any
   /** The error content, rendered while invalid. Replaces the `errorMessage` prop. */
-  'error'?: (props: ValidationResult) => any
+  error?: (props: ValidationResult) => any
   /** The label of each item. Replaces `item.label`. */
-  'item-label'?: (props: { item: T, index: number }) => any
+  'item-label'?: (props: { item: T; index: number }) => any
   /** The description of each item. Replaces `item.description`. */
-  'item-description'?: (props: { item: T, index: number }) => any
+  'item-description'?: (props: { item: T; index: number }) => any
   /** Custom content inside each control. Replaces the default dot. */
-  'indicator'?: (props: { item: T, checked: boolean }) => any
+  indicator?: (props: { item: T; checked: boolean }) => any
 }
 </script>
 
 <script setup lang="ts" generic="T extends RadioGroupItem = RadioGroupItem">
 import { RadioGroupItem as RekaRadioGroupItem, RadioGroupRoot } from 'reka-ui'
 import { computed, useSlots, useTemplateRef } from 'vue'
+
 import { forwardRootClick, submitOnEnter } from '../../composables/forwardRootClick'
 import { useComponentUI } from '../../composables/useComponentUI'
 import { useFieldChrome } from '../../composables/useFieldChrome'
 import { useFieldValidation } from '../../composables/useFieldValidation'
-import { useFieldsetDisabled } from '../fieldset/context'
 import Description from '../description/Description.vue'
+import { useFieldsetDisabled } from '../fieldset/context'
 
 // `invalid: undefined`: an absent boolean would cast to `false`, which counts as controlled-valid and hides validation errors
-const props = withDefaults(defineProps<RadioGroupProps<T>>(), { items: () => [], orientation: 'vertical', invalid: undefined })
+const props = withDefaults(defineProps<RadioGroupProps<T>>(), {
+  items: () => [],
+  orientation: 'vertical',
+  invalid: undefined,
+})
 defineSlots<RadioGroupSlots<T>>()
 /** The value of the selected item. Bind with `v-model`. */
 const modelValue = defineModel<string>()
@@ -136,13 +141,14 @@ const { validation, commitValidation } = useFieldValidation({
 })
 const invalid = computed(() => validation.value.isInvalid)
 
-const { id, labelId, hasLabel, describedBy, FieldLabel, FieldDescription, FieldError } = useFieldChrome({
-  props,
-  slots,
-  invalid,
-  validation,
-  disabled: isDisabled,
-})
+const { id, labelId, hasLabel, describedBy, FieldLabel, FieldDescription, FieldError } =
+  useFieldChrome({
+    props,
+    slots,
+    invalid,
+    validation,
+    disabled: isDisabled,
+  })
 
 function hasItemDescription(item: RadioGroupItem) {
   return !!(item.description || slots['item-description'])
@@ -151,14 +157,12 @@ function hasItemDescription(item: RadioGroupItem) {
 // Reka's roving focus moves focus (without selecting) on Home / End / PageUp / PageDown; RAC's radio group
 // ignores them, so stop them before they reach the focused radio.
 function onKeydownCapture(event: KeyboardEvent) {
-  if (['Home', 'End', 'PageUp', 'PageDown'].includes(event.key))
-    event.stopPropagation()
+  if (['Home', 'End', 'PageUp', 'PageDown'].includes(event.key)) event.stopPropagation()
 }
 
 function onUpdate(value: unknown) {
   // RAC `isReadOnly`: items stay focusable but the selection never changes
-  if (props.readonly)
-    return
+  if (props.readonly) return
   modelValue.value = value as string
   commitValidation()
 }
@@ -204,21 +208,39 @@ function onUpdate(value: unknown) {
         :id="`${id}-${index}`"
         :value="item.value"
         :disabled="item.disabled"
-        :aria-describedby="[hasItemDescription(item) && `${id}-${index}-description`, describedBy].filter(Boolean).join(' ') || undefined"
+        :aria-describedby="
+          [hasItemDescription(item) && `${id}-${index}-description`, describedBy]
+            .filter(Boolean)
+            .join(' ') || undefined
+        "
         data-slot="radio-content"
         :data-selected="selected === item.value ? 'true' : undefined"
         :class="ui.content({ class: props.ui?.content })"
         @keydown.capture="submitOnEnter"
       >
         <span data-slot="radio-control" :class="ui.control({ class: props.ui?.control })">
-          <span aria-hidden="true" data-slot="radio-indicator" :class="ui.indicator({ class: props.ui?.indicator })"><slot v-if="slots.indicator" name="indicator" :item="item" :checked="selected === item.value" /></span>
+          <span
+            aria-hidden="true"
+            data-slot="radio-indicator"
+            :class="ui.indicator({ class: props.ui?.indicator })"
+            ><slot
+              v-if="slots.indicator"
+              name="indicator"
+              :item="item"
+              :checked="selected === item.value"
+          /></span>
         </span>
         <slot name="item-label" :item="item" :index="index">{{ item.label }}</slot>
       </RekaRadioGroupItem>
-      <Description v-if="hasItemDescription(item) && $slots['item-description']" :id="`${id}-${index}-description`">
+      <Description
+        v-if="hasItemDescription(item) && $slots['item-description']"
+        :id="`${id}-${index}-description`"
+      >
         <slot name="item-description" :item="item" :index="index">{{ item.description }}</slot>
       </Description>
-      <Description v-else-if="hasItemDescription(item)" :id="`${id}-${index}-description`">{{ item.description }}</Description>
+      <Description v-else-if="hasItemDescription(item)" :id="`${id}-${index}-description`">{{
+        item.description
+      }}</Description>
     </div>
     <FieldError />
   </RadioGroupRoot>

@@ -1,7 +1,7 @@
 <script setup lang="ts">
+import { Calendar } from '@hareui/vue'
 import type { DateValue } from '@internationalized/date'
 import { getLocalTimeZone, isToday } from '@internationalized/date'
-import { Calendar } from '@hareui/vue'
 
 const datesWithEvents = [3, 7, 12, 15, 21, 28]
 

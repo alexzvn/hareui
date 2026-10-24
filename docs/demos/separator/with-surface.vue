@@ -29,7 +29,10 @@ import { Separator, Surface } from '@hareui/vue'
     </div>
 
     <div class="flex flex-col gap-2">
-      <Surface class="flex min-w-[320px] flex-col gap-3 rounded-3xl border p-6" variant="transparent">
+      <Surface
+        class="flex min-w-[320px] flex-col gap-3 rounded-3xl border p-6"
+        variant="transparent"
+      >
         <h3 class="text-base font-semibold text-foreground">Transparent Surface</h3>
         <Separator />
         <p class="text-sm text-muted">Surface Content</p>

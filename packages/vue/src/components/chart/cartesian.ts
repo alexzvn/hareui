@@ -1,13 +1,20 @@
-import type { ComputedRef, InjectionKey } from 'vue'
-import type { ChartContext } from './context'
-import type { ChartTick } from './scale'
-import type { ChartAxisDomain, ChartAxisInterval, ChartOffset, ChartPoint, ChartSeries } from './types'
 import { scaleBand, scaleLinear, scalePoint } from 'd3-scale'
 import { stack as d3Stack, stackOffsetNone, stackOrderNone } from 'd3-shape'
+import type { ComputedRef, InjectionKey } from 'vue'
 import { computed, inject, onScopeDispose, provide, shallowReactive, watchEffect } from 'vue'
+
+import type { ChartContext } from './context'
 import { provideChartLabelViewBox } from './label'
 import { percentValue } from './percent'
+import type { ChartTick } from './scale'
 import { measureText, resolveNumberDomain, thinTicks } from './scale'
+import type {
+  ChartAxisDomain,
+  ChartAxisInterval,
+  ChartOffset,
+  ChartPoint,
+  ChartSeries,
+} from './types'
 
 export type ChartAxisId = string | number
 
@@ -50,7 +57,7 @@ export interface ResolvedAxis {
   /** Width (y) or height (x) reserved for the axis. */
   size: number
   /** Box of the axis next to the plot area. */
-  box: { x: number, y: number, width: number, height: number }
+  box: { x: number; y: number; width: number; height: number }
   /** Number axis: pixel position of a value. Category axis: start of the datum's band (or its point). */
   scale: (value: number) => number
   /** Pixel position of datum `index` along this axis (band center for band scales). */
@@ -88,27 +95,30 @@ export interface CartesianContext {
   /** `[base, value]` per datum (stacked: `[lower, upper]`); `null` where the value is missing. */
   seriesValues: (seriesId: string) => Array<[number, number] | null>
   /** Position and size of a bar series within its band. */
-  barPosition: (seriesId: string) => { offset: number, size: number } | null
+  barPosition: (seriesId: string) => { offset: number; size: number } | null
   /** True when bars lay out vertically (category on x). */
   horizontal: ComputedRef<boolean>
 }
 
 export const cartesianContextKey: InjectionKey<CartesianContext> = Symbol('hareui-cartesian-chart')
 
-const sameId = (a: ChartAxisId | undefined, b: ChartAxisId | undefined) => String(a ?? 0) === String(b ?? 0)
+const sameId = (a: ChartAxisId | undefined, b: ChartAxisId | undefined) =>
+  String(a ?? 0) === String(b ?? 0)
 
 // Bar sizes and gaps pass non-finite values (`Infinity`, `'abc%'`) through instead of falling back, unlike polar layout.
 const BAR_LENGTH = { keepNonFinite: true }
 
 function toNumber(value: unknown): number | null {
-  if (value === null || value === undefined || value === '')
-    return null
+  if (value === null || value === undefined || value === '') return null
   const number = typeof value === 'number' ? value : Number(value)
   return Number.isFinite(number) ? number : null
 }
 
 /** Adds axes, scales, stacking and bar layout to a chart root (area, bar, line, composed charts). */
-export function useCartesianChart(chart: ChartContext, options: CartesianChartOptions = {}): CartesianContext {
+export function useCartesianChart(
+  chart: ChartContext,
+  options: CartesianChartOptions = {},
+): CartesianContext {
   const registry = shallowReactive(new Map<number, () => ChartAxisConfig>())
   let next = 0
 
@@ -121,14 +131,14 @@ export function useCartesianChart(chart: ChartContext, options: CartesianChartOp
   }
 
   const horizontal = computed(() => chart.layout.value !== 'vertical')
-  const visibleSeries = computed(() => chart.series.value.filter(series => !series.hide))
-  const hasBars = computed(() => visibleSeries.value.some(series => series.kind === 'bar'))
+  const visibleSeries = computed(() => chart.series.value.filter((series) => !series.hide))
+  const hasBars = computed(() => visibleSeries.value.some((series) => series.kind === 'bar'))
 
   /** Registered axes plus implicit hidden axes for ids series use without an axis component (sparklines). */
   const configs = computed<ChartAxisConfig[]>(() => {
-    const list = [...registry.values()].map(get => get())
+    const list = [...registry.values()].map((get) => get())
     const ensure = (axis: 'x' | 'y', id: ChartAxisId | undefined) => {
-      if (!list.some(config => config.axis === axis && sameId(config.id, id))) {
+      if (!list.some((config) => config.axis === axis && sameId(config.id, id))) {
         const category = (axis === 'x') === horizontal.value
         list.push({ axis, id: id ?? 0, hide: true, type: category ? 'category' : 'number' })
       }
@@ -153,21 +163,26 @@ export function useCartesianChart(chart: ChartContext, options: CartesianChartOp
         const key = `${config.axis}:${String(config.id ?? 0)}`
         if (seen.has(key) && !warned.has(key)) {
           warned.add(key)
-          console.warn(`[hareui] Two ${config.axis} axes with id "${String(config.id ?? 0)}" in one chart. When the chart root draws its axes from props, turn its axis off (\`:${config.axis}-axis="false"\`) before adding a Chart${config.axis.toUpperCase()}Axis, or give the extra axis its own id.`)
+          console.warn(
+            `[hareui] Two ${config.axis} axes with id "${String(config.id ?? 0)}" in one chart. When the chart root draws its axes from props, turn its axis off (\`:${config.axis}-axis="false"\`) before adding a Chart${config.axis.toUpperCase()}Axis, or give the extra axis its own id.`,
+          )
         }
         seen.add(key)
       }
     })
   }
 
-  const axisType = (config: ChartAxisConfig) => config.type ?? (config.axis === 'x' ? 'category' : 'number')
+  const axisType = (config: ChartAxisConfig) =>
+    config.type ?? (config.axis === 'x' ? 'category' : 'number')
   // Tick values and labels of a number axis. They depend on the data, not on the plot box.
   function numberTicks(config: ChartAxisConfig) {
     const data = chart.data.value
     const alongData = (config.axis === 'x') === horizontal.value && !!config.dataKey
     const extent: [number, number] = alongData
       ? (() => {
-          const values = data.map(datum => toNumber(datum[config.dataKey!])).filter((value): value is number => value !== null)
+          const values = data
+            .map((datum) => toNumber(datum[config.dataKey!]))
+            .filter((value): value is number => value !== null)
           return values.length ? [Math.min(...values), Math.max(...values)] : [0, 0]
         })()
       : valueExtent(config.axis, config.id)
@@ -195,25 +210,31 @@ export function useCartesianChart(chart: ChartContext, options: CartesianChartOp
 
   // Widest tick label plus the tick space: the width of an `'auto'` y axis.
   function autoSize(config: ChartAxisConfig) {
-    const texts = axisType(config) === 'category'
-      ? chart.data.value.map((_, index) => tickText(config, categoryOf(config, index), index))
-      : numberTicks(config).ticks.map((value, index) => tickText(config, value, index))
-    const widest = texts.reduce((max, text) => Math.max(max, measureText(text, config.fontSize ?? 10)), 0)
+    const texts =
+      axisType(config) === 'category'
+        ? chart.data.value.map((_, index) => tickText(config, categoryOf(config, index), index))
+        : numberTicks(config).ticks.map((value, index) => tickText(config, value, index))
+    const widest = texts.reduce(
+      (max, text) => Math.max(max, measureText(text, config.fontSize ?? 10)),
+      0,
+    )
     return Math.ceil(widest + (config.tickSpace ?? 8))
   }
 
   const axisSize = (config: ChartAxisConfig) => {
-    if (config.hide)
-      return 0
-    if (config.size === 'auto')
-      return config.axis === 'y' ? autoSize(config) : 30
+    if (config.hide) return 0
+    if (config.size === 'auto') return config.axis === 'y' ? autoSize(config) : 30
     return config.size ?? (config.axis === 'x' ? 30 : 60)
   }
-  const axisOrientation = (config: ChartAxisConfig) => config.orientation ?? (config.axis === 'x' ? 'bottom' : 'left')
+  const axisOrientation = (config: ChartAxisConfig) =>
+    config.orientation ?? (config.axis === 'x' ? 'bottom' : 'left')
 
   const offset = computed<ChartOffset>(() => {
     const margin = chart.margin.value
-    const sum = (side: string) => configs.value.filter(config => axisOrientation(config) === side).reduce((total, config) => total + axisSize(config), 0)
+    const sum = (side: string) =>
+      configs.value
+        .filter((config) => axisOrientation(config) === side)
+        .reduce((total, config) => total + axisSize(config), 0)
     const left = margin.left + sum('left')
     const right = margin.right + sum('right')
     const top = margin.top + sum('top')
@@ -242,35 +263,42 @@ export function useCartesianChart(chart: ChartContext, options: CartesianChartOp
     const data = chart.data.value
     for (const members of groups.values()) {
       const layers = d3Stack<Record<string, unknown>, string>()
-        .keys(members.map(series => series.id))
-        .value((datum, key) => toNumber(datum[members.find(series => series.id === key)!.dataKey]) ?? 0)
+        .keys(members.map((series) => series.id))
+        .value(
+          (datum, key) =>
+            toNumber(datum[members.find((series) => series.id === key)!.dataKey]) ?? 0,
+        )
         .order(stackOrderNone)
         .offset(stackOffsetNone)(data)
       layers.forEach((layer, layerIndex) => {
         const series = members[layerIndex]!
-        result.set(series.id, layer.map((point, index) => (toNumber(data[index]?.[series.dataKey]) === null ? null : [point[0], point[1]])))
+        result.set(
+          series.id,
+          layer.map((point, index) =>
+            toNumber(data[index]?.[series.dataKey]) === null ? null : [point[0], point[1]],
+          ),
+        )
       })
     }
     return result
   })
 
   function rawValues(series: ChartSeries): Array<number | null> {
-    return chart.data.value.map(datum => toNumber(datum[series.dataKey]))
+    return chart.data.value.map((datum) => toNumber(datum[series.dataKey]))
   }
 
   function valueExtent(axis: 'x' | 'y', id: ChartAxisId): [number, number] {
     let min = Infinity
     let max = -Infinity
     for (const series of visibleSeries.value) {
-      if (!sameId(axis === 'x' ? series.xAxisId : series.yAxisId, id))
-        continue
+      if (!sameId(axis === 'x' ? series.xAxisId : series.yAxisId, id)) continue
       const stacked = stacks.value.get(series.id)
-      const values = stacked ? stacked.flatMap(pair => pair ?? []) : rawValues(series).filter((value): value is number => value !== null)
+      const values = stacked
+        ? stacked.flatMap((pair) => pair ?? [])
+        : rawValues(series).filter((value): value is number => value !== null)
       for (const value of values) {
-        if (value < min)
-          min = value
-        if (value > max)
-          max = value
+        if (value < min) min = value
+        if (value > max) max = value
       }
     }
     return [min, max]
@@ -279,7 +307,12 @@ export function useCartesianChart(chart: ChartContext, options: CartesianChartOp
   const axes = computed<ResolvedAxis[]>(() => {
     const plot = offset.value
     const data = chart.data.value
-    const sideCursor: Record<string, number> = { left: plot.left, right: plot.left + plot.width, top: plot.top, bottom: plot.top + plot.height }
+    const sideCursor: Record<string, number> = {
+      left: plot.left,
+      right: plot.left + plot.width,
+      top: plot.top,
+      bottom: plot.top + plot.height,
+    }
 
     return configs.value.map((config) => {
       const type = axisType(config)
@@ -293,34 +326,35 @@ export function useCartesianChart(chart: ChartContext, options: CartesianChartOp
       // Category axes run top → bottom on y (first row on top).
       if (!isX && type === 'category')
         range = [plot.top + padStart, plot.top + plot.height - padEnd]
-      if (config.reversed)
-        range = [range[1], range[0]]
+      if (config.reversed) range = [range[1], range[0]]
 
       let box: ResolvedAxis['box']
       if (isX) {
         const y = orientation === 'top' ? sideCursor.top! - size : sideCursor.bottom!
-        if (orientation === 'top')
-          sideCursor.top = y
-        else
-          sideCursor.bottom = y + size
+        if (orientation === 'top') sideCursor.top = y
+        else sideCursor.bottom = y + size
         box = { x: plot.left, y, width: plot.width, height: size }
-      }
-      else {
+      } else {
         const x = orientation === 'right' ? sideCursor.right! : sideCursor.left! - size
-        if (orientation === 'right')
-          sideCursor.right = x + size
-        else
-          sideCursor.left = x
+        if (orientation === 'right') sideCursor.right = x + size
+        else sideCursor.left = x
         box = { x, y: plot.top, width: size, height: plot.height }
       }
 
       const fontSize = config.fontSize ?? 10
       const format = (value: number | string, index: number) => tickText(config, value, index)
       const bounds: [number, number] = isX ? [0, chart.width.value] : [0, chart.height.value]
-      const labelSize = (tick: { text: string }) => (isX ? measureText(tick.text, fontSize) : fontSize * 1.2)
+      const labelSize = (tick: { text: string }) =>
+        isX ? measureText(tick.text, fontSize) : fontSize * 1.2
       const finish = (raw: Omit<ChartTick, 'labelCoordinate'>[]) => ({
-        allTicks: raw.map(tick => ({ ...tick, labelCoordinate: tick.coordinate })),
-        ticks: thinTicks(raw, config.interval ?? 'preserveEnd', labelSize, bounds, config.minTickGap ?? 5),
+        allTicks: raw.map((tick) => ({ ...tick, labelCoordinate: tick.coordinate })),
+        ticks: thinTicks(
+          raw,
+          config.interval ?? 'preserveEnd',
+          labelSize,
+          bounds,
+          config.minTickGap ?? 5,
+        ),
       })
 
       if (type === 'category') {
@@ -333,7 +367,11 @@ export function useCartesianChart(chart: ChartContext, options: CartesianChartOp
         const start = (index: number) => scale(index) ?? range[0]
         const position = (index: number) => start(index) + bandwidth / 2
         const tickIndexes = config.ticks?.length
-          ? config.ticks.map(tick => indexes.find(index => String(categoryOf(config, index)) === String(tick))).filter((index): index is number => index !== undefined)
+          ? config.ticks
+              .map((tick) =>
+                indexes.find((index) => String(categoryOf(config, index)) === String(tick)),
+              )
+              .filter((index): index is number => index !== undefined)
           : indexes
         const raw = tickIndexes.map((index, order) => {
           const value = categoryOf(config, index)
@@ -362,8 +400,14 @@ export function useCartesianChart(chart: ChartContext, options: CartesianChartOp
       const { domain, ticks } = numberTicks(config)
       const scale = scaleLinear().domain(domain).range(range)
       // A row without a numeric value has no position (NaN); series skip it.
-      const position = (index: number) => scale(toNumber(data[index]?.[config.dataKey ?? '']) ?? Number.NaN)
-      const raw = ticks.map((value, index) => ({ value, coordinate: scale(value), index, text: format(value, index) }))
+      const position = (index: number) =>
+        scale(toNumber(data[index]?.[config.dataKey ?? '']) ?? Number.NaN)
+      const raw = ticks.map((value, index) => ({
+        value,
+        coordinate: scale(value),
+        index,
+        text: format(value, index),
+      }))
       return {
         id: config.id,
         axis: config.axis,
@@ -386,14 +430,19 @@ export function useCartesianChart(chart: ChartContext, options: CartesianChartOp
 
   function findAxis(axis: 'x' | 'y', id: ChartAxisId | undefined): ResolvedAxis {
     const all = axes.value
-    return all.find(entry => entry.axis === axis && sameId(entry.id, id)) ?? all.find(entry => entry.axis === axis)!
+    return (
+      all.find((entry) => entry.axis === axis && sameId(entry.id, id)) ??
+      all.find((entry) => entry.axis === axis)!
+    )
   }
 
   const categoryAxis = computed(() => {
     const axis = horizontal.value ? 'x' : 'y'
-    return axes.value.find(entry => entry.axis === axis && entry.type === 'category')
-      ?? axes.value.find(entry => entry.axis === axis && !!entry.config.dataKey)
-      ?? findAxis(axis, 0)
+    return (
+      axes.value.find((entry) => entry.axis === axis && entry.type === 'category') ??
+      axes.value.find((entry) => entry.axis === axis && !!entry.config.dataKey) ??
+      findAxis(axis, 0)
+    )
   })
 
   function valueAxisOf(series: ChartSeries): ResolvedAxis {
@@ -405,37 +454,34 @@ export function useCartesianChart(chart: ChartContext, options: CartesianChartOp
     const [a, b] = axis.domain as [number, number]
     const min = Math.min(a, b)
     const max = Math.max(a, b)
-    if (min >= 0)
-      return min
-    if (max <= 0)
-      return max
+    if (min >= 0) return min
+    if (max <= 0) return max
     return 0
   }
 
   function seriesValues(seriesId: string): Array<[number, number] | null> {
-    const series = chart.series.value.find(entry => entry.id === seriesId)
-    if (!series)
-      return []
+    const series = chart.series.value.find((entry) => entry.id === seriesId)
+    if (!series) return []
     const stacked = stacks.value.get(series.id)
-    if (stacked)
-      return stacked
+    if (stacked) return stacked
     const base = baseValue(valueAxisOf(series))
-    return rawValues(series).map(value => (value === null ? null : [base, value]))
+    return rawValues(series).map((value) => (value === null ? null : [base, value]))
   }
 
   // Bar slots per category axis: unstacked bars get one slot each, a stack shares one slot.
   const barLayout = computed(() => {
-    const result = new Map<string, { offset: number, size: number }>()
+    const result = new Map<string, { offset: number; size: number }>()
     const category = categoryAxis.value
     const bandSize = category.bandwidth
-    if (!bandSize)
-      return result
-    const slots: { ids: string[], size?: number, max?: number }[] = []
-    const stackSlots = new Map<string, { ids: string[], size?: number, max?: number }>()
+    if (!bandSize) return result
+    const slots: { ids: string[]; size?: number; max?: number }[] = []
+    const stackSlots = new Map<string, { ids: string[]; size?: number; max?: number }>()
     for (const series of visibleSeries.value) {
-      if (series.kind !== 'bar')
-        continue
-      const size = series.barSize === undefined ? undefined : percentValue(series.barSize, bandSize, 0, BAR_LENGTH)
+      if (series.kind !== 'bar') continue
+      const size =
+        series.barSize === undefined
+          ? undefined
+          : percentValue(series.barSize, bandSize, 0, BAR_LENGTH)
       if (series.stackId !== undefined) {
         const key = String(series.stackId)
         const slot = stackSlots.get(key)
@@ -452,11 +498,12 @@ export function useCartesianChart(chart: ChartContext, options: CartesianChartOp
       }
       slots.push({ ids: [series.id], size, max: series.maxBarSize })
     }
-    if (!slots.length)
-      return result
-    const rootSize = options.barSize?.() === undefined ? undefined : percentValue(options.barSize!(), bandSize, 0, BAR_LENGTH)
-    for (const slot of slots)
-      slot.size ??= rootSize
+    if (!slots.length) return result
+    const rootSize =
+      options.barSize?.() === undefined
+        ? undefined
+        : percentValue(options.barSize!(), bandSize, 0, BAR_LENGTH)
+    for (const slot of slots) slot.size ??= rootSize
     let gap = percentValue(options.barGap?.() ?? 4, bandSize, 0, BAR_LENGTH)
     const count = slots.length
     const maxBarSize = options.maxBarSize?.()
@@ -478,24 +525,24 @@ export function useCartesianChart(chart: ChartContext, options: CartesianChartOp
         const size = full || (slot.size ?? 0)
         cursor += previous + gap
         previous = size
-        for (const id of slot.ids)
-          result.set(id, { offset: cursor, size })
+        for (const id of slot.ids) result.set(id, { offset: cursor, size })
       }
       return result
     }
 
     const categoryGap = percentValue(options.barCategoryGap?.() ?? '10%', bandSize, 0, BAR_LENGTH)
-    if (bandSize - 2 * categoryGap - (count - 1) * gap <= 0)
-      gap = 0
+    if (bandSize - 2 * categoryGap - (count - 1) * gap <= 0) gap = 0
     // A category gap over half the band leaves no room: bars collapse to 0 instead of drawing inverted.
     let original = Math.max(0, (bandSize - 2 * categoryGap - (count - 1) * gap) / count)
-    if (original > 1)
-      original = Math.trunc(original)
+    if (original > 1) original = Math.trunc(original)
     slots.forEach((slot, index) => {
       const limit = slot.max ?? maxBarSize
       const size = limit !== undefined ? Math.min(original, limit) : original
       for (const id of slot.ids)
-        result.set(id, { offset: categoryGap + (original + gap) * index + (original - size) / 2, size })
+        result.set(id, {
+          offset: categoryGap + (original + gap) * index + (original - size) / 2,
+          size,
+        })
     })
     return result
   })
@@ -504,11 +551,11 @@ export function useCartesianChart(chart: ChartContext, options: CartesianChartOp
     offset,
     registerAxis,
     axes,
-    xAxis: id => findAxis('x', id),
-    yAxis: id => findAxis('y', id),
+    xAxis: (id) => findAxis('x', id),
+    yAxis: (id) => findAxis('y', id),
     categoryAxis,
     seriesValues,
-    barPosition: id => barLayout.value.get(id) ?? null,
+    barPosition: (id) => barLayout.value.get(id) ?? null,
     horizontal,
   }
 
@@ -522,8 +569,7 @@ export function useCartesianChart(chart: ChartContext, options: CartesianChartOp
         return null
       const axis = categoryAxis.value
       const count = chart.data.value.length
-      if (!count)
-        return null
+      if (!count) return null
       const along = horizontal.value ? x : y
       let best = 0
       let distance = Infinity
@@ -534,15 +580,18 @@ export function useCartesianChart(chart: ChartContext, options: CartesianChartOp
           best = index
         }
       }
-      const coordinate: ChartPoint = horizontal.value ? { x: axis.position(best), y } : { x, y: axis.position(best) }
+      const coordinate: ChartPoint = horizontal.value
+        ? { x: axis.position(best), y }
+        : { x, y: axis.position(best) }
       return { index: best, coordinate }
     },
     coordinateOf(index) {
-      if (index < 0 || index >= chart.data.value.length)
-        return null
+      if (index < 0 || index >= chart.data.value.length) return null
       const plot = offset.value
       const position = categoryAxis.value.position(index)
-      return horizontal.value ? { x: position, y: plot.top + plot.height / 2 } : { x: plot.left + plot.width / 2, y: position }
+      return horizontal.value
+        ? { x: position, y: plot.top + plot.height / 2 }
+        : { x: plot.left + plot.width / 2, y: position }
     },
   }
   chart.tooltipLabel.value = (index) => {
@@ -564,6 +613,8 @@ export function useCartesianChart(chart: ChartContext, options: CartesianChartOp
 export function useCartesianContext(component = 'Chart part'): CartesianContext {
   const context = inject(cartesianContextKey, null)
   if (!context)
-    throw new Error(`${component} must be used inside AreaChart, BarChart, LineChart or ComposedChart.`)
+    throw new Error(
+      `${component} must be used inside AreaChart, BarChart, LineChart or ComposedChart.`,
+    )
   return context
 }

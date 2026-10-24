@@ -13,7 +13,8 @@ const items = [
     title: 'Set up Browser Extension',
   },
   {
-    iconUrl: 'https://heroui-assets.nyc3.cdn.digitaloceanspaces.com/docs/3dicons/mint-collective-small.png',
+    iconUrl:
+      'https://heroui-assets.nyc3.cdn.digitaloceanspaces.com/docs/3dicons/mint-collective-small.png',
     subtitle: 'Create your first collectible',
     title: 'Mint Collectible',
   },
@@ -24,7 +25,7 @@ const items = [
   <div class="max-w-md space-y-4">
     <div v-for="(item, index) in items" :key="item.title">
       <div class="flex items-center gap-3">
-        <img :alt="item.title" class="size-12" :src="item.iconUrl">
+        <img :alt="item.title" class="size-12" :src="item.iconUrl" />
         <div class="flex-1 space-y-0">
           <h4 class="text-small font-medium">{{ item.title }}</h4>
           <p class="text-sm text-muted">{{ item.subtitle }}</p>

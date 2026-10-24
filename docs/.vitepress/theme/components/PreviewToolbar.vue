@@ -5,6 +5,7 @@ export type PreviewDevice = 'mobile' | 'tablet' | 'desktop'
 <script setup lang="ts">
 import gravity from '@iconify-json/gravity-ui/icons.json'
 import { nextTick, onBeforeUnmount, onMounted, ref, useTemplateRef, watch } from 'vue'
+
 import type { PreviewTheme } from '../demos'
 
 /**
@@ -18,14 +19,14 @@ defineProps<{
   /** Theme the preview currently shows. */
   theme: PreviewTheme
 }>()
-const emit = defineEmits<{ toggleTheme: [], preset: [device: PreviewDevice], preload: [] }>()
+const emit = defineEmits<{ toggleTheme: []; preset: [device: PreviewDevice]; preload: [] }>()
 const device = defineModel<PreviewDevice>('device', { required: true })
 function select(value: PreviewDevice) {
   device.value = value
   emit('preset', value)
 }
 
-const DEVICES: { value: PreviewDevice, label: string }[] = [
+const DEVICES: { value: PreviewDevice; label: string }[] = [
   { value: 'mobile', label: 'Mobile' },
   { value: 'tablet', label: 'Tablet' },
   { value: 'desktop', label: 'Desktop' },
@@ -33,11 +34,11 @@ const DEVICES: { value: PreviewDevice, label: string }[] = [
 
 // HeroUI `Segment` (size sm): a radiogroup whose selected pill slides between items.
 const items = useTemplateRef<HTMLButtonElement[]>('items')
-const indicator = ref<{ x: number, width: number }>()
+const indicator = ref<{ x: number; width: number }>()
 /** The pill slides only when the device changes; layout remeasures (fonts, resize, unhiding) snap it in place. */
 const sliding = ref(false)
 function measureIndicator() {
-  const item = items.value?.[DEVICES.findIndex(d => d.value === device.value)]
+  const item = items.value?.[DEVICES.findIndex((d) => d.value === device.value)]
   if (!item?.offsetWidth || !group.value) return
   // Fractional geometry: offsetLeft/offsetWidth round, leaving the pill up to half a pixel off its item.
   const rect = item.getBoundingClientRect()
@@ -59,34 +60,61 @@ watch(device, () => {
   nextTick(measureIndicator)
 })
 function onSegmentKeydown(event: KeyboardEvent) {
-  const step = ({ ArrowRight: 1, ArrowDown: 1, ArrowLeft: -1, ArrowUp: -1 } as Record<string, number>)[event.key]
+  const step = (
+    { ArrowRight: 1, ArrowDown: 1, ArrowLeft: -1, ArrowUp: -1 } as Record<string, number>
+  )[event.key]
   if (!step) return
   event.preventDefault()
-  const index = (DEVICES.findIndex(d => d.value === device.value) + step + DEVICES.length) % DEVICES.length
+  const index =
+    (DEVICES.findIndex((d) => d.value === device.value) + step + DEVICES.length) % DEVICES.length
   select(DEVICES[index].value)
   items.value?.[index]?.focus()
 }
 
 const icon = (name: 'moon' | 'sun' | 'arrow-up-right') =>
   `<svg aria-hidden="true" class="size-3.5" viewBox="0 0 16 16" xmlns="http://www.w3.org/2000/svg">${gravity.icons[name].body}</svg>`
-const iconButtonClass = 'flex size-7 cursor-(--cursor-interactive) items-center justify-center rounded-lg text-muted outline-none transition-colors hover:bg-default hover:text-foreground focus-visible:status-focused motion-reduce:transition-none'
+const iconButtonClass =
+  'flex size-7 cursor-(--cursor-interactive) items-center justify-center rounded-lg text-muted outline-none transition-colors hover:bg-default hover:text-foreground focus-visible:status-focused motion-reduce:transition-none'
 </script>
 
 <template>
   <div class="not-prose flex items-center justify-end px-0.5 pb-3">
     <div class="flex min-w-0 items-center gap-1">
-      <button type="button" aria-label="Toggle preview theme" :class="iconButtonClass" @click="emit('toggleTheme')">
+      <button
+        type="button"
+        aria-label="Toggle preview theme"
+        :class="iconButtonClass"
+        @click="emit('toggleTheme')"
+      >
         <span class="flex" v-html="icon(theme === 'dark' ? 'sun' : 'moon')" />
       </button>
-      <a aria-label="Open in new tab" :class="iconButtonClass" :href="href" target="_blank" rel="noopener noreferrer">
+      <a
+        aria-label="Open in new tab"
+        :class="iconButtonClass"
+        :href="href"
+        target="_blank"
+        rel="noopener noreferrer"
+      >
         <span class="flex" v-html="icon('arrow-up-right')" />
       </a>
       <div aria-hidden="true" class="mx-1 hidden h-5 w-px shrink-0 bg-separator md:block" />
-      <div ref="group" role="radiogroup" aria-label="Preview device" class="relative isolate hidden h-8 shrink-0 items-center rounded-full bg-default p-0.5 md:flex" @keydown="onSegmentKeydown" @pointerenter="emit('preload')" @focusin="emit('preload')">
+      <div
+        ref="group"
+        role="radiogroup"
+        aria-label="Preview device"
+        class="relative isolate hidden h-8 shrink-0 items-center rounded-full bg-default p-0.5 md:flex"
+        @keydown="onSegmentKeydown"
+        @pointerenter="emit('preload')"
+        @focusin="emit('preload')"
+      >
         <span
           v-if="indicator"
           aria-hidden="true"
-          :class="['absolute start-0 top-0.5 -z-1 h-7 rounded-full bg-segment shadow-surface', sliding && '[transition-duration:250ms] [transition-property:translate,width] [transition-timing-function:var(--ease-out-fluid)] motion-reduce:transition-none']"
+          :class="[
+            'absolute start-0 top-0.5 -z-1 h-7 rounded-full bg-segment shadow-surface',
+            sliding &&
+              '[transition-duration:250ms] [transition-property:translate,width] [transition-timing-function:var(--ease-out-fluid)] motion-reduce:transition-none',
+          ]"
           :style="{ width: `${indicator.width}px`, translate: `${indicator.x}px 0` }"
         />
         <button

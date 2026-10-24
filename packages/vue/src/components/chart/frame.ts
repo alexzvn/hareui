@@ -24,20 +24,30 @@ export interface ChartFrameConfig {
 /** Root slots the frame places: legend, legend rows and tooltip. */
 export interface ChartFrameSlots {
   /** Replaces the legend. `toggle(key)` hides or shows a series. */
-  'legend'?: (props: { items: ChartLegendItem[], toggle: (key: string) => void }) => any
+  legend?: (props: { items: ChartLegendItem[]; toggle: (key: string) => void }) => any
   /** Replaces each legend item. */
-  'legend-item'?: (props: { item: ChartLegendItem, index: number, toggle: () => void }) => any
+  'legend-item'?: (props: { item: ChartLegendItem; index: number; toggle: () => void }) => any
   /** Replaces the tooltip panel of a chart drawn from props. */
-  'tooltip'?: (props: ChartTooltipSlotProps) => any
+  tooltip?: (props: ChartTooltipSlotProps) => any
   /** Content under the tooltip rows, e.g. a total. */
-  'tooltip-footer'?: (props: { label?: number | string, payload: ChartTooltipContentEntry[] }) => any
+  'tooltip-footer'?: (props: {
+    label?: number | string
+    payload: ChartTooltipContentEntry[]
+  }) => any
 }
 
-const FRAME_SLOTS = ['legend', 'legend-item', 'tooltip', 'tooltip-footer'] as const satisfies ReadonlyArray<keyof ChartFrameSlots>
+const FRAME_SLOTS = [
+  'legend',
+  'legend-item',
+  'tooltip',
+  'tooltip-footer',
+] as const satisfies ReadonlyArray<keyof ChartFrameSlots>
 
 /** The frame slots a root was given, for forwarding them to `ChartFrame` with `v-for` + `#[name]`. */
-export function frameSlotNames(slots: Partial<Record<keyof ChartFrameSlots, unknown>>): Array<keyof ChartFrameSlots> {
-  return FRAME_SLOTS.filter(name => slots[name] !== undefined)
+export function frameSlotNames(
+  slots: Partial<Record<keyof ChartFrameSlots, unknown>>,
+): Array<keyof ChartFrameSlots> {
+  return FRAME_SLOTS.filter((name) => slots[name] !== undefined)
 }
 
 /**
@@ -45,12 +55,15 @@ export function frameSlotNames(slots: Partial<Record<keyof ChartFrameSlots, unkn
  * `defaults` go under the `legend` prop's own `ChartLegend` props.
  */
 export function resolveFrameLegend(
-  value: boolean | ChartLegendPosition | (Partial<ChartLegendProps<any>> & { position?: ChartLegendPosition }) | undefined,
+  value:
+    | boolean
+    | ChartLegendPosition
+    | (Partial<ChartLegendProps<any>> & { position?: ChartLegendPosition })
+    | undefined,
   hasLegendSlot: boolean,
   defaults: Partial<ChartLegendProps<any>> = {},
 ): ChartFrameLegend | null {
   const legend = resolveChartLegend<Partial<ChartLegendProps<any>>>(value)
-  if (legend)
-    return { position: legend.position, props: { ...defaults, ...legend.props } }
+  if (legend) return { position: legend.position, props: { ...defaults, ...legend.props } }
   return hasLegendSlot ? { position: 'bottom', props: { ...defaults } } : null
 }

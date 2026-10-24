@@ -4,6 +4,10 @@ import { CellSlider } from '@hareui/vue'
 
 <template>
   <div class="w-[252px]">
-    <CellSlider label="Brightness" :default-value="60" :format-options="{ style: 'unit', unit: 'percent' }" />
+    <CellSlider
+      label="Brightness"
+      :default-value="60"
+      :format-options="{ style: 'unit', unit: 'percent' }"
+    />
   </div>
 </template>

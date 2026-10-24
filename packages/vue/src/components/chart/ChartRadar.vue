@@ -1,5 +1,6 @@
 <script lang="ts">
 import type { ClassValue } from 'tailwind-variants'
+
 import type { ChartAnimationProps } from './animation'
 import type { ChartDotProps } from './types'
 
@@ -55,16 +56,17 @@ export interface ChartRadarSlots {
 </script>
 
 <script setup lang="ts">
-import type { ChartLabelItem } from './label'
-import type { ChartPoint, ChartSeries } from './types'
 import { useId } from 'reka-ui'
 import { computed } from 'vue'
+
 import { lerp, useChartTween } from './animation'
 import ChartLayer from './ChartLayer.vue'
 import { useChartContext } from './context'
+import type { ChartLabelItem } from './label'
 import { provideChartLabels } from './label'
 import { polarToCartesian, polygonPath, usePolarContext } from './polar'
 import { dotAttrs, seriesColor } from './series'
+import type { ChartPoint, ChartSeries } from './types'
 
 interface RadarPoint extends ChartPoint {
   index: number
@@ -106,8 +108,7 @@ chart.registerSeries((): ChartSeries => ({
 }))
 
 const target = computed<RadarPoint[]>(() => {
-  if (props.hide)
-    return []
+  if (props.hide) return []
   const cx = polar.cx.value
   const cy = polar.cy.value
   const angleAxis = polar.angleAxis.value
@@ -115,8 +116,7 @@ const target = computed<RadarPoint[]>(() => {
   return chart.data.value.flatMap((datum, index) => {
     const raw = datum[props.dataKey]
     const value = Number(raw)
-    if (raw === undefined || raw === '' || !Number.isFinite(value))
-      return []
+    if (raw === undefined || raw === '' || !Number.isFinite(value)) return []
     const angle = angleAxis.at(index)
     const radius = radiusAxis.scale(value)
     return [{ index, angle, radius, value: raw, ...polarToCartesian(cx, cy, radius, angle) }]
@@ -128,7 +128,7 @@ function interpolate(from: RadarPoint[] | null, to: RadarPoint[], t: number): Ra
   const cx = polar.cx.value
   const cy = polar.cy.value
   return to.map((point) => {
-    const previous = from?.find(item => item.index === point.index)
+    const previous = from?.find((item) => item.index === point.index)
     const radius = lerp(previous?.radius ?? 0, point.radius, t)
     return { ...point, radius, ...polarToCartesian(cx, cy, radius, point.angle) }
   })
@@ -143,36 +143,49 @@ const tween = useChartTween(
 
 const path = computed(() => polygonPath(tween.value.value))
 
-const dotStyle = computed(() => dotAttrs(props.dot, {
-  r: 3,
-  fill: fillColor.value,
-  stroke: strokeColor.value,
-  strokeWidth: props.strokeWidth ?? 1,
-}))
+const dotStyle = computed(() =>
+  dotAttrs(props.dot, {
+    r: 3,
+    fill: fillColor.value,
+    stroke: strokeColor.value,
+    strokeWidth: props.strokeWidth ?? 1,
+  }),
+)
 
-const activeDotStyle = computed(() => dotAttrs(props.activeDot, { r: 4, fill: color.value, stroke: 'var(--surface)', strokeWidth: 2 }))
+const activeDotStyle = computed(() =>
+  dotAttrs(props.activeDot, { r: 4, fill: color.value, stroke: 'var(--surface)', strokeWidth: 2 }),
+)
 
 const activePoint = computed(() => {
   const index = chart.active.index
-  if (index === null || props.hide || chart.tooltipEnabled.value === 0 || chart.interaction.value?.trigger !== 'axis')
+  if (
+    index === null ||
+    props.hide ||
+    chart.tooltipEnabled.value === 0 ||
+    chart.interaction.value?.trigger !== 'axis'
+  )
     return null
-  return target.value.find(point => point.index === index) ?? null
+  return target.value.find((point) => point.index === index) ?? null
 })
 
 // Each label sits past its point along the spoke, anchored away from the center. Labels follow the tween.
-provideChartLabels(() => tween.value.value.map((point): ChartLabelItem => ({
-  index: point.index,
-  value: point.value,
-  datum: chart.data.value[point.index] ?? {},
-  viewBox: {
-    cx: polar.cx.value,
-    cy: polar.cy.value,
-    innerRadius: point.radius,
-    outerRadius: point.radius,
-    startAngle: point.angle,
-    endAngle: point.angle,
-  },
-})), 'outside')
+provideChartLabels(
+  () =>
+    tween.value.value.map((point): ChartLabelItem => ({
+      index: point.index,
+      value: point.value,
+      datum: chart.data.value[point.index] ?? {},
+      viewBox: {
+        cx: polar.cx.value,
+        cy: polar.cy.value,
+        innerRadius: point.radius,
+        outerRadius: point.radius,
+        startAngle: point.angle,
+        endAngle: point.angle,
+      },
+    })),
+  'outside',
+)
 </script>
 
 <template>

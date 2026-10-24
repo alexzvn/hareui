@@ -17,13 +17,13 @@ async function load(text: string) {
   controller = new AbortController()
   isLoading.value = true
   try {
-    const res = await fetch(`https://swapi.py4e.com/api/people/?search=${text}`, { signal: controller.signal })
+    const res = await fetch(`https://swapi.py4e.com/api/people/?search=${text}`, {
+      signal: controller.signal,
+    })
     characters.value = (await res.json()).results
     isLoading.value = false
-  }
-  catch (error) {
-    if ((error as Error).name !== 'AbortError')
-      isLoading.value = false
+  } catch (error) {
+    if ((error as Error).name !== 'AbortError') isLoading.value = false
   }
 }
 watch(filterText, load)
@@ -42,14 +42,20 @@ onMounted(() => load(''))
     search-label="Search characters"
     search-placeholder="Search characters..."
     :filter="false"
-    :items="characters.map(c => ({ value: c.name, label: c.name }))"
-    :ui="{ searchField: 'sticky top-0 z-10', listBox: 'max-h-[420px] overflow-y-auto', searchClearButton: isLoading ? 'pointer-events-none opacity-0' : undefined }"
+    :items="characters.map((c) => ({ value: c.name, label: c.name }))"
+    :ui="{
+      searchField: 'sticky top-0 z-10',
+      listBox: 'max-h-[420px] overflow-y-auto',
+      searchClearButton: isLoading ? 'pointer-events-none opacity-0' : undefined,
+    }"
   >
     <template #search-trailing>
-      <Spinner size="sm" class="absolute end-2 top-1/2 -translate-y-1/2" :class="{ 'pointer-events-none opacity-0': !isLoading }" />
+      <Spinner
+        size="sm"
+        class="absolute end-2 top-1/2 -translate-y-1/2"
+        :class="{ 'pointer-events-none opacity-0': !isLoading }"
+      />
     </template>
-    <template #empty>
-      No results found
-    </template>
+    <template #empty> No results found </template>
   </Autocomplete>
 </template>

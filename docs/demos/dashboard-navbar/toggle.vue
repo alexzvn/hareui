@@ -1,11 +1,18 @@
 <script setup lang="ts">
 import type { NavigationMenuItem } from '@hareui/vue'
-import { DashboardGroup, DashboardNavbar, DashboardPanel, DashboardSidebar, NavigationMenu } from '@hareui/vue'
+import {
+  DashboardGroup,
+  DashboardNavbar,
+  DashboardPanel,
+  DashboardSidebar,
+  NavigationMenu,
+} from '@hareui/vue'
 import { Icon } from '@iconify/vue'
 import { h } from 'vue'
 
 // NavigationMenu takes icon components: wrap an Iconify icon and forward the menu's classes to it.
-const icon = (name: string) => (attrs: Record<string, unknown>) => h(Icon, { ...attrs, icon: `gravity-ui:${name}` })
+const icon = (name: string) => (attrs: Record<string, unknown>) =>
+  h(Icon, { ...attrs, icon: `gravity-ui:${name}` })
 
 const items: NavigationMenuItem[] = [
   { label: 'Home', icon: icon('house'), href: '#', active: true },
@@ -20,7 +27,10 @@ const items: NavigationMenuItem[] = [
     <DashboardSidebar id="navbar-toggle" :default-size="14" :min-size="12" :max-size="18">
       <template #header>
         <div class="flex min-w-0 items-center gap-3 px-0.5 py-2">
-          <span class="flex size-6 shrink-0 items-center justify-center rounded-md bg-accent text-sm font-bold text-accent-foreground">A</span>
+          <span
+            class="flex size-6 shrink-0 items-center justify-center rounded-md bg-accent text-sm font-bold text-accent-foreground"
+            >A</span
+          >
           <span class="truncate text-sm font-semibold text-foreground">Acme</span>
         </div>
       </template>
@@ -31,11 +41,16 @@ const items: NavigationMenuItem[] = [
       <template #header>
         <!-- The toggle shows below the `lg` breakpoint, where the sidebar opens as a sheet. A filled button drops the ghost
              button's optical offset (`ms-0 md:ms-0`) so its edge lines up with the title padding. -->
-        <DashboardNavbar title="Dashboard" :toggle="{ variant: 'secondary', class: 'ms-0 md:ms-0' }" />
+        <DashboardNavbar
+          title="Dashboard"
+          :toggle="{ variant: 'secondary', class: 'ms-0 md:ms-0' }"
+        />
       </template>
 
       <template #body>
-        <div class="h-full min-h-24 rounded-xl border border-dashed border-separator bg-surface/50" />
+        <div
+          class="h-full min-h-24 rounded-xl border border-dashed border-separator bg-surface/50"
+        />
       </template>
     </DashboardPanel>
   </DashboardGroup>

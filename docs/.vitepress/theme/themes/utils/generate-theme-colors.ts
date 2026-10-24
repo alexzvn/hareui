@@ -305,7 +305,10 @@ function generateSemanticColor(
 ): { color: ThemeColor; foreground: ThemeColor } {
   // Calculate blended hue
   const adjustedHue = calculateSemanticHue(config.hue, baseHue)
-  const adjustedHueDark = calculateSemanticHue('hueDark' in config ? (config.hueDark as number) : config.hue, baseHue)
+  const adjustedHueDark = calculateSemanticHue(
+    'hueDark' in config ? (config.hueDark as number) : config.hue,
+    baseHue,
+  )
 
   // Scale chroma slightly based on gray chroma for visual harmony
   const chromaBoost = 1 + grayChroma * 2
@@ -356,7 +359,13 @@ function generateSemanticColor(
  * - Semantic color overrides for specific themes
  */
 export function generateThemeColors(params: ColorGenerationParams): GeneratedThemeColors {
-  const { lightness, chroma, hue, grayChroma = Math.min(chroma * 0.05, 0.015), semanticOverrides } = params
+  const {
+    lightness,
+    chroma,
+    hue,
+    grayChroma = Math.min(chroma * 0.05, 0.015),
+    semanticOverrides,
+  } = params
 
   // Get defaults
   const defaultsLight = DEFAULT_THEME_VALUES.light
@@ -375,8 +384,12 @@ export function generateThemeColors(params: ColorGenerationParams): GeneratedThe
   // --accent-foreground: Use override if provided, otherwise calculate based on accent lightness
   const accentForeground: ThemeColor = {
     name: '--accent-foreground',
-    oklchDark: semanticOverrides?.dark?.accentForeground ?? calculateAccentForeground(lightness, chroma, hue),
-    oklchLight: semanticOverrides?.light?.accentForeground ?? calculateAccentForeground(lightness, chroma, hue),
+    oklchDark:
+      semanticOverrides?.dark?.accentForeground ??
+      calculateAccentForeground(lightness, chroma, hue),
+    oklchLight:
+      semanticOverrides?.light?.accentForeground ??
+      calculateAccentForeground(lightness, chroma, hue),
   }
 
   // --focus: Same as accent
@@ -438,8 +451,12 @@ export function generateThemeColors(params: ColorGenerationParams): GeneratedThe
   // --surface-secondary: Apply hue and chroma adjustments
   const surfaceSecondary: ThemeColor = {
     name: '--surface-secondary',
-    oklchDark: formatOklch(adjustChroma(adjustHue(defaultsDark.surfaceSecondary, hue), grayChroma * 1.5)),
-    oklchLight: formatOklch(adjustChroma(adjustHue(defaultsLight.surfaceSecondary, hue), grayChroma * 0.8)),
+    oklchDark: formatOklch(
+      adjustChroma(adjustHue(defaultsDark.surfaceSecondary, hue), grayChroma * 1.5),
+    ),
+    oklchLight: formatOklch(
+      adjustChroma(adjustHue(defaultsLight.surfaceSecondary, hue), grayChroma * 0.8),
+    ),
   }
 
   // --surface-secondary-foreground: Uses foreground value
@@ -452,8 +469,12 @@ export function generateThemeColors(params: ColorGenerationParams): GeneratedThe
   // --surface-tertiary: Apply hue and chroma adjustments
   const surfaceTertiary: ThemeColor = {
     name: '--surface-tertiary',
-    oklchDark: formatOklch(adjustChroma(adjustHue(defaultsDark.surfaceTertiary, hue), grayChroma * 1.5)),
-    oklchLight: formatOklch(adjustChroma(adjustHue(defaultsLight.surfaceTertiary, hue), grayChroma * 0.8)),
+    oklchDark: formatOklch(
+      adjustChroma(adjustHue(defaultsDark.surfaceTertiary, hue), grayChroma * 1.5),
+    ),
+    oklchLight: formatOklch(
+      adjustChroma(adjustHue(defaultsLight.surfaceTertiary, hue), grayChroma * 0.8),
+    ),
   }
 
   // --surface-tertiary-foreground: Uses foreground value
@@ -727,8 +748,10 @@ export function getDerivedColorFormulas(
     '--field-focus': 'var(--field-background, var(--default))',
     '--field-hover':
       'color-mix(in oklab, var(--field-background, var(--default)) 90%, var(--field-foreground, var(--foreground)) 2%)',
-    '--separator-secondary': 'color-mix(in oklab, var(--surface) 85%, var(--surface-foreground) 15%)',
-    '--separator-tertiary': 'color-mix(in oklab, var(--surface) 81%, var(--surface-foreground) 19%)',
+    '--separator-secondary':
+      'color-mix(in oklab, var(--surface) 85%, var(--surface-foreground) 15%)',
+    '--separator-tertiary':
+      'color-mix(in oklab, var(--surface) 81%, var(--surface-foreground) 19%)',
     '--success-hover': 'color-mix(in oklab, var(--success) 90%, var(--success-foreground) 10%)',
     '--success-soft': `color-mix(in oklab, var(--success) ${softPct}, transparent)`,
     '--success-soft-foreground': sfFg(

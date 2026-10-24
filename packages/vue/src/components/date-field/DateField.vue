@@ -1,11 +1,12 @@
 <script lang="ts">
 import type { DateFieldRootProps, DateValue } from 'reka-ui'
+
 import type { ValidateFn, ValidationResult } from '../../composables/useFieldValidation'
 import type { ComponentSlots } from '../../types/tv'
 import type { DateInputGroupProps } from '../date-input-group/DateInputGroup.vue'
+import dateInputGroupTheme from '../date-input-group/theme'
 import type { ValidationBehavior } from '../form/context'
 import type { FormFieldProps } from '../form/types'
-import dateInputGroupTheme from '../date-input-group/theme'
 import theme from './theme'
 
 type DateField = typeof theme
@@ -105,7 +106,10 @@ export interface DateFieldProps extends FormFieldProps {
   /** Additional classes merged into the root element. */
   class?: any
   /** Per-slot class overrides. `group`, `input`, `segment`, `prefix` and `suffix` are the internal `date-input-group`'s. */
-  ui?: ComponentSlots<DateField> & { group?: ComponentSlots<DateInputGroup>['base'] } & Pick<ComponentSlots<DateInputGroup>, 'input' | 'segment' | 'prefix' | 'suffix'>
+  ui?: ComponentSlots<DateField> & { group?: ComponentSlots<DateInputGroup>['base'] } & Pick<
+      ComponentSlots<DateInputGroup>,
+      'input' | 'segment' | 'prefix' | 'suffix'
+    >
 }
 
 export interface DateFieldSlots {
@@ -132,10 +136,14 @@ import { DateFormatter, getLocalTimeZone } from '@internationalized/date'
 import { DateFieldInput, DateFieldRoot } from 'reka-ui'
 import type { ComponentPublicInstance } from 'vue'
 import { computed, useTemplateRef } from 'vue'
+
 import { useComponentUI } from '../../composables/useComponentUI'
 import { useFieldChrome } from '../../composables/useFieldChrome'
 import { useFieldValidation } from '../../composables/useFieldValidation'
-import DateInputGroup, { dropDanglingTimeZoneSeparator, wrapBidiIsolate } from '../date-input-group/DateInputGroup.vue'
+import DateInputGroup, {
+  dropDanglingTimeZoneSeparator,
+  wrapBidiIsolate,
+} from '../date-input-group/DateInputGroup.vue'
 import { useFieldsetDisabled } from '../fieldset/context'
 
 // `invalid: undefined`: an absent boolean would cast to `false`, which counts as controlled-valid and hides validation errors
@@ -155,15 +163,16 @@ const root = useTemplateRef<ComponentPublicInstance>('root')
 // apply); Reka only tracks this internally per-segment (unreachable from outside), so it's computed here instead
 // and fed into `validate` so it follows `validationBehavior` like any other error.
 function formatDateBoundary(value: DateValue) {
-  return new DateFormatter(props.locale ?? 'en-US', { dateStyle: 'medium' }).format(value.toDate(getLocalTimeZone()))
+  return new DateFormatter(props.locale ?? 'en-US', { dateStyle: 'medium' }).format(
+    value.toDate(getLocalTimeZone()),
+  )
 }
 function builtinValidate(value: DateValue) {
   if (props.minValue && value.compare(props.minValue) < 0)
     return `Value must be ${formatDateBoundary(props.minValue)} or later.`
   if (props.maxValue && value.compare(props.maxValue) > 0)
     return `Value must be ${formatDateBoundary(props.maxValue)} or earlier.`
-  if (props.isDateUnavailable?.(value))
-    return 'Selected date unavailable.'
+  if (props.isDateUnavailable?.(value)) return 'Selected date unavailable.'
   return undefined
 }
 function validate(value: DateValue) {
@@ -173,7 +182,8 @@ function validate(value: DateValue) {
 const { validation, commitValidation } = useFieldValidation({
   // Untouched + uncontrolled: `modelValue` is `undefined` until the first `onUpdate`, so fall back to
   // `defaultValue`. A controlled field explicitly cleared to `null` stays `null`, not fall back.
-  value: () => (modelValue.value === undefined ? props.defaultValue : modelValue.value) ?? undefined,
+  value: () =>
+    (modelValue.value === undefined ? props.defaultValue : modelValue.value) ?? undefined,
   validate: () => validate,
   invalid: () => props.invalid,
   validationBehavior: () => props.validationBehavior,
@@ -192,16 +202,17 @@ function onUpdate(value: DateValue | undefined) {
   commitValidation()
 }
 
-const { id, labelId, hasLabel, describedBy, FieldLabel, FieldDescription, FieldError } = useFieldChrome({
-  props,
-  slots,
-  invalid,
-  validation,
-  disabled,
-  required: () => props.required,
-  // HeroUI's CSS always hides the description while invalid, regardless of whether an error message exists
-  hideDescriptionWhenInvalid: true,
-})
+const { id, labelId, hasLabel, describedBy, FieldLabel, FieldDescription, FieldError } =
+  useFieldChrome({
+    props,
+    slots,
+    invalid,
+    validation,
+    disabled,
+    required: () => props.required,
+    // HeroUI's CSS always hides the description while invalid, regardless of whether an error message exists
+    hideDescriptionWhenInvalid: true,
+  })
 
 const groupUiProps = computed<DateInputGroupProps['ui']>(() => ({
   input: props.ui?.input,

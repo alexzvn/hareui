@@ -2,9 +2,10 @@
 // release wherever the press started (`shouldSelectOnPressUp`), e.g. press the trigger, drag onto an option, release.
 // A press that starts and ends on the same option is left to the option's own click.
 
-const optionAt = (target: EventTarget | null) => target instanceof Element
-  ? target.closest<HTMLElement>('[role=option]:not([data-disabled])')
-  : null
+const optionAt = (target: EventTarget | null) =>
+  target instanceof Element
+    ? target.closest<HTMLElement>('[role=option]:not([data-disabled])')
+    : null
 
 export function usePressRelease() {
   let pressed: HTMLElement | null = null

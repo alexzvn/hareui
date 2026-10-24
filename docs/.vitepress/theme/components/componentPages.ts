@@ -9,8 +9,8 @@ const PREFIX = '/docs/components/'
 
 const bySlug = new Map(
   pages
-    .filter(page => page.url.startsWith(PREFIX))
-    .map(page => [page.url.slice(PREFIX.length), page.title] as const),
+    .filter((page) => page.url.startsWith(PREFIX))
+    .map((page) => [page.url.slice(PREFIX.length), page.title] as const),
 )
 
 /** Component pages for the given slugs, in order, skipping slugs HareUI has no page for. */

@@ -12,7 +12,11 @@ const data = [
   { hour: '21:00', harbor: 13, hillside: 10, airport: 13 },
 ]
 
-const series = { harbor: { name: 'Harbor' }, hillside: { name: 'Hillside' }, airport: { name: 'Airport' } }
+const series = {
+  harbor: { name: 'Harbor' },
+  hillside: { name: 'Hillside' },
+  airport: { name: 'Airport' },
+}
 const hidden = ref<string[]>(['airport'])
 
 function formatTemperature(value: number) {
@@ -21,7 +25,10 @@ function formatTemperature(value: number) {
 </script>
 
 <template>
-  <Card class="w-full max-w-[520px] rounded-2xl" :ui="{ header: 'flex-row flex-wrap items-center justify-between gap-2' }">
+  <Card
+    class="w-full max-w-[520px] rounded-2xl"
+    :ui="{ header: 'flex-row flex-wrap items-center justify-between gap-2' }"
+  >
     <template #header>
       <h3 class="text-base font-medium text-foreground">Station Temperatures</h3>
       <ChartLegend v-model:hidden="hidden" :series="series" toggleable />

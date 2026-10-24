@@ -25,27 +25,33 @@ RadioGroup renders a [Label](/docs/components/label) and a [Description](/docs/c
 ```vue
 <template>
   <RadioGroup :items="items" label="…" description="…" error-message="…" :invalid="…">
-    <template #label />                             <!-- Label content -->
-    <template #description />                        <!-- Description content -->
-    <template #item-label="{ item, index }" />        <!-- replaces item.label -->
-    <template #item-description="{ item, index }" />  <!-- replaces item.description -->
-    <template #indicator="{ item, checked }" />       <!-- custom content inside each control -->
-    <template #error />                               <!-- FieldError content, rendered when invalid -->
+    <template #label />
+    <!-- Label content -->
+    <template #description />
+    <!-- Description content -->
+    <template #item-label="{ item, index }" />
+    <!-- replaces item.label -->
+    <template #item-description="{ item, index }" />
+    <!-- replaces item.description -->
+    <template #indicator="{ item, checked }" />
+    <!-- custom content inside each control -->
+    <template #error />
+    <!-- FieldError content, rendered when invalid -->
   </RadioGroup>
 </template>
 ```
 
-| `ui` key | `data-slot` | Element |
-|---|---|---|
-| `base` | `radio-group` | root element |
-| `item` | `radio` | per-item row (`<div>`) |
-| `content` | `radio-content` | the clickable control + label button |
-| `control` | `radio-control` | circular control |
-| `indicator` | `radio-indicator` | inner dot / `#indicator` content |
-| — | — | [Label](/docs/components/label) (iff `label` / `#label`) |
-| — | — | [Description](/docs/components/description) (group, iff `description` / `#description`) |
-| — | — | [Description](/docs/components/description) (per-item, iff `item.description` / `#item-description`) |
-| — | — | [FieldError](/docs/components/field-error) (while invalid, iff `error-message` / `#error` / validation errors) |
+| `ui` key    | `data-slot`       | Element                                                                                                        |
+| ----------- | ----------------- | -------------------------------------------------------------------------------------------------------------- |
+| `base`      | `radio-group`     | root element                                                                                                   |
+| `item`      | `radio`           | per-item row (`<div>`)                                                                                         |
+| `content`   | `radio-content`   | the clickable control + label button                                                                           |
+| `control`   | `radio-control`   | circular control                                                                                               |
+| `indicator` | `radio-indicator` | inner dot / `#indicator` content                                                                               |
+| —           | —                 | [Label](/docs/components/label) (iff `label` / `#label`)                                                       |
+| —           | —                 | [Description](/docs/components/description) (group, iff `description` / `#description`)                        |
+| —           | —                 | [Description](/docs/components/description) (per-item, iff `item.description` / `#item-description`)           |
+| —           | —                 | [FieldError](/docs/components/field-error) (while invalid, iff `error-message` / `#error` / validation errors) |
 
 ### Typing items
 
@@ -124,9 +130,11 @@ Use the `#item-label` slot and `:ui` overrides to restyle each row. HeroUI's ren
 ### Global Configuration
 
 ```ts
-app.use(createHareUI({
-  ui: { radioGroup: { slots: { control: 'size-5' } } },
-}))
+app.use(
+  createHareUI({
+    ui: { radioGroup: { slots: { control: 'size-5' } } },
+  }),
+)
 ```
 
 ## Styling Reference

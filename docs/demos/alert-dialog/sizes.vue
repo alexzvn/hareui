@@ -23,24 +23,20 @@ const capitalize = (s: string) => s.charAt(0).toUpperCase() + s.slice(1)
       </template>
       <template #body>
         <p v-if="size === 'cover'">
-          This alert dialog uses the <code>cover</code> size variant. It spans the
-          full screen with margins: 16px on mobile and 40px on desktop. Maintains
-          rounded corners and standard padding. Perfect for critical confirmations
-          that need maximum width while preserving alert dialog aesthetics.
+          This alert dialog uses the <code>cover</code> size variant. It spans the full screen with
+          margins: 16px on mobile and 40px on desktop. Maintains rounded corners and standard
+          padding. Perfect for critical confirmations that need maximum width while preserving alert
+          dialog aesthetics.
         </p>
         <p v-else>
-          This alert dialog uses the <code>{{ size }}</code> size variant. On mobile
-          devices, all sizes adapt to near full-width for optimal viewing. On desktop,
-          each size provides a different maximum width to suit various content needs.
+          This alert dialog uses the <code>{{ size }}</code> size variant. On mobile devices, all
+          sizes adapt to near full-width for optimal viewing. On desktop, each size provides a
+          different maximum width to suit various content needs.
         </p>
       </template>
       <template #footer="{ close }">
-        <Button variant="tertiary" @click="close">
-          Cancel
-        </Button>
-        <Button @click="close">
-          Confirm
-        </Button>
+        <Button variant="tertiary" @click="close"> Cancel </Button>
+        <Button @click="close"> Confirm </Button>
       </template>
     </AlertDialog>
   </div>

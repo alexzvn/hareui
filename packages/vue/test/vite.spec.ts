@@ -1,8 +1,9 @@
-import type { HareUIConfig } from '../src/config'
 import { mount } from '@vue/test-utils'
 import { afterEach, describe, expect, it } from 'vitest'
+
 import * as charts from '../src/charts'
 import Button from '../src/components/button/Button.vue'
+import type { HareUIConfig } from '../src/config'
 import { createHareUI } from '../src/config'
 import * as lib from '../src/index'
 import { HareUIResolver } from '../src/vite'
@@ -17,16 +18,21 @@ function resolve(name: string, prefix?: string) {
 describe('HareUIResolver', () => {
   it('resolves every component the package exports', () => {
     const exported = Object.entries(lib)
-      .filter(([, value]) => typeof value === 'object' && value !== null && ('setup' in value || 'render' in value))
+      .filter(
+        ([, value]) =>
+          typeof value === 'object' && value !== null && ('setup' in value || 'render' in value),
+      )
       .map(([name]) => name)
     expect(exported.length).toBeGreaterThan(80)
-    for (const name of exported)
-      expect(resolve(name), name).toEqual({ name, from: '@hareui/vue' })
+    for (const name of exported) expect(resolve(name), name).toEqual({ name, from: '@hareui/vue' })
   })
 
   it('resolves chart components to the charts subpath', () => {
     const exported = Object.entries(charts)
-      .filter(([, value]) => typeof value === 'object' && value !== null && ('setup' in value || 'render' in value))
+      .filter(
+        ([, value]) =>
+          typeof value === 'object' && value !== null && ('setup' in value || 'render' in value),
+      )
       .map(([name]) => name)
     expect(exported).toContain('AreaChart')
     expect(exported).toContain('ChartTooltipContent')
@@ -68,6 +74,8 @@ describe('vite plugin ui option', () => {
     expect(fromApp).toContain('px-2')
     expect(fromApp).not.toContain('px-1')
     expect(fromApp).toContain('uppercase')
-    expect(mount(Button, { props: { class: 'px-3' }, global: { plugins } }).classes()).toContain('px-3')
+    expect(mount(Button, { props: { class: 'px-3' }, global: { plugins } }).classes()).toContain(
+      'px-3',
+    )
   })
 })

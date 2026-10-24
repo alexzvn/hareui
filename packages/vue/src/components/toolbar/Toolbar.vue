@@ -1,5 +1,6 @@
 <script lang="ts">
 import type { PrimitiveProps } from 'reka-ui'
+
 import type { ComponentSlots, ComponentVariants } from '../../types/tv'
 import theme from './theme'
 
@@ -37,6 +38,7 @@ export interface ToolbarSlots {
 <script setup lang="ts">
 import { Primitive } from 'reka-ui'
 import { inject, provide, ref, toRef } from 'vue'
+
 import { useComponentUI } from '../../composables/useComponentUI'
 import { toolbarContextKey } from './context'
 
@@ -47,7 +49,10 @@ defineSlots<ToolbarSlots>()
 // Unlike React Aria it drops `aria-orientation` there: `role="group"` doesn't support it (axe `aria-allowed-attr`).
 const isNested = !!inject(toolbarContextKey, null)
 
-const ui = useComponentUI('toolbar', theme, () => ({ orientation: props.orientation, attached: props.attached }))
+const ui = useComponentUI('toolbar', theme, () => ({
+  orientation: props.orientation,
+  attached: props.attached,
+}))
 
 provide(toolbarContextKey, {
   orientation: toRef(() => props.orientation),
@@ -74,14 +79,14 @@ const FOCUSABLE = [
 ].join(',')
 
 function focusable(el: HTMLElement) {
-  return [...el.querySelectorAll<HTMLElement>(FOCUSABLE)]
-    .filter(node => !node.closest('[inert]') && node.getClientRects().length > 0)
+  return [...el.querySelectorAll<HTMLElement>(FOCUSABLE)].filter(
+    (node) => !node.closest('[inert]') && node.getClientRects().length > 0,
+  )
 }
 
 function move(el: HTMLElement, step: 1 | -1, edge?: 'first' | 'last') {
   const nodes = focusable(el)
-  if (nodes.length === 0)
-    return
+  if (nodes.length === 0) return
   if (edge) {
     nodes[edge === 'first' ? 0 : nodes.length - 1]!.focus()
     return
@@ -98,24 +103,20 @@ let lastFocused: HTMLElement | null = null
 
 function onKeydown(event: KeyboardEvent) {
   const el = root.value?.$el
-  if (!el || !el.contains(event.target as Node))
-    return
+  if (!el || !el.contains(event.target as Node)) return
   const reverse = props.orientation === 'horizontal' && getComputedStyle(el).direction === 'rtl'
   const forward = props.orientation === 'horizontal' ? 'ArrowRight' : 'ArrowDown'
   const backward = props.orientation === 'horizontal' ? 'ArrowLeft' : 'ArrowUp'
   if (event.key === forward) {
     move(el, reverse ? -1 : 1)
-  }
-  else if (event.key === backward) {
+  } else if (event.key === backward) {
     move(el, reverse ? 1 : -1)
-  }
-  else if (event.key === 'Tab') {
+  } else if (event.key === 'Tab') {
     // Jump to the edge and let the browser's Tab carry focus out of the toolbar.
     lastFocused = document.activeElement as HTMLElement | null
     move(el, 1, event.shiftKey ? 'first' : 'last')
     return
-  }
-  else {
+  } else {
     return
   }
   event.stopPropagation()
@@ -130,7 +131,12 @@ function onFocusout(event: FocusEvent) {
 
 function onFocusin(event: FocusEvent) {
   const el = root.value?.$el
-  if (lastFocused && el && !el.contains(event.relatedTarget as Node | null) && el.contains(event.target as Node)) {
+  if (
+    lastFocused &&
+    el &&
+    !el.contains(event.relatedTarget as Node | null) &&
+    el.contains(event.target as Node)
+  ) {
     lastFocused.focus()
     lastFocused = null
   }
@@ -146,7 +152,11 @@ function onFocusin(event: FocusEvent) {
     data-slot="toolbar"
     :data-orientation="orientation"
     :class="ui.base({ class: [props.ui?.base, props.class] })"
-    v-on="isNested ? {} : { keydownCapture: onKeydown, focusinCapture: onFocusin, focusoutCapture: onFocusout }"
+    v-on="
+      isNested
+        ? {}
+        : { keydownCapture: onKeydown, focusinCapture: onFocusin, focusoutCapture: onFocusout }
+    "
   >
     <slot :orientation="orientation" />
   </Primitive>

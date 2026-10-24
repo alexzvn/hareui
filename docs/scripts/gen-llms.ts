@@ -1,5 +1,6 @@
 import { mkdir, readFile, writeFile } from 'node:fs/promises'
 import { dirname, join, resolve } from 'node:path'
+
 import { normalizePath, sectionLinks, sidebar, type SidebarLink } from '../.vitepress/sidebar'
 import type { ComponentApi } from './api-types'
 
@@ -46,29 +47,42 @@ function code(value: string | undefined): string {
 }
 
 async function apiTable(component: string, kind: string): Promise<string> {
-  const api: ComponentApi = JSON.parse(await readFile(join(docsRoot, '.vitepress/api', `${component}.json`), 'utf8'))
+  const api: ComponentApi = JSON.parse(
+    await readFile(join(docsRoot, '.vitepress/api', `${component}.json`), 'utf8'),
+  )
   if (kind === 'props') {
     return [
       '| Prop | Type | Default | Description |',
       '| --- | --- | --- | --- |',
-      ...api.props.map((p) => `| ${code(p.name)} | ${code(p.type)} | ${code(p.default)} | ${escapeCell(p.description) || '-'} |`),
+      ...api.props.map(
+        (p) =>
+          `| ${code(p.name)} | ${code(p.type)} | ${code(p.default)} | ${escapeCell(p.description) || '-'} |`,
+      ),
     ].join('\n')
   }
   if (kind === 'slots') {
     return [
       '| Slot | Props | Description |',
       '| --- | --- | --- |',
-      ...api.slots.map((s) => `| ${code(s.name)} | ${code(s.type)} | ${escapeCell(s.description) || '-'} |`),
+      ...api.slots.map(
+        (s) => `| ${code(s.name)} | ${code(s.type)} | ${escapeCell(s.description) || '-'} |`,
+      ),
     ].join('\n')
   }
   return [
     '| Event | Payload | Description |',
     '| --- | --- | --- |',
-    ...api.events.map((e) => `| ${code(e.name)} | ${code(e.type)} | ${escapeCell(e.description) || '-'} |`),
+    ...api.events.map(
+      (e) => `| ${code(e.name)} | ${code(e.type)} | ${escapeCell(e.description) || '-'} |`,
+    ),
   ].join('\n')
 }
 
-async function replaceAsync(input: string, re: RegExp, fn: (match: string) => Promise<string>): Promise<string> {
+async function replaceAsync(
+  input: string,
+  re: RegExp,
+  fn: (match: string) => Promise<string>,
+): Promise<string> {
   const parts: (string | Promise<string>)[] = []
   let last = 0
   for (const m of input.matchAll(re)) {
@@ -105,21 +119,32 @@ function colorSectionTable(tag: string): string {
   if ('lightColors' in props || 'darkColors' in props) {
     const dark = new Map(tokenRows(props.darkColors))
     const light = tokenRows(props.lightColors)
-    const rows = [...light.map(([v]) => v), ...[...dark.keys()].filter((v) => !light.some(([l]) => l === v))]
+    const rows = [
+      ...light.map(([v]) => v),
+      ...[...dark.keys()].filter((v) => !light.some(([l]) => l === v)),
+    ]
     const lightMap = new Map(light)
     return [
       '| Variable | Light | Dark |',
       '| --- | --- | --- |',
-      ...rows.map((v) => `| ${code(v)} | ${code(lightMap.get(v)) || '-'} | ${code(dark.get(v)) || '-'} |`),
+      ...rows.map(
+        (v) => `| ${code(v)} | ${code(lightMap.get(v)) || '-'} | ${code(dark.get(v)) || '-'} |`,
+      ),
     ].join('\n')
   }
   const rows = tokenRows(props)
   if (!rows.length) throw new Error(`Color section without tooltips: ${tag.slice(0, 80)}`)
-  return ['| Variable | Value |', '| --- | --- |', ...rows.map(([v, value]) => `| ${code(v)} | ${code(value)} |`)].join('\n')
+  return [
+    '| Variable | Value |',
+    '| --- | --- |',
+    ...rows.map(([v, value]) => `| ${code(v)} | ${code(value)} |`),
+  ].join('\n')
 }
 
 async function toMarkdown(body: string): Promise<string> {
-  let out = body.replace(/<script\b[\s\S]*?<\/script>\n?/g, '').replace(/<style\b[\s\S]*?<\/style>\n?/g, '')
+  let out = body
+    .replace(/<script\b[\s\S]*?<\/script>\n?/g, '')
+    .replace(/<style\b[\s\S]*?<\/style>\n?/g, '')
   out = await replaceAsync(out, /<ComponentPreview\b[^>]*\/>/g, async (tag) => {
     const name = attr(tag, 'name')
     if (!name) throw new Error(`ComponentPreview without name: ${tag}`)
@@ -135,12 +160,16 @@ async function toMarkdown(body: string): Promise<string> {
   out = out.replace(/<ColorSection\w+\b[\s\S]*?\/>/g, colorSectionTable)
   out = out.replace(/<CollapsibleCode\b[\s\S]*?\/>/g, (tag) => {
     const { lang = '', code: src } = tagProps(tag) as { lang?: string; code?: string }
-    if (typeof src !== 'string') throw new Error(`CollapsibleCode without :code: ${tag.slice(0, 80)}`)
+    if (typeof src !== 'string')
+      throw new Error(`CollapsibleCode without :code: ${tag.slice(0, 80)}`)
     return `\`\`\`${lang}\n${src.trimEnd()}\n\`\`\``
   })
   out = out.replace(/<FaqItem\b[^>]*>/g, (tag) => `**${attr(tag, 'question')}**`)
   const fences: string[] = []
-  out = out.replace(/^(```|~~~)[\s\S]*?^\1\s*$/gm, (fence) => `\u0000${fences.push(fence) - 1}\u0000`)
+  out = out.replace(
+    /^(```|~~~)[\s\S]*?^\1\s*$/gm,
+    (fence) => `\u0000${fences.push(fence) - 1}\u0000`,
+  )
   out = out.replace(/<\/?[A-Z][\w.]*\b[^>]*>/g, '')
   out = out.replace(/\u0000(\d+)\u0000/g, (_, i) => fences[Number(i)])
   return out.replace(/\n{3,}/g, '\n\n').trim()
@@ -150,10 +179,12 @@ const pages: Page[] = []
 for (const section of sidebar) {
   const links = sectionLinks(section)
   for (const link of links) {
-    const raw = await readFile(sourceFile(link.link), 'utf8').catch((error: NodeJS.ErrnoException) => {
-      if (error.code === 'ENOENT') return undefined
-      throw error
-    })
+    const raw = await readFile(sourceFile(link.link), 'utf8').catch(
+      (error: NodeJS.ErrnoException) => {
+        if (error.code === 'ENOENT') return undefined
+        throw error
+      },
+    )
     if (raw === undefined) {
       console.warn(`llms: skipping ${link.link} (no source page yet)`)
       continue
@@ -180,7 +211,14 @@ const index = [
   '',
   ...sidebar.flatMap((section) => {
     const items = pages.filter((p) => p.section === section.text)
-    return items.length ? [`## ${section.text}`, '', ...items.map((p) => `- [${p.title}](${p.url}): ${p.description}`), ''] : []
+    return items.length
+      ? [
+          `## ${section.text}`,
+          '',
+          ...items.map((p) => `- [${p.title}](${p.url}): ${p.description}`),
+          '',
+        ]
+      : []
   }),
 ].join('\n')
 

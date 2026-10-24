@@ -12,9 +12,12 @@ function show() {
 
 <template>
   <div class="flex h-full max-w-xl flex-col items-center justify-center">
-    <ToastProvider is-expanded aria-label="Expanded notifications" placement="bottom" :queue="queue" />
-    <Button size="sm" variant="secondary" @click="show">
-      Show 3 toasts
-    </Button>
+    <ToastProvider
+      is-expanded
+      aria-label="Expanded notifications"
+      placement="bottom"
+      :queue="queue"
+    />
+    <Button size="sm" variant="secondary" @click="show"> Show 3 toasts </Button>
   </div>
 </template>

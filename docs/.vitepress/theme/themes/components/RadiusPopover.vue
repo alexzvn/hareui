@@ -1,10 +1,11 @@
 <script setup lang="ts">
+import { InputGroup, ListBox, Popover } from '@hareui/vue'
+import { Icon } from '@iconify/vue'
+import { computed } from 'vue'
+
+import { useVariableSetter } from '../composables/variables'
 // Port of HeroUI docs `themes/components/radius-popover.tsx`.
 import type { RadiusId, ThemeVariables } from '../constants'
-import { Icon } from '@iconify/vue'
-import { InputGroup, ListBox, Popover } from '@hareui/vue'
-import { computed } from 'vue'
-import { useVariableSetter } from '../composables/variables'
 import ControlsPopoverTrigger from './ControlsPopoverTrigger.vue'
 import LockableLabel from './LockableLabel.vue'
 
@@ -23,27 +24,29 @@ const props = defineProps<{
 const RADIUS_OPTION_LABELS: Record<RadiusId, string> = {
   'extra-large': 'extra large',
   'extra-small': 'extra small',
-  'large': 'large',
-  'medium': 'medium',
-  'none': 'none',
-  'small': 'small',
+  large: 'large',
+  medium: 'medium',
+  none: 'none',
+  small: 'small',
 }
 
 const { setVariable, variables } = useVariableSetter()
 const currentValue = computed(() => variables.value[props.variableKey])
-const currentOption = computed(() => props.radiusOptions.find(r => r.id === currentValue.value))
+const currentOption = computed(() => props.radiusOptions.find((r) => r.id === currentValue.value))
 
-const items = computed(() => props.radiusOptions.map(option => ({
-  value: option.id,
-  label: option.label,
-  textValue: option.id,
-  class: 'group border-separator-on-surface flex h-[83px] w-[88px] flex-col items-center justify-center gap-[5px] rounded-2xl border data-[selected=true]:border-foreground',
-})))
+const items = computed(() =>
+  props.radiusOptions.map((option) => ({
+    value: option.id,
+    label: option.label,
+    textValue: option.id,
+    class:
+      'group border-separator-on-surface flex h-[83px] w-[88px] flex-col items-center justify-center gap-[5px] rounded-2xl border data-[selected=true]:border-foreground',
+  })),
+)
 
 function onSelectionChange(selected: unknown) {
   // `disallowEmptySelection`: clicking the selected item keeps it selected
-  if (selected)
-    setVariable(props.variableKey, String(selected) as RadiusId)
+  if (selected) setVariable(props.variableKey, String(selected) as RadiusId)
 }
 </script>
 

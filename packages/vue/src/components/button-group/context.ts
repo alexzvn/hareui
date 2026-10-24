@@ -1,7 +1,8 @@
 import type { ComputedRef, InjectionKey, Ref } from 'vue'
-import type buttonGroupTheme from './theme'
+
 import type { ComponentSlots, ComponentUI } from '../../types/tv'
 import type { ButtonProps } from '../button/Button.vue'
+import type buttonGroupTheme from './theme'
 
 export interface ButtonGroupContext {
   variant: Readonly<Ref<ButtonProps['variant']>>
@@ -16,4 +17,5 @@ export interface ButtonGroupContext {
 }
 
 /** Provided by `ButtonGroup` to its Buttons; each Button re-provides `null` so only the group's own Buttons read it. */
-export const buttonGroupContextKey: InjectionKey<ButtonGroupContext | null> = Symbol('hareui-button-group')
+export const buttonGroupContextKey: InjectionKey<ButtonGroupContext | null> =
+  Symbol('hareui-button-group')

@@ -11,21 +11,13 @@ import { Button, Drawer } from '@hareui/vue'
     :ui="{ heading: 'text-foreground' }"
     variant="blur"
   >
-    <Button variant="secondary">
-      Open filters
-    </Button>
+    <Button variant="secondary"> Open filters </Button>
     <template #body>
-      <p class="text-sm text-muted">
-        Narrow results by status, owner, or date.
-      </p>
+      <p class="text-sm text-muted">Narrow results by status, owner, or date.</p>
     </template>
     <template #footer="{ close }">
-      <Button variant="secondary" @click="close">
-        Cancel
-      </Button>
-      <Button @click="close">
-        Apply
-      </Button>
+      <Button variant="secondary" @click="close"> Cancel </Button>
+      <Button @click="close"> Apply </Button>
     </template>
   </Drawer>
 </template>

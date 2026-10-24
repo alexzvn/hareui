@@ -1,7 +1,12 @@
 import type { ThemeVariables } from '../constants'
+import {
+  adaptiveColors,
+  findMatchingTheme,
+  fontMap,
+  radiusCssMap,
+  themeValuesById,
+} from '../constants'
 import type { GeneratedThemeColors, SemanticOverrides, ThemeColor } from './generate-theme-colors'
-
-import { adaptiveColors, findMatchingTheme, fontMap, radiusCssMap, themeValuesById } from '../constants'
 
 /**
  * Custom font info for generating CSS variables
@@ -18,7 +23,10 @@ import { calculateAccentForeground, generateThemeColors, parseOklch } from './ge
  * Get only the authored CSS variables that users need to customize.
  * Derived variables are provided by the default theme stylesheet.
  */
-function getBaseColorVariables(colors: GeneratedThemeColors, theme: 'light' | 'dark'): Record<string, string> {
+function getBaseColorVariables(
+  colors: GeneratedThemeColors,
+  theme: 'light' | 'dark',
+): Record<string, string> {
   const isLight = theme === 'light'
   const getValue = (color: ThemeColor) => (isLight ? color.oklchLight : color.oklchDark)
 
@@ -64,7 +72,10 @@ function getBaseColorVariables(colors: GeneratedThemeColors, theme: 'light' | 'd
  * @param variables - Theme variables from the builder
  * @param customFont - Optional custom font info when using a CDN font
  */
-export function generateMinimalCssVariables(variables: ThemeVariables, customFont?: CustomFontInfo): string {
+export function generateMinimalCssVariables(
+  variables: ThemeVariables,
+  customFont?: CustomFontInfo,
+): string {
   // Check if this is a predefined font
   const fontId = variables.fontFamily
   const isPredefinedFont = fontId in fontMap
@@ -81,7 +92,13 @@ export function generateMinimalCssVariables(variables: ThemeVariables, customFon
     : undefined
 
   // Generate theme colors
-  const colors = generateThemeColors({ chroma, grayChroma: base, hue, lightness, semanticOverrides })
+  const colors = generateThemeColors({
+    chroma,
+    grayChroma: base,
+    hue,
+    lightness,
+    semanticOverrides,
+  })
 
   // Get base variables for both themes
   const lightVars = getBaseColorVariables(colors, 'light')

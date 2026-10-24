@@ -1,5 +1,6 @@
 <script lang="ts">
 import type { PrimitiveProps } from 'reka-ui'
+
 import type { ComponentSlots, ComponentVariants } from '../../types/tv'
 import theme from './theme'
 
@@ -31,6 +32,7 @@ export interface SurfaceSlots {
 <script setup lang="ts">
 import { Primitive } from 'reka-ui'
 import { computed, provide, toRef } from 'vue'
+
 import { useComponentUI } from '../../composables/useComponentUI'
 import { surfaceContextKey } from './context'
 

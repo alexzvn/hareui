@@ -32,16 +32,16 @@ CheckboxGroup renders its checkboxes from the `items` array. Label, description,
 </CheckboxGroup>
 ```
 
-| `ui` key | `data-slot` | Element |
-|---|---|---|
-| `base` | `checkbox-group` | root element |
-| `item` | `checkbox` | per-item root (`<div>`) |
-| `content` | `checkbox-content` | the clickable control + label |
-| `control` | `checkbox-control` | the box |
-| `indicator` | `checkbox-indicator` | checkmark / `#indicator` content |
-| — | `label` | [Label](/docs/components/label) (iff `label` / `#label`) |
-| — | `description` | [Description](/docs/components/description) (group and per-item) |
-| — | `field-error` | [FieldError](/docs/components/field-error) (while invalid, iff `error-message` / `#error` / validation errors) |
+| `ui` key    | `data-slot`          | Element                                                                                                        |
+| ----------- | -------------------- | -------------------------------------------------------------------------------------------------------------- |
+| `base`      | `checkbox-group`     | root element                                                                                                   |
+| `item`      | `checkbox`           | per-item root (`<div>`)                                                                                        |
+| `content`   | `checkbox-content`   | the clickable control + label                                                                                  |
+| `control`   | `checkbox-control`   | the box                                                                                                        |
+| `indicator` | `checkbox-indicator` | checkmark / `#indicator` content                                                                               |
+| —           | `label`              | [Label](/docs/components/label) (iff `label` / `#label`)                                                       |
+| —           | `description`        | [Description](/docs/components/description) (group and per-item)                                               |
+| —           | `field-error`        | [FieldError](/docs/components/field-error) (while invalid, iff `error-message` / `#error` / validation errors) |
 
 ### Typing items
 
@@ -107,9 +107,11 @@ Attributes such as `data-*` fall through to the root element.
 ### Global Configuration
 
 ```ts
-app.use(createHareUI({
-  ui: { checkboxGroup: { slots: { base: 'flex flex-col gap-2' } } },
-}))
+app.use(
+  createHareUI({
+    ui: { checkboxGroup: { slots: { base: 'flex flex-col gap-2' } } },
+  }),
+)
 ```
 
 ## Styling Reference

@@ -1,5 +1,5 @@
-import type { ComputedRef } from 'vue'
 import { useLocale } from 'reka-ui'
+import type { ComputedRef } from 'vue'
 import { computed } from 'vue'
 
 export interface RangeValueOptions {
@@ -38,12 +38,18 @@ export function useRangeValue(options: () => RangeValueOptions): ComputedRef<Ran
     return formatter.format(value)
   }
   return computed(() => {
-    const { value, minValue, maxValue, formatOptions = { style: 'percent' }, valueLabel } = options()
+    const {
+      value,
+      minValue,
+      maxValue,
+      formatOptions = { style: 'percent' },
+      valueLabel,
+    } = options()
     const clamped = Math.min(Math.max(value, minValue), maxValue)
     const range = maxValue - minValue
     const fraction = range === 0 ? 0 : (clamped - minValue) / range
-    const valueText = valueLabel
-      ?? format(formatOptions.style === 'percent' ? fraction : clamped, formatOptions)
+    const valueText =
+      valueLabel ?? format(formatOptions.style === 'percent' ? fraction : clamped, formatOptions)
     return { clamped, percentage: fraction * 100, valueText }
   })
 }

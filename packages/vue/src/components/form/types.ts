@@ -1,30 +1,47 @@
 import type { StandardSchemaV1, SuperstructSchema } from '../../utils/form'
 
 /** A schema the form can validate with: any Standard Schema (Zod, Valibot, ArkType, Yup, Effect Schema, …) or a Superstruct struct. */
-export type FormSchema<I extends object = object, O extends object = I> = StandardSchemaV1<I, O> | SuperstructSchema<O>
+export type FormSchema<I extends object = object, O extends object = I> =
+  | StandardSchemaV1<I, O>
+  | SuperstructSchema<O>
 
 /** The schema's input type: what the form's `state` holds once filled in. */
-export type InferInput<S> = S extends StandardSchemaV1 ? StandardSchemaV1.InferInput<S>
-  : S extends SuperstructSchema<infer I> ? I
+export type InferInput<S> = S extends StandardSchemaV1
+  ? StandardSchemaV1.InferInput<S>
+  : S extends SuperstructSchema<infer I>
+    ? I
     : never
 
 /** The schema's output type: the parsed values `@submit` receives. */
-export type InferOutput<S> = S extends StandardSchemaV1 ? StandardSchemaV1.InferOutput<S>
-  : S extends SuperstructSchema<infer O> ? O
+export type InferOutput<S> = S extends StandardSchemaV1
+  ? StandardSchemaV1.InferOutput<S>
+  : S extends SuperstructSchema<infer O>
+    ? O
     : never
 
-type FormStateLeaf = Date | Blob | RegExp | Map<unknown, unknown> | Set<unknown> | ((...args: never[]) => unknown)
+type FormStateLeaf =
+  | Date
+  | Blob
+  | RegExp
+  | Map<unknown, unknown>
+  | Set<unknown>
+  | ((...args: never[]) => unknown)
 
-type FormStateValue<T> = T extends FormStateLeaf ? T | null | undefined
-  : T extends object ? { [K in keyof T]?: FormStateValue<T[K]> } | null | undefined
-    : T extends number | bigint ? T | '' | null | undefined
+type FormStateValue<T> = T extends FormStateLeaf
+  ? T | null | undefined
+  : T extends object
+    ? { [K in keyof T]?: FormStateValue<T[K]> } | null | undefined
+    : T extends number | bigint
+      ? T | '' | null | undefined
       : T | null | undefined
 
 /** The form's values before validation: any value can be empty, and a cleared number input holds `''`. */
 export type FormState<S extends FormSchema> = NonNullable<FormStateValue<InferInput<S>>>
 
 /** The schema's output when `T` (the form's `transform`) is `true`, its input otherwise. */
-export type FormData<S extends FormSchema, T extends boolean = true> = T extends true ? InferOutput<S> : InferInput<S>
+export type FormData<S extends FormSchema, T extends boolean = true> = T extends true
+  ? InferOutput<S>
+  : InferInput<S>
 
 /** A field name of the schema's input; dotted paths (`address.city`) are accepted too. */
 export type FormFieldName<S extends FormSchema> = (keyof InferInput<S> & string) | (string & {})
@@ -80,7 +97,9 @@ export interface FormValidateOptions<S extends FormSchema, T extends boolean = f
 /** The form's exposed instance, from a template ref. */
 export interface Form<S extends FormSchema> {
   /** Validates the state, shows the errors, and resolves to the state (or the schema's output with `transform`). */
-  validate: <T extends boolean = false>(opts?: FormValidateOptions<S, T>) => Promise<FormData<S, T> | false>
+  validate: <T extends boolean = false>(
+    opts?: FormValidateOptions<S, T>,
+  ) => Promise<FormData<S, T> | false>
   /** Clears the errors of a field (by name or pattern), or all errors. */
   clear: (path?: FormFieldName<S> | RegExp) => void
   /** The current `schema` / `validate` errors. */

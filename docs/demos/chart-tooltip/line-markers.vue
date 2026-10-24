@@ -1,5 +1,12 @@
 <script setup lang="ts">
-import { ChartTooltipContent, ChartTooltipHeader, ChartTooltipIndicator, ChartTooltipItem, ChartTooltipLabel, ChartTooltipValue } from '@hareui/vue/charts'
+import {
+  ChartTooltipContent,
+  ChartTooltipHeader,
+  ChartTooltipIndicator,
+  ChartTooltipItem,
+  ChartTooltipLabel,
+  ChartTooltipValue,
+} from '@hareui/vue/charts'
 
 const steps = [
   { name: 'Install', color: 'var(--chart-1)', time: '22s' },

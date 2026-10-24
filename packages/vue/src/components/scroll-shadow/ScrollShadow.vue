@@ -1,5 +1,6 @@
 <script lang="ts">
 import type { PrimitiveProps } from 'reka-ui'
+
 import type { ComponentSlots, ComponentVariants } from '../../types/tv'
 import theme from './theme'
 
@@ -69,6 +70,7 @@ export interface ScrollShadowEmits {
 <script setup lang="ts">
 import { Primitive } from 'reka-ui'
 import { computed, onBeforeUnmount, ref, watch } from 'vue'
+
 import { useComponentUI } from '../../composables/useComponentUI'
 
 const props = withDefaults(defineProps<ScrollShadowProps>(), {
@@ -96,13 +98,12 @@ const auto = computed(() => props.enabled && props.visibility === 'auto')
 // Ported from HeroUI's `useScrollShadow`: measure on scroll / resize / content mutation and
 // publish the `data-*-scroll` flags one frame later. `null` until the first measurement, so
 // the flags are absent on the first paint like HeroUI's.
-const state = ref<{ before: boolean, after: boolean } | null>(null)
+const state = ref<{ before: boolean; after: boolean } | null>(null)
 let frame: number | null = null
 
 function measure() {
   const el = root.value?.$el
-  if (!el)
-    return
+  if (!el) return
   const vertical = props.orientation === 'vertical'
   const start = vertical ? el.scrollTop : Math.abs(el.scrollLeft)
   const size = vertical ? el.scrollHeight : el.scrollWidth
@@ -110,51 +111,60 @@ function measure() {
   const before = start > props.offset
   const after = start + client + props.offset < size - 1
   const prev = state.value
-  if (prev && prev.before === before && prev.after === after)
-    return
-  if (frame !== null)
-    cancelAnimationFrame(frame)
+  if (prev && prev.before === before && prev.after === after) return
+  if (frame !== null) cancelAnimationFrame(frame)
   frame = requestAnimationFrame(() => {
     frame = null
     state.value = { before, after }
-    const [start, end] = vertical ? ['top', 'bottom'] as const : ['left', 'right'] as const
+    const [start, end] = vertical ? (['top', 'bottom'] as const) : (['left', 'right'] as const)
     emit('visibilityChange', before && after ? 'both' : before ? start : after ? end : 'none')
   })
 }
 
 let cleanup: (() => void) | undefined
-watch([() => root.value?.$el as HTMLElement | undefined, auto, () => props.orientation, () => props.offset], ([el, isAuto]) => {
-  cleanup?.()
-  cleanup = undefined
-  state.value = null
-  if (!el || !isAuto)
-    return
-  measure()
-  el.addEventListener('scroll', measure, { passive: true })
-  const resize = new ResizeObserver(measure)
-  resize.observe(el)
-  const mutation = new MutationObserver(measure)
-  mutation.observe(el, { attributeFilter: ['class', 'style'], attributes: true, characterData: true, childList: true, subtree: true })
-  cleanup = () => {
-    el.removeEventListener('scroll', measure)
-    resize.disconnect()
-    mutation.disconnect()
-    if (frame !== null)
-      cancelAnimationFrame(frame)
-    frame = null
-  }
-}, { flush: 'post' })
+watch(
+  [
+    () => root.value?.$el as HTMLElement | undefined,
+    auto,
+    () => props.orientation,
+    () => props.offset,
+  ],
+  ([el, isAuto]) => {
+    cleanup?.()
+    cleanup = undefined
+    state.value = null
+    if (!el || !isAuto) return
+    measure()
+    el.addEventListener('scroll', measure, { passive: true })
+    const resize = new ResizeObserver(measure)
+    resize.observe(el)
+    const mutation = new MutationObserver(measure)
+    mutation.observe(el, {
+      attributeFilter: ['class', 'style'],
+      attributes: true,
+      characterData: true,
+      childList: true,
+      subtree: true,
+    })
+    cleanup = () => {
+      el.removeEventListener('scroll', measure)
+      resize.disconnect()
+      mutation.disconnect()
+      if (frame !== null) cancelAnimationFrame(frame)
+      frame = null
+    }
+  },
+  { flush: 'post' },
+)
 onBeforeUnmount(() => cleanup?.())
 
 const scrollAttrs = computed<Record<string, string>>(() => {
   const [start, end] = props.orientation === 'vertical' ? ['top', 'bottom'] : ['left', 'right']
   if (props.visibility !== 'auto') {
-    if (props.visibility === 'both')
-      return { [`data-${start}-${end}-scroll`]: 'true' }
+    if (props.visibility === 'both') return { [`data-${start}-${end}-scroll`]: 'true' }
     return props.visibility === 'none' ? {} : { [`data-${props.visibility}-scroll`]: 'true' }
   }
-  if (!auto.value || !state.value)
-    return {}
+  if (!auto.value || !state.value) return {}
   const { before, after } = state.value
   return before && after
     ? { [`data-${start}-${end}-scroll`]: 'true' }
@@ -163,7 +173,9 @@ const scrollAttrs = computed<Record<string, string>>(() => {
 
 defineExpose({
   /** The scroll container element. */
-  get el() { return root.value?.$el as HTMLElement | undefined },
+  get el() {
+    return root.value?.$el as HTMLElement | undefined
+  },
 })
 </script>
 

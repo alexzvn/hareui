@@ -4,7 +4,12 @@ import type { ChartLegendProps } from '../chart-legend/ChartLegend.vue'
 import type { ChartTooltipContentEntry } from '../chart-tooltip/ChartTooltipContent.vue'
 import type { ChartTooltipProps, ChartTooltipSlotProps } from '../chart/ChartTooltip.vue'
 import type { ChartPolarCenterSlotProps } from '../chart/polar'
-import type { ChartIndexKey, ChartLegendItem, ChartLegendPosition, ChartValueKey } from '../chart/series-config'
+import type {
+  ChartIndexKey,
+  ChartLegendItem,
+  ChartLegendPosition,
+  ChartValueKey,
+} from '../chart/series-config'
 import type { ChartDatum, ChartMargin } from '../chart/types'
 import theme from './theme'
 
@@ -48,7 +53,10 @@ export interface PieChartProps<T extends object = ChartDatum> {
    */
   tooltip?: boolean | Partial<ChartTooltipProps>
   /** Legend of the slices: `true` (below), a side, or `ChartLegend` props with a `position`. Clicking a row hides its slice. */
-  legend?: boolean | ChartLegendPosition | (Partial<ChartLegendProps<T>> & { position?: ChartLegendPosition })
+  legend?:
+    | boolean
+    | ChartLegendPosition
+    | (Partial<ChartLegendProps<T>> & { position?: ChartLegendPosition })
   /** Formats slice values in the tooltip and the legend. */
   valueFormatter?: (value: number, name: string) => string
   /** Names of hidden slices (`v-model:hidden`). */
@@ -76,22 +84,26 @@ export interface PieChartProps<T extends object = ChartDatum> {
 
 export interface PieChartSlots {
   /** Chart parts: `ChartPie`, `ChartTooltip`, a centered `ChartLabel`, and raw SVG such as `<defs>`. With `index`, extra parts drawn over the generated pie. */
-  'default'?: () => any
+  default?: () => any
   /** HTML centered in the pie, e.g. a total inside a donut. */
-  'center'?: (props: ChartPolarCenterSlotProps) => any
+  center?: (props: ChartPolarCenterSlotProps) => any
   /** Replaces the tooltip panel. */
-  'tooltip'?: (props: ChartTooltipSlotProps) => any
+  tooltip?: (props: ChartTooltipSlotProps) => any
   /** Content under the tooltip rows. */
-  'tooltip-footer'?: (props: { label?: number | string, payload: ChartTooltipContentEntry[] }) => any
+  'tooltip-footer'?: (props: {
+    label?: number | string
+    payload: ChartTooltipContentEntry[]
+  }) => any
   /** Replaces the legend. */
-  'legend'?: (props: { items: ChartLegendItem[], toggle: (key: string) => void }) => any
+  legend?: (props: { items: ChartLegendItem[]; toggle: (key: string) => void }) => any
   /** Replaces each legend row. */
-  'legend-item'?: (props: { item: ChartLegendItem, index: number, toggle: () => void }) => any
+  'legend-item'?: (props: { item: ChartLegendItem; index: number; toggle: () => void }) => any
 }
 </script>
 
 <script setup lang="ts" generic="T extends object">
 import { computed } from 'vue'
+
 import { useComponentUI } from '../../composables/useComponentUI'
 import ChartCell from '../chart/ChartCell.vue'
 import ChartFrame from '../chart/ChartFrame.vue'
@@ -114,7 +126,11 @@ const props = withDefaults(defineProps<PieChartProps<T>>(), {
 const slots = defineSlots<PieChartSlots>()
 const hidden = defineModel<string[]>('hidden', { default: () => [] })
 
-const { valueKey, slices, visibleSlices, config } = useSliceRoot({ props, hidden, hasLegendSlot: () => !!slots.legend })
+const { valueKey, slices, visibleSlices, config } = useSliceRoot({
+  props,
+  hidden,
+  hasLegendSlot: () => !!slots.legend,
+})
 
 const pie = computed(() => {
   const own = {
@@ -132,7 +148,10 @@ const pie = computed(() => {
 const ui = useComponentUI('pieChart', theme, () => ({}))
 const chart = useChartRoot({
   // Generated mode: only the visible slices reach the pie, so the active index points into them.
-  data: () => (slices.value ? visibleSlices.value.map(slice => slice.row) : props.data) as ChartDatum[] | undefined,
+  data: () =>
+    (slices.value ? visibleSlices.value.map((slice) => slice.row) : props.data) as
+      | ChartDatum[]
+      | undefined,
   margin: () => props.margin,
   layout: () => 'centric',
   ui,
@@ -156,12 +175,7 @@ providePolarCenterLabel(chart, polar, () => polar.outerRadius.value)
       <slot :name="name" v-bind="scope as any" />
     </template>
     <template #parts>
-      <ChartPie
-        v-if="slices && valueKey"
-        :data-key="valueKey"
-        :name-key="props.index"
-        v-bind="pie"
-      >
+      <ChartPie v-if="slices && valueKey" :data-key="valueKey" :name-key="props.index" v-bind="pie">
         <ChartCell v-for="slice in visibleSlices" :key="slice.key" :fill="slice.color" />
       </ChartPie>
     </template>

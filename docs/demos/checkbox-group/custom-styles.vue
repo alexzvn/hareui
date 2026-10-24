@@ -3,7 +3,8 @@ import type { CheckboxGroupItem } from '@hareui/vue'
 import { CheckboxGroup } from '@hareui/vue'
 
 const controlClass = 'bg-success-soft before:bg-success'
-const indicatorClass = '**:data-[slot=checkbox-default-indicator--checkmark]:text-success-foreground'
+const indicatorClass =
+  '**:data-[slot=checkbox-default-indicator--checkmark]:text-success-foreground'
 
 const channels: CheckboxGroupItem[] = [
   { label: 'Email', value: 'email' },

@@ -1,7 +1,8 @@
-import type { ComponentOptions } from 'vue'
 import { mount } from '@vue/test-utils'
 import { describe, expect, it } from 'vitest'
+import type { ComponentOptions } from 'vue'
 import { defineComponent, h, nextTick, ref } from 'vue'
+
 import Input from '../src/components/input/Input.vue'
 import TextField from '../src/components/text-field/TextField.vue'
 import { expectAccessible } from './a11y'
@@ -28,14 +29,21 @@ describe('TextField', () => {
   })
 
   it('invalid sets aria-invalid on the input and shows errorMessage', () => {
-    const wrapper = mount(TextField, { props: { invalid: true, errorMessage: 'Please enter a valid email' } })
+    const wrapper = mount(TextField, {
+      props: { invalid: true, errorMessage: 'Please enter a valid email' },
+    })
     expect(wrapper.get('input').attributes('aria-invalid')).toBe('true')
     expect(wrapper.get('[data-slot=field-error]').text()).toBe('Please enter a valid email')
   })
 
   it('label targets the input and v-model syncs both ways', async () => {
     const wrapper = mount(TextField, {
-      props: { 'label': 'Name', 'modelValue': 'a', 'onUpdate:modelValue': (v: string | number | undefined) => wrapper.setProps({ modelValue: v }) },
+      props: {
+        label: 'Name',
+        modelValue: 'a',
+        'onUpdate:modelValue': (v: string | number | undefined) =>
+          wrapper.setProps({ modelValue: v }),
+      },
     })
     const input = wrapper.get('input')
     expect(wrapper.get('label').attributes('for')).toBe(input.attributes('id'))
@@ -47,7 +55,12 @@ describe('TextField', () => {
   it('an Input in the default slot reads field state, explicit props win', () => {
     const wrapper = mount(TextField, {
       props: { id: 'f', disabled: true, invalid: true, description: 'Help' },
-      slots: { default: () => [h(Input, { 'data-test': 'ctx' }), h(Input, { 'data-test': 'own', 'id': 'own', 'disabled': false })] },
+      slots: {
+        default: () => [
+          h(Input, { 'data-test': 'ctx' }),
+          h(Input, { 'data-test': 'own', id: 'own', disabled: false }),
+        ],
+      },
     })
     const ctx = wrapper.get('[data-test=ctx]')
     expect(ctx.attributes('id')).toBe('f')
@@ -66,7 +79,9 @@ describe('TextField', () => {
     expect(input.element.value).toBe('jane')
     await input.setValue('john')
     expect(input.element.value).toBe('john')
-    const bound = mount(TextField, { props: { 'defaultValue': 'jane', 'modelValue': 'bound', 'onUpdate:modelValue': () => {} } })
+    const bound = mount(TextField, {
+      props: { defaultValue: 'jane', modelValue: 'bound', 'onUpdate:modelValue': () => {} },
+    })
     expect(bound.get('input').element.value).toBe('bound')
   })
 
@@ -74,7 +89,10 @@ describe('TextField', () => {
     const wrapper = mount(TextField, { props: { readonly: true } })
     expect(wrapper.get('input').attributes('readonly')).toBeDefined()
     expect(wrapper.attributes('data-readonly')).toBe('true')
-    const slotted = mount(TextField, { props: { readonly: true }, slots: { default: () => h(Input) } })
+    const slotted = mount(TextField, {
+      props: { readonly: true },
+      slots: { default: () => h(Input) },
+    })
     expect(slotted.get('input').attributes('readonly')).toBeDefined()
   })
 
@@ -92,24 +110,36 @@ describe('TextField', () => {
     expect(wrapper.get('input').attributes('aria-label')).toBe('Email')
     expect(wrapper.attributes('aria-label')).toBeUndefined()
     expect(wrapper.attributes('data-testid')).toBe('field')
-    const slotted = mount(TextField, { attrs: { 'aria-labelledby': 'heading' }, slots: { default: () => h(Input) } })
+    const slotted = mount(TextField, {
+      attrs: { 'aria-labelledby': 'heading' },
+      slots: { default: () => h(Input) },
+    })
     expect(slotted.get('input').attributes('aria-labelledby')).toBe('heading')
   })
 
   it.each([
     ['idle', {}],
     ['with description', { description: 'We never share it.' }],
-    ['invalid with error message', { description: 'We never share it.', invalid: true, errorMessage: 'Enter a valid email' }],
+    [
+      'invalid with error message',
+      { description: 'We never share it.', invalid: true, errorMessage: 'Enter a valid email' },
+    ],
     ['disabled', { disabled: true }],
     ['read-only', { readonly: true, defaultValue: 'jane@acme.com' }],
     ['required', { required: true }],
-  ])('labelled by its label (%s), it has no axe violations', async (_, props: Record<string, unknown>) => {
-    const wrapper = mount(TextField, { props: { label: 'Email', type: 'email', ...props }, attachTo: document.body })
-    const input = wrapper.get('input').element as HTMLInputElement
-    expect([...input.labels!].map(l => l.textContent?.trim())).toEqual(['Email'])
-    await expectAccessible(wrapper)
-    wrapper.unmount()
-  })
+  ])(
+    'labelled by its label (%s), it has no axe violations',
+    async (_, props: Record<string, unknown>) => {
+      const wrapper = mount(TextField, {
+        props: { label: 'Email', type: 'email', ...props },
+        attachTo: document.body,
+      })
+      const input = wrapper.get('input').element as HTMLInputElement
+      expect([...input.labels!].map((l) => l.textContent?.trim())).toEqual(['Email'])
+      await expectAccessible(wrapper)
+      wrapper.unmount()
+    },
+  )
 
   it('without a visible label, aria-label alone names the input with no axe violations', async () => {
     const wrapper = mount(TextField, { attrs: { 'aria-label': 'Search' }, attachTo: document.body })
@@ -119,20 +149,40 @@ describe('TextField', () => {
   })
 
   it('merges a consumer aria-describedby with its own description and error ids, which resolve to their text', async () => {
-    const wrapper = mount(() => h('div', [
-      h('p', { id: 'policy' }, 'See our policy'),
-      h(TextField, { 'id': 'e', 'label': 'Email', 'description': 'Work address', 'invalid': true, 'errorMessage': 'Required', 'aria-describedby': 'policy' }),
-    ]), { attachTo: document.body })
+    const wrapper = mount(
+      () =>
+        h('div', [
+          h('p', { id: 'policy' }, 'See our policy'),
+          h(TextField, {
+            id: 'e',
+            label: 'Email',
+            description: 'Work address',
+            invalid: true,
+            errorMessage: 'Required',
+            'aria-describedby': 'policy',
+          }),
+        ]),
+      { attachTo: document.body },
+    )
     const ids = wrapper.get('input').attributes('aria-describedby')!.split(' ')
     // The description is dropped while invalid
     expect(ids).toEqual(['policy', 'e-error'])
-    expect(ids.map(id => document.getElementById(id)?.textContent?.trim())).toEqual(['See our policy', 'Required'])
+    expect(ids.map((id) => document.getElementById(id)?.textContent?.trim())).toEqual([
+      'See our policy',
+      'Required',
+    ])
     expect(wrapper.find('[data-slot=textfield]').attributes('aria-describedby')).toBeUndefined()
     wrapper.unmount()
   })
 
   it('a failed validate marks the input invalid and describes it with the message; fixing it clears both', async () => {
-    const wrapper = mount(TextField, { props: { id: 'n', label: 'Name', validate: (v: string | number) => String(v).length < 3 ? 'At least 3 characters' : null } })
+    const wrapper = mount(TextField, {
+      props: {
+        id: 'n',
+        label: 'Name',
+        validate: (v: string | number) => (String(v).length < 3 ? 'At least 3 characters' : null),
+      },
+    })
     const input = wrapper.get('input')
     await input.setValue('ab')
     await input.trigger('change')
@@ -147,7 +197,10 @@ describe('TextField', () => {
   })
 
   it('autocomplete reaches the input, so its purpose is programmatically determinable', () => {
-    const wrapper = mount(TextField, { props: { label: 'Email' }, attrs: { autocomplete: 'email' } })
+    const wrapper = mount(TextField, {
+      props: { label: 'Email' },
+      attrs: { autocomplete: 'email' },
+    })
     expect(wrapper.get('input').attributes('autocomplete')).toBe('email')
     expect(wrapper.attributes('autocomplete')).toBeUndefined()
     wrapper.unmount()
@@ -171,11 +224,13 @@ describe('TextField label / description / error slots', () => {
     let labelUpdates = 0
     const countLabelUpdates: ComponentOptions = {
       updated() {
-        if (this.$el instanceof Element && this.$el.matches('[data-slot=label]'))
-          labelUpdates++
+        if (this.$el instanceof Element && this.$el.matches('[data-slot=label]')) labelUpdates++
       },
     }
-    const wrapper = mount(TextField, { props: { label: 'Email', description: 'A' }, global: { mixins: [countLabelUpdates] } })
+    const wrapper = mount(TextField, {
+      props: { label: 'Email', description: 'A' },
+      global: { mixins: [countLabelUpdates] },
+    })
     await wrapper.setProps({ description: 'B' })
     expect(wrapper.get('[data-slot=description]').text()).toBe('B')
     await wrapper.setProps({ description: undefined })
@@ -211,10 +266,13 @@ describe('TextField label / description / error slots', () => {
   })
 
   it('a #label slot that renders nothing falls back to the `label` prop', () => {
-    const wrapper = mount(defineComponent({
-      components: { TextField },
-      template: '<TextField id="f" label="Email"><template #label><span v-if="false" /></template></TextField>',
-    }))
+    const wrapper = mount(
+      defineComponent({
+        components: { TextField },
+        template:
+          '<TextField id="f" label="Email"><template #label><span v-if="false" /></template></TextField>',
+      }),
+    )
     const label = wrapper.get('[data-slot=label]')
     expect(label.text()).toBe('Email')
     expect(label.find('span').exists()).toBe(false)
@@ -223,11 +281,14 @@ describe('TextField label / description / error slots', () => {
 
   it('a parent toggling `<template v-if #label>` switches between slot content and the `label` prop', async () => {
     const show = ref(true)
-    const wrapper = mount(defineComponent({
-      components: { TextField },
-      setup: () => ({ show }),
-      template: '<TextField id="f" label="Email"><template v-if="show" #label><b data-test="custom">Custom</b></template></TextField>',
-    }))
+    const wrapper = mount(
+      defineComponent({
+        components: { TextField },
+        setup: () => ({ show }),
+        template:
+          '<TextField id="f" label="Email"><template v-if="show" #label><b data-test="custom">Custom</b></template></TextField>',
+      }),
+    )
     const label = () => wrapper.get('[data-slot=label]')
     expect(label().find('[data-test=custom]').exists()).toBe(true)
     expect(label().text()).toBe('Custom')

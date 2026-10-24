@@ -84,25 +84,27 @@ Use `selection-mode="single"` for mutually exclusive choices or `selection-mode=
 Override the `toggleButtonGroup` theme app-wide with `createHareUI`:
 
 ```ts
-app.use(createHareUI({
-  ui: {
-    toggleButtonGroup: {
-      slots: { base: 'rounded-lg', separator: 'opacity-25' },
-      variants: { fullWidth: { true: { base: 'w-full' } } },
+app.use(
+  createHareUI({
+    ui: {
+      toggleButtonGroup: {
+        slots: { base: 'rounded-lg', separator: 'opacity-25' },
+        variants: { fullWidth: { true: { base: 'w-full' } } },
+      },
     },
-  },
-}))
+  }),
+)
 ```
 
 ## Styling Reference
 
 Each rendered element carries the same `data-slot` string as HeroUI, so selectors translate 1:1.
 
-| `ui` key | `data-slot` | Description |
-|---|---|---|
-| `base` | `toggle-button-group` | Group container |
-| `separator` | `toggle-button-group-separator` | Divider inside each ToggleButton |
-| `button` | `toggle-button` | Classes added to each grouped ToggleButton |
+| `ui` key    | `data-slot`                     | Description                                |
+| ----------- | ------------------------------- | ------------------------------------------ |
+| `base`      | `toggle-button-group`           | Group container                            |
+| `separator` | `toggle-button-group-separator` | Divider inside each ToggleButton           |
+| `button`    | `toggle-button`                 | Classes added to each grouped ToggleButton |
 
 ## API Reference
 

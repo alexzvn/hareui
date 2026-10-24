@@ -10,7 +10,9 @@ const data = [
   { command: 'Terminal', runs: 611 },
 ]
 
-const series = { runs: { name: 'Runs', valueFormatter: (value: number) => value.toLocaleString('en-US') } }
+const series = {
+  runs: { name: 'Runs', valueFormatter: (value: number) => value.toLocaleString('en-US') },
+}
 </script>
 
 <template>

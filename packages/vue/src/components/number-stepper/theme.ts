@@ -25,20 +25,26 @@ export default {
     size: {
       sm: {
         group: 'gap-0',
-        decrementButton: 'size-8 md:size-7 active:scale-98 data-[pressed=true]:scale-98 [&_svg]:size-3.5',
-        incrementButton: 'size-8 md:size-7 active:scale-98 data-[pressed=true]:scale-98 [&_svg]:size-3.5',
+        decrementButton:
+          'size-8 md:size-7 active:scale-98 data-[pressed=true]:scale-98 [&_svg]:size-3.5',
+        incrementButton:
+          'size-8 md:size-7 active:scale-98 data-[pressed=true]:scale-98 [&_svg]:size-3.5',
         value: 'h-8 min-w-6 text-xs md:h-7 md:min-w-5',
       },
       md: {
         group: 'gap-0',
-        decrementButton: 'size-9 md:size-8 active:scale-98 data-[pressed=true]:scale-98 [&_svg]:size-4',
-        incrementButton: 'size-9 md:size-8 active:scale-98 data-[pressed=true]:scale-98 [&_svg]:size-4',
+        decrementButton:
+          'size-9 md:size-8 active:scale-98 data-[pressed=true]:scale-98 [&_svg]:size-4',
+        incrementButton:
+          'size-9 md:size-8 active:scale-98 data-[pressed=true]:scale-98 [&_svg]:size-4',
         value: 'h-9 min-w-7 text-sm md:h-8 md:min-w-6',
       },
       lg: {
         group: 'gap-0.5',
-        decrementButton: 'size-10 md:size-9 active:scale-96 data-[pressed=true]:scale-96 [&_svg]:size-5 md:[&_svg]:size-4',
-        incrementButton: 'size-10 md:size-9 active:scale-96 data-[pressed=true]:scale-96 [&_svg]:size-5 md:[&_svg]:size-4',
+        decrementButton:
+          'size-10 md:size-9 active:scale-96 data-[pressed=true]:scale-96 [&_svg]:size-5 md:[&_svg]:size-4',
+        incrementButton:
+          'size-10 md:size-9 active:scale-96 data-[pressed=true]:scale-96 [&_svg]:size-5 md:[&_svg]:size-4',
         value: 'h-10 min-w-8 text-base md:h-9 md:min-w-7',
       },
     },

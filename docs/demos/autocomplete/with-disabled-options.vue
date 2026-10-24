@@ -22,8 +22,6 @@ const animals: ListBoxItem[] = [
     search-placeholder="Search animals..."
     :items="animals"
   >
-    <template #empty>
-      No results found
-    </template>
+    <template #empty> No results found </template>
   </Autocomplete>
 </template>

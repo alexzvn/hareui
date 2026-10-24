@@ -12,8 +12,7 @@ export function percentValue(
   fallback = 0,
   options: { keepNonFinite?: boolean } = {},
 ): number {
-  if (value === undefined || value === null || value === '')
-    return fallback
+  if (value === undefined || value === null || value === '') return fallback
   if (typeof value === 'number')
     return Number.isFinite(value) || options.keepNonFinite ? value : fallback
   const text = value.trim()

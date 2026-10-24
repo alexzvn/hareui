@@ -1,6 +1,13 @@
 <script setup lang="ts">
+import {
+  Button,
+  ButtonGroup,
+  Separator,
+  ToggleButton,
+  ToggleButtonGroup,
+  Toolbar,
+} from '@hareui/vue'
 import { Icon } from '@iconify/vue'
-import { Button, ButtonGroup, Separator, ToggleButton, ToggleButtonGroup, Toolbar } from '@hareui/vue'
 </script>
 
 <template>

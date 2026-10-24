@@ -3,7 +3,12 @@ import { RadioButtonGroup, RadioButtonGroupItem } from '@hareui/vue'
 
 const rooms = [
   { value: 'atlas', title: 'Atlas', description: 'Ground floor, next to the kitchen', seats: 4 },
-  { value: 'borealis', title: 'Borealis', description: 'Second floor, with a whiteboard wall', seats: 8 },
+  {
+    value: 'borealis',
+    title: 'Borealis',
+    description: 'Second floor, with a whiteboard wall',
+    seats: 8,
+  },
   { value: 'cosmos', title: 'Cosmos', description: 'Top floor, video conferencing kit', seats: 14 },
 ]
 </script>

@@ -2,11 +2,14 @@ import { mount } from '@vue/test-utils'
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest'
 import type { VNodeChild } from 'vue'
 import { h, nextTick, ref } from 'vue'
+
 import AlertDialog from '../src/components/alert-dialog/AlertDialog.vue'
 import { expectAccessible } from './a11y'
 
 function escapeKeydown() {
-  document.dispatchEvent(new KeyboardEvent('keydown', { key: 'Escape', bubbles: true, cancelable: true }))
+  document.dispatchEvent(
+    new KeyboardEvent('keydown', { key: 'Escape', bubbles: true, cancelable: true }),
+  )
 }
 
 // Reka's Presence needs three ticks before a closed dialog leaves the DOM (see modal.spec.ts).
@@ -23,18 +26,24 @@ function stubExitAnimations() {
   const original = window.getComputedStyle.bind(window)
   vi.spyOn(window, 'getComputedStyle').mockImplementation((el: Element, pseudo?: string | null) => {
     const real = original(el, pseudo)
-    const animatesClosed = el.getAttribute?.('data-state') === 'closed' && /\[data-state=closed\]\)\]:animate-(?!none)/.test(el.getAttribute('class') ?? '')
+    const animatesClosed =
+      el.getAttribute?.('data-state') === 'closed' &&
+      /\[data-state=closed\]\)\]:animate-(?!none)/.test(el.getAttribute('class') ?? '')
     if (!animatesClosed) return real
     return new Proxy(real, {
-      get: (target, key) => key === 'animationName' ? 'exit' : Reflect.get(target, key),
+      get: (target, key) => (key === 'animationName' ? 'exit' : Reflect.get(target, key)),
     })
   })
 }
 
 async function finishExit() {
   await waitUnmount()
-  const event = Object.assign(new Event('animationend', { bubbles: true }), { animationName: 'exit' })
-  document.querySelectorAll('[data-slot=alert-dialog-backdrop][data-state=closed]').forEach(el => el.dispatchEvent(event))
+  const event = Object.assign(new Event('animationend', { bubbles: true }), {
+    animationName: 'exit',
+  })
+  document
+    .querySelectorAll('[data-slot=alert-dialog-backdrop][data-state=closed]')
+    .forEach((el) => el.dispatchEvent(event))
   await waitUnmount()
 }
 
@@ -42,7 +51,10 @@ const dialog = () => document.querySelector<HTMLElement>('[data-slot=alert-dialo
 
 describe('alertDialog', () => {
   it('renders role="alertdialog" with the default danger icon', async () => {
-    const wrapper = mount(AlertDialog, { props: { defaultOpen: true, title: 'Delete?' }, slots: { body: () => 'Body' } })
+    const wrapper = mount(AlertDialog, {
+      props: { defaultOpen: true, title: 'Delete?' },
+      slots: { body: () => 'Body' },
+    })
     await nextTick()
     expect(dialog()?.getAttribute('role')).toBe('alertdialog')
     const icon = document.querySelector('[data-slot=alert-dialog-icon]')
@@ -52,7 +64,10 @@ describe('alertDialog', () => {
   })
 
   it('escape does not close by default, but does with keyboardDismissible', async () => {
-    const closed = mount(AlertDialog, { props: { defaultOpen: true }, slots: { body: () => 'Body' } })
+    const closed = mount(AlertDialog, {
+      props: { defaultOpen: true },
+      slots: { body: () => 'Body' },
+    })
     await nextTick()
     escapeKeydown()
     await waitUnmount()
@@ -60,7 +75,10 @@ describe('alertDialog', () => {
     closed.unmount()
     await waitUnmount()
 
-    const dismissible = mount(AlertDialog, { props: { defaultOpen: true, keyboardDismissible: true }, slots: { body: () => 'Body' } })
+    const dismissible = mount(AlertDialog, {
+      props: { defaultOpen: true, keyboardDismissible: true },
+      slots: { body: () => 'Body' },
+    })
     await nextTick()
     escapeKeydown()
     await waitUnmount()
@@ -71,7 +89,10 @@ describe('alertDialog', () => {
   it('footer close() closes the dialog', async () => {
     const wrapper = mount(AlertDialog, {
       props: { defaultOpen: true },
-      slots: { footer: ({ close }: { close: () => void }) => h('button', { id: 'confirm', onClick: close }, 'Confirm') },
+      slots: {
+        footer: ({ close }: { close: () => void }) =>
+          h('button', { id: 'confirm', onClick: close }, 'Confirm'),
+      },
     })
     await nextTick()
     document.querySelector<HTMLButtonElement>('#confirm')!.click()
@@ -84,10 +105,14 @@ describe('alertDialog', () => {
     const warn = vi.spyOn(console, 'warn').mockImplementation(() => {})
     const wrapper = mount(AlertDialog, {
       props: { defaultOpen: true, title: 'Custom content' },
-      slots: { content: ({ close }: { close: () => void }) => h('button', { onClick: close }, 'Done') },
+      slots: {
+        content: ({ close }: { close: () => void }) => h('button', { onClick: close }, 'Done'),
+      },
     })
     await nextTick()
-    expect(document.getElementById(dialog()!.getAttribute('aria-labelledby')!)?.textContent).toBe('Custom content')
+    expect(document.getElementById(dialog()!.getAttribute('aria-labelledby')!)?.textContent).toBe(
+      'Custom content',
+    )
     expect(warn).not.toHaveBeenCalledWith(expect.stringContaining('requires a `DialogTitle`'))
     wrapper.unmount()
     warn.mockRestore()
@@ -99,21 +124,34 @@ describe('alertDialog', () => {
     // A failing assertion must not leave an open dialog behind for the next test.
     afterEach(() => {
       vi.restoreAllMocks()
-      mounted.splice(0).forEach(w => w.unmount())
+      mounted.splice(0).forEach((w) => w.unmount())
       document.body.innerHTML = ''
     })
 
     function mountControlled() {
       const open = ref(false)
-      const wrapper = mount({
-        render: () => h('div', [
-          h('main', { id: 'page' }, 'Page content'),
-          h(AlertDialog, { 'open': open.value, 'keyboardDismissible': true, 'onUpdate:open': (v: boolean) => (open.value = v) }, {
-            body: () => 'Body',
-            footer: ({ close }: { close: () => void }) => h('button', { id: 'confirm', onClick: close }, 'Confirm'),
-          }),
-        ]),
-      }, { attachTo: document.body })
+      const wrapper = mount(
+        {
+          render: () =>
+            h('div', [
+              h('main', { id: 'page' }, 'Page content'),
+              h(
+                AlertDialog,
+                {
+                  open: open.value,
+                  keyboardDismissible: true,
+                  'onUpdate:open': (v: boolean) => (open.value = v),
+                },
+                {
+                  body: () => 'Body',
+                  footer: ({ close }: { close: () => void }) =>
+                    h('button', { id: 'confirm', onClick: close }, 'Confirm'),
+                },
+              ),
+            ]),
+        },
+        { attachTo: document.body },
+      )
       mounted.push(wrapper)
       // The mount container is the sibling of the portalled dialog (the `#app` of a real page).
       const pageRoot = document.querySelector<HTMLElement>('#page')!.parentElement!.parentElement!
@@ -123,38 +161,59 @@ describe('alertDialog', () => {
     // Each close path, repeated: the live repro leaves the page hidden from the 3rd cycle on.
     const closePaths: Array<[string, (open: { value: boolean }) => void]> = [
       ['Escape', () => escapeKeydown()],
-      ['close button', () => document.querySelector<HTMLButtonElement>('[data-slot=alert-dialog-close-trigger]')!.click()],
+      [
+        'close button',
+        () =>
+          document
+            .querySelector<HTMLButtonElement>('[data-slot=alert-dialog-close-trigger]')!
+            .click(),
+      ],
       ['footer close()', () => document.querySelector<HTMLButtonElement>('#confirm')!.click()],
-      ['controlled open=false', (open) => { open.value = false }],
+      [
+        'controlled open=false',
+        (open) => {
+          open.value = false
+        },
+      ],
     ]
-    it.each(closePaths)('releases aria-hidden on the page after every open/close cycle closed with %s', async (_name, close) => {
-      // behaviour-final-check H1
-      const { open, pageRoot } = mountControlled()
-      for (let cycle = 1; cycle <= 4; cycle++) {
-        open.value = true
-        await nextTick()
-        expect(pageRoot.getAttribute('aria-hidden'), `open, cycle ${cycle}`).toBe('true')
-        close(open)
-        await waitUnmount()
-        // the container's exit animation must not run empty
-        expect(dialog(), `mounted while exiting, cycle ${cycle}`).not.toBeNull()
-        await finishExit()
-        expect(open.value, `closed, cycle ${cycle}`).toBe(false)
-        expect(dialog(), `unmounted, cycle ${cycle}`).toBeNull()
-        expect(pageRoot.getAttribute('aria-hidden'), `aria-hidden after cycle ${cycle}`).toBeNull()
-      }
-    })
+    it.each(closePaths)(
+      'releases aria-hidden on the page after every open/close cycle closed with %s',
+      async (_name, close) => {
+        // behaviour-final-check H1
+        const { open, pageRoot } = mountControlled()
+        for (let cycle = 1; cycle <= 4; cycle++) {
+          open.value = true
+          await nextTick()
+          expect(pageRoot.getAttribute('aria-hidden'), `open, cycle ${cycle}`).toBe('true')
+          close(open)
+          await waitUnmount()
+          // the container's exit animation must not run empty
+          expect(dialog(), `mounted while exiting, cycle ${cycle}`).not.toBeNull()
+          await finishExit()
+          expect(open.value, `closed, cycle ${cycle}`).toBe(false)
+          expect(dialog(), `unmounted, cycle ${cycle}`).toBeNull()
+          expect(
+            pageRoot.getAttribute('aria-hidden'),
+            `aria-hidden after cycle ${cycle}`,
+          ).toBeNull()
+        }
+      },
+    )
   })
 
   describe('accessibility', () => {
     const mounted: Array<{ unmount: () => void }> = []
     afterEach(() => {
-      mounted.splice(0).forEach(w => w.unmount())
+      mounted.splice(0).forEach((w) => w.unmount())
       document.body.innerHTML = ''
     })
 
-    const closeTrigger = () => document.querySelector<HTMLButtonElement>('[data-slot=alert-dialog-close-trigger]')!
-    const tab = (shiftKey = false) => (document.activeElement as HTMLElement).dispatchEvent(new KeyboardEvent('keydown', { key: 'Tab', shiftKey, bubbles: true, cancelable: true }))
+    const closeTrigger = () =>
+      document.querySelector<HTMLButtonElement>('[data-slot=alert-dialog-close-trigger]')!
+    const tab = (shiftKey = false) =>
+      (document.activeElement as HTMLElement).dispatchEvent(
+        new KeyboardEvent('keydown', { key: 'Tab', shiftKey, bubbles: true, cancelable: true }),
+      )
 
     // `undefined` drops a default slot, so a test can check the dialog without it.
     type SlotFns = Partial<Record<string, (props: { close: () => void }) => VNodeChild>>
@@ -163,7 +222,10 @@ describe('alertDialog', () => {
       const all: SlotFns = {
         default: () => h('button', { id: 'trigger' }, 'Delete project'),
         body: () => h('p', 'This permanently deletes the project.'),
-        footer: ({ close }) => [h('button', { id: 'cancel', onClick: close }, 'Cancel'), h('button', { id: 'confirm', onClick: close }, 'Delete')],
+        footer: ({ close }) => [
+          h('button', { id: 'cancel', onClick: close }, 'Cancel'),
+          h('button', { id: 'confirm', onClick: close }, 'Delete'),
+        ],
         ...slots,
       }
       const wrapper = mount(AlertDialog, {
@@ -219,13 +281,19 @@ describe('alertDialog', () => {
       expect(heading.getAttribute('data-slot')).toBe('alert-dialog-heading')
       expect(heading.textContent?.trim()).toBe('Delete project?')
       expect(dialog()!.hasAttribute('aria-describedby')).toBe(false)
-      expect(document.querySelector('[data-slot=alert-dialog-default-icon]')!.getAttribute('aria-hidden')).toBe('true')
+      expect(
+        document
+          .querySelector('[data-slot=alert-dialog-default-icon]')!
+          .getAttribute('aria-hidden'),
+      ).toBe('true')
     })
 
     it('names the alert dialog from `title` when #header replaces the visible heading', async () => {
       const { trigger } = mountWithTrigger({}, { header: () => h('div', 'Custom') })
       await openWith(trigger)
-      expect(document.getElementById(dialog()!.getAttribute('aria-labelledby')!)?.textContent).toBe('Delete project?')
+      expect(document.getElementById(dialog()!.getAttribute('aria-labelledby')!)?.textContent).toBe(
+        'Delete project?',
+      )
     })
 
     it('the default close button is named "Close"', async () => {
@@ -242,9 +310,17 @@ describe('alertDialog', () => {
       const seen: Array<string | null> = []
       for (let i = 0; i < 4; i++) {
         tab()
-        seen.push((document.activeElement as HTMLElement).id || (document.activeElement as HTMLElement).dataset.slot!)
+        seen.push(
+          (document.activeElement as HTMLElement).id ||
+            (document.activeElement as HTMLElement).dataset.slot!,
+        )
       }
-      expect(seen).toEqual(['alert-dialog-close-trigger', 'cancel', 'confirm', 'alert-dialog-close-trigger'])
+      expect(seen).toEqual([
+        'alert-dialog-close-trigger',
+        'cancel',
+        'confirm',
+        'alert-dialog-close-trigger',
+      ])
       tab(true)
       expect(document.activeElement?.id).toBe('confirm')
     })

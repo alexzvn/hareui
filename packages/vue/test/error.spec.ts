@@ -1,6 +1,7 @@
 import { mount } from '@vue/test-utils'
 import { describe, expect, it } from 'vitest'
 import { h } from 'vue'
+
 import Error from '../src/components/error/Error.vue'
 import { expectAccessible } from './a11y'
 
@@ -13,14 +14,20 @@ function withResolvers<T>() {
   return { promise, resolve }
 }
 
-const error = { statusCode: 404, statusMessage: 'Page not found', message: 'The page you are looking for does not exist.' }
+const error = {
+  statusCode: 404,
+  statusMessage: 'Page not found',
+  message: 'The page you are looking for does not exist.',
+}
 
 describe('error', () => {
   it('renders the status code, an h1 status message and the message', () => {
     const wrapper = mount(Error, { props: { error } })
     expect(wrapper.get('[data-slot=error-status-code]').text()).toBe('404')
     expect(wrapper.get('h1').text()).toBe('Page not found')
-    expect(wrapper.get('[data-slot=error-message]').text()).toBe('The page you are looking for does not exist.')
+    expect(wrapper.get('[data-slot=error-message]').text()).toBe(
+      'The page you are looking for does not exist.',
+    )
   })
 
   it('accepts the H3 field names status / statusText', () => {
@@ -30,7 +37,9 @@ describe('error', () => {
   })
 
   it('hides the message when it equals the status message', () => {
-    const wrapper = mount(Error, { props: { error: { statusCode: 404, statusMessage: 'Not found', message: 'Not found' } } })
+    const wrapper = mount(Error, {
+      props: { error: { statusCode: 404, statusMessage: 'Not found', message: 'Not found' } },
+    })
     expect(wrapper.find('[data-slot=error-message]').exists()).toBe(false)
   })
 
@@ -45,22 +54,32 @@ describe('error', () => {
     setTimeout(resolve, 2)
     await promise
     const event = new MouseEvent('click', { bubbles: true, cancelable: true })
-    link.element.addEventListener('click', e => e.preventDefault()) // keep happy-dom from navigating
+    link.element.addEventListener('click', (e) => e.preventDefault()) // keep happy-dom from navigating
     link.element.dispatchEvent(event)
     expect(wrapper.emitted('clear')).toHaveLength(1)
     expect(wrapper.emitted('clear')![0][0]).toBe(event)
   })
 
   it('a custom redirect sets the href; an empty redirect renders a plain button', () => {
-    expect(mount(Error, { props: { error, redirect: '/docs' } }).get('a').attributes('href')).toBe('/docs')
+    expect(
+      mount(Error, { props: { error, redirect: '/docs' } })
+        .get('a')
+        .attributes('href'),
+    ).toBe('/docs')
     const wrapper = mount(Error, { props: { error, redirect: '' } })
     expect(wrapper.find('a').exists()).toBe(false)
     expect(wrapper.get('[data-slot=error-links] button').attributes('type')).toBe('button')
   })
 
   it('clear={false} hides the button; an object sets label and forwards button props', () => {
-    expect(mount(Error, { props: { error, clear: false } }).find('[data-slot=error-links]').exists()).toBe(false)
-    const custom = mount(Error, { props: { error, clear: { label: 'Go back', class: 'rounded-full' } } })
+    expect(
+      mount(Error, { props: { error, clear: false } })
+        .find('[data-slot=error-links]')
+        .exists(),
+    ).toBe(false)
+    const custom = mount(Error, {
+      props: { error, clear: { label: 'Go back', class: 'rounded-full' } },
+    })
     expect(custom.get('[data-slot=error-links] a').text()).toBe('Go back')
     expect(custom.get('[data-slot=error-links] a').classes()).toContain('rounded-full')
   })
@@ -84,17 +103,22 @@ describe('error', () => {
   it.each([
     ['link', {}],
     ['button', { redirect: '' }],
-  ])('is a main landmark with a level-1 heading and a named %s action, with no axe violations', async (kind, props) => {
-    const wrapper = mount(Error, { props: { error, ...props }, attachTo: document.body })
-    expect(wrapper.element.tagName).toBe('MAIN')
-    expect(wrapper.get('h1').text()).toBe('Page not found')
-    const action = wrapper.get(`[data-slot=error-links] ${kind === 'link' ? 'a[href]' : 'button'}`)
-    expect(action.text()).toBe('Back to home')
-    // Reachable by Tab: a real link / button, not removed from the tab order
-    expect(action.attributes('tabindex') ?? '0').toBe('0')
-    await expectAccessible(wrapper)
-    wrapper.unmount()
-  })
+  ])(
+    'is a main landmark with a level-1 heading and a named %s action, with no axe violations',
+    async (kind, props) => {
+      const wrapper = mount(Error, { props: { error, ...props }, attachTo: document.body })
+      expect(wrapper.element.tagName).toBe('MAIN')
+      expect(wrapper.get('h1').text()).toBe('Page not found')
+      const action = wrapper.get(
+        `[data-slot=error-links] ${kind === 'link' ? 'a[href]' : 'button'}`,
+      )
+      expect(action.text()).toBe('Back to home')
+      // Reachable by Tab: a real link / button, not removed from the tab order
+      expect(action.attributes('tabindex') ?? '0').toBe('0')
+      await expectAccessible(wrapper)
+      wrapper.unmount()
+    },
+  )
 
   it('a status code alone, without a heading, has no axe violations', async () => {
     const wrapper = mount(Error, { props: { error: { statusCode: 500 } }, attachTo: document.body })

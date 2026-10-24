@@ -1,5 +1,6 @@
 import type { ComputedRef, Ref } from 'vue'
 import { computed, getCurrentInstance, readonly, ref, watch } from 'vue'
+
 import { snapNumber } from '../utils/number'
 
 export interface NumberValueOptions {
@@ -47,7 +48,9 @@ export function useNumberValue(options: NumberValueOptions): NumberValue {
     return snapNumber(value, options.min(), options.max(), options.step())
   }
 
-  const effectiveStep = computed(() => options.step() ?? (options.formatOptions()?.style === 'percent' ? 0.01 : undefined))
+  const effectiveStep = computed(
+    () => options.step() ?? (options.formatOptions()?.style === 'percent' ? 0.01 : undefined),
+  )
   const displayValue = computed(() => snap(model.value))
   const defaultDisplayValue = computed(() => snap(options.defaultValue()))
 
@@ -69,13 +72,10 @@ export function useNumberValue(options: NumberValueOptions): NumberValue {
   // clears its own state but, in uncontrolled mode, never emits `undefined` (its passive v-model only emits values
   // that differ from the absent prop), so commit the empty value here.
   function commitEmpty() {
-    if (formValue.value == null)
-      return
+    if (formValue.value == null) return
     formValue.value = undefined
-    if (model.value == null)
-      instance?.emit('update:modelValue', undefined)
-    else
-      model.value = undefined
+    if (model.value == null) instance?.emit('update:modelValue', undefined)
+    else model.value = undefined
     onCommit?.()
   }
 
@@ -84,5 +84,13 @@ export function useNumberValue(options: NumberValueOptions): NumberValue {
     model.value = formValue.value
   }
 
-  return { effectiveStep, displayValue, defaultDisplayValue, formValue: readonly(formValue), commit, commitEmpty, reset }
+  return {
+    effectiveStep,
+    displayValue,
+    defaultDisplayValue,
+    formValue: readonly(formValue),
+    commit,
+    commitEmpty,
+    reset,
+  }
 }

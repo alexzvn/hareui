@@ -9,8 +9,7 @@ const isInvalid = computed(() => value.value.length > 0 && value.value.length < 
 
 function handleSubmit(e: Event) {
   e.preventDefault()
-  if (value.value.length < MIN_LENGTH)
-    return
+  if (value.value.length < MIN_LENGTH) return
   isSubmitting.value = true
   // Simulate API call
   setTimeout(() => {
@@ -34,14 +33,18 @@ function handleSubmit(e: Event) {
       :error-message="`Search query must be at least ${MIN_LENGTH} characters`"
       :description="`Enter at least ${MIN_LENGTH} characters to search`"
     />
-    <Button class="w-full" :disabled="value.length < MIN_LENGTH" :pending="isSubmitting" type="submit" variant="primary">
+    <Button
+      class="w-full"
+      :disabled="value.length < MIN_LENGTH"
+      :pending="isSubmitting"
+      type="submit"
+      variant="primary"
+    >
       <template v-if="isSubmitting">
         <Spinner color="current" size="sm" />
         Searching...
       </template>
-      <template v-else>
-        Search
-      </template>
+      <template v-else> Search </template>
     </Button>
   </Form>
 </template>

@@ -18,21 +18,20 @@ async function load(url: string, append: boolean) {
   controller = new AbortController()
   loading.value = true
   try {
-    const json = await (await fetch(url.replace(/^http:\/\//i, 'https://'), { signal: controller.signal })).json()
+    const json = await (
+      await fetch(url.replace(/^http:\/\//i, 'https://'), { signal: controller.signal })
+    ).json()
     cursor = json.next
     characters.value = append ? [...characters.value, ...json.results] : json.results
     loading.value = false
-  }
-  catch (error) {
-    if ((error as Error).name !== 'AbortError')
-      loading.value = false
+  } catch (error) {
+    if ((error as Error).name !== 'AbortError') loading.value = false
   }
 }
 function loadMore() {
-  if (cursor && !loading.value)
-    load(cursor, true)
+  if (cursor && !loading.value) load(cursor, true)
 }
-watch(filterText, text => load(`https://swapi.py4e.com/api/people/?search=${text}`, false))
+watch(filterText, (text) => load(`https://swapi.py4e.com/api/people/?search=${text}`, false))
 // Client only: VitePress SSR-renders demos
 onMounted(() => load('https://swapi.py4e.com/api/people/?search=', false))
 </script>
@@ -45,7 +44,7 @@ onMounted(() => load('https://swapi.py4e.com/api/people/?search=', false))
     label="Pick a Character"
     placeholder="Star Wars characters..."
     :filter="false"
-    :items="characters.map(c => ({ value: c.name, label: c.name }))"
+    :items="characters.map((c) => ({ value: c.name, label: c.name }))"
     :loading="loading"
     @load-more="loadMore"
   >

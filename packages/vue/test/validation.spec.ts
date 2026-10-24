@@ -1,9 +1,10 @@
 import type { VueWrapper } from '@vue/test-utils'
-import type { ValidationErrors } from '../src/components/form/context'
 import { flushPromises, mount } from '@vue/test-utils'
 import { afterEach, describe, expect, it } from 'vitest'
 import { h, nextTick, ref } from 'vue'
+
 import Checkbox from '../src/components/checkbox/Checkbox.vue'
+import type { ValidationErrors } from '../src/components/form/context'
 import Form from '../src/components/form/Form.vue'
 import Input from '../src/components/input/Input.vue'
 import NumberField from '../src/components/number-field/NumberField.vue'
@@ -11,7 +12,7 @@ import RadioGroup from '../src/components/radio-group/RadioGroup.vue'
 import Switch from '../src/components/switch/Switch.vue'
 import TextField from '../src/components/text-field/TextField.vue'
 
-const minLength3 = (v: string | number) => String(v).length < 3 ? 'Too short' : null
+const minLength3 = (v: string | number) => (String(v).length < 3 ? 'Too short' : null)
 
 let wrapper: VueWrapper | undefined
 afterEach(() => {
@@ -49,7 +50,9 @@ describe('validation: native (default)', () => {
     await commit(input)
     expect(error()).toBe('Too short')
     expect(input.getAttribute('aria-invalid')).toBe('true')
-    expect(input.getAttribute('aria-describedby')).toContain(document.querySelector('[data-slot="field-error"]')!.id)
+    expect(input.getAttribute('aria-describedby')).toContain(
+      document.querySelector('[data-slot="field-error"]')!.id,
+    )
 
     await type(input, 'abc')
     expect(error()).toBe('Too short')
@@ -63,7 +66,7 @@ describe('validation: native (default)', () => {
       h(TextField, { label: 'A', name: 'a', required: true }),
       h(TextField, { label: 'B', name: 'b', required: true }),
     ])
-    const [a, b] = w.findAll('input').map(i => i.element)
+    const [a, b] = w.findAll('input').map((i) => i.element)
     w.get('form').element.checkValidity()
     await flushPromises()
     const errors = document.querySelectorAll('[data-slot="field-error"]')
@@ -74,7 +77,9 @@ describe('validation: native (default)', () => {
   })
 
   it('form reset clears displayed errors and restores defaultValue', async () => {
-    const w = mountInForm(() => h(TextField, { label: 'Name', name: 'name', defaultValue: 'x', validate: minLength3 }))
+    const w = mountInForm(() =>
+      h(TextField, { label: 'Name', name: 'name', defaultValue: 'x', validate: minLength3 }),
+    )
     const input = w.get('input').element
     await commit(input)
     expect(error()).toBe('Too short')
@@ -88,7 +93,10 @@ describe('validation: native (default)', () => {
 
 describe('validation: aria', () => {
   it('shows validate() errors in realtime and never blocks submission', async () => {
-    const w = mountInForm(() => h(TextField, { label: 'Name', name: 'name', validate: minLength3 }), { validationBehavior: 'aria' })
+    const w = mountInForm(
+      () => h(TextField, { label: 'Name', name: 'name', validate: minLength3 }),
+      { validationBehavior: 'aria' },
+    )
     expect(w.get('form').attributes('novalidate')).toBeDefined()
     const input = w.get('input').element
     expect(error()).toBe('Too short')
@@ -100,7 +108,14 @@ describe('validation: aria', () => {
   })
 
   it('a field-level validationBehavior overrides the form', async () => {
-    mountInForm(() => h(TextField, { label: 'Name', name: 'name', validate: minLength3, validationBehavior: 'aria' }))
+    mountInForm(() =>
+      h(TextField, {
+        label: 'Name',
+        name: 'name',
+        validate: minLength3,
+        validationBehavior: 'aria',
+      }),
+    )
     await nextTick()
     expect(error()).toBe('Too short')
   })
@@ -109,7 +124,17 @@ describe('validation: aria', () => {
 describe('validation: precedence', () => {
   it('controlled `invalid` overrides validate(), both ways', async () => {
     const invalid = ref<boolean | undefined>(false)
-    wrapper = mount(() => h(TextField, { label: 'N', invalid: invalid.value, validationBehavior: 'aria', validate: () => 'Bad', errorMessage: 'Custom' }), { attachTo: document.body })
+    wrapper = mount(
+      () =>
+        h(TextField, {
+          label: 'N',
+          invalid: invalid.value,
+          validationBehavior: 'aria',
+          validate: () => 'Bad',
+          errorMessage: 'Custom',
+        }),
+      { attachTo: document.body },
+    )
     expect(error()).toBeUndefined()
     invalid.value = true
     await nextTick()
@@ -122,7 +147,13 @@ describe('validation: precedence', () => {
 
   it('server errors show immediately, clear once the user commits a change, and return with a new errors object', async () => {
     const errors = ref<ValidationErrors>({ email: 'Email taken' })
-    wrapper = mount(() => h(Form, { validationErrors: errors.value }, () => h(TextField, { label: 'Email', name: 'email' })), { attachTo: document.body })
+    wrapper = mount(
+      () =>
+        h(Form, { validationErrors: errors.value }, () =>
+          h(TextField, { label: 'Email', name: 'email' }),
+        ),
+      { attachTo: document.body },
+    )
     const input = wrapper.get('input').element
     expect(error()).toBe('Email taken')
     expect(wrapper.get('form').element.checkValidity()).toBe(false)
@@ -138,7 +169,14 @@ describe('validation: precedence', () => {
 
 describe('validation: toggles', () => {
   it('Checkbox: required blocks submission, shows the error on submit, clears when checked', async () => {
-    const w = mountInForm(() => h(Checkbox, { label: 'Terms', name: 'terms', required: true, errorMessage: 'Accept the terms' }))
+    const w = mountInForm(() =>
+      h(Checkbox, {
+        label: 'Terms',
+        name: 'terms',
+        required: true,
+        errorMessage: 'Accept the terms',
+      }),
+    )
     await flushPromises()
     w.get('form').element.checkValidity()
     await flushPromises()
@@ -152,7 +190,14 @@ describe('validation: toggles', () => {
   })
 
   it('Checkbox: form reset restores defaultValue and keeps errors hidden until the next submit', async () => {
-    const w = mountInForm(() => h(Checkbox, { label: 'Terms', name: 'terms', required: true, errorMessage: 'Accept the terms' }))
+    const w = mountInForm(() =>
+      h(Checkbox, {
+        label: 'Terms',
+        name: 'terms',
+        required: true,
+        errorMessage: 'Accept the terms',
+      }),
+    )
     await flushPromises()
     await w.get('[role="checkbox"]').trigger('click')
     await w.get('[role="checkbox"]').trigger('click')
@@ -166,7 +211,14 @@ describe('validation: toggles', () => {
   })
 
   it('NumberField: a stepper press commits validate() in native mode', async () => {
-    const w = mountInForm(() => h(NumberField, { label: 'Qty', name: 'qty', defaultValue: 1, validate: (n: number) => n > 2 ? 'Max 2' : null }))
+    const w = mountInForm(() =>
+      h(NumberField, {
+        label: 'Qty',
+        name: 'qty',
+        defaultValue: 1,
+        validate: (n: number) => (n > 2 ? 'Max 2' : null),
+      }),
+    )
     await flushPromises()
     const inc = w.get('[data-slot="number-field-increment-button"]')
     await inc.trigger('pointerdown')
@@ -182,7 +234,11 @@ describe('validation: toggles', () => {
   })
 
   it('Switch: validate() receives the on/off state', async () => {
-    mountInForm(() => h(Switch, { label: 'Wi-Fi', name: 'wifi', validate: (on: boolean) => on || 'Turn it on' }), { validationBehavior: 'aria' })
+    mountInForm(
+      () =>
+        h(Switch, { label: 'Wi-Fi', name: 'wifi', validate: (on: boolean) => on || 'Turn it on' }),
+      { validationBehavior: 'aria' },
+    )
     await nextTick()
     expect(error()).toBe('Turn it on')
     await wrapper!.get('[role="switch"]').trigger('click')
@@ -190,9 +246,23 @@ describe('validation: toggles', () => {
   })
 
   it('RadioGroup: required in a native form shows the #error slot with validation props', async () => {
-    const w = mountInForm(() => h(RadioGroup, { name: 'plan', required: true, items: [{ value: 'a', label: 'A' }, { value: 'b', label: 'B' }] }, {
-      error: ({ validationDetails }: { validationDetails: { valueMissing: boolean } }) => validationDetails.valueMissing ? 'Pick a plan' : 'Other',
-    }))
+    const w = mountInForm(() =>
+      h(
+        RadioGroup,
+        {
+          name: 'plan',
+          required: true,
+          items: [
+            { value: 'a', label: 'A' },
+            { value: 'b', label: 'B' },
+          ],
+        },
+        {
+          error: ({ validationDetails }: { validationDetails: { valueMissing: boolean } }) =>
+            validationDetails.valueMissing ? 'Pick a plan' : 'Other',
+        },
+      ),
+    )
     await flushPromises()
     w.get('form').element.checkValidity()
     await flushPromises()
@@ -203,7 +273,18 @@ describe('validation: toggles', () => {
   })
 
   it('RadioGroup: validate() gets the selected value and is skipped while nothing is selected', async () => {
-    mountInForm(() => h(RadioGroup, { name: 'plan', items: [{ value: 'a', label: 'A' }, { value: 'b', label: 'B' }], validate: (v: string) => v === 'b' ? 'B is sold out' : null }), { validationBehavior: 'aria' })
+    mountInForm(
+      () =>
+        h(RadioGroup, {
+          name: 'plan',
+          items: [
+            { value: 'a', label: 'A' },
+            { value: 'b', label: 'B' },
+          ],
+          validate: (v: string) => (v === 'b' ? 'B is sold out' : null),
+        }),
+      { validationBehavior: 'aria' },
+    )
     await nextTick()
     expect(error()).toBeUndefined()
     await wrapper!.findAll('[role="radio"]')[1]!.trigger('click')
@@ -213,7 +294,13 @@ describe('validation: toggles', () => {
 
 describe('TextField with a slotted Input', () => {
   it('validate() sees what the user typed; name and type come from the TextField; reset restores defaultValue', async () => {
-    const w = mountInForm(() => h(TextField, { label: 'Email', name: 'email', type: 'email', defaultValue: 'x', validate: minLength3 }, { default: () => h(Input, { class: 'custom' }) }))
+    const w = mountInForm(() =>
+      h(
+        TextField,
+        { label: 'Email', name: 'email', type: 'email', defaultValue: 'x', validate: minLength3 },
+        { default: () => h(Input, { class: 'custom' }) },
+      ),
+    )
     const input = w.get('input.custom').element as HTMLInputElement
     expect(input.name).toBe('email')
     expect(input.type).toBe('email')
@@ -233,9 +320,22 @@ describe('TextField with a slotted Input', () => {
 
   it('a slotted Input with its own v-model mirrors into the field', async () => {
     const value = ref('ab')
-    wrapper = mount(() => h(TextField, { label: 'N', validate: minLength3, validationBehavior: 'aria' }, {
-      default: () => h(Input, { 'modelValue': value.value, 'onUpdate:modelValue': (v: string | number | undefined) => (value.value = String(v)) }),
-    }), { attachTo: document.body })
+    wrapper = mount(
+      () =>
+        h(
+          TextField,
+          { label: 'N', validate: minLength3, validationBehavior: 'aria' },
+          {
+            default: () =>
+              h(Input, {
+                modelValue: value.value,
+                'onUpdate:modelValue': (v: string | number | undefined) =>
+                  (value.value = String(v)),
+              }),
+          },
+        ),
+      { attachTo: document.body },
+    )
     await nextTick()
     expect(error()).toBe('Too short')
     value.value = 'abcd'
@@ -246,11 +346,21 @@ describe('TextField with a slotted Input', () => {
     expect(error()).toBe('Too short')
   })
 
-  it('form reset writes the TextField defaultValue back to a slotted Input\'s own v-model', async () => {
+  it("form reset writes the TextField defaultValue back to a slotted Input's own v-model", async () => {
     const value = ref('typed')
-    const w = mountInForm(() => h(TextField, { label: 'N', name: 'n', defaultValue: 'seed' }, {
-      default: () => h(Input, { 'modelValue': value.value, 'onUpdate:modelValue': (v: string | number | undefined) => (value.value = String(v)) }),
-    }))
+    const w = mountInForm(() =>
+      h(
+        TextField,
+        { label: 'N', name: 'n', defaultValue: 'seed' },
+        {
+          default: () =>
+            h(Input, {
+              modelValue: value.value,
+              'onUpdate:modelValue': (v: string | number | undefined) => (value.value = String(v)),
+            }),
+        },
+      ),
+    )
     w.get('form').element.reset()
     await flushPromises()
     expect(value.value).toBe('seed')
@@ -260,7 +370,14 @@ describe('TextField with a slotted Input', () => {
 
 describe('NumberField reset', () => {
   it('form reset restores defaultValue and does not re-show errors', async () => {
-    const w = mountInForm(() => h(NumberField, { label: 'Qty', name: 'qty', defaultValue: 3, validate: (n: number) => n > 2 ? 'Max 2' : null }))
+    const w = mountInForm(() =>
+      h(NumberField, {
+        label: 'Qty',
+        name: 'qty',
+        defaultValue: 3,
+        validate: (n: number) => (n > 2 ? 'Max 2' : null),
+      }),
+    )
     await flushPromises()
     w.get('form').element.checkValidity()
     await flushPromises()
@@ -274,9 +391,26 @@ describe('NumberField reset', () => {
 
 describe('TextField input attributes', () => {
   it('forwards input attrs (any casing) to the input and keeps the rest on the wrapper', () => {
-    wrapper = mount(TextField, { attrs: { 'maxlength': 5, 'minLength': 2, 'autocomplete': 'email', 'inputmode': 'email', 'pattern': '[a-z]+', 'data-testid': 'field', 'aria-describedby': 'hint' }, props: { description: 'Desc' } })
+    wrapper = mount(TextField, {
+      attrs: {
+        maxlength: 5,
+        minLength: 2,
+        autocomplete: 'email',
+        inputmode: 'email',
+        pattern: '[a-z]+',
+        'data-testid': 'field',
+        'aria-describedby': 'hint',
+      },
+      props: { description: 'Desc' },
+    })
     const input = wrapper.get('input')
-    expect(input.attributes()).toMatchObject({ maxlength: '5', minlength: '2', autocomplete: 'email', inputmode: 'email', pattern: '[a-z]+' })
+    expect(input.attributes()).toMatchObject({
+      maxlength: '5',
+      minlength: '2',
+      autocomplete: 'email',
+      inputmode: 'email',
+      pattern: '[a-z]+',
+    })
     expect(input.attributes('aria-describedby')).toMatch(/^hint \S+-description$/)
     expect(wrapper.attributes('data-testid')).toBe('field')
     expect(wrapper.attributes('maxlength')).toBeUndefined()
@@ -285,7 +419,9 @@ describe('TextField input attributes', () => {
 
   it('focus and blur listeners fire for the input', async () => {
     const events: string[] = []
-    wrapper = mount(TextField, { attrs: { onFocus: () => events.push('focus'), onBlur: () => events.push('blur') } })
+    wrapper = mount(TextField, {
+      attrs: { onFocus: () => events.push('focus'), onBlur: () => events.push('blur') },
+    })
     await wrapper.get('input').trigger('focus')
     await wrapper.get('input').trigger('blur')
     expect(events).toEqual(['focus', 'blur'])

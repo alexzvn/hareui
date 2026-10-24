@@ -29,7 +29,7 @@ export const rangeCalendarDayKey: InjectionKey<RangeCalendarDayContext> = Symbol
 import { RangeCalendarCell, RangeCalendarCellTrigger } from 'reka-ui'
 import { computed, inject } from 'vue'
 
-const props = defineProps<{ date: DateValue, month: DateValue }>()
+const props = defineProps<{ date: DateValue; month: DateValue }>()
 const ctx = inject(rangeCalendarDayKey)!
 
 // Boolean computeds only notify when their value flips, so a hover preview re-renders just the days entering/leaving it
@@ -75,8 +75,14 @@ const CellOutlet = ctx.CellOutlet
           :outsideView="outsideView"
           :selectionStart="selectionStart"
           :selectionEnd="selectionEnd"
-        >{{ dayValue }}</CellOutlet>
-        <span v-if="ctx.indicator()?.(date)" data-slot="range-calendar-cell-indicator" aria-hidden="true" :class="ctx.indicatorClass.value" />
+          >{{ dayValue }}</CellOutlet
+        >
+        <span
+          v-if="ctx.indicator()?.(date)"
+          data-slot="range-calendar-cell-indicator"
+          aria-hidden="true"
+          :class="ctx.indicatorClass.value"
+        />
       </span>
     </RangeCalendarCellTrigger>
   </RangeCalendarCell>

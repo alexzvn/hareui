@@ -102,6 +102,7 @@ export interface TextFieldSlots {
 
 <script setup lang="ts">
 import { computed, provide, ref, toRef, useAttrs, useTemplateRef, watch } from 'vue'
+
 import { useComponentUI } from '../../composables/useComponentUI'
 import { useFieldChrome } from '../../composables/useFieldChrome'
 import { useFieldValidation } from '../../composables/useFieldValidation'
@@ -121,14 +122,12 @@ const modelValue = defineModel<string | number>()
 const uncontrolledValue = ref(props.defaultValue)
 watch(modelValue, (v) => {
   // A parent clearing its v-model clears the field, not back to an earlier typed value
-  if (v === undefined)
-    uncontrolledValue.value = undefined
+  if (v === undefined) uncontrolledValue.value = undefined
 })
 const value = computed<string | number | undefined>({
   get: () => modelValue.value ?? uncontrolledValue.value,
   set: (v) => {
-    if (v === value.value)
-      return
+    if (v === value.value) return
     uncontrolledValue.value = v
     modelValue.value = v
   },
@@ -162,7 +161,11 @@ function onFocusIn(event: FocusEvent) {
   focusVisible.value = event.target instanceof Element && event.target.matches(':focus-visible')
 }
 function onFocusOut(event: FocusEvent) {
-  if (event.currentTarget instanceof Element && event.relatedTarget instanceof Node && event.currentTarget.contains(event.relatedTarget))
+  if (
+    event.currentTarget instanceof Element &&
+    event.relatedTarget instanceof Node &&
+    event.currentTarget.contains(event.relatedTarget)
+  )
     return
   focusWithin.value = false
   focusVisible.value = false
@@ -213,7 +216,9 @@ const ui = useComponentUI('textField', theme, () => ({ fullWidth: props.fullWidt
     @focusout="onFocusOut"
   >
     <FieldLabel :for="id" />
-    <slot v-bind="{ id, describedBy, invalid, disabled, required, readonly, focusWithin, focusVisible }">
+    <slot
+      v-bind="{ id, describedBy, invalid, disabled, required, readonly, focusWithin, focusVisible }"
+    >
       <Input :placeholder="placeholder" />
     </slot>
     <FieldDescription />

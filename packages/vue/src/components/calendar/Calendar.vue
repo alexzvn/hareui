@@ -1,8 +1,10 @@
 <script lang="ts">
 import type { DateValue } from '@internationalized/date'
+
 import type { ComponentSlots } from '@/types/tv'
-import type { PageBehavior, VisibleDuration } from './useCalendarDurationView'
+
 import theme from './theme'
+import type { PageBehavior, VisibleDuration } from './useCalendarDurationView'
 
 type Calendar = typeof theme
 
@@ -136,12 +138,14 @@ type CalendarCellSlotProps = Parameters<NonNullable<CalendarSlots['cell']>>[0]
 </script>
 
 <script setup lang="ts">
-import type { CalendarMonthShellExposed } from './CalendarMonthShell.vue'
 import { isSameDay } from '@internationalized/date'
 import { CalendarCell, CalendarCellTrigger } from 'reka-ui'
 import { computed, useTemplateRef } from 'vue'
+
 import { useComponentUI } from '@/composables/useComponentUI'
+
 import { calendarCellDate, calendarCellFrom } from './calendarCells'
+import type { CalendarMonthShellExposed } from './CalendarMonthShell.vue'
 import CalendarMonthShell from './CalendarMonthShell.vue'
 import { defaultMaxValue, defaultMinValue } from './useCalendarBounds'
 
@@ -178,7 +182,8 @@ const initial = props.modelValue ?? props.defaultValue
 // min-clamp treats an `undefined` date as below range, so `value[0]` on an empty array resolves to
 // `minValue` instead of today. Replicate that exactly so multiple-selection with `[]` matches HeroUI.
 const placeholderSeed =
-  props.defaultPlaceholder ?? (Array.isArray(initial) ? (initial[0] ?? minValue.value) : (initial ?? undefined))
+  props.defaultPlaceholder ??
+  (Array.isArray(initial) ? (initial[0] ?? minValue.value) : (initial ?? undefined))
 
 // React Aria disables outside-month cells, so pressing one neither selects nor pages; Reka would do both. And
 // re-pressing the selected date keeps it selected (Reka's `prevent-deselect`) but still reports it, as React Aria's
@@ -196,7 +201,10 @@ const reselect = (event: Event, cell: HTMLElement) => {
   event.stopPropagation()
   const date = calendarCellDate(cell, monthShell.value!.placeholder)
   const current = props.modelValue
-  emit('update:modelValue', current && !Array.isArray(current) && isSameDay(current, date) ? current : date)
+  emit(
+    'update:modelValue',
+    current && !Array.isArray(current) && isSameDay(current, date) ? current : date,
+  )
 }
 const onRootClickCapture = (event: MouseEvent) => {
   const cell = calendarCellFrom(event.target, monthShell.value?.rootEl)
@@ -209,7 +217,13 @@ const onRootClickCapture = (event: MouseEvent) => {
   reselect(event, cell)
 }
 const onRootKeyDownCapture = (event: KeyboardEvent) => {
-  if ((event.key !== 'Enter' && event.key !== ' ') || event.altKey || event.ctrlKey || event.metaKey) return
+  if (
+    (event.key !== 'Enter' && event.key !== ' ') ||
+    event.altKey ||
+    event.ctrlKey ||
+    event.metaKey
+  )
+    return
   const cell = calendarCellFrom(event.target, monthShell.value?.rootEl)
   if (cell) reselect(event, cell)
 }
@@ -220,7 +234,8 @@ const rootBindings = computed(() => ({
   multiple: props.selectionMode === 'multiple',
   preventDeselect: props.selectionMode !== 'multiple',
   isDateUnavailable: props.isDateUnavailable,
-  'onUpdate:modelValue': (value: DateValue | DateValue[] | undefined) => emit('update:modelValue', value),
+  'onUpdate:modelValue': (value: DateValue | DateValue[] | undefined) =>
+    emit('update:modelValue', value),
   onClickCapture: onRootClickCapture,
   onKeydownCapture: onRootKeyDownCapture,
 }))
@@ -266,7 +281,7 @@ const selection = computed(() => ({
       <slot name="navIcon" v-bind="slotProps" />
     </template>
     <template v-if="$slots.cell" #cell="slotProps">
-      <slot name="cell" v-bind="(slotProps as CalendarCellSlotProps)" />
+      <slot name="cell" v-bind="slotProps as CalendarCellSlotProps" />
     </template>
     <template #monthCell="{ date, month }">
       <CalendarCell :date="date">

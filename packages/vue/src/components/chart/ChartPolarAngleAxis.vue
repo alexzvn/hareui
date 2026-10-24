@@ -1,5 +1,6 @@
 <script lang="ts">
 import type { ClassValue } from 'tailwind-variants'
+
 import type { ChartAxisDomain } from './types'
 
 export interface ChartPolarAngleAxisProps {
@@ -77,12 +78,21 @@ export interface ChartPolarAngleAxisProps {
 
 export interface ChartPolarAngleAxisSlots {
   /** Replaces a tick label. Render SVG (`<text>`, `<g>`). */
-  tick?: (props: { x: number, y: number, value: number | string, index: number, text: string, textAnchor: 'start' | 'middle' | 'end', dy: string }) => any
+  tick?: (props: {
+    x: number
+    y: number
+    value: number | string
+    index: number
+    text: string
+    textAnchor: 'start' | 'middle' | 'end'
+    dy: string
+  }) => any
 }
 </script>
 
 <script setup lang="ts">
 import { computed } from 'vue'
+
 import ChartLayer from './ChartLayer.vue'
 import { useChartContext } from './context'
 import { angleTickAnchor, polarToCartesian, polygonPath, usePolarContext } from './polar'
@@ -119,9 +129,10 @@ const axisPath = computed(() => {
   const cx = polar.cx.value
   const cy = polar.cy.value
   const radius = polar.outerRadius.value
-  if (props.axisLineType === 'circle')
-    return ''
-  return polygonPath(polar.angleAxis.value.ticks.map(tick => polarToCartesian(cx, cy, radius, tick.coordinate)))
+  if (props.axisLineType === 'circle') return ''
+  return polygonPath(
+    polar.angleAxis.value.ticks.map((tick) => polarToCartesian(cx, cy, radius, tick.coordinate)),
+  )
 })
 
 const ticks = computed(() => {
@@ -160,13 +171,40 @@ const ticks = computed(() => {
           fill="none"
           :class="chart.classes('axisLine')"
         />
-        <path v-else data-slot="chart-polar-angle-axis-line" :d="axisPath" fill="none" :class="chart.classes('axisLine')" />
+        <path
+          v-else
+          data-slot="chart-polar-angle-axis-line"
+          :d="axisPath"
+          fill="none"
+          :class="chart.classes('axisLine')"
+        />
       </template>
       <g v-for="item in ticks" :key="item.key" data-slot="chart-polar-angle-axis-tick">
-        <line v-if="tickLine" data-slot="chart-polar-angle-axis-tick-line" v-bind="item.line" :class="chart.classes('tickLine')" />
+        <line
+          v-if="tickLine"
+          data-slot="chart-polar-angle-axis-tick-line"
+          v-bind="item.line"
+          :class="chart.classes('tickLine')"
+        />
         <template v-if="tick">
-          <slot name="tick" :x="item.x" :y="item.y" :value="item.value" :index="item.index" :text="item.text" :text-anchor="item.textAnchor" :dy="item.dy">
-            <text :x="item.x" :y="item.y" :dy="item.dy" :text-anchor="item.textAnchor" :class="chart.classes('angleTick')">{{ item.text }}</text>
+          <slot
+            name="tick"
+            :x="item.x"
+            :y="item.y"
+            :value="item.value"
+            :index="item.index"
+            :text="item.text"
+            :text-anchor="item.textAnchor"
+            :dy="item.dy"
+          >
+            <text
+              :x="item.x"
+              :y="item.y"
+              :dy="item.dy"
+              :text-anchor="item.textAnchor"
+              :class="chart.classes('angleTick')"
+              >{{ item.text }}</text
+            >
           </slot>
         </template>
       </g>

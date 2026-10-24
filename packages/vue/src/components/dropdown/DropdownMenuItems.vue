@@ -1,13 +1,26 @@
 <script setup lang="ts">
+import {
+  DropdownMenuGroup,
+  DropdownMenuLabel,
+  DropdownMenuPortal,
+  DropdownMenuSub,
+  DropdownMenuSubContent,
+  useId,
+} from 'reka-ui'
 // Internal: renders a list of Dropdown entries (items, sections, separators, submenus). Recursive
 // for submenus. Not exported.
 import type { ComponentPublicInstance } from 'vue'
-import type { DropdownEntry, DropdownItem, DropdownSection, DropdownSeparator } from './Dropdown.vue'
-import type { DropdownSelectionGroup } from './context'
-import { DropdownMenuGroup, DropdownMenuLabel, DropdownMenuPortal, DropdownMenuSub, DropdownMenuSubContent, useId } from 'reka-ui'
 import { inject, ref } from 'vue'
+
 import { preventNestedLayerDismiss } from '../../composables/nestedLayer'
+import type { DropdownSelectionGroup } from './context'
 import { dropdownContextKey } from './context'
+import type {
+  DropdownEntry,
+  DropdownItem,
+  DropdownSection,
+  DropdownSeparator,
+} from './Dropdown.vue'
 import DropdownMenuOption from './DropdownMenuOption.vue'
 
 defineProps<{
@@ -18,30 +31,38 @@ defineProps<{
 const ctx = inject(dropdownContextKey)!
 const baseId = useId(undefined, 'hareui-dropdown-section')
 
-const isSeparator = (entry: DropdownEntry): entry is DropdownSeparator => (entry as DropdownSeparator).type === 'separator'
-const isSection = (entry: DropdownEntry): entry is DropdownSection => (entry as DropdownSection).type === 'section'
-const hasSubmenu = (entry: DropdownEntry): entry is DropdownItem & { items: DropdownEntry[] } => !!(entry as DropdownItem).items?.length
+const isSeparator = (entry: DropdownEntry): entry is DropdownSeparator =>
+  (entry as DropdownSeparator).type === 'separator'
+const isSection = (entry: DropdownEntry): entry is DropdownSection =>
+  (entry as DropdownSection).type === 'section'
+const hasSubmenu = (entry: DropdownEntry): entry is DropdownItem & { items: DropdownEntry[] } =>
+  !!(entry as DropdownItem).items?.length
 
 // Submenus are separate menus without a selection mode (RAC: a nested `Menu` has its own selection).
-const submenuGroup: DropdownSelectionGroup = { mode: 'none', indicator: false, isSelected: () => false, toggle: () => {} }
+const submenuGroup: DropdownSelectionGroup = {
+  mode: 'none',
+  indicator: false,
+  isSelected: () => false,
+  toggle: () => {},
+}
 
 // The open submenu of this level (one at a time, as in RAC's `SubmenuTriggerState`).
 const openSubmenu = ref<DropdownItem['value'] | null>(null)
 
 // Mounted submenu contents by item value, for the nested-layer guard.
 const submenuContents = new Map<DropdownItem['value'], Element>()
-function setSubmenuContent(value: DropdownItem['value'], instance: Element | ComponentPublicInstance | null) {
-  if (instance && '$el' in instance)
-    submenuContents.set(value, instance.$el)
-  else
-    submenuContents.delete(value)
+function setSubmenuContent(
+  value: DropdownItem['value'],
+  instance: Element | ComponentPublicInstance | null,
+) {
+  if (instance && '$el' in instance) submenuContents.set(value, instance.$el)
+  else submenuContents.delete(value)
 }
 
 // Reka closes the whole menu on Escape inside a submenu; RAC closes only that submenu and refocuses
 // its trigger. Stopping the event here keeps it from Reka's document-level Escape listener.
 function onSubmenuKeydown(event: KeyboardEvent) {
-  if (event.key !== 'Escape')
-    return
+  if (event.key !== 'Escape') return
   const content = event.currentTarget as HTMLElement
   event.preventDefault()
   event.stopPropagation()
@@ -67,11 +88,13 @@ function key(entry: DropdownEntry, index: number) {
       data-slot="separator"
       data-orientation="horizontal"
       :class="ctx.classes().separator!({ class: ctx.ui()?.separator })"
-    >
+    />
     <DropdownMenuGroup
       v-else-if="isSection(entry)"
       as="section"
-      :aria-labelledby="entry.label || ctx.slots['section-label'] ? `${baseId}-${index}` : undefined"
+      :aria-labelledby="
+        entry.label || ctx.slots['section-label'] ? `${baseId}-${index}` : undefined
+      "
       :class="ctx.classes().section!({ class: [ctx.ui()?.section, entry.class] })"
     >
       <!-- RAC `useMenuSection`: menus can't own headings, so the header is presentational and only labels the group -->
@@ -83,7 +106,11 @@ function key(entry: DropdownEntry, index: number) {
         data-slot="header"
         :class="ctx.classes().header!({ class: ctx.ui()?.header })"
       >
-        <component :is="ctx.slots['section-label']" v-if="ctx.slots['section-label']" :section="entry" />
+        <component
+          :is="ctx.slots['section-label']"
+          v-if="ctx.slots['section-label']"
+          :section="entry"
+        />
         <template v-else>
           {{ entry.label }}
         </template>
@@ -93,13 +120,17 @@ function key(entry: DropdownEntry, index: number) {
     <DropdownMenuSub
       v-else-if="hasSubmenu(entry)"
       :open="openSubmenu === entry.value"
-      @update:open="openSubmenu = $event ? entry.value : openSubmenu === entry.value ? null : openSubmenu"
+      @update:open="
+        openSubmenu = $event ? entry.value : openSubmenu === entry.value ? null : openSubmenu
+      "
     >
       <DropdownMenuOption :item="entry" :group="group" submenu />
       <DropdownMenuPortal :disabled="ctx.portal().disabled" :to="ctx.portal().to">
         <!-- RAC submenu popover: placement "end top", offset 8, 12px container padding -->
         <DropdownMenuSubContent
-          :ref="instance => setSubmenuContent(entry.value, instance as ComponentPublicInstance | null)"
+          :ref="
+            (instance) => setSubmenuContent(entry.value, instance as ComponentPublicInstance | null)
+          "
           loop
           :side-offset="8"
           :collision-padding="12"

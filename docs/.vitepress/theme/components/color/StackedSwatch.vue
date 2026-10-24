@@ -1,7 +1,8 @@
 <script setup lang="ts">
 import { computed } from 'vue'
-import ColorTooltip from './ColorTooltip.vue'
+
 import { contrastStyle, copyColorValue, getTokenName } from '../../composables/useColorCopy'
+import ColorTooltip from './ColorTooltip.vue'
 
 const props = defineProps<{
   label: string
@@ -29,7 +30,11 @@ function onClick(event: MouseEvent) {
       @click="onClick"
     >
       <span class="text-sm font-medium tracking-tight" :style="style">{{ label }}</span>
-      <span class="truncate font-mono text-[10px] leading-tight opacity-60 sm:hidden" :style="style">{{ token }}</span>
+      <span
+        class="truncate font-mono text-[10px] leading-tight opacity-60 sm:hidden"
+        :style="style"
+        >{{ token }}</span
+      >
     </div>
   </ColorTooltip>
 </template>

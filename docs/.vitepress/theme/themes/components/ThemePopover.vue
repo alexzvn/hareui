@@ -1,25 +1,29 @@
 <script setup lang="ts">
-// Port of HeroUI docs `themes/components/theme-popover.tsx`.
-import type { ThemeId } from '../constants'
-import { Icon } from '@iconify/vue'
 import { Description, InputGroup, Kbd, Label, ListBox, Popover, Switch } from '@hareui/vue'
+import { Icon } from '@iconify/vue'
 import { computed } from 'vue'
+
 import { useKeyPress } from '../composables/keyPress'
 import { useVariablesState } from '../composables/variables'
+// Port of HeroUI docs `themes/components/theme-popover.tsx`.
+import type { ThemeId } from '../constants'
 import { findMatchingTheme, themeValuesById, themes } from '../constants'
 import ControlsPopoverTrigger from './ControlsPopoverTrigger.vue'
 
 const [variables, setVariables] = useVariablesState()
 const currentThemeId = computed(() => findMatchingTheme(variables.value))
-const currentTheme = computed(() => currentThemeId.value ? themes.find(t => t.id === currentThemeId.value) : undefined)
+const currentTheme = computed(() =>
+  currentThemeId.value ? themes.find((t) => t.id === currentThemeId.value) : undefined,
+)
 
-const items = themes.map(theme => ({
+const items = themes.map((theme) => ({
   value: theme.id,
   label: theme.label,
   textValue: theme.id,
-  class: 'group relative flex w-10 flex-col items-center justify-center gap-1.5 p-0 hover:bg-transparent data-[hovered=true]:bg-transparent',
+  class:
+    'group relative flex w-10 flex-col items-center justify-center gap-1.5 p-0 hover:bg-transparent data-[hovered=true]:bg-transparent',
 }))
-const images = Object.fromEntries(themes.map(theme => [theme.id, theme.image]))
+const images = Object.fromEntries(themes.map((theme) => [theme.id, theme.image]))
 
 function applyTheme(themeId: ThemeId) {
   const themeValues = themeValuesById[themeId]
@@ -46,8 +50,7 @@ function randomizeTheme() {
 useKeyPress('t', randomizeTheme)
 
 function onSelectionChange(selected: unknown) {
-  if (typeof selected === 'string')
-    applyTheme(selected as ThemeId)
+  if (typeof selected === 'string') applyTheme(selected as ThemeId)
 }
 </script>
 
@@ -88,8 +91,10 @@ function onSelectionChange(selected: unknown) {
               width="36"
               :src="images[item.value]"
               class="size-9 rounded-full bg-surface group-data-[selected=true]:ring-2 group-data-[selected=true]:ring-accent group-data-[selected=true]:ring-offset-2 group-data-[selected=true]:ring-offset-surface"
+            />
+            <span
+              class="text-[10px] font-medium text-muted capitalize group-data-[selected=true]:text-foreground"
             >
-            <span class="text-[10px] font-medium text-muted capitalize group-data-[selected=true]:text-foreground">
               {{ item.label }}
             </span>
           </template>

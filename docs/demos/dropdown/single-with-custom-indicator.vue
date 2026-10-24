@@ -22,11 +22,15 @@ const items: DropdownEntry[] = [
 
 <template>
   <Dropdown v-model="selected" class="min-w-[256px]" :items="items" selection-mode="single">
-    <Button variant="secondary">
-      Fruits
-    </Button>
+    <Button variant="secondary"> Fruits </Button>
     <template #indicator="{ selected: isSelected }">
-      <svg v-if="isSelected" height="16" viewBox="0 0 16 16" width="16" xmlns="http://www.w3.org/2000/svg">
+      <svg
+        v-if="isSelected"
+        height="16"
+        viewBox="0 0 16 16"
+        width="16"
+        xmlns="http://www.w3.org/2000/svg"
+      >
         <path
           class="text-accent-soft-foreground"
           clip-rule="evenodd"

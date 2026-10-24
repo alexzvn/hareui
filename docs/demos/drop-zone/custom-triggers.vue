@@ -43,7 +43,12 @@ const playlist = ref<File[]>([])
       </template>
     </DropZone>
 
-    <DropZone v-model="playlist" label="Import a playlist" description="M3U or TXT" accept=".m3u,.txt">
+    <DropZone
+      v-model="playlist"
+      label="Import a playlist"
+      description="M3U or TXT"
+      accept=".m3u,.txt"
+    >
       <template #icon>
         <Icon icon="gravity-ui:music-note" />
       </template>

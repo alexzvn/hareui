@@ -5,7 +5,8 @@ export default {
     type: 'suggestion',
     docs: { description: 'Class assertions belong only in theme contract specs (test/theme/**)' },
     messages: {
-      banned: 'Assert behavior (roles, ARIA, emits) instead of `{{name}}`; class assertions live in test/theme/.',
+      banned:
+        'Assert behavior (roles, ARIA, emits) instead of `{{name}}`; class assertions live in test/theme/.',
     },
     schema: [],
   },

@@ -6,7 +6,8 @@ export default {
   slots: {
     root: 'relative flex [&>div]:min-w-0',
     list: 'isolate min-w-0',
-    label: 'flex w-full items-center gap-1.5 px-2 py-1.5 text-xs font-medium text-muted select-none',
+    label:
+      'flex w-full items-center gap-1.5 px-2 py-1.5 text-xs font-medium text-muted select-none',
     item: 'min-w-0',
     link: 'group relative flex w-full min-w-0 items-center text-start text-sm no-highlight outline-none cursor-(--cursor-interactive) focus-visible:status-focused',
     linkLeadingIcon: 'size-4 shrink-0',
@@ -18,7 +19,8 @@ export default {
     linkTrailingBadge: 'shrink-0 text-muted tabular-nums',
     linkTrailingKbd: 'shrink-0',
     // Chevron: `transition: rotate 0.15s` (CSS default `ease`)
-    linkTrailingIcon: 'size-3.5 shrink-0 text-muted transition-[rotate] duration-150 ease-[ease] motion-reduce:transition-none',
+    linkTrailingIcon:
+      'size-3.5 shrink-0 text-muted transition-[rotate] duration-150 ease-[ease] motion-reduce:transition-none',
     linkLabel: 'min-w-0 flex-1 truncate text-start',
     linkLabelExternalIcon: 'ms-1 inline-block size-3 align-top text-muted',
     // Per-item actions, vertical only: a sibling of the link laid over
@@ -45,7 +47,8 @@ export default {
     childList: 'isolate',
     childLabel: 'text-xs font-medium text-muted',
     childItem: '',
-    childLink: 'group relative flex size-full items-start text-start text-sm no-highlight outline-none cursor-(--cursor-interactive) focus-visible:status-focused',
+    childLink:
+      'group relative flex size-full items-start text-start text-sm no-highlight outline-none cursor-(--cursor-interactive) focus-visible:status-focused',
     childLinkWrapper: 'min-w-0',
     childLinkIcon: 'size-4 shrink-0',
     childLinkLabel: 'truncate',
@@ -65,7 +68,8 @@ export default {
     content: '',
     // No `data-[state=hidden]:opacity-0`: tw-animate's `exit` keyframe starts from the computed opacity, so a
     // hidden-state opacity of 0 would cut the arrow instantly; `fill-mode-forwards` holds 0 until Reka unmounts it.
-    indicator: 'absolute bottom-0 left-0 z-2 flex h-2.5 w-(--reka-navigation-menu-indicator-size) translate-x-(--reka-navigation-menu-indicator-position) items-end justify-center overflow-hidden transition-[translate,width] duration-200 ease-[ease] data-[state=hidden]:animate-out data-[state=hidden]:fade-out-0 data-[state=hidden]:fill-mode-forwards data-[state=visible]:animate-in data-[state=visible]:fade-in-0 motion-reduce:transition-none',
+    indicator:
+      'absolute bottom-0 left-0 z-2 flex h-2.5 w-(--reka-navigation-menu-indicator-size) translate-x-(--reka-navigation-menu-indicator-position) items-end justify-center overflow-hidden transition-[translate,width] duration-200 ease-[ease] data-[state=hidden]:animate-out data-[state=hidden]:fade-out-0 data-[state=hidden]:fill-mode-forwards data-[state=visible]:animate-in data-[state=visible]:fade-in-0 motion-reduce:transition-none',
     arrow: 'relative top-[50%] z-1 size-2.5 rotate-45 rounded-xs bg-overlay',
   },
   variants: {
@@ -118,11 +122,13 @@ export default {
       horizontal: {
         viewportWrapper: 'justify-center',
         // 200ms like the viewport morph, so the old and new panels finish sliding when the size settles.
-        content: 'duration-200 ease-[ease] data-[motion=from-start]:animate-in data-[motion=from-start]:fade-in-0 data-[motion=from-start]:slide-in-from-left-8 data-[motion=from-end]:animate-in data-[motion=from-end]:fade-in-0 data-[motion=from-end]:slide-in-from-right-8 data-[motion=to-start]:animate-out data-[motion=to-start]:fade-out-0 data-[motion=to-start]:slide-out-to-left-8 data-[motion=to-end]:animate-out data-[motion=to-end]:fade-out-0 data-[motion=to-end]:slide-out-to-right-8',
+        content:
+          'duration-200 ease-[ease] data-[motion=from-start]:animate-in data-[motion=from-start]:fade-in-0 data-[motion=from-start]:slide-in-from-left-8 data-[motion=from-end]:animate-in data-[motion=from-end]:fade-in-0 data-[motion=from-end]:slide-in-from-right-8 data-[motion=to-start]:animate-out data-[motion=to-start]:fade-out-0 data-[motion=to-start]:slide-out-to-left-8 data-[motion=to-end]:animate-out data-[motion=to-end]:fade-out-0 data-[motion=to-end]:slide-out-to-right-8',
       },
       vertical: {
         // Below `sm` the viewport spans the menu; from `sm` it follows the trigger, clamped inside the menu's width.
-        viewport: 'sm:left-[clamp(0px,var(--reka-navigation-menu-viewport-left),calc(100%-var(--reka-navigation-menu-viewport-width)))] sm:w-(--reka-navigation-menu-viewport-width) sm:rtl:right-[clamp(0px,calc(100%-var(--reka-navigation-menu-viewport-left)-var(--reka-navigation-menu-viewport-width)),calc(100%-var(--reka-navigation-menu-viewport-width)))] sm:rtl:left-auto',
+        viewport:
+          'sm:left-[clamp(0px,var(--reka-navigation-menu-viewport-left),calc(100%-var(--reka-navigation-menu-viewport-width)))] sm:w-(--reka-navigation-menu-viewport-width) sm:rtl:right-[clamp(0px,calc(100%-var(--reka-navigation-menu-viewport-left)-var(--reka-navigation-menu-viewport-width)),calc(100%-var(--reka-navigation-menu-viewport-width)))] sm:rtl:left-auto',
       },
     },
     active: {
@@ -153,7 +159,9 @@ export default {
     // Per link: the item has an actions container next to it. The end padding applies once it renders something
     // (an `#item-actions` slot can render nothing for some items); 2.75rem = one 24px button, before it's measured.
     actions: {
-      true: { link: 'group-has-[[data-slot=linkActions]:not(:empty)]/row:pe-[var(--navigation-menu-actions-inset,2.75rem)]' },
+      true: {
+        link: 'group-has-[[data-slot=linkActions]:not(:empty)]/row:pe-[var(--navigation-menu-actions-inset,2.75rem)]',
+      },
     },
     // Per `actions` entry: a destructive one
     danger: {
@@ -162,8 +170,16 @@ export default {
   },
   compoundVariants: [
     // Horizontal content: two-column cards, or a single narrow column when the viewport is vertical
-    { orientation: 'horizontal', contentOrientation: 'horizontal', class: { childList: 'grid-cols-2 gap-1' } },
-    { orientation: 'horizontal', contentOrientation: 'vertical', class: { childList: 'gap-0.5', content: 'w-full sm:w-60' } },
+    {
+      orientation: 'horizontal',
+      contentOrientation: 'horizontal',
+      class: { childList: 'grid-cols-2 gap-1' },
+    },
+    {
+      orientation: 'horizontal',
+      contentOrientation: 'vertical',
+      class: { childList: 'gap-0.5', content: 'w-full sm:w-60' },
+    },
     // Vertical expanded: nested rows indented 16px (`--sidebar-menu-indent`) and stacked with no gap (36px
     // step), 2px kept between the parent and its first child (`pt-0.5`) and, through the parent list's gap, after
     // the last one. The guide line at indent/2 spans 1px into those gaps (per-row line: 1px above the first
@@ -173,7 +189,8 @@ export default {
       orientation: 'vertical',
       collapsed: false,
       class: {
-        childList: 'relative gap-0 ps-4 pt-0.5 before:pointer-events-none before:absolute before:top-px before:-bottom-px before:start-2 before:w-px before:bg-foreground/10 before:content-[""]',
+        childList:
+          'relative gap-0 ps-4 pt-0.5 before:pointer-events-none before:absolute before:top-px before:-bottom-px before:start-2 before:w-px before:bg-foreground/10 before:content-[""]',
       },
     },
     // Vertical collapsed (icon rail): the link is a lone icon; labels and trailing content vanish.
@@ -196,13 +213,17 @@ export default {
     {
       orientation: 'horizontal',
       highlight: true,
-      class: { link: 'after:absolute after:inset-x-3 after:-bottom-1 after:block after:h-px after:rounded-full' },
+      class: {
+        link: 'after:absolute after:inset-x-3 after:-bottom-1 after:block after:h-px after:rounded-full',
+      },
     },
     {
       orientation: 'vertical',
       highlight: true,
       level: true,
-      class: { link: 'after:absolute after:inset-y-0 after:-start-2 after:block after:w-px after:rounded-full' },
+      class: {
+        link: 'after:absolute after:inset-y-0 after:-start-2 after:block after:w-px after:rounded-full',
+      },
     },
     // Rows
     { orientation: 'vertical', variant: 'pill', class: { link: 'text-foreground' } },
@@ -230,14 +251,18 @@ export default {
       disabled: false,
       active: false,
       actions: true,
-      class: { link: '[@media(hover:hover)]:group-hover/row:text-foreground group-has-[[data-slot=linkActions]_[aria-expanded=true]]/row:text-foreground' },
+      class: {
+        link: '[@media(hover:hover)]:group-hover/row:text-foreground group-has-[[data-slot=linkActions]_[aria-expanded=true]]/row:text-foreground',
+      },
     },
     {
       disabled: false,
       active: false,
       actions: true,
       variant: 'pill',
-      class: { link: '[@media(hover:hover)]:group-hover/row:bg-default group-has-[[data-slot=linkActions]_[aria-expanded=true]]/row:bg-default' },
+      class: {
+        link: '[@media(hover:hover)]:group-hover/row:bg-default group-has-[[data-slot=linkActions]_[aria-expanded=true]]/row:bg-default',
+      },
     },
     {
       disabled: false,
@@ -247,17 +272,52 @@ export default {
     },
     { variant: 'pill', active: true, class: { link: 'bg-default' } },
     // Active colour: text and icon
-    { color: 'accent', active: true, class: { link: 'text-accent', linkLeadingIcon: 'text-accent' } },
-    { color: 'success', active: true, class: { link: 'text-success', linkLeadingIcon: 'text-success' } },
-    { color: 'warning', active: true, class: { link: 'text-warning', linkLeadingIcon: 'text-warning' } },
-    { color: 'danger', active: true, class: { link: 'text-danger', linkLeadingIcon: 'text-danger' } },
-    { color: 'default', active: true, class: { link: 'text-foreground', linkLeadingIcon: 'text-foreground' } },
+    {
+      color: 'accent',
+      active: true,
+      class: { link: 'text-accent', linkLeadingIcon: 'text-accent' },
+    },
+    {
+      color: 'success',
+      active: true,
+      class: { link: 'text-success', linkLeadingIcon: 'text-success' },
+    },
+    {
+      color: 'warning',
+      active: true,
+      class: { link: 'text-warning', linkLeadingIcon: 'text-warning' },
+    },
+    {
+      color: 'danger',
+      active: true,
+      class: { link: 'text-danger', linkLeadingIcon: 'text-danger' },
+    },
+    {
+      color: 'default',
+      active: true,
+      class: { link: 'text-foreground', linkLeadingIcon: 'text-foreground' },
+    },
     // Highlight line colour
     { highlightColor: 'accent', highlight: true, active: true, class: { link: 'after:bg-accent' } },
-    { highlightColor: 'success', highlight: true, active: true, class: { link: 'after:bg-success' } },
-    { highlightColor: 'warning', highlight: true, active: true, class: { link: 'after:bg-warning' } },
+    {
+      highlightColor: 'success',
+      highlight: true,
+      active: true,
+      class: { link: 'after:bg-success' },
+    },
+    {
+      highlightColor: 'warning',
+      highlight: true,
+      active: true,
+      class: { link: 'after:bg-warning' },
+    },
     { highlightColor: 'danger', highlight: true, active: true, class: { link: 'after:bg-danger' } },
-    { highlightColor: 'default', highlight: true, active: true, class: { link: 'after:bg-foreground' } },
+    {
+      highlightColor: 'default',
+      highlight: true,
+      active: true,
+      class: { link: 'after:bg-foreground' },
+    },
   ],
   defaultVariants: {
     color: 'default',

@@ -1,6 +1,6 @@
 <script setup lang="ts">
-import type { DateValue } from '@internationalized/date'
 import { Description, RangeCalendar } from '@hareui/vue'
+import type { DateValue } from '@internationalized/date'
 import { getLocalTimeZone, today } from '@internationalized/date'
 
 const now = today(getLocalTimeZone())
@@ -22,8 +22,6 @@ function isDateUnavailable(date: DateValue) {
       first-day-of-week="mon"
       :is-date-unavailable="isDateUnavailable"
     />
-    <Description class="text-center">
-      Some days are unavailable
-    </Description>
+    <Description class="text-center"> Some days are unavailable </Description>
   </div>
 </template>

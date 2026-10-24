@@ -1,7 +1,8 @@
-import type { MarkdownEnv, MarkdownRenderer } from 'vitepress'
 import gravity from '@iconify-json/gravity-ui/icons.json' with { type: 'json' }
-import { tv } from '../../packages/vue/src/utils/tv'
+import type { MarkdownEnv, MarkdownRenderer } from 'vitepress'
+
 import buttonTheme from '../../packages/vue/src/components/button/theme'
+import { tv } from '../../packages/vue/src/utils/tv'
 
 type RenderRule = NonNullable<MarkdownRenderer['renderer']['rules']['fence']>
 type Token = Parameters<RenderRule>[0][number]
@@ -36,19 +37,32 @@ const LINK_ICON =
 const lucide = (cls: string, body: string) =>
   `<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide ${cls} size-5 -me-0.5 fill-(--callout-color) text-fd-card" aria-hidden="true">${body}</svg>`
 
-const INFO_ICON = lucide('lucide-info', '<circle cx="12" cy="12" r="10"></circle><path d="M12 16v-4"></path><path d="M12 8h.01"></path>')
+const INFO_ICON = lucide(
+  'lucide-info',
+  '<circle cx="12" cy="12" r="10"></circle><path d="M12 16v-4"></path><path d="M12 8h.01"></path>',
+)
 
 const CALLOUTS: Record<string, { type: string; icon: string }> = {
   info: { type: 'info', icon: INFO_ICON },
   tip: { type: 'info', icon: INFO_ICON },
   warning: {
     type: 'warning',
-    icon: lucide('lucide-triangle-alert', '<path d="m21.73 18-8-14a2 2 0 0 0-3.48 0l-8 14A2 2 0 0 0 4 21h16a2 2 0 0 0 1.73-3"></path><path d="M12 9v4"></path><path d="M12 17h.01"></path>'),
+    icon: lucide(
+      'lucide-triangle-alert',
+      '<path d="m21.73 18-8-14a2 2 0 0 0-3.48 0l-8 14A2 2 0 0 0 4 21h16a2 2 0 0 0 1.73-3"></path><path d="M12 9v4"></path><path d="M12 17h.01"></path>',
+    ),
   },
-  danger: { type: 'error', icon: lucide('lucide-circle-x', '<circle cx="12" cy="12" r="10"></circle><path d="m15 9-6 6"></path><path d="m9 9 6 6"></path>') },
+  danger: {
+    type: 'error',
+    icon: lucide(
+      'lucide-circle-x',
+      '<circle cx="12" cy="12" r="10"></circle><path d="m15 9-6 6"></path><path d="m9 9 6 6"></path>',
+    ),
+  },
 }
 
-const FIGURE_STYLE = '--shiki-light:#24292e;--shiki-dark:#e1e4e8;--shiki-light-bg:#fff;--shiki-dark-bg:#24292e'
+const FIGURE_STYLE =
+  '--shiki-light:#24292e;--shiki-dark:#e1e4e8;--shiki-light-bg:#fff;--shiki-dark-bg:#24292e'
 const MAX_LINES_FOR_LINE_NUMBERS = 20
 
 export function codeFigure(codeInner: string, { vPre = true, extraClass = '' } = {}): string {
@@ -59,7 +73,9 @@ export function codeFigure(codeInner: string, { vPre = true, extraClass = '' } =
     'shiki shiki-themes github-light github-dark',
     codeInner.includes('class="line highlighted') ? 'has-highlighted' : '',
     extraClass,
-  ].filter(Boolean).join(' ')
+  ]
+    .filter(Boolean)
+    .join(' ')
   return (
     `<figure dir="ltr" class="${classes}" style="${FIGURE_STYLE}" tabindex="-1">` +
     `<div class="z-1! empty:hidden absolute top-3 right-2 z-2 backdrop-blur-lg rounded-lg text-fd-muted-foreground">${copyButton}</div>` +
@@ -110,7 +126,10 @@ export function markdownConfig(md: MarkdownRenderer): void {
       if (t.type !== 'fence') continue
       const index = triggers.length
       const title = t.info.match(/\[(.*?)\]/)?.[1] ?? (t.info.trim().split(/\s/)[0] || 'txt')
-      t.meta = { ...(t.meta as CodeGroupMeta | null), codeGroup: { id, index } } satisfies CodeGroupMeta
+      t.meta = {
+        ...(t.meta as CodeGroupMeta | null),
+        codeGroup: { id, index },
+      } satisfies CodeGroupMeta
       const value = `${id}-${index}`
       const active = index === 0
       triggers.push(
@@ -141,19 +160,24 @@ export function markdownConfig(md: MarkdownRenderer): void {
   const tableOpen = md.renderer.rules.table_open ?? ((t, i, o, _e, s) => s.renderToken(t, i, o))
   const tableClose = md.renderer.rules.table_close ?? ((t, i, o, _e, s) => s.renderToken(t, i, o))
   md.renderer.rules.table_open = (tokens, idx, options, env, self) =>
-    `<div class="relative overflow-auto prose-no-margin my-6">` + tableOpen(tokens, idx, options, env, self)
+    `<div class="relative overflow-auto prose-no-margin my-6">` +
+    tableOpen(tokens, idx, options, env, self)
   md.renderer.rules.table_close = (tokens, idx, options, env, self) =>
     tableClose(tokens, idx, options, env, self) + `</div>`
 }
 
-export function headingPermalink(slug: string, _opts: unknown, state: AnchorState, idx: number): void {
+export function headingPermalink(
+  slug: string,
+  _opts: unknown,
+  state: AnchorState,
+  idx: number,
+): void {
   state.tokens[idx].attrJoin('class', 'group/heading flex scroll-m-28 flex-row items-center gap-1')
   const inline = state.tokens[idx + 1]
   const before = new state.Token('html_inline', '', 0)
   before.content = `<a data-card="" href="#${slug}">`
   const after = new state.Token('html_inline', '', 0)
-  after.content =
-    `</a><button aria-label="Copy Anchor Link" data-copy-anchor="" class="inline-flex items-center justify-center rounded-md text-sm font-medium duration-100 disabled:pointer-events-none disabled:opacity-50 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-fd-ring hover:bg-fd-accent hover:text-fd-accent-foreground p-1 [&_svg]:size-4 not-prose shrink-0 text-fd-muted-foreground opacity-0 transition-opacity group-hover/heading:opacity-100">${LINK_ICON}</button>`
+  after.content = `</a><button aria-label="Copy Anchor Link" data-copy-anchor="" class="inline-flex items-center justify-center rounded-md text-sm font-medium duration-100 disabled:pointer-events-none disabled:opacity-50 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-fd-ring hover:bg-fd-accent hover:text-fd-accent-foreground p-1 [&_svg]:size-4 not-prose shrink-0 text-fd-muted-foreground opacity-0 transition-opacity group-hover/heading:opacity-100">${LINK_ICON}</button>`
   inline.children?.unshift(before)
   inline.children?.push(after)
 }
@@ -164,23 +188,30 @@ export function headingPermalink(slug: string, _opts: unknown, state: AnchorStat
 // section text; SearchDialog renders them like fumadocs does.
 function inlineMarkdown(html: string): string {
   return html
-    .replace(/<pre[\s\S]*?<\/pre>|<code[^>]*>([\s\S]*?)<\/code>|<strong>([\s\S]*?)<\/strong>/g, (match, code, strong) => {
-      if (code !== undefined) return `\`${code}\``
-      if (strong !== undefined) return `**${strong}**`
-      return ''
-    })
-    .replace(/<(p|li|td|th)\b[^>]*>[\s\S]*?<\/\1>/g, block => block.replace(/\s*\n\s*/g, ' '))
+    .replace(
+      /<pre[\s\S]*?<\/pre>|<code[^>]*>([\s\S]*?)<\/code>|<strong>([\s\S]*?)<\/strong>/g,
+      (match, code, strong) => {
+        if (code !== undefined) return `\`${code}\``
+        if (strong !== undefined) return `**${strong}**`
+        return ''
+      },
+    )
+    .replace(/<(p|li|td|th)\b[^>]*>[\s\S]*?<\/\1>/g, (block) => block.replace(/\s*\n\s*/g, ' '))
 }
 
 export function searchRender(src: string, env: MarkdownEnv, md: MarkdownRenderer): string {
   const html = md.render(src, env)
   if (env.frontmatter?.search === false) return ''
-  const title = env.frontmatter?.title ? `<h1>${md.utils.escapeHtml(String(env.frontmatter.title))}<a href="#"></a></h1>` : ''
+  const title = env.frontmatter?.title
+    ? `<h1>${md.utils.escapeHtml(String(env.frontmatter.title))}<a href="#"></a></h1>`
+    : ''
   return (
     title +
-    inlineMarkdown(html.replace(
-      /<a data-card="" href="#([^"]*)">([\s\S]*?)<\/a><button aria-label="Copy Anchor Link"[\s\S]*?<\/button>/g,
-      '$2<a href="#$1"></a>',
-    ))
+    inlineMarkdown(
+      html.replace(
+        /<a data-card="" href="#([^"]*)">([\s\S]*?)<\/a><button aria-label="Copy Anchor Link"[\s\S]*?<\/button>/g,
+        '$2<a href="#$1"></a>',
+      ),
+    )
   )
 }

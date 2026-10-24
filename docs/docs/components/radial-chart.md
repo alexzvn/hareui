@@ -113,15 +113,17 @@ Use `class` for the container and `ui` for the drawn parts. Ring colors come fro
 Override the `radialChart` theme app-wide with `createHareUI`:
 
 ```ts
-app.use(createHareUI({
-  ui: {
-    radialChart: {
-      slots: {
-        radialBarBackground: 'fill-surface-secondary',
+app.use(
+  createHareUI({
+    ui: {
+      radialChart: {
+        slots: {
+          radialBarBackground: 'fill-surface-secondary',
+        },
       },
     },
-  },
-}))
+  }),
+)
 ```
 
 ## Composition
@@ -144,19 +146,19 @@ Without `index`, the chart draws only the parts you put in its default slot. Use
 
 A ring's color comes from a `ChartCell`, a `fill` field in its row, or the bar's `fill`. A `ChartPolarAngleAxis` with `type="number"` and a fixed `domain` sets the full-scale value; `:tick="false"` hides its labels. Put a `ChartLabel` directly in the chart with `position="center"` for text in the middle. With `index` set, parts in the default slot draw over the generated rings.
 
-| `ui` key | `data-slot` | Element | Description |
-|---|---|---|---|
-| `base` | `radial-chart` | `<div>` | Responsive container |
-| `surface` | `chart-surface` | `<svg>` | Drawing surface |
-| `overlay` | `chart-overlay` | `<div>` | Layer over the svg that holds the tooltip and the center content |
-| — | `chart-radial-bar-background` | `<g>` | Tracks of one `ChartRadialBar`, when `background` is set |
-| `radialBarBackground` | `chart-radial-bar-track` | `<path>` | Full-length track behind one bar |
-| `series` | `chart-radial-bar` | `<g>` | One group per `ChartRadialBar` |
-| `sector` | `chart-radial-bar-sector` | `<path>` | One bar, with `data-index`, and `data-active` while hovered or selected with the keyboard |
-| `label` | `chart-label` | `<text>` | `ChartLabel` text |
-| `center` | `chart-center` | `<div>` | `#center` content |
-| `tooltip` | `chart-tooltip-wrapper` | `<div>` | Floating wrapper around the tooltip panel |
-| `legend` | `chart-legend` | `<ul>` | Legend drawn from the `legend` prop |
+| `ui` key              | `data-slot`                   | Element  | Description                                                                               |
+| --------------------- | ----------------------------- | -------- | ----------------------------------------------------------------------------------------- |
+| `base`                | `radial-chart`                | `<div>`  | Responsive container                                                                      |
+| `surface`             | `chart-surface`               | `<svg>`  | Drawing surface                                                                           |
+| `overlay`             | `chart-overlay`               | `<div>`  | Layer over the svg that holds the tooltip and the center content                          |
+| —                     | `chart-radial-bar-background` | `<g>`    | Tracks of one `ChartRadialBar`, when `background` is set                                  |
+| `radialBarBackground` | `chart-radial-bar-track`      | `<path>` | Full-length track behind one bar                                                          |
+| `series`              | `chart-radial-bar`            | `<g>`    | One group per `ChartRadialBar`                                                            |
+| `sector`              | `chart-radial-bar-sector`     | `<path>` | One bar, with `data-index`, and `data-active` while hovered or selected with the keyboard |
+| `label`               | `chart-label`                 | `<text>` | `ChartLabel` text                                                                         |
+| `center`              | `chart-center`                | `<div>`  | `#center` content                                                                         |
+| `tooltip`             | `chart-tooltip-wrapper`       | `<div>`  | Floating wrapper around the tooltip panel                                                 |
+| `legend`              | `chart-legend`                | `<ul>`   | Legend drawn from the `legend` prop                                                       |
 
 ## Styling Reference
 

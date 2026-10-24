@@ -15,7 +15,11 @@ function formatValue(value: number) {
 </script>
 
 <template>
-  <Card class="w-full max-w-[360px] rounded-2xl" title="Tickets by Channel" :ui="{ title: 'text-base' }">
+  <Card
+    class="w-full max-w-[360px] rounded-2xl"
+    title="Tickets by Channel"
+    :ui="{ title: 'text-base' }"
+  >
     <PieChart
       :data="data"
       index="channel"

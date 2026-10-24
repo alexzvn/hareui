@@ -23,7 +23,11 @@ const font = ref<SelectValue>('Menlo, monospace')
         <span :style="{ fontFamily: String(item.value) }">{{ item.label }}</span>
       </template>
     </CellSelect>
-    <pre class="overflow-x-auto rounded-xl bg-default px-4 py-3 text-xs leading-5" :style="{ fontFamily: String(font) }">const greet = (name) =&gt; {
+    <pre
+      class="overflow-x-auto rounded-xl bg-default px-4 py-3 text-xs leading-5"
+      :style="{ fontFamily: String(font) }"
+    >
+const greet = (name) =&gt; {
   return `Hi, ${name}!`
 }</pre>
   </div>

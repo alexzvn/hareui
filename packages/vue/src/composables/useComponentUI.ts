@@ -1,9 +1,10 @@
 import type { ComputedRef } from 'vue'
+import { computed, inject } from 'vue'
+
 import type { Themes } from '../components/themes'
 import type { HareUIConfig } from '../config'
-import type { ComponentUI, ThemeShape } from '../types/tv'
-import { computed, inject } from 'vue'
 import { hareUIConfigKey } from '../config'
+import type { ComponentUI, ThemeShape } from '../types/tv'
 import { tv } from '../utils/tv'
 
 /** Theme overrides inlined by the `@hareui/vue/vite` plugin's `ui` option; undeclared without it. */
@@ -15,7 +16,10 @@ function extendOptions(extend: unknown, override: object | undefined) {
 }
 
 type TV = (props: Record<string, unknown>) => unknown
-interface Shared { tv: TV, results: Map<string, unknown> }
+interface Shared {
+  tv: TV
+  results: Map<string, unknown>
+}
 
 const NO_CONFIG: HareUIConfig = {}
 const MEMO_LIMIT = 256
@@ -30,22 +34,23 @@ function getBase(name: keyof Themes, theme: object) {
   const buildUI = typeof __HAREUI_UI__ === 'undefined' ? undefined : __HAREUI_UI__?.[name]
   const key = buildUI ? JSON.stringify(buildUI) : ''
   let byOverride = bases.get(theme)
-  if (!byOverride)
-    bases.set(theme, byOverride = new Map())
+  if (!byOverride) bases.set(theme, (byOverride = new Map()))
   let base = byOverride.get(key)
   if (!base)
-    byOverride.set(key, base = buildUI ? tv(extendOptions(theme, buildUI)) as object : theme)
+    byOverride.set(key, (base = buildUI ? (tv(extendOptions(theme, buildUI)) as object) : theme))
   return base
 }
 
 function getComponent(config: HareUIConfig, name: keyof Themes, base: object) {
   let byBase = shared.get(config)
-  if (!byBase)
-    shared.set(config, byBase = new WeakMap())
+  if (!byBase) shared.set(config, (byBase = new WeakMap()))
   let component = byBase.get(base)
   if (!component) {
     // Reads `config.ui` reactively, so replacing or mutating it restyles every instance.
-    component = computed(() => ({ tv: tv(extendOptions(base, config.ui?.[name])) as unknown as TV, results: new Map() }))
+    component = computed(() => ({
+      tv: tv(extendOptions(base, config.ui?.[name])) as unknown as TV,
+      results: new Map(),
+    }))
     byBase.set(base, component)
   }
   return component
@@ -56,8 +61,7 @@ function memoKey(props: Record<string, unknown>) {
   let key = ''
   for (const name in props) {
     const value = props[name]
-    if (value !== null && typeof value === 'object')
-      return undefined
+    if (value !== null && typeof value === 'object') return undefined
     key += `${String(value)}\0`
   }
   return key
@@ -66,13 +70,11 @@ function memoKey(props: Record<string, unknown>) {
 // tv's own result cache isn't used: it re-signs every compound variant per call, slower than this for themes with compounds.
 function resolve(component: Shared, props: Record<string, unknown>) {
   const key = memoKey(props)
-  if (key === undefined)
-    return component.tv(props)
+  if (key === undefined) return component.tv(props)
   let result = component.results.get(key)
   if (result === undefined) {
-    if (component.results.size >= MEMO_LIMIT)
-      component.results.clear()
-    component.results.set(key, result = component.tv(props))
+    if (component.results.size >= MEMO_LIMIT) component.results.clear()
+    component.results.set(key, (result = component.tv(props)))
   }
   return result
 }

@@ -4,6 +4,7 @@
 // The builder state lives in the URL query, which only exists on the client, so the page body renders after mount
 // (the server markup is the empty page shell) instead of hydrating against defaults.
 import { onMounted, ref } from 'vue'
+
 import AccentColorSelector from './components/AccentColorSelector.vue'
 import BaseColorSlider from './components/BaseColorSlider.vue'
 import BuilderHeader from './components/BuilderHeader.vue'
@@ -30,7 +31,9 @@ onMounted(() => {
       <h1 class="sr-only">Theme Builder</h1>
       <BuilderHeader />
       <ThemeBuilderContent />
-      <div class="mx-auto hidden items-center justify-between gap-4 py-6 max-[1200px]:flex-col sm:flex">
+      <div
+        class="mx-auto hidden items-center justify-between gap-4 py-6 max-[1200px]:flex-col sm:flex"
+      >
         <div class="flex items-center gap-4">
           <AccentColorSelector />
           <BaseColorSlider />

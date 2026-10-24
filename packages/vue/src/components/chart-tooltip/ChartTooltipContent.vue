@@ -47,12 +47,13 @@ export interface ChartTooltipContentSlots {
   /** Manual composition with `ChartTooltipHeader` and `ChartTooltipItem`. Replaces the rows built from `payload`. */
   default?: () => any
   /** Content under the rows built from `payload`, e.g. a total. Not rendered when the default slot is used. */
-  footer?: (props: { label?: number | string, payload: ChartTooltipContentEntry[] }) => any
+  footer?: (props: { label?: number | string; payload: ChartTooltipContentEntry[] }) => any
 }
 </script>
 
 <script setup lang="ts">
 import { computed, provide } from 'vue'
+
 import { useComponentUI } from '../../composables/useComponentUI'
 import ChartTooltipHeader from './ChartTooltipHeader.vue'
 import ChartTooltipIndicator from './ChartTooltipIndicator.vue'
@@ -61,34 +62,37 @@ import ChartTooltipLabel from './ChartTooltipLabel.vue'
 import ChartTooltipValue from './ChartTooltipValue.vue'
 import { chartTooltipContextKey } from './context'
 
-const props = withDefaults(defineProps<ChartTooltipContentProps>(), { active: true, indicator: 'dot', hideHeader: false })
+const props = withDefaults(defineProps<ChartTooltipContentProps>(), {
+  active: true,
+  indicator: 'dot',
+  hideHeader: false,
+})
 const slots = defineSlots<ChartTooltipContentSlots>()
 
 const ui = useComponentUI('chartTooltip', theme, () => ({ indicator: props.indicator }))
 provide(chartTooltipContextKey, { classes: ui, ui: () => props.ui })
 
 const headerText = computed(() => {
-  if (props.label === undefined || props.label === '')
-    return undefined
+  if (props.label === undefined || props.label === '') return undefined
   return props.labelFormatter ? props.labelFormatter(props.label) : String(props.label)
 })
 
 function formatValue(entry: ChartTooltipContentEntry) {
   const value = entry.value
-  if (value === undefined || value === null)
-    return ''
-  if (props.valueFormatter)
-    return props.valueFormatter(value, entry)
+  if (value === undefined || value === null) return ''
+  if (props.valueFormatter) return props.valueFormatter(value, entry)
   return String(value)
 }
 
 // The index keeps keys unique when two rows share a dataKey (a bar and a line on the same field).
-const rows = computed(() => (props.payload ?? []).map((entry, index) => ({
-  key: `${entry.dataKey ?? entry.name ?? ''}-${index}`,
-  color: entry.color ?? entry.stroke ?? entry.fill,
-  name: entry.name ?? entry.dataKey ?? '',
-  value: formatValue(entry),
-})))
+const rows = computed(() =>
+  (props.payload ?? []).map((entry, index) => ({
+    key: `${entry.dataKey ?? entry.name ?? ''}-${index}`,
+    color: entry.color ?? entry.stroke ?? entry.fill,
+    name: entry.name ?? entry.dataKey ?? '',
+    value: formatValue(entry),
+  })),
+)
 </script>
 
 <template>

@@ -1,14 +1,15 @@
 <script lang="ts">
 import type { AccordionRootProps, NavigationMenuContentProps } from 'reka-ui'
 import type { Component } from 'vue'
+
 import type { ComponentSlots, ComponentVariants } from '../../types/tv'
 import type { AvatarProps } from '../avatar/Avatar.vue'
 import type { BadgeProps } from '../badge/Badge.vue'
 import type { ChipProps } from '../chip/Chip.vue'
 import type { DropdownEntry } from '../dropdown/Dropdown.vue'
 import type { TooltipProps } from '../tooltip/Tooltip.vue'
-import type { NavigationMenuPopoverProps } from './types'
 import theme from './theme'
+import type { NavigationMenuPopoverProps } from './types'
 
 export type { NavigationMenuPopoverProps } from './types'
 
@@ -106,12 +107,46 @@ export interface NavigationMenuItem {
   /** Additional classes merged into the item's link. */
   class?: any
   /** Per-slot class overrides for this item. */
-  ui?: Partial<Pick<ComponentSlots<NavigationMenu>, 'item' | 'linkLeadingAvatar' | 'linkLeadingIcon' | 'linkLeadingChip' | 'linkLabel' | 'linkLabelExternalIcon' | 'linkTrailing' | 'linkTrailingBadge' | 'linkTrailingKbd' | 'linkTrailingIcon' | 'linkRow' | 'linkActions' | 'linkAction' | 'linkActionsMenu' | 'linkActionsItemIcon' | 'label' | 'link' | 'content' | 'childList' | 'childLabel' | 'childItem' | 'childLink' | 'childLinkIcon' | 'childLinkWrapper' | 'childLinkLabel' | 'childLinkLabelExternalIcon' | 'childLinkDescription'>>
+  ui?: Partial<
+    Pick<
+      ComponentSlots<NavigationMenu>,
+      | 'item'
+      | 'linkLeadingAvatar'
+      | 'linkLeadingIcon'
+      | 'linkLeadingChip'
+      | 'linkLabel'
+      | 'linkLabelExternalIcon'
+      | 'linkTrailing'
+      | 'linkTrailingBadge'
+      | 'linkTrailingKbd'
+      | 'linkTrailingIcon'
+      | 'linkRow'
+      | 'linkActions'
+      | 'linkAction'
+      | 'linkActionsMenu'
+      | 'linkActionsItemIcon'
+      | 'label'
+      | 'link'
+      | 'content'
+      | 'childList'
+      | 'childLabel'
+      | 'childItem'
+      | 'childLink'
+      | 'childLinkIcon'
+      | 'childLinkWrapper'
+      | 'childLinkLabel'
+      | 'childLinkLabelExternalIcon'
+      | 'childLinkDescription'
+    >
+  >
   [key: string]: any
 }
 
 /** Options for the dropdown content of horizontal items with children. */
-export type NavigationMenuContentOptions = Omit<NavigationMenuContentProps, 'as' | 'asChild' | 'forceMount'> & {
+export type NavigationMenuContentOptions = Omit<
+  NavigationMenuContentProps,
+  'as' | 'asChild' | 'forceMount'
+> & {
   onEscapeKeyDown?: (event: KeyboardEvent) => void
   onPointerDownOutside?: (event: Event) => void
   onFocusOutside?: (event: Event) => void
@@ -251,15 +286,20 @@ export interface NavigationMenuEmits {
   'update:modelValue': [value: string | string[] | undefined]
 }
 
-type ItemSlotProps<T extends NavigationMenuItem = NavigationMenuItem> = { item: T, index: number, active: boolean, ui: Record<string, (props?: object) => string> }
+type ItemSlotProps<T extends NavigationMenuItem = NavigationMenuItem> = {
+  item: T
+  index: number
+  active: boolean
+  ui: Record<string, (props?: object) => string>
+}
 
 export interface NavigationMenuSlots<T extends NavigationMenuItem = NavigationMenuItem> {
   /** Replaces the whole content of an item's link. */
-  'item'?: (props: ItemSlotProps<T>) => any
+  item?: (props: ItemSlotProps<T>) => any
   /** Replaces the leading icon, avatar or chip. */
   'item-leading'?: (props: ItemSlotProps<T>) => any
   /** Replaces the label text. */
-  'item-label'?: (props: { item: T, index: number, active: boolean }) => any
+  'item-label'?: (props: { item: T; index: number; active: boolean }) => any
   /** Replaces the trailing badge, kbds and chevron. */
   'item-trailing'?: (props: ItemSlotProps<T>) => any
   /**
@@ -287,6 +327,7 @@ import {
   NavigationMenuViewport,
 } from 'reka-ui'
 import { computed, onBeforeUnmount, provide, useSlots } from 'vue'
+
 import { useComponentUI } from '../../composables/useComponentUI'
 import { get, navigationMenuKey } from './context'
 import NavigationMenuNode from './NavigationMenuNode.vue'
@@ -353,9 +394,10 @@ const popoverProps = computed<NavigationMenuPopoverProps>(() => ({
 
 const lists = computed<NavigationMenuItem[][]>(() => {
   const items = props.items
-  if (!items?.length)
-    return []
-  return Array.isArray(items[0]) ? items as NavigationMenuItem[][] : [items as NavigationMenuItem[]]
+  if (!items?.length) return []
+  return Array.isArray(items[0])
+    ? (items as NavigationMenuItem[][])
+    : [items as NavigationMenuItem[]]
 })
 
 function getLabel(item: NavigationMenuItem) {
@@ -364,26 +406,28 @@ function getLabel(item: NavigationMenuItem) {
 
 function getItemValue(item: NavigationMenuItem, index: number, level: number, listIndex: number) {
   const prefix = lists.value.length > 1 ? `group-${listIndex}-` : ''
-  return (get(item, props.valueKey) as string | undefined) ?? (level > 0 ? `${prefix}item-${level}-${index}` : `${prefix}item-${index}`)
+  return (
+    (get(item, props.valueKey) as string | undefined) ??
+    (level > 0 ? `${prefix}item-${level}-${index}` : `${prefix}item-${index}`)
+  )
 }
 
 function getAccordionDefaultValue(list: NavigationMenuItem[], level = 0, listIndex = 0) {
   const open = list.reduce<string[]>((acc, item, index) => {
-    if (item.defaultOpen || item.open)
-      acc.push(getItemValue(item, index, level, listIndex))
+    if (item.defaultOpen || item.open) acc.push(getItemValue(item, index, level, listIndex))
     return acc
   }, [])
   return props.type === 'single' ? open[0] : open
 }
 
 function listProps(list: NavigationMenuItem[], listIndex: number) {
-  if (!vertical.value || collapsed.value)
-    return {}
+  if (!vertical.value || collapsed.value) return {}
   return {
     ...accordionProps.value,
     modelValue: props.modelValue,
     defaultValue: props.defaultValue ?? getAccordionDefaultValue(list, 0, listIndex),
-    'onUpdate:modelValue': (value: string | string[] | undefined) => emit('update:modelValue', value),
+    'onUpdate:modelValue': (value: string | string[] | undefined) =>
+      emit('update:modelValue', value),
   }
 }
 
@@ -392,20 +436,21 @@ function listProps(list: NavigationMenuItem[], listIndex: number) {
 // the one-button default.
 let actionsObserver: ResizeObserver | undefined
 function observeActions(el: HTMLElement) {
-  if (typeof ResizeObserver === 'undefined')
-    return () => {}
+  if (typeof ResizeObserver === 'undefined') return () => {}
   actionsObserver ??= new ResizeObserver((entries) => {
     for (const { target } of entries) {
       const row = target.parentElement
-      if (!row)
-        continue
+      if (!row) continue
       const box = target.getBoundingClientRect()
       if (!box.width) {
         row.style.removeProperty('--navigation-menu-actions-inset')
         continue
       }
       const rowBox = row.getBoundingClientRect()
-      const covered = getComputedStyle(row).direction === 'rtl' ? box.right - rowBox.left : rowBox.right - box.left
+      const covered =
+        getComputedStyle(row).direction === 'rtl'
+          ? box.right - rowBox.left
+          : rowBox.right - box.left
       row.style.setProperty('--navigation-menu-actions-inset', `${covered + 12}px`)
     }
   })
@@ -433,11 +478,13 @@ provide(navigationMenuKey, {
     data-slot="root"
     v-bind="{
       ...rootProps,
-      ...(vertical ? {} : {
-        modelValue: props.modelValue as string | undefined,
-        defaultValue: props.defaultValue as string | undefined,
-        'onUpdate:modelValue': (value: string) => emit('update:modelValue', value),
-      }),
+      ...(vertical
+        ? {}
+        : {
+            modelValue: props.modelValue as string | undefined,
+            defaultValue: props.defaultValue as string | undefined,
+            'onUpdate:modelValue': (value: string) => emit('update:modelValue', value),
+          }),
       ...$attrs,
     }"
     :data-collapsed="props.collapsed"
@@ -462,17 +509,34 @@ provide(navigationMenuKey, {
         />
       </component>
 
-      <div v-if="vertical && listIndex < lists.length - 1" role="separator" data-slot="separator" :class="ui.separator({ class: props.ui?.separator })" />
+      <div
+        v-if="vertical && listIndex < lists.length - 1"
+        role="separator"
+        data-slot="separator"
+        :class="ui.separator({ class: props.ui?.separator })"
+      />
     </template>
 
     <slot name="list-trailing" />
 
-    <div v-if="!vertical" data-slot="viewportWrapper" :class="ui.viewportWrapper({ class: props.ui?.viewportWrapper })">
-      <NavigationMenuIndicator v-if="props.arrow" data-slot="indicator" :class="ui.indicator({ class: props.ui?.indicator })">
+    <div
+      v-if="!vertical"
+      data-slot="viewportWrapper"
+      :class="ui.viewportWrapper({ class: props.ui?.viewportWrapper })"
+    >
+      <NavigationMenuIndicator
+        v-if="props.arrow"
+        data-slot="indicator"
+        :class="ui.indicator({ class: props.ui?.indicator })"
+      >
         <div data-slot="arrow" :class="ui.arrow({ class: props.ui?.arrow })" />
       </NavigationMenuIndicator>
 
-      <NavigationMenuViewport v-bind="props.viewport" data-slot="viewport" :class="ui.viewport({ class: props.ui?.viewport })" />
+      <NavigationMenuViewport
+        v-bind="props.viewport"
+        data-slot="viewport"
+        :class="ui.viewport({ class: props.ui?.viewport })"
+      />
     </div>
   </NavigationMenuRoot>
 </template>

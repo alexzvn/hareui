@@ -1,5 +1,6 @@
 <script lang="ts">
 import type { PrimitiveProps } from 'reka-ui'
+
 import type { ComponentSlots, ComponentVariants } from '../../types/tv'
 import type { KbdKey } from './kbdKeys'
 import theme from './theme'
@@ -31,6 +32,7 @@ export interface KbdSlots {
 <script setup lang="ts">
 import { Primitive } from 'reka-ui'
 import { computed } from 'vue'
+
 import { useComponentUI } from '../../composables/useComponentUI'
 import { kbdKeysLabelMap, kbdKeysMap } from './kbdKeys'
 
@@ -38,7 +40,9 @@ const props = withDefaults(defineProps<KbdProps>(), { as: 'kbd' })
 const slots = defineSlots<KbdSlots>()
 
 const ui = useComponentUI('kbd', theme, () => ({ variant: props.variant }))
-const keyList = computed(() => (props.keys === undefined ? [] : Array.isArray(props.keys) ? props.keys : [props.keys]))
+const keyList = computed(() =>
+  props.keys === undefined ? [] : Array.isArray(props.keys) ? props.keys : [props.keys],
+)
 </script>
 
 <template>
@@ -48,6 +52,7 @@ const keyList = computed(() => (props.keys === undefined ? [] : Array.isArray(pr
       :key="index"
       :class="ui.abbr({ class: props.ui?.abbr })"
       :title="kbdKeysLabelMap[key]"
-    >{{ kbdKeysMap[key] }}</abbr><span v-if="slots.default" :class="ui.content({ class: props.ui?.content })"><slot /></span>
+      >{{ kbdKeysMap[key] }}</abbr
+    ><span v-if="slots.default" :class="ui.content({ class: props.ui?.content })"><slot /></span>
   </Primitive>
 </template>

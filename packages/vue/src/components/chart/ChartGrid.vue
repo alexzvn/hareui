@@ -40,6 +40,7 @@ export interface ChartGridProps {
 
 <script setup lang="ts">
 import { computed } from 'vue'
+
 import { useCartesianContext } from './cartesian'
 import ChartLayer from './ChartLayer.vue'
 import { useChartContext } from './context'
@@ -56,30 +57,33 @@ const cartesian = useCartesianContext('ChartGrid')
 
 // Tick positions of the axis with this exact id; an unknown id gives none, leaving only the edge lines.
 function tickCoordinates(axis: 'x' | 'y', id: string | number) {
-  const resolved = cartesian.axes.value.find(entry => entry.axis === axis && String(entry.id ?? 0) === String(id))
-  return resolved?.allTicks.map(tick => tick.coordinate) ?? []
+  const resolved = cartesian.axes.value.find(
+    (entry) => entry.axis === axis && String(entry.id ?? 0) === String(id),
+  )
+  return resolved?.allTicks.map((tick) => tick.coordinate) ?? []
 }
 
 function withEdges(coordinates: number[], start: number, end: number) {
-  if (props.syncWithTicks)
-    return coordinates
-  return [...coordinates, ...[start, end].filter(edge => !coordinates.includes(edge))]
+  if (props.syncWithTicks) return coordinates
+  return [...coordinates, ...[start, end].filter((edge) => !coordinates.includes(edge))]
 }
 
 const horizontalLines = computed(() => {
-  if (!props.horizontal)
-    return []
+  if (!props.horizontal) return []
   const plot = cartesian.offset.value
-  const points = props.horizontalPoints ?? withEdges(tickCoordinates('y', props.yAxisId), plot.top, plot.top + plot.height)
-  return points.map(y => ({ x1: plot.left, x2: plot.left + plot.width, y1: y, y2: y }))
+  const points =
+    props.horizontalPoints ??
+    withEdges(tickCoordinates('y', props.yAxisId), plot.top, plot.top + plot.height)
+  return points.map((y) => ({ x1: plot.left, x2: plot.left + plot.width, y1: y, y2: y }))
 })
 
 const verticalLines = computed(() => {
-  if (!props.vertical)
-    return []
+  if (!props.vertical) return []
   const plot = cartesian.offset.value
-  const points = props.verticalPoints ?? withEdges(tickCoordinates('x', props.xAxisId), plot.left, plot.left + plot.width)
-  return points.map(x => ({ x1: x, x2: x, y1: plot.top, y2: plot.top + plot.height }))
+  const points =
+    props.verticalPoints ??
+    withEdges(tickCoordinates('x', props.xAxisId), plot.left, plot.left + plot.width)
+  return points.map((x) => ({ x1: x, x2: x, y1: plot.top, y2: plot.top + plot.height }))
 })
 </script>
 

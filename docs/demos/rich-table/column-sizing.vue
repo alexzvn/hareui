@@ -24,29 +24,34 @@ const currency = new Intl.NumberFormat('en-US', { style: 'currency', currency: '
 // while dragging. Arrow keys resize by 10px, double click resets.
 function resizer(header: RichTableHeader<Payment>, label: string) {
   const { column } = header
-  const resizeBy = (delta: number) => header.getContext().table.setColumnSizing(sizing => ({ ...sizing, [column.id]: column.getSize() + delta }))
+  const resizeBy = (delta: number) =>
+    header
+      .getContext()
+      .table.setColumnSizing((sizing) => ({ ...sizing, [column.id]: column.getSize() + delta }))
   return h('div', { class: 'flex items-center' }, [
     label,
     h('div', {
-      'role': 'separator',
-      'tabindex': 0,
+      role: 'separator',
+      tabindex: 0,
       'aria-orientation': 'vertical',
       'aria-label': `Resize ${label}`,
       'aria-valuenow': column.getSize(),
       'aria-valuemin': column.columnDef.minSize,
       'data-resizing': column.getIsResizing() || undefined,
-      'class': [
+      class: [
         'absolute end-0 top-1/2 z-1 box-content h-4 w-px translate-x-1/2 -translate-y-1/2 rtl:-translate-x-1/2 cursor-col-resize touch-none select-none rounded-sm bg-separator bg-clip-content px-2 outline-none',
         'hover:h-full hover:w-0.5 hover:bg-accent data-resizing:h-full data-resizing:w-0.5 data-resizing:bg-accent focus-visible:h-full focus-visible:w-0.5 focus-visible:bg-focus',
       ],
-      'onMousedown': header.getResizeHandler(),
-      'onTouchstart': header.getResizeHandler(),
-      'onDblclick': () => column.resetSize(),
-      'onKeydown': (event: KeyboardEvent) => {
+      onMousedown: header.getResizeHandler(),
+      onTouchstart: header.getResizeHandler(),
+      onDblclick: () => column.resetSize(),
+      onKeydown: (event: KeyboardEvent) => {
         const delta = { ArrowLeft: -10, ArrowRight: 10 }[event.key]
         if (delta) {
           event.preventDefault()
-          resizeBy(getComputedStyle(event.currentTarget as Element).direction === 'rtl' ? -delta : delta)
+          resizeBy(
+            getComputedStyle(event.currentTarget as Element).direction === 'rtl' ? -delta : delta,
+          )
         }
       },
     }),
@@ -54,10 +59,32 @@ function resizer(header: RichTableHeader<Payment>, label: string) {
 }
 
 const columns: RichTableColumn<Payment>[] = [
-  { accessorKey: 'name', header: ({ header }) => resizer(header, 'Customer'), size: 200, minSize: 120 },
-  { accessorKey: 'email', header: ({ header }) => resizer(header, 'Email'), size: 240, minSize: 120 },
-  { accessorKey: 'status', header: ({ header }) => resizer(header, 'Status'), size: 140, minSize: 100, meta: { class: { td: 'capitalize' } } },
-  { accessorKey: 'amount', header: ({ header }) => resizer(header, 'Amount'), size: 140, minSize: 100, cell: ({ row }) => currency.format(row.original.amount) },
+  {
+    accessorKey: 'name',
+    header: ({ header }) => resizer(header, 'Customer'),
+    size: 200,
+    minSize: 120,
+  },
+  {
+    accessorKey: 'email',
+    header: ({ header }) => resizer(header, 'Email'),
+    size: 240,
+    minSize: 120,
+  },
+  {
+    accessorKey: 'status',
+    header: ({ header }) => resizer(header, 'Status'),
+    size: 140,
+    minSize: 100,
+    meta: { class: { td: 'capitalize' } },
+  },
+  {
+    accessorKey: 'amount',
+    header: ({ header }) => resizer(header, 'Amount'),
+    size: 140,
+    minSize: 100,
+    cell: ({ row }) => currency.format(row.original.amount),
+  },
 ]
 </script>
 

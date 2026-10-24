@@ -3,7 +3,15 @@
   "version": "0.3.0",
   "description": "HareUI — Vue 3 port of HeroUI v3",
   "license": "MIT",
-  "keywords": ["vue", "vue3", "heroui", "hareui", "tailwindcss", "components", "ui"],
+  "keywords": [
+    "vue",
+    "vue3",
+    "heroui",
+    "hareui",
+    "tailwindcss",
+    "components",
+    "ui"
+  ],
   "homepage": "https://hareui.alexzvn.me",
   "repository": {
     "type": "git",

@@ -62,6 +62,7 @@ export interface TextAreaProps extends FormFieldProps {
 
 <script setup lang="ts">
 import { computed, getCurrentInstance, inject, useTemplateRef, watch } from 'vue'
+
 import { useComponentUI } from '../../composables/useComponentUI'
 import { useFieldValidation } from '../../composables/useFieldValidation'
 import { useFieldsetDisabled } from '../fieldset/context'
@@ -82,26 +83,27 @@ const field = inject(textFieldContextKey, null)
 // Inside a TextField, a TextArea without its own v-model uses the field's value; with one, it mirrors into the field
 // so the field's `validate` and form reset see what the user typed
 const vnodeProps = getCurrentInstance()?.vnode.props ?? {}
-const ownModel = !field || ['modelValue', 'model-value', 'onUpdate:modelValue'].some(key => key in vnodeProps)
+const ownModel =
+  !field || ['modelValue', 'model-value', 'onUpdate:modelValue'].some((key) => key in vnodeProps)
 const value = computed({
-  get: () => ownModel ? modelValue.value : field!.model.value,
+  get: () => (ownModel ? modelValue.value : field!.model.value),
   set: (v) => {
-    if (ownModel)
-      modelValue.value = v
-    if (field)
-      field.model.value = v
+    if (ownModel) modelValue.value = v
+    if (field) field.model.value = v
   },
 })
-if (value.value === undefined && props.defaultValue !== undefined)
-  value.value = props.defaultValue
+if (value.value === undefined && props.defaultValue !== undefined) value.value = props.defaultValue
 if (field && ownModel) {
-  watch(modelValue, (v) => {
-    field.model.value = v
-  }, { immediate: true })
+  watch(
+    modelValue,
+    (v) => {
+      field.model.value = v
+    },
+    { immediate: true },
+  )
   // The field writes its model on form reset; pass that back to the parent's v-model
   watch(field.model, (v) => {
-    if (v !== modelValue.value)
-      modelValue.value = v
+    if (v !== modelValue.value) modelValue.value = v
   })
 }
 
@@ -130,9 +132,14 @@ const own = field
         value.value = props.defaultValue ?? ''
       },
     })
-const invalid = computed(() => own ? own.validation.value.isInvalid : props.invalid ?? field?.invalid.value ?? false)
+const invalid = computed(() =>
+  own ? own.validation.value.isInvalid : (props.invalid ?? field?.invalid.value ?? false),
+)
 
-const ui = useComponentUI('textArea', theme, () => ({ variant: variant.value, fullWidth: fullWidth.value }))
+const ui = useComponentUI('textArea', theme, () => ({
+  variant: variant.value,
+  fullWidth: fullWidth.value,
+}))
 </script>
 
 <template>

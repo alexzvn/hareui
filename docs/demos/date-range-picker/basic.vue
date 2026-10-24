@@ -3,5 +3,12 @@ import { DateRangePicker } from '@hareui/vue'
 </script>
 
 <template>
-  <DateRangePicker class="w-80" full-width start-name="startDate" end-name="endDate" label="Trip dates" calendar-label="Trip dates" />
+  <DateRangePicker
+    class="w-80"
+    full-width
+    start-name="startDate"
+    end-name="endDate"
+    label="Trip dates"
+    calendar-label="Trip dates"
+  />
 </template>

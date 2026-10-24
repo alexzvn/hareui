@@ -1,11 +1,12 @@
 <script setup lang="ts">
-// Internal: one Dropdown menu item (action item, selectable item or submenu trigger). Not exported.
-import type { DropdownItem } from './Dropdown.vue'
-import type { DropdownSelectionGroup } from './context'
 import { DropdownMenuCheckboxItem, DropdownMenuItem, DropdownMenuSubTrigger, useId } from 'reka-ui'
 import { computed, h, inject, ref, renderSlot } from 'vue'
-import { dropdownContextKey } from './context'
+
 import Kbd from '../kbd/Kbd.vue'
+import type { DropdownSelectionGroup } from './context'
+import { dropdownContextKey } from './context'
+// Internal: one Dropdown menu item (action item, selectable item or submenu trigger). Not exported.
+import type { DropdownItem } from './Dropdown.vue'
 
 const props = defineProps<{
   item: DropdownItem
@@ -20,8 +21,7 @@ const slots = ctx.slots
 
 // Reka's Label guard: a double click on the label must not select its text.
 function onLabelMousedown(event: MouseEvent) {
-  if (!event.defaultPrevented && event.detail > 1)
-    event.preventDefault()
+  if (!event.defaultPrevented && event.detail > 1) event.preventDefault()
 }
 
 // RAC interaction states that Reka doesn't expose
@@ -32,24 +32,39 @@ const focusVisible = ref(false)
 
 // RAC `useMenuItem`: the label names the item; description and keyboard shortcut describe it.
 const id = useId(undefined, 'hareui-dropdown-item')
-const aria = computed(() => slots.item
-  ? {}
-  : {
-      'aria-labelledby': `${id}-label`,
-      'aria-describedby': [
-        props.item.description || slots['item-description'] ? `${id}-description` : '',
-        props.item.kbd && !slots['item-trailing'] ? `${id}-kbd` : '',
-      ].filter(Boolean).join(' ') || undefined,
-    })
+const aria = computed(() =>
+  slots.item
+    ? {}
+    : {
+        'aria-labelledby': `${id}-label`,
+        'aria-describedby':
+          [
+            props.item.description || slots['item-description'] ? `${id}-description` : '',
+            props.item.kbd && !slots['item-trailing'] ? `${id}-kbd` : '',
+          ]
+            .filter(Boolean)
+            .join(' ') || undefined,
+      },
+)
 
 const selectable = computed(() => !props.submenu && props.group.mode !== 'none')
 const state = computed(() => ctx.slotProps(props.item, props.group))
-const component = computed(() => props.submenu ? DropdownMenuSubTrigger : selectable.value ? DropdownMenuCheckboxItem : DropdownMenuItem)
+const component = computed(() =>
+  props.submenu
+    ? DropdownMenuSubTrigger
+    : selectable.value
+      ? DropdownMenuCheckboxItem
+      : DropdownMenuItem,
+)
 // Only bound when set: an `undefined` fallthrough attr would erase Reka's own `role="menuitemcheckbox"`
 const extraAttrs = computed(() => ({
   ...aria.value,
   ...(selectable.value
-    ? { 'modelValue': state.value.selected, 'role': props.group.mode === 'single' ? 'menuitemradio' : 'menuitemcheckbox', 'data-selection-mode': props.group.mode }
+    ? {
+        modelValue: state.value.selected,
+        role: props.group.mode === 'single' ? 'menuitemradio' : 'menuitemcheckbox',
+        'data-selection-mode': props.group.mode,
+      }
     : {}),
 }))
 
@@ -78,18 +93,37 @@ function onSelect(event: Event) {
   props.group.toggle(props.item.value)
   const key = ctx.lastKey()
   const shouldClose = key !== null ? key === 'Enter' : props.group.mode !== 'multiple'
-  if (!shouldClose)
-    event.preventDefault()
+  if (!shouldClose) event.preventDefault()
 }
 
 // HeroUI's IconChevronRight. `renderSlot` falls back to it when `#submenu-indicator` renders nothing
 // (e.g. a `v-if` that doesn't match this item), so a custom indicator can be applied per item.
 function chevron() {
-  return h('svg', { 'aria-hidden': 'true', 'fill': 'none', 'height': '16', 'role': 'presentation', 'viewBox': '0 0 16 16', 'width': '16', 'xmlns': 'http://www.w3.org/2000/svg' }, [
-    h('path', { 'clip-rule': 'evenodd', 'd': 'M5.47 2.97a.75.75 0 0 1 1.06 0l4.5 4.5a.75.75 0 0 1 0 1.06l-4.5 4.5a.75.75 0 1 1-1.06-1.06L9.44 8 5.47 4.03a.75.75 0 0 1 0-1.06Z', 'fill': 'currentColor', 'fill-rule': 'evenodd' }),
-  ])
+  return h(
+    'svg',
+    {
+      'aria-hidden': 'true',
+      fill: 'none',
+      height: '16',
+      role: 'presentation',
+      viewBox: '0 0 16 16',
+      width: '16',
+      xmlns: 'http://www.w3.org/2000/svg',
+    },
+    [
+      h('path', {
+        'clip-rule': 'evenodd',
+        d: 'M5.47 2.97a.75.75 0 0 1 1.06 0l4.5 4.5a.75.75 0 0 1 0 1.06l-4.5 4.5a.75.75 0 1 1-1.06-1.06L9.44 8 5.47 4.03a.75.75 0 0 1 0-1.06Z',
+        fill: 'currentColor',
+        'fill-rule': 'evenodd',
+      }),
+    ],
+  )
 }
-const SubmenuIndicatorContent = () => renderSlot(slots as Record<string, any>, 'submenu-indicator', { ...state.value }, () => [chevron()])
+const SubmenuIndicatorContent = () =>
+  renderSlot(slots as Record<string, any>, 'submenu-indicator', { ...state.value }, () => [
+    chevron(),
+  ])
 </script>
 
 <template>
@@ -157,27 +191,48 @@ const SubmenuIndicatorContent = () => renderSlot(slots as Record<string, any>, '
       </span>
       <component :is="slots['item-leading']" v-if="slots['item-leading']" v-bind="state" />
       <div v-if="item.description || slots['item-description']" class="flex flex-col">
-        <label data-slot="label" :class="ctx.labelClass(item.disabled)" :id="`${id}-label`" @mousedown="onLabelMousedown">
+        <label
+          data-slot="label"
+          :class="ctx.labelClass(item.disabled)"
+          :id="`${id}-label`"
+          @mousedown="onLabelMousedown"
+        >
           <component :is="slots['item-label']" v-if="slots['item-label']" v-bind="state" />
           <template v-else>
             {{ item.label }}
           </template>
         </label>
         <span :id="`${id}-description`" data-slot="description" :class="ctx.descriptionClass()">
-          <component :is="slots['item-description']" v-if="slots['item-description']" v-bind="state" />
+          <component
+            :is="slots['item-description']"
+            v-if="slots['item-description']"
+            v-bind="state"
+          />
           <template v-else>
             {{ item.description }}
           </template>
         </span>
       </div>
-      <label v-else data-slot="label" :class="ctx.labelClass(item.disabled)" :id="`${id}-label`" @mousedown="onLabelMousedown">
+      <label
+        v-else
+        data-slot="label"
+        :class="ctx.labelClass(item.disabled)"
+        :id="`${id}-label`"
+        @mousedown="onLabelMousedown"
+      >
         <component :is="slots['item-label']" v-if="slots['item-label']" v-bind="state" />
         <template v-else>
           {{ item.label }}
         </template>
       </label>
       <component :is="slots['item-trailing']" v-if="slots['item-trailing']" v-bind="state" />
-      <Kbd v-else-if="item.kbd" :id="`${id}-kbd`" class="ms-auto" variant="light" :keys="item.kbd.keys">
+      <Kbd
+        v-else-if="item.kbd"
+        :id="`${id}-kbd`"
+        class="ms-auto"
+        variant="light"
+        :keys="item.kbd.keys"
+      >
         <template v-if="item.kbd.content">
           {{ item.kbd.content }}
         </template>
@@ -186,7 +241,9 @@ const SubmenuIndicatorContent = () => renderSlot(slots as Record<string, any>, '
         v-if="submenu"
         aria-hidden="true"
         data-slot="submenu-indicator"
-        :class="classes.submenuIndicator!({ variant: item.variant, class: ctx.ui()?.submenuIndicator })"
+        :class="
+          classes.submenuIndicator!({ variant: item.variant, class: ctx.ui()?.submenuIndicator })
+        "
       >
         <SubmenuIndicatorContent />
       </span>

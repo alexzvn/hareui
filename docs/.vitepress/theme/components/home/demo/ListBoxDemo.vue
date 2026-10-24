@@ -1,16 +1,49 @@
 <script setup lang="ts">
-import { Icon } from '@iconify/vue'
 import { Kbd, ListBox, Surface } from '@hareui/vue'
+import { Icon } from '@iconify/vue'
 
 const items = [
-  { type: 'section' as const, label: 'Actions', items: [
-    { value: 'new-file', label: 'New file', description: 'Create a new file', icon: 'gravity-ui:square-plus', iconClass: 'text-muted', keys: ['command'], key: 'N' },
-    { value: 'edit-file', label: 'Edit file', description: 'Make changes', icon: 'gravity-ui:pencil', iconClass: 'text-muted', keys: ['command'], key: 'E' },
-  ] },
+  {
+    type: 'section' as const,
+    label: 'Actions',
+    items: [
+      {
+        value: 'new-file',
+        label: 'New file',
+        description: 'Create a new file',
+        icon: 'gravity-ui:square-plus',
+        iconClass: 'text-muted',
+        keys: ['command'],
+        key: 'N',
+      },
+      {
+        value: 'edit-file',
+        label: 'Edit file',
+        description: 'Make changes',
+        icon: 'gravity-ui:pencil',
+        iconClass: 'text-muted',
+        keys: ['command'],
+        key: 'E',
+      },
+    ],
+  },
   { type: 'separator' as const },
-  { type: 'section' as const, label: 'Danger zone', items: [
-    { value: 'delete-file', label: 'Delete file', description: 'Move to trash', variant: 'danger' as const, icon: 'gravity-ui:trash-bin', iconClass: 'text-danger', keys: ['command', 'shift'], key: 'D' },
-  ] },
+  {
+    type: 'section' as const,
+    label: 'Danger zone',
+    items: [
+      {
+        value: 'delete-file',
+        label: 'Delete file',
+        description: 'Move to trash',
+        variant: 'danger' as const,
+        icon: 'gravity-ui:trash-bin',
+        iconClass: 'text-danger',
+        keys: ['command', 'shift'],
+        key: 'D',
+      },
+    ],
+  },
 ]
 </script>
 
@@ -23,7 +56,9 @@ const items = [
         </div>
       </template>
       <template #item-trailing="{ item }">
-        <Kbd class="ms-auto" :keys="(item as any).keys" variant="light">{{ (item as any).key }}</Kbd>
+        <Kbd class="ms-auto" :keys="(item as any).keys" variant="light">{{
+          (item as any).key
+        }}</Kbd>
       </template>
     </ListBox>
   </Surface>

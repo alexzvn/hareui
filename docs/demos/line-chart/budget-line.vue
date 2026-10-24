@@ -16,7 +16,13 @@ const data = [
 ]
 
 const series = [
-  { key: 'budget', name: 'Budget', color: 'var(--chart-1)', strokeDasharray: '5 5', curve: 'stepAfter' },
+  {
+    key: 'budget',
+    name: 'Budget',
+    color: 'var(--chart-1)',
+    strokeDasharray: '5 5',
+    curve: 'stepAfter',
+  },
   { key: 'used', name: 'Used', color: 'var(--chart-3)' },
 ] as const
 
@@ -26,7 +32,10 @@ function formatUsage(value: number) {
 </script>
 
 <template>
-  <Card class="w-full max-w-[520px] rounded-2xl" :ui="{ header: 'flex-row items-center justify-between' }">
+  <Card
+    class="w-full max-w-[520px] rounded-2xl"
+    :ui="{ header: 'flex-row items-center justify-between' }"
+  >
     <template #header>
       <h3 class="text-base font-medium text-foreground">Power Use vs Budget</h3>
       <div class="flex items-center gap-3">

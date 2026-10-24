@@ -2,6 +2,7 @@
 // Port of HeroUI docs `themes/components/mobile-footer.tsx`.
 import { ScrollShadow } from '@hareui/vue'
 import { ref } from 'vue'
+
 import { THEME_BUILDER_BOTTOM_SHEET_ID, formRadiusOptions, radiusOptions } from '../constants'
 import AccentColorSelector from './AccentColorSelector.vue'
 import BaseColorSlider from './BaseColorSlider.vue'
@@ -16,7 +17,9 @@ const isSheetOpen = ref(false)
 </script>
 
 <template>
-  <div class="fixed start-0 end-0 bottom-0 z-50 flex w-full items-center justify-between gap-4 border-t border-separator bg-background px-6 pt-3 pb-4 sm:hidden">
+  <div
+    class="fixed start-0 end-0 bottom-0 z-50 flex w-full items-center justify-between gap-4 border-t border-separator bg-background px-6 pt-3 pb-4 sm:hidden"
+  >
     <div class="w-full cursor-pointer" @click="isSheetOpen = true">
       <ThemeInput />
     </div>

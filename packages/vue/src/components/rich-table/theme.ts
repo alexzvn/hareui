@@ -80,7 +80,8 @@ export default {
     },
     loading: {
       true: {
-        thead: "after:absolute after:start-0 after:bottom-0 after:z-3 after:h-0.5 after:w-1/2 after:content-[''] motion-reduce:after:inset-x-0 motion-reduce:after:w-full motion-reduce:after:animate-pulse",
+        thead:
+          "after:absolute after:start-0 after:bottom-0 after:z-3 after:h-0.5 after:w-1/2 after:content-[''] motion-reduce:after:inset-x-0 motion-reduce:after:w-full motion-reduce:after:animate-pulse",
       },
     },
     externalScroll: {
@@ -89,10 +90,10 @@ export default {
       },
     },
     loadingAnimation: {
-      'carousel': '',
+      carousel: '',
       'carousel-inverse': '',
-      'swing': '',
-      'elastic': '',
+      swing: '',
+      elastic: '',
     },
     loadingColor: {
       accent: '',
@@ -111,12 +112,18 @@ export default {
     {
       loading: true,
       loadingAnimation: 'carousel',
-      class: { thead: 'motion-safe:after:animate-rich-table-carousel motion-safe:rtl:after:animate-rich-table-carousel-rtl' },
+      class: {
+        thead:
+          'motion-safe:after:animate-rich-table-carousel motion-safe:rtl:after:animate-rich-table-carousel-rtl',
+      },
     },
     {
       loading: true,
       loadingAnimation: 'carousel-inverse',
-      class: { thead: 'motion-safe:after:animate-rich-table-carousel-inverse motion-safe:rtl:after:animate-rich-table-carousel-inverse-rtl' },
+      class: {
+        thead:
+          'motion-safe:after:animate-rich-table-carousel-inverse motion-safe:rtl:after:animate-rich-table-carousel-inverse-rtl',
+      },
     },
     {
       loading: true,

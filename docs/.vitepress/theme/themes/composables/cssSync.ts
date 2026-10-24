@@ -1,9 +1,5 @@
-// Port of HeroUI docs `themes/hooks/use-css-sync.ts`: turns the builder variables into CSS custom properties.
-// Colors go on the page (#theme-builder-page); colors + radius + font go on the preview (#theme-builder-content,
-// its dialogs, and the mobile bottom sheet). Light/dark follow `.dark` / `[data-theme]` like the rest of the docs.
-import type { SemanticOverrides } from '../utils/generate-theme-colors'
-
 import { onBeforeUnmount, onMounted, watch } from 'vue'
+
 import {
   THEME_BUILDER_BOTTOM_SHEET_ID,
   THEME_BUILDER_CONTENT_ID,
@@ -15,6 +11,10 @@ import {
   themeValuesById,
 } from '../constants'
 import { getCustomFontInfoFromUrl, injectFontLink, isCustomFontUrl } from '../utils/font-utils'
+// Port of HeroUI docs `themes/hooks/use-css-sync.ts`: turns the builder variables into CSS custom properties.
+// Colors go on the page (#theme-builder-page); colors + radius + font go on the preview (#theme-builder-content,
+// its dialogs, and the mobile bottom sheet). Light/dark follow `.dark` / `[data-theme]` like the rest of the docs.
+import type { SemanticOverrides } from '../utils/generate-theme-colors'
 import {
   calculateAccentForeground,
   generateThemeColors,
@@ -39,7 +39,11 @@ const CONTENT_SELECTORS = [
 function parseOklch(oklch: string): { lightness: number; chroma: number; hue: number } | null {
   const match = oklch.match(/oklch\(\s*([\d.]+)\s+([\d.]+)\s+([\d.]+)\s*\)/)
   if (!match?.[1] || !match[2] || !match[3]) return null
-  return { chroma: Number.parseFloat(match[2]), hue: Number.parseFloat(match[3]), lightness: Number.parseFloat(match[1]) }
+  return {
+    chroma: Number.parseFloat(match[2]),
+    hue: Number.parseFloat(match[3]),
+    lightness: Number.parseFloat(match[1]),
+  }
 }
 
 function buildVarsCSS(vars: Record<string, string>) {
@@ -52,7 +56,11 @@ function buildVarsCSS(vars: Record<string, string>) {
  * Radius and font apply to both modes. Derived radius values are re-declared on the scoped elements
  * because custom properties resolve `var()` where they are defined.
  */
-function getCommonVariables(radius: string, fieldRadius: string, fontVariable: string): Record<string, string> {
+function getCommonVariables(
+  radius: string,
+  fieldRadius: string,
+  fontVariable: string,
+): Record<string, string> {
   return {
     '--field-radius': fieldRadius,
     '--font-sans': `var(${fontVariable})`,
@@ -144,8 +152,14 @@ function getThemeColorsCSS(
   const colors = generateThemeColors({ chroma, grayChroma, hue, lightness, semanticOverrides })
   const derivedOpts = { vibrant }
   return scopedCSS(
-    { ...getColorVariablesForElement(colors, 'light'), ...getDerivedColorFormulas('light', derivedOpts) },
-    { ...getColorVariablesForElement(colors, 'dark'), ...getDerivedColorFormulas('dark', derivedOpts) },
+    {
+      ...getColorVariablesForElement(colors, 'light'),
+      ...getDerivedColorFormulas('light', derivedOpts),
+    },
+    {
+      ...getColorVariablesForElement(colors, 'dark'),
+      ...getDerivedColorFormulas('dark', derivedOpts),
+    },
     commonVars,
   )
 }
@@ -170,27 +184,39 @@ export function useCssSync() {
     const v = variables.value
     const accentColor = `oklch(${v.lightness} ${v.chroma} ${v.hue})`
     const matchingThemeId = findMatchingTheme(v)
-    const semanticOverrides = matchingThemeId ? themeValuesById[matchingThemeId].semanticOverrides : undefined
+    const semanticOverrides = matchingThemeId
+      ? themeValuesById[matchingThemeId].semanticOverrides
+      : undefined
 
     // Every font (predefined or custom URL) is loaded on demand from its CDN stylesheet.
     let fontVariable: string
     let fontFamilyName: string
-    const customFontInfo = isCustomFontUrl(v.fontFamily) ? getCustomFontInfoFromUrl(v.fontFamily) : undefined
+    const customFontInfo = isCustomFontUrl(v.fontFamily)
+      ? getCustomFontInfoFromUrl(v.fontFamily)
+      : undefined
     if (customFontInfo) {
       injectFontLink(customFontInfo.variable, v.fontFamily)
       fontVariable = customFontInfo.variable
       fontFamilyName = customFontInfo.fontFamily
-    }
-    else {
+    } else {
       // Unparseable custom URLs fall back to Inter, like unknown ids.
-      const font = (!isCustomFontUrl(v.fontFamily) && fontMap[v.fontFamily as keyof typeof fontMap]) || fontMap.inter
+      const font =
+        (!isCustomFontUrl(v.fontFamily) && fontMap[v.fontFamily as keyof typeof fontMap]) ||
+        fontMap.inter
       injectFontLink(font.variable, font.cdnUrl)
       fontVariable = font.variable
       fontFamilyName = font.label
     }
 
-    const commonVars = getCommonVariables(radiusCssMap[v.radius], radiusCssMap[v.formRadius], fontVariable)
-    injectStyleElement(FONT_VAR_STYLE_ID, `:root { ${fontVariable}: "${fontFamilyName}", sans-serif; }`)
+    const commonVars = getCommonVariables(
+      radiusCssMap[v.radius],
+      radiusCssMap[v.formRadius],
+      fontVariable,
+    )
+    injectStyleElement(
+      FONT_VAR_STYLE_ID,
+      `:root { ${fontVariable}: "${fontFamilyName}", sans-serif; }`,
+    )
 
     removeInjected()
     const vibrant = v.vibrantPalette
@@ -198,13 +224,28 @@ export function useCssSync() {
     else document.documentElement.removeAttribute('data-vibrant-palette')
 
     if (accentColor in adaptiveColors) {
-      const css = getAdaptiveColorCSS(accentColor, v.chroma, v.hue, v.lightness, commonVars, semanticOverrides, vibrant)
+      const css = getAdaptiveColorCSS(
+        accentColor,
+        v.chroma,
+        v.hue,
+        v.lightness,
+        commonVars,
+        semanticOverrides,
+        vibrant,
+      )
       if (css) injectStyleElement(ADAPTIVE_STYLE_ID, css)
-    }
-    else {
+    } else {
       injectStyleElement(
         THEME_COLORS_STYLE_ID,
-        getThemeColorsCSS(v.chroma, v.hue, v.lightness, v.base, commonVars, semanticOverrides, vibrant),
+        getThemeColorsCSS(
+          v.chroma,
+          v.hue,
+          v.lightness,
+          v.base,
+          commonVars,
+          semanticOverrides,
+          vibrant,
+        ),
       )
     }
   }
@@ -215,7 +256,16 @@ export function useCssSync() {
     stop = watch(
       () => {
         const v = variables.value
-        return [v.lightness, v.chroma, v.hue, v.base, v.fontFamily, v.formRadius, v.radius, v.vibrantPalette].join('|')
+        return [
+          v.lightness,
+          v.chroma,
+          v.hue,
+          v.base,
+          v.fontFamily,
+          v.formRadius,
+          v.radius,
+          v.vibrantPalette,
+        ].join('|')
       },
       sync,
       { immediate: true },

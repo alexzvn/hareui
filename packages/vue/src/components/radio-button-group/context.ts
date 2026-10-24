@@ -1,7 +1,8 @@
 import type { ComputedRef, InjectionKey } from 'vue'
+import { inject } from 'vue'
+
 import type { ComponentSlots, ComponentVariants } from '../../types/tv'
 import type theme from './theme'
-import { inject } from 'vue'
 
 export interface RadioButtonGroupContext {
   /** The selected value, `null` while nothing is selected. */
@@ -21,7 +22,6 @@ export const radioButtonGroupKey: InjectionKey<RadioButtonGroupContext> = Symbol
 
 export function useRadioButtonGroup() {
   const context = inject(radioButtonGroupKey, null)
-  if (!context)
-    throw new Error('RadioButtonGroupItem must be used inside a RadioButtonGroup.')
+  if (!context) throw new Error('RadioButtonGroupItem must be used inside a RadioButtonGroup.')
   return context
 }

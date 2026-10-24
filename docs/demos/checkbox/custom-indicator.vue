@@ -17,14 +17,31 @@ import { Checkbox } from '@hareui/vue'
     <Checkbox default-value name="plus" label="Plus">
       <template #indicator="{ state }">
         <svg v-if="state === 'checked'" fill="none" viewBox="0 0 24 24">
-          <path d="M6 12H18" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="3" />
-          <path d="M12 18V6" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="3" />
+          <path
+            d="M6 12H18"
+            stroke="currentColor"
+            stroke-linecap="round"
+            stroke-linejoin="round"
+            stroke-width="3"
+          />
+          <path
+            d="M12 18V6"
+            stroke="currentColor"
+            stroke-linecap="round"
+            stroke-linejoin="round"
+            stroke-width="3"
+          />
         </svg>
       </template>
     </Checkbox>
     <Checkbox default-value="indeterminate" name="indeterminate" label="Indeterminate">
       <template #indicator="{ state }">
-        <svg v-if="state === 'indeterminate'" stroke="currentColor" stroke-width="3" viewBox="0 0 24 24">
+        <svg
+          v-if="state === 'indeterminate'"
+          stroke="currentColor"
+          stroke-width="3"
+          viewBox="0 0 24 24"
+        >
           <line x1="21" x2="3" y1="12" y2="12" />
         </svg>
       </template>

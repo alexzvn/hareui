@@ -1,5 +1,6 @@
 <script lang="ts">
 import type { PrimitiveProps } from 'reka-ui'
+
 import type { ComponentSlots } from '../../types/tv'
 import theme from './theme'
 
@@ -42,6 +43,7 @@ export interface LinkSlots {
 <script setup lang="ts">
 import { Primitive } from 'reka-ui'
 import { computed, h } from 'vue'
+
 import { useComponentUI } from '../../composables/useComponentUI'
 import { useFieldsetDisabled } from '../fieldset/context'
 
@@ -53,14 +55,36 @@ const isDisabled = useFieldsetDisabled(() => props.disabled)
 const showIcon = computed(() => props.icon || !!slots.icon)
 
 // HeroUI's ExternalLinkIcon (9×9, viewBox 0 0 7 7).
-const defaultIcon = () => h('svg', { 'aria-hidden': 'true', 'data-slot': 'link-default-icon', 'fill': 'none', 'height': '9', 'role': 'presentation', 'viewBox': '0 0 7 7', 'width': '9', 'xmlns': 'http://www.w3.org/2000/svg' }, [
-  h('path', { d: 'M1.20592 6.84333L0.379822 6.01723L4.52594 1.8672H1.37819L1.38601 0.731812H6.48742V5.83714H5.34421L5.35203 2.6933L1.20592 6.84333Z', fill: 'currentColor' }),
-])
-const Icon = () => h('span', {
-  'class': ui.value.icon({ class: props.ui?.icon }),
-  'data-default-icon': slots.icon ? undefined : 'true',
-  'data-slot': 'link-icon',
-}, slots.icon ? slots.icon() : defaultIcon())
+const defaultIcon = () =>
+  h(
+    'svg',
+    {
+      'aria-hidden': 'true',
+      'data-slot': 'link-default-icon',
+      fill: 'none',
+      height: '9',
+      role: 'presentation',
+      viewBox: '0 0 7 7',
+      width: '9',
+      xmlns: 'http://www.w3.org/2000/svg',
+    },
+    [
+      h('path', {
+        d: 'M1.20592 6.84333L0.379822 6.01723L4.52594 1.8672H1.37819L1.38601 0.731812H6.48742V5.83714H5.34421L5.35203 2.6933L1.20592 6.84333Z',
+        fill: 'currentColor',
+      }),
+    ],
+  )
+const Icon = () =>
+  h(
+    'span',
+    {
+      class: ui.value.icon({ class: props.ui?.icon }),
+      'data-default-icon': slots.icon ? undefined : 'true',
+      'data-slot': 'link-icon',
+    },
+    slots.icon ? slots.icon() : defaultIcon(),
+  )
 
 // React Aria renders a Link without an href (or a disabled one) as `role="link"`, focusable unless disabled and
 // activated by Enter; a native anchor only gets that from its href.

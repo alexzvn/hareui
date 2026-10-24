@@ -1,7 +1,8 @@
 <script lang="ts">
 import type { PrimitiveProps } from 'reka-ui'
-import type { ClassValue } from '../../utils/tv'
+
 import type { ComponentSlots } from '../../types/tv'
+import type { ClassValue } from '../../utils/tv'
 import theme from './theme'
 
 type Container = typeof theme
@@ -26,6 +27,7 @@ export interface ContainerSlots {
 
 <script setup lang="ts">
 import { Primitive } from 'reka-ui'
+
 import { useComponentUI } from '../../composables/useComponentUI'
 
 const props = withDefaults(defineProps<ContainerProps>(), { as: 'div' })
@@ -35,7 +37,11 @@ const ui = useComponentUI('container', theme, () => ({}))
 </script>
 
 <template>
-  <Primitive :as="as" data-slot="container" :class="ui.base({ class: [props.ui?.base, props.class] })">
+  <Primitive
+    :as="as"
+    data-slot="container"
+    :class="ui.base({ class: [props.ui?.base, props.class] })"
+  >
     <slot />
   </Primitive>
 </template>

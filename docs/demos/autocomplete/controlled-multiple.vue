@@ -28,9 +28,7 @@ const selected = ref<string[]>(['california', 'texas'])
       search-placeholder="Search states..."
       :items="items"
     >
-      <template #empty>
-        No results found
-      </template>
+      <template #empty> No results found </template>
     </Autocomplete>
     <p class="text-sm text-muted">
       Selected: {{ selected.length > 0 ? selected.join(', ') : 'None' }}

@@ -1,4 +1,5 @@
 import type { DefaultTheme } from 'vitepress'
+
 import { COMPONENT_GROUPS, NEW_COMPONENTS, UPDATED_COMPONENTS } from './componentGroups'
 
 export interface SidebarLink {
@@ -65,7 +66,15 @@ export const sidebar: SidebarSection[] = [
       { text: 'All Components (Vue)', link: c('') },
       ...Object.entries(COMPONENT_GROUPS).map(([group, slugs]) => ({
         group,
-        items: slugs.map(slug => ({ text: pascal(slug), link: c(slug), badge: NEW_COMPONENTS.has(slug) ? 'new' as const : UPDATED_COMPONENTS.has(slug) ? 'updated' as const : undefined })),
+        items: slugs.map((slug) => ({
+          text: pascal(slug),
+          link: c(slug),
+          badge: NEW_COMPONENTS.has(slug)
+            ? ('new' as const)
+            : UPDATED_COMPONENTS.has(slug)
+              ? ('updated' as const)
+              : undefined,
+        })),
       })),
     ],
   },
@@ -98,10 +107,15 @@ export function isGroup(entry: SidebarEntry): entry is SidebarGroup {
 }
 
 export function sectionLinks(section: SidebarSection): SidebarLink[] {
-  return section.items.flatMap(entry => isSeparator(entry) ? [] : isGroup(entry) ? entry.items : [entry])
+  return section.items.flatMap((entry) =>
+    isSeparator(entry) ? [] : isGroup(entry) ? entry.items : [entry],
+  )
 }
 export function normalizePath(path: string): string {
-  const p = path.replace(/[?#].*$/, '').replace(/\.html$/, '').replace(/\/index$/, '')
+  const p = path
+    .replace(/[?#].*$/, '')
+    .replace(/\.html$/, '')
+    .replace(/\/index$/, '')
   return p.length > 1 ? p.replace(/\/$/, '') : p
 }
 

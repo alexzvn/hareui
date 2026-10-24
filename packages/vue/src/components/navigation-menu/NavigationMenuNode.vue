@@ -1,6 +1,4 @@
 <script setup lang="ts">
-import type { NavigationMenuItem } from './NavigationMenu.vue'
-import type { ResolvedLink } from './LinkResolver'
 import {
   AccordionItem,
   AccordionRoot,
@@ -11,13 +9,16 @@ import {
   NavigationMenuLink,
   NavigationMenuTrigger,
 } from 'reka-ui'
-import type { DropdownEntry, DropdownItem, DropdownValue } from '../dropdown/Dropdown.vue'
 import { computed, useId } from 'vue'
+
+import type { DropdownEntry, DropdownItem, DropdownValue } from '../dropdown/Dropdown.vue'
 import Dropdown from '../dropdown/Dropdown.vue'
 import Tooltip from '../tooltip/Tooltip.vue'
 import { SlotOutlet, slotName, useNavigationMenu } from './context'
 import { EllipsisVerticalIcon, NavigationMenuIcon } from './icons'
+import type { ResolvedLink } from './LinkResolver'
 import LinkResolver from './LinkResolver'
+import type { NavigationMenuItem } from './NavigationMenu.vue'
 import NavigationMenuAccordionContent from './NavigationMenuAccordionContent.vue'
 import NavigationMenuChildLink from './NavigationMenuChildLink.vue'
 import NavigationMenuLinkBody from './NavigationMenuLinkBody.vue'
@@ -25,34 +26,54 @@ import NavigationMenuPopover from './NavigationMenuPopover.vue'
 import NavigationMenuTabBridge from './NavigationMenuTabBridge'
 
 // One item of the menu (recursive for vertical children).
-const props = withDefaults(defineProps<{
-  item: NavigationMenuItem
-  index: number
-  /** Nesting depth; 0 for top-level items. */
-  level?: number
-  /** Index of the list (group) the item belongs to. */
-  listIndex?: number
-}>(), { level: 0, listIndex: 0 })
+const props = withDefaults(
+  defineProps<{
+    item: NavigationMenuItem
+    index: number
+    /** Nesting depth; 0 for top-level items. */
+    level?: number
+    /** Index of the list (group) the item belongs to. */
+    listIndex?: number
+  }>(),
+  { level: 0, listIndex: 0 },
+)
 
 const ctx = useNavigationMenu()
 const { ui } = ctx
 
 // Renders a slot's children as-is: the "no tooltip / no popover" wrapper.
-const Passthrough = (_: unknown, { slots }: { slots: { default?: () => unknown } }) => slots.default?.()
+const Passthrough = (_: unknown, { slots }: { slots: { default?: () => unknown } }) =>
+  slots.default?.()
 
 const vertical = computed(() => ctx.props.orientation === 'vertical')
 const collapsed = computed(() => !!ctx.props.collapsed)
 const accordion = computed(() => vertical.value && !collapsed.value)
 const hasChildren = computed(() => !!props.item.children?.length)
 const hasContentSlot = computed(() => !!ctx.slots[slotName(props.item, 'content')])
-const horizontalContent = computed(() => !vertical.value && (hasChildren.value || hasContentSlot.value))
+const horizontalContent = computed(
+  () => !vertical.value && (hasChildren.value || hasContentSlot.value),
+)
 const label = computed(() => ctx.getLabel(props.item))
-const value = computed(() => ctx.getItemValue(props.item, props.index, props.level, props.listIndex))
+const value = computed(() =>
+  ctx.getItemValue(props.item, props.index, props.level, props.listIndex),
+)
 const isGroupLabel = computed(() => vertical.value && props.item.type === 'label')
 
-const popoverEnabled = computed(() => vertical.value && collapsed.value && hasChildren.value && (!!ctx.props.popover || !!props.item.popover))
-const tooltipEnabled = computed(() => (vertical.value && collapsed.value && (!!ctx.props.tooltip || !!props.item.tooltip)) || (!vertical.value && !!props.item.tooltip))
-const outer = computed(() => popoverEnabled.value ? NavigationMenuPopover : tooltipEnabled.value ? Tooltip : Passthrough)
+const popoverEnabled = computed(
+  () =>
+    vertical.value &&
+    collapsed.value &&
+    hasChildren.value &&
+    (!!ctx.props.popover || !!props.item.popover),
+)
+const tooltipEnabled = computed(
+  () =>
+    (vertical.value && collapsed.value && (!!ctx.props.tooltip || !!props.item.tooltip)) ||
+    (!vertical.value && !!props.item.tooltip),
+)
+const outer = computed(() =>
+  popoverEnabled.value ? NavigationMenuPopover : tooltipEnabled.value ? Tooltip : Passthrough,
+)
 const outerProps = computed(() => {
   if (popoverEnabled.value) {
     return {
@@ -62,12 +83,20 @@ const outerProps = computed(() => {
     }
   }
   if (tooltipEnabled.value)
-    return { text: label.value, ...ctx.tooltipProps.value, ...(typeof props.item.tooltip === 'object' ? props.item.tooltip : {}) }
+    return {
+      text: label.value,
+      ...ctx.tooltipProps.value,
+      ...(typeof props.item.tooltip === 'object' ? props.item.tooltip : {}),
+    }
   return {}
 })
 
 // Per-item actions: vertical expanded rows with `actions` or an actions slot.
-const hasActions = computed(() => accordion.value && (!!props.item.actions?.length || !!ctx.slots[slotName(props.item, 'actions')]))
+const hasActions = computed(
+  () =>
+    accordion.value &&
+    (!!props.item.actions?.length || !!ctx.slots[slotName(props.item, 'actions')]),
+)
 
 function linkClass(active: boolean) {
   return ui.value.link({
@@ -89,11 +118,9 @@ function setActionsEl(el: unknown) {
 // The entry a Dropdown `action` names: an item, or one inside a section or a submenu.
 function findAction(entries: DropdownEntry[], value: DropdownValue): DropdownItem | undefined {
   for (const entry of entries) {
-    if ('value' in entry && entry.value === value)
-      return entry
+    if ('value' in entry && entry.value === value) return entry
     const nested = 'items' in entry && entry.items ? findAction(entry.items, value) : undefined
-    if (nested)
-      return nested
+    if (nested) return nested
   }
   return undefined
 }
@@ -104,22 +131,19 @@ function onAction(value: DropdownValue) {
 
 type Kind = typeof NavigationMenuTrigger | typeof AccordionTrigger | typeof NavigationMenuLink
 function kindOf(link: ResolvedLink): Kind {
-  if (horizontalContent.value)
-    return NavigationMenuTrigger
-  if (accordion.value && hasChildren.value && !link.attrs.href)
-    return AccordionTrigger
+  if (horizontalContent.value) return NavigationMenuTrigger
+  if (accordion.value && hasChildren.value && !link.attrs.href) return AccordionTrigger
   return NavigationMenuLink
 }
 
 function onSelect(event: Event) {
-  if (!props.item.disabled)
-    props.item.onSelect?.(event)
+  if (!props.item.disabled) props.item.onSelect?.(event)
 }
 
 // Reka's link emits `select`; triggers don't, so their clicks stand in for it.
 function kindProps(kind: Kind, link: ResolvedLink) {
   if (kind === NavigationMenuLink)
-    return { 'asChild': true, 'active': link.active || !!props.item.active, 'onSelect': onSelect }
+    return { asChild: true, active: link.active || !!props.item.active, onSelect: onSelect }
   return { asChild: true, disabled: !!props.item.disabled, onClick: onSelect }
 }
 
@@ -136,17 +160,27 @@ const expanded = computed(() => {
 })
 function toggleExpanded() {
   // Same guard as Reka's AccordionTrigger: a single, non-collapsible accordion keeps its open item open.
-  if (!accordionRoot || props.item.disabled || (accordionRoot.isSingle.value && expanded.value && !accordionRoot.collapsible))
+  if (
+    !accordionRoot ||
+    props.item.disabled ||
+    (accordionRoot.isSingle.value && expanded.value && !accordionRoot.collapsible)
+  )
     return
   accordionRoot.changeModelValue(value.value)
 }
-const disclosure = computed(() => accordion.value && hasChildren.value ? { open: expanded.value, toggle: toggleExpanded } : undefined)
+const disclosure = computed(() =>
+  accordion.value && hasChildren.value
+    ? { open: expanded.value, toggle: toggleExpanded }
+    : undefined,
+)
 
 function onDisclosureKeydown(event: KeyboardEvent) {
-  if (event.altKey || event.ctrlKey || event.metaKey || event.shiftKey)
-    return
+  if (event.altKey || event.ctrlKey || event.metaKey || event.shiftKey) return
   const rtl = accordionRoot?.direction.value === 'rtl'
-  if (event.key === (expanded.value ? (rtl ? 'ArrowRight' : 'ArrowLeft') : (rtl ? 'ArrowLeft' : 'ArrowRight'))) {
+  if (
+    event.key ===
+    (expanded.value ? (rtl ? 'ArrowRight' : 'ArrowLeft') : rtl ? 'ArrowLeft' : 'ArrowRight')
+  ) {
     event.preventDefault()
     toggleExpanded()
   }
@@ -155,13 +189,15 @@ function onDisclosureKeydown(event: KeyboardEvent) {
 function linkAttrs(link: ResolvedLink) {
   const attrs: Record<string, unknown> = { ...link.attrs }
   // The collapsed rail hides labels: name the icon-only link by its label.
-  if (vertical.value && collapsed.value && label.value)
-    attrs['aria-label'] = label.value
+  if (vertical.value && collapsed.value && label.value) attrs['aria-label'] = label.value
   // A link (not an AccordionTrigger button, which names the region itself) labels its nested list.
-  if (disclosure.value && kindOf(link) === NavigationMenuLink)
-    attrs.id = disclosureIds.link
+  if (disclosure.value && kindOf(link) === NavigationMenuLink) attrs.id = disclosureIds.link
   if (disclosure.value && link.attrs.href)
-    Object.assign(attrs, { 'aria-expanded': expanded.value, 'aria-controls': disclosureIds.region, 'onKeydown': onDisclosureKeydown })
+    Object.assign(attrs, {
+      'aria-expanded': expanded.value,
+      'aria-controls': disclosureIds.region,
+      onKeydown: onDisclosureKeydown,
+    })
   return attrs
 }
 </script>
@@ -173,16 +209,44 @@ function linkAttrs(link: ResolvedLink) {
     v-bind="accordion ? { disabled: !!item.disabled } : {}"
     :value="value"
     :data-slot="level > 0 ? 'childItem' : 'item'"
-    :class="level > 0
-      ? ui.childItem({ class: [ctx.props.ui?.childItem, item.ui?.childItem] })
-      : ui.item({ class: [ctx.props.ui?.item, item.ui?.item] })"
+    :class="
+      level > 0
+        ? ui.childItem({ class: [ctx.props.ui?.childItem, item.ui?.childItem] })
+        : ui.item({ class: [ctx.props.ui?.item, item.ui?.item] })
+    "
   >
-    <div v-if="isGroupLabel" :id="disclosure ? disclosureIds.link : undefined" data-slot="label" :class="ui.label({ class: [ctx.props.ui?.label, item.ui?.label, item.class] })">
-      <NavigationMenuLinkBody :item="item" :index="index" :active="false" :disclosure="disclosure" />
+    <div
+      v-if="isGroupLabel"
+      :id="disclosure ? disclosureIds.link : undefined"
+      data-slot="label"
+      :class="ui.label({ class: [ctx.props.ui?.label, item.ui?.label, item.class] })"
+    >
+      <NavigationMenuLinkBody
+        :item="item"
+        :index="index"
+        :active="false"
+        :disclosure="disclosure"
+      />
     </div>
 
-    <LinkResolver v-else-if="item.type !== 'label'" v-slot="link" :item="item" :button="accordion && hasChildren && item.type === 'trigger'">
-      <component :is="hasActions ? 'div' : Passthrough" v-bind="hasActions ? { 'data-slot': 'linkRow', 'data-active': activeOf(link) || undefined, 'class': ui.linkRow({ class: [ctx.props.ui?.linkRow, item.ui?.linkRow] }) } : {}">
+    <LinkResolver
+      v-else-if="item.type !== 'label'"
+      v-slot="link"
+      :item="item"
+      :button="accordion && hasChildren && item.type === 'trigger'"
+    >
+      <component
+        :is="hasActions ? 'div' : Passthrough"
+        v-bind="
+          hasActions
+            ? {
+                'data-slot': 'linkRow',
+                'data-active': activeOf(link) || undefined,
+                class: ui.linkRow({ class: [ctx.props.ui?.linkRow, item.ui?.linkRow] }),
+              }
+            : {}
+        "
+      >
         <component :is="outer" v-bind="outerProps">
           <component :is="kindOf(link)" v-bind="kindProps(kindOf(link), link)">
             <component
@@ -191,25 +255,52 @@ function linkAttrs(link: ResolvedLink) {
               :class="linkClass(link.active)"
               v-bind="linkAttrs(link)"
             >
-              <NavigationMenuLinkBody :item="item" :index="index" :active="activeOf(link)" :disclosure="link.attrs.href ? disclosure : undefined" />
+              <NavigationMenuLinkBody
+                :item="item"
+                :index="index"
+                :active="activeOf(link)"
+                :disclosure="link.attrs.href ? disclosure : undefined"
+              />
             </component>
           </component>
 
           <template v-if="popoverEnabled" #content="{ close }">
-            <SlotOutlet :name="slotName(item, 'content')" :slot-props="{ item, active: activeOf(link), index, ui, close }">
-              <ul data-slot="childList" :class="ui.childList({ class: [ctx.props.ui?.childList, item.ui?.childList] })">
-                <li data-slot="childLabel" :class="ui.childLabel({ class: [ctx.props.ui?.childLabel, item.ui?.childLabel] })">
+            <SlotOutlet
+              :name="slotName(item, 'content')"
+              :slot-props="{ item, active: activeOf(link), index, ui, close }"
+            >
+              <ul
+                data-slot="childList"
+                :class="ui.childList({ class: [ctx.props.ui?.childList, item.ui?.childList] })"
+              >
+                <li
+                  data-slot="childLabel"
+                  :class="ui.childLabel({ class: [ctx.props.ui?.childLabel, item.ui?.childLabel] })"
+                >
                   {{ label }}
                 </li>
-                <NavigationMenuChildLink v-for="(child, childIndex) in item.children" :key="childIndex" :child="child" :parent="item" />
+                <NavigationMenuChildLink
+                  v-for="(child, childIndex) in item.children"
+                  :key="childIndex"
+                  :child="child"
+                  :parent="item"
+                />
               </ul>
             </SlotOutlet>
           </template>
         </component>
 
         <!-- A sibling of the link, never inside it: laid over the row's end. -->
-        <div v-if="hasActions" :ref="setActionsEl" data-slot="linkActions" :class="ui.linkActions({ class: [ctx.props.ui?.linkActions, item.ui?.linkActions] })">
-          <SlotOutlet :name="slotName(item, 'actions')" :slot-props="{ item, index, active: activeOf(link), ui }" />
+        <div
+          v-if="hasActions"
+          :ref="setActionsEl"
+          data-slot="linkActions"
+          :class="ui.linkActions({ class: [ctx.props.ui?.linkActions, item.ui?.linkActions] })"
+        >
+          <SlotOutlet
+            :name="slotName(item, 'actions')"
+            :slot-props="{ item, index, active: activeOf(link), ui }"
+          />
           <Dropdown
             v-if="item.actions?.length"
             :items="item.actions"
@@ -217,10 +308,19 @@ function linkAttrs(link: ResolvedLink) {
             align="start"
             :side-offset="6"
             :disabled="!!item.disabled"
-            :class="ui.linkActionsMenu({ class: [ctx.props.ui?.linkActionsMenu, item.ui?.linkActionsMenu] })"
+            :class="
+              ui.linkActionsMenu({
+                class: [ctx.props.ui?.linkActionsMenu, item.ui?.linkActionsMenu],
+              })
+            "
             @action="onAction"
           >
-            <button type="button" data-slot="linkAction" :aria-label="`More actions for ${label}`" :class="ui.linkAction({ class: [ctx.props.ui?.linkAction, item.ui?.linkAction] })">
+            <button
+              type="button"
+              data-slot="linkAction"
+              :aria-label="`More actions for ${label}`"
+              :class="ui.linkAction({ class: [ctx.props.ui?.linkAction, item.ui?.linkAction] })"
+            >
               <EllipsisVerticalIcon />
             </button>
             <template #item-leading="{ item: entry }">
@@ -228,7 +328,12 @@ function linkAttrs(link: ResolvedLink) {
                 v-if="entry.icon"
                 :icon="entry.icon"
                 data-slot="linkActionsItemIcon"
-                :class="ui.linkActionsItemIcon({ class: [ctx.props.ui?.linkActionsItemIcon, item.ui?.linkActionsItemIcon], danger: entry.variant === 'danger' })"
+                :class="
+                  ui.linkActionsItemIcon({
+                    class: [ctx.props.ui?.linkActionsItemIcon, item.ui?.linkActionsItemIcon],
+                    danger: entry.variant === 'danger',
+                  })
+                "
               />
             </template>
           </Dropdown>
@@ -236,10 +341,27 @@ function linkAttrs(link: ResolvedLink) {
       </component>
 
       <NavigationMenuTabBridge v-if="horizontalContent" />
-      <NavigationMenuContent v-if="horizontalContent" v-bind="ctx.props.content" data-slot="content" :class="ui.content({ class: [ctx.props.ui?.content, item.ui?.content] })">
-        <SlotOutlet :name="slotName(item, 'content')" :slot-props="{ item, active: activeOf(link), index, ui }">
-          <ul data-slot="childList" :class="ui.childList({ class: [ctx.props.ui?.childList, item.ui?.childList] })">
-            <NavigationMenuChildLink v-for="(child, childIndex) in item.children" :key="childIndex" :child="child" :parent="item" detailed />
+      <NavigationMenuContent
+        v-if="horizontalContent"
+        v-bind="ctx.props.content"
+        data-slot="content"
+        :class="ui.content({ class: [ctx.props.ui?.content, item.ui?.content] })"
+      >
+        <SlotOutlet
+          :name="slotName(item, 'content')"
+          :slot-props="{ item, active: activeOf(link), index, ui }"
+        >
+          <ul
+            data-slot="childList"
+            :class="ui.childList({ class: [ctx.props.ui?.childList, item.ui?.childList] })"
+          >
+            <NavigationMenuChildLink
+              v-for="(child, childIndex) in item.children"
+              :key="childIndex"
+              :child="child"
+              :parent="item"
+              detailed
+            />
           </ul>
         </SlotOutlet>
       </NavigationMenuContent>

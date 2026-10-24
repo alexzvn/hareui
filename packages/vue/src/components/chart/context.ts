@@ -1,5 +1,20 @@
+import { useId } from 'reka-ui'
 import type { ClassValue } from 'tailwind-variants'
 import type { ComputedRef, InjectionKey, Ref, ShallowRef } from 'vue'
+import {
+  computed,
+  getCurrentInstance,
+  inject,
+  onMounted,
+  onScopeDispose,
+  provide,
+  reactive,
+  ref,
+  shallowReactive,
+  shallowRef,
+  watchEffect,
+} from 'vue'
+
 import type {
   ChartActiveState,
   ChartDatum,
@@ -10,8 +25,6 @@ import type {
   ChartSeries,
   ChartTooltipPayloadEntry,
 } from './types'
-import { useId } from 'reka-ui'
-import { computed, getCurrentInstance, inject, onMounted, onScopeDispose, provide, reactive, ref, shallowReactive, shallowRef, watchEffect } from 'vue'
 import { chartLayerNames } from './types'
 
 /** Class functions of a chart root theme (any subset of the shared chart slots). */
@@ -72,14 +85,15 @@ export interface ChartContext {
 export function useChartConfig(chart: ChartContext) {
   return {
     index: () => chart.config.value?.()?.index,
-    series: (dataKey: string) => chart.config.value?.()?.series.find(entry => entry.key === dataKey),
+    series: (dataKey: string) =>
+      chart.config.value?.()?.series.find((entry) => entry.key === dataKey),
   }
 }
 
 /** What a root publishes from its `index` / `series` props. */
 export interface ChartRootConfig {
   index?: string
-  series: ReadonlyArray<{ key: string, name: string, color: string, hidden: boolean }>
+  series: ReadonlyArray<{ key: string; name: string; color: string; hidden: boolean }>
   hidden: readonly string[]
 }
 
@@ -94,32 +108,42 @@ export function useChartRoot(options: ChartRootOptions): ChartContext {
   const height = ref(0)
   // Each series keeps its component's DOM anchor, so the list follows template order: a series shown again with
   // `v-if` goes back to its place in the stack and the tooltip instead of moving to the end.
-  const registry = shallowReactive(new Map<number, { get: () => ChartSeries, anchor: () => Node | null }>())
+  const registry = shallowReactive(
+    new Map<number, { get: () => ChartSeries; anchor: () => Node | null }>(),
+  )
   const mountedSeries = ref(0)
   let nextSeries = 0
 
-  const layers = shallowReactive(Object.fromEntries(chartLayerNames.map(name => [name, null]))) as Record<ChartLayerName, Element | null>
-  const active = reactive<ChartActiveState>({ index: null, seriesId: null, coordinate: null, source: null })
+  const layers = shallowReactive(
+    Object.fromEntries(chartLayerNames.map((name) => [name, null])),
+  ) as Record<ChartLayerName, Element | null>
+  const active = reactive<ChartActiveState>({
+    index: null,
+    seriesId: null,
+    coordinate: null,
+    source: null,
+  })
   const data = computed(() => options.data() ?? [])
   const series = computed(() => {
     void mountedSeries.value
-    return [...registry.values()].sort(byTemplateOrder).map(entry => entry.get())
+    return [...registry.values()].sort(byTemplateOrder).map((entry) => entry.get())
   })
 
   function byTemplateOrder(a: { anchor: () => Node | null }, b: { anchor: () => Node | null }) {
     const first = a.anchor()
     const second = b.anchor()
-    if (!first?.isConnected || !second?.isConnected || first === second)
-      return 0
+    if (!first?.isConnected || !second?.isConnected || first === second) return 0
     return first.compareDocumentPosition(second) & Node.DOCUMENT_POSITION_FOLLOWING ? -1 : 1
   }
 
   function registerSeries(get: () => ChartSeries) {
     const key = nextSeries++
     const instance = getCurrentInstance()
-    registry.set(key, { get, anchor: () => (instance?.vnode.el as Node | null | undefined) ?? null })
-    if (instance)
-      onMounted(() => mountedSeries.value++)
+    registry.set(key, {
+      get,
+      anchor: () => (instance?.vnode.el as Node | null | undefined) ?? null,
+    })
+    if (instance) onMounted(() => mountedSeries.value++)
     const unregister = () => registry.delete(key)
     onScopeDispose(unregister)
     return unregister
@@ -138,23 +162,25 @@ export function useChartRoot(options: ChartRootOptions): ChartContext {
   function payloadAt(index: number, seriesId?: string | null): ChartTooltipPayloadEntry[] {
     const datum = data.value[index]
     return series.value
-      .filter(entry => !entry.hide && entry.tooltip !== false && (!seriesId || entry.id === seriesId))
+      .filter(
+        (entry) => !entry.hide && entry.tooltip !== false && (!seriesId || entry.id === seriesId),
+      )
       .flatMap((entry) => {
         // Series with their own data (pie) build their entries; the default path reads the root datum.
-        if (entry.entries)
-          return entry.entries(index)
+        if (entry.entries) return entry.entries(index)
         const value = datum?.[entry.dataKey]
-        if (!datum || value === undefined || value === null)
-          return []
-        return [{
-          dataKey: entry.dataKey,
-          name: entry.name ?? entry.dataKey,
-          value,
-          color: entry.color,
-          stroke: entry.stroke,
-          fill: entry.fill,
-          payload: datum,
-        }]
+        if (!datum || value === undefined || value === null) return []
+        return [
+          {
+            dataKey: entry.dataKey,
+            name: entry.name ?? entry.dataKey,
+            value,
+            color: entry.color,
+            stroke: entry.stroke,
+            fill: entry.fill,
+            payload: datum,
+          },
+        ]
       })
   }
 
@@ -172,14 +198,19 @@ export function useChartRoot(options: ChartRootOptions): ChartContext {
     }
     watchEffect(() => {
       if (tooltipEnabled.value > 1)
-        warn('tooltip', 'Two ChartTooltips in one chart. When the chart root draws its tooltip from props, pass `:tooltip="false"` before adding a ChartTooltip.')
+        warn(
+          'tooltip',
+          'Two ChartTooltips in one chart. When the chart root draws its tooltip from props, pass `:tooltip="false"` before adding a ChartTooltip.',
+        )
       const seen = new Set<string>()
       for (const entry of series.value) {
-        if (entry.entries || entry.hide)
-          continue
+        if (entry.entries || entry.hide) continue
         const key = `${entry.kind}:${entry.dataKey}`
         if (seen.has(key))
-          warn(key, `Two ${entry.kind} series read "${entry.dataKey}" in one chart. When the chart root draws its series from \`series\`, leave that key out of \`series\` or remove the child part.`)
+          warn(
+            key,
+            `Two ${entry.kind} series read "${entry.dataKey}" in one chart. When the chart root draws its series from \`series\`, leave that key out of \`series\` or remove the child part.`,
+          )
         seen.add(key)
       }
     })

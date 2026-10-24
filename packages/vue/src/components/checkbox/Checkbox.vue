@@ -86,7 +86,12 @@ export interface CheckboxSlots {
 <script setup lang="ts">
 import { CheckboxRoot } from 'reka-ui'
 import { computed, ref, useSlots, useTemplateRef } from 'vue'
-import { forwardRootClick, keepFocusWhenReadonly, submitOnEnter } from '../../composables/forwardRootClick'
+
+import {
+  forwardRootClick,
+  keepFocusWhenReadonly,
+  submitOnEnter,
+} from '../../composables/forwardRootClick'
 import { useComponentUI } from '../../composables/useComponentUI'
 import { useFieldChrome } from '../../composables/useFieldChrome'
 import { useFieldValidation } from '../../composables/useFieldValidation'
@@ -96,7 +101,10 @@ defineOptions({ inheritAttrs: false })
 
 // `undefined` defaults stop Vue casting absent boolean props to `false`: uncontrolled mode and `defaultValue` apply,
 // and an unset `invalid` leaves validation in charge
-const props = withDefaults(defineProps<CheckboxProps>(), { modelValue: undefined, invalid: undefined })
+const props = withDefaults(defineProps<CheckboxProps>(), {
+  modelValue: undefined,
+  invalid: undefined,
+})
 const emit = defineEmits<{
   /** Emitted when the checked state changes. */
   'update:modelValue': [value: boolean | 'indeterminate']
@@ -110,7 +118,9 @@ const ui = useComponentUI('checkbox', theme, () => ({
 
 const local = ref(props.defaultValue ?? false)
 const checked = computed(() => props.modelValue ?? local.value)
-const state = computed<CheckboxState>(() => checked.value === 'indeterminate' ? 'indeterminate' : checked.value ? 'checked' : 'unchecked')
+const state = computed<CheckboxState>(() =>
+  checked.value === 'indeterminate' ? 'indeterminate' : checked.value ? 'checked' : 'unchecked',
+)
 
 const root = useTemplateRef<HTMLElement>('root')
 const isDisabled = useFieldsetDisabled(() => props.disabled)
@@ -140,8 +150,7 @@ const { id, describedBy, FieldDescription, FieldError } = useFieldChrome({
 
 function onUpdate(value: boolean | 'indeterminate') {
   // RAC `isReadOnly`: the control stays focusable but never changes state
-  if (props.readonly)
-    return
+  if (props.readonly) return
   local.value = value
   emit('update:modelValue', value)
   commitValidation()
@@ -180,7 +189,11 @@ function onUpdate(value: boolean | 'indeterminate') {
       @update:model-value="onUpdate"
     >
       <span data-slot="checkbox-control" :class="ui.control({ class: props.ui?.control })">
-        <span aria-hidden="true" data-slot="checkbox-indicator" :class="ui.indicator({ class: props.ui?.indicator })">
+        <span
+          aria-hidden="true"
+          data-slot="checkbox-indicator"
+          :class="ui.indicator({ class: props.ui?.indicator })"
+        >
           <slot name="indicator" :state="state">
             <svg
               v-if="state === 'indeterminate'"

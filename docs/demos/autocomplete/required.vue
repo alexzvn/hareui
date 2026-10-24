@@ -39,9 +39,7 @@ function onSubmit(event: SubmitEvent) {
       search-placeholder="Search states..."
       :items="states"
     >
-      <template #empty>
-        No results found
-      </template>
+      <template #empty> No results found </template>
     </Autocomplete>
     <Autocomplete
       required
@@ -54,12 +52,8 @@ function onSubmit(event: SubmitEvent) {
       search-placeholder="Search countries..."
       :items="countries"
     >
-      <template #empty>
-        No results found
-      </template>
+      <template #empty> No results found </template>
     </Autocomplete>
-    <Button type="submit">
-      Submit
-    </Button>
+    <Button type="submit"> Submit </Button>
   </Form>
 </template>

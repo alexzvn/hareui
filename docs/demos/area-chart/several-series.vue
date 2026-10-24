@@ -21,7 +21,10 @@ function formatSpeed(value: number | string) {
 </script>
 
 <template>
-  <Card class="w-full max-w-[520px] rounded-2xl" :ui="{ header: 'flex-row items-center justify-between' }">
+  <Card
+    class="w-full max-w-[520px] rounded-2xl"
+    :ui="{ header: 'flex-row items-center justify-between' }"
+  >
     <template #header>
       <h3 class="text-base font-medium text-foreground">Office Network</h3>
       <ChartLegend :series="series" />

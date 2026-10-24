@@ -44,8 +44,6 @@ const items: DropdownEntry[] = [
 
 <template>
   <Dropdown v-model="selected" class="min-w-[256px]" :items="items">
-    <Button variant="secondary">
-      Styles
-    </Button>
+    <Button variant="secondary"> Styles </Button>
   </Dropdown>
 </template>

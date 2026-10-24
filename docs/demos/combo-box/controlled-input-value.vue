@@ -17,9 +17,13 @@ const inputValue = ref('')
 
 <template>
   <div class="space-y-2">
-    <ComboBox v-model:input-value="inputValue" class="w-[256px]" label="Search (controlled input)" placeholder="Type to search..." :items="animals" />
-    <p class="text-sm text-muted">
-      Input value: {{ inputValue || '(empty)' }}
-    </p>
+    <ComboBox
+      v-model:input-value="inputValue"
+      class="w-[256px]"
+      label="Search (controlled input)"
+      placeholder="Type to search..."
+      :items="animals"
+    />
+    <p class="text-sm text-muted">Input value: {{ inputValue || '(empty)' }}</p>
   </div>
 </template>

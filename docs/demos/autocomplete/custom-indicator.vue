@@ -1,7 +1,7 @@
 <script setup lang="ts">
-import { Icon } from '@iconify/vue'
 import type { ListBoxItem } from '@hareui/vue'
 import { Autocomplete } from '@hareui/vue'
+import { Icon } from '@iconify/vue'
 import { ref } from 'vue'
 
 const items: ListBoxItem[] = [
@@ -30,8 +30,6 @@ const selectedKey = ref<string | null>(null)
     <template #indicator>
       <Icon class="size-3" icon="gravity-ui:chevrons-expand-vertical" />
     </template>
-    <template #empty>
-      No results found
-    </template>
+    <template #empty> No results found </template>
   </Autocomplete>
 </template>

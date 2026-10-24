@@ -6,9 +6,7 @@ import { Button, Popover } from '@hareui/vue'
   <div class="grid grid-cols-3 gap-4">
     <div />
     <Popover side="top" arrow>
-      <Button class="w-full" variant="tertiary">
-        Top
-      </Button>
+      <Button class="w-full" variant="tertiary"> Top </Button>
       <template #content>
         <p class="text-sm">Top placement</p>
       </template>
@@ -16,9 +14,7 @@ import { Button, Popover } from '@hareui/vue'
     <div />
 
     <Popover side="left" arrow>
-      <Button class="w-full" variant="tertiary">
-        Left
-      </Button>
+      <Button class="w-full" variant="tertiary"> Left </Button>
       <template #content>
         <p class="text-sm">Left placement</p>
       </template>
@@ -29,9 +25,7 @@ import { Button, Popover } from '@hareui/vue'
     </div>
 
     <Popover side="right" arrow>
-      <Button class="w-full" variant="tertiary">
-        Right
-      </Button>
+      <Button class="w-full" variant="tertiary"> Right </Button>
       <template #content>
         <p class="text-sm">Right placement</p>
       </template>
@@ -39,9 +33,7 @@ import { Button, Popover } from '@hareui/vue'
 
     <div />
     <Popover side="bottom" arrow>
-      <Button class="w-full" variant="tertiary">
-        Bottom
-      </Button>
+      <Button class="w-full" variant="tertiary"> Bottom </Button>
       <template #content>
         <p class="text-sm">Bottom placement</p>
       </template>

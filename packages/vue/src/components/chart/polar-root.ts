@@ -1,15 +1,22 @@
 import type { ComputedRef, Ref } from 'vue'
+import { computed } from 'vue'
+
 import type { ChartLegendProps } from '../chart-legend'
 import type { ChartTooltipContentEntry } from '../chart-tooltip'
+import { definedProps } from './cartesian-root'
 import type { ChartTooltipProps } from './ChartTooltip.vue'
 import type { ChartContext } from './context'
 import type { ChartFrameConfig } from './frame'
-import type { PolarContext } from './polar'
-import type { ChartIndexKey, ChartLegendItem, ChartLegendPosition, ChartSlice, ChartValueKey } from './series-config'
-import { computed } from 'vue'
-import { definedProps } from './cartesian-root'
 import { resolveFrameLegend } from './frame'
 import { provideChartLabelViewBox } from './label'
+import type { PolarContext } from './polar'
+import type {
+  ChartIndexKey,
+  ChartLegendItem,
+  ChartLegendPosition,
+  ChartSlice,
+  ChartValueKey,
+} from './series-config'
 import { inferValueKeys, isChartGenerated, resolveChartPart, resolveSlices } from './series-config'
 
 /** Props of `PieChart`, `RadarChart` and `RadialChart` that the frame draws. */
@@ -17,7 +24,10 @@ export interface PolarRootFrameProps {
   /** Tooltip on hover and focus: `false` turns it off, an object sets `ChartTooltip` props. */
   tooltip?: boolean | Partial<ChartTooltipProps>
   /** `true` (below), a side, or `ChartLegend` props with a `position`. */
-  legend?: boolean | ChartLegendPosition | (Partial<ChartLegendProps<any>> & { position?: ChartLegendPosition })
+  legend?:
+    | boolean
+    | ChartLegendPosition
+    | (Partial<ChartLegendProps<any>> & { position?: ChartLegendPosition })
 }
 
 export interface PolarRootOptions {
@@ -41,8 +51,7 @@ export interface PolarRootOptions {
 export function usePolarRoot(options: PolarRootOptions): ComputedRef<ChartFrameConfig> {
   const { props } = options
   return computed<ChartFrameConfig>(() => {
-    if (!options.generated())
-      return { legend: null, legendItems: [], tooltip: null }
+    if (!options.generated()) return { legend: null, legendItems: [], tooltip: null }
     return {
       legend: resolveFrameLegend(props.legend, options.hasLegendSlot(), options.legend?.()),
       legendItems: options.legendItems(),
@@ -75,19 +84,42 @@ export function useSliceRoot<T extends object>(options: SliceRootOptions<T>) {
   const { props, hidden } = options
 
   const generated = computed(() => isChartGenerated(props))
-  const valueKey = computed(() => props.valueKey ?? (props.index === undefined ? undefined : inferValueKeys(props.data ?? [], props.index)[0]))
-  const slices = computed<ChartSlice<T>[] | undefined>(() => (generated.value && props.index !== undefined
-    ? resolveSlices({ data: props.data ?? [], index: props.index, valueKey: valueKey.value, colors: props.colors, hidden: hidden.value })
-    : undefined))
-  const visibleSlices = computed(() => slices.value?.filter(slice => !slice.hidden) ?? [])
+  const valueKey = computed(
+    () =>
+      props.valueKey ??
+      (props.index === undefined ? undefined : inferValueKeys(props.data ?? [], props.index)[0]),
+  )
+  const slices = computed<ChartSlice<T>[] | undefined>(() =>
+    generated.value && props.index !== undefined
+      ? resolveSlices({
+          data: props.data ?? [],
+          index: props.index,
+          valueKey: valueKey.value,
+          colors: props.colors,
+          hidden: hidden.value,
+        })
+      : undefined,
+  )
+  const visibleSlices = computed(() => slices.value?.filter((slice) => !slice.hidden) ?? [])
 
   const config = usePolarRoot({
     props,
     generated: () => generated.value,
-    legendItems: () => (slices.value ?? []).map(({ key, name, color, hidden, value, percent }) => ({ key, name, color, hidden, value, percent })),
+    legendItems: () =>
+      (slices.value ?? []).map(({ key, name, color, hidden, value, percent }) => ({
+        key,
+        name,
+        color,
+        hidden,
+        value,
+        percent,
+      })),
     tooltip: () => ({
       valueFormatter: props.valueFormatter
-        ? (value: number | string, entry: ChartTooltipContentEntry) => (typeof value === 'number' ? props.valueFormatter!(value, entry.name ?? '') : String(value))
+        ? (value: number | string, entry: ChartTooltipContentEntry) =>
+            typeof value === 'number'
+              ? props.valueFormatter!(value, entry.name ?? '')
+              : String(value)
         : undefined,
     }),
     legend: () => definedProps({ valueFormatter: props.valueFormatter }),
@@ -101,7 +133,11 @@ export function useSliceRoot<T extends object>(options: SliceRootOptions<T>) {
  * A `ChartLabel` placed directly in a pie or radial root sits on the polar center, inside a disc of `radius` (the pie,
  * or the hole inside the innermost ring).
  */
-export function providePolarCenterLabel(chart: ChartContext, polar: PolarContext, radius: () => number): void {
+export function providePolarCenterLabel(
+  chart: ChartContext,
+  polar: PolarContext,
+  radius: () => number,
+): void {
   const viewBox = computed(() => ({
     cx: polar.cx.value,
     cy: polar.cy.value,

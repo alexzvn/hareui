@@ -1,16 +1,51 @@
 <script setup lang="ts">
 import { CellSlider } from '@hareui/vue'
 
-interface Filter { label: string, value: number, min: number, max: number, step: number, format: Intl.NumberFormatOptions }
+interface Filter {
+  label: string
+  value: number
+  min: number
+  max: number
+  step: number
+  format: Intl.NumberFormatOptions
+}
 
 const filters: Record<string, Filter[]> = {
   Stay: [
-    { label: 'Max per night', value: 180, min: 40, max: 500, step: 10, format: { style: 'currency', currency: 'USD', maximumFractionDigits: 0 } },
-    { label: 'Guest rating', value: 4, min: 1, max: 5, step: 0.5, format: { minimumFractionDigits: 1 } },
+    {
+      label: 'Max per night',
+      value: 180,
+      min: 40,
+      max: 500,
+      step: 10,
+      format: { style: 'currency', currency: 'USD', maximumFractionDigits: 0 },
+    },
+    {
+      label: 'Guest rating',
+      value: 4,
+      min: 1,
+      max: 5,
+      step: 0.5,
+      format: { minimumFractionDigits: 1 },
+    },
   ],
   Location: [
-    { label: 'From center', value: 3, min: 0, max: 20, step: 0.5, format: { style: 'unit', unit: 'kilometer' } },
-    { label: 'Walk to transit', value: 10, min: 0, max: 30, step: 5, format: { style: 'unit', unit: 'minute' } },
+    {
+      label: 'From center',
+      value: 3,
+      min: 0,
+      max: 20,
+      step: 0.5,
+      format: { style: 'unit', unit: 'kilometer' },
+    },
+    {
+      label: 'Walk to transit',
+      value: 10,
+      min: 0,
+      max: 30,
+      step: 5,
+      format: { style: 'unit', unit: 'minute' },
+    },
   ],
 }
 </script>

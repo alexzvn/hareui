@@ -24,14 +24,12 @@ const format = ref('percent')
 
 function setMinValue(v: number | null | undefined) {
   minValue.value = v ?? 0
-  if (value.value < minValue.value)
-    value.value = minValue.value
+  if (value.value < minValue.value) value.value = minValue.value
 }
 
 function setMaxValue(v: number | null | undefined) {
   maxValue.value = v ?? minValue.value + 1
-  if (value.value > maxValue.value)
-    value.value = maxValue.value
+  if (value.value > maxValue.value) value.value = maxValue.value
 }
 </script>
 
@@ -55,7 +53,13 @@ function setMaxValue(v: number | null | undefined) {
     <div class="flex max-w-52 flex-col gap-3">
       <Label class="text-xs font-medium text-muted">Options</Label>
 
-      <NumberField v-model="value" label="Value" :max="maxValue" :min="minValue" variant="secondary" />
+      <NumberField
+        v-model="value"
+        label="Value"
+        :max="maxValue"
+        :min="minValue"
+        variant="secondary"
+      />
       <NumberField
         label="Min Value"
         :max="maxValue - 1"

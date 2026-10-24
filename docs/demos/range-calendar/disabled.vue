@@ -5,8 +5,6 @@ import { Description, RangeCalendar } from '@hareui/vue'
 <template>
   <div class="flex flex-col items-center gap-4">
     <RangeCalendar aria-label="Trip dates" disabled />
-    <Description class="text-center">
-      Range calendar is disabled
-    </Description>
+    <Description class="text-center"> Range calendar is disabled </Description>
   </div>
 </template>

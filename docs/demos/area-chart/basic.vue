@@ -23,7 +23,18 @@ const series = {
 </script>
 
 <template>
-  <Card class="w-full max-w-[520px] rounded-2xl" title="Rooftop Solar Output" description="3,743 kWh this year" :ui="{ title: 'text-base', description: 'text-xs' }">
-    <AreaChart :data="data" index="month" :series="series" aria-label="Monthly rooftop solar output" :height="200" />
+  <Card
+    class="w-full max-w-[520px] rounded-2xl"
+    title="Rooftop Solar Output"
+    description="3,743 kWh this year"
+    :ui="{ title: 'text-base', description: 'text-xs' }"
+  >
+    <AreaChart
+      :data="data"
+      index="month"
+      :series="series"
+      aria-label="Monthly rooftop solar output"
+      :height="200"
+    />
   </Card>
 </template>

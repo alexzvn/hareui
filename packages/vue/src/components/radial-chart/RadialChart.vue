@@ -5,7 +5,12 @@ import type { ChartTooltipContentEntry } from '../chart-tooltip/ChartTooltipCont
 import type { ChartRadialBarBackground } from '../chart/ChartRadialBar.vue'
 import type { ChartTooltipProps, ChartTooltipSlotProps } from '../chart/ChartTooltip.vue'
 import type { ChartPolarCenterSlotProps } from '../chart/polar'
-import type { ChartIndexKey, ChartLegendItem, ChartLegendPosition, ChartValueKey } from '../chart/series-config'
+import type {
+  ChartIndexKey,
+  ChartLegendItem,
+  ChartLegendPosition,
+  ChartValueKey,
+} from '../chart/series-config'
 import type { ChartDatum, ChartMargin } from '../chart/types'
 import theme from './theme'
 
@@ -52,7 +57,10 @@ export interface RadialChartProps<T extends object = ChartDatum> {
    */
   tooltip?: boolean | Partial<ChartTooltipProps>
   /** Legend of the rings: `true` (below), a side, or `ChartLegend` props with a `position`. Clicking a row hides its ring. */
-  legend?: boolean | ChartLegendPosition | (Partial<ChartLegendProps<T>> & { position?: ChartLegendPosition })
+  legend?:
+    | boolean
+    | ChartLegendPosition
+    | (Partial<ChartLegendProps<T>> & { position?: ChartLegendPosition })
   /** Formats ring values in the tooltip and the legend. */
   valueFormatter?: (value: number, name: string) => string
   /** Names of hidden rings (`v-model:hidden`). */
@@ -127,22 +135,26 @@ export interface RadialChartProps<T extends object = ChartDatum> {
 
 export interface RadialChartSlots {
   /** Chart parts: `ChartRadialBar`, `ChartPolarAngleAxis`, `ChartPolarGrid`, `ChartTooltip`, a centered `ChartLabel`. With `index`, extra parts drawn over the generated rings. */
-  'default'?: () => any
+  default?: () => any
   /** HTML centered in the rings, e.g. the value of a gauge. */
-  'center'?: (props: ChartPolarCenterSlotProps) => any
+  center?: (props: ChartPolarCenterSlotProps) => any
   /** Replaces the tooltip panel. */
-  'tooltip'?: (props: ChartTooltipSlotProps) => any
+  tooltip?: (props: ChartTooltipSlotProps) => any
   /** Content under the tooltip rows. */
-  'tooltip-footer'?: (props: { label?: number | string, payload: ChartTooltipContentEntry[] }) => any
+  'tooltip-footer'?: (props: {
+    label?: number | string
+    payload: ChartTooltipContentEntry[]
+  }) => any
   /** Replaces the legend. */
-  'legend'?: (props: { items: ChartLegendItem[], toggle: (key: string) => void }) => any
+  legend?: (props: { items: ChartLegendItem[]; toggle: (key: string) => void }) => any
   /** Replaces each legend row. */
-  'legend-item'?: (props: { item: ChartLegendItem, index: number, toggle: () => void }) => any
+  'legend-item'?: (props: { item: ChartLegendItem; index: number; toggle: () => void }) => any
 }
 </script>
 
 <script setup lang="ts" generic="T extends object">
 import { computed } from 'vue'
+
 import { useComponentUI } from '../../composables/useComponentUI'
 import ChartCell from '../chart/ChartCell.vue'
 import ChartFrame from '../chart/ChartFrame.vue'
@@ -174,17 +186,28 @@ const props = withDefaults(defineProps<RadialChartProps<T>>(), {
 const slots = defineSlots<RadialChartSlots>()
 const hidden = defineModel<string[]>('hidden', { default: () => [] })
 
-const { valueKey, slices, visibleSlices, config } = useSliceRoot({ props, hidden, hasLegendSlot: () => !!slots.legend })
+const { valueKey, slices, visibleSlices, config } = useSliceRoot({
+  props,
+  hidden,
+  hasLegendSlot: () => !!slots.legend,
+})
 // Full bar: `max`, or the largest value of every ring (hidden ones too, so toggling a ring keeps the scale).
-const domainMax = computed(() => props.max ?? Math.max(0, ...(slices.value ?? []).map(slice => slice.value)))
+const domainMax = computed(
+  () => props.max ?? Math.max(0, ...(slices.value ?? []).map((slice) => slice.value)),
+)
 
-const startAngle = computed(() => props.startAngle ?? (props.gauge ? chartDefaults.gauge.startAngle : 90))
-const endAngle = computed(() => props.endAngle ?? (props.gauge ? chartDefaults.gauge.endAngle : -270))
+const startAngle = computed(
+  () => props.startAngle ?? (props.gauge ? chartDefaults.gauge.startAngle : 90),
+)
+const endAngle = computed(
+  () => props.endAngle ?? (props.gauge ? chartDefaults.gauge.endAngle : -270),
+)
 
 const ui = useComponentUI('radialChart', theme, () => ({}))
 const chart = useChartRoot({
   // Generated mode: only the visible rings reach the chart, so the active index points into them.
-  data: () => (slices.value ? visibleSlices.value.map(slice => slice.row) : props.data) as ChartDatum[],
+  data: () =>
+    (slices.value ? visibleSlices.value.map((slice) => slice.row) : props.data) as ChartDatum[],
   margin: () => props.margin,
   layout: () => 'radial',
   ui,
@@ -221,7 +244,12 @@ providePolarCenterLabel(chart, polar, () => polar.innerRadius.value)
       <slot :name="name" v-bind="scope as any" />
     </template>
     <template v-if="slices && valueKey" #parts>
-      <ChartPolarAngleAxis type="number" :domain="[0, domainMax]" :tick="false" :axis-line="false" />
+      <ChartPolarAngleAxis
+        type="number"
+        :domain="[0, domainMax]"
+        :tick="false"
+        :axis-line="false"
+      />
       <ChartRadialBar
         :data-key="valueKey"
         :name-key="props.index"

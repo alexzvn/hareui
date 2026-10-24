@@ -1,9 +1,10 @@
 <script setup lang="ts">
+import { Button, ColorSwatchPicker } from '@hareui/vue'
+import { Icon } from '@iconify/vue'
 // Port of HeroUI docs `components/color-picker/components/color-swatches-carousel.tsx`.
 import type { Color } from 'reka-ui'
-import { Icon } from '@iconify/vue'
-import { Button, ColorSwatchPicker } from '@hareui/vue'
 import { computed, ref } from 'vue'
+
 import { chunkArray, SWATCHES_PER_PAGE } from './accentColorUtils'
 
 const props = defineProps<{
@@ -21,20 +22,21 @@ const swatchPages = computed(() => chunkArray(props.swatches, SWATCHES_PER_PAGE)
 const totalPages = computed(() => swatchPages.value.length)
 
 // Calculate initial swatch page based on current color
-const swatchPage = ref((() => {
-  if (!props.initialColorHex) return 0
-  const swatchIndex = props.swatches.findIndex(
-    s => s.toLowerCase() === props.initialColorHex!.toLowerCase(),
-  )
+const swatchPage = ref(
+  (() => {
+    if (!props.initialColorHex) return 0
+    const swatchIndex = props.swatches.findIndex(
+      (s) => s.toLowerCase() === props.initialColorHex!.toLowerCase(),
+    )
 
-  return swatchIndex !== -1 ? Math.floor(swatchIndex / SWATCHES_PER_PAGE) : 0
-})())
+    return swatchIndex !== -1 ? Math.floor(swatchIndex / SWATCHES_PER_PAGE) : 0
+  })(),
+)
 
 function navigateSwatches(direction: 'left' | 'right') {
   if (direction === 'left') {
     swatchPage.value = Math.max(0, swatchPage.value - 1)
-  }
-  else {
+  } else {
     swatchPage.value = Math.min(totalPages.value - 1, swatchPage.value + 1)
   }
 }
@@ -75,7 +77,11 @@ const SWATCH_UI = {
           transform: `translateX(-${swatchPage * 100}%)`,
         }"
       >
-        <div v-for="(pageSwatches, pageIndex) in swatchPages" :key="pageIndex" class="flex h-[22px] w-full shrink-0 justify-center">
+        <div
+          v-for="(pageSwatches, pageIndex) in swatchPages"
+          :key="pageIndex"
+          class="flex h-[22px] w-full shrink-0 justify-center"
+        >
           <ColorSwatchPicker
             :items="pageSwatches"
             :model-value="color"

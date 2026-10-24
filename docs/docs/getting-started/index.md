@@ -26,6 +26,7 @@ The component API itself follows Nuxt UI conventions rather than HeroUI's compou
 Copy-paste code works until it breaks. You're left maintaining outdated dependencies that stop evolving.
 
 HareUI is different. It's a library you install and update, not a folder of snippets you own:
+
 - Component themes stay in sync with upstream HeroUI changes
 - Deep customization through CSS variables and the `:ui` prop, not shallow theme tweaks
 - Predictable, typed props designed for AI-assisted code generation

@@ -1,8 +1,9 @@
 <script lang="ts">
 import type { PrimitiveProps } from 'reka-ui'
-import type { ClassValue } from '../../utils/tv'
+
 import type { DashboardSidebarSide } from '../../composables/useDashboard'
 import type { ComponentSlots } from '../../types/tv'
+import type { ClassValue } from '../../utils/tv'
 import type { ButtonProps } from '../button/Button.vue'
 import theme from './theme'
 
@@ -48,6 +49,7 @@ export interface DashboardSidebarCollapseSlots {
 
 <script setup lang="ts">
 import { computed } from 'vue'
+
 import { useComponentUI } from '../../composables/useComponentUI'
 import { useDashboard } from '../../composables/useDashboard'
 import Button from '../button/Button.vue'
@@ -83,11 +85,39 @@ const collapsed = computed(() => sidebar.value?.collapsed.value ?? false)
     @click="sidebar?.collapse(!collapsed)"
   >
     <slot :collapsed="collapsed">
-      <svg v-if="side === 'left'" aria-hidden="true" fill="none" height="16" role="presentation" viewBox="0 0 16 16" width="16" xmlns="http://www.w3.org/2000/svg">
-        <path clip-rule="evenodd" d="M6 3.5h6A1.5 1.5 0 0 1 13.5 5v6a1.5 1.5 0 0 1-1.5 1.5H6zm-1.5 0H4A1.5 1.5 0 0 0 2.5 5v6A1.5 1.5 0 0 0 4 12.5h.5zM1 5a3 3 0 0 1 3-3h8a3 3 0 0 1 3 3v6a3 3 0 0 1-3 3H4a3 3 0 0 1-3-3z" fill="currentColor" fill-rule="evenodd" />
+      <svg
+        v-if="side === 'left'"
+        aria-hidden="true"
+        fill="none"
+        height="16"
+        role="presentation"
+        viewBox="0 0 16 16"
+        width="16"
+        xmlns="http://www.w3.org/2000/svg"
+      >
+        <path
+          clip-rule="evenodd"
+          d="M6 3.5h6A1.5 1.5 0 0 1 13.5 5v6a1.5 1.5 0 0 1-1.5 1.5H6zm-1.5 0H4A1.5 1.5 0 0 0 2.5 5v6A1.5 1.5 0 0 0 4 12.5h.5zM1 5a3 3 0 0 1 3-3h8a3 3 0 0 1 3 3v6a3 3 0 0 1-3 3H4a3 3 0 0 1-3-3z"
+          fill="currentColor"
+          fill-rule="evenodd"
+        />
       </svg>
-      <svg v-else aria-hidden="true" fill="none" height="16" role="presentation" viewBox="0 0 16 16" width="16" xmlns="http://www.w3.org/2000/svg">
-        <path clip-rule="evenodd" d="M10 3.5H4A1.5 1.5 0 0 0 2.5 5v6A1.5 1.5 0 0 0 4 12.5h6zm1.5 0h.5A1.5 1.5 0 0 1 13.5 5v6a1.5 1.5 0 0 1-1.5 1.5h-.5zM15 5a3 3 0 0 0-3-3H4a3 3 0 0 0-3 3v6a3 3 0 0 0 3 3h8a3 3 0 0 0 3-3z" fill="currentColor" fill-rule="evenodd" />
+      <svg
+        v-else
+        aria-hidden="true"
+        fill="none"
+        height="16"
+        role="presentation"
+        viewBox="0 0 16 16"
+        width="16"
+        xmlns="http://www.w3.org/2000/svg"
+      >
+        <path
+          clip-rule="evenodd"
+          d="M10 3.5H4A1.5 1.5 0 0 0 2.5 5v6A1.5 1.5 0 0 0 4 12.5h6zm1.5 0h.5A1.5 1.5 0 0 1 13.5 5v6a1.5 1.5 0 0 1-1.5 1.5h-.5zM15 5a3 3 0 0 0-3-3H4a3 3 0 0 0-3 3v6a3 3 0 0 0 3 3h8a3 3 0 0 0 3-3z"
+          fill="currentColor"
+          fill-rule="evenodd"
+        />
       </svg>
     </slot>
   </Button>

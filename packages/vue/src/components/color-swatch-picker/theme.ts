@@ -44,7 +44,14 @@ export default {
   },
   compoundVariants: [
     { variant: 'square', size: 'xs', class: { item: 'rounded-md', swatch: 'rounded-md' } },
-    { variant: 'square', size: 'sm', class: { item: 'rounded-lg data-[state=checked]:[&_[data-slot=color-swatch-picker-swatch]]:rounded-md', swatch: 'rounded-lg' } },
+    {
+      variant: 'square',
+      size: 'sm',
+      class: {
+        item: 'rounded-lg data-[state=checked]:[&_[data-slot=color-swatch-picker-swatch]]:rounded-md',
+        swatch: 'rounded-lg',
+      },
+    },
     { variant: 'square', size: 'lg', class: { item: 'rounded-xl' } },
     { variant: 'square', size: 'xl', class: { item: 'rounded-xl' } },
   ],

@@ -17,19 +17,22 @@ const customers = [
   { name: 'Olivia Martin', amount: 1999 },
 ]
 
-const formatCurrency = (value: number) => new Intl.NumberFormat('en-US', { style: 'currency', currency: 'USD' }).format(value)
+const formatCurrency = (value: number) =>
+  new Intl.NumberFormat('en-US', { style: 'currency', currency: 'USD' }).format(value)
 
 const PAGE = 8
 const TOTAL = 40
-const all = Array.from({ length: TOTAL }, (_, i): Payment => ({ ...customers[i % customers.length]!, id: `pay_${String(i + 1).padStart(3, '0')}` }))
+const all = Array.from({ length: TOTAL }, (_, i): Payment => ({
+  ...customers[i % customers.length]!,
+  id: `pay_${String(i + 1).padStart(3, '0')}`,
+}))
 
 const items = ref(all.slice(0, PAGE))
 const loading = ref(false)
 const hasMore = () => items.value.length < all.length
 
 function loadMore() {
-  if (loading.value || !hasMore())
-    return
+  if (loading.value || !hasMore()) return
   loading.value = true
   setTimeout(() => {
     items.value = all.slice(0, items.value.length + PAGE)
@@ -40,7 +43,11 @@ function loadMore() {
 const columns: RichTableColumn<Payment>[] = [
   { accessorKey: 'id', header: 'ID' },
   { accessorKey: 'name', header: 'Customer' },
-  { accessorKey: 'amount', header: 'Amount', cell: ({ row }) => formatCurrency(row.original.amount) },
+  {
+    accessorKey: 'amount',
+    header: 'Amount',
+    cell: ({ row }) => formatCurrency(row.original.amount),
+  },
 ]
 
 // A sentinel row after the rows loads the next page once it scrolls into view.
@@ -49,9 +56,10 @@ const sentinel = useTemplateRef('sentinel')
 let observer: IntersectionObserver | undefined
 watch(sentinel, (el) => {
   observer?.disconnect()
-  if (!el)
-    return
-  observer = new IntersectionObserver(entries => entries[0]?.isIntersecting && loadMore(), { root: table.value?.$el })
+  if (!el) return
+  observer = new IntersectionObserver((entries) => entries[0]?.isIntersecting && loadMore(), {
+    root: table.value?.$el,
+  })
   observer.observe(el)
 })
 onBeforeUnmount(() => observer?.disconnect())
@@ -59,9 +67,7 @@ onBeforeUnmount(() => observer?.disconnect())
 
 <template>
   <div class="flex w-full flex-col gap-3">
-    <p class="text-sm text-muted">
-      {{ items.length }} / {{ all.length }} payments
-    </p>
+    <p class="text-sm text-muted">{{ items.length }} / {{ all.length }} payments</p>
     <RichTable ref="table" class="max-h-100" sticky :data="items" :columns="columns">
       <template v-if="items.length < all.length" #body-bottom>
         <!-- Load-more row: a centered Spinner while the next page loads. -->

@@ -1,7 +1,7 @@
 <script setup lang="ts">
+import { DatePicker } from '@hareui/vue'
 import type { DateValue } from '@internationalized/date'
 import { getLocalTimeZone, today } from '@internationalized/date'
-import { DatePicker } from '@hareui/vue'
 import { computed, shallowRef } from 'vue'
 
 const value = shallowRef<DateValue | null>(null)

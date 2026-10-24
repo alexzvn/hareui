@@ -32,7 +32,9 @@ const isPropsType = (name) => name.endsWith('Props') && !name.endsWith('SlotProp
 export default {
   meta: {
     type: 'suggestion',
-    docs: { description: 'Props sharing a camelCase prefix must be grouped into one nested object prop' },
+    docs: {
+      description: 'Props sharing a camelCase prefix must be grouped into one nested object prop',
+    },
     messages: { group: 'Group {{keys}} into `{{prefix}}: { {{rest}} }`.' },
     schema: [],
   },

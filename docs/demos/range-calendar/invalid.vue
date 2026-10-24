@@ -6,17 +6,20 @@ import { computed, shallowRef } from 'vue'
 
 const now = today(getLocalTimeZone())
 const value = shallowRef<DateRange>({ start: now.add({ days: 6 }), end: now.add({ days: 14 }) })
-const isInvalid = computed(() => !!value.value.end && !!value.value.start && value.value.end.compare(value.value.start) > 7)
+const isInvalid = computed(
+  () => !!value.value.end && !!value.value.start && value.value.end.compare(value.value.start) > 7,
+)
 </script>
 
 <template>
   <div class="flex flex-col items-center gap-4">
-    <RangeCalendar aria-label="Trip dates" v-model="value" first-day-of-week="mon" :invalid="isInvalid" />
-    <p v-if="isInvalid" class="text-sm text-danger">
-      Maximum stay duration is 1 week
-    </p>
-    <Description v-else class="text-center">
-      Select a stay of up to 7 days
-    </Description>
+    <RangeCalendar
+      aria-label="Trip dates"
+      v-model="value"
+      first-day-of-week="mon"
+      :invalid="isInvalid"
+    />
+    <p v-if="isInvalid" class="text-sm text-danger">Maximum stay duration is 1 week</p>
+    <Description v-else class="text-center"> Select a stay of up to 7 days </Description>
   </div>
 </template>

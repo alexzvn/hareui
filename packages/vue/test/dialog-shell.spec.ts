@@ -1,7 +1,8 @@
-import type { Component, VNodeChild } from 'vue'
 import { mount } from '@vue/test-utils'
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest'
+import type { Component, VNodeChild } from 'vue'
 import { h, nextTick, ref } from 'vue'
+
 import AlertDialog from '../src/components/alert-dialog/AlertDialog.vue'
 import Drawer from '../src/components/drawer/Drawer.vue'
 import Modal from '../src/components/modal/Modal.vue'
@@ -9,7 +10,9 @@ import Modal from '../src/components/modal/Modal.vue'
 // The lifecycle `useDialogShell` gives Modal, Drawer and AlertDialog, checked through each of them.
 
 function escapeKeydown() {
-  document.dispatchEvent(new KeyboardEvent('keydown', { key: 'Escape', bubbles: true, cancelable: true }))
+  document.dispatchEvent(
+    new KeyboardEvent('keydown', { key: 'Escape', bubbles: true, cancelable: true }),
+  )
 }
 
 // Reka's Presence needs three ticks before a closed dialog leaves the DOM (see modal.spec.ts).
@@ -25,11 +28,12 @@ function stubExitAnimations() {
   const original = window.getComputedStyle.bind(window)
   vi.spyOn(window, 'getComputedStyle').mockImplementation((el: Element, pseudo?: string | null) => {
     const real = original(el, pseudo)
-    const animatesClosed = el.getAttribute?.('data-state') === 'closed' && /\[data-state=closed\]\)\]:animate-(?!none)/.test(el.getAttribute('class') ?? '')
-    if (!animatesClosed)
-      return real
+    const animatesClosed =
+      el.getAttribute?.('data-state') === 'closed' &&
+      /\[data-state=closed\]\)\]:animate-(?!none)/.test(el.getAttribute('class') ?? '')
+    if (!animatesClosed) return real
     return new Proxy(real, {
-      get: (target, key) => key === 'animationName' ? 'exit' : Reflect.get(target, key),
+      get: (target, key) => (key === 'animationName' ? 'exit' : Reflect.get(target, key)),
     })
   })
 }
@@ -47,11 +51,29 @@ interface DialogCase {
 
 const cases: DialogCase[] = [
   // Modal: one `dismissible` switch for the backdrop and Escape (default on).
-  { name: 'Modal', component: Modal, slot: 'modal', escapeOn: {}, escapeOff: { dismissible: false } },
+  {
+    name: 'Modal',
+    component: Modal,
+    slot: 'modal',
+    escapeOn: {},
+    escapeOff: { dismissible: false },
+  },
   // Drawer: Escape follows `keyboardDismissible`, independent of the backdrop's `dismissible`.
-  { name: 'Drawer', component: Drawer, slot: 'drawer', escapeOn: { dismissible: false }, escapeOff: { keyboardDismissible: false } },
+  {
+    name: 'Drawer',
+    component: Drawer,
+    slot: 'drawer',
+    escapeOn: { dismissible: false },
+    escapeOff: { keyboardDismissible: false },
+  },
   // AlertDialog: Escape is off by default (HeroUI's `isKeyboardDismissDisabled`), on with `keyboardDismissible`.
-  { name: 'AlertDialog', component: AlertDialog, slot: 'alert-dialog', escapeOn: { keyboardDismissible: true }, escapeOff: {} },
+  {
+    name: 'AlertDialog',
+    component: AlertDialog,
+    slot: 'alert-dialog',
+    escapeOn: { keyboardDismissible: true },
+    escapeOff: {},
+  },
 ]
 
 const mounted: Array<{ unmount: () => void }> = []
@@ -60,7 +82,7 @@ beforeEach(() => stubExitAnimations())
 // A failing assertion must not leave an open dialog behind for the next test.
 afterEach(() => {
   vi.restoreAllMocks()
-  mounted.splice(0).forEach(w => w.unmount())
+  mounted.splice(0).forEach((w) => w.unmount())
   document.body.innerHTML = ''
 })
 
@@ -69,24 +91,39 @@ describe.each(cases)('dialog shell: $name', ({ component, slot, escapeOn, escape
 
   async function finishExit() {
     await waitUnmount()
-    const event = Object.assign(new Event('animationend', { bubbles: true }), { animationName: 'exit' })
-    document.querySelectorAll(`[data-slot=${slot}-backdrop][data-state=closed]`).forEach(el => el.dispatchEvent(event))
+    const event = Object.assign(new Event('animationend', { bubbles: true }), {
+      animationName: 'exit',
+    })
+    document
+      .querySelectorAll(`[data-slot=${slot}-backdrop][data-state=closed]`)
+      .forEach((el) => el.dispatchEvent(event))
     await waitUnmount()
   }
 
   /** Mounts the dialog beside a page, controlled by `open`. `onUpdate` replaces the default `v-model` write-back. */
-  function mountDialog(props: Record<string, unknown> = {}, { initial = false, onUpdate }: { initial?: boolean, onUpdate?: (value: boolean) => void } = {}) {
+  function mountDialog(
+    props: Record<string, unknown> = {},
+    { initial = false, onUpdate }: { initial?: boolean; onUpdate?: (value: boolean) => void } = {},
+  ) {
     const open = ref(initial)
-    const wrapper = mount({
-      render: () => h('div', [
-        h('main', { id: 'page' }, [h('button', { id: 'outside' }, 'Outside')]),
-        h(component, {
-          ...props,
-          'open': open.value,
-          'onUpdate:open': onUpdate ?? ((value: boolean) => (open.value = value)),
-        }, { body: () => 'Content' }),
-      ]),
-    }, { attachTo: document.body })
+    const wrapper = mount(
+      {
+        render: () =>
+          h('div', [
+            h('main', { id: 'page' }, [h('button', { id: 'outside' }, 'Outside')]),
+            h(
+              component,
+              {
+                ...props,
+                open: open.value,
+                'onUpdate:open': onUpdate ?? ((value: boolean) => (open.value = value)),
+              },
+              { body: () => 'Content' },
+            ),
+          ]),
+      },
+      { attachTo: document.body },
+    )
     mounted.push(wrapper)
     // The mount container is the sibling of the portalled dialog (the `#app` of a real page).
     const pageRoot = document.querySelector<HTMLElement>('#page')!.parentElement!.parentElement!
@@ -157,7 +194,10 @@ describe.each(cases)('dialog shell: $name', ({ component, slot, escapeOn, escape
 
   it('stays open and keeps the page inert while a controlled parent refuses to close', async () => {
     const updates: boolean[] = []
-    const { pageRoot } = mountDialog(escapeOn, { initial: true, onUpdate: value => updates.push(value) })
+    const { pageRoot } = mountDialog(escapeOn, {
+      initial: true,
+      onUpdate: (value) => updates.push(value),
+    })
     await nextTick()
     expect(pageRoot.hasAttribute('inert')).toBe(true)
 
@@ -182,17 +222,36 @@ describe('dialog shell: header', () => {
   type Slots = Record<string, () => VNodeChild>
   const headerCases: Array<[string, Component, string, Record<string, unknown>, Slots, boolean]> = [
     ['Modal without title or header parts', Modal, 'modal', {}, {}, false],
-    ['Modal with only a #description', Modal, 'modal', {}, { description: () => h('p', 'Details') }, true],
+    [
+      'Modal with only a #description',
+      Modal,
+      'modal',
+      {},
+      { description: () => h('p', 'Details') },
+      true,
+    ],
     ['Modal with only an #icon', Modal, 'modal', {}, { icon: () => h('span', '!') }, true],
     ['Drawer without title', Drawer, 'drawer', {}, {}, false],
     ['Drawer with a title', Drawer, 'drawer', { title: 'Settings' }, {}, true],
     ['AlertDialog with only its default status icon', AlertDialog, 'alert-dialog', {}, {}, true],
     ['AlertDialog without icon or title', AlertDialog, 'alert-dialog', { icon: false }, {}, false],
-    ['AlertDialog with a #title slot and no icon', AlertDialog, 'alert-dialog', { icon: false }, { title: () => 'Delete?' }, true],
+    [
+      'AlertDialog with a #title slot and no icon',
+      AlertDialog,
+      'alert-dialog',
+      { icon: false },
+      { title: () => 'Delete?' },
+      true,
+    ],
   ]
 
   it.each(headerCases)('%s', async (_name, component, slot, props, slots, rendered) => {
-    mounted.push(mount({ render: () => h(component, { defaultOpen: true, ...props }, { body: () => 'Content', ...slots }) }))
+    mounted.push(
+      mount({
+        render: () =>
+          h(component, { defaultOpen: true, ...props }, { body: () => 'Content', ...slots }),
+      }),
+    )
     await nextTick()
     expect(document.querySelector(`[data-slot=${slot}-dialog]`)).not.toBeNull()
     expect(!!document.querySelector(`[data-slot=${slot}-header]`)).toBe(rendered)
@@ -203,15 +262,25 @@ describe('dialog shell: header', () => {
     ['Drawer', Drawer, 'drawer'],
     ['AlertDialog', AlertDialog, 'alert-dialog'],
   ]
-  it.each(headerSlotCases)('%s: a #header slot replaces the visible heading, the title stays as the accessible name', async (_name, component, slot) => {
-    mounted.push(mount({
-      render: () => h(component, { defaultOpen: true, title: 'Settings' }, { header: () => h('span', { id: 'custom' }, 'Custom') }),
-    }))
-    await nextTick()
-    expect(document.querySelector(`[data-slot=${slot}-header] #custom`)).not.toBeNull()
-    expect(document.querySelector(`[data-slot=${slot}-heading]`)).toBeNull()
-    const dialog = document.querySelector<HTMLElement>(`[data-slot=${slot}-dialog]`)!
-    const labelledBy = dialog.getAttribute('aria-labelledby')!
-    expect(document.getElementById(labelledBy)?.textContent).toBe('Settings')
-  })
+  it.each(headerSlotCases)(
+    '%s: a #header slot replaces the visible heading, the title stays as the accessible name',
+    async (_name, component, slot) => {
+      mounted.push(
+        mount({
+          render: () =>
+            h(
+              component,
+              { defaultOpen: true, title: 'Settings' },
+              { header: () => h('span', { id: 'custom' }, 'Custom') },
+            ),
+        }),
+      )
+      await nextTick()
+      expect(document.querySelector(`[data-slot=${slot}-header] #custom`)).not.toBeNull()
+      expect(document.querySelector(`[data-slot=${slot}-heading]`)).toBeNull()
+      const dialog = document.querySelector<HTMLElement>(`[data-slot=${slot}-dialog]`)!
+      const labelledBy = dialog.getAttribute('aria-labelledby')!
+      expect(document.getElementById(labelledBy)?.textContent).toBe('Settings')
+    },
+  )
 })

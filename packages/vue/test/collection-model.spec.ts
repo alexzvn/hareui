@@ -1,12 +1,20 @@
-import type { ListBoxEntry, ListBoxItem } from '@/components/list-box/ListBox.vue'
-import type { CollectionModelOptions, CollectionValue } from '@/components/list-box/useCollectionModel'
 import { describe, expect, it } from 'vitest'
 import { ref } from 'vue'
+
+import type { ListBoxEntry, ListBoxItem } from '@/components/list-box/ListBox.vue'
+import type {
+  CollectionModelOptions,
+  CollectionValue,
+} from '@/components/list-box/useCollectionModel'
 import { useCollectionModel } from '@/components/list-box/useCollectionModel'
 
 const items: ListBoxEntry[] = [
   { value: 'a', label: 'Apple' },
-  { type: 'section', label: 'More', items: [{ value: 'b', label: 'Banana', textValue: 'Yellow banana' }] },
+  {
+    type: 'section',
+    label: 'More',
+    items: [{ value: 'b', label: 'Banana', textValue: 'Yellow banana' }],
+  },
   { type: 'separator' },
   { value: 3 },
 ]

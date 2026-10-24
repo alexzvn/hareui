@@ -53,31 +53,33 @@ HeroUI's compound parts (`Disclosure.Heading`, `Disclosure.Trigger`, `Disclosure
 To customize the Disclosure component classes app-wide, override the `disclosure` theme with `createHareUI`:
 
 ```ts
-app.use(createHareUI({
-  ui: {
-    disclosure: {
-      slots: {
-        base: 'relative',
-        trigger: 'cursor-pointer',
-        indicator: 'transition-transform duration-300',
-        content: 'overflow-hidden transition-all',
+app.use(
+  createHareUI({
+    ui: {
+      disclosure: {
+        slots: {
+          base: 'relative',
+          trigger: 'cursor-pointer',
+          indicator: 'transition-transform duration-300',
+          content: 'overflow-hidden transition-all',
+        },
       },
     },
-  },
-}))
+  }),
+)
 ```
 
 ## Styling Reference
 
 Each rendered element carries the same `data-slot` string as HeroUI, so selectors translate 1:1.
 
-| `ui` key | `data-slot` | Description |
-|---|---|---|
-| `base` | `disclosure` | Base container styles |
-| `heading` | `disclosure-heading` | Heading wrapper |
-| `trigger` | `disclosure-trigger` | Trigger button styles |
-| `indicator` | `disclosure-indicator` | Chevron indicator styles |
-| `content` | `disclosure-content` | Content container with animations |
+| `ui` key    | `data-slot`            | Description                       |
+| ----------- | ---------------------- | --------------------------------- |
+| `base`      | `disclosure`           | Base container styles             |
+| `heading`   | `disclosure-heading`   | Heading wrapper                   |
+| `trigger`   | `disclosure-trigger`   | Trigger button styles             |
+| `indicator` | `disclosure-indicator` | Chevron indicator styles          |
+| `content`   | `disclosure-content`   | Content container with animations |
 
 ### Interactive States
 

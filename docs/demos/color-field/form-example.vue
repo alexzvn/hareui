@@ -8,8 +8,7 @@ const isSubmitting = ref(false)
 
 function handleSubmit(e: Event) {
   e.preventDefault()
-  if (!value.value)
-    return
+  if (!value.value) return
 
   isSubmitting.value = true
   // Simulate API call

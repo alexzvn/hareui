@@ -1,6 +1,6 @@
 <script lang="ts">
-import type { ComponentSlots, ComponentVariants } from '../../types/tv'
 import type { ExpandedValue } from '../../composables/useExpandedValues'
+import type { ComponentSlots, ComponentVariants } from '../../types/tv'
 import theme from './theme'
 
 type Accordion = typeof theme
@@ -53,7 +53,11 @@ export interface AccordionProps<T extends AccordionItem = AccordionItem> {
   ui?: ComponentSlots<Accordion>
 }
 
-type ItemSlotProps<T extends AccordionItem = AccordionItem> = { item: T, index: number, open: boolean }
+type ItemSlotProps<T extends AccordionItem = AccordionItem> = {
+  item: T
+  index: number
+  open: boolean
+}
 
 export interface AccordionSlots<T extends AccordionItem = AccordionItem> {
   /** Rendered in the trigger before the label (e.g. an icon). */
@@ -79,7 +83,18 @@ export interface AccordionEmits {
 
 <script setup lang="ts" generic="T extends AccordionItem = AccordionItem">
 import type { VNode } from 'vue'
-import { cloneVNode, Comment, computed, h, isVNode, onBeforeUnmount, useId, useSlots, watch } from 'vue'
+import {
+  cloneVNode,
+  Comment,
+  computed,
+  h,
+  isVNode,
+  onBeforeUnmount,
+  useId,
+  useSlots,
+  watch,
+} from 'vue'
+
 import { useComponentUI } from '../../composables/useComponentUI'
 import { useExpandedValues } from '../../composables/useExpandedValues'
 import { animatePanel, onPanelReveal, setPanelStatic } from '../../utils/disclosurePanel'
@@ -92,7 +107,9 @@ defineSlots<AccordionSlots<T>>()
 
 const ui = useComponentUI('accordion', theme, () => ({ variant: props.variant }))
 
-const { isExpanded, setExpanded } = useExpandedValues(props, value => emit('update:modelValue', value))
+const { isExpanded, setExpanded } = useExpandedValues(props, (value) =>
+  emit('update:modelValue', value),
+)
 
 const id = useId()
 const valueOf = (item: AccordionItem, index: number) => item.value ?? index
@@ -103,52 +120,75 @@ function toggle(item: AccordionItem, index: number) {
   setExpanded(value, !isExpanded(value))
 }
 
-const CHEVRON_DOWN = 'M2.97 5.47a.75.75 0 0 1 1.06 0L8 9.44l3.97-3.97a.75.75 0 1 1 1.06 1.06l-4.5 4.5a.75.75 0 0 1-1.06 0l-4.5-4.5a.75.75 0 0 1 0-1.06'
+const CHEVRON_DOWN =
+  'M2.97 5.47a.75.75 0 0 1 1.06 0L8 9.44l3.97-3.97a.75.75 0 1 1 1.06 1.06l-4.5 4.5a.75.75 0 0 1-1.06 0l-4.5-4.5a.75.75 0 0 1 0-1.06'
 
 // HeroUI's `Accordion.Indicator`: a single child element is cloned with the indicator classes
 // and state (React's `cloneElement`); anything else falls back to the default chevron.
 function renderIndicator(item: AccordionItem, index: number, open: boolean) {
   const shared = {
-    'class': ui.value.indicator({ class: props.ui?.indicator }),
+    class: ui.value.indicator({ class: props.ui?.indicator }),
     'data-slot': 'accordion-indicator',
     'data-expanded': open ? 'true' : undefined,
   }
-  const children = (slots.indicator?.({ item, index, open }) ?? []).filter((v: VNode) => v.type !== Comment)
+  const children = (slots.indicator?.({ item, index, open }) ?? []).filter(
+    (v: VNode) => v.type !== Comment,
+  )
   if (children.length === 1 && isVNode(children[0]) && typeof children[0].type !== 'symbol')
     return cloneVNode(children[0], shared, true)
-  return h('svg', {
-    ...shared,
-    'aria-hidden': 'true',
-    'fill': 'none',
-    'height': '16',
-    'role': 'presentation',
-    'viewBox': '0 0 16 16',
-    'width': '16',
-    'xmlns': 'http://www.w3.org/2000/svg',
-  }, [h('path', { 'clip-rule': 'evenodd', 'd': CHEVRON_DOWN, 'fill': 'currentColor', 'fill-rule': 'evenodd' })])
+  return h(
+    'svg',
+    {
+      ...shared,
+      'aria-hidden': 'true',
+      fill: 'none',
+      height: '16',
+      role: 'presentation',
+      viewBox: '0 0 16 16',
+      width: '16',
+      xmlns: 'http://www.w3.org/2000/svg',
+    },
+    [
+      h('path', {
+        'clip-rule': 'evenodd',
+        d: CHEVRON_DOWN,
+        fill: 'currentColor',
+        'fill-rule': 'evenodd',
+      }),
+    ],
+  )
 }
-const Indicator = (p: { item: AccordionItem, index: number, open: boolean }) => renderIndicator(p.item, p.index, p.open)
+const Indicator = (p: { item: AccordionItem; index: number; open: boolean }) =>
+  renderIndicator(p.item, p.index, p.open)
 
 // Panels animate with the same `--disclosure-panel-height` sequence as Disclosure. Inline
 // function refs are re-invoked (null, then the element) on every render, so registration is
 // keyed by element identity and cleaned up only when the element changes or on unmount.
-const panels = new Map<ExpandedValue, { el: HTMLElement, stop: () => void }>()
+const panels = new Map<ExpandedValue, { el: HTMLElement; stop: () => void }>()
 function registerPanel(value: ExpandedValue, el: unknown) {
   if (!(el instanceof HTMLElement) || panels.get(value)?.el === el) return
   panels.get(value)?.stop()
   setPanelStatic(el, isExpanded(value))
   panels.set(value, { el, stop: onPanelReveal(el, () => setExpanded(value, !isExpanded(value))) })
 }
-onBeforeUnmount(() => panels.forEach(p => p.stop()))
+onBeforeUnmount(() => panels.forEach((p) => p.stop()))
 
-const openStates = computed(() => props.items.map((item, index) => [valueOf(item, index), isExpanded(valueOf(item, index))] as const))
-watch(openStates, (next, prev) => {
-  const before = new Map(prev)
-  for (const [value, open] of next) {
-    const panel = panels.get(value)
-    if (panel && before.has(value) && before.get(value) !== open) animatePanel(panel.el, open)
-  }
-}, { flush: 'post' })
+const openStates = computed(() =>
+  props.items.map(
+    (item, index) => [valueOf(item, index), isExpanded(valueOf(item, index))] as const,
+  ),
+)
+watch(
+  openStates,
+  (next, prev) => {
+    const before = new Map(prev)
+    for (const [value, open] of next) {
+      const panel = panels.get(value)
+      if (panel && before.has(value) && before.get(value) !== open) animatePanel(panel.el, open)
+    }
+  },
+  { flush: 'post' },
+)
 </script>
 
 <template>
@@ -173,7 +213,12 @@ watch(openStates, (next, prev) => {
           :class="ui.trigger({ class: props.ui?.trigger })"
           @click="toggle(item, index)"
         >
-          <slot name="leading" :item="item" :index="index" :open="isExpanded(valueOf(item, index))" />
+          <slot
+            name="leading"
+            :item="item"
+            :index="index"
+            :open="isExpanded(valueOf(item, index))"
+          />
           <slot name="label" :item="item" :index="index" :open="isExpanded(valueOf(item, index))">
             {{ item.label }}
           </slot>
@@ -182,7 +227,7 @@ watch(openStates, (next, prev) => {
       </h3>
       <div
         :id="`${id}-panel-${index}`"
-        :ref="el => registerPanel(valueOf(item, index), el)"
+        :ref="(el) => registerPanel(valueOf(item, index), el)"
         role="group"
         :aria-labelledby="`${id}-trigger-${index}`"
         :aria-hidden="isExpanded(valueOf(item, index)) ? 'false' : 'true'"
@@ -192,7 +237,12 @@ watch(openStates, (next, prev) => {
       >
         <div data-slot="accordion-body" :class="ui.body({ class: props.ui?.body })">
           <div :class="ui.bodyInner({ class: props.ui?.bodyInner })">
-            <slot :name="(item.slot || 'content') as 'content'" :item="item" :index="index" :open="isExpanded(valueOf(item, index))">
+            <slot
+              :name="(item.slot || 'content') as 'content'"
+              :item="item"
+              :index="index"
+              :open="isExpanded(valueOf(item, index))"
+            >
               {{ item.content }}
             </slot>
           </div>

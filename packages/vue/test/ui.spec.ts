@@ -1,10 +1,11 @@
-import type { HareUIConfig } from '../src/config'
 import { mount } from '@vue/test-utils'
 import { describe, expect, it } from 'vitest'
 import { defineComponent, nextTick, reactive, ref } from 'vue'
+
 import Button from '../src/components/button/Button.vue'
-import Input from '../src/components/input/Input.vue'
 import Description from '../src/components/description/Description.vue'
+import Input from '../src/components/input/Input.vue'
+import type { HareUIConfig } from '../src/config'
 import { createHareUI, hareUIConfigKey } from '../src/config'
 
 describe('class precedence', () => {
@@ -67,19 +68,26 @@ describe('responsive sizes', () => {
   // class evicts it and wins at every breakpoint.
   it('lets a plain height class replace the responsive button height', () => {
     const classes = mount(Button, { props: { class: 'h-11' } }).classes()
-    expect(classes.filter(c => /(^|:)h-/.test(c))).toEqual(['h-11'])
+    expect(classes.filter((c) => /(^|:)h-/.test(c))).toEqual(['h-11'])
   })
 
   it('lets a named text size replace the responsive input font size and line-height', () => {
     const classes = mount(Input, { attrs: { class: 'text-lg' } }).classes()
-    expect(classes.filter(c => /(^|:)text-(xs|sm|base|lg|xl|\(length)/.test(c))).toEqual(['text-lg'])
+    expect(classes.filter((c) => /(^|:)text-(xs|sm|base|lg|xl|\(length)/.test(c))).toEqual([
+      'text-lg',
+    ])
   })
 
   it('keeps the responsive line-height under an arbitrary length size, like HeroUI', () => {
     // HeroUI's `.input` sizes sit in a lower layer, so `text-[18px]` only replaces the font-size.
     // Tailwind sorts `text-[18px]` after the variable class, so its font-size wins.
     const classes = mount(Input, { attrs: { class: 'text-[18px]' } }).classes()
-    expect(classes).toEqual(expect.arrayContaining(['text-[18px]', 'text-(length:--input-font-size)/(--input-line-height)']))
+    expect(classes).toEqual(
+      expect.arrayContaining([
+        'text-[18px]',
+        'text-(length:--input-font-size)/(--input-line-height)',
+      ]),
+    )
   })
 })
 
@@ -95,11 +103,14 @@ describe('shared theme components', () => {
   })
 
   it('resolves variants per instance', async () => {
-    const wrapper = mount(defineComponent({
-      components: { Button },
-      setup: () => ({ size: ref<'sm' | 'lg'>('sm') }),
-      template: '<div><Button id="a" :size="size" /><Button id="b" size="lg" /></div>',
-    }), { global: { plugins: [createHareUI()] } })
+    const wrapper = mount(
+      defineComponent({
+        components: { Button },
+        setup: () => ({ size: ref<'sm' | 'lg'>('sm') }),
+        template: '<div><Button id="a" :size="size" /><Button id="b" size="lg" /></div>',
+      }),
+      { global: { plugins: [createHareUI()] } },
+    )
     const lg = '[--button-height:--spacing(11)]'
     expect(wrapper.find('#a').classes()).not.toContain(lg)
     expect(wrapper.find('#b').classes()).toContain(lg)

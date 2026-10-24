@@ -15,7 +15,19 @@ const multiple = ref<string[]>(['news', 'travel'])
 
 <template>
   <div class="flex flex-col gap-8">
-    <TagGroup v-model:selected="single" selection-mode="single" label="Single Selection" description="Choose one category" :items="items" />
-    <TagGroup v-model:selected="multiple" selection-mode="multiple" label="Multiple Selection" description="Choose multiple categories" :items="items" />
+    <TagGroup
+      v-model:selected="single"
+      selection-mode="single"
+      label="Single Selection"
+      description="Choose one category"
+      :items="items"
+    />
+    <TagGroup
+      v-model:selected="multiple"
+      selection-mode="multiple"
+      label="Multiple Selection"
+      description="Choose multiple categories"
+      :items="items"
+    />
   </div>
 </template>

@@ -80,11 +80,20 @@ export interface TooltipEmits {
 </script>
 
 <script setup lang="ts">
+import {
+  TooltipArrow,
+  TooltipContent,
+  TooltipPortal,
+  TooltipProvider,
+  TooltipRoot,
+  TooltipTrigger,
+} from 'reka-ui'
 import { computed, onBeforeUnmount, ref, watch } from 'vue'
-import { TooltipArrow, TooltipContent, TooltipPortal, TooltipProvider, TooltipRoot, TooltipTrigger } from 'reka-ui'
+
+import { TOOLTIP_OPEN_EVENT } from '@/composables/nestedLayer'
+
 import { useComponentUI } from '../../composables/useComponentUI'
 import { usePortal } from '../../composables/usePortal'
-import { TOOLTIP_OPEN_EVENT } from '@/composables/nestedLayer'
 
 // `open: undefined` stops Vue casting an absent boolean prop to `false`, so uncontrolled mode and `defaultOpen` apply
 const props = withDefaults(defineProps<TooltipProps>(), {
@@ -108,7 +117,9 @@ const ui = useComponentUI('tooltip', theme, () => ({}))
 // React Aria measures `offset` from the trigger to the tooltip body (the arrow overlaps the gap),
 // so subtract it to keep the HeroUI distance.
 const ARROW_HEIGHT = 12
-const sideOffset = computed(() => (props.sideOffset ?? (props.arrow ? 7 : 3)) - (props.arrow ? ARROW_HEIGHT : 0))
+const sideOffset = computed(
+  () => (props.sideOffset ?? (props.arrow ? 7 : 3)) - (props.arrow ? ARROW_HEIGHT : 0),
+)
 
 // Reka's TooltipRoot has neither a close delay nor a focus-only mode, so it is driven as a controlled
 // component and its open/close requests are filtered here. A request is "hover-driven" when the
@@ -116,10 +127,12 @@ const sideOffset = computed(() => (props.sideOffset ?? (props.arrow ? 7 : 3)) - 
 // happened since; capture-phase document listeners run before Reka's own trigger handlers.
 // `tooltip.open` is Reka's TOOLTIP_OPEN event: another tooltip opening closes this one immediately.
 const internalOpen = ref(props.open ?? props.defaultOpen)
-watch(() => props.open, (value) => {
-  if (value !== undefined)
-    internalOpen.value = value
-})
+watch(
+  () => props.open,
+  (value) => {
+    if (value !== undefined) internalOpen.value = value
+  },
+)
 const isOpen = computed(() => props.open ?? internalOpen.value)
 
 const triggerEl = ref<HTMLElement>()
@@ -132,10 +145,8 @@ function cancelClose() {
 }
 function commit(value: boolean) {
   cancelClose()
-  if (value === isOpen.value)
-    return
-  if (props.open === undefined)
-    internalOpen.value = value
+  if (value === isOpen.value) return
+  if (props.open === undefined) internalOpen.value = value
   emit('update:open', value)
 }
 
@@ -143,16 +154,14 @@ function onRootUpdate(value: boolean) {
   if (value) {
     // Focus-only: ignore hover-driven opens (Reka opens on pointermove after `delay`).
     const el = triggerEl.value
-    if (props.trigger === 'focus' && !(el && el.contains(document.activeElement)))
-      return
+    if (props.trigger === 'focus' && !(el && el.contains(document.activeElement))) return
     pointerLeft.value = false
     commit(true)
     return
   }
   if (pointerLeft.value) {
     // Focus-only: hovering never closes a focus-opened tooltip.
-    if (props.trigger === 'focus')
-      return
+    if (props.trigger === 'focus') return
     // A second close request while one is pending comes from something else: close now.
     if (props.closeDelay > 0 && closeTimer === undefined) {
       closeTimer = setTimeout(() => commit(false), props.closeDelay)
@@ -163,8 +172,7 @@ function onRootUpdate(value: boolean) {
 }
 
 function onPointerLeave(event: PointerEvent) {
-  if (event.pointerType !== 'touch')
-    pointerLeft.value = true
+  if (event.pointerType !== 'touch') pointerLeft.value = true
 }
 function onPointerEnter() {
   // Re-entering the trigger or the still-visible tooltip cancels a pending delayed close (RAC keeps
@@ -180,10 +188,8 @@ function resetPointerLeft() {
 const RESET_EVENTS = ['pointerdown', 'keydown', 'blur', 'focus', TOOLTIP_OPEN_EVENT]
 function toggleResetListeners(on: boolean) {
   for (const type of RESET_EVENTS) {
-    if (on)
-      document.addEventListener(type, resetPointerLeft, true)
-    else
-      document.removeEventListener(type, resetPointerLeft, true)
+    if (on) document.addEventListener(type, resetPointerLeft, true)
+    else document.removeEventListener(type, resetPointerLeft, true)
   }
 }
 watch(pointerLeft, toggleResetListeners, { flush: 'sync' })
@@ -195,9 +201,23 @@ onBeforeUnmount(() => {
 
 <template>
   <TooltipProvider>
-    <TooltipRoot :open="isOpen" :delay-duration="delay" :disabled="disabled" @update:open="onRootUpdate">
+    <TooltipRoot
+      :open="isOpen"
+      :delay-duration="delay"
+      :disabled="disabled"
+      @update:open="onRootUpdate"
+    >
       <template #default="{ open: rootOpen }">
-        <TooltipTrigger :ref="(c: any) => { triggerEl = c?.$el }" as-child @pointerenter="onPointerEnter" @pointerleave="onPointerLeave">
+        <TooltipTrigger
+          :ref="
+            (c: any) => {
+              triggerEl = c?.$el
+            }
+          "
+          as-child
+          @pointerenter="onPointerEnter"
+          @pointerleave="onPointerLeave"
+        >
           <slot :open="rootOpen" />
         </TooltipTrigger>
         <TooltipPortal :disabled="portalTarget.disabled" :to="portalTarget.to">
@@ -213,7 +233,15 @@ onBeforeUnmount(() => {
               <span v-if="text">{{ text }}</span>
             </slot>
             <TooltipArrow v-if="arrow" as-child>
-              <svg data-slot="overlay-arrow" width="12" height="12" viewBox="0 0 12 12" fill="none" xmlns="http://www.w3.org/2000/svg" :class="ui.arrow({ class: props.ui?.arrow })">
+              <svg
+                data-slot="overlay-arrow"
+                width="12"
+                height="12"
+                viewBox="0 0 12 12"
+                fill="none"
+                xmlns="http://www.w3.org/2000/svg"
+                :class="ui.arrow({ class: props.ui?.arrow })"
+              >
                 <path d="M0 0C5.48483 8 6.5 8 12 0Z" />
               </svg>
             </TooltipArrow>

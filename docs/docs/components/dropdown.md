@@ -29,9 +29,18 @@ import type { DropdownEntry } from '@hareui/vue'
 import { Button, Dropdown } from '@hareui/vue'
 
 const items: DropdownEntry[] = [
-  { type: 'section', label: 'Actions', items: [
-    { value: 'new', label: 'New file', description: 'Create a new file', kbd: { keys: ['command'], content: 'N' } },
-  ] },
+  {
+    type: 'section',
+    label: 'Actions',
+    items: [
+      {
+        value: 'new',
+        label: 'New file',
+        description: 'Create a new file',
+        kbd: { keys: ['command'], content: 'N' },
+      },
+    ],
+  },
   { type: 'separator' },
   { value: 'share', label: 'Share', items: [{ value: 'email', label: 'Email' }] },
   { value: 'delete', label: 'Delete', variant: 'danger' },
@@ -132,30 +141,32 @@ With `trigger="longPress"` the menu opens on a long press, or with `Alt + ArrowD
 To customize the Dropdown classes for the whole app, extend the `dropdown` theme in `createHareUI`:
 
 ```ts
-app.use(createHareUI({
-  ui: {
-    dropdown: {
-      slots: {
-        popover: 'rounded-lg border border-border bg-overlay p-2',
-        menu: 'flex flex-col gap-1',
+app.use(
+  createHareUI({
+    ui: {
+      dropdown: {
+        slots: {
+          popover: 'rounded-lg border border-border bg-overlay p-2',
+          menu: 'flex flex-col gap-1',
+        },
       },
     },
-  },
-}))
+  }),
+)
 ```
 
 ## Styling Reference
 
-| `ui` key | `data-slot` | Element |
-|---|---|---|
-| `popover` | `dropdown-popover` | The popover container (Reka `DropdownMenuContent`, which carries `role="menu"`); `class` merges here |
-| `menu` | `dropdown-menu` | The menu container inside the popover |
-| `item` | `menu-item` | Menu item; per-item classes go in `item.class` |
-| `indicator` | `menu-item-indicator` | Selection indicator (`menu-item-indicator--checkmark` / `menu-item-indicator--dot` SVG) |
-| `submenuIndicator` | `submenu-indicator` | Submenu chevron |
-| `section` | - | Section group (`<section role="group">`, labelled by its header) |
-| `header` | `header` | Section header, labels the group |
-| `separator` | `separator` | Divider between entries |
+| `ui` key           | `data-slot`           | Element                                                                                              |
+| ------------------ | --------------------- | ---------------------------------------------------------------------------------------------------- |
+| `popover`          | `dropdown-popover`    | The popover container (Reka `DropdownMenuContent`, which carries `role="menu"`); `class` merges here |
+| `menu`             | `dropdown-menu`       | The menu container inside the popover                                                                |
+| `item`             | `menu-item`           | Menu item; per-item classes go in `item.class`                                                       |
+| `indicator`        | `menu-item-indicator` | Selection indicator (`menu-item-indicator--checkmark` / `menu-item-indicator--dot` SVG)              |
+| `submenuIndicator` | `submenu-indicator`   | Submenu chevron                                                                                      |
+| `section`          | -                     | Section group (`<section role="group">`, labelled by its header)                                     |
+| `header`           | `header`              | Section header, labels the group                                                                     |
+| `separator`        | `separator`           | Divider between entries                                                                              |
 
 Item labels and descriptions render with the [Label](/docs/components/label) and
 [Description](/docs/components/description) components (`data-slot="label"` /

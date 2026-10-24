@@ -1,5 +1,6 @@
 <script lang="ts">
 import type { ConfigProviderProps } from 'reka-ui'
+
 import type { PortalTarget } from '../../config'
 import type { ToastProviderProps } from '../toast-provider/ToastProvider.vue'
 
@@ -40,6 +41,7 @@ export interface AppSlots {
 <script setup lang="ts">
 import { ConfigProvider } from 'reka-ui'
 import { inject, provide, useId } from 'vue'
+
 import { hareUIConfigKey } from '../../config'
 import ToastProvider from '../toast-provider/ToastProvider.vue'
 
@@ -66,7 +68,13 @@ provide(hareUIConfigKey, {
 </script>
 
 <template>
-  <ConfigProvider :use-id="() => useId()" :dir="dir" :locale="locale" :scroll-body="scrollBody" :nonce="nonce">
+  <ConfigProvider
+    :use-id="() => useId()"
+    :dir="dir"
+    :locale="locale"
+    :scroll-body="scrollBody"
+    :nonce="nonce"
+  >
     <slot />
     <ToastProvider v-if="toaster !== null" v-bind="toaster" />
   </ConfigProvider>

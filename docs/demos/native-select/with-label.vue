@@ -11,6 +11,12 @@ const items = [
 
 <template>
   <div class="w-[220px]">
-    <NativeSelect full-width label="Streaming quality" name="quality" default-value="high" :items="items" />
+    <NativeSelect
+      full-width
+      label="Streaming quality"
+      name="quality"
+      default-value="high"
+      :items="items"
+    />
   </div>
 </template>

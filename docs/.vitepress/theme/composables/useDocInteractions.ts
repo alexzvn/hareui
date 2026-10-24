@@ -1,5 +1,5 @@
-import { onBeforeUnmount, onMounted } from 'vue'
 import gravity from '@iconify-json/gravity-ui/icons.json'
+import { onBeforeUnmount, onMounted } from 'vue'
 
 const svg = (name: 'copy' | 'check') =>
   `<svg aria-hidden="true" height="1em" role="img" viewBox="0 0 16 16" width="1em" xmlns="http://www.w3.org/2000/svg">${gravity.icons[name].body}</svg>`

@@ -324,7 +324,7 @@ export const themeComparisonKeys = [
 export function findMatchingTheme(currentValues: ThemeValues): ThemeId | undefined {
   for (const themeId of themeIds) {
     const themeValues = themeValuesById[themeId]
-    const matches = themeComparisonKeys.every(key => {
+    const matches = themeComparisonKeys.every((key) => {
       const current = currentValues[key]
       const theme = themeValues[key]
 

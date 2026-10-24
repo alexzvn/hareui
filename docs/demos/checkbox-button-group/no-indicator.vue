@@ -9,7 +9,12 @@ const topics = [
 </script>
 
 <template>
-  <CheckboxButtonGroup class="w-[360px]" name="topics" label="Podcast topics" :default-value="['history']">
+  <CheckboxButtonGroup
+    class="w-[360px]"
+    name="topics"
+    label="Podcast topics"
+    :default-value="['history']"
+  >
     <CheckboxButtonGroupItem
       v-for="topic in topics"
       :key="topic.value"

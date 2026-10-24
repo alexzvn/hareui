@@ -3,6 +3,7 @@
 // `useDeferredValue` has no Vue counterpart; HighlightedCode highlights asynchronously and coalesces rapid changes,
 // so slider drags don't wait on syntax highlighting.
 import { computed } from 'vue'
+
 import { useCodePanel } from '../composables/codePanel'
 import { useVariablesState } from '../composables/variables'
 import { getCustomFontInfoFromUrl, isCustomFontUrl } from '../utils/font-utils'

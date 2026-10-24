@@ -10,8 +10,6 @@ import { Button, Form, Input, TextField } from '@hareui/vue'
     <TextField required name="email" type="email" label="Work email">
       <Input class="bg-field" placeholder="you@company.com" />
     </TextField>
-    <Button class="w-full" type="submit">
-      Continue
-    </Button>
+    <Button class="w-full" type="submit"> Continue </Button>
   </Form>
 </template>

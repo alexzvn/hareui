@@ -24,22 +24,26 @@ Checkbox renders a Reka UI [`CheckboxRoot`](https://reka-ui.com/docs/components/
 ```vue
 <template>
   <Checkbox label="…" description="…" error-message="…" :invalid="…">
-    <template #label="{ state }" />       <!-- replaces the label text -->
-    <template #description />             <!-- Description content -->
-    <template #error />                   <!-- FieldError content, rendered when invalid -->
-    <template #indicator="{ state }" />   <!-- replaces the default checkmark / dash icons -->
+    <template #label="{ state }" />
+    <!-- replaces the label text -->
+    <template #description />
+    <!-- Description content -->
+    <template #error />
+    <!-- FieldError content, rendered when invalid -->
+    <template #indicator="{ state }" />
+    <!-- replaces the default checkmark / dash icons -->
   </Checkbox>
 </template>
 ```
 
-| `ui` key | `data-slot` | Element |
-|---|---|---|
-| `base` | `checkbox` | `<div>` root |
-| `content` | `checkbox-content` | Reka `CheckboxRoot` (clickable label + control) |
-| `control` | `checkbox-control` | Control box |
-| `indicator` | `checkbox-indicator` | Checkmark / dash indicator |
-| — | `description` | [Description](/docs/components/description) (iff `description` / `#description`) |
-| — | `field-error` | [FieldError](/docs/components/field-error) (while invalid, iff `error-message` / `#error` / validation errors) |
+| `ui` key    | `data-slot`          | Element                                                                                                        |
+| ----------- | -------------------- | -------------------------------------------------------------------------------------------------------------- |
+| `base`      | `checkbox`           | `<div>` root                                                                                                   |
+| `content`   | `checkbox-content`   | Reka `CheckboxRoot` (clickable label + control)                                                                |
+| `control`   | `checkbox-control`   | Control box                                                                                                    |
+| `indicator` | `checkbox-indicator` | Checkmark / dash indicator                                                                                     |
+| —           | `description`        | [Description](/docs/components/description) (iff `description` / `#description`)                               |
+| —           | `field-error`        | [FieldError](/docs/components/field-error) (while invalid, iff `error-message` / `#error` / validation errors) |
 
 ## Examples
 
@@ -107,9 +111,11 @@ The `#label`, `#description` and `#indicator` slots receive `{ state }` (`'check
 ### Global Configuration
 
 ```ts
-app.use(createHareUI({
-  ui: { checkbox: { slots: { control: 'rounded-full' } } },
-}))
+app.use(
+  createHareUI({
+    ui: { checkbox: { slots: { control: 'rounded-full' } } },
+  }),
+)
 ```
 
 ## Styling Reference

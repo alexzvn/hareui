@@ -20,7 +20,10 @@ const { classes, ui } = useChartTooltipContext('Label')
 </script>
 
 <template>
-  <span data-slot="chart-tooltip-label" :class="classes.label({ class: [ui()?.label, props.class] })">
+  <span
+    data-slot="chart-tooltip-label"
+    :class="classes.label({ class: [ui()?.label, props.class] })"
+  >
     <slot />
   </span>
 </template>

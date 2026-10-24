@@ -1,10 +1,11 @@
 import type { MaybeRefOrGetter, Slot } from 'vue'
-import type { ValidationResult } from './useFieldValidation'
 import { computed, defineComponent, h, onBeforeUpdate, shallowRef, toValue, useId } from 'vue'
+
 import Description from '../components/description/Description.vue'
 import ErrorMessage from '../components/error-message/ErrorMessage.vue'
 import FieldError from '../components/field-error/FieldError.vue'
 import Label from '../components/label/Label.vue'
+import type { ValidationResult } from './useFieldValidation'
 import { useSlotOutlet } from './useSlotOutlet'
 
 const VALID_RESULT: ValidationResult = {
@@ -35,7 +36,7 @@ export type FieldChromeSlots = {
 
 export type FieldChromeOptions = {
   /** The component's props; reads `id` (unless `baseId` is given), `label`, `description` and `errorMessage`. */
-  props: { id?: string, label?: string, description?: string, errorMessage?: string }
+  props: { id?: string; label?: string; description?: string; errorMessage?: string }
   /**
    * Base of the returned `id` and the label / description / error ids, replacing `props.id ?? useId()`. For fields
    * whose `id` prop names an inner control while the chrome ids stay generated (e.g. ComboBox).
@@ -106,31 +107,56 @@ export const useFieldChrome = (options: FieldChromeOptions) => {
 
   // `slots` isn't reactive: mirror slot presence into refs (like `useSlotOutlet` does) so presence flags, and the
   // parts that read them, follow `<template v-if #label>` swaps.
-  const present = shallowRef({ label: !!slots.label, description: !!slots.description, error: !!slots[errorSlot] })
+  const present = shallowRef({
+    label: !!slots.label,
+    description: !!slots.description,
+    error: !!slots[errorSlot],
+  })
   onBeforeUpdate(() => {
-    const next = { label: !!slots.label, description: !!slots.description, error: !!slots[errorSlot] }
+    const next = {
+      label: !!slots.label,
+      description: !!slots.description,
+      error: !!slots[errorSlot],
+    }
     const prev = present.value
-    if (next.label !== prev.label || next.description !== prev.description || next.error !== prev.error)
+    if (
+      next.label !== prev.label ||
+      next.description !== prev.description ||
+      next.error !== prev.error
+    )
       present.value = next
   })
 
   const invalid = computed(() => !!toValue(options.invalid))
   const validation = computed(() => toValue(options.validation) ?? VALID_RESULT)
   const hasLabel = computed(() => !!(props.label || present.value.label))
-  const hasDescription = computed(() => !!(props.description || present.value.description)
-    && !(options.hideDescriptionWhenInvalid && invalid.value))
+  const hasDescription = computed(
+    () =>
+      !!(props.description || present.value.description) &&
+      !(options.hideDescriptionWhenInvalid && invalid.value),
+  )
   const hasMessageError = computed(() => props.errorMessage !== undefined || present.value.error)
-  const hasInvalidError = computed(() => invalid.value
-    && !!(props.errorMessage || present.value.error || validation.value.validationErrors.length))
+  const hasInvalidError = computed(
+    () =>
+      invalid.value &&
+      !!(props.errorMessage || present.value.error || validation.value.validationErrors.length),
+  )
   const hasError = isMessagePart ? hasMessageError : hasInvalidError
-  const errorText = computed(() => props.errorMessage ?? validation.value.validationErrors.join(' '))
+  const errorText = computed(
+    () => props.errorMessage ?? validation.value.validationErrors.join(' '),
+  )
   const describedBy = computed(() => {
     const description = hasDescription.value ? descriptionId.value : undefined
     const ids = toValue(options.describedByIds) ?? []
-    const around = options.describedByIdsPosition === 'afterDescription' ? [description, ...ids] : [...ids, description]
-    return [toValue(options.ariaDescribedBy), ...around, hasError.value ? errorId.value : undefined]
-      .filter(Boolean)
-      .join(' ') || undefined
+    const around =
+      options.describedByIdsPosition === 'afterDescription'
+        ? [description, ...ids]
+        : [...ids, description]
+    return (
+      [toValue(options.ariaDescribedBy), ...around, hasError.value ? errorId.value : undefined]
+        .filter(Boolean)
+        .join(' ') || undefined
+    )
   })
 
   // Outlets instead of forwarded `<slot>`s: a forwarded slot makes Vue force-update the part on every render
@@ -143,14 +169,19 @@ export const useFieldChrome = (options: FieldChromeOptions) => {
     name: 'FieldLabel',
     inheritAttrs: false,
     setup(_, { attrs }) {
-      return () => hasLabel.value
-        ? h(Label, {
-            disabled: toValue(options.disabled),
-            invalid: invalid.value,
-            required: toValue(options.required),
-            ...attrs,
-          }, () => h(LabelOutlet, toValue(options.slotProps), () => props.label))
-        : null
+      return () =>
+        hasLabel.value
+          ? h(
+              Label,
+              {
+                disabled: toValue(options.disabled),
+                invalid: invalid.value,
+                required: toValue(options.required),
+                ...attrs,
+              },
+              () => h(LabelOutlet, toValue(options.slotProps), () => props.label),
+            )
+          : null
     },
   })
 
@@ -159,9 +190,12 @@ export const useFieldChrome = (options: FieldChromeOptions) => {
     name: 'FieldDescription',
     inheritAttrs: false,
     setup(_, { attrs }) {
-      return () => hasDescription.value
-        ? h(Description, { ...attrs, id: descriptionId.value }, () => h(DescriptionOutlet, toValue(options.slotProps), () => props.description))
-        : null
+      return () =>
+        hasDescription.value
+          ? h(Description, { ...attrs, id: descriptionId.value }, () =>
+              h(DescriptionOutlet, toValue(options.slotProps), () => props.description),
+            )
+          : null
     },
   })
 
@@ -170,10 +204,16 @@ export const useFieldChrome = (options: FieldChromeOptions) => {
     name: 'FieldErrorPart',
     inheritAttrs: false,
     setup(_, { attrs }) {
-      const renderMessage = () => h(ErrorMessage, { ...attrs, id: errorId.value }, () => h(ErrorOutlet, null, () => props.errorMessage))
-      const renderFieldError = () => h(FieldError, { ...attrs, id: errorId.value }, () => h(ErrorOutlet, validation.value, () => errorText.value))
+      const renderMessage = () =>
+        h(ErrorMessage, { ...attrs, id: errorId.value }, () =>
+          h(ErrorOutlet, null, () => props.errorMessage),
+        )
+      const renderFieldError = () =>
+        h(FieldError, { ...attrs, id: errorId.value }, () =>
+          h(ErrorOutlet, validation.value, () => errorText.value),
+        )
       const render = isMessagePart ? renderMessage : renderFieldError
-      return () => hasError.value ? render() : null
+      return () => (hasError.value ? render() : null)
     },
   })
 

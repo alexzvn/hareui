@@ -1,15 +1,14 @@
 <script setup lang="ts">
+import { Button, ColorArea, InputGroup, Popover, Select, TextField } from '@hareui/vue'
+import { Icon } from '@iconify/vue'
 // Port of the HeroUI docs' own `components/color-picker/color-picker.tsx` (the popover with swatch carousel,
 // color area, hue slider + shuffle, and color field with format select), composed from HareUI parts.
 import type { Color } from 'reka-ui'
-import type { ColorFormat } from './accentColorUtils'
-import { Icon } from '@iconify/vue'
-import { Button, ColorArea, InputGroup, Popover, Select, TextField } from '@hareui/vue'
 import { computed, ref } from 'vue'
+
 import AccentColorSlider from './AccentColorSlider.vue'
 import AccentColorSwatchesCarousel from './AccentColorSwatchesCarousel.vue'
-import { cn } from './controlsCn'
-import ControlsPopoverTrigger from './ControlsPopoverTrigger.vue'
+import type { ColorFormat } from './accentColorUtils'
 import {
   DEFAULT_COLOR,
   defaultSwatches,
@@ -19,30 +18,35 @@ import {
   safeParseColor,
   validateColorInput,
 } from './accentColorUtils'
+import { cn } from './controlsCn'
+import ControlsPopoverTrigger from './ControlsPopoverTrigger.vue'
 
-const props = withDefaults(defineProps<{
-  /** The color, as a CSS color string (controlled) */
-  value?: string
-  /** Show alpha slider */
-  showAlpha?: boolean
-  /** Show hex/color field */
-  showColorField?: boolean
-  /** Show color swatches */
-  showSwatches?: boolean
-  /** Custom swatches array */
-  swatches?: string[]
-  /** Show shuffle/random button */
-  showShuffle?: boolean
-  /** Class name for popover content */
-  popoverClassName?: string
-}>(), {
-  value: DEFAULT_COLOR,
-  showAlpha: false,
-  showColorField: true,
-  showSwatches: true,
-  swatches: () => defaultSwatches,
-  showShuffle: true,
-})
+const props = withDefaults(
+  defineProps<{
+    /** The color, as a CSS color string (controlled) */
+    value?: string
+    /** Show alpha slider */
+    showAlpha?: boolean
+    /** Show hex/color field */
+    showColorField?: boolean
+    /** Show color swatches */
+    showSwatches?: boolean
+    /** Custom swatches array */
+    swatches?: string[]
+    /** Show shuffle/random button */
+    showShuffle?: boolean
+    /** Class name for popover content */
+    popoverClassName?: string
+  }>(),
+  {
+    value: DEFAULT_COLOR,
+    showAlpha: false,
+    showColorField: true,
+    showSwatches: true,
+    swatches: () => defaultSwatches,
+    showShuffle: true,
+  },
+)
 const emit = defineEmits<{ change: [color: Color] }>()
 
 const FORMAT_ITEMS = [
@@ -65,7 +69,9 @@ function handleColorChange(newColor: Color) {
 }
 
 // Compute the displayed input value
-const displayedInputValue = computed(() => editingValue.value ?? formatColor(colorValue.value, currentColorFormat.value))
+const displayedInputValue = computed(
+  () => editingValue.value ?? formatColor(colorValue.value, currentColorFormat.value),
+)
 
 // Handle input change - validate on every change
 function handleInputChange(newValue: string | number | undefined) {
@@ -83,8 +89,7 @@ function handleInputChange(newValue: string | number | undefined) {
   if (validatedColor) {
     handleColorChange(validatedColor)
     inputError.value = false
-  }
-  else {
+  } else {
     inputError.value = true
   }
 }
@@ -97,8 +102,7 @@ function handleInputBlur(event: FocusEvent) {
   if (inputError.value) {
     editingValue.value = null
     inputError.value = false
-  }
-  else {
+  } else {
     editingValue.value = null
   }
 }
@@ -153,7 +157,10 @@ function onFormatChange(key: unknown) {
           class="aspect-auto size-[232px] max-w-none border border-border shadow-none"
           color-space="hsl"
           :model-value="colorValue"
-          :ui="{ thumb: 'size-6 rounded-full border-2 border-white [box-shadow:0_10px_15px_-3px_rgb(0_0_0/0.1),0_4px_6px_-4px_rgb(0_0_0/0.1)] [transition:none] data-[dragging=true]:size-6' }"
+          :ui="{
+            thumb:
+              'size-6 rounded-full border-2 border-white [box-shadow:0_10px_15px_-3px_rgb(0_0_0/0.1),0_4px_6px_-4px_rgb(0_0_0/0.1)] [transition:none] data-[dragging=true]:size-6',
+          }"
           x-channel="saturation"
           y-channel="lightness"
           @change="handleColorChange"

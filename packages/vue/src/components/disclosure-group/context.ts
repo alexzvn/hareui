@@ -9,4 +9,5 @@ export interface DisclosureGroupContext {
   disabled: Readonly<Ref<boolean>>
 }
 
-export const disclosureGroupContextKey: InjectionKey<DisclosureGroupContext> = Symbol('hareui-disclosure-group')
+export const disclosureGroupContextKey: InjectionKey<DisclosureGroupContext> =
+  Symbol('hareui-disclosure-group')

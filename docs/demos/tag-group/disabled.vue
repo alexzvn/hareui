@@ -16,7 +16,18 @@ const keyedItems: TagGroupItem[] = [
 
 <template>
   <div class="flex flex-col gap-4">
-    <TagGroup selection-mode="single" label="Disabled Tags" description="Some tags are disabled" :items="ownDisabled" />
-    <TagGroup selection-mode="single" label="Disabled Keys" description="Tags disabled via disabledKeys prop" :items="keyedItems" :disabled-keys="['travel']" />
+    <TagGroup
+      selection-mode="single"
+      label="Disabled Tags"
+      description="Some tags are disabled"
+      :items="ownDisabled"
+    />
+    <TagGroup
+      selection-mode="single"
+      label="Disabled Keys"
+      description="Tags disabled via disabledKeys prop"
+      :items="keyedItems"
+      :disabled-keys="['travel']"
+    />
   </div>
 </template>

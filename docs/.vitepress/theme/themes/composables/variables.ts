@@ -1,12 +1,18 @@
+import { computed, shallowRef } from 'vue'
+
 // Port of HeroUI docs `themes/hooks/use-variables-state.ts` (nuqs `useQueryStates`) and the small hooks built on it
 // (use-variable-setter, use-toggle-locked-variable, use-randomize-variables, use-reset-variables).
 // The URL is the single source of truth, read through a module-level ref so every component shares it.
 // nuqs semantics kept: values equal to their default are removed from the URL (`clearOnDefault`), updates
 // merge into the existing query (keys keep their position, new keys are appended), each update pushes a history entry.
 import type { LockableThemeVariableKey, RadiusId, ThemeVariables } from '../constants'
-
-import { computed, shallowRef } from 'vue'
-import { defaultThemeVariables, fontIds, radiusIds, radiusOptions, themeVariableKeys } from '../constants'
+import {
+  defaultThemeVariables,
+  fontIds,
+  radiusIds,
+  radiusOptions,
+  themeVariableKeys,
+} from '../constants'
 
 export interface ThemeBuilderState extends ThemeVariables {
   lockedVariables: LockableThemeVariableKey[]
@@ -32,25 +38,25 @@ const float = (defaultValue: number): Parser<number> => ({
 const string = (defaultValue: string): Parser<string> => ({
   defaultValue,
   eq: (a, b) => a === b,
-  parse: raw => raw,
+  parse: (raw) => raw,
   serialize: String,
 })
 const literal = <T extends string>(values: readonly T[], defaultValue: T): Parser<T> => ({
   defaultValue,
   eq: (a, b) => a === b,
-  parse: raw => (values.includes(raw as T) ? (raw as T) : null),
+  parse: (raw) => (values.includes(raw as T) ? (raw as T) : null),
   serialize: String,
 })
 const literalArray = <T extends string>(values: readonly T[]): Parser<T[]> => ({
   defaultValue: [],
   eq: (a, b) => a.length === b.length && a.every((v, i) => v === b[i]),
-  parse: raw => (raw === '' ? [] : raw.split(',').filter((v): v is T => values.includes(v as T))),
-  serialize: value => value.join(','),
+  parse: (raw) => (raw === '' ? [] : raw.split(',').filter((v): v is T => values.includes(v as T))),
+  serialize: (value) => value.join(','),
 })
 const boolean = (defaultValue: boolean): Parser<boolean> => ({
   defaultValue,
   eq: (a, b) => a === b,
-  parse: raw => raw.toLowerCase() === 'true',
+  parse: (raw) => raw.toLowerCase() === 'true',
   serialize: String,
 })
 
@@ -69,7 +75,9 @@ const parsers: { [K in keyof ThemeBuilderState]: Parser<ThemeBuilderState[K]> } 
 const keys = Object.keys(parsers) as (keyof ThemeBuilderState)[]
 
 /** The current query string without `?`. Updated by `setVariables` and by browser navigation. */
-export const search = shallowRef(typeof window === 'undefined' ? '' : window.location.search.slice(1))
+export const search = shallowRef(
+  typeof window === 'undefined' ? '' : window.location.search.slice(1),
+)
 
 if (typeof window !== 'undefined')
   window.addEventListener('popstate', () => (search.value = window.location.search.slice(1)))
@@ -100,7 +108,9 @@ function encodeValue(value: string) {
 }
 
 export function renderQuery(params: URLSearchParams) {
-  return [...params].map(([key, value]) => `${encodeURIComponent(key)}=${encodeValue(value)}`).join('&')
+  return [...params]
+    .map(([key, value]) => `${encodeURIComponent(key)}=${encodeValue(value)}`)
+    .join('&')
 }
 
 const state = computed(() => parse(search.value))
@@ -112,13 +122,18 @@ function setVariables(update: Partial<ThemeBuilderState>) {
     if (!(key in update)) continue
     const value = update[key] as never
     const parser = parsers[key] as Parser<unknown>
-    if (value === null || value === undefined || parser.eq(value, parser.defaultValue)) params.delete(key)
+    if (value === null || value === undefined || parser.eq(value, parser.defaultValue))
+      params.delete(key)
     else params.set(key, parser.serialize(value))
   }
   const query = renderQuery(params)
   if (query === search.value) return
   search.value = query
-  window.history.pushState(window.history.state, '', `${window.location.pathname}${query ? `?${query}` : ''}${window.location.hash}`)
+  window.history.pushState(
+    window.history.state,
+    '',
+    `${window.location.pathname}${query ? `?${query}` : ''}${window.location.hash}`,
+  )
 }
 
 export function useVariablesState() {
@@ -126,8 +141,10 @@ export function useVariablesState() {
 }
 
 export function useVariableSetter() {
-  const setVariable = <K extends keyof ThemeBuilderState>(variable: K, value: ThemeBuilderState[K]) =>
-    setVariables({ ...state.value, [variable]: value })
+  const setVariable = <K extends keyof ThemeBuilderState>(
+    variable: K,
+    value: ThemeBuilderState[K],
+  ) => setVariables({ ...state.value, [variable]: value })
   return { setVariable, variables: state }
 }
 
@@ -137,7 +154,9 @@ export function useToggleLockedVariable(key: LockableThemeVariableKey) {
     const { lockedVariables } = state.value
     setVariables({
       ...state.value,
-      lockedVariables: isLocked.value ? lockedVariables.filter(v => v !== key) : [...lockedVariables, key],
+      lockedVariables: isLocked.value
+        ? lockedVariables.filter((v) => v !== key)
+        : [...lockedVariables, key],
     })
   }
   return { isLocked, toggleLockedVariable }
@@ -158,7 +177,7 @@ export function useRandomizeVariables() {
       formRadius: locked('formRadius') ? variables.formRadius : randomPick([...radiusIds]),
       hue: locked('hue') ? variables.hue : Math.floor(Math.random() * 360),
       lightness: locked('lightness') ? variables.lightness : randomInRange(0.5, 0.85),
-      radius: locked('radius') ? variables.radius : randomPick([...radiusOptions.map(r => r.id)]),
+      radius: locked('radius') ? variables.radius : randomPick([...radiusOptions.map((r) => r.id)]),
     })
   }
 }

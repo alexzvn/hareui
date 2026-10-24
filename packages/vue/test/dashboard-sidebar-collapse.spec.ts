@@ -1,9 +1,10 @@
 import { mount } from '@vue/test-utils'
 import { afterEach, describe, expect, it } from 'vitest'
 import { h, nextTick } from 'vue'
+
 import DashboardGroup from '../src/components/dashboard-group/DashboardGroup.vue'
-import DashboardSidebar from '../src/components/dashboard-sidebar/DashboardSidebar.vue'
 import DashboardSidebarCollapse from '../src/components/dashboard-sidebar-collapse/DashboardSidebarCollapse.vue'
+import DashboardSidebar from '../src/components/dashboard-sidebar/DashboardSidebar.vue'
 import { expectAccessible } from './a11y'
 
 /** Clicks like a user, past the millisecond Vue attached the listener in (it drops a click fired within it). */
@@ -15,19 +16,32 @@ async function click(el: HTMLElement) {
   await nextTick()
 }
 
-const button = (side: 'left' | 'right' = 'left') => document.querySelector<HTMLButtonElement>(`[data-testid=collapse-${side}]`)!
+const button = (side: 'left' | 'right' = 'left') =>
+  document.querySelector<HTMLButtonElement>(`[data-testid=collapse-${side}]`)!
 
 function mountDashboard(collapseProps: Record<string, unknown> = {}) {
   return mount(DashboardGroup, {
     props: { persistent: false },
     slots: {
       default: () => [
-        h(DashboardSidebar, { 'id': 'main', 'aria-label': 'Main', 'collapsible': true }, { default: () => h('a', { href: '#inbox' }, 'Inbox') }),
+        h(
+          DashboardSidebar,
+          { id: 'main', 'aria-label': 'Main', collapsible: true },
+          { default: () => h('a', { href: '#inbox' }, 'Inbox') },
+        ),
         h('div', [
           h(DashboardSidebarCollapse, { 'data-testid': 'collapse-left', ...collapseProps }),
-          h(DashboardSidebarCollapse, { 'data-testid': 'collapse-right', 'side': 'right', ...collapseProps }),
+          h(DashboardSidebarCollapse, {
+            'data-testid': 'collapse-right',
+            side: 'right',
+            ...collapseProps,
+          }),
         ]),
-        h(DashboardSidebar, { 'id': 'details', 'side': 'right', 'aria-label': 'Details', 'collapsible': true }, { default: () => h('p', 'Details') }),
+        h(
+          DashboardSidebar,
+          { id: 'details', side: 'right', 'aria-label': 'Details', collapsible: true },
+          { default: () => h('p', 'Details') },
+        ),
       ],
     },
     attachTo: document.body,

@@ -17,7 +17,7 @@ const tags: ListBoxItem[] = [
 const selectedKeys = ref<string[]>([])
 
 function onRemoveTags(ids: string[]) {
-  selectedKeys.value = selectedKeys.value.filter(key => !ids.includes(key))
+  selectedKeys.value = selectedKeys.value.filter((key) => !ids.includes(key))
 }
 </script>
 
@@ -36,10 +36,15 @@ function onRemoveTags(ids: string[]) {
       <template v-if="isPlaceholder">
         {{ text }}
       </template>
-      <TagGroup v-else size="sm" removable aria-label="Selected" :items="selectedItems.map(item => ({ id: String(item.value), label: item.label }))" @remove="onRemoveTags" />
+      <TagGroup
+        v-else
+        size="sm"
+        removable
+        aria-label="Selected"
+        :items="selectedItems.map((item) => ({ id: String(item.value), label: item.label }))"
+        @remove="onRemoveTags"
+      />
     </template>
-    <template #empty>
-      No tags found
-    </template>
+    <template #empty> No tags found </template>
   </Autocomplete>
 </template>

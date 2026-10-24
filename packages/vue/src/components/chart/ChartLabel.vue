@@ -1,5 +1,6 @@
 <script lang="ts">
 import type { ClassValue } from 'tailwind-variants'
+
 import type { ChartLabelPosition } from './label'
 
 export interface ChartLabelProps {
@@ -48,6 +49,7 @@ export interface ChartLabelSlots {
 
 <script setup lang="ts">
 import { computed } from 'vue'
+
 import ChartLayer from './ChartLayer.vue'
 import { useChartContext } from './context'
 import { labelAttrs, useChartLabelSource } from './label'
@@ -59,25 +61,36 @@ const chart = useChartContext('ChartLabel')
 const source = useChartLabelSource()
 
 function format(value: number | string | undefined, index: number) {
-  if (props.formatter)
-    return props.formatter(value, index)
+  if (props.formatter) return props.formatter(value, index)
   return value === undefined || value === null ? '' : String(value)
 }
 
 const labels = computed<ChartLabelSlotProps[]>(() => {
-  if (!source)
-    return []
+  if (!source) return []
   const position = props.position ?? source.position ?? 'center'
   if (source.items) {
     return source.items().map((item) => {
-      const value = props.dataKey ? (item.datum[props.dataKey] as number | string | undefined) : item.value
-      return { value, text: format(value, item.index), index: item.index, ...labelAttrs(item.viewBox, position, props.offset) }
+      const value = props.dataKey
+        ? (item.datum[props.dataKey] as number | string | undefined)
+        : item.value
+      return {
+        value,
+        text: format(value, item.index),
+        index: item.index,
+        ...labelAttrs(item.viewBox, position, props.offset),
+      }
     })
   }
   const viewBox = source.viewBox?.()
-  if (!viewBox)
-    return []
-  return [{ value: props.value, text: format(props.value, -1), index: -1, ...labelAttrs(viewBox, position, props.offset) }]
+  if (!viewBox) return []
+  return [
+    {
+      value: props.value,
+      text: format(props.value, -1),
+      index: -1,
+      ...labelAttrs(viewBox, position, props.offset),
+    },
+  ]
 })
 </script>
 
@@ -94,7 +107,8 @@ const labels = computed<ChartLabelSlotProps[]>(() => {
             :dominant-baseline="label.dominantBaseline"
             :style="fill ? { fill } : undefined"
             :class="chart.classes('label', props.class)"
-          >{{ label.text }}</text>
+            >{{ label.text }}</text
+          >
         </slot>
       </template>
     </g>

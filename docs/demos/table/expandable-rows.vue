@@ -53,10 +53,20 @@ const expandedKeys = ref<TableSelection>(new Set(['1']))
   >
     <template #name-cell="{ row, hasChildItems, isExpanded, toggle }">
       <span class="flex items-center gap-1">
-        <Button v-if="hasChildItems" aria-label="Toggle row" icon-only size="sm" variant="ghost" @click="toggle">
+        <Button
+          v-if="hasChildItems"
+          aria-label="Toggle row"
+          icon-only
+          size="sm"
+          variant="ghost"
+          @click="toggle"
+        >
           <Icon
             aria-hidden="true"
-            :class="['size-4 text-muted transition-transform duration-150', isExpanded ? 'rotate-90' : 'rtl:rotate-180']"
+            :class="[
+              'size-4 text-muted transition-transform duration-150',
+              isExpanded ? 'rotate-90' : 'rtl:rotate-180',
+            ]"
             icon="gravity-ui:chevron-right"
           />
         </Button>

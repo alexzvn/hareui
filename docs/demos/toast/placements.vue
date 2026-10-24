@@ -2,15 +2,19 @@
 import { Button, ToastProvider, ToastQueue } from '@hareui/vue'
 
 const placements = ['top start', 'top', 'top end', 'bottom start', 'bottom', 'bottom end'] as const
-type Placement = typeof placements[number]
+type Placement = (typeof placements)[number]
 
 // A separate queue per placement, so each `ToastProvider` below stacks independently.
 const placementQueues: Record<Placement, ToastQueue> = Object.fromEntries(
-  placements.map(p => [p, new ToastQueue({ maxVisibleToasts: 3 })]),
+  placements.map((p) => [p, new ToastQueue({ maxVisibleToasts: 3 })]),
 ) as Record<Placement, ToastQueue>
 
 function showToast(placement: Placement) {
-  placementQueues[placement].add({ title: 'Event created', description: 'Event has been created', variant: 'default' })
+  placementQueues[placement].add({
+    title: 'Event created',
+    description: 'Event has been created',
+    variant: 'default',
+  })
 }
 </script>
 

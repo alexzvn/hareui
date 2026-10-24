@@ -13,7 +13,13 @@ const successQueue = new ToastQueue({ maxVisibleToasts: 1 })
       <Button
         size="sm"
         variant="secondary"
-        @click="notificationQueue.add({ title: 'New notification', description: 'You have a new message', variant: 'default' })"
+        @click="
+          notificationQueue.add({
+            title: 'New notification',
+            description: 'You have a new message',
+            variant: 'default',
+          })
+        "
       >
         Add notification (max 2)
       </Button>
@@ -24,7 +30,13 @@ const successQueue = new ToastQueue({ maxVisibleToasts: 1 })
       <Button
         size="sm"
         variant="danger-soft"
-        @click="errorQueue.add({ title: 'Error occurred', description: 'Failed to save changes', variant: 'danger' })"
+        @click="
+          errorQueue.add({
+            title: 'Error occurred',
+            description: 'Failed to save changes',
+            variant: 'danger',
+          })
+        "
       >
         Add error (max 3)
       </Button>
@@ -36,7 +48,13 @@ const successQueue = new ToastQueue({ maxVisibleToasts: 1 })
         class="text-success-soft-foreground"
         size="sm"
         variant="secondary"
-        @click="successQueue.add({ title: 'Success!', description: `Operation ${Date.now()}`, variant: 'success' })"
+        @click="
+          successQueue.add({
+            title: 'Success!',
+            description: `Operation ${Date.now()}`,
+            variant: 'success',
+          })
+        "
       >
         Add success (max 1)
       </Button>

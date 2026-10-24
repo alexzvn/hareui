@@ -1,5 +1,6 @@
 <script setup lang="ts">
 import { computed, nextTick, ref, watch } from 'vue'
+
 import type { TocItem } from '../composables/useToc'
 
 const props = defineProps<{ items: TocItem[]; active: string[] }>()
@@ -26,7 +27,8 @@ function measure() {
   const first = anchors[0]
   const last = anchors[anchors.length - 1]
   const top = first.offsetTop + parseFloat(getComputedStyle(first).paddingTop)
-  const bottom = last.offsetTop + last.clientHeight - parseFloat(getComputedStyle(last).paddingBottom)
+  const bottom =
+    last.offsetTop + last.clientHeight - parseFloat(getComputedStyle(last).paddingBottom)
   rail.value = { top, height: bottom - top }
 }
 
@@ -38,7 +40,12 @@ watch(
 </script>
 
 <template>
-  <div v-if="items.length === 0" class="rounded-lg border bg-fd-card p-3 text-xs text-fd-muted-foreground">No Headings</div>
+  <div
+    v-if="items.length === 0"
+    class="rounded-lg border bg-fd-card p-3 text-xs text-fd-muted-foreground"
+  >
+    No Headings
+  </div>
   <div v-else ref="container" class="relative">
     <div
       class="bg-fd-primary absolute inset-s-0 top-(--fd-top) h-(--fd-height) w-px transition-[top,height] ease-linear data-[hidden=true]:opacity-0"
@@ -52,7 +59,8 @@ watch(
         :data-active="activeSet.has(item.id)"
         :href="`#${item.id}`"
         :class="[ITEM_CLASS, indent(item.depth)]"
-      >{{ item.text }}</a>
+        >{{ item.text }}</a
+      >
     </div>
   </div>
 </template>

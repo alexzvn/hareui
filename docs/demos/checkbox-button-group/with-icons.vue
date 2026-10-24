@@ -3,9 +3,24 @@ import { CheckboxButtonGroup, CheckboxButtonGroupItem } from '@hareui/vue'
 import { Icon } from '@iconify/vue'
 
 const channels = [
-  { value: 'email', label: 'Email', description: 'A daily digest of task updates', icon: 'gravity-ui:envelope' },
-  { value: 'push', label: 'Push', description: 'Instant alerts on your phone', icon: 'gravity-ui:bell' },
-  { value: 'chat', label: 'Chat', description: 'Messages in your team channel', icon: 'gravity-ui:comment' },
+  {
+    value: 'email',
+    label: 'Email',
+    description: 'A daily digest of task updates',
+    icon: 'gravity-ui:envelope',
+  },
+  {
+    value: 'push',
+    label: 'Push',
+    description: 'Instant alerts on your phone',
+    icon: 'gravity-ui:bell',
+  },
+  {
+    value: 'chat',
+    label: 'Chat',
+    description: 'Messages in your team channel',
+    icon: 'gravity-ui:comment',
+  },
 ]
 </script>
 

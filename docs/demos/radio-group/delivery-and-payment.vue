@@ -1,8 +1,8 @@
 <script setup lang="ts">
 import type { RadioGroupItem } from '@hareui/vue'
+import { Description, RadioGroup } from '@hareui/vue'
 import type { IconifyIcon } from '@iconify/vue'
 import { Icon } from '@iconify/vue'
-import { Description, RadioGroup } from '@hareui/vue'
 
 interface DeliveryOption extends RadioGroupItem {
   price: string
@@ -61,7 +61,14 @@ const control = 'absolute end-4 top-3 size-5'
 <template>
   <div
     class="flex w-full flex-col items-center gap-10"
-    style="--accent: #006FEE; --accent-foreground: #fff; --accent-hover: #006FEE; --border-width: 2px; --border-width-field: 2px; --focus: #006FEE;"
+    style="
+      --accent: #006fee;
+      --accent-foreground: #fff;
+      --accent-hover: #006fee;
+      --border-width: 2px;
+      --border-width-field: 2px;
+      --focus: #006fee;
+    "
   >
     <section class="flex w-full max-w-lg flex-col gap-4">
       <RadioGroup

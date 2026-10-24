@@ -8,5 +8,11 @@ import { DatePicker } from '@hareui/vue'
     compound parts to render-prop into. Vue's natural attrs fallthrough reaches the same root
     element instead, so this demo shows an arbitrary attribute landing on the field.
   -->
-  <DatePicker data-custom="date-picker" class="w-72" name="date" label="Date" calendar-label="Event date" />
+  <DatePicker
+    data-custom="date-picker"
+    class="w-72"
+    name="date"
+    label="Date"
+    calendar-label="Event date"
+  />
 </template>

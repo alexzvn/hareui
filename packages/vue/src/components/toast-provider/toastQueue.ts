@@ -8,12 +8,16 @@ const DEFAULT_EXIT_DURATION = 300
 const DEFAULT_TOAST_TIMEOUT = 4000
 
 /** Monotonic clock: Date.now() can jump on wall-clock adjustments. */
-const now: () => number = typeof performance !== 'undefined' && typeof performance.now === 'function'
-  ? () => performance.now()
-  : () => Date.now()
+const now: () => number =
+  typeof performance !== 'undefined' && typeof performance.now === 'function'
+    ? () => performance.now()
+    : () => Date.now()
 
 function prefersReducedMotion(): boolean {
-  return typeof window !== 'undefined' && !!window.matchMedia?.('(prefers-reduced-motion: reduce)')?.matches
+  return (
+    typeof window !== 'undefined' &&
+    !!window.matchMedia?.('(prefers-reduced-motion: reduce)')?.matches
+  )
 }
 
 let keySeq = 0
@@ -45,16 +49,14 @@ class ManagedToastTimer {
   }
 
   pause(): void {
-    if (this.timerId == null)
-      return
+    if (this.timerId == null) return
     clearTimeout(this.timerId)
     this.timerId = null
     this.remaining -= now() - (this.startTime ?? now())
   }
 
   resume(): void {
-    if (this.remaining <= 0 || this.timerId != null)
-      return
+    if (this.remaining <= 0 || this.timerId != null) return
     this.startTime = now()
     this.timerId = setTimeout(() => {
       this.timerId = null
@@ -121,15 +123,14 @@ export class ToastQueue<T extends object = ToastContentValue> {
   }
 
   /** Adds a toast and returns its key; explicit timeout 0 keeps it open. */
-  add(content: T, options?: { timeout?: number, onClose?: () => void }): string {
+  add(content: T, options?: { timeout?: number; onClose?: () => void }): string {
     const key = generateKey()
     const timeout = options?.timeout ?? DEFAULT_TOAST_TIMEOUT
     const toast: QueuedToast<T> = { key, content, timeout, onClose: options?.onClose }
     if (timeout > 0) {
       const timer = new ManagedToastTimer(() => this.close(key), timeout)
       toast.timer = markRaw(timer)
-      if (this.suspensions.size === 0)
-        timer.resume()
+      if (this.suspensions.size === 0) timer.resume()
     }
     this._visibleToasts.unshift(toast)
     return key
@@ -140,16 +141,13 @@ export class ToastQueue<T extends object = ToastContentValue> {
    * restarts the countdown (0 keeps it open); omit it to keep the current
    * countdown. Returns `false` if the toast no longer exists or is exiting.
    */
-  update(key: string, content: T, options?: { onClose?: () => void, timeout?: number }): boolean {
-    if (this._exitingKeys.has(key))
-      return false
-    const toast = this._visibleToasts.find(t => t.key === key)
-    if (!toast)
-      return false
+  update(key: string, content: T, options?: { onClose?: () => void; timeout?: number }): boolean {
+    if (this._exitingKeys.has(key)) return false
+    const toast = this._visibleToasts.find((t) => t.key === key)
+    if (!toast) return false
 
     toast.content = content
-    if (options && 'onClose' in options)
-      toast.onClose = options.onClose
+    if (options && 'onClose' in options) toast.onClose = options.onClose
 
     if (options?.timeout !== undefined) {
       toast.timer?.pause()
@@ -157,10 +155,8 @@ export class ToastQueue<T extends object = ToastContentValue> {
       if (options.timeout > 0) {
         const timer = new ManagedToastTimer(() => this.close(key), options.timeout)
         toast.timer = markRaw(timer)
-        if (this.suspensions.size === 0)
-          timer.resume()
-      }
-      else {
+        if (this.suspensions.size === 0) timer.resume()
+      } else {
         toast.timer = undefined
       }
     }
@@ -169,11 +165,9 @@ export class ToastQueue<T extends object = ToastContentValue> {
 
   /** Closes a toast by its key; it animates out and fires its `onClose`. */
   close(key: string): void {
-    if (this._exitingKeys.has(key))
-      return
-    const index = this._visibleToasts.findIndex(t => t.key === key)
-    if (index === -1)
-      return
+    if (this._exitingKeys.has(key)) return
+    const index = this._visibleToasts.findIndex((t) => t.key === key)
+    if (index === -1) return
     const toast = this._visibleToasts[index]!
     const onClose = toast.onClose
     const canAnimate = this.exitDuration > 0 && !prefersReducedMotion()
@@ -187,13 +181,15 @@ export class ToastQueue<T extends object = ToastContentValue> {
 
     toast.onClose = undefined
     this._exitingKeys.add(key)
-    this.exitTimers.set(key, setTimeout(() => {
-      this.exitTimers.delete(key)
-      this._exitingKeys.delete(key)
-      const i = this._visibleToasts.findIndex(t => t.key === key)
-      if (i !== -1)
-        this._visibleToasts.splice(i, 1)
-    }, this.exitDuration))
+    this.exitTimers.set(
+      key,
+      setTimeout(() => {
+        this.exitTimers.delete(key)
+        this._exitingKeys.delete(key)
+        const i = this._visibleToasts.findIndex((t) => t.key === key)
+        if (i !== -1) this._visibleToasts.splice(i, 1)
+      }, this.exitDuration),
+    )
     onClose?.()
   }
 

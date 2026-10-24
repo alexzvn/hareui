@@ -1,10 +1,11 @@
-import type { ChartTooltipSlotProps } from '../src/components/chart/ChartTooltip.vue'
 import { flushPromises, mount } from '@vue/test-utils'
 import { afterAll, beforeAll, describe, expect, it, vi } from 'vitest'
 import { h, nextTick } from 'vue'
+
 import ChartCell from '../src/components/chart/ChartCell.vue'
 import ChartPolarAngleAxis from '../src/components/chart/ChartPolarAngleAxis.vue'
 import ChartRadialBar from '../src/components/chart/ChartRadialBar.vue'
+import type { ChartTooltipSlotProps } from '../src/components/chart/ChartTooltip.vue'
 import ChartTooltip from '../src/components/chart/ChartTooltip.vue'
 import { bandBarPositions } from '../src/components/chart/polar'
 import RadialChart from '../src/components/radial-chart/RadialChart.vue'
@@ -34,17 +35,27 @@ function mountChart(children: () => any[], props: Record<string, unknown> = {}) 
 }
 
 async function hover(wrapper: ReturnType<typeof mountChart>, clientX: number, clientY: number) {
-  wrapper.find('[data-slot=chart-surface]').element.dispatchEvent(new PointerEvent('pointermove', { clientX, clientY, bubbles: true }))
+  wrapper
+    .find('[data-slot=chart-surface]')
+    .element.dispatchEvent(new PointerEvent('pointermove', { clientX, clientY, bubbles: true }))
   await settle()
 }
 
 const bar = (props: Record<string, unknown> = {}, cells?: () => any[]) =>
-  h(ChartRadialBar, { dataKey: 'value', isAnimationActive: false, ...props }, cells ? { default: cells } : undefined)
+  h(
+    ChartRadialBar,
+    { dataKey: 'value', isAnimationActive: false, ...props },
+    cells ? { default: cells } : undefined,
+  )
 
 describe('radial bar bands', () => {
   it('centers fixed-size bars in their band', () => {
-    expect(bandBarPositions(25, [{}], { barSize: 10, barGap: 4 })).toEqual([{ offset: 7, size: 10 }])
-    expect(bandBarPositions(19, [{}], { barSize: 10, barGap: 4 })).toEqual([{ offset: 4, size: 10 }])
+    expect(bandBarPositions(25, [{}], { barSize: 10, barGap: 4 })).toEqual([
+      { offset: 7, size: 10 },
+    ])
+    expect(bandBarPositions(19, [{}], { barSize: 10, barGap: 4 })).toEqual([
+      { offset: 4, size: 10 },
+    ])
   })
 
   it('shares the band between bars without a size, minus the category gap', () => {
@@ -55,7 +66,9 @@ describe('radial bar bands', () => {
   })
 
   it('caps bars at maxBarSize', () => {
-    expect(bandBarPositions(100, [{ maxBarSize: 20 }], { barCategoryGap: 0 })).toEqual([{ offset: 40, size: 20 }])
+    expect(bandBarPositions(100, [{ maxBarSize: 20 }], { barCategoryGap: 0 })).toEqual([
+      { offset: 40, size: 20 },
+    ])
   })
 
   it('never returns a negative bar size when gaps fill the band', () => {
@@ -82,14 +95,19 @@ describe('RadialChart', () => {
     expect(sectors[0]!.attributes('d')).toContain('A37,37')
     expect(sectors[1]!.attributes('d')).toContain('A72,72')
     expect(sectors[1]!.attributes('d')).toContain('A62,62')
-    expect(sectors.map(sector => sector.attributes('fill'))).toEqual(['var(--chart-4)', 'var(--chart-3)'])
+    expect(sectors.map((sector) => sector.attributes('fill'))).toEqual([
+      'var(--chart-4)',
+      'var(--chart-3)',
+    ])
     wrapper.unmount()
   })
 
-  it('fills a full turn with the largest value and starts at 12 o\'clock', async () => {
+  it("fills a full turn with the largest value and starts at 12 o'clock", async () => {
     const wrapper = mountChart(() => [bar()])
     await settle()
-    const [half, full] = wrapper.findAll('[data-slot=chart-radial-bar-sector]').map(sector => sector.attributes('d')!)
+    const [half, full] = wrapper
+      .findAll('[data-slot=chart-radial-bar-sector]')
+      .map((sector) => sector.attributes('d')!)
     // 50 of 100: from the top (0, -47) clockwise to the bottom (0, 47).
     expect(half).toMatch(/^M[-\d.e]+,-47A47,47,0,1,1,[-\d.e]+,47/)
     // 100 of 100: a full annulus.
@@ -103,7 +121,9 @@ describe('RadialChart', () => {
       bar(),
     ])
     await settle()
-    const [quarter, half] = wrapper.findAll('[data-slot=chart-radial-bar-sector]').map(sector => sector.attributes('d')!)
+    const [quarter, half] = wrapper
+      .findAll('[data-slot=chart-radial-bar-sector]')
+      .map((sector) => sector.attributes('d')!)
     // 50 of 200: top to 3 o'clock (47, 0). 100 of 200: top to bottom.
     expect(quarter).toMatch(/A47,47,0,0,1,47,[-\d.e]+/)
     expect(half).toMatch(/A72,72,0,1,1,[-\d.e]+,72/)
@@ -121,25 +141,32 @@ describe('RadialChart', () => {
 
     const custom = mountChart(() => [bar({ background: { fill: 'pink' } })])
     await settle()
-    expect(custom.find('[data-slot=chart-radial-bar-track]').attributes('style')).toContain('fill: pink')
+    expect(custom.find('[data-slot=chart-radial-bar-track]').attributes('style')).toContain(
+      'fill: pink',
+    )
     custom.unmount()
   })
 
   it('rounds the bar ends up to half the bar thickness', async () => {
     const wrapper = mountChart(() => [bar({ cornerRadius: 12 })])
     await settle()
-    const [half, full] = wrapper.findAll('[data-slot=chart-radial-bar-sector]').map(sector => sector.attributes('d')!)
+    const [half, full] = wrapper
+      .findAll('[data-slot=chart-radial-bar-sector]')
+      .map((sector) => sector.attributes('d')!)
     expect(half).toContain('A5,5')
     expect(full).not.toContain('A5,5')
     wrapper.unmount()
   })
 
   it('opens a gauge between start and end angles', async () => {
-    const wrapper = mountChart(() => [
-      h(ChartPolarAngleAxis, { type: 'number', domain: [0, 100], tick: false }),
-      bar({ background: true }),
-      h(ChartTooltip, { isAnimationActive: false }),
-    ], { data: [{ name: 'Active', value: 100 }], startAngle: 225, endAngle: -45 })
+    const wrapper = mountChart(
+      () => [
+        h(ChartPolarAngleAxis, { type: 'number', domain: [0, 100], tick: false }),
+        bar({ background: true }),
+        h(ChartTooltip, { isAnimationActive: false }),
+      ],
+      { data: [{ name: 'Active', value: 100 }], startAngle: 225, endAngle: -45 },
+    )
     await settle()
     // 270° sweep: the track is open at the bottom, so it is not a full annulus.
     const track = wrapper.find('[data-slot=chart-radial-bar-track]').attributes('d')!
@@ -155,7 +182,11 @@ describe('RadialChart', () => {
   it('colors rings with ChartCell before the datum fill', async () => {
     const wrapper = mountChart(() => [bar({}, () => [h(ChartCell, { fill: 'red' })])])
     await settle()
-    expect(wrapper.findAll('[data-slot=chart-radial-bar-sector]').map(sector => sector.attributes('fill'))).toEqual(['red', 'var(--chart-3)'])
+    expect(
+      wrapper
+        .findAll('[data-slot=chart-radial-bar-sector]')
+        .map((sector) => sector.attributes('fill')),
+    ).toEqual(['red', 'var(--chart-3)'])
     wrapper.unmount()
   })
 
@@ -163,12 +194,20 @@ describe('RadialChart', () => {
     let received: ChartTooltipSlotProps | undefined
     const wrapper = mountChart(() => [
       bar(),
-      h(ChartTooltip, { isAnimationActive: false }, {
-        content: (props: ChartTooltipSlotProps) => {
-          received = props
-          return h('div', { 'data-test': 'custom' }, props.payload.map(entry => `${entry.name}:${entry.value}`).join(','))
+      h(
+        ChartTooltip,
+        { isAnimationActive: false },
+        {
+          content: (props: ChartTooltipSlotProps) => {
+            received = props
+            return h(
+              'div',
+              { 'data-test': 'custom' },
+              props.payload.map((entry) => `${entry.name}:${entry.value}`).join(','),
+            )
+          },
         },
-      }),
+      ),
     ])
     await settle()
     // Radius 40: first band (30–55).
@@ -177,17 +216,23 @@ describe('RadialChart', () => {
     expect(received?.payload[0]).toMatchObject({ color: 'var(--chart-4)', fill: 'var(--chart-4)' })
     expect(received?.label).toBeUndefined()
     expect(received?.coordinate).toEqual({ x: 100, y: 60 })
-    expect(wrapper.find('[data-slot=chart-radial-bar-sector][data-index="0"]').attributes('data-active')).toBe('true')
+    expect(
+      wrapper.find('[data-slot=chart-radial-bar-sector][data-index="0"]').attributes('data-active'),
+    ).toBe('true')
     // Radius 70: second band.
     await hover(wrapper, 30, 100)
     expect(wrapper.find('[data-test=custom]').text()).toBe('Steps:100')
     // Center hole and outside the rings: the tooltip hides.
     await hover(wrapper, 100, 100)
-    expect(wrapper.find('[data-slot=chart-tooltip-wrapper]').attributes('data-state')).toBe('closed')
+    expect(wrapper.find('[data-slot=chart-tooltip-wrapper]').attributes('data-state')).toBe(
+      'closed',
+    )
     await hover(wrapper, 30, 100)
     expect(wrapper.find('[data-slot=chart-tooltip-wrapper]').attributes('data-state')).toBe('open')
     await hover(wrapper, 100, 5)
-    expect(wrapper.find('[data-slot=chart-tooltip-wrapper]').attributes('data-state')).toBe('closed')
+    expect(wrapper.find('[data-slot=chart-tooltip-wrapper]').attributes('data-state')).toBe(
+      'closed',
+    )
     wrapper.unmount()
   })
 
@@ -215,9 +260,13 @@ describe('RadialChart', () => {
     await wrapper.setProps({ data: data.slice(0, 1) })
     await settle()
     expect(wrapper.findAll('[data-slot=chart-radial-bar-sector]')).toHaveLength(1)
-    expect(wrapper.find('[data-slot=chart-tooltip-wrapper]').attributes('data-state')).toBe('closed')
+    expect(wrapper.find('[data-slot=chart-tooltip-wrapper]').attributes('data-state')).toBe(
+      'closed',
+    )
 
-    await wrapper.setProps({ data: [...data, { name: 'Exercise', value: 25, fill: 'var(--chart-5)' }] })
+    await wrapper.setProps({
+      data: [...data, { name: 'Exercise', value: 25, fill: 'var(--chart-5)' }],
+    })
     await settle()
     expect(wrapper.findAll('[data-slot=chart-radial-bar-sector]')).toHaveLength(3)
     // Three rings share 30–80px: bands of 50 / 3 px, the last one outermost.
@@ -253,33 +302,56 @@ describe('RadialChart generated mode', () => {
     })
   }
 
-  const paths = (wrapper: ReturnType<typeof mountComposed>, slot: string) => wrapper.findAll(`[data-slot=${slot}]`).map(path => path.attributes('d'))
+  const paths = (wrapper: ReturnType<typeof mountComposed>, slot: string) =>
+    wrapper.findAll(`[data-slot=${slot}]`).map((path) => path.attributes('d'))
 
   it('draws rounded rings with tracks, colored from the palette, like the hand-composed parts', async () => {
     const generated = mountGenerated()
-    const composed = mountComposed(() => [h(ChartRadialBar, { dataKey: 'progress', background: true, cornerRadius: 12, isAnimationActive: false })])
+    const composed = mountComposed(() => [
+      h(ChartRadialBar, {
+        dataKey: 'progress',
+        background: true,
+        cornerRadius: 12,
+        isAnimationActive: false,
+      }),
+    ])
     await settle()
-    expect(generated.findAll('[data-slot=chart-radial-bar-sector]').map(sector => sector.attributes('fill'))).toEqual(['var(--chart-3)', 'var(--chart-1)'])
-    expect(paths(generated, 'chart-radial-bar-sector')).toEqual(paths(composed, 'chart-radial-bar-sector'))
+    expect(
+      generated
+        .findAll('[data-slot=chart-radial-bar-sector]')
+        .map((sector) => sector.attributes('fill')),
+    ).toEqual(['var(--chart-3)', 'var(--chart-1)'])
+    expect(paths(generated, 'chart-radial-bar-sector')).toEqual(
+      paths(composed, 'chart-radial-bar-sector'),
+    )
     expect(paths(generated, 'chart-radial-bar-track')).toHaveLength(2)
-    expect(paths(generated, 'chart-radial-bar-track')).toEqual(paths(composed, 'chart-radial-bar-track'))
+    expect(paths(generated, 'chart-radial-bar-track')).toEqual(
+      paths(composed, 'chart-radial-bar-track'),
+    )
     generated.unmount()
     composed.unmount()
   })
 
   it('scales a full bar to max and draws a gauge', async () => {
     const generated = mountGenerated({ max: 100, gauge: true, background: false })
-    const composed = mountComposed(() => [
-      h(ChartPolarAngleAxis, { type: 'number', domain: [0, 100], tick: false }),
-      h(ChartRadialBar, { dataKey: 'progress', cornerRadius: 12, isAnimationActive: false }),
-    ], { startAngle: 225, endAngle: -45 })
+    const composed = mountComposed(
+      () => [
+        h(ChartPolarAngleAxis, { type: 'number', domain: [0, 100], tick: false }),
+        h(ChartRadialBar, { dataKey: 'progress', cornerRadius: 12, isAnimationActive: false }),
+      ],
+      { startAngle: 225, endAngle: -45 },
+    )
     await settle()
-    expect(paths(generated, 'chart-radial-bar-sector')).toEqual(paths(composed, 'chart-radial-bar-sector'))
+    expect(paths(generated, 'chart-radial-bar-sector')).toEqual(
+      paths(composed, 'chart-radial-bar-sector'),
+    )
     expect(generated.find('[data-slot=chart-radial-bar-track]').exists()).toBe(false)
     // Explicit angles win over `gauge`.
     await generated.setProps({ startAngle: 90, endAngle: -270 })
     await settle()
-    expect(paths(generated, 'chart-radial-bar-sector')).not.toEqual(paths(composed, 'chart-radial-bar-sector'))
+    expect(paths(generated, 'chart-radial-bar-sector')).not.toEqual(
+      paths(composed, 'chart-radial-bar-sector'),
+    )
     generated.unmount()
     composed.unmount()
   })
@@ -309,16 +381,26 @@ describe('RadialChart generated mode', () => {
   })
 
   it('formats legend values with the root valueFormatter', async () => {
-    const wrapper = mountGenerated({ valueFormatter: (value: number, name: string) => `${name} ${value}%`, legend: { showValue: true } })
+    const wrapper = mountGenerated({
+      valueFormatter: (value: number, name: string) => `${name} ${value}%`,
+      legend: { showValue: true },
+    })
     await settle()
-    expect(wrapper.findAll('[data-slot=chart-legend-value]').map(value => value.text())).toEqual(['Move 40%', 'Exercise 80%'])
+    expect(wrapper.findAll('[data-slot=chart-legend-value]').map((value) => value.text())).toEqual([
+      'Move 40%',
+      'Exercise 80%',
+    ])
     wrapper.unmount()
   })
 
   it('renders #center with the total and the active ring', async () => {
-    const wrapper = mountGenerated({}, {
-      center: (p: { total: number, active: { name: string } | null }) => h('span', { 'data-test': 'center' }, `${p.total}:${p.active?.name ?? '-'}`),
-    })
+    const wrapper = mountGenerated(
+      {},
+      {
+        center: (p: { total: number; active: { name: string } | null }) =>
+          h('span', { 'data-test': 'center' }, `${p.total}:${p.active?.name ?? '-'}`),
+      },
+    )
     await settle()
     expect(wrapper.find('[data-slot=chart-center]').attributes('style')).toContain('left: 100px')
     expect(wrapper.find('[data-test=center]').text()).toBe('120:-')
@@ -346,9 +428,12 @@ describe('RadialChart generated mode', () => {
   })
 
   it('is accessible idle and with a ring focused, with legend and center', async () => {
-    const wrapper = mountGenerated({ 'legend': true, 'aria-label': 'Goal progress' }, {
-      center: (p: { total: number }) => h('span', `${p.total} points`),
-    })
+    const wrapper = mountGenerated(
+      { legend: true, 'aria-label': 'Goal progress' },
+      {
+        center: (p: { total: number }) => h('span', `${p.total} points`),
+      },
+    )
     await settle()
     await expectAccessible(wrapper)
     ;(wrapper.find('[data-slot=chart-surface]').element as SVGElement).focus()

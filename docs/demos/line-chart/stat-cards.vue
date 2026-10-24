@@ -28,19 +28,35 @@ function formatTick(value: number) {
   return `${(value / 1000).toFixed(1)}k`
 }
 
-const series = { loans: { name: 'Loans', valueFormatter: (value: number) => `${value.toLocaleString()} books` } }
+const series = {
+  loans: { name: 'Loans', valueFormatter: (value: number) => `${value.toLocaleString()} books` },
+}
 </script>
 
 <template>
   <div class="flex w-full max-w-[700px] flex-col gap-3">
     <div class="@container">
       <div class="grid grid-cols-1 gap-3 @xl:grid-cols-3">
-        <Card v-for="stat in stats" :key="stat.label" class="gap-1 rounded-2xl" :description="stat.label" :ui="{ description: 'text-sm font-medium' }">
+        <Card
+          v-for="stat in stats"
+          :key="stat.label"
+          class="gap-1 rounded-2xl"
+          :description="stat.label"
+          :ui="{ description: 'text-sm font-medium' }"
+        >
           <div class="flex flex-row items-center gap-2">
             <span class="flex-1 text-2xl font-semibold text-foreground">{{ stat.value }}</span>
-            <Chip :color="stat.trend === 'up' ? 'success' : 'danger'" size="sm" variant="soft" class="whitespace-nowrap">
+            <Chip
+              :color="stat.trend === 'up' ? 'success' : 'danger'"
+              size="sm"
+              variant="soft"
+              class="whitespace-nowrap"
+            >
               <template #leading>
-                <Icon class="size-3" :icon="stat.trend === 'up' ? 'gravity-ui:arrow-up' : 'gravity-ui:arrow-down'" />
+                <Icon
+                  class="size-3"
+                  :icon="stat.trend === 'up' ? 'gravity-ui:arrow-up' : 'gravity-ui:arrow-down'"
+                />
               </template>
               {{ stat.change }}
             </Chip>

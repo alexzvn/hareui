@@ -29,7 +29,12 @@ const ui = useComponentUI('errorMessage', theme, () => ({}))
 </script>
 
 <template>
-  <span :id="id" slot="errorMessage" data-slot="error-message" :class="ui.base({ class: [props.ui?.base, props.class] })">
+  <span
+    :id="id"
+    slot="errorMessage"
+    data-slot="error-message"
+    :class="ui.base({ class: [props.ui?.base, props.class] })"
+  >
     <slot />
   </span>
 </template>

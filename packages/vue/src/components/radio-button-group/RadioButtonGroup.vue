@@ -81,6 +81,7 @@ export interface RadioButtonGroupSlots {
 <script setup lang="ts">
 import { RadioGroupRoot } from 'reka-ui'
 import { computed, provide, useSlots, useTemplateRef } from 'vue'
+
 import { useComponentUI } from '../../composables/useComponentUI'
 import { useFieldChrome } from '../../composables/useFieldChrome'
 import { useFieldValidation } from '../../composables/useFieldValidation'
@@ -88,7 +89,11 @@ import { useFieldsetDisabled } from '../fieldset/context'
 import { radioButtonGroupKey } from './context'
 
 // `invalid: undefined`: an absent boolean would cast to `false`, which counts as controlled-valid and hides validation errors
-const props = withDefaults(defineProps<RadioButtonGroupProps>(), { layout: 'flex', variant: 'primary', invalid: undefined })
+const props = withDefaults(defineProps<RadioButtonGroupProps>(), {
+  layout: 'flex',
+  variant: 'primary',
+  invalid: undefined,
+})
 defineSlots<RadioButtonGroupSlots>()
 /** The value of the selected item. Bind with `v-model`. */
 const modelValue = defineModel<string>()
@@ -120,13 +125,15 @@ const { validation, commitValidation } = useFieldValidation({
 })
 const invalid = computed(() => validation.value.isInvalid)
 
-const { labelId, hasLabel, describedBy, FieldLabel, FieldDescription, FieldError } = useFieldChrome({
-  props,
-  slots,
-  invalid,
-  validation,
-  disabled: isDisabled,
-})
+const { labelId, hasLabel, describedBy, FieldLabel, FieldDescription, FieldError } = useFieldChrome(
+  {
+    props,
+    slots,
+    invalid,
+    validation,
+    disabled: isDisabled,
+  },
+)
 
 provide(radioButtonGroupKey, {
   selected,
@@ -142,13 +149,11 @@ provide(radioButtonGroupKey, {
 // Reka's roving focus moves focus (without selecting) on Home / End / PageUp / PageDown; a native radio group
 // ignores them, so stop them before they reach the focused item.
 function onKeydownCapture(event: KeyboardEvent) {
-  if (['Home', 'End', 'PageUp', 'PageDown'].includes(event.key))
-    event.stopPropagation()
+  if (['Home', 'End', 'PageUp', 'PageDown'].includes(event.key)) event.stopPropagation()
 }
 
 function onUpdate(value: unknown) {
-  if (props.readonly)
-    return
+  if (props.readonly) return
   modelValue.value = value as string
   commitValidation()
 }

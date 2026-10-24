@@ -22,9 +22,9 @@ import { Label } from '@hareui/vue'
 
 Label renders a single `<label>` element (Reka UI `Label`).
 
-| `ui` key | `data-slot` | Element |
-|---|---|---|
-| `base` | `label` | `<label>` |
+| `ui` key | `data-slot` | Element   |
+| -------- | ----------- | --------- |
+| `base`   | `label`     | `<label>` |
 
 ## Examples
 
@@ -70,14 +70,16 @@ Override the theme for every Label with `createHareUI`:
 ```ts
 import { createHareUI } from '@hareui/vue'
 
-app.use(createHareUI({
-  ui: {
-    label: {
-      slots: { base: 'font-semibold text-foreground' },
-      variants: { required: { true: { base: 'after:text-accent' } } },
+app.use(
+  createHareUI({
+    ui: {
+      label: {
+        slots: { base: 'font-semibold text-foreground' },
+        variants: { required: { true: { base: 'after:text-accent' } } },
+      },
     },
-  },
-}))
+  }),
+)
 ```
 
 ## Styling Reference

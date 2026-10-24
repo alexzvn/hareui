@@ -21,8 +21,7 @@ const startingFiles = (): WorkoutFile[] => [
 const workoutFiles = ref<WorkoutFile[]>(startingFiles())
 
 function statusOf(file: WorkoutFile): DropZoneFileStatus {
-  if (file.offline)
-    return 'failed'
+  if (file.offline) return 'failed'
   return file.sent >= file.bytes ? 'complete' : 'uploading'
 }
 
@@ -33,44 +32,50 @@ function syncAgain(file: WorkoutFile) {
 }
 
 function removeFile(key: string) {
-  workoutFiles.value = workoutFiles.value.filter(file => file.key !== key)
+  workoutFiles.value = workoutFiles.value.filter((file) => file.key !== key)
 }
 
 // Simulated sync: 1.5 MB/s shared by every file still syncing, and at least 1.2 s per file
-const BYTES_PER_MS = 1.5 * 1024 * 1024 / 1000
+const BYTES_PER_MS = (1.5 * 1024 * 1024) / 1000
 let frame = 0
 let lastTime = 0
 
 function pump(now: number) {
-  const syncing = workoutFiles.value.filter(file => statusOf(file) === 'uploading')
+  const syncing = workoutFiles.value.filter((file) => statusOf(file) === 'uploading')
   if (!syncing.length) {
     frame = 0
     return
   }
   const elapsed = Math.min(now - lastTime, 100)
   for (const file of syncing)
-    file.sent = Math.min(file.bytes, file.sent + Math.max((BYTES_PER_MS * elapsed) / syncing.length, (file.bytes * elapsed) / 1200))
+    file.sent = Math.min(
+      file.bytes,
+      file.sent +
+        Math.max((BYTES_PER_MS * elapsed) / syncing.length, (file.bytes * elapsed) / 1200),
+    )
   lastTime = now
   frame = requestAnimationFrame(pump)
 }
 
 function resume() {
-  if (frame)
-    return
+  if (frame) return
   lastTime = performance.now()
   frame = requestAnimationFrame(pump)
 }
 
 // Brings the files back once the list is empty, so the demo can be replayed
 let refill: ReturnType<typeof setTimeout> | undefined
-watch(() => workoutFiles.value.length, (length) => {
-  if (length === 0) {
-    refill = setTimeout(() => {
-      workoutFiles.value = startingFiles()
-      resume()
-    }, 600)
-  }
-})
+watch(
+  () => workoutFiles.value.length,
+  (length) => {
+    if (length === 0) {
+      refill = setTimeout(() => {
+        workoutFiles.value = startingFiles()
+        resume()
+      }, 600)
+    }
+  },
+)
 
 onMounted(resume)
 onBeforeUnmount(() => {
@@ -81,7 +86,9 @@ onBeforeUnmount(() => {
 
 <template>
   <div class="w-full max-w-[460px] rounded-2xl border border-separator px-3 py-2">
-    <p class="m-0 flex items-center gap-2 border-b border-separator px-1 pb-2 text-xs font-medium text-muted">
+    <p
+      class="m-0 flex items-center gap-2 border-b border-separator px-1 pb-2 text-xs font-medium text-muted"
+    >
       <Icon icon="gravity-ui:arrows-rotate-right" class="size-3.5" /> Synced from your watch
     </p>
     <DropZoneFileList class="gap-0 divide-y divide-separator">
@@ -97,11 +104,19 @@ onBeforeUnmount(() => {
         <template #meta="{ size, status }">
           <span>{{ size }}</span>
           <span aria-hidden="true">·</span>
-          <span v-if="status === 'uploading'" class="tabular-nums">Syncing {{ Math.floor((file.sent / file.bytes) * 100) }}%</span>
+          <span v-if="status === 'uploading'" class="tabular-nums"
+            >Syncing {{ Math.floor((file.sent / file.bytes) * 100) }}%</span
+          >
           <span v-else-if="status === 'complete'" class="text-success">Synced</span>
           <span v-else class="text-danger">Your phone went offline during the sync.</span>
         </template>
-        <Button v-if="file.offline" class="mt-1.5 w-fit" size="sm" variant="outline" @click="syncAgain(file)">
+        <Button
+          v-if="file.offline"
+          class="mt-1.5 w-fit"
+          size="sm"
+          variant="outline"
+          @click="syncAgain(file)"
+        >
           <Icon icon="gravity-ui:arrows-rotate-left" /> Sync again
         </Button>
       </DropZoneFileItem>

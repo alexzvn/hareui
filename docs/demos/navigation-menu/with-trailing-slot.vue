@@ -4,7 +4,8 @@ import { Button, NavigationMenu } from '@hareui/vue'
 import { Icon } from '@iconify/vue'
 import { h } from 'vue'
 
-const icon = (name: string) => (attrs: Record<string, unknown>) => h(Icon, { ...attrs, icon: `gravity-ui:${name}` })
+const icon = (name: string) => (attrs: Record<string, unknown>) =>
+  h(Icon, { ...attrs, icon: `gravity-ui:${name}` })
 
 const items: NavigationMenuItem[][] = [
   [
@@ -21,9 +22,9 @@ const items: NavigationMenuItem[][] = [
 
 const updated: Record<string, string> = {
   'Design System': '2h',
-  'Travel': '3d',
-  'Engineering': '5m',
-  'Marketing': '1w',
+  Travel: '3d',
+  Engineering: '5m',
+  Marketing: '1w',
 }
 const updatedOf = (item: NavigationMenuItem) => updated[item.label ?? '']
 </script>
@@ -41,7 +42,9 @@ const updatedOf = (item: NavigationMenuItem) => updated[item.label ?? '']
       </Button>
     </template>
     <template #item-trailing="{ item }">
-      <span class="ms-auto text-xs text-muted opacity-0 transition-opacity group-hover:opacity-100 group-focus-visible:opacity-100">
+      <span
+        class="ms-auto text-xs text-muted opacity-0 transition-opacity group-hover:opacity-100 group-focus-visible:opacity-100"
+      >
         {{ updatedOf(item) }}
       </span>
     </template>

@@ -1,16 +1,31 @@
 <script setup lang="ts">
-import { Icon } from '@iconify/vue'
 import type { ListBoxItem } from '@hareui/vue'
 import { Avatar, ListBox, Surface } from '@hareui/vue'
+import { Icon } from '@iconify/vue'
 
 interface User extends ListBoxItem {
   avatar: string
 }
 
 const users: User[] = [
-  { value: '1', label: 'Bob', description: 'bob@heroui.com', avatar: 'https://heroui-assets.nyc3.cdn.digitaloceanspaces.com/avatars/blue.jpg' },
-  { value: '2', label: 'Fred', description: 'fred@heroui.com', avatar: 'https://heroui-assets.nyc3.cdn.digitaloceanspaces.com/avatars/green.jpg' },
-  { value: '3', label: 'Martha', description: 'martha@heroui.com', avatar: 'https://heroui-assets.nyc3.cdn.digitaloceanspaces.com/avatars/purple.jpg' },
+  {
+    value: '1',
+    label: 'Bob',
+    description: 'bob@heroui.com',
+    avatar: 'https://heroui-assets.nyc3.cdn.digitaloceanspaces.com/avatars/blue.jpg',
+  },
+  {
+    value: '2',
+    label: 'Fred',
+    description: 'fred@heroui.com',
+    avatar: 'https://heroui-assets.nyc3.cdn.digitaloceanspaces.com/avatars/green.jpg',
+  },
+  {
+    value: '3',
+    label: 'Martha',
+    description: 'martha@heroui.com',
+    avatar: 'https://heroui-assets.nyc3.cdn.digitaloceanspaces.com/avatars/purple.jpg',
+  },
 ]
 </script>
 

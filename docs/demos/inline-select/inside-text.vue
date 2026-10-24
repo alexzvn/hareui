@@ -16,7 +16,12 @@ const range = ref<SelectValue>('30d')
 <template>
   <div class="text-sm text-foreground">
     Showing revenue for the
-    <InlineSelect v-model="range" aria-label="Date range" :items="ranges" :ui="{ trigger: '-my-0.5', popover: 'w-44' }" />
+    <InlineSelect
+      v-model="range"
+      aria-label="Date range"
+      :items="ranges"
+      :ui="{ trigger: '-my-0.5', popover: 'w-44' }"
+    />
     across all workspaces.
   </div>
 </template>

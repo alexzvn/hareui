@@ -1,5 +1,6 @@
 <script lang="ts">
 import type { Component } from 'vue'
+
 import type { ComponentSlots } from '../../types/tv'
 import theme from './theme'
 
@@ -54,6 +55,7 @@ export interface CheckboxButtonGroupItemSlots {
 <script setup lang="ts">
 import { CheckboxRoot } from 'reka-ui'
 import { computed, inject, useSlots } from 'vue'
+
 import { submitOnEnter } from '../../composables/forwardRootClick'
 import { useComponentUI } from '../../composables/useComponentUI'
 import { useFieldChrome } from '../../composables/useFieldChrome'
@@ -66,8 +68,7 @@ defineSlots<CheckboxButtonGroupItemSlots>()
 const slots = useSlots()
 
 const injected = inject(checkboxButtonGroupContextKey, null)
-if (!injected)
-  throw new Error('CheckboxButtonGroupItem must be used inside a CheckboxButtonGroup.')
+if (!injected) throw new Error('CheckboxButtonGroupItem must be used inside a CheckboxButtonGroup.')
 const group = injected
 
 const selected = computed(() => group.selected.value.includes(props.value))
@@ -131,7 +132,9 @@ function cls(slot: keyof NonNullable<CheckboxButtonGroupItemProps['ui']>, extra?
         v-else
         aria-hidden="true"
         data-slot="checkbox-button-group-indicator"
-        :class="group.checkboxUi.value.control({ class: itemUi.indicator({ class: cls('indicator') }) })"
+        :class="
+          group.checkboxUi.value.control({ class: itemUi.indicator({ class: cls('indicator') }) })
+        "
       >
         <span data-slot="checkbox-indicator" :class="group.checkboxUi.value.indicator()">
           <svg
@@ -152,22 +155,48 @@ function cls(slot: keyof NonNullable<CheckboxButtonGroupItemProps['ui']>, extra?
         </span>
       </span>
     </template>
-    <span data-slot="checkbox-button-group-item-content" :class="itemUi.content({ class: cls('content') })">
-      <span v-if="hasIcon" aria-hidden="true" data-slot="checkbox-button-group-item-icon" :class="itemUi.icon({ class: cls('icon') })">
+    <span
+      data-slot="checkbox-button-group-item-content"
+      :class="itemUi.content({ class: cls('content') })"
+    >
+      <span
+        v-if="hasIcon"
+        aria-hidden="true"
+        data-slot="checkbox-button-group-item-icon"
+        :class="itemUi.icon({ class: cls('icon') })"
+      >
         <slot name="icon" v-bind="slotProps">
           <span v-if="typeof icon === 'string'" :class="icon" />
           <component :is="icon" v-else />
         </slot>
       </span>
-      <span data-slot="checkbox-button-group-item-text" :class="itemUi.itemText({ class: cls('itemText') })">
-        <span v-if="hasLabel" :id="labelId" data-slot="checkbox-button-group-item-label" :class="itemUi.itemLabel({ class: cls('itemLabel') })">
+      <span
+        data-slot="checkbox-button-group-item-text"
+        :class="itemUi.itemText({ class: cls('itemText') })"
+      >
+        <span
+          v-if="hasLabel"
+          :id="labelId"
+          data-slot="checkbox-button-group-item-label"
+          :class="itemUi.itemLabel({ class: cls('itemLabel') })"
+        >
           <slot name="label" v-bind="slotProps">{{ label }}</slot>
         </span>
-        <span v-if="hasDescription" :id="descriptionId" data-slot="checkbox-button-group-item-description" :class="itemUi.itemDescription({ class: cls('itemDescription') })">
+        <span
+          v-if="hasDescription"
+          :id="descriptionId"
+          data-slot="checkbox-button-group-item-description"
+          :class="itemUi.itemDescription({ class: cls('itemDescription') })"
+        >
           <slot name="description" v-bind="slotProps">{{ description }}</slot>
         </span>
         <!-- `contents`: the slot children stay flex items of the text column -->
-        <span v-if="slots.default" :id="extraId" data-slot="checkbox-button-group-item-extra" class="contents">
+        <span
+          v-if="slots.default"
+          :id="extraId"
+          data-slot="checkbox-button-group-item-extra"
+          class="contents"
+        >
           <slot v-bind="slotProps" />
         </span>
       </span>

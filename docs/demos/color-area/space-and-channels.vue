@@ -9,7 +9,7 @@ const colorSpaces: ListBoxItem[] = [
   { value: 'hsb', label: 'HSB' },
 ]
 
-const channelsBySpace: Record<ColorSpace, Array<{ value: ColorChannel, label: string }>> = {
+const channelsBySpace: Record<ColorSpace, Array<{ value: ColorChannel; label: string }>> = {
   hsb: [
     { value: 'hue', label: 'Hue' },
     { value: 'saturation', label: 'Saturation' },
@@ -33,33 +33,40 @@ const xChannel = ref<ColorChannel>('saturation')
 const yChannel = ref<ColorChannel>('brightness')
 
 function onSpaceChange(space: SelectValue | undefined) {
-  if (!space || typeof space !== 'string')
-    return
+  if (!space || typeof space !== 'string') return
   colorSpace.value = space as ColorSpace
   // Reset the channels to sensible defaults for the new colour space
   if (space === 'rgb') {
     xChannel.value = 'blue'
     yChannel.value = 'green'
-  }
-  else if (space === 'hsl') {
+  } else if (space === 'hsl') {
     xChannel.value = 'saturation'
     yChannel.value = 'lightness'
-  }
-  else {
+  } else {
     xChannel.value = 'saturation'
     yChannel.value = 'brightness'
   }
 }
 
 // A channel can't be on both axes, so each axis hides the other's channel
-const xChannelOptions = computed(() => channelsBySpace[colorSpace.value].filter(c => c.value !== yChannel.value))
-const yChannelOptions = computed(() => channelsBySpace[colorSpace.value].filter(c => c.value !== xChannel.value))
+const xChannelOptions = computed(() =>
+  channelsBySpace[colorSpace.value].filter((c) => c.value !== yChannel.value),
+)
+const yChannelOptions = computed(() =>
+  channelsBySpace[colorSpace.value].filter((c) => c.value !== xChannel.value),
+)
 </script>
 
 <template>
   <div class="flex flex-col items-center gap-6">
     <div class="flex gap-4">
-      <Select class="w-32" label="Color Space" :model-value="colorSpace" :items="colorSpaces" @update:model-value="onSpaceChange" />
+      <Select
+        class="w-32"
+        label="Color Space"
+        :model-value="colorSpace"
+        :items="colorSpaces"
+        @update:model-value="onSpaceChange"
+      />
       <Select v-model="xChannel" class="w-36" label="X Axis" :items="xChannelOptions" />
       <Select v-model="yChannel" class="w-36" label="Y Axis" :items="yChannelOptions" />
     </div>

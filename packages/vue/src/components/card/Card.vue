@@ -1,5 +1,6 @@
 <script lang="ts">
 import type { PrimitiveProps } from 'reka-ui'
+
 import type { ComponentSlots, ComponentVariants } from '../../types/tv'
 import theme from './theme'
 
@@ -47,6 +48,7 @@ export interface CardSlots {
 
 <script setup lang="ts">
 import { Primitive } from 'reka-ui'
+
 import { useComponentUI } from '../../composables/useComponentUI'
 
 const props = withDefaults(defineProps<CardProps>(), { as: 'div' })
@@ -64,22 +66,38 @@ const ui = useComponentUI('card', theme, () => ({ variant: props.variant }))
       :class="ui.header({ class: props.ui?.header })"
     >
       <slot name="header">
-        <h3 v-if="title || !!slots.title" data-slot="card-title" :class="ui.title({ class: props.ui?.title })">
+        <h3
+          v-if="title || !!slots.title"
+          data-slot="card-title"
+          :class="ui.title({ class: props.ui?.title })"
+        >
           <slot name="title">
             {{ title }}
           </slot>
         </h3>
-        <p v-if="description || !!slots.description" data-slot="card-description" :class="ui.description({ class: props.ui?.description })">
+        <p
+          v-if="description || !!slots.description"
+          data-slot="card-description"
+          :class="ui.description({ class: props.ui?.description })"
+        >
           <slot name="description">
             {{ description }}
           </slot>
         </p>
       </slot>
     </div>
-    <div v-if="!!slots.default" data-slot="card-content" :class="ui.content({ class: props.ui?.content })">
+    <div
+      v-if="!!slots.default"
+      data-slot="card-content"
+      :class="ui.content({ class: props.ui?.content })"
+    >
       <slot />
     </div>
-    <div v-if="!!slots.footer" data-slot="card-footer" :class="ui.footer({ class: props.ui?.footer })">
+    <div
+      v-if="!!slots.footer"
+      data-slot="card-footer"
+      :class="ui.footer({ class: props.ui?.footer })"
+    >
       <slot name="footer" />
     </div>
   </Primitive>

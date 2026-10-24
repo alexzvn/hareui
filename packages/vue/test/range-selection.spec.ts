@@ -1,7 +1,11 @@
 import type { DateValue } from '@internationalized/date'
-import type { DayRange, UseRangeSelectionOptions } from '../src/components/calendar/useRangeSelection'
 import { CalendarDate } from '@internationalized/date'
 import { describe, expect, it } from 'vitest'
+
+import type {
+  DayRange,
+  UseRangeSelectionOptions,
+} from '../src/components/calendar/useRangeSelection'
 import {
   availableRun,
   boundsWithinRun,
@@ -13,7 +17,10 @@ import {
 
 const d = (day: number, month = 3) => new CalendarDate(2025, month, day)
 const iso = (date: DateValue | undefined) => date?.toString()
-const unavailableOn = (...days: number[]) => (date: DateValue) => date.month === 3 && days.includes(date.day)
+const unavailableOn =
+  (...days: number[]) =>
+  (date: DateValue) =>
+    date.month === 3 && days.includes(date.day)
 
 function setup(overrides: Partial<UseRangeSelectionOptions> = {}) {
   const anchored: DateValue[] = []
@@ -24,8 +31,8 @@ function setup(overrides: Partial<UseRangeSelectionOptions> = {}) {
     minValue: () => d(1, 1),
     maxValue: () => d(31, 12),
     span: () => ({ months: 1 }),
-    onAnchor: date => anchored.push(date),
-    onCommit: range => committed.push(range),
+    onAnchor: (date) => anchored.push(date),
+    onCommit: (range) => committed.push(range),
     ...overrides,
   })
   return { selection, anchored, committed }
@@ -67,8 +74,14 @@ describe('availableRun', () => {
 
 describe('boundsWithinRun', () => {
   it('takes the tighter of min/max and the run on each side', () => {
-    expect(boundsWithinRun(d(10), d(25), { start: d(12), end: d(28) })).toEqual({ min: d(12), max: d(25) })
-    expect(boundsWithinRun(d(10), d(25), { start: d(5), end: d(20) })).toEqual({ min: d(10), max: d(20) })
+    expect(boundsWithinRun(d(10), d(25), { start: d(12), end: d(28) })).toEqual({
+      min: d(12),
+      max: d(25),
+    })
+    expect(boundsWithinRun(d(10), d(25), { start: d(5), end: d(20) })).toEqual({
+      min: d(10),
+      max: d(20),
+    })
     expect(boundsWithinRun(d(10), d(25), null)).toEqual({ min: d(10), max: d(25) })
   })
 })
@@ -90,14 +103,24 @@ describe('exceedsMaximumDays', () => {
 
 describe('isDaySelectedInRange', () => {
   it('selects unavailable days only inside an invalid range', () => {
-    expect(isDaySelectedInRange({ inRange: true, disabled: false, unavailable: true, invalid: false })).toBe(false)
-    expect(isDaySelectedInRange({ inRange: true, disabled: false, unavailable: true, invalid: true })).toBe(true)
-    expect(isDaySelectedInRange({ inRange: true, disabled: false, unavailable: false, invalid: false })).toBe(true)
+    expect(
+      isDaySelectedInRange({ inRange: true, disabled: false, unavailable: true, invalid: false }),
+    ).toBe(false)
+    expect(
+      isDaySelectedInRange({ inRange: true, disabled: false, unavailable: true, invalid: true }),
+    ).toBe(true)
+    expect(
+      isDaySelectedInRange({ inRange: true, disabled: false, unavailable: false, invalid: false }),
+    ).toBe(true)
   })
 
   it('never selects disabled or out-of-range days', () => {
-    expect(isDaySelectedInRange({ inRange: true, disabled: true, unavailable: false, invalid: true })).toBe(false)
-    expect(isDaySelectedInRange({ inRange: false, disabled: false, unavailable: false, invalid: true })).toBe(false)
+    expect(
+      isDaySelectedInRange({ inRange: true, disabled: true, unavailable: false, invalid: true }),
+    ).toBe(false)
+    expect(
+      isDaySelectedInRange({ inRange: false, disabled: false, unavailable: false, invalid: true }),
+    ).toBe(false)
   })
 })
 
@@ -144,7 +167,12 @@ describe('useRangeSelection', () => {
 
   it('passes the anchor to the matcher', () => {
     const seen: (DateValue | null)[] = []
-    const { selection } = setup({ isDateUnavailable: () => (_date, anchor) => { seen.push(anchor); return false } })
+    const { selection } = setup({
+      isDateUnavailable: () => (_date, anchor) => {
+        seen.push(anchor)
+        return false
+      },
+    })
     selection.isUnavailable.value!(d(1))
     selection.select(d(15))
     selection.isUnavailable.value!(d(1))

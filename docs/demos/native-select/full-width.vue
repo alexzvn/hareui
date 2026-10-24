@@ -11,6 +11,12 @@ const items = [
 
 <template>
   <div class="w-[400px] space-y-4">
-    <NativeSelect full-width label="Workout type" name="workout" placeholder="What did you do today?" :items="items" />
+    <NativeSelect
+      full-width
+      label="Workout type"
+      name="workout"
+      placeholder="What did you do today?"
+      :items="items"
+    />
   </div>
 </template>

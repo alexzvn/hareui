@@ -54,31 +54,33 @@ When used inside a [Surface](/docs/components/surface) component, use `variant="
 Override the `fieldset` theme app-wide with `createHareUI`:
 
 ```ts
-app.use(createHareUI({
-  ui: {
-    fieldset: {
-      slots: {
-        base: 'gap-5 rounded-xl border border-border/60 bg-surface p-6 shadow-field',
-        legend: 'text-lg font-semibold',
-        fieldGroup: 'gap-3 md:grid md:grid-cols-2',
-        actions: 'flex justify-end gap-2 pt-2',
+app.use(
+  createHareUI({
+    ui: {
+      fieldset: {
+        slots: {
+          base: 'gap-5 rounded-xl border border-border/60 bg-surface p-6 shadow-field',
+          legend: 'text-lg font-semibold',
+          fieldGroup: 'gap-3 md:grid md:grid-cols-2',
+          actions: 'flex justify-end gap-2 pt-2',
+        },
       },
     },
-  },
-}))
+  }),
+)
 ```
 
 ## Styling Reference
 
 Each rendered element carries the same `data-slot` string as HeroUI, so selectors translate 1:1.
 
-| `ui` key | `data-slot` | Description |
-|---|---|---|
-| `base` | `fieldset` | Root container |
-| `legend` | `fieldset-legend` | Legend element |
-| `description` | `description` | Description below the legend |
-| `fieldGroup` | `fieldset-field-group` | Wrapper for grouped fields |
-| `actions` | `fieldset-actions` | Action bar below the fields |
+| `ui` key      | `data-slot`            | Description                  |
+| ------------- | ---------------------- | ---------------------------- |
+| `base`        | `fieldset`             | Root container               |
+| `legend`      | `fieldset-legend`      | Legend element               |
+| `description` | `description`          | Description below the legend |
+| `fieldGroup`  | `fieldset-field-group` | Wrapper for grouped fields   |
+| `actions`     | `fieldset-actions`     | Action bar below the fields  |
 
 ## API Reference
 

@@ -14,5 +14,10 @@ const sort = ref<SelectValue>('newest')
 </script>
 
 <template>
-  <InlineSelect v-model="sort" aria-label="Sort by" :items="sortOptions" :ui="{ popover: 'w-44' }" />
+  <InlineSelect
+    v-model="sort"
+    aria-label="Sort by"
+    :items="sortOptions"
+    :ui="{ popover: 'w-44' }"
+  />
 </template>

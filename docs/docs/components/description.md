@@ -19,9 +19,9 @@ import { Description } from '@hareui/vue'
 
 ## Anatomy
 
-| `ui` key | `data-slot` | Element |
-|---|---|---|
-| `base` | `description` | `<span>` |
+| `ui` key | `data-slot`   | Element  |
+| -------- | ------------- | -------- |
+| `base`   | `description` | `<span>` |
 
 ## Examples
 
@@ -65,9 +65,11 @@ When using the [TextField](/docs/components/text-field) component, the descripti
 ### Global Configuration
 
 ```ts
-app.use(createHareUI({
-  ui: { description: { slots: { base: 'text-muted' } } },
-}))
+app.use(
+  createHareUI({
+    ui: { description: { slots: { base: 'text-muted' } } },
+  }),
+)
 ```
 
 ## Styling Reference

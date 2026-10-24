@@ -1,16 +1,7 @@
 {
   "$schema": "./node_modules/oxlint/configuration_schema.json",
-  "plugins": [
-    "typescript",
-    "unicorn",
-    "oxc",
-    "import",
-    "vue",
-    "vitest"
-  ],
-  "jsPlugins": [
-    "./tooling/lint/hareui-plugin.mjs"
-  ],
+  "plugins": ["typescript", "unicorn", "oxc", "import", "vue", "vitest"],
+  "jsPlugins": ["./tooling/lint/hareui-plugin.mjs"],
   "categories": {
     "correctness": "error"
   },
@@ -33,15 +24,9 @@
         "ignoreRestSiblings": true
       }
     ],
-    "typescript/consistent-type-definitions": [
-      "error",
-      "type"
-    ],
+    "typescript/consistent-type-definitions": ["error", "type"],
     "typescript/consistent-type-imports": "error",
-    "eslint/func-style": [
-      "error",
-      "expression"
-    ],
+    "eslint/func-style": ["error", "expression"],
     "eslint/prefer-arrow-callback": "error",
     "eslint/max-params": [
       "error",
@@ -72,53 +57,39 @@
     "vitest/expect-expect": [
       "error",
       {
-        "assertFunctionNames": [
-          "expect",
-          "expect*"
-        ]
+        "assertFunctionNames": ["expect", "expect*"]
       }
     ]
   },
   "overrides": [
     {
-      "files": [
-        "packages/vue/src/utils/warn.ts"
-      ],
+      "files": ["packages/vue/src/utils/warn.ts"],
       "rules": {
         "eslint/no-console": "off"
       }
     },
     {
-      "files": [
-        "packages/vue/test/**",
-        "**/*.spec.ts"
-      ],
+      "files": ["packages/vue/test/**", "**/*.spec.ts"],
       "rules": {
         "eslint/max-params": "off",
         "hareui/public-jsdoc": "off"
       }
     },
     {
-      "files": [
-        "packages/vue/test/theme/**"
-      ],
+      "files": ["packages/vue/test/theme/**"],
       "rules": {
         "hareui/no-class-assertion": "off"
       }
     },
     {
-      "files": [
-        "docs/**"
-      ],
+      "files": ["docs/**"],
       "rules": {
         "hareui/no-parent-import": "off",
         "hareui/public-jsdoc": "off"
       }
     },
     {
-      "files": [
-        "docs/scripts/**"
-      ],
+      "files": ["docs/scripts/**"],
       "rules": {
         "eslint/no-console": "off"
       }

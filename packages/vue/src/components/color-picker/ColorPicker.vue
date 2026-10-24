@@ -1,5 +1,6 @@
 <script lang="ts">
 import type { Color } from 'reka-ui'
+
 import type { PortalTarget } from '../../config'
 import type { ComponentSlots } from '../../types/tv'
 import theme from './theme'
@@ -64,6 +65,7 @@ export interface ColorPickerEmits {
 <script setup lang="ts">
 import { normalizeColor, PopoverContent, PopoverPortal, PopoverRoot, PopoverTrigger } from 'reka-ui'
 import { computed, nextTick, onBeforeUnmount, provide, ref, watch } from 'vue'
+
 import { outsideEventTarget, preventNestedLayerDismiss } from '../../composables/nestedLayer'
 import { useComponentUI } from '../../composables/useComponentUI'
 import { usePortal } from '../../composables/usePortal'
@@ -85,7 +87,9 @@ const ui = useComponentUI('colorPicker', theme, () => ({}))
 
 // RAC's ColorPicker defaults to black when neither value nor defaultValue is given.
 const internal = ref<Color>(normalizeColor(props.defaultValue ?? '#000000'))
-const color = computed<Color>(() => (props.modelValue === undefined ? internal.value : normalizeColor(props.modelValue)))
+const color = computed<Color>(() =>
+  props.modelValue === undefined ? internal.value : normalizeColor(props.modelValue),
+)
 
 function setColor(value: Color | string) {
   const next = normalizeColor(value)
@@ -98,7 +102,9 @@ provide(ColorPickerContextKey, { color, setColor })
 // RAC focuses the popover itself on open (not the first tabbable child like Reka), so Tab starts at the first control.
 function focusContent(event: Event) {
   event.preventDefault()
-  const el = (event.target as HTMLElement | null)?.querySelector<HTMLElement>('[data-slot=color-picker-popover]')
+  const el = (event.target as HTMLElement | null)?.querySelector<HTMLElement>(
+    '[data-slot=color-picker-popover]',
+  )
   // The event targets Reka's positioning wrapper; the popover is its child. It can't take focus until positioned.
   requestAnimationFrame(() => el?.focus({ preventScroll: true }))
 }
@@ -109,14 +115,15 @@ function focusContent(event: Event) {
 const triggerRef = ref<{ $el?: unknown } | null>(null)
 let closedByOutside = false
 let openNow = props.open ?? props.defaultOpen ?? false
-watch(() => props.open, (value) => {
-  if (value !== undefined)
-    openNow = value
-})
+watch(
+  () => props.open,
+  (value) => {
+    if (value !== undefined) openNow = value
+  },
+)
 function focusTrigger() {
   const el = triggerRef.value?.$el
-  if (el instanceof HTMLElement && !openNow)
-    el.focus({ preventScroll: true })
+  if (el instanceof HTMLElement && !openNow) el.focus({ preventScroll: true })
 }
 function onOutsideClick() {
   document.removeEventListener('click', onOutsideClick, true)
@@ -127,7 +134,10 @@ function onInteractOutside(event: CustomEvent<{ originalEvent: Event }>) {
   preventNestedLayerDismiss(event, contentRef.value?.$el)
   const el = triggerRef.value?.$el
   const target = outsideEventTarget(event)
-  if (event.defaultPrevented || (el instanceof Node && target instanceof Node && el.contains(target)))
+  if (
+    event.defaultPrevented ||
+    (el instanceof Node && target instanceof Node && el.contains(target))
+  )
     return
   closedByOutside = true
   // A mouse press closes the popover on pointerdown; the browser then moves focus on mousedown
@@ -140,16 +150,14 @@ function onUpdateOpen(value: boolean) {
   if (value) {
     closedByOutside = false
     document.removeEventListener('click', onOutsideClick, true)
-  }
-  else if (closedByOutside) {
+  } else if (closedByOutside) {
     nextTick(focusTrigger)
   }
 }
 function onCloseAutoFocus(event: Event) {
   document.removeEventListener('click', onOutsideClick, true)
   closedByOutside = false
-  if (!(triggerRef.value?.$el instanceof HTMLElement))
-    return
+  if (!(triggerRef.value?.$el instanceof HTMLElement)) return
   event.preventDefault()
   focusTrigger()
 }
@@ -157,7 +165,13 @@ onBeforeUnmount(() => document.removeEventListener('click', onOutsideClick, true
 </script>
 
 <template>
-  <PopoverRoot :open="open" :default-open="defaultOpen" :modal="false" v-slot="{ open: isOpen, close }" @update:open="onUpdateOpen">
+  <PopoverRoot
+    :open="open"
+    :default-open="defaultOpen"
+    :modal="false"
+    v-slot="{ open: isOpen, close }"
+    @update:open="onUpdateOpen"
+  >
     <div data-slot="color-picker" :class="ui.base({ class: [props.ui?.base, props.class] })">
       <PopoverTrigger
         ref="triggerRef"

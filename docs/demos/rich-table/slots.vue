@@ -12,14 +12,49 @@ interface Payment {
 }
 
 const data: Payment[] = [
-  { name: 'Emma Wilson', email: 'emma@example.com', avatar: 'https://img.heroui.chat/image/avatar?w=200&h=200&u=1', status: 'paid', amount: 2450 },
-  { name: 'Isabella Nguyen', email: 'isabella@example.com', avatar: 'https://img.heroui.chat/image/avatar?w=200&h=200&u=2', status: 'paid', amount: 299 },
-  { name: 'Jackson Lee', email: 'jackson@example.com', avatar: 'https://img.heroui.chat/image/avatar?w=200&h=200&u=3', status: 'processing', amount: 39 },
-  { name: 'Liam Johnson', email: 'liam@example.com', avatar: 'https://img.heroui.chat/image/avatar?w=200&h=200&u=4', status: 'refunded', amount: 150 },
-  { name: 'William Kim', email: 'will@example.com', avatar: 'https://img.heroui.chat/image/avatar?w=200&h=200&u=5', status: 'failed', amount: 99 },
+  {
+    name: 'Emma Wilson',
+    email: 'emma@example.com',
+    avatar: 'https://img.heroui.chat/image/avatar?w=200&h=200&u=1',
+    status: 'paid',
+    amount: 2450,
+  },
+  {
+    name: 'Isabella Nguyen',
+    email: 'isabella@example.com',
+    avatar: 'https://img.heroui.chat/image/avatar?w=200&h=200&u=2',
+    status: 'paid',
+    amount: 299,
+  },
+  {
+    name: 'Jackson Lee',
+    email: 'jackson@example.com',
+    avatar: 'https://img.heroui.chat/image/avatar?w=200&h=200&u=3',
+    status: 'processing',
+    amount: 39,
+  },
+  {
+    name: 'Liam Johnson',
+    email: 'liam@example.com',
+    avatar: 'https://img.heroui.chat/image/avatar?w=200&h=200&u=4',
+    status: 'refunded',
+    amount: 150,
+  },
+  {
+    name: 'William Kim',
+    email: 'will@example.com',
+    avatar: 'https://img.heroui.chat/image/avatar?w=200&h=200&u=5',
+    status: 'failed',
+    amount: 99,
+  },
 ]
 
-const statusColor = { paid: 'success', failed: 'danger', refunded: 'default', processing: 'warning' } as const
+const statusColor = {
+  paid: 'success',
+  failed: 'danger',
+  refunded: 'default',
+  processing: 'warning',
+} as const
 const currency = new Intl.NumberFormat('en-US', { style: 'currency', currency: 'USD' })
 const total = data.reduce((sum, payment) => sum + payment.amount, 0)
 
@@ -42,7 +77,12 @@ const items = [
   <RichTable :data="data" :columns="columns" class="w-full">
     <template #name-cell="{ row }">
       <div class="flex items-center gap-3">
-        <Avatar size="sm" :src="row.original.avatar" :alt="row.original.name" :fallback="row.original.name.slice(0, 1)" />
+        <Avatar
+          size="sm"
+          :src="row.original.avatar"
+          :alt="row.original.name"
+          :fallback="row.original.name.slice(0, 1)"
+        />
         <div>
           <p class="font-medium">
             {{ row.original.name }}
@@ -64,9 +104,7 @@ const items = [
     </template>
 
     <template #amount-header>
-      <span class="block text-end">
-        Amount
-      </span>
+      <span class="block text-end"> Amount </span>
     </template>
     <template #amount-cell="{ row }">
       <span class="block text-end font-medium">

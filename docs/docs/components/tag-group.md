@@ -24,21 +24,26 @@ TagGroup renders an optional [Label](/docs/components/label), a grid of tags, an
 ```vue
 <template>
   <TagGroup label="…" :items="items">
-    <template #label />                                             <!-- Label content -->
-    <template #description />                                       <!-- Description content -->
-    <template #errorMessage />                                      <!-- Error message content -->
-    <template #item="{ item, index, selected, disabled }" />        <!-- Content of each tag (default: item.label) -->
-    <template #empty />                                              <!-- Rendered inside the list when `items` is empty (usually <EmptyState>) -->
+    <template #label />
+    <!-- Label content -->
+    <template #description />
+    <!-- Description content -->
+    <template #errorMessage />
+    <!-- Error message content -->
+    <template #item="{ item, index, selected, disabled }" />
+    <!-- Content of each tag (default: item.label) -->
+    <template #empty />
+    <!-- Rendered inside the list when `items` is empty (usually <EmptyState>) -->
   </TagGroup>
 </template>
 ```
 
-| `ui` key | `data-slot` | Element |
-|---|---|---|
-| `base` | `tag-group` | `<div>` root |
-| `list` | `tag-group-list` | `<div role="grid">` |
-| `tag` *(`tag` theme)* | `tag` | `<div role="row">`, one per item |
-| `removeButton` *(`tag` theme)* | `tag-remove-button` | [CloseButton](/docs/components/close-button) (iff `removable`) |
+| `ui` key                       | `data-slot`         | Element                                                        |
+| ------------------------------ | ------------------- | -------------------------------------------------------------- |
+| `base`                         | `tag-group`         | `<div>` root                                                   |
+| `list`                         | `tag-group-list`    | `<div role="grid">`                                            |
+| `tag` _(`tag` theme)_          | `tag`               | `<div role="row">`, one per item                               |
+| `removeButton` _(`tag` theme)_ | `tag-remove-button` | [CloseButton](/docs/components/close-button) (iff `removable`) |
 
 ### Typing items
 
@@ -117,15 +122,13 @@ import { EmptyState } from '@hareui/vue'
 </script>
 
 <template>
-  <EmptyState class="p-1">
-    No team members
-  </EmptyState>
+  <EmptyState class="p-1"> No team members </EmptyState>
 </template>
 ```
 
-| `ui` key | `data-slot` | Element |
-|---|---|---|
-| `base` | `empty-state` | `<div>` root |
+| `ui` key | `data-slot`   | Element      |
+| -------- | ------------- | ------------ |
+| `base`   | `empty-state` | `<div>` root |
 
 <ApiTable component="EmptyState" kind="props" />
 
@@ -142,9 +145,11 @@ import { EmptyState } from '@hareui/vue'
 ### Global Configuration
 
 ```ts
-app.use(createHareUI({
-  ui: { tagGroup: { slots: { list: 'gap-2' } }, tag: { slots: { base: 'rounded-full' } } },
-}))
+app.use(
+  createHareUI({
+    ui: { tagGroup: { slots: { list: 'gap-2' } }, tag: { slots: { base: 'rounded-full' } } },
+  }),
+)
 ```
 
 ## Styling Reference

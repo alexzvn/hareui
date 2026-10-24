@@ -1,5 +1,6 @@
 <script lang="ts">
 import type { PrimitiveProps } from 'reka-ui'
+
 import type { ComponentSlots, ComponentVariants } from '../../types/tv'
 import type { ButtonProps } from '../button/Button.vue'
 import theme from './theme'
@@ -51,21 +52,30 @@ export interface ButtonGroupSlots {
 <script setup lang="ts">
 import { Primitive } from 'reka-ui'
 import { computed, inject, provide, toRef, useTemplateRef } from 'vue'
+
 import { useComponentUI } from '../../composables/useComponentUI'
 import { useFirstChild } from '../../composables/useFirstChild'
-import { buttonGroupContextKey } from './context'
 import { toolbarContextKey } from '../toolbar/context'
+import { buttonGroupContextKey } from './context'
 
-const props = withDefaults(defineProps<ButtonGroupProps>(), { as: 'div', disabled: undefined, fullWidth: undefined })
+const props = withDefaults(defineProps<ButtonGroupProps>(), {
+  as: 'div',
+  disabled: undefined,
+  fullWidth: undefined,
+})
 defineSlots<ButtonGroupSlots>()
-
 
 // Inside a Toolbar the group takes the toolbar's orientation (HeroUI reads React Aria's ToggleButtonGroupContext).
 const toolbar = inject(toolbarContextKey, null)
 const orientation = computed(() => props.orientation ?? toolbar?.orientation.value ?? 'horizontal')
 
-const ui = useComponentUI('buttonGroup', theme, () => ({ orientation: orientation.value, fullWidth: props.fullWidth }))
-const toolbarClass = computed(() => toolbar?.ui.value.buttonGroup({ class: toolbar.uiOverrides.value?.buttonGroup }))
+const ui = useComponentUI('buttonGroup', theme, () => ({
+  orientation: orientation.value,
+  fullWidth: props.fullWidth,
+}))
+const toolbarClass = computed(() =>
+  toolbar?.ui.value.buttonGroup({ class: toolbar.uiOverrides.value?.buttonGroup }),
+)
 
 const firstChild = useFirstChild(useTemplateRef('root'))
 

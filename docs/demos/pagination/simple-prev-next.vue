@@ -12,8 +12,6 @@ const endItem = computed(() => Math.min(page.value * itemsPerPage, totalItems))
 
 <template>
   <Pagination v-model:page="page" class="w-full" hide-pages prev-label="Prev" :total="totalPages">
-    <template #summary>
-      {{ startItem }} to {{ endItem }} of {{ totalItems }} invoices
-    </template>
+    <template #summary> {{ startItem }} to {{ endItem }} of {{ totalItems }} invoices </template>
   </Pagination>
 </template>

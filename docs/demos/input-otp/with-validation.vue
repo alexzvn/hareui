@@ -37,8 +37,6 @@ function handleChange(val: string | undefined) {
       :groups="[3, 3]"
       @update:model-value="handleChange"
     />
-    <Button :disabled="value.length !== 6" type="submit">
-      Submit
-    </Button>
+    <Button :disabled="value.length !== 6" type="submit"> Submit </Button>
   </Form>
 </template>

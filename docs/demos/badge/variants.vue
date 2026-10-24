@@ -14,7 +14,14 @@ const avatarSrc = 'https://heroui-assets.nyc3.cdn.digitaloceanspaces.com/avatars
           {{ variant }}
         </h3>
         <div class="flex items-center gap-6">
-          <Badge v-for="color in colors" :key="color" :color="color" content="5" size="sm" :variant="variant">
+          <Badge
+            v-for="color in colors"
+            :key="color"
+            :color="color"
+            content="5"
+            size="sm"
+            :variant="variant"
+          >
             <Avatar alt="John Doe" fallback="JD" :src="avatarSrc" />
           </Badge>
         </div>

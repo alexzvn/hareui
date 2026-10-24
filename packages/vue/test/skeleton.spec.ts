@@ -1,6 +1,7 @@
 import { mount } from '@vue/test-utils'
 import { afterEach, beforeAll, describe, expect, it, vi } from 'vitest'
 import { nextTick } from 'vue'
+
 import { expectAccessible } from './a11y'
 
 // Pay the cold SFC transform once, outside the per-test timeout.

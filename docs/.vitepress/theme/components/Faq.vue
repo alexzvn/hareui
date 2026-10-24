@@ -1,7 +1,8 @@
 <script setup lang="ts">
-import type { VNode } from 'vue'
 import { Accordion } from '@hareui/vue'
+import type { VNode } from 'vue'
 import { Fragment, useSlots } from 'vue'
+
 import FaqItem from './FaqItem.vue'
 
 // Renders markdown <FaqItem question="…"> children as a HareUI Accordion. The heading is
@@ -11,7 +12,8 @@ const slots = useSlots()
 function faqItems(nodes: VNode[]): VNode[] {
   return nodes.flatMap((node) => {
     if (node.type === FaqItem) return [node]
-    if (node.type === Fragment && Array.isArray(node.children)) return faqItems(node.children as VNode[])
+    if (node.type === Fragment && Array.isArray(node.children))
+      return faqItems(node.children as VNode[])
     return []
   })
 }

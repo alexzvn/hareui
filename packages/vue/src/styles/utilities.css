@@ -19,10 +19,10 @@
   /* Focused: show 2px ring in danger color, remove outline */
   &:focus,
   &:focus-visible,
-  &[data-focused="true"],
-  &[data-focus-visible="true"],
+  &[data-focused='true'],
+  &[data-focus-visible='true'],
   &:focus-within,
-  &[data-focus-within="true"] {
+  &[data-focus-within='true'] {
     @apply ring-2 ring-danger ring-offset-0;
     --tw-ring-offset-width: 0px;
   }
@@ -40,7 +40,7 @@
  */
 @utility touch-target {
   &::after {
-    content: "";
+    content: '';
     @apply absolute top-1/2 left-1/2 size-6 -translate-x-1/2 -translate-y-1/2;
   }
 }

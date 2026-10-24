@@ -23,8 +23,20 @@ function compact(value: number) {
 </script>
 
 <template>
-  <Card class="w-full max-w-[360px] rounded-2xl" title="Library Loans" :ui="{ title: 'text-base', content: 'items-center' }">
-    <PieChart :data="data" index="format" donut :width="240" :height="240" :legend="legend" aria-label="Library loans by format">
+  <Card
+    class="w-full max-w-[360px] rounded-2xl"
+    title="Library Loans"
+    :ui="{ title: 'text-base', content: 'items-center' }"
+  >
+    <PieChart
+      :data="data"
+      index="format"
+      donut
+      :width="240"
+      :height="240"
+      :legend="legend"
+      aria-label="Library loans by format"
+    >
       <template #center="{ total }">
         <span class="text-3xl font-bold text-foreground">{{ compact(total) }}</span>
         <span class="text-sm text-muted">Loans this month</span>

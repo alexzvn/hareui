@@ -8,7 +8,9 @@ import theme from './theme'
 
 type ComposedChartTheme = typeof theme
 
-export interface ComposedChartProps<T extends object = Record<string, unknown>> extends CartesianRootProps<T, ChartComposedSeries> {
+export interface ComposedChartProps<
+  T extends object = Record<string, unknown>,
+> extends CartesianRootProps<T, ChartComposedSeries> {
   /**
    * Stacks every area and bar on one stack; lines never stack. A series' own `stack` wins.
    * @defaultValue false
@@ -37,15 +39,24 @@ export interface ComposedChartSlots extends CartesianRootSlots {}
 </script>
 
 <script setup lang="ts" generic="T extends object">
-import type { ChartDatum } from '../chart/types'
 import { useSlots } from 'vue'
+
 import { useComponentUI } from '../../composables/useComponentUI'
 import { useCartesianChart } from '../chart/cartesian'
-import { cartesianRootDefaults, definedProps, rootMargin, useCartesianRoot } from '../chart/cartesian-root'
+import {
+  cartesianRootDefaults,
+  definedProps,
+  rootMargin,
+  useCartesianRoot,
+} from '../chart/cartesian-root'
 import ChartCartesianFrame from '../chart/ChartCartesianFrame.vue'
 import { useChartRoot } from '../chart/context'
+import type { ChartDatum } from '../chart/types'
 
-const props = withDefaults(defineProps<ComposedChartProps<T>>(), { ...cartesianRootDefaults, stacked: undefined })
+const props = withDefaults(defineProps<ComposedChartProps<T>>(), {
+  ...cartesianRootDefaults,
+  stacked: undefined,
+})
 defineSlots<ComposedChartSlots>()
 const hidden = defineModel<string[]>('hidden', { default: () => [] })
 const slots = useSlots()
@@ -66,9 +77,14 @@ const root = useCartesianRoot<T, ChartComposedSeries>({
   props,
   hidden,
   // Each series picks its part with `type`; series inferred from `data` are lines.
-  kind: series => series.type ?? 'line',
+  kind: (series) => series.type ?? 'line',
   stacked: () => props.stacked,
-  rootDefaults: () => definedProps({ curve: props.curve, strokeWidth: props.strokeWidth, radius: props.radius }) as Partial<ChartComposedSeries>,
+  rootDefaults: () =>
+    definedProps({
+      curve: props.curve,
+      strokeWidth: props.strokeWidth,
+      radius: props.radius,
+    }) as Partial<ChartComposedSeries>,
   hasLegendSlot: () => !!slots.legend,
 })
 </script>

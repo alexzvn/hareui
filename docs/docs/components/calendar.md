@@ -26,31 +26,33 @@ a 7-column day grid, with an optional overlay year grid.
 ```vue
 <template>
   <Calendar aria-label="Event date">
-    <template #navIcon="{ direction }" />                                  <!-- replaces both chevrons -->
-    <template #cell="{ date, today, selected, disabled, unavailable, outsideView }" /> <!-- replaces formatted day -->
+    <template #navIcon="{ direction }" />
+    <!-- replaces both chevrons -->
+    <template #cell="{ date, today, selected, disabled, unavailable, outsideView }" />
+    <!-- replaces formatted day -->
   </Calendar>
 </template>
 ```
 
-| `ui` key | `data-slot` | Element |
-|---|---|---|
-| `base` | `calendar` | root element |
-| `header` | `calendar-header` | row containing the heading/year-picker trigger and nav buttons |
-| `heading` | `calendar-heading` | formatted month/year label (hidden when `year-picker`) |
-| `navButton` | `calendar-nav-button` | previous/next button |
-| `navButtonIcon` | `calendar-nav-button-icon` | default chevron inside a nav button |
-| `grid` | `calendar-grid` | the day grid |
-| `gridHeader` | `calendar-grid-header` | weekday label row wrapper |
-| `gridBody` | `calendar-grid-body` | week rows wrapper |
-| `gridRow` | – | one week row |
-| `headerCell` | `calendar-header-cell` | weekday label cell |
-| `cell` | `calendar-cell` | one interactive day |
-| `cellIndicator` | `calendar-cell-indicator` | dot rendered when `indicator(date)` is true |
-| `yearPickerTrigger` | `calendar-year-picker-trigger` | toggles the year grid (when `year-picker`) |
-| `yearPickerTriggerHeading` | `calendar-year-picker-trigger-heading` | heading text inside the trigger |
-| `yearPickerTriggerIndicator` | `calendar-year-picker-trigger-indicator` | chevron icon inside the trigger |
-| `yearPickerGrid` | `calendar-year-picker-grid` | overlay grid of selectable years |
-| `yearPickerYearCell` | `calendar-year-picker-year-cell` | one selectable year |
+| `ui` key                     | `data-slot`                              | Element                                                        |
+| ---------------------------- | ---------------------------------------- | -------------------------------------------------------------- |
+| `base`                       | `calendar`                               | root element                                                   |
+| `header`                     | `calendar-header`                        | row containing the heading/year-picker trigger and nav buttons |
+| `heading`                    | `calendar-heading`                       | formatted month/year label (hidden when `year-picker`)         |
+| `navButton`                  | `calendar-nav-button`                    | previous/next button                                           |
+| `navButtonIcon`              | `calendar-nav-button-icon`               | default chevron inside a nav button                            |
+| `grid`                       | `calendar-grid`                          | the day grid                                                   |
+| `gridHeader`                 | `calendar-grid-header`                   | weekday label row wrapper                                      |
+| `gridBody`                   | `calendar-grid-body`                     | week rows wrapper                                              |
+| `gridRow`                    | –                                        | one week row                                                   |
+| `headerCell`                 | `calendar-header-cell`                   | weekday label cell                                             |
+| `cell`                       | `calendar-cell`                          | one interactive day                                            |
+| `cellIndicator`              | `calendar-cell-indicator`                | dot rendered when `indicator(date)` is true                    |
+| `yearPickerTrigger`          | `calendar-year-picker-trigger`           | toggles the year grid (when `year-picker`)                     |
+| `yearPickerTriggerHeading`   | `calendar-year-picker-trigger-heading`   | heading text inside the trigger                                |
+| `yearPickerTriggerIndicator` | `calendar-year-picker-trigger-indicator` | chevron icon inside the trigger                                |
+| `yearPickerGrid`             | `calendar-year-picker-grid`              | overlay grid of selectable years                               |
+| `yearPickerYearCell`         | `calendar-year-picker-year-cell`         | one selectable year                                            |
 
 ## Examples
 
@@ -165,16 +167,18 @@ page by the full visible width, matching React Aria's default behavior for multi
 To customize the Calendar classes for the whole app, extend the `calendar` theme in `createHareUI`:
 
 ```ts
-app.use(createHareUI({
-  ui: {
-    calendar: {
-      slots: {
-        base: 'rounded-2xl border border-border bg-surface p-3 shadow-sm',
-        cell: 'rounded-lg',
+app.use(
+  createHareUI({
+    ui: {
+      calendar: {
+        slots: {
+          base: 'rounded-2xl border border-border bg-surface p-3 shadow-sm',
+          cell: 'rounded-lg',
+        },
       },
     },
-  },
-}))
+  }),
+)
 ```
 
 ## Styling Reference

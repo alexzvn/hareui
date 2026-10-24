@@ -23,9 +23,9 @@ Compare to HeroUI's compound parts:
 ::: code-group
 
 ```tsx [HeroUI (React)]
-import { Card } from '@heroui/react';
+import { Card } from '@heroui/react'
 
-<Card>
+;<Card>
   <Card.Header>
     <Card.Title>Settings</Card.Title>
   </Card.Header>
@@ -80,9 +80,7 @@ Components with a non-interactive root (`Button`, `Card`, `Chip`) accept an `as`
 ```vue
 <template>
   <!-- Renders an <a> styled as a primary button -->
-  <Button as="a" href="/dashboard" variant="primary">
-    Go to Dashboard
-  </Button>
+  <Button as="a" href="/dashboard" variant="primary"> Go to Dashboard </Button>
 </template>
 ```
 

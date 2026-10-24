@@ -13,7 +13,11 @@ const data = [
 ]
 
 const series = {
-  sleep: { name: 'Sleep', dot: { r: 3, fill: 'var(--chart-3)', strokeWidth: 0 }, activeDot: { r: 5 } },
+  sleep: {
+    name: 'Sleep',
+    dot: { r: 3, fill: 'var(--chart-3)', strokeWidth: 0 },
+    activeDot: { r: 5 },
+  },
 }
 
 function formatHours(value: number) {
@@ -22,7 +26,12 @@ function formatHours(value: number) {
 </script>
 
 <template>
-  <Card class="w-full max-w-[520px] rounded-2xl" title="Sleep This Week" description="Average 7.2 h per night" :ui="{ title: 'text-base', description: 'text-xs' }">
+  <Card
+    class="w-full max-w-[520px] rounded-2xl"
+    title="Sleep This Week"
+    description="Average 7.2 h per night"
+    :ui="{ title: 'text-base', description: 'text-xs' }"
+  >
     <LineChart
       :data="data"
       index="day"

@@ -1,10 +1,24 @@
 <script setup lang="ts">
-import { computed, defineAsyncComponent, inject, markRaw, onBeforeUnmount, onMounted, provide, ref, shallowRef, useTemplateRef, watch, watchEffect } from 'vue'
-import { withBase } from 'vitepress'
 import { hareUIConfigKey, type HareUIConfig } from '@hareui/vue'
-import { tv } from '../../../../packages/vue/src/utils/tv'
-import buttonTheme from '../../../../packages/vue/src/components/button/theme'
 import gravity from '@iconify-json/gravity-ui/icons.json'
+import { withBase } from 'vitepress'
+import {
+  computed,
+  defineAsyncComponent,
+  inject,
+  markRaw,
+  onBeforeUnmount,
+  onMounted,
+  provide,
+  ref,
+  shallowRef,
+  useTemplateRef,
+  watch,
+  watchEffect,
+} from 'vue'
+
+import buttonTheme from '../../../../packages/vue/src/components/button/theme'
+import { tv } from '../../../../packages/vue/src/utils/tv'
 import { flashCopied } from '../composables/useDocInteractions'
 import { DESIGN_ATTRIBUTES, useDocTheme } from '../composables/useDocTheme'
 import { demoLoader, demoPreviewPath, previewOverlayTheme, type PreviewTheme } from '../demos'
@@ -12,21 +26,30 @@ import DevicePreview from './DevicePreview.vue'
 import PreviewResizeHandle from './PreviewResizeHandle.vue'
 import PreviewToolbar, { type PreviewDevice } from './PreviewToolbar.vue'
 
-const props = withDefaults(defineProps<{
-  name: string
-  align?: 'center' | 'start' | 'end'
-  minHeight?: string
-  /** Full-page demo (fixed layouts, overlays): always render it in an iframe of this height; bare `contain` uses 26rem. */
-  contain?: boolean | string
-  /** The device the preview starts on. */
-  device?: PreviewDevice
-}>(), {
-  align: 'center',
-  contain: false,
-  device: 'desktop',
-})
+const props = withDefaults(
+  defineProps<{
+    name: string
+    align?: 'center' | 'start' | 'end'
+    minHeight?: string
+    /** Full-page demo (fixed layouts, overlays): always render it in an iframe of this height; bare `contain` uses 26rem. */
+    contain?: boolean | string
+    /** The device the preview starts on. */
+    device?: PreviewDevice
+  }>(),
+  {
+    align: 'center',
+    contain: false,
+    device: 'desktop',
+  },
+)
 
-const frameHeight = computed(() => props.contain === false ? undefined : (props.contain === true || props.contain === '' ? '26rem' : props.contain))
+const frameHeight = computed(() =>
+  props.contain === false
+    ? undefined
+    : props.contain === true || props.contain === ''
+      ? '26rem'
+      : props.contain,
+)
 /** The demo renders in a fixed-height iframe rather than the plain preview box. */
 const paged = frameHeight.value !== undefined
 
@@ -104,7 +127,9 @@ function preload() {
 }
 const frameShown = computed(() => frameReady.value && frameVisible.value)
 /** Where the frame's right edge shows: dragging moves it with the pointer even before the iframe is ready. */
-const displayWidth = computed(() => (frameShown.value || dragging.value ? viewport.value : undefined))
+const displayWidth = computed(() =>
+  frameShown.value || dragging.value ? viewport.value : undefined,
+)
 
 // Overlays opened from an inline preview pinned to the other theme portal into a body-level element scoped like the
 // box; the docs-wide toast region (Layout.vue) follows the preview last interacted with.
@@ -141,7 +166,11 @@ function claimOverlays() {
   previewOverlayTheme.value = overlayScoped.value ? theme.value : undefined
 }
 
-const sources = import.meta.glob<string>('../../../demos/**/*.vue', { query: '?raw', import: 'default', eager: true })
+const sources = import.meta.glob<string>('../../../demos/**/*.vue', {
+  query: '?raw',
+  import: 'default',
+  eager: true,
+})
 
 const source = computed(() => sources[`../../../demos/${props.name}.vue`])
 
@@ -159,7 +188,11 @@ function highlight(name: string, code: string): Promise<string> {
   let cached = highlighted.get(name)
   if (!cached) {
     cached = import('shiki').then(({ codeToHtml }) =>
-      codeToHtml(code, { lang: 'vue', themes: { light: 'github-light', dark: 'github-dark' }, defaultColor: false }),
+      codeToHtml(code, {
+        lang: 'vue',
+        themes: { light: 'github-light', dark: 'github-dark' },
+        defaultColor: false,
+      }),
     )
     highlighted.set(name, cached)
   }
@@ -176,14 +209,23 @@ onMounted(async () => {
 const expanded = ref(false)
 
 const button = tv(buttonTheme)
-const copyClass = button({ variant: 'ghost', size: 'sm', iconOnly: true }).base({ class: '-mt-0.5 bg-transparent text-muted' })
+const copyClass = button({ variant: 'ghost', size: 'sm', iconOnly: true }).base({
+  class: '-mt-0.5 bg-transparent text-muted',
+})
 const expandClass = button({ variant: 'tertiary', size: 'sm' }).base({
   class: 'absolute end-1/2 bottom-2 translate-x-1/2 bg-surface text-xs shadow-sm shadow-black/5',
 })
 const copyIcon = `<svg aria-hidden="true" height="1em" role="img" viewBox="0 0 16 16" width="1em" xmlns="http://www.w3.org/2000/svg">${gravity.icons.copy.body}</svg>`
 
 const dataName = computed(() => props.name.replace(/\//g, '-'))
-const alignClass = computed(() => ({ center: 'items-center justify-center', start: 'items-start justify-start', end: 'items-end justify-end' })[props.align])
+const alignClass = computed(
+  () =>
+    ({
+      center: 'items-center justify-center',
+      start: 'items-start justify-start',
+      end: 'items-end justify-end',
+    })[props.align],
+)
 
 function copy(event: MouseEvent) {
   const target = event.currentTarget as HTMLElement
@@ -193,22 +235,54 @@ function copy(event: MouseEvent) {
 
 <template>
   <p v-if="!demo" class="text-danger">Demo not found: {{ name }}</p>
-  <div v-else class="component-preview-container group relative my-4 w-full" :data-name="dataName" style="contain: content">
-    <PreviewToolbar v-model:device="device" :href="href" :theme="theme" @toggle-theme="toggleTheme" @preset="customWidth = undefined" @preload="preload" />
+  <div
+    v-else
+    class="component-preview-container group relative my-4 w-full"
+    :data-name="dataName"
+    style="contain: content"
+  >
+    <PreviewToolbar
+      v-model:device="device"
+      :href="href"
+      :theme="theme"
+      @toggle-theme="toggleTheme"
+      @preset="customWidth = undefined"
+      @preload="preload"
+    />
     <div v-if="paged" ref="stage" class="relative">
-      <DevicePreview mode="page" :name="name" :height="frameHeight" :width="viewport" :theme="theme" />
-      <PreviewResizeHandle v-model:dragging="dragging" :width="viewport ?? fullWidth" :min="minWidth" :max="fullWidth" :edge="pageEdge" @resize="customWidth = $event" />
+      <DevicePreview
+        mode="page"
+        :name="name"
+        :height="frameHeight"
+        :width="viewport"
+        :theme="theme"
+      />
+      <PreviewResizeHandle
+        v-model:dragging="dragging"
+        :width="viewport ?? fullWidth"
+        :min="minWidth"
+        :max="fullWidth"
+        :edge="pageEdge"
+        @resize="customWidth = $event"
+      />
     </div>
     <div
       v-else
       ref="stage"
       :data-name="dataName"
       v-bind="scopeAttributes"
-      :class="['preview not-prose relative min-h-[350px] w-full overflow-hidden rounded-t-xl border-s border-e border-t border-separator bg-background p-4 text-foreground sm:p-10 flex', alignClass, pinnedTheme]"
+      :class="[
+        'preview not-prose relative min-h-[350px] w-full overflow-hidden rounded-t-xl border-s border-e border-t border-separator bg-background p-4 text-foreground sm:p-10 flex',
+        alignClass,
+        pinnedTheme,
+      ]"
       @pointerdown.capture="claimOverlays"
       @keydown.capture="claimOverlays"
     >
-      <div :class="['isolate flex w-full', alignClass, frameShown && 'invisible']" :style="minHeight ? { minHeight } : undefined">
+      <div
+        :class="['isolate flex w-full', alignClass, frameShown && 'invisible']"
+        :style="minHeight ? { minHeight } : undefined"
+      >
         <component :is="demo" />
       </div>
       <DevicePreview
@@ -226,21 +300,47 @@ function copy(event: MouseEvent) {
         class="absolute inset-y-0 end-0 z-1 border-s border-separator bg-background"
         :style="{ left: `${displayWidth}px` }"
       />
-      <PreviewResizeHandle v-model:dragging="dragging" :width="viewport ?? fullWidth" :min="minWidth" :max="fullWidth" :edge="displayWidth" @resize="customWidth = $event" @preload="preload" />
+      <PreviewResizeHandle
+        v-model:dragging="dragging"
+        :width="viewport ?? fullWidth"
+        :min="minWidth"
+        :max="fullWidth"
+        :edge="displayWidth"
+        @resize="customWidth = $event"
+        @preload="preload"
+      />
     </div>
-    <div :class="['code-section relative border border-separator bg-transparent', paged ? 'mt-4 rounded-xl' : 'rounded-b-xl']">
+    <div
+      :class="[
+        'code-section relative border border-separator bg-transparent',
+        paged ? 'mt-4 rounded-xl' : 'rounded-b-xl',
+      ]"
+    >
       <div class="code-block-wrapper">
         <div class="relative">
           <div class="relative">
-            <div :class="['code-block-wrapper relative', !expanded && 'mask-to-bottom max-h-[150px] overflow-hidden']">
+            <div
+              :class="[
+                'code-block-wrapper relative',
+                !expanded && 'mask-to-bottom max-h-[150px] overflow-hidden',
+              ]"
+            >
               <figure
                 dir="ltr"
                 class="my-4 bg-fd-card rounded-xl shiki relative border not-prose overflow-hidden text-sm docs-code-block shadow-none docs-code-block-line-numbers"
                 lang="vue"
                 tabindex="-1"
               >
-                <div class="z-1! empty:hidden absolute top-3 right-2 z-2 backdrop-blur-lg rounded-lg text-fd-muted-foreground">
-                  <button aria-label="Copy Text" type="button" :class="copyClass" @click="copy" v-html="copyIcon" />
+                <div
+                  class="z-1! empty:hidden absolute top-3 right-2 z-2 backdrop-blur-lg rounded-lg text-fd-muted-foreground"
+                >
+                  <button
+                    aria-label="Copy Text"
+                    type="button"
+                    :class="copyClass"
+                    @click="copy"
+                    v-html="copyIcon"
+                  />
                 </div>
                 <div
                   role="region"
@@ -250,13 +350,23 @@ function copy(event: MouseEvent) {
                 >
                   <pre
                     class="min-w-full w-max *:flex *:flex-col shiki shiki-themes github-light github-dark"
-                    style="--shiki-light: #24292e; --shiki-dark: #e1e4e8; --shiki-light-bg: #fff; --shiki-dark-bg: #24292e"
+                    style="
+                      --shiki-light: #24292e;
+                      --shiki-dark: #e1e4e8;
+                      --shiki-light-bg: #fff;
+                      --shiki-dark-bg: #24292e;
+                    "
                     tabindex="0"
                   ><code v-if="codeHtml" v-html="codeHtml" /><code v-else><span v-for="(line, i) in source?.split('\n')" :key="i" class="line">{{ line }}</span></code></pre>
                 </div>
               </figure>
             </div>
-            <button type="button" data-slot="button" :class="expandClass" @click="expanded = !expanded">
+            <button
+              type="button"
+              data-slot="button"
+              :class="expandClass"
+              @click="expanded = !expanded"
+            >
               {{ expanded ? 'Collapse code' : 'Expand code' }}
             </button>
           </div>

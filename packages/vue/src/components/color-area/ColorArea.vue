@@ -1,5 +1,6 @@
 <script lang="ts">
 import type { Color, ColorChannel, ColorSpace } from 'reka-ui'
+
 import type { ComponentSlots } from '../../types/tv'
 import theme from './theme'
 
@@ -41,25 +42,41 @@ export interface ColorAreaProps {
 
 export interface ColorAreaEmits {
   /** Emitted on every colour change, mirroring HeroUI's `onChange` (fired while dragging/typing). */
-  'change': [value: Color]
+  change: [value: Color]
   /** Emitted when the user stops interacting (pointer up / key up), mirroring HeroUI's `onChangeEnd`. */
-  'changeEnd': [value: Color]
+  changeEnd: [value: Color]
 }
 </script>
 
 <script setup lang="ts">
-import { ColorAreaArea, ColorAreaRoot, ColorAreaThumb, colorToString, getChannelName, normalizeColor } from 'reka-ui'
+import {
+  ColorAreaArea,
+  ColorAreaRoot,
+  ColorAreaThumb,
+  colorToString,
+  getChannelName,
+  normalizeColor,
+} from 'reka-ui'
 import { computed, onBeforeUnmount, onMounted, ref, useAttrs, useId, watch } from 'vue'
+
 import { useComponentUI } from '../../composables/useComponentUI'
-import { useFieldsetDisabled } from '../fieldset/context'
 import { useColorPickerContext } from '../color-picker/context'
+import { useFieldsetDisabled } from '../fieldset/context'
 
 const CHANNELS: Record<ColorSpace, ColorChannel[]> = {
   rgb: ['red', 'green', 'blue'],
   hsl: ['hue', 'saturation', 'lightness'],
   hsb: ['hue', 'saturation', 'brightness'],
 }
-const FIELD: Record<string, string> = { hue: 'h', saturation: 's', lightness: 'l', brightness: 'b', red: 'r', green: 'g', blue: 'b' }
+const FIELD: Record<string, string> = {
+  hue: 'h',
+  saturation: 's',
+  lightness: 'l',
+  brightness: 'b',
+  red: 'r',
+  green: 'g',
+  blue: 'b',
+}
 function toSpace(color: Color, to: ColorSpace): Color {
   return color.space === to ? color : normalizeColor(colorToString(color, to))
 }
@@ -74,29 +91,36 @@ const usesContext = computed(() => modelValue.value === undefined && !!ctx)
 
 // Controlled when a `v-model` is given, or implicitly via an enclosing `ColorPicker`.
 const rootModelValue = computed<string | Color | undefined>(() => {
-  if (modelValue.value !== undefined)
-    return modelValue.value
-  if (usesContext.value)
-    return ctx!.color.value
+  if (modelValue.value !== undefined) return modelValue.value
+  if (usesContext.value) return ctx!.color.value
   return undefined
 })
 
 // Tracked locally so the thumb can show the full current colour (Reka's `ColorAreaThumb`
 // doesn't expose it, unlike React Aria's `ColorThumb`, whose `defaultStyle.backgroundColor` HeroUI reads).
-const currentColor = ref<Color>(normalizeColor(rootModelValue.value ?? props.defaultValue ?? '#ff0000'))
+const currentColor = ref<Color>(
+  normalizeColor(rootModelValue.value ?? props.defaultValue ?? '#ff0000'),
+)
 watch(rootModelValue, (value) => {
-  if (value !== undefined)
-    currentColor.value = normalizeColor(value)
+  if (value !== undefined) currentColor.value = normalizeColor(value)
 })
-const space = computed<ColorSpace>(() => props.colorSpace ?? currentColor.value.space as ColorSpace)
+const space = computed<ColorSpace>(
+  () => props.colorSpace ?? (currentColor.value.space as ColorSpace),
+)
 const channels = computed(() => CHANNELS[space.value])
 // Reka reads channels off the value as-is (a hex string is treated as HSL for `hsb`), so hand it a colour already in the area's space.
-const rootValue = computed(() => rootModelValue.value === undefined ? undefined : toSpace(normalizeColor(rootModelValue.value), space.value))
-const rootDefault = computed(() => toSpace(normalizeColor(props.defaultValue ?? '#ff0000'), space.value))
+const rootValue = computed(() =>
+  rootModelValue.value === undefined
+    ? undefined
+    : toSpace(normalizeColor(rootModelValue.value), space.value),
+)
+const rootDefault = computed(() =>
+  toSpace(normalizeColor(props.defaultValue ?? '#ff0000'), space.value),
+)
 const axes = computed(() => {
-  const x = props.xChannel ?? channels.value.find(c => c !== props.yChannel)!
-  const y = props.yChannel ?? channels.value.find(c => c !== x)!
-  const z = channels.value.find(c => c !== x && c !== y)!
+  const x = props.xChannel ?? channels.value.find((c) => c !== props.yChannel)!
+  const y = props.yChannel ?? channels.value.find((c) => c !== x)!
+  const z = channels.value.find((c) => c !== x && c !== y)!
   return { x, y, z }
 })
 
@@ -106,7 +130,8 @@ const areaStyle = computed(() => {
   const color = toSpace(currentColor.value, space.value) as unknown as Record<string, number>
   const zValue = color[FIELD[z]]
   if (space.value === 'rgb') {
-    const channel = (name: ColorChannel, value: number) => `rgb(${['red', 'green', 'blue'].map(c => c === name ? value : 0).join(', ')})`
+    const channel = (name: ColorChannel, value: number) =>
+      `rgb(${['red', 'green', 'blue'].map((c) => (c === name ? value : 0)).join(', ')})`
     return {
       background: [
         `linear-gradient(to right, ${channel(x, 0)}, ${channel(x, 255)})`,
@@ -119,21 +144,21 @@ const areaStyle = computed(() => {
   const hsl = space.value === 'hsl'
   const base: Record<string, number> = hsl ? { h: 0, s: 100, l: 50 } : { h: 0, s: 100, b: 100 }
   base[FIELD[z]] = zValue
-  const css = (v: Record<string, number>) => hsl
-    ? `hsl(${v.h}, ${v.s}%, ${v.l}%)`
-    : colorToString({ space: 'hsb', h: v.h, s: v.s, b: v.b, alpha: 1 } as Color, 'rgb')
+  const css = (v: Record<string, number>) =>
+    hsl
+      ? `hsl(${v.h}, ${v.s}%, ${v.l}%)`
+      : colorToString({ space: 'hsb', h: v.h, s: v.s, b: v.b, alpha: 1 } as Color, 'rgb')
   const stops: Record<string, string> = {
-    hue: [0, 60, 120, 180, 240, 300, 360].map(h => css({ ...base, h })).join(', '),
+    hue: [0, 60, 120, 180, 240, 300, 360].map((h) => css({ ...base, h })).join(', '),
     saturation: `${css({ ...base, s: 0 })}, transparent`,
     lightness: 'black, transparent, white',
     brightness: 'black, transparent',
   }
   const layers = channels.value
-    .filter(c => c !== z)
-    .map(c => `linear-gradient(to ${c === x ? 'right' : 'top'}, ${stops[c]})`)
+    .filter((c) => c !== z)
+    .map((c) => `linear-gradient(to ${c === x ? 'right' : 'top'}, ${stops[c]})`)
     .reverse()
-  if (z === 'hue')
-    layers.push(css(base))
+  if (z === 'hue') layers.push(css(base))
   return { background: layers.join(', ') }
 })
 const thumbColor = computed(() => colorToString(currentColor.value, 'rgb'))
@@ -141,10 +166,8 @@ const thumbColor = computed(() => colorToString(currentColor.value, 'rgb'))
 function onUpdateColor(color: Color) {
   // Inside a ColorPicker the context owns the colour; writing the local model would detach from it.
   currentColor.value = color
-  if (usesContext.value)
-    ctx!.setColor(color)
-  else
-    modelValue.value = color
+  if (usesContext.value) ctx!.setColor(color)
+  else modelValue.value = color
   // Reka never fires its own `change`; every committed colour update is a change.
   emit('change', color)
 }
@@ -152,10 +175,18 @@ function onChangeEnd() {
   emit('changeEnd', currentColor.value)
 }
 // Reka only commits on pointer-up; React Aria also ends a change when a keyboard step ends.
-const commitKeys = new Set(['ArrowUp', 'ArrowDown', 'ArrowLeft', 'ArrowRight', 'PageUp', 'PageDown', 'Home', 'End'])
+const commitKeys = new Set([
+  'ArrowUp',
+  'ArrowDown',
+  'ArrowLeft',
+  'ArrowRight',
+  'PageUp',
+  'PageDown',
+  'Home',
+  'End',
+])
 function onKeyup(event: KeyboardEvent) {
-  if (commitKeys.has(event.key))
-    onChangeEnd()
+  if (commitKeys.has(event.key)) onChangeEnd()
 }
 
 // Reka's `ColorAreaArea`/`ColorAreaThumb` don't expose a `data-dragging` attribute (reka-limitation:
@@ -168,8 +199,7 @@ let pointerActive = false
 function onPointerDownCapture() {
   pointerActive = true
   focusVisible.value = false
-  if (!isDisabled.value)
-    isDragging.value = true
+  if (!isDisabled.value) isDragging.value = true
 }
 function onPointerUp() {
   isDragging.value = false
@@ -233,7 +263,7 @@ const thumbLabelledBy = computed(() => {
           data-slot="color-area-thumb"
           :aria-label="thumbLabel"
           :aria-labelledby="thumbLabelledBy"
-          :style="{ '--color-area-thumb-color': thumbColor, 'backgroundColor': thumbColor }"
+          :style="{ '--color-area-thumb-color': thumbColor, backgroundColor: thumbColor }"
           :data-dragging="isDragging ? 'true' : undefined"
           :data-focus-visible="focusVisible ? 'true' : undefined"
           @focus="onThumbFocus"

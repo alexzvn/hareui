@@ -67,18 +67,20 @@ Use the `as` prop when you need to customize the rendered element.
 Override the `typography` theme app-wide with `createHareUI`:
 
 ```ts
-app.use(createHareUI({
-  ui: {
-    typography: {
-      variants: {
-        type: {
-          h1: { base: 'font-extrabold tracking-tight' },
-          code: { base: 'rounded-md bg-default-100 font-mono dark:bg-default-50/20' },
+app.use(
+  createHareUI({
+    ui: {
+      typography: {
+        variants: {
+          type: {
+            h1: { base: 'font-extrabold tracking-tight' },
+            code: { base: 'rounded-md bg-default-100 font-mono dark:bg-default-50/20' },
+          },
         },
       },
     },
-  },
-}))
+  }),
+)
 ```
 
 ## Styling Reference
@@ -86,10 +88,10 @@ app.use(createHareUI({
 Each rendered element carries the same `data-slot` string as HeroUI (`typography` for the
 default mode, `prose` for `prose` mode), so selectors translate 1:1.
 
-| `ui` key | `data-slot` | Description |
-|---|---|---|
-| `base` | `typography` | Base typography primitive |
-| `prose` | `prose` | Rich prose container |
+| `ui` key | `data-slot`  | Description               |
+| -------- | ------------ | ------------------------- |
+| `base`   | `typography` | Base typography primitive |
+| `prose`  | `prose`      | Rich prose container      |
 
 HeroUI follows [BEM](https://getbem.com/) for its modifier classes (HareUI renders utilities,
 not BEM classes, so style through `class`, `ui` or `createHareUI`):

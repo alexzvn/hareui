@@ -9,7 +9,11 @@ const data = [
   { quarter: 'Q4', compute: 4600, storage: 2150, network: 1040 },
 ]
 
-const series = { compute: { name: 'Compute' }, storage: { name: 'Storage' }, network: { name: 'Network' } }
+const series = {
+  compute: { name: 'Compute' },
+  storage: { name: 'Storage' },
+  network: { name: 'Network' },
+}
 const colors = ['var(--chart-2)', 'var(--chart-3)', 'var(--chart-5)']
 
 function formatTick(value: number | string) {
@@ -22,7 +26,10 @@ function formatValue(value: number | string) {
 </script>
 
 <template>
-  <Card class="w-full max-w-[480px] rounded-2xl" :ui="{ header: 'flex-row flex-wrap items-center justify-between gap-2' }">
+  <Card
+    class="w-full max-w-[480px] rounded-2xl"
+    :ui="{ header: 'flex-row flex-wrap items-center justify-between gap-2' }"
+  >
     <template #header>
       <h3 class="text-base font-medium text-foreground">Cloud Spend</h3>
       <ChartLegend :series="series" :colors="colors" />

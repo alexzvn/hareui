@@ -16,13 +16,9 @@ import { Alert, Button, CloseButton, Spinner } from '@hareui/vue'
       title="Update available"
       description="A new version of the application is available. Please refresh to get the latest features and bug fixes."
     >
-      <Button class="mt-2 sm:hidden" size="sm" variant="primary">
-        Refresh
-      </Button>
+      <Button class="mt-2 sm:hidden" size="sm" variant="primary"> Refresh </Button>
       <template #trailing>
-        <Button class="hidden sm:block" size="sm" variant="primary">
-          Refresh
-        </Button>
+        <Button class="hidden sm:block" size="sm" variant="primary"> Refresh </Button>
       </template>
     </Alert>
 
@@ -36,13 +32,9 @@ import { Alert, Button, CloseButton, Spinner } from '@hareui/vue'
           <li>Clear your browser cache</li>
         </ul>
       </template>
-      <Button class="mt-2 sm:hidden" size="sm" variant="danger">
-        Retry
-      </Button>
+      <Button class="mt-2 sm:hidden" size="sm" variant="danger"> Retry </Button>
       <template #trailing>
-        <Button class="hidden sm:block" size="sm" variant="danger">
-          Retry
-        </Button>
+        <Button class="hidden sm:block" size="sm" variant="danger"> Retry </Button>
       </template>
     </Alert>
 

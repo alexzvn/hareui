@@ -1,7 +1,8 @@
 <script setup lang="ts">
 import { computed } from 'vue'
-import { tv } from '../../../../packages/vue/src/utils/tv'
+
 import buttonTheme from '../../../../packages/vue/src/components/button/theme'
+import { tv } from '../../../../packages/vue/src/utils/tv'
 import { repoFileUrl } from '../repo'
 import BrandIcon from './BrandIcon.vue'
 
@@ -33,10 +34,26 @@ const linkClass = docsButton().base()
 const badges = computed(() => {
   const links = props.links ?? {}
   return [
-    links.reka && { label: 'Reka UI', href: `https://reka-ui.com/docs/components/${links.reka}`, icon: 'reka' },
-    links.heroui && { label: 'HeroUI', href: `https://heroui.com/docs/react/components/${links.heroui}`, icon: 'heroui' },
-    links.source && { label: 'Source', href: repoFileUrl(`packages/vue/src/components/${links.source}`), icon: 'github' },
-    links.styles && { label: 'Styles source', href: repoFileUrl(`packages/vue/src/components/${links.styles}`), icon: 'github' },
+    links.reka && {
+      label: 'Reka UI',
+      href: `https://reka-ui.com/docs/components/${links.reka}`,
+      icon: 'reka',
+    },
+    links.heroui && {
+      label: 'HeroUI',
+      href: `https://heroui.com/docs/react/components/${links.heroui}`,
+      icon: 'heroui',
+    },
+    links.source && {
+      label: 'Source',
+      href: repoFileUrl(`packages/vue/src/components/${links.source}`),
+      icon: 'github',
+    },
+    links.styles && {
+      label: 'Styles source',
+      href: repoFileUrl(`packages/vue/src/components/${links.styles}`),
+      icon: 'github',
+    },
   ].filter((badge): badge is Badge => !!badge)
 })
 </script>
@@ -48,7 +65,14 @@ const badges = computed(() => {
     </div>
     <p v-if="description" class="text-fd-muted-foreground text-md mt-2 mb-4">{{ description }}</p>
     <div v-if="badges.length" class="mb-4 flex flex-wrap gap-2">
-      <a v-for="badge in badges" :key="badge.href" :class="linkClass" :href="badge.href" rel="noopener noreferrer" target="_blank">
+      <a
+        v-for="badge in badges"
+        :key="badge.href"
+        :class="linkClass"
+        :href="badge.href"
+        rel="noopener noreferrer"
+        target="_blank"
+      >
         <BrandIcon :name="badge.icon" class="text-lg" />
         {{ badge.label }}
       </a>

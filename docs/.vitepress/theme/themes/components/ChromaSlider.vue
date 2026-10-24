@@ -1,6 +1,7 @@
 <script setup lang="ts">
 // Port of HeroUI docs `themes/components/chroma-slider.tsx`: a slider for selecting chroma/saturation.
 import { computed, useTemplateRef } from 'vue'
+
 import { cn } from './controlsCn'
 
 const props = defineProps<{
@@ -14,7 +15,8 @@ const emit = defineEmits<{ change: [value: number] }>()
 const MAX_CHROMA = 0.02
 
 const SLIDER_TRACK = 'relative h-8 w-full cursor-pointer touch-none rounded-full'
-const SLIDER_THUMB = 'size-4 rounded-full border-[1.5px] border-white shadow-lg absolute top-1/2 -translate-x-1/2 -translate-y-1/2 cursor-grab active:cursor-grabbing outline-none focus-visible:ring-2 focus-visible:ring-blue-500 focus-visible:ring-offset-2 transition-shadow'
+const SLIDER_THUMB =
+  'size-4 rounded-full border-[1.5px] border-white shadow-lg absolute top-1/2 -translate-x-1/2 -translate-y-1/2 cursor-grab active:cursor-grabbing outline-none focus-visible:ring-2 focus-visible:ring-blue-500 focus-visible:ring-offset-2 transition-shadow'
 
 const track = useTemplateRef<HTMLDivElement>('track')
 let isDragging = false

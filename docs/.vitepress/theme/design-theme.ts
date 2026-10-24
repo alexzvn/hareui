@@ -24,7 +24,10 @@ export const DESIGN_THEME_CHANGE_EVENT = 'heroui-docs-design-theme-change'
 export const VIBRANT_STORAGE_KEY = 'heroui-docs-vibrant-palette'
 
 /** Accent base values per preset; used for the "Edit theme" link query like HeroUI's `themeValuesById`. */
-export const DESIGN_THEME_VALUES: Record<DesignThemeId, { lightness: number; chroma: number; hue: number }> = {
+export const DESIGN_THEME_VALUES: Record<
+  DesignThemeId,
+  { lightness: number; chroma: number; hue: number }
+> = {
   default: { lightness: 0.6204, chroma: 0.195, hue: 253.83 },
   sky: { lightness: 0.78, chroma: 0.16, hue: 225 },
   lavender: { lightness: 0.77, chroma: 0.13, hue: 305 },
