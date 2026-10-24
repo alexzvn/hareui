@@ -33,12 +33,14 @@ const PADDING = 12
 const SOFT_EDGE_MINIMUM_SIZE = 75
 const SOFT_EDGE_CONTAINER_RATIO = 0.35
 
-const enum State {
-  Inactive,
-  TouchDelay,
-  Holding,
-  WaitingForClick,
-}
+const State = {
+  Inactive: 'inactive',
+  TouchDelay: 'touch-delay',
+  Holding: 'holding',
+  WaitingForClick: 'waiting-for-click',
+} as const
+
+type State = (typeof State)[keyof typeof State]
 
 const hovered = ref(false)
 const pressed = ref(false)
@@ -49,7 +51,7 @@ let rippleSize = ''
 let rippleScale = ''
 let initialSize = 0
 let growAnimation: Animation | undefined
-let state = State.Inactive
+let state: State = State.Inactive
 let rippleStartEvent: PointerEvent | undefined
 let checkBoundsAfterContextMenu = false
 
@@ -207,24 +209,21 @@ const onContextMenu = () => {
   endPressAnimation()
 }
 
-const listeners = {
-  click: onClick,
-  contextmenu: onContextMenu,
-  pointercancel: onPointerCancel,
-  pointerdown: onPointerDown,
-  pointerenter: onPointerEnter,
-  pointerleave: onPointerLeave,
-  pointerup: onPointerUp,
-} as Record<string, (event: any) => void>
-
-let parent: HTMLElement | null | undefined
+let listenersController: AbortController | undefined
 onMounted(() => {
-  parent = root.value?.parentElement
-  for (const [type, fn] of Object.entries(listeners)) parent?.addEventListener(type, fn, true)
+  const parent = root.value?.parentElement
+  if (!parent) return
+  listenersController = new AbortController()
+  const options = { capture: true, signal: listenersController.signal }
+  parent.addEventListener('click', onClick, options)
+  parent.addEventListener('contextmenu', onContextMenu, options)
+  parent.addEventListener('pointercancel', onPointerCancel, options)
+  parent.addEventListener('pointerdown', onPointerDown, options)
+  parent.addEventListener('pointerenter', onPointerEnter, options)
+  parent.addEventListener('pointerleave', onPointerLeave, options)
+  parent.addEventListener('pointerup', onPointerUp, options)
 })
-onBeforeUnmount(() => {
-  for (const [type, fn] of Object.entries(listeners)) parent?.removeEventListener(type, fn, true)
-})
+onBeforeUnmount(() => listenersController?.abort())
 </script>
 
 <style>

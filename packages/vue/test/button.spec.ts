@@ -8,7 +8,7 @@ import { expectAccessible } from './a11y'
 
 describe('Button', () => {
   it('pending shows a spinner, sets aria-busy and swallows clicks while staying focusable', async () => {
-    const onClick = vi.fn()
+    const onClick = vi.fn<(event: MouseEvent) => void>()
     const wrapper = mount(Button, {
       props: { pending: true },
       attrs: { onClick },
@@ -36,7 +36,7 @@ describe('Button', () => {
   })
 
   it('as="a" renders a link that is aria-disabled, unfocusable and click-inert when disabled', async () => {
-    const onClick = vi.fn()
+    const onClick = vi.fn<(event: MouseEvent) => void>()
     const wrapper = mount(Button, {
       props: { as: 'a', disabled: true },
       attrs: { href: '#x', onClick },
@@ -50,7 +50,7 @@ describe('Button', () => {
   })
 
   it('fires click when enabled', async () => {
-    const onClick = vi.fn()
+    const onClick = vi.fn<(event: MouseEvent) => void>()
     const wrapper = mount(Button, { attrs: { onClick } })
     await wrapper.trigger('click')
     expect(onClick).toHaveBeenCalledOnce()
@@ -96,7 +96,7 @@ describe('Button', () => {
   })
 
   it('as="div" is a tabbable, named button activated once by Enter (keydown) and Space (keyup)', async () => {
-    const onClick = vi.fn()
+    const onClick = vi.fn<(event: MouseEvent) => void>()
     // Attached: happy-dom's `element.click()` doesn't dispatch on detached nodes.
     const wrapper = mount(Button, {
       props: { as: 'div' },
@@ -126,7 +126,7 @@ describe('Button', () => {
   })
 
   it('as="div" disabled leaves the tab order and ignores Enter, Space and clicks', async () => {
-    const onClick = vi.fn()
+    const onClick = vi.fn<(event: MouseEvent) => void>()
     const wrapper = mount(Button, {
       props: { as: 'div', disabled: true },
       attrs: { onClick },

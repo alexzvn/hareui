@@ -1,5 +1,6 @@
 import { mount } from '@vue/test-utils'
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest'
+import type { VNode } from 'vue'
 import { h, nextTick, ref } from 'vue'
 
 import Header from '@/components/header/Header.vue'
@@ -23,7 +24,9 @@ const click = async (el: HTMLElement) => {
 
 const mountHeader = (
   props: Partial<HeaderProps> & Record<string, unknown> = {},
-  slots: Record<string, () => any> = { body: () => h('a', { href: '#docs', id: 'link' }, 'Docs') },
+  slots: Record<string, () => VNode> = {
+    body: () => h('a', { href: '#docs', id: 'link' }, 'Docs'),
+  },
 ) => {
   return mount(Header, { props, slots, attachTo: document.body })
 }

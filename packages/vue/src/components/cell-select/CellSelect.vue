@@ -50,6 +50,8 @@
 </template>
 
 <script lang="ts">
+import type { VNode } from 'vue'
+
 import type { ListBoxItem } from '@/components/list-box/ListBox.vue'
 import type {
   SelectEmits,
@@ -89,7 +91,7 @@ export type CellSelectProps<T extends ListBoxItem = ListBoxItem> = {
 
 export type CellSelectSlots<T extends ListBoxItem = ListBoxItem> = {
   /** Row label content. Replaces `label`. */
-  label?: () => any
+  label?: () => VNode[]
 } & Omit<SelectSlots<T>, 'label' | 'leading'>
 
 export type CellSelectEmits = {

@@ -1,7 +1,8 @@
 import { useId } from 'reka-ui'
-import type { ClassValue } from 'tailwind-variants'
 import type { ComputedRef } from 'vue'
 import { computed } from 'vue'
+
+import type { ClassValue } from '@/utils/tv'
 
 import type { ChartAnimationProps } from './animation'
 import { lerp, useChartTween } from './animation'

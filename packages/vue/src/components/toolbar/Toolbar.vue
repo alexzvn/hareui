@@ -19,8 +19,10 @@
 
 <script lang="ts">
 import type { PrimitiveProps } from 'reka-ui'
+import type { VNode } from 'vue'
 
 import type { ComponentSlots, ComponentVariants } from '@/types/tv'
+import type { ClassValue } from '@/utils/tv'
 
 import theme from './theme'
 
@@ -44,14 +46,14 @@ export type ToolbarProps = {
    */
   attached?: boolean
   /** Additional classes merged into the root element. */
-  class?: any
+  class?: ClassValue
   /** Per-slot class overrides. */
   ui?: ComponentSlots<Toolbar>
 }
 
 export type ToolbarSlots = {
   /** Toolbar controls; receives HeroUI's render props. */
-  default?: (props: { orientation: 'horizontal' | 'vertical' }) => any
+  default?: (props: { orientation: 'horizontal' | 'vertical' }) => VNode[]
 }
 </script>
 

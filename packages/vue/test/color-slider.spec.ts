@@ -156,7 +156,7 @@ describe('ColorSlider', () => {
       props: { channel: 'alpha', label: 'Alpha', defaultValue: 'hsla(0, 100%, 50%, 0.5)' },
     })
     expect(a.get('[data-slot=color-slider-output]').text()).toBe('50%')
-    const b = mount(ColorSlider, { props: { channel: 'hue', 'aria-label': 'Hue' } as any })
+    const b = mount(ColorSlider, { props: { channel: 'hue' }, attrs: { 'aria-label': 'Hue' } })
     expect(b.find('[data-slot=color-slider-output]').exists()).toBe(false)
     expect(b.find('[data-slot=label]').exists()).toBe(false)
   })
@@ -194,12 +194,8 @@ describe('ColorSlider', () => {
 
   it('marks the root disabled and orientation on the track', () => {
     const wrapper = mount(ColorSlider, {
-      props: {
-        channel: 'hue',
-        disabled: true,
-        orientation: 'vertical',
-        'aria-label': 'Hue',
-      } as any,
+      props: { channel: 'hue', disabled: true, orientation: 'vertical' },
+      attrs: { 'aria-label': 'Hue' },
     })
     expect(wrapper.get('[data-slot=color-slider]').attributes('data-disabled')).toBeDefined()
     expect(wrapper.get(track).attributes('data-orientation')).toBe('vertical')
@@ -207,7 +203,8 @@ describe('ColorSlider', () => {
 
   it('sets edge colors and a checkerboard gradient on the track', () => {
     const wrapper = mount(ColorSlider, {
-      props: { channel: 'alpha', defaultValue: '#ff0000', 'aria-label': 'Alpha' } as any,
+      props: { channel: 'alpha', defaultValue: '#ff0000' },
+      attrs: { 'aria-label': 'Alpha' },
     })
     const style = wrapper.get(track).attributes('style')!
     expect(style).toContain('--track-start-color')

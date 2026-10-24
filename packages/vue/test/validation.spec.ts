@@ -1,6 +1,7 @@
 import type { VueWrapper } from '@vue/test-utils'
 import { flushPromises, mount } from '@vue/test-utils'
 import { afterEach, describe, expect, it } from 'vitest'
+import type { VNodeChild } from 'vue'
 import { h, nextTick, ref } from 'vue'
 
 import Checkbox from '@/components/checkbox/Checkbox.vue'
@@ -20,7 +21,7 @@ afterEach(() => {
   wrapper = undefined
 })
 
-const mountInForm = (children: () => any, formProps: Record<string, unknown> = {}) => {
+const mountInForm = (children: () => VNodeChild, formProps: Record<string, unknown> = {}) => {
   wrapper = mount(() => h(Form, formProps, children), { attachTo: document.body })
   return wrapper
 }

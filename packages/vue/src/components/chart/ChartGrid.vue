@@ -24,7 +24,7 @@
 </template>
 
 <script lang="ts">
-import type { ClassValue } from 'tailwind-variants'
+import type { ClassValue } from '@/utils/tv'
 
 export type ChartGridProps = {
   /**

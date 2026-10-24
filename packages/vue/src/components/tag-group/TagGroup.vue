@@ -73,7 +73,10 @@
 </template>
 
 <script lang="ts">
+import type { VNode } from 'vue'
+
 import type { ComponentSlots, ComponentVariants } from '@/types/tv'
+import type { ClassValue } from '@/utils/tv'
 
 import tagTheme from './tagTheme'
 import theme from './theme'
@@ -140,27 +143,32 @@ export type TagGroupProps<T extends TagGroupItem = TagGroupItem> = {
   /** Base id of the group; label/description/error ids derive from it. Generated when omitted. */
   id?: string
   /** Additional classes merged into the root element. */
-  class?: any
+  class?: ClassValue
   /** Per-slot class overrides. `tag` and `removeButton` are the `tag` theme's slots. */
-  ui?: ComponentSlots<TagGroup> & { tag?: any; removeButton?: any }
+  ui?: ComponentSlots<TagGroup> & {
+    /** Classes merged into each tag (the `tag` theme's `base`). */
+    tag?: ComponentSlots<Tag>['base']
+    /** Classes merged into each tag's remove button. */
+    removeButton?: ComponentSlots<Tag>['removeButton']
+  }
 }
 
 export type TagGroupSlots<T extends TagGroupItem = TagGroupItem> = {
   /** The group label content. Replaces the `label` prop. */
-  label?: () => any
+  label?: () => VNode[]
   /** The group description content. Replaces the `description` prop. */
-  description?: () => any
+  description?: () => VNode[]
   /** The error content. Replaces the `errorMessage` prop. Rendered whenever either is given. */
-  errorMessage?: () => any
+  errorMessage?: () => VNode[]
   /** Content of each tag. Replaces `item.label`. */
-  item?: (props: { item: T; index: number; selected: boolean; disabled: boolean }) => any
+  item?: (props: { item: T; index: number; selected: boolean; disabled: boolean }) => VNode[]
   /** Content of each tag's remove button (shown when `removable`). Replaces the default close icon. */
-  removeButton?: (props: { item: T; index: number }) => any
+  removeButton?: (props: { item: T; index: number }) => VNode[]
   /**
    * Content rendered inside the list when `items` is empty (HeroUI's `renderEmptyState`), usually an
    * `<EmptyState>`. Nothing is rendered when omitted.
    */
-  empty?: () => any
+  empty?: () => VNode[]
 }
 
 export type TagGroupEmits = {

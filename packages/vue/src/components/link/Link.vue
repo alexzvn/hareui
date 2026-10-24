@@ -19,8 +19,10 @@
 
 <script lang="ts">
 import type { PrimitiveProps } from 'reka-ui'
+import type { VNode } from 'vue'
 
 import type { ComponentSlots } from '@/types/tv'
+import type { ClassValue } from '@/utils/tv'
 
 import theme from './theme'
 
@@ -47,16 +49,16 @@ export type LinkProps = {
    */
   iconPlacement?: 'start' | 'end'
   /** Additional classes merged into the root element. */
-  class?: any
+  class?: ClassValue
   /** Per-slot class overrides. */
   ui?: ComponentSlots<Link>
 }
 
 export type LinkSlots = {
   /** The link text. */
-  default?: () => any
+  default?: () => VNode[]
   /** Custom icon content; renders the icon wrapper even when `icon` is not set. */
-  icon?: () => any
+  icon?: () => VNode[]
 }
 </script>
 

@@ -112,8 +112,10 @@
 
 <script lang="ts">
 import type { PrimitiveProps } from 'reka-ui'
+import type { VNode } from 'vue'
 
 import type { ComponentSlots, ComponentVariants } from '@/types/tv'
+import type { ClassValue } from '@/utils/tv'
 
 import theme from './theme'
 
@@ -140,24 +142,24 @@ export type AlertProps = {
    */
   indicator?: boolean
   /** Additional classes merged into the root element. */
-  class?: any
+  class?: ClassValue
   /** Per-slot class overrides. */
   ui?: ComponentSlots<Alert>
 }
 
 export type AlertSlots = {
   /** Content rendered inside the root before the indicator, without a wrapper (e.g. a decorative background). */
-  leading?: () => any
+  leading?: () => VNode[]
   /** Replaces the status icon inside the indicator. */
-  indicator?: () => any
+  indicator?: () => VNode[]
   /** Replaces the title text. */
-  title?: () => any
+  title?: () => VNode[]
   /** Replaces the description text. */
-  description?: () => any
+  description?: () => VNode[]
   /** Extra content rendered inside the content wrapper, after the description (e.g. an action button). */
-  default?: () => any
+  default?: () => VNode[]
   /** Content rendered after the content wrapper (e.g. actions or a close button). */
-  trailing?: () => any
+  trailing?: () => VNode[]
 }
 </script>
 

@@ -8,14 +8,18 @@
 </template>
 
 <script lang="ts">
+import type { VNode } from 'vue'
+
+import type { ClassValue } from '@/utils/tv'
+
 export type ChartTooltipLabelProps = {
   /** Additional classes merged into the element. */
-  class?: any
+  class?: ClassValue
 }
 
 export type ChartTooltipLabelSlots = {
   /** Series name. */
-  default?: () => any
+  default?: () => VNode[]
 }
 </script>
 

@@ -12,8 +12,10 @@
 
 <script lang="ts">
 import type { PrimitiveProps } from 'reka-ui'
+import type { VNode } from 'vue'
 
 import type { ComponentSlots, ComponentVariants } from '@/types/tv'
+import type { ClassValue } from '@/utils/tv'
 
 import type { KbdKey } from './kbdKeys'
 import theme from './theme'
@@ -31,14 +33,14 @@ export type KbdProps = {
   /** Visual variant. */
   variant?: ComponentVariants<Kbd>['variant']
   /** Additional classes merged into the root element. */
-  class?: any
+  class?: ClassValue
   /** Per-slot class overrides. */
   ui?: ComponentSlots<Kbd>
 }
 
 export type KbdSlots = {
   /** The key text after the symbols, wrapped in the `content` element (HeroUI's `Kbd.Content`). */
-  default?: () => any
+  default?: () => VNode[]
 }
 </script>
 

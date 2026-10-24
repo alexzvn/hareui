@@ -72,8 +72,8 @@ describe('NavigationMenu items', () => {
   })
 
   it('calls onSelect when an item is clicked, but not for a disabled one', async () => {
-    const onSelect = vi.fn()
-    const onDisabled = vi.fn()
+    const onSelect = vi.fn<(event: Event) => void>()
+    const onDisabled = vi.fn<(event: Event) => void>()
     const menu = mountMenu({
       items: [
         { label: 'Enabled', onSelect },
@@ -240,7 +240,7 @@ describe('NavigationMenu router links', () => {
   }
 
   it('routes `to` through RouterLink: href, router-derived active state and navigation', async () => {
-    const navigate = vi.fn()
+    const navigate = vi.fn<(to: unknown) => void>()
     const menu = mountMenu(
       {
         items: [
@@ -270,7 +270,7 @@ describe('NavigationMenu router links', () => {
         ],
       },
       {},
-      { components: { RouterLink: routerStub(vi.fn()) } },
+      { components: { RouterLink: routerStub(vi.fn<(to: unknown) => void>()) } },
     )
     const [forcedOff, partial, exact] = menu.findAll('a')
     expect(forcedOff!.attributes('data-active')).toBeUndefined()
@@ -429,7 +429,7 @@ describe('NavigationMenu vertical', () => {
   })
 
   it('a link with children and an href toggles from its chevron only, without navigating', async () => {
-    const onSelect = vi.fn()
+    const onSelect = vi.fn<(event: Event) => void>()
     const menu = mountMenu({
       orientation: 'vertical',
       items: [{ label: 'Guide', href: '#guide', children, onSelect }],
@@ -691,7 +691,7 @@ describe('NavigationMenu item actions', () => {
   })
 
   it("calls the selected entry's onSelect and renders entry icons, danger ones in red", async () => {
-    const onSelect = vi.fn()
+    const onSelect = vi.fn<() => void>()
     const actions = [
       { value: 'open', label: 'Open', icon: 'i-test-open' },
       { type: 'section', items: [{ value: 'duplicate', label: 'Duplicate', onSelect }] },
@@ -798,7 +798,7 @@ describe('NavigationMenu horizontal', () => {
   })
 
   it('selecting a child calls its onSelect', async () => {
-    const onSelect = vi.fn()
+    const onSelect = vi.fn<(event: Event) => void>()
     const menu = mountMenu({
       items: [{ label: 'Guide', children: [{ label: 'Introduction', href: '#intro', onSelect }] }],
       modelValue: 'item-0',

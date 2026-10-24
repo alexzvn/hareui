@@ -93,10 +93,13 @@
 </template>
 
 <script lang="ts">
+import type { VNode } from 'vue'
+
 import type { ValidationBehavior } from '@/components/form/context'
 import type { FormFieldProps } from '@/components/form/types'
 import type { ValidateFn, ValidationResult } from '@/composables/useFieldValidation'
 import type { ComponentSlots } from '@/types/tv'
+import type { ClassValue } from '@/utils/tv'
 
 import theme from './theme'
 
@@ -159,22 +162,22 @@ export type SearchFieldProps = {
    */
   validationBehavior?: ValidationBehavior
   /** Additional classes merged into the root element. */
-  class?: any
+  class?: ClassValue
   /** Per-slot class overrides. */
   ui?: ComponentSlots<SearchField>
 } & FormFieldProps
 
 export type SearchFieldSlots = {
   /** Label content. Replaces the `label` prop. */
-  label?: () => any
+  label?: () => VNode[]
   /** Replaces the default search icon. */
-  icon?: () => any
+  icon?: () => VNode[]
   /** Replaces the default clear (×) icon inside the clear button. */
-  clearIcon?: () => any
+  clearIcon?: () => VNode[]
   /** Description content. Replaces the `description` prop. */
-  description?: () => any
+  description?: () => VNode[]
   /** Error content, rendered while invalid. Replaces the `errorMessage` prop. */
-  error?: (props: ValidationResult) => any
+  error?: (props: ValidationResult) => VNode[]
 }
 
 export type SearchFieldEmits = {

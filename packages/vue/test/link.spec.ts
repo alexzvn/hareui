@@ -93,7 +93,7 @@ describe('Link', () => {
   })
 
   it('without an href it is still a focusable link that Enter activates (React Aria)', async () => {
-    const onClick = vi.fn()
+    const onClick = vi.fn<(event: MouseEvent) => void>()
     const wrapper = mount(Link, {
       attrs: { onClick },
       attachTo: document.body,
@@ -111,7 +111,7 @@ describe('Link', () => {
   })
 
   it('disabled is exposed as a disabled link outside the tab order and does not fire click handlers', async () => {
-    const onClick = vi.fn()
+    const onClick = vi.fn<(event: MouseEvent) => void>()
     const wrapper = mount(Link, {
       props: { href: '/x', disabled: true },
       attrs: { onClick },

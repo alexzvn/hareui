@@ -191,7 +191,7 @@ describe('searchField', () => {
   })
 
   it('escape that clears the field stops there, so an enclosing dialog stays open; on an empty field it passes through', async () => {
-    const onOuterKeydown = vi.fn()
+    const onOuterKeydown = vi.fn<(event: KeyboardEvent) => void>()
     const { wrapper } = controlled('cats', document.body)
     document.body.addEventListener('keydown', onOuterKeydown)
     const input = wrapper.get('input')

@@ -149,5 +149,7 @@ const footerItems: NavigationMenuItem[] = [
   { label: 'Help', icon: gravityIcon('circle-question'), href: '#' },
 ]
 
-const breadcrumbs: BreadcrumbsItem[] = [{ label: 'Dashboard', icon: 'gravity-ui:house' }]
+type Crumb = BreadcrumbsItem & { icon: string }
+
+const breadcrumbs: Crumb[] = [{ label: 'Dashboard', icon: 'gravity-ui:house' }]
 </script>

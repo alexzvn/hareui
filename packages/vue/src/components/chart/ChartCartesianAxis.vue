@@ -52,8 +52,9 @@
 </template>
 
 <script setup lang="ts">
-import type { ClassValue } from 'tailwind-variants'
 import { computed } from 'vue'
+
+import type { ClassValue } from '@/utils/tv'
 
 import type { ChartAxisTickSlotProps } from './axis'
 import type { ResolvedAxis } from './cartesian'

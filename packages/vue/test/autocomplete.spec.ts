@@ -1,9 +1,11 @@
+import type { ComponentMountingOptions } from '@vue/test-utils'
 import { mount } from '@vue/test-utils'
 import { afterEach, describe, expect, it } from 'vitest'
 import type { ComponentOptions } from 'vue'
 import { h, nextTick } from 'vue'
 
 import Autocomplete from '@/components/autocomplete/Autocomplete.vue'
+import type { ListBoxEntry } from '@/components/list-box/ListBox.vue'
 
 import { expectAccessible } from './a11y'
 
@@ -28,7 +30,10 @@ afterEach(() => {
   document.body.innerHTML = ''
 })
 
-const setup = (props: Record<string, any> = {}, slots?: Record<string, any>) => {
+const setup = (
+  props: ComponentMountingOptions<typeof Autocomplete>['props'] = {},
+  slots?: ComponentMountingOptions<typeof Autocomplete>['slots'],
+) => {
   const wrapper = mount(Autocomplete, {
     props: { items, label: 'State', placeholder: 'Select one', ...props },
     slots,
@@ -108,7 +113,7 @@ describe('Autocomplete', () => {
   })
 
   it('renders the #empty slot when nothing matches, and sections with headers', async () => {
-    const sections = [
+    const sections: ListBoxEntry[] = [
       { type: 'section', label: 'South', items: [{ value: 'florida', label: 'Florida' }] },
       { type: 'separator' },
       { type: 'section', label: 'West', items: [{ value: 'nevada', label: 'Nevada' }] },
@@ -337,7 +342,7 @@ describe('Autocomplete accessibility', () => {
   it('has no axe violations open without search, in multiple mode and with the empty state', async () => {
     for (const props of [
       { search: false },
-      { selectionMode: 'multiple', defaultValue: ['texas'] },
+      { selectionMode: 'multiple' as const, defaultValue: ['texas'] },
     ]) {
       const { wrapper } = setup(props)
       await open(wrapper)

@@ -25,11 +25,14 @@
 </template>
 
 <script lang="ts">
+import type { VNode } from 'vue'
+
 import type { ValidationBehavior } from '@/components/form/context'
 import type { FormFieldProps } from '@/components/form/types'
 import type { InputProps } from '@/components/input/Input.vue'
 import type { ValidateFn, ValidationResult } from '@/composables/useFieldValidation'
 import type { ComponentSlots } from '@/types/tv'
+import type { ClassValue } from '@/utils/tv'
 
 import theme from './theme'
 
@@ -97,7 +100,7 @@ export type TextFieldProps = {
    */
   validationBehavior?: ValidationBehavior
   /** Additional classes merged into the root element. */
-  class?: any
+  class?: ClassValue
   /** Per-slot class overrides. */
   ui?: ComponentSlots<TextField>
 } & FormFieldProps
@@ -117,13 +120,13 @@ export type TextFieldSlotProps = {
 
 export type TextFieldSlots = {
   /** Label content. Replaces the `label` prop. */
-  label?: () => any
+  label?: () => VNode[]
   /** Control slot. Replaces the default `Input` (e.g. an `Input` with custom props); `Input`s inside read the field context. */
-  default?: (props: TextFieldSlotProps) => any
+  default?: (props: TextFieldSlotProps) => VNode[]
   /** Description content. Replaces the `description` prop. */
-  description?: () => any
+  description?: () => VNode[]
   /** Error content, rendered while invalid. Replaces the `errorMessage` prop. */
-  error?: (props: ValidationResult) => any
+  error?: (props: ValidationResult) => VNode[]
 }
 </script>
 

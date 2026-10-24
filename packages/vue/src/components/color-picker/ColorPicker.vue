@@ -38,9 +38,11 @@
 
 <script lang="ts">
 import type { Color } from 'reka-ui'
+import type { VNode } from 'vue'
 
 import type { PortalTarget } from '@/config'
 import type { ComponentSlots } from '@/types/tv'
+import type { ClassValue } from '@/utils/tv'
 
 import theme from './theme'
 
@@ -78,19 +80,19 @@ export type ColorPickerProps = {
   /** Whether the trigger is disabled. */
   disabled?: boolean
   /** Additional classes merged into the root element. */
-  class?: any
+  class?: ClassValue
   /** Per-slot class overrides. */
   ui?: ComponentSlots<ColorPicker>
 }
 
 export type ColorPickerSlots = {
   /** Content of the trigger button, typically a ColorSwatch and a Label. Receives the current colour and open state. */
-  trigger?: (props: { color: Color; open: boolean }) => any
+  trigger?: (props: { color: Color; open: boolean }) => VNode[]
   /**
    * Popover content (ColorArea, ColorSlider, ColorField, ColorSwatchPicker, …). Colour components rendered here
    * follow the picker's colour unless they have their own `v-model`.
    */
-  default?: (props: { color: Color; close: () => void }) => any
+  default?: (props: { color: Color; close: () => void }) => VNode[]
 }
 
 export type ColorPickerEmits = {

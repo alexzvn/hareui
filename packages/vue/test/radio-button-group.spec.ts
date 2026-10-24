@@ -1,5 +1,6 @@
 import { flushPromises, mount } from '@vue/test-utils'
 import { describe, expect, it } from 'vitest'
+import type { VNodeChild } from 'vue'
 import { h, ref } from 'vue'
 
 import Fieldset from '@/components/fieldset/Fieldset.vue'
@@ -19,7 +20,7 @@ const plans = [
 // `props` may be a getter so reactive values (v-model) re-render the group.
 const group = (
   props: Record<string, unknown> | (() => Record<string, unknown>) = {},
-  itemSlots: Record<string, any> = {},
+  itemSlots: Record<string, (props: RadioButtonGroupItemSlotProps) => VNodeChild> = {},
 ) => {
   const read = typeof props === 'function' ? props : () => props
   return mount(

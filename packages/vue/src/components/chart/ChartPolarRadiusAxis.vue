@@ -38,7 +38,9 @@
 </template>
 
 <script lang="ts">
-import type { ClassValue } from 'tailwind-variants'
+import type { VNode } from 'vue'
+
+import type { ClassValue } from '@/utils/tv'
 
 import type { ChartAxisDomain } from './types'
 
@@ -85,7 +87,7 @@ export type ChartPolarRadiusAxisProps = {
    */
   tick?: boolean
   /** Formats a tick label. */
-  tickFormatter?: (value: any, index: number) => string
+  tickFormatter?: (value: number | string, index: number) => string
   /**
    * Draws the axis line.
    * @defaultValue true
@@ -114,7 +116,7 @@ export type ChartPolarRadiusAxisSlots = {
     index: number
     text: string
     textAnchor: 'start' | 'middle' | 'end'
-  }) => any
+  }) => VNode[]
 }
 </script>
 

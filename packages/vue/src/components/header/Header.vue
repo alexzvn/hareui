@@ -48,11 +48,13 @@
 
 <script lang="ts">
 import type { PrimitiveProps } from 'reka-ui'
+import type { VNode } from 'vue'
 
 import type { ButtonProps } from '@/components/button/Button.vue'
 import type { DrawerProps } from '@/components/drawer/Drawer.vue'
 import type { ModalProps } from '@/components/modal/Modal.vue'
 import type { ComponentSlots, ComponentUI, ComponentVariants } from '@/types/tv'
+import type { ClassValue } from '@/utils/tv'
 
 import theme from './theme'
 
@@ -145,30 +147,30 @@ export type HeaderProps = {
    */
   menuTitle?: string
   /** Additional classes merged into the root element. */
-  class?: any
+  class?: ClassValue
   /** Per-slot class overrides. */
   ui?: ComponentSlots<Header>
 }
 
 export type HeaderSlots = {
   /** Replaces the title text inside the default title link. */
-  title?: () => any
+  title?: () => VNode[]
   /** Replaces the whole start area (title link). The toggle is still rendered before it when `toggleSide="left"`. */
-  left?: () => any
+  left?: () => VNode[]
   /** Centered navigation, shown from the `lg` breakpoint. */
-  default?: () => any
+  default?: () => VNode[]
   /** End area (actions). The toggle is rendered after it when `toggleSide="right"`. */
-  right?: () => any
+  right?: () => VNode[]
   /** Replaces the toggle button. */
-  toggle?: (props: { open: boolean; toggle: () => void; ui: ComponentUI<Header> }) => any
+  toggle?: (props: { open: boolean; toggle: () => void; ui: ComponentUI<Header> }) => VNode[]
   /** Rendered above the bar, inside the root element. */
-  top?: () => any
+  top?: () => VNode[]
   /** Rendered below the bar, inside the root element. */
-  bottom?: () => any
+  bottom?: () => VNode[]
   /** The menu body, below the menu's own header (`modal` and `slideover`) or alone (`drawer`). */
-  body?: () => any
+  body?: () => VNode[]
   /** Replaces the entire menu content. */
-  content?: (props: { close: () => void }) => any
+  content?: (props: { close: () => void }) => VNode[]
 }
 
 export type HeaderEmits = {

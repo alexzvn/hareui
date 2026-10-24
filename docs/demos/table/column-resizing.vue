@@ -21,7 +21,16 @@ const columns: TableColumn[] = [
   { key: 'status', label: 'Status', minWidth: 100, resizable: true },
   { key: 'email', label: 'Email', minWidth: 200 },
 ]
-const rows: TableRow[] = [
+
+type Member = TableRow & {
+  name: string
+  role: string
+  status: string
+  color: 'success' | 'warning' | 'danger'
+  email: string
+}
+
+const rows: Member[] = [
   {
     id: 1,
     name: 'Kate Moore',

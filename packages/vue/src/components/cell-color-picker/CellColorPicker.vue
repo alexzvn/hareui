@@ -69,10 +69,12 @@
 
 <script lang="ts">
 import type { Color } from 'reka-ui'
+import type { VNode } from 'vue'
 
 import type { ColorSwatchPickerItem } from '@/components/color-swatch-picker/ColorSwatchPicker.vue'
 import type { PortalTarget } from '@/config'
 import type { ComponentSlots } from '@/types/tv'
+import type { ClassValue } from '@/utils/tv'
 
 import theme from './theme'
 
@@ -123,18 +125,18 @@ export type CellColorPickerProps = {
    */
   disabled?: boolean
   /** Additional classes merged into the root element. */
-  class?: any
+  class?: ClassValue
   /** Per-slot class overrides. */
   ui?: ComponentSlots<CellColorPicker>
 }
 
 export type CellColorPickerSlots = {
   /** Row label content. Replaces `label`. */
-  label?: () => any
+  label?: () => VNode[]
   /** Value text. Defaults to the color as uppercase hex, e.g. `#3B82F6`. */
-  value?: (props: { color: Color; hex: string }) => any
+  value?: (props: { color: Color; hex: string }) => VNode[]
   /** Popover content. Defaults to the presets, a saturation/brightness area and a hue slider. */
-  default?: (props: { color: Color; close: () => void }) => any
+  default?: (props: { color: Color; close: () => void }) => VNode[]
 }
 
 export type CellColorPickerEmits = {

@@ -44,9 +44,12 @@
 </template>
 
 <script lang="ts">
+import type { VNode } from 'vue'
+
 import type { KbdKey } from '@/components/kbd/kbdKeys'
 import type { PortalTarget } from '@/config'
 import type { ComponentSlots } from '@/types/tv'
+import type { ClassValue } from '@/utils/tv'
 
 import theme from './theme'
 
@@ -71,16 +74,16 @@ export type DropdownItem = {
   /** Nested entries: the item becomes a submenu trigger. */
   items?: DropdownEntry[]
   /** Classes merged onto the item element. */
-  class?: any
+  class?: ClassValue
   /** Extra fields (icons, ...) are passed through to the slots as `item`. */
-  [key: string]: any
+  [key: string]: unknown
 }
 
-export type DropdownSection = {
+export type DropdownSection<T extends DropdownItem = DropdownItem> = {
   type: 'section'
   /** Rendered as the section `<header>`, which also labels the group. */
   label?: string
-  items: DropdownItem[]
+  items: T[]
   /**
    * Section-level selection, independent of the rest of the menu (React Aria's section
    * `selectionMode`). Selected values still live in the Dropdown's `v-model`.
@@ -88,23 +91,26 @@ export type DropdownSection = {
   selectionMode?: 'none' | 'single' | 'multiple'
   /** Indicator for this section's selectable items. @defaultValue 'checkmark' */
   indicator?: 'checkmark' | 'dot' | false
-  class?: any
+  class?: ClassValue
 }
 
 export type DropdownSeparator = {
   type: 'separator'
 }
 
-export type DropdownEntry = DropdownItem | DropdownSection | DropdownSeparator
+export type DropdownEntry<T extends DropdownItem = DropdownItem> =
+  | T
+  | DropdownSection<T>
+  | DropdownSeparator
 
-export type DropdownProps = {
+export type DropdownProps<T extends DropdownItem = DropdownItem> = {
   /**
    * Renders the menu in a portal. `true` portals to `document.body`, a selector string or element is used as the teleport target, and `false` disables portalling.
    * Falls back to `createHareUI({ portal })`, then `true`.
    */
   portal?: PortalTarget
   /** The menu entries: items, `{ type: 'section' }` groups and `{ type: 'separator' }` dividers. */
-  items?: DropdownEntry[]
+  items?: DropdownEntry<T>[]
   /** The controlled open state of the menu. Use with `v-model:open`. */
   open?: boolean
   /** The open state when initially rendered. Use when you do not need to control the open state. */
@@ -136,36 +142,36 @@ export type DropdownProps = {
   /** The distance in pixels from the trigger. @defaultValue 8 */
   sideOffset?: number
   /** Classes merged onto the popover. */
-  class?: any
+  class?: ClassValue
   ui?: ComponentSlots<Dropdown>
 }
 
-export type DropdownItemSlotProps = {
-  item: DropdownItem
+export type DropdownItemSlotProps<T extends DropdownItem = DropdownItem> = {
+  item: T
   selected: boolean
   disabled: boolean
 }
 
-export type DropdownSlots = {
+export type DropdownSlots<T extends DropdownItem = DropdownItem> = {
   /** The trigger. Merged onto its single root element (`as-child`). */
-  default?: () => any
+  default?: () => VNode[]
   /**
    * Content above the menu, inside the popover (e.g. a user card). It renders inside the `role="menu"` element, so
    * keep it to text and decorative images (`alt=""`): a named image there is not an allowed menu child.
    */
-  'content-top'?: () => any
+  'content-top'?: () => VNode[]
   /** Replaces the whole item content. */
-  item?: (props: DropdownItemSlotProps) => any
-  'item-leading'?: (props: DropdownItemSlotProps) => any
-  'item-label'?: (props: DropdownItemSlotProps) => any
-  'item-description'?: (props: DropdownItemSlotProps) => any
+  item?: (props: DropdownItemSlotProps<T>) => VNode[]
+  'item-leading'?: (props: DropdownItemSlotProps<T>) => VNode[]
+  'item-label'?: (props: DropdownItemSlotProps<T>) => VNode[]
+  'item-description'?: (props: DropdownItemSlotProps<T>) => VNode[]
   /** Replaces the keyboard shortcut. */
-  'item-trailing'?: (props: DropdownItemSlotProps) => any
+  'item-trailing'?: (props: DropdownItemSlotProps<T>) => VNode[]
   /** Custom selection indicator content (rendered inside the indicator box). */
-  indicator?: (props: DropdownItemSlotProps) => any
+  indicator?: (props: DropdownItemSlotProps<T>) => VNode[]
   /** Custom submenu chevron. */
-  'submenu-indicator'?: (props: DropdownItemSlotProps) => any
-  'section-label'?: (props: { section: DropdownSection }) => any
+  'submenu-indicator'?: (props: DropdownItemSlotProps<T>) => VNode[]
+  'section-label'?: (props: { section: DropdownSection<T> }) => VNode[]
 }
 
 export type DropdownEmits = {
@@ -187,7 +193,7 @@ const ensureLongPressDescription = () => {
 }
 </script>
 
-<script setup lang="ts">
+<script setup lang="ts" generic="T extends DropdownItem = DropdownItem">
 import {
   DropdownMenuContent,
   DropdownMenuPortal,
@@ -207,7 +213,7 @@ import type { DropdownContext, DropdownSelectionGroup } from './context'
 import { dropdownContextKey, enabledMenuItems } from './context'
 import DropdownMenuItems from './DropdownMenuItems.vue'
 
-const props = withDefaults(defineProps<DropdownProps>(), {
+const props = withDefaults(defineProps<DropdownProps<T>>(), {
   portal: undefined,
   open: undefined,
   modelValue: undefined,
@@ -220,7 +226,7 @@ const props = withDefaults(defineProps<DropdownProps>(), {
 })
 const portalTarget = usePortal(() => props.portal)
 const emit = defineEmits<DropdownEmits>()
-const slots = defineSlots<DropdownSlots>()
+const slots = defineSlots<DropdownSlots<T>>()
 
 const ui = useComponentUI('dropdown', theme, () => ({}))
 // Same classes the Label / Description components would build, resolved once for every item.
@@ -308,7 +314,7 @@ const onMenuKeydown = (event: KeyboardEvent) => {
 }
 
 const ctx: DropdownContext = {
-  classes: () => ui.value as any,
+  classes: () => ui.value,
   ui: () => props.ui,
   labelClass: (disabled) => (disabled ? disabledLabelUI : labelUI).value.base(),
   descriptionClass: () => descriptionUI.value.base(),

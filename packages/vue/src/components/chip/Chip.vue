@@ -14,8 +14,10 @@
 
 <script lang="ts">
 import type { PrimitiveProps } from 'reka-ui'
+import type { VNode } from 'vue'
 
 import type { ComponentSlots, ComponentVariants } from '@/types/tv'
+import type { ClassValue } from '@/utils/tv'
 
 import theme from './theme'
 
@@ -45,18 +47,18 @@ export type ChipProps = {
    */
   size?: ComponentVariants<Chip>['size']
   /** Additional classes merged into the root element. */
-  class?: any
+  class?: ClassValue
   /** Per-slot class overrides. */
   ui?: ComponentSlots<Chip>
 }
 
 export type ChipSlots = {
   /** Content rendered before the label (e.g. an icon or status dot). */
-  leading?: () => any
+  leading?: () => VNode[]
   /** The chip label. Wrapped in the `label` element. */
-  default?: () => any
+  default?: () => VNode[]
   /** Content rendered after the label. */
-  trailing?: () => any
+  trailing?: () => VNode[]
 }
 </script>
 

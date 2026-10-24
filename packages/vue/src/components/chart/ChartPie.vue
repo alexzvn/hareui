@@ -23,7 +23,9 @@
 </template>
 
 <script lang="ts">
-import type { ClassValue } from 'tailwind-variants'
+import type { VNode } from 'vue'
+
+import type { ClassValue } from '@/utils/tv'
 
 import type { ChartAnimationProps } from './animation'
 import type { ChartDatum } from './types'
@@ -107,7 +109,7 @@ export type ChartPieProps = {
 
 export type ChartPieSlots = {
   /** `ChartCell` per slice (in data order) and `ChartLabel`. */
-  default?: () => any
+  default?: () => VNode[]
 }
 </script>
 

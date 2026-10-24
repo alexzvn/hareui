@@ -169,8 +169,11 @@
 </template>
 
 <script lang="ts">
+import type { VNode } from 'vue'
+
 import type { PortalTarget } from '@/config'
 import type { ComponentSlots, ComponentVariants } from '@/types/tv'
+import type { ClassValue } from '@/utils/tv'
 
 import theme from './theme'
 
@@ -229,28 +232,28 @@ export type AlertDialogProps = {
    */
   portal?: PortalTarget
   /** Additional classes merged into the dialog element. */
-  class?: any
+  class?: ClassValue
   /** Per-slot class overrides. */
   ui?: ComponentSlots<AlertDialog>
 }
 
 export type AlertDialogSlots = {
   /** The trigger element. Omit to control the alert dialog purely via `v-model:open`. */
-  default?: (props: { open: boolean }) => any
+  default?: (props: { open: boolean }) => VNode[]
   /** Replaces the whole header (icon and title). */
-  header?: () => any
+  header?: () => VNode[]
   /** Replaces the default status icon inside the icon wrapper. */
-  icon?: () => any
+  icon?: () => VNode[]
   /** Replaces the title text. */
-  title?: () => any
+  title?: () => VNode[]
   /** The dialog body. */
-  body?: (props: { close: () => void }) => any
+  body?: (props: { close: () => void }) => VNode[]
   /** The dialog footer (actions). */
-  footer?: (props: { close: () => void }) => any
+  footer?: (props: { close: () => void }) => VNode[]
   /** Replaces the default close button. */
-  close?: (props: { close: () => void }) => any
+  close?: (props: { close: () => void }) => VNode[]
   /** Replaces the entire dialog content (header, body, footer, close trigger). */
-  content?: (props: { close: () => void }) => any
+  content?: (props: { close: () => void }) => VNode[]
 }
 
 export type AlertDialogEmits = {

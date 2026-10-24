@@ -43,9 +43,11 @@
 
 <script lang="ts">
 import type { DateValue } from '@internationalized/date'
+import type { VNode } from 'vue'
 
 import type { PageBehavior, VisibleDuration } from '@/components/calendar/useCalendarDurationView'
 import type { ComponentSlots } from '@/types/tv'
+import type { ClassValue } from '@/utils/tv'
 
 import theme from './theme'
 
@@ -160,14 +162,14 @@ export type RangeCalendarProps = {
    */
   pageBehavior?: PageBehavior
   /** Additional classes merged into the root element. */
-  class?: any
+  class?: ClassValue
   /** Per-slot class overrides. */
   ui?: ComponentSlots<RangeCalendar>
 }
 
 export type RangeCalendarSlots = {
   /** Replaces the chevron icon inside a nav button. */
-  navIcon?: (props: { direction: 'previous' | 'next' }) => any
+  navIcon?: (props: { direction: 'previous' | 'next' }) => VNode[]
   /** Replaces a cell's default formatted-date content. */
   cell?: (props: {
     date: DateValue
@@ -178,7 +180,7 @@ export type RangeCalendarSlots = {
     outsideView: boolean
     selectionStart: boolean
     selectionEnd: boolean
-  }) => any
+  }) => VNode[]
 }
 
 export type RangeCalendarEmits = {

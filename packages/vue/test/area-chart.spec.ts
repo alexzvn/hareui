@@ -1,5 +1,6 @@
 import { flushPromises, mount } from '@vue/test-utils'
 import { afterEach, describe, expect, it, vi } from 'vitest'
+import type { VNode } from 'vue'
 import { h, nextTick } from 'vue'
 
 import AreaChart from '@/components/area-chart/AreaChart.vue'
@@ -27,7 +28,7 @@ const settle = async () => {
   await nextTick()
 }
 
-const mountChart = (children: () => any[], props: Record<string, unknown> = {}) => {
+const mountChart = (children: () => VNode[], props: Record<string, unknown> = {}) => {
   return mount(AreaChart, {
     props: { data, width: WIDTH, height: HEIGHT, margin, ...props },
     slots: { default: children },

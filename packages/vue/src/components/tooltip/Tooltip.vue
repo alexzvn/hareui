@@ -52,8 +52,11 @@
 </template>
 
 <script lang="ts">
+import type { VNode } from 'vue'
+
 import type { PortalTarget } from '@/config'
 import type { ComponentSlots } from '@/types/tv'
+import type { ClassValue } from '@/utils/tv'
 
 import theme from './theme'
 
@@ -115,16 +118,16 @@ export type TooltipProps = {
    */
   portal?: PortalTarget
   /** Additional classes merged into the tooltip content element. */
-  class?: any
+  class?: ClassValue
   /** Per-slot class overrides. */
   ui?: ComponentSlots<Tooltip>
 }
 
 export type TooltipSlots = {
   /** The trigger element. */
-  default?: (props: { open: boolean }) => any
+  default?: (props: { open: boolean }) => VNode[]
   /** Replaces the default `text` content. */
-  content?: () => any
+  content?: () => VNode[]
 }
 
 export type TooltipEmits = {

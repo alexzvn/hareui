@@ -28,12 +28,13 @@
 // Port of HeroUI docs `themes/components/chroma-slider.tsx`: a slider for selecting chroma/saturation.
 import { computed, useTemplateRef } from 'vue'
 
+import type { ClassValue } from './controlsCn'
 import { cn } from './controlsCn'
 
 const props = defineProps<{
   value: number
   hue: number
-  class?: any
+  class?: ClassValue
 }>()
 const emit = defineEmits<{ change: [value: number] }>()
 

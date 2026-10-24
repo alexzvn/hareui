@@ -35,7 +35,10 @@
 </template>
 
 <script lang="ts">
+import type { VNode } from 'vue'
+
 import type { ComponentSlots, ComponentVariants } from '@/types/tv'
+import type { ClassValue } from '@/utils/tv'
 
 import theme from './theme'
 
@@ -90,7 +93,7 @@ export type CellSliderProps = {
   /** The id of the slider. Generated when omitted. */
   id?: string
   /** Additional classes merged into the root element. */
-  class?: any
+  class?: ClassValue
   /** Per-slot class overrides. */
   ui?: ComponentSlots<CellSlider>
 }
@@ -104,9 +107,9 @@ export type CellSliderEmits = {
 
 export type CellSliderSlots = {
   /** The label content. Replaces the `label` prop. */
-  label?: () => any
+  label?: () => VNode[]
   /** The value shown at the end of the row. Replaces the formatted value. */
-  output?: (props: { value: number; formatted: string }) => any
+  output?: (props: { value: number; formatted: string }) => VNode[]
 }
 </script>
 

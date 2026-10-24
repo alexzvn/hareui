@@ -75,6 +75,7 @@
 // (a critically damped spring settling at 0.4s, sampled into `linear()`). HeroUI returns `null` as soon as `isVisible`
 // is false, so there is no exit animation; neither here.
 import { Icon } from '@iconify/vue'
+import type { HTMLAttributes, VNode } from 'vue'
 import { onBeforeUnmount, ref } from 'vue'
 
 import HighlightedCode from './HighlightedCode.vue'
@@ -92,14 +93,14 @@ const props = withDefaults(
     /** Whether to show line numbers */
     showLineNumbers?: boolean
     isVisible: boolean
-    class?: any
+    class?: HTMLAttributes['class']
   }>(),
   { lang: 'tsx', showLineNumbers: true, title: 'Source code' },
 )
 const emit = defineEmits<{ close: [] }>()
 defineSlots<{
   /** Pre-rendered content (takes precedence over `sourceCode`) */
-  default?: () => any
+  default?: () => VNode[]
 }>()
 
 // Same behavior as fumadocs' `useCopyButton`: `copied` for 1.5s

@@ -15,6 +15,7 @@
 
 <script setup lang="ts">
 import { ColorSlider } from '@hareui/vue'
+import type { ColorSliderProps } from '@hareui/vue'
 // Port of the HeroUI docs' own `components/color-picker/components/color-slider.tsx` (horizontal only): a HareUI
 // ColorSlider restyled to the docs' pill track (`h-8 rounded-full`, no end caps) and round 16px thumb.
 import type { Color, ColorChannel, ColorSpace } from 'reka-ui'
@@ -28,7 +29,7 @@ const props = defineProps<{
   trackBackground?: string
   /** Overrides the color of the thumb (defaults to the slider color) */
   thumbBackground?: string
-  class?: any
+  class?: ColorSliderProps['class']
 }>()
 const emit = defineEmits<{ 'update:modelValue': [value: Color] }>()
 

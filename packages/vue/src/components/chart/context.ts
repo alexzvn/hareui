@@ -1,5 +1,4 @@
 import { useId } from 'reka-ui'
-import type { ClassValue } from 'tailwind-variants'
 import type { ComputedRef, InjectionKey, Ref, ShallowRef } from 'vue'
 import {
   computed,
@@ -14,6 +13,8 @@ import {
   shallowRef,
   watchEffect,
 } from 'vue'
+
+import type { ClassValue } from '@/utils/tv'
 
 import type {
   ChartActiveState,

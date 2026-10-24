@@ -130,7 +130,7 @@ export const useRangeSelection = <T extends DateValue = DateValue>(
 ): RangeSelection<T> => {
   // `shallowRef<T | null>` returns a conditional type that stays deferred (and distributes) for a generic `T`, so
   // the ref is typed through its declared shape instead.
-  const anchor = shallowRef(null) as ShallowRef<T | null>
+  const anchor = shallowRef<T | null>(null) as ShallowRef<T | null>
   const enabled = () => options.enabled?.() ?? true
   // Reka's `Matcher` (and our cell code) is single-argument, so the consumer's 2-arg callback is wrapped, reading the
   // anchor at call time.

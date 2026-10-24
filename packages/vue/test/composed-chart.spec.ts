@@ -1,5 +1,6 @@
 import { flushPromises, mount } from '@vue/test-utils'
 import { describe, expect, it } from 'vitest'
+import type { VNode } from 'vue'
 import { h, nextTick, ref } from 'vue'
 
 import ChartArea from '@/components/chart/ChartArea.vue'
@@ -86,7 +87,7 @@ const data = [
   { month: 'Feb', revenue: 200, orders: 2, views: 100 },
 ]
 
-const mountChart = (children: () => any[]) => {
+const mountChart = (children: () => Array<VNode | null>) => {
   return mount(ComposedChart, {
     props: { data, width: WIDTH, height: HEIGHT, margin },
     slots: { default: children },

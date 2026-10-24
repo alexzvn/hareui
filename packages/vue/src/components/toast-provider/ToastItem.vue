@@ -102,6 +102,8 @@
 </template>
 
 <script lang="ts">
+import type { VNode } from 'vue'
+
 import type { ComponentSlots } from '@/types/tv'
 
 import theme from './theme'
@@ -134,7 +136,7 @@ export type ToastItemProps = {
     close: () => void
     titleId: string
     descriptionId: string
-  }) => any
+  }) => VNode[]
 }
 </script>
 

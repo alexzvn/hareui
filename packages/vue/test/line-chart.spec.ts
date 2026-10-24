@@ -1,8 +1,10 @@
 import { flushPromises, mount } from '@vue/test-utils'
 import { afterEach, describe, expect, it, vi } from 'vitest'
+import type { VNode } from 'vue'
 import { h, nextTick } from 'vue'
 
 import ChartLine from '@/components/chart/ChartLine.vue'
+import type { ChartTooltipSlotProps } from '@/components/chart/ChartTooltip.vue'
 import ChartTooltip from '@/components/chart/ChartTooltip.vue'
 import ChartXAxis from '@/components/chart/ChartXAxis.vue'
 import LineChart from '@/components/line-chart/LineChart.vue'
@@ -35,7 +37,7 @@ const data = [
   { month: 'Mar', organic: 20, paid: 0 },
 ]
 
-const mountChart = (children: () => any[], props: Record<string, unknown> = {}) => {
+const mountChart = (children: () => VNode[], props: Record<string, unknown> = {}) => {
   return mount(LineChart, {
     props: { data, width: WIDTH, height: HEIGHT, margin, ...props },
     slots: { default: children },
@@ -133,7 +135,7 @@ describe('LineChart', () => {
         ChartTooltip,
         { isAnimationActive: false },
         {
-          content: (props: any) => {
+          content: (props: ChartTooltipSlotProps) => {
             if (props.active) seen.push({ label: props.label, payload: props.payload })
             return h('div', { class: 'custom' }, String(props.label))
           },

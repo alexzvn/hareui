@@ -10,8 +10,10 @@
 
 <script lang="ts">
 import type { PrimitiveProps } from 'reka-ui'
+import type { VNode } from 'vue'
 
 import type { ComponentSlots, ComponentVariants } from '@/types/tv'
+import type { ClassValue } from '@/utils/tv'
 
 import theme from './theme'
 
@@ -29,14 +31,14 @@ export type SurfaceProps = {
    */
   variant?: ComponentVariants<Surface>['variant']
   /** Additional classes merged into the root element. */
-  class?: any
+  class?: ClassValue
   /** Per-slot class overrides. */
   ui?: ComponentSlots<Surface>
 }
 
 export type SurfaceSlots = {
   /** The surface content. */
-  default?: () => any
+  default?: () => VNode[]
 }
 </script>
 

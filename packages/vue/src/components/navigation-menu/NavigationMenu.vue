@@ -68,7 +68,7 @@
 
 <script lang="ts">
 import type { AccordionRootProps, NavigationMenuContentProps } from 'reka-ui'
-import type { Component } from 'vue'
+import type { Component, VNode } from 'vue'
 
 import type { AvatarProps } from '@/components/avatar/Avatar.vue'
 import type { BadgeProps } from '@/components/badge/Badge.vue'
@@ -76,6 +76,7 @@ import type { ChipProps } from '@/components/chip/Chip.vue'
 import type { DropdownEntry } from '@/components/dropdown/Dropdown.vue'
 import type { TooltipProps } from '@/components/tooltip/Tooltip.vue'
 import type { ComponentSlots, ComponentVariants } from '@/types/tv'
+import type { ClassValue } from '@/utils/tv'
 
 import theme from './theme'
 import type { NavigationMenuPopoverProps } from './types'
@@ -90,10 +91,12 @@ export type NavigationMenuIconValue = string | Component
 export type NavigationMenuChildItem = {
   /** Description, only shown when `orientation` is `horizontal`. */
   description?: string
-  [key: string]: any
-} & Omit<NavigationMenuItem, 'type' | 'ui'>
+  /** Extra fields are passed through to the slots as `item`. */
+  [key: string]: unknown
+} & Omit<NavigationMenuItemFields, 'type' | 'ui'>
 
-export type NavigationMenuItem = {
+/** The known fields of an item, kept apart from the index signature so `Omit` preserves them. */
+type NavigationMenuItemFields = {
   /** The item text. */
   label?: string
   /** Leading icon: a class string or a component. */
@@ -174,7 +177,7 @@ export type NavigationMenuItem = {
   /** With a router, replace the history entry instead of pushing. */
   replace?: boolean
   /** Additional classes merged into the item's link. */
-  class?: any
+  class?: ClassValue
   /** Per-slot class overrides for this item. */
   ui?: Partial<
     Pick<
@@ -208,7 +211,11 @@ export type NavigationMenuItem = {
       | 'childLinkDescription'
     >
   >
-  [key: string]: any
+}
+
+export type NavigationMenuItem = NavigationMenuItemFields & {
+  /** Extra fields are passed through to the slots as `item`. */
+  [key: string]: unknown
 }
 
 /** Options for the dropdown content of horizontal items with children. */
@@ -343,7 +350,7 @@ export type NavigationMenuProps<T extends NavigationMenuItem = NavigationMenuIte
    */
   unmountOnHide?: boolean
   /** Additional classes merged into the root element. */
-  class?: any
+  class?: ClassValue
   /** Per-slot class overrides. */
   ui?: ComponentSlots<NavigationMenu>
 }
@@ -364,26 +371,26 @@ type ItemSlotProps<T extends NavigationMenuItem = NavigationMenuItem> = {
 
 export type NavigationMenuSlots<T extends NavigationMenuItem = NavigationMenuItem> = {
   /** Replaces the whole content of an item's link. */
-  item?: (props: ItemSlotProps<T>) => any
+  item?: (props: ItemSlotProps<T>) => VNode[]
   /** Replaces the leading icon, avatar or chip. */
-  'item-leading'?: (props: ItemSlotProps<T>) => any
+  'item-leading'?: (props: ItemSlotProps<T>) => VNode[]
   /** Replaces the label text. */
-  'item-label'?: (props: { item: T; index: number; active: boolean }) => any
+  'item-label'?: (props: { item: T; index: number; active: boolean }) => VNode[]
   /** Replaces the trailing badge, kbds and chevron. */
-  'item-trailing'?: (props: ItemSlotProps<T>) => any
+  'item-trailing'?: (props: ItemSlotProps<T>) => VNode[]
   /**
    * Action buttons at the end of a vertical row, before the `actions` menu button: a sibling of the link, shown
    * on hover and focus. Style them with `ui.linkAction()`.
    */
-  'item-actions'?: (props: ItemSlotProps<T>) => any
+  'item-actions'?: (props: ItemSlotProps<T>) => VNode[]
   /** Replaces the content of an item: the dropdown content (horizontal) or the collapsed-rail popover (vertical). */
-  'item-content'?: (props: ItemSlotProps<T> & { close?: () => void }) => any
+  'item-content'?: (props: ItemSlotProps<T> & { close?: () => void }) => VNode[]
   /** Rendered before the lists, e.g. a logo in a horizontal menu. */
-  'list-leading'?: () => any
+  'list-leading'?: () => VNode[]
   /** Rendered after the lists. */
-  'list-trailing'?: () => any
+  'list-trailing'?: () => VNode[]
   /** The `<slot>`, `<slot>-leading`, `<slot>-label`, `<slot>-trailing`, `<slot>-actions` and `<slot>-content` slots of the items whose `slot` field names them. */
-  [slot: string]: ((props: ItemSlotProps<T> & { close?: () => void }) => any) | undefined
+  [slot: string]: ((props: ItemSlotProps<T> & { close?: () => void }) => VNode[]) | undefined
 }
 </script>
 

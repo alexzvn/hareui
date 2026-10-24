@@ -52,7 +52,10 @@
 </template>
 
 <script lang="ts">
+import type { VNode } from 'vue'
+
 import type { ComponentSlots, ComponentVariants } from '@/types/tv'
+import type { ClassValue } from '@/utils/tv'
 
 import theme from './theme'
 
@@ -103,7 +106,7 @@ export type ProgressBarProps = {
    */
   color?: ComponentVariants<ProgressBar>['color']
   /** Additional classes merged into the root element. */
-  class?: any
+  class?: ClassValue
   /** Per-slot class overrides. */
   ui?: ComponentSlots<ProgressBar>
 }
@@ -119,9 +122,9 @@ export type ProgressBarSlotProps = {
 
 export type ProgressBarSlots = {
   /** Replaces the label text. */
-  label?: (props: ProgressBarSlotProps) => any
+  label?: (props: ProgressBarSlotProps) => VNode[]
   /** Replaces the value output text. */
-  output?: (props: ProgressBarSlotProps) => any
+  output?: (props: ProgressBarSlotProps) => VNode[]
 }
 </script>
 

@@ -16,11 +16,13 @@
 </template>
 
 <script setup lang="ts">
-import type { DropdownEntry } from '@hareui/vue'
+import type { DropdownEntry, DropdownItem } from '@hareui/vue'
 import { Button, Dropdown } from '@hareui/vue'
 import { Icon } from '@iconify/vue'
 
-const items: DropdownEntry[] = [
+type IconItem = DropdownItem & { icon: string }
+
+const items: DropdownEntry<IconItem>[] = [
   {
     type: 'section',
     label: 'Actions',

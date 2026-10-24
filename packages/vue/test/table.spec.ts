@@ -83,10 +83,18 @@ describe('Table', () => {
     // A sentinel that is always in view: every observe() delivers an intersecting entry.
     vi.stubGlobal(
       'IntersectionObserver',
-      class {
+      class implements IntersectionObserver {
+        readonly root = null
+        readonly rootMargin = '0px'
+        readonly scrollMargin = '0px'
+        readonly thresholds = [0]
         constructor(private cb: IntersectionObserverCallback) {}
         observe() {
-          this.cb([{ isIntersecting: true } as IntersectionObserverEntry], this as any)
+          this.cb([{ isIntersecting: true } as IntersectionObserverEntry], this)
+        }
+        unobserve() {}
+        takeRecords() {
+          return []
         }
         disconnect() {}
       },
@@ -133,7 +141,7 @@ describe('Table', () => {
       await resizers()[0].trigger('keydown', { key: 'ArrowRight', shiftKey: true })
       expect(widths()).toEqual(['210', '220', '100', '200'])
     } finally {
-      delete (HTMLElement.prototype as any).clientWidth
+      Reflect.deleteProperty(HTMLElement.prototype, 'clientWidth')
     }
   })
 

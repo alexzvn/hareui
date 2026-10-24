@@ -247,7 +247,5 @@ const chevron = () => {
   )
 }
 const SubmenuIndicatorContent = () =>
-  renderSlot(slots as Record<string, any>, 'submenu-indicator', { ...state.value }, () => [
-    chevron(),
-  ])
+  renderSlot(slots, 'submenu-indicator', { ...state.value }, () => [chevron()])
 </script>

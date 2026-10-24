@@ -348,6 +348,7 @@
 
 <script lang="ts">
 import { injectListboxRootContext, injectPopoverRootContext } from 'reka-ui'
+import type { VNode } from 'vue'
 import { defineComponent, watchEffect } from 'vue'
 
 import type { ValidationBehavior } from '@/components/form/context'
@@ -363,6 +364,7 @@ import type { CollectionRow } from '@/components/list-box/listBoxCollection'
 import type { ValidateFn, ValidationResult } from '@/composables/useFieldValidation'
 import type { PortalTarget } from '@/config'
 import type { ComponentSlots } from '@/types/tv'
+import type { ClassValue } from '@/utils/tv'
 
 import theme from './theme'
 
@@ -480,9 +482,9 @@ export type AutocompleteProps<T extends ListBoxItem = ListBoxItem> = {
    */
   validationBehavior?: ValidationBehavior
   /** Additional classes merged into the root element. */
-  class?: any
+  class?: ClassValue
   /** Per-slot class overrides. */
-  ui?: ComponentSlots<Autocomplete> & { searchClearButton?: any }
+  ui?: ComponentSlots<Autocomplete> & { searchClearButton?: ClassValue }
 } & FormFieldProps
 
 export type AutocompleteValueSlotProps<T extends ListBoxItem = ListBoxItem> = {
@@ -496,37 +498,37 @@ export type AutocompleteValueSlotProps<T extends ListBoxItem = ListBoxItem> = {
 
 export type AutocompleteSlots<T extends ListBoxItem = ListBoxItem> = {
   /** Label content. Replaces `label`. */
-  label?: () => any
+  label?: () => VNode[]
   /** Trigger value content. Defaults to the selected label(s) or the placeholder. */
-  value?: (props: AutocompleteValueSlotProps<T>) => any
+  value?: (props: AutocompleteValueSlotProps<T>) => VNode[]
   /** Trigger indicator content. Defaults to a chevron. */
-  indicator?: (props: { open: boolean }) => any
+  indicator?: (props: { open: boolean }) => VNode[]
   /** Clear button content. Defaults to a close icon. */
-  clear?: () => any
+  clear?: () => VNode[]
   /** Description content. Replaces `description`. */
-  description?: () => any
+  description?: () => VNode[]
   /** Error content, rendered while invalid. */
-  error?: (props: ValidationResult) => any
+  error?: (props: ValidationResult) => VNode[]
   /** Content after the search input (e.g. a Spinner while fetching). */
-  'search-trailing'?: (props: { inputValue: string }) => any
+  'search-trailing'?: (props: { inputValue: string }) => VNode[]
   /** Whole content of each option (as ListBox `#item`). */
-  item?: (props: ListBoxItemSlotProps<T>) => any
+  item?: (props: ListBoxItemSlotProps<T>) => VNode[]
   /** Content before each option's text (ListBox `#item-leading`). */
-  'item-leading'?: (props: ListBoxItemSlotProps<T>) => any
+  'item-leading'?: (props: ListBoxItemSlotProps<T>) => VNode[]
   /** Each option's label (ListBox `#item-label`). */
-  'item-label'?: (props: ListBoxItemSlotProps<T>) => any
+  'item-label'?: (props: ListBoxItemSlotProps<T>) => VNode[]
   /** Each option's description (ListBox `#item-description`). */
-  'item-description'?: (props: ListBoxItemSlotProps<T>) => any
+  'item-description'?: (props: ListBoxItemSlotProps<T>) => VNode[]
   /** Content after each option's text (ListBox `#item-trailing`). */
-  'item-trailing'?: (props: ListBoxItemSlotProps<T>) => any
+  'item-trailing'?: (props: ListBoxItemSlotProps<T>) => VNode[]
   /** Option checkmark content (ListBox `#indicator`). */
-  'item-indicator'?: (props: ListBoxItemSlotProps<T>) => any
+  'item-indicator'?: (props: ListBoxItemSlotProps<T>) => VNode[]
   /** Section heading (ListBox `#section-label`). */
-  'section-label'?: (props: { section: ListBoxSection<T> }) => any
+  'section-label'?: (props: { section: ListBoxSection<T> }) => VNode[]
   /** Empty-state content, rendered when no option matches (HeroUI `renderEmptyState`). */
-  empty?: () => any
+  empty?: () => VNode[]
   /** Shown after the last option while `loading` is true. */
-  loading?: () => any
+  loading?: () => VNode[]
 }
 
 export type AutocompleteEmits = {

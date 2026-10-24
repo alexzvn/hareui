@@ -3,7 +3,7 @@ import { afterEach, describe, expect, it, vi } from 'vitest'
 import type { ComponentOptions } from 'vue'
 import { h } from 'vue'
 
-import type { ListBoxProps } from '@/components/list-box/ListBox.vue'
+import type { ListBoxItemSlotProps, ListBoxProps } from '@/components/list-box/ListBox.vue'
 import ListBox from '@/components/list-box/ListBox.vue'
 
 import { expectAccessible } from './a11y'
@@ -75,7 +75,7 @@ describe('ListBox', () => {
         ],
       },
       slots: {
-        'item-trailing': ({ item, selected, index }: any) =>
+        'item-trailing': ({ item, selected, index }: ListBoxItemSlotProps) =>
           h('kbd', `${item.value}:${selected}:${index}`),
       },
     })

@@ -6,8 +6,10 @@
 
 <script lang="ts">
 import type { PrimitiveProps } from 'reka-ui'
+import type { VNode } from 'vue'
 
 import type { ComponentSlots, ComponentVariants } from '@/types/tv'
+import type { ClassValue } from '@/utils/tv'
 
 import theme from './theme'
 
@@ -25,14 +27,14 @@ export type SkeletonProps = {
    */
   animationType?: ComponentVariants<Skeleton>['animationType']
   /** Additional classes merged into the root element. */
-  class?: any
+  class?: ClassValue
   /** Per-slot class overrides. */
   ui?: ComponentSlots<Skeleton>
 }
 
 export type SkeletonSlots = {
   /** Optional content rendered inside the placeholder. */
-  default?: () => any
+  default?: () => VNode[]
 }
 
 // `null` = not read yet. Read once per page, like HeroUI's cached `useCSSVariable`.

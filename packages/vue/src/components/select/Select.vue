@@ -219,6 +219,8 @@
 </template>
 
 <script lang="ts">
+import type { VNode } from 'vue'
+
 import type { ValidationBehavior } from '@/components/form/context'
 import type { FormFieldProps } from '@/components/form/types'
 import type {
@@ -231,6 +233,7 @@ import type {
 import type { ValidateFn, ValidationResult } from '@/composables/useFieldValidation'
 import type { PortalTarget } from '@/config'
 import type { ComponentSlots } from '@/types/tv'
+import type { ClassValue } from '@/utils/tv'
 
 import theme from './theme'
 
@@ -324,7 +327,7 @@ export type SelectProps<T extends ListBoxItem = ListBoxItem> = {
   /** Async options: shows the `#loading` slot after the last option and emits `load-more` at the end of the list (see ListBox `loading`). */
   loading?: boolean
   /** Additional classes merged into the root element. */
-  class?: any
+  class?: ClassValue
   /** Per-slot class overrides. */
   ui?: ComponentSlots<Select>
 } & FormFieldProps
@@ -340,37 +343,37 @@ export type SelectValueSlotProps<T extends ListBoxItem = ListBoxItem> = {
 
 export type SelectSlots<T extends ListBoxItem = ListBoxItem> = {
   /** Label content. Replaces `label`. */
-  label?: () => any
+  label?: () => VNode[]
   /** Content inside the trigger before the value. */
-  leading?: () => any
+  leading?: () => VNode[]
   /** Trigger value content. Defaults to the selected label(s) or the placeholder. */
-  value?: (props: SelectValueSlotProps<T>) => any
+  value?: (props: SelectValueSlotProps<T>) => VNode[]
   /** Trigger indicator content. Defaults to a chevron. */
-  indicator?: (props: { open: boolean }) => any
+  indicator?: (props: { open: boolean }) => VNode[]
   /** Clear button content. Defaults to a close icon. */
-  clear?: () => any
+  clear?: () => VNode[]
   /** Description content. Replaces `description`. */
-  description?: () => any
+  description?: () => VNode[]
   /** Error content, rendered while invalid. */
-  error?: (props: ValidationResult) => any
+  error?: (props: ValidationResult) => VNode[]
   /** Whole content of each option (forwarded to ListBox `#item`). */
-  item?: (props: ListBoxItemSlotProps<T>) => any
+  item?: (props: ListBoxItemSlotProps<T>) => VNode[]
   /** Content before each option's text (ListBox `#item-leading`). */
-  'item-leading'?: (props: ListBoxItemSlotProps<T>) => any
+  'item-leading'?: (props: ListBoxItemSlotProps<T>) => VNode[]
   /** Each option's label (ListBox `#item-label`). */
-  'item-label'?: (props: ListBoxItemSlotProps<T>) => any
+  'item-label'?: (props: ListBoxItemSlotProps<T>) => VNode[]
   /** Each option's description (ListBox `#item-description`). */
-  'item-description'?: (props: ListBoxItemSlotProps<T>) => any
+  'item-description'?: (props: ListBoxItemSlotProps<T>) => VNode[]
   /** Content after each option's text (ListBox `#item-trailing`). */
-  'item-trailing'?: (props: ListBoxItemSlotProps<T>) => any
+  'item-trailing'?: (props: ListBoxItemSlotProps<T>) => VNode[]
   /** Option checkmark content (ListBox `#indicator`). */
-  'item-indicator'?: (props: ListBoxItemSlotProps<T>) => any
+  'item-indicator'?: (props: ListBoxItemSlotProps<T>) => VNode[]
   /** Section heading (ListBox `#section-label`). */
-  'section-label'?: (props: { section: ListBoxSection<T> }) => any
+  'section-label'?: (props: { section: ListBoxSection<T> }) => VNode[]
   /** Rendered in the popover when `items` is empty (ListBox `#empty`). */
-  empty?: () => any
+  empty?: () => VNode[]
   /** Shown after the last option while `loading` is true (ListBox `#loading`). */
-  loading?: () => any
+  loading?: () => VNode[]
 }
 
 export type SelectEmits = {

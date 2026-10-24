@@ -182,8 +182,29 @@
 
 <script lang="ts">
 import type { CalendarDate, DateValue } from '@internationalized/date'
+import type { VNode } from 'vue'
+
+import type { ClassValue } from '@/utils/tv'
 
 import type { PageBehavior, VisibleDuration } from './useCalendarDurationView'
+
+type DurationRange = { start: DateValue | undefined; end: DateValue | undefined }
+
+/** Single: a date; multiple: an array; range: `{ start, end }`. */
+export type CalendarDurationValue = DateValue | DateValue[] | DurationRange
+
+type CalendarDurationCellSlotProps = {
+  date: CalendarDate
+  today: boolean
+  selected: boolean
+  disabled: boolean
+  unavailable: boolean
+  outsideView: boolean
+  /** Range kind only. */
+  selectionStart?: boolean
+  /** Range kind only. */
+  selectionEnd?: boolean
+}
 
 /**
  * Internal: the `visibleDuration={{ weeks }}` / `{{ days }}` grid shared by `Calendar` and `RangeCalendar`
@@ -194,16 +215,15 @@ import type { PageBehavior, VisibleDuration } from './useCalendarDurationView'
 export type CalendarDurationViewProps = {
   kind: 'calendar' | 'range'
   /** Resolved slot class functions of the parent's theme (already resolved for the `view` variant). */
-  ui: Record<string, (opts?: { class?: any }) => string>
+  ui: Record<string, (opts?: { class?: ClassValue }) => string>
   /** The parent's `:ui` overrides. */
-  uiOverrides?: Record<string, any>
-  rootClass?: any
+  uiOverrides?: Partial<Record<string, ClassValue>>
+  rootClass?: ClassValue
   ariaLabel?: string
   duration: VisibleDuration
   pageBehavior: PageBehavior
   focused: { value: DateValue }
-  /** Single: a date; multiple: an array; range: `{ start, end }`. */
-  value: any
+  value: CalendarDurationValue | null | undefined
   selectionMode?: 'single' | 'multiple'
   minValue: DateValue
   maxValue: DateValue
@@ -228,10 +248,10 @@ import { useCalendarDurationView } from './useCalendarDurationView'
 import { makeRange, useRangeSelection } from './useRangeSelection'
 
 const props = defineProps<CalendarDurationViewProps>()
-const emit = defineEmits<{ select: [value: any] }>()
+const emit = defineEmits<{ select: [value: CalendarDurationValue] }>()
 defineSlots<{
-  navIcon?: (props: { direction: 'previous' | 'next' }) => any
-  cell?: (props: Record<string, any>) => any
+  navIcon?: (props: { direction: 'previous' | 'next' }) => VNode[]
+  cell?: (props: CalendarDurationCellSlotProps) => VNode[]
 }>()
 
 const locale = useLocale(toRef(() => props.locale))
@@ -239,9 +259,16 @@ const direction = useDirection(toRef(() => props.dir))
 const p = computed(() => (props.kind === 'range' ? 'range-calendar' : 'calendar'))
 const cls = (slot: string) => props.ui[slot]?.({ class: props.uiOverrides?.[slot] })
 
+const isRange = (value: CalendarDurationValue): value is DurationRange =>
+  !Array.isArray(value) && 'start' in value
+const isCompleteRange = (
+  value: CalendarDurationValue | null | undefined,
+): value is { start: DateValue; end: DateValue } =>
+  !!value && isRange(value) && !!value.start && !!value.end
+
 // ---- Range selection state (react-stately `useRangeCalendarState`, shared core in `useRangeSelection`) ----
 const range = computed<{ start: DateValue; end: DateValue } | null>(() =>
-  props.kind === 'range' && props.value?.start && props.value?.end ? props.value : null,
+  props.kind === 'range' && isCompleteRange(props.value) ? props.value : null,
 )
 // No `onAnchor`: unlike the month view, the first pick emits nothing until the range commits.
 const selection = useRangeSelection<CalendarDate>({
@@ -298,13 +325,20 @@ const isSelected = (date: CalendarDate) => {
       date.compare(highlighted.value.end) <= 0
     )
   if (Array.isArray(props.value)) return props.value.some((v: DateValue) => isSameDay(v, date))
-  return !!props.value && isSameDay(props.value, date)
+  const single = singleValue()
+  return !!single && isSameDay(single, date)
+}
+
+// The calendar kind's one selected date: not an array (multiple) nor a `{ start, end }` (range)
+const singleValue = (): DateValue | undefined => {
+  const value = props.value
+  return value && !Array.isArray(value) && !isRange(value) ? value : undefined
 }
 
 // The emitted value keeps the original value's calendar system (Gregorian by default) and time of day
 const convert = (date: CalendarDate, old: DateValue | undefined): DateValue => {
   const converted = toCalendar(date, old?.calendar ?? new GregorianCalendar())
-  return old && 'hour' in old ? (old as any).set(converted) : converted
+  return old && 'hour' in old ? old.set(converted) : converted
 }
 const select = (date: CalendarDate) => {
   if (props.disabled || props.readonly || view.isCellDisabled(date) || unavailable(date)) return
@@ -314,11 +348,8 @@ const select = (date: CalendarDate) => {
     return
   }
   if (props.selectionMode === 'multiple') {
-    const current: DateValue[] = Array.isArray(props.value)
-      ? props.value
-      : props.value
-        ? [props.value]
-        : []
+    const single = singleValue()
+    const current: DateValue[] = Array.isArray(props.value) ? props.value : single ? [single] : []
     const index = current.findIndex((v) => isSameDay(v, date))
     emit(
       'select',
@@ -326,7 +357,7 @@ const select = (date: CalendarDate) => {
     )
     return
   }
-  emit('select', convert(date, props.value ?? undefined))
+  emit('select', convert(date, singleValue()))
 }
 const onPointerEnter = (date: CalendarDate) => {
   // `highlightDate`: while a range is anchored, hovering moves the focused date (and the preview)

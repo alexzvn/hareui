@@ -52,8 +52,11 @@
 </template>
 
 <script lang="ts">
+import type { VNode } from 'vue'
+
 import type { PortalTarget } from '@/config'
 import type { ComponentSlots } from '@/types/tv'
+import type { ClassValue } from '@/utils/tv'
 
 import theme from './theme'
 
@@ -109,18 +112,18 @@ export type PopoverProps = {
    */
   portal?: PortalTarget
   /** Additional classes merged into the popover surface. */
-  class?: any
+  class?: ClassValue
   /** Per-slot class overrides. */
   ui?: ComponentSlots<Popover>
 }
 
 export type PopoverSlots = {
   /** The trigger element. Receives the current open state. */
-  default?: (props: { open: boolean }) => any
+  default?: (props: { open: boolean }) => VNode[]
   /** Replaces the heading text derived from `title`. */
-  title?: () => any
+  title?: () => VNode[]
   /** The popover's content. Receives a `close` callback. */
-  content?: (props: { close: () => void }) => any
+  content?: (props: { close: () => void }) => VNode[]
 }
 
 export type PopoverEmits = {

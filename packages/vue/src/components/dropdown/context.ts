@@ -1,12 +1,13 @@
-import type { InjectionKey } from 'vue'
+import type { InjectionKey, Slots } from 'vue'
 
 import type { ResolvedPortal } from '@/composables/usePortal'
+import type { ClassValue } from '@/utils/tv'
 
 import type {
   DropdownItem,
   DropdownItemSlotProps,
+  DropdownProps,
   DropdownSection,
-  DropdownSlots,
   DropdownValue,
 } from './Dropdown.vue'
 
@@ -20,14 +21,15 @@ export type DropdownSelectionGroup = {
 
 export type DropdownContext = {
   /** Slot class functions of the Dropdown theme; `variant` is applied per item. */
-  classes: () => Record<string, (options?: { variant?: string; class?: any }) => string>
-  ui: () => Record<string, any> | undefined
+  classes: () => Record<string, (options?: { variant?: string; class?: ClassValue }) => string>
+  ui: () => DropdownProps['ui']
   /** Item label / description classes, resolved once per menu instead of mounting Label / Description per item. */
   labelClass: (disabled?: boolean) => string
   descriptionClass: () => string
   /** Resolved portal of the root menu; submenus portal to the same target. */
   portal: () => ResolvedPortal
-  slots: DropdownSlots
+  /** The Dropdown's slots, rendered by the menu internals for whatever item type the Dropdown was given. */
+  slots: Slots
   rootGroup: () => DropdownSelectionGroup
   sectionGroup: (section: DropdownSection, parent: DropdownSelectionGroup) => DropdownSelectionGroup
   /** Whether the last interaction was a keyboard one, and which key (RAC's interaction modality). */

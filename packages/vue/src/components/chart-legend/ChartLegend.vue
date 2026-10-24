@@ -55,6 +55,8 @@
 </template>
 
 <script lang="ts">
+import type { VNode } from 'vue'
+
 import type {
   ChartIndexKey,
   ChartLegendItem,
@@ -63,6 +65,7 @@ import type {
   ChartValueKey,
 } from '@/components/chart/series-config'
 import type { ComponentSlots, ComponentVariants } from '@/types/tv'
+import type { ClassValue } from '@/utils/tv'
 
 import theme from './theme'
 
@@ -120,7 +123,7 @@ export type ChartLegendProps<T extends object = Record<string, unknown>> = {
   /** Keys of hidden rows (`v-model:hidden`). Hidden rows are dimmed. */
   hidden?: string[]
   /** Additional classes merged into the root element. */
-  class?: any
+  class?: ClassValue
   /** Per-slot class overrides. */
   ui?: ComponentSlots<ChartLegendTheme>
 }
@@ -134,7 +137,7 @@ export type ChartLegendItemSlotProps = {
 
 export type ChartLegendSlots = {
   /** Replaces the content of a row; the row element and its toggle button stay. */
-  item?: (props: ChartLegendItemSlotProps) => any
+  item?: (props: ChartLegendItemSlotProps) => VNode[]
 }
 </script>
 

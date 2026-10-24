@@ -44,7 +44,9 @@
 </template>
 
 <script lang="ts">
-import type { ClassValue } from 'tailwind-variants'
+import type { VNode } from 'vue'
+
+import type { ClassValue } from '@/utils/tv'
 
 import type { ChartAnimationProps } from './animation'
 import type { ChartDotProps } from './types'
@@ -96,7 +98,7 @@ export type ChartRadarProps = {
 
 export type ChartRadarSlots = {
   /** `ChartLabel` for a label at every point. */
-  default?: () => any
+  default?: () => VNode[]
 }
 </script>
 

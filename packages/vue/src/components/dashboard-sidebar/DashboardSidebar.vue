@@ -84,10 +84,13 @@
 </template>
 
 <script lang="ts">
+import type { VNode } from 'vue'
+
 import type { ButtonProps } from '@/components/button/Button.vue'
 import type { DrawerProps } from '@/components/drawer/Drawer.vue'
 import type { ModalProps } from '@/components/modal/Modal.vue'
 import type { ComponentSlots, ComponentUI } from '@/types/tv'
+import type { ClassValue } from '@/utils/tv'
 
 import theme from './theme'
 
@@ -164,7 +167,7 @@ export type DashboardSidebarProps = {
    */
   autoClose?: boolean
   /** Additional classes merged into the root element. */
-  class?: any
+  class?: ClassValue
   /** Per-slot class overrides. */
   ui?: ComponentSlots<DashboardSidebar>
 }
@@ -199,17 +202,17 @@ type DashboardSidebarUI = ComponentUI<DashboardSidebar>
 
 export type DashboardSidebarSlots = {
   /** The sidebar header (logo, team switcher...). Hidden when omitted. */
-  header?: (props: { collapsed: boolean; collapse: (value: boolean) => void }) => any
+  header?: (props: { collapsed: boolean; collapse: (value: boolean) => void }) => VNode[]
   /** The scrollable sidebar body. */
-  default?: (props: { collapsed: boolean; collapse: (value: boolean) => void }) => any
+  default?: (props: { collapsed: boolean; collapse: (value: boolean) => void }) => VNode[]
   /** The sidebar footer (user menu...). Hidden when omitted. */
-  footer?: (props: { collapsed: boolean; collapse: (value: boolean) => void }) => any
+  footer?: (props: { collapsed: boolean; collapse: (value: boolean) => void }) => VNode[]
   /** Replaces the toggle button of the menu header. */
-  toggle?: (props: DashboardSidebarToggleSlotProps) => any
+  toggle?: (props: DashboardSidebarToggleSlotProps) => VNode[]
   /** Replaces the whole menu content (header, body and footer). */
-  content?: (props: { close: () => void }) => any
+  content?: (props: { close: () => void }) => VNode[]
   /** Replaces the resize handle. Rendered only when `resizable`. */
-  'resize-handle'?: (props: DashboardSidebarResizeHandleSlotProps) => any
+  'resize-handle'?: (props: DashboardSidebarResizeHandleSlotProps) => VNode[]
 }
 </script>
 
@@ -352,8 +355,7 @@ const menuProps = computed(() => {
 })
 // The user's `menu.ui` is forwarded as is; `backdrop` / `dialog` are merged with the sidebar's `overlay` / `content` slots.
 const menuClasses = computed(() => {
-  const user: Record<string, any> =
-    (props.menu as { ui?: Record<string, any> } | undefined)?.ui ?? {}
+  const user: Partial<Record<string, ClassValue>> = props.menu?.ui ?? {}
   return {
     ...user,
     backdrop: [ui.value.overlay({ class: props.ui?.overlay }), user.backdrop],

@@ -1,4 +1,5 @@
 import { mount as rawMount } from '@vue/test-utils'
+import type { Color } from 'reka-ui'
 import { colorToString } from 'reka-ui'
 import { afterEach, describe, expect, it } from 'vitest'
 import { h, nextTick } from 'vue'
@@ -9,11 +10,11 @@ import Fieldset from '@/components/fieldset/Fieldset.vue'
 import { expectAccessible } from './a11y'
 
 const wrappers: { unmount: () => void }[] = []
-const mount = ((...a: any[]) => {
-  const w = (rawMount as any)(...a)
-  wrappers.push(w)
-  return w
-}) as typeof rawMount
+const mount: typeof rawMount = (...args) => {
+  const wrapper = rawMount(...args)
+  wrappers.push(wrapper)
+  return wrapper
+}
 
 const trigger = () => document.body.querySelector<HTMLElement>('[data-slot=color-picker-trigger]')!
 const popover = () => document.body.querySelector('[data-slot=color-picker-popover]')
@@ -177,7 +178,7 @@ describe('CellColorPicker', () => {
     items[1]!.click()
     await nextTick()
     const emitted = w.emitted('update:modelValue')!
-    expect(colorToString(emitted.at(-1)![0] as any, 'hex').toUpperCase()).toBe('#22C55E')
+    expect(colorToString(emitted.at(-1)![0] as Color, 'hex').toUpperCase()).toBe('#22C55E')
     expect(valueText()).toBe('#22C55E')
   })
 

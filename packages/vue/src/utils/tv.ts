@@ -1,7 +1,19 @@
 import { fromTheme, validators } from 'tailwind-merge'
 import { createTV } from 'tailwind-variants'
 
-export type { ClassValue } from 'tailwind-variants'
+/**
+ * A class binding accepted by components: strings, arrays and `{ 'class-name': condition }` objects, like Vue's `:class`.
+ * tailwind-variants resolves all of these at runtime, but its own `ClassValue` type omits object syntax.
+ */
+export type ClassValue =
+  | string
+  | number
+  | bigint
+  | boolean
+  | null
+  | undefined
+  | Record<string, unknown>
+  | ReadonlyArray<ClassValue>
 
 /**
  * tailwind-merge configuration matching HeroUI's Tailwind theme:

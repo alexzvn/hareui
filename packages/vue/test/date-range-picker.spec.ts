@@ -1,4 +1,5 @@
 import { CalendarDate } from '@internationalized/date'
+import type { ComponentMountingOptions } from '@vue/test-utils'
 import { mount } from '@vue/test-utils'
 import { describe, expect, it } from 'vitest'
 
@@ -225,16 +226,19 @@ describe('DateRangePicker accessibility', () => {
       .join(' ')
 
   const open = async (
-    props: Record<string, unknown> = { label: 'Trip dates', defaultValue: range },
+    props: ComponentMountingOptions<typeof DateRangePicker>['props'] = {
+      label: 'Trip dates',
+      defaultValue: range,
+    },
   ) => {
-    const wrapper = mount(DateRangePicker, { props: props as any, attachTo: document.body })
+    const wrapper = mount(DateRangePicker, { props, attachTo: document.body })
     await wrapper.get(trigger).trigger('click')
     await flush()
     return wrapper
   }
 
   it('passes axe idle, filled with description, aria-labelled, invalid with error, disabled and read-only', async () => {
-    const cases = [
+    const cases: ComponentMountingOptions<typeof DateRangePicker>['props'][] = [
       { label: 'Trip dates' },
       { label: 'Trip dates', description: 'Up to two weeks', defaultValue: range },
       { 'aria-label': 'Trip dates' },
@@ -244,7 +248,7 @@ describe('DateRangePicker accessibility', () => {
       { label: 'Trip dates', inputContainer: true, defaultValue: range },
     ]
     for (const props of cases) {
-      const wrapper = mount(DateRangePicker, { props: props as any, attachTo: document.body })
+      const wrapper = mount(DateRangePicker, { props, attachTo: document.body })
       await expectAccessible(wrapper)
       wrapper.unmount()
     }

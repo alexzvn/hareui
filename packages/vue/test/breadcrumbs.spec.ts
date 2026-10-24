@@ -55,8 +55,8 @@ describe('Breadcrumbs accessibility', () => {
       { props: { items } },
       { props: { items, disabled: true } },
       { props: { items: [{ label: 'Home' }, ...items.slice(1)] } },
-      { props: { items }, slots: { separator: () => h('span', { 'aria-hidden': 'true' }, '/') } },
-      { props: { items }, slots: { separator: () => h('i') } },
+      { props: { items }, slots: { separator: () => [h('span', { 'aria-hidden': 'true' }, '/')] } },
+      { props: { items }, slots: { separator: () => [h('i')] } },
     ]
     for (const options of cases) {
       const wrapper = mount(Breadcrumbs, { ...options, attachTo: document.body })

@@ -15,7 +15,7 @@ const setup = (options: TypeaheadOptions, items: Item[], initial?: Item) => {
   const scope = effectScope()
   const typeahead = scope.run(() => useTypeahead(options))!
   let current = initial
-  const select = vi.fn((match: Item) => {
+  const select = vi.fn<(match: Item) => void>((match) => {
     current = match
   })
   const type = (key: string, init: KeyboardEventInit = {}) =>

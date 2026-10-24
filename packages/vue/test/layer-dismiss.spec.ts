@@ -200,7 +200,7 @@ describe('useLayerDismiss', () => {
   it('with `earlyPress`, dismisses on an outside press once open and keeps Reka from dismissing it again', async () => {
     const layer = createLayer()
     const isOpen = ref(false)
-    const onDismiss = vi.fn()
+    const onDismiss = vi.fn<() => void>()
     const scope = effectScope()
     const { onInteractOutside } = scope.run(() =>
       useLayerDismiss({ content: layer, earlyPress: { isOpen, onDismiss } }),

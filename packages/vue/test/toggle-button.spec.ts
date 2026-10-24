@@ -73,7 +73,7 @@ describe('ToggleButton', () => {
   })
 
   it('disabled leaves the tab order, keeps its pressed state exposed and ignores presses', async () => {
-    const onUpdate = vi.fn()
+    const onUpdate = vi.fn<(value: boolean) => void>()
     const wrapper = mount(ToggleButton, {
       props: { disabled: true, defaultValue: true, 'onUpdate:modelValue': onUpdate },
       attachTo: document.body,

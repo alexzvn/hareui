@@ -85,6 +85,7 @@ import { computed, inject, onMounted, onUpdated, ref, useId, useTemplateRef } fr
 import Description from '@/components/description/Description.vue'
 import Label from '@/components/label/Label.vue'
 import { keyboardModalityKey } from '@/composables/useKeyboardModality'
+import type { ClassValue } from '@/utils/tv'
 
 import type { ListBoxItem, ListBoxItemSlotProps, ListBoxSlots, ListBoxValue } from './ListBox.vue'
 
@@ -97,8 +98,11 @@ const props = defineProps<{
   indicator: boolean
   listDisabled: boolean
   /** Slot class functions of the parent ListBox; `variant` is applied per item. */
-  classes: Record<'item' | 'indicator', (options?: { variant?: string; class?: any }) => string>
-  ui?: { item?: any; indicator?: any }
+  classes: Record<
+    'item' | 'indicator',
+    (options?: { variant?: string; class?: ClassValue }) => string
+  >
+  ui?: { item?: ClassValue; indicator?: ClassValue }
   /** The Reka item primitive to render (ComboBox passes `ComboboxItem`). */
   component?: Component
   /**

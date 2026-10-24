@@ -71,9 +71,10 @@
 </template>
 
 <script lang="ts">
-import type { Component } from 'vue'
+import type { Component, VNode } from 'vue'
 
 import type { ComponentSlots } from '@/types/tv'
+import type { ClassValue } from '@/utils/tv'
 
 import theme from './theme'
 
@@ -99,7 +100,7 @@ export type RadioButtonGroupItemProps = {
   /** The id of the item's radio. Generated when omitted. */
   id?: string
   /** Additional classes merged into the card. */
-  class?: any
+  class?: ClassValue
   /** Per-slot class overrides for this item. Merged after the group's `ui`. */
   ui?: Omit<ComponentSlots<typeof theme>, 'base'>
 }
@@ -113,15 +114,15 @@ export type RadioButtonGroupItemSlotProps = {
 
 export type RadioButtonGroupItemSlots = {
   /** Extra content rendered after the title and description. */
-  default?: (props: RadioButtonGroupItemSlotProps) => any
+  default?: (props: RadioButtonGroupItemSlotProps) => VNode[]
   /** The title content. Replaces the `label` prop. */
-  label?: (props: RadioButtonGroupItemSlotProps) => any
+  label?: (props: RadioButtonGroupItemSlotProps) => VNode[]
   /** The description content. Replaces the `description` prop. */
-  description?: (props: RadioButtonGroupItemSlotProps) => any
+  description?: (props: RadioButtonGroupItemSlotProps) => VNode[]
   /** The leading icon. Replaces the `icon` prop. */
-  icon?: (props: RadioButtonGroupItemSlotProps) => any
+  icon?: (props: RadioButtonGroupItemSlotProps) => VNode[]
   /** A custom indicator icon, shown in accent color while the item is selected. Replaces the radio dot. */
-  indicator?: (props: RadioButtonGroupItemSlotProps) => any
+  indicator?: (props: RadioButtonGroupItemSlotProps) => VNode[]
 }
 </script>
 

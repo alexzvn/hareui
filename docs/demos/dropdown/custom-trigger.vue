@@ -42,7 +42,7 @@
 </template>
 
 <script setup lang="ts">
-import type { DropdownEntry } from '@hareui/vue'
+import type { DropdownEntry, DropdownItem } from '@hareui/vue'
 import { Avatar, Dropdown, Label } from '@hareui/vue'
 import { Icon } from '@iconify/vue'
 
@@ -54,7 +54,9 @@ const triggerClass = [
   'focus-visible:status-focused active:[transform:scale(0.97)]',
 ].join(' ')
 
-const items: DropdownEntry[] = [
+type IconItem = DropdownItem & { icon?: string }
+
+const items: DropdownEntry<IconItem>[] = [
   { value: 'dashboard', label: 'Dashboard' },
   { value: 'profile', label: 'Profile' },
   { value: 'settings', label: 'Settings', icon: 'gravity-ui:gear' },

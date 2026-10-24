@@ -134,6 +134,7 @@
 
 <script lang="ts">
 import type { DateFieldRootProps, DateValue } from 'reka-ui'
+import type { VNode } from 'vue'
 
 import type { DateInputGroupProps } from '@/components/date-input-group/DateInputGroup.vue'
 import dateInputGroupTheme from '@/components/date-input-group/theme'
@@ -142,6 +143,7 @@ import type { FormFieldProps } from '@/components/form/types'
 import type { ValidateFn, ValidationResult } from '@/composables/useFieldValidation'
 import type { PortalTarget } from '@/config'
 import type { ComponentSlots } from '@/types/tv'
+import type { ClassValue } from '@/utils/tv'
 
 import theme from './theme'
 
@@ -256,7 +258,7 @@ export type DatePickerProps = {
    */
   defaultOpen?: boolean
   /** Additional classes merged into the root element. */
-  class?: any
+  class?: ClassValue
   /** Per-slot class overrides. `group`, `input` and `segment` are the internal `date-input-group`'s. */
   ui?: ComponentSlots<DatePicker> & { group?: ComponentSlots<DateInputGroup>['base'] } & Pick<
       ComponentSlots<DateInputGroup>,
@@ -266,13 +268,13 @@ export type DatePickerProps = {
 
 export type DatePickerSlots = {
   /** Label content. Replaces the `label` prop. */
-  label?: () => any
+  label?: () => VNode[]
   /** Replaces the default calendar icon inside the trigger. */
-  indicator?: () => any
+  indicator?: () => VNode[]
   /** Description content. Replaces the `description` prop. */
-  description?: () => any
+  description?: () => VNode[]
   /** Error content, rendered while invalid. Replaces the `errorMessage` prop. */
-  error?: (props: ValidationResult) => any
+  error?: (props: ValidationResult) => VNode[]
   /**
    * Replaces the default `Calendar` rendered inside the popover. Bind `value` and call `onSelect`
    * on your own `Calendar` to keep it wired to the picker (see the `custom-styles` demo).
@@ -280,7 +282,7 @@ export type DatePickerSlots = {
   calendar?: (props: {
     value: DateValue | null | undefined
     onSelect: (value: DateValue) => void
-  }) => any
+  }) => VNode[]
 }
 
 export type DatePickerEmits = {

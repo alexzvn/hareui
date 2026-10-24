@@ -410,8 +410,8 @@ describe('dashboard sidebar', () => {
         ['dashboard-sidebar-main', JSON.stringify({ size: 22, collapsed: false })],
       ])
       const adapter: DashboardStorageAdapter = {
-        getItem: vi.fn((k: string) => data.get(k)),
-        setItem: vi.fn((k: string, v: string) => void data.set(k, v)),
+        getItem: vi.fn<DashboardStorageAdapter['getItem']>((k) => data.get(k)),
+        setItem: vi.fn<DashboardStorageAdapter['setItem']>((k, v) => void data.set(k, v)),
       }
       const wrapper = mountSidebar({ minSize: 10, maxSize: 40 }, { storage: adapter })
       expect(adapter.getItem).toHaveBeenCalledWith('dashboard-sidebar-main')
@@ -442,8 +442,10 @@ describe('dashboard sidebar', () => {
     it('persistent=false neither reads nor writes', async () => {
       localStorage.setItem('dashboard-sidebar-main', JSON.stringify({ size: 30, collapsed: false }))
       const adapter: DashboardStorageAdapter = {
-        getItem: vi.fn(() => JSON.stringify({ size: 30, collapsed: false })),
-        setItem: vi.fn(),
+        getItem: vi.fn<DashboardStorageAdapter['getItem']>(() =>
+          JSON.stringify({ size: 30, collapsed: false }),
+        ),
+        setItem: vi.fn<DashboardStorageAdapter['setItem']>(),
       }
       const wrapper = mountSidebar(
         { minSize: 10, maxSize: 40, defaultSize: 15 },
@@ -461,7 +463,10 @@ describe('dashboard sidebar', () => {
     })
 
     it('a sidebar that is neither resizable nor collapsible is not persisted', async () => {
-      const adapter: DashboardStorageAdapter = { getItem: vi.fn(), setItem: vi.fn() }
+      const adapter: DashboardStorageAdapter = {
+        getItem: vi.fn<DashboardStorageAdapter['getItem']>(),
+        setItem: vi.fn<DashboardStorageAdapter['setItem']>(),
+      }
       const wrapper = mountSidebar({ resizable: false, collapsible: false }, { storage: adapter })
       expect(adapter.getItem).not.toHaveBeenCalled()
       wrapper.unmount()

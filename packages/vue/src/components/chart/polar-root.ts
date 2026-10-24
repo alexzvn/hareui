@@ -28,7 +28,7 @@ export type PolarRootFrameProps = {
   legend?:
     | boolean
     | ChartLegendPosition
-    | (Partial<ChartLegendProps<any>> & { position?: ChartLegendPosition })
+    | (Partial<ChartLegendProps<object>> & { position?: ChartLegendPosition })
 }
 
 export type PolarRootOptions = {
@@ -40,7 +40,7 @@ export type PolarRootOptions = {
   /** `ChartTooltip` props from root props (e.g. `valueFormatter`), under the `tooltip` prop. */
   tooltip: () => Partial<ChartTooltipProps>
   /** `ChartLegend` props from root props, under those of the `legend` prop. */
-  legend?: () => Partial<ChartLegendProps<any>>
+  legend?: () => Partial<ChartLegendProps<object>>
   /** Whether the root has a `legend` slot. */
   hasLegendSlot: () => boolean
 }

@@ -205,7 +205,9 @@ const items: NavigationMenuItem[][] = [
   ],
 ]
 
-const breadcrumbs: BreadcrumbsItem[] = [{ label: 'Roadmap', icon: 'gravity-ui:chart-column' }]
+type Crumb = BreadcrumbsItem & { icon: string }
+
+const breadcrumbs: Crumb[] = [{ label: 'Roadmap', icon: 'gravity-ui:chart-column' }]
 
 const accountItems: DropdownEntry[] = [
   { value: 'profile', label: 'Profile', icon: 'gravity-ui:person' },

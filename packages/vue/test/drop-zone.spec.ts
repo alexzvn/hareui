@@ -44,7 +44,7 @@ const select = async (element: HTMLInputElement, files: File[]) => {
 
 const mountModel = (props: Record<string, unknown> = {}) => {
   const model = ref<File[]>([])
-  const onAdd = vi.fn()
+  const onAdd = vi.fn<(files: File[]) => void>()
   const onReject = vi.fn<(rejections: DropZoneRejection[]) => void>()
   const wrapper = mount(() =>
     h(DropZone, {

@@ -16,8 +16,10 @@
 
 <script lang="ts">
 import type { PrimitiveProps } from 'reka-ui'
+import type { VNode } from 'vue'
 
 import type { ComponentSlots, ComponentVariants } from '@/types/tv'
+import type { ClassValue } from '@/utils/tv'
 
 import theme from './theme'
 
@@ -68,14 +70,14 @@ export type ScrollShadowProps = {
    */
   enabled?: boolean
   /** Additional classes merged into the root element. */
-  class?: any
+  class?: ClassValue
   /** Per-slot class overrides. */
   ui?: ComponentSlots<ScrollShadow>
 }
 
 export type ScrollShadowSlots = {
   /** The scrollable content. */
-  default?: () => any
+  default?: () => VNode[]
 }
 
 export type ScrollShadowEmits = {

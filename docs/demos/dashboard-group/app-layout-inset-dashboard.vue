@@ -218,7 +218,9 @@ const footerItems: NavigationMenuItem[] = [
   { label: "What's new", icon: gravityIcon('sparkles'), href: '#' },
 ]
 
-const breadcrumbs: BreadcrumbsItem[] = [{ label: 'Overview', icon: 'gravity-ui:house' }]
+type Crumb = BreadcrumbsItem & { icon: string }
+
+const breadcrumbs: Crumb[] = [{ label: 'Overview', icon: 'gravity-ui:house' }]
 
 // Sparkline: a smooth-enough polyline plus the same line closed to the bottom for the gradient fill.
 const sparkline = (values: number[]) => {

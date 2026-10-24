@@ -44,6 +44,7 @@
 import type { Color, ColorChannel, ColorSpace } from 'reka-ui'
 
 import type { ComponentSlots } from '@/types/tv'
+import type { ClassValue } from '@/utils/tv'
 
 import theme from './theme'
 
@@ -78,7 +79,7 @@ export type ColorAreaProps = {
   /** The name of the y channel's hidden input, for form submission. */
   yName?: string
   /** Additional classes merged into the root element. */
-  class?: any
+  class?: ClassValue
   /** Per-slot class overrides. */
   ui?: ComponentSlots<ColorArea>
 }

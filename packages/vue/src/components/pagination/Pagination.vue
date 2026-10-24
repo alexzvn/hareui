@@ -123,7 +123,10 @@
 </template>
 
 <script lang="ts">
+import type { VNode } from 'vue'
+
 import type { ComponentSlots, ComponentVariants } from '@/types/tv'
+import type { ClassValue } from '@/utils/tv'
 
 import theme from './theme'
 
@@ -179,20 +182,20 @@ export type PaginationProps = {
    */
   size?: ComponentVariants<Pagination>['size']
   /** Additional classes merged into the root element. */
-  class?: any
+  class?: ClassValue
   /** Per-slot class overrides. `link` applies to page links and previous / next buttons. */
   ui?: ComponentSlots<Pagination>
 }
 
 export type PaginationSlots = {
   /** Info shown before the links (HeroUI's `Pagination.Summary`). */
-  summary?: (props: { page: number; total: number }) => any
+  summary?: (props: { page: number; total: number }) => VNode[]
   /** Replaces a page link's number. */
-  link?: (props: { page: number; active: boolean }) => any
+  link?: (props: { page: number; active: boolean }) => VNode[]
   /** Replaces the previous icon (HeroUI's `Pagination.PreviousIcon` children). */
-  prevIcon?: () => any
+  prevIcon?: () => VNode[]
   /** Replaces the next icon (HeroUI's `Pagination.NextIcon` children). */
-  nextIcon?: () => any
+  nextIcon?: () => VNode[]
 }
 
 export type PaginationEmits = {

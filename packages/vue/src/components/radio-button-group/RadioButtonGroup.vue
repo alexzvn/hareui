@@ -29,10 +29,13 @@
 </template>
 
 <script lang="ts">
+import type { VNode } from 'vue'
+
 import type { ValidationBehavior } from '@/components/form/context'
 import type { FormFieldProps } from '@/components/form/types'
 import type { ValidateFn, ValidationResult } from '@/composables/useFieldValidation'
 import type { ComponentSlots, ComponentVariants } from '@/types/tv'
+import type { ClassValue } from '@/utils/tv'
 
 import theme from './theme'
 
@@ -92,20 +95,20 @@ export type RadioButtonGroupProps = {
   /** Base id of the group. Generated when omitted. */
   id?: string
   /** Additional classes merged into the root element. */
-  class?: any
+  class?: ClassValue
   /** Per-slot class overrides, applied to every item. */
   ui?: ComponentSlots<RadioButtonGroup>
 } & FormFieldProps
 
 export type RadioButtonGroupSlots = {
   /** The `RadioButtonGroupItem` components. */
-  default?: () => any
+  default?: () => VNode[]
   /** The group label content. Replaces the `label` prop. */
-  label?: () => any
+  label?: () => VNode[]
   /** The group description content. Replaces the `description` prop. */
-  description?: () => any
+  description?: () => VNode[]
   /** The error content, rendered while invalid. Replaces the `errorMessage` prop. */
-  error?: (props: ValidationResult) => any
+  error?: (props: ValidationResult) => VNode[]
 }
 </script>
 

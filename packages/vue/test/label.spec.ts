@@ -65,7 +65,7 @@ describe('Label', () => {
     const host = document.createElement('div')
     document.body.append(host)
     host.addEventListener('mousedown', (event) => event.preventDefault(), { capture: true })
-    const onMousedown = vi.fn()
+    const onMousedown = vi.fn<(event: MouseEvent) => void>()
     const wrapper = mount(Label, {
       attrs: { onMousedown },
       slots: { default: () => 'Email' },
@@ -79,7 +79,7 @@ describe('Label', () => {
   })
 
   it('calls a user @mousedown listener exactly once per event', () => {
-    const onMousedown = vi.fn()
+    const onMousedown = vi.fn<(event: MouseEvent) => void>()
     const wrapper = mount(Label, { attrs: { onMousedown }, slots: { default: () => 'Email' } })
     const single = mousedown(wrapper.element, 1)
     expect(onMousedown).toHaveBeenCalledTimes(1)

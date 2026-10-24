@@ -70,8 +70,10 @@
 
 <script lang="ts">
 import type { Color, ColorChannel, ColorSpace } from 'reka-ui'
+import type { VNode } from 'vue'
 
 import type { ComponentSlots } from '@/types/tv'
+import type { ClassValue } from '@/utils/tv'
 
 import theme from './theme'
 
@@ -159,7 +161,7 @@ export type ColorSliderProps = {
   /** The name of the hidden input, used for form submission. Submits the channel value (e.g. `200` for hue, `0.5` for alpha), as React Aria does. */
   name?: string
   /** Additional classes merged into the root element. */
-  class?: any
+  class?: ClassValue
   /** Per-slot class overrides. */
   ui?: ComponentSlots<ColorSlider>
 }
@@ -175,11 +177,11 @@ export type ColorSliderSlotProps = {
 
 export type ColorSliderSlots = {
   /** Label content. Replaces the `label` prop. */
-  label?: () => any
+  label?: () => VNode[]
   /** Output content. Replaces the formatted value text. */
-  output?: (props: ColorSliderSlotProps) => any
+  output?: (props: ColorSliderSlotProps) => VNode[]
   /** Thumb content. */
-  thumb?: (props: ColorSliderSlotProps) => any
+  thumb?: (props: ColorSliderSlotProps) => VNode[]
 }
 
 export type ColorSliderEmits = {

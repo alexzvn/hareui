@@ -1,4 +1,6 @@
+import type { DateValue } from '@internationalized/date'
 import { CalendarDate, parseDate } from '@internationalized/date'
+import type { ComponentMountingOptions } from '@vue/test-utils'
 import { mount } from '@vue/test-utils'
 import { describe, expect, it } from 'vitest'
 import { defineComponent, nextTick, ref } from 'vue'
@@ -239,7 +241,7 @@ describe('range calendar week/day view (visibleDuration)', () => {
         locale: 'en-US',
         visibleDuration: { days: 10 },
         defaultPlaceholder: parseDate('2025-01-15'),
-        isDateUnavailable: (_d: any, anchor: any) => {
+        isDateUnavailable: (_d: DateValue, anchor: DateValue | null) => {
           anchors.push(anchor?.toString() ?? null)
           return false
         },
@@ -250,8 +252,8 @@ describe('range calendar week/day view (visibleDuration)', () => {
     await cell('9').trigger('click')
     expect(anchors.at(-1)).toBe('2025-01-09')
     await cell('12').trigger('click')
-    const value = wrapper.emitted('update:modelValue')!.at(-1)![0] as any
-    expect([value.start.toString(), value.end.toString()]).toEqual(['2025-01-09', '2025-01-12'])
+    const value = wrapper.emitted('update:modelValue')!.at(-1)![0] as DateRange
+    expect([value.start!.toString(), value.end!.toString()]).toEqual(['2025-01-09', '2025-01-12'])
     expect(cell('9').attributes('data-selection-start')).toBe('true')
     expect(cell('12').attributes('data-selection-end')).toBe('true')
   })
@@ -263,7 +265,7 @@ describe('range calendar anchor-dependent unavailable dates', () => {
       props: {
         ariaLabel: 'Trip',
         defaultPlaceholder: parseDate('2025-01-15'),
-        isDateUnavailable: (date: any, anchor: any) =>
+        isDateUnavailable: (date: DateValue, anchor: DateValue | null) =>
           anchor != null && Math.abs(date.compare(anchor)) > 7,
       },
       attachTo: document.body,
@@ -610,7 +612,7 @@ describe('RangeCalendar accessibility', () => {
   const range = { start, end: start.add({ days: 3 }) }
 
   it('passes axe idle, selected, disabled, read-only, invalid, unavailable, multi-month and week view', async () => {
-    const cases = [
+    const cases: ComponentMountingOptions<typeof RangeCalendar>['props'][] = [
       { defaultPlaceholder: start },
       { defaultValue: range, ariaLabel: 'Trip dates' },
       { defaultValue: range, disabled: true },
@@ -619,14 +621,14 @@ describe('RangeCalendar accessibility', () => {
       {
         defaultValue: range,
         minValue: new CalendarDate(2025, 1, 5),
-        isDateUnavailable: (d: CalendarDate) => d.day === 25,
+        isDateUnavailable: (d: DateValue) => d.day === 25,
       },
       { defaultValue: range, numberOfMonths: 2 },
       { defaultPlaceholder: start, visibleDuration: { weeks: 1 } },
       { defaultValue: range, yearPicker: true },
     ]
     for (const props of cases) {
-      const wrapper = mount(RangeCalendar, { props: props as any, attachTo: document.body })
+      const wrapper = mount(RangeCalendar, { props, attachTo: document.body })
       await nextTick()
       await expectAccessible(wrapper)
       wrapper.unmount()

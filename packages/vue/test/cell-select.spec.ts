@@ -41,14 +41,14 @@ describe('CellSelect', () => {
   })
 
   it('picking an option updates v-model and the value, then closes', async () => {
-    const model = ref<any>('default')
+    const model = ref<CellSelectProps['modelValue']>('default')
     const wrapper = mount(
       () =>
         h(CellSelect, {
           items: items,
           label: 'Theme',
           modelValue: model.value,
-          'onUpdate:modelValue': (v: any) => (model.value = v),
+          'onUpdate:modelValue': (v: CellSelectProps['modelValue']) => (model.value = v),
         }),
       { attachTo: document.body },
     )

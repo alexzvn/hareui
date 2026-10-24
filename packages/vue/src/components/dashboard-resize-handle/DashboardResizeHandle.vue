@@ -11,8 +11,10 @@
 
 <script lang="ts">
 import type { PrimitiveProps } from 'reka-ui'
+import type { VNode } from 'vue'
 
 import type { ComponentSlots } from '@/types/tv'
+import type { ClassValue } from '@/utils/tv'
 
 import theme from './theme'
 
@@ -25,14 +27,14 @@ export type DashboardResizeHandleProps = {
    */
   as?: PrimitiveProps['as']
   /** Additional classes merged into the root element. */
-  class?: any
+  class?: ClassValue
   /** Per-slot class overrides. */
   ui?: ComponentSlots<DashboardResizeHandle>
 }
 
 export type DashboardResizeHandleSlots = {
   /** Custom handle content. */
-  default?: () => any
+  default?: () => VNode[]
 }
 </script>
 

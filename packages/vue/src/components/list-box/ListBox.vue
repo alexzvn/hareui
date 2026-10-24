@@ -139,7 +139,10 @@
 </template>
 
 <script lang="ts">
+import type { VNode } from 'vue'
+
 import type { ComponentSlots } from '@/types/tv'
+import type { ClassValue } from '@/utils/tv'
 
 import theme from './theme'
 
@@ -164,7 +167,7 @@ export type ListBoxItem = {
    */
   variant?: 'default' | 'danger'
   /** Additional classes merged into the item element. */
-  class?: any
+  class?: ClassValue
 }
 
 export type ListBoxSection<T extends ListBoxItem = ListBoxItem> = {
@@ -230,7 +233,7 @@ export type ListBoxProps<T extends ListBoxItem = ListBoxItem> = {
    */
   loading?: boolean
   /** Additional classes merged into the root element. */
-  class?: any
+  class?: ClassValue
   /** Per-slot class overrides. */
   ui?: ComponentSlots<ListBox>
 }
@@ -244,23 +247,23 @@ export type ListBoxItemSlotProps<T extends ListBoxItem = ListBoxItem> = {
 
 export type ListBoxSlots<T extends ListBoxItem = ListBoxItem> = {
   /** Whole content of each item. Replaces leading, label, description, trailing and indicator. */
-  item?: (props: ListBoxItemSlotProps<T>) => any
+  item?: (props: ListBoxItemSlotProps<T>) => VNode[]
   /** Content before the item text (avatar, icon). */
-  'item-leading'?: (props: ListBoxItemSlotProps<T>) => any
+  'item-leading'?: (props: ListBoxItemSlotProps<T>) => VNode[]
   /** The label of each item. Replaces `item.label`. */
-  'item-label'?: (props: ListBoxItemSlotProps<T>) => any
+  'item-label'?: (props: ListBoxItemSlotProps<T>) => VNode[]
   /** The description of each item. Replaces `item.description`. */
-  'item-description'?: (props: ListBoxItemSlotProps<T>) => any
+  'item-description'?: (props: ListBoxItemSlotProps<T>) => VNode[]
   /** Content after the item text (shortcut, badge). */
-  'item-trailing'?: (props: ListBoxItemSlotProps<T>) => any
+  'item-trailing'?: (props: ListBoxItemSlotProps<T>) => VNode[]
   /** Indicator content. Defaults to an animated checkmark. */
-  indicator?: (props: ListBoxItemSlotProps<T>) => any
+  indicator?: (props: ListBoxItemSlotProps<T>) => VNode[]
   /** Section heading. Replaces `section.label`. */
-  'section-label'?: (props: { section: ListBoxSection<T> }) => any
+  'section-label'?: (props: { section: ListBoxSection<T> }) => VNode[]
   /** Rendered when `items` is empty. */
-  empty?: () => any
+  empty?: () => VNode[]
   /** Shown after the last item while `loading` is true (e.g. a Spinner). */
-  loading?: () => any
+  loading?: () => VNode[]
 }
 
 export type ListBoxEmits = {

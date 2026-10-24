@@ -24,6 +24,7 @@ import type { ValidationBehavior } from '@/components/form/context'
 import type { FormFieldProps } from '@/components/form/types'
 import type { ValidateFn } from '@/composables/useFieldValidation'
 import type { ComponentSlots, ComponentVariants } from '@/types/tv'
+import type { ClassValue } from '@/utils/tv'
 
 import theme from './theme'
 
@@ -81,7 +82,7 @@ export type InputProps = {
    */
   validationBehavior?: ValidationBehavior
   /** Additional classes merged into the root element. */
-  class?: any
+  class?: ClassValue
   /** Per-slot class overrides. */
   ui?: ComponentSlots<Input>
 } & FormFieldProps

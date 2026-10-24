@@ -1,5 +1,7 @@
+import type { ComponentMountingOptions } from '@vue/test-utils'
 import { flushPromises, mount } from '@vue/test-utils'
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest'
+import type { Component } from 'vue'
 import { h, nextTick } from 'vue'
 
 import AreaChart from '@/components/area-chart/AreaChart.vue'
@@ -28,9 +30,9 @@ const settle = async () => {
 }
 
 const mountRoot = (
-  component: any,
+  component: Component,
   props: Record<string, unknown>,
-  slots: Record<string, any> = {},
+  slots: ComponentMountingOptions<Component>['slots'] = {},
 ) => {
   return mount(component, {
     props: { data, width: WIDTH, height: HEIGHT, margin, ...props },

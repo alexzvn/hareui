@@ -46,8 +46,10 @@
 
 <script lang="ts">
 import type { PrimitiveProps } from 'reka-ui'
+import type { VNode } from 'vue'
 
 import type { ComponentSlots, ComponentVariants } from '@/types/tv'
+import type { ClassValue } from '@/utils/tv'
 
 import theme from './theme'
 
@@ -69,7 +71,7 @@ export type CardProps = {
   /** Description rendered under the title. */
   description?: string
   /** Additional classes merged into the root element. */
-  class?: any
+  class?: ClassValue
   /** Per-slot class overrides. */
   ui?: ComponentSlots<Card>
 }
@@ -79,17 +81,17 @@ export type CardSlots = {
    * Content rendered directly inside the root, before the header, without a wrapper
    * (e.g. an icon, an image, or a full-bleed background).
    */
-  leading?: () => any
+  leading?: () => VNode[]
   /** Replaces the whole header (title and description). */
-  header?: () => any
+  header?: () => VNode[]
   /** Replaces the title text. */
-  title?: () => any
+  title?: () => VNode[]
   /** Replaces the description text. */
-  description?: () => any
+  description?: () => VNode[]
   /** Card content. */
-  default?: () => any
+  default?: () => VNode[]
   /** Card footer. */
-  footer?: () => any
+  footer?: () => VNode[]
 }
 </script>
 

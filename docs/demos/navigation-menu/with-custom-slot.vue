@@ -22,7 +22,7 @@
 </template>
 
 <script setup lang="ts">
-import type { DropdownEntry, NavigationMenuItem } from '@hareui/vue'
+import type { DropdownEntry, DropdownItem, NavigationMenuItem } from '@hareui/vue'
 import { Button, Chip, Dropdown, NavigationMenu } from '@hareui/vue'
 import { Icon } from '@iconify/vue'
 import { h } from 'vue'
@@ -30,7 +30,9 @@ import { h } from 'vue'
 const icon = (name: string) => (attrs: Record<string, unknown>) =>
   h(Icon, { ...attrs, icon: `gravity-ui:${name}` })
 
-const moreItems: DropdownEntry[] = [
+type IconItem = DropdownItem & { icon: string }
+
+const moreItems: DropdownEntry<IconItem>[] = [
   { value: 'composables', label: 'Composables', icon: 'gravity-ui:database' },
   { value: 'components', label: 'Components', icon: 'gravity-ui:box' },
 ]

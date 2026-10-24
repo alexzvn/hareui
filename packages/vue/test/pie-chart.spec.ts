@@ -1,5 +1,7 @@
+import type { ComponentMountingOptions } from '@vue/test-utils'
 import { flushPromises, mount } from '@vue/test-utils'
 import { afterAll, beforeAll, describe, expect, it, vi } from 'vitest'
+import type { VNode } from 'vue'
 import { h, nextTick } from 'vue'
 
 import ChartCell from '@/components/chart/ChartCell.vue'
@@ -32,7 +34,7 @@ const settle = async () => {
   await nextTick()
 }
 
-const mountChart = (children: () => any[], props: Record<string, unknown> = {}) => {
+const mountChart = (children: () => VNode[], props: Record<string, unknown> = {}) => {
   return mount(PieChart, {
     props: { width: SIZE, height: SIZE, margin, ...props },
     slots: { default: children },
@@ -40,7 +42,7 @@ const mountChart = (children: () => any[], props: Record<string, unknown> = {}) 
   })
 }
 
-const pie = (props: Record<string, unknown> = {}, cells?: () => any[]) =>
+const pie = (props: Record<string, unknown> = {}, cells?: () => VNode[]) =>
   h(
     ChartPie,
     { data, dataKey: 'value', outerRadius: 100, isAnimationActive: false, ...props },
@@ -534,7 +536,10 @@ describe('PieChart generated mode', () => {
     { name: 'Edge', visits: 4, fill: 'red' },
   ]
 
-  const mountGenerated = (props: Record<string, unknown> = {}, slots: Record<string, any> = {}) => {
+  const mountGenerated = (
+    props: Record<string, unknown> = {},
+    slots: ComponentMountingOptions<typeof PieChart>['slots'] = {},
+  ) => {
     return mount(PieChart, {
       props: { data: browsers, index: 'name', width: SIZE, height: SIZE, margin, ...props },
       slots,

@@ -35,8 +35,10 @@
 
 <script lang="ts">
 import type { PrimitiveProps } from 'reka-ui'
+import type { VNode } from 'vue'
 
 import type { ComponentSlots } from '@/types/tv'
+import type { ClassValue } from '@/utils/tv'
 
 import theme from './theme'
 
@@ -48,9 +50,9 @@ export type BreadcrumbsItem = {
   /** The URL to link to. The last item is always the current page and renders without a link. */
   href?: string
   /** Additional classes merged into this item's `<li>` (HeroUI's `Breadcrumbs.Item` `className`). */
-  class?: any
+  class?: ClassValue
   /** Extra fields are passed through to the slots as `item`. */
-  [key: string]: any
+  [key: string]: unknown
 }
 
 export type BreadcrumbsProps<T extends BreadcrumbsItem = BreadcrumbsItem> = {
@@ -67,7 +69,7 @@ export type BreadcrumbsProps<T extends BreadcrumbsItem = BreadcrumbsItem> = {
    */
   disabled?: boolean
   /** Additional classes merged into the root element. */
-  class?: any
+  class?: ClassValue
   /** Per-slot class overrides. */
   ui?: ComponentSlots<Breadcrumbs>
 }
@@ -80,18 +82,17 @@ type ItemSlotProps<T extends BreadcrumbsItem = BreadcrumbsItem> = {
 
 export type BreadcrumbsSlots<T extends BreadcrumbsItem = BreadcrumbsItem> = {
   /** Replaces an item's label. */
-  item?: (props: ItemSlotProps<T>) => any
+  item?: (props: ItemSlotProps<T>) => VNode[]
   /**
    * Custom separator between items (HeroUI's `separator` prop). A single root element receives
    * the themed separator classes and `data-slot="breadcrumbs-separator"`.
    */
-  separator?: (props: ItemSlotProps<T>) => any
+  separator?: (props: ItemSlotProps<T>) => VNode[]
 }
 </script>
 
 <script setup lang="ts" generic="T extends BreadcrumbsItem = BreadcrumbsItem">
 import { Primitive } from 'reka-ui'
-import type { VNode } from 'vue'
 import { cloneVNode, Comment, h, isVNode, useSlots } from 'vue'
 
 import Link from '@/components/link/Link.vue'

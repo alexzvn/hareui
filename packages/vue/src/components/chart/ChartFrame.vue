@@ -31,6 +31,7 @@
 </template>
 
 <script setup lang="ts">
+import type { VNode } from 'vue'
 import { computed } from 'vue'
 
 import ChartLegend from '@/components/chart-legend/ChartLegend.vue'
@@ -54,9 +55,9 @@ const props = defineProps<{
 defineSlots<
   ChartFrameSlots & {
     /** Parts the root draws from props, under the tooltip. */
-    parts?: () => any
+    parts?: () => VNode[]
     /** The root's own default slot, and anything it draws over the tooltip. */
-    default?: () => any
+    default?: () => VNode[]
   }
 >()
 

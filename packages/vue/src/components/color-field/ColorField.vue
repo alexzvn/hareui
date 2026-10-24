@@ -73,11 +73,13 @@
 
 <script lang="ts">
 import type { Color, ColorChannel, ColorSpace } from 'reka-ui'
+import type { VNode } from 'vue'
 
 import type { ValidationBehavior } from '@/components/form/context'
 import type { FormFieldProps } from '@/components/form/types'
 import type { ValidateFn, ValidationResult } from '@/composables/useFieldValidation'
 import type { ComponentSlots } from '@/types/tv'
+import type { ClassValue } from '@/utils/tv'
 
 import theme from './theme'
 
@@ -161,22 +163,22 @@ export type ColorFieldProps = {
    */
   validationBehavior?: ValidationBehavior
   /** Additional classes merged into the root element. */
-  class?: any
+  class?: ClassValue
   /** Per-slot class overrides. */
   ui?: ComponentSlots<ColorField>
 } & FormFieldProps
 
 export type ColorFieldSlots = {
   /** Label content. Replaces the `label` prop. */
-  label?: () => any
+  label?: () => VNode[]
   /** Content rendered before the input, e.g. a `ColorSwatch`. */
-  prefix?: () => any
+  prefix?: () => VNode[]
   /** Content rendered after the input, e.g. a unit label. */
-  suffix?: () => any
+  suffix?: () => VNode[]
   /** Description content. Replaces the `description` prop. */
-  description?: () => any
+  description?: () => VNode[]
   /** Error content, rendered while invalid. Replaces the `errorMessage` prop. */
-  error?: (props: ValidationResult) => any
+  error?: (props: ValidationResult) => VNode[]
 }
 
 export type ColorFieldEmits = {

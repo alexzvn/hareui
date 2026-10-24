@@ -11,9 +11,11 @@
 
 <script lang="ts">
 import type { PrimitiveProps } from 'reka-ui'
+import type { VNode } from 'vue'
 
 import type { ExpandedValue } from '@/composables/useExpandedValues'
 import type { ComponentSlots } from '@/types/tv'
+import type { ClassValue } from '@/utils/tv'
 
 import theme from './theme'
 
@@ -40,14 +42,14 @@ export type DisclosureGroupProps = {
    */
   disabled?: boolean
   /** Additional classes merged into the root element. */
-  class?: any
+  class?: ClassValue
   /** Per-slot class overrides. */
   ui?: ComponentSlots<DisclosureGroup>
 }
 
 export type DisclosureGroupSlots = {
   /** The `Disclosure` items (and anything between them, e.g. `Separator`). */
-  default?: (props: { expanded: ExpandedValue[]; disabled: boolean }) => any
+  default?: (props: { expanded: ExpandedValue[]; disabled: boolean }) => VNode[]
 }
 
 export type DisclosureGroupEmits = {

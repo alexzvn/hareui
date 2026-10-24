@@ -29,7 +29,10 @@
 </template>
 
 <script lang="ts">
+import type { VNode } from 'vue'
+
 import type { ComponentSlots, ComponentVariants } from '@/types/tv'
+import type { ClassValue } from '@/utils/tv'
 
 import theme from './theme'
 
@@ -47,16 +50,16 @@ export type BadgeProps = {
   /** Badge variant. */
   variant?: ComponentVariants<Badge>['variant']
   /** Additional classes merged into the badge element. */
-  class?: any
+  class?: ClassValue
   /** Per-slot class overrides. */
   ui?: ComponentSlots<Badge>
 }
 
 export type BadgeSlots = {
   /** The element the badge is anchored to (HeroUI's `Badge.Anchor` children). Without it the badge renders on its own. */
-  default?: () => any
+  default?: () => VNode[]
   /** Custom badge content such as an icon, rendered without the `label` wrapper. */
-  content?: () => any
+  content?: () => VNode[]
 }
 </script>
 

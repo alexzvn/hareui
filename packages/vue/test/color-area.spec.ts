@@ -1,4 +1,5 @@
 import { mount } from '@vue/test-utils'
+import type { Color } from 'reka-ui'
 import { colorToString, parseColor } from 'reka-ui'
 import { describe, expect, it } from 'vitest'
 
@@ -183,7 +184,7 @@ describe('ColorArea', () => {
     })
     await wrapper.find(thumb).trigger('keydown', { key: 'ArrowRight' })
     const updates = wrapper.emitted('update:modelValue')!
-    expect(colorToString(updates.at(-1)![0] as any, 'hsb')).toBe('hsb(200, 51%, 50%)')
+    expect(colorToString(updates.at(-1)![0] as Color, 'hsb')).toBe('hsb(200, 51%, 50%)')
     expect(wrapper.emitted('change')).toBeTruthy()
   })
 

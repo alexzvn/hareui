@@ -68,9 +68,11 @@
 </template>
 
 <script lang="ts">
-import type { Color } from 'reka-ui'
+import type { Color, PrimitiveProps } from 'reka-ui'
+import type { VNode } from 'vue'
 
 import type { ComponentSlots, ComponentVariants } from '@/types/tv'
+import type { ClassValue } from '@/utils/tv'
 
 import theme from './theme'
 
@@ -120,11 +122,11 @@ export type ColorSwatchPickerProps = {
   /** The name of the field, used when submitting a form. */
   name?: string
   /** Element or component the root renders as. */
-  as?: any
+  as?: PrimitiveProps['as']
   /** Render the root as its single child instead of a wrapper element. */
   asChild?: boolean
   /** Additional classes merged into the root element. */
-  class?: any
+  class?: ClassValue
   /** Per-slot class overrides. */
   ui?: ComponentSlots<ColorSwatchPicker>
 }
@@ -140,9 +142,9 @@ export type ColorSwatchPickerSlotProps = {
 
 export type ColorSwatchPickerSlots = {
   /** Replaces the whole content of an item (swatch and indicator). */
-  default?: (props: ColorSwatchPickerSlotProps) => any
+  default?: (props: ColorSwatchPickerSlotProps) => VNode[]
   /** Replaces the check icon inside the indicator (always rendered, revealed by the selected state). */
-  indicator?: (props: ColorSwatchPickerSlotProps) => any
+  indicator?: (props: ColorSwatchPickerSlotProps) => VNode[]
 }
 
 export type ColorSwatchPickerEmits = {

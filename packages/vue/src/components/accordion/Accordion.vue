@@ -60,8 +60,11 @@
 </template>
 
 <script lang="ts">
+import type { VNode } from 'vue'
+
 import type { ExpandedValue } from '@/composables/useExpandedValues'
 import type { ComponentSlots, ComponentVariants } from '@/types/tv'
+import type { ClassValue } from '@/utils/tv'
 
 import theme from './theme'
 
@@ -79,7 +82,7 @@ export type AccordionItem = {
   /** Fallback body text, used when no `#content`/`[item.slot]` slot is provided. */
   content?: string
   /** Extra fields (icons, subtitles, …) are passed through to the slots as `item`. */
-  [key: string]: any
+  [key: string]: unknown
 }
 
 export type AccordionProps<T extends AccordionItem = AccordionItem> = {
@@ -110,7 +113,7 @@ export type AccordionProps<T extends AccordionItem = AccordionItem> = {
    */
   hideSeparator?: boolean
   /** Additional classes merged into the root element. */
-  class?: any
+  class?: ClassValue
   /** Per-slot class overrides. */
   ui?: ComponentSlots<Accordion>
 }
@@ -123,18 +126,18 @@ type ItemSlotProps<T extends AccordionItem = AccordionItem> = {
 
 export type AccordionSlots<T extends AccordionItem = AccordionItem> = {
   /** Rendered in the trigger before the label (e.g. an icon). */
-  leading?: (props: ItemSlotProps<T>) => any
+  leading?: (props: ItemSlotProps<T>) => VNode[]
   /** Replaces the trigger's label text. */
-  label?: (props: ItemSlotProps<T>) => any
+  label?: (props: ItemSlotProps<T>) => VNode[]
   /**
    * Replaces the chevron (HeroUI's `Accordion.Indicator` children). A single root element
    * receives the themed indicator classes and `data-expanded`, so it rotates like the default.
    */
-  indicator?: (props: ItemSlotProps<T>) => any
+  indicator?: (props: ItemSlotProps<T>) => VNode[]
   /** Body content for every item, overridden by `[item.slot]`. */
-  content?: (props: ItemSlotProps<T>) => any
+  content?: (props: ItemSlotProps<T>) => VNode[]
   /** Body content of the items whose `slot` names it. */
-  [slot: string]: ((props: ItemSlotProps<T>) => any) | undefined
+  [slot: string]: ((props: ItemSlotProps<T>) => VNode[]) | undefined
 }
 
 export type AccordionEmits = {
@@ -144,7 +147,6 @@ export type AccordionEmits = {
 </script>
 
 <script setup lang="ts" generic="T extends AccordionItem = AccordionItem">
-import type { VNode } from 'vue'
 import {
   cloneVNode,
   Comment,

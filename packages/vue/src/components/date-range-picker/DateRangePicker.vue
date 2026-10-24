@@ -164,6 +164,7 @@
 <script lang="ts">
 import type { DateValue } from '@internationalized/date'
 import type { DateRangePickerRootProps } from 'reka-ui'
+import type { VNode } from 'vue'
 
 import type { DateInputGroupProps } from '@/components/date-input-group/DateInputGroup.vue'
 import dateInputGroupTheme from '@/components/date-input-group/theme'
@@ -173,6 +174,7 @@ import type { DateRange } from '@/components/range-calendar/RangeCalendar.vue'
 import type { ValidateFn, ValidationResult } from '@/composables/useFieldValidation'
 import type { PortalTarget } from '@/config'
 import type { ComponentSlots } from '@/types/tv'
+import type { ClassValue } from '@/utils/tv'
 
 import theme from './theme'
 
@@ -298,7 +300,7 @@ export type DateRangePickerProps = {
    */
   defaultOpen?: boolean
   /** Additional classes merged into the root element. */
-  class?: any
+  class?: ClassValue
   /** Per-slot class overrides. `group`, `inputContainer`, `input` and `segment` are the internal `date-input-group`'s. */
   ui?: ComponentSlots<DateRangePicker> & { group?: ComponentSlots<DateInputGroup>['base'] } & Pick<
       ComponentSlots<DateInputGroup>,
@@ -317,17 +319,17 @@ export type DateRangePickerCalendarSlotProps = {
 
 export type DateRangePickerSlots = {
   /** Label content. Replaces the `label` prop. */
-  label?: () => any
+  label?: () => VNode[]
   /** Replaces the default calendar icon inside the trigger. */
-  indicator?: () => any
+  indicator?: () => VNode[]
   /** Replaces the default ` - ` between the start and end inputs. */
-  separator?: () => any
+  separator?: () => VNode[]
   /** Description content. Replaces the `description` prop. */
-  description?: () => any
+  description?: () => VNode[]
   /** Error content, rendered while invalid. Replaces the `errorMessage` prop. */
-  error?: (props: ValidationResult) => any
+  error?: (props: ValidationResult) => VNode[]
   /** Replaces the default `RangeCalendar` rendered inside the popover. */
-  calendar?: (props: DateRangePickerCalendarSlotProps) => any
+  calendar?: (props: DateRangePickerCalendarSlotProps) => VNode[]
 }
 
 export type DateRangePickerEmits = {
@@ -459,8 +461,8 @@ const hasTimeGranularity = computed(
 )
 const withTime = (date: DateValue, current: DateValue | undefined): DateValue => {
   if (current && 'hour' in current)
-    return (current as any).set({
-      era: (date as any).era,
+    return current.set({
+      era: date.era,
       year: date.year,
       month: date.month,
       day: date.day,

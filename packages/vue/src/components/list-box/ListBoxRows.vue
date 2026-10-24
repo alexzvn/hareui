@@ -102,8 +102,10 @@
 import { ListboxGroup, ListboxGroupLabel, ListboxVirtualizer } from 'reka-ui'
 // Internal: the rows of a filtered ListBox (options, sections, separators, empty state, load-more sentinel), rendered
 // inside an existing Reka listbox root. Used by ComboBox and Autocomplete. Not exported.
-import type { Component } from 'vue'
+import type { Component, VNode } from 'vue'
 import { computed, onBeforeUnmount, ref, useTemplateRef, watch } from 'vue'
+
+import type { ClassValue } from '@/utils/tv'
 
 import type { ListBoxItemSlotProps, ListBoxSection, ListBoxValue } from './ListBox.vue'
 import type { CollectionBlock, CollectionRow } from './listBoxCollection'
@@ -118,13 +120,13 @@ const props = defineProps<{
   /** Slot class functions of the listBox theme. */
   classes: Record<
     'item' | 'indicator' | 'section' | 'header' | 'separator' | 'emptyState',
-    (options?: { variant?: string; class?: any }) => string
+    (options?: { variant?: string; class?: ClassValue }) => string
   >
   /** Reka item primitive (ComboBox: `ComboboxItem`). */
   component?: Component
   virtualFocus?: { keyboard: boolean }
   /** Extra attributes / listeners per option. */
-  optionAttrs?: (row: CollectionRow) => Record<string, any>
+  optionAttrs?: (row: CollectionRow) => Record<string, unknown>
   /** Text of the empty state when there's no `#empty` slot; nothing renders when both are absent. */
   emptyText?: string
   loading?: boolean
@@ -133,15 +135,15 @@ const props = defineProps<{
 }>()
 const emit = defineEmits<{ loadMore: [] }>()
 const slots = defineSlots<{
-  item?: (props: ListBoxItemSlotProps) => any
-  'item-leading'?: (props: ListBoxItemSlotProps) => any
-  'item-label'?: (props: ListBoxItemSlotProps) => any
-  'item-description'?: (props: ListBoxItemSlotProps) => any
-  'item-trailing'?: (props: ListBoxItemSlotProps) => any
-  indicator?: (props: ListBoxItemSlotProps) => any
-  'section-label'?: (props: { section: ListBoxSection }) => any
-  empty?: () => any
-  loading?: () => any
+  item?: (props: ListBoxItemSlotProps) => VNode[]
+  'item-leading'?: (props: ListBoxItemSlotProps) => VNode[]
+  'item-label'?: (props: ListBoxItemSlotProps) => VNode[]
+  'item-description'?: (props: ListBoxItemSlotProps) => VNode[]
+  'item-trailing'?: (props: ListBoxItemSlotProps) => VNode[]
+  indicator?: (props: ListBoxItemSlotProps) => VNode[]
+  'section-label'?: (props: { section: ListBoxSection }) => VNode[]
+  empty?: () => VNode[]
+  loading?: () => VNode[]
 }>()
 
 const itemSlots = [

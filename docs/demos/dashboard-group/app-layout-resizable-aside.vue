@@ -151,5 +151,7 @@ const items: NavigationMenuItem[] = [
   { label: 'Home', icon: gravityIcon('house'), href: '#' },
 ]
 
-const breadcrumbs: BreadcrumbsItem[] = [{ label: 'Inbox', icon: 'gravity-ui:envelope' }]
+type Crumb = BreadcrumbsItem & { icon: string }
+
+const breadcrumbs: Crumb[] = [{ label: 'Inbox', icon: 'gravity-ui:envelope' }]
 </script>

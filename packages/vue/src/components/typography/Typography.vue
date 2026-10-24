@@ -20,8 +20,10 @@
 
 <script lang="ts">
 import type { PrimitiveProps } from 'reka-ui'
+import type { VNode } from 'vue'
 
 import type { ComponentSlots, ComponentVariants } from '@/types/tv'
+import type { ClassValue } from '@/utils/tv'
 
 import theme from './theme'
 
@@ -77,14 +79,14 @@ export type TypographyProps = {
    */
   prose?: boolean
   /** Additional classes merged into the root element. */
-  class?: any
+  class?: ClassValue
   /** Per-slot class overrides. */
   ui?: ComponentSlots<Typography>
 }
 
 export type TypographySlots = {
   /** Typography content. */
-  default?: () => any
+  default?: () => VNode[]
 }
 </script>
 

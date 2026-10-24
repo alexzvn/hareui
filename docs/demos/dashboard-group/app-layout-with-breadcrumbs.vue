@@ -148,7 +148,7 @@ const footerItems: NavigationMenuItem[] = [
 // (`@max-xl`) the middle ancestors fold into a "…" crumb that links to the nearest one and names the hidden path
 // in a tooltip, under 24rem (`@max-sm`, a phone) Home folds into it too, and under 20rem (`@max-xs`) only the
 // current page is left.
-const breadcrumbs: BreadcrumbsItem[] = [
+const breadcrumbs: (BreadcrumbsItem & { collapsed?: string; icon?: string })[] = [
   { label: 'Home', href: '#', class: '@max-sm:hidden' },
   {
     label: 'Design System',

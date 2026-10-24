@@ -103,9 +103,10 @@
 </template>
 
 <script lang="ts">
-import type { Component } from 'vue'
+import type { Component, VNode } from 'vue'
 
 import type { ComponentSlots } from '@/types/tv'
+import type { ClassValue } from '@/utils/tv'
 
 import theme from './theme'
 
@@ -131,7 +132,7 @@ export type CheckboxButtonGroupItemProps = {
   /** The id of the item's checkbox. Generated when omitted. */
   id?: string
   /** Additional classes merged into the card. */
-  class?: any
+  class?: ClassValue
   /** Per-slot class overrides for this item. Merged after the group's `ui`. */
   ui?: Omit<ComponentSlots<typeof theme>, 'base'>
 }
@@ -145,15 +146,15 @@ export type CheckboxButtonGroupItemSlotProps = {
 
 export type CheckboxButtonGroupItemSlots = {
   /** Extra content rendered after the title and description. */
-  default?: (props: CheckboxButtonGroupItemSlotProps) => any
+  default?: (props: CheckboxButtonGroupItemSlotProps) => VNode[]
   /** The title content. Replaces the `label` prop. */
-  label?: (props: CheckboxButtonGroupItemSlotProps) => any
+  label?: (props: CheckboxButtonGroupItemSlotProps) => VNode[]
   /** The description content. Replaces the `description` prop. */
-  description?: (props: CheckboxButtonGroupItemSlotProps) => any
+  description?: (props: CheckboxButtonGroupItemSlotProps) => VNode[]
   /** The leading icon. Replaces the `icon` prop. */
-  icon?: (props: CheckboxButtonGroupItemSlotProps) => any
+  icon?: (props: CheckboxButtonGroupItemSlotProps) => VNode[]
   /** A custom indicator icon, shown in accent color while the item is selected. Replaces the default checkbox. */
-  indicator?: (props: CheckboxButtonGroupItemSlotProps) => any
+  indicator?: (props: CheckboxButtonGroupItemSlotProps) => VNode[]
 }
 </script>
 
@@ -201,7 +202,7 @@ const { id, labelId, descriptionId, hasLabel, hasDescription, describedBy } = us
 })
 const extraId = computed(() => `${id.value}-extra`)
 
-const cls = (slot: keyof NonNullable<CheckboxButtonGroupItemProps['ui']>, extra?: any) => {
+const cls = (slot: keyof NonNullable<CheckboxButtonGroupItemProps['ui']>, extra?: ClassValue) => {
   return [group.uiOverrides.value?.[slot], props.ui?.[slot], extra]
 }
 </script>

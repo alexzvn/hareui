@@ -92,11 +92,14 @@
 </template>
 
 <script lang="ts">
+import type { VNode } from 'vue'
+
 import checkboxTheme from '@/components/checkbox/theme'
 import type { ValidationBehavior } from '@/components/form/context'
 import type { FormFieldProps } from '@/components/form/types'
 import type { ValidateFn, ValidationResult } from '@/composables/useFieldValidation'
 import type { ComponentSlots, ComponentVariants } from '@/types/tv'
+import type { ClassValue } from '@/utils/tv'
 
 import theme from './theme'
 
@@ -166,25 +169,25 @@ export type CheckboxGroupProps<T extends CheckboxGroupItem = CheckboxGroupItem> 
   /** Base id of the group; item controls get `${id}-${index}`. Generated when omitted. */
   id?: string
   /** Additional classes merged into the root element. */
-  class?: any
+  class?: ClassValue
   /** Per-slot class overrides. `item` is each checkbox's root; `content`, `control` and `indicator` are the `checkbox` theme's. */
   ui?: ComponentSlots<CheckboxGroup> &
-    Pick<ComponentSlots<Checkbox>, 'content' | 'control' | 'indicator'> & { item?: any }
+    Pick<ComponentSlots<Checkbox>, 'content' | 'control' | 'indicator'> & { item?: ClassValue }
 } & FormFieldProps
 
 export type CheckboxGroupSlots<T extends CheckboxGroupItem = CheckboxGroupItem> = {
   /** The group label content. Replaces the `label` prop. */
-  label?: () => any
+  label?: () => VNode[]
   /** The group description content. Replaces the `description` prop. */
-  description?: () => any
+  description?: () => VNode[]
   /** The error content, rendered while invalid. Replaces the `errorMessage` prop. */
-  error?: (props: ValidationResult) => any
+  error?: (props: ValidationResult) => VNode[]
   /** The label of each item. Replaces `item.label`. */
-  'item-label'?: (props: { item: T; index: number }) => any
+  'item-label'?: (props: { item: T; index: number }) => VNode[]
   /** The description of each item. Replaces `item.description`. */
-  'item-description'?: (props: { item: T; index: number }) => any
+  'item-description'?: (props: { item: T; index: number }) => VNode[]
   /** Custom content inside each control. Replaces the default checkmark. */
-  indicator?: (props: { item: T; checked: boolean }) => any
+  indicator?: (props: { item: T; checked: boolean }) => VNode[]
 }
 </script>
 

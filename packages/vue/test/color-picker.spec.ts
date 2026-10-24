@@ -1,4 +1,5 @@
 import { mount as rawMount } from '@vue/test-utils'
+import type { Color } from 'reka-ui'
 import { colorToString, parseColor } from 'reka-ui'
 import { afterEach, describe, expect, it } from 'vitest'
 import { h, nextTick } from 'vue'
@@ -13,11 +14,11 @@ import ColorSwatch from '@/components/color-swatch/ColorSwatch.vue'
 import { expectAccessible } from './a11y'
 
 const wrappers: { unmount: () => void }[] = []
-const mount = ((...a: any[]) => {
-  const w = (rawMount as any)(...a)
-  wrappers.push(w)
-  return w
-}) as typeof rawMount
+const mount: typeof rawMount = (...args) => {
+  const wrapper = rawMount(...args)
+  wrappers.push(wrapper)
+  return wrapper
+}
 
 const trigger = () => document.body.querySelector<HTMLElement>('[data-slot=color-picker-trigger]')!
 const popover = () => document.body.querySelector('[data-slot=color-picker-popover]')
@@ -191,7 +192,7 @@ describe('ColorPicker', () => {
     input.dispatchEvent(new Event('blur', { bubbles: true }))
     await nextTick()
     const emitted = w.emitted('update:modelValue')!
-    expect(colorToString(emitted.at(-1)![0] as any, 'hex')).toBe('#ff0000')
+    expect(colorToString(emitted.at(-1)![0] as Color, 'hex')).toBe('#ff0000')
     expect(swatchColor()).toMatch(/red/i)
   })
 
@@ -217,7 +218,7 @@ describe('ColorPicker', () => {
       props: { defaultOpen: true },
       slots: {
         trigger: slots.trigger,
-        default: (p: any) => {
+        default: (p: { color: Color; close: () => void }) => {
           close = p.close
           return h('i')
         },

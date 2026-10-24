@@ -367,8 +367,10 @@
 
 <script lang="ts">
 import type { DateValue } from '@internationalized/date'
-import type { ClassValue } from 'tailwind-variants'
 
+import type { ClassValue } from '@/utils/tv'
+
+import type { CalendarDurationValue } from './CalendarDurationView.vue'
 import type { PageBehavior, VisibleDuration } from './useCalendarDurationView'
 
 type CalendarKind = 'calendar' | 'range'
@@ -447,7 +449,7 @@ export type CalendarMonthShellExposed = {
 }
 </script>
 
-<script setup lang="ts" generic="TValue">
+<script setup lang="ts" generic="TValue extends CalendarDurationValue">
 import {
   CalendarGrid,
   CalendarGridBody,
@@ -597,7 +599,9 @@ const durationValue = shallowRef(props.selection.value ?? props.selection.defaul
 const durationCurrentValue = computed(() =>
   props.selection.value !== undefined ? props.selection.value : durationValue.value,
 )
-const onDurationSelect = (value: TValue) => {
+// The week/day view picks a value of the shape `kind` implies, which is the root's `TValue`
+const onDurationSelect = (picked: CalendarDurationValue) => {
+  const value = picked as TValue
   durationValue.value = value
   emit('select', value)
 }

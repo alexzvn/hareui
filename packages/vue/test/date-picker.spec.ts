@@ -1,4 +1,5 @@
 import { CalendarDate } from '@internationalized/date'
+import type { ComponentMountingOptions } from '@vue/test-utils'
 import { mount } from '@vue/test-utils'
 import { describe, expect, it } from 'vitest'
 
@@ -301,16 +302,19 @@ describe('DatePicker accessibility', () => {
       .join(' ')
 
   const open = async (
-    props: Record<string, unknown> = { label: 'Due date', defaultValue: date },
+    props: ComponentMountingOptions<typeof DatePicker>['props'] = {
+      label: 'Due date',
+      defaultValue: date,
+    },
   ) => {
-    const wrapper = mount(DatePicker, { props: props as any, attachTo: document.body })
+    const wrapper = mount(DatePicker, { props, attachTo: document.body })
     await wrapper.get(trigger).trigger('click')
     await flush()
     return wrapper
   }
 
   it('passes axe idle, filled with description, aria-labelled, invalid with error, disabled and read-only', async () => {
-    const cases = [
+    const cases: ComponentMountingOptions<typeof DatePicker>['props'][] = [
       { label: 'Due date' },
       { label: 'Due date', description: 'Pick a weekday', defaultValue: date },
       { 'aria-label': 'Due date' },
@@ -319,7 +323,7 @@ describe('DatePicker accessibility', () => {
       { label: 'Due date', readonly: true, defaultValue: date },
     ]
     for (const props of cases) {
-      const wrapper = mount(DatePicker, { props: props as any, attachTo: document.body })
+      const wrapper = mount(DatePicker, { props, attachTo: document.body })
       await expectAccessible(wrapper)
       wrapper.unmount()
     }

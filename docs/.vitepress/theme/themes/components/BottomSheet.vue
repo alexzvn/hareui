@@ -47,6 +47,7 @@ import {
   DialogTitle,
   VisuallyHidden,
 } from 'reka-ui'
+import type { VNode } from 'vue'
 import { ref, watch } from 'vue'
 
 const SHEET_HEIGHT = 600 // Total height of the sheet
@@ -60,7 +61,7 @@ const props = defineProps<{
   isOpen: boolean
 }>()
 const emit = defineEmits<{ 'update:isOpen': [isOpen: boolean] }>()
-defineSlots<{ default?: () => any }>()
+defineSlots<{ default?: () => VNode[] }>()
 
 const y = ref(SNAP_OFFSET)
 const isDragging = ref(false)

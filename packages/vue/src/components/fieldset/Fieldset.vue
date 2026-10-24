@@ -56,8 +56,10 @@
 
 <script lang="ts">
 import type { PrimitiveProps } from 'reka-ui'
+import type { VNode } from 'vue'
 
 import type { ComponentSlots } from '@/types/tv'
+import type { ClassValue } from '@/utils/tv'
 
 import theme from './theme'
 
@@ -79,20 +81,20 @@ export type FieldsetProps = {
    */
   disabled?: boolean
   /** Additional classes merged into the root element. */
-  class?: any
+  class?: ClassValue
   /** Per-slot class overrides. */
   ui?: ComponentSlots<Fieldset>
 }
 
 export type FieldsetSlots = {
   /** The legend content. Replaces the `legend` prop. */
-  legend?: () => any
+  legend?: () => VNode[]
   /** The description content. Replaces the `description` prop. */
-  description?: () => any
+  description?: () => VNode[]
   /** Form fields, rendered inside the field group. */
-  default?: () => any
+  default?: () => VNode[]
   /** Action buttons or helper text below the fields. */
-  actions?: () => any
+  actions?: () => VNode[]
 }
 </script>
 

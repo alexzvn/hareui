@@ -1,6 +1,7 @@
-import type { ClassValue } from 'tailwind-variants'
 import type { ComputedRef, InjectionKey } from 'vue'
 import { computed, inject, onScopeDispose, provide, shallowReactive } from 'vue'
+
+import type { ClassValue } from '@/utils/tv'
 
 /** Per-datum style overrides set by `ChartCell`. */
 export type ChartCellStyle = {

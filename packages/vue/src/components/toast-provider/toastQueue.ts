@@ -1,6 +1,7 @@
-import type { ClassValue } from 'tailwind-variants'
 import type { VNodeChild } from 'vue'
 import { markRaw, reactive } from 'vue'
+
+import type { ClassValue } from '@/utils/tv'
 
 // How long a closing toast stays mounted for its exit animation, in milliseconds.
 const DEFAULT_EXIT_DURATION = 300

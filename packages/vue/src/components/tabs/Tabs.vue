@@ -171,7 +171,10 @@
 </template>
 
 <script lang="ts">
+import type { VNode } from 'vue'
+
 import type { ComponentSlots, ComponentVariants } from '@/types/tv'
+import type { ClassValue } from '@/utils/tv'
 
 import theme from './theme'
 
@@ -227,20 +230,20 @@ export type TabsProps<T extends TabsItem = TabsItem> = {
    */
   separator?: boolean
   /** Additional classes merged into the root element. */
-  class?: any
+  class?: ClassValue
   /** Per-slot class overrides. */
   ui?: ComponentSlots<Tabs>
 }
 
 export type TabsSlots<T extends TabsItem = TabsItem> = {
   /** Replaces a tab's label. */
-  tab?: (props: { item: T; index: number; selected: boolean }) => any
+  tab?: (props: { item: T; index: number; selected: boolean }) => VNode[]
   /** Fallback panel content for every item, overridden by `[item.slot]`. */
-  content?: (props: { item: T; index: number }) => any
+  content?: (props: { item: T; index: number }) => VNode[]
   /** Panel content of the items whose `slot` names it. */
   [slot: string]:
-    | ((props: { item: T; index: number; selected: boolean }) => any)
-    | ((props: { item: T; index: number }) => any)
+    | ((props: { item: T; index: number; selected: boolean }) => VNode[])
+    | ((props: { item: T; index: number }) => VNode[])
     | undefined
 }
 </script>

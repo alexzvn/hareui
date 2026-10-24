@@ -15,8 +15,10 @@
 
 <script lang="ts">
 import type { Color } from 'reka-ui'
+import type { VNode } from 'vue'
 
 import type { ComponentSlots, ComponentVariants } from '@/types/tv'
+import type { ClassValue } from '@/utils/tv'
 
 import theme from './theme'
 
@@ -41,14 +43,14 @@ export type ColorSwatchProps = {
    */
   size?: ComponentVariants<ColorSwatch>['size']
   /** Additional classes merged into the root element. */
-  class?: any
+  class?: ClassValue
   /** Per-slot class overrides. */
   ui?: ComponentSlots<ColorSwatch>
 }
 
 export type ColorSwatchSlots = {
   /** Replaces the swatch content. Receives the resolved color as a CSS string and its alpha channel (0–1). */
-  default?: (props: { color: string; alpha: number }) => any
+  default?: (props: { color: string; alpha: number }) => VNode[]
 }
 </script>
 

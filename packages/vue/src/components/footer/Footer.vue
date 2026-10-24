@@ -30,8 +30,10 @@
 
 <script lang="ts">
 import type { PrimitiveProps } from 'reka-ui'
+import type { VNode } from 'vue'
 
 import type { ComponentSlots } from '@/types/tv'
+import type { ClassValue } from '@/utils/tv'
 
 import theme from './theme'
 
@@ -44,22 +46,22 @@ export type FooterProps = {
    */
   as?: PrimitiveProps['as']
   /** Additional classes merged into the root element. */
-  class?: any
+  class?: ClassValue
   /** Per-slot class overrides. */
   ui?: ComponentSlots<Footer>
 }
 
 export type FooterSlots = {
   /** Content aligned to the start on large screens (e.g. copyright). */
-  left?: () => any
+  left?: () => VNode[]
   /** Centered content (e.g. links). */
-  default?: () => any
+  default?: () => VNode[]
   /** Content aligned to the end on large screens (e.g. social buttons). */
-  right?: () => any
+  right?: () => VNode[]
   /** Full-width area above the footer bar (e.g. link columns). Only rendered when filled. */
-  top?: () => any
+  top?: () => VNode[]
   /** Full-width area below the footer bar. Only rendered when filled. */
-  bottom?: () => any
+  bottom?: () => VNode[]
 }
 </script>
 

@@ -1,9 +1,11 @@
 import type { VueWrapper } from '@vue/test-utils'
 import { flushPromises, mount } from '@vue/test-utils'
 import { afterEach, describe, expect, it } from 'vitest'
+import type { VNodeChild } from 'vue'
 import { h, nextTick, ref } from 'vue'
 
 import CheckboxButtonGroup from '@/components/checkbox-button-group/CheckboxButtonGroup.vue'
+import type { CheckboxButtonGroupItemSlotProps } from '@/components/checkbox-button-group/CheckboxButtonGroupItem.vue'
 import CheckboxButtonGroupItem from '@/components/checkbox-button-group/CheckboxButtonGroupItem.vue'
 import Fieldset from '@/components/fieldset/Fieldset.vue'
 import Form from '@/components/form/Form.vue'
@@ -25,7 +27,7 @@ afterEach(() => {
 // `props` may be a getter so a controlled `modelValue` is read during render and stays reactive
 const mountGroup = (
   props: Record<string, unknown> | (() => Record<string, unknown>) = {},
-  itemSlots: Record<string, any> = {},
+  itemSlots: Record<string, (props: CheckboxButtonGroupItemSlotProps) => VNodeChild> = {},
 ) => {
   wrapper = mount(
     () =>

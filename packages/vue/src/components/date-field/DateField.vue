@@ -56,6 +56,7 @@
 
 <script lang="ts">
 import type { DateFieldRootProps, DateValue } from 'reka-ui'
+import type { VNode } from 'vue'
 
 import type { DateInputGroupProps } from '@/components/date-input-group/DateInputGroup.vue'
 import dateInputGroupTheme from '@/components/date-input-group/theme'
@@ -63,6 +64,7 @@ import type { ValidationBehavior } from '@/components/form/context'
 import type { FormFieldProps } from '@/components/form/types'
 import type { ValidateFn, ValidationResult } from '@/composables/useFieldValidation'
 import type { ComponentSlots } from '@/types/tv'
+import type { ClassValue } from '@/utils/tv'
 
 import theme from './theme'
 
@@ -161,7 +163,7 @@ export type DateFieldProps = {
    */
   validationBehavior?: ValidationBehavior
   /** Additional classes merged into the root element. */
-  class?: any
+  class?: ClassValue
   /** Per-slot class overrides. `group`, `input`, `segment`, `prefix` and `suffix` are the internal `date-input-group`'s. */
   ui?: ComponentSlots<DateField> & { group?: ComponentSlots<DateInputGroup>['base'] } & Pick<
       ComponentSlots<DateInputGroup>,
@@ -171,15 +173,15 @@ export type DateFieldProps = {
 
 export type DateFieldSlots = {
   /** Label content. Replaces the `label` prop. */
-  label?: () => any
+  label?: () => VNode[]
   /** Prefix content, rendered before the segments (e.g. an icon). */
-  prefix?: () => any
+  prefix?: () => VNode[]
   /** Suffix content, rendered after the segments (e.g. an icon). */
-  suffix?: () => any
+  suffix?: () => VNode[]
   /** Description content. Replaces the `description` prop. */
-  description?: () => any
+  description?: () => VNode[]
   /** Error content, rendered while invalid. Replaces the `errorMessage` prop. */
-  error?: (props: ValidationResult) => any
+  error?: (props: ValidationResult) => VNode[]
 }
 
 export type DateFieldEmits = {

@@ -1,5 +1,6 @@
 import { flushPromises, mount } from '@vue/test-utils'
 import { describe, expect, it } from 'vitest'
+import type { VNode } from 'vue'
 import { h, nextTick } from 'vue'
 
 import BarChart from '@/components/bar-chart/BarChart.vue'
@@ -84,7 +85,7 @@ const data = [
   { name: 'B', low: 20, high: 20 },
 ]
 
-const mountChart = (children: () => any[], props: Record<string, unknown> = {}) => {
+const mountChart = (children: () => VNode[], props: Record<string, unknown> = {}) => {
   return mount(BarChart, {
     props: { data, width: WIDTH, height: HEIGHT, margin, ...props },
     slots: { default: children },

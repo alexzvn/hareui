@@ -12,6 +12,8 @@
 </template>
 
 <script lang="ts">
+import type { VNode } from 'vue'
+
 import type { ValidationBehavior, ValidationErrors } from './context'
 import type {
   FormData,
@@ -96,7 +98,7 @@ export type FormSlotProps = {
 
 export type FormSlots = {
   /** Fields and buttons. */
-  default?: (props: FormSlotProps) => any
+  default?: (props: FormSlotProps) => VNode[]
 }
 </script>
 

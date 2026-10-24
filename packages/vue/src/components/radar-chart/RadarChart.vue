@@ -42,6 +42,8 @@
 </template>
 
 <script lang="ts">
+import type { VNode } from 'vue'
+
 import type { ChartLegendProps } from '@/components/chart-legend/ChartLegend.vue'
 import type { ChartTooltipContentEntry } from '@/components/chart-tooltip/ChartTooltipContent.vue'
 import type {
@@ -60,6 +62,7 @@ import type {
 } from '@/components/chart/series-config'
 import type { ChartDatum, ChartDotProps, ChartMargin } from '@/components/chart/types'
 import type { ComponentSlots } from '@/types/tv'
+import type { ClassValue } from '@/utils/tv'
 
 import theme from './theme'
 
@@ -172,27 +175,27 @@ export type RadarChartProps<T extends object = ChartDatum> = {
    */
   endAngle?: number
   /** Additional classes merged into the root element. */
-  class?: any
+  class?: ClassValue
   /** Per-slot class overrides. */
   ui?: ComponentSlots<RadarChartTheme>
 }
 
 export type RadarChartSlots = {
   /** Chart parts: `ChartPolarGrid`, `ChartPolarAngleAxis`, `ChartPolarRadiusAxis`, `ChartRadar`, `ChartTooltip`. With `index` or `series`, extra parts drawn over the generated ones. */
-  default?: () => any
+  default?: () => VNode[]
   /** Replaces each spoke label. Render SVG (`<text>`, `<g>`). */
   'angle-tick'?: ChartPolarAngleAxisSlots['tick']
   /** Replaces the tooltip panel. */
-  tooltip?: (props: ChartTooltipSlotProps) => any
+  tooltip?: (props: ChartTooltipSlotProps) => VNode[]
   /** Content under the tooltip rows. */
   'tooltip-footer'?: (props: {
     label?: number | string
     payload: ChartTooltipContentEntry[]
-  }) => any
+  }) => VNode[]
   /** Replaces the legend. */
-  legend?: (props: { items: ChartLegendItem[]; toggle: (key: string) => void }) => any
+  legend?: (props: { items: ChartLegendItem[]; toggle: (key: string) => void }) => VNode[]
   /** Replaces each legend row. */
-  'legend-item'?: (props: { item: ChartLegendItem; index: number; toggle: () => void }) => any
+  'legend-item'?: (props: { item: ChartLegendItem; index: number; toggle: () => void }) => VNode[]
 }
 </script>
 

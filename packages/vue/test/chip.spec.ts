@@ -1,6 +1,6 @@
 import { mount } from '@vue/test-utils'
 import { describe, expect, it } from 'vitest'
-import { h } from 'vue'
+import { createTextVNode, h } from 'vue'
 
 import type { ChipProps, ChipSlots } from '@/components/chip/Chip.vue'
 import Chip from '@/components/chip/Chip.vue'
@@ -13,15 +13,18 @@ describe('Chip', () => {
     [
       'with slotted content and a decorative leading icon',
       { color: 'success', variant: 'soft' },
-      { default: () => 'Active', leading: () => h('svg', { 'aria-hidden': 'true' }) },
+      {
+        default: () => [createTextVNode('Active')],
+        leading: () => [h('svg', { 'aria-hidden': 'true' })],
+      },
     ],
     [
       'with a status dot and trailing content',
       { color: 'danger', size: 'sm' },
       {
-        leading: () => h('span', { 'aria-hidden': 'true' }),
-        default: () => 'Failed',
-        trailing: () => '3',
+        leading: () => [h('span', { 'aria-hidden': 'true' })],
+        default: () => [createTextVNode('Failed')],
+        trailing: () => [createTextVNode('3')],
       },
     ],
   ])('is accessible %s', async (_, props, slots) => {

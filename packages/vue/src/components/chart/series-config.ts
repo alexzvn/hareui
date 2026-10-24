@@ -1,4 +1,4 @@
-import type { ClassValue } from 'tailwind-variants'
+import type { ClassValue } from '@/utils/tv'
 
 import type { ChartRadius } from './shapes'
 import type { ChartCurveType, ChartDotProps, ChartLayout, ChartMargin } from './types'
@@ -182,7 +182,7 @@ export const inferValueKeys = (data: readonly object[], index?: string): string[
 
 /** Map and array forms to `[key, config]` pairs, in series order. */
 export const normalizeSeriesInput = <S extends object>(
-  series: ChartSeriesInput<any, S>,
+  series: ChartSeriesInput<object, S>,
 ): Array<[key: string, config: Partial<S>]> => {
   if (Array.isArray(series)) {
     return series.map((entry: string | (S & { key: string })) => {

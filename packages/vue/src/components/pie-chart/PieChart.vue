@@ -25,6 +25,8 @@
 </template>
 
 <script lang="ts">
+import type { VNode } from 'vue'
+
 import type { ChartLegendProps } from '@/components/chart-legend/ChartLegend.vue'
 import type { ChartTooltipContentEntry } from '@/components/chart-tooltip/ChartTooltipContent.vue'
 import type { ChartTooltipProps, ChartTooltipSlotProps } from '@/components/chart/ChartTooltip.vue'
@@ -37,6 +39,7 @@ import type {
 } from '@/components/chart/series-config'
 import type { ChartDatum, ChartMargin } from '@/components/chart/types'
 import type { ComponentSlots } from '@/types/tv'
+import type { ClassValue } from '@/utils/tv'
 
 import theme from './theme'
 
@@ -104,27 +107,27 @@ export type PieChartProps<T extends object = ChartDatum> = {
    */
   margin?: ChartMargin
   /** Additional classes merged into the root element. */
-  class?: any
+  class?: ClassValue
   /** Per-slot class overrides. */
   ui?: ComponentSlots<PieChartTheme>
 }
 
 export type PieChartSlots = {
   /** Chart parts: `ChartPie`, `ChartTooltip`, a centered `ChartLabel`, and raw SVG such as `<defs>`. With `index`, extra parts drawn over the generated pie. */
-  default?: () => any
+  default?: () => VNode[]
   /** HTML centered in the pie, e.g. a total inside a donut. */
-  center?: (props: ChartPolarCenterSlotProps) => any
+  center?: (props: ChartPolarCenterSlotProps) => VNode[]
   /** Replaces the tooltip panel. */
-  tooltip?: (props: ChartTooltipSlotProps) => any
+  tooltip?: (props: ChartTooltipSlotProps) => VNode[]
   /** Content under the tooltip rows. */
   'tooltip-footer'?: (props: {
     label?: number | string
     payload: ChartTooltipContentEntry[]
-  }) => any
+  }) => VNode[]
   /** Replaces the legend. */
-  legend?: (props: { items: ChartLegendItem[]; toggle: (key: string) => void }) => any
+  legend?: (props: { items: ChartLegendItem[]; toggle: (key: string) => void }) => VNode[]
   /** Replaces each legend row. */
-  'legend-item'?: (props: { item: ChartLegendItem; index: number; toggle: () => void }) => any
+  'legend-item'?: (props: { item: ChartLegendItem; index: number; toggle: () => void }) => VNode[]
 }
 </script>
 

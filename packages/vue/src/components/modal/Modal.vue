@@ -101,8 +101,11 @@
 </template>
 
 <script lang="ts">
+import type { VNode } from 'vue'
+
 import type { PortalTarget } from '@/config'
 import type { ComponentSlots, ComponentVariants } from '@/types/tv'
+import type { ClassValue } from '@/utils/tv'
 
 import theme from './theme'
 
@@ -151,30 +154,30 @@ export type ModalProps = {
    */
   portal?: PortalTarget
   /** Additional classes merged into the dialog element. */
-  class?: any
+  class?: ClassValue
   /** Per-slot class overrides. */
   ui?: ComponentSlots<Modal>
 }
 
 export type ModalSlots = {
   /** The trigger element. Omit to control the modal purely via `v-model:open`. */
-  default?: (props: { open: boolean }) => any
+  default?: (props: { open: boolean }) => VNode[]
   /** Replaces the whole header (icon and title). */
-  header?: () => any
+  header?: () => VNode[]
   /** Icon rendered before the title in the header. */
-  icon?: () => any
+  icon?: () => VNode[]
   /** Replaces the title text. */
-  title?: () => any
+  title?: () => VNode[]
   /** Supporting text after the title, linked to the dialog as its description. Pass one element (e.g. a `<p>`). */
-  description?: () => any
+  description?: () => VNode[]
   /** The dialog body. */
-  body?: (props: { close: () => void }) => any
+  body?: (props: { close: () => void }) => VNode[]
   /** The dialog footer (actions). */
-  footer?: (props: { close: () => void }) => any
+  footer?: (props: { close: () => void }) => VNode[]
   /** Replaces the default close button. */
-  close?: (props: { close: () => void }) => any
+  close?: (props: { close: () => void }) => VNode[]
   /** Replaces the entire dialog content (header, body, footer, close trigger). */
-  content?: (props: { close: () => void }) => any
+  content?: (props: { close: () => void }) => VNode[]
 }
 
 export type ModalEmits = {

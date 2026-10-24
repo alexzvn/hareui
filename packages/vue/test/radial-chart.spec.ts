@@ -1,5 +1,7 @@
+import type { ComponentMountingOptions } from '@vue/test-utils'
 import { flushPromises, mount } from '@vue/test-utils'
 import { afterAll, beforeAll, describe, expect, it, vi } from 'vitest'
+import type { VNode } from 'vue'
 import { h, nextTick } from 'vue'
 
 import ChartCell from '@/components/chart/ChartCell.vue'
@@ -27,7 +29,7 @@ const settle = async () => {
   await nextTick()
 }
 
-const mountChart = (children: () => any[], props: Record<string, unknown> = {}) => {
+const mountChart = (children: () => VNode[], props: Record<string, unknown> = {}) => {
   return mount(RadialChart, {
     props: { data, width: SIZE, height: SIZE, margin, ...props },
     slots: { default: children },
@@ -42,7 +44,7 @@ const hover = async (wrapper: ReturnType<typeof mountChart>, clientX: number, cl
   await settle()
 }
 
-const bar = (props: Record<string, unknown> = {}, cells?: () => any[]) =>
+const bar = (props: Record<string, unknown> = {}, cells?: () => VNode[]) =>
   h(
     ChartRadialBar,
     { dataKey: 'value', isAnimationActive: false, ...props },
@@ -287,7 +289,10 @@ describe('RadialChart generated mode', () => {
     { name: 'Exercise', progress: 80 },
   ]
 
-  const mountGenerated = (props: Record<string, unknown> = {}, slots: Record<string, any> = {}) => {
+  const mountGenerated = (
+    props: Record<string, unknown> = {},
+    slots: ComponentMountingOptions<typeof RadialChart>['slots'] = {},
+  ) => {
     return mount(RadialChart, {
       props: { data: goals, index: 'name', width: SIZE, height: SIZE, margin, ...props },
       slots,
@@ -295,7 +300,7 @@ describe('RadialChart generated mode', () => {
     })
   }
 
-  const mountComposed = (children: () => any[], props: Record<string, unknown> = {}) => {
+  const mountComposed = (children: () => VNode[], props: Record<string, unknown> = {}) => {
     return mount(RadialChart, {
       props: { data: goals, width: SIZE, height: SIZE, margin, ...props },
       slots: { default: children },

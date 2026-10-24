@@ -1,8 +1,8 @@
-import type { ClassValue } from 'tailwind-variants'
 import type { ComputedRef, InjectionKey, Slots, VNode } from 'vue'
 import { Comment, Fragment, h, inject } from 'vue'
 
 import type { TooltipProps } from '@/components/tooltip/Tooltip.vue'
+import type { ClassValue } from '@/utils/tv'
 
 import type { NavigationMenuItem, NavigationMenuProps } from './NavigationMenu.vue'
 import type theme from './theme'

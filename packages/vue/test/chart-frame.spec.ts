@@ -1,6 +1,7 @@
+import type { ComponentMountingOptions } from '@vue/test-utils'
 import { flushPromises, mount } from '@vue/test-utils'
 import { afterAll, beforeAll, describe, expect, it, vi } from 'vitest'
-import type { Component } from 'vue'
+import type { Component, VNode } from 'vue'
 import { h, nextTick } from 'vue'
 
 import BarChart from '@/components/bar-chart/BarChart.vue'
@@ -102,7 +103,10 @@ describe('chart frame', () => {
   afterAll(() => vi.unstubAllGlobals())
 
   describe.each(cases)('$name', ({ component, props, keys, series }) => {
-    const mountChart = (extra: Record<string, unknown> = {}, slots: Record<string, any> = {}) => {
+    const mountChart = (
+      extra: Record<string, unknown> = {},
+      slots: ComponentMountingOptions<Component>['slots'] = {},
+    ) => {
       return mount(component, {
         props: { width: SIZE, height: SIZE, margin, ...props, ...extra },
         slots,
@@ -192,7 +196,7 @@ describe('chart frame', () => {
     const pie = (props: Record<string, unknown>) =>
       h(ChartPie, { data, dataKey: 'value', isAnimationActive: false, ...props })
 
-    const mountPies = (pies: () => any[]) => {
+    const mountPies = (pies: () => VNode[]) => {
       return mount(PieChart, {
         props: { width: SIZE, height: SIZE, margin },
         slots: {

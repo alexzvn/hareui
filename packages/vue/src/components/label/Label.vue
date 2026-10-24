@@ -12,8 +12,10 @@
 
 <script lang="ts">
 import type { PrimitiveProps } from 'reka-ui'
+import type { VNode } from 'vue'
 
 import type { ComponentSlots } from '@/types/tv'
+import type { ClassValue } from '@/utils/tv'
 
 import theme from './theme'
 
@@ -43,14 +45,14 @@ export type LabelProps = {
    */
   required?: boolean
   /** Additional classes merged into the root element. */
-  class?: any
+  class?: ClassValue
   /** Per-slot class overrides. */
   ui?: ComponentSlots<Label>
 }
 
 export type LabelSlots = {
   /** The label content. */
-  default?: () => any
+  default?: () => VNode[]
 }
 </script>
 

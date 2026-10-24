@@ -82,7 +82,7 @@ type Setup = {
 const setup = (initial: Setup = {}) => {
   const props = ref<Setup>({ ...initial })
   const model = ref<number | null | undefined>(initial.modelValue)
-  const onCommit = vi.fn()
+  const onCommit = vi.fn<() => void>()
   let value!: NumberValue
   const options: NumberValueOptions = {
     model,

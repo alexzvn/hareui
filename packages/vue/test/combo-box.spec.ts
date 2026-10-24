@@ -1,10 +1,12 @@
+import type { ComponentMountingOptions } from '@vue/test-utils'
 import { mount } from '@vue/test-utils'
 import { afterEach, describe, expect, it, vi } from 'vitest'
 import type { ComponentOptions } from 'vue'
 import { h, nextTick } from 'vue'
 
-import type { ComboBoxValue } from '@/components/combo-box/ComboBox.vue'
+import type { ComboBoxValidationValue, ComboBoxValue } from '@/components/combo-box/ComboBox.vue'
 import ComboBox from '@/components/combo-box/ComboBox.vue'
+import type { ListBoxEntry } from '@/components/list-box/ListBox.vue'
 
 import { expectAccessible } from './a11y'
 
@@ -27,7 +29,10 @@ afterEach(() => {
   document.body.innerHTML = ''
 })
 
-const setup = (props: Record<string, any> = {}, slots?: Record<string, any>) => {
+const setup = (
+  props: ComponentMountingOptions<typeof ComboBox>['props'] = {},
+  slots?: ComponentMountingOptions<typeof ComboBox>['slots'],
+) => {
   const wrapper = mount(ComboBox, {
     props: { items, label: 'Animal', ...props },
     slots,
@@ -91,7 +96,8 @@ describe('ComboBox', () => {
   it('with v-model, picking an option fills the input before blur', async () => {
     const { wrapper, input } = setup({
       modelValue: 'cat',
-      'onUpdate:modelValue': (value: ComboBoxValue) => wrapper.setProps({ modelValue: value }),
+      'onUpdate:modelValue': (value: ComboBoxValue | undefined) =>
+        wrapper.setProps({ modelValue: value }),
     })
     expect(input.element.value).toBe('Cat')
     await input.trigger('focus')
@@ -200,7 +206,7 @@ describe('ComboBox', () => {
       defaultValue: 'cat',
       validationBehavior: 'aria',
       description: 'Pick one',
-      validate: (v: { selectedKey: string | null }) => (v.selectedKey === 'cat' ? 'No cats' : true),
+      validate: (v: ComboBoxValidationValue) => (v.selectedKey === 'cat' ? 'No cats' : true),
     })
     await flush()
     expect(wrapper.get('[data-slot=combo-box]').attributes('data-invalid')).toBe('true')
@@ -212,7 +218,7 @@ describe('ComboBox', () => {
   })
 
   it('renders sections, separators, the #empty slot and a custom indicator', async () => {
-    const sections = [
+    const sections: ListBoxEntry[] = [
       { type: 'section', label: 'A', items: [{ value: 'a1', label: 'Apple' }] },
       { type: 'separator' },
       { type: 'section', label: 'B', items: [{ value: 'b1', label: 'Banana' }] },
@@ -446,7 +452,7 @@ describe('ComboBox', () => {
     })
 
     it('has no axe violations open with sections and separators', async () => {
-      const sections = [
+      const sections: ListBoxEntry[] = [
         { type: 'section', label: 'A', items: [{ value: 'a1', label: 'Apple' }] },
         { type: 'separator' },
         { type: 'section', label: 'B', items: [{ value: 'b1', label: 'Banana' }] },

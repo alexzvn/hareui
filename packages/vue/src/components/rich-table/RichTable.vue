@@ -253,10 +253,10 @@ import type {
 } from '@tanstack/vue-table'
 import type { Virtualizer, VirtualizerOptions } from '@tanstack/vue-virtual'
 import type { PrimitiveProps } from 'reka-ui'
-import type { ClassValue } from 'tailwind-variants'
 import type { AriaAttributes, ComponentPublicInstance, StyleValue, WatchOptions } from 'vue'
 
 import type { ComponentSlots, ComponentVariants } from '@/types/tv'
+import type { ClassValue } from '@/utils/tv'
 
 import theme from './theme'
 

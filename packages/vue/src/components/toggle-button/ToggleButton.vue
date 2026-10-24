@@ -44,8 +44,10 @@
 
 <script lang="ts">
 import type { PrimitiveProps } from 'reka-ui'
+import type { VNode } from 'vue'
 
 import type { ComponentSlots, ComponentVariants } from '@/types/tv'
+import type { ClassValue } from '@/utils/tv'
 
 import theme from './theme'
 
@@ -87,7 +89,7 @@ export type ToggleButtonProps = {
   /** Identifies the button inside a `ToggleButtonGroup` (HeroUI's `id`); the group's `v-model` holds these values. */
   value?: string
   /** Additional classes merged into the root element. */
-  class?: any
+  class?: ClassValue
   /** Per-slot class overrides. */
   ui?: ComponentSlots<ToggleButton>
 }
@@ -99,7 +101,7 @@ export type ToggleButtonSlotProps = {
 
 export type ToggleButtonSlots = {
   /** The button content. */
-  default?: (props: ToggleButtonSlotProps) => any
+  default?: (props: ToggleButtonSlotProps) => VNode[]
 }
 </script>
 

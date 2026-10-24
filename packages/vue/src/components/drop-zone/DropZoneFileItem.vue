@@ -94,9 +94,10 @@
 </template>
 
 <script lang="ts">
-import type { ClassValue } from 'tailwind-variants'
+import type { VNode } from 'vue'
 
 import type { ComponentSlots } from '@/types/tv'
+import type { ClassValue } from '@/utils/tv'
 
 import theme from './theme'
 import type { DropZoneFileColor } from './utils'
@@ -143,7 +144,7 @@ export type DropZoneFileItemProps = {
    */
   retryable?: boolean
   /** Additional classes merged into the item element. */
-  class?: any
+  class?: ClassValue
   /** Per-slot class overrides. Merged after the surrounding DropZone's `ui`. */
   ui?: FileItemSlots
 }
@@ -161,17 +162,17 @@ export type DropZoneFileItemSlotProps = {
 
 export type DropZoneFileItemSlots = {
   /** Replaces the file format icon. */
-  icon?: (props: DropZoneFileItemSlotProps) => any
+  icon?: (props: DropZoneFileItemSlotProps) => VNode[]
   /** Replaces the file name. */
-  name?: (props: DropZoneFileItemSlotProps) => any
+  name?: (props: DropZoneFileItemSlotProps) => VNode[]
   /** Replaces the meta line content (the formatted size by default). */
-  meta?: (props: DropZoneFileItemSlotProps) => any
+  meta?: (props: DropZoneFileItemSlotProps) => VNode[]
   /** Extra content below the meta line and progress bar, e.g. an error message or a retry button. */
-  default?: (props: DropZoneFileItemSlotProps) => any
+  default?: (props: DropZoneFileItemSlotProps) => VNode[]
   /** Replaces the retry button label. */
-  retry?: (props: DropZoneFileItemSlotProps) => any
+  retry?: (props: DropZoneFileItemSlotProps) => VNode[]
   /** Replaces the remove button icon. */
-  remove?: (props: DropZoneFileItemSlotProps) => any
+  remove?: (props: DropZoneFileItemSlotProps) => VNode[]
 }
 </script>
 

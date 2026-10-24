@@ -6,6 +6,7 @@ import type { ComponentOptions } from 'vue'
 import { defineComponent, h, nextTick, reactive, ref } from 'vue'
 import * as z from 'zod'
 
+import type { FormSubmitEvent } from '@/components/form'
 import Form from '@/components/form/Form.vue'
 import type { NumberStepperProps } from '@/components/number-stepper/NumberStepper.vue'
 import NumberStepper from '@/components/number-stepper/NumberStepper.vue'
@@ -181,7 +182,7 @@ describe('NumberStepper', () => {
 
   it('joins a Form: schema errors block submit and route to the field by name', async () => {
     const state = reactive({ guests: 1 })
-    const onSubmit = vi.fn()
+    const onSubmit = vi.fn<(event: FormSubmitEvent<unknown>) => void>()
     const schema = z.object({ guests: z.number().min(2, 'At least 2 guests') })
     const wrapper = mount(
       () =>

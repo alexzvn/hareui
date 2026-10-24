@@ -107,8 +107,11 @@
 </template>
 
 <script lang="ts">
+import type { VNode } from 'vue'
+
 import type { PortalTarget } from '@/config'
 import type { ComponentSlots, ComponentVariants } from '@/types/tv'
+import type { ClassValue } from '@/utils/tv'
 
 import theme from './theme'
 
@@ -157,26 +160,26 @@ export type DrawerProps = {
    */
   portal?: PortalTarget
   /** Additional classes merged into the dialog (panel) element. */
-  class?: any
+  class?: ClassValue
   /** Per-slot class overrides. */
   ui?: ComponentSlots<Drawer>
 }
 
 export type DrawerSlots = {
   /** The trigger element. Omit to control the drawer purely via `v-model:open`. */
-  default?: (props: { open: boolean }) => any
+  default?: (props: { open: boolean }) => VNode[]
   /** Replaces the whole header (title). */
-  header?: () => any
+  header?: () => VNode[]
   /** Replaces the title text. */
-  title?: () => any
+  title?: () => VNode[]
   /** The drawer body (scrollable; drag-to-dismiss is excluded from it). */
-  body?: (props: { close: () => void }) => any
+  body?: (props: { close: () => void }) => VNode[]
   /** The drawer footer (actions). */
-  footer?: (props: { close: () => void }) => any
+  footer?: (props: { close: () => void }) => VNode[]
   /** Replaces the default close button. */
-  close?: (props: { close: () => void }) => any
+  close?: (props: { close: () => void }) => VNode[]
   /** Replaces the entire drawer content (handle, header, body, footer, close trigger). */
-  content?: (props: { close: () => void }) => any
+  content?: (props: { close: () => void }) => VNode[]
 }
 
 export type DrawerEmits = {

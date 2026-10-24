@@ -18,8 +18,11 @@ export type DialogShellOptions = {
     portal?: PortalTarget
     dismissible?: boolean
   }
-  /** The component's slots (`useSlots()`); reads `header` and `title`. */
-  slots: { header?: Slot<any>; title?: Slot<any> }
+  /**
+   * The component's slots (`useSlots()`); reads `header` and `title`. Only their presence is read, so `Slot<never>`
+   * accepts any slot props.
+   */
+  slots: { header?: Slot<never>; title?: Slot<never> }
   /** The `DialogContent` instance (the component's `useTemplateRef`). */
   dialogContent: Readonly<ShallowRef<{ $el: HTMLElement } | null>>
   emit: (event: 'update:open', value: boolean) => void

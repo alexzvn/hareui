@@ -29,9 +29,7 @@
       </div>
     </template>
     <template #status-cell="{ row }">
-      <Chip :color="statusColorMap[row.status as Status]" size="sm" variant="soft">{{
-        row.status
-      }}</Chip>
+      <Chip :color="statusColorMap[row.status]" size="sm" variant="soft">{{ row.status }}</Chip>
     </template>
     <template #actions-cell="{ row }">
       <div class="flex items-center gap-1">

@@ -30,7 +30,10 @@
 </template>
 
 <script lang="ts">
+import type { VNode } from 'vue'
+
 import type { ComponentSlots, ComponentVariants } from '@/types/tv'
+import type { ClassValue } from '@/utils/tv'
 
 import theme from './theme'
 
@@ -53,14 +56,14 @@ export type CloseButtonProps = {
    */
   ariaLabel?: string
   /** Additional classes merged into the root element. */
-  class?: any
+  class?: ClassValue
   /** Per-slot class overrides. */
   ui?: ComponentSlots<CloseButton>
 }
 
 export type CloseButtonSlots = {
   /** Replaces the default close icon. */
-  default?: () => any
+  default?: () => VNode[]
 }
 </script>
 

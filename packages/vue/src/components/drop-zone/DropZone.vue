@@ -115,10 +115,13 @@
 </template>
 
 <script lang="ts">
+import type { VNode } from 'vue'
+
 import type { ValidationBehavior } from '@/components/form/context'
 import type { FormFieldProps } from '@/components/form/types'
 import type { ValidateFn, ValidationResult } from '@/composables/useFieldValidation'
 import type { ComponentSlots } from '@/types/tv'
+import type { ClassValue } from '@/utils/tv'
 
 import theme from './theme'
 
@@ -186,7 +189,7 @@ export type DropZoneProps = {
   /** The id of the area's focusable button; the file input gets `<id>-input`. Generated when omitted. */
   id?: string
   /** Additional classes merged into the root element. */
-  class?: any
+  class?: ClassValue
   /** Per-slot class overrides. The file keys also style the file lists and items inside the drop zone. */
   ui?: ComponentSlots<DropZone>
 } & FormFieldProps
@@ -207,17 +210,17 @@ export type DropZoneFilesSlotProps = {
 
 export type DropZoneSlots = {
   /** The area icon. Replaces the default upload icon. */
-  icon?: (props: DropZoneSlotProps) => any
+  icon?: (props: DropZoneSlotProps) => VNode[]
   /** The label content. Replaces the `label` prop. */
-  label?: (props: DropZoneSlotProps) => any
+  label?: (props: DropZoneSlotProps) => VNode[]
   /** The description content. Replaces the `description` prop. */
-  description?: (props: DropZoneSlotProps) => any
+  description?: (props: DropZoneSlotProps) => VNode[]
   /** Replaces the picker button. Call `open` from your own button or link. */
-  trigger?: (props: DropZoneSlotProps & { open: () => void }) => any
+  trigger?: (props: DropZoneSlotProps & { open: () => void }) => VNode[]
   /** Rendered below the area. Replaces the built-in file list, e.g. to show upload progress. */
-  files?: (props: DropZoneFilesSlotProps) => any
+  files?: (props: DropZoneFilesSlotProps) => VNode[]
   /** The error content, rendered while invalid. Replaces the `errorMessage` prop. */
-  error?: (props: ValidationResult) => any
+  error?: (props: ValidationResult) => VNode[]
 }
 
 export type DropZoneEmits = {

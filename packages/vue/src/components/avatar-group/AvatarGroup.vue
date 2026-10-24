@@ -9,6 +9,7 @@ import type { VNode } from 'vue'
 
 import type { AvatarProps } from '@/components/avatar/Avatar.vue'
 import type { ComponentSlots, ComponentVariants } from '@/types/tv'
+import type { ClassValue } from '@/utils/tv'
 
 import theme from './theme'
 
@@ -37,7 +38,7 @@ export type AvatarGroupProps = {
    */
   overlap?: ComponentVariants<AvatarGroup>['overlap']
   /** Additional classes merged into the root element. */
-  class?: any
+  class?: ClassValue
   /** Per-slot class overrides. */
   ui?: ComponentSlots<AvatarGroup>
 }
@@ -49,7 +50,7 @@ export type AvatarGroupSlots = {
    * Content of an explicit overflow-count avatar (e.g. `+9` for a known total). It is not
    * truncated by `max` and replaces the automatic count.
    */
-  count?: () => any
+  count?: () => VNode[]
 }
 </script>
 

@@ -1,4 +1,5 @@
 import { Time } from '@internationalized/date'
+import type { ComponentMountingOptions } from '@vue/test-utils'
 import { mount } from '@vue/test-utils'
 import { describe, expect, it } from 'vitest'
 import { nextTick } from 'vue'
@@ -233,7 +234,7 @@ describe('TimeField accessibility', () => {
       .join(' ')
 
   it('passes axe idle, filled with description, aria-labelled, invalid with error, disabled, read-only, 24-hour and with seconds', async () => {
-    const cases = [
+    const cases: ComponentMountingOptions<typeof TimeField>['props'][] = [
       { label: 'Start time' },
       { label: 'Start time', description: 'Office hours only', defaultValue: time },
       { 'aria-label': 'Start time' },
@@ -244,7 +245,7 @@ describe('TimeField accessibility', () => {
       { label: 'Start time', granularity: 'second' as const, defaultValue: time },
     ]
     for (const props of cases) {
-      const wrapper = mount(TimeField, { props: props as any, attachTo: document.body })
+      const wrapper = mount(TimeField, { props, attachTo: document.body })
       await expectAccessible(wrapper)
       wrapper.unmount()
     }

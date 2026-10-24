@@ -1,8 +1,11 @@
+import type { DateValue } from '@internationalized/date'
 import { CalendarDate, parseDate } from '@internationalized/date'
+import type { VueWrapper } from '@vue/test-utils'
 import { mount } from '@vue/test-utils'
 import { describe, expect, it } from 'vitest'
 import { nextTick } from 'vue'
 
+import type { CalendarProps } from '@/components/calendar/Calendar.vue'
 import Calendar from '@/components/calendar/Calendar.vue'
 
 import { expectAccessible } from './a11y'
@@ -118,7 +121,7 @@ describe('calendar', () => {
 })
 
 describe('calendar week/day view (visibleDuration)', () => {
-  const cells = (w: { findAll: (s: string) => any[] }) => w.findAll('[data-slot=calendar-cell]')
+  const cells = (w: Pick<VueWrapper, 'findAll'>) => w.findAll('[data-slot=calendar-cell]')
 
   it('week view renders one 7-day row with a range heading, and pages by the visible weeks', async () => {
     const wrapper = mount(Calendar, {
@@ -129,15 +132,7 @@ describe('calendar week/day view (visibleDuration)', () => {
         defaultPlaceholder: parseDate('2025-01-15'),
       },
     })
-    expect(cells(wrapper).map((c: any) => c.text())).toEqual([
-      '12',
-      '13',
-      '14',
-      '15',
-      '16',
-      '17',
-      '18',
-    ])
+    expect(cells(wrapper).map((c) => c.text())).toEqual(['12', '13', '14', '15', '16', '17', '18'])
     expect(wrapper.get('[data-slot=calendar-heading]').text().replace(/\s/g, ' ')).toBe(
       'January 12 – 18, 2025',
     )
@@ -154,7 +149,7 @@ describe('calendar week/day view (visibleDuration)', () => {
         defaultPlaceholder: parseDate('2025-01-15'),
       },
     })
-    expect(cells(wrapper).map((c: any) => c.text())).toEqual(['13', '14', '15', '16', '17'])
+    expect(cells(wrapper).map((c) => c.text())).toEqual(['13', '14', '15', '16', '17'])
     expect(wrapper.findAll('[data-slot=calendar-header-cell]').map((c) => c.text())).toEqual([
       'Mon',
       'Tue',
@@ -191,12 +186,16 @@ describe('calendar week/day view (visibleDuration)', () => {
       attachTo: document.body,
     })
     await cells(wrapper)[1]!.trigger('click')
-    expect((wrapper.emitted('update:modelValue')!.at(-1)![0] as any).toString()).toBe('2025-01-13')
+    expect((wrapper.emitted('update:modelValue')!.at(-1)![0] as DateValue).toString()).toBe(
+      '2025-01-13',
+    )
     const grid = wrapper.get('[data-slot=calendar-grid]')
     for (let i = 0; i < 6; i++) await grid.trigger('keydown', { key: 'ArrowRight' })
     expect(cells(wrapper)[0]!.text()).toBe('19')
     await grid.trigger('keydown', { key: 'Enter' })
-    expect((wrapper.emitted('update:modelValue')!.at(-1)![0] as any).toString()).toBe('2025-01-19')
+    expect((wrapper.emitted('update:modelValue')!.at(-1)![0] as DateValue).toString()).toBe(
+      '2025-01-19',
+    )
     wrapper.unmount()
   })
 })
@@ -348,7 +347,7 @@ describe('Calendar accessibility', () => {
   const date = new CalendarDate(2025, 1, 15)
 
   it('passes axe idle, selected, disabled, read-only, invalid, unavailable, multi-select, multi-month and week view', async () => {
-    const cases = [
+    const cases: CalendarProps[] = [
       { defaultPlaceholder: date },
       { defaultValue: date, ariaLabel: 'Event date' },
       { defaultValue: date, disabled: true },
@@ -357,7 +356,7 @@ describe('Calendar accessibility', () => {
       {
         defaultValue: date,
         minValue: new CalendarDate(2025, 1, 5),
-        isDateUnavailable: (d: CalendarDate) => d.day === 18,
+        isDateUnavailable: (d: DateValue) => d.day === 18,
       },
       { defaultValue: [date, date.add({ days: 2 })], selectionMode: 'multiple' as const },
       { defaultValue: date, numberOfMonths: 2 },
@@ -365,7 +364,7 @@ describe('Calendar accessibility', () => {
       { defaultValue: date, yearPicker: true },
     ]
     for (const props of cases) {
-      const wrapper = mount(Calendar, { props: props as any, attachTo: document.body })
+      const wrapper = mount(Calendar, { props, attachTo: document.body })
       await nextTick()
       await expectAccessible(wrapper)
       wrapper.unmount()

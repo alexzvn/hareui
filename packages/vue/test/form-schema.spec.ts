@@ -7,7 +7,7 @@ import { afterEach, describe, expect, it, vi } from 'vitest'
 import { h, nextTick, reactive, ref } from 'vue'
 import * as z from 'zod'
 
-import type { FormErrorEvent, FormInstance } from '@/components/form'
+import type { FormError, FormErrorEvent, FormInstance, FormSubmitEvent } from '@/components/form'
 import Form from '@/components/form/Form.vue'
 import TextField from '@/components/text-field/TextField.vue'
 import type { StandardSchemaV1 } from '@/utils/form'
@@ -43,19 +43,23 @@ const submit = async (w: VueWrapper) => {
 }
 
 /** A TextField bound with v-model to `state[name]`. */
-const field = (state: Record<string, any>, name: string, props: Record<string, unknown> = {}) => {
+const field = <K extends string>(
+  state: Partial<Record<K, string | number | undefined>>,
+  name: K,
+  props: Record<string, unknown> = {},
+) => {
   return h(TextField, {
     label: name,
     name,
     modelValue: state[name],
-    'onUpdate:modelValue': (value: unknown) => {
+    'onUpdate:modelValue': (value: string | number | undefined) => {
       state[name] = value
     },
     ...props,
   })
 }
 
-const schemas: Record<string, StandardSchemaV1<any, { name: string }>> = {
+const schemas: Record<string, StandardSchemaV1<{ name: string }, { name: string }>> = {
   zod: z.object({ name: z.string().min(3, 'Too short') }),
   valibot: v.object({ name: v.pipe(v.string(), v.minLength(3, 'Too short')) }),
   typebox: Compile(Type.Object({ name: Type.String({ minLength: 3 }) })),
@@ -64,7 +68,7 @@ const schemas: Record<string, StandardSchemaV1<any, { name: string }>> = {
 describe.each(Object.entries(schemas))('schema: %s', (vendor, schema) => {
   it('blocks submit with errors routed to the field by name, then submits the validated state', async () => {
     const state = reactive({ name: 'ab' })
-    const onSubmit = vi.fn()
+    const onSubmit = vi.fn<(event: FormSubmitEvent<unknown>) => void>()
     const onError = vi.fn<(event: FormErrorEvent) => void>()
     wrapper = mount(
       () => h(Form, { schema, state, onSubmit, onError }, () => field(state, 'name')),
@@ -142,7 +146,7 @@ describe('form validation', () => {
   it('submits the schema output, or the raw state with transform false', async () => {
     const schema = z.object({ age: z.coerce.number() })
     const state = reactive({ age: '42' })
-    const onSubmit = vi.fn()
+    const onSubmit = vi.fn<(event: FormSubmitEvent<unknown>) => void>()
     const transform = ref(true)
     wrapper = mount(
       () =>
@@ -160,11 +164,13 @@ describe('form validation', () => {
   it('runs `validate` on the raw state alongside the schema; unnamed errors are form-level', async () => {
     const schema = z.object({ password: z.string().min(8, 'Min 8'), confirm: z.string() })
     const state = reactive({ password: 'short', confirm: 'other' })
-    const validate = vi.fn((s: Partial<{ password: string; confirm: string }>) => [
-      ...(s.password !== s.confirm ? [{ name: 'confirm', message: 'Passwords differ' }] : []),
-      { message: 'Form-level' },
-    ])
-    const onSubmit = vi.fn()
+    const validate = vi.fn<(s: Partial<{ password: string; confirm: string }>) => FormError[]>(
+      (s) => [
+        ...(s.password !== s.confirm ? [{ name: 'confirm', message: 'Passwords differ' }] : []),
+        { message: 'Form-level' },
+      ],
+    )
+    const onSubmit = vi.fn<(event: FormSubmitEvent<unknown>) => void>()
     let slotErrors: unknown[] = []
     wrapper = mount(
       () =>
@@ -268,7 +274,7 @@ describe('form validation', () => {
       },
     }
     const state = reactive({ name: 'taken' })
-    const onSubmit = vi.fn()
+    const onSubmit = vi.fn<(event: FormSubmitEvent<unknown>) => void>()
     wrapper = mount(() => h(Form, { schema, state, onSubmit }, () => field(state, 'name')), {
       attachTo: document.body,
     })
@@ -299,9 +305,8 @@ describe('form validation', () => {
 
   it('validates nested forms with the parent, prefixing their errors and merging their output', async () => {
     const state = reactive({ name: 'Ann', address: { city: '' } })
-    const onSubmit = vi.fn()
+    const onSubmit = vi.fn<(event: FormSubmitEvent<unknown>) => void>()
     const onError = vi.fn<(event: FormErrorEvent) => void>()
-    const address = state.address as Record<string, any>
     wrapper = mount(
       () =>
         h(Form, { schema: z.object({ name: z.string() }), state, onSubmit, onError }, () => [
@@ -318,7 +323,7 @@ describe('form validation', () => {
                   .transform((s) => s.toUpperCase()),
               }),
             },
-            () => field(address, 'city'),
+            () => field(state.address, 'city'),
           ),
         ]),
       { attachTo: document.body },
@@ -330,7 +335,7 @@ describe('form validation', () => {
     ])
     expect(onSubmit).not.toHaveBeenCalled()
 
-    address.city = 'Hanoi'
+    state.address.city = 'Hanoi'
     await submit(wrapper)
     expect(errors()).toEqual([])
     expect(onSubmit.mock.calls[0]![0].data).toEqual({ name: 'Ann', address: { city: 'HANOI' } })
@@ -408,7 +413,7 @@ describe('form validation', () => {
   })
 
   it('without state, schema or validate, submits natively', async () => {
-    const onSubmit = vi.fn()
+    const onSubmit = vi.fn<(event: FormSubmitEvent<unknown>) => void>()
     wrapper = mount(
       () =>
         h(Form, { onSubmit }, () =>

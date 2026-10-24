@@ -10,9 +10,11 @@
 
 <script lang="ts">
 import type { PrimitiveProps } from 'reka-ui'
+import type { VNode } from 'vue'
 
 import type { DashboardStorage, DashboardUnit } from '@/composables/useDashboard'
 import type { ComponentSlots } from '@/types/tv'
+import type { ClassValue } from '@/utils/tv'
 
 import theme from './theme'
 
@@ -45,14 +47,14 @@ export type DashboardGroupProps = {
    */
   unit?: DashboardUnit
   /** Additional classes merged into the root element. */
-  class?: any
+  class?: ClassValue
   /** Per-slot class overrides. */
   ui?: ComponentSlots<DashboardGroup>
 }
 
 export type DashboardGroupSlots = {
   /** The sidebars and panels. */
-  default?: () => any
+  default?: () => VNode[]
 }
 </script>
 

@@ -21,8 +21,11 @@
 </template>
 
 <script lang="ts">
+import type { VNode } from 'vue'
+
 import type { ChartTooltipPayloadEntry } from '@/components/chart/types'
 import type { ComponentSlots, ComponentVariants } from '@/types/tv'
+import type { ClassValue } from '@/utils/tv'
 
 import theme from './theme'
 
@@ -61,16 +64,16 @@ export type ChartTooltipContentProps = {
   /** Formats each series value. Also receives the row's entry, so the format can depend on its `dataKey`. Values print as given by default. */
   valueFormatter?: (value: number | string, entry: ChartTooltipContentEntry) => string
   /** Additional classes merged into the root element. */
-  class?: any
+  class?: ClassValue
   /** Per-part class overrides, also applied to composed parts. */
   ui?: ComponentSlots<ChartTooltip>
 }
 
 export type ChartTooltipContentSlots = {
   /** Manual composition with `ChartTooltipHeader` and `ChartTooltipItem`. Replaces the rows built from `payload`. */
-  default?: () => any
+  default?: () => VNode[]
   /** Content under the rows built from `payload`, e.g. a total. Not rendered when the default slot is used. */
-  footer?: (props: { label?: number | string; payload: ChartTooltipContentEntry[] }) => any
+  footer?: (props: { label?: number | string; payload: ChartTooltipContentEntry[] }) => VNode[]
 }
 </script>
 

@@ -43,7 +43,7 @@ describe('CloseButton', () => {
   })
 
   it('is focusable and fires click when enabled; disabled leaves the tab order and ignores clicks', async () => {
-    const onClick = vi.fn()
+    const onClick = vi.fn<(event: MouseEvent) => void>()
     const wrapper = mount(
       {
         render: () =>

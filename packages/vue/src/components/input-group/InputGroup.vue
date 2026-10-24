@@ -49,10 +49,13 @@
 </template>
 
 <script lang="ts">
+import type { VNode } from 'vue'
+
 import type { ValidationBehavior } from '@/components/form/context'
 import type { FormFieldProps } from '@/components/form/types'
 import type { ValidateFn } from '@/composables/useFieldValidation'
 import type { ComponentSlots, ComponentVariants } from '@/types/tv'
+import type { ClassValue } from '@/utils/tv'
 
 import theme from './theme'
 
@@ -122,16 +125,16 @@ export type InputGroupProps = {
   /** Number of visible text lines when `textarea` is set. */
   rows?: number
   /** Additional classes merged into the root element. */
-  class?: any
+  class?: ClassValue
   /** Per-slot class overrides. */
   ui?: ComponentSlots<InputGroup>
 } & FormFieldProps
 
 export type InputGroupSlots = {
   /** Content rendered before the input (icon, text or a button). Replaces the `prefix` prop. */
-  prefix?: () => any
+  prefix?: () => VNode[]
   /** Content rendered after the input (icon, text or a button). Replaces the `suffix` prop. */
-  suffix?: () => any
+  suffix?: () => VNode[]
 }
 </script>
 

@@ -32,8 +32,10 @@
 
 <script lang="ts">
 import type { PrimitiveProps } from 'reka-ui'
+import type { VNode } from 'vue'
 
 import type { ComponentSlots, ComponentVariants } from '@/types/tv'
+import type { ClassValue } from '@/utils/tv'
 
 import theme from './theme'
 
@@ -81,18 +83,18 @@ export type ButtonProps = {
    */
   pending?: boolean
   /** Additional classes merged into the root element. */
-  class?: any
+  class?: ClassValue
   /** Per-slot class overrides. */
   ui?: ComponentSlots<Button>
 }
 
 export type ButtonSlots = {
   /** Content rendered before the label. Replaces the pending spinner. */
-  leading?: (props: { pending: boolean }) => any
+  leading?: (props: { pending: boolean }) => VNode[]
   /** The button label. */
-  default?: (props: { pending: boolean }) => any
+  default?: (props: { pending: boolean }) => VNode[]
   /** Content rendered after the label. */
-  trailing?: (props: { pending: boolean }) => any
+  trailing?: (props: { pending: boolean }) => VNode[]
 }
 </script>
 

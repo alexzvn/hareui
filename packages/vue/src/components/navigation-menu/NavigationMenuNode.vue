@@ -319,7 +319,8 @@ const findAction = (entries: DropdownEntry[], value: DropdownValue): DropdownIte
 }
 
 const onAction = (value: DropdownValue) => {
-  findAction(props.item.actions ?? [], value)?.onSelect?.()
+  const onSelect = findAction(props.item.actions ?? [], value)?.onSelect
+  if (typeof onSelect === 'function') onSelect()
 }
 
 type Kind = typeof NavigationMenuTrigger | typeof AccordionTrigger | typeof NavigationMenuLink

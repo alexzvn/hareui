@@ -1,4 +1,10 @@
-import type { CalendarDate, DateDuration, DateValue, DayOfWeek } from '@internationalized/date'
+import type {
+  CalendarDate,
+  CalendarIdentifier,
+  DateDuration,
+  DateValue,
+  DayOfWeek,
+} from '@internationalized/date'
 import {
   createCalendar,
   DateFormatter,
@@ -129,7 +135,9 @@ export type UseCalendarDurationViewOptions = {
 export const useCalendarDurationView = (options: UseCalendarDurationViewOptions) => {
   const timeZone = getLocalTimeZone()
   const displayCalendar = computed(() =>
-    createCalendar(new DateFormatter(options.locale()).resolvedOptions().calendar as any),
+    createCalendar(
+      new DateFormatter(options.locale()).resolvedOptions().calendar as CalendarIdentifier,
+    ),
   )
   const duration = computed<DateDuration>(() => {
     const d = options.duration()

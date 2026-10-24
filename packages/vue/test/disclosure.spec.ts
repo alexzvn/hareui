@@ -105,7 +105,7 @@ describe('disclosure', () => {
   it("#trigger keeps the slotted element's own data-slot and can render the themed indicator", async () => {
     const wrapper = mount(Disclosure, {
       slots: {
-        trigger: ({ indicator }: { indicator: any }) =>
+        trigger: ({ indicator }: { indicator: Component }) =>
           h('button', { 'data-slot': 'button' }, ['Toggle', h(indicator, { class: 'extra' })]),
         default: () => 'Content',
       },

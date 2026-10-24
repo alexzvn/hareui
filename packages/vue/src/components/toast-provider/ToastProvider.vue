@@ -51,8 +51,11 @@
 </template>
 
 <script lang="ts">
+import type { VNode } from 'vue'
+
 import type { PortalTarget } from '@/config'
 import type { ComponentSlots, ComponentVariants } from '@/types/tv'
+import type { ClassValue } from '@/utils/tv'
 
 import theme from './theme'
 import type { ToastQueue, ToastContentValue as ToastContentValueType } from './toastQueue'
@@ -110,7 +113,7 @@ export type ToastProviderProps = {
    */
   portal?: PortalTarget
   /** Additional classes merged into the region element. */
-  class?: any
+  class?: ClassValue
   /** Per-slot class overrides, shared by every rendered toast. */
   ui?: ComponentSlots<Toast>
 }
@@ -128,7 +131,7 @@ export type ToastProviderSlots = {
     close: () => void
     titleId: string
     descriptionId: string
-  }) => any
+  }) => VNode[]
 }
 
 // Module scope (not <script setup>): withDefaults() is hoisted out of setup() and can't see setup locals.

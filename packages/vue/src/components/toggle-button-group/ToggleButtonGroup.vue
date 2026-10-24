@@ -19,9 +19,11 @@
 
 <script lang="ts">
 import type { PrimitiveProps } from 'reka-ui'
+import type { VNode } from 'vue'
 
 import type { ToggleButtonProps } from '@/components/toggle-button/ToggleButton.vue'
 import type { ComponentSlots, ComponentVariants } from '@/types/tv'
+import type { ClassValue } from '@/utils/tv'
 
 import theme from './theme'
 
@@ -79,14 +81,14 @@ export type ToggleButtonGroupProps = {
    */
   separator?: boolean
   /** Additional classes merged into the root element. */
-  class?: any
+  class?: ClassValue
   /** Per-slot class overrides. `button` is added to each ToggleButton, `separator` to each divider. */
   ui?: ComponentSlots<ToggleButtonGroup>
 }
 
 export type ToggleButtonGroupSlots = {
   /** The ToggleButtons, each with a `value`. */
-  default?: (props: { selected: string[] }) => any
+  default?: (props: { selected: string[] }) => VNode[]
 }
 </script>
 

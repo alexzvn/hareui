@@ -32,7 +32,10 @@
 </template>
 
 <script lang="ts">
+import type { VNode } from 'vue'
+
 import type { ComponentSlots } from '@/types/tv'
+import type { ClassValue } from '@/utils/tv'
 
 import theme from './theme'
 
@@ -65,7 +68,7 @@ export type DashboardPanelProps = {
    */
   resizable?: boolean
   /** Additional classes merged into the root element. */
-  class?: any
+  class?: ClassValue
   /** Per-slot class overrides. */
   ui?: ComponentSlots<DashboardPanel>
 }
@@ -84,15 +87,15 @@ export type DashboardPanelResizeHandleSlotProps = {
 
 export type DashboardPanelSlots = {
   /** Replaces the header, body and footer (use it when you don't want a scrollable, padded body). */
-  default?: () => any
+  default?: () => VNode[]
   /** Rendered above the body, e.g. a navbar. */
-  header?: () => any
+  header?: () => VNode[]
   /** The scrollable, padded body. */
-  body?: () => any
+  body?: () => VNode[]
   /** Rendered below the body. */
-  footer?: () => any
+  footer?: () => VNode[]
   /** Replaces the resize handle. Rendered only when `resizable`. */
-  'resize-handle'?: (props: DashboardPanelResizeHandleSlotProps) => any
+  'resize-handle'?: (props: DashboardPanelResizeHandleSlotProps) => VNode[]
 }
 </script>
 

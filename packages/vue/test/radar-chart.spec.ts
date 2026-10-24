@@ -1,5 +1,7 @@
+import type { ComponentMountingOptions } from '@vue/test-utils'
 import { flushPromises, mount } from '@vue/test-utils'
 import { afterAll, beforeAll, describe, expect, it, vi } from 'vitest'
+import type { VNode } from 'vue'
 import { h, nextTick } from 'vue'
 
 import ChartLabel from '@/components/chart/ChartLabel.vue'
@@ -31,7 +33,7 @@ const settle = async () => {
   await nextTick()
 }
 
-const mountChart = (children: () => any[], props: Record<string, unknown> = {}) => {
+const mountChart = (children: () => VNode[], props: Record<string, unknown> = {}) => {
   return mount(RadarChart, {
     props: { data, width: SIZE, height: SIZE, margin, ...props },
     slots: { default: children },
@@ -46,7 +48,7 @@ const hover = async (wrapper: ReturnType<typeof mountChart>, clientX: number, cl
   await settle()
 }
 
-const radar = (props: Record<string, unknown> = {}, children?: () => any[]) =>
+const radar = (props: Record<string, unknown> = {}, children?: () => VNode[]) =>
   h(ChartRadar, { dataKey: 'score', name: 'Score', isAnimationActive: false, ...props }, children)
 const angleAxis = () => h(ChartPolarAngleAxis, { dataKey: 'category' })
 
@@ -171,7 +173,7 @@ describe('RadarChart', () => {
     const wrapper = mountChart(() => [
       h(ChartPolarAngleAxis, {
         dataKey: 'category',
-        tickFormatter: (value: string) => value.toLowerCase(),
+        tickFormatter: (value: string | number) => String(value).toLowerCase(),
       }),
       radar(),
     ])
@@ -394,7 +396,10 @@ describe('RadarChart generated mode', () => {
   beforeAll(() => vi.stubGlobal('matchMedia', () => ({ matches: true })))
   afterAll(() => vi.unstubAllGlobals())
 
-  const mountGenerated = (props: Record<string, unknown> = {}, slots: Record<string, any> = {}) => {
+  const mountGenerated = (
+    props: Record<string, unknown> = {},
+    slots: ComponentMountingOptions<typeof RadarChart>['slots'] = {},
+  ) => {
     return mount(RadarChart, {
       props: { data, index: 'category', width: SIZE, height: SIZE, margin, ...props },
       slots,

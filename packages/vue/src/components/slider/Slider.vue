@@ -103,7 +103,10 @@
 </template>
 
 <script lang="ts">
+import type { VNode } from 'vue'
+
 import type { ComponentSlots } from '@/types/tv'
+import type { ClassValue } from '@/utils/tv'
 
 import theme from './theme'
 
@@ -161,16 +164,16 @@ export type SliderProps = {
   /** The id of the slider. Generated when omitted. */
   id?: string
   /** Additional classes merged into the root element. */
-  class?: any
+  class?: ClassValue
   /** Per-slot class overrides. */
   ui?: ComponentSlots<Slider>
 }
 
 export type SliderSlots = {
   /** The label content. Replaces the `label` prop. */
-  label?: () => any
+  label?: () => VNode[]
   /** The output content, showing the formatted current value(s). Replaces the default `' – '`-joined format. */
-  output?: (props: { values: number[]; formatted: string[] }) => any
+  output?: (props: { values: number[]; formatted: string[] }) => VNode[]
 }
 </script>
 

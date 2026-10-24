@@ -1,4 +1,5 @@
 import { mount, type VueWrapper } from '@vue/test-utils'
+import type { Color } from 'reka-ui'
 import { colorToString, parseColor } from 'reka-ui'
 import { describe, expect, it } from 'vitest'
 import { h, nextTick } from 'vue'
@@ -178,7 +179,7 @@ describe('ColorSwatchPicker', () => {
     const w = mount(ColorSwatchPicker, { props: { items, modelValue: parseColor('#F43F5E') } })
     expect(opts(w)[0].attributes('data-state')).toBe('checked')
     await opts(w)[1].trigger('click')
-    const emitted = w.emitted('update:modelValue')![0][0] as any
+    const emitted = w.emitted('update:modelValue')![0][0]
     expect(typeof emitted).toBe('object')
     expect(opts(w)[0].attributes('data-state')).toBe('checked')
   })
@@ -192,14 +193,14 @@ describe('ColorSwatchPicker', () => {
   })
 
   it('reads and writes the enclosing ColorPicker context', async () => {
-    const calls: any[] = []
+    const calls: Color[] = []
     const Wrapper = { setup: () => () => h(ColorSwatchPicker, { items }) }
     const w = mount(Wrapper, {
       global: {
         provide: {
           [ColorPickerContextKey as unknown as string]: {
             color: { value: parseColor('#8B5CF6') },
-            setColor: (c: any) => calls.push(c),
+            setColor: (c: Color) => calls.push(c),
           },
         },
       },

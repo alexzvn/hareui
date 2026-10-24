@@ -287,7 +287,9 @@ const footerItems: NavigationMenuItem[] = [
   { label: 'Help Center', icon: gravityIcon('circle-question'), href: '#' },
 ]
 
-const breadcrumbs: BreadcrumbsItem[] = [{ label: 'Inbox', icon: 'gravity-ui:envelope' }]
+type Crumb = BreadcrumbsItem & { icon: string }
+
+const breadcrumbs: Crumb[] = [{ label: 'Inbox', icon: 'gravity-ui:envelope' }]
 
 const avatars = {
   blue: 'https://heroui-assets.nyc3.cdn.digitaloceanspaces.com/avatars/blue.jpg',

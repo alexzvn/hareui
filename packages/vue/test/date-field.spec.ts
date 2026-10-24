@@ -1,5 +1,6 @@
 import type { DateValue } from '@internationalized/date'
 import { CalendarDate, CalendarDateTime } from '@internationalized/date'
+import type { ComponentMountingOptions } from '@vue/test-utils'
 import { mount } from '@vue/test-utils'
 import { describe, expect, it } from 'vitest'
 
@@ -244,7 +245,7 @@ describe('DateField accessibility', () => {
       .join(' ')
 
   it('passes axe idle, filled with description, aria-labelled, invalid with error, disabled, read-only, required and with time', async () => {
-    const cases = [
+    const cases: ComponentMountingOptions<typeof DateField>['props'][] = [
       { label: 'Due date' },
       { label: 'Due date', description: 'Pick a weekday', defaultValue: date },
       { 'aria-label': 'Due date' },
@@ -259,7 +260,7 @@ describe('DateField accessibility', () => {
       },
     ]
     for (const props of cases) {
-      const wrapper = mount(DateField, { props: props as any, attachTo: document.body })
+      const wrapper = mount(DateField, { props, attachTo: document.body })
       await expectAccessible(wrapper)
       wrapper.unmount()
     }
@@ -290,7 +291,7 @@ describe('DateField accessibility', () => {
 
   it('aria-label without a visible label names the group and is appended to every segment name', () => {
     const wrapper = mount(DateField, {
-      props: { 'aria-label': 'Due date' } as any,
+      attrs: { 'aria-label': 'Due date' },
       attachTo: document.body,
     })
     expect(wrapper.get('[data-slot=date-input-group]').attributes('aria-label')).toBe('Due date')

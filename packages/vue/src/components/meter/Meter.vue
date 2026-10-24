@@ -32,7 +32,10 @@
 </template>
 
 <script lang="ts">
+import type { VNode } from 'vue'
+
 import type { ComponentSlots, ComponentVariants } from '@/types/tv'
+import type { ClassValue } from '@/utils/tv'
 
 import theme from './theme'
 
@@ -78,7 +81,7 @@ export type MeterProps = {
    */
   color?: ComponentVariants<Meter>['color']
   /** Additional classes merged into the root element. */
-  class?: any
+  class?: ClassValue
   /** Per-slot class overrides. */
   ui?: ComponentSlots<Meter>
 }
@@ -92,9 +95,9 @@ export type MeterSlotProps = {
 
 export type MeterSlots = {
   /** Replaces the label text. */
-  label?: (props: MeterSlotProps) => any
+  label?: (props: MeterSlotProps) => VNode[]
   /** Replaces the value output text. */
-  output?: (props: MeterSlotProps) => any
+  output?: (props: MeterSlotProps) => VNode[]
 }
 </script>
 

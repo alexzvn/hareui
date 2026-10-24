@@ -11,8 +11,10 @@
 
 <script lang="ts">
 import type { PrimitiveProps } from 'reka-ui'
+import type { VNode } from 'vue'
 
 import type { ComponentSlots, ComponentVariants } from '@/types/tv'
+import type { ClassValue } from '@/utils/tv'
 
 import theme from './theme'
 
@@ -35,14 +37,14 @@ export type SeparatorProps = {
    */
   variant?: ComponentVariants<Separator>['variant']
   /** Additional classes merged into the root element. */
-  class?: any
+  class?: ClassValue
   /** Per-slot class overrides. */
   ui?: ComponentSlots<Separator>
 }
 
 export type SeparatorSlots = {
   /** Content rendered inside the separator (uncommon; HeroUI's separator is normally empty). */
-  default?: () => any
+  default?: () => VNode[]
 }
 </script>
 

@@ -1,5 +1,14 @@
 import type { MaybeRefOrGetter, Slot } from 'vue'
-import { computed, defineComponent, h, onBeforeUpdate, shallowRef, toValue, useId } from 'vue'
+import {
+  computed,
+  defineComponent,
+  h,
+  normalizeClass,
+  onBeforeUpdate,
+  shallowRef,
+  toValue,
+  useId,
+} from 'vue'
 
 import Description from '@/components/description/Description.vue'
 import ErrorMessage from '@/components/error-message/ErrorMessage.vue'
@@ -27,12 +36,13 @@ const VALID_RESULT: ValidationResult = {
   },
 }
 
+// `Slot<never>` accepts any slot props: the slots are only checked for presence and forwarded, never called here.
 export type FieldChromeSlots = {
-  label?: Slot<any>
-  description?: Slot<any>
-  error?: Slot<any>
+  label?: Slot<never>
+  description?: Slot<never>
+  error?: Slot<never>
   /** Read instead of `error` when `errorPart` is `'errorMessage'`. */
-  errorMessage?: Slot<any>
+  errorMessage?: Slot<never>
 }
 
 export type FieldChromeOptions = {
@@ -179,6 +189,7 @@ export const useFieldChrome = (options: FieldChromeOptions) => {
                 invalid: invalid.value,
                 required: toValue(options.required),
                 ...attrs,
+                class: normalizeClass(attrs.class),
               },
               () => h(LabelOutlet, toValue(options.slotProps), () => props.label),
             )
@@ -193,8 +204,10 @@ export const useFieldChrome = (options: FieldChromeOptions) => {
     setup(_, { attrs }) {
       return () =>
         hasDescription.value
-          ? h(Description, { ...attrs, id: descriptionId.value }, () =>
-              h(DescriptionOutlet, toValue(options.slotProps), () => props.description),
+          ? h(
+              Description,
+              { ...attrs, class: normalizeClass(attrs.class), id: descriptionId.value },
+              () => h(DescriptionOutlet, toValue(options.slotProps), () => props.description),
             )
           : null
     },
@@ -206,11 +219,11 @@ export const useFieldChrome = (options: FieldChromeOptions) => {
     inheritAttrs: false,
     setup(_, { attrs }) {
       const renderMessage = () =>
-        h(ErrorMessage, { ...attrs, id: errorId.value }, () =>
+        h(ErrorMessage, { ...attrs, class: normalizeClass(attrs.class), id: errorId.value }, () =>
           h(ErrorOutlet, null, () => props.errorMessage),
         )
       const renderFieldError = () =>
-        h(FieldError, { ...attrs, id: errorId.value }, () =>
+        h(FieldError, { ...attrs, class: normalizeClass(attrs.class), id: errorId.value }, () =>
           h(ErrorOutlet, validation.value, () => errorText.value),
         )
       const render = isMessagePart ? renderMessage : renderFieldError

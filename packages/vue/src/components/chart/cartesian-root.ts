@@ -1,7 +1,8 @@
-import type { ComputedRef, Ref } from 'vue'
+import type { ComputedRef, Ref, VNode } from 'vue'
 import { computed } from 'vue'
 
 import type { ChartLegendProps } from '@/components/chart-legend'
+import type { ClassValue } from '@/utils/tv'
 
 import type { ChartAxisTickSlotProps } from './axis'
 import type { ChartGridProps } from './ChartGrid.vue'
@@ -110,17 +111,17 @@ export type CartesianRootProps<T extends object, S extends ChartSeriesBase> = {
    */
   margin?: ChartMargin
   /** Additional classes merged into the root element. */
-  class?: any
+  class?: ClassValue
 }
 
 /** Slots shared by the cartesian roots. */
 export type CartesianRootSlots = {
   /** Chart parts (`ChartGrid`, `ChartXAxis`, series, `ChartTooltip`, …) and raw SVG such as `<defs>`. */
-  default?: () => any
+  default?: () => VNode[]
   /** Replaces each x axis tick label. Render SVG (`<text>`). */
-  'x-tick'?: (props: ChartAxisTickSlotProps) => any
+  'x-tick'?: (props: ChartAxisTickSlotProps) => VNode[]
   /** Replaces each y axis tick label. Render SVG (`<text>`). */
-  'y-tick'?: (props: ChartAxisTickSlotProps) => any
+  'y-tick'?: (props: ChartAxisTickSlotProps) => VNode[]
 } & ChartFrameSlots
 
 /** `withDefaults` values shared by the cartesian roots. */
@@ -219,7 +220,7 @@ export const useCartesianRoot = <T extends object, S extends ChartSeriesBase>(
     const series =
       props.series === undefined
         ? undefined
-        : normalizeSeriesInput<AnySeries>(props.series as ChartSeriesInput<any, AnySeries>).map(
+        : normalizeSeriesInput<AnySeries>(props.series as ChartSeriesInput<object, AnySeries>).map(
             ([key, entry]) => ({
               ...kindDefaults(options.kind(entry), sparkline),
               ...rootDefaults,

@@ -39,10 +39,13 @@
 </template>
 
 <script lang="ts">
+import type { VNode } from 'vue'
+
 import type { ValidationBehavior } from '@/components/form/context'
 import type { FormFieldProps } from '@/components/form/types'
 import type { ValidateFn, ValidationResult } from '@/composables/useFieldValidation'
 import type { ComponentSlots, ComponentVariants } from '@/types/tv'
+import type { ClassValue } from '@/utils/tv'
 
 import theme from './theme'
 
@@ -103,7 +106,7 @@ export type CellSwitchProps = {
   /** The id of the row's switch button. Generated when omitted. */
   id?: string
   /** Additional classes merged into the root element. */
-  class?: any
+  class?: ClassValue
   /** Per-slot class overrides. */
   ui?: ComponentSlots<CellSwitch>
 } & FormFieldProps
@@ -115,11 +118,11 @@ export type CellSwitchEmits = {
 
 export type CellSwitchSlots = {
   /** The content at the start of the row. Replaces the `label` prop. */
-  label?: (props: { checked: boolean }) => any
+  label?: (props: { checked: boolean }) => VNode[]
   /** The error content, rendered below the row while invalid. Replaces the `errorMessage` prop. */
-  error?: (props: ValidationResult) => any
+  error?: (props: ValidationResult) => VNode[]
   /** Icon rendered inside the switch thumb. */
-  icon?: (props: { checked: boolean }) => any
+  icon?: (props: { checked: boolean }) => VNode[]
 }
 </script>
 

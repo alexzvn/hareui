@@ -7,7 +7,10 @@
 </template>
 
 <script lang="ts">
+import type { VNode } from 'vue'
+
 import type { ComponentSlots, ComponentVariants } from '@/types/tv'
+import type { ClassValue } from '@/utils/tv'
 
 import theme from './theme'
 
@@ -20,14 +23,14 @@ export type SwitchGroupProps = {
    */
   orientation?: ComponentVariants<SwitchGroup>['orientation']
   /** Additional classes merged into the root element. */
-  class?: any
+  class?: ClassValue
   /** Per-slot class overrides. */
   ui?: ComponentSlots<SwitchGroup>
 }
 
 export type SwitchGroupSlots = {
   /** The `Switch` items to render. */
-  default?: () => any
+  default?: () => VNode[]
 }
 </script>
 

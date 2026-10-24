@@ -36,6 +36,7 @@
 </template>
 
 <script setup lang="ts">
+import type { VNode } from 'vue'
 import { computed, onBeforeUnmount, onMounted, shallowRef, useAttrs, watch, watchEffect } from 'vue'
 
 import { useChartContext } from './context'
@@ -61,8 +62,8 @@ const props = defineProps<{
 }>()
 
 defineSlots<{
-  default?: () => any
-  legend?: () => any
+  default?: () => VNode[]
+  legend?: () => VNode[]
 }>()
 
 const chart = useChartContext('ChartSurface')

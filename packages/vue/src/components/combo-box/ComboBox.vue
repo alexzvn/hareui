@@ -208,6 +208,7 @@
 
 <script lang="ts">
 import { injectComboboxRootContext, injectListboxRootContext } from 'reka-ui'
+import type { VNode } from 'vue'
 import { defineComponent } from 'vue'
 
 import type { ValidationBehavior } from '@/components/form/context'
@@ -223,6 +224,7 @@ import type { CollectionRow } from '@/components/list-box/listBoxCollection'
 import type { ValidateFn, ValidationResult } from '@/composables/useFieldValidation'
 import type { PortalTarget } from '@/config'
 import type { ComponentSlots } from '@/types/tv'
+import type { ClassValue } from '@/utils/tv'
 
 import theme from './theme'
 
@@ -340,7 +342,7 @@ export type ComboBoxProps<T extends ListBoxItem = ListBoxItem> = {
    */
   validationBehavior?: ValidationBehavior
   /** Additional classes merged into the root element. */
-  class?: any
+  class?: ClassValue
   /** Per-slot class overrides. */
   ui?: ComponentSlots<ComboBox>
 } & FormFieldProps
@@ -356,33 +358,33 @@ export type ComboBoxValueSlotProps<T extends ListBoxItem = ListBoxItem> = {
 
 export type ComboBoxSlots<T extends ListBoxItem = ListBoxItem> = {
   /** Label content. Replaces `label`. */
-  label?: () => any
+  label?: () => VNode[]
   /** Content of the selected-value element below the input (rendered in multiple mode, or whenever this slot is used). */
-  value?: (props: ComboBoxValueSlotProps<T>) => any
+  value?: (props: ComboBoxValueSlotProps<T>) => VNode[]
   /** Trigger button content. Defaults to a chevron. */
-  indicator?: (props: { open: boolean }) => any
+  indicator?: (props: { open: boolean }) => VNode[]
   /** Description content. Replaces `description`. */
-  description?: () => any
+  description?: () => VNode[]
   /** Error content, rendered while invalid. */
-  error?: (props: ValidationResult) => any
+  error?: (props: ValidationResult) => VNode[]
   /** Whole content of each option (as ListBox `#item`). */
-  item?: (props: ListBoxItemSlotProps<T>) => any
+  item?: (props: ListBoxItemSlotProps<T>) => VNode[]
   /** Content before each option's text (ListBox `#item-leading`). */
-  'item-leading'?: (props: ListBoxItemSlotProps<T>) => any
+  'item-leading'?: (props: ListBoxItemSlotProps<T>) => VNode[]
   /** Each option's label (ListBox `#item-label`). */
-  'item-label'?: (props: ListBoxItemSlotProps<T>) => any
+  'item-label'?: (props: ListBoxItemSlotProps<T>) => VNode[]
   /** Each option's description (ListBox `#item-description`). */
-  'item-description'?: (props: ListBoxItemSlotProps<T>) => any
+  'item-description'?: (props: ListBoxItemSlotProps<T>) => VNode[]
   /** Content after each option's text (ListBox `#item-trailing`). */
-  'item-trailing'?: (props: ListBoxItemSlotProps<T>) => any
+  'item-trailing'?: (props: ListBoxItemSlotProps<T>) => VNode[]
   /** Option checkmark content (ListBox `#indicator`). */
-  'item-indicator'?: (props: ListBoxItemSlotProps<T>) => any
+  'item-indicator'?: (props: ListBoxItemSlotProps<T>) => VNode[]
   /** Section heading (ListBox `#section-label`). */
-  'section-label'?: (props: { section: ListBoxSection<T> }) => any
+  'section-label'?: (props: { section: ListBoxSection<T> }) => VNode[]
   /** Rendered in the popover when no option matches and `allowsEmptyCollection` is set. */
-  empty?: () => any
+  empty?: () => VNode[]
   /** Shown after the last option while `loading` is true. */
-  loading?: () => any
+  loading?: () => VNode[]
 }
 
 export type ComboBoxEmits = {

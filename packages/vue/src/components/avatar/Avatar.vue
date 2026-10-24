@@ -31,8 +31,10 @@
 
 <script lang="ts">
 import type { AvatarImageProps } from 'reka-ui'
+import type { VNode } from 'vue'
 
 import type { ComponentSlots, ComponentVariants } from '@/types/tv'
+import type { ClassValue } from '@/utils/tv'
 
 import theme from './theme'
 
@@ -73,7 +75,7 @@ export type AvatarProps = {
    */
   variant?: ComponentVariants<Avatar>['variant']
   /** Additional classes merged into the root element. */
-  class?: any
+  class?: ClassValue
   /** Per-slot class overrides. */
   ui?: ComponentSlots<Avatar>
 }
@@ -83,9 +85,9 @@ export type AvatarSlots = {
    * Custom image component (e.g. `<NuxtImg>`). Rendered in place of the `<img>`, receiving
    * `src`, the `image` classes and the loading-state visibility. Requires `src`.
    */
-  image?: () => any
+  image?: () => VNode[]
   /** Fallback content (e.g. an icon). Defaults to the `fallback` text. */
-  fallback?: () => any
+  fallback?: () => VNode[]
 }
 
 export type AvatarEmits = {

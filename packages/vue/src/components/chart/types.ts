@@ -1,4 +1,4 @@
-import type { ClassValue } from 'tailwind-variants'
+import type { ClassValue } from '@/utils/tv'
 
 export type ChartTooltipPayloadEntry = {
   dataKey: string

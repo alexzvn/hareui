@@ -1,3 +1,4 @@
+import type { Row } from '@tanstack/vue-table'
 import { getGroupedRowModel, getPaginationRowModel } from '@tanstack/vue-table'
 import type { VueWrapper } from '@vue/test-utils'
 import { flushPromises, mount } from '@vue/test-utils'
@@ -215,7 +216,7 @@ describe('RichTable', () => {
 
   describe('row events', () => {
     it('calls onSelect on click and Enter/Space, but not for clicks on interactive elements', async () => {
-      const onSelect = vi.fn()
+      const onSelect = vi.fn<(event: Event, row: Row<Person>) => void>()
       const wrapper = mountTable({
         props: {
           data: people,
@@ -239,15 +240,15 @@ describe('RichTable', () => {
     })
 
     it('reports hover enter and leave, and context menu requests', async () => {
-      const onHover = vi.fn()
-      const onContextmenu = vi.fn()
-      const second = vi.fn()
+      const onHover = vi.fn<(event: Event, row: Row<Person> | null) => void>()
+      const onContextmenu = vi.fn<(event: Event, row: Row<Person>) => void>()
+      const second = vi.fn<(event: Event, row: Row<Person>) => void>()
       const wrapper = mountTable({
         props: { data: people, columns, onHover, onContextmenu: [onContextmenu, second] },
       })
       const row = bodyRows(wrapper)[0]!
       await row.trigger('pointerenter')
-      expect(onHover.mock.calls[0]![1].original.name).toBe('Kate')
+      expect(onHover.mock.calls[0]![1]!.original.name).toBe('Kate')
       await row.trigger('pointerleave')
       expect(onHover.mock.calls[1]![1]).toBeNull()
       await row.trigger('contextmenu')
@@ -924,7 +925,7 @@ describe('RichTable accessibility', () => {
   })
 
   it('activates a focusable row with Space, ignoring key repeats, modified keys and keys from cell controls', async () => {
-    const onSelect = vi.fn()
+    const onSelect = vi.fn<(event: Event, row: Row<Person>) => void>()
     const wrapper = mountTable({
       props: { data: people, columns: interactive, caption: 'Team', onSelect },
       attachTo: document.body,

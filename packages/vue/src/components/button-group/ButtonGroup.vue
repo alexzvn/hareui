@@ -14,9 +14,11 @@
 
 <script lang="ts">
 import type { PrimitiveProps } from 'reka-ui'
+import type { VNode } from 'vue'
 
 import type { ButtonProps } from '@/components/button/Button.vue'
 import type { ComponentSlots, ComponentVariants } from '@/types/tv'
+import type { ClassValue } from '@/utils/tv'
 
 import theme from './theme'
 
@@ -53,14 +55,14 @@ export type ButtonGroupProps = {
    */
   separator?: boolean
   /** Additional classes merged into the root element. */
-  class?: any
+  class?: ClassValue
   /** Per-slot class overrides. `button`/`buttonOutline` are added to each grouped Button, `separator` to each divider. */
   ui?: ComponentSlots<ButtonGroup>
 }
 
 export type ButtonGroupSlots = {
   /** The Buttons. Buttons placed directly in the group read its props. */
-  default?: () => any
+  default?: () => VNode[]
 }
 </script>
 

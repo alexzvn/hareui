@@ -1,5 +1,6 @@
 import { mount } from '@vue/test-utils'
 import { describe, expect, it } from 'vitest'
+import { createTextVNode } from 'vue'
 
 import type { PaginationProps, PaginationSlots } from '@/components/pagination/Pagination.vue'
 import Pagination from '@/components/pagination/Pagination.vue'
@@ -55,7 +56,10 @@ describe('Pagination accessibility', () => {
       { props: { total: 5 } },
       { props: { total: 12, ellipsis: true, defaultPage: 6 } },
       { props: { total: 5, prevLabel: '', nextLabel: '' } },
-      { props: { total: 5 }, slots: { summary: ({ page, total }) => `Page ${page} of ${total}` } },
+      {
+        props: { total: 5 },
+        slots: { summary: ({ page, total }) => [createTextVNode(`Page ${page} of ${total}`)] },
+      },
       { props: { total: 5, hidePages: true } },
       { props: { total: 5, disabled: true } },
     ]

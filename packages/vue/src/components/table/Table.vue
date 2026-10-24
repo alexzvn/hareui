@@ -222,7 +222,10 @@
 </template>
 
 <script lang="ts">
+import type { VNode } from 'vue'
+
 import type { ComponentSlots, ComponentVariants } from '@/types/tv'
+import type { ClassValue } from '@/utils/tv'
 
 import type { ColumnWidth } from './columnSizes'
 import theme from './theme'
@@ -266,7 +269,7 @@ export type TableColumn = {
   /** Whether this column shows a drag handle to resize it. */
   resizable?: boolean
   /** Additional classes merged into this column's header and body cells. */
-  class?: any
+  class?: ClassValue
 }
 
 export type TableRow = {
@@ -277,14 +280,14 @@ export type TableRow = {
   /** Whether the row is disabled: dimmed, excluded from selection and interaction. */
   disabled?: boolean
   /** Arbitrary cell values, read as `row[column.key]` unless a `#<key>-cell` slot is provided. */
-  [key: string]: any
+  [key: string]: unknown
 }
 
-export type TableProps = {
+export type TableProps<T extends TableRow = TableRow> = {
   /** Column definitions, in display order. */
   columns: TableColumn[]
   /** Row data, already sorted by the caller according to `sortDescriptor` (Table only displays the sort indicator and emits changes). */
-  rows: TableRow[]
+  rows: T[]
   /** Accessible label for the table. */
   ariaLabel?: string
   /**
@@ -318,14 +321,14 @@ export type TableProps = {
   /** Shows the `#load-more` row (a `Spinner` by default) and stops re-emitting `loadMore` while the sentinel stays visible. */
   loading?: boolean
   /** Additional classes merged into the root element. */
-  class?: any
+  class?: ClassValue
   /** Per-slot class overrides. */
   ui?: ComponentSlots<Table>
 }
 
-export type TableCellSlotProps = {
+export type TableCellSlotProps<T extends TableRow = TableRow> = {
   /** The row being rendered. */
-  row: TableRow
+  row: T
   /** The column being rendered. */
   column: TableColumn
   /** `row[column.key]`. */
@@ -349,21 +352,21 @@ export type TableHeaderSlotProps = {
   sortDirection: TableSortDirection | undefined
 }
 
-export type TableSlots = {
+export type TableSlots<T extends TableRow = TableRow> = {
   /** Header content for a column, replacing `column.label`. Named dynamically per column: `#<column.key>-header="{ column, sortDirection }"`. */
-  [slot: `${string}-header`]: ((props: TableHeaderSlotProps) => any) | undefined
+  [slot: `${string}-header`]: ((props: TableHeaderSlotProps) => VNode[]) | undefined
   /** Cell content for a column, replacing `row[column.key]`. Named dynamically per column: `#<column.key>-cell="{ row, column, value, index, depth, isExpanded, hasChildItems, toggle }"`. */
-  [slot: `${string}-cell`]: ((props: TableCellSlotProps) => any) | undefined
+  [slot: `${string}-cell`]: ((props: TableCellSlotProps<T>) => VNode[]) | undefined
   /** Content shown instead of the body when `rows` is empty. */
-  empty?: () => any
+  empty?: () => VNode[]
   /** Content of the load-more row shown while `loading`. Defaults to a `Spinner`. */
-  'load-more'?: () => any
+  'load-more'?: () => VNode[]
   /** Footer content, rendered outside the scrollable table (e.g. pagination). */
-  footer?: () => any
+  footer?: () => VNode[]
 }
 </script>
 
-<script setup lang="ts">
+<script setup lang="ts" generic="T extends TableRow = TableRow">
 import { computed, nextTick, onBeforeUnmount, ref, useId, useSlots, watch } from 'vue'
 
 import Checkbox from '@/components/checkbox/Checkbox.vue'
@@ -373,7 +376,7 @@ import { useSelectionManager } from '@/composables/useSelectionManager'
 
 import { calculateColumnSizes, DEFAULT_MIN_COLUMN_WIDTH } from './columnSizes'
 
-const props = withDefaults(defineProps<TableProps>(), {
+const props = withDefaults(defineProps<TableProps<T>>(), {
   variant: 'primary',
   selectionMode: 'none',
   hasMore: false,
@@ -389,7 +392,7 @@ const selectedKeysModel = defineModel<TableSelection>('selectedKeys')
 const expandedKeysModel = defineModel<TableSelection>('expandedKeys')
 /** Controlled sort state. Use `v-model:sort-descriptor`. */
 const sortDescriptorModel = defineModel<TableSortDescriptor | undefined>('sortDescriptor')
-defineSlots<TableSlots>()
+defineSlots<TableSlots<T>>()
 const slots = useSlots()
 
 const ui = useComponentUI('table', theme, () => ({ variant: props.variant }))
@@ -450,7 +453,7 @@ const sortDirectionFor = (column: TableColumn): TableSortDirection | undefined =
 
 /* ---------------- Row flattening (tree) ---------------- */
 type FlatRow = {
-  row: TableRow
+  row: T
   key: TableSelectionKey
   depth: number
   hasChildItems: boolean
@@ -460,12 +463,14 @@ type FlatRow = {
 const flatRows = computed<FlatRow[]>(() => {
   const acc: FlatRow[] = []
   let index = 0
-  const visit = (rows: TableRow[], depth: number) => {
+  const visit = (rows: T[], depth: number) => {
     rows.forEach((row, i) => {
       const key = row.id ?? i
       const hasChildItems = !!row.children?.length
       acc.push({ row, key, depth, hasChildItems, index: index++ })
-      if (hasChildItems && props.treeColumn && isRowExpanded(key)) visit(row.children!, depth + 1)
+      // Nested rows are rendered with the caller's row type: `children` holds rows of the same shape.
+      if (hasChildItems && props.treeColumn && isRowExpanded(key))
+        visit(row.children as T[], depth + 1)
     })
   }
   visit(props.rows, 1)

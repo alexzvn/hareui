@@ -49,9 +49,10 @@
 
 <script lang="ts">
 import type { PrimitiveProps } from 'reka-ui'
-import type { Component } from 'vue'
+import type { Component, VNode } from 'vue'
 
 import type { ComponentSlots } from '@/types/tv'
+import type { ClassValue } from '@/utils/tv'
 
 import theme from './theme'
 
@@ -84,7 +85,7 @@ export type DisclosureProps = {
    */
   disabled?: boolean
   /** Additional classes merged into the root element. */
-  class?: any
+  class?: ClassValue
   /** Per-slot class overrides. */
   ui?: ComponentSlots<Disclosure>
 }
@@ -99,11 +100,11 @@ export type DisclosureSlots = {
     open: boolean
     /** The themed chevron (HeroUI's `Disclosure.Indicator`): render it with `<component :is="indicator" />`. */
     indicator: Component
-  }) => any
+  }) => VNode[]
   /** Replaces the chevron indicator rendered inside the default trigger. */
-  indicator?: (props: { open: boolean }) => any
+  indicator?: (props: { open: boolean }) => VNode[]
   /** The disclosure's panel content. */
-  default?: () => any
+  default?: () => VNode[]
 }
 
 export type DisclosureEmits = {

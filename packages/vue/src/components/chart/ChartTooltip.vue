@@ -46,9 +46,8 @@
 </template>
 
 <script lang="ts">
-import type { ClassValue } from 'tailwind-variants'
-
 import type { ChartTooltipContentEntry, ChartTooltipContentProps } from '@/components/chart-tooltip'
+import type { ClassValue } from '@/utils/tv'
 
 import type { ChartPoint, ChartTooltipPayloadEntry } from './types'
 
