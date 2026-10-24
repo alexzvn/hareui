@@ -16,9 +16,9 @@ import type { ListBoxItem } from '@hareui/vue'
 import { Avatar, ListBox, Surface } from '@hareui/vue'
 import { Icon } from '@iconify/vue'
 
-interface User extends ListBoxItem {
+type User = {
   avatar: string
-}
+} & ListBoxItem
 
 const users: User[] = [
   {

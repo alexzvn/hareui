@@ -38,14 +38,14 @@ import type { ClassValue } from 'tailwind-variants'
 
 import type { ChartAnimationProps } from './animation'
 
-export interface ChartRadialBarBackground {
+export type ChartRadialBarBackground = {
   /** Track color. Defaults to the theme's default color. */
   fill?: string
   /** Additional classes merged into each track. */
   class?: ClassValue
 }
 
-export interface ChartRadialBarProps extends ChartAnimationProps {
+export type ChartRadialBarProps = {
   /** Key of the value in each row. */
   dataKey: string
   /**
@@ -94,9 +94,9 @@ export interface ChartRadialBarProps extends ChartAnimationProps {
   tooltipType?: 'none'
   /** Additional classes merged into the bar group. */
   class?: ClassValue
-}
+} & ChartAnimationProps
 
-export interface ChartRadialBarSlots {
+export type ChartRadialBarSlots = {
   /** `ChartCell` per ring (in data order) and `ChartLabel`. */
   default?: () => any
 }
@@ -116,10 +116,10 @@ import { deltaAngle, sectorPath, usePolarContext } from './polar'
 import { DEFAULT_SERIES_COLOR } from './series'
 import type { ChartSeries, ChartTooltipPayloadEntry } from './types'
 
-interface RadialBarSector extends ChartPolarViewBox {
+type RadialBarSector = {
   index: number
   value: number | string | undefined
-}
+} & ChartPolarViewBox
 
 const props = withDefaults(defineProps<ChartRadialBarProps>(), {
   nameKey: 'name',

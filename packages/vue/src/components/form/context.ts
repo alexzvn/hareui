@@ -15,7 +15,7 @@ export type ValidationErrors = Record<string, ValidationError>
 export type ValidationBehavior = 'native' | 'aria'
 
 /** A field event reported to the form. */
-export interface FormInputEvent {
+export type FormInputEvent = {
   type: FormInputEvents
   name: string
   /** Validate on input before the field was first left. */
@@ -27,13 +27,13 @@ export interface FormInputEvent {
 }
 
 /** A field registered with the form, so errors can point at its control. */
-export interface FormInput {
+export type FormInput = {
   id: () => string | undefined
   pattern: () => RegExp | undefined
 }
 
 /** A `nested` form, as attached to its parent. */
-export interface NestedForm {
+export type NestedForm = {
   id: string
   name?: string
   validate: (opts: { silent?: boolean; nested?: boolean; transform?: boolean }) => Promise<unknown>
@@ -44,7 +44,7 @@ export interface NestedForm {
   clear: (name?: string | RegExp) => void
 }
 
-export interface FormContext {
+export type FormContext = {
   validationBehavior: Readonly<Ref<ValidationBehavior>>
   validationErrors: Readonly<Ref<ValidationErrors | undefined>>
   /** The form's `schema` / `validate` errors. */

@@ -7,11 +7,11 @@ import { tv } from '../../packages/vue/src/utils/tv'
 type RenderRule = NonNullable<MarkdownRenderer['renderer']['rules']['fence']>
 type Token = Parameters<RenderRule>[0][number]
 
-interface CodeGroupMeta {
+type CodeGroupMeta = {
   codeGroup?: { id: string; index: number }
 }
 
-interface AnchorState {
+type AnchorState = {
   tokens: Token[]
   Token: new (type: string, tag: string, nesting: number) => Token
 }

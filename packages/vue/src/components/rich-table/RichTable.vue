@@ -273,7 +273,7 @@ export type RichTableCellContext<T extends RichTableData, D = unknown> = CellCon
 export type RichTableApi<T extends RichTableData> = Table<T>
 
 /** `meta` of a column definition: classes, styles and spans merged into its header (`th`) and body (`td`) cells. */
-export interface RichTableColumnMeta<T extends RichTableData = RichTableData, D = unknown> {
+export type RichTableColumnMeta<T extends RichTableData = RichTableData, D = unknown> = {
   class?: {
     th?: string | ((header: Header<T, D>) => string)
     td?: string | ((cell: Cell<T, D>) => string)
@@ -294,7 +294,7 @@ export interface RichTableColumnMeta<T extends RichTableData = RichTableData, D 
 }
 
 /** `meta` of the table: classes and styles merged into every body row (`tr`). */
-export interface RichTableMeta<T extends RichTableData = RichTableData> {
+export type RichTableMeta<T extends RichTableData = RichTableData> = {
   class?: {
     tr?: string | ((row: Row<T>) => string)
   }
@@ -308,7 +308,7 @@ export type RichTableColumn<T extends RichTableData, D = unknown> = ColumnDef<T,
   meta?: RichTableColumnMeta<T, D>
 }
 
-export interface RichTableProps<T extends RichTableData = RichTableData> {
+export type RichTableProps<T extends RichTableData = RichTableData> = {
   /**
    * The element or component this component should render as.
    * @defaultValue 'div'
@@ -477,7 +477,7 @@ export interface RichTableProps<T extends RichTableData = RichTableData> {
   ui?: ComponentSlots<RichTableTheme>
 }
 
-export interface RichTableSlots<T extends RichTableData = RichTableData> {
+export type RichTableSlots<T extends RichTableData = RichTableData> = {
   /** Header content of a column, replacing its `header` definition. Named per column id: `#<column-id>-header`. */
   [slot: `${string}-header`]: ((props: HeaderContext<T, unknown>) => unknown) | undefined
   /** Footer content of a column, replacing its `footer` definition. Named per column id: `#<column-id>-footer`. */

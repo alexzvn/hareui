@@ -9,7 +9,7 @@ const SITE_URL = 'https://hareui.alexzvn.me'
 const docsRoot = resolve(import.meta.dir, '..')
 const distDir = join(docsRoot, '.vitepress/dist')
 
-interface Page {
+type Page = {
   section: string
   link: SidebarLink
   url: string

@@ -63,7 +63,7 @@ import ColorBlock from './ColorBlock.vue'
 import ColorTooltip from './ColorTooltip.vue'
 import ThemeChip from './ThemeChip.vue'
 
-export interface FormFieldColors {
+export type FormFieldColors = {
   bg: string
   bgTooltip?: string
   bgHover: string

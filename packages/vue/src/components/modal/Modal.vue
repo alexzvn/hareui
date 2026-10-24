@@ -108,7 +108,7 @@ import theme from './theme'
 
 type Modal = typeof theme
 
-export interface ModalProps {
+export type ModalProps = {
   /** The controlled open state of the modal. Use with `v-model:open`. */
   open?: boolean
   /** The open state of the modal when it is initially rendered. Use when you do not need to control its open state. */
@@ -156,7 +156,7 @@ export interface ModalProps {
   ui?: ComponentSlots<Modal>
 }
 
-export interface ModalSlots {
+export type ModalSlots = {
   /** The trigger element. Omit to control the modal purely via `v-model:open`. */
   default?: (props: { open: boolean }) => any
   /** Replaces the whole header (icon and title). */
@@ -177,7 +177,7 @@ export interface ModalSlots {
   content?: (props: { close: () => void }) => any
 }
 
-export interface ModalEmits {
+export type ModalEmits = {
   /** Emitted when the open state changes. */
   'update:open': [value: boolean]
 }

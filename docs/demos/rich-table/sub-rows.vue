@@ -14,7 +14,7 @@ import { Button, Chip, RichTable } from '@hareui/vue'
 import { Icon } from '@iconify/vue'
 import { h } from 'vue'
 
-interface Node {
+type Node = {
   name: string
   type: 'Folder' | 'PDF' | 'Sheet' | 'Text' | 'Image'
   size: string

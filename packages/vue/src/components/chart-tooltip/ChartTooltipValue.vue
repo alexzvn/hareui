@@ -8,12 +8,12 @@
 </template>
 
 <script lang="ts">
-export interface ChartTooltipValueProps {
+export type ChartTooltipValueProps = {
   /** Additional classes merged into the element. */
   class?: any
 }
 
-export interface ChartTooltipValueSlots {
+export type ChartTooltipValueSlots = {
   /** Series value, already formatted. */
   default?: () => any
 }

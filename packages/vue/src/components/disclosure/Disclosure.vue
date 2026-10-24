@@ -57,7 +57,7 @@ import theme from './theme'
 
 type Disclosure = typeof theme
 
-export interface DisclosureProps {
+export type DisclosureProps = {
   /**
    * The element or component to render the root as.
    * @defaultValue 'div'
@@ -89,7 +89,7 @@ export interface DisclosureProps {
   ui?: ComponentSlots<Disclosure>
 }
 
-export interface DisclosureSlots {
+export type DisclosureSlots = {
   /**
    * Replaces the whole trigger content (default: the `title` text followed by `#indicator`).
    * Compose it with your own interactive element (e.g. `Button`) for full control of the
@@ -106,7 +106,7 @@ export interface DisclosureSlots {
   default?: () => any
 }
 
-export interface DisclosureEmits {
+export type DisclosureEmits = {
   /** Emitted when the expanded state changes. */
   'update:open': [value: boolean]
 }

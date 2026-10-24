@@ -3,7 +3,7 @@ import { computed, onScopeDispose, ref, shallowRef, watch } from 'vue'
 
 export type ChartEasing = 'ease' | 'ease-in' | 'ease-out' | 'ease-in-out' | 'linear'
 
-export interface ChartAnimationProps {
+export type ChartAnimationProps = {
   /**
    * Animates the series on mount and when its data changes. Always off when the user prefers reduced motion.
    * @defaultValue true
@@ -74,7 +74,7 @@ export function prefersReducedMotion(): boolean {
   return !!reducedMotionQuery?.matches
 }
 
-export interface ChartTween<T> {
+export type ChartTween<T> = {
   /** Geometry to draw this frame. */
   value: ComputedRef<T>
   /** Eased progress, 0 → 1. */

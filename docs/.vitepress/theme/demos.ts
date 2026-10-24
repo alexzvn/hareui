@@ -21,7 +21,7 @@ export type PreviewTheme = 'light' | 'dark'
 export const previewOverlayTheme = ref<PreviewTheme>()
 
 /** `postMessage` payload a preview page sends its parent once the demo has rendered. */
-export interface PreviewReadyMessage {
+export type PreviewReadyMessage = {
   type: 'hareui-preview-ready'
 }
 

@@ -6,7 +6,7 @@ import { fileURLToPath } from 'node:url'
 import type { Browser, Page } from 'puppeteer'
 import puppeteer from 'puppeteer'
 
-interface AxeNode {
+type AxeNode = {
   html: string
   target: string
   reason?: string
@@ -17,25 +17,25 @@ interface AxeNode {
     expectedContrastRatio?: string
   }
 }
-interface AxeViolation {
+type AxeViolation = {
   id: string
   impact: string | null
   help: string
   nodes: AxeNode[]
 }
 type State = 'idle' | 'open'
-interface Audit {
+type Audit = {
   violations: AxeViolation[]
   accepted: AxeViolation[]
 }
-interface Result extends Audit {
+type Result = {
   demo: string
   component: string
   state: State
   trigger?: string
   error?: string
-}
-interface Accepted {
+} & Audit
+type Accepted = {
   rule: string
   selector: string
   demos?: string[]
@@ -43,6 +43,7 @@ interface Accepted {
 }
 
 declare global {
+  // oxlint-disable-next-line typescript/consistent-type-definitions -- augments the global Window via declaration merging
   interface Window {
     axe: {
       run: (
@@ -268,7 +269,7 @@ async function open(page: Page): Promise<string | undefined> {
   return label
 }
 
-interface Tab {
+type Tab = {
   page: Page
   loads: number
 }

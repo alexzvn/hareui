@@ -1,6 +1,6 @@
 import type { ClassValue } from 'tailwind-variants'
 
-export interface ChartTooltipPayloadEntry {
+export type ChartTooltipPayloadEntry = {
   dataKey: string
   name: string
   value: number | string
@@ -12,7 +12,7 @@ export interface ChartTooltipPayloadEntry {
   fill?: string
 }
 
-export interface ChartMargin {
+export type ChartMargin = {
   top?: number
   right?: number
   bottom?: number
@@ -74,13 +74,13 @@ export type ChartAxisInterval =
   | 'preserveStartEnd'
   | 'equidistantPreserveStart'
 
-export interface ChartPoint {
+export type ChartPoint = {
   x: number
   y: number
 }
 
 /** Size and position of the plot area (inside margins and axes), in SVG pixels. */
-export interface ChartOffset {
+export type ChartOffset = {
   left: number
   top: number
   width: number
@@ -90,7 +90,7 @@ export interface ChartOffset {
 }
 
 /** Props of a point marker: `dot` on every point, or `activeDot` on the hovered one. */
-export interface ChartDotProps {
+export type ChartDotProps = {
   /**
    * Radius, in px.
    * @defaultValue 3 for `dot`, 4 for `activeDot`
@@ -107,7 +107,7 @@ export interface ChartDotProps {
 }
 
 /** A series registered with the chart root, in template order. */
-export interface ChartSeries {
+export type ChartSeries = {
   id: string
   kind: 'area' | 'line' | 'bar' | 'pie' | 'radar' | 'radialBar' | (string & {})
   dataKey: string
@@ -128,7 +128,7 @@ export interface ChartSeries {
   entries?: (index: number) => ChartTooltipPayloadEntry[]
 }
 
-export interface ChartActiveState {
+export type ChartActiveState = {
   /** Hovered or focused datum. */
   index: number | null
   /** Set by item-triggered charts (pie, radial): only this series is shown in the tooltip. */
@@ -139,7 +139,7 @@ export interface ChartActiveState {
 }
 
 /** How pointer and keyboard positions map to data indexes; set by `useCartesianChart` or a polar composable. */
-export interface ChartInteraction {
+export type ChartInteraction = {
   trigger: 'axis' | 'item'
   /** The datum under an SVG point, or `null` outside the plot. Item triggers also name the series it belongs to. */
   hitTest?: (

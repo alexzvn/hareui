@@ -59,7 +59,7 @@ import theme from './theme'
 
 type Tooltip = typeof theme
 
-export interface TooltipProps {
+export type TooltipProps = {
   /** The text content of the tooltip. Ignored when the `content` slot is used. */
   text?: string
   /** The controlled open state of the tooltip. Use with `v-model:open`. */
@@ -120,14 +120,14 @@ export interface TooltipProps {
   ui?: ComponentSlots<Tooltip>
 }
 
-export interface TooltipSlots {
+export type TooltipSlots = {
   /** The trigger element. */
   default?: (props: { open: boolean }) => any
   /** Replaces the default `text` content. */
   content?: () => any
 }
 
-export interface TooltipEmits {
+export type TooltipEmits = {
   /** Emitted when the open state changes. */
   'update:open': [value: boolean]
 }

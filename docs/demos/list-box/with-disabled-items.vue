@@ -26,11 +26,11 @@ import type { KbdKey, ListBoxEntry, ListBoxItem } from '@hareui/vue'
 import { Kbd, ListBox, Surface } from '@hareui/vue'
 import { Icon } from '@iconify/vue'
 
-interface FileAction extends ListBoxItem {
+type FileAction = {
   icon: { name: string; cls: string }
   keys: KbdKey[]
   key: string
-}
+} & ListBoxItem
 
 const icon = (name: string, cls = 'text-muted') => ({ name, cls })
 const sections = (dangerDisabled: boolean): ListBoxEntry<FileAction>[] => [

@@ -17,7 +17,7 @@ import type { ConfigProviderProps } from 'reka-ui'
 import type { ToastProviderProps } from '@/components/toast-provider/ToastProvider.vue'
 import type { PortalTarget } from '@/config'
 
-export interface AppProps {
+export type AppProps = {
   /**
    * The reading direction of the application, inherited by every directional primitive.
    * @defaultValue 'ltr'
@@ -45,7 +45,7 @@ export interface AppProps {
   toaster?: ToastProviderProps | null
 }
 
-export interface AppSlots {
+export type AppSlots = {
   /** The application. */
   default?: () => unknown
 }

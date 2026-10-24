@@ -109,7 +109,7 @@ import type { ComponentSlots } from '@/types/tv'
 
 import theme from './theme'
 
-export interface CheckboxButtonGroupItemProps {
+export type CheckboxButtonGroupItemProps = {
   /** The value added to / removed from the group's `v-model` when the item is toggled. */
   value: string
   /** The item title. */
@@ -136,14 +136,14 @@ export interface CheckboxButtonGroupItemProps {
   ui?: Omit<ComponentSlots<typeof theme>, 'base'>
 }
 
-export interface CheckboxButtonGroupItemSlotProps {
+export type CheckboxButtonGroupItemSlotProps = {
   /** Whether the item is selected. */
   selected: boolean
   /** Whether the item is disabled, directly or through the group. */
   disabled: boolean
 }
 
-export interface CheckboxButtonGroupItemSlots {
+export type CheckboxButtonGroupItemSlots = {
   /** Extra content rendered after the title and description. */
   default?: (props: CheckboxButtonGroupItemSlotProps) => any
   /** The title content. Replaces the `label` prop. */

@@ -16,9 +16,9 @@ import type { AccordionItem } from '@hareui/vue'
 import { Accordion } from '@hareui/vue'
 import { Icon } from '@iconify/vue'
 
-interface FaqItem extends AccordionItem {
+type FaqItem = {
   icon: string
-}
+} & AccordionItem
 
 const items: FaqItem[] = [
   {

@@ -64,7 +64,7 @@ import ColorBlock from './ColorBlock.vue'
 import ColorHeader from './ColorHeader.vue'
 import ColorTooltip from './ColorTooltip.vue'
 
-export interface SoftProps {
+export type SoftProps = {
   baseVariable: string
   baseCssValue?: string
   baseTooltip?: string

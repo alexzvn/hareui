@@ -35,9 +35,9 @@ import { Accordion, Button, useDisclosureGroupNavigation } from '@hareui/vue'
 import { Icon } from '@iconify/vue'
 import { ref } from 'vue'
 
-interface Section extends AccordionItem {
+type Section = {
   value: string
-}
+} & AccordionItem
 
 const items: Section[] = [
   {

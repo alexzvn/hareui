@@ -26,7 +26,7 @@
 <script lang="ts">
 import type { ClassValue } from 'tailwind-variants'
 
-export interface ChartGridProps {
+export type ChartGridProps = {
   /**
    * Draws horizontal lines at the y axis ticks.
    * @defaultValue true

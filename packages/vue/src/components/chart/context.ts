@@ -30,7 +30,7 @@ import { chartLayerNames } from './types'
 /** Class functions of a chart root theme (any subset of the shared chart slots). */
 export type ChartRootUI = Record<string, (props?: { class?: ClassValue }) => string>
 
-export interface ChartRootOptions {
+export type ChartRootOptions = {
   data: () => ChartDatum[] | undefined
   margin: () => ChartMargin | undefined
   layout: () => ChartLayout
@@ -42,7 +42,7 @@ export interface ChartRootOptions {
   cursor?: 'line' | 'band'
 }
 
-export interface ChartContext {
+export type ChartContext = {
   /** Unique id; prefix for clip paths and other SVG ids. */
   id: string
   data: ComputedRef<ChartDatum[]>
@@ -91,7 +91,7 @@ export function useChartConfig(chart: ChartContext) {
 }
 
 /** What a root publishes from its `index` / `series` props. */
-export interface ChartRootConfig {
+export type ChartRootConfig = {
   index?: string
   series: ReadonlyArray<{ key: string; name: string; color: string; hidden: boolean }>
   hidden: readonly string[]

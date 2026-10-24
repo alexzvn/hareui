@@ -23,9 +23,7 @@ import theme from './theme'
 
 type BarChartTheme = typeof theme
 
-export interface BarChartProps<
-  T extends object = Record<string, unknown>,
-> extends CartesianRootProps<T, ChartBarSeries> {
+export type BarChartProps<T extends object = Record<string, unknown>> = {
   /**
    * Bar direction. Use `'vertical'` for horizontal bars: the category axis becomes the y-axis.
    * @defaultValue 'horizontal'
@@ -57,9 +55,9 @@ export interface BarChartProps<
   radius?: ChartRadius
   /** Per-slot class overrides. */
   ui?: ComponentSlots<BarChartTheme>
-}
+} & CartesianRootProps<T, ChartBarSeries>
 
-export interface BarChartSlots extends CartesianRootSlots {}
+export type BarChartSlots = {} & CartesianRootSlots
 </script>
 
 <script setup lang="ts" generic="T extends object">

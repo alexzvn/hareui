@@ -42,7 +42,7 @@
 import type { DateValue } from '@internationalized/date'
 import type { Component, ComputedRef, InjectionKey } from 'vue'
 
-export interface RangeCalendarCellState {
+export type RangeCalendarCellState = {
   selected: boolean
   selectionStart: boolean
   selectionEnd: boolean
@@ -50,7 +50,7 @@ export interface RangeCalendarCellState {
 }
 
 /** What RangeCalendar shares with each day, so a day (not the whole grid) tracks range state. */
-export interface RangeCalendarDayContext {
+export type RangeCalendarDayContext = {
   cellState: (date: DateValue, month: DateValue) => RangeCalendarCellState
   onPointerDown: (event: PointerEvent, date: DateValue) => void
   onPointerUp: (event: PointerEvent, date: DateValue) => void

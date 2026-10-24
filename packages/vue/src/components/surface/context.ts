@@ -1,6 +1,6 @@
 import type { InjectionKey, Ref } from 'vue'
 
-export interface SurfaceContext {
+export type SurfaceContext = {
   /** The current surface's visual variant. */
   variant: Readonly<Ref<'transparent' | 'default' | 'secondary' | 'tertiary'>>
 }

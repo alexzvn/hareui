@@ -25,9 +25,9 @@ import type { ListBoxItem } from '@hareui/vue'
 import { CellSelect } from '@hareui/vue'
 import { Icon } from '@iconify/vue'
 
-interface ShippingMethod extends ListBoxItem {
+type ShippingMethod = {
   icon: string
-}
+} & ListBoxItem
 
 const methods: ShippingMethod[] = [
   { value: 'courier', label: 'Courier', icon: 'gravity-ui:car' },

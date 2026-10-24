@@ -42,10 +42,10 @@ const iconItems: TagGroupItem[] = [
   { id: 'gaming', label: 'Gaming' },
   { id: 'shopping', label: 'Shopping' },
 ]
-interface Person extends TagGroupItem {
+type Person = {
   avatar: string
   fallback: string
-}
+} & TagGroupItem
 
 const people: Person[] = [
   {

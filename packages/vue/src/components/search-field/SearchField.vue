@@ -102,7 +102,7 @@ import theme from './theme'
 
 type SearchField = typeof theme
 
-export interface SearchFieldProps extends FormFieldProps {
+export type SearchFieldProps = {
   /** Label text rendered above the field. */
   label?: string
   /** Helper text rendered below the field. Hidden while the field is invalid. */
@@ -162,9 +162,9 @@ export interface SearchFieldProps extends FormFieldProps {
   class?: any
   /** Per-slot class overrides. */
   ui?: ComponentSlots<SearchField>
-}
+} & FormFieldProps
 
-export interface SearchFieldSlots {
+export type SearchFieldSlots = {
   /** Label content. Replaces the `label` prop. */
   label?: () => any
   /** Replaces the default search icon. */
@@ -177,7 +177,7 @@ export interface SearchFieldSlots {
   error?: (props: ValidationResult) => any
 }
 
-export interface SearchFieldEmits {
+export type SearchFieldEmits = {
   /** Emitted when the value changes. */
   'update:modelValue': [value: string]
   /** Emitted when the user presses Enter inside the input. */

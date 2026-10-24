@@ -3,7 +3,7 @@ import { computed, getCurrentInstance, readonly, ref, watch } from 'vue'
 
 import { snapNumber } from '@/utils/number'
 
-export interface NumberValueOptions {
+export type NumberValueOptions = {
   /** The component's `defineModel<number | null>()` ref. */
   model: Ref<number | null | undefined>
   defaultValue: () => number | undefined
@@ -16,7 +16,7 @@ export interface NumberValueOptions {
   onCommit?: () => void
 }
 
-export interface NumberValue {
+export type NumberValue = {
   /** Step handed to Reka: `step`, or 0.01 for percent formats. */
   effectiveStep: ComputedRef<number | undefined>
   /** The model value, clamped and snapped; `undefined` while uncontrolled. */

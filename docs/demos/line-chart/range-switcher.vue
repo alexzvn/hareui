@@ -43,7 +43,7 @@ import { computed, ref } from 'vue'
 
 type Range = '24H' | '7D' | '30D' | '90D' | '1Y'
 
-interface Point {
+type Point = {
   when: string
   value: number
 }

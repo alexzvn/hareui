@@ -36,7 +36,7 @@ import theme from './theme'
 
 type CloseButton = typeof theme
 
-export interface CloseButtonProps {
+export type CloseButtonProps = {
   /**
    * Visual style of the close button.
    * @defaultValue 'default'
@@ -58,7 +58,7 @@ export interface CloseButtonProps {
   ui?: ComponentSlots<CloseButton>
 }
 
-export interface CloseButtonSlots {
+export type CloseButtonSlots = {
   /** Replaces the default close icon. */
   default?: () => any
 }

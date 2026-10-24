@@ -21,7 +21,7 @@
 <script setup lang="ts">
 import { CellSlider } from '@hareui/vue'
 
-interface Filter {
+type Filter = {
   label: string
   value: number
   min: number

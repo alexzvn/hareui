@@ -48,7 +48,7 @@ import theme from './theme'
 
 type ProgressCircle = typeof theme
 
-export interface ProgressCircleProps {
+export type ProgressCircleProps = {
   /**
    * The current value (clamped to `minValue`–`maxValue`).
    * @defaultValue 0

@@ -39,7 +39,7 @@ import theme from './theme'
 
 type Button = typeof theme
 
-export interface ButtonProps {
+export type ButtonProps = {
   /**
    * The element or component to render as.
    * @defaultValue 'button'
@@ -86,7 +86,7 @@ export interface ButtonProps {
   ui?: ComponentSlots<Button>
 }
 
-export interface ButtonSlots {
+export type ButtonSlots = {
   /** Content rendered before the label. Replaces the pending spinner. */
   leading?: (props: { pending: boolean }) => any
   /** The button label. */

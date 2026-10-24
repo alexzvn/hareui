@@ -141,7 +141,7 @@ function resolveDomainItem(
     : bound
 }
 
-export interface NumberDomainOptions {
+export type NumberDomainOptions = {
   domain?: ChartAxisDomain
   ticks?: number[]
   tickCount?: number
@@ -185,7 +185,7 @@ export function resolveNumberDomain(
 }
 
 /** A tick with its pixel position along the axis. */
-export interface ChartTick {
+export type ChartTick = {
   value: number | string
   /** Position along the axis (x for horizontal axes, y for vertical ones). */
   coordinate: number

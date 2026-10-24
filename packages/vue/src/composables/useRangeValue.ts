@@ -2,7 +2,7 @@ import { useLocale } from 'reka-ui'
 import type { ComputedRef } from 'vue'
 import { computed } from 'vue'
 
-export interface RangeValueOptions {
+export type RangeValueOptions = {
   value: number
   minValue: number
   maxValue: number
@@ -10,7 +10,7 @@ export interface RangeValueOptions {
   valueLabel?: string
 }
 
-export interface RangeValue {
+export type RangeValue = {
   /** `value` clamped to `minValue`–`maxValue`. */
   clamped: number
   /** Position of the clamped value in the range, 0–100. */

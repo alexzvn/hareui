@@ -14,7 +14,7 @@ import theme from './theme'
 
 type AvatarGroup = typeof theme
 
-export interface AvatarGroupProps {
+export type AvatarGroupProps = {
   /**
    * Size applied to child Avatars (and the overflow count) that don't set `size`.
    * @defaultValue 'md'
@@ -42,7 +42,7 @@ export interface AvatarGroupProps {
   ui?: ComponentSlots<AvatarGroup>
 }
 
-export interface AvatarGroupSlots {
+export type AvatarGroupSlots = {
   /** The `Avatar` components. Only direct `Avatar` children inherit `size`, `color` and `variant`. */
   default?: () => VNode[]
   /**

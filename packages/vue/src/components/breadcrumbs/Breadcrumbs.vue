@@ -42,7 +42,7 @@ import theme from './theme'
 
 type Breadcrumbs = typeof theme
 
-export interface BreadcrumbsItem {
+export type BreadcrumbsItem = {
   /** The item text, shown unless `#item` is used. */
   label?: string
   /** The URL to link to. The last item is always the current page and renders without a link. */
@@ -53,7 +53,7 @@ export interface BreadcrumbsItem {
   [key: string]: any
 }
 
-export interface BreadcrumbsProps<T extends BreadcrumbsItem = BreadcrumbsItem> {
+export type BreadcrumbsProps<T extends BreadcrumbsItem = BreadcrumbsItem> = {
   /**
    * The element or component to render the list as.
    * @defaultValue 'ol'
@@ -78,7 +78,7 @@ type ItemSlotProps<T extends BreadcrumbsItem = BreadcrumbsItem> = {
   current: boolean
 }
 
-export interface BreadcrumbsSlots<T extends BreadcrumbsItem = BreadcrumbsItem> {
+export type BreadcrumbsSlots<T extends BreadcrumbsItem = BreadcrumbsItem> = {
   /** Replaces an item's label. */
   item?: (props: ItemSlotProps<T>) => any
   /**

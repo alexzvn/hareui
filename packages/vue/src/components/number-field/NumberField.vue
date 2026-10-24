@@ -123,7 +123,7 @@ import theme from './theme'
 
 type NumberField = typeof theme
 
-export interface NumberFieldProps extends FormFieldProps {
+export type NumberFieldProps = {
   /** Label text rendered above the group. */
   label?: string
   /** Helper text rendered below the group. Hidden while the field is invalid. */
@@ -207,9 +207,9 @@ export interface NumberFieldProps extends FormFieldProps {
   class?: any
   /** Per-slot class overrides. */
   ui?: ComponentSlots<NumberField>
-}
+} & FormFieldProps
 
-export interface NumberFieldSlots {
+export type NumberFieldSlots = {
   /** Label content. Replaces the `label` prop. */
   label?: () => any
   /** Increment button content. Defaults to a plus icon. */

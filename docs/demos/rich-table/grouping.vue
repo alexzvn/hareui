@@ -16,7 +16,7 @@ import { Icon } from '@iconify/vue'
 import { getGroupedRowModel } from '@tanstack/vue-table'
 import { h, ref } from 'vue'
 
-interface Payment {
+type Payment = {
   name: string
   status: string
   amount: number

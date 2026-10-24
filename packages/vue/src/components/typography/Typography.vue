@@ -41,7 +41,7 @@ const defaultElementByType: Record<NonNullable<ComponentVariants<Typography>['ty
   code: 'code',
 }
 
-export interface TypographyProps {
+export type TypographyProps = {
   /**
    * The element or component to render as, overriding the element implied by `type`
    * (equivalent to HeroUI's `render` prop).
@@ -82,7 +82,7 @@ export interface TypographyProps {
   ui?: ComponentSlots<Typography>
 }
 
-export interface TypographySlots {
+export type TypographySlots = {
   /** Typography content. */
   default?: () => any
 }

@@ -12,7 +12,7 @@ import type { FormError, FormSubmitEvent } from '@hareui/vue'
 import { Button, Form, TextField } from '@hareui/vue'
 import { reactive } from 'vue'
 
-interface State {
+type State = {
   email?: string
   password?: string
   confirm?: string

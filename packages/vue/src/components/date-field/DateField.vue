@@ -75,7 +75,7 @@ type HourCycle = NonNullable<DateFieldRootProps['hourCycle']>
 type DateStep = NonNullable<DateFieldRootProps['step']>
 type DateUnavailableMatcher = NonNullable<DateFieldRootProps['isDateUnavailable']>
 
-export interface DateFieldProps extends FormFieldProps {
+export type DateFieldProps = {
   /** Label text rendered above the group. */
   label?: string
   /** Helper text rendered below the group. Hidden while the field is invalid. */
@@ -167,9 +167,9 @@ export interface DateFieldProps extends FormFieldProps {
       ComponentSlots<DateInputGroup>,
       'input' | 'segment' | 'prefix' | 'suffix'
     >
-}
+} & FormFieldProps
 
-export interface DateFieldSlots {
+export type DateFieldSlots = {
   /** Label content. Replaces the `label` prop. */
   label?: () => any
   /** Prefix content, rendered before the segments (e.g. an icon). */
@@ -182,7 +182,7 @@ export interface DateFieldSlots {
   error?: (props: ValidationResult) => any
 }
 
-export interface DateFieldEmits {
+export type DateFieldEmits = {
   /** Emitted when the displayed placeholder date changes. */
   'update:placeholder': [value: DateValue]
 }

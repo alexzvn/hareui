@@ -24,7 +24,7 @@ import type { AccordionItem } from '@hareui/vue'
 import { Accordion } from '@hareui/vue'
 import { Icon } from '@iconify/vue'
 
-interface FaqCategory {
+type FaqCategory = {
   title: string
   items: AccordionItem[]
 }

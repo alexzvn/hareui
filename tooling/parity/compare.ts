@@ -12,7 +12,7 @@ import pixelmatch from 'pixelmatch'
 import { PNG } from 'pngjs'
 import puppeteer from 'puppeteer'
 
-interface Case {
+type Case = {
   id: string
   component: string
   actions: Array<'hover' | 'focus' | 'press' | 'open'>
@@ -27,7 +27,7 @@ interface Case {
 type State = 'idle' | Case['actions'][number]
 type Theme = 'light' | 'dark'
 
-interface SlotSnapshot { slot: string, tag: string, styles: Record<string, string> }
+type SlotSnapshot = { slot: string, tag: string, styles: Record<string, string> }
 
 const VUE = 'http://localhost:5173'
 const REACT = 'http://localhost:5174'

@@ -25,7 +25,7 @@ type ScrollShadow = typeof theme
 
 export type ScrollShadowVisibility = 'auto' | 'both' | 'top' | 'bottom' | 'left' | 'right' | 'none'
 
-export interface ScrollShadowProps {
+export type ScrollShadowProps = {
   /**
    * The element or component to render the root as.
    * @defaultValue 'div'
@@ -73,12 +73,12 @@ export interface ScrollShadowProps {
   ui?: ComponentSlots<ScrollShadow>
 }
 
-export interface ScrollShadowSlots {
+export type ScrollShadowSlots = {
   /** The scrollable content. */
   default?: () => any
 }
 
-export interface ScrollShadowEmits {
+export type ScrollShadowEmits = {
   /** Emitted when the visible shadows change (auto mode only). */
   visibilityChange: [visibility: ScrollShadowVisibility]
 }

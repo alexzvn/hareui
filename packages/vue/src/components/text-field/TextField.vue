@@ -35,7 +35,7 @@ import theme from './theme'
 
 type TextField = typeof theme
 
-export interface TextFieldProps extends FormFieldProps {
+export type TextFieldProps = {
   /** Label text rendered above the input. */
   label?: string
   /** Helper text rendered below the input. Hidden while the field is invalid. */
@@ -100,9 +100,9 @@ export interface TextFieldProps extends FormFieldProps {
   class?: any
   /** Per-slot class overrides. */
   ui?: ComponentSlots<TextField>
-}
+} & FormFieldProps
 
-export interface TextFieldSlotProps {
+export type TextFieldSlotProps = {
   id: string
   describedBy: string | undefined
   invalid: boolean
@@ -115,7 +115,7 @@ export interface TextFieldSlotProps {
   focusVisible: boolean
 }
 
-export interface TextFieldSlots {
+export type TextFieldSlots = {
   /** Label content. Replaces the `label` prop. */
   label?: () => any
   /** Control slot. Replaces the default `Input` (e.g. an `Input` with custom props); `Input`s inside read the field context. */

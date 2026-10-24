@@ -18,7 +18,7 @@ import theme from './theme'
 
 type Container = typeof theme
 
-export interface ContainerProps {
+export type ContainerProps = {
   /**
    * The element or component to render as.
    * @defaultValue 'div'
@@ -30,7 +30,7 @@ export interface ContainerProps {
   ui?: ComponentSlots<Container>
 }
 
-export interface ContainerSlots {
+export type ContainerSlots = {
   /** The container content. */
   default?: () => unknown
 }

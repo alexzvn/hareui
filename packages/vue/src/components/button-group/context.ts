@@ -5,7 +5,7 @@ import type { ComponentSlots, ComponentUI } from '@/types/tv'
 
 import type buttonGroupTheme from './theme'
 
-export interface ButtonGroupContext {
+export type ButtonGroupContext = {
   variant: Readonly<Ref<ButtonProps['variant']>>
   size: Readonly<Ref<ButtonProps['size']>>
   disabled: Readonly<Ref<boolean | undefined>>

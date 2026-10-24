@@ -81,7 +81,7 @@ import theme from './theme'
 type TagGroup = typeof theme
 type Tag = typeof tagTheme
 
-export interface TagGroupItem {
+export type TagGroupItem = {
   /** Unique identifier. Selected via `v-model:selected`, removed via the `remove` event. */
   id: string
   /** The tag label. */
@@ -90,7 +90,7 @@ export interface TagGroupItem {
   disabled?: boolean
 }
 
-export interface TagGroupProps<T extends TagGroupItem = TagGroupItem> {
+export type TagGroupProps<T extends TagGroupItem = TagGroupItem> = {
   /** The tags to render. */
   items?: T[]
   /**
@@ -145,7 +145,7 @@ export interface TagGroupProps<T extends TagGroupItem = TagGroupItem> {
   ui?: ComponentSlots<TagGroup> & { tag?: any; removeButton?: any }
 }
 
-export interface TagGroupSlots<T extends TagGroupItem = TagGroupItem> {
+export type TagGroupSlots<T extends TagGroupItem = TagGroupItem> = {
   /** The group label content. Replaces the `label` prop. */
   label?: () => any
   /** The group description content. Replaces the `description` prop. */
@@ -163,7 +163,7 @@ export interface TagGroupSlots<T extends TagGroupItem = TagGroupItem> {
   empty?: () => any
 }
 
-export interface TagGroupEmits {
+export type TagGroupEmits = {
   /** Emitted with the removed ids, via the remove button or Delete / Backspace. */
   remove: [ids: string[]]
 }

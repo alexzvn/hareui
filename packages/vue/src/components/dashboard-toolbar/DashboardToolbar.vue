@@ -25,7 +25,7 @@ import theme from './theme'
 
 type DashboardToolbar = typeof theme
 
-export interface DashboardToolbarProps {
+export type DashboardToolbarProps = {
   /**
    * The element or component to render as.
    * @defaultValue 'div'
@@ -37,7 +37,7 @@ export interface DashboardToolbarProps {
   ui?: ComponentSlots<DashboardToolbar>
 }
 
-export interface DashboardToolbarSlots {
+export type DashboardToolbarSlots = {
   /** Replaces the `left` and `right` groups. */
   default?: () => unknown
   /** Content aligned to the start. */

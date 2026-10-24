@@ -1,7 +1,7 @@
 import type { InjectionKey, Ref } from 'vue'
 import { computed, inject } from 'vue'
 
-export interface FieldsetContext {
+export type FieldsetContext = {
   /** Whether the surrounding `<Fieldset disabled>` (or a disabled or submitting `Form`) disables its descendants. */
   disabled: Readonly<Ref<boolean>>
 }

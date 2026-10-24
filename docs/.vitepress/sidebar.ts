@@ -2,7 +2,7 @@ import type { DefaultTheme } from 'vitepress'
 
 import { COMPONENT_GROUPS, NEW_COMPONENTS, UPDATED_COMPONENTS } from './componentGroups'
 
-export interface SidebarLink {
+export type SidebarLink = {
   text: string
   link: string
   icon?: string
@@ -10,19 +10,19 @@ export interface SidebarLink {
   badge?: 'new' | 'updated'
 }
 
-export interface SidebarSeparator {
+export type SidebarSeparator = {
   separator: string
 }
 
 /** Collapsible group of links; open by default. */
-export interface SidebarGroup {
+export type SidebarGroup = {
   group: string
   items: SidebarLink[]
 }
 
 export type SidebarEntry = SidebarLink | SidebarSeparator | SidebarGroup
 
-export interface SidebarSection {
+export type SidebarSection = {
   text: string
   icon: string
   base: string
@@ -119,7 +119,7 @@ export function normalizePath(path: string): string {
   return p.length > 1 ? p.replace(/\/$/, '') : p
 }
 
-export interface ThemeConfig {
+export type ThemeConfig = {
   sidebar: SidebarSection[]
   search: DefaultTheme.Config['search']
 }

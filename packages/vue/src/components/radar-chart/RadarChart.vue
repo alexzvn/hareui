@@ -65,7 +65,7 @@ import theme from './theme'
 
 type RadarChartTheme = typeof theme
 
-export interface RadarChartProps<T extends object = ChartDatum> {
+export type RadarChartProps<T extends object = ChartDatum> = {
   /** Rows to plot. Each row is one spoke; each radar reads one field of every row. */
   data: T[]
   /** Key of the spoke labels. Setting it (or `series`) draws the grid, axis, radars, tooltip and legend from props. */
@@ -177,7 +177,7 @@ export interface RadarChartProps<T extends object = ChartDatum> {
   ui?: ComponentSlots<RadarChartTheme>
 }
 
-export interface RadarChartSlots {
+export type RadarChartSlots = {
   /** Chart parts: `ChartPolarGrid`, `ChartPolarAngleAxis`, `ChartPolarRadiusAxis`, `ChartRadar`, `ChartTooltip`. With `index` or `series`, extra parts drawn over the generated ones. */
   default?: () => any
   /** Replaces each spoke label. Render SVG (`<text>`, `<g>`). */

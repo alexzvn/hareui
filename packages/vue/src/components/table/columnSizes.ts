@@ -7,7 +7,7 @@ export type ColumnWidth = number | `${number}%` | `${number}fr`
 /** React Aria's default column min width in pixels. */
 export const DEFAULT_MIN_COLUMN_WIDTH = 75
 
-export interface ColumnSizeInput {
+export type ColumnSizeInput = {
   width?: ColumnWidth
   minWidth?: ColumnWidth
   maxWidth?: ColumnWidth

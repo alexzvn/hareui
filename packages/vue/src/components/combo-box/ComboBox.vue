@@ -231,7 +231,7 @@ type ComboBox = typeof theme
 export type ComboBoxValue = ListBoxValue | ListBoxValue[] | null
 
 /** The value passed to `validate` (RAC `ComboBoxValidationValue`). */
-export interface ComboBoxValidationValue {
+export type ComboBoxValidationValue = {
   /** The text in the input. */
   inputValue: string
   /** The selection: a value (or `null`) in single mode, an array in multiple mode. */
@@ -240,7 +240,7 @@ export interface ComboBoxValidationValue {
   selectedKey: ListBoxValue | null
 }
 
-export interface ComboBoxProps<T extends ListBoxItem = ListBoxItem> extends FormFieldProps {
+export type ComboBoxProps<T extends ListBoxItem = ListBoxItem> = {
   /**
    * Renders the listbox popover in a portal. `true` portals to `document.body`, a selector string or element is used as the teleport target, and `false` disables portalling.
    * Falls back to `createHareUI({ portal })`, then `true`.
@@ -343,9 +343,9 @@ export interface ComboBoxProps<T extends ListBoxItem = ListBoxItem> extends Form
   class?: any
   /** Per-slot class overrides. */
   ui?: ComponentSlots<ComboBox>
-}
+} & FormFieldProps
 
-export interface ComboBoxValueSlotProps<T extends ListBoxItem = ListBoxItem> {
+export type ComboBoxValueSlotProps<T extends ListBoxItem = ListBoxItem> = {
   /** The selected options, in selection order. */
   selectedItems: T[]
   /** Whether nothing is selected. */
@@ -354,7 +354,7 @@ export interface ComboBoxValueSlotProps<T extends ListBoxItem = ListBoxItem> {
   text: string
 }
 
-export interface ComboBoxSlots<T extends ListBoxItem = ListBoxItem> {
+export type ComboBoxSlots<T extends ListBoxItem = ListBoxItem> = {
   /** Label content. Replaces `label`. */
   label?: () => any
   /** Content of the selected-value element below the input (rendered in multiple mode, or whenever this slot is used). */
@@ -385,7 +385,7 @@ export interface ComboBoxSlots<T extends ListBoxItem = ListBoxItem> {
   loading?: () => any
 }
 
-export interface ComboBoxEmits {
+export type ComboBoxEmits = {
   /** The popover opened or closed (`v-model:open`). */
   'update:open': [value: boolean]
   /** The input text changed (`v-model:input-value`). */

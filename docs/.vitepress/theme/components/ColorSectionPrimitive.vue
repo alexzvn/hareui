@@ -7,7 +7,7 @@
 <script setup lang="ts">
 import StackedSwatch from './color/StackedSwatch.vue'
 
-interface StackedColor {
+type StackedColor = {
   label: string
   variable: string
   cssValue?: string

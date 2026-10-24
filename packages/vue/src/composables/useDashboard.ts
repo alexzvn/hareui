@@ -2,7 +2,7 @@ import type { InjectionKey, Ref } from 'vue'
 import { inject, provide, ref } from 'vue'
 
 /** Custom persistence backend for dashboard sidebar/panel state. */
-export interface DashboardStorageAdapter {
+export type DashboardStorageAdapter = {
   getItem: (key: string) => string | null | undefined
   setItem: (key: string, value: string) => void
 }
@@ -15,7 +15,7 @@ export type DashboardUnit = '%' | 'rem' | 'px'
 export type DashboardSidebarSide = 'left' | 'right'
 
 /** State of one sidebar slot of the group. `left` is the main sidebar, `right` the aside panel. */
-export interface DashboardSidebarState {
+export type DashboardSidebarState = {
   /** Mobile menu (sheet) open state. */
   open: Ref<boolean>
   /** Desktop collapsed state (icon rail or off-canvas). */
@@ -26,7 +26,7 @@ export interface DashboardSidebarState {
   collapse: (collapsed: boolean) => void
 }
 
-export interface DashboardContext {
+export type DashboardContext = {
   storage: DashboardStorage
   storageKey: string
   persistent: boolean

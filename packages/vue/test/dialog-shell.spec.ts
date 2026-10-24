@@ -38,7 +38,7 @@ function stubExitAnimations() {
   })
 }
 
-interface DialogCase {
+type DialogCase = {
   name: string
   component: Component
   /** `data-slot` prefix of the component's parts. */

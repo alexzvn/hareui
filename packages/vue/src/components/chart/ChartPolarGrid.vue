@@ -29,7 +29,7 @@
 <script lang="ts">
 import type { ClassValue } from 'tailwind-variants'
 
-export interface ChartPolarGridProps {
+export type ChartPolarGridProps = {
   /**
    * Shape of the rings: polygons through the angle axis ticks, or circles.
    * @defaultValue 'polygon'

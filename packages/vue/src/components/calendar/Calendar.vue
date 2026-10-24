@@ -85,7 +85,7 @@ import type { PageBehavior, VisibleDuration } from './useCalendarDurationView'
 
 type Calendar = typeof theme
 
-export interface CalendarProps {
+export type CalendarProps = {
   /** Accessible label for the calendar. */
   ariaLabel?: string
   /** The selected date(s). Use `v-model` to control it. */
@@ -191,7 +191,7 @@ export interface CalendarProps {
   ui?: ComponentSlots<Calendar>
 }
 
-export interface CalendarSlots {
+export type CalendarSlots = {
   /** Replaces the chevron icon inside a nav button. */
   navIcon?: (props: { direction: 'previous' | 'next' }) => any
   /** Replaces a cell's default formatted-date content. */
@@ -205,7 +205,7 @@ export interface CalendarSlots {
   }) => any
 }
 
-export interface CalendarEmits {
+export type CalendarEmits = {
   /** Emitted when the selected date(s) change. */
   'update:modelValue': [value: DateValue | DateValue[] | undefined]
   /** Emitted when the displayed month/year changes. */

@@ -70,7 +70,7 @@ describe('snapNumber', () => {
   })
 })
 
-interface Setup {
+type Setup = {
   modelValue?: number | null
   defaultValue?: number
   min?: number

@@ -17,14 +17,14 @@ import type { ComponentSlots } from '@/types/tv'
 
 import theme from './theme'
 
-export interface DropZoneFileListProps {
+export type DropZoneFileListProps = {
   /** Additional classes merged into the list element. */
   class?: any
   /** Per-slot class overrides. Merged after the surrounding DropZone's `ui`. */
   ui?: Pick<ComponentSlots<typeof theme>, 'fileList'>
 }
 
-export interface DropZoneFileListSlots {
+export type DropZoneFileListSlots = {
   /** The `DropZoneFileItem`s. Give each a unique `key` so they animate in and out. */
   default?: () => any
 }

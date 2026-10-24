@@ -3,7 +3,7 @@ import type { ComputedRef, InjectionKey } from 'vue'
 import { computed, inject, onScopeDispose, provide, shallowReactive } from 'vue'
 
 /** Per-datum style overrides set by `ChartCell`. */
-export interface ChartCellStyle {
+export type ChartCellStyle = {
   fill?: string
   fillOpacity?: number
   stroke?: string
@@ -11,7 +11,7 @@ export interface ChartCellStyle {
   class?: ClassValue
 }
 
-interface ChartCellRegistry {
+type ChartCellRegistry = {
   register: (get: () => ChartCellStyle) => void
 }
 

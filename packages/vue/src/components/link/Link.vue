@@ -26,7 +26,7 @@ import theme from './theme'
 
 type Link = typeof theme
 
-export interface LinkProps {
+export type LinkProps = {
   /**
    * The element or component to render as, e.g. a router link component.
    * @defaultValue 'a'
@@ -52,7 +52,7 @@ export interface LinkProps {
   ui?: ComponentSlots<Link>
 }
 
-export interface LinkSlots {
+export type LinkSlots = {
   /** The link text. */
   default?: () => any
   /** Custom icon content; renders the icon wrapper even when `icon` is not set. */

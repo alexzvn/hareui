@@ -370,7 +370,7 @@ type Autocomplete = typeof theme
 
 export type AutocompleteValue = ListBoxValue | ListBoxValue[] | null
 
-export interface AutocompleteProps<T extends ListBoxItem = ListBoxItem> extends FormFieldProps {
+export type AutocompleteProps<T extends ListBoxItem = ListBoxItem> = {
   /**
    * Renders the listbox popover in a portal. `true` portals to `document.body`, a selector string or element is used as the teleport target, and `false` disables portalling.
    * Falls back to `createHareUI({ portal })`, then `true`.
@@ -483,9 +483,9 @@ export interface AutocompleteProps<T extends ListBoxItem = ListBoxItem> extends 
   class?: any
   /** Per-slot class overrides. */
   ui?: ComponentSlots<Autocomplete> & { searchClearButton?: any }
-}
+} & FormFieldProps
 
-export interface AutocompleteValueSlotProps<T extends ListBoxItem = ListBoxItem> {
+export type AutocompleteValueSlotProps<T extends ListBoxItem = ListBoxItem> = {
   /** The selected options, in selection order. */
   selectedItems: T[]
   /** Whether nothing is selected. */
@@ -494,7 +494,7 @@ export interface AutocompleteValueSlotProps<T extends ListBoxItem = ListBoxItem>
   text: string
 }
 
-export interface AutocompleteSlots<T extends ListBoxItem = ListBoxItem> {
+export type AutocompleteSlots<T extends ListBoxItem = ListBoxItem> = {
   /** Label content. Replaces `label`. */
   label?: () => any
   /** Trigger value content. Defaults to the selected label(s) or the placeholder. */
@@ -529,7 +529,7 @@ export interface AutocompleteSlots<T extends ListBoxItem = ListBoxItem> {
   loading?: () => any
 }
 
-export interface AutocompleteEmits {
+export type AutocompleteEmits = {
   /** The selection was cleared with the clear button or Backspace / Delete. */
   clear: []
   /** The popover opened or closed (`v-model:open`). */

@@ -36,7 +36,7 @@ export type ChartTooltipContentEntry = Partial<ChartTooltipPayloadEntry> & {
   fill?: string
 }
 
-export interface ChartTooltipContentProps {
+export type ChartTooltipContentProps = {
   /**
    * Renders the panel. Nothing is rendered when `false`.
    * @defaultValue true
@@ -66,7 +66,7 @@ export interface ChartTooltipContentProps {
   ui?: ComponentSlots<ChartTooltip>
 }
 
-export interface ChartTooltipContentSlots {
+export type ChartTooltipContentSlots = {
   /** Manual composition with `ChartTooltipHeader` and `ChartTooltipItem`. Replaces the rows built from `payload`. */
   default?: () => any
   /** Content under the rows built from `payload`, e.g. a total. Not rendered when the default slot is used. */

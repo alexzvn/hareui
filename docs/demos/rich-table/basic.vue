@@ -8,7 +8,7 @@ import { Chip, RichTable } from '@hareui/vue'
 import { Icon } from '@iconify/vue'
 import { h } from 'vue'
 
-interface Payment {
+type Payment = {
   id: string
   name: string
   email: string

@@ -185,12 +185,12 @@ type HourCycle = NonNullable<DateRangePickerRootProps['hourCycle']>
 type DateStep = NonNullable<DateRangePickerRootProps['step']>
 
 /** A complete date range, as emitted by `DateRangePicker`'s `v-model`. */
-export interface DateRangeValue {
+export type DateRangeValue = {
   start: DateValue
   end: DateValue
 }
 
-export interface DateRangePickerProps extends FormFieldProps {
+export type DateRangePickerProps = {
   /**
    * Renders the calendar popover in a portal. `true` portals to `document.body`, a selector string or element is used as the teleport target, and `false` disables portalling.
    * Falls back to `createHareUI({ portal })`, then `true`.
@@ -304,9 +304,9 @@ export interface DateRangePickerProps extends FormFieldProps {
       ComponentSlots<DateInputGroup>,
       'inputContainer' | 'input' | 'segment'
     >
-}
+} & FormFieldProps
 
-export interface DateRangePickerCalendarSlotProps {
+export type DateRangePickerCalendarSlotProps = {
   /** The committed range, or `null`. */
   value: DateRangeValue | null
   /** Commits a range, closes the popover and refocuses the trigger (what the default calendar calls). */
@@ -315,7 +315,7 @@ export interface DateRangePickerCalendarSlotProps {
   onChange: (value: DateRangeValue) => void
 }
 
-export interface DateRangePickerSlots {
+export type DateRangePickerSlots = {
   /** Label content. Replaces the `label` prop. */
   label?: () => any
   /** Replaces the default calendar icon inside the trigger. */
@@ -330,7 +330,7 @@ export interface DateRangePickerSlots {
   calendar?: (props: DateRangePickerCalendarSlotProps) => any
 }
 
-export interface DateRangePickerEmits {
+export type DateRangePickerEmits = {
   /** Emitted when the displayed placeholder date changes. */
   'update:placeholder': [value: DateValue]
   /** Emitted when the popover open state changes. */

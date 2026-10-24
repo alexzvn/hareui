@@ -191,7 +191,7 @@ import type { PageBehavior, VisibleDuration } from './useCalendarDurationView'
  * (`useCalendarDurationView`, a port of react-stately's `useCalendarState`) and mirror the month view's DOM,
  * `data-slot`s and Reka-style data attributes so the same theme applies.
  */
-export interface CalendarDurationViewProps {
+export type CalendarDurationViewProps = {
   kind: 'calendar' | 'range'
   /** Resolved slot class functions of the parent's theme (already resolved for the `view` variant). */
   ui: Record<string, (opts?: { class?: any }) => string>

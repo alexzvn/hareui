@@ -28,7 +28,7 @@ import type { ClassValue } from 'tailwind-variants'
 import type { ChartAnimationProps } from './animation'
 import type { ChartDatum } from './types'
 
-export interface ChartPieProps extends ChartAnimationProps {
+export type ChartPieProps = {
   /** Slices of the pie. Defaults to the chart's `data`. Rows may leave keys out, e.g. a `fill` set on some rows only. */
   data?: object[]
   /** Key of the slice values. */
@@ -103,9 +103,9 @@ export interface ChartPieProps extends ChartAnimationProps {
   tooltipType?: 'none'
   /** Additional classes merged into the pie group. */
   class?: ClassValue
-}
+} & ChartAnimationProps
 
-export interface ChartPieSlots {
+export type ChartPieSlots = {
   /** `ChartCell` per slice (in data order) and `ChartLabel`. */
   default?: () => any
 }

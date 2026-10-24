@@ -147,7 +147,7 @@ type ListBox = typeof theme
 
 export type ListBoxValue = string | number
 
-export interface ListBoxItem {
+export type ListBoxItem = {
   /** Unique value; bound to `v-model` when selected and passed to `action`. */
   value: ListBoxValue
   /** The item label. */
@@ -167,14 +167,14 @@ export interface ListBoxItem {
   class?: any
 }
 
-export interface ListBoxSection<T extends ListBoxItem = ListBoxItem> {
+export type ListBoxSection<T extends ListBoxItem = ListBoxItem> = {
   type: 'section'
   /** Section heading, rendered as a `<header>`. */
   label?: string
   items: T[]
 }
 
-export interface ListBoxSeparator {
+export type ListBoxSeparator = {
   type: 'separator'
 }
 
@@ -183,7 +183,7 @@ export type ListBoxEntry<T extends ListBoxItem = ListBoxItem> =
   | ListBoxSection<T>
   | ListBoxSeparator
 
-export interface ListBoxProps<T extends ListBoxItem = ListBoxItem> {
+export type ListBoxProps<T extends ListBoxItem = ListBoxItem> = {
   /**
    * Items, sections (`{ type: 'section', label, items }`) and separators (`{ type: 'separator' }`).
    * Extra fields on the items are kept and typed in the item slots.
@@ -235,14 +235,14 @@ export interface ListBoxProps<T extends ListBoxItem = ListBoxItem> {
   ui?: ComponentSlots<ListBox>
 }
 
-export interface ListBoxItemSlotProps<T extends ListBoxItem = ListBoxItem> {
+export type ListBoxItemSlotProps<T extends ListBoxItem = ListBoxItem> = {
   item: T
   index: number
   selected: boolean
   disabled: boolean
 }
 
-export interface ListBoxSlots<T extends ListBoxItem = ListBoxItem> {
+export type ListBoxSlots<T extends ListBoxItem = ListBoxItem> = {
   /** Whole content of each item. Replaces leading, label, description, trailing and indicator. */
   item?: (props: ListBoxItemSlotProps<T>) => any
   /** Content before the item text (avatar, icon). */
@@ -263,7 +263,7 @@ export interface ListBoxSlots<T extends ListBoxItem = ListBoxItem> {
   loading?: () => any
 }
 
-export interface ListBoxEmits {
+export type ListBoxEmits = {
   /** An item was activated (click, Enter or Space) while `selectionMode` is `'none'`. */
   action: [value: ListBoxValue]
   /** The end of the list scrolled into view while `loading` is false. Fetch the next page. */
@@ -334,7 +334,7 @@ watch([sentinelVisible, () => props.loading, () => props.items?.length], () => {
 })
 
 // Flat running indices so item slots get a stable `index` across sections
-interface Row {
+type Row = {
   kind: 'item'
   item: T
   index: number

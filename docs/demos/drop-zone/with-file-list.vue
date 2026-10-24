@@ -55,7 +55,7 @@ import { DropZone, DropZoneFileItem, DropZoneFileList } from '@hareui/vue'
 import { Icon } from '@iconify/vue'
 import { computed, onBeforeUnmount, onMounted, ref } from 'vue'
 
-interface ShopAsset {
+type ShopAsset = {
   key: string
   name: string
   bytes: number

@@ -14,10 +14,10 @@ import {
   themeVariableKeys,
 } from '../constants'
 
-export interface ThemeBuilderState extends ThemeVariables {
+export type ThemeBuilderState = {
   lockedVariables: LockableThemeVariableKey[]
   vibrantPalette: boolean
-}
+} & ThemeVariables
 
 type Parser<T> = {
   parse: (raw: string) => T | null

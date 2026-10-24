@@ -18,7 +18,7 @@ import theme from './theme'
 
 type DashboardResizeHandle = typeof theme
 
-export interface DashboardResizeHandleProps {
+export type DashboardResizeHandleProps = {
   /**
    * The element or component this component should render as.
    * @defaultValue 'div'
@@ -30,7 +30,7 @@ export interface DashboardResizeHandleProps {
   ui?: ComponentSlots<DashboardResizeHandle>
 }
 
-export interface DashboardResizeHandleSlots {
+export type DashboardResizeHandleSlots = {
   /** Custom handle content. */
   default?: () => any
 }

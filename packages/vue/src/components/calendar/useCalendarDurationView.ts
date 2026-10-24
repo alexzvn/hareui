@@ -14,7 +14,7 @@ import {
 import { computed, nextTick, ref, shallowRef, watch } from 'vue'
 
 /** React Aria's `visibleDuration`: `{ months }` is the (Reka) month view, `{ weeks }` / `{ days }` the custom views. */
-export interface VisibleDuration {
+export type VisibleDuration = {
   months?: number
   weeks?: number
   days?: number
@@ -105,7 +105,7 @@ function isOutOfRange(date: DateValue, min?: DateValue, max?: DateValue) {
   return (min != null && date.compare(min) < 0) || (max != null && date.compare(max) > 0)
 }
 
-export interface UseCalendarDurationViewOptions {
+export type UseCalendarDurationViewOptions = {
   duration: () => VisibleDuration | undefined
   locale: () => string
   firstDayOfWeek: () => DayOfWeek | undefined

@@ -109,7 +109,7 @@ import theme from './theme'
 
 type Slider = typeof theme
 
-export interface SliderProps {
+export type SliderProps = {
   /**
    * The current value(s). Bind with `v-model`. A plain number renders a single thumb; an array
    * renders one thumb per value (e.g. a two-element array for a range slider).
@@ -166,7 +166,7 @@ export interface SliderProps {
   ui?: ComponentSlots<Slider>
 }
 
-export interface SliderSlots {
+export type SliderSlots = {
   /** The label content. Replaces the `label` prop. */
   label?: () => any
   /** The output content, showing the formatted current value(s). Replaces the default `' – '`-joined format. */

@@ -72,7 +72,7 @@ type ChartLegendTheme = typeof theme
 export type ChartLegendEntry = Pick<ChartLegendItem, 'key' | 'name' | 'color'> &
   Partial<ChartLegendItem>
 
-export interface ChartLegendProps<T extends object = Record<string, unknown>> {
+export type ChartLegendProps<T extends object = Record<string, unknown>> = {
   /** Explicit rows. Wins over `series` and `data`. */
   items?: ChartLegendEntry[]
   /** One row per series, named and colored like the chart that gets the same `series` and `colors`. */
@@ -125,14 +125,14 @@ export interface ChartLegendProps<T extends object = Record<string, unknown>> {
   ui?: ComponentSlots<ChartLegendTheme>
 }
 
-export interface ChartLegendItemSlotProps {
+export type ChartLegendItemSlotProps = {
   item: ChartLegendItem
   index: number
   /** Toggles the row's key in `hidden`. */
   toggle: () => void
 }
 
-export interface ChartLegendSlots {
+export type ChartLegendSlots = {
   /** Replaces the content of a row; the row element and its toggle button stay. */
   item?: (props: ChartLegendItemSlotProps) => any
 }

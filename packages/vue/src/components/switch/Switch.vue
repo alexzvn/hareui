@@ -56,7 +56,7 @@ import theme from './theme'
 
 type Switch = typeof theme
 
-export interface SwitchProps extends FormFieldProps {
+export type SwitchProps = {
   /** The checked state. Bind with `v-model`. */
   modelValue?: boolean
   /**
@@ -116,9 +116,9 @@ export interface SwitchProps extends FormFieldProps {
   class?: any
   /** Per-slot class overrides. */
   ui?: ComponentSlots<Switch>
-}
+} & FormFieldProps
 
-export interface SwitchSlots {
+export type SwitchSlots = {
   /** The label content. Replaces the `label` prop. */
   label?: (props: { checked: boolean }) => any
   /** The description content. Replaces the `description` prop. */

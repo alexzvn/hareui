@@ -176,7 +176,7 @@ import theme from './theme'
 
 type AlertDialog = typeof theme
 
-export interface AlertDialogProps {
+export type AlertDialogProps = {
   /** The controlled open state of the alert dialog. Use with `v-model:open`. */
   open?: boolean
   /** The open state of the alert dialog when it is initially rendered. Use when you do not need to control its open state. */
@@ -234,7 +234,7 @@ export interface AlertDialogProps {
   ui?: ComponentSlots<AlertDialog>
 }
 
-export interface AlertDialogSlots {
+export type AlertDialogSlots = {
   /** The trigger element. Omit to control the alert dialog purely via `v-model:open`. */
   default?: (props: { open: boolean }) => any
   /** Replaces the whole header (icon and title). */
@@ -253,7 +253,7 @@ export interface AlertDialogSlots {
   content?: (props: { close: () => void }) => any
 }
 
-export interface AlertDialogEmits {
+export type AlertDialogEmits = {
   /** Emitted when the open state changes. */
   'update:open': [value: boolean]
 }

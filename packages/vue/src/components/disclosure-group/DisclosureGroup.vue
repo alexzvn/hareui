@@ -19,7 +19,7 @@ import theme from './theme'
 
 type DisclosureGroup = typeof theme
 
-export interface DisclosureGroupProps {
+export type DisclosureGroupProps = {
   /**
    * The element or component to render the root as.
    * @defaultValue 'div'
@@ -45,12 +45,12 @@ export interface DisclosureGroupProps {
   ui?: ComponentSlots<DisclosureGroup>
 }
 
-export interface DisclosureGroupSlots {
+export type DisclosureGroupSlots = {
   /** The `Disclosure` items (and anything between them, e.g. `Separator`). */
   default?: (props: { expanded: ExpandedValue[]; disabled: boolean }) => any
 }
 
-export interface DisclosureGroupEmits {
+export type DisclosureGroupEmits = {
   /** Emitted when the expanded disclosures change. */
   'update:modelValue': [value: ExpandedValue[]]
 }

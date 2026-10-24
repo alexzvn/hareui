@@ -54,7 +54,7 @@ import theme from './theme'
 
 type RadialChartTheme = typeof theme
 
-export interface RadialChartProps<T extends object = ChartDatum> {
+export type RadialChartProps<T extends object = ChartDatum> = {
   /** Rows to plot. Each row becomes a ring, the first one innermost. */
   data: T[]
   /** Key of the ring name. Setting it draws the rings, tooltip and legend from props (no child parts needed). */
@@ -171,7 +171,7 @@ export interface RadialChartProps<T extends object = ChartDatum> {
   ui?: ComponentSlots<RadialChartTheme>
 }
 
-export interface RadialChartSlots {
+export type RadialChartSlots = {
   /** Chart parts: `ChartRadialBar`, `ChartPolarAngleAxis`, `ChartPolarGrid`, `ChartTooltip`, a centered `ChartLabel`. With `index`, extra parts drawn over the generated rings. */
   default?: () => any
   /** HTML centered in the rings, e.g. the value of a gauge. */

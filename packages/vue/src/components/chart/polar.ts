@@ -30,7 +30,7 @@ export function cartesianToPolar(
 }
 
 /** Plot area of a polar chart: the chart minus its margins. */
-export interface PolarBox {
+export type PolarBox = {
   left: number
   top: number
   width: number
@@ -38,7 +38,7 @@ export interface PolarBox {
 }
 
 /** Center and radii as given on a root or a `ChartPie`: px, or percentage strings. */
-export interface PolarGeometryInput {
+export type PolarGeometryInput = {
   cx?: number | string
   cy?: number | string
   innerRadius?: number | string
@@ -46,7 +46,7 @@ export interface PolarGeometryInput {
 }
 
 /** Center and radii in px. */
-export interface PolarGeometry {
+export type PolarGeometry = {
   cx: number
   cy: number
   innerRadius: number
@@ -107,9 +107,9 @@ export function angleTickAnchor(
   return { textAnchor, dy: above ? '0em' : '0.71em' }
 }
 
-export interface ChartSector extends ChartPolarViewBox {
+export type ChartSector = {
   cornerRadius?: number
-}
+} & ChartPolarViewBox
 
 const sectorArc = arc<{
   innerRadius: number
@@ -145,7 +145,7 @@ export function sectorPath(sector: Omit<ChartSector, 'cx' | 'cy'>): string {
 
 // ── Pie ────────────────────────────────────────────────────────────────────
 
-export interface PieLayoutOptions {
+export type PieLayoutOptions = {
   cx: number
   cy: number
   innerRadius: number
@@ -158,7 +158,7 @@ export interface PieLayoutOptions {
   minAngle?: number
 }
 
-export interface PieSector extends ChartPolarViewBox {
+export type PieSector = {
   index: number
   value: number
   /** Share of the total, 0–1. */
@@ -167,10 +167,10 @@ export interface PieSector extends ChartPolarViewBox {
   middleRadius: number
   /** Tooltip anchor: the middle of the sector. */
   tooltipPosition: ChartPoint
-}
+} & ChartPolarViewBox
 
 /** A pie's slices plus the sweep they share, so hover can tell padding gaps from the open part of a half pie. */
-export interface PieItemGroup {
+export type PieItemGroup = {
   sectors: PieSector[]
   startAngle: number
   endAngle: number
@@ -229,7 +229,7 @@ export function computePieSectors(values: number[], options: PieLayoutOptions): 
 
 // ── Bars on a radial band ──────────────────────────────────────────────────
 
-export interface RadialBarSizing {
+export type RadialBarSizing = {
   barSize?: number | string
   maxBarSize?: number
 }
@@ -292,7 +292,7 @@ export function bandBarPositions(
 
 export type PolarChartKind = 'pie' | 'radar' | 'radialBar'
 
-export interface PolarAngleAxisConfig {
+export type PolarAngleAxisConfig = {
   dataKey?: string
   /** `category` spreads the data evenly around the circle; `number` maps values onto the sweep. */
   type?: 'category' | 'number'
@@ -304,7 +304,7 @@ export interface PolarAngleAxisConfig {
   reversed?: boolean
 }
 
-export interface PolarRadiusAxisConfig {
+export type PolarRadiusAxisConfig = {
   dataKey?: string
   type?: 'category' | 'number'
   domain?: ChartAxisDomain
@@ -315,14 +315,14 @@ export interface PolarRadiusAxisConfig {
   reversed?: boolean
 }
 
-export interface PolarTick {
+export type PolarTick = {
   value: number | string
   index: number
   /** Angle in degrees (angle axis) or radius in px (radius axis). */
   coordinate: number
 }
 
-export interface ResolvedPolarAxis {
+export type ResolvedPolarAxis = {
   type: 'category' | 'number'
   dataKey?: string
   /** Pixel radii or angles the domain maps onto. */
@@ -338,7 +338,7 @@ export interface ResolvedPolarAxis {
   at: (index: number) => number
 }
 
-export interface PolarChartOptions {
+export type PolarChartOptions = {
   kind: PolarChartKind
   cx?: () => number | string | undefined
   cy?: () => number | string | undefined
@@ -356,14 +356,14 @@ export interface PolarChartOptions {
 }
 
 /** Props of the `#center` slot of PieChart and RadialChart. */
-export interface ChartPolarCenterSlotProps {
+export type ChartPolarCenterSlotProps = {
   /** Sum of the visible slice (or ring) values. */
   total: number
   /** Hovered or focused slice (or ring), or `null`. */
   active: ChartLegendItem | null
 }
 
-export interface PolarContext {
+export type PolarContext = {
   kind: PolarChartKind
   /**
    * Center and radii of `input` in this chart's plot area. The one formula behind every polar part, so a `ChartPie`

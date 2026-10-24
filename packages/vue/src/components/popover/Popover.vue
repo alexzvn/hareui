@@ -59,7 +59,7 @@ import theme from './theme'
 
 type Popover = typeof theme
 
-export interface PopoverProps {
+export type PopoverProps = {
   /**
    * The controlled open state of the popover.
    */
@@ -114,7 +114,7 @@ export interface PopoverProps {
   ui?: ComponentSlots<Popover>
 }
 
-export interface PopoverSlots {
+export type PopoverSlots = {
   /** The trigger element. Receives the current open state. */
   default?: (props: { open: boolean }) => any
   /** Replaces the heading text derived from `title`. */
@@ -123,7 +123,7 @@ export interface PopoverSlots {
   content?: (props: { close: () => void }) => any
 }
 
-export interface PopoverEmits {
+export type PopoverEmits = {
   /** Emitted when the open state changes. */
   'update:open': [value: boolean]
 }

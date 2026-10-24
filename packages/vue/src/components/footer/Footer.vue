@@ -37,7 +37,7 @@ import theme from './theme'
 
 type Footer = typeof theme
 
-export interface FooterProps {
+export type FooterProps = {
   /**
    * The element or component to render as.
    * @defaultValue 'footer'
@@ -49,7 +49,7 @@ export interface FooterProps {
   ui?: ComponentSlots<Footer>
 }
 
-export interface FooterSlots {
+export type FooterSlots = {
   /** Content aligned to the start on large screens (e.g. copyright). */
   left?: () => any
   /** Centered content (e.g. links). */

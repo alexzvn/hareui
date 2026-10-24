@@ -8,7 +8,7 @@
 </template>
 
 <script lang="ts">
-export interface ChartTooltipIndicatorProps {
+export type ChartTooltipIndicatorProps = {
   /** CSS color of the marker, e.g. `var(--chart-1)`. */
   color?: string
   /** Additional classes merged into the element. */

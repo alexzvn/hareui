@@ -131,7 +131,7 @@ type Pagination = typeof theme
 
 export type PaginationEntry = number | 'ellipsis'
 
-export interface PaginationProps {
+export type PaginationProps = {
   /** The current page (1-based). Use `v-model:page` to control it. */
   page?: number
   /**
@@ -184,7 +184,7 @@ export interface PaginationProps {
   ui?: ComponentSlots<Pagination>
 }
 
-export interface PaginationSlots {
+export type PaginationSlots = {
   /** Info shown before the links (HeroUI's `Pagination.Summary`). */
   summary?: (props: { page: number; total: number }) => any
   /** Replaces a page link's number. */
@@ -195,7 +195,7 @@ export interface PaginationSlots {
   nextIcon?: () => any
 }
 
-export interface PaginationEmits {
+export type PaginationEmits = {
   /** Emitted when the page changes. */
   'update:page': [page: number]
 }

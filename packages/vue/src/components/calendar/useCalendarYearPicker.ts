@@ -2,7 +2,7 @@ import type { DateValue } from '@internationalized/date'
 import type { ComputedRef, Ref, ShallowRef } from 'vue'
 import { computed, nextTick, onMounted, onScopeDispose, ref, watch } from 'vue'
 
-export interface UseCalendarYearPickerOptions {
+export type UseCalendarYearPickerOptions = {
   /** Whether the year grid is open. Mutated directly to close on selection/Escape. */
   open: Ref<boolean>
   /** The year currently shown by the calendar (the placeholder's year). */

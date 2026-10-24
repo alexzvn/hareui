@@ -94,7 +94,7 @@ import theme from './theme'
 
 type DateInputGroup = typeof theme
 
-export interface DateInputGroupSegment {
+export type DateInputGroupSegment = {
   part: string
   value: string
 }
@@ -144,7 +144,7 @@ function isTimeUnitPart(part: string) {
  * Internal part shared by `DateField` and `TimeField` (and later `DatePicker` / `DateRangePicker`).
  * Not exported from the package: HeroUI's docs don't show `DateInputGroup` standalone.
  */
-export interface DateInputGroupProps {
+export type DateInputGroupProps = {
   /** Segment contents from the parent `DateFieldRoot` / `TimeFieldRoot` default slot. */
   segments: DateInputGroupSegment[]
   /** `DateFieldInput` or `TimeFieldInput` from `reka-ui`, matching whichever root this is rendered inside. */
@@ -195,7 +195,7 @@ export interface DateInputGroupProps {
   ui?: ComponentSlots<DateInputGroup>
 }
 
-export interface DateInputGroupSlots {
+export type DateInputGroupSlots = {
   /** Prefix content, rendered before the segments. */
   prefix?: () => any
   /** Suffix content, rendered after the segments. */
@@ -231,7 +231,7 @@ const ui = useComponentUI('dateInputGroup', theme, () => ({
 // The Reka root this group renders inside (whichever one `segmentInput` belongs to); the keyboard handling
 // and ARIA fixes below read and write its segment state the same way Reka's own segment handlers do.
 type SegmentValues = Record<string, any>
-interface SegmentState {
+type SegmentState = {
   placeholder: Ref<DateValue>
   modelValue: Ref<DateValue | undefined>
   segmentValues: Ref<SegmentValues>

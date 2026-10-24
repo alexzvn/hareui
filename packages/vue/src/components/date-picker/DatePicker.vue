@@ -154,7 +154,7 @@ type HourCycle = NonNullable<DateFieldRootProps['hourCycle']>
 type DateStep = NonNullable<DateFieldRootProps['step']>
 type DateUnavailableMatcher = NonNullable<DateFieldRootProps['isDateUnavailable']>
 
-export interface DatePickerProps extends FormFieldProps {
+export type DatePickerProps = {
   /**
    * Renders the calendar popover in a portal. `true` portals to `document.body`, a selector string or element is used as the teleport target, and `false` disables portalling.
    * Falls back to `createHareUI({ portal })`, then `true`.
@@ -262,9 +262,9 @@ export interface DatePickerProps extends FormFieldProps {
       ComponentSlots<DateInputGroup>,
       'input' | 'segment'
     >
-}
+} & FormFieldProps
 
-export interface DatePickerSlots {
+export type DatePickerSlots = {
   /** Label content. Replaces the `label` prop. */
   label?: () => any
   /** Replaces the default calendar icon inside the trigger. */
@@ -283,7 +283,7 @@ export interface DatePickerSlots {
   }) => any
 }
 
-export interface DatePickerEmits {
+export type DatePickerEmits = {
   /** Emitted when the displayed placeholder date changes. */
   'update:placeholder': [value: DateValue]
   /** Emitted when the popover open state changes. */

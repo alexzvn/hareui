@@ -5,7 +5,7 @@ import { ToastQueue } from './toastQueue'
 
 const DEFAULT_TOAST_TIMEOUT = 4000
 
-export interface ToastOptions {
+export type ToastOptions = {
   description?: VNodeChild
   /** `null` hides the indicator. */
   indicator?: VNodeChild | null
@@ -23,13 +23,13 @@ export interface ToastOptions {
   onClose?: () => void
 }
 
-export interface ToastPromiseOptions<T = unknown> {
+export type ToastPromiseOptions<T = unknown> = {
   loading: VNodeChild
   success: ((data: T) => VNodeChild) | VNodeChild
   error: ((error: Error) => VNodeChild) | VNodeChild
 }
 
-export interface ToastFunction {
+export type ToastFunction = {
   /** Shows a toast; returns its key. */
   (message: VNodeChild, options?: ToastOptions): string
   /** Shows a `success` variant toast. */

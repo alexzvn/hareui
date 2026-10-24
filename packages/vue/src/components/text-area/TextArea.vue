@@ -28,7 +28,7 @@ import theme from './theme'
 
 type TextArea = typeof theme
 
-export interface TextAreaProps extends FormFieldProps {
+export type TextAreaProps = {
   /** The id of the textarea. Defaults to the id provided by a surrounding `TextField`. */
   id?: string
   /** The name of the textarea, used when submitting a form. */
@@ -78,7 +78,7 @@ export interface TextAreaProps extends FormFieldProps {
   class?: any
   /** Per-slot class overrides. */
   ui?: ComponentSlots<TextArea>
-}
+} & FormFieldProps
 </script>
 
 <script setup lang="ts">

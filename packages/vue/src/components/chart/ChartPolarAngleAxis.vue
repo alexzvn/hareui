@@ -57,7 +57,7 @@ import type { ClassValue } from 'tailwind-variants'
 
 import type { ChartAxisDomain } from './types'
 
-export interface ChartPolarAngleAxisProps {
+export type ChartPolarAngleAxisProps = {
   /** Key of the category shown around the chart. */
   dataKey?: string
   /**
@@ -130,7 +130,7 @@ export interface ChartPolarAngleAxisProps {
   class?: ClassValue
 }
 
-export interface ChartPolarAngleAxisSlots {
+export type ChartPolarAngleAxisSlots = {
   /** Replaces a tick label. Render SVG (`<text>`, `<g>`). */
   tick?: (props: {
     x: number

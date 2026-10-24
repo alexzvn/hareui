@@ -5,12 +5,12 @@ import { Comment, Fragment, h, inject } from 'vue'
 import type { TooltipProps } from '@/components/tooltip/Tooltip.vue'
 
 import type { NavigationMenuItem, NavigationMenuProps } from './NavigationMenu.vue'
-import theme from './theme'
+import type theme from './theme'
 import type { NavigationMenuPopoverProps } from './types'
 
 type Theme = typeof theme
 type SlotName = keyof Theme['slots']
-interface SlotArgs {
+type SlotArgs = {
   class?: ClassValue
   active?: boolean
   disabled?: boolean
@@ -22,7 +22,7 @@ interface SlotArgs {
 /** The resolved slot class functions; link slots take per-item variants on top of the root ones. */
 export type NavigationMenuUI = Record<SlotName, (props?: SlotArgs) => string>
 
-export interface NavigationMenuContext {
+export type NavigationMenuContext = {
   props: NavigationMenuProps
   ui: ComputedRef<NavigationMenuUI>
   slots: Slots

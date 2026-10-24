@@ -33,7 +33,7 @@ import {
 import type { ChartLayout, ChartMargin } from './types'
 
 /** Props shared by `AreaChart`, `LineChart`, `BarChart` and `ComposedChart`. */
-export interface CartesianRootProps<T extends object, S extends ChartSeriesBase> {
+export type CartesianRootProps<T extends object, S extends ChartSeriesBase> = {
   /** Rows to plot. Each series reads one field of each row. */
   data: T[]
   /** Key of the category of each row (x axis labels, tooltip header). Setting it draws the chart from props. */
@@ -114,14 +114,14 @@ export interface CartesianRootProps<T extends object, S extends ChartSeriesBase>
 }
 
 /** Slots shared by the cartesian roots. */
-export interface CartesianRootSlots extends ChartFrameSlots {
+export type CartesianRootSlots = {
   /** Chart parts (`ChartGrid`, `ChartXAxis`, series, `ChartTooltip`, …) and raw SVG such as `<defs>`. */
   default?: () => any
   /** Replaces each x axis tick label. Render SVG (`<text>`). */
   'x-tick'?: (props: ChartAxisTickSlotProps) => any
   /** Replaces each y axis tick label. Render SVG (`<text>`). */
   'y-tick'?: (props: ChartAxisTickSlotProps) => any
-}
+} & ChartFrameSlots
 
 /** `withDefaults` values shared by the cartesian roots. */
 export const cartesianRootDefaults = {
@@ -150,14 +150,14 @@ export function rootMargin(
 export type CartesianSeriesKind = 'area' | 'line' | 'bar'
 
 /** One generated series part: the component kind and its props. */
-export interface CartesianAutoSeries {
+export type CartesianAutoSeries = {
   key: string
   kind: CartesianSeriesKind
   props: Record<string, unknown>
 }
 
 /** What a cartesian root draws from its props (rendered by `ChartCartesianFrame`). */
-export interface CartesianAutoConfig extends ChartFrameConfig {
+export type CartesianAutoConfig = {
   generated: boolean
   layout: Extract<ChartLayout, 'horizontal' | 'vertical'>
   series: CartesianAutoSeries[]
@@ -165,11 +165,11 @@ export interface CartesianAutoConfig extends ChartFrameConfig {
   xAxis: Partial<ChartXAxisProps> | null
   yAxis: Partial<ChartYAxisProps> | null
   yAxisRight: Partial<ChartYAxisProps> | null
-}
+} & ChartFrameConfig
 
 type AnySeries = ChartAreaSeries & ChartBarSeries & ChartLineSeries & { type?: CartesianSeriesKind }
 
-export interface CartesianRootOptions<T extends object, S extends ChartSeriesBase> {
+export type CartesianRootOptions<T extends object, S extends ChartSeriesBase> = {
   chart: ChartContext
   props: CartesianRootProps<T, S>
   hidden: Ref<string[]>

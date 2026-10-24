@@ -8,12 +8,12 @@
 </template>
 
 <script lang="ts">
-export interface ChartTooltipHeaderProps {
+export type ChartTooltipHeaderProps = {
   /** Additional classes merged into the element. */
   class?: any
 }
 
-export interface ChartTooltipHeaderSlots {
+export type ChartTooltipHeaderSlots = {
   /** Header text, usually the x-axis label of the hovered point. */
   default?: () => any
 }

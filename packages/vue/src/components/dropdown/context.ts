@@ -11,14 +11,14 @@ import type {
 } from './Dropdown.vue'
 
 /** One selection scope: the menu itself, or a section with its own `selectionMode` (RAC's `GroupSelectionManager`). */
-export interface DropdownSelectionGroup {
+export type DropdownSelectionGroup = {
   mode: 'none' | 'single' | 'multiple'
   indicator: 'checkmark' | 'dot' | false
   isSelected: (value: DropdownValue) => boolean
   toggle: (value: DropdownValue) => void
 }
 
-export interface DropdownContext {
+export type DropdownContext = {
   /** Slot class functions of the Dropdown theme; `variant` is applied per item. */
   classes: () => Record<string, (options?: { variant?: string; class?: any }) => string>
   ui: () => Record<string, any> | undefined

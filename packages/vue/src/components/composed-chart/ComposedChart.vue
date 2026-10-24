@@ -24,9 +24,7 @@ import theme from './theme'
 
 type ComposedChartTheme = typeof theme
 
-export interface ComposedChartProps<
-  T extends object = Record<string, unknown>,
-> extends CartesianRootProps<T, ChartComposedSeries> {
+export type ComposedChartProps<T extends object = Record<string, unknown>> = {
   /**
    * Stacks every area and bar on one stack; lines never stack. A series' own `stack` wins.
    * @defaultValue false
@@ -49,9 +47,9 @@ export interface ComposedChartProps<
   radius?: ChartRadius
   /** Per-slot class overrides. */
   ui?: ComponentSlots<ComposedChartTheme>
-}
+} & CartesianRootProps<T, ChartComposedSeries>
 
-export interface ComposedChartSlots extends CartesianRootSlots {}
+export type ComposedChartSlots = {} & CartesianRootSlots
 </script>
 
 <script setup lang="ts" generic="T extends object">

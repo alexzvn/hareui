@@ -21,7 +21,7 @@ import theme from './theme'
 
 type Chip = typeof theme
 
-export interface ChipProps {
+export type ChipProps = {
   /**
    * The element or component to render as.
    * @defaultValue 'span'
@@ -50,7 +50,7 @@ export interface ChipProps {
   ui?: ComponentSlots<Chip>
 }
 
-export interface ChipSlots {
+export type ChipSlots = {
   /** Content rendered before the label (e.g. an icon or status dot). */
   leading?: () => any
   /** The chip label. Wrapped in the `label` element. */

@@ -13,7 +13,7 @@ import theme from './theme'
 
 type Skeleton = typeof theme
 
-export interface SkeletonProps {
+export type SkeletonProps = {
   /**
    * The element or component to render as.
    * @defaultValue 'div'
@@ -30,7 +30,7 @@ export interface SkeletonProps {
   ui?: ComponentSlots<Skeleton>
 }
 
-export interface SkeletonSlots {
+export type SkeletonSlots = {
   /** Optional content rendered inside the placeholder. */
   default?: () => any
 }

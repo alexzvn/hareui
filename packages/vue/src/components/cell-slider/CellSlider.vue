@@ -41,7 +41,7 @@ import theme from './theme'
 
 type CellSlider = typeof theme
 
-export interface CellSliderProps {
+export type CellSliderProps = {
   /** The current value. Bind with `v-model`. */
   modelValue?: number
   /**
@@ -95,14 +95,14 @@ export interface CellSliderProps {
   ui?: ComponentSlots<CellSlider>
 }
 
-export interface CellSliderEmits {
+export type CellSliderEmits = {
   /** Emitted when the value changes, on every step of a drag. */
   'update:modelValue': [value: number]
   /** Emitted with the final value when a drag or keyboard step commits a change. */
   changeEnd: [value: number]
 }
 
-export interface CellSliderSlots {
+export type CellSliderSlots = {
   /** The label content. Replaces the `label` prop. */
   label?: () => any
   /** The value shown at the end of the row. Replaces the formatted value. */

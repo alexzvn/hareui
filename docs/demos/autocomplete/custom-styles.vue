@@ -69,10 +69,10 @@ const TEAMMATES = [
 const itemClass =
   'rounded-lg data-[focused=true]:bg-accent/10 data-[selected=true]:bg-accent/5 dark:data-[focused=true]:bg-accent/15 dark:data-[selected=true]:bg-accent/8'
 
-interface Teammate extends ListBoxItem {
+type Teammate = {
   name: string
   role: string
-}
+} & ListBoxItem
 
 const items: Teammate[] = TEAMMATES.map((t) => ({
   value: t.id,

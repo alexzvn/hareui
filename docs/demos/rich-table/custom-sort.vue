@@ -13,7 +13,7 @@ import { RichTable } from '@hareui/vue'
 import { Icon } from '@iconify/vue'
 import { h } from 'vue'
 
-interface Payment {
+type Payment = {
   name: string
   status: string
   amount: number

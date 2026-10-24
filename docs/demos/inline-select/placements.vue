@@ -22,10 +22,10 @@ type Align = 'start' | 'center' | 'end'
 const sides: Side[] = ['bottom', 'top', 'left', 'right']
 const aligns: Align[] = ['start', 'center', 'end']
 
-interface Placement extends ListBoxItem {
+type Placement = {
   side: Side
   align: Align
-}
+} & ListBoxItem
 
 // One option per side / align pair, e.g. "Bottom · End"
 const placements: Placement[] = sides.flatMap((side) =>

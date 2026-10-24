@@ -6,7 +6,7 @@ import { inject, type InjectionKey, type Ref } from 'vue'
  * mirroring RAC's ColorPicker, which feeds ColorArea/ColorSlider/ColorField/ColorSwatch/ColorSwatchPicker
  * through context. A child uses it only when it has no `modelValue` of its own.
  */
-export interface ColorPickerContext {
+export type ColorPickerContext = {
   /** The picker's current colour. */
   color: Readonly<Ref<Color>>
   /** Updates the picker's colour (accepts any CSS colour string Reka's `parseColor` understands). */

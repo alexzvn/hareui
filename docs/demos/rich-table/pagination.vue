@@ -26,7 +26,7 @@ import { Pagination, RichTable } from '@hareui/vue'
 import { getPaginationRowModel } from '@tanstack/vue-table'
 import { computed, ref } from 'vue'
 
-interface Payment {
+type Payment = {
   name: string
   status: string
   amount: number

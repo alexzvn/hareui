@@ -63,10 +63,7 @@ import theme from './theme'
 
 type CellSelect = typeof theme
 
-export interface CellSelectProps<T extends ListBoxItem = ListBoxItem> extends Omit<
-  SelectProps<T>,
-  'variant' | 'label' | 'fullWidth' | 'ui'
-> {
+export type CellSelectProps<T extends ListBoxItem = ListBoxItem> = {
   /** Text shown at the start of the row. Also names the trigger and the listbox. */
   label?: string
   /** The selected value(s). Use with `v-model`. */
@@ -88,20 +85,17 @@ export interface CellSelectProps<T extends ListBoxItem = ListBoxItem> extends Om
   align?: 'start' | 'center' | 'end'
   /** Per-slot class overrides. */
   ui?: ComponentSlots<CellSelect>
-}
+} & Omit<SelectProps<T>, 'variant' | 'label' | 'fullWidth' | 'side' | 'align' | 'ui'>
 
-export interface CellSelectSlots<T extends ListBoxItem = ListBoxItem> extends Omit<
-  SelectSlots<T>,
-  'label' | 'leading'
-> {
+export type CellSelectSlots<T extends ListBoxItem = ListBoxItem> = {
   /** Row label content. Replaces `label`. */
   label?: () => any
-}
+} & Omit<SelectSlots<T>, 'label' | 'leading'>
 
-export interface CellSelectEmits extends SelectEmits {
+export type CellSelectEmits = {
   /** The selection changed (`v-model`). */
   'update:modelValue': [value: SelectValue]
-}
+} & SelectEmits
 </script>
 
 <script setup lang="ts" generic="T extends ListBoxItem = ListBoxItem">

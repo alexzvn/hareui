@@ -7,7 +7,7 @@ function defined(attrs: Record<string, unknown>): Record<string, unknown> {
   return Object.fromEntries(Object.entries(attrs).filter(([, value]) => value !== undefined))
 }
 
-export interface ResolvedLink {
+export type ResolvedLink = {
   /** The tag or component to render the link as. */
   as: string | Component
   /** Whether the item is the current location (`item.active`, else the router's match). */
@@ -16,7 +16,7 @@ export interface ResolvedLink {
   attrs: Record<string, unknown>
 }
 
-interface RouterLinkSlotProps {
+type RouterLinkSlotProps = {
   href: string
   isActive: boolean
   isExactActive: boolean

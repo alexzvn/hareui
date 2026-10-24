@@ -8,13 +8,13 @@ import { resolveChartLegend } from './series-config'
 // What every chart root (cartesian and polar) draws around its parts: the in-chart legend, which hides and shows
 // series, and the tooltip drawn from props. Rendered by `ChartFrame`.
 
-export interface ChartFrameLegend {
+export type ChartFrameLegend = {
   position: ChartLegendPosition
   /** `ChartLegend` props: the root's defaults under the `legend` prop's own. */
   props: Partial<ChartLegendProps<any>>
 }
 
-export interface ChartFrameConfig {
+export type ChartFrameConfig = {
   /** `null`: no legend. */
   legend: ChartFrameLegend | null
   legendItems: ChartLegendItem[]
@@ -23,7 +23,7 @@ export interface ChartFrameConfig {
 }
 
 /** Root slots the frame places: legend, legend rows and tooltip. */
-export interface ChartFrameSlots {
+export type ChartFrameSlots = {
   /** Replaces the legend. `toggle(key)` hides or shows a series. */
   legend?: (props: { items: ChartLegendItem[]; toggle: (key: string) => void }) => any
   /** Replaces each legend item. */

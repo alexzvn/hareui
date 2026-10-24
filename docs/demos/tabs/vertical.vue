@@ -21,9 +21,9 @@
 import type { TabsItem } from '@hareui/vue'
 import { Tabs } from '@hareui/vue'
 
-interface Section extends TabsItem {
+type Section = {
   heading: string
-}
+} & TabsItem
 
 const items: Section[] = [
   {

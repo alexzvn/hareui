@@ -5,7 +5,7 @@ import type { ComponentSlots, ComponentUI, ComponentVariants } from '@/types/tv'
 
 import type theme from './theme'
 
-export interface CheckboxButtonGroupContext {
+export type CheckboxButtonGroupContext = {
   /** The selected values. */
   selected: Readonly<Ref<string[]>>
   disabled: Readonly<Ref<boolean>>

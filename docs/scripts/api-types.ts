@@ -1,4 +1,4 @@
-export interface ApiProp {
+export type ApiProp = {
   name: string
   type: string
   default?: string
@@ -6,19 +6,19 @@ export interface ApiProp {
   required: boolean
 }
 
-export interface ApiSlot {
+export type ApiSlot = {
   name: string
   type: string
   description: string
 }
 
-export interface ApiEvent {
+export type ApiEvent = {
   name: string
   type: string
   description: string
 }
 
-export interface ComponentApi {
+export type ComponentApi = {
   props: ApiProp[]
   slots: ApiSlot[]
   events: ApiEvent[]

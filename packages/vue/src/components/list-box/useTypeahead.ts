@@ -14,7 +14,7 @@ import { onScopeDispose } from 'vue'
  */
 export type TypeaheadStart = 'current' | 'next'
 
-export interface TypeaheadOptions {
+export type TypeaheadOptions = {
   start: TypeaheadStart
   /**
    * RAC: Space extends a search in progress (the caller should then keep it from pressing/selecting) but never
@@ -23,7 +23,7 @@ export interface TypeaheadOptions {
   space?: boolean
 }
 
-export interface TypeaheadSource<T> {
+export type TypeaheadSource<T> = {
   /** Candidates in display order. */
   items: readonly T[]
   /** Searchable text of an item; matched case-insensitively by prefix. */

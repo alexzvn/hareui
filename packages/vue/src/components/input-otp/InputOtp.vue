@@ -91,7 +91,7 @@ import theme from './theme'
 
 type InputOtp = typeof theme
 
-export interface InputOtpProps extends FormFieldProps {
+export type InputOtpProps = {
   /** The current code. Bind with `v-model`. */
   modelValue?: string
   /** The initial code when uncontrolled (no `v-model`). */
@@ -154,9 +154,9 @@ export interface InputOtpProps extends FormFieldProps {
   class?: any
   /** Per-slot class overrides. */
   ui?: ComponentSlots<InputOtp>
-}
+} & FormFieldProps
 
-export interface InputOtpSlots {
+export type InputOtpSlots = {
   /** Label content. Replaces the `label` prop. */
   label?: () => any
   /** Description content. Replaces the `description` prop. */
@@ -165,7 +165,7 @@ export interface InputOtpSlots {
   error?: (props: ValidationResult) => any
 }
 
-export interface InputOtpEmits {
+export type InputOtpEmits = {
   /** Emitted once, when every slot has just become filled. */
   complete: [value: string]
 }

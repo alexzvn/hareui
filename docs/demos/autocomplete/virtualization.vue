@@ -24,10 +24,10 @@ import { Autocomplete } from '@hareui/vue'
 import { useFilter } from 'reka-ui'
 import { computed, ref } from 'vue'
 
-interface User extends ListBoxItem {
+type User = {
   label: string
   description: string
-}
+} & ListBoxItem
 
 function generateUsers(n: number): User[] {
   const firstNames = [

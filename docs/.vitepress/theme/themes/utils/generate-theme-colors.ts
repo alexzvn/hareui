@@ -96,19 +96,19 @@ const SEMANTIC_COLORS = {
  * Types
  * -----------------------------------------------------------------------------------------------*/
 
-export interface OklchColor {
+export type OklchColor = {
   l: number
   c: number
   h: number
 }
 
-export interface ThemeColor {
+export type ThemeColor = {
   name: string
   oklchLight: string
   oklchDark: string
 }
 
-export interface GeneratedThemeColors {
+export type GeneratedThemeColors = {
   // Core colors
   background: ThemeColor
   foreground: ThemeColor
@@ -151,7 +151,7 @@ export interface GeneratedThemeColors {
 /**
  * Semantic color override for a single color (success, warning, or danger)
  */
-export interface SemanticColorOverride {
+export type SemanticColorOverride = {
   /** OKLCH color string e.g. "oklch(0.5148 0.1337 146.82)" */
   color: string
   /** Optional foreground color - if not provided, will be calculated automatically */
@@ -162,7 +162,7 @@ export interface SemanticColorOverride {
  * Semantic color overrides for light and dark modes.
  * Allows themes to specify exact semantic colors instead of using calculated values.
  */
-export interface SemanticOverrides {
+export type SemanticOverrides = {
   light?: {
     /** Override the accent foreground color (text on accent background) */
     accentForeground?: string
@@ -179,7 +179,7 @@ export interface SemanticOverrides {
   }
 }
 
-export interface ColorGenerationParams {
+export type ColorGenerationParams = {
   /** Lightness value for accent color (0-1) */
   lightness: number
   /** Chroma value for accent and gray tinting (0-0.4) */

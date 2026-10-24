@@ -103,7 +103,7 @@ import theme from './theme'
 type CheckboxGroup = typeof theme
 type Checkbox = typeof checkboxTheme
 
-export interface CheckboxGroupItem {
+export type CheckboxGroupItem = {
   /** The value added to / removed from `v-model` when the item is toggled. */
   value: string
   /** The item label. */
@@ -114,9 +114,7 @@ export interface CheckboxGroupItem {
   disabled?: boolean
 }
 
-export interface CheckboxGroupProps<
-  T extends CheckboxGroupItem = CheckboxGroupItem,
-> extends FormFieldProps {
+export type CheckboxGroupProps<T extends CheckboxGroupItem = CheckboxGroupItem> = {
   /** The checkbox items. */
   items?: T[]
   /**
@@ -172,9 +170,9 @@ export interface CheckboxGroupProps<
   /** Per-slot class overrides. `item` is each checkbox's root; `content`, `control` and `indicator` are the `checkbox` theme's. */
   ui?: ComponentSlots<CheckboxGroup> &
     Pick<ComponentSlots<Checkbox>, 'content' | 'control' | 'indicator'> & { item?: any }
-}
+} & FormFieldProps
 
-export interface CheckboxGroupSlots<T extends CheckboxGroupItem = CheckboxGroupItem> {
+export type CheckboxGroupSlots<T extends CheckboxGroupItem = CheckboxGroupItem> = {
   /** The group label content. Replaces the `label` prop. */
   label?: () => any
   /** The group description content. Replaces the `description` prop. */

@@ -200,7 +200,7 @@ import theme from './theme'
 
 type NumberStepper = typeof theme
 
-export interface NumberStepperProps extends FormFieldProps {
+export type NumberStepperProps = {
   /** Label text rendered above the stepper. */
   label?: string
   /** Helper text rendered below the stepper. Hidden while the field is invalid. */
@@ -281,9 +281,9 @@ export interface NumberStepperProps extends FormFieldProps {
   class?: any
   /** Per-slot class overrides. */
   ui?: ComponentSlots<NumberStepper>
-}
+} & FormFieldProps
 
-export interface NumberStepperSlots {
+export type NumberStepperSlots = {
   /** Label content. Replaces the `label` prop. */
   label?: () => any
   /** Decrement button content. Defaults to a minus icon. */

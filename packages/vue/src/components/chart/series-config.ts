@@ -40,7 +40,7 @@ export type ChartIndexKey<T> =
         [K in StringKey<T>]-?: NonNullable<T[K]> extends string | number | Date ? K : never
       }[StringKey<T>]
 
-export interface ChartSeriesBase {
+export type ChartSeriesBase = {
   /**
    * Legend and tooltip label.
    * @defaultValue the key
@@ -67,12 +67,12 @@ export interface ChartSeriesBase {
   class?: ClassValue
 }
 
-export interface ChartStackableSeries {
+export type ChartStackableSeries = {
   /** Series with the same string share a stack; `true` joins the chart's shared stack, `false` opts out of `stacked`. */
   stack?: string | boolean
 }
 
-export interface ChartAxisSeries {
+export type ChartAxisSeries = {
   /**
    * Value axis the series is drawn against. `'right'` adds a right y axis.
    * @defaultValue 'left'
@@ -80,43 +80,47 @@ export interface ChartAxisSeries {
   yAxis?: 'left' | 'right'
 }
 
-export interface ChartLineSeries extends ChartSeriesBase, ChartAxisSeries {
+export type ChartLineSeries = {
   curve?: ChartCurveType
   strokeWidth?: number
   strokeDasharray?: string
   dot?: boolean | ChartDotProps
   activeDot?: boolean | ChartDotProps
   connectNulls?: boolean
-}
+} & ChartSeriesBase &
+  ChartAxisSeries
 
 /** `'gradient'` fades the series color from `fillOpacity[0]` at the top to `fillOpacity[1]` at the bottom. */
 export type ChartAreaFill = 'gradient' | 'solid' | 'none' | (string & {})
 
-export interface ChartAreaSeries extends ChartLineSeries, ChartStackableSeries {
+export type ChartAreaSeries = {
   fill?: ChartAreaFill
   /** One opacity, or `[top, bottom]` stop opacities for the gradient fill. */
   fillOpacity?: number | [top: number, bottom: number]
-}
+} & ChartLineSeries &
+  ChartStackableSeries
 
-export interface ChartBarSeries extends ChartSeriesBase, ChartAxisSeries, ChartStackableSeries {
+export type ChartBarSeries = {
   /** Corner radius of the bar's outer end. Only the last bar of a stack is rounded. */
   radius?: ChartRadius
   barSize?: number | string
   fillOpacity?: number
-}
+} & ChartSeriesBase &
+  ChartAxisSeries &
+  ChartStackableSeries
 
 export type ChartComposedSeries =
   | (ChartAreaSeries & { type: 'area' })
   | (ChartBarSeries & { type: 'bar' })
   | (ChartLineSeries & { type: 'line' })
 
-export interface ChartRadarSeries extends ChartSeriesBase {
+export type ChartRadarSeries = {
   fillOpacity?: number
   strokeWidth?: number
   strokeDasharray?: string
   dot?: boolean | ChartDotProps
   activeDot?: boolean | ChartDotProps
-}
+} & ChartSeriesBase
 
 /** Keyed map, ordered by key order, as a const and reused by `ChartLegend`. */
 export type ChartSeriesMap<T, S = ChartSeriesBase> = { [K in ChartValueKey<T>]?: S }
@@ -146,7 +150,7 @@ export type ChartResolvedSeries<S = ChartSeriesBase> = Omit<
 }
 
 /** Root props that turn on the generated parts. */
-export interface ChartModeProps {
+export type ChartModeProps = {
   index?: unknown
   series?: unknown
   sparkline?: boolean
@@ -198,7 +202,7 @@ export function chartColorAt(position: number, colors: readonly string[] = CHART
   return palette[position % palette.length]!
 }
 
-export interface ResolveSeriesOptions<T, S> {
+export type ResolveSeriesOptions<T, S> = {
   data: readonly T[]
   /** Category key, left out of the inferred series. */
   index?: string
@@ -280,7 +284,7 @@ export function chartGradientId(chartId: string, key: string): string {
   return `${chartId}-fill-${key}`.replace(/[^\w-]/g, '_')
 }
 
-export interface ChartAreaFillResult {
+export type ChartAreaFillResult = {
   /** `fill` for `ChartArea`: a color, `url(#id)` or `'none'`. */
   fill: string
   fillOpacity: number
@@ -362,7 +366,7 @@ export function resolveChartLegend<P extends object>(
 }
 
 /** One legend row: a series, or a pie/radial slice. */
-export interface ChartLegendItem {
+export type ChartLegendItem = {
   key: string
   name: string
   color: string
@@ -373,13 +377,13 @@ export interface ChartLegendItem {
   percent?: number
 }
 
-export interface ChartSlice<T = object> extends ChartLegendItem {
+export type ChartSlice<T = object> = {
   value: number
   position: number
   row: T
-}
+} & ChartLegendItem
 
-export interface ResolveSlicesOptions<T> {
+export type ResolveSlicesOptions<T> = {
   data: readonly T[]
   /** Slice name key. */
   index: string

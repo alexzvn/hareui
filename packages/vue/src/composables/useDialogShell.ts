@@ -9,7 +9,7 @@ import { usePortal } from './usePortal'
 import { useTabbableFocusLoop } from './useTabbableFocusLoop'
 import { useVisualViewportHeight } from './useVisualViewportHeight'
 
-export interface DialogShellOptions {
+export type DialogShellOptions = {
   /** The component's props; reads `open`, `defaultOpen`, `title`, `portal` and `dismissible`. */
   props: {
     open?: boolean

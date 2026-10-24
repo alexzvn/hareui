@@ -27,7 +27,7 @@ import theme from './theme'
 
 type ToggleButtonGroup = typeof theme
 
-export interface ToggleButtonGroupProps {
+export type ToggleButtonGroupProps = {
   /**
    * The element or component to render as.
    * @defaultValue 'div'
@@ -84,7 +84,7 @@ export interface ToggleButtonGroupProps {
   ui?: ComponentSlots<ToggleButtonGroup>
 }
 
-export interface ToggleButtonGroupSlots {
+export type ToggleButtonGroupSlots = {
   /** The ToggleButtons, each with a `value`. */
   default?: (props: { selected: string[] }) => any
 }

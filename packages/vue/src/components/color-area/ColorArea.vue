@@ -49,7 +49,7 @@ import theme from './theme'
 
 type ColorArea = typeof theme
 
-export interface ColorAreaProps {
+export type ColorAreaProps = {
   /**
    * The colour value (controlled), as a hex/CSS colour string or a `Color` object. Use with `v-model`.
    * When omitted and used inside a `ColorPicker`, falls back to its current colour.
@@ -83,7 +83,7 @@ export interface ColorAreaProps {
   ui?: ComponentSlots<ColorArea>
 }
 
-export interface ColorAreaEmits {
+export type ColorAreaEmits = {
   /** Emitted on every colour change, mirroring HeroUI's `onChange` (fired while dragging/typing). */
   change: [value: Color]
   /** Emitted when the user stops interacting (pointer up / key up), mirroring HeroUI's `onChangeEnd`. */

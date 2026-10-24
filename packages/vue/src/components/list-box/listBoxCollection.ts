@@ -2,7 +2,7 @@
 // collections of ComboBox and Autocomplete (RAC `filterCollection`).
 import type { ListBoxEntry, ListBoxItem, ListBoxSection } from './ListBox.vue'
 
-export interface CollectionRow {
+export type CollectionRow = {
   kind: 'item'
   item: ListBoxItem
   index: number

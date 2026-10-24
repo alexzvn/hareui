@@ -63,7 +63,7 @@ import theme from './theme'
 
 type DashboardSidebarCollapse = typeof theme
 
-export interface DashboardSidebarCollapseProps {
+export type DashboardSidebarCollapseProps = {
   /**
    * The element or component to render as.
    * @defaultValue 'button'
@@ -95,7 +95,7 @@ export interface DashboardSidebarCollapseProps {
   ui?: ComponentSlots<DashboardSidebarCollapse>
 }
 
-export interface DashboardSidebarCollapseSlots {
+export type DashboardSidebarCollapseSlots = {
   /** The button content. Defaults to the gravity-ui `layout-side-content-left` icon (`-right` for `side="right"`). */
   default?: (props: { collapsed: boolean }) => unknown
 }

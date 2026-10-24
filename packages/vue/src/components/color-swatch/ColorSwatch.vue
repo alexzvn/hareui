@@ -22,7 +22,7 @@ import theme from './theme'
 
 type ColorSwatch = typeof theme
 
-export interface ColorSwatchProps {
+export type ColorSwatchProps = {
   /**
    * The color to display, as a hex/CSS color string or a `Color` object.
    * When omitted and used inside a `ColorPicker`, falls back to its current color.
@@ -46,7 +46,7 @@ export interface ColorSwatchProps {
   ui?: ComponentSlots<ColorSwatch>
 }
 
-export interface ColorSwatchSlots {
+export type ColorSwatchSlots = {
   /** Replaces the swatch content. Receives the resolved color as a CSS string and its alpha channel (0–1). */
   default?: (props: { color: string; alpha: number }) => any
 }

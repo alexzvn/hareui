@@ -2,7 +2,7 @@ import type { ReactElement } from 'react'
 import { Calendar, DateField, DatePicker, FieldError, Label } from '@heroui/react'
 import { CalendarDate } from '@internationalized/date'
 
-interface FieldProps {
+type FieldProps = {
   variant?: 'primary' | 'secondary'
   isRequired?: boolean
   isDisabled?: boolean

@@ -58,7 +58,7 @@ import theme from './theme'
 
 type InputGroup = typeof theme
 
-export interface InputGroupProps extends FormFieldProps {
+export type InputGroupProps = {
   /**
    * The native input type.
    * @defaultValue 'text'
@@ -125,9 +125,9 @@ export interface InputGroupProps extends FormFieldProps {
   class?: any
   /** Per-slot class overrides. */
   ui?: ComponentSlots<InputGroup>
-}
+} & FormFieldProps
 
-export interface InputGroupSlots {
+export type InputGroupSlots = {
   /** Content rendered before the input (icon, text or a button). Replaces the `prefix` prop. */
   prefix?: () => any
   /** Content rendered after the input (icon, text or a button). Replaces the `suffix` prop. */

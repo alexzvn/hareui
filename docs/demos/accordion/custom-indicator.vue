@@ -13,9 +13,9 @@ import { Accordion } from '@hareui/vue'
 import { Icon } from '@iconify/vue'
 import { ref } from 'vue'
 
-interface IndicatorItem extends AccordionItem {
+type IndicatorItem = {
   icon?: string
-}
+} & AccordionItem
 
 const items: IndicatorItem[] = [
   {

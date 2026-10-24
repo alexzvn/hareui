@@ -49,7 +49,7 @@
 import { DropZone, DropZoneFileItem, DropZoneFileList } from '@hareui/vue'
 import { onBeforeUnmount, ref } from 'vue'
 
-interface TripDocument {
+type TripDocument = {
   key: string
   name: string
   bytes: number

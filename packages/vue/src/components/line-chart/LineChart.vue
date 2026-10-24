@@ -23,9 +23,7 @@ import theme from './theme'
 
 type LineChartTheme = typeof theme
 
-export interface LineChartProps<
-  T extends object = Record<string, unknown>,
-> extends CartesianRootProps<T, ChartLineSeries> {
+export type LineChartProps<T extends object = Record<string, unknown>> = {
   /**
    * Curve of every series.
    * @defaultValue 'monotone'
@@ -48,9 +46,9 @@ export interface LineChartProps<
   connectNulls?: boolean
   /** Per-slot class overrides. */
   ui?: ComponentSlots<LineChartTheme>
-}
+} & CartesianRootProps<T, ChartLineSeries>
 
-export interface LineChartSlots extends CartesianRootSlots {}
+export type LineChartSlots = {} & CartesianRootSlots
 </script>
 
 <script setup lang="ts" generic="T extends object">

@@ -3,7 +3,7 @@ import { computed, getCurrentScope, onScopeDispose, ref, toValue, watch } from '
 
 import type { DashboardStorage, DashboardUnit } from './useDashboard'
 
-export interface UseResizableOptions {
+export type UseResizableOptions = {
   /** The side of the panel the resize handle sits on is the opposite one: a `left` panel is resized from its right edge. */
   side?: 'left' | 'right'
   minSize?: number
@@ -17,7 +17,7 @@ export interface UseResizableOptions {
   unit?: DashboardUnit
 }
 
-export interface UseResizableReturn {
+export type UseResizableReturn = {
   /** The rendered size in `unit`: `collapsedSize` while collapsed. */
   size: Readonly<Ref<number>>
   isDragging: Readonly<Ref<boolean>>
@@ -41,7 +41,7 @@ export interface UseResizableReturn {
   >
 }
 
-interface StoredState {
+type StoredState = {
   size?: number
   collapsed?: boolean
 }
@@ -109,7 +109,7 @@ const COLLAPSE_THRESHOLD: Record<DashboardUnit, number> = { '%': 4, rem: 4, px: 
 /** Keyboard resize step in `unit`. Shift multiplies it by 5. */
 const KEYBOARD_STEP: Record<DashboardUnit, number> = { '%': 1, rem: 1, px: 16 }
 
-interface DragSession {
+type DragSession = {
   startX: number
   startWidth: number
   parentWidth: number
@@ -117,7 +117,7 @@ interface DragSession {
   rtl: boolean
 }
 
-interface UseResizableSetup {
+type UseResizableSetup = {
   /** Persistence key (cookie or storage entry name). */
   key: string
   /** Reactive resize options. */

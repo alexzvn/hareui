@@ -18,7 +18,7 @@ import theme from './theme'
 
 type DashboardGroup = typeof theme
 
-export interface DashboardGroupProps {
+export type DashboardGroupProps = {
   /**
    * The element or component this component should render as.
    * @defaultValue 'div'
@@ -50,7 +50,7 @@ export interface DashboardGroupProps {
   ui?: ComponentSlots<DashboardGroup>
 }
 
-export interface DashboardGroupSlots {
+export type DashboardGroupSlots = {
   /** The sidebars and panels. */
   default?: () => any
 }

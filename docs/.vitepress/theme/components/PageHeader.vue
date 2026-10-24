@@ -28,7 +28,7 @@ import { tv } from '../../../../packages/vue/src/utils/tv'
 import { repoFileUrl } from '../repo'
 import BrandIcon from './BrandIcon.vue'
 
-export interface PageLinks {
+export type PageLinks = {
   /** Component file under `packages/vue/src/components/`, e.g. `button/Button.vue`. */
   source?: string
   /** Theme file under `packages/vue/src/components/`, e.g. `button/theme.ts`. */
@@ -37,7 +37,7 @@ export interface PageLinks {
   heroui?: string
 }
 
-interface Badge {
+type Badge = {
   label: string
   href: string
   icon: 'github' | 'heroui' | 'reka'

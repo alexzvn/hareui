@@ -20,7 +20,7 @@ import theme from './theme'
 
 type Kbd = typeof theme
 
-export interface KbdProps {
+export type KbdProps = {
   /**
    * The element or component to render as.
    * @defaultValue 'kbd'
@@ -36,7 +36,7 @@ export interface KbdProps {
   ui?: ComponentSlots<Kbd>
 }
 
-export interface KbdSlots {
+export type KbdSlots = {
   /** The key text after the symbols, wrapped in the `content` element (HeroUI's `Kbd.Content`). */
   default?: () => any
 }

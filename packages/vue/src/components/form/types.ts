@@ -49,16 +49,16 @@ export type FormFieldName<S extends FormSchema> = (keyof InferInput<S> & string)
 /** The field events that trigger validation. */
 export type FormInputEvents = 'input' | 'blur' | 'change' | 'focus'
 
-export interface FormError<P extends string = string> {
+export type FormError<P extends string = string> = {
   /** The `name` of the field the error belongs to; empty for form-level errors. */
   name?: P
   message: string
 }
 
-export interface FormErrorWithId extends FormError {
+export type FormErrorWithId = {
   /** The id of the field's control, to focus or scroll to it. */
   id?: string
-}
+} & FormError
 
 export type FormSubmitEvent<T> = SubmitEvent & {
   /** The validated state: the schema's output unless `transform` is `false`. */
@@ -83,7 +83,7 @@ export class FormValidationException extends Error {
   }
 }
 
-export interface FormValidateOptions<S extends FormSchema, T extends boolean = false> {
+export type FormValidateOptions<S extends FormSchema, T extends boolean = false> = {
   /** Only validate these fields; errors on other fields are kept. */
   name?: FormFieldName<S> | FormFieldName<S>[]
   /** Resolve to `false` instead of throwing a `FormValidationException` when invalid. */
@@ -95,7 +95,7 @@ export interface FormValidateOptions<S extends FormSchema, T extends boolean = f
 }
 
 /** The form's exposed instance, from a template ref. */
-export interface Form<S extends FormSchema> {
+export type Form<S extends FormSchema> = {
   /** Validates the state, shows the errors, and resolves to the state (or the schema's output with `transform`). */
   validate: <T extends boolean = false>(
     opts?: FormValidateOptions<S, T>,
@@ -125,7 +125,7 @@ export interface Form<S extends FormSchema> {
 }
 
 /** Form-validation props shared by every field. */
-export interface FormFieldProps {
+export type FormFieldProps = {
   /** Shows form errors whose name matches this pattern too, e.g. `/^tags\..+/` for errors on array items (`tags.0`). */
   errorPattern?: RegExp
   /**

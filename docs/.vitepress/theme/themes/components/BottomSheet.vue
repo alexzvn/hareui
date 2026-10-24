@@ -76,7 +76,7 @@ watch(
 // Inputs that handle their own pointer gestures must not start a sheet drag.
 const OWN_GESTURES = 'input, textarea, select, [role="slider"], [data-slot*="slider"]'
 
-interface Session {
+type Session = {
   startY: number
   pointerId: number
   active: boolean

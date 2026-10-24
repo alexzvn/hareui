@@ -5,7 +5,7 @@ import type { ComponentSlots, ComponentVariants } from '@/types/tv'
 
 import type theme from './theme'
 
-export interface RadioButtonGroupContext {
+export type RadioButtonGroupContext = {
   /** The selected value, `null` while nothing is selected. */
   selected: ComputedRef<string | null>
   disabled: ComputedRef<boolean>

@@ -17,7 +17,7 @@
 <script lang="ts">
 import type { ChartAxisProps, ChartAxisSlots } from './axis'
 
-export interface ChartYAxisProps extends ChartAxisProps {
+export type ChartYAxisProps = {
   /**
    * Id that series reference with `yAxisId` when a chart has several y axes.
    * @defaultValue 0
@@ -35,7 +35,7 @@ export interface ChartYAxisProps extends ChartAxisProps {
   width?: number | 'auto'
   /** Space above the top and below the bottom value, in px. */
   padding?: { top?: number; bottom?: number }
-}
+} & ChartAxisProps
 
 export type ChartYAxisSlots = ChartAxisSlots
 </script>

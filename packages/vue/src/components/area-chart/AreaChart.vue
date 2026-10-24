@@ -23,9 +23,7 @@ import theme from './theme'
 
 type AreaChartTheme = typeof theme
 
-export interface AreaChartProps<
-  T extends object = Record<string, unknown>,
-> extends CartesianRootProps<T, ChartAreaSeries> {
+export type AreaChartProps<T extends object = Record<string, unknown>> = {
   /**
    * Stacks every area on one stack. A series' own `stack` wins.
    * @defaultValue false
@@ -64,9 +62,9 @@ export interface AreaChartProps<
   connectNulls?: boolean
   /** Per-slot class overrides. */
   ui?: ComponentSlots<AreaChartTheme>
-}
+} & CartesianRootProps<T, ChartAreaSeries>
 
-export interface AreaChartSlots extends CartesianRootSlots {}
+export type AreaChartSlots = {} & CartesianRootSlots
 </script>
 
 <script setup lang="ts" generic="T extends object">

@@ -59,7 +59,7 @@ import type { ToastQueue, ToastContentValue as ToastContentValueType } from './t
 
 type Toast = typeof theme
 
-export interface ToastProviderProps {
+export type ToastProviderProps = {
   /**
    * Placement of the toast region.
    * @defaultValue 'bottom'
@@ -115,7 +115,7 @@ export interface ToastProviderProps {
   ui?: ComponentSlots<Toast>
 }
 
-export interface ToastProviderSlots {
+export type ToastProviderSlots = {
   /**
    * Replaces a toast's inner content (indicator, title, description, action,
    * close button). The positioned, animated stack wrapper is still rendered
@@ -365,7 +365,7 @@ function onHeightRemove(key: string) {
   delete heights[key]
 }
 
-interface RenderItem {
+type RenderItem = {
   toast: QueuedToast<ToastContentValueType>
   index: number
   isFrontmost: boolean

@@ -27,7 +27,7 @@ import type { DropdownValue, RichTableColumn, RichTableRow } from '@hareui/vue'
 import { Dropdown, RichTable } from '@hareui/vue'
 import { ref, useTemplateRef } from 'vue'
 
-interface Payment {
+type Payment = {
   id: string
   name: string
   status: string

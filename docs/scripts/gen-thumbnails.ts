@@ -36,7 +36,7 @@ const CROP_RADIUS = 12
 // Full-page (`contain`) demos render in an iframe, so `page` shoots the demo alone from its /preview/<demo> route
 // at that viewport instead, keeping either the `select` matches or the `crop` (in CSS px), and `pointer` hovers a
 // point of it first. Crops are picked to show the component itself at 1x or more, not the whole page shrunk.
-interface Pick {
+type Pick = {
   demo?: string
   select?: string
   width?: number
@@ -155,7 +155,7 @@ const ISOLATE = `
   [data-thumbnail], [data-thumbnail] * { visibility: visible !important; }
 `
 
-interface Box {
+type Box = {
   x: number
   y: number
   width: number

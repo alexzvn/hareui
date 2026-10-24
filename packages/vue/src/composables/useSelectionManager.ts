@@ -1,6 +1,6 @@
 export type SelectionMode = 'none' | 'single' | 'multiple'
 
-export interface SelectionManagerOptions<K> {
+export type SelectionManagerOptions<K> = {
   /** How many keys can be selected. */
   mode: () => SelectionMode
   /** Every key of the collection, in display order. */

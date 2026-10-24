@@ -44,11 +44,11 @@ import type { TagGroupItem } from '@hareui/vue'
 import { Avatar, EmptyState, TagGroup } from '@hareui/vue'
 import { computed, ref } from 'vue'
 
-interface User extends TagGroupItem {
+type User = {
   label: string
   avatar: string
   fallback: string
-}
+} & TagGroupItem
 
 const users = ref<User[]>([
   {

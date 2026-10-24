@@ -24,7 +24,7 @@ import type { ClassValue } from 'tailwind-variants'
 
 import type { ChartLabelPosition } from './label'
 
-export interface ChartLabelProps {
+export type ChartLabelProps = {
   /** Key of the label value in each row. Inside a series it defaults to the series values. */
   dataKey?: string
   /** Text of a single label placed directly in a chart (e.g. a total in the middle of a donut). */
@@ -48,7 +48,7 @@ export interface ChartLabelProps {
   class?: ClassValue
 }
 
-export interface ChartLabelSlotProps {
+export type ChartLabelSlotProps = {
   /** Raw value. */
   value: number | string | undefined
   /** Formatted text. */
@@ -62,7 +62,7 @@ export interface ChartLabelSlotProps {
   dominantBaseline: 'auto' | 'central' | 'hanging'
 }
 
-export interface ChartLabelSlots {
+export type ChartLabelSlots = {
   /** Replaces each label. Render SVG (`<text>`, `<g>`). */
   default?: (props: ChartLabelSlotProps) => unknown
 }

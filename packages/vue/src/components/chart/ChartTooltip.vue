@@ -52,7 +52,7 @@ import type { ChartTooltipContentEntry, ChartTooltipContentProps } from '@/compo
 
 import type { ChartPoint, ChartTooltipPayloadEntry } from './types'
 
-export interface ChartTooltipProps {
+export type ChartTooltipProps = {
   /**
    * Hover cursor: a dashed line (`'line'`), a band behind the hovered category (`'band'`), or none.
    * `true` draws a band in a `BarChart`, and a dashed line in every other chart.
@@ -100,7 +100,7 @@ export interface ChartTooltipProps {
   class?: ClassValue
 }
 
-export interface ChartTooltipSlotProps {
+export type ChartTooltipSlotProps = {
   /** Whether a row is hovered or focused. */
   active: boolean
   /** Category of the hovered row (x value, or the sector name in pie charts). */
@@ -111,7 +111,7 @@ export interface ChartTooltipSlotProps {
   coordinate: ChartPoint | null
 }
 
-export interface ChartTooltipSlots {
+export type ChartTooltipSlots = {
   /** Replaces the panel, e.g. with a composed `ChartTooltipContent`. */
   content?: (props: ChartTooltipSlotProps) => unknown
   /** Content under the default panel's rows, e.g. a total. Ignored when `#content` is used. */

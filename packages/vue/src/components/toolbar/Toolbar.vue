@@ -26,7 +26,7 @@ import theme from './theme'
 
 type Toolbar = typeof theme
 
-export interface ToolbarProps {
+export type ToolbarProps = {
   /**
    * The element or component to render as.
    * @defaultValue 'div'
@@ -49,7 +49,7 @@ export interface ToolbarProps {
   ui?: ComponentSlots<Toolbar>
 }
 
-export interface ToolbarSlots {
+export type ToolbarSlots = {
   /** Toolbar controls; receives HeroUI's render props. */
   default?: (props: { orientation: 'horizontal' | 'vertical' }) => any
 }

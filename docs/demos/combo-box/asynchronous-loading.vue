@@ -26,7 +26,7 @@
 import { ComboBox, EmptyState, Spinner } from '@hareui/vue'
 import { onMounted, ref, watch } from 'vue'
 
-interface Character {
+type Character = {
   name: string
 }
 

@@ -87,13 +87,13 @@ type NavigationMenu = typeof theme
 /** An icon: a class string (icon-font / CSS-mask utilities such as `i-lucide-house`) or a component. */
 export type NavigationMenuIconValue = string | Component
 
-export interface NavigationMenuChildItem extends Omit<NavigationMenuItem, 'type' | 'ui'> {
+export type NavigationMenuChildItem = {
   /** Description, only shown when `orientation` is `horizontal`. */
   description?: string
   [key: string]: any
-}
+} & Omit<NavigationMenuItem, 'type' | 'ui'>
 
-export interface NavigationMenuItem {
+export type NavigationMenuItem = {
   /** The item text. */
   label?: string
   /** Leading icon: a class string or a component. */
@@ -222,7 +222,7 @@ export type NavigationMenuContentOptions = Omit<
   onInteractOutside?: (event: Event) => void
 }
 
-export interface NavigationMenuProps<T extends NavigationMenuItem = NavigationMenuItem> {
+export type NavigationMenuProps<T extends NavigationMenuItem = NavigationMenuItem> = {
   /**
    * The element or component this component should render as.
    * @defaultValue 'nav'
@@ -348,7 +348,7 @@ export interface NavigationMenuProps<T extends NavigationMenuItem = NavigationMe
   ui?: ComponentSlots<NavigationMenu>
 }
 
-export interface NavigationMenuEmits {
+export type NavigationMenuEmits = {
   /**
    * Emitted when the open item(s) change: a `string` (horizontal and vertical `single`) or a `string[]` (vertical `multiple`).
    */
@@ -362,7 +362,7 @@ type ItemSlotProps<T extends NavigationMenuItem = NavigationMenuItem> = {
   ui: Record<string, (props?: object) => string>
 }
 
-export interface NavigationMenuSlots<T extends NavigationMenuItem = NavigationMenuItem> {
+export type NavigationMenuSlots<T extends NavigationMenuItem = NavigationMenuItem> = {
   /** Replaces the whole content of an item's link. */
   item?: (props: ItemSlotProps<T>) => any
   /** Replaces the leading icon, avatar or chip. */

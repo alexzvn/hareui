@@ -77,7 +77,7 @@ import type { ComponentSlots } from '@/types/tv'
 
 import theme from './theme'
 
-export interface RadioButtonGroupItemProps {
+export type RadioButtonGroupItemProps = {
   /** The value submitted and bound to the group's `v-model` when the item is selected. */
   value: string
   /** The item title. */
@@ -104,14 +104,14 @@ export interface RadioButtonGroupItemProps {
   ui?: Omit<ComponentSlots<typeof theme>, 'base'>
 }
 
-export interface RadioButtonGroupItemSlotProps {
+export type RadioButtonGroupItemSlotProps = {
   /** Whether the item is selected. */
   selected: boolean
   /** Whether the item is disabled, directly or through the group. */
   disabled: boolean
 }
 
-export interface RadioButtonGroupItemSlots {
+export type RadioButtonGroupItemSlots = {
   /** Extra content rendered after the title and description. */
   default?: (props: RadioButtonGroupItemSlotProps) => any
   /** The title content. Replaces the `label` prop. */

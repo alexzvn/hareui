@@ -78,7 +78,7 @@ import theme from './theme'
 
 type CellColorPicker = typeof theme
 
-export interface CellColorPickerProps {
+export type CellColorPickerProps = {
   /** Text shown at the start of the row. */
   label?: string
   /** The current color. Use with `v-model`. */
@@ -128,7 +128,7 @@ export interface CellColorPickerProps {
   ui?: ComponentSlots<CellColorPicker>
 }
 
-export interface CellColorPickerSlots {
+export type CellColorPickerSlots = {
   /** Row label content. Replaces `label`. */
   label?: () => any
   /** Value text. Defaults to the color as uppercase hex, e.g. `#3B82F6`. */
@@ -137,7 +137,7 @@ export interface CellColorPickerSlots {
   default?: (props: { color: Color; close: () => void }) => any
 }
 
-export interface CellColorPickerEmits {
+export type CellColorPickerEmits = {
   /** The color changed (`v-model`). */
   'update:modelValue': [value: Color]
   /** The popover opened or closed (`v-model:open`). */

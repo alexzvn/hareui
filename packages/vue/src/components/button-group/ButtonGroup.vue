@@ -22,7 +22,7 @@ import theme from './theme'
 
 type ButtonGroup = typeof theme
 
-export interface ButtonGroupProps {
+export type ButtonGroupProps = {
   /**
    * The element or component to render as.
    * @defaultValue 'div'
@@ -58,7 +58,7 @@ export interface ButtonGroupProps {
   ui?: ComponentSlots<ButtonGroup>
 }
 
-export interface ButtonGroupSlots {
+export type ButtonGroupSlots = {
   /** The Buttons. Buttons placed directly in the group read its props. */
   default?: () => any
 }

@@ -99,7 +99,7 @@ export type DashboardSidebarMode = 'slideover' | 'drawer' | 'modal'
 /** Props forwarded to the menu overlay: `Modal` props for `mode="modal"`, `Drawer` props otherwise. */
 export type DashboardSidebarMenuProps = Partial<DrawerProps> | Partial<ModalProps>
 
-export interface DashboardSidebarProps {
+export type DashboardSidebarProps = {
   /**
    * Identifies the sidebar in the storage (`${storageKey}-sidebar-${id}`) and as its element id.
    * @defaultValue useId()
@@ -169,20 +169,20 @@ export interface DashboardSidebarProps {
   ui?: ComponentSlots<DashboardSidebar>
 }
 
-export interface DashboardSidebarEmits {
+export type DashboardSidebarEmits = {
   /** Emitted when the mobile menu opens or closes. */
   'update:open': [value: boolean]
   /** Emitted when the sidebar collapses or expands. */
   'update:collapsed': [value: boolean]
 }
 
-export interface DashboardSidebarToggleSlotProps {
+export type DashboardSidebarToggleSlotProps = {
   open: boolean
   toggle: () => void
   ui: DashboardSidebarUI
 }
 
-export interface DashboardSidebarResizeHandleSlotProps {
+export type DashboardSidebarResizeHandleSlotProps = {
   onPointerDown: (e: PointerEvent) => void
   onMouseDown: (e: MouseEvent) => void
   onTouchStart: (e: TouchEvent) => void
@@ -197,7 +197,7 @@ export interface DashboardSidebarResizeHandleSlotProps {
 
 type DashboardSidebarUI = ComponentUI<DashboardSidebar>
 
-export interface DashboardSidebarSlots {
+export type DashboardSidebarSlots = {
   /** The sidebar header (logo, team switcher...). Hidden when omitted. */
   header?: (props: { collapsed: boolean; collapse: (value: boolean) => void }) => any
   /** The scrollable sidebar body. */

@@ -54,7 +54,7 @@ import theme from './theme'
 
 type Spinner = typeof theme
 
-export interface SpinnerProps {
+export type SpinnerProps = {
   /**
    * Size of the spinner.
    * @defaultValue 'md'

@@ -4,7 +4,7 @@ import type { ComponentSlots, ComponentUI } from '@/types/tv'
 
 import type toolbarTheme from './theme'
 
-export interface ToolbarContext {
+export type ToolbarContext = {
   orientation: Readonly<Ref<'horizontal' | 'vertical'>>
   ui: ComputedRef<ComponentUI<typeof toolbarTheme>>
   uiOverrides: Readonly<Ref<ComponentSlots<typeof toolbarTheme> | undefined>>

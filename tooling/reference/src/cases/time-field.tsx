@@ -2,7 +2,7 @@ import type { ReactElement } from 'react'
 import { Description, FieldError, Label, TimeField } from '@heroui/react'
 import { Time } from '@internationalized/date'
 
-interface FieldProps {
+type FieldProps = {
   variant?: 'primary' | 'secondary'
   isRequired?: boolean
   isDisabled?: boolean

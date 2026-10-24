@@ -1,6 +1,6 @@
 import type { ClassValue } from 'tailwind-variants'
 
-export interface ThemeShape {
+export type ThemeShape = {
   slots: Record<string, ClassValue>
   variants?: Record<string, Record<string, any>>
   compoundVariants?: any[]
@@ -19,7 +19,7 @@ export type ComponentUI<T extends ThemeShape> = {
   [K in keyof T['slots']]: (props?: { class?: ClassValue }) => string
 }
 
-export interface ThemeOverride<T extends ThemeShape> {
+export type ThemeOverride<T extends ThemeShape> = {
   slots?: ComponentSlots<T>
   variants?: {
     [K in keyof T['variants']]?: Record<string, ClassValue | Record<string, ClassValue>>

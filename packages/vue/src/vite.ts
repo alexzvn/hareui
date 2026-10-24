@@ -5,7 +5,7 @@ import type { Plugin } from 'vite'
 
 import type { HareUIConfig } from './config'
 
-export interface HareUIResolverOptions {
+export type HareUIResolverOptions = {
   /**
    * Prefix of HareUI components in templates. `'H'` resolves `<HButton>` and `<h-button>` to `Button`.
    * Kebab-case (`'h-'`) is accepted and converted to PascalCase.
@@ -14,7 +14,7 @@ export interface HareUIResolverOptions {
   prefix?: string
 }
 
-export interface HareUIPluginOptions extends HareUIResolverOptions {
+export type HareUIPluginOptions = {
   /**
    * App-wide component theme overrides, same shape as `createHareUI({ ui })`. Applied above the default
    * themes and below `createHareUI({ ui })`. Inlined at build time, so values must be JSON-serializable.
@@ -25,7 +25,7 @@ export interface HareUIPluginOptions extends HareUIResolverOptions {
    * resolver is appended to `resolvers`. `false` disables component auto import.
    */
   components?: ComponentsOptions | false
-}
+} & HareUIResolverOptions
 
 const components = new Map(Object.entries(componentNames))
 

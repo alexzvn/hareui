@@ -1,6 +1,6 @@
 import { data as pages } from '../pages.data'
 
-export interface ComponentPage {
+export type ComponentPage = {
   slug: string
   title: string
 }

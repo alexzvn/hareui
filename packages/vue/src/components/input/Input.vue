@@ -29,7 +29,7 @@ import theme from './theme'
 
 type Input = typeof theme
 
-export interface InputProps extends FormFieldProps {
+export type InputProps = {
   /**
    * The native input type.
    * @defaultValue 'text'
@@ -84,7 +84,7 @@ export interface InputProps extends FormFieldProps {
   class?: any
   /** Per-slot class overrides. */
   ui?: ComponentSlots<Input>
-}
+} & FormFieldProps
 </script>
 
 <script setup lang="ts">

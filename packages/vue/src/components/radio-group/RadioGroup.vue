@@ -86,7 +86,7 @@ import theme from './theme'
 
 type RadioGroup = typeof theme
 
-export interface RadioGroupItem {
+export type RadioGroupItem = {
   /** The value submitted and bound to `v-model` when the item is selected. */
   value: string
   /** The item label. */
@@ -97,7 +97,7 @@ export interface RadioGroupItem {
   disabled?: boolean
 }
 
-export interface RadioGroupProps<T extends RadioGroupItem = RadioGroupItem> extends FormFieldProps {
+export type RadioGroupProps<T extends RadioGroupItem = RadioGroupItem> = {
   /** The radio items. */
   items?: T[]
   /** The value selected initially when uncontrolled. */
@@ -154,9 +154,9 @@ export interface RadioGroupProps<T extends RadioGroupItem = RadioGroupItem> exte
   class?: any
   /** Per-slot class overrides. */
   ui?: ComponentSlots<RadioGroup>
-}
+} & FormFieldProps
 
-export interface RadioGroupSlots<T extends RadioGroupItem = RadioGroupItem> {
+export type RadioGroupSlots<T extends RadioGroupItem = RadioGroupItem> = {
   /** The group label content. Replaces the `label` prop. */
   label?: () => any
   /** The group description content. Replaces the `description` prop. */

@@ -233,14 +233,14 @@ export type TableSelectionKey = string | number
 export type TableSelection = Set<TableSelectionKey> | 'all'
 export type TableSortDirection = 'ascending' | 'descending'
 
-export interface TableSortDescriptor {
+export type TableSortDescriptor = {
   /** Key of the column being sorted. */
   column: string
   /** Sort direction. */
   direction: TableSortDirection
 }
 
-export interface TableColumn {
+export type TableColumn = {
   /** Unique column key. Looked up as `row[key]` for the default cell content and matched against `sortDescriptor.column`. */
   key: string
   /** Header label. Replaced by the `#<key>-header` slot. */
@@ -269,7 +269,7 @@ export interface TableColumn {
   class?: any
 }
 
-export interface TableRow {
+export type TableRow = {
   /** Unique row key. Falls back to the row's index among its siblings when omitted — provide one explicitly for nested, filtered or reordered rows. */
   id?: string | number
   /** Nested rows, indented under this one. Pair with `treeColumn` and `expandedKeys`. */
@@ -280,7 +280,7 @@ export interface TableRow {
   [key: string]: any
 }
 
-export interface TableProps {
+export type TableProps = {
   /** Column definitions, in display order. */
   columns: TableColumn[]
   /** Row data, already sorted by the caller according to `sortDescriptor` (Table only displays the sort indicator and emits changes). */
@@ -323,7 +323,7 @@ export interface TableProps {
   ui?: ComponentSlots<Table>
 }
 
-export interface TableCellSlotProps {
+export type TableCellSlotProps = {
   /** The row being rendered. */
   row: TableRow
   /** The column being rendered. */
@@ -342,14 +342,14 @@ export interface TableCellSlotProps {
   toggle: () => void
 }
 
-export interface TableHeaderSlotProps {
+export type TableHeaderSlotProps = {
   /** The column being rendered. */
   column: TableColumn
   /** Current sort direction for this column, when it is the sorted one. */
   sortDirection: TableSortDirection | undefined
 }
 
-export interface TableSlots {
+export type TableSlots = {
   /** Header content for a column, replacing `column.label`. Named dynamically per column: `#<column.key>-header="{ column, sortDirection }"`. */
   [slot: `${string}-header`]: ((props: TableHeaderSlotProps) => any) | undefined
   /** Cell content for a column, replacing `row[column.key]`. Named dynamically per column: `#<column.key>-cell="{ row, column, value, index, depth, isExpanded, hasChildItems, toggle }"`. */
@@ -449,7 +449,7 @@ function sortDirectionFor(column: TableColumn): TableSortDirection | undefined {
 }
 
 /* ---------------- Row flattening (tree) ---------------- */
-interface FlatRow {
+type FlatRow = {
   row: TableRow
   key: TableSelectionKey
   depth: number

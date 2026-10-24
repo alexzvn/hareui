@@ -42,7 +42,7 @@ import type { ClassValue } from 'tailwind-variants'
 
 import type { ChartAxisDomain } from './types'
 
-export interface ChartPolarRadiusAxisProps {
+export type ChartPolarRadiusAxisProps = {
   /**
    * Direction of the axis line, in degrees. 0 is at 3 o'clock; 90 points up.
    * @defaultValue 0
@@ -105,7 +105,7 @@ export interface ChartPolarRadiusAxisProps {
   class?: ClassValue
 }
 
-export interface ChartPolarRadiusAxisSlots {
+export type ChartPolarRadiusAxisSlots = {
   /** Replaces a tick label. Render SVG (`<text>`, `<g>`). */
   tick?: (props: {
     x: number

@@ -17,7 +17,7 @@ import theme from './theme'
 
 type FieldError = typeof theme
 
-export interface FieldErrorProps {
+export type FieldErrorProps = {
   /** The id of the element, referenced by `aria-describedby` of the invalid control. */
   id?: string
   /** Additional classes merged into the root element. */
@@ -26,7 +26,7 @@ export interface FieldErrorProps {
   ui?: ComponentSlots<FieldError>
 }
 
-export interface FieldErrorSlots {
+export type FieldErrorSlots = {
   /** The error message. */
   default?: () => any
 }

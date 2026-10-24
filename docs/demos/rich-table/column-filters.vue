@@ -15,7 +15,7 @@ import type { RichTableColumn } from '@hareui/vue'
 import { Input, RichTable } from '@hareui/vue'
 import { computed, useTemplateRef } from 'vue'
 
-interface Payment {
+type Payment = {
   name: string
   email: string
   status: string

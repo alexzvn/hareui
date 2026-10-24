@@ -21,7 +21,7 @@ import type {
 import { inferValueKeys, isChartGenerated, resolveChartPart, resolveSlices } from './series-config'
 
 /** Props of `PieChart`, `RadarChart` and `RadialChart` that the frame draws. */
-export interface PolarRootFrameProps {
+export type PolarRootFrameProps = {
   /** Tooltip on hover and focus: `false` turns it off, an object sets `ChartTooltip` props. */
   tooltip?: boolean | Partial<ChartTooltipProps>
   /** `true` (below), a side, or `ChartLegend` props with a `position`. */
@@ -31,7 +31,7 @@ export interface PolarRootFrameProps {
     | (Partial<ChartLegendProps<any>> & { position?: ChartLegendPosition })
 }
 
-export interface PolarRootOptions {
+export type PolarRootOptions = {
   props: PolarRootFrameProps
   /** Generated mode: the root draws its parts from props. Composition mode draws only the slot, so no legend or tooltip. */
   generated: () => boolean
@@ -62,16 +62,16 @@ export function usePolarRoot(options: PolarRootOptions): ComputedRef<ChartFrameC
 }
 
 /** Props of the roots that draw one slice (or ring) per row: `PieChart` and `RadialChart`. */
-export interface SliceRootProps<T extends object> extends PolarRootFrameProps {
+export type SliceRootProps<T extends object> = {
   data?: T[]
   index?: ChartIndexKey<T>
   valueKey?: ChartValueKey<T>
   colors?: string[] | Record<string, string>
   /** Formats slice values in the tooltip and the legend. */
   valueFormatter?: (value: number, name: string) => string
-}
+} & PolarRootFrameProps
 
-export interface SliceRootOptions<T extends object> {
+export type SliceRootOptions<T extends object> = {
   props: SliceRootProps<T>
   hidden: Ref<string[]>
   hasLegendSlot: () => boolean

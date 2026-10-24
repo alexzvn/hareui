@@ -46,7 +46,7 @@ import theme from './theme'
 
 type ColorPicker = typeof theme
 
-export interface ColorPickerProps {
+export type ColorPickerProps = {
   /** The current colour (controlled). Use with `v-model`. */
   modelValue?: string | Color
   /** The initial colour when uncontrolled. */
@@ -83,7 +83,7 @@ export interface ColorPickerProps {
   ui?: ComponentSlots<ColorPicker>
 }
 
-export interface ColorPickerSlots {
+export type ColorPickerSlots = {
   /** Content of the trigger button, typically a ColorSwatch and a Label. Receives the current colour and open state. */
   trigger?: (props: { color: Color; open: boolean }) => any
   /**
@@ -93,7 +93,7 @@ export interface ColorPickerSlots {
   default?: (props: { color: Color; close: () => void }) => any
 }
 
-export interface ColorPickerEmits {
+export type ColorPickerEmits = {
   /** Emitted when the colour changes. */
   'update:modelValue': [value: Color]
   /** Emitted when the popover opens or closes. */

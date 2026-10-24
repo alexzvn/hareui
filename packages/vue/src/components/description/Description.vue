@@ -11,7 +11,7 @@ import theme from './theme'
 
 type Description = typeof theme
 
-export interface DescriptionProps {
+export type DescriptionProps = {
   /** The id of the element, referenced by `aria-describedby` of the described control. */
   id?: string
   /** Additional classes merged into the root element. */
@@ -20,7 +20,7 @@ export interface DescriptionProps {
   ui?: ComponentSlots<Description>
 }
 
-export interface DescriptionSlots {
+export type DescriptionSlots = {
   /** The description content. */
   default?: () => any
 }

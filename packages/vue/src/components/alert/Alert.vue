@@ -119,7 +119,7 @@ import theme from './theme'
 
 type Alert = typeof theme
 
-export interface AlertProps {
+export type AlertProps = {
   /**
    * The element or component to render as.
    * @defaultValue 'div'
@@ -145,7 +145,7 @@ export interface AlertProps {
   ui?: ComponentSlots<Alert>
 }
 
-export interface AlertSlots {
+export type AlertSlots = {
   /** Content rendered inside the root before the indicator, without a wrapper (e.g. a decorative background). */
   leading?: () => any
   /** Replaces the status icon inside the indicator. */

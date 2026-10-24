@@ -19,7 +19,7 @@ import type {
 export type ChartAxisId = string | number
 
 /** Axis settings registered by `ChartXAxis` / `ChartYAxis`. */
-export interface ChartAxisConfig {
+export type ChartAxisConfig = {
   axis: 'x' | 'y'
   id: ChartAxisId
   type?: 'number' | 'category'
@@ -46,7 +46,7 @@ export interface ChartAxisConfig {
   fontSize?: number
 }
 
-export interface ResolvedAxis {
+export type ResolvedAxis = {
   id: ChartAxisId
   axis: 'x' | 'y'
   type: 'number' | 'category'
@@ -72,7 +72,7 @@ export interface ResolvedAxis {
   allTicks: ChartTick[]
 }
 
-export interface CartesianChartOptions {
+export type CartesianChartOptions = {
   /** Gap between bands, px or percent of the band. @defaultValue '10%' */
   barCategoryGap?: () => number | string | undefined
   /** Gap between bars of one band, px or percent. @defaultValue 4 */
@@ -83,7 +83,7 @@ export interface CartesianChartOptions {
   maxBarSize?: () => number | undefined
 }
 
-export interface CartesianContext {
+export type CartesianContext = {
   /** Plot area in SVG px. */
   offset: ComputedRef<ChartOffset>
   registerAxis: (get: () => ChartAxisConfig) => () => void

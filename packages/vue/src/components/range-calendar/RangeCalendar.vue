@@ -51,12 +51,12 @@ import theme from './theme'
 
 type RangeCalendar = typeof theme
 
-export interface DateRange {
+export type DateRange = {
   start: DateValue | undefined
   end: DateValue | undefined
 }
 
-export interface RangeCalendarProps {
+export type RangeCalendarProps = {
   /** Accessible label for the calendar. */
   ariaLabel?: string
   /** The selected date range. Use `v-model` to control it. */
@@ -165,7 +165,7 @@ export interface RangeCalendarProps {
   ui?: ComponentSlots<RangeCalendar>
 }
 
-export interface RangeCalendarSlots {
+export type RangeCalendarSlots = {
   /** Replaces the chevron icon inside a nav button. */
   navIcon?: (props: { direction: 'previous' | 'next' }) => any
   /** Replaces a cell's default formatted-date content. */
@@ -181,7 +181,7 @@ export interface RangeCalendarSlots {
   }) => any
 }
 
-export interface RangeCalendarEmits {
+export type RangeCalendarEmits = {
   /** Emitted when the selected date range changes. */
   'update:modelValue': [value: DateRange | undefined]
   /** Emitted when the displayed month/year changes. */

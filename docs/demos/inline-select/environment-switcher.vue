@@ -19,9 +19,9 @@ import type { ListBoxItem, SelectValue } from '@hareui/vue'
 import { InlineSelect } from '@hareui/vue'
 import { computed, ref } from 'vue'
 
-interface Environment extends ListBoxItem {
+type Environment = {
   dot: string
-}
+} & ListBoxItem
 
 const environments: Environment[] = [
   { value: 'production', label: 'Production', description: 'app.example.com', dot: 'bg-success' },

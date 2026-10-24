@@ -1,6 +1,6 @@
 import type { InjectionKey, Ref } from 'vue'
 
-export interface DisclosureGroupContext {
+export type DisclosureGroupContext = {
   /** Whether the disclosure identified by `value` is expanded. */
   isExpanded: (value: string | number) => boolean
   /** Expands or collapses the disclosure identified by `value`. */

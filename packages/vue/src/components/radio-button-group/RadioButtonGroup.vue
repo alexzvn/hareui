@@ -38,7 +38,7 @@ import theme from './theme'
 
 type RadioButtonGroup = typeof theme
 
-export interface RadioButtonGroupProps extends FormFieldProps {
+export type RadioButtonGroupProps = {
   /** The value selected initially when uncontrolled. */
   defaultValue?: string
   /** The group label. */
@@ -95,9 +95,9 @@ export interface RadioButtonGroupProps extends FormFieldProps {
   class?: any
   /** Per-slot class overrides, applied to every item. */
   ui?: ComponentSlots<RadioButtonGroup>
-}
+} & FormFieldProps
 
-export interface RadioButtonGroupSlots {
+export type RadioButtonGroupSlots = {
   /** The `RadioButtonGroupItem` components. */
   default?: () => any
   /** The group label content. Replaces the `label` prop. */

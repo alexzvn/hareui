@@ -22,7 +22,7 @@
 import type { ChartSeriesProps } from './series'
 import type { ChartRadius } from './shapes'
 
-export interface ChartBarProps extends ChartSeriesProps {
+export type ChartBarProps = {
   /**
    * Bar color or `url(#gradient-id)`.
    * @defaultValue 'var(--chart-3)'
@@ -45,9 +45,9 @@ export interface ChartBarProps extends ChartSeriesProps {
    * @defaultValue 0
    */
   radius?: ChartRadius
-}
+} & ChartSeriesProps
 
-export interface ChartBarSlots {
+export type ChartBarSlots = {
   /** `ChartCell` per bar to override its fill, and `ChartLabel` to label every bar. */
   default?: () => unknown
 }
@@ -69,7 +69,7 @@ import { DEFAULT_SERIES_COLOR, useRootSeries } from './series'
 import { rectanglePath } from './shapes'
 import type { ChartTooltipPayloadEntry } from './types'
 
-interface BarRect {
+type BarRect = {
   index: number
   x: number
   y: number

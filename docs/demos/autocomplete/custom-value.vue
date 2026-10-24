@@ -26,11 +26,11 @@
 import type { ListBoxItem } from '@hareui/vue'
 import { Autocomplete } from '@hareui/vue'
 
-interface Currency extends ListBoxItem {
+type Currency = {
   code: string
   name: string
   symbol: string
-}
+} & ListBoxItem
 
 const currencies = [
   { value: 'usd', code: 'USD', name: 'US Dollar', symbol: '$' },

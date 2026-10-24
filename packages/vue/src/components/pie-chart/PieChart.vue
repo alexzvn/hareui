@@ -42,7 +42,7 @@ import theme from './theme'
 
 type PieChartTheme = typeof theme
 
-export interface PieChartProps<T extends object = ChartDatum> {
+export type PieChartProps<T extends object = ChartDatum> = {
   /** Rows of the chart. With `index`, each row is one slice; otherwise they are shared by every `ChartPie` without its own `data`. */
   data?: T[]
   /** Key of the slice name. Setting it draws the pie, tooltip and legend from props (no child parts needed). */
@@ -109,7 +109,7 @@ export interface PieChartProps<T extends object = ChartDatum> {
   ui?: ComponentSlots<PieChartTheme>
 }
 
-export interface PieChartSlots {
+export type PieChartSlots = {
   /** Chart parts: `ChartPie`, `ChartTooltip`, a centered `ChartLabel`, and raw SVG such as `<defs>`. With `index`, extra parts drawn over the generated pie. */
   default?: () => any
   /** HTML centered in the pie, e.g. a total inside a donut. */

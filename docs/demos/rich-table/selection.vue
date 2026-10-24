@@ -20,7 +20,7 @@ import { Avatar, Checkbox, Chip, RichTable } from '@hareui/vue'
 import { Icon } from '@iconify/vue'
 import { h, ref, useTemplateRef } from 'vue'
 
-interface Employee {
+type Employee = {
   name: string
   email: string
   avatar: string

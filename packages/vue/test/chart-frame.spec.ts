@@ -29,7 +29,7 @@ const sessions = [
   { month: 'Feb', organic: 3, paid: 4 },
 ]
 
-interface FrameCase {
+type FrameCase = {
   name: string
   component: Component
   props: Record<string, unknown>

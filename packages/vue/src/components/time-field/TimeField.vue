@@ -73,7 +73,7 @@ type DateInputGroup = typeof dateInputGroupTheme
 type HourCycle = NonNullable<TimeFieldRootProps['hourCycle']>
 type TimeStep = NonNullable<TimeFieldRootProps['step']>
 
-export interface TimeFieldProps extends FormFieldProps {
+export type TimeFieldProps = {
   /** Label text rendered above the group. */
   label?: string
   /** Helper text rendered below the group. Hidden while the field is invalid. */
@@ -163,9 +163,9 @@ export interface TimeFieldProps extends FormFieldProps {
       ComponentSlots<DateInputGroup>,
       'input' | 'segment' | 'prefix' | 'suffix'
     >
-}
+} & FormFieldProps
 
-export interface TimeFieldSlots {
+export type TimeFieldSlots = {
   /** Label content. Replaces the `label` prop. */
   label?: () => any
   /** Prefix content, rendered before the segments (e.g. an icon). */
@@ -178,7 +178,7 @@ export interface TimeFieldSlots {
   error?: (props: ValidationResult) => any
 }
 
-export interface TimeFieldEmits {
+export type TimeFieldEmits = {
   /** Emitted when the displayed placeholder time changes. */
   'update:placeholder': [value: TimeValue]
 }

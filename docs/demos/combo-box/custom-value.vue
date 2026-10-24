@@ -10,10 +10,10 @@
 import type { ListBoxItem } from '@hareui/vue'
 import { Avatar, ComboBox } from '@hareui/vue'
 
-interface User extends ListBoxItem {
+type User = {
   avatarUrl: string
   fallback: string
-}
+} & ListBoxItem
 
 const users: User[] = [
   {

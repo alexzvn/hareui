@@ -25,11 +25,7 @@ import type {
   InferInput,
 } from './types'
 
-export interface FormProps<
-  S extends FormSchema,
-  T extends boolean = true,
-  N extends boolean = false,
-> {
+export type FormProps<S extends FormSchema, T extends boolean = true, N extends boolean = false> = {
   /**
    * Validation behavior for the fields inside. `native` blocks submission and shows errors on change or submit;
    * `aria` shows errors in realtime and never blocks submission. A field's own `validationBehavior` wins.
@@ -86,19 +82,19 @@ export interface FormProps<
 }
 
 // `submit` is the `onSubmit` prop, so the form can await it (`loadingAuto`)
-export interface FormEmits {
+export type FormEmits = {
   /** Submission was blocked by validation errors. */
   error: [event: FormErrorEvent]
 }
 
-export interface FormSlotProps {
+export type FormSlotProps = {
   /** The current `schema` / `validate` errors. */
   errors: FormErrorWithId[]
   /** Whether a submission is in progress. */
   loading: boolean
 }
 
-export interface FormSlots {
+export type FormSlots = {
   /** Fields and buttons. */
   default?: (props: FormSlotProps) => any
 }

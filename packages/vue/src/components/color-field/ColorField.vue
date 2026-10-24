@@ -83,7 +83,7 @@ import theme from './theme'
 
 type ColorField = typeof theme
 
-export interface ColorFieldProps extends FormFieldProps {
+export type ColorFieldProps = {
   /** Label text rendered above the field. */
   label?: string
   /** Helper text rendered below the field. Hidden while the field is invalid. */
@@ -164,9 +164,9 @@ export interface ColorFieldProps extends FormFieldProps {
   class?: any
   /** Per-slot class overrides. */
   ui?: ComponentSlots<ColorField>
-}
+} & FormFieldProps
 
-export interface ColorFieldSlots {
+export type ColorFieldSlots = {
   /** Label content. Replaces the `label` prop. */
   label?: () => any
   /** Content rendered before the input, e.g. a `ColorSwatch`. */
@@ -179,7 +179,7 @@ export interface ColorFieldSlots {
   error?: (props: ValidationResult) => any
 }
 
-export interface ColorFieldEmits {
+export type ColorFieldEmits = {
   /**
    * Emitted when the committed color changes (on blur, Enter, stepper or wheel). `null` when the
    * input is cleared.

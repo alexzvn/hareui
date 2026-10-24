@@ -58,7 +58,7 @@ import theme from './theme'
 
 type ProgressBar = typeof theme
 
-export interface ProgressBarProps {
+export type ProgressBarProps = {
   /**
    * The current value (clamped to `minValue`–`maxValue`).
    * @defaultValue 0
@@ -108,7 +108,7 @@ export interface ProgressBarProps {
   ui?: ComponentSlots<ProgressBar>
 }
 
-export interface ProgressBarSlotProps {
+export type ProgressBarSlotProps = {
   /** The percentage of the progress (0–100); `undefined` when indeterminate. */
   percentage: number | undefined
   /** The formatted value text; `undefined` when indeterminate. */
@@ -117,7 +117,7 @@ export interface ProgressBarSlotProps {
   indeterminate: boolean
 }
 
-export interface ProgressBarSlots {
+export type ProgressBarSlots = {
   /** Replaces the label text. */
   label?: (props: ProgressBarSlotProps) => any
   /** Replaces the value output text. */

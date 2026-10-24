@@ -24,7 +24,7 @@ function mountTable<T extends RichTableData>(options: {
   return mount(RichTable as unknown as Parameters<typeof mount>[0], options) as VueWrapper
 }
 
-interface Person {
+type Person = {
   id: string
   name: string
   role: string
@@ -308,7 +308,7 @@ describe('RichTable', () => {
     })
 
     it('renders sub rows from get-sub-rows', async () => {
-      interface TreeNode {
+      type TreeNode = {
         name: string
         children?: TreeNode[]
       }

@@ -10,9 +10,9 @@
 import type { ListBoxItem } from '@hareui/vue'
 import { Avatar, ListBox } from '@hareui/vue'
 
-interface User extends ListBoxItem {
+type User = {
   avatar: string
-}
+} & ListBoxItem
 
 const users: User[] = [
   {

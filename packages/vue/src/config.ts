@@ -7,7 +7,7 @@ import type { ThemeOverride } from './types/tv'
 /** Overlay portal target: `true` = `document.body`, a selector or element = that target, `false` = render in place. */
 export type PortalTarget = boolean | string | HTMLElement
 
-export interface HareUIConfig {
+export type HareUIConfig = {
   /** Per-component theme overrides merged on top of the default themes. */
   ui?: { [K in keyof Themes]?: ThemeOverride<Themes[K]> }
   /**

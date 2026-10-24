@@ -19,7 +19,7 @@ import theme from './theme'
 
 type Label = typeof theme
 
-export interface LabelProps {
+export type LabelProps = {
   /**
    * The element or component to render as. Use `span` for a group label named via `aria-labelledby`, which has no single control for `for`.
    * @defaultValue 'label'
@@ -48,7 +48,7 @@ export interface LabelProps {
   ui?: ComponentSlots<Label>
 }
 
-export interface LabelSlots {
+export type LabelSlots = {
   /** The label content. */
   default?: () => any
 }

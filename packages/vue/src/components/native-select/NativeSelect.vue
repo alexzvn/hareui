@@ -96,7 +96,7 @@ export type NativeSelectOption =
     }
 
 /** An `<optgroup>` holding options. */
-export interface NativeSelectGroup {
+export type NativeSelectGroup = {
   /** The group heading. */
   label: string
   /** The options in the group. */
@@ -107,7 +107,7 @@ export interface NativeSelectGroup {
 
 export type NativeSelectItem = NativeSelectOption | NativeSelectGroup
 
-export interface NativeSelectProps extends FormFieldProps {
+export type NativeSelectProps = {
   /** The selected value. Bind with `v-model`. */
   modelValue?: string
   /** The initial value when uncontrolled. */
@@ -165,9 +165,9 @@ export interface NativeSelectProps extends FormFieldProps {
   class?: any
   /** Per-slot class overrides. */
   ui?: ComponentSlots<NativeSelect>
-}
+} & FormFieldProps
 
-export interface NativeSelectSlots {
+export type NativeSelectSlots = {
   /** `<option>` and `<optgroup>` elements, rendered after `items`. */
   default?: () => any
   /** The label content. Replaces the `label` prop. */

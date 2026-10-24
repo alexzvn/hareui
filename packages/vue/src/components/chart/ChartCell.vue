@@ -5,7 +5,7 @@
 <script lang="ts">
 import type { ClassValue } from 'tailwind-variants'
 
-export interface ChartCellProps {
+export type ChartCellProps = {
   /** Fill of this row's shape. */
   fill?: string
   /** Opacity of the fill. */

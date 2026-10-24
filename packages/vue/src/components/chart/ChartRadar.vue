@@ -49,7 +49,7 @@ import type { ClassValue } from 'tailwind-variants'
 import type { ChartAnimationProps } from './animation'
 import type { ChartDotProps } from './types'
 
-export interface ChartRadarProps extends ChartAnimationProps {
+export type ChartRadarProps = {
   /** Key of the value in each row. */
   dataKey: string
   /** Name shown in the tooltip. Defaults to `dataKey`. */
@@ -92,9 +92,9 @@ export interface ChartRadarProps extends ChartAnimationProps {
   tooltipType?: 'none'
   /** Additional classes merged into the radar group. */
   class?: ClassValue
-}
+} & ChartAnimationProps
 
-export interface ChartRadarSlots {
+export type ChartRadarSlots = {
   /** `ChartLabel` for a label at every point. */
   default?: () => any
 }
@@ -113,12 +113,12 @@ import { polarToCartesian, polygonPath, usePolarContext } from './polar'
 import { dotAttrs, seriesColor } from './series'
 import type { ChartPoint, ChartSeries } from './types'
 
-interface RadarPoint extends ChartPoint {
+type RadarPoint = {
   index: number
   angle: number
   radius: number
   value: number | string | undefined
-}
+} & ChartPoint
 
 const props = withDefaults(defineProps<ChartRadarProps>(), {
   dot: false,

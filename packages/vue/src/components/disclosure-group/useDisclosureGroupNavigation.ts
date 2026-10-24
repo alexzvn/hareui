@@ -3,7 +3,7 @@ import { computed, toValue } from 'vue'
 
 import type { ExpandedValue } from '@/composables/useExpandedValues'
 
-export interface UseDisclosureGroupNavigationOptions {
+export type UseDisclosureGroupNavigationOptions = {
   /** The currently expanded values (the Accordion / DisclosureGroup `v-model`). */
   expandedKeys: MaybeRefOrGetter<ExpandedValue[]>
   /** Every item's value, in display order. */

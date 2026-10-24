@@ -44,7 +44,7 @@ import { Button, DropZoneFileItem, DropZoneFileList } from '@hareui/vue'
 import { Icon } from '@iconify/vue'
 import { onBeforeUnmount, onMounted, ref, watch } from 'vue'
 
-interface WorkoutFile {
+type WorkoutFile = {
   key: string
   name: string
   bytes: number

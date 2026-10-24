@@ -17,7 +17,7 @@ import theme from './theme'
 
 type Surface = typeof theme
 
-export interface SurfaceProps {
+export type SurfaceProps = {
   /**
    * The element or component to render as.
    * @defaultValue 'div'
@@ -34,7 +34,7 @@ export interface SurfaceProps {
   ui?: ComponentSlots<Surface>
 }
 
-export interface SurfaceSlots {
+export type SurfaceSlots = {
   /** The surface content. */
   default?: () => any
 }

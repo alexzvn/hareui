@@ -55,7 +55,7 @@ import type { ChartCurveSeriesProps } from './series'
 
 export type ChartLineProps = ChartCurveSeriesProps
 
-export interface ChartLineSlots {
+export type ChartLineSlots = {
   /** `ChartLabel` to label every point. */
   default?: () => unknown
 }

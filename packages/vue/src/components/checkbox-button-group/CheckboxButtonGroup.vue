@@ -38,7 +38,7 @@ import theme from './theme'
 
 type CheckboxButtonGroup = typeof theme
 
-export interface CheckboxButtonGroupProps extends FormFieldProps {
+export type CheckboxButtonGroupProps = {
   /**
    * The values selected initially when uncontrolled.
    * @defaultValue []
@@ -96,9 +96,9 @@ export interface CheckboxButtonGroupProps extends FormFieldProps {
   class?: any
   /** Per-slot class overrides, applied to every item. */
   ui?: ComponentSlots<CheckboxButtonGroup>
-}
+} & FormFieldProps
 
-export interface CheckboxButtonGroupSlots {
+export type CheckboxButtonGroupSlots = {
   /** The `CheckboxButtonGroupItem` components. */
   default?: () => any
   /** The group label content. Replaces the `label` prop. */

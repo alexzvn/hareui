@@ -20,7 +20,7 @@
 import { Select, Spinner } from '@hareui/vue'
 import { onMounted, ref } from 'vue'
 
-interface Pokemon {
+type Pokemon = {
   name: string
 }
 

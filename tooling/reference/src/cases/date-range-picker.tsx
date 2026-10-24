@@ -3,7 +3,7 @@ import type { CSSProperties, ReactElement } from 'react'
 import { DateField, DateRangePicker, Description, FieldError, Label, RangeCalendar } from '@heroui/react'
 import { CalendarDate, CalendarDateTime } from '@internationalized/date'
 
-interface PickerProps {
+type PickerProps = {
   className?: string
   style?: CSSProperties
   variant?: 'primary' | 'secondary'

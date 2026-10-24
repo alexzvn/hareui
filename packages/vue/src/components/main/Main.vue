@@ -14,7 +14,7 @@ import theme from './theme'
 
 type Main = typeof theme
 
-export interface MainProps {
+export type MainProps = {
   /**
    * The element or component to render as.
    * @defaultValue 'main'
@@ -26,7 +26,7 @@ export interface MainProps {
   ui?: ComponentSlots<Main>
 }
 
-export interface MainSlots {
+export type MainSlots = {
   /** The page content. */
   default?: () => unknown
 }

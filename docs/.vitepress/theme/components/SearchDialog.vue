@@ -173,7 +173,7 @@ type Item =
   | { id: string; type: 'heading'; url: string; html: string }
   | { id: string; type: 'text'; url: string; html: string }
 
-interface Section {
+type Section = {
   id: string
   title: string
   titles: string[]

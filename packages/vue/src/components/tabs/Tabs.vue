@@ -177,7 +177,7 @@ import theme from './theme'
 
 type Tabs = typeof theme
 
-export interface TabsItem {
+export type TabsItem = {
   /** The tab's label, shown in the trigger unless `#tab` is used. */
   label?: string
   /** The value identifying this tab. Defaults to the item's index (as a string). */
@@ -190,7 +190,7 @@ export interface TabsItem {
   content?: string
 }
 
-export interface TabsProps<T extends TabsItem = TabsItem> {
+export type TabsProps<T extends TabsItem = TabsItem> = {
   /** The tabs to render. */
   items: T[]
   /** The selected tab value. Use `v-model` to control it. */
@@ -232,7 +232,7 @@ export interface TabsProps<T extends TabsItem = TabsItem> {
   ui?: ComponentSlots<Tabs>
 }
 
-export interface TabsSlots<T extends TabsItem = TabsItem> {
+export type TabsSlots<T extends TabsItem = TabsItem> = {
   /** Replaces a tab's label. */
   tab?: (props: { item: T; index: number; selected: boolean }) => any
   /** Fallback panel content for every item, overridden by `[item.slot]`. */

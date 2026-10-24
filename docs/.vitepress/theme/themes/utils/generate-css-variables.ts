@@ -11,7 +11,7 @@ import type { GeneratedThemeColors, SemanticOverrides, ThemeColor } from './gene
 /**
  * Custom font info for generating CSS variables
  */
-export interface CustomFontInfo {
+export type CustomFontInfo = {
   label: string
   variable: string
   fontFamily: string

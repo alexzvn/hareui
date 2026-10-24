@@ -12,7 +12,7 @@ import type { RichTableColumn } from '@hareui/vue'
 import { RichTable } from '@hareui/vue'
 import { h, ref } from 'vue'
 
-interface Payment {
+type Payment = {
   id: string
   name: string
   email: string

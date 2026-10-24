@@ -64,7 +64,7 @@ type MenuProps =
   | Omit<ModalProps, 'open' | 'defaultOpen'>
   | Omit<DrawerProps, 'open' | 'defaultOpen'>
 
-export interface HeaderProps {
+export type HeaderProps = {
   /**
    * The element or component to render as.
    * @defaultValue 'header'
@@ -150,7 +150,7 @@ export interface HeaderProps {
   ui?: ComponentSlots<Header>
 }
 
-export interface HeaderSlots {
+export type HeaderSlots = {
   /** Replaces the title text inside the default title link. */
   title?: () => any
   /** Replaces the whole start area (title link). The toggle is still rendered before it when `toggleSide="left"`. */
@@ -171,7 +171,7 @@ export interface HeaderSlots {
   content?: (props: { close: () => void }) => any
 }
 
-export interface HeaderEmits {
+export type HeaderEmits = {
   /** Emitted when the menu opens or closes. */
   'update:open': [value: boolean]
   /** Emitted when `hideOnScroll` hides or reveals the bar. */

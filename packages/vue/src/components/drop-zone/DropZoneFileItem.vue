@@ -117,7 +117,7 @@ type FileItemSlots = Pick<
   | 'fileRemoveTrigger'
 >
 
-export interface DropZoneFileItemProps {
+export type DropZoneFileItemProps = {
   /** The file to show. Fills in `name` and `size`. */
   file?: File
   /** The file name. Defaults to the name of `file`. */
@@ -148,7 +148,7 @@ export interface DropZoneFileItemProps {
   ui?: FileItemSlots
 }
 
-export interface DropZoneFileItemSlotProps {
+export type DropZoneFileItemSlotProps = {
   /** The file name. */
   name: string
   /** The formatted file size (`2.4 MB`); empty when the size is unknown. */
@@ -159,7 +159,7 @@ export interface DropZoneFileItemSlotProps {
   progress: number | undefined
 }
 
-export interface DropZoneFileItemSlots {
+export type DropZoneFileItemSlots = {
   /** Replaces the file format icon. */
   icon?: (props: DropZoneFileItemSlotProps) => any
   /** Replaces the file name. */

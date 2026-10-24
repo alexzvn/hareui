@@ -5,12 +5,12 @@
 </template>
 
 <script lang="ts">
-export interface ChartTooltipItemProps {
+export type ChartTooltipItemProps = {
   /** Additional classes merged into the element. */
   class?: any
 }
 
-export interface ChartTooltipItemSlots {
+export type ChartTooltipItemSlots = {
   /** Row content: an indicator, a label and a value. */
   default?: () => any
 }

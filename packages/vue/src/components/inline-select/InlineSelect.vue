@@ -48,10 +48,7 @@ import theme from './theme'
 
 type InlineSelect = typeof theme
 
-export interface InlineSelectProps<T extends ListBoxItem = ListBoxItem> extends Omit<
-  SelectProps<T>,
-  'variant' | 'fullWidth' | 'clearable' | 'side' | 'align' | 'ui'
-> {
+export type InlineSelectProps<T extends ListBoxItem = ListBoxItem> = {
   /** The selected value(s). Use with `v-model`. */
   modelValue?: SelectValue
   /**
@@ -66,14 +63,14 @@ export interface InlineSelectProps<T extends ListBoxItem = ListBoxItem> extends 
   align?: 'start' | 'center' | 'end'
   /** Per-slot class overrides. */
   ui?: ComponentSlots<InlineSelect>
-}
+} & Omit<SelectProps<T>, 'variant' | 'fullWidth' | 'clearable' | 'side' | 'align' | 'ui'>
 
 export type InlineSelectSlots<T extends ListBoxItem = ListBoxItem> = Omit<SelectSlots<T>, 'clear'>
 
-export interface InlineSelectEmits extends Omit<SelectEmits, 'clear'> {
+export type InlineSelectEmits = {
   /** The selection changed (`v-model`). */
   'update:modelValue': [value: SelectValue]
-}
+} & Omit<SelectEmits, 'clear'>
 </script>
 
 <script setup lang="ts" generic="T extends ListBoxItem = ListBoxItem">

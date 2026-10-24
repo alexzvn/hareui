@@ -12,7 +12,7 @@
 import type { RichTableColumn } from '@hareui/vue'
 import { RichTable } from '@hareui/vue'
 
-interface Row {
+type Row = {
   id: number
   name: string
   email: string

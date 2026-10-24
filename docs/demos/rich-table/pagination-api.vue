@@ -41,7 +41,7 @@ import { Button, RichTable } from '@hareui/vue'
 import { getPaginationRowModel } from '@tanstack/vue-table'
 import { useTemplateRef } from 'vue'
 
-interface Payment {
+type Payment = {
   name: string
   status: string
   amount: number

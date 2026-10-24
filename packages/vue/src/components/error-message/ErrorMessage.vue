@@ -16,7 +16,7 @@ import theme from './theme'
 
 type ErrorMessage = typeof theme
 
-export interface ErrorMessageProps {
+export type ErrorMessageProps = {
   /** The id of the element, referenced by `aria-describedby` of the described control. */
   id?: string
   /** Additional classes merged into the root element. */
@@ -25,7 +25,7 @@ export interface ErrorMessageProps {
   ui?: ComponentSlots<ErrorMessage>
 }
 
-export interface ErrorMessageSlots {
+export type ErrorMessageSlots = {
   /** The error message content. The element stays rendered while empty, like HeroUI's. */
   default?: () => any
 }

@@ -238,7 +238,7 @@ type Select = typeof theme
 
 export type SelectValue = ListBoxValue | ListBoxValue[] | null
 
-export interface SelectProps<T extends ListBoxItem = ListBoxItem> extends FormFieldProps {
+export type SelectProps<T extends ListBoxItem = ListBoxItem> = {
   /**
    * Renders the listbox popover in a portal. `true` portals to `document.body`, a selector string or element is used as the teleport target, and `false` disables portalling.
    * Falls back to `createHareUI({ portal })`, then `true`.
@@ -327,9 +327,9 @@ export interface SelectProps<T extends ListBoxItem = ListBoxItem> extends FormFi
   class?: any
   /** Per-slot class overrides. */
   ui?: ComponentSlots<Select>
-}
+} & FormFieldProps
 
-export interface SelectValueSlotProps<T extends ListBoxItem = ListBoxItem> {
+export type SelectValueSlotProps<T extends ListBoxItem = ListBoxItem> = {
   /** The selected options, in collection order. */
   selectedItems: T[]
   /** Whether nothing is selected. */
@@ -338,7 +338,7 @@ export interface SelectValueSlotProps<T extends ListBoxItem = ListBoxItem> {
   text: string
 }
 
-export interface SelectSlots<T extends ListBoxItem = ListBoxItem> {
+export type SelectSlots<T extends ListBoxItem = ListBoxItem> = {
   /** Label content. Replaces `label`. */
   label?: () => any
   /** Content inside the trigger before the value. */
@@ -373,7 +373,7 @@ export interface SelectSlots<T extends ListBoxItem = ListBoxItem> {
   loading?: () => any
 }
 
-export interface SelectEmits {
+export type SelectEmits = {
   /** The selection was cleared with the clear button or Backspace / Delete. */
   clear: []
   /** The popover opened or closed (`v-model:open`). */

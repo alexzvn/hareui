@@ -61,7 +61,7 @@ import theme from './theme'
 
 type DashboardSidebarToggle = typeof theme
 
-export interface DashboardSidebarToggleProps {
+export type DashboardSidebarToggleProps = {
   /**
    * The element or component to render as.
    * @defaultValue 'button'
@@ -93,7 +93,7 @@ export interface DashboardSidebarToggleProps {
   ui?: ComponentSlots<DashboardSidebarToggle>
 }
 
-export interface DashboardSidebarToggleSlots {
+export type DashboardSidebarToggleSlots = {
   /** The button content. Defaults to the gravity-ui `bars` icon, and to a close icon while the sidebar is open. */
   default?: (props: { open: boolean }) => unknown
 }

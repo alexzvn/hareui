@@ -38,7 +38,7 @@ import theme from './theme'
 
 type Meter = typeof theme
 
-export interface MeterProps {
+export type MeterProps = {
   /**
    * The current value (clamped to `minValue`–`maxValue`).
    * @defaultValue 0
@@ -83,14 +83,14 @@ export interface MeterProps {
   ui?: ComponentSlots<Meter>
 }
 
-export interface MeterSlotProps {
+export type MeterSlotProps = {
   /** The percentage of the meter (0–100). */
   percentage: number
   /** The formatted value text. */
   valueText: string
 }
 
-export interface MeterSlots {
+export type MeterSlots = {
   /** Replaces the label text. */
   label?: (props: MeterSlotProps) => any
   /** Replaces the value output text. */

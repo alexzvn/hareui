@@ -1,6 +1,6 @@
 import type { InjectionKey, Ref } from 'vue'
 
-export interface TextFieldContext {
+export type TextFieldContext = {
   /** Id applied to the field's input. */
   id: Readonly<Ref<string>>
   /** Space-separated ids of the rendered description and error elements. */

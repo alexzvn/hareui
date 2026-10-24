@@ -1,7 +1,7 @@
 import { useRoute } from 'vitepress'
 import { nextTick, onBeforeUnmount, onMounted, ref, watch } from 'vue'
 
-export interface TocItem {
+export type TocItem = {
   id: string
   text: string
   depth: number

@@ -28,7 +28,7 @@ import type { RichTableColumn } from '@hareui/vue'
 import { Button, RichTable } from '@hareui/vue'
 import { ref } from 'vue'
 
-interface Payment {
+type Payment = {
   name: string
   status: 'paid' | 'failed' | 'refunded' | 'processing'
   amount: number

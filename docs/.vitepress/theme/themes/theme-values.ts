@@ -12,7 +12,7 @@ export type RadiusId = (typeof radiusIds)[number]
 /**
  * Semantic color override for a single color (success, warning, or danger)
  */
-export interface SemanticColorOverride {
+export type SemanticColorOverride = {
   /** OKLCH color string e.g. "oklch(0.5148 0.1337 146.82)" */
   color: string
   /** Optional foreground color - if not provided, will be calculated automatically */
@@ -23,7 +23,7 @@ export interface SemanticColorOverride {
  * Semantic color overrides for light and dark modes.
  * Allows themes to specify exact semantic colors instead of using calculated values.
  */
-export interface ThemeSemanticOverrides {
+export type ThemeSemanticOverrides = {
   light?: {
     /** Override the accent foreground color (text on accent background) */
     accentForeground?: string

@@ -54,7 +54,7 @@ type Dropdown = typeof theme
 
 export type DropdownValue = string | number
 
-export interface DropdownItem {
+export type DropdownItem = {
   /** Unique key of the item across the whole menu. Emitted by `action` and stored in `v-model`. */
   value: DropdownValue
   /** The item text, shown unless the `#item` / `#item-label` slot is used. */
@@ -76,7 +76,7 @@ export interface DropdownItem {
   [key: string]: any
 }
 
-export interface DropdownSection {
+export type DropdownSection = {
   type: 'section'
   /** Rendered as the section `<header>`, which also labels the group. */
   label?: string
@@ -91,13 +91,13 @@ export interface DropdownSection {
   class?: any
 }
 
-export interface DropdownSeparator {
+export type DropdownSeparator = {
   type: 'separator'
 }
 
 export type DropdownEntry = DropdownItem | DropdownSection | DropdownSeparator
 
-export interface DropdownProps {
+export type DropdownProps = {
   /**
    * Renders the menu in a portal. `true` portals to `document.body`, a selector string or element is used as the teleport target, and `false` disables portalling.
    * Falls back to `createHareUI({ portal })`, then `true`.
@@ -140,13 +140,13 @@ export interface DropdownProps {
   ui?: ComponentSlots<Dropdown>
 }
 
-export interface DropdownItemSlotProps {
+export type DropdownItemSlotProps = {
   item: DropdownItem
   selected: boolean
   disabled: boolean
 }
 
-export interface DropdownSlots {
+export type DropdownSlots = {
   /** The trigger. Merged onto its single root element (`as-child`). */
   default?: () => any
   /**
@@ -168,7 +168,7 @@ export interface DropdownSlots {
   'section-label'?: (props: { section: DropdownSection }) => any
 }
 
-export interface DropdownEmits {
+export type DropdownEmits = {
   'update:open': [value: boolean]
   'update:modelValue': [value: DropdownValue[]]
   /** An action item (not a selectable one, not a submenu trigger) was selected. */

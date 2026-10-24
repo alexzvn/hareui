@@ -4,7 +4,7 @@ import { computed, inject, toValue } from 'vue'
 import type { PortalTarget } from '@/config'
 import { hareUIConfigKey } from '@/config'
 
-export interface ResolvedPortal {
+export type ResolvedPortal = {
   /** Teleport target; `'body'` when portalling is on without an explicit target. */
   to: string | HTMLElement
   disabled: boolean

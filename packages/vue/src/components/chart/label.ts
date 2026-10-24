@@ -2,7 +2,7 @@ import type { InjectionKey } from 'vue'
 import { inject, provide } from 'vue'
 
 /** Rectangle a label is placed against (a bar, a point as a 0×0 box, or the plot area). */
-export interface ChartCartesianViewBox {
+export type ChartCartesianViewBox = {
   x: number
   y: number
   width: number
@@ -10,7 +10,7 @@ export interface ChartCartesianViewBox {
 }
 
 /** Sector a label is placed against; angles in degrees, 0 = 3 o'clock, counter-clockwise. */
-export interface ChartPolarViewBox {
+export type ChartPolarViewBox = {
   cx: number
   cy: number
   innerRadius: number
@@ -42,7 +42,7 @@ export type ChartLabelPosition =
   | 'end'
 
 /** One label slot of a series: a datum and the shape its label is placed against. */
-export interface ChartLabelItem {
+export type ChartLabelItem = {
   index: number
   /** Default text: the series value (or the `dataKey` value of `ChartLabel`). */
   value: number | string | undefined
@@ -50,7 +50,7 @@ export interface ChartLabelItem {
   viewBox: ChartLabelViewBox
 }
 
-export interface ChartLabelSource {
+export type ChartLabelSource = {
   /** Labels per datum (inside a series), or `undefined` for a single label (directly in a root). */
   items?: () => ChartLabelItem[]
   /** Box of a single label. */
@@ -97,7 +97,7 @@ export function polarToCartesian(
   return { x: cx + Math.cos(-RADIAN * angle) * radius, y: cy + Math.sin(-RADIAN * angle) * radius }
 }
 
-export interface ChartLabelAttrs {
+export type ChartLabelAttrs = {
   x: number
   y: number
   textAnchor: 'start' | 'middle' | 'end'

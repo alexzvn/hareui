@@ -5,7 +5,7 @@ import type { ComponentSlots, ComponentUI } from '@/types/tv'
 
 import type toggleButtonGroupTheme from './theme'
 
-export interface ToggleButtonGroupContext {
+export type ToggleButtonGroupContext = {
   selectionMode: Readonly<Ref<'single' | 'multiple'>>
   selected: Readonly<Ref<string[]>>
   disabled: Readonly<Ref<boolean>>

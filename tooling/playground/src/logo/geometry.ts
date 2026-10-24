@@ -2,7 +2,7 @@
 // squircle-style cubic corners. The shipped mark (docs/public/logo.svg, docs/.vitepress/theme/components/HareLogo.vue)
 // is `logoPath(LOGO_DEFAULTS)` rotated by `LOGO_DEFAULTS.tilt` around the canvas centre.
 
-export interface LogoParams {
+export type LogoParams = {
   /** Side of each square. */
   s: number
   /** Horizontal overlap of the two squares. */

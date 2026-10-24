@@ -18,7 +18,7 @@ import theme from './theme'
 
 type Separator = typeof theme
 
-export interface SeparatorProps {
+export type SeparatorProps = {
   /**
    * The element or component to render as.
    * @defaultValue 'div'
@@ -40,7 +40,7 @@ export interface SeparatorProps {
   ui?: ComponentSlots<Separator>
 }
 
-export interface SeparatorSlots {
+export type SeparatorSlots = {
   /** Content rendered inside the separator (uncommon; HeroUI's separator is normally empty). */
   default?: () => any
 }

@@ -31,7 +31,7 @@ import type { RichTableColumn } from '@hareui/vue'
 import { Button, RichTable } from '@hareui/vue'
 import { Icon } from '@iconify/vue'
 
-interface Payment {
+type Payment = {
   name: string
   status: string
   amount: number

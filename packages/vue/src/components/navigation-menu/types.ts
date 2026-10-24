@@ -1,7 +1,7 @@
 import type { PortalTarget } from '@/config'
 
 /** Options of the hover/click popover shown for a collapsed item with children. */
-export interface NavigationMenuPopoverProps {
+export type NavigationMenuPopoverProps = {
   /**
    * What opens the popover. `'hover'` (the default) opens it on hover and closes it when the
    * pointer leaves both the item and the popover; `'click'` uses the regular `Popover`.

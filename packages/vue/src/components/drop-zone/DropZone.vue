@@ -125,12 +125,12 @@ import theme from './theme'
 type DropZone = typeof theme
 
 /** A file the DropZone turned away, and why: it doesn't match `accept` (`type`) or exceeds `maxSize` (`size`). */
-export interface DropZoneRejection {
+export type DropZoneRejection = {
   file: File
   reason: 'type' | 'size'
 }
 
-export interface DropZoneProps extends FormFieldProps {
+export type DropZoneProps = {
   /** The selected files. Bind with `v-model`. */
   modelValue?: File[]
   /**
@@ -189,23 +189,23 @@ export interface DropZoneProps extends FormFieldProps {
   class?: any
   /** Per-slot class overrides. The file keys also style the file lists and items inside the drop zone. */
   ui?: ComponentSlots<DropZone>
-}
+} & FormFieldProps
 
-export interface DropZoneSlotProps {
+export type DropZoneSlotProps = {
   /** Whether files are dragged over the area. */
   dropTarget: boolean
   /** Whether the drop zone is disabled. */
   disabled: boolean
 }
 
-export interface DropZoneFilesSlotProps {
+export type DropZoneFilesSlotProps = {
   /** The selected files. */
   files: File[]
   /** Removes a file from the selection, by index or by reference. */
   removeFile: (file: File | number) => void
 }
 
-export interface DropZoneSlots {
+export type DropZoneSlots = {
   /** The area icon. Replaces the default upload icon. */
   icon?: (props: DropZoneSlotProps) => any
   /** The label content. Replaces the `label` prop. */
@@ -220,7 +220,7 @@ export interface DropZoneSlots {
   error?: (props: ValidationResult) => any
 }
 
-export interface DropZoneEmits {
+export type DropZoneEmits = {
   /** Emitted with the new selection when files are added or removed. */
   'update:modelValue': [files: File[]]
   /** Emitted with the files just accepted from a drop, a paste or the picker. */

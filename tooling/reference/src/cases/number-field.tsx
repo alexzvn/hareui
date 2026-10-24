@@ -1,7 +1,7 @@
 import type { ReactElement } from 'react'
 import { Description, FieldError, Label, NumberField } from '@heroui/react'
 
-interface FieldProps {
+type FieldProps = {
   variant?: 'primary' | 'secondary'
   isRequired?: boolean
   isDisabled?: boolean

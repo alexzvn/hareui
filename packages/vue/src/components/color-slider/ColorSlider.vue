@@ -118,7 +118,7 @@ function getValidColorSpace(
   return colorSpace
 }
 
-export interface ColorSliderProps {
+export type ColorSliderProps = {
   /** The color channel that this slider manipulates. */
   channel: ColorChannel
   /**
@@ -164,7 +164,7 @@ export interface ColorSliderProps {
   ui?: ComponentSlots<ColorSlider>
 }
 
-export interface ColorSliderSlotProps {
+export type ColorSliderSlotProps = {
   /** The display name of the current channel (e.g. `'Hue'`). */
   channelName: string
   /** The current numeric value of the channel. */
@@ -173,7 +173,7 @@ export interface ColorSliderSlotProps {
   valueText: string
 }
 
-export interface ColorSliderSlots {
+export type ColorSliderSlots = {
   /** Label content. Replaces the `label` prop. */
   label?: () => any
   /** Output content. Replaces the formatted value text. */
@@ -182,7 +182,7 @@ export interface ColorSliderSlots {
   thumb?: (props: ColorSliderSlotProps) => any
 }
 
-export interface ColorSliderEmits {
+export type ColorSliderEmits = {
   /** Emitted on every value change with the new color, in the channel's native color space. */
   'update:modelValue': [value: Color]
   /** Emitted on every value change while dragging/keying, with the new color as a hex string. */

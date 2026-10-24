@@ -48,7 +48,7 @@ import theme from './theme'
 
 type CellSwitch = typeof theme
 
-export interface CellSwitchProps extends FormFieldProps {
+export type CellSwitchProps = {
   /** The checked state. Bind with `v-model`. */
   modelValue?: boolean
   /**
@@ -106,14 +106,14 @@ export interface CellSwitchProps extends FormFieldProps {
   class?: any
   /** Per-slot class overrides. */
   ui?: ComponentSlots<CellSwitch>
-}
+} & FormFieldProps
 
-export interface CellSwitchEmits {
+export type CellSwitchEmits = {
   /** Emitted when the checked state changes. */
   'update:modelValue': [value: boolean]
 }
 
-export interface CellSwitchSlots {
+export type CellSwitchSlots = {
   /** The content at the start of the row. Replaces the `label` prop. */
   label?: (props: { checked: boolean }) => any
   /** The error content, rendered below the row while invalid. Replaces the `errorMessage` prop. */

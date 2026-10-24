@@ -14,7 +14,7 @@ import { provideChartLabels } from './label'
 import type { ChartCurveType, ChartDotProps, ChartSeries } from './types'
 
 /** Props shared by every cartesian series. */
-export interface ChartSeriesProps extends ChartAnimationProps {
+export type ChartSeriesProps = {
   /** Key of the value in each row. */
   dataKey: string
   /** Name shown in the tooltip. Defaults to `dataKey`. */
@@ -38,10 +38,10 @@ export interface ChartSeriesProps extends ChartAnimationProps {
   yAxisId?: string | number
   /** Additional classes merged into the series group. */
   class?: ClassValue
-}
+} & ChartAnimationProps
 
 /** Props of areas and lines. */
-export interface ChartCurveSeriesProps extends ChartSeriesProps {
+export type ChartCurveSeriesProps = {
   /**
    * Curve interpolation. `monotone` gives smooth curves that never overshoot the data.
    * @defaultValue 'linear'
@@ -74,9 +74,9 @@ export interface ChartCurveSeriesProps extends ChartSeriesProps {
    * @defaultValue false
    */
   connectNulls?: boolean
-}
+} & ChartSeriesProps
 
-export interface ChartSeriesPoint {
+export type ChartSeriesPoint = {
   index: number
   x: number
   y: number
@@ -93,7 +93,7 @@ export function seriesColor(stroke: string | undefined, fill: string | undefined
   return stroke && stroke !== 'none' ? stroke : (fill ?? DEFAULT_SERIES_COLOR)
 }
 
-export interface PointSeries {
+export type PointSeries = {
   id: string
   chart: ChartContext
   cartesian: CartesianContext

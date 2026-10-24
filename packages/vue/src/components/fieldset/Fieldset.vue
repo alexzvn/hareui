@@ -63,7 +63,7 @@ import theme from './theme'
 
 type Fieldset = typeof theme
 
-export interface FieldsetProps {
+export type FieldsetProps = {
   /**
    * The element or component to render as.
    * @defaultValue 'fieldset'
@@ -84,7 +84,7 @@ export interface FieldsetProps {
   ui?: ComponentSlots<Fieldset>
 }
 
-export interface FieldsetSlots {
+export type FieldsetSlots = {
   /** The legend content. Replaces the `legend` prop. */
   legend?: () => any
   /** The description content. Replaces the `description` prop. */

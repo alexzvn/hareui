@@ -87,7 +87,7 @@ export type ColorSwatchPickerItem =
       disabled?: boolean
     }
 
-export interface ColorSwatchPickerProps {
+export type ColorSwatchPickerProps = {
   /** The swatches to render. */
   items: ColorSwatchPickerItem[]
   /**
@@ -129,7 +129,7 @@ export interface ColorSwatchPickerProps {
   ui?: ComponentSlots<ColorSwatchPicker>
 }
 
-export interface ColorSwatchPickerSlotProps {
+export type ColorSwatchPickerSlotProps = {
   /** The item's color string. */
   value: string
   /** The item's accessible label, if any. */
@@ -138,14 +138,14 @@ export interface ColorSwatchPickerSlotProps {
   selected: boolean
 }
 
-export interface ColorSwatchPickerSlots {
+export type ColorSwatchPickerSlots = {
   /** Replaces the whole content of an item (swatch and indicator). */
   default?: (props: ColorSwatchPickerSlotProps) => any
   /** Replaces the check icon inside the indicator (always rendered, revealed by the selected state). */
   indicator?: (props: ColorSwatchPickerSlotProps) => any
 }
 
-export interface ColorSwatchPickerEmits {
+export type ColorSwatchPickerEmits = {
   /** Emitted when the selection changes. Emits a `Color` when the current value is a `Color`, else the item's string. */
   'update:modelValue': [value: string | Color]
 }

@@ -13,7 +13,7 @@ import theme from './theme'
 
 type SwitchGroup = typeof theme
 
-export interface SwitchGroupProps {
+export type SwitchGroupProps = {
   /**
    * The axis the switches are laid out along.
    * @defaultValue 'vertical'
@@ -25,7 +25,7 @@ export interface SwitchGroupProps {
   ui?: ComponentSlots<SwitchGroup>
 }
 
-export interface SwitchGroupSlots {
+export type SwitchGroupSlots = {
   /** The `Switch` items to render. */
   default?: () => any
 }

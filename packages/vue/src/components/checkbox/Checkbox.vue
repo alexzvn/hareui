@@ -87,7 +87,7 @@ type Checkbox = typeof theme
 
 export type CheckboxState = 'checked' | 'unchecked' | 'indeterminate'
 
-export interface CheckboxProps extends FormFieldProps {
+export type CheckboxProps = {
   /** The checked state (`true`, `false` or `'indeterminate'`). Bind with `v-model`. */
   modelValue?: boolean | 'indeterminate'
   /**
@@ -147,9 +147,9 @@ export interface CheckboxProps extends FormFieldProps {
   class?: any
   /** Per-slot class overrides. */
   ui?: ComponentSlots<Checkbox>
-}
+} & FormFieldProps
 
-export interface CheckboxSlots {
+export type CheckboxSlots = {
   /** The label content. Replaces the `label` prop. */
   label?: (props: { state: CheckboxState }) => any
   /** The description content. Replaces the `description` prop. */

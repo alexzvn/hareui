@@ -67,7 +67,7 @@ import theme from './theme'
 
 type Accordion = typeof theme
 
-export interface AccordionItem {
+export type AccordionItem = {
   /** The trigger text, shown unless `#label` is used. */
   label?: string
   /** The value identifying this item (HeroUI's `id`). Defaults to the item's index. */
@@ -82,7 +82,7 @@ export interface AccordionItem {
   [key: string]: any
 }
 
-export interface AccordionProps<T extends AccordionItem = AccordionItem> {
+export type AccordionProps<T extends AccordionItem = AccordionItem> = {
   /** The items to render. */
   items: T[]
   /** The expanded item values. Use `v-model` to control them. */
@@ -121,7 +121,7 @@ type ItemSlotProps<T extends AccordionItem = AccordionItem> = {
   open: boolean
 }
 
-export interface AccordionSlots<T extends AccordionItem = AccordionItem> {
+export type AccordionSlots<T extends AccordionItem = AccordionItem> = {
   /** Rendered in the trigger before the label (e.g. an icon). */
   leading?: (props: ItemSlotProps<T>) => any
   /** Replaces the trigger's label text. */
@@ -137,7 +137,7 @@ export interface AccordionSlots<T extends AccordionItem = AccordionItem> {
   [slot: string]: ((props: ItemSlotProps<T>) => any) | undefined
 }
 
-export interface AccordionEmits {
+export type AccordionEmits = {
   /** Emitted when the expanded items change. */
   'update:modelValue': [value: ExpandedValue[]]
 }

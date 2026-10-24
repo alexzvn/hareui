@@ -18,7 +18,7 @@ import { Button, Dropdown, RichTable } from '@hareui/vue'
 import { Icon } from '@iconify/vue'
 import { computed, ref } from 'vue'
 
-interface Payment {
+type Payment = {
   name: string
   email: string
   status: string

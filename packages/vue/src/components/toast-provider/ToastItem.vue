@@ -112,7 +112,7 @@ type Toast = typeof theme
 // Not exported: HeroUI's Toast/ToastContent/ToastIndicator/Toast* compound parts collapse
 // into ToastProvider's single `#toast` slot (see ToastProvider.vue), per the "no compound
 // parts" rule. This renders one stack entry, used only from ToastProvider's `v-for`.
-export interface ToastItemProps {
+export type ToastItemProps = {
   toast: QueuedToast<ToastContentValue>
   index: number
   isFrontmost: boolean

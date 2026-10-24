@@ -3,7 +3,7 @@ import type { ClassValue } from 'tailwind-variants'
 import type { ChartAxisDomain, ChartAxisInterval } from './types'
 
 /** Props shared by `ChartXAxis` and `ChartYAxis`. */
-export interface ChartAxisProps {
+export type ChartAxisProps = {
   /** Data key of the category values. Category axes without it show the data index. */
   dataKey?: string
   /**
@@ -87,7 +87,7 @@ export interface ChartAxisProps {
   class?: ClassValue
 }
 
-export interface ChartAxisTickSlotProps {
+export type ChartAxisTickSlotProps = {
   /** Label position in SVG px. */
   x: number
   y: number
@@ -100,7 +100,7 @@ export interface ChartAxisTickSlotProps {
   textAnchor: 'start' | 'middle' | 'end'
 }
 
-export interface ChartAxisSlots {
+export type ChartAxisSlots = {
   /** Replaces each tick label. Render SVG (`<text>`). */
   tick?: (props: ChartAxisTickSlotProps) => unknown
 }

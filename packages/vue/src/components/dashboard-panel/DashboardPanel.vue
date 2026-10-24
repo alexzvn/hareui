@@ -38,7 +38,7 @@ import theme from './theme'
 
 type DashboardPanel = typeof theme
 
-export interface DashboardPanelProps {
+export type DashboardPanelProps = {
   /**
    * Identifies the panel in the storage (`${storageKey}-panel-${id}`) and as its element id. Set it when several panels live in different pages.
    * @defaultValue useId()
@@ -70,7 +70,7 @@ export interface DashboardPanelProps {
   ui?: ComponentSlots<DashboardPanel>
 }
 
-export interface DashboardPanelResizeHandleSlotProps {
+export type DashboardPanelResizeHandleSlotProps = {
   onPointerDown: (e: PointerEvent) => void
   onMouseDown: (e: MouseEvent) => void
   onTouchStart: (e: TouchEvent) => void
@@ -82,7 +82,7 @@ export interface DashboardPanelResizeHandleSlotProps {
   dragging: boolean
 }
 
-export interface DashboardPanelSlots {
+export type DashboardPanelSlots = {
   /** Replaces the header, body and footer (use it when you don't want a scrollable, padded body). */
   default?: () => any
   /** Rendered above the body, e.g. a navbar. */

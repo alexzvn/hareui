@@ -16,7 +16,7 @@ function extendOptions(extend: unknown, override: object | undefined) {
 }
 
 type TV = (props: Record<string, unknown>) => unknown
-interface Shared {
+type Shared = {
   tv: TV
   results: Map<string, unknown>
 }

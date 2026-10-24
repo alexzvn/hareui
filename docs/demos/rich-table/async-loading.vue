@@ -22,7 +22,7 @@ import type { RichTableColumn } from '@hareui/vue'
 import { RichTable, Spinner } from '@hareui/vue'
 import { onBeforeUnmount, ref, useTemplateRef, watch } from 'vue'
 
-interface Payment {
+type Payment = {
   id: string
   name: string
   amount: number

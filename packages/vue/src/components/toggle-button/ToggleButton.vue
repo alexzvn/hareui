@@ -51,7 +51,7 @@ import theme from './theme'
 
 type ToggleButton = typeof theme
 
-export interface ToggleButtonProps {
+export type ToggleButtonProps = {
   /**
    * The element or component to render as.
    * @defaultValue 'button'
@@ -92,12 +92,12 @@ export interface ToggleButtonProps {
   ui?: ComponentSlots<ToggleButton>
 }
 
-export interface ToggleButtonSlotProps {
+export type ToggleButtonSlotProps = {
   selected: boolean
   disabled: boolean
 }
 
-export interface ToggleButtonSlots {
+export type ToggleButtonSlots = {
   /** The button content. */
   default?: (props: ToggleButtonSlotProps) => any
 }

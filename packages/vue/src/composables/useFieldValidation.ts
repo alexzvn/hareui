@@ -13,7 +13,7 @@ import { formContextKey } from '@/components/form/context'
 import type { FormFieldProps, FormInputEvents } from '@/components/form/types'
 
 /** Snapshot of the native `ValidityState` flags. */
-export interface ValidationDetails {
+export type ValidationDetails = {
   badInput: boolean
   customError: boolean
   patternMismatch: boolean
@@ -27,7 +27,7 @@ export interface ValidationDetails {
   valid: boolean
 }
 
-export interface ValidationResult {
+export type ValidationResult = {
   /** Whether the field is currently displayed as invalid. */
   isInvalid: boolean
   /** The current error messages. */
@@ -39,7 +39,7 @@ export interface ValidationResult {
 /** Returns an error message (or several) for an invalid value; `true`, `null` or `undefined` when valid. */
 export type ValidateFn<T> = (value: T) => ValidationError | true | null | undefined
 
-export interface FieldValidationOptions<T> {
+export type FieldValidationOptions<T> = {
   value: () => T | null | undefined
   validate: () => ValidateFn<T> | undefined
   /** The controlled `invalid` prop; `undefined` when not set. */

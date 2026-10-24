@@ -8,7 +8,7 @@ import { fileURLToPath } from 'node:url'
  * page shows the demo: `contain` demos fill the viewport (`page`), the others are laid out like the preview box
  * (`centered`), so the box swaps between its inline render and the frame without a jump.
  */
-interface Usage {
+type Usage = {
   layout: 'page' | 'centered'
   align: string
   minHeight: string

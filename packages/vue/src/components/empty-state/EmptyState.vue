@@ -11,14 +11,14 @@ import theme from './theme'
 
 type EmptyState = typeof theme
 
-export interface EmptyStateProps {
+export type EmptyStateProps = {
   /** Additional classes merged into the root element. */
   class?: any
   /** Per-slot class overrides. */
   ui?: ComponentSlots<EmptyState>
 }
 
-export interface EmptyStateSlots {
+export type EmptyStateSlots = {
   /** The empty-state content. Defaults to "No results found". */
   default?: () => any
 }

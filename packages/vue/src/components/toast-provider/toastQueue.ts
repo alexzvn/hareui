@@ -66,7 +66,7 @@ class ManagedToastTimer {
   }
 }
 
-export interface QueuedToast<T> {
+export type QueuedToast<T> = {
   /** Unique key identifying this toast in the queue. */
   key: string
   /** The toast's content. */
@@ -79,7 +79,7 @@ export interface QueuedToast<T> {
   timer?: ManagedToastTimer
 }
 
-export interface ToastQueueOptions {
+export type ToastQueueOptions = {
   /**
    * How long a closing toast stays mounted for its exit animation, in
    * milliseconds. Set to 0 to remove toasts immediately.
@@ -240,7 +240,7 @@ export class ToastQueue<T extends object = ToastContentValue> {
  * Toast content
  * --------------------------------------------------------------------------------------------- */
 
-export interface ToastContentValue {
+export type ToastContentValue = {
   /** `null` hides the indicator. */
   indicator?: VNodeChild | null
   title?: VNodeChild
@@ -251,7 +251,7 @@ export interface ToastContentValue {
   isLoading?: boolean
 }
 
-export interface ToastAction {
+export type ToastAction = {
   /** The action button's label. */
   label: VNodeChild
   /** Called when the action button is clicked. */

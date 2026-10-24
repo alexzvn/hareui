@@ -31,7 +31,7 @@
 import StackedSwatch from './color/StackedSwatch.vue'
 import ThemeChip from './color/ThemeChip.vue'
 
-interface StackedColor {
+type StackedColor = {
   label: string
   variable: string
   cssValue?: string

@@ -3,7 +3,7 @@
 import type { MaybeRefOrGetter } from 'vue'
 import { onBeforeUnmount, onMounted, toValue } from 'vue'
 
-export interface UseKeyPressOptions {
+export type UseKeyPressOptions = {
   alt?: boolean
   ctrl?: boolean
   shift?: boolean

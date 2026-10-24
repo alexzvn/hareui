@@ -70,7 +70,7 @@ import theme from './theme'
 
 type DashboardNavbar = typeof theme
 
-export interface DashboardNavbarProps {
+export type DashboardNavbarProps = {
   /**
    * The element or component to render as. An object sets the element per part (`{ root, title }`).
    * @defaultValue 'div'
@@ -100,7 +100,7 @@ export type DashboardNavbarSlotProps = Pick<
   'sidebarOpen' | 'toggleSidebar' | 'sidebarCollapsed' | 'collapseSidebar' | 'sidebars'
 >
 
-export interface DashboardNavbarSlots {
+export type DashboardNavbarSlots = {
   /** Replaces the `leading`, `title` and `trailing` content of the left group. */
   left?: (props: Partial<DashboardNavbarSlotProps>) => unknown
   /** Content before the title, e.g. an icon or a logo. */

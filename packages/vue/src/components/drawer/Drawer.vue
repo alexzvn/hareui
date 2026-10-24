@@ -114,7 +114,7 @@ import theme from './theme'
 
 type Drawer = typeof theme
 
-export interface DrawerProps {
+export type DrawerProps = {
   /** The controlled open state of the drawer. Use with `v-model:open`. */
   open?: boolean
   /** The open state of the drawer when it is initially rendered. Use when you do not need to control its open state. */
@@ -162,7 +162,7 @@ export interface DrawerProps {
   ui?: ComponentSlots<Drawer>
 }
 
-export interface DrawerSlots {
+export type DrawerSlots = {
   /** The trigger element. Omit to control the drawer purely via `v-model:open`. */
   default?: (props: { open: boolean }) => any
   /** Replaces the whole header (title). */
@@ -179,7 +179,7 @@ export interface DrawerSlots {
   content?: (props: { close: () => void }) => any
 }
 
-export interface DrawerEmits {
+export type DrawerEmits = {
   /** Emitted when the open state changes. */
   'update:open': [value: boolean]
 }

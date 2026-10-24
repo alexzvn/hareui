@@ -4,7 +4,7 @@ import { effectScope } from 'vue'
 import type { TypeaheadOptions } from '@/components/list-box/useTypeahead'
 import { useTypeahead } from '@/components/list-box/useTypeahead'
 
-interface Item {
+type Item = {
   label: string
   disabled?: boolean
 }

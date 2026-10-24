@@ -73,7 +73,7 @@ import theme from './theme'
 type ErrorTheme = typeof theme
 
 /** The error to display. Accepts Nuxt's `NuxtError` (`statusCode`/`statusMessage`) and H3's `status`/`statusText` alike. */
-export interface ErrorValue {
+export type ErrorValue = {
   statusCode?: number
   status?: number
   statusMessage?: string
@@ -84,7 +84,7 @@ export interface ErrorValue {
 /** Props of the clear button: those of `Button`, plus its `label`. */
 export type ErrorClearProps = ButtonProps & { label?: string }
 
-export interface ErrorProps {
+export type ErrorProps = {
   /**
    * The element or component to render as. An object sets the element per part (`{ root, statusMessage }`).
    * @defaultValue 'main'
@@ -109,7 +109,7 @@ export interface ErrorProps {
   ui?: ComponentSlots<ErrorTheme>
 }
 
-export interface ErrorSlots {
+export type ErrorSlots = {
   /** Content rendered after the links. */
   default?: () => unknown
   /** Content above the status code, e.g. an icon. */
@@ -124,7 +124,7 @@ export interface ErrorSlots {
   links?: () => unknown
 }
 
-export interface ErrorEmits {
+export type ErrorEmits = {
   /** Fired when the clear button is clicked, before it follows `redirect`. Call `event.preventDefault()` to navigate yourself. */
   clear: [event: MouseEvent]
 }

@@ -34,10 +34,10 @@ import type { ListBoxItem } from '@hareui/vue'
 import { Autocomplete, Avatar } from '@hareui/vue'
 import { ref } from 'vue'
 
-interface User extends ListBoxItem {
+type User = {
   avatarUrl: string
   fallback: string
-}
+} & ListBoxItem
 
 const users: User[] = [
   {

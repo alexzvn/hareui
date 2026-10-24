@@ -3,7 +3,7 @@ import { Checkbox, CheckboxGroup, Description, FieldError, Label } from '@heroui
 
 type Props = Parameters<typeof CheckboxGroup>[0]
 
-interface Item { value: string, label: string, description?: string, disabled?: boolean }
+type Item = { value: string, label: string, description?: string, disabled?: boolean }
 
 const interests: Item[] = [
   { value: 'coding', label: 'Coding' },

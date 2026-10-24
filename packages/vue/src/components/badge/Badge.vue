@@ -35,7 +35,7 @@ import theme from './theme'
 
 type Badge = typeof theme
 
-export interface BadgeProps {
+export type BadgeProps = {
   /** Text or number shown in the badge, wrapped in the `label` element. Omit it (and `#content`) for a dot. */
   content?: string | number
   /** Badge color. */
@@ -52,7 +52,7 @@ export interface BadgeProps {
   ui?: ComponentSlots<Badge>
 }
 
-export interface BadgeSlots {
+export type BadgeSlots = {
   /** The element the badge is anchored to (HeroUI's `Badge.Anchor` children). Without it the badge renders on its own. */
   default?: () => any
   /** Custom badge content such as an icon, rendered without the `label` wrapper. */

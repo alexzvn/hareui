@@ -53,7 +53,7 @@ import theme from './theme'
 
 type Card = typeof theme
 
-export interface CardProps {
+export type CardProps = {
   /**
    * The element or component to render as.
    * @defaultValue 'div'
@@ -74,7 +74,7 @@ export interface CardProps {
   ui?: ComponentSlots<Card>
 }
 
-export interface CardSlots {
+export type CardSlots = {
   /**
    * Content rendered directly inside the root, before the header, without a wrapper
    * (e.g. an icon, an image, or a full-bleed background).

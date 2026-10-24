@@ -3,7 +3,7 @@ import { readonly, ref } from 'vue'
 
 import { extractFontFamilyFromUrl } from '../utils/font-utils'
 
-export interface CustomFont {
+export type CustomFont = {
   id: string
   label: string
   url: string

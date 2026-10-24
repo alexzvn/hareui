@@ -38,7 +38,7 @@ import theme from './theme'
 
 type Avatar = typeof theme
 
-export interface AvatarProps {
+export type AvatarProps = {
   /** Image source. The fallback shows until it loads, or if it fails. */
   src?: string
   /** Alternative text of the image. */
@@ -78,7 +78,7 @@ export interface AvatarProps {
   ui?: ComponentSlots<Avatar>
 }
 
-export interface AvatarSlots {
+export type AvatarSlots = {
   /**
    * Custom image component (e.g. `<NuxtImg>`). Rendered in place of the `<img>`, receiving
    * `src`, the `image` classes and the loading-state visibility. Requires `src`.
@@ -88,7 +88,7 @@ export interface AvatarSlots {
   fallback?: () => any
 }
 
-export interface AvatarEmits {
+export type AvatarEmits = {
   /** Emitted when the image loading status changes (`'loading'`, `'loaded'` or `'error'`). */
   loadingStatusChange: [value: 'idle' | 'loading' | 'loaded' | 'error']
 }

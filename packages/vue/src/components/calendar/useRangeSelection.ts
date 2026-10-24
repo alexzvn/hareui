@@ -10,7 +10,7 @@ import { compareDay } from './calendarCells'
  * min/max window derived from it. Each view keeps its own pointer/keyboard/focus layer on top.
  */
 
-export interface DayRange<T extends DateValue = DateValue> {
+export type DayRange<T extends DateValue = DateValue> = {
   start: T
   end: T
 }
@@ -89,7 +89,7 @@ export function isDaySelectedInRange(state: {
   return state.inRange && !state.disabled && (state.invalid || !state.unavailable)
 }
 
-export interface UseRangeSelectionOptions<T extends DateValue = DateValue> {
+export type UseRangeSelectionOptions<T extends DateValue = DateValue> = {
   /** Consumer matcher; receives the current anchor (React Aria's 2-arg `isDateUnavailable`). */
   isDateUnavailable: () => ((date: DateValue, anchorDate: DateValue | null) => boolean) | undefined
   allowNonContiguousRanges: () => boolean | undefined
@@ -109,7 +109,7 @@ export interface UseRangeSelectionOptions<T extends DateValue = DateValue> {
   onCommit: (range: DayRange<T>) => void
 }
 
-export interface RangeSelection<T extends DateValue = DateValue> {
+export type RangeSelection<T extends DateValue = DateValue> = {
   /** react-stately's `anchorDate`: the first pick of an in-progress selection, `null` otherwise. */
   anchor: ShallowRef<T | null>
   /** The consumer matcher bound to the current anchor, or `undefined` without one. */

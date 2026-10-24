@@ -3,7 +3,7 @@ import { Description, FieldError, Label, Radio, RadioGroup } from '@heroui/react
 
 type Props = Parameters<typeof RadioGroup>[0]
 
-interface Item { value: string, label: string, description?: string, disabled?: boolean }
+type Item = { value: string, label: string, description?: string, disabled?: boolean }
 
 const plans: Item[] = [
   { value: 'basic', label: 'Basic Plan' },
