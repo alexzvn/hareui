@@ -51,7 +51,9 @@ export function useInertOutside(target: MaybeRefOrGetter<Target>, open: MaybeRef
   }
   const sync = (el: Element | null | undefined) => {
     release()
-    if (el instanceof Element && el.isConnected && toValue(open))
+    // The immediate watcher also runs during server rendering, where `el` is always empty and `Element` is undefined:
+    // check emptiness first so the global is never read there.
+    if (el && el instanceof Element && el.isConnected && toValue(open))
       apply(el)
   }
   // Reopening while the content is still mounted (a close animation held by Presence) keeps the same element, so the
