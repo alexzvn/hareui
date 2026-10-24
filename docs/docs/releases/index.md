@@ -3,7 +3,7 @@ title: All Releases
 description: Every @hareui/vue release, newest first.
 ---
 
-Release notes for `@hareui/vue`, newest first.
+Release notes for `@hareui/vue`, newest first. Changes merged since the last release are listed under [Unreleased](./unreleased).
 
 | Version | Date | Highlights |
 | --- | --- | --- |
