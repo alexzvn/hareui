@@ -1,8 +1,10 @@
 import type { ComponentOptions } from 'vue'
-import { mount } from '@vue/test-utils'
+import { flushPromises, mount } from '@vue/test-utils'
 import { describe, expect, it } from 'vitest'
 import { defineComponent, nextTick, ref } from 'vue'
+import type { NumberFieldProps } from '../src/components/number-field/NumberField.vue'
 import NumberField from '../src/components/number-field/NumberField.vue'
+import { expectAccessible } from './a11y'
 
 const inc = '[data-slot=number-field-increment-button]'
 const dec = '[data-slot=number-field-decrement-button]'
@@ -125,6 +127,102 @@ describe('NumberField', () => {
     await wrapper.get(input).trigger('keydown', { key: 'PageDown' })
     expect(wrapper.emitted('update:modelValue')?.at(-1)).toEqual([5])
     wrapper.unmount()
+  })
+
+  it.each<[string, NumberFieldProps & { 'aria-label'?: string }]>([
+    ['idle with a visible label', { label: 'Width', defaultValue: 4 }],
+    ['named by aria-label only', { 'aria-label': 'Width', 'defaultValue': 4 }],
+    ['with a description', { label: 'Width', description: 'In pixels', defaultValue: 4 }],
+    ['invalid with an error message', { label: 'Width', errorMessage: 'Too small', invalid: true, defaultValue: 4 }],
+    ['required', { label: 'Width', required: true }],
+    ['disabled', { label: 'Width', disabled: true, defaultValue: 4 }],
+    ['read-only', { label: 'Width', readonly: true, defaultValue: 4 }],
+    ['at the minimum (decrement disabled)', { label: 'Width', min: 0, defaultValue: 0 }],
+  ])('has no axe violations: %s', async (_, props) => {
+    const wrapper = mount(NumberField, { props, attachTo: document.body })
+    await nextTick()
+    await expectAccessible(wrapper)
+    wrapper.unmount()
+  })
+
+  it('the input is the only tab stop; the stepper buttons stay out of the tab order', () => {
+    const wrapper = mount(NumberField, { props: { label: 'Width' } })
+    expect(wrapper.get(input).attributes('tabindex')).not.toBe('-1')
+    expect(wrapper.get(inc).attributes('tabindex')).toBe('-1')
+    expect(wrapper.get(dec).attributes('tabindex')).toBe('-1')
+  })
+
+  it('ArrowDown decrements, Home / End jump to min / max (spinbutton keys)', async () => {
+    const wrapper = mount(NumberField, { props: { label: 'Width', defaultValue: 5, min: 1, max: 9 }, attachTo: document.body })
+    const el = wrapper.get(input)
+    await el.trigger('keydown', { key: 'ArrowDown' })
+    expect(wrapper.emitted('update:modelValue')?.at(-1)).toEqual([4])
+    await el.trigger('keydown', { key: 'End' })
+    expect(wrapper.emitted('update:modelValue')?.at(-1)).toEqual([9])
+    await el.trigger('keydown', { key: 'Home' })
+    expect(wrapper.emitted('update:modelValue')?.at(-1)).toEqual([1])
+    wrapper.unmount()
+  })
+
+  it('Enter commits a typed value', async () => {
+    const wrapper = mount(NumberField, { props: { label: 'Width', defaultValue: 5 }, attachTo: document.body })
+    const el = wrapper.get(input)
+    ;(el.element as HTMLInputElement).value = '12'
+    await el.trigger('input')
+    await el.trigger('keydown', { key: 'Enter' })
+    expect(wrapper.emitted('update:modelValue')?.at(-1)).toEqual([12])
+    wrapper.unmount()
+  })
+
+  it('pressing a stepper button keeps focus in the input', async () => {
+    const wrapper = mount(NumberField, { props: { label: 'Width', defaultValue: 5 }, attachTo: document.body })
+    await flushPromises()
+    ;(wrapper.get(input).element as HTMLElement).focus()
+    const down = new PointerEvent('pointerdown', { bubbles: true, cancelable: true, button: 0, pointerType: 'mouse' })
+    wrapper.get(inc).element.dispatchEvent(down)
+    wrapper.get(inc).element.dispatchEvent(new PointerEvent('pointerup', { bubbles: true, button: 0, pointerType: 'mouse' }))
+    await nextTick()
+    expect(down.defaultPrevented).toBe(true)
+    expect(document.activeElement).toBe(wrapper.get(input).element)
+    expect(wrapper.emitted('update:modelValue')?.at(-1)).toEqual([6])
+    wrapper.unmount()
+  })
+
+  it('exposes the spin button value range and names the stepper buttons after the field', async () => {
+    const wrapper = mount(NumberField, { props: { id: 'w', label: 'Width', defaultValue: 5, min: 0, max: 10 }, attachTo: document.body })
+    const el = wrapper.get(input)
+    expect(el.attributes()).toMatchObject({ 'role': 'spinbutton', 'aria-valuenow': '5', 'aria-valuemin': '0', 'aria-valuemax': '10' })
+    expect(wrapper.get(inc).attributes()).toMatchObject({ 'aria-label': 'Increase Width', 'aria-controls': 'w' })
+    expect(wrapper.get(dec).attributes()).toMatchObject({ 'aria-label': 'Decrease Width', 'aria-controls': 'w' })
+    await el.trigger('keydown', { key: 'ArrowUp' })
+    expect(el.attributes('aria-valuenow')).toBe('6')
+    wrapper.unmount()
+  })
+
+  it('aria-label names the input and the stepper buttons, not the wrapper', () => {
+    const wrapper = mount(NumberField, { props: { 'aria-label': 'Quantity' } })
+    expect(wrapper.get(input).attributes('aria-label')).toBe('Quantity')
+    expect(wrapper.get('[data-slot=number-field]').attributes('aria-label')).toBeUndefined()
+    expect(wrapper.get(inc).attributes('aria-label')).toBe('Increase Quantity')
+  })
+
+  it('reflects disabled, read-only and required on the input', () => {
+    const disabled = mount(NumberField, { props: { label: 'Width', disabled: true } })
+    expect(disabled.get(input).attributes('disabled')).toBeDefined()
+    expect([inc, dec].map(s => disabled.get(s).attributes('disabled'))).toEqual(['', ''])
+    const readonly = mount(NumberField, { props: { label: 'Width', readonly: true, required: true } })
+    expect(readonly.get(input).attributes('readonly')).toBeDefined()
+    expect(readonly.get(input).attributes('required')).toBeDefined()
+  })
+
+  it('drops the error from aria-describedby once the field is valid again', async () => {
+    const wrapper = mount(NumberField, { props: { id: 'w', label: 'Width', description: 'Pixels', errorMessage: 'Too small', invalid: true } })
+    expect(wrapper.get('#w-error').text()).toBe('Too small')
+    expect(wrapper.get('#w-description').text()).toBe('Pixels')
+    await wrapper.setProps({ invalid: false })
+    expect(wrapper.get(input).attributes('aria-describedby')).toBe('w-description')
+    expect(wrapper.get(input).attributes('aria-invalid')).toBeUndefined()
+    expect(wrapper.find('#w-error').exists()).toBe(false)
   })
 })
 

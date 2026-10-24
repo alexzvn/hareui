@@ -85,11 +85,19 @@ export interface InputGroupSlots {
 </script>
 
 <script setup lang="ts">
-import { computed, getCurrentInstance, inject, useTemplateRef, watch } from 'vue'
+import { computed, getCurrentInstance, inject, useAttrs, useTemplateRef, watch } from 'vue'
 import { useComponentUI } from '../../composables/useComponentUI'
 import { useFieldValidation } from '../../composables/useFieldValidation'
 import { useFieldsetDisabled } from '../fieldset/context'
-import { textFieldContextKey } from '../text-field/context'
+import { splitInputAttrs, textFieldContextKey } from '../text-field/context'
+
+defineOptions({ inheritAttrs: false })
+
+// `aria-label`, `autocomplete` and other input attributes go to the input (labelling the group would leave the
+// input itself unnamed); the rest stay on the group
+const attrs = useAttrs()
+const splitAttrs = computed(() => splitInputAttrs(attrs))
+const rootAttrs = computed(() => splitAttrs.value.root)
 
 const props = withDefaults(defineProps<InputGroupProps>(), {
   type: undefined,
@@ -179,6 +187,7 @@ function onClick(event: MouseEvent) {
 // Shared by the <input> and the <textarea> branch
 const controlAttrs = computed(() => ({
   ...field?.inputAttrs.value,
+  ...splitAttrs.value.input,
   'id': id.value,
   'name': name.value,
   'placeholder': props.placeholder,
@@ -186,7 +195,7 @@ const controlAttrs = computed(() => ({
   'required': required.value || undefined,
   'readonly': readonly.value || undefined,
   'aria-invalid': invalid.value ? 'true' as const : undefined,
-  'aria-describedby': field?.describedBy.value,
+  'aria-describedby': [attrs['aria-describedby'] as string | undefined, field?.describedBy.value].filter(Boolean).join(' ') || undefined,
   'data-invalid': invalid.value ? 'true' : undefined,
   'data-disabled': disabled.value ? 'true' : undefined,
 }))
@@ -196,6 +205,7 @@ const ui = useComponentUI('inputGroup', theme, () => ({ variant: variant.value, 
 
 <template>
   <div
+    v-bind="rootAttrs"
     data-slot="input-group"
     role="group"
     :aria-disabled="disabled ? 'true' : undefined"

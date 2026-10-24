@@ -1,7 +1,9 @@
 import { mount } from '@vue/test-utils'
 import { describe, expect, it } from 'vitest'
 import { h, ref } from 'vue'
+import type { InputOtpProps } from '../src/components/input-otp/InputOtp.vue'
 import InputOtp from '../src/components/input-otp/InputOtp.vue'
+import { expectAccessible } from './a11y'
 
 function controlled(initial = '', props: Record<string, unknown> = {}) {
   const model = ref(initial)
@@ -209,5 +211,63 @@ describe('inputOtp', () => {
     await input.trigger('click')
     await input.trigger('paste', { clipboardData: { getData: () => '12' } })
     expect(model.value).toBe('123451')
+  })
+
+  it.each<[string, InputOtpProps & { 'aria-label'?: string }]>([
+    ['idle with a visible label', { label: 'Verification code' }],
+    ['named by aria-label only', { 'aria-label': 'Verification code' }],
+    ['with a description', { label: 'Verification code', description: 'Sent to your email' }],
+    ['partially filled, split in groups', { label: 'Verification code', modelValue: '123', groups: [3, 3] }],
+    ['invalid with an error message', { label: 'Verification code', modelValue: '12', invalid: true, errorMessage: 'Incomplete code' }],
+    ['required', { label: 'Verification code', required: true, name: 'otp' }],
+    ['disabled', { label: 'Verification code', modelValue: '12', disabled: true }],
+  ])('has no axe violations: %s', async (_, props) => {
+    const wrapper = mount(InputOtp, { props, attachTo: document.body })
+    await expectAccessible(wrapper)
+    wrapper.unmount()
+  })
+
+  it('has no axe violations while focused with an active slot', async () => {
+    const wrapper = mount(InputOtp, { props: { label: 'Verification code', modelValue: '1' }, attachTo: document.body })
+    ;(wrapper.get('input').element as HTMLElement).focus()
+    await wrapper.get('input').trigger('focus')
+    expect(wrapper.find('[data-active=true]').exists()).toBe(true)
+    await expectAccessible(wrapper)
+    wrapper.unmount()
+  })
+
+  it('is a single tab stop: one focusable input behind the slots, reached from its label', () => {
+    const wrapper = mount(InputOtp, { props: { id: 'otp-tab', label: 'Verification code', length: 6 }, attachTo: document.body })
+    const focusable = wrapper.findAll('input, button, [tabindex]').filter(el => el.attributes('tabindex') !== '-1')
+    expect(focusable).toHaveLength(1)
+    expect(focusable[0]!.element).toBe(wrapper.get('input').element)
+    expect(document.getElementById((wrapper.get('label').element as HTMLLabelElement).htmlFor)).toBe(wrapper.get('input').element)
+    wrapper.unmount()
+  })
+
+  it('aria-label / aria-labelledby name the input, not the wrapper', () => {
+    const wrapper = mount(InputOtp, { props: { 'aria-label': 'Verification code' }, attrs: { 'data-test': 'root' } })
+    expect(wrapper.get('input').attributes('aria-label')).toBe('Verification code')
+    expect(wrapper.get('[data-test=root]').attributes('aria-label')).toBeUndefined()
+    const labelled = mount(InputOtp, { attrs: { 'aria-labelledby': 'heading' } })
+    expect(labelled.get('input').attributes('aria-labelledby')).toBe('heading')
+  })
+
+  it('exposes the code constraints to assistive tech and autofill', () => {
+    const wrapper = mount(InputOtp, { props: { label: 'Code', length: 4, pattern: 'digits', required: true } })
+    expect(wrapper.get('input').attributes()).toMatchObject({ autocomplete: 'one-time-code', maxlength: '4', inputmode: 'numeric' })
+    expect(wrapper.get('input').attributes('required')).toBeDefined()
+    expect(mount(InputOtp, { props: { pattern: 'alphanumeric' } }).get('input').attributes('inputmode')).toBe('text')
+  })
+
+  it('wires an invalid field: aria-invalid and the error id in aria-describedby, removed once valid', async () => {
+    const wrapper = mount(InputOtp, { props: { id: 'otp', label: 'Code', description: 'Check your email', errorMessage: 'Wrong code', invalid: true } })
+    const input = wrapper.get('input')
+    expect(input.attributes('aria-invalid')).toBe('true')
+    expect(input.attributes('aria-describedby')).toBe('otp-description otp-error')
+    expect(wrapper.get('#otp-error').text()).toBe('Wrong code')
+    await wrapper.setProps({ invalid: false })
+    expect(input.attributes('aria-invalid')).toBeUndefined()
+    expect(input.attributes('aria-describedby')).toBe('otp-description')
   })
 })

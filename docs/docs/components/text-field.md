@@ -95,7 +95,7 @@ Use [TextArea](/docs/components/text-area) instead of [Input](/docs/components/i
 
 ### Render Function
 
-HeroUI's `render` prop replaces the root element. In Vue, attributes you pass to `TextField` (other than `aria-label` / `aria-labelledby`, which go to the input) fall through to the root `div`; render your own markup through the default slot.
+HeroUI's `render` prop replaces the root element. In Vue, input attributes you pass to `TextField` (`aria-label`, `aria-labelledby`, `autocomplete`, `maxlength`, `inputmode`, …) go to the input, and `aria-describedby` is added to the input's description and error ids. Everything else falls through to the root `div`; render your own markup through the default slot.
 
 <ComponentPreview name="textfield/render-function" />
 

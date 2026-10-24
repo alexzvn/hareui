@@ -4,6 +4,7 @@ import { describe, expect, it } from 'vitest'
 import { defineComponent, h, nextTick, ref } from 'vue'
 import Input from '../src/components/input/Input.vue'
 import TextField from '../src/components/text-field/TextField.vue'
+import { expectAccessible } from './a11y'
 
 describe('TextField', () => {
   it('aria-describedby lists only the rendered description and error ids', async () => {
@@ -90,6 +91,62 @@ describe('TextField', () => {
     expect(wrapper.attributes('data-testid')).toBe('field')
     const slotted = mount(TextField, { attrs: { 'aria-labelledby': 'heading' }, slots: { default: () => h(Input) } })
     expect(slotted.get('input').attributes('aria-labelledby')).toBe('heading')
+  })
+
+  it.each([
+    ['idle', {}],
+    ['with description', { description: 'We never share it.' }],
+    ['invalid with error message', { description: 'We never share it.', invalid: true, errorMessage: 'Enter a valid email' }],
+    ['disabled', { disabled: true }],
+    ['read-only', { readonly: true, defaultValue: 'jane@acme.com' }],
+    ['required', { required: true }],
+  ])('labelled by its label (%s), it has no axe violations', async (_, props: Record<string, unknown>) => {
+    const wrapper = mount(TextField, { props: { label: 'Email', type: 'email', ...props }, attachTo: document.body })
+    const input = wrapper.get('input').element as HTMLInputElement
+    expect([...input.labels!].map(l => l.textContent?.trim())).toEqual(['Email'])
+    await expectAccessible(wrapper)
+    wrapper.unmount()
+  })
+
+  it('without a visible label, aria-label alone names the input with no axe violations', async () => {
+    const wrapper = mount(TextField, { attrs: { 'aria-label': 'Search' }, attachTo: document.body })
+    expect(wrapper.find('label').exists()).toBe(false)
+    await expectAccessible(wrapper)
+    wrapper.unmount()
+  })
+
+  it('merges a consumer aria-describedby with its own description and error ids, which resolve to their text', async () => {
+    const wrapper = mount(() => h('div', [
+      h('p', { id: 'policy' }, 'See our policy'),
+      h(TextField, { 'id': 'e', 'label': 'Email', 'description': 'Work address', 'invalid': true, 'errorMessage': 'Required', 'aria-describedby': 'policy' }),
+    ]), { attachTo: document.body })
+    const ids = wrapper.get('input').attributes('aria-describedby')!.split(' ')
+    expect(ids).toEqual(['policy', 'e-description', 'e-error'])
+    expect(ids.map(id => document.getElementById(id)?.textContent?.trim())).toEqual(['See our policy', 'Work address', 'Required'])
+    expect(wrapper.find('[data-slot=textfield]').attributes('aria-describedby')).toBeUndefined()
+    wrapper.unmount()
+  })
+
+  it('a failed validate marks the input invalid and describes it with the message; fixing it clears both', async () => {
+    const wrapper = mount(TextField, { props: { id: 'n', label: 'Name', validate: (v: string | number) => String(v).length < 3 ? 'At least 3 characters' : null } })
+    const input = wrapper.get('input')
+    await input.setValue('ab')
+    await input.trigger('change')
+    expect(input.attributes('aria-invalid')).toBe('true')
+    expect(input.attributes('aria-describedby')).toBe('n-error')
+    expect(wrapper.get('#n-error').text()).toBe('At least 3 characters')
+    await input.setValue('abc')
+    await input.trigger('change')
+    expect(input.attributes('aria-invalid')).toBeUndefined()
+    expect(input.attributes('aria-describedby')).toBeUndefined()
+    wrapper.unmount()
+  })
+
+  it('autocomplete reaches the input, so its purpose is programmatically determinable', () => {
+    const wrapper = mount(TextField, { props: { label: 'Email' }, attrs: { autocomplete: 'email' } })
+    expect(wrapper.get('input').attributes('autocomplete')).toBe('email')
+    expect(wrapper.attributes('autocomplete')).toBeUndefined()
+    wrapper.unmount()
   })
 })
 

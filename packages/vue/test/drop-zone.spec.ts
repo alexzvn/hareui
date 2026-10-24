@@ -6,6 +6,7 @@ import DropZone from '../src/components/drop-zone/DropZone.vue'
 import DropZoneFileItem from '../src/components/drop-zone/DropZoneFileItem.vue'
 import DropZoneFileList from '../src/components/drop-zone/DropZoneFileList.vue'
 import { matchesAccept } from '../src/components/drop-zone/utils'
+import { expectAccessible } from './a11y'
 
 const area = '[data-slot=drop-zone-area]'
 const input = '[data-slot=drop-zone-input]'
@@ -270,5 +271,142 @@ describe('matchesAccept', () => {
     expect(matchesAccept({ name: 'a.csv', type: '' }, '.csv,.xlsx')).toBe(true)
     expect(matchesAccept({ name: 'a.pdf', type: 'application/pdf' }, 'image/png, image/jpeg')).toBe(false)
     expect(matchesAccept({ name: 'a.pdf', type: 'application/pdf' }, undefined)).toBe(true)
+  })
+})
+
+describe('DropZone accessibility', () => {
+  const button = '[data-slot=drop-zone-focus-target]'
+  const pdf = () => file('a.pdf', 'application/pdf')
+
+  function mountFiles(initial: File[]) {
+    const model = ref<File[]>(initial)
+    const wrapper = mount(() => h(DropZone, { 'label': 'Upload', 'multiple': true, 'modelValue': model.value, 'onUpdate:modelValue': (files: File[]) => (model.value = files) }), { attachTo: document.body })
+    const remove = (name: string) => wrapper.get<HTMLButtonElement>(`[aria-label="Remove ${name}"]`)
+    return { wrapper, model, remove }
+  }
+
+  it('is accessible idle, unlabelled, with files, disabled and required', async () => {
+    const wrappers = [
+      mount(DropZone, { props: { label: 'Upload', description: 'PDF up to 5 MB' }, attachTo: document.body }),
+      mount(DropZone, { attachTo: document.body }),
+      mount(DropZone, { props: { label: 'Upload', multiple: true, defaultValue: [pdf(), file('b.png', 'image/png')] }, attachTo: document.body }),
+      mount(DropZone, { props: { label: 'Upload', disabled: true }, attachTo: document.body }),
+      mount(DropZone, { props: { label: 'Upload', required: true, name: 'files' }, attachTo: document.body }),
+    ]
+    for (const wrapper of wrappers) {
+      await expectAccessible(wrapper)
+      wrapper.unmount()
+    }
+  })
+
+  it('is accessible invalid with an error message, which describes the area button', async () => {
+    const wrapper = mount(DropZone, { props: { label: 'Upload', description: 'PDF only', invalid: true, errorMessage: 'Add a file', id: 'dz' }, attachTo: document.body })
+    const area = wrapper.get(button)
+    expect(area.attributes('aria-invalid')).toBe('true')
+    const described = area.attributes('aria-describedby')!.split(' ').map(id => document.getElementById(id)?.textContent)
+    expect(described).toEqual(['PDF only', 'Add a file'])
+    await expectAccessible(wrapper)
+    wrapper.unmount()
+  })
+
+  it('is accessible while files are dragged over it', async () => {
+    const wrapper = mount(DropZone, { props: { label: 'Upload' }, attachTo: document.body })
+    wrapper.get(area).element.dispatchEvent(dragEvent('dragenter', [pdf()]))
+    await nextTick()
+    expect(wrapper.get(area).attributes('data-drop-target')).toBe('true')
+    await expectAccessible(wrapper)
+    wrapper.unmount()
+  })
+
+  it('names an unlabelled area button "Drop zone" and a label slot labels it', () => {
+    expect(mount(DropZone).get(button).attributes('aria-label')).toBe('Drop zone')
+    const slotted = mount(DropZone, { props: { id: 'dz' }, slots: { label: 'Drop files here' } })
+    expect(slotted.get(button).attributes('aria-label')).toBeUndefined()
+    expect(slotted.get(button).attributes('aria-labelledby')).toBe('dz-label')
+    expect(slotted.get('#dz-label').text()).toBe('Drop files here')
+  })
+
+  it('keeps the mirrored file input out of the accessibility tree and the tab order', () => {
+    const wrapper = mount(DropZone, { props: { label: 'Upload', required: true } })
+    expect(wrapper.get(input).attributes()).toMatchObject({ 'aria-hidden': 'true', 'tabindex': '-1' })
+  })
+
+  it('Tab reaches the area button, then the picker button, then each file\'s remove button', () => {
+    const wrapper = mount(DropZone, { props: { label: 'Upload', multiple: true, defaultValue: [pdf(), file('b.png', 'image/png')] }, attachTo: document.body })
+    const root: Element = wrapper.element
+    const tabbable = Array.from(root.querySelectorAll<HTMLElement>('button, input, [tabindex]'))
+      .filter(el => el.tabIndex >= 0 && !el.hasAttribute('disabled'))
+      .map(el => el.getAttribute('aria-label') ?? el.getAttribute('data-slot'))
+    expect(tabbable).toEqual(['drop-zone-focus-target', 'drop-zone-trigger', 'Remove a.pdf', 'Remove b.png'])
+    wrapper.unmount()
+  })
+
+  it('disabled takes the area and picker buttons out of the tab order', () => {
+    const wrapper = mount(DropZone, { props: { label: 'Upload', disabled: true } })
+    expect(wrapper.get(button).attributes('disabled')).toBeDefined()
+    expect(wrapper.get('[data-slot=drop-zone-trigger]').attributes('disabled')).toBeDefined()
+  })
+
+  it('pasting files into the focused area button adds them, the keyboard alternative to dropping', async () => {
+    const { wrapper, model } = mountFiles([])
+    const pasted = pdf()
+    const event = new Event('paste', { bubbles: true, cancelable: true })
+    Object.defineProperty(event, 'clipboardData', { value: { files: [pasted] } })
+    wrapper.get(button).element.dispatchEvent(event)
+    await nextTick()
+    expect(model.value).toEqual([pasted])
+    expect(event.defaultPrevented).toBe(true)
+    wrapper.unmount()
+  })
+
+  it('removing the focused file moves focus to the next file\'s remove button, else the previous, else the area button', async () => {
+    const a = pdf()
+    const b = file('b.pdf', 'application/pdf')
+    const c = file('c.pdf', 'application/pdf')
+    const { wrapper, model, remove } = mountFiles([a, b, c])
+    remove('b.pdf').element.focus()
+    remove('b.pdf').element.click()
+    await nextTick()
+    expect(model.value).toEqual([a, c])
+    expect(document.activeElement).toBe(remove('c.pdf').element)
+    remove('c.pdf').element.click()
+    await nextTick()
+    expect(document.activeElement).toBe(remove('a.pdf').element)
+    remove('a.pdf').element.click()
+    await nextTick()
+    expect(model.value).toEqual([])
+    expect(document.activeElement).toBe(wrapper.get(button).element)
+    wrapper.unmount()
+  })
+
+  it('removing a file while focus is elsewhere leaves focus alone', async () => {
+    const a = pdf()
+    const b = file('b.pdf', 'application/pdf')
+    const { wrapper, remove } = mountFiles([a, b])
+    const trigger = wrapper.get<HTMLButtonElement>('[data-slot=drop-zone-trigger]').element
+    trigger.focus()
+    remove('a.pdf').element.click()
+    await nextTick()
+    expect(document.activeElement).toBe(trigger)
+    wrapper.unmount()
+  })
+})
+
+describe('DropZoneFileItem accessibility', () => {
+  it.each([
+    ['uploading', { progress: 40, status: 'uploading' }],
+    ['failed and retryable', { progress: 60, status: 'failed', retryable: true }],
+    ['complete, not removable', { progress: 100, status: 'complete', removable: false }],
+  ] as const)('is accessible %s', async (_name, props) => {
+    const wrapper = mount(DropZoneFileList, { slots: { default: () => [h(DropZoneFileItem, { key: 1, name: 'Report.pdf', size: 2048, ...props })] }, attachTo: document.body })
+    await expectAccessible(wrapper)
+    wrapper.unmount()
+  })
+
+  it('names the remove and retry buttons, and keeps the format icon out of the accessibility tree', () => {
+    const wrapper = mount(DropZoneFileItem, { props: { name: 'Report.pdf', status: 'failed', retryable: true } })
+    expect(wrapper.get('[data-slot=drop-zone-file-remove-trigger]').attributes('aria-label')).toBe('Remove Report.pdf')
+    expect(wrapper.get('[data-slot=drop-zone-file-retry-trigger]').text()).toBe('Retry')
+    expect(wrapper.get('[data-slot=drop-zone-file-format-icon]').attributes('aria-hidden')).toBe('true')
   })
 })

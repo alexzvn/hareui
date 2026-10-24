@@ -346,6 +346,7 @@ function onFocusOut(event: FocusEvent) {
         :id="id"
         data-slot="color-input-group-input"
         :aria-invalid="invalid ? 'true' : undefined"
+        :aria-required="required ? 'true' : undefined"
         :aria-describedby="describedBy"
         :aria-label="attrs['aria-label']"
         :aria-labelledby="attrs['aria-labelledby']"

@@ -219,6 +219,29 @@ function removeFile(file: File | number) {
   commitValidation()
 }
 
+// The built-in items by file, to move focus off an item that is going away
+const itemElements = new Map<File, Element>()
+function setItemElement(file: File, item: unknown) {
+  const el = item && typeof item === 'object' && '$el' in item ? item.$el : undefined
+  if (el instanceof Element)
+    itemElements.set(file, el)
+  else
+    itemElements.delete(file)
+}
+
+// Removing the item that holds focus would drop focus to the page: it moves to the next file's remove button,
+// else the previous one's, else the area button
+function onItemRemove(file: File, index: number) {
+  // Read before removing: a bound `v-model` only updates `files` on the parent's next render
+  const neighbour = files.value[index + 1] ?? files.value[index - 1]
+  const hadFocus = itemElements.get(file)?.contains(document.activeElement) ?? false
+  removeFile(file)
+  if (!hadFocus)
+    return
+  const next = neighbour && itemElements.get(neighbour)?.querySelector<HTMLElement>('[data-slot=drop-zone-file-remove-trigger]')
+  ;(next ?? focusTarget.value)?.focus()
+}
+
 // Clearing first makes the picker fire `change` even when the same file is picked again; a cancelled picker restores it
 function open() {
   if (isDisabled.value || !input.value)
@@ -383,11 +406,13 @@ defineExpose({
         </Button>
       </slot>
     </div>
+    <!-- A mirror for forms and native validation only: the area button is the control, so the input stays out of the accessibility tree. -->
     <input
       :id="`${id}-input`"
       ref="input"
       type="file"
       tabindex="-1"
+      aria-hidden="true"
       data-slot="drop-zone-input"
       :name="name"
       :accept="accept"
@@ -407,7 +432,13 @@ defineExpose({
     <FieldError v-else-if="hasError" :id="errorId">{{ errorMessage ?? validation.validationErrors.join(' ') }}</FieldError>
     <slot v-if="slots.files" name="files" :files="files" :remove-file="removeFile" />
     <DropZoneFileList v-else>
-      <DropZoneFileItem v-for="file in files" :key="fileKey(file)" :file="file" @remove="removeFile(file)" />
+      <DropZoneFileItem
+        v-for="(file, index) in files"
+        :key="fileKey(file)"
+        :ref="(item) => setItemElement(file, item)"
+        :file="file"
+        @remove="onItemRemove(file, index)"
+      />
     </DropZoneFileList>
   </div>
 </template>

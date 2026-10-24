@@ -226,6 +226,11 @@ const describedBy = computed(() => [
   hasError.value ? errorId.value : undefined,
 ].filter(Boolean).join(' ') || undefined)
 
+// As in RAC: the stepper buttons are named after the field ("Increase Width") and control its input
+const fieldName = computed(() => (attrs['aria-label'] as string | undefined) ?? props.label)
+const incrementLabel = computed(() => fieldName.value ? `Increase ${fieldName.value}` : 'Increase')
+const decrementLabel = computed(() => fieldName.value ? `Decrease ${fieldName.value}` : 'Decrease')
+
 const ui = useComponentUI('numberField', theme, () => ({ variant: props.variant, fullWidth: props.fullWidth }))
 
 // RAC Group's `data-focus-within` / `data-focus-visible`
@@ -289,6 +294,8 @@ function onFocusOut(event: FocusEvent) {
         v-if="decrement"
         slot="decrement"
         data-slot="number-field-decrement-button"
+        :aria-label="decrementLabel"
+        :aria-controls="id"
         :class="ui.decrementButton({ class: props.ui?.decrementButton })"
       >
         <DecrementOutlet>
@@ -322,6 +329,8 @@ function onFocusOut(event: FocusEvent) {
         v-if="increment"
         slot="increment"
         data-slot="number-field-increment-button"
+        :aria-label="incrementLabel"
+        :aria-controls="id"
         :class="ui.incrementButton({ class: props.ui?.incrementButton })"
       >
         <IncrementOutlet>

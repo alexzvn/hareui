@@ -3,6 +3,7 @@ import { describe, expect, it } from 'vitest'
 import { h } from 'vue'
 import InputGroup from '../src/components/input-group/InputGroup.vue'
 import TextField from '../src/components/text-field/TextField.vue'
+import { expectAccessible } from './a11y'
 
 describe('InputGroup', () => {
   it('v-model syncs standalone', async () => {
@@ -106,6 +107,81 @@ describe('InputGroup', () => {
     // Enter / Space on a focused button, and a mouse click, all arrive as a click event
     await button.trigger('click')
     expect(document.activeElement).toBe(button.element)
+    wrapper.unmount()
+  })
+
+  const searchIcon = () => h('svg', { 'aria-hidden': 'true', 'viewBox': '0 0 16 16' }, h('path', { d: 'M0 0h16v16H0z' }))
+
+  it.each([
+    ['idle', {}],
+    ['with description', { description: 'Your public profile URL' }],
+    ['invalid with error message', { invalid: true, errorMessage: 'That handle is taken' }],
+    ['disabled', { disabled: true }],
+    ['read-only', { readonly: true, defaultValue: 'jane' }],
+    ['required', { required: true }],
+  ])('inside a labelled TextField with a prefix and a suffix button (%s), it has no axe violations', async (_, props: Record<string, unknown>) => {
+    const wrapper = mount(TextField, {
+      props: { label: 'Website', ...props },
+      slots: {
+        default: () => h(InputGroup, null, {
+          prefix: searchIcon,
+          suffix: () => h('button', { 'type': 'button', 'aria-label': 'Copy' }, searchIcon()),
+        }),
+      },
+      attachTo: document.body,
+    })
+    const input = wrapper.get('[data-slot=input-group-input]').element as HTMLInputElement
+    expect([...input.labels!].map(l => l.textContent?.trim())).toEqual(['Website'])
+    expect(wrapper.get('[data-slot=input-group]').attributes('aria-disabled')).toBe(props.disabled ? 'true' : undefined)
+    await expectAccessible(wrapper)
+    wrapper.unmount()
+  })
+
+  it('textarea mode inside a labelled TextField has no axe violations', async () => {
+    const wrapper = mount(TextField, {
+      props: { label: 'Prompt', description: 'Markdown supported' },
+      slots: { default: () => h(InputGroup, { textarea: true }, { suffix: () => h('button', { 'type': 'button', 'aria-label': 'Send' }, 'Send') }) },
+      attachTo: document.body,
+    })
+    expect(wrapper.get('textarea').attributes('aria-describedby')).toBe(wrapper.get('[data-slot=description]').attributes('id'))
+    await expectAccessible(wrapper)
+    wrapper.unmount()
+  })
+
+  it('standalone, aria-label and autocomplete go to the input, not the group, with no axe violations', async () => {
+    const wrapper = mount(InputGroup, {
+      props: { type: 'email' },
+      attrs: { 'aria-label': 'Email', 'autocomplete': 'email', 'aria-describedby': 'hint', 'data-testid': 'group' },
+      slots: { prefix: searchIcon },
+      attachTo: document.body,
+    })
+    const group = wrapper.get('[data-slot=input-group]')
+    const input = wrapper.get('[data-slot=input-group-input]')
+    expect(input.attributes()).toMatchObject({ 'aria-label': 'Email', 'autocomplete': 'email', 'aria-describedby': 'hint' })
+    expect(group.attributes('aria-label')).toBeUndefined()
+    expect(group.attributes('aria-describedby')).toBeUndefined()
+    expect(group.attributes('data-testid')).toBe('group')
+    expect(group.attributes('role')).toBe('group')
+    wrapper.unmount()
+    // Audit without the dangling `hint` reference
+    const labelled = mount(InputGroup, { attrs: { 'aria-label': 'Email' }, slots: { prefix: searchIcon }, attachTo: document.body })
+    await expectAccessible(labelled)
+    labelled.unmount()
+  })
+
+  it('a standalone Label names the input through the group id', async () => {
+    const wrapper = mount(() => h('div', [h('label', { for: 'price' }, 'Price'), h(InputGroup, { id: 'price', prefix: '$', suffix: 'USD' })]), { attachTo: document.body })
+    const input = wrapper.get('[data-slot=input-group-input]').element as HTMLInputElement
+    expect([...input.labels!].map(l => l.textContent)).toEqual(['Price'])
+    await expectAccessible(wrapper)
+    wrapper.unmount()
+  })
+
+  it('a suffix button stays in the tab order after the input', () => {
+    const wrapper = mount(InputGroup, { attrs: { 'aria-label': 'Link' }, slots: { suffix: () => h('button', { type: 'button' }, 'Copy') } })
+    const focusable = wrapper.findAll('input, button').map(el => el.element)
+    expect(focusable.map(el => el.tagName)).toEqual(['INPUT', 'BUTTON'])
+    expect(focusable.every(el => !el.hasAttribute('tabindex'))).toBe(true)
     wrapper.unmount()
   })
 })

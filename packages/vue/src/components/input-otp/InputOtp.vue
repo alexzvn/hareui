@@ -88,7 +88,7 @@ export interface InputOtpEmits {
 </script>
 
 <script setup lang="ts">
-import { computed, onBeforeUnmount, onMounted, ref, useId, useSlots, useTemplateRef, watch } from 'vue'
+import { computed, onBeforeUnmount, onMounted, ref, useAttrs, useId, useSlots, useTemplateRef, watch } from 'vue'
 import { useComponentUI } from '../../composables/useComponentUI'
 import { useFieldValidation } from '../../composables/useFieldValidation'
 import Description from '../description/Description.vue'
@@ -96,10 +96,19 @@ import FieldError from '../field-error/FieldError.vue'
 import { useFieldsetDisabled } from '../fieldset/context'
 import Label from '../label/Label.vue'
 
+defineOptions({ inheritAttrs: false })
+
 const props = withDefaults(defineProps<InputOtpProps>(), { length: 6, invalid: undefined })
 const emit = defineEmits<InputOtpEmits>()
 const slots = useSlots()
 defineSlots<InputOtpSlots>()
+
+// `aria-label` / `aria-labelledby` name the input (as the `input-otp` library spreads them onto it), not the wrapper div
+const attrs = useAttrs()
+const rootAttrs = computed(() => {
+  const { 'aria-label': _label, 'aria-labelledby': _labelledby, ...rest } = attrs
+  return rest
+})
 
 /** The code. Bind with `v-model`. */
 const modelValue = defineModel<string>()
@@ -320,6 +329,7 @@ function onPaste(event: ClipboardEvent) {
 <template>
   <div
     ref="root"
+    v-bind="rootAttrs"
     :class="ui.base({ class: [props.ui?.base, props.class] })"
   >
     <!-- `base` is HareUI's own wrapper (HeroUI composes Label/InputOTP/Description itself), so it carries no data-slot -->
@@ -373,6 +383,8 @@ function onPaste(event: ClipboardEvent) {
         autocapitalize="off"
         autocorrect="off"
         spellcheck="false"
+        :aria-label="attrs['aria-label'] as string | undefined"
+        :aria-labelledby="attrs['aria-labelledby'] as string | undefined"
         :aria-invalid="invalid ? 'true' : undefined"
         :aria-describedby="describedBy"
         data-slot="input-otp"

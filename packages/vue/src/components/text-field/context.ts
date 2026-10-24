@@ -20,3 +20,28 @@ export interface TextFieldContext {
 }
 
 export const textFieldContextKey: InjectionKey<TextFieldContext> = Symbol('hareui-textfield')
+
+// Attributes passed to a field component that belong to its input (as in HeroUI, where the field passes them to its
+// Input), matched case-insensitively so `maxlength` and `maxLength` both work. Everything else stays on the wrapper.
+const INPUT_ATTRS = new Set([
+  'autofocus', 'autocomplete', 'autocapitalize', 'autocorrect', 'spellcheck', 'inputmode', 'enterkeyhint',
+  'maxlength', 'minlength', 'pattern', 'min', 'max', 'step', 'size', 'list', 'form', 'dirname',
+  'aria-label', 'aria-labelledby', 'aria-details', 'aria-errormessage', 'aria-controls', 'aria-activedescendant', 'aria-autocomplete', 'aria-haspopup',
+  'onfocus', 'onblur',
+])
+
+/**
+ * Splits a field's fallthrough attributes into the input's and the wrapper's. `aria-describedby` goes to neither:
+ * the field merges it into the input's own description ids.
+ */
+export function splitInputAttrs(attrs: Record<string, unknown>) {
+  const input: Record<string, unknown> = {}
+  const root: Record<string, unknown> = {}
+  for (const [key, value] of Object.entries(attrs)) {
+    if (INPUT_ATTRS.has(key.toLowerCase()))
+      input[key] = value
+    else if (key !== 'aria-describedby')
+      root[key] = value
+  }
+  return { input, root }
+}

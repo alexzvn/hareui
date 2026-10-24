@@ -93,7 +93,7 @@ export interface SearchFieldEmits {
 </script>
 
 <script setup lang="ts">
-import { computed, ref, useId, useSlots, useTemplateRef } from 'vue'
+import { computed, ref, useAttrs, useId, useSlots, useTemplateRef } from 'vue'
 import { useComponentUI } from '../../composables/useComponentUI'
 import { useFieldValidation } from '../../composables/useFieldValidation'
 import CloseButton from '../close-button/CloseButton.vue'
@@ -101,11 +101,20 @@ import Description from '../description/Description.vue'
 import FieldError from '../field-error/FieldError.vue'
 import { useFieldsetDisabled } from '../fieldset/context'
 import Label from '../label/Label.vue'
+import { splitInputAttrs } from '../text-field/context'
+
+defineOptions({ inheritAttrs: false })
 
 const props = withDefaults(defineProps<SearchFieldProps>(), { invalid: undefined })
 const emit = defineEmits<SearchFieldEmits>()
 const slots = useSlots()
 defineSlots<SearchFieldSlots>()
+
+// `aria-label`, `autocomplete` and other input attributes go to the input, as in HeroUI; the rest stay on the root
+const attrs = useAttrs()
+const splitAttrs = computed(() => splitInputAttrs(attrs))
+const inputAttrs = computed(() => splitAttrs.value.input)
+const rootAttrs = computed(() => splitAttrs.value.root)
 
 /** The search query. */
 const modelValue = defineModel<string>()
@@ -152,11 +161,13 @@ function onEnter(event: KeyboardEvent) {
     return
   emit('submit', modelValue.value ?? '')
 }
-// Matches RAC: Escape clears the field, but does nothing (and doesn't blur) when it's already empty,
-// disabled or readonly.
-function onEscape() {
+// Matches RAC: Escape clears the field and stops there (an enclosing dialog stays open), but does nothing and lets
+// the key through when the field is already empty, disabled or readonly.
+function onEscape(event: KeyboardEvent) {
   if (disabled.value || props.readonly || !modelValue.value)
     return
+  event.preventDefault()
+  event.stopPropagation()
   modelValue.value = ''
   emit('clear')
 }
@@ -175,6 +186,7 @@ const hasError = computed(() => invalid.value && !!(props.errorMessage || slots.
 const descriptionId = computed(() => `${id.value}-description`)
 const errorId = computed(() => `${id.value}-error`)
 const describedBy = computed(() => [
+  attrs['aria-describedby'] as string | undefined,
   hasDescription.value ? descriptionId.value : undefined,
   hasError.value ? errorId.value : undefined,
 ].filter(Boolean).join(' ') || undefined)
@@ -185,6 +197,7 @@ const ui = useComponentUI('searchField', theme, () => ({ variant: props.variant,
 <template>
   <div
     ref="root"
+    v-bind="rootAttrs"
     data-slot="search-field"
     :data-disabled="disabled ? 'true' : undefined"
     :data-invalid="invalid ? 'true' : undefined"
@@ -204,6 +217,7 @@ const ui = useComponentUI('searchField', theme, () => ({ variant: props.variant,
     </Label>
     <div
       data-slot="search-field-group"
+      role="group"
       :data-invalid="invalid ? 'true' : undefined"
       :data-disabled="disabled ? 'true' : undefined"
       :data-focus-within="focusWithin ? 'true' : undefined"
@@ -220,6 +234,7 @@ const ui = useComponentUI('searchField', theme, () => ({ variant: props.variant,
         </slot>
       </span>
       <input
+        v-bind="inputAttrs"
         :id="id"
         ref="input"
         v-model="modelValue"
