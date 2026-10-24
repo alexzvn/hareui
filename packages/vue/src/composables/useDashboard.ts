@@ -20,6 +20,8 @@ export interface DashboardSidebarState {
   open: Ref<boolean>
   /** Desktop collapsed state (icon rail or off-canvas). */
   collapsed: Ref<boolean>
+  /** Element id of the mounted sidebar (`aria-controls` of its collapse button; its toggle points at `${id}-menu`); `undefined` until one mounts. */
+  id: Ref<string | undefined>
   toggle: () => void
   collapse: (collapsed: boolean) => void
 }
@@ -55,9 +57,11 @@ export function useDashboard(): DashboardContext | undefined {
 export function createDashboardSidebarState(): DashboardSidebarState {
   const open = ref(false)
   const collapsed = ref(false)
+  const id = ref<string>()
   return {
     open,
     collapsed,
+    id,
     toggle: () => {
       open.value = !open.value
     },

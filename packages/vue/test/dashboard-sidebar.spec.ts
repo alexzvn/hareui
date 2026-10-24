@@ -5,7 +5,9 @@ import { defineComponent, h, nextTick, ref } from 'vue'
 import DashboardGroup from '../src/components/dashboard-group/DashboardGroup.vue'
 import DashboardPanel from '../src/components/dashboard-panel/DashboardPanel.vue'
 import DashboardSidebar from '../src/components/dashboard-sidebar/DashboardSidebar.vue'
+import DashboardSidebarToggle from '../src/components/dashboard-sidebar-toggle/DashboardSidebarToggle.vue'
 import { useDashboard } from '../src/composables/useDashboard'
+import { expectAccessible } from './a11y'
 
 async function settle() {
   for (let i = 0; i < 4; i++)
@@ -767,6 +769,134 @@ describe('dashboard sidebar', () => {
       expect(width(panel)).toBe('45%')
       await key(handle(), 'Home')
       expect(width(panel)).toBe('20%')
+      wrapper.unmount()
+    })
+  })
+
+  describe('accessibility', () => {
+    const nav = () => h('nav', { 'aria-label': 'Primary' }, [h('a', { href: '#inbox' }, 'Inbox'), h('a', { href: '#settings' }, 'Settings')])
+    const sidebarSlots = {
+      header: () => h('a', { href: '#home' }, 'Acme'),
+      default: nav,
+      footer: () => h('button', { type: 'button' }, 'Account'),
+    }
+    const dialog = () => document.querySelector<HTMLElement>('[role=dialog]')
+    const toggleButton = () => document.querySelector<HTMLButtonElement>('[data-testid=toggle]')!
+
+    /** A sidebar with its navbar toggle, as a dashboard renders it on mobile. */
+    function mountWithToggle(sidebar: Props = {}) {
+      return mount(DashboardGroup, {
+        props: { persistent: false },
+        slots: {
+          default: () => [
+            h(DashboardSidebar, { 'id': 'main', 'aria-label': 'Main', ...sidebar }, sidebarSlots),
+            h(DashboardSidebarToggle, { 'data-testid': 'toggle' }),
+          ],
+        },
+        attachTo: document.body,
+      })
+    }
+
+    it('renders a complementary landmark carrying its id and the consumer\'s label, and passes axe', async () => {
+      const wrapper = mountSidebar({ 'aria-label': 'Main', 'collapsible': true }, { persistent: false })
+      const el = aside()
+      expect(el.tagName).toBe('ASIDE')
+      expect(el.id).toBe('dashboard-sidebar-main')
+      expect(el.getAttribute('aria-label')).toBe('Main')
+      expect(handle().getAttribute('aria-label')).toBe('Resize sidebar')
+      await expectAccessible(document.body)
+      wrapper.unmount()
+    })
+
+    it('passes axe collapsed to its rail, with the separator reporting the collapsed size', async () => {
+      const wrapper = mountSidebar({ 'aria-label': 'Main', 'collapsible': true, 'collapsedSize': 4, 'collapsed': true }, { persistent: false })
+      await nextTick()
+      expect(aside().dataset.collapsed).toBe('true')
+      expect(handle().getAttribute('aria-valuenow')).toBe('4')
+      await expectAccessible(document.body)
+      wrapper.unmount()
+    })
+
+    it('the separator is reachable with Tab (in the focus order right after the sidebar)', async () => {
+      const wrapper = mountSidebar({ 'aria-label': 'Main' }, { persistent: false })
+      expect(handle().tabIndex).toBe(0)
+      expect(aside().nextElementSibling).toBe(handle())
+      handle().focus()
+      expect(document.activeElement).toBe(handle())
+      wrapper.unmount()
+    })
+
+    /** Waits past the millisecond a listener was attached: Vue drops a click fired within it. */
+    function pause() {
+      const { promise, resolve } = Promise.withResolvers<void>()
+      setTimeout(resolve, 2)
+      return promise
+    }
+
+    /** Focuses and clicks the toggle like a user. */
+    async function openMenu() {
+      await pause()
+      toggleButton().focus()
+      toggleButton().click()
+      await settle()
+    }
+
+    for (const mode of ['slideover', 'drawer', 'modal'] as const) {
+      it(`${mode} menu: a dialog named by menu.title, and passes axe`, async () => {
+        const wrapper = mountWithToggle({ mode, menu: { title: 'Navigation' } })
+        await openMenu()
+        const el = dialog()!
+        const title = document.getElementById(el.getAttribute('aria-labelledby')!)
+        expect(title?.textContent).toBe('Navigation')
+        await expectAccessible(document.body)
+        wrapper.unmount()
+      })
+    }
+
+    it('the menu\'s close button is named', async () => {
+      const wrapper = mountWithToggle()
+      await openMenu()
+      const close = dialog()!.querySelector<HTMLButtonElement>('[data-slot=dashboard-sidebar-toggle]')!
+      expect(close.getAttribute('aria-label')).toBe('Close sidebar')
+      wrapper.unmount()
+    })
+
+    it('opening moves focus into the menu and Tab is trapped inside it', async () => {
+      const wrapper = mountWithToggle()
+      await openMenu()
+      const el = dialog()!
+      expect(el.contains(document.activeElement)).toBe(true)
+
+      const links = [...el.querySelectorAll<HTMLElement>('a[href], button')]
+      const first = links[0]!
+      const last = links.at(-1)!
+      last.focus()
+      last.dispatchEvent(new KeyboardEvent('keydown', { key: 'Tab', bubbles: true, cancelable: true }))
+      expect(document.activeElement).toBe(first)
+      first.dispatchEvent(new KeyboardEvent('keydown', { key: 'Tab', shiftKey: true, bubbles: true, cancelable: true }))
+      expect(document.activeElement).toBe(last)
+      wrapper.unmount()
+    })
+
+    it('Escape closes the menu and returns focus to the toggle that opened it', async () => {
+      const wrapper = mountWithToggle()
+      await openMenu()
+      document.activeElement!.dispatchEvent(new KeyboardEvent('keydown', { key: 'Escape', bubbles: true, cancelable: true }))
+      await settle()
+      expect(dialog()).toBeNull()
+      expect(toggleButton().getAttribute('aria-expanded')).toBe('false')
+      expect(document.activeElement).toBe(toggleButton())
+      wrapper.unmount()
+    })
+
+    it('the menu\'s close button also returns focus to the toggle', async () => {
+      const wrapper = mountWithToggle()
+      await openMenu()
+      await pause()
+      dialog()!.querySelector<HTMLButtonElement>('[data-slot=dashboard-sidebar-toggle]')!.click()
+      await settle()
+      expect(dialog()).toBeNull()
+      expect(document.activeElement).toBe(toggleButton())
       wrapper.unmount()
     })
   })

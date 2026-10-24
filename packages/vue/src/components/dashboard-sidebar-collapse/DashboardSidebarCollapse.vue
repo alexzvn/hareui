@@ -78,6 +78,7 @@ const collapsed = computed(() => sidebar.value?.collapsed.value ?? false)
     :disabled="disabled"
     :aria-label="collapsed ? 'Expand sidebar' : 'Collapse sidebar'"
     :aria-expanded="!collapsed"
+    :aria-controls="sidebar?.id.value"
     :class="ui.base({ class: [props.ui?.base, props.class] })"
     @click="sidebar?.collapse(!collapsed)"
   >

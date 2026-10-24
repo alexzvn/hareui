@@ -4,6 +4,7 @@ import { defineComponent, h, inject, provide } from 'vue'
 import App from '../src/components/app/App.vue'
 import { hareUIConfigKey } from '../src/config'
 import { usePortal } from '../src/composables/usePortal'
+import { expectAccessible } from './a11y'
 
 const Probe = defineComponent({
   setup() {
@@ -39,5 +40,24 @@ describe('app', () => {
     expect(el.attributes('data-to')).toBe('#from-config')
     expect(el.attributes('data-ui')).toBe('yes')
     expect(probe({ portal: '#own' }, { portal: '#from-config' }).attributes('data-to')).toBe('#own')
+  })
+
+  it('renders the app unwrapped next to its toast region, and passes axe', async () => {
+    const wrapper = mount(App, {
+      slots: { default: () => h('main', [h('h1', 'Home'), h('button', { type: 'button' }, 'Save')]) },
+      attachTo: document.body,
+    })
+    // Mounted into a container appended to <body>: no wrapper element in between.
+    expect(document.querySelector('main')!.parentElement!.parentElement).toBe(document.body)
+    await expectAccessible(document.body)
+    wrapper.unmount()
+    document.body.innerHTML = ''
+  })
+
+  it('passes axe without a toaster', async () => {
+    const wrapper = mount(App, { props: { toaster: null }, slots: { default: () => h('main', 'Home') }, attachTo: document.body })
+    await expectAccessible(document.body)
+    wrapper.unmount()
+    document.body.innerHTML = ''
   })
 })

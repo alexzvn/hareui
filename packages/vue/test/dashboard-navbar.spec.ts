@@ -3,10 +3,13 @@ import { mount } from '@vue/test-utils'
 import { describe, expect, it } from 'vitest'
 import { defineComponent, h } from 'vue'
 import { createDashboardSidebarState, provideDashboardContext } from '../src/composables/useDashboard'
+import DashboardGroup from '../src/components/dashboard-group/DashboardGroup.vue'
 import DashboardNavbar from '../src/components/dashboard-navbar/DashboardNavbar.vue'
+import DashboardSidebar from '../src/components/dashboard-sidebar/DashboardSidebar.vue'
 import DashboardSidebarCollapse from '../src/components/dashboard-sidebar-collapse/DashboardSidebarCollapse.vue'
 import DashboardSidebarToggle from '../src/components/dashboard-sidebar-toggle/DashboardSidebarToggle.vue'
 import DashboardToolbar from '../src/components/dashboard-toolbar/DashboardToolbar.vue'
+import { expectAccessible } from './a11y'
 
 // Provides the dashboard context the way DashboardGroup does, without depending on the group.
 function mountInDashboard(render: () => VNode) {
@@ -244,5 +247,45 @@ describe('dashboardToolbar', () => {
     const wrapper = mount(DashboardToolbar, { slots: { default: () => h('span', { id: 'x' }, 'Menu') } })
     expect(wrapper.find('#x').exists()).toBe(true)
     expect(wrapper.find('[data-slot=dashboard-toolbar-left]').exists()).toBe(false)
+  })
+})
+
+describe('dashboardNavbar accessibility', () => {
+  function mountNavbar(navbar: Record<string, unknown> = {}) {
+    return mount(DashboardGroup, {
+      props: { persistent: false },
+      slots: {
+        default: () => [
+          h(DashboardSidebar, { 'id': 'main', 'aria-label': 'Main' }, { default: () => h('a', { href: '#inbox' }, 'Inbox') }),
+          h(DashboardNavbar, { title: 'Inbox', ...navbar }, {
+            default: () => h('nav', { 'aria-label': 'Views' }, [h('a', { href: '#all' }, 'All')]),
+            right: () => h('button', { type: 'button' }, 'Compose'),
+          }),
+        ],
+      },
+      attachTo: document.body,
+    })
+  }
+
+  it('heads the page with its title, names its toggle, and passes axe', async () => {
+    const wrapper = mountNavbar()
+    const heading = document.querySelector('[data-slot=dashboard-navbar-title]')!
+    expect(heading.tagName).toBe('H1')
+    expect(heading.textContent).toBe('Inbox')
+    const button = document.querySelector<HTMLButtonElement>('[data-slot=dashboard-navbar-toggle]')!
+    expect(button.getAttribute('aria-label')).toBe('Open sidebar')
+    expect(button.getAttribute('aria-expanded')).toBe('false')
+    await expectAccessible(document.body)
+    wrapper.unmount()
+    document.body.innerHTML = ''
+  })
+
+  it('passes axe with the toggle on the right and a custom title level', async () => {
+    const wrapper = mountNavbar({ toggleSide: 'right', as: { title: 'h2' } })
+    expect(document.querySelector('[data-slot=dashboard-navbar-title]')!.tagName).toBe('H2')
+    expect(document.querySelector('[data-slot=dashboard-navbar-right] [data-slot=dashboard-navbar-toggle]')).not.toBeNull()
+    await expectAccessible(document.body)
+    wrapper.unmount()
+    document.body.innerHTML = ''
   })
 })

@@ -3,6 +3,7 @@ import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest'
 import { h, nextTick, ref } from 'vue'
 import Header from '../src/components/header/Header.vue'
 import type { HeaderProps } from '../src/components/header/Header.vue'
+import { expectAccessible } from './a11y'
 
 // Reka's Presence needs three ticks before a closed dialog leaves the DOM (see modal.spec.ts).
 async function settle() {
@@ -323,6 +324,99 @@ describe('header hideOnScroll', () => {
   it('height sets --header-height', () => {
     const wrapper = mountHeader({ height: '2.75rem' }, {})
     expect(root().style.getPropertyValue('--header-height')).toBe('2.75rem')
+    wrapper.unmount()
+  })
+})
+
+describe('header accessibility', () => {
+  afterEach(() => {
+    document.body.innerHTML = ''
+    document.body.style.cssText = ''
+  })
+
+  const dialog = () => document.querySelector<HTMLElement>('[role=dialog]')
+
+  it('renders the banner landmark with a named home link and a named, collapsed menu toggle, and passes axe', async () => {
+    const wrapper = mountHeader({}, { body: () => h('a', { href: '#docs' }, 'Docs'), right: () => h('button', { type: 'button' }, 'Sign in') })
+    const header = document.querySelector('header')!
+    // A header outside sectioning content maps to the banner landmark.
+    expect(header.closest('article, aside, main, nav, section')).toBeNull()
+    const home = header.querySelector<HTMLAnchorElement>('[data-slot=header-title]')!
+    expect(home.getAttribute('href')).toBe('/')
+    expect(home.getAttribute('aria-label')).toBe('HareUI')
+    expect(toggle().tagName).toBe('BUTTON')
+    expect(toggle().getAttribute('type')).toBe('button')
+    expect(toggle().getAttribute('aria-expanded')).toBe('false')
+    await expectAccessible(document.body)
+    wrapper.unmount()
+  })
+
+  it('names a logo-only home link from title, and passes axe with inline navigation', async () => {
+    const wrapper = mountHeader({ title: 'Acme' }, {
+      title: () => h('svg', { 'aria-hidden': 'true' }),
+      default: () => h('nav', { 'aria-label': 'Main' }, [h('a', { href: '/docs' }, 'Docs')]),
+    })
+    expect(document.querySelector('[data-slot=header-title]')!.getAttribute('aria-label')).toBe('Acme')
+    expect(document.querySelector('[data-slot=header-toggle]')).toBeNull()
+    await expectAccessible(document.body)
+    wrapper.unmount()
+  })
+
+  for (const mode of ['modal', 'slideover', 'drawer'] as const) {
+    it(`${mode} menu: a dialog named by menuTitle with an expanded, renamed toggle, and passes axe`, async () => {
+      const wrapper = mountHeader({ mode, menuTitle: 'Site menu' })
+      await click(toggle())
+      await settle()
+      const el = dialog()!
+      expect(document.getElementById(el.getAttribute('aria-labelledby')!)?.textContent).toBe('Site menu')
+      expect(toggle().getAttribute('aria-expanded')).toBe('true')
+      expect(toggle().getAttribute('aria-label')).toBe('Close menu')
+      await expectAccessible(document.body)
+      wrapper.unmount()
+    })
+  }
+
+  it('opening moves focus into the menu and Tab is trapped inside it', async () => {
+    const wrapper = mountHeader()
+    toggle().focus()
+    await click(toggle())
+    await settle()
+    const el = dialog()!
+    expect(el.contains(document.activeElement)).toBe(true)
+
+    const focusables = [...el.querySelectorAll<HTMLElement>('a[href], button')]
+    const first = focusables[0]!
+    const last = focusables.at(-1)!
+    last.focus()
+    last.dispatchEvent(new KeyboardEvent('keydown', { key: 'Tab', bubbles: true, cancelable: true }))
+    expect(document.activeElement).toBe(first)
+    first.dispatchEvent(new KeyboardEvent('keydown', { key: 'Tab', shiftKey: true, bubbles: true, cancelable: true }))
+    expect(document.activeElement).toBe(last)
+    wrapper.unmount()
+  })
+
+  it('Escape closes the menu and returns focus to the bar toggle', async () => {
+    const wrapper = mountHeader()
+    toggle().focus()
+    await click(toggle())
+    await settle()
+    document.activeElement!.dispatchEvent(new KeyboardEvent('keydown', { key: 'Escape', bubbles: true, cancelable: true }))
+    await settle()
+    expect(dialog()).toBeNull()
+    expect(toggle().getAttribute('aria-expanded')).toBe('false')
+    expect(document.activeElement).toBe(toggle())
+    wrapper.unmount()
+  })
+
+  it('the menu\'s own close toggle returns focus to the bar toggle', async () => {
+    const wrapper = mountHeader()
+    toggle().focus()
+    await click(toggle())
+    await settle()
+    await click(dialog()!.querySelector<HTMLElement>('[data-slot=header-toggle]')!)
+    await settle()
+    expect(dialog()).toBeNull()
+    expect(document.activeElement).toBe(toggle())
     wrapper.unmount()
   })
 })

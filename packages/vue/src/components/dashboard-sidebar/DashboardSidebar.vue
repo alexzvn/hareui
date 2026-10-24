@@ -130,7 +130,7 @@ export interface DashboardSidebarSlots {
 <script setup lang="ts">
 import type { FunctionalComponent } from 'vue'
 import { DialogTitle, VisuallyHidden } from 'reka-ui'
-import { computed, h, ref, useId, watch } from 'vue'
+import { computed, h, onBeforeUnmount, ref, useId, watch } from 'vue'
 import { useComponentUI } from '../../composables/useComponentUI'
 import { createDashboardSidebarState, useDashboard } from '../../composables/useDashboard'
 import { useResizable } from '../../composables/useResizable'
@@ -166,6 +166,19 @@ const state = computed(() => dashboard?.sidebars[props.side] ?? standalone)
 
 const fallbackId = useId()
 const id = `${dashboard?.storageKey ?? 'dashboard'}-sidebar-${props.id ?? fallbackId}`
+// The menu content wrapper, referenced by the toggle's `aria-controls` while the menu is open.
+const menuId = `${id}-menu`
+
+// The toggle and collapse buttons point their `aria-controls` at the sidebar through the shared state.
+watch(state, (current, previous) => {
+  if (previous?.id.value === id)
+    previous.id.value = undefined
+  current.id.value = id
+}, { immediate: true })
+onBeforeUnmount(() => {
+  if (state.value.id.value === id)
+    state.value.id.value = undefined
+})
 
 const { el, size, isDragging, isCollapsed, collapse, onPointerDown, onMouseDown, onTouchStart, onDoubleClick, onKeyDown, handleAttrs } = useResizable(id, () => ({
   side: props.side,
@@ -321,33 +334,35 @@ const Toggle: FunctionalComponent = () => {
 
   <component :is="Menu" v-model:open="open" v-bind="menuProps" :ui="menuClasses">
     <template #content="{ close }">
-      <slot name="content" :close="close">
-        <VisuallyHidden as-child>
-          <DialogTitle>{{ menuTitle }}</DialogTitle>
-        </VisuallyHidden>
+      <div :id="menuId" data-slot="dashboard-sidebar-menu" class="contents">
+        <slot name="content" :close="close">
+          <VisuallyHidden as-child>
+            <DialogTitle>{{ menuTitle }}</DialogTitle>
+          </VisuallyHidden>
 
-        <div v-if="mode === 'drawer'" aria-hidden="true" data-slot="drawer-handle" class="flex items-center justify-center pt-2 pb-1">
-          <div class="h-1 w-9 rounded-xs bg-separator" />
-        </div>
-
-        <div class="contents" @click="onMenuClick">
-          <div v-if="!!slots.header || mode !== 'drawer'" data-slot="dashboard-sidebar-header" :class="ui.header({ class: props.ui?.header })">
-            <Toggle v-if="mode !== 'drawer' && toggleSide === 'left'" />
-
-            <slot name="header" :collapsed="false" :collapse="() => {}" />
-
-            <Toggle v-if="mode !== 'drawer' && toggleSide === 'right'" />
+          <div v-if="mode === 'drawer'" aria-hidden="true" data-slot="drawer-handle" class="flex items-center justify-center pt-2 pb-1">
+            <div class="h-1 w-9 rounded-xs bg-separator" />
           </div>
 
-          <div data-slot="dashboard-sidebar-body" :class="ui.body({ class: props.ui?.body })">
-            <slot :collapsed="false" :collapse="() => {}" />
-          </div>
+          <div class="contents" @click="onMenuClick">
+            <div v-if="!!slots.header || mode !== 'drawer'" data-slot="dashboard-sidebar-header" :class="ui.header({ class: props.ui?.header })">
+              <Toggle v-if="mode !== 'drawer' && toggleSide === 'left'" />
 
-          <div v-if="!!slots.footer" data-slot="dashboard-sidebar-footer" :class="ui.footer({ class: props.ui?.footer })">
-            <slot name="footer" :collapsed="false" :collapse="() => {}" />
+              <slot name="header" :collapsed="false" :collapse="() => {}" />
+
+              <Toggle v-if="mode !== 'drawer' && toggleSide === 'right'" />
+            </div>
+
+            <div data-slot="dashboard-sidebar-body" :class="ui.body({ class: props.ui?.body })">
+              <slot :collapsed="false" :collapse="() => {}" />
+            </div>
+
+            <div v-if="!!slots.footer" data-slot="dashboard-sidebar-footer" :class="ui.footer({ class: props.ui?.footer })">
+              <slot name="footer" :collapsed="false" :collapse="() => {}" />
+            </div>
           </div>
-        </div>
-      </slot>
+        </slot>
+      </div>
     </template>
   </component>
 </template>
