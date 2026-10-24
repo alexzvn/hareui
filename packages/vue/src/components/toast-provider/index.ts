@@ -1,5 +1,5 @@
 export { default as ToastProvider } from './ToastProvider.vue'
-export type { ToastProviderProps, ToastProviderSlots } from './ToastProvider.vue'
+export type { ToastProviderProps, ToastProviderSlots } from './ToastProvider.types'
 export { ToastQueue } from './toastQueue'
 export type { QueuedToast, ToastAction, ToastContentValue, ToastQueueOptions } from './toastQueue'
 export { toast, toastQueue, useToast } from './useToast'

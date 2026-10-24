@@ -61,7 +61,10 @@ import type {
   ChartPolarAngleAxisSlots,
 } from './ChartPolarAngleAxis.types'
 import { useChartContext } from './context'
-import { angleTickAnchor, polarToCartesian, polygonPath, usePolarContext } from './polar'
+import { polarToCartesian } from './label'
+import { angleTickAnchor } from './polar-axis'
+import { usePolarContext } from './polar-context'
+import { polygonPath } from './polar-paths'
 
 const props = withDefaults(defineProps<ChartPolarAngleAxisProps>(), {
   allowDecimals: true,

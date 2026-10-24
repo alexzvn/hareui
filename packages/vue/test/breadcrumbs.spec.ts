@@ -2,7 +2,7 @@ import { mount } from '@vue/test-utils'
 import { describe, expect, it } from 'vitest'
 import { h } from 'vue'
 
-import type { BreadcrumbsProps, BreadcrumbsSlots } from '@/components/breadcrumbs/Breadcrumbs.vue'
+import type { BreadcrumbsProps, BreadcrumbsSlots } from '@/components/breadcrumbs/Breadcrumbs.types'
 import Breadcrumbs from '@/components/breadcrumbs/Breadcrumbs.vue'
 
 import { expectAccessible } from './a11y'

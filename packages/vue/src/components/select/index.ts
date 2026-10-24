@@ -6,4 +6,4 @@ export type {
   SelectSlots,
   SelectValue,
   SelectValueSlotProps,
-} from './Select.vue'
+} from './Select.types'

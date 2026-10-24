@@ -41,160 +41,9 @@
   </CalendarMonthShell>
 </template>
 
-<script lang="ts">
-import type { DateValue } from '@internationalized/date'
-import type { VNode } from 'vue'
-
-import type { PageBehavior, VisibleDuration } from '@/components/calendar/useCalendarDurationView'
-import type { ComponentSlots } from '@/types/tv'
-import type { ClassValue } from '@/utils/tv'
-
-import theme from './theme'
-
-type RangeCalendar = typeof theme
-
-export type DateRange = {
-  start: DateValue | undefined
-  end: DateValue | undefined
-}
-
-export type RangeCalendarProps = {
-  /** Accessible label for the calendar. */
-  ariaLabel?: string
-  /** The selected date range. Use `v-model` to control it. */
-  modelValue?: DateRange
-  /** The selected date range when initially rendered (uncontrolled). */
-  defaultValue?: DateRange
-  /** The currently displayed month/year. Use `v-model:placeholder` to control it. */
-  placeholder?: DateValue
-  /** The date initially displayed, before navigation (uncontrolled). */
-  defaultPlaceholder?: DateValue
-  /**
-   * The minimum selectable date.
-   * @defaultValue 1900-01-01
-   */
-  minValue?: DateValue
-  /**
-   * The maximum selectable date.
-   * @defaultValue 2099-12-31
-   */
-  maxValue?: DateValue
-  /**
-   * Callback returning whether a given date is unavailable for selection. During an
-   * in-progress range selection, `anchorDate` is the already-picked start date (or `null`
-   * before any date is picked), matching React Aria's `isDateUnavailable(date, anchorDate)`.
-   */
-  isDateUnavailable?: (date: DateValue, anchorDate: DateValue | null) => boolean
-  /**
-   * Whether the whole calendar is disabled.
-   * @defaultValue false
-   */
-  disabled?: boolean
-  /**
-   * Whether the calendar is read-only (dates stay visible but cannot be changed).
-   * @defaultValue false
-   */
-  readonly?: boolean
-  /**
-   * Whether non-contiguous ranges are allowed, skipping over unavailable dates in the middle
-   * of the range instead of resetting the selection.
-   * @defaultValue false
-   */
-  allowNonContiguousRanges?: boolean
-  /** Restricts a range selection to a fixed number of days from the start date. */
-  maximumDays?: number
-  /** The locale used for formatting and week calculations. */
-  locale?: string
-  /** The day the week starts on. */
-  firstDayOfWeek?: 'sun' | 'mon' | 'tue' | 'wed' | 'thu' | 'fri' | 'sat'
-  /**
-   * Whether to always display 6 weeks, avoiding layout shift between months.
-   * Reka UI only supports a fixed 6-week grid (HeroUI's React `weeksInMonth` accepts
-   * any count up to 6; see reka-limitations in the RangeCalendar report).
-   * @defaultValue false
-   */
-  fixedWeeks?: boolean
-  /**
-   * Replaces the plain month/year heading with a toggleable year grid.
-   * @defaultValue false
-   */
-  yearPicker?: boolean
-  /** Callback returning whether a small dot indicator should render under a date. */
-  indicator?: (date: DateValue) => boolean
-  /**
-   * This property causes the previous/next buttons to navigate by the number of
-   * months displayed at once rather than one month.
-   * @defaultValue false
-   */
-  pagedNavigation?: boolean
-  /**
-   * Shows this many months side by side. Navigating with the prev/next buttons always pages
-   * by the full visible width (Reka's `pagedNavigation`, forced on regardless of the
-   * `pagedNavigation` prop, matching React Aria's default `pageBehavior: "visible"`).
-   * Reka's heading only formats the combined range, so each panel renders its own
-   * "<Month> <Year>" label derived from that panel's `Grid.value` (see reka-limitations in
-   * the RangeCalendar report).
-   * @defaultValue 1
-   */
-  numberOfMonths?: number
-  /**
-   * Marks the calendar as invalid for consumer-driven validation (e.g. a selected range that's
-   * too long). Reka's own `isInvalid` is a read-only computed derived from `isDateUnavailable`/
-   * `minValue`/`maxValue`, with no input prop to override it (see reka-limitations in the
-   * RangeCalendar report), so this sets `aria-invalid`/`data-invalid` directly instead. HeroUI's
-   * styles don't key off it either, so it has no visual effect by itself.
-   * @defaultValue false
-   */
-  invalid?: boolean
-  /** The reading direction of the calendar. */
-  dir?: 'ltr' | 'rtl'
-  /**
-   * The visible time range. `{ weeks: n }` shows a week view and `{ days: n }` a day view (a rolling window of
-   * consecutive days); anything else shows the month view (use `number-of-months` for several months).
-   * Navigation advances by the visible range.
-   * @defaultValue { months: 1 }
-   */
-  visibleDuration?: VisibleDuration
-  /**
-   * In week/day views, whether the prev/next buttons and page keys move by the whole visible range
-   * (`'visible'`) or by one week/day (`'single'`).
-   * @defaultValue 'visible'
-   */
-  pageBehavior?: PageBehavior
-  /** Additional classes merged into the root element. */
-  class?: ClassValue
-  /** Per-slot class overrides. */
-  ui?: ComponentSlots<RangeCalendar>
-}
-
-export type RangeCalendarSlots = {
-  /** Replaces the chevron icon inside a nav button. */
-  navIcon?: (props: { direction: 'previous' | 'next' }) => VNode[]
-  /** Replaces a cell's default formatted-date content. */
-  cell?: (props: {
-    date: DateValue
-    today: boolean
-    selected: boolean
-    disabled: boolean
-    unavailable: boolean
-    outsideView: boolean
-    selectionStart: boolean
-    selectionEnd: boolean
-  }) => VNode[]
-}
-
-export type RangeCalendarEmits = {
-  /** Emitted when the selected date range changes. */
-  'update:modelValue': [value: DateRange | undefined]
-  /** Emitted when the displayed month/year changes. */
-  'update:placeholder': [value: DateValue]
-}
-
-type RangeCalendarCellSlotProps = Parameters<NonNullable<RangeCalendarSlots['cell']>>[0]
-</script>
-
 <script setup lang="ts">
 import { isSameDay, isSameMonth } from '@internationalized/date'
+import type { DateValue } from '@internationalized/date'
 import {
   computed,
   nextTick,
@@ -212,7 +61,7 @@ import {
   compareDay,
   focusCalendarCell,
 } from '@/components/calendar/calendarCells'
-import type { CalendarMonthShellExposed } from '@/components/calendar/CalendarMonthShell.vue'
+import type { CalendarMonthShellExposed } from '@/components/calendar/CalendarMonthShell.types'
 import CalendarMonthShell from '@/components/calendar/CalendarMonthShell.vue'
 import { defaultMaxValue, defaultMinValue } from '@/components/calendar/useCalendarBounds'
 import {
@@ -224,7 +73,16 @@ import {
 import { useComponentUI } from '@/composables/useComponentUI'
 import { useSlotOutlet } from '@/composables/useSlotOutlet'
 
-import RangeCalendarDay, { rangeCalendarDayKey } from './RangeCalendarDay.vue'
+import { rangeCalendarDayKey } from './context'
+import type {
+  DateRange,
+  RangeCalendarCellSlotProps,
+  RangeCalendarEmits,
+  RangeCalendarProps,
+  RangeCalendarSlots,
+} from './RangeCalendar.types'
+import RangeCalendarDay from './RangeCalendarDay.vue'
+import theme from './theme'
 
 const props = withDefaults(defineProps<RangeCalendarProps>(), {
   modelValue: undefined,
@@ -245,6 +103,7 @@ const slots = defineSlots<RangeCalendarSlots>()
 
 const viewKind = computed(() => {
   if (props.visibleDuration?.days != null) return 'day' as const
+
   return props.visibleDuration?.weeks != null ? ('week' as const) : ('month' as const)
 })
 
@@ -311,39 +170,46 @@ const isDateDisabledByMaximumDays = (date: DateValue) => {
 
 const highlightedRange = computed(() => {
   if (anchor.value) return makeRange(anchor.value, focusedDate.value ?? anchor.value)
+
   const value = committed.value
 
   return value?.start && value.end ? makeRange(value.start, value.end) : null
 })
 
+const isUnavailableDate = (date: DateValue) => !!wrappedIsDateUnavailable.value?.(date)
+
+const isOutOfBounds = (date: DateValue) =>
+  compareDay(date, minValue.value) < 0 || compareDay(date, maxValue.value) > 0
+
 // react-stately's `isInvalidSelection` (+ the `invalid` prop): a committed range whose ends are unavailable or out of
 // bounds. Its cells are flagged `data-invalid` and stay selected even where unavailable.
 const isValueInvalid = computed(() => {
   if (props.invalid) return true
+
   const value = committed.value
   if (anchor.value || !value?.start || !value.end) return false
 
-  const outOfBounds = (date: DateValue) =>
-    compareDay(date, minValue.value) < 0 || compareDay(date, maxValue.value) > 0
-
   return (
-    !!wrappedIsDateUnavailable.value?.(value.start) ||
-    !!wrappedIsDateUnavailable.value?.(value.end) ||
-    outOfBounds(value.start) ||
-    outOfBounds(value.end)
+    isUnavailableDate(value.start) ||
+    isUnavailableDate(value.end) ||
+    isOutOfBounds(value.start) ||
+    isOutOfBounds(value.end)
   )
 })
 
 // `useCalendarCell`: outside-month and disabled days are never selected, unavailable ones only inside an invalid range
 const cellState = (date: DateValue, month: DateValue) => {
   const range = highlightedRange.value
-  const inRange = !!range && compareDay(date, range.start) >= 0 && compareDay(date, range.end) <= 0
+  const isInRange =
+    !!range && compareDay(date, range.start) >= 0 && compareDay(date, range.end) <= 0
+
   const disabled = !isSameMonth(date, month) || selection.isOutsideWindow(date)
-  const invalid = inRange && !disabled && isValueInvalid.value
+  const invalid = isInRange && !disabled && isValueInvalid.value
+
   const selected = isDaySelectedInRange({
-    inRange,
+    inRange: isInRange,
     disabled,
-    unavailable: !!wrappedIsDateUnavailable.value?.(date),
+    unavailable: isUnavailableDate(date),
     invalid,
   })
 
@@ -362,6 +228,7 @@ const emitValue = (value: DateRange) => {
 
 const selectDate = (date: DateValue) => {
   if (props.readonly || props.disabled) return
+
   selection.select(date)
 }
 
@@ -374,15 +241,16 @@ const isSelectableCell = (el: HTMLElement) => {
   )
 }
 
+const isOutsideEffectiveBounds = (date: DateValue) =>
+  compareDay(date, effectiveMinValue.value) < 0 || compareDay(date, effectiveMaxValue.value) > 0
+
 // `focusNearestAvailableDate`: anchoring with the keyboard advances focus one day (back one at the end of the
 // available run) so the preview shows a range immediately.
 const focusNearestAvailableDate = (from: DateValue) => {
-  const outside = (date: DateValue) =>
-    compareDay(date, effectiveMinValue.value) < 0 || compareDay(date, effectiveMaxValue.value) > 0
-
   let next = from.add({ days: 1 })
-  if (outside(next)) next = from.subtract({ days: 1 })
-  if (outside(next)) return
+  if (isOutsideEffectiveBounds(next)) next = from.subtract({ days: 1 })
+  if (isOutsideEffectiveBounds(next)) return
+
   focusedDate.value = next
   monthShell.value!.placeholder = next
   nextTick(() => focusCalendarCell(rootEl(), next))
@@ -401,39 +269,44 @@ const pointerFocus = (el: HTMLElement) => {
 // `boundary` when it grabbed an end of the committed range. Leaving the pressed cell cancels it, as RAC's
 // `shouldCancelOnPointerExit` does while anchored.
 let press: { el: HTMLElement; anchor: boolean; boundary: boolean } | null = null
-let dragging = false
+let isDragging = false
 
 // A mouse press is handled on pointerdown/pointerup, so the click that follows it is swallowed
-let swallowClick = false
+let shouldSwallowClick = false
 
-const onCellPointerDown = (event: PointerEvent, date: DateValue) => {
-  if (event.button !== 0) return
-  const el = event.currentTarget as HTMLElement
-  if (!isSelectableCell(el)) return
-  event.preventDefault()
-  pointerFocus(el)
-
-  // Chrome drops `:active` once Reka re-renders the pressed cell, so mirror RAC's `data-pressed` (which HeroUI's
-  // CSS styles alongside `:active`) until the press ends.
+// Chrome drops `:active` once Reka re-renders the pressed cell, so mirror RAC's `data-pressed` (which HeroUI's
+// CSS styles alongside `:active`) until the press ends.
+const markPressed = (el: HTMLElement) => {
   el.setAttribute('data-pressed', 'true')
+
   const release = () => el.removeAttribute('data-pressed')
   window.addEventListener('pointerup', release, { once: true })
   window.addEventListener('pointercancel', release, { once: true })
+}
+
+const onCellPointerDown = (event: PointerEvent, date: DateValue) => {
+  if (event.button !== 0) return
+
+  const el = event.currentTarget as HTMLElement
+  if (!isSelectableCell(el)) return
+
+  event.preventDefault()
+  pointerFocus(el)
+  markPressed(el)
   if (event.pointerType === 'touch' || props.disabled || props.readonly) return
-  swallowClick = true
+
+  shouldSwallowClick = true
   press = { el, anchor: false, boundary: false }
 
   // A second press (anchor already set) commits on release
   if (anchor.value) return
-  dragging = true
+
+  isDragging = true
 
   // Pressing an end of the committed range re-anchors on the opposite end, so dragging adjusts that end
   const range = highlightedRange.value
-  if (
-    range &&
-    !isValueInvalid.value &&
-    (isSameDay(date, range.start) || isSameDay(date, range.end))
-  ) {
+  const isRangeEnd = !!range && (isSameDay(date, range.start) || isSameDay(date, range.end))
+  if (range && !isValueInvalid.value && isRangeEnd) {
     anchor.value = isSameDay(date, range.start) ? range.end : range.start
     focusedDate.value = date
     press.boundary = true
@@ -448,36 +321,41 @@ const onCellPointerDown = (event: PointerEvent, date: DateValue) => {
 
 const onCellPointerUp = (event: PointerEvent, date: DateValue) => {
   if (event.button !== 0 || event.pointerType === 'touch') return
+
   const el = event.currentTarget as HTMLElement
   const pressedHere = press?.el === el ? press : null
   press = null
-  dragging = false
+  isDragging = false
   if (props.disabled || props.readonly || !isSelectableCell(el)) return
 
   // Releasing on a grabbed range end without dragging starts a new selection there
   if (pressedHere?.boundary) {
     anchor.value = date
     focusedDate.value = date
+
+    return
   }
+
   // Releasing a drag, or the second press of a selection, commits
-  else if (anchor.value && !pressedHere?.anchor) {
-    selectDate(date)
-  }
+  if (anchor.value && !pressedHere?.anchor) selectDate(date)
 }
 
 // `useRangeCalendar`'s `endDragging`: releasing a drag outside the cells commits the focused date
 const onWindowPointerUp = (event: PointerEvent) => {
   setTimeout(() => {
-    swallowClick = false
+    shouldSwallowClick = false
   })
 
-  const wasDragging = dragging
-  dragging = false
+  const hasDragged = isDragging
+  isDragging = false
   press = null
+
   const root = rootEl()
-  if (!wasDragging || !anchor.value || !root?.contains(document.activeElement)) return
+  if (!hasDragged || !anchor.value || !root?.contains(document.activeElement)) return
+
   const target = event.target as Element | null
   if (target && root.contains(target) && target.closest('button, [role="button"]')) return
+
   selectDate(focusedDate.value ?? anchor.value)
 }
 
@@ -490,8 +368,11 @@ const onCellMouseEnter = (event: MouseEvent, date: DateValue) => {
   const el = event.currentTarget as HTMLElement
   if (press && press.el !== el) press = null
   if (!anchor.value || !isSelectableCell(el)) return
+
   focusedDate.value = date
-  if (rootEl()?.contains(document.activeElement) && document.activeElement !== el) pointerFocus(el)
+
+  const hasCalendarFocus = rootEl()?.contains(document.activeElement)
+  if (hasCalendarFocus && document.activeElement !== el) pointerFocus(el)
 }
 
 // Each day reads its range state through this, so a hover re-renders only the days whose state flips
@@ -509,8 +390,9 @@ provide(rangeCalendarDayKey, {
 
 const onRootFocusIn = (event: FocusEvent) => {
   const cell = calendarCellFrom(event.target, rootEl())
-  if (cell && !cell.hasAttribute('data-disabled') && !cell.hasAttribute('data-outside-view'))
-    focusedDate.value = calendarCellDate(cell, monthShell.value!.placeholder)
+  if (!cell || cell.hasAttribute('data-disabled') || cell.hasAttribute('data-outside-view')) return
+
+  focusedDate.value = calendarCellDate(cell, monthShell.value!.placeholder)
 }
 
 // Clicks without a handled mouse press (keyboard-less screen readers, touch taps, scripted clicks) select directly.
@@ -518,10 +400,11 @@ const onRootFocusIn = (event: FocusEvent) => {
 const onRootClickCapture = (event: MouseEvent) => {
   const cell = calendarCellFrom(event.target, rootEl())
   if (!cell) return
+
   event.stopPropagation()
 
-  if (swallowClick) {
-    swallowClick = false
+  if (shouldSwallowClick) {
+    shouldSwallowClick = false
     return
   }
 
@@ -538,21 +421,18 @@ const onRootKeyDownCapture = (event: KeyboardEvent) => {
     return
   }
 
-  if (
-    (event.key !== 'Enter' && event.key !== ' ') ||
-    event.altKey ||
-    event.ctrlKey ||
-    event.metaKey
-  )
-    return
+  const isPressKey = event.key === 'Enter' || event.key === ' '
+  const hasModifier = event.altKey || event.ctrlKey || event.metaKey
+  if (!isPressKey || hasModifier) return
 
   event.preventDefault()
   event.stopPropagation()
   if (!isSelectableCell(cell)) return
+
   const date = calendarCellDate(cell, monthShell.value!.placeholder)
-  const wasAnchored = !!anchor.value
+  const isFirstPick = !anchor.value
   selectDate(date)
-  if (!wasAnchored && anchor.value) focusNearestAvailableDate(date)
+  if (isFirstPick && anchor.value) focusNearestAvailableDate(date)
 }
 
 // Reka re-centred the view on the range start whenever the value changed; keep that for values set from outside
@@ -561,13 +441,10 @@ watch(
   () => props.modelValue?.start,
   (start) => {
     const shell = monthShell.value
-    if (
-      !start ||
-      !shell ||
-      (lastEmitted?.start && isSameDay(start, lastEmitted.start)) ||
-      isSameDay(start, shell.placeholder)
-    )
-      return
+    if (!start || !shell) return
+
+    const isOwnPick = !!lastEmitted?.start && isSameDay(start, lastEmitted.start)
+    if (isOwnPick || isSameDay(start, shell.placeholder)) return
 
     shell.placeholder = start
   },

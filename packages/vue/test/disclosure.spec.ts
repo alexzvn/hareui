@@ -3,7 +3,7 @@ import { describe, expect, it } from 'vitest'
 import type { Component, VNode } from 'vue'
 import { h, nextTick, ref } from 'vue'
 
-import type { DisclosureProps } from '@/components/disclosure/Disclosure.vue'
+import type { DisclosureProps } from '@/components/disclosure/Disclosure.types'
 import Disclosure from '@/components/disclosure/Disclosure.vue'
 
 import { expectAccessible } from './a11y'

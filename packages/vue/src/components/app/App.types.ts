@@ -1,6 +1,6 @@
 import type { ConfigProviderProps } from 'reka-ui'
 
-import type { ToastProviderProps } from '@/components/toast-provider/ToastProvider.vue'
+import type { ToastProviderProps } from '@/components/toast-provider/ToastProvider.types'
 import type { PortalTarget } from '@/config'
 
 export type AppProps = {

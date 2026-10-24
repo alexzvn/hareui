@@ -4,7 +4,7 @@ import { describe, expect, it } from 'vitest'
 import type { ComponentOptions } from 'vue'
 import { defineComponent, h, nextTick, ref } from 'vue'
 
-import type { ColorFieldProps } from '@/components/color-field/ColorField.vue'
+import type { ColorFieldProps } from '@/components/color-field/ColorField.types'
 import ColorField from '@/components/color-field/ColorField.vue'
 import { ColorPickerContextKey } from '@/components/color-picker/context'
 import ColorSwatch from '@/components/color-swatch/ColorSwatch.vue'

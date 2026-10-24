@@ -85,130 +85,6 @@
   </div>
 </template>
 
-<script lang="ts">
-import type { Component, VNode } from 'vue'
-
-import type { ComponentSlots } from '@/types/tv'
-import type { ClassValue } from '@/utils/tv'
-
-import theme from './theme'
-
-type DateInputGroup = typeof theme
-
-export type DateInputGroupSegment = {
-  part: string
-  value: string
-}
-
-/**
- * reka-limitation (`shared/date/utils.ts` `getOptsByGranularity`): every granularity except
- * `'day'` always requests `timeZoneName: 'short'` from `Intl.DateTimeFormat`, even for a plain
- * (non-zoned) value. `shared/date/parser.ts` `createContentArr` drops the resulting
- * `timeZoneName` segment when there's no zone to show, but not the literal separator space
- * `Intl` inserts right before it, leaving a dangling whitespace-only segment trailing. Unlike the
- * bidi-isolation mark gap above, this one is NOT zero-width (it renders as a real space), so it's
- * stripped here before the segments reach `DateInputGroup`.
- */
-export const dropDanglingTimeZoneSeparator = (segments: DateInputGroupSegment[]) => {
-  const last = segments.at(-1)
-  return last && last.part === 'literal' && last.value.trim() === ''
-    ? segments.slice(0, -1)
-    : segments
-}
-
-/**
- * React Aria's `useDateFieldState` (`processSegments`) wraps the `hour`/`minute`/`second` run of a time
- * field in U+2066/U+2069 (LRI/PDI) bidi-isolation literal segments, to force LTR rendering of the time in
- * RTL locales. Reka's `shared/date/parser.ts` doesn't add these, so they're inserted here to keep the
- * segment list (and therefore the `gap-px`-driven group width) identical to HeroUI's React output.
- */
-export const wrapBidiIsolate = (segments: DateInputGroupSegment[]) => {
-  const open = segments.findIndex((s) => s.part === 'hour')
-  if (open === -1) return segments
-  let close = open
-  for (let i = segments.length - 1; i > open; i--) {
-    if (isTimeUnitPart(segments[i].part)) {
-      close = i
-      break
-    }
-  }
-
-  const result = segments.slice()
-  result.splice(close + 1, 0, { part: 'literal', value: '\u2069' })
-  result.splice(open, 0, { part: 'literal', value: '\u2066' })
-
-  return result
-}
-
-const isTimeUnitPart = (part: string) => {
-  return part === 'hour' || part === 'minute' || part === 'second'
-}
-
-/**
- * Internal part shared by `DateField` and `TimeField` (and later `DatePicker` / `DateRangePicker`).
- * Not exported from the package: HeroUI's docs don't show `DateInputGroup` standalone.
- */
-export type DateInputGroupProps = {
-  /** Segment contents from the parent `DateFieldRoot` / `TimeFieldRoot` default slot. */
-  segments: DateInputGroupSegment[]
-  /** `DateFieldInput` or `TimeFieldInput` from `reka-ui`, matching whichever root this is rendered inside. */
-  segmentInput: Component
-  /**
-   * Range mode (`DateRangePicker`): the end input's segments. When set, `segments` are the start input's, each
-   * segment gets Reka's `type="start"|"end"`, and the `#separator` slot renders between the two inputs.
-   */
-  endSegments?: DateInputGroupSegment[]
-  /**
-   * Wraps the input(s) in a horizontally scrollable `date-input-group-input-container`
-   * (HeroUI's `DateField.InputContainer`), for long ranges that overflow the group.
-   * @defaultValue false
-   */
-  inputContainer?: boolean
-  /**
-   * Visual variant of the group.
-   * @defaultValue 'primary'
-   */
-  variant?: 'primary' | 'secondary'
-  /**
-   * Whether the group takes the full width of its container.
-   * @defaultValue false
-   */
-  fullWidth?: boolean
-  /** Whether the group is disabled. */
-  disabled?: boolean
-  /** Whether the group is invalid. */
-  invalid?: boolean
-  /**
-   * The field's `aria-label` (fields without a visible label). Names the group and is appended to every segment's
-   * own name, as React Aria does.
-   */
-  ariaLabel?: string
-  /**
-   * Id(s) of the field's label. Names the group, and is appended to every segment's own name, as React Aria does
-   * (VoiceOver on iOS doesn't announce groups).
-   */
-  labelledby?: string
-  /**
-   * Id(s) of the field's description/error. Describes the first segment of each input, or every segment while
-   * invalid, as React Aria does (so it isn't re-read on every segment).
-   */
-  describedby?: string
-  /** Additional classes merged into the root element. */
-  class?: ClassValue
-  /** Per-slot class overrides. */
-  ui?: ComponentSlots<DateInputGroup>
-}
-
-export type DateInputGroupSlots = {
-  /** Prefix content, rendered before the segments. */
-  prefix?: () => VNode[]
-  /** Suffix content, rendered after the segments. */
-  suffix?: () => VNode[]
-  /** Range mode only: rendered between the start and end inputs. */
-  separator?: () => VNode[]
-}
-</script>
-
 <script setup lang="ts">
 import type { DateValue } from '@internationalized/date'
 import {
@@ -220,6 +96,9 @@ import type { FunctionalComponent, Ref } from 'vue'
 import { computed, useId } from 'vue'
 
 import { useComponentUI } from '@/composables/useComponentUI'
+
+import type { DateInputGroupProps, DateInputGroupSlots } from './DateInputGroup.types'
+import theme from './theme'
 
 // Renders its children without a wrapper element (used when `inputContainer` is off)
 const Passthrough: FunctionalComponent = (_, { slots }) => slots.default?.()
@@ -271,59 +150,130 @@ const rangeContext = injectDateRangeFieldRootContext(null)
 const timeContext = injectTimeFieldRootContext(null)
 const dateContext = injectDateFieldRootContext(null)
 const segmentState = (type?: string | null): SegmentState | undefined => {
-  if (props.endSegments) {
-    if (!rangeContext) return undefined
-    const end = type === 'end'
+  if (!props.endSegments) return timeContext ?? dateContext ?? undefined
+  if (!rangeContext) return undefined
 
-    return {
-      ...rangeContext,
-      modelValue: end ? rangeContext.endValue : rangeContext.startValue,
-      segmentValues: end ? rangeContext.segmentValues.end : rangeContext.segmentValues.start,
-    }
+  const isEnd = type === 'end'
+
+  return {
+    ...rangeContext,
+    modelValue: isEnd ? rangeContext.endValue : rangeContext.startValue,
+    segmentValues: isEnd ? rangeContext.segmentValues.end : rangeContext.segmentValues.start,
   }
-
-  return timeContext ?? dateContext ?? undefined
 }
 
 // Reka keeps a `dayPeriod` segment value even for 24-hour fields; the rendered segments tell which cycle is shown
 const is12Hour = computed(() => props.segments.some((s) => s.part === 'dayPeriod'))
 
-const segmentBounds = (
-  part: NumericPart,
-  values: SegmentValues,
-  placeholder: DateValue,
-): [number, number] => {
-  switch (part) {
-    case 'year':
-      return [1, 9999]
-    case 'month':
-      return [
-        1,
-        placeholder.calendar.getMonthsInYear(
-          values.year ? placeholder.set({ year: values.year }) : placeholder,
-        ),
-      ]
-    case 'day': {
-      const fields: Record<string, number> = {}
-      if (values.year) fields.year = values.year
-      if (values.month) fields.month = values.month
-      const date = placeholder.set({ ...fields, day: 1 })
+type BoundsInput = { values: SegmentValues; placeholder: DateValue }
 
-      return [1, date.calendar.getDaysInMonth(date)]
-    }
-    case 'hour': {
-      // 12-hour fields keep the hour within the current AM/PM period, as React Aria does
-      if (!is12Hour.value) return [0, 23]
-      const placeholderFields: DateFields = placeholder
-      const hour = values.hour ?? placeholderFields.hour ?? 0
-      const pm = values.dayPeriod ? values.dayPeriod === 'PM' : hour >= 12
+const monthBounds = ({ values, placeholder }: BoundsInput): [number, number] => {
+  const yearDate = values.year ? placeholder.set({ year: values.year }) : placeholder
 
-      return pm ? [12, 23] : [0, 11]
-    }
-    case 'minute':
-    case 'second':
-      return [0, 59]
+  return [1, placeholder.calendar.getMonthsInYear(yearDate)]
+}
+
+const dayBounds = ({ values, placeholder }: BoundsInput): [number, number] => {
+  const fields: Record<string, number> = {}
+  if (values.year) fields.year = values.year
+  if (values.month) fields.month = values.month
+
+  const date = placeholder.set({ ...fields, day: 1 })
+
+  return [1, date.calendar.getDaysInMonth(date)]
+}
+
+// 12-hour fields keep the hour within the current AM/PM period, as React Aria does
+const hourBounds = ({ values, placeholder }: BoundsInput): [number, number] => {
+  if (!is12Hour.value) return [0, 23]
+
+  const placeholderFields: DateFields = placeholder
+  const hour = values.hour ?? placeholderFields.hour ?? 0
+  const isPM = values.dayPeriod ? values.dayPeriod === 'PM' : hour >= 12
+
+  return isPM ? [12, 23] : [0, 11]
+}
+
+// The `[min, max]` each numeric segment can hold, given the other segments' current values
+const segmentBounds: Record<NumericPart, (input: BoundsInput) => [number, number]> = {
+  year: () => [1, 9999],
+  month: monthBounds,
+  day: dayBounds,
+  hour: hourBounds,
+  minute: () => [0, 59],
+  second: () => [0, 59],
+}
+
+type SegmentKey = { key: string; part: string; state: SegmentState }
+
+// Home/End pick AM/PM; PageUp/PageDown switch to the other period
+const dayPeriodTarget = (key: string, current: 'AM' | 'PM') => {
+  if (key === 'Home') return 'AM'
+  if (key === 'End') return 'PM'
+  if (key === 'PageUp' || key === 'PageDown') return current === 'PM' ? 'AM' : 'PM'
+
+  return undefined
+}
+
+const createDayPeriodPatch = (key: string, values: SegmentValues): SegmentValues | undefined => {
+  const current = values.dayPeriod === 'PM' ? 'PM' : 'AM'
+  const target = dayPeriodTarget(key, current)
+  if (!target) return undefined
+
+  const patch: SegmentValues = { dayPeriod: target }
+
+  // The hour segment holds a 24-hour value, so switching period shifts it by 12
+  if (values.hour != null && target !== current) {
+    patch.hour = values.hour + (target === 'PM' ? 12 : -12)
   }
+
+  return patch
+}
+
+const numericPatch = (part: NumericPart, value: number | undefined): SegmentValues => {
+  const patch: SegmentValues = {}
+  patch[part] = value
+
+  return patch
+}
+
+const createNumericPatch = ({
+  key,
+  part,
+  state,
+}: SegmentKey & { part: NumericPart }): SegmentValues | undefined => {
+  const values = state.segmentValues.value
+  const [min, max] = segmentBounds[part]({ values, placeholder: state.placeholder.value })
+  if (key === 'Home') return numericPatch(part, min)
+  if (key === 'End') return numericPatch(part, max)
+
+  const prev = values[part] ?? null
+  const isArrow = key === 'ArrowUp' || key === 'ArrowDown'
+  const isPage = key === 'PageUp' || key === 'PageDown'
+  const isPeriodHourArrow = isArrow && part === 'hour' && is12Hour.value && prev !== null
+  if (!isPage && !isPeriodHourArrow) return undefined
+
+  // An empty segment takes the placeholder's value first
+  if (prev === null) {
+    const placeholderFields: DateFields = state.placeholder.value
+    return numericPatch(part, placeholderFields[part])
+  }
+
+  // Step, then wrap around within [min, max]
+  const step = isArrow ? (state.step.value[part] ?? 1) : PAGE_STEP[part]
+  const direction = key === 'ArrowUp' || key === 'PageUp' ? 1 : -1
+  const size = max - min + 1
+  const offset = (prev - min + step * direction) % size
+
+  return numericPatch(part, min + ((offset + size) % size))
+}
+
+// The segment values a key press sets, or `undefined` when the key is left to Reka
+const createSegmentPatch = ({ key, part, state }: SegmentKey) => {
+  if (part === 'dayPeriod') return createDayPeriodPatch(key, state.segmentValues.value)
+  if (!isNumericPart(part)) return undefined
+
+  return createNumericPatch({ key, part, state })
 }
 
 /**
@@ -334,59 +284,22 @@ const segmentBounds = (
  */
 const onSegmentKeydown = (event: KeyboardEvent) => {
   if (event.isComposing || event.altKey || event.ctrlKey || event.metaKey) return
+
   const el = event.target as HTMLElement
   const part =
     el.getAttribute('data-reka-date-field-segment') ??
     el.getAttribute('data-reka-time-field-segment')
 
   if (!part) return
+
   const state = segmentState(el.getAttribute('data-reka-date-range-field-segment-type'))
   if (!state || state.disabled.value || state.readonly.value) return
+
   const values = state.segmentValues.value
   if (!(part in values)) return
-  const key = event.key
-  const patch: SegmentValues = {}
-  if (part === 'dayPeriod') {
-    const isPM = values.dayPeriod === 'PM'
-    const toPM =
-      key === 'Home'
-        ? false
-        : key === 'End'
-          ? true
-          : key === 'PageUp' || key === 'PageDown'
-            ? !isPM
-            : undefined
 
-    if (toPM === undefined) return
-    patch.dayPeriod = toPM ? 'PM' : 'AM'
-    if (values.hour != null && toPM !== isPM) patch.hour = values.hour + (toPM ? 12 : -12)
-  } else {
-    if (!isNumericPart(part)) return
-    const [min, max] = segmentBounds(part, values, state.placeholder.value)
-    const prev = values[part] ?? null
-    const arrow = key === 'ArrowUp' || key === 'ArrowDown'
-    if (key === 'Home') patch[part] = min
-    else if (key === 'End') patch[part] = max
-    else if (
-      key === 'PageUp' ||
-      key === 'PageDown' ||
-      (arrow && part === 'hour' && is12Hour.value && prev !== null)
-    ) {
-      if (prev === null) {
-        const placeholderFields: DateFields = state.placeholder.value
-        patch[part] = placeholderFields[part]
-      } else {
-        const amount =
-          (arrow ? (state.step.value[part] ?? 1) : PAGE_STEP[part]) *
-          (key === 'ArrowUp' || key === 'PageUp' ? 1 : -1)
-
-        const size = max - min + 1
-        patch[part] = min + ((((prev - min + amount) % size) + size) % size)
-      }
-    } else {
-      return
-    }
-  }
+  const patch = createSegmentPatch({ key: event.key, part, state })
+  if (!patch) return
 
   event.preventDefault()
   event.stopPropagation()
@@ -423,26 +336,28 @@ const segmentAttrs = (part: string, type?: 'start' | 'end') => {
     .filter(Boolean)
     .join(', ')
 
-  const firstEditable =
-    (type === 'end' ? props.endSegments : props.segments)?.find((s) => s.part !== 'literal')
-      ?.part === part
+  const inputSegments = type === 'end' ? props.endSegments : props.segments
+  const isFirstEditable = inputSegments?.find((s) => s.part !== 'literal')?.part === part
 
   const attrs: Record<string, unknown> = {
     id: id,
     'aria-label': `${[name, props.ariaLabel].filter(Boolean).join(', ')}${props.labelledby ? ', ' : ''}`,
     'aria-labelledby': props.labelledby ? `${id} ${props.labelledby}` : undefined,
     'aria-describedby':
-      props.describedby && (firstEditable || props.invalid) ? props.describedby : undefined,
+      props.describedby && (isFirstEditable || props.invalid) ? props.describedby : undefined,
     'aria-readonly': state?.readonly.value ? 'true' : undefined,
     'aria-invalid': props.invalid ? 'true' : undefined,
     'data-invalid': props.invalid ? 'true' : undefined,
   }
 
   if (type) attrs.type = type
+
   const values = state?.segmentValues.value
   const value = values && isNumericPart(part) ? values[part] : undefined
-  if ((part === 'minute' || part === 'second') && typeof value === 'number')
+  const isTwoDigitPart = part === 'minute' || part === 'second'
+  if (isTwoDigitPart && typeof value === 'number') {
     attrs['aria-valuetext'] = String(value).padStart(2, '0')
+  }
 
   if (part === 'hour' && is12Hour.value && typeof value === 'number') {
     const hour = value % 12 || 12

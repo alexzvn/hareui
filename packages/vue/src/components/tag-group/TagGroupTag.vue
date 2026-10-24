@@ -53,7 +53,7 @@ import CloseButton from '@/components/close-button/CloseButton.vue'
 // parent can tell Shift+press (range) from a toggle.
 import type { ComponentSlots, ComponentUI } from '@/types/tv'
 
-import type { TagGroupItem, TagGroupSlots } from './TagGroup.vue'
+import type { TagGroupItem, TagGroupSlots } from './TagGroup.types'
 import type tagTheme from './tagTheme'
 
 const props = defineProps<{

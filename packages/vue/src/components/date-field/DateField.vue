@@ -54,156 +54,26 @@
   </DateFieldRoot>
 </template>
 
-<script lang="ts">
-import type { DateFieldRootProps, DateValue } from 'reka-ui'
-import type { VNode } from 'vue'
-
-import type { DateInputGroupProps } from '@/components/date-input-group/DateInputGroup.vue'
-import dateInputGroupTheme from '@/components/date-input-group/theme'
-import type { ValidationBehavior } from '@/components/form/context'
-import type { FormFieldProps } from '@/components/form/types'
-import type { ValidateFn, ValidationResult } from '@/composables/useFieldValidation'
-import type { ComponentSlots } from '@/types/tv'
-import type { ClassValue } from '@/utils/tv'
-
-import theme from './theme'
-
-type DateField = typeof theme
-type DateInputGroup = typeof dateInputGroupTheme
-
-// Reka doesn't export these as standalone types; derive them from the (exported) root props instead.
-type Granularity = NonNullable<DateFieldRootProps['granularity']>
-type HourCycle = NonNullable<DateFieldRootProps['hourCycle']>
-type DateStep = NonNullable<DateFieldRootProps['step']>
-type DateUnavailableMatcher = NonNullable<DateFieldRootProps['isDateUnavailable']>
-
-export type DateFieldProps = {
-  /** Label text rendered above the group. */
-  label?: string
-  /** Helper text rendered below the group. Hidden while the field is invalid. */
-  description?: string
-  /** Error message rendered below the group while invalid. Defaults to the validation errors. */
-  errorMessage?: string
-  /**
-   * The id of the field; label, description and error ids derive from it.
-   * @defaultValue useId()
-   */
-  id?: string
-  /** The name of the value, used when submitting a form. */
-  name?: string
-  /** The initial value when uncontrolled (no `v-model`). */
-  defaultValue?: DateValue
-  /** The placeholder date, used to determine which segments to show when no date is selected. Use `v-model:placeholder` to control it. */
-  placeholder?: DateValue
-  /** The placeholder date when uncontrolled. */
-  defaultPlaceholder?: DateValue
-  /**
-   * The granularity of the field: which segments are rendered, up to and including this unit.
-   * @defaultValue 'day' (a `CalendarDate` value), otherwise 'minute'
-   */
-  granularity?: Granularity
-  /** The hour cycle used to format times. Defaults to the locale's preference. */
-  hourCycle?: HourCycle
-  /**
-   * The stepping interval for the time segments.
-   * @defaultValue 1
-   */
-  step?: DateStep
-  /**
-   * Whether to snap the time value to the nearest `step` increment after input.
-   * @defaultValue false
-   */
-  stepSnapping?: boolean
-  /** Whether to hide the time zone segment. */
-  hideTimeZone?: boolean
-  /** The minimum selectable date. */
-  minValue?: DateValue
-  /** The maximum selectable date. */
-  maxValue?: DateValue
-  /** The locale used to format the field. Defaults to the `ConfigProvider` locale. */
-  locale?: string
-  /** A function that returns whether a given date is unavailable for selection. */
-  isDateUnavailable?: DateUnavailableMatcher
-  /**
-   * Visual variant of the group.
-   * @defaultValue 'primary'
-   */
-  variant?: 'primary' | 'secondary'
-  /**
-   * Whether the field takes the full width of its container.
-   * @defaultValue false
-   */
-  fullWidth?: boolean
-  /**
-   * Whether the field is disabled.
-   * @defaultValue false
-   */
-  disabled?: boolean
-  /**
-   * Whether the field is invalid. Overrides validation when set.
-   * @defaultValue undefined
-   */
-  invalid?: boolean
-  /**
-   * Whether the field is required.
-   * @defaultValue false
-   */
-  required?: boolean
-  /**
-   * Whether the value can be selected but not changed.
-   * @defaultValue false
-   */
-  readonly?: boolean
-  /** Validates the committed value. Return an error message (or several) when invalid. */
-  validate?: ValidateFn<DateValue>
-  /**
-   * `native` blocks form submission and shows errors on commit or submit; `aria` shows errors in realtime.
-   * Defaults to the surrounding `Form`.
-   * @defaultValue 'native'
-   */
-  validationBehavior?: ValidationBehavior
-  /** Additional classes merged into the root element. */
-  class?: ClassValue
-  /** Per-slot class overrides. `group`, `input`, `segment`, `prefix` and `suffix` are the internal `date-input-group`'s. */
-  ui?: ComponentSlots<DateField> & { group?: ComponentSlots<DateInputGroup>['base'] } & Pick<
-      ComponentSlots<DateInputGroup>,
-      'input' | 'segment' | 'prefix' | 'suffix'
-    >
-} & FormFieldProps
-
-export type DateFieldSlots = {
-  /** Label content. Replaces the `label` prop. */
-  label?: () => VNode[]
-  /** Prefix content, rendered before the segments (e.g. an icon). */
-  prefix?: () => VNode[]
-  /** Suffix content, rendered after the segments (e.g. an icon). */
-  suffix?: () => VNode[]
-  /** Description content. Replaces the `description` prop. */
-  description?: () => VNode[]
-  /** Error content, rendered while invalid. Replaces the `errorMessage` prop. */
-  error?: (props: ValidationResult) => VNode[]
-}
-
-export type DateFieldEmits = {
-  /** Emitted when the displayed placeholder date changes. */
-  'update:placeholder': [value: DateValue]
-}
-</script>
-
 <script setup lang="ts">
 import { DateFormatter, getLocalTimeZone } from '@internationalized/date'
+import type { DateValue } from 'reka-ui'
 import { DateFieldInput, DateFieldRoot } from 'reka-ui'
 import type { ComponentPublicInstance } from 'vue'
 import { computed, useTemplateRef } from 'vue'
 
-import DateInputGroup, {
+import type { DateInputGroupProps } from '@/components/date-input-group/DateInputGroup.types'
+import {
   dropDanglingTimeZoneSeparator,
   wrapBidiIsolate,
-} from '@/components/date-input-group/DateInputGroup.vue'
+} from '@/components/date-input-group/dateInputGroup.utils'
+import DateInputGroup from '@/components/date-input-group/DateInputGroup.vue'
 import { useFieldsetDisabled } from '@/components/fieldset/context'
 import { useComponentUI } from '@/composables/useComponentUI'
 import { useFieldChrome } from '@/composables/useFieldChrome'
 import { useFieldValidation } from '@/composables/useFieldValidation'
+
+import type { DateFieldEmits, DateFieldProps, DateFieldSlots } from './DateField.types'
+import theme from './theme'
 
 // `invalid: undefined`: an absent boolean would cast to `false`, which counts as controlled-valid and hides validation errors
 const props = withDefaults(defineProps<DateFieldProps>(), { invalid: undefined })
@@ -218,16 +88,16 @@ const ui = useComponentUI('dateField', theme, () => ({ fullWidth: props.fullWidt
 
 const root = useTemplateRef<ComponentPublicInstance>('root')
 
+const formatDateBoundary = (value: DateValue) => {
+  const formatter = new DateFormatter(props.locale ?? 'en-US', { dateStyle: 'medium' })
+
+  return formatter.format(value.toDate(getLocalTimeZone()))
+}
+
 // React Aria's `useDateFieldState` treats an out-of-range/unavailable value as a builtin validation error,
 // combined with `validate`'s own errors the same way RAC's `mergeValidation` does (custom error wins when both
 // apply); Reka only tracks this internally per-segment (unreachable from outside), so it's computed here instead
 // and fed into `validate` so it follows `validationBehavior` like any other error.
-const formatDateBoundary = (value: DateValue) => {
-  return new DateFormatter(props.locale ?? 'en-US', { dateStyle: 'medium' }).format(
-    value.toDate(getLocalTimeZone()),
-  )
-}
-
 const builtinValidate = (value: DateValue) => {
   if (props.minValue && value.compare(props.minValue) < 0)
     return `Value must be ${formatDateBoundary(props.minValue)} or later.`
@@ -245,11 +115,15 @@ const validate = (value: DateValue) => {
   return custom && custom !== true ? custom : builtinValidate(value)
 }
 
+// Untouched + uncontrolled: `modelValue` is `undefined` until the first `onUpdate`, so fall back to
+// `defaultValue`. A controlled field explicitly cleared to `null` stays `null`, not fall back.
+const currentValue = () => {
+  const value = modelValue.value === undefined ? props.defaultValue : modelValue.value
+  return value ?? undefined
+}
+
 const { validation, commitValidation } = useFieldValidation({
-  // Untouched + uncontrolled: `modelValue` is `undefined` until the first `onUpdate`, so fall back to
-  // `defaultValue`. A controlled field explicitly cleared to `null` stays `null`, not fall back.
-  value: () =>
-    (modelValue.value === undefined ? props.defaultValue : modelValue.value) ?? undefined,
+  value: currentValue,
   validate: () => validate,
   invalid: () => props.invalid,
   validationBehavior: () => props.validationBehavior,

@@ -1,12 +1,12 @@
 import type { VNode } from 'vue'
 
-import type { ListBoxItem } from '@/components/list-box/ListBox.vue'
+import type { ListBoxItem } from '@/components/list-box/ListBox.types'
 import type {
   SelectEmits,
   SelectProps,
   SelectSlots,
   SelectValue,
-} from '@/components/select/Select.vue'
+} from '@/components/select/Select.types'
 import type { ComponentSlots } from '@/types/tv'
 
 import type theme from './theme'

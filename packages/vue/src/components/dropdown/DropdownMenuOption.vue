@@ -132,7 +132,7 @@ import Kbd from '@/components/kbd/Kbd.vue'
 import type { DropdownSelectionGroup } from './context'
 import { dropdownContextKey } from './context'
 // Internal: one Dropdown menu item (action item, selectable item or submenu trigger). Not exported.
-import type { DropdownItem } from './Dropdown.vue'
+import type { DropdownItem } from './Dropdown.types'
 
 const props = defineProps<{
   item: DropdownItem

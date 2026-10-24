@@ -2,7 +2,7 @@ import type { VNode } from 'vue'
 
 import type { ValidationBehavior } from '@/components/form/context'
 import type { FormFieldProps } from '@/components/form/types'
-import type { InputProps } from '@/components/input/Input.vue'
+import type { InputProps } from '@/components/input/Input.types'
 import type { ValidateFn, ValidationResult } from '@/composables/useFieldValidation'
 import type { ComponentSlots } from '@/types/tv'
 import type { ClassValue } from '@/utils/tv'

@@ -43,156 +43,6 @@
   </DropdownMenuRoot>
 </template>
 
-<script lang="ts">
-import type { VNode } from 'vue'
-
-import type { KbdKey } from '@/components/kbd/kbdKeys'
-import type { PortalTarget } from '@/config'
-import type { ComponentSlots } from '@/types/tv'
-import type { ClassValue } from '@/utils/tv'
-
-import theme from './theme'
-
-type Dropdown = typeof theme
-
-export type DropdownValue = string | number
-
-export type DropdownItem = {
-  /** Unique key of the item across the whole menu. Emitted by `action` and stored in `v-model`. */
-  value: DropdownValue
-  /** The item text, shown unless the `#item` / `#item-label` slot is used. */
-  label?: string
-  /** Secondary text under the label. */
-  description?: string
-  /** Text used for typeahead. Defaults to `label`. */
-  textValue?: string
-  disabled?: boolean
-  /** `danger` colours the label (and indicators) for destructive actions. */
-  variant?: 'default' | 'danger'
-  /** Keyboard shortcut rendered at the end of the item (as `<Kbd variant="light">`). */
-  kbd?: { keys?: KbdKey | KbdKey[]; content?: string }
-  /** Nested entries: the item becomes a submenu trigger. */
-  items?: DropdownEntry[]
-  /** Classes merged onto the item element. */
-  class?: ClassValue
-  /** Extra fields (icons, ...) are passed through to the slots as `item`. */
-  [key: string]: unknown
-}
-
-export type DropdownSection<T extends DropdownItem = DropdownItem> = {
-  type: 'section'
-  /** Rendered as the section `<header>`, which also labels the group. */
-  label?: string
-  items: T[]
-  /**
-   * Section-level selection, independent of the rest of the menu (React Aria's section
-   * `selectionMode`). Selected values still live in the Dropdown's `v-model`.
-   */
-  selectionMode?: 'none' | 'single' | 'multiple'
-  /** Indicator for this section's selectable items. @defaultValue 'checkmark' */
-  indicator?: 'checkmark' | 'dot' | false
-  class?: ClassValue
-}
-
-export type DropdownSeparator = {
-  type: 'separator'
-}
-
-export type DropdownEntry<T extends DropdownItem = DropdownItem> =
-  | T
-  | DropdownSection<T>
-  | DropdownSeparator
-
-export type DropdownProps<T extends DropdownItem = DropdownItem> = {
-  /**
-   * Renders the menu in a portal. `true` portals to `document.body`, a selector string or element is used as the teleport target, and `false` disables portalling.
-   * Falls back to `createHareUI({ portal })`, then `true`.
-   */
-  portal?: PortalTarget
-  /** The menu entries: items, `{ type: 'section' }` groups and `{ type: 'separator' }` dividers. */
-  items?: DropdownEntry<T>[]
-  /** The controlled open state of the menu. Use with `v-model:open`. */
-  open?: boolean
-  /** The open state when initially rendered. Use when you do not need to control the open state. */
-  defaultOpen?: boolean
-  /**
-   * The selected values (`v-model`). Always an array, as sections can carry their own selection.
-   */
-  modelValue?: DropdownValue[]
-  /** The initially selected values, when uncontrolled. */
-  defaultValue?: DropdownValue[]
-  /** The type of selection allowed in the menu. @defaultValue 'none' */
-  selectionMode?: 'none' | 'single' | 'multiple'
-  /**
-   * The indicator rendered on selectable items: a checkmark, a dot, or nothing.
-   * @defaultValue 'checkmark'
-   */
-  indicator?: 'checkmark' | 'dot' | false
-  /**
-   * How the menu opens: on press, or on long press (and `Alt + ArrowDown` / `Alt + ArrowUp`)
-   * so the trigger can keep its own press action. @defaultValue 'press'
-   */
-  trigger?: 'press' | 'longPress'
-  /** Disables the trigger. */
-  disabled?: boolean
-  /** The preferred side of the trigger to render against when open. @defaultValue 'bottom' */
-  side?: 'top' | 'right' | 'bottom' | 'left'
-  /** The preferred alignment against the trigger. @defaultValue 'start' */
-  align?: 'start' | 'center' | 'end'
-  /** The distance in pixels from the trigger. @defaultValue 8 */
-  sideOffset?: number
-  /** Classes merged onto the popover. */
-  class?: ClassValue
-  ui?: ComponentSlots<Dropdown>
-}
-
-export type DropdownItemSlotProps<T extends DropdownItem = DropdownItem> = {
-  item: T
-  selected: boolean
-  disabled: boolean
-}
-
-export type DropdownSlots<T extends DropdownItem = DropdownItem> = {
-  /** The trigger. Merged onto its single root element (`as-child`). */
-  default?: () => VNode[]
-  /**
-   * Content above the menu, inside the popover (e.g. a user card). It renders inside the `role="menu"` element, so
-   * keep it to text and decorative images (`alt=""`): a named image there is not an allowed menu child.
-   */
-  'content-top'?: () => VNode[]
-  /** Replaces the whole item content. */
-  item?: (props: DropdownItemSlotProps<T>) => VNode[]
-  'item-leading'?: (props: DropdownItemSlotProps<T>) => VNode[]
-  'item-label'?: (props: DropdownItemSlotProps<T>) => VNode[]
-  'item-description'?: (props: DropdownItemSlotProps<T>) => VNode[]
-  /** Replaces the keyboard shortcut. */
-  'item-trailing'?: (props: DropdownItemSlotProps<T>) => VNode[]
-  /** Custom selection indicator content (rendered inside the indicator box). */
-  indicator?: (props: DropdownItemSlotProps<T>) => VNode[]
-  /** Custom submenu chevron. */
-  'submenu-indicator'?: (props: DropdownItemSlotProps<T>) => VNode[]
-  'section-label'?: (props: { section: DropdownSection<T> }) => VNode[]
-}
-
-export type DropdownEmits = {
-  'update:open': [value: boolean]
-  'update:modelValue': [value: DropdownValue[]]
-  /** An action item (not a selectable one, not a submenu trigger) was selected. */
-  action: [value: DropdownValue]
-}
-
-// React Aria's `useLongPress` accessibility description, shared by every long-press trigger.
-const LONG_PRESS_DESCRIPTION_ID = 'hareui-dropdown-long-press-description'
-const ensureLongPressDescription = () => {
-  if (document.getElementById(LONG_PRESS_DESCRIPTION_ID)) return
-  const el = document.createElement('div')
-  el.id = LONG_PRESS_DESCRIPTION_ID
-  el.style.display = 'none'
-  el.textContent = 'Long press or press Alt + ArrowDown to open menu'
-  document.body.appendChild(el)
-}
-</script>
-
 <script setup lang="ts" generic="T extends DropdownItem = DropdownItem">
 import {
   DropdownMenuContent,
@@ -211,7 +61,18 @@ import { usePortal } from '@/composables/usePortal'
 
 import type { DropdownContext, DropdownSelectionGroup } from './context'
 import { dropdownContextKey, enabledMenuItems } from './context'
+import type {
+  DropdownEmits,
+  DropdownEntry,
+  DropdownItem,
+  DropdownProps,
+  DropdownSection,
+  DropdownSlots,
+  DropdownValue,
+} from './Dropdown.types'
+import { ensureLongPressDescription, LONG_PRESS_DESCRIPTION_ID } from './dropdown.utils'
 import DropdownMenuItems from './DropdownMenuItems.vue'
+import theme from './theme'
 
 const props = withDefaults(defineProps<DropdownProps<T>>(), {
   portal: undefined,
@@ -264,28 +125,32 @@ const setSelected = (value: DropdownValue[]) => {
 const isSection = (entry: DropdownEntry): entry is DropdownSection =>
   (entry as DropdownSection).type === 'section'
 
+type SelectionScope = {
+  mode: DropdownSelectionGroup['mode']
+  indicator: DropdownSelectionGroup['indicator']
+  /** The values this scope owns: `single` mode replaces only these. */
+  values: () => DropdownValue[]
+}
+
 /**
  * A selection scope (RAC's `SelectionManager` / `GroupSelectionManager`). `single` replaces only
  * this scope's values and deselects on re-select, as React Aria does without `disallowEmptySelection`.
  */
-const makeGroup = (
-  mode: DropdownSelectionGroup['mode'],
-  indicator: DropdownSelectionGroup['indicator'],
-  values: () => DropdownValue[],
-): DropdownSelectionGroup => {
-  return {
-    mode,
-    indicator,
-    isSelected: (value) => selected.value.includes(value),
-    toggle(value) {
-      const current = selected.value
-      if (current.includes(value)) setSelected(current.filter((v) => v !== value))
-      else if (mode === 'single')
-        setSelected([...current.filter((v) => !values().includes(v)), value])
-      else setSelected([...current, value])
-    },
-  }
-}
+const makeGroup = ({ mode, indicator, values }: SelectionScope): DropdownSelectionGroup => ({
+  mode,
+  indicator,
+  isSelected: (value) => selected.value.includes(value),
+  toggle(value) {
+    const current = selected.value
+    if (current.includes(value)) {
+      setSelected(current.filter((v) => v !== value))
+      return
+    }
+
+    const kept = mode === 'single' ? current.filter((v) => !values().includes(v)) : current
+    setSelected([...kept, value])
+  },
+})
 
 // Values whose selection scope is the menu itself: top-level items plus sections without their own mode.
 const rootValues = computed(() =>
@@ -296,7 +161,11 @@ const rootValues = computed(() =>
 )
 
 const rootGroup = computed(() =>
-  makeGroup(props.selectionMode, props.indicator, () => rootValues.value),
+  makeGroup({
+    mode: props.selectionMode,
+    indicator: props.indicator,
+    values: () => rootValues.value,
+  }),
 )
 
 const sectionGroups = new WeakMap<DropdownSection, DropdownSelectionGroup>()
@@ -332,18 +201,18 @@ const ctx: DropdownContext = {
   rootGroup: () => rootGroup.value,
   sectionGroup(section, parent) {
     if (!section.selectionMode) return parent
-    let group = sectionGroups.get(section)
-    if (
-      !group ||
-      group.mode !== section.selectionMode ||
-      group.indicator !== (section.indicator ?? 'checkmark')
-    ) {
-      group = makeGroup(section.selectionMode, section.indicator ?? 'checkmark', () =>
-        section.items.map((item) => item.value),
-      )
 
-      sectionGroups.set(section, group)
-    }
+    const indicator = section.indicator ?? 'checkmark'
+    const cached = sectionGroups.get(section)
+    if (cached?.mode === section.selectionMode && cached.indicator === indicator) return cached
+
+    const group = makeGroup({
+      mode: section.selectionMode,
+      indicator,
+      values: () => section.items.map((item) => item.value),
+    })
+
+    sectionGroups.set(section, group)
 
     return group
   },
@@ -367,20 +236,28 @@ const openWithFocus = (strategy: 'first' | 'last') => {
   setOpen(true)
 }
 
+const strategyItem = (items: HTMLElement[], strategy: 'first' | 'last' | null) => {
+  if (strategy === 'first') return items[0]
+  if (strategy === 'last') return items.at(-1)
+
+  return undefined
+}
+
 // RAC's `useSelectableCollection` focuses the first selected item whenever the menu opens (pointer or
 // keyboard), else the item of the focus strategy; Reka focuses the content, or the first item when opened
 // from the keyboard.
 const onOpenAutoFocus = (event: Event) => {
   const strategy = focusOnOpen
   focusOnOpen = null
-  const content = event.target as HTMLElement
-  const items = enabledMenuItems(content)
-  const item =
-    content.querySelector<HTMLElement>(
-      '[data-slot=menu-item][aria-checked=true]:not([data-disabled])',
-    ) ?? (strategy === 'first' ? items[0] : strategy === 'last' ? items.at(-1) : undefined)
 
+  const content = event.target as HTMLElement
+  const selectedItem = content.querySelector<HTMLElement>(
+    '[data-slot=menu-item][aria-checked=true]:not([data-disabled])',
+  )
+
+  const item = selectedItem ?? strategyItem(enabledMenuItems(content), strategy)
   if (!item) return
+
   event.preventDefault()
   item.focus()
 }
@@ -429,13 +306,18 @@ const onTriggerKeydownCapture = (event: KeyboardEvent) => {
     return
   }
 
-  if (event.altKey && (event.key === 'ArrowDown' || event.key === 'ArrowUp')) {
+  const isAltArrow = event.altKey && (event.key === 'ArrowDown' || event.key === 'ArrowUp')
+  if (isAltArrow) {
     event.preventDefault()
     event.stopImmediatePropagation()
     if (!props.disabled) openWithFocus(event.key === 'ArrowDown' ? 'first' : 'last')
-  } else if (event.key === 'Enter' || event.key === ' ' || event.key === 'ArrowDown') {
-    event.stopImmediatePropagation()
+
+    return
   }
+
+  // Keys Reka's trigger toggles on: a long-press trigger opens only on a hold or Alt + Arrow
+  const isRekaToggleKey = event.key === 'Enter' || event.key === ' ' || event.key === 'ArrowDown'
+  if (isRekaToggleKey) event.stopImmediatePropagation()
 }
 
 onMounted(() => {

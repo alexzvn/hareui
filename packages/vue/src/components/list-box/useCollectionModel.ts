@@ -3,7 +3,7 @@
 import type { ComputedRef, Ref, WritableComputedRef } from 'vue'
 import { computed, ref } from 'vue'
 
-import type { ListBoxEntry, ListBoxItem, ListBoxValue } from './ListBox.vue'
+import type { ListBoxEntry, ListBoxItem, ListBoxValue } from './ListBox.types'
 import { flattenEntries, itemText } from './listBoxCollection'
 
 /** A field's selection: a value (or `null`) in single mode, an array in multiple mode. */

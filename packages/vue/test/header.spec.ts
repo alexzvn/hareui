@@ -3,8 +3,8 @@ import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest'
 import type { VNode } from 'vue'
 import { h, nextTick, ref } from 'vue'
 
+import type { HeaderProps } from '@/components/header/Header.types'
 import Header from '@/components/header/Header.vue'
-import type { HeaderProps } from '@/components/header/Header.vue'
 
 import { expectAccessible } from './a11y'
 

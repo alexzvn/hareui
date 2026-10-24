@@ -9,7 +9,7 @@ import ChartPolarAngleAxis from '@/components/chart/ChartPolarAngleAxis.vue'
 import ChartRadialBar from '@/components/chart/ChartRadialBar.vue'
 import type { ChartTooltipSlotProps } from '@/components/chart/ChartTooltip.types'
 import ChartTooltip from '@/components/chart/ChartTooltip.vue'
-import { bandBarPositions } from '@/components/chart/polar'
+import { bandBarPositions } from '@/components/chart/polar-bars'
 import RadialChart from '@/components/radial-chart/RadialChart.vue'
 
 import { expectAccessible } from './a11y'
@@ -54,30 +54,32 @@ const bar = (props: Record<string, unknown> = {}, cells?: () => VNode[]) =>
 
 describe('radial bar bands', () => {
   it('centers fixed-size bars in their band', () => {
-    expect(bandBarPositions(25, [{}], { barSize: 10, barGap: 4 })).toEqual([
+    expect(bandBarPositions({ bandSize: 25, bars: [{}] }, { barSize: 10, barGap: 4 })).toEqual([
       { offset: 7, size: 10 },
     ])
 
-    expect(bandBarPositions(19, [{}], { barSize: 10, barGap: 4 })).toEqual([
+    expect(bandBarPositions({ bandSize: 19, bars: [{}] }, { barSize: 10, barGap: 4 })).toEqual([
       { offset: 4, size: 10 },
     ])
   })
 
   it('shares the band between bars without a size, minus the category gap', () => {
-    expect(bandBarPositions(100, [{}, {}], { barGap: 4, barCategoryGap: '10%' })).toEqual([
+    const band = { bandSize: 100, bars: [{}, {}] }
+    expect(bandBarPositions(band, { barGap: 4, barCategoryGap: '10%' })).toEqual([
       { offset: 10, size: 38 },
       { offset: 52, size: 38 },
     ])
   })
 
   it('caps bars at maxBarSize', () => {
-    expect(bandBarPositions(100, [{ maxBarSize: 20 }], { barCategoryGap: 0 })).toEqual([
-      { offset: 40, size: 20 },
-    ])
+    expect(
+      bandBarPositions({ bandSize: 100, bars: [{ maxBarSize: 20 }] }, { barCategoryGap: 0 }),
+    ).toEqual([{ offset: 40, size: 20 }])
   })
 
   it('never returns a negative bar size when gaps fill the band', () => {
-    const [first] = bandBarPositions(10, [{}, {}], { barGap: 20, barCategoryGap: 6 })
+    const band = { bandSize: 10, bars: [{}, {}] }
+    const [first] = bandBarPositions(band, { barGap: 20, barCategoryGap: 6 })
     expect(first!.size).toBe(0)
   })
 })

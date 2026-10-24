@@ -44,7 +44,9 @@ import type { ChartRadialBarProps, ChartRadialBarSlots } from './ChartRadialBar.
 import { useChartContext } from './context'
 import type { ChartLabelItem, ChartPolarViewBox } from './label'
 import { provideChartLabels } from './label'
-import { deltaAngle, sectorPath, usePolarContext } from './polar'
+import { usePolarContext } from './polar-context'
+import { deltaAngle } from './polar-geometry'
+import { sectorPath } from './polar-paths'
 import { DEFAULT_SERIES_COLOR } from './series'
 import type { ChartSeries, ChartTooltipPayloadEntry } from './types'
 

@@ -203,7 +203,11 @@ import {
 } from 'reka-ui'
 import { computed, useId } from 'vue'
 
-import type { DropdownEntry, DropdownItem, DropdownValue } from '@/components/dropdown/Dropdown.vue'
+import type {
+  DropdownEntry,
+  DropdownItem,
+  DropdownValue,
+} from '@/components/dropdown/Dropdown.types'
 import Dropdown from '@/components/dropdown/Dropdown.vue'
 import Tooltip from '@/components/tooltip/Tooltip.vue'
 

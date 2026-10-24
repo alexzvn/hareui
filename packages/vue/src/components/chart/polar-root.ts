@@ -10,7 +10,7 @@ import type { ChartContext } from './context'
 import type { ChartFrameConfig } from './frame'
 import { resolveFrameLegend } from './frame'
 import { provideChartLabelViewBox } from './label'
-import type { PolarContext } from './polar'
+import type { PolarContext } from './polar-context'
 import type {
   ChartIndexKey,
   ChartLegendItem,

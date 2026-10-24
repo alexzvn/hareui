@@ -52,7 +52,7 @@
 <script setup lang="ts" generic="T extends ListBoxItem = ListBoxItem">
 import { computed, useId } from 'vue'
 
-import type { ListBoxItem } from '@/components/list-box/ListBox.vue'
+import type { ListBoxItem } from '@/components/list-box/ListBox.types'
 import Select from '@/components/select/Select.vue'
 import { useComponentUI } from '@/composables/useComponentUI'
 

@@ -5,7 +5,7 @@ import { mount } from '@vue/test-utils'
 import { describe, expect, it } from 'vitest'
 import { nextTick } from 'vue'
 
-import type { CalendarProps } from '@/components/calendar/Calendar.vue'
+import type { CalendarProps } from '@/components/calendar/Calendar.types'
 import Calendar from '@/components/calendar/Calendar.vue'
 
 import { expectAccessible } from './a11y'

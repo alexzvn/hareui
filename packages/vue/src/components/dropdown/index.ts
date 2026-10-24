@@ -10,4 +10,4 @@ export type {
   DropdownSeparator,
   DropdownSlots,
   DropdownValue,
-} from './Dropdown.vue'
+} from './Dropdown.types'

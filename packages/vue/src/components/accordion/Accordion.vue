@@ -59,93 +59,6 @@
   </div>
 </template>
 
-<script lang="ts">
-import type { VNode } from 'vue'
-
-import type { ExpandedValue } from '@/composables/useExpandedValues'
-import type { ComponentSlots, ComponentVariants } from '@/types/tv'
-import type { ClassValue } from '@/utils/tv'
-
-import theme from './theme'
-
-type Accordion = typeof theme
-
-export type AccordionItem = {
-  /** The trigger text, shown unless `#label` is used. */
-  label?: string
-  /** The value identifying this item (HeroUI's `id`). Defaults to the item's index. */
-  value?: ExpandedValue
-  /** Whether this item is disabled. */
-  disabled?: boolean
-  /** Name of a dynamic slot to render this item's body, taking precedence over `#content`. */
-  slot?: string
-  /** Fallback body text, used when no `#content`/`[item.slot]` slot is provided. */
-  content?: string
-  /** Extra fields (icons, subtitles, …) are passed through to the slots as `item`. */
-  [key: string]: unknown
-}
-
-export type AccordionProps<T extends AccordionItem = AccordionItem> = {
-  /** The items to render. */
-  items: T[]
-  /** The expanded item values. Use `v-model` to control them. */
-  modelValue?: ExpandedValue[]
-  /** The values expanded on first render (uncontrolled). */
-  defaultValue?: ExpandedValue[]
-  /**
-   * Whether multiple items can be expanded at once (HeroUI's `allowsMultipleExpanded`).
-   * @defaultValue false
-   */
-  multiple?: boolean
-  /**
-   * Whether the entire accordion is disabled.
-   * @defaultValue false
-   */
-  disabled?: boolean
-  /**
-   * The visual variant of the accordion.
-   * @defaultValue 'default'
-   */
-  variant?: ComponentVariants<Accordion>['variant']
-  /**
-   * Hide separator lines between accordion items.
-   * @defaultValue false
-   */
-  hideSeparator?: boolean
-  /** Additional classes merged into the root element. */
-  class?: ClassValue
-  /** Per-slot class overrides. */
-  ui?: ComponentSlots<Accordion>
-}
-
-type ItemSlotProps<T extends AccordionItem = AccordionItem> = {
-  item: T
-  index: number
-  open: boolean
-}
-
-export type AccordionSlots<T extends AccordionItem = AccordionItem> = {
-  /** Rendered in the trigger before the label (e.g. an icon). */
-  leading?: (props: ItemSlotProps<T>) => VNode[]
-  /** Replaces the trigger's label text. */
-  label?: (props: ItemSlotProps<T>) => VNode[]
-  /**
-   * Replaces the chevron (HeroUI's `Accordion.Indicator` children). A single root element
-   * receives the themed indicator classes and `data-expanded`, so it rotates like the default.
-   */
-  indicator?: (props: ItemSlotProps<T>) => VNode[]
-  /** Body content for every item, overridden by `[item.slot]`. */
-  content?: (props: ItemSlotProps<T>) => VNode[]
-  /** Body content of the items whose `slot` names it. */
-  [slot: string]: ((props: ItemSlotProps<T>) => VNode[]) | undefined
-}
-
-export type AccordionEmits = {
-  /** Emitted when the expanded items change. */
-  'update:modelValue': [value: ExpandedValue[]]
-}
-</script>
-
 <script setup lang="ts" generic="T extends AccordionItem = AccordionItem">
 import {
   cloneVNode,
@@ -158,10 +71,21 @@ import {
   useSlots,
   watch,
 } from 'vue'
+import type { VNode } from 'vue'
 
 import { useComponentUI } from '@/composables/useComponentUI'
 import { useExpandedValues } from '@/composables/useExpandedValues'
+import type { ExpandedValue } from '@/composables/useExpandedValues'
 import { animatePanel, onPanelReveal, setPanelStatic } from '@/utils/disclosurePanel'
+
+import type {
+  AccordionEmits,
+  AccordionItem,
+  AccordionProps,
+  AccordionSlots,
+  ItemSlotProps,
+} from './Accordion.types'
+import theme from './theme'
 
 // `modelValue: undefined` keeps the uncontrolled mode when no `v-model` is bound.
 const props = withDefaults(defineProps<AccordionProps<T>>(), { modelValue: undefined })
@@ -178,8 +102,10 @@ const { isExpanded, setExpanded } = useExpandedValues(props, (value) =>
 const id = useId()
 const valueOf = (item: AccordionItem, index: number) => item.value ?? index
 const isItemDisabled = (item: AccordionItem) => props.disabled || !!item.disabled
+
 const toggle = (item: AccordionItem, index: number) => {
   if (isItemDisabled(item)) return
+
   const value = valueOf(item, index)
   setExpanded(value, !isExpanded(value))
 }
@@ -189,19 +115,20 @@ const CHEVRON_DOWN =
 
 // HeroUI's `Accordion.Indicator`: a single child element is cloned with the indicator classes
 // and state (React's `cloneElement`); anything else falls back to the default chevron.
-const renderIndicator = (item: AccordionItem, index: number, open: boolean) => {
+const Indicator = ({ item, index, open }: ItemSlotProps) => {
   const shared = {
     class: ui.value.indicator({ class: props.ui?.indicator }),
     'data-slot': 'accordion-indicator',
     'data-expanded': open ? 'true' : undefined,
   }
 
-  const children = (slots.indicator?.({ item, index, open }) ?? []).filter(
-    (v: VNode) => v.type !== Comment,
-  )
+  const rendered = slots.indicator?.({ item, index, open }) ?? []
+  const children = rendered.filter((v: VNode) => v.type !== Comment)
+  const [onlyChild] = children
+  const isSingleElement =
+    children.length === 1 && isVNode(onlyChild) && typeof onlyChild.type !== 'symbol'
 
-  if (children.length === 1 && isVNode(children[0]) && typeof children[0].type !== 'symbol')
-    return cloneVNode(children[0], shared, true)
+  if (isSingleElement) return cloneVNode(onlyChild, shared, true)
 
   return h(
     'svg',
@@ -226,35 +153,43 @@ const renderIndicator = (item: AccordionItem, index: number, open: boolean) => {
   )
 }
 
-const Indicator = (p: { item: AccordionItem; index: number; open: boolean }) =>
-  renderIndicator(p.item, p.index, p.open)
-
 // Panels animate with the same `--disclosure-panel-height` sequence as Disclosure. Inline
 // function refs are re-invoked (null, then the element) on every render, so registration is
 // keyed by element identity and cleaned up only when the element changes or on unmount.
 const panels = new Map<ExpandedValue, { el: HTMLElement; stop: () => void }>()
+
 const registerPanel = (value: ExpandedValue, el: unknown) => {
-  if (!(el instanceof HTMLElement) || panels.get(value)?.el === el) return
-  panels.get(value)?.stop()
+  if (!(el instanceof HTMLElement)) return
+
+  const registered = panels.get(value)
+  if (registered?.el === el) return
+
+  registered?.stop()
   setPanelStatic(el, isExpanded(value))
-  panels.set(value, { el, stop: onPanelReveal(el, () => setExpanded(value, !isExpanded(value))) })
+
+  const stop = onPanelReveal(el, () => setExpanded(value, !isExpanded(value)))
+  panels.set(value, { el, stop })
 }
 
 onBeforeUnmount(() => panels.forEach((p) => p.stop()))
 
 const openStates = computed(() =>
-  props.items.map(
-    (item, index) => [valueOf(item, index), isExpanded(valueOf(item, index))] as const,
-  ),
+  props.items.map((item, index) => {
+    const value = valueOf(item, index)
+
+    return [value, isExpanded(value)] as const
+  }),
 )
 
 watch(
   openStates,
   (next, prev) => {
     const before = new Map(prev)
+
     for (const [value, open] of next) {
       const panel = panels.get(value)
-      if (panel && before.has(value) && before.get(value) !== open) animatePanel(panel.el, open)
+      const hasToggled = before.has(value) && before.get(value) !== open
+      if (panel && hasToggled) animatePanel(panel.el, open)
     }
   },
   { flush: 'post' },

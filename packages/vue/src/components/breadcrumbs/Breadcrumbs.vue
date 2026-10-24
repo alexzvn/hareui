@@ -33,70 +33,21 @@
   </Primitive>
 </template>
 
-<script lang="ts">
-import type { PrimitiveProps } from 'reka-ui'
-import type { VNode } from 'vue'
-
-import type { ComponentSlots } from '@/types/tv'
-import type { ClassValue } from '@/utils/tv'
-
-import theme from './theme'
-
-type Breadcrumbs = typeof theme
-
-export type BreadcrumbsItem = {
-  /** The item text, shown unless `#item` is used. */
-  label?: string
-  /** The URL to link to. The last item is always the current page and renders without a link. */
-  href?: string
-  /** Additional classes merged into this item's `<li>` (HeroUI's `Breadcrumbs.Item` `className`). */
-  class?: ClassValue
-  /** Extra fields are passed through to the slots as `item`. */
-  [key: string]: unknown
-}
-
-export type BreadcrumbsProps<T extends BreadcrumbsItem = BreadcrumbsItem> = {
-  /**
-   * The element or component to render the list as.
-   * @defaultValue 'ol'
-   */
-  as?: PrimitiveProps['as']
-  /** The breadcrumb items, from the root to the current page. */
-  items: T[]
-  /**
-   * Whether all breadcrumb links are disabled.
-   * @defaultValue false
-   */
-  disabled?: boolean
-  /** Additional classes merged into the root element. */
-  class?: ClassValue
-  /** Per-slot class overrides. */
-  ui?: ComponentSlots<Breadcrumbs>
-}
-
-type ItemSlotProps<T extends BreadcrumbsItem = BreadcrumbsItem> = {
-  item: T
-  index: number
-  current: boolean
-}
-
-export type BreadcrumbsSlots<T extends BreadcrumbsItem = BreadcrumbsItem> = {
-  /** Replaces an item's label. */
-  item?: (props: ItemSlotProps<T>) => VNode[]
-  /**
-   * Custom separator between items (HeroUI's `separator` prop). A single root element receives
-   * the themed separator classes and `data-slot="breadcrumbs-separator"`.
-   */
-  separator?: (props: ItemSlotProps<T>) => VNode[]
-}
-</script>
-
 <script setup lang="ts" generic="T extends BreadcrumbsItem = BreadcrumbsItem">
 import { Primitive } from 'reka-ui'
+import type { VNode } from 'vue'
 import { cloneVNode, Comment, h, isVNode, useSlots } from 'vue'
 
 import Link from '@/components/link/Link.vue'
 import { useComponentUI } from '@/composables/useComponentUI'
+
+import type {
+  BreadcrumbsItem,
+  BreadcrumbsProps,
+  BreadcrumbsSlots,
+  ItemSlotProps,
+} from './Breadcrumbs.types'
+import theme from './theme'
 
 const props = withDefaults(defineProps<BreadcrumbsProps<T>>(), { as: 'ol' })
 const slots = useSlots()
@@ -117,9 +68,10 @@ const Separator = (p: ItemSlotProps) => {
 
   if (slots.separator) {
     const nodes = slots.separator(p).filter((v: VNode) => v.type !== Comment)
-    return nodes.length === 1 && isVNode(nodes[0]) && typeof nodes[0].type !== 'symbol'
-      ? cloneVNode(nodes[0], shared, true)
-      : nodes
+    const isSingleElement =
+      nodes.length === 1 && isVNode(nodes[0]) && typeof nodes[0].type !== 'symbol'
+
+    return isSingleElement ? cloneVNode(nodes[0], shared, true) : nodes
   }
 
   return h(

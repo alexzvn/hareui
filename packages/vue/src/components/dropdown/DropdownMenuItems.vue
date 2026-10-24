@@ -89,7 +89,7 @@ import type {
   DropdownItem,
   DropdownSection,
   DropdownSeparator,
-} from './Dropdown.vue'
+} from './Dropdown.types'
 import DropdownMenuOption from './DropdownMenuOption.vue'
 
 defineProps<{
@@ -126,8 +126,12 @@ const setSubmenuContent = (
   value: DropdownItem['value'],
   instance: Element | ComponentPublicInstance | null,
 ) => {
-  if (instance && '$el' in instance) submenuContents.set(value, instance.$el)
-  else submenuContents.delete(value)
+  if (instance && '$el' in instance) {
+    submenuContents.set(value, instance.$el)
+    return
+  }
+
+  submenuContents.delete(value)
 }
 
 // Reka closes the whole menu on Escape inside a submenu; RAC closes only that submenu and refocuses

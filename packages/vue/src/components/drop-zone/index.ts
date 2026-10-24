@@ -16,7 +16,7 @@ export type {
   DropZoneFileItemSlotProps,
   DropZoneFileItemSlots,
   DropZoneFileStatus,
-} from './DropZoneFileItem.vue'
+} from './DropZoneFileItem.types'
 
 export { default as DropZoneFileList } from './DropZoneFileList.vue'
 export type { DropZoneFileListProps, DropZoneFileListSlots } from './DropZoneFileList.types'

@@ -2,7 +2,7 @@ import { mount } from '@vue/test-utils'
 import { afterEach, describe, expect, it, vi } from 'vitest'
 import { h, nextTick } from 'vue'
 
-import type { DropdownEntry } from '@/components/dropdown/Dropdown.vue'
+import type { DropdownEntry } from '@/components/dropdown/Dropdown.types'
 import Dropdown from '@/components/dropdown/Dropdown.vue'
 
 import { expectAccessible } from './a11y'

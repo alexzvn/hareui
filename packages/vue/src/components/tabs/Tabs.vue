@@ -170,84 +170,6 @@
   </TabsRoot>
 </template>
 
-<script lang="ts">
-import type { VNode } from 'vue'
-
-import type { ComponentSlots, ComponentVariants } from '@/types/tv'
-import type { ClassValue } from '@/utils/tv'
-
-import theme from './theme'
-
-type Tabs = typeof theme
-
-export type TabsItem = {
-  /** The tab's label, shown in the trigger unless `#tab` is used. */
-  label?: string
-  /** The value identifying this tab. Defaults to the item's index (as a string). */
-  value?: string | number
-  /** Whether this tab is disabled. */
-  disabled?: boolean
-  /** Name of a dynamic slot to render this item's panel content, taking precedence over `#content`. */
-  slot?: string
-  /** Fallback panel text, used when no `#content`/`[item.slot]` slot is provided. */
-  content?: string
-}
-
-export type TabsProps<T extends TabsItem = TabsItem> = {
-  /** The tabs to render. */
-  items: T[]
-  /** The selected tab value. Use `v-model` to control it. */
-  modelValue?: string | number
-  /**
-   * The value of the tab selected by default (uncontrolled).
-   * @defaultValue the first enabled item's value
-   */
-  defaultValue?: string | number
-  /**
-   * Layout direction of the tab list.
-   * @defaultValue 'horizontal'
-   */
-  orientation?: ComponentVariants<Tabs>['orientation']
-  /**
-   * Visual style of the tabs.
-   * @defaultValue 'primary'
-   */
-  variant?: ComponentVariants<Tabs>['variant']
-  /**
-   * Alignment of the tab labels.
-   * @defaultValue 'center'
-   */
-  align?: ComponentVariants<Tabs>['align']
-  /**
-   * Whether to render a panel for every item.
-   * @defaultValue true
-   */
-  content?: boolean
-  /**
-   * Whether to render a separator between tabs. HeroUI separators are opt-in
-   * via `<Tabs.Separator/>`.
-   * @defaultValue false
-   */
-  separator?: boolean
-  /** Additional classes merged into the root element. */
-  class?: ClassValue
-  /** Per-slot class overrides. */
-  ui?: ComponentSlots<Tabs>
-}
-
-export type TabsSlots<T extends TabsItem = TabsItem> = {
-  /** Replaces a tab's label. */
-  tab?: (props: { item: T; index: number; selected: boolean }) => VNode[]
-  /** Fallback panel content for every item, overridden by `[item.slot]`. */
-  content?: (props: { item: T; index: number }) => VNode[]
-  /** Panel content of the items whose `slot` names it. */
-  [slot: string]:
-    | ((props: { item: T; index: number; selected: boolean }) => VNode[])
-    | ((props: { item: T; index: number }) => VNode[])
-    | undefined
-}
-</script>
-
 <script setup lang="ts" generic="T extends TabsItem = TabsItem">
 import { TabsContent, TabsList, TabsRoot, TabsTrigger } from 'reka-ui'
 import { computed, nextTick, onBeforeUnmount, onMounted, ref, watch } from 'vue'
@@ -255,6 +177,9 @@ import { computed, nextTick, onBeforeUnmount, onMounted, ref, watch } from 'vue'
 import type { ScrollShadowVisibility } from '@/components/scroll-shadow/ScrollShadow.types'
 import ScrollShadow from '@/components/scroll-shadow/ScrollShadow.vue'
 import { useComponentUI } from '@/composables/useComponentUI'
+
+import type { TabsItem, TabsProps, TabsSlots } from './Tabs.types'
+import theme from './theme'
 
 const props = withDefaults(defineProps<TabsProps<T>>(), {
   orientation: 'horizontal',
@@ -279,6 +204,7 @@ const itemValue = (item: TabsItem, index: number): string | number => {
 // selected (and the roving tab stop never lands on a disabled tab).
 const defaultValue = computed(() => {
   if (props.defaultValue !== undefined) return props.defaultValue
+
   const index = props.items.findIndex((item) => !item.disabled)
 
   return index === -1 ? (props.items[0]?.value ?? '0') : itemValue(props.items[index]!, index)
@@ -292,10 +218,8 @@ const tabStopValue = computed(() => {
     (item, index) => itemValue(item, index) === selectedValue.value,
   )
 
-  const index =
-    selected !== -1 && !props.items[selected]!.disabled
-      ? selected
-      : props.items.findIndex((item) => !item.disabled)
+  const isSelectedEnabled = selected !== -1 && !props.items[selected]!.disabled
+  const index = isSelectedEnabled ? selected : props.items.findIndex((item) => !item.disabled)
 
   return index === -1 ? undefined : itemValue(props.items[index]!, index)
 })
@@ -305,6 +229,7 @@ const tabStopValue = computed(() => {
 // panel ourselves to match data-slot presence 1:1.
 const visiblePanel = computed(() => {
   if (!props.content) return null
+
   const index = props.items.findIndex((item, i) => itemValue(item, i) === selectedValue.value)
 
   return index === -1 ? null : { item: props.items[index]!, index }
@@ -314,6 +239,7 @@ const isSeparatorHidden = (index: number): boolean => {
   const current = itemValue(props.items[index]!, index)
   if (current === selectedValue.value) return true
   if (index === 0) return false
+
   const previous = itemValue(props.items[index - 1]!, index - 1)
 
   return previous === selectedValue.value
@@ -334,18 +260,21 @@ const onListKeydown = (event: KeyboardEvent) => {
     return
   }
 
-  if (props.orientation !== 'vertical' || (event.key !== 'ArrowLeft' && event.key !== 'ArrowRight'))
-    return
+  const isSideArrow = event.key === 'ArrowLeft' || event.key === 'ArrowRight'
+  if (props.orientation !== 'vertical' || !isSideArrow) return
 
   const list = event.currentTarget as HTMLElement
   const tabs = [...list.querySelectorAll<HTMLElement>('[data-slot="tabs-tab"]:not([disabled])')]
   const index = tabs.indexOf(document.activeElement as HTMLElement)
   if (index === -1) return
+
   event.preventDefault()
   event.stopPropagation()
-  const rtl = list.closest('[dir]')?.getAttribute('dir') === 'rtl'
-  const step = (event.key === 'ArrowRight') !== rtl ? 1 : -1
-  tabs[(index + step + tabs.length) % tabs.length]!.focus()
+
+  const isRtl = list.closest('[dir]')?.getAttribute('dir') === 'rtl'
+  const step = (event.key === 'ArrowRight') !== isRtl ? 1 : -1
+  const nextIndex = (index + step + tabs.length) % tabs.length
+  tabs[nextIndex]!.focus()
 }
 
 const placeIndicator = () => {
@@ -373,9 +302,9 @@ const indicatorGeometry = ref<Record<string, string>>({})
 // list's origin) until the first measurement, so without this guard it would visibly
 // animate from that collapsed state into place on mount. Suppress the transition until
 // the first real measurement has painted, then let it animate normally on later changes.
-const indicatorReady = ref(false)
+const isIndicatorReady = ref(false)
 const indicatorStyle = computed(() =>
-  indicatorReady.value
+  isIndicatorReady.value
     ? indicatorGeometry.value
     : { ...indicatorGeometry.value, transition: 'none' },
 )
@@ -385,6 +314,7 @@ let resizeObserver: ResizeObserver | null = null
 const measureIndicator = () => {
   const listEl = listRef.value?.$el
   if (!listEl) return
+
   const activeTab = listEl.querySelector<HTMLElement>('[data-slot="tabs-tab"][data-state="active"]')
   if (!activeTab) {
     indicatorGeometry.value = {}
@@ -417,26 +347,32 @@ const onScrollVisibility = (visibility: ScrollShadowVisibility) => {
 const scrollByPage = (direction: 1 | -1) => {
   const el = scrollerRef.value?.el
   if (!el) return
-  const vertical = props.orientation === 'vertical'
-  const size = vertical ? el.clientHeight : el.clientWidth
-  const maxScroll = Math.max(0, (vertical ? el.scrollHeight : el.scrollWidth) - size)
-  const rtl = !vertical && getComputedStyle(el).direction === 'rtl'
-  const current = vertical ? el.scrollTop : el.scrollLeft
-  const next = Math.min(
-    rtl ? 0 : maxScroll,
-    Math.max(rtl ? -maxScroll : 0, current + direction * size * 0.8 * (rtl ? -1 : 1)),
-  )
 
-  if (next !== current) el.scrollTo({ behavior: 'smooth', [vertical ? 'top' : 'left']: next })
+  const isVertical = props.orientation === 'vertical'
+  const size = isVertical ? el.clientHeight : el.clientWidth
+  const scrollSize = isVertical ? el.scrollHeight : el.scrollWidth
+  const maxScroll = Math.max(0, scrollSize - size)
+  const current = isVertical ? el.scrollTop : el.scrollLeft
+
+  // An RTL scroll offset runs from 0 (start) down to -maxScroll, so the step is flipped too
+  const isRtl = !isVertical && getComputedStyle(el).direction === 'rtl'
+  const min = isRtl ? -maxScroll : 0
+  const max = isRtl ? 0 : maxScroll
+  const step = direction * size * 0.8 * (isRtl ? -1 : 1)
+  const next = Math.min(max, Math.max(min, current + step))
+
+  if (next !== current) el.scrollTo({ behavior: 'smooth', [isVertical ? 'top' : 'left']: next })
 }
 
 const observeGeometry = () => {
   const listEl = listRef.value?.$el
   resizeObserver?.disconnect()
   if (!listEl) return
-  resizeObserver = new ResizeObserver(() => measureIndicator())
-  resizeObserver.observe(listEl)
-  listEl.querySelectorAll('[data-slot="tabs-tab"]').forEach((el) => resizeObserver!.observe(el))
+
+  const observer = new ResizeObserver(() => measureIndicator())
+  resizeObserver = observer
+  observer.observe(listEl)
+  listEl.querySelectorAll('[data-slot="tabs-tab"]').forEach((el) => observer.observe(el))
 }
 
 onMounted(() => {
@@ -445,7 +381,7 @@ onMounted(() => {
   measureIndicator()
 
   requestAnimationFrame(() => {
-    indicatorReady.value = true
+    isIndicatorReady.value = true
   })
 
   window.addEventListener('resize', measureIndicator)
@@ -468,9 +404,14 @@ let panelObserver: MutationObserver | null = null
 const syncPanelTabStop = () => {
   const panel = panelRef.value?.$el
   if (!(panel instanceof HTMLElement)) return
-  const tabbable = panel.querySelector(PANEL_TABBABLE) !== null
-  if (tabbable && panel.hasAttribute('tabindex')) panel.removeAttribute('tabindex')
-  else if (!tabbable && panel.getAttribute('tabindex') !== '0') panel.setAttribute('tabindex', '0')
+
+  const hasTabbableChild = panel.querySelector(PANEL_TABBABLE) !== null
+  if (hasTabbableChild) {
+    if (panel.hasAttribute('tabindex')) panel.removeAttribute('tabindex')
+    return
+  }
+
+  if (panel.getAttribute('tabindex') !== '0') panel.setAttribute('tabindex', '0')
 }
 
 watch(
@@ -479,18 +420,18 @@ watch(
     panelObserver?.disconnect()
     panelObserver = null
     if (!(panel instanceof HTMLElement)) return
+
     syncPanelTabStop()
+    if (typeof MutationObserver === 'undefined') return
 
-    if (typeof MutationObserver !== 'undefined') {
-      panelObserver = new MutationObserver(syncPanelTabStop)
+    panelObserver = new MutationObserver(syncPanelTabStop)
 
-      panelObserver.observe(panel, {
-        subtree: true,
-        childList: true,
-        attributes: true,
-        attributeFilter: ['tabindex', 'disabled', 'href', 'contenteditable'],
-      })
-    }
+    panelObserver.observe(panel, {
+      subtree: true,
+      childList: true,
+      attributes: true,
+      attributeFilter: ['tabindex', 'disabled', 'href', 'contenteditable'],
+    })
   },
   { flush: 'sync' },
 )

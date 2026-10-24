@@ -10,4 +10,4 @@ export type {
   ListBoxSeparator,
   ListBoxSlots,
   ListBoxValue,
-} from './ListBox.vue'
+} from './ListBox.types'

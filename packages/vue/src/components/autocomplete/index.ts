@@ -6,4 +6,4 @@ export type {
   AutocompleteSlots,
   AutocompleteValue,
   AutocompleteValueSlotProps,
-} from './Autocomplete.vue'
+} from './Autocomplete.types'

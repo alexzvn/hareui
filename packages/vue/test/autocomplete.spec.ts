@@ -5,7 +5,7 @@ import type { ComponentOptions } from 'vue'
 import { h, nextTick } from 'vue'
 
 import Autocomplete from '@/components/autocomplete/Autocomplete.vue'
-import type { ListBoxEntry } from '@/components/list-box/ListBox.vue'
+import type { ListBoxEntry } from '@/components/list-box/ListBox.types'
 
 import { expectAccessible } from './a11y'
 

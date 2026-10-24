@@ -13,7 +13,7 @@
 import { computed } from 'vue'
 
 import { useChartContext } from './context'
-import { usePolarContext } from './polar'
+import { usePolarContext } from './polar-context'
 
 // Internal: the `#center` slot of PieChart and RadialChart. HTML content centered on the polar center (which
 // moves with `cx`/`cy` and the margins), placed in the chart's HTML overlay next to the tooltip.

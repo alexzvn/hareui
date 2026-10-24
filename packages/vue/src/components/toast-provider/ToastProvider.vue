@@ -50,107 +50,24 @@
   </Teleport>
 </template>
 
-<script lang="ts">
-import type { VNode } from 'vue'
-
-import type { PortalTarget } from '@/config'
-import type { ComponentSlots, ComponentVariants } from '@/types/tv'
-import type { ClassValue } from '@/utils/tv'
-
-import theme from './theme'
-import type { ToastQueue, ToastContentValue as ToastContentValueType } from './toastQueue'
-
-type Toast = typeof theme
-
-export type ToastProviderProps = {
-  /**
-   * Placement of the toast region.
-   * @defaultValue 'bottom'
-   */
-  placement?: ComponentVariants<Toast>['placement']
-  /**
-   * The gap between toasts in pixels.
-   * @defaultValue 12
-   */
-  gap?: number
-  /**
-   * Keeps the stack in its expanded layout instead of expanding only on hover
-   * or keyboard focus. Forced expansion does not pause toast timers.
-   * @defaultValue false
-   */
-  isExpanded?: boolean
-  /**
-   * The maximum number of toasts to display at a time (visual only).
-   * @defaultValue 3, or the queue's own `maxVisibleToasts`
-   */
-  maxVisibleToasts?: number
-  /**
-   * Hotkey that focuses the toast region. Modifiers match `KeyboardEvent`
-   * boolean props, other keys match `event.code`. Pass `[]` to disable.
-   * @defaultValue ['altKey', 'KeyT']
-   */
-  hotkey?: string[]
-  /**
-   * How much each toast behind the front one scales down.
-   * @defaultValue 0.05
-   */
-  scaleFactor?: number
-  /**
-   * The width of the toast region; numbers are pixels.
-   * @defaultValue 460
-   */
-  width?: number | string
-  /** Custom toast queue instance; defaults to the shared default queue used by `toast()`. */
-  queue?: ToastQueue<ToastContentValueType>
-  /**
-   * Accessible label for the region landmark. Defaults to the toast count, as React Aria does
-   * (e.g. "2 notifications.").
-   */
-  ariaLabel?: string
-  /**
-   * Renders the toast region in a portal. `true` portals to `document.body`, a selector string or element is used as the teleport target, and `false` disables portalling.
-   * Falls back to `createHareUI({ portal })`, then `true`.
-   */
-  portal?: PortalTarget
-  /** Additional classes merged into the region element. */
-  class?: ClassValue
-  /** Per-slot class overrides, shared by every rendered toast. */
-  ui?: ComponentSlots<Toast>
-}
-
-export type ToastProviderSlots = {
-  /**
-   * Replaces a toast's inner content (indicator, title, description, action,
-   * close button). The positioned, animated stack wrapper is still rendered
-   * by the provider; style it with the `ui.toast` slot override.
-   * Put `titleId` / `descriptionId` on the elements holding the title and description to name and describe
-   * the toast, and wrap the message in a `role="alert"` element so screen readers announce it.
-   */
-  toast?: (props: {
-    content: ToastContentValueType
-    close: () => void
-    titleId: string
-    descriptionId: string
-  }) => VNode[]
-}
-
-// Module scope (not <script setup>): withDefaults() is hoisted out of setup() and can't see setup locals.
-const DEFAULT_GAP = 12
-const DEFAULT_MAX_VISIBLE_TOAST = 3
-const DEFAULT_SCALE_FACTOR = 0.05
-const DEFAULT_TOAST_WIDTH = 460
-const DEFAULT_HOTKEY = ['altKey', 'KeyT']
-const MODIFIER_PROPS = ['altKey', 'ctrlKey', 'metaKey', 'shiftKey'] as const
-</script>
-
 <script setup lang="ts">
 import { computed, onBeforeUnmount, onMounted, reactive, ref, useSlots, watch } from 'vue'
 
 import { useComponentUI } from '@/composables/useComponentUI'
 import { usePortal } from '@/composables/usePortal'
 
+import theme from './theme'
 import ToastItem from './ToastItem.vue'
-import type { QueuedToast } from './toastQueue'
+import type { ToastProviderProps, ToastProviderSlots } from './ToastProvider.types'
+import {
+  DEFAULT_GAP,
+  DEFAULT_HOTKEY,
+  DEFAULT_MAX_VISIBLE_TOAST,
+  DEFAULT_SCALE_FACTOR,
+  DEFAULT_TOAST_WIDTH,
+  MODIFIER_PROPS,
+} from './toastProvider.utils'
+import type { QueuedToast, ToastContentValue as ToastContentValueType } from './toastQueue'
 import { toastQueue as defaultToastQueue } from './useToast'
 
 defineOptions({ inheritAttrs: false })
@@ -185,60 +102,69 @@ const resolvedMaxVisibleToasts = computed(
  * -------------------------------------------------------------------------------------------- */
 const regionEl = ref<HTMLElement | null>(null)
 const isPointerOrFocusWithin = ref(false)
-let pointerWithin = false
+let isPointerWithin = false
 
 const collapseIfOutside = () => {
   const node = regionEl.value
-  if (node && !pointerWithin && !node.contains(document.activeElement))
-    isPointerOrFocusWithin.value = false
+  const isFocusInside = node?.contains(document.activeElement)
+  if (node && !isPointerWithin && !isFocusInside) isPointerOrFocusWithin.value = false
 }
 
 const onPointerEnterOrMove = (event: PointerEvent) => {
   if (event.pointerType === 'touch') return
-  pointerWithin = true
+
+  isPointerWithin = true
   isPointerOrFocusWithin.value = true
 }
 
 const onPointerLeave = (event: PointerEvent) => {
   if (event.pointerType === 'touch') return
-  pointerWithin = false
+
+  isPointerWithin = false
   collapseIfOutside()
 }
 
 const onFocusIn = (event: FocusEvent) => {
   isPointerOrFocusWithin.value = true
-  const node = regionEl.value
-  const target = event.target as HTMLElement
-  if (node && target !== node) lastFocusedInRegion = target
 
-  if (node && event.relatedTarget instanceof HTMLElement && !node.contains(event.relatedTarget))
-    lastFocusedOutside = event.relatedTarget
+  const node = regionEl.value
+  if (!node) return
+
+  const target = event.target as HTMLElement
+  if (target !== node) lastFocusedInRegion = target
+
+  const from = event.relatedTarget
+  if (from instanceof HTMLElement && !node.contains(from)) lastFocusedOutside = from
 }
 
 const onFocusOut = (event: FocusEvent) => {
   const node = regionEl.value
   if (node && event.relatedTarget instanceof Node && node.contains(event.relatedTarget)) return
+
   lastFocusedOutside = null
   collapseIfOutside()
 }
 
 const onGlobalPointerOver = (event: PointerEvent) => {
   const node = regionEl.value
+  if (!node || event.pointerType === 'touch') return
 
   // The composed path's first node: inside a shadow root `event.target` is the shadow host.
   const target = event.composedPath()[0]
-  if (!node || event.pointerType === 'touch' || (target instanceof Node && node.contains(target)))
-    return
+  if (target instanceof Node && node.contains(target)) return
 
-  pointerWithin = false
+  isPointerWithin = false
   collapseIfOutside()
 }
 
 const onRegionKeyDown = (event: KeyboardEvent) => {
   const node = regionEl.value
   if (!node || event.key !== 'Escape') return
-  if (node.contains(document.activeElement)) (document.activeElement as HTMLElement | null)?.blur()
-  pointerWithin = false
+
+  const focused = document.activeElement as HTMLElement | null
+  if (node.contains(focused)) focused?.blur()
+
+  isPointerWithin = false
   isPointerOrFocusWithin.value = false
 }
 
@@ -250,23 +176,29 @@ const onRegionKeyDown = (event: KeyboardEvent) => {
  * -------------------------------------------------------------------------------------------- */
 let lastFocusedInRegion: HTMLElement | null = null
 let lastFocusedOutside: HTMLElement | null = null
-let pointerModality = false
+let isPointerModality = false
+
 const onModalityPointer = () => {
-  pointerModality = true
+  isPointerModality = true
 }
 
 const onModalityKey = () => {
-  pointerModality = false
+  isPointerModality = false
 }
 
 const onLandmarkKeyDown = (event: KeyboardEvent) => {
   const node = regionEl.value
   if (!node || event.key !== 'F6' || event.altKey || node.closest('[aria-hidden=true]')) return
+
   event.preventDefault()
 
-  if (lastFocusedInRegion?.isConnected && node.contains(lastFocusedInRegion))
-    lastFocusedInRegion.focus()
-  else node.focus()
+  const previous = lastFocusedInRegion
+  if (previous?.isConnected && node.contains(previous)) {
+    previous.focus()
+    return
+  }
+
+  node.focus()
 }
 
 const restoreOutsideFocus = () => {
@@ -276,24 +208,33 @@ const restoreOutsideFocus = () => {
 const onFocusLeave = (el: HTMLElement) => {
   const node = regionEl.value
   if (!node) return
-  if (pointerModality && lastFocusedOutside?.isConnected) return restoreOutsideFocus()
-  const toasts = [...node.querySelectorAll<HTMLElement>('[data-slot=toast]')]
-  const index = toasts.indexOf(el)
 
-  const available = (toast: HTMLElement) =>
+  if (isPointerModality && lastFocusedOutside?.isConnected) {
+    restoreOutsideFocus()
+    return
+  }
+
+  const isAvailable = (toast: HTMLElement) =>
     toast !== el &&
     !toast.hasAttribute('data-exiting') &&
     toast.getAttribute('aria-hidden') !== 'true'
 
-  const next =
-    toasts.slice(0, index).reverse().find(available) ?? toasts.slice(index + 1).find(available)
+  const toasts = [...node.querySelectorAll<HTMLElement>('[data-slot=toast]')]
+  const index = toasts.indexOf(el)
+  const newer = toasts.slice(0, index).reverse().find(isAvailable)
+  const next = newer ?? toasts.slice(index + 1).find(isAvailable)
 
-  if (next) next.focus({ preventScroll: true })
-  else restoreOutsideFocus()
+  if (!next) {
+    restoreOutsideFocus()
+    return
+  }
+
+  next.focus({ preventScroll: true })
 }
 
 const onDocumentKeyDown = (event: KeyboardEvent) => {
   onLandmarkKeyDown(event)
+
   const node = regionEl.value
   const hotkey = props.hotkey
   if (!node || hotkey.length === 0) return
@@ -307,6 +248,7 @@ const onDocumentKeyDown = (event: KeyboardEvent) => {
   )
 
   if (!hasExpectedModifiers || !hasExpectedCodes) return
+
   event.preventDefault()
   node.focus()
 }
@@ -343,14 +285,24 @@ const resolvedIsExpanded = computed(
 // must not resume it early, so this isn't keyed on `resolvedIsExpanded` (forced expansion
 // via the `isExpanded` prop does not pause timers, per that prop's contract).
 watch(isPointerOrFocusWithin, (within) => {
-  if (within) activeQueue.value.suspendTimers('interaction')
-  else activeQueue.value.resumeTimers('interaction')
+  const queue = activeQueue.value
+  if (within) {
+    queue.suspendTimers('interaction')
+    return
+  }
+
+  queue.resumeTimers('interaction')
 })
 
 // Pause timers while the page is hidden so toasts aren't missed in a background tab.
 const onVisibilityChange = () => {
-  if (document.hidden) activeQueue.value.suspendTimers('visibility')
-  else activeQueue.value.resumeTimers('visibility')
+  const queue = activeQueue.value
+  if (document.hidden) {
+    queue.suspendTimers('visibility')
+    return
+  }
+
+  queue.resumeTimers('visibility')
 }
 
 onMounted(() => document.addEventListener('visibilitychange', onVisibilityChange))
@@ -389,6 +341,7 @@ onBeforeUnmount(() => {
  * height and the measured heights of every toast ahead of it in the stack.
  * -------------------------------------------------------------------------------------------- */
 const heights = reactive<Record<string, number>>({})
+
 const onHeightChange = (key: string, height: number) => {
   heights[key] = height
 }
@@ -418,25 +371,29 @@ const renderItems = computed<RenderItem[]>(() => {
   // but keep their own slot while fading out.
   const common = vis.filter((t) => !exiting.has(t.key))
   const frontKey = common[0]?.key
-  const frontHeightVal = (frontKey ? heights[frontKey] : undefined) ?? 0
+  const frontHeight = (frontKey ? heights[frontKey] : undefined) ?? 0
 
-  const prefix: number[] = []
+  // The summed height of the laid-out toasts ahead of each one
+  const heightsAhead: number[] = []
   let sum = 0
+
   for (const t of common) {
-    prefix.push(sum)
-    sum += heights[t.key] ?? frontHeightVal
+    heightsAhead.push(sum)
+    sum += heights[t.key] ?? frontHeight
   }
 
   const items: RenderItem[] = []
   let nonExitingBefore = 0
+
   for (let i = 0; i < vis.length; i++) {
-    const t = vis[i]!
-    const isExiting = exiting.has(t.key)
+    const toast = vis[i]!
+    const isExiting = exiting.has(toast.key)
     const index = nonExitingBefore
     if (!isExiting) nonExitingBefore++
-    const heightsBefore = prefix[index] ?? index * frontHeightVal
+
+    const heightsBefore = heightsAhead[index] ?? index * frontHeight
     items.push({
-      toast: t,
+      toast,
       index,
       isFrontmost: index <= 0,
       isExiting,
@@ -445,7 +402,7 @@ const renderItems = computed<RenderItem[]>(() => {
       offsetCollapsed: index * props.gap,
       offsetExpanded: heightsBefore + index * props.gap,
       scaleCollapsed: 1 - index * props.scaleFactor,
-      frontHeight: frontHeightVal,
+      frontHeight,
     })
   }
 

@@ -38,36 +38,12 @@
   </RangeCalendarCell>
 </template>
 
-<script lang="ts">
-import type { DateValue } from '@internationalized/date'
-import type { Component, ComputedRef, InjectionKey } from 'vue'
-
-export type RangeCalendarCellState = {
-  selected: boolean
-  selectionStart: boolean
-  selectionEnd: boolean
-  invalid: boolean
-}
-
-/** What RangeCalendar shares with each day, so a day (not the whole grid) tracks range state. */
-export type RangeCalendarDayContext = {
-  cellState: (date: DateValue, month: DateValue) => RangeCalendarCellState
-  onPointerDown: (event: PointerEvent, date: DateValue) => void
-  onPointerUp: (event: PointerEvent, date: DateValue) => void
-  onMouseEnter: (event: MouseEvent, date: DateValue) => void
-  cellClass: ComputedRef<string>
-  cellButtonClass: ComputedRef<string>
-  indicatorClass: ComputedRef<string>
-  indicator: () => ((date: DateValue) => boolean) | undefined
-  CellOutlet: Component
-}
-
-export const rangeCalendarDayKey: InjectionKey<RangeCalendarDayContext> = Symbol('rangeCalendarDay')
-</script>
-
 <script setup lang="ts">
+import type { DateValue } from '@internationalized/date'
 import { RangeCalendarCell, RangeCalendarCellTrigger } from 'reka-ui'
 import { computed, inject } from 'vue'
+
+import { rangeCalendarDayKey } from './context'
 
 const props = defineProps<{ date: DateValue; month: DateValue }>()
 const ctx = inject(rangeCalendarDayKey)!

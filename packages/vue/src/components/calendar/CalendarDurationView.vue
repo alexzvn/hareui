@@ -180,70 +180,19 @@
   </div>
 </template>
 
-<script lang="ts">
-import type { CalendarDate, DateValue } from '@internationalized/date'
-import type { VNode } from 'vue'
-
-import type { ClassValue } from '@/utils/tv'
-
-import type { PageBehavior, VisibleDuration } from './useCalendarDurationView'
-
-type DurationRange = { start: DateValue | undefined; end: DateValue | undefined }
-
-/** Single: a date; multiple: an array; range: `{ start, end }`. */
-export type CalendarDurationValue = DateValue | DateValue[] | DurationRange
-
-type CalendarDurationCellSlotProps = {
-  date: CalendarDate
-  today: boolean
-  selected: boolean
-  disabled: boolean
-  unavailable: boolean
-  outsideView: boolean
-  /** Range kind only. */
-  selectionStart?: boolean
-  /** Range kind only. */
-  selectionEnd?: boolean
-}
-
-/**
- * Internal: the `visibleDuration={{ weeks }}` / `{{ days }}` grid shared by `Calendar` and `RangeCalendar`
- * (decision #11). Reka's calendar roots always build full month grids, so these views use their own state
- * (`useCalendarDurationView`, a port of react-stately's `useCalendarState`) and mirror the month view's DOM,
- * `data-slot`s and Reka-style data attributes so the same theme applies.
- */
-export type CalendarDurationViewProps = {
-  kind: 'calendar' | 'range'
-  /** Resolved slot class functions of the parent's theme (already resolved for the `view` variant). */
-  ui: Record<string, (opts?: { class?: ClassValue }) => string>
-  /** The parent's `:ui` overrides. */
-  uiOverrides?: Partial<Record<string, ClassValue>>
-  rootClass?: ClassValue
-  ariaLabel?: string
-  duration: VisibleDuration
-  pageBehavior: PageBehavior
-  focused: { value: DateValue }
-  value: CalendarDurationValue | null | undefined
-  selectionMode?: 'single' | 'multiple'
-  minValue: DateValue
-  maxValue: DateValue
-  isDateUnavailable?: (date: DateValue, anchorDate: DateValue | null) => boolean
-  allowNonContiguousRanges?: boolean
-  disabled: boolean
-  readonly: boolean
-  invalid: boolean
-  locale?: string
-  firstDayOfWeek?: 'sun' | 'mon' | 'tue' | 'wed' | 'thu' | 'fri' | 'sat'
-  indicator?: (date: DateValue) => boolean
-  dir?: 'ltr' | 'rtl'
-}
-</script>
-
 <script setup lang="ts">
 import { GregorianCalendar, isSameDay, toCalendar } from '@internationalized/date'
+import type { CalendarDate, DateValue } from '@internationalized/date'
 import { useDirection, useLocale } from 'reka-ui'
 import { computed, toRef } from 'vue'
+import type { VNode } from 'vue'
 
+import type {
+  CalendarDurationCellSlotProps,
+  CalendarDurationValue,
+  CalendarDurationViewProps,
+  DurationRange,
+} from './CalendarDurationView.types'
 import { useCalendarDurationView } from './useCalendarDurationView'
 import { makeRange, useRangeSelection } from './useRangeSelection'
 
@@ -296,10 +245,10 @@ const unavailable = (date: DateValue) => selection.isUnavailable.value?.(date) ?
 const alignment = () => {
   if (!range.value) return 'center' as const
 
-  return range.value.end.compare(range.value.start) >=
-    (props.duration.days ?? (props.duration.weeks ?? 1) * 7) / 2
-    ? ('start' as const)
-    : ('center' as const)
+  const rangeDays = range.value.end.compare(range.value.start)
+  const windowDays = props.duration.days ?? (props.duration.weeks ?? 1) * 7
+
+  return rangeDays >= windowDays / 2 ? ('start' as const) : ('center' as const)
 }
 
 const view = useCalendarDurationView({
@@ -324,14 +273,14 @@ const highlighted = computed(() => {
 })
 
 const isSelected = (date: CalendarDate) => {
-  if (props.kind === 'range')
-    return (
-      !!highlighted.value &&
-      date.compare(highlighted.value.start) >= 0 &&
-      date.compare(highlighted.value.end) <= 0
-    )
+  if (props.kind === 'range') {
+    const highlight = highlighted.value
+
+    return !!highlight && date.compare(highlight.start) >= 0 && date.compare(highlight.end) <= 0
+  }
 
   if (Array.isArray(props.value)) return props.value.some((v: DateValue) => isSameDay(v, date))
+
   const single = singleValue()
 
   return !!single && isSameDay(single, date)
@@ -340,17 +289,38 @@ const isSelected = (date: CalendarDate) => {
 // The calendar kind's one selected date: not an array (multiple) nor a `{ start, end }` (range)
 const singleValue = (): DateValue | undefined => {
   const value = props.value
+
   return value && !Array.isArray(value) && !isRange(value) ? value : undefined
+}
+
+// The multiple mode's selected dates; a single date (e.g. set before switching modes) counts as one
+const selectedDates = (): DateValue[] => {
+  if (Array.isArray(props.value)) return props.value
+
+  const single = singleValue()
+
+  return single ? [single] : []
 }
 
 // The emitted value keeps the original value's calendar system (Gregorian by default) and time of day
 const convert = (date: CalendarDate, old: DateValue | undefined): DateValue => {
   const converted = toCalendar(date, old?.calendar ?? new GregorianCalendar())
+
   return old && 'hour' in old ? old.set(converted) : converted
+}
+
+const toggleDate = (date: CalendarDate) => {
+  const current = selectedDates()
+  const index = current.findIndex((v) => isSameDay(v, date))
+  const next =
+    index >= 0 ? current.filter((_, i) => i !== index) : [...current, convert(date, current[0])]
+
+  emit('select', next)
 }
 
 const select = (date: CalendarDate) => {
   if (props.disabled || props.readonly || view.isCellDisabled(date) || unavailable(date)) return
+
   view.focusedDate.value = date
 
   if (props.kind === 'range') {
@@ -359,14 +329,7 @@ const select = (date: CalendarDate) => {
   }
 
   if (props.selectionMode === 'multiple') {
-    const single = singleValue()
-    const current: DateValue[] = Array.isArray(props.value) ? props.value : single ? [single] : []
-    const index = current.findIndex((v) => isSameDay(v, date))
-    emit(
-      'select',
-      index >= 0 ? current.filter((_, i) => i !== index) : [...current, convert(date, current[0])],
-    )
-
+    toggleDate(date)
     return
   }
 
@@ -380,16 +343,13 @@ const onPointerEnter = (date: CalendarDate) => {
 }
 
 const onKeyDown = (event: KeyboardEvent) => {
+  const cancelAnchor = () => {
+    selection.cancel()
+  }
+
   view.onKeyDown(
     event,
-    {
-      select: (date) => select(date),
-      escape: anchor.value
-        ? () => {
-            selection.cancel()
-          }
-        : undefined,
-    },
+    { select: (date) => select(date), escape: anchor.value ? cancelAnchor : undefined },
     direction.value,
   )
 }
@@ -397,27 +357,21 @@ const onKeyDown = (event: KeyboardEvent) => {
 const cellState = (date: CalendarDate) => {
   const disabled = view.isCellDisabled(date)
   const isUnavailable = unavailable(date)
-  const selectable = !disabled && !isUnavailable
-  const selected = isSelected(date) && selectable
+  const isSelectable = !disabled && !isUnavailable
+
+  // Only set for the range kind
+  const highlight = highlighted.value
 
   return {
     date,
     disabled,
     unavailable: isUnavailable,
-    selectable,
-    selected,
+    selectable: isSelectable,
+    selected: isSelected(date) && isSelectable,
     today: view.isToday(date),
     focused: isSameDay(date, view.focusedDate.value),
-    selectionStart:
-      props.kind === 'range' &&
-      !!highlighted.value &&
-      isSameDay(date, highlighted.value.start) &&
-      selectable,
-    selectionEnd:
-      props.kind === 'range' &&
-      !!highlighted.value &&
-      isSameDay(date, highlighted.value.end) &&
-      selectable,
+    selectionStart: !!highlight && isSameDay(date, highlight.start) && isSelectable,
+    selectionEnd: !!highlight && isSameDay(date, highlight.end) && isSelectable,
   }
 }
 

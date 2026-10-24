@@ -9,7 +9,7 @@ import type {
   DropdownProps,
   DropdownSection,
   DropdownValue,
-} from './Dropdown.vue'
+} from './Dropdown.types'
 
 /** One selection scope: the menu itself, or a section with its own `selectionMode` (RAC's `GroupSelectionManager`). */
 export type DropdownSelectionGroup = {

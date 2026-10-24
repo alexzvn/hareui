@@ -7,4 +7,4 @@ export type {
   ComboBoxValidationValue,
   ComboBoxValue,
   ComboBoxValueSlotProps,
-} from './ComboBox.vue'
+} from './ComboBox.types'

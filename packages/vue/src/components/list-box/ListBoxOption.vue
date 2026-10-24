@@ -87,7 +87,7 @@ import Label from '@/components/label/Label.vue'
 import { keyboardModalityKey } from '@/composables/useKeyboardModality'
 import type { ClassValue } from '@/utils/tv'
 
-import type { ListBoxItem, ListBoxItemSlotProps, ListBoxSlots, ListBoxValue } from './ListBox.vue'
+import type { ListBoxItem, ListBoxItemSlotProps, ListBoxSlots, ListBoxValue } from './ListBox.types'
 
 const props = defineProps<{
   item: ListBoxItem

@@ -32,7 +32,9 @@ import { computed } from 'vue'
 import ChartLayer from './ChartLayer.vue'
 import type { ChartPolarGridProps } from './ChartPolarGrid.types'
 import { useChartContext } from './context'
-import { polarToCartesian, polygonPath, usePolarContext } from './polar'
+import { polarToCartesian } from './label'
+import { usePolarContext } from './polar-context'
+import { polygonPath } from './polar-paths'
 
 const props = withDefaults(defineProps<ChartPolarGridProps>(), {
   gridType: 'polygon',

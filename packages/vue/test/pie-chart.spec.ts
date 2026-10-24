@@ -10,12 +10,9 @@ import ChartPie from '@/components/chart/ChartPie.vue'
 import type { ChartTooltipSlotProps } from '@/components/chart/ChartTooltip.types'
 import ChartTooltip from '@/components/chart/ChartTooltip.vue'
 import { percentValue } from '@/components/chart/percent'
-import {
-  cartesianToPolar,
-  computePieSectors,
-  deltaAngle,
-  sectorPath,
-} from '@/components/chart/polar'
+import { cartesianToPolar, deltaAngle } from '@/components/chart/polar-geometry'
+import { sectorPath } from '@/components/chart/polar-paths'
+import { computePieSectors } from '@/components/chart/polar-pie'
 import PieChart from '@/components/pie-chart/PieChart.vue'
 
 import { expectAccessible } from './a11y'
@@ -76,9 +73,10 @@ describe('polar geometry', () => {
   })
 
   it("converts points to radius and angle (0° at 3 o'clock, counter-clockwise)", () => {
-    expect(cartesianToPolar(100, 100, 100, 20)).toEqual({ radius: 80, angle: 90 })
-    expect(cartesianToPolar(100, 100, 150, 100)).toEqual({ radius: 50, angle: 0 })
-    expect(cartesianToPolar(100, 100, 100, 160).angle).toBe(-90)
+    const center = { x: 100, y: 100 }
+    expect(cartesianToPolar(center, { x: 100, y: 20 })).toEqual({ radius: 80, angle: 90 })
+    expect(cartesianToPolar(center, { x: 150, y: 100 })).toEqual({ radius: 50, angle: 0 })
+    expect(cartesianToPolar(center, { x: 100, y: 160 }).angle).toBe(-90)
   })
 
   it('splits a full pie by value, counter-clockwise from the start angle', () => {

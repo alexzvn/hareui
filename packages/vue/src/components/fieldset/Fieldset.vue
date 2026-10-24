@@ -2,10 +2,10 @@
   <Primitive
     :as="as"
     data-slot="fieldset"
-    :role="native ? undefined : 'group'"
-    :aria-labelledby="!native && (legend || slots.legend) ? legendId : undefined"
+    :role="isNative ? undefined : 'group'"
+    :aria-labelledby="!isNative && (legend || slots.legend) ? legendId : undefined"
     :aria-describedby="description || slots.description ? descriptionId : undefined"
-    :aria-disabled="!native && disabled ? 'true' : undefined"
+    :aria-disabled="!isNative && disabled ? 'true' : undefined"
     :disabled="disabled || undefined"
     :data-disabled="disabled ? 'true' : undefined"
     :class="ui.base({ class: [props.ui?.base, props.class] })"
@@ -54,50 +54,6 @@
   </Primitive>
 </template>
 
-<script lang="ts">
-import type { PrimitiveProps } from 'reka-ui'
-import type { VNode } from 'vue'
-
-import type { ComponentSlots } from '@/types/tv'
-import type { ClassValue } from '@/utils/tv'
-
-import theme from './theme'
-
-type Fieldset = typeof theme
-
-export type FieldsetProps = {
-  /**
-   * The element or component to render as.
-   * @defaultValue 'fieldset'
-   */
-  as?: PrimitiveProps['as']
-  /** The legend text. */
-  legend?: string
-  /** Help text rendered below the legend. */
-  description?: string
-  /**
-   * Disables every control inside, like a native `<fieldset disabled>`, including div-based ones.
-   * @defaultValue false
-   */
-  disabled?: boolean
-  /** Additional classes merged into the root element. */
-  class?: ClassValue
-  /** Per-slot class overrides. */
-  ui?: ComponentSlots<Fieldset>
-}
-
-export type FieldsetSlots = {
-  /** The legend content. Replaces the `legend` prop. */
-  legend?: () => VNode[]
-  /** The description content. Replaces the `description` prop. */
-  description?: () => VNode[]
-  /** Form fields, rendered inside the field group. */
-  default?: () => VNode[]
-  /** Action buttons or helper text below the fields. */
-  actions?: () => VNode[]
-}
-</script>
-
 <script setup lang="ts">
 import { Primitive } from 'reka-ui'
 import { computed, provide, useId } from 'vue'
@@ -106,6 +62,8 @@ import Description from '@/components/description/Description.vue'
 import { useComponentUI } from '@/composables/useComponentUI'
 
 import { fieldsetContextKey, useFieldsetDisabled } from './context'
+import type { FieldsetProps, FieldsetSlots } from './Fieldset.types'
+import theme from './theme'
 
 const props = withDefaults(defineProps<FieldsetProps>(), { as: 'fieldset' })
 const slots = defineSlots<FieldsetSlots>()
@@ -115,7 +73,7 @@ provide(fieldsetContextKey, { disabled: useFieldsetDisabled(() => props.disabled
 
 // A native `<fieldset>` is named by its `<legend>`; any other element gets the same group semantics through ARIA.
 // The description is announced with the group either way.
-const native = computed(() => props.as === 'fieldset')
+const isNative = computed(() => props.as === 'fieldset')
 const baseId = useId()
 const legendId = `${baseId}-legend`
 const descriptionId = `${baseId}-description`

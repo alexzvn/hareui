@@ -67,4 +67,4 @@ export type {
   ChartRadialBarSlots,
 } from './ChartRadialBar.types'
 
-export type { ChartPolarCenterSlotProps } from './polar'
+export type { ChartPolarCenterSlotProps } from './polar-context'

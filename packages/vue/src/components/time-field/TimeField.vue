@@ -53,152 +53,26 @@
   </TimeFieldRoot>
 </template>
 
-<script lang="ts">
-import type { AnyTime } from '@internationalized/date'
-import type { TimeFieldRootProps, TimeValue } from 'reka-ui'
-import type { VNode } from 'vue'
-
-import type { DateInputGroupProps } from '@/components/date-input-group/DateInputGroup.vue'
-import dateInputGroupTheme from '@/components/date-input-group/theme'
-import type { ValidationBehavior } from '@/components/form/context'
-import type { FormFieldProps } from '@/components/form/types'
-import type { ValidateFn, ValidationResult } from '@/composables/useFieldValidation'
-import type { ComponentSlots } from '@/types/tv'
-import type { ClassValue } from '@/utils/tv'
-
-import theme from './theme'
-
-type TimeField = typeof theme
-type DateInputGroup = typeof dateInputGroupTheme
-
-// Reka doesn't export these as standalone types; derive them from the (exported) root props instead.
-type HourCycle = NonNullable<TimeFieldRootProps['hourCycle']>
-type TimeStep = NonNullable<TimeFieldRootProps['step']>
-
-export type TimeFieldProps = {
-  /** Label text rendered above the group. */
-  label?: string
-  /** Helper text rendered below the group. Hidden while the field is invalid. */
-  description?: string
-  /** Error message rendered below the group while invalid. Defaults to the validation errors. */
-  errorMessage?: string
-  /**
-   * The id of the field; label, description and error ids derive from it.
-   * @defaultValue useId()
-   */
-  id?: string
-  /** The name of the value, used when submitting a form. */
-  name?: string
-  /** The initial value when uncontrolled (no `v-model`). */
-  defaultValue?: TimeValue
-  /** The placeholder time, used to determine which segments to show when no time is selected. Use `v-model:placeholder` to control it. */
-  placeholder?: TimeValue
-  /** The placeholder time when uncontrolled. */
-  defaultPlaceholder?: TimeValue
-  /**
-   * The granularity of the field: which segments are rendered, up to and including this unit.
-   * @defaultValue 'minute'
-   */
-  granularity?: 'hour' | 'minute' | 'second'
-  /** The hour cycle used to format the time. Defaults to the locale's preference. */
-  hourCycle?: HourCycle
-  /**
-   * The stepping interval for the time segments.
-   * @defaultValue 1
-   */
-  step?: TimeStep
-  /**
-   * Whether to snap the value to the nearest `step` increment after input.
-   * @defaultValue false
-   */
-  stepSnapping?: boolean
-  /** Whether to hide the time zone segment. */
-  hideTimeZone?: boolean
-  /** The minimum selectable time. */
-  minValue?: TimeValue
-  /** The maximum selectable time. */
-  maxValue?: TimeValue
-  /** The locale used to format the field. Defaults to the `ConfigProvider` locale. */
-  locale?: string
-  /**
-   * Visual variant of the group.
-   * @defaultValue 'primary'
-   */
-  variant?: 'primary' | 'secondary'
-  /**
-   * Whether the field takes the full width of its container.
-   * @defaultValue false
-   */
-  fullWidth?: boolean
-  /**
-   * Whether the field is disabled.
-   * @defaultValue false
-   */
-  disabled?: boolean
-  /**
-   * Whether the field is invalid. Overrides validation when set.
-   * @defaultValue undefined
-   */
-  invalid?: boolean
-  /**
-   * Whether the field is required.
-   * @defaultValue false
-   */
-  required?: boolean
-  /**
-   * Whether the value can be selected but not changed.
-   * @defaultValue false
-   */
-  readonly?: boolean
-  /** Validates the committed value. Return an error message (or several) when invalid. */
-  validate?: ValidateFn<TimeValue>
-  /**
-   * `native` blocks form submission and shows errors on commit or submit; `aria` shows errors in realtime.
-   * Defaults to the surrounding `Form`.
-   * @defaultValue 'native'
-   */
-  validationBehavior?: ValidationBehavior
-  /** Additional classes merged into the root element. */
-  class?: ClassValue
-  /** Per-slot class overrides. `group`, `input`, `segment`, `prefix` and `suffix` are the internal `date-input-group`'s. */
-  ui?: ComponentSlots<TimeField> & { group?: ComponentSlots<DateInputGroup>['base'] } & Pick<
-      ComponentSlots<DateInputGroup>,
-      'input' | 'segment' | 'prefix' | 'suffix'
-    >
-} & FormFieldProps
-
-export type TimeFieldSlots = {
-  /** Label content. Replaces the `label` prop. */
-  label?: () => VNode[]
-  /** Prefix content, rendered before the segments (e.g. an icon). */
-  prefix?: () => VNode[]
-  /** Suffix content, rendered after the segments (e.g. an icon). */
-  suffix?: () => VNode[]
-  /** Description content. Replaces the `description` prop. */
-  description?: () => VNode[]
-  /** Error content, rendered while invalid. Replaces the `errorMessage` prop. */
-  error?: (props: ValidationResult) => VNode[]
-}
-
-export type TimeFieldEmits = {
-  /** Emitted when the displayed placeholder time changes. */
-  'update:placeholder': [value: TimeValue]
-}
-</script>
-
 <script setup lang="ts">
+import type { AnyTime } from '@internationalized/date'
 import { TimeFieldInput, TimeFieldRoot } from 'reka-ui'
+import type { TimeValue } from 'reka-ui'
 import type { ComponentPublicInstance } from 'vue'
 import { computed, useTemplateRef } from 'vue'
 
-import DateInputGroup, {
+import type { DateInputGroupProps } from '@/components/date-input-group/DateInputGroup.types'
+import {
   dropDanglingTimeZoneSeparator,
   wrapBidiIsolate,
-} from '@/components/date-input-group/DateInputGroup.vue'
+} from '@/components/date-input-group/dateInputGroup.utils'
+import DateInputGroup from '@/components/date-input-group/DateInputGroup.vue'
 import { useFieldsetDisabled } from '@/components/fieldset/context'
 import { useComponentUI } from '@/composables/useComponentUI'
 import { useFieldChrome } from '@/composables/useFieldChrome'
 import { useFieldValidation } from '@/composables/useFieldValidation'
+
+import theme from './theme'
+import type { TimeFieldEmits, TimeFieldProps, TimeFieldSlots } from './TimeField.types'
 
 // `invalid: undefined`: an absent boolean would cast to `false`, which counts as controlled-valid and hides validation errors
 const props = withDefaults(defineProps<TimeFieldProps>(), { invalid: undefined })
@@ -213,10 +87,6 @@ const ui = useComponentUI('timeField', theme, () => ({ fullWidth: props.fullWidt
 
 const root = useTemplateRef<ComponentPublicInstance>('root')
 
-// React Aria's `useTimeFieldState` treats an out-of-range value as a builtin validation error, combined with
-// `validate`'s own errors the same way RAC's `mergeValidation` does (custom error wins when both apply); Reka
-// only tracks this internally per-segment (unreachable from outside), so it's computed here instead and fed
-// into `validate` so it follows `validationBehavior` like any other error.
 // `TimeValue.compare()` has incompatible call signatures across its `Time | CalendarDateTime | ZonedDateTime`
 // members, so bounds are compared by time-of-day fields directly instead (matches HeroUI/React Aria semantics,
 // where `minValue`/`maxValue` constrain the time of day regardless of any date part).
@@ -226,9 +96,11 @@ const compareTimeOfDay = (a: AnyTime, b: AnyTime) => {
   )
 }
 
+const intlHourCycles = { 12: 'h12', 24: 'h23' } as const
+
 const formatTimeBoundary = (value: AnyTime) => {
   const reference = new Date(2020, 0, 1, value.hour, value.minute, value.second, value.millisecond)
-  const hourCycle = props.hourCycle === 12 ? 'h12' : props.hourCycle === 24 ? 'h23' : undefined
+  const hourCycle = props.hourCycle ? intlHourCycles[props.hourCycle] : undefined
 
   return new Intl.DateTimeFormat(props.locale ?? 'en-US', {
     hour: 'numeric',
@@ -237,6 +109,10 @@ const formatTimeBoundary = (value: AnyTime) => {
   }).format(reference)
 }
 
+// React Aria's `useTimeFieldState` treats an out-of-range value as a builtin validation error, combined with
+// `validate`'s own errors the same way RAC's `mergeValidation` does (custom error wins when both apply); Reka
+// only tracks this internally per-segment (unreachable from outside), so it's computed here instead and fed
+// into `validate` so it follows `validationBehavior` like any other error.
 const builtinValidate = (value: TimeValue) => {
   if (props.minValue && compareTimeOfDay(value, props.minValue) < 0)
     return `Value must be ${formatTimeBoundary(props.minValue)} or later.`
@@ -249,7 +125,9 @@ const builtinValidate = (value: TimeValue) => {
 
 const validate = (value: TimeValue) => {
   const custom = props.validate?.(value)
-  return custom && custom !== true ? custom : builtinValidate(value)
+  const hasCustomError = custom && custom !== true
+
+  return hasCustomError ? custom : builtinValidate(value)
 }
 
 const { validation, commitValidation } = useFieldValidation({

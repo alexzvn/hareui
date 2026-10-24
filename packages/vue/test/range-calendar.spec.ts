@@ -5,7 +5,7 @@ import { mount } from '@vue/test-utils'
 import { describe, expect, it } from 'vitest'
 import { defineComponent, nextTick, ref } from 'vue'
 
-import type { DateRange } from '@/components/range-calendar/RangeCalendar.vue'
+import type { DateRange } from '@/components/range-calendar/RangeCalendar.types'
 import RangeCalendar from '@/components/range-calendar/RangeCalendar.vue'
 
 import { expectAccessible } from './a11y'

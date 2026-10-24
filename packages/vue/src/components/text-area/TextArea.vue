@@ -18,70 +18,6 @@
   />
 </template>
 
-<script lang="ts">
-import type { ValidationBehavior } from '@/components/form/context'
-import type { FormFieldProps } from '@/components/form/types'
-import type { ValidateFn } from '@/composables/useFieldValidation'
-import type { ComponentSlots, ComponentVariants } from '@/types/tv'
-import type { ClassValue } from '@/utils/tv'
-
-import theme from './theme'
-
-type TextArea = typeof theme
-
-export type TextAreaProps = {
-  /** The id of the textarea. Defaults to the id provided by a surrounding `TextField`. */
-  id?: string
-  /** The name of the textarea, used when submitting a form. */
-  name?: string
-  /** Temporary text shown when the textarea is empty. */
-  placeholder?: string
-  /** The initial value when uncontrolled (no `v-model`). */
-  defaultValue?: string | number
-  /**
-   * Visual variant of the textarea. Defaults to the surrounding `TextField` variant.
-   * @defaultValue 'primary'
-   */
-  variant?: ComponentVariants<TextArea>['variant']
-  /**
-   * Whether the textarea takes the full width of its container.
-   * @defaultValue false
-   */
-  fullWidth?: boolean
-  /**
-   * Whether the textarea is disabled.
-   * @defaultValue false
-   */
-  disabled?: boolean
-  /**
-   * Whether the textarea is invalid.
-   * @defaultValue false
-   */
-  invalid?: boolean
-  /**
-   * Whether the textarea is required.
-   * @defaultValue false
-   */
-  required?: boolean
-  /**
-   * Whether the textarea can be selected but not changed. Defaults to the surrounding `TextField`.
-   * @defaultValue false
-   */
-  readonly?: boolean
-  /** Validates the value when used without a `TextField` (inside one, set `validate` on the TextField). */
-  validate?: ValidateFn<string | number>
-  /**
-   * Validation behavior when used without a `TextField`. Defaults to the surrounding `Form`.
-   * @defaultValue 'native'
-   */
-  validationBehavior?: ValidationBehavior
-  /** Additional classes merged into the root element. */
-  class?: ClassValue
-  /** Per-slot class overrides. */
-  ui?: ComponentSlots<TextArea>
-} & FormFieldProps
-</script>
-
 <script setup lang="ts">
 import { computed, getCurrentInstance, inject, useTemplateRef, watch } from 'vue'
 
@@ -89,6 +25,9 @@ import { useFieldsetDisabled } from '@/components/fieldset/context'
 import { textFieldContextKey } from '@/components/text-field/context'
 import { useComponentUI } from '@/composables/useComponentUI'
 import { useFieldValidation } from '@/composables/useFieldValidation'
+
+import type { TextAreaProps } from './TextArea.types'
+import theme from './theme'
 
 const props = withDefaults(defineProps<TextAreaProps>(), {
   fullWidth: undefined,
@@ -106,8 +45,11 @@ const field = inject(textFieldContextKey, null)
 // Inside a TextField, a TextArea without its own v-model uses the field's value; with one, it mirrors into the field
 // so the field's `validate` and form reset see what the user typed
 const vnodeProps = getCurrentInstance()?.vnode.props ?? {}
-const ownModel =
-  !field || ['modelValue', 'model-value', 'onUpdate:modelValue'].some((key) => key in vnodeProps)
+const hasVModel = ['modelValue', 'model-value', 'onUpdate:modelValue'].some(
+  (key) => key in vnodeProps,
+)
+
+const ownModel = !field || hasVModel
 
 const value = computed({
   get: () => (ownModel ? modelValue.value : field!.model.value),
@@ -135,7 +77,6 @@ if (field && ownModel) {
 }
 
 const name = computed(() => props.name ?? field?.name.value)
-
 const id = computed(() => props.id ?? field?.id.value)
 const variant = computed(() => props.variant ?? field?.variant.value)
 const fullWidth = computed(() => props.fullWidth ?? field?.fullWidth.value ?? false)

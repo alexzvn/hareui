@@ -6,4 +6,4 @@ export type {
   DateRangePickerProps,
   DateRangePickerSlots,
   DateRangeValue,
-} from './DateRangePicker.vue'
+} from './DateRangePicker.types'

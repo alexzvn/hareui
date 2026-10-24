@@ -107,7 +107,7 @@ import { computed, onBeforeUnmount, ref, useTemplateRef, watch } from 'vue'
 
 import type { ClassValue } from '@/utils/tv'
 
-import type { ListBoxItemSlotProps, ListBoxSection, ListBoxValue } from './ListBox.vue'
+import type { ListBoxItemSlotProps, ListBoxSection, ListBoxValue } from './ListBox.types'
 import type { CollectionBlock, CollectionRow } from './listBoxCollection'
 import { countRows } from './listBoxCollection'
 import ListBoxOption from './ListBoxOption.vue'

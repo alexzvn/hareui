@@ -5,4 +5,4 @@ export type {
   RangeCalendarEmits,
   RangeCalendarProps,
   RangeCalendarSlots,
-} from './RangeCalendar.vue'
+} from './RangeCalendar.types'

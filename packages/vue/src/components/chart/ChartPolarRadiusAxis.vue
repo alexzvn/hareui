@@ -46,7 +46,8 @@ import type {
   ChartPolarRadiusAxisSlots,
 } from './ChartPolarRadiusAxis.types'
 import { useChartContext } from './context'
-import { polarToCartesian, usePolarContext } from './polar'
+import { polarToCartesian } from './label'
+import { usePolarContext } from './polar-context'
 
 const props = withDefaults(defineProps<ChartPolarRadiusAxisProps>(), {
   angle: 0,

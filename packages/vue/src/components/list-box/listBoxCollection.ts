@@ -1,6 +1,6 @@
 // Internal: pure ListBox collection helpers: flattening and option text (behind `useCollectionModel`) and the filtered
 // collections of ComboBox and Autocomplete (RAC `filterCollection`).
-import type { ListBoxEntry, ListBoxItem, ListBoxSection } from './ListBox.vue'
+import type { ListBoxEntry, ListBoxItem, ListBoxSection } from './ListBox.types'
 
 export type CollectionRow = {
   kind: 'item'

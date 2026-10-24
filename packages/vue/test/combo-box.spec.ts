@@ -4,9 +4,9 @@ import { afterEach, describe, expect, it, vi } from 'vitest'
 import type { ComponentOptions } from 'vue'
 import { h, nextTick } from 'vue'
 
-import type { ComboBoxValidationValue, ComboBoxValue } from '@/components/combo-box/ComboBox.vue'
+import type { ComboBoxValidationValue, ComboBoxValue } from '@/components/combo-box/ComboBox.types'
 import ComboBox from '@/components/combo-box/ComboBox.vue'
-import type { ListBoxEntry } from '@/components/list-box/ListBox.vue'
+import type { ListBoxEntry } from '@/components/list-box/ListBox.types'
 
 import { expectAccessible } from './a11y'
 

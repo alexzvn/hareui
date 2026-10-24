@@ -132,169 +132,9 @@
   </PopoverRoot>
 </template>
 
-<script lang="ts">
-import type { DateFieldRootProps, DateValue } from 'reka-ui'
-import type { VNode } from 'vue'
-
-import type { DateInputGroupProps } from '@/components/date-input-group/DateInputGroup.vue'
-import dateInputGroupTheme from '@/components/date-input-group/theme'
-import type { ValidationBehavior } from '@/components/form/context'
-import type { FormFieldProps } from '@/components/form/types'
-import type { ValidateFn, ValidationResult } from '@/composables/useFieldValidation'
-import type { PortalTarget } from '@/config'
-import type { ComponentSlots } from '@/types/tv'
-import type { ClassValue } from '@/utils/tv'
-
-import theme from './theme'
-
-type DatePicker = typeof theme
-type DateInputGroup = typeof dateInputGroupTheme
-
-// Reka doesn't export these as standalone types; derive them from the (exported) root props instead.
-type Granularity = NonNullable<DateFieldRootProps['granularity']>
-type HourCycle = NonNullable<DateFieldRootProps['hourCycle']>
-type DateStep = NonNullable<DateFieldRootProps['step']>
-type DateUnavailableMatcher = NonNullable<DateFieldRootProps['isDateUnavailable']>
-
-export type DatePickerProps = {
-  /**
-   * Renders the calendar popover in a portal. `true` portals to `document.body`, a selector string or element is used as the teleport target, and `false` disables portalling.
-   * Falls back to `createHareUI({ portal })`, then `true`.
-   */
-  portal?: PortalTarget
-  /** Label text rendered above the group. */
-  label?: string
-  /** Accessible label for the calendar inside the popover. HeroUI's demos set this independently of `label`. */
-  calendarLabel?: string
-  /** Helper text rendered below the group. Hidden while the field is invalid. */
-  description?: string
-  /** Error message rendered below the group while invalid. Defaults to the validation errors. */
-  errorMessage?: string
-  /**
-   * The id of the field; label, description and error ids derive from it.
-   * @defaultValue useId()
-   */
-  id?: string
-  /** The name of the value, used when submitting a form. */
-  name?: string
-  /** The initial value when uncontrolled (no `v-model`). */
-  defaultValue?: DateValue
-  /** The placeholder date, used to determine which segments/month to show when no date is selected. */
-  placeholder?: DateValue
-  /** The placeholder date when uncontrolled. */
-  defaultPlaceholder?: DateValue
-  /**
-   * The granularity of the field: which segments are rendered, up to and including this unit.
-   * @defaultValue 'day' (a `CalendarDate` value), otherwise 'minute'
-   */
-  granularity?: Granularity
-  /** The hour cycle used to format times. Defaults to the locale's preference. */
-  hourCycle?: HourCycle
-  /**
-   * The stepping interval for the time segments.
-   * @defaultValue 1
-   */
-  step?: DateStep
-  /**
-   * Whether to snap the time value to the nearest `step` increment after input.
-   * @defaultValue false
-   */
-  stepSnapping?: boolean
-  /** Whether to hide the time zone segment. */
-  hideTimeZone?: boolean
-  /** The minimum selectable date. */
-  minValue?: DateValue
-  /** The maximum selectable date. */
-  maxValue?: DateValue
-  /** The locale used to format the field and calendar. Defaults to the `ConfigProvider` locale. */
-  locale?: string
-  /** A function that returns whether a given date is unavailable for selection. */
-  isDateUnavailable?: DateUnavailableMatcher
-  /**
-   * Visual variant of the group.
-   * @defaultValue 'primary'
-   */
-  variant?: 'primary' | 'secondary'
-  /**
-   * Whether the field takes the full width of its container.
-   * @defaultValue false
-   */
-  fullWidth?: boolean
-  /**
-   * Whether the picker is disabled.
-   * @defaultValue false
-   */
-  disabled?: boolean
-  /**
-   * Whether the field is invalid. Overrides validation when set.
-   * @defaultValue undefined
-   */
-  invalid?: boolean
-  /**
-   * Whether the field is required.
-   * @defaultValue false
-   */
-  required?: boolean
-  /**
-   * Whether the value can be selected but not changed.
-   * @defaultValue false
-   */
-  readonly?: boolean
-  /** Validates the committed value. Return an error message (or several) when invalid. */
-  validate?: ValidateFn<DateValue>
-  /**
-   * `native` blocks form submission and shows errors on commit or submit; `aria` shows errors in realtime.
-   * Defaults to the surrounding `Form`.
-   * @defaultValue 'native'
-   */
-  validationBehavior?: ValidationBehavior
-  /**
-   * The controlled open state of the popover.
-   */
-  open?: boolean
-  /**
-   * The open state of the popover when it is initially rendered.
-   * @defaultValue false
-   */
-  defaultOpen?: boolean
-  /** Additional classes merged into the root element. */
-  class?: ClassValue
-  /** Per-slot class overrides. `group`, `input` and `segment` are the internal `date-input-group`'s. */
-  ui?: ComponentSlots<DatePicker> & { group?: ComponentSlots<DateInputGroup>['base'] } & Pick<
-      ComponentSlots<DateInputGroup>,
-      'input' | 'segment'
-    >
-} & FormFieldProps
-
-export type DatePickerSlots = {
-  /** Label content. Replaces the `label` prop. */
-  label?: () => VNode[]
-  /** Replaces the default calendar icon inside the trigger. */
-  indicator?: () => VNode[]
-  /** Description content. Replaces the `description` prop. */
-  description?: () => VNode[]
-  /** Error content, rendered while invalid. Replaces the `errorMessage` prop. */
-  error?: (props: ValidationResult) => VNode[]
-  /**
-   * Replaces the default `Calendar` rendered inside the popover. Bind `value` and call `onSelect`
-   * on your own `Calendar` to keep it wired to the picker (see the `custom-styles` demo).
-   */
-  calendar?: (props: {
-    value: DateValue | null | undefined
-    onSelect: (value: DateValue) => void
-  }) => VNode[]
-}
-
-export type DatePickerEmits = {
-  /** Emitted when the displayed placeholder date changes. */
-  'update:placeholder': [value: DateValue]
-  /** Emitted when the popover open state changes. */
-  'update:open': [value: boolean]
-}
-</script>
-
 <script setup lang="ts">
 import { DateFormatter, getLocalTimeZone } from '@internationalized/date'
+import type { DateValue } from 'reka-ui'
 import {
   DateFieldInput,
   DateFieldRoot,
@@ -308,10 +148,12 @@ import type { ComponentPublicInstance } from 'vue'
 import { computed, ref, useAttrs, useTemplateRef, watch } from 'vue'
 
 import Calendar from '@/components/calendar/Calendar.vue'
-import DateInputGroup, {
+import type { DateInputGroupProps } from '@/components/date-input-group/DateInputGroup.types'
+import {
   dropDanglingTimeZoneSeparator,
   wrapBidiIsolate,
-} from '@/components/date-input-group/DateInputGroup.vue'
+} from '@/components/date-input-group/dateInputGroup.utils'
+import DateInputGroup from '@/components/date-input-group/DateInputGroup.vue'
 import { useFieldsetDisabled } from '@/components/fieldset/context'
 import { useComponentUI } from '@/composables/useComponentUI'
 import { useFieldChrome } from '@/composables/useFieldChrome'
@@ -319,7 +161,9 @@ import { useFieldValidation } from '@/composables/useFieldValidation'
 import { useInertOutside } from '@/composables/useInertOutside'
 import { usePortal } from '@/composables/usePortal'
 
+import type { DatePickerEmits, DatePickerProps, DatePickerSlots } from './DatePicker.types'
 import PopoverLabelledBy from './PopoverLabelledBy'
+import theme from './theme'
 
 // `invalid: undefined`/`open: undefined`: an absent boolean would cast to `false`, which would count as
 // controlled-valid/controlled-closed and hide validation errors / force the popover shut
@@ -342,6 +186,7 @@ const modelValue = defineModel<DateValue | null>()
 /** The popover's open state. Bind with `v-model:open`. */
 // Also mirrors a controlled `open` synchronously, so `useInertOutside` releases before Reka refocuses the trigger.
 const openLocal = ref(props.open ?? props.defaultOpen ?? false)
+
 watch(
   () => props.open,
   (open) => {
@@ -369,16 +214,16 @@ const trigger = useTemplateRef<HTMLButtonElement>('trigger')
 // forward them manually to `DateFieldRoot`, the field's actual visual/semantic root.
 const attrs = useAttrs()
 
+const formatDateBoundary = (value: DateValue) => {
+  const formatter = new DateFormatter(props.locale ?? 'en-US', { dateStyle: 'medium' })
+
+  return formatter.format(value.toDate(getLocalTimeZone()))
+}
+
 // React Aria's `useDateFieldState` treats an out-of-range/unavailable value as a builtin validation error,
 // combined with `validate`'s own errors the same way RAC's `mergeValidation` does (custom error wins when both
 // apply); Reka only tracks this internally per-segment (unreachable from outside), so it's computed here instead
 // and fed into `validate` so it follows `validationBehavior` like any other error.
-const formatDateBoundary = (value: DateValue) => {
-  return new DateFormatter(props.locale ?? 'en-US', { dateStyle: 'medium' }).format(
-    value.toDate(getLocalTimeZone()),
-  )
-}
-
 const builtinValidate = (value: DateValue) => {
   if (props.minValue && value.compare(props.minValue) < 0)
     return `Value must be ${formatDateBoundary(props.minValue)} or later.`
@@ -396,11 +241,16 @@ const validate = (value: DateValue) => {
   return custom && custom !== true ? custom : builtinValidate(value)
 }
 
+// Untouched + uncontrolled: `modelValue` is `undefined` until the first `onUpdate`, so fall back to
+// `defaultValue`. A controlled field explicitly cleared to `null` stays `null`, not fall back.
+const currentValue = () => {
+  const value = modelValue.value === undefined ? props.defaultValue : modelValue.value
+
+  return value ?? undefined
+}
+
 const { validation, commitValidation } = useFieldValidation({
-  // Untouched + uncontrolled: `modelValue` is `undefined` until the first `onUpdate`, so fall back to
-  // `defaultValue`. A controlled field explicitly cleared to `null` stays `null`, not fall back.
-  value: () =>
-    (modelValue.value === undefined ? props.defaultValue : modelValue.value) ?? undefined,
+  value: currentValue,
   validate: () => validate,
   invalid: () => props.invalid,
   validationBehavior: () => props.validationBehavior,
@@ -438,13 +288,9 @@ const onCalendarUpdate = (value: DateValue | DateValue[] | undefined) => {
 // React Aria's `useDatePickerGroup`: Alt+ArrowDown/ArrowUp on a segment opens the calendar instead of
 // stepping the segment. Captured on the field root so it runs before the segment's own handler.
 const onFieldKeydown = (event: KeyboardEvent) => {
-  if (
-    !event.altKey ||
-    (event.key !== 'ArrowDown' && event.key !== 'ArrowUp') ||
-    disabled.value ||
-    props.readonly
-  )
-    return
+  const isVerticalArrow = event.key === 'ArrowDown' || event.key === 'ArrowUp'
+  const isOpenShortcut = event.altKey && isVerticalArrow
+  if (!isOpenShortcut || disabled.value || props.readonly) return
 
   event.preventDefault()
   event.stopPropagation()
@@ -466,29 +312,32 @@ const onEscapeKeyDown = (event: KeyboardEvent) => {
 
 // React Aria's calendar takes focus on open (its focused date: the value, else the placeholder, else today, else
 // the first available day). Reka's PopoverContent would focus the first tabbable (the year-picker trigger) instead.
-const onOpenAutoFocus = (event: Event) => {
-  const content = event.target as HTMLElement | null
+const findInitialFocusCell = (content: HTMLElement | null) => {
+  const focusDate = currentValue() ?? props.placeholder ?? props.defaultPlaceholder
 
-  const focusDate =
-    (modelValue.value === undefined ? props.defaultValue : modelValue.value) ??
-    props.placeholder ??
-    props.defaultPlaceholder
+  const focusDateCell = focusDate
+    ? content?.querySelector<HTMLElement>(
+        `[data-value="${focusDate.toString().slice(0, 10)}"]:not([data-outside-view])`,
+      )
+    : null
 
-  const cell =
-    (focusDate
-      ? content?.querySelector<HTMLElement>(
-          `[data-value="${focusDate.toString().slice(0, 10)}"]:not([data-outside-view])`,
-        )
-      : null) ??
-    content?.querySelector<HTMLElement>('[data-today]:not([data-outside-view])') ??
+  const todayCell = () =>
+    content?.querySelector<HTMLElement>('[data-today]:not([data-outside-view])')
+
+  const firstAvailableCell = () =>
     content?.querySelector<HTMLElement>(
       '[data-value]:not([data-outside-view]):not([data-disabled]):not([data-unavailable])',
     )
 
-  if (cell) {
-    event.preventDefault()
-    cell.focus()
-  }
+  return focusDateCell ?? todayCell() ?? firstAvailableCell()
+}
+
+const onOpenAutoFocus = (event: Event) => {
+  const cell = findInitialFocusCell(event.target as HTMLElement | null)
+  if (!cell) return
+
+  event.preventDefault()
+  cell.focus()
 }
 
 const { id, labelId, hasLabel, describedBy, FieldLabel, FieldDescription, FieldError } =

@@ -6,7 +6,7 @@ import type {
   ChartTooltipProps,
   ChartTooltipSlotProps,
 } from '@/components/chart/ChartTooltip.types'
-import type { ChartPolarCenterSlotProps } from '@/components/chart/polar'
+import type { ChartPolarCenterSlotProps } from '@/components/chart/polar-context'
 import type {
   ChartIndexKey,
   ChartLegendItem,

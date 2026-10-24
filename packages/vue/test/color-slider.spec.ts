@@ -4,7 +4,7 @@ import { describe, expect, it, vi } from 'vitest'
 import { h, nextTick } from 'vue'
 
 import { ColorPickerContextKey } from '@/components/color-picker/context'
-import type { ColorSliderProps } from '@/components/color-slider/ColorSlider.vue'
+import type { ColorSliderProps } from '@/components/color-slider/ColorSlider.types'
 import ColorSlider from '@/components/color-slider/ColorSlider.vue'
 
 import { expectAccessible } from './a11y'

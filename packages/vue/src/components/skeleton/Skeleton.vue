@@ -4,57 +4,15 @@
   </Primitive>
 </template>
 
-<script lang="ts">
-import type { PrimitiveProps } from 'reka-ui'
-import type { VNode } from 'vue'
-
-import type { ComponentSlots, ComponentVariants } from '@/types/tv'
-import type { ClassValue } from '@/utils/tv'
-
-import theme from './theme'
-
-type Skeleton = typeof theme
-
-export type SkeletonProps = {
-  /**
-   * The element or component to render as.
-   * @defaultValue 'div'
-   */
-  as?: PrimitiveProps['as']
-  /**
-   * Animation type. When omitted, the `--skeleton-animation` CSS variable on `:root`
-   * (`shimmer`, `pulse` or `none`) decides, falling back to `shimmer`.
-   */
-  animationType?: ComponentVariants<Skeleton>['animationType']
-  /** Additional classes merged into the root element. */
-  class?: ClassValue
-  /** Per-slot class overrides. */
-  ui?: ComponentSlots<Skeleton>
-}
-
-export type SkeletonSlots = {
-  /** Optional content rendered inside the placeholder. */
-  default?: () => VNode[]
-}
-
-// `null` = not read yet. Read once per page, like HeroUI's cached `useCSSVariable`.
-let cssAnimationCache: string | undefined | null = null
-
-const readCssAnimation = (): string | undefined => {
-  if (cssAnimationCache === null)
-    cssAnimationCache =
-      getComputedStyle(document.documentElement).getPropertyValue('--skeleton-animation').trim() ||
-      undefined
-
-  return cssAnimationCache
-}
-</script>
-
 <script setup lang="ts">
 import { Primitive } from 'reka-ui'
 import { onMounted, ref } from 'vue'
 
 import { useComponentUI } from '@/composables/useComponentUI'
+
+import { readCssAnimation } from './cssAnimation'
+import type { SkeletonProps, SkeletonSlots } from './Skeleton.types'
+import theme from './theme'
 
 const props = withDefaults(defineProps<SkeletonProps>(), { as: 'div' })
 defineSlots<SkeletonSlots>()
@@ -62,6 +20,7 @@ defineSlots<SkeletonSlots>()
 // Resolved after mount so server and client render the same markup (HeroUI returns
 // undefined during SSR too); the default `shimmer` matches the default variable.
 const cssAnimation = ref<string>()
+
 onMounted(() => {
   cssAnimation.value = readCssAnimation()
 })

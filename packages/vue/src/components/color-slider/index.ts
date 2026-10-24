@@ -5,4 +5,4 @@ export type {
   ColorSliderProps,
   ColorSliderSlotProps,
   ColorSliderSlots,
-} from './ColorSlider.vue'
+} from './ColorSlider.types'

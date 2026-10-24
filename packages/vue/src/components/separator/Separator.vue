@@ -9,45 +9,6 @@
   </SeparatorPrimitive>
 </template>
 
-<script lang="ts">
-import type { PrimitiveProps } from 'reka-ui'
-import type { VNode } from 'vue'
-
-import type { ComponentSlots, ComponentVariants } from '@/types/tv'
-import type { ClassValue } from '@/utils/tv'
-
-import theme from './theme'
-
-type Separator = typeof theme
-
-export type SeparatorProps = {
-  /**
-   * The element or component to render as.
-   * @defaultValue 'div'
-   */
-  as?: PrimitiveProps['as']
-  /**
-   * The orientation of the separator. Inside a Toolbar it defaults to the one perpendicular to the toolbar.
-   * @defaultValue 'horizontal'
-   */
-  orientation?: ComponentVariants<Separator>['orientation']
-  /**
-   * The visual variant of the separator.
-   * @defaultValue 'default'
-   */
-  variant?: ComponentVariants<Separator>['variant']
-  /** Additional classes merged into the root element. */
-  class?: ClassValue
-  /** Per-slot class overrides. */
-  ui?: ComponentSlots<Separator>
-}
-
-export type SeparatorSlots = {
-  /** Content rendered inside the separator (uncommon; HeroUI's separator is normally empty). */
-  default?: () => VNode[]
-}
-</script>
-
 <script setup lang="ts">
 import { Separator as SeparatorPrimitive } from 'reka-ui'
 import { computed, inject } from 'vue'
@@ -55,19 +16,21 @@ import { computed, inject } from 'vue'
 import { toolbarContextKey } from '@/components/toolbar/context'
 import { useComponentUI } from '@/composables/useComponentUI'
 
+import type { SeparatorProps, SeparatorSlots } from './Separator.types'
+import theme from './theme'
+
 const props = defineProps<SeparatorProps>()
 defineSlots<SeparatorSlots>()
 
+// Inside a Toolbar the separator defaults to the orientation perpendicular to the toolbar
 const toolbar = inject(toolbarContextKey, null)
-const resolvedOrientation = computed(
-  () =>
-    props.orientation ??
-    (toolbar
-      ? toolbar.orientation.value === 'horizontal'
-        ? 'vertical'
-        : 'horizontal'
-      : 'horizontal'),
-)
+const resolvedOrientation = computed(() => {
+  if (!toolbar) return props.orientation ?? 'horizontal'
+
+  const perpendicular = toolbar.orientation.value === 'horizontal' ? 'vertical' : 'horizontal'
+
+  return props.orientation ?? perpendicular
+})
 
 const ui = useComponentUI('separator', theme, () => ({
   orientation: resolvedOrientation.value,

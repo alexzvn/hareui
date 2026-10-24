@@ -11,7 +11,9 @@ import ChartPolarRadiusAxis from '@/components/chart/ChartPolarRadiusAxis.vue'
 import ChartRadar from '@/components/chart/ChartRadar.vue'
 import type { ChartTooltipSlotProps } from '@/components/chart/ChartTooltip.types'
 import ChartTooltip from '@/components/chart/ChartTooltip.vue'
-import { angleInSweep, angleTickAnchor, polygonPath } from '@/components/chart/polar'
+import { angleTickAnchor } from '@/components/chart/polar-axis'
+import { angleInSweep } from '@/components/chart/polar-geometry'
+import { polygonPath } from '@/components/chart/polar-paths'
 import RadarChart from '@/components/radar-chart/RadarChart.vue'
 
 import { expectAccessible } from './a11y'
@@ -64,11 +66,11 @@ describe('polar helpers', () => {
   })
 
   it('tests angles against a sweep in either direction', () => {
-    expect(angleInSweep(45, 90, -270)).toBe(true)
-    expect(angleInSweep(180, 225, -45)).toBe(true)
-    expect(angleInSweep(-90, 225, -45)).toBe(false)
-    expect(angleInSweep(-90, 0, 180)).toBe(false)
-    expect(angleInSweep(90, 0, 180)).toBe(true)
+    expect(angleInSweep(45, { startAngle: 90, endAngle: -270 })).toBe(true)
+    expect(angleInSweep(180, { startAngle: 225, endAngle: -45 })).toBe(true)
+    expect(angleInSweep(-90, { startAngle: 225, endAngle: -45 })).toBe(false)
+    expect(angleInSweep(-90, { startAngle: 0, endAngle: 180 })).toBe(false)
+    expect(angleInSweep(90, { startAngle: 0, endAngle: 180 })).toBe(true)
   })
 
   it('closes a polygon back to its first point', () => {

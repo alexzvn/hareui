@@ -3,7 +3,7 @@ import { afterEach, describe, expect, it } from 'vitest'
 import type { ComponentOptions } from 'vue'
 import { h, ref } from 'vue'
 
-import type { TagGroupProps } from '@/components/tag-group/TagGroup.vue'
+import type { TagGroupProps } from '@/components/tag-group/TagGroup.types'
 import TagGroup from '@/components/tag-group/TagGroup.vue'
 
 import { expectAccessible } from './a11y'

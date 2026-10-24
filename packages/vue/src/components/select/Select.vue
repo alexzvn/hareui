@@ -3,8 +3,8 @@
     ref="root"
     data-slot="select"
     v-bind="rootAttrs"
-    :data-focused="focused || isOpen ? 'true' : undefined"
-    :data-focus-visible="focusVisible ? 'true' : undefined"
+    :data-focused="isFocused || isOpen ? 'true' : undefined"
+    :data-focus-visible="isFocusVisible ? 'true' : undefined"
     :data-open="isOpen ? 'true' : undefined"
     :data-disabled="disabled ? 'true' : undefined"
     :data-invalid="invalid ? 'true' : undefined"
@@ -28,17 +28,17 @@
           :disabled="disabled"
           :data-disabled="disabled ? 'true' : undefined"
           :data-pressed="isOpen ? 'true' : undefined"
-          :data-hovered="hovered ? 'true' : undefined"
-          :data-focused="focused ? 'true' : undefined"
-          :data-focus-visible="focusVisible ? 'true' : undefined"
+          :data-hovered="isHovered ? 'true' : undefined"
+          :data-focused="isFocused ? 'true' : undefined"
+          :data-focus-visible="isFocusVisible ? 'true' : undefined"
           :class="ui.trigger({ class: props.ui?.trigger })"
           @keydown="onTriggerKeydown"
           @focus="onTriggerFocus"
           @blur="onTriggerBlur"
           @pointerdown="onTriggerPointerdown"
           @mousedown="onTriggerMousedown"
-          @pointerenter="hovered = $event.pointerType === 'mouse'"
-          @pointerleave="hovered = false"
+          @pointerenter="isHovered = $event.pointerType === 'mouse'"
+          @pointerleave="isHovered = false"
         >
           <slot name="leading" />
           <span
@@ -156,7 +156,7 @@
         >
           <ListBox
             ref="listBox"
-            :model-value="multiple ? selectedValues : selectedKey"
+            :model-value="isMultiple ? selectedValues : selectedKey"
             :items="items"
             :selection-mode="selectionMode"
             highlight-on-hover
@@ -198,7 +198,7 @@
       <select
         tabindex="-1"
         :name="name"
-        :multiple="multiple"
+        :multiple="isMultiple"
         :required="required && (validationBehavior ?? 'native') === 'native'"
         :disabled="disabled"
         :autocomplete="autocomplete"
@@ -218,198 +218,21 @@
   </div>
 </template>
 
-<script lang="ts">
-import type { VNode } from 'vue'
-
-import type { ValidationBehavior } from '@/components/form/context'
-import type { FormFieldProps } from '@/components/form/types'
-import type {
-  ListBoxEntry,
-  ListBoxItem,
-  ListBoxItemSlotProps,
-  ListBoxSection,
-  ListBoxValue,
-} from '@/components/list-box/ListBox.vue'
-import type { ValidateFn, ValidationResult } from '@/composables/useFieldValidation'
-import type { PortalTarget } from '@/config'
-import type { ComponentSlots } from '@/types/tv'
-import type { ClassValue } from '@/utils/tv'
-
-import theme from './theme'
-
-type Select = typeof theme
-
-export type SelectValue = ListBoxValue | ListBoxValue[] | null
-
-export type SelectProps<T extends ListBoxItem = ListBoxItem> = {
-  /**
-   * Renders the listbox popover in a portal. `true` portals to `document.body`, a selector string or element is used as the teleport target, and `false` disables portalling.
-   * Falls back to `createHareUI({ portal })`, then `true`.
-   */
-  portal?: PortalTarget
-  /** Options, sections (`{ type: 'section', label, items }`) and separators (`{ type: 'separator' }`), as in ListBox. */
-  items?: ListBoxEntry<T>[]
-  /**
-   * Whether one or several options can be selected. In `'multiple'` mode `v-model` is an array.
-   * @defaultValue 'single'
-   */
-  selectionMode?: 'single' | 'multiple'
-  /** The initial selection when uncontrolled (no `v-model`). */
-  defaultValue?: SelectValue
-  /**
-   * Text shown in the trigger while nothing is selected.
-   * @defaultValue 'Select an item'
-   */
-  placeholder?: string
-  /** Label text rendered above the trigger. */
-  label?: string
-  /** Helper text rendered below the trigger. Hidden while invalid. */
-  description?: string
-  /** Error text rendered below the trigger while invalid. Defaults to the validation messages. */
-  errorMessage?: string
-  /** Id of the trigger button. */
-  id?: string
-  /** Name of the hidden native `<select>`, submitted with forms. */
-  name?: string
-  /** `autocomplete` hint of the hidden native `<select>`. */
-  autocomplete?: string
-  /** Whether the popover is open (`v-model:open`). */
-  open?: boolean
-  /**
-   * Whether the popover starts open when uncontrolled.
-   * @defaultValue false
-   */
-  defaultOpen?: boolean
-  /**
-   * Whether to render a clear button in the trigger. Backspace / Delete on the trigger also clears.
-   * @defaultValue false
-   */
-  clearable?: boolean
-  /**
-   * Visual variant. Use `secondary` on surfaces.
-   * @defaultValue 'primary'
-   */
-  variant?: 'primary' | 'secondary'
-  /**
-   * Whether the select takes the full width of its container.
-   * @defaultValue false
-   */
-  fullWidth?: boolean
-  /**
-   * Side of the trigger the popover opens on.
-   * @defaultValue 'bottom'
-   */
-  side?: 'top' | 'right' | 'bottom' | 'left'
-  /**
-   * Alignment of the popover against the trigger.
-   * @defaultValue 'center'
-   */
-  align?: 'start' | 'center' | 'end'
-  /**
-   * Whether the select is disabled.
-   * @defaultValue false
-   */
-  disabled?: boolean
-  /**
-   * Whether a selection is required before the form can be submitted.
-   * @defaultValue false
-   */
-  required?: boolean
-  /** Controlled invalid state; overrides validation. */
-  invalid?: boolean
-  /** Custom validation, called with the current selection. Return an error message (or several) when invalid. */
-  validate?: ValidateFn<SelectValue>
-  /**
-   * `native` blocks form submission and shows errors on commit; `aria` shows errors in realtime without blocking.
-   * @defaultValue 'native' (or the enclosing Form's)
-   */
-  validationBehavior?: ValidationBehavior
-  /** Async options: shows the `#loading` slot after the last option and emits `load-more` at the end of the list (see ListBox `loading`). */
-  loading?: boolean
-  /** Additional classes merged into the root element. */
-  class?: ClassValue
-  /** Per-slot class overrides. */
-  ui?: ComponentSlots<Select>
-} & FormFieldProps
-
-export type SelectValueSlotProps<T extends ListBoxItem = ListBoxItem> = {
-  /** The selected options, in collection order. */
-  selectedItems: T[]
-  /** Whether nothing is selected. */
-  isPlaceholder: boolean
-  /** The placeholder, or the selected labels joined as a list. */
-  text: string
-}
-
-export type SelectSlots<T extends ListBoxItem = ListBoxItem> = {
-  /** Label content. Replaces `label`. */
-  label?: () => VNode[]
-  /** Content inside the trigger before the value. */
-  leading?: () => VNode[]
-  /** Trigger value content. Defaults to the selected label(s) or the placeholder. */
-  value?: (props: SelectValueSlotProps<T>) => VNode[]
-  /** Trigger indicator content. Defaults to a chevron. */
-  indicator?: (props: { open: boolean }) => VNode[]
-  /** Clear button content. Defaults to a close icon. */
-  clear?: () => VNode[]
-  /** Description content. Replaces `description`. */
-  description?: () => VNode[]
-  /** Error content, rendered while invalid. */
-  error?: (props: ValidationResult) => VNode[]
-  /** Whole content of each option (forwarded to ListBox `#item`). */
-  item?: (props: ListBoxItemSlotProps<T>) => VNode[]
-  /** Content before each option's text (ListBox `#item-leading`). */
-  'item-leading'?: (props: ListBoxItemSlotProps<T>) => VNode[]
-  /** Each option's label (ListBox `#item-label`). */
-  'item-label'?: (props: ListBoxItemSlotProps<T>) => VNode[]
-  /** Each option's description (ListBox `#item-description`). */
-  'item-description'?: (props: ListBoxItemSlotProps<T>) => VNode[]
-  /** Content after each option's text (ListBox `#item-trailing`). */
-  'item-trailing'?: (props: ListBoxItemSlotProps<T>) => VNode[]
-  /** Option checkmark content (ListBox `#indicator`). */
-  'item-indicator'?: (props: ListBoxItemSlotProps<T>) => VNode[]
-  /** Section heading (ListBox `#section-label`). */
-  'section-label'?: (props: { section: ListBoxSection<T> }) => VNode[]
-  /** Rendered in the popover when `items` is empty (ListBox `#empty`). */
-  empty?: () => VNode[]
-  /** Shown after the last option while `loading` is true (ListBox `#loading`). */
-  loading?: () => VNode[]
-}
-
-export type SelectEmits = {
-  /** The selection was cleared with the clear button or Backspace / Delete. */
-  clear: []
-  /** The popover opened or closed (`v-model:open`). */
-  'update:open': [value: boolean]
-  /** The end of the option list scrolled into view while `loading` is false (ListBox `load-more`). */
-  loadMore: []
-}
-</script>
-
 <script setup lang="ts" generic="T extends ListBoxItem = ListBoxItem">
-import {
-  injectPopoverRootContext,
-  PopoverContent,
-  PopoverPortal,
-  PopoverRoot,
-  PopoverTrigger,
-} from 'reka-ui'
-import {
-  computed,
-  defineComponent,
-  provide,
-  ref,
-  useAttrs,
-  useTemplateRef,
-  watch,
-  watchEffect,
-} from 'vue'
+import { PopoverContent, PopoverPortal, PopoverRoot, PopoverTrigger } from 'reka-ui'
+import { computed, provide, ref, useAttrs, useTemplateRef, watch } from 'vue'
 
 import { useFieldsetDisabled } from '@/components/fieldset/context'
+import type {
+  ListBoxItem,
+  ListBoxItemSlotProps,
+  ListBoxValue,
+} from '@/components/list-box/ListBox.types'
 import ListBox from '@/components/list-box/ListBox.vue'
 import { itemText } from '@/components/list-box/listBoxCollection'
 import listBoxTheme from '@/components/list-box/theme'
 import { useCollectionModel } from '@/components/list-box/useCollectionModel'
+import type { TypeaheadSource } from '@/components/list-box/useTypeahead'
 import { useTypeahead } from '@/components/list-box/useTypeahead'
 import { useComponentUI } from '@/composables/useComponentUI'
 import { useFieldChrome } from '@/composables/useFieldChrome'
@@ -418,13 +241,18 @@ import { keyboardModalityKey, useKeyboardModality } from '@/composables/useKeybo
 import { usePortal } from '@/composables/usePortal'
 
 import { usePressRelease } from './pressRelease'
+import type { SelectEmits, SelectProps, SelectSlots, SelectValue } from './Select.types'
+import theme from './theme'
+import { useSelectLabels } from './useSelectLabels'
+import { useSelectListFocus } from './useSelectListFocus'
 
 defineOptions({ inheritAttrs: false })
 
 // The popover's options mount after the press that opens it, so the modality is tracked from here
 provide(keyboardModalityKey, useKeyboardModality())
 
-// Absent booleans stay `undefined` (not `false`): `open` → uncontrolled, `invalid` → validation decides, `loading` → no sentinel
+// Absent booleans stay `undefined` (not `false`): `open` → uncontrolled, `invalid` → validation decides,
+// `loading` → no sentinel
 const props = withDefaults(defineProps<SelectProps<T>>(), {
   portal: undefined,
   selectionMode: 'single',
@@ -437,16 +265,16 @@ const props = withDefaults(defineProps<SelectProps<T>>(), {
   loading: undefined,
 })
 
-const portalTarget = usePortal(() => props.portal)
-const disabled = useFieldsetDisabled(() => props.disabled)
 const emit = defineEmits<SelectEmits>()
 const slots = defineSlots<SelectSlots<T>>()
 const modelValue = defineModel<SelectValue>()
 
-const multiple = computed(() => props.selectionMode === 'multiple')
+const portalTarget = usePortal(() => props.portal)
+const disabled = useFieldsetDisabled(() => props.disabled)
+const isMultiple = computed(() => props.selectionMode === 'multiple')
 
-// Selection: `v-model` wins when bound; otherwise local, seeded from `defaultValue`. Selected items keep collection
-// order (not RAC's selection order)
+// Selection: `v-model` wins when bound; otherwise local, seeded from `defaultValue`. Selected items keep
+// collection order (not RAC's selection order)
 const {
   options,
   selection,
@@ -462,13 +290,14 @@ const {
   items: () => props.items,
   model: modelValue,
   defaultValue: () => props.defaultValue,
-  isMultiple: () => multiple.value,
+  isMultiple: () => isMultiple.value,
   placeholder: () => props.placeholder,
   order: 'collection',
 })
 
 // Open state: the `open` prop wins when bound
 const uncontrolledOpen = ref(props.defaultOpen ?? false)
+
 const isOpen = computed({
   get: () => props.open ?? uncontrolledOpen.value,
   set: (value: boolean) => {
@@ -479,14 +308,16 @@ const isOpen = computed({
 
 const setOpen = (value: boolean) => {
   if (value && disabled.value) return
+
   isOpen.value = value
 }
 
 const root = useTemplateRef<HTMLElement>('root')
 const trigger = useTemplateRef<{ $el: HTMLElement } | HTMLElement>('trigger')
+
 const triggerEl = () => {
-  const t = trigger.value
-  return t instanceof HTMLElement ? t : t?.$el
+  const element = trigger.value
+  return element instanceof HTMLElement ? element : element?.$el
 }
 
 const { validation, commitValidation } = useFieldValidation<SelectValue>({
@@ -507,137 +338,123 @@ const onListUpdate = (value: ListBoxValue | ListBoxValue[] | null | undefined) =
   commitValidation()
 
   // Single selection closes the popover; focus returns to the trigger
-  if (!multiple.value) setOpen(false)
+  if (!isMultiple.value) setOpen(false)
 }
 
 const clear = () => {
   if (disabled.value || isPlaceholder.value) return
+
   clearSelection()
   commitValidation()
   emit('clear')
 }
 
-// RAC Select: typing on the closed trigger selects the first option, from the selected one onwards (inclusive, so a
-// repeated character stays put) and then from the top, whose text starts with the typed string. Space opens instead.
+const { setOpenStrategy, onOpenAutoFocus, onCloseAutoFocus } = useSelectListFocus({
+  isPlaceholder: () => isPlaceholder.value,
+  focusTrigger: () => triggerEl()?.focus(),
+})
+
+// RAC Select: typing on the closed trigger selects the first option, from the selected one onwards (inclusive, so
+// a repeated character stays put) and then from the top, whose text starts with the typed string. Space opens
+// instead.
 const typeahead = useTypeahead({ start: 'current' })
 
+const getTypeaheadSource = (): TypeaheadSource<T> => ({
+  items: options.value,
+  text: itemText,
+  disabled: (item) => !!item.disabled,
+  isCurrent: (item) => item.value === selectedValues.value[0],
+})
+
+const selectTypeaheadMatch = (match: T) => {
+  if (isMultiple.value) return
+
+  selection.value = match.value
+  commitValidation()
+}
+
+// RAC Select opens on mouse press start, and releasing over an option selects it (press-drag-release)
+let isTriggerPress = false
+
+const endTriggerPress = () => {
+  setTimeout(() => {
+    isTriggerPress = false
+  })
+}
+
+const onTriggerPointerdown = (event: PointerEvent) => {
+  const isPrimaryMouse = event.pointerType === 'mouse' && event.button === 0
+  if (!isPrimaryMouse || disabled.value) return
+
+  // The click that ends this press must not toggle again
+  isTriggerPress = true
+  triggerEl()?.focus()
+  setOpen(!isOpen.value)
+
+  window.addEventListener('pointerup', endTriggerPress, { once: true, capture: true })
+  window.addEventListener('pointercancel', endTriggerPress, { once: true, capture: true })
+}
+
+// Focus stays where the press put it (the trigger, or the list once open)
+const onTriggerMousedown = (event: MouseEvent) => {
+  if (isTriggerPress) event.preventDefault()
+}
+
+const onRootOpenChange = (value: boolean) => {
+  if (!isTriggerPress) setOpen(value)
+}
+
+const pressRelease = usePressRelease()
+
 const onTriggerKeydown = (event: KeyboardEvent) => {
-  triggerPress = false
+  isTriggerPress = false
   if (disabled.value) return
 
   if (event.key === 'ArrowDown' || event.key === 'ArrowUp') {
     event.preventDefault()
 
     // RAC focus strategy: ArrowUp opens on the last option (unless one is selected)
-    openStrategy = event.key === 'ArrowUp' ? 'last' : 'first'
+    setOpenStrategy(event.key === 'ArrowUp' ? 'last' : 'first')
     setOpen(true)
-  } else if (
-    (event.key === 'Backspace' || event.key === 'Delete') &&
-    props.clearable &&
-    !isOpen.value
-  ) {
+
+    return
+  }
+
+  const isClearKey = event.key === 'Backspace' || event.key === 'Delete'
+  if (isClearKey && props.clearable && !isOpen.value) {
     event.preventDefault()
     clear()
-  } else {
-    typeahead.onKeydown(
-      event,
-      () => ({
-        items: options.value,
-        text: itemText,
-        disabled: (item) => !!item.disabled,
-        isCurrent: (item) => item.value === selectedValues.value[0],
-      }),
-      (match) => {
-        if (!multiple.value) {
-          selection.value = match.value
-          commitValidation()
-        }
-      },
-    )
+
+    return
   }
+
+  typeahead.onKeydown(event, getTypeaheadSource, selectTypeaheadMatch)
 }
 
 // RAC Button / Select interaction states
-const hovered = ref(false)
-const focused = ref(false)
-const focusVisible = ref(false)
+const isHovered = ref(false)
+const isFocused = ref(false)
+const isFocusVisible = ref(false)
+
 const onTriggerFocus = (event: FocusEvent) => {
-  focused.value = true
-  focusVisible.value = event.target instanceof Element && event.target.matches(':focus-visible')
+  isFocused.value = true
+  isFocusVisible.value = event.target instanceof Element && event.target.matches(':focus-visible')
 }
 
 const onTriggerBlur = () => {
-  focused.value = false
-  focusVisible.value = false
+  isFocused.value = false
+  isFocusVisible.value = false
 }
 
-// Focus moves into the list on open, as in RAC: the first selected option, else the first option (the last one
-// when opened with ArrowUp), else (empty collection) the listbox itself
-const content = useTemplateRef<{ $el: HTMLElement }>('content')
-const listBox = useTemplateRef<{ highlightSelected: () => Promise<void> | undefined }>('listBox')
-let openStrategy: 'first' | 'last' = 'first'
-const onOpenAutoFocus = async (event: Event) => {
-  event.preventDefault()
-  const strategy = openStrategy
-  openStrategy = 'first'
-  await listBox.value?.highlightSelected()
-  const list = content.value?.$el.querySelector<HTMLElement>('[data-slot=list-box]')
-
-  // Reka's End key moves the highlight (and focus) to the last enabled option
-  if (list && strategy === 'last' && isPlaceholder.value)
-    list.dispatchEvent(new KeyboardEvent('keydown', { key: 'End', cancelable: true }))
-
-  if (list && !list.contains(document.activeElement)) list.focus()
-}
-
-// Reka's non-modal popover skips the trigger refocus after an outside press; RAC restores focus to the trigger
-// unless the press moved it to another element
-const onCloseAutoFocus = (event: Event) => {
-  event.preventDefault()
-  const active = document.activeElement
-  if (!active || active === document.body || content.value?.$el.contains(active))
-    triggerEl()?.focus()
-}
-
-// RAC Select opens on mouse press start, and releasing over an option selects it (press-drag-release)
-let triggerPress = false
-const onTriggerPointerdown = (event: PointerEvent) => {
-  if (event.pointerType !== 'mouse' || event.button !== 0 || disabled.value) return
-
-  // The click that ends this press must not toggle again
-  triggerPress = true
-  triggerEl()?.focus()
-  setOpen(!isOpen.value)
-
-  const release = () =>
-    setTimeout(() => {
-      triggerPress = false
-    })
-
-  window.addEventListener('pointerup', release, { once: true, capture: true })
-  window.addEventListener('pointercancel', release, { once: true, capture: true })
-}
-
-const onTriggerMousedown = (event: MouseEvent) => {
-  // Focus stays where the press put it (the trigger, or the list once open)
-  if (triggerPress) event.preventDefault()
-}
-
-const onRootOpenChange = (value: boolean) => {
-  if (!triggerPress) setOpen(value)
-}
-
-const pressRelease = usePressRelease()
-
-// The validation composable focuses the first native control of an invalid field; the hidden <select>
-// isn't focusable for users, so hand focus to the trigger (RAC marks it `data-react-aria-prevent-focus`)
+// The validation composable focuses the first native control of an invalid field; the hidden <select> isn't
+// focusable for users, so hand focus to the trigger (RAC marks it `data-react-aria-prevent-focus`)
 const onHiddenInvalid = () => {
   requestAnimationFrame(() => {
-    if (
-      document.activeElement instanceof HTMLSelectElement &&
-      root.value?.contains(document.activeElement)
-    )
-      triggerEl()?.focus({ focusVisible: true } as FocusOptions)
+    const active = document.activeElement
+    const isHiddenSelectFocused =
+      active instanceof HTMLSelectElement && !!root.value?.contains(active)
+
+    if (isHiddenSelectFocused) triggerEl()?.focus({ focusVisible: true } as FocusOptions)
   })
 }
 
@@ -654,45 +471,11 @@ const { id, labelId, hasLabel, describedBy, FieldLabel, FieldDescription, FieldE
     hideDescriptionWhenInvalid: true,
   })
 
-const valueId = computed(() => `${id.value}-value`)
-
-// `aria-labelledby` overrides `aria-label`, so an `aria-label`-only trigger references itself to keep that name (as RAC does)
-const triggerLabelledBy = computed(() =>
-  [
-    attrs['aria-labelledby'] as string | undefined,
-    hasLabel.value ? labelId.value : undefined,
-    attrs['aria-label'] && !attrs['aria-labelledby'] && !hasLabel.value ? id.value : undefined,
-    valueId.value,
-  ]
-    .filter(Boolean)
-    .join(' '),
-)
-
-const listLabelledBy = computed(
-  () =>
-    (attrs['aria-labelledby'] as string | undefined) ??
-    (hasLabel.value ? labelId.value : undefined),
-)
-
-// RAC names the popover dialog like the listbox (or after an `aria-label`-only trigger). Reka labels its content with
-// its own trigger id, which the trigger's `id` replaces, so point that id at the label instead (set before the trigger's
-// setup, which only fills it when empty)
-const popoverLabelledBy = computed(() => listLabelledBy.value ?? id.value)
-const PopoverLabel = defineComponent({
-  setup() {
-    const popover = injectPopoverRootContext()
-    watchEffect(() => {
-      popover.triggerId = popoverLabelledBy.value
-    })
-
-    return () => null
-  },
-})
-
-// Bound after the root's `data-slot`, so a wrapping component (CellSelect, InlineSelect) can rename the root
-const rootAttrs = computed(() => {
-  const { 'aria-label': _label, 'aria-labelledby': _labelledby, ...rest } = attrs
-  return rest
+const { valueId, triggerLabelledBy, listLabelledBy, PopoverLabel, rootAttrs } = useSelectLabels({
+  attrs,
+  id,
+  labelId,
+  hasLabel,
 })
 
 // ListBox item slots are forwarded; the option checkmark is `item-indicator` here (`indicator` is the chevron)
@@ -717,13 +500,13 @@ const ui = useComponentUI('select', theme, () => ({
 // Classes for the hidden indicator copies inside the value (RAC renders the item's own indicator there);
 // per-item variant override, as in ListBoxOption
 const listBoxUi = useComponentUI('listBox', listBoxTheme, () => ({}))
+
 const valueIndicatorClass = (item: ListBoxItem) => {
-  return (listBoxUi.value.indicator as (options?: { variant?: string }) => string)({
-    variant: item.variant,
-  })
+  const indicator = listBoxUi.value.indicator as (options?: { variant?: string }) => string
+  return indicator({ variant: item.variant })
 }
 
-watch(disabled, (disabled) => {
-  if (disabled) setOpen(false)
+watch(disabled, (isDisabled) => {
+  if (isDisabled) setOpen(false)
 })
 </script>

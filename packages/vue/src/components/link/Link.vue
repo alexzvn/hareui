@@ -17,57 +17,15 @@
   </Primitive>
 </template>
 
-<script lang="ts">
-import type { PrimitiveProps } from 'reka-ui'
-import type { VNode } from 'vue'
-
-import type { ComponentSlots } from '@/types/tv'
-import type { ClassValue } from '@/utils/tv'
-
-import theme from './theme'
-
-type Link = typeof theme
-
-export type LinkProps = {
-  /**
-   * The element or component to render as, e.g. a router link component.
-   * @defaultValue 'a'
-   */
-  as?: PrimitiveProps['as']
-  /** The URL the link points to. */
-  href?: string
-  /** Whether the link is disabled: sets `aria-disabled` and blocks navigation. */
-  disabled?: boolean
-  /**
-   * Show the icon (HeroUI's `Link.Icon`). Defaults to the external-link arrow; fill `#icon` to replace it.
-   * @defaultValue false
-   */
-  icon?: boolean
-  /**
-   * Which side of the text the icon goes on.
-   * @defaultValue 'end'
-   */
-  iconPlacement?: 'start' | 'end'
-  /** Additional classes merged into the root element. */
-  class?: ClassValue
-  /** Per-slot class overrides. */
-  ui?: ComponentSlots<Link>
-}
-
-export type LinkSlots = {
-  /** The link text. */
-  default?: () => VNode[]
-  /** Custom icon content; renders the icon wrapper even when `icon` is not set. */
-  icon?: () => VNode[]
-}
-</script>
-
 <script setup lang="ts">
 import { Primitive } from 'reka-ui'
 import { computed, h } from 'vue'
 
 import { useFieldsetDisabled } from '@/components/fieldset/context'
 import { useComponentUI } from '@/composables/useComponentUI'
+
+import type { LinkProps, LinkSlots } from './Link.types'
+import theme from './theme'
 
 const props = withDefaults(defineProps<LinkProps>(), { as: 'a', iconPlacement: 'end' })
 const slots = defineSlots<LinkSlots>()
@@ -114,16 +72,18 @@ const Icon = () =>
 const hrefless = computed(() => props.as === 'a' && (isDisabled.value || !props.href))
 
 const onClick = (event: MouseEvent) => {
-  if (isDisabled.value) {
-    event.preventDefault()
-    event.stopImmediatePropagation()
-  }
+  if (!isDisabled.value) return
+
+  event.preventDefault()
+  event.stopImmediatePropagation()
 }
 
 const onKeydown = (event: KeyboardEvent) => {
-  if (hrefless.value && !isDisabled.value && event.key === 'Enter' && !event.repeat) {
-    event.preventDefault()
-    ;(event.currentTarget as HTMLElement).click()
-  }
+  const isEnterPress = event.key === 'Enter' && !event.repeat
+  if (!hrefless.value || isDisabled.value || !isEnterPress) return
+
+  const link = event.currentTarget as HTMLElement
+  event.preventDefault()
+  link.click()
 }
 </script>

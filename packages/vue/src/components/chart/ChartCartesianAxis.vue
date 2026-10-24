@@ -57,7 +57,7 @@ import { computed } from 'vue'
 import type { ClassValue } from '@/utils/tv'
 
 import type { ChartAxisTickSlotProps } from './axis'
-import type { ResolvedAxis } from './cartesian'
+import type { ResolvedAxis } from './cartesian.types'
 import ChartLayer from './ChartLayer.vue'
 import { useChartContext } from './context'
 import type { ChartTick } from './scale'

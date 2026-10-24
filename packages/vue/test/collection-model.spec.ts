@@ -1,7 +1,7 @@
 import { describe, expect, it } from 'vitest'
 import { ref } from 'vue'
 
-import type { ListBoxEntry, ListBoxItem } from '@/components/list-box/ListBox.vue'
+import type { ListBoxEntry, ListBoxItem } from '@/components/list-box/ListBox.types'
 import type {
   CollectionModelOptions,
   CollectionValue,
