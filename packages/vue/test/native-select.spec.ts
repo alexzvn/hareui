@@ -3,7 +3,7 @@ import { describe, expect, it } from 'vitest'
 import { h, ref } from 'vue'
 
 import Fieldset from '@/components/fieldset/Fieldset.vue'
-import type { NativeSelectProps } from '@/components/native-select/NativeSelect.vue'
+import type { NativeSelectProps } from '@/components/native-select/NativeSelect.types'
 import NativeSelect from '@/components/native-select/NativeSelect.vue'
 
 import { expectAccessible } from './a11y'

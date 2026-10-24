@@ -4,7 +4,7 @@ import type { VNode } from 'vue'
 import { h, nextTick } from 'vue'
 
 import ChartLine from '@/components/chart/ChartLine.vue'
-import type { ChartTooltipSlotProps } from '@/components/chart/ChartTooltip.vue'
+import type { ChartTooltipSlotProps } from '@/components/chart/ChartTooltip.types'
 import ChartTooltip from '@/components/chart/ChartTooltip.vue'
 import ChartXAxis from '@/components/chart/ChartXAxis.vue'
 import LineChart from '@/components/line-chart/LineChart.vue'

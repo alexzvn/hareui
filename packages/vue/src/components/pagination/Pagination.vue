@@ -122,92 +122,18 @@
   </nav>
 </template>
 
-<script lang="ts">
-import type { VNode } from 'vue'
-
-import type { ComponentSlots, ComponentVariants } from '@/types/tv'
-import type { ClassValue } from '@/utils/tv'
-
-import theme from './theme'
-
-type Pagination = typeof theme
-
-export type PaginationEntry = number | 'ellipsis'
-
-export type PaginationProps = {
-  /** The current page (1-based). Use `v-model:page` to control it. */
-  page?: number
-  /**
-   * The page shown on first render (uncontrolled).
-   * @defaultValue 1
-   */
-  defaultPage?: number
-  /** The total number of pages. */
-  total: number
-  /**
-   * Collapse distant pages into ellipses: the first and last page, the current page and its
-   * neighbours (HeroUI's demo pattern). Ignored when `pages` is set.
-   * @defaultValue false
-   */
-  ellipsis?: boolean
-  /** The exact page entries to render, overriding the built-in list. */
-  pages?: PaginationEntry[]
-  /**
-   * Render only the previous / next buttons, without page links.
-   * @defaultValue false
-   */
-  hidePages?: boolean
-  /**
-   * The previous button's label. An empty string renders only the icon.
-   * @defaultValue 'Previous'
-   */
-  prevLabel?: string
-  /**
-   * The next button's label. An empty string renders only the icon.
-   * @defaultValue 'Next'
-   */
-  nextLabel?: string
-  /** Disable the previous button. Defaults to being on the first page. */
-  prevDisabled?: boolean
-  /** Disable the next button. Defaults to being on the last page. */
-  nextDisabled?: boolean
-  /**
-   * Disable every button.
-   * @defaultValue false
-   */
-  disabled?: boolean
-  /**
-   * The size of the pagination items.
-   * @defaultValue 'md'
-   */
-  size?: ComponentVariants<Pagination>['size']
-  /** Additional classes merged into the root element. */
-  class?: ClassValue
-  /** Per-slot class overrides. `link` applies to page links and previous / next buttons. */
-  ui?: ComponentSlots<Pagination>
-}
-
-export type PaginationSlots = {
-  /** Info shown before the links (HeroUI's `Pagination.Summary`). */
-  summary?: (props: { page: number; total: number }) => VNode[]
-  /** Replaces a page link's number. */
-  link?: (props: { page: number; active: boolean }) => VNode[]
-  /** Replaces the previous icon (HeroUI's `Pagination.PreviousIcon` children). */
-  prevIcon?: () => VNode[]
-  /** Replaces the next icon (HeroUI's `Pagination.NextIcon` children). */
-  nextIcon?: () => VNode[]
-}
-
-export type PaginationEmits = {
-  /** Emitted when the page changes. */
-  'update:page': [page: number]
-}
-</script>
-
 <script setup lang="ts">
 import { computed, ref } from 'vue'
 
 import { useComponentUI } from '@/composables/useComponentUI'
+
+import type {
+  PaginationEntry,
+  PaginationProps,
+  PaginationSlots,
+  PaginationEmits,
+} from './Pagination.types'
+import theme from './theme'
 
 // `page`/`prevDisabled`/`nextDisabled: undefined` keep the derived defaults when unbound.
 const props = withDefaults(defineProps<PaginationProps>(), {

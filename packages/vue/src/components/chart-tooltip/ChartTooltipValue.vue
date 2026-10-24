@@ -7,23 +7,8 @@
   </span>
 </template>
 
-<script lang="ts">
-import type { VNode } from 'vue'
-
-import type { ClassValue } from '@/utils/tv'
-
-export type ChartTooltipValueProps = {
-  /** Additional classes merged into the element. */
-  class?: ClassValue
-}
-
-export type ChartTooltipValueSlots = {
-  /** Series value, already formatted. */
-  default?: () => VNode[]
-}
-</script>
-
 <script setup lang="ts">
+import type { ChartTooltipValueProps, ChartTooltipValueSlots } from './ChartTooltipValue.types'
 import { useChartTooltipContext } from './context'
 
 const props = defineProps<ChartTooltipValueProps>()

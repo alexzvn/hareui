@@ -7,18 +7,8 @@
   />
 </template>
 
-<script lang="ts">
-import type { ClassValue } from '@/utils/tv'
-
-export type ChartTooltipIndicatorProps = {
-  /** CSS color of the marker, e.g. `var(--chart-1)`. */
-  color?: string
-  /** Additional classes merged into the element. */
-  class?: ClassValue
-}
-</script>
-
 <script setup lang="ts">
+import type { ChartTooltipIndicatorProps } from './ChartTooltipIndicator.types'
 import { useChartTooltipContext } from './context'
 
 const props = defineProps<ChartTooltipIndicatorProps>()

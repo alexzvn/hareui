@@ -1,6 +1,6 @@
 import type { ComputedRef, InjectionKey, Ref } from 'vue'
 
-import type { ButtonProps } from '@/components/button/Button.vue'
+import type { ButtonProps } from '@/components/button/Button.types'
 import type { ComponentSlots, ComponentUI } from '@/types/tv'
 
 import type buttonGroupTheme from './theme'

@@ -14,4 +14,4 @@ export type {
   RichTableProps,
   RichTableRow,
   RichTableSlots,
-} from './RichTable.vue'
+} from './RichTable.types'

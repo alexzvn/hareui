@@ -1,7 +1,7 @@
 import type { Component, PropType, VNode } from 'vue'
 import { defineComponent, getCurrentInstance, h } from 'vue'
 
-import type { NavigationMenuChildItem, NavigationMenuItem } from './NavigationMenu.vue'
+import type { NavigationMenuChildItem, NavigationMenuItem } from './NavigationMenu.types'
 
 const defined = (attrs: Record<string, unknown>): Record<string, unknown> => {
   return Object.fromEntries(Object.entries(attrs).filter(([, value]) => value !== undefined))

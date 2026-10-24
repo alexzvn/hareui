@@ -4,4 +4,4 @@ export type {
   CellColorPickerEmits,
   CellColorPickerProps,
   CellColorPickerSlots,
-} from './CellColorPicker.vue'
+} from './CellColorPicker.types'

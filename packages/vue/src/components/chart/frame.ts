@@ -3,7 +3,7 @@ import type { VNode } from 'vue'
 import type { ChartLegendProps } from '@/components/chart-legend'
 import type { ChartTooltipContentEntry } from '@/components/chart-tooltip'
 
-import type { ChartTooltipProps, ChartTooltipSlotProps } from './ChartTooltip.vue'
+import type { ChartTooltipProps, ChartTooltipSlotProps } from './ChartTooltip.types'
 import type { ChartLegendItem, ChartLegendPosition } from './series-config'
 import { resolveChartLegend } from './series-config'
 

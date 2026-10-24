@@ -2,7 +2,7 @@ import { mount } from '@vue/test-utils'
 import { afterEach, describe, expect, it } from 'vitest'
 import { h, ref } from 'vue'
 
-import type { CellSelectProps } from '@/components/cell-select/CellSelect.vue'
+import type { CellSelectProps } from '@/components/cell-select/CellSelect.types'
 import CellSelect from '@/components/cell-select/CellSelect.vue'
 import Fieldset from '@/components/fieldset/Fieldset.vue'
 

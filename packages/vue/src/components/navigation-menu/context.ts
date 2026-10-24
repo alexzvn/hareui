@@ -1,10 +1,10 @@
 import type { ComputedRef, InjectionKey, Slots, VNode } from 'vue'
 import { Comment, Fragment, h, inject } from 'vue'
 
-import type { TooltipProps } from '@/components/tooltip/Tooltip.vue'
+import type { TooltipProps } from '@/components/tooltip/Tooltip.types'
 import type { ClassValue } from '@/utils/tv'
 
-import type { NavigationMenuItem, NavigationMenuProps } from './NavigationMenu.vue'
+import type { NavigationMenuItem, NavigationMenuProps } from './NavigationMenu.types'
 import type theme from './theme'
 import type { NavigationMenuPopoverProps } from './types'
 

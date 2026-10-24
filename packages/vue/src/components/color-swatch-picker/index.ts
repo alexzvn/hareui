@@ -6,4 +6,4 @@ export type {
   ColorSwatchPickerProps,
   ColorSwatchPickerSlotProps,
   ColorSwatchPickerSlots,
-} from './ColorSwatchPicker.vue'
+} from './ColorSwatchPicker.types'

@@ -50,9 +50,9 @@
 import type { PrimitiveProps } from 'reka-ui'
 import type { VNode } from 'vue'
 
-import type { ButtonProps } from '@/components/button/Button.vue'
-import type { DrawerProps } from '@/components/drawer/Drawer.vue'
-import type { ModalProps } from '@/components/modal/Modal.vue'
+import type { ButtonProps } from '@/components/button/Button.types'
+import type { DrawerProps } from '@/components/drawer/Drawer.types'
+import type { ModalProps } from '@/components/modal/Modal.types'
 import type { ComponentSlots, ComponentUI, ComponentVariants } from '@/types/tv'
 import type { ClassValue } from '@/utils/tv'
 

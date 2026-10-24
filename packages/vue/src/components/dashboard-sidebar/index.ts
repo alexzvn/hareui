@@ -8,4 +8,4 @@ export type {
   DashboardSidebarResizeHandleSlotProps,
   DashboardSidebarSlots,
   DashboardSidebarToggleSlotProps,
-} from './DashboardSidebar.vue'
+} from './DashboardSidebar.types'

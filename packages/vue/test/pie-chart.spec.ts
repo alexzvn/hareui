@@ -7,7 +7,7 @@ import { h, nextTick } from 'vue'
 import ChartCell from '@/components/chart/ChartCell.vue'
 import ChartLabel from '@/components/chart/ChartLabel.vue'
 import ChartPie from '@/components/chart/ChartPie.vue'
-import type { ChartTooltipSlotProps } from '@/components/chart/ChartTooltip.vue'
+import type { ChartTooltipSlotProps } from '@/components/chart/ChartTooltip.types'
 import ChartTooltip from '@/components/chart/ChartTooltip.vue'
 import { percentValue } from '@/components/chart/percent'
 import {

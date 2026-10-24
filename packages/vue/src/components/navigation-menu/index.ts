@@ -9,4 +9,4 @@ export type {
   NavigationMenuPopoverProps,
   NavigationMenuProps,
   NavigationMenuSlots,
-} from './NavigationMenu.vue'
+} from './NavigationMenu.types'

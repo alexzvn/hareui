@@ -8,7 +8,7 @@ import * as z from 'zod'
 
 import type { FormSubmitEvent } from '@/components/form'
 import Form from '@/components/form/Form.vue'
-import type { NumberStepperProps } from '@/components/number-stepper/NumberStepper.vue'
+import type { NumberStepperProps } from '@/components/number-stepper/NumberStepper.types'
 import NumberStepper from '@/components/number-stepper/NumberStepper.vue'
 
 import { expectAccessible } from './a11y'

@@ -6,4 +6,4 @@ export type {
   NativeSelectOption,
   NativeSelectProps,
   NativeSelectSlots,
-} from './NativeSelect.vue'
+} from './NativeSelect.types'

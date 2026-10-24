@@ -2,7 +2,7 @@ import { mount } from '@vue/test-utils'
 import { describe, expect, it } from 'vitest'
 import { h, ref } from 'vue'
 
-import type { InputOtpProps } from '@/components/input-otp/InputOtp.vue'
+import type { InputOtpProps } from '@/components/input-otp/InputOtp.types'
 import InputOtp from '@/components/input-otp/InputOtp.vue'
 
 import { expectAccessible } from './a11y'

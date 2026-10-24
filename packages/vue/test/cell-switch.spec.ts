@@ -2,7 +2,7 @@ import { flushPromises, mount } from '@vue/test-utils'
 import { describe, expect, it } from 'vitest'
 import { h, nextTick, ref } from 'vue'
 
-import type { CellSwitchProps } from '@/components/cell-switch/CellSwitch.vue'
+import type { CellSwitchProps } from '@/components/cell-switch/CellSwitch.types'
 import CellSwitch from '@/components/cell-switch/CellSwitch.vue'
 import Fieldset from '@/components/fieldset/Fieldset.vue'
 import Form from '@/components/form/Form.vue'

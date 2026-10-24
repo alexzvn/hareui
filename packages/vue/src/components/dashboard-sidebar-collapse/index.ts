@@ -3,4 +3,4 @@ export { default as DashboardSidebarCollapse } from './DashboardSidebarCollapse.
 export type {
   DashboardSidebarCollapseProps,
   DashboardSidebarCollapseSlots,
-} from './DashboardSidebarCollapse.vue'
+} from './DashboardSidebarCollapse.types'

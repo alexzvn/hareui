@@ -2,7 +2,7 @@ import { mount } from '@vue/test-utils'
 import { describe, expect, it } from 'vitest'
 import { createTextVNode } from 'vue'
 
-import type { PaginationProps, PaginationSlots } from '@/components/pagination/Pagination.vue'
+import type { PaginationProps, PaginationSlots } from '@/components/pagination/Pagination.types'
 import Pagination from '@/components/pagination/Pagination.vue'
 
 import { expectAccessible } from './a11y'

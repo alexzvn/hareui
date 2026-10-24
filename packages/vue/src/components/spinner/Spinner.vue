@@ -47,36 +47,13 @@
   </span>
 </template>
 
-<script lang="ts">
-import type { ComponentSlots, ComponentVariants } from '@/types/tv'
-import type { ClassValue } from '@/utils/tv'
-
-import theme from './theme'
-
-type Spinner = typeof theme
-
-export type SpinnerProps = {
-  /**
-   * Size of the spinner.
-   * @defaultValue 'md'
-   */
-  size?: ComponentVariants<Spinner>['size']
-  /**
-   * Color of the spinner.
-   * @defaultValue 'accent'
-   */
-  color?: ComponentVariants<Spinner>['color']
-  /** Additional classes merged into the root element. */
-  class?: ClassValue
-  /** Per-slot class overrides. */
-  ui?: ComponentSlots<Spinner>
-}
-</script>
-
 <script setup lang="ts">
 import { useId } from 'vue'
 
 import { useComponentUI } from '@/composables/useComponentUI'
+
+import type { SpinnerProps } from './Spinner.types'
+import theme from './theme'
 
 const props = defineProps<SpinnerProps>()
 

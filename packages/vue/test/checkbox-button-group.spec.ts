@@ -5,7 +5,7 @@ import type { VNodeChild } from 'vue'
 import { h, nextTick, ref } from 'vue'
 
 import CheckboxButtonGroup from '@/components/checkbox-button-group/CheckboxButtonGroup.vue'
-import type { CheckboxButtonGroupItemSlotProps } from '@/components/checkbox-button-group/CheckboxButtonGroupItem.vue'
+import type { CheckboxButtonGroupItemSlotProps } from '@/components/checkbox-button-group/CheckboxButtonGroupItem.types'
 import CheckboxButtonGroupItem from '@/components/checkbox-button-group/CheckboxButtonGroupItem.vue'
 import Fieldset from '@/components/fieldset/Fieldset.vue'
 import Form from '@/components/form/Form.vue'

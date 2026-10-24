@@ -2,7 +2,7 @@ import { mount } from '@vue/test-utils'
 import { describe, expect, it } from 'vitest'
 import { h, nextTick, ref } from 'vue'
 
-import type { SliderProps } from '@/components/slider/Slider.vue'
+import type { SliderProps } from '@/components/slider/Slider.types'
 import Slider from '@/components/slider/Slider.vue'
 
 import { expectAccessible } from './a11y'

@@ -2,7 +2,7 @@ import { mount } from '@vue/test-utils'
 import { describe, expect, it, vi } from 'vitest'
 import { defineComponent, h, nextTick, ref } from 'vue'
 
-import type { CheckboxProps } from '@/components/checkbox/Checkbox.vue'
+import type { CheckboxProps } from '@/components/checkbox/Checkbox.types'
 import Checkbox from '@/components/checkbox/Checkbox.vue'
 import Label from '@/components/label/Label.vue'
 

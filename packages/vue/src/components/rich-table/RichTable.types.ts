@@ -1,0 +1,271 @@
+import type {
+  Cell,
+  CellContext,
+  Column,
+  ColumnDef,
+  ColumnFiltersOptions,
+  ColumnPinningOptions,
+  ColumnSizingOptions,
+  CoreOptions,
+  ExpandedOptions,
+  FacetedOptions,
+  GlobalFilterOptions,
+  GroupingOptions,
+  Header,
+  HeaderContext,
+  PaginationOptions,
+  Row,
+  RowData,
+  RowPinningOptions,
+  RowSelectionOptions,
+  SortingOptions,
+  Table,
+  VisibilityOptions,
+} from '@tanstack/vue-table'
+import type { VirtualizerOptions } from '@tanstack/vue-virtual'
+import type { PrimitiveProps } from 'reka-ui'
+import type { WatchOptions } from 'vue'
+
+import type { ComponentSlots, ComponentVariants } from '@/types/tv'
+import type { ClassValue } from '@/utils/tv'
+
+import type theme from './theme'
+
+type RichTableTheme = typeof theme
+
+export type RichTableData = RowData
+export type RichTableRow<T extends RichTableData> = Row<T>
+export type RichTableHeader<T extends RichTableData, D = unknown> = Header<T, D>
+export type RichTableCell<T extends RichTableData, D = unknown> = Cell<T, D>
+export type RichTableColumnInstance<T extends RichTableData, D = unknown> = Column<T, D>
+export type RichTableHeaderContext<T extends RichTableData, D = unknown> = HeaderContext<T, D>
+export type RichTableCellContext<T extends RichTableData, D = unknown> = CellContext<T, D>
+
+/** The TanStack Table instance, exposed as `tableApi`. */
+export type RichTableApi<T extends RichTableData> = Table<T>
+
+/** `meta` of a column definition: classes, styles and spans merged into its header (`th`) and body (`td`) cells. */
+export type RichTableColumnMeta<T extends RichTableData = RichTableData, D = unknown> = {
+  class?: {
+    th?: string | ((header: Header<T, D>) => string)
+    td?: string | ((cell: Cell<T, D>) => string)
+  }
+  style?: {
+    th?:
+      | string
+      | Record<string, string>
+      | ((header: Header<T, D>) => string | Record<string, string>)
+    td?: string | Record<string, string> | ((cell: Cell<T, D>) => string | Record<string, string>)
+  }
+  colspan?: {
+    td?: string | ((cell: Cell<T, D>) => string)
+  }
+  rowspan?: {
+    td?: string | ((cell: Cell<T, D>) => string)
+  }
+}
+
+/** `meta` of the table: classes and styles merged into every body row (`tr`). */
+export type RichTableMeta<T extends RichTableData = RichTableData> = {
+  class?: {
+    tr?: string | ((row: Row<T>) => string)
+  }
+  style?: {
+    tr?: string | Record<string, string> | ((row: Row<T>) => string | Record<string, string>)
+  }
+}
+
+/** A TanStack column definition whose `meta` is typed as {@link RichTableColumnMeta}. */
+export type RichTableColumn<T extends RichTableData, D = unknown> = ColumnDef<T, D> & {
+  meta?: RichTableColumnMeta<T, D>
+}
+
+export type RichTableProps<T extends RichTableData = RichTableData> = {
+  /**
+   * The element or component this component should render as.
+   * @defaultValue 'div'
+   */
+  as?: PrimitiveProps['as']
+  /** The rows. A shallow copy is kept and replaced whenever `data` changes (deeply, see `watchOptions`). */
+  data?: T[]
+  /** TanStack column definitions. Defaults to one column per key of the first row, titled by the key. */
+  columns?: RichTableColumn<T>[]
+  /** Accessible caption, visually hidden. Replaced by the `#caption` slot. */
+  caption?: string
+  /** Table `meta`: `meta.class.tr` / `meta.style.tr` are merged into every body row. */
+  meta?: RichTableMeta<T>
+  /**
+   * Visual variant. Primary has a gray container with a card-style body; secondary is flat with transparent rows.
+   * @defaultValue 'primary'
+   */
+  variant?: ComponentVariants<RichTableTheme>['variant']
+  /**
+   * Enable virtualization for large datasets. Pass an object to configure the TanStack virtualizer.
+   * Row pinning is not supported when virtualization is enabled.
+   * @see https://tanstack.com/virtual/latest/docs/api/virtualizer#options
+   * @defaultValue false
+   */
+  virtualize?:
+    | boolean
+    | (Partial<
+        Omit<VirtualizerOptions<Element, Element>, 'count' | 'estimateSize' | 'overscan'>
+      > & {
+        /**
+         * Virtualize against an external scroll element instead of the table's own root.
+         * Pair with `scrollMargin` set to the table's offset from the scroll element's start.
+         * @defaultValue undefined
+         */
+        getScrollElement?: () => Element | null
+        /**
+         * Number of items rendered outside the visible area.
+         * @defaultValue 12
+         */
+        overscan?: number
+        /**
+         * Estimated size (in px) of each item, or a function that returns the size for a given index.
+         * @defaultValue 65
+         */
+        estimateSize?: number | ((index: number) => number)
+      })
+  /**
+   * The text to display when the table is empty.
+   * @defaultValue 'No data'
+   */
+  empty?: string
+  /**
+   * Whether the table has a sticky header or footer: `true` for both, `'header'` or `'footer'` for one.
+   * @defaultValue false
+   */
+  sticky?: boolean | 'header' | 'footer'
+  /**
+   * Whether the table is loading: shows the animated bar under the header, and the `#loading` slot while there are no rows.
+   * @defaultValue false
+   */
+  loading?: boolean
+  /**
+   * Color of the loading bar.
+   * @defaultValue 'accent'
+   */
+  loadingColor?: ComponentVariants<RichTableTheme>['loadingColor']
+  /**
+   * Animation of the loading bar.
+   * @defaultValue 'carousel'
+   */
+  loadingAnimation?: ComponentVariants<RichTableTheme>['loadingAnimation']
+  /**
+   * Customize how `data` changes are watched (for ex: disable deep watching or limit the traversal depth). Improves performance with large datasets, at the cost of missing in-place row mutations.
+   * @see https://vuejs.org/api/options-state.html#watch
+   * @defaultValue { deep: true }
+   */
+  watchOptions?: WatchOptions
+  /** Custom TanStack features registered on the table. */
+  _features?: CoreOptions<T>['_features']
+  /** Resets every `auto reset` behavior (page index, expanded rows...) when set. */
+  autoResetAll?: boolean
+  debugAll?: boolean
+  debugCells?: boolean
+  debugColumns?: boolean
+  debugHeaders?: boolean
+  debugRows?: boolean
+  debugTable?: boolean
+  /** Properties every column definition inherits. */
+  defaultColumn?: Partial<ColumnDef<T, unknown>>
+  /** Derives each row's id from its data. Defaults to the row's index (its path for sub rows). */
+  getRowId?: (originalRow: T, index: number, parent?: Row<T>) => string
+  /** Returns the sub rows of a row, for expandable trees. */
+  getSubRows?: (originalRow: T, index: number) => undefined | T[]
+  /** State the table starts with when a slice isn't bound with `v-model`. */
+  initialState?: CoreOptions<T>['initialState']
+  /** Merges the default and the given table options. */
+  mergeOptions?: CoreOptions<T>['mergeOptions']
+  /** Rendered for a cell whose value is `undefined`. */
+  renderFallbackValue?: unknown
+  /**
+   * @see https://tanstack.com/table/v8/docs/api/features/global-filtering#table-options
+   */
+  globalFilterOptions?: Omit<GlobalFilterOptions<T>, 'onGlobalFilterChange'>
+  /**
+   * @see https://tanstack.com/table/v8/docs/api/features/column-filtering#table-options
+   */
+  columnFiltersOptions?: Omit<
+    ColumnFiltersOptions<T>,
+    'getFilteredRowModel' | 'onColumnFiltersChange'
+  >
+  /**
+   * @see https://tanstack.com/table/v8/docs/api/features/column-pinning#table-options
+   */
+  columnPinningOptions?: Omit<ColumnPinningOptions, 'onColumnPinningChange'>
+  /**
+   * Column widths (`size`) are applied to the cells once `enableColumnResizing` is set or a column has been sized.
+   * @see https://tanstack.com/table/v8/docs/api/features/column-sizing#table-options
+   */
+  columnSizingOptions?: Omit<
+    ColumnSizingOptions,
+    'onColumnSizingChange' | 'onColumnSizingInfoChange'
+  >
+  /**
+   * @see https://tanstack.com/table/v8/docs/api/features/column-visibility#table-options
+   */
+  visibilityOptions?: Omit<VisibilityOptions, 'onColumnVisibilityChange'>
+  /**
+   * @see https://tanstack.com/table/v8/docs/api/features/sorting#table-options
+   */
+  sortingOptions?: Omit<SortingOptions<T>, 'getSortedRowModel' | 'onSortingChange'>
+  /**
+   * Pass `getGroupedRowModel: getGroupedRowModel()` to enable client-side grouping.
+   * @see https://tanstack.com/table/v8/docs/api/features/grouping#table-options
+   */
+  groupingOptions?: Omit<GroupingOptions, 'onGroupingChange'>
+  /**
+   * @see https://tanstack.com/table/v8/docs/api/features/expanding#table-options
+   */
+  expandedOptions?: Omit<ExpandedOptions<T>, 'getExpandedRowModel' | 'onExpandedChange'>
+  /**
+   * @see https://tanstack.com/table/v8/docs/api/features/row-selection#table-options
+   */
+  rowSelectionOptions?: Omit<RowSelectionOptions<T>, 'onRowSelectionChange'>
+  /**
+   * @see https://tanstack.com/table/v8/docs/api/features/row-pinning#table-options
+   */
+  rowPinningOptions?: Omit<RowPinningOptions<T>, 'onRowPinningChange'>
+  /**
+   * Pass `getPaginationRowModel: getPaginationRowModel()` to enable client-side pagination.
+   * @see https://tanstack.com/table/v8/docs/api/features/pagination#table-options
+   */
+  paginationOptions?: Omit<PaginationOptions, 'onPaginationChange'>
+  /**
+   * @see https://tanstack.com/table/v8/docs/api/features/column-faceting#table-options
+   */
+  facetedOptions?: FacetedOptions<T>
+  /** Called when a row is clicked (or activated with Enter/Space). Makes rows selectable (cursor, tabindex). */
+  onSelect?: (e: Event, row: Row<T>) => void
+  /** Called with the row when the pointer enters it, and with `null` when it leaves. */
+  onHover?: (e: Event, row: Row<T> | null) => void
+  /** Called when the context menu is requested on a row. */
+  onContextmenu?: ((e: Event, row: Row<T>) => void) | Array<(e: Event, row: Row<T>) => void>
+  /** Additional classes merged into the root element. */
+  class?: ClassValue
+  /** Per-slot class overrides. */
+  ui?: ComponentSlots<RichTableTheme>
+}
+
+export type RichTableSlots<T extends RichTableData = RichTableData> = {
+  /** Header content of a column, replacing its `header` definition. Named per column id: `#<column-id>-header`. */
+  [slot: `${string}-header`]: ((props: HeaderContext<T, unknown>) => unknown) | undefined
+  /** Footer content of a column, replacing its `footer` definition. Named per column id: `#<column-id>-footer`. */
+  [slot: `${string}-footer`]: ((props: HeaderContext<T, unknown>) => unknown) | undefined
+  /** Cell content of a column, replacing its `cell` definition. Named per column id: `#<column-id>-cell`. */
+  [slot: `${string}-cell`]: ((props: CellContext<T, unknown>) => unknown) | undefined
+  /** Content of the row below an expanded row. Without it, expanding only reveals sub rows (`get-sub-rows`, grouping). */
+  expanded?: (props: { row: Row<T> }) => unknown
+  /** Content shown when there are no rows. Defaults to `empty`. */
+  empty?: () => unknown
+  /** Content shown instead of `#empty` while `loading` and there are no rows. */
+  loading?: () => unknown
+  /** Caption of the table, visually hidden. */
+  caption?: () => unknown
+  /** Rows rendered before the data rows. */
+  'body-top'?: () => unknown
+  /** Rows rendered after the data rows. */
+  'body-bottom'?: () => unknown
+}

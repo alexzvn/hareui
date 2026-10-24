@@ -50,22 +50,12 @@
   <slot />
 </template>
 
-<script lang="ts">
-import type { ChartCurveSeriesProps } from './series'
-
-export type ChartLineProps = ChartCurveSeriesProps
-
-export type ChartLineSlots = {
-  /** `ChartLabel` to label every point. */
-  default?: () => unknown
-}
-</script>
-
 <script setup lang="ts">
 import { line as d3Line } from 'd3-shape'
 import { computed, shallowRef, watch } from 'vue'
 
 import ChartLayer from './ChartLayer.vue'
+import type { ChartLineProps, ChartLineSlots } from './ChartLine.types'
 import { useChartContext } from './context'
 import { curveFactory } from './curve'
 import type { ChartSeriesPoint } from './series'

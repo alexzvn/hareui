@@ -1,7 +1,7 @@
 import { mount } from '@vue/test-utils'
 import { describe, expect, it } from 'vitest'
 
-import type { ProgressCircleProps } from '@/components/progress-circle/ProgressCircle.vue'
+import type { ProgressCircleProps } from '@/components/progress-circle/ProgressCircle.types'
 import ProgressCircle from '@/components/progress-circle/ProgressCircle.vue'
 
 import { expectAccessible } from './a11y'

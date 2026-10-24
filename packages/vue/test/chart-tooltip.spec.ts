@@ -2,7 +2,7 @@ import { mount } from '@vue/test-utils'
 import { describe, expect, it } from 'vitest'
 import { h } from 'vue'
 
-import type { ChartTooltipContentEntry } from '@/components/chart-tooltip/ChartTooltipContent.vue'
+import type { ChartTooltipContentEntry } from '@/components/chart-tooltip/ChartTooltipContent.types'
 import ChartTooltipContent from '@/components/chart-tooltip/ChartTooltipContent.vue'
 import ChartTooltipHeader from '@/components/chart-tooltip/ChartTooltipHeader.vue'
 import ChartTooltipIndicator from '@/components/chart-tooltip/ChartTooltipIndicator.vue'

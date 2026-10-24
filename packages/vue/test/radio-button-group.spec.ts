@@ -6,7 +6,7 @@ import { h, ref } from 'vue'
 import Fieldset from '@/components/fieldset/Fieldset.vue'
 import Form from '@/components/form/Form.vue'
 import RadioButtonGroup from '@/components/radio-button-group/RadioButtonGroup.vue'
-import type { RadioButtonGroupItemSlotProps } from '@/components/radio-button-group/RadioButtonGroupItem.vue'
+import type { RadioButtonGroupItemSlotProps } from '@/components/radio-button-group/RadioButtonGroupItem.types'
 import RadioButtonGroupItem from '@/components/radio-button-group/RadioButtonGroupItem.vue'
 
 import { expectAccessible } from './a11y'

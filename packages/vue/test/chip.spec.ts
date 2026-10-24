@@ -2,7 +2,7 @@ import { mount } from '@vue/test-utils'
 import { describe, expect, it } from 'vitest'
 import { createTextVNode, h } from 'vue'
 
-import type { ChipProps, ChipSlots } from '@/components/chip/Chip.vue'
+import type { ChipProps, ChipSlots } from '@/components/chip/Chip.types'
 import Chip from '@/components/chip/Chip.vue'
 
 import { expectAccessible } from './a11y'

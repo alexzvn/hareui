@@ -4,4 +4,4 @@ export type {
   DashboardPanelProps,
   DashboardPanelResizeHandleSlotProps,
   DashboardPanelSlots,
-} from './DashboardPanel.vue'
+} from './DashboardPanel.types'

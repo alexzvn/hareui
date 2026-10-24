@@ -5,4 +5,4 @@ export type {
   ScrollShadowProps,
   ScrollShadowSlots,
   ScrollShadowVisibility,
-} from './ScrollShadow.vue'
+} from './ScrollShadow.types'

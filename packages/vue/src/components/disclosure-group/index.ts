@@ -4,7 +4,7 @@ export type {
   DisclosureGroupEmits,
   DisclosureGroupProps,
   DisclosureGroupSlots,
-} from './DisclosureGroup.vue'
+} from './DisclosureGroup.types'
 
 export { useDisclosureGroupNavigation } from './useDisclosureGroupNavigation'
 export type { UseDisclosureGroupNavigationOptions } from './useDisclosureGroupNavigation'

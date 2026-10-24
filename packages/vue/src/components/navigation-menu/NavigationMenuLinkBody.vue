@@ -167,7 +167,7 @@ import { kbdKeysMap } from '@/components/kbd/kbdKeys'
 
 import { SlotOutlet, slotName, useNavigationMenu } from './context'
 import { ChevronDownIcon, ChevronRightIcon, ExternalIcon, NavigationMenuIcon } from './icons'
-import type { NavigationMenuItem } from './NavigationMenu.vue'
+import type { NavigationMenuItem } from './NavigationMenu.types'
 
 // The contents of an item's link: leading (avatar / icon / chip), label, trailing (badge / kbds / chevron).
 const props = defineProps<{

@@ -5,7 +5,7 @@ import type { ChartLegendProps } from '@/components/chart-legend'
 import type { ChartTooltipContentEntry } from '@/components/chart-tooltip'
 
 import { definedProps } from './cartesian-root'
-import type { ChartTooltipProps } from './ChartTooltip.vue'
+import type { ChartTooltipProps } from './ChartTooltip.types'
 import type { ChartContext } from './context'
 import type { ChartFrameConfig } from './frame'
 import { resolveFrameLegend } from './frame'

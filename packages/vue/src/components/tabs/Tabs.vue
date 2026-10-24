@@ -252,8 +252,8 @@ export type TabsSlots<T extends TabsItem = TabsItem> = {
 import { TabsContent, TabsList, TabsRoot, TabsTrigger } from 'reka-ui'
 import { computed, nextTick, onBeforeUnmount, onMounted, ref, watch } from 'vue'
 
+import type { ScrollShadowVisibility } from '@/components/scroll-shadow/ScrollShadow.types'
 import ScrollShadow from '@/components/scroll-shadow/ScrollShadow.vue'
-import type { ScrollShadowVisibility } from '@/components/scroll-shadow/ScrollShadow.vue'
 import { useComponentUI } from '@/composables/useComponentUI'
 
 const props = withDefaults(defineProps<TabsProps<T>>(), {

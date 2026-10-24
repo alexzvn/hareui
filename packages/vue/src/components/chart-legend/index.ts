@@ -5,4 +5,4 @@ export type {
   ChartLegendItemSlotProps,
   ChartLegendProps,
   ChartLegendSlots,
-} from './ChartLegend.vue'
+} from './ChartLegend.types'

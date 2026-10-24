@@ -4,23 +4,8 @@
   </div>
 </template>
 
-<script lang="ts">
-import type { VNode } from 'vue'
-
-import type { ClassValue } from '@/utils/tv'
-
-export type ChartTooltipItemProps = {
-  /** Additional classes merged into the element. */
-  class?: ClassValue
-}
-
-export type ChartTooltipItemSlots = {
-  /** Row content: an indicator, a label and a value. */
-  default?: () => VNode[]
-}
-</script>
-
 <script setup lang="ts">
+import type { ChartTooltipItemProps, ChartTooltipItemSlots } from './ChartTooltipItem.types'
 import { useChartTooltipContext } from './context'
 
 const props = defineProps<ChartTooltipItemProps>()

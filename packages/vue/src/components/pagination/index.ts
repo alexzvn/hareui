@@ -5,4 +5,4 @@ export type {
   PaginationEntry,
   PaginationProps,
   PaginationSlots,
-} from './Pagination.vue'
+} from './Pagination.types'

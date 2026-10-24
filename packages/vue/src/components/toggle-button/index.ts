@@ -4,4 +4,4 @@ export type {
   ToggleButtonProps,
   ToggleButtonSlotProps,
   ToggleButtonSlots,
-} from './ToggleButton.vue'
+} from './ToggleButton.types'

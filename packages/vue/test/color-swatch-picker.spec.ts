@@ -5,7 +5,7 @@ import { describe, expect, it } from 'vitest'
 import { h, nextTick } from 'vue'
 
 import { ColorPickerContextKey } from '@/components/color-picker/context'
-import type { ColorSwatchPickerProps } from '@/components/color-swatch-picker/ColorSwatchPicker.vue'
+import type { ColorSwatchPickerProps } from '@/components/color-swatch-picker/ColorSwatchPicker.types'
 import ColorSwatchPicker from '@/components/color-swatch-picker/ColorSwatchPicker.vue'
 
 import { expectAccessible } from './a11y'

@@ -11,4 +11,4 @@ export type {
   TableSlots,
   TableSortDescriptor,
   TableSortDirection,
-} from './Table.vue'
+} from './Table.types'

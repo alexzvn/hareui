@@ -4,4 +4,4 @@ export type {
   DashboardNavbarProps,
   DashboardNavbarSlotProps,
   DashboardNavbarSlots,
-} from './DashboardNavbar.vue'
+} from './DashboardNavbar.types'

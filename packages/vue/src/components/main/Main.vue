@@ -4,38 +4,13 @@
   </Primitive>
 </template>
 
-<script lang="ts">
-import type { PrimitiveProps } from 'reka-ui'
-
-import type { ComponentSlots } from '@/types/tv'
-import type { ClassValue } from '@/utils/tv'
-
-import theme from './theme'
-
-type Main = typeof theme
-
-export type MainProps = {
-  /**
-   * The element or component to render as.
-   * @defaultValue 'main'
-   */
-  as?: PrimitiveProps['as']
-  /** Additional classes merged into the root element. */
-  class?: ClassValue
-  /** Per-slot class overrides. */
-  ui?: ComponentSlots<Main>
-}
-
-export type MainSlots = {
-  /** The page content. */
-  default?: () => unknown
-}
-</script>
-
 <script setup lang="ts">
 import { Primitive } from 'reka-ui'
 
 import { useComponentUI } from '@/composables/useComponentUI'
+
+import type { MainProps, MainSlots } from './Main.types'
+import theme from './theme'
 
 const props = withDefaults(defineProps<MainProps>(), { as: 'main' })
 defineSlots<MainSlots>()

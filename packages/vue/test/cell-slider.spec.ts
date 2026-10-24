@@ -2,7 +2,7 @@ import { mount } from '@vue/test-utils'
 import { describe, expect, it } from 'vitest'
 import { h, nextTick, ref } from 'vue'
 
-import type { CellSliderProps } from '@/components/cell-slider/CellSlider.vue'
+import type { CellSliderProps } from '@/components/cell-slider/CellSlider.types'
 import CellSlider from '@/components/cell-slider/CellSlider.vue'
 import Fieldset from '@/components/fieldset/Fieldset.vue'
 

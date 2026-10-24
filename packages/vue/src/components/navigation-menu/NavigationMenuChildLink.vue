@@ -140,7 +140,7 @@ import { NavigationMenuLink } from 'reka-ui'
 import { get, useNavigationMenu } from './context'
 import { ExternalIcon, NavigationMenuIcon } from './icons'
 import LinkResolver from './LinkResolver'
-import type { NavigationMenuChildItem, NavigationMenuItem } from './NavigationMenu.vue'
+import type { NavigationMenuChildItem, NavigationMenuItem } from './NavigationMenu.types'
 
 // One link of an item's child list, in a dropdown content (`detailed`: label + description) or in
 // the collapsed-rail popover (compact).

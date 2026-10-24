@@ -3,7 +3,7 @@ import { describe, expect, it, vi } from 'vitest'
 import { defineComponent, h, nextTick, ref } from 'vue'
 
 import Label from '@/components/label/Label.vue'
-import type { SwitchProps } from '@/components/switch/Switch.vue'
+import type { SwitchProps } from '@/components/switch/Switch.types'
 import Switch from '@/components/switch/Switch.vue'
 
 import { expectAccessible } from './a11y'
