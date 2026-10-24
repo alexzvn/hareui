@@ -6,7 +6,10 @@ import {
   radiusCssMap,
   themeValuesById,
 } from '../constants'
-import type { GeneratedThemeColors, SemanticOverrides, ThemeColor } from './generate-theme-colors'
+import { calculateAccentForeground } from './foreground-colors'
+import { generateThemeColors } from './generate-theme-colors'
+import { parseOklch } from './oklch'
+import type { GeneratedThemeColors, SemanticOverrides, ThemeColor } from './theme-colors.types'
 
 /**
  * Custom font info for generating CSS variables
@@ -16,8 +19,6 @@ export type CustomFontInfo = {
   variable: string
   fontFamily: string
 }
-
-import { calculateAccentForeground, generateThemeColors, parseOklch } from './generate-theme-colors'
 
 /**
  * Get only the authored CSS variables that users need to customize.
@@ -110,12 +111,12 @@ export const generateMinimalCssVariables = (
     const darkAccent = parseOklch(adaptiveConfig.dark)
 
     const lightFg = lightAccent
-      ? calculateAccentForeground(lightAccent.l, lightAccent.c, lightAccent.h)
-      : calculateAccentForeground(0, 0, 0)
+      ? calculateAccentForeground(lightAccent)
+      : calculateAccentForeground({ c: 0, h: 0, l: 0 })
 
     const darkFg = darkAccent
-      ? calculateAccentForeground(darkAccent.l, darkAccent.c, darkAccent.h)
-      : calculateAccentForeground(1, 0, 0)
+      ? calculateAccentForeground(darkAccent)
+      : calculateAccentForeground({ c: 0, h: 0, l: 1 })
 
     lightVars['--accent'] = adaptiveConfig.light
     lightVars['--accent-foreground'] = lightFg

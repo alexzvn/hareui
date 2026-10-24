@@ -10,18 +10,18 @@ import {
   radiusCssMap,
   themeValuesById,
 } from '../constants'
-import { getCustomFontInfoFromUrl, injectFontLink, isCustomFontUrl } from '../utils/font-utils'
 // Port of HeroUI docs `themes/hooks/use-css-sync.ts`: turns the builder variables into CSS custom properties.
 // Colors go on the page (#theme-builder-page); colors + radius + font go on the preview (#theme-builder-content,
 // its dialogs, and the mobile bottom sheet). Light/dark follow `.dark` / `[data-theme]` like the rest of the docs.
-import type { SemanticOverrides } from '../utils/generate-theme-colors'
 import {
-  calculateAccentForeground,
-  generateThemeColors,
   getColorVariablesForElement,
   getDerivedColorFormulas,
   radiusDerivedVariables,
-} from '../utils/generate-theme-colors'
+} from '../utils/color-variables'
+import { getCustomFontInfoFromUrl, injectFontLink, isCustomFontUrl } from '../utils/font-utils'
+import { calculateAccentForeground } from '../utils/foreground-colors'
+import { generateThemeColors } from '../utils/generate-theme-colors'
+import type { SemanticOverrides } from '../utils/theme-colors.types'
 import { useVariablesState } from './variables'
 
 const ADAPTIVE_STYLE_ID = 'theme-builder-adaptive-colors'
@@ -116,12 +116,20 @@ const getAdaptiveColorCSS = (
   const darkAccent = parseOklch(adaptiveConfig.dark)
 
   const lightFg = lightAccent
-    ? calculateAccentForeground(lightAccent.lightness, lightAccent.chroma, lightAccent.hue)
-    : calculateAccentForeground(0, 0, 0)
+    ? calculateAccentForeground({
+        c: lightAccent.chroma,
+        h: lightAccent.hue,
+        l: lightAccent.lightness,
+      })
+    : calculateAccentForeground({ c: 0, h: 0, l: 0 })
 
   const darkFg = darkAccent
-    ? calculateAccentForeground(darkAccent.lightness, darkAccent.chroma, darkAccent.hue)
-    : calculateAccentForeground(1, 0, 0)
+    ? calculateAccentForeground({
+        c: darkAccent.chroma,
+        h: darkAccent.hue,
+        l: darkAccent.lightness,
+      })
+    : calculateAccentForeground({ c: 0, h: 0, l: 1 })
 
   // Same as HeroUI: the adaptive path ignores `base` (no grayChroma).
   const colors = generateThemeColors({ chroma, hue, lightness, semanticOverrides })
