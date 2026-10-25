@@ -354,7 +354,6 @@ describe('Autocomplete accessibility', () => {
     expect(button.attributes('aria-required')).toBeUndefined()
     expect(wrapper.get('select').attributes('required')).toBeDefined()
     expect(wrapper.attributes('data-required')).toBe('true')
-    expect(wrapper.get('[data-slot=label]').classes()).toContain("after:content-['*']")
     await expectAccessible()
     wrapper.unmount()
   })

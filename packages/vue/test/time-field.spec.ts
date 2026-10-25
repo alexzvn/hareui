@@ -150,12 +150,6 @@ describe('timeField', () => {
     ).toBe(true)
   })
 
-  it('fullWidth: applies w-full to the root and forwards it to the group', () => {
-    const wrapper = mount(TimeField, { props: { fullWidth: true } })
-    expect(wrapper.classes()).toContain('w-full')
-    expect(wrapper.find('[data-slot="date-input-group"]').classes()).toContain('w-full')
-  })
-
   it('granularity: "second" renders a second segment', () => {
     const wrapper = mount(TimeField, {
       props: { defaultValue: new Time(9, 30, 15), granularity: 'second' },

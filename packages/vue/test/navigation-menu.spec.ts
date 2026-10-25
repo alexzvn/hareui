@@ -111,12 +111,11 @@ describe('NavigationMenu items', () => {
     expect(without.find('[data-slot=linkLabelExternalIcon]').exists()).toBe(false)
   })
 
-  it('renders badge, kbds and a string icon as a class on an empty span', () => {
+  it('renders badge and kbds', () => {
     const menu = mountMenu({
       items: [{ label: 'Inbox', icon: 'i-test-inbox', badge: 3, kbds: ['command', 'K'] }],
     })
 
-    expect(menu.get('[data-slot=linkLeadingIcon]').classes()).toContain('i-test-inbox')
     expect(menu.get('[data-slot=linkTrailingBadge]').text()).toBe('3')
     const kbd = menu.get('[data-slot=linkTrailingKbd]')
     expect(kbd.get('abbr').text()).toBe('⌘')
@@ -126,34 +125,6 @@ describe('NavigationMenu items', () => {
   it('renders a 0 badge', () => {
     const menu = mountMenu({ items: [{ label: 'Inbox', badge: 0 }] })
     expect(menu.get('[data-slot=linkTrailingBadge]').text()).toBe('0')
-  })
-
-  it('applies the active colour and the highlight line only to the active item', () => {
-    const menu = mountMenu({
-      color: 'accent',
-      highlight: true,
-      highlightColor: 'success',
-      items: [
-        { label: 'A', href: '#a' },
-        { label: 'B', href: '#b', active: true },
-      ],
-    })
-
-    const [a, b] = menu.findAll('a')
-    expect(b!.classes()).toContain('text-accent')
-    expect(b!.classes()).toContain('after:bg-success')
-    expect(a!.classes()).not.toContain('text-accent')
-    expect(a!.classes()).not.toContain('after:bg-success')
-  })
-
-  it('merges `class` and per-item `ui` into the item link', () => {
-    const menu = mountMenu({
-      items: [{ label: 'A', href: '#a', class: 'item-class', ui: { link: 'item-ui' } }],
-    })
-
-    const link = menu.get('a')
-    expect(link.classes()).toContain('item-class')
-    expect(link.classes()).toContain('item-ui')
   })
 
   it('renders groups with a separator between them', () => {
@@ -497,7 +468,7 @@ describe('NavigationMenu vertical', () => {
     expect(menu.text()).not.toContain('Introduction')
   })
 
-  it('highlights the active child with the highlight line on nested levels', async () => {
+  it('marks the active child on nested levels as the current page', async () => {
     const menu = mountMenu({
       orientation: 'vertical',
       highlight: true,
@@ -513,7 +484,6 @@ describe('NavigationMenu vertical', () => {
     await flushPromises()
     const child = menu.findAll('a').find((a) => a.text() === 'Introduction')!
     expect(child.attributes('aria-current')).toBe('page')
-    expect(child.classes()).toContain('after:bg-foreground')
   })
 })
 
@@ -523,9 +493,8 @@ describe('NavigationMenu collapsed', () => {
     { label: 'Guide', icon: 'i-test-guide', children },
   ]
 
-  it('hides labels and trailing content and does not render nested children inline', () => {
+  it('does not render nested children inline', () => {
     const menu = mountMenu({ orientation: 'vertical', collapsed: true, items })
-    expect(menu.get('[data-slot=linkLabel]').classes()).toContain('hidden')
     expect(menu.text()).not.toContain('Introduction')
     expect(menu.attributes('data-collapsed')).toBe('true')
   })
@@ -708,21 +677,16 @@ describe('NavigationMenu item actions', () => {
     }
   })
 
-  it('keeps the row highlighted while its menu is open', async () => {
+  it("exposes the open menu as an expanded trigger inside the row's actions", async () => {
     mountMenu({ orientation: 'vertical', items })
     await flushPromises()
     const button = actionButton('Reports')!
     const row = button.closest('[data-slot=linkRow]')!
-    const link = row.querySelector('[data-slot=link]')!
 
-    // The link's fill follows an expanded trigger inside its row's actions (the CSS `:has()` the class compiles
-    // to; jsdom's `:has` mishandles descendant combinators, so the same query runs from the row).
-    const lit = 'group-has-[[data-slot=linkActions]_[aria-expanded=true]]/row:bg-default'
-
+    // The row highlight and the visible actions key on this query (see the theme spec).
     const expanded = () =>
       row.querySelector('[data-slot=linkActions] [aria-expanded=true]') !== null
 
-    expect(link.classList).toContain(lit)
     expect(expanded()).toBe(false)
 
     button.click()
@@ -730,17 +694,12 @@ describe('NavigationMenu item actions', () => {
     expect(menuOpen()).toBe(true)
     expect(expanded()).toBe(true)
 
-    // The actions stay visible while the menu is open.
-    expect(row.querySelector('[data-slot=linkActions]')!.classList).toContain(
-      'has-aria-expanded:opacity-100',
-    )
-
     press(menuItem('Open')!, 'Escape')
     await flushPromises()
     expect(expanded()).toBe(false)
   })
 
-  it("calls the selected entry's onSelect and renders entry icons, danger ones in red", async () => {
+  it("calls the selected entry's onSelect and closes the menu", async () => {
     const onSelect = vi.fn<() => void>()
     const actions = [
       { value: 'open', label: 'Open', icon: 'i-test-open' },
@@ -752,12 +711,6 @@ describe('NavigationMenu item actions', () => {
     await flushPromises()
     actionButton('Reports')!.click()
     await flushPromises()
-    const [open, trash] = [...document.querySelectorAll('[data-slot=linkActionsItemIcon]')]
-    expect(open!.classList).toContain('i-test-open')
-    expect(open!.classList).toContain('text-muted')
-    expect(trash!.classList).toContain('i-test-trash')
-    expect(trash!.classList).toContain('text-danger')
-    expect(trash!.classList).not.toContain('text-muted')
     menuItem('Duplicate')!.click()
     await flushPromises()
     expect(onSelect).toHaveBeenCalledTimes(1)

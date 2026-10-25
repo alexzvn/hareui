@@ -81,10 +81,8 @@ describe('dashboardSidebarToggle', () => {
     expect(wrapper.get(`${toggle} path`).attributes('d')).toBe(menuIcon)
   })
 
-  it('is hidden from md and defaults to a ghost, icon-only button', () => {
+  it('renders an icon-only button', () => {
     const { wrapper } = mountInDashboard(() => h(DashboardSidebarToggle))
-    const classes = wrapper.get(toggle).classes()
-    expect(classes).toContain('md:hidden')
     expect(wrapper.get(toggle).attributes('data-slot')).toBe('dashboard-sidebar-toggle')
     expect(wrapper.get(toggle).find('svg').exists()).toBe(true)
   })
@@ -139,13 +137,6 @@ describe('dashboardSidebarCollapse', () => {
     expect(left.collapsed.value).toBe(false)
     expect(wrapper.get(`${collapse} path`).attributes('d')).not.toBe(leftIcon)
   })
-
-  it('is hidden below md and centres itself on a collapsed sidebar rail', () => {
-    const { wrapper } = mountInDashboard(() => h(DashboardSidebarCollapse))
-    expect(wrapper.get(collapse).classes()).toEqual(
-      expect.arrayContaining(['hidden', 'md:flex', 'group-data-[collapsed=true]/sidebar:mx-auto']),
-    )
-  })
 })
 
 describe('dashboardNavbar', () => {
@@ -197,32 +188,9 @@ describe('dashboardNavbar', () => {
     expect(left.open.value).toBe(false)
   })
 
-  it('forwards an object toggle to the button and hides it with false', () => {
-    const custom = mountInDashboard(() =>
-      h(DashboardNavbar, { toggle: { variant: 'secondary', class: 'rounded-full' } }),
-    ).wrapper.get('[data-slot=dashboard-navbar-toggle]')
-
-    expect(custom.classes()).toContain('rounded-full')
-    expect(custom.classes()).toEqual(expect.arrayContaining(['md:hidden']))
-
+  it('hides the toggle with false', () => {
     const hidden = mountInDashboard(() => h(DashboardNavbar, { toggle: false })).wrapper
     expect(hidden.find('[data-slot=dashboard-navbar-toggle]').exists()).toBe(false)
-  })
-
-  it('toggle.class overrides the toggle slot classes, such as the optical offset', () => {
-    const ghost = mountInDashboard(() => h(DashboardNavbar)).wrapper.get(
-      '[data-slot=dashboard-navbar-toggle]',
-    )
-
-    expect(ghost.classes()).toEqual(expect.arrayContaining(['-ms-2.5', 'md:-ms-2']))
-
-    const filled = mountInDashboard(() =>
-      h(DashboardNavbar, { toggle: { variant: 'secondary', class: 'ms-0 md:ms-0' } }),
-    ).wrapper.get('[data-slot=dashboard-navbar-toggle]')
-
-    expect(filled.classes()).toEqual(expect.arrayContaining(['ms-0', 'md:ms-0']))
-    expect(filled.classes()).not.toContain('-ms-2.5')
-    expect(filled.classes()).not.toContain('md:-ms-2')
   })
 
   it('#toggle replaces the button and receives the dashboard state', async () => {

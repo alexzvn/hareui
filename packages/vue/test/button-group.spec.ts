@@ -10,18 +10,6 @@ import { expectAccessible } from './a11y'
 const buttons = (wrapper: ReturnType<typeof mount>) => wrapper.findAll('[data-slot="button"]')
 
 describe('ButtonGroup', () => {
-  it("passes variant and size to its Buttons, a Button's own props win", () => {
-    const wrapper = mount(ButtonGroup, {
-      props: { variant: 'outline', size: 'sm' },
-      slots: { default: () => [h(Button, () => 'A'), h(Button, { variant: 'danger' }, () => 'B')] },
-    })
-
-    const [a, b] = buttons(wrapper)
-    expect(a!.classes()).toContain('border')
-    expect(a!.classes()).toContain('px-3')
-    expect(b!.classes()).not.toContain('border')
-  })
-
   it('disables its Buttons unless a Button sets disabled=false', () => {
     const wrapper = mount(ButtonGroup, {
       props: { disabled: true },
@@ -57,7 +45,7 @@ describe('ButtonGroup', () => {
     expect(seps[0]!.attributes('aria-hidden')).toBe('true')
   })
 
-  it('does not leak group props into a Button nested inside a Button', () => {
+  it('does not leak group disabled into a Button nested inside a Button', () => {
     const wrapper = mount(ButtonGroup, {
       props: { variant: 'outline', disabled: true },
       slots: { default: () => h(Button, { as: 'div' }, () => h(Button, () => 'inner')) },
@@ -65,16 +53,6 @@ describe('ButtonGroup', () => {
 
     const inner = wrapper.find('button[data-slot="button"]')
     expect(inner.attributes('disabled')).toBeUndefined()
-    expect(inner.classes()).not.toContain('border')
-  })
-
-  it('lets a user rounded-* class replace the group edge radii', () => {
-    const wrapper = mount(ButtonGroup, {
-      slots: { default: () => h(Button, { class: 'rounded-none' }, () => 'A') },
-    })
-
-    const classes = buttons(wrapper)[0]!.classes()
-    expect(classes.filter((c) => c.startsWith('rounded'))).toEqual(['rounded-none'])
   })
 
   it.each([

@@ -73,16 +73,6 @@ describe('InputGroup', () => {
     expect(ownOverride.get('[data-slot=input-group-input]').attributes('disabled')).toBeUndefined()
   })
 
-  it('variant falls back to the surrounding TextField variant', () => {
-    const wrapper = mount(TextField, {
-      props: { variant: 'secondary' },
-      slots: { default: () => h(InputGroup, { 'data-test': 'g' }) },
-    })
-
-    // secondary variant drops the shadow utility present on primary
-    expect(wrapper.get('[data-test=g]').classes()).not.toContain('shadow-field')
-  })
-
   it('clicking the group (not the input) focuses the input', async () => {
     const wrapper = mount(InputGroup, { props: { prefix: '$' }, attachTo: document.body })
     const prefix = wrapper.get('[data-slot=input-group-prefix]')

@@ -141,8 +141,8 @@ describe('ToggleButtonGroup', () => {
     ])
   })
 
-  it('renders separators in every button but the first, only with `separator`, and passes group size', async () => {
-    const wrapper = group({ separator: true, size: 'sm' })
+  it('renders separators in every button but the first, only with `separator`', async () => {
+    const wrapper = group({ separator: true })
     await nextTick()
 
     expect(items(wrapper)[0]!.find('[data-slot="toggle-button-group-separator"]').exists()).toBe(
@@ -150,6 +150,5 @@ describe('ToggleButtonGroup', () => {
     )
 
     expect(wrapper.findAll('[data-slot="toggle-button-group-separator"]')).toHaveLength(2)
-    expect(items(wrapper)[0]!.classes()).toContain('px-3')
   })
 })

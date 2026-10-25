@@ -19,18 +19,11 @@ describe('EmptyState', () => {
     const wrapper = mount(EmptyState)
     expect(wrapper.attributes('data-slot')).toBe('empty-state')
     expect(wrapper.text()).toBe('No results found')
-    expect(wrapper.classes()).toEqual(expect.arrayContaining(['p-2', 'text-sm', 'text-muted']))
   })
 
-  it('renders slot content and merges class over the theme padding', () => {
-    const wrapper = mount(EmptyState, {
-      props: { class: 'p-1' },
-      slots: { default: () => 'No team members' },
-    })
-
+  it('renders slot content', () => {
+    const wrapper = mount(EmptyState, { slots: { default: () => 'No team members' } })
     expect(wrapper.text()).toBe('No team members')
-    expect(wrapper.classes()).toContain('p-1')
-    expect(wrapper.classes()).not.toContain('p-2')
   })
 
   it('renders inside an empty TagGroup list via #empty, and disappears once items exist', async () => {

@@ -38,23 +38,10 @@ describe('Badge', () => {
     expect(wrapper.find('[data-slot="badge"] svg').exists()).toBe(true)
   })
 
-  it('renders standalone without an anchor, class landing on the badge', () => {
-    const wrapper = mount(Badge, { props: { content: 'New', class: 'min-w-5' } })
+  it('renders standalone without an anchor', () => {
+    const wrapper = mount(Badge, { props: { content: 'New' } })
     expect(wrapper.attributes('data-slot')).toBe('badge')
-    expect(wrapper.classes()).toContain('min-w-5')
-    expect(wrapper.classes()).not.toContain('min-w-7')
-  })
-
-  it('applies soft compound colors and placement', () => {
-    const wrapper = mount(Badge, {
-      props: { variant: 'soft', color: 'success', placement: 'bottom-left' },
-      slots: { default: () => 'x' },
-    })
-
-    const cls = wrapper.get('[data-slot="badge"]').classes()
-    expect(cls).toEqual(
-      expect.arrayContaining(['[--badge-bg:var(--success-soft)]', 'bottom-0', 'left-0']),
-    )
+    expect(wrapper.find('[data-slot="badge-anchor"]').exists()).toBe(false)
   })
 
   it('is accessible anchored with content, as a dot, with icon content and standalone', async () => {

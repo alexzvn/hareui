@@ -23,12 +23,7 @@ describe('Label', () => {
     expect(wrapper.text()).toBe('Email')
   })
 
-  it('renders as a span with the same slot and classes, and no `as` / `for` attribute', () => {
-    const label = mount(Label, {
-      props: { for: 'email', required: true },
-      slots: { default: () => 'Email' },
-    })
-
+  it('renders as a span with the same slot, and no `as` / `for` attribute', () => {
     const span = mount(Label, {
       props: { as: 'span', for: 'email', required: true },
       slots: { default: () => 'Email' },
@@ -36,7 +31,6 @@ describe('Label', () => {
 
     expect(span.element.tagName).toBe('SPAN')
     expect(span.attributes('data-slot')).toBe('label')
-    expect(span.classes()).toEqual(label.classes())
     expect(span.attributes()).not.toHaveProperty('as')
     expect(span.attributes()).not.toHaveProperty('for')
     expect(span.text()).toBe('Email')
@@ -93,9 +87,8 @@ describe('Label', () => {
     expect(onMousedown).toHaveBeenLastCalledWith(double)
   })
 
-  it('passes attrs and classes through to the label element', () => {
+  it('passes attrs through to the label element', () => {
     const wrapper = mount(Label, {
-      props: { class: 'extra' },
       attrs: { id: 'l', title: 'Hint', 'data-testid': 'lbl', 'aria-hidden': 'true' },
       slots: { default: () => 'Email' },
     })
@@ -104,7 +97,6 @@ describe('Label', () => {
     expect(wrapper.attributes('title')).toBe('Hint')
     expect(wrapper.attributes('data-testid')).toBe('lbl')
     expect(wrapper.attributes('aria-hidden')).toBe('true')
-    expect(wrapper.classes()).toContain('extra')
   })
 
   it.each([

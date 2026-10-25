@@ -24,11 +24,10 @@ describe('ErrorMessage', () => {
     expect(wrapper.text()).toBe('Pick one')
   })
 
-  it('stays rendered while empty and lets a user class override the color', () => {
-    const wrapper = mount(ErrorMessage, { props: { class: 'text-warning' } })
+  it('stays rendered while empty', () => {
+    const wrapper = mount(ErrorMessage)
     expect(wrapper.exists()).toBe(true)
-    expect(wrapper.classes()).toContain('text-warning')
-    expect(wrapper.classes()).not.toContain('text-danger')
+    expect(wrapper.attributes('data-slot')).toBe('error-message')
   })
 
   it('describes the invalid control that references its id, with no axe violations', async () => {

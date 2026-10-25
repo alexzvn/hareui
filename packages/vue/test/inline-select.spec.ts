@@ -188,16 +188,16 @@ describe('InlineSelect', () => {
     const wrapper = mount(InlineSelect, {
       props: { items, defaultValue: 'en' },
       slots: {
-        indicator: () => h('i', { class: 'custom-indicator' }),
-        leading: () => h('span', { class: 'team-icon' }, 'N'),
+        indicator: () => h('i', { 'data-testid': 'custom-indicator' }),
+        leading: () => h('span', { 'data-testid': 'team-icon' }, 'N'),
       },
     })
 
     const indicator = wrapper.get('[data-slot=select-indicator]')
-    expect(indicator.find('.custom-indicator').exists()).toBe(true)
+    expect(indicator.find('[data-testid=custom-indicator]').exists()).toBe(true)
     expect(indicator.find('svg').exists()).toBe(false)
     const children = [...wrapper.get(trigger).element.children]
-    expect(children[0]!.classList.contains('team-icon')).toBe(true)
+    expect(children[0]!.getAttribute('data-testid')).toBe('team-icon')
     expect(children[1]!.getAttribute('data-slot')).toBe('select-value')
   })
 

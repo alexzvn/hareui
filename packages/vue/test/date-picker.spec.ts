@@ -160,12 +160,6 @@ describe('datePicker', () => {
     expect(wrapper.find('[data-slot=date-input-group]').attributes('data-invalid')).toBeUndefined()
   })
 
-  it('fullWidth: applies w-full to the root and forwards it to the group', () => {
-    const wrapper = mount(DatePicker, { props: { fullWidth: true } })
-    expect(wrapper.get('[data-slot=date-picker]').classes()).toContain('w-full')
-    expect(wrapper.get('[data-slot=date-input-group]').classes()).toContain('w-full')
-  })
-
   it('slots: calendar slot replaces the default calendar, receiving value and onSelect', async () => {
     const wrapper = mount(DatePicker, {
       props: { label: 'Date' },

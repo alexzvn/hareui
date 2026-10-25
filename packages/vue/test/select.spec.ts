@@ -175,13 +175,13 @@ describe('Select', () => {
   it('renders the leading slot before the value and places the popover with side / align', async () => {
     const wrapper = mount(Select, {
       props: { items, defaultOpen: true, side: 'top', align: 'end' },
-      slots: { leading: () => h('i', { class: 'lead' }) },
+      slots: { leading: () => h('i', { 'data-testid': 'lead' }) },
       attachTo: document.body,
     })
 
     await flush()
     const children = [...wrapper.get(trigger).element.children]
-    expect(children[0]!.classList.contains('lead')).toBe(true)
+    expect(children[0]!.getAttribute('data-testid')).toBe('lead')
     expect(children[1]!.getAttribute('data-slot')).toBe('select-value')
     const popover = document.querySelector('[data-slot=select-popover]')!
     expect(popover.getAttribute('data-side')).toBe('top')

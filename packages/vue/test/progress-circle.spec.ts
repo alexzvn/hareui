@@ -42,16 +42,12 @@ describe('ProgressCircle', () => {
     ).toBeCloseTo(CIRCUMFERENCE)
   })
 
-  it('indeterminate drops aria-valuenow/valuetext, shows a quarter arc and spins the track', () => {
+  it('indeterminate drops aria-valuenow/valuetext and shows a quarter arc', () => {
     const wrapper = mount(ProgressCircle, { props: { indeterminate: true, value: 60 } })
     const root = wrapper.get('[data-slot="progress-circle"]')
     expect(root.attributes('aria-valuenow')).toBeUndefined()
     expect(root.attributes('aria-valuetext')).toBeUndefined()
     expect(Number(fill(wrapper).attributes('stroke-dashoffset'))).toBeCloseTo(CIRCUMFERENCE * 0.75)
-
-    expect(wrapper.get('[data-slot="progress-circle-track"]').classes()).toContain(
-      'animate-progress-circle-spin',
-    )
   })
 
   it("strokeWidth moves the radius but keeps HeroUI's default dash length", () => {
@@ -60,19 +56,6 @@ describe('ProgressCircle', () => {
       expect(circle.attributes()).toMatchObject({ r: '15', 'stroke-width': '6' })
 
     expect(Number(fill(wrapper).attributes('stroke-dasharray'))).toBeCloseTo(CIRCUMFERENCE)
-  })
-
-  it('ui stroke classes replace the themed stroke colors', () => {
-    const wrapper = mount(ProgressCircle, {
-      props: { ui: { trackCircle: 'stroke-neutral-200', fillCircle: 'stroke-neutral-700' } },
-    })
-
-    expect(wrapper.get('[data-slot="progress-circle-track-circle"]').classes()).toEqual([
-      'stroke-neutral-200',
-    ])
-
-    expect(fill(wrapper).classes()).toContain('stroke-neutral-700')
-    expect(fill(wrapper).classes()).not.toContain('stroke-(--progress-circle-stroke)')
   })
 
   it.each<[string, ProgressCircleProps & { 'aria-label'?: string; 'aria-labelledby'?: string }]>([

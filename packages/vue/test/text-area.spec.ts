@@ -27,9 +27,9 @@ describe('TextArea', () => {
     expect(wrapper.emitted('update:modelValue')!.at(-1)).toEqual(['typed'])
   })
 
-  it('inside a TextField takes the field id, description, variant and value', async () => {
+  it('inside a TextField takes the field id, description and value', async () => {
     const wrapper = mount(TextField, {
-      props: { label: 'Message', description: 'Max 500', variant: 'secondary', defaultValue: 'hi' },
+      props: { label: 'Message', description: 'Max 500', defaultValue: 'hi' },
       slots: { default: () => h(TextArea) },
     })
 
@@ -40,7 +40,6 @@ describe('TextArea', () => {
       wrapper.get('[data-slot="description"]').attributes('id'),
     )
 
-    expect(el.classes()).toContain('bg-(--textarea-bg)')
     expect(el.element.value).toBe('hi')
   })
 

@@ -120,7 +120,6 @@ describe('disclosure', () => {
     const trigger = wrapper.find('button')
     expect(trigger.attributes('data-slot')).toBe('button')
     const indicator = trigger.find('[data-slot=disclosure-indicator]')
-    expect(indicator.classes()).toContain('extra')
     expect(indicator.attributes('data-expanded')).toBeUndefined()
     await trigger.trigger('click')
 

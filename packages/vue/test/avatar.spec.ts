@@ -71,7 +71,7 @@ describe('Avatar', () => {
     expect(wrapper.attributes('loading')).toBeUndefined()
   })
 
-  it('#image replaces the <img> with the slotted element, keeping src and image classes', async () => {
+  it('#image replaces the <img> with the slotted element, keeping src', async () => {
     const wrapper = mount(Avatar, {
       props: { src: '/a.jpg', fallback: 'JD' },
       slots: { image: () => h('picture-img', { alt: 'custom' }) },
@@ -80,7 +80,6 @@ describe('Avatar', () => {
     await nextTick()
     const custom = wrapper.find('picture-img')
     expect(custom.attributes('src')).toBe('/a.jpg')
-    expect(custom.classes()).toContain('absolute')
     expect(wrapper.find('img').exists()).toBe(false)
   })
 

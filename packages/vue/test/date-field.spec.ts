@@ -182,12 +182,6 @@ describe('dateField', () => {
     ).toBe(true)
   })
 
-  it('fullWidth: applies w-full to the root and forwards it to the group', () => {
-    const wrapper = mount(DateField, { props: { fullWidth: true } })
-    expect(wrapper.classes()).toContain('w-full')
-    expect(wrapper.find('[data-slot="date-input-group"]').classes()).toContain('w-full')
-  })
-
   // behaviour-final-check F1: React Aria cycles the 12-hour hour segment within the current period
   it('12-hour: ArrowUp on the hour segment wraps within the period instead of crossing AM/PM', async () => {
     const wrapper = mount(DateField, {

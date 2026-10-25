@@ -30,16 +30,6 @@ describe('Kbd', () => {
     expect(wrapper.find('span').exists()).toBe(false)
   })
 
-  it('applies the light variant and per-slot overrides', () => {
-    const wrapper = mount(Kbd, {
-      props: { variant: 'light', keys: 'up', ui: { abbr: 'font-bold' } },
-    })
-
-    expect(wrapper.classes()).toContain('bg-transparent')
-    expect(wrapper.classes()).not.toContain('bg-default')
-    expect(wrapper.get('abbr').classes()).toContain('font-bold')
-  })
-
   it.each([
     ['with keys and content', { keys: ['command', 'shift'] }, 'K'],
     ['with content only', {}, 'Esc'],

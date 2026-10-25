@@ -34,15 +34,15 @@ describe('breadcrumbs', () => {
     ).toBe(true)
   })
 
-  it('a single custom separator element receives the separator classes', () => {
+  it('a single custom separator element replaces the default separator', () => {
     const wrapper = mount(Breadcrumbs, {
       props: { items },
       slots: { separator: () => h('i', { class: 'dot' }) },
     })
 
-    const sep = wrapper.find('[data-slot=breadcrumbs-separator]')
-    expect(sep.element.tagName).toBe('I')
-    expect(sep.classes()).toEqual(expect.arrayContaining(['dot', 'size-3', 'text-muted']))
+    const seps = wrapper.findAll('[data-slot=breadcrumbs-separator]')
+    expect(seps).toHaveLength(2)
+    expect(seps.every((sep) => sep.element.tagName === 'I')).toBe(true)
   })
 })
 

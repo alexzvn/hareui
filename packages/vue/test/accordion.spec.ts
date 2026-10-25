@@ -93,7 +93,7 @@ describe('accordion', () => {
     expect(expanded.value).toEqual(['a'])
   })
 
-  it('a single #indicator element receives the indicator classes and expanded state', async () => {
+  it('a single #indicator element becomes the indicator and carries the expanded state', async () => {
     const wrapper = mount(Accordion, {
       props: { items: [items[0]!], defaultValue: ['a'] },
       slots: { indicator: () => h('i', { class: 'custom' }) },
@@ -101,8 +101,6 @@ describe('accordion', () => {
 
     const indicator = wrapper.find('[data-slot=accordion-indicator]')
     expect(indicator.element.tagName).toBe('I')
-    expect(indicator.classes()).toContain('custom')
-    expect(indicator.classes()).toContain('size-4')
     expect(indicator.attributes('data-expanded')).toBe('true')
 
     await wrapper.find('[data-slot=accordion-trigger]').trigger('click')

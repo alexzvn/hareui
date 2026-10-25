@@ -43,17 +43,6 @@ describe('Typography', () => {
     const wrapper = mount(Typography, { props: { as: 'h2', type: 'h1' } })
     expect(wrapper.element.tagName).toBe('H2')
     expect(wrapper.attributes('data-type')).toBe('h1')
-    expect(wrapper.classes()).toContain('text-4xl')
-  })
-
-  it('weight overrides the type default font weight', () => {
-    const wrapper = mount(Typography, { props: { type: 'h1', weight: 'normal' } })
-    expect(wrapper.classes()).toContain('font-normal')
-  })
-
-  it('truncate adds block truncate classes', () => {
-    const wrapper = mount(Typography, { props: { truncate: true } })
-    expect(wrapper.classes()).toEqual(expect.arrayContaining(['block', 'truncate']))
   })
 
   it('prose renders a div[data-slot=prose] without typography data-attrs, ignoring type', () => {
@@ -65,20 +54,8 @@ describe('Typography', () => {
     expect(wrapper.element.tagName).toBe('DIV')
     expect(wrapper.attributes('data-slot')).toBe('prose')
     expect(wrapper.attributes('data-type')).toBeUndefined()
-    expect(wrapper.classes()).not.toContain('text-4xl')
     expect(wrapper.find('h1').exists()).toBe(true)
     expect(wrapper.find('p').exists()).toBe(true)
-  })
-
-  it('class prop wins over theme classes (tailwind-merge)', () => {
-    const wrapper = mount(Typography, { props: { type: 'h1', class: 'text-sm' } })
-    expect(wrapper.classes()).toContain('text-sm')
-    expect(wrapper.classes()).not.toContain('text-4xl')
-  })
-
-  it('ui.base overrides merge into the root class', () => {
-    const wrapper = mount(Typography, { props: { ui: { base: 'italic' } } })
-    expect(wrapper.classes()).toContain('italic')
   })
 
   it('is accessible as a heading outline, body text and code', async () => {

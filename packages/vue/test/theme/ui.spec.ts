@@ -106,10 +106,11 @@ describe('shared theme components', () => {
   })
 
   it('resolves variants per instance', async () => {
+    const size = ref<'sm' | 'lg'>('sm')
     const wrapper = mount(
       defineComponent({
         components: { Button },
-        setup: () => ({ size: ref<'sm' | 'lg'>('sm') }),
+        setup: () => ({ size }),
         template: '<div><Button id="a" :size="size" /><Button id="b" size="lg" /></div>',
       }),
       { global: { plugins: [createHareUI()] } },
@@ -118,11 +119,11 @@ describe('shared theme components', () => {
     const lg = '[--button-height:--spacing(11)]'
     expect(wrapper.find('#a').classes()).not.toContain(lg)
     expect(wrapper.find('#b').classes()).toContain(lg)
-    ;(wrapper.vm as unknown as { size: 'sm' | 'lg' }).size = 'lg'
+    size.value = 'lg'
     await nextTick()
     expect(wrapper.find('#a').classes()).toContain(lg)
     expect(wrapper.find('#b').classes()).toContain(lg)
-    ;(wrapper.vm as unknown as { size: 'sm' | 'lg' }).size = 'sm'
+    size.value = 'sm'
     await nextTick()
     expect(wrapper.find('#a').classes()).not.toContain(lg)
     expect(wrapper.find('#b').classes()).toContain(lg)

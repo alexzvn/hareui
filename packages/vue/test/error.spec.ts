@@ -86,11 +86,11 @@ describe('error', () => {
     ).toBe(false)
 
     const custom = mount(Error, {
-      props: { error, clear: { label: 'Go back', class: 'rounded-full' } },
+      props: { error, clear: { label: 'Go back', pending: true } },
     })
 
     expect(custom.get('[data-slot=error-links] a').text()).toBe('Go back')
-    expect(custom.get('[data-slot=error-links] a').classes()).toContain('rounded-full')
+    expect(custom.get('[data-slot=error-links] a').attributes('aria-busy')).toBe('true')
   })
 
   it('#leading renders above the status code; #links replaces the button', () => {

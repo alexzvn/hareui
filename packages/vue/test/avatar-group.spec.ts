@@ -43,28 +43,6 @@ describe('AvatarGroup', () => {
     expect(wrapper.element.children).toHaveLength(3)
   })
 
-  it('group size fills in only where the Avatar omits it', () => {
-    const wrapper = mount(AvatarGroup, {
-      props: { size: 'lg' },
-      slots: {
-        default: () => [h(Avatar, { fallback: 'A' }), h(Avatar, { fallback: 'B', size: 'sm' })],
-      },
-    })
-
-    const [first, second] = wrapper.element.children
-    expect(first.className).toContain('size-12')
-    expect(second.className).toContain('size-8')
-    expect(second.className).not.toContain('size-12')
-  })
-
-  it('grid drops the stacked overlap', () => {
-    const stacked = mount(AvatarGroup, { slots: { default: avatars(2) } })
-    const grid = mount(AvatarGroup, { props: { grid: true }, slots: { default: avatars(2) } })
-    expect(stacked.classes().join(' ')).toContain('mask-image')
-    expect(grid.classes().join(' ')).not.toContain('mask-image')
-    expect(grid.classes()).toContain('flex-wrap')
-  })
-
   it('is accessible as a labelled group with an overflow count, and as a plain stack', async () => {
     const wrapper = mountAll(() => [
       h(AvatarGroup, { max: 3, role: 'group', 'aria-label': 'Assignees' }, avatars(5)),

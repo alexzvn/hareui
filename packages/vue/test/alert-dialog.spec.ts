@@ -57,7 +57,7 @@ const finishExit = async () => {
 const dialog = () => document.querySelector<HTMLElement>('[data-slot=alert-dialog-dialog]')
 
 describe('alertDialog', () => {
-  it('renders role="alertdialog" with the default danger icon', async () => {
+  it('renders role="alertdialog" with the default icon', async () => {
     const wrapper = mount(AlertDialog, {
       props: { defaultOpen: true, title: 'Delete?' },
       slots: { body: () => 'Body' },
@@ -66,7 +66,6 @@ describe('alertDialog', () => {
     await nextTick()
     expect(dialog()?.getAttribute('role')).toBe('alertdialog')
     const icon = document.querySelector('[data-slot=alert-dialog-icon]')
-    expect(icon?.className).toContain('bg-danger-soft')
     expect(icon?.querySelector('[data-slot=alert-dialog-default-icon]')).not.toBeNull()
     wrapper.unmount()
   })

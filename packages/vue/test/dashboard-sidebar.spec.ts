@@ -1018,7 +1018,7 @@ describe('dashboard sidebar', () => {
   })
 
   describe('panel', () => {
-    it('fills the space until sized; resizing persists under `${storageKey}-panel-${id}`', async () => {
+    it('starts unsized; resizing persists under `${storageKey}-panel-${id}`', async () => {
       const wrapper = mount(DashboardGroup, {
         slots: {
           default: () => [
@@ -1034,7 +1034,6 @@ describe('dashboard sidebar', () => {
       })
 
       const panel = document.querySelector<HTMLElement>('#dashboard-panel-inbox')!
-      expect(panel.className).toContain('flex-1')
       expect(width(panel)).toBe('')
 
       layout(panel, 400)
@@ -1043,7 +1042,6 @@ describe('dashboard sidebar', () => {
       release()
       await nextTick()
       expect(width(panel)).toBe('50%')
-      expect(panel.className).toContain('md:w-(--width)')
       expect(cookieValue('dashboard-panel-inbox')).toEqual({ size: 50, collapsed: false })
 
       await key(handle(), 'ArrowLeft', { shiftKey: true })

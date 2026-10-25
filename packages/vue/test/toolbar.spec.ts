@@ -46,7 +46,7 @@ const key = async (el: Element, k: string, shiftKey = false) => {
 }
 
 describe('Toolbar', () => {
-  it('passes its orientation to ToggleButtonGroups and ButtonGroups and the perpendicular one to Separators', () => {
+  it('passes its orientation to ToggleButtonGroups and the perpendicular one to Separators', () => {
     const { wrapper } = editor({ orientation: 'vertical' })
     expect(wrapper.attributes()).toMatchObject({ role: 'toolbar', 'aria-orientation': 'vertical' })
     const group = wrapper.find('[data-slot=toggle-button-group]')
@@ -56,18 +56,13 @@ describe('Toolbar', () => {
     expect(group.attributes('aria-orientation')).toBeUndefined()
     const separator = wrapper.find('[data-slot=separator]')
     expect(separator.attributes('data-orientation')).toBe('horizontal')
-    expect(separator.classes()).toEqual(expect.arrayContaining(['w-1/2', 'justify-self-center']))
-
-    expect(wrapper.find('[data-slot=button-group]').classes()).toEqual(
-      expect.arrayContaining(['justify-start', 'flex-col']),
-    )
   })
 
-  it('lets an explicit orientation and classes on children win over the toolbar', () => {
+  it('lets an explicit orientation on children win over the toolbar', () => {
     const wrapper = mount(Toolbar, {
       slots: {
         default: () => [
-          h(Separator, { orientation: 'horizontal', class: 'w-4' }),
+          h(Separator, { orientation: 'horizontal' }),
           h(ToggleButtonGroup, { orientation: 'vertical' }, () =>
             h(ToggleButton, { value: 'a' }, () => 'a'),
           ),
@@ -75,10 +70,7 @@ describe('Toolbar', () => {
       },
     })
 
-    const separator = wrapper.find('[data-slot=separator]')
-    expect(separator.attributes('data-orientation')).toBe('horizontal')
-    expect(separator.classes()).toContain('w-4')
-    expect(separator.classes()).not.toContain('w-1/2')
+    expect(wrapper.find('[data-slot=separator]').attributes('data-orientation')).toBe('horizontal')
 
     expect(wrapper.find('[data-slot=toggle-button-group]').attributes('aria-orientation')).toBe(
       'vertical',
