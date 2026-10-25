@@ -28,7 +28,7 @@ export type NavigationMenuItemPosition = {
 }
 
 /** The resolved slot class functions; link slots take per-item variants on top of the root ones. */
-export type NavigationMenuUI = Record<SlotName, (props?: SlotArgs) => string>
+type NavigationMenuUI = Record<SlotName, (props?: SlotArgs) => string>
 
 export type NavigationMenuContext = {
   props: NavigationMenuProps
@@ -79,7 +79,7 @@ const isContentNode = (node: VNode): boolean => {
 }
 
 /** Whether rendered slot output has content (Vue's own rule for falling back to slot defaults). */
-export const hasContent = (nodes: VNode[] | undefined): boolean => {
+const hasContent = (nodes: VNode[] | undefined): boolean => {
   return !!nodes?.some(isContentNode)
 }
 

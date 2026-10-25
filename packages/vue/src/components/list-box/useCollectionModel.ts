@@ -14,7 +14,7 @@ export type CollectionValue = ListBoxValue | ListBoxValue[] | null
  * - `selection`: the order the values appear in the selection, as RAC (`[...selectedKeys]`).
  * - `collection`: the order the options appear in `items`. Select keeps this rule; it is not RAC's.
  */
-export type CollectionOrder = 'selection' | 'collection'
+type CollectionOrder = 'selection' | 'collection'
 
 export type CollectionModelOptions<T extends ListBoxItem> = {
   /** Options, sections and separators, as in ListBox. */

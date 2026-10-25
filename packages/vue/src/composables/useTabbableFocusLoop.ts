@@ -22,7 +22,7 @@ const isVisible = (el: HTMLElement, container: HTMLElement) => {
  * or an explicit `tabindex >= 0`. Chrome's keyboard-focusable scrollers (an overflowing `modal-body` / `drawer-body`)
  * are left out, as in React Aria's FocusScope tree walker.
  */
-export const getTabbables = (container: HTMLElement): HTMLElement[] => {
+const getTabbables = (container: HTMLElement): HTMLElement[] => {
   return [...container.querySelectorAll<HTMLElement>(`${NATIVE_FOCUSABLE}, [tabindex]`)].filter(
     (el) => {
       if (el.tabIndex < 0 || (el as HTMLButtonElement).disabled) return false

@@ -52,7 +52,7 @@ export type DashboardContext = {
   sidebars: Record<DashboardSidebarSide, DashboardSidebarState>
 }
 
-export const dashboardContextKey: InjectionKey<DashboardContext> = Symbol('hareui-dashboard')
+const dashboardContextKey: InjectionKey<DashboardContext> = Symbol('hareui-dashboard')
 
 export const provideDashboardContext = (context: DashboardContext): void => {
   provide(dashboardContextKey, context)

@@ -16,7 +16,7 @@ export type SelectionManagerOptions<K> = {
 }
 
 /** Meta on macOS, Control elsewhere; both are accepted, like most desktop lists. */
-export const isSelectAllKey = (event: KeyboardEvent) =>
+const isSelectAllKey = (event: KeyboardEvent) =>
   (event.ctrlKey || event.metaKey) && !event.altKey && event.key.toLowerCase() === 'a'
 
 /**

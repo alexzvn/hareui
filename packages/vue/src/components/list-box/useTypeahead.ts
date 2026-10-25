@@ -12,7 +12,7 @@ import { onScopeDispose } from 'vue'
  * - `next`: a single character starts after the current item, so repeating it cycles through the matches; a longer
  *   search starts at the top. Autocomplete's closed trigger keeps this rule; it is not RAC's.
  */
-export type TypeaheadStart = 'current' | 'next'
+type TypeaheadStart = 'current' | 'next'
 
 export type TypeaheadOptions = {
   start: TypeaheadStart

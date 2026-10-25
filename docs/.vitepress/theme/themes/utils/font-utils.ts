@@ -156,7 +156,7 @@ const FONT_FILE_EXTENSIONS = ['.woff2', '.woff', '.ttf', '.otf', '.eot']
 /**
  * Checks if a URL points to a font file (vs a CSS stylesheet)
  */
-export const isFontFileUrl = (url: string): boolean => {
+const isFontFileUrl = (url: string): boolean => {
   try {
     const pathname = new URL(url).pathname.toLowerCase()
 
@@ -248,20 +248,6 @@ export const injectFontLink = (
   document.head.appendChild(linkElement)
 
   return linkElement
-}
-
-/**
- * Removes a font element by ID
- */
-export const removeFontLink = (id: string): void => {
-  if (typeof document === 'undefined') return
-
-  const elementId = `font-link-${id}`
-  const existingElement = document.getElementById(elementId)
-
-  if (existingElement) {
-    existingElement.remove()
-  }
 }
 
 /**

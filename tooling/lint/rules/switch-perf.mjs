@@ -11,7 +11,7 @@ export default {
       missingPerfComment:
         '`switch` needs a preceding `// perf: <reason>` comment; otherwise use an `as const` lookup map or guard clauses.',
       missingDefault:
-        '`switch` needs a `default` clause; for a finite union call `assertNever(x)` from `@/utils/assert`.',
+        '`switch` needs a `default` clause; for a finite union assert exhaustiveness with `x satisfies never`.',
     },
     schema: [],
   },

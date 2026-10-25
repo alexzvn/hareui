@@ -125,10 +125,7 @@ const readRawStorage = (storage: DashboardStorage, key: string): string | null |
 }
 
 /** Reads a persisted `{ size, collapsed }` entry. Missing, unparsable or malformed data yields `undefined` fields (never throws). */
-export const readDashboardStorage = (
-  storage: DashboardStorage,
-  key: string,
-): StoredState | undefined => {
+const readDashboardStorage = (storage: DashboardStorage, key: string): StoredState | undefined => {
   let raw: string | null | undefined
   try {
     raw = readRawStorage(storage, key)
@@ -169,7 +166,7 @@ const writeRawStorage = (storage: DashboardStorage, { key, raw }: { key: string;
 }
 
 /** Writes a `{ size, collapsed }` entry. Storage failures (quota, blocked cookies) are swallowed. */
-export const writeDashboardStorage = (
+const writeDashboardStorage = (
   storage: DashboardStorage,
   { key, value }: { key: string; value: { size: number; collapsed: boolean } },
 ): void => {

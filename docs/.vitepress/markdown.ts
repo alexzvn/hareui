@@ -19,7 +19,7 @@ type AnchorState = {
 const gravityIcons: Record<string, { body: string }> = gravity.icons
 const button = tv(buttonTheme)
 
-export const gravityIcon = (name: string, attrs = ''): string => {
+const gravityIcon = (name: string, attrs = ''): string => {
   const icon = gravityIcons[name]
   if (!icon) throw new Error(`gravity-ui icon not found: ${name}`)
 
@@ -67,7 +67,7 @@ const FIGURE_STYLE =
 
 const MAX_LINES_FOR_LINE_NUMBERS = 20
 
-export const codeFigure = (codeInner: string, { vPre = true, extraClass = '' } = {}): string => {
+const codeFigure = (codeInner: string, { vPre = true, extraClass = '' } = {}): string => {
   const lines = (codeInner.match(/<span class="line/g) ?? []).length
   const classes = [
     'my-4 bg-fd-card rounded-xl shiki relative border shadow-sm not-prose overflow-hidden text-sm mdx-code-block',

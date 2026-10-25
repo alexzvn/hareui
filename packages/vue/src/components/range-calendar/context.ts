@@ -2,7 +2,7 @@ import type { DateValue } from '@internationalized/date'
 import type { Component, ComputedRef, InjectionKey } from 'vue'
 
 /** The range state of one day cell. */
-export type RangeCalendarCellState = {
+type RangeCalendarCellState = {
   selected: boolean
   selectionStart: boolean
   selectionEnd: boolean

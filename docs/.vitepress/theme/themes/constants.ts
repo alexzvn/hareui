@@ -3,22 +3,9 @@
 import type { RadiusId, ThemeId } from './theme-values'
 import { DEFAULT_BASE } from './theme-values'
 
-export type {
-  RadiusId,
-  SemanticColorOverride,
-  ThemeId,
-  ThemeSemanticOverrides,
-  ThemeValues,
-} from './theme-values'
+export type { RadiusId, ThemeId } from './theme-values'
 
-export {
-  DEFAULT_BASE,
-  findMatchingTheme,
-  radiusIds,
-  themeComparisonKeys,
-  themeIds,
-  themeValuesById,
-} from './theme-values'
+export { findMatchingTheme, radiusIds, themeValuesById } from './theme-values'
 
 /**
  * Adaptive colors that need different values in light vs dark modes.

@@ -113,7 +113,7 @@ const encodeValue = (value: string) => {
     .replace(/>/g, '%3E')
 }
 
-export const renderQuery = (params: URLSearchParams) => {
+const renderQuery = (params: URLSearchParams) => {
   return [...params]
     .map(([key, value]) => `${encodeURIComponent(key)}=${encodeValue(value)}`)
     .join('&')

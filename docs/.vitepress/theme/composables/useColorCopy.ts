@@ -8,7 +8,7 @@ const formatNumber = (value: number | undefined): string => {
 }
 
 /** Converts any CSS color string (resolved rgb/hex/etc.) into an `oklch(...)` string. */
-export const toOklchCss = (value: string): string => {
+const toOklchCss = (value: string): string => {
   const parsed = parse(value)
   if (!parsed) return value
 

@@ -23,7 +23,7 @@ no semicolons, single quotes, printWidth 100, trailingComma all. Import order by
 | F3 | Default params / destructured defaults instead of `x ?? default` at top of body | review-only |
 | F4 | No `else` / `else if`. Use guard clauses/early return, `as const` lookup maps (`Record<Union, Handler>` with `satisfies`), single-level ternary | `hareui/no-else` |
 | F5 | Nested ternary banned | `eslint/no-nested-ternary` |
-| F6 | `switch` only with a preceding `// perf: <reason>` comment AND a `default` clause; when the discriminant is a finite union the default calls `assertNever(x)` from `@/utils/assert` | `hareui/switch-perf` |
+| F6 | `switch` only with a preceding `// perf: <reason>` comment AND a `default` clause; when the discriminant is a finite union the default asserts exhaustiveness with `value satisfies never` (no util) | `hareui/switch-perf` |
 | N1 | Event handlers named `onX`; `handleX` banned | `hareui/handler-naming` |
 | N2 | Boolean variables named `is/has/should/can` + PascalCase; `isNot*`/`hasNo*` banned. Props/`defineModel` names exempt (HTML/HeroUI names like `disabled`, `open`) | `hareui/boolean-prefix` |
 | N3 | One verb per concept: `get` = pure read, `resolve` = read with fallback/merge, `create` = new instance, `use` = composable, `on` = handler, `to` = conversion | review-only, glossary in AGENTS.md |

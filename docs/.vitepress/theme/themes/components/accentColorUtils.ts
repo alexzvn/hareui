@@ -9,7 +9,6 @@ import { convertToHsb, convertToHsl, convertToRgb, normalizeColor } from 'reka-u
  * -----------------------------------------------------------------------------------------------*/
 
 export const DEFAULT_COLOR = '#006FEE'
-export const DEFAULT_COLOR_HSL = 'hsl(253.67, 100%, 61.99%)'
 
 export const SWATCHES_PER_PAGE = 8
 
@@ -112,7 +111,7 @@ const toHex = (color: Color): string => {
  * normalizeColorSyntax("rgb(255 128 0)") // → "rgb(255, 128, 0)"
  * normalizeColorSyntax("rgb(255 128 0 / 0.5)") // → "rgba(255, 128, 0, 0.5)"
  */
-export const normalizeColorSyntax = (color: string): string => {
+const normalizeColorSyntax = (color: string): string => {
   const trimmed = color.trim()
 
   // Match hsl/hsla with space-separated values
@@ -352,5 +351,3 @@ export const chunkArray = <T>(array: T[], chunkSize: number): T[][] => {
 
   return chunks
 }
-
-export { parseColor }

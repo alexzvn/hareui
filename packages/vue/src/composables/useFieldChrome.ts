@@ -37,7 +37,7 @@ const VALID_RESULT: ValidationResult = {
 }
 
 // `Slot<never>` accepts any slot props: the slots are only checked for presence and forwarded, never called here.
-export type FieldChromeSlots = {
+type FieldChromeSlots = {
   label?: Slot<never>
   description?: Slot<never>
   error?: Slot<never>

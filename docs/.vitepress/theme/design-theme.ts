@@ -18,10 +18,10 @@ export const DESIGN_THEME_IDS = [
 
 export type DesignThemeId = (typeof DESIGN_THEME_IDS)[number]
 
-export const DEFAULT_DESIGN_THEME: DesignThemeId = 'default'
-export const DESIGN_THEME_STORAGE_KEY = 'heroui-docs-design-theme'
+const DEFAULT_DESIGN_THEME: DesignThemeId = 'default'
+const DESIGN_THEME_STORAGE_KEY = 'heroui-docs-design-theme'
 export const DESIGN_THEME_CHANGE_EVENT = 'heroui-docs-design-theme-change'
-export const VIBRANT_STORAGE_KEY = 'heroui-docs-vibrant-palette'
+const VIBRANT_STORAGE_KEY = 'heroui-docs-vibrant-palette'
 
 /** Accent base values per preset; used for the "Edit theme" link query like HeroUI's `themeValuesById`. */
 export const DESIGN_THEME_VALUES: Record<
@@ -42,7 +42,7 @@ export const DESIGN_THEME_VALUES: Record<
   kumo: { lightness: 0.5772, chroma: 0.2324, hue: 260 },
 }
 
-export const isDesignThemeId = (value: string | null | undefined): value is DesignThemeId => {
+const isDesignThemeId = (value: string | null | undefined): value is DesignThemeId => {
   return (DESIGN_THEME_IDS as readonly string[]).includes(value ?? '')
 }
 

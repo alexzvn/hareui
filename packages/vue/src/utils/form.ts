@@ -63,11 +63,11 @@ const hasKeys = (value: unknown): value is object => {
   return (typeof value === 'object' || typeof value === 'function') && value !== null
 }
 
-export const isStandardSchema = (schema: unknown): schema is StandardSchemaV1 => {
+const isStandardSchema = (schema: unknown): schema is StandardSchemaV1 => {
   return hasKeys(schema) && '~standard' in schema
 }
 
-export const isSuperstructSchema = (schema: unknown): schema is SuperstructSchema => {
+const isSuperstructSchema = (schema: unknown): schema is SuperstructSchema => {
   return (
     hasKeys(schema) &&
     'schema' in schema &&
