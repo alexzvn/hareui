@@ -2,8 +2,8 @@
   <Pagination
     class="justify-center"
     :default-page="2"
-    next-label=""
-    prev-label=""
+    :next="{ label: '' }"
+    :prev="{ label: '' }"
     :total="3"
     :ui="{ content: 'gap-1 rounded-xl bg-default p-1', link: `${linkClass} ${activeClass}` }"
   />

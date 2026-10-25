@@ -4,6 +4,49 @@ import type { ClassValue } from '@/utils/tv'
 
 import type { ChartAxisDomain } from './types'
 
+/** Tick labels and tick marks of `ChartPolarAngleAxis`, the `tick` prop. */
+export type ChartPolarAngleAxisTickOptions = {
+  /**
+   * Shows the tick labels.
+   * @defaultValue true
+   */
+  label?: boolean
+  /**
+   * Number axes: number of ticks.
+   * @defaultValue 5
+   */
+  count?: number
+  /**
+   * Formats a tick label.
+   * @defaultValue `String(value)`
+   */
+  formatter?: (value: number | string, index: number) => string
+  /**
+   * Distance between the outer ring and the labels, in px.
+   * @defaultValue 8
+   */
+  size?: number
+  /**
+   * Draws the tick marks. They are transparent by default; give `ui.tickLine` a stroke to show them.
+   * @defaultValue true
+   */
+  line?: boolean
+}
+
+/** Outer ring of `ChartPolarAngleAxis`, the `axisLine` prop. */
+export type ChartPolarAngleAxisLineOptions = {
+  /**
+   * Draws the outer ring. It is transparent by default; give `ui.axisLine` a stroke to show it.
+   * @defaultValue true
+   */
+  show?: boolean
+  /**
+   * Shape of the outer ring.
+   * @defaultValue 'polygon'
+   */
+  type?: 'polygon' | 'circle'
+}
+
 /** Props of `ChartPolarAngleAxis`: the category axis around a polar chart, with its outline and tick labels. */
 export type ChartPolarAngleAxisProps = {
   /** Key of the category shown around the chart. */
@@ -15,11 +58,6 @@ export type ChartPolarAngleAxisProps = {
   type?: 'category' | 'number'
   /** Number axes: `[min, max]` of the sweep. In radial charts, a fixed max turns bars into progress gauges. */
   domain?: ChartAxisDomain
-  /**
-   * Number axes: number of ticks.
-   * @defaultValue 5
-   */
-  tickCount?: number
   /**
    * Number axes: allows decimal ticks.
    * @defaultValue true
@@ -38,32 +76,15 @@ export type ChartPolarAngleAxisProps = {
    */
   reversed?: boolean
   /**
-   * Shows the tick labels.
-   * @defaultValue true
+   * Tick labels and marks. Unset keys keep their defaults.
+   * @defaultValue { label: true, count: 5, size: 8, line: true }
    */
-  tick?: boolean
-  /** Formats a tick label. */
-  tickFormatter?: (value: number | string, index: number) => string
+  tick?: ChartPolarAngleAxisTickOptions
   /**
-   * Distance between the outer ring and the labels, in px.
-   * @defaultValue 8
+   * Outer ring. Unset keys keep their defaults.
+   * @defaultValue { show: true, type: 'polygon' }
    */
-  tickSize?: number
-  /**
-   * Draws the tick marks. They are transparent by default; give `ui.tickLine` a stroke to show them.
-   * @defaultValue true
-   */
-  tickLine?: boolean
-  /**
-   * Draws the outer ring. It is transparent by default; give `ui.axisLine` a stroke to show it.
-   * @defaultValue true
-   */
-  axisLine?: boolean
-  /**
-   * Shape of the outer ring.
-   * @defaultValue 'polygon'
-   */
-  axisLineType?: 'polygon' | 'circle'
+  axisLine?: ChartPolarAngleAxisLineOptions
   /**
    * Places the labels outside or inside the outer ring.
    * @defaultValue 'outer'

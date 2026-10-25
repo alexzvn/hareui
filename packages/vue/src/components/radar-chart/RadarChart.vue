@@ -120,7 +120,7 @@ const angleAxis = computed(() =>
     ? resolveChartPart<Partial<ChartPolarAngleAxisProps>>(props.angleAxis, {
         defaults: definedProps({
           dataKey: props.index as string | undefined,
-          tickFormatter: props.indexFormatter,
+          tick: props.indexFormatter ? { formatter: props.indexFormatter } : undefined,
         }),
       })
     : null,

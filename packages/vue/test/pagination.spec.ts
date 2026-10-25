@@ -55,7 +55,7 @@ describe('Pagination accessibility', () => {
     }[] = [
       { props: { total: 5 } },
       { props: { total: 12, ellipsis: true, defaultPage: 6 } },
-      { props: { total: 5, prevLabel: '', nextLabel: '' } },
+      { props: { total: 5, prev: { label: '' }, next: { label: '' } } },
       {
         props: { total: 5 },
         slots: { summary: ({ page, total }) => [createTextVNode(`Page ${page} of ${total}`)] },
@@ -107,7 +107,10 @@ describe('Pagination accessibility', () => {
 
     named.unmount()
 
-    const iconOnly = mount(Pagination, { props: { total: 3, prevLabel: '', nextLabel: '' } })
+    const iconOnly = mount(Pagination, {
+      props: { total: 3, prev: { label: '' }, next: { label: '' } },
+    })
+
     expect(iconOnly.get('[data-slot=pagination-previous]').attributes('aria-label')).toBe(
       'Previous page',
     )

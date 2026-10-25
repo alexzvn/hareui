@@ -54,7 +54,7 @@ Each series takes `name`, `color`, `hide`, `tooltip`, `valueFormatter`, `yAxis`,
 
 ## Axes and Formatting
 
-`x-axis`, `y-axis` and `grid` take `false` to hide the part, or an object of `ChartXAxis`, `ChartYAxis` and `ChartGrid` props. The y axis fits its widest label. A series with `yAxis: 'right'` draws against a second y axis on the right; set its props with `y-axis-right`.
+`x-axis` and `grid` take `false` to hide the part, or an object of `ChartXAxis` and `ChartGrid` props. `y-axis` takes `{ left, right }`, each `false` or an object of `ChartYAxis` props. The y axis fits its widest label. A series with `yAxis: 'right'` draws against a second y axis on the right; set its props with `y-axis.right`.
 
 - `value-formatter` formats values in the tooltip and on the y axis. It receives the series key (`''` on the axis).
 - `index-formatter` formats the categories on the x axis and in the tooltip header.
@@ -65,7 +65,7 @@ Each series takes `name`, `color`, `hide`, `tooltip`, `valueFormatter`, `yAxis`,
   :data="data"
   index="month"
   :value-formatter="(value) => `${value}°C`"
-  :y-axis="{ domain: [0, 30] }"
+  :y-axis="{ left: { domain: [0, 30] } }"
 />
 ```
 
@@ -111,13 +111,13 @@ Without axes, the chart fills its container. Give the container a width and set 
 
 ### Stat Cards
 
-Put stat cards above a chart card. The series' `valueFormatter` adds the unit in the tooltip, and the y axis `tickFormatter` shortens the labels.
+Put stat cards above a chart card. The series' `valueFormatter` adds the unit in the tooltip, and the y axis `tick.formatter` shortens the labels.
 
 <ComponentPreview name="line-chart/stat-cards" />
 
 ### Linear
 
-Set `curve="linear"` for straight segments between points. `ticks` in `y-axis` picks the exact grid lines to show.
+Set `curve="linear"` for straight segments between points. `ticks` in `y-axis.left` picks the exact grid lines to show.
 
 <ComponentPreview name="line-chart/linear" />
 

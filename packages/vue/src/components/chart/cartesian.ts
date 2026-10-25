@@ -124,7 +124,7 @@ export const useCartesianChart = (
     createBarLayout({
       series: visibleSeries.value,
       bandSize: categoryAxis.value.bandwidth,
-      settings: options,
+      bar: options.bar?.(),
     }),
   )
 

@@ -23,8 +23,8 @@ const page = ref(1)
     <section>
       <h2 class="mb-2 text-sm font-medium text-muted">hide-pages / icon-only / disabled</h2>
       <div class="flex flex-col gap-4">
-        <Pagination :total="10" hide-pages prev-label="Prev" />
-        <Pagination :total="3" prev-label="" next-label="" :default-page="2" />
+        <Pagination :total="10" hide-pages :prev="{ label: 'Prev' }" />
+        <Pagination :total="3" :prev="{ label: '' }" :next="{ label: '' }" :default-page="2" />
         <Pagination :total="3" disabled />
       </div>
     </section>

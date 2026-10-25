@@ -1,5 +1,13 @@
-export type { ChartAnimationProps, ChartEasing } from './animation'
-export type { ChartAxisProps, ChartAxisSlots, ChartAxisTickSlotProps } from './axis'
+export type { ChartAnimationOptions, ChartAnimationProps, ChartEasing } from './animation'
+
+export type {
+  ChartAxisProps,
+  ChartAxisSlots,
+  ChartAxisTickOptions,
+  ChartAxisTickSlotProps,
+} from './axis'
+
+export type { ChartYAxesOptions } from './cartesian-root'
 export { default as ChartArea } from './ChartArea.vue'
 export type { ChartAreaProps, ChartAreaSlots } from './ChartArea.types'
 export { default as ChartBar } from './ChartBar.vue'
@@ -33,6 +41,7 @@ export type {
   ChartActiveState,
   ChartAxisDomain,
   ChartAxisInterval,
+  ChartBarSizing,
   ChartCurveType,
   ChartDatum,
   ChartDotProps,
@@ -46,17 +55,20 @@ export type { ChartPieProps, ChartPieSlots } from './ChartPie.types'
 export { default as ChartPolarAngleAxis } from './ChartPolarAngleAxis.vue'
 
 export type {
+  ChartPolarAngleAxisLineOptions,
   ChartPolarAngleAxisProps,
   ChartPolarAngleAxisSlots,
+  ChartPolarAngleAxisTickOptions,
 } from './ChartPolarAngleAxis.types'
 
 export { default as ChartPolarGrid } from './ChartPolarGrid.vue'
-export type { ChartPolarGridProps } from './ChartPolarGrid.types'
+export type { ChartPolarGridPositions, ChartPolarGridProps } from './ChartPolarGrid.types'
 export { default as ChartPolarRadiusAxis } from './ChartPolarRadiusAxis.vue'
 
 export type {
   ChartPolarRadiusAxisProps,
   ChartPolarRadiusAxisSlots,
+  ChartPolarRadiusAxisTickOptions,
 } from './ChartPolarRadiusAxis.types'
 
 export { default as ChartRadar } from './ChartRadar.vue'

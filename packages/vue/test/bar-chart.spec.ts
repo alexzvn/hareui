@@ -254,7 +254,7 @@ describe('BarChart', () => {
 
   it('never draws negative bar widths when the category gap exceeds half the band', async () => {
     const wrapper = mountChart(() => [h(ChartBar, { dataKey: 'low', isAnimationActive: false })], {
-      barCategoryGap: '60%',
+      bar: { categoryGap: '60%' },
     })
 
     await settle()

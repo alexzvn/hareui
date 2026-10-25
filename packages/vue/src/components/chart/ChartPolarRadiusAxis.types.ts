@@ -4,6 +4,25 @@ import type { ClassValue } from '@/utils/tv'
 
 import type { ChartAxisDomain } from './types'
 
+/** Tick labels of `ChartPolarRadiusAxis`, the `tick` prop. */
+export type ChartPolarRadiusAxisTickOptions = {
+  /**
+   * Shows the tick labels.
+   * @defaultValue true
+   */
+  label?: boolean
+  /**
+   * Number axes: number of ticks (and grid rings).
+   * @defaultValue 5
+   */
+  count?: number
+  /**
+   * Formats a tick label.
+   * @defaultValue `String(value)`
+   */
+  formatter?: (value: number | string, index: number) => string
+}
+
 /** Props of `ChartPolarRadiusAxis`: the value axis from the center outwards, drawn along one angle. */
 export type ChartPolarRadiusAxisProps = {
   /**
@@ -20,11 +39,6 @@ export type ChartPolarRadiusAxisProps = {
   type?: 'category' | 'number'
   /** Number axes: `[min, max]` from the center to the outer ring. */
   domain?: ChartAxisDomain
-  /**
-   * Number axes: number of ticks (and grid rings).
-   * @defaultValue 5
-   */
-  tickCount?: number
   /**
    * Number axes: allows decimal ticks.
    * @defaultValue true
@@ -43,12 +57,10 @@ export type ChartPolarRadiusAxisProps = {
    */
   reversed?: boolean
   /**
-   * Shows the tick labels.
-   * @defaultValue true
+   * Tick labels. Unset keys keep their defaults.
+   * @defaultValue { label: true, count: 5 }
    */
-  tick?: boolean
-  /** Formats a tick label. */
-  tickFormatter?: (value: number | string, index: number) => string
+  tick?: ChartPolarRadiusAxisTickOptions
   /**
    * Draws the axis line.
    * @defaultValue true

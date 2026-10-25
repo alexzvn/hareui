@@ -179,14 +179,6 @@ describe('ChartTooltipContent', () => {
     wrapper.unmount()
   })
 
-  it('merges class and ui into the panel', () => {
-    const wrapper = mount(ChartTooltipContent, {
-      props: { payload, class: 'min-w-48', ui: { base: 'rounded-2xl' } },
-    })
-
-    expect(wrapper.classes()).toEqual(expect.arrayContaining(['min-w-48', 'rounded-2xl']))
-  })
-
   it('throws when a part is used outside ChartTooltipContent', () => {
     expect(() => mount(ChartTooltipItem)).toThrow(/inside ChartTooltipContent/)
   })

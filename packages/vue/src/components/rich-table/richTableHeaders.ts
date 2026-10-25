@@ -37,7 +37,7 @@ export const getHeaderScope = <T extends RichTableData>(
 
 // `getCanSort()` is true for every accessor column, so it cannot tell a column that offers sort UI
 // from a plain one, and an explicit `enableSorting: true` can still come from `defaultColumn` or be
-// overridden by `sortingOptions`. A header is sortable only when both agree.
+// overridden by `features.sorting`. A header is sortable only when both agree.
 const isSortable = <T extends RichTableData>(column: Column<T, unknown>) => {
   return column.columnDef.enableSorting === true && column.getCanSort()
 }

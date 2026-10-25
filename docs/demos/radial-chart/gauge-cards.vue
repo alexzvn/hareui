@@ -10,15 +10,17 @@
       <RadialChart
         :data="[metric]"
         index="name"
-        value-key="used"
         gauge
         :max="metric.max"
         :width="120"
         :height="120"
-        :bar-size="8"
+        :bar="{ size: 8 }"
         inner-radius="70%"
         outer-radius="90%"
-        :value-formatter="(value: number) => `${value} of ${metric.max} ${metric.unit}`"
+        :value="{
+          key: 'used',
+          formatter: (value: number) => `${value} of ${metric.max} ${metric.unit}`,
+        }"
         :aria-label="`${metric.name} usage`"
       >
         <template #center="{ total }">

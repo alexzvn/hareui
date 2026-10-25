@@ -13,17 +13,23 @@ import type {
   InferInput,
 } from './types'
 
-/** Props of `Form`: a `<form>` that validates its fields with a schema or a function, and shares validation behavior and server errors with them. */
-export type FormProps<S extends FormSchema, T extends boolean = true, N extends boolean = false> = {
+/** Validation settings a `Form` shares with the fields inside. */
+export type FormValidation = {
   /**
-   * Validation behavior for the fields inside. `native` blocks submission and shows errors on change or submit;
+   * How fields display validation. `native` blocks submission and shows errors on change or submit;
    * `aria` shows errors in realtime and never blocks submission. A field's own `validationBehavior` wins.
    * A `nested` form inherits its parent's.
    * @defaultValue 'native'
    */
-  validationBehavior?: ValidationBehavior
-  /** Server-side errors keyed by field `name`. Shown immediately; a field's error clears once the user changes it. */
-  validationErrors?: ValidationErrors
+  behavior?: ValidationBehavior
+  /** Server-side errors keyed by field `name`. Shown immediately; a field's error clears once the user changes it. A `nested` form inherits its parent's. */
+  errors?: ValidationErrors
+}
+
+/** Props of `Form`: a `<form>` that validates its fields with a schema or a function, and shares validation behavior and server errors with them. */
+export type FormProps<S extends FormSchema, T extends boolean = true, N extends boolean = false> = {
+  /** Validation behavior and server-side errors for the fields inside. */
+  validation?: FormValidation
   /** Schema to validate the form state: any [Standard Schema](https://standardschema.dev) (Zod, Valibot, ArkType, Yup, Effect Schema, …) or a Superstruct struct. */
   schema?: S
   /** A reactive object holding the form's state. A `nested` form reads its parent's. */

@@ -5,7 +5,7 @@
       ref="table"
       :data="data"
       :columns="columns"
-      :pagination-options="paginationOptions"
+      :features="features"
       :initial-state="initialState"
     />
     <div class="flex items-center justify-between gap-4 px-5 pt-1 pb-3">
@@ -60,7 +60,7 @@ const data: Payment[] = [
 
 const currency = new Intl.NumberFormat('en-US', { style: 'currency', currency: 'USD' })
 const table = useTemplateRef('table')
-const paginationOptions = { getPaginationRowModel: getPaginationRowModel() }
+const features = { pagination: { getPaginationRowModel: getPaginationRowModel() } }
 const initialState = { pagination: { pageIndex: 0, pageSize: 4 } }
 
 const columns: RichTableColumn<Payment>[] = [

@@ -1,7 +1,7 @@
 <template>
   <RichTable
     v-model:grouping="grouping"
-    :grouping-options="groupingOptions"
+    :features="features"
     :data="data"
     :columns="columns"
     :initial-state="{ expanded: true }"
@@ -33,7 +33,7 @@ const data: Payment[] = [
 
 const currency = new Intl.NumberFormat('en-US', { style: 'currency', currency: 'USD' })
 const grouping = ref(['status'])
-const groupingOptions = { getGroupedRowModel: getGroupedRowModel() }
+const features = { grouping: { getGroupedRowModel: getGroupedRowModel() } }
 
 // A ghost button whose muted chevron turns from right to down.
 const expandToggle = (row: RichTableRow<Payment>, label: string) => {

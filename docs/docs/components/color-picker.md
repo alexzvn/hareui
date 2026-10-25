@@ -28,7 +28,7 @@ ColorPicker renders a trigger button and a popover. The `trigger` slot holds the
     <ColorSwatch />
     <Label>Pick a color</Label>
   </template>
-  <ColorArea color-space="hsb" x-channel="saturation" y-channel="brightness" />
+  <ColorArea color-space="hsb" :x="{ channel: 'saturation' }" :y="{ channel: 'brightness' }" />
   <ColorSlider channel="hue" color-space="hsb" />
 </ColorPicker>
 ```

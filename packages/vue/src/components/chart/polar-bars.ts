@@ -1,4 +1,8 @@
+import { defu } from 'defu'
+
 import { percentValue } from './percent'
+import type { ChartBarSizing } from './types'
+import { CHART_BAR_SIZING_DEFAULTS } from './types'
 
 /** Size limits of one radial bar series. */
 type RadialBarSizing = {
@@ -10,14 +14,6 @@ type RadialBarSizing = {
 export type RadialBand = {
   bandSize: number
   bars: RadialBarSizing[]
-}
-
-/** Chart-wide bar sizing; a bar's own `barSize` / `maxBarSize` win. */
-export type RadialBandOptions = {
-  barSize?: number | string
-  barGap?: number | string
-  barCategoryGap?: number | string
-  maxBarSize?: number
 }
 
 /** Offset of a bar from the start of its band, and its thickness. */
@@ -87,17 +83,19 @@ const shareBand = (
 
 /**
  * Offset and thickness of each bar inside a band: fixed sizes are centered
- * with `barGap` between them, otherwise `barCategoryGap` is left on both sides and the rest is shared.
+ * with `gap` between them, otherwise `categoryGap` is left on both sides and the rest is shared.
+ * The chart-wide `sizing` is below a bar's own `barSize` / `maxBarSize`.
  */
 export const bandBarPositions = (
   band: RadialBand,
-  options: RadialBandOptions = {},
+  sizing: ChartBarSizing = {},
 ): RadialBarPosition[] => {
   const { bandSize, bars } = band
   if (!bars.length || bandSize <= 0) return bars.map(() => ({ offset: 0, size: 0 }))
 
-  const gap = percentValue(options.barGap ?? 4, { total: bandSize })
-  const sizes = bars.map((bar) => bar.barSize ?? options.barSize)
+  const bar = defu(sizing, CHART_BAR_SIZING_DEFAULTS)
+  const gap = percentValue(bar.gap, { total: bandSize })
+  const sizes = bars.map((entry) => entry.barSize ?? bar.size)
   const firstSize = sizes[0]
 
   const isFixed =
@@ -110,8 +108,8 @@ export const bandBarPositions = (
     return centerFixedBars({ bandSize, gap }, fixedSizes)
   }
 
-  const categoryGap = percentValue(options.barCategoryGap ?? '10%', { total: bandSize })
-  const maxSizes = bars.map((bar) => bar.maxBarSize ?? options.maxBarSize)
+  const categoryGap = percentValue(bar.categoryGap, { total: bandSize })
+  const maxSizes = bars.map((entry) => entry.maxBarSize ?? bar.maxSize)
 
   return shareBand({ bandSize, gap, categoryGap }, maxSizes)
 }

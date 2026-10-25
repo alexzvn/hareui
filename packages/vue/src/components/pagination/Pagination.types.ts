@@ -10,6 +10,14 @@ type Pagination = typeof theme
 /** One entry of the pagination list: a page number, or `'ellipsis'` for a gap of skipped pages. */
 export type PaginationEntry = number | 'ellipsis'
 
+/** Options of the previous or next button. */
+export type PaginationNavButton = {
+  /** The button's label (`'Previous'` / `'Next'` by default). An empty string renders only the icon. */
+  label?: string
+  /** Disable the button. Defaults to being on the first page (previous) or the last page (next). */
+  disabled?: boolean
+}
+
 /** Props of the `Pagination` component. */
 export type PaginationProps = {
   /** The current page (1-based). Use `v-model:page` to control it. */
@@ -35,19 +43,15 @@ export type PaginationProps = {
    */
   hidePages?: boolean
   /**
-   * The previous button's label. An empty string renders only the icon.
-   * @defaultValue 'Previous'
+   * The previous button.
+   * @defaultValue { label: 'Previous' }
    */
-  prevLabel?: string
+  prev?: PaginationNavButton
   /**
-   * The next button's label. An empty string renders only the icon.
-   * @defaultValue 'Next'
+   * The next button.
+   * @defaultValue { label: 'Next' }
    */
-  nextLabel?: string
-  /** Disable the previous button. Defaults to being on the first page. */
-  prevDisabled?: boolean
-  /** Disable the next button. Defaults to being on the last page. */
-  nextDisabled?: boolean
+  next?: PaginationNavButton
   /**
    * Disable every button.
    * @defaultValue false

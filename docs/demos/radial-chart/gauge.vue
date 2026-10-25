@@ -13,7 +13,7 @@
       :height="200"
       inner-radius="70%"
       outer-radius="90%"
-      :value-formatter="formatPercent"
+      :value="{ formatter: formatPercent }"
       aria-label="Build server CPU load"
     >
       <template #center="{ total }">

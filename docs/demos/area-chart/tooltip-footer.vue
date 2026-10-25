@@ -14,7 +14,7 @@
       aria-label="Weekly app installs by store"
       :height="200"
       :value-formatter="formatCount"
-      :y-axis="{ tickFormatter: formatTick }"
+      :y-axis="{ left: { tick: { formatter: formatTick } } }"
       :tooltip="tooltip"
     >
       <template #tooltip-footer="{ payload }">

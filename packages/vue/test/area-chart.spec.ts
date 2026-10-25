@@ -124,7 +124,7 @@ describe('AreaChart', () => {
     wrapper.unmount()
   })
 
-  it('renders y axis ticks with nice values and hidden axis lines', async () => {
+  it('renders y axis ticks with nice values', async () => {
     // Vertical margin leaves room for the labels at both ends of the axis.
     const wrapper = mountChart(
       () => [
@@ -141,7 +141,6 @@ describe('AreaChart', () => {
 
     // Axis width shifts the plot: the first point sits at x = 40.
     expect(wrapper.find('[data-slot=chart-area-curve]').attributes('d')).toMatch(/^M40,190/)
-    expect(wrapper.find('[data-slot=chart-axis-line]').classes()).toContain('stroke-none')
     wrapper.unmount()
   })
 
@@ -410,7 +409,10 @@ describe('AreaChart', () => {
       }
 
       const wrapper = mountChart(() => [
-        h(ChartArea, { dataKey: 'organic', animationDuration: 100, animationEasing: 'linear' }),
+        h(ChartArea, {
+          dataKey: 'organic',
+          animation: { duration: 100, easing: 'linear' },
+        }),
       ])
 
       await settle()
@@ -484,8 +486,7 @@ describe('AreaChart', () => {
     expect(live.attributes('role')).toBe('status')
     expect(live.attributes('data-panel')).toBe('false')
 
-    // Visually hidden, not positioned: no floating panel.
-    expect(live.classes()).toContain('sr-only')
+    // Not positioned: no floating panel.
     expect(live.attributes('style')).toBeUndefined()
     expect(live.text()).toContain('Feb')
     expect(live.text()).toContain('Organic')
@@ -570,21 +571,6 @@ describe('AreaChart', () => {
 
     // organic = [0, 10, 20] → y domain [0, 20] over [40, 0].
     expect(wrapper.find('[data-slot=chart-area-curve]').attributes('d')).toBe('M0,40L200,20L400,0')
-    wrapper.unmount()
-  })
-
-  it('applies ui overrides to the drawn parts', async () => {
-    const wrapper = mountChart(
-      () => [
-        h(ChartYAxis, { width: 40 }),
-        h(ChartArea, { dataKey: 'organic', isAnimationActive: false }),
-      ],
-      { ui: { tick: 'fill-foreground', series: 'custom-series' } },
-    )
-
-    await settle()
-    expect(wrapper.find('[data-slot=chart-tick]').classes()).toContain('fill-foreground')
-    expect(wrapper.find('[data-slot=chart-area]').classes()).toContain('custom-series')
     wrapper.unmount()
   })
 

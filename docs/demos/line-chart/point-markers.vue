@@ -12,7 +12,7 @@
       aria-label="Hours of sleep per night this week"
       :height="200"
       :value-formatter="formatHours"
-      :y-axis="{ domain: [5, 9] }"
+      :y-axis="{ left: { domain: [5, 9] } }"
     />
   </Card>
 </template>

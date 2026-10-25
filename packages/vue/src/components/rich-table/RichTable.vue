@@ -271,14 +271,8 @@ const props = withDefaults(defineProps<RichTableProps<T>>(), {
   variant: 'primary',
   watchOptions: () => ({ deep: true }),
   virtualize: false,
-  // Boolean props default to `false` when absent, which would switch off every `autoReset*` option: keep them unset.
+  // Boolean props default to `false` when absent, which would switch off every `autoReset*` option: keep it unset.
   autoResetAll: undefined,
-  debugAll: undefined,
-  debugCells: undefined,
-  debugColumns: undefined,
-  debugHeaders: undefined,
-  debugRows: undefined,
-  debugTable: undefined,
 })
 
 const slots = defineSlots<RichTableSlots<T>>()
@@ -355,8 +349,8 @@ const ui = useComponentUI('richTable', {
     variant: props.variant,
     sticky: props.sticky,
     loading: props.loading,
-    loadingColor: props.loadingColor,
-    loadingAnimation: props.loadingAnimation,
+    loadingColor: props.loadingBar?.color,
+    loadingAnimation: props.loadingBar?.animation,
     externalScroll: isExternalScroll.value,
   }),
 })
@@ -384,7 +378,7 @@ const detached = useRichTablePinnedEdges({
 const { getColumnEdge, getColumnStyles, columnLayouts } = useRichTableColumnLayout({
   table: tableApi,
   detached,
-  isResizingEnabled: () => !!props.columnSizingOptions?.enableColumnResizing,
+  isResizingEnabled: () => !!props.features?.columnSizing?.enableColumnResizing,
 })
 
 const onRowSelect = (e: Event, row: Row<T>) => {

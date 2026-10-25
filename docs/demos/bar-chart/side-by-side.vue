@@ -12,7 +12,7 @@
       index="term"
       :series="series"
       :colors="colors"
-      :bar-size="12"
+      :bar="{ size: 12 }"
       aria-label="Pottery class enrollments by level and term"
       :height="220"
       :tooltip="{ valueFormatter: formatValue }"

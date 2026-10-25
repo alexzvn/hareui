@@ -10,6 +10,7 @@ import type { PolarBox, PolarGeometryInput } from './polar-geometry'
 import { deltaAngle, resolvePolarGeometry } from './polar-geometry'
 import type { PieItemGroup } from './polar-pie'
 import type { ChartSlice } from './series-config'
+import type { ChartBarSizing } from './types'
 import { usePolarCenter } from './usePolarCenter'
 import { usePolarInteraction } from './usePolarInteraction'
 
@@ -22,11 +23,8 @@ export type PolarChartOptions = {
   outerRadius?: () => number | string | undefined
   startAngle?: () => number | undefined
   endAngle?: () => number | undefined
-  /** Radial bar charts. */
-  barSize?: () => number | string | undefined
-  barGap?: () => number | string | undefined
-  barCategoryGap?: () => number | string | undefined
-  maxBarSize?: () => number | undefined
+  /** Radial bar charts: chart-wide bar sizing; a `ChartRadialBar`'s own `barSize` / `maxBarSize` win. */
+  bar?: () => ChartBarSizing | undefined
   /** Generated mode of PieChart and RadialChart: the resolved rows, hidden ones included. */
   slices?: () => readonly ChartSlice[] | undefined
 }
@@ -164,12 +162,7 @@ export const usePolarChart = (chart: ChartContext, options: PolarChartOptions): 
         bandSize: radiusAxis.value.bandwidth,
         bars: bars.map((bar) => ({ barSize: bar.barSize, maxBarSize: bar.maxBarSize })),
       },
-      {
-        barSize: options.barSize?.(),
-        barGap: options.barGap?.(),
-        barCategoryGap: options.barCategoryGap?.(),
-        maxBarSize: options.maxBarSize?.(),
-      },
+      options.bar?.(),
     )
 
     return new Map(bars.map((bar, index) => [bar.id, positions[index]!]))

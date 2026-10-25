@@ -15,8 +15,8 @@
     <ColorArea
       v-model="color"
       :color-space="colorSpace"
-      :x-channel="xChannel"
-      :y-channel="yChannel"
+      :x="{ channel: xChannel }"
+      :y="{ channel: yChannel }"
     />
 
     <div class="flex items-center gap-3">

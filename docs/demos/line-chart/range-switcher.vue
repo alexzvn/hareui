@@ -25,7 +25,7 @@
       :series="{ value: { name: 'Subscribers' } }"
       sparkline
       :stroke-width="2"
-      :y-axis="{ hide: true, domain: ['dataMin - 100', 'dataMax + 100'] }"
+      :y-axis="{ left: { hide: true, domain: ['dataMin - 100', 'dataMax + 100'] } }"
       :value-formatter="formatSubscribers"
       :tooltip="{ cursor: false, panel: false }"
       aria-label="Podcast subscribers over the selected range"

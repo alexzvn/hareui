@@ -36,7 +36,7 @@
         :series="series"
         aria-label="Library loans per month"
         :height="200"
-        :y-axis="{ tickFormatter: formatTick }"
+        :y-axis="{ left: { tick: { formatter: formatTick } } }"
       />
     </Card>
   </div>

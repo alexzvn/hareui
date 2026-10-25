@@ -16,7 +16,7 @@
     </div>
     <RichTable
       :loading="isLoading"
-      :loading-animation="loadingAnimation"
+      :loading-bar="{ animation: loadingAnimation }"
       :data="data"
       :columns="columns"
     />

@@ -54,18 +54,18 @@ const bar = (props: Record<string, unknown> = {}, cells?: () => VNode[]) =>
 
 describe('radial bar bands', () => {
   it('centers fixed-size bars in their band', () => {
-    expect(bandBarPositions({ bandSize: 25, bars: [{}] }, { barSize: 10, barGap: 4 })).toEqual([
+    expect(bandBarPositions({ bandSize: 25, bars: [{}] }, { size: 10, gap: 4 })).toEqual([
       { offset: 7, size: 10 },
     ])
 
-    expect(bandBarPositions({ bandSize: 19, bars: [{}] }, { barSize: 10, barGap: 4 })).toEqual([
+    expect(bandBarPositions({ bandSize: 19, bars: [{}] }, { size: 10, gap: 4 })).toEqual([
       { offset: 4, size: 10 },
     ])
   })
 
   it('shares the band between bars without a size, minus the category gap', () => {
     const band = { bandSize: 100, bars: [{}, {}] }
-    expect(bandBarPositions(band, { barGap: 4, barCategoryGap: '10%' })).toEqual([
+    expect(bandBarPositions(band, { gap: 4, categoryGap: '10%' })).toEqual([
       { offset: 10, size: 38 },
       { offset: 52, size: 38 },
     ])
@@ -73,13 +73,13 @@ describe('radial bar bands', () => {
 
   it('caps bars at maxBarSize', () => {
     expect(
-      bandBarPositions({ bandSize: 100, bars: [{ maxBarSize: 20 }] }, { barCategoryGap: 0 }),
+      bandBarPositions({ bandSize: 100, bars: [{ maxBarSize: 20 }] }, { categoryGap: 0 }),
     ).toEqual([{ offset: 40, size: 20 }])
   })
 
   it('never returns a negative bar size when gaps fill the band', () => {
     const band = { bandSize: 10, bars: [{}, {}] }
-    const [first] = bandBarPositions(band, { barGap: 20, barCategoryGap: 6 })
+    const [first] = bandBarPositions(band, { gap: 20, categoryGap: 6 })
     expect(first!.size).toBe(0)
   })
 })
@@ -129,7 +129,7 @@ describe('RadialChart', () => {
 
   it('measures against a fixed angle-axis domain', async () => {
     const wrapper = mountChart(() => [
-      h(ChartPolarAngleAxis, { type: 'number', domain: [0, 200], tick: false }),
+      h(ChartPolarAngleAxis, { type: 'number', domain: [0, 200], tick: { label: false } }),
       bar(),
     ])
 
@@ -151,7 +151,6 @@ describe('RadialChart', () => {
     const tracks = wrapper.findAll('[data-slot=chart-radial-bar-track]')
     expect(tracks).toHaveLength(2)
     expect(tracks[0]!.attributes('d')!.match(/A47,47/g)).toHaveLength(2)
-    expect(tracks[0]!.classes()).toContain('fill-default')
     wrapper.unmount()
 
     const custom = mountChart(() => [bar({ background: { fill: 'pink' } })])
@@ -180,7 +179,7 @@ describe('RadialChart', () => {
   it('opens a gauge between start and end angles', async () => {
     const wrapper = mountChart(
       () => [
-        h(ChartPolarAngleAxis, { type: 'number', domain: [0, 100], tick: false }),
+        h(ChartPolarAngleAxis, { type: 'number', domain: [0, 100], tick: { label: false } }),
         bar({ background: true }),
         h(ChartTooltip, { isAnimationActive: false }),
       ],
@@ -384,7 +383,7 @@ describe('RadialChart generated mode', () => {
 
     const composed = mountComposed(
       () => [
-        h(ChartPolarAngleAxis, { type: 'number', domain: [0, 100], tick: false }),
+        h(ChartPolarAngleAxis, { type: 'number', domain: [0, 100], tick: { label: false } }),
         h(ChartRadialBar, { dataKey: 'progress', cornerRadius: 12, isAnimationActive: false }),
       ],
       { startAngle: 225, endAngle: -45 },
@@ -427,7 +426,7 @@ describe('RadialChart generated mode', () => {
   })
 
   it('shows the ring under keyboard focus in the tooltip, formatted', async () => {
-    const wrapper = mountGenerated({ valueFormatter: (value: number) => `${value}%` })
+    const wrapper = mountGenerated({ value: { formatter: (value: number) => `${value}%` } })
     await settle()
     await wrapper.find('[data-slot=chart-surface]').trigger('keydown', { key: 'ArrowRight' })
     await settle()
@@ -435,9 +434,9 @@ describe('RadialChart generated mode', () => {
     wrapper.unmount()
   })
 
-  it('formats legend values with the root valueFormatter', async () => {
+  it('formats legend values with the root value formatter', async () => {
     const wrapper = mountGenerated({
-      valueFormatter: (value: number, name: string) => `${name} ${value}%`,
+      value: { formatter: (value: number, name: string) => `${name} ${value}%` },
       legend: { showValue: true },
     })
 

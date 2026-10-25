@@ -8,14 +8,14 @@
       :data="data"
       :width="200"
       :height="200"
-      :bar-size="10"
+      :bar="{ size: 10 }"
       inner-radius="70%"
       outer-radius="90%"
       :start-angle="225"
       :end-angle="-45"
       aria-label="Build server CPU load"
     >
-      <ChartPolarAngleAxis type="number" :domain="[0, 100]" :tick="false" />
+      <ChartPolarAngleAxis type="number" :domain="[0, 100]" :tick="{ label: false }" />
       <ChartRadialBar data-key="percent" name-key="metric" background :corner-radius="12" />
       <ChartTooltip :value-formatter="formatPercent" />
       <ChartLabel

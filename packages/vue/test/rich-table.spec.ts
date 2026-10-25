@@ -283,7 +283,7 @@ describe('RichTable', () => {
           data: people,
           columns,
           expanded: { 1: true },
-          expandedOptions: { getRowCanExpand: () => true },
+          features: { expanded: { getRowCanExpand: () => true } },
         },
         slots: {
           expanded:
@@ -313,7 +313,7 @@ describe('RichTable', () => {
             },
             ...columns,
           ],
-          expandedOptions: { getRowCanExpand: () => true },
+          features: { expanded: { getRowCanExpand: () => true } },
         },
         slots: { expanded: '<template #expanded>more</template>' },
       })
@@ -363,7 +363,7 @@ describe('RichTable', () => {
           data: people,
           columns,
           grouping: ['role'],
-          groupingOptions: { getGroupedRowModel: getGroupedRowModel() },
+          features: { grouping: { getGroupedRowModel: getGroupedRowModel() } },
         },
       })
 
@@ -389,7 +389,7 @@ describe('RichTable', () => {
           columns: aggregated,
           grouping: ['role'],
           expanded: true,
-          groupingOptions: { getGroupedRowModel: getGroupedRowModel() },
+          features: { grouping: { getGroupedRowModel: getGroupedRowModel() } },
         },
       })
 
@@ -511,7 +511,7 @@ describe('RichTable', () => {
         props: {
           data: people,
           columns: [{ accessorKey: 'name', size: 120 }],
-          columnSizingOptions: { enableColumnResizing: true },
+          features: { columnSizing: { enableColumnResizing: true } },
         },
       })
 
@@ -537,7 +537,7 @@ describe('RichTable', () => {
         props: {
           data: many,
           columns,
-          paginationOptions: { getPaginationRowModel: getPaginationRowModel() },
+          features: { pagination: { getPaginationRowModel: getPaginationRowModel() } },
           pagination: { pageIndex: 0, pageSize: 2 },
         },
       })
@@ -559,7 +559,7 @@ describe('RichTable', () => {
         props: {
           data: many,
           columns,
-          paginationOptions: { getPaginationRowModel: getPaginationRowModel() },
+          features: { pagination: { getPaginationRowModel: getPaginationRowModel() } },
           initialState: { pagination: { pageIndex: 0, pageSize: 2 } },
         },
       })
@@ -605,43 +605,15 @@ describe('RichTable', () => {
       expect(wrapper.find('[data-slot="rich-table-empty"]').exists()).toBe(true)
     })
 
-    it('keeps rows and animates the header bar while loading', async () => {
-      const wrapper = mountTable({
-        props: {
-          data: people,
-          columns,
-          loading: true,
-          loadingColor: 'danger',
-          loadingAnimation: 'swing',
-        },
-      })
+    it('keeps rows while loading', () => {
+      const wrapper = mountTable({ props: { data: people, columns, loading: true } })
 
       expect(bodyRows(wrapper)).toHaveLength(3)
-      const thead = wrapper.get('thead').classes().join(' ')
-      expect(thead).toContain('after:bg-danger')
-      expect(thead).toContain('motion-safe:after:animate-rich-table-swing')
-      await wrapper.setProps({ loading: false })
-      expect(wrapper.get('thead').classes().join(' ')).not.toContain('after:bg-danger')
-    })
-  })
-
-  describe('sticky', () => {
-    it.each([
-      [true, true, true],
-      ['header', true, false],
-      ['footer', false, true],
-    ] as const)('sticky=%s', (sticky, header, footer) => {
-      const wrapper = mountTable({
-        props: { data: people, columns: [{ accessorKey: 'name', footer: 'x' }], sticky },
-      })
-
-      expect(wrapper.get('thead').classes().includes('sticky')).toBe(header)
-      expect(wrapper.get('tfoot').classes().includes('sticky')).toBe(footer)
     })
   })
 
   describe('meta', () => {
-    it('merges column and table meta classes and styles into cells and rows', () => {
+    it('merges column and table meta styles and spans into cells and rows', () => {
       const wrapper = mountTable({
         props: {
           data: people,
@@ -650,35 +622,19 @@ describe('RichTable', () => {
               accessorKey: 'name',
               header: 'Name',
               meta: {
-                class: {
-                  th: 'th-meta',
-                  td: (cell) => (cell.getValue() === 'John' ? 'td-john' : 'td-meta'),
-                },
                 style: { td: { color: 'red' } },
                 colspan: { td: (cell) => (cell.getValue() === 'Sara' ? '2' : '1') },
               },
             },
             { accessorKey: 'role', header: 'Role' },
           ],
-          meta: {
-            class: { tr: (row) => `row-${row.original.id}` },
-            style: { tr: { opacity: '0.5' } },
-          },
+          meta: { style: { tr: { opacity: '0.5' } } },
         },
       })
 
-      expect(wrapper.find('th').classes()).toContain('th-meta')
       const rows = bodyRows(wrapper)
-      expect(rows.map((row) => row.classes().find((c) => c.startsWith('row-')))).toEqual([
-        'row-a',
-        'row-b',
-        'row-c',
-      ])
-
       expect(rows[0]!.attributes('style')).toContain('opacity: 0.5')
       const cells = rows.map((row) => row.find('td'))
-      expect(cells[0]!.classes()).toContain('td-meta')
-      expect(cells[1]!.classes()).toContain('td-john')
       expect(cells[0]!.attributes('style')).toContain('color: red')
       expect(cells[2]!.attributes('colspan')).toBe('2')
     })
@@ -840,7 +796,7 @@ describe('RichTable accessibility', () => {
         caption: 'Team',
         rowSelection: { 1: true },
         expanded: { 0: true },
-        expandedOptions: { getRowCanExpand: () => true },
+        features: { expanded: { getRowCanExpand: () => true } },
         onSelect: () => {},
       },
       slots: {

@@ -10,7 +10,7 @@
       index="command"
       :series="series"
       layout="vertical"
-      :bar-size="14"
+      :bar="{ size: 14 }"
       :radius="24"
       aria-label="Most-run editor commands"
       :height="220"

@@ -1,5 +1,10 @@
 <template>
-  <Pagination class="justify-center" next-label="Forward" prev-label="Back" :total="3">
+  <Pagination
+    class="justify-center"
+    :next="{ label: 'Forward' }"
+    :prev="{ label: 'Back' }"
+    :total="3"
+  >
     <template #prevIcon>
       <Icon icon="gravity-ui:arrow-left" />
     </template>

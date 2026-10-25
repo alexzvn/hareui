@@ -48,9 +48,6 @@ const props = withDefaults(defineProps<ChartBarProps>(), {
   radius: 0,
   hide: false,
   isAnimationActive: true,
-  animationBegin: 0,
-  animationDuration: 1500,
-  animationEasing: 'ease',
   xAxisId: 0,
   yAxisId: 0,
 })

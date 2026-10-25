@@ -9,7 +9,7 @@
       index="channel"
       donut
       :height="220"
-      :value-formatter="formatValue"
+      :value="{ formatter: formatValue }"
       :legend="{ showValue: true }"
       aria-label="Support tickets by channel"
     />

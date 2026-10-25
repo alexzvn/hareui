@@ -1,3 +1,5 @@
+import { defu } from 'defu'
+
 import type { ClassValue } from '@/utils/tv'
 
 import type { ChartRadius } from './shapes'
@@ -31,6 +33,23 @@ export type ChartValueKey<T> =
   OpenKeys<T> extends true
     ? string
     : { [K in StringKey<T>]-?: NonNullable<T[K]> extends number ? K : never }[StringKey<T>]
+
+/**
+ * Value key and value format of slice rows, the `value` prop of `PieChart`, `RadialChart` and `ChartLegend`.
+ * `K` is the row's numeric keys (`ChartValueKey<T>`).
+ */
+export type ChartValueOptions<K extends string = string> = {
+  /**
+   * Key of the value in each row.
+   * @defaultValue the first numeric key except `index`
+   */
+  key?: K
+  /**
+   * Formats values in the tooltip and the legend. Receives the slice name (the row key in `ChartLegend`).
+   * @defaultValue `value.toLocaleString()`
+   */
+  formatter?: (value: number, name: string) => string
+}
 
 /** Keys of `T` usable as the category axis or the slice name. Any string when `T` names no keys. */
 export type ChartIndexKey<T> =
@@ -383,8 +402,9 @@ type ChartPartOptions<P> = {
 }
 
 /**
- * A root's `grid` / `xAxis` / `yAxis` / `tooltip` prop to the part's props, or `null` when the part is off.
- * `undefined` follows `isEnabled`; `true` means the defaults; an object is merged over them.
+ * A root's `grid` / `xAxis` / `yAxis` side / `tooltip` prop to the part's props, or `null` when the part is off.
+ * `undefined` follows `isEnabled`; `true` means the defaults; an object is merged over them, nested objects such as
+ * an axis `tick` per key.
  */
 export const resolveChartPart = <P extends object>(
   value: boolean | Partial<P> | undefined,
@@ -393,7 +413,8 @@ export const resolveChartPart = <P extends object>(
   if (value === false || (value === undefined && !isEnabled)) return null
   if (value === true || value === undefined) return { ...defaults }
 
-  return { ...defaults, ...value }
+  // `defu`'s merged type stays unresolved for a generic `P`; defaults `P` under a `Partial<P>` is a `P`.
+  return defu(value, defaults) as P
 }
 
 /** Side of the plot an in-chart legend sits on. */
@@ -518,8 +539,7 @@ export const chartDefaults: {
   /** Cartesian `grid`; `BarChart layout="vertical"` uses `gridVertical`. */
   grid: Readonly<{ vertical: boolean }>
   gridVertical: Readonly<{ horizontal: boolean }>
-  xAxis: Readonly<{ tickMargin: number }>
-  yAxis: Readonly<Record<never, never>>
+  xAxis: Readonly<{ tick: Readonly<{ margin: number }> }>
   /** `sparkline`: parts off unless passed explicitly, thinner strokes, a 2px top margin for the stroke. */
   sparkline: Readonly<{ margin: Required<ChartMargin>; strokeWidth: number }>
 } = {
@@ -540,7 +560,6 @@ export const chartDefaults: {
   radial: { cornerRadius: 12, background: true },
   grid: { vertical: false },
   gridVertical: { horizontal: false },
-  xAxis: { tickMargin: 8 },
-  yAxis: {},
+  xAxis: { tick: { margin: 8 } },
   sparkline: { margin: { top: 2, right: 0, bottom: 0, left: 0 }, strokeWidth: 1.5 },
 }

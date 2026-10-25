@@ -67,7 +67,6 @@ type NestedResult =
   | { name?: string; output?: undefined; error: FormValidationException }
 
 const props = withDefaults(defineProps<FormProps<S, T, N>>(), {
-  validationBehavior: undefined,
   validateOn: () => ['input', 'blur', 'change'],
   validateOnInputDelay: 300,
   transform: () => true as T,
@@ -93,14 +92,14 @@ const state = computed<unknown>(() => {
 })
 
 const validationBehavior = computed<ValidationBehavior>(
-  () => props.validationBehavior ?? parent?.validationBehavior.value ?? 'native',
+  () => props.validation?.behavior ?? parent?.validationBehavior.value ?? 'native',
 )
 
 // A nested form's fields are named relative to its `name`
 const validationErrors = computed<ValidationErrors | undefined>(() => {
+  const own = props.validation?.errors
   const inherited = parent?.validationErrors.value
-  if (props.validationErrors || !inherited || !props.name)
-    return props.validationErrors ?? inherited
+  if (own || !inherited || !props.name) return own ?? inherited
 
   const prefix = `${props.name}.`
   const ownEntries = Object.entries(inherited)

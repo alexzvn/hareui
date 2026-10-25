@@ -1,8 +1,35 @@
+import { defu } from 'defu'
 import type { ComputedRef, Ref, WatchSource } from 'vue'
 import { computed, onScopeDispose, ref, shallowRef, watch } from 'vue'
 
 /** CSS timing function a chart series animates with. */
 export type ChartEasing = 'ease' | 'ease-in' | 'ease-out' | 'ease-in-out' | 'linear'
+
+/** Timing of a chart series animation, the `animation` prop of every series. */
+export type ChartAnimationOptions = {
+  /**
+   * Delay before the animation starts, in ms.
+   * @defaultValue 0
+   */
+  begin?: number
+  /**
+   * Animation length in ms.
+   * @defaultValue 1500
+   */
+  duration?: number
+  /**
+   * Timing function of the animation.
+   * @defaultValue 'ease'
+   */
+  easing?: ChartEasing
+}
+
+/** Defaults of `ChartAnimationOptions`; a partial `animation` prop keeps the others. */
+const CHART_ANIMATION_DEFAULTS: Readonly<Required<ChartAnimationOptions>> = {
+  begin: 0,
+  duration: 1500,
+  easing: 'ease',
+}
 
 /** Animation props shared by every chart series (`ChartLine`, `ChartBar`, `ChartPie`, …). */
 export type ChartAnimationProps = {
@@ -12,20 +39,10 @@ export type ChartAnimationProps = {
    */
   isAnimationActive?: boolean
   /**
-   * Delay before the animation starts, in ms.
-   * @defaultValue 0
+   * Animation timing. Unset keys keep their defaults.
+   * @defaultValue { begin: 0, duration: 1500, easing: 'ease' }
    */
-  animationBegin?: number
-  /**
-   * Animation length in ms.
-   * @defaultValue 1500
-   */
-  animationDuration?: number
-  /**
-   * Timing function of the animation.
-   * @defaultValue 'ease'
-   */
-  animationEasing?: ChartEasing
+  animation?: ChartAnimationOptions
 }
 
 const bezierPoints: Record<ChartEasing, [number, number, number, number]> = {
@@ -37,7 +54,7 @@ const bezierPoints: Record<ChartEasing, [number, number, number, number]> = {
 }
 
 /** CSS `cubic-bezier()` timing function evaluated at `t` (0–1). */
-export const cubicBezier = ([x1, y1, x2, y2]: [number, number, number, number]): ((
+const cubicBezier = ([x1, y1, x2, y2]: [number, number, number, number]): ((
   t: number,
 ) => number) => {
   const curve = (a: number, b: number) => (t: number) =>
@@ -63,7 +80,7 @@ export const cubicBezier = ([x1, y1, x2, y2]: [number, number, number, number]):
   }
 }
 
-export const easings: Record<ChartEasing, (t: number) => number> = Object.fromEntries(
+const easings: Record<ChartEasing, (t: number) => number> = Object.fromEntries(
   Object.entries(bezierPoints).map(([name, points]) => [name, cubicBezier(points)]),
 ) as Record<ChartEasing, (t: number) => number>
 
@@ -138,19 +155,15 @@ export const useChartTween = <T>({
   }
 
   const start = (initial: boolean) => {
-    const {
-      isAnimationActive = true,
-      animationBegin = 0,
-      animationDuration = 1500,
-      animationEasing = 'ease',
-    } = animation()
+    const { isAnimationActive = true, animation: options } = animation()
+    const { begin, duration, easing } = defu(options, CHART_ANIMATION_DEFAULTS)
 
     const snapshot = initial ? null : drawn
     stop()
 
     if (
       !isAnimationActive ||
-      animationDuration <= 0 ||
+      duration <= 0 ||
       typeof requestAnimationFrame === 'undefined' ||
       prefersReducedMotion()
     ) {
@@ -163,11 +176,11 @@ export const useChartTween = <T>({
     from.value = snapshot
     isEntering.value = initial
     progress.value = 0
-    const ease = easings[animationEasing] ?? easings.ease
+    const ease = easings[easing] ?? easings.ease
     const run = () => {
       const startTime = performance.now()
       const tick = (now: number) => {
-        const elapsed = Math.min((now - startTime) / animationDuration, 1)
+        const elapsed = Math.min((now - startTime) / duration, 1)
         progress.value = ease(elapsed)
 
         if (elapsed < 1) {
@@ -183,8 +196,8 @@ export const useChartTween = <T>({
       frame = requestAnimationFrame(tick)
     }
 
-    if (animationBegin > 0) {
-      timer = setTimeout(run, animationBegin)
+    if (begin > 0) {
+      timer = setTimeout(run, begin)
 
       return
     }

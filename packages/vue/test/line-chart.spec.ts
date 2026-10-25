@@ -265,14 +265,12 @@ describe('LineChart', () => {
         h(ChartLine, {
           dataKey: 'organic',
           dot: false,
-          animationDuration: 1000,
-          animationEasing: 'linear',
+          animation: { duration: 1000, easing: 'linear' },
         }),
         h(ChartLine, {
           dataKey: 'paid',
           dot: false,
-          animationDuration: 1000,
-          animationEasing: 'linear',
+          animation: { duration: 1000, easing: 'linear' },
         }),
       ])
 

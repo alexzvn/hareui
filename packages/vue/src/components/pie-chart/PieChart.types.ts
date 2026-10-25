@@ -12,6 +12,7 @@ import type {
   ChartLegendItem,
   ChartLegendPosition,
   ChartValueKey,
+  ChartValueOptions,
 } from '@/components/chart/series-config'
 import type { ChartDatum, ChartMargin } from '@/components/chart/types'
 import type { ComponentSlots } from '@/types/tv'
@@ -28,10 +29,10 @@ export type PieChartProps<T extends object = ChartDatum> = {
   /** Key of the slice name. Setting it draws the pie, tooltip and legend from props (no child parts needed). */
   index?: ChartIndexKey<T>
   /**
-   * Key of the slice value.
-   * @defaultValue the first numeric key
+   * Key of the slice value, and how values are formatted in the tooltip and the legend.
+   * @defaultValue { key: the first numeric key }
    */
-  valueKey?: ChartValueKey<T>
+  value?: ChartValueOptions<ChartValueKey<T>>
   /**
    * Slice colors: an array used in row order, or a map keyed by slice name. A row's own `fill` wins.
    * @defaultValue the chart palette
@@ -64,8 +65,6 @@ export type PieChartProps<T extends object = ChartDatum> = {
     | boolean
     | ChartLegendPosition
     | (Partial<ChartLegendProps<T>> & { position?: ChartLegendPosition })
-  /** Formats slice values in the tooltip and the legend. */
-  valueFormatter?: (value: number, name: string) => string
   /** Names of hidden slices (`v-model:hidden`). */
   hidden?: string[]
   /**

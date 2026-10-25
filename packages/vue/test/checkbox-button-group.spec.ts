@@ -361,7 +361,7 @@ describe('CheckboxButtonGroup form integration', () => {
   it('validate() receives the selected values in aria mode', async () => {
     wrapper = mount(
       () =>
-        h(Form, { validationBehavior: 'aria' }, () =>
+        h(Form, { validation: { behavior: 'aria' } }, () =>
           h(
             CheckboxButtonGroup,
             {

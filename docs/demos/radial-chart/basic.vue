@@ -17,7 +17,7 @@
       :height="200"
       inner-radius="40%"
       outer-radius="100%"
-      :value-formatter="formatMinutes"
+      :value="{ formatter: formatMinutes }"
       class="shrink-0"
       aria-label="Study time by subject"
     >

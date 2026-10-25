@@ -6,6 +6,7 @@ import type {
   ChartSeriesBase,
   ChartSeriesInput,
   ChartValueKey,
+  ChartValueOptions,
 } from '@/components/chart/series-config'
 import type { ComponentSlots, ComponentVariants } from '@/types/tv'
 import type { ClassValue } from '@/utils/tv'
@@ -34,10 +35,10 @@ export type ChartLegendProps<T extends object = Record<string, unknown>> = {
   /** Slice name key of `data`. */
   index?: ChartIndexKey<T>
   /**
-   * Slice value key of `data`.
-   * @defaultValue the first numeric key except `index`
+   * Slice value key of `data`, and the value format (receives the row's key; defaults to `toLocaleString()`).
+   * @defaultValue { key: the first numeric key except `index` }
    */
-  valueKey?: ChartValueKey<T>
+  value?: ChartValueOptions<ChartValueKey<T>>
   /**
    * Row direction. Vertical lists suit pie breakdowns.
    * @defaultValue 'horizontal'
@@ -58,8 +59,6 @@ export type ChartLegendProps<T extends object = Record<string, unknown>> = {
    * @defaultValue false
    */
   showPercent?: boolean
-  /** Formats values; receives the row's key. Defaults to `toLocaleString()`. */
-  valueFormatter?: (value: number, key: string) => string
   /** Formats shares (0–100). Defaults to a rounded percentage such as `42%`. */
   percentFormatter?: (percent: number) => string
   /**

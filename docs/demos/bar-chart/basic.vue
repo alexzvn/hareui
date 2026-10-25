@@ -19,7 +19,7 @@
       :data="data"
       index="day"
       :series="series"
-      :bar-size="20"
+      :bar="{ size: 20 }"
       :radius="24"
       aria-label="Sourdough loaves sold per day"
       :height="200"

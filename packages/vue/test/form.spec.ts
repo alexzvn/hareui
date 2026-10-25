@@ -50,8 +50,8 @@ describe('Form', () => {
     await expectAccessible(w)
   })
 
-  it('server validationErrors mark each named field invalid and describe it with its message', async () => {
-    const w = signUp({ validationErrors: { email: 'This email is already registered' } })
+  it('server validation errors mark each named field invalid and describe it with its message', async () => {
+    const w = signUp({ validation: { errors: { email: 'This email is already registered' } } })
     await flushPromises()
     const email = w.get('input[name=email]').element
     expect(email.getAttribute('aria-invalid')).toBe('true')

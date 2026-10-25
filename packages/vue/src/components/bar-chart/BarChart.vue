@@ -35,8 +35,6 @@ import theme from './theme'
 const props = withDefaults(defineProps<BarChartProps<T>>(), {
   ...cartesianRootDefaults,
   layout: 'horizontal',
-  barCategoryGap: '10%',
-  barGap: 4,
   stacked: undefined,
 })
 
@@ -57,12 +55,7 @@ const chart = useChartRoot({
   uiProps: () => props.ui,
 })
 
-useCartesianChart(chart, {
-  barCategoryGap: () => props.barCategoryGap,
-  barGap: () => props.barGap,
-  barSize: () => props.barSize,
-  maxBarSize: () => props.maxBarSize,
-})
+useCartesianChart(chart, { bar: () => props.bar })
 
 const root = useCartesianRoot<T, ChartBarSeries>({
   chart,

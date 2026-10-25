@@ -12,8 +12,10 @@
       index="month"
       :series="series"
       :colors="colors"
-      :y-axis="{ tickFormatter: formatCount }"
-      :y-axis-right="{ domain: [0, 100], tickFormatter: formatPercent }"
+      :y-axis="{
+        left: { tick: { formatter: formatCount } },
+        right: { domain: [0, 100], tick: { formatter: formatPercent } },
+      }"
       :tooltip="{ indicator: 'line' }"
       aria-label="Cinema tickets, screenings and occupancy by month"
       :height="280"

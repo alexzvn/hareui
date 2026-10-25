@@ -8,7 +8,7 @@ import type { PageBehavior, VisibleDuration } from './useCalendarDurationView'
 export type CalendarKind = 'calendar' | 'range'
 
 /** The theme slots a shell renders. */
-export type CalendarShellSlot =
+type CalendarShellSlot =
   | 'base'
   | 'panels'
   | 'panel'
@@ -34,7 +34,7 @@ export type CalendarShellUI = Record<CalendarShellSlot, (props?: { class?: Class
 export type CalendarShellUIOverrides = Partial<Record<string, ClassValue>>
 
 /** How the calendar selects. The week/day view runs outside Reka, so it selects with these directly. */
-export type CalendarShellSelection<TValue> = {
+type CalendarShellSelection<TValue> = {
   /** The controlled value; `undefined` leaves the week/day view's selection uncontrolled. */
   value?: TValue | null
   /** The week/day view's initial uncontrolled value. */
@@ -44,6 +44,12 @@ export type CalendarShellSelection<TValue> = {
   allowNonContiguousRanges?: boolean
 }
 
+/** The Calendar or RangeCalendar root's own class, and the Reka root props and listeners that differ between them. */
+type CalendarShellRoot = {
+  class?: ClassValue
+  bindings: Record<string, unknown>
+}
+
 /** The props a Calendar or RangeCalendar root passes to its shell. */
 export type CalendarMonthShellProps<TValue> = {
   kind: CalendarKind
@@ -51,7 +57,7 @@ export type CalendarMonthShellProps<TValue> = {
   ui: CalendarShellUI
   /** The root's `:ui` overrides. */
   uiOverrides?: CalendarShellUIOverrides
-  rootClass?: ClassValue
+  root: CalendarShellRoot
   ariaLabel?: string
   /** The controlled displayed date. */
   placeholder?: DateValue
@@ -63,8 +69,6 @@ export type CalendarMonthShellProps<TValue> = {
   /** Narrower bounds for the month grid and its keys (RangeCalendar while a range is anchored). */
   monthBounds?: { minValue: DateValue; maxValue: DateValue }
   selection: CalendarShellSelection<TValue>
-  /** Props and listeners for the Reka root that differ between Calendar and RangeCalendar. */
-  rootBindings: Record<string, unknown>
   disabled: boolean
   readonly: boolean
   invalid: boolean

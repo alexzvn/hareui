@@ -15,7 +15,8 @@ export const getAxisOrientation = (config: ChartAxisConfig) =>
 export const createTickFormatter =
   (config: ChartAxisConfig) =>
   (value: number | string, index: number): string => {
-    const text = config.tickFormatter ? config.tickFormatter(value, index) : String(value)
+    const formatter = config.tick?.formatter
+    const text = formatter ? formatter(value, index) : String(value)
 
     return config.unit ? `${text}${config.unit}` : text
   }
@@ -57,7 +58,7 @@ export const createAxisMeasure = (source: AxisMeasureSource) => {
     return resolveNumberDomain(extent, {
       domain: config.domain ?? (isAlongData ? ['auto', 'auto'] : undefined),
       ticks: config.ticks?.map(Number).filter(Number.isFinite),
-      tickCount: config.tickCount,
+      tickCount: config.tick?.count,
       allowDecimals: config.allowDecimals,
       allowDataOverflow: config.allowDataOverflow,
     })
@@ -77,7 +78,7 @@ export const createAxisMeasure = (source: AxisMeasureSource) => {
       0,
     )
 
-    return Math.ceil(widest + (config.tickSpace ?? 8))
+    return Math.ceil(widest + (config.tick?.space ?? 8))
   }
 
   // Width of a y axis or height of an x axis; hidden axes take no room.

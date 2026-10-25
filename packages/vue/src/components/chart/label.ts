@@ -2,7 +2,7 @@ import type { InjectionKey } from 'vue'
 import { inject, provide } from 'vue'
 
 /** Rectangle a label is placed against (a bar, a point as a 0×0 box, or the plot area). */
-export type ChartCartesianViewBox = {
+type ChartCartesianViewBox = {
   x: number
   y: number
   width: number
@@ -87,7 +87,7 @@ export const useChartLabelSource = (): ChartLabelSource | null => {
   return inject(chartLabelSourceKey, null)
 }
 
-export const isPolarViewBox = (viewBox: ChartLabelViewBox): viewBox is ChartPolarViewBox => {
+const isPolarViewBox = (viewBox: ChartLabelViewBox): viewBox is ChartPolarViewBox => {
   return 'cx' in viewBox
 }
 

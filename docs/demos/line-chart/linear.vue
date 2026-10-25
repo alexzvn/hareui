@@ -17,7 +17,7 @@
         index="time"
         :series="series"
         curve="linear"
-        :y-axis="{ ticks: [0, 150, 300, 450] }"
+        :y-axis="{ left: { ticks: [0, 150, 300, 450] } }"
         aria-label="Ferry passengers by pier through the day"
         :height="180"
       />

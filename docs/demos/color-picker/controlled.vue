@@ -15,8 +15,8 @@
         aria-label="Color area"
         class="max-w-full"
         color-space="hsb"
-        x-channel="saturation"
-        y-channel="brightness"
+        :x="{ channel: 'saturation' }"
+        :y="{ channel: 'brightness' }"
       />
       <div class="flex items-center gap-2 px-1">
         <ColorSlider aria-label="Hue slider" channel="hue" class="flex-1" color-space="hsb" />

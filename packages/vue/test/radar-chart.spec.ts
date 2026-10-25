@@ -183,11 +183,11 @@ describe('RadarChart', () => {
     wrapper.unmount()
   })
 
-  it('formats spoke labels and hides them with :tick="false"', async () => {
+  it('formats spoke labels and hides them with :tick="{ label: false }"', async () => {
     const wrapper = mountChart(() => [
       h(ChartPolarAngleAxis, {
         dataKey: 'category',
-        tickFormatter: (value: string | number) => String(value).toLowerCase(),
+        tick: { formatter: (value: string | number) => String(value).toLowerCase() },
       }),
       radar(),
     ])
@@ -201,7 +201,7 @@ describe('RadarChart', () => {
     wrapper.unmount()
 
     const hidden = mountChart(() => [
-      h(ChartPolarAngleAxis, { dataKey: 'category', tick: false }),
+      h(ChartPolarAngleAxis, { dataKey: 'category', tick: { label: false } }),
       radar(),
     ])
 

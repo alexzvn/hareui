@@ -13,7 +13,7 @@
       :series="series"
       :colors="colors"
       stacked
-      :y-axis-right="{ domain: [0, 100], tickFormatter: formatPercent }"
+      :y-axis="{ right: { domain: [0, 100], tick: { formatter: formatPercent } } }"
       :tooltip="{ indicator: 'line' }"
       aria-label="Support tickets by channel and same-day solve rate"
       :height="300"

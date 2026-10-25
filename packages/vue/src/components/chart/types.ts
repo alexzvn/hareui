@@ -26,6 +26,38 @@ export type ChartDatum = Record<string, number | string>
 /** `horizontal`/`vertical`: cartesian charts (category axis on x / on y). `centric`/`radial`: polar charts. */
 export type ChartLayout = 'horizontal' | 'vertical' | 'centric' | 'radial'
 
+/** Chart-wide bar sizing of `BarChart` and `RadialChart`, the `bar` prop. A bar's own `barSize` / `maxBarSize` win. */
+export type ChartBarSizing = {
+  /**
+   * Bar thickness, in px or as a percentage of the band (the ring in radial charts).
+   * @defaultValue unset in `BarChart` (bars share the band), 10 in `RadialChart`
+   */
+  size?: number | string
+  /**
+   * Largest bar thickness, in px.
+   * @defaultValue no limit
+   */
+  maxSize?: number
+  /**
+   * Gap between the bars of one category (or ring), in px or as a percentage.
+   * @defaultValue 4
+   */
+  gap?: number | string
+  /**
+   * Gap between neighbouring categories (or rings) when `size` is not set, in px or as a percentage of the band.
+   * @defaultValue '10%'
+   */
+  categoryGap?: number | string
+}
+
+/** Defaults of `ChartBarSizing` shared by every bar layout; a partial `bar` prop keeps the others. */
+export const CHART_BAR_SIZING_DEFAULTS: Readonly<
+  Required<Pick<ChartBarSizing, 'gap' | 'categoryGap'>>
+> = {
+  gap: 4,
+  categoryGap: '10%',
+}
+
 /** SVG z-layers of a chart, bottom to top. */
 export const chartLayerNames = [
   'grid',

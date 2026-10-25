@@ -688,9 +688,9 @@ describe('PieChart generated mode', () => {
     wrapper.unmount()
   })
 
-  it('formats legend values with the root valueFormatter, and a legend formatter wins', async () => {
-    const valueFormatter = (value: number, name: string) => `${name}=${value * 10}`
-    const wrapper = mountGenerated({ valueFormatter, legend: { showValue: true } })
+  it('formats legend values with the root value formatter, and a legend formatter wins', async () => {
+    const formatter = (value: number, name: string) => `${name}=${value * 10}`
+    const wrapper = mountGenerated({ value: { formatter }, legend: { showValue: true } })
     await settle()
 
     const values = () =>
@@ -699,7 +699,7 @@ describe('PieChart generated mode', () => {
     expect(values()).toEqual(['Chrome=10', 'Safari=30', 'Edge=40'])
 
     await wrapper.setProps({
-      legend: { showValue: true, valueFormatter: (value: number) => `#${value}` },
+      legend: { showValue: true, value: { formatter: (value: number) => `#${value}` } },
     })
 
     await settle()
@@ -709,7 +709,7 @@ describe('PieChart generated mode', () => {
 
   it('shows the slice under keyboard focus in the tooltip, formatted', async () => {
     const wrapper = mountGenerated({
-      valueFormatter: (value: number, name: string) => `${name}=${value * 10}`,
+      value: { formatter: (value: number, name: string) => `${name}=${value * 10}` },
     })
 
     await settle()
@@ -832,7 +832,6 @@ describe('PieChart generated mode', () => {
     await settle()
     const live = wrapper.find('[data-slot=chart-tooltip-wrapper]')
     expect(live.attributes('role')).toBe('status')
-    expect(live.classes()).toContain('sr-only')
     expect(live.text()).toContain('Safari')
 
     expect(wrapper.find('[data-slot=chart-pie-sector][data-active=true]').attributes('fill')).toBe(

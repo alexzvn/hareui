@@ -4,7 +4,7 @@
     :kind="kind"
     :ui="ui"
     :ui-overrides="uiOverrides"
-    :root-class="rootClass"
+    :root-class="root.class"
     :aria-label="ariaLabel"
     :duration="visibleDuration!"
     :page-behavior="pageBehavior"
@@ -34,9 +34,9 @@
   <component
     :is="reka.Root"
     v-else
-    ref="root"
+    ref="rekaRoot"
     v-slot="{ weekDays, grid, locale: resolvedLocale }"
-    v-bind="rootBindings"
+    v-bind="root.bindings"
     v-model:placeholder="placeholderModel"
     :min-value="gridBounds.minValue"
     :max-value="gridBounds.maxValue"
@@ -54,7 +54,7 @@
     :calendar-label="ariaLabel"
     :data-slot="prefix"
     role="application"
-    :class="ui.base({ class: [uiOverrides?.base, rootClass] })"
+    :class="ui.base({ class: [uiOverrides?.base, root.class] })"
     @keydown="onMonthKeyDown"
   >
     <template v-if="numberOfMonths <= 1">
@@ -297,7 +297,7 @@ const gridBounds = computed(
   () => props.monthBounds ?? { minValue: props.minValue, maxValue: props.maxValue },
 )
 
-const rootInstance = useTemplateRef<{ $el: HTMLElement }>('root')
+const rootInstance = useTemplateRef<{ $el: HTMLElement }>('rekaRoot')
 const prevButtonEl = useTemplateRef<HTMLElement>('prevButton')
 const nextButtonEl = useTemplateRef<HTMLElement>('nextButton')
 const yearPickerGridEl = useTemplateRef<HTMLElement>('yearPickerGrid')

@@ -11,7 +11,7 @@
       :height="180"
       inner-radius="40%"
       outer-radius="100%"
-      :value-formatter="formatValue"
+      :value="{ formatter: formatValue }"
       :legend="legend"
       :ui="{ legend: 'flex-1' }"
       aria-label="Monthly spending by category"

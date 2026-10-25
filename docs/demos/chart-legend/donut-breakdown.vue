@@ -11,7 +11,7 @@
       aria-label="Storage used by file type"
       :width="160"
       :height="160"
-      :value-formatter="formatSize"
+      :value="{ formatter: formatSize }"
     >
       <template #center>
         <span class="text-xl font-bold text-foreground">{{ used }} GB</span>
@@ -25,7 +25,7 @@
       orientation="vertical"
       show-value
       show-percent
-      :value-formatter="formatSize"
+      :value="{ formatter: formatSize }"
     />
   </Card>
 </template>

@@ -11,7 +11,7 @@
       :data="data"
       index="day"
       :series="series"
-      :y-axis-right="{ tickFormatter: formatCurrency }"
+      :y-axis="{ right: { tick: { formatter: formatCurrency } } }"
       aria-label="Covers and average check per day"
       :height="260"
     />

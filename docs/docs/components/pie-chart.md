@@ -34,7 +34,7 @@ bun add d3-scale d3-shape
 
 :::
 
-`index` names the field that holds each slice's name, and the first other numeric field sets its size (`value-key` picks another). The chart draws one slice per row with a tooltip. `PieChart` fills its parent's width.
+`index` names the field that holds each slice's name, and the first other numeric field sets its size (`value.key` picks another). The chart draws one slice per row with a tooltip. `PieChart` fills its parent's width.
 
 <ComponentPreview name="pie-chart/basic" />
 
@@ -67,17 +67,17 @@ The `#center` slot puts HTML in the middle of the chart, such as a total inside 
 
 ## Tooltip
 
-Hovering a slice shows its name and value. `tooltip` takes `false`, or `ChartTooltip` props such as `indicator` and `labelFormatter`. `value-formatter` formats the values. Use the `#tooltip-footer` slot to add rows under the default ones, or `#tooltip` to replace the panel.
+Hovering a slice shows its name and value. `tooltip` takes `false`, or `ChartTooltip` props such as `indicator` and `labelFormatter`. `value.formatter` formats the values. Use the `#tooltip-footer` slot to add rows under the default ones, or `#tooltip` to replace the panel.
 
 ## Legend
 
-Set `legend` to draw a [ChartLegend](./chart-legend) beside the chart: `true` puts it at the bottom, or pass `'top'`, `'left'` or `'right'`. An object sets `ChartLegend` props, such as `showValue` and `showPercent`, plus a `position`; the chart's `valueFormatter` formats the legend values too. Clicking an item hides or shows its slice; bind `v-model:hidden` to read or set the hidden names. Use `#legend-item` to redraw each row, or `#legend` to replace the list.
+Set `legend` to draw a [ChartLegend](./chart-legend) beside the chart: `true` puts it at the bottom, or pass `'top'`, `'left'` or `'right'`. An object sets `ChartLegend` props, such as `showValue` and `showPercent`, plus a `position`; the chart's `value.formatter` formats the legend values too. Clicking an item hides or shows its slice; bind `v-model:hidden` to read or set the hidden names. Use `#legend-item` to redraw each row, or `#legend` to replace the list.
 
 ## Examples
 
 ### Share Tooltip
 
-`value-formatter` shows each slice as a share of the total, and `#tooltip-footer` adds the order count under it.
+`value.formatter` shows each slice as a share of the total, and `#tooltip-footer` adds the order count under it.
 
 <ComponentPreview name="pie-chart/share-tooltip" />
 

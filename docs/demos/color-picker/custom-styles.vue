@@ -11,8 +11,8 @@
       aria-label="Color area"
       class="max-w-full"
       color-space="hsb"
-      x-channel="saturation"
-      y-channel="brightness"
+      :x="{ channel: 'saturation' }"
+      :y="{ channel: 'brightness' }"
     />
     <ColorSlider
       channel="hue"

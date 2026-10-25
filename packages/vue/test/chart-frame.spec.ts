@@ -257,10 +257,13 @@ describe('resolveFrameLegend', () => {
 
   it('puts a legend slot alone at the bottom', () => {
     expect(
-      resolveFrameLegend(undefined, { hasLegendSlot: true, defaults: { valueFormatter: format } }),
+      resolveFrameLegend(undefined, {
+        hasLegendSlot: true,
+        defaults: { value: { formatter: format } },
+      }),
     ).toEqual({
       position: 'bottom',
-      props: { valueFormatter: format },
+      props: { value: { formatter: format } },
     })
   })
 
@@ -278,10 +281,10 @@ describe('resolveFrameLegend', () => {
     const own = (value: number) => `${value}!`
     expect(
       resolveFrameLegend(
-        { position: 'right', valueFormatter: own },
-        { hasLegendSlot: false, defaults: { valueFormatter: format, showValue: true } },
+        { position: 'right', value: { formatter: own } },
+        { hasLegendSlot: false, defaults: { value: { formatter: format }, showValue: true } },
       ),
-    ).toEqual({ position: 'right', props: { valueFormatter: own, showValue: true } })
+    ).toEqual({ position: 'right', props: { value: { formatter: own }, showValue: true } })
   })
 })
 

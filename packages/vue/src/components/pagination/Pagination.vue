@@ -18,7 +18,7 @@
         <button
           type="button"
           data-slot="pagination-previous"
-          :aria-label="prevLabel ? undefined : 'Previous page'"
+          :aria-label="prevButton.label ? undefined : 'Previous page'"
           :disabled="isPrevDisabled || undefined"
           :data-disabled="isPrevDisabled ? 'true' : undefined"
           :class="navClass"
@@ -48,7 +48,7 @@
               </svg>
             </slot>
           </span>
-          <span v-if="prevLabel">{{ prevLabel }}</span>
+          <span v-if="prevButton.label">{{ prevButton.label }}</span>
         </button>
       </li>
       <template v-if="!hidePages">
@@ -85,13 +85,13 @@
         <button
           type="button"
           data-slot="pagination-next"
-          :aria-label="nextLabel ? undefined : 'Next page'"
+          :aria-label="nextButton.label ? undefined : 'Next page'"
           :disabled="isNextDisabled || undefined"
           :data-disabled="isNextDisabled ? 'true' : undefined"
           :class="navClass"
           @click="go(current + 1)"
         >
-          <span v-if="nextLabel">{{ nextLabel }}</span>
+          <span v-if="nextButton.label">{{ nextButton.label }}</span>
           <span
             aria-hidden="true"
             data-slot="pagination-next-icon"
@@ -123,26 +123,27 @@
 </template>
 
 <script setup lang="ts">
+import { defu } from 'defu'
 import { computed, ref } from 'vue'
 
 import { useComponentUI } from '@/composables/useComponentUI'
 
 import type {
   PaginationEntry,
+  PaginationNavButton,
   PaginationProps,
   PaginationSlots,
   PaginationEmits,
 } from './Pagination.types'
 import theme from './theme'
 
-// `page`/`prevDisabled`/`nextDisabled: undefined` keep the derived defaults when unbound.
+const PREV_DEFAULTS = { label: 'Previous' } satisfies PaginationNavButton
+const NEXT_DEFAULTS = { label: 'Next' } satisfies PaginationNavButton
+
+// `page: undefined` keeps the uncontrolled page when unbound.
 const props = withDefaults(defineProps<PaginationProps>(), {
   page: undefined,
   defaultPage: 1,
-  prevLabel: 'Previous',
-  nextLabel: 'Next',
-  prevDisabled: undefined,
-  nextDisabled: undefined,
 })
 
 const emit = defineEmits<PaginationEmits>()
@@ -152,6 +153,9 @@ const ui = useComponentUI('pagination', {
   theme,
   variantProps: () => ({ size: props.size }),
 })
+
+const prevButton = computed(() => defu(props.prev, PREV_DEFAULTS))
+const nextButton = computed(() => defu(props.next, NEXT_DEFAULTS))
 
 const uncontrolled = ref(props.defaultPage)
 const current = computed(() => props.page ?? uncontrolled.value)
@@ -175,10 +179,12 @@ const entries = computed<PaginationEntry[]>(() => {
   return list
 })
 
-const isPrevDisabled = computed(() => props.disabled || (props.prevDisabled ?? current.value <= 1))
+const isPrevDisabled = computed(
+  () => props.disabled || (prevButton.value.disabled ?? current.value <= 1),
+)
 
 const isNextDisabled = computed(
-  () => props.disabled || (props.nextDisabled ?? current.value >= props.total),
+  () => props.disabled || (nextButton.value.disabled ?? current.value >= props.total),
 )
 
 const linkClass = computed(() => ui.value.link({ class: props.ui?.link }))

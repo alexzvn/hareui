@@ -73,9 +73,6 @@ const props = withDefaults(defineProps<ChartRadarProps>(), {
   strokeWidth: 1,
   hide: false,
   isAnimationActive: true,
-  animationBegin: 0,
-  animationDuration: 1500,
-  animationEasing: 'ease',
 })
 
 defineSlots<ChartRadarSlots>()

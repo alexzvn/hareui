@@ -7,7 +7,7 @@
         v-bind="line"
         :class="chart.classes('radiusAxisLine')"
       />
-      <template v-if="tick">
+      <template v-if="tickOptions.label">
         <g
           v-for="item in ticks"
           :key="item.key"
@@ -38,12 +38,14 @@
 </template>
 
 <script setup lang="ts">
+import { defu } from 'defu'
 import { computed } from 'vue'
 
 import ChartLayer from './ChartLayer.vue'
 import type {
   ChartPolarRadiusAxisProps,
   ChartPolarRadiusAxisSlots,
+  ChartPolarRadiusAxisTickOptions,
 } from './ChartPolarRadiusAxis.types'
 import { useChartContext } from './context'
 import { polarToCartesian } from './label'
@@ -54,13 +56,19 @@ const props = withDefaults(defineProps<ChartPolarRadiusAxisProps>(), {
   allowDecimals: true,
   allowDataOverflow: false,
   reversed: false,
-  tick: true,
   axisLine: true,
   orientation: 'right',
   hide: false,
 })
 
 defineSlots<ChartPolarRadiusAxisSlots>()
+
+const TICK_DEFAULTS: Readonly<Required<Omit<ChartPolarRadiusAxisTickOptions, 'formatter'>>> = {
+  label: true,
+  count: 5,
+}
+
+const tickOptions = computed(() => defu(props.tick, TICK_DEFAULTS))
 
 const chart = useChartContext('ChartPolarRadiusAxis')
 const polar = usePolarContext('ChartPolarRadiusAxis')
@@ -69,7 +77,7 @@ polar.registerRadiusAxis(() => ({
   dataKey: props.dataKey,
   type: props.type,
   domain: props.domain,
-  tickCount: props.tickCount,
+  tickCount: tickOptions.value.count,
   allowDecimals: props.allowDecimals,
   allowDataOverflow: props.allowDataOverflow,
   ticks: props.ticks,
@@ -93,8 +101,10 @@ const tickAnchors = {
 
 const textAnchor = computed(() => tickAnchors[props.orientation])
 
-const ticks = computed(() =>
-  polar.radiusAxis.value.ticks.map((tick) => {
+const ticks = computed(() => {
+  const { formatter } = tickOptions.value
+
+  return polar.radiusAxis.value.ticks.map((tick) => {
     const point = polarToCartesian(
       { cx: polar.cx.value, cy: polar.cy.value },
       { radius: tick.coordinate, angle: props.angle },
@@ -104,12 +114,12 @@ const ticks = computed(() =>
       key: `${tick.index}-${tick.value}`,
       index: tick.index,
       value: tick.value,
-      text: props.tickFormatter ? props.tickFormatter(tick.value, tick.index) : String(tick.value),
+      text: formatter ? formatter(tick.value, tick.index) : String(tick.value),
       x: point.x,
       y: point.y,
       // Labels run along the axis line.
       transform: `rotate(${90 - props.angle}, ${point.x}, ${point.y})`,
     }
-  }),
-)
+  })
+})
 </script>

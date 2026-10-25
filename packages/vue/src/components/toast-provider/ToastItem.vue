@@ -192,8 +192,8 @@ const tabIndex = computed(() =>
 
 const styleVars = computed(() => {
   const vars: Record<string, string> = {
-    '--offset-collapsed': `${props.offsetCollapsed}px`,
-    '--offset-expanded': `${props.offsetExpanded}px`,
+    '--offset-collapsed': `${props.offset.collapsed}px`,
+    '--offset-expanded': `${props.offset.expanded}px`,
     '--scale-collapsed': `${props.scaleCollapsed}`,
     '--front-height': `${props.frontHeight}px`,
     'z-index': `${props.zIndex}`,

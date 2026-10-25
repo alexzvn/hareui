@@ -18,8 +18,8 @@ describe('ColorArea', () => {
       props: {
         defaultValue: '#0485F7',
         colorSpace: 'hsb',
-        xChannel: 'saturation',
-        yChannel: 'brightness',
+        x: { channel: 'saturation' },
+        y: { channel: 'brightness' },
       },
     })
 
@@ -62,8 +62,8 @@ describe('ColorArea', () => {
       props: {
         defaultValue: 'hsb(200, 50%, 30%)',
         colorSpace: 'hsb',
-        xChannel: 'saturation',
-        yChannel: 'brightness',
+        x: { channel: 'saturation' },
+        y: { channel: 'brightness' },
       },
     })
 
@@ -82,8 +82,8 @@ describe('ColorArea', () => {
       props: {
         defaultValue: 'hsb(200, 50%, 50%)',
         colorSpace: 'hsb',
-        xChannel: 'saturation',
-        yChannel: 'brightness',
+        x: { channel: 'saturation' },
+        y: { channel: 'brightness' },
       },
     })
 
@@ -111,8 +111,8 @@ describe('ColorArea', () => {
       props: {
         defaultValue: 'hsb(200, 50%, 50%)',
         colorSpace: 'hsb',
-        xChannel: 'saturation',
-        yChannel: 'brightness',
+        x: { channel: 'saturation' },
+        y: { channel: 'brightness' },
         disabled: true,
       },
     })
@@ -140,8 +140,8 @@ describe('ColorArea', () => {
       props: {
         defaultValue: '#0485F7',
         colorSpace: 'hsb',
-        xChannel: 'saturation',
-        yChannel: 'brightness',
+        x: { channel: 'saturation' },
+        y: { channel: 'brightness' },
       },
       attrs: { 'aria-label': 'Background colour' },
     })
@@ -160,7 +160,7 @@ describe('ColorArea', () => {
       {
         components: { ColorArea },
         template:
-          '<div><span id="area-label">Accent</span><ColorArea aria-labelledby="area-label" default-value="#0485F7" color-space="hsb" x-channel="saturation" y-channel="brightness" /></div>',
+          '<div><span id="area-label">Accent</span><ColorArea aria-labelledby="area-label" default-value="#0485F7" color-space="hsb" :x="{ channel: \'saturation\' }" :y="{ channel: \'brightness\' }" /></div>',
       },
       { attachTo: document.body },
     )
@@ -182,7 +182,11 @@ describe('ColorArea', () => {
 
   it('renders the area with a slider thumb exposing both channels', () => {
     const wrapper = mount(ColorArea, {
-      props: { defaultValue: 'hsb(219, 58%, 93%)', xChannel: 'saturation', yChannel: 'brightness' },
+      props: {
+        defaultValue: 'hsb(219, 58%, 93%)',
+        x: { channel: 'saturation' },
+        y: { channel: 'brightness' },
+      },
     })
 
     expect(wrapper.find(area).exists()).toBe(true)
@@ -196,8 +200,8 @@ describe('ColorArea', () => {
     const wrapper = mount(ColorArea, {
       props: {
         modelValue: parseColor('hsb(200, 50%, 50%)'),
-        xChannel: 'saturation',
-        yChannel: 'brightness',
+        x: { channel: 'saturation' },
+        y: { channel: 'brightness' },
       },
     })
 
@@ -214,12 +218,12 @@ describe('ColorArea', () => {
     expect(rgb.find(thumb).attributes('aria-valuetext')).toContain('Red 255, Green 100')
   })
 
-  it('xChannel and yChannel select which channels the thumb reports', () => {
+  it('the x and y channels select which channels the thumb reports', () => {
     const wrapper = mount(ColorArea, {
       props: {
         colorSpace: 'rgb',
-        xChannel: 'red',
-        yChannel: 'green',
+        x: { channel: 'red' },
+        y: { channel: 'green' },
         defaultValue: 'rgb(255, 100, 50)',
       },
     })
@@ -235,28 +239,10 @@ describe('ColorArea', () => {
     expect(wrapper.find(thumb).attributes('tabindex')).toBeUndefined()
   })
 
-  it('showDots adds the dot overlay classes', () => {
-    const on = mount(ColorArea, { props: { showDots: true, defaultValue: '#0485F7' } })
-    const off = mount(ColorArea, { props: { defaultValue: '#0485F7' } })
-    expect(on.find(area).classes().join(' ')).toContain('after:')
-    expect(off.find(area).classes().join(' ')).not.toContain('after:')
-  })
-
-  it('a user class on the root is merged and wins over the default size', () => {
-    const wrapper = mount(ColorArea, {
-      props: { class: 'size-44 rounded-3xl', defaultValue: '#0485F7' },
-    })
-
-    const cls = wrapper.find(area).classes()
-    expect(cls).toContain('size-44')
-    expect(cls).toContain('rounded-3xl')
-    expect(cls).not.toContain('rounded-2xl')
-  })
-
   it('inside a ColorPicker, reads the context colour and writes commits back', async () => {
     const commits: unknown[] = []
     const wrapper = mount(ColorArea, {
-      props: { xChannel: 'saturation', yChannel: 'brightness' },
+      props: { x: { channel: 'saturation' }, y: { channel: 'brightness' } },
       global: {
         provide: {
           [ColorPickerContextKey as unknown as string]: {
@@ -294,8 +280,8 @@ describe('ColorArea', () => {
       props: {
         defaultValue: '#F43F5E',
         colorSpace: 'hsb',
-        xChannel: 'saturation',
-        yChannel: 'brightness',
+        x: { channel: 'saturation' },
+        y: { channel: 'brightness' },
       },
     })
 
@@ -310,8 +296,8 @@ describe('ColorArea', () => {
       props: {
         modelValue: '#000000',
         colorSpace: 'hsb',
-        xChannel: 'saturation',
-        yChannel: 'brightness',
+        x: { channel: 'saturation' },
+        y: { channel: 'brightness' },
       },
     })
 

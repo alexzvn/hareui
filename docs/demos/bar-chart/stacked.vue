@@ -13,10 +13,10 @@
       :series="series"
       :colors="colors"
       stacked
-      :bar-size="32"
+      :bar="{ size: 32 }"
       aria-label="Quarterly cloud spend by service"
       :height="220"
-      :y-axis="{ tickFormatter: formatTick }"
+      :y-axis="{ left: { tick: { formatter: formatTick } } }"
       :tooltip="{ indicator: 'line', valueFormatter: formatValue }"
     />
   </Card>

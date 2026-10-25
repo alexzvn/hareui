@@ -13,7 +13,7 @@
       :colors="colors"
       layout="vertical"
       stacked
-      :bar-size="18"
+      :bar="{ size: 18 }"
       :grid="false"
       :x-axis="false"
       legend

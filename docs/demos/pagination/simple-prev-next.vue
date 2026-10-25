@@ -1,5 +1,11 @@
 <template>
-  <Pagination v-model:page="page" class="w-full" hide-pages prev-label="Prev" :total="totalPages">
+  <Pagination
+    v-model:page="page"
+    class="w-full"
+    :prev="{ label: 'Prev' }"
+    hide-pages
+    :total="totalPages"
+  >
     <template #summary> {{ startItem }} to {{ endItem }} of {{ totalItems }} invoices </template>
   </Pagination>
 </template>

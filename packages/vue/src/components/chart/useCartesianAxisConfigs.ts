@@ -9,9 +9,18 @@ import type { ChartContext } from './context'
 
 type AxisRegistry = Map<number, () => ChartAxisConfig>
 
+// The root prop that turns the duplicated axis off.
+const rootAxisOffProp = (config: ChartAxisConfig) => {
+  if (config.axis === 'x') return ':x-axis="false"'
+
+  const side = config.id === 'right' ? 'right' : 'left'
+
+  return `:y-axis="{ ${side}: false }"`
+}
+
 const duplicateAxisMessage = (config: ChartAxisConfig) => {
   const id = String(config.id ?? 0)
-  const prop = `:${config.axis}-axis="false"`
+  const prop = rootAxisOffProp(config)
   const component = `Chart${config.axis.toUpperCase()}Axis`
 
   return `Two ${config.axis} axes with id "${id}" in one chart. When the chart root draws its axes from props, turn its axis off (\`${prop}\`) before adding a ${component}, or give the extra axis its own id.`

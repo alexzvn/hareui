@@ -45,11 +45,11 @@ const chart = useChartContext('ChartPolarGrid')
 const polar = usePolarContext('ChartPolarGrid')
 
 const angles = computed(
-  () => props.polarAngles ?? polar.angleAxis.value.ticks.map((tick) => tick.coordinate),
+  () => props.positions?.angles ?? polar.angleAxis.value.ticks.map((tick) => tick.coordinate),
 )
 
 const radii = computed(
-  () => props.polarRadius ?? polar.radiusAxis.value.ticks.map((tick) => tick.coordinate),
+  () => props.positions?.radii ?? polar.radiusAxis.value.ticks.map((tick) => tick.coordinate),
 )
 
 const spokes = computed(() => {

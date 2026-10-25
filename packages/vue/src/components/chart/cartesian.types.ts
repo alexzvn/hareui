@@ -1,7 +1,7 @@
 import type { ComputedRef } from 'vue'
 
 import type { ChartTick } from './scale'
-import type { ChartAxisDomain, ChartAxisInterval, ChartOffset } from './types'
+import type { ChartAxisDomain, ChartAxisInterval, ChartBarSizing, ChartOffset } from './types'
 
 /** Id linking series to an axis; `0` when unset. */
 export type ChartAxisId = string | number
@@ -14,21 +14,23 @@ export type ChartAxisConfig = {
   dataKey?: string
   domain?: ChartAxisDomain
   ticks?: (number | string)[]
-  tickCount?: number
+  tick?: {
+    count?: number
+    formatter?: (value: number | string, index: number) => string
+    /** Tick size plus tick margin: the space between the plot and the labels, used by `size: 'auto'`. */
+    space?: number
+  }
   allowDecimals?: boolean
   allowDataOverflow?: boolean
   hide?: boolean
   /** Width of a y axis / height of an x axis, in px. `'auto'` fits the widest tick label (y axes). */
   size?: number | 'auto'
-  /** Tick size plus tick margin: the space between the plot and the labels, used by `size: 'auto'`. */
-  tickSpace?: number
   orientation?: 'top' | 'bottom' | 'left' | 'right'
   /** Space before the first and after the last category, in px. */
   padding?: [number, number]
   reversed?: boolean
   interval?: ChartAxisInterval
   minTickGap?: number
-  tickFormatter?: (value: number | string, index: number) => string
   unit?: string
   /** Tick label font size used to thin overlapping labels. */
   fontSize?: number
@@ -63,14 +65,8 @@ export type ResolvedAxis = {
 
 /** Bar layout settings a cartesian root passes to `useCartesianChart`. */
 export type CartesianChartOptions = {
-  /** Gap between bands, px or percent of the band. @defaultValue '10%' */
-  barCategoryGap?: () => number | string | undefined
-  /** Gap between bars of one band, px or percent. @defaultValue 4 */
-  barGap?: () => number | string | undefined
-  /** Default bar size, px or percent of the band. */
-  barSize?: () => number | string | undefined
-  /** Max bar size in px. */
-  maxBarSize?: () => number | undefined
+  /** Chart-wide bar sizing; a `ChartBar`'s own `barSize` / `maxBarSize` win. */
+  bar?: () => ChartBarSizing | undefined
 }
 
 /** `[base, value]` per datum (stacked: `[lower, upper]`); `null` where the value is missing. */

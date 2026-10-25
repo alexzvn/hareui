@@ -13,7 +13,7 @@
         </linearGradient>
       </defs>
       <ChartGrid :vertical="false" />
-      <ChartXAxis data-key="month" :tick-margin="8" />
+      <ChartXAxis data-key="month" :tick="{ margin: 8 }" />
       <ChartYAxis :width="30" />
       <ChartArea
         data-key="output"

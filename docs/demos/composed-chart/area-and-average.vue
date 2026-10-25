@@ -11,7 +11,7 @@
       :data="data"
       index="month"
       :series="series"
-      :y-axis="{ domain: [0, 100] }"
+      :y-axis="{ left: { domain: [0, 100] } }"
       :value-formatter="formatPercent"
       aria-label="Reservoir level against the 20-year average"
       :height="260"

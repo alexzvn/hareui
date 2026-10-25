@@ -115,7 +115,7 @@ Use `class` for the container and `ui` for the drawn parts. Radar colors come fr
 />
 ```
 
-Switch the grid to circles with `:grid="{ gridType: 'circle' }"`, and the outer ring with `:angle-axis="{ axisLineType: 'circle' }"`.
+Switch the grid to circles with `:grid="{ gridType: 'circle' }"`, and the outer ring with `:angle-axis="{ axisLine: { type: 'circle' } }"`.
 
 ### Global Configuration
 

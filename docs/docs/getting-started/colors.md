@@ -15,19 +15,13 @@ Accent should be used intentionally and sparingly. Overuse reduces its impact an
 
 <ColorSectionSideBySide
   name="Accent"
-  baseVariable="--accent"
-  baseTooltip="--accent: oklch(0.6204 0.195 253.83)"
-  hoverVariable="--accent-hover"
-  hoverTooltip="--accent-hover: color-mix(in oklab, var(--accent) 90%, var(--accent-foreground) 10%)"
-  foregroundVariable="--accent-foreground"
-  foregroundTooltip="--accent-foreground: var(--snow)"
+  :base="{ variable: '--accent', tooltip: '--accent: oklch(0.6204 0.195 253.83)' }"
+  :hover="{ variable: '--accent-hover', tooltip: '--accent-hover: color-mix(in oklab, var(--accent) 90%, var(--accent-foreground) 10%)' }"
+  :foreground="{ variable: '--accent-foreground', tooltip: '--accent-foreground: var(--snow)' }"
   :soft="{
-    baseVariable: '--accent-soft',
-    baseTooltip: '--accent-soft: color-mix(in oklab, var(--accent) 15%, transparent)',
-    hoverVariable: '--accent-soft-hover',
-    hoverTooltip: '--accent-soft-hover: color-mix(in oklab, var(--accent) 20%, transparent)',
-    foregroundVariable: '--accent-soft-foreground', foregroundCssValue: 'var(--accent)',
-    foregroundTooltip: '--accent-soft-foreground: color-mix(in oklab, var(--accent) 70%, var(--foreground) 30%)',
+    base: { variable: '--accent-soft', tooltip: '--accent-soft: color-mix(in oklab, var(--accent) 15%, transparent)' },
+    hover: { variable: '--accent-soft-hover', tooltip: '--accent-soft-hover: color-mix(in oklab, var(--accent) 20%, transparent)' },
+    foreground: { variable: '--accent-soft-foreground', cssValue: 'var(--accent)', tooltip: '--accent-soft-foreground: color-mix(in oklab, var(--accent) 70%, var(--foreground) 30%)' },
   }"
 />
 
@@ -37,12 +31,9 @@ Default colors form the neutral backbone of the system. They are used for most n
 
 <ColorSectionSideBySide
   name="Default"
-  baseVariable="--default"
-  baseTooltip="--default: oklch(94% 0.001 286.375)"
-  hoverVariable="--default-hover"
-  hoverTooltip="--default-hover: color-mix(in oklab, var(--default) 96%, var(--default-foreground) 4%)"
-  foregroundVariable="--default-foreground"
-  foregroundTooltip="--default-foreground: var(--eclipse)"
+  :base="{ variable: '--default', tooltip: '--default: oklch(94% 0.001 286.375)' }"
+  :hover="{ variable: '--default-hover', tooltip: '--default-hover: color-mix(in oklab, var(--default) 96%, var(--default-foreground) 4%)' }"
+  :foreground="{ variable: '--default-foreground', tooltip: '--default-foreground: var(--eclipse)' }"
 />
 
 ## Success
@@ -51,19 +42,13 @@ Success colors communicate positive outcomes, confirmations, and completed state
 
 <ColorSectionSideBySide
   name="Success"
-  baseVariable="--success"
-  baseTooltip="--success: oklch(0.7329 0.1935 150.81)"
-  hoverVariable="--success-hover"
-  hoverTooltip="--success-hover: color-mix(in oklab, var(--success) 90%, var(--success-foreground) 10%)"
-  foregroundVariable="--success-foreground"
-  foregroundTooltip="--success-foreground: var(--eclipse)"
+  :base="{ variable: '--success', tooltip: '--success: oklch(0.7329 0.1935 150.81)' }"
+  :hover="{ variable: '--success-hover', tooltip: '--success-hover: color-mix(in oklab, var(--success) 90%, var(--success-foreground) 10%)' }"
+  :foreground="{ variable: '--success-foreground', tooltip: '--success-foreground: var(--eclipse)' }"
   :soft="{
-    baseVariable: '--success-soft',
-    baseTooltip: '--success-soft: color-mix(in oklab, var(--success) 15%, transparent)',
-    hoverVariable: '--success-soft-hover',
-    hoverTooltip: '--success-soft-hover: color-mix(in oklab, var(--success) 20%, transparent)',
-    foregroundVariable: '--success-soft-foreground', foregroundCssValue: 'var(--success)',
-    foregroundTooltip: '--success-soft-foreground: color-mix(in oklab, var(--success) 80%, var(--foreground) 60%)',
+    base: { variable: '--success-soft', tooltip: '--success-soft: color-mix(in oklab, var(--success) 15%, transparent)' },
+    hover: { variable: '--success-soft-hover', tooltip: '--success-soft-hover: color-mix(in oklab, var(--success) 20%, transparent)' },
+    foreground: { variable: '--success-soft-foreground', cssValue: 'var(--success)', tooltip: '--success-soft-foreground: color-mix(in oklab, var(--success) 80%, var(--foreground) 60%)' },
   }"
 />
 
@@ -73,19 +58,13 @@ Warning colors indicate caution, risk, or actions that require attention but are
 
 <ColorSectionSideBySide
   name="Warning"
-  baseVariable="--warning"
-  baseTooltip="--warning: oklch(0.7819 0.1585 72.33)"
-  hoverVariable="--warning-hover"
-  hoverTooltip="--warning-hover: color-mix(in oklab, var(--warning) 90%, var(--warning-foreground) 10%)"
-  foregroundVariable="--warning-foreground"
-  foregroundTooltip="--warning-foreground: var(--eclipse)"
+  :base="{ variable: '--warning', tooltip: '--warning: oklch(0.7819 0.1585 72.33)' }"
+  :hover="{ variable: '--warning-hover', tooltip: '--warning-hover: color-mix(in oklab, var(--warning) 90%, var(--warning-foreground) 10%)' }"
+  :foreground="{ variable: '--warning-foreground', tooltip: '--warning-foreground: var(--eclipse)' }"
   :soft="{
-    baseVariable: '--warning-soft',
-    baseTooltip: '--warning-soft: color-mix(in oklab, var(--warning) 15%, transparent)',
-    hoverVariable: '--warning-soft-hover',
-    hoverTooltip: '--warning-soft-hover: color-mix(in oklab, var(--warning) 20%, transparent)',
-    foregroundVariable: '--warning-soft-foreground', foregroundCssValue: 'var(--warning)',
-    foregroundTooltip: '--warning-soft-foreground: color-mix(in oklab, var(--warning) 80%, var(--foreground) 70%)',
+    base: { variable: '--warning-soft', tooltip: '--warning-soft: color-mix(in oklab, var(--warning) 15%, transparent)' },
+    hover: { variable: '--warning-soft-hover', tooltip: '--warning-soft-hover: color-mix(in oklab, var(--warning) 20%, transparent)' },
+    foreground: { variable: '--warning-soft-foreground', cssValue: 'var(--warning)', tooltip: '--warning-soft-foreground: color-mix(in oklab, var(--warning) 80%, var(--foreground) 70%)' },
   }"
 />
 
@@ -95,19 +74,13 @@ Danger colors represent destructive, irreversible, or critical actions and state
 
 <ColorSectionSideBySide
   name="Danger"
-  baseVariable="--danger"
-  baseTooltip="--danger: oklch(0.6532 0.2328 25.74)"
-  hoverVariable="--danger-hover"
-  hoverTooltip="--danger-hover: color-mix(in oklab, var(--danger) 90%, var(--danger-foreground) 10%)"
-  foregroundVariable="--danger-foreground"
-  foregroundTooltip="--danger-foreground: var(--snow)"
+  :base="{ variable: '--danger', tooltip: '--danger: oklch(0.6532 0.2328 25.74)' }"
+  :hover="{ variable: '--danger-hover', tooltip: '--danger-hover: color-mix(in oklab, var(--danger) 90%, var(--danger-foreground) 10%)' }"
+  :foreground="{ variable: '--danger-foreground', tooltip: '--danger-foreground: var(--snow)' }"
   :soft="{
-    baseVariable: '--danger-soft',
-    baseTooltip: '--danger-soft: color-mix(in oklab, var(--danger) 15%, transparent)',
-    hoverVariable: '--danger-soft-hover',
-    hoverTooltip: '--danger-soft-hover: color-mix(in oklab, var(--danger) 20%, transparent)',
-    foregroundVariable: '--danger-soft-foreground', foregroundCssValue: 'var(--danger)',
-    foregroundTooltip: '--danger-soft-foreground: color-mix(in oklab, var(--danger) 70%, var(--foreground) 40%)',
+    base: { variable: '--danger-soft', tooltip: '--danger-soft: color-mix(in oklab, var(--danger) 15%, transparent)' },
+    hover: { variable: '--danger-soft-hover', tooltip: '--danger-soft-hover: color-mix(in oklab, var(--danger) 20%, transparent)' },
+    foreground: { variable: '--danger-soft-foreground', cssValue: 'var(--danger)', tooltip: '--danger-soft-foreground: color-mix(in oklab, var(--danger) 70%, var(--foreground) 40%)' },
   }"
 />
 

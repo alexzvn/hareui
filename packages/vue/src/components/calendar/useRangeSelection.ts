@@ -31,7 +31,7 @@ export type RunSearch<T extends DateValue = DateValue> = {
  * One edge of react-stately's `getAvailableRange`: the last available day before the first unavailable one in
  * direction `dir`, or `undefined` when no unavailable day is found within `span` of `from`.
  */
-export const edgeOfAvailableRun = <T extends DateValue>(
+const edgeOfAvailableRun = <T extends DateValue>(
   from: T,
   search: RunSearch<T> & { dir: 1 | -1 },
 ): T | undefined => {

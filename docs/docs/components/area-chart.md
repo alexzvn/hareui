@@ -54,7 +54,7 @@ Each series takes `name`, `color`, `hide`, `tooltip`, `valueFormatter`, `yAxis`,
 
 ## Axes and Formatting
 
-`x-axis`, `y-axis` and `grid` take `false` to hide the part, or an object of `ChartXAxis`, `ChartYAxis` and `ChartGrid` props. The y axis fits its widest label.
+`x-axis` and `grid` take `false` to hide the part, or an object of `ChartXAxis` and `ChartGrid` props. `y-axis` takes `{ left, right }`, each `false` or an object of `ChartYAxis` props. The y axis fits its widest label.
 
 - `value-formatter` formats values in the tooltip and on the y axis. It receives the series key (`''` on the axis).
 - `index-formatter` formats the categories on the x axis and in the tooltip header.
@@ -65,7 +65,7 @@ Each series takes `name`, `color`, `hide`, `tooltip`, `valueFormatter`, `yAxis`,
   :data="data"
   index="month"
   :value-formatter="(value) => `$${value}`"
-  :y-axis="{ tickFormatter: compact }"
+  :y-axis="{ left: { tick: { formatter: compact } } }"
 />
 ```
 

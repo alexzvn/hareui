@@ -13,8 +13,9 @@ import type {
   ChartLegendItem,
   ChartLegendPosition,
   ChartValueKey,
+  ChartValueOptions,
 } from '@/components/chart/series-config'
-import type { ChartDatum, ChartMargin } from '@/components/chart/types'
+import type { ChartBarSizing, ChartDatum, ChartMargin } from '@/components/chart/types'
 import type { ComponentSlots } from '@/types/tv'
 import type { ClassValue } from '@/utils/tv'
 
@@ -29,10 +30,10 @@ export type RadialChartProps<T extends object = ChartDatum> = {
   /** Key of the ring name. Setting it draws the rings, tooltip and legend from props (no child parts needed). */
   index?: ChartIndexKey<T>
   /**
-   * Key of the ring value.
-   * @defaultValue the first numeric key
+   * Key of the ring value, and how values are formatted in the tooltip and the legend.
+   * @defaultValue { key: the first numeric key }
    */
-  valueKey?: ChartValueKey<T>
+  value?: ChartValueOptions<ChartValueKey<T>>
   /**
    * Ring colors: an array used in row order, or a map keyed by ring name. A row's own `fill` wins.
    * @defaultValue the chart palette
@@ -68,8 +69,6 @@ export type RadialChartProps<T extends object = ChartDatum> = {
     | boolean
     | ChartLegendPosition
     | (Partial<ChartLegendProps<T>> & { position?: ChartLegendPosition })
-  /** Formats ring values in the tooltip and the legend. */
-  valueFormatter?: (value: number, name: string) => string
   /** Names of hidden rings (`v-model:hidden`). */
   hidden?: string[]
   /**
@@ -98,22 +97,11 @@ export type RadialChartProps<T extends object = ChartDatum> = {
    */
   cy?: number | string
   /**
-   * Bar thickness, in px.
-   * @defaultValue 10
+   * Bar thickness and gaps. Unset keys keep their defaults; a `ChartRadialBar` with its own `barSize` / `maxBarSize`
+   * wins.
+   * @defaultValue { size: 10, gap: 4, categoryGap: '10%' }
    */
-  barSize?: number
-  /**
-   * Gap between the bars of a ring when several `ChartRadialBar`s share the chart, in px or as a percentage.
-   * @defaultValue 4
-   */
-  barGap?: number | string
-  /**
-   * Gap between rings when `barSize` is not set, in px or as a percentage of the ring.
-   * @defaultValue '10%'
-   */
-  barCategoryGap?: number | string
-  /** Largest bar thickness, in px. */
-  maxBarSize?: number
+  bar?: ChartBarSizing
   /**
    * Radius of the innermost ring, in px or as a percentage of half the shorter chart side.
    * @defaultValue '30%'

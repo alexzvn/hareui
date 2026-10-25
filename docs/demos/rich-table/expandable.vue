@@ -3,7 +3,7 @@
     v-model:expanded="expanded"
     :data="data"
     :columns="columns"
-    :expanded-options="{ getRowCanExpand: () => true }"
+    :features="{ expanded: { getRowCanExpand: () => true } }"
     class="w-full"
   >
     <template #expanded="{ row }">

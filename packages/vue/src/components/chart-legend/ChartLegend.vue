@@ -114,7 +114,7 @@ const rows = computed<ChartLegendItem[]>(() => {
     return resolveSlices({
       data: props.data,
       index: props.index,
-      valueKey: props.valueKey,
+      valueKey: props.value?.key,
       colors: props.colors,
       hidden: hiddenKeys,
     }).map((slice) => ({
@@ -131,7 +131,9 @@ const rows = computed<ChartLegendItem[]>(() => {
 })
 
 const formatValue = (value: number, key: string) => {
-  return props.valueFormatter ? props.valueFormatter(value, key) : value.toLocaleString()
+  const format = props.value?.formatter
+
+  return format ? format(value, key) : value.toLocaleString()
 }
 
 const formatPercent = (percent: number) => {

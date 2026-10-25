@@ -50,7 +50,7 @@ Pass `series` to choose the fields, their names and their order. Use a map of ke
 />
 ```
 
-Each series takes `name`, `color`, `hide`, `tooltip`, `valueFormatter`, `yAxis`, `radius`, `barSize`, `fillOpacity` and `stack`. Series without a stack sit side by side in each category. `bar-size`, `bar-gap`, `bar-category-gap` and `max-bar-size` on the root size the bars, and `radius` (4 by default) rounds the outer end of each bar.
+Each series takes `name`, `color`, `hide`, `tooltip`, `valueFormatter`, `yAxis`, `radius`, `barSize`, `fillOpacity` and `stack`. Series without a stack sit side by side in each category. `bar` on the root sizes the bars (`{ size, maxSize, gap, categoryGap }`; unset keys keep their defaults), and `radius` (4 by default) rounds the outer end of each bar.
 
 ## Layout
 
@@ -62,7 +62,7 @@ Each series takes `name`, `color`, `hide`, `tooltip`, `valueFormatter`, `yAxis`,
 
 ## Axes and Formatting
 
-`x-axis`, `y-axis` and `grid` take `false` to hide the part, or an object of `ChartXAxis`, `ChartYAxis` and `ChartGrid` props. The y axis fits its widest label. A series with `yAxis: 'right'` draws against a second y axis on the right; set its props with `y-axis-right`.
+`x-axis` and `grid` take `false` to hide the part, or an object of `ChartXAxis` and `ChartGrid` props. `y-axis` takes `{ left, right }`, each `false` or an object of `ChartYAxis` props. The y axis fits its widest label. A series with `yAxis: 'right'` draws against a second y axis on the right; set its props with `y-axis.right`.
 
 - `value-formatter` formats values in the tooltip and on the value axis. It receives the series key (`''` on the axis).
 - `index-formatter` formats the categories on the category axis and in the tooltip header.
@@ -100,7 +100,7 @@ Two series compare this year with a long-term average. Bars without a stack sit 
 
 ### Side By Side
 
-Each key in `series` adds a bar to every category. `bar-size` keeps the bars thin when there are few categories.
+Each key in `series` adds a bar to every category. `bar.size` keeps the bars thin when there are few categories.
 
 <ComponentPreview name="bar-chart/side-by-side" />
 
@@ -118,7 +118,7 @@ Combine `layout="vertical"` with `stacked`. Only the outer end of each stack is 
 
 ### Metric With Bars
 
-A bar chart without a y axis (`:y-axis="false"`) works as a compact trend under a metric.
+A bar chart without a y axis (`:y-axis="{ left: false }"`) works as a compact trend under a metric.
 
 <ComponentPreview name="bar-chart/metric-with-bars" />
 

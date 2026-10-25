@@ -99,7 +99,7 @@ describe('validation: aria', () => {
   it('shows validate() errors in realtime and never blocks submission', async () => {
     const w = mountInForm(
       () => h(TextField, { label: 'Name', name: 'name', validate: minLength3 }),
-      { validationBehavior: 'aria' },
+      { validation: { behavior: 'aria' } },
     )
 
     expect(w.get('form').attributes('novalidate')).toBeDefined()
@@ -156,7 +156,7 @@ describe('validation: precedence', () => {
     const errors = ref<ValidationErrors>({ email: 'Email taken' })
     wrapper = mount(
       () =>
-        h(Form, { validationErrors: errors.value }, () =>
+        h(Form, { validation: { errors: errors.value } }, () =>
           h(TextField, { label: 'Email', name: 'email' }),
         ),
       { attachTo: document.body },
@@ -248,7 +248,7 @@ describe('validation: toggles', () => {
     mountInForm(
       () =>
         h(Switch, { label: 'Wi-Fi', name: 'wifi', validate: (on: boolean) => on || 'Turn it on' }),
-      { validationBehavior: 'aria' },
+      { validation: { behavior: 'aria' } },
     )
 
     await nextTick()
@@ -296,7 +296,7 @@ describe('validation: toggles', () => {
           ],
           validate: (v: string) => (v === 'b' ? 'B is sold out' : null),
         }),
-      { validationBehavior: 'aria' },
+      { validation: { behavior: 'aria' } },
     )
 
     await nextTick()

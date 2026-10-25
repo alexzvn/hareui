@@ -10,12 +10,12 @@
           <slot name="x-tick" v-bind="tick" />
         </template>
       </ChartXAxis>
-      <ChartYAxis v-if="config.yAxis" v-bind="config.yAxis">
+      <ChartYAxis v-if="config.yAxis.left" v-bind="config.yAxis.left">
         <template v-if="$slots['y-tick']" #tick="tick">
           <slot name="y-tick" v-bind="tick" />
         </template>
       </ChartYAxis>
-      <ChartYAxis v-if="config.yAxisRight" v-bind="config.yAxisRight">
+      <ChartYAxis v-if="config.yAxis.right" v-bind="config.yAxis.right">
         <template v-if="$slots['y-tick']" #tick="tick">
           <slot name="y-tick" v-bind="tick" />
         </template>

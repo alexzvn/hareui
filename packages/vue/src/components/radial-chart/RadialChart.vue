@@ -14,8 +14,8 @@
       <ChartPolarAngleAxis
         type="number"
         :domain="[0, domainMax]"
-        :tick="false"
-        :axis-line="false"
+        :tick="{ label: false }"
+        :axis-line="{ show: false }"
       />
       <ChartRadialBar
         :data-key="valueKey"
@@ -36,6 +36,7 @@
 </template>
 
 <script setup lang="ts" generic="T extends object">
+import { defu } from 'defu'
 import { computed } from 'vue'
 
 import ChartCell from '@/components/chart/ChartCell.vue'
@@ -48,7 +49,7 @@ import { frameSlotNames } from '@/components/chart/frame'
 import { usePolarChart } from '@/components/chart/polar'
 import { providePolarCenterLabel, useSliceRoot } from '@/components/chart/polar-root'
 import { chartDefaults } from '@/components/chart/series-config'
-import type { ChartDatum } from '@/components/chart/types'
+import type { ChartBarSizing, ChartDatum } from '@/components/chart/types'
 import { useComponentUI } from '@/composables/useComponentUI'
 
 import type { RadialChartProps, RadialChartSlots } from './RadialChart.types'
@@ -60,9 +61,6 @@ const props = withDefaults(defineProps<RadialChartProps<T>>(), {
   margin: () => ({ top: 5, right: 5, bottom: 5, left: 5 }),
   cx: '50%',
   cy: '50%',
-  barSize: 10,
-  barGap: 4,
-  barCategoryGap: '10%',
   innerRadius: '30%',
   outerRadius: '80%',
   gauge: false,
@@ -70,6 +68,9 @@ const props = withDefaults(defineProps<RadialChartProps<T>>(), {
   tooltip: undefined,
   legend: undefined,
 })
+
+// Gaps default in the bar layout, shared with `BarChart`.
+const BAR_DEFAULTS: ChartBarSizing = { size: 10 }
 
 const slots = defineSlots<RadialChartSlots>()
 const hidden = defineModel<string[]>('hidden', { default: () => [] })
@@ -84,6 +85,8 @@ const { valueKey, slices, visibleSlices, config } = useSliceRoot({
 const domainMax = computed(
   () => props.max ?? Math.max(0, ...(slices.value ?? []).map((slice) => slice.value)),
 )
+
+const bar = computed(() => defu(props.bar, BAR_DEFAULTS))
 
 const startAngle = computed(
   () => props.startAngle ?? (props.gauge ? chartDefaults.gauge.startAngle : 90),
@@ -112,10 +115,7 @@ const polar = usePolarChart(chart, {
   outerRadius: () => props.outerRadius,
   startAngle: () => startAngle.value,
   endAngle: () => endAngle.value,
-  barSize: () => props.barSize,
-  barGap: () => props.barGap,
-  barCategoryGap: () => props.barCategoryGap,
-  maxBarSize: () => props.maxBarSize,
+  bar: () => bar.value,
   slices: () => slices.value,
 })
 

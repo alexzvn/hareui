@@ -48,7 +48,7 @@ describe('useChartTween', () => {
         target: () => target.value,
         interpolate: ({ from, to, t }) => lerp([from ?? 0, to], t),
         key: target,
-        animation: () => ({ animationDuration: 100, animationEasing: 'linear' }),
+        animation: () => ({ animation: { duration: 100, easing: 'linear' } }),
       }),
     )!
 

@@ -12,8 +12,10 @@
       index="week"
       :series="series"
       :colors="colors"
-      :y-axis="{ tickFormatter: formatCount }"
-      :y-axis-right="{ domain: [0, 6], tickFormatter: formatKm }"
+      :y-axis="{
+        left: { tick: { formatter: formatCount } },
+        right: { domain: [0, 6], tick: { formatter: formatKm } },
+      }"
       aria-label="Weekly bike share rides and average distance"
       :height="260"
     />

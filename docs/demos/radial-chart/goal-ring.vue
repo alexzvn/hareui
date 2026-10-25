@@ -10,10 +10,10 @@
       :max="goal"
       :width="200"
       :height="200"
-      :bar-size="12"
+      :bar="{ size: 12 }"
       inner-radius="86%"
       outer-radius="100%"
-      :value-formatter="formatValue"
+      :value="{ formatter: formatValue }"
       aria-label="Water intake against the daily goal"
     >
       <template #center="{ total }">

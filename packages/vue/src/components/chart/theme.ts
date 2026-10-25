@@ -23,5 +23,3 @@ export const chartSlots = {
   /** In-chart `ChartLegend` drawn from the root's `legend` prop. */
   legend: '',
 }
-
-export type ChartSlot = keyof typeof chartSlots

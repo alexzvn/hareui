@@ -1,6 +1,7 @@
 import type { CartesianRootProps, CartesianRootSlots } from '@/components/chart/cartesian-root'
 import type { ChartBarSeries } from '@/components/chart/series-config'
 import type { ChartRadius } from '@/components/chart/shapes'
+import type { ChartBarSizing } from '@/components/chart/types'
 import type { ComponentSlots } from '@/types/tv'
 
 import type theme from './theme'
@@ -15,19 +16,10 @@ export type BarChartProps<T extends object = Record<string, unknown>> = {
    */
   layout?: 'horizontal' | 'vertical'
   /**
-   * Gap between neighbouring categories, as a percentage of the band or in pixels.
-   * @defaultValue '10%'
+   * Bar thickness and gaps. Unset keys keep their defaults; a `ChartBar` with its own `barSize` / `maxBarSize` wins.
+   * @defaultValue { gap: 4, categoryGap: '10%' }
    */
-  barCategoryGap?: number | string
-  /**
-   * Gap between bars of the same category, in pixels or as a percentage.
-   * @defaultValue 4
-   */
-  barGap?: number | string
-  /** Default bar thickness, in px or percent of the band. A `ChartBar` with its own `barSize` overrides it. */
-  barSize?: number | string
-  /** Maximum bar thickness, in px. */
-  maxBarSize?: number
+  bar?: ChartBarSizing
   /**
    * Stacks every bar on one stack. A series' own `stack` wins.
    * @defaultValue false

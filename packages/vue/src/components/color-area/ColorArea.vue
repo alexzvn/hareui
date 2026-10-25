@@ -9,8 +9,8 @@
     :x-channel="axes.x"
     :y-channel="axes.y"
     :disabled="isDisabled"
-    :x-name="xName"
-    :y-name="yName"
+    :x-name="props.x?.name"
+    :y-name="props.y?.name"
     @update:color="onUpdateColor"
     @change-end="onChangeEnd"
   >
@@ -123,8 +123,8 @@ const rootDefault = computed(() =>
 )
 
 const axes = computed(() => {
-  const x = props.xChannel ?? channels.value.find((c) => c !== props.yChannel)!
-  const y = props.yChannel ?? channels.value.find((c) => c !== x)!
+  const x = props.x?.channel ?? channels.value.find((c) => c !== props.y?.channel)!
+  const y = props.y?.channel ?? channels.value.find((c) => c !== x)!
   const z = channels.value.find((c) => c !== x && c !== y)!
 
   return { x, y, z }

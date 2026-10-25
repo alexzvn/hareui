@@ -55,9 +55,6 @@ const props = withDefaults(defineProps<ChartPieProps>(), {
   cornerRadius: 0,
   hide: false,
   isAnimationActive: true,
-  animationBegin: 0,
-  animationDuration: 1500,
-  animationEasing: 'ease',
 })
 
 defineSlots<ChartPieSlots>()

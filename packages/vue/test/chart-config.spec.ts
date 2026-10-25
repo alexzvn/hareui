@@ -17,7 +17,7 @@ const HEIGHT = 200
 const margin = { top: 0, right: 0, bottom: 0, left: 0 }
 
 // Axes, grid and tooltip off: the plot box is the whole chart.
-const bare = { xAxis: false, yAxis: false, grid: false }
+const bare = { xAxis: false, yAxis: { left: false }, grid: false }
 
 const data = [
   { month: 'Jan', organic: 0, paid: 10 },

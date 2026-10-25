@@ -2,7 +2,7 @@
   <RichTable
     :data="data"
     :columns="columns"
-    :column-sizing-options="{ enableColumnResizing: true, columnResizeMode: 'onChange' }"
+    :features="{ columnSizing: { enableColumnResizing: true, columnResizeMode: 'onChange' } }"
     :ui="{ base: 'table-fixed' }"
     class="w-full"
   />

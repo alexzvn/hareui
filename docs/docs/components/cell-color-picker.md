@@ -89,8 +89,8 @@ Pass classes per part with `ui`, or replace the popover content with the default
     <ColorArea
       aria-label="Color area"
       color-space="hsb"
-      x-channel="saturation"
-      y-channel="brightness"
+      :x="{ channel: 'saturation' }"
+      :y="{ channel: 'brightness' }"
     />
     <ColorField aria-label="Hex" />
   </CellColorPicker>

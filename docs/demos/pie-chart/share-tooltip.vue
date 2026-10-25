@@ -9,7 +9,7 @@
       index="drink"
       :outer-radius="90"
       :height="220"
-      :value-formatter="formatShare"
+      :value="{ formatter: formatShare }"
       legend
       aria-label="Orders by drink"
     >

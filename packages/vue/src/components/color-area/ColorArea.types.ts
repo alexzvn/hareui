@@ -7,6 +7,17 @@ import type theme from './theme'
 
 type ColorArea = typeof theme
 
+/** One axis of a `ColorArea`: the colour channel it adjusts and its hidden input. */
+export type ColorAreaAxis = {
+  /**
+   * Colour channel of the axis. Defaults to the first channel of the colour space the other axis
+   * doesn't use: `hue` then `saturation` for HSL/HSB, `red` then `green` for RGB, as in React Aria.
+   */
+  channel?: ColorChannel
+  /** The name of the axis's hidden input, for form submission. */
+  name?: string
+}
+
 /** Props for `ColorArea`, a 2D area for adjusting two channels of a colour, e.g. saturation and lightness. */
 export type ColorAreaProps = {
   /**
@@ -19,23 +30,19 @@ export type ColorAreaProps = {
   /** The colour space the channels are read from. Defaults to the colour's own space. */
   colorSpace?: ColorSpace
   /**
-   * Colour channel for the horizontal (x) axis. Defaults to the first channel of the colour space
-   * that isn't `yChannel` (`hue` for HSL/HSB, `red` for RGB), as in React Aria.
+   * The horizontal (x) axis. Its channel defaults to the first channel of the colour space that
+   * isn't the y channel (`hue` for HSL/HSB, `red` for RGB), as in React Aria.
    */
-  xChannel?: ColorChannel
+  x?: ColorAreaAxis
   /**
-   * Colour channel for the vertical (y) axis. Defaults to the first channel of the colour space
-   * that isn't the x channel (`saturation` for HSL/HSB, `green` for RGB), as in React Aria.
+   * The vertical (y) axis. Its channel defaults to the first channel of the colour space that
+   * isn't the x channel (`saturation` for HSL/HSB, `green` for RGB), as in React Aria.
    */
-  yChannel?: ColorChannel
+  y?: ColorAreaAxis
   /** Whether the colour area is disabled. */
   disabled?: boolean
   /** Whether to show the dot grid overlay for precision picking. */
   showDots?: boolean
-  /** The name of the x channel's hidden input, for form submission. */
-  xName?: string
-  /** The name of the y channel's hidden input, for form submission. */
-  yName?: string
   /** Additional classes merged into the root element. */
   class?: ClassValue
   /** Per-slot class overrides. */

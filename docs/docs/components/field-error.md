@@ -17,7 +17,7 @@ import { FieldError } from '@hareui/vue'
 
 <ComponentPreview name="field-error/basic" />
 
-The FieldError component displays validation error messages for form fields. Fields render it automatically while they are invalid: from the `error-message` prop or `#error` slot, or else from their validation errors (native constraints, `validate`, or a [Form](/docs/components/form)'s `validation-errors`).
+The FieldError component displays validation error messages for form fields. Fields render it automatically while they are invalid: from the `error-message` prop or `#error` slot, or else from their validation errors (native constraints, `validate`, or a [Form](/docs/components/form)'s `validation.errors`).
 
 ## Anatomy
 

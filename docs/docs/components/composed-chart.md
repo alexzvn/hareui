@@ -50,20 +50,20 @@ Each series takes `type`, `name`, `color`, `hide`, `tooltip`, `valueFormatter` a
 
 ## Two y axes
 
-Give a series `yAxis: 'right'` to draw it against a second y axis on the right. Set that axis' props with `y-axis-right`, and the left one's with `y-axis`:
+Give a series `yAxis: 'right'` to draw it against a second y axis on the right. Set the axes' props with `y-axis`: `right` for that axis, `left` for the left one:
 
 ```vue
 <ComposedChart
   :data="data"
   index="day"
   :series="{ covers: { type: 'bar' }, avgCheck: { type: 'line', yAxis: 'right' } }"
-  :y-axis-right="{ tickFormatter: (value) => `€${value}` }"
+  :y-axis="{ right: { tick: { formatter: (value) => `€${value}` } } }"
 />
 ```
 
 ## Axes and Formatting
 
-`x-axis`, `y-axis` and `grid` take `false` to hide the part, or an object of `ChartXAxis`, `ChartYAxis` and `ChartGrid` props. Each y axis fits its widest label.
+`x-axis` and `grid` take `false` to hide the part, or an object of `ChartXAxis` and `ChartGrid` props. `y-axis` takes `{ left, right }`, each `false` or an object of `ChartYAxis` props. Each y axis fits its widest label.
 
 - `value-formatter` formats values in the tooltip and on the y axes. It receives the series key (`''` on the axes).
 - `index-formatter` formats the categories on the x axis and in the tooltip header.
@@ -103,7 +103,7 @@ Bars on the left y axis and an area on the right. The area draws its own line al
 
 ### Area, Bars And Line
 
-An area, bars and a line with dots in one chart. The occupancy line's `valueFormatter` adds a percent sign in the tooltip, and `y-axis-right` formats its axis.
+An area, bars and a line with dots in one chart. The occupancy line's `valueFormatter` adds a percent sign in the tooltip, and `y-axis.right` formats its axis.
 
 <ComponentPreview name="composed-chart/area-bars-and-line" />
 

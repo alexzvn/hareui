@@ -12,7 +12,7 @@
         fill="none"
         :class="chart.classes('axisLine')"
       />
-      <template v-if="tickLine">
+      <template v-if="tick.line">
         <line
           v-for="entry in ticks"
           :key="`line-${entry.tick.index}`"
@@ -22,7 +22,7 @@
           :class="chart.classes('tickLine')"
         />
       </template>
-      <template v-if="tick">
+      <template v-if="tick.label">
         <template v-for="entry in ticks" :key="`tick-${entry.tick.index}`">
           <slot
             name="tick"
@@ -56,7 +56,7 @@ import { computed } from 'vue'
 
 import type { ClassValue } from '@/utils/tv'
 
-import type { ChartAxisTickSlotProps } from './axis'
+import type { ChartAxisTickSlotProps, ResolvedAxisTick } from './axis'
 import type { ResolvedAxis } from './cartesian.types'
 import ChartLayer from './ChartLayer.vue'
 import { useChartContext } from './context'
@@ -66,10 +66,7 @@ import type { ChartTick } from './scale'
 
 const props = defineProps<{
   axis: ResolvedAxis
-  tickSize: number
-  tickMargin: number
-  tick: boolean
-  tickLine: boolean
+  tick: ResolvedAxisTick
   axisLine: boolean
   class?: ClassValue
 }>()
@@ -158,7 +155,8 @@ const ticks = computed(() => {
   const geometry = tickGeometries[orientation]
 
   // The tick size is always reserved, even with tick lines hidden.
-  const frame = { box, tickSize: props.tickSize, gap: props.tickSize + props.tickMargin }
+  const { size, margin } = props.tick
+  const frame = { box, tickSize: size, gap: size + margin }
 
   return props.axis.ticks.map((tick) => ({ tick, ...geometry(tick, frame) }))
 })

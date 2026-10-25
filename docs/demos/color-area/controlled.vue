@@ -1,6 +1,11 @@
 <template>
   <div class="flex flex-col gap-4">
-    <ColorArea v-model="color" color-space="rgb" x-channel="red" y-channel="green" />
+    <ColorArea
+      v-model="color"
+      color-space="rgb"
+      :x="{ channel: 'red' }"
+      :y="{ channel: 'green' }"
+    />
     <div class="flex w-[300px] items-center gap-3">
       <ColorSwatch :color="color" size="md" />
       <p class="text-sm text-muted">

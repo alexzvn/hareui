@@ -63,9 +63,6 @@ const props = withDefaults(defineProps<ChartRadialBarProps>(), {
   minPointSize: 0,
   hide: false,
   isAnimationActive: true,
-  animationBegin: 0,
-  animationDuration: 1500,
-  animationEasing: 'ease',
 })
 
 defineSlots<ChartRadialBarSlots>()

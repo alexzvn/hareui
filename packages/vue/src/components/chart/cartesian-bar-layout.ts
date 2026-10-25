@@ -1,6 +1,9 @@
-import type { CartesianChartOptions, ChartBarPosition } from './cartesian.types'
+import { defu } from 'defu'
+
+import type { ChartBarPosition } from './cartesian.types'
 import { percentValue } from './percent'
-import type { ChartSeries } from './types'
+import type { ChartBarSizing, ChartSeries } from './types'
+import { CHART_BAR_SIZING_DEFAULTS } from './types'
 
 /** One bar position in a band: an unstacked bar, or every bar of a stack. */
 type BarSlot = { ids: string[]; size?: number; max?: number }
@@ -98,23 +101,23 @@ const layoutAutoSlots = (
 export const createBarLayout = (options: {
   series: ChartSeries[]
   bandSize: number
-  settings: CartesianChartOptions
+  /** The root's bar sizing; a series' own `barSize` / `maxBarSize` win. */
+  bar?: ChartBarSizing
 }): Map<string, ChartBarPosition> => {
-  const { bandSize, settings } = options
+  const { bandSize } = options
   if (!bandSize) return new Map()
 
   const slots = collectBarSlots(options.series, bandSize)
   if (!slots.length) return new Map()
 
-  const rootBarSize = settings.barSize?.()
-  const rootSize = rootBarSize === undefined ? undefined : toBarLength(rootBarSize, bandSize)
+  const bar = defu(options.bar, CHART_BAR_SIZING_DEFAULTS)
+  const rootSize = bar.size === undefined ? undefined : toBarLength(bar.size, bandSize)
   for (const slot of slots) slot.size ??= rootSize
 
-  const gap = toBarLength(settings.barGap?.() ?? 4, bandSize)
+  const gap = toBarLength(bar.gap, bandSize)
   if (slots[0]!.size !== undefined) return new Map(layoutSizedSlots(slots, { bandSize, gap }))
 
-  const categoryGap = toBarLength(settings.barCategoryGap?.() ?? '10%', bandSize)
-  const maxBarSize = settings.maxBarSize?.()
+  const categoryGap = toBarLength(bar.categoryGap, bandSize)
 
-  return new Map(layoutAutoSlots(slots, { bandSize, gap, categoryGap, maxBarSize }))
+  return new Map(layoutAutoSlots(slots, { bandSize, gap, categoryGap, maxBarSize: bar.maxSize }))
 }

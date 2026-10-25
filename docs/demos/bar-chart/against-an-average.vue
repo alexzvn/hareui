@@ -14,7 +14,7 @@
       :data="data"
       index="month"
       :series="series"
-      :bar-size="12"
+      :bar="{ size: 12 }"
       aria-label="Monthly rainfall against the 10-year average"
       :height="200"
       :value-formatter="formatRain"

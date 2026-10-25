@@ -35,8 +35,7 @@
         :is-mobile="isMobile"
         :placement="placement!"
         :z-index="item.zIndex"
-        :offset-collapsed="item.offsetCollapsed"
-        :offset-expanded="item.offsetExpanded"
+        :offset="item.offset"
         :scale-collapsed="item.scaleCollapsed"
         :front-height="item.frontHeight"
         :close="() => activeQueue.close(item.toast.key)"
@@ -66,6 +65,7 @@ import { useComponentUI } from '@/composables/useComponentUI'
 import { usePortal } from '@/composables/usePortal'
 
 import theme from './theme'
+import type { ToastItemOffset } from './ToastItem.types'
 import ToastItem from './ToastItem.vue'
 import type { ToastProviderProps, ToastProviderSlots } from './ToastProvider.types'
 import {
@@ -369,8 +369,7 @@ type RenderItem = {
   isExiting: boolean
   isHidden: boolean
   zIndex: number
-  offsetCollapsed: number
-  offsetExpanded: number
+  offset: ToastItemOffset
   scaleCollapsed: number
   frontHeight: number
 }
@@ -411,8 +410,7 @@ const renderItems = computed<RenderItem[]>(() => {
       isExiting,
       isHidden: !isExiting && index >= resolvedMaxVisibleToasts.value,
       zIndex: isExiting ? 0 : vis.length - i,
-      offsetCollapsed: index * props.gap,
-      offsetExpanded: heightsBefore + index * props.gap,
+      offset: { collapsed: index * props.gap, expanded: heightsBefore + index * props.gap },
       scaleCollapsed: 1 - index * props.scaleFactor,
       frontHeight,
     })

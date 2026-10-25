@@ -18,9 +18,9 @@
         :data="data"
         index="week"
         :series="series"
-        :bar-size="16"
+        :bar="{ size: 16 }"
         :radius="24"
-        :y-axis="false"
+        :y-axis="{ left: false }"
         aria-label="Parcels shipped per week"
         :height="160"
       />

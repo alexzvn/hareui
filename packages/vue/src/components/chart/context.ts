@@ -30,7 +30,7 @@ import type {
 import { chartLayerNames } from './types'
 
 /** Class functions of a chart root theme (any subset of the shared chart slots). */
-export type ChartRootUI = Record<string, (props?: { class?: ClassValue }) => string>
+type ChartRootUI = Record<string, (props?: { class?: ClassValue }) => string>
 
 export type ChartRootOptions = {
   data: () => ChartDatum[] | undefined
@@ -93,13 +93,13 @@ export const useChartConfig = (chart: ChartContext) => {
 }
 
 /** What a root publishes from its `index` / `series` props. */
-export type ChartRootConfig = {
+type ChartRootConfig = {
   index?: string
   series: ReadonlyArray<{ key: string; name: string; color: string; hidden: boolean }>
   hidden: readonly string[]
 }
 
-export const chartContextKey: InjectionKey<ChartContext> = Symbol('hareui-chart')
+const chartContextKey: InjectionKey<ChartContext> = Symbol('hareui-chart')
 
 const DEFAULT_MARGIN: Required<ChartMargin> = { top: 8, right: 8, bottom: 0, left: 0 }
 

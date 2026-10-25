@@ -41,7 +41,7 @@ ColorArea renders the gradient area with its draggable thumb built in (HeroUI's 
 
 ### Color Space & Channels
 
-Use `color-space` to set the color space (RGB, HSL, HSB) and `x-channel` / `y-channel` to choose which channels are shown on each axis.
+Use `color-space` to set the color space (RGB, HSL, HSB) and the `channel` of `x` / `y` to choose which channels are shown on each axis.
 
 <ComponentPreview name="color-area/space-and-channels" />
 

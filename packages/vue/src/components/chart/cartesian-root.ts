@@ -1,3 +1,4 @@
+import { defu } from 'defu'
 import type { ComputedRef, Ref, VNode } from 'vue'
 import { computed } from 'vue'
 
@@ -33,6 +34,21 @@ import {
 } from './series-config'
 import type { ChartLayout, ChartMargin } from './types'
 
+/** Y axes of a cartesian root, the `yAxis` prop. `false` hides an axis, an object sets `ChartYAxis` props. */
+export type ChartYAxesOptions = {
+  /**
+   * Left axis: values, or the categories with `BarChart layout="vertical"`.
+   * @defaultValue true, false with `sparkline`
+   */
+  left?: boolean | Partial<ChartYAxisProps>
+  /**
+   * Right axis for series with `yAxis: 'right'`. Drawn when such a series exists, or when set. Not drawn with
+   * `BarChart layout="vertical"`.
+   * @defaultValue true when a series uses it
+   */
+  right?: boolean | Partial<ChartYAxisProps>
+}
+
 /** Props shared by `AreaChart`, `LineChart`, `BarChart` and `ComposedChart`. */
 export type CartesianRootProps<T extends object, S extends ChartSeriesBase> = {
   /** Rows to plot. Each series reads one field of each row. */
@@ -61,15 +77,11 @@ export type CartesianRootProps<T extends object, S extends ChartSeriesBase> = {
    */
   xAxis?: boolean | Partial<ChartXAxisProps>
   /**
-   * Y axis: `false` hides it, an object sets `ChartYAxis` props. Its width fits the widest label.
-   * @defaultValue true, false with `sparkline`
+   * Y axes: `left`, and `right` for series with `yAxis: 'right'`. `false` hides an axis, an object sets `ChartYAxis`
+   * props. Their width fits the widest label.
+   * @defaultValue { left: true, right: true when a series uses it }; no left axis with `sparkline`
    */
-  yAxis?: boolean | Partial<ChartYAxisProps>
-  /**
-   * Right y axis for series with `yAxis: 'right'`. Drawn when such a series exists, or when set.
-   * @defaultValue true when a series uses it
-   */
-  yAxisRight?: boolean | Partial<ChartYAxisProps>
+  yAxis?: ChartYAxesOptions
   /**
    * Hover tooltip: `false` turns it off, an object sets `ChartTooltip` props.
    * @defaultValue true, false with `sparkline`
@@ -132,8 +144,6 @@ export const cartesianRootDefaults = {
   margin: undefined,
   grid: undefined,
   xAxis: undefined,
-  yAxis: undefined,
-  yAxisRight: undefined,
   tooltip: undefined,
   legend: undefined,
   sparkline: false,
@@ -148,7 +158,7 @@ export const rootMargin = (
   return props.margin ?? (props.sparkline ? chartDefaults.sparkline.margin : DEFAULT_MARGIN)
 }
 
-export type CartesianSeriesKind = 'area' | 'line' | 'bar'
+type CartesianSeriesKind = 'area' | 'line' | 'bar'
 
 /** One generated series part: the component kind and its props. */
 export type CartesianAutoSeries = {
@@ -164,8 +174,7 @@ export type CartesianAutoConfig = {
   series: CartesianAutoSeries[]
   grid: Partial<ChartGridProps> | null
   xAxis: Partial<ChartXAxisProps> | null
-  yAxis: Partial<ChartYAxisProps> | null
-  yAxisRight: Partial<ChartYAxisProps> | null
+  yAxis: { left: Partial<ChartYAxisProps> | null; right: Partial<ChartYAxisProps> | null }
 } & ChartFrameConfig
 
 type AnySeries = ChartAreaSeries & ChartBarSeries & ChartLineSeries & { type?: CartesianSeriesKind }
@@ -322,35 +331,40 @@ export const useCartesianRoot = <T extends object, S extends ChartSeriesBase>(
       }
     })
 
-    const valueTicks = props.valueFormatter
-      ? (value: number | string) => props.valueFormatter!(Number(value), '')
-      : undefined
+    const { indexFormatter, valueFormatter } = props
 
-    const categoryAxis = definedProps({
+    const categoryAxis: Partial<ChartXAxisProps & ChartYAxisProps> = definedProps({
       dataKey: props.index as string | undefined,
-      tickFormatter: props.indexFormatter,
+      tick: indexFormatter ? { formatter: indexFormatter } : undefined,
     })
 
-    const valueAxis = definedProps({ tickFormatter: valueTicks })
+    const valueAxis: Partial<ChartXAxisProps & ChartYAxisProps> = valueFormatter
+      ? { tick: { formatter: (value) => valueFormatter(Number(value), '') } }
+      : {}
+
     const xAxis = resolveChartPart<Partial<ChartXAxisProps>>(props.xAxis, {
       defaults: isVertical
-        ? { ...chartDefaults.xAxis, type: 'number', ...valueAxis }
-        : { ...chartDefaults.xAxis, ...categoryAxis },
+        ? defu(valueAxis, { type: 'number' as const }, chartDefaults.xAxis)
+        : defu(categoryAxis, chartDefaults.xAxis),
       isEnabled,
     })
 
-    const yAxis = resolveChartPart<Partial<ChartYAxisProps>>(props.yAxis, {
+    const left = resolveChartPart<Partial<ChartYAxisProps>>(props.yAxis?.left, {
       defaults: isVertical
-        ? { ...chartDefaults.yAxis, type: 'category', width: 'auto', ...categoryAxis }
-        : { ...chartDefaults.yAxis, width: 'auto', ...valueAxis },
+        ? defu(categoryAxis, { type: 'category' as const, width: 'auto' as const })
+        : defu(valueAxis, { width: 'auto' as const }),
       isEnabled,
     })
 
     const usesRight = series.some((entry) => entry.props.yAxisId === 'right')
-    const yAxisRight = isVertical
+    const right = isVertical
       ? null
-      : resolveChartPart<Partial<ChartYAxisProps>>(props.yAxisRight, {
-          defaults: { width: 'auto', ...valueAxis, yAxisId: 'right', orientation: 'right' },
+      : resolveChartPart<Partial<ChartYAxisProps>>(props.yAxis?.right, {
+          defaults: defu(valueAxis, {
+            width: 'auto' as const,
+            yAxisId: 'right',
+            orientation: 'right' as const,
+          }),
           isEnabled: usesRight,
         })
 
@@ -363,8 +377,7 @@ export const useCartesianRoot = <T extends object, S extends ChartSeriesBase>(
         isEnabled,
       }),
       xAxis,
-      yAxis,
-      yAxisRight,
+      yAxis: { left, right },
       // Composition mode draws only the slot, so a `ChartTooltip` child stays the single tooltip.
       tooltip: generated.value
         ? resolveChartPart<Partial<ChartTooltipProps>>(props.tooltip, {

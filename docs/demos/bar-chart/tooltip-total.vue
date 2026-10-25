@@ -10,10 +10,10 @@
       index="month"
       :series="series"
       :colors="colors"
-      :bar-size="10"
+      :bar="{ size: 10 }"
       aria-label="Museum tickets sold by channel"
       :height="220"
-      :y-axis="{ tickFormatter: formatTick }"
+      :y-axis="{ left: { tick: { formatter: formatTick } } }"
       :tooltip="{ valueFormatter: formatCount }"
     >
       <template #tooltip-footer="{ payload }">

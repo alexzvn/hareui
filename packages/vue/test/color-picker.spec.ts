@@ -30,7 +30,7 @@ const swatchColor = () =>
 const slots = {
   trigger: () => h(ColorSwatch, { size: 'lg' }),
   default: () => [
-    h(ColorArea, { colorSpace: 'hsb', xChannel: 'saturation', yChannel: 'brightness' }),
+    h(ColorArea, { colorSpace: 'hsb', x: { channel: 'saturation' }, y: { channel: 'brightness' } }),
     h(ColorField, { 'aria-label': 'Hex' }),
   ],
 }
@@ -42,8 +42,8 @@ const fullSlots = {
     h(ColorSwatchPicker, { items: ['#F43F5E', '#0485F7'], 'aria-label': 'Presets' }),
     h(ColorArea, {
       colorSpace: 'hsb',
-      xChannel: 'saturation',
-      yChannel: 'brightness',
+      x: { channel: 'saturation' },
+      y: { channel: 'brightness' },
       'aria-label': 'Colour',
     }),
     h(ColorSlider, { channel: 'hue', colorSpace: 'hsb', label: 'Hue' }),

@@ -69,9 +69,6 @@ const props = withDefaults(defineProps<ChartLineProps>(), {
   connectNulls: false,
   hide: false,
   isAnimationActive: true,
-  animationBegin: 0,
-  animationDuration: 1500,
-  animationEasing: 'ease',
   xAxisId: 0,
   yAxisId: 0,
 })

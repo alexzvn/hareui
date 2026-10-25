@@ -4,14 +4,13 @@
     kind="calendar"
     :ui="ui"
     :ui-overrides="props.ui"
-    :root-class="props.class"
+    :root="shellRoot"
     :aria-label="ariaLabel"
     :placeholder="placeholder"
     :default-placeholder="placeholderSeed"
     :min-value="minValue"
     :max-value="maxValue"
     :selection="selection"
-    :root-bindings="rootBindings"
     :disabled="disabled"
     :readonly="readonly"
     :invalid="invalid"
@@ -194,6 +193,8 @@ const rootBindings = computed(() => ({
   onClickCapture: onRootClickCapture,
   onKeydownCapture: onRootKeyDownCapture,
 }))
+
+const shellRoot = computed(() => ({ class: props.class, bindings: rootBindings.value }))
 
 const selection = computed(() => ({
   value: props.modelValue,

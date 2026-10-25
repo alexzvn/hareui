@@ -68,7 +68,7 @@ For pie and radial charts, pass `data` and `index` instead of `series`. Each row
 
 <ComponentPreview name="chart-legend/donut-breakdown" />
 
-Slice colors follow the chart: the row's `fill` field, then a `colors` map keyed by name, then the palette by position. `value-key` picks the value field when the rows have more than one number.
+Slice colors follow the chart: the row's `fill` field, then a `colors` map keyed by name, then the palette by position. `value.key` picks the value field when the rows have more than one number, and `value.formatter` formats the values.
 
 ### Toggle Series
 

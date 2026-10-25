@@ -98,7 +98,7 @@ describe('ChartLegend', () => {
         index: 'name',
         showValue: true,
         showPercent: true,
-        valueFormatter: (value: number, key: string) => `${key}: ${value} units`,
+        value: { formatter: (value: number, key: string) => `${key}: ${value} units` },
         percentFormatter: (percent: number) => `(${percent.toFixed(1)}%)`,
       },
     })
@@ -257,14 +257,5 @@ describe('ChartLegend', () => {
     expect(buttons[0]!.attributes('aria-pressed')).toBe('false')
     await expectAccessible(wrapper)
     wrapper.unmount()
-  })
-
-  it('merges class and ui overrides', () => {
-    const wrapper = mount(ChartLegend, {
-      props: { series: ['a'], class: 'mt-4', ui: { label: 'text-danger' } },
-    })
-
-    expect(wrapper.classes()).toContain('mt-4')
-    expect(wrapper.get('[data-slot="chart-legend-label"]').classes()).toContain('text-danger')
   })
 })

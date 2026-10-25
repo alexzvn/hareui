@@ -9,7 +9,7 @@ const presets = ['#ef4444', '#f97316', '#eab308', '#22c55e', '#06b6d4', '#3b82f6
 const spaces = ['hsb', 'hsl', 'rgb'].map(value => ({ value, label: value, class: 'uppercase' }))
 
 const trigger = (label = 'Pick a color') => () => [h(ColorSwatch, { size: 'lg' }), h(Label, null, () => label)]
-const area = () => h(ColorArea, { 'aria-label': 'Color area', 'class': 'max-w-full', 'colorSpace': 'hsb', 'xChannel': 'saturation', 'yChannel': 'brightness' })
+const area = () => h(ColorArea, { 'aria-label': 'Color area', 'class': 'max-w-full', 'colorSpace': 'hsb', 'x': { channel: 'saturation' }, 'y': { channel: 'brightness' } })
 const hue = (extra: Record<string, unknown> = {}) => h(ColorSlider, { channel: 'hue', class: 'gap-1 px-1', colorSpace: 'hsb', label: 'Hue', ui: { output: 'text-muted' }, ...extra } as any)
 const swatches = (cls: string) => h(ColorSwatchPicker, { items: presets, class: cls, size: 'xs' })
 
@@ -32,7 +32,7 @@ cases['color-picker-open-fields'] = () =>
   h(ColorPicker, { defaultValue: 'hsl(240, 100%, 50%)', defaultOpen: true, ui: { popover: 'max-w-62 gap-2' } }, {
     trigger: trigger(),
     default: () => [
-      h(ColorArea, { class: 'max-w-full', colorSpace: 'hsb', xChannel: 'saturation', yChannel: 'brightness' }),
+      h(ColorArea, { class: 'max-w-full', colorSpace: 'hsb', x: { channel: 'saturation' }, y: { channel: 'brightness' } }),
       hue(),
       h(Select, { 'aria-label': 'Color space', 'variant': 'secondary', 'defaultValue': 'hsl', 'items': spaces, 'ui': { value: 'uppercase' } }),
       h('div', { class: 'grid w-full grid-cols-3 items-center gap-2' }, ['hue', 'saturation', 'lightness'].map(channel =>

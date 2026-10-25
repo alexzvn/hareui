@@ -93,6 +93,100 @@ export type RichTableColumn<T extends RichTableData, D = unknown> = ColumnDef<T,
   meta?: RichTableColumnMeta<T, D>
 }
 
+/** Look of the loading bar shown under the header while `loading` is set. */
+export type RichTableLoadingBar = {
+  /**
+   * Color of the loading bar.
+   * @defaultValue 'accent'
+   */
+  color?: ComponentVariants<RichTableTheme>['loadingColor']
+  /**
+   * Animation of the loading bar.
+   * @defaultValue 'carousel'
+   */
+  animation?: ComponentVariants<RichTableTheme>['loadingAnimation']
+}
+
+/** TanStack debug logging switches, each logging to the console. */
+export type RichTableDebug = {
+  /** Logs debugging information for every table feature. */
+  all?: boolean
+  /** Logs cell debugging information. */
+  cells?: boolean
+  /** Logs column debugging information. */
+  columns?: boolean
+  /** Logs header debugging information. */
+  headers?: boolean
+  /** Logs row debugging information. */
+  rows?: boolean
+  /** Logs table debugging information. */
+  table?: boolean
+}
+
+/** Table options of each built-in TanStack feature, keyed by feature. The state change handlers are bound to the `v-model`s. */
+export type RichTableFeatures<T extends RichTableData = RichTableData> = {
+  /**
+   * Global filtering (`v-model:global-filter`), e.g. `globalFilterFn`.
+   * @see https://tanstack.com/table/v8/docs/api/features/global-filtering#table-options
+   */
+  globalFilter?: Omit<GlobalFilterOptions<T>, 'onGlobalFilterChange'>
+  /**
+   * Column filtering (`v-model:column-filters`).
+   * @see https://tanstack.com/table/v8/docs/api/features/column-filtering#table-options
+   */
+  columnFilters?: Omit<ColumnFiltersOptions<T>, 'getFilteredRowModel' | 'onColumnFiltersChange'>
+  /**
+   * Column pinning (`v-model:column-pinning`).
+   * @see https://tanstack.com/table/v8/docs/api/features/column-pinning#table-options
+   */
+  columnPinning?: Omit<ColumnPinningOptions, 'onColumnPinningChange'>
+  /**
+   * Column sizing (`v-model:column-sizing`). Column widths (`size`) are applied to the cells once `enableColumnResizing` is set or a column has been sized.
+   * @see https://tanstack.com/table/v8/docs/api/features/column-sizing#table-options
+   */
+  columnSizing?: Omit<ColumnSizingOptions, 'onColumnSizingChange' | 'onColumnSizingInfoChange'>
+  /**
+   * Column visibility (`v-model:column-visibility`).
+   * @see https://tanstack.com/table/v8/docs/api/features/column-visibility#table-options
+   */
+  visibility?: Omit<VisibilityOptions, 'onColumnVisibilityChange'>
+  /**
+   * Sorting (`v-model:sorting`), e.g. `manualSorting`.
+   * @see https://tanstack.com/table/v8/docs/api/features/sorting#table-options
+   */
+  sorting?: Omit<SortingOptions<T>, 'getSortedRowModel' | 'onSortingChange'>
+  /**
+   * Grouping (`v-model:grouping`). Pass `getGroupedRowModel: getGroupedRowModel()` to enable client-side grouping.
+   * @see https://tanstack.com/table/v8/docs/api/features/grouping#table-options
+   */
+  grouping?: Omit<GroupingOptions, 'onGroupingChange'>
+  /**
+   * Row expanding (`v-model:expanded`), e.g. `getRowCanExpand`.
+   * @see https://tanstack.com/table/v8/docs/api/features/expanding#table-options
+   */
+  expanded?: Omit<ExpandedOptions<T>, 'getExpandedRowModel' | 'onExpandedChange'>
+  /**
+   * Row selection (`v-model:row-selection`).
+   * @see https://tanstack.com/table/v8/docs/api/features/row-selection#table-options
+   */
+  rowSelection?: Omit<RowSelectionOptions<T>, 'onRowSelectionChange'>
+  /**
+   * Row pinning (`v-model:row-pinning`).
+   * @see https://tanstack.com/table/v8/docs/api/features/row-pinning#table-options
+   */
+  rowPinning?: Omit<RowPinningOptions<T>, 'onRowPinningChange'>
+  /**
+   * Pagination (`v-model:pagination`). Pass `getPaginationRowModel: getPaginationRowModel()` to enable client-side pagination.
+   * @see https://tanstack.com/table/v8/docs/api/features/pagination#table-options
+   */
+  pagination?: Omit<PaginationOptions, 'onPaginationChange'>
+  /**
+   * Column faceting.
+   * @see https://tanstack.com/table/v8/docs/api/features/column-faceting#table-options
+   */
+  faceted?: FacetedOptions<T>
+}
+
 /** Props of `RichTable`: a data table driven by TanStack Table, with sorting, filtering, selection, pinning, grouping and virtualization. */
 export type RichTableProps<T extends RichTableData = RichTableData> = {
   /**
@@ -156,16 +250,8 @@ export type RichTableProps<T extends RichTableData = RichTableData> = {
    * @defaultValue false
    */
   loading?: boolean
-  /**
-   * Color of the loading bar.
-   * @defaultValue 'accent'
-   */
-  loadingColor?: ComponentVariants<RichTableTheme>['loadingColor']
-  /**
-   * Animation of the loading bar.
-   * @defaultValue 'carousel'
-   */
-  loadingAnimation?: ComponentVariants<RichTableTheme>['loadingAnimation']
+  /** Color and animation of the loading bar. */
+  loadingBar?: RichTableLoadingBar
   /**
    * Customize how `data` changes are watched (for ex: disable deep watching or limit the traversal depth). Improves performance with large datasets, at the cost of missing in-place row mutations.
    * @see https://vuejs.org/api/options-state.html#watch
@@ -176,18 +262,8 @@ export type RichTableProps<T extends RichTableData = RichTableData> = {
   _features?: CoreOptions<T>['_features']
   /** Resets every `auto reset` behavior (page index, expanded rows...) when set. */
   autoResetAll?: boolean
-  /** Logs debugging information for every table feature to the console. */
-  debugAll?: boolean
-  /** Logs cell debugging information to the console. */
-  debugCells?: boolean
-  /** Logs column debugging information to the console. */
-  debugColumns?: boolean
-  /** Logs header debugging information to the console. */
-  debugHeaders?: boolean
-  /** Logs row debugging information to the console. */
-  debugRows?: boolean
-  /** Logs table debugging information to the console. */
-  debugTable?: boolean
+  /** TanStack debug logging, per area. */
+  debug?: RichTableDebug
   /** Properties every column definition inherits. */
   defaultColumn?: Partial<ColumnDef<T, unknown>>
   /** Derives each row's id from its data. Defaults to the row's index (its path for sub rows). */
@@ -200,63 +276,8 @@ export type RichTableProps<T extends RichTableData = RichTableData> = {
   mergeOptions?: CoreOptions<T>['mergeOptions']
   /** Rendered for a cell whose value is `undefined`. */
   renderFallbackValue?: unknown
-  /**
-   * @see https://tanstack.com/table/v8/docs/api/features/global-filtering#table-options
-   */
-  globalFilterOptions?: Omit<GlobalFilterOptions<T>, 'onGlobalFilterChange'>
-  /**
-   * @see https://tanstack.com/table/v8/docs/api/features/column-filtering#table-options
-   */
-  columnFiltersOptions?: Omit<
-    ColumnFiltersOptions<T>,
-    'getFilteredRowModel' | 'onColumnFiltersChange'
-  >
-  /**
-   * @see https://tanstack.com/table/v8/docs/api/features/column-pinning#table-options
-   */
-  columnPinningOptions?: Omit<ColumnPinningOptions, 'onColumnPinningChange'>
-  /**
-   * Column widths (`size`) are applied to the cells once `enableColumnResizing` is set or a column has been sized.
-   * @see https://tanstack.com/table/v8/docs/api/features/column-sizing#table-options
-   */
-  columnSizingOptions?: Omit<
-    ColumnSizingOptions,
-    'onColumnSizingChange' | 'onColumnSizingInfoChange'
-  >
-  /**
-   * @see https://tanstack.com/table/v8/docs/api/features/column-visibility#table-options
-   */
-  visibilityOptions?: Omit<VisibilityOptions, 'onColumnVisibilityChange'>
-  /**
-   * @see https://tanstack.com/table/v8/docs/api/features/sorting#table-options
-   */
-  sortingOptions?: Omit<SortingOptions<T>, 'getSortedRowModel' | 'onSortingChange'>
-  /**
-   * Pass `getGroupedRowModel: getGroupedRowModel()` to enable client-side grouping.
-   * @see https://tanstack.com/table/v8/docs/api/features/grouping#table-options
-   */
-  groupingOptions?: Omit<GroupingOptions, 'onGroupingChange'>
-  /**
-   * @see https://tanstack.com/table/v8/docs/api/features/expanding#table-options
-   */
-  expandedOptions?: Omit<ExpandedOptions<T>, 'getExpandedRowModel' | 'onExpandedChange'>
-  /**
-   * @see https://tanstack.com/table/v8/docs/api/features/row-selection#table-options
-   */
-  rowSelectionOptions?: Omit<RowSelectionOptions<T>, 'onRowSelectionChange'>
-  /**
-   * @see https://tanstack.com/table/v8/docs/api/features/row-pinning#table-options
-   */
-  rowPinningOptions?: Omit<RowPinningOptions<T>, 'onRowPinningChange'>
-  /**
-   * Pass `getPaginationRowModel: getPaginationRowModel()` to enable client-side pagination.
-   * @see https://tanstack.com/table/v8/docs/api/features/pagination#table-options
-   */
-  paginationOptions?: Omit<PaginationOptions, 'onPaginationChange'>
-  /**
-   * @see https://tanstack.com/table/v8/docs/api/features/column-faceting#table-options
-   */
-  facetedOptions?: FacetedOptions<T>
+  /** Table options of the built-in TanStack features (sorting, filtering, pinning, pagination...). */
+  features?: RichTableFeatures<T>
   /** Called when a row is clicked (or activated with Enter/Space). Makes rows selectable (cursor, tabindex). */
   onSelect?: (e: Event, row: Row<T>) => void
   /** Called with the row when the pointer enters it, and with `null` when it leaves. */

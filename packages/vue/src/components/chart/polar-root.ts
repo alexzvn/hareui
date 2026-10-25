@@ -4,7 +4,6 @@ import { computed } from 'vue'
 import type { ChartLegendProps } from '@/components/chart-legend'
 import type { ChartTooltipContentEntry } from '@/components/chart-tooltip'
 
-import { definedProps } from './cartesian-root'
 import type { ChartTooltipProps } from './ChartTooltip.types'
 import type { ChartContext } from './context'
 import type { ChartFrameConfig } from './frame'
@@ -17,11 +16,12 @@ import type {
   ChartLegendPosition,
   ChartSlice,
   ChartValueKey,
+  ChartValueOptions,
 } from './series-config'
 import { inferValueKeys, isChartGenerated, resolveChartPart, resolveSlices } from './series-config'
 
 /** Props of `PieChart`, `RadarChart` and `RadialChart` that the frame draws. */
-export type PolarRootFrameProps = {
+type PolarRootFrameProps = {
   /** Tooltip on hover and focus: `false` turns it off, an object sets `ChartTooltip` props. */
   tooltip?: boolean | Partial<ChartTooltipProps>
   /** `true` (below), a side, or `ChartLegend` props with a `position`. */
@@ -68,13 +68,12 @@ export const usePolarRoot = (options: PolarRootOptions): ComputedRef<ChartFrameC
 }
 
 /** Props of the roots that draw one slice (or ring) per row: `PieChart` and `RadialChart`. */
-export type SliceRootProps<T extends object> = {
+type SliceRootProps<T extends object> = {
   data?: T[]
   index?: ChartIndexKey<T>
-  valueKey?: ChartValueKey<T>
+  /** Slice value key, and the value format of the tooltip and the legend. */
+  value?: ChartValueOptions<ChartValueKey<T>>
   colors?: string[] | Record<string, string>
-  /** Formats slice values in the tooltip and the legend. */
-  valueFormatter?: (value: number, name: string) => string
 } & PolarRootFrameProps
 
 export type SliceRootOptions<T extends object> = {
@@ -94,7 +93,7 @@ export const useSliceRoot = <T extends object>(options: SliceRootOptions<T>) => 
 
   const valueKey = computed(
     () =>
-      props.valueKey ??
+      props.value?.key ??
       (props.index === undefined ? undefined : inferValueKeys(props.data ?? [], props.index)[0]),
   )
 
@@ -124,15 +123,21 @@ export const useSliceRoot = <T extends object>(options: SliceRootOptions<T>) => 
         value,
         percent,
       })),
-    tooltip: () => ({
-      valueFormatter: props.valueFormatter
-        ? (value: number | string, entry: ChartTooltipContentEntry) =>
-            typeof value === 'number'
-              ? props.valueFormatter!(value, entry.name ?? '')
-              : String(value)
-        : undefined,
-    }),
-    legend: () => definedProps({ valueFormatter: props.valueFormatter }),
+    tooltip: () => {
+      const format = props.value?.formatter
+
+      return {
+        valueFormatter: format
+          ? (value: number | string, entry: ChartTooltipContentEntry) =>
+              typeof value === 'number' ? format(value, entry.name ?? '') : String(value)
+          : undefined,
+      }
+    },
+    legend: () => {
+      const format = props.value?.formatter
+
+      return format ? { value: { formatter: format } } : {}
+    },
     hasLegendSlot: options.hasLegendSlot,
   })
 

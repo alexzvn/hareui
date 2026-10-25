@@ -4,7 +4,7 @@
     kind="range"
     :ui="ui"
     :ui-overrides="props.ui"
-    :root-class="props.class"
+    :root="shellRoot"
     :aria-label="ariaLabel"
     :placeholder="placeholder"
     :default-placeholder="placeholderSeed"
@@ -12,7 +12,6 @@
     :max-value="maxValue"
     :month-bounds="monthBounds"
     :selection="shellSelection"
-    :root-bindings="rootBindings"
     :disabled="disabled"
     :readonly="readonly"
     :invalid="invalid"
@@ -467,6 +466,8 @@ const rootBindings = computed(() => ({
   onKeydownCapture: onRootKeyDownCapture,
   onFocusin: onRootFocusIn,
 }))
+
+const shellRoot = computed(() => ({ class: props.class, bindings: rootBindings.value }))
 
 // The week/day view selects with the configured matcher; the month view's anchor-bound one is in `rootBindings`
 const shellSelection = computed(() => ({

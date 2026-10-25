@@ -5,14 +5,14 @@
       v-model:pagination="pagination"
       :data="data"
       :columns="columns"
-      :pagination-options="paginationOptions"
+      :features="features"
     />
     <Pagination
       v-model:page="page"
       :total="pageCount"
       size="sm"
-      prev-label=""
-      next-label=""
+      :prev="{ label: '' }"
+      :next="{ label: '' }"
       class="px-5 pt-1.5 pb-3.5"
     >
       <template #summary> {{ first }} to {{ last }} of {{ data.length }} payments </template>
@@ -46,7 +46,7 @@ const data: Payment[] = [
 
 const currency = new Intl.NumberFormat('en-US', { style: 'currency', currency: 'USD' })
 const pagination = ref({ pageIndex: 0, pageSize: 3 })
-const paginationOptions = { getPaginationRowModel: getPaginationRowModel() }
+const features = { pagination: { getPaginationRowModel: getPaginationRowModel() } }
 
 const columns: RichTableColumn<Payment>[] = [
   { accessorKey: 'name', header: 'Customer' },

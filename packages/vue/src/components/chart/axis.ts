@@ -2,6 +2,54 @@ import type { ClassValue } from '@/utils/tv'
 
 import type { ChartAxisDomain, ChartAxisInterval } from './types'
 
+/** Tick labels and tick lines of `ChartXAxis` and `ChartYAxis`, the `tick` prop. */
+export type ChartAxisTickOptions = {
+  /**
+   * Shows tick labels.
+   * @defaultValue true
+   */
+  label?: boolean
+  /**
+   * Number of ticks on a number axis (rounded to nice values).
+   * @defaultValue 5
+   */
+  count?: number
+  // Method syntax keeps the parameter bivariant, so a number axis can take `(value: number) => string`.
+  /**
+   * Formats tick labels. Receives the tick value (a number on number axes) and its index.
+   * @defaultValue `String(value)`
+   */
+  formatter?(value: number | string, index: number): string
+  /**
+   * Gap between the tick labels and the axis, in px. Added to `size`.
+   * @defaultValue 2
+   */
+  margin?: number
+  /**
+   * Length of the tick lines, in px. Reserved even when `line` is `false`.
+   * @defaultValue 6
+   */
+  size?: number
+  /**
+   * Draws tick lines. Hidden by the default theme.
+   * @defaultValue true
+   */
+  line?: boolean
+}
+
+/** `ChartAxisTickOptions` with every default applied. */
+export type ResolvedAxisTick = Required<Omit<ChartAxisTickOptions, 'formatter'>> &
+  Pick<ChartAxisTickOptions, 'formatter'>
+
+/** Defaults of `ChartAxisTickOptions`; a partial `tick` prop keeps the others. */
+export const CHART_AXIS_TICK_DEFAULTS: Readonly<Omit<ResolvedAxisTick, 'formatter'>> = {
+  label: true,
+  count: 5,
+  margin: 2,
+  size: 6,
+  line: true,
+}
+
 /** Props shared by `ChartXAxis` and `ChartYAxis`. */
 export type ChartAxisProps = {
   /** Data key of the category values. Category axes without it show the data index. */
@@ -25,10 +73,10 @@ export type ChartAxisProps = {
   /** Exact tick values. */
   ticks?: (number | string)[]
   /**
-   * Number of ticks on a number axis (rounded to nice values).
-   * @defaultValue 5
+   * Tick labels and lines. Unset keys keep their defaults.
+   * @defaultValue { label: true, count: 5, margin: 2, size: 6, line: true }
    */
-  tickCount?: number
+  tick?: ChartAxisTickOptions
   /**
    * Allows decimal tick values.
    * @defaultValue true
@@ -39,28 +87,6 @@ export type ChartAxisProps = {
    * @defaultValue false
    */
   allowDataOverflow?: boolean
-  /** Formats tick labels. Receives the tick value (a number on number axes) and its index. */
-  tickFormatter?(value: number | string, index: number): string
-  /**
-   * Shows tick labels.
-   * @defaultValue true
-   */
-  tick?: boolean
-  /**
-   * Gap between the tick labels and the axis, in px. Added to `tickSize`.
-   * @defaultValue 2
-   */
-  tickMargin?: number
-  /**
-   * Length of the tick lines, in px. Reserved even when `tickLine` is `false`.
-   * @defaultValue 6
-   */
-  tickSize?: number
-  /**
-   * Draws tick lines. Hidden by the default theme.
-   * @defaultValue true
-   */
-  tickLine?: boolean
   /**
    * Draws the axis line. Hidden by the default theme.
    * @defaultValue true

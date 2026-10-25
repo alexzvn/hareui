@@ -1,3 +1,4 @@
+import { defu } from 'defu'
 import type { VNode } from 'vue'
 
 import type { ChartLegendProps } from '@/components/chart-legend'
@@ -70,7 +71,7 @@ export const resolveFrameLegend = (
   { hasLegendSlot, defaults = {} }: FrameLegendOptions,
 ): ChartFrameLegend | null => {
   const legend = resolveChartLegend<Partial<ChartLegendProps<object>>>(value)
-  if (legend) return { position: legend.position, props: { ...defaults, ...legend.props } }
+  if (legend) return { position: legend.position, props: defu(legend.props, defaults) }
 
   return hasLegendSlot ? { position: 'bottom', props: { ...defaults } } : null
 }
