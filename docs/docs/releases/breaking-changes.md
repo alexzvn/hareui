@@ -1,0 +1,213 @@
+---
+title: Breaking changes
+description: What changes in your code when you upgrade from v0.3.0 to the next release, and how to update it.
+---
+
+These changes are merged since [v0.3.0](./v0-3-0) and ship in the next release. Everything else in [Unreleased](./unreleased) works without changes to your code.
+
+## Grouped props
+
+Props that shared a prefix are now one object prop: `prev-label` and `prev-disabled` become `:prev="{ label, disabled }"`. When you pass only some members of a group, the others keep their defaults, so `:tick="{ count: 4 }"` still draws tick lines and labels.
+
+The API table on each component page lists every member of a grouped prop with its type and default.
+
+### Pagination
+
+```vue
+<!-- Before -->
+<Pagination prev-label="Back" prev-disabled next-label="Forward" />
+
+<!-- After -->
+<Pagination :prev="{ label: 'Back', disabled: true }" :next="{ label: 'Forward' }" />
+```
+
+### ColorArea
+
+```vue
+<!-- Before -->
+<ColorArea x-channel="saturation" x-name="sat" y-channel="brightness" y-name="bri" />
+
+<!-- After -->
+<ColorArea
+  :x="{ channel: 'saturation', name: 'sat' }"
+  :y="{ channel: 'brightness', name: 'bri' }"
+/>
+```
+
+### Form
+
+```vue
+<!-- Before -->
+<Form validation-behavior="aria" :validation-errors="errors" />
+
+<!-- After -->
+<Form :validation="{ behavior: 'aria', errors }" />
+```
+
+### RichTable
+
+The loading bar, the TanStack debug flags and the TanStack feature options each move into one prop. `loading` itself is unchanged.
+
+```vue
+<!-- Before -->
+<RichTable
+  loading-color="danger"
+  loading-animation="swing"
+  debug-table
+  debug-rows
+  :sorting-options="{ enableMultiSort: true }"
+  :row-selection-options="{ enableRowSelection: true }"
+/>
+
+<!-- After -->
+<RichTable
+  :loading-bar="{ color: 'danger', animation: 'swing' }"
+  :debug="{ table: true, rows: true }"
+  :features="{ sorting: { enableMultiSort: true }, rowSelection: { enableRowSelection: true } }"
+/>
+```
+
+`features` takes the same keys the old props had, without the `-options` suffix: `globalFilter`, `columnFilters`, `columnPinning`, `columnSizing`, `visibility`, `sorting`, `grouping`, `expanded`, `rowSelection`, `rowPinning`, `pagination` and `faceted`. `debug` takes `all`, `cells`, `columns`, `headers`, `rows` and `table`.
+
+### Chart animation
+
+Every chart series (`ChartArea`, `ChartBar`, `ChartLine`, `ChartPie`, `ChartRadar`, `ChartRadialBar`):
+
+```vue
+<!-- Before -->
+<ChartLine animation-begin="200" :animation-duration="800" animation-easing="linear" />
+
+<!-- After -->
+<ChartLine :animation="{ begin: 200, duration: 800, easing: 'linear' }" />
+```
+
+### Chart axes
+
+`ChartXAxis` and `ChartYAxis` group their tick props under `tick`. The old `:tick="false"` (hide the labels) becomes `label: false`.
+
+```vue
+<!-- Before -->
+<ChartXAxis
+  :tick="false"
+  :tick-count="4"
+  :tick-formatter="format"
+  :tick-margin="8"
+  :tick-size="4"
+  :tick-line="false"
+/>
+
+<!-- After -->
+<ChartXAxis
+  :tick="{ label: false, count: 4, formatter: format, margin: 8, size: 4, line: false }"
+/>
+```
+
+The `x-axis` and `y-axis` options of `AreaChart`, `BarChart`, `LineChart` and `ComposedChart` follow the same shape. `y-axis-right` moves into `y-axis` as `right`, and the left axis becomes `left`:
+
+```vue
+<!-- Before -->
+<LineChart
+  :x-axis="{ tickFormatter: format, tickMargin: 4 }"
+  :y-axis="{ domain: [0, 100] }"
+  :y-axis-right="{ tickFormatter: format }"
+/>
+
+<!-- After -->
+<LineChart
+  :x-axis="{ tick: { formatter: format, margin: 4 } }"
+  :y-axis="{ left: { domain: [0, 100] }, right: { tick: { formatter: format } } }"
+/>
+```
+
+To hide the left axis, `:y-axis="false"` becomes `:y-axis="{ left: false }"`.
+
+### Bar sizing
+
+`BarChart` and `RadialChart`:
+
+```vue
+<!-- Before -->
+<BarChart :bar-size="12" :bar-gap="2" bar-category-gap="20%" :max-bar-size="24" />
+
+<!-- After -->
+<BarChart :bar="{ size: 12, gap: 2, categoryGap: '20%', maxSize: 24 }" />
+```
+
+### Chart values
+
+`PieChart`, `RadialChart` and `ChartLegend`:
+
+```vue
+<!-- Before -->
+<PieChart value-key="visits" :value-formatter="format" />
+
+<!-- After -->
+<PieChart :value="{ key: 'visits', formatter: format }" />
+```
+
+### Polar axes and grid
+
+```vue
+<!-- Before -->
+<ChartPolarAngleAxis
+  :tick="false"
+  :tick-count="6"
+  :tick-formatter="format"
+  :axis-line="false"
+  axis-line-type="circle"
+/>
+<ChartPolarRadiusAxis :tick-count="4" :tick-formatter="format" />
+<ChartPolarGrid :polar-angles="[0, 90, 180, 270]" :polar-radius="[20, 40]" />
+
+<!-- After -->
+<ChartPolarAngleAxis
+  :tick="{ label: false, count: 6, formatter: format }"
+  :axis-line="{ show: false, type: 'circle' }"
+/>
+<ChartPolarRadiusAxis :tick="{ count: 4, formatter: format }" />
+<ChartPolarGrid :positions="{ angles: [0, 90, 180, 270], radii: [20, 40] }" />
+```
+
+`ChartPolarAngleAxis` also moves `tick-size` and `tick-line` into `tick` as `size` and `line`.
+
+`RadarChart` options follow the same shape:
+
+```vue
+<!-- Before -->
+<RadarChart
+  :angle-axis="{ tickFormatter: format, axisLineType: 'circle' }"
+  :radius-axis="{ tickCount: 4 }"
+/>
+
+<!-- After -->
+<RadarChart
+  :angle-axis="{ tick: { formatter: format }, axisLine: { type: 'circle' } }"
+  :radius-axis="{ tick: { count: 4 } }"
+/>
+```
+
+## `useResizable`
+
+`useResizable` takes one options object. It no longer creates the panel element ref: create it with `useTemplateRef` and pass it in as `element`. The return value no longer has `el`; everything else is unchanged.
+
+```ts
+// Before
+const { el, size, isCollapsed } = useResizable(
+  'sidebar',
+  { minSize: 200 },
+  { initialCollapsed: true },
+)
+
+// After
+const panel = useTemplateRef<HTMLElement>('panel')
+const { size, isCollapsed } = useResizable({
+  key: 'sidebar',
+  options: { minSize: 200 },
+  element: panel,
+  initialCollapsed: true,
+})
+```
+
+## Stricter types
+
+Props, slots and events that were typed `any` now have precise types. Your code keeps working at runtime. TypeScript may now flag values the components never handled: for example, `class` and `ui` take strings, arrays and `{ 'class-name': condition }` objects, as Vue's `:class` does.
