@@ -46,9 +46,18 @@ const api = computed(() => {
 const table = computed(() => {
   const data = api.value
   if (props.kind === 'props') {
+    // A nested prop group's members follow it as `group.member` rows.
     return {
       head: ['Prop', 'Type', 'Default', 'Description'],
-      rows: data.props.map((p) => [p.name, p.type, p.default ?? '-', p.description]),
+      rows: data.props.flatMap((p) => [
+        [p.name, p.type, p.default ?? '-', p.description],
+        ...(p.members ?? []).map((m) => [
+          `${p.name}.${m.name}`,
+          m.type,
+          m.default ?? '-',
+          m.description,
+        ]),
+      ]),
     }
   }
 

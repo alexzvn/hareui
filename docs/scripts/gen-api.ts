@@ -2,17 +2,19 @@ import { mkdir, readdir, rm, writeFile } from 'node:fs/promises'
 import { basename, dirname, join, resolve } from 'node:path'
 
 import ts from 'typescript'
-import { createChecker, type PropertyMeta } from 'vue-component-meta'
+import { createChecker, type PropertyMeta, type PropertyMetaSchema } from 'vue-component-meta'
 
-import type { ApiProp, ComponentApi } from './api-types'
+import type { ApiProp, ApiPropMember, ComponentApi } from './api-types'
 
 const root = resolve(import.meta.dir, '../..')
 const componentsDir = join(root, 'packages/vue/src/components')
 const outDir = join(root, 'docs/.vitepress/api')
 
+// `schema` expands object types, so nested prop groups can list their members.
 const checker = createChecker(join(root, 'packages/vue/tsconfig.json'), {
   forceUseTs: true,
   printer: { newLine: 1 },
+  schema: true,
 })
 
 const defaultValue = (prop: PropertyMeta): string | undefined => {
@@ -29,13 +31,67 @@ const fromNodeModules = (prop: PropertyMeta): boolean => {
   )
 }
 
-const toProp = (prop: PropertyMeta): ApiProp => {
+const withoutUndefined = (type: string): string => {
+  return type.replace(/\s*\|\s*undefined$/, '')
+}
+
+// A named object type such as `PaginationNavButton` or `RichTableFeatures<T>`: its name, without type arguments.
+const NAMED_TYPE = /^([A-Z]\w*)(<.+>)?$/
+
+// The object type of a prop typed `Named` or `Named | undefined`.
+const getObjectSchema = (schema: PropertyMetaSchema) => {
+  if (typeof schema === 'string') return undefined
+  if (schema.kind === 'object') return schema
+  if (schema.kind !== 'enum') return undefined
+
+  const defined = (schema.schema ?? []).filter((s) => s !== 'undefined')
+  const [only] = defined
+  const isSingleObject = defined.length === 1 && typeof only !== 'string' && only?.kind === 'object'
+
+  return isSingleObject ? only : undefined
+}
+
+// Types declared in `packages/vue/src`. Nested schemas carry no declarations, so a prop's object type is
+// matched by name: TanStack, Reka or DOM types like `RegExp` are linked from the prop descriptions instead.
+const srcDir = join(root, 'packages/vue/src')
+const srcTypeNames = new Set<string>()
+for (const f of await readdir(srcDir, { recursive: true })) {
+  if (!f.endsWith('.ts')) continue
+
+  const source = await Bun.file(join(srcDir, f)).text()
+  for (const match of source.matchAll(/^export type (\w+)/gm)) srcTypeNames.add(match[1]!)
+}
+
+// Members of a nested prop group: a named object type declared in `packages/vue/src`. `ui` lists theme slots.
+const toMembers = (
+  prop: PropertyMeta,
+  named: (type: string) => string,
+): ApiPropMember[] | undefined => {
+  if (prop.name === 'ui') return undefined
+
+  const object = getObjectSchema(prop.schema)
+  const typeName = object?.type.match(NAMED_TYPE)?.[1]
+  if (!object?.schema || !typeName || !srcTypeNames.has(typeName)) return undefined
+
+  const members = Object.values(object.schema)
+  if (members.length === 0) return undefined
+
+  return members.map((member) => ({
+    name: member.name,
+    type: named(withoutUndefined(member.type)),
+    default: defaultValue(member),
+    description: member.description,
+  }))
+}
+
+const toProp = (prop: PropertyMeta, named: (type: string) => string): ApiProp => {
   return {
     name: prop.name,
-    type: prop.type.replace(/\s*\|\s*undefined$/, ''),
+    type: named(withoutUndefined(prop.type)),
     default: defaultValue(prop),
     description: prop.description,
     required: prop.required,
+    members: toMembers(prop, named),
   }
 }
 
@@ -110,7 +166,7 @@ for (const file of files) {
   const api: ComponentApi = {
     props: meta.props
       .filter((p) => !p.global && !(fromNodeModules(p) && !p.description))
-      .map((p) => ({ ...toProp(p), type: named(toProp(p).type) })),
+      .map((p) => toProp(p, named)),
     slots: meta.slots.map((s) => ({
       name: s.name,
       type: named(s.type),

@@ -53,10 +53,16 @@ const apiTable = async (component: string, kind: string): Promise<string> => {
   )
 
   if (kind === 'props') {
+    // A nested prop group's members follow it as `group.member` rows, as on the page.
+    const rows = api.props.flatMap((p) => [
+      p,
+      ...(p.members ?? []).map((m) => ({ ...m, name: `${p.name}.${m.name}` })),
+    ])
+
     return [
       '| Prop | Type | Default | Description |',
       '| --- | --- | --- | --- |',
-      ...api.props.map(
+      ...rows.map(
         (p) =>
           `| ${code(p.name)} | ${code(p.type)} | ${code(p.default)} | ${escapeCell(p.description) || '-'} |`,
       ),
