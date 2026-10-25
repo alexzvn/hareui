@@ -14,7 +14,7 @@ Changes merged since [v0.3.0](./v0-3-0) that are not in a published release yet.
 
 ## Breaking changes
 
-Props that shared a prefix are grouped into one object prop, for example `:prev="{ label, disabled }"` on `Pagination` and `:tick="{ count, formatter }"` on chart axes. `useResizable` takes one options object. See [Migrating from v0.3.0 to v0.4.0](./migrations/v0.3.0-v0.4.0) for every change, with before and after code.
+Props that shared a prefix are grouped into one object prop, for example `:prev="{ label, disabled }"` on `Pagination` and `:tick="{ count, formatter }"` on chart axes. `useResizable` takes one options object. See [Migrating from v0.3.0 to v0.4.0](./migrations/v0.3.0-v0.4.0.md) for every change, with before and after code.
 
 ## Accessibility
 
