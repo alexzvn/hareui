@@ -44,6 +44,7 @@
     "hareui/no-else": "error",
     "hareui/switch-perf": "error",
     "hareui/no-enum": "error",
+    "hareui/no-manual-ui-merge": "error",
     "hareui/handler-naming": "error",
     "hareui/boolean-prefix": "error",
     "hareui/no-reactive-destructure": "error",

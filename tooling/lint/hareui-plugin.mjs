@@ -5,6 +5,7 @@ import maxFileLines from './rules/max-file-lines.mjs'
 import noClassAssertion from './rules/no-class-assertion.mjs'
 import noElse from './rules/no-else.mjs'
 import noEnum from './rules/no-enum.mjs'
+import noManualUiMerge from './rules/no-manual-ui-merge.mjs'
 import noParentImport from './rules/no-parent-import.mjs'
 import noReactiveDestructure from './rules/no-reactive-destructure.mjs'
 import paddingLines from './rules/padding-lines.mjs'
@@ -32,5 +33,6 @@ export default {
     'no-class-assertion': noClassAssertion,
     'padding-lines': paddingLines,
     'max-file-lines': maxFileLines,
+    'no-manual-ui-merge': noManualUiMerge,
   },
 }
