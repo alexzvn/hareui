@@ -114,7 +114,13 @@ export * from './components/main'
 export * from './components/container'
 export * from './components/error'
 export { useResizable } from './composables/useResizable'
-export type { UseResizableOptions, UseResizableReturn } from './composables/useResizable'
+
+export type {
+  UseResizableOptions,
+  UseResizableReturn,
+  UseResizableSetup,
+} from './composables/useResizable'
+
 export { useDashboard } from './composables/useDashboard'
 
 export type {

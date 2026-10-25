@@ -193,7 +193,8 @@ type DragSession = {
   rtl: boolean
 }
 
-type UseResizableSetup = {
+/** Argument of `useResizable`: which panel to resize and how. */
+export type UseResizableSetup = {
   /** Persistence key (cookie or storage entry name). */
   key: string
   /** Reactive resize options. */
