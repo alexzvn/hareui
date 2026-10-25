@@ -5,7 +5,7 @@
     :width="width"
     :height="height"
     :config="config"
-    :class="ui.base({ class: [props.ui?.base, props.class] })"
+    :class="ui.base()"
   >
     <template v-for="name in frameSlotNames(slots)" #[name]="scope">
       <slot :name="name" v-bind="scope as any" />
@@ -75,7 +75,7 @@ const pie = computed(() => {
   return { ...(props.donut ? chartDefaults.donut : {}), ...defined }
 })
 
-const ui = useComponentUI('pieChart', { theme: theme, variantProps: () => ({}) })
+const ui = useComponentUI('pieChart', { theme: theme, variantProps: () => ({}), props })
 const chart = useChartRoot({
   // Generated mode: only the visible slices reach the pie, so the active index points into them.
   data: () =>
@@ -85,7 +85,6 @@ const chart = useChartRoot({
   margin: () => props.margin,
   layout: () => 'centric',
   ui,
-  uiProps: () => props.ui,
 })
 
 // The center follows the first pie drawn (see `usePolarChart`), so the root passes no geometry of its own.

@@ -11,7 +11,7 @@
     :data-pressed="isPressed ? 'true' : undefined"
     :data-focused="isFocused ? 'true' : undefined"
     :data-focus-visible="isFocusVisible ? 'true' : undefined"
-    :class="classes.item!({ variant: item.variant, class: [ctx.ui()?.item, item.class] })"
+    :class="classes.item!({ variant: item.variant, override: item.class })"
     @select="onSelect"
     @pointerenter="isHovered = $event.pointerType === 'mouse'"
     @pointerleave="onPointerleave"
@@ -29,7 +29,7 @@
         data-slot="menu-item-indicator"
         :data-type="group.indicator"
         :data-visible="state.selected || undefined"
-        :class="classes.indicator!({ variant: item.variant, class: ctx.ui()?.indicator })"
+        :class="classes.indicator!({ variant: item.variant })"
       >
         <component :is="slots.indicator" v-if="slots.indicator" v-bind="state" />
         <svg
@@ -113,9 +113,7 @@
         v-if="submenu"
         aria-hidden="true"
         data-slot="submenu-indicator"
-        :class="
-          classes.submenuIndicator!({ variant: item.variant, class: ctx.ui()?.submenuIndicator })
-        "
+        :class="classes.submenuIndicator!({ variant: item.variant })"
       >
         <SubmenuIndicatorContent />
       </span>

@@ -16,7 +16,7 @@
     :aria-disabled="isDisabled ? 'true' : undefined"
     :aria-labelledby="hasLabel ? labelId : undefined"
     :aria-describedby="describedBy"
-    :class="ui.base({ class: [props.ui?.base, props.class] })"
+    :class="ui.base()"
     @update:model-value="onUpdate"
     @keydown.capture="onKeydownCapture"
   >
@@ -60,6 +60,7 @@ const ui = useComponentUI('radioButtonGroup', {
     layout: props.layout,
     variant: props.variant,
   }),
+  props,
 })
 
 // `null` (not `undefined`) when nothing is selected: Reka self-manages its state when `modelValue` is undefined,

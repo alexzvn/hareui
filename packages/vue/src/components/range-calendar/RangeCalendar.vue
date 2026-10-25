@@ -3,7 +3,6 @@
     ref="shell"
     kind="range"
     :ui="ui"
-    :ui-overrides="props.ui"
     :root="shellRoot"
     :aria-label="ariaLabel"
     :placeholder="placeholder"
@@ -109,6 +108,7 @@ const viewKind = computed(() => {
 const ui = useComponentUI('rangeCalendar', {
   theme,
   variantProps: () => ({ view: viewKind.value }),
+  props,
 })
 
 const monthShell = useTemplateRef<CalendarMonthShellExposed>('shell')
@@ -383,9 +383,9 @@ provide(rangeCalendarDayKey, {
   onPointerDown: onCellPointerDown,
   onPointerUp: onCellPointerUp,
   onMouseEnter: onCellMouseEnter,
-  cellClass: computed(() => ui.value.cell({ class: props.ui?.cell })),
-  cellButtonClass: computed(() => ui.value.cellButton({ class: props.ui?.cellButton })),
-  indicatorClass: computed(() => ui.value.cellIndicator({ class: props.ui?.cellIndicator })),
+  cellClass: computed(() => ui.value.cell()),
+  cellButtonClass: computed(() => ui.value.cellButton()),
+  indicatorClass: computed(() => ui.value.cellIndicator()),
   indicator: () => props.indicator,
   CellOutlet: useSlotOutlet(slots, 'cell'),
 })
@@ -467,7 +467,7 @@ const rootBindings = computed(() => ({
   onFocusin: onRootFocusIn,
 }))
 
-const shellRoot = computed(() => ({ class: props.class, bindings: rootBindings.value }))
+const shellRoot = computed(() => ({ bindings: rootBindings.value }))
 
 // The week/day view selects with the configured matcher; the month view's anchor-bound one is in `rootBindings`
 const shellSelection = computed(() => ({

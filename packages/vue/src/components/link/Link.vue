@@ -7,7 +7,7 @@
     :aria-disabled="isDisabled ? 'true' : undefined"
     :data-disabled="isDisabled ? 'true' : undefined"
     data-slot="link"
-    :class="ui.base({ class: [props.ui?.base, props.class] })"
+    :class="ui.base()"
     @click="onClick"
     @keydown="onKeydown"
   >
@@ -30,7 +30,7 @@ import theme from './theme'
 const props = withDefaults(defineProps<LinkProps>(), { as: 'a', iconPlacement: 'end' })
 const slots = defineSlots<LinkSlots>()
 
-const ui = useComponentUI('link', { theme: theme, variantProps: () => ({}) })
+const ui = useComponentUI('link', { theme: theme, variantProps: () => ({}), props })
 const isDisabled = useFieldsetDisabled(() => props.disabled)
 const showIcon = computed(() => props.icon || !!slots.icon)
 
@@ -60,7 +60,7 @@ const Icon = () =>
   h(
     'span',
     {
-      class: ui.value.icon({ class: props.ui?.icon }),
+      class: ui.value.icon(),
       'data-default-icon': slots.icon ? undefined : 'true',
       'data-slot': 'link-icon',
     },

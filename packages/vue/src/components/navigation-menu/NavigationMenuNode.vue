@@ -7,15 +7,15 @@
     :data-slot="level > 0 ? 'childItem' : 'item'"
     :class="
       level > 0
-        ? ui.childItem({ class: [ctx.props.ui?.childItem, item.ui?.childItem] })
-        : ui.item({ class: [ctx.props.ui?.item, item.ui?.item] })
+        ? ui.childItem({ override: item.ui?.childItem })
+        : ui.item({ override: item.ui?.item })
     "
   >
     <div
       v-if="isGroupLabel"
       :id="disclosure ? disclosureIds.link : undefined"
       data-slot="label"
-      :class="ui.label({ class: [ctx.props.ui?.label, item.ui?.label, item.class] })"
+      :class="ui.label({ override: [item.ui?.label, item.class] })"
     >
       <NavigationMenuLinkBody
         :item="item"
@@ -38,7 +38,7 @@
             ? {
                 'data-slot': 'linkRow',
                 'data-active': activeOf(link) || undefined,
-                class: ui.linkRow({ class: [ctx.props.ui?.linkRow, item.ui?.linkRow] }),
+                class: ui.linkRow({ override: item.ui?.linkRow }),
               }
             : {}
         "
@@ -65,13 +65,10 @@
               :name="slotName(item, 'content')"
               :slot-props="{ item, active: activeOf(link), index, ui, close }"
             >
-              <ul
-                data-slot="childList"
-                :class="ui.childList({ class: [ctx.props.ui?.childList, item.ui?.childList] })"
-              >
+              <ul data-slot="childList" :class="ui.childList({ override: item.ui?.childList })">
                 <li
                   data-slot="childLabel"
-                  :class="ui.childLabel({ class: [ctx.props.ui?.childLabel, item.ui?.childLabel] })"
+                  :class="ui.childLabel({ override: item.ui?.childLabel })"
                 >
                   {{ label }}
                 </li>
@@ -91,7 +88,7 @@
           v-if="hasActions"
           :ref="setActionsEl"
           data-slot="linkActions"
-          :class="ui.linkActions({ class: [ctx.props.ui?.linkActions, item.ui?.linkActions] })"
+          :class="ui.linkActions({ override: item.ui?.linkActions })"
         >
           <SlotOutlet
             :name="slotName(item, 'actions')"
@@ -106,7 +103,7 @@
             :disabled="!!item.disabled"
             :class="
               ui.linkActionsMenu({
-                class: [ctx.props.ui?.linkActionsMenu, item.ui?.linkActionsMenu],
+                override: item.ui?.linkActionsMenu,
               })
             "
             @action="onAction"
@@ -115,7 +112,7 @@
               type="button"
               data-slot="linkAction"
               :aria-label="`More actions for ${label}`"
-              :class="ui.linkAction({ class: [ctx.props.ui?.linkAction, item.ui?.linkAction] })"
+              :class="ui.linkAction({ override: item.ui?.linkAction })"
             >
               <EllipsisVerticalIcon />
             </button>
@@ -126,7 +123,7 @@
                 data-slot="linkActionsItemIcon"
                 :class="
                   ui.linkActionsItemIcon({
-                    class: [ctx.props.ui?.linkActionsItemIcon, item.ui?.linkActionsItemIcon],
+                    override: item.ui?.linkActionsItemIcon,
                     danger: entry.variant === 'danger',
                   })
                 "
@@ -141,16 +138,13 @@
         v-if="horizontalContent"
         v-bind="ctx.props.content"
         data-slot="content"
-        :class="ui.content({ class: [ctx.props.ui?.content, item.ui?.content] })"
+        :class="ui.content({ override: item.ui?.content })"
       >
         <SlotOutlet
           :name="slotName(item, 'content')"
           :slot-props="{ item, active: activeOf(link), index, ui }"
         >
-          <ul
-            data-slot="childList"
-            :class="ui.childList({ class: [ctx.props.ui?.childList, item.ui?.childList] })"
-          >
+          <ul data-slot="childList" :class="ui.childList({ override: item.ui?.childList })">
             <NavigationMenuChildLink
               v-for="(child, childIndex) in item.children"
               :key="childIndex"
@@ -168,7 +162,7 @@
       :id="disclosureIds.region"
       :labelledby="disclosureIds.link"
       data-slot="content"
-      :class="ui.content({ class: [ctx.props.ui?.content, item.ui?.content] })"
+      :class="ui.content({ override: item.ui?.content })"
     >
       <AccordionRoot
         v-bind="ctx.accordionProps.value"
@@ -177,7 +171,7 @@
         "
         as="ul"
         data-slot="childList"
-        :class="ui.childList({ class: [ctx.props.ui?.childList, item.ui?.childList] })"
+        :class="ui.childList({ override: item.ui?.childList })"
       >
         <NavigationMenuNode
           v-for="(child, childIndex) in item.children"
@@ -290,7 +284,7 @@ const outerProps = computed(() => {
     return {
       ...ctx.popoverProps.value,
       ...(typeof props.item.popover === 'object' ? props.item.popover : {}),
-      class: ui.value.content({ class: [ctx.props.ui?.content, props.item.ui?.content] }),
+      class: ui.value.content({ override: props.item.ui?.content }),
     }
   }
 
@@ -313,7 +307,7 @@ const hasActions = computed(
 
 const linkClass = (active: boolean) => {
   return ui.value.link({
-    class: [ctx.props.ui?.link, props.item.ui?.link, props.item.class],
+    override: [props.item.ui?.link, props.item.class],
     active: active || !!props.item.active,
     disabled: !!props.item.disabled,
     level: !isVertical.value || props.level > 0,

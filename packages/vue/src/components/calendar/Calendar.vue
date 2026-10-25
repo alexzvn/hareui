@@ -3,7 +3,6 @@
     ref="shell"
     kind="calendar"
     :ui="ui"
-    :ui-overrides="props.ui"
     :root="shellRoot"
     :aria-label="ariaLabel"
     :placeholder="placeholder"
@@ -41,7 +40,7 @@
           :day="date"
           :month="month"
           data-slot="calendar-cell"
-          :class="ui.cell({ class: props.ui?.cell })"
+          :class="ui.cell()"
         >
           <slot
             name="cell"
@@ -58,7 +57,7 @@
             v-if="indicator?.(date)"
             data-slot="calendar-cell-indicator"
             aria-hidden="true"
-            :class="ui.cellIndicator({ class: props.ui?.cellIndicator })"
+            :class="ui.cellIndicator()"
           />
         </CalendarCellTrigger>
         <!-- no slot content -> no slot-scope ref, so moving focus doesn't force-update every trigger -->
@@ -67,7 +66,7 @@
           :day="date"
           :month="month"
           data-slot="calendar-cell"
-          :class="ui.cell({ class: props.ui?.cell })"
+          :class="ui.cell()"
         />
       </CalendarCell>
     </template>
@@ -119,6 +118,7 @@ const viewKind = computed(() => {
 const ui = useComponentUI('calendar', {
   theme,
   variantProps: () => ({ view: viewKind.value }),
+  props,
 })
 
 const monthShell = useTemplateRef<CalendarMonthShellExposed>('shell')
@@ -194,7 +194,7 @@ const rootBindings = computed(() => ({
   onKeydownCapture: onRootKeyDownCapture,
 }))
 
-const shellRoot = computed(() => ({ class: props.class, bindings: rootBindings.value }))
+const shellRoot = computed(() => ({ bindings: rootBindings.value }))
 
 const selection = computed(() => ({
   value: props.modelValue,

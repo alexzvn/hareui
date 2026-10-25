@@ -120,7 +120,7 @@ const props = defineProps<{
   /** Slot class functions of the listBox theme. */
   classes: Record<
     'item' | 'indicator' | 'section' | 'header' | 'separator' | 'emptyState',
-    (options?: { variant?: string; class?: ClassValue }) => string
+    (options?: { variant?: string; override?: ClassValue }) => string
   >
   /** Reka item primitive (ComboBox: `ComboboxItem`). */
   component?: Component

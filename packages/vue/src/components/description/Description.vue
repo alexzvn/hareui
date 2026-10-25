@@ -1,5 +1,5 @@
 <template>
-  <span :id="id" data-slot="description" :class="ui.base({ class: [props.ui?.base, props.class] })">
+  <span :id="id" data-slot="description" :class="ui.base()">
     <slot />
   </span>
 </template>
@@ -13,5 +13,5 @@ import theme from './theme'
 const props = defineProps<DescriptionProps>()
 defineSlots<DescriptionSlots>()
 
-const ui = useComponentUI('description', { theme: theme, variantProps: () => ({}) })
+const ui = useComponentUI('description', { theme: theme, variantProps: () => ({}), props })
 </script>

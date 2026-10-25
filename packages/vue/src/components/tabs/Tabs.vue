@@ -5,16 +5,13 @@
     :orientation="orientation"
     activation-mode="automatic"
     data-slot="tabs"
-    :class="ui.base({ class: [props.ui?.base, props.class] })"
+    :class="ui.base()"
   >
-    <div
-      :class="ui.tabListContainer({ class: props.ui?.tabListContainer })"
-      data-slot="tabs-list-container"
-    >
+    <div :class="ui.tabListContainer()" data-slot="tabs-list-container">
       <ScrollShadow
         ref="scrollerRef"
         hide-scroll-bar
-        :class="ui.scroller({ class: props.ui?.scroller })"
+        :class="ui.scroller()"
         :orientation="orientation"
         :size="64"
         @visibility-change="onScrollVisibility"
@@ -25,7 +22,7 @@
              leaves every tab at -1 until one has been focused. -->
         <TabsList ref="listRef" as-child>
           <div
-            :class="ui.tabList({ class: props.ui?.tabList })"
+            :class="ui.tabList()"
             :tabindex="undefined"
             data-slot="tabs-list"
             @keydown.capture="onListKeydown"
@@ -40,7 +37,7 @@
               <button
                 type="button"
                 :tabindex="itemValue(item, index) === tabStopValue ? 0 : -1"
-                :class="ui.tab({ class: props.ui?.tab })"
+                :class="ui.tab()"
                 data-slot="tabs-tab"
               >
                 <span
@@ -48,12 +45,7 @@
                   aria-hidden="true"
                   :data-orientation="orientation"
                   :class="
-                    ui.separator({
-                      class: [
-                        props.ui?.separator,
-                        isSeparatorHidden(index) ? 'opacity-0' : undefined,
-                      ],
-                    })
+                    ui.separator({ override: isSeparatorHidden(index) ? 'opacity-0' : undefined })
                   "
                   data-slot="tabs-separator"
                 />
@@ -72,7 +64,7 @@
               ref="indicatorRef"
               aria-hidden="true"
               :style="indicatorStyle"
-              :class="ui.tabIndicator({ class: props.ui?.tabIndicator })"
+              :class="ui.tabIndicator()"
               data-slot="tabs-indicator"
             />
           </div>
@@ -80,11 +72,7 @@
       </ScrollShadow>
       <button
         :aria-label="orientation === 'vertical' ? 'Scroll tabs up' : 'Scroll tabs left'"
-        :class="
-          ui.scrollPrev({
-            class: [props.ui?.scrollPrev, scrollState.before ? 'inline-flex' : undefined],
-          })
-        "
+        :class="ui.scrollPrev({ override: scrollState.before ? 'inline-flex' : undefined })"
         tabindex="-1"
         type="button"
         @click="scrollByPage(-1)"
@@ -116,11 +104,7 @@
       </button>
       <button
         :aria-label="orientation === 'vertical' ? 'Scroll tabs down' : 'Scroll tabs right'"
-        :class="
-          ui.scrollNext({
-            class: [props.ui?.scrollNext, scrollState.after ? 'inline-flex' : undefined],
-          })
-        "
+        :class="ui.scrollNext({ override: scrollState.after ? 'inline-flex' : undefined })"
         tabindex="-1"
         type="button"
         @click="scrollByPage(1)"
@@ -156,7 +140,7 @@
       ref="panelRef"
       :key="itemValue(visiblePanel.item, visiblePanel.index)"
       :value="itemValue(visiblePanel.item, visiblePanel.index)"
-      :class="ui.tabPanel({ class: props.ui?.tabPanel })"
+      :class="ui.tabPanel()"
       data-slot="tabs-panel"
     >
       <slot
@@ -197,6 +181,7 @@ const ui = useComponentUI('tabs', {
     align: props.align,
     orientation: props.orientation,
   }),
+  props,
 })
 
 const itemValue = (item: TabsItem, index: number): string | number => {

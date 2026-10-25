@@ -9,7 +9,7 @@
     :aria-label="open ? 'Close sidebar' : 'Open sidebar'"
     :aria-expanded="open"
     :aria-controls="open && sidebar?.id.value ? `${sidebar.id.value}-menu` : undefined"
-    :class="ui.base({ class: [props.ui?.base, props.class] })"
+    :class="ui.base()"
     @click="sidebar?.toggle()"
   >
     <slot :open="open">
@@ -75,6 +75,7 @@ defineSlots<DashboardSidebarToggleSlots>()
 const ui = useComponentUI('dashboardSidebarToggle', {
   theme,
   variantProps: () => ({ side: props.side }),
+  props,
 })
 
 const dashboard = useDashboard()

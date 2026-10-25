@@ -1,14 +1,10 @@
 <template>
-  <Primitive
-    :as="as"
-    data-slot="dashboard-toolbar"
-    :class="ui.root({ class: [props.ui?.root, props.class] })"
-  >
+  <Primitive :as="as" data-slot="dashboard-toolbar" :class="ui.root()">
     <slot>
-      <div data-slot="dashboard-toolbar-left" :class="ui.left({ class: props.ui?.left })">
+      <div data-slot="dashboard-toolbar-left" :class="ui.left()">
         <slot name="left" />
       </div>
-      <div data-slot="dashboard-toolbar-right" :class="ui.right({ class: props.ui?.right })">
+      <div data-slot="dashboard-toolbar-right" :class="ui.right()">
         <slot name="right" />
       </div>
     </slot>
@@ -26,5 +22,10 @@ import theme from './theme'
 const props = withDefaults(defineProps<DashboardToolbarProps>(), { as: 'div' })
 defineSlots<DashboardToolbarSlots>()
 
-const ui = useComponentUI('dashboardToolbar', { theme: theme, variantProps: () => ({}) })
+const ui = useComponentUI('dashboardToolbar', {
+  theme: theme,
+  variantProps: () => ({}),
+  props,
+  classSlot: 'root',
+})
 </script>

@@ -4,7 +4,6 @@
     data-slot="cell-select"
     :model-value="modelValue"
     :aria-labelledby="hasLabel ? labelId : undefined"
-    :class="props.class"
     :ui="selectUi"
     @update:model-value="emit('update:modelValue', $event)"
     @update:open="emit('update:open', $event)"
@@ -12,12 +11,7 @@
     @load-more="emit('loadMore')"
   >
     <template #leading>
-      <span
-        v-if="hasLabel"
-        :id="labelId"
-        data-slot="cell-select-label"
-        :class="ui.label({ class: props.ui?.label })"
-      >
+      <span v-if="hasLabel" :id="labelId" data-slot="cell-select-label" :class="ui.label()">
         <slot name="label">
           {{ label }}
         </slot>
@@ -78,6 +72,8 @@ const slots = defineSlots<CellSelectSlots<T>>()
 const ui = useComponentUI('cellSelect', {
   theme,
   variantProps: () => ({ variant: props.variant }),
+  // `class` lands on `base`, which Select layers last on its own root.
+  props,
 })
 
 const selectProps = computed(() => {
@@ -94,11 +90,11 @@ const selectProps = computed(() => {
 })
 
 const selectUi = computed(() => ({
-  base: ui.value.base({ class: props.ui?.base }),
-  trigger: ui.value.trigger({ class: props.ui?.trigger }),
-  value: ui.value.value({ class: props.ui?.value }),
-  indicator: ui.value.indicator({ class: props.ui?.indicator }),
-  popover: ui.value.popover({ class: props.ui?.popover }),
+  base: ui.value.base(),
+  trigger: ui.value.trigger(),
+  value: ui.value.value(),
+  indicator: ui.value.indicator(),
+  popover: ui.value.popover(),
 }))
 
 const labelId = `${useId()}-label`

@@ -9,13 +9,13 @@
     :aria-valuenow="indeterminate ? undefined : range.clamped"
     :aria-valuetext="indeterminate ? undefined : range.valueText"
     data-slot="progress-circle"
-    :class="ui.base({ class: [props.ui?.base, props.class] })"
+    :class="ui.base()"
   >
     <svg
       data-slot="progress-circle-track"
       fill="none"
       :viewBox="`0 0 ${CENTER * 2} ${CENTER * 2}`"
-      :class="ui.track({ class: props.ui?.track })"
+      :class="ui.track()"
     >
       <circle
         data-slot="progress-circle-track-circle"
@@ -23,7 +23,7 @@
         :cy="CENTER"
         :r="radius"
         :stroke-width="strokeWidth"
-        :class="ui.trackCircle({ class: props.ui?.trackCircle })"
+        :class="ui.trackCircle()"
       />
       <circle
         data-slot="progress-circle-fill-circle"
@@ -35,7 +35,7 @@
         stroke-linecap="round"
         :stroke-width="strokeWidth"
         :transform="`rotate(-90 ${CENTER} ${CENTER})`"
-        :class="ui.fillCircle({ class: props.ui?.fillCircle })"
+        :class="ui.fillCircle()"
       />
     </svg>
   </ProgressRoot>
@@ -66,6 +66,7 @@ const ui = useComponentUI('progressCircle', {
     size: props.size,
     indeterminate: props.indeterminate,
   }),
+  props,
 })
 
 const range = useRangeValue(() => props)

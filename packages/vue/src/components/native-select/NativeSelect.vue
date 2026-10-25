@@ -7,10 +7,10 @@
     :data-invalid="invalid ? 'true' : undefined"
     :aria-invalid="invalid ? 'true' : undefined"
     :data-required="required ? 'true' : undefined"
-    :class="ui.base({ class: [props.ui?.base, props.class] })"
+    :class="ui.base()"
   >
     <FieldLabel :for="id" />
-    <div data-slot="native-select-trigger" :class="ui.trigger({ class: props.ui?.trigger })">
+    <div data-slot="native-select-trigger" :class="ui.trigger()">
       <select
         v-bind="selectAttrs"
         :id="id"
@@ -25,7 +25,7 @@
         :aria-invalid="invalid ? 'true' : undefined"
         :aria-describedby="describedBy"
         :data-placeholder="current === '' ? 'true' : undefined"
-        :class="ui.select({ class: props.ui?.select })"
+        :class="ui.select()"
         @change="onChange"
       >
         <option v-if="placeholder !== undefined" value="">
@@ -48,11 +48,7 @@
         </template>
         <slot />
       </select>
-      <span
-        aria-hidden="true"
-        data-slot="native-select-indicator"
-        :class="ui.indicator({ class: props.ui?.indicator })"
-      >
+      <span aria-hidden="true" data-slot="native-select-indicator" :class="ui.indicator()">
         <slot name="indicator">
           <svg
             fill="none"
@@ -110,6 +106,7 @@ const ui = useComponentUI('nativeSelect', {
     variant: props.variant,
     fullWidth: props.fullWidth,
   }),
+  props,
 })
 
 const root = useTemplateRef<HTMLElement>('root')

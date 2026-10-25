@@ -18,7 +18,7 @@
       <ColorAreaArea
         data-slot="color-area"
         :style="areaStyle"
-        :class="ui.base({ class: [props.ui?.base, props.class] })"
+        :class="ui.base()"
         @pointerdown.capture="onPointerDownCapture"
         @keyup="onKeyup"
       >
@@ -33,7 +33,7 @@
           @focus="onThumbFocus"
           @keydown="onThumbKeydown"
           @blur="isFocusVisible = false"
-          :class="ui.thumb({ class: props.ui?.thumb })"
+          :class="ui.thumb()"
         />
       </ColorAreaArea>
     </template>
@@ -252,6 +252,7 @@ const ui = useComponentUI('colorArea', {
   variantProps: () => ({
     showDots: props.showDots,
   }),
+  props,
 })
 
 // The group gets the consumer's `aria-label`/`aria-labelledby` (fallthrough); the focusable thumb carries it too, as

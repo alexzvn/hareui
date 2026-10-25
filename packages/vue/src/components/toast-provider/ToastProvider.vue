@@ -15,7 +15,7 @@
         '--scale-factor': scaleFactor,
         '--toast-width': typeof width === 'number' ? `${width}px` : width,
       }"
-      :class="ui.region({ class: [props.ui?.region, props.class] })"
+      :class="ui.region()"
       @pointerenter="onPointerEnterOrMove"
       @pointermove="onPointerEnterOrMove"
       @pointerleave="onPointerLeave"
@@ -98,6 +98,8 @@ defineSlots<ToastProviderSlots>()
 const ui = useComponentUI('toast', {
   theme,
   variantProps: () => ({ placement: props.placement }),
+  props,
+  classSlot: 'region',
 })
 
 const activeQueue = computed(() => props.queue ?? defaultToastQueue)

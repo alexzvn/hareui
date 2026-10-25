@@ -6,7 +6,7 @@
     data-slot="button"
     :data-pending="pending ? 'true' : undefined"
     :aria-busy="pending ? 'true' : undefined"
-    :class="ui.base({ class: [groupClass, props.ui?.base, props.class] })"
+    :class="ui.base({ class: groupClass })"
     @click.capture="onClickCapture"
     @keydown="onKeydown"
     @keyup="onKeyup"
@@ -15,15 +15,10 @@
       v-if="shouldShowSeparator"
       aria-hidden="true"
       data-slot="button-group-separator"
-      :class="group!.ui.value.separator({ class: group!.uiOverrides.value?.separator })"
+      :class="group!.ui.value.separator()"
     />
     <slot name="leading" :pending="pending">
-      <Spinner
-        v-if="pending"
-        size="sm"
-        color="current"
-        :class="ui.spinner({ class: props.ui?.spinner })"
-      />
+      <Spinner v-if="pending" size="sm" color="current" :class="ui.spinner()" />
     </slot>
     <slot :pending="pending" />
     <slot name="trailing" :pending="pending" />
@@ -65,17 +60,14 @@ const ui = useComponentUI('button', {
     fullWidth: props.fullWidth ?? group?.fullWidth.value,
     iconOnly: props.iconOnly,
   }),
+  props,
 })
 
 const groupClass = computed(() => {
   if (!group) return undefined
   const groupUI = group.ui.value
-  const overrides = group.uiOverrides.value
 
-  return [
-    groupUI.button({ class: overrides?.button }),
-    variant.value === 'outline' && groupUI.buttonOutline({ class: overrides?.buttonOutline }),
-  ]
+  return [groupUI.button(), variant.value === 'outline' && groupUI.buttonOutline()]
 })
 
 // HeroUI renders `ButtonGroup.Separator` in every grouped Button except the first.

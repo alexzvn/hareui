@@ -9,14 +9,9 @@
     :data-disabled="disabled ? 'true' : undefined"
     :data-invalid="invalid ? 'true' : undefined"
     :data-required="required ? 'true' : undefined"
-    :class="ui.base({ class: [props.ui?.base, props.class] })"
+    :class="ui.base()"
   >
-    <FieldLabel
-      :id="labelId"
-      as="span"
-      :class="ui.label({ class: props.ui?.label })"
-      @click="button?.focus()"
-    />
+    <FieldLabel :id="labelId" as="span" :class="ui.label()" @click="button?.focus()" />
     <PopoverRoot :open="isOpen" :modal="false" @update:open="setOpen">
       <PopoverLabelBridge :labelled-by="popupLabelledBy" />
       <PopoverAnchor as-child>
@@ -28,7 +23,7 @@
           :data-hovered="triggerState.isHovered ? 'true' : undefined"
           :data-focus-within="triggerState.isFocusWithin ? 'true' : undefined"
           :data-focus-visible="triggerState.isFocusVisible ? 'true' : undefined"
-          :class="ui.trigger({ class: props.ui?.trigger })"
+          :class="ui.trigger()"
           @pointerdown="onTriggerPointerdown"
           @mousedown="onTriggerMousedown"
           @click="onTriggerClick"
@@ -41,7 +36,7 @@
             :id="valueId"
             data-slot="autocomplete-value"
             :data-placeholder="isPlaceholder ? 'true' : undefined"
-            :class="ui.value({ class: props.ui?.value })"
+            :class="ui.value()"
           >
             <!-- RAC SelectValue re-renders each selected item's children, indicator included; the value class hides it -->
             <!-- A rich item (with a description) re-renders as RAC does: its label only, in the item's column wrapper -->
@@ -88,7 +83,7 @@
             :aria-hidden="isPlaceholder ? 'true' : undefined"
             :data-empty="isPlaceholder ? 'true' : undefined"
             :disabled="disabled"
-            :class="ui.clearButton({ class: props.ui?.clearButton })"
+            :class="ui.clearButton()"
             @click="clear"
           >
             <slot name="clear">
@@ -133,7 +128,7 @@
               aria-hidden="true"
               data-slot="autocomplete-indicator"
               :data-open="isOpen ? 'true' : undefined"
-              :class="ui.indicator({ class: props.ui?.indicator })"
+              :class="ui.indicator()"
             >
               <slot name="indicator" :open="isOpen" />
             </Primitive>
@@ -148,7 +143,7 @@
               viewBox="0 0 16 16"
               width="16"
               xmlns="http://www.w3.org/2000/svg"
-              :class="ui.indicator({ class: props.ui?.indicator })"
+              :class="ui.indicator()"
             >
               <path
                 clip-rule="evenodd"
@@ -169,7 +164,7 @@
           align="center"
           :side-offset="8"
           :collision-padding="12"
-          :class="ui.popover({ class: props.ui?.popover })"
+          :class="ui.popover()"
           @open-auto-focus="onOpenAutoFocus"
           @close-auto-focus="onCloseAutoFocus"
           @pointer-down-outside="onOutside"
@@ -211,7 +206,7 @@
               :aria-labelledby="listLabelledBy"
               :aria-multiselectable="isMultiple ? 'true' : undefined"
               :data-empty="countRows(blocks) ? undefined : 'true'"
-              :class="listBoxUi.base({ class: props.ui?.listBox })"
+              :class="listBoxUi.base()"
               @mousedown.prevent
               @pointerdown="pressRelease.onPointerdown"
               @pointerup="pressRelease.onPointerup"
@@ -555,9 +550,19 @@ const ui = useComponentUI('autocomplete', {
     variant: props.variant,
     fullWidth: props.fullWidth,
   }),
+  props,
 })
 
-const listBoxUi = useComponentUI('listBox', { theme: listBoxTheme, variantProps: () => ({}) })
+// The suggestion list's root takes `ui.listBox`.
+const listBoxUi = useComponentUI('listBox', {
+  theme: listBoxTheme,
+  variantProps: () => ({}),
+  props: {
+    get ui() {
+      return { base: props.ui?.listBox }
+    },
+  },
+})
 
 const valueIndicatorClass = (item: ListBoxItem) => {
   return (listBoxUi.value.indicator as (options?: { variant?: string }) => string)({

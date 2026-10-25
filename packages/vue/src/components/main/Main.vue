@@ -1,5 +1,5 @@
 <template>
-  <Primitive :as="as" data-slot="main" :class="ui.base({ class: [props.ui?.base, props.class] })">
+  <Primitive :as="as" data-slot="main" :class="ui.base()">
     <slot />
   </Primitive>
 </template>
@@ -15,5 +15,5 @@ import theme from './theme'
 const props = withDefaults(defineProps<MainProps>(), { as: 'main' })
 defineSlots<MainSlots>()
 
-const ui = useComponentUI('main', { theme: theme, variantProps: () => ({}) })
+const ui = useComponentUI('main', { theme: theme, variantProps: () => ({}), props })
 </script>

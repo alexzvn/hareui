@@ -7,7 +7,7 @@
     :data-invalid="invalid ? 'true' : undefined"
     :data-required="required ? 'true' : undefined"
     :data-readonly="readonly ? 'true' : undefined"
-    :class="ui.base({ class: [props.ui?.base, props.class] })"
+    :class="ui.base()"
   >
     <FieldLabel :for="id" />
     <ColorFieldRoot
@@ -26,7 +26,7 @@
       :data-invalid="invalid ? 'true' : undefined"
       :data-focus-within="isFocusWithin ? 'true' : undefined"
       :data-focus-visible="isFocusVisible ? 'true' : undefined"
-      :class="ui.group({ class: props.ui?.group })"
+      :class="ui.group()"
       @focusin="onFocusIn"
       @focusout="onFocusOut"
       @update:color="onUpdateColor"
@@ -40,11 +40,7 @@
         :locale="locale"
       />
       <!-- Prefix/suffix go through `useSlotOutlet` components: a `<slot>` outlet here would make Vue flag the root's slots as forwarded and re-render the root on every render -->
-      <div
-        v-if="hasPrefix"
-        data-slot="color-input-group-prefix"
-        :class="ui.prefix({ class: props.ui?.prefix })"
-      >
+      <div v-if="hasPrefix" data-slot="color-input-group-prefix" :class="ui.prefix()">
         <PrefixOutlet />
       </div>
       <ColorFieldInput
@@ -55,14 +51,10 @@
         :aria-describedby="describedBy"
         :aria-label="attrs['aria-label']"
         :aria-labelledby="attrs['aria-labelledby']"
-        :class="ui.input({ class: props.ui?.input })"
+        :class="ui.input()"
         @keydown="onInputKeydown"
       />
-      <div
-        v-if="hasSuffix"
-        data-slot="color-input-group-suffix"
-        :class="ui.suffix({ class: props.ui?.suffix })"
-      >
+      <div v-if="hasSuffix" data-slot="color-input-group-suffix" :class="ui.suffix()">
         <SuffixOutlet />
       </div>
     </ColorFieldRoot>
@@ -265,6 +257,7 @@ const ui = useComponentUI('colorField', {
     variant: props.variant,
     fullWidth: props.fullWidth,
   }),
+  props,
 })
 
 // RAC Group's `data-focus-within` / `data-focus-visible`

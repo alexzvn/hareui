@@ -1,7 +1,7 @@
 import type { ComputedRef, InjectionKey, Ref } from 'vue'
 
 import type { ToggleButtonProps } from '@/components/toggle-button/ToggleButton.types'
-import type { ComponentSlots, ComponentUI } from '@/types/tv'
+import type { ComponentUI } from '@/types/tv'
 
 import type toggleButtonGroupTheme from './theme'
 
@@ -17,8 +17,8 @@ export type ToggleButtonGroupContext = {
   firstChild: Readonly<Ref<Element | null>>
   /** False inside a Toolbar: the toolbar owns arrow-key focus, so the buttons are plain tab stops (React Aria). */
   roving: boolean
+  /** The group's slot classes, its `ui` prop layered in. */
   ui: ComputedRef<ComponentUI<typeof toggleButtonGroupTheme>>
-  uiOverrides: Readonly<Ref<ComponentSlots<typeof toggleButtonGroupTheme> | undefined>>
 }
 
 export const toggleButtonGroupContextKey: InjectionKey<ToggleButtonGroupContext> = Symbol(

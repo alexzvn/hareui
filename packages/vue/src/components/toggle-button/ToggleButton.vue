@@ -8,14 +8,14 @@
       v-bind="roleAttrs"
       data-slot="toggle-button"
       :data-selected="selected ? 'true' : undefined"
-      :class="ui.base({ class: [groupClass, props.ui?.base, props.class] })"
+      :class="ui.base({ class: groupClass })"
       @update:model-value="onUpdate"
     >
       <span
         v-if="hasSeparator"
         aria-hidden="true"
         data-slot="toggle-button-group-separator"
-        :class="group!.ui.value.separator({ class: group!.uiOverrides.value?.separator })"
+        :class="group!.ui.value.separator()"
       />
       <slot :selected="selected" :disabled="isDisabled" />
     </Toggle>
@@ -29,14 +29,14 @@
     v-bind="roleAttrs"
     data-slot="toggle-button"
     :data-selected="selected ? 'true' : undefined"
-    :class="ui.base({ class: [groupClass, props.ui?.base, props.class] })"
+    :class="ui.base({ class: groupClass })"
     @update:model-value="onUpdate"
   >
     <span
       v-if="hasSeparator"
       aria-hidden="true"
       data-slot="toggle-button-group-separator"
-      :class="group!.ui.value.separator({ class: group!.uiOverrides.value?.separator })"
+      :class="group!.ui.value.separator()"
     />
     <slot :selected="selected" :disabled="isDisabled" />
   </Toggle>
@@ -100,6 +100,7 @@ const ui = useComponentUI('toggleButton', {
     size: props.size ?? group?.size.value,
     iconOnly: props.iconOnly,
   }),
+  props,
 })
 
 // HeroUI renders `ToggleButtonGroup.Separator` in every grouped button except the first.
@@ -108,9 +109,7 @@ const hasSeparator = computed(
   (): boolean => !!group?.separator.value && group.firstChild.value !== refElement(self.value),
 )
 
-const groupClass = computed(() =>
-  group?.ui.value.button({ class: group.uiOverrides.value?.button }),
-)
+const groupClass = computed(() => group?.ui.value.button())
 
 // Inside a single-selection group the buttons are radios, as in React Aria.
 const roleAttrs = computed(() =>

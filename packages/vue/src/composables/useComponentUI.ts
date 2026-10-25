@@ -1,10 +1,11 @@
-import type { ComputedRef } from 'vue'
-import { computed, inject } from 'vue'
+import type { ComputedRef, MaybeRefOrGetter } from 'vue'
+import { computed, inject, toValue } from 'vue'
 
 import type { Themes } from '@/components/themes'
 import type { HareUIConfig } from '@/config'
 import { hareUIConfigKey } from '@/config'
-import type { ComponentUI, ThemeShape } from '@/types/tv'
+import type { ComponentUI, SlotClasses, ThemeShape } from '@/types/tv'
+import type { ClassValue } from '@/utils/tv'
 import { tv } from '@/utils/tv'
 
 /** Theme overrides inlined by the `@hareui/vue/vite` plugin's `ui` option; undeclared without it. */
@@ -90,25 +91,93 @@ const resolve = (component: Shared, props: Record<string, unknown>) => {
   return result
 }
 
+/** The user-facing class props a component layers over its theme: per-slot `ui` and the root `class`. */
+type UIProps<Slot extends string> = {
+  ui?: Partial<Record<Slot, ClassValue>>
+  class?: ClassValue
+}
+
+type SlotFunction = (options?: Record<string, unknown>) => string
+
+type SlotOptions = SlotClasses & Record<string, unknown>
+
+type Layers = {
+  props?: UIProps<string>
+  classSlot: MaybeRefOrGetter<string>
+}
+
+// Keys besides `class` / `override` are per-call variant values (e.g. a list item's own `variant`), passed to tv.
+const getVariants = (options: SlotOptions | undefined) => {
+  let variants: Record<string, unknown> | undefined
+  for (const key in options) {
+    if (key !== 'class' && key !== 'override') (variants ??= {})[key] = options[key]
+  }
+
+  return variants
+}
+
+// A single layer goes to tv as-is: tv caches string merges, and a call without options returns its cached core class.
+const callSlot = (
+  resolveSlot: SlotFunction,
+  { layers, variants }: { layers: ClassValue[]; variants?: Record<string, unknown> },
+) => {
+  if (layers.length === 0 && !variants) return resolveSlot()
+
+  return resolveSlot({ ...variants, class: layers.length > 1 ? layers : layers[0] })
+}
+
+// Lowest to highest precedence (tailwind-merge: last wins). `props` is read per call, inside the render effect.
+const layerSlot = (
+  resolveSlot: SlotFunction,
+  { slot, props, classSlot }: Layers & { slot: string },
+) => {
+  return (options?: SlotOptions) => {
+    const userClass = slot === toValue(classSlot) ? props?.class : undefined
+    const layers = [options?.class, props?.ui?.[slot], userClass, options?.override]
+
+    return callSlot(resolveSlot, {
+      layers: layers.filter((layer) => layer != null),
+      variants: getVariants(options),
+    })
+  }
+}
+
+const layerSlots = (slots: Record<string, SlotFunction>, layers: Layers) => {
+  const layered: Record<string, (options?: SlotOptions) => string> = {}
+  for (const slot in slots) layered[slot] = layerSlot(slots[slot], { ...layers, slot })
+
+  return layered
+}
+
 /** What `useComponentUI` resolves: the component's default theme and a getter for its current variant props. */
 export type UseComponentUIOptions<T extends ThemeShape> = {
   /** The component's default theme (`./theme.ts`). */
   theme: T
   /** Reads the props that select variants; tracked, so the classes update when they change. */
   variantProps: () => Record<string, unknown>
+  /** The component's props: `ui` classes are layered over every slot, `class` over `classSlot`. */
+  props?: UIProps<NoInfer<keyof T['slots'] & string>>
+  /** The slot that receives `props.class`; defaults to `base`. A getter when the root element changes. */
+  classSlot?: MaybeRefOrGetter<NoInfer<keyof T['slots'] & string>>
 }
 
 /**
  * Builds the slot class functions for a component: default theme, extended by the Vite plugin's `ui`
  * option, then by the app config (`createHareUI({ ui })`), resolved for the current variant props.
- * The tv component is shared by every instance of the same app config and theme.
+ * Each slot function then layers the call's `class`, `props.ui[slot]`, `props.class` (on `classSlot`)
+ * and the call's `override`. The tv component is shared by every instance of the same app config and theme.
  */
 export const useComponentUI = <T extends ThemeShape>(
   name: keyof Themes,
-  { theme, variantProps }: UseComponentUIOptions<T>,
+  { theme, variantProps, props, classSlot = 'base' }: UseComponentUIOptions<T>,
 ): ComputedRef<ComponentUI<T>> => {
   const config = inject(hareUIConfigKey, NO_CONFIG)
   const component = getComponent(config, { name, base: getBase(name, theme) })
 
-  return computed(() => resolve(component.value, variantProps()) as ComponentUI<T>)
+  // Memoized per variant key, so the layered slots below are rebuilt only when the variant result changes.
+  const slots = computed(
+    () => resolve(component.value, variantProps()) as Record<string, SlotFunction>,
+  )
+
+  return computed(() => layerSlots(slots.value, { props, classSlot }) as ComponentUI<T>)
 }

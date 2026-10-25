@@ -15,7 +15,7 @@
     :aria-disabled="isDisabled ? 'true' : undefined"
     :aria-labelledby="hasLabel ? labelId : undefined"
     :aria-describedby="describedBy"
-    :class="ui.base({ class: [props.ui?.base, props.class] })"
+    :class="ui.base()"
     @update:model-value="onUpdate"
   >
     <!-- `as` falls through to Reka `Label`: the group label names the group via aria-labelledby, not a form control -->
@@ -30,7 +30,7 @@
       :data-disabled="isDisabled || item.disabled ? 'true' : undefined"
       :data-invalid="invalid ? 'true' : undefined"
       :data-readonly="readonly ? 'true' : undefined"
-      :class="itemUi.base({ class: props.ui?.item })"
+      :class="itemUi.base()"
       @click="forwardRootClick($event, '[data-slot=checkbox-content]')"
       @mousedown="
         keepFocusWhenReadonly($event, { readonly, contentSelector: '[data-slot=checkbox-content]' })
@@ -49,15 +49,11 @@
         "
         data-slot="checkbox-content"
         :data-selected="selected.includes(item.value) ? 'true' : undefined"
-        :class="itemUi.content({ class: props.ui?.content })"
+        :class="itemUi.content()"
         @keydown.capture="submitOnEnter"
       >
-        <span data-slot="checkbox-control" :class="itemUi.control({ class: props.ui?.control })">
-          <span
-            aria-hidden="true"
-            data-slot="checkbox-indicator"
-            :class="itemUi.indicator({ class: props.ui?.indicator })"
-          >
+        <span data-slot="checkbox-control" :class="itemUi.control()">
+          <span aria-hidden="true" data-slot="checkbox-indicator" :class="itemUi.indicator()">
             <slot name="indicator" :item="item" :checked="selected.includes(item.value)">
               <svg
                 aria-hidden="true"
@@ -134,6 +130,7 @@ const ui = useComponentUI('checkboxGroup', {
   variantProps: () => ({
     variant: props.variant,
   }),
+  props,
 })
 
 // Items are literally HeroUI's `<Checkbox>` inside `<CheckboxGroup>`: reuse its theme/classes verbatim.
@@ -142,6 +139,17 @@ const itemUi = useComponentUI('checkbox', {
   variantProps: () => ({
     variant: props.variant,
   }),
+  // `ui.item` is each checkbox's root (`base`); `content`, `control` and `indicator` keep the checkbox theme's names.
+  props: {
+    get ui() {
+      return {
+        base: props.ui?.item,
+        content: props.ui?.content,
+        control: props.ui?.control,
+        indicator: props.ui?.indicator,
+      }
+    },
+  },
 })
 
 // `[]` (not `undefined`): Reka self-manages its state when `modelValue` is undefined, which would let

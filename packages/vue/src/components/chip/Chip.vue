@@ -1,11 +1,7 @@
 <template>
-  <Primitive :as="as" data-slot="chip" :class="ui.base({ class: [props.ui?.base, props.class] })">
+  <Primitive :as="as" data-slot="chip" :class="ui.base()">
     <slot name="leading" />
-    <span
-      v-if="label !== undefined || !!slots.default"
-      data-slot="chip-label"
-      :class="ui.label({ class: props.ui?.label })"
-    >
+    <span v-if="label !== undefined || !!slots.default" data-slot="chip-label" :class="ui.label()">
       <slot>{{ label }}</slot>
     </span>
     <slot name="trailing" />
@@ -30,5 +26,6 @@ const ui = useComponentUI('chip', {
     variant: props.variant,
     size: props.size,
   }),
+  props,
 })
 </script>

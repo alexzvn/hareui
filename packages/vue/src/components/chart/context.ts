@@ -14,6 +14,7 @@ import {
   watchEffect,
 } from 'vue'
 
+import type { SlotClasses } from '@/types/tv'
 import type { ClassValue } from '@/utils/tv'
 import { warn } from '@/utils/warn'
 
@@ -30,16 +31,14 @@ import type {
 import { chartLayerNames } from './types'
 
 /** Class functions of a chart root theme (any subset of the shared chart slots). */
-type ChartRootUI = Record<string, (props?: { class?: ClassValue }) => string>
+type ChartRootUI = Record<string, (classes?: SlotClasses) => string>
 
 export type ChartRootOptions = {
   data: () => ChartDatum[] | undefined
   margin: () => ChartMargin | undefined
   layout: () => ChartLayout
-  /** The root's resolved theme (`useComponentUI(name, { theme: theme, variantProps: … })`). */
+  /** The root's resolved theme (`useComponentUI(name, { theme, variantProps, props })`), its `ui` prop layered in. */
   ui: ComputedRef<object>
-  /** The root's `ui` prop. */
-  uiProps: () => Partial<Record<string, ClassValue>> | undefined
   /** Default `ChartTooltip` cursor: `'band'` for bar charts, `'line'` (the default) for the rest. */
   cursor?: 'line' | 'band'
 }
@@ -55,7 +54,7 @@ export type ChartContext = {
   width: Ref<number>
   height: Ref<number>
   margin: ComputedRef<Required<ChartMargin>>
-  /** Classes of a theme slot of the root, merged with the root's `ui` override and `extra`. */
+  /** Classes of a theme slot of the root, with the root's `ui` prop and then the part's own `extra` classes. */
   classes: (slot: string, extra?: ClassValue) => string
   /** SVG layer groups, filled by `ChartSurface`. */
   layers: Record<ChartLayerName, Element | null>
@@ -250,7 +249,7 @@ export const useChartRoot = (options: ChartRootOptions): ChartContext => {
     margin: computed(() => ({ ...DEFAULT_MARGIN, ...options.margin() })),
     classes: (slot, extra) => {
       const ui = options.ui.value as ChartRootUI
-      return ui[slot]?.({ class: [options.uiProps()?.[slot], extra] }) ?? ''
+      return ui[slot]?.({ override: extra }) ?? ''
     },
     layers,
     overlay: shallowRef(null),

@@ -1,20 +1,13 @@
 <template>
-  <div
-    data-slot="search-field"
-    :data-empty="value ? undefined : 'true'"
-    :class="searchUi.base({ class: [props.ui?.searchField] })"
-  >
+  <div data-slot="search-field" :data-empty="value ? undefined : 'true'" :class="searchUi.base()">
     <div
       data-slot="search-field-group"
       role="group"
       :data-focus-within="'true'"
       :data-focus-visible="isFocusVisible ? 'true' : undefined"
-      :class="searchUi.group({ class: props.ui?.searchGroup })"
+      :class="searchUi.group()"
     >
-      <span
-        data-slot="search-field-search-icon"
-        :class="searchUi.searchIcon({ class: props.ui?.searchIcon })"
-      >
+      <span data-slot="search-field-search-icon" :class="searchUi.searchIcon()">
         <svg
           aria-hidden="true"
           fill="none"
@@ -47,7 +40,7 @@
         :placeholder="placeholder"
         :value="value"
         data-slot="search-field-input"
-        :class="searchUi.input({ class: props.ui?.searchInput })"
+        :class="searchUi.input()"
         @input="onInput"
         @focus="onFocus"
         @blur="isFocusVisible = false"
@@ -57,7 +50,7 @@
         data-slot="search-field-clear-button"
         aria-label="Clear search"
         tabindex="-1"
-        :class="searchUi.clearButton({ class: props.ui?.searchClearButton })"
+        :class="searchUi.clearButton()"
         @mousedown.prevent
         @click="onClear"
       />
@@ -99,6 +92,18 @@ const searchUi = useComponentUI('searchField', {
     variant: 'secondary',
     fullWidth: false,
   }),
+  // Autocomplete prefixes the search field's slots (`ui.searchField` is its root).
+  props: {
+    get ui() {
+      return {
+        base: props.ui?.searchField,
+        group: props.ui?.searchGroup,
+        searchIcon: props.ui?.searchIcon,
+        input: props.ui?.searchInput,
+        clearButton: props.ui?.searchClearButton,
+      }
+    },
+  },
 })
 
 const onInput = (event: Event) => {

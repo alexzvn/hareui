@@ -1,21 +1,9 @@
 <template>
-  <Primitive
-    :as="as.root"
-    data-slot="error"
-    :class="ui.root({ class: [props.ui?.root, props.class] })"
-  >
-    <div
-      v-if="slots.leading"
-      data-slot="error-leading"
-      :class="ui.leading({ class: props.ui?.leading })"
-    >
+  <Primitive :as="as.root" data-slot="error" :class="ui.root()">
+    <div v-if="slots.leading" data-slot="error-leading" :class="ui.leading()">
       <slot name="leading" :ui="ui" />
     </div>
-    <p
-      v-if="statusCode || slots.statusCode"
-      data-slot="error-status-code"
-      :class="ui.statusCode({ class: props.ui?.statusCode })"
-    >
+    <p v-if="statusCode || slots.statusCode" data-slot="error-status-code" :class="ui.statusCode()">
       <slot name="statusCode">
         {{ statusCode }}
       </slot>
@@ -24,7 +12,7 @@
       v-if="statusMessage || slots.statusMessage"
       :as="as.statusMessage"
       data-slot="error-status-message"
-      :class="ui.statusMessage({ class: props.ui?.statusMessage })"
+      :class="ui.statusMessage()"
     >
       <slot name="statusMessage">
         {{ statusMessage }}
@@ -33,17 +21,13 @@
     <p
       v-if="(error?.message && error.message !== statusMessage) || slots.message"
       data-slot="error-message"
-      :class="ui.message({ class: props.ui?.message })"
+      :class="ui.message()"
     >
       <slot name="message">
         {{ error?.message }}
       </slot>
     </p>
-    <div
-      v-if="clear || slots.links"
-      data-slot="error-links"
-      :class="ui.links({ class: props.ui?.links })"
-    >
+    <div v-if="clear || slots.links" data-slot="error-links" :class="ui.links()">
       <slot name="links">
         <Button
           v-if="clear"
@@ -81,7 +65,12 @@ const props = withDefaults(defineProps<ErrorProps>(), {
 const emit = defineEmits<ErrorEmits>()
 const slots = defineSlots<ErrorSlots>()
 
-const ui = useComponentUI('error', { theme: theme, variantProps: () => ({}) })
+const ui = useComponentUI('error', {
+  theme: theme,
+  variantProps: () => ({}),
+  props,
+  classSlot: 'root',
+})
 
 const as = computed(() => resolveAs(props.as, { root: 'main', statusMessage: 'h1' }))
 const statusCode = computed(() => props.error?.statusCode || props.error?.status)

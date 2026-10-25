@@ -7,7 +7,7 @@
     :data-invalid="invalid ? 'true' : undefined"
     :data-required="required ? 'true' : undefined"
     :data-readonly="readonly ? 'true' : undefined"
-    :class="ui.base({ class: [props.ui?.base, props.class] })"
+    :class="ui.base()"
   >
     <FieldLabel :for="id" />
     <NumberFieldRoot
@@ -28,7 +28,7 @@
       :data-disabled="isDisabled ? 'true' : undefined"
       :aria-disabled="isDisabled ? 'true' : undefined"
       :data-invalid="invalid ? 'true' : undefined"
-      :class="ui.group({ class: props.ui?.group })"
+      :class="ui.group()"
       @update:model-value="commit"
     >
       <!-- Slots inside the root's content go through `useSlotOutlet` components: a `<slot>` outlet here would make Vue flag the root's slots as forwarded and re-render the root and its buttons on every render -->
@@ -69,7 +69,7 @@
           data-slot="number-stepper-decrement-button"
           :aria-label="decrementLabel"
           :aria-controls="id"
-          :class="ui.decrementButton({ class: props.ui?.decrementButton })"
+          :class="ui.decrementButton()"
         >
           <DecrementOutlet>
             <svg
@@ -90,11 +90,7 @@
           </DecrementOutlet>
         </NumberFieldDecrement>
       </template>
-      <span
-        data-slot="number-stepper-value"
-        aria-hidden="true"
-        :class="ui.value({ class: props.ui?.value })"
-      >
+      <span data-slot="number-stepper-value" aria-hidden="true" :class="ui.value()">
         <ValueOutlet v-bind="{ value: current ?? undefined, formattedValue: textValue }">
           <NumberFlow
             v-if="current != null"
@@ -144,7 +140,7 @@
           data-slot="number-stepper-increment-button"
           :aria-label="incrementLabel"
           :aria-controls="id"
-          :class="ui.incrementButton({ class: props.ui?.incrementButton })"
+          :class="ui.incrementButton()"
         >
           <IncrementOutlet>
             <svg
@@ -172,7 +168,7 @@
         :aria-describedby="describedBy"
         :aria-label="attrs['aria-label']"
         :aria-labelledby="attrs['aria-labelledby']"
-        :class="ui.input({ class: props.ui?.input })"
+        :class="ui.input()"
         @blur="onCommitEmpty"
         @keydown="onKeydown"
       />
@@ -345,5 +341,6 @@ const ui = useComponentUI('numberStepper', {
     size: props.size,
     reversed: props.reversed,
   }),
+  props,
 })
 </script>

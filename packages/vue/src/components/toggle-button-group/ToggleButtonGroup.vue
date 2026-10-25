@@ -10,7 +10,7 @@
     data-slot="toggle-button-group"
     :data-orientation="orientation"
     :data-disabled="isDisabled ? 'true' : undefined"
-    :class="ui.base({ class: [props.ui?.base, props.class] })"
+    :class="ui.base()"
     @keydown.capture="onKeydownCapture"
   >
     <slot :selected="selected" />
@@ -83,6 +83,7 @@ const ui = useComponentUI('toggleButtonGroup', {
     fullWidth: props.fullWidth,
     detached: props.detached,
   }),
+  props,
 })
 
 const firstChild = useFirstChild(useTemplateRef('root'))
@@ -97,6 +98,5 @@ provide(toggleButtonGroupContextKey, {
   firstChild,
   roving: !toolbar,
   ui,
-  uiOverrides: toRef(() => props.ui),
 })
 </script>

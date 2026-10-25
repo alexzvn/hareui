@@ -8,7 +8,7 @@
         data-slot="linkLeadingAvatar"
         :class="
           ui.linkLeadingAvatar({
-            class: [ctx.props.ui?.linkLeadingAvatar, item.ui?.linkLeadingAvatar],
+            override: item.ui?.linkLeadingAvatar,
             ...variantsOf(),
           })
         "
@@ -18,16 +18,14 @@
         size="sm"
         v-bind="chipProps"
         data-slot="linkLeadingChip"
-        :class="
-          ui.linkLeadingChip({ class: [ctx.props.ui?.linkLeadingChip, item.ui?.linkLeadingChip] })
-        "
+        :class="ui.linkLeadingChip({ override: item.ui?.linkLeadingChip })"
       >
         <NavigationMenuIcon
           :icon="item.icon"
           data-slot="linkLeadingIcon"
           :class="
             ui.linkLeadingIcon({
-              class: [ctx.props.ui?.linkLeadingIcon, item.ui?.linkLeadingIcon],
+              override: item.ui?.linkLeadingIcon,
               ...variantsOf(),
             })
           "
@@ -39,7 +37,7 @@
         data-slot="linkLeadingIcon"
         :class="
           ui.linkLeadingIcon({
-            class: [ctx.props.ui?.linkLeadingIcon, item.ui?.linkLeadingIcon],
+            override: item.ui?.linkLeadingIcon,
             ...variantsOf(),
           })
         "
@@ -49,7 +47,7 @@
     <span
       v-if="label || hasLabelSlot"
       data-slot="linkLabel"
-      :class="ui.linkLabel({ class: [ctx.props.ui?.linkLabel, item.ui?.linkLabel] })"
+      :class="ui.linkLabel({ override: item.ui?.linkLabel })"
     >
       <SlotOutlet :name="slotName(item, 'label')" :slot-props="{ item, active, index }">
         {{ label }}
@@ -60,7 +58,7 @@
         data-slot="linkLabelExternalIcon"
         :class="
           ui.linkLabelExternalIcon({
-            class: [ctx.props.ui?.linkLabelExternalIcon, item.ui?.linkLabelExternalIcon],
+            override: item.ui?.linkLabelExternalIcon,
             active,
           })
         "
@@ -70,7 +68,7 @@
         data-slot="linkLabelExternalIcon"
         :class="
           ui.linkLabelExternalIcon({
-            class: [ctx.props.ui?.linkLabelExternalIcon, item.ui?.linkLabelExternalIcon],
+            override: item.ui?.linkLabelExternalIcon,
             active,
           })
         "
@@ -81,7 +79,7 @@
       v-if="hasTrailing"
       data-slot="linkTrailing"
       :data-state="trailingIsTrigger ? (disclosure!.open ? 'open' : 'closed') : undefined"
-      :class="ui.linkTrailing({ class: [ctx.props.ui?.linkTrailing, item.ui?.linkTrailing] })"
+      :class="ui.linkTrailing({ override: item.ui?.linkTrailing })"
       @click="onTrailingClick"
     >
       <SlotOutlet :name="slotName(item, 'trailing')" :slot-props="{ item, active, index, ui }">
@@ -93,7 +91,7 @@
           data-slot="linkTrailingBadge"
           :class="
             ui.linkTrailingBadge({
-              class: [ctx.props.ui?.linkTrailingBadge, item.ui?.linkTrailingBadge],
+              override: item.ui?.linkTrailingBadge,
             })
           "
         />
@@ -101,9 +99,7 @@
           v-if="item.kbds?.length"
           :keys="kbd.keys"
           data-slot="linkTrailingKbd"
-          :class="
-            ui.linkTrailingKbd({ class: [ctx.props.ui?.linkTrailingKbd, item.ui?.linkTrailingKbd] })
-          "
+          :class="ui.linkTrailingKbd({ override: item.ui?.linkTrailingKbd })"
         >
           <template v-if="kbd.text" #default>
             {{ kbd.text }}
@@ -115,7 +111,7 @@
           data-slot="linkTrailingIcon"
           :class="
             ui.linkTrailingIcon({
-              class: [ctx.props.ui?.linkTrailingIcon, item.ui?.linkTrailingIcon],
+              override: item.ui?.linkTrailingIcon,
               active,
             })
           "
@@ -125,7 +121,7 @@
           data-slot="linkTrailingIcon"
           :class="
             ui.linkTrailingIcon({
-              class: [ctx.props.ui?.linkTrailingIcon, item.ui?.linkTrailingIcon],
+              override: item.ui?.linkTrailingIcon,
               active,
             })
           "
@@ -135,7 +131,7 @@
           data-slot="linkTrailingIcon"
           :class="
             ui.linkTrailingIcon({
-              class: [ctx.props.ui?.linkTrailingIcon, item.ui?.linkTrailingIcon],
+              override: item.ui?.linkTrailingIcon,
               active,
             })
           "
@@ -146,7 +142,7 @@
           data-slot="linkTrailingIcon"
           :class="
             ui.linkTrailingIcon({
-              class: [ctx.props.ui?.linkTrailingIcon, item.ui?.linkTrailingIcon],
+              override: item.ui?.linkTrailingIcon,
               active,
             })
           "

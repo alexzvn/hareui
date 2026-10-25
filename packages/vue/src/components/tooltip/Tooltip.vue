@@ -20,7 +20,7 @@
             :side="side"
             :align="align"
             :side-offset="sideOffset"
-            :class="ui.base({ class: [props.ui?.base, props.class] })"
+            :class="ui.base()"
             @pointerenter="onPointerEnter"
             @pointerleave="onPointerLeave"
           >
@@ -35,7 +35,7 @@
                 viewBox="0 0 12 12"
                 fill="none"
                 xmlns="http://www.w3.org/2000/svg"
-                :class="ui.arrow({ class: props.ui?.arrow })"
+                :class="ui.arrow()"
               >
                 <path d="M0 0C5.48483 8 6.5 8 12 0Z" />
               </svg>
@@ -82,7 +82,7 @@ const portalTarget = usePortal(() => props.portal)
 const emit = defineEmits<TooltipEmits>()
 defineSlots<TooltipSlots>()
 
-const ui = useComponentUI('tooltip', { theme: theme, variantProps: () => ({}) })
+const ui = useComponentUI('tooltip', { theme: theme, variantProps: () => ({}), props })
 
 // The arrow SVG is 12px tall. Reka's PopperContent adds the arrow's height to `sideOffset`, but
 // React Aria measures `offset` from the trigger to the tooltip body (the arrow overlaps the gap),

@@ -1,32 +1,22 @@
 <template>
-  <Primitive
-    ref="rootRef"
-    :as="props.as"
-    data-slot="rich-table"
-    v-bind="$attrs"
-    :class="ui.root({ class: [props.ui?.root, props.class] })"
-  >
-    <table
-      ref="tableRef"
-      data-slot="rich-table-content"
-      :class="ui.base({ class: [props.ui?.base] })"
-    >
+  <Primitive ref="rootRef" :as="props.as" data-slot="rich-table" v-bind="$attrs" :class="ui.root()">
+    <table ref="tableRef" data-slot="rich-table-content" :class="ui.base()">
       <caption
         v-if="props.caption || !!slots.caption"
         data-slot="rich-table-caption"
-        :class="ui.caption({ class: [props.ui?.caption] })"
+        :class="ui.caption()"
       >
         <slot name="caption">
           {{ props.caption }}
         </slot>
       </caption>
 
-      <thead data-slot="rich-table-header" :class="ui.thead({ class: [props.ui?.thead] })">
+      <thead data-slot="rich-table-header" :class="ui.thead()">
         <tr
           v-for="headerGroup in tableApi.getHeaderGroups()"
           :key="headerGroup.id"
           data-slot="rich-table-header-row"
-          :class="ui.tr({ class: [props.ui?.tr] })"
+          :class="ui.tr()"
         >
           <th
             v-for="header in headerGroup.headers"
@@ -40,12 +30,7 @@
             :aria-sort="getAriaSort(tableApi, header)"
             data-slot="rich-table-column"
             :class="
-              ui.th({
-                class: [
-                  props.ui?.th,
-                  resolveValue(getColumnMeta(header.column)?.class?.th, header),
-                ],
-              })
+              ui.th({ override: resolveValue(getColumnMeta(header.column)?.class?.th, header) })
             "
             :style="[
               getColumnStyles(header.column, header.getSize()),
@@ -63,7 +48,7 @@
         </tr>
       </thead>
 
-      <tbody data-slot="rich-table-body" :class="ui.tbody({ class: [props.ui?.tbody] })">
+      <tbody data-slot="rich-table-body" :class="ui.tbody()">
         <slot name="body-top" />
 
         <template v-if="rows.length">
@@ -86,11 +71,7 @@
                 :data-pinned="entry.row.getIsPinned() || undefined"
                 :tabindex="props.onSelect ? 0 : undefined"
                 data-slot="rich-table-row"
-                :class="
-                  ui.tr({
-                    class: [props.ui?.tr, resolveValue(props.meta?.class?.tr, entry.row)],
-                  })
-                "
+                :class="ui.tr({ override: resolveValue(props.meta?.class?.tr, entry.row) })"
                 :style="resolveStyle(props.meta?.style?.tr, entry.row)"
                 @click="onRowSelect($event, entry.row)"
                 @keydown.self.exact.enter.space="onRowSelect($event, entry.row)"
@@ -107,12 +88,7 @@
                   :rowspan="resolveValue(getColumnMeta(cell.column)?.rowspan?.td, cell)"
                   data-slot="rich-table-cell"
                   :class="
-                    ui.td({
-                      class: [
-                        props.ui?.td,
-                        resolveValue(getColumnMeta(cell.column)?.class?.td, cell),
-                      ],
-                    })
+                    ui.td({ override: resolveValue(getColumnMeta(cell.column)?.class?.td, cell) })
                   "
                   :style="[
                     columnLayouts.get(cell.column.id)?.styles,
@@ -137,14 +113,14 @@
               <tr
                 v-if="entry.row.getIsExpanded() && !!slots.expanded"
                 data-slot="rich-table-expanded-row"
-                :class="ui.tr({ class: [props.ui?.tr] })"
+                :class="ui.tr()"
                 @vue:mounted="onExpandedRowMounted"
                 @vue:unmounted="onExpandedRowUnmounted"
               >
                 <td
                   :colspan="entry.row.getVisibleCells().length"
                   data-slot="rich-table-cell"
-                  :class="ui.td({ class: [props.ui?.td] })"
+                  :class="ui.td()"
                 >
                   <slot name="expanded" :row="entry.row" />
                 </td>
@@ -154,21 +130,13 @@
         </template>
 
         <tr v-else-if="props.loading && !!slots['loading']">
-          <td
-            :colspan="columnCount"
-            data-slot="rich-table-loading"
-            :class="ui.loading({ class: props.ui?.loading })"
-          >
+          <td :colspan="columnCount" data-slot="rich-table-loading" :class="ui.loading()">
             <slot name="loading" />
           </td>
         </tr>
 
         <tr v-else>
-          <td
-            :colspan="columnCount"
-            data-slot="rich-table-empty"
-            :class="ui.empty({ class: props.ui?.empty })"
-          >
+          <td :colspan="columnCount" data-slot="rich-table-empty" :class="ui.empty()">
             <slot name="empty">
               {{ props.empty || 'No data' }}
             </slot>
@@ -178,16 +146,12 @@
         <slot name="body-bottom" />
       </tbody>
 
-      <tfoot
-        v-if="hasFooter"
-        data-slot="rich-table-footer"
-        :class="ui.tfoot({ class: [props.ui?.tfoot] })"
-      >
+      <tfoot v-if="hasFooter" data-slot="rich-table-footer" :class="ui.tfoot()">
         <tr
           v-for="footerGroup in tableApi.getFooterGroups()"
           :key="footerGroup.id"
           data-slot="rich-table-footer-row"
-          :class="ui.tr({ class: [props.ui?.tr] })"
+          :class="ui.tr()"
         >
           <th
             v-for="header in footerGroup.headers"
@@ -199,12 +163,7 @@
             :role="isEmptyFooter(header, slots) ? 'cell' : undefined"
             data-slot="rich-table-column"
             :class="
-              ui.th({
-                class: [
-                  props.ui?.th,
-                  resolveValue(getColumnMeta(header.column)?.class?.th, header),
-                ],
-              })
+              ui.th({ override: resolveValue(getColumnMeta(header.column)?.class?.th, header) })
             "
             :style="[
               getColumnStyles(header.column, header.getSize()),
@@ -353,6 +312,8 @@ const ui = useComponentUI('richTable', {
     loadingAnimation: props.loadingBar?.animation,
     externalScroll: isExternalScroll.value,
   }),
+  props,
+  classSlot: 'root',
 })
 
 const hasFooter = computed(() => hasColumnFooter(columns.value))

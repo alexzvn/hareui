@@ -1,5 +1,5 @@
 <template>
-  <div data-slot="drop-zone-file-item" :data-status="status" :class="cls('fileItem', props.class)">
+  <div data-slot="drop-zone-file-item" :data-status="status" :class="cls('fileItem')">
     <slot name="icon" v-bind="slotProps">
       <svg
         aria-hidden="true"
@@ -98,7 +98,6 @@ import { computed, inject } from 'vue'
 
 import ProgressBar from '@/components/progress-bar/ProgressBar.vue'
 import { useComponentUI } from '@/composables/useComponentUI'
-import type { ClassValue } from '@/utils/tv'
 
 import { dropZoneContextKey } from './context'
 import type {
@@ -122,11 +121,16 @@ const emit = defineEmits<{
 defineSlots<DropZoneFileItemSlots>()
 
 const context = inject(dropZoneContextKey, null)
-const ui = useComponentUI('dropZone', { theme: theme, variantProps: () => ({}) })
 
-// The surrounding DropZone's `ui` applies first, then this item's own overrides
-const cls = (key: keyof FileItemSlots, extra?: ClassValue) =>
-  ui.value[key]({ class: [context?.ui.value?.[key], props.ui?.[key], extra] })
+const ui = useComponentUI('dropZone', {
+  theme: theme,
+  variantProps: () => ({}),
+  props,
+  classSlot: 'fileItem',
+})
+
+// The surrounding DropZone's `ui` applies first, then this item's own `ui` / `class`
+const cls = (key: keyof FileItemSlots) => ui.value[key]({ class: context?.ui.value?.[key] })
 
 const name = computed(() => props.name ?? props.file?.name ?? '')
 const extension = computed(() => fileExtension(name.value))

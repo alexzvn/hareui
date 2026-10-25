@@ -4,7 +4,7 @@
       v-if="isSeparator(entry)"
       data-slot="separator"
       data-orientation="horizontal"
-      :class="ctx.classes().separator!({ class: ctx.ui()?.separator })"
+      :class="ctx.classes().separator!()"
     />
     <DropdownMenuGroup
       v-else-if="isSection(entry)"
@@ -12,7 +12,7 @@
       :aria-labelledby="
         entry.label || ctx.slots['section-label'] ? `${baseId}-${index}` : undefined
       "
-      :class="ctx.classes().section!({ class: [ctx.ui()?.section, entry.class] })"
+      :class="ctx.classes().section!({ override: entry.class })"
     >
       <!-- RAC `useMenuSection`: menus can't own headings, so the header is presentational and only labels the group -->
       <DropdownMenuLabel
@@ -21,7 +21,7 @@
         as="header"
         role="presentation"
         data-slot="header"
-        :class="ctx.classes().header!({ class: ctx.ui()?.header })"
+        :class="ctx.classes().header!()"
       >
         <component
           :is="ctx.slots['section-label']"
@@ -52,11 +52,11 @@
           :side-offset="8"
           :collision-padding="12"
           data-slot="dropdown-popover"
-          :class="ctx.classes().popover!({ class: ctx.ui()?.popover })"
+          :class="ctx.classes().popover!()"
           @interact-outside="preventNestedLayerDismiss($event, submenuContents.get(entry.value))"
           @keydown="onSubmenuContentKeydown"
         >
-          <div data-slot="dropdown-menu" :class="ctx.classes().menu!({ class: ctx.ui()?.menu })">
+          <div data-slot="dropdown-menu" :class="ctx.classes().menu!()">
             <DropdownMenuItems :entries="entry.items" :group="submenuGroup" />
           </div>
         </DropdownMenuSubContent>

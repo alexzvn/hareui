@@ -6,13 +6,13 @@
     v-slot="{ open: isOpen, close }"
     @update:open="onUpdateOpen"
   >
-    <div data-slot="color-picker" :class="ui.base({ class: [props.ui?.base, props.class] })">
+    <div data-slot="color-picker" :class="ui.base()">
       <PopoverTrigger
         ref="triggerRef"
         data-slot="color-picker-trigger"
         :disabled="disabled"
         :data-disabled="disabled ? 'true' : undefined"
-        :class="ui.trigger({ class: props.ui?.trigger })"
+        :class="ui.trigger()"
       >
         <slot name="trigger" :color="color" :open="isOpen" />
       </PopoverTrigger>
@@ -28,7 +28,7 @@
         @open-auto-focus="focusContent"
         @close-auto-focus="onCloseAutoFocus"
         @interact-outside="onInteractOutside"
-        :class="ui.popover({ class: props.ui?.popover })"
+        :class="ui.popover()"
       >
         <slot :color="color" :close="close" />
       </PopoverContent>
@@ -62,7 +62,7 @@ const portalTarget = usePortal(() => props.portal)
 const emit = defineEmits<ColorPickerEmits>()
 defineSlots<ColorPickerSlots>()
 
-const ui = useComponentUI('colorPicker', { theme: theme, variantProps: () => ({}) })
+const ui = useComponentUI('colorPicker', { theme: theme, variantProps: () => ({}), props })
 
 // RAC's ColorPicker defaults to black when neither value nor defaultValue is given.
 const internal = ref<Color>(normalizeColor(props.defaultValue ?? '#000000'))

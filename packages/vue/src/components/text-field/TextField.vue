@@ -9,7 +9,7 @@
     :data-readonly="readonly ? 'true' : undefined"
     :data-focus-within="isFocusWithin ? 'true' : undefined"
     :data-focus-visible="isFocusVisible ? 'true' : undefined"
-    :class="ui.base({ class: [props.ui?.base, props.class] })"
+    :class="ui.base()"
     @focusin="onFocusIn"
     @focusout="onFocusOut"
   >
@@ -142,5 +142,6 @@ provide(textFieldContextKey, {
 const ui = useComponentUI('textField', {
   theme,
   variantProps: () => ({ fullWidth: props.fullWidth }),
+  props,
 })
 </script>

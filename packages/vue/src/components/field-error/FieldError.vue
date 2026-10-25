@@ -1,11 +1,5 @@
 <template>
-  <span
-    :id="id"
-    data-slot="field-error"
-    data-visible="true"
-    role="alert"
-    :class="ui.base({ class: [props.ui?.base, props.class] })"
-  >
+  <span :id="id" data-slot="field-error" data-visible="true" role="alert" :class="ui.base()">
     <slot />
   </span>
 </template>
@@ -19,5 +13,5 @@ import theme from './theme'
 const props = defineProps<FieldErrorProps>()
 defineSlots<FieldErrorSlots>()
 
-const ui = useComponentUI('fieldError', { theme: theme, variantProps: () => ({}) })
+const ui = useComponentUI('fieldError', { theme: theme, variantProps: () => ({}), props })
 </script>

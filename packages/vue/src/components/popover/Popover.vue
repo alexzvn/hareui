@@ -12,23 +12,13 @@
         :side-offset="contentOffset"
         :avoid-collisions="flip"
         :collision-padding="8"
-        :class="ui.base({ class: [props.ui?.base, props.class] })"
+        :class="ui.base()"
         @escape-key-down="onEscapeKeyDown"
         @interact-outside="onInteractOutside"
         @open-auto-focus="onOpenAutoFocus"
       >
-        <div
-          ref="dialogRef"
-          data-slot="popover-dialog"
-          tabindex="-1"
-          :class="ui.dialog({ class: props.ui?.dialog })"
-        >
-          <h2
-            v-if="hasHeading"
-            :id="headingId"
-            data-slot="popover-heading"
-            :class="ui.heading({ class: props.ui?.heading })"
-          >
+        <div ref="dialogRef" data-slot="popover-dialog" tabindex="-1" :class="ui.dialog()">
+          <h2 v-if="hasHeading" :id="headingId" data-slot="popover-heading" :class="ui.heading()">
             <slot name="title">{{ title }}</slot>
           </h2>
           <slot name="content" :close="close" />
@@ -41,7 +31,7 @@
             viewBox="0 0 12 12"
             width="12"
             xmlns="http://www.w3.org/2000/svg"
-            :class="ui.arrow({ class: props.ui?.arrow })"
+            :class="ui.arrow()"
           >
             <path d="M0 0C5.48483 8 6.5 8 12 0Z" />
           </svg>
@@ -80,7 +70,7 @@ const emit = defineEmits<PopoverEmits>()
 const slots = useSlots()
 defineSlots<PopoverSlots>()
 
-const ui = useComponentUI('popover', { theme: theme, variantProps: () => ({}) })
+const ui = useComponentUI('popover', { theme: theme, variantProps: () => ({}), props })
 
 const contentRef = useTemplateRef<{ $el: HTMLElement }>('contentRef')
 const dialogRef = useTemplateRef<HTMLElement>('dialogRef')

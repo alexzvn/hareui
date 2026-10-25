@@ -12,7 +12,7 @@
     :data-selected="selected ? 'true' : undefined"
     :data-invalid="group.invalid.value ? 'true' : undefined"
     :data-readonly="group.readonly.value ? 'true' : undefined"
-    :class="itemUi.item({ class: cls('item', props.class) })"
+    :class="itemUi.item({ class: groupUi('item') })"
     @keydown.capture="submitOnEnter"
     @mousedown="group.readonly.value && $event.preventDefault()"
   >
@@ -22,7 +22,7 @@
         aria-hidden="true"
         data-slot="checkbox-button-group-indicator"
         data-custom="true"
-        :class="itemUi.indicator({ class: cls('indicator') })"
+        :class="itemUi.indicator({ class: groupUi('indicator') })"
       >
         <slot name="indicator" v-bind="slotProps" />
       </span>
@@ -31,7 +31,9 @@
         aria-hidden="true"
         data-slot="checkbox-button-group-indicator"
         :class="
-          group.checkboxUi.value.control({ class: itemUi.indicator({ class: cls('indicator') }) })
+          group.checkboxUi.value.control({
+            class: itemUi.indicator({ class: groupUi('indicator') }),
+          })
         "
       >
         <span data-slot="checkbox-indicator" :class="group.checkboxUi.value.indicator()">
@@ -55,13 +57,13 @@
     </template>
     <span
       data-slot="checkbox-button-group-item-content"
-      :class="itemUi.content({ class: cls('content') })"
+      :class="itemUi.content({ class: groupUi('content') })"
     >
       <span
         v-if="hasIcon"
         aria-hidden="true"
         data-slot="checkbox-button-group-item-icon"
-        :class="itemUi.icon({ class: cls('icon') })"
+        :class="itemUi.icon({ class: groupUi('icon') })"
       >
         <slot name="icon" v-bind="slotProps">
           <span v-if="typeof icon === 'string'" :class="icon" />
@@ -70,13 +72,13 @@
       </span>
       <span
         data-slot="checkbox-button-group-item-text"
-        :class="itemUi.itemText({ class: cls('itemText') })"
+        :class="itemUi.itemText({ class: groupUi('itemText') })"
       >
         <span
           v-if="hasLabel"
           :id="labelId"
           data-slot="checkbox-button-group-item-label"
-          :class="itemUi.itemLabel({ class: cls('itemLabel') })"
+          :class="itemUi.itemLabel({ class: groupUi('itemLabel') })"
         >
           <slot name="label" v-bind="slotProps">{{ label }}</slot>
         </span>
@@ -84,7 +86,7 @@
           v-if="hasDescription"
           :id="descriptionId"
           data-slot="checkbox-button-group-item-description"
-          :class="itemUi.itemDescription({ class: cls('itemDescription') })"
+          :class="itemUi.itemDescription({ class: groupUi('itemDescription') })"
         >
           <slot name="description" v-bind="slotProps">{{ description }}</slot>
         </span>
@@ -109,7 +111,6 @@ import { computed, inject, useSlots } from 'vue'
 import { submitOnEnter } from '@/composables/forwardRootClick'
 import { useComponentUI } from '@/composables/useComponentUI'
 import { useFieldChrome } from '@/composables/useFieldChrome'
-import type { ClassValue } from '@/utils/tv'
 
 import type {
   CheckboxButtonGroupItemProps,
@@ -146,6 +147,8 @@ const itemUi = useComponentUI('checkboxButtonGroup', {
     customIndicator: hasCustomIndicator.value,
     withIcon: hasIcon.value,
   }),
+  props,
+  classSlot: 'item',
 })
 
 // Named by the title alone; the description and the default slot content are announced through aria-describedby.
@@ -158,7 +161,8 @@ const { id, labelId, descriptionId, hasLabel, hasDescription, describedBy } = us
 
 const extraId = computed(() => `${id.value}-extra`)
 
-const cls = (slot: keyof NonNullable<CheckboxButtonGroupItemProps['ui']>, extra?: ClassValue) => {
-  return [group.uiOverrides.value?.[slot], props.ui?.[slot], extra]
+// The group's `ui` sits under the item's own `ui` / `class`.
+const groupUi = (slot: keyof NonNullable<CheckboxButtonGroupItemProps['ui']>) => {
+  return group.uiOverrides.value?.[slot]
 }
 </script>

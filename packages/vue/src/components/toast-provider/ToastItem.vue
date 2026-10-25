@@ -15,7 +15,7 @@
     :data-index="index"
     :data-placement="placement"
     :style="styleVars"
-    :class="ui.toast({ class: providerUi?.toast })"
+    :class="ui.toast()"
   >
     <template v-if="toastSlot">
       <component
@@ -28,7 +28,7 @@
         v-if="hasIndicator"
         data-slot="toast-indicator"
         :data-swapped="hasSwapped ? 'true' : undefined"
-        :class="ui.indicator({ class: providerUi?.indicator })"
+        :class="ui.indicator()"
       >
         <Spinner v-if="content.isLoading" color="current" size="sm" />
         <component
@@ -55,21 +55,16 @@
         role="alert"
         aria-atomic="true"
         :aria-hidden="isContentVisible ? undefined : 'true'"
-        :class="ui.content({ class: providerUi?.content })"
+        :class="ui.content()"
       >
-        <p
-          v-if="hasTitle"
-          :id="titleId"
-          data-slot="toast-title"
-          :class="ui.title({ class: providerUi?.title })"
-        >
+        <p v-if="hasTitle" :id="titleId" data-slot="toast-title" :class="ui.title()">
           <component :is="renderValue" :value="content.title" />
         </p>
         <p
           v-if="hasDescription"
           :id="descId"
           data-slot="toast-description"
-          :class="ui.description({ class: providerUi?.description })"
+          :class="ui.description()"
         >
           <component :is="renderValue" :value="content.description" />
         </p>
@@ -77,7 +72,7 @@
           v-if="isMobile && content.action"
           data-slot="toast-action-button"
           :variant="content.action.variant ?? 'secondary'"
-          :class="[ui.action({ class: providerUi?.action }), content.action.class]"
+          :class="[ui.action(), content.action.class]"
           @click="onActionClick"
         >
           <component :is="renderValue" :value="content.action.label" />
@@ -87,16 +82,12 @@
         v-if="!isMobile && content.action"
         data-slot="toast-action-button"
         :variant="content.action.variant ?? 'secondary'"
-        :class="[ui.action({ class: providerUi?.action }), content.action.class]"
+        :class="[ui.action(), content.action.class]"
         @click="onActionClick"
       >
         <component :is="renderValue" :value="content.action.label" />
       </Button>
-      <CloseButton
-        data-slot="toast-close"
-        :class="ui.close({ class: providerUi?.close })"
-        @click="props.close"
-      />
+      <CloseButton data-slot="toast-close" :class="ui.close()" @click="props.close" />
     </template>
   </div>
 </template>
@@ -140,6 +131,12 @@ const ui = useComponentUI('toast', {
     placement: props.placement,
     variant: content.value.variant ?? 'default',
   }),
+  // The provider's `ui` styles every toast.
+  props: {
+    get ui() {
+      return props.providerUi
+    },
+  },
 })
 
 const titleId = useId()

@@ -8,7 +8,7 @@
     :data-required="required ? 'true' : undefined"
     :data-readonly="readonly ? 'true' : undefined"
     :data-empty="isEmpty ? 'true' : undefined"
-    :class="ui.base({ class: [props.ui?.base, props.class] })"
+    :class="ui.base()"
   >
     <FieldLabel :for="id" />
     <div
@@ -18,14 +18,11 @@
       :data-disabled="disabled ? 'true' : undefined"
       :data-focus-within="isFocusWithin ? 'true' : undefined"
       :data-focus-visible="isFocusVisible ? 'true' : undefined"
-      :class="ui.group({ class: props.ui?.group })"
+      :class="ui.group()"
       @focusin="onFocusIn"
       @focusout="onFocusOut"
     >
-      <span
-        data-slot="search-field-search-icon"
-        :class="ui.searchIcon({ class: props.ui?.searchIcon })"
-      >
+      <span data-slot="search-field-search-icon" :class="ui.searchIcon()">
         <slot name="icon">
           <svg
             aria-hidden="true"
@@ -60,7 +57,7 @@
         :aria-describedby="describedBy"
         data-slot="search-field-input"
         :data-invalid="invalid ? 'true' : undefined"
-        :class="ui.input({ class: props.ui?.input })"
+        :class="ui.input()"
         @keydown.enter="onEnter"
         @keydown.esc="onEscape"
       />
@@ -70,7 +67,7 @@
         aria-label="Clear search"
         tabindex="-1"
         :disabled="disabled || readonly || undefined"
-        :class="ui.clearButton({ class: props.ui?.clearButton })"
+        :class="ui.clearButton()"
         @mousedown.prevent
         @click="onClear"
       >
@@ -82,7 +79,7 @@
         aria-label="Clear search"
         tabindex="-1"
         :disabled="disabled || readonly || undefined"
-        :class="ui.clearButton({ class: props.ui?.clearButton })"
+        :class="ui.clearButton()"
         @mousedown.prevent
         @click="onClear"
       />
@@ -205,5 +202,6 @@ const ui = useComponentUI('searchField', {
     variant: props.variant,
     fullWidth: props.fullWidth,
   }),
+  props,
 })
 </script>

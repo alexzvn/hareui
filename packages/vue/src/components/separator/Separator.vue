@@ -3,7 +3,7 @@
     :as="as"
     :orientation="resolvedOrientation"
     data-slot="separator"
-    :class="ui.base({ class: [toolbarClass, props.ui?.base, props.class] })"
+    :class="ui.base({ class: toolbarClass })"
   >
     <slot />
   </SeparatorPrimitive>
@@ -38,6 +38,7 @@ const ui = useComponentUI('separator', {
     orientation: resolvedOrientation.value,
     variant: props.variant,
   }),
+  props,
 })
 
 const toolbarClass = computed(() => {
@@ -46,6 +47,6 @@ const toolbarClass = computed(() => {
   const slot =
     resolvedOrientation.value === 'vertical' ? 'separatorVertical' : 'separatorHorizontal'
 
-  return toolbar.ui.value[slot]({ class: toolbar.uiOverrides.value?.[slot] })
+  return toolbar.ui.value[slot]()
 })
 </script>

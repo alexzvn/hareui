@@ -5,13 +5,13 @@
     data-slot="dashboard-panel"
     v-bind="$attrs"
     :data-dragging="isDragging"
-    :class="ui.root({ class: [props.ui?.root, props.class] })"
+    :class="ui.root()"
     :style="size ? { '--width': `${size}${unit}` } : undefined"
   >
     <slot>
       <slot name="header" />
 
-      <div data-slot="dashboard-panel-body" :class="ui.body({ class: props.ui?.body })">
+      <div data-slot="dashboard-panel-body" :class="ui.body()">
         <slot name="body" />
       </div>
 
@@ -23,7 +23,7 @@
     <DashboardResizeHandle
       v-bind="resizeHandleSlotProps.attrs"
       :data-dragging="isDragging"
-      :class="ui.handle({ class: props.ui?.handle })"
+      :class="ui.handle()"
       @pointerdown="onPointerDown"
       @dblclick="onDoubleClick"
       @keydown="onKeyDown"
@@ -89,6 +89,8 @@ const {
 const ui = useComponentUI('dashboardPanel', {
   theme,
   variantProps: () => ({ size: !!size.value }),
+  props,
+  classSlot: 'root',
 })
 
 const unit = computed(() => dashboard?.unit ?? '%')

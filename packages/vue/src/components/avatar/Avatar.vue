@@ -1,5 +1,5 @@
 <template>
-  <AvatarRoot :class="ui.base({ class: [props.ui?.base, props.class] })">
+  <AvatarRoot :class="ui.base()">
     <!-- reka hard-codes role="img"; Radix sets none, and alt="" with a role breaks aria-allowed-role. -->
     <AvatarImage
       v-if="src"
@@ -12,16 +12,12 @@
       :loading="loading"
       :cross-origin="crossOrigin"
       :referrer-policy="referrerPolicy"
-      :class="ui.image({ class: props.ui?.image })"
+      :class="ui.image()"
       @loading-status-change="emit('loadingStatusChange', $event)"
     >
       <slot name="image" />
     </AvatarImage>
-    <AvatarFallback
-      data-slot="avatar-fallback"
-      :delay-ms="delayMs"
-      :class="ui.fallback({ class: props.ui?.fallback })"
-    >
+    <AvatarFallback data-slot="avatar-fallback" :delay-ms="delayMs" :class="ui.fallback()">
       <slot name="fallback">
         {{ fallback }}
       </slot>
@@ -48,5 +44,6 @@ const ui = useComponentUI('avatar', {
     size: props.size,
     variant: props.variant,
   }),
+  props,
 })
 </script>

@@ -13,13 +13,13 @@
       <DialogOverlay
         data-slot="drawer-backdrop"
         :style="{ '--visual-viewport-height': visualViewportHeight }"
-        :class="ui.backdrop({ class: props.ui?.backdrop })"
+        :class="ui.backdrop()"
       >
         <div
           data-slot="drawer-content"
           :data-state="isOpen ? 'open' : 'closed'"
           :data-placement="placement"
-          :class="ui.content({ class: props.ui?.content })"
+          :class="ui.content()"
         >
           <DialogContent
             ref="dialogContent"
@@ -27,7 +27,7 @@
             :data-placement="placement"
             :aria-describedby="undefined"
             :style="dismissible ? { touchAction: 'none' } : undefined"
-            :class="ui.dialog({ class: [props.ui?.dialog, props.class] })"
+            :class="ui.dialog()"
             @escape-key-down="onEscapeKeyDown"
             @interact-outside="onInteractOutside"
             @open-auto-focus="onOpenAutoFocus"
@@ -41,10 +41,7 @@
             <slot name="content" :close="close">
               <DialogClose v-if="closeButton" as-child>
                 <slot name="close" :close="close">
-                  <CloseButton
-                    data-slot="drawer-close-trigger"
-                    :class="ui.closeTrigger({ class: props.ui?.closeTrigger })"
-                  />
+                  <CloseButton data-slot="drawer-close-trigger" :class="ui.closeTrigger()" />
                 </slot>
               </DialogClose>
               <!-- Before the header so `handle + header` / `header + body` spacing selectors still match -->
@@ -55,20 +52,16 @@
                 v-if="handle && placement !== 'top'"
                 aria-hidden="true"
                 data-slot="drawer-handle"
-                :class="ui.handle({ class: props.ui?.handle })"
+                :class="ui.handle()"
               >
                 <div data-slot="drawer-handle-bar" />
               </div>
-              <div
-                v-if="hasHeader"
-                data-slot="drawer-header"
-                :class="ui.header({ class: props.ui?.header })"
-              >
+              <div v-if="hasHeader" data-slot="drawer-header" :class="ui.header()">
                 <slot name="header">
                   <DialogTitle
                     v-if="showHeaderTitle"
                     data-slot="drawer-heading"
-                    :class="ui.heading({ class: props.ui?.heading })"
+                    :class="ui.heading()"
                   >
                     <slot name="title">
                       {{ title }}
@@ -76,25 +69,17 @@
                   </DialogTitle>
                 </slot>
               </div>
-              <div
-                v-if="!!slots.body"
-                data-slot="drawer-body"
-                :class="ui.body({ class: props.ui?.body })"
-              >
+              <div v-if="!!slots.body" data-slot="drawer-body" :class="ui.body()">
                 <slot name="body" :close="close" />
               </div>
-              <div
-                v-if="!!slots.footer"
-                data-slot="drawer-footer"
-                :class="ui.footer({ class: props.ui?.footer })"
-              >
+              <div v-if="!!slots.footer" data-slot="drawer-footer" :class="ui.footer()">
                 <slot name="footer" :close="close" />
               </div>
               <div
                 v-if="handle && placement === 'top'"
                 aria-hidden="true"
                 data-slot="drawer-handle"
-                :class="ui.handle({ class: props.ui?.handle })"
+                :class="ui.handle()"
               >
                 <div data-slot="drawer-handle-bar" />
               </div>
@@ -146,6 +131,8 @@ const ui = useComponentUI('drawer', {
     placement: props.placement,
     variant: props.variant,
   }),
+  props,
+  classSlot: 'dialog',
 })
 
 const dialogContent = useTemplateRef<{ $el: HTMLElement }>('dialogContent')

@@ -9,7 +9,7 @@
     :data-selected="isSelected ? 'true' : undefined"
     :data-invalid="group.invalid.value ? 'true' : undefined"
     :data-readonly="group.readonly.value ? 'true' : undefined"
-    :class="cls('item', props.class)"
+    :class="cls('item')"
     @keydown.capture="submitOnEnter"
   >
     <span
@@ -102,6 +102,8 @@ const ui = useComponentUI('radioButtonGroup', {
     withIcon: hasIcon.value,
     customIndicator: hasCustomIndicator.value,
   }),
+  props,
+  classSlot: 'item',
 })
 
 // The default indicator is the radio dot of `RadioGroup`, so it follows that theme (and its overrides).
@@ -112,11 +114,9 @@ const radioUI = useComponentUI('radioGroup', {
   }),
 })
 
-const cls = (
-  slot: keyof NonNullable<RadioButtonGroupItemProps['ui']>,
-  extra?: RadioButtonGroupItemProps['class'],
-) => {
-  return ui.value[slot]({ class: [group.ui.value?.[slot], props.ui?.[slot], extra] })
+// The group's `ui` sits under the item's own `ui` / `class`.
+const cls = (slot: keyof NonNullable<RadioButtonGroupItemProps['ui']>) => {
+  return ui.value[slot]({ class: group.ui.value?.[slot] })
 }
 
 const isSelected = computed(() => group.selected.value === props.value)

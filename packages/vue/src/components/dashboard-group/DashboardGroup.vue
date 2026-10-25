@@ -1,9 +1,5 @@
 <template>
-  <Primitive
-    :as="as"
-    data-slot="dashboard-group"
-    :class="ui.base({ class: [props.ui?.base, props.class] })"
-  >
+  <Primitive :as="as" data-slot="dashboard-group" :class="ui.base()">
     <slot />
   </Primitive>
 </template>
@@ -26,7 +22,7 @@ const props = withDefaults(defineProps<DashboardGroupProps>(), {
 
 defineSlots<DashboardGroupSlots>()
 
-const ui = useComponentUI('dashboardGroup', { theme: theme, variantProps: () => ({}) })
+const ui = useComponentUI('dashboardGroup', { theme: theme, variantProps: () => ({}), props })
 
 const left = createDashboardSidebarState()
 const right = createDashboardSidebarState()

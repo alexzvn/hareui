@@ -7,19 +7,15 @@
     :data-hidden="hidden ? 'true' : undefined"
     :data-menu-open="open ? 'true' : undefined"
     :style="heightStyle"
-    :class="ui.root({ class: [props.ui?.root, props.class] })"
+    :class="ui.root()"
     @focusin="onFocusIn"
   >
     <slot name="top" />
 
-    <div
-      ref="bar"
-      data-slot="header-container"
-      :class="ui.container({ class: props.ui?.container })"
-    >
+    <div ref="bar" data-slot="header-container" :class="ui.container()">
       <Left />
 
-      <div data-slot="header-center" :class="ui.center({ class: props.ui?.center })">
+      <div data-slot="header-center" :class="ui.center()">
         <slot />
       </div>
 
@@ -95,6 +91,8 @@ const ui = useComponentUI('header', {
     breakpoint: props.breakpoint,
     mode: props.mode,
   }),
+  props,
+  classSlot: 'root',
 })
 
 const root = useTemplateRef<{ $el: HTMLElement }>('root')
@@ -126,7 +124,7 @@ const Toggle: FunctionalComponent = () => {
       'aria-hidden': 'true',
       'data-slot': 'header-toggle-icon',
       'data-open': isIconOpen.value ? 'true' : 'false',
-      class: ui.value.toggleIcon({ class: props.ui?.toggleIcon }),
+      class: ui.value.toggleIcon(),
     })
 
   return h(
@@ -138,7 +136,7 @@ const Toggle: FunctionalComponent = () => {
       'aria-label': open.value ? props.closeLabel : props.openLabel,
       'aria-expanded': open.value,
       'data-slot': 'header-toggle',
-      class: ui.value.toggle({ class: [props.ui?.toggle, options.class] }),
+      class: ui.value.toggle({ override: options.class }),
       onClick: toggleOpen,
     },
     renderIcon,
@@ -153,7 +151,7 @@ const titleAttrs = computed(() => ({
   to: props.to,
   'aria-label': props.title.trim(),
   'data-slot': 'header-title',
-  class: ui.value.title({ class: props.ui?.title }),
+  class: ui.value.title(),
 }))
 
 const titleContent = () => (slots.title ? slots.title() : props.title)
@@ -175,13 +173,13 @@ const renderTitleLink = () => {
 }
 
 const Left: FunctionalComponent = () =>
-  h('div', { 'data-slot': 'header-left', class: ui.value.left({ class: props.ui?.left }) }, [
+  h('div', { 'data-slot': 'header-left', class: ui.value.left() }, [
     props.toggleSide === 'left' ? h(Toggle) : null,
     slots.left ? slots.left() : renderTitleLink(),
   ])
 
 const Right: FunctionalComponent = () =>
-  h('div', { 'data-slot': 'header-right', class: ui.value.right({ class: props.ui?.right }) }, [
+  h('div', { 'data-slot': 'header-right', class: ui.value.right() }, [
     slots.right?.(),
     props.toggleSide === 'right' ? h(Toggle) : null,
   ])
@@ -203,11 +201,11 @@ const modalProps = computed((): ModalMenuProps => {
     portal: false,
     ui: {
       ...menu.ui,
-      backdrop: [ui.value.overlay({ class: props.ui?.overlay }), menu.ui?.backdrop],
+      backdrop: [ui.value.overlay(), menu.ui?.backdrop],
 
       // Fade only: Modal's `full` size has no zoom or slide.
       container: ['h-full w-full', menu.ui?.container],
-      dialog: [ui.value.content({ class: props.ui?.content }), menu.ui?.dialog],
+      dialog: [ui.value.content(), menu.ui?.dialog],
     },
   }
 })
@@ -223,11 +221,11 @@ const drawerProps = computed((): DrawerMenuProps => {
     portal: false,
     ui: {
       ...menu.ui,
-      backdrop: [ui.value.overlay({ class: props.ui?.overlay }), menu.ui?.backdrop],
+      backdrop: [ui.value.overlay(), menu.ui?.backdrop],
 
       // Fill the anchored region instead of the viewport, and clip the sliding panel to it.
       content: ['absolute h-full overflow-hidden', menu.ui?.content],
-      dialog: [ui.value.content({ class: props.ui?.content }), menu.ui?.dialog],
+      dialog: [ui.value.content(), menu.ui?.dialog],
     },
   }
 })
@@ -246,7 +244,7 @@ const renderMenuHeader = () => {
     'div',
     {
       'data-slot': 'header-menu-container',
-      class: ui.value.container({ class: props.ui?.container }),
+      class: ui.value.container(),
     },
     [h(Left), h(Right)],
   )
@@ -256,7 +254,7 @@ const renderMenuHeader = () => {
     {
       'data-slot': 'header-menu-header',
       style: heightStyle.value,
-      class: ui.value.header({ class: props.ui?.header }),
+      class: ui.value.header(),
       onClick: onMenuClick,
     },
     [container],
@@ -268,7 +266,7 @@ const renderMenuBody = () =>
     'div',
     {
       'data-slot': 'header-menu-body',
-      class: ui.value.body({ class: props.ui?.body }),
+      class: ui.value.body(),
       onClick: onMenuClick,
     },
     slots.body?.(),

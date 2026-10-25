@@ -5,7 +5,7 @@
     :width="width"
     :height="height"
     :config="config"
-    :class="ui.base({ class: [props.ui?.base, props.class] })"
+    :class="ui.base()"
   >
     <template v-for="name in frameSlotNames(slots)" #[name]="scope">
       <slot :name="name" v-bind="scope as any" />
@@ -147,13 +147,12 @@ const config = usePolarRoot({
   hasLegendSlot: () => !!slots.legend,
 })
 
-const ui = useComponentUI('radarChart', { theme: theme, variantProps: () => ({}) })
+const ui = useComponentUI('radarChart', { theme: theme, variantProps: () => ({}), props })
 const chart = useChartRoot({
   data: () => props.data as ChartDatum[],
   margin: () => props.margin,
   layout: () => 'centric',
   ui,
-  uiProps: () => props.ui,
 })
 
 usePolarChart(chart, {

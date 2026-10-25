@@ -8,7 +8,7 @@
     :data-invalid="invalid ? '' : undefined"
     :data-disabled="disabled ? '' : undefined"
     :data-readonly="readonly ? '' : undefined"
-    :class="ui.base({ class: [uiOverrides?.base, rootClass] })"
+    :class="ui.base()"
   >
     <header :data-slot="`${p}-header`" role="presentation" :class="cls('header')">
       <div :data-slot="`${p}-heading`" aria-hidden="true" :class="cls('heading')">
@@ -203,7 +203,7 @@ defineSlots<{
 const locale = useLocale(toRef(() => props.locale))
 const direction = useDirection(toRef(() => props.dir))
 const p = computed(() => (props.kind === 'range' ? 'range-calendar' : 'calendar'))
-const cls = (slot: string) => props.ui[slot]?.({ class: props.uiOverrides?.[slot] })
+const cls = (slot: string) => props.ui[slot]?.()
 
 const isRange = (value: CalendarDurationValue): value is DurationRange =>
   !Array.isArray(value) && 'start' in value

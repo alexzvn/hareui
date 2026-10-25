@@ -1,5 +1,5 @@
 <template>
-  <div data-slot="avatar-group" :class="ui.base({ class: [props.ui?.base, props.class] })">
+  <div data-slot="avatar-group" :class="ui.base()">
     <Items />
   </div>
 </template>
@@ -28,6 +28,7 @@ const ui = useComponentUI('avatarGroup', {
     grid: props.grid,
     overlap: props.overlap,
   }),
+  props,
 })
 
 const flatten = (nodes: VNode[]): VNode[] => {
@@ -70,7 +71,7 @@ const Items = () => {
         {
           ...groupProps.value,
           'data-slot': 'avatar-group-count',
-          class: ui.value.count({ class: props.ui?.count }),
+          class: ui.value.count(),
         },
         { fallback: slots.count ?? (() => `+${remaining}`) },
       ),

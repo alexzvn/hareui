@@ -1,22 +1,18 @@
 <template>
-  <ul
-    data-slot="chart-legend"
-    :data-orientation="orientation"
-    :class="ui.base({ class: [props.ui?.base, props.class] })"
-  >
+  <ul data-slot="chart-legend" :data-orientation="orientation" :class="ui.base()">
     <li
       v-for="(item, index) in rows"
       :key="item.key"
       data-slot="chart-legend-item"
       :data-hidden="item.hidden ? 'true' : undefined"
-      :class="ui.item({ class: props.ui?.item })"
+      :class="ui.item()"
     >
       <component
         :is="toggleable ? 'button' : 'span'"
         data-slot="chart-legend-trigger"
         :type="toggleable ? 'button' : undefined"
         :aria-pressed="toggleable ? String(!item.hidden) : undefined"
-        :class="ui.trigger({ class: props.ui?.trigger })"
+        :class="ui.trigger()"
         @click="toggleable ? toggle(item.key) : undefined"
       >
         <slot
@@ -30,22 +26,20 @@
           <span
             data-slot="chart-legend-indicator"
             aria-hidden="true"
-            :class="ui.indicator({ class: props.ui?.indicator })"
+            :class="ui.indicator()"
             :style="{ backgroundColor: item.color }"
           />
-          <span data-slot="chart-legend-label" :class="ui.label({ class: props.ui?.label })">{{
-            item.name
-          }}</span>
+          <span data-slot="chart-legend-label" :class="ui.label()">{{ item.name }}</span>
           <span
             v-if="showValue && item.value !== undefined"
             data-slot="chart-legend-value"
-            :class="ui.value({ class: props.ui?.value })"
+            :class="ui.value()"
             >{{ formatValue(item.value, item.key) }}</span
           >
           <span
             v-if="showPercent && item.percent !== undefined"
             data-slot="chart-legend-percent"
-            :class="ui.percent({ class: props.ui?.percent })"
+            :class="ui.percent()"
             >{{ formatPercent(item.percent) }}</span
           >
         </template>
@@ -87,6 +81,7 @@ const ui = useComponentUI('chartLegend', {
     indicator: props.indicator,
     toggleable: props.toggleable,
   }),
+  props,
 })
 
 const rows = computed<ChartLegendItem[]>(() => {

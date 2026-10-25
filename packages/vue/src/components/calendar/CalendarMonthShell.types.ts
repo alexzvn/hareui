@@ -1,7 +1,5 @@
 import type { DateValue } from '@internationalized/date'
 
-import type { ClassValue } from '@/utils/tv'
-
 import type { PageBehavior, VisibleDuration } from './useCalendarDurationView'
 
 /** Which Reka root family a shell renders: Calendar or RangeCalendar. */
@@ -27,11 +25,8 @@ type CalendarShellSlot =
   | 'yearPickerGrid'
   | 'yearPickerYearCell'
 
-/** The root's resolved slot class functions, one per shell slot. */
-export type CalendarShellUI = Record<CalendarShellSlot, (props?: { class?: ClassValue }) => string>
-
-/** The root's `:ui` overrides. */
-export type CalendarShellUIOverrides = Partial<Record<string, ClassValue>>
+/** The root's resolved slot class functions, one per shell slot, with its `ui` and `class` props layered in. */
+export type CalendarShellUI = Record<CalendarShellSlot, () => string>
 
 /** How the calendar selects. The week/day view runs outside Reka, so it selects with these directly. */
 type CalendarShellSelection<TValue> = {
@@ -44,9 +39,8 @@ type CalendarShellSelection<TValue> = {
   allowNonContiguousRanges?: boolean
 }
 
-/** The Calendar or RangeCalendar root's own class, and the Reka root props and listeners that differ between them. */
+/** The Reka root props and listeners that differ between Calendar and RangeCalendar. */
 type CalendarShellRoot = {
-  class?: ClassValue
   bindings: Record<string, unknown>
 }
 
@@ -55,8 +49,6 @@ export type CalendarMonthShellProps<TValue> = {
   kind: CalendarKind
   /** The root's resolved slot class functions (already resolved for the `view` variant). */
   ui: CalendarShellUI
-  /** The root's `:ui` overrides. */
-  uiOverrides?: CalendarShellUIOverrides
   root: CalendarShellRoot
   ariaLabel?: string
   /** The controlled displayed date. */

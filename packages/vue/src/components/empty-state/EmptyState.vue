@@ -1,5 +1,5 @@
 <template>
-  <div data-slot="empty-state" :class="ui.base({ class: [props.ui?.base, props.class] })">
+  <div data-slot="empty-state" :class="ui.base()">
     <slot>No results found</slot>
   </div>
 </template>
@@ -13,5 +13,5 @@ import theme from './theme'
 const props = defineProps<EmptyStateProps>()
 defineSlots<EmptyStateSlots>()
 
-const ui = useComponentUI('emptyState', { theme: theme, variantProps: () => ({}) })
+const ui = useComponentUI('emptyState', { theme: theme, variantProps: () => ({}), props })
 </script>

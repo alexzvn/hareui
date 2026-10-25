@@ -13,7 +13,7 @@
       ...$attrs,
     }"
     :data-collapsed="props.collapsed"
-    :class="ui.root({ class: [props.ui?.root, props.class] })"
+    :class="ui.root()"
   >
     <slot name="list-leading" />
 
@@ -23,7 +23,7 @@
         v-bind="listProps(list, listIndex)"
         as="ul"
         data-slot="list"
-        :class="ui.list({ class: props.ui?.list })"
+        :class="ui.list()"
       >
         <NavigationMenuNode
           v-for="(item, index) in list"
@@ -38,30 +38,18 @@
         v-if="isVertical && listIndex < lists.length - 1"
         role="separator"
         data-slot="separator"
-        :class="ui.separator({ class: props.ui?.separator })"
+        :class="ui.separator()"
       />
     </template>
 
     <slot name="list-trailing" />
 
-    <div
-      v-if="!isVertical"
-      data-slot="viewportWrapper"
-      :class="ui.viewportWrapper({ class: props.ui?.viewportWrapper })"
-    >
-      <NavigationMenuIndicator
-        v-if="props.arrow"
-        data-slot="indicator"
-        :class="ui.indicator({ class: props.ui?.indicator })"
-      >
-        <div data-slot="arrow" :class="ui.arrow({ class: props.ui?.arrow })" />
+    <div v-if="!isVertical" data-slot="viewportWrapper" :class="ui.viewportWrapper()">
+      <NavigationMenuIndicator v-if="props.arrow" data-slot="indicator" :class="ui.indicator()">
+        <div data-slot="arrow" :class="ui.arrow()" />
       </NavigationMenuIndicator>
 
-      <NavigationMenuViewport
-        v-bind="props.viewport"
-        data-slot="viewport"
-        :class="ui.viewport({ class: props.ui?.viewport })"
-      />
+      <NavigationMenuViewport v-bind="props.viewport" data-slot="viewport" :class="ui.viewport()" />
     </div>
   </NavigationMenuRoot>
 </template>
@@ -126,6 +114,8 @@ const ui = useComponentUI('navigationMenu', {
     highlight: !!props.highlight,
     highlightColor: props.highlightColor || props.color,
   }),
+  props,
+  classSlot: 'root',
 })
 
 const rootProps = computed(() => ({

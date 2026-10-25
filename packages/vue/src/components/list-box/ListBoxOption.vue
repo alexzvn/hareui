@@ -16,7 +16,7 @@
     :data-pressed="isPressed ? 'true' : undefined"
     :data-focused="isFocused ? 'true' : undefined"
     :data-focus-visible="isFocusVisible ? 'true' : undefined"
-    :class="classes.item({ variant: item.variant, class: [ui?.item, item.class] })"
+    :class="classes.item({ variant: item.variant, override: item.class })"
     @select="onSelect"
     @pointerenter="isHovered = $event.pointerType === 'mouse'"
     @pointerleave="onPointerleave"
@@ -52,7 +52,7 @@
         aria-hidden="true"
         data-slot="list-box-item-indicator"
         :data-visible="selected || undefined"
-        :class="classes.indicator({ variant: item.variant, class: ui?.indicator })"
+        :class="classes.indicator({ variant: item.variant })"
       >
         <slot name="indicator" v-bind="state">
           <svg
@@ -97,12 +97,11 @@ const props = defineProps<{
   selectionMode: 'none' | 'single' | 'multiple'
   indicator: boolean
   listDisabled: boolean
-  /** Slot class functions of the parent ListBox; `variant` is applied per item. */
+  /** Slot class functions of the parent ListBox (its `ui` prop layered in); `variant` is applied per item. */
   classes: Record<
     'item' | 'indicator',
-    (options?: { variant?: string; class?: ClassValue }) => string
+    (options?: { variant?: string; override?: ClassValue }) => string
   >
-  ui?: { item?: ClassValue; indicator?: ClassValue }
   /** The Reka item primitive to render (ComboBox passes `ComboboxItem`). */
   component?: Component
   /**

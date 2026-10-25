@@ -1,8 +1,5 @@
 <template>
-  <li
-    data-slot="childItem"
-    :class="ui.childItem({ class: [ctx.props.ui?.childItem, parent.ui?.childItem] })"
-  >
+  <li data-slot="childItem" :class="ui.childItem({ override: parent.ui?.childItem })">
     <LinkResolver v-slot="{ as, active, attrs }" :item="child">
       <NavigationMenuLink as-child :active="active" @select="onSelect">
         <component
@@ -11,7 +8,7 @@
           data-slot="childLink"
           :class="
             ui.childLink({
-              class: [ctx.props.ui?.childLink, parent.ui?.childLink, child.class],
+              override: [parent.ui?.childLink, child.class],
               active,
               disabled: !!child.disabled,
             })
@@ -23,7 +20,7 @@
             data-slot="childLinkIcon"
             :class="
               ui.childLinkIcon({
-                class: [ctx.props.ui?.childLinkIcon, parent.ui?.childLinkIcon],
+                override: parent.ui?.childLinkIcon,
                 active,
               })
             "
@@ -34,7 +31,7 @@
             data-slot="childLinkWrapper"
             :class="
               ui.childLinkWrapper({
-                class: [ctx.props.ui?.childLinkWrapper, parent.ui?.childLinkWrapper],
+                override: parent.ui?.childLinkWrapper,
               })
             "
           >
@@ -42,7 +39,7 @@
               data-slot="childLinkLabel"
               :class="
                 ui.childLinkLabel({
-                  class: [ctx.props.ui?.childLinkLabel, parent.ui?.childLinkLabel],
+                  override: parent.ui?.childLinkLabel,
                   active,
                 })
               "
@@ -54,10 +51,7 @@
                 data-slot="childLinkLabelExternalIcon"
                 :class="
                   ui.childLinkLabelExternalIcon({
-                    class: [
-                      ctx.props.ui?.childLinkLabelExternalIcon,
-                      parent.ui?.childLinkLabelExternalIcon,
-                    ],
+                    override: parent.ui?.childLinkLabelExternalIcon,
                     active,
                   })
                 "
@@ -67,10 +61,7 @@
                 data-slot="childLinkLabelExternalIcon"
                 :class="
                   ui.childLinkLabelExternalIcon({
-                    class: [
-                      ctx.props.ui?.childLinkLabelExternalIcon,
-                      parent.ui?.childLinkLabelExternalIcon,
-                    ],
+                    override: parent.ui?.childLinkLabelExternalIcon,
                     active,
                   })
                 "
@@ -81,7 +72,7 @@
               data-slot="childLinkDescription"
               :class="
                 ui.childLinkDescription({
-                  class: [ctx.props.ui?.childLinkDescription, parent.ui?.childLinkDescription],
+                  override: parent.ui?.childLinkDescription,
                   active,
                 })
               "
@@ -94,7 +85,7 @@
             data-slot="childLinkLabel"
             :class="
               ui.childLinkLabel({
-                class: [ctx.props.ui?.childLinkLabel, parent.ui?.childLinkLabel],
+                override: parent.ui?.childLinkLabel,
                 active,
               })
             "
@@ -106,10 +97,7 @@
               data-slot="childLinkLabelExternalIcon"
               :class="
                 ui.childLinkLabelExternalIcon({
-                  class: [
-                    ctx.props.ui?.childLinkLabelExternalIcon,
-                    parent.ui?.childLinkLabelExternalIcon,
-                  ],
+                  override: parent.ui?.childLinkLabelExternalIcon,
                   active,
                 })
               "
@@ -119,10 +107,7 @@
               data-slot="childLinkLabelExternalIcon"
               :class="
                 ui.childLinkLabelExternalIcon({
-                  class: [
-                    ctx.props.ui?.childLinkLabelExternalIcon,
-                    parent.ui?.childLinkLabelExternalIcon,
-                  ],
+                  override: parent.ui?.childLinkLabelExternalIcon,
                   active,
                 })
               "

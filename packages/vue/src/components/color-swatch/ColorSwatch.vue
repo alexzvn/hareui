@@ -5,7 +5,7 @@
     :label="colorName"
     data-slot="color-swatch"
     :style="{ backgroundColor: 'var(--reka-color-swatch-color)' }"
-    :class="ui.base({ class: [props.ui?.base, props.class] })"
+    :class="ui.base()"
   >
     <template #default="slotProps">
       <slot v-bind="slotProps" />
@@ -36,5 +36,6 @@ const ui = useComponentUI('colorSwatch', {
     shape: props.shape,
     size: props.size,
   }),
+  props,
 })
 </script>

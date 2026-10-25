@@ -32,9 +32,21 @@ export type ComponentSlots<T extends ThemeShape> = {
   [K in keyof T['slots']]?: ClassValue
 }
 
-/** The resolved theme: one function per slot returning its class string, with optional extra classes. */
+/**
+ * Classes a slot call adds over the resolved theme. `class` holds the component's own additions, below the
+ * user's `ui` and `class` props; `override` holds a more specific user input (a column's or an item's own
+ * classes) that must beat them.
+ */
+export type SlotClasses = {
+  /** Component-internal classes, applied over the theme and under the `ui` / `class` props. */
+  class?: ClassValue
+  /** Classes applied last, over the `ui` / `class` props. */
+  override?: ClassValue
+}
+
+/** The resolved theme: one function per slot returning its class string, layered with the `ui` / `class` props. */
 export type ComponentUI<T extends ThemeShape> = {
-  [K in keyof T['slots']]: (props?: { class?: ClassValue }) => string
+  [K in keyof T['slots']]: (classes?: SlotClasses) => string
 }
 
 /**

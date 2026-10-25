@@ -3,7 +3,7 @@
     :as="as"
     data-slot="disclosure-group"
     :data-disabled="disabled ? 'true' : undefined"
-    :class="ui.base({ class: [props.ui?.base, props.class] })"
+    :class="ui.base()"
   >
     <slot :expanded="expanded" :disabled="!!disabled" />
   </Primitive>
@@ -33,7 +33,7 @@ const props = withDefaults(defineProps<DisclosureGroupProps>(), {
 const emit = defineEmits<DisclosureGroupEmits>()
 defineSlots<DisclosureGroupSlots>()
 
-const ui = useComponentUI('disclosureGroup', { theme: theme, variantProps: () => ({}) })
+const ui = useComponentUI('disclosureGroup', { theme: theme, variantProps: () => ({}), props })
 
 const { expanded, isExpanded, setExpanded } = useExpandedValues(props, (value) =>
   emit('update:modelValue', value),

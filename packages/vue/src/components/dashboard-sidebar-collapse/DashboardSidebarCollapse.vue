@@ -9,7 +9,7 @@
     :aria-label="collapsed ? 'Expand sidebar' : 'Collapse sidebar'"
     :aria-expanded="!collapsed"
     :aria-controls="sidebar?.id.value"
-    :class="ui.base({ class: [props.ui?.base, props.class] })"
+    :class="ui.base()"
     @click="sidebar?.collapse(!collapsed)"
   >
     <slot :collapsed="collapsed">
@@ -77,6 +77,7 @@ defineSlots<DashboardSidebarCollapseSlots>()
 const ui = useComponentUI('dashboardSidebarCollapse', {
   theme,
   variantProps: () => ({ side: props.side }),
+  props,
 })
 
 const dashboard = useDashboard()

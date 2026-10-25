@@ -1,9 +1,5 @@
 <template>
-  <Primitive
-    :as="as"
-    data-slot="surface"
-    :class="ui.base({ class: [props.ui?.base, props.class] })"
-  >
+  <Primitive :as="as" data-slot="surface" :class="ui.base()">
     <slot />
   </Primitive>
 </template>
@@ -26,6 +22,7 @@ const ui = useComponentUI('surface', {
   variantProps: () => ({
     variant: props.variant,
   }),
+  props,
 })
 
 const variant = computed(() => props.variant ?? 'default')

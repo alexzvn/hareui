@@ -21,7 +21,7 @@
     data-slot="time-field"
     :data-required="required ? 'true' : undefined"
     :aria-describedby="describedBy"
-    :class="ui.base({ class: [props.ui?.base, props.class] })"
+    :class="ui.base()"
     @update:model-value="onUpdate"
     @update:placeholder="emit('update:placeholder', $event)"
   >
@@ -86,6 +86,7 @@ const modelValue = defineModel<TimeValue | null>()
 const ui = useComponentUI('timeField', {
   theme,
   variantProps: () => ({ fullWidth: props.fullWidth }),
+  props,
 })
 
 const root = useTemplateRef<ComponentPublicInstance>('root')

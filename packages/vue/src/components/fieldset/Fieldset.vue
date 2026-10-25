@@ -8,47 +8,31 @@
     :aria-disabled="!isNative && disabled ? 'true' : undefined"
     :disabled="disabled || undefined"
     :data-disabled="disabled ? 'true' : undefined"
-    :class="ui.base({ class: [props.ui?.base, props.class] })"
+    :class="ui.base()"
   >
     <legend
       v-if="legend || slots.legend"
       :id="legendId"
       data-slot="fieldset-legend"
-      :class="ui.legend({ class: props.ui?.legend })"
+      :class="ui.legend()"
     >
       <slot name="legend">
         {{ legend }}
       </slot>
     </legend>
     <!-- Split so Description's slot is only forwarded (and force-updated) when a `description` slot is passed. -->
-    <Description
-      v-if="slots.description"
-      :id="descriptionId"
-      :class="ui.description({ class: props.ui?.description })"
-    >
+    <Description v-if="slots.description" :id="descriptionId" :class="ui.description()">
       <slot name="description">
         {{ description }}
       </slot>
     </Description>
-    <Description
-      v-else-if="description"
-      :id="descriptionId"
-      :class="ui.description({ class: props.ui?.description })"
-    >
+    <Description v-else-if="description" :id="descriptionId" :class="ui.description()">
       {{ description }}
     </Description>
-    <div
-      v-if="slots.default"
-      data-slot="fieldset-field-group"
-      :class="ui.fieldGroup({ class: props.ui?.fieldGroup })"
-    >
+    <div v-if="slots.default" data-slot="fieldset-field-group" :class="ui.fieldGroup()">
       <slot />
     </div>
-    <div
-      v-if="slots.actions"
-      data-slot="fieldset-actions"
-      :class="ui.actions({ class: props.ui?.actions })"
-    >
+    <div v-if="slots.actions" data-slot="fieldset-actions" :class="ui.actions()">
       <slot name="actions" />
     </div>
   </Primitive>
@@ -78,5 +62,5 @@ const baseId = useId()
 const legendId = `${baseId}-legend`
 const descriptionId = `${baseId}-description`
 
-const ui = useComponentUI('fieldset', { theme: theme, variantProps: () => ({}) })
+const ui = useComponentUI('fieldset', { theme: theme, variantProps: () => ({}), props })
 </script>

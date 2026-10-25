@@ -5,7 +5,7 @@
     :width="width"
     :height="height"
     :config="config"
-    :class="ui.base({ class: [props.ui?.base, props.class] })"
+    :class="ui.base()"
   >
     <template v-for="name in frameSlotNames(slots)" #[name]="scope">
       <slot :name="name" v-bind="scope as any" />
@@ -96,7 +96,7 @@ const endAngle = computed(
   () => props.endAngle ?? (props.gauge ? chartDefaults.gauge.endAngle : -270),
 )
 
-const ui = useComponentUI('radialChart', { theme: theme, variantProps: () => ({}) })
+const ui = useComponentUI('radialChart', { theme: theme, variantProps: () => ({}), props })
 const chart = useChartRoot({
   // Generated mode: only the visible rings reach the chart, so the active index points into them.
   data: () =>
@@ -104,7 +104,6 @@ const chart = useChartRoot({
   margin: () => props.margin,
   layout: () => 'radial',
   ui,
-  uiProps: () => props.ui,
 })
 
 const polar = usePolarChart(chart, {

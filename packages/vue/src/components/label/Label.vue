@@ -3,7 +3,7 @@
     :is="as"
     :for="as === 'label' ? props.for : undefined"
     data-slot="label"
-    :class="ui.base({ class: [props.ui?.base, props.class] })"
+    :class="ui.base()"
     @mousedown="onMousedown"
   >
     <slot />
@@ -26,6 +26,7 @@ const ui = useComponentUI('label', {
     invalid: props.invalid,
     required: props.required,
   }),
+  props,
 })
 
 // Same as reka's `Label` (for any element it renders): block text selection on double-click. A plain element keeps

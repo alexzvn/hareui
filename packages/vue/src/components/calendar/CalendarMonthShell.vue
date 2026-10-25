@@ -3,8 +3,6 @@
     v-if="isWeekOrDayView"
     :kind="kind"
     :ui="ui"
-    :ui-overrides="uiOverrides"
-    :root-class="root.class"
     :aria-label="ariaLabel"
     :duration="visibleDuration!"
     :page-behavior="pageBehavior"
@@ -54,14 +52,14 @@
     :calendar-label="ariaLabel"
     :data-slot="prefix"
     role="application"
-    :class="ui.base({ class: [uiOverrides?.base, root.class] })"
+    :class="ui.base()"
     @keydown="onMonthKeyDown"
   >
     <template v-if="numberOfMonths <= 1">
       <header
         :data-slot="`${prefix}-header`"
         role="presentation"
-        :class="ui.header({ class: uiOverrides?.header })"
+        :class="ui.header()"
         @click.capture="onHeaderClickCapture"
       >
         <button
@@ -71,22 +69,20 @@
           :data-open="isYearPickerOpen ? 'true' : undefined"
           :aria-expanded="isYearPickerOpen"
           :aria-label="`${formatPanelHeading(resolvedLocale, resolveDisplayedMonth(grid))}, year selector`"
-          :class="ui.yearPickerTrigger({ class: uiOverrides?.yearPickerTrigger })"
+          :class="ui.yearPickerTrigger()"
           @click="isYearPickerOpen = !isYearPickerOpen"
         >
           <component :is="reka.Heading" as-child>
             <span
               data-slot="calendar-year-picker-trigger-heading"
-              :class="ui.yearPickerTriggerHeading({ class: uiOverrides?.yearPickerTriggerHeading })"
+              :class="ui.yearPickerTriggerHeading()"
               >{{ formatPanelHeading(resolvedLocale, resolveDisplayedMonth(grid)) }}</span
             >
           </component>
           <span
             data-slot="calendar-year-picker-trigger-indicator"
             aria-hidden="true"
-            :class="
-              ui.yearPickerTriggerIndicator({ class: uiOverrides?.yearPickerTriggerIndicator })
-            "
+            :class="ui.yearPickerTriggerIndicator()"
           >
             <CalendarChevronIcon direction="next" size="1em" />
           </span>
@@ -95,37 +91,27 @@
           :is="reka.Heading"
           v-else
           :data-slot="`${prefix}-heading`"
-          :class="ui.heading({ class: uiOverrides?.heading })"
+          :class="ui.heading()"
           >{{ formatPanelHeading(resolvedLocale, resolveDisplayedMonth(grid)) }}</component
         >
         <component :is="reka.Prev" :data-slot="`${prefix}-nav-button`" as-child>
-          <button
-            ref="prevButton"
-            type="button"
-            aria-label="Previous"
-            :class="ui.navButton({ class: uiOverrides?.navButton })"
-          >
+          <button ref="prevButton" type="button" aria-label="Previous" :class="ui.navButton()">
             <slot name="navIcon" direction="previous">
               <CalendarChevronIcon
                 direction="previous"
                 :data-slot="`${prefix}-nav-button-icon`"
-                :class="ui.navButtonIcon({ class: uiOverrides?.navButtonIcon })"
+                :class="ui.navButtonIcon()"
               />
             </slot>
           </button>
         </component>
         <component :is="reka.Next" :data-slot="`${prefix}-nav-button`" as-child>
-          <button
-            ref="nextButton"
-            type="button"
-            aria-label="Next"
-            :class="ui.navButton({ class: uiOverrides?.navButton })"
-          >
+          <button ref="nextButton" type="button" aria-label="Next" :class="ui.navButton()">
             <slot name="navIcon" direction="next">
               <CalendarChevronIcon
                 direction="next"
                 :data-slot="`${prefix}-nav-button-icon`"
-                :class="ui.navButtonIcon({ class: uiOverrides?.navButtonIcon })"
+                :class="ui.navButtonIcon()"
               />
             </slot>
           </button>
@@ -134,7 +120,6 @@
       <CalendarMonthGrid
         :kind="kind"
         :ui="ui"
-        :ui-overrides="uiOverrides"
         :label="
           formatGridLabel(ariaLabel, { locale: resolvedLocale, month: resolveDisplayedMonth(grid) })
         "
@@ -148,60 +133,46 @@
         </template>
       </CalendarMonthGrid>
     </template>
-    <div v-else data-slot="calendar-panels" :class="ui.panels({ class: uiOverrides?.panels })">
+    <div v-else data-slot="calendar-panels" :class="ui.panels()">
       <div
         v-for="(month, panelIndex) in grid"
         :key="panelIndex"
         data-slot="calendar-panel"
-        :class="ui.panel({ class: uiOverrides?.panel })"
+        :class="ui.panel()"
       >
-        <header
-          :data-slot="`${prefix}-header`"
-          role="presentation"
-          :class="ui.header({ class: uiOverrides?.header })"
-        >
+        <header :data-slot="`${prefix}-header`" role="presentation" :class="ui.header()">
           <component
             v-if="panelIndex === 0"
             :is="reka.Prev"
             :data-slot="`${prefix}-nav-button`"
             as-child
           >
-            <button
-              type="button"
-              aria-label="Previous"
-              :class="ui.navButton({ class: uiOverrides?.navButton })"
-            >
+            <button type="button" aria-label="Previous" :class="ui.navButton()">
               <slot name="navIcon" direction="previous">
                 <CalendarChevronIcon
                   direction="previous"
                   :data-slot="`${prefix}-nav-button-icon`"
-                  :class="ui.navButtonIcon({ class: uiOverrides?.navButtonIcon })"
+                  :class="ui.navButtonIcon()"
                 />
               </slot>
             </button>
           </component>
           <div v-else aria-hidden="true" class="size-6" />
-          <span
-            :data-slot="`${prefix}-heading`"
-            :class="ui.heading({ class: uiOverrides?.heading })"
-            >{{ formatPanelHeading(resolvedLocale, month.value) }}</span
-          >
+          <span :data-slot="`${prefix}-heading`" :class="ui.heading()">{{
+            formatPanelHeading(resolvedLocale, month.value)
+          }}</span>
           <component
             v-if="panelIndex === grid.length - 1"
             :is="reka.Next"
             :data-slot="`${prefix}-nav-button`"
             as-child
           >
-            <button
-              type="button"
-              aria-label="Next"
-              :class="ui.navButton({ class: uiOverrides?.navButton })"
-            >
+            <button type="button" aria-label="Next" :class="ui.navButton()">
               <slot name="navIcon" direction="next">
                 <CalendarChevronIcon
                   direction="next"
                   :data-slot="`${prefix}-nav-button-icon`"
-                  :class="ui.navButtonIcon({ class: uiOverrides?.navButtonIcon })"
+                  :class="ui.navButtonIcon()"
                 />
               </slot>
             </button>
@@ -211,7 +182,6 @@
         <CalendarMonthGrid
           :kind="kind"
           :ui="ui"
-          :ui-overrides="uiOverrides"
           :label="formatGridLabel(ariaLabel, { locale: resolvedLocale, month: month.value })"
           :multiselectable="isMultiselectable"
           :week-days="weekDays"
@@ -233,7 +203,7 @@
       tabindex="-1"
       :aria-hidden="!isYearPickerOpen"
       :data-open="isYearPickerOpen ? 'true' : undefined"
-      :class="ui.yearPickerGrid({ class: uiOverrides?.yearPickerGrid })"
+      :class="ui.yearPickerGrid()"
       @keydown="onYearPickerKeyDown"
     >
       <button
@@ -246,7 +216,7 @@
         :data-selected="year === focusedYear ? true : undefined"
         :aria-selected="year === focusedYear"
         :tabindex="isYearPickerOpen && year === yearPickerActiveYear ? 0 : -1"
-        :class="ui.yearPickerYearCell({ class: uiOverrides?.yearPickerYearCell })"
+        :class="ui.yearPickerYearCell()"
         @click="selectYearPickerYear(year)"
         @focus="yearPickerActiveYear = year"
       >

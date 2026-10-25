@@ -5,7 +5,7 @@
     :width="width"
     :height="height"
     :config="root.config.value"
-    :class="ui.base({ class: [props.ui?.base, props.class] })"
+    :class="ui.base()"
   >
     <template v-for="name in slotNames()" #[name]="scope">
       <slot :name="name" v-bind="scope as any" />
@@ -46,13 +46,12 @@ const slots = useSlots()
 // Every slot is forwarded to the frame, which places it.
 const slotNames = () => Object.keys(slots) as Array<keyof AreaChartSlots>
 
-const ui = useComponentUI('areaChart', { theme: theme, variantProps: () => ({}) })
+const ui = useComponentUI('areaChart', { theme: theme, variantProps: () => ({}), props })
 const chart = useChartRoot({
   data: () => props.data as ChartDatum[],
   margin: () => rootMargin(props),
   layout: () => 'horizontal',
   ui,
-  uiProps: () => props.ui,
 })
 
 useCartesianChart(chart, {})

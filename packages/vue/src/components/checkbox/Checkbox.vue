@@ -9,7 +9,7 @@
     :data-invalid="invalid ? 'true' : undefined"
     :data-readonly="readonly ? 'true' : undefined"
     :data-required="required ? 'true' : undefined"
-    :class="ui.base({ class: [props.ui?.base, props.class] })"
+    :class="ui.base()"
     @click="forwardRootClick($event, '[data-slot=checkbox-content]')"
     @mousedown="
       keepFocusWhenReadonly($event, { readonly, contentSelector: '[data-slot=checkbox-content]' })
@@ -27,16 +27,12 @@
       :aria-readonly="readonly ? 'true' : undefined"
       :aria-describedby="describedBy"
       data-slot="checkbox-content"
-      :class="ui.content({ class: props.ui?.content })"
+      :class="ui.content()"
       @keydown.capture="submitOnEnter"
       @update:model-value="onUpdate"
     >
-      <span data-slot="checkbox-control" :class="ui.control({ class: props.ui?.control })">
-        <span
-          aria-hidden="true"
-          data-slot="checkbox-indicator"
-          :class="ui.indicator({ class: props.ui?.indicator })"
-        >
+      <span data-slot="checkbox-control" :class="ui.control()">
+        <span aria-hidden="true" data-slot="checkbox-indicator" :class="ui.indicator()">
           <slot name="indicator" :state="state">
             <svg
               v-if="state === 'indeterminate'"
@@ -116,6 +112,7 @@ const ui = useComponentUI('checkbox', {
   variantProps: () => ({
     variant: props.variant,
   }),
+  props,
 })
 
 const local = ref(props.defaultValue ?? false)

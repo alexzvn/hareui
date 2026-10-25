@@ -28,7 +28,7 @@
       data-slot="date-range-picker"
       :data-required="required ? 'true' : undefined"
       :aria-describedby="describedBy"
-      :class="ui.base({ class: [props.ui?.base, props.class] })"
+      :class="ui.base()"
       @keydown.capture="onFieldKeydown"
       @focusout="onFieldFocusOut"
     >
@@ -52,7 +52,7 @@
             <span
               aria-hidden="true"
               data-slot="date-range-picker-range-separator"
-              :class="ui.rangeSeparator({ class: props.ui?.rangeSeparator })"
+              :class="ui.rangeSeparator()"
             >
               <slot name="separator">{{ ' - ' }}</slot>
             </span>
@@ -69,12 +69,12 @@
                 :data-reka-date-field-segment="undefined"
                 data-slot="date-range-picker-trigger"
                 :disabled="disabled || readonly"
-                :class="ui.trigger({ class: props.ui?.trigger })"
+                :class="ui.trigger()"
               >
                 <span
                   aria-hidden="true"
                   data-slot="date-range-picker-trigger-indicator"
-                  :class="ui.triggerIndicator({ class: props.ui?.triggerIndicator })"
+                  :class="ui.triggerIndicator()"
                 >
                   <slot name="indicator">
                     <svg
@@ -126,7 +126,7 @@
         :side-offset="8"
         :avoid-collisions="true"
         :collision-padding="8"
-        :class="ui.popover({ class: props.ui?.popover })"
+        :class="ui.popover()"
         @open-auto-focus="onOpenAutoFocus"
         @close-auto-focus="onCloseAutoFocus"
         @escape-key-down="onEscapeKeyDown"
@@ -248,6 +248,7 @@ useInertOutside(useTemplateRef<ComponentPublicInstance>('popoverContent'), openL
 const ui = useComponentUI('dateRangePicker', {
   theme,
   variantProps: () => ({ fullWidth: props.fullWidth }),
+  props,
 })
 
 const root = useTemplateRef<ComponentPublicInstance>('root')

@@ -1,17 +1,12 @@
 <template>
-  <Primitive
-    :as="as"
-    aria-label="Breadcrumbs"
-    data-slot="breadcrumbs"
-    :class="ui.base({ class: [props.ui?.base, props.class] })"
-  >
+  <Primitive :as="as" aria-label="Breadcrumbs" data-slot="breadcrumbs" :class="ui.base()">
     <li
       v-for="(item, index) in items"
       :key="index"
       data-slot="breadcrumbs-item"
       :data-current="index === items.length - 1 ? 'true' : undefined"
       :data-disabled="disabled || index === items.length - 1 ? 'true' : undefined"
-      :class="ui.item({ class: [props.ui?.item, item.class] })"
+      :class="ui.item({ override: item.class })"
     >
       <!-- The current page is a non-interactive span, like React Aria's current Breadcrumb. -->
       <Link
@@ -22,7 +17,7 @@
         :aria-current="index === items.length - 1 ? 'page' : undefined"
         :data-current="index === items.length - 1 ? 'true' : undefined"
         :tabindex="index === items.length - 1 || disabled ? undefined : 0"
-        :class="ui.link({ class: props.ui?.link })"
+        :class="ui.link()"
       >
         <slot name="item" :item="item" :index="index" :current="index === items.length - 1">
           {{ item.label }}
@@ -53,7 +48,7 @@ const props = withDefaults(defineProps<BreadcrumbsProps<T>>(), { as: 'ol' })
 const slots = useSlots()
 defineSlots<BreadcrumbsSlots<T>>()
 
-const ui = useComponentUI('breadcrumbs', { theme: theme, variantProps: () => ({}) })
+const ui = useComponentUI('breadcrumbs', { theme: theme, variantProps: () => ({}), props })
 
 const CHEVRON_RIGHT =
   'M5.47 2.97a.75.75 0 0 1 1.06 0l4.5 4.5a.75.75 0 0 1 0 1.06l-4.5 4.5a.75.75 0 1 1-1.06-1.06L9.44 8 5.47 4.03a.75.75 0 0 1 0-1.06Z'
@@ -62,7 +57,7 @@ const CHEVRON_RIGHT =
 // anything else is rendered as-is, and no slot falls back to the chevron.
 const Separator = (p: ItemSlotProps) => {
   const shared = {
-    class: ui.value.separator({ class: props.ui?.separator }),
+    class: ui.value.separator(),
     'data-slot': 'breadcrumbs-separator',
   }
 

@@ -1,8 +1,5 @@
 <template>
-  <span
-    data-slot="chart-tooltip-label"
-    :class="classes.label({ class: [ui()?.label, props.class] })"
-  >
+  <span data-slot="chart-tooltip-label" :class="classes.label({ override: props.class })">
     <slot />
   </span>
 </template>
@@ -14,5 +11,5 @@ import { useChartTooltipContext } from './context'
 const props = defineProps<ChartTooltipLabelProps>()
 defineSlots<ChartTooltipLabelSlots>()
 
-const { classes, ui } = useChartTooltipContext('Label')
+const { classes } = useChartTooltipContext('Label')
 </script>

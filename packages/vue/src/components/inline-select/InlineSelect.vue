@@ -59,7 +59,7 @@ const props = withDefaults(defineProps<InlineSelectProps<T>>(), {
 const emit = defineEmits<InlineSelectEmits>()
 const slots = defineSlots<InlineSelectSlots<T>>()
 
-const ui = useComponentUI('inlineSelect', { theme: theme, variantProps: () => ({}) })
+const ui = useComponentUI('inlineSelect', { theme: theme, variantProps: () => ({}), props })
 
 const selectProps = computed(() => {
   const { ui: _ui, modelValue: _modelValue, ...rest } = props
@@ -67,11 +67,11 @@ const selectProps = computed(() => {
 })
 
 const selectUi = computed(() => ({
-  base: ui.value.base({ class: props.ui?.base }),
-  trigger: ui.value.trigger({ class: props.ui?.trigger }),
-  value: ui.value.value({ class: props.ui?.value }),
-  indicator: ui.value.indicator({ class: props.ui?.indicator }),
-  popover: ui.value.popover({ class: props.ui?.popover }),
+  base: ui.value.base(),
+  trigger: ui.value.trigger(),
+  value: ui.value.value(),
+  indicator: ui.value.indicator(),
+  popover: ui.value.popover(),
 }))
 
 // Every Select slot passes through, except `indicator` (defaulted here)

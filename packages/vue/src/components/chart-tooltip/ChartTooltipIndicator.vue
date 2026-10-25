@@ -2,7 +2,7 @@
   <span
     data-slot="chart-tooltip-indicator"
     aria-hidden="true"
-    :class="classes.indicator({ class: [ui()?.indicator, props.class] })"
+    :class="classes.indicator({ override: props.class })"
     :style="color ? { backgroundColor: color } : undefined"
   />
 </template>
@@ -13,5 +13,5 @@ import { useChartTooltipContext } from './context'
 
 const props = defineProps<ChartTooltipIndicatorProps>()
 
-const { classes, ui } = useChartTooltipContext('Indicator')
+const { classes } = useChartTooltipContext('Indicator')
 </script>

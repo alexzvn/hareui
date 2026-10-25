@@ -10,14 +10,14 @@
     :aria-valuenow="indeterminate ? undefined : clamped"
     :aria-valuetext="state.valueText"
     data-slot="progress-bar"
-    :class="ui.base({ class: [props.ui?.base, props.class] })"
+    :class="ui.base()"
   >
     <!-- Split so ProgressRoot's slot is only forwarded (and force-updated) when these slots are passed. -->
     <span
       v-if="hasLabel && $slots.label"
       :id="labelId"
       data-slot="label"
-      :class="labelUi.base({ class: ui.label({ class: props.ui?.label }) })"
+      :class="labelUi.base({ class: ui.label() })"
     >
       <slot name="label" v-bind="state">{{ label }}</slot>
     </span>
@@ -25,26 +25,19 @@
       v-else-if="hasLabel"
       :id="labelId"
       data-slot="label"
-      :class="labelUi.base({ class: ui.label({ class: props.ui?.label }) })"
+      :class="labelUi.base({ class: ui.label() })"
       >{{ label }}</span
     >
-    <span
-      v-if="hasOutput && $slots.output"
-      data-slot="progress-bar-output"
-      :class="ui.output({ class: props.ui?.output })"
-    >
+    <span v-if="hasOutput && $slots.output" data-slot="progress-bar-output" :class="ui.output()">
       <slot name="output" v-bind="state">{{ state.valueText }}</slot>
     </span>
-    <span
-      v-else-if="hasOutput"
-      data-slot="progress-bar-output"
-      :class="ui.output({ class: props.ui?.output })"
-      >{{ state.valueText }}</span
-    >
-    <div data-slot="progress-bar-track" :class="ui.track({ class: props.ui?.track })">
+    <span v-else-if="hasOutput" data-slot="progress-bar-output" :class="ui.output()">{{
+      state.valueText
+    }}</span>
+    <div data-slot="progress-bar-track" :class="ui.track()">
       <ProgressIndicator
         data-slot="progress-bar-fill"
-        :class="ui.fill({ class: props.ui?.fill })"
+        :class="ui.fill()"
         :style="indeterminate ? undefined : { width: `${state.percentage}%` }"
       />
     </div>
@@ -79,6 +72,7 @@ const ui = useComponentUI('progressBar', {
     size: props.size,
     indeterminate: props.indeterminate,
   }),
+  props,
 })
 
 const labelUi = useComponentUI('label', { theme: labelTheme, variantProps: () => ({}) })

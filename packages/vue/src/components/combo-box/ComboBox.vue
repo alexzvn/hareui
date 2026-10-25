@@ -17,12 +17,12 @@
     :data-readonly="readonly ? 'true' : undefined"
     :data-invalid="invalid ? 'true' : undefined"
     :data-required="required ? 'true' : undefined"
-    :class="ui.base({ class: [props.ui?.base, props.class] })"
+    :class="ui.base()"
     @update:model-value="onRekaValue"
     @update:open="onRekaOpen"
   >
     <RekaBridge @ready="onReady" />
-    <FieldLabel :id="labelId" :for="id" :class="ui.label({ class: props.ui?.label })" />
+    <FieldLabel :id="labelId" :for="id" :class="ui.label()" />
     <ComboboxAnchor
       as="div"
       role="group"
@@ -31,7 +31,7 @@
       :data-invalid="invalid ? 'true' : undefined"
       :data-focus-within="isFocused ? 'true' : undefined"
       :data-focus-visible="isFocusVisible ? 'true' : undefined"
-      :class="ui.inputGroup({ class: props.ui?.inputGroup })"
+      :class="ui.inputGroup()"
     >
       <input
         :id="id"
@@ -61,7 +61,7 @@
         :data-disabled="disabled ? 'true' : undefined"
         :data-focused="isFocused ? 'true' : undefined"
         :data-focus-visible="isFocusVisible ? 'true' : undefined"
-        :class="inputUi.base({ class: props.ui?.input })"
+        :class="inputUi.base()"
         @input="onInput"
         @keydown="onKeydown"
         @focus="onFocus"
@@ -82,7 +82,7 @@
         :data-open="isOpen ? 'true' : undefined"
         :data-pressed="isOpen ? 'true' : undefined"
         :data-hovered="isTriggerHovered ? 'true' : undefined"
-        :class="ui.trigger({ class: props.ui?.trigger })"
+        :class="ui.trigger()"
         @pointerdown="onTriggerPointerdown"
         @click="onTriggerClick"
         @pointerenter="isTriggerHovered = $event.pointerType === 'mouse'"
@@ -114,7 +114,7 @@
       :id="valueId"
       data-slot="combo-box-value"
       :data-placeholder="isPlaceholder ? 'true' : undefined"
-      :class="ui.value({ class: props.ui?.value })"
+      :class="ui.value()"
     >
       <slot
         name="value"
@@ -148,7 +148,7 @@
         align="center"
         :side-offset="8"
         :collision-padding="12"
-        :class="ui.popover({ class: props.ui?.popover })"
+        :class="ui.popover()"
       >
         <div
           :id="listboxId"
@@ -522,6 +522,7 @@ const hiddenValues = computed(() => (selectedValues.value.length ? selectedValue
 const ui = useComponentUI('comboBox', {
   theme,
   variantProps: () => ({ fullWidth: props.fullWidth }),
+  props,
 })
 
 const inputUi = useComponentUI('input', {
@@ -530,6 +531,12 @@ const inputUi = useComponentUI('input', {
     variant: props.variant,
     fullWidth: false,
   }),
+  // The text input is the input theme's root, styled by `ui.input`.
+  props: {
+    get ui() {
+      return { base: props.ui?.input }
+    },
+  },
 })
 
 const listBoxUi = useComponentUI('listBox', { theme: listBoxTheme, variantProps: () => ({}) })

@@ -15,12 +15,12 @@
     :required="required"
     orientation="horizontal"
     :ui="{
-      base: ui.base({ class: [props.ui?.base, props.class] }),
-      track: ui.track({ class: props.ui?.track }),
-      fill: ui.fill({ class: props.ui?.fill }),
-      thumb: ui.thumb({ class: props.ui?.thumb }),
-      label: ui.label({ class: props.ui?.label }),
-      output: ui.output({ class: props.ui?.output }),
+      base: ui.base(),
+      track: ui.track(),
+      fill: ui.fill(),
+      thumb: ui.thumb(),
+      label: ui.label(),
+      output: ui.output(),
     }"
     @update:model-value="onUpdate"
     @change-end="emit('changeEnd', $event as number)"
@@ -57,6 +57,7 @@ const ui = useComponentUI('cellSlider', {
   variantProps: () => ({
     variant: props.variant,
   }),
+  props,
 })
 
 // Always horizontal: the row is the track, so a press anywhere on it moves the value. The root's `data-slot`

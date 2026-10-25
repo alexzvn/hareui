@@ -1,5 +1,5 @@
 <template>
-  <div data-slot="tag-group" :class="ui.base({ class: [props.ui?.base, props.class] })">
+  <div data-slot="tag-group" :class="ui.base()">
     <FieldLabel :id="labelId" as="span" />
     <div
       ref="list"
@@ -11,7 +11,7 @@
       :aria-describedby="describedBy"
       :data-empty="items.length ? undefined : 'true'"
       :tabindex="items.length ? undefined : 0"
-      :class="ui.list({ class: props.ui?.list })"
+      :class="ui.list()"
       @keydown="onListKeydown"
       @focusin="onListFocusIn"
     >
@@ -28,7 +28,6 @@
           :selection-mode="selectionMode"
           :removable="removable"
           :classes="tagUi"
-          :ui="props.ui"
           @press="onPress(item, $event)"
           @remove="removeOne(item)"
         >
@@ -55,7 +54,6 @@
           :selection-mode="selectionMode"
           :removable="removable"
           :classes="tagUi"
-          :ui="props.ui"
           @press="onPress(item, $event)"
           @remove="removeOne(item)"
         />
@@ -95,11 +93,17 @@ const slots = defineSlots<TagGroupSlots<T>>()
 /** The selected tag ids. Bind with `v-model:selected`. */
 const selectedModel = defineModel<string[]>('selected')
 
-const ui = useComponentUI('tagGroup', { theme: theme, variantProps: () => ({}) })
+const ui = useComponentUI('tagGroup', { theme: theme, variantProps: () => ({}), props })
 
 const tagUi = useComponentUI('tag', {
   theme: tagTheme,
   variantProps: () => ({ size: props.size, variant: props.variant }),
+  // Each tag's root (`base`) takes `ui.tag`.
+  props: {
+    get ui() {
+      return { base: props.ui?.tag, removeButton: props.ui?.removeButton }
+    },
+  },
 })
 
 const selected = computed(() => selectedModel.value ?? props.defaultSelected ?? [])

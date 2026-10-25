@@ -1,27 +1,23 @@
 <template>
-  <span
-    v-if="slots.default"
-    data-slot="badge-anchor"
-    :class="ui.anchor({ class: props.ui?.anchor })"
-  >
+  <span v-if="slots.default" data-slot="badge-anchor" :class="ui.anchor()">
     <slot />
-    <span data-slot="badge" :class="ui.base({ class: [props.ui?.base, props.class] })">
+    <span data-slot="badge" :class="ui.base()">
       <slot name="content">
         <span
           v-if="content !== undefined && content !== ''"
           data-slot="badge-label"
-          :class="ui.label({ class: props.ui?.label })"
+          :class="ui.label()"
           >{{ content }}</span
         >
       </slot>
     </span>
   </span>
-  <span v-else data-slot="badge" :class="ui.base({ class: [props.ui?.base, props.class] })">
+  <span v-else data-slot="badge" :class="ui.base()">
     <slot name="content">
       <span
         v-if="content !== undefined && content !== ''"
         data-slot="badge-label"
-        :class="ui.label({ class: props.ui?.label })"
+        :class="ui.label()"
         >{{ content }}</span
       >
     </slot>
@@ -45,5 +41,6 @@ const ui = useComponentUI('badge', {
     size: props.size,
     variant: props.variant,
   }),
+  props,
 })
 </script>

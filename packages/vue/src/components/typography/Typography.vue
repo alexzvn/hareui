@@ -1,19 +1,8 @@
 <template>
-  <Primitive
-    v-if="prose"
-    :as="as ?? 'div'"
-    data-slot="prose"
-    :class="ui.prose({ class: [props.ui?.prose, props.class] })"
-  >
+  <Primitive v-if="prose" :as="as ?? 'div'" data-slot="prose" :class="ui.prose()">
     <slot />
   </Primitive>
-  <Primitive
-    v-else
-    :as="element"
-    data-slot="typography"
-    :data-type="type"
-    :class="ui.base({ class: [props.ui?.base, props.class] })"
-  >
+  <Primitive v-else :as="element" data-slot="typography" :data-type="type" :class="ui.base()">
     <slot />
   </Primitive>
 </template>
@@ -47,6 +36,8 @@ const ui = useComponentUI('typography', {
     weight: props.weight,
     truncate: props.truncate,
   }),
+  props,
+  classSlot: () => (props.prose ? 'prose' : 'base'),
 })
 
 const element = computed(() => props.as ?? defaultElementByType[props.type ?? 'body'])

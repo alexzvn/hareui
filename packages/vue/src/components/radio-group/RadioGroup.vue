@@ -15,7 +15,7 @@
     :aria-disabled="isDisabled ? 'true' : undefined"
     :aria-labelledby="hasLabel ? labelId : undefined"
     :aria-describedby="describedBy"
-    :class="ui.base({ class: [props.ui?.base, props.class] })"
+    :class="ui.base()"
     @update:model-value="onUpdate"
     @keydown.capture="onKeydownCapture"
   >
@@ -31,7 +31,7 @@
       :data-selected="selected === item.value ? 'true' : undefined"
       :data-disabled="isDisabled || item.disabled ? 'true' : undefined"
       :data-invalid="invalid ? 'true' : undefined"
-      :class="ui.item({ class: props.ui?.item })"
+      :class="ui.item()"
       @click="forwardRootClick($event, '[data-slot=radio-content]')"
     >
       <RekaRadioGroupItem
@@ -45,14 +45,11 @@
         "
         data-slot="radio-content"
         :data-selected="selected === item.value ? 'true' : undefined"
-        :class="ui.content({ class: props.ui?.content })"
+        :class="ui.content()"
         @keydown.capture="submitOnEnter"
       >
-        <span data-slot="radio-control" :class="ui.control({ class: props.ui?.control })">
-          <span
-            aria-hidden="true"
-            data-slot="radio-indicator"
-            :class="ui.indicator({ class: props.ui?.indicator })"
+        <span data-slot="radio-control" :class="ui.control()">
+          <span aria-hidden="true" data-slot="radio-indicator" :class="ui.indicator()"
             ><slot
               v-if="slots.indicator"
               name="indicator"
@@ -109,6 +106,7 @@ const ui = useComponentUI('radioGroup', {
     variant: props.variant,
     orientation: props.orientation,
   }),
+  props,
 })
 
 // `null` (not `undefined`) when nothing is selected: Reka self-manages its state when `modelValue` is undefined,

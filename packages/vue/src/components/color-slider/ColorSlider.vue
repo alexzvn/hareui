@@ -10,7 +10,7 @@
     data-slot="color-slider"
     role="group"
     :aria-labelledby="hasLabel ? autoId : undefined"
-    :class="ui.base({ class: [props.ui?.base, props.class] })"
+    :class="ui.base()"
     @update:color="onUpdateColor"
     @change="(value: string) => emit('change', value)"
     @change-end="(value: string) => emit('changeEnd', value)"
@@ -20,36 +20,18 @@
     @gotpointercapture="captureOnDraggedThumb"
   >
     <!-- Split so Label's slot is only forwarded (and force-updated) when a `label` slot is passed. -->
-    <Label
-      v-if="hasLabel && $slots.label"
-      :id="autoId"
-      :disabled="isDisabled"
-      :class="ui.label({ class: props.ui?.label })"
-    >
+    <Label v-if="hasLabel && $slots.label" :id="autoId" :disabled="isDisabled" :class="ui.label()">
       <slot name="label">
         {{ label }}
       </slot>
     </Label>
-    <Label
-      v-else-if="hasLabel"
-      :id="autoId"
-      :disabled="isDisabled"
-      :class="ui.label({ class: props.ui?.label })"
-    >
+    <Label v-else-if="hasLabel" :id="autoId" :disabled="isDisabled" :class="ui.label()">
       {{ label }}
     </Label>
-    <span
-      v-if="hasOutput"
-      data-slot="color-slider-output"
-      :class="ui.output({ class: props.ui?.output })"
-    >
+    <span v-if="hasOutput" data-slot="color-slider-output" :class="ui.output()">
       <slot name="output" v-bind="slotProps">{{ slotProps.valueText }}</slot>
     </span>
-    <SliderTrack
-      data-slot="color-slider-track"
-      :style="trackStyle"
-      :class="ui.track({ class: props.ui?.track })"
-    >
+    <SliderTrack data-slot="color-slider-track" :style="trackStyle" :class="ui.track()">
       <ColorSliderThumb
         ref="thumbRef"
         data-slot="color-slider-thumb"
@@ -58,7 +40,7 @@
         :aria-valuetext="valueText"
         :data-dragging="isDragging ? 'true' : undefined"
         :style="thumbStyle"
-        :class="ui.thumb({ class: props.ui?.thumb })"
+        :class="ui.thumb()"
       >
         <slot name="thumb" v-bind="slotProps" />
       </ColorSliderThumb>
@@ -274,6 +256,7 @@ const ui = useComponentUI('colorSlider', {
     hasLabel: hasLabel.value,
     hasOutput: hasOutput.value,
   }),
+  props,
 })
 
 // RAC labels the slider's input with the visible label, or with the group's own `aria-label`/`aria-labelledby`

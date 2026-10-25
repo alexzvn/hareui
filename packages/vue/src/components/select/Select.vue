@@ -9,7 +9,7 @@
     :data-disabled="disabled ? 'true' : undefined"
     :data-invalid="invalid ? 'true' : undefined"
     :data-required="required ? 'true' : undefined"
-    :class="ui.base({ class: [props.ui?.base, props.class] })"
+    :class="ui.base()"
   >
     <FieldLabel :id="labelId" as="span" @click="triggerEl()?.focus()" />
     <PopoverRoot :open="isOpen" :modal="false" @update:open="onRootOpenChange">
@@ -31,7 +31,7 @@
           :data-hovered="isHovered ? 'true' : undefined"
           :data-focused="isFocused ? 'true' : undefined"
           :data-focus-visible="isFocusVisible ? 'true' : undefined"
-          :class="ui.trigger({ class: props.ui?.trigger })"
+          :class="ui.trigger()"
           @keydown="onTriggerKeydown"
           @focus="onTriggerFocus"
           @blur="onTriggerBlur"
@@ -45,7 +45,7 @@
             :id="valueId"
             data-slot="select-value"
             :data-placeholder="isPlaceholder ? 'true' : undefined"
-            :class="ui.value({ class: props.ui?.value })"
+            :class="ui.value()"
           >
             <slot
               name="value"
@@ -85,7 +85,7 @@
             aria-hidden="true"
             data-slot="select-clear-button"
             :data-empty="isPlaceholder ? 'true' : undefined"
-            :class="ui.clearButton({ class: props.ui?.clearButton })"
+            :class="ui.clearButton()"
             @pointerdown.stop
             @click.stop.prevent="clear"
           >
@@ -114,7 +114,7 @@
             aria-hidden="true"
             data-slot="select-indicator"
             :data-open="isOpen ? 'true' : undefined"
-            :class="ui.indicator({ class: props.ui?.indicator })"
+            :class="ui.indicator()"
           >
             <slot name="indicator" :open="isOpen" />
           </span>
@@ -129,7 +129,7 @@
             viewBox="0 0 16 16"
             width="16"
             xmlns="http://www.w3.org/2000/svg"
-            :class="ui.indicator({ class: props.ui?.indicator })"
+            :class="ui.indicator()"
           >
             <path
               clip-rule="evenodd"
@@ -148,7 +148,7 @@
           :align="align"
           :side-offset="8"
           :collision-padding="12"
-          :class="ui.popover({ class: props.ui?.popover })"
+          :class="ui.popover()"
           @open-auto-focus="onOpenAutoFocus"
           @close-auto-focus="onCloseAutoFocus"
           @pointerdown="pressRelease.onPointerdown"
@@ -498,6 +498,7 @@ const ui = useComponentUI('select', {
     variant: props.variant,
     fullWidth: props.fullWidth,
   }),
+  props,
 })
 
 // Classes for the hidden indicator copies inside the value (RAC renders the item's own indicator there);

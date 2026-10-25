@@ -1,7 +1,5 @@
 import type { CalendarDate, DateValue } from '@internationalized/date'
 
-import type { ClassValue } from '@/utils/tv'
-
 import type { PageBehavior, VisibleDuration } from './useCalendarDurationView'
 
 /** A range value whose ends may still be unset. */
@@ -32,11 +30,8 @@ export type CalendarDurationCellSlotProps = {
  */
 export type CalendarDurationViewProps = {
   kind: 'calendar' | 'range'
-  /** Resolved slot class functions of the parent's theme (already resolved for the `view` variant). */
-  ui: Record<string, (opts?: { class?: ClassValue }) => string>
-  /** The parent's `:ui` overrides. */
-  uiOverrides?: Partial<Record<string, ClassValue>>
-  rootClass?: ClassValue
+  /** The parent's slot class functions (resolved for the `view` variant, its `ui` and `class` props layered in). */
+  ui: Record<string, () => string>
   ariaLabel?: string
   duration: VisibleDuration
   pageBehavior: PageBehavior

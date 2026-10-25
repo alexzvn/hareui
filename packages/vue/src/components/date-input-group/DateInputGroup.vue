@@ -7,13 +7,9 @@
     :aria-describedby="describedby"
     :data-disabled="disabled ? '' : undefined"
     :data-invalid="invalid ? 'true' : undefined"
-    :class="ui.base({ class: [props.ui?.base, props.class] })"
+    :class="ui.base()"
   >
-    <div
-      v-if="$slots.prefix"
-      data-slot="date-input-group-prefix"
-      :class="ui.prefix({ class: props.ui?.prefix })"
-    >
+    <div v-if="$slots.prefix" data-slot="date-input-group-prefix" :class="ui.prefix()">
       <slot name="prefix" />
     </div>
     <component
@@ -22,7 +18,7 @@
         inputContainer
           ? {
               'data-slot': 'date-input-group-input-container',
-              class: ui.inputContainer({ class: props.ui?.inputContainer }),
+              class: ui.inputContainer(),
             }
           : {}
       "
@@ -31,7 +27,7 @@
         data-slot="date-input-group-input"
         :slot="endSegments ? 'start' : undefined"
         :data-invalid="invalid ? 'true' : undefined"
-        :class="ui.input({ class: props.ui?.input })"
+        :class="ui.input()"
         @keydown.capture="onSegmentKeydown"
       >
         <component
@@ -47,7 +43,7 @@
               : segmentAttrs(item.part, endSegments ? 'start' : undefined)
           "
           data-slot="date-input-group-segment"
-          :class="ui.segment({ class: props.ui?.segment })"
+          :class="ui.segment()"
         >
           {{ item.value }}
         </component>
@@ -58,7 +54,7 @@
           data-slot="date-input-group-input"
           slot="end"
           :data-invalid="invalid ? 'true' : undefined"
-          :class="ui.input({ class: props.ui?.input })"
+          :class="ui.input()"
           @keydown.capture="onSegmentKeydown"
         >
           <component
@@ -68,18 +64,14 @@
             :part="item.part"
             v-bind="item.part === 'literal' ? { type: 'end' } : segmentAttrs(item.part, 'end')"
             data-slot="date-input-group-segment"
-            :class="ui.segment({ class: props.ui?.segment })"
+            :class="ui.segment()"
           >
             {{ item.value }}
           </component>
         </div>
       </template>
     </component>
-    <div
-      v-if="$slots.suffix"
-      data-slot="date-input-group-suffix"
-      :class="ui.suffix({ class: props.ui?.suffix })"
-    >
+    <div v-if="$slots.suffix" data-slot="date-input-group-suffix" :class="ui.suffix()">
       <slot name="suffix" />
     </div>
   </div>
@@ -112,6 +104,7 @@ const ui = useComponentUI('dateInputGroup', {
     variant: props.variant,
     fullWidth: props.fullWidth,
   }),
+  props,
 })
 
 // React Aria's `useDateSegment` PAGE_STEP (PageUp/PageDown); its keys are exactly the numeric segments

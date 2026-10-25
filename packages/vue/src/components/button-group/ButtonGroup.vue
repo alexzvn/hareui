@@ -6,7 +6,7 @@
     data-slot="button-group"
     :aria-disabled="disabled ? 'true' : undefined"
     :data-disabled="disabled ? 'true' : undefined"
-    :class="ui.base({ class: [toolbarClass, props.ui?.base, props.class] })"
+    :class="ui.base({ class: toolbarClass })"
   >
     <slot />
   </Primitive>
@@ -42,11 +42,10 @@ const ui = useComponentUI('buttonGroup', {
     orientation: orientation.value,
     fullWidth: props.fullWidth,
   }),
+  props,
 })
 
-const toolbarClass = computed(() =>
-  toolbar?.ui.value.buttonGroup({ class: toolbar.uiOverrides.value?.buttonGroup }),
-)
+const toolbarClass = computed(() => toolbar?.ui.value.buttonGroup())
 
 const firstChild = useFirstChild(useTemplateRef('root'))
 
@@ -58,6 +57,5 @@ provide(buttonGroupContextKey, {
   separator: toRef(() => props.separator),
   firstChild,
   ui,
-  uiOverrides: toRef(() => props.ui),
 })
 </script>

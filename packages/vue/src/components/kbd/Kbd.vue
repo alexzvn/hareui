@@ -1,12 +1,12 @@
 <template>
-  <Primitive :as="as" :class="ui.base({ class: [props.ui?.base, props.class] })">
+  <Primitive :as="as" :class="ui.base()">
     <abbr
       v-for="(key, index) in keyList"
       :key="index"
-      :class="ui.abbr({ class: props.ui?.abbr })"
+      :class="ui.abbr()"
       :title="kbdKeysLabelMap[key]"
       >{{ kbdKeysMap[key] }}</abbr
-    ><span v-if="slots.default" :class="ui.content({ class: props.ui?.content })"><slot /></span>
+    ><span v-if="slots.default" :class="ui.content()"><slot /></span>
   </Primitive>
 </template>
 
@@ -23,7 +23,7 @@ import theme from './theme'
 const props = withDefaults(defineProps<KbdProps>(), { as: 'kbd' })
 const slots = defineSlots<KbdSlots>()
 
-const ui = useComponentUI('kbd', { theme, variantProps: () => ({ variant: props.variant }) })
+const ui = useComponentUI('kbd', { theme, variantProps: () => ({ variant: props.variant }), props })
 
 const keyList = computed(() => {
   if (props.keys === undefined) return []

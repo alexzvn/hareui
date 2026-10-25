@@ -1,11 +1,11 @@
 <template>
-  <div ref="root" v-bind="rootAttrs" :class="ui.base({ class: [props.ui?.base, props.class] })">
+  <div ref="root" v-bind="rootAttrs" :class="ui.base()">
     <!-- `base` is HareUI's own wrapper (HeroUI composes Label/InputOTP/Description itself), so it carries no data-slot -->
     <FieldLabel :for="id" />
     <!-- Like the `input-otp` library's container: HeroUI's `data-slot="input-otp"` and state attributes land on the <input> -->
-    <div ref="box" data-input-otp-container="true" :class="ui.root({ class: props.ui?.root })">
+    <div ref="box" data-input-otp-container="true" :class="ui.root()">
       <template v-for="(indexes, groupIndex) in groupSlots" :key="groupIndex">
-        <div data-slot="input-otp-group" :class="ui.group({ class: props.ui?.group })">
+        <div data-slot="input-otp-group" :class="ui.group()">
           <div
             v-for="index in indexes"
             :key="index"
@@ -14,26 +14,18 @@
             :data-filled="charAt(index) ? 'true' : undefined"
             :data-disabled="disabled ? 'true' : undefined"
             :data-invalid="invalid ? 'true' : undefined"
-            :class="ui.slot({ class: props.ui?.slot })"
+            :class="ui.slot()"
           >
-            <div
-              v-if="charAt(index)"
-              data-slot="input-otp-slot-value"
-              :class="ui.slotValue({ class: props.ui?.slotValue })"
-            >
+            <div v-if="charAt(index)" data-slot="input-otp-slot-value" :class="ui.slotValue()">
               {{ charAt(index) }}
             </div>
-            <div
-              v-if="hasFakeCaret(index)"
-              data-slot="input-otp-caret"
-              :class="ui.caret({ class: props.ui?.caret })"
-            />
+            <div v-if="hasFakeCaret(index)" data-slot="input-otp-caret" :class="ui.caret()" />
           </div>
         </div>
         <div
           v-if="groupIndex < groupSlots.length - 1"
           data-slot="input-otp-separator"
-          :class="ui.separator({ class: props.ui?.separator })"
+          :class="ui.separator()"
         />
       </template>
       <input
@@ -58,7 +50,7 @@
         data-slot="input-otp"
         :data-disabled="disabled ? 'true' : undefined"
         :data-invalid="invalid ? 'true' : undefined"
-        :class="ui.input({ class: props.ui?.input })"
+        :class="ui.input()"
         :style="
           shouldPushPwmBadge
             ? {
@@ -158,6 +150,7 @@ const invalid = computed(() => validation.value.isInvalid)
 const ui = useComponentUI('inputOtp', {
   theme,
   variantProps: () => ({ variant: props.variant }),
+  props,
 })
 
 const { id, describedBy, FieldLabel, FieldDescription, FieldError } = useFieldChrome({

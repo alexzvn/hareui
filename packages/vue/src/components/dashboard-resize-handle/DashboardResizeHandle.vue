@@ -1,10 +1,5 @@
 <template>
-  <Primitive
-    :as="as"
-    role="separator"
-    data-slot="dashboard-resize-handle"
-    :class="ui.base({ class: [props.ui?.base, props.class] })"
-  >
+  <Primitive :as="as" role="separator" data-slot="dashboard-resize-handle" :class="ui.base()">
     <slot />
   </Primitive>
 </template>
@@ -23,5 +18,9 @@ import theme from './theme'
 const props = defineProps<DashboardResizeHandleProps>()
 defineSlots<DashboardResizeHandleSlots>()
 
-const ui = useComponentUI('dashboardResizeHandle', { theme: theme, variantProps: () => ({}) })
+const ui = useComponentUI('dashboardResizeHandle', {
+  theme: theme,
+  variantProps: () => ({}),
+  props,
+})
 </script>

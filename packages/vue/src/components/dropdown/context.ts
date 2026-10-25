@@ -6,7 +6,6 @@ import type { ClassValue } from '@/utils/tv'
 import type {
   DropdownItem,
   DropdownItemSlotProps,
-  DropdownProps,
   DropdownSection,
   DropdownValue,
 } from './Dropdown.types'
@@ -20,9 +19,11 @@ export type DropdownSelectionGroup = {
 }
 
 export type DropdownContext = {
-  /** Slot class functions of the Dropdown theme; `variant` is applied per item. */
-  classes: () => Record<string, (options?: { variant?: string; class?: ClassValue }) => string>
-  ui: () => DropdownProps['ui']
+  /** Slot class functions of the Dropdown theme, its `ui` prop layered in; `variant` is applied per item. */
+  classes: () => Record<
+    string,
+    (options?: { variant?: string; class?: ClassValue; override?: ClassValue }) => string
+  >
   /** Item label / description classes, resolved once per menu instead of mounting Label / Description per item. */
   labelClass: (disabled?: boolean) => string
   descriptionClass: () => string

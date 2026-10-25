@@ -1,8 +1,5 @@
 <template>
-  <div
-    data-slot="chart-tooltip-header"
-    :class="classes.header({ class: [ui()?.header, props.class] })"
-  >
+  <div data-slot="chart-tooltip-header" :class="classes.header({ override: props.class })">
     <slot />
   </div>
 </template>
@@ -14,5 +11,5 @@ import { useChartTooltipContext } from './context'
 const props = defineProps<ChartTooltipHeaderProps>()
 defineSlots<ChartTooltipHeaderSlots>()
 
-const { classes, ui } = useChartTooltipContext('Header')
+const { classes } = useChartTooltipContext('Header')
 </script>

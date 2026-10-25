@@ -17,15 +17,15 @@
     :validate-on-input-delay="validateOnInputDelay"
     :error-pattern="errorPattern"
     :ui="{
-      base: ui.base({ class: [props.ui?.base, props.class] }),
-      content: ui.trigger({ class: props.ui?.trigger }),
-      control: ui.control({ class: props.ui?.control }),
-      thumb: ui.thumb({ class: props.ui?.thumb }),
+      base: ui.base(),
+      content: ui.trigger(),
+      control: ui.control(),
+      thumb: ui.thumb(),
     }"
     @update:model-value="emit('update:modelValue', $event)"
   >
     <template #label="{ checked }">
-      <span data-slot="cell-switch-label" :class="ui.label({ class: props.ui?.label })">
+      <span data-slot="cell-switch-label" :class="ui.label()">
         <slot name="label" :checked="checked">{{ label }}</slot>
       </span>
     </template>
@@ -59,6 +59,7 @@ const ui = useComponentUI('cellSwitch', {
   variantProps: () => ({
     variant: props.variant,
   }),
+  props,
 })
 // The row is Switch's own button, so a click anywhere on it toggles the switch. The root's `data-slot` replaces
 // Switch's, so the theme repeats the Switch rules that key off `[data-slot=switch]`.

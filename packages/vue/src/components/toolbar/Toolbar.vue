@@ -6,7 +6,7 @@
     :aria-orientation="isNested ? undefined : orientation"
     data-slot="toolbar"
     :data-orientation="orientation"
-    :class="ui.base({ class: [props.ui?.base, props.class] })"
+    :class="ui.base()"
     v-on="
       isNested
         ? {}
@@ -40,12 +40,12 @@ const ui = useComponentUI('toolbar', {
     orientation: props.orientation,
     attached: props.attached,
   }),
+  props,
 })
 
 provide(toolbarContextKey, {
   orientation: toRef(() => props.orientation),
   ui,
-  uiOverrides: toRef(() => props.ui),
 })
 
 const root = useTemplateRef<{ $el: HTMLElement }>('root')

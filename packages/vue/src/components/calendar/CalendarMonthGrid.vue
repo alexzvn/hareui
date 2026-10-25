@@ -5,34 +5,26 @@
     role="grid"
     :aria-label="label"
     :aria-multiselectable="multiselectable || undefined"
-    :class="ui.grid({ class: uiOverrides?.grid })"
+    :class="ui.grid()"
   >
-    <component
-      :is="reka.GridHead"
-      :data-slot="`${prefix}-grid-header`"
-      :class="ui.gridHeader({ class: uiOverrides?.gridHeader })"
-    >
-      <component :is="reka.GridRow" :class="ui.gridRow({ class: uiOverrides?.gridRow })">
+    <component :is="reka.GridHead" :data-slot="`${prefix}-grid-header`" :class="ui.gridHeader()">
+      <component :is="reka.GridRow" :class="ui.gridRow()">
         <CalendarHeadCell
           v-for="(day, i) in weekDays"
           :key="`weekday-${i}`"
           :data-slot="`${prefix}-header-cell`"
-          :class="ui.headerCell({ class: uiOverrides?.headerCell })"
+          :class="ui.headerCell()"
         >
           {{ day }}
         </CalendarHeadCell>
       </component>
     </component>
-    <component
-      :is="reka.GridBody"
-      :data-slot="`${prefix}-grid-body`"
-      :class="ui.gridBody({ class: uiOverrides?.gridBody })"
-    >
+    <component :is="reka.GridBody" :data-slot="`${prefix}-grid-body`" :class="ui.gridBody()">
       <component
         :is="reka.GridRow"
         v-for="(weekDates, index) in rows"
         :key="`week-${index}`"
-        :class="ui.gridRow({ class: uiOverrides?.gridRow })"
+        :class="ui.gridRow()"
       >
         <template v-for="weekDate in weekDates" :key="weekDate.toString()">
           <slot name="cell" :date="weekDate" :month="month" />
@@ -46,17 +38,12 @@
 import type { DateValue } from '@internationalized/date'
 import { CalendarHeadCell } from 'reka-ui'
 
-import type {
-  CalendarKind,
-  CalendarShellUI,
-  CalendarShellUIOverrides,
-} from './CalendarMonthShell.types'
+import type { CalendarKind, CalendarShellUI } from './CalendarMonthShell.types'
 import { REKA_PARTS, SLOT_PREFIXES } from './calendarRekaParts'
 
 const props = defineProps<{
   kind: CalendarKind
   ui: CalendarShellUI
-  uiOverrides?: CalendarShellUIOverrides
   /** The grid's accessible name. */
   label: string
   multiselectable: boolean

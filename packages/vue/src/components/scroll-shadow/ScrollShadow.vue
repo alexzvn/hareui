@@ -2,7 +2,7 @@
   <Primitive
     ref="root"
     :as="as"
-    :class="ui.base({ class: [props.ui?.base, props.class] })"
+    :class="ui.base()"
     :data-orientation="orientation"
     :data-scroll-shadow-mode="auto ? 'auto' : 'manual'"
     :data-scroll-shadow-size="size"
@@ -49,6 +49,7 @@ const ui = useComponentUI('scrollShadow', {
     variant: props.variant,
     hideScrollBar: props.hideScrollBar,
   }),
+  props,
 })
 
 const root = useTemplateRef<{ $el: HTMLElement }>('root')

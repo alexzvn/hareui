@@ -11,7 +11,7 @@
     :data-disabled="disabled ? 'true' : undefined"
     :data-pressed="isPressed ? 'true' : undefined"
     :data-focus-visible="isFocusVisible ? 'true' : undefined"
-    :class="classes.base({ class: ui?.tag })"
+    :class="classes.base()"
     @click="onClick"
     @pointerdown="onPointerdown"
     @mousedown="onMousedown"
@@ -31,7 +31,7 @@
         aria-label="Remove tag"
         :aria-labelledby="`${removeButtonId} ${rowId}`"
         :disabled="disabled"
-        :class="classes.removeButton({ class: ui?.removeButton })"
+        :class="classes.removeButton()"
         @click="onRemoveClick"
       >
         <template v-if="$slots.removeButton" #default>
@@ -51,7 +51,7 @@ import CloseButton from '@/components/close-button/CloseButton.vue'
 // collection and needs to skip disabled tags), so this component only renders and tracks hover-ish
 // visual state; it never attaches its own keydown handler. Presses are reported with their event so the
 // parent can tell Shift+press (range) from a toggle.
-import type { ComponentSlots, ComponentUI } from '@/types/tv'
+import type { ComponentUI } from '@/types/tv'
 
 import type { TagGroupItem, TagGroupSlots } from './TagGroup.types'
 import type tagTheme from './tagTheme'
@@ -64,12 +64,8 @@ const props = defineProps<{
   tabindex: 0 | -1
   selectionMode: 'none' | 'single' | 'multiple'
   removable: boolean
-  /** Slot class functions of the parent TagGroup's `tag` theme; size/variant are already baked in. */
+  /** Slot class functions of the parent TagGroup's `tag` theme; size/variant and its `ui` are already baked in. */
   classes: ComponentUI<typeof tagTheme>
-  ui?: {
-    tag?: ComponentSlots<typeof tagTheme>['base']
-    removeButton?: ComponentSlots<typeof tagTheme>['removeButton']
-  }
 }>()
 
 const emit = defineEmits<{ press: [event: MouseEvent | PointerEvent]; remove: [] }>()

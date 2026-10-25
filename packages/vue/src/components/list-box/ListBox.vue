@@ -12,7 +12,7 @@
       data-orientation="vertical"
       :data-empty="blocks.length ? undefined : 'true'"
       :aria-multiselectable="isMultiple ? 'true' : undefined"
-      :class="ui.base({ class: [props.ui?.base, props.class] })"
+      :class="ui.base()"
       @keydown.capture="onKeydownCapture"
     >
       <RekaContext />
@@ -52,21 +52,21 @@
           role="presentation"
           data-slot="separator"
           data-orientation="horizontal"
-          :class="ui.separator({ class: props.ui?.separator })"
+          :class="ui.separator()"
         />
         <!-- Reka's group always references its label's id; an unlabelled section stays an unnamed group, as in RAC -->
         <component
           :is="isSectionLabelled(block.section) ? ListboxGroup : 'section'"
           v-else-if="block.kind === 'section'"
           v-bind="isSectionLabelled(block.section) ? { as: 'section' } : { role: 'group' }"
-          :class="ui.section({ class: props.ui?.section })"
+          :class="ui.section()"
         >
           <ListboxGroupLabel
             v-if="isSectionLabelled(block.section)"
             as="header"
             role="presentation"
             data-slot="header"
-            :class="ui.header({ class: props.ui?.header })"
+            :class="ui.header()"
           >
             <slot name="section-label" :section="block.section">
               {{ block.section.label }}
@@ -114,7 +114,7 @@
       </template>
       <!-- RAC wraps the empty state in an option (a listbox owns only options and groups) -->
       <div v-if="!blocks.length && slots.empty" role="option" style="display: contents">
-        <div data-slot="empty-state" :class="ui.emptyState({ class: props.ui?.emptyState })">
+        <div data-slot="empty-state" :class="ui.emptyState()">
           <slot name="empty" />
         </div>
       </div>
@@ -180,7 +180,7 @@ const modelValue = defineModel<ListBoxValue | ListBoxValue[] | null>()
 const listboxRoot = useTemplateRef<ListBoxRekaRoot>('listboxRoot')
 const sentinel = useTemplateRef<HTMLElement>('sentinel')
 
-const ui = useComponentUI('listBox', { theme: theme, variantProps: () => ({}) })
+const ui = useComponentUI('listBox', { theme: theme, variantProps: () => ({}), props })
 
 // Options read the interaction modality; a standalone ListBox tracks its own (Select provides one from before the open)
 if (!inject(keyboardModalityKey, null)) provide(keyboardModalityKey, useKeyboardModality())
@@ -244,7 +244,6 @@ const optionProps = (row: ListBoxRow<T>) => {
     listDisabled: props.disabled,
     focusOnHover: props.highlightOnHover,
     classes: ui.value,
-    ui: props.ui,
   }
 }
 

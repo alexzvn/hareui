@@ -13,7 +13,7 @@
       <DialogOverlay
         data-slot="modal-backdrop"
         :style="{ '--visual-viewport-height': visualViewportHeight }"
-        :class="ui.backdrop({ class: props.ui?.backdrop })"
+        :class="ui.backdrop()"
       >
         <!-- data-state mirrors Reka's overlay/content so container enter/exit animations (theme and user `data-[state=…]:` classes) run.
              The dialog has no visible exit animation; its theme runs `presence-hold` while closed so its own Presence keeps it
@@ -23,14 +23,14 @@
           data-slot="modal-container"
           :data-state="isOpen ? 'open' : 'closed'"
           :data-placement="placement"
-          :class="ui.container({ class: props.ui?.container })"
+          :class="ui.container()"
         >
           <DialogContent
             ref="dialogContent"
             data-slot="modal-dialog"
             :data-placement="placement"
             v-bind="slots.description ? {} : { 'aria-describedby': undefined }"
-            :class="ui.dialog({ class: [props.ui?.dialog, props.class] })"
+            :class="ui.dialog()"
             @escape-key-down="onEscapeKeyDown"
             @interact-outside="onInteractOutside"
             @open-auto-focus="onOpenAutoFocus"
@@ -39,23 +39,15 @@
               <DialogTitle>{{ title }}</DialogTitle>
             </VisuallyHidden>
             <slot name="content" :close="close">
-              <div
-                v-if="hasHeader"
-                data-slot="modal-header"
-                :class="ui.header({ class: props.ui?.header })"
-              >
+              <div v-if="hasHeader" data-slot="modal-header" :class="ui.header()">
                 <slot name="header">
-                  <div
-                    v-if="!!slots.icon"
-                    data-slot="modal-icon"
-                    :class="ui.icon({ class: props.ui?.icon })"
-                  >
+                  <div v-if="!!slots.icon" data-slot="modal-icon" :class="ui.icon()">
                     <slot name="icon" />
                   </div>
                   <DialogTitle
                     v-if="showHeaderTitle"
                     data-slot="modal-heading"
-                    :class="ui.heading({ class: props.ui?.heading })"
+                    :class="ui.heading()"
                   >
                     <slot name="title">
                       {{ title }}
@@ -66,18 +58,10 @@
                   </DialogDescription>
                 </slot>
               </div>
-              <div
-                v-if="!!slots.body"
-                data-slot="modal-body"
-                :class="ui.body({ class: props.ui?.body })"
-              >
+              <div v-if="!!slots.body" data-slot="modal-body" :class="ui.body()">
                 <slot name="body" :close="close" />
               </div>
-              <div
-                v-if="!!slots.footer"
-                data-slot="modal-footer"
-                :class="ui.footer({ class: props.ui?.footer })"
-              >
+              <div v-if="!!slots.footer" data-slot="modal-footer" :class="ui.footer()">
                 <slot name="footer" :close="close" />
               </div>
               <!-- after header/body/footer so the theme's `header + body` / `body + footer` sibling margins still apply -->
@@ -86,10 +70,7 @@
               </VisuallyHidden>
               <DialogClose v-if="closeButton" as-child>
                 <slot name="close" :close="close">
-                  <CloseButton
-                    data-slot="modal-close-trigger"
-                    :class="ui.closeTrigger({ class: props.ui?.closeTrigger })"
-                  />
+                  <CloseButton data-slot="modal-close-trigger" :class="ui.closeTrigger()" />
                 </slot>
               </DialogClose>
             </slot>
@@ -142,6 +123,8 @@ const ui = useComponentUI('modal', {
     variant: props.variant,
     placement: props.placement,
   }),
+  props,
+  classSlot: 'dialog',
 })
 
 const dialogContent = useTemplateRef<{ $el: HTMLElement }>('dialogContent')

@@ -4,7 +4,7 @@
     data-slot="drop-zone-file-list"
     move-class="transition-transform! duration-250! ease-out! motion-reduce:transition-none!"
     :css="false"
-    :class="ui.fileList({ class: [context?.ui.value?.fileList, props.ui?.fileList, props.class] })"
+    :class="ui.fileList({ class: context?.ui.value?.fileList })"
     @enter="onEnter"
     @leave="onLeave"
   >
@@ -25,7 +25,13 @@ const props = defineProps<DropZoneFileListProps>()
 defineSlots<DropZoneFileListSlots>()
 
 const context = inject(dropZoneContextKey, null)
-const ui = useComponentUI('dropZone', { theme: theme, variantProps: () => ({}) })
+
+const ui = useComponentUI('dropZone', {
+  theme: theme,
+  variantProps: () => ({}),
+  props,
+  classSlot: 'fileList',
+})
 
 type AnimateOptions = {
   keyframes: Keyframe[]

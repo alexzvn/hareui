@@ -8,7 +8,7 @@
     :orientation="layout === 'stack' ? 'vertical' : 'horizontal'"
     data-slot="color-swatch-picker"
     :aria-disabled="isDisabled ? 'true' : undefined"
-    :class="ui.base({ class: [props.ui?.base, props.class] })"
+    :class="ui.base()"
     @update:model-value="onUpdate"
   >
     <ColorSwatchPickerBridge
@@ -27,20 +27,16 @@
       v-bind="item.label ? { 'aria-label': item.label } : {}"
       data-slot="color-swatch-picker-item"
       :style="{ '--color-swatch-current': item.value }"
-      :class="ui.item({ class: props.ui?.item })"
+      :class="ui.item()"
     >
       <slot :value="item.value" :label="item.label" :selected="item.value === selected">
         <ColorSwatch
           :color="item.value"
           :color-name="item.label"
           data-slot="color-swatch-picker-swatch"
-          :class="ui.swatch({ class: props.ui?.swatch })"
+          :class="ui.swatch()"
         />
-        <span
-          aria-hidden="true"
-          data-slot="color-swatch-picker-indicator"
-          :class="ui.indicator({ class: props.ui?.indicator })"
-        >
+        <span aria-hidden="true" data-slot="color-swatch-picker-indicator" :class="ui.indicator()">
           <slot
             name="indicator"
             :value="item.value"
@@ -156,5 +152,6 @@ const ui = useComponentUI('colorSwatchPicker', {
     variant: props.variant,
     layout: props.layout,
   }),
+  props,
 })
 </script>

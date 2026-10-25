@@ -1,10 +1,5 @@
 <template>
-  <div
-    v-if="active"
-    data-slot="chart-tooltip"
-    :data-indicator="indicator"
-    :class="ui.base({ class: [props.ui?.base, props.class] })"
-  >
+  <div v-if="active" data-slot="chart-tooltip" :data-indicator="indicator" :class="ui.base()">
     <slot v-if="slots.default" />
     <template v-else>
       <ChartTooltipHeader v-if="!hideHeader && headerText !== undefined">
@@ -49,9 +44,10 @@ const slots = defineSlots<ChartTooltipContentSlots>()
 const ui = useComponentUI('chartTooltip', {
   theme,
   variantProps: () => ({ indicator: props.indicator }),
+  props,
 })
 
-provide(chartTooltipContextKey, { classes: ui, ui: () => props.ui })
+provide(chartTooltipContextKey, { classes: ui })
 
 const headerText = computed(() => {
   if (props.label === undefined || props.label === '') return undefined

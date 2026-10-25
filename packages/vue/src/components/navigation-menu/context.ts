@@ -13,6 +13,8 @@ type SlotName = keyof Theme['slots']
 
 type SlotArgs = {
   class?: ClassValue
+  /** An item's own `ui` / `class`, over the menu's. */
+  override?: ClassValue
   active?: boolean
   disabled?: boolean
   level?: boolean
@@ -27,7 +29,7 @@ export type NavigationMenuItemPosition = {
   listIndex: number
 }
 
-/** The resolved slot class functions; link slots take per-item variants on top of the root ones. */
+/** The resolved slot class functions, the menu's `ui` layered in; link slots take per-item variants on top of the root ones. */
 type NavigationMenuUI = Record<SlotName, (props?: SlotArgs) => string>
 
 export type NavigationMenuContext = {

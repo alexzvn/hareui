@@ -1,27 +1,19 @@
 <template>
-  <div ref="table" data-slot="table" :class="ui.base({ class: [props.ui?.base, props.class] })">
+  <div ref="table" data-slot="table" :class="ui.base()">
     <div
       ref="scrollRoot"
       :data-slot="hasResizableColumns ? 'table-resizable-container' : 'table-scroll-container'"
-      :class="
-        hasResizableColumns
-          ? ui.resizableContainer({ class: props.ui?.resizableContainer })
-          : ui.scrollContainer({ class: props.ui?.scrollContainer })
-      "
+      :class="hasResizableColumns ? ui.resizableContainer() : ui.scrollContainer()"
     >
-      <table
-        :aria-label="ariaLabel"
-        data-slot="table-content"
-        :class="ui.content({ class: props.ui?.content })"
-      >
-        <thead data-slot="table-header" :class="ui.header({ class: props.ui?.header })">
+      <table :aria-label="ariaLabel" data-slot="table-content" :class="ui.content()">
+        <thead data-slot="table-header" :class="ui.header()">
           <tr @keydown="onHeaderKeydown">
             <th
               v-if="hasSelectionColumn"
               scope="col"
               data-slot="table-column"
               :tabindex="headerTabindex(0)"
-              :class="ui.column({ class: [props.ui?.column, 'pe-0'] })"
+              :class="ui.column({ class: 'pe-0' })"
               @click.stop
               @focus="onHeaderFocus(0)"
             >
@@ -44,7 +36,7 @@
               :aria-sort="column.sortable ? (sortDirectionFor(column) ?? 'none') : undefined"
               :tabindex="headerTabindex(headerIndexOf(columnIndex))"
               :style="widthStyle(column)"
-              :class="ui.column({ class: [props.ui?.column, column.class, getAlignClass(column)] })"
+              :class="ui.column({ override: [column.class, getAlignClass(column)] })"
               @click="toggleSort(column)"
               @focus="onHeaderFocus(headerIndexOf(columnIndex))"
               @keydown.enter.prevent="toggleSort(column)"
@@ -54,7 +46,7 @@
                 v-if="column.sortable"
                 data-slot="table-sortable-column-header"
                 :data-direction="sortDirectionFor(column)"
-                :class="ui.sortableColumnHeader({ class: props.ui?.sortableColumnHeader })"
+                :class="ui.sortableColumnHeader()"
               >
                 <slot
                   :name="`${column.key}-header`"
@@ -68,7 +60,7 @@
                   aria-hidden="true"
                   data-slot="table-sortable-column-indicator"
                   :data-direction="sortDirectionFor(column)"
-                  :class="ui.sortableColumnIndicator({ class: props.ui?.sortableColumnIndicator })"
+                  :class="ui.sortableColumnIndicator()"
                   fill="none"
                   height="16"
                   role="presentation"
@@ -106,7 +98,7 @@
                 :aria-valuemax="column.maxWidth"
                 tabindex="0"
                 :data-resizing="resizingKey === column.key ? 'true' : undefined"
-                :class="ui.columnResizer({ class: props.ui?.columnResizer })"
+                :class="ui.columnResizer()"
                 @click.stop
                 @pointerdown.stop="onResizerPointerDown(column, $event)"
                 @keydown="onResizerKeydown(column, $event)"
@@ -117,7 +109,7 @@
         <tbody
           data-slot="table-body"
           :data-empty="flatRows.length === 0 || undefined"
-          :class="ui.body({ class: props.ui?.body })"
+          :class="ui.body()"
         >
           <!-- Like React Aria's `renderEmptyState`: no row at all unless the slot is provided. -->
           <tr v-if="flatRows.length === 0 && !!slots.empty" role="row">
@@ -136,7 +128,7 @@
             :aria-disabled="flat.row.disabled ? 'true' : undefined"
             :tabindex="flat.key === activeRowKey ? 0 : -1"
             :style="{ '--table-row-level': flat.depth }"
-            :class="ui.row({ class: props.ui?.row })"
+            :class="ui.row()"
             @click="onRowClick(flat, $event)"
             @focus="onRowFocus(flat.key)"
             @keydown="onRowKeydown(flat, $event)"
@@ -144,7 +136,7 @@
             <td
               v-if="hasSelectionColumn"
               data-slot="table-cell"
-              :class="ui.cell({ class: [props.ui?.cell, 'pe-0'] })"
+              :class="ui.cell({ class: 'pe-0' })"
               @click.stop
             >
               <Checkbox
@@ -163,7 +155,7 @@
               data-slot="table-cell"
               :data-tree-column="treeColumn === column.key ? 'true' : undefined"
               :style="widthStyle(column)"
-              :class="ui.cell({ class: [props.ui?.cell, column.class, getAlignClass(column)] })"
+              :class="ui.cell({ override: [column.class, getAlignClass(column)] })"
             >
               <slot
                 :name="`${column.key}-cell`"
@@ -190,13 +182,10 @@
             v-if="hasMore && loading"
             role="row"
             data-slot="table-load-more"
-            :class="ui.loadMore({ class: props.ui?.loadMore })"
+            :class="ui.loadMore()"
           >
             <td role="rowheader" :colspan="colSpan">
-              <div
-                data-slot="table-load-more-content"
-                :class="ui.loadMoreContent({ class: props.ui?.loadMoreContent })"
-              >
+              <div data-slot="table-load-more-content" :class="ui.loadMoreContent()">
                 <slot name="load-more">
                   <Spinner size="md" />
                 </slot>
@@ -206,11 +195,7 @@
         </tbody>
       </table>
     </div>
-    <div
-      v-if="!!slots.footer"
-      data-slot="table-footer"
-      :class="ui.footer({ class: props.ui?.footer })"
-    >
+    <div v-if="!!slots.footer" data-slot="table-footer" :class="ui.footer()">
       <slot name="footer" />
     </div>
   </div>
@@ -267,6 +252,7 @@ const slots = useSlots()
 const ui = useComponentUI('table', {
   theme,
   variantProps: () => ({ variant: props.variant }),
+  props,
 })
 
 const table = useTemplateRef<HTMLElement>('table')

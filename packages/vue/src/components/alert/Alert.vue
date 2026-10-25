@@ -1,15 +1,7 @@
 <template>
-  <Primitive
-    :as="as"
-    data-slot="alert-root"
-    :class="ui.base({ class: [props.ui?.base, props.class] })"
-  >
+  <Primitive :as="as" data-slot="alert-root" :class="ui.base()">
     <slot name="leading" />
-    <div
-      v-if="indicator"
-      data-slot="alert-indicator"
-      :class="ui.indicator({ class: props.ui?.indicator })"
-    >
+    <div v-if="indicator" data-slot="alert-indicator" :class="ui.indicator()">
       <slot name="indicator">
         <svg
           v-if="status === 'success'"
@@ -85,12 +77,8 @@
         </svg>
       </slot>
     </div>
-    <div data-slot="alert-content" :class="ui.content({ class: props.ui?.content })">
-      <p
-        v-if="title || !!slots.title"
-        data-slot="alert-title"
-        :class="ui.title({ class: props.ui?.title })"
-      >
+    <div data-slot="alert-content" :class="ui.content()">
+      <p v-if="title || !!slots.title" data-slot="alert-title" :class="ui.title()">
         <slot name="title">
           {{ title }}
         </slot>
@@ -98,7 +86,7 @@
       <span
         v-if="description || !!slots.description"
         data-slot="alert-description"
-        :class="ui.description({ class: props.ui?.description })"
+        :class="ui.description()"
       >
         <slot name="description">
           {{ description }}
@@ -121,5 +109,9 @@ import theme from './theme'
 const props = withDefaults(defineProps<AlertProps>(), { as: 'div', indicator: true })
 const slots = defineSlots<AlertSlots>()
 
-const ui = useComponentUI('alert', { theme: theme, variantProps: () => ({ status: props.status }) })
+const ui = useComponentUI('alert', {
+  theme: theme,
+  variantProps: () => ({ status: props.status }),
+  props,
+})
 </script>

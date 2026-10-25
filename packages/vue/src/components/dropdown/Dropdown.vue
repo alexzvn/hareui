@@ -25,7 +25,7 @@
         :side-offset="sideOffset"
         :collision-padding="12"
         data-slot="dropdown-popover"
-        :class="ui.popover({ class: [props.ui?.popover, props.class] })"
+        :class="ui.popover()"
         @interact-outside="onInteractOutside"
         @open-auto-focus="onOpenAutoFocus"
         @keydown="onMenuKeydown"
@@ -34,7 +34,7 @@
         <div
           data-slot="dropdown-menu"
           :data-selection-mode="selectionMode !== 'none' ? selectionMode : undefined"
-          :class="ui.menu({ class: props.ui?.menu })"
+          :class="ui.menu()"
         >
           <DropdownMenuItems :entries="items ?? []" :group="rootGroup" />
         </div>
@@ -90,7 +90,23 @@ const portalTarget = usePortal(() => props.portal)
 const emit = defineEmits<DropdownEmits>()
 const slots = defineSlots<DropdownSlots<T>>()
 
-const ui = useComponentUI('dropdown', { theme: theme, variantProps: () => ({}) })
+const ui = useComponentUI('dropdown', {
+  theme: theme,
+  variantProps: () => ({}),
+  props,
+  classSlot: 'popover',
+})
+
+// Submenus and items layer `ui` too, but the `class` prop only styles the root popover.
+const menuUI = useComponentUI('dropdown', {
+  theme: theme,
+  variantProps: () => ({}),
+  props: {
+    get ui() {
+      return props.ui
+    },
+  },
+})
 
 // Same classes the Label / Description components would build, resolved once for every item.
 const labelUI = useComponentUI('label', { theme: labelTheme, variantProps: () => ({}) })
@@ -201,8 +217,7 @@ const onMenuKeydown = (event: KeyboardEvent) => {
 }
 
 const ctx: DropdownContext = {
-  classes: () => ui.value,
-  ui: () => props.ui,
+  classes: () => menuUI.value,
   labelClass: (disabled) => (disabled ? disabledLabelUI : labelUI).value.base(),
   descriptionClass: () => descriptionUI.value.base(),
   portal: () => portalTarget.value,

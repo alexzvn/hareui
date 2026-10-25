@@ -22,7 +22,7 @@
     data-slot="date-field"
     :data-required="required ? 'true' : undefined"
     :aria-describedby="describedBy"
-    :class="ui.base({ class: [props.ui?.base, props.class] })"
+    :class="ui.base()"
     @update:model-value="onUpdate"
     @update:placeholder="emit('update:placeholder', $event)"
   >
@@ -87,6 +87,7 @@ const modelValue = defineModel<DateValue | null>()
 const ui = useComponentUI('dateField', {
   theme,
   variantProps: () => ({ fullWidth: props.fullWidth }),
+  props,
 })
 
 const root = useTemplateRef<ComponentPublicInstance>('root')

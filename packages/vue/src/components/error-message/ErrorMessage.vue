@@ -1,10 +1,5 @@
 <template>
-  <span
-    :id="id"
-    slot="errorMessage"
-    data-slot="error-message"
-    :class="ui.base({ class: [props.ui?.base, props.class] })"
-  >
+  <span :id="id" slot="errorMessage" data-slot="error-message" :class="ui.base()">
     <slot />
   </span>
 </template>
@@ -18,5 +13,5 @@ import theme from './theme'
 const props = defineProps<ErrorMessageProps>()
 defineSlots<ErrorMessageSlots>()
 
-const ui = useComponentUI('errorMessage', { theme: theme, variantProps: () => ({}) })
+const ui = useComponentUI('errorMessage', { theme: theme, variantProps: () => ({}), props })
 </script>

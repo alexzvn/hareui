@@ -17,7 +17,7 @@
     :aria-disabled="isDisabled ? 'true' : undefined"
     :aria-labelledby="hasLabel ? labelId : undefined"
     :aria-describedby="describedBy"
-    :class="ui.base({ class: [props.ui?.base, props.class] })"
+    :class="ui.base()"
     @update:model-value="onUpdate"
   >
     <!-- `as` falls through to Reka `Label`: the group label names the group via aria-labelledby, not a form control -->
@@ -60,6 +60,7 @@ const ui = useComponentUI('checkboxButtonGroup', {
     layout: props.layout,
     variant: props.variant,
   }),
+  props,
 })
 
 const checkboxUi = useComponentUI('checkbox', {

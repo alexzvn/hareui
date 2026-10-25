@@ -4,7 +4,7 @@
     data-slot="close-button"
     :aria-label="ariaLabel"
     :disabled="disabled || undefined"
-    :class="ui.base({ class: [props.ui?.base, props.class] })"
+    :class="ui.base()"
   >
     <slot>
       <svg
@@ -16,7 +16,7 @@
         viewBox="0 0 16 16"
         width="16"
         xmlns="http://www.w3.org/2000/svg"
-        :class="ui.icon({ class: props.ui?.icon })"
+        :class="ui.icon()"
       >
         <path
           clip-rule="evenodd"
@@ -41,5 +41,6 @@ defineSlots<CloseButtonSlots>()
 const ui = useComponentUI('closeButton', {
   theme,
   variantProps: () => ({ variant: props.variant }),
+  props,
 })
 </script>

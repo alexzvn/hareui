@@ -4,12 +4,9 @@
     data-slot="disclosure"
     :data-expanded="isOpen ? 'true' : undefined"
     :data-disabled="isDisabled ? 'true' : undefined"
-    :class="ui.base({ class: [props.ui?.base, props.class] })"
+    :class="ui.base()"
   >
-    <h3
-      data-slot="disclosure-heading"
-      :class="ui.heading({ class: props.ui?.heading }) || undefined"
-    >
+    <h3 data-slot="disclosure-heading" :class="ui.heading() || undefined">
       <Primitive
         :as="slots.trigger ? undefined : 'button'"
         :as-child="!!slots.trigger"
@@ -32,14 +29,10 @@
       :aria-hidden="isOpen ? 'false' : 'true'"
       data-slot="disclosure-content"
       :data-expanded="isOpen ? 'true' : undefined"
-      :class="ui.content({ class: props.ui?.content })"
+      :class="ui.content()"
     >
-      <div
-        v-if="!!slots.default"
-        data-slot="disclosure-body"
-        :class="ui.body({ class: props.ui?.body })"
-      >
-        <div :class="ui.bodyInner({ class: props.ui?.bodyInner }) || undefined">
+      <div v-if="!!slots.default" data-slot="disclosure-body" :class="ui.body()">
+        <div :class="ui.bodyInner() || undefined">
           <slot />
         </div>
       </div>
@@ -76,7 +69,7 @@ const emit = defineEmits<DisclosureEmits>()
 const slots = useSlots()
 defineSlots<DisclosureSlots>()
 
-const ui = useComponentUI('disclosure', { theme, variantProps: () => ({}) })
+const ui = useComponentUI('disclosure', { theme, variantProps: () => ({}), props })
 
 // Inside a DisclosureGroup the group owns the expanded state (HeroUI's DisclosureGroup `expandedKeys`).
 const group = inject(disclosureGroupContextKey, null)
@@ -127,7 +120,7 @@ const Indicator = defineComponent({
           width: '16',
           xmlns: 'http://www.w3.org/2000/svg',
           'data-expanded': isOpen.value ? 'true' : undefined,
-          class: ui.value.indicator({ class: [props.ui?.indicator, attrs.class as string] }),
+          class: ui.value.indicator({ override: attrs.class as string }),
         },
         [
           h('path', {
@@ -153,9 +146,7 @@ const triggerAttrs = computed(() => ({
   'aria-expanded': isOpen.value ? 'true' : 'false',
   'aria-controls': panelId,
   ...(isDisabled.value ? { disabled: true } : {}),
-  ...(slots.trigger
-    ? {}
-    : { 'data-slot': 'disclosure-trigger', class: ui.value.trigger({ class: props.ui?.trigger }) }),
+  ...(slots.trigger ? {} : { 'data-slot': 'disclosure-trigger', class: ui.value.trigger() }),
 }))
 
 const panel = useTemplateRef<HTMLElement>('panel')

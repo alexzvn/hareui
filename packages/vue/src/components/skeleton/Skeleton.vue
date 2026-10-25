@@ -1,5 +1,5 @@
 <template>
-  <Primitive :as="as" :class="ui.base({ class: [props.ui?.base, props.class] })">
+  <Primitive :as="as" :class="ui.base()">
     <slot />
   </Primitive>
 </template>
@@ -30,5 +30,6 @@ const ui = useComponentUI('skeleton', {
   variantProps: () => ({
     animationType: props.animationType ?? cssAnimation.value,
   }),
+  props,
 })
 </script>

@@ -1,5 +1,5 @@
 <template>
-  <div data-slot="accordion" :class="ui.base({ class: [props.ui?.base, props.class] })">
+  <div data-slot="accordion" :class="ui.base()">
     <div
       v-for="(item, index) in items"
       :key="valueOf(item, index)"
@@ -7,9 +7,9 @@
       :data-expanded="isExpanded(valueOf(item, index)) ? 'true' : undefined"
       :data-disabled="isItemDisabled(item) ? 'true' : undefined"
       :data-hide-separator="hideSeparator ? 'true' : undefined"
-      :class="ui.item({ class: props.ui?.item })"
+      :class="ui.item()"
     >
-      <h3 data-slot="accordion-heading" :class="ui.heading({ class: props.ui?.heading })">
+      <h3 data-slot="accordion-heading" :class="ui.heading()">
         <button
           :id="`${id}-trigger-${index}`"
           type="button"
@@ -17,7 +17,7 @@
           :aria-expanded="isExpanded(valueOf(item, index)) ? 'true' : 'false'"
           :aria-controls="`${id}-panel-${index}`"
           :disabled="isItemDisabled(item) || undefined"
-          :class="ui.trigger({ class: props.ui?.trigger })"
+          :class="ui.trigger()"
           @click="toggle(item, index)"
         >
           <slot
@@ -40,10 +40,10 @@
         :aria-hidden="isExpanded(valueOf(item, index)) ? 'false' : 'true'"
         data-slot="accordion-panel"
         :data-expanded="isExpanded(valueOf(item, index)) ? 'true' : undefined"
-        :class="ui.panel({ class: props.ui?.panel })"
+        :class="ui.panel()"
       >
-        <div data-slot="accordion-body" :class="ui.body({ class: props.ui?.body })">
-          <div :class="ui.bodyInner({ class: props.ui?.bodyInner })">
+        <div data-slot="accordion-body" :class="ui.body()">
+          <div :class="ui.bodyInner()">
             <slot
               :name="(item.slot || 'content') as 'content'"
               :item="item"
@@ -96,6 +96,7 @@ defineSlots<AccordionSlots<T>>()
 const ui = useComponentUI('accordion', {
   theme,
   variantProps: () => ({ variant: props.variant }),
+  props,
 })
 
 const { isExpanded, setExpanded } = useExpandedValues(props, (value) =>
@@ -120,7 +121,7 @@ const CHEVRON_DOWN =
 // and state (React's `cloneElement`); anything else falls back to the default chevron.
 const Indicator = ({ item, index, open }: ItemSlotProps) => {
   const shared = {
-    class: ui.value.indicator({ class: props.ui?.indicator }),
+    class: ui.value.indicator(),
     'data-slot': 'accordion-indicator',
     'data-expanded': open ? 'true' : undefined,
   }

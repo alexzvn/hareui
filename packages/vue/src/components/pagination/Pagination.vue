@@ -1,20 +1,10 @@
 <template>
-  <nav
-    aria-label="pagination"
-    data-slot="pagination"
-    role="navigation"
-    :class="ui.base({ class: [props.ui?.base, props.class] })"
-  >
-    <div
-      v-if="$slots.summary"
-      data-slot="pagination-summary"
-      dir="auto"
-      :class="ui.summary({ class: props.ui?.summary })"
-    >
+  <nav aria-label="pagination" data-slot="pagination" role="navigation" :class="ui.base()">
+    <div v-if="$slots.summary" data-slot="pagination-summary" dir="auto" :class="ui.summary()">
       <slot name="summary" :page="current" :total="total" />
     </div>
-    <ul data-slot="pagination-content" :class="ui.content({ class: props.ui?.content })">
-      <li data-slot="pagination-item" :class="ui.item({ class: props.ui?.item })">
+    <ul data-slot="pagination-content" :class="ui.content()">
+      <li data-slot="pagination-item" :class="ui.item()">
         <button
           type="button"
           data-slot="pagination-previous"
@@ -24,11 +14,7 @@
           :class="navClass"
           @click="go(current - 1)"
         >
-          <span
-            aria-hidden="true"
-            data-slot="pagination-previous-icon"
-            :class="ui.icon({ class: props.ui?.icon })"
-          >
+          <span aria-hidden="true" data-slot="pagination-previous-icon" :class="ui.icon()">
             <slot name="prevIcon">
               <svg
                 aria-hidden="true"
@@ -56,13 +42,13 @@
           v-for="(entry, index) in entries"
           :key="entry === 'ellipsis' ? `ellipsis-${index}` : entry"
           data-slot="pagination-item"
-          :class="ui.item({ class: props.ui?.item })"
+          :class="ui.item()"
         >
           <span
             v-if="entry === 'ellipsis'"
             aria-hidden="true"
             data-slot="pagination-ellipsis"
-            :class="ui.ellipsis({ class: props.ui?.ellipsis })"
+            :class="ui.ellipsis()"
             >&hellip;</span
           >
           <button
@@ -81,7 +67,7 @@
           </button>
         </li>
       </template>
-      <li data-slot="pagination-item" :class="ui.item({ class: props.ui?.item })">
+      <li data-slot="pagination-item" :class="ui.item()">
         <button
           type="button"
           data-slot="pagination-next"
@@ -92,11 +78,7 @@
           @click="go(current + 1)"
         >
           <span v-if="nextButton.label">{{ nextButton.label }}</span>
-          <span
-            aria-hidden="true"
-            data-slot="pagination-next-icon"
-            :class="ui.icon({ class: props.ui?.icon })"
-          >
+          <span aria-hidden="true" data-slot="pagination-next-icon" :class="ui.icon()">
             <slot name="nextIcon">
               <svg
                 aria-hidden="true"
@@ -152,6 +134,7 @@ defineSlots<PaginationSlots>()
 const ui = useComponentUI('pagination', {
   theme,
   variantProps: () => ({ size: props.size }),
+  props,
 })
 
 const prevButton = computed(() => defu(props.prev, PREV_DEFAULTS))
@@ -187,9 +170,8 @@ const isNextDisabled = computed(
   () => props.disabled || (nextButton.value.disabled ?? current.value >= props.total),
 )
 
-const linkClass = computed(() => ui.value.link({ class: props.ui?.link }))
+const linkClass = computed(() => ui.value.link())
 
-const navClass = computed(() =>
-  ui.value.link({ class: [ui.value.nav(), props.ui?.link, props.ui?.nav] }),
-)
+// `nav` modifies `link` (HeroUI's `.pagination__link--nav`); `ui.nav` stays above `ui.link`.
+const navClass = computed(() => ui.value.link({ class: ui.value.nav(), override: props.ui?.nav }))
 </script>

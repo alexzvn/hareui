@@ -6,14 +6,10 @@
     :aria-disabled="disabled ? 'true' : undefined"
     :data-invalid="invalid ? 'true' : undefined"
     :data-disabled="disabled ? 'true' : undefined"
-    :class="ui.base({ class: [props.ui?.base, props.class] })"
+    :class="ui.base()"
     @click="onClick"
   >
-    <div
-      v-if="hasPrefix"
-      data-slot="input-group-prefix"
-      :class="ui.prefix({ class: props.ui?.prefix })"
-    >
+    <div v-if="hasPrefix" data-slot="input-group-prefix" :class="ui.prefix()">
       <slot name="prefix">
         {{ prefix }}
       </slot>
@@ -25,7 +21,7 @@
       v-model="value"
       :rows="rows"
       data-slot="input-group-textarea"
-      :class="ui.input({ class: props.ui?.input })"
+      :class="ui.input()"
     />
     <input
       v-else
@@ -34,13 +30,9 @@
       v-model="value"
       :type="type"
       data-slot="input-group-input"
-      :class="ui.input({ class: props.ui?.input })"
+      :class="ui.input()"
     />
-    <div
-      v-if="hasSuffix"
-      data-slot="input-group-suffix"
-      :class="ui.suffix({ class: props.ui?.suffix })"
-    >
+    <div v-if="hasSuffix" data-slot="input-group-suffix" :class="ui.suffix()">
       <slot name="suffix">
         {{ suffix }}
       </slot>
@@ -191,5 +183,6 @@ const ui = useComponentUI('inputGroup', {
     variant: variant.value,
     fullWidth: fullWidth.value,
   }),
+  props,
 })
 </script>

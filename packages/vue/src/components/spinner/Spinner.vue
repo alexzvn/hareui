@@ -1,10 +1,5 @@
 <template>
-  <span
-    aria-label="Loading"
-    data-slot="spinner"
-    role="status"
-    :class="ui.base({ class: [props.ui?.base, props.class] })"
-  >
+  <span aria-label="Loading" data-slot="spinner" role="status" :class="ui.base()">
     <svg aria-hidden="true" data-slot="spinner-icon" viewBox="0 0 24 24">
       <defs>
         <linearGradient
@@ -60,6 +55,7 @@ const props = defineProps<SpinnerProps>()
 const ui = useComponentUI('spinner', {
   theme,
   variantProps: () => ({ size: props.size, color: props.color }),
+  props,
 })
 
 const id = useId()

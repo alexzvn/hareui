@@ -14,7 +14,7 @@
     data-slot="textarea"
     :data-invalid="invalid ? 'true' : undefined"
     :data-disabled="disabled ? 'true' : undefined"
-    :class="ui.base({ class: [props.ui?.base, props.class] })"
+    :class="ui.base()"
   />
 </template>
 
@@ -111,5 +111,6 @@ const ui = useComponentUI('textArea', {
     variant: variant.value,
     fullWidth: fullWidth.value,
   }),
+  props,
 })
 </script>

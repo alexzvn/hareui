@@ -5,14 +5,14 @@
     :data-disabled="isDisabled ? 'true' : undefined"
     :data-invalid="invalid ? 'true' : undefined"
     :data-required="required ? 'true' : undefined"
-    :class="ui.base({ class: [props.ui?.base, props.class] })"
+    :class="ui.base()"
   >
     <div
       data-slot="drop-zone-area"
       :data-drop-target="isDropTarget ? 'true' : undefined"
       :data-focus-visible="isFocusVisible ? 'true' : undefined"
       :data-disabled="isDisabled ? 'true' : undefined"
-      :class="ui.area({ class: props.ui?.area })"
+      :class="ui.area()"
       @dragenter="onDragEnter"
       @dragover="onDragOver"
       @dragleave="onDragLeave"
@@ -28,13 +28,13 @@
         :aria-labelledby="hasLabel ? labelId : undefined"
         :aria-describedby="describedBy"
         :aria-invalid="invalid ? 'true' : undefined"
-        :class="ui.focusTarget({ class: props.ui?.focusTarget })"
+        :class="ui.focusTarget()"
         @click="open"
         @paste="onPaste"
         @focus="onFocus"
         @blur="isFocusVisible = false"
       />
-      <span data-slot="drop-zone-icon" :class="ui.icon({ class: props.ui?.icon })">
+      <span data-slot="drop-zone-icon" :class="ui.icon()">
         <slot name="icon" v-bind="slotProps">
           <svg
             aria-hidden="true"
@@ -53,19 +53,14 @@
           </svg>
         </slot>
       </span>
-      <span
-        v-if="hasLabel"
-        :id="labelId"
-        data-slot="drop-zone-label"
-        :class="ui.label({ class: props.ui?.label })"
-      >
+      <span v-if="hasLabel" :id="labelId" data-slot="drop-zone-label" :class="ui.label()">
         <slot name="label" v-bind="slotProps">{{ label }}</slot>
       </span>
       <span
         v-if="hasDescription"
         :id="descriptionId"
         data-slot="drop-zone-description"
-        :class="ui.description({ class: props.ui?.description })"
+        :class="ui.description()"
       >
         <slot name="description" v-bind="slotProps">{{ description }}</slot>
       </span>
@@ -74,7 +69,7 @@
           variant="outline"
           data-slot="drop-zone-trigger"
           :disabled="isDisabled"
-          :class="ui.trigger({ class: props.ui?.trigger })"
+          :class="ui.trigger()"
           @click="open"
         >
           {{ triggerLabel }}
@@ -95,7 +90,7 @@
       :required="required"
       :disabled="isDisabled"
       :aria-invalid="invalid ? 'true' : undefined"
-      :class="ui.input({ class: props.ui?.input })"
+      :class="ui.input()"
       @change="onInputChange"
       @cancel="syncInput"
       @focus="onInputFocus"
@@ -146,7 +141,7 @@ const props = withDefaults(defineProps<DropZoneProps>(), {
 const emit = defineEmits<DropZoneEmits>()
 const slots = defineSlots<DropZoneSlots>()
 
-const ui = useComponentUI('dropZone', { theme, variantProps: () => ({}) })
+const ui = useComponentUI('dropZone', { theme, variantProps: () => ({}), props })
 provide(dropZoneContextKey, { ui: toRef(() => props.ui) })
 
 const local = ref<File[]>(props.defaultValue ?? [])

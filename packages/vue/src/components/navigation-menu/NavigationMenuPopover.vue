@@ -41,9 +41,7 @@
         :side-offset="sideOffset"
         :align-offset="alignOffset"
         :collision-padding="8"
-        :class="
-          ui.base({ class: ['origin-(--reka-hover-card-content-transform-origin)', props.class] })
-        "
+        :class="ui.base({ class: 'origin-(--reka-hover-card-content-transform-origin)' })"
         @keydown="onContentKeydown"
         @focusout="onContentFocusout"
       >
@@ -92,7 +90,7 @@ defineSlots<{
   content?: (props: { close: () => void }) => unknown
 }>()
 
-const ui = useComponentUI('popover', { theme: popoverTheme, variantProps: () => ({}) })
+const ui = useComponentUI('popover', { theme: popoverTheme, variantProps: () => ({}), props })
 const portalTarget = usePortal(() => props.portal)
 const isOpen = ref(false)
 

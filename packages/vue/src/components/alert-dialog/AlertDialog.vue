@@ -13,14 +13,14 @@
       <DialogOverlay
         data-slot="alert-dialog-backdrop"
         :style="{ '--visual-viewport-height': visualViewportHeight }"
-        :class="ui.backdrop({ class: props.ui?.backdrop })"
+        :class="ui.backdrop()"
       >
         <!-- No force-mount: see Modal.vue - the dialog's `presence-hold` keeps it through the container's exit animation -->
         <div
           data-slot="alert-dialog-container"
           :data-state="isOpen ? 'open' : 'closed'"
           :data-placement="placement"
-          :class="ui.container({ class: props.ui?.container })"
+          :class="ui.container()"
         >
           <DialogContent
             ref="dialogContent"
@@ -28,7 +28,7 @@
             role="alertdialog"
             :data-placement="placement"
             :aria-describedby="undefined"
-            :class="ui.dialog({ class: [props.ui?.dialog, props.class] })"
+            :class="ui.dialog()"
             @escape-key-down="onEscapeKeyDown"
             @interact-outside="onInteractOutside"
             @open-auto-focus="onOpenAutoFocus"
@@ -39,27 +39,16 @@
             <slot name="content" :close="close">
               <DialogClose v-if="closeButton" as-child>
                 <slot name="close" :close="close">
-                  <CloseButton
-                    data-slot="alert-dialog-close-trigger"
-                    :class="ui.closeTrigger({ class: props.ui?.closeTrigger })"
-                  />
+                  <CloseButton data-slot="alert-dialog-close-trigger" :class="ui.closeTrigger()" />
                 </slot>
               </DialogClose>
               <!-- Before the header so `header + body` / `header + footer` spacing selectors still match -->
               <VisuallyHidden v-if="!showHeaderTitle" as-child>
                 <DialogTitle>{{ title }}</DialogTitle>
               </VisuallyHidden>
-              <div
-                v-if="hasHeader"
-                data-slot="alert-dialog-header"
-                :class="ui.header({ class: props.ui?.header })"
-              >
+              <div v-if="hasHeader" data-slot="alert-dialog-header" :class="ui.header()">
                 <slot name="header">
-                  <div
-                    v-if="icon"
-                    data-slot="alert-dialog-icon"
-                    :class="ui.icon({ class: props.ui?.icon })"
-                  >
+                  <div v-if="icon" data-slot="alert-dialog-icon" :class="ui.icon()">
                     <slot name="icon">
                       <svg
                         v-if="status === 'success'"
@@ -138,7 +127,7 @@
                   <DialogTitle
                     v-if="showHeaderTitle"
                     data-slot="alert-dialog-heading"
-                    :class="ui.heading({ class: props.ui?.heading })"
+                    :class="ui.heading()"
                   >
                     <slot name="title">
                       {{ title }}
@@ -146,18 +135,10 @@
                   </DialogTitle>
                 </slot>
               </div>
-              <div
-                v-if="!!slots.body"
-                data-slot="alert-dialog-body"
-                :class="ui.body({ class: props.ui?.body })"
-              >
+              <div v-if="!!slots.body" data-slot="alert-dialog-body" :class="ui.body()">
                 <slot name="body" :close="close" />
               </div>
-              <div
-                v-if="!!slots.footer"
-                data-slot="alert-dialog-footer"
-                :class="ui.footer({ class: props.ui?.footer })"
-              >
+              <div v-if="!!slots.footer" data-slot="alert-dialog-footer" :class="ui.footer()">
                 <slot name="footer" :close="close" />
               </div>
             </slot>
@@ -209,6 +190,8 @@ const ui = useComponentUI('alertDialog', {
     variant: props.variant,
     placement: props.placement,
   }),
+  props,
+  classSlot: 'dialog',
 })
 
 const dialogContent = useTemplateRef<{ $el: HTMLElement }>('dialogContent')

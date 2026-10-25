@@ -9,26 +9,18 @@
     :data-side="side"
     :data-collapsed="isCollapsed"
     :data-dragging="isDragging"
-    :class="ui.root({ class: [props.ui?.root, props.class] })"
+    :class="ui.root()"
     :style="{ '--width': `${size || 0}${unit}` }"
   >
-    <div
-      v-if="!!slots.header"
-      data-slot="dashboard-sidebar-header"
-      :class="ui.header({ class: props.ui?.header })"
-    >
+    <div v-if="!!slots.header" data-slot="dashboard-sidebar-header" :class="ui.header()">
       <slot name="header" :collapsed="isCollapsed" :collapse="collapse" />
     </div>
 
-    <div data-slot="dashboard-sidebar-body" :class="ui.body({ class: props.ui?.body })">
+    <div data-slot="dashboard-sidebar-body" :class="ui.body()">
       <slot :collapsed="isCollapsed" :collapse="collapse" />
     </div>
 
-    <div
-      v-if="!!slots.footer"
-      data-slot="dashboard-sidebar-footer"
-      :class="ui.footer({ class: props.ui?.footer })"
-    >
+    <div v-if="!!slots.footer" data-slot="dashboard-sidebar-footer" :class="ui.footer()">
       <slot name="footer" :collapsed="isCollapsed" :collapse="collapse" />
     </div>
   </aside>
@@ -56,7 +48,7 @@
             <div
               v-if="!!slots.header || mode !== 'drawer'"
               data-slot="dashboard-sidebar-header"
-              :class="ui.header({ class: props.ui?.header })"
+              :class="ui.header()"
             >
               <Toggle v-if="mode !== 'drawer' && toggleSide === 'left'" />
 
@@ -65,15 +57,11 @@
               <Toggle v-if="mode !== 'drawer' && toggleSide === 'right'" />
             </div>
 
-            <div data-slot="dashboard-sidebar-body" :class="ui.body({ class: props.ui?.body })">
+            <div data-slot="dashboard-sidebar-body" :class="ui.body()">
               <slot :collapsed="false" :collapse="() => {}" />
             </div>
 
-            <div
-              v-if="!!slots.footer"
-              data-slot="dashboard-sidebar-footer"
-              :class="ui.footer({ class: props.ui?.footer })"
-            >
+            <div v-if="!!slots.footer" data-slot="dashboard-sidebar-footer" :class="ui.footer()">
               <slot name="footer" :collapsed="false" :collapse="() => {}" />
             </div>
           </div>
@@ -224,6 +212,8 @@ const ui = useComponentUI('dashboardSidebar', {
     toggleSide: props.toggleSide,
     mode: props.mode,
   }),
+  props,
+  classSlot: 'root',
 })
 
 const menuTitle = computed(() => (props.menu as { title?: string } | undefined)?.title ?? 'Sidebar')
@@ -249,8 +239,8 @@ const menuClasses = computed(() => {
   const user: Partial<Record<string, ClassValue>> = props.menu?.ui ?? {}
   return {
     ...user,
-    backdrop: [ui.value.overlay({ class: props.ui?.overlay }), user.backdrop],
-    dialog: ['p-0 gap-0', ui.value.content({ class: props.ui?.content }), user.dialog],
+    backdrop: [ui.value.overlay(), user.backdrop],
+    dialog: ['p-0 gap-0', ui.value.content(), user.dialog],
   }
 })
 
@@ -290,7 +280,7 @@ const Handle: FunctionalComponent = () => {
     ...resizeHandleSlotProps.value.attrs,
     'data-dragging': isDragging.value,
     'data-side': props.side,
-    class: ui.value.handle({ class: props.ui?.handle }),
+    class: ui.value.handle(),
     onPointerdown: onPointerDown,
     onDblclick: onDoubleClick,
     onKeydown: onKeyDown,
@@ -313,7 +303,7 @@ const Toggle: FunctionalComponent = () => {
       ...custom,
       'data-slot': 'dashboard-sidebar-toggle',
       'data-idle': isToggleIdle.value || undefined,
-      class: ui.value.toggle({ class: [props.ui?.toggle, custom.class] }),
+      class: ui.value.toggle({ override: custom.class }),
       onClick: toggleOpen,
       onPointermove: () => {
         isToggleIdle.value = false

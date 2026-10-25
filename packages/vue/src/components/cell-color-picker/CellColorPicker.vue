@@ -2,7 +2,7 @@
   <div
     data-slot="cell-color-picker"
     :data-disabled="disabled ? 'true' : undefined"
-    :class="ui.base({ class: [props.ui?.base, props.class] })"
+    :class="ui.base()"
   >
     <ColorPicker
       :model-value="modelValue"
@@ -15,27 +15,24 @@
       :disabled="disabled"
       :ui="{
         base: 'flex w-full',
-        trigger: ui.trigger({ class: props.ui?.trigger }),
-        popover: ui.popover({ class: props.ui?.popover }),
+        trigger: ui.trigger(),
+        popover: ui.popover(),
       }"
       @update:model-value="emit('update:modelValue', $event)"
       @update:open="emit('update:open', $event)"
     >
       <template #trigger="{ color }">
-        <span data-slot="cell-color-picker-label" :class="ui.label({ class: props.ui?.label })">
+        <span data-slot="cell-color-picker-label" :class="ui.label()">
           <slot name="label">
             {{ label }}
           </slot>
         </span>
-        <span
-          data-slot="cell-color-picker-value-display"
-          :class="ui.valueDisplay({ class: props.ui?.valueDisplay })"
-        >
+        <span data-slot="cell-color-picker-value-display" :class="ui.valueDisplay()">
           <slot name="value" :color="color" :hex="toHex(color)">
             {{ toHex(color) }}
           </slot>
         </span>
-        <ColorSwatch :class="ui.swatch({ class: props.ui?.swatch })" />
+        <ColorSwatch :class="ui.swatch()" />
       </template>
       <template #default="{ color, close }">
         <slot :color="color" :close="close">
@@ -45,7 +42,7 @@
             aria-label="Color presets"
             size="xs"
             :ui="{ indicator: 'hidden' }"
-            :class="ui.presets({ class: props.ui?.presets })"
+            :class="ui.presets()"
           />
           <ColorArea
             aria-label="Color area"
@@ -103,6 +100,7 @@ defineSlots<CellColorPickerSlots>()
 const ui = useComponentUI('cellColorPicker', {
   theme,
   variantProps: () => ({ variant: props.variant }),
+  props,
 })
 
 const disabled = useFieldsetDisabled(() => props.disabled)

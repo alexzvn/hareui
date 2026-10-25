@@ -1,11 +1,6 @@
 <template>
-  <Primitive
-    :as="as.root"
-    data-slot="dashboard-navbar"
-    v-bind="$attrs"
-    :class="ui.root({ class: [props.ui?.root, props.class] })"
-  >
-    <div data-slot="dashboard-navbar-left" :class="ui.left({ class: props.ui?.left })">
+  <Primitive :as="as.root" data-slot="dashboard-navbar" v-bind="$attrs" :class="ui.root()">
+    <div data-slot="dashboard-navbar-left" :class="ui.left()">
       <slot v-if="toggleSide === 'left'" name="toggle" v-bind="{ ...context, ui }">
         <DashboardSidebarToggle
           v-if="toggle"
@@ -23,7 +18,7 @@
           v-if="title || slots.title"
           :as="as.title"
           data-slot="dashboard-navbar-title"
-          :class="ui.title({ class: props.ui?.title })"
+          :class="ui.title()"
         >
           <slot name="title">
             <span class="truncate">{{ title }}</span>
@@ -34,15 +29,11 @@
       </slot>
     </div>
 
-    <div
-      v-if="slots.default"
-      data-slot="dashboard-navbar-center"
-      :class="ui.center({ class: props.ui?.center })"
-    >
+    <div v-if="slots.default" data-slot="dashboard-navbar-center" :class="ui.center()">
       <slot v-bind="context" />
     </div>
 
-    <div data-slot="dashboard-navbar-right" :class="ui.right({ class: props.ui?.right })">
+    <div data-slot="dashboard-navbar-right" :class="ui.right()">
       <slot name="right" v-bind="context" />
 
       <slot v-if="toggleSide === 'right'" name="toggle" v-bind="{ ...context, ui }">
@@ -87,6 +78,8 @@ const slots = defineSlots<DashboardNavbarSlots>()
 const ui = useComponentUI('dashboardNavbar', {
   theme,
   variantProps: () => ({ toggleSide: props.toggleSide }),
+  props,
+  classSlot: 'root',
 })
 
 const as = computed(() => resolveAs(props.as, { root: 'div', title: 'h1' }))
@@ -113,8 +106,6 @@ const toggleProps = computed(() => {
 })
 
 const toggleClass = computed(() =>
-  ui.value.toggle({
-    class: [props.ui?.toggle, typeof props.toggle === 'object' ? props.toggle.class : undefined],
-  }),
+  ui.value.toggle({ override: typeof props.toggle === 'object' ? props.toggle.class : undefined }),
 )
 </script>

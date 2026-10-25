@@ -8,7 +8,7 @@
     :data-invalid="invalid ? 'true' : undefined"
     :data-readonly="readonly ? 'true' : undefined"
     :data-required="required ? 'true' : undefined"
-    :class="ui.base({ class: [props.ui?.base, props.class] })"
+    :class="ui.base()"
     @click="forwardRootClick($event, '[data-slot=switch-content]')"
     @mousedown="
       keepFocusWhenReadonly($event, { readonly, contentSelector: '[data-slot=switch-content]' })
@@ -26,17 +26,13 @@
       :aria-invalid="invalid ? 'true' : undefined"
       :aria-readonly="readonly ? 'true' : undefined"
       data-slot="switch-content"
-      :class="ui.content({ class: props.ui?.content })"
+      :class="ui.content()"
       @keydown.capture="submitOnEnter"
       @update:model-value="onUpdate"
     >
-      <span data-slot="switch-control" :class="ui.control({ class: props.ui?.control })">
-        <span data-slot="switch-thumb" :class="ui.thumb({ class: props.ui?.thumb })">
-          <span
-            v-if="slots.icon"
-            data-slot="switch-icon"
-            :class="ui.icon({ class: props.ui?.icon })"
-          >
+      <span data-slot="switch-control" :class="ui.control()">
+        <span data-slot="switch-thumb" :class="ui.thumb()">
+          <span v-if="slots.icon" data-slot="switch-icon" :class="ui.icon()">
             <slot name="icon" :checked="checked" />
           </span>
         </span>
@@ -89,6 +85,7 @@ const ui = useComponentUI('switch', {
   variantProps: () => ({
     size: props.size,
   }),
+  props,
 })
 
 const local = ref(props.defaultValue ?? false)
