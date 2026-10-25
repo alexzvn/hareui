@@ -63,7 +63,7 @@
         :key="index"
         data-slot="slider-thumb"
         :data-dragging="dragging(index)"
-        :data-focus-visible="focusVisibleIndex === index ? 'true' : undefined"
+        :data-focus-visible="thumbState.focusVisibleIndex === index ? 'true' : undefined"
         :ref="
           (el: any) => {
             thumbRefs[index] = el
@@ -95,7 +95,7 @@
 
 <script setup lang="ts">
 import { SliderRange, SliderRoot, SliderThumb, SliderTrack } from 'reka-ui'
-import { computed, ref, useId, useSlots } from 'vue'
+import { computed, ref, shallowReactive, useId, useSlots } from 'vue'
 
 import { useFieldsetDisabled } from '@/components/fieldset/context'
 import Label from '@/components/label/Label.vue'
@@ -176,7 +176,7 @@ const changedValue = (previous: number[], next: number[]): number | undefined =>
 
 const constrain = (values: number[]): number[] => {
   const previous = current.value
-  movingIndex ??= activeThumbIndex.value
+  movingIndex ??= thumbState.activeThumbIndex
   const index = movingIndex
   if (values.length < 2 || values.length !== previous.length || index >= previous.length)
     return values
@@ -236,9 +236,9 @@ const pageDirection = (event: KeyboardEvent): number => {
 
 const onThumbKeydown = (event: KeyboardEvent, index: number) => {
   isPointerActive = false
-  focusVisibleIndex.value = index
+  thumbState.focusVisibleIndex = index
   movingIndex = index
-  activeThumbIndex.value = index
+  thumbState.activeThumbIndex = index
   const page = pageDirection(event)
   if (isDisabled.value || (page === 0 && event.key !== 'Home' && event.key !== 'End')) return
 
@@ -298,13 +298,11 @@ const fillEnd = computed(() =>
 // (including when the drag starts on the track rather than a thumb).
 // The same programmatic focus makes `:focus-visible` match on a mouse press, so `data-focus-visible` is
 // tracked like RAC's: set by keyboard focus/keys, suppressed while a pointer interaction is in progress.
-const isSliding = ref(false)
-const activeThumbIndex = ref(0)
-const focusVisibleIndex = ref(-1)
+const thumbState = shallowReactive({ isSliding: false, activeThumbIndex: 0, focusVisibleIndex: -1 })
 let isPointerActive = false
 const onPointerDownCapture = () => {
   isPointerActive = true
-  focusVisibleIndex.value = -1
+  thumbState.focusVisibleIndex = -1
 
   // Reka focuses the thumb closest to the press (unless it already has focus) before its first update; that
   // thumb is the one to move, picked up in `onUpdate`
@@ -312,25 +310,25 @@ const onPointerDownCapture = () => {
 }
 
 const onPointerDown = () => {
-  if (!isDisabled.value) isSliding.value = true
+  if (!isDisabled.value) thumbState.isSliding = true
 }
 
 const onPointerEnd = () => {
-  isSliding.value = false
+  thumbState.isSliding = false
   isPointerActive = false
 }
 
 const onThumbFocus = (index: number) => {
   // While a thumb is moving, Reka may focus its neighbour (it hands crossing moves over); `onUpdate` moves focus back
-  if (movingIndex === null) activeThumbIndex.value = index
-  focusVisibleIndex.value = isPointerActive ? -1 : index
+  if (movingIndex === null) thumbState.activeThumbIndex = index
+  thumbState.focusVisibleIndex = isPointerActive ? -1 : index
 }
 
 const onThumbBlur = () => {
-  focusVisibleIndex.value = -1
+  thumbState.focusVisibleIndex = -1
 }
 
 const dragging = (index: number) => {
-  return isSliding.value && activeThumbIndex.value === index ? 'true' : undefined
+  return thumbState.isSliding && thumbState.activeThumbIndex === index ? 'true' : undefined
 }
 </script>

@@ -28,11 +28,11 @@
           :aria-label="thumbLabel"
           :aria-labelledby="thumbLabelledBy"
           :style="{ '--color-area-thumb-color': thumbColor, backgroundColor: thumbColor }"
-          :data-dragging="isDragging ? 'true' : undefined"
-          :data-focus-visible="isFocusVisible ? 'true' : undefined"
+          :data-dragging="thumbState.isDragging ? 'true' : undefined"
+          :data-focus-visible="thumbState.isFocusVisible ? 'true' : undefined"
           @focus="onThumbFocus"
           @keydown="onThumbKeydown"
-          @blur="isFocusVisible = false"
+          @blur="thumbState.isFocusVisible = false"
           :class="ui.thumb()"
         />
       </ColorAreaArea>
@@ -50,7 +50,16 @@ import {
   getChannelName,
   normalizeColor,
 } from 'reka-ui'
-import { computed, onBeforeUnmount, onMounted, ref, useAttrs, useId, watch } from 'vue'
+import {
+  computed,
+  onBeforeUnmount,
+  onMounted,
+  ref,
+  shallowReactive,
+  useAttrs,
+  useId,
+  watch,
+} from 'vue'
 
 import { useColorPickerContext } from '@/components/color-picker/context'
 import { useFieldsetDisabled } from '@/components/fieldset/context'
@@ -216,32 +225,34 @@ const onKeyup = (event: KeyboardEvent) => {
   if (commitKeys.has(event.key)) onChangeEnd()
 }
 
-// Reka's `ColorAreaArea`/`ColorAreaThumb` don't expose a `data-dragging` attribute (reka-limitation:
-// Reka tracks `isDragging` privately inside `ColorAreaArea`), so it's tracked locally for the thumb's
-// enlarged drag size, matching HeroUI's `[data-dragging="true"]` styling.
-const isDragging = ref(false)
+const thumbState = shallowReactive({
+  // Reka's `ColorAreaArea`/`ColorAreaThumb` don't expose a `data-dragging` attribute (reka-limitation:
+  // Reka tracks `isDragging` privately inside `ColorAreaArea`), so it's tracked locally for the thumb's
+  // enlarged drag size, matching HeroUI's `[data-dragging="true"]` styling.
+  isDragging: false,
+  // Keyboard-modality focus ring, as RAC's `useFocusRing`: Reka focuses the thumb on a pointer press as well.
+  isFocusVisible: false,
+})
 
-// Keyboard-modality focus ring, as RAC's `useFocusRing`: Reka focuses the thumb on a pointer press as well.
-const isFocusVisible = ref(false)
 let isPointerActive = false
 const onPointerDownCapture = () => {
   isPointerActive = true
-  isFocusVisible.value = false
-  if (!isDisabled.value) isDragging.value = true
+  thumbState.isFocusVisible = false
+  if (!isDisabled.value) thumbState.isDragging = true
 }
 
 const onPointerUp = () => {
-  isDragging.value = false
+  thumbState.isDragging = false
   isPointerActive = false
 }
 
 const onThumbFocus = () => {
-  isFocusVisible.value = !isPointerActive
+  thumbState.isFocusVisible = !isPointerActive
 }
 
 const onThumbKeydown = () => {
   isPointerActive = false
-  isFocusVisible.value = true
+  thumbState.isFocusVisible = true
 }
 
 onMounted(() => window.addEventListener('pointerup', onPointerUp))

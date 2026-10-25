@@ -3,8 +3,8 @@
     ref="root"
     data-slot="select"
     v-bind="rootAttrs"
-    :data-focused="isFocused || isOpen ? 'true' : undefined"
-    :data-focus-visible="isFocusVisible ? 'true' : undefined"
+    :data-focused="interaction.isFocused || isOpen ? 'true' : undefined"
+    :data-focus-visible="interaction.isFocusVisible ? 'true' : undefined"
     :data-open="isOpen ? 'true' : undefined"
     :data-disabled="disabled ? 'true' : undefined"
     :data-invalid="invalid ? 'true' : undefined"
@@ -28,17 +28,17 @@
           :disabled="disabled"
           :data-disabled="disabled ? 'true' : undefined"
           :data-pressed="isOpen ? 'true' : undefined"
-          :data-hovered="isHovered ? 'true' : undefined"
-          :data-focused="isFocused ? 'true' : undefined"
-          :data-focus-visible="isFocusVisible ? 'true' : undefined"
+          :data-hovered="interaction.isHovered ? 'true' : undefined"
+          :data-focused="interaction.isFocused ? 'true' : undefined"
+          :data-focus-visible="interaction.isFocusVisible ? 'true' : undefined"
           :class="ui.trigger()"
           @keydown="onTriggerKeydown"
           @focus="onTriggerFocus"
           @blur="onTriggerBlur"
           @pointerdown="onTriggerPointerdown"
           @mousedown="onTriggerMousedown"
-          @pointerenter="isHovered = $event.pointerType === 'mouse'"
-          @pointerleave="isHovered = false"
+          @pointerenter="interaction.isHovered = $event.pointerType === 'mouse'"
+          @pointerleave="interaction.isHovered = false"
         >
           <slot name="leading" />
           <span
@@ -220,7 +220,7 @@
 
 <script setup lang="ts" generic="T extends ListBoxItem = ListBoxItem">
 import { PopoverContent, PopoverPortal, PopoverRoot, PopoverTrigger } from 'reka-ui'
-import { computed, provide, ref, useAttrs, useTemplateRef, watch } from 'vue'
+import { computed, provide, ref, shallowReactive, useAttrs, useTemplateRef, watch } from 'vue'
 
 import { useFieldsetDisabled } from '@/components/fieldset/context'
 import type {
@@ -432,18 +432,18 @@ const onTriggerKeydown = (event: KeyboardEvent) => {
 }
 
 // RAC Button / Select interaction states
-const isHovered = ref(false)
-const isFocused = ref(false)
-const isFocusVisible = ref(false)
+const interaction = shallowReactive({ isHovered: false, isFocused: false, isFocusVisible: false })
 
 const onTriggerFocus = (event: FocusEvent) => {
-  isFocused.value = true
-  isFocusVisible.value = event.target instanceof Element && event.target.matches(':focus-visible')
+  interaction.isFocused = true
+
+  interaction.isFocusVisible =
+    event.target instanceof Element && event.target.matches(':focus-visible')
 }
 
 const onTriggerBlur = () => {
-  isFocused.value = false
-  isFocusVisible.value = false
+  interaction.isFocused = false
+  interaction.isFocusVisible = false
 }
 
 // The validation composable focuses the first native control of an invalid field; the hidden <select> isn't

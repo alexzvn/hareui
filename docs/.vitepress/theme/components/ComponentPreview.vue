@@ -11,7 +11,7 @@
       :href="href"
       :theme="theme"
       @toggle-theme="toggleTheme"
-      @preset="customWidth = undefined"
+      @preset="width.custom = undefined"
       @preload="preload"
     />
     <div v-if="isPaged" ref="stage" class="relative">
@@ -24,11 +24,11 @@
       />
       <PreviewResizeHandle
         v-model:dragging="isDragging"
-        :width="viewport ?? fullWidth"
+        :width="viewport ?? width.full"
         :min="minWidth"
-        :max="fullWidth"
+        :max="width.full"
         :edge="pageEdge"
-        @resize="customWidth = $event"
+        @resize="width.custom = $event"
       />
     </div>
     <div
@@ -51,27 +51,27 @@
         <component :is="demo" />
       </div>
       <DevicePreview
-        v-if="isFrameMounted"
+        v-if="iframe.isMounted"
         mode="inline"
         :name="name"
         :width="viewport"
         :theme="theme"
         :visible="isFrameVisible"
-        @ready="isFrameReady = true"
+        @ready="iframe.isReady = true"
       />
       <div
-        v-if="displayWidth !== undefined && displayWidth < fullWidth"
+        v-if="displayWidth !== undefined && displayWidth < width.full"
         aria-hidden="true"
         class="absolute inset-y-0 end-0 z-1 border-s border-separator bg-background"
         :style="{ left: `${displayWidth}px` }"
       />
       <PreviewResizeHandle
         v-model:dragging="isDragging"
-        :width="viewport ?? fullWidth"
+        :width="viewport ?? width.full"
         :min="minWidth"
-        :max="fullWidth"
+        :max="width.full"
         :edge="displayWidth"
-        @resize="customWidth = $event"
+        @resize="width.custom = $event"
         @preload="preload"
       />
     </div>
@@ -154,6 +154,7 @@ import {
   onMounted,
   provide,
   ref,
+  shallowReactive,
   shallowRef,
   useTemplateRef,
   watch,
@@ -228,20 +229,24 @@ const PRESETS: Partial<Record<PreviewDevice, number>> = { mobile: 375, tablet: 7
 const MIN_WIDTH = 320
 const stage = useTemplateRef<HTMLElement>('stage')
 
-/** The Desktop viewport width: the box inside its side borders, or the row minus the page frame's borders. */
-const fullWidth = ref(0)
-const customWidth = ref<number>()
-const minWidth = computed(() => Math.min(MIN_WIDTH, fullWidth.value))
+const width = shallowReactive({
+  /** The Desktop viewport width: the box inside its side borders, or the row minus the page frame's borders. */
+  full: 0,
+  /** The dragged width; a device preset clears it. */
+  custom: undefined as number | undefined,
+})
+
+const minWidth = computed(() => Math.min(MIN_WIDTH, width.full))
 
 /** `undefined`: the frame fills the row (not measured yet, or a phone-sized docs page). */
 const viewport = computed(() => {
-  if (isCompact.value || !fullWidth.value) return undefined
-  const target = customWidth.value ?? PRESETS[device.value] ?? fullWidth.value
+  if (isCompact.value || !width.full) return undefined
+  const target = width.custom ?? PRESETS[device.value] ?? width.full
 
-  return Math.min(fullWidth.value, Math.max(minWidth.value, target))
+  return Math.min(width.full, Math.max(minWidth.value, target))
 })
 
-const isNarrow = computed(() => viewport.value !== undefined && viewport.value < fullWidth.value)
+const isNarrow = computed(() => viewport.value !== undefined && viewport.value < width.full)
 const isDragging = ref(false)
 const pageEdge = computed(() => (isNarrow.value ? viewport.value! + 2 : undefined))
 
@@ -252,7 +257,7 @@ onMounted(() => {
   compactQuery.addEventListener('change', onCompactChange)
 
   stageObserver = new ResizeObserver(() => {
-    if (stage.value) fullWidth.value = stage.value.clientWidth - (isPaged ? 2 : 0)
+    if (stage.value) width.full = stage.value.clientWidth - (isPaged ? 2 : 0)
   })
 
   if (stage.value) stageObserver.observe(stage.value)
@@ -268,18 +273,17 @@ onBeforeUnmount(() => {
 // breakpoints: the box mounts the standalone page in an iframe over itself, invisible until it reports its demo
 // rendered, then swaps from the inline render (which keeps the box height) to it in one paint. The iframe stays
 // mounted once loaded, so later swaps are instant; hovering the device switch or the handle preloads it.
-const isFrameMounted = ref(false)
-const isFrameReady = ref(false)
+const iframe = shallowReactive({ isMounted: false, isReady: false })
 const isFrameVisible = computed(() => isNarrow.value || isDragging.value)
 watchEffect(() => {
-  if (!isPaged && isFrameVisible.value) isFrameMounted.value = true
+  if (!isPaged && isFrameVisible.value) iframe.isMounted = true
 })
 
 const preload = () => {
-  if (!isPaged && !isCompact.value) isFrameMounted.value = true
+  if (!isPaged && !isCompact.value) iframe.isMounted = true
 }
 
-const isFrameShown = computed(() => isFrameReady.value && isFrameVisible.value)
+const isFrameShown = computed(() => iframe.isReady && isFrameVisible.value)
 
 /** Where the frame's right edge shows: dragging moves it with the pointer even before the iframe is ready. */
 const displayWidth = computed(() =>

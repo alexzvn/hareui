@@ -62,7 +62,11 @@
         />
 
         <!-- Color Field with Color Space Selector -->
-        <TextField v-if="showColorField" aria-labelledby="Accent color" :invalid="hasInputError">
+        <TextField
+          v-if="showColorField"
+          aria-labelledby="Accent color"
+          :invalid="colorInput.hasError"
+        >
           <InputGroup
             full-width
             class="rounded-xl"
@@ -78,7 +82,7 @@
               <Select
                 aria-label="Color format"
                 :items="FORMAT_ITEMS"
-                :model-value="currentColorFormat"
+                :model-value="colorInput.format"
                 :ui="{ trigger: 'h-full min-w-22 rounded-none border-none bg-transparent px-3' }"
                 @update:model-value="onFormatChange"
               />
@@ -96,7 +100,7 @@ import { Icon } from '@iconify/vue'
 // Port of the HeroUI docs' own `components/color-picker/color-picker.tsx` (the popover with swatch carousel,
 // color area, hue slider + shuffle, and color field with format select), composed from HareUI parts.
 import type { Color } from 'reka-ui'
-import { computed, ref } from 'vue'
+import { computed, shallowReactive } from 'vue'
 
 import AccentColorSlider from './AccentColorSlider.vue'
 import AccentColorSwatchesCarousel from './AccentColorSwatchesCarousel.vue'
@@ -150,9 +154,12 @@ const FORMAT_ITEMS = [
   { value: 'oklch', label: 'OKLCH', textValue: 'OKLCH' },
 ]
 
-const currentColorFormat = ref<ColorFormat>('hex')
-const editingValue = ref<string | null>(null)
-const hasInputError = ref(false)
+// The colour field: its format, the in-progress text (`null` shows the current colour) and its validity
+const colorInput = shallowReactive({
+  format: 'hex' as ColorFormat,
+  editingValue: null as string | null,
+  hasError: false,
+})
 
 const colorValue = computed(() => safeParseColor(props.value))
 const initialColorHex = computed(() => props.value.toLowerCase())
@@ -163,30 +170,30 @@ const onColorChange = (newColor: Color) => {
 
 // Compute the displayed input value
 const displayedInputValue = computed(
-  () => editingValue.value ?? formatColor(colorValue.value, currentColorFormat.value),
+  () => colorInput.editingValue ?? formatColor(colorValue.value, colorInput.format),
 )
 
 // Handle input change - validate on every change
 const onInputChange = (newValue: string | number | undefined) => {
   const value = String(newValue ?? '')
 
-  editingValue.value = value
+  colorInput.editingValue = value
 
   // Auto-detect and switch color format based on input
   const detectedFormat = detectColorFormat(value)
-  const colorFormat = detectedFormat ?? currentColorFormat.value
+  const colorFormat = detectedFormat ?? colorInput.format
 
-  currentColorFormat.value = colorFormat
+  colorInput.format = colorFormat
   const validatedColor = validateColorInput(value, colorFormat)
 
   if (!validatedColor) {
-    hasInputError.value = true
+    colorInput.hasError = true
 
     return
   }
 
   onColorChange(validatedColor)
-  hasInputError.value = false
+  colorInput.hasError = false
 }
 
 const isInput = (event: Event) => (event.target as HTMLElement).matches('input')
@@ -195,23 +202,23 @@ const isInput = (event: Event) => (event.target as HTMLElement).matches('input')
 const onInputBlur = (event: FocusEvent) => {
   if (!isInput(event)) return
 
-  editingValue.value = null
-  hasInputError.value = false
+  colorInput.editingValue = null
+  colorInput.hasError = false
 }
 
 const onInputKeyDown = (event: KeyboardEvent) => {
   if (!isInput(event)) return
 
   if (event.key === 'Escape') {
-    editingValue.value = null
-    hasInputError.value = false
+    colorInput.editingValue = null
+    colorInput.hasError = false
     ;(event.target as HTMLInputElement).blur()
   }
 }
 
 const onInputFocus = (event: FocusEvent) => {
   if (!isInput(event)) return
-  editingValue.value = formatColor(colorValue.value, currentColorFormat.value)
+  colorInput.editingValue = formatColor(colorValue.value, colorInput.format)
 }
 
 const onShuffle = () => {
@@ -220,7 +227,7 @@ const onShuffle = () => {
 
 const onFormatChange = (key: unknown) => {
   if (key) {
-    currentColorFormat.value = key as ColorFormat
+    colorInput.format = key as ColorFormat
   }
 }
 </script>

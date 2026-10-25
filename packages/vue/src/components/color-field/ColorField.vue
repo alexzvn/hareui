@@ -24,8 +24,8 @@
       :required="required"
       data-slot="color-input-group"
       :data-invalid="invalid ? 'true' : undefined"
-      :data-focus-within="isFocusWithin ? 'true' : undefined"
-      :data-focus-visible="isFocusVisible ? 'true' : undefined"
+      :data-focus-within="focusState.isFocusWithin ? 'true' : undefined"
+      :data-focus-visible="focusState.isFocusVisible ? 'true' : undefined"
       :class="ui.group()"
       @focusin="onFocusIn"
       @focusout="onFocusOut"
@@ -40,7 +40,7 @@
         :locale="locale"
       />
       <!-- Prefix/suffix go through `useSlotOutlet` components: a `<slot>` outlet here would make Vue flag the root's slots as forwarded and re-render the root on every render -->
-      <div v-if="hasPrefix" data-slot="color-input-group-prefix" :class="ui.prefix()">
+      <div v-if="slotPresence.hasPrefix" data-slot="color-input-group-prefix" :class="ui.prefix()">
         <PrefixOutlet />
       </div>
       <ColorFieldInput
@@ -54,7 +54,7 @@
         :class="ui.input()"
         @keydown="onInputKeydown"
       />
-      <div v-if="hasSuffix" data-slot="color-input-group-suffix" :class="ui.suffix()">
+      <div v-if="slotPresence.hasSuffix" data-slot="color-input-group-suffix" :class="ui.suffix()">
         <SuffixOutlet />
       </div>
     </ColorFieldRoot>
@@ -71,7 +71,7 @@ import {
   nextTick,
   onBeforeUpdate,
   ref,
-  shallowRef,
+  shallowReactive,
   useAttrs,
   useSlots,
   useTemplateRef,
@@ -114,13 +114,16 @@ const modelValueForRoot = computed<string | Color | undefined>(() => {
 // Option A of the empty-value decision: React Aria's ColorField can be empty (`null`), Reka's always holds a colour
 // (`#000000`). While "empty" the input text is blanked (see colorFieldBridge.ts); Reka and the form keep `#000000`.
 // `isFilledByCommit` covers the gap between a commit and the parent re-rendering with the new `modelValue`.
-const isUncontrolledEmpty = ref(props.defaultValue == null)
-const isFilledByCommit = ref(false)
+const emptiness = shallowReactive({
+  isUncontrolledEmpty: props.defaultValue == null,
+  isFilledByCommit: false,
+})
+
 const empty = computed(() => {
-  if (isFilledByCommit.value) return false
+  if (emptiness.isFilledByCommit) return false
   if (hasOwnModel.value) return props.modelValue === null
 
-  return !pickerCtx && isUncontrolledEmpty.value
+  return !pickerCtx && emptiness.isUncontrolledEmpty
 })
 
 // Reka only updates on commit (blur / Enter / stepper / page jump / wheel), like RAC's ColorField; tracked locally
@@ -148,7 +151,7 @@ const { validation, commitValidation } = useFieldValidation({
   root: () => root.value,
   onReset: () => {
     if (props.defaultValue == null && !pickerCtx) {
-      isUncontrolledEmpty.value = true
+      emptiness.isUncontrolledEmpty = true
       formColor.value = null
       emit('update:modelValue', null)
 
@@ -166,11 +169,11 @@ const invalid = computed(() => validation.value.isInvalid)
 
 const onUpdateColor = (color: Color) => {
   if (empty.value) {
-    isFilledByCommit.value = true
-    isUncontrolledEmpty.value = false
+    emptiness.isFilledByCommit = true
+    emptiness.isUncontrolledEmpty = false
 
     nextTick(() => {
-      isFilledByCommit.value = false
+      emptiness.isFilledByCommit = false
     })
   }
 
@@ -183,7 +186,7 @@ const onUpdateColor = (color: Color) => {
 const onClear = () => {
   if (pickerCtx && !hasOwnModel.value) return
 
-  isUncontrolledEmpty.value = true
+  emptiness.isUncontrolledEmpty = true
   formColor.value = null
   emit('update:modelValue', null)
   commitValidation()
@@ -242,13 +245,12 @@ const { id, describedBy, FieldLabel, FieldDescription, FieldError } = useFieldCh
   hideDescriptionWhenInvalid: true,
 })
 
-// `slots` isn't reactive and the root no longer re-renders with this component, so mirror slot swaps into refs
-const hasPrefix = shallowRef(!!slots.prefix)
-const hasSuffix = shallowRef(!!slots.suffix)
+// `slots` isn't reactive and the root no longer re-renders with this component, so mirror slot swaps into state
+const slotPresence = shallowReactive({ hasPrefix: !!slots.prefix, hasSuffix: !!slots.suffix })
 
 onBeforeUpdate(() => {
-  hasPrefix.value = !!slots.prefix
-  hasSuffix.value = !!slots.suffix
+  slotPresence.hasPrefix = !!slots.prefix
+  slotPresence.hasSuffix = !!slots.suffix
 })
 
 const ui = useComponentUI('colorField', {
@@ -261,12 +263,13 @@ const ui = useComponentUI('colorField', {
 })
 
 // RAC Group's `data-focus-within` / `data-focus-visible`
-const isFocusWithin = ref(false)
-const isFocusVisible = ref(false)
+const focusState = shallowReactive({ isFocusWithin: false, isFocusVisible: false })
 
 const onFocusIn = (event: FocusEvent) => {
-  isFocusWithin.value = true
-  isFocusVisible.value = event.target instanceof Element && event.target.matches(':focus-visible')
+  focusState.isFocusWithin = true
+
+  focusState.isFocusVisible =
+    event.target instanceof Element && event.target.matches(':focus-visible')
 }
 
 const onFocusOut = (event: FocusEvent) => {
@@ -277,7 +280,7 @@ const onFocusOut = (event: FocusEvent) => {
 
   if (isFocusStayingInside) return
 
-  isFocusWithin.value = false
-  isFocusVisible.value = false
+  focusState.isFocusWithin = false
+  focusState.isFocusVisible = false
 }
 </script>

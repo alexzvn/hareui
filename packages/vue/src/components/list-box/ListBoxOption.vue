@@ -12,21 +12,21 @@
     :aria-describedby="isRich ? descriptionId : undefined"
     :data-selected="selected ? 'true' : undefined"
     :data-selection-mode="selectable ? selectionMode : undefined"
-    :data-hovered="isHovered ? 'true' : undefined"
-    :data-pressed="isPressed ? 'true' : undefined"
+    :data-hovered="interaction.isHovered ? 'true' : undefined"
+    :data-pressed="interaction.isPressed ? 'true' : undefined"
     :data-focused="isFocused ? 'true' : undefined"
     :data-focus-visible="isFocusVisible ? 'true' : undefined"
     :class="classes.item({ variant: item.variant, override: item.class })"
     @select="onSelect"
-    @pointerenter="isHovered = $event.pointerType === 'mouse'"
+    @pointerenter="interaction.isHovered = $event.pointerType === 'mouse'"
     @pointerleave="onPointerleave"
-    @pointerdown="isPressed = true"
+    @pointerdown="interaction.isPressed = true"
     @pointermove="onPointermove"
     @mousedown="onMousedown"
-    @pointerup="isPressed = false"
-    @pointercancel="isPressed = false"
+    @pointerup="interaction.isPressed = false"
+    @pointercancel="interaction.isPressed = false"
     @focus="onFocus"
-    @blur="isDomFocused = false"
+    @blur="interaction.isDomFocused = false"
   >
     <slot name="item" v-bind="state">
       <slot name="item-leading" v-bind="state" />
@@ -80,7 +80,7 @@
 import { injectListboxRootContext, ListboxItem } from 'reka-ui'
 // Internal: one ListBox item. Not exported.
 import type { Component } from 'vue'
-import { computed, inject, onMounted, onUpdated, ref, useId, useTemplateRef } from 'vue'
+import { computed, inject, onMounted, onUpdated, shallowReactive, useId, useTemplateRef } from 'vue'
 
 import Description from '@/components/description/Description.vue'
 import Label from '@/components/label/Label.vue'
@@ -121,9 +121,7 @@ const emit = defineEmits<{
 const slots = defineSlots<Omit<ListBoxSlots, 'section-label' | 'empty'>>()
 
 // RAC interaction states that Reka doesn't expose
-const isHovered = ref(false)
-const isPressed = ref(false)
-const isDomFocused = ref(false)
+const interaction = shallowReactive({ isHovered: false, isPressed: false, isDomFocused: false })
 
 // RAC interaction modality: DOM focus is focus-visible only after keyboard use (Reka focuses options on open and hover)
 const keyboardModality = inject(keyboardModalityKey, null)
@@ -142,7 +140,7 @@ onMounted(dropSelectedState)
 onUpdated(dropSelectedState)
 
 const onFocus = () => {
-  isDomFocused.value = true
+  interaction.isDomFocused = true
 
   // DOM focus is the keyboard cursor (RAC focusedKey): a mouse press or `focus()` must move Reka's highlight too
   const el = option.value?.$el
@@ -151,8 +149,8 @@ const onFocus = () => {
 }
 
 const onPointerleave = () => {
-  isHovered.value = false
-  isPressed.value = false
+  interaction.isHovered = false
+  interaction.isPressed = false
 }
 
 const onPointermove = (event: PointerEvent) => {
@@ -179,12 +177,14 @@ const isHighlighted = computed(() =>
     : !!listbox && !!option.value && listbox.highlightedElement.value === option.value.$el,
 )
 
-const isFocused = computed(() => (props.virtualFocus ? isHighlighted.value : isDomFocused.value))
+const isFocused = computed(() =>
+  props.virtualFocus ? isHighlighted.value : interaction.isDomFocused,
+)
 
 const isFocusVisible = computed(() =>
   props.virtualFocus
     ? isHighlighted.value && props.virtualFocus.keyboard
-    : isDomFocused.value && !!keyboardModality?.value,
+    : interaction.isDomFocused && !!keyboardModality?.value,
 )
 
 // RAC useOption: a rich item is named by its label and described by its description

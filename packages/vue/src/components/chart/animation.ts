@@ -1,6 +1,6 @@
 import { defu } from 'defu'
 import type { ComputedRef, Ref, WatchSource } from 'vue'
-import { computed, onScopeDispose, ref, shallowRef, watch } from 'vue'
+import { computed, onScopeDispose, shallowReactive, toRefs, watch } from 'vue'
 
 /** CSS timing function a chart series animates with. */
 export type ChartEasing = 'ease' | 'ease-in' | 'ease-out' | 'ease-in-out' | 'linear'
@@ -130,9 +130,8 @@ export const useChartTween = <T>({
   key,
   animation,
 }: ChartTweenOptions<T>): ChartTween<T> => {
-  const progress = ref(1)
-  const isEntering = ref(false)
-  const from = shallowRef<T | null>(null)
+  // `from` is the geometry the running animation starts from (`null` on mount); kept unproxied like the drawn frames
+  const tween = shallowReactive({ progress: 1, isEntering: false, from: null as T | null })
   let frame = 0
   let timer: ReturnType<typeof setTimeout> | undefined
 
@@ -142,7 +141,7 @@ export const useChartTween = <T>({
 
   const value = computed(() => {
     const to = target()
-    drawn = progress.value >= 1 ? to : interpolate({ from: from.value, to, t: progress.value })
+    drawn = tween.progress >= 1 ? to : interpolate({ from: tween.from, to, t: tween.progress })
 
     return drawn
   })
@@ -167,21 +166,21 @@ export const useChartTween = <T>({
       typeof requestAnimationFrame === 'undefined' ||
       prefersReducedMotion()
     ) {
-      isEntering.value = false
-      progress.value = 1
+      tween.isEntering = false
+      tween.progress = 1
 
       return
     }
 
-    from.value = snapshot
-    isEntering.value = initial
-    progress.value = 0
+    tween.from = snapshot
+    tween.isEntering = initial
+    tween.progress = 0
     const ease = easings[easing] ?? easings.ease
     const run = () => {
       const startTime = performance.now()
       const tick = (now: number) => {
         const elapsed = Math.min((now - startTime) / duration, 1)
-        progress.value = ease(elapsed)
+        tween.progress = ease(elapsed)
 
         if (elapsed < 1) {
           frame = requestAnimationFrame(tick)
@@ -190,7 +189,7 @@ export const useChartTween = <T>({
         }
 
         frame = 0
-        isEntering.value = false
+        tween.isEntering = false
       }
 
       frame = requestAnimationFrame(tick)
@@ -208,6 +207,8 @@ export const useChartTween = <T>({
   start(true)
   watch(key, () => start(false))
   onScopeDispose(stop)
+
+  const { progress, isEntering } = toRefs(tween)
 
   return { value, progress, isEntering }
 }

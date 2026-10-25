@@ -39,9 +39,9 @@
           ref="options"
           data-slot="list-box-item"
           role="option"
-          :aria-selected="item.id === active"
-          :data-selected="item.id === active ? 'true' : undefined"
-          :tabindex="item.id === active ? 0 : -1"
+          :aria-selected="item.id === appearance.theme"
+          :data-selected="item.id === appearance.theme ? 'true' : undefined"
+          :tabindex="item.id === appearance.theme ? 0 : -1"
           class="group relative flex min-h-9 w-10 flex-col items-center justify-center gap-1.5 rounded-2xl p-0 outline-none no-highlight cursor-(--cursor-interactive) transition-[transform,box-shadow] duration-250 ease-out-quart motion-reduce:transition-none focus-visible:status-focused active:scale-[0.98]"
           @click="setStoredDesignTheme(item.id)"
           @keydown="onOptionKeydown($event, index)"
@@ -67,7 +67,7 @@
           </div>
           <Switch
             aria-label="Vibrant palette"
-            :model-value="isVibrant"
+            :model-value="appearance.isVibrant"
             @update:model-value="setStoredVibrantPalette(!!$event)"
           />
         </div>
@@ -93,7 +93,7 @@
 import { Button, Description, Label, Popover, Switch } from '@hareui/vue'
 import { Icon } from '@iconify/vue'
 // Port of HeroUI docs `components/design-theme-selector.tsx`.
-import { computed, onBeforeUnmount, onMounted, ref } from 'vue'
+import { computed, onBeforeUnmount, onMounted, ref, shallowReactive } from 'vue'
 
 import airbnb from '../assets/themes/airbnb.png'
 import black from '../assets/themes/black.png'
@@ -132,13 +132,13 @@ const THEMES: { id: DesignThemeId; label: string; image: string }[] = [
   { id: 'kumo', image: kumo, label: 'Kumo' },
 ]
 
-const active = ref<DesignThemeId>('default')
-const isVibrant = ref(false)
+// The stored design theme and palette, mirrored on mount and on every change
+const appearance = shallowReactive({ theme: 'default' as DesignThemeId, isVibrant: false })
 const isMounted = ref(false)
 
 const syncAppearance = () => {
-  active.value = getStoredDesignTheme()
-  isVibrant.value = getStoredVibrantPalette()
+  appearance.theme = getStoredDesignTheme()
+  appearance.isVibrant = getStoredVibrantPalette()
 }
 
 onMounted(() => {
@@ -149,12 +149,14 @@ onMounted(() => {
 
 onBeforeUnmount(() => window.removeEventListener(DESIGN_THEME_CHANGE_EVENT, syncAppearance))
 
-const current = computed(() => THEMES.find((t) => t.id === active.value))
-const showAvatar = computed(() => isMounted.value && active.value !== 'default' && !!current.value)
+const current = computed(() => THEMES.find((t) => t.id === appearance.theme))
+const showAvatar = computed(
+  () => isMounted.value && appearance.theme !== 'default' && !!current.value,
+)
 
 // HeroUI links to its own /themes builder; HareUI ports it, so link to ours.
 const themeBuilderHref = computed(() => {
-  const values = DESIGN_THEME_VALUES[active.value]
+  const values = DESIGN_THEME_VALUES[appearance.theme]
   const params = new URLSearchParams({
     lightness: String(values.lightness),
     chroma: String(values.chroma),

@@ -7,8 +7,8 @@
     :data-invalid="invalid ? 'true' : undefined"
     :data-required="required ? 'true' : undefined"
     :data-readonly="readonly ? 'true' : undefined"
-    :data-focus-within="isFocusWithin ? 'true' : undefined"
-    :data-focus-visible="isFocusVisible ? 'true' : undefined"
+    :data-focus-within="focusState.isFocusWithin ? 'true' : undefined"
+    :data-focus-visible="focusState.isFocusVisible ? 'true' : undefined"
     :class="ui.base()"
     @focusin="onFocusIn"
     @focusout="onFocusOut"
@@ -22,8 +22,8 @@
         disabled,
         required,
         readonly,
-        focusWithin: isFocusWithin,
-        focusVisible: isFocusVisible,
+        focusWithin: focusState.isFocusWithin,
+        focusVisible: focusState.isFocusVisible,
       }"
     >
       <Input :placeholder="placeholder" />
@@ -34,7 +34,16 @@
 </template>
 
 <script setup lang="ts">
-import { computed, provide, ref, toRef, useAttrs, useTemplateRef, watch } from 'vue'
+import {
+  computed,
+  provide,
+  ref,
+  shallowReactive,
+  toRef,
+  useAttrs,
+  useTemplateRef,
+  watch,
+} from 'vue'
 
 import { useFieldsetDisabled } from '@/components/fieldset/context'
 import Input from '@/components/input/Input.vue'
@@ -94,11 +103,12 @@ const { validation } = useFieldValidation({
 const invalid = computed(() => validation.value.isInvalid)
 const disabled = useFieldsetDisabled(() => props.disabled)
 
-const isFocusWithin = ref(false)
-const isFocusVisible = ref(false)
+const focusState = shallowReactive({ isFocusWithin: false, isFocusVisible: false })
 const onFocusIn = (event: FocusEvent) => {
-  isFocusWithin.value = true
-  isFocusVisible.value = event.target instanceof Element && event.target.matches(':focus-visible')
+  focusState.isFocusWithin = true
+
+  focusState.isFocusVisible =
+    event.target instanceof Element && event.target.matches(':focus-visible')
 }
 
 const onFocusOut = (event: FocusEvent) => {
@@ -109,8 +119,8 @@ const onFocusOut = (event: FocusEvent) => {
   )
     return
 
-  isFocusWithin.value = false
-  isFocusVisible.value = false
+  focusState.isFocusWithin = false
+  focusState.isFocusVisible = false
 }
 
 const { id, describedBy, FieldLabel, FieldDescription, FieldError } = useFieldChrome({

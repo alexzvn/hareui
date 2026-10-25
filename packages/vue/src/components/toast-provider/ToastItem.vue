@@ -99,6 +99,7 @@ import {
   onMounted,
   onUpdated,
   ref,
+  shallowReactive,
   useId,
   useTemplateRef,
   watch,
@@ -156,24 +157,23 @@ const hasDescription = computed(
 
 // A #toast slot renders its own title / description: reference the ids handed to it only once an element carries
 // them (as RAC's useSlotId does), so the toast never points at a missing element.
-const hasSlotTitle = ref(false)
-const hasSlotDescription = ref(false)
+const renderedParts = shallowReactive({ hasTitle: false, hasDescription: false })
 const syncSlotIds = () => {
   const el = rootEl.value
   if (!el || !props.toastSlot) return
-  hasSlotTitle.value = !!el.querySelector(`[id="${titleId}"]`)
-  hasSlotDescription.value = !!el.querySelector(`[id="${descId}"]`)
+  renderedParts.hasTitle = !!el.querySelector(`[id="${titleId}"]`)
+  renderedParts.hasDescription = !!el.querySelector(`[id="${descId}"]`)
 }
 
 onMounted(syncSlotIds)
 onUpdated(syncSlotIds)
 
 const labelledBy = computed(() =>
-  (props.toastSlot ? hasSlotTitle.value : hasTitle.value) ? titleId : undefined,
+  (props.toastSlot ? renderedParts.hasTitle : hasTitle.value) ? titleId : undefined,
 )
 
 const describedBy = computed(() =>
-  (props.toastSlot ? hasSlotDescription.value : hasDescription.value) ? descId : undefined,
+  (props.toastSlot ? renderedParts.hasDescription : hasDescription.value) ? descId : undefined,
 )
 
 // React Aria's `contentProps`: the content is the live `role="alert"` region. It starts aria-hidden and is revealed

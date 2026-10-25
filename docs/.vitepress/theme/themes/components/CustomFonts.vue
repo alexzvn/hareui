@@ -18,10 +18,14 @@
       description="Supports G Fonts, Fontsource and Fontshare"
       :invalid="showError"
       :error-message="errorMessage ?? undefined"
-      :model-value="cdnUrl"
+      :model-value="importForm.cdnUrl"
       @update:model-value="onCdnUrlChange"
     >
-      <InputGroup variant="secondary" placeholder="Paste font URL..." @focusout="hasBlurred = true">
+      <InputGroup
+        variant="secondary"
+        placeholder="Paste font URL..."
+        @focusout="importForm.hasBlurred = true"
+      >
         <template #prefix>
           <Icon icon="gravity-ui:globe" class="size-4 text-muted" />
         </template>
@@ -29,12 +33,12 @@
     </TextField>
     <Button
       class="w-full"
-      :disabled="!cdnUrl.trim() || validationError !== null || isImporting"
+      :disabled="!importForm.cdnUrl.trim() || validationError !== null || importForm.isImporting"
       size="sm"
       variant="secondary"
       @click="onImport"
     >
-      {{ isImporting ? 'Importing...' : 'Import font' }}
+      {{ importForm.isImporting ? 'Importing...' : 'Import font' }}
     </Button>
   </div>
 </template>
@@ -43,7 +47,7 @@
 import { Button, InputGroup, Link, TextField } from '@hareui/vue'
 // Port of HeroUI docs `themes/components/custom-fonts.tsx`.
 import { Icon } from '@iconify/vue'
-import { computed, ref } from 'vue'
+import { computed, shallowReactive } from 'vue'
 
 import { useCustomFonts } from '../composables/customFonts'
 import { useVariableSetter } from '../composables/variables'
@@ -51,22 +55,25 @@ import { extractFontFamilyFromUrl, isValidFontCdnUrl } from '../utils/font-utils
 
 const emit = defineEmits<{ goToSuggested: [] }>()
 
-const cdnUrl = ref('')
-const hasBlurred = ref(false)
-const importError = ref<string | null>(null)
-const isImporting = ref(false)
+const importForm = shallowReactive({
+  cdnUrl: '',
+  hasBlurred: false,
+  importError: null as string | null,
+  isImporting: false,
+})
+
 const { addCustomFont } = useCustomFonts()
 const { setVariable } = useVariableSetter()
 
 const validationError = computed<string | null>(() => {
-  if (!cdnUrl.value.trim()) return null
+  if (!importForm.cdnUrl.trim()) return null
 
   try {
-    const parsedUrl = new URL(cdnUrl.value)
+    const parsedUrl = new URL(importForm.cdnUrl)
 
     if (parsedUrl.protocol !== 'https:') return 'URL must use https protocol'
 
-    if (!isValidFontCdnUrl(cdnUrl.value))
+    if (!isValidFontCdnUrl(importForm.cdnUrl))
       return 'URL must be from a supported CDN (Google Fonts, Fontsource, Bunny Fonts, etc.)'
 
     return null
@@ -75,33 +82,33 @@ const validationError = computed<string | null>(() => {
   }
 })
 
-const showValidationError = computed(() => hasBlurred.value && validationError.value !== null)
-const showError = computed(() => showValidationError.value || importError.value !== null)
-const errorMessage = computed(() => importError.value ?? validationError.value)
+const showValidationError = computed(() => importForm.hasBlurred && validationError.value !== null)
+const showError = computed(() => showValidationError.value || importForm.importError !== null)
+const errorMessage = computed(() => importForm.importError ?? validationError.value)
 
 const onCdnUrlChange = (value: string | number | undefined) => {
-  cdnUrl.value = String(value ?? '')
-  importError.value = null
+  importForm.cdnUrl = String(value ?? '')
+  importForm.importError = null
 }
 
 const onImport = () => {
   if (validationError.value) return
 
-  isImporting.value = true
-  importError.value = null
+  importForm.isImporting = true
+  importForm.importError = null
 
   // Validate that we can extract a font family from the URL
-  const fontFamily = extractFontFamilyFromUrl(cdnUrl.value)
+  const fontFamily = extractFontFamilyFromUrl(importForm.cdnUrl)
 
   if (!fontFamily) {
-    importError.value = 'Could not detect font family from URL. Please check the URL format.'
-    isImporting.value = false
+    importForm.importError = 'Could not detect font family from URL. Please check the URL format.'
+    importForm.isImporting = false
 
     return
   }
 
   // Add to localStorage for the font picker list
-  const result = addCustomFont(cdnUrl.value)
+  const result = addCustomFont(importForm.cdnUrl)
 
   if ('error' in result) {
     const message =
@@ -109,17 +116,17 @@ const onImport = () => {
         ? 'This font is already imported as "{name}"'.replace('{name}', result.label)
         : 'Could not detect font family from URL. Please ensure the URL is a valid font stylesheet.'
 
-    importError.value = message
-    isImporting.value = false
+    importForm.importError = message
+    importForm.isImporting = false
 
     return
   }
 
   // Store the URL directly in the query params (makes it shareable!)
-  setVariable('fontFamily', cdnUrl.value)
-  cdnUrl.value = ''
-  hasBlurred.value = false
-  isImporting.value = false
+  setVariable('fontFamily', importForm.cdnUrl)
+  importForm.cdnUrl = ''
+  importForm.hasBlurred = false
+  importForm.isImporting = false
   emit('goToSuggested')
 }
 </script>

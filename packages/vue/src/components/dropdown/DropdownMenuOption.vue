@@ -7,17 +7,17 @@
     data-slot="menu-item"
     :data-selected="state.selected ? 'true' : undefined"
     :data-has-submenu="submenu ? 'true' : undefined"
-    :data-hovered="isHovered ? 'true' : undefined"
-    :data-pressed="isPressed ? 'true' : undefined"
-    :data-focused="isFocused ? 'true' : undefined"
-    :data-focus-visible="isFocusVisible ? 'true' : undefined"
+    :data-hovered="interaction.isHovered ? 'true' : undefined"
+    :data-pressed="interaction.isPressed ? 'true' : undefined"
+    :data-focused="interaction.isFocused ? 'true' : undefined"
+    :data-focus-visible="interaction.isFocusVisible ? 'true' : undefined"
     :class="classes.item!({ variant: item.variant, override: item.class })"
     @select="onSelect"
-    @pointerenter="isHovered = $event.pointerType === 'mouse'"
+    @pointerenter="interaction.isHovered = $event.pointerType === 'mouse'"
     @pointerleave="onPointerleave"
-    @pointerdown="isPressed = true"
-    @pointerup="isPressed = false"
-    @pointercancel="isPressed = false"
+    @pointerdown="interaction.isPressed = true"
+    @pointerup="interaction.isPressed = false"
+    @pointercancel="interaction.isPressed = false"
     @focus="onFocus"
     @blur="onBlur"
   >
@@ -123,7 +123,7 @@
 
 <script setup lang="ts">
 import { DropdownMenuCheckboxItem, DropdownMenuItem, DropdownMenuSubTrigger, useId } from 'reka-ui'
-import { computed, h, inject, ref, renderSlot } from 'vue'
+import { computed, h, inject, renderSlot, shallowReactive } from 'vue'
 
 import Kbd from '@/components/kbd/Kbd.vue'
 
@@ -149,10 +149,12 @@ const onLabelMousedown = (event: MouseEvent) => {
 }
 
 // RAC interaction states that Reka doesn't expose
-const isHovered = ref(false)
-const isPressed = ref(false)
-const isFocused = ref(false)
-const isFocusVisible = ref(false)
+const interaction = shallowReactive({
+  isHovered: false,
+  isPressed: false,
+  isFocused: false,
+  isFocusVisible: false,
+})
 
 // RAC `useMenuItem`: the label names the item; description and keyboard shortcut describe it.
 const id = useId(undefined, 'hareui-dropdown-item')
@@ -193,18 +195,20 @@ const extraAttrs = computed(() => ({
 }))
 
 const onFocus = (event: FocusEvent) => {
-  isFocused.value = true
-  isFocusVisible.value = event.target instanceof Element && event.target.matches(':focus-visible')
+  interaction.isFocused = true
+
+  interaction.isFocusVisible =
+    event.target instanceof Element && event.target.matches(':focus-visible')
 }
 
 const onBlur = () => {
-  isFocused.value = false
-  isFocusVisible.value = false
+  interaction.isFocused = false
+  interaction.isFocusVisible = false
 }
 
 const onPointerleave = () => {
-  isHovered.value = false
-  isPressed.value = false
+  interaction.isHovered = false
+  interaction.isPressed = false
 }
 
 // RAC `useMenuItem`: pointer selection closes unless the selection is multiple; keyboard selection

@@ -5,6 +5,8 @@ import {
   onScopeDispose,
   onWatcherCleanup,
   ref,
+  shallowReactive,
+  toRef,
   toValue,
   watch,
 } from 'vue'
@@ -235,37 +237,40 @@ export const useResizable = ({
 
   // Read synchronously so the very first render already has the persisted size (no flash).
   const stored = persists() ? readDashboardStorage(opts.value.storage, key) : undefined
-  const size = ref(
-    stored?.size !== undefined && opts.value.resizable
-      ? clamp(stored.size)
-      : opts.value.defaultSize,
-  )
 
-  const isCollapsed = ref(opts.value.collapsible ? (stored?.collapsed ?? initialCollapsed) : false)
+  // The persisted layout: the expanded size and whether the panel is collapsed
+  const layout = shallowReactive({
+    size:
+      stored?.size !== undefined && opts.value.resizable
+        ? clamp(stored.size)
+        : opts.value.defaultSize,
+    isCollapsed: opts.value.collapsible ? (stored?.collapsed ?? initialCollapsed) : false,
+  })
+
   const isDragging = ref(false)
-  const currentSize = computed(() => (isCollapsed.value ? opts.value.collapsedSize : size.value))
+  const currentSize = computed(() => (layout.isCollapsed ? opts.value.collapsedSize : layout.size))
 
   const persist = () => {
     if (!persists()) return
 
     writeDashboardStorage(opts.value.storage, {
       key,
-      value: { size: size.value, collapsed: isCollapsed.value },
+      value: { size: layout.size, collapsed: layout.isCollapsed },
     })
   }
 
   const setCollapsed = (value: boolean) => {
-    if (!opts.value.collapsible || value === isCollapsed.value) return
-    isCollapsed.value = value
+    if (!opts.value.collapsible || value === layout.isCollapsed) return
+    layout.isCollapsed = value
     if (!isDragging.value) persist()
   }
 
   const collapse = (value?: boolean) => {
-    setCollapsed(value ?? !isCollapsed.value)
+    setCollapsed(value ?? !layout.isCollapsed)
   }
 
   const setSize = (value: number) => {
-    size.value = value
+    layout.size = value
     if (!isDragging.value) persist()
   }
 
@@ -299,7 +304,7 @@ export const useResizable = ({
     }
 
     setCollapsed(false)
-    size.value = clamp(value)
+    layout.size = clamp(value)
   }
 
   const schedule = (clientX: number) => {
@@ -453,7 +458,7 @@ export const useResizable = ({
     if (!el.value || !opts.value.resizable) return
     e.preventDefault()
     e.stopPropagation()
-    isCollapsed.value = false
+    layout.isCollapsed = false
     setSize(opts.value.defaultSize)
   }
 
@@ -489,19 +494,19 @@ export const useResizable = ({
     const step = KEYBOARD_STEP[unit] * (e.shiftKey ? 5 : 1)
 
     if (grows) {
-      if (isCollapsed.value) {
+      if (layout.isCollapsed) {
         setCollapsed(false)
 
         return
       }
 
-      setSize(clamp(size.value + step))
+      setSize(clamp(layout.size + step))
 
       return
     }
 
-    if (isCollapsed.value) return
-    const next = size.value - step
+    if (layout.isCollapsed) return
+    const next = layout.size - step
     if (collapsible && next < minSize) {
       setCollapsed(true)
 
@@ -531,7 +536,7 @@ export const useResizable = ({
 
   const handleAttrs = computed(() => ({
     tabindex: 0 as const,
-    hidden: isCollapsed.value && isZeroWidth.value,
+    hidden: layout.isCollapsed && isZeroWidth.value,
     'aria-orientation': 'vertical' as const,
     'aria-valuenow': Math.round(currentSize.value * 100) / 100,
     'aria-valuemin': opts.value.collapsible ? opts.value.collapsedSize : opts.value.minSize,
@@ -543,7 +548,7 @@ export const useResizable = ({
   return {
     size: currentSize,
     isDragging,
-    isCollapsed,
+    isCollapsed: toRef(layout, 'isCollapsed'),
     onPointerDown,
     onMouseDown,
     onTouchStart,

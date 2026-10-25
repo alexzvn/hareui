@@ -80,6 +80,7 @@ import {
   onMounted,
   onWatcherCleanup,
   ref,
+  shallowReactive,
   useAttrs,
   useSlots,
   useTemplateRef,
@@ -189,17 +190,19 @@ const charAt = (index: number) => {
 
 // `input-otp` is a single real (invisible) `<input>` overlaying decorative slot `<div>`s: typing,
 // backspace, arrow-key movement and OS-level text selection are the browser's native text-editing
-// behavior, not custom per-slot focus management. `selStart`/`selEnd` mirror the input's own selection
-// so each slot can tell whether it's the active one (or part of an active range selection).
-const isFocused = ref(false)
+// behavior, not custom per-slot focus management. `inputSelection` mirrors the input's focus and its own
+// selection so each slot can tell whether it's the active one (or part of an active range selection).
+const inputSelection = shallowReactive({
+  isFocused: false,
+  start: null as number | null,
+  end: null as number | null,
+})
 
 // The `input-otp` library's password-manager badge push (`pushPasswordManagerStrategy: 'increase-width'`, its
 // default): once focused while the box is at least 40px wide, the invisible input is widened by 40px and clipped
 // back, so a manager's badge sits outside the visible box. It stays on for the component's lifetime, as there.
 const PWM_BADGE_SPACE = 40
 const shouldPushPwmBadge = ref(false)
-const selStart = ref<number | null>(null)
-const selEnd = ref<number | null>(null)
 
 type CaretSelection = [number | null, number | null]
 
@@ -251,9 +254,9 @@ const syncSelection = () => {
     if (range) el.setSelectionRange(range.start, range.end, range.direction)
   }
 
-  selStart.value = el.selectionStart
-  selEnd.value = el.selectionEnd
-  prevSelection = [selStart.value, selEnd.value]
+  inputSelection.start = el.selectionStart
+  inputSelection.end = el.selectionEnd
+  prevSelection = [inputSelection.start, inputSelection.end]
 }
 
 // The browser fires `selectionchange` for every caret move (arrow keys, clicks, typing), as the library listens to
@@ -262,10 +265,15 @@ const onSelectionChange = () => {
 }
 
 const isActive = (index: number) => {
-  if (!isFocused.value || selStart.value === null || selEnd.value === null) return false
-  if (selStart.value === selEnd.value) return index === Math.min(selStart.value, props.length - 1)
+  if (!inputSelection.isFocused || inputSelection.start === null || inputSelection.end === null) {
+    return false
+  }
 
-  return index >= selStart.value && index < selEnd.value
+  if (inputSelection.start === inputSelection.end) {
+    return index === Math.min(inputSelection.start, props.length - 1)
+  }
+
+  return index >= inputSelection.start && index < inputSelection.end
 }
 
 const hasFakeCaret = (index: number) => {
@@ -279,7 +287,7 @@ const commit = (next: string) => {
 }
 
 const onFocus = () => {
-  isFocused.value = true
+  inputSelection.isFocused = true
   if (box.value && box.value.offsetWidth >= PWM_BADGE_SPACE) shouldPushPwmBadge.value = true
   const el = input.value
   if (el) {
@@ -292,9 +300,9 @@ const onFocus = () => {
 }
 
 const onBlur = () => {
-  isFocused.value = false
-  selStart.value = null
-  selEnd.value = null
+  inputSelection.isFocused = false
+  inputSelection.start = null
+  inputSelection.end = null
   prevSelection = [null, null]
 }
 
