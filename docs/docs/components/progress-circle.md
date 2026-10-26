@@ -68,29 +68,31 @@ Use the `class` prop for the root and the `ui` prop for the SVG and its circles:
 Override the `progressCircle` theme app-wide with `createHareUI`:
 
 ```ts
-app.use(createHareUI({
-  ui: {
-    progressCircle: {
-      slots: {
-        base: 'inline-flex',
-        track: 'size-12',
-        fillCircle: 'stroke-[purple]',
+app.use(
+  createHareUI({
+    ui: {
+      progressCircle: {
+        slots: {
+          base: 'inline-flex',
+          track: 'size-12',
+          fillCircle: 'stroke-[purple]',
+        },
       },
     },
-  },
-}))
+  }),
+)
 ```
 
 ## Styling Reference
 
 Each rendered element carries the same `data-slot` string as HeroUI, so selectors translate 1:1.
 
-| `ui` key | `data-slot` | Description |
-|---|---|---|
-| `base` | `progress-circle` | Base container |
-| `track` | `progress-circle-track` | SVG element |
+| `ui` key      | `data-slot`                    | Description       |
+| ------------- | ------------------------------ | ----------------- |
+| `base`        | `progress-circle`              | Base container    |
+| `track`       | `progress-circle-track`        | SVG element       |
 | `trackCircle` | `progress-circle-track-circle` | Background circle |
-| `fillCircle` | `progress-circle-fill-circle` | Progress arc |
+| `fillCircle`  | `progress-circle-fill-circle`  | Progress arc      |
 
 HeroUI's modifier classes correspond to props (HareUI renders utilities, not BEM classes, so
 style through `class`, `ui` or `createHareUI`):

@@ -1,8 +1,9 @@
 import type { ComputedRef, Ref } from 'vue'
 import { computed, getCurrentInstance, readonly, ref, watch } from 'vue'
-import { snapNumber } from '../utils/number'
 
-export interface NumberValueOptions {
+import { snapNumber } from '@/utils/number'
+
+export type NumberValueOptions = {
   /** The component's `defineModel<number | null>()` ref. */
   model: Ref<number | null | undefined>
   defaultValue: () => number | undefined
@@ -15,7 +16,7 @@ export interface NumberValueOptions {
   onCommit?: () => void
 }
 
-export interface NumberValue {
+export type NumberValue = {
   /** Step handed to Reka: `step`, or 0.01 for percent formats. */
   effectiveStep: ComputedRef<number | undefined>
   /** The model value, clamped and snapped; `undefined` while uncontrolled. */
@@ -37,17 +38,21 @@ export interface NumberValue {
  * the incoming value and default are clamped into range (and snapped to `step` when one is given) before display,
  * and the committed number is tracked for the form.
  */
-export function useNumberValue(options: NumberValueOptions): NumberValue {
+export const useNumberValue = (options: NumberValueOptions): NumberValue => {
   const { model, onCommit } = options
+
   // A second `defineEmits` for `update:modelValue` would clash with defineModel's emit type, so the forced emit in
   // `commitEmpty` goes through the instance.
   const instance = getCurrentInstance()
 
-  function snap<T extends number | null | undefined>(value: T): T {
-    return snapNumber(value, options.min(), options.max(), options.step())
+  const snap = <T extends number | null | undefined>(value: T): T => {
+    return snapNumber(value, { min: options.min(), max: options.max(), step: options.step() })
   }
 
-  const effectiveStep = computed(() => options.step() ?? (options.formatOptions()?.style === 'percent' ? 0.01 : undefined))
+  const effectiveStep = computed(
+    () => options.step() ?? (options.formatOptions()?.style === 'percent' ? 0.01 : undefined),
+  )
+
   const displayValue = computed(() => snap(model.value))
   const defaultDisplayValue = computed(() => snap(options.defaultValue()))
 
@@ -59,7 +64,7 @@ export function useNumberValue(options: NumberValueOptions): NumberValue {
     formValue.value = value
   })
 
-  function commit(value: number | undefined) {
+  const commit = (value: number | undefined) => {
     formValue.value = value
     model.value = value
     onCommit?.()
@@ -68,21 +73,35 @@ export function useNumberValue(options: NumberValueOptions): NumberValue {
   // RAC commits an emptied input as "no value" (`onChange(NaN)`, an empty form value). Reka's applyInputValue
   // clears its own state but, in uncontrolled mode, never emits `undefined` (its passive v-model only emits values
   // that differ from the absent prop), so commit the empty value here.
-  function commitEmpty() {
-    if (formValue.value == null)
-      return
-    formValue.value = undefined
-    if (model.value == null)
+  const clearModel = () => {
+    if (model.value == null) {
       instance?.emit('update:modelValue', undefined)
-    else
-      model.value = undefined
+
+      return
+    }
+
+    model.value = undefined
+  }
+
+  const commitEmpty = () => {
+    if (formValue.value == null) return
+    formValue.value = undefined
+    clearModel()
     onCommit?.()
   }
 
-  function reset() {
+  const reset = () => {
     formValue.value = defaultDisplayValue.value
     model.value = formValue.value
   }
 
-  return { effectiveStep, displayValue, defaultDisplayValue, formValue: readonly(formValue), commit, commitEmpty, reset }
+  return {
+    effectiveStep,
+    displayValue,
+    defaultDisplayValue,
+    formValue: readonly(formValue),
+    commit,
+    commitEmpty,
+    reset,
+  }
 }

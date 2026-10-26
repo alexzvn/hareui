@@ -54,14 +54,19 @@ Each series takes `name`, `color`, `hide`, `tooltip`, `valueFormatter`, `yAxis`,
 
 ## Axes and Formatting
 
-`x-axis`, `y-axis` and `grid` take `false` to hide the part, or an object of `ChartXAxis`, `ChartYAxis` and `ChartGrid` props. The y axis fits its widest label. A series with `yAxis: 'right'` draws against a second y axis on the right; set its props with `y-axis-right`.
+`x-axis` and `grid` take `false` to hide the part, or an object of `ChartXAxis` and `ChartGrid` props. `y-axis` takes `{ left, right }`, each `false` or an object of `ChartYAxis` props. The y axis fits its widest label. A series with `yAxis: 'right'` draws against a second y axis on the right; set its props with `y-axis.right`.
 
 - `value-formatter` formats values in the tooltip and on the y axis. It receives the series key (`''` on the axis).
 - `index-formatter` formats the categories on the x axis and in the tooltip header.
 - A series' `valueFormatter` formats that series in the tooltip only.
 
 ```vue
-<LineChart :data="data" index="month" :value-formatter="value => `${value}°C`" :y-axis="{ domain: [0, 30] }" />
+<LineChart
+  :data="data"
+  index="month"
+  :value-formatter="(value) => `${value}°C`"
+  :y-axis="{ left: { domain: [0, 30] } }"
+/>
 ```
 
 ## Tooltip
@@ -106,13 +111,13 @@ Without axes, the chart fills its container. Give the container a width and set 
 
 ### Stat Cards
 
-Put stat cards above a chart card. The series' `valueFormatter` adds the unit in the tooltip, and the y axis `tickFormatter` shortens the labels.
+Put stat cards above a chart card. The series' `valueFormatter` adds the unit in the tooltip, and the y axis `tick.formatter` shortens the labels.
 
 <ComponentPreview name="line-chart/stat-cards" />
 
 ### Linear
 
-Set `curve="linear"` for straight segments between points. `ticks` in `y-axis` picks the exact grid lines to show.
+Set `curve="linear"` for straight segments between points. `ticks` in `y-axis.left` picks the exact grid lines to show.
 
 <ComponentPreview name="line-chart/linear" />
 
@@ -145,15 +150,17 @@ Use `class` for the container and `ui` for the drawn parts. Series colors come f
 Override the `lineChart` theme app-wide with `createHareUI`:
 
 ```ts
-app.use(createHareUI({
-  ui: {
-    lineChart: {
-      slots: {
-        tick: 'text-xs',
+app.use(
+  createHareUI({
+    ui: {
+      lineChart: {
+        slots: {
+          tick: 'text-xs',
+        },
       },
     },
-  },
-}))
+  }),
+)
 ```
 
 ## Composition
@@ -174,25 +181,25 @@ Without `index` or `series`, the chart draws only the parts you put in its defau
 
 Parts always draw in the same order (grid, series, axes, cursor), so template order doesn't matter. With `index` or `series` set, parts in the default slot draw next to the generated ones: turn a generated part off (for example `:x-axis="false"`) before adding your own. Hand-placed parts still read the root's `index` and `series`, so `<ChartXAxis />` picks up the categories and `<ChartLine data-key="oslo" />` its name and color. The [AreaChart page](./area-chart#composition) has a full example built from parts.
 
-| `ui` key | `data-slot` | Element | Description |
-|---|---|---|---|
-| `base` | `line-chart` | `<div>` | Responsive container |
-| `surface` | `chart-surface` | `<svg>` | Drawing surface, layered grid → series → axes → cursor |
-| `overlay` | `chart-overlay` | `<div>` | Layer over the svg that holds the tooltip |
-| `grid` | `chart-grid` | `<g>` | Grid lines (`chart-grid-line`) |
-| `axis` | `chart-x-axis`, `chart-y-axis` | `<g>` | One group per axis |
-| `axisLine` | `chart-axis-line` | `<line>` | Axis line, hidden by default |
-| `tickLine` | `chart-tick-line` | `<line>` | Tick marks, hidden by default |
-| `tick` | `chart-tick` | `<text>` | Axis labels |
-| `series` | `chart-line` | `<g>` | One group per series |
-| — | `chart-line-curve` | `<path>` | One path per `ChartLine` |
-| — | `chart-dots` | `<g>` | Group of point markers per series |
-| `dot` | `chart-dot` | `<circle>` | Point markers |
-| `activeDot` | `chart-active-dot` | `<circle>` | Marker at the hovered point |
-| `cursor` | `chart-cursor` | `<path>` | Hover cursor |
-| `tooltip` | `chart-tooltip-wrapper` | `<div>` | Floating wrapper around the tooltip panel |
-| `label` | `chart-label` | `<text>` | `ChartLabel` text |
-| `legend` | `chart-legend` | `<ul>` | Legend drawn from the `legend` prop |
+| `ui` key    | `data-slot`                    | Element    | Description                                            |
+| ----------- | ------------------------------ | ---------- | ------------------------------------------------------ |
+| `base`      | `line-chart`                   | `<div>`    | Responsive container                                   |
+| `surface`   | `chart-surface`                | `<svg>`    | Drawing surface, layered grid → series → axes → cursor |
+| `overlay`   | `chart-overlay`                | `<div>`    | Layer over the svg that holds the tooltip              |
+| `grid`      | `chart-grid`                   | `<g>`      | Grid lines (`chart-grid-line`)                         |
+| `axis`      | `chart-x-axis`, `chart-y-axis` | `<g>`      | One group per axis                                     |
+| `axisLine`  | `chart-axis-line`              | `<line>`   | Axis line, hidden by default                           |
+| `tickLine`  | `chart-tick-line`              | `<line>`   | Tick marks, hidden by default                          |
+| `tick`      | `chart-tick`                   | `<text>`   | Axis labels                                            |
+| `series`    | `chart-line`                   | `<g>`      | One group per series                                   |
+| —           | `chart-line-curve`             | `<path>`   | One path per `ChartLine`                               |
+| —           | `chart-dots`                   | `<g>`      | Group of point markers per series                      |
+| `dot`       | `chart-dot`                    | `<circle>` | Point markers                                          |
+| `activeDot` | `chart-active-dot`             | `<circle>` | Marker at the hovered point                            |
+| `cursor`    | `chart-cursor`                 | `<path>`   | Hover cursor                                           |
+| `tooltip`   | `chart-tooltip-wrapper`        | `<div>`    | Floating wrapper around the tooltip panel              |
+| `label`     | `chart-label`                  | `<text>`   | `ChartLabel` text                                      |
+| `legend`    | `chart-legend`                 | `<ul>`     | Legend drawn from the `legend` prop                    |
 
 ## Styling Reference
 

@@ -1,4 +1,5 @@
 export { default as NavigationMenu } from './NavigationMenu.vue'
+
 export type {
   NavigationMenuChildItem,
   NavigationMenuContentOptions,
@@ -8,4 +9,4 @@ export type {
   NavigationMenuPopoverProps,
   NavigationMenuProps,
   NavigationMenuSlots,
-} from './NavigationMenu.vue'
+} from './NavigationMenu.types'

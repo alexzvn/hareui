@@ -28,32 +28,45 @@ button, not the outer cell.
 ```vue
 <template>
   <RangeCalendar aria-label="Trip dates">
-    <template #navIcon="{ direction }" />                                  <!-- replaces both chevrons -->
-    <template #cell="{ date, today, selected, disabled, unavailable, outsideView, selectionStart, selectionEnd }" /> <!-- replaces formatted day -->
+    <template #navIcon="{ direction }" />
+    <!-- replaces both chevrons -->
+    <template
+      #cell="{
+        date,
+        today,
+        selected,
+        disabled,
+        unavailable,
+        outsideView,
+        selectionStart,
+        selectionEnd,
+      }"
+    />
+    <!-- replaces formatted day -->
   </RangeCalendar>
 </template>
 ```
 
-| `ui` key | `data-slot` | Element |
-|---|---|---|
-| `base` | `range-calendar` | root element |
-| `header` | `range-calendar-header` | row containing the heading/year-picker trigger and nav buttons |
-| `heading` | `calendar-heading` | formatted month/year label (hidden when `year-picker`) |
-| `navButton` | `range-calendar-nav-button` | previous/next button |
-| `navButtonIcon` | `calendar-nav-button-icon` | default chevron inside a nav button |
-| `grid` | `range-calendar-grid` | the day grid |
-| `gridHeader` | `range-calendar-grid-header` | weekday label row wrapper |
-| `gridBody` | `range-calendar-grid-body` | week rows wrapper |
-| `gridRow` | `range-calendar-grid-row` | one week row |
-| `headerCell` | `calendar-header-cell` | weekday label cell |
-| `cell` | `range-calendar-cell` | the interactive day cell — carries all state attributes |
-| `cellButton` | `range-calendar-cell-button` | decorative inner circle (visual only, no attributes) |
-| `cellIndicator` | `calendar-cell-indicator` | dot rendered when `indicator(date)` is true |
-| `yearPickerTrigger` | `calendar-year-picker-trigger` | toggles the year grid (when `year-picker`) |
-| `yearPickerTriggerHeading` | `calendar-year-picker-trigger-heading` | heading text inside the trigger |
-| `yearPickerTriggerIndicator` | `calendar-year-picker-trigger-indicator` | chevron icon inside the trigger |
-| `yearPickerGrid` | `calendar-year-picker-grid` | overlay grid of selectable years |
-| `yearPickerYearCell` | `calendar-year-picker-year-cell` | one selectable year |
+| `ui` key                     | `data-slot`                              | Element                                                        |
+| ---------------------------- | ---------------------------------------- | -------------------------------------------------------------- |
+| `base`                       | `range-calendar`                         | root element                                                   |
+| `header`                     | `range-calendar-header`                  | row containing the heading/year-picker trigger and nav buttons |
+| `heading`                    | `calendar-heading`                       | formatted month/year label (hidden when `year-picker`)         |
+| `navButton`                  | `range-calendar-nav-button`              | previous/next button                                           |
+| `navButtonIcon`              | `calendar-nav-button-icon`               | default chevron inside a nav button                            |
+| `grid`                       | `range-calendar-grid`                    | the day grid                                                   |
+| `gridHeader`                 | `range-calendar-grid-header`             | weekday label row wrapper                                      |
+| `gridBody`                   | `range-calendar-grid-body`               | week rows wrapper                                              |
+| `gridRow`                    | `range-calendar-grid-row`                | one week row                                                   |
+| `headerCell`                 | `calendar-header-cell`                   | weekday label cell                                             |
+| `cell`                       | `range-calendar-cell`                    | the interactive day cell — carries all state attributes        |
+| `cellButton`                 | `range-calendar-cell-button`             | decorative inner circle (visual only, no attributes)           |
+| `cellIndicator`              | `calendar-cell-indicator`                | dot rendered when `indicator(date)` is true                    |
+| `yearPickerTrigger`          | `calendar-year-picker-trigger`           | toggles the year grid (when `year-picker`)                     |
+| `yearPickerTriggerHeading`   | `calendar-year-picker-trigger-heading`   | heading text inside the trigger                                |
+| `yearPickerTriggerIndicator` | `calendar-year-picker-trigger-indicator` | chevron icon inside the trigger                                |
+| `yearPickerGrid`             | `calendar-year-picker-grid`              | overlay grid of selectable years                               |
+| `yearPickerYearCell`         | `calendar-year-picker-year-cell`         | one selectable year                                            |
 
 ## Examples
 
@@ -178,16 +191,18 @@ To customize the RangeCalendar classes for the whole app, extend the `rangeCalen
 `createHareUI`:
 
 ```ts
-app.use(createHareUI({
-  ui: {
-    rangeCalendar: {
-      slots: {
-        base: 'rounded-2xl border border-border bg-surface p-3 shadow-sm',
-        cell: 'rounded-lg',
+app.use(
+  createHareUI({
+    ui: {
+      rangeCalendar: {
+        slots: {
+          base: 'rounded-2xl border border-border bg-surface p-3 shadow-sm',
+          cell: 'rounded-lg',
+        },
       },
     },
-  },
-}))
+  }),
+)
 ```
 
 ## Styling Reference

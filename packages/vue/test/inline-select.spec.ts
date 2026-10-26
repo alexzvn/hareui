@@ -1,7 +1,9 @@
 import { flushPromises, mount } from '@vue/test-utils'
 import { afterEach, describe, expect, it } from 'vitest'
 import { defineComponent, h, nextTick, ref } from 'vue'
-import InlineSelect from '../src/components/inline-select/InlineSelect.vue'
+
+import InlineSelect from '@/components/inline-select/InlineSelect.vue'
+
 import { expectAccessible } from './a11y'
 
 const items = [
@@ -10,13 +12,18 @@ const items = [
   { value: 'fr', label: 'French' },
   { value: 'ja', label: 'Japanese' },
 ]
+
 const trigger = '[data-slot=select-trigger]'
 const value = '[data-slot=select-value]'
 const flush = flushPromises
 const optionEls = () => [...document.querySelectorAll<HTMLElement>('[role=option]')]
 const focusedText = () => document.activeElement?.textContent?.trim()
-async function press(key: string) {
-  document.activeElement!.dispatchEvent(new KeyboardEvent('keydown', { key, bubbles: true, cancelable: true }))
+
+const press = async (key: string) => {
+  document.activeElement!.dispatchEvent(
+    new KeyboardEvent('keydown', { key, bubbles: true, cancelable: true }),
+  )
+
   await flush()
 }
 
@@ -26,7 +33,11 @@ afterEach(() => {
 
 describe('InlineSelect', () => {
   it('renders the default indicator and names the root inline-select', () => {
-    const wrapper = mount(InlineSelect, { props: { items, defaultValue: 'en' }, attrs: { 'aria-label': 'Language' } })
+    const wrapper = mount(InlineSelect, {
+      props: { items, defaultValue: 'en' },
+      attrs: { 'aria-label': 'Language' },
+    })
+
     expect(wrapper.attributes('data-slot')).toBe('inline-select')
     expect(wrapper.get(value).text()).toBe('English')
     const indicator = wrapper.get('[data-slot=select-indicator]')
@@ -36,7 +47,11 @@ describe('InlineSelect', () => {
   })
 
   it('names the trigger with aria-label plus the current value', () => {
-    const wrapper = mount(InlineSelect, { props: { items, defaultValue: 'en', id: 'lang' }, attrs: { 'aria-label': 'Language' } })
+    const wrapper = mount(InlineSelect, {
+      props: { items, defaultValue: 'en', id: 'lang' },
+      attrs: { 'aria-label': 'Language' },
+    })
+
     const t = wrapper.get(trigger)
     expect(t.attributes('aria-label')).toBe('Language')
     expect(t.attributes('aria-labelledby')).toBe('lang lang-value')
@@ -47,12 +62,19 @@ describe('InlineSelect', () => {
     const Host = defineComponent({
       setup() {
         const model = ref<string | null>('en')
-        return () => h('div', [
-          h(InlineSelect, { 'items': items, 'aria-label': 'Language', 'modelValue': model.value, 'onUpdate:modelValue': (v: unknown) => (model.value = v as string | null) }),
-          h('output', model.value ?? ''),
-        ])
+        return () =>
+          h('div', [
+            h(InlineSelect, {
+              items: items,
+              'aria-label': 'Language',
+              modelValue: model.value,
+              'onUpdate:modelValue': (v: unknown) => (model.value = v as string | null),
+            }),
+            h('output', model.value ?? ''),
+          ])
       },
     })
+
     const wrapper = mount(Host, { attachTo: document.body })
     await wrapper.get(trigger).trigger('click')
     await flush()
@@ -65,7 +87,11 @@ describe('InlineSelect', () => {
   })
 
   it('works uncontrolled from defaultValue', async () => {
-    const wrapper = mount(InlineSelect, { props: { items, defaultValue: 'es' }, attachTo: document.body })
+    const wrapper = mount(InlineSelect, {
+      props: { items, defaultValue: 'es' },
+      attachTo: document.body,
+    })
+
     expect(wrapper.get(value).text()).toBe('Spanish')
     await wrapper.get(trigger).trigger('click')
     await flush()
@@ -77,7 +103,11 @@ describe('InlineSelect', () => {
   })
 
   it('opens with ArrowDown on the selected option, moves with arrows, selects with Enter and refocuses the trigger', async () => {
-    const wrapper = mount(InlineSelect, { props: { items, defaultValue: 'es' }, attachTo: document.body })
+    const wrapper = mount(InlineSelect, {
+      props: { items, defaultValue: 'es' },
+      attachTo: document.body,
+    })
+
     wrapper.get<HTMLElement>(trigger).element.focus()
     await wrapper.get(trigger).trigger('keydown', { key: 'ArrowDown' })
     await flush()
@@ -96,7 +126,11 @@ describe('InlineSelect', () => {
   })
 
   it('closes with Escape without changing the selection', async () => {
-    const wrapper = mount(InlineSelect, { props: { items, defaultValue: 'en' }, attachTo: document.body })
+    const wrapper = mount(InlineSelect, {
+      props: { items, defaultValue: 'en' },
+      attachTo: document.body,
+    })
+
     wrapper.get<HTMLElement>(trigger).element.focus()
     await wrapper.get(trigger).trigger('keydown', { key: 'ArrowDown' })
     await flush()
@@ -110,7 +144,11 @@ describe('InlineSelect', () => {
   })
 
   it('keeps the popover open in multiple mode and lists the selected labels', async () => {
-    const wrapper = mount(InlineSelect, { props: { items, selectionMode: 'multiple', modelValue: ['en'] }, attachTo: document.body })
+    const wrapper = mount(InlineSelect, {
+      props: { items, selectionMode: 'multiple', modelValue: ['en'] },
+      attachTo: document.body,
+    })
+
     await wrapper.get(trigger).trigger('click')
     await flush()
     optionEls()[2]!.click()
@@ -124,14 +162,22 @@ describe('InlineSelect', () => {
   })
 
   it('aligns the popover to the bottom end by default and follows side / align', async () => {
-    const wrapper = mount(InlineSelect, { props: { items, defaultOpen: true }, attachTo: document.body })
+    const wrapper = mount(InlineSelect, {
+      props: { items, defaultOpen: true },
+      attachTo: document.body,
+    })
+
     await flush()
     const popover = () => document.querySelector<HTMLElement>('[data-slot=select-popover]')!
     expect(popover().getAttribute('data-side')).toBe('bottom')
     expect(popover().getAttribute('data-align')).toBe('end')
     wrapper.unmount()
 
-    const top = mount(InlineSelect, { props: { items, defaultOpen: true, side: 'top', align: 'start' }, attachTo: document.body })
+    const top = mount(InlineSelect, {
+      props: { items, defaultOpen: true, side: 'top', align: 'start' },
+      attachTo: document.body,
+    })
+
     await flush()
     expect(popover().getAttribute('data-side')).toBe('top')
     expect(popover().getAttribute('data-align')).toBe('start')
@@ -142,34 +188,57 @@ describe('InlineSelect', () => {
     const wrapper = mount(InlineSelect, {
       props: { items, defaultValue: 'en' },
       slots: {
-        indicator: () => h('i', { class: 'custom-indicator' }),
-        leading: () => h('span', { class: 'team-icon' }, 'N'),
+        indicator: () => h('i', { 'data-testid': 'custom-indicator' }),
+        leading: () => h('span', { 'data-testid': 'team-icon' }, 'N'),
       },
     })
+
     const indicator = wrapper.get('[data-slot=select-indicator]')
-    expect(indicator.find('.custom-indicator').exists()).toBe(true)
+    expect(indicator.find('[data-testid=custom-indicator]').exists()).toBe(true)
     expect(indicator.find('svg').exists()).toBe(false)
     const children = [...wrapper.get(trigger).element.children]
-    expect(children[0]!.classList.contains('team-icon')).toBe(true)
+    expect(children[0]!.getAttribute('data-testid')).toBe('team-icon')
     expect(children[1]!.getAttribute('data-slot')).toBe('select-value')
   })
 
-  async function openWithKeyboard(props: Record<string, unknown> = {}) {
-    const wrapper = mount(InlineSelect, { props: { items, defaultValue: 'en', id: 'lang', ...props }, attrs: { 'aria-label': 'Language' }, attachTo: document.body })
+  const openWithKeyboard = async (props: Record<string, unknown> = {}) => {
+    const wrapper = mount(InlineSelect, {
+      props: { items, defaultValue: 'en', id: 'lang', ...props },
+      attrs: { 'aria-label': 'Language' },
+      attachTo: document.body,
+    })
+
     wrapper.get<HTMLElement>(trigger).element.focus()
     await wrapper.get(trigger).trigger('keydown', { key: 'ArrowDown' })
     await flush()
     await flush()
+
     return wrapper
   }
 
   it('has no axe violations idle (aria-label or visible label), disabled, and with a custom indicator', async () => {
     const named = { 'aria-label': 'Language' }
     for (const create of [
-      () => mount(InlineSelect, { props: { items, defaultValue: 'en' }, attrs: named, attachTo: document.body }),
+      () =>
+        mount(InlineSelect, {
+          props: { items, defaultValue: 'en' },
+          attrs: named,
+          attachTo: document.body,
+        }),
       () => mount(InlineSelect, { props: { items, label: 'Language' }, attachTo: document.body }),
-      () => mount(InlineSelect, { props: { items, defaultValue: 'en', disabled: true }, attrs: named, attachTo: document.body }),
-      () => mount(InlineSelect, { props: { items }, attrs: named, slots: { indicator: () => h('svg', { 'aria-hidden': 'true' }) }, attachTo: document.body }),
+      () =>
+        mount(InlineSelect, {
+          props: { items, defaultValue: 'en', disabled: true },
+          attrs: named,
+          attachTo: document.body,
+        }),
+      () =>
+        mount(InlineSelect, {
+          props: { items },
+          attrs: named,
+          slots: { indicator: () => h('svg', { 'aria-hidden': 'true' }) },
+          attachTo: document.body,
+        }),
     ]) {
       const wrapper = create()
       await expectAccessible(wrapper)
@@ -183,7 +252,11 @@ describe('InlineSelect', () => {
     await expectAccessible()
     single.unmount()
 
-    const multiple = await openWithKeyboard({ selectionMode: 'multiple', defaultValue: ['en', 'fr'] })
+    const multiple = await openWithKeyboard({
+      selectionMode: 'multiple',
+      defaultValue: ['en', 'fr'],
+    })
+
     await expectAccessible()
     multiple.unmount()
   })
@@ -194,8 +267,18 @@ describe('InlineSelect', () => {
     expect(t.attributes('aria-haspopup')).toBe('listbox')
     expect(t.attributes('aria-expanded')).toBe('true')
     expect(document.querySelector('[role=listbox]')!.getAttribute('aria-label')).toBe('Language')
-    expect(document.querySelector('[data-slot=select-popover]')!.getAttribute('aria-labelledby')).toBe('lang')
-    expect(optionEls().map(o => o.getAttribute('aria-selected'))).toEqual(['true', 'false', 'false', 'false'])
+
+    expect(
+      document.querySelector('[data-slot=select-popover]')!.getAttribute('aria-labelledby'),
+    ).toBe('lang')
+
+    expect(optionEls().map((o) => o.getAttribute('aria-selected'))).toEqual([
+      'true',
+      'false',
+      'false',
+      'false',
+    ])
+
     wrapper.unmount()
   })
 
@@ -219,7 +302,11 @@ describe('InlineSelect', () => {
   })
 
   it('disabled trigger does not open', async () => {
-    const wrapper = mount(InlineSelect, { props: { items, disabled: true }, attachTo: document.body })
+    const wrapper = mount(InlineSelect, {
+      props: { items, disabled: true },
+      attachTo: document.body,
+    })
+
     expect(wrapper.get(trigger).attributes('disabled')).toBeDefined()
     await wrapper.get(trigger).trigger('keydown', { key: 'ArrowDown' })
     await nextTick()

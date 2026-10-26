@@ -1,9 +1,7 @@
-<script setup lang="ts">
-import { Typography } from '@hareui/vue'
-</script>
-
 <template>
-  <div class="flex max-w-md flex-col gap-2 rounded-xl border border-border/80 bg-surface-secondary p-4">
+  <div
+    class="flex max-w-md flex-col gap-2 rounded-xl border border-border/80 bg-surface-secondary p-4"
+  >
     <Typography class="text-xs font-medium tracking-wide text-accent uppercase" type="body-xs">
       Changelog
     </Typography>
@@ -15,3 +13,7 @@ import { Typography } from '@hareui/vue'
     </Typography>
   </div>
 </template>
+
+<script setup lang="ts">
+import { Typography } from '@hareui/vue'
+</script>

@@ -50,14 +50,13 @@ Import order matters. Always import `tailwindcss` first.
 HareUI components work without any setup. Install the plugin only if you want to override themes globally or set an app-wide overlay portal target with `createHareUI`:
 
 ```ts [main.ts]
-import { createApp } from 'vue'
 import { createHareUI } from '@hareui/vue'
+import { createApp } from 'vue'
+
 import App from './App.vue'
 import './style.css'
 
-createApp(App)
-  .use(createHareUI())
-  .mount('#app')
+createApp(App).use(createHareUI()).mount('#app')
 ```
 
 ### Portal Target
@@ -97,13 +96,13 @@ See [Frameworks](/docs/getting-started/frameworks#vite-plugin-optional) for the 
 ## Use Components
 
 ```vue
-<script setup lang="ts">
-import { Button } from '@hareui/vue'
-</script>
-
 <template>
   <Button>My Button</Button>
 </template>
+
+<script setup lang="ts">
+import { Button } from '@hareui/vue'
+</script>
 ```
 
 ## What's Next?

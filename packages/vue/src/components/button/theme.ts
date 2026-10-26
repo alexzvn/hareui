@@ -26,18 +26,36 @@ export default {
   },
   variants: {
     variant: {
-      primary: { base: '[--button-bg:var(--accent)] [--button-bg-hover:var(--accent-hover)] [--button-bg-pressed:var(--accent-hover)] [--button-fg:var(--accent-foreground)]' },
-      secondary: { base: '[--button-bg:var(--default)] [--button-bg-hover:var(--default-hover)] [--button-bg-pressed:var(--default-hover)] [--button-fg:var(--accent-soft-foreground)]' },
-      tertiary: { base: '[--button-bg:var(--default)] [--button-bg-hover:var(--default-hover)] [--button-bg-pressed:var(--default-hover)]' },
-      ghost: { base: '[--button-bg:transparent] [--button-bg-hover:var(--default)] [--button-bg-pressed:var(--default)] [--button-fg:var(--default-foreground)]' },
-      outline: { base: '[--button-bg:transparent] [--button-bg-hover:color-mix(in_srgb,var(--default)_60%,transparent)] [--button-bg-pressed:var(--default)] [--button-fg:var(--default-foreground)] border border-border' },
-      danger: { base: '[--button-bg:var(--danger)] [--button-bg-hover:var(--danger-hover)] [--button-bg-pressed:var(--danger-hover)] [--button-fg:var(--danger-foreground)]' },
-      'danger-soft': { base: '[--button-bg:var(--danger-soft)] [--button-bg-hover:var(--danger-soft-hover)] [--button-bg-pressed:var(--danger-soft-hover)] [--button-fg:var(--danger-soft-foreground)]' },
+      primary: {
+        base: '[--button-bg:var(--accent)] [--button-bg-hover:var(--accent-hover)] [--button-bg-pressed:var(--accent-hover)] [--button-fg:var(--accent-foreground)]',
+      },
+      secondary: {
+        base: '[--button-bg:var(--default)] [--button-bg-hover:var(--default-hover)] [--button-bg-pressed:var(--default-hover)] [--button-fg:var(--accent-soft-foreground)]',
+      },
+      tertiary: {
+        base: '[--button-bg:var(--default)] [--button-bg-hover:var(--default-hover)] [--button-bg-pressed:var(--default-hover)]',
+      },
+      ghost: {
+        base: '[--button-bg:transparent] [--button-bg-hover:var(--default)] [--button-bg-pressed:var(--default)] [--button-fg:var(--default-foreground)]',
+      },
+      outline: {
+        base: '[--button-bg:transparent] [--button-bg-hover:color-mix(in_srgb,var(--default)_60%,transparent)] [--button-bg-pressed:var(--default)] [--button-fg:var(--default-foreground)] border border-border',
+      },
+      danger: {
+        base: '[--button-bg:var(--danger)] [--button-bg-hover:var(--danger-hover)] [--button-bg-pressed:var(--danger-hover)] [--button-fg:var(--danger-foreground)]',
+      },
+      'danger-soft': {
+        base: '[--button-bg:var(--danger-soft)] [--button-bg-hover:var(--danger-soft-hover)] [--button-bg-pressed:var(--danger-soft-hover)] [--button-fg:var(--danger-soft-foreground)]',
+      },
     },
     size: {
-      sm: { base: '[--button-height:--spacing(9)] px-3 md:[--button-height:--spacing(8)] [:where(&_svg:not([data-slot=spinner]_svg,[data-slot=link-icon]_svg))]:size-4 sm:[:where(&_svg:not([data-slot=spinner]_svg,[data-slot=link-icon]_svg))]:size-4 active:[transform:scale(0.98)] data-[pressed=true]:[transform:scale(0.98)]' },
+      sm: {
+        base: '[--button-height:--spacing(9)] px-3 md:[--button-height:--spacing(8)] [:where(&_svg:not([data-slot=spinner]_svg,[data-slot=link-icon]_svg))]:size-4 sm:[:where(&_svg:not([data-slot=spinner]_svg,[data-slot=link-icon]_svg))]:size-4 active:[transform:scale(0.98)] data-[pressed=true]:[transform:scale(0.98)]',
+      },
       md: { base: '' },
-      lg: { base: '[--button-height:--spacing(11)] text-base md:[--button-height:--spacing(10)] active:[transform:scale(0.96)] data-[pressed=true]:[transform:scale(0.96)]' },
+      lg: {
+        base: '[--button-height:--spacing(11)] text-base md:[--button-height:--spacing(10)] active:[transform:scale(0.96)] data-[pressed=true]:[transform:scale(0.96)]',
+      },
     },
     iconOnly: {
       // Before fullWidth: HeroUI's `.button--full-width` comes later, so `w-full` beats the square width.

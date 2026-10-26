@@ -1,9 +1,3 @@
-<script setup lang="ts">
-import { Checkbox, RadioGroup, Spinner, Switch } from '@hareui/vue'
-
-const radios = [{ value: 'option1' }, { value: 'option2' }]
-</script>
-
 <template>
   <div class="flex w-full items-center justify-center gap-8">
     <Checkbox :default-value="true" aria-label="Checkbox Indicator Example" />
@@ -19,3 +13,9 @@ const radios = [{ value: 'option1' }, { value: 'option2' }]
     <Spinner />
   </div>
 </template>
+
+<script setup lang="ts">
+import { Checkbox, RadioGroup, Spinner, Switch } from '@hareui/vue'
+
+const radios = [{ value: 'option1' }, { value: 'option2' }]
+</script>

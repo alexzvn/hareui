@@ -1,7 +1,3 @@
-<script setup lang="ts">
-import { NumberField, Surface } from '@hareui/vue'
-</script>
-
 <template>
   <Surface class="flex w-full max-w-[280px] flex-col gap-4 rounded-3xl p-6">
     <NumberField
@@ -27,3 +23,7 @@ import { NumberField, Surface } from '@hareui/vue'
     />
   </Surface>
 </template>
+
+<script setup lang="ts">
+import { NumberField, Surface } from '@hareui/vue'
+</script>

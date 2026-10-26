@@ -65,12 +65,36 @@ export default {
   },
   variants: {
     placement: {
-      bottom: { region: 'bottom-4 left-1/2 -translate-x-1/2', toast: "[--dir:-1] bottom-0 [transform-origin:bottom_center] [&:where([data-expanded=true])]:after:top-[calc(-1*var(--gap,12px)-1px)] [&:where([data-expanded=true])]:after:bottom-0" },
-      'bottom start': { region: 'start-4 bottom-4', toast: "[--dir:-1] bottom-0 [transform-origin:bottom_center] [&:where([data-expanded=true])]:after:top-[calc(-1*var(--gap,12px)-1px)] [&:where([data-expanded=true])]:after:bottom-0" },
-      'bottom end': { region: 'end-4 bottom-4', toast: "[--dir:-1] bottom-0 [transform-origin:bottom_center] [&:where([data-expanded=true])]:after:top-[calc(-1*var(--gap,12px)-1px)] [&:where([data-expanded=true])]:after:bottom-0" },
-      top: { region: 'top-4 left-1/2 -translate-x-1/2', toast: "[--dir:1] top-0 [transform-origin:top_center] [&:where([data-expanded=true])]:after:top-0 [&:where([data-expanded=true])]:after:bottom-[calc(-1*var(--gap,12px)-1px)]" },
-      'top start': { region: 'start-4 top-4', toast: "[--dir:1] top-0 [transform-origin:top_center] [&:where([data-expanded=true])]:after:top-0 [&:where([data-expanded=true])]:after:bottom-[calc(-1*var(--gap,12px)-1px)]" },
-      'top end': { region: 'end-4 top-4', toast: "[--dir:1] top-0 [transform-origin:top_center] [&:where([data-expanded=true])]:after:top-0 [&:where([data-expanded=true])]:after:bottom-[calc(-1*var(--gap,12px)-1px)]" },
+      bottom: {
+        region: 'bottom-4 left-1/2 -translate-x-1/2',
+        toast:
+          '[--dir:-1] bottom-0 [transform-origin:bottom_center] [&:where([data-expanded=true])]:after:top-[calc(-1*var(--gap,12px)-1px)] [&:where([data-expanded=true])]:after:bottom-0',
+      },
+      'bottom start': {
+        region: 'start-4 bottom-4',
+        toast:
+          '[--dir:-1] bottom-0 [transform-origin:bottom_center] [&:where([data-expanded=true])]:after:top-[calc(-1*var(--gap,12px)-1px)] [&:where([data-expanded=true])]:after:bottom-0',
+      },
+      'bottom end': {
+        region: 'end-4 bottom-4',
+        toast:
+          '[--dir:-1] bottom-0 [transform-origin:bottom_center] [&:where([data-expanded=true])]:after:top-[calc(-1*var(--gap,12px)-1px)] [&:where([data-expanded=true])]:after:bottom-0',
+      },
+      top: {
+        region: 'top-4 left-1/2 -translate-x-1/2',
+        toast:
+          '[--dir:1] top-0 [transform-origin:top_center] [&:where([data-expanded=true])]:after:top-0 [&:where([data-expanded=true])]:after:bottom-[calc(-1*var(--gap,12px)-1px)]',
+      },
+      'top start': {
+        region: 'start-4 top-4',
+        toast:
+          '[--dir:1] top-0 [transform-origin:top_center] [&:where([data-expanded=true])]:after:top-0 [&:where([data-expanded=true])]:after:bottom-[calc(-1*var(--gap,12px)-1px)]',
+      },
+      'top end': {
+        region: 'end-4 top-4',
+        toast:
+          '[--dir:1] top-0 [transform-origin:top_center] [&:where([data-expanded=true])]:after:top-0 [&:where([data-expanded=true])]:after:bottom-[calc(-1*var(--gap,12px)-1px)]',
+      },
     },
     variant: {
       default: {},

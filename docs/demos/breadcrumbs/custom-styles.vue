@@ -1,3 +1,7 @@
+<template>
+  <Breadcrumbs class="rounded-lg bg-default-soft px-3 py-2" :items="items" />
+</template>
+
 <script setup lang="ts">
 import type { BreadcrumbsItem } from '@hareui/vue'
 import { Breadcrumbs } from '@hareui/vue'
@@ -8,7 +12,3 @@ const items: BreadcrumbsItem[] = [
   { label: 'Laptop', class: 'font-medium text-foreground' },
 ]
 </script>
-
-<template>
-  <Breadcrumbs class="rounded-lg bg-default-soft px-3 py-2" :items="items" />
-</template>

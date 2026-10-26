@@ -19,16 +19,16 @@ import { DropZone, DropZoneFileItem, DropZoneFileList } from '@hareui/vue'
 Bind `v-model` to get the selected files as a `File[]`. DropZone lists them below the area, each with a remove button.
 
 ```vue
+<template>
+  <DropZone v-model="files" label="Drop your receipts here" multiple />
+</template>
+
 <script setup lang="ts">
 import { DropZone } from '@hareui/vue'
 import { ref } from 'vue'
 
 const files = ref<File[]>([])
 </script>
-
-<template>
-  <DropZone v-model="files" label="Drop your receipts here" multiple />
-</template>
 ```
 
 To show upload progress, listen to `@add` and render your own list in the `#files` slot with `DropZoneFileList` and `DropZoneFileItem`. With `multiple`, DropZone still keeps every added file in its selection: call the slot's `removeFile` when you remove one from your list (or use `v-model`), so removed files aren't submitted with the form.
@@ -42,20 +42,30 @@ DropZone renders the drop area (icon, label, description and a button that opens
 ```vue
 <template>
   <DropZone label="…" description="…" trigger-label="…">
-    <template #icon />         <!-- area icon (default: upload cloud) -->
-    <template #label />        <!-- label content -->
-    <template #description />  <!-- description content -->
-    <template #trigger="{ open }" />  <!-- replaces the picker button -->
-    <template #error />        <!-- FieldError content, rendered when invalid -->
+    <template #icon />
+    <!-- area icon (default: upload cloud) -->
+    <template #label />
+    <!-- label content -->
+    <template #description />
+    <!-- description content -->
+    <template #trigger="{ open }" />
+    <!-- replaces the picker button -->
+    <template #error />
+    <!-- FieldError content, rendered when invalid -->
     <template #files="{ files, removeFile }">
       <DropZoneFileList>
         <DropZoneFileItem name="…" :size="…" :status="…" :progress="…">
-          <template #icon />   <!-- replaces the file format icon -->
-          <template #name />   <!-- file name -->
-          <template #meta />   <!-- meta line (default: the formatted size) -->
+          <template #icon />
+          <!-- replaces the file format icon -->
+          <template #name />
+          <!-- file name -->
+          <template #meta />
+          <!-- meta line (default: the formatted size) -->
           <!-- default slot: extra content below the meta line -->
-          <template #retry />  <!-- retry button label -->
-          <template #remove /> <!-- remove button icon -->
+          <template #retry />
+          <!-- retry button label -->
+          <template #remove />
+          <!-- remove button icon -->
         </DropZoneFileItem>
       </DropZoneFileList>
     </template>
@@ -63,27 +73,27 @@ DropZone renders the drop area (icon, label, description and a button that opens
 </template>
 ```
 
-| `ui` key | `data-slot` | Element |
-|---|---|---|
-| `base` | `drop-zone` | `<div>` root |
-| `area` | `drop-zone-area` | `<div>` drop target |
-| `focusTarget` | `drop-zone-focus-target` | visually hidden `<button>` that makes the area focusable |
-| `icon` | `drop-zone-icon` | `<span>` around the icon |
-| `label` | `drop-zone-label` | `<span>` (iff `label` / `#label`) |
-| `description` | `drop-zone-description` | `<span>` (iff `description` / `#description`) |
-| `trigger` | `drop-zone-trigger` | outline [Button](/docs/components/button) (unless `#trigger`) |
-| `input` | `drop-zone-input` | hidden `<input type="file">` |
-| — | `field-error` | [FieldError](/docs/components/field-error) (while invalid) |
-| `fileList` | `drop-zone-file-list` | `<div>` around the file items |
-| `fileItem` | `drop-zone-file-item` | `<div>` per file |
-| `fileFormatIcon` | `drop-zone-file-format-icon` | `<svg>` file shape |
-| `fileFormatIconBadge` | `drop-zone-file-format-icon-badge` | `<div>` extension badge |
-| `fileInfo` | `drop-zone-file-info` | `<div>` around name, meta and progress |
-| `fileName` | `drop-zone-file-name` | `<span>` |
-| `fileMeta` | `drop-zone-file-meta` | `<span>` |
-| `fileProgress` | `drop-zone-file-progress` | small [ProgressBar](/docs/components/progress-bar) (iff `progress`) |
-| `fileRetryTrigger` | `drop-zone-file-retry-trigger` | `<button>` (iff `retryable` and `status="failed"`) |
-| `fileRemoveTrigger` | `drop-zone-file-remove-trigger` | `<button>` (iff `removable`) |
+| `ui` key              | `data-slot`                        | Element                                                             |
+| --------------------- | ---------------------------------- | ------------------------------------------------------------------- |
+| `base`                | `drop-zone`                        | `<div>` root                                                        |
+| `area`                | `drop-zone-area`                   | `<div>` drop target                                                 |
+| `focusTarget`         | `drop-zone-focus-target`           | visually hidden `<button>` that makes the area focusable            |
+| `icon`                | `drop-zone-icon`                   | `<span>` around the icon                                            |
+| `label`               | `drop-zone-label`                  | `<span>` (iff `label` / `#label`)                                   |
+| `description`         | `drop-zone-description`            | `<span>` (iff `description` / `#description`)                       |
+| `trigger`             | `drop-zone-trigger`                | outline [Button](/docs/components/button) (unless `#trigger`)       |
+| `input`               | `drop-zone-input`                  | hidden `<input type="file">`                                        |
+| —                     | `field-error`                      | [FieldError](/docs/components/field-error) (while invalid)          |
+| `fileList`            | `drop-zone-file-list`              | `<div>` around the file items                                       |
+| `fileItem`            | `drop-zone-file-item`              | `<div>` per file                                                    |
+| `fileFormatIcon`      | `drop-zone-file-format-icon`       | `<svg>` file shape                                                  |
+| `fileFormatIconBadge` | `drop-zone-file-format-icon-badge` | `<div>` extension badge                                             |
+| `fileInfo`            | `drop-zone-file-info`              | `<div>` around name, meta and progress                              |
+| `fileName`            | `drop-zone-file-name`              | `<span>`                                                            |
+| `fileMeta`            | `drop-zone-file-meta`              | `<span>`                                                            |
+| `fileProgress`        | `drop-zone-file-progress`          | small [ProgressBar](/docs/components/progress-bar) (iff `progress`) |
+| `fileRetryTrigger`    | `drop-zone-file-retry-trigger`     | `<button>` (iff `retryable` and `status="failed"`)                  |
+| `fileRemoveTrigger`   | `drop-zone-file-remove-trigger`    | `<button>` (iff `removable`)                                        |
 
 ## Examples
 
@@ -153,9 +163,11 @@ Pass classes per part with the `ui` prop. The file keys of a DropZone's `ui` als
 ### Global Configuration
 
 ```ts
-app.use(createHareUI({
-  ui: { dropZone: { slots: { area: 'py-12', fileItem: 'rounded-xl' } } },
-}))
+app.use(
+  createHareUI({
+    ui: { dropZone: { slots: { area: 'py-12', fileItem: 'rounded-xl' } } },
+  }),
+)
 ```
 
 ## Styling Reference

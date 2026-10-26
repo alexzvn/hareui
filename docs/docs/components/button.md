@@ -98,24 +98,26 @@ Use the `class` prop to merge classes onto the root element (tailwind-merge reso
 Override the `button` theme app-wide with `createHareUI`:
 
 ```ts
-app.use(createHareUI({
-  ui: {
-    button: {
-      slots: { base: 'rounded-md' },
-      defaultVariants: { variant: 'secondary' },
+app.use(
+  createHareUI({
+    ui: {
+      button: {
+        slots: { base: 'rounded-md' },
+        defaultVariants: { variant: 'secondary' },
+      },
     },
-  },
-}))
+  }),
+)
 ```
 
 ## Styling Reference
 
 Each rendered element carries the same `data-slot` string as HeroUI, so selectors translate 1:1.
 
-| `ui` key | `data-slot` | Description |
-|---|---|---|
-| `base` | `button` | The root `<button>` / `as` element |
-| `spinner` | `spinner` | The auto-rendered pending spinner |
+| `ui` key  | `data-slot` | Description                        |
+| --------- | ----------- | ---------------------------------- |
+| `base`    | `button`    | The root `<button>` / `as` element |
+| `spinner` | `spinner`   | The auto-rendered pending spinner  |
 
 ### Interactive states
 

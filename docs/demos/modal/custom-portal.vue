@@ -1,10 +1,3 @@
-<script setup lang="ts">
-import { Button, Modal } from '@hareui/vue'
-import { ref } from 'vue'
-
-const portalRef = ref<HTMLElement>()
-</script>
-
 <template>
   <div class="flex flex-col gap-4">
     <div>
@@ -17,38 +10,41 @@ const portalRef = ref<HTMLElement>()
       </p>
     </div>
     <div
-      ref="portalRef"
+      ref="container"
       class="relative flex h-[380px] items-center justify-center overflow-hidden rounded bg-muted/20"
       style="transform: translate(0)"
     >
-      <Modal v-if="portalRef" :portal="portalRef" :ui="{ backdrop: 'h-full' }">
+      <Modal v-if="container" :portal="container" :ui="{ backdrop: 'h-full' }">
         <Button>Open Modal</Button>
-        <template #title>
-          Custom Portal
-        </template>
+        <template #title> Custom Portal </template>
         <template #body>
           <p class="text-sm text-muted">
             Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed do eiusmod tempor
-            incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis
-            nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat.
+            incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud
+            exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat.
           </p>
           <p class="text-sm text-muted">
             Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed do eiusmod tempor
-            incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis
-            nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat.
+            incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud
+            exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat.
           </p>
           <p class="text-sm text-muted">
             Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed do eiusmod tempor
-            incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis
-            nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat.
+            incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud
+            exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat.
           </p>
         </template>
         <template #footer="{ close }">
-          <Button variant="secondary" @click="close">
-            Close
-          </Button>
+          <Button variant="secondary" @click="close"> Close </Button>
         </template>
       </Modal>
     </div>
   </div>
 </template>
+
+<script setup lang="ts">
+import { Button, Modal } from '@hareui/vue'
+import { useTemplateRef } from 'vue'
+
+const container = useTemplateRef<HTMLElement>('container')
+</script>

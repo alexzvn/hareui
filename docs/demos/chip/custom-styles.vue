@@ -1,7 +1,3 @@
-<script setup lang="ts">
-import { Chip } from '@hareui/vue'
-</script>
-
 <template>
   <div class="flex flex-wrap items-center gap-2">
     <Chip class="rounded-full bg-default-soft px-3 text-default-soft-foreground">Draft</Chip>
@@ -9,3 +5,7 @@ import { Chip } from '@hareui/vue'
     <Chip class="rounded-full bg-success-soft px-3 text-success-soft-foreground">Published</Chip>
   </div>
 </template>
+
+<script setup lang="ts">
+import { Chip } from '@hareui/vue'
+</script>

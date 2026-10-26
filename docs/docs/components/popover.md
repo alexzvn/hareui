@@ -53,23 +53,25 @@ The default slot's first child is the trigger (receives the current `open` state
 ### Global theme override
 
 ```ts
-app.use(createHareUI({
-  ui: {
-    popover: {
-      slots: { base: 'rounded-xl' },
+app.use(
+  createHareUI({
+    ui: {
+      popover: {
+        slots: { base: 'rounded-xl' },
+      },
     },
-  },
-}))
+  }),
+)
 ```
 
 ## Styling Reference
 
-| `ui` key | `data-slot` | Description |
-|---|---|---|
-| `base` | `popover` | The floating surface |
-| `dialog` | `popover-dialog` | The dialog wrapper around the heading/content |
-| `heading` | `popover-heading` | The heading (shown when `title` prop or `title` slot is set) |
-| `arrow` | `popover-overlay-arrow` | The arrow `<svg>` (shown when `arrow` is `true`) |
+| `ui` key  | `data-slot`             | Description                                                  |
+| --------- | ----------------------- | ------------------------------------------------------------ |
+| `base`    | `popover`               | The floating surface                                         |
+| `dialog`  | `popover-dialog`        | The dialog wrapper around the heading/content                |
+| `heading` | `popover-heading`       | The heading (shown when `title` prop or `title` slot is set) |
+| `arrow`   | `popover-overlay-arrow` | The arrow `<svg>` (shown when `arrow` is `true`)             |
 
 ### Interactive states
 

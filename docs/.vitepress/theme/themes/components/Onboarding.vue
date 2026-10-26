@@ -1,3 +1,46 @@
+<template>
+  <Modal
+    v-model:open="isOpen"
+    title="Adapt HeroUI v3 to your brand"
+    size="lg"
+    class="max-w-[480px]"
+    :close-button="false"
+    :ui="{ header: 'mb-4' }"
+  >
+    <template #header>
+      <div
+        class="flex h-64 w-full items-center justify-center rounded-xl border border-border bg-background"
+      >
+        <div
+          class="onboarding-block h-[152px] w-[188px] bg-surface p-4 shadow-[0_2px_4px_0_rgba(0,0,0,0.04),0_1px_2px_0_rgba(0,0,0,0.06),0_0_1px_0_rgba(0,0,0,0.06)]"
+        >
+          <div class="onboarding-block mb-3 size-10 bg-surface-secondary" />
+          <div class="onboarding-block mb-2 h-2 w-[93px] bg-surface-secondary" />
+          <div class="onboarding-block mb-3 h-4 w-[139px] bg-surface-secondary" />
+          <div class="onboarding-block onboarding-button h-6 w-[104px] px-3 py-2">
+            <div class="onboarding-block onboarding-button-inner h-full w-full" />
+          </div>
+        </div>
+      </div>
+    </template>
+    <template #body>
+      <div class="flex flex-col gap-2">
+        <p class="text-base font-medium text-foreground">Adapt HeroUI v3 to your brand</p>
+        <p class="text-sm leading-5 text-muted">
+          Customize colors, radius, and typography using a token system that keeps every component
+          consistent and production-ready.
+          <br />
+          <br />
+          More features and themes coming soon.
+        </p>
+      </div>
+    </template>
+    <template #footer="{ close }">
+      <Button class="w-full" @click="close()">Continue</Button>
+    </template>
+  </Modal>
+</template>
+
 <script setup lang="ts">
 // Port of HeroUI docs `themes/components/onboarding.tsx`.
 // framer-motion keyframes (`duration: 4, ease: easeInOut, repeat: Infinity, times: [0, .25, .5, .75, 1]`) -> CSS keyframe animations.
@@ -15,44 +58,6 @@ onMounted(() => {
   }
 })
 </script>
-
-<template>
-  <Modal
-    v-model:open="isOpen"
-    title="Adapt HeroUI v3 to your brand"
-    size="lg"
-    class="max-w-[480px]"
-    :close-button="false"
-    :ui="{ header: 'mb-4' }"
-  >
-    <template #header>
-      <div class="flex h-64 w-full items-center justify-center rounded-xl border border-border bg-background">
-        <div class="onboarding-block h-[152px] w-[188px] bg-surface p-4 shadow-[0_2px_4px_0_rgba(0,0,0,0.04),0_1px_2px_0_rgba(0,0,0,0.06),0_0_1px_0_rgba(0,0,0,0.06)]">
-          <div class="onboarding-block mb-3 size-10 bg-surface-secondary" />
-          <div class="onboarding-block mb-2 h-2 w-[93px] bg-surface-secondary" />
-          <div class="onboarding-block mb-3 h-4 w-[139px] bg-surface-secondary" />
-          <div class="onboarding-block onboarding-button h-6 w-[104px] px-3 py-2">
-            <div class="onboarding-block onboarding-button-inner h-full w-full" />
-          </div>
-        </div>
-      </div>
-    </template>
-    <template #body>
-      <div class="flex flex-col gap-2">
-        <p class="text-base font-medium text-foreground">Adapt HeroUI v3 to your brand</p>
-        <p class="text-sm leading-5 text-muted">
-          Customize colors, radius, and typography using a token system that keeps every component consistent and production-ready.
-          <br>
-          <br>
-          More features and themes coming soon.
-        </p>
-      </div>
-    </template>
-    <template #footer="{ close }">
-      <Button class="w-full" @click="close()">Continue</Button>
-    </template>
-  </Modal>
-</template>
 
 <style scoped>
 .onboarding-block {

@@ -1,10 +1,12 @@
 import type { ComponentResolver, Options as ComponentsOptions } from 'unplugin-vue-components/types'
-import type { Plugin } from 'vite'
-import type { HareUIConfig } from './config'
 import Components from 'unplugin-vue-components/vite'
 import componentNames from 'virtual:hareui-component-names'
+import type { Plugin } from 'vite'
 
-export interface HareUIResolverOptions {
+import type { HareUIConfig } from './config'
+
+/** Options for `HareUIResolver`, the unplugin-vue-components resolver for HareUI components. */
+export type HareUIResolverOptions = {
   /**
    * Prefix of HareUI components in templates. `'H'` resolves `<HButton>` and `<h-button>` to `Button`.
    * Kebab-case (`'h-'`) is accepted and converted to PascalCase.
@@ -13,7 +15,8 @@ export interface HareUIResolverOptions {
   prefix?: string
 }
 
-export interface HareUIPluginOptions extends HareUIResolverOptions {
+/** Options for the `hareui()` Vite plugin; also accepts every `HareUIResolverOptions` key. */
+export type HareUIPluginOptions = {
   /**
    * App-wide component theme overrides, same shape as `createHareUI({ ui })`. Applied above the default
    * themes and below `createHareUI({ ui })`. Inlined at build time, so values must be JSON-serializable.
@@ -24,45 +27,56 @@ export interface HareUIPluginOptions extends HareUIResolverOptions {
    * resolver is appended to `resolvers`. `false` disables component auto import.
    */
   components?: ComponentsOptions | false
-}
+} & HareUIResolverOptions
 
 const components = new Map(Object.entries(componentNames))
 
-function pascalCase(value: string): string {
-  return value.split(/[-_]/).map(part => part.charAt(0).toUpperCase() + part.slice(1)).join('')
+const pascalCase = (value: string): string => {
+  return value
+    .split(/[-_]/)
+    .map((part) => part.charAt(0).toUpperCase() + part.slice(1))
+    .join('')
 }
 
 /**
  * unplugin-vue-components resolver for HareUI components, for setups that register unplugin-vue-components themselves.
  * Chart components resolve to `@hareui/vue/charts`.
  */
-export function HareUIResolver(options: HareUIResolverOptions = {}): ComponentResolver {
+export const HareUIResolver = (options: HareUIResolverOptions = {}): ComponentResolver => {
   const prefix = pascalCase(options.prefix ?? '')
   return {
     type: 'component',
     resolve(name) {
-      if (!name.startsWith(prefix))
-        return
+      if (!name.startsWith(prefix)) return
       const component = name.slice(prefix.length)
       const from = components.get(component)
-      if (from)
-        return { name: component, from }
+      if (from) return { name: component, from }
     },
   }
 }
 
 /** Vite plugin: auto-imports HareUI components (optionally prefixed) and applies app-wide theme overrides. */
-export function hareui(options: HareUIPluginOptions = {}): Plugin[] {
+export const hareui = (options: HareUIPluginOptions = {}): Plugin[] => {
   const plugins: Plugin[] = []
   const { ui } = options
   if (ui) {
     // `useComponentUI` reads this global; Vite's `define` also reaches the pre-bundled `@hareui/vue`.
-    plugins.push({ name: 'hareui:ui', config: () => ({ define: { __HAREUI_UI__: JSON.stringify(ui) } }) })
+    plugins.push({
+      name: 'hareui:ui',
+      config: () => ({ define: { __HAREUI_UI__: JSON.stringify(ui) } }),
+    })
   }
+
   if (options.components !== false) {
     const { resolvers = [], ...rest } = options.components ?? {}
-    plugins.push(Components({ ...rest, resolvers: [...resolvers, HareUIResolver({ prefix: options.prefix })] }))
+    plugins.push(
+      Components({
+        ...rest,
+        resolvers: [...resolvers, HareUIResolver({ prefix: options.prefix })],
+      }),
+    )
   }
+
   return plugins
 }
 

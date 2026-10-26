@@ -1,10 +1,3 @@
-<script setup lang="ts">
-import { Checkbox } from '@hareui/vue'
-import { ref } from 'vue'
-
-const isSelected = ref(true)
-</script>
-
 <template>
   <div class="flex flex-col gap-3">
     <Checkbox id="email-notifications" v-model="isSelected" label="Email notifications" />
@@ -13,3 +6,10 @@ const isSelected = ref(true)
     </p>
   </div>
 </template>
+
+<script setup lang="ts">
+import { Checkbox } from '@hareui/vue'
+import { ref } from 'vue'
+
+const isSelected = ref(true)
+</script>

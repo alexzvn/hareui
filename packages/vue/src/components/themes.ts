@@ -1,3 +1,5 @@
+import type * as themes from './themes'
+
 export { default as button } from './button/theme'
 export { default as spinner } from './spinner/theme'
 export { default as closeButton } from './close-button/theme'
@@ -28,7 +30,8 @@ export { default as select } from './select/theme'
 export { default as comboBox } from './combo-box/theme'
 export { default as autocomplete } from './autocomplete/theme'
 
-export type Themes = typeof import('./themes')
+/** Map of every component's default theme by config key (`button`, `textField`, …); the keys accepted by `HareUIConfig['ui']`. */
+export type Themes = typeof themes
 export { default as meter } from './meter/theme'
 export { default as switchGroup } from './switch-group/theme'
 export { default as colorSwatch } from './color-swatch/theme'

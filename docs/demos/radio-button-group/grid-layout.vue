@@ -1,15 +1,3 @@
-<script setup lang="ts">
-import { RadioButtonGroup, RadioButtonGroupItem } from '@hareui/vue'
-
-const rooms = [
-  { value: 'single', title: 'Single', description: 'One bed, city view', price: 89 },
-  { value: 'double', title: 'Double', description: 'Queen bed, balcony', price: 129 },
-  { value: 'suite', title: 'Suite', description: 'Living room, sea view', price: 210 },
-]
-
-const eur = new Intl.NumberFormat('en-IE', { style: 'currency', currency: 'EUR', maximumFractionDigits: 0 })
-</script>
-
 <template>
   <RadioButtonGroup
     class="w-full max-w-2xl grid-cols-1 sm:grid-cols-3"
@@ -33,3 +21,19 @@ const eur = new Intl.NumberFormat('en-IE', { style: 'currency', currency: 'EUR',
     </RadioButtonGroupItem>
   </RadioButtonGroup>
 </template>
+
+<script setup lang="ts">
+import { RadioButtonGroup, RadioButtonGroupItem } from '@hareui/vue'
+
+const rooms = [
+  { value: 'single', title: 'Single', description: 'One bed, city view', price: 89 },
+  { value: 'double', title: 'Double', description: 'Queen bed, balcony', price: 129 },
+  { value: 'suite', title: 'Suite', description: 'Living room, sea view', price: 210 },
+]
+
+const eur = new Intl.NumberFormat('en-IE', {
+  style: 'currency',
+  currency: 'EUR',
+  maximumFractionDigits: 0,
+})
+</script>

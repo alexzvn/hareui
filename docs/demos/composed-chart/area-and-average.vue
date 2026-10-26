@@ -1,6 +1,27 @@
+<template>
+  <Card
+    class="w-full max-w-[560px] rounded-2xl"
+    :ui="{ header: 'flex-row flex-wrap items-center justify-between gap-2' }"
+  >
+    <template #header>
+      <h3 class="text-base font-medium text-foreground">Reservoir Level</h3>
+      <ChartLegend :series="series" />
+    </template>
+    <ComposedChart
+      :data="data"
+      index="month"
+      :series="series"
+      :y-axis="{ left: { domain: [0, 100] } }"
+      :value-formatter="formatPercent"
+      aria-label="Reservoir level against the 20-year average"
+      :height="260"
+    />
+  </Card>
+</template>
+
 <script setup lang="ts">
-import type { ChartComposedSeries } from '@hareui/vue/charts'
 import { Card } from '@hareui/vue'
+import type { ChartComposedSeries } from '@hareui/vue/charts'
 import { ChartLegend, ComposedChart } from '@hareui/vue/charts'
 
 const data = [
@@ -23,25 +44,7 @@ const series = {
   average: { type: 'line', name: '20-year average', strokeDasharray: '6 3' },
 } satisfies Record<string, ChartComposedSeries>
 
-function formatPercent(value: number) {
+const formatPercent = (value: number) => {
   return `${value}%`
 }
 </script>
-
-<template>
-  <Card class="w-full max-w-[560px] rounded-2xl" :ui="{ header: 'flex-row flex-wrap items-center justify-between gap-2' }">
-    <template #header>
-      <h3 class="text-base font-medium text-foreground">Reservoir Level</h3>
-      <ChartLegend :series="series" />
-    </template>
-    <ComposedChart
-      :data="data"
-      index="month"
-      :series="series"
-      :y-axis="{ domain: [0, 100] }"
-      :value-formatter="formatPercent"
-      aria-label="Reservoir level against the 20-year average"
-      :height="260"
-    />
-  </Card>
-</template>

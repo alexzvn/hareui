@@ -1,27 +1,13 @@
-<script setup lang="ts">
-// Port of HeroUI docs `themes/components/theme-input.tsx`.
-import { Icon } from '@iconify/vue'
-import { Avatar, InputGroup } from '@hareui/vue'
-import { computed } from 'vue'
-import { useVariablesState } from '../composables/variables'
-import { findMatchingTheme, themes } from '../constants'
-
-const [variables] = useVariablesState()
-const currentThemeId = computed(() => findMatchingTheme(variables.value))
-const currentTheme = computed(() => currentThemeId.value ? themes.find(t => t.id === currentThemeId.value) : undefined)
-
-const customThemeGradient = computed(() => {
-  const accentColor = `oklch(${variables.value.lightness} ${variables.value.chroma} ${variables.value.hue})`
-  return `radial-gradient(85.29% 80.57% at 40.28% 34.72%, rgba(0, 0, 0, 0.00) 0%, rgba(0, 0, 0, 0.02) 43.66%, rgba(0, 0, 0, 0.27) 72.4%, rgba(0, 0, 0, 0.30) 100%), ${accentColor}`
-})
-</script>
-
 <template>
   <InputGroup
     class="w-full cursor-pointer"
     readonly
     :model-value="currentTheme?.label ?? 'Custom'"
-    :ui="{ prefix: 'w-10', input: 'max-w-20 sm:max-w-none', suffix: 'flex w-10 flex-1 justify-end' }"
+    :ui="{
+      prefix: 'w-10',
+      input: 'max-w-20 sm:max-w-none',
+      suffix: 'flex w-10 flex-1 justify-end',
+    }"
   >
     <template #prefix>
       <Avatar
@@ -38,3 +24,24 @@ const customThemeGradient = computed(() => {
     </template>
   </InputGroup>
 </template>
+
+<script setup lang="ts">
+import { Avatar, InputGroup } from '@hareui/vue'
+// Port of HeroUI docs `themes/components/theme-input.tsx`.
+import { Icon } from '@iconify/vue'
+import { computed } from 'vue'
+
+import { useVariablesState } from '../composables/variables'
+import { findMatchingTheme, themes } from '../constants'
+
+const [variables] = useVariablesState()
+const currentThemeId = computed(() => findMatchingTheme(variables.value))
+const currentTheme = computed(() =>
+  currentThemeId.value ? themes.find((t) => t.id === currentThemeId.value) : undefined,
+)
+
+const customThemeGradient = computed(() => {
+  const accentColor = `oklch(${variables.value.lightness} ${variables.value.chroma} ${variables.value.hue})`
+  return `radial-gradient(85.29% 80.57% at 40.28% 34.72%, rgba(0, 0, 0, 0.00) 0%, rgba(0, 0, 0, 0.02) 43.66%, rgba(0, 0, 0, 0.27) 72.4%, rgba(0, 0, 0, 0.30) 100%), ${accentColor}`
+})
+</script>

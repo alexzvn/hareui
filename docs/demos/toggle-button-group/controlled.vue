@@ -1,11 +1,3 @@
-<script setup lang="ts">
-import { Icon } from '@iconify/vue'
-import { ToggleButton, ToggleButtonGroup } from '@hareui/vue'
-import { ref } from 'vue'
-
-const selected = ref(['bold'])
-</script>
-
 <template>
   <div class="flex flex-col gap-4">
     <ToggleButtonGroup v-model="selected" selection-mode="multiple" separator>
@@ -28,3 +20,11 @@ const selected = ref(['bold'])
     </p>
   </div>
 </template>
+
+<script setup lang="ts">
+import { ToggleButton, ToggleButtonGroup } from '@hareui/vue'
+import { Icon } from '@iconify/vue'
+import { ref } from 'vue'
+
+const selected = ref(['bold'])
+</script>

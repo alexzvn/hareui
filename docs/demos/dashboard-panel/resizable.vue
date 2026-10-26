@@ -1,7 +1,3 @@
-<script setup lang="ts">
-import { DashboardGroup, DashboardNavbar, DashboardPanel } from '@hareui/vue'
-</script>
-
 <template>
   <DashboardGroup :persistent="false">
     <!-- The handle sits on the end edge of a resizable panel. Sizes are % of the group (`unit` on the group changes that). -->
@@ -11,7 +7,9 @@ import { DashboardGroup, DashboardNavbar, DashboardPanel } from '@hareui/vue'
       </template>
 
       <template #body>
-        <div class="h-full min-h-24 rounded-xl border border-dashed border-separator bg-surface/50" />
+        <div
+          class="h-full min-h-24 rounded-xl border border-dashed border-separator bg-surface/50"
+        />
       </template>
     </DashboardPanel>
 
@@ -22,8 +20,14 @@ import { DashboardGroup, DashboardNavbar, DashboardPanel } from '@hareui/vue'
       </template>
 
       <template #body>
-        <div class="h-full min-h-24 rounded-xl border border-dashed border-separator bg-surface/50" />
+        <div
+          class="h-full min-h-24 rounded-xl border border-dashed border-separator bg-surface/50"
+        />
       </template>
     </DashboardPanel>
   </DashboardGroup>
 </template>
+
+<script setup lang="ts">
+import { DashboardGroup, DashboardNavbar, DashboardPanel } from '@hareui/vue'
+</script>

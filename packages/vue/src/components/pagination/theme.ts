@@ -23,7 +23,8 @@ export default {
     nav: 'w-auto gap-1.5 px-2.5 md:w-auto',
     // Icon wrappers: HeroUI flips them in RTL.
     icon: 'rtl:rotate-180',
-    ellipsis: 'inline-flex h-9 w-9 items-center justify-center text-sm text-muted select-none md:h-8 md:w-8',
+    ellipsis:
+      'inline-flex h-9 w-9 items-center justify-center text-sm text-muted select-none md:h-8 md:w-8',
   },
   variants: {
     size: {

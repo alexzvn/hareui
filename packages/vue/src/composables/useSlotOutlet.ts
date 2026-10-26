@@ -9,14 +9,16 @@ import type { Slot } from 'vue'
  * forwarded, which re-renders that component (and its children) on every render of the caller even when nothing
  * it shows changed.
  */
-export function useSlotOutlet<S extends object>(slots: S, name: keyof S & string) {
+export const useSlotOutlet = <S extends object>(slots: S, name: keyof S & string) => {
   const read = () => slots[name] as Slot | undefined
   const slot = shallowRef(read())
+
   // The outlet's ancestors no longer re-render with the caller, so mirror slot swaps (e.g. `<template v-if #name>`)
   // into a ref the outlet tracks. Stable slots keep their identity, so this triggers nothing on ordinary renders.
   onBeforeUpdate(() => {
     slot.value = read()
   })
+
   return defineComponent({
     name: 'SlotOutlet',
     inheritAttrs: false,

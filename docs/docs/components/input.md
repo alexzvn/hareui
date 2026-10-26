@@ -23,9 +23,9 @@ For validation, labels, and error messages, see **[TextField](/docs/components/t
 
 ## Anatomy
 
-| `ui` key | `data-slot` | Element |
-|---|---|---|
-| `base` | `input` | `<input>` |
+| `ui` key | `data-slot` | Element   |
+| -------- | ----------- | --------- |
+| `base`   | `input`     | `<input>` |
 
 Attributes not declared as props (`aria-label`, `min`, `max`, `autocomplete`, listeners…) fall through to the `<input>`.
 
@@ -69,14 +69,16 @@ Bind the value with `v-model`.
 ### Global Configuration
 
 ```ts
-app.use(createHareUI({
-  ui: {
-    input: {
-      slots: { base: 'rounded-lg px-4' },
-      defaultVariants: { variant: 'secondary' },
+app.use(
+  createHareUI({
+    ui: {
+      input: {
+        slots: { base: 'rounded-lg px-4' },
+        defaultVariants: { variant: 'secondary' },
+      },
     },
-  },
-}))
+  }),
+)
 ```
 
 ### CSS Variables

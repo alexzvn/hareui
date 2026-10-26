@@ -1,30 +1,43 @@
-import type { TypeaheadOptions } from '../src/components/list-box/useTypeahead'
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest'
 import { effectScope } from 'vue'
-import { useTypeahead } from '../src/components/list-box/useTypeahead'
 
-interface Item { label: string, disabled?: boolean }
+import type { TypeaheadOptions } from '@/components/list-box/useTypeahead'
+import { useTypeahead } from '@/components/list-box/useTypeahead'
+
+type Item = {
+  label: string
+  disabled?: boolean
+}
+
 const item = (label: string, disabled?: boolean): Item => ({ label, disabled })
 
 // A list whose current item follows the typeahead, as the Select trigger and ListBox use it
-function setup(options: TypeaheadOptions, items: Item[], initial?: Item) {
+const setup = (options: TypeaheadOptions, items: Item[], initial?: Item) => {
   const scope = effectScope()
   const typeahead = scope.run(() => useTypeahead(options))!
   let current = initial
-  const select = vi.fn((match: Item) => {
+  const select = vi.fn<(match: Item) => void>((match) => {
     current = match
   })
-  const type = (key: string, init: KeyboardEventInit = {}) => typeahead.onKeydown(
-    new KeyboardEvent('keydown', { key, ...init }),
-    () => ({ items, text: i => i.label, disabled: i => !!i.disabled, isCurrent: i => i === current }),
-    select,
-  )
+
+  const type = (key: string, init: KeyboardEventInit = {}) =>
+    typeahead.onKeydown(new KeyboardEvent('keydown', { key, ...init }), {
+      source: () => ({
+        items,
+        text: (i) => i.label,
+        disabled: (i) => !!i.disabled,
+        isCurrent: (i) => i === current,
+      }),
+      select,
+    })
+
   return { type, select, scope, current: () => current }
 }
 
 beforeEach(() => {
   vi.useFakeTimers()
 })
+
 afterEach(() => {
   vi.useRealTimers()
 })
@@ -108,8 +121,12 @@ describe('useTypeahead buffer', () => {
     t.type('b')
     vi.advanceTimersByTime(600)
     t.type('o')
-    vi.advanceTimersByTime(600) // 1200 ms after the first key, but the second restarted the timer
-    t.type('a') // "boa": no match; a reset buffer would have found Alpha
+
+    // 1200 ms after the first key, but the second restarted the timer
+    vi.advanceTimersByTime(600)
+
+    // "boa": no match; a reset buffer would have found Alpha
+    t.type('a')
     expect(t.current()).toBe(bonus)
     vi.advanceTimersByTime(1000)
     t.type('a')
@@ -121,6 +138,7 @@ describe('useTypeahead buffer', () => {
     expect(t.type('x')).toBe(true)
     expect(t.select).not.toHaveBeenCalled()
     expect(t.current()).toBe(bravo)
+
     // "xa" still matches nothing: the buffer was kept
     t.type('a')
     expect(t.select).not.toHaveBeenCalled()
@@ -167,9 +185,12 @@ describe('useTypeahead keys', () => {
     const t = setup({ start: 'current' }, items)
     for (const init of [{ ctrlKey: true }, { metaKey: true }, { altKey: true }])
       expect(t.type('n', init)).toBe(false)
+
     for (const key of ['ArrowDown', 'Enter', 'Shift', 'Backspace', 'F1'])
       expect(t.type(key)).toBe(false)
+
     expect(t.select).not.toHaveBeenCalled()
+
     // Nothing was buffered, otherwise this would search "nnnn"
     t.type('n')
     expect(t.current()).toBe(newark)
@@ -184,8 +205,7 @@ describe('useTypeahead keys', () => {
   it('with `space`, Space extends a search in progress but never starts one', () => {
     const t = setup({ start: 'current', space: true }, items)
     expect(t.type(' ')).toBe(false)
-    for (const key of 'new')
-      t.type(key)
+    for (const key of 'new') t.type(key)
     expect(t.current()).toBe(newark)
     expect(t.type(' ')).toBe(true)
     expect(t.current()).toBe(newYork)
@@ -195,9 +215,9 @@ describe('useTypeahead keys', () => {
 
   it('without `space`, Space is never a typeahead key', () => {
     const t = setup({ start: 'current' }, items)
-    for (const key of 'new')
-      t.type(key)
+    for (const key of 'new') t.type(key)
     expect(t.type(' ')).toBe(false)
+
     // The buffer is still "new": "y" makes "newy", which matches nothing
     t.type('y')
     expect(t.current()).toBe(newark)

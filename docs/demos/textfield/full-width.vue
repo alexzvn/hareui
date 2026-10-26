@@ -1,7 +1,3 @@
-<script setup lang="ts">
-import { TextField } from '@hareui/vue'
-</script>
-
 <template>
   <div class="w-[400px] space-y-4">
     <TextField full-width label="Your name" name="name" placeholder="John" />
@@ -16,3 +12,7 @@ import { TextField } from '@hareui/vue'
     />
   </div>
 </template>
+
+<script setup lang="ts">
+import { TextField } from '@hareui/vue'
+</script>

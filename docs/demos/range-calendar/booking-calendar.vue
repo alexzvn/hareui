@@ -1,24 +1,3 @@
-<script setup lang="ts">
-import type { DateRange } from '@hareui/vue'
-import type { DateValue } from '@internationalized/date'
-import { Button, RangeCalendar } from '@hareui/vue'
-import { getLocalTimeZone, isWeekend, today } from '@internationalized/date'
-import { computed, shallowRef } from 'vue'
-
-const selectedRange = shallowRef<DateRange | undefined>()
-const blockedDates = [5, 6, 12, 13, 14, 20]
-
-function isDateUnavailable(date: DateValue) {
-  return isWeekend(date, 'en-US') || blockedDates.includes(date.day)
-}
-
-function indicator(date: DateValue) {
-  return !isWeekend(date, 'en-US') && blockedDates.includes(date.day)
-}
-
-const minValue = computed(() => today(getLocalTimeZone()))
-</script>
-
 <template>
   <div class="flex flex-col items-center gap-4">
     <RangeCalendar
@@ -44,3 +23,24 @@ const minValue = computed(() => today(getLocalTimeZone()))
     </div>
   </div>
 </template>
+
+<script setup lang="ts">
+import type { DateRange } from '@hareui/vue'
+import { Button, RangeCalendar } from '@hareui/vue'
+import type { DateValue } from '@internationalized/date'
+import { getLocalTimeZone, isWeekend, today } from '@internationalized/date'
+import { computed, shallowRef } from 'vue'
+
+const selectedRange = shallowRef<DateRange | undefined>()
+const blockedDates = [5, 6, 12, 13, 14, 20]
+
+const isDateUnavailable = (date: DateValue) => {
+  return isWeekend(date, 'en-US') || blockedDates.includes(date.day)
+}
+
+const indicator = (date: DateValue) => {
+  return !isWeekend(date, 'en-US') && blockedDates.includes(date.day)
+}
+
+const minValue = computed(() => today(getLocalTimeZone()))
+</script>

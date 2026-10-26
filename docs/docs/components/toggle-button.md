@@ -50,14 +50,16 @@ Bind the selected state with `v-model`. The default slot receives `{ selected, d
 Override the `toggleButton` theme app-wide with `createHareUI`:
 
 ```ts
-app.use(createHareUI({
-  ui: {
-    toggleButton: {
-      slots: { base: 'bg-purple-500 text-white' },
-      variants: { iconOnly: { true: { base: 'rounded-lg' } } },
+app.use(
+  createHareUI({
+    ui: {
+      toggleButton: {
+        slots: { base: 'bg-purple-500 text-white' },
+        variants: { iconOnly: { true: { base: 'rounded-lg' } } },
+      },
     },
-  },
-}))
+  }),
+)
 ```
 
 ## Styling Reference

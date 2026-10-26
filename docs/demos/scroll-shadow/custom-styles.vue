@@ -1,16 +1,3 @@
-<script setup lang="ts">
-import { ScrollShadow } from '@hareui/vue'
-
-const entries = [
-  'Reviewed quarterly goals with the design team.',
-  'Shipped dark mode tokens to production.',
-  'Merged accessibility fixes for form fields.',
-  'Published updated component documentation.',
-  'Scheduled performance audit for next sprint.',
-  'Added scroll shadow demos to the docs site.',
-]
-</script>
-
 <template>
   <div class="w-full sm:max-w-sm">
     <ScrollShadow
@@ -31,3 +18,16 @@ const entries = [
     </ScrollShadow>
   </div>
 </template>
+
+<script setup lang="ts">
+import { ScrollShadow } from '@hareui/vue'
+
+const entries = [
+  'Reviewed quarterly goals with the design team.',
+  'Shipped dark mode tokens to production.',
+  'Merged accessibility fixes for form fields.',
+  'Published updated component documentation.',
+  'Scheduled performance audit for next sprint.',
+  'Added scroll shadow demos to the docs site.',
+]
+</script>

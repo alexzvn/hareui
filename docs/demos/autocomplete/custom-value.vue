@@ -1,23 +1,3 @@
-<script setup lang="ts">
-import type { ListBoxItem } from '@hareui/vue'
-import { Autocomplete } from '@hareui/vue'
-
-interface Currency extends ListBoxItem {
-  code: string
-  name: string
-  symbol: string
-}
-
-const currencies = [
-  { value: 'usd', code: 'USD', name: 'US Dollar', symbol: '$' },
-  { value: 'eur', code: 'EUR', name: 'Euro', symbol: '€' },
-  { value: 'gbp', code: 'GBP', name: 'British Pound', symbol: '£' },
-  { value: 'jpy', code: 'JPY', name: 'Japanese Yen', symbol: '¥' },
-  { value: 'chf', code: 'CHF', name: 'Swiss Franc', symbol: '₣' },
-]
-const items: Currency[] = currencies.map(c => ({ ...c, label: c.code, description: c.name, textValue: `${c.code} ${c.name}` }))
-</script>
-
 <template>
   <Autocomplete
     class="w-[256px]"
@@ -38,8 +18,32 @@ const items: Currency[] = currencies.map(c => ({ ...c, label: c.code, descriptio
         <span class="truncate text-muted">{{ selectedItems[0]!.name }}</span>
       </span>
     </template>
-    <template #empty>
-      No results found
-    </template>
+    <template #empty> No results found </template>
   </Autocomplete>
 </template>
+
+<script setup lang="ts">
+import type { ListBoxItem } from '@hareui/vue'
+import { Autocomplete } from '@hareui/vue'
+
+type Currency = {
+  code: string
+  name: string
+  symbol: string
+} & ListBoxItem
+
+const currencies = [
+  { value: 'usd', code: 'USD', name: 'US Dollar', symbol: '$' },
+  { value: 'eur', code: 'EUR', name: 'Euro', symbol: '€' },
+  { value: 'gbp', code: 'GBP', name: 'British Pound', symbol: '£' },
+  { value: 'jpy', code: 'JPY', name: 'Japanese Yen', symbol: '¥' },
+  { value: 'chf', code: 'CHF', name: 'Swiss Franc', symbol: '₣' },
+]
+
+const items: Currency[] = currencies.map((c) => ({
+  ...c,
+  label: c.code,
+  description: c.name,
+  textValue: `${c.code} ${c.name}`,
+}))
+</script>

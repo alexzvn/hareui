@@ -47,28 +47,30 @@ become props and named slots, rendered in a fixed order: `#leading`, indicator, 
 Override the `alert` theme app-wide with `createHareUI`:
 
 ```ts
-app.use(createHareUI({
-  ui: {
-    alert: {
-      slots: { base: 'rounded-2xl shadow-lg', title: 'font-bold text-lg' },
-      variants: {
-        status: { danger: { base: 'border-l-4 border-red-600' } },
+app.use(
+  createHareUI({
+    ui: {
+      alert: {
+        slots: { base: 'rounded-2xl shadow-lg', title: 'font-bold text-lg' },
+        variants: {
+          status: { danger: { base: 'border-l-4 border-red-600' } },
+        },
       },
     },
-  },
-}))
+  }),
+)
 ```
 
 ## Styling Reference
 
 Each rendered element carries the same `data-slot` string as HeroUI, so selectors translate 1:1.
 
-| `ui` key | `data-slot` | Description |
-|---|---|---|
-| `base` | `alert-root` | Base alert container |
-| `indicator` | `alert-indicator` | Icon/indicator container |
-| `content` | `alert-content` | Content wrapper for title and description |
-| `title` | `alert-title` | Alert title text (renders as `p`) |
+| `ui` key      | `data-slot`         | Description                                |
+| ------------- | ------------------- | ------------------------------------------ |
+| `base`        | `alert-root`        | Base alert container                       |
+| `indicator`   | `alert-indicator`   | Icon/indicator container                   |
+| `content`     | `alert-content`     | Content wrapper for title and description  |
+| `title`       | `alert-title`       | Alert title text (renders as `p`)          |
 | `description` | `alert-description` | Alert description text (renders as `span`) |
 
 HeroUI's status modifier classes correspond to the `status` prop (HareUI renders utilities, not BEM

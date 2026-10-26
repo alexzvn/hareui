@@ -1,75 +1,77 @@
-import type { NumberValue, NumberValueOptions } from '../src/composables/useNumberValue'
 import { mount } from '@vue/test-utils'
 import { describe, expect, it, vi } from 'vitest'
 import { defineComponent, nextTick, ref } from 'vue'
-import { useNumberValue } from '../src/composables/useNumberValue'
-import { clamp, snapNumber, snapValueToStep } from '../src/utils/number'
+
+import type { NumberValue, NumberValueOptions } from '@/composables/useNumberValue'
+import { useNumberValue } from '@/composables/useNumberValue'
+import { clamp, snapNumber, snapValueToStep } from '@/utils/number'
 
 describe('clamp', () => {
   it('limits to the bounds and treats an absent bound as unlimited', () => {
-    expect(clamp(150, 0, 100)).toBe(100)
-    expect(clamp(-5, 0, 100)).toBe(0)
-    expect(clamp(50, 0, 100)).toBe(50)
-    expect(clamp(-1e9, undefined, 10)).toBe(-1e9)
-    expect(clamp(1e9, 0, undefined)).toBe(1e9)
+    expect(clamp(150, { min: 0, max: 100 })).toBe(100)
+    expect(clamp(-5, { min: 0, max: 100 })).toBe(0)
+    expect(clamp(50, { min: 0, max: 100 })).toBe(50)
+    expect(clamp(-1e9, { max: 10 })).toBe(-1e9)
+    expect(clamp(1e9, { min: 0 })).toBe(1e9)
   })
 })
 
 describe('snapValueToStep', () => {
   it('snaps relative to min, rounding halves away from min', () => {
-    expect(snapValueToStep(7, 1, 100, 5)).toBe(6)
-    expect(snapValueToStep(8.5, 1, 100, 5)).toBe(11)
-    expect(snapValueToStep(-7, -10, 10, 5)).toBe(-5)
-    expect(snapValueToStep(-8, -10, 10, 5)).toBe(-10)
-    expect(snapValueToStep(12, undefined, undefined, 5)).toBe(10)
+    expect(snapValueToStep(7, { min: 1, max: 100, step: 5 })).toBe(6)
+    expect(snapValueToStep(8.5, { min: 1, max: 100, step: 5 })).toBe(11)
+    expect(snapValueToStep(-7, { min: -10, max: 10, step: 5 })).toBe(-5)
+    expect(snapValueToStep(-8, { min: -10, max: 10, step: 5 })).toBe(-10)
+    expect(snapValueToStep(12, { step: 5 })).toBe(10)
   })
 
   it('returns decimal steps without floating-point noise', () => {
-    expect(snapValueToStep(0.1 + 0.2, 0, 1, 0.1)).toBe(0.3)
-    expect(snapValueToStep(0.7, 0, 1, 0.1)).toBe(0.7)
-    expect(snapValueToStep(1.2, 0, 10, 0.25)).toBe(1.25)
-    expect(snapValueToStep(1.1, 0, 10, 0.25)).toBe(1)
-    expect(snapValueToStep(0.123, 0, 1, 0.01)).toBe(0.12)
-    expect(snapValueToStep(-0.64, -1, 1, 0.1)).toBe(-0.6)
-    expect(snapValueToStep(-0.66, -1, 1, 0.1)).toBe(-0.7)
-    expect(snapValueToStep(3.1e-7, 0, 1, 1e-7)).toBe(3e-7)
+    expect(snapValueToStep(0.1 + 0.2, { min: 0, max: 1, step: 0.1 })).toBe(0.3)
+    expect(snapValueToStep(0.7, { min: 0, max: 1, step: 0.1 })).toBe(0.7)
+    expect(snapValueToStep(1.2, { min: 0, max: 10, step: 0.25 })).toBe(1.25)
+    expect(snapValueToStep(1.1, { min: 0, max: 10, step: 0.25 })).toBe(1)
+    expect(snapValueToStep(0.123, { min: 0, max: 1, step: 0.01 })).toBe(0.12)
+    expect(snapValueToStep(-0.64, { min: -1, max: 1, step: 0.1 })).toBe(-0.6)
+    expect(snapValueToStep(-0.66, { min: -1, max: 1, step: 0.1 })).toBe(-0.7)
+    expect(snapValueToStep(3.1e-7, { min: 0, max: 1, step: 1e-7 })).toBe(3e-7)
   })
 
   it('keeps the grid of a min with more decimals than the step', () => {
-    expect(snapValueToStep(2, 0.5, 9.5, 1)).toBe(2.5)
-    expect(snapValueToStep(0.31, 0.05, 1, 0.1)).toBe(0.35)
+    expect(snapValueToStep(2, { min: 0.5, max: 9.5, step: 1 })).toBe(2.5)
+    expect(snapValueToStep(0.31, { min: 0.05, max: 1, step: 0.1 })).toBe(0.35)
   })
 
   it('limits to min, and above max takes the last step at or below max', () => {
-    expect(snapValueToStep(-3, 0, 10, 1)).toBe(0)
-    expect(snapValueToStep(12, 0, 10, 3)).toBe(9)
-    expect(snapValueToStep(1.5, 0.1, 1, 0.2)).toBe(0.9)
-    expect(snapValueToStep(12, undefined, 10, 3)).toBe(9)
+    expect(snapValueToStep(-3, { min: 0, max: 10, step: 1 })).toBe(0)
+    expect(snapValueToStep(12, { min: 0, max: 10, step: 3 })).toBe(9)
+    expect(snapValueToStep(1.5, { min: 0.1, max: 1, step: 0.2 })).toBe(0.9)
+    expect(snapValueToStep(12, { max: 10, step: 3 })).toBe(9)
+
     // no max: a page past an off-grid max stays on the grid (Slider clamps it afterwards)
-    expect(snapValueToStep(12, 0, undefined, 3)).toBe(12)
+    expect(snapValueToStep(12, { min: 0, step: 3 })).toBe(12)
   })
 })
 
 describe('snapNumber', () => {
   it('only clamps without a step', () => {
-    expect(snapNumber(3.14159, 0, 10, undefined)).toBe(3.14159)
-    expect(snapNumber(42, 0, 10, undefined)).toBe(10)
-    expect(snapNumber(-42, 0, undefined, undefined)).toBe(0)
+    expect(snapNumber(3.14159, { min: 0, max: 10 })).toBe(3.14159)
+    expect(snapNumber(42, { min: 0, max: 10 })).toBe(10)
+    expect(snapNumber(-42, { min: 0 })).toBe(0)
   })
 
   it('snaps and clamps with a step', () => {
-    expect(snapNumber(42, 0, 10, 3)).toBe(9)
-    expect(snapNumber(4.4, 0, 10, 3)).toBe(3)
+    expect(snapNumber(42, { min: 0, max: 10, step: 3 })).toBe(9)
+    expect(snapNumber(4.4, { min: 0, max: 10, step: 3 })).toBe(3)
   })
 
   it('passes empty values through', () => {
-    expect(snapNumber(null, 0, 10, 1)).toBeNull()
-    expect(snapNumber(undefined, 0, 10, 1)).toBeUndefined()
-    expect(snapNumber(Number.NaN, 0, 10, 1)).toBeNaN()
+    expect(snapNumber(null, { min: 0, max: 10, step: 1 })).toBeNull()
+    expect(snapNumber(undefined, { min: 0, max: 10, step: 1 })).toBeUndefined()
+    expect(snapNumber(Number.NaN, { min: 0, max: 10, step: 1 })).toBeNaN()
   })
 })
 
-interface Setup {
+type Setup = {
   modelValue?: number | null
   defaultValue?: number
   min?: number
@@ -78,11 +80,12 @@ interface Setup {
   formatOptions?: Intl.NumberFormatOptions
 }
 
-function setup(initial: Setup = {}) {
+const setup = (initial: Setup = {}) => {
   const props = ref<Setup>({ ...initial })
   const model = ref<number | null | undefined>(initial.modelValue)
-  const onCommit = vi.fn()
+  const onCommit = vi.fn<() => void>()
   let value!: NumberValue
+
   const options: NumberValueOptions = {
     model,
     defaultValue: () => props.value.defaultValue,
@@ -92,13 +95,17 @@ function setup(initial: Setup = {}) {
     formatOptions: () => props.value.formatOptions,
     onCommit,
   }
-  const wrapper = mount(defineComponent({
-    emits: ['update:modelValue'],
-    setup() {
-      value = useNumberValue(options)
-      return () => null
-    },
-  }))
+
+  const wrapper = mount(
+    defineComponent({
+      emits: ['update:modelValue'],
+      setup() {
+        value = useNumberValue(options)
+        return () => null
+      },
+    }),
+  )
+
   return { wrapper, props, model, onCommit, value }
 }
 
@@ -115,7 +122,14 @@ describe('useNumberValue', () => {
   })
 
   it('displays the model and default clamped and snapped, and passes an empty model through', () => {
-    const { model, value } = setup({ modelValue: 0.1 + 0.2, defaultValue: 99, min: 0, max: 1, step: 0.1 })
+    const { model, value } = setup({
+      modelValue: 0.1 + 0.2,
+      defaultValue: 99,
+      min: 0,
+      max: 1,
+      step: 0.1,
+    })
+
     expect(value.displayValue.value).toBe(0.3)
     expect(value.defaultDisplayValue.value).toBe(1)
     model.value = null

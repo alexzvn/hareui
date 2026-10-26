@@ -1,11 +1,10 @@
-<script setup lang="ts">
-import { Description, Switch } from '@hareui/vue'
-</script>
-
 <template>
   <Switch
     id="autosave"
-    :ui="{ control: '[--switch-control-bg-checked-hover:var(--success)] [--switch-control-bg-checked:var(--success)]' }"
+    :ui="{
+      control:
+        '[--switch-control-bg-checked-hover:var(--success)] [--switch-control-bg-checked:var(--success)]',
+    }"
   >
     <template #label>
       <span class="flex flex-col gap-0.5">
@@ -15,3 +14,7 @@ import { Description, Switch } from '@hareui/vue'
     </template>
   </Switch>
 </template>
+
+<script setup lang="ts">
+import { Description, Switch } from '@hareui/vue'
+</script>

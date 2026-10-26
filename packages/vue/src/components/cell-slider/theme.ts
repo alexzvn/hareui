@@ -34,8 +34,10 @@ export default {
       'data-[focus-visible=true]:[box-shadow:none]! data-[focus-visible=true]:after:status-focused data-[focus-visible=true]:after:opacity-70 data-[focus-visible=true]:after:[transform:scaleY(1.2)]',
       '[[data-slot=cell-slider][dir=rtl]_&]:data-[orientation=horizontal]:[--reka-slider-thumb-transform:translate(50%,-50%)]',
     ],
-    label: 'pointer-events-none z-1 ms-3 min-w-0 truncate text-start text-sm font-medium text-foreground',
-    output: 'pointer-events-none z-1 me-3 text-end text-sm font-normal text-muted tabular-nums in-data-disabled:opacity-(--disabled-opacity)',
+    label:
+      'pointer-events-none z-1 ms-3 min-w-0 truncate text-start text-sm font-medium text-foreground',
+    output:
+      'pointer-events-none z-1 me-3 text-end text-sm font-normal text-muted tabular-nums in-data-disabled:opacity-(--disabled-opacity)',
   },
   variants: {
     variant: {

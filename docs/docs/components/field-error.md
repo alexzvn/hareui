@@ -17,27 +17,19 @@ import { FieldError } from '@hareui/vue'
 
 <ComponentPreview name="field-error/basic" />
 
-The FieldError component displays validation error messages for form fields. Fields render it automatically while they are invalid: from the `error-message` prop or `#error` slot, or else from their validation errors (native constraints, `validate`, or a [Form](/docs/components/form)'s `validation-errors`).
+The FieldError component displays validation error messages for form fields. Fields render it automatically while they are invalid: from the `error-message` prop or `#error` slot, or else from their validation errors (native constraints, `validate`, or a [Form](/docs/components/form)'s `validation.errors`).
 
 ## Anatomy
 
-| `ui` key | `data-slot` | Element |
-|---|---|---|
-| `base` | `field-error` | `<span role="alert">` |
+| `ui` key | `data-slot`   | Element               |
+| -------- | ------------- | --------------------- |
+| `base`   | `field-error` | `<span role="alert">` |
 
 ## Examples
 
 ### Basic Validation
 
 ```vue
-<script setup lang="ts">
-import { TextField } from '@hareui/vue'
-import { computed, ref } from 'vue'
-
-const value = ref('')
-const invalid = computed(() => value.value.length > 0 && value.value.length < 3)
-</script>
-
 <template>
   <TextField
     v-model="value"
@@ -48,6 +40,14 @@ const invalid = computed(() => value.value.length > 0 && value.value.length < 3)
     error-message="Username must be at least 3 characters"
   />
 </template>
+
+<script setup lang="ts">
+import { TextField } from '@hareui/vue'
+import { computed, ref } from 'vue'
+
+const value = ref('')
+const invalid = computed(() => value.value.length > 0 && value.value.length < 3)
+</script>
 ```
 
 ### With Dynamic Messages
@@ -63,14 +63,6 @@ const invalid = computed(() => value.value.length > 0 && value.value.length < 3)
 ### Custom Validation Logic
 
 ```vue
-<script setup lang="ts">
-import { TextField } from '@hareui/vue'
-import { computed, ref } from 'vue'
-
-const email = ref('')
-const invalid = computed(() => email.value.length > 0 && !email.value.includes('@'))
-</script>
-
 <template>
   <TextField
     v-model="email"
@@ -80,6 +72,14 @@ const invalid = computed(() => email.value.length > 0 && !email.value.includes('
     error-message="Email must include @ symbol"
   />
 </template>
+
+<script setup lang="ts">
+import { TextField } from '@hareui/vue'
+import { computed, ref } from 'vue'
+
+const email = ref('')
+const invalid = computed(() => email.value.length > 0 && !email.value.includes('@'))
+</script>
 ```
 
 ### Multiple Error Messages
@@ -103,9 +103,11 @@ const invalid = computed(() => email.value.length > 0 && !email.value.includes('
 ### Global Configuration
 
 ```ts
-app.use(createHareUI({
-  ui: { fieldError: { slots: { base: 'font-medium text-danger' } } },
-}))
+app.use(
+  createHareUI({
+    ui: { fieldError: { slots: { base: 'font-medium text-danger' } } },
+  }),
+)
 ```
 
 ## Styling Reference

@@ -1,7 +1,3 @@
-<script setup lang="ts">
-import { Button, Tooltip } from '@hareui/vue'
-</script>
-
 <template>
   <div class="grid grid-cols-3 gap-4">
     <div />
@@ -29,3 +25,7 @@ import { Button, Tooltip } from '@hareui/vue'
     <div />
   </div>
 </template>
+
+<script setup lang="ts">
+import { Button, Tooltip } from '@hareui/vue'
+</script>

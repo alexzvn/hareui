@@ -24,24 +24,39 @@ TextField renders a [Label](/docs/components/label), an [Input](/docs/components
 ```vue
 <template>
   <TextField label="…" description="…" error-message="…" :invalid="…">
-    <template #label />        <!-- Label content -->
-    <template #default="{ id, describedBy, invalid, disabled, required, readonly, focusWithin, focusVisible }" /> <!-- replaces the Input -->
-    <template #description />  <!-- Description content -->
-    <template #error="{ isInvalid, validationErrors, validationDetails }" /> <!-- FieldError content, rendered while invalid -->
+    <template #label />
+    <!-- Label content -->
+    <template
+      #default="{
+        id,
+        describedBy,
+        invalid,
+        disabled,
+        required,
+        readonly,
+        focusWithin,
+        focusVisible,
+      }"
+    />
+    <!-- replaces the Input -->
+    <template #description />
+    <!-- Description content -->
+    <template #error="{ isInvalid, validationErrors, validationDetails }" />
+    <!-- FieldError content, rendered while invalid -->
   </TextField>
 </template>
 ```
 
-| `ui` key | `data-slot` | Element |
-|---|---|---|
-| `base` | `textfield` | `<div>` root |
-| — | `label` | [Label](/docs/components/label) (iff `label` / `#label`) |
-| — | `input` | [Input](/docs/components/input) (default slot) |
-| — | `description` | [Description](/docs/components/description) (iff `description` / `#description`) |
-| — | `field-error` | [FieldError](/docs/components/field-error) (while invalid, iff `error-message` / `#error` / validation errors) |
+| `ui` key | `data-slot`   | Element                                                                                                        |
+| -------- | ------------- | -------------------------------------------------------------------------------------------------------------- |
+| `base`   | `textfield`   | `<div>` root                                                                                                   |
+| —        | `label`       | [Label](/docs/components/label) (iff `label` / `#label`)                                                       |
+| —        | `input`       | [Input](/docs/components/input) (default slot)                                                                 |
+| —        | `description` | [Description](/docs/components/description) (iff `description` / `#description`)                               |
+| —        | `field-error` | [FieldError](/docs/components/field-error) (while invalid, iff `error-message` / `#error` / validation errors) |
 
 > **TextField** combines label, input, description, and error into a single accessible component.
-For standalone inputs, use **[Input](/docs/components/input)**.
+> For standalone inputs, use **[Input](/docs/components/input)**.
 
 ## Examples
 
@@ -110,9 +125,11 @@ Use the default slot to render your own `Label` and `Input` with custom classes;
 ### Global Configuration
 
 ```ts
-app.use(createHareUI({
-  ui: { textField: { slots: { base: 'gap-2' } } },
-}))
+app.use(
+  createHareUI({
+    ui: { textField: { slots: { base: 'gap-2' } } },
+  }),
+)
 ```
 
 ## Styling Reference
@@ -156,16 +173,16 @@ TextField sets these data attributes on its root:
 
 The default slot receives the field state, the Vue equivalent of HeroUI's render props:
 
-| Prop | Type | Description |
-|------|------|-------------|
-| `id` | `string` | Id of the field's input. |
-| `describedBy` | `string \| undefined` | Ids of the rendered description and error. |
-| `disabled` | `boolean` | Whether the field is disabled. |
-| `invalid` | `boolean` | Whether the field is currently invalid. |
-| `readonly` | `boolean` | Whether the field is read-only. |
-| `required` | `boolean` | Whether the field is required. |
-| `focusWithin` | `boolean` | Whether any child element is focused. |
-| `focusVisible` | `boolean` | Whether focus is visible (keyboard navigation). |
+| Prop           | Type                  | Description                                     |
+| -------------- | --------------------- | ----------------------------------------------- |
+| `id`           | `string`              | Id of the field's input.                        |
+| `describedBy`  | `string \| undefined` | Ids of the rendered description and error.      |
+| `disabled`     | `boolean`             | Whether the field is disabled.                  |
+| `invalid`      | `boolean`             | Whether the field is currently invalid.         |
+| `readonly`     | `boolean`             | Whether the field is read-only.                 |
+| `required`     | `boolean`             | Whether the field is required.                  |
+| `focusWithin`  | `boolean`             | Whether any child element is focused.           |
+| `focusVisible` | `boolean`             | Whether focus is visible (keyboard navigation). |
 
 ## Accessibility
 

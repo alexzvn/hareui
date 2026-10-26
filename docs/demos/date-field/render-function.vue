@@ -1,7 +1,3 @@
-<script setup lang="ts">
-import { DateField } from '@hareui/vue'
-</script>
-
 <template>
   <!--
     HeroUI's render-function demo shows a render prop customizing each sub-part; Option A has no
@@ -10,3 +6,7 @@ import { DateField } from '@hareui/vue'
   -->
   <DateField data-custom="foo" class="w-[256px]" name="date" label="Date" />
 </template>
+
+<script setup lang="ts">
+import { DateField } from '@hareui/vue'
+</script>

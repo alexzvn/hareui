@@ -1,10 +1,11 @@
-<script setup lang="ts">
-import { Avatar, Card } from '@hareui/vue'
-</script>
-
 <template>
   <div class="flex flex-wrap gap-4">
-    <Card class="w-[200px] gap-2" description="148 members" title="Indie Hackers" :ui="{ footer: 'flex gap-2' }">
+    <Card
+      class="w-[200px] gap-2"
+      description="148 members"
+      title="Indie Hackers"
+      :ui="{ footer: 'flex gap-2' }"
+    >
       <template #leading>
         <img
           alt="Indie Hackers community"
@@ -26,7 +27,12 @@ import { Avatar, Card } from '@hareui/vue'
       </template>
     </Card>
 
-    <Card class="w-[200px] gap-2" description="362 members" title="AI Builders" :ui="{ footer: 'flex gap-2' }">
+    <Card
+      class="w-[200px] gap-2"
+      description="362 members"
+      title="AI Builders"
+      :ui="{ footer: 'flex gap-2' }"
+    >
       <template #leading>
         <img
           alt="AI Builders community"
@@ -49,3 +55,7 @@ import { Avatar, Card } from '@hareui/vue'
     </Card>
   </div>
 </template>
+
+<script setup lang="ts">
+import { Avatar, Card } from '@hareui/vue'
+</script>

@@ -1,7 +1,3 @@
-<script setup lang="ts">
-import { Spinner } from '@hareui/vue'
-</script>
-
 <template>
   <div class="flex items-center gap-8">
     <div class="flex flex-col items-center gap-2">
@@ -18,3 +14,7 @@ import { Spinner } from '@hareui/vue'
     </div>
   </div>
 </template>
+
+<script setup lang="ts">
+import { Spinner } from '@hareui/vue'
+</script>

@@ -31,9 +31,25 @@ export * from './components/typography'
 export * from './components/number-field'
 export * from './components/disclosure'
 export * from './components/form'
-export type { ValidateFn, ValidationDetails, ValidationResult } from './composables/useFieldValidation'
+
+export type {
+  ValidateFn,
+  ValidationDetails,
+  ValidationResult,
+} from './composables/useFieldValidation'
+
 export { colorToString, isValidColor, normalizeColor, parseColor } from 'reka-ui'
-export type { Color, ColorChannel, ColorFormat, ColorSpace, HSBColor, HSLColor, RGBColor } from 'reka-ui'
+
+export type {
+  Color,
+  ColorChannel,
+  ColorFormat,
+  ColorSpace,
+  HSBColor,
+  HSLColor,
+  RGBColor,
+} from 'reka-ui'
+
 export * from './components/meter'
 export * from './components/switch-group'
 export * from './components/list-box'
@@ -98,9 +114,24 @@ export * from './components/main'
 export * from './components/container'
 export * from './components/error'
 export { useResizable } from './composables/useResizable'
-export type { UseResizableOptions, UseResizableReturn } from './composables/useResizable'
+
+export type {
+  UseResizableOptions,
+  UseResizableReturn,
+  UseResizableSetup,
+} from './composables/useResizable'
+
 export { useDashboard } from './composables/useDashboard'
-export type { DashboardContext, DashboardSidebarSide, DashboardSidebarState, DashboardStorage, DashboardStorageAdapter, DashboardUnit } from './composables/useDashboard'
+
+export type {
+  DashboardContext,
+  DashboardSidebarSide,
+  DashboardSidebarState,
+  DashboardStorage,
+  DashboardStorageAdapter,
+  DashboardUnit,
+} from './composables/useDashboard'
+
 export * from './components/navigation-menu'
 export * from './components/rich-table'
 export * from './components/native-select'

@@ -1,7 +1,3 @@
-<script setup lang="ts">
-import { Autocomplete } from '@hareui/vue'
-</script>
-
 <template>
   <!-- No options: with `allows-empty-collection` the popover still opens and shows the empty state -->
   <Autocomplete
@@ -13,8 +9,10 @@ import { Autocomplete } from '@hareui/vue'
     search-placeholder="Search states..."
     :items="[]"
   >
-    <template #empty>
-      No results found
-    </template>
+    <template #empty> No results found </template>
   </Autocomplete>
 </template>
+
+<script setup lang="ts">
+import { Autocomplete } from '@hareui/vue'
+</script>

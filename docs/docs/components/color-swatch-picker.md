@@ -23,10 +23,7 @@ import { ColorSwatchPicker } from '@hareui/vue'
 Pass the swatches as `items`: a hex/CSS color string, or `{ value, label?, disabled? }` to set the accessible name or disable one swatch. Each item renders a [ColorSwatch](/docs/components/color-swatch) plus a check indicator. Selection is matched by color, so `#8b5cf6` and `#8B5CF6` are the same item.
 
 ```vue
-<ColorSwatchPicker
-  v-model="color"
-  :items="['#F43F5E', { value: '#3B82F6', label: 'Sky' }]"
-/>
+<ColorSwatchPicker v-model="color" :items="['#F43F5E', { value: '#3B82F6', label: 'Sky' }]" />
 ```
 
 ## Examples
@@ -78,25 +75,27 @@ Use `as` (or `as-child`) to change the root element.
 ### Global CSS
 
 ```ts
-app.use(createHareUI({
-  ui: {
-    colorSwatchPicker: {
-      slots: {
-        base: 'gap-4',
-        item: 'shadow-md',
+app.use(
+  createHareUI({
+    ui: {
+      colorSwatchPicker: {
+        slots: {
+          base: 'gap-4',
+          item: 'shadow-md',
+        },
       },
     },
-  },
-}))
+  }),
+)
 ```
 
 ## Styling Reference
 
-| `ui` key | `data-slot` | Description |
-|---|---|---|
-| `base` | `color-swatch-picker` | Container (flex, wraps) |
-| `item` | `color-swatch-picker-item` | One selectable swatch; ring when selected |
-| `swatch` | `color-swatch-picker-swatch` | The ColorSwatch inside the item |
+| `ui` key    | `data-slot`                     | Description                                         |
+| ----------- | ------------------------------- | --------------------------------------------------- |
+| `base`      | `color-swatch-picker`           | Container (flex, wraps)                             |
+| `item`      | `color-swatch-picker-item`      | One selectable swatch; ring when selected           |
+| `swatch`    | `color-swatch-picker-swatch`    | The ColorSwatch inside the item                     |
 | `indicator` | `color-swatch-picker-indicator` | Check icon wrapper, shown on the selected item only |
 
 ### Interactive States

@@ -1,3 +1,21 @@
+<template>
+  <Surface class="w-[320px] rounded-3xl p-6">
+    <Autocomplete
+      v-model="selectedKey"
+      clearable
+      class="w-full"
+      label="State"
+      placeholder="Select one"
+      variant="secondary"
+      search-label="Search states"
+      search-placeholder="Search states..."
+      :items="items"
+    >
+      <template #empty> No results found </template>
+    </Autocomplete>
+  </Surface>
+</template>
+
 <script setup lang="ts">
 import type { ListBoxItem } from '@hareui/vue'
 import { Autocomplete, Surface } from '@hareui/vue'
@@ -14,23 +32,3 @@ const items: ListBoxItem[] = [
 
 const selectedKey = ref<string | null>(null)
 </script>
-
-<template>
-  <Surface class="w-[320px] rounded-3xl p-6">
-    <Autocomplete
-      v-model="selectedKey"
-      clearable
-      class="w-full"
-      label="State"
-      placeholder="Select one"
-      variant="secondary"
-      search-label="Search states"
-      search-placeholder="Search states..."
-      :items="items"
-    >
-      <template #empty>
-        No results found
-      </template>
-    </Autocomplete>
-  </Surface>
-</template>

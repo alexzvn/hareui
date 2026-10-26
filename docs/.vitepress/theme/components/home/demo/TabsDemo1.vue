@@ -1,3 +1,7 @@
+<template>
+  <Tabs class="w-[256px]" aria-label="Options" :items="items" :content="false" />
+</template>
+
 <script setup lang="ts">
 import { Tabs } from '@hareui/vue'
 
@@ -9,7 +13,3 @@ const items = [
   { label: 'All', value: 'all' },
 ]
 </script>
-
-<template>
-  <Tabs class="w-[256px]" aria-label="Options" :items="items" :content="false" />
-</template>

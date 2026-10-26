@@ -1,7 +1,3 @@
-<script setup lang="ts">
-import { NumberField } from '@hareui/vue'
-</script>
-
 <template>
   <NumberField
     class="w-full max-w-48"
@@ -18,3 +14,7 @@ import { NumberField } from '@hareui/vue'
     }"
   />
 </template>
+
+<script setup lang="ts">
+import { NumberField } from '@hareui/vue'
+</script>

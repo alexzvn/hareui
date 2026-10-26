@@ -1,12 +1,18 @@
 import { mount } from '@vue/test-utils'
 import { describe, expect, it } from 'vitest'
 import { h } from 'vue'
-import Container from '../src/components/container/Container.vue'
+
+import Container from '@/components/container/Container.vue'
+
 import { expectAccessible } from './a11y'
 
 describe('Container', () => {
   it('adds no landmark or role of its own and passes axe', async () => {
-    const wrapper = mount(Container, { slots: { default: () => [h('h2', 'Pricing'), h('p', 'Plans for every team.')] }, attachTo: document.body })
+    const wrapper = mount(Container, {
+      slots: { default: () => [h('h2', 'Pricing'), h('p', 'Plans for every team.')] },
+      attachTo: document.body,
+    })
+
     expect(wrapper.element.tagName).toBe('DIV')
     expect(wrapper.element.hasAttribute('role')).toBe(false)
     await expectAccessible(wrapper)
@@ -20,6 +26,7 @@ describe('Container', () => {
       slots: { default: () => h('h2', { id: 'pricing' }, 'Pricing') },
       attachTo: document.body,
     })
+
     const section = document.querySelector('section')!
     expect(section.getAttribute('aria-labelledby')).toBe('pricing')
     expect(document.getElementById('pricing')!.textContent).toBe('Pricing')

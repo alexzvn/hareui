@@ -1,4 +1,3 @@
-import type { PropType } from 'vue'
 import { injectListboxRootContext } from 'reka-ui'
 import { defineComponent, getCurrentInstance, onBeforeUnmount, onMounted, watch } from 'vue'
 
@@ -27,62 +26,80 @@ export default defineComponent({
   setup(props) {
     const listbox = injectListboxRootContext()
     const instance = getCurrentInstance()
+
     // The renderless child's placeholder node sits directly inside the listbox element
     const root = () => (instance?.vnode.el as Node | null | undefined)?.parentElement ?? null
 
-    watch(() => props.disabled, (disabled) => {
-      listbox.focusable.value = !disabled
-    }, { immediate: true })
+    watch(
+      () => props.disabled,
+      (disabled) => {
+        listbox.focusable.value = !disabled
+      },
+      { immediate: true },
+    )
 
-    function onFocusIn(event: FocusEvent) {
+    const onFocusIn = (event: FocusEvent) => {
       const item = event.target instanceof Element ? event.target.closest<HTMLElement>(ITEM) : null
       if (item && listbox.highlightedElement.value !== item)
         listbox.changeHighlight(item, false, false)
     }
 
-    // Moves through the rendered items rather than Reka's collection, which only fills in after mount
-    function onKeydown(event: KeyboardEvent) {
-      const el = root()
-      if (!el || event.altKey || event.ctrlKey || event.metaKey || !listbox.focusable.value)
-        return
-      const items = [...el.querySelectorAll<HTMLElement>(ITEM)].filter(item => !item.hasAttribute('data-disabled'))
-      const current = event.target instanceof Element ? event.target.closest<HTMLElement>(ITEM) : null
+    const findKeyTarget = (event: KeyboardEvent, items: HTMLElement[]) => {
+      if (event.key === 'PageUp') return items[0]
+      if (event.key === 'PageDown') return items.at(-1)
+
+      const current =
+        event.target instanceof Element ? event.target.closest<HTMLElement>(ITEM) : null
+
       const index = current ? items.indexOf(current) : -1
-      let target: HTMLElement | undefined
-      if (event.key === 'PageUp')
-        target = items[0]
-      else if (event.key === 'PageDown')
-        target = items.at(-1)
-      else if (props.stack && (event.key === 'ArrowLeft' || event.key === 'ArrowRight')) {
-        const forward = (event.key === 'ArrowRight') !== (listbox.dir.value === 'rtl')
-        target = index === -1 ? undefined : items[index + (forward ? 1 : -1)]
-      }
-      else {
-        return
-      }
+      if (index === -1) return undefined
+
+      const isForward = (event.key === 'ArrowRight') !== (listbox.dir.value === 'rtl')
+
+      return items[index + (isForward ? 1 : -1)]
+    }
+
+    // Moves through the rendered items rather than Reka's collection, which only fills in after mount
+    const onKeydown = (event: KeyboardEvent) => {
+      const el = root()
+      if (!el || event.altKey || event.ctrlKey || event.metaKey || !listbox.focusable.value) return
+
+      const isPageKey = event.key === 'PageUp' || event.key === 'PageDown'
+      const isStackArrow = props.stack && (event.key === 'ArrowLeft' || event.key === 'ArrowRight')
+      if (!isPageKey && !isStackArrow) return
+
+      const items = [...el.querySelectorAll<HTMLElement>(ITEM)].filter(
+        (item) => !item.hasAttribute('data-disabled'),
+      )
+
+      const target = findKeyTarget(event, items)
       event.preventDefault()
-      if (target)
-        listbox.changeHighlight(target)
+      if (target) listbox.changeHighlight(target)
     }
 
     let restoreTimer: ReturnType<typeof setTimeout> | undefined
-    watch(() => props.selected, () => {
-      const el = root()
-      if (!el || el.contains(document.activeElement))
-        return
-      const items = [...el.querySelectorAll<HTMLElement>(ITEM)]
-      for (const item of items) {
-        item.focus = () => {}
-        item.scrollIntoView = () => {}
-      }
-      clearTimeout(restoreTimer)
-      restoreTimer = setTimeout(() => {
+    watch(
+      () => props.selected,
+      () => {
+        const el = root()
+        if (!el || el.contains(document.activeElement)) return
+        const items = [...el.querySelectorAll<HTMLElement>(ITEM)]
         for (const item of items) {
-          delete (item as Partial<HTMLElement>).focus
-          delete (item as Partial<HTMLElement>).scrollIntoView
+          item.focus = () => {}
+          item.scrollIntoView = () => {}
         }
-      })
-    }, { flush: 'sync' })
+
+        clearTimeout(restoreTimer)
+
+        restoreTimer = setTimeout(() => {
+          for (const item of items) {
+            delete (item as Partial<HTMLElement>).focus
+            delete (item as Partial<HTMLElement>).scrollIntoView
+          }
+        })
+      },
+      { flush: 'sync' },
+    )
 
     let attached: HTMLElement | null = null
     onMounted(() => {
@@ -90,6 +107,7 @@ export default defineComponent({
       attached?.addEventListener('focusin', onFocusIn)
       attached?.addEventListener('keydown', onKeydown)
     })
+
     onBeforeUnmount(() => {
       clearTimeout(restoreTimer)
       attached?.removeEventListener('focusin', onFocusIn)

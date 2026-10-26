@@ -100,34 +100,36 @@ The `#footer`, `#body` and `#content` slots receive a `close` function. `#conten
 To customize the AlertDialog classes for the whole app, extend the `alertDialog` theme in `createHareUI`:
 
 ```ts
-app.use(createHareUI({
-  ui: {
-    alertDialog: {
-      slots: {
-        backdrop: 'bg-gradient-to-br from-black/60 to-black/80',
-        dialog: 'rounded-2xl border border-red-500/20 shadow-2xl',
-        header: 'gap-4',
-        icon: 'size-16',
-        closeTrigger: 'rounded-full bg-white/10 hover:bg-white/20',
+app.use(
+  createHareUI({
+    ui: {
+      alertDialog: {
+        slots: {
+          backdrop: 'bg-gradient-to-br from-black/60 to-black/80',
+          dialog: 'rounded-2xl border border-red-500/20 shadow-2xl',
+          header: 'gap-4',
+          icon: 'size-16',
+          closeTrigger: 'rounded-full bg-white/10 hover:bg-white/20',
+        },
       },
     },
-  },
-}))
+  }),
+)
 ```
 
 ## Styling Reference
 
-| `ui` key | `data-slot` | Element |
-|---|---|---|
-| `backdrop` | `alert-dialog-backdrop` | Overlay backdrop behind the dialog (Reka `DialogOverlay`) |
-| `container` | `alert-dialog-container` | Positioning wrapper with placement support |
-| `dialog` | `alert-dialog-dialog` | Dialog content container (Reka `DialogContent`, `role="alertdialog"`); `class` merges here |
-| `header` | `alert-dialog-header` | Header section for the icon and title |
-| `heading` | `alert-dialog-heading` | Heading text (Reka `DialogTitle`) |
-| `body` | `alert-dialog-body` | Main content area, rendered when `#body` is present |
-| `footer` | `alert-dialog-footer` | Footer section for actions, rendered when `#footer` is present |
-| `icon` | `alert-dialog-icon` | Icon container with status colors, rendered when `icon` is `true` |
-| `closeTrigger` | `alert-dialog-close-trigger` | Close button, rendered when `closeButton` is `true` |
+| `ui` key       | `data-slot`                  | Element                                                                                    |
+| -------------- | ---------------------------- | ------------------------------------------------------------------------------------------ |
+| `backdrop`     | `alert-dialog-backdrop`      | Overlay backdrop behind the dialog (Reka `DialogOverlay`)                                  |
+| `container`    | `alert-dialog-container`     | Positioning wrapper with placement support                                                 |
+| `dialog`       | `alert-dialog-dialog`        | Dialog content container (Reka `DialogContent`, `role="alertdialog"`); `class` merges here |
+| `header`       | `alert-dialog-header`        | Header section for the icon and title                                                      |
+| `heading`      | `alert-dialog-heading`       | Heading text (Reka `DialogTitle`)                                                          |
+| `body`         | `alert-dialog-body`          | Main content area, rendered when `#body` is present                                        |
+| `footer`       | `alert-dialog-footer`        | Footer section for actions, rendered when `#footer` is present                             |
+| `icon`         | `alert-dialog-icon`          | Icon container with status colors, rendered when `icon` is `true`                          |
+| `closeTrigger` | `alert-dialog-close-trigger` | Close button, rendered when `closeButton` is `true`                                        |
 
 The default status icon inside `icon` carries `data-slot="alert-dialog-default-icon"`.
 

@@ -1,9 +1,11 @@
-import type { ComponentOptions } from 'vue'
 import { flushPromises, mount } from '@vue/test-utils'
 import { afterEach, describe, expect, it, vi } from 'vitest'
+import type { ComponentOptions } from 'vue'
 import { h } from 'vue'
-import type { ListBoxProps } from '../src/components/list-box/ListBox.vue'
-import ListBox from '../src/components/list-box/ListBox.vue'
+
+import type { ListBoxItemSlotProps, ListBoxProps } from '@/components/list-box/ListBox.types'
+import ListBox from '@/components/list-box/ListBox.vue'
+
 import { expectAccessible } from './a11y'
 
 const items = [
@@ -11,6 +13,7 @@ const items = [
   { value: 'b', label: 'Beta' },
   { value: 'c', label: 'Gamma', disabled: true },
 ]
+
 const option = '[data-slot=list-box-item]'
 
 describe('ListBox', () => {
@@ -26,7 +29,11 @@ describe('ListBox', () => {
   })
 
   it('multiple selection accumulates an array; disabled items stay unselectable', async () => {
-    const wrapper = mount(ListBox, { props: { items, selectionMode: 'multiple' }, attachTo: document.body })
+    const wrapper = mount(ListBox, {
+      props: { items, selectionMode: 'multiple' },
+      attachTo: document.body,
+    })
+
     const options = wrapper.findAll(option)
     await options[0]!.trigger('click')
     await options[1]!.trigger('click')
@@ -37,7 +44,11 @@ describe('ListBox', () => {
   })
 
   it('selectionMode none emits action and never selects', async () => {
-    const wrapper = mount(ListBox, { props: { items, selectionMode: 'none' }, attachTo: document.body })
+    const wrapper = mount(ListBox, {
+      props: { items, selectionMode: 'none' },
+      attachTo: document.body,
+    })
+
     await wrapper.findAll(option)[0]!.trigger('click')
     expect(wrapper.emitted('action')).toEqual([['a']])
     expect(wrapper.emitted('update:modelValue')).toBeUndefined()
@@ -58,13 +69,29 @@ describe('ListBox', () => {
 
   it('renders sections with headers, separators, and forwards item slots with state', () => {
     const wrapper = mount(ListBox, {
-      props: { modelValue: 'b', items: [{ type: 'section', label: 'Actions', items: items.slice(0, 2) }, { type: 'separator' }, { type: 'section', items: [items[2]!] }] },
-      slots: { 'item-trailing': ({ item, selected, index }: any) => h('kbd', `${item.value}:${selected}:${index}`) },
+      props: {
+        modelValue: 'b',
+        items: [
+          { type: 'section', label: 'Actions', items: items.slice(0, 2) },
+          { type: 'separator' },
+          { type: 'section', items: [items[2]!] },
+        ],
+      },
+      slots: {
+        'item-trailing': ({ item, selected, index }: ListBoxItemSlotProps) =>
+          h('kbd', `${item.value}:${selected}:${index}`),
+      },
     })
+
     expect(wrapper.findAll('section')).toHaveLength(2)
     expect(wrapper.get('header[data-slot=header]').text()).toBe('Actions')
     expect(wrapper.get('hr[data-slot=separator]').attributes('data-orientation')).toBe('horizontal')
-    expect(wrapper.findAll('kbd').map(k => k.text())).toEqual(['a:false:0', 'b:true:1', 'c:false:2'])
+
+    expect(wrapper.findAll('kbd').map((k) => k.text())).toEqual([
+      'a:false:0',
+      'b:true:1',
+      'c:false:2',
+    ])
   })
 
   describe('accessibility', () => {
@@ -74,13 +101,18 @@ describe('ListBox', () => {
       { value: 'c', label: 'Cherry', disabled: true },
       { value: 'd', label: 'Date' },
     ]
+
     const sectioned = [
       { type: 'section' as const, label: 'Fruit', items: fruit.slice(0, 2) },
       { type: 'separator' as const },
       { type: 'section' as const, items: fruit.slice(2) },
     ]
+
     const press = (key: string, init: KeyboardEventInit = {}) =>
-      document.activeElement!.dispatchEvent(new KeyboardEvent('keydown', { key, bubbles: true, cancelable: true, ...init }))
+      document.activeElement!.dispatchEvent(
+        new KeyboardEvent('keydown', { key, bubbles: true, cancelable: true, ...init }),
+      )
+
     const focusedText = () => document.activeElement?.closest('[role=option]')?.textContent?.trim()
 
     afterEach(() => {
@@ -95,8 +127,14 @@ describe('ListBox', () => {
         { items: fruit, selectionMode: 'none' as const },
         { items: fruit, disabled: true },
       ]
+
       for (const props of cases) {
-        const wrapper = mount(ListBox, { props, attrs: { 'aria-label': 'Fruit' }, attachTo: document.body })
+        const wrapper = mount(ListBox, {
+          props,
+          attrs: { 'aria-label': 'Fruit' },
+          attachTo: document.body,
+        })
+
         await wrapper.vm.$nextTick()
         await expectAccessible(wrapper)
         wrapper.unmount()
@@ -104,18 +142,35 @@ describe('ListBox', () => {
     })
 
     it('has no axe violations with labelled and unlabelled sections and separators', async () => {
-      const wrapper = mount(ListBox, { props: { items: sectioned }, attrs: { 'aria-label': 'Fruit' }, attachTo: document.body })
+      const wrapper = mount(ListBox, {
+        props: { items: sectioned },
+        attrs: { 'aria-label': 'Fruit' },
+        attachTo: document.body,
+      })
+
       await expectAccessible(wrapper)
       wrapper.unmount()
     })
 
     it('has no axe violations with an empty state and while loading more', async () => {
-      const empty = mount(ListBox, { props: { items: [] }, attrs: { 'aria-label': 'Fruit' }, slots: { empty: () => 'No fruit' }, attachTo: document.body })
+      const empty = mount(ListBox, {
+        props: { items: [] },
+        attrs: { 'aria-label': 'Fruit' },
+        slots: { empty: () => 'No fruit' },
+        attachTo: document.body,
+      })
+
       expect(empty.text()).toBe('No fruit')
       await expectAccessible(empty)
       empty.unmount()
 
-      const loading = mount(ListBox, { props: { items: fruit, loading: true }, attrs: { 'aria-label': 'Fruit' }, slots: { loading: () => h('span', { role: 'status' }, 'Loading…') }, attachTo: document.body })
+      const loading = mount(ListBox, {
+        props: { items: fruit, loading: true },
+        attrs: { 'aria-label': 'Fruit' },
+        slots: { loading: () => h('span', { role: 'status' }, 'Loading…') },
+        attachTo: document.body,
+      })
+
       await expectAccessible(loading)
       loading.unmount()
     })
@@ -132,28 +187,51 @@ describe('ListBox', () => {
       const banana = wrapper.findAll(option)[1]!
       expect(banana.find(`[id="${banana.attributes('aria-labelledby')}"]`).text()).toBe('Banana')
       expect(banana.find(`[id="${banana.attributes('aria-describedby')}"]`).text()).toBe('Yellow')
+
       // A plain option is named by its text
       expect(wrapper.findAll(option)[0]!.attributes('aria-labelledby')).toBeUndefined()
       wrapper.unmount()
     })
 
     it('reflects selected and disabled state on the options', async () => {
-      const wrapper = mount(ListBox, { props: { items: fruit, selectionMode: 'multiple', defaultValue: ['a'] }, attachTo: document.body })
+      const wrapper = mount(ListBox, {
+        props: { items: fruit, selectionMode: 'multiple', defaultValue: ['a'] },
+        attachTo: document.body,
+      })
+
       const opts = wrapper.findAll(option)
-      expect(opts.map(o => o.attributes('aria-selected'))).toEqual(['true', 'false', 'false', 'false'])
-      expect(opts.map(o => o.attributes('aria-disabled'))).toEqual([undefined, undefined, 'true', undefined])
+      expect(opts.map((o) => o.attributes('aria-selected'))).toEqual([
+        'true',
+        'false',
+        'false',
+        'false',
+      ])
+
+      expect(opts.map((o) => o.attributes('aria-disabled'))).toEqual([
+        undefined,
+        undefined,
+        'true',
+        undefined,
+      ])
+
       await opts[3]!.trigger('click')
       expect(opts[3]!.attributes('aria-selected')).toBe('true')
       wrapper.unmount()
 
       const disabled = mount(ListBox, { props: { items: fruit, disabled: true } })
-      expect(disabled.findAll(option).every(o => o.attributes('aria-disabled') === 'true')).toBe(true)
+      expect(disabled.findAll(option).every((o) => o.attributes('aria-disabled') === 'true')).toBe(
+        true,
+      )
+
       disabled.unmount()
     })
 
     it('selectionMode none exposes no selection state', () => {
       const wrapper = mount(ListBox, { props: { items: fruit, selectionMode: 'none' } })
-      expect(wrapper.findAll(option).some(o => o.attributes('aria-selected') !== undefined)).toBe(false)
+      expect(wrapper.findAll(option).some((o) => o.attributes('aria-selected') !== undefined)).toBe(
+        false,
+      )
+
       wrapper.unmount()
     })
 
@@ -169,8 +247,15 @@ describe('ListBox', () => {
     })
 
     it('has a single tab stop, and entering the list focuses the selected option, else the first one', async () => {
-      for (const [defaultValue, expected] of [['d', 'Date'], [undefined, 'Apple']] as const) {
-        const wrapper = mount(ListBox, { props: { items: fruit, defaultValue }, attachTo: document.body })
+      for (const [defaultValue, expected] of [
+        ['d', 'Date'],
+        [undefined, 'Apple'],
+      ] as const) {
+        const wrapper = mount(ListBox, {
+          props: { items: fruit, defaultValue },
+          attachTo: document.body,
+        })
+
         await flushPromises()
         const stops = [...document.querySelectorAll<HTMLElement>('[tabindex="0"]')]
         expect(stops).toHaveLength(1)
@@ -184,7 +269,7 @@ describe('ListBox', () => {
     it('arrow keys skip disabled options; Home / End jump to the ends; Enter and Space select', async () => {
       const wrapper = mount(ListBox, { props: { items: fruit }, attachTo: document.body })
       await wrapper.vm.$nextTick()
-      const opts = wrapper.findAll(option).map(o => o.element as HTMLElement)
+      const opts = wrapper.findAll(option).map((o) => o.element as HTMLElement)
       opts[0]!.focus()
       press('ArrowDown')
       await wrapper.vm.$nextTick()
@@ -211,7 +296,11 @@ describe('ListBox', () => {
     })
 
     it('Enter on an action list emits action for the focused option', async () => {
-      const wrapper = mount(ListBox, { props: { items: fruit, selectionMode: 'none' }, attachTo: document.body })
+      const wrapper = mount(ListBox, {
+        props: { items: fruit, selectionMode: 'none' },
+        attachTo: document.body,
+      })
+
       await wrapper.vm.$nextTick()
       ;(wrapper.findAll(option)[3]!.element as HTMLElement).focus()
       press('Enter')
@@ -241,7 +330,11 @@ describe('ListBox', () => {
       await flushPromises()
       outside.focus()
       await flushPromises()
-      const stop = document.querySelector<HTMLElement>('[data-slot=list-box] [tabindex="0"], [data-slot=list-box][tabindex="0"]')!
+
+      const stop = document.querySelector<HTMLElement>(
+        '[data-slot=list-box] [tabindex="0"], [data-slot=list-box][tabindex="0"]',
+      )!
+
       expect(stop.getAttribute('role')).toBe('listbox')
       stop.focus()
       await flushPromises()
@@ -258,9 +351,15 @@ describe('ListBox', () => {
       { value: 'd', label: 'Date' },
       { value: 'e', label: 'Elderberry' },
     ]
+
     const press = (el: Element, key: string, init: KeyboardEventInit = {}) =>
-      el.dispatchEvent(new KeyboardEvent('keydown', { key, bubbles: true, cancelable: true, ...init }))
-    const last = (w: ReturnType<typeof mount>) => (w.emitted('update:modelValue')?.at(-1)?.[0] as string[] | string | null | undefined)
+      el.dispatchEvent(
+        new KeyboardEvent('keydown', { key, bubbles: true, cancelable: true, ...init }),
+      )
+
+    const last = (w: ReturnType<typeof mount>) =>
+      w.emitted('update:modelValue')?.at(-1)?.[0] as string[] | string | null | undefined
+
     const sorted = (v: unknown) => [...(v as string[])].sort()
 
     // Failed assertions skip `unmount()`; keep a leaked tree from polluting the next test's focus.
@@ -268,10 +367,15 @@ describe('ListBox', () => {
       document.body.innerHTML = ''
     })
 
-    async function setup(selectionMode: 'none' | 'single' | 'multiple') {
-      const wrapper = mount(ListBox, { props: { items: fruit, selectionMode }, attachTo: document.body })
+    const setup = async (selectionMode: 'none' | 'single' | 'multiple') => {
+      const wrapper = mount(ListBox, {
+        props: { items: fruit, selectionMode },
+        attachTo: document.body,
+      })
+
       await wrapper.vm.$nextTick()
-      return { wrapper, opts: wrapper.findAll(option).map(o => o.element as HTMLElement) }
+
+      return { wrapper, opts: wrapper.findAll(option).map((o) => o.element as HTMLElement) }
     }
 
     it('Shift+ArrowDown extends the selection from the anchor and skips disabled items', async () => {
@@ -370,19 +474,25 @@ describe('ListBox', () => {
     it('selectionMode none: ArrowDown after a mouse click continues from the clicked item', async () => {
       // behaviour-final-check L5
       const { wrapper, opts } = await setup('none')
+
       // A mouse press focuses the pressed option before the click fires.
       await wrapper.findAll(option)[1]!.trigger('mousedown', { button: 0 })
       opts[1]!.focus()
       await wrapper.findAll(option)[1]!.trigger('click')
       press(document.activeElement!, 'ArrowDown')
       await wrapper.vm.$nextTick()
+
       // Cherry (index 2) is disabled, so the cursor lands on Date.
       expect(document.activeElement).toBe(opts[3])
       wrapper.unmount()
     })
 
     it('escapeKeyBehavior none keeps the selection and lets Escape through', async () => {
-      const wrapper = mount(ListBox, { props: { items: fruit, selectionMode: 'single', escapeKeyBehavior: 'none' }, attachTo: document.body })
+      const wrapper = mount(ListBox, {
+        props: { items: fruit, selectionMode: 'single', escapeKeyBehavior: 'none' },
+        attachTo: document.body,
+      })
+
       await wrapper.vm.$nextTick()
       const opts = wrapper.findAll(option)
       await opts[0]!.trigger('click')
@@ -396,10 +506,17 @@ describe('ListBox', () => {
     })
 
     it('highlightOnHover focuses the hovered option so the keyboard continues from it', async () => {
-      const wrapper = mount(ListBox, { props: { items: fruit, highlightOnHover: true }, attachTo: document.body })
+      const wrapper = mount(ListBox, {
+        props: { items: fruit, highlightOnHover: true },
+        attachTo: document.body,
+      })
+
       await wrapper.vm.$nextTick()
-      const opts = wrapper.findAll(option).map(o => o.element as HTMLElement)
-      opts[1]!.dispatchEvent(new PointerEvent('pointermove', { bubbles: true, pointerType: 'mouse' }))
+      const opts = wrapper.findAll(option).map((o) => o.element as HTMLElement)
+      opts[1]!.dispatchEvent(
+        new PointerEvent('pointermove', { bubbles: true, pointerType: 'mouse' }),
+      )
+
       expect(document.activeElement).toBe(opts[1])
       press(opts[1]!, 'ArrowDown')
       await wrapper.vm.$nextTick()
@@ -421,14 +538,20 @@ describe('ListBox', () => {
 
   describe('render scope', () => {
     const many = Array.from({ length: 50 }, (_, i) => ({ value: `v${i}`, label: `Item ${i}` }))
+
     // Option elements whose ListBoxOption re-rendered (Reka's own primitives under it are out of scope)
     const updatedOptions = new Set<Element>()
     const trackOptionUpdates: ComponentOptions = {
       updated() {
-        if (this.$options.__name === 'ListBoxOption' && this.$el instanceof Element && this.$el.matches(option))
+        if (
+          this.$options.__name === 'ListBoxOption' &&
+          this.$el instanceof Element &&
+          this.$el.matches(option)
+        )
           updatedOptions.add(this.$el)
       },
     }
+
     const press = (el: Element, key: string) =>
       el.dispatchEvent(new KeyboardEvent('keydown', { key, bubbles: true, cancelable: true }))
 
@@ -437,9 +560,14 @@ describe('ListBox', () => {
     })
 
     it('ArrowDown re-renders only the previously and newly focused options', async () => {
-      const wrapper = mount(ListBox, { props: { items: many }, attachTo: document.body, global: { mixins: [trackOptionUpdates] } })
+      const wrapper = mount(ListBox, {
+        props: { items: many },
+        attachTo: document.body,
+        global: { mixins: [trackOptionUpdates] },
+      })
+
       await wrapper.vm.$nextTick()
-      const opts = wrapper.findAll(option).map(o => o.element as HTMLElement)
+      const opts = wrapper.findAll(option).map((o) => o.element as HTMLElement)
       opts[0]!.focus()
       press(opts[0]!, 'ArrowDown')
       await wrapper.vm.$nextTick()
@@ -449,14 +577,21 @@ describe('ListBox', () => {
       expect(document.activeElement).toBe(opts[2])
       expect(opts[2]!.dataset.focused).toBe('true')
       expect(updatedOptions.has(opts[2]!)).toBe(true)
-      expect([...updatedOptions].filter(el => el !== opts[1] && el !== opts[2]).length).toBe(0)
+      expect([...updatedOptions].filter((el) => el !== opts[1] && el !== opts[2]).length).toBe(0)
       wrapper.unmount()
     })
 
     it('selecting re-renders only the options whose selected state changes', async () => {
-      const wrapper = mount(ListBox, { props: { items: [{ type: 'section', label: 'S', items: many.slice(0, 25) }, ...many.slice(25)] }, attachTo: document.body, global: { mixins: [trackOptionUpdates] } })
+      const wrapper = mount(ListBox, {
+        props: {
+          items: [{ type: 'section', label: 'S', items: many.slice(0, 25) }, ...many.slice(25)],
+        },
+        attachTo: document.body,
+        global: { mixins: [trackOptionUpdates] },
+      })
+
       await wrapper.vm.$nextTick()
-      const opts = wrapper.findAll(option).map(o => o.element as HTMLElement)
+      const opts = wrapper.findAll(option).map((o) => o.element as HTMLElement)
       opts[3]!.click()
       await wrapper.vm.$nextTick()
       updatedOptions.clear()
@@ -466,19 +601,24 @@ describe('ListBox', () => {
       expect(opts[30]!.dataset.selected).toBe('true')
       expect(opts[3]!.dataset.selected).toBeUndefined()
       expect(updatedOptions.has(opts[30]!)).toBe(true)
-      expect([...updatedOptions].filter(el => el !== opts[3] && el !== opts[30]).length).toBe(0)
+      expect([...updatedOptions].filter((el) => el !== opts[3] && el !== opts[30]).length).toBe(0)
       wrapper.unmount()
     })
 
     it('typeahead queries the option collection once per key, whatever the list length', async () => {
       const wrapper = mount(ListBox, { props: { items: many }, attachTo: document.body })
       await wrapper.vm.$nextTick()
-      const opts = wrapper.findAll(option).map(o => o.element as HTMLElement)
+      const opts = wrapper.findAll(option).map((o) => o.element as HTMLElement)
       opts[0]!.focus()
       const query = vi.spyOn(Element.prototype, 'querySelectorAll')
+
       // No match: every option is checked
       press(opts[0]!, 'z')
-      const collectionQueries = query.mock.calls.filter(([selector]) => selector.includes('data-reka-collection-item')).length
+
+      const collectionQueries = query.mock.calls.filter(([selector]) =>
+        selector.includes('data-reka-collection-item'),
+      ).length
+
       query.mockRestore()
       expect(document.activeElement).toBe(opts[0])
       expect(collectionQueries).toBe(1)

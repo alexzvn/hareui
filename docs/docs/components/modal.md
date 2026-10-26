@@ -99,28 +99,30 @@ The `#footer`, `#body` and `#content` slots receive a `close` function. `#conten
 ### Global theme override
 
 ```ts
-app.use(createHareUI({
-  ui: {
-    modal: {
-      slots: { dialog: 'rounded-2xl' },
+app.use(
+  createHareUI({
+    ui: {
+      modal: {
+        slots: { dialog: 'rounded-2xl' },
+      },
     },
-  },
-}))
+  }),
+)
 ```
 
 ## Styling Reference
 
-| `ui` key | `data-slot` | Element |
-|---|---|---|
-| `backdrop` | `modal-backdrop` | The full-screen overlay behind the dialog (Reka `DialogOverlay`) |
-| `container` | `modal-container` | Positioning wrapper with placement support |
-| `dialog` | `modal-dialog` | The dialog surface (Reka `DialogContent`); `class` merges here |
-| `header` | `modal-header` | Header section for the icon, title and description, rendered when `#header`, `#icon`, `#description`, or a title is present |
-| `icon` | `modal-icon` | Icon wrapper rendered before the title, rendered when `#icon` is present |
-| `heading` | `modal-heading` | The title (Reka `DialogTitle`) |
-| `body` | `modal-body` | The scrollable content area, rendered when `#body` is present |
-| `footer` | `modal-footer` | Footer section for actions, rendered when `#footer` is present |
-| `closeTrigger` | `modal-close-trigger` | The default close button, rendered when `closeButton` is `true` |
+| `ui` key       | `data-slot`           | Element                                                                                                                     |
+| -------------- | --------------------- | --------------------------------------------------------------------------------------------------------------------------- |
+| `backdrop`     | `modal-backdrop`      | The full-screen overlay behind the dialog (Reka `DialogOverlay`)                                                            |
+| `container`    | `modal-container`     | Positioning wrapper with placement support                                                                                  |
+| `dialog`       | `modal-dialog`        | The dialog surface (Reka `DialogContent`); `class` merges here                                                              |
+| `header`       | `modal-header`        | Header section for the icon, title and description, rendered when `#header`, `#icon`, `#description`, or a title is present |
+| `icon`         | `modal-icon`          | Icon wrapper rendered before the title, rendered when `#icon` is present                                                    |
+| `heading`      | `modal-heading`       | The title (Reka `DialogTitle`)                                                                                              |
+| `body`         | `modal-body`          | The scrollable content area, rendered when `#body` is present                                                               |
+| `footer`       | `modal-footer`        | Footer section for actions, rendered when `#footer` is present                                                              |
+| `closeTrigger` | `modal-close-trigger` | The default close button, rendered when `closeButton` is `true`                                                             |
 
 ### Interactive States
 

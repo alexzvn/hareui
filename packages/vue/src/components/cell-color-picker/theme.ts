@@ -23,7 +23,8 @@ export default {
     variant: {
       default: {},
       secondary: {
-        trigger: 'shadow-none [--cell-bg:var(--default)] [--cell-bg-hover:var(--default-hover)] [--cell-bg-focus:var(--default)]',
+        trigger:
+          'shadow-none [--cell-bg:var(--default)] [--cell-bg-hover:var(--default-hover)] [--cell-bg-focus:var(--default)]',
       },
     },
   },

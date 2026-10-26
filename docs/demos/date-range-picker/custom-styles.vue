@@ -1,7 +1,3 @@
-<script setup lang="ts">
-import { DateRangePicker, RangeCalendar } from '@hareui/vue'
-</script>
-
 <template>
   <!--
     HeroUI restyles the composed RangeCalendar's parts directly. Option A reaches the field parts through
@@ -26,10 +22,20 @@ import { DateRangePicker, RangeCalendar } from '@hareui/vue'
       <RangeCalendar
         aria-label="Stay dates"
         class="rounded-2xl bg-surface p-2"
-        :ui="{ heading: 'font-medium text-foreground', navButton: 'text-muted hover:bg-default', headerCell: 'text-xs text-muted' }"
+        :ui="{
+          heading: 'font-medium text-foreground',
+          navButton: 'text-muted hover:bg-default',
+          headerCell: 'text-xs text-muted',
+        }"
         :model-value="value ?? undefined"
-        @update:model-value="(range) => range?.start && range.end && onSelect({ start: range.start, end: range.end })"
+        @update:model-value="
+          (range) => range?.start && range.end && onSelect({ start: range.start, end: range.end })
+        "
       />
     </template>
   </DateRangePicker>
 </template>
+
+<script setup lang="ts">
+import { DateRangePicker, RangeCalendar } from '@hareui/vue'
+</script>

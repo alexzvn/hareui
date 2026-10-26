@@ -80,25 +80,27 @@ Simply omit the `separator` prop.
 Override the `buttonGroup` theme app-wide with `createHareUI`:
 
 ```ts
-app.use(createHareUI({
-  ui: {
-    buttonGroup: {
-      slots: { base: 'gap-2 rounded-lg', separator: 'opacity-25' },
+app.use(
+  createHareUI({
+    ui: {
+      buttonGroup: {
+        slots: { base: 'gap-2 rounded-lg', separator: 'opacity-25' },
+      },
     },
-  },
-}))
+  }),
+)
 ```
 
 ## Styling Reference
 
 Each rendered element carries the same `data-slot` string as HeroUI, so selectors translate 1:1.
 
-| `ui` key | `data-slot` | Description |
-|---|---|---|
-| `base` | `button-group` | Base button group container |
-| `separator` | `button-group-separator` | Separator element between buttons |
-| `button` | `button` | Classes added to each grouped Button |
-| `buttonOutline` | `button` | Classes added to each grouped outline Button |
+| `ui` key        | `data-slot`              | Description                                  |
+| --------------- | ------------------------ | -------------------------------------------- |
+| `base`          | `button-group`           | Base button group container                  |
+| `separator`     | `button-group-separator` | Separator element between buttons            |
+| `button`        | `button`                 | Classes added to each grouped Button         |
+| `buttonOutline` | `button`                 | Classes added to each grouped outline Button |
 
 The ButtonGroup component automatically applies border radius to buttons:
 

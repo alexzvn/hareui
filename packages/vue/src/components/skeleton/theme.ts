@@ -6,7 +6,7 @@ export default {
   variants: {
     animationType: {
       shimmer: {
-        base: 'after:absolute after:inset-0 after:-translate-x-full after:animate-skeleton after:bg-linear-to-r after:from-transparent after:via-surface-tertiary after:to-transparent after:content-[\'\']',
+        base: "after:absolute after:inset-0 after:-translate-x-full after:animate-skeleton after:bg-linear-to-r after:from-transparent after:via-surface-tertiary after:to-transparent after:content-['']",
       },
       pulse: { base: 'animate-pulse' },
       none: { base: '' },

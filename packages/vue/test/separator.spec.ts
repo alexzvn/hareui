@@ -1,12 +1,18 @@
-import type { VNode } from 'vue'
 import { mount } from '@vue/test-utils'
 import { describe, expect, it } from 'vitest'
+import type { VNode } from 'vue'
 import { defineComponent, h } from 'vue'
-import Separator from '../src/components/separator/Separator.vue'
-import Toolbar from '../src/components/toolbar/Toolbar.vue'
+
+import Separator from '@/components/separator/Separator.vue'
+import Toolbar from '@/components/toolbar/Toolbar.vue'
+
 import { expectAccessible } from './a11y'
 
-const mountAll = (children: () => VNode[]) => mount(defineComponent(() => () => h('div', children())), { attachTo: document.body })
+const mountAll = (children: () => VNode[]) =>
+  mount(
+    defineComponent(() => () => h('div', children())),
+    { attachTo: document.body },
+  )
 
 describe('Separator', () => {
   it('defaults to horizontal orientation with role="separator"', () => {
@@ -28,10 +34,7 @@ describe('Separator', () => {
   })
 
   it('is accessible horizontal and vertical', async () => {
-    const wrapper = mountAll(() => [
-      h(Separator),
-      h(Separator, { orientation: 'vertical' }),
-    ])
+    const wrapper = mountAll(() => [h(Separator), h(Separator, { orientation: 'vertical' })])
     await expectAccessible(wrapper)
     wrapper.unmount()
   })
@@ -39,9 +42,16 @@ describe('Separator', () => {
   it('inside a horizontal Toolbar it is exposed as a vertical separator between the buttons', async () => {
     const wrapper = mount(Toolbar, {
       attrs: { 'aria-label': 'Formatting' },
-      slots: { default: () => [h('button', { type: 'button' }, 'Bold'), h(Separator), h('button', { type: 'button' }, 'Link')] },
+      slots: {
+        default: () => [
+          h('button', { type: 'button' }, 'Bold'),
+          h(Separator),
+          h('button', { type: 'button' }, 'Link'),
+        ],
+      },
       attachTo: document.body,
     })
+
     const sep = wrapper.get('[data-slot=separator]')
     expect(sep.attributes('role')).toBe('separator')
     expect(sep.attributes('aria-orientation')).toBe('vertical')

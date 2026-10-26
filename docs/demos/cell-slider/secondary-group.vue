@@ -1,18 +1,17 @@
-<script setup lang="ts">
-import { CellSlider } from '@hareui/vue'
-</script>
-
 <template>
   <section class="grid w-[300px] gap-1.5 rounded-3xl bg-surface-secondary p-4">
     <header class="mb-1.5">
-      <h4 class="text-sm font-semibold">
-        Daily goals
-      </h4>
-      <p class="text-xs text-muted">
-        Resets at midnight
-      </p>
+      <h4 class="text-sm font-semibold">Daily goals</h4>
+      <p class="text-xs text-muted">Resets at midnight</p>
     </header>
-    <CellSlider label="Steps" variant="secondary" :default-value="8000" :min="2000" :max="20000" :step="500" />
+    <CellSlider
+      label="Steps"
+      variant="secondary"
+      :default-value="8000"
+      :min="2000"
+      :max="20000"
+      :step="500"
+    />
     <CellSlider
       label="Water"
       variant="secondary"
@@ -24,3 +23,7 @@ import { CellSlider } from '@hareui/vue'
     />
   </section>
 </template>
+
+<script setup lang="ts">
+import { CellSlider } from '@hareui/vue'
+</script>

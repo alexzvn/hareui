@@ -1,3 +1,13 @@
+<template>
+  <Select
+    class="w-[256px]"
+    label="Countries to Visit"
+    placeholder="Select countries"
+    selection-mode="multiple"
+    :items="countries"
+  />
+</template>
+
 <script setup lang="ts">
 import type { ListBoxItem } from '@hareui/vue'
 import { Select } from '@hareui/vue'
@@ -14,13 +24,3 @@ const countries: ListBoxItem[] = [
   { value: 'iceland', label: 'Iceland' },
 ]
 </script>
-
-<template>
-  <Select
-    class="w-[256px]"
-    label="Countries to Visit"
-    placeholder="Select countries"
-    selection-mode="multiple"
-    :items="countries"
-  />
-</template>

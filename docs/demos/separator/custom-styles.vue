@@ -1,7 +1,3 @@
-<script setup lang="ts">
-import { Separator } from '@hareui/vue'
-</script>
-
 <template>
   <div class="max-w-xs space-y-4">
     <p class="text-sm font-medium text-foreground">Account settings</p>
@@ -15,3 +11,7 @@ import { Separator } from '@hareui/vue'
     </div>
   </div>
 </template>
+
+<script setup lang="ts">
+import { Separator } from '@hareui/vue'
+</script>

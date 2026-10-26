@@ -1,27 +1,35 @@
 import { mount } from '@vue/test-utils'
 import { describe, expect, it } from 'vitest'
 import { defineComponent, h, inject, provide } from 'vue'
-import App from '../src/components/app/App.vue'
-import { hareUIConfigKey } from '../src/config'
-import { usePortal } from '../src/composables/usePortal'
+
+import App from '@/components/app/App.vue'
+import { usePortal } from '@/composables/usePortal'
+import { hareUIConfigKey } from '@/config'
+
 import { expectAccessible } from './a11y'
 
 const Probe = defineComponent({
   setup() {
     const portal = usePortal(() => undefined)
     const config = inject(hareUIConfigKey, {})
-    return () => h('span', { 'data-to': String(portal.value.to), 'data-disabled': String(portal.value.disabled), 'data-ui': config.ui ? 'yes' : 'no' })
+
+    return () =>
+      h('span', {
+        'data-to': String(portal.value.to),
+        'data-disabled': String(portal.value.disabled),
+        'data-ui': config.ui ? 'yes' : 'no',
+      })
   },
 })
 
-function probe(props: Record<string, unknown>, parentConfig?: object) {
+const probe = (props: Record<string, unknown>, parentConfig?: object) => {
   const Parent = defineComponent({
     setup() {
-      if (parentConfig)
-        provide(hareUIConfigKey, parentConfig)
+      if (parentConfig) provide(hareUIConfigKey, parentConfig)
       return () => h(App, { toaster: null, ...props }, () => h(Probe))
     },
   })
+
   return mount(Parent).get('span')
 }
 
@@ -44,9 +52,12 @@ describe('app', () => {
 
   it('renders the app unwrapped next to its toast region, and passes axe', async () => {
     const wrapper = mount(App, {
-      slots: { default: () => h('main', [h('h1', 'Home'), h('button', { type: 'button' }, 'Save')]) },
+      slots: {
+        default: () => h('main', [h('h1', 'Home'), h('button', { type: 'button' }, 'Save')]),
+      },
       attachTo: document.body,
     })
+
     // Mounted into a container appended to <body>: no wrapper element in between.
     expect(document.querySelector('main')!.parentElement!.parentElement).toBe(document.body)
     await expectAccessible(document.body)
@@ -55,7 +66,12 @@ describe('app', () => {
   })
 
   it('passes axe without a toaster', async () => {
-    const wrapper = mount(App, { props: { toaster: null }, slots: { default: () => h('main', 'Home') }, attachTo: document.body })
+    const wrapper = mount(App, {
+      props: { toaster: null },
+      slots: { default: () => h('main', 'Home') },
+      attachTo: document.body,
+    })
+
     await expectAccessible(document.body)
     wrapper.unmount()
     document.body.innerHTML = ''

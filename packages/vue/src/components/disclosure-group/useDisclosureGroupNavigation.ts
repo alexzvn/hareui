@@ -1,8 +1,10 @@
 import type { MaybeRefOrGetter } from 'vue'
-import type { ExpandedValue } from '../../composables/useExpandedValues'
 import { computed, toValue } from 'vue'
 
-export interface UseDisclosureGroupNavigationOptions {
+import type { ExpandedValue } from '@/composables/useExpandedValues'
+
+/** Options for {@link useDisclosureGroupNavigation}. */
+export type UseDisclosureGroupNavigationOptions = {
   /** The currently expanded values (the Accordion / DisclosureGroup `v-model`). */
   expandedKeys: MaybeRefOrGetter<ExpandedValue[]>
   /** Every item's value, in display order. */
@@ -21,21 +23,28 @@ export interface UseDisclosureGroupNavigationOptions {
  * HeroUI's `useDisclosureGroupNavigation`. The current item is the first expanded one (or the
  * first item when none is expanded).
  */
-export function useDisclosureGroupNavigation(options: UseDisclosureGroupNavigationOptions) {
+export const useDisclosureGroupNavigation = (options: UseDisclosureGroupNavigationOptions) => {
   const currentIndex = computed(() => {
     const ids = toValue(options.itemIds)
     const expanded = toValue(options.expandedKeys)
-    const current = ids.find(id => expanded.includes(id)) ?? ids[0]
+    const current = ids.find((id) => expanded.includes(id)) ?? ids[0]
+
     return current === undefined ? -1 : ids.indexOf(current)
   })
 
-  function goTo(index: number) {
+  const resolveNextExpanded = (id: ExpandedValue): ExpandedValue[] => {
+    if (!toValue(options.multiple)) return [id]
+
+    const expanded = toValue(options.expandedKeys)
+
+    return expanded.includes(id) ? [...expanded] : [...expanded, id]
+  }
+
+  const goTo = (index: number) => {
     const id = toValue(options.itemIds)[index]
     if (id === undefined) return
-    const expanded = toValue(options.expandedKeys)
-    options.onExpandedChange(toValue(options.multiple)
-      ? (expanded.includes(id) ? [...expanded] : [...expanded, id])
-      : [id])
+
+    options.onExpandedChange(resolveNextExpanded(id))
   }
 
   return {

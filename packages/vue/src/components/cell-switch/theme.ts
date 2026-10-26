@@ -37,7 +37,8 @@ export default {
       secondary: {
         // Unchecked control: muted at 20% (30% while pressed); checked keeps the accent.
         base: '[--switch-control-bg:color-mix(in_oklab,var(--muted)_20%,transparent)] [--switch-control-bg-hover:var(--switch-control-bg)] [--switch-control-bg-pressed:color-mix(in_oklab,var(--muted)_30%,transparent)]',
-        trigger: 'shadow-none [--cell-bg:var(--default)] [--cell-bg-hover:var(--default-hover)] [--cell-bg-focus:var(--default)]',
+        trigger:
+          'shadow-none [--cell-bg:var(--default)] [--cell-bg-hover:var(--default-hover)] [--cell-bg-focus:var(--default)]',
       },
     },
   },

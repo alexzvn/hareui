@@ -1,8 +1,12 @@
+<template>
+  <RichTable variant="secondary" :data="data" :columns="columns" class="w-full" />
+</template>
+
 <script setup lang="ts">
 import type { RichTableColumn } from '@hareui/vue'
 import { RichTable } from '@hareui/vue'
 
-interface Payment {
+type Payment = {
   name: string
   email: string
   status: string
@@ -23,10 +27,10 @@ const columns: RichTableColumn<Payment>[] = [
   { accessorKey: 'name', header: 'Customer' },
   { accessorKey: 'email', header: 'Email' },
   { accessorKey: 'status', header: 'Status', meta: { class: { td: 'capitalize' } } },
-  { accessorKey: 'amount', header: 'Amount', cell: ({ row }) => currency.format(row.original.amount) },
+  {
+    accessorKey: 'amount',
+    header: 'Amount',
+    cell: ({ row }) => currency.format(row.original.amount),
+  },
 ]
 </script>
-
-<template>
-  <RichTable variant="secondary" :data="data" :columns="columns" class="w-full" />
-</template>

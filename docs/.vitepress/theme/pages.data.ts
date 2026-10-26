@@ -1,6 +1,6 @@
 import { createContentLoader } from 'vitepress'
 
-export interface PageMeta {
+export type PageMeta = {
   url: string
   title: string
   description: string

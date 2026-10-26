@@ -2,11 +2,13 @@ import { mount } from '@vue/test-utils'
 import { afterEach, describe, expect, it, vi } from 'vitest'
 import type { VNodeChild } from 'vue'
 import { h, nextTick } from 'vue'
-import Drawer from '../src/components/drawer/Drawer.vue'
+
+import Drawer from '@/components/drawer/Drawer.vue'
+
 import { expectAccessible } from './a11y'
 
 // Reka's Presence needs three ticks before a closed dialog leaves the DOM (see modal.spec.ts).
-async function waitUnmount() {
+const waitUnmount = async () => {
   await nextTick()
   await nextTick()
   await nextTick()
@@ -14,11 +16,11 @@ async function waitUnmount() {
 
 const dialog = () => document.querySelector<HTMLElement>('[data-slot=drawer-dialog]')
 
-function pointer(type: string, el: Element, clientY: number) {
+const pointer = (type: string, el: Element, clientY: number) => {
   el.dispatchEvent(new PointerEvent(type, { bubbles: true, button: 0, clientY, pointerId: 1 }))
 }
 
-function drag(el: HTMLElement, distance: number) {
+const drag = (el: HTMLElement, distance: number) => {
   // happy-dom/jsdom lack pointer capture; drag logic only needs it not to throw.
   el.setPointerCapture ??= () => {}
   el.releasePointerCapture ??= () => {}
@@ -31,41 +33,63 @@ function drag(el: HTMLElement, distance: number) {
 
 describe('drawer', () => {
   it('renders the handle at the top, or after the footer for placement="top"', async () => {
-    const bottom = mount(Drawer, { props: { defaultOpen: true, handle: true, title: 'T' }, slots: { footer: () => 'F' } })
+    const bottom = mount(Drawer, {
+      props: { defaultOpen: true, handle: true, title: 'T' },
+      slots: { footer: () => 'F' },
+    })
+
     await nextTick()
-    let order = [...dialog()!.children].map(c => c.getAttribute('data-slot'))
+    let order = [...dialog()!.children].map((c) => c.getAttribute('data-slot'))
     expect(order.indexOf('drawer-handle')).toBeLessThan(order.indexOf('drawer-header'))
     bottom.unmount()
     await waitUnmount()
 
-    const top = mount(Drawer, { props: { defaultOpen: true, handle: true, placement: 'top', title: 'T' }, slots: { footer: () => 'F' } })
+    const top = mount(Drawer, {
+      props: { defaultOpen: true, handle: true, placement: 'top', title: 'T' },
+      slots: { footer: () => 'F' },
+    })
+
     await nextTick()
-    order = [...dialog()!.children].map(c => c.getAttribute('data-slot'))
+    order = [...dialog()!.children].map((c) => c.getAttribute('data-slot'))
     expect(order.at(-1)).toBe('drawer-handle')
     top.unmount()
   })
 
   it('names the dialog from `title` when #content replaces the whole content', async () => {
     const warn = vi.spyOn(console, 'warn').mockImplementation(() => {})
+
     const wrapper = mount(Drawer, {
       props: { defaultOpen: true, title: 'Custom content' },
-      slots: { content: ({ close }: { close: () => void }) => h('button', { onClick: close }, 'Done') },
+      slots: {
+        content: ({ close }: { close: () => void }) => h('button', { onClick: close }, 'Done'),
+      },
     })
+
     await nextTick()
-    expect(document.getElementById(dialog()!.getAttribute('aria-labelledby')!)?.textContent).toBe('Custom content')
+
+    expect(document.getElementById(dialog()!.getAttribute('aria-labelledby')!)?.textContent).toBe(
+      'Custom content',
+    )
+
     expect(warn).not.toHaveBeenCalledWith(expect.stringContaining('requires a `DialogTitle`'))
     wrapper.unmount()
     warn.mockRestore()
   })
 
   it('a short drag springs back, a long drag towards the edge closes', async () => {
-    const wrapper = mount(Drawer, { props: { defaultOpen: true, title: 'T' }, attachTo: document.body })
+    const wrapper = mount(Drawer, {
+      props: { defaultOpen: true, title: 'T' },
+      attachTo: document.body,
+    })
+
     await nextTick()
+
     // The velocity check uses Date.now(); freeze time so only distance decides. The frozen value
     // must be later than mount: Vue's event invoker drops events stamped before the listener was attached.
     const now = Date.now
     const frozen = now() + 10_000
     Date.now = () => frozen
+
     try {
       drag(dialog()!, 40)
       await waitUnmount()
@@ -76,8 +100,7 @@ describe('drawer', () => {
       await waitUnmount()
       expect(dialog()).toBeNull()
       expect(wrapper.emitted('update:open')?.at(-1)).toEqual([false])
-    }
-    finally {
+    } finally {
       Date.now = now
       wrapper.unmount()
     }
@@ -89,12 +112,12 @@ describe('drawer', () => {
     const now = Date.now
     const frozen = now() + 10_000
     Date.now = () => frozen
+
     try {
       drag(dialog()!, 300)
       await waitUnmount()
       expect(dialog()).not.toBeNull()
-    }
-    finally {
+    } finally {
       Date.now = now
       wrapper.unmount()
     }
@@ -110,18 +133,26 @@ describe('drawer', () => {
       },
       attachTo: document.body,
     })
+
     await nextTick()
     await nextTick()
-    const tab = () => (document.activeElement as HTMLElement).dispatchEvent(new KeyboardEvent('keydown', { key: 'Tab', bubbles: true, cancelable: true }))
+
+    const tab = () =>
+      (document.activeElement as HTMLElement).dispatchEvent(
+        new KeyboardEvent('keydown', { key: 'Tab', bubbles: true, cancelable: true }),
+      )
+
     const name = () => {
       const el = document.activeElement as HTMLElement
       return el.dataset.slot ?? el.textContent
     }
+
     const seen: Array<string | null> = []
     for (let i = 0; i < 4; i++) {
       tab()
       seen.push(name())
     }
+
     expect(seen).toEqual(['drawer-close-trigger', 'Cancel', 'Done', 'drawer-close-trigger'])
     wrapper.unmount()
   })
@@ -129,34 +160,42 @@ describe('drawer', () => {
   describe('accessibility', () => {
     const mounted: Array<{ unmount: () => void }> = []
     afterEach(() => {
-      mounted.splice(0).forEach(w => w.unmount())
+      mounted.splice(0).forEach((w) => w.unmount())
       document.body.innerHTML = ''
     })
 
-    const escapeKeydown = () => document.dispatchEvent(new KeyboardEvent('keydown', { key: 'Escape', bubbles: true, cancelable: true }))
-    const closeTrigger = () => document.querySelector<HTMLButtonElement>('[data-slot=drawer-close-trigger]')!
+    const escapeKeydown = () =>
+      document.dispatchEvent(
+        new KeyboardEvent('keydown', { key: 'Escape', bubbles: true, cancelable: true }),
+      )
+
+    const closeTrigger = () =>
+      document.querySelector<HTMLButtonElement>('[data-slot=drawer-close-trigger]')!
 
     // `undefined` drops a default slot, so a test can check the drawer without it.
     type SlotFns = Partial<Record<string, (props: { close: () => void }) => VNodeChild>>
 
-    function mountWithTrigger(props: Record<string, unknown> = {}, slots: SlotFns = {}) {
+    const mountWithTrigger = (props: Record<string, unknown> = {}, slots: SlotFns = {}) => {
       const all: SlotFns = {
         default: () => h('button', { id: 'trigger' }, 'Open'),
         body: () => h('label', ['Name', h('input', { type: 'text' })]),
         footer: () => [h('button', 'Cancel'), h('button', 'Save')],
         ...slots,
       }
+
       const wrapper = mount(Drawer, {
         props: { title: 'Settings', handle: true, ...props },
         slots: Object.fromEntries(Object.entries(all).filter(([, fn]) => fn)),
         attachTo: document.body,
       })
+
       mounted.push(wrapper)
       const trigger = document.querySelector<HTMLButtonElement>('#trigger')!
+
       return { wrapper, trigger }
     }
 
-    async function openWith(trigger: HTMLButtonElement) {
+    const openWith = async (trigger: HTMLButtonElement) => {
       trigger.focus()
       trigger.click()
       await nextTick()
@@ -174,8 +213,13 @@ describe('drawer', () => {
       ['#content replacing the whole content', {}, { content: () => h('button', 'Done') }],
       ['placement="left" and no close button', { placement: 'left', closeButton: false }, {}],
       ['placement="top" (handle after the footer)', { placement: 'top' }, {}],
-      ['dismissible=false and keyboardDismissible=false', { dismissible: false, keyboardDismissible: false }, {}],
+      [
+        'dismissible=false and keyboardDismissible=false',
+        { dismissible: false, keyboardDismissible: false },
+        {},
+      ],
     ]
+
     it.each(variants)('has no axe violations open with %s', async (_name, props, slots) => {
       const { trigger } = mountWithTrigger(props, slots)
       await openWith(trigger)
@@ -205,13 +249,20 @@ describe('drawer', () => {
     it('names the dialog from `title` when #header replaces the visible heading', async () => {
       const { trigger } = mountWithTrigger({}, { header: () => h('div', 'Custom') })
       await openWith(trigger)
-      expect(document.getElementById(dialog()!.getAttribute('aria-labelledby')!)?.textContent).toBe('Settings')
+
+      expect(document.getElementById(dialog()!.getAttribute('aria-labelledby')!)?.textContent).toBe(
+        'Settings',
+      )
     })
 
     it('hides the decorative handle and names the close button "Close"', async () => {
       const { trigger } = mountWithTrigger()
       await openWith(trigger)
-      expect(document.querySelector('[data-slot=drawer-handle]')!.getAttribute('aria-hidden')).toBe('true')
+
+      expect(document.querySelector('[data-slot=drawer-handle]')!.getAttribute('aria-hidden')).toBe(
+        'true',
+      )
+
       expect(closeTrigger().tagName).toBe('BUTTON')
       expect(closeTrigger().getAttribute('aria-label')).toBe('Close')
     })
@@ -250,7 +301,16 @@ describe('drawer', () => {
       const { trigger } = mountWithTrigger()
       await openWith(trigger)
       closeTrigger().focus()
-      closeTrigger().dispatchEvent(new KeyboardEvent('keydown', { key: 'Tab', shiftKey: true, bubbles: true, cancelable: true }))
+
+      closeTrigger().dispatchEvent(
+        new KeyboardEvent('keydown', {
+          key: 'Tab',
+          shiftKey: true,
+          bubbles: true,
+          cancelable: true,
+        }),
+      )
+
       expect(document.activeElement?.textContent).toBe('Save')
     })
 

@@ -69,7 +69,8 @@ export default {
     },
     placement: {
       auto: {
-        container: '[&:where([data-state=open])]:slide-in-from-bottom-1 sm:[&:where([data-state=open])]:slide-in-from-bottom-0',
+        container:
+          '[&:where([data-state=open])]:slide-in-from-bottom-1 sm:[&:where([data-state=open])]:slide-in-from-bottom-0',
         dialog: 'mt-auto sm:my-auto',
       },
       top: {

@@ -1,40 +1,10 @@
-<script setup lang="ts">
-import { Select, Spinner } from '@hareui/vue'
-import { onMounted, ref } from 'vue'
-
-interface Pokemon {
-  name: string
-}
-
-// HeroUI's `useAsyncList` equivalent: fetch the first page, then the next cursor on `load-more`
-const pokemon = ref<Pokemon[]>([])
-const loading = ref(false)
-let cursor: string | null = 'https://pokeapi.co/api/v2/pokemon'
-
-async function loadMore() {
-  if (!cursor || loading.value)
-    return
-  loading.value = true
-  try {
-    const json = await (await fetch(cursor)).json()
-    cursor = json.next
-    pokemon.value = [...pokemon.value, ...json.results]
-  }
-  finally {
-    loading.value = false
-  }
-}
-// Client only: VitePress SSR-renders demos
-onMounted(loadMore)
-</script>
-
 <template>
   <Select
     class="w-[256px]"
     label="Pick a Pokemon"
     placeholder="Select a Pokemon"
-    :items="pokemon.map(p => ({ value: p.name, label: p.name }))"
-    :loading="loading"
+    :items="pokemon.map((p) => ({ value: p.name, label: p.name }))"
+    :loading="isLoading"
     @load-more="loadMore"
   >
     <template #loading>
@@ -45,3 +15,33 @@ onMounted(loadMore)
     </template>
   </Select>
 </template>
+
+<script setup lang="ts">
+import { Select, Spinner } from '@hareui/vue'
+import { onMounted, ref } from 'vue'
+
+type Pokemon = {
+  name: string
+}
+
+// HeroUI's `useAsyncList` equivalent: fetch the first page, then the next cursor on `load-more`
+const pokemon = ref<Pokemon[]>([])
+const isLoading = ref(false)
+let cursor: string | null = 'https://pokeapi.co/api/v2/pokemon'
+
+const loadMore = async () => {
+  if (!cursor || isLoading.value) return
+  isLoading.value = true
+
+  try {
+    const json = await (await fetch(cursor)).json()
+    cursor = json.next
+    pokemon.value = [...pokemon.value, ...json.results]
+  } finally {
+    isLoading.value = false
+  }
+}
+
+// Client only: VitePress SSR-renders demos
+onMounted(loadMore)
+</script>

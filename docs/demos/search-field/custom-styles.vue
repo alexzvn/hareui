@@ -1,7 +1,3 @@
-<script setup lang="ts">
-import { SearchField } from '@hareui/vue'
-</script>
-
 <template>
   <SearchField
     class="w-full max-w-64"
@@ -9,6 +5,15 @@ import { SearchField } from '@hareui/vue'
     variant="secondary"
     label="Search docs"
     placeholder="Components, guides..."
-    :ui="{ group: 'rounded-xl bg-default', searchIcon: 'text-muted', input: 'placeholder:text-muted', clearButton: 'text-muted' }"
+    :ui="{
+      group: 'rounded-xl bg-default',
+      searchIcon: 'text-muted',
+      input: 'placeholder:text-muted',
+      clearButton: 'text-muted',
+    }"
   />
 </template>
+
+<script setup lang="ts">
+import { SearchField } from '@hareui/vue'
+</script>

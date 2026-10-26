@@ -12,7 +12,7 @@ export type RadiusId = (typeof radiusIds)[number]
 /**
  * Semantic color override for a single color (success, warning, or danger)
  */
-export interface SemanticColorOverride {
+type SemanticColorOverride = {
   /** OKLCH color string e.g. "oklch(0.5148 0.1337 146.82)" */
   color: string
   /** Optional foreground color - if not provided, will be calculated automatically */
@@ -23,7 +23,7 @@ export interface SemanticColorOverride {
  * Semantic color overrides for light and dark modes.
  * Allows themes to specify exact semantic colors instead of using calculated values.
  */
-export interface ThemeSemanticOverrides {
+type ThemeSemanticOverrides = {
   light?: {
     /** Override the accent foreground color (text on accent background) */
     accentForeground?: string
@@ -54,7 +54,7 @@ export type ThemeValues = {
   vibrantPalette?: boolean
 }
 
-export const defaultThemeValues: ThemeValues = {
+const defaultThemeValues: ThemeValues = {
   base: DEFAULT_BASE,
   chroma: 0.195,
   fontFamily: 'inter',
@@ -64,7 +64,7 @@ export const defaultThemeValues: ThemeValues = {
   radius: 'medium',
 } as const
 
-export const skyThemeValues: ThemeValues = {
+const skyThemeValues: ThemeValues = {
   base: DEFAULT_BASE,
   chroma: 0.16,
   fontFamily: 'inter',
@@ -74,7 +74,7 @@ export const skyThemeValues: ThemeValues = {
   radius: 'medium',
 } as const
 
-export const lavenderThemeValues: ThemeValues = {
+const lavenderThemeValues: ThemeValues = {
   base: DEFAULT_BASE,
   chroma: 0.13,
   fontFamily: 'inter',
@@ -84,7 +84,7 @@ export const lavenderThemeValues: ThemeValues = {
   radius: 'medium',
 } as const
 
-export const mintThemeValues: ThemeValues = {
+const mintThemeValues: ThemeValues = {
   base: DEFAULT_BASE,
   chroma: 0.12,
   fontFamily: 'inter',
@@ -94,7 +94,7 @@ export const mintThemeValues: ThemeValues = {
   radius: 'medium',
 } as const
 
-export const netflixThemeValues: ThemeValues = {
+const netflixThemeValues: ThemeValues = {
   base: BASE_FULL_LEFT,
   chroma: 0.2349,
   fontFamily: 'inter',
@@ -116,7 +116,7 @@ export const netflixThemeValues: ThemeValues = {
   },
 } as const
 
-export const uberThemeValues: ThemeValues = {
+const uberThemeValues: ThemeValues = {
   base: BASE_FULL_LEFT,
   chroma: 0,
   fontFamily: 'inter',
@@ -138,7 +138,7 @@ export const uberThemeValues: ThemeValues = {
   },
 } as const
 
-export const spotifyThemeValues: ThemeValues = {
+const spotifyThemeValues: ThemeValues = {
   base: BASE_10P_LEFT,
   chroma: 0.2124,
   fontFamily: 'inter',
@@ -160,7 +160,7 @@ export const spotifyThemeValues: ThemeValues = {
   },
 } as const
 
-export const coinbaseThemeValues: ThemeValues = {
+const coinbaseThemeValues: ThemeValues = {
   base: BASE_10P_LEFT,
   chroma: 0.2628,
   fontFamily: 'inter',
@@ -182,7 +182,7 @@ export const coinbaseThemeValues: ThemeValues = {
   },
 } as const
 
-export const airbnbThemeValues: ThemeValues = {
+const airbnbThemeValues: ThemeValues = {
   base: BASE_FULL_LEFT,
   chroma: 0.2309,
   fontFamily: 'inter',
@@ -206,7 +206,7 @@ export const airbnbThemeValues: ThemeValues = {
   },
 } as const
 
-export const discordThemeValues: ThemeValues = {
+const discordThemeValues: ThemeValues = {
   base: BASE_50P,
   chroma: 0.2091,
   fontFamily: 'inter',
@@ -228,7 +228,7 @@ export const discordThemeValues: ThemeValues = {
   },
 } as const
 
-export const rabbitThemeValues: ThemeValues = {
+const rabbitThemeValues: ThemeValues = {
   base: BASE_50P,
   chroma: 0.2232,
   fontFamily: 'inter',
@@ -249,7 +249,7 @@ export const rabbitThemeValues: ThemeValues = {
 } as const
 
 // Cloudflare Kumo (packages/kumo/src/styles/theme-kumo.css): pure neutrals, blue brand.
-export const kumoThemeValues: ThemeValues = {
+const kumoThemeValues: ThemeValues = {
   base: BASE_FULL_LEFT,
   chroma: 0.2324,
   fontFamily: 'inter',
@@ -271,7 +271,7 @@ export const kumoThemeValues: ThemeValues = {
   },
 } as const
 
-export const themeIds = [
+const themeIds = [
   'default',
   'sky',
   'lavender',
@@ -307,7 +307,7 @@ export const themeValuesById: Record<ThemeId, ThemeValues> = {
  * Keys that define a theme's appearance.
  * Used for comparing current values against predefined themes.
  */
-export const themeComparisonKeys = [
+const themeComparisonKeys = [
   'base',
   'chroma',
   'fontFamily',
@@ -321,10 +321,10 @@ export const themeComparisonKeys = [
  * Find which predefined theme matches the current variable values.
  * Returns undefined if no theme matches (i.e., it's a custom theme).
  */
-export function findMatchingTheme(currentValues: ThemeValues): ThemeId | undefined {
+export const findMatchingTheme = (currentValues: ThemeValues): ThemeId | undefined => {
   for (const themeId of themeIds) {
     const themeValues = themeValuesById[themeId]
-    const matches = themeComparisonKeys.every(key => {
+    const matches = themeComparisonKeys.every((key) => {
       const current = currentValues[key]
       const theme = themeValues[key]
 

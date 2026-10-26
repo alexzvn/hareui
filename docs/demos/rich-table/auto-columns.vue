@@ -1,3 +1,7 @@
+<template>
+  <RichTable :data="data" class="w-full" />
+</template>
+
 <script setup lang="ts">
 import { RichTable } from '@hareui/vue'
 
@@ -8,7 +12,3 @@ const data = [
   { id: 3, name: 'Jackson Lee', role: 'Viewer' },
 ]
 </script>
-
-<template>
-  <RichTable :data="data" class="w-full" />
-</template>

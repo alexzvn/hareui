@@ -1,7 +1,3 @@
-<script setup lang="ts">
-import { Input } from '@hareui/vue'
-</script>
-
 <template>
   <Input
     aria-label="Search projects"
@@ -9,3 +5,7 @@ import { Input } from '@hareui/vue'
     placeholder="Search projects..."
   />
 </template>
+
+<script setup lang="ts">
+import { Input } from '@hareui/vue'
+</script>

@@ -1,7 +1,3 @@
-<script setup lang="ts">
-import { Button, Card, ScrollShadow } from '@hareui/vue'
-</script>
-
 <template>
   <Card
     class="max-w-[400px]"
@@ -12,19 +8,19 @@ import { Button, Card, ScrollShadow } from '@hareui/vue'
     <ScrollShadow class="h-[300px] px-4" :size="80">
       <div class="space-y-4">
         <p v-for="idx in 10" :key="`scroll-shadow-lorem-content-${idx}`">
-          Lorem ipsum dolor sit amet, consectetur adipiscing elit. Nullam pulvinar risus non
-          risus hendrerit venenatis. Pellentesque sit amet hendrerit risus, sed porttitor quam.
-          Morbi accumsan cursus enim, sed ultricies sapien.
+          Lorem ipsum dolor sit amet, consectetur adipiscing elit. Nullam pulvinar risus non risus
+          hendrerit venenatis. Pellentesque sit amet hendrerit risus, sed porttitor quam. Morbi
+          accumsan cursus enim, sed ultricies sapien.
         </p>
       </div>
     </ScrollShadow>
     <template #footer>
-      <Button class="w-full" variant="secondary">
-        Cancel
-      </Button>
-      <Button class="w-full">
-        Accept
-      </Button>
+      <Button class="w-full" variant="secondary"> Cancel </Button>
+      <Button class="w-full"> Accept </Button>
     </template>
   </Card>
 </template>
+
+<script setup lang="ts">
+import { Button, Card, ScrollShadow } from '@hareui/vue'
+</script>

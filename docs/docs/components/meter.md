@@ -68,30 +68,32 @@ Use the `class` prop for the root and the `ui` prop for the label, output, track
 Override the `meter` theme app-wide with `createHareUI`:
 
 ```ts
-app.use(createHareUI({
-  ui: {
-    meter: {
-      slots: {
-        base: 'w-full gap-2',
-        track: 'h-3 rounded-full',
-        fill: 'rounded-full',
+app.use(
+  createHareUI({
+    ui: {
+      meter: {
+        slots: {
+          base: 'w-full gap-2',
+          track: 'h-3 rounded-full',
+          fill: 'rounded-full',
+        },
       },
     },
-  },
-}))
+  }),
+)
 ```
 
 ## Styling Reference
 
 Each rendered element carries the same `data-slot` string as HeroUI, so selectors translate 1:1.
 
-| `ui` key | `data-slot` | Description |
-|---|---|---|
-| `base` | `meter` | Base container (grid layout) |
-| `label` | `label` | Label text (Label theme plus the grid placement) |
-| `output` | `meter-output` | Value text display |
-| `track` | `meter-track` | Track background |
-| `fill` | `meter-fill` | Filled portion of the track |
+| `ui` key | `data-slot`    | Description                                      |
+| -------- | -------------- | ------------------------------------------------ |
+| `base`   | `meter`        | Base container (grid layout)                     |
+| `label`  | `label`        | Label text (Label theme plus the grid placement) |
+| `output` | `meter-output` | Value text display                               |
+| `track`  | `meter-track`  | Track background                                 |
+| `fill`   | `meter-fill`   | Filled portion of the track                      |
 
 HeroUI's modifier classes correspond to props (HareUI renders utilities, not BEM classes, so
 style through `class`, `ui` or `createHareUI`):
@@ -115,8 +117,7 @@ style through `class`, `ui` or `createHareUI`):
 
 `#label` and `#output` receive:
 
-| Prop | Type | Description |
-|------|------|-------------|
+| Prop         | Type     | Description                         |
+| ------------ | -------- | ----------------------------------- |
 | `percentage` | `number` | The percentage of the meter (0-100) |
-| `valueText` | `string` | The formatted value text |
-
+| `valueText`  | `string` | The formatted value text            |

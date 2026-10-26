@@ -1,3 +1,13 @@
+<template>
+  <RadioGroup
+    default-value="premium"
+    name="plan"
+    label="Plan selection"
+    description="Choose the plan that suits you best"
+    :items="items"
+  />
+</template>
+
 <script setup lang="ts">
 import type { RadioGroupItem } from '@hareui/vue'
 import { RadioGroup } from '@hareui/vue'
@@ -8,13 +18,3 @@ const items: RadioGroupItem[] = [
   { value: 'business', label: 'Business Plan', description: 'Unlimited messages' },
 ]
 </script>
-
-<template>
-  <RadioGroup
-    default-value="premium"
-    name="plan"
-    label="Plan selection"
-    description="Choose the plan that suits you best"
-    :items="items"
-  />
-</template>

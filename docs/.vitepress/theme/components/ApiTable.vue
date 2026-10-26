@@ -1,40 +1,3 @@
-<script setup lang="ts">
-import { computed } from 'vue'
-import type { ComponentApi } from '../../../scripts/api-types'
-
-const props = defineProps<{ component: string; kind: 'props' | 'slots' | 'emits' }>()
-
-const files = import.meta.glob<ComponentApi>('../../api/*.json', { import: 'default', eager: true })
-
-const api = computed(() => {
-  const data = files[`../../api/${props.component}.json`]
-  if (!data) throw new Error(`ApiTable: missing docs/.vitepress/api/${props.component}.json (run \`bun run api\`)`)
-  return data
-})
-
-const table = computed(() => {
-  const data = api.value
-  if (props.kind === 'props') {
-    return {
-      head: ['Prop', 'Type', 'Default', 'Description'],
-      rows: data.props.map((p) => [p.name, p.type, p.default ?? '-', p.description]),
-    }
-  }
-  if (props.kind === 'slots') {
-    return {
-      head: ['Slot', 'Props', 'Description'],
-      rows: data.slots.map((s) => [s.name, s.type, s.description]),
-    }
-  }
-  return {
-    head: ['Event', 'Payload', 'Description'],
-    rows: data.events.map((e) => [e.name, e.type, e.description]),
-  }
-})
-
-const codeColumns = computed(() => (props.kind === 'props' ? [0, 1, 2] : [0, 1]))
-</script>
-
 <template>
   <div class="relative overflow-auto prose-no-margin my-6">
     <table>
@@ -48,7 +11,10 @@ const codeColumns = computed(() => (props.kind === 'props' ? [0, 1, 2] : [0, 1])
           <td v-for="(cell, i) in row" :key="i">
             <code v-if="codeColumns.includes(i) && cell !== '-' && cell !== ''">{{ cell }}</code>
             <template v-else-if="cell">
-              <template v-for="(part, j) in cell.split('`')" :key="j"><code v-if="j % 2">{{ part }}</code><template v-else>{{ part }}</template></template>
+              <template v-for="(part, j) in cell.split('`')" :key="j"
+                ><code v-if="j % 2">{{ part }}</code
+                ><template v-else>{{ part }}</template></template
+              >
             </template>
             <template v-else>-</template>
           </td>
@@ -57,3 +23,56 @@ const codeColumns = computed(() => (props.kind === 'props' ? [0, 1, 2] : [0, 1])
     </table>
   </div>
 </template>
+
+<script setup lang="ts">
+import { computed } from 'vue'
+
+import type { ComponentApi } from '../../../scripts/api-types'
+
+const props = defineProps<{ component: string; kind: 'props' | 'slots' | 'emits' }>()
+
+const files = import.meta.glob<ComponentApi>('../../api/*.json', { import: 'default', eager: true })
+
+const api = computed(() => {
+  const data = files[`../../api/${props.component}.json`]
+  if (!data)
+    throw new Error(
+      `ApiTable: missing docs/.vitepress/api/${props.component}.json (run \`bun run api\`)`,
+    )
+
+  return data
+})
+
+const table = computed(() => {
+  const data = api.value
+  if (props.kind === 'props') {
+    // A nested prop group's members follow it as `group.member` rows.
+    return {
+      head: ['Prop', 'Type', 'Default', 'Description'],
+      rows: data.props.flatMap((p) => [
+        [p.name, p.type, p.default ?? '-', p.description],
+        ...(p.members ?? []).map((m) => [
+          `${p.name}.${m.name}`,
+          m.type,
+          m.default ?? '-',
+          m.description,
+        ]),
+      ]),
+    }
+  }
+
+  if (props.kind === 'slots') {
+    return {
+      head: ['Slot', 'Props', 'Description'],
+      rows: data.slots.map((s) => [s.name, s.type, s.description]),
+    }
+  }
+
+  return {
+    head: ['Event', 'Payload', 'Description'],
+    rows: data.events.map((e) => [e.name, e.type, e.description]),
+  }
+})
+
+const codeColumns = computed(() => (props.kind === 'props' ? [0, 1, 2] : [0, 1]))
+</script>

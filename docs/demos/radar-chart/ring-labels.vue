@@ -1,3 +1,24 @@
+<template>
+  <Card
+    class="w-full max-w-[460px] rounded-2xl"
+    :ui="{ header: 'flex-row items-center justify-between' }"
+  >
+    <template #header>
+      <h3 class="text-base font-medium text-foreground">Player Ratings</h3>
+      <ChartLegend :series="series" />
+    </template>
+    <RadarChart
+      :data="data"
+      index="category"
+      :series="series"
+      :dot="{ strokeWidth: 0 }"
+      :radius-axis="{ angle: 90, domain: [0, 100] }"
+      :height="300"
+      aria-label="Player ratings this season and last season"
+    />
+  </Card>
+</template>
+
 <script setup lang="ts">
 import { Card } from '@hareui/vue'
 import { ChartLegend, RadarChart } from '@hareui/vue/charts'
@@ -16,21 +37,3 @@ const series = {
   lastSeason: { name: 'Last season', color: 'var(--chart-1)' },
 }
 </script>
-
-<template>
-  <Card class="w-full max-w-[460px] rounded-2xl" :ui="{ header: 'flex-row items-center justify-between' }">
-    <template #header>
-      <h3 class="text-base font-medium text-foreground">Player Ratings</h3>
-      <ChartLegend :series="series" />
-    </template>
-    <RadarChart
-      :data="data"
-      index="category"
-      :series="series"
-      :dot="{ strokeWidth: 0 }"
-      :radius-axis="{ angle: 90, domain: [0, 100] }"
-      :height="300"
-      aria-label="Player ratings this season and last season"
-    />
-  </Card>
-</template>

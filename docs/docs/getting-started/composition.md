@@ -23,9 +23,9 @@ Compare to HeroUI's compound parts:
 ::: code-group
 
 ```tsx [HeroUI (React)]
-import { Card } from '@heroui/react';
+import { Card } from '@heroui/react'
 
-<Card>
+;<Card>
   <Card.Header>
     <Card.Title>Settings</Card.Title>
   </Card.Header>
@@ -54,13 +54,6 @@ import { Card } from '@heroui/react';
 Some slots expose internal state as scoped slot props, so you can render different content depending on what the component is doing — no render-prop wrapper needed. `Button`'s `leading`, `default`, and `trailing` slots all receive `{ pending }`:
 
 ```vue
-<script setup lang="ts">
-import { ref } from 'vue'
-import { Button } from '@hareui/vue'
-
-const isSaving = ref(false)
-</script>
-
 <template>
   <Button :pending="isSaving" @click="isSaving = true">
     <template #leading="{ pending }">
@@ -69,6 +62,13 @@ const isSaving = ref(false)
     {{ isSaving ? 'Saving…' : 'Save' }}
   </Button>
 </template>
+
+<script setup lang="ts">
+import { ref } from 'vue'
+import { Button } from '@hareui/vue'
+
+const isSaving = ref(false)
+</script>
 ```
 
 By default the `leading` slot renders a `Spinner` while `pending` is true — overriding the slot replaces that default entirely, so check `pending` yourself if you still want a loading indicator.
@@ -80,9 +80,7 @@ Components with a non-interactive root (`Button`, `Card`, `Chip`) accept an `as`
 ```vue
 <template>
   <!-- Renders an <a> styled as a primary button -->
-  <Button as="a" href="/dashboard" variant="primary">
-    Go to Dashboard
-  </Button>
+  <Button as="a" href="/dashboard" variant="primary"> Go to Dashboard </Button>
 </template>
 ```
 
@@ -108,13 +106,6 @@ All three compose together — swap the element, override one slot's classes, an
 Compose HareUI primitives into your own components the same way you'd compose any Vue component — no variant-function glue required:
 
 ```vue
-<!-- components/IconButton.vue -->
-<script setup lang="ts">
-import { Button, Tooltip } from '@hareui/vue'
-
-defineProps<{ label: string }>()
-</script>
-
 <template>
   <Tooltip :text="label">
     <Button :aria-label="label" icon-only variant="ghost">
@@ -122,6 +113,13 @@ defineProps<{ label: string }>()
     </Button>
   </Tooltip>
 </template>
+
+<!-- components/IconButton.vue -->
+<script setup lang="ts">
+import { Button, Tooltip } from '@hareui/vue'
+
+defineProps<{ label: string }>()
+</script>
 ```
 
 ```vue

@@ -11,9 +11,7 @@ Every HareUI component accepts a `class` prop for the root element and a `:ui` p
 
 ```vue
 <template>
-  <Button class="bg-purple-500 hover:bg-purple-600">
-    Custom Button
-  </Button>
+  <Button class="bg-purple-500 hover:bg-purple-600"> Custom Button </Button>
 </template>
 ```
 
@@ -43,12 +41,12 @@ HareUI's scroll slots (e.g. `Modal`'s body) apply the `scrollbar` utility, which
 </template>
 ```
 
-| Utility | Effect |
-|---------|--------|
-| `scrollbar` | HareUI thumb (reads theme `--scrollbar-*` variables) |
-| `scrollbar-thin` | HareUI themed thin scrollbar |
-| `scrollbar-default` | OS / browser scrollbars |
-| `scrollbar-none` | Hidden scrollbar |
+| Utility             | Effect                                               |
+| ------------------- | ---------------------------------------------------- |
+| `scrollbar`         | HareUI thumb (reads theme `--scrollbar-*` variables) |
+| `scrollbar-thin`    | HareUI themed thin scrollbar                         |
+| `scrollbar-default` | OS / browser scrollbars                              |
+| `scrollbar-none`    | Hidden scrollbar                                     |
 
 Global and per-subtree control uses `data-scrollbar` on an ancestor. See [Theming](/docs/getting-started/theming#scrollbars) for tokens and modes.
 
@@ -67,29 +65,29 @@ HareUI components expose their state through `data-slot` and state data attribut
 
 ```css
 /* Target component state */
-[data-slot="button"][data-pending="true"] {
+[data-slot='button'][data-pending='true'] {
   cursor: progress;
 }
 
-[data-slot="checkbox-control"][data-state="checked"] {
+[data-slot='checkbox-control'][data-state='checked'] {
   background: var(--accent);
 }
 
-[data-slot="modal-dialog"][data-state="open"] {
+[data-slot='modal-dialog'][data-state='open'] {
   animation: fade-in 150ms var(--ease-out);
 }
 ```
 
 Common attributes:
 
-| Attribute | Meaning |
-|---|---|
-| `data-slot="<name>"` | Identifies the rendered part, identical to HeroUI's `data-slot` strings |
-| `data-state="checked\|open\|closed\|active"` | Reka UI state (checkbox/switch/radio, overlays, tabs) |
-| `data-disabled` | Present when the part is disabled |
-| `data-pending="true"` | Button is in a pending state |
-| `data-invalid="true"` | Form field failed validation |
-| `data-side="top\|right\|bottom\|left"` | Floating content placement (popover, tooltip) |
+| Attribute                                    | Meaning                                                                 |
+| -------------------------------------------- | ----------------------------------------------------------------------- |
+| `data-slot="<name>"`                         | Identifies the rendered part, identical to HeroUI's `data-slot` strings |
+| `data-state="checked\|open\|closed\|active"` | Reka UI state (checkbox/switch/radio, overlays, tabs)                   |
+| `data-disabled`                              | Present when the part is disabled                                       |
+| `data-pending="true"`                        | Button is in a pending state                                            |
+| `data-invalid="true"`                        | Form field failed validation                                            |
+| `data-side="top\|right\|bottom\|left"`       | Floating content placement (popover, tooltip)                           |
 
 See [Animation](/docs/getting-started/animation) for the full `data-state` → Tailwind variant mapping used in transitions.
 
@@ -98,15 +96,15 @@ See [Animation](/docs/getting-started/animation) for the full `data-state` → T
 HareUI components are plain DOM elements, so native pseudo-classes work directly — no `data-hovered`/`data-pressed` attributes to match:
 
 ```css
-[data-slot="button"]:hover {
+[data-slot='button']:hover {
   background: var(--accent-hover);
 }
 
-[data-slot="button"]:active {
+[data-slot='button']:active {
   transform: scale(0.97);
 }
 
-[data-slot="button"]:focus-visible {
+[data-slot='button']:focus-visible {
   outline: 2px solid var(--focus);
 }
 ```
@@ -125,9 +123,7 @@ Because `tv({ extend })` merges with tailwind-merge, the new variant's classes w
 
 ```vue
 <template>
-  <Button class="text-sm md:text-base lg:text-lg px-3 md:px-4 lg:px-6">
-    Responsive Button
-  </Button>
+  <Button class="text-sm md:text-base lg:text-lg px-3 md:px-4 lg:px-6"> Responsive Button </Button>
 </template>
 ```
 
@@ -136,14 +132,14 @@ Because `tv({ extend })` merges with tailwind-merge, the new variant's classes w
 Vue's `<style module>` works the same way as any other `class` value — bind the generated identifier instead of a literal string:
 
 ```vue
+<template>
+  <Button :class="$style.button">Scoped Button</Button>
+</template>
+
 <!-- GradientButton.vue -->
 <script setup lang="ts">
 import { Button } from '@hareui/vue'
 </script>
-
-<template>
-  <Button :class="$style.button">Scoped Button</Button>
-</template>
 
 <style module>
 .button {

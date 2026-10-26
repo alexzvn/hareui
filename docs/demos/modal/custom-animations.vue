@@ -1,3 +1,35 @@
+<template>
+  <div class="flex flex-wrap gap-4">
+    <Modal
+      v-for="animation in animations"
+      :key="animation.name"
+      :ui="{
+        backdrop: animation.classNames.backdrop,
+        container: animation.classNames.container,
+        dialog: 'sm:max-w-[360px]',
+        icon: 'bg-default text-foreground',
+      }"
+    >
+      <Button variant="secondary">
+        {{ animation.name }}
+      </Button>
+      <template #icon>
+        <Icon class="size-5" :icon="animation.icon" />
+      </template>
+      <template #title> {{ animation.name }} Animation </template>
+      <template #body>
+        <p class="mt-1">
+          {{ animation.description }}
+        </p>
+      </template>
+      <template #footer="{ close }">
+        <Button variant="tertiary" @click="close"> Close </Button>
+        <Button @click="close"> Try Again </Button>
+      </template>
+    </Modal>
+  </div>
+</template>
+
 <script setup lang="ts">
 import { Button, Modal } from '@hareui/vue'
 import { Icon } from '@iconify/vue'
@@ -57,36 +89,3 @@ const animations = [
   },
 ]
 </script>
-
-<template>
-  <div class="flex flex-wrap gap-4">
-    <Modal
-      v-for="animation in animations"
-      :key="animation.name"
-      :ui="{ backdrop: animation.classNames.backdrop, container: animation.classNames.container, dialog: 'sm:max-w-[360px]', icon: 'bg-default text-foreground' }"
-    >
-      <Button variant="secondary">
-        {{ animation.name }}
-      </Button>
-      <template #icon>
-        <Icon class="size-5" :icon="animation.icon" />
-      </template>
-      <template #title>
-        {{ animation.name }} Animation
-      </template>
-      <template #body>
-        <p class="mt-1">
-          {{ animation.description }}
-        </p>
-      </template>
-      <template #footer="{ close }">
-        <Button variant="tertiary" @click="close">
-          Close
-        </Button>
-        <Button @click="close">
-          Try Again
-        </Button>
-      </template>
-    </Modal>
-  </div>
-</template>

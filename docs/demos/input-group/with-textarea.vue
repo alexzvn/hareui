@@ -1,22 +1,3 @@
-<script setup lang="ts">
-import { Icon } from '@iconify/vue'
-import { Button, InputGroup, Kbd, TextField, Tooltip } from '@hareui/vue'
-import { ref } from 'vue'
-
-const value = ref('')
-const isSubmitting = ref(false)
-
-function handleSubmit() {
-  if (!value.value.trim())
-    return
-  isSubmitting.value = true
-  setTimeout(() => {
-    isSubmitting.value = false
-    value.value = ''
-  }, 1000)
-}
-</script>
-
 <template>
   <TextField
     v-model="value"
@@ -49,9 +30,7 @@ function handleSubmit() {
             <Icon icon="gravity-ui:plus" />
           </Button>
           <template #content>
-            <p class="text-xs">
-              Add a files and more
-            </p>
+            <p class="text-xs">Add a files and more</p>
           </template>
         </Tooltip>
         <Tooltip :delay="0">
@@ -59,9 +38,7 @@ function handleSubmit() {
             <Icon icon="gravity-ui:plug-connection" />
           </Button>
           <template #content>
-            <p class="text-xs">
-              Connect apps
-            </p>
+            <p class="text-xs">Connect apps</p>
           </template>
         </Tooltip>
         <div class="ms-auto flex items-center gap-1.5">
@@ -70,9 +47,7 @@ function handleSubmit() {
               <Icon icon="gravity-ui:microphone" />
             </Button>
             <template #content>
-              <p class="text-xs">
-                Voice input
-              </p>
+              <p class="text-xs">Voice input</p>
             </template>
           </Tooltip>
           <Tooltip :delay="0" class="flex items-center gap-1">
@@ -81,16 +56,14 @@ function handleSubmit() {
               aria-label="Send prompt"
               :disabled="!value.trim()"
               :pending="isSubmitting"
-              @click="handleSubmit"
+              @click="onSubmit"
             >
               <template #default="{ pending }">
                 <Icon v-if="!pending" icon="gravity-ui:arrow-up" />
               </template>
             </Button>
             <template #content>
-              <p class="text-xs">
-                Send
-              </p>
+              <p class="text-xs">Send</p>
               <Kbd keys="enter" class="h-4 rounded-sm px-1" />
             </template>
           </Tooltip>
@@ -99,3 +72,22 @@ function handleSubmit() {
     </InputGroup>
   </TextField>
 </template>
+
+<script setup lang="ts">
+import { Button, InputGroup, Kbd, TextField, Tooltip } from '@hareui/vue'
+import { Icon } from '@iconify/vue'
+import { ref } from 'vue'
+
+const value = ref('')
+const isSubmitting = ref(false)
+
+const onSubmit = () => {
+  if (!value.value.trim()) return
+  isSubmitting.value = true
+
+  setTimeout(() => {
+    isSubmitting.value = false
+    value.value = ''
+  }, 1000)
+}
+</script>

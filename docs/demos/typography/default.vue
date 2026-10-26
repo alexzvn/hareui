@@ -1,7 +1,3 @@
-<script setup lang="ts">
-import { Typography } from '@hareui/vue'
-</script>
-
 <template>
   <div class="flex max-w-xl flex-col gap-4">
     <Typography type="h1">Build better interfaces</Typography>
@@ -18,3 +14,7 @@ import { Typography } from '@hareui/vue'
     <Typography type="code">pnpm add @heroui/react</Typography>
   </div>
 </template>
+
+<script setup lang="ts">
+import { Typography } from '@hareui/vue'
+</script>

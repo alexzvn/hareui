@@ -1,6 +1,41 @@
+<template>
+  <ChartFrame v-model:hidden="hidden" :width="width" :height="height" :config="config">
+    <template v-for="name in frameSlotNames(slots)" #[name]="scope">
+      <slot :name="name" v-bind="scope as any" />
+    </template>
+    <template v-if="config.generated" #parts>
+      <ChartGrid v-if="config.grid" v-bind="config.grid" />
+      <ChartXAxis v-if="config.xAxis" v-bind="config.xAxis">
+        <template v-if="$slots['x-tick']" #tick="tick">
+          <slot name="x-tick" v-bind="tick" />
+        </template>
+      </ChartXAxis>
+      <ChartYAxis v-if="config.yAxis.left" v-bind="config.yAxis.left">
+        <template v-if="$slots['y-tick']" #tick="tick">
+          <slot name="y-tick" v-bind="tick" />
+        </template>
+      </ChartYAxis>
+      <ChartYAxis v-if="config.yAxis.right" v-bind="config.yAxis.right">
+        <template v-if="$slots['y-tick']" #tick="tick">
+          <slot name="y-tick" v-bind="tick" />
+        </template>
+      </ChartYAxis>
+      <template v-for="series in config.series" :key="series.key">
+        <ChartArea v-if="series.kind === 'area'" v-bind="series.props as any" />
+        <ChartBar v-else-if="series.kind === 'bar'" v-bind="series.props as any" />
+        <ChartLine v-else v-bind="series.props as any" />
+      </template>
+    </template>
+    <template #default>
+      <slot />
+    </template>
+  </ChartFrame>
+</template>
+
 <script setup lang="ts">
-import type { CartesianAutoConfig, CartesianRootSlots } from './cartesian-root'
 import { useSlots } from 'vue'
+
+import type { CartesianAutoConfig, CartesianRootSlots } from './cartesian-root'
 import ChartArea from './ChartArea.vue'
 import ChartBar from './ChartBar.vue'
 import ChartFrame from './ChartFrame.vue'
@@ -25,37 +60,3 @@ const slots = useSlots()
 
 const hidden = defineModel<string[]>('hidden', { required: true })
 </script>
-
-<template>
-  <ChartFrame v-model:hidden="hidden" :width="width" :height="height" :config="config">
-    <template v-for="name in frameSlotNames(slots)" #[name]="scope">
-      <slot :name="name" v-bind="scope as any" />
-    </template>
-    <template v-if="config.generated" #parts>
-      <ChartGrid v-if="config.grid" v-bind="config.grid" />
-      <ChartXAxis v-if="config.xAxis" v-bind="config.xAxis">
-        <template v-if="$slots['x-tick']" #tick="tick">
-          <slot name="x-tick" v-bind="tick" />
-        </template>
-      </ChartXAxis>
-      <ChartYAxis v-if="config.yAxis" v-bind="config.yAxis">
-        <template v-if="$slots['y-tick']" #tick="tick">
-          <slot name="y-tick" v-bind="tick" />
-        </template>
-      </ChartYAxis>
-      <ChartYAxis v-if="config.yAxisRight" v-bind="config.yAxisRight">
-        <template v-if="$slots['y-tick']" #tick="tick">
-          <slot name="y-tick" v-bind="tick" />
-        </template>
-      </ChartYAxis>
-      <template v-for="series in config.series" :key="series.key">
-        <ChartArea v-if="series.kind === 'area'" v-bind="series.props as any" />
-        <ChartBar v-else-if="series.kind === 'bar'" v-bind="series.props as any" />
-        <ChartLine v-else v-bind="series.props as any" />
-      </template>
-    </template>
-    <template #default>
-      <slot />
-    </template>
-  </ChartFrame>
-</template>

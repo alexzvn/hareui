@@ -50,15 +50,15 @@ Inside a chart, set the chart's `legend` prop instead (`true`, `'top'`, `'bottom
 </template>
 ```
 
-| `ui` key | `data-slot` | Element | Description |
-|---|---|---|---|
-| `base` | `chart-legend` | `<ul>` | The list |
-| `item` | `chart-legend-item` | `<li>` | One row per series or slice |
-| `trigger` | `chart-legend-trigger` | `<span>` or `<button>` | Row content. A button with `toggleable` |
-| `indicator` | `chart-legend-indicator` | `<span>` | Color marker, a dot or a line |
-| `label` | `chart-legend-label` | `<span>` | Series or slice name |
-| `value` | `chart-legend-value` | `<span>` | Value, with `show-value` |
-| `percent` | `chart-legend-percent` | `<span>` | Share of the total, with `show-percent` |
+| `ui` key    | `data-slot`              | Element                | Description                             |
+| ----------- | ------------------------ | ---------------------- | --------------------------------------- |
+| `base`      | `chart-legend`           | `<ul>`                 | The list                                |
+| `item`      | `chart-legend-item`      | `<li>`                 | One row per series or slice             |
+| `trigger`   | `chart-legend-trigger`   | `<span>` or `<button>` | Row content. A button with `toggleable` |
+| `indicator` | `chart-legend-indicator` | `<span>`               | Color marker, a dot or a line           |
+| `label`     | `chart-legend-label`     | `<span>`               | Series or slice name                    |
+| `value`     | `chart-legend-value`     | `<span>`               | Value, with `show-value`                |
+| `percent`   | `chart-legend-percent`   | `<span>`               | Share of the total, with `show-percent` |
 
 ## Examples
 
@@ -68,7 +68,7 @@ For pie and radial charts, pass `data` and `index` instead of `series`. Each row
 
 <ComponentPreview name="chart-legend/donut-breakdown" />
 
-Slice colors follow the chart: the row's `fill` field, then a `colors` map keyed by name, then the palette by position. `value-key` picks the value field when the rows have more than one number.
+Slice colors follow the chart: the row's `fill` field, then a `colors` map keyed by name, then the palette by position. `value.key` picks the value field when the rows have more than one number, and `value.formatter` formats the values.
 
 ### Toggle Series
 
@@ -119,16 +119,18 @@ Use `class` for the list and `ui` for its parts:
 Override the `chartLegend` theme app-wide with `createHareUI`:
 
 ```ts
-app.use(createHareUI({
-  ui: {
-    chartLegend: {
-      slots: {
-        indicator: 'rounded-sm',
-        label: 'font-medium',
+app.use(
+  createHareUI({
+    ui: {
+      chartLegend: {
+        slots: {
+          indicator: 'rounded-sm',
+          label: 'font-medium',
+        },
       },
     },
-  },
-}))
+  }),
+)
 ```
 
 ## Styling Reference
@@ -148,7 +150,7 @@ app.use(createHareUI({
 The list sets `[data-orientation="horizontal"]` or `[data-orientation="vertical"]`. Hidden rows set `[data-hidden="true"]`:
 
 ```css
-[data-slot="chart-legend-item"][data-hidden="true"] [data-slot="chart-legend-label"] {
+[data-slot='chart-legend-item'][data-hidden='true'] [data-slot='chart-legend-label'] {
   text-decoration: line-through;
 }
 ```

@@ -1,5 +1,23 @@
-import type { ClassValue } from 'tailwind-variants'
+import { useId } from 'reka-ui'
 import type { ComputedRef, InjectionKey, Ref, ShallowRef } from 'vue'
+import {
+  computed,
+  getCurrentInstance,
+  inject,
+  onMounted,
+  onScopeDispose,
+  provide,
+  reactive,
+  ref,
+  shallowReactive,
+  shallowRef,
+  watchEffect,
+} from 'vue'
+
+import type { SlotClasses } from '@/types/tv'
+import type { ClassValue } from '@/utils/tv'
+import { warn } from '@/utils/warn'
+
 import type {
   ChartActiveState,
   ChartDatum,
@@ -10,26 +28,22 @@ import type {
   ChartSeries,
   ChartTooltipPayloadEntry,
 } from './types'
-import { useId } from 'reka-ui'
-import { computed, getCurrentInstance, inject, onMounted, onScopeDispose, provide, reactive, ref, shallowReactive, shallowRef, watchEffect } from 'vue'
 import { chartLayerNames } from './types'
 
 /** Class functions of a chart root theme (any subset of the shared chart slots). */
-export type ChartRootUI = Record<string, (props?: { class?: ClassValue }) => string>
+type ChartRootUI = Record<string, (classes?: SlotClasses) => string>
 
-export interface ChartRootOptions {
+export type ChartRootOptions = {
   data: () => ChartDatum[] | undefined
   margin: () => ChartMargin | undefined
   layout: () => ChartLayout
-  /** The root's resolved theme (`useComponentUI(name, theme, …)`). */
+  /** The root's resolved theme (`useComponentUI(name, { theme, variantProps, props })`), its `ui` prop layered in. */
   ui: ComputedRef<object>
-  /** The root's `ui` prop. */
-  uiProps: () => Partial<Record<string, ClassValue>> | undefined
   /** Default `ChartTooltip` cursor: `'band'` for bar charts, `'line'` (the default) for the rest. */
   cursor?: 'line' | 'band'
 }
 
-export interface ChartContext {
+export type ChartContext = {
   /** Unique id; prefix for clip paths and other SVG ids. */
   id: string
   data: ComputedRef<ChartDatum[]>
@@ -40,7 +54,7 @@ export interface ChartContext {
   width: Ref<number>
   height: Ref<number>
   margin: ComputedRef<Required<ChartMargin>>
-  /** Classes of a theme slot of the root, merged with the root's `ui` override and `extra`. */
+  /** Classes of a theme slot of the root, with the root's `ui` prop and then the part's own `extra` classes. */
   classes: (slot: string, extra?: ClassValue) => string
   /** SVG layer groups, filled by `ChartSurface`. */
   layers: Record<ChartLayerName, Element | null>
@@ -69,92 +83,153 @@ export interface ChartContext {
 }
 
 /** Default `dataKey` of the category axis and per-series defaults of the parts, by `dataKey`. */
-export function useChartConfig(chart: ChartContext) {
+export const useChartConfig = (chart: ChartContext) => {
   return {
     index: () => chart.config.value?.()?.index,
-    series: (dataKey: string) => chart.config.value?.()?.series.find(entry => entry.key === dataKey),
+    series: (dataKey: string) =>
+      chart.config.value?.()?.series.find((entry) => entry.key === dataKey),
   }
 }
 
 /** What a root publishes from its `index` / `series` props. */
-export interface ChartRootConfig {
+type ChartRootConfig = {
   index?: string
-  series: ReadonlyArray<{ key: string, name: string, color: string, hidden: boolean }>
+  series: ReadonlyArray<{ key: string; name: string; color: string; hidden: boolean }>
   hidden: readonly string[]
 }
 
-export const chartContextKey: InjectionKey<ChartContext> = Symbol('hareui-chart')
+const chartContextKey: InjectionKey<ChartContext> = Symbol('hareui-chart')
 
 const DEFAULT_MARGIN: Required<ChartMargin> = { top: 8, right: 8, bottom: 0, left: 0 }
 
+// Each duplicate warns once.
+const warnDuplicateParts = ({
+  tooltipEnabled,
+  series,
+}: {
+  tooltipEnabled: Ref<number>
+  series: ComputedRef<ChartSeries[]>
+}) => {
+  const warned = new Set<string>()
+  const warnOnce = (key: string, message: string) => {
+    if (warned.has(key)) return
+
+    warned.add(key)
+    warn(message)
+  }
+
+  watchEffect(() => {
+    if (tooltipEnabled.value > 1)
+      warnOnce(
+        'tooltip',
+        'Two ChartTooltips in one chart. When the chart root draws its tooltip from props, pass `:tooltip="false"` before adding a ChartTooltip.',
+      )
+
+    const seen = new Set<string>()
+    for (const entry of series.value) {
+      if (entry.entries || entry.hide) continue
+      const key = `${entry.kind}:${entry.dataKey}`
+      if (seen.has(key))
+        warnOnce(
+          key,
+          `Two ${entry.kind} series read "${entry.dataKey}" in one chart. When the chart root draws its series from \`series\`, leave that key out of \`series\` or remove the child part.`,
+        )
+
+      seen.add(key)
+    }
+  })
+}
+
 /** Creates the chart context of a root and provides it to its parts. Call in the root's setup. */
-export function useChartRoot(options: ChartRootOptions): ChartContext {
+export const useChartRoot = (options: ChartRootOptions): ChartContext => {
   const id = useId(undefined, 'hareui-chart')
   const width = ref(0)
   const height = ref(0)
+
   // Each series keeps its component's DOM anchor, so the list follows template order: a series shown again with
   // `v-if` goes back to its place in the stack and the tooltip instead of moving to the end.
-  const registry = shallowReactive(new Map<number, { get: () => ChartSeries, anchor: () => Node | null }>())
+  const registry = shallowReactive(
+    new Map<number, { get: () => ChartSeries; anchor: () => Node | null }>(),
+  )
+
   const mountedSeries = ref(0)
   let nextSeries = 0
 
-  const layers = shallowReactive(Object.fromEntries(chartLayerNames.map(name => [name, null]))) as Record<ChartLayerName, Element | null>
-  const active = reactive<ChartActiveState>({ index: null, seriesId: null, coordinate: null, source: null })
-  const data = computed(() => options.data() ?? [])
-  const series = computed(() => {
-    void mountedSeries.value
-    return [...registry.values()].sort(byTemplateOrder).map(entry => entry.get())
+  const layers = shallowReactive(
+    Object.fromEntries(chartLayerNames.map((name) => [name, null])),
+  ) as Record<ChartLayerName, Element | null>
+
+  const active = reactive<ChartActiveState>({
+    index: null,
+    seriesId: null,
+    coordinate: null,
+    source: null,
   })
 
-  function byTemplateOrder(a: { anchor: () => Node | null }, b: { anchor: () => Node | null }) {
+  const data = computed(() => options.data() ?? [])
+
+  const series = computed(() => {
+    void mountedSeries.value
+    return [...registry.values()].sort(byTemplateOrder).map((entry) => entry.get())
+  })
+
+  const byTemplateOrder = (a: { anchor: () => Node | null }, b: { anchor: () => Node | null }) => {
     const first = a.anchor()
     const second = b.anchor()
-    if (!first?.isConnected || !second?.isConnected || first === second)
-      return 0
+    if (!first?.isConnected || !second?.isConnected || first === second) return 0
+
     return first.compareDocumentPosition(second) & Node.DOCUMENT_POSITION_FOLLOWING ? -1 : 1
   }
 
-  function registerSeries(get: () => ChartSeries) {
+  const registerSeries = (get: () => ChartSeries) => {
     const key = nextSeries++
     const instance = getCurrentInstance()
-    registry.set(key, { get, anchor: () => (instance?.vnode.el as Node | null | undefined) ?? null })
-    if (instance)
-      onMounted(() => mountedSeries.value++)
+    registry.set(key, {
+      get,
+      anchor: () => (instance?.vnode.el as Node | null | undefined) ?? null,
+    })
+
+    if (instance) onMounted(() => mountedSeries.value++)
     const unregister = () => registry.delete(key)
     onScopeDispose(unregister)
+
     return unregister
   }
 
-  function setActive(state: Partial<ChartActiveState> | null) {
+  const setActive = (state: Partial<ChartActiveState> | null) => {
     if (!state || state.index === null || state.index === undefined) {
       Object.assign(active, { index: null, seriesId: null, coordinate: null, source: null })
       return
     }
+
     Object.assign(active, { seriesId: null, coordinate: null, source: 'pointer', ...state })
   }
 
   const tooltipLabel = shallowRef<(index: number) => string | number | undefined>(() => undefined)
 
-  function payloadAt(index: number, seriesId?: string | null): ChartTooltipPayloadEntry[] {
+  const payloadAt = (index: number, seriesId?: string | null): ChartTooltipPayloadEntry[] => {
     const datum = data.value[index]
     return series.value
-      .filter(entry => !entry.hide && entry.tooltip !== false && (!seriesId || entry.id === seriesId))
+      .filter(
+        (entry) => !entry.hide && entry.tooltip !== false && (!seriesId || entry.id === seriesId),
+      )
       .flatMap((entry) => {
         // Series with their own data (pie) build their entries; the default path reads the root datum.
-        if (entry.entries)
-          return entry.entries(index)
+        if (entry.entries) return entry.entries(index)
         const value = datum?.[entry.dataKey]
-        if (!datum || value === undefined || value === null)
-          return []
-        return [{
-          dataKey: entry.dataKey,
-          name: entry.name ?? entry.dataKey,
-          value,
-          color: entry.color,
-          stroke: entry.stroke,
-          fill: entry.fill,
-          payload: datum,
-        }]
+        if (!datum || value === undefined || value === null) return []
+
+        return [
+          {
+            dataKey: entry.dataKey,
+            name: entry.name ?? entry.dataKey,
+            value,
+            color: entry.color,
+            stroke: entry.stroke,
+            fill: entry.fill,
+            payload: datum,
+          },
+        ]
       })
   }
 
@@ -162,28 +237,7 @@ export function useChartRoot(options: ChartRootOptions): ChartContext {
 
   // Duplicates usually mean the root draws a part from its props (`series`, `tooltip`) and the same part was also
   // added as a child.
-  if (import.meta.env?.DEV) {
-    const warned = new Set<string>()
-    const warn = (key: string, message: string) => {
-      if (!warned.has(key)) {
-        warned.add(key)
-        console.warn(`[hareui] ${message}`)
-      }
-    }
-    watchEffect(() => {
-      if (tooltipEnabled.value > 1)
-        warn('tooltip', 'Two ChartTooltips in one chart. When the chart root draws its tooltip from props, pass `:tooltip="false"` before adding a ChartTooltip.')
-      const seen = new Set<string>()
-      for (const entry of series.value) {
-        if (entry.entries || entry.hide)
-          continue
-        const key = `${entry.kind}:${entry.dataKey}`
-        if (seen.has(key))
-          warn(key, `Two ${entry.kind} series read "${entry.dataKey}" in one chart. When the chart root draws its series from \`series\`, leave that key out of \`series\` or remove the child part.`)
-        seen.add(key)
-      }
-    })
-  }
+  warnDuplicateParts({ tooltipEnabled, series })
 
   const context: ChartContext = {
     id,
@@ -195,7 +249,7 @@ export function useChartRoot(options: ChartRootOptions): ChartContext {
     margin: computed(() => ({ ...DEFAULT_MARGIN, ...options.margin() })),
     classes: (slot, extra) => {
       const ui = options.ui.value as ChartRootUI
-      return ui[slot]?.({ class: [options.uiProps()?.[slot], extra] }) ?? ''
+      return ui[slot]?.({ override: extra }) ?? ''
     },
     layers,
     overlay: shallowRef(null),
@@ -211,13 +265,15 @@ export function useChartRoot(options: ChartRootOptions): ChartContext {
   }
 
   provide(chartContextKey, context)
+
   return context
 }
 
 /** The enclosing chart root's context. Throws outside a chart. */
-export function useChartContext(component = 'Chart part'): ChartContext {
+export const useChartContext = (component = 'Chart part'): ChartContext => {
   const context = inject(chartContextKey, null)
   if (!context)
     throw new Error(`${component} must be used inside a chart (AreaChart, BarChart, LineChart, …).`)
+
   return context
 }

@@ -1,112 +1,5 @@
-<script lang="ts">
-import type { ClassValue } from 'tailwind-variants'
-import type { ComponentSlots } from '../../types/tv'
-import type { DropZoneFileColor } from './utils'
-import theme from './theme'
-
-/** Upload state of a file item. */
-export type DropZoneFileStatus = 'uploading' | 'complete' | 'failed'
-
-type FileItemSlots = Pick<ComponentSlots<typeof theme>, 'fileItem' | 'fileFormatIcon' | 'fileFormatIconBadge' | 'fileInfo' | 'fileName' | 'fileMeta' | 'fileProgress' | 'fileRetryTrigger' | 'fileRemoveTrigger'>
-
-export interface DropZoneFileItemProps {
-  /** The file to show. Fills in `name` and `size`. */
-  file?: File
-  /** The file name. Defaults to the name of `file`. */
-  name?: string
-  /** The file size in bytes, shown in the meta line. Defaults to the size of `file`. */
-  size?: number
-  /** The badge text on the file icon, e.g. `PDF`. Defaults to the extension of `name`. */
-  format?: string
-  /** The badge color on the file icon. Defaults to a color picked from the extension, `gray` for unknown ones. */
-  color?: DropZoneFileColor
-  /** The upload state. `failed` turns the border red; with `progress`, `complete` and `failed` color the bar. */
-  status?: DropZoneFileStatus
-  /** Upload progress from 0 to 100. Renders a progress bar when set. */
-  progress?: number
-  /**
-   * Whether to show the remove button.
-   * @defaultValue true
-   */
-  removable?: boolean
-  /**
-   * Whether to show a retry button while `status` is `failed`.
-   * @defaultValue false
-   */
-  retryable?: boolean
-  /** Additional classes merged into the item element. */
-  class?: any
-  /** Per-slot class overrides. Merged after the surrounding DropZone's `ui`. */
-  ui?: FileItemSlots
-}
-
-export interface DropZoneFileItemSlotProps {
-  /** The file name. */
-  name: string
-  /** The formatted file size (`2.4 MB`); empty when the size is unknown. */
-  size: string
-  /** The upload state. */
-  status: DropZoneFileStatus | undefined
-  /** The upload progress. */
-  progress: number | undefined
-}
-
-export interface DropZoneFileItemSlots {
-  /** Replaces the file format icon. */
-  icon?: (props: DropZoneFileItemSlotProps) => any
-  /** Replaces the file name. */
-  name?: (props: DropZoneFileItemSlotProps) => any
-  /** Replaces the meta line content (the formatted size by default). */
-  meta?: (props: DropZoneFileItemSlotProps) => any
-  /** Extra content below the meta line and progress bar, e.g. an error message or a retry button. */
-  default?: (props: DropZoneFileItemSlotProps) => any
-  /** Replaces the retry button label. */
-  retry?: (props: DropZoneFileItemSlotProps) => any
-  /** Replaces the remove button icon. */
-  remove?: (props: DropZoneFileItemSlotProps) => any
-}
-</script>
-
-<script setup lang="ts">
-import { computed, inject } from 'vue'
-import { useComponentUI } from '../../composables/useComponentUI'
-import ProgressBar from '../progress-bar/ProgressBar.vue'
-import { dropZoneContextKey } from './context'
-import { fileExtension, formatColor, formatFileSize } from './utils'
-
-const props = withDefaults(defineProps<DropZoneFileItemProps>(), { removable: true })
-const emit = defineEmits<{
-  /** Emitted when the remove button is pressed. */
-  remove: []
-  /** Emitted when the retry button is pressed. */
-  retry: []
-}>()
-defineSlots<DropZoneFileItemSlots>()
-
-const context = inject(dropZoneContextKey, null)
-const ui = useComponentUI('dropZone', theme, () => ({}))
-const cls = (key: keyof FileItemSlots, extra?: ClassValue) => ui.value[key]({ class: [context?.ui.value?.[key], props.ui?.[key], extra] })
-
-const name = computed(() => props.name ?? props.file?.name ?? '')
-const extension = computed(() => fileExtension(name.value))
-const format = computed(() => props.format ?? extension.value.toUpperCase())
-const color = computed(() => props.color ?? formatColor(extension.value))
-const size = computed(() => {
-  const bytes = props.size ?? props.file?.size
-  return bytes == null ? '' : formatFileSize(bytes)
-})
-const progressColor = computed(() => props.status === 'complete' ? 'success' : props.status === 'failed' ? 'danger' : 'accent')
-
-const slotProps = computed<DropZoneFileItemSlotProps>(() => ({
-  name: name.value,
-  size: size.value,
-  status: props.status,
-  progress: props.progress,
-}))
-</script>
-
 <template>
-  <div data-slot="drop-zone-file-item" :data-status="status" :class="cls('fileItem', props.class)">
+  <div data-slot="drop-zone-file-item" :data-status="status" :class="cls('fileItem')">
     <slot name="icon" v-bind="slotProps">
       <svg
         aria-hidden="true"
@@ -126,9 +19,21 @@ const slotProps = computed<DropZoneFileItemSlotProps>(() => ({
           stroke-linejoin="round"
           stroke-width="1.5"
         />
-        <path d="M21.25 0.75V10.75H31.25Z" fill="var(--color-border)" stroke="var(--color-border)" stroke-linejoin="round" stroke-width="1.5" />
+        <path
+          d="M21.25 0.75V10.75H31.25Z"
+          fill="var(--color-border)"
+          stroke="var(--color-border)"
+          stroke-linejoin="round"
+          stroke-width="1.5"
+        />
         <foreignObject v-if="format" height="40" width="32" x="0" y="0">
-          <div data-slot="drop-zone-file-format-icon-badge" :data-color="color" :class="cls('fileFormatIconBadge')">{{ format }}</div>
+          <div
+            data-slot="drop-zone-file-format-icon-badge"
+            :data-color="color"
+            :class="cls('fileFormatIconBadge')"
+          >
+            {{ format }}
+          </div>
         </foreignObject>
       </svg>
     </slot>
@@ -168,7 +73,14 @@ const slotProps = computed<DropZoneFileItemSlotProps>(() => ({
       @click="emit('remove')"
     >
       <slot name="remove" v-bind="slotProps">
-        <svg aria-hidden="true" fill="none" height="16" viewBox="0 0 16 16" width="16" xmlns="http://www.w3.org/2000/svg">
+        <svg
+          aria-hidden="true"
+          fill="none"
+          height="16"
+          viewBox="0 0 16 16"
+          width="16"
+          xmlns="http://www.w3.org/2000/svg"
+        >
           <path
             clip-rule="evenodd"
             d="M9 2H7a.5.5 0 0 0-.5.5V3h3v-.5A.5.5 0 0 0 9 2m2 1v-.5a2 2 0 0 0-2-2H7a2 2 0 0 0-2 2V3H2.251a.75.75 0 0 0 0 1.5h.312l.317 7.625A3 3 0 0 0 5.878 15h4.245a3 3 0 0 0 2.997-2.875l.318-7.625h.312a.75.75 0 0 0 0-1.5zm.936 1.5H4.064l.315 7.562A1.5 1.5 0 0 0 5.878 13.5h4.245a1.5 1.5 0 0 0 1.498-1.438zm-6.186 2v5a.75.75 0 0 0 1.5 0v-5a.75.75 0 0 0-1.5 0m3.75-.75a.75.75 0 0 1 .75.75v5a.75.75 0 0 1-1.5 0v-5a.75.75 0 0 1 .75-.75"
@@ -180,3 +92,67 @@ const slotProps = computed<DropZoneFileItemSlotProps>(() => ({
     </button>
   </div>
 </template>
+
+<script setup lang="ts">
+import { computed, inject } from 'vue'
+
+import ProgressBar from '@/components/progress-bar/ProgressBar.vue'
+import { useComponentUI } from '@/composables/useComponentUI'
+
+import { dropZoneContextKey } from './context'
+import type {
+  DropZoneFileItemProps,
+  DropZoneFileItemSlotProps,
+  DropZoneFileItemSlots,
+  FileItemSlots,
+} from './DropZoneFileItem.types'
+import theme from './theme'
+import { fileExtension, formatColor, formatFileSize } from './utils'
+
+const props = withDefaults(defineProps<DropZoneFileItemProps>(), { removable: true })
+
+const emit = defineEmits<{
+  /** Emitted when the remove button is pressed. */
+  remove: []
+  /** Emitted when the retry button is pressed. */
+  retry: []
+}>()
+
+defineSlots<DropZoneFileItemSlots>()
+
+const context = inject(dropZoneContextKey, null)
+
+const ui = useComponentUI('dropZone', {
+  theme: theme,
+  variantProps: () => ({}),
+  props,
+  classSlot: 'fileItem',
+})
+
+// The surrounding DropZone's `ui` applies first, then this item's own `ui` / `class`
+const cls = (key: keyof FileItemSlots) => ui.value[key]({ class: context?.ui.value?.[key] })
+
+const name = computed(() => props.name ?? props.file?.name ?? '')
+const extension = computed(() => fileExtension(name.value))
+const format = computed(() => props.format ?? extension.value.toUpperCase())
+const color = computed(() => props.color ?? formatColor(extension.value))
+
+const size = computed(() => {
+  const bytes = props.size ?? props.file?.size
+  return bytes == null ? '' : formatFileSize(bytes)
+})
+
+const progressColor = computed(() => {
+  if (props.status === 'complete') return 'success'
+  if (props.status === 'failed') return 'danger'
+
+  return 'accent'
+})
+
+const slotProps = computed<DropZoneFileItemSlotProps>(() => ({
+  name: name.value,
+  size: size.value,
+  status: props.status,
+  progress: props.progress,
+}))
+</script>

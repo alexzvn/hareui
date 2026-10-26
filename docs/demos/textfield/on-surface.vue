@@ -1,10 +1,11 @@
-<script setup lang="ts">
-import { Input, Surface, TextArea, TextField } from '@hareui/vue'
-</script>
-
 <template>
   <Surface class="flex w-full min-w-[340px] flex-col gap-4 rounded-3xl p-6">
-    <TextField name="name" variant="secondary" label="Your name" description="We'll never share this with anyone else">
+    <TextField
+      name="name"
+      variant="secondary"
+      label="Your name"
+      description="We'll never share this with anyone else"
+    >
       <Input class="w-full" placeholder="John" />
     </TextField>
     <TextField name="email" type="email" variant="secondary" label="Email">
@@ -15,3 +16,7 @@ import { Input, Surface, TextArea, TextField } from '@hareui/vue'
     </TextField>
   </Surface>
 </template>
+
+<script setup lang="ts">
+import { Input, Surface, TextArea, TextField } from '@hareui/vue'
+</script>

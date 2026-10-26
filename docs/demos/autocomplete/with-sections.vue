@@ -1,3 +1,17 @@
+<template>
+  <Autocomplete
+    clearable
+    class="w-[256px]"
+    label="Country"
+    placeholder="Select a country"
+    search-label="Search countries"
+    search-placeholder="Search countries..."
+    :items="countries"
+  >
+    <template #empty> No results found </template>
+  </Autocomplete>
+</template>
+
 <script setup lang="ts">
 import type { ListBoxEntry } from '@hareui/vue'
 import { Autocomplete } from '@hareui/vue'
@@ -37,19 +51,3 @@ const countries: ListBoxEntry[] = [
   },
 ]
 </script>
-
-<template>
-  <Autocomplete
-    clearable
-    class="w-[256px]"
-    label="Country"
-    placeholder="Select a country"
-    search-label="Search countries"
-    search-placeholder="Search countries..."
-    :items="countries"
-  >
-    <template #empty>
-      No results found
-    </template>
-  </Autocomplete>
-</template>

@@ -5,13 +5,16 @@ import { onBeforeUnmount, onMounted, ref } from 'vue'
 
 const STORAGE_KEY = 'vitepress-theme-appearance'
 
-export function useColorMode() {
-  const isDark = ref(typeof document !== 'undefined' && document.documentElement.classList.contains('dark'))
+export const useColorMode = () => {
+  const isDark = ref(
+    typeof document !== 'undefined' && document.documentElement.classList.contains('dark'),
+  )
+
   let observer: MutationObserver | undefined
 
   const read = () => (isDark.value = document.documentElement.classList.contains('dark'))
 
-  function setDark(dark: boolean) {
+  const setDark = (dark: boolean) => {
     const root = document.documentElement
     localStorage.setItem(STORAGE_KEY, dark ? 'dark' : 'light')
     root.classList.toggle('dark', dark)
@@ -23,6 +26,7 @@ export function useColorMode() {
     observer = new MutationObserver(read)
     observer.observe(document.documentElement, { attributeFilter: ['class'], attributes: true })
   })
+
   onBeforeUnmount(() => observer?.disconnect())
 
   return { isDark, setDark, toggle: () => setDark(!isDark.value) }

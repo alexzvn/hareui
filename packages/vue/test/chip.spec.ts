@@ -1,15 +1,32 @@
 import { mount } from '@vue/test-utils'
 import { describe, expect, it } from 'vitest'
-import { h } from 'vue'
-import type { ChipProps, ChipSlots } from '../src/components/chip/Chip.vue'
-import Chip from '../src/components/chip/Chip.vue'
+import { createTextVNode, h } from 'vue'
+
+import type { ChipProps, ChipSlots } from '@/components/chip/Chip.types'
+import Chip from '@/components/chip/Chip.vue'
+
 import { expectAccessible } from './a11y'
 
 describe('Chip', () => {
   it.each<[string, ChipProps, Pick<ChipSlots, keyof ChipSlots>]>([
     ['with a label prop', { label: 'New' }, {}],
-    ['with slotted content and a decorative leading icon', { color: 'success', variant: 'soft' }, { default: () => 'Active', leading: () => h('svg', { 'aria-hidden': 'true' }) }],
-    ['with a status dot and trailing content', { color: 'danger', size: 'sm' }, { leading: () => h('span', { 'aria-hidden': 'true' }), default: () => 'Failed', trailing: () => '3' }],
+    [
+      'with slotted content and a decorative leading icon',
+      { color: 'success', variant: 'soft' },
+      {
+        default: () => [createTextVNode('Active')],
+        leading: () => [h('svg', { 'aria-hidden': 'true' })],
+      },
+    ],
+    [
+      'with a status dot and trailing content',
+      { color: 'danger', size: 'sm' },
+      {
+        leading: () => [h('span', { 'aria-hidden': 'true' })],
+        default: () => [createTextVNode('Failed')],
+        trailing: () => [createTextVNode('3')],
+      },
+    ],
   ])('is accessible %s', async (_, props, slots) => {
     const wrapper = mount(Chip, { props, slots, attachTo: document.body })
     await expectAccessible(wrapper)

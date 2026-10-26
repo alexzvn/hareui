@@ -1,7 +1,3 @@
-<script setup lang="ts">
-import { Description, Input, Label } from '@hareui/vue'
-</script>
-
 <template>
   <div class="flex flex-col gap-1">
     <Label for="email">Email</Label>
@@ -17,3 +13,7 @@ import { Description, Input, Label } from '@hareui/vue'
     </Description>
   </div>
 </template>
+
+<script setup lang="ts">
+import { Description, Input, Label } from '@hareui/vue'
+</script>

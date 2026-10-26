@@ -1,19 +1,3 @@
-<script setup lang="ts">
-import type { TableColumn, TableRow } from '@hareui/vue'
-import { Table } from '@hareui/vue'
-
-const columns: TableColumn[] = [
-  { key: 'name', label: 'Name', isRowHeader: true },
-  { key: 'role', label: 'Role' },
-  { key: 'status', label: 'Status' },
-]
-const rows: TableRow[] = [
-  { id: 1, name: 'Kate Moore', role: 'CEO', status: 'Active' },
-  { id: 2, name: 'John Smith', role: 'CTO', status: 'Active' },
-  { id: 3, name: 'Sara Johnson', role: 'CMO', status: 'On leave' },
-]
-</script>
-
 <template>
   <Table
     aria-label="Team members"
@@ -23,7 +7,8 @@ const rows: TableRow[] = [
     :ui="{
       content: 'min-w-[600px]',
       header: 'bg-neutral-100/80 dark:bg-neutral-800/80',
-      column: 'text-xs font-semibold uppercase tracking-wide text-neutral-500 dark:text-neutral-400',
+      column:
+        'text-xs font-semibold uppercase tracking-wide text-neutral-500 dark:text-neutral-400',
       row: 'border-t border-border/60 transition-colors hover:bg-neutral-100/60 even:bg-neutral-50/50 dark:hover:bg-neutral-800/50 dark:even:bg-neutral-900/30',
     }"
   >
@@ -32,3 +17,20 @@ const rows: TableRow[] = [
     </template>
   </Table>
 </template>
+
+<script setup lang="ts">
+import type { TableColumn, TableRow } from '@hareui/vue'
+import { Table } from '@hareui/vue'
+
+const columns: TableColumn[] = [
+  { key: 'name', label: 'Name', isRowHeader: true },
+  { key: 'role', label: 'Role' },
+  { key: 'status', label: 'Status' },
+]
+
+const rows: TableRow[] = [
+  { id: 1, name: 'Kate Moore', role: 'CEO', status: 'Active' },
+  { id: 2, name: 'John Smith', role: 'CTO', status: 'Active' },
+  { id: 3, name: 'Sara Johnson', role: 'CMO', status: 'On leave' },
+]
+</script>

@@ -1,5 +1,6 @@
 import { computed, ref } from 'vue'
 
+/** The `value` that identifies an Accordion or DisclosureGroup item in the expanded list. */
 export type ExpandedValue = string | number
 
 /**
@@ -7,19 +8,23 @@ export type ExpandedValue = string | number
  * state): controlled through `modelValue`, uncontrolled from `defaultValue`. Without `multiple`,
  * expanding an item collapses the others.
  */
-export function useExpandedValues(
-  props: { modelValue?: ExpandedValue[], defaultValue?: ExpandedValue[], multiple?: boolean },
+export const useExpandedValues = (
+  props: { modelValue?: ExpandedValue[]; defaultValue?: ExpandedValue[]; multiple?: boolean },
   emit: (value: ExpandedValue[]) => void,
-) {
+) => {
   const uncontrolled = ref<ExpandedValue[]>([...(props.defaultValue ?? [])])
   const expanded = computed(() => props.modelValue ?? uncontrolled.value)
 
   const isExpanded = (value: ExpandedValue) => expanded.value.includes(value)
-  function setExpanded(value: ExpandedValue, open: boolean) {
+
+  const getExpandedWith = (value: ExpandedValue) =>
+    props.multiple ? [...expanded.value, value] : [value]
+
+  const setExpanded = (value: ExpandedValue, open: boolean) => {
     if (open === isExpanded(value)) return
-    const next = open
-      ? (props.multiple ? [...expanded.value, value] : [value])
-      : expanded.value.filter(v => v !== value)
+
+    const next = open ? getExpandedWith(value) : expanded.value.filter((v) => v !== value)
+
     uncontrolled.value = next
     emit(next)
   }

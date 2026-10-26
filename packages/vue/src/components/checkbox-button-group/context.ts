@@ -1,9 +1,11 @@
 import type { ComputedRef, InjectionKey, Ref } from 'vue'
-import type checkboxTheme from '../checkbox/theme'
-import type { ComponentSlots, ComponentUI, ComponentVariants } from '../../types/tv'
+
+import type checkboxTheme from '@/components/checkbox/theme'
+import type { ComponentSlots, ComponentUI, ComponentVariants } from '@/types/tv'
+
 import type theme from './theme'
 
-export interface CheckboxButtonGroupContext {
+export type CheckboxButtonGroupContext = {
   /** The selected values. */
   selected: Readonly<Ref<string[]>>
   disabled: Readonly<Ref<boolean>>
@@ -19,4 +21,6 @@ export interface CheckboxButtonGroupContext {
   uiOverrides: Readonly<Ref<ComponentSlots<typeof theme> | undefined>>
 }
 
-export const checkboxButtonGroupContextKey: InjectionKey<CheckboxButtonGroupContext> = Symbol('hareui-checkbox-button-group')
+export const checkboxButtonGroupContextKey: InjectionKey<CheckboxButtonGroupContext> = Symbol(
+  'hareui-checkbox-button-group',
+)

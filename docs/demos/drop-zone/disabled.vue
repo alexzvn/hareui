@@ -1,7 +1,3 @@
-<script setup lang="ts">
-import { DropZone } from '@hareui/vue'
-</script>
-
 <template>
   <DropZone
     class="w-full max-w-[420px]"
@@ -11,3 +7,7 @@ import { DropZone } from '@hareui/vue'
     disabled
   />
 </template>
+
+<script setup lang="ts">
+import { DropZone } from '@hareui/vue'
+</script>

@@ -1,48 +1,13 @@
-<script setup lang="ts">
-import type { RichTableColumn } from '@hareui/vue'
-import { Avatar, Button, Chip, Dropdown, RichTable } from '@hareui/vue'
-import { Icon } from '@iconify/vue'
-
-interface Payment {
-  name: string
-  email: string
-  avatar: string
-  status: 'paid' | 'failed' | 'refunded' | 'processing'
-  amount: number
-}
-
-const data: Payment[] = [
-  { name: 'Emma Wilson', email: 'emma@example.com', avatar: 'https://img.heroui.chat/image/avatar?w=200&h=200&u=1', status: 'paid', amount: 2450 },
-  { name: 'Isabella Nguyen', email: 'isabella@example.com', avatar: 'https://img.heroui.chat/image/avatar?w=200&h=200&u=2', status: 'paid', amount: 299 },
-  { name: 'Jackson Lee', email: 'jackson@example.com', avatar: 'https://img.heroui.chat/image/avatar?w=200&h=200&u=3', status: 'processing', amount: 39 },
-  { name: 'Liam Johnson', email: 'liam@example.com', avatar: 'https://img.heroui.chat/image/avatar?w=200&h=200&u=4', status: 'refunded', amount: 150 },
-  { name: 'William Kim', email: 'will@example.com', avatar: 'https://img.heroui.chat/image/avatar?w=200&h=200&u=5', status: 'failed', amount: 99 },
-]
-
-const statusColor = { paid: 'success', failed: 'danger', refunded: 'default', processing: 'warning' } as const
-const currency = new Intl.NumberFormat('en-US', { style: 'currency', currency: 'USD' })
-const total = data.reduce((sum, payment) => sum + payment.amount, 0)
-
-// Plain column definitions with a `footer` so the footer row renders; every cell is rendered by the slots below.
-const columns: RichTableColumn<Payment>[] = [
-  { accessorKey: 'name', header: 'Customer', footer: 'Total' },
-  { accessorKey: 'status', header: 'Status' },
-  { accessorKey: 'amount', header: 'Amount', footer: '' },
-  { id: 'actions' },
-]
-
-const items = [
-  { value: 'copy', label: 'Copy payment ID' },
-  { value: 'view', label: 'View customer' },
-  { value: 'refund', label: 'Refund', variant: 'danger' as const },
-]
-</script>
-
 <template>
   <RichTable :data="data" :columns="columns" class="w-full">
     <template #name-cell="{ row }">
       <div class="flex items-center gap-3">
-        <Avatar size="sm" :src="row.original.avatar" :alt="row.original.name" :fallback="row.original.name.slice(0, 1)" />
+        <Avatar
+          size="sm"
+          :src="row.original.avatar"
+          :alt="row.original.name"
+          :fallback="row.original.name.slice(0, 1)"
+        />
         <div>
           <p class="font-medium">
             {{ row.original.name }}
@@ -64,9 +29,7 @@ const items = [
     </template>
 
     <template #amount-header>
-      <span class="block text-end">
-        Amount
-      </span>
+      <span class="block text-end"> Amount </span>
     </template>
     <template #amount-cell="{ row }">
       <span class="block text-end font-medium">
@@ -93,3 +56,79 @@ const items = [
     </template>
   </RichTable>
 </template>
+
+<script setup lang="ts">
+import type { RichTableColumn } from '@hareui/vue'
+import { Avatar, Button, Chip, Dropdown, RichTable } from '@hareui/vue'
+import { Icon } from '@iconify/vue'
+
+type Payment = {
+  name: string
+  email: string
+  avatar: string
+  status: 'paid' | 'failed' | 'refunded' | 'processing'
+  amount: number
+}
+
+const data: Payment[] = [
+  {
+    name: 'Emma Wilson',
+    email: 'emma@example.com',
+    avatar: 'https://img.heroui.chat/image/avatar?w=200&h=200&u=1',
+    status: 'paid',
+    amount: 2450,
+  },
+  {
+    name: 'Isabella Nguyen',
+    email: 'isabella@example.com',
+    avatar: 'https://img.heroui.chat/image/avatar?w=200&h=200&u=2',
+    status: 'paid',
+    amount: 299,
+  },
+  {
+    name: 'Jackson Lee',
+    email: 'jackson@example.com',
+    avatar: 'https://img.heroui.chat/image/avatar?w=200&h=200&u=3',
+    status: 'processing',
+    amount: 39,
+  },
+  {
+    name: 'Liam Johnson',
+    email: 'liam@example.com',
+    avatar: 'https://img.heroui.chat/image/avatar?w=200&h=200&u=4',
+    status: 'refunded',
+    amount: 150,
+  },
+  {
+    name: 'William Kim',
+    email: 'will@example.com',
+    avatar: 'https://img.heroui.chat/image/avatar?w=200&h=200&u=5',
+    status: 'failed',
+    amount: 99,
+  },
+]
+
+const statusColor = {
+  paid: 'success',
+  failed: 'danger',
+  refunded: 'default',
+  processing: 'warning',
+} as const
+
+const currency = new Intl.NumberFormat('en-US', { style: 'currency', currency: 'USD' })
+const total = data.reduce((sum, payment) => sum + payment.amount, 0)
+
+// Plain column definitions with a `footer` so the footer row renders; every cell is rendered by the slots below.
+const columns: RichTableColumn<Payment>[] = [
+  { accessorKey: 'name', header: 'Customer', footer: 'Total' },
+  { accessorKey: 'status', header: 'Status' },
+  { accessorKey: 'amount', header: 'Amount', footer: '' },
+  { id: 'actions' },
+]
+
+const items = [
+  { value: 'copy', label: 'Copy payment ID' },
+  { value: 'view', label: 'View customer' },
+  { value: 'refund', label: 'Refund', variant: 'danger' as const },
+]
+</script>

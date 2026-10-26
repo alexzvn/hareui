@@ -103,15 +103,6 @@ Use the `height` prop to change the height of the header. Defaults to `4rem`.
 ### Within an app layout
 
 ```vue
-<script setup lang="ts">
-import { Button, Footer, Header, NavigationMenu } from '@hareui/vue'
-
-const items = [
-  { label: 'Docs', href: '/docs', active: true },
-  { label: 'Components', href: '/components' },
-]
-</script>
-
 <template>
   <Header hide-on-scroll>
     <template #title><Logo class="h-6 w-auto" /></template>
@@ -131,6 +122,15 @@ const items = [
 
   <Footer>…</Footer>
 </template>
+
+<script setup lang="ts">
+import { Button, Footer, Header, NavigationMenu } from '@hareui/vue'
+
+const items = [
+  { label: 'Docs', href: '/docs', active: true },
+  { label: 'Components', href: '/components' },
+]
+</script>
 ```
 
 ## Customization
@@ -146,32 +146,34 @@ const items = [
 ```ts
 import { createHareUI } from '@hareui/vue'
 
-app.use(createHareUI({
-  ui: {
-    header: {
-      slots: { root: 'bg-surface' },
-      defaultVariants: { breakpoint: 'md' },
+app.use(
+  createHareUI({
+    ui: {
+      header: {
+        slots: { root: 'bg-surface' },
+        defaultVariants: { breakpoint: 'md' },
+      },
     },
-  },
-}))
+  }),
+)
 ```
 
 ## Styling Reference
 
-| `ui` key | `data-slot` | Element |
-|---|---|---|
-| `root` | `header` | The `<header>`; `class` merges here. `data-hidden="true"` while hidden by `hideOnScroll`, `data-menu-open="true"` while the menu is open |
-| `container` | `header-container` | Width-limited flex row (same width as `Container`) |
-| `left` | `header-left` | Start area (title, and the toggle when `toggle-side="left"`) |
-| `title` | `header-title` | The title link |
-| `center` | `header-center` | The default slot, shown from the breakpoint up |
-| `right` | `header-right` | End area (actions, and the toggle when `toggle-side="right"`) |
-| `toggle` | `header-toggle` | The toggle button |
-| `toggleIcon` | `header-toggle-icon` | The animated hamburger icon (`data-open`) |
-| `overlay` | `modal-backdrop` / `drawer-backdrop` | Backdrop of the menu (drops it from the breakpoint up) |
-| `content` | `modal-dialog` / `drawer-dialog` | Panel of the menu |
-| `header` | `header-menu-header` | The menu's own header row (title and toggle), `modal` and `slideover` only |
-| `body` | `header-menu-body` | The scrollable menu body |
+| `ui` key     | `data-slot`                          | Element                                                                                                                                  |
+| ------------ | ------------------------------------ | ---------------------------------------------------------------------------------------------------------------------------------------- |
+| `root`       | `header`                             | The `<header>`; `class` merges here. `data-hidden="true"` while hidden by `hideOnScroll`, `data-menu-open="true"` while the menu is open |
+| `container`  | `header-container`                   | Width-limited flex row (same width as `Container`)                                                                                       |
+| `left`       | `header-left`                        | Start area (title, and the toggle when `toggle-side="left"`)                                                                             |
+| `title`      | `header-title`                       | The title link                                                                                                                           |
+| `center`     | `header-center`                      | The default slot, shown from the breakpoint up                                                                                           |
+| `right`      | `header-right`                       | End area (actions, and the toggle when `toggle-side="right"`)                                                                            |
+| `toggle`     | `header-toggle`                      | The toggle button                                                                                                                        |
+| `toggleIcon` | `header-toggle-icon`                 | The animated hamburger icon (`data-open`)                                                                                                |
+| `overlay`    | `modal-backdrop` / `drawer-backdrop` | Backdrop of the menu (drops it from the breakpoint up)                                                                                   |
+| `content`    | `modal-dialog` / `drawer-dialog`     | Panel of the menu                                                                                                                        |
+| `header`     | `header-menu-header`                 | The menu's own header row (title and toggle), `modal` and `slideover` only                                                               |
+| `body`       | `header-menu-body`                   | The scrollable menu body                                                                                                                 |
 
 The `--header-height` CSS variable holds the height of the header. While the menu is open, its position is exposed as `--header-menu-top`, `--header-menu-left`, `--header-menu-width` and `--header-menu-height`.
 

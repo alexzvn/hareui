@@ -1,7 +1,3 @@
-<script setup lang="ts">
-import { Separator } from '@hareui/vue'
-</script>
-
 <template>
   <div class="text-small flex h-5 items-center space-x-4">
     <div>Blog</div>
@@ -11,3 +7,7 @@ import { Separator } from '@hareui/vue'
     <div>Source</div>
   </div>
 </template>
+
+<script setup lang="ts">
+import { Separator } from '@hareui/vue'
+</script>

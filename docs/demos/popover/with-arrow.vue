@@ -1,16 +1,9 @@
-<script setup lang="ts">
-import { Icon } from '@iconify/vue'
-import { Button, Popover } from '@hareui/vue'
-</script>
-
 <template>
   <div class="flex items-center gap-4">
     <Popover title="Popover with Arrow" arrow class="max-w-64">
       <Button variant="secondary">With Arrow</Button>
       <template #content>
-        <p class="mt-2 text-sm text-muted">
-          The arrow shows which element triggered the popover.
-        </p>
+        <p class="mt-2 text-sm text-muted">The arrow shows which element triggered the popover.</p>
       </template>
     </Popover>
 
@@ -19,10 +12,13 @@ import { Button, Popover } from '@hareui/vue'
         <Icon icon="gravity-ui:ellipsis" />
       </Button>
       <template #content>
-        <p class="mt-2 text-sm text-muted">
-          The arrow shows which element triggered the popover.
-        </p>
+        <p class="mt-2 text-sm text-muted">The arrow shows which element triggered the popover.</p>
       </template>
     </Popover>
   </div>
 </template>
+
+<script setup lang="ts">
+import { Button, Popover } from '@hareui/vue'
+import { Icon } from '@iconify/vue'
+</script>

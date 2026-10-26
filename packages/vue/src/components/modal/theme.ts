@@ -70,7 +70,8 @@ export default {
     },
     placement: {
       auto: {
-        dialog: 'mt-auto mb-(--modal-dialog-margin-bottom) [--modal-dialog-margin-bottom:0px] sm:[--modal-dialog-margin-bottom:auto]',
+        dialog:
+          'mt-auto mb-(--modal-dialog-margin-bottom) [--modal-dialog-margin-bottom:0px] sm:[--modal-dialog-margin-bottom:auto]',
       },
       top: {
         dialog: 'mt-0',
@@ -98,11 +99,36 @@ export default {
   // The zoom and placement slide live here, not in the base/placement classes, so `size="full"` gets none:
   // overriding them with `zoom-in-100` loses in stylesheet order (`zoom-in-105` is emitted later).
   compoundVariants: [
-    { size: ['xs', 'sm', 'md', 'lg', 'cover'], class: { container: '[&:where([data-state=open])]:zoom-in-105 [&:where([data-state=closed])]:zoom-out-95' } },
-    { size: ['xs', 'sm', 'md', 'lg', 'cover'], placement: 'auto', class: { container: '[&:where([data-state=open])]:slide-in-from-bottom-1 sm:[&:where([data-state=open])]:slide-in-from-bottom-0' } },
-    { size: ['xs', 'sm', 'md', 'lg', 'cover'], placement: 'top', class: { container: '[&:where([data-state=open])]:slide-in-from-top-1' } },
-    { size: ['xs', 'sm', 'md', 'lg', 'cover'], placement: 'center', class: { container: '[&:where([data-state=open])]:slide-in-from-top-0' } },
-    { size: ['xs', 'sm', 'md', 'lg', 'cover'], placement: 'bottom', class: { container: '[&:where([data-state=open])]:slide-in-from-bottom-1' } },
+    {
+      size: ['xs', 'sm', 'md', 'lg', 'cover'],
+      class: {
+        container:
+          '[&:where([data-state=open])]:zoom-in-105 [&:where([data-state=closed])]:zoom-out-95',
+      },
+    },
+    {
+      size: ['xs', 'sm', 'md', 'lg', 'cover'],
+      placement: 'auto',
+      class: {
+        container:
+          '[&:where([data-state=open])]:slide-in-from-bottom-1 sm:[&:where([data-state=open])]:slide-in-from-bottom-0',
+      },
+    },
+    {
+      size: ['xs', 'sm', 'md', 'lg', 'cover'],
+      placement: 'top',
+      class: { container: '[&:where([data-state=open])]:slide-in-from-top-1' },
+    },
+    {
+      size: ['xs', 'sm', 'md', 'lg', 'cover'],
+      placement: 'center',
+      class: { container: '[&:where([data-state=open])]:slide-in-from-top-0' },
+    },
+    {
+      size: ['xs', 'sm', 'md', 'lg', 'cover'],
+      placement: 'bottom',
+      class: { container: '[&:where([data-state=open])]:slide-in-from-bottom-1' },
+    },
   ],
   defaultVariants: {
     scroll: 'inside',

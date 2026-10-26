@@ -59,13 +59,15 @@ Use the `side` prop to toggle the right sidebar instead. `DashboardNavbar` sets 
 Override the `dashboardSidebarToggle` theme app-wide with `createHareUI`:
 
 ```ts
-app.use(createHareUI({
-  ui: {
-    dashboardSidebarToggle: {
-      slots: { base: 'md:hidden' },
+app.use(
+  createHareUI({
+    ui: {
+      dashboardSidebarToggle: {
+        slots: { base: 'md:hidden' },
+      },
     },
-  },
-}))
+  }),
+)
 ```
 
 ## API

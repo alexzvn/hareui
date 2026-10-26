@@ -1,7 +1,3 @@
-<script setup lang="ts">
-import { Skeleton } from '@hareui/vue'
-</script>
-
 <template>
   <div class="w-full max-w-md space-y-3">
     <Skeleton class="h-4 w-full rounded" />
@@ -11,3 +7,7 @@ import { Skeleton } from '@hareui/vue'
     <Skeleton class="h-4 w-3/6 rounded" />
   </div>
 </template>
+
+<script setup lang="ts">
+import { Skeleton } from '@hareui/vue'
+</script>

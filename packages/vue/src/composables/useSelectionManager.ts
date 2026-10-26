@@ -1,6 +1,6 @@
 export type SelectionMode = 'none' | 'single' | 'multiple'
 
-export interface SelectionManagerOptions<K> {
+export type SelectionManagerOptions<K> = {
   /** How many keys can be selected. */
   mode: () => SelectionMode
   /** Every key of the collection, in display order. */
@@ -16,7 +16,7 @@ export interface SelectionManagerOptions<K> {
 }
 
 /** Meta on macOS, Control elsewhere; both are accepted, like most desktop lists. */
-export const isSelectAllKey = (event: KeyboardEvent) =>
+const isSelectAllKey = (event: KeyboardEvent) =>
   (event.ctrlKey || event.metaKey) && !event.altKey && event.key.toLowerCase() === 'a'
 
 /**
@@ -24,41 +24,42 @@ export const isSelectAllKey = (event: KeyboardEvent) =>
  * TagGroup and Table: an anchor for Shift ranges, select-all and clear. Focus movement stays with each
  * component; it calls `extend` with the key focus moved to.
  */
-export function useSelectionManager<K>(options: SelectionManagerOptions<K>) {
+export const useSelectionManager = <K>(options: SelectionManagerOptions<K>) => {
   // RAC keeps the anchor and the range's moving end on the Selection object
   let anchor: K | undefined
   let current: K | undefined
+
   // A Shift range right after select-all starts over from the target key
-  let fromAll = false
+  let isFromAll = false
 
   const isSelected = (key: K) => options.selected().includes(key)
 
   /** Selectable keys from `a` to `b` inclusive, in collection order. */
-  function range(a: K, b: K): K[] {
+  const range = (a: K, b: K): K[] => {
     const keys = options.keys()
     let from = keys.indexOf(a)
     let to = keys.indexOf(b)
-    if (from === -1 || to === -1)
-      return []
-    if (from > to)
-      [from, to] = [to, from]
-    return keys.slice(from, to + 1).filter(key => !options.isDisabled(key))
+    if (from === -1 || to === -1) return []
+    if (from > to) [from, to] = [to, from]
+
+    return keys.slice(from, to + 1).filter((key) => !options.isDisabled(key))
   }
 
-  function write(keys: K[]) {
-    fromAll = false
+  const write = (keys: K[]) => {
+    isFromAll = false
     options.setSelected(keys)
   }
 
   /** Click / Space / Enter: toggles `key` (single mode replaces). Adding a key makes it the anchor. */
-  function toggle(key: K) {
+  const toggle = (key: K) => {
     const mode = options.mode()
-    if (mode === 'none' || options.isDisabled(key))
-      return
+    if (mode === 'none' || options.isDisabled(key)) return
+
     if (isSelected(key)) {
-      write(mode === 'single' ? [] : options.selected().filter(k => k !== key))
+      write(mode === 'single' ? [] : options.selected().filter((k) => k !== key))
       return
     }
+
     anchor = current = key
     write(mode === 'single' ? [key] : [...options.selected(), key])
   }
@@ -67,66 +68,77 @@ export function useSelectionManager<K>(options: SelectionManagerOptions<K>) {
    * Shift+click / Shift+navigation: selects the range from the anchor to `to`, replacing the range the anchor
    * last spanned. Without an anchor the range starts at `from` (the key focus left), else at `to` itself.
    */
-  function extend(to: K, from?: K) {
+  const extend = (to: K, from?: K) => {
     const mode = options.mode()
-    if (mode === 'none' || options.isDisabled(to))
-      return
+    if (mode === 'none' || options.isDisabled(to)) return
+
     if (mode === 'single') {
       anchor = current = to
       write([to])
+
       return
     }
-    if (fromAll || (anchor !== undefined && !options.keys().includes(anchor))) {
-      anchor = fromAll ? to : undefined
+
+    if (isFromAll || (anchor !== undefined && !options.keys().includes(anchor))) {
+      anchor = isFromAll ? to : undefined
       current = undefined
     }
+
     const start = anchor ?? from ?? to
-    const next = new Set(fromAll ? [] : options.selected())
-    for (const key of range(start, current ?? to))
-      next.delete(key)
-    for (const key of range(to, start))
-      next.add(key)
+    const next = new Set(isFromAll ? [] : options.selected())
+    for (const key of range(start, current ?? to)) next.delete(key)
+    for (const key of range(to, start)) next.add(key)
     anchor = start
     current = to
     write([...next])
   }
 
   /** Meta/Ctrl+A: every selectable key. Focus stays where it is. */
-  function selectAll() {
-    if (options.mode() !== 'multiple')
-      return false
-    write(options.keys().filter(key => !options.isDisabled(key)))
+  const selectAll = () => {
+    if (options.mode() !== 'multiple') return false
+    write(options.keys().filter((key) => !options.isDisabled(key)))
     anchor = current = undefined
-    fromAll = true
+    isFromAll = true
+
     return true
   }
 
   /** Escape: clears a non-empty selection (RAC `escapeKeyBehavior: 'clearSelection'`). */
-  function clear() {
+  const clear = () => {
     if (options.mode() === 'none' || options.keepOnEscape?.() || options.selected().length === 0)
       return false
+
     write([])
     anchor = current = undefined
+
     return true
+  }
+
+  const runShortcut = (event: KeyboardEvent): boolean => {
+    if (event.key === 'Escape') return clear()
+    if (isSelectAllKey(event)) return selectAll()
+
+    return false
   }
 
   /**
    * Handles the selection shortcuts that don't move focus (Escape, Meta/Ctrl+A). Returns whether the event was
    * consumed; it is then default-prevented and stopped, as RAC does.
    */
-  function onKeydown(event: KeyboardEvent): boolean {
-    const handled = event.key === 'Escape' ? clear() : isSelectAllKey(event) ? selectAll() : false
-    if (handled) {
+  const onKeydown = (event: KeyboardEvent): boolean => {
+    const isHandled = runShortcut(event)
+    if (isHandled) {
       event.preventDefault()
       event.stopPropagation()
     }
-    return handled
+
+    return isHandled
   }
 
   /** Records `key` as the anchor without changing the selection (e.g. a toggle made elsewhere). */
-  function setAnchor(key: K | undefined) {
+  const setAnchor = (key: K | undefined) => {
     anchor = current = key
-    fromAll = false
+    isFromAll = false
   }
 
   return { isSelected, toggle, extend, selectAll, clear, onKeydown, setAnchor }

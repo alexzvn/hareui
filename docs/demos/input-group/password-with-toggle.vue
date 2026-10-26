@@ -1,11 +1,3 @@
-<script setup lang="ts">
-import { Icon } from '@iconify/vue'
-import { Button, InputGroup, TextField } from '@hareui/vue'
-import { ref } from 'vue'
-
-const isVisible = ref(false)
-</script>
-
 <template>
   <TextField class="w-full max-w-[280px]" name="password" label="Password">
     <InputGroup
@@ -27,3 +19,11 @@ const isVisible = ref(false)
     </InputGroup>
   </TextField>
 </template>
+
+<script setup lang="ts">
+import { Button, InputGroup, TextField } from '@hareui/vue'
+import { Icon } from '@iconify/vue'
+import { ref } from 'vue'
+
+const isVisible = ref(false)
+</script>

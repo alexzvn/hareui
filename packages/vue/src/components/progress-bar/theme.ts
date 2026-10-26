@@ -7,7 +7,8 @@ export default {
       'disabled:status-disabled data-[disabled=true]:status-disabled aria-disabled:status-disabled',
     ],
     // `.progress-bar [data-slot="label"]` (rendered with the Label theme underneath)
-    label: 'w-fit text-sm font-medium [grid-area:label] in-aria-disabled:opacity-100 in-data-[disabled=true]:opacity-100',
+    label:
+      'w-fit text-sm font-medium [grid-area:label] in-aria-disabled:opacity-100 in-data-[disabled=true]:opacity-100',
     output: 'text-sm font-medium tabular-nums [grid-area:output]',
     track: 'relative h-2 overflow-hidden rounded-sm bg-default [grid-area:track]',
     fill: 'absolute start-0 top-0 h-full rounded-sm bg-(--progress-bar-fill) transition-[width] duration-300 ease-out motion-reduce:transition-none',

@@ -1,6 +1,6 @@
-import type { ClassValue } from 'tailwind-variants'
+import type { ClassValue } from '@/utils/tv'
 
-export interface ChartTooltipPayloadEntry {
+export type ChartTooltipPayloadEntry = {
   dataKey: string
   name: string
   value: number | string
@@ -12,12 +12,51 @@ export interface ChartTooltipPayloadEntry {
   fill?: string
 }
 
-export interface ChartMargin { top?: number, right?: number, bottom?: number, left?: number }
+/** Space around the plot area, in px; sides left out keep the chart's default (8 at top and right, 0 elsewhere). */
+export type ChartMargin = {
+  top?: number
+  right?: number
+  bottom?: number
+  left?: number
+}
 
+/** A chart row: the category and series values, keyed by name. */
 export type ChartDatum = Record<string, number | string>
 
 /** `horizontal`/`vertical`: cartesian charts (category axis on x / on y). `centric`/`radial`: polar charts. */
 export type ChartLayout = 'horizontal' | 'vertical' | 'centric' | 'radial'
+
+/** Chart-wide bar sizing of `BarChart` and `RadialChart`, the `bar` prop. A bar's own `barSize` / `maxBarSize` win. */
+export type ChartBarSizing = {
+  /**
+   * Bar thickness, in px or as a percentage of the band (the ring in radial charts).
+   * @defaultValue unset in `BarChart` (bars share the band), 10 in `RadialChart`
+   */
+  size?: number | string
+  /**
+   * Largest bar thickness, in px.
+   * @defaultValue no limit
+   */
+  maxSize?: number
+  /**
+   * Gap between the bars of one category (or ring), in px or as a percentage.
+   * @defaultValue 4
+   */
+  gap?: number | string
+  /**
+   * Gap between neighbouring categories (or rings) when `size` is not set, in px or as a percentage of the band.
+   * @defaultValue '10%'
+   */
+  categoryGap?: number | string
+}
+
+/** Defaults of `ChartBarSizing` shared by every bar layout; a partial `bar` prop keeps the others. */
+export const CHART_BAR_SIZING_DEFAULTS: Readonly<
+  Required<Pick<ChartBarSizing, 'gap' | 'categoryGap'>>
+> = {
+  gap: 4,
+  categoryGap: '10%',
+}
 
 /** SVG z-layers of a chart, bottom to top. */
 export const chartLayerNames = [
@@ -33,42 +72,67 @@ export const chartLayerNames = [
   'active-dot',
   'label',
 ] as const
-export type ChartLayerName = typeof chartLayerNames[number]
+
+export type ChartLayerName = (typeof chartLayerNames)[number]
 
 /** Curve interpolation of areas and lines. `monotone` follows the layout (x in horizontal charts, y in vertical ones). */
-export type ChartCurveType
-  = | 'basis'
-    | 'basisClosed'
-    | 'basisOpen'
-    | 'bump'
-    | 'bumpX'
-    | 'bumpY'
-    | 'linear'
-    | 'linearClosed'
-    | 'natural'
-    | 'monotone'
-    | 'monotoneX'
-    | 'monotoneY'
-    | 'step'
-    | 'stepBefore'
-    | 'stepAfter'
+export type ChartCurveType =
+  | 'basis'
+  | 'basisClosed'
+  | 'basisOpen'
+  | 'bump'
+  | 'bumpX'
+  | 'bumpY'
+  | 'linear'
+  | 'linearClosed'
+  | 'natural'
+  | 'monotone'
+  | 'monotoneX'
+  | 'monotoneY'
+  | 'step'
+  | 'stepBefore'
+  | 'stepAfter'
 
 /**
  * One end of an axis domain: a number, `'auto'` (nice rounded bound), `'dataMin'`/`'dataMax'`,
  * `'dataMin - 10'`/`'dataMax + 10'`, or a function of the data bound.
  */
 export type ChartAxisDomainItem = number | string | ((value: number) => number)
-export type ChartAxisDomain = [ChartAxisDomainItem, ChartAxisDomainItem] | ((range: [number, number]) => [number, number])
 
-export type ChartAxisInterval = number | 'preserveStart' | 'preserveEnd' | 'preserveStartEnd' | 'equidistantPreserveStart'
+/** Axis domain: `[min, max]` ends, or a function from the data extent to the domain. */
+export type ChartAxisDomain =
+  | [ChartAxisDomainItem, ChartAxisDomainItem]
+  | ((range: [number, number]) => [number, number])
 
-export interface ChartPoint { x: number, y: number }
+/**
+ * Which tick labels an axis keeps when they would overlap: a number skips that many labels between kept ones
+ * (`0` keeps all); the others keep as many as fit while keeping the first, last or both ticks, and
+ * `equidistantPreserveStart` keeps an even spacing from the first.
+ */
+export type ChartAxisInterval =
+  | number
+  | 'preserveStart'
+  | 'preserveEnd'
+  | 'preserveStartEnd'
+  | 'equidistantPreserveStart'
+
+export type ChartPoint = {
+  x: number
+  y: number
+}
 
 /** Size and position of the plot area (inside margins and axes), in SVG pixels. */
-export interface ChartOffset { left: number, top: number, width: number, height: number, right: number, bottom: number }
+export type ChartOffset = {
+  left: number
+  top: number
+  width: number
+  height: number
+  right: number
+  bottom: number
+}
 
 /** Props of a point marker: `dot` on every point, or `activeDot` on the hovered one. */
-export interface ChartDotProps {
+export type ChartDotProps = {
   /**
    * Radius, in px.
    * @defaultValue 3 for `dot`, 4 for `activeDot`
@@ -85,7 +149,7 @@ export interface ChartDotProps {
 }
 
 /** A series registered with the chart root, in template order. */
-export interface ChartSeries {
+export type ChartSeries = {
   id: string
   kind: 'area' | 'line' | 'bar' | 'pie' | 'radar' | 'radialBar' | (string & {})
   dataKey: string
@@ -106,21 +170,26 @@ export interface ChartSeries {
   entries?: (index: number) => ChartTooltipPayloadEntry[]
 }
 
-export interface ChartActiveState {
+/** The hovered or keyboard-focused datum of a chart, shared by its tooltip and series. */
+export type ChartActiveState = {
   /** Hovered or focused datum. */
   index: number | null
   /** Set by item-triggered charts (pie, radial): only this series is shown in the tooltip. */
   seriesId: string | null
   /** Tooltip anchor in SVG pixels. */
   coordinate: ChartPoint | null
+  /** What picked the datum; keyboard picks are cleared on blur. */
   source: 'pointer' | 'keyboard' | null
 }
 
 /** How pointer and keyboard positions map to data indexes; set by `useCartesianChart` or a polar composable. */
-export interface ChartInteraction {
+export type ChartInteraction = {
   trigger: 'axis' | 'item'
   /** The datum under an SVG point, or `null` outside the plot. Item triggers also name the series it belongs to. */
-  hitTest?: (x: number, y: number) => { index: number, seriesId?: string, coordinate: ChartPoint } | null
+  hitTest?: (
+    x: number,
+    y: number,
+  ) => { index: number; seriesId?: string; coordinate: ChartPoint } | null
   /** Tooltip anchor of a datum, for keyboard navigation. */
   coordinateOf: (index: number) => ChartPoint | null
   /** Number of navigable data points. */
@@ -129,5 +198,5 @@ export interface ChartInteraction {
    * Item trigger: every navigable item in keyboard order. When set, arrow keys walk this list and pass `seriesId`
    * to `setActive`.
    */
-  items?: () => Array<{ seriesId: string, index: number, coordinate: ChartPoint | null }>
+  items?: () => Array<{ seriesId: string; index: number; coordinate: ChartPoint | null }>
 }

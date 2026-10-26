@@ -1,10 +1,3 @@
-<script setup lang="ts">
-import { ColorSlider, ColorSwatch, colorToString, parseColor } from '@hareui/vue'
-import { ref } from 'vue'
-
-const color = ref(parseColor('rgb(255, 100, 50)'))
-</script>
-
 <template>
   <div class="flex w-full max-w-xs flex-col gap-4">
     <ColorSlider v-model="color" channel="red" label="Red" />
@@ -18,3 +11,10 @@ const color = ref(parseColor('rgb(255, 100, 50)'))
     </div>
   </div>
 </template>
+
+<script setup lang="ts">
+import { ColorSlider, ColorSwatch, colorToString, parseColor } from '@hareui/vue'
+import { ref } from 'vue'
+
+const color = ref(parseColor('rgb(255, 100, 50)'))
+</script>

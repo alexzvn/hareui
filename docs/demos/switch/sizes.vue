@@ -1,7 +1,3 @@
-<script setup lang="ts">
-import { Switch } from '@hareui/vue'
-</script>
-
 <template>
   <div class="flex gap-6">
     <Switch size="sm" label="Small" />
@@ -9,3 +5,7 @@ import { Switch } from '@hareui/vue'
     <Switch size="lg" label="Large" />
   </div>
 </template>
+
+<script setup lang="ts">
+import { Switch } from '@hareui/vue'
+</script>

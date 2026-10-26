@@ -1,7 +1,3 @@
-<script setup lang="ts">
-import { TimeField } from '@hareui/vue'
-</script>
-
 <template>
   <!--
     HeroUI's custom-styles demo places `<Description>` above `<TimeField.Group>` via its compound
@@ -13,7 +9,8 @@ import { TimeField } from '@hareui/vue'
     name="reminder"
     description="Daily check-in notification."
     :ui="{
-      group: 'rounded-xl border border-border/80 bg-surface px-2 py-1 shadow-sm ring-1 ring-accent/5 focus-within:border-accent/25 focus-within:ring-2 focus-within:ring-accent/15',
+      group:
+        'rounded-xl border border-border/80 bg-surface px-2 py-1 shadow-sm ring-1 ring-accent/5 focus-within:border-accent/25 focus-within:ring-2 focus-within:ring-accent/15',
       segment: 'text-foreground',
     }"
   >
@@ -22,3 +19,7 @@ import { TimeField } from '@hareui/vue'
     </template>
   </TimeField>
 </template>
+
+<script setup lang="ts">
+import { TimeField } from '@hareui/vue'
+</script>

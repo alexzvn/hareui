@@ -4,27 +4,38 @@
   "type": "module",
   "workspaces": [
     "packages/*",
-    "playground",
-    "reference",
+    "tooling/playground",
+    "tooling/reference",
     "docs"
   ],
   "scripts": {
-    "dev": "bun run --cwd playground dev",
+    "dev": "bun run --cwd tooling/playground dev",
     "build": "bun run --cwd packages/vue build",
     "test": "bun run --cwd packages/vue test",
     "typecheck": "bun run --cwd packages/vue typecheck",
     "typecheck:docs": "bun run --cwd docs typecheck",
-    "reference": "bun run --cwd reference dev",
-    "parity": "bun parity/compare.ts",
+    "reference": "bun run --cwd tooling/reference dev",
+    "parity": "bun tooling/parity/compare.ts",
     "docs:dev": "bun run --cwd docs dev",
     "docs:build": "bun run --cwd docs build",
-    "a11y": "bun run --cwd docs a11y"
+    "a11y": "bun run --cwd docs a11y",
+    "lint": "oxlint --deny-warnings",
+    "lint:fix": "oxlint --fix",
+    "format": "oxfmt",
+    "format:check": "oxfmt --check",
+    "knip": "knip",
+    "check": "bun run format:check && bun run lint && bun run knip && bun run typecheck && bun run typecheck:docs && bun run test",
+    "prepare": "lefthook install"
   },
   "devDependencies": {
-    "puppeteer": "^25.12.0",
+    "@types/bun": "latest",
+    "@types/pngjs": "^6.0.5",
+    "knip": "^6.43.0",
+    "lefthook": "^2.2.2",
+    "oxfmt": "0.74.0",
+    "oxlint": "^1.89.0",
     "pixelmatch": "^7.2.0",
     "pngjs": "^7.0.0",
-    "@types/pngjs": "^6.0.5",
-    "@types/bun": "latest"
+    "puppeteer": "^25.12.0"
   }
 }

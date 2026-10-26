@@ -1,30 +1,47 @@
-import type { StandardSchemaV1, SuperstructSchema } from '../../utils/form'
+import type { StandardSchemaV1, SuperstructSchema } from '@/utils/form'
 
 /** A schema the form can validate with: any Standard Schema (Zod, Valibot, ArkType, Yup, Effect Schema, …) or a Superstruct struct. */
-export type FormSchema<I extends object = object, O extends object = I> = StandardSchemaV1<I, O> | SuperstructSchema<O>
+export type FormSchema<I extends object = object, O extends object = I> =
+  | StandardSchemaV1<I, O>
+  | SuperstructSchema<O>
 
 /** The schema's input type: what the form's `state` holds once filled in. */
-export type InferInput<S> = S extends StandardSchemaV1 ? StandardSchemaV1.InferInput<S>
-  : S extends SuperstructSchema<infer I> ? I
+export type InferInput<S> = S extends StandardSchemaV1
+  ? StandardSchemaV1.InferInput<S>
+  : S extends SuperstructSchema<infer I>
+    ? I
     : never
 
 /** The schema's output type: the parsed values `@submit` receives. */
-export type InferOutput<S> = S extends StandardSchemaV1 ? StandardSchemaV1.InferOutput<S>
-  : S extends SuperstructSchema<infer O> ? O
+export type InferOutput<S> = S extends StandardSchemaV1
+  ? StandardSchemaV1.InferOutput<S>
+  : S extends SuperstructSchema<infer O>
+    ? O
     : never
 
-type FormStateLeaf = Date | Blob | RegExp | Map<unknown, unknown> | Set<unknown> | ((...args: never[]) => unknown)
+type FormStateLeaf =
+  | Date
+  | Blob
+  | RegExp
+  | Map<unknown, unknown>
+  | Set<unknown>
+  | ((...args: never[]) => unknown)
 
-type FormStateValue<T> = T extends FormStateLeaf ? T | null | undefined
-  : T extends object ? { [K in keyof T]?: FormStateValue<T[K]> } | null | undefined
-    : T extends number | bigint ? T | '' | null | undefined
+type FormStateValue<T> = T extends FormStateLeaf
+  ? T | null | undefined
+  : T extends object
+    ? { [K in keyof T]?: FormStateValue<T[K]> } | null | undefined
+    : T extends number | bigint
+      ? T | '' | null | undefined
       : T | null | undefined
 
 /** The form's values before validation: any value can be empty, and a cleared number input holds `''`. */
 export type FormState<S extends FormSchema> = NonNullable<FormStateValue<InferInput<S>>>
 
 /** The schema's output when `T` (the form's `transform`) is `true`, its input otherwise. */
-export type FormData<S extends FormSchema, T extends boolean = true> = T extends true ? InferOutput<S> : InferInput<S>
+export type FormData<S extends FormSchema, T extends boolean = true> = T extends true
+  ? InferOutput<S>
+  : InferInput<S>
 
 /** A field name of the schema's input; dotted paths (`address.city`) are accepted too. */
 export type FormFieldName<S extends FormSchema> = (keyof InferInput<S> & string) | (string & {})
@@ -32,22 +49,27 @@ export type FormFieldName<S extends FormSchema> = (keyof InferInput<S> & string)
 /** The field events that trigger validation. */
 export type FormInputEvents = 'input' | 'blur' | 'change' | 'focus'
 
-export interface FormError<P extends string = string> {
+/** A validation error, from the `schema`, `validate`, or `setErrors`. */
+export type FormError<P extends string = string> = {
   /** The `name` of the field the error belongs to; empty for form-level errors. */
   name?: P
+  /** The error text shown under the field. */
   message: string
 }
 
-export interface FormErrorWithId extends FormError {
+/** A {@link FormError} with the id of the field's control, as listed in `@error` and `errors`. */
+export type FormErrorWithId = {
   /** The id of the field's control, to focus or scroll to it. */
   id?: string
-}
+} & FormError
 
+/** The `onSubmit` payload: the native submit event with the validated `data`. */
 export type FormSubmitEvent<T> = SubmitEvent & {
   /** The validated state: the schema's output unless `transform` is `false`. */
   data: T
 }
 
+/** The `@error` payload: the native submit event with the errors that blocked submission. */
 export type FormErrorEvent = SubmitEvent & {
   /** The errors that blocked submission. */
   errors: FormErrorWithId[]
@@ -66,7 +88,8 @@ export class FormValidationException extends Error {
   }
 }
 
-export interface FormValidateOptions<S extends FormSchema, T extends boolean = false> {
+/** Options of the form's `validate()` method. */
+export type FormValidateOptions<S extends FormSchema, T extends boolean = false> = {
   /** Only validate these fields; errors on other fields are kept. */
   name?: FormFieldName<S> | FormFieldName<S>[]
   /** Resolve to `false` instead of throwing a `FormValidationException` when invalid. */
@@ -78,9 +101,11 @@ export interface FormValidateOptions<S extends FormSchema, T extends boolean = f
 }
 
 /** The form's exposed instance, from a template ref. */
-export interface Form<S extends FormSchema> {
+export type Form<S extends FormSchema> = {
   /** Validates the state, shows the errors, and resolves to the state (or the schema's output with `transform`). */
-  validate: <T extends boolean = false>(opts?: FormValidateOptions<S, T>) => Promise<FormData<S, T> | false>
+  validate: <T extends boolean = false>(
+    opts?: FormValidateOptions<S, T>,
+  ) => Promise<FormData<S, T> | false>
   /** Clears the errors of a field (by name or pattern), or all errors. */
   clear: (path?: FormFieldName<S> | RegExp) => void
   /** The current `schema` / `validate` errors. */
@@ -106,7 +131,7 @@ export interface Form<S extends FormSchema> {
 }
 
 /** Form-validation props shared by every field. */
-export interface FormFieldProps {
+export type FormFieldProps = {
   /** Shows form errors whose name matches this pattern too, e.g. `/^tags\..+/` for errors on array items (`tags.0`). */
   errorPattern?: RegExp
   /**

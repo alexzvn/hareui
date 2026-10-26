@@ -1,7 +1,3 @@
-<script setup lang="ts">
-import { Typography } from '@hareui/vue'
-</script>
-
 <template>
   <Typography class="flex max-w-xl flex-col gap-3" prose>
     <h1>Prose title</h1>
@@ -16,3 +12,7 @@ import { Typography } from '@hareui/vue'
     </p>
   </Typography>
 </template>
+
+<script setup lang="ts">
+import { Typography } from '@hareui/vue'
+</script>

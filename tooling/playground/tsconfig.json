@@ -1,0 +1,19 @@
+{
+  "extends": "../../tsconfig.base.json",
+  "compilerOptions": {
+    "types": [
+      "vite/client"
+    ],
+    "paths": {
+      "@hareui/vue": [
+        "../../packages/vue/src/index.ts"
+      ],
+      "@/*": [
+        "../../packages/vue/src/*"
+      ]
+    }
+  },
+  "include": [
+    "src"
+  ]
+}

@@ -1,7 +1,3 @@
-<script setup lang="ts">
-import { NumberStepper } from '@hareui/vue'
-</script>
-
 <template>
   <NumberStepper
     label="Checked bags"
@@ -12,3 +8,7 @@ import { NumberStepper } from '@hareui/vue'
     :max="3"
   />
 </template>
+
+<script setup lang="ts">
+import { NumberStepper } from '@hareui/vue'
+</script>

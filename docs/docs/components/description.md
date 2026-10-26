@@ -19,9 +19,9 @@ import { Description } from '@hareui/vue'
 
 ## Anatomy
 
-| `ui` key | `data-slot` | Element |
-|---|---|---|
-| `base` | `description` | `<span>` |
+| `ui` key | `data-slot`   | Element  |
+| -------- | ------------- | -------- |
+| `base`   | `description` | `<span>` |
 
 ## Examples
 
@@ -40,10 +40,6 @@ import { Description } from '@hareui/vue'
 ### Integration with TextField
 
 ```vue
-<script setup lang="ts">
-import { TextField } from '@hareui/vue'
-</script>
-
 <template>
   <TextField
     type="email"
@@ -52,6 +48,10 @@ import { TextField } from '@hareui/vue'
     description="We'll never share your email"
   />
 </template>
+
+<script setup lang="ts">
+import { TextField } from '@hareui/vue'
+</script>
 ```
 
 When using the [TextField](/docs/components/text-field) component, the description id and the input's `aria-describedby` are wired automatically.
@@ -65,9 +65,11 @@ When using the [TextField](/docs/components/text-field) component, the descripti
 ### Global Configuration
 
 ```ts
-app.use(createHareUI({
-  ui: { description: { slots: { base: 'text-muted' } } },
-}))
+app.use(
+  createHareUI({
+    ui: { description: { slots: { base: 'text-muted' } } },
+  }),
+)
 ```
 
 ## Styling Reference

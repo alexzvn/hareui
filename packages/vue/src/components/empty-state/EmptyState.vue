@@ -1,33 +1,17 @@
-<script lang="ts">
-import type { ComponentSlots } from '../../types/tv'
-import theme from './theme'
-
-type EmptyState = typeof theme
-
-export interface EmptyStateProps {
-  /** Additional classes merged into the root element. */
-  class?: any
-  /** Per-slot class overrides. */
-  ui?: ComponentSlots<EmptyState>
-}
-
-export interface EmptyStateSlots {
-  /** The empty-state content. Defaults to "No results found". */
-  default?: () => any
-}
-</script>
+<template>
+  <div data-slot="empty-state" :class="ui.base()">
+    <slot>No results found</slot>
+  </div>
+</template>
 
 <script setup lang="ts">
-import { useComponentUI } from '../../composables/useComponentUI'
+import { useComponentUI } from '@/composables/useComponentUI'
+
+import type { EmptyStateProps, EmptyStateSlots } from './EmptyState.types'
+import theme from './theme'
 
 const props = defineProps<EmptyStateProps>()
 defineSlots<EmptyStateSlots>()
 
-const ui = useComponentUI('emptyState', theme, () => ({}))
+const ui = useComponentUI('emptyState', { theme: theme, variantProps: () => ({}), props })
 </script>
-
-<template>
-  <div data-slot="empty-state" :class="ui.base({ class: [props.ui?.base, props.class] })">
-    <slot>No results found</slot>
-  </div>
-</template>

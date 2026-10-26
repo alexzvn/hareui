@@ -1,8 +1,3 @@
-<script setup lang="ts">
-import { Icon } from '@iconify/vue'
-import { InputGroup, TextField } from '@hareui/vue'
-</script>
-
 <template>
   <TextField class="w-full max-w-[280px]" default-value="heroui" name="website" label="Website">
     <InputGroup :ui="{ input: 'w-full max-w-[280px]' }" suffix=".com">
@@ -12,3 +7,8 @@ import { InputGroup, TextField } from '@hareui/vue'
     </InputGroup>
   </TextField>
 </template>
+
+<script setup lang="ts">
+import { InputGroup, TextField } from '@hareui/vue'
+import { Icon } from '@iconify/vue'
+</script>

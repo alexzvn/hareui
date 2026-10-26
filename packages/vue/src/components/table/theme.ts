@@ -15,7 +15,8 @@ export default {
       'focus-visible:rounded-lg focus-visible:outline-none focus-visible:shadow-[inset_0_0_0_2px_var(--focus)]',
     ],
     sortableColumnHeader: 'flex items-center justify-between',
-    sortableColumnIndicator: 'inline-grid size-3 transform place-content-center transition-transform duration-100 ease-out data-[direction=descending]:rotate-180',
+    sortableColumnIndicator:
+      'inline-grid size-3 transform place-content-center transition-transform duration-100 ease-out data-[direction=descending]:rotate-180',
     body: '',
     row: [
       'relative h-full border-b border-separator/50 last:border-b-0',
@@ -60,7 +61,8 @@ export default {
       },
       secondary: {
         header: 'border-b-0 bg-transparent',
-        column: 'bg-surface-secondary first:rounded-s-[min(32px,var(--radius-2xl))] last:rounded-e-[min(32px,var(--radius-2xl))]',
+        column:
+          'bg-surface-secondary first:rounded-s-[min(32px,var(--radius-2xl))] last:rounded-e-[min(32px,var(--radius-2xl))]',
         body: 'shadow-none',
         row: 'hover:*:bg-default/50',
         cell: 'bg-transparent',

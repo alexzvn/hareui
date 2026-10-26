@@ -24,21 +24,24 @@ CellSelect is a [Select](/docs/components/select) laid out as one row: the label
 ```vue
 <template>
   <CellSelect label="…" :items="…">
-    <template #label />      <!-- row label content -->
-    <template #value />      <!-- value content (receives selectedItems, isPlaceholder, text) -->
-    <template #indicator />  <!-- indicator content (default: chevrons icon) -->
+    <template #label />
+    <!-- row label content -->
+    <template #value />
+    <!-- value content (receives selectedItems, isPlaceholder, text) -->
+    <template #indicator />
+    <!-- indicator content (default: chevrons icon) -->
   </CellSelect>
 </template>
 ```
 
-| `ui` key | `data-slot` | Element |
-|---|---|---|
-| `base` | `cell-select` | `<div>` root |
-| `trigger` | `select-trigger` | `<button>` row |
-| `label` | `cell-select-label` | `<span>` row label (when `label` or `#label` is set) |
-| `value` | `select-value` | `<span>` selected value |
-| `indicator` | `select-indicator` | `<span>` chevrons icon |
-| `popover` | `select-popover` | popover holding the [ListBox](/docs/components/list-box) |
+| `ui` key    | `data-slot`         | Element                                                  |
+| ----------- | ------------------- | -------------------------------------------------------- |
+| `base`      | `cell-select`       | `<div>` root                                             |
+| `trigger`   | `select-trigger`    | `<button>` row                                           |
+| `label`     | `cell-select-label` | `<span>` row label (when `label` or `#label` is set)     |
+| `value`     | `select-value`      | `<span>` selected value                                  |
+| `indicator` | `select-indicator`  | `<span>` chevrons icon                                   |
+| `popover`   | `select-popover`    | popover holding the [ListBox](/docs/components/list-box) |
 
 ## Examples
 
@@ -86,16 +89,22 @@ Pass classes per part with `ui`:
 
 ```vue
 <template>
-  <CellSelect :items="items" label="Tab size" :ui="{ trigger: 'rounded-full', value: 'text-accent' }" />
+  <CellSelect
+    :items="items"
+    label="Tab size"
+    :ui="{ trigger: 'rounded-full', value: 'text-accent' }"
+  />
 </template>
 ```
 
 ### Global Configuration
 
 ```ts
-app.use(createHareUI({
-  ui: { cellSelect: { slots: { trigger: 'h-10', label: 'font-semibold' } } },
-}))
+app.use(
+  createHareUI({
+    ui: { cellSelect: { slots: { trigger: 'h-10', label: 'font-semibold' } } },
+  }),
+)
 ```
 
 ## Styling Reference

@@ -1,3 +1,27 @@
+<template>
+  <Card
+    class="w-full max-w-[480px] rounded-2xl"
+    :ui="{ header: 'flex-row flex-wrap items-center justify-between gap-2' }"
+  >
+    <template #header>
+      <div>
+        <h3 class="text-base font-medium text-foreground">Rainfall</h3>
+        <p class="text-xs text-muted">Compared with the 10-year average</p>
+      </div>
+      <ChartLegend :series="series" />
+    </template>
+    <BarChart
+      :data="data"
+      index="month"
+      :series="series"
+      :bar="{ size: 12 }"
+      aria-label="Monthly rainfall against the 10-year average"
+      :height="200"
+      :value-formatter="formatRain"
+    />
+  </Card>
+</template>
+
 <script setup lang="ts">
 import { Card } from '@hareui/vue'
 import { BarChart, ChartLegend } from '@hareui/vue/charts'
@@ -13,28 +37,7 @@ const data = [
 
 const series = { thisYear: { name: '2026' }, average: { name: '10-year avg.' } }
 
-function formatRain(value: number) {
+const formatRain = (value: number) => {
   return `${value} mm`
 }
 </script>
-
-<template>
-  <Card class="w-full max-w-[480px] rounded-2xl" :ui="{ header: 'flex-row flex-wrap items-center justify-between gap-2' }">
-    <template #header>
-      <div>
-        <h3 class="text-base font-medium text-foreground">Rainfall</h3>
-        <p class="text-xs text-muted">Compared with the 10-year average</p>
-      </div>
-      <ChartLegend :series="series" />
-    </template>
-    <BarChart
-      :data="data"
-      index="month"
-      :series="series"
-      :bar-size="12"
-      aria-label="Monthly rainfall against the 10-year average"
-      :height="200"
-      :value-formatter="formatRain"
-    />
-  </Card>
-</template>

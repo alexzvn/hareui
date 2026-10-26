@@ -24,20 +24,22 @@ Slider renders a [Label](/docs/components/label), an output showing the formatte
 ```vue
 <template>
   <Slider label="…" :default-value="[25, 75]">
-    <template #label />                          <!-- Label content -->
-    <template #output="{ values, formatted }" /> <!-- output content (default: formatted values joined by ' – ') -->
+    <template #label />
+    <!-- Label content -->
+    <template #output="{ values, formatted }" />
+    <!-- output content (default: formatted values joined by ' – ') -->
   </Slider>
 </template>
 ```
 
-| `ui` key | `data-slot` | Element |
-|---|---|---|
-| `base` | `slider` | `<div>` root |
-| `label` | `label` | [Label](/docs/components/label) (iff `label` / `#label`) |
-| `output` | `slider-output` | `<output>` |
-| `track` | `slider-track` | `<span>` |
-| `fill` | `slider-fill` | `<span>` |
-| `thumb` | `slider-thumb` | `<span role="slider">`, one per value |
+| `ui` key | `data-slot`     | Element                                                  |
+| -------- | --------------- | -------------------------------------------------------- |
+| `base`   | `slider`        | `<div>` root                                             |
+| `label`  | `label`         | [Label](/docs/components/label) (iff `label` / `#label`) |
+| `output` | `slider-output` | `<output>`                                               |
+| `track`  | `slider-track`  | `<span>`                                                 |
+| `fill`   | `slider-fill`   | `<span>`                                                 |
+| `thumb`  | `slider-thumb`  | `<span role="slider">`, one per value                    |
 
 ## Examples
 
@@ -86,9 +88,11 @@ Attributes such as `data-*` fall through to the root element.
 ### Global Configuration
 
 ```ts
-app.use(createHareUI({
-  ui: { slider: { slots: { output: 'text-muted', thumb: 'rounded-full' } } },
-}))
+app.use(
+  createHareUI({
+    ui: { slider: { slots: { output: 'text-muted', thumb: 'rounded-full' } } },
+  }),
+)
 ```
 
 ## Styling Reference

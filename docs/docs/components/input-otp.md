@@ -24,26 +24,29 @@ HeroUI's `InputOTP` is a low-level anatomy component built on the [input-otp](ht
 ```vue
 <template>
   <InputOtp v-model="code" :length="6" :groups="[3, 3]" label="…" description="…" error-message="…">
-    <template #label />                       <!-- Label content -->
-    <template #description />                 <!-- Description content -->
-    <template #error="{ validationErrors }" /> <!-- FieldError content, rendered while invalid -->
+    <template #label />
+    <!-- Label content -->
+    <template #description />
+    <!-- Description content -->
+    <template #error="{ validationErrors }" />
+    <!-- FieldError content, rendered while invalid -->
   </InputOtp>
 </template>
 ```
 
-| `ui` key | `data-slot` | Element |
-|---|---|---|
-| `base` | — | root `<div>` (HareUI-only), stacks label/box/description/error |
-| — | `label` | [Label](/docs/components/label) (iff `label` / `#label`) |
-| `root` | — | the box (`<div data-input-otp-container>`), HeroUI's `.input-otp` |
-| `group` | `input-otp-group` | one `<div>` per entry in `groups` |
-| `slot` | `input-otp-slot` | one `<div>` per character |
-| `slotValue` | `input-otp-slot-value` | the character inside a filled slot |
-| `caret` | `input-otp-caret` | blinking fake caret in the active, empty slot |
-| `separator` | `input-otp-separator` | `<div>` between groups |
-| `input` | `input-otp` | the real, invisible `<input>` that receives focus, typing and paste; carries `data-disabled` / `data-invalid` |
-| — | `description` | [Description](/docs/components/description) (iff `description` / `#description`) |
-| — | `field-error` | [FieldError](/docs/components/field-error) (while invalid, iff `error-message` / `#error` / validation errors) |
+| `ui` key    | `data-slot`            | Element                                                                                                        |
+| ----------- | ---------------------- | -------------------------------------------------------------------------------------------------------------- |
+| `base`      | —                      | root `<div>` (HareUI-only), stacks label/box/description/error                                                 |
+| —           | `label`                | [Label](/docs/components/label) (iff `label` / `#label`)                                                       |
+| `root`      | —                      | the box (`<div data-input-otp-container>`), HeroUI's `.input-otp`                                              |
+| `group`     | `input-otp-group`      | one `<div>` per entry in `groups`                                                                              |
+| `slot`      | `input-otp-slot`       | one `<div>` per character                                                                                      |
+| `slotValue` | `input-otp-slot-value` | the character inside a filled slot                                                                             |
+| `caret`     | `input-otp-caret`      | blinking fake caret in the active, empty slot                                                                  |
+| `separator` | `input-otp-separator`  | `<div>` between groups                                                                                         |
+| `input`     | `input-otp`            | the real, invisible `<input>` that receives focus, typing and paste; carries `data-disabled` / `data-invalid`  |
+| —           | `description`          | [Description](/docs/components/description) (iff `description` / `#description`)                               |
+| —           | `field-error`          | [FieldError](/docs/components/field-error) (while invalid, iff `error-message` / `#error` / validation errors) |
 
 ## Examples
 
@@ -111,9 +114,11 @@ Use `invalid` together with `error-message` to surface errors.
 ### Global Configuration
 
 ```ts
-app.use(createHareUI({
-  ui: { inputOtp: { slots: { slot: 'size-12 rounded-xl border-2 font-bold' } } },
-}))
+app.use(
+  createHareUI({
+    ui: { inputOtp: { slots: { slot: 'size-12 rounded-xl border-2 font-bold' } } },
+  }),
+)
 ```
 
 ## Styling Reference

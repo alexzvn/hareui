@@ -1,4 +1,4 @@
-import { chartSlots } from '../chart/theme'
+import { chartSlots } from '@/components/chart/theme'
 
 export default {
   slots: {

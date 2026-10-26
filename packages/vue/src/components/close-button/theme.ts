@@ -15,7 +15,9 @@ export default {
   },
   variants: {
     variant: {
-      default: { base: 'bg-default text-muted hover:bg-default-hover active:[transform:scale(0.93)]' },
+      default: {
+        base: 'bg-default text-muted hover:bg-default-hover active:[transform:scale(0.93)]',
+      },
     },
   },
   defaultVariants: {

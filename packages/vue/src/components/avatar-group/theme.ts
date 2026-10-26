@@ -21,7 +21,9 @@ export default {
     {
       grid: false,
       overlap: 'ring',
-      class: { base: '*:relative *:[box-shadow:0_0_0_var(--avatar-group-seam,2px)_var(--background)]' },
+      class: {
+        base: '*:relative *:[box-shadow:0_0_0_var(--avatar-group-seam,2px)_var(--background)]',
+      },
     },
     {
       // Crescent cut on the inline-end edge of every avatar but the last; fallback glyphs get an optical nudge.

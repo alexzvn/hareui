@@ -12,9 +12,9 @@ import { onScopeDispose } from 'vue'
  * - `next`: a single character starts after the current item, so repeating it cycles through the matches; a longer
  *   search starts at the top. Autocomplete's closed trigger keeps this rule; it is not RAC's.
  */
-export type TypeaheadStart = 'current' | 'next'
+type TypeaheadStart = 'current' | 'next'
 
-export interface TypeaheadOptions {
+export type TypeaheadOptions = {
   start: TypeaheadStart
   /**
    * RAC: Space extends a search in progress (the caller should then keep it from pressing/selecting) but never
@@ -23,7 +23,7 @@ export interface TypeaheadOptions {
   space?: boolean
 }
 
-export interface TypeaheadSource<T> {
+export type TypeaheadSource<T> = {
   /** Candidates in display order. */
   items: readonly T[]
   /** Searchable text of an item; matched case-insensitively by prefix. */
@@ -34,28 +34,46 @@ export interface TypeaheadSource<T> {
   isCurrent?: (item: T) => boolean
 }
 
+export type TypeaheadHandlers<T> = {
+  /** Reads the candidates; called lazily, only for typeahead keys (it may query the DOM). */
+  source: () => TypeaheadSource<T>
+  /** Receives the first matching item. */
+  select: (match: T) => void
+}
+
 /** RAC `TYPEAHEAD_DEBOUNCE_WAIT_MS`: the buffer resets this long after the last typeahead key. */
 const RESET_MS = 1000
 
-export function useTypeahead(options: TypeaheadOptions) {
+export const useTypeahead = (options: TypeaheadOptions) => {
   let search = ''
   let timer: ReturnType<typeof setTimeout> | undefined
   onScopeDispose(() => clearTimeout(timer))
 
-  function accepts(event: KeyboardEvent) {
+  const accepts = (event: KeyboardEvent) => {
     // One printable character (one code point, so astral characters count); named keys are longer
-    return [...event.key].length === 1 && !event.ctrlKey && !event.metaKey && !event.altKey
-      && (event.key !== ' ' || (!!options.space && search !== ''))
+    return (
+      [...event.key].length === 1 &&
+      !event.ctrlKey &&
+      !event.metaKey &&
+      !event.altKey &&
+      (event.key !== ' ' || (!!options.space && search !== ''))
+    )
   }
 
-  function find<T>({ items, text, disabled, isCurrent }: TypeaheadSource<T>): T | undefined {
-    const enabled = disabled ? items.filter(item => !disabled(item)) : items
+  const getSearchStart = (currentIndex: number) => {
+    if (options.start === 'current') return Math.max(currentIndex, 0)
+
+    return search.length > 1 ? 0 : currentIndex + 1
+  }
+
+  const find = <T>({ items, text, disabled, isCurrent }: TypeaheadSource<T>): T | undefined => {
+    const enabled = disabled ? items.filter((item) => !disabled(item)) : items
     const index = isCurrent ? enabled.findIndex(isCurrent) : -1
-    const from = options.start === 'current' ? Math.max(index, 0) : search.length > 1 ? 0 : index + 1
+    const from = getSearchStart(index)
+
     for (let i = 0; i < enabled.length; i++) {
       const item = enabled[(from + i) % enabled.length]!
-      if (text(item).toLowerCase().startsWith(search))
-        return item
+      if (text(item).toLowerCase().startsWith(search)) return item
     }
   }
 
@@ -65,17 +83,21 @@ export function useTypeahead(options: TypeaheadOptions) {
    * `select`; nothing matching leaves the current item alone and keeps the buffer (RAC clears it instead and lets the
    * key propagate).
    */
-  function onKeydown<T>(event: KeyboardEvent, source: () => TypeaheadSource<T>, select: (match: T) => void): boolean {
-    if (!accepts(event))
-      return false
+  const onKeydown = <T>(
+    event: KeyboardEvent,
+    { source, select }: TypeaheadHandlers<T>,
+  ): boolean => {
+    if (!accepts(event)) return false
     search += event.key.toLowerCase()
     clearTimeout(timer)
+
     timer = setTimeout(() => {
       search = ''
     }, RESET_MS)
+
     const match = find(source())
-    if (match !== undefined)
-      select(match)
+    if (match !== undefined) select(match)
+
     return true
   }
 

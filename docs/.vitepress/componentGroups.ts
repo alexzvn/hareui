@@ -1,12 +1,29 @@
 // Port of HeroUI docs' components-category.tsx groups, limited to components HareUI has a page for.
 // Shared by the sidebar and the "All Components" page; group order is alphabetical, as on that page.
 export const COMPONENT_GROUPS: Record<string, readonly string[]> = {
-  'Buttons': ['button', 'button-group', 'close-button', 'toggle-button', 'toggle-button-group'],
-  'Charts': ['area-chart', 'bar-chart', 'chart-legend', 'chart-tooltip', 'composed-chart', 'line-chart', 'pie-chart', 'radar-chart', 'radial-chart'],
-  'Collections': ['dropdown', 'list-box', 'tag-group'],
-  'Colors': ['color-area', 'color-field', 'color-picker', 'color-slider', 'color-swatch', 'color-swatch-picker'],
-  'Controls': ['slider', 'switch'],
-  'Dashboard': [
+  Buttons: ['button', 'button-group', 'close-button', 'toggle-button', 'toggle-button-group'],
+  Charts: [
+    'area-chart',
+    'bar-chart',
+    'chart-legend',
+    'chart-tooltip',
+    'composed-chart',
+    'line-chart',
+    'pie-chart',
+    'radar-chart',
+    'radial-chart',
+  ],
+  Collections: ['dropdown', 'list-box', 'tag-group'],
+  Colors: [
+    'color-area',
+    'color-field',
+    'color-picker',
+    'color-slider',
+    'color-swatch',
+    'color-swatch-picker',
+  ],
+  Controls: ['slider', 'switch'],
+  Dashboard: [
     'dashboard-group',
     'dashboard-navbar',
     'dashboard-panel',
@@ -17,9 +34,16 @@ export const COMPONENT_GROUPS: Record<string, readonly string[]> = {
     'dashboard-toolbar',
   ],
   'Data Display': ['badge', 'chip', 'rich-table', 'table'],
-  'Date and Time': ['calendar', 'date-field', 'date-picker', 'date-range-picker', 'range-calendar', 'time-field'],
-  'Feedback': ['alert', 'meter', 'progress-bar', 'progress-circle', 'skeleton', 'spinner'],
-  'Forms': [
+  'Date and Time': [
+    'calendar',
+    'date-field',
+    'date-picker',
+    'date-range-picker',
+    'range-calendar',
+    'time-field',
+  ],
+  Feedback: ['alert', 'meter', 'progress-bar', 'progress-circle', 'skeleton', 'spinner'],
+  Forms: [
     'cell-color-picker',
     'cell-select',
     'cell-slider',
@@ -46,13 +70,33 @@ export const COMPONENT_GROUPS: Record<string, readonly string[]> = {
     'text-field',
     'text-area',
   ],
-  'Layout': ['app', 'card', 'container', 'error', 'footer', 'header', 'main', 'separator', 'surface', 'toolbar'],
-  'Media': ['avatar', 'avatar-group'],
-  'Navigation': ['accordion', 'breadcrumbs', 'disclosure', 'disclosure-group', 'link', 'navigation-menu', 'pagination', 'tabs'],
-  'Overlays': ['alert-dialog', 'drawer', 'modal', 'popover', 'toast', 'tooltip'],
-  'Pickers': ['autocomplete', 'combo-box', 'select'],
-  'Typography': ['kbd', 'typography'],
-  'Utilities': ['scroll-shadow'],
+  Layout: [
+    'app',
+    'card',
+    'container',
+    'error',
+    'footer',
+    'header',
+    'main',
+    'separator',
+    'surface',
+    'toolbar',
+  ],
+  Media: ['avatar', 'avatar-group'],
+  Navigation: [
+    'accordion',
+    'breadcrumbs',
+    'disclosure',
+    'disclosure-group',
+    'link',
+    'navigation-menu',
+    'pagination',
+    'tabs',
+  ],
+  Overlays: ['alert-dialog', 'drawer', 'modal', 'popover', 'toast', 'tooltip'],
+  Pickers: ['autocomplete', 'combo-box', 'select'],
+  Typography: ['kbd', 'typography'],
+  Utilities: ['scroll-shadow'],
 }
 
 // Pages that get a "New" badge in the sidebar. Clear entries once they stop being new.
@@ -95,6 +139,4 @@ export const NEW_COMPONENTS: ReadonlySet<string> = new Set([
 ])
 
 // Pages that get an "Updated" badge in the sidebar. Clear entries after the next release.
-export const UPDATED_COMPONENTS: ReadonlySet<string> = new Set([
-  'form',
-])
+export const UPDATED_COMPONENTS: ReadonlySet<string> = new Set(['form'])

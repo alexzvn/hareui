@@ -1,7 +1,3 @@
-<script setup lang="ts">
-import { Input, Label } from '@hareui/vue'
-</script>
-
 <template>
   <div class="flex w-80 flex-col gap-4">
     <div class="flex flex-col gap-1">
@@ -18,3 +14,7 @@ import { Input, Label } from '@hareui/vue'
     </div>
   </div>
 </template>
+
+<script setup lang="ts">
+import { Input, Label } from '@hareui/vue'
+</script>

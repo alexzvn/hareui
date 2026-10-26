@@ -17,6 +17,7 @@ export default defineComponent({
     watchEffect(() => {
       context.triggerId = props.labelledby
     })
+
     return () => null
   },
 })

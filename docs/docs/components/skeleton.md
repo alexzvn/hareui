@@ -68,22 +68,24 @@ before:bg-[linear-gradient(90deg,transparent_0%,rgba(255,255,255,0.5)_50%,transp
 Override the `skeleton` theme app-wide with `createHareUI`:
 
 ```ts
-app.use(createHareUI({
-  ui: {
-    skeleton: {
-      slots: {
-        base: 'bg-surface-secondary/50', // Change base background
-      },
-      variants: {
-        animationType: {
-          shimmer: { base: 'after:via-surface' }, // Change shimmer gradient color
-          pulse: { base: 'animate-pulse opacity-75' }, // Customize pulse animation
-          none: { base: 'opacity-50' }, // Style for static skeleton
+app.use(
+  createHareUI({
+    ui: {
+      skeleton: {
+        slots: {
+          base: 'bg-surface-secondary/50', // Change base background
+        },
+        variants: {
+          animationType: {
+            shimmer: { base: 'after:via-surface' }, // Change shimmer gradient color
+            pulse: { base: 'animate-pulse opacity-75' }, // Customize pulse animation
+            none: { base: 'opacity-50' }, // Style for static skeleton
+          },
         },
       },
     },
-  },
-}))
+  }),
+)
 ```
 
 ### Global Animation Configuration
@@ -98,11 +100,13 @@ You can set a default animation type for all Skeleton components in your applica
 }
 
 /* You can also set different values for light/dark themes */
-.light, [data-theme="light"] {
+.light,
+[data-theme='light'] {
   --skeleton-animation: shimmer;
 }
 
-.dark, [data-theme="dark"] {
+.dark,
+[data-theme='dark'] {
   --skeleton-animation: pulse;
 }
 ```
@@ -114,9 +118,9 @@ Like HeroUI, the variable is read from `:root` once per page load, after the com
 
 Like HeroUI's, the Skeleton root has no `data-slot`.
 
-| `ui` key | Description |
-|---|---|
-| `base` | Base skeleton styles with background and rounded corners |
+| `ui` key | Description                                              |
+| -------- | -------------------------------------------------------- |
+| `base`   | Base skeleton styles with background and rounded corners |
 
 HeroUI's modifier classes correspond to the `animationType` prop (HareUI renders utilities, not
 BEM classes, so style through `class`, `ui` or `createHareUI`):

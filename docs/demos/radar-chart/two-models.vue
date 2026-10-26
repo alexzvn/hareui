@@ -1,3 +1,23 @@
+<template>
+  <Card
+    class="w-full max-w-[460px] rounded-2xl"
+    :ui="{ header: 'flex-row items-center justify-between' }"
+  >
+    <template #header>
+      <h3 class="text-base font-medium text-foreground">Car Comparison</h3>
+      <ChartLegend :series="series" />
+    </template>
+    <RadarChart
+      :data="data"
+      index="category"
+      :series="series"
+      :dot="{ strokeWidth: 0 }"
+      :height="300"
+      aria-label="Hatchback and SUV ratings"
+    />
+  </Card>
+</template>
+
 <script setup lang="ts">
 import { Card } from '@hareui/vue'
 import { ChartLegend, RadarChart } from '@hareui/vue/charts'
@@ -13,13 +33,3 @@ const data = [
 
 const series = { hatchback: { name: 'Hatchback' }, suv: { name: 'SUV' } }
 </script>
-
-<template>
-  <Card class="w-full max-w-[460px] rounded-2xl" :ui="{ header: 'flex-row items-center justify-between' }">
-    <template #header>
-      <h3 class="text-base font-medium text-foreground">Car Comparison</h3>
-      <ChartLegend :series="series" />
-    </template>
-    <RadarChart :data="data" index="category" :series="series" :dot="{ strokeWidth: 0 }" :height="300" aria-label="Hatchback and SUV ratings" />
-  </Card>
-</template>

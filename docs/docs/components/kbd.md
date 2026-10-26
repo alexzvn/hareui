@@ -20,17 +20,15 @@ import { Kbd } from '@hareui/vue'
 ```vue
 <template>
   <!-- keys render as abbr symbols (title = key name); the default slot is the content -->
-  <Kbd :keys="['command']">
-    K
-  </Kbd>
+  <Kbd :keys="['command']"> K </Kbd>
 </template>
 ```
 
-| `ui` key | Element | Description |
-|---|---|---|
-| `base` | `<kbd>` | The key container |
-| `abbr` | `<abbr>` | One per entry in `keys`, e.g. `⌘` with `title="Command"` (HeroUI's `Kbd.Abbr`) |
-| `content` | `<span>` | Wraps the default slot (HeroUI's `Kbd.Content`) |
+| `ui` key  | Element  | Description                                                                    |
+| --------- | -------- | ------------------------------------------------------------------------------ |
+| `base`    | `<kbd>`  | The key container                                                              |
+| `abbr`    | `<abbr>` | One per entry in `keys`, e.g. `⌘` with `title="Command"` (HeroUI's `Kbd.Abbr`) |
+| `content` | `<span>` | Wraps the default slot (HeroUI's `Kbd.Content`)                                |
 
 ## Examples
 
@@ -65,17 +63,19 @@ import { Kbd } from '@hareui/vue'
 Override the `kbd` theme app-wide with `createHareUI`:
 
 ```ts
-app.use(createHareUI({
-  ui: {
-    kbd: {
-      slots: {
-        base: 'bg-gray-100 dark:bg-gray-800',
-        abbr: 'font-bold',
-        content: 'text-sm',
+app.use(
+  createHareUI({
+    ui: {
+      kbd: {
+        slots: {
+          base: 'bg-gray-100 dark:bg-gray-800',
+          abbr: 'font-bold',
+          content: 'text-sm',
+        },
       },
     },
-  },
-}))
+  }),
+)
 ```
 
 ## Styling Reference
@@ -104,30 +104,30 @@ HeroUI's Kbd renders no `data-slot` attributes; style it through `class`, `ui` o
 
 Available values for `keys`, with the symbol and `title` each renders. `kbdKeysMap` and `kbdKeysLabelMap` are exported.
 
-| Key | Symbol | Title |
-|---|---|---|
-| `command` | ⌘ | Command |
-| `shift` | ⇧ | Shift |
-| `ctrl` | ⌃ | Control |
-| `option` | ⌥ | Option |
-| `enter` | ↵ | Enter |
-| `delete` | ⌫ | Delete |
-| `escape` | ⎋ | Escape |
-| `tab` | ⇥ | Tab |
-| `capslock` | ⇪ | Caps Lock |
-| `up` | ↑ | Up |
-| `right` | → | Right |
-| `down` | ↓ | Down |
-| `left` | ← | Left |
-| `pageup` | ⇞ | Page Up |
-| `pagedown` | ⇟ | Page Down |
-| `home` | ↖ | Home |
-| `end` | ↘ | End |
-| `help` | ? | Help |
-| `space` | ␣ | Space |
-| `fn` | Fn | Fn |
-| `win` | ⌘ | Win |
-| `alt` | ⌥ | Alt |
+| Key        | Symbol | Title     |
+| ---------- | ------ | --------- |
+| `command`  | ⌘      | Command   |
+| `shift`    | ⇧      | Shift     |
+| `ctrl`     | ⌃      | Control   |
+| `option`   | ⌥      | Option    |
+| `enter`    | ↵      | Enter     |
+| `delete`   | ⌫      | Delete    |
+| `escape`   | ⎋      | Escape    |
+| `tab`      | ⇥      | Tab       |
+| `capslock` | ⇪      | Caps Lock |
+| `up`       | ↑      | Up        |
+| `right`    | →      | Right     |
+| `down`     | ↓      | Down      |
+| `left`     | ←      | Left      |
+| `pageup`   | ⇞      | Page Up   |
+| `pagedown` | ⇟      | Page Down |
+| `home`     | ↖      | Home      |
+| `end`      | ↘      | End       |
+| `help`     | ?      | Help      |
+| `space`    | ␣      | Space     |
+| `fn`       | Fn     | Fn        |
+| `win`      | ⌘      | Win       |
+| `alt`      | ⌥      | Alt       |
 
 ## Related Components
 

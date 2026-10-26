@@ -1,3 +1,32 @@
+<template>
+  <div class="flex flex-wrap gap-4">
+    <AlertDialog
+      v-for="animation in animations"
+      :key="animation.name"
+      class="sm:max-w-[400px]"
+      status="accent"
+      :title="`${animation.name} Animation`"
+      :ui="{ backdrop: animation.classNames.backdrop, container: animation.classNames.container }"
+    >
+      <Button variant="secondary">
+        {{ animation.name }}
+      </Button>
+      <template #icon>
+        <Icon class="size-5" :icon="animation.icon" />
+      </template>
+      <template #body>
+        <p class="mt-1">
+          {{ animation.description }}
+        </p>
+      </template>
+      <template #footer="{ close }">
+        <Button variant="tertiary" @click="close"> Close </Button>
+        <Button @click="close"> Try Again </Button>
+      </template>
+    </AlertDialog>
+  </div>
+</template>
+
 <script setup lang="ts">
 import { AlertDialog, Button } from '@hareui/vue'
 import { Icon } from '@iconify/vue'
@@ -58,36 +87,3 @@ const animations = [
   },
 ]
 </script>
-
-<template>
-  <div class="flex flex-wrap gap-4">
-    <AlertDialog
-      v-for="animation in animations"
-      :key="animation.name"
-      class="sm:max-w-[400px]"
-      status="accent"
-      :title="`${animation.name} Animation`"
-      :ui="{ backdrop: animation.classNames.backdrop, container: animation.classNames.container }"
-    >
-      <Button variant="secondary">
-        {{ animation.name }}
-      </Button>
-      <template #icon>
-        <Icon class="size-5" :icon="animation.icon" />
-      </template>
-      <template #body>
-        <p class="mt-1">
-          {{ animation.description }}
-        </p>
-      </template>
-      <template #footer="{ close }">
-        <Button variant="tertiary" @click="close">
-          Close
-        </Button>
-        <Button @click="close">
-          Try Again
-        </Button>
-      </template>
-    </AlertDialog>
-  </div>
-</template>

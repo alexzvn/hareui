@@ -1,7 +1,3 @@
-<script setup lang="ts">
-import { ChartTooltipContent, ChartTooltipHeader, ChartTooltipIndicator, ChartTooltipItem, ChartTooltipLabel, ChartTooltipValue } from '@hareui/vue/charts'
-</script>
-
 <template>
   <ChartTooltipContent>
     <ChartTooltipHeader>Saturday</ChartTooltipHeader>
@@ -17,3 +13,14 @@ import { ChartTooltipContent, ChartTooltipHeader, ChartTooltipIndicator, ChartTo
     </ChartTooltipItem>
   </ChartTooltipContent>
 </template>
+
+<script setup lang="ts">
+import {
+  ChartTooltipContent,
+  ChartTooltipHeader,
+  ChartTooltipIndicator,
+  ChartTooltipItem,
+  ChartTooltipLabel,
+  ChartTooltipValue,
+} from '@hareui/vue/charts'
+</script>

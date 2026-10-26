@@ -1,7 +1,3 @@
-<script setup lang="ts">
-import { Checkbox } from '@hareui/vue'
-</script>
-
 <template>
   <Checkbox
     id="custom"
@@ -12,3 +8,7 @@ import { Checkbox } from '@hareui/vue'
     }"
   />
 </template>
+
+<script setup lang="ts">
+import { Checkbox } from '@hareui/vue'
+</script>

@@ -1,7 +1,3 @@
-<script setup lang="ts">
-import { Button, Tooltip } from '@hareui/vue'
-</script>
-
 <template>
   <div class="flex items-center gap-4">
     <Tooltip arrow :delay="0" text="Tooltip with arrow indicator">
@@ -13,3 +9,7 @@ import { Button, Tooltip } from '@hareui/vue'
     </Tooltip>
   </div>
 </template>
+
+<script setup lang="ts">
+import { Button, Tooltip } from '@hareui/vue'
+</script>

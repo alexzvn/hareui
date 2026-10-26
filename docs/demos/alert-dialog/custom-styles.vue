@@ -1,3 +1,27 @@
+<template>
+  <AlertDialog
+    :class="dialogClass"
+    :close-button="false"
+    status="accent"
+    title="Sign out of your account?"
+    variant="blur"
+    :ui="{ backdrop: 'bg-overlay/50 dark:bg-overlay/60', header: 'relative', body: 'relative' }"
+  >
+    <Button variant="secondary"> Sign out </Button>
+    <template #body>
+      <p class="text-muted">
+        You will be signed out on this device. Unsaved work in
+        <strong class="text-foreground">Acme Workspace</strong> may be lost unless it was saved to
+        the cloud.
+      </p>
+    </template>
+    <template #footer="{ close }">
+      <Button variant="tertiary" @click="close"> Stay signed in </Button>
+      <Button @click="close"> Sign out </Button>
+    </template>
+  </AlertDialog>
+</template>
+
 <script setup lang="ts">
 import { AlertDialog, Button } from '@hareui/vue'
 
@@ -9,33 +33,3 @@ const dialogClass = [
   'after:pointer-events-none after:absolute after:inset-x-8 after:top-0 after:h-px after:bg-linear-to-r after:from-transparent after:via-accent/35 after:to-transparent dark:after:via-accent/45',
 ].join(' ')
 </script>
-
-<template>
-  <AlertDialog
-    :class="dialogClass"
-    :close-button="false"
-    status="accent"
-    title="Sign out of your account?"
-    variant="blur"
-    :ui="{ backdrop: 'bg-overlay/50 dark:bg-overlay/60', header: 'relative', body: 'relative' }"
-  >
-    <Button variant="secondary">
-      Sign out
-    </Button>
-    <template #body>
-      <p class="text-muted">
-        You will be signed out on this device. Unsaved work in
-        <strong class="text-foreground">Acme Workspace</strong> may be lost unless it
-        was saved to the cloud.
-      </p>
-    </template>
-    <template #footer="{ close }">
-      <Button variant="tertiary" @click="close">
-        Stay signed in
-      </Button>
-      <Button @click="close">
-        Sign out
-      </Button>
-    </template>
-  </AlertDialog>
-</template>

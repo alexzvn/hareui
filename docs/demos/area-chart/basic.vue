@@ -1,3 +1,20 @@
+<template>
+  <Card
+    class="w-full max-w-[520px] rounded-2xl"
+    title="Rooftop Solar Output"
+    description="3,743 kWh this year"
+    :ui="{ title: 'text-base', description: 'text-xs' }"
+  >
+    <AreaChart
+      :data="data"
+      index="month"
+      :series="series"
+      aria-label="Monthly rooftop solar output"
+      :height="200"
+    />
+  </Card>
+</template>
+
 <script setup lang="ts">
 import { Card } from '@hareui/vue'
 import { AreaChart } from '@hareui/vue/charts'
@@ -21,9 +38,3 @@ const series = {
   output: { name: 'Output', valueFormatter: (value: number) => `${value} kWh` },
 }
 </script>
-
-<template>
-  <Card class="w-full max-w-[520px] rounded-2xl" title="Rooftop Solar Output" description="3,743 kWh this year" :ui="{ title: 'text-base', description: 'text-xs' }">
-    <AreaChart :data="data" index="month" :series="series" aria-label="Monthly rooftop solar output" :height="200" />
-  </Card>
-</template>

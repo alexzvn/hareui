@@ -1,7 +1,3 @@
-<script setup lang="ts">
-import { Calendar, DatePicker } from '@hareui/vue'
-</script>
-
 <template>
   <!--
     HeroUI's custom-styles demo restyles the embedded Calendar's own sub-parts directly. Option A's
@@ -19,10 +15,16 @@ import { Calendar, DatePicker } from '@hareui/vue'
     <template #calendar="{ value, onSelect }">
       <Calendar
         class="rounded-2xl bg-surface p-2"
-        :ui="{ cell: 'rounded-lg [&:where([data-selected]):not([data-unavailable])]:bg-accent [&:where([data-selected]):not([data-unavailable])]:text-accent-foreground' }"
+        :ui="{
+          cell: 'rounded-lg [&:where([data-selected]):not([data-unavailable])]:bg-accent [&:where([data-selected]):not([data-unavailable])]:text-accent-foreground',
+        }"
         :model-value="value"
         @update:model-value="(v) => v && !Array.isArray(v) && onSelect(v)"
       />
     </template>
   </DatePicker>
 </template>
+
+<script setup lang="ts">
+import { Calendar, DatePicker } from '@hareui/vue'
+</script>

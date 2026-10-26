@@ -1,7 +1,3 @@
-<script setup lang="ts">
-import { Skeleton } from '@hareui/vue'
-</script>
-
 <template>
   <!-- HeroUI's `.skeleton--shimmer` parent rule, written as utilities on the container -->
   <div
@@ -12,3 +8,7 @@ import { Skeleton } from '@hareui/vue'
     <Skeleton animation-type="none" class="h-24 rounded-xl" />
   </div>
 </template>
+
+<script setup lang="ts">
+import { Skeleton } from '@hareui/vue'
+</script>

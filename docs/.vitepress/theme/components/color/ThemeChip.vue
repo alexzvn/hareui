@@ -1,10 +1,3 @@
-<script setup lang="ts">
-import { Chip } from '@hareui/vue'
-import { Icon } from '@iconify/vue'
-
-defineProps<{ theme: 'Light' | 'Dark' }>()
-</script>
-
 <template>
   <div>
     <Chip size="sm">
@@ -15,3 +8,10 @@ defineProps<{ theme: 'Light' | 'Dark' }>()
     </Chip>
   </div>
 </template>
+
+<script setup lang="ts">
+import { Chip } from '@hareui/vue'
+import { Icon } from '@iconify/vue'
+
+defineProps<{ theme: 'Light' | 'Dark' }>()
+</script>

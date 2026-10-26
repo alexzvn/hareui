@@ -1,17 +1,3 @@
-<script setup lang="ts">
-import type { ListBoxItem } from '@hareui/vue'
-import { Avatar, ListBox } from '@hareui/vue'
-
-interface User extends ListBoxItem {
-  avatar: string
-}
-
-const users: User[] = [
-  { value: '1', label: 'Bob', description: 'bob@heroui.com', avatar: 'https://heroui-assets.nyc3.cdn.digitaloceanspaces.com/avatars/blue.jpg' },
-  { value: '2', label: 'Fred', description: 'fred@heroui.com', avatar: 'https://heroui-assets.nyc3.cdn.digitaloceanspaces.com/avatars/green.jpg' },
-]
-</script>
-
 <template>
   <ListBox
     aria-label="Assignee"
@@ -24,3 +10,27 @@ const users: User[] = [
     </template>
   </ListBox>
 </template>
+
+<script setup lang="ts">
+import type { ListBoxItem } from '@hareui/vue'
+import { Avatar, ListBox } from '@hareui/vue'
+
+type User = {
+  avatar: string
+} & ListBoxItem
+
+const users: User[] = [
+  {
+    value: '1',
+    label: 'Bob',
+    description: 'bob@heroui.com',
+    avatar: 'https://heroui-assets.nyc3.cdn.digitaloceanspaces.com/avatars/blue.jpg',
+  },
+  {
+    value: '2',
+    label: 'Fred',
+    description: 'fred@heroui.com',
+    avatar: 'https://heroui-assets.nyc3.cdn.digitaloceanspaces.com/avatars/green.jpg',
+  },
+]
+</script>

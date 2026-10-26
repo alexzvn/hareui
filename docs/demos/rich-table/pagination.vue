@@ -1,10 +1,32 @@
+<template>
+  <!-- The footer sits in the table's gray container, under the rows -->
+  <div class="w-full rounded-[min(32px,calc(var(--radius)*2.5))] bg-surface-secondary">
+    <RichTable
+      v-model:pagination="pagination"
+      :data="data"
+      :columns="columns"
+      :features="features"
+    />
+    <Pagination
+      v-model:page="page"
+      :total="pageCount"
+      size="sm"
+      :prev="{ label: '' }"
+      :next="{ label: '' }"
+      class="px-5 pt-1.5 pb-3.5"
+    >
+      <template #summary> {{ first }} to {{ last }} of {{ data.length }} payments </template>
+    </Pagination>
+  </div>
+</template>
+
 <script setup lang="ts">
 import type { RichTableColumn } from '@hareui/vue'
 import { Pagination, RichTable } from '@hareui/vue'
 import { getPaginationRowModel } from '@tanstack/vue-table'
 import { computed, ref } from 'vue'
 
-interface Payment {
+type Payment = {
   name: string
   status: string
   amount: number
@@ -24,32 +46,26 @@ const data: Payment[] = [
 
 const currency = new Intl.NumberFormat('en-US', { style: 'currency', currency: 'USD' })
 const pagination = ref({ pageIndex: 0, pageSize: 3 })
-const paginationOptions = { getPaginationRowModel: getPaginationRowModel() }
+const features = { pagination: { getPaginationRowModel: getPaginationRowModel() } }
 
 const columns: RichTableColumn<Payment>[] = [
   { accessorKey: 'name', header: 'Customer' },
   { accessorKey: 'status', header: 'Status', meta: { class: { td: 'capitalize' } } },
-  { accessorKey: 'amount', header: 'Amount', cell: ({ row }) => currency.format(row.original.amount) },
+  {
+    accessorKey: 'amount',
+    header: 'Amount',
+    cell: ({ row }) => currency.format(row.original.amount),
+  },
 ]
 
 const pageCount = computed(() => Math.ceil(data.length / pagination.value.pageSize))
+
 // `Pagination` is 1-based while TanStack's `pageIndex` is 0-based.
 const page = computed({
   get: () => pagination.value.pageIndex + 1,
-  set: value => (pagination.value = { ...pagination.value, pageIndex: value - 1 }),
+  set: (value) => (pagination.value = { ...pagination.value, pageIndex: value - 1 }),
 })
+
 const first = computed(() => pagination.value.pageIndex * pagination.value.pageSize + 1)
 const last = computed(() => Math.min(first.value + pagination.value.pageSize - 1, data.length))
 </script>
-
-<template>
-  <!-- The footer sits in the table's gray container, under the rows -->
-  <div class="w-full rounded-[min(32px,calc(var(--radius)*2.5))] bg-surface-secondary">
-    <RichTable v-model:pagination="pagination" :data="data" :columns="columns" :pagination-options="paginationOptions" />
-    <Pagination v-model:page="page" :total="pageCount" size="sm" prev-label="" next-label="" class="px-5 pt-1.5 pb-3.5">
-      <template #summary>
-        {{ first }} to {{ last }} of {{ data.length }} payments
-      </template>
-    </Pagination>
-  </div>
-</template>

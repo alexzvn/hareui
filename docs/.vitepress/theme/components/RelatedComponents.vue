@@ -1,5 +1,15 @@
+<template>
+  <div
+    v-if="items.length"
+    class="not-prose grid grid-cols-1 gap-x-4 gap-y-8 sm:grid-cols-2 lg:grid-cols-3"
+  >
+    <ComponentItem v-for="item in items" :key="item.slug" :slug="item.slug" :title="item.title" />
+  </div>
+</template>
+
 <script setup lang="ts">
 import { computed } from 'vue'
+
 import ComponentItem from './ComponentItem.vue'
 import { componentPages } from './componentPages'
 
@@ -9,9 +19,3 @@ const props = defineProps<{ components: string[] }>()
 
 const items = computed(() => componentPages(props.components))
 </script>
-
-<template>
-  <div v-if="items.length" class="not-prose grid grid-cols-1 gap-x-4 gap-y-8 sm:grid-cols-2 lg:grid-cols-3">
-    <ComponentItem v-for="item in items" :key="item.slug" :slug="item.slug" :title="item.title" />
-  </div>
-</template>

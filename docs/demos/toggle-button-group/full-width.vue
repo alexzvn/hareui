@@ -1,8 +1,3 @@
-<script setup lang="ts">
-import { Icon } from '@iconify/vue'
-import { ToggleButton, ToggleButtonGroup } from '@hareui/vue'
-</script>
-
 <template>
   <div class="w-full max-w-md space-y-3">
     <ToggleButtonGroup full-width selection-mode="multiple" separator>
@@ -35,3 +30,8 @@ import { ToggleButton, ToggleButtonGroup } from '@hareui/vue'
     </ToggleButtonGroup>
   </div>
 </template>
+
+<script setup lang="ts">
+import { ToggleButton, ToggleButtonGroup } from '@hareui/vue'
+import { Icon } from '@iconify/vue'
+</script>

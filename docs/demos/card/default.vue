@@ -1,8 +1,3 @@
-<script setup lang="ts">
-import { Card, Link } from '@hareui/vue'
-import { Icon } from '@iconify/vue'
-</script>
-
 <template>
   <Card
     class="w-[400px]"
@@ -10,7 +5,12 @@ import { Icon } from '@iconify/vue'
     title="Become an Acme Creator!"
   >
     <template #leading>
-      <Icon aria-label="Dollar sign icon" class="size-6" icon="gravity-ui:circle-dollar" role="img" />
+      <Icon
+        aria-label="Dollar sign icon"
+        class="size-6"
+        icon="gravity-ui:circle-dollar"
+        role="img"
+      />
     </template>
     <template #footer>
       <Link
@@ -25,3 +25,8 @@ import { Icon } from '@iconify/vue'
     </template>
   </Card>
 </template>
+
+<script setup lang="ts">
+import { Card, Link } from '@hareui/vue'
+import { Icon } from '@iconify/vue'
+</script>

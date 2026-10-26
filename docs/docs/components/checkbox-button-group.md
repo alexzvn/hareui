@@ -24,34 +24,41 @@ import { CheckboxButtonGroup, CheckboxButtonGroupItem } from '@hareui/vue'
 ```vue
 <template>
   <CheckboxButtonGroup label="…" description="…" error-message="…">
-    <template #label />        <!-- Label content -->
-    <template #description />  <!-- Description content -->
+    <template #label />
+    <!-- Label content -->
+    <template #description />
+    <!-- Description content -->
     <CheckboxButtonGroupItem value="…" label="…" description="…" icon="…">
-      <template #indicator />    <!-- custom indicator, shown while selected -->
-      <template #icon />         <!-- leading icon -->
-      <template #label />        <!-- item title, replaces `label` -->
-      <template #description />  <!-- item description, replaces `description` -->
+      <template #indicator />
+      <!-- custom indicator, shown while selected -->
+      <template #icon />
+      <!-- leading icon -->
+      <template #label />
+      <!-- item title, replaces `label` -->
+      <template #description />
+      <!-- item description, replaces `description` -->
       <!-- default slot: extra content after the title and description -->
     </CheckboxButtonGroupItem>
-    <template #error />        <!-- FieldError content, rendered when invalid -->
+    <template #error />
+    <!-- FieldError content, rendered when invalid -->
   </CheckboxButtonGroup>
 </template>
 ```
 
-| `ui` key | `data-slot` | Element |
-|---|---|---|
-| `base` | `checkbox-button-group` | `<div role="group">` root |
-| — | `label` | [Label](/docs/components/label) (iff `label` / `#label`) |
-| — | `description` | [Description](/docs/components/description) (iff `description` / `#description`) |
-| `item` | `checkbox-button-group-item` | `<button role="checkbox">` card |
-| `indicator` | `checkbox-button-group-indicator` | `<span>` checkbox control or custom icon (iff `indicator`) |
-| `content` | `checkbox-button-group-item-content` | `<span>` content column |
-| `icon` | `checkbox-button-group-item-icon` | `<span>` leading icon (iff `icon` / `#icon`) |
-| `itemText` | `checkbox-button-group-item-text` | `<span>` wrapping the title, description and default slot |
-| `itemLabel` | `checkbox-button-group-item-label` | `<span>` item title (iff `label` / `#label`) |
-| `itemDescription` | `checkbox-button-group-item-description` | `<span>` item description (iff `description` / `#description`) |
-| — | `checkbox-button-group-item-extra` | `<span class="contents">` around the default slot (iff default slot) |
-| — | `field-error` | [FieldError](/docs/components/field-error) (while invalid) |
+| `ui` key          | `data-slot`                              | Element                                                                          |
+| ----------------- | ---------------------------------------- | -------------------------------------------------------------------------------- |
+| `base`            | `checkbox-button-group`                  | `<div role="group">` root                                                        |
+| —                 | `label`                                  | [Label](/docs/components/label) (iff `label` / `#label`)                         |
+| —                 | `description`                            | [Description](/docs/components/description) (iff `description` / `#description`) |
+| `item`            | `checkbox-button-group-item`             | `<button role="checkbox">` card                                                  |
+| `indicator`       | `checkbox-button-group-indicator`        | `<span>` checkbox control or custom icon (iff `indicator`)                       |
+| `content`         | `checkbox-button-group-item-content`     | `<span>` content column                                                          |
+| `icon`            | `checkbox-button-group-item-icon`        | `<span>` leading icon (iff `icon` / `#icon`)                                     |
+| `itemText`        | `checkbox-button-group-item-text`        | `<span>` wrapping the title, description and default slot                        |
+| `itemLabel`       | `checkbox-button-group-item-label`       | `<span>` item title (iff `label` / `#label`)                                     |
+| `itemDescription` | `checkbox-button-group-item-description` | `<span>` item description (iff `description` / `#description`)                   |
+| —                 | `checkbox-button-group-item-extra`       | `<span class="contents">` around the default slot (iff default slot)             |
+| —                 | `field-error`                            | [FieldError](/docs/components/field-error) (while invalid)                       |
 
 The `ui` prop on the group styles every item. Set `ui` or `class` on a single `CheckboxButtonGroupItem` to style that card only.
 
@@ -126,7 +133,11 @@ Pass classes through `class` and `ui`, on the group or on one item.
 ```vue
 <template>
   <CheckboxButtonGroup :ui="{ item: 'rounded-lg bg-default', indicator: 'top-4' }">
-    <CheckboxButtonGroupItem value="team" label="Team" class="data-[selected=true]:bg-accent-soft" />
+    <CheckboxButtonGroupItem
+      value="team"
+      label="Team"
+      class="data-[selected=true]:bg-accent-soft"
+    />
   </CheckboxButtonGroup>
 </template>
 ```
@@ -138,9 +149,11 @@ Pass classes through `class` and `ui`, on the group or on one item.
 ### Global Configuration
 
 ```ts
-app.use(createHareUI({
-  ui: { checkboxButtonGroup: { slots: { item: 'px-4 py-3' } } },
-}))
+app.use(
+  createHareUI({
+    ui: { checkboxButtonGroup: { slots: { item: 'px-4 py-3' } } },
+  }),
+)
 ```
 
 ## Styling Reference

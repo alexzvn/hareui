@@ -12,6 +12,10 @@ Changes merged since [v0.3.0](./v0-3-0) that are not in a published release yet.
 - `ComboBox` lists your own `aria-describedby` ids first, before its value, description and error ids, as the other fields do.
 - A `justify-*` class in a cartesian chart's `ui.legend` now overrides the default `justify-center`, as it already did on pie, radar and radial charts.
 
+## Breaking changes
+
+Props that shared a prefix are grouped into one object prop, for example `:prev="{ label, disabled }"` on `Pagination` and `:tick="{ count, formatter }"` on chart axes. `useResizable` takes one options object. See [Migrating from v0.3.0 to v0.4.0](./migrations/v0.3.0-v0.4.0.md) for every change, with before and after code.
+
 ## Accessibility
 
 - While a field is invalid, its description is removed from the page and from `aria-describedby`, so screen readers announce only the error. This applies to `TextField`, `NumberField`, `NumberStepper`, `ColorField`, `SearchField`, `Select`, `ComboBox`, `NativeSelect` and `CellSelect`, whose themes already hid the description visually. Date and time fields already did this.

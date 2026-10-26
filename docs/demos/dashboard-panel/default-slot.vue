@@ -1,7 +1,3 @@
-<script setup lang="ts">
-import { DashboardGroup, DashboardPanel } from '@hareui/vue'
-</script>
-
 <template>
   <DashboardGroup :persistent="false">
     <!-- The default slot replaces header/body/footer: no padding, no scroll container. -->
@@ -12,3 +8,7 @@ import { DashboardGroup, DashboardPanel } from '@hareui/vue'
     </DashboardPanel>
   </DashboardGroup>
 </template>
+
+<script setup lang="ts">
+import { DashboardGroup, DashboardPanel } from '@hareui/vue'
+</script>

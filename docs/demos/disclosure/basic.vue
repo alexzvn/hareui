@@ -1,16 +1,10 @@
-<script setup lang="ts">
-import { Button, Disclosure } from '@hareui/vue'
-import { Icon } from '@iconify/vue'
-import { ref } from 'vue'
-
-const isExpanded = ref(true)
-</script>
-
 <template>
   <div class="w-full max-w-md text-center">
     <Disclosure
       v-model:open="isExpanded"
-      :ui="{ bodyInner: 'shadow-panel flex flex-col items-center rounded-3xl bg-surface p-4 text-center' }"
+      :ui="{
+        bodyInner: 'shadow-panel flex flex-col items-center rounded-3xl bg-surface p-4 text-center',
+      }"
     >
       <template #trigger="{ indicator }">
         <Button variant="secondary">
@@ -26,10 +20,8 @@ const isExpanded = ref(true)
         alt="Expo Go QR Code"
         class="aspect-square w-full max-w-54 object-cover"
         src="https://heroui-assets.nyc3.cdn.digitaloceanspaces.com/images/qr-code-native.png"
-      >
-      <p class="text-sm text-muted">
-        Expo must be installed on your device.
-      </p>
+      />
+      <p class="text-sm text-muted">Expo must be installed on your device.</p>
       <Button class="mt-4" variant="primary">
         <Icon icon="tabler:brand-apple-filled" />
         Download on App Store
@@ -37,3 +29,11 @@ const isExpanded = ref(true)
     </Disclosure>
   </div>
 </template>
+
+<script setup lang="ts">
+import { Button, Disclosure } from '@hareui/vue'
+import { Icon } from '@iconify/vue'
+import { ref } from 'vue'
+
+const isExpanded = ref(true)
+</script>

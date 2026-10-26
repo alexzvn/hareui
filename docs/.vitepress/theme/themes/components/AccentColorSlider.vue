@@ -1,8 +1,24 @@
+<template>
+  <ColorSlider
+    :channel="channel"
+    :color-space="colorSpace"
+    :model-value="modelValue"
+    :class="props.class"
+    :ui="ui"
+    :style="{
+      '--accent-slider-track': trackBackground,
+      '--accent-slider-thumb': thumbBackground,
+    }"
+    @update:model-value="emit('update:modelValue', $event)"
+  />
+</template>
+
 <script setup lang="ts">
+import { ColorSlider } from '@hareui/vue'
+import type { ColorSliderProps } from '@hareui/vue'
 // Port of the HeroUI docs' own `components/color-picker/components/color-slider.tsx` (horizontal only): a HareUI
 // ColorSlider restyled to the docs' pill track (`h-8 rounded-full`, no end caps) and round 16px thumb.
 import type { Color, ColorChannel, ColorSpace } from 'reka-ui'
-import { ColorSlider } from '@hareui/vue'
 import { computed } from 'vue'
 
 const props = defineProps<{
@@ -13,8 +29,9 @@ const props = defineProps<{
   trackBackground?: string
   /** Overrides the color of the thumb (defaults to the slider color) */
   thumbBackground?: string
-  class?: any
+  class?: ColorSliderProps['class']
 }>()
+
 const emit = defineEmits<{ 'update:modelValue': [value: Color] }>()
 
 const ui = computed(() => ({
@@ -31,18 +48,3 @@ const ui = computed(() => ({
   ],
 }))
 </script>
-
-<template>
-  <ColorSlider
-    :channel="channel"
-    :color-space="colorSpace"
-    :model-value="modelValue"
-    :class="props.class"
-    :ui="ui"
-    :style="{
-      '--accent-slider-track': trackBackground,
-      '--accent-slider-thumb': thumbBackground,
-    }"
-    @update:model-value="emit('update:modelValue', $event)"
-  />
-</template>

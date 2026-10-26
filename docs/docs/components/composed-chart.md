@@ -50,20 +50,20 @@ Each series takes `type`, `name`, `color`, `hide`, `tooltip`, `valueFormatter` a
 
 ## Two y axes
 
-Give a series `yAxis: 'right'` to draw it against a second y axis on the right. Set that axis' props with `y-axis-right`, and the left one's with `y-axis`:
+Give a series `yAxis: 'right'` to draw it against a second y axis on the right. Set the axes' props with `y-axis`: `right` for that axis, `left` for the left one:
 
 ```vue
 <ComposedChart
   :data="data"
   index="day"
   :series="{ covers: { type: 'bar' }, avgCheck: { type: 'line', yAxis: 'right' } }"
-  :y-axis-right="{ tickFormatter: value => `€${value}` }"
+  :y-axis="{ right: { tick: { formatter: (value) => `€${value}` } } }"
 />
 ```
 
 ## Axes and Formatting
 
-`x-axis`, `y-axis` and `grid` take `false` to hide the part, or an object of `ChartXAxis`, `ChartYAxis` and `ChartGrid` props. Each y axis fits its widest label.
+`x-axis` and `grid` take `false` to hide the part, or an object of `ChartXAxis` and `ChartGrid` props. `y-axis` takes `{ left, right }`, each `false` or an object of `ChartYAxis` props. Each y axis fits its widest label.
 
 - `value-formatter` formats values in the tooltip and on the y axes. It receives the series key (`''` on the axes).
 - `index-formatter` formats the categories on the x axis and in the tooltip header.
@@ -103,7 +103,7 @@ Bars on the left y axis and an area on the right. The area draws its own line al
 
 ### Area, Bars And Line
 
-An area, bars and a line with dots in one chart. The occupancy line's `valueFormatter` adds a percent sign in the tooltip, and `y-axis-right` formats its axis.
+An area, bars and a line with dots in one chart. The occupancy line's `valueFormatter` adds a percent sign in the tooltip, and `y-axis.right` formats its axis.
 
 <ComponentPreview name="composed-chart/area-bars-and-line" />
 
@@ -124,15 +124,17 @@ Use `class` for the container and `ui` for the drawn parts. Series colors come f
 Override the `composedChart` theme app-wide with `createHareUI`:
 
 ```ts
-app.use(createHareUI({
-  ui: {
-    composedChart: {
-      slots: {
-        tick: 'text-xs',
+app.use(
+  createHareUI({
+    ui: {
+      composedChart: {
+        slots: {
+          tick: 'text-xs',
+        },
       },
     },
-  },
-}))
+  }),
+)
 ```
 
 ## Composition
@@ -155,26 +157,26 @@ Without `index` or `series`, the chart draws only the parts you put in its defau
 
 Parts always draw in the same order (grid, series, axes, cursor), so template order doesn't matter. Give each `ChartYAxis` a `y-axis-id` and put the second one on the right with `orientation="right"`; series pick their axis with the same `y-axis-id`. With `index` or `series` set, parts in the default slot draw next to the generated ones: turn a generated part off (for example `:x-axis="false"`) before adding your own. The [AreaChart page](./area-chart#composition) has a full example built from parts.
 
-| `ui` key | `data-slot` | Element | Description |
-|---|---|---|---|
-| `base` | `composed-chart` | `<div>` | Responsive container |
-| `surface` | `chart-surface` | `<svg>` | Drawing surface, layered grid → series → axes → cursor |
-| `overlay` | `chart-overlay` | `<div>` | Layer over the svg that holds the tooltip |
-| `grid` | `chart-grid` | `<g>` | Grid lines (`chart-grid-line`) |
-| `axis` | `chart-x-axis`, `chart-y-axis` | `<g>` | One group per axis |
-| `axisLine` | `chart-axis-line` | `<line>` | Axis line, hidden by default |
-| `tickLine` | `chart-tick-line` | `<line>` | Tick marks, hidden by default |
-| `tick` | `chart-tick` | `<text>` | Axis labels |
-| `series` | `chart-bar`, `chart-line`, `chart-area` | `<g>` | One group per series |
-| — | `chart-bar-rectangle` | `<path>` | One shape per bar, with `data-index` |
-| — | `chart-line-curve`, `chart-area-curve`, `chart-area-fill` | `<path>` | Line and area paths |
-| — | `chart-dots` | `<g>` | Group of point markers per series |
-| `dot` | `chart-dot` | `<circle>` | Point markers |
-| `activeDot` | `chart-active-dot` | `<circle>` | Marker at the hovered point |
-| `cursor` | `chart-cursor` | `<path>` | Hover cursor |
-| `tooltip` | `chart-tooltip-wrapper` | `<div>` | Floating wrapper around the tooltip panel |
-| `label` | `chart-label` | `<text>` | `ChartLabel` text |
-| `legend` | `chart-legend` | `<ul>` | Legend drawn from the `legend` prop |
+| `ui` key    | `data-slot`                                               | Element    | Description                                            |
+| ----------- | --------------------------------------------------------- | ---------- | ------------------------------------------------------ |
+| `base`      | `composed-chart`                                          | `<div>`    | Responsive container                                   |
+| `surface`   | `chart-surface`                                           | `<svg>`    | Drawing surface, layered grid → series → axes → cursor |
+| `overlay`   | `chart-overlay`                                           | `<div>`    | Layer over the svg that holds the tooltip              |
+| `grid`      | `chart-grid`                                              | `<g>`      | Grid lines (`chart-grid-line`)                         |
+| `axis`      | `chart-x-axis`, `chart-y-axis`                            | `<g>`      | One group per axis                                     |
+| `axisLine`  | `chart-axis-line`                                         | `<line>`   | Axis line, hidden by default                           |
+| `tickLine`  | `chart-tick-line`                                         | `<line>`   | Tick marks, hidden by default                          |
+| `tick`      | `chart-tick`                                              | `<text>`   | Axis labels                                            |
+| `series`    | `chart-bar`, `chart-line`, `chart-area`                   | `<g>`      | One group per series                                   |
+| —           | `chart-bar-rectangle`                                     | `<path>`   | One shape per bar, with `data-index`                   |
+| —           | `chart-line-curve`, `chart-area-curve`, `chart-area-fill` | `<path>`   | Line and area paths                                    |
+| —           | `chart-dots`                                              | `<g>`      | Group of point markers per series                      |
+| `dot`       | `chart-dot`                                               | `<circle>` | Point markers                                          |
+| `activeDot` | `chart-active-dot`                                        | `<circle>` | Marker at the hovered point                            |
+| `cursor`    | `chart-cursor`                                            | `<path>`   | Hover cursor                                           |
+| `tooltip`   | `chart-tooltip-wrapper`                                   | `<div>`    | Floating wrapper around the tooltip panel              |
+| `label`     | `chart-label`                                             | `<text>`   | `ChartLabel` text                                      |
+| `legend`    | `chart-legend`                                            | `<ul>`     | Legend drawn from the `legend` prop                    |
 
 ## Styling Reference
 

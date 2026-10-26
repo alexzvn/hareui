@@ -1,7 +1,19 @@
 import { fromTheme, validators } from 'tailwind-merge'
 import { createTV } from 'tailwind-variants'
 
-export type { ClassValue } from 'tailwind-variants'
+/**
+ * A class binding accepted by components: strings, arrays and `{ 'class-name': condition }` objects, like Vue's `:class`.
+ * tailwind-variants resolves all of these at runtime, but its own `ClassValue` type omits object syntax.
+ */
+export type ClassValue =
+  | string
+  | number
+  | bigint
+  | boolean
+  | null
+  | undefined
+  | Record<string, unknown>
+  | ReadonlyArray<ClassValue>
 
 /**
  * tailwind-merge configuration matching HeroUI's Tailwind theme:
@@ -32,22 +44,41 @@ export const tv = /* @__PURE__ */ createTV({
     },
     extend: {
       theme: {
-        'shadow': ['surface', 'overlay', 'field', 'sidebar-edge'],
-        'radius': ['field'],
-        'animate': ['spin-fast', 'skeleton', 'caret-blink'],
-        'ease': [
+        shadow: ['surface', 'overlay', 'field', 'sidebar-edge'],
+        radius: ['field'],
+        animate: ['spin-fast', 'skeleton', 'caret-blink'],
+        ease: [
           'smooth',
           'linear',
           'out-fluid',
-          'in-quad', 'in-cubic', 'in-quart', 'in-quint', 'in-expo', 'in-circ',
-          'out-quad', 'out-cubic', 'out-quart', 'out-quint', 'out-expo', 'out-circ',
-          'in-out-quad', 'in-out-cubic', 'in-out-quart', 'in-out-quint', 'in-out-expo', 'in-out-circ',
+          'in-quad',
+          'in-cubic',
+          'in-quart',
+          'in-quint',
+          'in-expo',
+          'in-circ',
+          'out-quad',
+          'out-cubic',
+          'out-quart',
+          'out-quint',
+          'out-expo',
+          'out-circ',
+          'in-out-quad',
+          'in-out-cubic',
+          'in-out-quart',
+          'in-out-quint',
+          'in-out-expo',
+          'in-out-circ',
         ],
       },
       classGroups: {
         'border-w': [{ border: ['field'] }],
         'font-size-arbitrary': [{ text: [validators.isArbitraryLength] }],
-        'text-color-ordered': [{ text: [fromTheme('color'), validators.isArbitraryVariable, validators.isArbitraryValue] }],
+        'text-color-ordered': [
+          {
+            text: [fromTheme('color'), validators.isArbitraryVariable, validators.isArbitraryValue],
+          },
+        ],
       },
       conflictingClassGroups: { transition: ['arbitrary..transition'] },
     },

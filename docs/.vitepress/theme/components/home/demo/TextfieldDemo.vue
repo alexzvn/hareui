@@ -1,7 +1,3 @@
-<script setup lang="ts">
-import { Input, TextField } from '@hareui/vue'
-</script>
-
 <template>
   <div>
     <TextField
@@ -17,3 +13,7 @@ import { Input, TextField } from '@hareui/vue'
     </TextField>
   </div>
 </template>
+
+<script setup lang="ts">
+import { Input, TextField } from '@hareui/vue'
+</script>

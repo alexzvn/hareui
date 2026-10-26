@@ -75,16 +75,14 @@ toast('Event created')
 Render the provider once at the root of your app.
 
 ```vue
+<template>
+  <ToastProvider />
+  <Button @click="toast('Simple message')"> Show toast </Button>
+</template>
+
 <script setup lang="ts">
 import { Button, ToastProvider, toast } from '@hareui/vue'
 </script>
-
-<template>
-  <ToastProvider />
-  <Button @click="toast('Simple message')">
-    Show toast
-  </Button>
-</template>
 ```
 
 ## Customization
@@ -96,27 +94,29 @@ import { Button, ToastProvider, toast } from '@hareui/vue'
 ### Global theme override
 
 ```ts
-app.use(createHareUI({
-  ui: {
-    toast: {
-      slots: { toast: 'rounded-xl shadow-lg', content: 'gap-2' },
+app.use(
+  createHareUI({
+    ui: {
+      toast: {
+        slots: { toast: 'rounded-xl shadow-lg', content: 'gap-2' },
+      },
     },
-  },
-}))
+  }),
+)
 ```
 
 ## Styling Reference
 
-| `ui` key | `data-slot` | Element |
-|---|---|---|
-| `region` | `toast-region` | The positioned landmark region toasts are teleported into |
-| `toast` | `toast` | Each toast's positioned, animated wrapper (Reka has no built-in equivalent; implemented directly) |
-| `content` | `toast-content` | Wrapper for the title and description |
-| `indicator` | `toast-indicator` | Icon/spinner container, rendered unless `indicator` is `null` |
-| `title` | `toast-title` | The toast title |
-| `description` | `toast-description` | The toast description |
-| `close` | `toast-close` | The close button |
-| `action` | `toast-action-button` | The optional action button |
+| `ui` key      | `data-slot`           | Element                                                                                           |
+| ------------- | --------------------- | ------------------------------------------------------------------------------------------------- |
+| `region`      | `toast-region`        | The positioned landmark region toasts are teleported into                                         |
+| `toast`       | `toast`               | Each toast's positioned, animated wrapper (Reka has no built-in equivalent; implemented directly) |
+| `content`     | `toast-content`       | Wrapper for the title and description                                                             |
+| `indicator`   | `toast-indicator`     | Icon/spinner container, rendered unless `indicator` is `null`                                     |
+| `title`       | `toast-title`         | The toast title                                                                                   |
+| `description` | `toast-description`   | The toast description                                                                             |
+| `close`       | `toast-close`         | The close button                                                                                  |
+| `action`      | `toast-action-button` | The optional action button                                                                        |
 
 ### Interactive States
 
@@ -151,22 +151,22 @@ module-level default queue used by `toast()`.
 
 #### Constructor Options
 
-| Option | Type | Default | Description |
-|---|---|---|---|
-| `exitDuration` | `number` | `300` | How long a closing toast stays mounted for its exit animation (`0` removes immediately) |
-| `maxVisibleToasts` | `number` | `3` | Maximum number of toasts to display at once (visual only) |
+| Option             | Type     | Default | Description                                                                             |
+| ------------------ | -------- | ------- | --------------------------------------------------------------------------------------- |
+| `exitDuration`     | `number` | `300`   | How long a closing toast stays mounted for its exit animation (`0` removes immediately) |
+| `maxVisibleToasts` | `number` | `3`     | Maximum number of toasts to display at once (visual only)                               |
 
 #### Methods
 
-| Method | Parameters | Returns | Description |
-|---|---|---|---|
-| `add` | `(content, options?: { timeout?, onClose? })` | `string` | Adds a toast, returns its key |
-| `update` | `(key, content, options?: { timeout?, onClose? })` | `boolean` | Updates a toast in place, preserving its stack position; `false` if it no longer exists |
-| `close` | `(key)` | `void` | Closes a toast by its key |
-| `clear` | `()` | `void` | Closes every toast |
-| `pauseAll` | `()` | `void` | Pauses every toast's auto-dismiss timer |
-| `resumeAll` | `()` | `void` | Resumes every toast's auto-dismiss timer |
-| `visibleToasts` | — | `QueuedToast[]` | The currently rendered toasts, newest first (getter) |
+| Method          | Parameters                                         | Returns         | Description                                                                             |
+| --------------- | -------------------------------------------------- | --------------- | --------------------------------------------------------------------------------------- |
+| `add`           | `(content, options?: { timeout?, onClose? })`      | `string`        | Adds a toast, returns its key                                                           |
+| `update`        | `(key, content, options?: { timeout?, onClose? })` | `boolean`       | Updates a toast in place, preserving its stack position; `false` if it no longer exists |
+| `close`         | `(key)`                                            | `void`          | Closes a toast by its key                                                               |
+| `clear`         | `()`                                               | `void`          | Closes every toast                                                                      |
+| `pauseAll`      | `()`                                               | `void`          | Pauses every toast's auto-dismiss timer                                                 |
+| `resumeAll`     | `()`                                               | `void`          | Resumes every toast's auto-dismiss timer                                                |
+| `visibleToasts` | —                                                  | `QueuedToast[]` | The currently rendered toasts, newest first (getter)                                    |
 
 ### toast / useToast()
 
@@ -207,7 +207,7 @@ toast.update(id, 'Saved', { variant: 'success', timeout: 4000 })
 // position; the auto-dismiss countdown starts at that point.
 toast.promise(uploadFile(), {
   loading: 'Uploading file...',
-  success: data => `File ${data.filename} uploaded`,
+  success: (data) => `File ${data.filename} uploaded`,
   error: 'Failed to upload file',
 })
 
@@ -226,23 +226,23 @@ toast.resumeAll()
 
 #### toast Options
 
-| Option | Type | Default | Description |
-|---|---|---|---|
-| `description` | `VNodeChild` | - | Optional description text |
-| `variant` | `'default' \| 'accent' \| 'success' \| 'warning' \| 'danger'` | `'default'` | Visual variant |
-| `indicator` | `VNodeChild \| null` | - | Custom indicator icon (`null` hides it) |
-| `action` | `{ label, onClick?, variant?, class? }` | - | Action button |
-| `isLoading` | `boolean` | `false` | Shows a spinner in place of the indicator |
-| `timeout` | `number` | `4000` | Auto-dismiss timeout in milliseconds; `0` keeps the toast open |
-| `onClose` | `() => void` | - | Called when the toast is dismissed, as its exit animation starts |
+| Option        | Type                                                          | Default     | Description                                                      |
+| ------------- | ------------------------------------------------------------- | ----------- | ---------------------------------------------------------------- |
+| `description` | `VNodeChild`                                                  | -           | Optional description text                                        |
+| `variant`     | `'default' \| 'accent' \| 'success' \| 'warning' \| 'danger'` | `'default'` | Visual variant                                                   |
+| `indicator`   | `VNodeChild \| null`                                          | -           | Custom indicator icon (`null` hides it)                          |
+| `action`      | `{ label, onClick?, variant?, class? }`                       | -           | Action button                                                    |
+| `isLoading`   | `boolean`                                                     | `false`     | Shows a spinner in place of the indicator                        |
+| `timeout`     | `number`                                                      | `4000`      | Auto-dismiss timeout in milliseconds; `0` keeps the toast open   |
+| `onClose`     | `() => void`                                                  | -           | Called when the toast is dismissed, as its exit animation starts |
 
 #### toast.promise Options
 
-| Option | Type | Default | Description |
-|---|---|---|---|
-| `loading` | `VNodeChild` | - | Message shown while the promise is pending |
-| `success` | `VNodeChild \| ((data: T) => VNodeChild)` | - | Message shown on success |
-| `error` | `VNodeChild \| ((error: Error) => VNodeChild)` | - | Message shown on error |
+| Option    | Type                                           | Default | Description                                |
+| --------- | ---------------------------------------------- | ------- | ------------------------------------------ |
+| `loading` | `VNodeChild`                                   | -       | Message shown while the promise is pending |
+| `success` | `VNodeChild \| ((data: T) => VNodeChild)`      | -       | Message shown on success                   |
+| `error`   | `VNodeChild \| ((error: Error) => VNodeChild)` | -       | Message shown on error                     |
 
 ## Accessibility
 

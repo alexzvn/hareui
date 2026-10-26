@@ -1,8 +1,3 @@
-<script setup lang="ts">
-import { TimeField } from '@hareui/vue'
-import { Icon } from '@iconify/vue'
-</script>
-
 <template>
   <div class="w-[400px] space-y-4">
     <TimeField full-width name="time" label="Time" />
@@ -16,3 +11,8 @@ import { Icon } from '@iconify/vue'
     </TimeField>
   </div>
 </template>
+
+<script setup lang="ts">
+import { TimeField } from '@hareui/vue'
+import { Icon } from '@iconify/vue'
+</script>

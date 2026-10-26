@@ -25,25 +25,30 @@ ColorField renders a [Label](/docs/components/label), a group holding an optiona
 ```vue
 <template>
   <ColorField label="…" description="…" error-message="…" :invalid="…">
-    <template #label />        <!-- Label content -->
-    <template #prefix />       <!-- content rendered before the input, e.g. a ColorSwatch -->
-    <template #suffix />       <!-- content rendered after the input -->
-    <template #description />  <!-- Description content -->
-    <template #error />        <!-- FieldError content, rendered when invalid -->
+    <template #label />
+    <!-- Label content -->
+    <template #prefix />
+    <!-- content rendered before the input, e.g. a ColorSwatch -->
+    <template #suffix />
+    <!-- content rendered after the input -->
+    <template #description />
+    <!-- Description content -->
+    <template #error />
+    <!-- FieldError content, rendered when invalid -->
   </ColorField>
 </template>
 ```
 
-| `ui` key | `data-slot` | Element |
-|---|---|---|
-| `base` | `color-field` | `<div>` root |
-| — | `label` | [Label](/docs/components/label) (iff `label` / `#label`) |
-| `group` | `color-input-group` | `<div role="group">` holding the prefix, input and suffix |
-| `prefix` | `color-input-group-prefix` | `<span>` (iff `#prefix`) |
-| `input` | `color-input-group-input` | `<input>` |
-| `suffix` | `color-input-group-suffix` | `<span>` (iff `#suffix`) |
-| — | `description` | [Description](/docs/components/description) (iff `description` / `#description`) |
-| — | `field-error` | [FieldError](/docs/components/field-error) (while invalid, iff `error-message` / `#error` / validation errors) |
+| `ui` key | `data-slot`                | Element                                                                                                        |
+| -------- | -------------------------- | -------------------------------------------------------------------------------------------------------------- |
+| `base`   | `color-field`              | `<div>` root                                                                                                   |
+| —        | `label`                    | [Label](/docs/components/label) (iff `label` / `#label`)                                                       |
+| `group`  | `color-input-group`        | `<div role="group">` holding the prefix, input and suffix                                                      |
+| `prefix` | `color-input-group-prefix` | `<span>` (iff `#prefix`)                                                                                       |
+| `input`  | `color-input-group-input`  | `<input>`                                                                                                      |
+| `suffix` | `color-input-group-suffix` | `<span>` (iff `#suffix`)                                                                                       |
+| —        | `description`              | [Description](/docs/components/description) (iff `description` / `#description`)                               |
+| —        | `field-error`              | [FieldError](/docs/components/field-error) (while invalid, iff `error-message` / `#error` / validation errors) |
 
 > **ColorField** combines a label, color input, description, and error into a single accessible component. It accepts a hex string or a `Color` object (from `parseColor`) and always commits a `Color` object.
 
@@ -123,9 +128,11 @@ HeroUI's `render` prop replaces the root element. In Vue, attributes you pass to
 ### Global Configuration
 
 ```ts
-app.use(createHareUI({
-  ui: { colorField: { slots: { group: 'rounded-xl', input: 'font-mono' } } },
-}))
+app.use(
+  createHareUI({
+    ui: { colorField: { slots: { group: 'rounded-xl', input: 'font-mono' } } },
+  }),
+)
 ```
 
 ## Styling Reference

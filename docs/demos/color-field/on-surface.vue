@@ -1,7 +1,3 @@
-<script setup lang="ts">
-import { ColorField, Surface } from '@hareui/vue'
-</script>
-
 <template>
   <Surface class="w-[320px] p-4">
     <ColorField
@@ -13,3 +9,7 @@ import { ColorField, Surface } from '@hareui/vue'
     />
   </Surface>
 </template>
+
+<script setup lang="ts">
+import { ColorField, Surface } from '@hareui/vue'
+</script>

@@ -1,9 +1,11 @@
 import type { ComputedRef, InjectionKey, Ref } from 'vue'
-import type buttonGroupTheme from './theme'
-import type { ComponentSlots, ComponentUI } from '../../types/tv'
-import type { ButtonProps } from '../button/Button.vue'
 
-export interface ButtonGroupContext {
+import type { ButtonProps } from '@/components/button/Button.types'
+import type { ComponentUI } from '@/types/tv'
+
+import type buttonGroupTheme from './theme'
+
+export type ButtonGroupContext = {
   variant: Readonly<Ref<ButtonProps['variant']>>
   size: Readonly<Ref<ButtonProps['size']>>
   disabled: Readonly<Ref<boolean | undefined>>
@@ -11,9 +13,10 @@ export interface ButtonGroupContext {
   separator: Readonly<Ref<boolean>>
   /** The group's first element child; its button renders no separator element (HeroUI places none there). */
   firstChild: Readonly<Ref<Element | null>>
+  /** The group's slot classes, its `ui` prop layered in. */
   ui: ComputedRef<ComponentUI<typeof buttonGroupTheme>>
-  uiOverrides: Readonly<Ref<ComponentSlots<typeof buttonGroupTheme> | undefined>>
 }
 
 /** Provided by `ButtonGroup` to its Buttons; each Button re-provides `null` so only the group's own Buttons read it. */
-export const buttonGroupContextKey: InjectionKey<ButtonGroupContext | null> = Symbol('hareui-button-group')
+export const buttonGroupContextKey: InjectionKey<ButtonGroupContext | null> =
+  Symbol('hareui-button-group')

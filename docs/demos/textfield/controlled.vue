@@ -1,11 +1,3 @@
-<script setup lang="ts">
-import { TextArea, TextField } from '@hareui/vue'
-import { ref } from 'vue'
-
-const name = ref('')
-const bio = ref('')
-</script>
-
 <template>
   <div class="flex w-full max-w-64 flex-col gap-4">
     <TextField
@@ -25,3 +17,11 @@ const bio = ref('')
     </TextField>
   </div>
 </template>
+
+<script setup lang="ts">
+import { TextArea, TextField } from '@hareui/vue'
+import { ref } from 'vue'
+
+const name = ref('')
+const bio = ref('')
+</script>

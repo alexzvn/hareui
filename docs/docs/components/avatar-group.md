@@ -62,24 +62,26 @@ import { Avatar, AvatarGroup } from '@hareui/vue'
 Override the `avatarGroup` theme app-wide with `createHareUI`:
 
 ```ts
-app.use(createHareUI({
-  ui: {
-    avatarGroup: {
-      slots: {
-        base: '[--avatar-group-overlap:0.75rem] [--avatar-group-seam:2px]',
-        count: 'font-semibold',
+app.use(
+  createHareUI({
+    ui: {
+      avatarGroup: {
+        slots: {
+          base: '[--avatar-group-overlap:0.75rem] [--avatar-group-seam:2px]',
+          count: 'font-semibold',
+        },
       },
     },
-  },
-}))
+  }),
+)
 ```
 
 ## Styling Reference
 
-| `ui` key | `data-slot` | Description |
-|---|---|---|
-| `base` | `avatar-group` | Base avatar group container |
-| `count` | `avatar-group-count` | Overflow count avatar |
+| `ui` key | `data-slot`          | Description                 |
+| -------- | -------------------- | --------------------------- |
+| `base`   | `avatar-group`       | Base avatar group container |
+| `count`  | `avatar-group-count` | Overflow count avatar       |
 
 HeroUI's modifier classes correspond to props (HareUI renders utilities, not BEM classes, so
 style through `class`, `ui` or `createHareUI`): `.avatar-group--grid` → `grid`,

@@ -1,3 +1,23 @@
+<template>
+  <Card
+    class="w-full max-w-[520px] rounded-2xl"
+    :ui="{ header: 'flex-row items-center justify-between' }"
+  >
+    <template #header>
+      <h3 class="text-base font-medium text-foreground">Average Temperature</h3>
+      <ChartLegend :series="series" />
+    </template>
+    <LineChart
+      :data="data"
+      index="month"
+      :series="series"
+      aria-label="Average monthly temperature in Lisbon and Oslo"
+      :height="200"
+      :value-formatter="formatDegrees"
+    />
+  </Card>
+</template>
+
 <script setup lang="ts">
 import { Card } from '@hareui/vue'
 import { ChartLegend, LineChart } from '@hareui/vue/charts'
@@ -19,24 +39,7 @@ const data = [
 
 const series = { lisbon: { name: 'Lisbon' }, oslo: { name: 'Oslo' } }
 
-function formatDegrees(value: number) {
+const formatDegrees = (value: number) => {
   return `${value}°C`
 }
 </script>
-
-<template>
-  <Card class="w-full max-w-[520px] rounded-2xl" :ui="{ header: 'flex-row items-center justify-between' }">
-    <template #header>
-      <h3 class="text-base font-medium text-foreground">Average Temperature</h3>
-      <ChartLegend :series="series" />
-    </template>
-    <LineChart
-      :data="data"
-      index="month"
-      :series="series"
-      aria-label="Average monthly temperature in Lisbon and Oslo"
-      :height="200"
-      :value-formatter="formatDegrees"
-    />
-  </Card>
-</template>

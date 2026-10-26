@@ -1,3 +1,9 @@
+<template>
+  <Dropdown :items="items" @action="(key) => console.log(`Selected: ${key}`)">
+    <Button variant="secondary"> Actions </Button>
+  </Dropdown>
+</template>
+
 <script setup lang="ts">
 import type { DropdownEntry } from '@hareui/vue'
 import { Button, Dropdown } from '@hareui/vue'
@@ -9,11 +15,3 @@ const items: DropdownEntry[] = [
   { value: 'delete-file', label: 'Delete file', variant: 'danger' },
 ]
 </script>
-
-<template>
-  <Dropdown :items="items" @action="(key) => console.log(`Selected: ${key}`)">
-    <Button variant="secondary">
-      Actions
-    </Button>
-  </Dropdown>
-</template>

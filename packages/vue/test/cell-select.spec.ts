@@ -1,9 +1,11 @@
 import { mount } from '@vue/test-utils'
 import { afterEach, describe, expect, it } from 'vitest'
 import { h, ref } from 'vue'
-import type { CellSelectProps } from '../src/components/cell-select/CellSelect.vue'
-import CellSelect from '../src/components/cell-select/CellSelect.vue'
-import Fieldset from '../src/components/fieldset/Fieldset.vue'
+
+import type { CellSelectProps } from '@/components/cell-select/CellSelect.types'
+import CellSelect from '@/components/cell-select/CellSelect.vue'
+import Fieldset from '@/components/fieldset/Fieldset.vue'
+
 import { expectAccessible } from './a11y'
 
 const items = [
@@ -11,9 +13,10 @@ const items = [
   { value: 'dark', label: 'Dark' },
   { value: 'system', label: 'System' },
 ]
+
 const trigger = '[data-slot=select-trigger]'
 const value = '[data-slot=select-value]'
-const flush = () => new Promise(r => setTimeout(r, 0))
+const flush = () => new Promise((r) => setTimeout(r, 0))
 
 afterEach(() => {
   document.body.innerHTML = ''
@@ -27,6 +30,7 @@ describe('CellSelect', () => {
     expect(row.get('[data-slot=cell-select-label]').text()).toBe('Theme')
     expect(row.get(value).text()).toBe('Default')
     expect(row.find('[data-slot=select-indicator] svg').exists()).toBe(true)
+
     // No field label above the row
     expect(wrapper.find('[data-slot=label]').exists()).toBe(false)
   })
@@ -39,12 +43,22 @@ describe('CellSelect', () => {
   })
 
   it('picking an option updates v-model and the value, then closes', async () => {
-    const model = ref<any>('default')
-    const wrapper = mount(() => h(CellSelect, { 'items': items, 'label': 'Theme', 'modelValue': model.value, 'onUpdate:modelValue': (v: any) => (model.value = v) }), { attachTo: document.body })
+    const model = ref<CellSelectProps['modelValue']>('default')
+    const wrapper = mount(
+      () =>
+        h(CellSelect, {
+          items: items,
+          label: 'Theme',
+          modelValue: model.value,
+          'onUpdate:modelValue': (v: CellSelectProps['modelValue']) => (model.value = v),
+        }),
+      { attachTo: document.body },
+    )
+
     await wrapper.get(trigger).trigger('click')
     await flush()
     const options = document.querySelectorAll<HTMLElement>('[role=option]')
-    expect([...options].map(o => o.textContent?.trim())).toEqual(['Default', 'Dark', 'System'])
+    expect([...options].map((o) => o.textContent?.trim())).toEqual(['Default', 'Dark', 'System'])
     options[1]!.click()
     await flush()
     expect(model.value).toBe('dark')
@@ -54,7 +68,11 @@ describe('CellSelect', () => {
   })
 
   it('uncontrolled: starts from defaultValue and follows the selection', async () => {
-    const wrapper = mount(CellSelect, { props: { items, label: 'Theme', defaultValue: 'default' }, attachTo: document.body })
+    const wrapper = mount(CellSelect, {
+      props: { items, label: 'Theme', defaultValue: 'default' },
+      attachTo: document.body,
+    })
+
     await wrapper.get(trigger).trigger('click')
     await flush()
     document.querySelectorAll<HTMLElement>('[role=option]')[2]!.click()
@@ -71,12 +89,20 @@ describe('CellSelect', () => {
     const popover = document.querySelector('[data-slot=select-popover]')
     expect(popover).not.toBeNull()
     expect(popover!.getAttribute('data-align')).toBe('end')
-    expect(document.querySelector('[role=listbox]')!.getAttribute('aria-labelledby')).toBe(wrapper.get('[data-slot=cell-select-label]').attributes('id'))
+
+    expect(document.querySelector('[role=listbox]')!.getAttribute('aria-labelledby')).toBe(
+      wrapper.get('[data-slot=cell-select-label]').attributes('id'),
+    )
+
     wrapper.unmount()
   })
 
   it('opening with the mouse shows no focus ring on the selected option', async () => {
-    const wrapper = mount(CellSelect, { props: { items, label: 'Theme', defaultValue: 'dark' }, attachTo: document.body })
+    const wrapper = mount(CellSelect, {
+      props: { items, label: 'Theme', defaultValue: 'dark' },
+      attachTo: document.body,
+    })
+
     await wrapper.get(trigger).trigger('pointerdown', { button: 0, pointerType: 'mouse' })
     await wrapper.get(trigger).trigger('click')
     await flush()
@@ -87,7 +113,11 @@ describe('CellSelect', () => {
   })
 
   it('opening with the keyboard shows the focus ring on the focused option', async () => {
-    const wrapper = mount(CellSelect, { props: { items, label: 'Theme', defaultValue: 'dark' }, attachTo: document.body })
+    const wrapper = mount(CellSelect, {
+      props: { items, label: 'Theme', defaultValue: 'dark' },
+      attachTo: document.body,
+    })
+
     await wrapper.get(trigger).trigger('keydown', { key: 'ArrowDown' })
     await flush()
     const focusedOption = document.querySelector('[role=option][data-focused=true]')
@@ -96,17 +126,27 @@ describe('CellSelect', () => {
     wrapper.unmount()
   })
 
-  async function openWithKeyboard(props: Record<string, unknown> = {}) {
-    const wrapper = mount(CellSelect, { props: { items, label: 'Theme', defaultValue: 'dark', ...props }, attachTo: document.body })
+  const openWithKeyboard = async (props: Record<string, unknown> = {}) => {
+    const wrapper = mount(CellSelect, {
+      props: { items, label: 'Theme', defaultValue: 'dark', ...props },
+      attachTo: document.body,
+    })
+
     wrapper.get<HTMLElement>(trigger).element.focus()
     await wrapper.get(trigger).trigger('keydown', { key: 'ArrowDown' })
     await flush()
     await flush()
+
     return wrapper
   }
+
   const focusedText = () => document.activeElement?.textContent?.trim()
+
   const press = async (key: string) => {
-    document.activeElement!.dispatchEvent(new KeyboardEvent('keydown', { key, bubbles: true, cancelable: true }))
+    document.activeElement!.dispatchEvent(
+      new KeyboardEvent('keydown', { key, bubbles: true, cancelable: true }),
+    )
+
     await flush()
   }
 
@@ -114,10 +154,17 @@ describe('CellSelect', () => {
     const cases: Pick<CellSelectProps, keyof CellSelectProps>[] = [
       { items, label: 'Theme' },
       { items, label: 'Theme', defaultValue: 'dark', description: 'Applies to every window' },
-      { items, label: 'Theme', invalid: true, errorMessage: 'Pick a theme', description: 'Applies to every window' },
+      {
+        items,
+        label: 'Theme',
+        invalid: true,
+        errorMessage: 'Pick a theme',
+        description: 'Applies to every window',
+      },
       { items, label: 'Theme', disabled: true, defaultValue: 'system' },
       { items, label: 'Theme', clearable: true, defaultValue: 'dark' },
     ]
+
     for (const props of cases) {
       const wrapper = mount(CellSelect, { props, attachTo: document.body })
       await expectAccessible(wrapper)
@@ -137,16 +184,37 @@ describe('CellSelect', () => {
     const labelId = wrapper.get('[data-slot=cell-select-label]').attributes('id')
     expect(wrapper.get(trigger).attributes('aria-expanded')).toBe('true')
     expect(wrapper.get(trigger).attributes('aria-haspopup')).toBe('listbox')
-    expect(document.querySelector('[data-slot=select-popover]')!.getAttribute('aria-labelledby')).toBe(labelId)
-    expect(document.querySelector('[role=option][aria-selected=true]')?.textContent?.trim()).toBe('Dark')
+
+    expect(
+      document.querySelector('[data-slot=select-popover]')!.getAttribute('aria-labelledby'),
+    ).toBe(labelId)
+
+    expect(document.querySelector('[role=option][aria-selected=true]')?.textContent?.trim()).toBe(
+      'Dark',
+    )
+
     wrapper.unmount()
   })
 
   it('describes the trigger by its description while valid, and only by the error while invalid', () => {
-    const valid = mount(CellSelect, { props: { items, label: 'Theme', id: 'v', description: 'Help', errorMessage: 'Bad' } })
+    const valid = mount(CellSelect, {
+      props: { items, label: 'Theme', id: 'v', description: 'Help', errorMessage: 'Bad' },
+    })
+
     expect(valid.get(trigger).attributes('aria-describedby')).toBe('v-description')
     valid.unmount()
-    const wrapper = mount(CellSelect, { props: { items, label: 'Theme', id: 'c', description: 'Help', invalid: true, errorMessage: 'Bad' } })
+
+    const wrapper = mount(CellSelect, {
+      props: {
+        items,
+        label: 'Theme',
+        id: 'c',
+        description: 'Help',
+        invalid: true,
+        errorMessage: 'Bad',
+      },
+    })
+
     expect(wrapper.get(trigger).attributes('aria-describedby')).toBe('c-error')
     expect(wrapper.get('#c-error').text()).toBe('Bad')
     expect(wrapper.get(trigger).attributes('aria-invalid')).toBe('true')
@@ -176,7 +244,11 @@ describe('CellSelect', () => {
   })
 
   it('disabled blocks opening', async () => {
-    const wrapper = mount(CellSelect, { props: { items, label: 'Theme', disabled: true }, attachTo: document.body })
+    const wrapper = mount(CellSelect, {
+      props: { items, label: 'Theme', disabled: true },
+      attachTo: document.body,
+    })
+
     expect(wrapper.get(trigger).attributes('disabled')).toBeDefined()
     await wrapper.get(trigger).trigger('keydown', { key: 'ArrowDown' })
     await flush()
@@ -185,7 +257,12 @@ describe('CellSelect', () => {
   })
 
   it('is disabled by an ancestor Fieldset', async () => {
-    const wrapper = mount(Fieldset, { props: { disabled: true }, slots: { default: () => h(CellSelect, { items, label: 'Theme' }) }, attachTo: document.body })
+    const wrapper = mount(Fieldset, {
+      props: { disabled: true },
+      slots: { default: () => h(CellSelect, { items, label: 'Theme' }) },
+      attachTo: document.body,
+    })
+
     expect(wrapper.get('[data-slot=cell-select]').attributes('data-disabled')).toBe('true')
     expect(wrapper.get(trigger).attributes('disabled')).toBeDefined()
     await wrapper.get(trigger).trigger('keydown', { key: 'ArrowDown' })

@@ -26,11 +26,11 @@ import { Badge } from '@hareui/vue'
 </template>
 ```
 
-| `ui` key | Element | Description |
-|---|---|---|
+| `ui` key | Element                      | Description                                             |
+| -------- | ---------------------------- | ------------------------------------------------------- |
 | `anchor` | `[data-slot="badge-anchor"]` | Wraps the default slot; only rendered when it is filled |
-| `base` | `[data-slot="badge"]` | The badge (receives `class`) |
-| `label` | `[data-slot="badge-label"]` | Wraps `content` (HeroUI's `Badge.Label`) |
+| `base`   | `[data-slot="badge"]`        | The badge (receives `class`)                            |
+| `label`  | `[data-slot="badge-label"]`  | Wraps `content` (HeroUI's `Badge.Label`)                |
 
 ## Examples
 
@@ -71,14 +71,16 @@ Badge supports text, numbers, and icons as content. When no content is provided,
 ### Global theme override
 
 ```ts
-app.use(createHareUI({
-  ui: {
-    badge: {
-      slots: { base: 'border-2' },
-      defaultVariants: { size: 'sm' },
+app.use(
+  createHareUI({
+    ui: {
+      badge: {
+        slots: { base: 'border-2' },
+        defaultVariants: { size: 'sm' },
+      },
     },
-  },
-}))
+  }),
+)
 ```
 
 ## Styling Reference

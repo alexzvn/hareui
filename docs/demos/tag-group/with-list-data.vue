@@ -1,34 +1,3 @@
-<script setup lang="ts">
-import type { TagGroupItem } from '@hareui/vue'
-import { Avatar, EmptyState, TagGroup } from '@hareui/vue'
-import { computed, ref } from 'vue'
-
-interface User extends TagGroupItem {
-  label: string
-  avatar: string
-  fallback: string
-}
-
-const users = ref<User[]>([
-  { id: 'fred', label: 'Fred', avatar: 'https://heroui-assets.nyc3.cdn.digitaloceanspaces.com/avatars/blue.jpg', fallback: 'F' },
-  { id: 'michael', label: 'Michael', avatar: 'https://heroui-assets.nyc3.cdn.digitaloceanspaces.com/avatars/green.jpg', fallback: 'M' },
-  { id: 'jane', label: 'Jane', avatar: 'https://heroui-assets.nyc3.cdn.digitaloceanspaces.com/avatars/purple.jpg', fallback: 'J' },
-  { id: 'alice', label: 'Alice', avatar: 'https://heroui-assets.nyc3.cdn.digitaloceanspaces.com/avatars/red.jpg', fallback: 'A' },
-  { id: 'bob', label: 'Bob', avatar: 'https://heroui-assets.nyc3.cdn.digitaloceanspaces.com/avatars/orange.jpg', fallback: 'B' },
-  { id: 'charlie', label: 'Charlie', avatar: 'https://heroui-assets.nyc3.cdn.digitaloceanspaces.com/avatars/black.jpg', fallback: 'C' },
-])
-const selected = ref<string[]>(['fred', 'michael'])
-
-const selectedUsers = computed(() => selected.value
-  .map(id => users.value.find(user => user.id === id))
-  .filter((user): user is User => !!user))
-
-function onRemove(ids: string[]) {
-  users.value = users.value.filter(user => !ids.includes(user.id))
-  selected.value = selected.value.filter(id => !ids.includes(id))
-}
-</script>
-
 <template>
   <div class="w-sm">
     <TagGroup
@@ -41,19 +10,21 @@ function onRemove(ids: string[]) {
       @remove="onRemove"
     >
       <template #item="{ item }">
-        <Avatar class="size-4" size="sm" alt="" :src="(item as User).avatar" :fallback="(item as User).fallback" />
+        <Avatar
+          class="size-4"
+          size="sm"
+          alt=""
+          :src="(item as User).avatar"
+          :fallback="(item as User).fallback"
+        />
         {{ item.label }}
       </template>
       <template #empty>
-        <EmptyState class="p-1">
-          No team members
-        </EmptyState>
+        <EmptyState class="p-1"> No team members </EmptyState>
       </template>
     </TagGroup>
     <div v-if="selectedUsers.length > 0" class="mt-4 flex flex-col gap-2">
-      <p class="text-sm font-medium text-muted">
-        Selected:
-      </p>
+      <p class="text-sm font-medium text-muted">Selected:</p>
       <div class="flex flex-wrap gap-2">
         <div
           v-for="user in selectedUsers"
@@ -67,3 +38,67 @@ function onRemove(ids: string[]) {
     </div>
   </div>
 </template>
+
+<script setup lang="ts">
+import type { TagGroupItem } from '@hareui/vue'
+import { Avatar, EmptyState, TagGroup } from '@hareui/vue'
+import { computed, ref } from 'vue'
+
+type User = {
+  label: string
+  avatar: string
+  fallback: string
+} & TagGroupItem
+
+const users = ref<User[]>([
+  {
+    id: 'fred',
+    label: 'Fred',
+    avatar: 'https://heroui-assets.nyc3.cdn.digitaloceanspaces.com/avatars/blue.jpg',
+    fallback: 'F',
+  },
+  {
+    id: 'michael',
+    label: 'Michael',
+    avatar: 'https://heroui-assets.nyc3.cdn.digitaloceanspaces.com/avatars/green.jpg',
+    fallback: 'M',
+  },
+  {
+    id: 'jane',
+    label: 'Jane',
+    avatar: 'https://heroui-assets.nyc3.cdn.digitaloceanspaces.com/avatars/purple.jpg',
+    fallback: 'J',
+  },
+  {
+    id: 'alice',
+    label: 'Alice',
+    avatar: 'https://heroui-assets.nyc3.cdn.digitaloceanspaces.com/avatars/red.jpg',
+    fallback: 'A',
+  },
+  {
+    id: 'bob',
+    label: 'Bob',
+    avatar: 'https://heroui-assets.nyc3.cdn.digitaloceanspaces.com/avatars/orange.jpg',
+    fallback: 'B',
+  },
+  {
+    id: 'charlie',
+    label: 'Charlie',
+    avatar: 'https://heroui-assets.nyc3.cdn.digitaloceanspaces.com/avatars/black.jpg',
+    fallback: 'C',
+  },
+])
+
+const selected = ref<string[]>(['fred', 'michael'])
+
+const selectedUsers = computed(() =>
+  selected.value
+    .map((id) => users.value.find((user) => user.id === id))
+    .filter((user): user is User => !!user),
+)
+
+const onRemove = (ids: string[]) => {
+  users.value = users.value.filter((user) => !ids.includes(user.id))
+  selected.value = selected.value.filter((id) => !ids.includes(id))
+}
+</script>

@@ -27,28 +27,31 @@ HeroUI composes `Pagination.Summary`, `Pagination.Content`, `Pagination.Item`, `
 <template>
   <Pagination v-model:page="page" :total="10" ellipsis>
     <template #summary="{ page, total }">Showing 1-10 of 100 results</template>
-    <template #link="{ page, active }" />  <!-- replaces a page number -->
-    <template #prevIcon />                 <!-- Pagination.PreviousIcon children -->
-    <template #nextIcon />                 <!-- Pagination.NextIcon children -->
+    <template #link="{ page, active }" />
+    <!-- replaces a page number -->
+    <template #prevIcon />
+    <!-- Pagination.PreviousIcon children -->
+    <template #nextIcon />
+    <!-- Pagination.NextIcon children -->
   </Pagination>
 </template>
 ```
 
 - `ellipsis` collapses distant pages (first, last, current ± 1), the pattern HeroUI's demos build;
   `pages` takes any exact list of numbers and `'ellipsis'` entries.
-- `prev-label` / `next-label` set the button text (empty = icon only); `prev-disabled` /
-  `next-disabled` override the first/last-page defaults.
+- `prev` / `next` configure the buttons: `label` sets the text (empty = icon only) and `disabled`
+  overrides the first/last-page default.
 
-| `ui` key | `data-slot` | Element |
-|---|---|---|
-| `base` | `pagination` | `<nav>` root |
-| `summary` | `pagination-summary` | info text (only with `#summary`) |
-| `content` | `pagination-content` | `<ul>` of items |
-| `item` | `pagination-item` | `<li>` per entry |
-| `link` | `pagination-link`, `pagination-previous`, `pagination-next` | page and previous/next buttons |
-| `nav` | `pagination-previous`, `pagination-next` | extra classes for previous/next (HeroUI's `pagination__link--nav`) |
-| `icon` | `pagination-previous-icon`, `pagination-next-icon` | icon wrappers |
-| `ellipsis` | `pagination-ellipsis` | ellipsis indicator |
+| `ui` key   | `data-slot`                                                 | Element                                                            |
+| ---------- | ----------------------------------------------------------- | ------------------------------------------------------------------ |
+| `base`     | `pagination`                                                | `<nav>` root                                                       |
+| `summary`  | `pagination-summary`                                        | info text (only with `#summary`)                                   |
+| `content`  | `pagination-content`                                        | `<ul>` of items                                                    |
+| `item`     | `pagination-item`                                           | `<li>` per entry                                                   |
+| `link`     | `pagination-link`, `pagination-previous`, `pagination-next` | page and previous/next buttons                                     |
+| `nav`      | `pagination-previous`, `pagination-next`                    | extra classes for previous/next (HeroUI's `pagination__link--nav`) |
+| `icon`     | `pagination-previous-icon`, `pagination-next-icon`          | icon wrappers                                                      |
+| `ellipsis` | `pagination-ellipsis`                                       | ellipsis indicator                                                 |
 
 ## Examples
 
@@ -93,17 +96,19 @@ You can replace the default chevron icons with the `#prevIcon` and `#nextIcon` s
 To customize the Pagination classes for the whole app, extend the `pagination` theme in `createHareUI`:
 
 ```ts
-app.use(createHareUI({
-  ui: {
-    pagination: {
-      slots: {
-        base: 'gap-8',
-        link: 'rounded-md',
-        summary: 'text-xs font-semibold',
+app.use(
+  createHareUI({
+    ui: {
+      pagination: {
+        slots: {
+          base: 'gap-8',
+          link: 'rounded-md',
+          summary: 'text-xs font-semibold',
+        },
       },
     },
-  },
-}))
+  }),
+)
 ```
 
 ## Styling Reference

@@ -1,3 +1,17 @@
+<template>
+  <Select
+    class="w-56"
+    label="Plan"
+    placeholder="Pick a plan"
+    variant="secondary"
+    :items="plans"
+    :ui="{
+      trigger: 'rounded-xl bg-default',
+      popover: 'rounded-xl border border-border bg-surface p-1 shadow-lg',
+    }"
+  />
+</template>
+
 <script setup lang="ts">
 import type { ListBoxItem } from '@hareui/vue'
 import { Select } from '@hareui/vue'
@@ -8,14 +22,3 @@ const plans: ListBoxItem[] = [
   { value: 'pro', label: 'Pro', class: itemClass },
 ]
 </script>
-
-<template>
-  <Select
-    class="w-56"
-    label="Plan"
-    placeholder="Pick a plan"
-    variant="secondary"
-    :items="plans"
-    :ui="{ trigger: 'rounded-xl bg-default', popover: 'rounded-xl border border-border bg-surface p-1 shadow-lg' }"
-  />
-</template>

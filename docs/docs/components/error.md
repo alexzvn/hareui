@@ -64,7 +64,15 @@ Listen to the `clear` event to handle the click yourself. Call `event.preventDef
 <ComponentPreview name="error/custom-handler" minHeight="400px" />
 
 ```vue
-<Error :error="error" @clear="(event) => { event.preventDefault(); router.push('/') }" />
+<Error
+  :error="error"
+  @clear="
+    (event) => {
+      event.preventDefault()
+      router.push('/')
+    }
+  "
+/>
 ```
 
 ## Customization
@@ -74,13 +82,15 @@ Listen to the `clear` event to handle the click yourself. Call `event.preventDef
 Override the `error` theme app-wide with `createHareUI`:
 
 ```ts
-app.use(createHareUI({
-  ui: {
-    error: {
-      slots: { statusCode: 'text-danger', statusMessage: 'text-3xl' },
+app.use(
+  createHareUI({
+    ui: {
+      error: {
+        slots: { statusCode: 'text-danger', statusMessage: 'text-3xl' },
+      },
     },
-  },
-}))
+  }),
+)
 ```
 
 ## API

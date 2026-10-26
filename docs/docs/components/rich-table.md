@@ -38,7 +38,7 @@ Use the `meta` property of a column to add classes, styles and spans to its head
 
 ### Loading
 
-Use the `loading` prop to show a loading bar under the header. Change its color with `loading-color` (`accent`, `success`, `warning`, `danger`, `neutral`) and its animation with `loading-animation` (`carousel`, `carousel-inverse`, `swing`, `elastic`). When there are no rows yet, the `#loading` slot replaces the empty state.
+Use the `loading` prop to show a loading bar under the header. Change its look with the `loading-bar` prop: `color` (`accent`, `success`, `warning`, `danger`, `neutral`) and `animation` (`carousel`, `carousel-inverse`, `swing`, `elastic`). When there are no rows yet, the `#loading` slot replaces the empty state.
 
 <ComponentPreview name="rich-table/loading" minHeight="360px" />
 
@@ -84,13 +84,13 @@ Use the `variant` prop to change the style. The `secondary` variant removes the 
 
 ### With expandable rows
 
-Set `getRowCanExpand` in the `expanded-options` prop, toggle a row with `row.toggleExpanded()` and render its content in the `#expanded` slot. Bind `v-model:expanded` to read or control which rows are open.
+Set `getRowCanExpand` in `features.expanded`, toggle a row with `row.toggleExpanded()` and render its content in the `#expanded` slot. Bind `v-model:expanded` to read or control which rows are open.
 
 <ComponentPreview name="rich-table/expandable" minHeight="460px" />
 
 ### With grouped rows
 
-Bind `v-model:grouping` to the ids of the columns to group by, and pass `{ getGroupedRowModel: getGroupedRowModel() }` from `@tanstack/vue-table` to the `grouping-options` prop. Give a column an `aggregationFn` such as `'sum'` or `'count'` and an `aggregatedCell` to summarize each group. In the `cell` function, `row.getIsGrouped()` tells you when to render a group header.
+Bind `v-model:grouping` to the ids of the columns to group by, and pass `{ getGroupedRowModel: getGroupedRowModel() }` from `@tanstack/vue-table` to `features.grouping`. Give a column an `aggregationFn` such as `'sum'` or `'count'` and an `aggregatedCell` to summarize each group. In the `cell` function, `row.getIsGrouped()` tells you when to render a group header.
 
 <ComponentPreview name="rich-table/grouping" minHeight="520px" />
 
@@ -124,7 +124,7 @@ Bind `v-model:sorting` and render a header that calls `column.toggleSorting()`. 
 
 <ComponentPreview name="rich-table/sorting" minHeight="460px" />
 
-Set `sortingFn` on a column to a built-in name or a `(rowA, rowB, columnId) => number` function. To sort on the server, pass `{ manualSorting: true }` to the `sorting-options` prop.
+Set `sortingFn` on a column to a built-in name or a `(rowA, rowB, columnId) => number` function. To sort on the server, pass `{ manualSorting: true }` to `features.sorting`.
 
 <ComponentPreview name="rich-table/custom-sort" minHeight="460px" />
 
@@ -142,7 +142,7 @@ Bind `v-model:column-visibility` to an object of column ids set to `false` to hi
 
 ### With column sizing
 
-Set `enableColumnResizing` in the `column-sizing-options` prop and attach `header.getResizeHandler()` to a handle in the header. Bind `v-model:column-sizing` to read or restore the widths. A handle with `role="separator"` replaces the column's divider line; the one in this example also responds to the arrow keys and resets on double click.
+Set `enableColumnResizing` in `features.columnSizing` and attach `header.getResizeHandler()` to a handle in the header. Bind `v-model:column-sizing` to read or restore the widths. A handle with `role="separator"` replaces the column's divider line; the one in this example also responds to the arrow keys and resets on double click.
 
 <ComponentPreview name="rich-table/column-sizing" minHeight="360px" />
 
@@ -154,13 +154,13 @@ Bind `v-model:column-filters`, or set a column's filter with `tableApi.getColumn
 
 ### With global filter
 
-Bind `v-model:global-filter` to match rows against every column. Pass `globalFilterFn` or `getColumnCanGlobalFilter` to the `global-filter-options` prop to change how values are matched.
+Bind `v-model:global-filter` to match rows against every column. Pass `globalFilterFn` or `getColumnCanGlobalFilter` to `features.globalFilter` to change how values are matched.
 
 <ComponentPreview name="rich-table/global-filter" minHeight="460px" />
 
 ### With pagination
 
-Pass `{ getPaginationRowModel: getPaginationRowModel() }` from `@tanstack/vue-table` to the `pagination-options` prop and bind `v-model:pagination` to `{ pageIndex, pageSize }`, where `pageIndex` starts at 0. Without the row model, every row is rendered. Use [Pagination](./pagination) for the controls, and put them with the table in a `bg-surface-secondary` wrapper so they sit in the table's gray footer.
+Pass `{ getPaginationRowModel: getPaginationRowModel() }` from `@tanstack/vue-table` to `features.pagination` and bind `v-model:pagination` to `{ pageIndex, pageSize }`, where `pageIndex` starts at 0. Without the row model, every row is rendered. Use [Pagination](./pagination) for the controls, and put them with the table in a `bg-surface-secondary` wrapper so they sit in the table's gray footer.
 
 <ComponentPreview name="rich-table/pagination" minHeight="420px" />
 
@@ -168,7 +168,7 @@ You can also drive the controls from the exposed `tableApi` instead of binding t
 
 <ComponentPreview name="rich-table/pagination-api" minHeight="420px" />
 
-To paginate on the server, pass `{ manualPagination: true, rowCount }` to `pagination-options` and load each page into `data`.
+To paginate on the server, pass `{ manualPagination: true, rowCount }` to `features.pagination` and load each page into `data`.
 
 ### With virtualization
 
@@ -197,16 +197,18 @@ Use the `class` prop to style the root and the `ui` prop to style each part.
 ### Global theme override
 
 ```ts
-app.use(createHareUI({
-  ui: {
-    richTable: {
-      slots: {
-        th: 'bg-gray-100',
-        td: 'px-6 py-4',
+app.use(
+  createHareUI({
+    ui: {
+      richTable: {
+        slots: {
+          th: 'bg-gray-100',
+          td: 'px-6 py-4',
+        },
       },
     },
-  },
-}))
+  }),
+)
 ```
 
 ## API
@@ -225,18 +227,18 @@ app.use(createHareUI({
 
 ## Styling Reference
 
-| `ui` key | `data-slot` | Description |
-|---|---|---|
-| `root` | `rich-table` | Scroll container |
-| `base` | `rich-table-content` | The `<table>` element |
-| `caption` | `rich-table-caption` | The `<caption>` element |
-| `thead` | `rich-table-header` | The `<thead>` element |
-| `tbody` | `rich-table-body` | The `<tbody>` element |
-| `tfoot` | `rich-table-footer` | The `<tfoot>` element |
-| `tr` | `rich-table-row`, `rich-table-header-row`, `rich-table-footer-row`, `rich-table-expanded-row` | Every row |
-| `th` | `rich-table-column` | Header and footer cells |
-| `td` | `rich-table-cell` | Body cells |
-| `empty` | `rich-table-empty` | Cell shown when there are no rows |
-| `loading` | `rich-table-loading` | Cell shown while loading with no rows |
+| `ui` key  | `data-slot`                                                                                   | Description                           |
+| --------- | --------------------------------------------------------------------------------------------- | ------------------------------------- |
+| `root`    | `rich-table`                                                                                  | Scroll container                      |
+| `base`    | `rich-table-content`                                                                          | The `<table>` element                 |
+| `caption` | `rich-table-caption`                                                                          | The `<caption>` element               |
+| `thead`   | `rich-table-header`                                                                           | The `<thead>` element                 |
+| `tbody`   | `rich-table-body`                                                                             | The `<tbody>` element                 |
+| `tfoot`   | `rich-table-footer`                                                                           | The `<tfoot>` element                 |
+| `tr`      | `rich-table-row`, `rich-table-header-row`, `rich-table-footer-row`, `rich-table-expanded-row` | Every row                             |
+| `th`      | `rich-table-column`                                                                           | Header and footer cells               |
+| `td`      | `rich-table-cell`                                                                             | Body cells                            |
+| `empty`   | `rich-table-empty`                                                                            | Cell shown when there are no rows     |
+| `loading` | `rich-table-loading`                                                                          | Cell shown while loading with no rows |
 
 Rows set `data-selected`, `data-expanded`, `data-selectable` and `data-pinned`; pinned cells set `data-pinned="left" | "right"` and, while content scrolls under them, `data-edge` on the column facing the scrolling columns.

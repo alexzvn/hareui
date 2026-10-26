@@ -84,33 +84,35 @@ excluded from the body area to avoid scroll conflicts.
 To customize the Drawer classes for the whole app, extend the `drawer` theme in `createHareUI`:
 
 ```ts
-app.use(createHareUI({
-  ui: {
-    drawer: {
-      slots: {
-        backdrop: 'bg-gradient-to-br from-black/50 to-black/70',
-        dialog: 'rounded-2xl border border-white/10 shadow-2xl',
-        header: 'text-center',
-        closeTrigger: 'rounded-full bg-white/10 hover:bg-white/20',
+app.use(
+  createHareUI({
+    ui: {
+      drawer: {
+        slots: {
+          backdrop: 'bg-gradient-to-br from-black/50 to-black/70',
+          dialog: 'rounded-2xl border border-white/10 shadow-2xl',
+          header: 'text-center',
+          closeTrigger: 'rounded-full bg-white/10 hover:bg-white/20',
+        },
       },
     },
-  },
-}))
+  }),
+)
 ```
 
 ## Styling Reference
 
-| `ui` key | `data-slot` | Element |
-|---|---|---|
-| `backdrop` | `drawer-backdrop` | Overlay backdrop behind the drawer (Reka `DialogOverlay`) |
-| `content` | `drawer-content` | Positioning wrapper for the drawer panel |
-| `dialog` | `drawer-dialog` | The drawer panel itself (Reka `DialogContent`); `class` merges here |
-| `header` | `drawer-header` | Header section for titles |
-| `heading` | `drawer-heading` | Main title text (Reka `DialogTitle`) |
-| `body` | `drawer-body` | Main scrollable content area, rendered when `#body` is present |
-| `footer` | `drawer-footer` | Footer section for actions, rendered when `#footer` is present |
-| `handle` | `drawer-handle` | Visual drag handle indicator (bar: `data-slot="drawer-handle-bar"`), rendered when `handle` is `true` |
-| `closeTrigger` | `drawer-close-trigger` | Close button, rendered when `closeButton` is `true` |
+| `ui` key       | `data-slot`            | Element                                                                                               |
+| -------------- | ---------------------- | ----------------------------------------------------------------------------------------------------- |
+| `backdrop`     | `drawer-backdrop`      | Overlay backdrop behind the drawer (Reka `DialogOverlay`)                                             |
+| `content`      | `drawer-content`       | Positioning wrapper for the drawer panel                                                              |
+| `dialog`       | `drawer-dialog`        | The drawer panel itself (Reka `DialogContent`); `class` merges here                                   |
+| `header`       | `drawer-header`        | Header section for titles                                                                             |
+| `heading`      | `drawer-heading`       | Main title text (Reka `DialogTitle`)                                                                  |
+| `body`         | `drawer-body`          | Main scrollable content area, rendered when `#body` is present                                        |
+| `footer`       | `drawer-footer`        | Footer section for actions, rendered when `#footer` is present                                        |
+| `handle`       | `drawer-handle`        | Visual drag handle indicator (bar: `data-slot="drawer-handle-bar"`), rendered when `handle` is `true` |
+| `closeTrigger` | `drawer-close-trigger` | Close button, rendered when `closeButton` is `true`                                                   |
 
 #### Backdrop Variants
 

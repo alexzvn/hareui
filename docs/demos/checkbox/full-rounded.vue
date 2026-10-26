@@ -1,7 +1,3 @@
-<script setup lang="ts">
-import { Checkbox, Label } from '@hareui/vue'
-</script>
-
 <template>
   <div class="flex flex-col gap-6">
     <div class="flex flex-col gap-3">
@@ -14,10 +10,18 @@ import { Checkbox, Label } from '@hareui/vue'
       />
     </div>
     <div class="flex flex-col gap-3">
-      <Checkbox name="default-rounded" label="Default size" :ui="{ control: 'size-4 rounded-full before:rounded-full' }" />
+      <Checkbox
+        name="default-rounded"
+        label="Default size"
+        :ui="{ control: 'size-4 rounded-full before:rounded-full' }"
+      />
     </div>
     <div class="flex flex-col gap-3">
-      <Checkbox name="large-rounded" label="Large size" :ui="{ control: 'size-5 rounded-full before:rounded-full' }" />
+      <Checkbox
+        name="large-rounded"
+        label="Large size"
+        :ui="{ control: 'size-5 rounded-full before:rounded-full' }"
+      />
     </div>
     <div class="flex flex-col gap-3">
       <Checkbox
@@ -29,3 +33,7 @@ import { Checkbox, Label } from '@hareui/vue'
     </div>
   </div>
 </template>
+
+<script setup lang="ts">
+import { Checkbox, Label } from '@hareui/vue'
+</script>

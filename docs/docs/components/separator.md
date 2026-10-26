@@ -51,25 +51,27 @@ The Separator component adapts to different surface backgrounds for better visib
 Override the `separator` theme app-wide with `createHareUI`:
 
 ```ts
-app.use(createHareUI({
-  ui: {
-    separator: {
-      slots: { base: 'bg-accent h-[2px]' },
-      variants: {
-        orientation: { vertical: { base: 'bg-accent w-[2px]' } },
+app.use(
+  createHareUI({
+    ui: {
+      separator: {
+        slots: { base: 'bg-accent h-[2px]' },
+        variants: {
+          orientation: { vertical: { base: 'bg-accent w-[2px]' } },
+        },
       },
     },
-  },
-}))
+  }),
+)
 ```
 
 ## Styling Reference
 
 Each rendered element carries the same `data-slot` string as HeroUI, so selectors translate 1:1.
 
-| `ui` key | `data-slot` | Description |
-|---|---|---|
-| `base` | `separator` | The separator element |
+| `ui` key | `data-slot` | Description           |
+| -------- | ----------- | --------------------- |
+| `base`   | `separator` | The separator element |
 
 HeroUI's modifier classes correspond to these props (HareUI renders utilities, not BEM classes, so
 style through `class`, `ui` or `createHareUI`):

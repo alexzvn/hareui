@@ -1,10 +1,3 @@
-<script setup lang="ts">
-import { AlertDialog, Button } from '@hareui/vue'
-import { ref } from 'vue'
-
-const portalRef = ref<HTMLElement>()
-</script>
-
 <template>
   <div class="flex flex-col gap-4">
     <div>
@@ -33,29 +26,32 @@ const portalRef = ref<HTMLElement>()
         <template #body>
           <p class="text-sm text-muted">
             Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed do eiusmod tempor
-            incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis
-            nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat.
+            incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud
+            exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat.
           </p>
           <p class="text-sm text-muted">
             Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed do eiusmod tempor
-            incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis
-            nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat.
+            incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud
+            exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat.
           </p>
           <p class="text-sm text-muted">
             Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed do eiusmod tempor
-            incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis
-            nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat.
+            incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud
+            exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat.
           </p>
         </template>
         <template #footer="{ close }">
-          <Button variant="tertiary" @click="close">
-            Cancel
-          </Button>
-          <Button @click="close">
-            Confirm
-          </Button>
+          <Button variant="tertiary" @click="close"> Cancel </Button>
+          <Button @click="close"> Confirm </Button>
         </template>
       </AlertDialog>
     </div>
   </div>
 </template>
+
+<script setup lang="ts">
+import { AlertDialog, Button } from '@hareui/vue'
+import { useTemplateRef } from 'vue'
+
+const portalRef = useTemplateRef<HTMLElement>('portalRef')
+</script>

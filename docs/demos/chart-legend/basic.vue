@@ -1,3 +1,23 @@
+<template>
+  <Card
+    class="w-full max-w-[520px] rounded-2xl"
+    :ui="{ header: 'flex-row flex-wrap items-center justify-between gap-2' }"
+  >
+    <template #header>
+      <h3 class="text-base font-medium text-foreground">Support Tickets</h3>
+      <ChartLegend :series="series" />
+    </template>
+    <BarChart
+      :data="data"
+      index="day"
+      :series="series"
+      stacked
+      aria-label="Support tickets by channel"
+      :height="220"
+    />
+  </Card>
+</template>
+
 <script setup lang="ts">
 import { Card } from '@hareui/vue'
 import { BarChart, ChartLegend } from '@hareui/vue/charts'
@@ -12,13 +32,3 @@ const data = [
 
 const series = { email: { name: 'Email' }, chat: { name: 'Live chat' }, phone: { name: 'Phone' } }
 </script>
-
-<template>
-  <Card class="w-full max-w-[520px] rounded-2xl" :ui="{ header: 'flex-row flex-wrap items-center justify-between gap-2' }">
-    <template #header>
-      <h3 class="text-base font-medium text-foreground">Support Tickets</h3>
-      <ChartLegend :series="series" />
-    </template>
-    <BarChart :data="data" index="day" :series="series" stacked aria-label="Support tickets by channel" :height="220" />
-  </Card>
-</template>
