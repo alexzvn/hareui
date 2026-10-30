@@ -70,7 +70,7 @@ const selected = computed(() => modelValue.value ?? props.defaultValue ?? null)
 const root = useTemplateRef<InstanceType<typeof RadioGroupRoot>>('root')
 const isDisabled = useFieldsetDisabled(() => props.disabled)
 
-const { validation, commitValidation } = useFieldValidation({
+const { validation, invalid, commitValidation } = useFieldValidation({
   formField: props,
   value: () => selected.value,
   validate: () => props.validate,
@@ -82,8 +82,6 @@ const { validation, commitValidation } = useFieldValidation({
     modelValue.value = props.defaultValue
   },
 })
-
-const invalid = computed(() => validation.value.isInvalid)
 
 const { labelId, hasLabel, describedBy, FieldLabel, FieldDescription, FieldError } = useFieldChrome(
   {

@@ -141,7 +141,7 @@ watch(empty, (isEmpty) => {
 })
 
 const root = useTemplateRef<HTMLElement>('root')
-const { validation, commitValidation } = useFieldValidation({
+const { validation, invalid, commitValidation } = useFieldValidation({
   formField: props,
   value: () => formColor.value,
   validate: () => props.validate,
@@ -164,8 +164,6 @@ const { validation, commitValidation } = useFieldValidation({
     if (pickerCtx && !hasOwnModel.value) pickerCtx.setColor(next)
   },
 })
-
-const invalid = computed(() => validation.value.isInvalid)
 
 const onUpdateColor = (color: Color) => {
   if (empty.value) {

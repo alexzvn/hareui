@@ -94,7 +94,7 @@ const checked = computed(() => props.modelValue ?? local.value)
 const root = useTemplateRef<HTMLElement>('root')
 const isDisabled = useFieldsetDisabled(() => props.disabled)
 
-const { validation, commitValidation } = useFieldValidation({
+const { validation, invalid, commitValidation } = useFieldValidation({
   formField: props,
   value: () => checked.value,
   validate: () => props.validate,
@@ -107,8 +107,6 @@ const { validation, commitValidation } = useFieldValidation({
     emit('update:modelValue', local.value)
   },
 })
-
-const invalid = computed(() => validation.value.isInvalid)
 
 const { id, describedBy, FieldDescription, FieldError } = useFieldChrome({
   props,

@@ -364,7 +364,7 @@ const toValidationValue = (): ComboBoxValidationValue | null => {
   return { inputValue: inputValue.value, value: selection.value, selectedKey: selectedKey.value }
 }
 
-const { validation, commitValidation } = useFieldValidation<ComboBoxValidationValue>({
+const { validation, invalid, commitValidation } = useFieldValidation<ComboBoxValidationValue>({
   formField: props,
   value: toValidationValue,
   validate: () => props.validate,
@@ -378,8 +378,6 @@ const { validation, commitValidation } = useFieldValidation<ComboBoxValidationVa
     inputValue.value = props.defaultInputValue ?? resetText
   },
 })
-
-const invalid = computed(() => validation.value.isInvalid)
 
 const isNativeRequired = computed(() => {
   const isNativeBehavior = (props.validationBehavior ?? 'native') === 'native'

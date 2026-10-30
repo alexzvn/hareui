@@ -148,6 +148,8 @@ export const useFieldValidation = <T>(
 ): {
   /** The validation state to display (drives `invalid`, `aria-invalid` and FieldError). */
   validation: ComputedRef<ValidationResult>
+  /** Whether the displayed validation state is invalid. */
+  invalid: ComputedRef<boolean>
   /** Commits the current value's validation (native behavior), e.g. after a stepper press that fires no `change`. */
   commitValidation: () => void
 } => {
@@ -410,5 +412,7 @@ export const useFieldValidation = <T>(
   watch(() => options.root(), attach, { flush: 'post' })
   onBeforeUnmount(() => detach?.())
 
-  return { validation, commitValidation }
+  const invalid = computed(() => validation.value.isInvalid)
+
+  return { validation, invalid, commitValidation }
 }

@@ -162,7 +162,7 @@ const { effectiveStep, displayValue, defaultDisplayValue, formValue, commit, com
 const root = useTemplateRef<HTMLElement>('root')
 const isDisabled = useFieldsetDisabled(() => props.disabled)
 
-const { validation, commitValidation } = useFieldValidation({
+const { validation, invalid, commitValidation } = useFieldValidation({
   formField: props,
   // As in RAC: the committed number, `NaN` while empty
   value: () => formValue.value ?? Number.NaN,
@@ -173,8 +173,6 @@ const { validation, commitValidation } = useFieldValidation({
   root: () => root.value,
   onReset: reset,
 })
-
-const invalid = computed(() => validation.value.isInvalid)
 
 // Runs after Reka's blur / Enter handler, which has already applied a non-empty input
 const onCommitEmpty = (event: Event) => {

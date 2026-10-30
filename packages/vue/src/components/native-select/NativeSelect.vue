@@ -134,7 +134,7 @@ onMounted(() => {
   if (props.modelValue === undefined) local.value = initial
 })
 
-const { validation, commitValidation } = useFieldValidation({
+const { validation, invalid, commitValidation } = useFieldValidation({
   formField: props,
   value: () => current.value,
   validate: () => props.validate,
@@ -153,8 +153,6 @@ const { validation, commitValidation } = useFieldValidation({
     })
   },
 })
-
-const invalid = computed(() => validation.value.isInvalid)
 
 const { id, describedBy, FieldLabel, FieldDescription, FieldError } = useFieldChrome({
   props,

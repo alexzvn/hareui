@@ -132,7 +132,7 @@ watch(
   { flush: 'post' },
 )
 
-const { validation } = useFieldValidation({
+const { validation, invalid } = useFieldValidation({
   value: () => modelValue.value ?? '',
   validate: () => props.validate,
   invalid: () => props.invalid,
@@ -146,7 +146,6 @@ const { validation } = useFieldValidation({
 })
 
 const disabled = useFieldsetDisabled(() => props.disabled)
-const invalid = computed(() => validation.value.isInvalid)
 
 const ui = useComponentUI('inputOtp', {
   theme,

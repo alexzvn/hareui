@@ -240,7 +240,7 @@ const { effectiveStep, displayValue, defaultDisplayValue, formValue, commit, com
 const root = useTemplateRef<HTMLElement>('root')
 const isDisabled = useFieldsetDisabled(() => props.disabled)
 
-const { validation, commitValidation } = useFieldValidation({
+const { validation, invalid, commitValidation } = useFieldValidation({
   formField: props,
   value: () => formValue.value ?? Number.NaN,
   validate: () => props.validate,
@@ -250,8 +250,6 @@ const { validation, commitValidation } = useFieldValidation({
   root: () => root.value,
   onReset: reset,
 })
-
-const invalid = computed(() => validation.value.isInvalid)
 
 // The value rolls digit by digit (number-flow, as in HeroUI Pro), with the same locale and format as the spin button.
 // number-flow skips the motion under `prefers-reduced-motion`.

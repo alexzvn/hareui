@@ -87,7 +87,7 @@ const inputAttrs = computed(() => splitAttrs.value.input)
 const rootAttrs = computed(() => splitAttrs.value.root)
 
 const root = useTemplateRef<HTMLElement>('root')
-const { validation } = useFieldValidation({
+const { validation, invalid } = useFieldValidation({
   value: () => value.value ?? '',
   validate: () => props.validate,
   invalid: () => props.invalid,
@@ -100,7 +100,6 @@ const { validation } = useFieldValidation({
   },
 })
 
-const invalid = computed(() => validation.value.isInvalid)
 const disabled = useFieldsetDisabled(() => props.disabled)
 
 const focusState = shallowReactive({ isFocusWithin: false, isFocusVisible: false })

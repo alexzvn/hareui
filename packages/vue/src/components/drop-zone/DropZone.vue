@@ -152,7 +152,7 @@ const input = useTemplateRef<HTMLInputElement>('input')
 const focusTarget = useTemplateRef<HTMLButtonElement>('focusTarget')
 const isDisabled = useFieldsetDisabled(() => props.disabled)
 
-const { validation, commitValidation } = useFieldValidation({
+const { validation, invalid, commitValidation } = useFieldValidation({
   formField: props,
   value: () => files.value,
   validate: () => props.validate,
@@ -162,8 +162,6 @@ const { validation, commitValidation } = useFieldValidation({
   root: () => root.value,
   onReset: () => setFiles(props.defaultValue ?? []),
 })
-
-const invalid = computed(() => validation.value.isInvalid)
 
 const { id, labelId, descriptionId, hasLabel, hasDescription, describedBy, FieldError } =
   useFieldChrome({

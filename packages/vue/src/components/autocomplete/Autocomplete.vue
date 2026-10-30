@@ -379,7 +379,7 @@ const {
 })
 
 // ---- Validation -------------------------------------------------------------------------------------------------
-const { validation, commitValidation } = useFieldValidation<AutocompleteValue>({
+const { validation, invalid, commitValidation } = useFieldValidation<AutocompleteValue>({
   formField: props,
   value: () => selection.value,
   validate: () => props.validate,
@@ -389,8 +389,6 @@ const { validation, commitValidation } = useFieldValidation<AutocompleteValue>({
   root: () => root.value,
   onReset: reset,
 })
-
-const invalid = computed(() => validation.value.isInvalid)
 
 const isNativeRequired = computed(
   () => !!props.required && (props.validationBehavior ?? 'native') === 'native',

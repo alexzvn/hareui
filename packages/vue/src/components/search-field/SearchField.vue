@@ -123,7 +123,7 @@ if (modelValue.value === undefined && props.defaultValue !== undefined)
 const root = useTemplateRef<HTMLElement>('root')
 const input = useTemplateRef<HTMLInputElement>('input')
 
-const { validation } = useFieldValidation({
+const { validation, invalid } = useFieldValidation({
   value: () => modelValue.value ?? '',
   validate: () => props.validate,
   invalid: () => props.invalid,
@@ -136,7 +136,6 @@ const { validation } = useFieldValidation({
   },
 })
 
-const invalid = computed(() => validation.value.isInvalid)
 const disabled = useFieldsetDisabled(() => props.disabled)
 const isEmpty = computed(() => !modelValue.value)
 

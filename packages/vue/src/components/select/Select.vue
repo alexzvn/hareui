@@ -320,7 +320,7 @@ const triggerEl = () => {
   return element instanceof HTMLElement ? element : element?.$el
 }
 
-const { validation, commitValidation } = useFieldValidation<SelectValue>({
+const { validation, invalid, commitValidation } = useFieldValidation<SelectValue>({
   formField: props,
   value: () => selection.value,
   validate: () => props.validate,
@@ -330,8 +330,6 @@ const { validation, commitValidation } = useFieldValidation<SelectValue>({
   root: () => root.value,
   onReset: reset,
 })
-
-const invalid = computed(() => validation.value.isInvalid)
 
 const onListUpdate = (value: ListBoxValue | ListBoxValue[] | null | undefined) => {
   selection.value = value
