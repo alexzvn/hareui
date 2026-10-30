@@ -33,7 +33,6 @@ export const COMPONENT_GROUPS: Record<string, readonly string[]> = {
     'dashboard-sidebar-toggle',
     'dashboard-toolbar',
   ],
-  'Data Display': ['badge', 'chip', 'rich-table', 'table'],
   'Date and Time': [
     'calendar',
     'date-field',
@@ -82,7 +81,6 @@ export const COMPONENT_GROUPS: Record<string, readonly string[]> = {
     'surface',
     'toolbar',
   ],
-  Media: ['avatar', 'avatar-group'],
   Navigation: [
     'accordion',
     'breadcrumbs',
@@ -95,48 +93,11 @@ export const COMPONENT_GROUPS: Record<string, readonly string[]> = {
   ],
   Overlays: ['alert-dialog', 'drawer', 'modal', 'popover', 'toast', 'tooltip'],
   Pickers: ['autocomplete', 'combo-box', 'select'],
-  Typography: ['kbd', 'typography'],
   Utilities: ['scroll-shadow'],
 }
 
 // Pages that get a "New" badge in the sidebar. Clear entries once they stop being new.
-export const NEW_COMPONENTS: ReadonlySet<string> = new Set([
-  'app',
-  'area-chart',
-  'bar-chart',
-  'cell-color-picker',
-  'cell-select',
-  'cell-slider',
-  'cell-switch',
-  'chart-legend',
-  'chart-tooltip',
-  'checkbox-button-group',
-  'composed-chart',
-  'container',
-  'dashboard-group',
-  'dashboard-navbar',
-  'dashboard-panel',
-  'dashboard-resize-handle',
-  'dashboard-sidebar',
-  'dashboard-sidebar-collapse',
-  'dashboard-sidebar-toggle',
-  'dashboard-toolbar',
-  'drop-zone',
-  'error',
-  'footer',
-  'header',
-  'inline-select',
-  'line-chart',
-  'main',
-  'native-select',
-  'navigation-menu',
-  'number-stepper',
-  'pie-chart',
-  'radar-chart',
-  'radial-chart',
-  'radio-button-group',
-  'rich-table',
-])
+export const NEW_COMPONENTS: ReadonlySet<string> = new Set([])
 
 // Pages that get an "Updated" badge in the sidebar. Clear entries after the next release.
-export const UPDATED_COMPONENTS: ReadonlySet<string> = new Set(['form'])
+export const UPDATED_COMPONENTS: ReadonlySet<string> = new Set<string>()
