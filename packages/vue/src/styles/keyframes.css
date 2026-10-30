@@ -87,6 +87,27 @@
   }
 }
 
+/* Stepper: a step that turns complete pops its indicator and draws its check (a 22-unit stroke) */
+@theme {
+  --animate-stepper-complete: stepper-complete 300ms ease-out;
+  --animate-stepper-check: stepper-check 200ms ease-out 50ms both;
+
+  @keyframes stepper-complete {
+    50% {
+      scale: 1.15;
+    }
+  }
+
+  @keyframes stepper-check {
+    from {
+      stroke-dashoffset: 22;
+    }
+    to {
+      stroke-dashoffset: 0;
+    }
+  }
+}
+
 /* RichTable loading bar (`loadingAnimation`) */
 @theme {
   --animate-rich-table-carousel: rich-table-carousel 2s linear infinite;
