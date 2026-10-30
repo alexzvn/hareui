@@ -71,6 +71,14 @@
     "@internationalized/date": "^3.12.4",
     "d3-scale": "^4.0.0",
     "d3-shape": "^3.0.0",
+    "embla-carousel": "^8.6.0",
+    "embla-carousel-auto-height": "^8.6.0",
+    "embla-carousel-auto-scroll": "^8.6.0",
+    "embla-carousel-autoplay": "^8.6.0",
+    "embla-carousel-class-names": "^8.6.0",
+    "embla-carousel-fade": "^8.6.0",
+    "embla-carousel-vue": "^8.6.0",
+    "embla-carousel-wheel-gestures": "^8.1.0",
     "tailwindcss": "^4.3.0",
     "vite": ">=6.0.0",
     "vue": "^3.5.0"
@@ -80,6 +88,30 @@
       "optional": true
     },
     "d3-shape": {
+      "optional": true
+    },
+    "embla-carousel": {
+      "optional": true
+    },
+    "embla-carousel-auto-height": {
+      "optional": true
+    },
+    "embla-carousel-auto-scroll": {
+      "optional": true
+    },
+    "embla-carousel-autoplay": {
+      "optional": true
+    },
+    "embla-carousel-class-names": {
+      "optional": true
+    },
+    "embla-carousel-fade": {
+      "optional": true
+    },
+    "embla-carousel-vue": {
+      "optional": true
+    },
+    "embla-carousel-wheel-gestures": {
       "optional": true
     },
     "vite": {
@@ -97,6 +129,14 @@
     "axe-core": "^4.14.0",
     "d3-scale": "^4.0.2",
     "d3-shape": "^3.2.0",
+    "embla-carousel": "^8.6.0",
+    "embla-carousel-auto-height": "^8.6.0",
+    "embla-carousel-auto-scroll": "^8.6.0",
+    "embla-carousel-autoplay": "^8.6.0",
+    "embla-carousel-class-names": "^8.6.0",
+    "embla-carousel-fade": "^8.6.0",
+    "embla-carousel-vue": "^8.6.0",
+    "embla-carousel-wheel-gestures": "^8.1.0",
     "happy-dom": "^20.14.5",
     "tailwindcss": "^4.3.3",
     "tsc-alias": "^1.9.9",
