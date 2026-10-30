@@ -2,6 +2,8 @@ import { defu } from 'defu'
 import type { ComputedRef, Ref, WatchSource } from 'vue'
 import { computed, onScopeDispose, shallowReactive, toRefs, watch } from 'vue'
 
+import { prefersReducedMotion } from '@/utils/motion'
+
 /** CSS timing function a chart series animates with. */
 export type ChartEasing = 'ease' | 'ease-in' | 'ease-out' | 'ease-in-out' | 'linear'
 
@@ -83,21 +85,6 @@ const cubicBezier = ([x1, y1, x2, y2]: [number, number, number, number]): ((
 const easings: Record<ChartEasing, (t: number) => number> = Object.fromEntries(
   Object.entries(bezierPoints).map(([name, points]) => [name, cubicBezier(points)]),
 ) as Record<ChartEasing, (t: number) => number>
-
-// Called on every pointer move; cached per `matchMedia` function so a replaced (e.g. stubbed) one is respected.
-let reducedMotionSource: typeof window.matchMedia | undefined
-let reducedMotionQuery: MediaQueryList | undefined
-
-export const prefersReducedMotion = (): boolean => {
-  if (typeof window === 'undefined' || typeof window.matchMedia !== 'function') return false
-
-  if (reducedMotionSource !== window.matchMedia || !reducedMotionQuery) {
-    reducedMotionSource = window.matchMedia
-    reducedMotionQuery = window.matchMedia('(prefers-reduced-motion: reduce)')
-  }
-
-  return !!reducedMotionQuery?.matches
-}
 
 export type ChartTween<T> = {
   /** Geometry to draw this frame. */

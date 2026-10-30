@@ -2,6 +2,7 @@ import type { ComputedRef, InjectionKey, Slots, VNode } from 'vue'
 import { Comment, Fragment, h, inject } from 'vue'
 
 import type { TooltipProps } from '@/components/tooltip/Tooltip.types'
+import { resolveSlotName } from '@/utils/slotName'
 import type { ClassValue } from '@/utils/tv'
 
 import type { NavigationMenuItem, NavigationMenuProps } from './NavigationMenu.types'
@@ -62,17 +63,6 @@ export const useNavigationMenu = (): NavigationMenuContext => {
   return context
 }
 
-/** Reads a (possibly dotted) path from an item (dotted-path getter). */
-export const get = (item: unknown, path: string): unknown => {
-  let value: unknown = item
-  for (const key of path.split('.')) {
-    if (value === null || typeof value !== 'object') return undefined
-    value = (value as Record<string, unknown>)[key]
-  }
-
-  return value
-}
-
 // Comments are empty; fragments count when any child has content.
 const isContentNode = (node: VNode): boolean => {
   if (node.type === Comment) return false
@@ -85,14 +75,11 @@ const hasContent = (nodes: VNode[] | undefined): boolean => {
   return !!nodes?.some(isContentNode)
 }
 
-/** Slot names an item resolves to: its own `slot` field, falling back to the generic one. */
+/** Slot names an item resolves to: its own `slot` field, falling back to the generic `item`. */
 export const slotName = (
   item: NavigationMenuItem,
   suffix: '' | 'leading' | 'label' | 'trailing' | 'content' | 'actions',
-): string => {
-  const base = item.slot || 'item'
-  return suffix ? `${base}-${suffix}` : base
-}
+): string => resolveSlotName({ slot: item.slot, suffix })
 
 /**
  * Renders a named slot of the root `NavigationMenu` with this component's default slot as the

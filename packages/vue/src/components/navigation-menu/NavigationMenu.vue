@@ -64,10 +64,12 @@ import {
 } from 'reka-ui'
 import { computed, onBeforeUnmount, provide, useSlots } from 'vue'
 
+import { toGroups } from '@/components/dropdown/dropdown.utils'
 import type { TooltipProps } from '@/components/tooltip/Tooltip.types'
 import { useComponentUI } from '@/composables/useComponentUI'
+import { get } from '@/utils/get'
 
-import { get, navigationMenuKey } from './context'
+import { navigationMenuKey } from './context'
 import type { NavigationMenuItemPosition } from './context'
 import type {
   NavigationMenuItem,
@@ -148,14 +150,7 @@ const popoverProps = computed<NavigationMenuPopoverProps>(() => ({
   ...(typeof props.popover === 'object' ? props.popover : {}),
 }))
 
-const lists = computed<NavigationMenuItem[][]>(() => {
-  const items = props.items
-  if (!items?.length) return []
-
-  return Array.isArray(items[0])
-    ? (items as NavigationMenuItem[][])
-    : [items as NavigationMenuItem[]]
-})
+const lists = computed(() => toGroups<NavigationMenuItem>(props.items ?? []))
 
 const getLabel = (item: NavigationMenuItem) => {
   return get(item, props.labelKey) as string | undefined

@@ -1,6 +1,8 @@
 import type { Component, FunctionalComponent, HTMLAttributes } from 'vue'
 import { h, isVNode } from 'vue'
 
+import { createSvgIcon } from '@/utils/icon'
+
 type IconClass = HTMLAttributes['class']
 
 const CHEVRON_RIGHT =
@@ -17,52 +19,11 @@ const EXTERNAL =
 const ELLIPSIS_VERTICAL =
   'M8 4.5a1.5 1.5 0 1 0 0-3 1.5 1.5 0 0 0 0 3M9.5 8a1.5 1.5 0 1 1-3 0 1.5 1.5 0 0 1 3 0m0 5a1.5 1.5 0 1 1-3 0 1.5 1.5 0 0 1 3 0'
 
-type SvgIconOptions = {
-  viewBox: string
-  d: string
-  /** Fill with the even-odd rule (glyphs with cut-outs). */
-  isEvenOdd?: boolean
-}
+export const ChevronRightIcon = createSvgIcon({ d: CHEVRON_RIGHT })
+export const ChevronDownIcon = createSvgIcon({ d: CHEVRON_DOWN })
+export const ExternalIcon = createSvgIcon({ viewBox: '0 0 7 7', d: EXTERNAL, isEvenOdd: false })
 
-const svg = ({
-  viewBox,
-  d,
-  isEvenOdd = false,
-}: SvgIconOptions): FunctionalComponent<{ class?: IconClass }> => {
-  const icon: FunctionalComponent<{ class?: IconClass }> = (props) =>
-    h(
-      'svg',
-      {
-        'aria-hidden': 'true',
-        fill: 'none',
-        role: 'presentation',
-        viewBox: viewBox,
-        xmlns: 'http://www.w3.org/2000/svg',
-        class: props.class,
-      },
-      [
-        h('path', {
-          d: d,
-          fill: 'currentColor',
-          ...(isEvenOdd ? { 'clip-rule': 'evenodd', 'fill-rule': 'evenodd' } : {}),
-        }),
-      ],
-    )
-
-  icon.props = ['class']
-
-  return icon
-}
-
-export const ChevronRightIcon = svg({ viewBox: '0 0 16 16', d: CHEVRON_RIGHT, isEvenOdd: true })
-export const ChevronDownIcon = svg({ viewBox: '0 0 16 16', d: CHEVRON_DOWN, isEvenOdd: true })
-export const ExternalIcon = svg({ viewBox: '0 0 7 7', d: EXTERNAL })
-
-export const EllipsisVerticalIcon = svg({
-  viewBox: '0 0 16 16',
-  d: ELLIPSIS_VERTICAL,
-  isEvenOdd: true,
-})
+export const EllipsisVerticalIcon = createSvgIcon({ d: ELLIPSIS_VERTICAL })
 
 /**
  * Renders an item icon. A string is applied as a class on an empty `<span>` (icon-font / CSS-mask

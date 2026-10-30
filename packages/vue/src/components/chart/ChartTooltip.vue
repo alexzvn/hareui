@@ -57,8 +57,8 @@ import {
 } from 'vue'
 
 import ChartTooltipContent from '@/components/chart-tooltip/ChartTooltipContent.vue'
+import { prefersReducedMotion } from '@/utils/motion'
 
-import { prefersReducedMotion } from './animation'
 import { cartesianContextKey } from './cartesian'
 import ChartLayer from './ChartLayer.vue'
 import type {

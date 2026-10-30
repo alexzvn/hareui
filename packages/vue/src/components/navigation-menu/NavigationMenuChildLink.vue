@@ -122,7 +122,9 @@
 <script setup lang="ts">
 import { NavigationMenuLink } from 'reka-ui'
 
-import { get, useNavigationMenu } from './context'
+import { get } from '@/utils/get'
+
+import { useNavigationMenu } from './context'
 import { ExternalIcon, NavigationMenuIcon } from './icons'
 import LinkResolver from './LinkResolver'
 import type { NavigationMenuChildItem, NavigationMenuItem } from './NavigationMenu.types'

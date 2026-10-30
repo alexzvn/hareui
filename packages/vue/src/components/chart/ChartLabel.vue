@@ -22,6 +22,8 @@
 <script setup lang="ts">
 import { computed } from 'vue'
 
+import { toText } from '@/utils/text'
+
 import type { ChartLabelProps, ChartLabelSlotProps, ChartLabelSlots } from './ChartLabel.types'
 import ChartLayer from './ChartLayer.vue'
 import { useChartContext } from './context'
@@ -35,7 +37,7 @@ const source = useChartLabelSource()
 
 const format = (value: number | string | undefined, index: number) => {
   if (props.formatter) return props.formatter(value, index)
-  return value === undefined || value === null ? '' : String(value)
+  return toText(value)
 }
 
 const labels = computed<ChartLabelSlotProps[]>(() => {

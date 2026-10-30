@@ -1,5 +1,7 @@
 // Internal: where ListBox's own navigation keys move focus, over the enabled option elements in DOM order.
 
+import { getScrollParent } from '@/utils/scrollParent'
+
 type PageTargetOptions = {
   options: HTMLElement[]
   /** The focused option the page is measured from. */
@@ -14,22 +16,6 @@ type RangeTargetContext = {
   focused: HTMLElement | undefined
   /** Position of `focused` in `options`, `-1` when there is none. */
   index: number
-}
-
-const isScrollable = (el: HTMLElement) => {
-  const overflow = getComputedStyle(el).overflowY
-  const isOverflowing = el.scrollHeight > el.clientHeight
-
-  return isOverflowing && (overflow === 'auto' || overflow === 'scroll')
-}
-
-/** The nearest scrolling element from `el` up, below `document.body`. */
-const getScrollParent = (el: HTMLElement | null): HTMLElement | undefined => {
-  for (let node = el; node && node !== document.body; node = node.parentElement) {
-    if (isScrollable(node)) return node
-  }
-
-  return undefined
 }
 
 /**
