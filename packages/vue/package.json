@@ -87,6 +87,7 @@
     "embla-carousel-fade": "^8.6.0",
     "embla-carousel-vue": "^8.6.0",
     "embla-carousel-wheel-gestures": "^8.1.0",
+    "fuse.js": "^7.5.0",
     "shiki": "^4.5.0",
     "tailwindcss": "^4.3.0",
     "vite": ">=6.0.0",
@@ -123,6 +124,9 @@
     "embla-carousel-wheel-gestures": {
       "optional": true
     },
+    "fuse.js": {
+      "optional": true
+    },
     "shiki": {
       "optional": true
     },
@@ -149,6 +153,7 @@
     "embla-carousel-fade": "^8.6.0",
     "embla-carousel-vue": "^8.6.0",
     "embla-carousel-wheel-gestures": "^8.1.0",
+    "fuse.js": "^7.5.0",
     "happy-dom": "^20.14.5",
     "shiki": "^4.5.0",
     "tailwindcss": "^4.3.3",
