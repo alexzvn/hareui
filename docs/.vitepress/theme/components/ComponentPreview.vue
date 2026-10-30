@@ -122,7 +122,7 @@
                       --shiki-dark-bg: #24292e;
                     "
                     tabindex="0"
-                  ><code v-if="codeHtml" v-html="codeHtml" /><code v-else><span v-for="(line, i) in source?.split('\n')" :key="i" class="line">{{ line }}</span></code></pre>
+                  ><code v-html="codeHtml ?? plainHtml" /></pre>
                 </div>
               </figure>
             </div>
@@ -152,6 +152,7 @@ import {
   markRaw,
   onBeforeUnmount,
   onMounted,
+  onServerPrefetch,
   provide,
   ref,
   shallowReactive,
@@ -165,7 +166,13 @@ import buttonTheme from '../../../../packages/vue/src/components/button/theme'
 import { tv } from '../../../../packages/vue/src/utils/tv'
 import { flashCopied } from '../composables/useDocInteractions'
 import { DESIGN_ATTRIBUTES, useDocTheme } from '../composables/useDocTheme'
-import { demoLoader, demoPreviewPath, previewOverlayTheme, type PreviewTheme } from '../demos'
+import {
+  demoLoader,
+  demoPreviewPath,
+  demoSourceLoader,
+  previewOverlayTheme,
+  type PreviewTheme,
+} from '../demos'
 import DevicePreview from './DevicePreview.vue'
 import PreviewResizeHandle from './PreviewResizeHandle.vue'
 import PreviewToolbar, { type PreviewDevice } from './PreviewToolbar.vue'
@@ -334,13 +341,24 @@ const claimOverlays = () => {
   previewOverlayTheme.value = isOverlayScoped.value ? theme.value : undefined
 }
 
-const sources = import.meta.glob<string>('../../../demos/**/*.vue', {
-  query: '?raw',
-  import: 'default',
-  eager: true,
-})
+// Only this demo's source is fetched: during SSR for the plain listing, then on mount for highlighting and copy.
+// The client's first render leaves the server's listing in place (`v-html` children aren't hydrated).
+const source = shallowRef<string>()
+const loadSource = async () => {
+  source.value ??= await demoSourceLoader(props.name)?.()
+}
 
-const source = computed(() => sources[`../../../demos/${props.name}.vue`])
+onServerPrefetch(loadSource)
+
+const escapeHtml = (text: string) =>
+  text.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;')
+
+const plainHtml = computed(() =>
+  source.value
+    ?.split('\n')
+    .map((line) => `<span class="line">${escapeHtml(line)}</span>`)
+    .join(''),
+)
 
 if (import.meta.env.SSR && !demoLoader(props.name)) {
   throw new Error(`ComponentPreview: demo not found: docs/demos/${props.name}.vue`)
@@ -371,6 +389,7 @@ const highlight = (name: string, code: string): Promise<string> => {
 
 const codeHtml = shallowRef<string>()
 onMounted(async () => {
+  await loadSource()
   if (!source.value) return
   const html = await highlight(props.name, source.value)
   codeHtml.value = html.match(/<code[^>]*>([\s\S]*)<\/code>/)?.[1]
