@@ -12,6 +12,7 @@ const entries = {
   'index.ts': '@hareui/vue',
   'charts.ts': '@hareui/vue/charts',
   'carousel.ts': '@hareui/vue/carousel',
+  'code-block.ts': '@hareui/vue/code-block',
 }
 
 /**

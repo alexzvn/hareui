@@ -10,7 +10,13 @@ export default defineConfig({
   resolve: { alias: { '@': fileURLToPath(new URL('./src', import.meta.url)) } },
   build: {
     lib: {
-      entry: ['src/index.ts', 'src/charts.ts', 'src/carousel.ts', 'src/vite.ts'],
+      entry: [
+        'src/index.ts',
+        'src/charts.ts',
+        'src/carousel.ts',
+        'src/code-block.ts',
+        'src/vite.ts',
+      ],
       formats: ['es'],
     },
     emptyOutDir: true,

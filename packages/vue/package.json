@@ -49,6 +49,10 @@
       "types": "./dist/carousel.d.ts",
       "import": "./dist/carousel.js"
     },
+    "./code-block": {
+      "types": "./dist/code-block.d.ts",
+      "import": "./dist/code-block.js"
+    },
     "./vite": {
       "types": "./dist/vite.d.ts",
       "import": "./dist/vite.js"
