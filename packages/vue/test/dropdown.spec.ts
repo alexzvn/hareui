@@ -1,4 +1,5 @@
 import { mount } from '@vue/test-utils'
+import { DropdownMenuSubContent } from 'reka-ui'
 import { afterEach, describe, expect, it, vi } from 'vitest'
 import { h, nextTick } from 'vue'
 
@@ -6,6 +7,7 @@ import type { DropdownEntry } from '@/components/dropdown/Dropdown.types'
 import Dropdown from '@/components/dropdown/Dropdown.vue'
 
 import { expectAccessible } from './a11y'
+import { settle } from './settle'
 
 const fruits: DropdownEntry[] = [
   { value: 'apple', label: 'Apple' },
@@ -36,10 +38,6 @@ const item = (label: string) =>
   )!
 
 const menuOpen = () => document.querySelector('[data-slot=dropdown-popover]') !== null
-
-const settle = async () => {
-  for (let i = 0; i < 4; i++) await nextTick()
-}
 
 const press = (el: HTMLElement, key: 'Enter' | ' ') => {
   el.focus()
@@ -256,6 +254,13 @@ describe('dropdown keyboard navigation', () => {
     expect(document.activeElement).toBe(item('Email'))
     key(item('Email'), 'ArrowUp')
     expect(document.activeElement).toBe(item('Messages'))
+  })
+
+  it('opens a submenu 8px beside its parent menu', async () => {
+    const w = open({ items: submenuItems })
+    await settle()
+    await openSubmenu('Share')
+    expect(w.findComponent(DropdownMenuSubContent).props('sideOffset')).toBe(8)
   })
 
   it('ArrowUp on the focused trigger opens the menu with the last item focused', async () => {

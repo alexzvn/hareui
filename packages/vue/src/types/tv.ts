@@ -44,9 +44,20 @@ export type SlotClasses = {
   override?: ClassValue
 }
 
-/** The resolved theme: one function per slot returning its class string, layered with the `ui` / `class` props. */
+/** A variant's value as a slot call accepts it: one of its keys, or a boolean for a `true` / `false` variant. */
+type SlotVariantValue<V> = keyof V | ('true' extends keyof V ? boolean : never)
+
+/** The per-call variant values a slot function accepts, e.g. `{ active?: boolean; size?: 'sm' | 'md' }`. */
+export type SlotVariants<T extends ThemeShape> = {
+  [K in keyof T['variants']]?: SlotVariantValue<T['variants'][K]>
+}
+
+/**
+ * The resolved theme: one function per slot returning its class string, layered with the `ui` / `class` props.
+ * Keys besides `class` / `override` are per-call variant values of the theme (e.g. a list item's own `variant`).
+ */
 export type ComponentUI<T extends ThemeShape> = {
-  [K in keyof T['slots']]: (classes?: SlotClasses) => string
+  [K in keyof T['slots']]: (classes?: SlotClasses & SlotVariants<T>) => string
 }
 
 /**

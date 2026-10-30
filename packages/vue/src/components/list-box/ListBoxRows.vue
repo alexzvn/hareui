@@ -105,12 +105,13 @@ import { ListboxGroup, ListboxGroupLabel, ListboxVirtualizer } from 'reka-ui'
 import type { Component, VNode } from 'vue'
 import { computed, onBeforeUnmount, ref, useTemplateRef, watch } from 'vue'
 
-import type { ClassValue } from '@/utils/tv'
+import type { ComponentUI } from '@/types/tv'
 
 import type { ListBoxItemSlotProps, ListBoxSection, ListBoxValue } from './ListBox.types'
 import type { CollectionBlock, CollectionRow } from './listBoxCollection'
 import { countRows } from './listBoxCollection'
 import ListBoxOption from './ListBoxOption.vue'
+import type theme from './theme'
 
 const props = defineProps<{
   blocks: CollectionBlock[]
@@ -118,9 +119,9 @@ const props = defineProps<{
   selectionMode: 'single' | 'multiple'
   disabled?: boolean
   /** Slot class functions of the listBox theme. */
-  classes: Record<
-    'item' | 'indicator' | 'section' | 'header' | 'separator' | 'emptyState',
-    (options?: { variant?: string; override?: ClassValue }) => string
+  classes: Pick<
+    ComponentUI<typeof theme>,
+    'item' | 'indicator' | 'section' | 'header' | 'separator' | 'emptyState'
   >
   /** Reka item primitive (ComboBox: `ComboboxItem`). */
   component?: Component

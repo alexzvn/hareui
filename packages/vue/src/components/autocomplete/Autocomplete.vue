@@ -563,9 +563,7 @@ const listBoxUi = useComponentUI('listBox', {
 })
 
 const valueIndicatorClass = (item: ListBoxItem) => {
-  return (listBoxUi.value.indicator as (options?: { variant?: string }) => string)({
-    variant: item.variant,
-  })
+  return listBoxUi.value.indicator({ variant: item.variant })
 }
 
 const rowSlots = [

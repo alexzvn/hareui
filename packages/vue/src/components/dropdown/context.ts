@@ -1,7 +1,7 @@
 import type { InjectionKey, Slots } from 'vue'
 
 import type { ResolvedPortal } from '@/composables/usePortal'
-import type { ClassValue } from '@/utils/tv'
+import type { ComponentUI } from '@/types/tv'
 
 import type {
   DropdownItem,
@@ -9,6 +9,7 @@ import type {
   DropdownSection,
   DropdownValue,
 } from './Dropdown.types'
+import type theme from './theme'
 
 /** One selection scope: the menu itself, or a section with its own `selectionMode` (RAC's `GroupSelectionManager`). */
 export type DropdownSelectionGroup = {
@@ -20,15 +21,19 @@ export type DropdownSelectionGroup = {
 
 export type DropdownContext = {
   /** Slot class functions of the Dropdown theme, its `ui` prop layered in; `variant` is applied per item. */
-  classes: () => Record<
-    string,
-    (options?: { variant?: string; class?: ClassValue; override?: ClassValue }) => string
-  >
+  classes: () => ComponentUI<typeof theme>
   /** Item label / description classes, resolved once per menu instead of mounting Label / Description per item. */
   labelClass: (disabled?: boolean) => string
   descriptionClass: () => string
   /** Resolved portal of the root menu; submenus portal to the same target. */
   portal: () => ResolvedPortal
+  /** Distance in pixels between a submenu and its parent menu; a negative value overlaps the parent. */
+  submenuSideOffset: number
+  /**
+   * Whether a submenu with no room beside its parent menu (on a phone) opens below its trigger row, so the
+   * row stays visible instead of being covered.
+   */
+  submenuClearsTrigger?: boolean
   /** The Dropdown's slots, rendered by the menu internals for whatever item type the Dropdown was given. */
   slots: Slots
   rootGroup: () => DropdownSelectionGroup

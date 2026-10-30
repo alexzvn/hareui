@@ -37,20 +37,22 @@
     <DropdownMenuSub
       v-else-if="hasSubmenu(entry)"
       :open="openSubmenu === entry.value"
-      @update:open="
-        openSubmenu = $event ? entry.value : openSubmenu === entry.value ? null : openSubmenu
-      "
+      @update:open="setSubmenuOpen(entry.value, $event)"
     >
-      <DropdownMenuOption :item="entry" :group="group" submenu />
+      <DropdownMenuOption
+        :ref="(instance) => trackTrigger(entry.value, instance)"
+        :item="entry"
+        :group="group"
+        submenu
+      />
       <DropdownMenuPortal :disabled="ctx.portal().disabled" :to="ctx.portal().to">
-        <!-- RAC submenu popover: placement "end top", offset 8, 12px container padding -->
+        <!-- RAC submenu popover: placement "end top", 12px container padding; the root menu sets the offset -->
         <DropdownMenuSubContent
-          :ref="
-            (instance) => setSubmenuContent(entry.value, instance as ComponentPublicInstance | null)
-          "
+          :ref="(instance) => trackContent(entry.value, instance)"
           loop
-          :side-offset="8"
-          :collision-padding="12"
+          :side-offset="ctx.submenuSideOffset"
+          :align-offset="openSubmenu === entry.value ? submenuAlignOffset : 0"
+          :collision-padding="COLLISION_PADDING"
           data-slot="dropdown-popover"
           :class="ctx.classes().popover!()"
           @interact-outside="preventNestedLayerDismiss($event, submenuContents.get(entry.value))"
@@ -84,12 +86,8 @@ import { preventNestedLayerDismiss } from '@/composables/nestedLayer'
 
 import type { DropdownSelectionGroup } from './context'
 import { dropdownContextKey } from './context'
-import type {
-  DropdownEntry,
-  DropdownItem,
-  DropdownSection,
-  DropdownSeparator,
-} from './Dropdown.types'
+import type { DropdownEntry, DropdownItem } from './Dropdown.types'
+import { isSection, isSeparator } from './dropdown.utils'
 import DropdownMenuOption from './DropdownMenuOption.vue'
 
 defineProps<{
@@ -99,12 +97,6 @@ defineProps<{
 
 const ctx = inject(dropdownContextKey)!
 const baseId = useId(undefined, 'hareui-dropdown-section')
-
-const isSeparator = (entry: DropdownEntry): entry is DropdownSeparator =>
-  (entry as DropdownSeparator).type === 'separator'
-
-const isSection = (entry: DropdownEntry): entry is DropdownSection =>
-  (entry as DropdownSection).type === 'section'
 
 const hasSubmenu = (entry: DropdownEntry): entry is DropdownItem & { items: DropdownEntry[] } =>
   !!(entry as DropdownItem).items?.length
@@ -120,18 +112,53 @@ const submenuGroup: DropdownSelectionGroup = {
 // The open submenu of this level (one at a time, as in RAC's `SubmenuTriggerState`).
 const openSubmenu = ref<DropdownItem['value'] | null>(null)
 
-// Mounted submenu contents by item value, for the nested-layer guard.
+// Mounted submenu triggers and contents by item value: the triggers to measure the room beside their
+// menu, the contents for the nested-layer guard.
+const submenuTriggers = new Map<DropdownItem['value'], Element>()
 const submenuContents = new Map<DropdownItem['value'], Element>()
-const setSubmenuContent = (
-  value: DropdownItem['value'],
-  instance: Element | ComponentPublicInstance | null,
-) => {
-  if (instance && '$el' in instance) {
-    submenuContents.set(value, instance.$el)
+
+const track =
+  (elements: Map<DropdownItem['value'], Element>) =>
+  (value: DropdownItem['value'], instance: Element | ComponentPublicInstance | null) => {
+    if (instance && '$el' in instance) {
+      elements.set(value, instance.$el)
+      return
+    }
+
+    elements.delete(value)
+  }
+
+const trackTrigger = track(submenuTriggers)
+const trackContent = track(submenuContents)
+
+// RAC submenu popover: 12px container padding
+const COLLISION_PADDING = 12
+
+// How far the open submenu moves down from its trigger row's top: the row's height when it fits on
+// neither side of its menu and `submenuClearsTrigger` is set, or 0.
+const submenuAlignOffset = ref(0)
+
+const clearingOffset = (trigger: Element | undefined): number => {
+  const menu = trigger?.closest('[role=menu]')
+  if (!ctx.submenuClearsTrigger || !trigger || !menu) return 0
+
+  // The submenu has at least its parent menu's width
+  const row = trigger.getBoundingClientRect()
+  const needed = menu.getBoundingClientRect().width + ctx.submenuSideOffset + COLLISION_PADDING
+  const hasRoom = row.right + needed <= window.innerWidth || row.left - needed >= 0
+
+  return hasRoom ? 0 : row.height
+}
+
+const setSubmenuOpen = (value: DropdownItem['value'], open: boolean) => {
+  if (open) {
+    submenuAlignOffset.value = clearingOffset(submenuTriggers.get(value))
+    openSubmenu.value = value
+
     return
   }
 
-  submenuContents.delete(value)
+  if (openSubmenu.value === value) openSubmenu.value = null
 }
 
 // Reka closes the whole menu on Escape inside a submenu; RAC closes only that submenu and refocuses

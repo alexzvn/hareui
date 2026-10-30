@@ -85,9 +85,10 @@ import { computed, inject, onMounted, onUpdated, shallowReactive, useId, useTemp
 import Description from '@/components/description/Description.vue'
 import Label from '@/components/label/Label.vue'
 import { keyboardModalityKey } from '@/composables/useKeyboardModality'
-import type { ClassValue } from '@/utils/tv'
+import type { ComponentUI } from '@/types/tv'
 
 import type { ListBoxItem, ListBoxItemSlotProps, ListBoxSlots, ListBoxValue } from './ListBox.types'
+import type theme from './theme'
 
 const props = defineProps<{
   item: ListBoxItem
@@ -98,10 +99,7 @@ const props = defineProps<{
   indicator: boolean
   listDisabled: boolean
   /** Slot class functions of the parent ListBox (its `ui` prop layered in); `variant` is applied per item. */
-  classes: Record<
-    'item' | 'indicator',
-    (options?: { variant?: string; override?: ClassValue }) => string
-  >
+  classes: Pick<ComponentUI<typeof theme>, 'item' | 'indicator'>
   /** The Reka item primitive to render (ComboBox passes `ComboboxItem`). */
   component?: Component
   /**
