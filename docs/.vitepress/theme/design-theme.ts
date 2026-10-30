@@ -18,13 +18,16 @@ export const DESIGN_THEME_IDS = [
 
 export type DesignThemeId = (typeof DESIGN_THEME_IDS)[number]
 
-export const DEFAULT_DESIGN_THEME: DesignThemeId = 'default'
-export const DESIGN_THEME_STORAGE_KEY = 'heroui-docs-design-theme'
+const DEFAULT_DESIGN_THEME: DesignThemeId = 'default'
+const DESIGN_THEME_STORAGE_KEY = 'heroui-docs-design-theme'
 export const DESIGN_THEME_CHANGE_EVENT = 'heroui-docs-design-theme-change'
-export const VIBRANT_STORAGE_KEY = 'heroui-docs-vibrant-palette'
+const VIBRANT_STORAGE_KEY = 'heroui-docs-vibrant-palette'
 
 /** Accent base values per preset; used for the "Edit theme" link query like HeroUI's `themeValuesById`. */
-export const DESIGN_THEME_VALUES: Record<DesignThemeId, { lightness: number; chroma: number; hue: number }> = {
+export const DESIGN_THEME_VALUES: Record<
+  DesignThemeId,
+  { lightness: number; chroma: number; hue: number }
+> = {
   default: { lightness: 0.6204, chroma: 0.195, hue: 253.83 },
   sky: { lightness: 0.78, chroma: 0.16, hue: 225 },
   lavender: { lightness: 0.77, chroma: 0.13, hue: 305 },
@@ -39,35 +42,42 @@ export const DESIGN_THEME_VALUES: Record<DesignThemeId, { lightness: number; chr
   kumo: { lightness: 0.5772, chroma: 0.2324, hue: 260 },
 }
 
-export function isDesignThemeId(value: string | null | undefined): value is DesignThemeId {
+const isDesignThemeId = (value: string | null | undefined): value is DesignThemeId => {
   return (DESIGN_THEME_IDS as readonly string[]).includes(value ?? '')
 }
 
-export function getStoredDesignTheme(): DesignThemeId {
+export const getStoredDesignTheme = (): DesignThemeId => {
   const stored = localStorage.getItem(DESIGN_THEME_STORAGE_KEY)
   return isDesignThemeId(stored) ? stored : DEFAULT_DESIGN_THEME
 }
 
-export function getStoredVibrantPalette(): boolean {
+export const getStoredVibrantPalette = (): boolean => {
   return localStorage.getItem(VIBRANT_STORAGE_KEY) === 'true'
 }
 
-function notifyDesignThemeChange(themeId: DesignThemeId) {
+const notifyDesignThemeChange = (themeId: DesignThemeId) => {
   window.dispatchEvent(new CustomEvent(DESIGN_THEME_CHANGE_EVENT, { detail: { themeId } }))
 }
 
-export function setStoredDesignTheme(themeId: DesignThemeId) {
+/** Sets `name` on `<html>`, or removes it when `value` is `null`. */
+const setRootAttribute = (name: string, value: string | null) => {
   const root = document.documentElement
+  if (value === null) {
+    root.removeAttribute(name)
+    return
+  }
+
+  root.setAttribute(name, value)
+}
+
+export const setStoredDesignTheme = (themeId: DesignThemeId) => {
   localStorage.setItem(DESIGN_THEME_STORAGE_KEY, themeId)
-  if (themeId === DEFAULT_DESIGN_THEME) root.removeAttribute('data-design-theme')
-  else root.setAttribute('data-design-theme', themeId)
+  setRootAttribute('data-design-theme', themeId === DEFAULT_DESIGN_THEME ? null : themeId)
   notifyDesignThemeChange(themeId)
 }
 
-export function setStoredVibrantPalette(enabled: boolean) {
-  const root = document.documentElement
+export const setStoredVibrantPalette = (enabled: boolean) => {
   localStorage.setItem(VIBRANT_STORAGE_KEY, String(enabled))
-  if (enabled) root.setAttribute('data-vibrant-palette', 'true')
-  else root.removeAttribute('data-vibrant-palette')
+  setRootAttribute('data-vibrant-palette', enabled ? 'true' : null)
   notifyDesignThemeChange(getStoredDesignTheme())
 }

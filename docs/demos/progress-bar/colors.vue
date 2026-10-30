@@ -1,7 +1,3 @@
-<script setup lang="ts">
-import { ProgressBar } from '@hareui/vue'
-</script>
-
 <template>
   <div class="flex w-64 flex-col gap-6">
     <ProgressBar aria-label="Default" color="default" label="Default" :value="50" />
@@ -11,3 +7,7 @@ import { ProgressBar } from '@hareui/vue'
     <ProgressBar aria-label="Danger" color="danger" label="Danger" :value="50" />
   </div>
 </template>
+
+<script setup lang="ts">
+import { ProgressBar } from '@hareui/vue'
+</script>

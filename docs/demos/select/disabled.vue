@@ -1,3 +1,25 @@
+<template>
+  <div class="flex flex-col gap-4">
+    <Select
+      disabled
+      class="w-[256px]"
+      default-value="california"
+      label="State"
+      placeholder="Select one"
+      :items="states"
+    />
+    <Select
+      disabled
+      class="w-[256px]"
+      label="Countries to Visit"
+      placeholder="Select countries"
+      selection-mode="multiple"
+      :default-value="['argentina', 'japan', 'france']"
+      :items="countries"
+    />
+  </div>
+</template>
+
 <script setup lang="ts">
 import type { ListBoxItem } from '@hareui/vue'
 import { Select } from '@hareui/vue'
@@ -10,6 +32,7 @@ const states: ListBoxItem[] = [
   { value: 'new-york', label: 'New York' },
   { value: 'washington', label: 'Washington' },
 ]
+
 const countries: ListBoxItem[] = [
   { value: 'argentina', label: 'Argentina' },
   { value: 'venezuela', label: 'Venezuela' },
@@ -19,18 +42,3 @@ const countries: ListBoxItem[] = [
   { value: 'spain', label: 'Spain' },
 ]
 </script>
-
-<template>
-  <div class="flex flex-col gap-4">
-    <Select disabled class="w-[256px]" default-value="california" label="State" placeholder="Select one" :items="states" />
-    <Select
-      disabled
-      class="w-[256px]"
-      label="Countries to Visit"
-      placeholder="Select countries"
-      selection-mode="multiple"
-      :default-value="['argentina', 'japan', 'france']"
-      :items="countries"
-    />
-  </div>
-</template>

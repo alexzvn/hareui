@@ -1,70 +1,78 @@
 import { flushPromises, mount } from '@vue/test-utils'
 import { describe, expect, it } from 'vitest'
+import type { VNode } from 'vue'
 import { h, nextTick, ref } from 'vue'
-import ChartArea from '../src/components/chart/ChartArea.vue'
-import ChartBar from '../src/components/chart/ChartBar.vue'
-import ChartLine from '../src/components/chart/ChartLine.vue'
-import ChartTooltip from '../src/components/chart/ChartTooltip.vue'
-import ChartXAxis from '../src/components/chart/ChartXAxis.vue'
-import ChartYAxis from '../src/components/chart/ChartYAxis.vue'
-import ComposedChart from '../src/components/composed-chart/ComposedChart.vue'
+
+import ChartArea from '@/components/chart/ChartArea.vue'
+import ChartBar from '@/components/chart/ChartBar.vue'
+import ChartLine from '@/components/chart/ChartLine.vue'
+import ChartTooltip from '@/components/chart/ChartTooltip.vue'
+import ChartXAxis from '@/components/chart/ChartXAxis.vue'
+import ChartYAxis from '@/components/chart/ChartYAxis.vue'
+import ComposedChart from '@/components/composed-chart/ComposedChart.vue'
+
 import { expectAccessible } from './a11y'
 
 const WIDTH = 400
 const HEIGHT = 200
 const margin = { top: 0, right: 0, bottom: 0, left: 0 }
 
+/** Per SVG path command: numbers per point, and the offsets of the end point's x / y in each point. */
+const PATH_COMMANDS: Partial<Record<string, { stride: number; x?: number; y?: number }>> = {
+  M: { stride: 2, x: 0, y: 1 },
+  L: { stride: 2, x: 0, y: 1 },
+  H: { stride: 1, x: 0 },
+  V: { stride: 1, y: 0 },
+  A: { stride: 7, x: 5, y: 6 },
+}
+
 /** Bounding box of an SVG path made of M/L/H/V/A/Z commands (absolute or relative). */
-function bbox(d: string) {
+const bbox = (d: string) => {
   const xs: number[] = []
   const ys: number[] = []
   let x = 0
   let y = 0
   for (const [, cmd, args] of d.matchAll(/([MLHVAZmlhvaz])([^MLHVAZmlhvaz]*)/g)) {
+    const command = PATH_COMMANDS[cmd.toUpperCase()]
+    if (!command) continue
+
     const n = (args.match(/-?\d*\.?\d+(?:e-?\d+)?/g) ?? []).map(Number)
-    const rel = cmd === cmd.toLowerCase()
-    switch (cmd.toUpperCase()) {
-      case 'M':
-      case 'L':
-        for (let i = 0; i < n.length; i += 2) {
-          x = rel ? x + n[i] : n[i]
-          y = rel ? y + n[i + 1] : n[i + 1]
-          xs.push(x)
-          ys.push(y)
-        }
-        break
-      case 'H':
-        for (const v of n) {
-          x = rel ? x + v : v
-          xs.push(x)
-        }
-        break
-      case 'V':
-        for (const v of n) {
-          y = rel ? y + v : v
-          ys.push(y)
-        }
-        break
-      case 'A':
-        for (let i = 0; i < n.length; i += 7) {
-          x = rel ? x + n[i + 5] : n[i + 5]
-          y = rel ? y + n[i + 6] : n[i + 6]
-          xs.push(x)
-          ys.push(y)
-        }
-        break
+    const isRelative = cmd === cmd.toLowerCase()
+    for (let i = 0; i < n.length; i += command.stride) {
+      if (command.x !== undefined) {
+        x = isRelative ? x + n[i + command.x] : n[i + command.x]
+        xs.push(x)
+      }
+
+      if (command.y !== undefined) {
+        y = isRelative ? y + n[i + command.y] : n[i + command.y]
+        ys.push(y)
+      }
     }
   }
-  return { x: Math.min(...xs), y: Math.min(...ys), width: Math.max(...xs) - Math.min(...xs), height: Math.max(...ys) - Math.min(...ys) }
+
+  return {
+    x: Math.min(...xs),
+    y: Math.min(...ys),
+    width: Math.max(...xs) - Math.min(...xs),
+    height: Math.max(...ys) - Math.min(...ys),
+  }
 }
 
-async function settle() {
+const settle = async () => {
   await flushPromises()
   await nextTick()
 }
 
-async function hover(wrapper: { find: (s: string) => { element: Element } }, clientX: number, clientY: number) {
-  wrapper.find('[data-slot=chart-surface]').element.dispatchEvent(new PointerEvent('pointermove', { clientX, clientY, bubbles: true }))
+const hover = async (
+  wrapper: { find: (s: string) => { element: Element } },
+  clientX: number,
+  clientY: number,
+) => {
+  wrapper
+    .find('[data-slot=chart-surface]')
+    .element.dispatchEvent(new PointerEvent('pointermove', { clientX, clientY, bubbles: true }))
+
   await settle()
 }
 
@@ -73,7 +81,7 @@ const data = [
   { month: 'Feb', revenue: 200, orders: 2, views: 100 },
 ]
 
-function mountChart(children: () => any[]) {
+const mountChart = (children: () => Array<VNode | null>) => {
   return mount(ComposedChart, {
     props: { data, width: WIDTH, height: HEIGHT, margin },
     slots: { default: children },
@@ -89,13 +97,17 @@ describe('ComposedChart', () => {
       h(ChartArea, { dataKey: 'views', stackId: 'a', isAnimationActive: false }),
       h(ChartTooltip, { isAnimationActive: false }),
     ])
+
     await settle()
+
     // Totals 150 and 300 -> domain [0, 300]. The Feb bar (200) ends at 200 - 200 * 200 / 300.
     const bar = bbox(wrapper.findAll('[data-slot=chart-bar-rectangle]')[1].attributes('d')!)
     expect(bar.y).toBeCloseTo(66.667, 2)
+
     // The area sits on the bar: its Feb top is the stack total, 300, the top of the plot.
     await hover(wrapper, 300, 100)
     expect(Number(wrapper.find('[data-slot=chart-active-dot]').attributes('cy'))).toBeCloseTo(0)
+
     // The cursor follows the chart type, not the band scale: a ComposedChart draws a dashed line.
     const cursor = wrapper.find('[data-slot=chart-cursor]')
     expect(cursor.attributes('data-kind')).toBe('line')
@@ -104,21 +116,32 @@ describe('ComposedChart', () => {
   })
 
   it('keeps template order when a series is shown again', async () => {
-    const showRevenue = ref(true)
+    const isRevenueShown = ref(true)
     const wrapper = mountChart(() => [
       h(ChartXAxis, { dataKey: 'month', hide: true }),
-      showRevenue.value ? h(ChartLine, { dataKey: 'revenue', name: 'Revenue', dot: false, isAnimationActive: false }) : null,
+      isRevenueShown.value
+        ? h(ChartLine, {
+            dataKey: 'revenue',
+            name: 'Revenue',
+            dot: false,
+            isAnimationActive: false,
+          })
+        : null,
       h(ChartLine, { dataKey: 'orders', name: 'Orders', dot: false, isAnimationActive: false }),
       h(ChartTooltip, { isAnimationActive: false }),
     ])
+
     await settle()
-    const labels = () => wrapper.findAll('[data-slot=chart-tooltip-label]').map(label => label.text())
+
+    const labels = () =>
+      wrapper.findAll('[data-slot=chart-tooltip-label]').map((label) => label.text())
+
     await hover(wrapper, 100, 100)
     expect(labels()).toEqual(['Revenue', 'Orders'])
-    showRevenue.value = false
+    isRevenueShown.value = false
     await settle()
     expect(labels()).toEqual(['Orders'])
-    showRevenue.value = true
+    isRevenueShown.value = true
     await settle()
     await hover(wrapper, 110, 100)
     expect(labels()).toEqual(['Revenue', 'Orders'])
@@ -128,15 +151,27 @@ describe('ComposedChart', () => {
   it('skips rows without a value on a number x axis', async () => {
     const wrapper = mount(ComposedChart, {
       // x domain: nice ticks 0, 3, ..., 12.
-      props: { data: [{ x: 0, y: 1 }, { y: 2 }, { x: 12, y: 3 }], width: WIDTH, height: HEIGHT, margin },
-      slots: { default: () => [
-        h(ChartXAxis, { dataKey: 'x', type: 'number', hide: true }),
-        h(ChartLine, { dataKey: 'y', dot: true, isAnimationActive: false }),
-      ] },
+      props: {
+        data: [{ x: 0, y: 1 }, { y: 2 }, { x: 12, y: 3 }],
+        width: WIDTH,
+        height: HEIGHT,
+        margin,
+      },
+      slots: {
+        default: () => [
+          h(ChartXAxis, { dataKey: 'x', type: 'number', hide: true }),
+          h(ChartLine, { dataKey: 'y', dot: true, isAnimationActive: false }),
+        ],
+      },
       attachTo: document.body,
     })
+
     await settle()
-    expect(wrapper.findAll('[data-slot=chart-dot]').map(dot => Number(dot.attributes('cx')))).toEqual([0, 400])
+
+    expect(
+      wrapper.findAll('[data-slot=chart-dot]').map((dot) => Number(dot.attributes('cx'))),
+    ).toEqual([0, 400])
+
     wrapper.unmount()
   })
 
@@ -146,6 +181,7 @@ describe('ComposedChart', () => {
       h(ChartBar, { dataKey: 'revenue', barSize: 16, isAnimationActive: false }),
       h(ChartLine, { dataKey: 'orders', dot: false, isAnimationActive: false }),
     ])
+
     await settle()
     expect(wrapper.findAll('[data-slot=chart-bar-rectangle]')).toHaveLength(2)
     expect(wrapper.find('[data-slot=chart-line-curve]').exists()).toBe(true)
@@ -158,6 +194,7 @@ describe('ComposedChart', () => {
       h(ChartBar, { dataKey: 'revenue', barSize: 16, isAnimationActive: false }),
       h(ChartLine, { dataKey: 'orders', type: 'linear', dot: { r: 3 }, isAnimationActive: false }),
     ])
+
     await settle()
     const bar = wrapper.findAll('[data-slot=chart-bar-rectangle]')[0]
     const box = bbox(bar.attributes('d')!)
@@ -171,9 +208,17 @@ describe('ComposedChart', () => {
       h(ChartYAxis, { yAxisId: 'left', hide: true }),
       h(ChartYAxis, { yAxisId: 'right', orientation: 'right', hide: true }),
       h(ChartBar, { dataKey: 'revenue', yAxisId: 'left', barSize: 16, isAnimationActive: false }),
-      h(ChartLine, { dataKey: 'orders', yAxisId: 'right', type: 'linear', dot: { r: 3 }, isAnimationActive: false }),
+      h(ChartLine, {
+        dataKey: 'orders',
+        yAxisId: 'right',
+        type: 'linear',
+        dot: { r: 3 },
+        isAnimationActive: false,
+      }),
     ])
+
     await settle()
+
     // Both maxima (200 on the left, 2 on the right) reach the top of the plot.
     const bar = wrapper.findAll('[data-slot=chart-bar-rectangle]')[1]
     const box = bbox(bar.attributes('d')!)
@@ -188,15 +233,30 @@ describe('ComposedChart', () => {
       h(ChartXAxis, { dataKey: 'month', hide: true }),
       h(ChartBar, { dataKey: 'revenue', name: 'Revenue', isAnimationActive: false }),
       h(ChartLine, { dataKey: 'orders', name: 'Orders', dot: false, isAnimationActive: false }),
-      h(ChartArea, { dataKey: 'views', name: 'Views', tooltipType: 'none', isAnimationActive: false }),
+      h(ChartArea, {
+        dataKey: 'views',
+        name: 'Views',
+        tooltipType: 'none',
+        isAnimationActive: false,
+      }),
       h(ChartTooltip, { isAnimationActive: false }),
     ])
+
     await settle()
     await hover(wrapper, 100, 100)
     const panel = wrapper.find('[data-slot=chart-tooltip]')
     expect(panel.find('[data-slot=chart-tooltip-header]').text()).toBe('Jan')
-    expect(panel.findAll('[data-slot=chart-tooltip-label]').map(label => label.text())).toEqual(['Revenue', 'Orders'])
-    expect(panel.findAll('[data-slot=chart-tooltip-value]').map(value => value.text())).toEqual(['100', '1'])
+
+    expect(panel.findAll('[data-slot=chart-tooltip-label]').map((label) => label.text())).toEqual([
+      'Revenue',
+      'Orders',
+    ])
+
+    expect(panel.findAll('[data-slot=chart-tooltip-value]').map((value) => value.text())).toEqual([
+      '100',
+      '1',
+    ])
+
     wrapper.unmount()
   })
 
@@ -208,13 +268,18 @@ describe('ComposedChart', () => {
       h(ChartLine, { dataKey: 'orders', name: 'Orders', dot: false, isAnimationActive: false }),
       h(ChartTooltip, { isAnimationActive: false }),
     ])
+
     await settle()
     const svg = wrapper.find('[data-slot=chart-surface]')
     const header = () => wrapper.find('[data-slot=chart-tooltip-header]').text()
     ;(svg.element as SVGElement).focus()
     await settle()
     expect(header()).toBe('Jan')
-    expect(wrapper.findAll('[data-slot=chart-tooltip-label]').map(label => label.text())).toEqual(['Views', 'Revenue', 'Orders'])
+
+    expect(wrapper.findAll('[data-slot=chart-tooltip-label]').map((label) => label.text())).toEqual(
+      ['Views', 'Revenue', 'Orders'],
+    )
+
     await svg.trigger('keydown', { key: 'End' })
     await settle()
     expect(header()).toBe('Feb')
@@ -227,16 +292,21 @@ describe('ComposedChart', () => {
   it('is accessible idle and with a month focused', async () => {
     const wrapper = mount(ComposedChart, {
       props: {
-        'data': data,
-        'index': 'month',
-        'series': { revenue: { type: 'bar' }, orders: { type: 'line', yAxis: 'right' }, views: { type: 'area' } },
-        'width': WIDTH,
-        'height': HEIGHT,
-        'legend': true,
+        data: data,
+        index: 'month',
+        series: {
+          revenue: { type: 'bar' },
+          orders: { type: 'line', yAxis: 'right' },
+          views: { type: 'area' },
+        },
+        width: WIDTH,
+        height: HEIGHT,
+        legend: true,
         'aria-label': 'Revenue, orders and views per month',
       },
       attachTo: document.body,
     })
+
     await settle()
     await expectAccessible(wrapper)
     ;(wrapper.find('[data-slot=chart-surface]').element as SVGElement).focus()

@@ -51,28 +51,29 @@ The Separator component adapts to different surface backgrounds for better visib
 Override the `separator` theme app-wide with `createHareUI`:
 
 ```ts
-app.use(createHareUI({
-  ui: {
-    separator: {
-      slots: { base: 'bg-accent h-[2px]' },
-      variants: {
-        orientation: { vertical: { base: 'bg-accent w-[2px]' } },
+app.use(
+  createHareUI({
+    ui: {
+      separator: {
+        slots: { base: 'bg-accent h-[2px]' },
+        variants: {
+          orientation: { vertical: { base: 'bg-accent w-[2px]' } },
+        },
       },
     },
-  },
-}))
+  }),
+)
 ```
 
 ## Styling Reference
 
-Each rendered element carries the same `data-slot` string as HeroUI, so selectors translate 1:1.
+Each rendered element carries a `data-slot` attribute you can target in selectors.
 
-| `ui` key | `data-slot` | Description |
-|---|---|---|
-| `base` | `separator` | The separator element |
+| `ui` key | `data-slot` | Description           |
+| -------- | ----------- | --------------------- |
+| `base`   | `separator` | The separator element |
 
-HeroUI's modifier classes correspond to these props (HareUI renders utilities, not BEM classes, so
-style through `class`, `ui` or `createHareUI`):
+These props control styling (HareUI renders Tailwind utilities, so style through `class`, `ui` or `createHareUI`):
 
 - `orientation`: `horizontal` (default, full width / 1px height), `vertical` (full height / 1px width)
 - `variant`: `default` (standard contrast), `secondary` (medium contrast), `tertiary` (subtle contrast)
@@ -87,7 +88,7 @@ style through `class`, `ui` or `createHareUI`):
 
 <ApiTable component="Separator" kind="slots" />
 
-### Theme
+## Theme
 
 <ApiTheme component="Separator" />
 

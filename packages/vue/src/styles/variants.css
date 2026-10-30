@@ -20,7 +20,7 @@
  * ------------------------------------------------------------------------------------------------- */
 @custom-variant motion-reduce {
   /* Explicit: data-reduce-motion="true" on element or ancestor */
-  &:is([data-reduce-motion="true"], [data-reduce-motion="true"] *) {
+  &:is([data-reduce-motion='true'], [data-reduce-motion='true'] *) {
     @slot;
 
     &::before,
@@ -31,7 +31,7 @@
 
   /* Fallback: system prefers-reduced-motion setting */
   @media (prefers-reduced-motion: reduce) {
-    &:not(:is([data-reduce-motion="true"], [data-reduce-motion="true"] *)) {
+    &:not(:is([data-reduce-motion='true'], [data-reduce-motion='true'] *)) {
       @slot;
 
       &::before,
@@ -48,7 +48,7 @@
  * ------------------------------------------------------------------------------------------------- */
 @custom-variant motion-safe {
   /* Explicit: data-reduce-motion="false" on element or ancestor */
-  &:is([data-reduce-motion="false"], [data-reduce-motion="false"] *) {
+  &:is([data-reduce-motion='false'], [data-reduce-motion='false'] *) {
     @slot;
 
     &::before,
@@ -61,10 +61,10 @@
   @media (prefers-reduced-motion: no-preference) {
     &:not(
       :is(
-        [data-reduce-motion="true"],
-        [data-reduce-motion="true"] *,
-        [data-reduce-motion="false"],
-        [data-reduce-motion="false"] *
+        [data-reduce-motion='true'],
+        [data-reduce-motion='true'] *,
+        [data-reduce-motion='false'],
+        [data-reduce-motion='false'] *
       )
     ) {
       @slot;
@@ -84,7 +84,12 @@
  * ------------------------------------------------------------------------------------------------- */
 @custom-variant dark {
   /* Explicit: .dark class or data-theme="dark" on element or ancestor */
-  &:is(.dark, .dark *, [data-theme="dark"], [data-theme="dark"] *):not(:where(:is(.dark, [data-theme="dark"]) :is(.light, [data-theme="light"]), :is(.dark, [data-theme="dark"]) :is(.light, [data-theme="light"]) *)) {
+  &:is(.dark, .dark *, [data-theme='dark'], [data-theme='dark'] *):not(
+      :where(
+        :is(.dark, [data-theme='dark']) :is(.light, [data-theme='light']),
+        :is(.dark, [data-theme='dark']) :is(.light, [data-theme='light']) *
+      )
+    ) {
     @slot;
 
     &::before,
@@ -95,7 +100,7 @@
 
   /* Fallback: system prefers dark color scheme */
   @media (prefers-color-scheme: dark) {
-    &:not(:is(.dark, .dark *, [data-theme="dark"], [data-theme="dark"] *)) & {
+    &:not(:is(.dark, .dark *, [data-theme='dark'], [data-theme='dark'] *)) & {
       @slot;
 
       &::before,

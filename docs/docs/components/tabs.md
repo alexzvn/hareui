@@ -26,10 +26,14 @@ item.
 
 ```vue
 <template>
-  <Tabs :items="items" default-value="…" separator> <!-- separator: optional -->
-    <template #tab="{ item, index, selected }" /> <!-- replaces item.label -->
-    <template #content="{ item, index }" />       <!-- fallback panel content -->
-    <template #[item.slot]="{ item, index }" />   <!-- per-item panel content -->
+  <Tabs :items="items" default-value="…" separator>
+    <!-- separator: optional -->
+    <template #tab="{ item, index, selected }" />
+    <!-- replaces item.label -->
+    <template #content="{ item, index }" />
+    <!-- fallback panel content -->
+    <template #[item.slot]="{ item, index }" />
+    <!-- per-item panel content -->
   </Tabs>
 </template>
 ```
@@ -37,18 +41,18 @@ item.
 The tab list sits in a `scroller` (`[data-slot="scroll-shadow"]`). When the tabs overflow it, the
 edges fade and previous/next chevrons (`scrollPrev` / `scrollNext`) appear.
 
-| `ui` key | `data-slot` | Element |
-|---|---|---|
-| `base` | `tabs` | root element |
-| `tabListContainer` | `tabs-list-container` | wrapper around the tab list |
-| `scroller` | `scroll-shadow` | scroll container around the tab list, fades overflowing edges |
-| `scrollPrev` | – | chevron that scrolls to previous tabs (shown only when there are any) |
-| `scrollNext` | – | chevron that scrolls to next tabs (shown only when there are any) |
-| `tabList` | `tabs-list` | the `TabsList` |
-| `tab` | `tabs-tab` | per-item `TabsTrigger` |
-| `tabIndicator` | `tabs-indicator` | sliding selection indicator, positioned via `--tabs-indicator-{x,y,width,height}` |
-| `separator` | `tabs-separator` | divider inside every tab (iff `separator`); hidden on the selected tab and the one after it |
-| `tabPanel` | `tabs-panel` | the selected item's `TabsContent` |
+| `ui` key           | `data-slot`           | Element                                                                                     |
+| ------------------ | --------------------- | ------------------------------------------------------------------------------------------- |
+| `base`             | `tabs`                | root element                                                                                |
+| `tabListContainer` | `tabs-list-container` | wrapper around the tab list                                                                 |
+| `scroller`         | `scroll-shadow`       | scroll container around the tab list, fades overflowing edges                               |
+| `scrollPrev`       | –                     | chevron that scrolls to previous tabs (shown only when there are any)                       |
+| `scrollNext`       | –                     | chevron that scrolls to next tabs (shown only when there are any)                           |
+| `tabList`          | `tabs-list`           | the `TabsList`                                                                              |
+| `tab`              | `tabs-tab`            | per-item `TabsTrigger`                                                                      |
+| `tabIndicator`     | `tabs-indicator`      | sliding selection indicator, positioned via `--tabs-indicator-{x,y,width,height}`           |
+| `separator`        | `tabs-separator`      | divider inside every tab (iff `separator`); hidden on the selected tab and the one after it |
+| `tabPanel`         | `tabs-panel`          | the selected item's `TabsContent`                                                           |
 
 ### Typing items
 
@@ -115,25 +119,27 @@ especially useful for vertical, sidebar-style navigation. The tabs can still be 
 To customize the Tabs classes for the whole app, extend the `tabs` theme in `createHareUI`:
 
 ```ts
-app.use(createHareUI({
-  ui: {
-    tabs: {
-      slots: {
-        tabList: 'rounded-xl border border-border bg-surface p-1',
-        tab: 'rounded-lg font-medium',
-        tabIndicator: 'rounded-lg bg-foreground shadow-sm',
-      },
-      variants: {
-        variant: {
-          secondary: {
-            tabList: 'border-b border-border bg-transparent p-0',
-            tabIndicator: 'rounded-none bg-accent',
+app.use(
+  createHareUI({
+    ui: {
+      tabs: {
+        slots: {
+          tabList: 'rounded-xl border border-border bg-surface p-1',
+          tab: 'rounded-lg font-medium',
+          tabIndicator: 'rounded-lg bg-foreground shadow-sm',
+        },
+        variants: {
+          variant: {
+            secondary: {
+              tabList: 'border-b border-border bg-transparent p-0',
+              tabIndicator: 'rounded-none bg-accent',
+            },
           },
         },
       },
     },
-  },
-}))
+  }),
+)
 ```
 
 ## Styling Reference
@@ -170,7 +176,7 @@ app.use(createHareUI({
 
 ### Interactive States
 
-Tabs sets these data attributes (from Reka UI):
+Tabs sets these data attributes:
 
 - **Selected**: `[data-state="active"]` on `[data-slot="tabs-tab"]`
 - **Hover**: `:hover`
@@ -191,6 +197,6 @@ Tabs sets these data attributes (from Reka UI):
 
 <ApiTable component="Tabs" kind="emits" />
 
-### Theme
+## Theme
 
 <ApiTheme component="Tabs" />

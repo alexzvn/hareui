@@ -24,36 +24,43 @@ import { RadioButtonGroup, RadioButtonGroupItem } from '@hareui/vue'
 ```vue
 <template>
   <RadioButtonGroup label="…" description="…" error-message="…">
-    <template #label />          <!-- group Label content -->
-    <template #description />    <!-- group Description content -->
+    <template #label />
+    <!-- group Label content -->
+    <template #description />
+    <!-- group Description content -->
     <RadioButtonGroupItem value="…" label="…" description="…" icon="…">
-      <template #indicator />    <!-- custom indicator (default: radio dot) -->
-      <template #icon />         <!-- leading icon -->
-      <template #label />        <!-- title content -->
-      <template #description />  <!-- description content -->
+      <template #indicator />
+      <!-- custom indicator (default: radio dot) -->
+      <template #icon />
+      <!-- leading icon -->
+      <template #label />
+      <!-- title content -->
+      <template #description />
+      <!-- description content -->
       <!-- default slot: extra content after the description -->
     </RadioButtonGroupItem>
-    <template #error />          <!-- FieldError content, rendered when invalid -->
+    <template #error />
+    <!-- FieldError content, rendered when invalid -->
   </RadioButtonGroup>
 </template>
 ```
 
-| `ui` key | `data-slot` | Element |
-|---|---|---|
-| `base` | `radio-button-group` | `<div role="radiogroup">` root |
-| — | `label` | [Label](/docs/components/label) (iff `label` / `#label`) |
-| — | `description` | [Description](/docs/components/description) (iff `description` / `#description`) |
-| `item` | `radio-button-group-item` | `<button role="radio">` card |
-| `indicator` | `radio-button-group-indicator` | `<span>` in the top-end corner (unless `indicator` is `false`) |
-| `control` | `radio-control` | default radio circle inside the indicator (no `#indicator` slot) |
-| `controlIndicator` | `radio-indicator` | dot inside the radio circle |
-| `content` | `radio-button-group-item-content` | `<span>` holding the icon and the text |
-| `icon` | `radio-button-group-item-icon` | `<span>` (iff `icon` / `#icon`) |
-| `itemText` | `radio-button-group-item-text` | `<span>` holding the title, description and default slot |
-| `itemLabel` | `radio-button-group-item-label` | `<span>` (iff `label` / `#label`) |
-| `itemDescription` | `radio-button-group-item-description` | `<span>` (iff `description` / `#description`) |
-| — | `radio-button-group-item-extra` | `<span class="contents">` around the default slot (iff default slot) |
-| — | `field-error` | [FieldError](/docs/components/field-error) (while invalid) |
+| `ui` key           | `data-slot`                           | Element                                                                          |
+| ------------------ | ------------------------------------- | -------------------------------------------------------------------------------- |
+| `base`             | `radio-button-group`                  | `<div role="radiogroup">` root                                                   |
+| —                  | `label`                               | [Label](/docs/components/label) (iff `label` / `#label`)                         |
+| —                  | `description`                         | [Description](/docs/components/description) (iff `description` / `#description`) |
+| `item`             | `radio-button-group-item`             | `<button role="radio">` card                                                     |
+| `indicator`        | `radio-button-group-indicator`        | `<span>` in the top-end corner (unless `indicator` is `false`)                   |
+| `control`          | `radio-control`                       | default radio circle inside the indicator (no `#indicator` slot)                 |
+| `controlIndicator` | `radio-indicator`                     | dot inside the radio circle                                                      |
+| `content`          | `radio-button-group-item-content`     | `<span>` holding the icon and the text                                           |
+| `icon`             | `radio-button-group-item-icon`        | `<span>` (iff `icon` / `#icon`)                                                  |
+| `itemText`         | `radio-button-group-item-text`        | `<span>` holding the title, description and default slot                         |
+| `itemLabel`        | `radio-button-group-item-label`       | `<span>` (iff `label` / `#label`)                                                |
+| `itemDescription`  | `radio-button-group-item-description` | `<span>` (iff `description` / `#description`)                                    |
+| —                  | `radio-button-group-item-extra`       | `<span class="contents">` around the default slot (iff default slot)             |
+| —                  | `field-error`                         | [FieldError](/docs/components/field-error) (while invalid)                       |
 
 ## Examples
 
@@ -140,9 +147,11 @@ Pass `class` and `ui` to a single item, or `ui` to the group to style every item
 ### Global Configuration
 
 ```ts
-app.use(createHareUI({
-  ui: { radioButtonGroup: { slots: { item: 'rounded-xl', indicator: 'top-4' } } },
-}))
+app.use(
+  createHareUI({
+    ui: { radioButtonGroup: { slots: { item: 'rounded-xl', indicator: 'top-4' } } },
+  }),
+)
 ```
 
 The default indicator is the radio dot from [RadioGroup](/docs/components/radio-group), so overrides of `radioGroup` `control` / `indicator` apply to it too.
@@ -196,7 +205,7 @@ The card radius comes from `--radio-button-group-item-radius` (default `var(--ra
 
 <ApiTable component="RadioButtonGroupItem" kind="slots" />
 
-### Theme
+## Theme
 
 <ApiTheme component="RadioButtonGroup" />
 

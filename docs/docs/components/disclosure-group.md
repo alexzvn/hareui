@@ -30,13 +30,13 @@ import { DisclosureGroup } from '@hareui/vue'
 </template>
 ```
 
-Each `Disclosure` inside the group is identified by its `value` (HeroUI's `id`); the group's
+Each `Disclosure` inside the group is identified by its `value`; the group's
 `v-model` holds the expanded values. Anything else can sit between the disclosures (e.g. a
 `Separator`).
 
-| `ui` key | `data-slot` | Element |
-|---|---|---|
-| `base` | `disclosure-group` | root element |
+| `ui` key | `data-slot`        | Element      |
+| -------- | ------------------ | ------------ |
+| `base`   | `disclosure-group` | root element |
 
 ## Examples
 
@@ -58,15 +58,17 @@ and the `useDisclosureGroupNavigation` composable.
 To customize the DisclosureGroup classes for the whole app, extend the `disclosureGroup` theme in `createHareUI`:
 
 ```ts
-app.use(createHareUI({
-  ui: {
-    disclosureGroup: {
-      slots: {
-        base: 'w-full [contain:layout_style]',
+app.use(
+  createHareUI({
+    ui: {
+      disclosureGroup: {
+        slots: {
+          base: 'w-full [contain:layout_style]',
+        },
       },
     },
-  },
-}))
+  }),
+)
 ```
 
 ## Styling Reference
@@ -96,20 +98,20 @@ The component supports both CSS pseudo-classes and data attributes for flexibili
 
 <ApiTable component="DisclosureGroup" kind="emits" />
 
-### Theme
-
-<ApiTheme component="DisclosureGroup" />
-
 ### useDisclosureGroupNavigation
 
-| Option | Type | Default | Description |
-|------|------|---------|-------------|
-| `expandedKeys` | `MaybeRefOrGetter<ExpandedValue[]>` | - | The current `v-model` value |
-| `itemIds` | `MaybeRefOrGetter<ExpandedValue[]>` | - | Every disclosure's `value`, in display order |
-| `onExpandedChange` | `(keys: ExpandedValue[]) => void` | - | Called with the new expanded values |
-| `multiple` | `MaybeRefOrGetter<boolean>` | `false` | Keep previously expanded disclosures open while navigating |
+| Option             | Type                                | Default | Description                                                |
+| ------------------ | ----------------------------------- | ------- | ---------------------------------------------------------- |
+| `expandedKeys`     | `MaybeRefOrGetter<ExpandedValue[]>` | -       | The current `v-model` value                                |
+| `itemIds`          | `MaybeRefOrGetter<ExpandedValue[]>` | -       | Every disclosure's `value`, in display order               |
+| `onExpandedChange` | `(keys: ExpandedValue[]) => void`   | -       | Called with the new expanded values                        |
+| `multiple`         | `MaybeRefOrGetter<boolean>`         | `false` | Keep previously expanded disclosures open while navigating |
 
 Returns `currentIndex`, `isPrevDisabled`, `isNextDisabled` (computed refs) and `onPrevious`, `onNext`.
+
+## Theme
+
+<ApiTheme component="DisclosureGroup" />
 
 ## Related Components
 

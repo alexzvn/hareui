@@ -4,41 +4,41 @@
  * restyling the toast's subtree.
  */
 @property --offset-collapsed {
-  syntax: "*";
+  syntax: '*';
   inherits: false;
 }
 
 @property --offset-expanded {
-  syntax: "*";
+  syntax: '*';
   inherits: false;
 }
 
 @property --scale-collapsed {
-  syntax: "*";
+  syntax: '*';
   inherits: false;
 }
 
 @property --front-height {
-  syntax: "*";
+  syntax: '*';
   inherits: false;
 }
 
 @property --toast-height {
-  syntax: "*";
+  syntax: '*';
   inherits: false;
 }
 
 @property --toast-y {
-  syntax: "*";
+  syntax: '*';
   inherits: false;
 }
 
 @property --toast-scale {
-  syntax: "*";
+  syntax: '*';
   inherits: false;
 }
 
 @property --toast-enter {
-  syntax: "*";
+  syntax: '*';
   inherits: false;
 }

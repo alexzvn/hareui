@@ -1,3 +1,14 @@
+<template>
+  <TagGroup
+    v-model:selected="selected"
+    selection-mode="multiple"
+    label="Amenities"
+    :description="description"
+    :error-message="errorMessage"
+    :items="items"
+  />
+</template>
+
 <script setup lang="ts">
 import type { TagGroupItem } from '@hareui/vue'
 import { TagGroup } from '@hareui/vue'
@@ -10,12 +21,12 @@ const items: TagGroupItem[] = [
   { id: 'pool', label: 'Swimming pool' },
   { id: 'breakfast', label: 'Breakfast' },
 ]
+
 const selected = ref<string[]>([])
 const isInvalid = computed(() => selected.value.length === 0)
-const description = computed(() => isInvalid.value ? 'Select at least one category' : `Selected: ${selected.value.join(', ')}`)
-const errorMessage = computed(() => isInvalid.value ? 'Please select at least one category' : '')
-</script>
+const description = computed(() =>
+  isInvalid.value ? 'Select at least one category' : `Selected: ${selected.value.join(', ')}`,
+)
 
-<template>
-  <TagGroup v-model:selected="selected" selection-mode="multiple" label="Amenities" :description="description" :error-message="errorMessage" :items="items" />
-</template>
+const errorMessage = computed(() => (isInvalid.value ? 'Please select at least one category' : ''))
+</script>

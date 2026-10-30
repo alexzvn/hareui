@@ -45,13 +45,15 @@ Use the `left` and `right` slots to align two groups to either end of the toolba
 Override the `dashboardToolbar` theme app-wide with `createHareUI`:
 
 ```ts
-app.use(createHareUI({
-  ui: {
-    dashboardToolbar: {
-      slots: { root: 'bg-surface' },
+app.use(
+  createHareUI({
+    ui: {
+      dashboardToolbar: {
+        slots: { root: 'bg-surface' },
+      },
     },
-  },
-}))
+  }),
+)
 ```
 
 ## API
@@ -63,3 +65,7 @@ app.use(createHareUI({
 ### DashboardToolbar Slots
 
 <ApiTable component="DashboardToolbar" kind="slots" />
+
+## Theme
+
+<ApiTheme component="DashboardToolbar" />

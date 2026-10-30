@@ -24,21 +24,26 @@ TagGroup renders an optional [Label](/docs/components/label), a grid of tags, an
 ```vue
 <template>
   <TagGroup label="…" :items="items">
-    <template #label />                                             <!-- Label content -->
-    <template #description />                                       <!-- Description content -->
-    <template #errorMessage />                                      <!-- Error message content -->
-    <template #item="{ item, index, selected, disabled }" />        <!-- Content of each tag (default: item.label) -->
-    <template #empty />                                              <!-- Rendered inside the list when `items` is empty (usually <EmptyState>) -->
+    <template #label />
+    <!-- Label content -->
+    <template #description />
+    <!-- Description content -->
+    <template #errorMessage />
+    <!-- Error message content -->
+    <template #item="{ item, index, selected, disabled }" />
+    <!-- Content of each tag (default: item.label) -->
+    <template #empty />
+    <!-- Rendered inside the list when `items` is empty (usually <EmptyState>) -->
   </TagGroup>
 </template>
 ```
 
-| `ui` key | `data-slot` | Element |
-|---|---|---|
-| `base` | `tag-group` | `<div>` root |
-| `list` | `tag-group-list` | `<div role="grid">` |
-| `tag` *(`tag` theme)* | `tag` | `<div role="row">`, one per item |
-| `removeButton` *(`tag` theme)* | `tag-remove-button` | [CloseButton](/docs/components/close-button) (iff `removable`) |
+| `ui` key                       | `data-slot`         | Element                                                        |
+| ------------------------------ | ------------------- | -------------------------------------------------------------- |
+| `base`                         | `tag-group`         | `<div>` root                                                   |
+| `list`                         | `tag-group-list`    | `<div role="grid">`                                            |
+| `tag` _(`tag` theme)_          | `tag`               | `<div role="row">`, one per item                               |
+| `removeButton` _(`tag` theme)_ | `tag-remove-button` | [CloseButton](/docs/components/close-button) (iff `removable`) |
 
 ### Typing items
 
@@ -109,29 +114,23 @@ Attributes on `TagGroup` (other than `aria-label`) fall through to the root elem
 
 ## EmptyState
 
-`EmptyState` is the small muted placeholder HeroUI renders inside empty collections (TagGroup, ListBox, Table). It renders "No results found" by default; pass your own text in the default slot. Use it in TagGroup's `#empty` slot.
+`EmptyState` is the small muted placeholder for empty collections (TagGroup, ListBox, Table). It renders "No results found" by default; pass your own text in the default slot. Use it in TagGroup's `#empty` slot.
 
 ```vue
+<template>
+  <EmptyState class="p-1"> No team members </EmptyState>
+</template>
+
 <script setup lang="ts">
 import { EmptyState } from '@hareui/vue'
 </script>
-
-<template>
-  <EmptyState class="p-1">
-    No team members
-  </EmptyState>
-</template>
 ```
 
-| `ui` key | `data-slot` | Element |
-|---|---|---|
-| `base` | `empty-state` | `<div>` root |
+| `ui` key | `data-slot`   | Element      |
+| -------- | ------------- | ------------ |
+| `base`   | `empty-state` | `<div>` root |
 
 <ApiTable component="EmptyState" kind="props" />
-
-### EmptyState Theme
-
-<ApiTheme component="EmptyState" />
 
 ## Customization
 
@@ -142,9 +141,11 @@ import { EmptyState } from '@hareui/vue'
 ### Global Configuration
 
 ```ts
-app.use(createHareUI({
-  ui: { tagGroup: { slots: { list: 'gap-2' } }, tag: { slots: { base: 'rounded-full' } } },
-}))
+app.use(
+  createHareUI({
+    ui: { tagGroup: { slots: { list: 'gap-2' } }, tag: { slots: { base: 'rounded-full' } } },
+  }),
+)
 ```
 
 ## Styling Reference
@@ -178,13 +179,19 @@ app.use(createHareUI({
 
 <ApiTable component="TagGroup" kind="emits" />
 
+## Theme
+
+### EmptyState Theme
+
+<ApiTheme component="EmptyState" />
+
 ### TagGroup Theme
 
 <ApiTheme component="TagGroup" />
 
 ## Accessibility
 
-- The list has `role="grid"`; each tag has `role="row"` wrapping a `role="gridcell"`, matching React Aria's `TagGroup`
+- The list has `role="grid"`; each tag has `role="row"` wrapping a `role="gridcell"`
 - `aria-multiselectable` is set on the list when `selection-mode` is `'multiple'`
 - `label` names the list through `aria-labelledby`; without one, pass `aria-label`
 - `description` and `error-message` are both referenced by the list's `aria-describedby`

@@ -1,33 +1,19 @@
-<script lang="ts">
-import type { ChartAxisProps, ChartAxisSlots } from './axis'
-
-export interface ChartXAxisProps extends ChartAxisProps {
-  /**
-   * Id that series reference with `xAxisId` when a chart has several x axes.
-   * @defaultValue 0
-   */
-  xAxisId?: string | number
-  /**
-   * Side of the plot the axis sits on.
-   * @defaultValue 'bottom'
-   */
-  orientation?: 'top' | 'bottom'
-  /**
-   * Height reserved for the axis, in px.
-   * @defaultValue 30
-   */
-  height?: number
-  /** Space before the first and after the last category, in px. */
-  padding?: { left?: number, right?: number }
-}
-
-export type ChartXAxisSlots = ChartAxisSlots
-</script>
+<template>
+  <ChartCartesianAxis :axis="axis" :tick="tickOptions" :axis-line="axisLine" :class="props.class">
+    <template v-if="$slots.tick" #tick="slotProps">
+      <slot name="tick" v-bind="slotProps" />
+    </template>
+  </ChartCartesianAxis>
+</template>
 
 <script setup lang="ts">
+import { defu } from 'defu'
 import { computed } from 'vue'
+
+import { CHART_AXIS_TICK_DEFAULTS } from './axis'
 import { useCartesianContext } from './cartesian'
 import ChartCartesianAxis from './ChartCartesianAxis.vue'
+import type { ChartXAxisProps, ChartXAxisSlots } from './ChartXAxis.types'
 import { useChartConfig, useChartContext } from './context'
 
 const props = withDefaults(defineProps<ChartXAxisProps>(), {
@@ -35,19 +21,17 @@ const props = withDefaults(defineProps<ChartXAxisProps>(), {
   orientation: 'bottom',
   height: 30,
   hide: false,
-  tick: true,
-  tickMargin: 2,
-  tickSize: 6,
-  tickLine: true,
   axisLine: true,
   allowDecimals: true,
   allowDataOverflow: false,
   reversed: false,
-  tickCount: 5,
   minTickGap: 5,
   interval: 'preserveEnd',
 })
+
 defineSlots<ChartXAxisSlots>()
+
+const tickOptions = computed(() => defu(props.tick, CHART_AXIS_TICK_DEFAULTS))
 
 const cartesian = useCartesianContext('ChartXAxis')
 const config = useChartConfig(useChartContext('ChartXAxis'))
@@ -59,7 +43,7 @@ cartesian.registerAxis(() => ({
   dataKey: props.dataKey ?? (props.type === 'number' ? undefined : config.index()),
   domain: props.domain,
   ticks: props.ticks,
-  tickCount: props.tickCount,
+  tick: { count: tickOptions.value.count, formatter: tickOptions.value.formatter },
   allowDecimals: props.allowDecimals,
   allowDataOverflow: props.allowDataOverflow,
   hide: props.hide,
@@ -69,25 +53,8 @@ cartesian.registerAxis(() => ({
   reversed: props.reversed,
   interval: props.interval,
   minTickGap: props.minTickGap,
-  tickFormatter: props.tickFormatter,
   unit: props.unit,
 }))
 
 const axis = computed(() => cartesian.xAxis(props.xAxisId))
 </script>
-
-<template>
-  <ChartCartesianAxis
-    :axis="axis"
-    :tick-size="tickSize"
-    :tick-margin="tickMargin"
-    :tick="tick"
-    :tick-line="tickLine"
-    :axis-line="axisLine"
-    :class="props.class"
-  >
-    <template v-if="$slots.tick" #tick="slotProps">
-      <slot name="tick" v-bind="slotProps" />
-    </template>
-  </ChartCartesianAxis>
-</template>

@@ -1,7 +1,3 @@
-<script setup lang="ts">
-import { Meter } from '@hareui/vue'
-</script>
-
 <template>
   <Meter
     class="w-64"
@@ -12,3 +8,7 @@ import { Meter } from '@hareui/vue'
     :value="750"
   />
 </template>
+
+<script setup lang="ts">
+import { Meter } from '@hareui/vue'
+</script>

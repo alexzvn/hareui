@@ -20,7 +20,7 @@ import { ColorArea } from '@hareui/vue'
 
 ## Anatomy
 
-ColorArea renders the gradient area with its draggable thumb built in (HeroUI's `ColorArea.Thumb` child). Style the parts with `class` and `ui`.
+ColorArea renders the gradient area with its draggable thumb built in. Style the parts with `class` and `ui`.
 
 ```vue
 <template>
@@ -28,10 +28,10 @@ ColorArea renders the gradient area with its draggable thumb built in (HeroUI's 
 </template>
 ```
 
-| `ui` key | `data-slot` | Element |
-|---|---|---|
-| `base` | `color-area` | `<div role="application">` gradient area |
-| `thumb` | `color-area-thumb` | `<div role="slider">` thumb |
+| `ui` key | `data-slot`        | Element                                  |
+| -------- | ------------------ | ---------------------------------------- |
+| `base`   | `color-area`       | `<div role="application">` gradient area |
+| `thumb`  | `color-area-thumb` | `<div role="slider">` thumb              |
 
 ## Examples
 
@@ -41,7 +41,7 @@ ColorArea renders the gradient area with its draggable thumb built in (HeroUI's 
 
 ### Color Space & Channels
 
-Use `color-space` to set the color space (RGB, HSL, HSB) and `x-channel` / `y-channel` to choose which channels are shown on each axis.
+Use `color-space` to set the color space (RGB, HSL, HSB) and the `channel` of `x` / `y` to choose which channels are shown on each axis.
 
 <ComponentPreview name="color-area/space-and-channels" />
 
@@ -57,7 +57,7 @@ Bind the value with `v-model`. The committed value is always a `Color` object; u
 
 ### Render Function
 
-HeroUI's `render` prop replaces the root element. In Vue, attributes you pass to `ColorArea` fall through to the root element.
+Attributes you pass to `ColorArea` fall through to the root element.
 
 <ComponentPreview name="color-area/render-function" />
 
@@ -70,9 +70,11 @@ HeroUI's `render` prop replaces the root element. In Vue, attributes you pass to
 ### Global Configuration
 
 ```ts
-app.use(createHareUI({
-  ui: { colorArea: { slots: { base: 'rounded-3xl', thumb: 'size-5 border-4' } } },
-}))
+app.use(
+  createHareUI({
+    ui: { colorArea: { slots: { base: 'rounded-3xl', thumb: 'size-5 border-4' } } },
+  }),
+)
 ```
 
 ## Styling Reference
@@ -102,7 +104,7 @@ app.use(createHareUI({
 
 <ApiTable component="ColorArea" kind="emits" />
 
-### Theme
+## Theme
 
 <ApiTheme component="ColorArea" />
 

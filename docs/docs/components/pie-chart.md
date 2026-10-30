@@ -34,7 +34,7 @@ bun add d3-scale d3-shape
 
 :::
 
-`index` names the field that holds each slice's name, and the first other numeric field sets its size (`value-key` picks another). The chart draws one slice per row with a tooltip. `PieChart` fills its parent's width.
+`index` names the field that holds each slice's name, and the first other numeric field sets its size (`value.key` picks another). The chart draws one slice per row with a tooltip. `PieChart` fills its parent's width.
 
 <ComponentPreview name="pie-chart/basic" />
 
@@ -43,7 +43,11 @@ bun add d3-scale d3-shape
 Slices start at 3 o'clock and run counter-clockwise, in row order. Colors follow the chart palette by position (`--chart-3`, `--chart-1`, `--chart-4`, `--chart-2`, `--chart-5`). Set `colors` to an array for another palette, or to a map of slice name to color. A `fill` field in a row wins over both.
 
 ```vue
-<PieChart :data="data" index="channel" :colors="{ Email: 'var(--chart-4)', Chat: 'var(--chart-2)' }" />
+<PieChart
+  :data="data"
+  index="channel"
+  :colors="{ Email: 'var(--chart-4)', Chat: 'var(--chart-2)' }"
+/>
 ```
 
 `donut` cuts a hole in the middle and rounds the slices (`inner-radius="68%"`, `:corner-radius="12"`, `:padding-angle="-20"`, so the rounded ends overlap). `inner-radius`, `outer-radius`, `corner-radius`, `padding-angle`, `start-angle` and `end-angle` set each value on their own and win over `donut`. Radii take pixels or a percentage of half the shorter chart side.
@@ -63,17 +67,17 @@ The `#center` slot puts HTML in the middle of the chart, such as a total inside 
 
 ## Tooltip
 
-Hovering a slice shows its name and value. `tooltip` takes `false`, or `ChartTooltip` props such as `indicator` and `labelFormatter`. `value-formatter` formats the values. Use the `#tooltip-footer` slot to add rows under the default ones, or `#tooltip` to replace the panel.
+Hovering a slice shows its name and value. `tooltip` takes `false`, or `ChartTooltip` props such as `indicator` and `labelFormatter`. `value.formatter` formats the values. Use the `#tooltip-footer` slot to add rows under the default ones, or `#tooltip` to replace the panel.
 
 ## Legend
 
-Set `legend` to draw a [ChartLegend](./chart-legend) beside the chart: `true` puts it at the bottom, or pass `'top'`, `'left'` or `'right'`. An object sets `ChartLegend` props, such as `showValue` and `showPercent`, plus a `position`; the chart's `valueFormatter` formats the legend values too. Clicking an item hides or shows its slice; bind `v-model:hidden` to read or set the hidden names. Use `#legend-item` to redraw each row, or `#legend` to replace the list.
+Set `legend` to draw a [ChartLegend](./chart-legend) beside the chart: `true` puts it at the bottom, or pass `'top'`, `'left'` or `'right'`. An object sets `ChartLegend` props, such as `showValue` and `showPercent`, plus a `position`; the chart's `value.formatter` formats the legend values too. Clicking an item hides or shows its slice; bind `v-model:hidden` to read or set the hidden names. Use `#legend-item` to redraw each row, or `#legend` to replace the list.
 
 ## Examples
 
 ### Share Tooltip
 
-`value-formatter` shows each slice as a share of the total, and `#tooltip-footer` adds the order count under it.
+`value.formatter` shows each slice as a share of the total, and `#tooltip-footer` adds the order count under it.
 
 <ComponentPreview name="pie-chart/share-tooltip" />
 
@@ -114,7 +118,11 @@ A donut with the total in the hole and a legend on the right that lists each val
 Use `class` for the container and `ui` for the drawn parts. Slice colors come from `colors` or a `fill` field in each row, which accept any CSS color or the `--chart-1` to `--chart-5` tokens.
 
 ```vue
-<PieChart :data="data" index="mode" :ui="{ sector: 'stroke-background stroke-2', center: 'gap-1' }" />
+<PieChart
+  :data="data"
+  index="mode"
+  :ui="{ sector: 'stroke-background stroke-2', center: 'gap-1' }"
+/>
 ```
 
 ### Global Configuration
@@ -122,15 +130,17 @@ Use `class` for the container and `ui` for the drawn parts. Slice colors come fr
 Override the `pieChart` theme app-wide with `createHareUI`:
 
 ```ts
-app.use(createHareUI({
-  ui: {
-    pieChart: {
-      slots: {
-        sector: 'stroke-background',
+app.use(
+  createHareUI({
+    ui: {
+      pieChart: {
+        slots: {
+          sector: 'stroke-background',
+        },
       },
     },
-  },
-}))
+  }),
+)
 ```
 
 ## Composition
@@ -152,17 +162,17 @@ Without `index`, the chart draws only the parts you put in its default slot. Use
 
 `ChartPie` draws one ring from `data-key` and `name-key`, using its own `data` or the chart's. A `ChartCell` per slice sets its color, in row order. Put a `ChartLabel` inside a `ChartPie` to label each slice, or directly in the chart with `position="center"` for text in the middle. With several pies, the tooltip shows the slice under the pointer. With `index` set, parts in the default slot draw over the generated pie.
 
-| `ui` key | `data-slot` | Element | Description |
-|---|---|---|---|
-| `base` | `pie-chart` | `<div>` | Responsive container |
-| `surface` | `chart-surface` | `<svg>` | Drawing surface |
-| `overlay` | `chart-overlay` | `<div>` | Layer over the svg that holds the tooltip and the center content |
-| `series` | `chart-pie` | `<g>` | One group per pie |
-| `sector` | `chart-pie-sector` | `<path>` | One slice, with `data-index`, and `data-active` while hovered or selected with the keyboard |
-| `label` | `chart-label` | `<text>` | `ChartLabel` text |
-| `center` | `chart-center` | `<div>` | `#center` content |
-| `tooltip` | `chart-tooltip-wrapper` | `<div>` | Floating wrapper around the tooltip panel |
-| `legend` | `chart-legend` | `<ul>` | Legend drawn from the `legend` prop |
+| `ui` key  | `data-slot`             | Element  | Description                                                                                 |
+| --------- | ----------------------- | -------- | ------------------------------------------------------------------------------------------- |
+| `base`    | `pie-chart`             | `<div>`  | Responsive container                                                                        |
+| `surface` | `chart-surface`         | `<svg>`  | Drawing surface                                                                             |
+| `overlay` | `chart-overlay`         | `<div>`  | Layer over the svg that holds the tooltip and the center content                            |
+| `series`  | `chart-pie`             | `<g>`    | One group per pie                                                                           |
+| `sector`  | `chart-pie-sector`      | `<path>` | One slice, with `data-index`, and `data-active` while hovered or selected with the keyboard |
+| `label`   | `chart-label`           | `<text>` | `ChartLabel` text                                                                           |
+| `center`  | `chart-center`          | `<div>`  | `#center` content                                                                           |
+| `tooltip` | `chart-tooltip-wrapper` | `<div>`  | Floating wrapper around the tooltip panel                                                   |
+| `legend`  | `chart-legend`          | `<ul>`   | Legend drawn from the `legend` prop                                                         |
 
 ## Styling Reference
 
@@ -208,7 +218,7 @@ Without `index`, the chart draws only the parts you put in its default slot. Use
 
 <ApiTable component="ChartTooltip" kind="slots" />
 
-### Theme
+## Theme
 
 <ApiTheme component="PieChart" />
 

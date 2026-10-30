@@ -1,7 +1,3 @@
-<script setup lang="ts">
-import { Skeleton } from '@hareui/vue'
-</script>
-
 <template>
   <div class="w-full max-w-sm space-y-4">
     <div v-for="index in 3" :key="index" class="flex items-center gap-3">
@@ -13,3 +9,7 @@ import { Skeleton } from '@hareui/vue'
     </div>
   </div>
 </template>
+
+<script setup lang="ts">
+import { Skeleton } from '@hareui/vue'
+</script>

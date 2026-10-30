@@ -24,31 +24,36 @@ SearchField renders a [Label](/docs/components/label), a group holding a search 
 ```vue
 <template>
   <SearchField label="…" description="…" error-message="…" :invalid="…">
-    <template #label />      <!-- Label content -->
-    <template #icon />       <!-- search icon content (default: magnifier icon) -->
-    <template #clearIcon />  <!-- clear button icon content (default: × icon) -->
-    <template #description />  <!-- Description content -->
-    <template #error="{ isInvalid, validationErrors, validationDetails }" /> <!-- FieldError content, rendered while invalid -->
+    <template #label />
+    <!-- Label content -->
+    <template #icon />
+    <!-- search icon content (default: magnifier icon) -->
+    <template #clearIcon />
+    <!-- clear button icon content (default: × icon) -->
+    <template #description />
+    <!-- Description content -->
+    <template #error="{ isInvalid, validationErrors, validationDetails }" />
+    <!-- FieldError content, rendered while invalid -->
   </SearchField>
 </template>
 ```
 
-| `ui` key | `data-slot` | Element |
-|---|---|---|
-| `base` | `search-field` | `<div>` root |
-| — | `label` | [Label](/docs/components/label) (iff `label` / `#label`) |
-| `group` | `search-field-group` | `<div>` wrapping the icon, input and clear button |
-| `searchIcon` | `search-field-search-icon` | `<span>` (default icon or `#icon`) |
-| `input` | `search-field-input` | `<input type="search">` |
-| `clearButton` | `search-field-clear-button` | [CloseButton](/docs/components/close-button) (default icon or `#clearIcon`), hidden via CSS while empty |
-| — | `description` | [Description](/docs/components/description) (iff `description` / `#description`) |
-| — | `field-error` | [FieldError](/docs/components/field-error) (while invalid, iff `error-message` / `#error` / validation errors) |
+| `ui` key      | `data-slot`                 | Element                                                                                                        |
+| ------------- | --------------------------- | -------------------------------------------------------------------------------------------------------------- |
+| `base`        | `search-field`              | `<div>` root                                                                                                   |
+| —             | `label`                     | [Label](/docs/components/label) (iff `label` / `#label`)                                                       |
+| `group`       | `search-field-group`        | `<div>` wrapping the icon, input and clear button                                                              |
+| `searchIcon`  | `search-field-search-icon`  | `<span>` (default icon or `#icon`)                                                                             |
+| `input`       | `search-field-input`        | `<input type="search">`                                                                                        |
+| `clearButton` | `search-field-clear-button` | [CloseButton](/docs/components/close-button) (default icon or `#clearIcon`), hidden via CSS while empty        |
+| —             | `description`               | [Description](/docs/components/description) (iff `description` / `#description`)                               |
+| —             | `field-error`               | [FieldError](/docs/components/field-error) (while invalid, iff `error-message` / `#error` / validation errors) |
 
 ## Examples
 
 ### In Surface
 
-When used inside a surface (HeroUI's [Surface](/docs/components/surface), here a `bg-surface` container), use `variant="secondary"` to apply the lower emphasis variant suitable for surface backgrounds.
+When used inside a surface ([Surface](/docs/components/surface) or another `bg-surface` container), use `variant="secondary"` to apply the lower emphasis variant suitable for surface backgrounds.
 
 <ComponentPreview name="search-field/on-surface" />
 
@@ -100,7 +105,7 @@ Add keyboard shortcuts to quickly focus the search field.
 
 ### Render Function
 
-HeroUI's `render` prop replaces the root element. In Vue, input attributes you pass to `SearchField` (`aria-label`, `aria-labelledby`, `autocomplete`, `maxlength`, `inputmode`, …) go to the input, and `aria-describedby` is added to the input's description and error ids. Everything else falls through to the root `div`.
+Input attributes you pass to `SearchField` (`aria-label`, `aria-labelledby`, `autocomplete`, `maxlength`, `inputmode`, …) go to the input, and `aria-describedby` is added to the input's description and error ids. Everything else falls through to the root `div`.
 
 <ComponentPreview name="search-field/render-function" />
 
@@ -116,9 +121,11 @@ Use the `icon` and `clearIcon` slots to render custom icons, and `:ui` or `class
 ### Global Configuration
 
 ```ts
-app.use(createHareUI({
-  ui: { searchField: { slots: { base: 'gap-2' } } },
-}))
+app.use(
+  createHareUI({
+    ui: { searchField: { slots: { base: 'gap-2' } } },
+  }),
+)
 ```
 
 ## Styling Reference
@@ -159,7 +166,7 @@ SearchField sets these data attributes:
 
 <ApiTable component="SearchField" kind="emits" />
 
-### Theme
+## Theme
 
 <ApiTheme component="SearchField" />
 

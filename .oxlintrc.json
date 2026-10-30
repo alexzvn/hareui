@@ -1,0 +1,115 @@
+{
+  "$schema": "./node_modules/oxlint/configuration_schema.json",
+  "plugins": ["typescript", "unicorn", "oxc", "import", "vue", "vitest"],
+  "jsPlugins": ["./tooling/lint/hareui-plugin.mjs"],
+  "categories": {
+    "correctness": "error"
+  },
+  "ignorePatterns": [
+    "**/dist",
+    "**/node_modules",
+    "packages/herouse",
+    "docs/.vitepress/cache",
+    "docs/.vitepress/dist",
+    "docs/.vitepress/api",
+    "docs/.vitepress/theme/fumadocs/typography.mjs",
+    "tooling"
+  ],
+  "rules": {
+    "typescript/no-explicit-any": "error",
+    "eslint/no-unused-vars": [
+      "error",
+      {
+        "args": "after-used",
+        "ignoreRestSiblings": true
+      }
+    ],
+    "typescript/consistent-type-definitions": ["error", "type"],
+    "typescript/consistent-type-imports": "error",
+    "eslint/func-style": ["error", "expression"],
+    "eslint/prefer-arrow-callback": "error",
+    "eslint/max-params": [
+      "error",
+      {
+        "max": 2
+      }
+    ],
+    "eslint/no-nested-ternary": "error",
+    "eslint/no-throw-literal": "error",
+    "unicorn/throw-new-error": "error",
+    "eslint/no-empty": "error",
+    "eslint/no-console": "error",
+    "vue/require-typed-ref": "error",
+    "vue/prefer-import-from-vue": "error",
+    "hareui/no-else": "error",
+    "hareui/switch-perf": "error",
+    "hareui/no-enum": "error",
+    "hareui/no-manual-ui-merge": "error",
+    "hareui/handler-naming": "error",
+    "hareui/boolean-prefix": "error",
+    "hareui/no-reactive-destructure": "error",
+    "hareui/use-template-ref": "error",
+    "hareui/no-parent-import": "error",
+    "hareui/sfc-block-order": "error",
+    "hareui/composable-export": "error",
+    "hareui/prop-group": "error",
+    "hareui/public-jsdoc": "error",
+    "hareui/no-class-assertion": "error",
+    "vitest/expect-expect": [
+      "error",
+      {
+        "assertFunctionNames": ["expect", "expect*"]
+      }
+    ],
+    "hareui/padding-lines": "error",
+    "hareui/max-file-lines": [
+      "error",
+      {
+        "max": 600
+      }
+    ],
+    "eslint/max-depth": ["error", 3],
+    "eslint/max-nested-callbacks": ["error", 3]
+  },
+  "overrides": [
+    {
+      "files": ["packages/vue/src/utils/warn.ts"],
+      "rules": {
+        "eslint/no-console": "off"
+      }
+    },
+    {
+      "files": ["packages/vue/test/**", "**/*.spec.ts"],
+      "rules": {
+        "eslint/max-params": "off",
+        "hareui/public-jsdoc": "off",
+        "eslint/max-nested-callbacks": ["error", 5],
+        "hareui/max-file-lines": [
+          "error",
+          {
+            "max": 1500
+          }
+        ]
+      }
+    },
+    {
+      "files": ["packages/vue/test/theme/**"],
+      "rules": {
+        "hareui/no-class-assertion": "off"
+      }
+    },
+    {
+      "files": ["docs/**"],
+      "rules": {
+        "hareui/no-parent-import": "off",
+        "hareui/public-jsdoc": "off"
+      }
+    },
+    {
+      "files": ["docs/scripts/**", "docs/demos/**"],
+      "rules": {
+        "eslint/no-console": "off"
+      }
+    }
+  ]
+}

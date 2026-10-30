@@ -1,7 +1,3 @@
-<script setup lang="ts">
-import { ProgressBar } from '@hareui/vue'
-</script>
-
 <template>
   <ProgressBar
     aria-label="Upload progress"
@@ -16,3 +12,7 @@ import { ProgressBar } from '@hareui/vue'
     :value="45"
   />
 </template>
+
+<script setup lang="ts">
+import { ProgressBar } from '@hareui/vue'
+</script>

@@ -1,9 +1,10 @@
 // Port of HeroUI docs `themes/hooks/use-undo-redo.ts`: tracks our own history stack of query strings
 // (browsers don't expose theirs) and moves through it with history.back()/forward().
 import { onBeforeUnmount, onMounted, ref, watch } from 'vue'
+
 import { search } from './variables'
 
-export function useUndoRedo() {
+export const useUndoRedo = () => {
   const canUndo = ref(false)
   const canRedo = ref(false)
   let historyStack: string[] = []
@@ -16,11 +17,13 @@ export function useUndoRedo() {
     (current) => {
       if (current === lastSearch) return
       lastSearch = current
+
       if (isNavigating) {
         // This change came from our own undo/redo navigation.
         isNavigating = false
         return
       }
+
       // A new change from the user: drop any forward history and add the entry.
       historyStack = historyStack.slice(0, currentIndex + 1)
       historyStack.push(current)
@@ -42,6 +45,7 @@ export function useUndoRedo() {
       canRedo.value = newIndex < historyStack.length - 1
     }
   }
+
   onMounted(() => window.addEventListener('popstate', onPopState))
   onBeforeUnmount(() => window.removeEventListener('popstate', onPopState))
 

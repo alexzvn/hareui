@@ -19,9 +19,18 @@ import { Breadcrumbs } from '@hareui/vue'
 
 ## Anatomy
 
-HeroUI's `Breadcrumbs.Item` children become an `items` array. The last item is the current page.
+Pass the trail as an `items` array. The last item is the current page.
 
 ```vue
+<template>
+  <Breadcrumbs :items="items">
+    <template #item="{ item, index, current }" />
+    <!-- replaces an item's label -->
+    <template #separator="{ item, index }" />
+    <!-- replaces the chevron -->
+  </Breadcrumbs>
+</template>
+
 <script setup lang="ts">
 import { Breadcrumbs } from '@hareui/vue'
 
@@ -31,21 +40,14 @@ const items = [
   { label: 'Current Page' },
 ]
 </script>
-
-<template>
-  <Breadcrumbs :items="items">
-    <template #item="{ item, index, current }" />  <!-- replaces an item's label -->
-    <template #separator="{ item, index }" />      <!-- replaces the chevron -->
-  </Breadcrumbs>
-</template>
 ```
 
-| `ui` key | `data-slot` | Element |
-|---|---|---|
-| `base` | `breadcrumbs` | `<ol>` root |
-| `item` | `breadcrumbs-item` | `<li>` per item (an item's `class` is merged here) |
-| `link` | `link` | the item's [Link](/docs/components/link) |
-| `separator` | `breadcrumbs-separator` | separator icon between items |
+| `ui` key    | `data-slot`             | Element                                            |
+| ----------- | ----------------------- | -------------------------------------------------- |
+| `base`      | `breadcrumbs`           | `<ol>` root                                        |
+| `item`      | `breadcrumbs-item`      | `<li>` per item (an item's `class` is merged here) |
+| `link`      | `link`                  | the item's [Link](/docs/components/link)           |
+| `separator` | `breadcrumbs-separator` | separator icon between items                       |
 
 ### Typing items
 
@@ -76,7 +78,7 @@ const items: MyItem[] = [/* ... */]
 
 ### Custom Separator
 
-A single root element in `#separator` receives the separator classes, like HeroUI's `separator` element.
+A single root element in `#separator` receives the separator classes.
 
 <ComponentPreview name="breadcrumbs/custom-separator" />
 
@@ -91,17 +93,19 @@ A single root element in `#separator` receives the separator classes, like HeroU
 To customize the Breadcrumbs classes for the whole app, extend the `breadcrumbs` theme in `createHareUI`:
 
 ```ts
-app.use(createHareUI({
-  ui: {
-    breadcrumbs: {
-      slots: {
-        base: 'gap-4 text-lg',
-        link: 'font-semibold',
-        separator: 'text-blue-500',
+app.use(
+  createHareUI({
+    ui: {
+      breadcrumbs: {
+        slots: {
+          base: 'gap-4 text-lg',
+          link: 'font-semibold',
+          separator: 'text-blue-500',
+        },
       },
     },
-  },
-}))
+  }),
+)
 ```
 
 ## Styling Reference
@@ -135,7 +139,7 @@ The component supports both CSS pseudo-classes and data attributes for flexibili
 
 <ApiTable component="Breadcrumbs" kind="slots" />
 
-### Theme
+## Theme
 
 <ApiTheme component="Breadcrumbs" />
 

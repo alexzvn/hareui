@@ -1,7 +1,3 @@
-<script setup lang="ts">
-import { Avatar } from '@hareui/vue'
-</script>
-
 <template>
   <Avatar
     alt="John Doe"
@@ -11,3 +7,7 @@ import { Avatar } from '@hareui/vue'
     :ui="{ fallback: 'rounded-lg' }"
   />
 </template>
+
+<script setup lang="ts">
+import { Avatar } from '@hareui/vue'
+</script>

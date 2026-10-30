@@ -18,7 +18,7 @@ import { Error } from '@hareui/vue'
 Importing `Error` shadows the global `Error` constructor in that file. If you also need the constructor, rename the import: `import { Error as ErrorPage } from '@hareui/vue'`.
 :::
 
-Use the `error` prop to display an error. It accepts an object with `statusCode`, `statusMessage` and `message`, as thrown by Nuxt, or `status` and `statusText`, as thrown by H3. The message is hidden when it is the same as the status message.
+Use the `error` prop to display an error. It accepts an object with `statusCode`, `statusMessage` and `message` (thrown by `createError`), or `status` and `statusText`, as thrown by H3. The message is hidden when it is the same as the status message.
 
 <ComponentPreview name="error/basic" minHeight="400px" />
 
@@ -64,7 +64,15 @@ Listen to the `clear` event to handle the click yourself. Call `event.preventDef
 <ComponentPreview name="error/custom-handler" minHeight="400px" />
 
 ```vue
-<Error :error="error" @clear="(event) => { event.preventDefault(); router.push('/') }" />
+<Error
+  :error="error"
+  @clear="
+    (event) => {
+      event.preventDefault()
+      router.push('/')
+    }
+  "
+/>
 ```
 
 ## Customization
@@ -74,13 +82,15 @@ Listen to the `clear` event to handle the click yourself. Call `event.preventDef
 Override the `error` theme app-wide with `createHareUI`:
 
 ```ts
-app.use(createHareUI({
-  ui: {
-    error: {
-      slots: { statusCode: 'text-danger', statusMessage: 'text-3xl' },
+app.use(
+  createHareUI({
+    ui: {
+      error: {
+        slots: { statusCode: 'text-danger', statusMessage: 'text-3xl' },
+      },
     },
-  },
-}))
+  }),
+)
 ```
 
 ## API
@@ -96,3 +106,7 @@ app.use(createHareUI({
 ### Error Emits
 
 <ApiTable component="Error" kind="emits" />
+
+## Theme
+
+<ApiTheme component="Error" />

@@ -1,3 +1,26 @@
+<template>
+  <Card
+    class="w-full max-w-[460px] rounded-2xl"
+    title="Cake Orders by Size"
+    :ui="{ title: 'text-base' }"
+  >
+    <PieChart
+      :data="data"
+      index="size"
+      donut
+      :height="180"
+      :legend="legend"
+      :ui="{ legend: 'flex-1' }"
+      aria-label="Cake orders by size"
+    >
+      <template #center="{ total }">
+        <span class="text-xl font-bold text-foreground">{{ total.toLocaleString() }}</span>
+        <span class="text-[10px]/3 text-muted">Orders</span>
+      </template>
+    </PieChart>
+  </Card>
+</template>
+
 <script setup lang="ts">
 import { Card } from '@hareui/vue'
 import { PieChart } from '@hareui/vue/charts'
@@ -15,14 +38,3 @@ const legend = {
   percentFormatter: (percent: number) => `(${percent.toFixed(1)}%)`,
 }
 </script>
-
-<template>
-  <Card class="w-full max-w-[460px] rounded-2xl" title="Cake Orders by Size" :ui="{ title: 'text-base' }">
-    <PieChart :data="data" index="size" donut :height="180" :legend="legend" :ui="{ legend: 'flex-1' }" aria-label="Cake orders by size">
-      <template #center="{ total }">
-        <span class="text-xl font-bold text-foreground">{{ total.toLocaleString() }}</span>
-        <span class="text-[10px]/3 text-muted">Orders</span>
-      </template>
-    </PieChart>
-  </Card>
-</template>

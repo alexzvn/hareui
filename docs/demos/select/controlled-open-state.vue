@@ -1,3 +1,17 @@
+<template>
+  <div class="space-y-4">
+    <Select
+      v-model:open="isOpen"
+      class="w-[256px]"
+      label="State"
+      placeholder="Select one"
+      :items="states"
+    />
+    <Button @click="isOpen = !isOpen"> {{ isOpen ? 'Close' : 'Open' }} Select </Button>
+    <p class="text-sm text-muted">Select is {{ isOpen ? 'open' : 'closed' }}</p>
+  </div>
+</template>
+
 <script setup lang="ts">
 import type { ListBoxItem } from '@hareui/vue'
 import { Button, Select } from '@hareui/vue'
@@ -14,15 +28,3 @@ const states: ListBoxItem[] = [
 
 const isOpen = ref(false)
 </script>
-
-<template>
-  <div class="space-y-4">
-    <Select v-model:open="isOpen" class="w-[256px]" label="State" placeholder="Select one" :items="states" />
-    <Button @click="isOpen = !isOpen">
-      {{ isOpen ? 'Close' : 'Open' }} Select
-    </Button>
-    <p class="text-sm text-muted">
-      Select is {{ isOpen ? 'open' : 'closed' }}
-    </p>
-  </div>
-</template>

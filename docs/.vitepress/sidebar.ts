@@ -1,7 +1,8 @@
 import type { DefaultTheme } from 'vitepress'
+
 import { COMPONENT_GROUPS, NEW_COMPONENTS, UPDATED_COMPONENTS } from './componentGroups'
 
-export interface SidebarLink {
+export type SidebarLink = {
   text: string
   link: string
   icon?: string
@@ -9,19 +10,19 @@ export interface SidebarLink {
   badge?: 'new' | 'updated'
 }
 
-export interface SidebarSeparator {
+export type SidebarSeparator = {
   separator: string
 }
 
 /** Collapsible group of links; open by default. */
-export interface SidebarGroup {
+export type SidebarGroup = {
   group: string
   items: SidebarLink[]
 }
 
 export type SidebarEntry = SidebarLink | SidebarSeparator | SidebarGroup
 
-export interface SidebarSection {
+export type SidebarSection = {
   text: string
   icon: string
   base: string
@@ -31,8 +32,16 @@ export interface SidebarSection {
 const gs = (page: string) => `/docs/getting-started/${page}`
 const c = (page: string) => `/docs/components/${page}`
 const r = (page: string) => `/docs/releases/${page}`
+
 // `color-swatch-picker` → `ColorSwatchPicker`, the component name
-const pascal = (slug: string) => slug.replace(/(^|-)(\w)/g, (_, __, ch: string) => ch.toUpperCase())
+const pascal = (slug: string) => slug.replace(/(?:^|-)(\w)/g, (_, ch: string) => ch.toUpperCase())
+
+const componentBadge = (slug: string) => {
+  if (NEW_COMPONENTS.has(slug)) return 'new' as const
+  if (UPDATED_COMPONENTS.has(slug)) return 'updated' as const
+
+  return undefined
+}
 
 export const sidebar: SidebarSection[] = [
   {
@@ -52,6 +61,7 @@ export const sidebar: SidebarSection[] = [
       { text: 'Styling', link: gs('styling'), icon: 'brush' },
       { text: 'Animation', link: gs('animation'), icon: 'copy-transparent' },
       { text: 'Composition', link: gs('composition'), icon: 'layers' },
+      { text: 'Overlays', link: gs('overlays'), icon: 'layers', badge: 'new' },
       { separator: 'UI for Agents' },
       { text: 'LLMs.txt', link: gs('llms-txt') },
     ],
@@ -65,7 +75,11 @@ export const sidebar: SidebarSection[] = [
       { text: 'All Components (Vue)', link: c('') },
       ...Object.entries(COMPONENT_GROUPS).map(([group, slugs]) => ({
         group,
-        items: slugs.map(slug => ({ text: pascal(slug), link: c(slug), badge: NEW_COMPONENTS.has(slug) ? 'new' as const : UPDATED_COMPONENTS.has(slug) ? 'updated' as const : undefined })),
+        items: slugs.map((slug) => ({
+          text: pascal(slug),
+          link: c(slug),
+          badge: componentBadge(slug),
+        })),
       })),
     ],
   },
@@ -77,7 +91,10 @@ export const sidebar: SidebarSection[] = [
     items: [
       { separator: 'Overview' },
       { text: 'All Releases', link: r('') },
+      { separator: 'Migrations' },
+      { text: 'v0.3.0 → v0.4.0', link: r('migrations/v0.3.0-v0.4.0') },
       { separator: 'Versions' },
+      { text: 'v0.4.0', link: r('v0-4-0') },
       { text: 'v0.3.0', link: r('v0-3-0') },
       { text: 'v0.2.0', link: r('v0-2-0') },
       { text: 'v0.1.3', link: r('v0-1-3') },
@@ -88,23 +105,34 @@ export const sidebar: SidebarSection[] = [
   },
 ]
 
-export function isSeparator(entry: SidebarEntry): entry is SidebarSeparator {
+export const isSeparator = (entry: SidebarEntry): entry is SidebarSeparator => {
   return 'separator' in entry
 }
 
-export function isGroup(entry: SidebarEntry): entry is SidebarGroup {
+export const isGroup = (entry: SidebarEntry): entry is SidebarGroup => {
   return 'group' in entry
 }
 
-export function sectionLinks(section: SidebarSection): SidebarLink[] {
-  return section.items.flatMap(entry => isSeparator(entry) ? [] : isGroup(entry) ? entry.items : [entry])
+const entryLinks = (entry: SidebarEntry): SidebarLink[] => {
+  if (isSeparator(entry)) return []
+
+  return isGroup(entry) ? entry.items : [entry]
 }
-export function normalizePath(path: string): string {
-  const p = path.replace(/[?#].*$/, '').replace(/\.html$/, '').replace(/\/index$/, '')
+
+export const sectionLinks = (section: SidebarSection): SidebarLink[] => {
+  return section.items.flatMap(entryLinks)
+}
+
+export const normalizePath = (path: string): string => {
+  const p = path
+    .replace(/[?#].*$/, '')
+    .replace(/\.html$/, '')
+    .replace(/\/index$/, '')
+
   return p.length > 1 ? p.replace(/\/$/, '') : p
 }
 
-export interface ThemeConfig {
+export type ThemeConfig = {
   sidebar: SidebarSection[]
   search: DefaultTheme.Config['search']
 }

@@ -13,11 +13,13 @@ export default {
       'data-[hidden=true]:pointer-events-none data-[hidden=true]:-translate-y-full',
     ],
     // Inner row: `--navbar-max-width: 1024px`, `px-6`, `gap-4` (`--container-max-width` / `--container-padding`) at every width.
-    container: 'mx-auto flex h-full w-full max-w-(--container-max-width) px-(--container-padding) items-center justify-between gap-4',
+    container:
+      'mx-auto flex h-full w-full max-w-(--container-max-width) px-(--container-padding) items-center justify-between gap-4',
     left: 'flex items-center gap-2',
     center: 'items-center gap-1',
     right: 'flex items-center justify-end gap-1.5',
-    title: 'flex shrink-0 items-center gap-2 rounded-lg text-lg font-semibold text-foreground no-underline outline-none focus-visible:status-focused',
+    title:
+      'flex shrink-0 items-center gap-2 rounded-lg text-lg font-semibold text-foreground no-underline outline-none focus-visible:status-focused',
     // Menu toggle: a 36px square, `--radius` corners.
     toggle: 'rounded-lg [--button-height:--spacing(9)]',
     // Toggle icon: two 24px hairlines 8px apart that rotate into an X (`transform 0.15s`, CSS `ease`).
@@ -32,7 +34,8 @@ export default {
     content: 'p-0',
     // The menu backdrop, positioned on the region the Header measures: from the bar's top edge to the bottom of the
     // viewport, across the bar's width (the whole viewport for a full-width sticky header).
-    overlay: 'inset-auto top-(--header-menu-top) left-(--header-menu-left) h-(--header-menu-height) w-(--header-menu-width)',
+    overlay:
+      'inset-auto top-(--header-menu-top) left-(--header-menu-left) h-(--header-menu-height) w-(--header-menu-width)',
     // The menu's own header row repeats the bar (same height and container), so brand and toggle sit exactly over the bar's.
     header: 'flex h-(--header-height) shrink-0 [--header-height:4rem]',
     // Same inline padding and max width as `container`, so the item pills line up with the brand (px-6 pt-2 pb-6).

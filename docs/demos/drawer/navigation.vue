@@ -1,17 +1,3 @@
-<script setup lang="ts">
-import { Button, Drawer } from '@hareui/vue'
-import { Icon } from '@iconify/vue'
-
-const navItems = [
-  { icon: 'gravity-ui:house', label: 'Home' },
-  { icon: 'gravity-ui:magnifier', label: 'Search' },
-  { icon: 'gravity-ui:bell', label: 'Notifications' },
-  { icon: 'gravity-ui:envelope', label: 'Messages' },
-  { icon: 'gravity-ui:person', label: 'Profile' },
-  { icon: 'gravity-ui:gear', label: 'Settings' },
-]
-</script>
-
 <template>
   <Drawer placement="left" title="Navigation">
     <Button variant="secondary">
@@ -33,3 +19,17 @@ const navItems = [
     </template>
   </Drawer>
 </template>
+
+<script setup lang="ts">
+import { Button, Drawer } from '@hareui/vue'
+import { Icon } from '@iconify/vue'
+
+const navItems = [
+  { icon: 'gravity-ui:house', label: 'Home' },
+  { icon: 'gravity-ui:magnifier', label: 'Search' },
+  { icon: 'gravity-ui:bell', label: 'Notifications' },
+  { icon: 'gravity-ui:envelope', label: 'Messages' },
+  { icon: 'gravity-ui:person', label: 'Profile' },
+  { icon: 'gravity-ui:gear', label: 'Settings' },
+]
+</script>

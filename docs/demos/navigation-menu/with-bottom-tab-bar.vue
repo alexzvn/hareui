@@ -1,19 +1,3 @@
-<script setup lang="ts">
-import type { NavigationMenuItem } from '@hareui/vue'
-import { NavigationMenu } from '@hareui/vue'
-import { Icon } from '@iconify/vue'
-import { h } from 'vue'
-
-const icon = (name: string) => (attrs: Record<string, unknown>) => h(Icon, { ...attrs, icon: `gravity-ui:${name}` })
-
-const items: NavigationMenuItem[] = [
-  { label: 'Home', icon: icon('house'), active: true },
-  { label: 'Samples', icon: icon('circle-play') },
-  { label: 'Explore', icon: icon('compass') },
-  { label: 'Library', icon: icon('bookmark') },
-]
-</script>
-
 <template>
   <NavigationMenu
     :items="items"
@@ -27,3 +11,20 @@ const items: NavigationMenuItem[] = [
     class="w-full"
   />
 </template>
+
+<script setup lang="ts">
+import type { NavigationMenuItem } from '@hareui/vue'
+import { NavigationMenu } from '@hareui/vue'
+import { Icon } from '@iconify/vue'
+import { h } from 'vue'
+
+const icon = (name: string) => (attrs: Record<string, unknown>) =>
+  h(Icon, { ...attrs, icon: `gravity-ui:${name}` })
+
+const items: NavigationMenuItem[] = [
+  { label: 'Home', icon: icon('house'), active: true },
+  { label: 'Samples', icon: icon('circle-play') },
+  { label: 'Explore', icon: icon('compass') },
+  { label: 'Library', icon: icon('bookmark') },
+]
+</script>

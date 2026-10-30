@@ -45,28 +45,29 @@ the lower-emphasis variant suitable for surface backgrounds.
 Override the `surface` theme app-wide with `createHareUI`:
 
 ```ts
-app.use(createHareUI({
-  ui: {
-    surface: {
-      slots: { base: 'rounded-2xl border border-border' },
-      variants: {
-        variant: { secondary: { base: 'bg-gradient-to-br from-blue-50 to-purple-50' } },
+app.use(
+  createHareUI({
+    ui: {
+      surface: {
+        slots: { base: 'rounded-2xl border border-border' },
+        variants: {
+          variant: { secondary: { base: 'bg-gradient-to-br from-blue-50 to-purple-50' } },
+        },
       },
     },
-  },
-}))
+  }),
+)
 ```
 
 ## Styling Reference
 
-Each rendered element carries the same `data-slot` string as HeroUI, so selectors translate 1:1.
+Each rendered element carries a `data-slot` attribute you can target in selectors.
 
-| `ui` key | `data-slot` | Description |
-|---|---|---|
-| `base` | `surface` | Base surface container |
+| `ui` key | `data-slot` | Description            |
+| -------- | ----------- | ---------------------- |
+| `base`   | `surface`   | Base surface container |
 
-HeroUI's `.surface--*` modifier classes correspond to the `variant` prop (HareUI renders utilities,
-not BEM classes, so style through `class`, `ui` or `createHareUI`): `transparent`, `default`,
+The `variant` prop sets the background (HareUI renders Tailwind utilities, so style through `class`, `ui` or `createHareUI`): `transparent`, `default`,
 `secondary`, `tertiary`.
 
 ## API Reference
@@ -79,7 +80,7 @@ not BEM classes, so style through `class`, `ui` or `createHareUI`): `transparent
 
 <ApiTable component="Surface" kind="slots" />
 
-### Theme
+## Theme
 
 <ApiTheme component="Surface" />
 
@@ -90,8 +91,8 @@ not BEM classes, so style through `class`, `ui` or `createHareUI`): `transparent
 Child components can inject the Surface context to read the current variant:
 
 ```ts
-import { inject } from 'vue'
 import { surfaceContextKey } from '@hareui/vue'
+import { inject } from 'vue'
 
 const ctx = inject(surfaceContextKey)
 // ctx?.variant.value is a Ref<'transparent' | 'default' | 'secondary' | 'tertiary'>

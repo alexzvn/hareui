@@ -25,13 +25,15 @@ Set the `--container-max-width` (default `64rem`) and `--container-padding` (def
 Override the `container` theme app-wide with `createHareUI`:
 
 ```ts
-app.use(createHareUI({
-  ui: {
-    container: {
-      slots: { base: 'max-w-7xl' },
+app.use(
+  createHareUI({
+    ui: {
+      container: {
+        slots: { base: 'max-w-7xl' },
+      },
     },
-  },
-}))
+  }),
+)
 ```
 
 ## API
@@ -43,3 +45,7 @@ app.use(createHareUI({
 ### Container Slots
 
 <ApiTable component="Container" kind="slots" />
+
+## Theme
+
+<ApiTheme component="Container" />

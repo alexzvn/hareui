@@ -24,22 +24,27 @@ InlineSelect is a [Select](/docs/components/select) with a ghost trigger: no bor
 ```vue
 <template>
   <InlineSelect aria-label="…" :items="items">
-    <template #leading />                                  <!-- inside the trigger, before the value -->
-    <template #value="{ selectedItems, isPlaceholder, text }" /> <!-- trigger value -->
-    <template #indicator="{ open }" />                     <!-- indicator (default: chevrons-expand icon) -->
-    <template #item-leading="{ item, selected }" />        <!-- ListBox item slots, forwarded -->
-    <template #item-indicator="{ selected }" />            <!-- option checkmark -->
+    <template #leading />
+    <!-- inside the trigger, before the value -->
+    <template #value="{ selectedItems, isPlaceholder, text }" />
+    <!-- trigger value -->
+    <template #indicator="{ open }" />
+    <!-- indicator (default: chevrons-expand icon) -->
+    <template #item-leading="{ item, selected }" />
+    <!-- ListBox item slots, forwarded -->
+    <template #item-indicator="{ selected }" />
+    <!-- option checkmark -->
   </InlineSelect>
 </template>
 ```
 
-| `ui` key | `data-slot` | Element |
-|---|---|---|
-| `base` | `inline-select` | root `<div>` |
-| `trigger` | `select-trigger` | `<button>` |
-| `value` | `select-value` | `<span>` inside the trigger, truncated |
-| `indicator` | `select-indicator` | `<span aria-hidden>` holding the icon |
-| `popover` | `select-popover` | popover holding the ListBox |
+| `ui` key    | `data-slot`        | Element                                |
+| ----------- | ------------------ | -------------------------------------- |
+| `base`      | `inline-select`    | root `<div>`                           |
+| `trigger`   | `select-trigger`   | `<button>`                             |
+| `value`     | `select-value`     | `<span>` inside the trigger, truncated |
+| `indicator` | `select-indicator` | `<span aria-hidden>` holding the icon  |
+| `popover`   | `select-popover`   | popover holding the ListBox            |
 
 There is no visible label. Give the trigger a name with `aria-label`, or point `aria-labelledby` at nearby text.
 
@@ -93,23 +98,29 @@ Pass classes per part with `ui`, or on the root with `class`. Set the popover wi
 
 ### CSS Variables
 
-| Variable | Default | Description |
-|---|---|---|
-| `--inline-select-value-max-width` | `12rem` | Width at which the value truncates |
-| `--inline-select-indicator-size` | `0.75rem` | Size of the indicator icon |
+| Variable                          | Default   | Description                        |
+| --------------------------------- | --------- | ---------------------------------- |
+| `--inline-select-value-max-width` | `12rem`   | Width at which the value truncates |
+| `--inline-select-indicator-size`  | `0.75rem` | Size of the indicator icon         |
 
 ```vue
 <template>
-  <InlineSelect class="[--inline-select-value-max-width:8rem]" aria-label="Sort by" :items="sortOptions" />
+  <InlineSelect
+    class="[--inline-select-value-max-width:8rem]"
+    aria-label="Sort by"
+    :items="sortOptions"
+  />
 </template>
 ```
 
 ### Global Configuration
 
 ```ts
-app.use(createHareUI({
-  ui: { inlineSelect: { slots: { trigger: 'text-foreground', indicator: 'text-current' } } },
-}))
+app.use(
+  createHareUI({
+    ui: { inlineSelect: { slots: { trigger: 'text-foreground', indicator: 'text-current' } } },
+  }),
+)
 ```
 
 The InlineSelect classes are merged over the Select theme, so `ui.select` overrides from your config apply here too unless an InlineSelect class replaces them.
@@ -146,7 +157,7 @@ The InlineSelect classes are merged over the Select theme, so `ui.select` overri
 
 <ApiTable component="InlineSelect" kind="emits" />
 
-### Theme
+## Theme
 
 <ApiTheme component="InlineSelect" />
 

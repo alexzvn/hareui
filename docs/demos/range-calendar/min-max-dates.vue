@@ -1,12 +1,3 @@
-<script setup lang="ts">
-import { Description, RangeCalendar } from '@hareui/vue'
-import { getLocalTimeZone, today } from '@internationalized/date'
-
-const now = today(getLocalTimeZone())
-const minDate = now
-const maxDate = now.add({ months: 3 })
-</script>
-
 <template>
   <div class="flex flex-col items-center gap-4">
     <RangeCalendar aria-label="Trip dates" :min-value="minDate" :max-value="maxDate" />
@@ -15,3 +6,12 @@ const maxDate = now.add({ months: 3 })
     </Description>
   </div>
 </template>
+
+<script setup lang="ts">
+import { Description, RangeCalendar } from '@hareui/vue'
+import { getLocalTimeZone, today } from '@internationalized/date'
+
+const now = today(getLocalTimeZone())
+const minDate = now
+const maxDate = now.add({ months: 3 })
+</script>

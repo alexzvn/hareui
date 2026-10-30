@@ -1,3 +1,39 @@
+<template>
+  <div
+    class="inline-flex cursor-(--cursor-interactive) items-center rounded-full border p-1"
+    data-theme-toggle=""
+  >
+    <button
+      v-for="item in modes"
+      :key="item.mode"
+      type="button"
+      :aria-label="item.label"
+      :class="[
+        'size-6.5 rounded-full p-1.5',
+        current === item.mode
+          ? 'bg-fd-accent text-fd-accent-foreground'
+          : 'text-fd-muted-foreground',
+      ]"
+      @click="select(item.mode)"
+    >
+      <svg
+        xmlns="http://www.w3.org/2000/svg"
+        width="24"
+        height="24"
+        viewBox="0 0 24 24"
+        fill="none"
+        stroke="currentColor"
+        stroke-width="2"
+        stroke-linecap="round"
+        stroke-linejoin="round"
+        class="size-full"
+        aria-hidden="true"
+        v-html="item.paths.join('')"
+      />
+    </button>
+  </div>
+</template>
+
 <script setup lang="ts">
 import { onBeforeUnmount, onMounted, ref } from 'vue'
 
@@ -26,20 +62,20 @@ const modes: { mode: Mode; label: string; paths: string[] }[] = [
 const current = ref<Mode>('auto')
 let media: MediaQueryList | undefined
 
-function apply(mode: Mode) {
-  const dark = mode === 'dark' || (mode === 'auto' && !!media?.matches)
+const apply = (mode: Mode) => {
+  const isDark = mode === 'dark' || (mode === 'auto' && !!media?.matches)
   const root = document.documentElement
-  root.classList.toggle('dark', dark)
-  root.style.colorScheme = dark ? 'dark' : 'light'
+  root.classList.toggle('dark', isDark)
+  root.style.colorScheme = isDark ? 'dark' : 'light'
 }
 
-function select(mode: Mode) {
+const select = (mode: Mode) => {
   current.value = mode
   localStorage.setItem(STORAGE_KEY, mode)
   apply(mode)
 }
 
-function onSystemChange() {
+const onSystemChange = () => {
   if (current.value === 'auto') apply('auto')
 }
 
@@ -53,34 +89,3 @@ onMounted(() => {
 
 onBeforeUnmount(() => media?.removeEventListener('change', onSystemChange))
 </script>
-
-<template>
-  <div class="inline-flex cursor-(--cursor-interactive) items-center rounded-full border p-1" data-theme-toggle="">
-    <button
-      v-for="item in modes"
-      :key="item.mode"
-      type="button"
-      :aria-label="item.label"
-      :class="[
-        'size-6.5 rounded-full p-1.5',
-        current === item.mode ? 'bg-fd-accent text-fd-accent-foreground' : 'text-fd-muted-foreground',
-      ]"
-      @click="select(item.mode)"
-    >
-      <svg
-        xmlns="http://www.w3.org/2000/svg"
-        width="24"
-        height="24"
-        viewBox="0 0 24 24"
-        fill="none"
-        stroke="currentColor"
-        stroke-width="2"
-        stroke-linecap="round"
-        stroke-linejoin="round"
-        class="size-full"
-        aria-hidden="true"
-        v-html="item.paths.join('')"
-      />
-    </button>
-  </div>
-</template>

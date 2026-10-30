@@ -48,11 +48,11 @@ Use the `unit` prop to set the unit of the `min-size`, `max-size`, `default-size
 
 The group stores the size and collapsed state of each sidebar and panel when a drag ends. Use the `storage-key` prop to prefix the keys and the `storage` prop to choose where they are saved:
 
-| Value | Behavior |
-|---|---|
-| `'cookie'` (default) | A cookie that lasts one year. It is read during setup, so the first render, including on the server, already has the stored size. |
-| `'local'` | `localStorage`. |
-| `{ getItem, setItem }` | A custom adapter, for example one that reads the request cookies during SSR. |
+| Value                  | Behavior                                                                                                                          |
+| ---------------------- | --------------------------------------------------------------------------------------------------------------------------------- |
+| `'cookie'` (default)   | A cookie that lasts one year. It is read during setup, so the first render, including on the server, already has the stored size. |
+| `'local'`              | `localStorage`.                                                                                                                   |
+| `{ getItem, setItem }` | A custom adapter, for example one that reads the request cookies during SSR.                                                      |
 
 Stored sizes outside `min-size` and `max-size` are clamped, and invalid entries are ignored. Set `:persistent="false"` to disable persistence.
 
@@ -155,20 +155,22 @@ Set `resizable` on the right sidebar too, with its own size limits. The button i
 ### Global theme override
 
 ```ts
-app.use(createHareUI({
-  ui: {
-    dashboardGroup: {
-      slots: { base: 'bg-surface-secondary' },
+app.use(
+  createHareUI({
+    ui: {
+      dashboardGroup: {
+        slots: { base: 'bg-surface-secondary' },
+      },
     },
-  },
-}))
+  }),
+)
 ```
 
 ## Styling Reference
 
-| `ui` key | `data-slot` | Description |
-|---|---|---|
-| `base` | `dashboard-group` | Root: `fixed inset-0 flex overflow-hidden` |
+| `ui` key | `data-slot`       | Description                                |
+| -------- | ----------------- | ------------------------------------------ |
+| `base`   | `dashboard-group` | Root: `fixed inset-0 flex overflow-hidden` |
 
 ## API Reference
 
@@ -180,7 +182,7 @@ app.use(createHareUI({
 
 <ApiTable component="DashboardGroup" kind="slots" />
 
-### Theme
+## Theme
 
 <ApiTheme component="DashboardGroup" />
 

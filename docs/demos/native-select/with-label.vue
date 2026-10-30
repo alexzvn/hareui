@@ -1,3 +1,15 @@
+<template>
+  <div class="w-[220px]">
+    <NativeSelect
+      full-width
+      label="Streaming quality"
+      name="quality"
+      default-value="high"
+      :items="items"
+    />
+  </div>
+</template>
+
 <script setup lang="ts">
 import { NativeSelect } from '@hareui/vue'
 
@@ -8,9 +20,3 @@ const items = [
   { value: 'lossless', label: 'Lossless' },
 ]
 </script>
-
-<template>
-  <div class="w-[220px]">
-    <NativeSelect full-width label="Streaming quality" name="quality" default-value="high" :items="items" />
-  </div>
-</template>

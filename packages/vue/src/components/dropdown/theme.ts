@@ -39,8 +39,10 @@ export default {
       'data-[has-submenu=true]:has-[[data-slot=menu-item-indicator],[data-slot=submenu-indicator]]:ps-2 data-[has-submenu=true]:has-[[data-slot=menu-item-indicator],[data-slot=submenu-indicator]]:pe-7',
       'data-[focus-visible=true]:status-focused',
       'active:will-change-transform active:[transform:scale(0.98)] data-[pressed=true]:will-change-transform data-[pressed=true]:[transform:scale(0.98)]',
-      // `:where()` keeps hover at one class of specificity (HeroUI's `@layer components`), so user `data-[focused=true]:bg-*` wins
-      '[@media(hover:hover)]:[&:where(:hover,[data-hovered=true])]:bg-default',
+      // The highlight follows Reka's `data-highlighted` alone (the item under a moving mouse or the keyboard's item),
+      // so a mouse resting on an item doesn't keep it lit once the keyboard moves on. `:where()` keeps it at one class
+      // of specificity, so a user `data-[focused=true]:bg-*` wins
+      '[&:where([data-highlighted])]:bg-default',
       // Selected single-mode checkmark draws in; multiple mode keeps the indicator's 300ms transition
       // (HeroUI's multiple rule wins on specificity, so scope this one to single mode)
       '[&[aria-checked=true][data-selection-mode=single]_[data-slot=menu-item-indicator--checkmark]]:[transition:stroke-dashoffset_100ms_linear] motion-reduce:[&[aria-checked=true][data-selection-mode=single]_[data-slot=menu-item-indicator--checkmark]]:transition-none',

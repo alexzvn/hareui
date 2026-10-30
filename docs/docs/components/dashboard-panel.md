@@ -48,22 +48,24 @@ Use the `default` slot to render content that needs no padding or scrolling, suc
 ### Global theme override
 
 ```ts
-app.use(createHareUI({
-  ui: {
-    dashboardPanel: {
-      slots: { body: 'p-0 sm:p-0' },
+app.use(
+  createHareUI({
+    ui: {
+      dashboardPanel: {
+        slots: { body: 'p-0 sm:p-0' },
+      },
     },
-  },
-}))
+  }),
+)
 ```
 
 ## Styling Reference
 
-| `ui` key | `data-slot` | Description |
-|---|---|---|
-| `root` | `dashboard-panel` | The panel. `--width` is set once it has a size. Carries `data-dragging` |
-| `body` | `dashboard-panel-body` | Scrollable, padded body |
-| `handle` | `dashboard-resize-handle` | The resize handle |
+| `ui` key | `data-slot`               | Description                                                             |
+| -------- | ------------------------- | ----------------------------------------------------------------------- |
+| `root`   | `dashboard-panel`         | The panel. `--width` is set once it has a size. Carries `data-dragging` |
+| `body`   | `dashboard-panel-body`    | Scrollable, padded body                                                 |
+| `handle` | `dashboard-resize-handle` | The resize handle                                                       |
 
 ## API Reference
 
@@ -75,7 +77,7 @@ app.use(createHareUI({
 
 <ApiTable component="DashboardPanel" kind="slots" />
 
-### Theme
+## Theme
 
 <ApiTheme component="DashboardPanel" />
 

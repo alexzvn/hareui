@@ -1,8 +1,3 @@
-<script setup lang="ts">
-import { Icon } from '@iconify/vue'
-import { Button, ButtonGroup } from '@hareui/vue'
-</script>
-
 <template>
   <div class="flex items-start gap-8">
     <div class="flex flex-col gap-2">
@@ -41,3 +36,8 @@ import { Button, ButtonGroup } from '@hareui/vue'
     </div>
   </div>
 </template>
+
+<script setup lang="ts">
+import { Button, ButtonGroup } from '@hareui/vue'
+import { Icon } from '@iconify/vue'
+</script>

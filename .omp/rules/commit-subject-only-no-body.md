@@ -1,8 +1,13 @@
 ---
 name: commit-subject-only-no-body
-description: "Commit messages must be a single conventional subject line — never a heredoc body"
-condition: ["git commit[^\\n]*-F\\s*-", "git commit[^\\n]*<<\\s*'?EOF", "git commit[^\\n]*-m[^\\n]*\\\\n\\\\n"]
-scope: "tool:bash"
+description: 'Commit messages must be a single conventional subject line — never a heredoc body'
+condition:
+  [
+    "git commit[^\\n]*-F\\s*-",
+    "git commit[^\\n]*<<\\s*'?EOF",
+    "git commit[^\\n]*-m[^\\n]*\\\\n\\\\n",
+  ]
+scope: 'tool:bash'
 ---
 
 Commit messages are **subject only**:

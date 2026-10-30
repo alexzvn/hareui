@@ -8,11 +8,7 @@
     "isolatedModules": true,
     "skipLibCheck": true,
     "types": [],
-    "lib": [
-      "ES2022",
-      "DOM",
-      "DOM.Iterable"
-    ],
+    "lib": ["ES2022", "DOM", "DOM.Iterable"],
     "resolveJsonModule": true,
     "esModuleInterop": true,
     "verbatimModuleSyntax": true

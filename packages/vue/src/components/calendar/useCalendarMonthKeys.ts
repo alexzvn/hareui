@@ -1,43 +1,38 @@
 import type { DateValue } from '@internationalized/date'
+import { endOfMonth, startOfMonth } from '@internationalized/date'
 import type { WritableComputedRef } from 'vue'
-import { endOfMonth, parseDate, startOfMonth, toCalendarDate } from '@internationalized/date'
 import { nextTick } from 'vue'
 
-/** Day-level comparison that tolerates mixed `CalendarDate`/`CalendarDateTime`/`ZonedDateTime` values. */
-export function compareDay(a: DateValue, b: DateValue): number {
-  return toCalendarDate(a).compare(toCalendarDate(b))
-}
+import { calendarCellDate, calendarCellFrom, compareDay, focusCalendarCell } from './calendarCells'
 
-/** The Reka cell trigger an event happened on, when it belongs to this calendar's month grid. */
-export function calendarCellFrom(target: EventTarget | null, root: HTMLElement | undefined): HTMLElement | null {
-  const el = (target as Element | null)?.closest?.('[data-reka-calendar-cell-trigger]') as HTMLElement | null
-  return el && root?.contains(el) ? el : null
-}
-
-/** A cell's date (from its ISO `data-value`) in the calendar system and value type of `like`. */
-export function calendarCellDate(el: HTMLElement, like: DateValue): DateValue {
-  const iso = el.getAttribute('data-value')!.slice(0, 10)
-  return like.add({ days: parseDate(iso).compare(toCalendarDate(like)) })
-}
-
-export function focusCalendarCell(root: HTMLElement | undefined, date: DateValue) {
-  root?.querySelector<HTMLElement>(`[data-reka-calendar-cell-trigger][data-value='${date.toString()}']:not([data-outside-view])`)?.focus()
-}
-
-function constrain(date: DateValue, min: DateValue | undefined, max: DateValue | undefined) {
-  if (min && compareDay(date, min) < 0)
-    return date.add({ days: -compareDay(date, min) })
-  if (max && compareDay(date, max) > 0)
-    return date.subtract({ days: compareDay(date, max) })
-  return date
-}
-
-interface UseCalendarMonthKeysOptions {
+type UseCalendarMonthKeysOptions = {
   placeholder: WritableComputedRef<DateValue>
   minValue: () => DateValue | undefined
   maxValue: () => DateValue | undefined
   rootEl: () => HTMLElement | undefined
   numberOfMonths: () => number
+  prevButton: () => HTMLElement | null
+  nextButton: () => HTMLElement | null
+}
+
+type MonthKeyMove = (focused: DateValue, isShift: boolean) => DateValue | undefined
+
+// `undefined` leaves the key to Reka (Shift+Home/End)
+const MONTH_KEY_MOVES = {
+  Home: (focused, isShift) => (isShift ? undefined : startOfMonth(focused)),
+  End: (focused, isShift) => (isShift ? undefined : endOfMonth(focused)),
+  PageUp: (focused, isShift) => focused.subtract(isShift ? { years: 1 } : { months: 1 }),
+  PageDown: (focused, isShift) => focused.add(isShift ? { years: 1 } : { months: 1 }),
+} as const satisfies Record<string, MonthKeyMove>
+
+const constrain = (date: DateValue, bounds: { min?: DateValue; max?: DateValue }) => {
+  if (bounds.min && compareDay(date, bounds.min) < 0)
+    return date.add({ days: -compareDay(date, bounds.min) })
+
+  if (bounds.max && compareDay(date, bounds.max) > 0)
+    return date.subtract({ days: compareDay(date, bounds.max) })
+
+  return date
 }
 
 /**
@@ -47,56 +42,49 @@ interface UseCalendarMonthKeysOptions {
  * Also returns the nav-button handler: React Aria's prev/next buttons move the focused date by the visible duration
  * keeping its day of month, where Reka resets it to the 1st.
  */
-export function useCalendarMonthKeys(options: UseCalendarMonthKeysOptions) {
-  function moveTo(date: DateValue, focus: boolean) {
-    const next = constrain(date, options.minValue(), options.maxValue())
+export const useCalendarMonthKeys = (options: UseCalendarMonthKeysOptions) => {
+  const moveTo = (date: DateValue, shouldFocus: boolean) => {
+    const next = constrain(date, { min: options.minValue(), max: options.maxValue() })
     options.placeholder.value = next
-    if (focus)
-      nextTick(() => focusCalendarCell(options.rootEl(), next))
+    if (shouldFocus) nextTick(() => focusCalendarCell(options.rootEl(), next))
   }
 
-  function onKeyDown(event: KeyboardEvent) {
-    if (event.altKey || event.ctrlKey || event.metaKey)
+  const onKeyDown = (event: KeyboardEvent) => {
+    if (
+      event.altKey ||
+      event.ctrlKey ||
+      event.metaKey ||
+      !Object.hasOwn(MONTH_KEY_MOVES, event.key)
+    )
       return
+
     const cell = calendarCellFrom(event.target, options.rootEl())
-    if (!cell)
-      return
-    const focused = calendarCellDate(cell, options.placeholder.value)
-    let next: DateValue
-    switch (event.key) {
-      case 'Home':
-      case 'End':
-        if (event.shiftKey)
-          return
-        next = event.key === 'Home' ? startOfMonth(focused) : endOfMonth(focused)
-        break
-      case 'PageUp':
-        next = focused.subtract(event.shiftKey ? { years: 1 } : { months: 1 })
-        break
-      case 'PageDown':
-        next = focused.add(event.shiftKey ? { years: 1 } : { months: 1 })
-        break
-      default:
-        return
-    }
+    if (!cell) return
+    const move: MonthKeyMove = MONTH_KEY_MOVES[event.key as keyof typeof MONTH_KEY_MOVES]
+    const next = move(calendarCellDate(cell, options.placeholder.value), event.shiftKey)
+    if (!next) return
     event.preventDefault()
     event.stopPropagation()
     moveTo(next, true)
+  }
+
+  // +1 for the next button, -1 for the previous one, 0 elsewhere in the header
+  const navDirection = (target: Element | null) => {
+    if (options.prevButton()?.contains(target)) return -1
+    return options.nextButton()?.contains(target) ? 1 : 0
   }
 
   /**
    * Click handler for the header, in the capture phase so Reka's own nav handler never runs. Single-month view only:
    * with several months Reka's paging (by the visible width) is kept.
    */
-  function onHeaderClickCapture(event: MouseEvent, prev: HTMLElement | null | undefined, next: HTMLElement | null | undefined) {
-    if (options.numberOfMonths() > 1)
-      return
-    const target = event.target as Element | null
-    const dir = prev?.contains(target) ? -1 : next?.contains(target) ? 1 : 0
-    if (!dir || (dir < 0 ? prev : next)!.hasAttribute('disabled'))
-      return
+  const onHeaderClickCapture = (event: MouseEvent) => {
+    if (options.numberOfMonths() > 1) return
+    const direction = navDirection(event.target as Element | null)
+    const button = direction < 0 ? options.prevButton() : options.nextButton()
+    if (!direction || button!.hasAttribute('disabled')) return
     event.stopPropagation()
-    moveTo(options.placeholder.value.add({ months: dir }), false)
+    moveTo(options.placeholder.value.add({ months: direction }), false)
   }
 
   return { onKeyDown, onHeaderClickCapture }

@@ -1,7 +1,3 @@
-<script setup lang="ts">
-import { ColorField } from '@hareui/vue'
-</script>
-
 <template>
   <div class="flex flex-col gap-4">
     <ColorField
@@ -23,3 +19,7 @@ import { ColorField } from '@hareui/vue'
     />
   </div>
 </template>
+
+<script setup lang="ts">
+import { ColorField } from '@hareui/vue'
+</script>

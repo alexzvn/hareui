@@ -1,7 +1,3 @@
-<script setup lang="ts">
-import { Button } from '@hareui/vue'
-</script>
-
 <template>
   <div class="flex flex-wrap gap-3">
     <Button>Primary</Button>
@@ -13,3 +9,7 @@ import { Button } from '@hareui/vue'
     <Button variant="danger-soft">Danger Soft</Button>
   </div>
 </template>
+
+<script setup lang="ts">
+import { Button } from '@hareui/vue'
+</script>

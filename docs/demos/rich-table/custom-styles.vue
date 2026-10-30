@@ -1,8 +1,22 @@
+<template>
+  <RichTable
+    :data="data"
+    :columns="columns"
+    class="w-full rounded-xl border border-separator"
+    :ui="{
+      th: 'bg-accent/10 text-accent uppercase tracking-wide',
+      td: 'text-muted',
+      tbody: '[&>[data-slot=rich-table-row]]:hover:*:bg-accent/5',
+    }"
+    variant="secondary"
+  />
+</template>
+
 <script setup lang="ts">
 import type { RichTableColumn } from '@hareui/vue'
 import { RichTable } from '@hareui/vue'
 
-interface Payment {
+type Payment = {
   name: string
   email: string
   amount: number
@@ -21,20 +35,10 @@ const currency = new Intl.NumberFormat('en-US', { style: 'currency', currency: '
 const columns: RichTableColumn<Payment>[] = [
   { accessorKey: 'name', header: 'Customer' },
   { accessorKey: 'email', header: 'Email' },
-  { accessorKey: 'amount', header: 'Amount', cell: ({ row }) => currency.format(row.original.amount) },
+  {
+    accessorKey: 'amount',
+    header: 'Amount',
+    cell: ({ row }) => currency.format(row.original.amount),
+  },
 ]
 </script>
-
-<template>
-  <RichTable
-    :data="data"
-    :columns="columns"
-    class="w-full rounded-xl border border-separator"
-    :ui="{
-      th: 'bg-accent/10 text-accent uppercase tracking-wide',
-      td: 'text-muted',
-      tbody: '[&>[data-slot=rich-table-row]]:hover:*:bg-accent/5',
-    }"
-    variant="secondary"
-  />
-</template>

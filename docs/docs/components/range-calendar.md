@@ -1,6 +1,6 @@
 ---
 title: RangeCalendar
-description: Date range picker with month grid, navigation, and year picker support built on Reka UI's RangeCalendar.
+description: Date range picker with month grid, navigation, and year picker support
 links:
   reka: range-calendar
   source: range-calendar/RangeCalendar.vue
@@ -22,38 +22,51 @@ import { RangeCalendar } from '@hareui/vue'
 
 RangeCalendar renders a header (heading or year-picker trigger, plus previous/next buttons)
 followed by a 7-column day grid, with an optional overlay year grid. Unlike Calendar, each day is
-a `cell` wrapping a `cellButton` — Reka puts the selection/today/outside-view state on the inner
+a `cell` wrapping a `cellButton` — the selection/today/outside-view state is on on the inner
 button, not the outer cell.
 
 ```vue
 <template>
   <RangeCalendar aria-label="Trip dates">
-    <template #navIcon="{ direction }" />                                  <!-- replaces both chevrons -->
-    <template #cell="{ date, today, selected, disabled, unavailable, outsideView, selectionStart, selectionEnd }" /> <!-- replaces formatted day -->
+    <template #navIcon="{ direction }" />
+    <!-- replaces both chevrons -->
+    <template
+      #cell="{
+        date,
+        today,
+        selected,
+        disabled,
+        unavailable,
+        outsideView,
+        selectionStart,
+        selectionEnd,
+      }"
+    />
+    <!-- replaces formatted day -->
   </RangeCalendar>
 </template>
 ```
 
-| `ui` key | `data-slot` | Element |
-|---|---|---|
-| `base` | `range-calendar` | root element |
-| `header` | `range-calendar-header` | row containing the heading/year-picker trigger and nav buttons |
-| `heading` | `calendar-heading` | formatted month/year label (hidden when `year-picker`) |
-| `navButton` | `range-calendar-nav-button` | previous/next button |
-| `navButtonIcon` | `calendar-nav-button-icon` | default chevron inside a nav button |
-| `grid` | `range-calendar-grid` | the day grid |
-| `gridHeader` | `range-calendar-grid-header` | weekday label row wrapper |
-| `gridBody` | `range-calendar-grid-body` | week rows wrapper |
-| `gridRow` | `range-calendar-grid-row` | one week row |
-| `headerCell` | `calendar-header-cell` | weekday label cell |
-| `cell` | `range-calendar-cell` | the interactive day cell — carries all state attributes |
-| `cellButton` | `range-calendar-cell-button` | decorative inner circle (visual only, no attributes) |
-| `cellIndicator` | `calendar-cell-indicator` | dot rendered when `indicator(date)` is true |
-| `yearPickerTrigger` | `calendar-year-picker-trigger` | toggles the year grid (when `year-picker`) |
-| `yearPickerTriggerHeading` | `calendar-year-picker-trigger-heading` | heading text inside the trigger |
-| `yearPickerTriggerIndicator` | `calendar-year-picker-trigger-indicator` | chevron icon inside the trigger |
-| `yearPickerGrid` | `calendar-year-picker-grid` | overlay grid of selectable years |
-| `yearPickerYearCell` | `calendar-year-picker-year-cell` | one selectable year |
+| `ui` key                     | `data-slot`                              | Element                                                        |
+| ---------------------------- | ---------------------------------------- | -------------------------------------------------------------- |
+| `base`                       | `range-calendar`                         | root element                                                   |
+| `header`                     | `range-calendar-header`                  | row containing the heading/year-picker trigger and nav buttons |
+| `heading`                    | `calendar-heading`                       | formatted month/year label (hidden when `year-picker`)         |
+| `navButton`                  | `range-calendar-nav-button`              | previous/next button                                           |
+| `navButtonIcon`              | `calendar-nav-button-icon`               | default chevron inside a nav button                            |
+| `grid`                       | `range-calendar-grid`                    | the day grid                                                   |
+| `gridHeader`                 | `range-calendar-grid-header`             | weekday label row wrapper                                      |
+| `gridBody`                   | `range-calendar-grid-body`               | week rows wrapper                                              |
+| `gridRow`                    | `range-calendar-grid-row`                | one week row                                                   |
+| `headerCell`                 | `calendar-header-cell`                   | weekday label cell                                             |
+| `cell`                       | `range-calendar-cell`                    | the interactive day cell — carries all state attributes        |
+| `cellButton`                 | `range-calendar-cell-button`             | decorative inner circle (visual only, no attributes)           |
+| `cellIndicator`              | `calendar-cell-indicator`                | dot rendered when `indicator(date)` is true                    |
+| `yearPickerTrigger`          | `calendar-year-picker-trigger`           | toggles the year grid (when `year-picker`)                     |
+| `yearPickerTriggerHeading`   | `calendar-year-picker-trigger-heading`   | heading text inside the trigger                                |
+| `yearPickerTriggerIndicator` | `calendar-year-picker-trigger-indicator` | chevron icon inside the trigger                                |
+| `yearPickerGrid`             | `calendar-year-picker-grid`              | overlay grid of selectable years                               |
+| `yearPickerYearCell`         | `calendar-year-picker-year-cell`         | one selectable year                                            |
 
 ## Examples
 
@@ -141,7 +154,7 @@ Pass `indicator` to render a dot under matching dates, e.g. to surface metadata 
 ### Multiple Months
 
 Set `number-of-months` to show several months side by side. The previous/next buttons always page
-by the full visible width, matching React Aria's default behavior for multi-month calendars.
+by the full visible width.
 
 <ComponentPreview name="range-calendar/multiple-months" />
 
@@ -178,16 +191,18 @@ To customize the RangeCalendar classes for the whole app, extend the `rangeCalen
 `createHareUI`:
 
 ```ts
-app.use(createHareUI({
-  ui: {
-    rangeCalendar: {
-      slots: {
-        base: 'rounded-2xl border border-border bg-surface p-3 shadow-sm',
-        cell: 'rounded-lg',
+app.use(
+  createHareUI({
+    ui: {
+      rangeCalendar: {
+        slots: {
+          base: 'rounded-2xl border border-border bg-surface p-3 shadow-sm',
+          cell: 'rounded-lg',
+        },
       },
     },
-  },
-}))
+  }),
+)
 ```
 
 ## Styling Reference
@@ -207,23 +222,23 @@ RangeCalendar sets these data attributes on `[data-slot="range-calendar-cell"]`:
 - **Focus visible**: `:focus-visible`
 - **Disabled**: `:disabled` or `[data-disabled]`
 
-### Reka UI Limitations
+### Limitations
 
-- Week and day views (`visible-duration`) are rendered by HareUI's own grid, since Reka's `CalendarRoot`/`RangeCalendarRoot` always build full month grids. They follow React Aria's `visibleDuration` behaviour (alignment, paging, `page-behavior`, keyboard navigation) and HeroUI's `--week-view`/`--day-view` styles; the year picker, `number-of-months` and `fixed-weeks` only apply to the month view.
-- Anchor-aware `is-date-unavailable`: Reka's matcher takes one argument, so RangeCalendar wraps the two-argument callback in a closure that reads the in-progress anchor (the picked start while `end` is unset, `null` once the range is complete, as in react-stately). It also narrows Reka's `min-value`/`max-value` to the run of available days around the anchor (react-stately's `getAvailableRange`), so paging past it is disabled, The lone anchor cell is both selection start and end, as in React Aria.
-- `fixed-weeks` is boolean only (always 6 weeks). HeroUI's React `weeksInMonth` accepts any count up
-  to 6; Reka's `RangeCalendarRoot` only exposes the all-or-nothing `fixedWeeks` flag.
-- `invalid` sets `aria-invalid`/`data-invalid` directly rather than through Reka: Reka's own
-  `isInvalid` is a read-only computed derived from `isDateUnavailable`/`minValue`/`maxValue`, with
-  no input prop to override it for arbitrary consumer validation (e.g. "stay too long").
-- Range selection runs outside Reka: Reka's `RangeCalendarRoot` has no live preview with the selected
-  styling, no press-and-drag selection and re-centres the view on every start change, so the month
-  view keeps react-stately's anchor/focused-date state itself and uses Reka only for the grid, focus
-  movement and paging. Like React Aria, a mouse press anchors the range (drag and release to commit,
-  or click a second day), pressing an end of the selected range and dragging adjusts that end, the
-  preview follows the hovered or focused day, Enter/Space anchors and moves focus one day ahead,
-  Escape cancels, and outside-month days are inert. Picking the first day still emits a half-open
-  range (`end: undefined`).
+- Week and day views (`visible-duration`) use their own grid rather than the month grid. They have
+  their own alignment, paging, `page-behavior` and keyboard navigation; the year picker,
+  `number-of-months` and `fixed-weeks` only apply to the month view.
+- Anchor-aware `is-date-unavailable`: the callback receives the in-progress anchor as its second
+  argument (the picked start while `end` is unset, `null` once the range is complete). While a
+  range is anchored, `min-value`/`max-value` narrow to the run of available days around the anchor,
+  so paging past it is disabled. The lone anchor cell is both selection start and end.
+- `fixed-weeks` is boolean only: it always shows 6 weeks, with no other week count.
+- `invalid` sets `aria-invalid`/`data-invalid` directly, so any consumer validation (e.g. "stay too
+  long") can mark the calendar invalid, not only unavailable or out-of-range dates.
+- Range selection: a mouse press anchors the range (drag and release to commit, or click a second
+  day), pressing an end of the selected range and dragging adjusts that end, the preview follows
+  the hovered or focused day, Enter/Space anchors and moves focus one day ahead, Escape cancels,
+  and outside-month days are inert. Picking the first day still emits a half-open range
+  (`end: undefined`).
 
 ## API Reference
 
@@ -239,6 +254,6 @@ RangeCalendar sets these data attributes on `[data-slot="range-calendar-cell"]`:
 
 <ApiTable component="RangeCalendar" kind="emits" />
 
-### Theme
+## Theme
 
 <ApiTheme component="RangeCalendar" />

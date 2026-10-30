@@ -46,21 +46,23 @@ A single `<button>` with a default close icon that the default slot can replace.
 ### Global theme override
 
 ```ts
-app.use(createHareUI({
-  ui: {
-    closeButton: {
-      slots: { base: 'rounded-full' },
+app.use(
+  createHareUI({
+    ui: {
+      closeButton: {
+        slots: { base: 'rounded-full' },
+      },
     },
-  },
-}))
+  }),
+)
 ```
 
 ## Styling Reference
 
-| `ui` key | `data-slot` | Description |
-|---|---|---|
-| `base` | `close-button` | The root `<button>` |
-| `icon` | `close-button-icon` | The default close icon `<svg>` |
+| `ui` key | `data-slot`         | Description                    |
+| -------- | ------------------- | ------------------------------ |
+| `base`   | `close-button`      | The root `<button>`            |
+| `icon`   | `close-button-icon` | The default close icon `<svg>` |
 
 ### Interactive states
 
@@ -79,7 +81,7 @@ app.use(createHareUI({
 
 <ApiTable component="CloseButton" kind="slots" />
 
-### Theme
+## Theme
 
 <ApiTheme component="CloseButton" />
 

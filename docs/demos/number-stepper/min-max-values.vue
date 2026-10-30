@@ -1,7 +1,3 @@
-<script setup lang="ts">
-import { NumberStepper } from '@hareui/vue'
-</script>
-
 <template>
   <div class="flex flex-col gap-4">
     <div class="flex items-center justify-between gap-6">
@@ -20,3 +16,7 @@ import { NumberStepper } from '@hareui/vue'
     </div>
   </div>
 </template>
+
+<script setup lang="ts">
+import { NumberStepper } from '@hareui/vue'
+</script>

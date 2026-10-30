@@ -1,14 +1,3 @@
-<script setup lang="ts">
-import { NativeSelect } from '@hareui/vue'
-
-const items = [
-  { value: 'daily', label: 'Daily' },
-  { value: 'weekly', label: 'Weekly' },
-  { value: 'monthly', label: 'Monthly' },
-  { value: 'never', label: 'Never' },
-]
-</script>
-
 <template>
   <div class="w-[220px]">
     <NativeSelect
@@ -21,3 +10,14 @@ const items = [
     />
   </div>
 </template>
+
+<script setup lang="ts">
+import { NativeSelect } from '@hareui/vue'
+
+const items = [
+  { value: 'daily', label: 'Daily' },
+  { value: 'weekly', label: 'Weekly' },
+  { value: 'monthly', label: 'Monthly' },
+  { value: 'never', label: 'Never' },
+]
+</script>

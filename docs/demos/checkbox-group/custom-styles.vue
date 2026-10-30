@@ -1,17 +1,3 @@
-<script setup lang="ts">
-import type { CheckboxGroupItem } from '@hareui/vue'
-import { CheckboxGroup } from '@hareui/vue'
-
-const controlClass = 'bg-success-soft before:bg-success'
-const indicatorClass = '**:data-[slot=checkbox-default-indicator--checkmark]:text-success-foreground'
-
-const channels: CheckboxGroupItem[] = [
-  { label: 'Email', value: 'email' },
-  { label: 'SMS', value: 'sms' },
-  { label: 'Push', value: 'push' },
-]
-</script>
-
 <template>
   <CheckboxGroup
     name="notification-channels"
@@ -23,3 +9,19 @@ const channels: CheckboxGroupItem[] = [
     :ui="{ control: controlClass, indicator: indicatorClass }"
   />
 </template>
+
+<script setup lang="ts">
+import type { CheckboxGroupItem } from '@hareui/vue'
+import { CheckboxGroup } from '@hareui/vue'
+
+const controlClass = 'bg-success-soft before:bg-success'
+
+const indicatorClass =
+  '**:data-[slot=checkbox-default-indicator--checkmark]:text-success-foreground'
+
+const channels: CheckboxGroupItem[] = [
+  { label: 'Email', value: 'email' },
+  { label: 'SMS', value: 'sms' },
+  { label: 'Push', value: 'push' },
+]
+</script>

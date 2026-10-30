@@ -99,34 +99,35 @@ The `#footer`, `#body` and `#content` slots receive a `close` function. `#conten
 ### Global theme override
 
 ```ts
-app.use(createHareUI({
-  ui: {
-    modal: {
-      slots: { dialog: 'rounded-2xl' },
+app.use(
+  createHareUI({
+    ui: {
+      modal: {
+        slots: { dialog: 'rounded-2xl' },
+      },
     },
-  },
-}))
+  }),
+)
 ```
 
 ## Styling Reference
 
-| `ui` key | `data-slot` | Element |
-|---|---|---|
-| `backdrop` | `modal-backdrop` | The full-screen overlay behind the dialog (Reka `DialogOverlay`) |
-| `container` | `modal-container` | Positioning wrapper with placement support |
-| `dialog` | `modal-dialog` | The dialog surface (Reka `DialogContent`); `class` merges here |
-| `header` | `modal-header` | Header section for the icon, title and description, rendered when `#header`, `#icon`, `#description`, or a title is present |
-| `icon` | `modal-icon` | Icon wrapper rendered before the title, rendered when `#icon` is present |
-| `heading` | `modal-heading` | The title (Reka `DialogTitle`) |
-| `body` | `modal-body` | The scrollable content area, rendered when `#body` is present |
-| `footer` | `modal-footer` | Footer section for actions, rendered when `#footer` is present |
-| `closeTrigger` | `modal-close-trigger` | The default close button, rendered when `closeButton` is `true` |
+| `ui` key       | `data-slot`           | Element                                                                                                                     |
+| -------------- | --------------------- | --------------------------------------------------------------------------------------------------------------------------- |
+| `backdrop`     | `modal-backdrop`      | The full-screen overlay behind the dialog                                                                                   |
+| `container`    | `modal-container`     | Positioning wrapper with placement support                                                                                  |
+| `dialog`       | `modal-dialog`        | The dialog surface, which carries `role="dialog"`; `class` merges here                                                      |
+| `header`       | `modal-header`        | Header section for the icon, title and description, rendered when `#header`, `#icon`, `#description`, or a title is present |
+| `icon`         | `modal-icon`          | Icon wrapper rendered before the title, rendered when `#icon` is present                                                    |
+| `heading`      | `modal-heading`       | The title, which labels the dialog                                                                                          |
+| `body`         | `modal-body`          | The scrollable content area, rendered when `#body` is present                                                               |
+| `footer`       | `modal-footer`        | Footer section for actions, rendered when `#footer` is present                                                              |
+| `closeTrigger` | `modal-close-trigger` | The default close button, rendered when `closeButton` is `true`                                                             |
 
 ### Interactive States
 
 - `data-[state=open]` / `data-[state=closed]` — applied to `backdrop` and `container`
-  during the enter/exit animation, mapped from HeroUI's `[data-entering]` /
-  `[data-exiting]`
+  during the enter/exit animation, the hooks for entrance/exit animations
 - `data-placement="auto|top|center|bottom"` — applied to `container` and `dialog`,
   mirroring the `placement` prop
 
@@ -144,20 +145,20 @@ app.use(createHareUI({
 
 <ApiTable component="Modal" kind="emits" />
 
-### Theme
+## Theme
 
 <ApiTheme component="Modal" />
 
 ## Accessibility
 
 Implements the [WAI-ARIA Dialog pattern](https://www.w3.org/WAI/ARIA/apg/patterns/dialog-modal/)
-via Reka UI's `Dialog` primitive:
+with these behaviours:
 
 - **Focus trap**: focus is locked within the dialog while open and restored to the
   trigger on close
 - **Keyboard**: `Escape` closes the dialog (unless `dismissible` is `false`), `Tab`
-  cycles through focusable elements inside it. A scrollable body is not a tab stop of its own
-  (as in HeroUI); give it `tabindex="0"` if you want it to be one
+  cycles through focusable elements inside it. A scrollable body is not a tab stop of its own;
+  give it `tabindex="0"` if you want it to be one
 - **Screen readers**: the dialog always has an accessible name — either the rendered
   title or a visually hidden one
 - **Scroll lock**: body scroll is disabled while the modal is open

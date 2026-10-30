@@ -19,18 +19,18 @@ import { Badge } from '@hareui/vue'
 
 ```vue
 <template>
-  <!-- the default slot is the anchored element (HeroUI's Badge.Anchor children) -->
+  <!-- the default slot is the anchored element -->
   <Badge content="5">
     <Avatar fallback="JD" />
   </Badge>
 </template>
 ```
 
-| `ui` key | Element | Description |
-|---|---|---|
+| `ui` key | Element                      | Description                                             |
+| -------- | ---------------------------- | ------------------------------------------------------- |
 | `anchor` | `[data-slot="badge-anchor"]` | Wraps the default slot; only rendered when it is filled |
-| `base` | `[data-slot="badge"]` | The badge (receives `class`) |
-| `label` | `[data-slot="badge-label"]` | Wraps `content` (HeroUI's `Badge.Label`) |
+| `base`   | `[data-slot="badge"]`        | The badge (receives `class`)                            |
+| `label`  | `[data-slot="badge-label"]`  | Wraps `content`                                         |
 
 ## Examples
 
@@ -71,14 +71,16 @@ Badge supports text, numbers, and icons as content. When no content is provided,
 ### Global theme override
 
 ```ts
-app.use(createHareUI({
-  ui: {
-    badge: {
-      slots: { base: 'border-2' },
-      defaultVariants: { size: 'sm' },
+app.use(
+  createHareUI({
+    ui: {
+      badge: {
+        slots: { base: 'border-2' },
+        defaultVariants: { size: 'sm' },
+      },
     },
-  },
-}))
+  }),
+)
 ```
 
 ## Styling Reference
@@ -106,7 +108,7 @@ app.use(createHareUI({
 
 <ApiTable component="Badge" kind="slots" />
 
-### Theme
+## Theme
 
 <ApiTheme component="Badge" />
 

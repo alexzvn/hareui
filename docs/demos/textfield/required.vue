@@ -1,7 +1,3 @@
-<script setup lang="ts">
-import { TextField } from '@hareui/vue'
-</script>
-
 <template>
   <TextField
     required
@@ -12,3 +8,7 @@ import { TextField } from '@hareui/vue'
     description="This field is required"
   />
 </template>
+
+<script setup lang="ts">
+import { TextField } from '@hareui/vue'
+</script>

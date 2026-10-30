@@ -56,32 +56,32 @@ Use the `class` prop for the root and `:ui="{ label: '…' }"` for the label (ta
 Override the `chip` theme app-wide with `createHareUI`:
 
 ```ts
-app.use(createHareUI({
-  ui: {
-    chip: {
-      slots: {
-        base: 'rounded-full text-xs',
-        label: 'font-medium',
+app.use(
+  createHareUI({
+    ui: {
+      chip: {
+        slots: {
+          base: 'rounded-full text-xs',
+          label: 'font-medium',
+        },
+        compoundVariants: [{ color: 'accent', class: { base: 'border-accent/20 text-accent' } }],
       },
-      compoundVariants: [
-        { color: 'accent', class: { base: 'border-accent/20 text-accent' } },
-      ],
     },
-  },
-}))
+  }),
+)
 ```
 
 ## Styling Reference
 
-Each rendered element carries the same `data-slot` string as HeroUI, so selectors translate 1:1.
+Each rendered element carries a `data-slot` attribute, so you can target it with selectors.
 
-| `ui` key | `data-slot` | Description |
-|---|---|---|
-| `base` | `chip` | Base chip container styles (`as`, default `span`) |
-| `label` | `chip-label` | Label text slot styles, rendered when `label`/default slot is present |
+| `ui` key | `data-slot`  | Description                                                           |
+| -------- | ------------ | --------------------------------------------------------------------- |
+| `base`   | `chip`       | Base chip container styles (`as`, default `span`)                     |
+| `label`  | `chip-label` | Label text slot styles, rendered when `label`/default slot is present |
 
-HeroUI's `.chip--*` modifier classes correspond to these props (HareUI renders utilities, not BEM
-classes, so style through `class`, `ui` or `createHareUI`):
+These props set the appearance (HareUI renders utility classes, so style through `class`, `ui` or
+`createHareUI`):
 
 - `color`: `accent`, `danger`, `default`, `success`, `warning`
 - `variant`: `primary` (filled background), `secondary` (default), `tertiary` (transparent background), `soft` (lighter background)
@@ -104,7 +104,7 @@ Other combinations (e.g. `variant="secondary" color="accent"`) can be styled wit
 
 <ApiTable component="Chip" kind="slots" />
 
-### Theme
+## Theme
 
 <ApiTheme component="Chip" />
 

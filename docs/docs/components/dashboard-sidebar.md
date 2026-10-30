@@ -120,27 +120,29 @@ At `0` width there is nothing to drag from, so the resize handle hides until the
 ### Global theme override
 
 ```ts
-app.use(createHareUI({
-  ui: {
-    dashboardSidebar: {
-      slots: { root: 'bg-surface' },
+app.use(
+  createHareUI({
+    ui: {
+      dashboardSidebar: {
+        slots: { root: 'bg-surface' },
+      },
     },
-  },
-}))
+  }),
+)
 ```
 
 ## Styling Reference
 
-| `ui` key | `data-slot` | Description |
-|---|---|---|
-| `root` | `dashboard-sidebar` | The desktop `<aside>` (`hidden md:flex`), width from `--width`. Carries `data-side`, `data-collapsed` and `data-dragging` |
-| `header` | `dashboard-sidebar-header` | Top section |
-| `body` | `dashboard-sidebar-body` | Scrollable middle section |
-| `footer` | `dashboard-sidebar-footer` | Bottom section |
-| `toggle` | `dashboard-sidebar-toggle` | Close button of the mobile menu header. Carries `data-idle` from opening until the pointer moves over it, so it doesn't show a hover fill when the sheet opens under the cursor |
-| `handle` | `dashboard-resize-handle` | The resize handle |
-| `content` | — | The mobile menu dialog |
-| `overlay` | — | The mobile menu backdrop |
+| `ui` key  | `data-slot`                | Description                                                                                                                                                                     |
+| --------- | -------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `root`    | `dashboard-sidebar`        | The desktop `<aside>` (`hidden md:flex`), width from `--width`. Carries `data-side`, `data-collapsed` and `data-dragging`                                                       |
+| `header`  | `dashboard-sidebar-header` | Top section                                                                                                                                                                     |
+| `body`    | `dashboard-sidebar-body`   | Scrollable middle section                                                                                                                                                       |
+| `footer`  | `dashboard-sidebar-footer` | Bottom section                                                                                                                                                                  |
+| `toggle`  | `dashboard-sidebar-toggle` | Close button of the mobile menu header. Carries `data-idle` from opening until the pointer moves over it, so it doesn't show a hover fill when the sheet opens under the cursor |
+| `handle`  | `dashboard-resize-handle`  | The resize handle                                                                                                                                                               |
+| `content` | —                          | The mobile menu dialog                                                                                                                                                          |
+| `overlay` | —                          | The mobile menu backdrop                                                                                                                                                        |
 
 The width transition is disabled while `data-dragging="true"` and when the user prefers reduced motion.
 
@@ -154,7 +156,7 @@ The width transition is disabled while `data-dragging="true"` and when the user 
 
 <ApiTable component="DashboardSidebar" kind="slots" />
 
-### Theme
+## Theme
 
 <ApiTheme component="DashboardSidebar" />
 

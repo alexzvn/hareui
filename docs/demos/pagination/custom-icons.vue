@@ -1,10 +1,10 @@
-<script setup lang="ts">
-import { Icon } from '@iconify/vue'
-import { Pagination } from '@hareui/vue'
-</script>
-
 <template>
-  <Pagination class="justify-center" next-label="Forward" prev-label="Back" :total="3">
+  <Pagination
+    class="justify-center"
+    :next="{ label: 'Forward' }"
+    :prev="{ label: 'Back' }"
+    :total="3"
+  >
     <template #prevIcon>
       <Icon icon="gravity-ui:arrow-left" />
     </template>
@@ -13,3 +13,8 @@ import { Pagination } from '@hareui/vue'
     </template>
   </Pagination>
 </template>
+
+<script setup lang="ts">
+import { Pagination } from '@hareui/vue'
+import { Icon } from '@iconify/vue'
+</script>

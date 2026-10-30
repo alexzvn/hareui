@@ -1,7 +1,3 @@
-<script setup lang="ts">
-import { Button, ButtonGroup } from '@hareui/vue'
-</script>
-
 <template>
   <div class="flex flex-col gap-6">
     <div class="flex flex-col items-start gap-2">
@@ -17,10 +13,12 @@ import { Button, ButtonGroup } from '@hareui/vue'
       <ButtonGroup disabled separator>
         <Button>First</Button>
         <Button>Second</Button>
-        <Button :disabled="false">
-          Third (enabled)
-        </Button>
+        <Button :disabled="false"> Third (enabled) </Button>
       </ButtonGroup>
     </div>
   </div>
 </template>
+
+<script setup lang="ts">
+import { Button, ButtonGroup } from '@hareui/vue'
+</script>

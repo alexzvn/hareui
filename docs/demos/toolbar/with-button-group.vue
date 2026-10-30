@@ -1,8 +1,3 @@
-<script setup lang="ts">
-import { Icon } from '@iconify/vue'
-import { Button, ButtonGroup, Separator, ToggleButton, ToggleButtonGroup, Toolbar } from '@hareui/vue'
-</script>
-
 <template>
   <Toolbar aria-label="Editor toolbar">
     <ButtonGroup variant="tertiary" separator>
@@ -41,3 +36,15 @@ import { Button, ButtonGroup, Separator, ToggleButton, ToggleButtonGroup, Toolba
     </ButtonGroup>
   </Toolbar>
 </template>
+
+<script setup lang="ts">
+import {
+  Button,
+  ButtonGroup,
+  Separator,
+  ToggleButton,
+  ToggleButtonGroup,
+  Toolbar,
+} from '@hareui/vue'
+import { Icon } from '@iconify/vue'
+</script>

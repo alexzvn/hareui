@@ -1,24 +1,33 @@
 import type { ThemeVariables } from '../constants'
-import type { GeneratedThemeColors, SemanticOverrides, ThemeColor } from './generate-theme-colors'
-
-import { adaptiveColors, findMatchingTheme, fontMap, radiusCssMap, themeValuesById } from '../constants'
+import {
+  adaptiveColors,
+  findMatchingTheme,
+  fontMap,
+  radiusCssMap,
+  themeValuesById,
+} from '../constants'
+import { calculateAccentForeground } from './foreground-colors'
+import { generateThemeColors } from './generate-theme-colors'
+import { parseOklch } from './oklch'
+import type { GeneratedThemeColors, SemanticOverrides, ThemeColor } from './theme-colors.types'
 
 /**
  * Custom font info for generating CSS variables
  */
-export interface CustomFontInfo {
+export type CustomFontInfo = {
   label: string
   variable: string
   fontFamily: string
 }
 
-import { calculateAccentForeground, generateThemeColors, parseOklch } from './generate-theme-colors'
-
 /**
  * Get only the authored CSS variables that users need to customize.
  * Derived variables are provided by the default theme stylesheet.
  */
-function getBaseColorVariables(colors: GeneratedThemeColors, theme: 'light' | 'dark'): Record<string, string> {
+const getBaseColorVariables = (
+  colors: GeneratedThemeColors,
+  theme: 'light' | 'dark',
+): Record<string, string> => {
   const isLight = theme === 'light'
   const getValue = (color: ThemeColor) => (isLight ? color.oklchLight : color.oklchDark)
 
@@ -57,6 +66,23 @@ function getBaseColorVariables(colors: GeneratedThemeColors, theme: 'light' | 'd
   }
 }
 
+type PredefinedFont = (typeof fontMap)[keyof typeof fontMap]
+
+/** The font label (for the comment) and `--font-sans` value, for a predefined or custom font. */
+const resolveFontValues = (
+  predefinedFont: PredefinedFont | undefined,
+  customFont: CustomFontInfo | undefined,
+): { label: string; sansValue: string } => {
+  if (predefinedFont)
+    return { label: predefinedFont.label, sansValue: `var(${predefinedFont.variable})` }
+
+  if (customFont)
+    return { label: customFont.label, sansValue: `"${customFont.fontFamily}", sans-serif` }
+
+  // Fallback for unknown font
+  return { label: 'your custom font', sansValue: 'var(--font-sans)' }
+}
+
 /**
  * Generates CSS output with only the variables users need to customize.
  * Derived variables are automatically computed by the default theme stylesheet.
@@ -64,7 +90,10 @@ function getBaseColorVariables(colors: GeneratedThemeColors, theme: 'light' | 'd
  * @param variables - Theme variables from the builder
  * @param customFont - Optional custom font info when using a CDN font
  */
-export function generateMinimalCssVariables(variables: ThemeVariables, customFont?: CustomFontInfo): string {
+export const generateMinimalCssVariables = (
+  variables: ThemeVariables,
+  customFont?: CustomFontInfo,
+): string => {
   // Check if this is a predefined font
   const fontId = variables.fontFamily
   const isPredefinedFont = fontId in fontMap
@@ -81,7 +110,13 @@ export function generateMinimalCssVariables(variables: ThemeVariables, customFon
     : undefined
 
   // Generate theme colors
-  const colors = generateThemeColors({ chroma, grayChroma: base, hue, lightness, semanticOverrides })
+  const colors = generateThemeColors({
+    chroma,
+    grayChroma: base,
+    hue,
+    lightness,
+    semanticOverrides,
+  })
 
   // Get base variables for both themes
   const lightVars = getBaseColorVariables(colors, 'light')
@@ -93,11 +128,12 @@ export function generateMinimalCssVariables(variables: ThemeVariables, customFon
     const darkAccent = parseOklch(adaptiveConfig.dark)
 
     const lightFg = lightAccent
-      ? calculateAccentForeground(lightAccent.l, lightAccent.c, lightAccent.h)
-      : calculateAccentForeground(0, 0, 0)
+      ? calculateAccentForeground(lightAccent)
+      : calculateAccentForeground({ c: 0, h: 0, l: 0 })
+
     const darkFg = darkAccent
-      ? calculateAccentForeground(darkAccent.l, darkAccent.c, darkAccent.h)
-      : calculateAccentForeground(1, 0, 0)
+      ? calculateAccentForeground(darkAccent)
+      : calculateAccentForeground({ c: 0, h: 0, l: 1 })
 
     lightVars['--accent'] = adaptiveConfig.light
     lightVars['--accent-foreground'] = lightFg
@@ -119,21 +155,10 @@ export function generateMinimalCssVariables(variables: ThemeVariables, customFon
     .map(([prop, val]) => `  ${prop}: ${val};`)
     .join('\n')
 
-  // Determine font values based on whether it's predefined or custom
-  let fontLabel: string
-  let fontSansValue: string
-
-  if (predefinedFont) {
-    fontLabel = predefinedFont.label
-    fontSansValue = `var(${predefinedFont.variable})`
-  } else if (customFont) {
-    fontLabel = customFont.label
-    fontSansValue = `"${customFont.fontFamily}", sans-serif`
-  } else {
-    // Fallback for unknown font
-    fontLabel = 'your custom font'
-    fontSansValue = 'var(--font-sans)'
-  }
+  const { label: fontLabel, sansValue: fontSansValue } = resolveFontValues(
+    predefinedFont,
+    customFont,
+  )
 
   const vibrantComment = variables.vibrantPalette
     ? `
@@ -146,10 +171,9 @@ export function generateMinimalCssVariables(variables: ThemeVariables, customFon
     : ''
 
   return `/*
- * HeroUI Theme Customization
- * Add this to your global.css after importing @heroui/styles
+ * HareUI Theme Customization
+ * Add this to your global.css after importing @hareui/vue
  * Only includes variables users need to customize
- * @see https://heroui.com/docs/react/getting-started/theming
  */
 ${vibrantComment}
 :root,

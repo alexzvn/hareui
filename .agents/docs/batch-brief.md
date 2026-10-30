@@ -3,7 +3,7 @@
 Repo: /Volumes/Workspaces/opensource/herouse (bun workspace, already installed). Full plan: /tmp/herouse-plan.md — read "API conventions", Step 4 (CSS→tv rules), Step 5 (your components' specs), Step 7 (parity), Step 8 (tests), Step 9 "Content → Component pages".
 
 ## Reference implementation (copy these patterns exactly)
-- packages/herouse/src/components/Button.vue, Spinner.vue — SFC shape: `<script lang="ts">` block exporting `XProps`/`XSlots` interfaces with JSDoc + `@defaultValue`, then `<script setup>` using `useComponentUI('<themeKey>', theme, () => ({ ...variant props }))`.
+- packages/herouse/src/components/Button.vue, Spinner.vue — SFC shape: `<script lang="ts">` block exporting `XProps`/`XSlots` interfaces with JSDoc + `@defaultValue`, then `<script setup>` using `useComponentUI('<themeKey>', { theme, variantProps: () => ({ ...variant props }) })`.
 - packages/herouse/src/theme/button.ts — theme shape (`slots`, `variants` with `{ slotKey: '...' }` objects, `compoundVariants`, `defaultVariants`).
 - Parity cases: parity/cases/button.json + playground/src/parity/cases/button.ts + reference/src/cases/button.tsx. Shared test icon: `gear` from playground/src/parity/icons.ts and reference/src/icons.tsx.
 - Tests: packages/herouse/test/button.spec.ts.

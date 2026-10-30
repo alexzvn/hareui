@@ -1,6 +1,29 @@
+<template>
+  <Card
+    class="w-full max-w-[700px] rounded-2xl"
+    :ui="{ header: 'flex-row flex-wrap items-center justify-between gap-2' }"
+  >
+    <template #header>
+      <h3 class="text-base font-medium text-foreground">Support Tickets</h3>
+      <ChartLegend :series="series" :colors="colors" />
+    </template>
+    <ComposedChart
+      :data="data"
+      index="date"
+      :series="series"
+      :colors="colors"
+      stacked
+      :y-axis="{ right: { domain: [0, 100], tick: { formatter: formatPercent } } }"
+      :tooltip="{ indicator: 'line' }"
+      aria-label="Support tickets by channel and same-day solve rate"
+      :height="300"
+    />
+  </Card>
+</template>
+
 <script setup lang="ts">
-import type { ChartComposedSeries } from '@hareui/vue/charts'
 import { Card } from '@hareui/vue'
+import type { ChartComposedSeries } from '@hareui/vue/charts'
 import { ChartLegend, ComposedChart } from '@hareui/vue/charts'
 
 const data = [
@@ -16,7 +39,7 @@ const data = [
   { date: 'Sep 10', email: 129, chat: 247, phone: 70, social: 29, solved: 83 },
 ]
 
-function formatPercent(value: number | string) {
+const formatPercent = (value: number | string) => {
   return `${value}%`
 }
 
@@ -25,27 +48,20 @@ const series = {
   email: { type: 'bar', name: 'Email', barSize: 20 },
   phone: { type: 'bar', name: 'Phone', barSize: 20 },
   social: { type: 'bar', name: 'Social', barSize: 20 },
-  solved: { type: 'line', name: 'Solved same day', yAxis: 'right', strokeWidth: 1.5, valueFormatter: formatPercent },
+  solved: {
+    type: 'line',
+    name: 'Solved same day',
+    yAxis: 'right',
+    strokeWidth: 1.5,
+    valueFormatter: formatPercent,
+  },
 } satisfies Record<string, ChartComposedSeries>
-const colors = ['var(--chart-4)', 'var(--chart-3)', 'var(--chart-2)', 'var(--chart-1)', 'var(--muted)']
-</script>
 
-<template>
-  <Card class="w-full max-w-[700px] rounded-2xl" :ui="{ header: 'flex-row flex-wrap items-center justify-between gap-2' }">
-    <template #header>
-      <h3 class="text-base font-medium text-foreground">Support Tickets</h3>
-      <ChartLegend :series="series" :colors="colors" />
-    </template>
-    <ComposedChart
-      :data="data"
-      index="date"
-      :series="series"
-      :colors="colors"
-      stacked
-      :y-axis-right="{ domain: [0, 100], tickFormatter: formatPercent }"
-      :tooltip="{ indicator: 'line' }"
-      aria-label="Support tickets by channel and same-day solve rate"
-      :height="300"
-    />
-  </Card>
-</template>
+const colors = [
+  'var(--chart-4)',
+  'var(--chart-3)',
+  'var(--chart-2)',
+  'var(--chart-1)',
+  'var(--muted)',
+]
+</script>

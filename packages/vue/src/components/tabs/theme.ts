@@ -16,7 +16,8 @@ export default {
       '[transition:opacity_150ms_var(--ease-smooth)] motion-reduce:transition-none',
       '[@media(hover:hover)]:hover:opacity-70 focus-visible:status-focused',
     ],
-    tabList: 'isolate inline-flex p-1 data-[orientation=horizontal]:w-max data-[orientation=horizontal]:min-w-full data-[orientation=horizontal]:flex-row data-[orientation=vertical]:flex-col data-[orientation=vertical]:gap-1',
+    tabList:
+      'isolate inline-flex p-1 data-[orientation=horizontal]:w-max data-[orientation=horizontal]:min-w-full data-[orientation=horizontal]:flex-row data-[orientation=vertical]:flex-col data-[orientation=vertical]:gap-1',
     tab: [
       'relative flex h-8 w-full items-center justify-center rounded-3xl px-4 text-center text-sm font-medium text-muted outline-none no-highlight',
       'z-[1] cursor-(--cursor-interactive)',
@@ -73,12 +74,18 @@ export default {
     {
       variant: 'secondary',
       orientation: 'horizontal',
-      class: { tabListContainer: 'border-b border-border', tabIndicator: 'top-auto bottom-0 h-0.5 translate-y-0' },
+      class: {
+        tabListContainer: 'border-b border-border',
+        tabIndicator: 'top-auto bottom-0 h-0.5 translate-y-0',
+      },
     },
     {
       variant: 'secondary',
       orientation: 'vertical',
-      class: { tabListContainer: 'border-s border-border', tabIndicator: 'start-0 w-0.5 translate-x-0' },
+      class: {
+        tabListContainer: 'border-s border-border',
+        tabIndicator: 'start-0 w-0.5 translate-x-0',
+      },
     },
   ],
   defaultVariants: {

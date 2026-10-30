@@ -25,27 +25,35 @@ ListBox takes an `items` array. Each entry is an item (`{ value, label, descript
 ```vue
 <template>
   <ListBox :items="items">
-    <template #item-leading="{ item, selected }" />      <!-- before the text (avatar, icon) -->
-    <template #item-label="{ item }" />                  <!-- Label content -->
-    <template #item-description="{ item }" />            <!-- Description content -->
-    <template #item-trailing="{ item }" />               <!-- after the text (shortcut) -->
-    <template #indicator="{ selected }" />               <!-- indicator content (default: checkmark) -->
-    <template #item="{ item, index, selected, disabled }" /> <!-- whole item content -->
-    <template #section-label="{ section }" />            <!-- section header -->
-    <template #empty />                                  <!-- shown when items is empty -->
+    <template #item-leading="{ item, selected }" />
+    <!-- before the text (avatar, icon) -->
+    <template #item-label="{ item }" />
+    <!-- Label content -->
+    <template #item-description="{ item }" />
+    <!-- Description content -->
+    <template #item-trailing="{ item }" />
+    <!-- after the text (shortcut) -->
+    <template #indicator="{ selected }" />
+    <!-- indicator content (default: checkmark) -->
+    <template #item="{ item, index, selected, disabled }" />
+    <!-- whole item content -->
+    <template #section-label="{ section }" />
+    <!-- section header -->
+    <template #empty />
+    <!-- shown when items is empty -->
   </ListBox>
 </template>
 ```
 
-| `ui` key | `data-slot` | Element |
-|---|---|---|
-| `base` | `list-box` | `<div role="listbox">` root |
-| `item` | `list-box-item` | `<div role="option">` |
-| `indicator` | `list-box-item-indicator` | checkmark wrapper |
-| `section` | — | `<section>` per section |
-| `header` | `header` | `<header>` section label |
-| `separator` | `separator` | `<hr>` |
-| `emptyState` | `empty-state` | `<div>` (iff `items` is empty and `#empty` given) |
+| `ui` key     | `data-slot`               | Element                                           |
+| ------------ | ------------------------- | ------------------------------------------------- |
+| `base`       | `list-box`                | `<div role="listbox">` root                       |
+| `item`       | `list-box-item`           | `<div role="option">`                             |
+| `indicator`  | `list-box-item-indicator` | checkmark wrapper                                 |
+| `section`    | —                         | `<section>` per section                           |
+| `header`     | `header`                  | `<header>` section label                          |
+| `separator`  | `separator`               | `<hr>`                                            |
+| `emptyState` | `empty-state`             | `<div>` (iff `items` is empty and `#empty` given) |
 
 ### Typing items
 
@@ -82,7 +90,7 @@ const items: MyItem[] = [/* ... */]
 
 ### Virtualization
 
-`virtualize` renders only the visible rows through Reka's `ListboxVirtualizer`. The root must scroll (give it a height and `overflow-y-auto`), and `items` must be flat. Pass `{ estimateSize, overscan }` to tune the row height estimate.
+`virtualize` renders only the visible rows. The root must scroll (give it a height and `overflow-y-auto`), and `items` must be flat. Pass `{ estimateSize, overscan }` to tune the row height estimate.
 
 <ComponentPreview name="list-box/virtualization" />
 
@@ -92,7 +100,7 @@ const items: MyItem[] = [/* ... */]
 
 ### Render Function
 
-HeroUI's `render` prop has no HareUI equivalent; attributes such as `data-custom` fall through to the root.
+ListBox has no `render` prop; attributes such as `data-custom` fall through to the root.
 
 <ComponentPreview name="list-box/render-function" />
 
@@ -109,9 +117,15 @@ HeroUI's `render` prop has no HareUI equivalent; attributes such as `data-custom
 ### Global Configuration
 
 ```ts
-app.use(createHareUI({
-  ui: { listBox: { slots: { base: 'rounded-lg border border-border p-2', item: 'rounded px-2 py-1' } } },
-}))
+app.use(
+  createHareUI({
+    ui: {
+      listBox: {
+        slots: { base: 'rounded-lg border border-border p-2', item: 'rounded px-2 py-1' },
+      },
+    },
+  }),
+)
 ```
 
 ## Styling Reference
@@ -138,13 +152,13 @@ app.use(createHareUI({
 
 <ApiTable component="ListBox" kind="emits" />
 
-### Theme
+## Theme
 
 <ApiTheme component="ListBox" />
 
 ## Accessibility
 
-Built on Reka's Listbox, which implements the ARIA listbox pattern:
+Implements the ARIA listbox pattern:
 
 - Arrow keys, Home/End, PageUp/PageDown and typeahead navigation (Space continues a typeahead search)
 - In `multiple` mode, Shift+Arrow/Home/End/Space and Shift+click select a range from the last selected item, and Meta/Ctrl+A selects every enabled item

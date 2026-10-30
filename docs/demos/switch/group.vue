@@ -1,7 +1,3 @@
-<script setup lang="ts">
-import { Switch, SwitchGroup } from '@hareui/vue'
-</script>
-
 <template>
   <SwitchGroup>
     <Switch name="notifications" label="Allow Notifications" />
@@ -9,3 +5,7 @@ import { Switch, SwitchGroup } from '@hareui/vue'
     <Switch name="social" label="Social media updates" />
   </SwitchGroup>
 </template>
+
+<script setup lang="ts">
+import { Switch, SwitchGroup } from '@hareui/vue'
+</script>

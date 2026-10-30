@@ -1,3 +1,12 @@
+<template>
+  <ChartTooltipContent
+    :label="27"
+    :payload="sleep"
+    :label-formatter="toWeek"
+    :value-formatter="toHours"
+  />
+</template>
+
 <script setup lang="ts">
 import { ChartTooltipContent } from '@hareui/vue/charts'
 
@@ -7,16 +16,12 @@ const sleep = [
   { name: 'REM', color: 'var(--chart-4)', value: 2.1 },
 ]
 
-function toHours(value: number | string) {
+const toHours = (value: number | string) => {
   const minutes = Math.round(Number(value) * 60)
   return `${Math.floor(minutes / 60)}h ${String(minutes % 60).padStart(2, '0')}m`
 }
 
-function toWeek(label: number | string) {
+const toWeek = (label: number | string) => {
   return `Week ${label}`
 }
 </script>
-
-<template>
-  <ChartTooltipContent :label="27" :payload="sleep" :label-formatter="toWeek" :value-formatter="toHours" />
-</template>

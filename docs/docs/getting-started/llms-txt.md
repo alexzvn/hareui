@@ -15,21 +15,25 @@ Both files are generated from the same Markdown source as this site, so they sta
 ## Integration
 
 **Claude Code / Claude:** Tell Claude to reference the documentation:
+
 ```
 Use HareUI documentation from https://hareui.alexzvn.me/llms.txt
 ```
 
 **Cursor:** Use the `@Docs` feature:
+
 ```
 @Docs https://hareui.alexzvn.me/llms-full.txt
 ```
 
 **Windsurf:** Add to your `.windsurfrules` file:
+
 ```
 #docs https://hareui.alexzvn.me/llms-full.txt
 ```
 
 **Other AI tools:** Most assistants can fetch documentation by URL. Provide:
+
 ```
 https://hareui.alexzvn.me/llms.txt
 ```

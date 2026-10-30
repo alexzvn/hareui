@@ -5,9 +5,12 @@ import { describe, expect, it, vi } from 'vitest'
 import type { ComponentOptions } from 'vue'
 import { defineComponent, h, nextTick, reactive, ref } from 'vue'
 import * as z from 'zod'
-import Form from '../src/components/form/Form.vue'
-import type { NumberStepperProps } from '../src/components/number-stepper/NumberStepper.vue'
-import NumberStepper from '../src/components/number-stepper/NumberStepper.vue'
+
+import type { FormSubmitEvent } from '@/components/form'
+import Form from '@/components/form/Form.vue'
+import type { NumberStepperProps } from '@/components/number-stepper/NumberStepper.types'
+import NumberStepper from '@/components/number-stepper/NumberStepper.vue'
+
 import { expectAccessible } from './a11y'
 
 const inc = '[data-slot=number-stepper-increment-button]'
@@ -15,16 +18,28 @@ const dec = '[data-slot=number-stepper-decrement-button]'
 const value = '[data-slot=number-stepper-value]'
 const input = '[data-slot=number-stepper-input]'
 
-async function press(target: { element: Element }) {
+const press = async (target: { element: Element }) => {
   // Reka's press-and-hold binds its pointerdown listener in a post-flush watcher, after mount
   await flushPromises()
-  target.element.dispatchEvent(new PointerEvent('pointerdown', { bubbles: true, cancelable: true, button: 0, pointerType: 'mouse' }))
-  target.element.dispatchEvent(new PointerEvent('pointerup', { bubbles: true, button: 0, pointerType: 'mouse' }))
+
+  target.element.dispatchEvent(
+    new PointerEvent('pointerdown', {
+      bubbles: true,
+      cancelable: true,
+      button: 0,
+      pointerType: 'mouse',
+    }),
+  )
+
+  target.element.dispatchEvent(
+    new PointerEvent('pointerup', { bubbles: true, button: 0, pointerType: 'mouse' }),
+  )
+
   await nextTick()
 }
 
 // The value renders through number-flow; assert what it's given, not its (animated) DOM
-function shown(wrapper: VueWrapper) {
+const shown = (wrapper: VueWrapper) => {
   return wrapper.findComponent(NumberFlow).props('value')
 }
 
@@ -42,7 +57,11 @@ describe('NumberStepper', () => {
   })
 
   it('steps with the arrow keys and clamps to min / max', async () => {
-    const wrapper = mount(NumberStepper, { props: { defaultValue: 4, min: 0, max: 5 }, attachTo: document.body })
+    const wrapper = mount(NumberStepper, {
+      props: { defaultValue: 4, min: 0, max: 5 },
+      attachTo: document.body,
+    })
+
     await wrapper.get(input).trigger('keydown', { key: 'ArrowUp' })
     expect(wrapper.emitted('update:modelValue')?.at(-1)).toEqual([5])
     await nextTick()
@@ -57,7 +76,11 @@ describe('NumberStepper', () => {
   })
 
   it('PageUp / PageDown move by one step, not ten', async () => {
-    const wrapper = mount(NumberStepper, { props: { defaultValue: 10, step: 5 }, attachTo: document.body })
+    const wrapper = mount(NumberStepper, {
+      props: { defaultValue: 10, step: 5 },
+      attachTo: document.body,
+    })
+
     await wrapper.get(input).trigger('keydown', { key: 'PageUp' })
     expect(wrapper.emitted('update:modelValue')?.at(-1)).toEqual([15])
     await wrapper.get(input).trigger('keydown', { key: 'PageDown' })
@@ -67,7 +90,11 @@ describe('NumberStepper', () => {
   })
 
   it('steps by `step` and clamps an out-of-range v-model for display', async () => {
-    const wrapper = mount(NumberStepper, { props: { modelValue: 0, min: 0, step: 5 }, attachTo: document.body })
+    const wrapper = mount(NumberStepper, {
+      props: { modelValue: 0, min: 0, step: 5 },
+      attachTo: document.body,
+    })
+
     await wrapper.get(input).trigger('keydown', { key: 'ArrowUp' })
     expect(wrapper.emitted('update:modelValue')?.at(-1)).toEqual([5])
     await wrapper.setProps({ modelValue: -20 })
@@ -85,10 +112,17 @@ describe('NumberStepper', () => {
   it('formats the value with formatOptions and submits the raw number', () => {
     const form = document.createElement('form')
     document.body.append(form)
+
     const wrapper = mount(NumberStepper, {
-      props: { name: 'price', defaultValue: 10, locale: 'en-US', formatOptions: { style: 'currency', currency: 'USD' } },
+      props: {
+        name: 'price',
+        defaultValue: 10,
+        locale: 'en-US',
+        formatOptions: { style: 'currency', currency: 'USD' },
+      },
       attachTo: form,
     })
+
     const flow = wrapper.findComponent(NumberFlow)
     expect(flow.props('value')).toBe(10)
     expect(flow.props('format')).toEqual({ style: 'currency', currency: 'USD' })
@@ -102,13 +136,26 @@ describe('NumberStepper', () => {
   it('exposes the value and formatted value to the value slot', () => {
     const wrapper = mount(NumberStepper, {
       props: { defaultValue: 3 },
-      slots: { value: ({ value: v, formattedValue }: { value: number | undefined, formattedValue: string }) => `${formattedValue} items (${v})` },
+      slots: {
+        value: ({
+          value: v,
+          formattedValue,
+        }: {
+          value: number | undefined
+          formattedValue: string
+        }) => `${formattedValue} items (${v})`,
+      },
     })
+
     expect(wrapper.get(value).text()).toBe('3 items (3)')
   })
 
   it('disables both buttons and the input when disabled', async () => {
-    const wrapper = mount(NumberStepper, { props: { defaultValue: 3, disabled: true }, attachTo: document.body })
+    const wrapper = mount(NumberStepper, {
+      props: { defaultValue: 3, disabled: true },
+      attachTo: document.body,
+    })
+
     expect(wrapper.get('[data-slot=number-stepper]').attributes('data-disabled')).toBe('true')
     expect(wrapper.get(inc).attributes('disabled')).toBeDefined()
     expect(wrapper.get(dec).attributes('disabled')).toBeDefined()
@@ -119,7 +166,10 @@ describe('NumberStepper', () => {
   })
 
   it('names the buttons after the field and links label and description to the input', () => {
-    const wrapper = mount(NumberStepper, { props: { id: 'g', label: 'Guests', description: 'Up to 10' } })
+    const wrapper = mount(NumberStepper, {
+      props: { id: 'g', label: 'Guests', description: 'Up to 10' },
+    })
+
     expect(wrapper.get('label').attributes('for')).toBe('g')
     expect(wrapper.get(input).attributes('id')).toBe('g')
     expect(wrapper.get(input).attributes('aria-describedby')).toBe('g-description')
@@ -128,7 +178,11 @@ describe('NumberStepper', () => {
   })
 
   it('renders a Button when increment / decrement receive Button props', async () => {
-    const wrapper = mount(NumberStepper, { props: { defaultValue: 1, increment: { variant: 'primary', size: 'sm' }, decrement: false }, attachTo: document.body })
+    const wrapper = mount(NumberStepper, {
+      props: { defaultValue: 1, increment: { variant: 'primary', size: 'sm' }, decrement: false },
+      attachTo: document.body,
+    })
+
     expect(wrapper.find(dec).exists()).toBe(false)
     const button = wrapper.get(inc)
     expect(button.attributes('data-slot')).toBe('number-stepper-increment-button')
@@ -140,18 +194,28 @@ describe('NumberStepper', () => {
 
   it('joins a Form: schema errors block submit and route to the field by name', async () => {
     const state = reactive({ guests: 1 })
-    const onSubmit = vi.fn()
+    const onSubmit = vi.fn<(event: FormSubmitEvent<unknown>) => void>()
     const schema = z.object({ guests: z.number().min(2, 'At least 2 guests') })
-    const wrapper = mount(() => h(Form, { schema, state, onSubmit }, () => h(NumberStepper, {
-      'label': 'Guests',
-      'name': 'guests',
-      'modelValue': state.guests,
-      'onUpdate:modelValue': (v: number | null | undefined) => { state.guests = v ?? Number.NaN },
-    })), { attachTo: document.body })
+    const wrapper = mount(
+      () =>
+        h(Form, { schema, state, onSubmit }, () =>
+          h(NumberStepper, {
+            label: 'Guests',
+            name: 'guests',
+            modelValue: state.guests,
+            'onUpdate:modelValue': (v: number | null | undefined) => {
+              state.guests = v ?? Number.NaN
+            },
+          }),
+        ),
+      { attachTo: document.body },
+    )
+
     const submit = () => {
       wrapper.get('form').element.dispatchEvent(new Event('submit', { cancelable: true }))
       return flushPromises()
     }
+
     await submit()
     expect(wrapper.get('[data-slot=field-error]').text()).toBe('At least 2 guests')
     expect(wrapper.get(input).attributes('aria-invalid')).toBe('true')
@@ -166,14 +230,25 @@ describe('NumberStepper', () => {
 
   it.each<[string, NumberStepperProps & { 'aria-label'?: string }]>([
     ['idle with a visible label', { label: 'Guests', defaultValue: 2 }],
-    ['named by aria-label only', { 'aria-label': 'Guests', 'defaultValue': 2 }],
+    ['named by aria-label only', { 'aria-label': 'Guests', defaultValue: 2 }],
     ['with a description', { label: 'Guests', description: 'Up to 10', defaultValue: 2 }],
-    ['invalid with an error message', { label: 'Guests', errorMessage: 'Too many', invalid: true, defaultValue: 2 }],
+    [
+      'invalid with an error message',
+      { label: 'Guests', errorMessage: 'Too many', invalid: true, defaultValue: 2 },
+    ],
     ['required', { label: 'Guests', required: true }],
     ['disabled', { label: 'Guests', disabled: true, defaultValue: 2 }],
     ['read-only', { label: 'Guests', readonly: true, defaultValue: 2 }],
     ['at the maximum (increment disabled)', { label: 'Guests', max: 2, defaultValue: 2 }],
-    ['with Button steppers', { label: 'Guests', defaultValue: 2, increment: { variant: 'primary' }, decrement: { variant: 'secondary' } }],
+    [
+      'with Button steppers',
+      {
+        label: 'Guests',
+        defaultValue: 2,
+        increment: { variant: 'primary' },
+        decrement: { variant: 'secondary' },
+      },
+    ],
   ])('has no axe violations: %s', async (_, props) => {
     const wrapper = mount(NumberStepper, { props, attachTo: document.body })
     await nextTick()
@@ -182,7 +257,11 @@ describe('NumberStepper', () => {
   })
 
   it('the spin button is the only tab stop; the stepper buttons stay out of the tab order', () => {
-    const cases: NumberStepperProps[] = [{ label: 'Guests' }, { label: 'Guests', increment: { variant: 'primary' }, decrement: { variant: 'primary' } }]
+    const cases: NumberStepperProps[] = [
+      { label: 'Guests' },
+      { label: 'Guests', increment: { variant: 'primary' }, decrement: { variant: 'primary' } },
+    ]
+
     for (const props of cases) {
       const wrapper = mount(NumberStepper, { props })
       expect(wrapper.get(input).attributes('tabindex')).not.toBe('-1')
@@ -193,7 +272,11 @@ describe('NumberStepper', () => {
   })
 
   it('ArrowDown decrements and End jumps to max (spinbutton keys)', async () => {
-    const wrapper = mount(NumberStepper, { props: { label: 'Guests', defaultValue: 5, min: 1, max: 9 }, attachTo: document.body })
+    const wrapper = mount(NumberStepper, {
+      props: { label: 'Guests', defaultValue: 5, min: 1, max: 9 },
+      attachTo: document.body,
+    })
+
     await wrapper.get(input).trigger('keydown', { key: 'ArrowDown' })
     expect(wrapper.emitted('update:modelValue')?.at(-1)).toEqual([4])
     await wrapper.get(input).trigger('keydown', { key: 'End' })
@@ -202,12 +285,29 @@ describe('NumberStepper', () => {
   })
 
   it('pressing a stepper button keeps focus in the spin button', async () => {
-    const wrapper = mount(NumberStepper, { props: { label: 'Guests', defaultValue: 5 }, attachTo: document.body })
+    const wrapper = mount(NumberStepper, {
+      props: { label: 'Guests', defaultValue: 5 },
+      attachTo: document.body,
+    })
+
     await flushPromises()
     ;(wrapper.get(input).element as HTMLElement).focus()
-    const down = new PointerEvent('pointerdown', { bubbles: true, cancelable: true, button: 0, pointerType: 'mouse' })
+
+    const down = new PointerEvent('pointerdown', {
+      bubbles: true,
+      cancelable: true,
+      button: 0,
+      pointerType: 'mouse',
+    })
+
     wrapper.get(dec).element.dispatchEvent(down)
-    wrapper.get(dec).element.dispatchEvent(new PointerEvent('pointerup', { bubbles: true, button: 0, pointerType: 'mouse' }))
+
+    wrapper
+      .get(dec)
+      .element.dispatchEvent(
+        new PointerEvent('pointerup', { bubbles: true, button: 0, pointerType: 'mouse' }),
+      )
+
     await nextTick()
     expect(down.defaultPrevented).toBe(true)
     expect(document.activeElement).toBe(wrapper.get(input).element)
@@ -216,8 +316,17 @@ describe('NumberStepper', () => {
   })
 
   it('exposes the value range on the spin button, hides the animated duplicate and wires the buttons to it', async () => {
-    const wrapper = mount(NumberStepper, { props: { id: 'g', label: 'Guests', defaultValue: 3, min: 1, max: 9 } })
-    expect(wrapper.get(input).attributes()).toMatchObject({ 'role': 'spinbutton', 'aria-valuenow': '3', 'aria-valuemin': '1', 'aria-valuemax': '9' })
+    const wrapper = mount(NumberStepper, {
+      props: { id: 'g', label: 'Guests', defaultValue: 3, min: 1, max: 9 },
+    })
+
+    expect(wrapper.get(input).attributes()).toMatchObject({
+      role: 'spinbutton',
+      'aria-valuenow': '3',
+      'aria-valuemin': '1',
+      'aria-valuemax': '9',
+    })
+
     expect(wrapper.get(value).attributes('aria-hidden')).toBe('true')
     expect(wrapper.get(inc).attributes('aria-controls')).toBe('g')
     expect(wrapper.get(dec).attributes('aria-controls')).toBe('g')
@@ -232,9 +341,18 @@ describe('NumberStepper', () => {
   })
 
   it('wires an invalid field: aria-invalid and the error id in aria-describedby', async () => {
-    const wrapper = mount(NumberStepper, { props: { id: 'g', label: 'Guests', description: 'Up to 10', errorMessage: 'Too many', invalid: true } })
+    const wrapper = mount(NumberStepper, {
+      props: {
+        id: 'g',
+        label: 'Guests',
+        description: 'Up to 10',
+        errorMessage: 'Too many',
+        invalid: true,
+      },
+    })
+
     expect(wrapper.get(input).attributes('aria-invalid')).toBe('true')
-    expect(wrapper.get(input).attributes('aria-describedby')).toBe('g-description g-error')
+    expect(wrapper.get(input).attributes('aria-describedby')).toBe('g-error')
     expect(wrapper.get('#g-error').text()).toBe('Too many')
     await wrapper.setProps({ invalid: false })
     expect(wrapper.get(input).attributes('aria-invalid')).toBeUndefined()
@@ -242,7 +360,11 @@ describe('NumberStepper', () => {
   })
 
   it('read-only blocks the keys and the buttons and marks the spin button read-only', async () => {
-    const wrapper = mount(NumberStepper, { props: { label: 'Guests', defaultValue: 3, readonly: true }, attachTo: document.body })
+    const wrapper = mount(NumberStepper, {
+      props: { label: 'Guests', defaultValue: 3, readonly: true },
+      attachTo: document.body,
+    })
+
     expect(wrapper.get(input).attributes('readonly')).toBeDefined()
     expect(wrapper.get(inc).attributes('disabled')).toBeDefined()
     await wrapper.get(input).trigger('keydown', { key: 'ArrowUp' })
@@ -253,29 +375,34 @@ describe('NumberStepper', () => {
 
 describe('NumberStepper slot outlets', () => {
   it('#decrement / #increment / #value toggled by a parent v-if switch between custom content and the fallback', async () => {
-    const show = ref(true)
-    const wrapper = mount(defineComponent({
-      components: { NumberStepper },
-      setup: () => ({ show }),
-      template: `<NumberStepper :default-value="1">
-        <template v-if="show" #decrement><i data-test="minus" /></template>
-        <template v-if="show" #increment><i data-test="plus" /></template>
-        <template v-if="show" #value="{ value, formattedValue }"><b data-test="value">{{ value }}|{{ formattedValue }}</b></template>
+    const isShown = ref(true)
+    const wrapper = mount(
+      defineComponent({
+        components: { NumberStepper },
+        setup: () => ({ isShown }),
+        template: `<NumberStepper :default-value="1">
+        <template v-if="isShown" #decrement><i data-test="minus" /></template>
+        <template v-if="isShown" #increment><i data-test="plus" /></template>
+        <template v-if="isShown" #value="{ value, formattedValue }"><b data-test="value">{{ value }}|{{ formattedValue }}</b></template>
       </NumberStepper>`,
-    }))
-    const custom = () => ['minus', 'plus', 'value'].map(t => wrapper.find(`[data-test=${t}]`).exists())
+      }),
+    )
+
+    const custom = () =>
+      ['minus', 'plus', 'value'].map((t) => wrapper.find(`[data-test=${t}]`).exists())
+
     expect(custom()).toEqual([true, true, true])
     expect(wrapper.get('[data-test=value]').text()).toBe('1|1')
     expect(wrapper.get(dec).find('svg').exists()).toBe(false)
 
-    show.value = false
+    isShown.value = false
     await nextTick()
     expect(custom()).toEqual([false, false, false])
     expect(wrapper.get(dec).find('svg').exists()).toBe(true)
     expect(wrapper.get(inc).find('svg').exists()).toBe(true)
     expect(wrapper.findComponent(NumberFlow).exists()).toBe(true)
 
-    show.value = true
+    isShown.value = true
     await nextTick()
     expect(custom()).toEqual([true, true, true])
     expect(wrapper.get(inc).find('svg').exists()).toBe(false)
@@ -286,11 +413,15 @@ describe('NumberStepper slot outlets', () => {
     let buttonUpdates = 0
     const countButtonUpdates: ComponentOptions = {
       updated() {
-        if (this.$el instanceof Element && this.$el.matches(`${inc}, ${dec}`))
-          buttonUpdates++
+        if (this.$el instanceof Element && this.$el.matches(`${inc}, ${dec}`)) buttonUpdates++
       },
     }
-    const wrapper = mount(NumberStepper, { props: { label: 'Guests', description: 'A', defaultValue: 1 }, global: { mixins: [countButtonUpdates] } })
+
+    const wrapper = mount(NumberStepper, {
+      props: { label: 'Guests', description: 'A', defaultValue: 1 },
+      global: { mixins: [countButtonUpdates] },
+    })
+
     // reka's form-control check is computed before the input mounts and catches up on the first update of any kind
     await wrapper.setProps({ description: 'B' })
     buttonUpdates = 0

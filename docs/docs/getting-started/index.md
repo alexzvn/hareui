@@ -1,15 +1,15 @@
 ---
 title: Introduction
-description: A Vue 3 port of HeroUI v3, built on Reka UI and Tailwind CSS v4 with a slot-based component API.
+description: A Vue 3 component library built on Reka UI and Tailwind CSS v4, with a slot-based component API.
 ---
 
-HareUI is a Vue 3 component library that ports [HeroUI v3](https://heroui.com) (React, Tailwind CSS v4, React Aria Components) to Vue. Instead of wrapping React Aria, HareUI is rebuilt on [Reka UI](https://reka-ui.com) for headless behavior, with the exact same visual design as HeroUI — verified with an automated computed-style and screenshot diff against `@heroui/react`.
+HareUI is a Vue 3 component library built on [Reka UI](https://reka-ui.com) and Tailwind CSS v4. Its visual design comes from [HeroUI](https://heroui.com), and its design tokens use the same names, so a HeroUI theme's CSS variables work unchanged.
 
-The component API itself follows Nuxt UI conventions rather than HeroUI's compound components: named template slots instead of `Card.Header`, a `:ui` prop for per-slot class overrides, a `class` prop merged into the root element, and an optional app-level `createHareUI()` config for global theme overrides.
+The component API is built around named template slots, a `:ui` prop for per-slot class overrides, a `class` prop merged into the root element, and an optional app-level `createHareUI()` config for global theme overrides.
 
 ## Why HareUI?
 
-**Visually identical to HeroUI** — Every component's computed styles and rendered pixels are diffed against `@heroui/react` so the two stay in sync.
+**Consistent visual design** — Every component shares one set of design tokens, and computed styles and rendered pixels are checked by automated visual tests.
 
 **Accessible** — Built on [Reka UI](https://reka-ui.com) primitives with focus management, keyboard navigation, and screen reader support.
 
@@ -26,20 +26,19 @@ The component API itself follows Nuxt UI conventions rather than HeroUI's compou
 Copy-paste code works until it breaks. You're left maintaining outdated dependencies that stop evolving.
 
 HareUI is different. It's a library you install and update, not a folder of snippets you own:
-- Component themes stay in sync with upstream HeroUI changes
+
+- Component themes keep evolving with every release
 - Deep customization through CSS variables and the `:ui` prop, not shallow theme tweaks
 - Predictable, typed props designed for AI-assisted code generation
 
-HareUI is not a snapshot of HeroUI v3 — it tracks the source library as it evolves. 🌱
+## How HareUI Is Built
 
-## How HareUI Differs from HeroUI
+Each component is a Vue single-file component:
 
-HareUI is a hand-translated port, not a wrapper around `@heroui/react`. Each component is rebuilt from scratch in Vue:
-
-- **Headless foundation**: [Reka UI](https://reka-ui.com) instead of React Aria Components.
-- **API shape**: named slots and `:ui` overrides instead of HeroUI's `Card.Header`-style compound components.
-- **Styling**: component themes are [tailwind-variants](https://tailwind-variants.org/) objects translated by hand from HeroUI's CSS, not an import of `@heroui/styles`.
-- **Tokens**: CSS variables (`--accent`, `--surface`, `--radius`, …) are copied verbatim from HeroUI, so existing HeroUI theme overrides apply unchanged.
+- **Headless foundation**: [Reka UI](https://reka-ui.com) primitives handle focus, keyboard and ARIA behavior.
+- **API shape**: named slots and `:ui` overrides instead of compound components.
+- **Styling**: component themes are [tailwind-variants](https://tailwind-variants.org/) slot objects.
+- **Tokens**: CSS variables (`--accent`, `--surface`, `--radius`, …) drive the whole theme.
 
 See [Design Principles](/docs/getting-started/design-principles) for the full list of naming and API conventions.
 
@@ -55,7 +54,7 @@ Yes — HareUI is MIT licensed and open source.
 
 <FaqItem question="Is it production-ready?">
 
-HareUI is in early development (`0.1.x`). The component API is stable for the components that exist, but coverage of HeroUI's full component set is incomplete and the API may still change before a 1.0 release.
+HareUI is in early development (`0.1.x`). The component API is stable for the components that exist, but the component set is still growing and the API may still change before a 1.0 release.
 
 </FaqItem>
 
@@ -79,7 +78,7 @@ Built on [Reka UI](https://reka-ui.com) primitives for keyboard navigation, focu
 
 <FaqItem question="Can I use HareUI without Vue?">
 
-No. Unlike HeroUI, which separates `@heroui/styles` (framework-agnostic BEM classes) from `@heroui/react` (behavior), HareUI's styles live inside each Vue single-file component's tailwind-variants theme and are not published as a standalone CSS package.
+No. HareUI's styles live inside each Vue single-file component's tailwind-variants theme and are not published as a standalone CSS package.
 
 </FaqItem>
 

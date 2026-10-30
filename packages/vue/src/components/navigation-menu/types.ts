@@ -1,7 +1,8 @@
-import type { PortalTarget } from '../../config'
+import type { PortalTarget } from '@/config'
+import type { ClassValue } from '@/utils/tv'
 
 /** Options of the hover/click popover shown for a collapsed item with children. */
-export interface NavigationMenuPopoverProps {
+export type NavigationMenuPopoverProps = {
   /**
    * What opens the popover. `'hover'` (the default) opens it on hover and closes it when the
    * pointer leaves both the item and the popover; `'click'` uses the regular `Popover`.
@@ -41,5 +42,5 @@ export interface NavigationMenuPopoverProps {
   /** Where to render the popover: `true`/`false`, a selector or an element. Falls back to `createHareUI({ portal })`. */
   portal?: PortalTarget
   /** Additional classes merged into the popover surface. */
-  class?: any
+  class?: ClassValue
 }

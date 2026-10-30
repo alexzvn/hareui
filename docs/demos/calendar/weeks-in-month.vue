@@ -1,7 +1,3 @@
-<script setup lang="ts">
-import { Calendar, Description } from '@hareui/vue'
-</script>
-
 <template>
   <div class="flex flex-col items-center gap-4">
     <Calendar aria-label="Event date" fixed-weeks />
@@ -10,3 +6,7 @@ import { Calendar, Description } from '@hareui/vue'
     </Description>
   </div>
 </template>
+
+<script setup lang="ts">
+import { Calendar, Description } from '@hareui/vue'
+</script>

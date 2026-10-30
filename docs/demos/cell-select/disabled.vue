@@ -1,3 +1,9 @@
+<template>
+  <div class="w-72">
+    <CellSelect default-value="1h" disabled :items="intervals" label="Auto sync" />
+  </div>
+</template>
+
 <script setup lang="ts">
 import { CellSelect } from '@hareui/vue'
 
@@ -7,9 +13,3 @@ const intervals = [
   { value: 'manual', label: 'Manually' },
 ]
 </script>
-
-<template>
-  <div class="w-72">
-    <CellSelect default-value="1h" disabled :items="intervals" label="Auto sync" />
-  </div>
-</template>

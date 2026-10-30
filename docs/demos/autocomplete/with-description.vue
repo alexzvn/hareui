@@ -1,3 +1,18 @@
+<template>
+  <Autocomplete
+    clearable
+    class="w-[256px]"
+    label="State"
+    placeholder="Select one"
+    search-label="Search states"
+    search-placeholder="Search states..."
+    description="Select your state of residence"
+    :items="items"
+  >
+    <template #empty> No results found </template>
+  </Autocomplete>
+</template>
+
 <script setup lang="ts">
 import type { ListBoxItem } from '@hareui/vue'
 import { Autocomplete } from '@hareui/vue'
@@ -11,20 +26,3 @@ const items: ListBoxItem[] = [
   { value: 'washington', label: 'Washington' },
 ]
 </script>
-
-<template>
-  <Autocomplete
-    clearable
-    class="w-[256px]"
-    label="State"
-    placeholder="Select one"
-    search-label="Search states"
-    search-placeholder="Search states..."
-    description="Select your state of residence"
-    :items="items"
-  >
-    <template #empty>
-      No results found
-    </template>
-  </Autocomplete>
-</template>

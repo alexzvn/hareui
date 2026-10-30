@@ -57,14 +57,16 @@ When used inside a [Surface](/docs/components/surface) component, use `variant="
 ### Global Configuration
 
 ```ts
-app.use(createHareUI({
-  ui: {
-    textArea: {
-      slots: { base: 'rounded-xl px-4 py-3 leading-6' },
-      defaultVariants: { variant: 'secondary' },
+app.use(
+  createHareUI({
+    ui: {
+      textArea: {
+        slots: { base: 'rounded-xl px-4 py-3 leading-6' },
+        defaultVariants: { variant: 'secondary' },
+      },
     },
-  },
-}))
+  }),
+)
 ```
 
 ## Styling Reference
@@ -92,11 +94,11 @@ TextArea accepts all standard HTML `<textarea>` attributes (`rows`, `cols`, `max
 
 <ApiTable component="TextArea" kind="emits" />
 
-### Theme
+> For validation props like `invalid`, `required`, and error handling, use **[TextField](/docs/components/text-field)** with TextArea in its default slot.
+
+## Theme
 
 <ApiTheme component="TextArea" />
-
-> For validation props like `invalid`, `required`, and error handling, use **[TextField](/docs/components/text-field)** with TextArea in its default slot.
 
 ## Related Components
 

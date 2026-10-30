@@ -1,50 +1,16 @@
-<script setup lang="ts">
-import type { AccordionItem } from '@hareui/vue'
-import { Icon } from '@iconify/vue'
-import { Accordion } from '@hareui/vue'
-
-interface SetupItem extends AccordionItem {
-  iconUrl: string
-  subtitle: string
-}
-
-const items: SetupItem[] = [
-  {
-    content: 'Stay informed about your account activity with real-time notifications.',
-    iconUrl: 'https://heroui-assets.nyc3.cdn.digitaloceanspaces.com/docs/3dicons/bell-small.png',
-    subtitle: 'Receive account activity updates',
-    label: 'Set Up Notifications',
-  },
-  {
-    content: 'Enhance your browsing experience by installing our official browser extension',
-    iconUrl: 'https://heroui-assets.nyc3.cdn.digitaloceanspaces.com/docs/3dicons/compass-small.png',
-    subtitle: 'Connect your browser to your account',
-    label: 'Set up Browser Extension',
-  },
-  {
-    content: 'Begin your journey into the world of digital collectibles by creating your first NFT. ',
-    iconUrl: 'https://heroui-assets.nyc3.cdn.digitaloceanspaces.com/docs/3dicons/mint-collective-small.png',
-    subtitle: 'Create your first collectible',
-    label: 'Mint Collectible',
-  },
-]
-
-const ui = {
-  item: "group/item first:**:data-[slot=accordion-trigger]:rounded-t-2xl last:[&:not(:has([data-slot=accordion-trigger][aria-expanded='true']))_[data-slot=accordion-trigger]]:rounded-b-2xl",
-  trigger: 'group flex items-center gap-2 transition-none hover:bg-surface',
-  indicator: 'text-muted/50 [&>svg]:size-4',
-  bodyInner: 'text-muted/80',
-}
-</script>
-
 <template>
-  <Accordion class="bg-surface-1/10 w-full max-w-md rounded-2xl" :items="items" :ui="ui" variant="surface">
+  <Accordion
+    class="bg-surface-1/10 w-full max-w-md rounded-2xl"
+    :items="items"
+    :ui="ui"
+    variant="surface"
+  >
     <template #leading="{ item }">
-      <img
-        :alt="item.label"
-        class="h-11 w-11 transition-[scale,rotate] duration-300 ease-out group-hover/item:scale-120 group-hover/item:-rotate-10 group-hover/item:drop-shadow-lg"
-        :src="item.iconUrl"
+      <span
+        class="flex size-11 shrink-0 items-center justify-center rounded-xl bg-accent-soft text-accent-soft-foreground transition-[scale,rotate] duration-300 ease-out group-hover/item:scale-120 group-hover/item:-rotate-10 group-hover/item:drop-shadow-lg"
       >
+        <Icon class="size-5" :icon="item.icon" />
+      </span>
     </template>
     <template #label="{ item }">
       <div class="flex flex-col gap-0">
@@ -57,3 +23,42 @@ const ui = {
     </template>
   </Accordion>
 </template>
+
+<script setup lang="ts">
+import type { AccordionItem } from '@hareui/vue'
+import { Accordion } from '@hareui/vue'
+import { Icon } from '@iconify/vue'
+
+type SetupItem = {
+  icon: string
+  subtitle: string
+} & AccordionItem
+
+const items: SetupItem[] = [
+  {
+    content: 'Choose which updates reach you by email and which only show up in the app.',
+    icon: 'gravity-ui:bell',
+    subtitle: 'Pick what you hear about',
+    label: 'Alerts',
+  },
+  {
+    content: 'Add a second sign-in step with an authenticator app or a hardware key.',
+    icon: 'gravity-ui:shield-check',
+    subtitle: 'Protect your account',
+    label: 'Two-Step Sign-In',
+  },
+  {
+    content: 'Invite teammates by email and decide what each of them can edit.',
+    icon: 'gravity-ui:persons',
+    subtitle: 'Work together',
+    label: 'Team Members',
+  },
+]
+
+const ui = {
+  item: "group/item first:**:data-[slot=accordion-trigger]:rounded-t-2xl last:[&:not(:has([data-slot=accordion-trigger][aria-expanded='true']))_[data-slot=accordion-trigger]]:rounded-b-2xl",
+  trigger: 'group flex items-center gap-2 transition-none hover:bg-surface',
+  indicator: 'text-muted/50 [&>svg]:size-4',
+  bodyInner: 'text-muted/80',
+}
+</script>

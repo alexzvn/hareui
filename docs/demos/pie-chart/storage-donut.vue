@@ -1,21 +1,3 @@
-<script setup lang="ts">
-import { Card } from '@hareui/vue'
-import { PieChart } from '@hareui/vue/charts'
-
-const data = [
-  { kind: 'Photos', size: 61, fill: 'var(--chart-4)' },
-  { kind: 'Videos', size: 38, fill: 'var(--chart-3)' },
-  { kind: 'Screenshots', size: 9, fill: 'var(--chart-2)' },
-  { kind: 'Other', size: 4, fill: 'var(--chart-1)' },
-]
-
-const stored = data.reduce((sum, item) => sum + item.size, 0)
-
-function formatValue(value: number) {
-  return `${value} GB`
-}
-</script>
-
 <template>
   <Card
     class="w-full max-w-[360px] rounded-2xl"
@@ -29,7 +11,7 @@ function formatValue(value: number) {
       donut
       :width="220"
       :height="220"
-      :value-formatter="formatValue"
+      :value="{ formatter: formatValue }"
       :legend="{ showValue: true }"
       aria-label="Cloud backup by file kind"
     >
@@ -40,3 +22,21 @@ function formatValue(value: number) {
     </PieChart>
   </Card>
 </template>
+
+<script setup lang="ts">
+import { Card } from '@hareui/vue'
+import { PieChart } from '@hareui/vue/charts'
+
+const data = [
+  { kind: 'Photos', size: 61, fill: 'var(--chart-4)' },
+  { kind: 'Videos', size: 38, fill: 'var(--chart-3)' },
+  { kind: 'Screenshots', size: 9, fill: 'var(--chart-2)' },
+  { kind: 'Other', size: 4, fill: 'var(--chart-1)' },
+]
+
+const stored = data.reduce((sum, item) => sum + item.size, 0)
+
+const formatValue = (value: number) => {
+  return `${value} GB`
+}
+</script>

@@ -32,15 +32,15 @@ composed through props or named slots.
 </Switch>
 ```
 
-| `ui` key | `data-slot` | Element |
-|---|---|---|
-| `base` | `switch` | `<div>` root |
-| `content` | `switch-content` | The Reka `SwitchRoot` button |
-| `control` | `switch-control` | The track |
-| `thumb` | `switch-thumb` | The moving thumb |
-| `icon` | `switch-icon` | Icon container inside the thumb (iff `#icon`) |
-| — | `description` | [Description](/docs/components/description) (iff `description` / `#description`) |
-| — | `field-error` | [FieldError](/docs/components/field-error) (while invalid, iff `error-message` / `#error` / validation errors) |
+| `ui` key  | `data-slot`      | Element                                                                                                        |
+| --------- | ---------------- | -------------------------------------------------------------------------------------------------------------- |
+| `base`    | `switch`         | `<div>` root                                                                                                   |
+| `content` | `switch-content` | The switch button                                                                                              |
+| `control` | `switch-control` | The track                                                                                                      |
+| `thumb`   | `switch-thumb`   | The moving thumb                                                                                               |
+| `icon`    | `switch-icon`    | Icon container inside the thumb (iff `#icon`)                                                                  |
+| —         | `description`    | [Description](/docs/components/description) (iff `description` / `#description`)                               |
+| —         | `field-error`    | [FieldError](/docs/components/field-error) (while invalid, iff `error-message` / `#error` / validation errors) |
 
 Group multiple switches with [SwitchGroup](#switchgroup), a layout-only wrapper (`orientation: 'vertical' | 'horizontal'`, default `vertical`):
 
@@ -51,10 +51,10 @@ Group multiple switches with [SwitchGroup](#switchgroup), a layout-only wrapper 
 </SwitchGroup>
 ```
 
-| `ui` key | `data-slot` | Element |
-|---|---|---|
-| `base` | `switch-group` | `<div>` root |
-| `items` | `switch-group-items` | Container for the switch items |
+| `ui` key | `data-slot`          | Element                        |
+| -------- | -------------------- | ------------------------------ |
+| `base`   | `switch-group`       | `<div>` root                   |
+| `items`  | `switch-group-items` | Container for the switch items |
 
 ## Examples
 
@@ -121,9 +121,11 @@ Override the control's checked colors with CSS variables through `:ui`, and stac
 ### Global Configuration
 
 ```ts
-app.use(createHareUI({
-  ui: { switch: { slots: { control: 'rounded-md' } } },
-}))
+app.use(
+  createHareUI({
+    ui: { switch: { slots: { control: 'rounded-md' } } },
+  }),
+)
 ```
 
 ## Styling Reference
@@ -161,15 +163,11 @@ app.use(createHareUI({
 
 <ApiTable component="Switch" kind="emits" />
 
-### Switch Theme
-
-<ApiTheme component="Switch" />
-
 ## SwitchGroup
 
 `SwitchGroup` is a layout-only wrapper: it renders no state of its own and shares no context with its
 `Switch` children — each switch keeps its own `name`/`value`/`v-model`. Use it purely to apply the grouped
-spacing/orientation styling HeroUI ships for stacks of switches.
+spacing/orientation styling for stacks of switches.
 
 ### Props
 
@@ -178,6 +176,12 @@ spacing/orientation styling HeroUI ships for stacks of switches.
 ### Slots
 
 <ApiTable component="SwitchGroup" kind="slots" />
+
+## Theme
+
+### Switch Theme
+
+<ApiTheme component="Switch" />
 
 ### SwitchGroup Theme
 

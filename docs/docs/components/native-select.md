@@ -25,25 +25,30 @@ NativeSelect renders a [Label](/docs/components/label), a trigger holding the `<
 ```vue
 <template>
   <NativeSelect label="…" description="…" error-message="…" placeholder="…" :items="…">
-    <option value="…">…</option>           <!-- extra options, after `items` -->
+    <option value="…">…</option>
+    <!-- extra options, after `items` -->
     <optgroup label="…">…</optgroup>
-    <template #label />                     <!-- Label content -->
-    <template #indicator />                 <!-- icon at the end (default: chevron) -->
-    <template #description />               <!-- Description content -->
-    <template #error />                     <!-- FieldError content, rendered when invalid -->
+    <template #label />
+    <!-- Label content -->
+    <template #indicator />
+    <!-- icon at the end (default: chevron) -->
+    <template #description />
+    <!-- Description content -->
+    <template #error />
+    <!-- FieldError content, rendered when invalid -->
   </NativeSelect>
 </template>
 ```
 
-| `ui` key | `data-slot` | Element |
-|---|---|---|
-| `base` | `native-select` | `<div>` root |
-| — | `label` | [Label](/docs/components/label) (iff `label` / `#label`) |
-| `trigger` | `native-select-trigger` | `<div>` positioning the select and indicator |
-| `select` | `native-select-select` | `<select>` |
-| `indicator` | `native-select-indicator` | `<span aria-hidden>` holding the icon |
-| — | `description` | [Description](/docs/components/description) (iff `description` / `#description`) |
-| — | `field-error` | [FieldError](/docs/components/field-error) (while invalid, iff `error-message` / `#error` / validation errors) |
+| `ui` key    | `data-slot`               | Element                                                                                                        |
+| ----------- | ------------------------- | -------------------------------------------------------------------------------------------------------------- |
+| `base`      | `native-select`           | `<div>` root                                                                                                   |
+| —           | `label`                   | [Label](/docs/components/label) (iff `label` / `#label`)                                                       |
+| `trigger`   | `native-select-trigger`   | `<div>` positioning the select and indicator                                                                   |
+| `select`    | `native-select-select`    | `<select>`                                                                                                     |
+| `indicator` | `native-select-indicator` | `<span aria-hidden>` holding the icon                                                                          |
+| —           | `description`             | [Description](/docs/components/description) (iff `description` / `#description`)                               |
+| —           | `field-error`             | [FieldError](/docs/components/field-error) (while invalid, iff `error-message` / `#error` / validation errors) |
 
 An item is a string, an option object `{ value, label?, disabled? }`, or a group `{ label, items, disabled? }` rendered as an `<optgroup>`. `placeholder` adds a first option with an empty value.
 
@@ -119,9 +124,11 @@ Pass groups in `items` to render `<optgroup>` sections.
 ### Global Configuration
 
 ```ts
-app.use(createHareUI({
-  ui: { nativeSelect: { slots: { select: 'rounded-full', indicator: 'text-accent' } } },
-}))
+app.use(
+  createHareUI({
+    ui: { nativeSelect: { slots: { select: 'rounded-full', indicator: 'text-accent' } } },
+  }),
+)
 ```
 
 ## Styling Reference
@@ -160,7 +167,7 @@ The select's background follows `--native-select-bg-current`, so a plain `bg-*` 
 
 <ApiTable component="NativeSelect" kind="emits" />
 
-### Theme
+## Theme
 
 <ApiTheme component="NativeSelect" />
 

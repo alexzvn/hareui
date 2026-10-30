@@ -8,7 +8,8 @@ export default {
     ],
     track: 'size-7',
     trackCircle: 'stroke-(--progress-circle-track-stroke)',
-    fillCircle: 'stroke-(--progress-circle-stroke) transition-[stroke-dashoffset] duration-300 ease-out motion-reduce:transition-none',
+    fillCircle:
+      'stroke-(--progress-circle-stroke) transition-[stroke-dashoffset] duration-300 ease-out motion-reduce:transition-none',
   },
   variants: {
     color: {

@@ -1,15 +1,3 @@
-<script setup lang="ts">
-import { RadioButtonGroup, RadioButtonGroupItem } from '@hareui/vue'
-import { Icon } from '@iconify/vue'
-
-const schedules = {
-  hourly: { copies: 24, storage: '18 GB' },
-  daily: { copies: 30, storage: '7.5 GB' },
-  weekly: { copies: 12, storage: '3.2 GB' },
-  monthly: { copies: 6, storage: '1.1 GB' },
-}
-</script>
-
 <template>
   <div class="w-[min(440px,calc(100vw-2rem))] rounded-3xl bg-default p-4">
     <RadioButtonGroup
@@ -35,3 +23,15 @@ const schedules = {
     </RadioButtonGroup>
   </div>
 </template>
+
+<script setup lang="ts">
+import { RadioButtonGroup, RadioButtonGroupItem } from '@hareui/vue'
+import { Icon } from '@iconify/vue'
+
+const schedules = {
+  hourly: { copies: 24, storage: '18 GB' },
+  daily: { copies: 30, storage: '7.5 GB' },
+  weekly: { copies: 12, storage: '3.2 GB' },
+  monthly: { copies: 6, storage: '1.1 GB' },
+}
+</script>

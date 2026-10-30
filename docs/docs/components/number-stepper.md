@@ -26,27 +26,33 @@ The value animates digit by digit with [NumberFlow](https://number-flow.barvian.
 ```vue
 <template>
   <NumberStepper label="…" description="…" error-message="…">
-    <template #label />        <!-- Label content -->
-    <template #decrement />    <!-- decrement button content (default: minus icon) -->
-    <template #value />        <!-- value content (default: formatted value) -->
-    <template #increment />    <!-- increment button content (default: plus icon) -->
-    <template #description />  <!-- Description content -->
-    <template #error />        <!-- FieldError content, rendered when invalid -->
+    <template #label />
+    <!-- Label content -->
+    <template #decrement />
+    <!-- decrement button content (default: minus icon) -->
+    <template #value />
+    <!-- value content (default: formatted value) -->
+    <template #increment />
+    <!-- increment button content (default: plus icon) -->
+    <template #description />
+    <!-- Description content -->
+    <template #error />
+    <!-- FieldError content, rendered when invalid -->
   </NumberStepper>
 </template>
 ```
 
-| `ui` key | `data-slot` | Element |
-|---|---|---|
-| `base` | `number-stepper` | `<div>` root |
-| — | `label` | [Label](/docs/components/label) (iff `label` / `#label`) |
-| `group` | `number-stepper-group` | `<div role="group">` holding the buttons and the value |
-| `decrementButton` | `number-stepper-decrement-button` | `<button>` (iff `decrement`) |
-| `value` | `number-stepper-value` | `<span aria-hidden="true">` with the formatted value |
-| `incrementButton` | `number-stepper-increment-button` | `<button>` (iff `increment`) |
-| `input` | `number-stepper-input` | visually hidden `<input role="spinbutton">` |
-| — | `description` | [Description](/docs/components/description) (iff `description` / `#description`) |
-| — | `field-error` | [FieldError](/docs/components/field-error) (while invalid, iff `error-message` / `#error` / validation errors) |
+| `ui` key          | `data-slot`                       | Element                                                                                                        |
+| ----------------- | --------------------------------- | -------------------------------------------------------------------------------------------------------------- |
+| `base`            | `number-stepper`                  | `<div>` root                                                                                                   |
+| —                 | `label`                           | [Label](/docs/components/label) (iff `label` / `#label`)                                                       |
+| `group`           | `number-stepper-group`            | `<div role="group">` holding the buttons and the value                                                         |
+| `decrementButton` | `number-stepper-decrement-button` | `<button>` (iff `decrement`)                                                                                   |
+| `value`           | `number-stepper-value`            | `<span aria-hidden="true">` with the formatted value                                                           |
+| `incrementButton` | `number-stepper-increment-button` | `<button>` (iff `increment`)                                                                                   |
+| `input`           | `number-stepper-input`            | visually hidden `<input role="spinbutton">`                                                                    |
+| —                 | `description`                     | [Description](/docs/components/description) (iff `description` / `#description`)                               |
+| —                 | `field-error`                     | [FieldError](/docs/components/field-error) (while invalid, iff `error-message` / `#error` / validation errors) |
 
 Use NumberStepper for small counts changed a step at a time, like servings, tickets or bags. Use [NumberField](/docs/components/number-field) when people need to type a value.
 
@@ -139,9 +145,19 @@ Pass classes per part with `ui`:
 ### Global Configuration
 
 ```ts
-app.use(createHareUI({
-  ui: { numberStepper: { slots: { group: 'rounded-xl', incrementButton: 'rounded-lg', decrementButton: 'rounded-lg' } } },
-}))
+app.use(
+  createHareUI({
+    ui: {
+      numberStepper: {
+        slots: {
+          group: 'rounded-xl',
+          incrementButton: 'rounded-lg',
+          decrementButton: 'rounded-lg',
+        },
+      },
+    },
+  }),
+)
 ```
 
 ## Styling Reference
@@ -184,7 +200,7 @@ app.use(createHareUI({
 
 <ApiTable component="NumberStepper" kind="emits" />
 
-### Theme
+## Theme
 
 <ApiTheme component="NumberStepper" />
 

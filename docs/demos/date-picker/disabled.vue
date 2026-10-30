@@ -1,8 +1,3 @@
-<script setup lang="ts">
-import { getLocalTimeZone, today } from '@internationalized/date'
-import { DatePicker } from '@hareui/vue'
-</script>
-
 <template>
   <DatePicker
     disabled
@@ -14,3 +9,8 @@ import { DatePicker } from '@hareui/vue'
     description="This date picker is disabled."
   />
 </template>
+
+<script setup lang="ts">
+import { DatePicker } from '@hareui/vue'
+import { getLocalTimeZone, today } from '@internationalized/date'
+</script>

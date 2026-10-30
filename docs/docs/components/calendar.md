@@ -1,6 +1,6 @@
 ---
 title: Calendar
-description: Date picker with month grid, navigation, and year picker support built on Reka UI's Calendar.
+description: Date picker with month grid, navigation, and year picker support.
 links:
   reka: calendar
   source: calendar/Calendar.vue
@@ -26,31 +26,33 @@ a 7-column day grid, with an optional overlay year grid.
 ```vue
 <template>
   <Calendar aria-label="Event date">
-    <template #navIcon="{ direction }" />                                  <!-- replaces both chevrons -->
-    <template #cell="{ date, today, selected, disabled, unavailable, outsideView }" /> <!-- replaces formatted day -->
+    <template #navIcon="{ direction }" />
+    <!-- replaces both chevrons -->
+    <template #cell="{ date, today, selected, disabled, unavailable, outsideView }" />
+    <!-- replaces formatted day -->
   </Calendar>
 </template>
 ```
 
-| `ui` key | `data-slot` | Element |
-|---|---|---|
-| `base` | `calendar` | root element |
-| `header` | `calendar-header` | row containing the heading/year-picker trigger and nav buttons |
-| `heading` | `calendar-heading` | formatted month/year label (hidden when `year-picker`) |
-| `navButton` | `calendar-nav-button` | previous/next button |
-| `navButtonIcon` | `calendar-nav-button-icon` | default chevron inside a nav button |
-| `grid` | `calendar-grid` | the day grid |
-| `gridHeader` | `calendar-grid-header` | weekday label row wrapper |
-| `gridBody` | `calendar-grid-body` | week rows wrapper |
-| `gridRow` | – | one week row |
-| `headerCell` | `calendar-header-cell` | weekday label cell |
-| `cell` | `calendar-cell` | one interactive day |
-| `cellIndicator` | `calendar-cell-indicator` | dot rendered when `indicator(date)` is true |
-| `yearPickerTrigger` | `calendar-year-picker-trigger` | toggles the year grid (when `year-picker`) |
-| `yearPickerTriggerHeading` | `calendar-year-picker-trigger-heading` | heading text inside the trigger |
-| `yearPickerTriggerIndicator` | `calendar-year-picker-trigger-indicator` | chevron icon inside the trigger |
-| `yearPickerGrid` | `calendar-year-picker-grid` | overlay grid of selectable years |
-| `yearPickerYearCell` | `calendar-year-picker-year-cell` | one selectable year |
+| `ui` key                     | `data-slot`                              | Element                                                        |
+| ---------------------------- | ---------------------------------------- | -------------------------------------------------------------- |
+| `base`                       | `calendar`                               | root element                                                   |
+| `header`                     | `calendar-header`                        | row containing the heading/year-picker trigger and nav buttons |
+| `heading`                    | `calendar-heading`                       | formatted month/year label (hidden when `year-picker`)         |
+| `navButton`                  | `calendar-nav-button`                    | previous/next button                                           |
+| `navButtonIcon`              | `calendar-nav-button-icon`               | default chevron inside a nav button                            |
+| `grid`                       | `calendar-grid`                          | the day grid                                                   |
+| `gridHeader`                 | `calendar-grid-header`                   | weekday label row wrapper                                      |
+| `gridBody`                   | `calendar-grid-body`                     | week rows wrapper                                              |
+| `gridRow`                    | –                                        | one week row                                                   |
+| `headerCell`                 | `calendar-header-cell`                   | weekday label cell                                             |
+| `cell`                       | `calendar-cell`                          | one interactive day                                            |
+| `cellIndicator`              | `calendar-cell-indicator`                | dot rendered when `indicator(date)` is true                    |
+| `yearPickerTrigger`          | `calendar-year-picker-trigger`           | toggles the year grid (when `year-picker`)                     |
+| `yearPickerTriggerHeading`   | `calendar-year-picker-trigger-heading`   | heading text inside the trigger                                |
+| `yearPickerTriggerIndicator` | `calendar-year-picker-trigger-indicator` | chevron icon inside the trigger                                |
+| `yearPickerGrid`             | `calendar-year-picker-grid`              | overlay grid of selectable years                               |
+| `yearPickerYearCell`         | `calendar-year-picker-year-cell`         | one selectable year                                            |
 
 ## Examples
 
@@ -150,7 +152,7 @@ below shows the Indian calendar system.
 ### Multiple Months
 
 Set `number-of-months` to show several months side by side. The previous/next buttons always
-page by the full visible width, matching React Aria's default behavior for multi-month calendars.
+page by the full visible width.
 
 <ComponentPreview name="calendar/multiple-months" />
 
@@ -165,23 +167,25 @@ page by the full visible width, matching React Aria's default behavior for multi
 To customize the Calendar classes for the whole app, extend the `calendar` theme in `createHareUI`:
 
 ```ts
-app.use(createHareUI({
-  ui: {
-    calendar: {
-      slots: {
-        base: 'rounded-2xl border border-border bg-surface p-3 shadow-sm',
-        cell: 'rounded-lg',
+app.use(
+  createHareUI({
+    ui: {
+      calendar: {
+        slots: {
+          base: 'rounded-2xl border border-border bg-surface p-3 shadow-sm',
+          cell: 'rounded-lg',
+        },
       },
     },
-  },
-}))
+  }),
+)
 ```
 
 ## Styling Reference
 
 ### Interactive States
 
-Calendar sets these data attributes (from Reka UI):
+Calendar sets these data attributes:
 
 - **Selected**: `[data-selected]` on `[data-slot="calendar-cell"]`
 - **Today**: `[data-today]`
@@ -192,15 +196,16 @@ Calendar sets these data attributes (from Reka UI):
 - **Focus visible**: `:focus-visible`
 - **Disabled**: `:disabled` or `[data-disabled]`
 
-### Reka UI Limitations
+### Limitations
 
-- Week and day views (`visible-duration`) are rendered by HareUI's own grid, since Reka's `CalendarRoot`/`RangeCalendarRoot` always build full month grids. They follow React Aria's `visibleDuration` behaviour (alignment, paging, `page-behavior`, keyboard navigation) and HeroUI's `--week-view`/`--day-view` styles; the year picker, `number-of-months` and `fixed-weeks` only apply to the month view.
-- `fixed-weeks` is boolean only (always 6 weeks). HeroUI's React `weeksInMonth` accepts any count up
-  to 6; Reka's `CalendarRoot` only exposes the all-or-nothing `fixedWeeks` flag.
-- React Aria behaviours Reka lacks are added on top of `CalendarRoot`: Home/End and PageUp/PageDown
-  (Shift: by year) keyboard paging, prev/next buttons that keep the focused day of the month,
-  inert outside-month days, and re-selecting the selected date keeps it selected (single
-  selection) while still emitting `update:modelValue` with it.
+- Week and day views (`visible-duration`) use their own grid rather than the month grid. They have
+  their own alignment, paging, `page-behavior` and keyboard navigation; the year picker,
+  `number-of-months` and `fixed-weeks` only apply to the month view.
+- `fixed-weeks` is boolean only: it always shows 6 weeks, with no other week count.
+- Keyboard and selection details: Home/End and PageUp/PageDown (Shift: by year) page the view,
+  prev/next buttons keep the focused day of the month, outside-month days are inert, and
+  re-selecting the selected date keeps it selected (single selection) while still emitting
+  `update:modelValue` with it.
 
 ## API Reference
 
@@ -216,6 +221,6 @@ Calendar sets these data attributes (from Reka UI):
 
 <ApiTable component="Calendar" kind="emits" />
 
-### Theme
+## Theme
 
 <ApiTheme component="Calendar" />

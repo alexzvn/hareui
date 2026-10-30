@@ -15,13 +15,15 @@ export default {
       '[[data-slot=native-select][data-invalid=true]_&]:status-invalid-field [[data-slot=native-select][data-invalid=true]_&]:border-(--color-field-border-invalid) [[data-slot=native-select][data-invalid=true]_&]:[--native-select-bg-current:var(--native-select-bg-focus)]',
       'disabled:status-disabled aria-disabled:status-disabled',
     ],
-    indicator: 'pointer-events-none absolute inset-y-0 end-2 flex items-center justify-center text-field-placeholder [&>svg]:size-4',
+    indicator:
+      'pointer-events-none absolute inset-y-0 end-2 flex items-center justify-center text-field-placeholder [&>svg]:size-4',
   },
   variants: {
     variant: {
       primary: {},
       secondary: {
-        select: 'shadow-none [--native-select-bg:var(--default)] [--native-select-bg-hover:var(--default-hover)] [--native-select-bg-focus:var(--default)]',
+        select:
+          'shadow-none [--native-select-bg:var(--default)] [--native-select-bg-hover:var(--default-hover)] [--native-select-bg-focus:var(--default)]',
       },
     },
     fullWidth: {

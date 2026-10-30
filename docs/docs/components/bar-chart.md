@@ -50,7 +50,7 @@ Pass `series` to choose the fields, their names and their order. Use a map of ke
 />
 ```
 
-Each series takes `name`, `color`, `hide`, `tooltip`, `valueFormatter`, `yAxis`, `radius`, `barSize`, `fillOpacity` and `stack`. Series without a stack sit side by side in each category. `bar-size`, `bar-gap`, `bar-category-gap` and `max-bar-size` on the root size the bars, and `radius` (4 by default) rounds the outer end of each bar.
+Each series takes `name`, `color`, `hide`, `tooltip`, `valueFormatter`, `yAxis`, `radius`, `barSize`, `fillOpacity` and `stack`. Series without a stack sit side by side in each category. `bar` on the root sizes the bars (`{ size, maxSize, gap, categoryGap }`; unset keys keep their defaults), and `radius` (4 by default) rounds the outer end of each bar.
 
 ## Layout
 
@@ -62,14 +62,14 @@ Each series takes `name`, `color`, `hide`, `tooltip`, `valueFormatter`, `yAxis`,
 
 ## Axes and Formatting
 
-`x-axis`, `y-axis` and `grid` take `false` to hide the part, or an object of `ChartXAxis`, `ChartYAxis` and `ChartGrid` props. The y axis fits its widest label. A series with `yAxis: 'right'` draws against a second y axis on the right; set its props with `y-axis-right`.
+`x-axis` and `grid` take `false` to hide the part, or an object of `ChartXAxis` and `ChartGrid` props. `y-axis` takes `{ left, right }`, each `false` or an object of `ChartYAxis` props. The y axis fits its widest label. A series with `yAxis: 'right'` draws against a second y axis on the right; set its props with `y-axis.right`.
 
 - `value-formatter` formats values in the tooltip and on the value axis. It receives the series key (`''` on the axis).
 - `index-formatter` formats the categories on the category axis and in the tooltip header.
 - A series' `valueFormatter` formats that series in the tooltip only.
 
 ```vue
-<BarChart :data="data" index="month" :value-formatter="value => `${value} mm`" />
+<BarChart :data="data" index="month" :value-formatter="(value) => `${value} mm`" />
 ```
 
 ## Stacking
@@ -100,7 +100,7 @@ Two series compare this year with a long-term average. Bars without a stack sit 
 
 ### Side By Side
 
-Each key in `series` adds a bar to every category. `bar-size` keeps the bars thin when there are few categories.
+Each key in `series` adds a bar to every category. `bar.size` keeps the bars thin when there are few categories.
 
 <ComponentPreview name="bar-chart/side-by-side" />
 
@@ -118,7 +118,7 @@ Combine `layout="vertical"` with `stacked`. Only the outer end of each stack is 
 
 ### Metric With Bars
 
-A bar chart without a y axis (`:y-axis="false"`) works as a compact trend under a metric.
+A bar chart without a y axis (`:y-axis="{ left: false }"`) works as a compact trend under a metric.
 
 <ComponentPreview name="bar-chart/metric-with-bars" />
 
@@ -145,15 +145,17 @@ Use `class` for the container and `ui` for the drawn parts. Series colors come f
 Override the `barChart` theme app-wide with `createHareUI`:
 
 ```ts
-app.use(createHareUI({
-  ui: {
-    barChart: {
-      slots: {
-        tick: 'text-xs',
+app.use(
+  createHareUI({
+    ui: {
+      barChart: {
+        slots: {
+          tick: 'text-xs',
+        },
       },
     },
-  },
-}))
+  }),
+)
 ```
 
 ## Composition
@@ -184,22 +186,22 @@ Parts always draw in the same order (grid, series, axes, cursor), so template or
 </BarChart>
 ```
 
-| `ui` key | `data-slot` | Element | Description |
-|---|---|---|---|
-| `base` | `bar-chart` | `<div>` | Responsive container |
-| `surface` | `chart-surface` | `<svg>` | Drawing surface, layered grid → series → axes → cursor |
-| `overlay` | `chart-overlay` | `<div>` | Layer over the svg that holds the tooltip |
-| `grid` | `chart-grid` | `<g>` | Grid lines (`chart-grid-line`) |
-| `axis` | `chart-x-axis`, `chart-y-axis` | `<g>` | One group per axis |
-| `axisLine` | `chart-axis-line` | `<line>` | Axis line, hidden by default |
-| `tickLine` | `chart-tick-line` | `<line>` | Tick marks, hidden by default |
-| `tick` | `chart-tick` | `<text>` | Axis labels |
-| `series` | `chart-bar` | `<g>` | One group per series |
-| — | `chart-bar-rectangle` | `<path>` | One shape per bar, with `data-index` |
-| `cursor` | `chart-cursor` | `<path>` | Hover cursor |
-| `tooltip` | `chart-tooltip-wrapper` | `<div>` | Floating wrapper around the tooltip panel |
-| `label` | `chart-label` | `<text>` | `ChartLabel` text |
-| `legend` | `chart-legend` | `<ul>` | Legend drawn from the `legend` prop |
+| `ui` key   | `data-slot`                    | Element  | Description                                            |
+| ---------- | ------------------------------ | -------- | ------------------------------------------------------ |
+| `base`     | `bar-chart`                    | `<div>`  | Responsive container                                   |
+| `surface`  | `chart-surface`                | `<svg>`  | Drawing surface, layered grid → series → axes → cursor |
+| `overlay`  | `chart-overlay`                | `<div>`  | Layer over the svg that holds the tooltip              |
+| `grid`     | `chart-grid`                   | `<g>`    | Grid lines (`chart-grid-line`)                         |
+| `axis`     | `chart-x-axis`, `chart-y-axis` | `<g>`    | One group per axis                                     |
+| `axisLine` | `chart-axis-line`              | `<line>` | Axis line, hidden by default                           |
+| `tickLine` | `chart-tick-line`              | `<line>` | Tick marks, hidden by default                          |
+| `tick`     | `chart-tick`                   | `<text>` | Axis labels                                            |
+| `series`   | `chart-bar`                    | `<g>`    | One group per series                                   |
+| —          | `chart-bar-rectangle`          | `<path>` | One shape per bar, with `data-index`                   |
+| `cursor`   | `chart-cursor`                 | `<path>` | Hover cursor                                           |
+| `tooltip`  | `chart-tooltip-wrapper`        | `<div>`  | Floating wrapper around the tooltip panel              |
+| `label`    | `chart-label`                  | `<text>` | `ChartLabel` text                                      |
+| `legend`   | `chart-legend`                 | `<ul>`   | Legend drawn from the `legend` prop                    |
 
 ## Styling Reference
 
@@ -265,7 +267,7 @@ Parts always draw in the same order (grid, series, axes, cursor), so template or
 
 <ApiTable component="ChartTooltip" kind="slots" />
 
-### Theme
+## Theme
 
 <ApiTheme component="BarChart" />
 

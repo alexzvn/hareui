@@ -45,18 +45,15 @@ watchEffect(() => {
 })
 
 export function useDark() {
-  return { theme, resolvedTheme: () => resolve(theme.value), setTheme: (value: Theme) => (theme.value = value) }
+  return {
+    theme,
+    resolvedTheme: () => resolve(theme.value),
+    setTheme: (value: Theme) => (theme.value = value),
+  }
 }
 ```
 
 ```vue [components/ThemeSwitcher.vue]
-<script setup lang="ts">
-import { Button } from '@hareui/vue'
-import { useDark } from '../composables/useDark'
-
-const { theme, setTheme } = useDark()
-</script>
-
 <template>
   <div class="flex items-center gap-2">
     <Button :variant="theme === 'light' ? 'primary' : 'secondary'" @click="setTheme('light')">
@@ -70,6 +67,13 @@ const { theme, setTheme } = useDark()
     </Button>
   </div>
 </template>
+
+<script setup lang="ts">
+import { Button } from '@hareui/vue'
+import { useDark } from '../composables/useDark'
+
+const { theme, setTheme } = useDark()
+</script>
 ```
 
 ::: tip
@@ -83,9 +87,7 @@ Theme-aware utilities work automatically because they read CSS variables:
 ```vue
 <template>
   <main class="min-h-screen bg-background text-foreground">
-    <section class="bg-surface text-surface-foreground shadow-surface">
-      Theme-aware content
-    </section>
+    <section class="bg-surface text-surface-foreground shadow-surface">Theme-aware content</section>
   </main>
 </template>
 ```

@@ -28,7 +28,7 @@ ColorPicker renders a trigger button and a popover. The `trigger` slot holds the
     <ColorSwatch />
     <Label>Pick a color</Label>
   </template>
-  <ColorArea color-space="hsb" x-channel="saturation" y-channel="brightness" />
+  <ColorArea color-space="hsb" :x="{ channel: 'saturation' }" :y="{ channel: 'brightness' }" />
   <ColorSlider channel="hue" color-space="hsb" />
 </ColorPicker>
 ```
@@ -66,24 +66,26 @@ Use several `ColorSlider` components to adjust each channel.
 ### Global CSS
 
 ```ts
-app.use(createHareUI({
-  ui: {
-    colorPicker: {
-      slots: {
-        trigger: 'gap-4 rounded-lg',
-        popover: 'rounded-xl p-4',
+app.use(
+  createHareUI({
+    ui: {
+      colorPicker: {
+        slots: {
+          trigger: 'gap-4 rounded-lg',
+          popover: 'rounded-xl p-4',
+        },
       },
     },
-  },
-}))
+  }),
+)
 ```
 
 ## Styling Reference
 
-| `ui` key | `data-slot` | Description |
-|---|---|---|
-| `base` | `color-picker` | Wrapper (inline-flex) |
-| `trigger` | `color-picker-trigger` | Trigger button |
+| `ui` key  | `data-slot`            | Description                             |
+| --------- | ---------------------- | --------------------------------------- |
+| `base`    | `color-picker`         | Wrapper (inline-flex)                   |
+| `trigger` | `color-picker-trigger` | Trigger button                          |
 | `popover` | `color-picker-popover` | Popover container (portalled to `body`) |
 
 ### Interactive States
@@ -105,7 +107,7 @@ app.use(createHareUI({
 
 <ApiTable component="ColorPicker" kind="emits" />
 
-### Theme
+## Theme
 
 <ApiTheme component="ColorPicker" />
 

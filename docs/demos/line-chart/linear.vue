@@ -1,3 +1,30 @@
+<template>
+  <Card
+    class="w-full max-w-[520px] rounded-2xl"
+    :ui="{ header: 'flex-row items-center justify-between' }"
+  >
+    <template #header>
+      <h3 class="text-base font-medium text-foreground">Ferry Passengers</h3>
+      <ChartLegend :series="series" />
+    </template>
+    <div class="flex flex-col gap-4">
+      <div class="flex flex-col">
+        <span class="text-lg font-semibold text-foreground">4,330</span>
+        <span class="text-xs text-muted">Boardings today</span>
+      </div>
+      <LineChart
+        :data="data"
+        index="time"
+        :series="series"
+        curve="linear"
+        :y-axis="{ left: { ticks: [0, 150, 300, 450] } }"
+        aria-label="Ferry passengers by pier through the day"
+        :height="180"
+      />
+    </div>
+  </Card>
+</template>
+
 <script setup lang="ts">
 import { Card } from '@hareui/vue'
 import { ChartLegend, LineChart } from '@hareui/vue/charts'
@@ -15,27 +42,3 @@ const data = [
 
 const series = { northPier: { name: 'North Pier' }, oldTown: { name: 'Old Town' } }
 </script>
-
-<template>
-  <Card class="w-full max-w-[520px] rounded-2xl" :ui="{ header: 'flex-row items-center justify-between' }">
-    <template #header>
-      <h3 class="text-base font-medium text-foreground">Ferry Passengers</h3>
-      <ChartLegend :series="series" />
-    </template>
-    <div class="flex flex-col gap-4">
-      <div class="flex flex-col">
-        <span class="text-lg font-semibold text-foreground">4,330</span>
-        <span class="text-xs text-muted">Boardings today</span>
-      </div>
-      <LineChart
-        :data="data"
-        index="time"
-        :series="series"
-        curve="linear"
-        :y-axis="{ ticks: [0, 150, 300, 450] }"
-        aria-label="Ferry passengers by pier through the day"
-        :height="180"
-      />
-    </div>
-  </Card>
-</template>

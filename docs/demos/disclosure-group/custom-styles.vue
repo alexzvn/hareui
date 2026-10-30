@@ -1,7 +1,3 @@
-<script setup lang="ts">
-import { Button, Disclosure, DisclosureGroup, Separator } from '@hareui/vue'
-</script>
-
 <template>
   <DisclosureGroup class="w-full max-w-sm rounded-xl bg-default-soft p-2">
     <Disclosure value="billing" :ui="{ bodyInner: 'text-sm text-muted' }">
@@ -21,7 +17,11 @@ import { Button, Disclosure, DisclosureGroup, Separator } from '@hareui/vue'
           <component :is="indicator" class="text-muted" />
         </Button>
       </template>
-      Reach us at help@heroui.com. Typical response time is under one business day.
+      Reach us at help@example.com. Typical response time is under one business day.
     </Disclosure>
   </DisclosureGroup>
 </template>
+
+<script setup lang="ts">
+import { Button, Disclosure, DisclosureGroup, Separator } from '@hareui/vue'
+</script>

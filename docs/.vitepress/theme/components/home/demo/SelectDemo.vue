@@ -1,3 +1,7 @@
+<template>
+  <Select class="w-[256px]" :items="options" label="State" placeholder="Select one" required />
+</template>
+
 <script setup lang="ts">
 import { Select } from '@hareui/vue'
 
@@ -10,7 +14,3 @@ const options = [
   { value: 'washington', label: 'Washington' },
 ]
 </script>
-
-<template>
-  <Select class="w-[256px]" :items="options" label="State" placeholder="Select one" required />
-</template>

@@ -1,8 +1,3 @@
-<script setup lang="ts">
-import { Icon } from '@iconify/vue'
-import { InputGroup, TextField } from '@hareui/vue'
-</script>
-
 <template>
   <div class="flex flex-col gap-4">
     <TextField class="w-[280px]" name="primary" label="Primary variant">
@@ -21,3 +16,8 @@ import { InputGroup, TextField } from '@hareui/vue'
     </TextField>
   </div>
 </template>
+
+<script setup lang="ts">
+import { InputGroup, TextField } from '@hareui/vue'
+import { Icon } from '@iconify/vue'
+</script>

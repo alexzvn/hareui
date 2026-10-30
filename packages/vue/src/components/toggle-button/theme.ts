@@ -23,13 +23,21 @@ export default {
   },
   variants: {
     variant: {
-      default: { base: '[--toggle-button-bg-hover:var(--default-hover)] [--toggle-button-bg-pressed:var(--default-hover)] [--toggle-button-bg:var(--default)]' },
-      ghost: { base: '[--toggle-button-bg-hover:var(--default)] [--toggle-button-bg-pressed:var(--default)] [--toggle-button-bg:transparent] [--toggle-button-fg:var(--default-foreground)]' },
+      default: {
+        base: '[--toggle-button-bg-hover:var(--default-hover)] [--toggle-button-bg-pressed:var(--default-hover)] [--toggle-button-bg:var(--default)]',
+      },
+      ghost: {
+        base: '[--toggle-button-bg-hover:var(--default)] [--toggle-button-bg-pressed:var(--default)] [--toggle-button-bg:transparent] [--toggle-button-fg:var(--default-foreground)]',
+      },
     },
     size: {
-      sm: { base: '[--toggle-button-height:--spacing(9)] px-3 md:[--toggle-button-height:--spacing(8)] [:where(&_svg)]:size-4 sm:[:where(&_svg)]:size-4 active:[transform:scale(0.98)]' },
+      sm: {
+        base: '[--toggle-button-height:--spacing(9)] px-3 md:[--toggle-button-height:--spacing(8)] [:where(&_svg)]:size-4 sm:[:where(&_svg)]:size-4 active:[transform:scale(0.98)]',
+      },
       md: { base: '' },
-      lg: { base: '[--toggle-button-height:--spacing(11)] text-base md:[--toggle-button-height:--spacing(10)] active:[transform:scale(0.96)]' },
+      lg: {
+        base: '[--toggle-button-height:--spacing(11)] text-base md:[--toggle-button-height:--spacing(10)] active:[transform:scale(0.96)]',
+      },
     },
     iconOnly: {
       // Icon-only buttons are square: HeroUI's per-size widths equal the size's height.

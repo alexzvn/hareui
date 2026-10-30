@@ -1,15 +1,3 @@
-<script setup lang="ts">
-import type { Time } from '@internationalized/date'
-import { parseTime } from '@internationalized/date'
-import { TimeField } from '@hareui/vue'
-import { computed, shallowRef } from 'vue'
-
-const value = shallowRef<Time | null>(null)
-const minTime = parseTime('09:00')
-const maxTime = parseTime('17:00')
-const isInvalid = computed(() => value.value !== null && (value.value.compare(minTime) < 0 || value.value.compare(maxTime) > 0))
-</script>
-
 <template>
   <div class="flex flex-col gap-4">
     <TimeField
@@ -26,3 +14,18 @@ const isInvalid = computed(() => value.value !== null && (value.value.compare(mi
     />
   </div>
 </template>
+
+<script setup lang="ts">
+import { TimeField } from '@hareui/vue'
+import type { Time } from '@internationalized/date'
+import { parseTime } from '@internationalized/date'
+import { computed, shallowRef } from 'vue'
+
+const value = shallowRef<Time | null>(null)
+const minTime = parseTime('09:00')
+const maxTime = parseTime('17:00')
+const isInvalid = computed(
+  () =>
+    value.value !== null && (value.value.compare(minTime) < 0 || value.value.compare(maxTime) > 0),
+)
+</script>

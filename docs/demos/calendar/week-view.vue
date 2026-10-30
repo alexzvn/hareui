@@ -1,3 +1,16 @@
+<template>
+  <div class="flex flex-col items-center gap-6">
+    <Select
+      class="w-40"
+      label="Visible weeks"
+      :items="weekOptions"
+      :model-value="String(weeks)"
+      @update:model-value="(value) => value && (weeks = Number(value))"
+    />
+    <Calendar aria-label="Week view" :visible-duration="{ weeks }" />
+  </div>
+</template>
+
 <script setup lang="ts">
 import type { ListBoxItem } from '@hareui/vue'
 import { Calendar, Select } from '@hareui/vue'
@@ -15,16 +28,3 @@ const weekOptions: ListBoxItem[] = [
 
 const weeks = ref(1)
 </script>
-
-<template>
-  <div class="flex flex-col items-center gap-6">
-    <Select
-      class="w-40"
-      label="Visible weeks"
-      :items="weekOptions"
-      :model-value="String(weeks)"
-      @update:model-value="(value) => value && (weeks = Number(value))"
-    />
-    <Calendar aria-label="Week view" :visible-duration="{ weeks }" />
-  </div>
-</template>

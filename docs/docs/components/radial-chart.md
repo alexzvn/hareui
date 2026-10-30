@@ -34,7 +34,7 @@ bun add d3-scale d3-shape
 
 :::
 
-Each row of `data` becomes a ring, the first one innermost. `index` names the field that holds each ring's name, and the first other numeric field sets its length (`value-key` picks another). Rings get a rounded end, a track behind them and a tooltip. `RadialChart` fills its parent's width.
+Each row of `data` becomes a ring, the first one innermost. `index` names the field that holds each ring's name, and the first other numeric field sets its length (`value.key` picks another). Rings get a rounded end, a track behind them and a tooltip. `RadialChart` fills its parent's width.
 
 <ComponentPreview name="radial-chart/basic" />
 
@@ -45,7 +45,7 @@ Bars start at 12 o'clock and run clockwise. A full turn equals the largest value
 Colors follow the chart palette by position (`--chart-3`, `--chart-1`, `--chart-4`, `--chart-2`, `--chart-5`). Set `colors` to an array for another palette, or to a map of ring name to color. A `fill` field in a row wins over both.
 
 - `gauge` opens the circle at the bottom (`:start-angle="225"`, `:end-angle="-45"`). `start-angle` and `end-angle` set any other sweep, in degrees counter-clockwise from 3 o'clock, and win over `gauge`.
-- `inner-radius` and `outer-radius` set the space the rings share, in pixels or as a percentage of half the shorter chart side. `bar-size` sets each bar's thickness.
+- `inner-radius` and `outer-radius` set the space the rings share, in pixels or as a percentage of half the shorter chart side. `bar` sizes the bars: `size` (10 by default) sets each bar's thickness, `gap` and `categoryGap` the space between them.
 - `corner-radius` rounds the bar ends (12 by default). `background` takes `false` to drop the tracks, or `{ fill, class }` to style them.
 
 ```vue
@@ -66,11 +66,11 @@ The `#center` slot puts HTML in the middle of the rings, such as the value of a 
 
 ## Tooltip
 
-Hovering a ring, or its track, shows its name and value. `tooltip` takes `false`, or `ChartTooltip` props such as `indicator` and `labelFormatter`. `value-formatter` formats the values. Use the `#tooltip-footer` slot to add rows under the default ones, or `#tooltip` to replace the panel.
+Hovering a ring, or its track, shows its name and value. `tooltip` takes `false`, or `ChartTooltip` props such as `indicator` and `labelFormatter`. `value.formatter` formats the values. Use the `#tooltip-footer` slot to add rows under the default ones, or `#tooltip` to replace the panel.
 
 ## Legend
 
-Set `legend` to draw a [ChartLegend](./chart-legend) beside the chart: `true` puts it at the bottom, or pass `'top'`, `'left'` or `'right'`. An object sets `ChartLegend` props, such as `showValue` and `showPercent`, plus a `position`; the chart's `valueFormatter` formats the legend values too. Clicking an item hides or shows its ring; bind `v-model:hidden` to read or set the hidden names. Use `#legend-item` to redraw each row, or `#legend` to replace the list.
+Set `legend` to draw a [ChartLegend](./chart-legend) beside the chart: `true` puts it at the bottom, or pass `'top'`, `'left'` or `'right'`. An object sets `ChartLegend` props, such as `showValue` and `showPercent`, plus a `position`; the chart's `value.formatter` formats the legend values too. Clicking an item hides or shows its ring; bind `v-model:hidden` to read or set the hidden names. Use `#legend-item` to redraw each row, or `#legend` to replace the list.
 
 ## Examples
 
@@ -88,7 +88,7 @@ One small gauge per card, each measured against its own `max`.
 
 ### Goal Ring
 
-A single ring measured against a goal. A large `inner-radius` and a `bar-size` make a thin ring with room for text in the middle.
+A single ring measured against a goal. A large `inner-radius` and a `bar.size` make a thin ring with room for text in the middle.
 
 <ComponentPreview name="radial-chart/goal-ring" />
 
@@ -113,15 +113,17 @@ Use `class` for the container and `ui` for the drawn parts. Ring colors come fro
 Override the `radialChart` theme app-wide with `createHareUI`:
 
 ```ts
-app.use(createHareUI({
-  ui: {
-    radialChart: {
-      slots: {
-        radialBarBackground: 'fill-surface-secondary',
+app.use(
+  createHareUI({
+    ui: {
+      radialChart: {
+        slots: {
+          radialBarBackground: 'fill-surface-secondary',
+        },
       },
     },
-  },
-}))
+  }),
+)
 ```
 
 ## Composition
@@ -142,21 +144,21 @@ Without `index`, the chart draws only the parts you put in its default slot. Use
 
 <ComponentPreview name="radial-chart/composition" />
 
-A ring's color comes from a `ChartCell`, a `fill` field in its row, or the bar's `fill`. A `ChartPolarAngleAxis` with `type="number"` and a fixed `domain` sets the full-scale value; `:tick="false"` hides its labels. Put a `ChartLabel` directly in the chart with `position="center"` for text in the middle. With `index` set, parts in the default slot draw over the generated rings.
+A ring's color comes from a `ChartCell`, a `fill` field in its row, or the bar's `fill`. A `ChartPolarAngleAxis` with `type="number"` and a fixed `domain` sets the full-scale value; `:tick="{ label: false }"` hides its labels. Put a `ChartLabel` directly in the chart with `position="center"` for text in the middle. With `index` set, parts in the default slot draw over the generated rings.
 
-| `ui` key | `data-slot` | Element | Description |
-|---|---|---|---|
-| `base` | `radial-chart` | `<div>` | Responsive container |
-| `surface` | `chart-surface` | `<svg>` | Drawing surface |
-| `overlay` | `chart-overlay` | `<div>` | Layer over the svg that holds the tooltip and the center content |
-| — | `chart-radial-bar-background` | `<g>` | Tracks of one `ChartRadialBar`, when `background` is set |
-| `radialBarBackground` | `chart-radial-bar-track` | `<path>` | Full-length track behind one bar |
-| `series` | `chart-radial-bar` | `<g>` | One group per `ChartRadialBar` |
-| `sector` | `chart-radial-bar-sector` | `<path>` | One bar, with `data-index`, and `data-active` while hovered or selected with the keyboard |
-| `label` | `chart-label` | `<text>` | `ChartLabel` text |
-| `center` | `chart-center` | `<div>` | `#center` content |
-| `tooltip` | `chart-tooltip-wrapper` | `<div>` | Floating wrapper around the tooltip panel |
-| `legend` | `chart-legend` | `<ul>` | Legend drawn from the `legend` prop |
+| `ui` key              | `data-slot`                   | Element  | Description                                                                               |
+| --------------------- | ----------------------------- | -------- | ----------------------------------------------------------------------------------------- |
+| `base`                | `radial-chart`                | `<div>`  | Responsive container                                                                      |
+| `surface`             | `chart-surface`               | `<svg>`  | Drawing surface                                                                           |
+| `overlay`             | `chart-overlay`               | `<div>`  | Layer over the svg that holds the tooltip and the center content                          |
+| —                     | `chart-radial-bar-background` | `<g>`    | Tracks of one `ChartRadialBar`, when `background` is set                                  |
+| `radialBarBackground` | `chart-radial-bar-track`      | `<path>` | Full-length track behind one bar                                                          |
+| `series`              | `chart-radial-bar`            | `<g>`    | One group per `ChartRadialBar`                                                            |
+| `sector`              | `chart-radial-bar-sector`     | `<path>` | One bar, with `data-index`, and `data-active` while hovered or selected with the keyboard |
+| `label`               | `chart-label`                 | `<text>` | `ChartLabel` text                                                                         |
+| `center`              | `chart-center`                | `<div>`  | `#center` content                                                                         |
+| `tooltip`             | `chart-tooltip-wrapper`       | `<div>`  | Floating wrapper around the tooltip panel                                                 |
+| `legend`              | `chart-legend`                | `<ul>`   | Legend drawn from the `legend` prop                                                       |
 
 ## Styling Reference
 
@@ -209,7 +211,7 @@ A ring's color comes from a `ChartCell`, a `fill` field in its row, or the bar's
 
 <ApiTable component="ChartTooltip" kind="slots" />
 
-### Theme
+## Theme
 
 <ApiTheme component="RadialChart" />
 

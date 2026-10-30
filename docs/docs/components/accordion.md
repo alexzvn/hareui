@@ -20,37 +20,40 @@ import { Accordion } from '@hareui/vue'
 ## Anatomy
 
 Accordion renders one item per `items` entry: a heading with a trigger button (leading content,
-label, indicator) and a collapsible panel holding the body. HeroUI's compound parts
-(`Accordion.Item`, `Accordion.Heading`, `Accordion.Trigger`, `Accordion.Indicator`,
-`Accordion.Panel`, `Accordion.Body`) become `items`, slots and `ui` keys:
+label, indicator) and a collapsible panel holding the body. Customize it through `items`, slots and
+`ui` keys:
 
 ```vue
 <template>
   <Accordion :items="items" v-model="expanded">
-    <template #leading="{ item, index, open }" />   <!-- before the label (e.g. an icon) -->
-    <template #label="{ item, index, open }" />     <!-- replaces item.label -->
-    <template #indicator="{ item, index, open }" /> <!-- Accordion.Indicator's children -->
-    <template #content="{ item, index, open }" />   <!-- fallback body content -->
-    <template #[item.slot]="{ item, index, open }" /> <!-- per-item body content -->
+    <template #leading="{ item, index, open }" />
+    <!-- before the label (e.g. an icon) -->
+    <template #label="{ item, index, open }" />
+    <!-- replaces item.label -->
+    <template #indicator="{ item, index, open }" />
+    <!-- Accordion.Indicator's children -->
+    <template #content="{ item, index, open }" />
+    <!-- fallback body content -->
+    <template #[item.slot]="{ item, index, open }" />
+    <!-- per-item body content -->
   </Accordion>
 </template>
 ```
 
-- A single root element in `#indicator` receives the indicator classes and `data-expanded`, like
-  HeroUI's `Accordion.Indicator` children, so any icon rotates when its item expands.
+- A single root element in `#indicator` receives the indicator classes and `data-expanded`, so
+  any icon rotates when its item expands.
 - Extra fields on an item (icons, subtitles, …) are passed through to the slots as `item`.
-- `Accordion.Body`'s `className` maps to the `bodyInner` `ui` key.
 
-| `ui` key | `data-slot` | Element |
-|---|---|---|
-| `base` | `accordion` | root element |
-| `item` | `accordion-item` | one per item |
-| `heading` | `accordion-heading` | `<h3>` around the trigger |
-| `trigger` | `accordion-trigger` | the expand/collapse button |
+| `ui` key    | `data-slot`           | Element                           |
+| ----------- | --------------------- | --------------------------------- |
+| `base`      | `accordion`           | root element                      |
+| `item`      | `accordion-item`      | one per item                      |
+| `heading`   | `accordion-heading`   | `<h3>` around the trigger         |
+| `trigger`   | `accordion-trigger`   | the expand/collapse button        |
 | `indicator` | `accordion-indicator` | chevron (or `#indicator` content) |
-| `panel` | `accordion-panel` | collapsible panel |
-| `body` | `accordion-body` | content body container |
-| `bodyInner` | – | padded wrapper inside the body (HeroUI's `Accordion.Body` `className` target) |
+| `panel`     | `accordion-panel`     | collapsible panel                 |
+| `body`      | `accordion-body`      | content body container            |
+| `bodyInner` | –                     | padded wrapper inside the body    |
 
 ### Typing items
 
@@ -108,21 +111,23 @@ const items: MyItem[] = [/* ... */]
 To customize the Accordion classes for the whole app, extend the `accordion` theme in `createHareUI`:
 
 ```ts
-app.use(createHareUI({
-  ui: {
-    accordion: {
-      slots: {
-        base: 'rounded-xl bg-gray-50',
-        trigger: 'font-semibold text-lg',
-      },
-      variants: {
-        variant: {
-          surface: { base: 'shadow-lg border-2' },
+app.use(
+  createHareUI({
+    ui: {
+      accordion: {
+        slots: {
+          base: 'rounded-xl bg-gray-50',
+          trigger: 'font-semibold text-lg',
+        },
+        variants: {
+          variant: {
+            surface: { base: 'shadow-lg border-2' },
+          },
         },
       },
     },
-  },
-}))
+  }),
+)
 ```
 
 ## Styling Reference
@@ -170,22 +175,22 @@ The component supports both CSS pseudo-classes and data attributes for flexibili
 
 <ApiTable component="Accordion" kind="emits" />
 
-### Theme
-
-<ApiTheme component="Accordion" />
-
 ### useDisclosureGroupNavigation
 
 Previous/next navigation for a controlled Accordion or DisclosureGroup (used by the Controlled example).
 
-| Option | Type | Default | Description |
-|------|------|---------|-------------|
-| `expandedKeys` | `MaybeRefOrGetter<ExpandedValue[]>` | - | The current `v-model` value |
-| `itemIds` | `MaybeRefOrGetter<ExpandedValue[]>` | - | Every item's `value`, in display order |
-| `onExpandedChange` | `(keys: ExpandedValue[]) => void` | - | Called with the new expanded values |
-| `multiple` | `MaybeRefOrGetter<boolean>` | `false` | Keep previously expanded items open while navigating |
+| Option             | Type                                | Default | Description                                          |
+| ------------------ | ----------------------------------- | ------- | ---------------------------------------------------- |
+| `expandedKeys`     | `MaybeRefOrGetter<ExpandedValue[]>` | -       | The current `v-model` value                          |
+| `itemIds`          | `MaybeRefOrGetter<ExpandedValue[]>` | -       | Every item's `value`, in display order               |
+| `onExpandedChange` | `(keys: ExpandedValue[]) => void`   | -       | Called with the new expanded values                  |
+| `multiple`         | `MaybeRefOrGetter<boolean>`         | `false` | Keep previously expanded items open while navigating |
 
 Returns `currentIndex`, `isPrevDisabled`, `isNextDisabled` (computed refs) and `onPrevious`, `onNext`.
+
+## Theme
+
+<ApiTheme component="Accordion" />
 
 ## Related Components
 

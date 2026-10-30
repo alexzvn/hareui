@@ -17,8 +17,7 @@ import { Card } from '@hareui/vue'
 
 ## Anatomy
 
-HeroUI's compound parts (`Card.Header`, `Card.Title`, `Card.Description`, `Card.Content`,
-`Card.Footer`) become props and named slots, rendered in a fixed order: `#leading`, header,
+Card is composed through props and named slots, rendered in a fixed order: `#leading`, header,
 content (default slot), then `#footer`.
 
 ```vue
@@ -34,7 +33,7 @@ content (default slot), then `#footer`.
 
 - The header renders only when the `title`/`description` props or the `#header`/`#title`/`#description` slots are provided.
 - The content wrapper renders only when the default slot is used; the footer only when `#footer` is used.
-- `#leading` renders its children directly inside the root, without a wrapper, so they become flex items of the card (like the plain children HeroUI places before `Card.Header`).
+- `#leading` renders its children directly inside the root, without a wrapper, so they become flex items of the card.
 
 `ui` keys: `base`, `header`, `title`, `description`, `content`, `footer`.
 
@@ -84,31 +83,26 @@ Use the `class` prop for the root and the `ui` prop for the inner elements (tail
 Override the `card` theme app-wide with `createHareUI`:
 
 ```ts
-app.use(createHareUI({
-  ui: {
-    card: {
-      variants: {
-        variant: { secondary: { base: 'bg-linear-to-br from-blue-50 to-purple-50' } },
+app.use(
+  createHareUI({
+    ui: {
+      card: {
+        variants: {
+          variant: { secondary: { base: 'bg-linear-to-br from-blue-50 to-purple-50' } },
+        },
+        slots: { title: 'text-xl font-bold' },
       },
-      slots: { title: 'text-xl font-bold' },
     },
-  },
-}))
+  }),
+)
 ```
 
 ### Title and description in custom wrappers
 
 When a layout puts the title or description inside your own markup (like the horizontal layout
-above), resolve the Card theme with `tv` to reuse its slot classes, the equivalent of HeroUI's
-`cardVariants()`:
+above), resolve the Card theme with `tv` to reuse its slot classes:
 
 ```vue
-<script setup lang="ts">
-import { Card, themes, tv } from '@hareui/vue'
-
-const card = tv(themes.card)()
-</script>
-
 <template>
   <Card class="md:flex-row" :ui="{ content: 'gap-3' }">
     <template #leading>
@@ -120,6 +114,12 @@ const card = tv(themes.card)()
     </div>
   </Card>
 </template>
+
+<script setup lang="ts">
+import { Card, themes, tv } from '@hareui/vue'
+
+const card = tv(themes.card)()
+</script>
 ```
 
 `tv(themes.card)` uses the default theme; app-wide `createHareUI({ ui: { card } })` overrides
@@ -127,20 +127,19 @@ don't apply to these classes.
 
 ## Styling Reference
 
-Each rendered element carries the same `data-slot` string as HeroUI, so selectors translate 1:1.
+Each rendered element carries a `data-slot` attribute, so you can target it with selectors.
 
-| `ui` key | `data-slot` | Description |
-|---|---|---|
-| `base` | `card` | Base container with padding and border radius |
-| `header` | `card-header` | Header section container |
-| `title` | `card-title` | Title with base font size and weight (renders as `h3`) |
-| `description` | `card-description` | Muted description text (renders as `p`) |
-| `content` | `card-content` | Flexible content container (default slot) |
-| `footer` | `card-footer` | Footer with row layout |
+| `ui` key      | `data-slot`        | Description                                            |
+| ------------- | ------------------ | ------------------------------------------------------ |
+| `base`        | `card`             | Base container with padding and border radius          |
+| `header`      | `card-header`      | Header section container                               |
+| `title`       | `card-title`       | Title with base font size and weight (renders as `h3`) |
+| `description` | `card-description` | Muted description text (renders as `p`)                |
+| `content`     | `card-content`     | Flexible content container (default slot)              |
+| `footer`      | `card-footer`      | Footer with row layout                                 |
 
-HeroUI's modifier classes correspond to the `variant` prop (HareUI renders utilities, not BEM
-classes, so style through `class`, `ui` or `createHareUI`): `.card--transparent`,
-`.card--default`, `.card--secondary`, `.card--tertiary`.
+The `variant` prop (`transparent`, `default`, `secondary`, `tertiary`) sets the surface. HareUI
+renders utility classes, so style through `class`, `ui` or `createHareUI`.
 
 ## API Reference
 
@@ -152,19 +151,13 @@ classes, so style through `class`, `ui` or `createHareUI`): `.card--transparent`
 
 <ApiTable component="Card" kind="slots" />
 
-### Theme
+## Theme
 
 <ApiTheme component="Card" />
 
 ## Accessibility
 
 ```vue
-<script setup lang="ts">
-import { Card, themes, tv } from '@hareui/vue'
-
-const card = tv(themes.card)()
-</script>
-
 <template>
   <!-- Semantic markup -->
   <Card as="article" aria-labelledby="card-title">
@@ -178,6 +171,12 @@ const card = tv(themes.card)()
     <h3 :class="card.title()">Product Name</h3>
   </a>
 </template>
+
+<script setup lang="ts">
+import { Card, themes, tv } from '@hareui/vue'
+
+const card = tv(themes.card)()
+</script>
 ```
 
 ## Related Components

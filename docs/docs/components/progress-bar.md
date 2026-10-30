@@ -18,8 +18,7 @@ import { ProgressBar } from '@hareui/vue'
 
 ## Anatomy
 
-HeroUI's `Label`, `ProgressBar.Output`, `ProgressBar.Track` and `ProgressBar.Fill` parts are
-rendered by the component, built on Reka UI's `ProgressRoot` / `ProgressIndicator`.
+The label, output, track and fill parts are rendered by the component.
 
 ```vue
 <ProgressBar :value="60" label="Loading">
@@ -74,36 +73,37 @@ Use the `class` prop for the root and the `ui` prop for the label, output, track
 Override the `progressBar` theme app-wide with `createHareUI`:
 
 ```ts
-app.use(createHareUI({
-  ui: {
-    progressBar: {
-      slots: {
-        base: 'w-full gap-2',
-        track: 'h-3 rounded-full',
-        fill: 'rounded-full',
+app.use(
+  createHareUI({
+    ui: {
+      progressBar: {
+        slots: {
+          base: 'w-full gap-2',
+          track: 'h-3 rounded-full',
+          fill: 'rounded-full',
+        },
       },
     },
-  },
-}))
+  }),
+)
 ```
 
 ## Styling Reference
 
-Each rendered element carries the same `data-slot` string as HeroUI, so selectors translate 1:1.
+Each rendered element carries a `data-slot` attribute you can target in selectors.
 
-| `ui` key | `data-slot` | Description |
-|---|---|---|
-| `base` | `progress-bar` | Base container (grid layout) |
-| `label` | `label` | Label text (Label theme plus the grid placement) |
-| `output` | `progress-bar-output` | Value text display |
-| `track` | `progress-bar-track` | Track background |
-| `fill` | `progress-bar-fill` | Filled portion of the track |
+| `ui` key | `data-slot`           | Description                                      |
+| -------- | --------------------- | ------------------------------------------------ |
+| `base`   | `progress-bar`        | Base container (grid layout)                     |
+| `label`  | `label`               | Label text (Label theme plus the grid placement) |
+| `output` | `progress-bar-output` | Value text display                               |
+| `track`  | `progress-bar-track`  | Track background                                 |
+| `fill`   | `progress-bar-fill`   | Filled portion of the track                      |
 
-HeroUI's modifier classes correspond to props (HareUI renders utilities, not BEM classes, so
-style through `class`, `ui` or `createHareUI`):
+These props control styling (HareUI renders Tailwind utilities, so style through `class`, `ui` or `createHareUI`):
 
-- `size`: `sm` (thinner track), `md` (default), `lg` (thicker track) (`.progress-bar--{size}`)
-- `color`: `default`, `accent` (default), `success`, `warning`, `danger` (`.progress-bar--{color}`)
+- `size`: `sm` (thinner track), `md` (default), `lg` (thicker track)
+- `color`: `default`, `accent` (default), `success`, `warning`, `danger`
 
 ## API Reference
 
@@ -115,14 +115,14 @@ style through `class`, `ui` or `createHareUI`):
 
 <ApiTable component="ProgressBar" kind="slots" />
 
-### Theme
-
-<ApiTheme component="ProgressBar" />
-
 `#label` and `#output` receive:
 
-| Prop | Type | Description |
-|------|------|-------------|
-| `percentage` | `number \| undefined` | The percentage of the progress (0-100) |
-| `valueText` | `string \| undefined` | The formatted value text |
-| `indeterminate` | `boolean` | Whether progress is indeterminate |
+| Prop            | Type                  | Description                            |
+| --------------- | --------------------- | -------------------------------------- |
+| `percentage`    | `number \| undefined` | The percentage of the progress (0-100) |
+| `valueText`     | `string \| undefined` | The formatted value text               |
+| `indeterminate` | `boolean`             | Whether progress is indeterminate      |
+
+## Theme
+
+<ApiTheme component="ProgressBar" />

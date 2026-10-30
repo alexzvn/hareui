@@ -1,41 +1,17 @@
-<script lang="ts">
-import type { ComponentSlots } from '../../types/tv'
-import theme from './theme'
-
-type FieldError = typeof theme
-
-export interface FieldErrorProps {
-  /** The id of the element, referenced by `aria-describedby` of the invalid control. */
-  id?: string
-  /** Additional classes merged into the root element. */
-  class?: any
-  /** Per-slot class overrides. */
-  ui?: ComponentSlots<FieldError>
-}
-
-export interface FieldErrorSlots {
-  /** The error message. */
-  default?: () => any
-}
-</script>
+<template>
+  <span :id="id" data-slot="field-error" data-visible="true" role="alert" :class="ui.base()">
+    <slot />
+  </span>
+</template>
 
 <script setup lang="ts">
-import { useComponentUI } from '../../composables/useComponentUI'
+import { useComponentUI } from '@/composables/useComponentUI'
+
+import type { FieldErrorProps, FieldErrorSlots } from './FieldError.types'
+import theme from './theme'
 
 const props = defineProps<FieldErrorProps>()
 defineSlots<FieldErrorSlots>()
 
-const ui = useComponentUI('fieldError', theme, () => ({}))
+const ui = useComponentUI('fieldError', { theme: theme, variantProps: () => ({}), props })
 </script>
-
-<template>
-  <span
-    :id="id"
-    data-slot="field-error"
-    data-visible="true"
-    role="alert"
-    :class="ui.base({ class: [props.ui?.base, props.class] })"
-  >
-    <slot />
-  </span>
-</template>

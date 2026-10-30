@@ -1,28 +1,5 @@
-<script setup lang="ts">
-import { Button, NumberField } from '@hareui/vue'
-import { computed, ref } from 'vue'
-
-const STOCK_AVAILABLE = 3
-const value = ref<number | null>()
-const isSubmitting = ref(false)
-const isOutOfStock = computed(() => value.value != null && value.value > STOCK_AVAILABLE)
-
-function handleSubmit(e: Event) {
-  e.preventDefault()
-  if (value.value == null || value.value < 1 || value.value > STOCK_AVAILABLE)
-    return
-  isSubmitting.value = true
-  // Simulate API call
-  setTimeout(() => {
-    console.log('Order submitted:', { quantity: value.value })
-    value.value = undefined
-    isSubmitting.value = false
-  }, 1500)
-}
-</script>
-
 <template>
-  <form class="flex w-[280px] flex-col gap-4" @submit="handleSubmit">
+  <form class="flex w-[280px] flex-col gap-4" @submit="onSubmit">
     <NumberField
       v-model="value"
       required
@@ -46,3 +23,26 @@ function handleSubmit(e: Event) {
     </Button>
   </form>
 </template>
+
+<script setup lang="ts">
+import { Button, NumberField } from '@hareui/vue'
+import { computed, ref } from 'vue'
+
+const STOCK_AVAILABLE = 3
+const value = ref<number | null>()
+const isSubmitting = ref(false)
+const isOutOfStock = computed(() => value.value != null && value.value > STOCK_AVAILABLE)
+
+const onSubmit = (e: Event) => {
+  e.preventDefault()
+  if (value.value == null || value.value < 1 || value.value > STOCK_AVAILABLE) return
+  isSubmitting.value = true
+
+  // Simulate API call
+  setTimeout(() => {
+    console.log('Order submitted:', { quantity: value.value })
+    value.value = undefined
+    isSubmitting.value = false
+  }, 1500)
+}
+</script>

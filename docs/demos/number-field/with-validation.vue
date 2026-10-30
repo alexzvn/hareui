@@ -1,11 +1,3 @@
-<script setup lang="ts">
-import { NumberField } from '@hareui/vue'
-import { computed, ref } from 'vue'
-
-const value = ref<number | null>()
-const isInvalid = computed(() => value.value != null && (value.value < 0 || value.value > 100))
-</script>
-
 <template>
   <div class="flex w-full max-w-64 flex-col gap-4">
     <NumberField
@@ -24,3 +16,11 @@ const isInvalid = computed(() => value.value != null && (value.value < 0 || valu
     />
   </div>
 </template>
+
+<script setup lang="ts">
+import { NumberField } from '@hareui/vue'
+import { computed, ref } from 'vue'
+
+const value = ref<number | null>()
+const isInvalid = computed(() => value.value != null && (value.value < 0 || value.value > 100))
+</script>

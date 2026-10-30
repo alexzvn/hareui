@@ -1,7 +1,3 @@
-<script setup lang="ts">
-import { TextField } from '@hareui/vue'
-</script>
-
 <template>
   <TextField
     invalid
@@ -13,3 +9,7 @@ import { TextField } from '@hareui/vue'
     error-message="Please enter a valid email address"
   />
 </template>
+
+<script setup lang="ts">
+import { TextField } from '@hareui/vue'
+</script>

@@ -3,45 +3,82 @@ import { mount } from '@vue/test-utils'
 import { DateFieldInput, DateFieldRoot, DateRangeFieldInput, DateRangeFieldRoot } from 'reka-ui'
 import { describe, expect, it } from 'vitest'
 import { defineComponent, h } from 'vue'
-import DateInputGroup from '../src/components/date-input-group/DateInputGroup.vue'
+
+import DateInputGroup from '@/components/date-input-group/DateInputGroup.vue'
+
 import { expectAccessible } from './a11y'
 
 const date = new CalendarDate(2025, 1, 15)
 
 // DateInputGroup isn't exported: it is only rendered inside a Reka date root, as the fields and pickers do
-function field(groupProps: Record<string, unknown> = {}, rootProps: Record<string, unknown> = {}) {
-  return defineComponent(() => () => h('div', [
-    h('span', { id: 'lbl' }, 'Due date'),
-    h('span', { id: 'desc' }, 'Pick a weekday'),
-    h(DateFieldRoot, { defaultValue: date, ...rootProps }, {
-      default: ({ segments }: { segments: { part: string, value: string }[] }) =>
-        h(DateInputGroup, { segments, segmentInput: DateFieldInput, ...groupProps }),
-    }),
-  ]))
+const field = (
+  groupProps: Record<string, unknown> = {},
+  rootProps: Record<string, unknown> = {},
+) => {
+  return defineComponent(
+    () => () =>
+      h('div', [
+        h('span', { id: 'lbl' }, 'Due date'),
+        h('span', { id: 'desc' }, 'Pick a weekday'),
+        h(
+          DateFieldRoot,
+          { defaultValue: date, ...rootProps },
+          {
+            default: ({ segments }: { segments: { part: string; value: string }[] }) =>
+              h(DateInputGroup, { segments, segmentInput: DateFieldInput, ...groupProps }),
+          },
+        ),
+      ]),
+  )
 }
 
-function rangeField(groupProps: Record<string, unknown> = {}) {
-  return defineComponent(() => () => h('div', [
-    h('span', { id: 'lbl' }, 'Trip'),
-    h(DateRangeFieldRoot, { defaultValue: { start: date, end: date.add({ days: 3 }) } }, {
-      default: ({ segments }: { segments: { start: { part: string, value: string }[], end: { part: string, value: string }[] } }) =>
-        h(DateInputGroup, { segments: segments.start, endSegments: segments.end, segmentInput: DateRangeFieldInput, ...groupProps }),
-    }),
-  ]))
+const rangeField = (groupProps: Record<string, unknown> = {}) => {
+  return defineComponent(
+    () => () =>
+      h('div', [
+        h('span', { id: 'lbl' }, 'Trip'),
+        h(
+          DateRangeFieldRoot,
+          { defaultValue: { start: date, end: date.add({ days: 3 }) } },
+          {
+            default: ({
+              segments,
+            }: {
+              segments: {
+                start: { part: string; value: string }[]
+                end: { part: string; value: string }[]
+              }
+            }) =>
+              h(DateInputGroup, {
+                segments: segments.start,
+                endSegments: segments.end,
+                segmentInput: DateRangeFieldInput,
+                ...groupProps,
+              }),
+          },
+        ),
+      ]),
+  )
 }
 
-const spinbuttons = (root: ParentNode) => [...root.querySelectorAll<HTMLElement>('[role=spinbutton]')]
+const spinbuttons = (root: ParentNode) => [
+  ...root.querySelectorAll<HTMLElement>('[role=spinbutton]'),
+]
 
 /** Accessible name per aria-labelledby (an element referencing itself contributes its own aria-label). */
-function accessibleName(el: HTMLElement) {
+const accessibleName = (el: HTMLElement) => {
   const ids = el.getAttribute('aria-labelledby')
-  if (!ids)
-    return el.getAttribute('aria-label')
-  return ids.split(' ').map((id) => {
-    const target = document.getElementById(id)
-    expect(target, `aria-labelledby id "${id}" exists`).not.toBeNull()
-    return target === el ? el.getAttribute('aria-label') : target!.textContent
-  }).join('')
+  if (!ids) return el.getAttribute('aria-label')
+
+  return ids
+    .split(' ')
+    .map((id) => {
+      const target = document.getElementById(id)
+      expect(target, `aria-labelledby id "${id}" exists`).not.toBeNull()
+
+      return target === el ? el.getAttribute('aria-label') : target!.textContent
+    })
+    .join('')
 }
 
 describe('DateInputGroup', () => {
@@ -55,6 +92,7 @@ describe('DateInputGroup', () => {
       field({ labelledby: 'lbl', disabled: true }, { disabled: true }),
       rangeField({ labelledby: 'lbl' }),
     ]
+
     for (const component of cases) {
       const wrapper = mount(component, { attachTo: document.body })
       await expectAccessible(wrapper)
@@ -67,8 +105,14 @@ describe('DateInputGroup', () => {
     const group = wrapper.get('[data-slot=date-input-group]')
     expect(group.attributes('role')).toBe('group')
     expect(group.attributes('aria-labelledby')).toBe('lbl')
-    expect(spinbuttons(wrapper.element).map(accessibleName)).toEqual(['month, Due date', 'day, Due date', 'year, Due date'])
-    const ids = spinbuttons(wrapper.element).map(s => s.id)
+
+    expect(spinbuttons(wrapper.element).map(accessibleName)).toEqual([
+      'month, Due date',
+      'day, Due date',
+      'year, Due date',
+    ])
+
+    const ids = spinbuttons(wrapper.element).map((s) => s.id)
     expect(new Set(ids).size).toBe(ids.length)
     wrapper.unmount()
   })
@@ -76,7 +120,13 @@ describe('DateInputGroup', () => {
   it('an aria-label (no visible label) names the group and is appended to every segment name', () => {
     const wrapper = mount(field({ ariaLabel: 'Due date' }), { attachTo: document.body })
     expect(wrapper.get('[data-slot=date-input-group]').attributes('aria-label')).toBe('Due date')
-    expect(spinbuttons(wrapper.element).map(accessibleName)).toEqual(['month, Due date', 'day, Due date', 'year, Due date'])
+
+    expect(spinbuttons(wrapper.element).map(accessibleName)).toEqual([
+      'month, Due date',
+      'day, Due date',
+      'year, Due date',
+    ])
+
     wrapper.unmount()
   })
 
@@ -84,21 +134,34 @@ describe('DateInputGroup', () => {
     const wrapper = mount(field({ labelledby: 'lbl' }))
     const literals = wrapper.findAll('[data-segment=literal]')
     expect(literals.length).toBeGreaterThan(0)
-    expect(literals.every(l => l.attributes('aria-hidden') === 'true')).toBe(true)
+    expect(literals.every((l) => l.attributes('aria-hidden') === 'true')).toBe(true)
     wrapper.unmount()
   })
 
   it('the description describes the group and only the first segment; while invalid it describes every segment', async () => {
-    const wrapper = mount(field({ labelledby: 'lbl', describedby: 'desc' }), { attachTo: document.body })
+    const wrapper = mount(field({ labelledby: 'lbl', describedby: 'desc' }), {
+      attachTo: document.body,
+    })
+
     expect(wrapper.get('[data-slot=date-input-group]').attributes('aria-describedby')).toBe('desc')
-    expect(spinbuttons(wrapper.element).map(s => s.getAttribute('aria-describedby'))).toEqual(['desc', null, null])
+
+    expect(spinbuttons(wrapper.element).map((s) => s.getAttribute('aria-describedby'))).toEqual([
+      'desc',
+      null,
+      null,
+    ])
+
     wrapper.unmount()
 
-    const invalid = mount(field({ labelledby: 'lbl', describedby: 'desc', invalid: true }), { attachTo: document.body })
+    const invalid = mount(field({ labelledby: 'lbl', describedby: 'desc', invalid: true }), {
+      attachTo: document.body,
+    })
+
     for (const segment of spinbuttons(invalid.element)) {
       expect(segment.getAttribute('aria-describedby')).toBe('desc')
       expect(segment.getAttribute('aria-invalid')).toBe('true')
     }
+
     invalid.unmount()
   })
 
@@ -108,6 +171,7 @@ describe('DateInputGroup', () => {
       expect(segment.getAttribute('aria-readonly')).toBe('true')
       expect(segment.getAttribute('tabindex')).toBe('0')
     }
+
     readonly.unmount()
 
     const disabled = mount(field({ labelledby: 'lbl', disabled: true }, { disabled: true }))
@@ -115,6 +179,7 @@ describe('DateInputGroup', () => {
       expect(segment.getAttribute('aria-disabled')).toBe('true')
       expect(segment.hasAttribute('tabindex')).toBe(false)
     }
+
     disabled.unmount()
   })
 
@@ -129,8 +194,9 @@ describe('DateInputGroup', () => {
       'day, End Date, Trip',
       'year, End Date, Trip',
     ])
-    expect(new Set(segments.map(s => s.id)).size).toBe(6)
-    expect(segments.every(s => s.getAttribute('tabindex') === '0')).toBe(true)
+
+    expect(new Set(segments.map((s) => s.id)).size).toBe(6)
+    expect(segments.every((s) => s.getAttribute('tabindex') === '0')).toBe(true)
     wrapper.unmount()
   })
 })

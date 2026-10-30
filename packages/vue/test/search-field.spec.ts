@@ -1,12 +1,22 @@
 import { mount } from '@vue/test-utils'
 import { describe, expect, it, vi } from 'vitest'
 import { h, ref } from 'vue'
-import SearchField from '../src/components/search-field/SearchField.vue'
+
+import SearchField from '@/components/search-field/SearchField.vue'
+
 import { expectAccessible } from './a11y'
 
-function controlled(initial: string, attachTo?: HTMLElement) {
+const controlled = (initial: string, attachTo?: HTMLElement) => {
   const model = ref(initial)
-  const wrapper = mount(() => h(SearchField, { 'modelValue': model.value, 'onUpdate:modelValue': (v: unknown) => (model.value = String(v ?? '')) }), { attachTo })
+  const wrapper = mount(
+    () =>
+      h(SearchField, {
+        modelValue: model.value,
+        'onUpdate:modelValue': (v: unknown) => (model.value = String(v ?? '')),
+      }),
+    { attachTo },
+  )
+
   return { model, wrapper, field: wrapper.findComponent(SearchField) }
 }
 
@@ -56,8 +66,9 @@ describe('searchField', () => {
 
   it('validate drives invalid and the error slot', async () => {
     const wrapper = mount(SearchField, {
-      props: { modelValue: 'ab', validate: (v: string) => v.length < 3 ? 'Too short' : null },
+      props: { modelValue: 'ab', validate: (v: string) => (v.length < 3 ? 'Too short' : null) },
     })
+
     await wrapper.get('input').trigger('change')
     expect(wrapper.get('input').attributes('aria-invalid')).toBe('true')
     expect(wrapper.get('[data-slot=field-error]').text()).toBe('Too short')
@@ -66,24 +77,38 @@ describe('searchField', () => {
   it('disabled and readonly reach the input and disable the clear button', () => {
     const disabled = mount(SearchField, { props: { disabled: true } })
     expect(disabled.get('input').attributes('disabled')).toBeDefined()
-    expect(disabled.get('[data-slot=search-field-clear-button]').attributes('disabled')).toBeDefined()
+
+    expect(
+      disabled.get('[data-slot=search-field-clear-button]').attributes('disabled'),
+    ).toBeDefined()
 
     const readonly = mount(SearchField, { props: { readonly: true } })
     expect(readonly.get('input').attributes('readonly')).toBeDefined()
-    expect(readonly.get('[data-slot=search-field-clear-button]').attributes('disabled')).toBeDefined()
+
+    expect(
+      readonly.get('[data-slot=search-field-clear-button]').attributes('disabled'),
+    ).toBeDefined()
   })
 
   it('defaultValue seeds an uncontrolled field; v-model wins when bound', async () => {
     const wrapper = mount(SearchField, { props: { defaultValue: 'jane' } })
     expect(wrapper.get('input').element.value).toBe('jane')
-    const bound = mount(SearchField, { props: { 'defaultValue': 'jane', 'modelValue': 'bound', 'onUpdate:modelValue': () => {} } })
+
+    const bound = mount(SearchField, {
+      props: { defaultValue: 'jane', modelValue: 'bound', 'onUpdate:modelValue': () => {} },
+    })
+
     expect(bound.get('input').element.value).toBe('bound')
   })
 
   it('custom icon and clearIcon slots replace the defaults', () => {
     const wrapper = mount(SearchField, {
-      slots: { icon: '<span data-test="custom-icon" />', clearIcon: '<span data-test="custom-clear" />' },
+      slots: {
+        icon: '<span data-test="custom-icon" />',
+        clearIcon: '<span data-test="custom-clear" />',
+      },
     })
+
     expect(wrapper.find('[data-test=custom-icon]').exists()).toBe(true)
     expect(wrapper.find('[data-test=custom-clear]').exists()).toBe(true)
     expect(wrapper.get('[data-slot=search-field-search-icon]').find('svg').exists()).toBe(false)
@@ -92,7 +117,14 @@ describe('searchField', () => {
   it('readonly: escape does not clear the value or emit clear', async () => {
     // behaviour-final-check H13
     const model = ref('cats')
-    const wrapper = mount(() => h(SearchField, { 'modelValue': model.value, 'readonly': true, 'onUpdate:modelValue': (v: unknown) => (model.value = String(v ?? '')) }))
+    const wrapper = mount(() =>
+      h(SearchField, {
+        modelValue: model.value,
+        readonly: true,
+        'onUpdate:modelValue': (v: unknown) => (model.value = String(v ?? '')),
+      }),
+    )
+
     await wrapper.get('input').trigger('keydown', { key: 'Escape' })
     expect(model.value).toBe('cats')
     expect(wrapper.get('input').element.value).toBe('cats')
@@ -113,16 +145,27 @@ describe('searchField', () => {
     ['invalid with error message', { invalid: true, errorMessage: 'Enter at least 3 characters' }],
     ['disabled', { disabled: true, defaultValue: 'cats' }],
     ['read-only', { readonly: true, defaultValue: 'cats' }],
-  ])('labelled by its label (%s), it has no axe violations', async (_, props: Record<string, unknown>) => {
-    const wrapper = mount(SearchField, { props: { label: 'Search users', ...props }, attachTo: document.body })
-    const input = wrapper.get('input').element as HTMLInputElement
-    expect([...input.labels!].map(l => l.textContent?.trim())).toEqual(['Search users'])
-    await expectAccessible(wrapper)
-    wrapper.unmount()
-  })
+  ])(
+    'labelled by its label (%s), it has no axe violations',
+    async (_, props: Record<string, unknown>) => {
+      const wrapper = mount(SearchField, {
+        props: { label: 'Search users', ...props },
+        attachTo: document.body,
+      })
+
+      const input = wrapper.get('input').element as HTMLInputElement
+      expect([...input.labels!].map((l) => l.textContent?.trim())).toEqual(['Search users'])
+      await expectAccessible(wrapper)
+      wrapper.unmount()
+    },
+  )
 
   it('without a visible label, aria-label names the input (not the root) with no axe violations', async () => {
-    const wrapper = mount(SearchField, { attrs: { 'aria-label': 'Search docs', 'data-testid': 'search' }, attachTo: document.body })
+    const wrapper = mount(SearchField, {
+      attrs: { 'aria-label': 'Search docs', 'data-testid': 'search' },
+      attachTo: document.body,
+    })
+
     expect(wrapper.get('input').attributes('aria-label')).toBe('Search docs')
     expect(wrapper.attributes('aria-label')).toBeUndefined()
     expect(wrapper.attributes('data-testid')).toBe('search')
@@ -135,9 +178,12 @@ describe('searchField', () => {
       props: { id: 's', description: 'Help', invalid: true, errorMessage: 'Bad' },
       attrs: { 'aria-labelledby': 'heading', 'aria-describedby': 'tips' },
     })
+
     const input = wrapper.get('input')
     expect(input.attributes('aria-labelledby')).toBe('heading')
-    expect(input.attributes('aria-describedby')).toBe('tips s-description s-error')
+
+    // The theme hides the description while invalid, so it's dropped from aria-describedby too
+    expect(input.attributes('aria-describedby')).toBe('tips s-error')
     expect(input.attributes('aria-invalid')).toBe('true')
     expect(wrapper.get('#s-error').text()).toBe('Bad')
     expect(wrapper.attributes('aria-describedby')).toBeUndefined()
@@ -150,12 +196,16 @@ describe('searchField', () => {
     const clear = wrapper.get('[data-slot=search-field-clear-button]')
     expect(clear.attributes('aria-label')).toBe('Clear search')
     expect(clear.attributes('tabindex')).toBe('-1')
-    expect(wrapper.get('[data-slot=search-field-search-icon] svg').attributes('aria-hidden')).toBe('true')
+
+    expect(wrapper.get('[data-slot=search-field-search-icon] svg').attributes('aria-hidden')).toBe(
+      'true',
+    )
+
     wrapper.unmount()
   })
 
   it('escape that clears the field stops there, so an enclosing dialog stays open; on an empty field it passes through', async () => {
-    const onOuterKeydown = vi.fn()
+    const onOuterKeydown = vi.fn<(event: KeyboardEvent) => void>()
     const { wrapper } = controlled('cats', document.body)
     document.body.addEventListener('keydown', onOuterKeydown)
     const input = wrapper.get('input')

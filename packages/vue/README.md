@@ -33,8 +33,8 @@ npm i @hareui/vue
 Add the styles to your main CSS file, after Tailwind:
 
 ```css
-@import "tailwindcss";
-@import "@hareui/vue";
+@import 'tailwindcss';
+@import '@hareui/vue';
 ```
 
 Use components:

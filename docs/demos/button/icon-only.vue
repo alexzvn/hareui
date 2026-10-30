@@ -1,8 +1,3 @@
-<script setup lang="ts">
-import { Button } from '@hareui/vue'
-import { Icon } from '@iconify/vue'
-</script>
-
 <template>
   <div class="flex gap-3">
     <Button aria-label="More options" icon-only variant="tertiary">
@@ -16,3 +11,8 @@ import { Icon } from '@iconify/vue'
     </Button>
   </div>
 </template>
+
+<script setup lang="ts">
+import { Button } from '@hareui/vue'
+import { Icon } from '@iconify/vue'
+</script>

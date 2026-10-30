@@ -7,120 +7,126 @@ export type ColumnWidth = number | `${number}%` | `${number}fr`
 /** React Aria's default column min width in pixels. */
 export const DEFAULT_MIN_COLUMN_WIDTH = 75
 
-export interface ColumnSizeInput {
+export type ColumnSizeInput = {
   width?: ColumnWidth
   minWidth?: ColumnWidth
   maxWidth?: ColumnWidth
 }
 
-function isStatic(width: ColumnWidth): boolean {
+const isStatic = (width: ColumnWidth): boolean => {
   return typeof width === 'number' || /^\d+(?:\.\d+)?%$/.test(width)
 }
 
-function staticWidth(width: ColumnWidth, tableWidth: number): number {
+const staticWidth = (width: ColumnWidth, tableWidth: number): number => {
   return typeof width === 'number' ? width : tableWidth * (Number.parseFloat(width) / 100)
 }
 
-function flexFactor(width: ColumnWidth): number {
-  if (typeof width === 'number')
-    return 1
+const flexFactor = (width: ColumnWidth): number => {
+  if (typeof width === 'number') return 1
   const match = width.match(/^(.+)(?=fr$)/)
+
   return match ? Number.parseFloat(match[0]) : 1
 }
 
 /** Rounds floats summing to an integer into integers with the same sum. */
-function cascadeRounding(sizes: number[]): number[] {
+const cascadeRounding = (sizes: number[]): number[] => {
   let fpTotal = 0
   let intTotal = 0
+
   return sizes.map((size) => {
     const integer = Math.round(size + fpTotal) - intTotal
     fpTotal += size
     intTotal += integer
+
     return integer
   })
 }
 
+type ColumnSizeItem = {
+  isFrozen: boolean
+  baseSize: number
+  min: number
+  max: number
+  flex: number
+  target: number
+  violation: number
+}
+
+const createSizeItem = (column: ColumnSizeInput, tableWidth: number): ColumnSizeItem => {
+  const width = column.width ?? '1fr'
+  const isStaticWidth = isStatic(width)
+  const baseSize = isStaticWidth ? staticWidth(width, tableWidth) : 0
+  const flex = isStaticWidth ? 0 : flexFactor(width)
+  const min = staticWidth(column.minWidth ?? DEFAULT_MIN_COLUMN_WIDTH, tableWidth)
+
+  const max =
+    column.maxWidth != null ? staticWidth(column.maxWidth, tableWidth) : Number.MAX_SAFE_INTEGER
+
+  const hypothetical = Math.max(min, Math.min(baseSize, max))
+
+  // Static and zero-flex columns sit at their clamped size from the start, as does a column whose
+  // base size already overflows its max.
+  const isFrozen = isStaticWidth || flex <= 0 || baseSize > hypothetical
+
+  return { isFrozen, baseSize, min, max, flex, target: isFrozen ? hypothetical : 0, violation: 0 }
+}
+
 /**
  * Resolves each column's pixel width for a table `availableWidth` wide. Widths default to
- * `'1fr'`, min widths to `defaultMinWidth`.
+ * `'1fr'`, min widths to {@link DEFAULT_MIN_COLUMN_WIDTH}.
  */
-export function calculateColumnSizes(availableWidth: number, columns: ColumnSizeInput[], defaultMinWidth = DEFAULT_MIN_COLUMN_WIDTH): number[] {
-  const flooredWidth = Math.floor(availableWidth)
-  const fraction = availableWidth - flooredWidth
-  availableWidth = flooredWidth
-
-  let hasNonFrozenItems = false
-  const items = columns.map((column) => {
-    const width = column.width ?? '1fr'
-    let frozen = false
-    let baseSize = 0
-    let flex = 0
-    let target = 0
-    if (isStatic(width)) {
-      baseSize = staticWidth(width, availableWidth)
-      frozen = true
-    }
-    else {
-      flex = flexFactor(width)
-      if (flex <= 0)
-        frozen = true
-    }
-    const min = staticWidth(column.minWidth ?? defaultMinWidth, availableWidth)
-    const max = column.maxWidth != null ? staticWidth(column.maxWidth, availableWidth) : Number.MAX_SAFE_INTEGER
-    const hypothetical = Math.max(min, Math.min(baseSize, max))
-    if (frozen) {
-      target = hypothetical
-    }
-    else if (baseSize > hypothetical) {
-      frozen = true
-      target = hypothetical
-    }
-    if (!frozen)
-      hasNonFrozenItems = true
-    return { frozen, baseSize, min, max, flex, target, violation: 0 }
-  })
+export const calculateColumnSizes = (
+  availableWidth: number,
+  columns: ColumnSizeInput[],
+): number[] => {
+  const tableWidth = Math.floor(availableWidth)
+  const fraction = availableWidth - tableWidth
+  const items = columns.map((column) => createSizeItem(column, tableWidth))
+  let hasNonFrozenItems = items.some((item) => !item.isFrozen)
 
   while (hasNonFrozenItems) {
     let used = 0
     let flexFactors = 0
     for (const item of items) {
-      if (item.frozen) {
-        used += item.target
-      }
-      else {
-        used += item.baseSize
-        flexFactors += item.flex
-      }
+      used += item.isFrozen ? item.target : item.baseSize
+      if (!item.isFrozen) flexFactors += item.flex
     }
-    const free = availableWidth - used
-    if (free > 0) {
-      for (const item of items) {
-        if (!item.frozen)
-          item.target = item.baseSize + (item.flex / flexFactors) * free
-      }
+
+    const free = tableWidth - used
+    for (const item of items) {
+      if (free > 0 && !item.isFrozen) item.target = item.baseSize + (item.flex / flexFactors) * free
     }
+
     let totalViolation = 0
     for (const item of items) {
       item.violation = 0
-      if (!item.frozen) {
-        const clamped = Math.max(item.min, Math.min(item.target, item.max))
-        item.violation = clamped - item.target
-        item.target = clamped
-        totalViolation += item.violation
-      }
+      if (item.isFrozen) continue
+
+      const clamped = Math.max(item.min, Math.min(item.target, item.max))
+      item.violation = clamped - item.target
+      item.target = clamped
+      totalViolation += item.violation
     }
+
     hasNonFrozenItems = false
+
     for (const item of items) {
-      if (totalViolation === 0 || Math.sign(totalViolation) === Math.sign(item.violation))
-        item.frozen = true
-      else if (!item.frozen)
-        hasNonFrozenItems = true
+      const shouldFreeze =
+        totalViolation === 0 || Math.sign(totalViolation) === Math.sign(item.violation)
+
+      if (shouldFreeze) {
+        item.isFrozen = true
+        continue
+      }
+
+      if (!item.isFrozen) hasNonFrozenItems = true
     }
   }
 
-  const sizes = cascadeRounding(items.map(item => item.target))
+  const sizes = cascadeRounding(items.map((item) => item.target))
+
   // The last column takes the sub-pixel remainder so the columns sum to the exact width.
-  if (fraction > 0 && sizes.length)
-    sizes[sizes.length - 1] += fraction
+  if (fraction > 0 && sizes.length) sizes[sizes.length - 1] += fraction
+
   return sizes
 }

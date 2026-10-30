@@ -23,9 +23,9 @@ For validation, labels, and error messages, see **[TextField](/docs/components/t
 
 ## Anatomy
 
-| `ui` key | `data-slot` | Element |
-|---|---|---|
-| `base` | `input` | `<input>` |
+| `ui` key | `data-slot` | Element   |
+| -------- | ----------- | --------- |
+| `base`   | `input`     | `<input>` |
 
 Attributes not declared as props (`aria-label`, `min`, `max`, `autocomplete`, listeners…) fall through to the `<input>`.
 
@@ -42,7 +42,7 @@ The Input component supports two visual variants:
 
 ### In Surface
 
-When used on a surface background (HeroUI's `Surface`, here a `bg-surface` container), use `variant="secondary"` to apply the lower emphasis variant suitable for surface backgrounds.
+When used on a surface background (such as a `bg-surface` container), use `variant="secondary"` to apply the lower emphasis variant suitable for surface backgrounds.
 
 <ComponentPreview name="input/on-surface" />
 
@@ -69,14 +69,16 @@ Bind the value with `v-model`.
 ### Global Configuration
 
 ```ts
-app.use(createHareUI({
-  ui: {
-    input: {
-      slots: { base: 'rounded-lg px-4' },
-      defaultVariants: { variant: 'secondary' },
+app.use(
+  createHareUI({
+    ui: {
+      input: {
+        slots: { base: 'rounded-lg px-4' },
+        defaultVariants: { variant: 'secondary' },
+      },
     },
-  },
-}))
+  }),
+)
 ```
 
 ### CSS Variables
@@ -92,7 +94,7 @@ The input reads the field tokens `--field-border`, `--field-border-hover`, `--fi
 ### Interactive States
 
 - **Hover**: `:hover` (when not focused)
-- **Focus Visible**: `:focus` (focus styles apply on any focus, as in HeroUI's `input.css`)
+- **Focus Visible**: `:focus` (focus styles apply on any focus)
 - **Invalid**: `[data-invalid="true"]` (set with `aria-invalid` by the `invalid` prop)
 - **Disabled**: `:disabled`, `[data-disabled="true"]` or `[aria-disabled="true"]`
 - **Read Only**: `[readonly]` (set by the `readonly` prop)
@@ -107,11 +109,11 @@ The input reads the field tokens `--field-border`, `--field-border-hover`, `--fi
 
 <ApiTable component="Input" kind="emits" />
 
-### Theme
+> For labels, descriptions and error messages, use **[TextField](/docs/components/text-field)**; an `Input` placed in its default slot inherits the field's id, `aria-describedby`, `invalid`, `disabled`, `required`, `variant` and `fullWidth`.
+
+## Theme
 
 <ApiTheme component="Input" />
-
-> For labels, descriptions and error messages, use **[TextField](/docs/components/text-field)**; an `Input` placed in its default slot inherits the field's id, `aria-describedby`, `invalid`, `disabled`, `required`, `variant` and `fullWidth`.
 
 ## Related Components
 

@@ -1,8 +1,3 @@
-<script setup lang="ts">
-import { CellSwitch } from '@hareui/vue'
-import { Icon } from '@iconify/vue'
-</script>
-
 <template>
   <div class="w-[360px]">
     <CellSwitch
@@ -15,7 +10,9 @@ import { Icon } from '@iconify/vue'
     >
       <template #label>
         <span class="flex items-center gap-3">
-          <span class="grid size-10 shrink-0 place-items-center rounded-xl bg-accent text-accent-foreground">
+          <span
+            class="grid size-10 shrink-0 place-items-center rounded-xl bg-accent text-accent-foreground"
+          >
             <Icon icon="gravity-ui:magic-wand" class="size-5" />
           </span>
           <span class="grid min-w-0 gap-1">
@@ -24,7 +21,9 @@ import { Icon } from '@iconify/vue'
             </span>
             <span class="flex items-baseline gap-2 text-sm">
               Inline suggestions
-              <span class="text-[11px] font-semibold tracking-wide text-accent uppercase">Beta</span>
+              <span class="text-[11px] font-semibold tracking-wide text-accent uppercase"
+                >Beta</span
+              >
             </span>
           </span>
         </span>
@@ -32,3 +31,8 @@ import { Icon } from '@iconify/vue'
     </CellSwitch>
   </div>
 </template>
+
+<script setup lang="ts">
+import { CellSwitch } from '@hareui/vue'
+import { Icon } from '@iconify/vue'
+</script>

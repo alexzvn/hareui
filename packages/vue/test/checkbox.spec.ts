@@ -1,22 +1,31 @@
 import { mount } from '@vue/test-utils'
 import { describe, expect, it, vi } from 'vitest'
 import { defineComponent, h, nextTick, ref } from 'vue'
-import type { CheckboxProps } from '../src/components/checkbox/Checkbox.vue'
-import Checkbox from '../src/components/checkbox/Checkbox.vue'
-import Label from '../src/components/label/Label.vue'
+
+import type { CheckboxProps } from '@/components/checkbox/Checkbox.types'
+import Checkbox from '@/components/checkbox/Checkbox.vue'
+import Label from '@/components/label/Label.vue'
+
 import { expectAccessible } from './a11y'
 
 const control = '[data-slot=checkbox-content]'
 
 describe('Checkbox', () => {
   it('click toggles v-model and the root selected state', async () => {
-    const model = ref<boolean | 'indeterminate'>(false)
-    const wrapper = mount(() => h(Checkbox, { 'label': 'Terms', 'modelValue': model.value, 'onUpdate:modelValue': (v: boolean | 'indeterminate') => (model.value = v) }))
+    const isChecked = ref<boolean | 'indeterminate'>(false)
+    const wrapper = mount(() =>
+      h(Checkbox, {
+        label: 'Terms',
+        modelValue: isChecked.value,
+        'onUpdate:modelValue': (v: boolean | 'indeterminate') => (isChecked.value = v),
+      }),
+    )
+
     await wrapper.find(control).trigger('click')
-    expect(model.value).toBe(true)
+    expect(isChecked.value).toBe(true)
     expect(wrapper.find('[data-slot=checkbox]').attributes('data-selected')).toBe('true')
     await wrapper.find(control).trigger('click')
-    expect(model.value).toBe(false)
+    expect(isChecked.value).toBe(false)
     expect(wrapper.find('[data-slot=checkbox]').attributes('data-selected')).toBeUndefined()
   })
 
@@ -27,9 +36,19 @@ describe('Checkbox', () => {
     expect(wrapper.attributes('data-selected')).toBeUndefined()
   })
 
-  it('\'indeterminate\' renders the dash indicator and resolves to checked on click', async () => {
-    const wrapper = mount(Checkbox, { props: { 'modelValue': 'indeterminate' as const, 'onUpdate:modelValue': (v: boolean | 'indeterminate') => wrapper.setProps({ modelValue: v }) } })
-    expect(wrapper.find('[data-slot=checkbox-default-indicator--indeterminate]').exists()).toBe(true)
+  it("'indeterminate' renders the dash indicator and resolves to checked on click", async () => {
+    const wrapper = mount(Checkbox, {
+      props: {
+        modelValue: 'indeterminate' as const,
+        'onUpdate:modelValue': (v: boolean | 'indeterminate') =>
+          wrapper.setProps({ modelValue: v }),
+      },
+    })
+
+    expect(wrapper.find('[data-slot=checkbox-default-indicator--indeterminate]').exists()).toBe(
+      true,
+    )
+
     expect(wrapper.find(control).attributes('aria-checked')).toBe('mixed')
     await wrapper.find(control).trigger('click')
     expect(wrapper.emitted('update:modelValue')![0]).toEqual([true])
@@ -37,13 +56,21 @@ describe('Checkbox', () => {
   })
 
   it('an external Label pointing at the id toggles the checkbox', async () => {
-    const model = ref(false)
-    const wrapper = mount(defineComponent(() => () => [
-      h(Checkbox, { 'id': 'marketing', 'modelValue': model.value, 'onUpdate:modelValue': (v: boolean | 'indeterminate') => (model.value = v === true) }),
-      h(Label, { for: 'marketing' }, () => 'Send me marketing emails'),
-    ]), { attachTo: document.body })
+    const isChecked = ref(false)
+    const wrapper = mount(
+      defineComponent(() => () => [
+        h(Checkbox, {
+          id: 'marketing',
+          modelValue: isChecked.value,
+          'onUpdate:modelValue': (v: boolean | 'indeterminate') => (isChecked.value = v === true),
+        }),
+        h(Label, { for: 'marketing' }, () => 'Send me marketing emails'),
+      ]),
+      { attachTo: document.body },
+    )
+
     await wrapper.find('label[for=marketing]').trigger('click')
-    expect(model.value).toBe(true)
+    expect(isChecked.value).toBe(true)
     wrapper.unmount()
   })
 
@@ -55,7 +82,10 @@ describe('Checkbox', () => {
   })
 
   it('shows errorMessage only when invalid and wires aria-describedby', async () => {
-    const wrapper = mount(Checkbox, { props: { id: 'c', description: 'Help', errorMessage: 'Required' } })
+    const wrapper = mount(Checkbox, {
+      props: { id: 'c', description: 'Help', errorMessage: 'Required' },
+    })
+
     expect(wrapper.find('[data-slot=field-error]').exists()).toBe(false)
     expect(wrapper.find(control).attributes('aria-describedby')).toBe('c-description')
     await wrapper.setProps({ invalid: true })
@@ -77,7 +107,12 @@ describe('Checkbox', () => {
 
 describe('Checkbox row click', () => {
   it('clicking the root outside the control toggles it, but nested links are left alone', async () => {
-    const wrapper = mount(Checkbox, { props: { label: 'Accept' }, slots: { description: () => h('a', { href: '#x' }, 'terms') }, attachTo: document.body })
+    const wrapper = mount(Checkbox, {
+      props: { label: 'Accept' },
+      slots: { description: () => h('a', { href: '#x' }, 'terms') },
+      attachTo: document.body,
+    })
+
     await wrapper.find('[data-slot=checkbox]').trigger('click')
     expect(wrapper.emitted('update:modelValue')).toEqual([[true]])
     await wrapper.find('a').trigger('click')
@@ -91,7 +126,11 @@ describe('Checkbox indeterminate glyph click', () => {
   // A script-dispatched click never reaches the microtask checkpoint a user click gets between listeners, so
   // re-render right after the control's own handler: that detaches the glyph before the root's bubbling handler runs.
   it('toggles once when the glyph is clicked (uncontrolled)', async () => {
-    const wrapper = mount(Checkbox, { props: { defaultValue: 'indeterminate' }, attachTo: document.body })
+    const wrapper = mount(Checkbox, {
+      props: { defaultValue: 'indeterminate' },
+      attachTo: document.body,
+    })
+
     wrapper.find(control).element.addEventListener('click', () => wrapper.vm.$.update())
     await wrapper.find('[data-slot=checkbox-default-indicator--indeterminate]').trigger('click')
     expect(wrapper.emitted('update:modelValue')).toEqual([[true]])
@@ -102,7 +141,19 @@ describe('Checkbox indeterminate glyph click', () => {
   it('toggles once when the glyph is clicked (v-model)', async () => {
     const model = ref<boolean | 'indeterminate'>('indeterminate')
     const seen: Array<boolean | 'indeterminate'> = []
-    const wrapper = mount(() => h(Checkbox, { 'label': 'All', 'modelValue': model.value, 'onUpdate:modelValue': (v: boolean | 'indeterminate') => { seen.push(v); model.value = v } }), { attachTo: document.body })
+    const wrapper = mount(
+      () =>
+        h(Checkbox, {
+          label: 'All',
+          modelValue: model.value,
+          'onUpdate:modelValue': (v: boolean | 'indeterminate') => {
+            seen.push(v)
+            model.value = v
+          },
+        }),
+      { attachTo: document.body },
+    )
+
     wrapper.find(control).element.addEventListener('click', () => wrapper.vm.$.update())
     await wrapper.find('[data-slot=checkbox-default-indicator--indeterminate]').trigger('click')
     expect(seen).toEqual([true])
@@ -121,6 +172,7 @@ describe('Checkbox keyboard and readonly parity', () => {
       e.preventDefault()
       submitted++
     })
+
     const wrapper = mount(Checkbox, { props: { label: 'Terms' }, attachTo: form })
     await wrapper.get(control).trigger('keydown', { key: 'Enter' })
     expect(submitted).toBe(1)
@@ -131,7 +183,11 @@ describe('Checkbox keyboard and readonly parity', () => {
 
   // behaviour-final-check C4: RAC ignores presses on a readonly checkbox, so focus stays where it was
   it('pressing a readonly checkbox does not take focus', async () => {
-    const wrapper = mount(Checkbox, { props: { label: 'Terms', readonly: true }, attachTo: document.body })
+    const wrapper = mount(Checkbox, {
+      props: { label: 'Terms', readonly: true },
+      attachTo: document.body,
+    })
+
     const down = new MouseEvent('mousedown', { bubbles: true, cancelable: true })
     wrapper.get(control).element.dispatchEvent(down)
     expect(down.defaultPrevented).toBe(true)
@@ -159,13 +215,32 @@ describe('Checkbox root click timing', () => {
 
 // A native button toggles on Space unless a handler cancelled the key; happy-dom has no activation behaviour, so
 // the press helper performs it when the keys get through.
-async function pressSpace(el: Element) {
-  const down = new KeyboardEvent('keydown', { key: ' ', code: 'Space', bubbles: true, cancelable: true })
-  const up = new KeyboardEvent('keyup', { key: ' ', code: 'Space', bubbles: true, cancelable: true })
+const pressSpace = async (el: Element) => {
+  const down = new KeyboardEvent('keydown', {
+    key: ' ',
+    code: 'Space',
+    bubbles: true,
+    cancelable: true,
+  })
+
+  const up = new KeyboardEvent('keyup', {
+    key: ' ',
+    code: 'Space',
+    bubbles: true,
+    cancelable: true,
+  })
+
   el.dispatchEvent(down)
   el.dispatchEvent(up)
-  if (el instanceof HTMLButtonElement && !el.disabled && !down.defaultPrevented && !up.defaultPrevented)
+
+  if (
+    el instanceof HTMLButtonElement &&
+    !el.disabled &&
+    !down.defaultPrevented &&
+    !up.defaultPrevented
+  )
     el.click()
+
   await nextTick()
 }
 
@@ -178,32 +253,51 @@ describe('Checkbox accessibility', () => {
     ['read-only', { readonly: true, defaultValue: true }],
     ['required', { required: true }],
     ['described', { description: 'We only send product news' }],
-    ['invalid with an error message', { description: 'Required to continue', invalid: true, errorMessage: 'Accept the terms' }],
+    [
+      'invalid with an error message',
+      { description: 'Required to continue', invalid: true, errorMessage: 'Accept the terms' },
+    ],
   ])('has no axe violations when %s', async (_, props) => {
-    const wrapper = mount(Checkbox, { props: { label: 'Accept terms', ...props }, attachTo: document.body })
+    const wrapper = mount(Checkbox, {
+      props: { label: 'Accept terms', ...props },
+      attachTo: document.body,
+    })
+
     await expectAccessible(wrapper)
     wrapper.unmount()
   })
 
   it('has no axe violations inside a form, with its hidden input', async () => {
-    const wrapper = mount(() => h('form', null, h(Checkbox, { label: 'Accept terms', name: 'terms', required: true })), { attachTo: document.body })
+    const wrapper = mount(
+      () => h('form', null, h(Checkbox, { label: 'Accept terms', name: 'terms', required: true })),
+      { attachTo: document.body },
+    )
+
     await nextTick()
     await expectAccessible(wrapper)
     wrapper.unmount()
   })
 
   it('is named by an external Label pointing at its id', async () => {
-    const wrapper = mount(defineComponent(() => () => h('div', [
-      h(Checkbox, { id: 'news' }),
-      h(Label, { for: 'news' }, () => 'Send me news'),
-    ])), { attachTo: document.body })
+    const wrapper = mount(
+      defineComponent(
+        () => () =>
+          h('div', [h(Checkbox, { id: 'news' }), h(Label, { for: 'news' }, () => 'Send me news')]),
+      ),
+      { attachTo: document.body },
+    )
+
     await nextTick()
     await expectAccessible(wrapper)
     wrapper.unmount()
   })
 
   it('is named by aria-label when it has no visible label', async () => {
-    const wrapper = mount(Checkbox, { attrs: { 'aria-label': 'Select row' }, attachTo: document.body })
+    const wrapper = mount(Checkbox, {
+      attrs: { 'aria-label': 'Select row' },
+      attachTo: document.body,
+    })
+
     expect(wrapper.get(control).attributes('aria-label')).toBe('Select row')
     await expectAccessible(wrapper)
     wrapper.unmount()
@@ -228,9 +322,22 @@ describe('Checkbox accessibility', () => {
   })
 
   it('aria-describedby points at the rendered description and error text', async () => {
-    const wrapper = mount(Checkbox, { props: { label: 'Terms', description: 'Read them first', errorMessage: 'Accept the terms', invalid: true }, attachTo: document.body })
+    const wrapper = mount(Checkbox, {
+      props: {
+        label: 'Terms',
+        description: 'Read them first',
+        errorMessage: 'Accept the terms',
+        invalid: true,
+      },
+      attachTo: document.body,
+    })
+
     const ids = wrapper.get(control).attributes('aria-describedby')!.split(' ')
-    expect(ids.map(id => document.getElementById(id)?.textContent?.trim())).toEqual(['Read them first', 'Accept the terms'])
+    expect(ids.map((id) => document.getElementById(id)?.textContent?.trim())).toEqual([
+      'Read them first',
+      'Accept the terms',
+    ])
+
     wrapper.unmount()
   })
 
@@ -250,7 +357,11 @@ describe('Checkbox accessibility', () => {
   })
 
   it('a read-only checkbox stays focusable but Space does not change it', async () => {
-    const wrapper = mount(Checkbox, { props: { label: 'Terms', readonly: true }, attachTo: document.body })
+    const wrapper = mount(Checkbox, {
+      props: { label: 'Terms', readonly: true },
+      attachTo: document.body,
+    })
+
     const content = wrapper.get(control).element as HTMLButtonElement
     expect(content.disabled).toBe(false)
     content.focus()
@@ -262,7 +373,11 @@ describe('Checkbox accessibility', () => {
   })
 
   it('a disabled checkbox is removed from the tab order', () => {
-    const wrapper = mount(Checkbox, { props: { label: 'Terms', disabled: true }, attachTo: document.body })
+    const wrapper = mount(Checkbox, {
+      props: { label: 'Terms', disabled: true },
+      attachTo: document.body,
+    })
+
     const content = wrapper.get(control).element as HTMLButtonElement
     expect(content.disabled).toBe(true)
     content.focus()

@@ -26,14 +26,32 @@ export * from './components/tooltip'
 export * from './components/skeleton'
 export * from './components/alert'
 export * from './components/toast-provider'
+export * from './components/overlay-provider'
+export { useOverlay } from './composables/useOverlay'
 export * from './components/progress-bar'
 export * from './components/typography'
 export * from './components/number-field'
 export * from './components/disclosure'
 export * from './components/form'
-export type { ValidateFn, ValidationDetails, ValidationResult } from './composables/useFieldValidation'
+
+export type {
+  ValidateFn,
+  ValidationDetails,
+  ValidationResult,
+} from './composables/useFieldValidation'
+
 export { colorToString, isValidColor, normalizeColor, parseColor } from 'reka-ui'
-export type { Color, ColorChannel, ColorFormat, ColorSpace, HSBColor, HSLColor, RGBColor } from 'reka-ui'
+
+export type {
+  Color,
+  ColorChannel,
+  ColorFormat,
+  ColorSpace,
+  HSBColor,
+  HSLColor,
+  RGBColor,
+} from 'reka-ui'
+
 export * from './components/meter'
 export * from './components/switch-group'
 export * from './components/list-box'
@@ -98,9 +116,24 @@ export * from './components/main'
 export * from './components/container'
 export * from './components/error'
 export { useResizable } from './composables/useResizable'
-export type { UseResizableOptions, UseResizableReturn } from './composables/useResizable'
+
+export type {
+  UseResizableOptions,
+  UseResizableReturn,
+  UseResizableSetup,
+} from './composables/useResizable'
+
 export { useDashboard } from './composables/useDashboard'
-export type { DashboardContext, DashboardSidebarSide, DashboardSidebarState, DashboardStorage, DashboardStorageAdapter, DashboardUnit } from './composables/useDashboard'
+
+export type {
+  DashboardContext,
+  DashboardSidebarSide,
+  DashboardSidebarState,
+  DashboardStorage,
+  DashboardStorageAdapter,
+  DashboardUnit,
+} from './composables/useDashboard'
+
 export * from './components/navigation-menu'
 export * from './components/rich-table'
 export * from './components/native-select'
@@ -113,3 +146,11 @@ export * from './components/cell-select'
 export * from './components/cell-color-picker'
 export * from './components/inline-select'
 export * from './components/drop-zone'
+export * from './components/splitter'
+export * from './components/timeline'
+export * from './components/rating'
+export * from './components/stepper'
+export * from './components/tree'
+export * from './components/sidebar'
+export * from './components/context-menu'
+export * from './components/toc'

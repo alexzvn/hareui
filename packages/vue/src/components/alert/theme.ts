@@ -2,7 +2,8 @@
 export default {
   slots: {
     base: 'flex w-full flex-row items-start justify-start gap-4 bg-surface px-4 py-3 shadow-surface rounded-[min(32px,var(--radius-3xl))]',
-    indicator: 'flex items-center justify-center p-1 select-none [&_[data-slot=alert-default-icon]]:box-content [&_[data-slot=alert-default-icon]]:size-4',
+    indicator:
+      'flex items-center justify-center p-1 select-none [&_[data-slot=alert-default-icon]]:box-content [&_[data-slot=alert-default-icon]]:size-4',
     content: 'flex h-full grow flex-col items-start',
     title: 'text-sm leading-6 font-medium',
     description: 'text-sm text-muted',

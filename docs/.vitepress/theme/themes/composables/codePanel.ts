@@ -4,7 +4,7 @@ import { ref } from 'vue'
 
 const isCodeVisible = ref(false)
 
-export function useCodePanel() {
+export const useCodePanel = () => {
   return {
     isCodeVisible,
     setIsCodeVisible: (visible: boolean) => (isCodeVisible.value = visible),

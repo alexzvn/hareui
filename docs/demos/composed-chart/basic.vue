@@ -1,6 +1,26 @@
+<template>
+  <Card
+    class="w-full max-w-[560px] rounded-2xl"
+    :ui="{ header: 'flex-row flex-wrap items-center justify-between gap-2' }"
+  >
+    <template #header>
+      <h3 class="text-base font-medium text-foreground">Covers &amp; Average Check</h3>
+      <ChartLegend :series="series" />
+    </template>
+    <ComposedChart
+      :data="data"
+      index="day"
+      :series="series"
+      :y-axis="{ right: { tick: { formatter: formatCurrency } } }"
+      aria-label="Covers and average check per day"
+      :height="260"
+    />
+  </Card>
+</template>
+
 <script setup lang="ts">
-import type { ChartComposedSeries } from '@hareui/vue/charts'
 import { Card } from '@hareui/vue'
+import type { ChartComposedSeries } from '@hareui/vue/charts'
 import { ChartLegend, ComposedChart } from '@hareui/vue/charts'
 
 const data = [
@@ -13,7 +33,7 @@ const data = [
   { day: 'Sun', covers: 142, avgCheck: 38 },
 ]
 
-function formatCurrency(value: number | string) {
+const formatCurrency = (value: number | string) => {
   return `€${value}`
 }
 
@@ -22,20 +42,3 @@ const series = {
   avgCheck: { type: 'line', name: 'Avg. check', yAxis: 'right', valueFormatter: formatCurrency },
 } satisfies Record<string, ChartComposedSeries>
 </script>
-
-<template>
-  <Card class="w-full max-w-[560px] rounded-2xl" :ui="{ header: 'flex-row flex-wrap items-center justify-between gap-2' }">
-    <template #header>
-      <h3 class="text-base font-medium text-foreground">Covers &amp; Average Check</h3>
-      <ChartLegend :series="series" />
-    </template>
-    <ComposedChart
-      :data="data"
-      index="day"
-      :series="series"
-      :y-axis-right="{ tickFormatter: formatCurrency }"
-      aria-label="Covers and average check per day"
-      :height="260"
-    />
-  </Card>
-</template>

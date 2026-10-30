@@ -2,9 +2,11 @@ import type { VueWrapper } from '@vue/test-utils'
 import { flushPromises, mount } from '@vue/test-utils'
 import { afterEach, describe, expect, it } from 'vitest'
 import { h } from 'vue'
-import Button from '../src/components/button/Button.vue'
-import Form from '../src/components/form/Form.vue'
-import TextField from '../src/components/text-field/TextField.vue'
+
+import Button from '@/components/button/Button.vue'
+import Form from '@/components/form/Form.vue'
+import TextField from '@/components/text-field/TextField.vue'
+
 import { expectAccessible } from './a11y'
 
 let wrapper: VueWrapper | undefined
@@ -13,18 +15,32 @@ afterEach(() => {
   wrapper = undefined
 })
 
-function signUp(formProps: Record<string, unknown> = {}) {
-  wrapper = mount(() => h(Form, { 'aria-label': 'Sign up', ...formProps }, () => [
-    h(TextField, { label: 'Name', name: 'name', required: true }),
-    h(TextField, { label: 'Email', name: 'email', type: 'email', required: true, description: 'We never share it.' }),
-    h(Button, { type: 'submit' }, () => 'Create account'),
-  ]), { attachTo: document.body })
+const signUp = (formProps: Record<string, unknown> = {}) => {
+  wrapper = mount(
+    () =>
+      h(Form, { 'aria-label': 'Sign up', ...formProps }, () => [
+        h(TextField, { label: 'Name', name: 'name', required: true }),
+        h(TextField, {
+          label: 'Email',
+          name: 'email',
+          type: 'email',
+          required: true,
+          description: 'We never share it.',
+        }),
+        h(Button, { type: 'submit' }, () => 'Create account'),
+      ]),
+    { attachTo: document.body },
+  )
+
   return wrapper
 }
 
 /** The text of every element the control's `aria-describedby` points at. */
-function descriptions(el: Element) {
-  return (el.getAttribute('aria-describedby') ?? '').split(' ').filter(Boolean).map(id => document.getElementById(id)?.textContent?.trim())
+const descriptions = (el: Element) => {
+  return (el.getAttribute('aria-describedby') ?? '')
+    .split(' ')
+    .filter(Boolean)
+    .map((id) => document.getElementById(id)?.textContent?.trim())
 }
 
 describe('Form', () => {
@@ -34,12 +50,14 @@ describe('Form', () => {
     await expectAccessible(w)
   })
 
-  it('server validationErrors mark each named field invalid and describe it with its message', async () => {
-    const w = signUp({ validationErrors: { email: 'This email is already registered' } })
+  it('server validation errors mark each named field invalid and describe it with its message', async () => {
+    const w = signUp({ validation: { errors: { email: 'This email is already registered' } } })
     await flushPromises()
     const email = w.get('input[name=email]').element
     expect(email.getAttribute('aria-invalid')).toBe('true')
-    expect(descriptions(email)).toEqual(['We never share it.', 'This email is already registered'])
+
+    // TextField drops its description while invalid
+    expect(descriptions(email)).toEqual(['This email is already registered'])
     expect(w.get('input[name=name]').attributes('aria-invalid')).toBeUndefined()
     await expectAccessible(w)
   })
@@ -61,6 +79,7 @@ describe('Form', () => {
     const w = signUp({ disabled: true })
     for (const control of w.findAll('input, button'))
       expect((control.element as HTMLInputElement).disabled).toBe(true)
+
     await expectAccessible(w)
   })
 })

@@ -57,7 +57,12 @@ Each series takes `name`, `color`, `hide`, `tooltip`, `valueFormatter`, `fillOpa
 `grid`, `angle-axis` and `radius-axis` take `false` to hide the part, or an object of `ChartPolarGrid`, `ChartPolarAngleAxis` and `ChartPolarRadiusAxis` props. The grid and the spoke labels show by default; the radius axis is off until you set it.
 
 ```vue
-<RadarChart :data="data" index="category" :grid="{ gridType: 'circle' }" :radius-axis="{ angle: 90, domain: [0, 100] }" />
+<RadarChart
+  :data="data"
+  index="category"
+  :grid="{ gridType: 'circle' }"
+  :radius-axis="{ angle: 90, domain: [0, 100] }"
+/>
 ```
 
 The `#angle-tick` slot redraws each spoke label. It receives the label position and text, and renders SVG. To change only the text, `index-formatter` formats the spoke labels and the tooltip header.
@@ -103,25 +108,31 @@ Three radars with their own `color` and a lower `fill-opacity`. Without `dot`, o
 Use `class` for the container and `ui` for the drawn parts. Radar colors come from `colors` or each series' `color`, which accept any CSS color or the `--chart-1` to `--chart-5` tokens.
 
 ```vue
-<RadarChart :data="data" index="category" :ui="{ polarGrid: 'stroke-accent/30', angleTick: 'fill-foreground text-xs' }" />
+<RadarChart
+  :data="data"
+  index="category"
+  :ui="{ polarGrid: 'stroke-accent/30', angleTick: 'fill-foreground text-xs' }"
+/>
 ```
 
-Switch the grid to circles with `:grid="{ gridType: 'circle' }"`, and the outer ring with `:angle-axis="{ axisLineType: 'circle' }"`.
+Switch the grid to circles with `:grid="{ gridType: 'circle' }"`, and the outer ring with `:angle-axis="{ axisLine: { type: 'circle' } }"`.
 
 ### Global Configuration
 
 Override the `radarChart` theme app-wide with `createHareUI`:
 
 ```ts
-app.use(createHareUI({
-  ui: {
-    radarChart: {
-      slots: {
-        angleTick: 'text-xs',
+app.use(
+  createHareUI({
+    ui: {
+      radarChart: {
+        slots: {
+          angleTick: 'text-xs',
+        },
       },
     },
-  },
-}))
+  }),
+)
 ```
 
 ## Composition
@@ -144,26 +155,26 @@ Without `index` or `series`, the chart draws only the parts you put in its defau
 
 `ChartPolarAngleAxis` labels the spokes with its `data-key`, and each `ChartRadar` draws one field as a closed shape. Put a `ChartLabel` inside a `ChartRadar` to label each point; it sits past the point, away from the center. Parts always draw in the same order (grid, series, axes), so template order doesn't matter. With `index` or `series` set, parts in the default slot draw next to the generated ones: turn a generated part off (for example `:grid="false"`) before adding your own.
 
-| `ui` key | `data-slot` | Element | Description |
-|---|---|---|---|
-| `base` | `radar-chart` | `<div>` | Responsive container |
-| `surface` | `chart-surface` | `<svg>` | Drawing surface |
-| `overlay` | `chart-overlay` | `<div>` | Layer over the svg that holds the tooltip |
-| `polarGrid` | `chart-polar-grid` | `<g>` | Rings (`chart-polar-grid-ring`) and spokes (`chart-polar-grid-spoke`) |
-| `axis` | `chart-polar-angle-axis`, `chart-polar-radius-axis` | `<g>` | One group per axis |
-| `axisLine` | `chart-polar-angle-axis-line` | `<path>` | Outer ring of the angle axis, hidden by default |
-| `tickLine` | `chart-polar-angle-axis-tick-line` | `<line>` | Tick marks of the angle axis, hidden by default |
-| `angleTick` | `chart-polar-angle-axis-tick` | `<g>` | One spoke label |
-| `radiusAxisLine` | `chart-polar-radius-axis-line` | `<line>` | Radius axis line |
-| `radiusTick` | `chart-polar-radius-axis-tick` | `<g>` | One radius label |
-| `series` | `chart-radar` | `<g>` | One group per radar |
-| `radar` | `chart-radar-polygon` | `<path>` | Radar shape |
-| — | `chart-radar-dots` | `<g>` | Point markers of one radar, when `dot` is set |
-| `dot` | `chart-dot` | `<circle>` | Point marker |
-| `activeDot` | `chart-active-dot` | `<circle>` | Marker at the hovered spoke |
-| `label` | `chart-label` | `<text>` | `ChartLabel` text |
-| `tooltip` | `chart-tooltip-wrapper` | `<div>` | Floating wrapper around the tooltip panel |
-| `legend` | `chart-legend` | `<ul>` | Legend drawn from the `legend` prop |
+| `ui` key         | `data-slot`                                         | Element    | Description                                                           |
+| ---------------- | --------------------------------------------------- | ---------- | --------------------------------------------------------------------- |
+| `base`           | `radar-chart`                                       | `<div>`    | Responsive container                                                  |
+| `surface`        | `chart-surface`                                     | `<svg>`    | Drawing surface                                                       |
+| `overlay`        | `chart-overlay`                                     | `<div>`    | Layer over the svg that holds the tooltip                             |
+| `polarGrid`      | `chart-polar-grid`                                  | `<g>`      | Rings (`chart-polar-grid-ring`) and spokes (`chart-polar-grid-spoke`) |
+| `axis`           | `chart-polar-angle-axis`, `chart-polar-radius-axis` | `<g>`      | One group per axis                                                    |
+| `axisLine`       | `chart-polar-angle-axis-line`                       | `<path>`   | Outer ring of the angle axis, hidden by default                       |
+| `tickLine`       | `chart-polar-angle-axis-tick-line`                  | `<line>`   | Tick marks of the angle axis, hidden by default                       |
+| `angleTick`      | `chart-polar-angle-axis-tick`                       | `<g>`      | One spoke label                                                       |
+| `radiusAxisLine` | `chart-polar-radius-axis-line`                      | `<line>`   | Radius axis line                                                      |
+| `radiusTick`     | `chart-polar-radius-axis-tick`                      | `<g>`      | One radius label                                                      |
+| `series`         | `chart-radar`                                       | `<g>`      | One group per radar                                                   |
+| `radar`          | `chart-radar-polygon`                               | `<path>`   | Radar shape                                                           |
+| —                | `chart-radar-dots`                                  | `<g>`      | Point markers of one radar, when `dot` is set                         |
+| `dot`            | `chart-dot`                                         | `<circle>` | Point marker                                                          |
+| `activeDot`      | `chart-active-dot`                                  | `<circle>` | Marker at the hovered spoke                                           |
+| `label`          | `chart-label`                                       | `<text>`   | `ChartLabel` text                                                     |
+| `tooltip`        | `chart-tooltip-wrapper`                             | `<div>`    | Floating wrapper around the tooltip panel                             |
+| `legend`         | `chart-legend`                                      | `<ul>`     | Legend drawn from the `legend` prop                                   |
 
 ## Styling Reference
 
@@ -229,7 +240,7 @@ Without `index` or `series`, the chart draws only the parts you put in its defau
 
 <ApiTable component="ChartTooltip" kind="slots" />
 
-### Theme
+## Theme
 
 <ApiTheme component="RadarChart" />
 

@@ -2,7 +2,6 @@
    IMPORTS
    ============================================================================ */
 
-
 @keyframes float-stars {
   0% {
     transform: translateY(0px) translateX(0px);
@@ -62,12 +61,12 @@
   -moz-osx-font-smoothing: grayscale;
 }
 
-[data-theme="light"],
+[data-theme='light'],
 .light {
 }
 
 /* Dark Theme Variables */
-[data-theme="dark"],
+[data-theme='dark'],
 .dark {
   /* Custom Values (Optional) */
   /* --radius: 0.5rem; */
@@ -167,7 +166,7 @@
   backdrop-filter: none;
 
   &:after {
-    content: "";
+    content: '';
     display: block;
     position: absolute;
     bottom: -1px;
@@ -259,13 +258,13 @@
     background: rgba(0, 0, 0, 0.04);
   }
 
-  &[data-active="true"] {
+  &[data-active='true'] {
     @apply bg-surface shadow-surface;
   }
 }
 
 /* Nested items inside open groups */
-#nd-sidebar [data-state="open"] > [data-state="open"] {
+#nd-sidebar [data-state='open'] > [data-state='open'] {
   padding: 4px 16px;
 
   a {
@@ -277,8 +276,8 @@
 }
 
 /* External link icon for sidebar links */
-#nd-sidebar a[rel="noreferrer noopener"]::after {
-  content: "";
+#nd-sidebar a[rel='noreferrer noopener']::after {
+  content: '';
   display: inline-block;
   width: 10px;
   height: 10px;
@@ -293,7 +292,7 @@
   transition: opacity 0.2s;
 }
 
-#nd-sidebar a[rel="noreferrer noopener"]:hover::after {
+#nd-sidebar a[rel='noreferrer noopener']:hover::after {
   opacity: 1;
 }
 
@@ -344,9 +343,9 @@
     --fd-sidebar-width: 272px;
   }
   grid-template:
-    ". header header header ."
-    ". sidebar toc-popover toc-popover ."
-    ". sidebar main toc ." 1fr / minmax(min-content, 1fr) var(--fd-sidebar-col) minmax(
+    '. header header header .'
+    '. sidebar toc-popover toc-popover .'
+    '. sidebar main toc .' 1fr / minmax(min-content, 1fr) var(--fd-sidebar-col) minmax(
       0,
       calc(var(--fd-layout-width, 97rem) - var(--fd-sidebar-col) - var(--fd-toc-width))
     )
@@ -394,7 +393,7 @@
   --fd-toc-width: 220px;
   --color-fd-foreground: transparent;
   /* Disables the active indicator */
-  [role="none"] {
+  [role='none'] {
     display: none;
     background: transparent;
   }
@@ -480,11 +479,11 @@
   max-height: fit-content;
 }
 
-[role="tabpanel"] .mdx-code-block {
+[role='tabpanel'] .mdx-code-block {
   padding: 0;
 }
 
-code {
+code:where(:not([data-slot='code-block'] code)) {
   @apply border-separator bg-transparent px-[3px];
 }
 
@@ -536,7 +535,7 @@ code {
     @apply pl-0!;
   }
 
-  [role="region"] {
+  [role='region'] {
     max-height: 75vh;
   }
 }
@@ -656,7 +655,7 @@ code {
   overflow: hidden;
 
   &::after {
-    content: "";
+    content: '';
     position: absolute;
     inset: 0;
     width: 100%;
@@ -672,7 +671,7 @@ code {
     pointer-events: none;
   }
 
-  [data-theme="dark"] &::after,
+  [data-theme='dark'] &::after,
   .dark &::after {
     background: linear-gradient(
       120deg,
@@ -701,7 +700,7 @@ code {
    DARK THEME OVERRIDES
    ============================================================================ */
 
-[data-theme="dark"],
+[data-theme='dark'],
 .dark {
   /* Navigation Components */
 
@@ -710,12 +709,12 @@ code {
       background: rgba(255, 255, 255, 0.04);
     }
 
-    &[data-active="true"] {
+    &[data-active='true'] {
       background: rgba(255, 255, 255, 0.08);
     }
   }
 
-  #nd-sidebar a[rel="noreferrer noopener"]::after {
+  #nd-sidebar a[rel='noreferrer noopener']::after {
     background-image: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="10" height="10"><path d="M6 18L18 6m0 0H9m9 0v9" fill="none" stroke="white" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"/></svg>');
   }
 
@@ -763,90 +762,90 @@ code {
   }
 
   .range-calendar--custom-demo
-    .range-calendar__cell[data-selected="true"]:not([data-outside-month="true"]) {
+    .range-calendar__cell[data-selected='true']:not([data-outside-month='true']) {
     @apply rounded-none bg-muted/50;
   }
 
   .dark
     .range-calendar--custom-demo
-    .range-calendar__cell[data-selected="true"]:not([data-outside-month="true"]) {
+    .range-calendar__cell[data-selected='true']:not([data-outside-month='true']) {
     @apply bg-muted/35;
   }
 
-  .range-calendar--custom-demo .range-calendar__cell[data-selected="true"]:is(td:first-child > *) {
+  .range-calendar--custom-demo .range-calendar__cell[data-selected='true']:is(td:first-child > *) {
     @apply rounded-ss-none rounded-es-none;
 
-    &[data-selection-start="true"] {
+    &[data-selection-start='true'] {
       @apply rounded-ss-none rounded-es-none;
     }
   }
 
-  .range-calendar--custom-demo .range-calendar__cell[data-selected="true"]:is(td:last-child > *) {
+  .range-calendar--custom-demo .range-calendar__cell[data-selected='true']:is(td:last-child > *) {
     @apply rounded-se-none rounded-ee-none;
 
-    &[data-selection-end="true"] {
+    &[data-selection-end='true'] {
       @apply rounded-se-none rounded-ee-none;
     }
   }
 
   .range-calendar--custom-demo
     .range-calendar__grid-body
-    td:has(> .range-calendar__cell[data-outside-month="true"])
+    td:has(> .range-calendar__cell[data-outside-month='true'])
     + td
-    > .range-calendar__cell[data-selected="true"] {
+    > .range-calendar__cell[data-selected='true'] {
     @apply rounded-ss-none rounded-es-none;
 
-    &[data-selection-start="true"] {
+    &[data-selection-start='true'] {
       @apply rounded-ss-none rounded-es-none;
     }
   }
 
   .range-calendar--custom-demo
     .range-calendar__grid-body
-    td:has(> .range-calendar__cell[data-selected="true"]):has(
-      + td > .range-calendar__cell[data-outside-month="true"]
+    td:has(> .range-calendar__cell[data-selected='true']):has(
+      + td > .range-calendar__cell[data-outside-month='true']
     )
-    > .range-calendar__cell[data-selected="true"] {
+    > .range-calendar__cell[data-selected='true'] {
     @apply rounded-se-none rounded-ee-none;
 
-    &[data-selection-end="true"] {
+    &[data-selection-end='true'] {
       @apply rounded-se-none rounded-ee-none;
     }
   }
 
   .range-calendar--custom-demo
-    .range-calendar__cell[data-selection-start="true"]:not([data-outside-month="true"]) {
+    .range-calendar__cell[data-selection-start='true']:not([data-outside-month='true']) {
     @apply rounded-none;
   }
 
   .range-calendar--custom-demo
-    .range-calendar__cell[data-selection-end="true"]:not([data-outside-month="true"]) {
+    .range-calendar__cell[data-selection-end='true']:not([data-outside-month='true']) {
     @apply rounded-none;
   }
 
   .range-calendar--custom-demo
-    .range-calendar__cell[data-selected="true"]
+    .range-calendar__cell[data-selected='true']
     .range-calendar__cell-button {
     @apply rounded-none;
   }
 
   .range-calendar--custom-demo
-    .range-calendar__cell[data-selection-start="true"]:not([data-outside-month="true"])
+    .range-calendar__cell[data-selection-start='true']:not([data-outside-month='true'])
     .range-calendar__cell-button,
   .range-calendar--custom-demo
-    .range-calendar__cell[data-selection-end="true"]:not([data-outside-month="true"])
+    .range-calendar__cell[data-selection-end='true']:not([data-outside-month='true'])
     .range-calendar__cell-button {
     @apply bg-foreground text-background;
   }
 
   .range-calendar--custom-demo
-    .range-calendar__cell[data-selection-start="true"][data-pressed="true"]:not(
-      [data-outside-month="true"]
+    .range-calendar__cell[data-selection-start='true'][data-pressed='true']:not(
+      [data-outside-month='true']
     )
     .range-calendar__cell-button,
   .range-calendar--custom-demo
-    .range-calendar__cell[data-selection-end="true"][data-pressed="true"]:not(
-      [data-outside-month="true"]
+    .range-calendar__cell[data-selection-end='true'][data-pressed='true']:not(
+      [data-outside-month='true']
     )
     .range-calendar__cell-button {
     @apply bg-foreground/90;
@@ -854,10 +853,10 @@ code {
 
   @media (hover: hover) {
     .range-calendar--custom-demo
-      .range-calendar__cell[data-hovered="true"]:not([data-selected="true"])
+      .range-calendar__cell[data-hovered='true']:not([data-selected='true'])
       .range-calendar__cell-button,
     .range-calendar--custom-demo
-      .range-calendar__cell:hover:not([data-selected="true"])
+      .range-calendar__cell:hover:not([data-selected='true'])
       .range-calendar__cell-button {
       @apply rounded-none bg-muted/70;
     }
@@ -866,7 +865,7 @@ code {
 
 @utility gradient-border {
   &::before {
-    content: "";
+    content: '';
     position: absolute;
     inset: 0;
     z-index: 0;

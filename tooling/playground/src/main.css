@@ -1,0 +1,15 @@
+@import "tailwindcss";
+@import "../../../packages/vue/src/styles/index.css";
+
+/* Inter (same v4 wght-only variable file as next/font) + docs text rendering */
+@import "@fontsource-variable/inter";
+
+@theme {
+  --font-sans: "Inter Variable", ui-sans-serif, system-ui, sans-serif;
+}
+
+html {
+  font-synthesis: none;
+  text-rendering: optimizeLegibility;
+  -webkit-font-smoothing: antialiased;
+}

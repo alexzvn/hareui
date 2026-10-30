@@ -7,7 +7,7 @@
 export default {
   slots: {
     backdrop: [
-      'fixed inset-0 z-(--z-index-overlay)',
+      'fixed inset-x-0 top-(--visual-viewport-top) z-(--z-index-overlay)',
       'h-(--visual-viewport-height) w-full',
       '[&:where([data-state=open])]:animate-drawer-in [&:where([data-state=open])]:[--tw-duration:250ms] [&:where([data-state=open])]:ease-[cubic-bezier(0.32,0.72,0,1)] [&:where([data-state=open])]:fade-in-0',
       '[&:where([data-state=closed])]:animate-drawer-out [&:where([data-state=closed])]:[--tw-duration:200ms] [&:where([data-state=closed])]:ease-[cubic-bezier(0.32,0.72,0,1)] [&:where([data-state=closed])]:fade-out-0',
@@ -16,11 +16,9 @@ export default {
       '[transition:opacity_250ms_cubic-bezier(0.32,0.72,0,1)] motion-reduce:transition-none',
       'motion-reduce:[&:where([data-state=open])]:animate-none motion-reduce:[&:where([data-state=closed])]:animate-none',
     ],
-    content: [
-      'pointer-events-none',
-      'fixed inset-0 z-(--z-index-overlay) flex',
-      'h-(--visual-viewport-height) w-full min-w-0',
-    ],
+    // Absolute, not HeroUI's second `fixed inset-0` box: it fills the backdrop, so it follows the
+    // backdrop's visual-viewport `top` and height.
+    content: ['pointer-events-none', 'absolute inset-0 flex min-w-0'],
     dialog: [
       'relative',
       'flex flex-col',
@@ -61,10 +59,12 @@ export default {
   },
   variants: {
     placement: {
+      // 85% of the visible area, not HeroUI's `85vh`: with the iOS keyboard open `85vh` is taller than the visible
+      // area, so the panel's header ends up off screen.
       bottom: {
         content: 'items-end',
         dialog: [
-          'w-full max-h-[85vh]',
+          'w-full max-h-[calc(var(--visual-viewport-height)*0.85)]',
           '[border-start-start-radius:min(32px,var(--radius-2xl))] [border-start-end-radius:min(32px,var(--radius-2xl))]',
           '[&:where([data-state=open])]:slide-in-from-bottom [&:where([data-state=closed])]:slide-out-to-bottom',
         ],
@@ -72,7 +72,7 @@ export default {
       top: {
         content: 'items-start',
         dialog: [
-          'w-full max-h-[85vh]',
+          'w-full max-h-[calc(var(--visual-viewport-height)*0.85)]',
           '[border-end-start-radius:min(32px,var(--radius-2xl))] [border-end-end-radius:min(32px,var(--radius-2xl))]',
           'pb-2',
           '[&:where([data-state=open])]:slide-in-from-top [&:where([data-state=closed])]:slide-out-to-top',

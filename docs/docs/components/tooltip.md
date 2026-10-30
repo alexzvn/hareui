@@ -18,7 +18,7 @@ import { Tooltip } from '@hareui/vue'
 
 ## Anatomy
 
-Each `Tooltip` instance owns its own Reka `TooltipProvider`, so no app-level provider is
+Each `Tooltip` instance owns its own tooltip provider, so no app-level provider is
 needed. The first child is the trigger (`as-child`, merged directly onto its own root
 element — no extra wrapper is rendered); `text` or the `#content` slot supplies the
 floating content.
@@ -50,14 +50,13 @@ floating content.
 ### Custom Triggers
 
 The default slot's root element becomes the trigger. To use non-focusable content (an `Avatar`,
-a `Chip`, an icon), wrap it in an `inline-block` element with `role="button"` and `tabindex="0"`
-(the equivalent of HeroUI's `Tooltip.Trigger`) so the tooltip stays reachable from the keyboard.
+a `Chip`, an icon), wrap it in an `inline-block` element with `role="button"` and `tabindex="0"` so the tooltip stays reachable from the keyboard.
 
 <ComponentPreview name="tooltip/custom-trigger" />
 
 ### Delays and Focus-Only Trigger
 
-`delay` (default `1500`) and `close-delay` (default `500`) match HeroUI's `--tooltip-delay` / `--tooltip-close-delay` defaults. The close delay applies only when the pointer leaves the trigger or tooltip; moving back in cancels it. Blur, press, Escape and another tooltip opening close it immediately. `trigger="focus"` opens the tooltip only when the trigger gets focus, and hovering neither opens nor closes it.
+`delay` (default `1500`) and `close-delay` (default `500`) are the defaults. The close delay applies only when the pointer leaves the trigger or tooltip; moving back in cancels it. Blur, press, Escape and another tooltip opening close it immediately. `trigger="focus"` opens the tooltip only when the trigger gets focus, and hovering neither opens nor closes it.
 
 ```vue
 <Tooltip :delay="0" :close-delay="1000" text="Stays open for a second">
@@ -69,11 +68,10 @@ a `Chip`, an icon), wrap it in an `inline-block` element with `role="button"` an
 </Tooltip>
 ```
 
-### Known differences from HeroUI
+### Delay Behaviour
 
-- **No cross-tooltip warm-up.** React Aria shares one global timer, so once any tooltip has opened, the next one opens instantly. Each HareUI Tooltip has its own Reka provider, so every tooltip waits for its own `delay`.
-- **Sub-pixel position drift.** Reka positions the content with floating-ui and React Aria uses its own overlay maths. The two can differ by under a pixel.
-- **Delays are props, not CSS variables.** HeroUI reads its defaults from `--tooltip-delay` / `--tooltip-close-delay` at runtime. HareUI uses the same values as prop defaults, so changing those variables has no effect.
+- Each tooltip waits for its own `delay`, even right after another tooltip has closed.
+- Delays are props, not CSS variables: setting `--tooltip-delay` / `--tooltip-close-delay` has no effect.
 
 ## Customization
 
@@ -86,30 +84,30 @@ a `Chip`, an icon), wrap it in an `inline-block` element with `role="button"` an
 To customize the Tooltip classes for the whole app, extend the `tooltip` theme in `createHareUI`:
 
 ```ts
-app.use(createHareUI({
-  ui: {
-    tooltip: {
-      slots: { base: 'rounded-xl shadow-lg' },
+app.use(
+  createHareUI({
+    ui: {
+      tooltip: {
+        slots: { base: 'rounded-xl shadow-lg' },
+      },
     },
-  },
-}))
+  }),
+)
 ```
 
 ## Styling Reference
 
-| `ui` key | `data-slot` | Element |
-|---|---|---|
-| `base` | — | The floating content (Reka `TooltipContent`) |
-| `arrow` | `overlay-arrow` | The arrow SVG, rendered when `arrow` is `true` |
+| `ui` key | `data-slot`     | Element                                        |
+| -------- | --------------- | ---------------------------------------------- |
+| `base`   | —               | The floating content                           |
+| `arrow`  | `overlay-arrow` | The arrow SVG, rendered when `arrow` is `true` |
 
 ### Interactive States
 
 - `data-[state=delayed-open]` / `data-[state=instant-open]` — applied while the tooltip is
-  open (entrance animation), mapped from HeroUI's `[data-entering]`
-- `data-[state=closed]` — applied while closing (exit animation), mapped from HeroUI's
-  `[data-exiting]`
-- `data-[side="top|right|bottom|left"]` — the resolved placement, mapped from HeroUI's
-  `[data-placement]`
+  open (entrance animation)
+- `data-[state=closed]` — applied while closing (exit animation)
+- `data-[side="top|right|bottom|left"]` — the resolved placement
 
 ## API Reference
 
@@ -125,7 +123,7 @@ app.use(createHareUI({
 
 <ApiTable component="Tooltip" kind="emits" />
 
-### Theme
+## Theme
 
 <ApiTheme component="Tooltip" />
 

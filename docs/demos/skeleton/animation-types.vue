@@ -1,13 +1,3 @@
-<script setup lang="ts">
-import { Skeleton } from '@hareui/vue'
-
-const types = [
-  { type: 'shimmer', label: 'Shimmer' },
-  { type: 'pulse', label: 'Pulse' },
-  { type: 'none', label: 'None' },
-] as const
-</script>
-
 <template>
   <div class="grid w-full max-w-xl grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-3">
     <div v-for="item in types" :key="item.type" class="space-y-2">
@@ -20,3 +10,13 @@ const types = [
     </div>
   </div>
 </template>
+
+<script setup lang="ts">
+import { Skeleton } from '@hareui/vue'
+
+const types = [
+  { type: 'shimmer', label: 'Shimmer' },
+  { type: 'pulse', label: 'Pulse' },
+  { type: 'none', label: 'None' },
+] as const
+</script>

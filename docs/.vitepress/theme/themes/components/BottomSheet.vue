@@ -1,93 +1,3 @@
-<script setup lang="ts">
-// Port of HeroUI docs `themes/components/bottom-sheet.tsx` (react-aria Modal + framer-motion drag).
-// react-aria `ModalOverlay`/`Modal`/`Dialog` -> Reka dialog primitives (the same ones HareUI's Modal is built on);
-// framer-motion:
-//   enter/exit `duration: 0.5, ease: cubicBezier(0.32, 0.72, 0, 1)` -> CSS keyframe animations (Reka's Presence waits on animations),
-//   `y -> backdrop rgba(0,0,0, 0.4 -> 0)` over [0, 600]               -> `--bottom-sheet-y` drives both the sheet and the backdrop alpha,
-//   `drag="y"`, `dragConstraints.top`, default elastic 0.5, dismissal `offset > 160 || velocity > 10` -> pointer events below,
-//   snap-back inertia (bounce)                                         -> a 0.4s CSS transition with the same easing.
-import { DialogContent, DialogOverlay, DialogPortal, DialogRoot, DialogTitle, VisuallyHidden } from 'reka-ui'
-import { ref, watch } from 'vue'
-
-const SHEET_HEIGHT = 600 // Total height of the sheet
-const SNAP_HEIGHT = 320 // Height visible at snap position
-const SNAP_OFFSET = SHEET_HEIGHT - SNAP_HEIGHT // Offset to show snap height
-const DRAG_THRESHOLD = 3 // framer-motion starts a drag after 3px
-const ELASTIC = 0.5 // framer-motion's default `dragElastic`
-
-const props = defineProps<{
-  id?: string
-  isOpen: boolean
-}>()
-const emit = defineEmits<{ 'update:isOpen': [isOpen: boolean] }>()
-defineSlots<{ default?: () => any }>()
-
-const y = ref(SNAP_OFFSET)
-const isDragging = ref(false)
-
-// A fresh open always starts at the snap position.
-watch(
-  () => props.isOpen,
-  (open) => {
-    if (open) y.value = SNAP_OFFSET
-  },
-)
-
-// Inputs that handle their own pointer gestures must not start a sheet drag.
-const OWN_GESTURES = 'input, textarea, select, [role="slider"], [data-slot*="slider"]'
-
-interface Session {
-  startY: number
-  pointerId: number
-  active: boolean
-  samples: { t: number, y: number }[]
-}
-let session: Session | null = null
-
-function onPointerDown(event: PointerEvent) {
-  if (event.button !== 0 || (event.target as HTMLElement).closest(OWN_GESTURES)) return
-  session = { startY: event.clientY, pointerId: event.pointerId, active: false, samples: [] }
-}
-
-function onPointerMove(event: PointerEvent) {
-  if (!session || event.pointerId !== session.pointerId) return
-  const offset = event.clientY - session.startY
-  if (!session.active) {
-    if (Math.abs(offset) <= DRAG_THRESHOLD) return
-    session.active = true
-    isDragging.value = true
-    ;(event.currentTarget as HTMLElement).setPointerCapture(event.pointerId)
-  }
-  // `dragConstraints.top`: dragging above the snap position is elastic.
-  y.value = SNAP_OFFSET + (offset < 0 ? offset * ELASTIC : offset)
-  const now = performance.now()
-  session.samples.push({ t: now, y: event.clientY })
-  session.samples = session.samples.filter(sample => now - sample.t <= 100)
-}
-
-function onPointerEnd(event: PointerEvent) {
-  if (!session || event.pointerId !== session.pointerId) return
-  const { active, samples, startY } = session
-  session = null
-  if (!active) return
-
-  const offset = event.clientY - startY
-  const first = samples[0]
-  const last = samples[samples.length - 1]
-  const velocity = first && last && last.t > first.t ? ((last.y - first.y) / (last.t - first.t)) * 1000 : 0
-
-  isDragging.value = false
-  if (event.type !== 'pointercancel' && (offset > SNAP_HEIGHT * 0.5 || velocity > 10)) emit('update:isOpen', false)
-  else y.value = SNAP_OFFSET
-}
-
-// React Aria focuses the dialog itself on open (see HareUI's Modal).
-function onOpenAutoFocus(event: Event) {
-  event.preventDefault()
-  ;(event.target as HTMLElement | null)?.focus({ preventScroll: true })
-}
-</script>
-
 <template>
   <DialogRoot :open="isOpen" modal @update:open="emit('update:isOpen', $event)">
     <DialogPortal>
@@ -120,6 +30,126 @@ function onOpenAutoFocus(event: Event) {
     </DialogPortal>
   </DialogRoot>
 </template>
+
+<script setup lang="ts">
+// Port of HeroUI docs `themes/components/bottom-sheet.tsx` (react-aria Modal + framer-motion drag).
+// react-aria `ModalOverlay`/`Modal`/`Dialog` -> Reka dialog primitives (the same ones HareUI's Modal is built on);
+// framer-motion:
+//   enter/exit `duration: 0.5, ease: cubicBezier(0.32, 0.72, 0, 1)` -> CSS keyframe animations (Reka's Presence waits on animations),
+//   `y -> backdrop rgba(0,0,0, 0.4 -> 0)` over [0, 600]               -> `--bottom-sheet-y` drives both the sheet and the backdrop alpha,
+//   `drag="y"`, `dragConstraints.top`, default elastic 0.5, dismissal `offset > 160 || velocity > 10` -> pointer events below,
+//   snap-back inertia (bounce)                                         -> a 0.4s CSS transition with the same easing.
+import {
+  DialogContent,
+  DialogOverlay,
+  DialogPortal,
+  DialogRoot,
+  DialogTitle,
+  VisuallyHidden,
+} from 'reka-ui'
+import type { VNode } from 'vue'
+import { ref, watch } from 'vue'
+
+// Total height of the sheet
+const SHEET_HEIGHT = 600
+
+// Height visible at snap position
+const SNAP_HEIGHT = 320
+
+// Offset to show snap height
+const SNAP_OFFSET = SHEET_HEIGHT - SNAP_HEIGHT
+
+// framer-motion starts a drag after 3px
+const DRAG_THRESHOLD = 3
+
+// framer-motion's default `dragElastic`
+const ELASTIC = 0.5
+
+const props = defineProps<{
+  id?: string
+  isOpen: boolean
+}>()
+
+const emit = defineEmits<{ 'update:isOpen': [isOpen: boolean] }>()
+defineSlots<{ default?: () => VNode[] }>()
+
+const y = ref(SNAP_OFFSET)
+const isDragging = ref(false)
+
+// A fresh open always starts at the snap position.
+watch(
+  () => props.isOpen,
+  (open) => {
+    if (open) y.value = SNAP_OFFSET
+  },
+)
+
+// Inputs that handle their own pointer gestures must not start a sheet drag.
+const OWN_GESTURES = 'input, textarea, select, [role="slider"], [data-slot*="slider"]'
+
+type Session = {
+  startY: number
+  pointerId: number
+  active: boolean
+  samples: { t: number; y: number }[]
+}
+
+let session: Session | null = null
+
+const onPointerDown = (event: PointerEvent) => {
+  if (event.button !== 0 || (event.target as HTMLElement).closest(OWN_GESTURES)) return
+  session = { startY: event.clientY, pointerId: event.pointerId, active: false, samples: [] }
+}
+
+const onPointerMove = (event: PointerEvent) => {
+  if (!session || event.pointerId !== session.pointerId) return
+  const offset = event.clientY - session.startY
+  if (!session.active) {
+    if (Math.abs(offset) <= DRAG_THRESHOLD) return
+    session.active = true
+    isDragging.value = true
+    ;(event.currentTarget as HTMLElement).setPointerCapture(event.pointerId)
+  }
+
+  // `dragConstraints.top`: dragging above the snap position is elastic.
+  y.value = SNAP_OFFSET + (offset < 0 ? offset * ELASTIC : offset)
+  const now = performance.now()
+  session.samples.push({ t: now, y: event.clientY })
+  session.samples = session.samples.filter((sample) => now - sample.t <= 100)
+}
+
+const onPointerEnd = (event: PointerEvent) => {
+  if (!session || event.pointerId !== session.pointerId) return
+  const { active, samples, startY } = session
+  session = null
+  if (!active) return
+
+  const offset = event.clientY - startY
+  const first = samples[0]
+  const last = samples[samples.length - 1]
+  const velocity =
+    first && last && last.t > first.t ? ((last.y - first.y) / (last.t - first.t)) * 1000 : 0
+
+  isDragging.value = false
+
+  const shouldDismiss =
+    event.type !== 'pointercancel' && (offset > SNAP_HEIGHT * 0.5 || velocity > 10)
+
+  if (shouldDismiss) {
+    emit('update:isOpen', false)
+
+    return
+  }
+
+  y.value = SNAP_OFFSET
+}
+
+// React Aria focuses the dialog itself on open (see HareUI's Modal).
+const onOpenAutoFocus = (event: Event) => {
+  event.preventDefault()
+  ;(event.target as HTMLElement | null)?.focus({ preventScroll: true })
+}
+</script>
 
 <style scoped>
 .bottom-sheet-overlay {

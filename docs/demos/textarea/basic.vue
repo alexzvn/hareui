@@ -1,7 +1,3 @@
-<script setup lang="ts">
-import { TextArea } from '@hareui/vue'
-</script>
-
 <template>
   <TextArea
     aria-label="Quick project update"
@@ -9,3 +5,7 @@ import { TextArea } from '@hareui/vue'
     placeholder="Share a quick project update..."
   />
 </template>
+
+<script setup lang="ts">
+import { TextArea } from '@hareui/vue'
+</script>

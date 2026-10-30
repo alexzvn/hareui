@@ -24,23 +24,26 @@ CellColorPicker is a [ColorPicker](/docs/components/color-picker) whose trigger 
 ```vue
 <template>
   <CellColorPicker label="…" :presets="…">
-    <template #label />    <!-- row label content -->
-    <template #value />    <!-- value content (receives color, hex) -->
-    <template #default />  <!-- popover content (receives color, close) -->
+    <template #label />
+    <!-- row label content -->
+    <template #value />
+    <!-- value content (receives color, hex) -->
+    <template #default />
+    <!-- popover content (receives color, close) -->
   </CellColorPicker>
 </template>
 ```
 
-| `ui` key | `data-slot` | Element |
-|---|---|---|
-| `base` | `cell-color-picker` | `<div>` root |
-| — | `color-picker` | [ColorPicker](/docs/components/color-picker) |
-| `trigger` | `color-picker-trigger` | `<button>` row |
-| `label` | `cell-color-picker-label` | `<span>` row label |
-| `valueDisplay` | `cell-color-picker-value-display` | `<span>` hex value |
-| `swatch` | `color-swatch` | [ColorSwatch](/docs/components/color-swatch) |
-| `popover` | `color-picker-popover` | popover content |
-| `presets` | `color-swatch-picker` | [ColorSwatchPicker](/docs/components/color-swatch-picker) (when `presets` is set) |
+| `ui` key       | `data-slot`                       | Element                                                                           |
+| -------------- | --------------------------------- | --------------------------------------------------------------------------------- |
+| `base`         | `cell-color-picker`               | `<div>` root                                                                      |
+| —              | `color-picker`                    | [ColorPicker](/docs/components/color-picker)                                      |
+| `trigger`      | `color-picker-trigger`            | `<button>` row                                                                    |
+| `label`        | `cell-color-picker-label`         | `<span>` row label                                                                |
+| `valueDisplay` | `cell-color-picker-value-display` | `<span>` hex value                                                                |
+| `swatch`       | `color-swatch`                    | [ColorSwatch](/docs/components/color-swatch)                                      |
+| `popover`      | `color-picker-popover`            | popover content                                                                   |
+| `presets`      | `color-swatch-picker`             | [ColorSwatchPicker](/docs/components/color-swatch-picker) (when `presets` is set) |
 
 ## Examples
 
@@ -83,7 +86,12 @@ Pass classes per part with `ui`, or replace the popover content with the default
 ```vue
 <template>
   <CellColorPicker label="Event color" :ui="{ swatch: 'rounded-md', valueDisplay: 'font-mono' }">
-    <ColorArea aria-label="Color area" color-space="hsb" x-channel="saturation" y-channel="brightness" />
+    <ColorArea
+      aria-label="Color area"
+      color-space="hsb"
+      :x="{ channel: 'saturation' }"
+      :y="{ channel: 'brightness' }"
+    />
     <ColorField aria-label="Hex" />
   </CellColorPicker>
 </template>
@@ -92,9 +100,11 @@ Pass classes per part with `ui`, or replace the popover content with the default
 ### Global Configuration
 
 ```ts
-app.use(createHareUI({
-  ui: { cellColorPicker: { slots: { trigger: 'h-10', swatch: 'size-6' } } },
-}))
+app.use(
+  createHareUI({
+    ui: { cellColorPicker: { slots: { trigger: 'h-10', swatch: 'size-6' } } },
+  }),
+)
 ```
 
 ## Styling Reference
@@ -132,7 +142,7 @@ The root is named `cell-color-picker`; the other parts keep the [ColorPicker](/d
 
 <ApiTable component="CellColorPicker" kind="emits" />
 
-### Theme
+## Theme
 
 <ApiTheme component="CellColorPicker" />
 

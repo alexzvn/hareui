@@ -25,28 +25,33 @@ TimeField renders a [Label](/docs/components/label), a group holding an optional
 ```vue
 <template>
   <TimeField label="…" description="…" error-message="…" :invalid="…">
-    <template #label />        <!-- Label content -->
-    <template #prefix />       <!-- content rendered before the segments, e.g. an icon -->
-    <template #suffix />       <!-- content rendered after the segments -->
-    <template #description />  <!-- Description content -->
-    <template #error />        <!-- FieldError content, rendered when invalid -->
+    <template #label />
+    <!-- Label content -->
+    <template #prefix />
+    <!-- content rendered before the segments, e.g. an icon -->
+    <template #suffix />
+    <!-- content rendered after the segments -->
+    <template #description />
+    <!-- Description content -->
+    <template #error />
+    <!-- FieldError content, rendered when invalid -->
   </TimeField>
 </template>
 ```
 
-| `ui` key | `data-slot` | Element |
-|---|---|---|
-| `base` | `time-field` | `<div>` root |
-| — | `label` | [Label](/docs/components/label) (iff `label` / `#label`) |
-| `group` | `date-input-group` | `<div role="group">` holding the prefix, segments and suffix |
-| `prefix` | `date-input-group-prefix` | `<span>` (iff `#prefix`) |
-| `input` | `date-input-group-input` | `<div>` wrapping the segments |
-| `segment` | `date-input-group-segment` | one per time part (hour, minute, second, day period) |
-| `suffix` | `date-input-group-suffix` | `<span>` (iff `#suffix`) |
-| — | `description` | [Description](/docs/components/description) (iff `description` / `#description`) |
-| — | `field-error` | [FieldError](/docs/components/field-error) (while invalid, iff `error-message` / `#error` / validation errors) |
+| `ui` key  | `data-slot`                | Element                                                                                                        |
+| --------- | -------------------------- | -------------------------------------------------------------------------------------------------------------- |
+| `base`    | `time-field`               | `<div>` root                                                                                                   |
+| —         | `label`                    | [Label](/docs/components/label) (iff `label` / `#label`)                                                       |
+| `group`   | `date-input-group`         | `<div role="group">` holding the prefix, segments and suffix                                                   |
+| `prefix`  | `date-input-group-prefix`  | `<span>` (iff `#prefix`)                                                                                       |
+| `input`   | `date-input-group-input`   | `<div>` wrapping the segments                                                                                  |
+| `segment` | `date-input-group-segment` | one per time part (hour, minute, second, day period)                                                           |
+| `suffix`  | `date-input-group-suffix`  | `<span>` (iff `#suffix`)                                                                                       |
+| —         | `description`              | [Description](/docs/components/description) (iff `description` / `#description`)                               |
+| —         | `field-error`              | [FieldError](/docs/components/field-error) (while invalid, iff `error-message` / `#error` / validation errors) |
 
-> **TimeField** combines a label, segmented time input, description, and error into a single accessible component. Values are [`@internationalized/date`](https://react-aria.adobe.com/internationalized/date/) `Time` objects — the same type HeroUI uses. It shares its input group with [DateField](/docs/components/date-field).
+> **TimeField** combines a label, segmented time input, description, and error into a single accessible component. Values are [`@internationalized/date`](https://www.npmjs.com/package/@internationalized/date) `Time` objects. It shares its input group with [DateField](/docs/components/date-field).
 
 ## Examples
 
@@ -106,7 +111,7 @@ TimeField supports validation with `min-value`, `max-value`, and custom validati
 
 ### Render Function
 
-HeroUI's `render` prop replaces the root element and lets sub-parts render-prop their own markup. Option A has no compound parts to render-prop into; attributes you pass to `TimeField` fall through to the root element instead.
+Attributes you pass to `TimeField` fall through to the root element instead.
 
 <ComponentPreview name="time-field/render-function" />
 
@@ -119,9 +124,11 @@ HeroUI's `render` prop replaces the root element and lets sub-parts render-prop 
 ### Global Configuration
 
 ```ts
-app.use(createHareUI({
-  ui: { timeField: { slots: { group: 'rounded-xl', segment: 'font-mono' } } },
-}))
+app.use(
+  createHareUI({
+    ui: { timeField: { slots: { group: 'rounded-xl', segment: 'font-mono' } } },
+  }),
+)
 ```
 
 ## Styling Reference
@@ -163,7 +170,7 @@ TimeField sets these data attributes:
 
 <ApiTable component="TimeField" kind="emits" />
 
-### Theme
+## Theme
 
 <ApiTheme component="TimeField" />
 
@@ -173,7 +180,7 @@ TimeField sets these data attributes:
 - The field's `aria-describedby` lists the ids of the rendered description (`<id>-description`) and error (`<id>-error`)
 - `invalid` sets `aria-invalid="true"` on the field and every segment; the error is announced via `role="alert"`
 - Keyboard: <kbd>←</kbd>/<kbd>→</kbd> move between segments, <kbd>↑</kbd>/<kbd>↓</kbd> increment/decrement the focused segment (a 12-hour hour stays within its AM/PM period), <kbd>PgUp</kbd>/<kbd>PgDn</kbd> step it by a larger amount, <kbd>Home</kbd>/<kbd>End</kbd> set it to its minimum/maximum, digits type directly into the focused segment and auto-advance
-- `min-value` and `max-value` mark the field invalid on their own, matching React Aria's `useTimeFieldState` — no need to compute `invalid` yourself just for native-range feedback
+- `min-value` and `max-value` mark the field invalid on their own — no need to compute `invalid` yourself just for native-range feedback
 
 ## Related Components
 

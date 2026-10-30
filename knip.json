@@ -1,0 +1,27 @@
+{
+  "$schema": "https://unpkg.com/knip@6/schema.json",
+  "ignoreWorkspaces": ["tooling/playground", "tooling/reference"],
+  "ignoreIssues": {
+    "packages/vue/src/vite.ts": ["duplicates"]
+  },
+  "workspaces": {
+    ".": {
+      "entry": ["tooling/lint/**/*.mjs", "tooling/scripts/**/*.ts"],
+      "project": ["tooling/lint/**/*.mjs", "tooling/scripts/**/*.ts"]
+    },
+    "packages/vue": {
+      "entry": ["build/*.ts", "test/**/*.spec.ts"],
+      "project": ["src/**/*.{ts,vue,css}", "test/**/*.ts", "build/**/*.ts"]
+    },
+    "docs": {
+      "entry": ["scripts/*.ts", "demos/**/*.vue", ".vitepress/**/*.data.ts"],
+      "project": [
+        ".vitepress/**/*.{ts,vue,css}",
+        "scripts/**/*.ts",
+        "demos/**/*.vue",
+        "!.vitepress/{cache,dist,api}/**"
+      ],
+      "ignoreDependencies": ["lightningcss", "@localSearchIndex"]
+    }
+  }
+}

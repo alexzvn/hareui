@@ -1,11 +1,12 @@
-<script setup lang="ts">
-import { Avatar, Card } from '@hareui/vue'
-import HareLogo from '../../HareLogo.vue'
-import VerifiedBadgeIcon from '../icons/VerifiedBadgeIcon.vue'
-</script>
-
 <template>
-  <Card class="w-full items-start justify-center xl:w-[400px]" :ui="{ header: 'items-top w-full flex-row justify-between', content: 'flex-row text-start', footer: 'gap-2' }">
+  <Card
+    class="w-full items-start justify-center xl:w-[400px]"
+    :ui="{
+      header: 'items-top w-full flex-row justify-between',
+      content: 'flex-row text-start',
+      footer: 'gap-2',
+    }"
+  >
     <template #header>
       <div class="flex items-center gap-3">
         <Avatar size="sm">
@@ -26,7 +27,7 @@ import VerifiedBadgeIcon from '../icons/VerifiedBadgeIcon.vue'
       Building the future of UI for Vue.&nbsp;
       <br />
       <!-- One line: JSX drops the newline between the emoji and `&nbsp;`, Vue would render it as a space. -->
-      <span aria-label="rocket" role="img">🚀</span>&nbsp;A Vue port of HeroUI v3&nbsp;
+      <span aria-label="rocket" role="img">🚀</span>&nbsp;The modern UI library for Vue&nbsp;
     </p>
     <template #footer>
       <div class="flex gap-1">
@@ -40,3 +41,10 @@ import VerifiedBadgeIcon from '../icons/VerifiedBadgeIcon.vue'
     </template>
   </Card>
 </template>
+
+<script setup lang="ts">
+import { Avatar, Card } from '@hareui/vue'
+
+import HareLogo from '../../HareLogo.vue'
+import VerifiedBadgeIcon from '../icons/VerifiedBadgeIcon.vue'
+</script>

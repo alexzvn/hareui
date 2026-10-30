@@ -1,7 +1,3 @@
-<script setup lang="ts">
-import { ProgressCircle } from '@hareui/vue'
-</script>
-
 <template>
   <div class="flex items-center gap-6">
     <ProgressCircle aria-label="Default" color="default" :value="60" />
@@ -11,3 +7,7 @@ import { ProgressCircle } from '@hareui/vue'
     <ProgressCircle aria-label="Danger" color="danger" :value="60" />
   </div>
 </template>
+
+<script setup lang="ts">
+import { ProgressCircle } from '@hareui/vue'
+</script>

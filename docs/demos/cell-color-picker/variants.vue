@@ -1,7 +1,3 @@
-<script setup lang="ts">
-import { CellColorPicker } from '@hareui/vue'
-</script>
-
 <template>
   <div class="grid w-full max-w-xl gap-4 sm:grid-cols-2">
     <figure class="grid gap-2 p-3">
@@ -18,3 +14,7 @@ import { CellColorPicker } from '@hareui/vue'
     </figure>
   </div>
 </template>
+
+<script setup lang="ts">
+import { CellColorPicker } from '@hareui/vue'
+</script>

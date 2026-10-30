@@ -1,3 +1,12 @@
+<template>
+  <InlineSelect
+    v-model="sort"
+    aria-label="Sort by"
+    :items="sortOptions"
+    :ui="{ popover: 'w-44' }"
+  />
+</template>
+
 <script setup lang="ts">
 import type { ListBoxItem, SelectValue } from '@hareui/vue'
 import { InlineSelect } from '@hareui/vue'
@@ -12,7 +21,3 @@ const sortOptions: ListBoxItem[] = [
 
 const sort = ref<SelectValue>('newest')
 </script>
-
-<template>
-  <InlineSelect v-model="sort" aria-label="Sort by" :items="sortOptions" :ui="{ popover: 'w-44' }" />
-</template>

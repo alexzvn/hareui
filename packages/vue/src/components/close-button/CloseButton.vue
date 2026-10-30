@@ -1,53 +1,10 @@
-<script lang="ts">
-import type { ComponentSlots, ComponentVariants } from '../../types/tv'
-import theme from './theme'
-
-type CloseButton = typeof theme
-
-export interface CloseButtonProps {
-  /**
-   * Visual style of the close button.
-   * @defaultValue 'default'
-   */
-  variant?: ComponentVariants<CloseButton>['variant']
-  /**
-   * Whether the button is disabled.
-   * @defaultValue false
-   */
-  disabled?: boolean
-  /**
-   * Accessible label of the button.
-   * @defaultValue 'Close'
-   */
-  ariaLabel?: string
-  /** Additional classes merged into the root element. */
-  class?: any
-  /** Per-slot class overrides. */
-  ui?: ComponentSlots<CloseButton>
-}
-
-export interface CloseButtonSlots {
-  /** Replaces the default close icon. */
-  default?: () => any
-}
-</script>
-
-<script setup lang="ts">
-import { useComponentUI } from '../../composables/useComponentUI'
-
-const props = withDefaults(defineProps<CloseButtonProps>(), { ariaLabel: 'Close' })
-defineSlots<CloseButtonSlots>()
-
-const ui = useComponentUI('closeButton', theme, () => ({ variant: props.variant }))
-</script>
-
 <template>
   <button
     type="button"
     data-slot="close-button"
     :aria-label="ariaLabel"
     :disabled="disabled || undefined"
-    :class="ui.base({ class: [props.ui?.base, props.class] })"
+    :class="ui.base()"
   >
     <slot>
       <svg
@@ -59,7 +16,7 @@ const ui = useComponentUI('closeButton', theme, () => ({ variant: props.variant 
         viewBox="0 0 16 16"
         width="16"
         xmlns="http://www.w3.org/2000/svg"
-        :class="ui.icon({ class: props.ui?.icon })"
+        :class="ui.icon()"
       >
         <path
           clip-rule="evenodd"
@@ -71,3 +28,19 @@ const ui = useComponentUI('closeButton', theme, () => ({ variant: props.variant 
     </slot>
   </button>
 </template>
+
+<script setup lang="ts">
+import { useComponentUI } from '@/composables/useComponentUI'
+
+import type { CloseButtonProps, CloseButtonSlots } from './CloseButton.types'
+import theme from './theme'
+
+const props = withDefaults(defineProps<CloseButtonProps>(), { ariaLabel: 'Close' })
+defineSlots<CloseButtonSlots>()
+
+const ui = useComponentUI('closeButton', {
+  theme,
+  variantProps: () => ({ variant: props.variant }),
+  props,
+})
+</script>

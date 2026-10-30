@@ -1,0 +1,29 @@
+{
+  "$schema": "./node_modules/oxfmt/configuration_schema.json",
+  "semi": false,
+  "singleQuote": true,
+  "printWidth": 100,
+  "trailingComma": "all",
+  "vueIndentScriptAndStyle": false,
+  "sortPackageJson": false,
+  "ignorePatterns": [
+    "**/dist",
+    "**/node_modules",
+    "bun.lock",
+    "packages/herouse",
+    "docs/.vitepress/cache",
+    "docs/.vitepress/dist",
+    "docs/.vitepress/api",
+    "docs/public/related-components",
+    ".agents/**/*.md",
+    "*.timestamp-*.mjs",
+    "docs/.vitepress/theme/fumadocs/typography.mjs",
+    "tooling/playground",
+    "tooling/reference",
+    "tooling/parity"
+  ],
+  "sortImports": {
+    "groups": ["builtin", "external", "internal", ["parent", "sibling", "index"], "unknown"],
+    "internalPattern": ["@/"]
+  }
+}

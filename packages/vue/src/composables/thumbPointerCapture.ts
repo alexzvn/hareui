@@ -6,12 +6,13 @@
  * capture to the thumb being dragged: the one Reka focused on slide start, or the only thumb. Reka's
  * move/up handlers only check that the event target holds the capture, so dragging is unaffected.
  */
-export function captureOnDraggedThumb(event: PointerEvent): void {
+export const captureOnDraggedThumb = (event: PointerEvent): void => {
   const root = event.currentTarget as HTMLElement
   const target = event.target as HTMLElement
   const thumbs = root.querySelectorAll<HTMLElement>('[role="slider"]')
   const active = document.activeElement
-  const thumb = [...thumbs].find(el => el === active) ?? (thumbs.length === 1 ? thumbs[0] : undefined)
-  if (thumb && thumb !== target)
-    thumb.setPointerCapture(event.pointerId)
+  const thumb =
+    [...thumbs].find((el) => el === active) ?? (thumbs.length === 1 ? thumbs[0] : undefined)
+
+  if (thumb && thumb !== target) thumb.setPointerCapture(event.pointerId)
 }

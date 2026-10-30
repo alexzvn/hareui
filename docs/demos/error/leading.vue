@@ -1,12 +1,11 @@
-<script setup lang="ts">
-import { Icon } from '@iconify/vue'
-import { Error } from '@hareui/vue'
-</script>
-
 <template>
   <Error
     class="min-h-96"
-    :error="{ statusCode: 404, statusMessage: 'Page not found', message: 'The page you are looking for does not exist.' }"
+    :error="{
+      statusCode: 404,
+      statusMessage: 'Page not found',
+      message: 'The page you are looking for does not exist.',
+    }"
   >
     <template #leading>
       <span class="flex size-14 items-center justify-center rounded-full bg-accent-soft">
@@ -15,3 +14,8 @@ import { Error } from '@hareui/vue'
     </template>
   </Error>
 </template>
+
+<script setup lang="ts">
+import { Error } from '@hareui/vue'
+import { Icon } from '@iconify/vue'
+</script>

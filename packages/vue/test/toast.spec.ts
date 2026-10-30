@@ -1,28 +1,32 @@
 import { mount } from '@vue/test-utils'
 import { afterEach, describe, expect, it, vi } from 'vitest'
 import { h, nextTick } from 'vue'
-import ToastProvider from '../src/components/toast-provider/ToastProvider.vue'
-import { toast, toastQueue, useToast } from '../src/components/toast-provider/useToast'
+
+import ToastProvider from '@/components/toast-provider/ToastProvider.vue'
+import { toast, toastQueue, useToast } from '@/components/toast-provider/useToast'
+
 import { expectAccessible } from './a11y'
 
-function mountProvider() {
+const mountProvider = () => {
   return mount(ToastProvider, { props: { portal: false } })
 }
 
 // Local stand-in for Promise.withResolvers, so the library's tsconfig `lib` doesn't need ES2024.
-function withResolvers<T>() {
+const withResolvers = <T>() => {
   let resolve!: (value: T) => void
   let reject!: (reason?: unknown) => void
   const promise = new Promise<T>((res, rej) => {
     resolve = res
     reject = rej
   })
+
   return { promise, resolve, reject }
 }
 
-function delay(ms: number): Promise<void> {
+const delay = (ms: number): Promise<void> => {
   const { promise, resolve } = withResolvers<void>()
   setTimeout(resolve, ms)
+
   return promise
 }
 
@@ -49,7 +53,12 @@ describe('toast', () => {
 
   it('forwards non-prop attributes to the region without an extraneous-attrs warning', async () => {
     const warn = vi.spyOn(console, 'warn').mockImplementation(() => {})
-    const wrapper = mount(ToastProvider, { props: { portal: false }, attrs: { 'data-design-theme': 'kumo', 'id': 'toasts' } })
+
+    const wrapper = mount(ToastProvider, {
+      props: { portal: false },
+      attrs: { 'data-design-theme': 'kumo', id: 'toasts' },
+    })
+
     toast('Scoped', { timeout: 0 })
     await nextTick()
 
@@ -72,6 +81,7 @@ describe('toast', () => {
     expect(wrapper.find('[data-slot=toast]').exists()).toBe(true)
 
     toast.close(key)
+
     // exitDuration defaults to 300ms; the toast stays mounted (exiting) until it elapses.
     await nextTick()
     expect(wrapper.find('[data-slot=toast]').attributes('data-exiting')).toBe('true')
@@ -122,9 +132,10 @@ describe('toast', () => {
     const { promise: pending, resolve: resolvePromise } = withResolvers<string>()
     toast.promise(pending, {
       loading: 'Loading…',
-      success: data => `Done: ${data}`,
+      success: (data) => `Done: ${data}`,
       error: 'Failed',
     })
+
     await nextTick()
     expect(wrapper.find('[data-slot=toast-title]').text()).toBe('Loading…')
     expect(wrapper.find('[data-slot=spinner]').exists()).toBe(true)
@@ -146,8 +157,9 @@ describe('toast', () => {
     toast.promise(pending, {
       loading: 'Loading…',
       success: 'Done',
-      error: error => `Failed: ${error.message}`,
+      error: (error) => `Failed: ${error.message}`,
     })
+
     await nextTick()
 
     rejectPromise(new Error('boom'))
@@ -180,7 +192,10 @@ describe('toast', () => {
       trigger.focus()
       expect(document.activeElement).toBe(trigger)
 
-      trigger.dispatchEvent(new KeyboardEvent('keydown', { key: 'F6', code: 'F6', bubbles: true, cancelable: true }))
+      trigger.dispatchEvent(
+        new KeyboardEvent('keydown', { key: 'F6', code: 'F6', bubbles: true, cancelable: true }),
+      )
+
       await nextTick()
 
       const region = document.querySelector<HTMLElement>('[data-slot=toast-region]')!
@@ -195,11 +210,12 @@ describe('toast', () => {
       await nextTick()
       expect(toastEls()).toHaveLength(2)
 
-      const closing = toastEls().find(el => el.textContent?.includes('First'))!
-      const remaining = toastEls().find(el => el.textContent?.includes('Second'))!
+      const closing = toastEls().find((el) => el.textContent?.includes('First'))!
+      const remaining = toastEls().find((el) => el.textContent?.includes('Second'))!
       const close = closing.querySelector<HTMLButtonElement>('[data-slot=toast-close]')!
       close.focus()
       expect(document.activeElement).toBe(close)
+
       // Enter / Space on a focused button activates it as a click
       close.click()
       await nextTick()
@@ -247,23 +263,52 @@ describe('toast', () => {
       document.body.innerHTML = ''
     })
 
-    type ToastSlotProps = { content: { title?: unknown, description?: unknown }, close: () => void, titleId: string, descriptionId: string }
-    function mountRegion(props: Record<string, unknown> = {}, slots: Record<string, (p: ToastSlotProps) => unknown> = {}) {
-      mounted = mount(ToastProvider, { props: { portal: false, ...props }, slots, attachTo: document.body })
+    type ToastSlotProps = {
+      content: { title?: unknown; description?: unknown }
+      close: () => void
+      titleId: string
+      descriptionId: string
+    }
+
+    const mountRegion = (
+      props: Record<string, unknown> = {},
+      slots: Record<string, (p: ToastSlotProps) => unknown> = {},
+    ) => {
+      mounted = mount(ToastProvider, {
+        props: { portal: false, ...props },
+        slots,
+        attachTo: document.body,
+      })
+
       return mounted
     }
+
     const toastEl = () => document.querySelector<HTMLElement>('[data-slot=toast]')!
+
     // The provider's root is a (possibly disabled) Teleport, so audit the region element itself.
     const region = () => document.querySelector<HTMLElement>('[data-slot=toast-region]')!
 
     const cases: Array<[string, () => void]> = [
-      ['a title and description', () => toast('Saved', { description: 'Your changes are live.', timeout: 0 })],
+      [
+        'a title and description',
+        () => toast('Saved', { description: 'Your changes are live.', timeout: 0 }),
+      ],
       ['a title only', () => toast('Saved', { timeout: 0 })],
-      ['a status variant', () => toast.danger('Upload failed', { description: 'Try again.', timeout: 0 })],
-      ['an action button', () => toast('Message archived', { action: { label: 'Undo' }, timeout: 0 })],
+      [
+        'a status variant',
+        () => toast.danger('Upload failed', { description: 'Try again.', timeout: 0 }),
+      ],
+      [
+        'an action button',
+        () => toast('Message archived', { action: { label: 'Undo' }, timeout: 0 }),
+      ],
       ['a loading indicator', () => toast('Uploading…', { isLoading: true, timeout: 0 })],
-      ['more toasts than maxVisibleToasts', () => ['One', 'Two', 'Three', 'Four', 'Five'].forEach(t => toast(t, { timeout: 0 }))],
+      [
+        'more toasts than maxVisibleToasts',
+        () => ['One', 'Two', 'Three', 'Four', 'Five'].forEach((t) => toast(t, { timeout: 0 })),
+      ],
     ]
+
     it.each(cases)('has no axe violations with %s', async (_name, show) => {
       mountRegion()
       show()
@@ -274,27 +319,41 @@ describe('toast', () => {
     })
 
     it('has no axe violations with a #toast slot that uses the title / description ids, which name and describe the toast', async () => {
-      mountRegion({}, {
-        toast: ({ content, close, titleId, descriptionId }) => [
-          h('div', { role: 'alert', 'aria-atomic': 'true' }, [
-            h('p', { id: titleId }, String(content.title)),
-            h('p', { id: descriptionId }, String(content.description)),
-          ]),
-          h('button', { onClick: close }, 'Dismiss'),
-        ],
-      })
+      mountRegion(
+        {},
+        {
+          toast: ({ content, close, titleId, descriptionId }) => [
+            h('div', { role: 'alert', 'aria-atomic': 'true' }, [
+              h('p', { id: titleId }, String(content.title)),
+              h('p', { id: descriptionId }, String(content.description)),
+            ]),
+            h('button', { onClick: close }, 'Dismiss'),
+          ],
+        },
+      )
+
       toast('Custom', { description: 'Rendered by the slot', timeout: 0 })
       await nextTick()
       await nextTick()
       await expectAccessible(region())
-      expect(document.getElementById(toastEl().getAttribute('aria-labelledby')!)?.textContent).toBe('Custom')
-      expect(document.getElementById(toastEl().getAttribute('aria-describedby')!)?.textContent).toBe('Rendered by the slot')
+
+      expect(document.getElementById(toastEl().getAttribute('aria-labelledby')!)?.textContent).toBe(
+        'Custom',
+      )
+
+      expect(
+        document.getElementById(toastEl().getAttribute('aria-describedby')!)?.textContent,
+      ).toBe('Rendered by the slot')
     })
 
     it('a #toast slot that ignores the ids leaves no dangling aria-labelledby / aria-describedby', async () => {
-      mountRegion({}, {
-        toast: ({ content }) => h('p', String(content.title)),
-      })
+      mountRegion(
+        {},
+        {
+          toast: ({ content }) => h('p', String(content.title)),
+        },
+      )
+
       toast('Custom', { description: 'Detail', timeout: 0 })
       await nextTick()
       await nextTick()
@@ -320,8 +379,14 @@ describe('toast', () => {
       const el = toastEl()
       expect(el.getAttribute('role')).toBe('alertdialog')
       expect(el.getAttribute('aria-modal')).toBe('false')
-      expect(document.getElementById(el.getAttribute('aria-labelledby')!)?.textContent).toBe('Saved')
-      expect(document.getElementById(el.getAttribute('aria-describedby')!)?.textContent).toBe('Your changes are live.')
+
+      expect(document.getElementById(el.getAttribute('aria-labelledby')!)?.textContent).toBe(
+        'Saved',
+      )
+
+      expect(document.getElementById(el.getAttribute('aria-describedby')!)?.textContent).toBe(
+        'Your changes are live.',
+      )
     })
 
     it('has no dangling aria-describedby without a description', async () => {
@@ -329,7 +394,10 @@ describe('toast', () => {
       toast('Saved', { timeout: 0 })
       await nextTick()
       expect(toastEl().hasAttribute('aria-describedby')).toBe(false)
-      expect(document.getElementById(toastEl().getAttribute('aria-labelledby')!)?.textContent).toBe('Saved')
+
+      expect(document.getElementById(toastEl().getAttribute('aria-labelledby')!)?.textContent).toBe(
+        'Saved',
+      )
     })
 
     it('announces the content through an atomic role="alert" live region revealed after mount, like React Aria', async () => {
@@ -352,7 +420,10 @@ describe('toast', () => {
       const close = toastEl().querySelector<HTMLButtonElement>('[data-slot=toast-close]')!
       expect(close.tagName).toBe('BUTTON')
       expect(close.getAttribute('aria-label')).toBe('Close')
-      expect(toastEl().querySelector('[data-slot=toast-default-icon]')!.getAttribute('aria-hidden')).toBe('true')
+
+      expect(
+        toastEl().querySelector('[data-slot=toast-default-icon]')!.getAttribute('aria-hidden'),
+      ).toBe('true')
     })
 
     it('the frontmost toast is tabbable and toasts past maxVisibleToasts are hidden and inert', async () => {
@@ -363,11 +434,12 @@ describe('toast', () => {
       await nextTick()
       await nextTick()
       const els = [...document.querySelectorAll<HTMLElement>('[data-slot=toast]')]
-      const byTitle = (t: string) => els.find(el => el.textContent?.includes(t))!
+      const byTitle = (t: string) => els.find((el) => el.textContent?.includes(t))!
       expect(byTitle('Three').getAttribute('data-frontmost')).toBe('true')
       expect(byTitle('Three').tabIndex).toBe(0)
-      const hidden = els.filter(el => el.getAttribute('data-hidden') === 'true')
+      const hidden = els.filter((el) => el.getAttribute('data-hidden') === 'true')
       expect(hidden.length).toBeGreaterThan(0)
+
       for (const el of hidden) {
         expect(el.getAttribute('aria-hidden')).toBe('true')
         expect(el.hasAttribute('inert')).toBe(true)
@@ -381,6 +453,7 @@ describe('toast', () => {
       toast.close(key)
       await nextTick()
       expect(toastEl().getAttribute('aria-hidden')).toBe('true')
+
       for (const control of toastEl().querySelectorAll<HTMLElement>('button'))
         expect(control.tabIndex).toBe(-1)
     })
@@ -390,12 +463,26 @@ describe('toast', () => {
       toast('Saved', { timeout: 0 })
       await nextTick()
       const region = document.querySelector<HTMLElement>('[data-slot=toast-region]')!
-      document.body.dispatchEvent(new KeyboardEvent('keydown', { key: '†', code: 'KeyT', altKey: true, bubbles: true, cancelable: true }))
+
+      document.body.dispatchEvent(
+        new KeyboardEvent('keydown', {
+          key: '†',
+          code: 'KeyT',
+          altKey: true,
+          bubbles: true,
+          cancelable: true,
+        }),
+      )
+
       expect(document.activeElement).toBe(region)
 
       const close = toastEl().querySelector<HTMLButtonElement>('[data-slot=toast-close]')!
       close.focus()
-      close.dispatchEvent(new KeyboardEvent('keydown', { key: 'Escape', bubbles: true, cancelable: true }))
+
+      close.dispatchEvent(
+        new KeyboardEvent('keydown', { key: 'Escape', bubbles: true, cancelable: true }),
+      )
+
       expect(region.contains(document.activeElement)).toBe(false)
     })
   })

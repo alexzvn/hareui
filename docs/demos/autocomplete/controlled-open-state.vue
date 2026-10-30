@@ -1,3 +1,22 @@
+<template>
+  <div class="space-y-4">
+    <Autocomplete
+      v-model:open="isOpen"
+      clearable
+      class="w-[256px]"
+      label="State"
+      placeholder="Select one"
+      search-label="Search states"
+      search-placeholder="Search states..."
+      :items="items"
+    >
+      <template #empty> No results found </template>
+    </Autocomplete>
+    <Button @click="isOpen = !isOpen"> {{ isOpen ? 'Close' : 'Open' }} Autocomplete </Button>
+    <p class="text-sm text-muted">Autocomplete is {{ isOpen ? 'open' : 'closed' }}</p>
+  </div>
+</template>
+
 <script setup lang="ts">
 import type { ListBoxItem } from '@hareui/vue'
 import { Autocomplete, Button } from '@hareui/vue'
@@ -14,28 +33,3 @@ const items: ListBoxItem[] = [
 
 const isOpen = ref(false)
 </script>
-
-<template>
-  <div class="space-y-4">
-    <Autocomplete
-      v-model:open="isOpen"
-      clearable
-      class="w-[256px]"
-      label="State"
-      placeholder="Select one"
-      search-label="Search states"
-      search-placeholder="Search states..."
-      :items="items"
-    >
-      <template #empty>
-        No results found
-      </template>
-    </Autocomplete>
-    <Button @click="isOpen = !isOpen">
-      {{ isOpen ? 'Close' : 'Open' }} Autocomplete
-    </Button>
-    <p class="text-sm text-muted">
-      Autocomplete is {{ isOpen ? 'open' : 'closed' }}
-    </p>
-  </div>
-</template>

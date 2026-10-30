@@ -1,253 +1,3 @@
-<script lang="ts">
-import type { ValidateFn, ValidationResult } from '../../composables/useFieldValidation'
-import type { ComponentSlots } from '../../types/tv'
-import type { ValidationBehavior } from '../form/context'
-import type { FormFieldProps } from '../form/types'
-import theme from './theme'
-
-type NumberField = typeof theme
-
-export interface NumberFieldProps extends FormFieldProps {
-  /** Label text rendered above the group. */
-  label?: string
-  /** Helper text rendered below the group. Hidden while the field is invalid. */
-  description?: string
-  /** Error message rendered below the group while invalid. Defaults to the validation errors. */
-  errorMessage?: string
-  /**
-   * The id of the input; label, description and error ids derive from it.
-   * @defaultValue useId()
-   */
-  id?: string
-  /** The name of the value, used when submitting a form. */
-  name?: string
-  /** Temporary text shown when the input is empty. */
-  placeholder?: string
-  /** The initial value when uncontrolled (no `v-model`). */
-  defaultValue?: number
-  /** The smallest allowed value. */
-  min?: number
-  /** The largest allowed value. */
-  max?: number
-  /**
-   * The amount the value changes per increment/decrement. When set, values are also snapped to it
-   * (relative to `min`); when unset, they're only clamped to `min`/`max`.
-   * @defaultValue 1 (0.01 with `formatOptions.style: 'percent'`)
-   */
-  step?: number
-  /** Formatting options for the displayed value (`Intl.NumberFormat`). */
-  formatOptions?: Intl.NumberFormatOptions
-  /** Locale used to format and parse the value. Defaults to the `ConfigProvider` locale. */
-  locale?: string
-  /**
-   * Visual variant of the group.
-   * @defaultValue 'primary'
-   */
-  variant?: 'primary' | 'secondary'
-  /**
-   * Whether the field takes the full width of its container.
-   * @defaultValue false
-   */
-  fullWidth?: boolean
-  /**
-   * Whether to render the increment button.
-   * @defaultValue true
-   */
-  increment?: boolean
-  /**
-   * Whether to render the decrement button.
-   * @defaultValue true
-   */
-  decrement?: boolean
-  /**
-   * Whether the field is disabled.
-   * @defaultValue false
-   */
-  disabled?: boolean
-  /**
-   * Whether the field is invalid. Overrides validation when set.
-   * @defaultValue undefined
-   */
-  invalid?: boolean
-  /**
-   * Whether the field is required.
-   * @defaultValue false
-   */
-  required?: boolean
-  /**
-   * Whether the value can be selected but not changed.
-   * @defaultValue false
-   */
-  readonly?: boolean
-  /** Validates the committed value (`NaN` while empty). Return an error message (or several) when invalid. */
-  validate?: ValidateFn<number>
-  /**
-   * `native` blocks form submission and shows errors on commit or submit; `aria` shows errors in realtime.
-   * Defaults to the surrounding `Form`.
-   * @defaultValue 'native'
-   */
-  validationBehavior?: ValidationBehavior
-  /** Additional classes merged into the root element. */
-  class?: any
-  /** Per-slot class overrides. */
-  ui?: ComponentSlots<NumberField>
-}
-
-export interface NumberFieldSlots {
-  /** Label content. Replaces the `label` prop. */
-  label?: () => any
-  /** Increment button content. Defaults to a plus icon. */
-  increment?: () => any
-  /** Decrement button content. Defaults to a minus icon. */
-  decrement?: () => any
-  /** Description content. Replaces the `description` prop. */
-  description?: () => any
-  /** Error content, rendered while invalid. Replaces the `errorMessage` prop. */
-  error?: (props: ValidationResult) => any
-}
-</script>
-
-<script setup lang="ts">
-import { NumberFieldDecrement, NumberFieldIncrement, NumberFieldInput, NumberFieldRoot } from 'reka-ui'
-import { computed, getCurrentInstance, onBeforeUnmount, onMounted, ref, useAttrs, useId, useTemplateRef, watch } from 'vue'
-import { useComponentUI } from '../../composables/useComponentUI'
-import { useFieldValidation } from '../../composables/useFieldValidation'
-import { useSlotOutlet } from '../../composables/useSlotOutlet'
-import { snapNumber } from '../../utils/number'
-import { useFieldsetDisabled } from '../fieldset/context'
-import Description from '../description/Description.vue'
-import FieldError from '../field-error/FieldError.vue'
-import Label from '../label/Label.vue'
-
-defineOptions({ inheritAttrs: false })
-
-// `invalid: undefined`: an absent boolean would cast to `false`, which counts as controlled-valid and hides validation errors
-const props = withDefaults(defineProps<NumberFieldProps>(), { increment: true, decrement: true, invalid: undefined })
-const slots = defineSlots<NumberFieldSlots>()
-const DecrementOutlet = useSlotOutlet(slots, 'decrement')
-const IncrementOutlet = useSlotOutlet(slots, 'increment')
-/** The numeric value; `undefined` while the input is empty. */
-const modelValue = defineModel<number | null>()
-// A second `defineEmits` for `update:modelValue` would clash with defineModel's emit type, so the forced emit below
-// goes through the instance.
-const instance = getCurrentInstance()
-
-// As in react-stately's useNumberFieldState: the incoming value and default are clamped into range
-// (and snapped to `step` when one is given) before display; the step falls back to 0.01 for percents.
-const effectiveStep = computed(() => props.step ?? (props.formatOptions?.style === 'percent' ? 0.01 : undefined))
-function snap<T extends number | null | undefined>(value: T): T {
-  return snapNumber(value, props.min, props.max, props.step)
-}
-const displayValue = computed(() => snap(modelValue.value))
-
-// The form value is a sibling `<input type="hidden">` after the root, as in RAC (not Reka's in-root input):
-// form data carries the raw number, and layouts like `space-y-*` treat the field exactly as HeroUI's.
-// Tracked locally so uncontrolled fields submit `defaultValue` without emitting an update on mount.
-const formValue = ref<number | null | undefined>(displayValue.value ?? snap(props.defaultValue))
-watch(displayValue, (value) => {
-  formValue.value = value
-})
-
-const root = useTemplateRef<HTMLElement>('root')
-const isDisabled = useFieldsetDisabled(() => props.disabled)
-
-const { validation, commitValidation } = useFieldValidation({
-  formField: props,
-  // As in RAC: the committed number, `NaN` while empty
-  value: () => formValue.value ?? Number.NaN,
-  validate: () => props.validate,
-  invalid: () => props.invalid,
-  validationBehavior: () => props.validationBehavior,
-  name: () => props.name,
-  root: () => root.value,
-  onReset: () => {
-    formValue.value = snap(props.defaultValue)
-    modelValue.value = formValue.value
-  },
-})
-const invalid = computed(() => validation.value.isInvalid)
-
-function onUpdate(value: number | undefined) {
-  formValue.value = value
-  modelValue.value = value
-  // RAC commits validation on blur / Enter and on every stepper press
-  commitValidation()
-}
-
-// RAC commits an emptied input as "no value" (`onChange(NaN)`, an empty form value). Reka's applyInputValue
-// clears its own state but, in uncontrolled mode, never emits `undefined` (its passive v-model only emits values
-// that differ from the absent prop), so commit the empty value here. Runs after Reka's blur / Enter handler.
-function onCommitEmpty(event: Event) {
-  if ((event.target as HTMLInputElement).value !== '' || formValue.value == null)
-    return
-  formValue.value = undefined
-  if (modelValue.value == null)
-    instance?.emit('update:modelValue', undefined)
-  else
-    modelValue.value = undefined
-  commitValidation()
-}
-function onKeydown(event: KeyboardEvent) {
-  if (event.key === 'Enter' && !event.isComposing)
-    onCommitEmpty(event)
-}
-
-// RAC's spin button moves PageUp / PageDown by a single step (`onIncrementPage` = `onIncrement`); Reka moves 10 steps.
-// A capture listener on the root runs ahead of Reka's handler on the input and hands Reka the matching arrow key.
-// It is attached natively: a Vue `@keydown.capture` invoker would timestamp the re-dispatched event, and Vue's
-// invoker on the input then drops it as "dispatched before attach" when the key lands right after mount.
-function onKeydownCapture(event: KeyboardEvent) {
-  const target = event.target as HTMLElement
-  if ((event.key !== 'PageUp' && event.key !== 'PageDown') || event.isComposing || target.dataset.slot !== 'number-field-input')
-    return
-  event.preventDefault()
-  event.stopImmediatePropagation()
-  target.dispatchEvent(new KeyboardEvent('keydown', { key: event.key === 'PageUp' ? 'ArrowUp' : 'ArrowDown', cancelable: true }))
-}
-onMounted(() => root.value?.addEventListener('keydown', onKeydownCapture, true))
-onBeforeUnmount(() => root.value?.removeEventListener('keydown', onKeydownCapture, true))
-
-// `aria-label` / `aria-labelledby` name the input (as in HeroUI), not the wrapper div
-const attrs = useAttrs()
-const rootAttrs = computed(() => {
-  const { 'aria-label': _label, 'aria-labelledby': _labelledby, ...rest } = attrs
-  return rest
-})
-
-const autoId = useId()
-const id = computed(() => props.id ?? autoId)
-const hasLabel = computed(() => !!(props.label || slots.label))
-const hasDescription = computed(() => !!(props.description || slots.description))
-const hasError = computed(() => invalid.value && !!(props.errorMessage || slots.error || validation.value.validationErrors.length))
-const descriptionId = computed(() => `${id.value}-description`)
-const errorId = computed(() => `${id.value}-error`)
-const describedBy = computed(() => [
-  hasDescription.value ? descriptionId.value : undefined,
-  hasError.value ? errorId.value : undefined,
-].filter(Boolean).join(' ') || undefined)
-
-// As in RAC: the stepper buttons are named after the field ("Increase Width") and control its input
-const fieldName = computed(() => (attrs['aria-label'] as string | undefined) ?? props.label)
-const incrementLabel = computed(() => fieldName.value ? `Increase ${fieldName.value}` : 'Increase')
-const decrementLabel = computed(() => fieldName.value ? `Decrease ${fieldName.value}` : 'Decrease')
-
-const ui = useComponentUI('numberField', theme, () => ({ variant: props.variant, fullWidth: props.fullWidth }))
-
-// RAC Group's `data-focus-within` / `data-focus-visible`
-const focusWithin = ref(false)
-const focusVisible = ref(false)
-function onFocusIn(event: FocusEvent) {
-  focusWithin.value = true
-  focusVisible.value = event.target instanceof Element && event.target.matches(':focus-visible')
-}
-function onFocusOut(event: FocusEvent) {
-  if (event.currentTarget instanceof Element && event.relatedTarget instanceof Node && event.currentTarget.contains(event.relatedTarget))
-    return
-  focusWithin.value = false
-  focusVisible.value = false
-}
-</script>
-
 <template>
   <div
     ref="root"
@@ -257,21 +7,13 @@ function onFocusOut(event: FocusEvent) {
     :data-invalid="invalid ? 'true' : undefined"
     :data-required="required ? 'true' : undefined"
     :data-readonly="readonly ? 'true' : undefined"
-    :class="ui.base({ class: [props.ui?.base, props.class] })"
+    :class="ui.base()"
   >
-    <!-- Each part renders the `<slot>` outlet only when that slot is passed: a forwarded slot would otherwise make Vue force-update the child on every render -->
-    <Label v-if="hasLabel && $slots.label" :for="id" :disabled="isDisabled" :invalid="invalid" :required="required">
-      <slot name="label">
-        {{ label }}
-      </slot>
-    </Label>
-    <Label v-else-if="hasLabel" :for="id" :disabled="isDisabled" :invalid="invalid" :required="required">
-      {{ label }}
-    </Label>
+    <FieldLabel :for="id" />
     <NumberFieldRoot
       :id="id"
       :model-value="displayValue"
-      :default-value="snap(defaultValue)"
+      :default-value="defaultDisplayValue"
       :min="min"
       :max="max"
       :step="effectiveStep"
@@ -283,12 +25,12 @@ function onFocusOut(event: FocusEvent) {
       :required="required"
       data-slot="number-field-group"
       :data-invalid="invalid ? 'true' : undefined"
-      :data-focus-within="focusWithin ? 'true' : undefined"
-      :data-focus-visible="focusVisible ? 'true' : undefined"
-      :class="ui.group({ class: props.ui?.group })"
+      :data-focus-within="isFocusWithin ? 'true' : undefined"
+      :data-focus-visible="isFocusVisible ? 'true' : undefined"
+      :class="ui.group()"
       @focusin="onFocusIn"
       @focusout="onFocusOut"
-      @update:model-value="onUpdate"
+      @update:model-value="commit"
     >
       <NumberFieldDecrement
         v-if="decrement"
@@ -296,7 +38,7 @@ function onFocusOut(event: FocusEvent) {
         data-slot="number-field-decrement-button"
         :aria-label="decrementLabel"
         :aria-controls="id"
-        :class="ui.decrementButton({ class: props.ui?.decrementButton })"
+        :class="ui.decrementButton()"
       >
         <DecrementOutlet>
           <svg
@@ -309,7 +51,12 @@ function onFocusOut(event: FocusEvent) {
             width="16"
             xmlns="http://www.w3.org/2000/svg"
           >
-            <path clip-rule="evenodd" d="M1.75 8a.75.75 0 0 1 .75-.75h11a.75.75 0 0 1 0 1.5h-11A.75.75 0 0 1 1.75 8" fill="currentColor" fill-rule="evenodd" />
+            <path
+              clip-rule="evenodd"
+              d="M1.75 8a.75.75 0 0 1 .75-.75h11a.75.75 0 0 1 0 1.5h-11A.75.75 0 0 1 1.75 8"
+              fill="currentColor"
+              fill-rule="evenodd"
+            />
           </svg>
         </DecrementOutlet>
       </NumberFieldDecrement>
@@ -321,7 +68,7 @@ function onFocusOut(event: FocusEvent) {
         :aria-describedby="describedBy"
         :aria-label="attrs['aria-label']"
         :aria-labelledby="attrs['aria-labelledby']"
-        :class="ui.input({ class: props.ui?.input })"
+        :class="ui.input()"
         @blur="onCommitEmpty"
         @keydown="onKeydown"
       />
@@ -331,7 +78,7 @@ function onFocusOut(event: FocusEvent) {
         data-slot="number-field-increment-button"
         :aria-label="incrementLabel"
         :aria-controls="id"
-        :class="ui.incrementButton({ class: props.ui?.incrementButton })"
+        :class="ui.incrementButton()"
       >
         <IncrementOutlet>
           <svg
@@ -344,27 +91,178 @@ function onFocusOut(event: FocusEvent) {
             width="16"
             xmlns="http://www.w3.org/2000/svg"
           >
-            <path clip-rule="evenodd" d="M8 1.75a.75.75 0 0 1 .75.75v4.75h4.75a.75.75 0 0 1 0 1.5H8.75v4.75a.75.75 0 0 1-1.5 0V8.75H2.5a.75.75 0 0 1 0-1.5h4.75V2.5A.75.75 0 0 1 8 1.75" fill="currentColor" fill-rule="evenodd" />
+            <path
+              clip-rule="evenodd"
+              d="M8 1.75a.75.75 0 0 1 .75.75v4.75h4.75a.75.75 0 0 1 0 1.5H8.75v4.75a.75.75 0 0 1-1.5 0V8.75H2.5a.75.75 0 0 1 0-1.5h4.75V2.5A.75.75 0 0 1 8 1.75"
+              fill="currentColor"
+              fill-rule="evenodd"
+            />
           </svg>
         </IncrementOutlet>
       </NumberFieldIncrement>
     </NumberFieldRoot>
-    <Description v-if="hasDescription && $slots.description" :id="descriptionId">
-      <slot name="description">
-        {{ description }}
-      </slot>
-    </Description>
-    <Description v-else-if="hasDescription" :id="descriptionId">
-      {{ description }}
-    </Description>
-    <FieldError v-if="hasError && $slots.error" :id="errorId">
-      <slot name="error" v-bind="validation">
-        {{ errorMessage ?? validation.validationErrors.join(' ') }}
-      </slot>
-    </FieldError>
-    <FieldError v-else-if="hasError" :id="errorId">
-      {{ errorMessage ?? validation.validationErrors.join(' ') }}
-    </FieldError>
+    <FieldDescription />
+    <FieldError />
   </div>
-  <input v-if="name" type="hidden" :name="name" :value="formValue ?? ''" :disabled="isDisabled || undefined">
+  <input
+    v-if="name"
+    type="hidden"
+    :name="name"
+    :value="formValue ?? ''"
+    :disabled="isDisabled || undefined"
+  />
 </template>
+
+<script setup lang="ts">
+import {
+  NumberFieldDecrement,
+  NumberFieldIncrement,
+  NumberFieldInput,
+  NumberFieldRoot,
+} from 'reka-ui'
+import { computed, onBeforeUnmount, onMounted, ref, useAttrs, useTemplateRef } from 'vue'
+
+import { useFieldsetDisabled } from '@/components/fieldset/context'
+import { useComponentUI } from '@/composables/useComponentUI'
+import { useFieldChrome } from '@/composables/useFieldChrome'
+import { useFieldValidation } from '@/composables/useFieldValidation'
+import { useNumberValue } from '@/composables/useNumberValue'
+import { useSlotOutlet } from '@/composables/useSlotOutlet'
+
+import type { NumberFieldProps, NumberFieldSlots } from './NumberField.types'
+import theme from './theme'
+
+defineOptions({ inheritAttrs: false })
+
+// `invalid: undefined`: an absent boolean would cast to `false`, which counts as controlled-valid and hides validation errors
+const props = withDefaults(defineProps<NumberFieldProps>(), {
+  increment: true,
+  decrement: true,
+  invalid: undefined,
+})
+
+const slots = defineSlots<NumberFieldSlots>()
+const DecrementOutlet = useSlotOutlet(slots, 'decrement')
+const IncrementOutlet = useSlotOutlet(slots, 'increment')
+
+/** The numeric value; `undefined` while the input is empty. */
+const modelValue = defineModel<number | null>()
+
+const { effectiveStep, displayValue, defaultDisplayValue, formValue, commit, commitEmpty, reset } =
+  useNumberValue({
+    model: modelValue,
+    defaultValue: () => props.defaultValue,
+    min: () => props.min,
+    max: () => props.max,
+    step: () => props.step,
+    formatOptions: () => props.formatOptions,
+    onCommit: () => commitValidation(),
+  })
+
+const root = useTemplateRef<HTMLElement>('root')
+const isDisabled = useFieldsetDisabled(() => props.disabled)
+
+const { validation, invalid, commitValidation } = useFieldValidation({
+  formField: props,
+  // As in RAC: the committed number, `NaN` while empty
+  value: () => formValue.value ?? Number.NaN,
+  validate: () => props.validate,
+  invalid: () => props.invalid,
+  validationBehavior: () => props.validationBehavior,
+  name: () => props.name,
+  root: () => root.value,
+  onReset: reset,
+})
+
+// Runs after Reka's blur / Enter handler, which has already applied a non-empty input
+const onCommitEmpty = (event: Event) => {
+  if ((event.target as HTMLInputElement).value === '') commitEmpty()
+}
+
+const onKeydown = (event: KeyboardEvent) => {
+  if (event.key === 'Enter' && !event.isComposing) onCommitEmpty(event)
+}
+
+// RAC's spin button moves PageUp / PageDown by a single step (`onIncrementPage` = `onIncrement`); Reka moves 10 steps.
+// A capture listener on the root runs ahead of Reka's handler on the input and hands Reka the matching arrow key.
+// It is attached natively: a Vue `@keydown.capture` invoker would timestamp the re-dispatched event, and Vue's
+// invoker on the input then drops it as "dispatched before attach" when the key lands right after mount.
+const onKeydownCapture = (event: KeyboardEvent) => {
+  const target = event.target as HTMLElement
+  if (
+    (event.key !== 'PageUp' && event.key !== 'PageDown') ||
+    event.isComposing ||
+    target.dataset.slot !== 'number-field-input'
+  )
+    return
+
+  event.preventDefault()
+  event.stopImmediatePropagation()
+
+  target.dispatchEvent(
+    new KeyboardEvent('keydown', {
+      key: event.key === 'PageUp' ? 'ArrowUp' : 'ArrowDown',
+      cancelable: true,
+    }),
+  )
+}
+
+onMounted(() => root.value?.addEventListener('keydown', onKeydownCapture, true))
+onBeforeUnmount(() => root.value?.removeEventListener('keydown', onKeydownCapture, true))
+
+// `aria-label` / `aria-labelledby` name the input (as in HeroUI), not the wrapper div
+const attrs = useAttrs()
+const rootAttrs = computed(() => {
+  const { 'aria-label': _label, 'aria-labelledby': _labelledby, ...rest } = attrs
+  return rest
+})
+
+const { id, describedBy, FieldLabel, FieldDescription, FieldError } = useFieldChrome({
+  props,
+  slots,
+  invalid,
+  validation,
+  disabled: isDisabled,
+  required: () => props.required,
+  hideDescriptionWhenInvalid: true,
+})
+
+// As in RAC: the stepper buttons are named after the field ("Increase Width") and control its input
+const fieldName = computed(() => (attrs['aria-label'] as string | undefined) ?? props.label)
+const incrementLabel = computed(() =>
+  fieldName.value ? `Increase ${fieldName.value}` : 'Increase',
+)
+
+const decrementLabel = computed(() =>
+  fieldName.value ? `Decrease ${fieldName.value}` : 'Decrease',
+)
+
+const ui = useComponentUI('numberField', {
+  theme,
+  variantProps: () => ({
+    variant: props.variant,
+    fullWidth: props.fullWidth,
+  }),
+  props,
+})
+
+// RAC Group's `data-focus-within` / `data-focus-visible`
+const isFocusWithin = ref(false)
+const isFocusVisible = ref(false)
+const onFocusIn = (event: FocusEvent) => {
+  isFocusWithin.value = true
+  isFocusVisible.value = event.target instanceof Element && event.target.matches(':focus-visible')
+}
+
+const onFocusOut = (event: FocusEvent) => {
+  if (
+    event.currentTarget instanceof Element &&
+    event.relatedTarget instanceof Node &&
+    event.currentTarget.contains(event.relatedTarget)
+  )
+    return
+
+  isFocusWithin.value = false
+  isFocusVisible.value = false
+}
+</script>

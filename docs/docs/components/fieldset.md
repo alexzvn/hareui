@@ -17,8 +17,7 @@ import { Fieldset } from '@hareui/vue'
 
 ## Anatomy
 
-HeroUI's compound parts (`Fieldset.Legend`, `Fieldset.Group`, `Fieldset.Actions`) become props and
-named slots, rendered in a fixed order: legend, description, field group, then actions.
+Fieldset is composed through props and named slots, rendered in a fixed order: legend, description, field group, then actions.
 
 ```vue
 <Fieldset legend="…" description="…">
@@ -31,7 +30,7 @@ named slots, rendered in a fixed order: legend, description, field group, then a
 
 - Each part renders only when its prop or slot is provided.
 - `disabled` sets the native `disabled` attribute and `data-disabled="true"`, and disables HareUI
-  controls inside (such as `Button` and `Link`) the same way HeroUI's fieldset does.
+  controls inside (such as `Button` and `Link`).
 
 `ui` keys: `base`, `legend`, `description`, `fieldGroup`, `actions`.
 
@@ -54,31 +53,33 @@ When used inside a [Surface](/docs/components/surface) component, use `variant="
 Override the `fieldset` theme app-wide with `createHareUI`:
 
 ```ts
-app.use(createHareUI({
-  ui: {
-    fieldset: {
-      slots: {
-        base: 'gap-5 rounded-xl border border-border/60 bg-surface p-6 shadow-field',
-        legend: 'text-lg font-semibold',
-        fieldGroup: 'gap-3 md:grid md:grid-cols-2',
-        actions: 'flex justify-end gap-2 pt-2',
+app.use(
+  createHareUI({
+    ui: {
+      fieldset: {
+        slots: {
+          base: 'gap-5 rounded-xl border border-border/60 bg-surface p-6 shadow-field',
+          legend: 'text-lg font-semibold',
+          fieldGroup: 'gap-3 md:grid md:grid-cols-2',
+          actions: 'flex justify-end gap-2 pt-2',
+        },
       },
     },
-  },
-}))
+  }),
+)
 ```
 
 ## Styling Reference
 
-Each rendered element carries the same `data-slot` string as HeroUI, so selectors translate 1:1.
+Each rendered element carries a `data-slot` attribute, so you can target it with selectors.
 
-| `ui` key | `data-slot` | Description |
-|---|---|---|
-| `base` | `fieldset` | Root container |
-| `legend` | `fieldset-legend` | Legend element |
-| `description` | `description` | Description below the legend |
-| `fieldGroup` | `fieldset-field-group` | Wrapper for grouped fields |
-| `actions` | `fieldset-actions` | Action bar below the fields |
+| `ui` key      | `data-slot`            | Description                  |
+| ------------- | ---------------------- | ---------------------------- |
+| `base`        | `fieldset`             | Root container               |
+| `legend`      | `fieldset-legend`      | Legend element               |
+| `description` | `description`          | Description below the legend |
+| `fieldGroup`  | `fieldset-field-group` | Wrapper for grouped fields   |
+| `actions`     | `fieldset-actions`     | Action bar below the fields  |
 
 ## API Reference
 
@@ -90,7 +91,7 @@ Each rendered element carries the same `data-slot` string as HeroUI, so selector
 
 <ApiTable component="Fieldset" kind="slots" />
 
-### Theme
+## Theme
 
 <ApiTheme component="Fieldset" />
 

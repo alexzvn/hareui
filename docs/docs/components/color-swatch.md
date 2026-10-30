@@ -55,24 +55,26 @@ Use `colorName` to provide a custom accessible name for the color, and `aria-lab
 To customize the ColorSwatch component classes app-wide, override the `colorSwatch` theme with `createHareUI`:
 
 ```ts
-app.use(createHareUI({
-  ui: {
-    colorSwatch: {
-      slots: {
-        base: 'border-2 border-white',
+app.use(
+  createHareUI({
+    ui: {
+      colorSwatch: {
+        slots: {
+          base: 'border-2 border-white',
+        },
       },
     },
-  },
-}))
+  }),
+)
 ```
 
 ## Styling Reference
 
-Each rendered element carries the same `data-slot` string as HeroUI, so selectors translate 1:1.
+Each rendered element carries a `data-slot` attribute, so you can target it with selectors.
 
-| `ui` key | `data-slot` | Description |
-|---|---|---|
-| `base` | `color-swatch` | Base swatch styles with checkered background for transparency |
+| `ui` key | `data-slot`    | Description                                                   |
+| -------- | -------------- | ------------------------------------------------------------- |
+| `base`   | `color-swatch` | Base swatch styles with checkered background for transparency |
 
 ## API Reference
 
@@ -84,7 +86,7 @@ Each rendered element carries the same `data-slot` string as HeroUI, so selector
 
 <ApiTable component="ColorSwatch" kind="slots" />
 
-### Theme
+## Theme
 
 <ApiTheme component="ColorSwatch" />
 

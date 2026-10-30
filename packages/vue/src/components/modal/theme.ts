@@ -4,7 +4,7 @@
 export default {
   slots: {
     backdrop: [
-      'fixed inset-0 z-(--z-index-overlay) flex flex-row items-center justify-center',
+      'fixed inset-x-0 top-(--visual-viewport-top) z-(--z-index-overlay) flex flex-row items-center justify-center',
       'h-(--visual-viewport-height) w-full',
       '[&:where([data-state=open])]:animate-in [&:where([data-state=open])]:[--tw-duration:150ms] [&:where([data-state=open])]:ease-out [&:where([data-state=open])]:fade-in-0',
       '[&:where([data-state=closed])]:animate-out [&:where([data-state=closed])]:[--tw-duration:100ms] [&:where([data-state=closed])]:ease-out [&:where([data-state=closed])]:fade-out-0',
@@ -70,7 +70,8 @@ export default {
     },
     placement: {
       auto: {
-        dialog: 'mt-auto mb-(--modal-dialog-margin-bottom) [--modal-dialog-margin-bottom:0px] sm:[--modal-dialog-margin-bottom:auto]',
+        dialog:
+          'mt-auto mb-(--modal-dialog-margin-bottom) [--modal-dialog-margin-bottom:0px] sm:[--modal-dialog-margin-bottom:auto]',
       },
       top: {
         dialog: 'mt-0',
@@ -98,11 +99,36 @@ export default {
   // The zoom and placement slide live here, not in the base/placement classes, so `size="full"` gets none:
   // overriding them with `zoom-in-100` loses in stylesheet order (`zoom-in-105` is emitted later).
   compoundVariants: [
-    { size: ['xs', 'sm', 'md', 'lg', 'cover'], class: { container: '[&:where([data-state=open])]:zoom-in-105 [&:where([data-state=closed])]:zoom-out-95' } },
-    { size: ['xs', 'sm', 'md', 'lg', 'cover'], placement: 'auto', class: { container: '[&:where([data-state=open])]:slide-in-from-bottom-1 sm:[&:where([data-state=open])]:slide-in-from-bottom-0' } },
-    { size: ['xs', 'sm', 'md', 'lg', 'cover'], placement: 'top', class: { container: '[&:where([data-state=open])]:slide-in-from-top-1' } },
-    { size: ['xs', 'sm', 'md', 'lg', 'cover'], placement: 'center', class: { container: '[&:where([data-state=open])]:slide-in-from-top-0' } },
-    { size: ['xs', 'sm', 'md', 'lg', 'cover'], placement: 'bottom', class: { container: '[&:where([data-state=open])]:slide-in-from-bottom-1' } },
+    {
+      size: ['xs', 'sm', 'md', 'lg', 'cover'],
+      class: {
+        container:
+          '[&:where([data-state=open])]:zoom-in-105 [&:where([data-state=closed])]:zoom-out-95',
+      },
+    },
+    {
+      size: ['xs', 'sm', 'md', 'lg', 'cover'],
+      placement: 'auto',
+      class: {
+        container:
+          '[&:where([data-state=open])]:slide-in-from-bottom-1 sm:[&:where([data-state=open])]:slide-in-from-bottom-0',
+      },
+    },
+    {
+      size: ['xs', 'sm', 'md', 'lg', 'cover'],
+      placement: 'top',
+      class: { container: '[&:where([data-state=open])]:slide-in-from-top-1' },
+    },
+    {
+      size: ['xs', 'sm', 'md', 'lg', 'cover'],
+      placement: 'center',
+      class: { container: '[&:where([data-state=open])]:slide-in-from-top-0' },
+    },
+    {
+      size: ['xs', 'sm', 'md', 'lg', 'cover'],
+      placement: 'bottom',
+      class: { container: '[&:where([data-state=open])]:slide-in-from-bottom-1' },
+    },
   ],
   defaultVariants: {
     scroll: 'inside',

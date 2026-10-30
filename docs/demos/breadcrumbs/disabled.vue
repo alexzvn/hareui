@@ -1,3 +1,7 @@
+<template>
+  <Breadcrumbs disabled :items="items" />
+</template>
+
 <script setup lang="ts">
 import type { BreadcrumbsItem } from '@hareui/vue'
 import { Breadcrumbs } from '@hareui/vue'
@@ -9,7 +13,3 @@ const items: BreadcrumbsItem[] = [
   { label: 'Laptop' },
 ]
 </script>
-
-<template>
-  <Breadcrumbs disabled :items="items" />
-</template>

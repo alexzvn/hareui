@@ -28,7 +28,7 @@ export default {
       false: {},
       true: {
         base: [
-          'after:pointer-events-none after:absolute after:inset-0 after:rounded-[inherit] after:content-[\'\']',
+          "after:pointer-events-none after:absolute after:inset-0 after:rounded-[inherit] after:content-['']",
           'after:[background-image:radial-gradient(circle,rgba(255,255,255,0.2)_1px,transparent_1px)]',
           'after:[background-size:8px_8px]',
         ],

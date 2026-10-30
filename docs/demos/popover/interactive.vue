@@ -1,37 +1,32 @@
-<script setup lang="ts">
-import { ref } from 'vue'
-import { Avatar, Button, Popover } from '@hareui/vue'
-
-const isFollowing = ref(false)
-</script>
-
 <template>
   <div class="flex items-center gap-6">
     <Popover class="w-[320px]">
       <template #default="{ open }">
         <button type="button" class="flex items-center gap-2" :aria-expanded="open">
-          <Avatar size="sm" alt="" src="https://img.heroui.chat/image/avatar?w=400&h=400&u=1" fallback="SJ" />
+          <Avatar
+            size="sm"
+            alt=""
+            src="https://img.heroui.chat/image/avatar?w=400&h=400&u=1"
+            fallback="SJ"
+          />
           <div class="flex flex-col items-start">
-            <p class="text-sm font-medium">
-              Sarah Johnson
-            </p>
-            <p class="text-xs text-muted">
-              @sarahj
-            </p>
+            <p class="text-sm font-medium">Sarah Johnson</p>
+            <p class="text-xs text-muted">@sarahj</p>
           </div>
         </button>
       </template>
       <template #title>
         <div class="flex items-center justify-between">
           <div class="flex items-center gap-3">
-            <Avatar size="md" alt="Sarah Johnson" src="https://img.heroui.chat/image/avatar?w=400&h=400&u=1" fallback="SJ" />
+            <Avatar
+              size="md"
+              alt="Sarah Johnson"
+              src="https://img.heroui.chat/image/avatar?w=400&h=400&u=1"
+              fallback="SJ"
+            />
             <div>
-              <p class="font-semibold">
-                Sarah Johnson
-              </p>
-              <p class="text-sm text-muted">
-                @sarahj
-              </p>
+              <p class="font-semibold">Sarah Johnson</p>
+              <p class="text-sm text-muted">@sarahj</p>
             </div>
           </div>
           <Button
@@ -62,3 +57,10 @@ const isFollowing = ref(false)
     </Popover>
   </div>
 </template>
+
+<script setup lang="ts">
+import { Avatar, Button, Popover } from '@hareui/vue'
+import { ref } from 'vue'
+
+const isFollowing = ref(false)
+</script>

@@ -93,8 +93,10 @@ export default {
       '[&:where(:disabled:not([data-outside-view]))]:status-disabled [&:where(:disabled:not([data-outside-view]))]:line-through',
       '[&:where([data-disabled]:not([data-outside-view]))]:status-disabled [&:where([data-disabled]:not([data-outside-view]))]:line-through',
     ],
-    cellButton: 'flex aspect-square w-full items-center justify-center rounded-3xl text-sm font-medium text-foreground no-highlight transform-gpu motion-reduce:transition-none [transition:scale_200ms_var(--ease-out)]',
-    cellIndicator: 'absolute bottom-1 left-1/2 size-[3px] -translate-x-1/2 rounded-xs bg-muted in-data-selected:bg-accent-foreground',
+    cellButton:
+      'flex aspect-square w-full items-center justify-center rounded-3xl text-sm font-medium text-foreground no-highlight transform-gpu motion-reduce:transition-none [transition:scale_200ms_var(--ease-out)]',
+    cellIndicator:
+      'absolute bottom-1 left-1/2 size-[3px] -translate-x-1/2 rounded-xs bg-muted in-data-selected:bg-accent-foreground',
 
     // Internal year-picker part (calendar-year-picker__*), swapped in for the plain heading.
     yearPickerTrigger: [

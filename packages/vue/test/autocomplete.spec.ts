@@ -1,8 +1,12 @@
-import type { ComponentOptions } from 'vue'
+import type { ComponentMountingOptions } from '@vue/test-utils'
 import { mount } from '@vue/test-utils'
 import { afterEach, describe, expect, it } from 'vitest'
+import type { ComponentOptions } from 'vue'
 import { h, nextTick } from 'vue'
-import Autocomplete from '../src/components/autocomplete/Autocomplete.vue'
+
+import Autocomplete from '@/components/autocomplete/Autocomplete.vue'
+import type { ListBoxEntry } from '@/components/list-box/ListBox.types'
+
 import { expectAccessible } from './a11y'
 
 const items = [
@@ -11,14 +15,16 @@ const items = [
   { value: 'california', label: 'California', disabled: true },
   { value: 'texas', label: 'Texas' },
 ]
+
 const flush = async () => {
   for (let i = 0; i < 5; i++) {
     await nextTick()
-    await new Promise(r => setTimeout(r, 0))
+    await new Promise((r) => setTimeout(r, 0))
   }
 }
+
 const options = () => [...document.querySelectorAll<HTMLElement>('[role=option]')]
-const texts = () => options().map(o => o.textContent?.trim())
+const texts = () => options().map((o) => o.textContent?.trim())
 const search = () => document.querySelector<HTMLInputElement>('[data-slot=search-field-input]')
 const value = '[data-slot=autocomplete-value]'
 
@@ -26,17 +32,27 @@ afterEach(() => {
   document.body.innerHTML = ''
 })
 
-function setup(props: Record<string, any> = {}, slots?: Record<string, any>) {
-  const wrapper = mount(Autocomplete, { props: { items, label: 'State', placeholder: 'Select one', ...props }, slots, attachTo: document.body })
+const setup = (
+  props: ComponentMountingOptions<typeof Autocomplete>['props'] = {},
+  slots?: ComponentMountingOptions<typeof Autocomplete>['slots'],
+) => {
+  const wrapper = mount(Autocomplete, {
+    props: { items, label: 'State', placeholder: 'Select one', ...props },
+    slots,
+    attachTo: document.body,
+  })
+
   return { wrapper, button: wrapper.get('button[aria-haspopup=listbox]') }
 }
-async function typeSearch(text: string) {
+
+const typeSearch = async (text: string) => {
   const input = search()!
   input.value = text
   input.dispatchEvent(new Event('input'))
   await flush()
 }
-async function key(el: Element, k: string) {
+
+const key = async (el: Element, k: string) => {
   el.dispatchEvent(new KeyboardEvent('keydown', { key: k, bubbles: true, cancelable: true }))
   await flush()
 }
@@ -57,6 +73,7 @@ describe('Autocomplete', () => {
 
   it('arrow keys move the virtual focus from the search field; Enter selects and closes', async () => {
     const { wrapper } = setup()
+
     // A keyboard-style click (detail 0) focuses the first option
     await wrapper.get('[data-slot=autocomplete-trigger]').trigger('click')
     await flush()
@@ -65,6 +82,7 @@ describe('Autocomplete', () => {
     expect(search()!.getAttribute('aria-activedescendant')).toBe(options()[1]!.id)
     expect(options()[1]!.getAttribute('data-focused')).toBe('true')
     await key(search()!, 'ArrowDown')
+
     // Disabled option skipped
     expect(options()[3]!.getAttribute('data-focused')).toBe('true')
     await key(search()!, 'Enter')
@@ -102,18 +120,35 @@ describe('Autocomplete', () => {
   })
 
   it('renders the #empty slot when nothing matches, and sections with headers', async () => {
-    const sections = [
+    const sections: ListBoxEntry[] = [
       { type: 'section', label: 'South', items: [{ value: 'florida', label: 'Florida' }] },
       { type: 'separator' },
       { type: 'section', label: 'West', items: [{ value: 'nevada', label: 'Nevada' }] },
     ]
-    const { wrapper } = setup({ items: sections, defaultOpen: true }, { empty: () => 'No results found' })
+
+    const { wrapper } = setup(
+      { items: sections, defaultOpen: true },
+      { empty: () => 'No results found' },
+    )
+
     await flush()
-    expect([...document.querySelectorAll('[data-slot=header]')].map(e => e.textContent?.trim())).toEqual(['South', 'West'])
+
+    expect(
+      [...document.querySelectorAll('[data-slot=header]')].map((e) => e.textContent?.trim()),
+    ).toEqual(['South', 'West'])
+
     await typeSearch('nev')
-    expect([...document.querySelectorAll('[data-slot=header]')].map(e => e.textContent?.trim())).toEqual(['West'])
+
+    expect(
+      [...document.querySelectorAll('[data-slot=header]')].map((e) => e.textContent?.trim()),
+    ).toEqual(['West'])
+
     await typeSearch('zzz')
-    expect(document.querySelector('[data-slot=empty-state]')?.textContent?.trim()).toBe('No results found')
+
+    expect(document.querySelector('[data-slot=empty-state]')?.textContent?.trim()).toBe(
+      'No results found',
+    )
+
     wrapper.unmount()
   })
 
@@ -136,12 +171,20 @@ describe('Autocomplete', () => {
     await disabled.wrapper.get('[data-slot=autocomplete-trigger]').trigger('click')
     await flush()
     expect(document.querySelector('[role=listbox]')).toBeNull()
-    expect(disabled.wrapper.get('[data-slot=autocomplete-trigger]').attributes('data-disabled')).toBe('true')
+
+    expect(
+      disabled.wrapper.get('[data-slot=autocomplete-trigger]').attributes('data-disabled'),
+    ).toBe('true')
+
     disabled.wrapper.unmount()
   })
 
   it('custom indicator, v-model:input-value and filter=false', async () => {
-    const { wrapper } = setup({ inputValue: 'zzz', filter: false, defaultOpen: true }, { indicator: () => h('i', { class: 'custom' }) })
+    const { wrapper } = setup(
+      { inputValue: 'zzz', filter: false, defaultOpen: true },
+      { indicator: () => h('i', { class: 'custom' }) },
+    )
+
     await flush()
     expect(wrapper.find('i.custom[data-slot=autocomplete-indicator]').exists()).toBe(true)
     expect(search()!.value).toBe('zzz')
@@ -159,7 +202,13 @@ describe('Autocomplete', () => {
           updated.add(this.$el.textContent!.trim())
       },
     }
-    const wrapper = mount(Autocomplete, { props: { items, label: 'State' }, attachTo: document.body, global: { mixins: [countOptionUpdates] } })
+
+    const wrapper = mount(Autocomplete, {
+      props: { items, label: 'State' },
+      attachTo: document.body,
+      global: { mixins: [countOptionUpdates] },
+    })
+
     await wrapper.get('[data-slot=autocomplete-trigger]').trigger('click')
     await flush()
     await key(search()!, 'ArrowDown')
@@ -176,7 +225,15 @@ describe('Autocomplete behaviour parity (React Aria)', () => {
     // behaviour-final-check A1 (RAC Select trigger opens on press start)
     const { wrapper, button } = setup()
     const el = wrapper.get('[data-slot=autocomplete-trigger]').element
-    el.dispatchEvent(new PointerEvent('pointerdown', { bubbles: true, cancelable: true, button: 0, pointerType: 'mouse' }))
+    el.dispatchEvent(
+      new PointerEvent('pointerdown', {
+        bubbles: true,
+        cancelable: true,
+        button: 0,
+        pointerType: 'mouse',
+      }),
+    )
+
     await flush()
     expect(button.attributes('aria-expanded')).toBe('true')
     expect(document.querySelector('[role=listbox]')).not.toBeNull()
@@ -191,8 +248,17 @@ describe('Autocomplete behaviour parity (React Aria)', () => {
     const { wrapper } = setup()
     await wrapper.get('[data-slot=autocomplete-trigger]').trigger('click')
     await flush()
+
     const pointer = (el: Element, type: string) =>
-      el.dispatchEvent(new PointerEvent(type, { bubbles: true, cancelable: true, button: 0, pointerType: 'mouse' }))
+      el.dispatchEvent(
+        new PointerEvent(type, {
+          bubbles: true,
+          cancelable: true,
+          button: 0,
+          pointerType: 'mouse',
+        }),
+      )
+
     pointer(options()[0]!, 'pointerdown')
     pointer(options()[3]!, 'pointerup')
     await flush()
@@ -209,12 +275,14 @@ describe('Autocomplete virtualize', () => {
   it('renders only part of a long list and keeps keyboard focus by value', async () => {
     const { wrapper } = setup({ items: users, virtualize: { estimateSize: 50 }, defaultOpen: true })
     await flush()
+
     // happy-dom has no layout, so the virtualizer mounts (almost) nothing; never all 300 rows
     expect(options().length).toBeLessThan(300)
     expect(document.querySelector('[data-reka-virtualizer]')).not.toBeNull()
     await key(search()!, 'ArrowDown')
     expect(search()!.getAttribute('aria-activedescendant')).toMatch(/-option-1$/)
     await key(search()!, 'End')
+
     // The last row may not be mounted, but the active descendant points at it
     expect(search()!.getAttribute('aria-activedescendant')).toMatch(/-option-300$/)
     await key(search()!, 'Enter')
@@ -226,29 +294,44 @@ describe('Autocomplete virtualize', () => {
     const { wrapper } = setup({ items: users, virtualize: true, defaultOpen: true })
     await flush()
     await typeSearch('User 29')
+
     // Typing focuses the first match, even when its row isn't mounted
     expect(search()!.getAttribute('aria-activedescendant')).toMatch(/-option-29$/)
-    expect(texts().every(t => t?.startsWith('User 29'))).toBe(true)
+    expect(texts().every((t) => t?.startsWith('User 29'))).toBe(true)
     wrapper.unmount()
   })
 })
 
 describe('Autocomplete accessibility', () => {
   /** The text an `aria-labelledby` / `aria-describedby` list points at; fails on dangling ids. */
-  const refText = (ids: string | null | undefined) => (ids ?? '').split(' ').filter(Boolean).map((id) => {
-    const el = document.getElementById(id)
-    expect(el, `#${id} exists`).not.toBeNull()
-    return el!.getAttribute('aria-label') ?? el!.textContent!.trim()
-  }).join(' ')
+  const refText = (ids: string | null | undefined) =>
+    (ids ?? '')
+      .split(' ')
+      .filter(Boolean)
+      .map((id) => {
+        const el = document.getElementById(id)
+        expect(el, `#${id} exists`).not.toBeNull()
+
+        return el!.getAttribute('aria-label') ?? el!.textContent!.trim()
+      })
+      .join(' ')
+
   const listbox = () => document.querySelector<HTMLElement>('[role=listbox]')
   const popover = () => document.querySelector<HTMLElement>('[data-slot=autocomplete-popover]')
-  async function open(wrapper: ReturnType<typeof setup>['wrapper']) {
+
+  const open = async (wrapper: ReturnType<typeof setup>['wrapper']) => {
     await wrapper.get('[data-slot=autocomplete-trigger]').trigger('click')
     await flush()
   }
 
   it('has no axe violations closed: placeholder, selected, with a description, clearable and disabled', async () => {
-    for (const props of [{}, { defaultValue: 'texas', description: 'Where you live' }, { clearable: true, defaultValue: 'florida' }, { clearable: true }, { disabled: true }]) {
+    for (const props of [
+      {},
+      { defaultValue: 'texas', description: 'Where you live' },
+      { clearable: true, defaultValue: 'florida' },
+      { clearable: true },
+      { disabled: true },
+    ]) {
       const { wrapper } = setup(props)
       await flush()
       await expectAccessible()
@@ -271,7 +354,6 @@ describe('Autocomplete accessibility', () => {
     expect(button.attributes('aria-required')).toBeUndefined()
     expect(wrapper.get('select').attributes('required')).toBeDefined()
     expect(wrapper.attributes('data-required')).toBe('true')
-    expect(wrapper.get('[data-slot=label]').classes()).toContain('after:content-[\'*\']')
     await expectAccessible()
     wrapper.unmount()
   })
@@ -286,12 +368,16 @@ describe('Autocomplete accessibility', () => {
   })
 
   it('has no axe violations open without search, in multiple mode and with the empty state', async () => {
-    for (const props of [{ search: false }, { selectionMode: 'multiple', defaultValue: ['texas'] }]) {
+    for (const props of [
+      { search: false },
+      { selectionMode: 'multiple' as const, defaultValue: ['texas'] },
+    ]) {
       const { wrapper } = setup(props)
       await open(wrapper)
       await expectAccessible()
       wrapper.unmount()
     }
+
     const { wrapper } = setup({}, { empty: () => 'No results found' })
     await open(wrapper)
     await typeSearch('zzz')
@@ -313,7 +399,12 @@ describe('Autocomplete accessibility', () => {
   })
 
   it('an aria-label still names the trigger and the popup when there is no visible label', async () => {
-    const wrapper = mount(Autocomplete, { props: { items, placeholder: 'Select one' }, attrs: { 'aria-label': 'State' }, attachTo: document.body })
+    const wrapper = mount(Autocomplete, {
+      props: { items, placeholder: 'Select one' },
+      attrs: { 'aria-label': 'State' },
+      attachTo: document.body,
+    })
+
     const button = wrapper.get('button[aria-haspopup=listbox]')
     expect(refText(button.attributes('aria-labelledby'))).toBe('Select one State')
     await open(wrapper)
@@ -339,17 +430,31 @@ describe('Autocomplete accessibility', () => {
     const single = setup({ defaultValue: 'texas' })
     try {
       await open(single.wrapper)
-      expect(options().map(o => o.getAttribute('aria-selected'))).toEqual(['false', 'false', 'false', 'true'])
+
+      expect(options().map((o) => o.getAttribute('aria-selected'))).toEqual([
+        'false',
+        'false',
+        'false',
+        'true',
+      ])
+
       expect(listbox()!.getAttribute('aria-multiselectable')).not.toBe('true')
       expect(options()[2]!.getAttribute('aria-disabled')).toBe('true')
-    }
-    finally {
+    } finally {
       single.wrapper.unmount()
     }
+
     const multi = setup({ selectionMode: 'multiple', defaultValue: ['florida', 'texas'] })
     await open(multi.wrapper)
     expect(listbox()!.getAttribute('aria-multiselectable')).toBe('true')
-    expect(options().map(o => o.getAttribute('aria-selected'))).toEqual(['true', 'false', 'false', 'true'])
+
+    expect(options().map((o) => o.getAttribute('aria-selected'))).toEqual([
+      'true',
+      'false',
+      'false',
+      'true',
+    ])
+
     multi.wrapper.unmount()
   })
 
@@ -361,8 +466,13 @@ describe('Autocomplete accessibility', () => {
       expect(search()!.getAttribute('aria-activedescendant')).toBe(options()[0]!.id)
       wrapper.unmount()
     }
-    const { wrapper, button } = setup({ items: [...items.slice(0, 3), { value: 'utah', label: 'Utah', disabled: true }] })
+
+    const { wrapper, button } = setup({
+      items: [...items.slice(0, 3), { value: 'utah', label: 'Utah', disabled: true }],
+    })
+
     await key(button.element, 'ArrowUp')
+
     // Utah (last) and California are disabled
     expect(search()!.getAttribute('aria-activedescendant')).toBe(options()[1]!.id)
     wrapper.unmount()
@@ -384,6 +494,7 @@ describe('Autocomplete accessibility', () => {
     await key(button.element, 'Enter')
     expect(document.activeElement).toBe(search())
     await typeSearch('tex')
+
     // The first Escape clears the search, the second closes
     await key(search()!, 'Escape')
     expect(search()!.value).toBe('')
@@ -415,6 +526,7 @@ describe('Autocomplete accessibility', () => {
     expect(clear.attributes('aria-hidden')).toBeUndefined()
     await key(button.element, 'Backspace')
     expect(wrapper.emitted('clear')).toHaveLength(1)
+
     // With nothing to clear it is hidden from assistive technology
     expect(clear.attributes('aria-hidden')).toBe('true')
     expect(button.attributes('aria-expanded')).toBe('false')

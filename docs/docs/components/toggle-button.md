@@ -35,7 +35,7 @@ import { ToggleButton } from '@hareui/vue'
 
 ### Controlled
 
-Bind the selected state with `v-model`. The default slot receives `{ selected, disabled }` (HeroUI's render props).
+Bind the selected state with `v-model`. The default slot receives `{ selected, disabled }`.
 
 <ComponentPreview name="toggle-button/controlled" />
 
@@ -50,19 +50,21 @@ Bind the selected state with `v-model`. The default slot receives `{ selected, d
 Override the `toggleButton` theme app-wide with `createHareUI`:
 
 ```ts
-app.use(createHareUI({
-  ui: {
-    toggleButton: {
-      slots: { base: 'bg-purple-500 text-white' },
-      variants: { iconOnly: { true: { base: 'rounded-lg' } } },
+app.use(
+  createHareUI({
+    ui: {
+      toggleButton: {
+        slots: { base: 'bg-purple-500 text-white' },
+        variants: { iconOnly: { true: { base: 'rounded-lg' } } },
+      },
     },
-  },
-}))
+  }),
+)
 ```
 
 ## Styling Reference
 
-The root carries `data-slot="toggle-button"`, as in HeroUI. `ui` key: `base`.
+The root carries `data-slot="toggle-button"`. `ui` key: `base`.
 
 ### Interactive States
 
@@ -86,7 +88,7 @@ The root carries `data-slot="toggle-button"`, as in HeroUI. `ui` key: `base`.
 
 <ApiTable component="ToggleButton" kind="emits" />
 
-### Theme
+## Theme
 
 <ApiTheme component="ToggleButton" />
 

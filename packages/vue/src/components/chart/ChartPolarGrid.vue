@@ -1,71 +1,11 @@
-<script lang="ts">
-import type { ClassValue } from 'tailwind-variants'
-
-export interface ChartPolarGridProps {
-  /**
-   * Shape of the rings: polygons through the angle axis ticks, or circles.
-   * @defaultValue 'polygon'
-   */
-  gridType?: 'polygon' | 'circle'
-  /**
-   * Draws the spokes from the center to every angle axis tick.
-   * @defaultValue true
-   */
-  radialLines?: boolean
-  /** Angles of the spokes, in degrees. Defaults to the angle axis ticks. */
-  polarAngles?: number[]
-  /** Radii of the rings, in px. Defaults to the radius axis ticks. */
-  polarRadius?: number[]
-  /** Line color. Defaults to the theme's muted color. */
-  stroke?: string
-  /** Dash pattern of the lines, e.g. `'3 3'`. */
-  strokeDasharray?: string
-  /** Additional classes merged into the grid group. */
-  class?: ClassValue
-}
-</script>
-
-<script setup lang="ts">
-import { computed } from 'vue'
-import ChartLayer from './ChartLayer.vue'
-import { useChartContext } from './context'
-import { polarToCartesian, polygonPath, usePolarContext } from './polar'
-
-const props = withDefaults(defineProps<ChartPolarGridProps>(), {
-  gridType: 'polygon',
-  radialLines: true,
-})
-
-const chart = useChartContext('ChartPolarGrid')
-const polar = usePolarContext('ChartPolarGrid')
-
-const angles = computed(() => props.polarAngles ?? polar.angleAxis.value.ticks.map(tick => tick.coordinate))
-const radii = computed(() => props.polarRadius ?? polar.radiusAxis.value.ticks.map(tick => tick.coordinate))
-
-const spokes = computed(() => {
-  if (!props.radialLines)
-    return []
-  const cx = polar.cx.value
-  const cy = polar.cy.value
-  return angles.value.map((angle) => {
-    const from = polarToCartesian(cx, cy, polar.innerRadius.value, angle)
-    const to = polarToCartesian(cx, cy, polar.outerRadius.value, angle)
-    return { x1: from.x, y1: from.y, x2: to.x, y2: to.y }
-  })
-})
-
-const rings = computed(() => {
-  const cx = polar.cx.value
-  const cy = polar.cy.value
-  return radii.value.map(radius => props.gridType === 'circle'
-    ? { radius, d: '' }
-    : { radius, d: polygonPath(angles.value.map(angle => polarToCartesian(cx, cy, radius, angle))) })
-})
-</script>
-
 <template>
   <ChartLayer name="grid">
-    <g data-slot="chart-polar-grid" :class="chart.classes('polarGrid', props.class)" :style="stroke ? { stroke } : undefined" :stroke-dasharray="strokeDasharray">
+    <g
+      data-slot="chart-polar-grid"
+      :class="chart.classes('polarGrid', props.class)"
+      :style="stroke ? { stroke } : undefined"
+      :stroke-dasharray="strokeDasharray"
+    >
       <template v-for="ring in rings" :key="ring.radius">
         <circle
           v-if="gridType === 'circle'"
@@ -85,3 +25,55 @@ const rings = computed(() => {
     </g>
   </ChartLayer>
 </template>
+
+<script setup lang="ts">
+import { computed } from 'vue'
+
+import ChartLayer from './ChartLayer.vue'
+import type { ChartPolarGridProps } from './ChartPolarGrid.types'
+import { useChartContext } from './context'
+import { polarToCartesian } from './label'
+import { usePolarContext } from './polar-context'
+import { polygonPath } from './polar-paths'
+
+const props = withDefaults(defineProps<ChartPolarGridProps>(), {
+  gridType: 'polygon',
+  radialLines: true,
+})
+
+const chart = useChartContext('ChartPolarGrid')
+const polar = usePolarContext('ChartPolarGrid')
+
+const angles = computed(
+  () => props.positions?.angles ?? polar.angleAxis.value.ticks.map((tick) => tick.coordinate),
+)
+
+const radii = computed(
+  () => props.positions?.radii ?? polar.radiusAxis.value.ticks.map((tick) => tick.coordinate),
+)
+
+const spokes = computed(() => {
+  if (!props.radialLines) return []
+  const center = { cx: polar.cx.value, cy: polar.cy.value }
+
+  return angles.value.map((angle) => {
+    const from = polarToCartesian(center, { radius: polar.innerRadius.value, angle })
+    const to = polarToCartesian(center, { radius: polar.outerRadius.value, angle })
+
+    return { x1: from.x, y1: from.y, x2: to.x, y2: to.y }
+  })
+})
+
+const rings = computed(() => {
+  const center = { cx: polar.cx.value, cy: polar.cy.value }
+
+  return radii.value.map((radius) =>
+    props.gridType === 'circle'
+      ? { radius, d: '' }
+      : {
+          radius,
+          d: polygonPath(angles.value.map((angle) => polarToCartesian(center, { radius, angle }))),
+        },
+  )
+})
+</script>

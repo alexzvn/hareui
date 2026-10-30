@@ -1,16 +1,9 @@
-<script setup lang="ts">
-import { Card } from '@hareui/vue'
-import { RadialChart } from '@hareui/vue/charts'
-
-const data = [{ metric: 'CPU load', percent: 62, fill: 'var(--chart-3)' }]
-
-function formatPercent(value: number) {
-  return `${value}%`
-}
-</script>
-
 <template>
-  <Card class="w-full max-w-[280px] rounded-2xl" title="Build Server" :ui="{ title: 'text-base', content: 'items-center' }">
+  <Card
+    class="w-full max-w-[280px] rounded-2xl"
+    title="Build Server"
+    :ui="{ title: 'text-base', content: 'items-center' }"
+  >
     <RadialChart
       :data="data"
       index="metric"
@@ -20,7 +13,7 @@ function formatPercent(value: number) {
       :height="200"
       inner-radius="70%"
       outer-radius="90%"
-      :value-formatter="formatPercent"
+      :value="{ formatter: formatPercent }"
       aria-label="Build server CPU load"
     >
       <template #center="{ total }">
@@ -30,3 +23,14 @@ function formatPercent(value: number) {
     </RadialChart>
   </Card>
 </template>
+
+<script setup lang="ts">
+import { Card } from '@hareui/vue'
+import { RadialChart } from '@hareui/vue/charts'
+
+const data = [{ metric: 'CPU load', percent: 62, fill: 'var(--chart-3)' }]
+
+const formatPercent = (value: number) => {
+  return `${value}%`
+}
+</script>

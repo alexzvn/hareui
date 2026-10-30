@@ -1,4 +1,7 @@
-// Copied from @heroui/react components/kbd/kbd.constants.ts
+/**
+ * Name of a modifier or special key that `Kbd` can render as a symbol, e.g. `'command'` (⌘)
+ * or `'shift'` (⇧). Copied from HeroUI's `kbd.constants.ts`.
+ */
 export type KbdKey =
   | 'command'
   | 'shift'
@@ -23,6 +26,7 @@ export type KbdKey =
   | 'win'
   | 'alt'
 
+/** Symbol rendered for each `KbdKey` (e.g. `command` → `⌘`), matching HeroUI's key glyphs. */
 export const kbdKeysMap: Record<KbdKey, string> = {
   command: '⌘',
   shift: '⇧',
@@ -48,6 +52,7 @@ export const kbdKeysMap: Record<KbdKey, string> = {
   alt: '⌥',
 }
 
+/** Human-readable name for each `KbdKey`, used as the symbol's `title` (e.g. `ctrl` → `Control`). */
 export const kbdKeysLabelMap: Record<KbdKey, string> = {
   command: 'Command',
   shift: 'Shift',

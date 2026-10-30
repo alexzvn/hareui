@@ -1,0 +1,39 @@
+import type { PrimitiveProps } from 'reka-ui'
+import type { VNode } from 'vue'
+
+import type { ComponentSlots, ComponentVariants } from '@/types/tv'
+import type { ClassValue } from '@/utils/tv'
+
+import type theme from './theme'
+
+type Toolbar = typeof theme
+
+/** Props of the `Toolbar` component: a container of controls navigated with arrow keys. */
+export type ToolbarProps = {
+  /**
+   * The element or component to render as.
+   * @defaultValue 'div'
+   */
+  as?: PrimitiveProps['as']
+  /**
+   * The orientation of the toolbar. Arrow keys follow it, ToggleButtonGroups inside take it,
+   * and Separators inside take the perpendicular one.
+   * @defaultValue 'horizontal'
+   */
+  orientation?: ComponentVariants<Toolbar>['orientation']
+  /**
+   * Whether the toolbar has a surface background with full rounding.
+   * @defaultValue false
+   */
+  attached?: boolean
+  /** Additional classes merged into the root element. */
+  class?: ClassValue
+  /** Per-slot class overrides. */
+  ui?: ComponentSlots<Toolbar>
+}
+
+/** Slots of the `Toolbar` component. */
+export type ToolbarSlots = {
+  /** Toolbar controls; receives the toolbar `orientation`. */
+  default?: (props: { orientation: 'horizontal' | 'vertical' }) => VNode[]
+}

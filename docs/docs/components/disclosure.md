@@ -17,8 +17,7 @@ import { Disclosure } from '@hareui/vue'
 
 ## Anatomy
 
-HeroUI's compound parts (`Disclosure.Heading`, `Disclosure.Trigger`, `Disclosure.Indicator`,
-`Disclosure.Content`, `Disclosure.Body`) become props and named slots:
+Disclosure is composed through props and named slots:
 
 ```vue
 <Disclosure title="…" v-model:open="open">
@@ -31,8 +30,7 @@ HeroUI's compound parts (`Disclosure.Heading`, `Disclosure.Trigger`, `Disclosure
 ```
 
 - Without `#trigger`, a `<button data-slot="disclosure-trigger">` renders `title` followed by the indicator.
-- With `#trigger`, the slotted element (e.g. `Button`) receives `aria-expanded`, `aria-controls` and the toggle handler, like HeroUI's `<Button slot="trigger">`.
-- `Disclosure.Body`'s `className` maps to the `bodyInner` `ui` key.
+- With `#trigger`, the slotted element (e.g. `Button`) receives `aria-expanded`, `aria-controls` and the toggle handler.
 
 `ui` keys: `base`, `heading`, `trigger`, `indicator`, `content`, `body`, `bodyInner`.
 
@@ -53,31 +51,33 @@ HeroUI's compound parts (`Disclosure.Heading`, `Disclosure.Trigger`, `Disclosure
 To customize the Disclosure component classes app-wide, override the `disclosure` theme with `createHareUI`:
 
 ```ts
-app.use(createHareUI({
-  ui: {
-    disclosure: {
-      slots: {
-        base: 'relative',
-        trigger: 'cursor-pointer',
-        indicator: 'transition-transform duration-300',
-        content: 'overflow-hidden transition-all',
+app.use(
+  createHareUI({
+    ui: {
+      disclosure: {
+        slots: {
+          base: 'relative',
+          trigger: 'cursor-pointer',
+          indicator: 'transition-transform duration-300',
+          content: 'overflow-hidden transition-all',
+        },
       },
     },
-  },
-}))
+  }),
+)
 ```
 
 ## Styling Reference
 
-Each rendered element carries the same `data-slot` string as HeroUI, so selectors translate 1:1.
+Each rendered element carries a `data-slot` attribute, so you can target it with selectors.
 
-| `ui` key | `data-slot` | Description |
-|---|---|---|
-| `base` | `disclosure` | Base container styles |
-| `heading` | `disclosure-heading` | Heading wrapper |
-| `trigger` | `disclosure-trigger` | Trigger button styles |
-| `indicator` | `disclosure-indicator` | Chevron indicator styles |
-| `content` | `disclosure-content` | Content container with animations |
+| `ui` key    | `data-slot`            | Description                       |
+| ----------- | ---------------------- | --------------------------------- |
+| `base`      | `disclosure`           | Base container styles             |
+| `heading`   | `disclosure-heading`   | Heading wrapper                   |
+| `trigger`   | `disclosure-trigger`   | Trigger button styles             |
+| `indicator` | `disclosure-indicator` | Chevron indicator styles          |
+| `content`   | `disclosure-content`   | Content container with animations |
 
 ### Interactive States
 
@@ -102,7 +102,7 @@ The component supports both CSS pseudo-classes and data attributes for flexibili
 
 <ApiTable component="Disclosure" kind="emits" />
 
-### Theme
+## Theme
 
 <ApiTheme component="Disclosure" />
 

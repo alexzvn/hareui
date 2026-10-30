@@ -50,19 +50,21 @@ import { ScrollShadow } from '@hareui/vue'
 To customize the ScrollShadow classes for the whole app, extend the `scrollShadow` theme in `createHareUI`:
 
 ```ts
-app.use(createHareUI({
-  ui: {
-    scrollShadow: {
-      slots: { base: 'rounded-xl border border-default-200' },
-      variants: {
-        orientation: {
-          vertical: { base: 'pr-2' }, // Add padding for custom scrollbar styling
-          horizontal: { base: 'pb-2' },
+app.use(
+  createHareUI({
+    ui: {
+      scrollShadow: {
+        slots: { base: 'rounded-xl border border-default-200' },
+        variants: {
+          orientation: {
+            vertical: { base: 'pr-2' }, // Add padding for custom scrollbar styling
+            horizontal: { base: 'pb-2' },
+          },
         },
       },
     },
-  },
-}))
+  }),
+)
 ```
 
 ## Styling Reference
@@ -78,17 +80,18 @@ app.use(createHareUI({
 - `hide-scroll-bar` – hides the native scrollbar
 
 The fade masks live in HareUI's stylesheet (`styles/scroll-shadow.css`) and key on
-`[data-slot="scroll-shadow"]` and `[data-orientation]`, so they apply to any element carrying
-those attributes (Tabs' scrolling list uses the same component).
+`[data-scroll-shadow-mode]` and `[data-orientation]`, so they apply to any element carrying
+those attributes, even when a parent renames its `data-slot` (Tabs' scrolling list and Carousel's
+thumbnail strip use the same component).
 
 ### CSS Variables
 
 The ScrollShadow component uses CSS variables to size the fade mask and reserve space for visible native scrollbars:
 
-| Variable | Default | Description |
-|---|---|---|
-| `--scroll-shadow-size` | `40px` | Controls the fade gradient size. This is set from the `size` prop. |
-| `--scroll-shadow-offset` | `0px` | How far the container must be scrolled before the fade starts. This is set from the `offset` prop. |
+| Variable                         | Default                             | Description                                                                                                         |
+| -------------------------------- | ----------------------------------- | ------------------------------------------------------------------------------------------------------------------- |
+| `--scroll-shadow-size`           | `40px`                              | Controls the fade gradient size. This is set from the `size` prop.                                                  |
+| `--scroll-shadow-offset`         | `0px`                               | How far the container must be scrolled before the fade starts. This is set from the `offset` prop.                  |
 | `--scroll-shadow-scrollbar-size` | `10px` (`0px` when `hideScrollBar`) | Reserves a solid mask gutter for the native scrollbar so the fade does not cover it. Override for wider scrollbars. |
 
 ### Data Attributes
@@ -129,6 +132,6 @@ mount. Two things to keep in mind when customizing:
 
 <ApiTable component="ScrollShadow" kind="emits" />
 
-### Theme
+## Theme
 
 <ApiTheme component="ScrollShadow" />

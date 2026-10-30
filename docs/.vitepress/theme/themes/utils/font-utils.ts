@@ -27,7 +27,7 @@ const JSDELIVR_ALLOWED_PATHS = [
  * Validates if a URL is from an allowed font CDN host and uses HTTPS.
  * This is a security check to prevent loading malicious resources.
  */
-export function isValidFontCdnUrl(url: string): boolean {
+export const isValidFontCdnUrl = (url: string): boolean => {
   try {
     const parsedUrl = new URL(url)
 
@@ -38,11 +38,13 @@ export function isValidFontCdnUrl(url: string): boolean {
 
     // Special handling for jsdelivr - only allow Fontsource paths
     if (parsedUrl.hostname === 'cdn.jsdelivr.net') {
-      return JSDELIVR_ALLOWED_PATHS.some(prefix => parsedUrl.pathname.startsWith(prefix))
+      return JSDELIVR_ALLOWED_PATHS.some((prefix) => parsedUrl.pathname.startsWith(prefix))
     }
 
     // Must be from an allowed host
-    return ALLOWED_FONT_CDN_HOSTS.some(host => parsedUrl.hostname === host || parsedUrl.hostname.endsWith(`.${host}`))
+    return ALLOWED_FONT_CDN_HOSTS.some(
+      (host) => parsedUrl.hostname === host || parsedUrl.hostname.endsWith(`.${host}`),
+    )
   } catch {
     return false
   }
@@ -52,7 +54,7 @@ export function isValidFontCdnUrl(url: string): boolean {
  * Checks if a fontFamily value is a valid CDN URL (for custom fonts)
  * Only returns true if it's a valid URL from an allowed CDN host
  */
-export function isCustomFontUrl(fontFamily: string): boolean {
+export const isCustomFontUrl = (fontFamily: string): boolean => {
   if (!fontFamily.startsWith('https://')) {
     return false
   }
@@ -71,7 +73,7 @@ export function isCustomFontUrl(fontFamily: string): boolean {
  * - Fontsource: https://cdn.jsdelivr.net/fontsource/fonts/lato@latest/latin-400-normal.woff2 -> "Lato"
  * - CDNfonts: https://fonts.cdnfonts.com/css/stasiun -> "Stasiun"
  */
-export function extractFontFamilyFromUrl(url: string): string | null {
+export const extractFontFamilyFromUrl = (url: string): string | null => {
   try {
     const parsedUrl = new URL(url)
 
@@ -81,6 +83,7 @@ export function extractFontFamilyFromUrl(url: string): string | null {
     if (familyParam) {
       // Handle multiple families (take the first one)
       const firstFamily = familyParam.split('|')[0] ?? ''
+
       // Remove weight/style specifiers (everything after :)
       const familyName = firstFamily.split(':')[0] ?? ''
 
@@ -97,44 +100,46 @@ export function extractFontFamilyFromUrl(url: string): string | null {
 
       if (fontName) {
         // Capitalize first letter of each word
-        return fontName.replace(/-/g, ' ').replace(/\b\w/g, l => l.toUpperCase())
+        return fontName.replace(/-/g, ' ').replace(/\b\w/g, (l) => l.toUpperCase())
       }
     }
 
     // Fontsource npm format: /npm/@fontsource/font-name@version/...
     // or /npm/@fontsource-variable/font-name@version/...
-    const fontsourceNpmMatch = parsedUrl.pathname.match(/\/npm\/@fontsource(?:-variable)?\/([^@/]+)/)
+    const fontsourceNpmMatch = parsedUrl.pathname.match(
+      /\/npm\/@fontsource(?:-variable)?\/([^@/]+)/,
+    )
 
     if (fontsourceNpmMatch?.[1]) {
-      return fontsourceNpmMatch[1].replace(/-/g, ' ').replace(/\b\w/g, l => l.toUpperCase())
+      return fontsourceNpmMatch[1].replace(/-/g, ' ').replace(/\b\w/g, (l) => l.toUpperCase())
     }
 
     // Fontsource direct format: /fontsource/fonts/font-name@version/... or /fontsource/fonts/font-name:vf@version/...
     const fontsourceDirectMatch = parsedUrl.pathname.match(/\/fontsource\/fonts\/([^@/:]+)/)
 
     if (fontsourceDirectMatch?.[1]) {
-      return fontsourceDirectMatch[1].replace(/-/g, ' ').replace(/\b\w/g, l => l.toUpperCase())
+      return fontsourceDirectMatch[1].replace(/-/g, ' ').replace(/\b\w/g, (l) => l.toUpperCase())
     }
 
     // CDNfonts page format: /font-name.font (e.g., https://www.cdnfonts.com/stasiun.font)
     const cdnfontsPageMatch = parsedUrl.pathname.match(/\/([^/]+)\.font$/)
 
     if (cdnfontsPageMatch?.[1]) {
-      return cdnfontsPageMatch[1].replace(/-/g, ' ').replace(/\b\w/g, l => l.toUpperCase())
+      return cdnfontsPageMatch[1].replace(/-/g, ' ').replace(/\b\w/g, (l) => l.toUpperCase())
     }
 
     // CDNfonts CSS format: /css/font-name (e.g., https://fonts.cdnfonts.com/css/stasiun)
     const cdnfontsCssMatch = parsedUrl.pathname.match(/\/css\/([^/?]+)/)
 
     if (cdnfontsCssMatch?.[1]) {
-      return cdnfontsCssMatch[1].replace(/-/g, ' ').replace(/\b\w/g, l => l.toUpperCase())
+      return cdnfontsCssMatch[1].replace(/-/g, ' ').replace(/\b\w/g, (l) => l.toUpperCase())
     }
 
     // Generic CSS file format: /path/font-name.css
     const pathMatch = url.match(/\/([^/]+)\.css/)
 
     if (pathMatch?.[1]) {
-      return pathMatch[1].replace(/-/g, ' ').replace(/\b\w/g, l => l.toUpperCase())
+      return pathMatch[1].replace(/-/g, ' ').replace(/\b\w/g, (l) => l.toUpperCase())
     }
 
     return null
@@ -151,36 +156,35 @@ const FONT_FILE_EXTENSIONS = ['.woff2', '.woff', '.ttf', '.otf', '.eot']
 /**
  * Checks if a URL points to a font file (vs a CSS stylesheet)
  */
-export function isFontFileUrl(url: string): boolean {
+const isFontFileUrl = (url: string): boolean => {
   try {
     const pathname = new URL(url).pathname.toLowerCase()
 
-    return FONT_FILE_EXTENSIONS.some(ext => pathname.endsWith(ext))
+    return FONT_FILE_EXTENSIONS.some((ext) => pathname.endsWith(ext))
   } catch {
     return false
   }
+}
+
+/** The `@font-face` `format()` for a font file, from its extension and variable font status. */
+const getFontFormat = (url: string, isVariable: boolean) => {
+  if (url.endsWith('.woff')) return 'woff'
+  if (url.endsWith('.ttf')) return 'truetype'
+  if (url.endsWith('.otf')) return 'opentype'
+  if (isVariable && url.endsWith('.woff2')) return 'woff2-variations'
+
+  return 'woff2'
 }
 
 /**
  * Generates @font-face CSS for a font file URL
  * Supports Fontsource variable fonts and static fonts
  */
-function generateFontFaceCSS(fontFamily: string, url: string): string {
+const generateFontFaceCSS = (fontFamily: string, url: string): string => {
   // Detect variable fonts by URL patterns
   const isVariable = url.includes(':vf@') || url.includes('-wght-') || url.includes('-opsz-')
 
-  // Determine format based on file extension and variable font status
-  let format = 'woff2'
-
-  if (url.endsWith('.woff')) {
-    format = 'woff'
-  } else if (url.endsWith('.ttf')) {
-    format = 'truetype'
-  } else if (url.endsWith('.otf')) {
-    format = 'opentype'
-  } else if (isVariable && url.endsWith('.woff2')) {
-    format = 'woff2-variations'
-  }
+  const format = getFontFormat(url, isVariable)
 
   // Variable fonts support weight range, static fonts use 400
   const fontWeight = isVariable ? '100 900' : '400'
@@ -203,14 +207,12 @@ function generateFontFaceCSS(fontFamily: string, url: string): string {
  *
  * @param id - Unique identifier for this font
  * @param url - CDN URL for the font (stylesheet or font file)
- * @param fontFamily - Font family name (required for font files)
- * @returns The injected element
+ * @returns The injected element, or `null` when the family of a font file can't be read from its URL
  */
-export function injectFontLink(
+export const injectFontLink = (
   id: string,
   url: string,
-  fontFamily?: string,
-): HTMLLinkElement | HTMLStyleElement | null {
+): HTMLLinkElement | HTMLStyleElement | null => {
   if (typeof document === 'undefined') return null
 
   const elementId = `font-link-${id}`
@@ -222,14 +224,11 @@ export function injectFontLink(
 
   // Check if this is a font file URL that needs @font-face generation
   if (isFontFileUrl(url)) {
-    // For font files, we need the font family name to generate @font-face
-    const family = fontFamily || extractFontFamilyFromUrl(url)
+    // For font files, we need the font family name to generate @font-face. Imports are validated
+    // with the same extractor first, so an unreadable family only comes from a hand-edited URL: skip it.
+    const family = extractFontFamilyFromUrl(url)
 
-    if (!family) {
-      console.warn('Could not determine font family for font file:', url)
-
-      return null
-    }
+    if (!family) return null
 
     const styleElement = document.createElement('style')
 
@@ -252,29 +251,17 @@ export function injectFontLink(
 }
 
 /**
- * Removes a font element by ID
- */
-export function removeFontLink(id: string): void {
-  if (typeof document === 'undefined') return
-
-  const elementId = `font-link-${id}`
-  const existingElement = document.getElementById(elementId)
-
-  if (existingElement) {
-    existingElement.remove()
-  }
-}
-
-/**
  * Gets font info from a URL for CSS generation.
  * Returns null if the URL is invalid or not from a trusted CDN.
  */
-export function getCustomFontInfoFromUrl(url: string): {
+export const getCustomFontInfoFromUrl = (
+  url: string,
+): {
   fontFamily: string
   label: string
   url: string
   variable: string
-} | null {
+} | null => {
   // Security: Validate URL is from a trusted CDN before processing
   if (!isValidFontCdnUrl(url)) {
     return null

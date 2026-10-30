@@ -1,3 +1,15 @@
+<template>
+  <Pagination
+    v-model:page="page"
+    class="w-full"
+    :prev="{ label: 'Prev' }"
+    hide-pages
+    :total="totalPages"
+  >
+    <template #summary> {{ startItem }} to {{ endItem }} of {{ totalItems }} invoices </template>
+  </Pagination>
+</template>
+
 <script setup lang="ts">
 import { Pagination } from '@hareui/vue'
 import { computed, ref } from 'vue'
@@ -9,11 +21,3 @@ const totalItems = 50
 const startItem = computed(() => (page.value - 1) * itemsPerPage + 1)
 const endItem = computed(() => Math.min(page.value * itemsPerPage, totalItems))
 </script>
-
-<template>
-  <Pagination v-model:page="page" class="w-full" hide-pages prev-label="Prev" :total="totalPages">
-    <template #summary>
-      {{ startItem }} to {{ endItem }} of {{ totalItems }} invoices
-    </template>
-  </Pagination>
-</template>

@@ -24,20 +24,22 @@ CellSlider is a horizontal [Slider](/docs/components/slider) where the whole row
 ```vue
 <template>
   <CellSlider label="…">
-    <template #label />                         <!-- label content -->
-    <template #output="{ value, formatted }" /> <!-- value at the end of the row -->
+    <template #label />
+    <!-- label content -->
+    <template #output="{ value, formatted }" />
+    <!-- value at the end of the row -->
   </CellSlider>
 </template>
 ```
 
-| `ui` key | `data-slot` | Element |
-|---|---|---|
-| `base` | `cell-slider` | `<div role="group">` root |
-| `label` | `label` | [Label](/docs/components/label) at the start of the row, when `label` or `#label` is set |
-| `output` | `slider-output` | `<output>` at the end of the row |
-| `track` | `slider-track` | `<span>`, the visible row |
-| `fill` | `slider-fill` | `<span>` tint from the start of the row to the value |
-| `thumb` | `slider-thumb` | `<span role="slider">` hit area; the bar is its `::after` |
+| `ui` key | `data-slot`     | Element                                                                                  |
+| -------- | --------------- | ---------------------------------------------------------------------------------------- |
+| `base`   | `cell-slider`   | `<div role="group">` root                                                                |
+| `label`  | `label`         | [Label](/docs/components/label) at the start of the row, when `label` or `#label` is set |
+| `output` | `slider-output` | `<output>` at the end of the row                                                         |
+| `track`  | `slider-track`  | `<span>`, the visible row                                                                |
+| `fill`   | `slider-fill`   | `<span>` tint from the start of the row to the value                                     |
+| `thumb`  | `slider-thumb`  | `<span role="slider">` hit area; the bar is its `::after`                                |
 
 ## Examples
 
@@ -94,9 +96,11 @@ Pass classes per part with `ui`:
 ### Global Configuration
 
 ```ts
-app.use(createHareUI({
-  ui: { cellSlider: { slots: { track: 'h-10', fill: 'bg-accent/10' } } },
-}))
+app.use(
+  createHareUI({
+    ui: { cellSlider: { slots: { track: 'h-10', fill: 'bg-accent/10' } } },
+  }),
+)
 ```
 
 The slots are merged over the [Slider](/docs/components/slider) theme, so `ui.slider` in the app config applies here too.
@@ -135,7 +139,7 @@ The row background reads `--cell-bg-current`, so a plain `bg-*` class in `ui.tra
 
 <ApiTable component="CellSlider" kind="emits" />
 
-### Theme
+## Theme
 
 <ApiTheme component="CellSlider" />
 

@@ -25,30 +25,39 @@ ComboBox renders a [Label](/docs/components/label), an input group (an [Input](/
 ```vue
 <template>
   <ComboBox label="Animal" :items="items">
-    <template #label />                                  <!-- Label content -->
-    <template #indicator="{ open }" />                   <!-- trigger button content (default: chevron) -->
+    <template #label />
+    <!-- Label content -->
+    <template #indicator="{ open }" />
+    <!-- trigger button content (default: chevron) -->
     <!-- Displays the selected values, primarily used for multiple selection -->
     <template #value="{ selectedItems, isPlaceholder, text }" />
-    <template #description />                            <!-- Description content -->
-    <template #error="validation" />                     <!-- FieldError content -->
-    <template #item-leading="{ item, selected }" />      <!-- ListBox item slots -->
-    <template #item-indicator="{ selected }" />          <!-- option checkmark -->
-    <template #section-label="{ section }" />            <!-- section header -->
-    <template #empty />                                  <!-- with `allows-empty-collection` -->
-    <template #loading />                                <!-- with `loading`: after the last option -->
+    <template #description />
+    <!-- Description content -->
+    <template #error="validation" />
+    <!-- FieldError content -->
+    <template #item-leading="{ item, selected }" />
+    <!-- ListBox item slots -->
+    <template #item-indicator="{ selected }" />
+    <!-- option checkmark -->
+    <template #section-label="{ section }" />
+    <!-- section header -->
+    <template #empty />
+    <!-- with `allows-empty-collection` -->
+    <template #loading />
+    <!-- with `loading`: after the last option -->
   </ComboBox>
 </template>
 ```
 
-| `ui` key | `data-slot` | Element |
-|---|---|---|
-| `base` | `combo-box` | root `<div>` |
-| `label` | `label` | Label |
+| `ui` key     | `data-slot`             | Element                                           |
+| ------------ | ----------------------- | ------------------------------------------------- |
+| `base`       | `combo-box`             | root `<div>`                                      |
+| `label`      | `label`                 | Label                                             |
 | `inputGroup` | `combo-box-input-group` | `<div role="group">` around the input and trigger |
-| `input` | `input` | `<input role="combobox">` (Input styles) |
-| `trigger` | `combo-box-trigger` | `<button>` opening the popover |
-| `value` | `combo-box-value` | selected values (multiple mode or `#value`) |
-| `popover` | `combo-box-popover` | popover holding the list |
+| `input`      | `input`                 | `<input role="combobox">` (Input styles)          |
+| `trigger`    | `combo-box-trigger`     | `<button>` opening the popover                    |
+| `value`      | `combo-box-value`       | selected values (multiple mode or `#value`)       |
+| `popover`    | `combo-box-popover`     | popover holding the list                          |
 
 ### Typing items
 
@@ -131,7 +140,7 @@ Pass `filter` to replace the default case- and accent-insensitive "contains" mat
 
 ### Render Function
 
-HeroUI's `render` prop has no HareUI equivalent; attributes such as `data-custom` fall through to the root.
+ComboBox has no `render` prop; attributes such as `data-custom` fall through to the root.
 
 <ComponentPreview name="combo-box/render-function" />
 
@@ -193,9 +202,19 @@ When used inside a [Surface](/docs/components/surface) component, use `variant="
 ### Global Configuration
 
 ```ts
-app.use(createHareUI({
-  ui: { comboBox: { slots: { inputGroup: 'rounded-lg', trigger: 'text-muted', popover: 'rounded-lg border border-border bg-surface p-2' } } },
-}))
+app.use(
+  createHareUI({
+    ui: {
+      comboBox: {
+        slots: {
+          inputGroup: 'rounded-lg',
+          trigger: 'text-muted',
+          popover: 'rounded-lg border border-border bg-surface p-2',
+        },
+      },
+    },
+  }),
+)
 ```
 
 ## Styling Reference
@@ -222,7 +241,7 @@ app.use(createHareUI({
 
 <ApiTable component="ComboBox" kind="emits" />
 
-### Theme
+## Theme
 
 <ApiTheme component="ComboBox" />
 

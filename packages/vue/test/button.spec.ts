@@ -1,13 +1,20 @@
 import { mount } from '@vue/test-utils'
 import { describe, expect, it, vi } from 'vitest'
 import { h } from 'vue'
-import Button from '../src/components/button/Button.vue'
+
+import Button from '@/components/button/Button.vue'
+
 import { expectAccessible } from './a11y'
 
 describe('Button', () => {
   it('pending shows a spinner, sets aria-busy and swallows clicks while staying focusable', async () => {
-    const onClick = vi.fn()
-    const wrapper = mount(Button, { props: { pending: true }, attrs: { onClick }, slots: { default: 'Save' } })
+    const onClick = vi.fn<(event: MouseEvent) => void>()
+    const wrapper = mount(Button, {
+      props: { pending: true },
+      attrs: { onClick },
+      slots: { default: 'Save' },
+    })
+
     expect(wrapper.find('[data-slot=spinner]').exists()).toBe(true)
     expect(wrapper.attributes('aria-busy')).toBe('true')
     expect(wrapper.attributes('disabled')).toBeUndefined()
@@ -16,7 +23,11 @@ describe('Button', () => {
   })
 
   it('#leading replaces the pending spinner', () => {
-    const wrapper = mount(Button, { props: { pending: true }, slots: { leading: () => h('i', { id: 'icon' }) } })
+    const wrapper = mount(Button, {
+      props: { pending: true },
+      slots: { leading: () => h('i', { id: 'icon' }) },
+    })
+
     expect(wrapper.find('#icon').exists()).toBe(true)
     expect(wrapper.find('[data-slot=spinner]').exists()).toBe(false)
   })
@@ -27,8 +38,12 @@ describe('Button', () => {
   })
 
   it('as="a" renders a link that is aria-disabled, unfocusable and click-inert when disabled', async () => {
-    const onClick = vi.fn()
-    const wrapper = mount(Button, { props: { as: 'a', disabled: true }, attrs: { href: '#x', onClick } })
+    const onClick = vi.fn<(event: MouseEvent) => void>()
+    const wrapper = mount(Button, {
+      props: { as: 'a', disabled: true },
+      attrs: { href: '#x', onClick },
+    })
+
     expect(wrapper.element.tagName).toBe('A')
     expect(wrapper.attributes('aria-disabled')).toBe('true')
     expect(wrapper.attributes('tabindex')).toBe('-1')
@@ -38,7 +53,7 @@ describe('Button', () => {
   })
 
   it('fires click when enabled', async () => {
-    const onClick = vi.fn()
+    const onClick = vi.fn<(event: MouseEvent) => void>()
     const wrapper = mount(Button, { attrs: { onClick } })
     await wrapper.trigger('click')
     expect(onClick).toHaveBeenCalledOnce()
@@ -46,7 +61,12 @@ describe('Button', () => {
 
   it.each([
     ['with a text label', {}, { default: 'Save' }, {}],
-    ['icon-only with aria-label', { iconOnly: true }, { default: () => h('svg', { 'aria-hidden': 'true' }) }, { 'aria-label': 'Settings' }],
+    [
+      'icon-only with aria-label',
+      { iconOnly: true },
+      { default: () => h('svg', { 'aria-hidden': 'true' }) },
+      { 'aria-label': 'Settings' },
+    ],
     ['disabled', { disabled: true }, { default: 'Save' }, {}],
     ['pending', { pending: true }, { default: 'Save' }, {}],
     ['as a link', { as: 'a' }, { default: 'Docs' }, { href: '/docs' }],
@@ -58,10 +78,17 @@ describe('Button', () => {
   })
 
   it('pending keeps the button focusable and exposes it as disabled; disabled leaves the tab order', () => {
-    const wrapper = mount({ render: () => h('div', [
-      h(Button, { id: 'pending', pending: true }, () => 'Save'),
-      h(Button, { id: 'disabled', disabled: true }, () => 'Save'),
-    ]) }, { attachTo: document.body })
+    const wrapper = mount(
+      {
+        render: () =>
+          h('div', [
+            h(Button, { id: 'pending', pending: true }, () => 'Save'),
+            h(Button, { id: 'disabled', disabled: true }, () => 'Save'),
+          ]),
+      },
+      { attachTo: document.body },
+    )
+
     const pending = wrapper.get('#pending').element as HTMLButtonElement
     pending.focus()
     expect(document.activeElement).toBe(pending)
@@ -73,9 +100,16 @@ describe('Button', () => {
   })
 
   it('as="div" is a tabbable, named button activated once by Enter (keydown) and Space (keyup)', async () => {
-    const onClick = vi.fn()
+    const onClick = vi.fn<(event: MouseEvent) => void>()
+
     // Attached: happy-dom's `element.click()` doesn't dispatch on detached nodes.
-    const wrapper = mount(Button, { props: { as: 'div' }, attrs: { onClick }, slots: { default: 'Open' }, attachTo: document.body })
+    const wrapper = mount(Button, {
+      props: { as: 'div' },
+      attrs: { onClick },
+      slots: { default: 'Open' },
+      attachTo: document.body,
+    })
+
     // Vue drops events stamped in the same millisecond its listeners were attached; real key presses never are.
     const tick = Promise.withResolvers<void>()
     setTimeout(tick.resolve, 2)
@@ -98,8 +132,14 @@ describe('Button', () => {
   })
 
   it('as="div" disabled leaves the tab order and ignores Enter, Space and clicks', async () => {
-    const onClick = vi.fn()
-    const wrapper = mount(Button, { props: { as: 'div', disabled: true }, attrs: { onClick }, slots: { default: 'Open' }, attachTo: document.body })
+    const onClick = vi.fn<(event: MouseEvent) => void>()
+    const wrapper = mount(Button, {
+      props: { as: 'div', disabled: true },
+      attrs: { onClick },
+      slots: { default: 'Open' },
+      attachTo: document.body,
+    })
+
     expect(wrapper.attributes('role')).toBe('button')
     expect(wrapper.attributes('aria-disabled')).toBe('true')
     expect(wrapper.attributes('tabindex')).toBe('-1')
@@ -115,7 +155,12 @@ describe('Button', () => {
     ['enabled', {}],
     ['disabled', { disabled: true }],
   ])('as="div" %s passes axe', async (_, props) => {
-    const wrapper = mount(Button, { props: { as: 'div', ...props }, slots: { default: 'Open' }, attachTo: document.body })
+    const wrapper = mount(Button, {
+      props: { as: 'div', ...props },
+      slots: { default: 'Open' },
+      attachTo: document.body,
+    })
+
     await expectAccessible(wrapper)
     wrapper.unmount()
   })

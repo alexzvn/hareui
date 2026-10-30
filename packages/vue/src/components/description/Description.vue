@@ -1,35 +1,17 @@
-<script lang="ts">
-import type { ComponentSlots } from '../../types/tv'
-import theme from './theme'
-
-type Description = typeof theme
-
-export interface DescriptionProps {
-  /** The id of the element, referenced by `aria-describedby` of the described control. */
-  id?: string
-  /** Additional classes merged into the root element. */
-  class?: any
-  /** Per-slot class overrides. */
-  ui?: ComponentSlots<Description>
-}
-
-export interface DescriptionSlots {
-  /** The description content. */
-  default?: () => any
-}
-</script>
+<template>
+  <span :id="id" data-slot="description" :class="ui.base()">
+    <slot />
+  </span>
+</template>
 
 <script setup lang="ts">
-import { useComponentUI } from '../../composables/useComponentUI'
+import { useComponentUI } from '@/composables/useComponentUI'
+
+import type { DescriptionProps, DescriptionSlots } from './Description.types'
+import theme from './theme'
 
 const props = defineProps<DescriptionProps>()
 defineSlots<DescriptionSlots>()
 
-const ui = useComponentUI('description', theme, () => ({}))
+const ui = useComponentUI('description', { theme: theme, variantProps: () => ({}), props })
 </script>
-
-<template>
-  <span :id="id" data-slot="description" :class="ui.base({ class: [props.ui?.base, props.class] })">
-    <slot />
-  </span>
-</template>

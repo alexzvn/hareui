@@ -54,13 +54,15 @@ Use the `side` prop to collapse the right sidebar instead. With `side="right"` t
 Override the `dashboardSidebarCollapse` theme app-wide with `createHareUI`:
 
 ```ts
-app.use(createHareUI({
-  ui: {
-    dashboardSidebarCollapse: {
-      slots: { base: 'hidden xl:flex' },
+app.use(
+  createHareUI({
+    ui: {
+      dashboardSidebarCollapse: {
+        slots: { base: 'hidden xl:flex' },
+      },
     },
-  },
-}))
+  }),
+)
 ```
 
 ## API
@@ -72,3 +74,7 @@ app.use(createHareUI({
 ### DashboardSidebarCollapse Slots
 
 <ApiTable component="DashboardSidebarCollapse" kind="slots" />
+
+## Theme
+
+<ApiTheme component="DashboardSidebarCollapse" />

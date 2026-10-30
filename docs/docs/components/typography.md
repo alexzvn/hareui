@@ -26,7 +26,7 @@ import { Typography } from '@hareui/vue'
 - `type` picks both the visual style and, unless `as` is set, the rendered element: `h1`–`h6` →
   `<h1>`–`<h6>`, `body`/`body-sm`/`body-xs` → `<p>`, `code` → `<code>`.
 - `prose` switches to a rich-content container (`<div data-slot="prose">`): children are plain
-  HTML and receive HeroUI's default typography rhythm instead of the `type` styles. `type`,
+  HTML and receive a default typography rhythm instead of the `type` styles. `type`,
   `align`, `color`, `weight` and `truncate` are ignored in this mode.
 
 `ui` keys: `base`, `prose`.
@@ -67,41 +67,31 @@ Use the `as` prop when you need to customize the rendered element.
 Override the `typography` theme app-wide with `createHareUI`:
 
 ```ts
-app.use(createHareUI({
-  ui: {
-    typography: {
-      variants: {
-        type: {
-          h1: { base: 'font-extrabold tracking-tight' },
-          code: { base: 'rounded-md bg-default-100 font-mono dark:bg-default-50/20' },
+app.use(
+  createHareUI({
+    ui: {
+      typography: {
+        variants: {
+          type: {
+            h1: { base: 'font-extrabold tracking-tight' },
+            code: { base: 'rounded-md bg-default-100 font-mono dark:bg-default-50/20' },
+          },
         },
       },
     },
-  },
-}))
+  }),
+)
 ```
 
 ## Styling Reference
 
-Each rendered element carries the same `data-slot` string as HeroUI (`typography` for the
-default mode, `prose` for `prose` mode), so selectors translate 1:1.
+Each rendered element carries a `data-slot` attribute (`typography` for the
+default mode, `prose` for `prose` mode) you can target in selectors.
 
-| `ui` key | `data-slot` | Description |
-|---|---|---|
-| `base` | `typography` | Base typography primitive |
-| `prose` | `prose` | Rich prose container |
-
-HeroUI follows [BEM](https://getbem.com/) for its modifier classes (HareUI renders utilities,
-not BEM classes, so style through `class`, `ui` or `createHareUI`):
-
-- `.typography--h1` through `.typography--h6`, `.typography--body`, `.typography--body-sm`,
-  `.typography--body-xs`, `.typography--code` → the `type` prop
-- `.typography--align-start`, `--align-center`, `--align-end`, `--align-justify` → the `align`
-  prop
-- `.typography--color-default`, `--color-muted` → the `color` prop
-- `.typography--weight-normal`, `--weight-medium`, `--weight-semibold`, `--weight-bold` → the
-  `weight` prop
-- `.typography--truncate` → the `truncate` prop
+| `ui` key | `data-slot`  | Description               |
+| -------- | ------------ | ------------------------- |
+| `base`   | `typography` | Base typography primitive |
+| `prose`  | `prose`      | Rich prose container      |
 
 ## API Reference
 
@@ -113,7 +103,7 @@ not BEM classes, so style through `class`, `ui` or `createHareUI`):
 
 <ApiTable component="Typography" kind="slots" />
 
-### Theme
+## Theme
 
 <ApiTheme component="Typography" />
 

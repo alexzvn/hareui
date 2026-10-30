@@ -1,23 +1,29 @@
-import type { ClassValue } from 'tailwind-variants'
 import type { VNodeChild } from 'vue'
 import { markRaw, reactive } from 'vue'
 
+import type { ClassValue } from '@/utils/tv'
+
 // How long a closing toast stays mounted for its exit animation, in milliseconds.
 const DEFAULT_EXIT_DURATION = 300
+
 // Auto-dismiss timeout in milliseconds.
 const DEFAULT_TOAST_TIMEOUT = 4000
 
 /** Monotonic clock: Date.now() can jump on wall-clock adjustments. */
-const now: () => number = typeof performance !== 'undefined' && typeof performance.now === 'function'
-  ? () => performance.now()
-  : () => Date.now()
+const now: () => number =
+  typeof performance !== 'undefined' && typeof performance.now === 'function'
+    ? () => performance.now()
+    : () => Date.now()
 
-function prefersReducedMotion(): boolean {
-  return typeof window !== 'undefined' && !!window.matchMedia?.('(prefers-reduced-motion: reduce)')?.matches
+const prefersReducedMotion = (): boolean => {
+  return (
+    typeof window !== 'undefined' &&
+    !!window.matchMedia?.('(prefers-reduced-motion: reduce)')?.matches
+  )
 }
 
 let keySeq = 0
-function generateKey(): string {
+const generateKey = (): string => {
   keySeq += 1
   return `toast-${keySeq}-${Math.random().toString(36).slice(2, 8)}`
 }
@@ -45,17 +51,16 @@ class ManagedToastTimer {
   }
 
   pause(): void {
-    if (this.timerId == null)
-      return
+    if (this.timerId == null) return
     clearTimeout(this.timerId)
     this.timerId = null
     this.remaining -= now() - (this.startTime ?? now())
   }
 
   resume(): void {
-    if (this.remaining <= 0 || this.timerId != null)
-      return
+    if (this.remaining <= 0 || this.timerId != null) return
     this.startTime = now()
+
     this.timerId = setTimeout(() => {
       this.timerId = null
       this.remaining = 0
@@ -64,7 +69,8 @@ class ManagedToastTimer {
   }
 }
 
-export interface QueuedToast<T> {
+/** A toast entry held by a `ToastQueue`. */
+export type QueuedToast<T> = {
   /** Unique key identifying this toast in the queue. */
   key: string
   /** The toast's content. */
@@ -77,7 +83,8 @@ export interface QueuedToast<T> {
   timer?: ManagedToastTimer
 }
 
-export interface ToastQueueOptions {
+/** Options for creating a `ToastQueue`. */
+export type ToastQueueOptions = {
   /**
    * How long a closing toast stays mounted for its exit animation, in
    * milliseconds. Set to 0 to remove toasts immediately.
@@ -120,18 +127,23 @@ export class ToastQueue<T extends object = ToastContentValue> {
     return this._exitingKeys
   }
 
+  /** Starts an auto-dismiss countdown for `key`, held while any suspension is active. */
+  private startTimer(key: string, timeout: number): ManagedToastTimer {
+    const timer = markRaw(new ManagedToastTimer(() => this.close(key), timeout))
+    if (this.suspensions.size === 0) timer.resume()
+
+    return timer
+  }
+
   /** Adds a toast and returns its key; explicit timeout 0 keeps it open. */
-  add(content: T, options?: { timeout?: number, onClose?: () => void }): string {
+  add(content: T, options?: { timeout?: number; onClose?: () => void }): string {
     const key = generateKey()
     const timeout = options?.timeout ?? DEFAULT_TOAST_TIMEOUT
     const toast: QueuedToast<T> = { key, content, timeout, onClose: options?.onClose }
-    if (timeout > 0) {
-      const timer = new ManagedToastTimer(() => this.close(key), timeout)
-      toast.timer = markRaw(timer)
-      if (this.suspensions.size === 0)
-        timer.resume()
-    }
+    if (timeout > 0) toast.timer = this.startTimer(key, timeout)
+
     this._visibleToasts.unshift(toast)
+
     return key
   }
 
@@ -140,66 +152,61 @@ export class ToastQueue<T extends object = ToastContentValue> {
    * restarts the countdown (0 keeps it open); omit it to keep the current
    * countdown. Returns `false` if the toast no longer exists or is exiting.
    */
-  update(key: string, content: T, options?: { onClose?: () => void, timeout?: number }): boolean {
-    if (this._exitingKeys.has(key))
-      return false
-    const toast = this._visibleToasts.find(t => t.key === key)
-    if (!toast)
-      return false
+  // oxlint-disable-next-line eslint/max-params -- mirrors `toast(message, options)` with the target id in front; folding message into options would make the two calls differ
+  update(key: string, content: T, options?: { onClose?: () => void; timeout?: number }): boolean {
+    if (this._exitingKeys.has(key)) return false
+    const toast = this._visibleToasts.find((t) => t.key === key)
+    if (!toast) return false
 
     toast.content = content
-    if (options && 'onClose' in options)
-      toast.onClose = options.onClose
+    if (options && 'onClose' in options) toast.onClose = options.onClose
 
-    if (options?.timeout !== undefined) {
-      toast.timer?.pause()
-      toast.timeout = options.timeout
-      if (options.timeout > 0) {
-        const timer = new ManagedToastTimer(() => this.close(key), options.timeout)
-        toast.timer = markRaw(timer)
-        if (this.suspensions.size === 0)
-          timer.resume()
-      }
-      else {
-        toast.timer = undefined
-      }
-    }
+    if (options?.timeout === undefined) return true
+
+    toast.timer?.pause()
+    toast.timeout = options.timeout
+    toast.timer = options.timeout > 0 ? this.startTimer(key, options.timeout) : undefined
+
     return true
   }
 
   /** Closes a toast by its key; it animates out and fires its `onClose`. */
   close(key: string): void {
-    if (this._exitingKeys.has(key))
-      return
-    const index = this._visibleToasts.findIndex(t => t.key === key)
-    if (index === -1)
-      return
+    if (this._exitingKeys.has(key)) return
+    const index = this._visibleToasts.findIndex((t) => t.key === key)
+    if (index === -1) return
     const toast = this._visibleToasts[index]!
     const onClose = toast.onClose
     const canAnimate = this.exitDuration > 0 && !prefersReducedMotion()
 
     toast.timer?.pause()
+
     if (!canAnimate) {
       this._visibleToasts.splice(index, 1)
       onClose?.()
+
       return
     }
 
     toast.onClose = undefined
     this._exitingKeys.add(key)
-    this.exitTimers.set(key, setTimeout(() => {
-      this.exitTimers.delete(key)
-      this._exitingKeys.delete(key)
-      const i = this._visibleToasts.findIndex(t => t.key === key)
-      if (i !== -1)
-        this._visibleToasts.splice(i, 1)
-    }, this.exitDuration))
+
+    this.exitTimers.set(
+      key,
+      setTimeout(() => {
+        this.exitTimers.delete(key)
+        this._exitingKeys.delete(key)
+        const i = this._visibleToasts.findIndex((t) => t.key === key)
+        if (i !== -1) this._visibleToasts.splice(i, 1)
+      }, this.exitDuration),
+    )
+
     onClose?.()
   }
 
   /** Closes all toasts; each animates out and fires its `onClose`. */
   clear(): void {
-    for (const t of [...this._visibleToasts]) this.close(t.key)
+    this._visibleToasts.map((t) => t.key).forEach((key) => this.close(key))
   }
 
   /** Pauses every toast's auto-dismiss timer. */
@@ -214,9 +221,10 @@ export class ToastQueue<T extends object = ToastContentValue> {
 
   /** @internal Sources form a set: timers pause once it becomes non-empty, resume once it empties. */
   suspendTimers(source: string): void {
-    const wasEmpty = this.suspensions.size === 0
+    const isFirstSuspension = this.suspensions.size === 0
     this.suspensions.add(source)
-    if (wasEmpty) {
+
+    if (isFirstSuspension) {
       for (const t of this._visibleToasts) t.timer?.pause()
     }
   }
@@ -224,6 +232,7 @@ export class ToastQueue<T extends object = ToastContentValue> {
   /** @internal */
   resumeTimers(source: string): void {
     this.suspensions.delete(source)
+
     if (this.suspensions.size === 0) {
       for (const t of this._visibleToasts) t.timer?.resume()
     }
@@ -244,23 +253,30 @@ export class ToastQueue<T extends object = ToastContentValue> {
  * Toast content
  * --------------------------------------------------------------------------------------------- */
 
-export interface ToastContentValue {
-  /** `null` hides the indicator. */
+/** The content of a toast in the default queue, as rendered by `ToastProvider`. */
+export type ToastContentValue = {
+  /** Custom icon before the title; `null` hides the indicator. */
   indicator?: VNodeChild | null
+  /** Main message of the toast. */
   title?: VNodeChild
+  /** Secondary text rendered below the title. */
   description?: VNodeChild
+  /** Color variant conveying the toast's intent. */
   variant?: 'default' | 'accent' | 'success' | 'warning' | 'danger'
+  /** Optional action button rendered inside the toast. */
   action?: ToastAction
   /** Shows a spinner in place of the indicator. */
   isLoading?: boolean
 }
 
-export interface ToastAction {
+/** An action button shown inside a toast. */
+export type ToastAction = {
   /** The action button's label. */
   label: VNodeChild
   /** Called when the action button is clicked. */
   onClick?: (event: MouseEvent) => void
   /** @defaultValue 'secondary' */
   variant?: 'primary' | 'secondary' | 'tertiary' | 'ghost' | 'outline' | 'danger' | 'danger-soft'
+  /** Extra classes for the action button. */
   class?: ClassValue
 }

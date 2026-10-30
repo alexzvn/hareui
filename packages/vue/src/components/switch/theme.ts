@@ -45,13 +45,15 @@ export default {
       sm: {
         base: '[&>[data-slot=description]]:ps-[calc(2rem+0.75rem)] [&&>[data-slot=field-error]]:ps-[calc(2rem+0.75rem)]',
         control: 'h-4 w-8 rounded-lg',
-        thumb: 'h-3 w-[1.03125rem] rounded-md group-data-[selected=true]/switch:ms-[calc(100%-1.15625rem)]',
+        thumb:
+          'h-3 w-[1.03125rem] rounded-md group-data-[selected=true]/switch:ms-[calc(100%-1.15625rem)]',
       },
       md: {},
       lg: {
         base: '[&>[data-slot=description]]:ps-[calc(3rem+0.75rem)] [&&>[data-slot=field-error]]:ps-[calc(3rem+0.75rem)]',
         control: 'h-6 w-12',
-        thumb: 'h-5 w-[1.71875rem] rounded-xl group-data-[selected=true]/switch:ms-[calc(100%-1.84375rem)]',
+        thumb:
+          'h-5 w-[1.71875rem] rounded-xl group-data-[selected=true]/switch:ms-[calc(100%-1.84375rem)]',
       },
     },
   },

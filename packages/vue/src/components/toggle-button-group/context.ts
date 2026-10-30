@@ -1,9 +1,11 @@
 import type { ComputedRef, InjectionKey, Ref } from 'vue'
-import type toggleButtonGroupTheme from './theme'
-import type { ComponentSlots, ComponentUI } from '../../types/tv'
-import type { ToggleButtonProps } from '../toggle-button/ToggleButton.vue'
 
-export interface ToggleButtonGroupContext {
+import type { ToggleButtonProps } from '@/components/toggle-button/ToggleButton.types'
+import type { ComponentUI } from '@/types/tv'
+
+import type toggleButtonGroupTheme from './theme'
+
+export type ToggleButtonGroupContext = {
   selectionMode: Readonly<Ref<'single' | 'multiple'>>
   selected: Readonly<Ref<string[]>>
   disabled: Readonly<Ref<boolean>>
@@ -15,8 +17,10 @@ export interface ToggleButtonGroupContext {
   firstChild: Readonly<Ref<Element | null>>
   /** False inside a Toolbar: the toolbar owns arrow-key focus, so the buttons are plain tab stops (React Aria). */
   roving: boolean
+  /** The group's slot classes, its `ui` prop layered in. */
   ui: ComputedRef<ComponentUI<typeof toggleButtonGroupTheme>>
-  uiOverrides: Readonly<Ref<ComponentSlots<typeof toggleButtonGroupTheme> | undefined>>
 }
 
-export const toggleButtonGroupContextKey: InjectionKey<ToggleButtonGroupContext> = Symbol('hareui-toggle-button-group')
+export const toggleButtonGroupContextKey: InjectionKey<ToggleButtonGroupContext> = Symbol(
+  'hareui-toggle-button-group',
+)

@@ -1,3 +1,14 @@
+<template>
+  <Select
+    clearable
+    class="w-[256px]"
+    default-value="california"
+    label="State"
+    placeholder="Select one"
+    :items="states"
+  />
+</template>
+
 <script setup lang="ts">
 import type { ListBoxItem } from '@hareui/vue'
 import { Select } from '@hareui/vue'
@@ -11,14 +22,3 @@ const states: ListBoxItem[] = [
   { value: 'washington', label: 'Washington' },
 ]
 </script>
-
-<template>
-  <Select
-    clearable
-    class="w-[256px]"
-    default-value="california"
-    label="State"
-    placeholder="Select one"
-    :items="states"
-  />
-</template>

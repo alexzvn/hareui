@@ -1,7 +1,3 @@
-<script setup lang="ts">
-import { DashboardGroup, DashboardNavbar, DashboardPanel, DashboardResizeHandle } from '@hareui/vue'
-</script>
-
 <template>
   <DashboardGroup :persistent="false">
     <DashboardPanel id="custom-left" resizable :default-size="40" :max-size="70" :min-size="20">
@@ -10,7 +6,9 @@ import { DashboardGroup, DashboardNavbar, DashboardPanel, DashboardResizeHandle 
       </template>
 
       <template #body>
-        <div class="h-full min-h-24 rounded-xl border border-dashed border-separator bg-surface/50" />
+        <div
+          class="h-full min-h-24 rounded-xl border border-dashed border-separator bg-surface/50"
+        />
       </template>
 
       <!-- The slot receives the pointer / keyboard handlers and the aria attributes of a `role="separator"`. -->
@@ -37,8 +35,14 @@ import { DashboardGroup, DashboardNavbar, DashboardPanel, DashboardResizeHandle 
       </template>
 
       <template #body>
-        <div class="h-full min-h-24 rounded-xl border border-dashed border-separator bg-surface/50" />
+        <div
+          class="h-full min-h-24 rounded-xl border border-dashed border-separator bg-surface/50"
+        />
       </template>
     </DashboardPanel>
   </DashboardGroup>
 </template>
+
+<script setup lang="ts">
+import { DashboardGroup, DashboardNavbar, DashboardPanel, DashboardResizeHandle } from '@hareui/vue'
+</script>

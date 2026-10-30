@@ -1,3 +1,5 @@
+import type * as themes from './themes'
+
 export { default as button } from './button/theme'
 export { default as spinner } from './spinner/theme'
 export { default as closeButton } from './close-button/theme'
@@ -28,7 +30,8 @@ export { default as select } from './select/theme'
 export { default as comboBox } from './combo-box/theme'
 export { default as autocomplete } from './autocomplete/theme'
 
-export type Themes = typeof import('./themes')
+/** Map of every component's default theme by config key (`button`, `textField`, …); the keys accepted by `HareUIConfig['ui']`. */
+export type Themes = typeof themes
 export { default as meter } from './meter/theme'
 export { default as switchGroup } from './switch-group/theme'
 export { default as colorSwatch } from './color-swatch/theme'
@@ -109,3 +112,16 @@ export { default as pieChart } from './pie-chart/theme'
 export { default as radarChart } from './radar-chart/theme'
 export { default as radialChart } from './radial-chart/theme'
 export { default as chartLegend } from './chart-legend/theme'
+export { default as splitter } from './splitter/theme'
+export { default as timeline } from './timeline/theme'
+export { default as codeBlock } from './code-block/theme'
+export { default as rating } from './rating/theme'
+export { default as stepper } from './stepper/theme'
+export { default as tree } from './tree/theme'
+export { default as carousel } from './carousel/theme'
+export { default as sidebar } from './sidebar/theme'
+export { default as contextMenu } from './context-menu/theme'
+export { default as toc } from './toc/theme'
+export { default as editor } from './editor/theme'
+export { default as commandPalette } from './command-palette/theme'
+export { default as editorToolbar } from './editor-toolbar/theme'

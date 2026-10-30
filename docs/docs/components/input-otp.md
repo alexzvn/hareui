@@ -19,31 +19,34 @@ import { InputOtp } from '@hareui/vue'
 
 ## Anatomy
 
-HeroUI's `InputOTP` is a low-level anatomy component built on the [input-otp](https://github.com/guilhermerodz/input-otp) library: a single real `<input>` (invisible, but fully interactive) overlays a row of decorative slots, so typing, <kbd>Backspace</kbd>, arrow keys and paste are native browser text-editing behavior rather than custom per-slot focus management. `InputOtp` bundles that box together with a `Label`, `Description` and `FieldError`, following the same field convention as [SearchField](/docs/components/search-field) and [NumberField](/docs/components/number-field). Slots are laid out with `groups`, an array of slot counts per visual group; a separator is rendered between each group.
+The OTP box is built on the [input-otp](https://github.com/guilhermerodz/input-otp) library: a single real `<input>` (invisible, but fully interactive) overlays a row of decorative slots, so typing, <kbd>Backspace</kbd>, arrow keys and paste are native browser text-editing behavior rather than custom per-slot focus management. `InputOtp` bundles that box together with a `Label`, `Description` and `FieldError`, following the same field convention as [SearchField](/docs/components/search-field) and [NumberField](/docs/components/number-field). Slots are laid out with `groups`, an array of slot counts per visual group; a separator is rendered between each group.
 
 ```vue
 <template>
   <InputOtp v-model="code" :length="6" :groups="[3, 3]" label="…" description="…" error-message="…">
-    <template #label />                       <!-- Label content -->
-    <template #description />                 <!-- Description content -->
-    <template #error="{ validationErrors }" /> <!-- FieldError content, rendered while invalid -->
+    <template #label />
+    <!-- Label content -->
+    <template #description />
+    <!-- Description content -->
+    <template #error="{ validationErrors }" />
+    <!-- FieldError content, rendered while invalid -->
   </InputOtp>
 </template>
 ```
 
-| `ui` key | `data-slot` | Element |
-|---|---|---|
-| `base` | — | root `<div>` (HareUI-only), stacks label/box/description/error |
-| — | `label` | [Label](/docs/components/label) (iff `label` / `#label`) |
-| `root` | — | the box (`<div data-input-otp-container>`), HeroUI's `.input-otp` |
-| `group` | `input-otp-group` | one `<div>` per entry in `groups` |
-| `slot` | `input-otp-slot` | one `<div>` per character |
-| `slotValue` | `input-otp-slot-value` | the character inside a filled slot |
-| `caret` | `input-otp-caret` | blinking fake caret in the active, empty slot |
-| `separator` | `input-otp-separator` | `<div>` between groups |
-| `input` | `input-otp` | the real, invisible `<input>` that receives focus, typing and paste; carries `data-disabled` / `data-invalid` |
-| — | `description` | [Description](/docs/components/description) (iff `description` / `#description`) |
-| — | `field-error` | [FieldError](/docs/components/field-error) (while invalid, iff `error-message` / `#error` / validation errors) |
+| `ui` key    | `data-slot`            | Element                                                                                                        |
+| ----------- | ---------------------- | -------------------------------------------------------------------------------------------------------------- |
+| `base`      | —                      | root `<div>` (HareUI-only), stacks label/box/description/error                                                 |
+| —           | `label`                | [Label](/docs/components/label) (iff `label` / `#label`)                                                       |
+| `root`      | —                      | the box (`<div data-input-otp-container>`)                                                                     |
+| `group`     | `input-otp-group`      | one `<div>` per entry in `groups`                                                                              |
+| `slot`      | `input-otp-slot`       | one `<div>` per character                                                                                      |
+| `slotValue` | `input-otp-slot-value` | the character inside a filled slot                                                                             |
+| `caret`     | `input-otp-caret`      | blinking fake caret in the active, empty slot                                                                  |
+| `separator` | `input-otp-separator`  | `<div>` between groups                                                                                         |
+| `input`     | `input-otp`            | the real, invisible `<input>` that receives focus, typing and paste; carries `data-disabled` / `data-invalid`  |
+| —           | `description`          | [Description](/docs/components/description) (iff `description` / `#description`)                               |
+| —           | `field-error`          | [FieldError](/docs/components/field-error) (while invalid, iff `error-message` / `#error` / validation errors) |
 
 ## Examples
 
@@ -92,7 +95,7 @@ A complete two-factor authentication form with validation and submission.
 
 ### With Pattern
 
-Use the `pattern` prop to restrict input to specific characters: `'digits'`, `'chars'` or `'alphanumeric'`, mirroring HeroUI's exported `REGEXP_ONLY_DIGITS` / `REGEXP_ONLY_CHARS` / `REGEXP_ONLY_DIGITS_AND_CHARS` patterns.
+Use the `pattern` prop to restrict input to specific characters: `'digits'`, `'chars'` or `'alphanumeric'`.
 
 <ComponentPreview name="input-otp/with-pattern" />
 
@@ -111,9 +114,11 @@ Use `invalid` together with `error-message` to surface errors.
 ### Global Configuration
 
 ```ts
-app.use(createHareUI({
-  ui: { inputOtp: { slots: { slot: 'size-12 rounded-xl border-2 font-bold' } } },
-}))
+app.use(
+  createHareUI({
+    ui: { inputOtp: { slots: { slot: 'size-12 rounded-xl border-2 font-bold' } } },
+  }),
+)
 ```
 
 ## Styling Reference
@@ -127,7 +132,7 @@ app.use(createHareUI({
 - `slotValue` → `[data-slot="input-otp-slot-value"]` — the rendered character
 - `caret` → `[data-slot="input-otp-caret"]` — the blinking fake caret
 - `separator` → `[data-slot="input-otp-separator"]` — the dash between groups
-- `input` → `[data-slot="input-otp"]` — the real, invisible `<input>` (as in HeroUI, where `input-otp` passes `data-slot` to the input)
+- `input` → `[data-slot="input-otp"]` — the real, invisible `<input>`
 
 ### Interactive States
 
@@ -150,7 +155,7 @@ app.use(createHareUI({
 
 <ApiTable component="InputOtp" kind="emits" />
 
-### Theme
+## Theme
 
 <ApiTheme component="InputOtp" />
 

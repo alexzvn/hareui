@@ -1,10 +1,3 @@
-<script setup lang="ts">
-import { ColorField, ColorSwatch, parseColor } from '@hareui/vue'
-import { ref } from 'vue'
-
-const color = ref(parseColor('#6366F1'))
-</script>
-
 <template>
   <ColorField
     v-model="color"
@@ -24,3 +17,10 @@ const color = ref(parseColor('#6366F1'))
     </template>
   </ColorField>
 </template>
+
+<script setup lang="ts">
+import { ColorField, ColorSwatch, parseColor } from '@hareui/vue'
+import { ref } from 'vue'
+
+const color = ref(parseColor('#6366F1'))
+</script>

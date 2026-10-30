@@ -42,8 +42,7 @@ Skeleton is a single element. Size and shape come from `class`; the default slot
 ### Single Shimmer
 
 A synchronized shimmer effect that passes over all skeleton elements at once. Put the
-container classes below on a parent element (the equivalent of HeroUI's `skeleton--shimmer`
-class) and set `animation-type="none"` on child skeletons.
+container classes below on a parent element and set `animation-type="none"` on child skeletons.
 
 ```
 relative overflow-hidden before:pointer-events-none before:absolute before:inset-0 before:z-10
@@ -68,22 +67,24 @@ before:bg-[linear-gradient(90deg,transparent_0%,rgba(255,255,255,0.5)_50%,transp
 Override the `skeleton` theme app-wide with `createHareUI`:
 
 ```ts
-app.use(createHareUI({
-  ui: {
-    skeleton: {
-      slots: {
-        base: 'bg-surface-secondary/50', // Change base background
-      },
-      variants: {
-        animationType: {
-          shimmer: { base: 'after:via-surface' }, // Change shimmer gradient color
-          pulse: { base: 'animate-pulse opacity-75' }, // Customize pulse animation
-          none: { base: 'opacity-50' }, // Style for static skeleton
+app.use(
+  createHareUI({
+    ui: {
+      skeleton: {
+        slots: {
+          base: 'bg-surface-secondary/50', // Change base background
+        },
+        variants: {
+          animationType: {
+            shimmer: { base: 'after:via-surface' }, // Change shimmer gradient color
+            pulse: { base: 'animate-pulse opacity-75' }, // Customize pulse animation
+            none: { base: 'opacity-50' }, // Style for static skeleton
+          },
         },
       },
     },
-  },
-}))
+  }),
+)
 ```
 
 ### Global Animation Configuration
@@ -98,32 +99,33 @@ You can set a default animation type for all Skeleton components in your applica
 }
 
 /* You can also set different values for light/dark themes */
-.light, [data-theme="light"] {
+.light,
+[data-theme='light'] {
   --skeleton-animation: shimmer;
 }
 
-.dark, [data-theme="dark"] {
+.dark,
+[data-theme='dark'] {
   --skeleton-animation: pulse;
 }
 ```
 
 This global setting will be overridden by the `animationType` prop when specified on individual components.
-Like HeroUI, the variable is read from `:root` once per page load, after the component mounts.
+The variable is read from `:root` once per page load, after the component mounts.
 
 ## Styling Reference
 
-Like HeroUI's, the Skeleton root has no `data-slot`.
+The Skeleton root has no `data-slot`.
 
-| `ui` key | Description |
-|---|---|
-| `base` | Base skeleton styles with background and rounded corners |
+| `ui` key | Description                                              |
+| -------- | -------------------------------------------------------- |
+| `base`   | Base skeleton styles with background and rounded corners |
 
-HeroUI's modifier classes correspond to the `animationType` prop (HareUI renders utilities, not
-BEM classes, so style through `class`, `ui` or `createHareUI`):
+The `animationType` prop selects the animation (HareUI renders Tailwind utilities, so style through `class`, `ui` or `createHareUI`):
 
-- `.skeleton--shimmer` → `shimmer` (default): shimmer animation with a gradient
-- `.skeleton--pulse` → `pulse`: Tailwind's `animate-pulse`
-- `.skeleton--none` → `none`: static skeleton
+- `shimmer` (default): shimmer animation with a gradient
+- `pulse`: Tailwind's `animate-pulse`
+- `none`: static skeleton
 
 ### Animation
 
@@ -168,7 +170,7 @@ The pulse animation uses Tailwind's built-in `animate-pulse` utility.
 
 <ApiTable component="Skeleton" kind="slots" />
 
-### Theme
+## Theme
 
 <ApiTheme component="Skeleton" />
 

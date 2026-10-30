@@ -1,8 +1,3 @@
-<script setup lang="ts">
-import { Icon } from '@iconify/vue'
-import { Link } from '@hareui/vue'
-</script>
-
 <template>
   <div class="flex flex-col gap-3">
     <Link href="#" :ui="{ icon: 'ms-1.5 size-3' }">
@@ -19,3 +14,8 @@ import { Link } from '@hareui/vue'
     </Link>
   </div>
 </template>
+
+<script setup lang="ts">
+import { Link } from '@hareui/vue'
+import { Icon } from '@iconify/vue'
+</script>

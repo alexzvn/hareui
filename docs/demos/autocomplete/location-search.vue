@@ -1,38 +1,3 @@
-<script setup lang="ts">
-import type { ListBoxItem } from '@hareui/vue'
-import { Autocomplete } from '@hareui/vue'
-import { ref, watch } from 'vue'
-
-const allCities = [
-  { country: 'USA', name: 'New York' },
-  { country: 'USA', name: 'Los Angeles' },
-  { country: 'USA', name: 'Chicago' },
-  { country: 'UK', name: 'London' },
-  { country: 'France', name: 'Paris' },
-  { country: 'Japan', name: 'Tokyo' },
-  { country: 'Australia', name: 'Sydney' },
-  { country: 'Canada', name: 'Toronto' },
-  { country: 'Germany', name: 'Berlin' },
-  { country: 'Spain', name: 'Madrid' },
-]
-const items: ListBoxItem[] = allCities.map(city => ({ value: city.name, label: city.name, description: city.country }))
-
-const selectedKey = ref<string | null>(null)
-const searchText = ref('')
-const isLoading = ref(false)
-// Simulate async filtering
-let timer: ReturnType<typeof setTimeout> | undefined
-watch(searchText, (text) => {
-  if (!text)
-    return
-  isLoading.value = true
-  clearTimeout(timer)
-  timer = setTimeout(() => {
-    isLoading.value = false
-  }, 300)
-})
-</script>
-
 <template>
   <Autocomplete
     v-model="selectedKey"
@@ -50,3 +15,44 @@ watch(searchText, (text) => {
     </template>
   </Autocomplete>
 </template>
+
+<script setup lang="ts">
+import type { ListBoxItem } from '@hareui/vue'
+import { Autocomplete } from '@hareui/vue'
+import { ref, watch } from 'vue'
+
+const allCities = [
+  { country: 'USA', name: 'New York' },
+  { country: 'USA', name: 'Los Angeles' },
+  { country: 'USA', name: 'Chicago' },
+  { country: 'UK', name: 'London' },
+  { country: 'France', name: 'Paris' },
+  { country: 'Japan', name: 'Tokyo' },
+  { country: 'Australia', name: 'Sydney' },
+  { country: 'Canada', name: 'Toronto' },
+  { country: 'Germany', name: 'Berlin' },
+  { country: 'Spain', name: 'Madrid' },
+]
+
+const items: ListBoxItem[] = allCities.map((city) => ({
+  value: city.name,
+  label: city.name,
+  description: city.country,
+}))
+
+const selectedKey = ref<string | null>(null)
+const searchText = ref('')
+const isLoading = ref(false)
+
+// Simulate async filtering
+let timer: ReturnType<typeof setTimeout> | undefined
+watch(searchText, (text) => {
+  if (!text) return
+  isLoading.value = true
+  clearTimeout(timer)
+
+  timer = setTimeout(() => {
+    isLoading.value = false
+  }, 300)
+})
+</script>

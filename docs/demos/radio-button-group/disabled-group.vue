@@ -1,13 +1,3 @@
-<script setup lang="ts">
-import { RadioButtonGroup, RadioButtonGroupItem } from '@hareui/vue'
-
-const rooms = [
-  { value: 'atlas', title: 'Atlas', description: 'Ground floor, next to the kitchen', seats: 4 },
-  { value: 'borealis', title: 'Borealis', description: 'Second floor, with a whiteboard wall', seats: 8 },
-  { value: 'cosmos', title: 'Cosmos', description: 'Top floor, video conferencing kit', seats: 14 },
-]
-</script>
-
 <template>
   <RadioButtonGroup
     class="w-[min(360px,calc(100vw-2rem))]"
@@ -31,3 +21,18 @@ const rooms = [
     </RadioButtonGroupItem>
   </RadioButtonGroup>
 </template>
+
+<script setup lang="ts">
+import { RadioButtonGroup, RadioButtonGroupItem } from '@hareui/vue'
+
+const rooms = [
+  { value: 'atlas', title: 'Atlas', description: 'Ground floor, next to the kitchen', seats: 4 },
+  {
+    value: 'borealis',
+    title: 'Borealis',
+    description: 'Second floor, with a whiteboard wall',
+    seats: 8,
+  },
+  { value: 'cosmos', title: 'Cosmos', description: 'Top floor, video conferencing kit', seats: 14 },
+]
+</script>
