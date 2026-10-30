@@ -7,7 +7,7 @@ import { useInertOutside } from './useInertOutside'
 import { useLayerDismiss } from './useLayerDismiss'
 import { usePortal } from './usePortal'
 import { useTabbableFocusLoop } from './useTabbableFocusLoop'
-import { useVisualViewportHeight } from './useVisualViewportHeight'
+import { useVisualViewport } from './useVisualViewport'
 
 export type DialogShellOptions = {
   /** The component's props; reads `open`, `defaultOpen`, `title`, `portal` and `dismissible`. */
@@ -92,7 +92,7 @@ export const useDialogShell = (options: DialogShellOptions) => {
     ;(event.target as HTMLElement | null)?.focus({ preventScroll: true })
   }
 
-  const visualViewportHeight = useVisualViewportHeight()
+  const visualViewportStyle = useVisualViewport()
 
   const hasTitle = computed(() => !!(props.title || slots.title))
   const showHeaderTitle = computed(() => !slots.header && hasTitle.value)
@@ -103,8 +103,8 @@ export const useDialogShell = (options: DialogShellOptions) => {
 
   return {
     portalTarget,
-    /** Value for the backdrop's `--visual-viewport-height`. */
-    visualViewportHeight,
+    /** Backdrop `style`: `--visual-viewport-height` and `--visual-viewport-top`. */
+    visualViewportStyle,
     showHeaderTitle,
     hasHeader,
     /** `DialogRoot`'s `@update:open`. */

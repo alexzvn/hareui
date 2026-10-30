@@ -4,7 +4,7 @@
 export default {
   slots: {
     backdrop: [
-      'fixed inset-0 z-(--z-index-overlay) flex flex-row items-center justify-center',
+      'fixed inset-x-0 top-(--visual-viewport-top) z-(--z-index-overlay) flex flex-row items-center justify-center',
       'h-(--visual-viewport-height) w-full',
       '[&:where([data-state=open])]:animate-in [&:where([data-state=open])]:[--tw-duration:150ms] [&:where([data-state=open])]:ease-out [&:where([data-state=open])]:fade-in-0',
       '[&:where([data-state=closed])]:animate-out [&:where([data-state=closed])]:[--tw-duration:100ms] [&:where([data-state=closed])]:ease-out [&:where([data-state=closed])]:fade-out-0',

@@ -12,7 +12,7 @@
     <DialogPortal :disabled="portalTarget.disabled" :to="portalTarget.to">
       <DialogOverlay
         data-slot="alert-dialog-backdrop"
-        :style="{ '--visual-viewport-height': visualViewportHeight }"
+        :style="visualViewportStyle"
         :class="ui.backdrop()"
       >
         <!-- No force-mount: see Modal.vue - the dialog's `presence-hold` keeps it through the container's exit animation -->
@@ -197,7 +197,7 @@ const ui = useComponentUI('alertDialog', {
 const dialogContent = useTemplateRef<{ $el: HTMLElement }>('dialogContent')
 const {
   portalTarget,
-  visualViewportHeight,
+  visualViewportStyle,
   showHeaderTitle,
   hasHeader,
   onOpenChange,

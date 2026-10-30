@@ -11,6 +11,7 @@ Changes merged since [v0.3.0](./v0-3-0) that are not in a published release yet.
 - A `PieChart` centre label and its `#center` slot sit at the centre of the pie that is drawn, including a composed `ChartPie` with its own `cx`, `cy` or radii. Previously they stayed at the middle of the chart.
 - `ComboBox` lists your own `aria-describedby` ids first, before its value, description and error ids, as the other fields do.
 - A `justify-*` class in a cartesian chart's `ui.legend` now overrides the default `justify-center`, as it already did on pie, radar and radial charts.
+- `Modal`, `Drawer` and `AlertDialog` stay over the visible area when iOS Safari scrolls the page to show the on-screen keyboard. Previously the overlay stayed at the top of the page, so a drawer's header went off screen and its bottom stopped short of the keyboard. A top or bottom `Drawer` is now at most 85% of the visible area's height rather than of the page's, so a tall one keeps its header in view while the keyboard is open.
 
 ## Breaking changes
 

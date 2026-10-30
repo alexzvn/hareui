@@ -223,8 +223,8 @@ const drawerProps = computed((): DrawerMenuProps => {
       ...menu.ui,
       backdrop: [ui.value.overlay(), menu.ui?.backdrop],
 
-      // Fill the anchored region instead of the viewport, and clip the sliding panel to it.
-      content: ['absolute h-full overflow-hidden', menu.ui?.content],
+      // Drawer content already fills the backdrop (the anchored region); clip the sliding panel to it.
+      content: ['overflow-hidden', menu.ui?.content],
       dialog: [ui.value.content(), menu.ui?.dialog],
     },
   }

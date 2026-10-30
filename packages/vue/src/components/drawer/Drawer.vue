@@ -12,7 +12,7 @@
     <DialogPortal :disabled="portalTarget.disabled" :to="portalTarget.to">
       <DialogOverlay
         data-slot="drawer-backdrop"
-        :style="{ '--visual-viewport-height': visualViewportHeight }"
+        :style="visualViewportStyle"
         :class="ui.backdrop()"
       >
         <div
@@ -138,7 +138,7 @@ const ui = useComponentUI('drawer', {
 const dialogContent = useTemplateRef<{ $el: HTMLElement }>('dialogContent')
 const {
   portalTarget,
-  visualViewportHeight,
+  visualViewportStyle,
   showHeaderTitle,
   hasHeader,
   onOpenChange,
