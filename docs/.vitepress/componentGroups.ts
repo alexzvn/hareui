@@ -78,6 +78,7 @@ export const COMPONENT_GROUPS: Record<string, readonly string[]> = {
     'header',
     'main',
     'separator',
+    'splitter',
     'surface',
     'toolbar',
   ],
@@ -97,7 +98,7 @@ export const COMPONENT_GROUPS: Record<string, readonly string[]> = {
 }
 
 // Pages that get a "New" badge in the sidebar. Clear entries once they stop being new.
-export const NEW_COMPONENTS: ReadonlySet<string> = new Set([])
+export const NEW_COMPONENTS: ReadonlySet<string> = new Set(['splitter'])
 
 // Pages that get an "Updated" badge in the sidebar. Clear entries after the next release.
 export const UPDATED_COMPONENTS: ReadonlySet<string> = new Set<string>()

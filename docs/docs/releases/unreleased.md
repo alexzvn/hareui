@@ -5,6 +5,10 @@ description: Changes merged since v0.3.0 that are not yet published.
 
 Changes merged since [v0.3.0](./v0-3-0) that are not in a published release yet.
 
+## New components
+
+- `Splitter`: resizable panels from an `items` prop, with line, drag, pill and handle grips, collapsible panels, keyboard resizing and layout persistence (`auto-save-id`).
+
 ## Changes
 
 - `Popover`, `Dropdown`, `Modal`, `Drawer`, `AlertDialog`, `DatePicker` and `DateRangePicker` render on the server again. In v0.3.0 they threw `Element is not defined` during server rendering, for example in Nuxt.
