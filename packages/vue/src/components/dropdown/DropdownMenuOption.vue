@@ -194,11 +194,15 @@ const extraAttrs = computed(() => ({
     : {}),
 }))
 
+// Reka focuses the item under the mouse, and the browser can count that focus as `:focus-visible` (the menu
+// took focus without a click), so the ring also needs the last interaction to be a keyboard one.
 const onFocus = (event: FocusEvent) => {
   interaction.isFocused = true
 
   interaction.isFocusVisible =
-    event.target instanceof Element && event.target.matches(':focus-visible')
+    ctx.lastKey() !== null &&
+    event.target instanceof Element &&
+    event.target.matches(':focus-visible')
 }
 
 const onBlur = () => {
