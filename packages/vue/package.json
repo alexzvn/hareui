@@ -57,6 +57,10 @@
       "types": "./dist/command-palette.d.ts",
       "import": "./dist/command-palette.js"
     },
+    "./editor": {
+      "types": "./dist/editor.d.ts",
+      "import": "./dist/editor.js"
+    },
     "./vite": {
       "types": "./dist/vite.d.ts",
       "import": "./dist/vite.js"

@@ -16,6 +16,7 @@ export default defineConfig({
         'src/carousel.ts',
         'src/code-block.ts',
         'src/command-palette.ts',
+        'src/editor.ts',
         'src/vite.ts',
       ],
       formats: ['es'],

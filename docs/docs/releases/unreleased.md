@@ -18,6 +18,7 @@ Changes merged since [v0.3.0](./v0-3-0) that are not in a published release yet.
 - `CommandPalette` (`@hareui/vue/command-palette`): grouped commands with fuzzy search, keyboard navigation, `v-model` and `v-model:search-term`, nested lists, shortcuts, match highlighting, virtualization and per-group slots. Needs the optional `fuse.js` peer.
 - `Carousel` (`@hareui/vue/carousel`): slides with arrows, dots and thumbnails, `in-place`, `modal` and `miniatures` types, vertical and RTL support, and arrow-key navigation. Needs the optional `embla-carousel-vue` peer; the autoplay, auto-scroll, auto-height, class-names, fade and wheel-gestures plugin props each load their own `embla-carousel-*` package only when set.
 - `CodeBlock` (`@hareui/vue/code-block`): code with a filename or language header, copy button, highlighted lines and line numbers. Highlighting uses the optional `shiki` peer when it's installed, with light and dark themes.
+- `Editor` and `EditorToolbar` (`@hareui/vue/editor`): a rich-text field with HTML, JSON or Markdown `v-model`, fixed, bubble and floating toolbars, dropdown commands and custom handlers. Needs the optional `@tiptap/*` peers listed on its page.
 - `useOverlay()`: open a `Modal`, `Drawer` or `AlertDialog` from code and await the value it closes with. `App` now renders the `OverlayProvider` it needs. See [Overlays](../getting-started/overlays).
 
 The four components with an import path of their own aren't exported from `@hareui/vue`, so apps that don't use them don't need their peers.

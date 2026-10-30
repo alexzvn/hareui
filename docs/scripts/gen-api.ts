@@ -272,9 +272,14 @@ const toProp = (prop: PropertyMeta, format: FormatType): ApiProp => {
 // ListBoxOption or ToastItem aren't in it).
 const entry = (
   await Promise.all(
-    ['index.ts', 'charts.ts', 'carousel.ts', 'code-block.ts', 'command-palette.ts'].map((file) =>
-      Bun.file(join(componentsDir, '..', file)).text(),
-    ),
+    [
+      'index.ts',
+      'charts.ts',
+      'carousel.ts',
+      'code-block.ts',
+      'command-palette.ts',
+      'editor.ts',
+    ].map((file) => Bun.file(join(componentsDir, '..', file)).text()),
   )
 ).join('\n')
 

@@ -14,6 +14,7 @@ const entries = {
   'carousel.ts': '@hareui/vue/carousel',
   'code-block.ts': '@hareui/vue/code-block',
   'command-palette.ts': '@hareui/vue/command-palette',
+  'editor.ts': '@hareui/vue/editor',
 }
 
 /**
