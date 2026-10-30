@@ -12,6 +12,8 @@ const componentSlugs = sidebar
   .map((link) => link.link.match(/^\/docs\/components\/([\w-]+)$/)?.[1])
   .filter(Boolean)
 
+const favicon = { rel: 'icon', type: 'image/svg+xml', href: '/logo.svg' }
+
 export default defineConfigWithTheme<ThemeConfig>({
   title: 'HareUI',
   description: 'Beautiful, fast and modern Vue UI library — a Vue port of HeroUI v3',
@@ -20,7 +22,7 @@ export default defineConfigWithTheme<ThemeConfig>({
   ignoreDeadLinks: [new RegExp(`^/docs/components/(${componentSlugs.join('|')})$`)],
   srcExclude: ['THIRD_PARTY_LICENSES.md', 'demos/**'],
   head: [
-    ['link', { rel: 'icon', type: 'image/svg+xml', href: '/logo.svg' }],
+    ['link', favicon],
     // Restore the docs design-theme preset and vibrant palette before first paint (keys/attributes from HeroUI's utils/design-theme.ts).
     [
       'script',
@@ -45,7 +47,16 @@ export default defineConfigWithTheme<ThemeConfig>({
     },
   },
   vite: {
-    plugins: [tailwindcss()],
+    plugins: [
+      tailwindcss(),
+      // The dev server's page shell has no `head` entries until the app mounts, so the browser would request
+      // /favicon.ico first; built pages carry the icon link already.
+      {
+        name: 'docs-dev-favicon',
+        apply: 'serve',
+        transformIndexHtml: () => [{ tag: 'link', attrs: favicon, injectTo: 'head' }],
+      },
+    ],
     // Tailwind emits `:is()` (never matches) where a variant's nested `&::before` meets a pseudo-element variant
     // (`motion-reduce:before:*`); esbuild's minifier flags that valid selector as a syntax error, lightningcss doesn't.
     build: { cssMinify: 'lightningcss' },
