@@ -1,6 +1,3 @@
-// Translated from @heroui/styles components/scroll-shadow.css. The fade masks themselves live in
-// styles/scroll-shadow.css, keyed on `data-slot="scroll-shadow"` + `data-orientation` (and the
-// `data-*-scroll` flags) so the same rules serve every scroller, e.g. Tabs' list.
 export default {
   slots: {
     base: 'relative',
