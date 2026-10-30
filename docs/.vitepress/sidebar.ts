@@ -61,6 +61,7 @@ export const sidebar: SidebarSection[] = [
       { text: 'Styling', link: gs('styling'), icon: 'brush' },
       { text: 'Animation', link: gs('animation'), icon: 'copy-transparent' },
       { text: 'Composition', link: gs('composition'), icon: 'layers' },
+      { text: 'Overlays', link: gs('overlays'), icon: 'layers', badge: 'new' },
       { separator: 'UI for Agents' },
       { text: 'LLMs.txt', link: gs('llms-txt') },
     ],

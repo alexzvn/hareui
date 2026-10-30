@@ -15,6 +15,7 @@ Changes merged since [v0.3.0](./v0-3-0) that are not in a published release yet.
 - `Splitter`: resizable panels from an `items` prop, with line, drag, pill and handle grips, collapsible panels, keyboard resizing and layout persistence (`auto-save-id`).
 - `Sidebar`: a standalone collapsible sidebar with `offcanvas`, `icon` or `none` collapse, `sidebar`, `floating` or `inset` variants, a rail, and a slideover, drawer or modal menu on mobile that closes when a link inside it is clicked (`auto-close`).
 - `Toc`: a table of contents that follows the heading in view, as a sticky list (collapsible below `lg`, with an optional straight or circuit highlight) or as floating marks that open the links on hover or press.
+- `useOverlay()`: open a `Modal`, `Drawer` or `AlertDialog` from code and await the value it closes with. `App` now renders the `OverlayProvider` it needs. See [Overlays](../getting-started/overlays).
 
 ## Changes
 

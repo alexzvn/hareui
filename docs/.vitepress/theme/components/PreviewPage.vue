@@ -14,11 +14,12 @@
     <p v-else class="p-4 text-danger">Demo not found: {{ name }}</p>
     <!-- The docs shell's shared queue provider (Layout.vue): demos calling the global `toast()` need one here too. -->
     <ToastProvider />
+    <OverlayProvider />
   </div>
 </template>
 
 <script setup lang="ts">
-import { ToastProvider } from '@hareui/vue'
+import { OverlayProvider, ToastProvider } from '@hareui/vue'
 import { useData } from 'vitepress'
 import { computed, defineAsyncComponent, onBeforeUnmount, onMounted } from 'vue'
 

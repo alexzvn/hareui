@@ -3,7 +3,10 @@ import type { ConfigProviderProps } from 'reka-ui'
 import type { ToastProviderProps } from '@/components/toast-provider/ToastProvider.types'
 import type { PortalTarget } from '@/config'
 
-/** Props of `App`, the root wrapper that provides direction, locale, portal target and a toaster to everything inside it. */
+/**
+ * Props of `App`, the root wrapper that provides direction, locale, portal target and a toaster to everything inside
+ * it, and renders the overlays opened with `useOverlay()`.
+ */
 export type AppProps = {
   /**
    * The reading direction of the application, inherited by every directional primitive.

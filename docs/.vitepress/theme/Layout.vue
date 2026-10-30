@@ -138,11 +138,13 @@
       :class="toastTheme && [toastTheme, 'text-foreground']"
       v-bind="toastTheme ? design : {}"
     />
+    <!-- Host for overlays opened with `useOverlay()` (the Overlays page demos). -->
+    <OverlayProvider />
   </div>
 </template>
 
 <script setup lang="ts">
-import { ToastProvider } from '@hareui/vue'
+import { OverlayProvider, ToastProvider } from '@hareui/vue'
 import { useData, useRoute } from 'vitepress'
 import { computed, defineAsyncComponent, onBeforeUnmount, onMounted, ref, watch } from 'vue'
 
