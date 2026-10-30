@@ -11,13 +11,38 @@ export const useToc = () => {
   const route = useRoute()
   const items = ref<TocItem[]>([])
   const active = ref<string[]>([])
-  let observer: IntersectionObserver | undefined
+  let headings: HTMLElement[] = []
+  let frame = 0
+
+  // The headings fully in view are active. With none in view (a tall demo fills the screen, or the page jumped
+  // there), the current section is the last heading above the viewport, never a heading the reader left behind.
+  const update = () => {
+    frame = 0
+
+    const viewportHeight = window.innerHeight
+
+    const rects = headings.map((heading) => ({
+      id: heading.id,
+      rect: heading.getBoundingClientRect(),
+    }))
+
+    const inView = rects.filter(({ rect }) => rect.top >= 0 && rect.bottom <= viewportHeight)
+    if (inView.length > 0) {
+      active.value = inView.map(({ id }) => id)
+      return
+    }
+
+    const current = rects.filter(({ rect }) => rect.top < 0).at(-1) ?? rects[0]
+    active.value = current ? [current.id] : []
+  }
+
+  const onScroll = () => {
+    if (!frame) frame = requestAnimationFrame(update)
+  }
 
   const collect = () => {
-    observer?.disconnect()
-
     // Headings rendered by live demos belong to the demo, not the page outline.
-    const headings = Array.from(
+    headings = Array.from(
       document.querySelectorAll<HTMLElement>('#nd-page .prose h2[id], #nd-page .prose h3[id]'),
     ).filter((h) => !h.closest('.component-preview-container'))
 
@@ -27,40 +52,25 @@ export const useToc = () => {
       depth: Number(h.tagName.slice(1)),
     }))
 
-    const visible = new Set<string>()
-    observer = new IntersectionObserver(
-      (entries) => {
-        for (const entry of entries) {
-          if (entry.isIntersecting) {
-            visible.add(entry.target.id)
-            continue
-          }
-
-          visible.delete(entry.target.id)
-        }
-
-        if (visible.size > 0) {
-          active.value = items.value.filter((item) => visible.has(item.id)).map((item) => item.id)
-          return
-        }
-
-        if (active.value.length > 1) active.value = active.value.slice(-1)
-      },
-      { rootMargin: '0px', threshold: 0.98 },
-    )
-
-    for (const h of headings) observer.observe(h)
-    active.value = items.value.length ? [items.value[0].id] : []
+    update()
   }
 
-  onMounted(collect)
+  onMounted(() => {
+    collect()
+    window.addEventListener('scroll', onScroll, { passive: true })
+    window.addEventListener('resize', onScroll, { passive: true })
+  })
 
   watch(
     () => route.path,
     () => nextTick(collect),
   )
 
-  onBeforeUnmount(() => observer?.disconnect())
+  onBeforeUnmount(() => {
+    window.removeEventListener('scroll', onScroll)
+    window.removeEventListener('resize', onScroll)
+    cancelAnimationFrame(frame)
+  })
 
   return { items, active }
 }
